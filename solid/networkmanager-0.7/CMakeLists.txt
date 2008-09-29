@@ -24,14 +24,15 @@ set(solid_networkmanager_PART_SRCS
    nmpropertyhelper.cpp
 )
 
-set( DBUS_INTERFACES_FILES 
+set( DBUS_INTERFACES_FILES
    dbus/activeconnection.cpp
    dbus/nm-manager-clientinterface.cpp
    dbus/nm-deviceinterface.cpp
-   dbus/nm-access-pointinterface.cpp 
-   dbus/nm-device-802-3-ethernetinterface.cpp
-   dbus/nm-device-802-11-wirelessinterface.cpp
+   dbus/nm-access-pointinterface.cpp
+   dbus/nm-device-ethernetinterface.cpp
+   dbus/nm-device-wifiinterface.cpp
    dbus/nm-ip4-configinterface.cpp
+   dbus/nm-dhcp4-configinterface.cpp
 )
 
 

@@ -8,8 +8,8 @@
  * Do not edit! All changes made to it will be lost.
  */
 
-#ifndef NMDEVICEINTERFACE_H_1210621531
-#define NMDEVICEINTERFACE_H_1210621531
+#ifndef NM_DEVICEINTERFACE_H_1222729762
+#define NM_DEVICEINTERFACE_H_1222729762
 
 #include <QtCore/QObject>
 #include <QtCore/QByteArray>
@@ -43,6 +43,10 @@ public:
     inline uint deviceType() const
     { return qvariant_cast< uint >(internalPropGet("DeviceType")); }
 
+    Q_PROPERTY(QDBusObjectPath Dhcp4Config READ dhcp4Config)
+    inline QDBusObjectPath dhcp4Config() const
+    { return qvariant_cast< QDBusObjectPath >(internalPropGet("Dhcp4Config")); }
+
     Q_PROPERTY(QString Driver READ driver)
     inline QString driver() const
     { return qvariant_cast< QString >(internalPropGet("Driver")); }
@@ -73,7 +77,7 @@ public:
 
 public Q_SLOTS: // METHODS
 Q_SIGNALS: // SIGNALS
-    void StateChanged(uint state);
+    void StateChanged(uint new_state, uint old_state, uint reason);
 };
 
 #endif

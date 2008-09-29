@@ -29,22 +29,17 @@ class IPv4Config::Private
 {
 public:
     Private(const QList<IPv4Address> &theAddresses,
-        quint32 theBroadcast, const QString &theHostname, const QList<quint32> &theNameservers,
-        const QStringList &theDomains, const QString &theNisDomain, const QList<quint32> &theNisServers)
-        : addresses(theAddresses), broadcast(theBroadcast),
-    hostname(theHostname), nameservers(theNameservers), domains(theDomains),
-    nisDomain(theNisDomain), nisServers(theNisServers)
+        const QList<quint32> &theNameservers,
+        const QStringList &theDomains, const QList<IPv4Route> &theRoutes)
+        : addresses(theAddresses), nameservers(theNameservers),
+        domains(theDomains), routes(theRoutes)
     {}
     Private()
-        : broadcast(0)
     {}
     QList<IPv4Address> addresses;
-    quint32 broadcast;
-    QString hostname;
     QList<quint32> nameservers;
     QStringList domains;
-    QString nisDomain;
-    QList<quint32> nisServers;
+    QList<IPv4Route> routes;
 };
 
 
@@ -60,6 +55,21 @@ public:
     quint32 address;
     quint32 netMask;
     quint32 gateway;
+};
+
+class IPv4Route::Private
+{
+public:
+    Private(quint32 theRoute, quint32 thePrefix, quint32 theNextHop, quint32 theMetric)
+        : route(theRoute), prefix(thePrefix), nextHop(theNextHop), metric(theMetric)
+    {}
+    Private()
+        : route(0), prefix(0), nextHop(0), metric(0)
+    {}
+    quint32 route;
+    quint32 prefix;
+    quint32 nextHop;
+    quint32 metric;
 };
 }
 }
@@ -113,12 +123,66 @@ bool Solid::Control::IPv4Address::isValid() const
     return d->address != 0;
 }
 
+Solid::Control::IPv4Route::IPv4Route(quint32 route, quint32 prefix, quint32 nextHop, quint32 metric)
+: d(new Private(route, prefix, nextHop, metric))
+{
+}
+
+Solid::Control::IPv4Route::IPv4Route()
+: d(new Private())
+{
+}
+
+Solid::Control::IPv4Route::~IPv4Route()
+{
+    delete d;
+}
+
+Solid::Control::IPv4Route::IPv4Route(const IPv4Route &other)
+: d(new Private(*other.d))
+{
+}
+
+quint32 Solid::Control::IPv4Route::route() const
+{
+    return d->route;
+}
+
+quint32 Solid::Control::IPv4Route::prefix() const
+{
+    return d->prefix;
+}
+
+quint32 Solid::Control::IPv4Route::nextHop() const
+{
+    return d->nextHop;
+}
+
+quint32 Solid::Control::IPv4Route::metric() const
+{
+    return d->metric;
+}
+
+Solid::Control::IPv4Route &Solid::Control::IPv4Route::operator=(const Solid::Control::IPv4Route &other)
+{
+    if (this == &other)
+        return *this;
+
+    *d = *other.d;
+    return *this;
+}
+
+bool Solid::Control::IPv4Route::isValid() const
+{
+    return d->route != 0;
+}
+
 
 Solid::Control::IPv4Config::IPv4Config(const QList<IPv4Address> &addresses,
-        quint32 broadcast, const QString &hostname, const QList<quint32> &nameservers,
-        const QStringList &domains, const QString &nisDomain, const QList<quint32> &nisServers)
-: d(new Private(addresses, broadcast, hostname, nameservers, domains, 
-            nisDomain, nisServers))
+        const QList<quint32> &nameservers,
+        const QStringList &domains,
+        const QList<IPv4Route> &routes)
+: d(new Private(addresses, nameservers, domains, routes))
 {
 }
 
@@ -142,16 +206,6 @@ QList<Solid::Control::IPv4Address> Solid::Control::IPv4Config::addresses() const
     return d->addresses;
 }
 
-quint32 Solid::Control::IPv4Config::broadcast() const
-{
-    return d->broadcast;
-}
-
-QString Solid::Control::IPv4Config::hostname() const
-{
-    return d->hostname;
-}
-
 QList<quint32> Solid::Control::IPv4Config::nameservers() const
 {
     return d->nameservers;
@@ -160,16 +214,6 @@ QList<quint32> Solid::Control::IPv4Config::nameservers() const
 QStringList Solid::Control::IPv4Config::domains() const
 {
     return d->domains;
-}
-
-QString Solid::Control::IPv4Config::nisDomain() const
-{
-    return d->nisDomain;
-}
-
-QList<quint32> Solid::Control::IPv4Config::nisServers() const
-{
-    return d->nisServers;
 }
 
 Solid::Control::IPv4Config &Solid::Control::IPv4Config::operator=(const Solid::Control::IPv4Config& other)

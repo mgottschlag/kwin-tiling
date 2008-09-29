@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define NM07_WIRELESSNETWORKINTERFACE_P_H
 
 #include "networkinterface_p.h"
-#include "dbus/nm-device-802-11-wirelessinterface.h"
+#include "dbus/nm-device-wifiinterface.h"
 
 class NMWirelessNetworkInterfacePrivate : public NMNetworkInterfacePrivate
 {

@@ -8,8 +8,8 @@
  * Do not edit! All changes made to it will be lost.
  */
 
-#ifndef NMMANAGERCLIENTINTERFACE_H_1210621531
-#define NMMANAGERCLIENTINTERFACE_H_1210621531
+#ifndef NM_MANAGER_CLIENTINTERFACE_H_1222729762
+#define NM_MANAGER_CLIENTINTERFACE_H_1222729762
 
 #include <QtCore/QObject>
 #include <QtCore/QByteArray>

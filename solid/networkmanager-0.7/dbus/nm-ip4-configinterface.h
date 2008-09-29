@@ -8,8 +8,8 @@
  * Do not edit! All changes made to it will be lost.
  */
 
-#ifndef NMIP4CONFIGINTERFACE_H_1210621530
-#define NMIP4CONFIGINTERFACE_H_1210621530
+#ifndef NM_IP4_CONFIGINTERFACE_H_1222729762
+#define NM_IP4_CONFIGINTERFACE_H_1222729762
 
 #include <QtCore/QObject>
 #include <QtCore/QByteArray>
@@ -20,7 +20,6 @@
 #include <QtCore/QVariant>
 #include <QtDBus/QtDBus>
 
-//HAND-EDIT
 #include "generic-types.h"
 
 /*
@@ -46,21 +45,13 @@ public:
     inline QStringList domains() const
     { return qvariant_cast< QStringList >(internalPropGet("Domains")); }
 
-    Q_PROPERTY(QString Hostname READ hostname)
-    inline QString hostname() const
-    { return qvariant_cast< QString >(internalPropGet("Hostname")); }
-
     Q_PROPERTY(UIntList Nameservers READ nameservers)
     inline UIntList nameservers() const
     { return qvariant_cast< UIntList >(internalPropGet("Nameservers")); }
 
-    Q_PROPERTY(QString NisDomain READ nisDomain)
-    inline QString nisDomain() const
-    { return qvariant_cast< QString >(internalPropGet("NisDomain")); }
-
-    Q_PROPERTY(UIntList NisServers READ nisServers)
-    inline UIntList nisServers() const
-    { return qvariant_cast< UIntList >(internalPropGet("NisServers")); }
+    Q_PROPERTY(UIntListList Routes READ routes)
+    inline UIntListList routes() const
+    { return qvariant_cast< UIntListList >(internalPropGet("Routes")); }
 
 public Q_SLOTS: // METHODS
 Q_SIGNALS: // SIGNALS

@@ -48,12 +48,31 @@ private:
     Private * d;
 };
 
+class SOLIDCONTROL_EXPORT IPv4Route
+{
+public:
+    IPv4Route(quint32 route, quint32 prefix, quint32 nextHop, quint32 metric);
+    IPv4Route();
+    ~IPv4Route();
+    IPv4Route(const IPv4Route&);
+    IPv4Route &operator=(const IPv4Route&);
+    bool isValid() const;
+    quint32 route() const;
+    quint32 prefix() const;
+    quint32 nextHop() const;
+    quint32 metric() const;
+private:
+    class Private;
+    Private * d;
+};
+
 class SOLIDCONTROL_EXPORT IPv4Config
 {
 public:
     IPv4Config(const QList<IPv4Address> &addresses,
-        quint32 broadcast, const QString &hostname, const QList<quint32> &nameservers,
-        const QStringList &domains, const QString &nisDomain, const QList<quint32> &nisServers);
+        const QList<quint32> &nameservers,
+        const QStringList &domains,
+        const QList<IPv4Route> &routes);
     IPv4Config();
     ~IPv4Config();
     IPv4Config(const IPv4Config&);
@@ -61,13 +80,9 @@ public:
      * List of IP addresses related to this configuration. 
      */
     QList<IPv4Address> addresses() const;
-    /** May go away, need to check if the broadcast address is *ALWAYS* .255 */
-    quint32 broadcast() const;
-    QString hostname() const;
     QList<quint32> nameservers() const;
     QStringList domains() const;
-    QString nisDomain() const;
-    QList<quint32> nisServers() const;
+    QList<IPv4Route> routes() const;
     IPv4Config &operator=(const IPv4Config&);
     bool isValid() const;
 private:

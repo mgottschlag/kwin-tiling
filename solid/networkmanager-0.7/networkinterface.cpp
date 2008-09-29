@@ -132,6 +132,7 @@ Solid::Control::IPv4Config NMNetworkInterface::ipV4Config() const
         QDBusObjectPath ipV4ConfigPath = d->deviceIface.ip4Config();
         OrgFreedesktopNetworkManagerIP4ConfigInterface iface(NMNetworkManager::DBUS_SERVICE, ipV4ConfigPath.path(), QDBusConnection::systemBus());
         if (iface.isValid()) {
+            //convert ipaddresses into object
             UIntListList addresses = iface.addresses();
             QList<Solid::Control::IPv4Address> addressObjects;
             foreach (UIntList addressList, addresses) {
@@ -140,9 +141,18 @@ Solid::Control::IPv4Config NMNetworkInterface::ipV4Config() const
                     addressObjects.append(addr);
                 }
             }
-            return Solid::Control::IPv4Config(addressObjects, 0 /*broadcast*/,
-                    iface.hostname(), iface.nameservers(), iface.domains(),
-                    iface.nisDomain(), iface.nisServers());
+            //convert routes into objects
+            UIntListList routes = iface.routes();
+            QList<Solid::Control::IPv4Route> routeObjects;
+            foreach (UIntList routeList, routes) {
+                if ( routeList.count() == 4 ) {
+                    Solid::Control::IPv4Route addr(routeList[0], routeList[1], routeList[2], routeList[3]);
+                    routeObjects.append(addr);
+                }
+            }
+            return Solid::Control::IPv4Config(addressObjects,
+                    iface.nameservers(), iface.domains(),
+                    routeObjects);
         } else {
             return Solid::Control::IPv4Config();
         }
