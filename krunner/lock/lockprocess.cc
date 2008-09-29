@@ -352,10 +352,8 @@ void LockProcess::configure()
             mLockGrace = 0;
         else if (mLockGrace > 300000)
             mLockGrace = 300000; // 5 minutes, keep the value sane
-        mSuppressUnlockTimeout = mLockGrace;
     } else {
         mLockGrace = -1;
-        mSuppressUnlockTimeout = 0;
     }
 
     if ( KScreenSaverSettings::autoLogout() ) {
@@ -383,8 +381,8 @@ void LockProcess::configure()
     //if plasma's disabled, never start in setup mode
     mFreeUnlock = mFreeUnlock && mPlasmaEnabled;
 
-    mSuppressUnlockTimeout += qMax(0, KScreenSaverSettings::timeout() * 1000);
-    mSuppressUnlockTimeout = qMax(mSuppressUnlockTimeout, 30 * 1000); //min. 30 secs
+    mSuppressUnlockTimeout = qMax(0, KScreenSaverSettings::timeout() * 1000);
+    mSuppressUnlockTimeout = qMax(mSuppressUnlockTimeout, 30 * 1000); //min. 30 secs FIXME is this a good idea?
 
     mPlugins = KScreenSaverSettings::pluginsUnlock();
     if (mPlugins.isEmpty()) {
@@ -1062,12 +1060,6 @@ void LockProcess::resume( bool force )
 //
 bool LockProcess::checkPass()
 {
-    if (mSuppressUnlock.isActive()) {
-        //help, help, I'm being suppressed!
-        mSuppressUnlock.start(); //reset the timeout
-        return false;
-    }
-
     killTimer(mAutoLogoutTimerId);
 
     if (mPlasmaDBus && mPlasmaDBus->isValid()) {
@@ -1234,13 +1226,16 @@ bool LockProcess::x11Event(XEvent *event)
             if (mBusy || !mDialogs.isEmpty())
                 break;
             mBusy = true;
-            if (!mLocked || checkPass())
-            {
+            //something happened. do we quit, ask for a password or forward it to plasma?
+            if (mSuppressUnlock.isActive()) {
+                //help, help, I'm being suppressed!
+                mSuppressUnlock.start(); //reset the timeout
+            } else if (!mLocked || checkPass()) {
                 quitSaver();
                 mBusy = false;
                 return true; //it's better not to forward any input while quitting, right?
             }
-            else if (mAutoLogout) // we need to restart the auto logout countdown
+            if (mAutoLogout) // we need to restart the auto logout countdown
             {
                 killTimer(mAutoLogoutTimerId);
                 mAutoLogoutTimerId = startTimer(mAutoLogoutTimeout);
