@@ -105,15 +105,14 @@ Solid::Control::IPv4Config parseIPv4Config(const NMDBusDeviceProperties & dev)
         parseIPv4Address(dev.ipv4Address),
         parseIPv4Address(dev.subnetMask),
         parseIPv4Address(dev.route));
-    quint32 broadcast = parseIPv4Address(dev.broadcast);
     QList<quint32> dnsServers;
     dnsServers.append(parseIPv4Address(dev.primaryDNS));
     dnsServers.append(parseIPv4Address(dev.secondaryDNS));
     return Solid::Control::IPv4Config(
         QList<Solid::Control::IPv4Address>() << address,
-        broadcast, QString() /* hostname */, dnsServers,
-        QStringList() /* domains */, QString() /* nisDomain */,
-        QList<quint32>() /* nisServers */);
+        dnsServers /*nameservers*/,
+        QStringList() /* domains */,
+        QList<Solid::Control::IPv4Route>() /* routes*/);
 }
 
 
