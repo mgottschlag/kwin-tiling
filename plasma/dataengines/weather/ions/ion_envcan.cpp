@@ -120,6 +120,7 @@ QMap<QString,IonInterface::ConditionIcons> EnvCanadaIon::setupDayIconMappings(vo
     dayList["light drizzle"] = ScatteredShowers;
     dayList["rain"] = Showers;
     dayList["heavy rain"] = Showers;
+    dayList["rain at times heavy"] = Showers;
     dayList["periods of rain"] = Showers;
     dayList["periods of drizzle"] = ScatteredShowers;
     dayList["recent thunderstorm"] = Thunderstorm;
@@ -161,6 +162,7 @@ QMap<QString,IonInterface::ConditionIcons> EnvCanadaIon::setupNightIconMappings(
     nightList["light rain"] = Showers;
     nightList["light drizzle"] = ScatteredShowers;
     nightList["rain"] = Showers;
+    nightList["rain at times heavy"] = Showers;
     nightList["showers"] = Showers;
     nightList["heavy rain"] = Showers;
     nightList["periods of rain"] = Showers;
