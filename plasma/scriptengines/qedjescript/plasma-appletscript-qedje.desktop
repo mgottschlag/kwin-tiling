@@ -1,0 +1,20 @@
+[Desktop Entry]
+Name=QEdje
+Comment=QEdje Gadgets
+Type=Service
+
+X-KDE-ServiceTypes=Plasma/ScriptEngine
+X-KDE-Library=plasma_appletscript_qedje
+X-EngineName=qedjescript
+X-Plasma-API=qedjescript
+X-Plasma-ComponentTypes=Applet
+X-Plasma-PackageFormat=qedjescript
+
+X-KDE-PluginInfo-Author=Artur de Souza
+X-KDE-PluginInfo-Email=morpheuz@gmail.com
+X-KDE-PluginInfo-Name=qedjescript
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-Website=http://dev.openbossa.org/trac/qedje
+X-KDE-PluginInfo-Category=Examples
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true

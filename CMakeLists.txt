@@ -21,6 +21,12 @@ macro_optional_find_package(Googlegadgets)
 macro_log_feature(GOOGLEGADGETS_FOUND "GoogleGadgets" "Google Gadgets library"
   "http://code.google.com/p/google-gadgets-for-linux/" FALSE ""
   "Needed to build plasma scriptengine for google gadgets")
+
+macro_optional_find_package(QEdje)
+macro_log_feature(QEdje_FOUND "QEdje" "QEdje library"
+  "http://dev.openbossa.org/trac/qedje/" FALSE ""
+  "Needed to build plasma scriptengine for edje files")
+
 macro_optional_find_package(OpenGL)
 
 include (MacroLibrary)
