@@ -60,6 +60,7 @@ public:
     QString timezone;
     QPoint clicked;
     QStringList selectedTimezones;
+    QString prettyTimezone;
 };
 
 ClockApplet::ClockApplet(QObject *parent, const QVariantList &args)
@@ -74,16 +75,66 @@ ClockApplet::~ClockApplet()
     delete d;
 }
 
-void ClockApplet::updateToolTipContent() {
-    //QString timeString = KGlobal::locale()->formatTime(d->time, d->showSeconds);
-    //TODO port to TOOLTIP manager
-    /*Plasma::ToolTipData tipData;
+void ClockApplet::toolTipAboutToShow()
+{
+    updateToolTipContent();
+}
 
-    tipData.mainText = "";//d->time.toString(timeString);
-    tipData.subText = "";//d->date.toString();
-    //tipData.image = d->toolTipIcon;
+void ClockApplet::toolTipHidden()
+{
+    Plasma::ToolTipManager::self()->clearToolTipContent(this);
+}
 
-    setToolTip(tipData);*/
+void ClockApplet::updateToolTipContent()
+{
+    Plasma::ToolTipManager::ToolTipContent tipData;
+
+    {
+        // the main text contains the current timezone's time and date
+        Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
+        QString mainText = d->prettyTimezone + " ";
+        mainText += KGlobal::locale()->formatTime(data["Time"].toTime(), false) + "<br>";
+        mainText += KGlobal::locale()->formatDate(data["Date"].toDate());
+        tipData.mainText = mainText;
+    }
+
+    QString subText;
+    foreach (QString tz, getSelectedTimezones()) {
+        if (tz == currentTimezone()) {
+            continue;
+        }
+
+        Plasma::DataEngine::Data data = dataEngine("time")->query(tz);
+        subText += "<br><b>" + data["Timezone City"].toString().replace("_", " ")+"</b> ";
+        subText += KGlobal::locale()->formatTime(data["Time"].toTime(), false) + ", ";
+        subText += KGlobal::locale()->formatDate(data["Date"].toDate());
+    }
+    tipData.subText = subText;
+
+    // query for custom content
+    Plasma::ToolTipManager::ToolTipContent customContent = toolTipContent();
+    if (customContent.image.isNull()) {
+        tipData.image = KIcon("chronometer").pixmap(IconSize(KIconLoader::Desktop));
+    } else {
+        tipData.image = customContent.image;
+    }
+
+    if (!customContent.mainText.isEmpty()) {
+        // add their main text
+        tipData.mainText = customContent.mainText + "<br>" + tipData.mainText;
+    }
+
+    if (!customContent.subText.isEmpty()) {
+        // add their sub text
+        tipData.subText = customContent.subText + "<br>" + tipData.subText;
+    }
+
+    Plasma::ToolTipManager::self()->setToolTipContent(this, tipData);
+}
+
+Plasma::ToolTipManager::ToolTipContent ClockApplet::toolTipContent()
+{
+    return Plasma::ToolTipManager::ToolTipContent();
 }
 
 void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
@@ -237,7 +288,7 @@ void ClockApplet::init()
     d->selectedTimezones = cg.readEntry("timeZones", QStringList());
     d->timezone = cg.readEntry("timezone", d->timezone);
     QStringList tzParts = d->timezone.split("/");
-    m_prettyTimezone = tzParts.value(1);
+    d->prettyTimezone = tzParts.value(1);
 
     //avoid duplication
     if (!extender()->item("calendar")) {
@@ -245,6 +296,8 @@ void ClockApplet::init()
         eItem->setName("calendar");
         initExtenderItem(eItem);
     }
+
+    Plasma::ToolTipManager::self()->registerWidget(this);
 }
 
 void ClockApplet::setCurrentTimezone(const QString &tz)
@@ -255,7 +308,7 @@ void ClockApplet::setCurrentTimezone(const QString &tz)
 
     d->timezone = tz;
     QStringList tzParts = tz.split("/");
-    m_prettyTimezone = tzParts.value(1);
+    d->prettyTimezone = tzParts.value(1);
 
     KConfigGroup cg = config();
     cg.writeEntry("timezone", tz);
@@ -265,6 +318,11 @@ void ClockApplet::setCurrentTimezone(const QString &tz)
 QString ClockApplet::currentTimezone() const
 {
     return d->timezone;
+}
+
+QString ClockApplet::prettyTimezone() const
+{
+    return d->prettyTimezone;
 }
 
 QStringList ClockApplet::getSelectedTimezones() const

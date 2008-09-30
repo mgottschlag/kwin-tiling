@@ -24,9 +24,10 @@
 #include <QtCore/QTime>
 #include <QtCore/QDate>
 
-#include <plasma/popupapplet.h>
 #include <plasma/dataengine.h>
 #include <plasma/dialog.h>
+#include <plasma/popupapplet.h>
+#include <plasma/tooltipmanager.h>
 #include "ui_calendar.h"
 
 #include "plasmaclock_export.h"
@@ -49,20 +50,25 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::PopupApplet
         void init();
 
         QString currentTimezone() const;
+        QString prettyTimezone() const;
         bool isLocalTimezone() const;
         QStringList getSelectedTimezones() const;
 
         static QString localTimezone();
 
-        QString m_prettyTimezone;
+    public Q_SLOTS:
+        void toolTipAboutToShow();
+        void toolTipHidden();
 
     protected:
-        void wheelEvent(QGraphicsSceneWheelEvent *event);
-        void createConfigurationInterface(KConfigDialog *parent);
         virtual void createClockConfigurationInterface(KConfigDialog *parent);
         virtual void clockConfigAccepted();
         virtual void changeEngineTimezone(const QString &oldTimezone, const QString &newTimezone);
+        virtual Plasma::ToolTipManager::ToolTipContent toolTipContent();
+        void wheelEvent(QGraphicsSceneWheelEvent *event);
+        void createConfigurationInterface(KConfigDialog *parent);
         void initExtenderItem(Plasma::ExtenderItem *item);
+        void updateToolTipContent();
 
     protected Q_SLOTS:
         void setCurrentTimezone(const QString &tz);
@@ -70,8 +76,6 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::PopupApplet
         void updateClockDefaultsTo();
 
     private:
-        void updateToolTipContent();
-
         class Private;
         Private * const d;
 };
