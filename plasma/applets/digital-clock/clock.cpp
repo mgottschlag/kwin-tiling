@@ -70,7 +70,6 @@ Clock::~Clock()
 void Clock::init()
 {
     ClockApplet::init();
-    Plasma::ToolTipManager::self()->registerWidget(this);
 
     KConfigGroup cg = config();
 
@@ -95,12 +94,8 @@ void Clock::init()
     QString timeString = KGlobal::locale()->formatTime(QTime(23, 59), m_showSeconds);
     setMinimumSize(metrics.size(Qt::TextSingleLine, timeString));
 
-    m_toolTipIcon = KIcon("chronometer").pixmap(IconSize(KIconLoader::Desktop));
-
     dataEngine("time")->connectSource(currentTimezone(), this, updateInterval(), intervalAlignment());
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));
-
-    updateToolTipContent();
 }
 
 void Clock::constraintsEvent(Plasma::Constraints constraints)
@@ -133,31 +128,6 @@ void Clock::updateSize() {
     }
 }
 
-void Clock::updateToolTipContent()
-{
-    Plasma::ToolTipManager::ToolTipContent tipData;
-    tipData.image = m_toolTipIcon;
-
-    QString mainText = m_prettyTimezone + " ";
-    mainText += KGlobal::locale()->formatTime(m_time, m_showSeconds) + "<br>";
-    mainText += KGlobal::locale()->formatDate(m_date);
-    tipData.mainText = mainText;
-
-    QString subText;
-    foreach(QString tz, getSelectedTimezones()) {
-        if (tz==currentTimezone()) {
-            continue;
-        }
-        Plasma::DataEngine::Data data = dataEngine("time")->query(tz);
-        subText += "<br><b>" + data["Timezone City"].toString().replace("_", " ")+"</b> ";
-        subText += KGlobal::locale()->formatTime(data["Time"].toTime(), m_showSeconds) + ", ";
-        subText += KGlobal::locale()->formatDate(data["Date"].toDate());
-    }
-    tipData.subText = subText;
-
-    Plasma::ToolTipManager::self()->setToolTipContent(this,tipData);
-}
-
 void Clock::dataUpdated(const QString &source, const Plasma::DataEngine::Data &data)
 {
     Q_UNUSED(source);
@@ -173,11 +143,6 @@ void Clock::dataUpdated(const QString &source, const Plasma::DataEngine::Data &d
         m_lastTimeSeen = m_time;
         update();
     }
-}
-
-void Clock::toolTipAboutToShow()
-{
-    updateToolTipContent();
 }
 
 void Clock::createClockConfigurationInterface(KConfigDialog *parent)
@@ -302,13 +267,13 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                 }
 
                 if (m_showTimezone) {
-                    QString currentTimezone = m_prettyTimezone;
+                    QString currentTimezone = prettyTimezone();
                     dateString = i18nc("@label Date with currentTimezone: "
                                        "%1 day of the week with date, %2 currentTimezone",
                                        "%1 %2", dateString, currentTimezone);
                 }
             } else if (m_showTimezone && !isLocalTimezone()) {
-                dateString = m_prettyTimezone;
+                dateString = prettyTimezone();
             }
 
             // Check sizes

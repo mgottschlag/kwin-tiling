@@ -44,7 +44,6 @@ class Clock : public ClockApplet
 
     public slots:
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
-        void toolTipAboutToShow();
         void updateColors();
 
     protected slots:
@@ -56,7 +55,6 @@ class Clock : public ClockApplet
         void changeEngineTimezone(const QString &oldTimezone, const QString &newTimezone);
 
     private:
-        void updateToolTipContent();
         void updateSize();
         QRect preparePainter(QPainter *p, const QRect &rect, const QFont &font, const QString &text);
 
