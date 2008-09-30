@@ -664,6 +664,7 @@ void Battery::acAnimationUpdate(qreal progress)
     // now the animation has ended, we _really_ set it to not show the adapter
     if (!m_acFadeIn && (progress == 1)) {
         m_acadapter_plugged = false;
+        updateStatus();
     }
     update();
 }
