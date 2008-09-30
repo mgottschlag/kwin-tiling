@@ -38,16 +38,12 @@ bool QEdjePackage::installPackage(const QString &archive_path,
 
   // Create the directory so we can copy the edje file inside it
   QDir contents(dest_dir);
-  if (!contents.exists() && !contents.mkpath(dest_dir)) {
-      kDebug() << "-------> RETURNED FALSE 1 <-------------";
+  if (!contents.exists() && !contents.mkpath(dest_dir))
       return false;
-  }
 
   // Copy the edje file to the package's directory
-  if (!QFile::copy(archive_path, QString(dest_dir + "file.edj"))) {
-      kDebug() << "-------> RETURNED FALSE 2 <-------------";
+  if (!QFile::copy(archive_path, QString(dest_dir + "file.edj")))
       return false;
-  }
 
   setPath(dest_dir);
 
@@ -60,6 +56,5 @@ bool QEdjePackage::installPackage(const QString &archive_path,
   data.setDescription("An Edje Object to be loaded using QEdje");
   Plasma::Package::registerPackage(data, QString(""));
 
-  kDebug() << "-------> RETURNED TRUE <-------------";
   return true;
 }
