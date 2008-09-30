@@ -128,11 +128,11 @@ const int TIMEOUT_CODE = 2; //from PasswordDlg
 // Screen saver handling process.  Handles screensaver window,
 // starting screensaver hacks, and password entry.f
 //
-LockProcess::LockProcess(bool child, bool useBlankOnly, bool plasmaSetupMode)
+LockProcess::LockProcess(bool child, bool useBlankOnly)
     : QWidget(0L, Qt::X11BypassWindowManagerHint),
       mPlasmaDBus(0),
       mPlasmaView(0),
-      mFreeUnlock(plasmaSetupMode),
+      mSetupMode(false),
       mOpenGLVisual(false),
       child_saver(child),
       mParent(0),
@@ -325,6 +325,17 @@ bool LockProcess::defaultSave()
     return false;
 }
 
+bool LockProcess::startSetup()
+{
+    if (!mPlasmaEnabled) {
+        return defaultSave();
+    }
+
+    mLocked = false;
+    mSetupMode = true;
+    return startSaver();
+    //plasma startup will handle the suppressunlock bit
+}
 //---------------------------------------------------------------------------
 bool LockProcess::dontLock()
 {
@@ -378,8 +389,6 @@ void LockProcess::configure()
     readSaver();
 
     mPlasmaEnabled = KScreenSaverSettings::plasmaEnabled();
-    //if plasma's disabled, never start in setup mode
-    mFreeUnlock = mFreeUnlock && mPlasmaEnabled;
 
     mSuppressUnlockTimeout = qMax(0, KScreenSaverSettings::timeout() * 1000);
     mSuppressUnlockTimeout = qMax(mSuppressUnlockTimeout, 30 * 1000); //min. 30 secs FIXME is this a good idea?
@@ -919,7 +928,7 @@ bool LockProcess::startPlasma()
         return false;
     }
     kDebug() << "starting plasma-overlay";
-    if (mFreeUnlock) {
+    if (mSetupMode) {
         mSuppressUnlock.start(mSuppressUnlockTimeout);
         XChangeActivePointerGrab( QX11Info::display(), GRABEVENTS,
                 QCursor(Qt::ArrowCursor).handle(), CurrentTime);
@@ -933,7 +942,7 @@ bool LockProcess::startPlasma()
     if (mPlasmaDBus->isValid()) {
         kDebug() << "weird, plasma-overlay is already running";
         connect(mPlasmaDBus, SIGNAL(viewCreated(uint)), SLOT(setPlasmaView(uint)));
-        if (mFreeUnlock) {
+        if (mSetupMode) {
             mPlasmaDBus->call(QDBus::NoBlock, "activate");
             //it'll be locked because we haven't put plasma in setup mode. doh.
             //FIXME make a dbus call to change that
@@ -950,7 +959,7 @@ bool LockProcess::startPlasma()
                     QString)),
             SLOT(newService(QString)));
     mPlasmaProc.setProgram("plasma-overlay");
-    if (mFreeUnlock) {
+    if (mSetupMode) {
         mPlasmaProc << "--setup";
     }
     mPlasmaProc.start();
@@ -1145,7 +1154,7 @@ static void fakeFocusIn( WId window )
 void LockProcess::setPlasmaView(uint id)
 {
     mPlasmaView = id;
-    if (mFreeUnlock) {
+    if (mSetupMode) {
         fakeFocusIn(mPlasmaView);
     }
     kDebug() << id;

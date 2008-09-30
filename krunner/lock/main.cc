@@ -140,7 +140,7 @@ int main( int argc, char **argv )
     app.disableSessionManagement();
     KGlobal::locale()->insertCatalog("libkworkspace");
 
-    LockProcess process(child, args->isSet( "blank" ), args->isSet("plasmasetup"));
+    LockProcess process(child, args->isSet("blank"));
     if (!child)
         process.setChildren(child_sockets);
     else
@@ -148,13 +148,15 @@ int main( int argc, char **argv )
 
     bool rt;
     bool sig = false;
-    if( !child && (args->isSet( "forcelock" ) || args->isSet("plasmasetup")))
-    {
+    if (!child && (args->isSet("forcelock"))) {
         rt = process.lock();
         sig = true;
     }
     else if( child || args->isSet( "dontlock" ))
         rt = process.dontLock();
+    else if (args->isSet("plasmasetup")) {
+        rt = process.startSetup();
+    }
     else
         rt = process.defaultSave();
     if (!rt)

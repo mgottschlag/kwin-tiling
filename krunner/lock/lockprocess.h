@@ -43,13 +43,28 @@ class LockProcess
 {
     Q_OBJECT
 public:
-    explicit LockProcess(bool child_saver = false, bool useBlankOnly = false, bool plasmaSetupMode = false);
+    explicit LockProcess(bool child_saver = false, bool useBlankOnly = false);
     ~LockProcess();
 
+    /**
+     * start the screensaver locked
+     */
     bool lock();
 
+    /**
+     * start the screensaver unlocked
+     */
     bool defaultSave();
 
+    /**
+     * start the screensaver in plasma setup mode
+     * if plasma is disabled this just acts like defaultSave
+     */
+    bool startSetup();
+
+    /**
+     * start the screensaver unlocked, and *never* automatically lock it
+     */
     bool dontLock();
 
     void setChildren(QList<int> children) { child_sockets = children; }
@@ -165,7 +180,7 @@ private:
     QDBusInterface *mPlasmaDBus;
     WId         mPlasmaView;
     bool        mPlasmaEnabled;
-    bool        mFreeUnlock;
+    bool        mSetupMode;
     QString     mSaverExec;
     QString     mSaver;
     bool        mOpenGLVisual;
