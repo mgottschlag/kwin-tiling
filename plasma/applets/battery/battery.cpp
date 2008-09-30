@@ -92,13 +92,28 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     resize(128, 128);
     setAspectRatioMode(Plasma::ConstrainedSquare );
     m_textRect = QRect();
-    m_theme = new Plasma::Svg(this);
-    m_svgFile = "widgets/battery";
 }
 
-void Battery::setSvgFile(const QString svg)
+void Battery::setSvgTheme(int style)
 {
-    m_svgFile = svg;
+    if (style == 0) {
+        m_batteryStyle = OxygenBattery;
+        m_svgFile= "widgets/battery-oxygen";
+    } else {
+        m_batteryStyle = ClassicBattery;
+        m_svgFile= "widgets/battery";
+    }
+    showBattery(false);
+    delete m_theme;
+    m_theme = new Plasma::Svg(this);
+    m_theme->setImagePath(m_svgFile);
+    m_theme->setContainsMultipleImages(false);
+    kDebug() << "Changing theme to " << m_svgFile;
+    m_theme->resize(contentsRect().size());
+    if (m_acadapter_plugged) {
+        showAcAdapter(true);
+    }
+    showBattery(true);
 }
 
 void Battery::init()
@@ -109,16 +124,8 @@ void Battery::init()
 
     if (!m_isEmbedded) {
         m_svgFile= QString();
-        if (cg.readEntry("style", 0) == 0) {
-            m_batteryStyle = OxygenBattery;
-            m_svgFile= "widgets/battery-oxygen";
-        } else {
-            m_batteryStyle = ClassicBattery;
-            m_svgFile= "widgets/battery";
-        }
+        setSvgTheme(cg.readEntry("style", 0));
     }
-    m_theme->setImagePath(m_svgFile);
-    m_theme->setContainsMultipleImages(false);
 
     m_theme->resize(contentsRect().size());
     m_font = QApplication::font();
@@ -252,27 +259,11 @@ void Battery::configAccepted()
     }
 
     if (ui.styleGroup->selected() != m_batteryStyle) {
-        QString m_svgFile= QString();
-        if (ui.styleGroup->selected() == OxygenBattery) {
-            m_svgFile= "widgets/battery-oxygen";
-        } else {
-            m_svgFile= "widgets/battery";
+        setSvgTheme(ui.styleGroup->selected());
+        if (m_extenderApplet) {
+            // Also switch the theme in the extenderApplet
+            //m_extenderApplet->setSvgTheme(ui.styleGroup->selected()); // FIXME: crashes
         }
-        if (m_acadapter_plugged) {
-            showAcAdapter(false);
-        }
-        showBattery(false);
-        m_batteryStyle = ui.styleGroup->selected();
-        delete m_theme;
-        m_theme = new Plasma::Svg(this);
-        m_theme->setImagePath(m_svgFile);
-        kDebug() << "Changing theme to " << m_svgFile;
-        cg.writeEntry("style", m_batteryStyle);
-        m_theme->resize(contentsRect().size());
-        if (m_acadapter_plugged) {
-            showAcAdapter(true);
-        }
-        showBattery(true);
     }
 
     //reconnect sources
@@ -378,18 +369,18 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
 
         batteryLayout->addItem(m_batteryLabel, 0, 0, 1, 1, Qt::AlignLeft);
 
-        Battery *applet = static_cast<Battery*>(Plasma::Applet::load("battery"));
-        if (applet) {
-            applet->setParent(this);
-            applet->setAcceptsHoverEvents(true);
-            applet->setParentItem(controls);
-            applet->setEmbedded(true);
-            applet->setSvgFile(m_svgFile);
-            applet->setMinimumSize(100, columnWidth);
-            applet->setBackgroundHints(NoBackground);
-            applet->setFlag(QGraphicsItem::ItemIsMovable, false);
-            applet->init();
-            batteryLayout->addItem(applet, 0, 1, 1, 1, Qt::AlignRight);
+        Battery *m_extenderApplet = static_cast<Battery*>(Plasma::Applet::load("battery"));
+        if (m_extenderApplet) {
+            m_extenderApplet ->setParent(this);
+            m_extenderApplet ->setAcceptsHoverEvents(true);
+            m_extenderApplet ->setParentItem(controls);
+            m_extenderApplet ->setEmbedded(true);
+            m_extenderApplet ->setSvgTheme(m_batteryStyle);
+            m_extenderApplet ->setMinimumSize(100, columnWidth);
+            m_extenderApplet ->setBackgroundHints(NoBackground);
+            m_extenderApplet ->setFlag(QGraphicsItem::ItemIsMovable, false);
+            m_extenderApplet ->init();
+            batteryLayout->addItem(m_extenderApplet , 0, 1, 1, 1, Qt::AlignRight);
         }
 
         controlsLayout->addItem(batteryLayout, row, 0, 1, 3);

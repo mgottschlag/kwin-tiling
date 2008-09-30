@@ -68,7 +68,7 @@ class Battery : public Plasma::PopupApplet
     protected:
         void createConfigurationInterface(KConfigDialog *parent);
         void setEmbedded(const bool embedded);
-        void setSvgFile(const QString svg);
+        void setSvgTheme(int style);
 
     private slots:
         void animationUpdate(qreal progress);
@@ -86,7 +86,7 @@ class Battery : public Plasma::PopupApplet
 
     private:
         Q_ENUMS( m_batteryStyle )
-        enum ClockStyle {
+        enum BatteryStyle {
             // Keep the order of styles the same order as the items in the configdialog!
             OxygenBattery, ClassicBattery
         };
@@ -94,9 +94,11 @@ class Battery : public Plasma::PopupApplet
         void disconnectSources();
         void initBatteryExtender(Plasma::ExtenderItem *item);
         void updateStatus();
+        void setSvg(Plasma::Svg &theme);
 
         /* Prevent creating infinite loops by embedding applets inside applets */
         bool m_isEmbedded;
+        Battery *m_extenderApplet;
         bool m_extenderVisible;
         QString m_svgFile;
         Plasma::Label *m_statusLabel;
