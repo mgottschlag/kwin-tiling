@@ -107,7 +107,7 @@ QStandardItem* NotifierDialog::searchOrCreateDeviceCategory(const QString &categ
                 QString currentItemName = currentItem->text();
                 if (currentItemName == categoryName)
                 {
-                    //the category is find... we have to return te pointer on this category
+                    //the category is find... we have to return the pointer on this category
                     return m_hotplugModel->itemFromIndex(index);
                 }
             }
