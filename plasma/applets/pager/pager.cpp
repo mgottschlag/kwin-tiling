@@ -42,6 +42,7 @@
 
 #include <plasma/svg.h>
 #include <plasma/panelsvg.h>
+#include <plasma/paintutils.h>
 #include <plasma/theme.h>
 #include <plasma/animator.h>
 
@@ -933,30 +934,10 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
         if (m_background->hasElementPrefix(prefix)) {
             m_background->setElementPrefix(prefix);
             if (m_animations[i].animId > -1) {
-                QPixmap pixmap(m_rects[i].size().toSize());
-                QColor alphaColor(0,0,0);
-
-                //alpha of the not-hover element
-                alphaColor.setAlphaF(1.0-m_animations[i].alpha);
-                pixmap.fill(alphaColor);
-
-                QPainter buffPainter(&pixmap);
-                buffPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-
-                m_background->paintPanel(&buffPainter);
-                buffPainter.end();
-                painter->drawPixmap(m_rects[i].topLeft(), pixmap);
-
+                QPixmap normal = m_background->panelPixmap();
                 m_background->setElementPrefix("hover");
-                //alpha of the not-hover element
-                alphaColor.setAlphaF(m_animations[i].alpha);
-                //FIXME: filling again the old pixmap makes a segfault
-                pixmap = QPixmap(m_rects[i].size().toSize());
-                pixmap.fill(alphaColor);
-                buffPainter.begin(&pixmap);
-                buffPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-                m_background->paintPanel(&buffPainter);
-                painter->drawPixmap(m_rects[i].topLeft(), pixmap);
+                QPixmap result = Plasma::PaintUtils::transition(normal, m_background->panelPixmap(), m_animations[i].alpha);
+                painter->drawPixmap(m_rects[i].topLeft(), result);
             } else {
                 //no anims, simpler thing
                 if (m_rects[i] == m_hoverRect) {
