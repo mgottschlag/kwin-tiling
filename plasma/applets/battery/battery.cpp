@@ -356,7 +356,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
     // as the battery applet is also embedded into the battery's extender.
     if (!m_isEmbedded) {
         int row = 0;
-        int rowHeight = 30;
+        int rowHeight = 20;
         int columnWidth = 80;
 
         QGraphicsWidget *controls = new QGraphicsWidget(item);
@@ -365,46 +365,37 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         controlsLayout->setColumnPreferredWidth(0, rowHeight);
         controlsLayout->setColumnMinimumWidth(1, 2*columnWidth);
         controlsLayout->setColumnPreferredWidth(2, rowHeight);
-
-        m_statusLabel = new Plasma::Label(controls);
-        m_statusLabel->setStyleSheet(QString("font: bold;"));
-        m_statusLabel->setText(i18n("Battery Status"));
-
-        controlsLayout->addItem(m_statusLabel, row, 0, 1, 3);
-        row++;
+        controlsLayout->setHorizontalSpacing(0);
 
         QGraphicsGridLayout *batteryLayout = new QGraphicsGridLayout(controlsLayout);
         batteryLayout->setColumnPreferredWidth(0, columnWidth);
-        batteryLayout->setColumnPreferredWidth(1, 60);
+        batteryLayout->setColumnPreferredWidth(1, columnWidth);
 
         m_batteryLabel = new Plasma::Label(controls);
-        m_batteryLabel->setMinimumSize(100, columnWidth);
-        m_batteryLabel->setText(i18n("Battery:\nCPU:"));
-        m_batteryLabel->setStyleSheet(QString("font: %1pt;").arg(m_font.pointSize() +1));
+        m_batteryLabel->setMinimumSize(60, columnWidth);
         m_batteryLabel->nativeWidget()->setWordWrap(false);
+        m_batteryLabel->nativeWidget()->setAlignment(Qt::AlignTop);
 
         batteryLayout->addItem(m_batteryLabel, 0, 0, 1, 1, Qt::AlignLeft);
 
         Battery *applet = static_cast<Battery*>(Plasma::Applet::load("battery"));
         if (applet) {
             applet->setParent(this);
-            applet->setAcceptsHoverEvents(false);
+            applet->setAcceptsHoverEvents(true);
             applet->setParentItem(controls);
             applet->setEmbedded(true);
             applet->setSvgFile(m_svgFile);
-            applet->setMinimumSize(80, columnWidth);
+            applet->setMinimumSize(100, columnWidth);
             applet->setBackgroundHints(NoBackground);
             applet->setFlag(QGraphicsItem::ItemIsMovable, false);
             applet->init();
             batteryLayout->addItem(applet, 0, 1, 1, 1, Qt::AlignRight);
         }
 
-        controlsLayout->addItem(batteryLayout, row, 1, 1, 2);
-        controlsLayout->setRowSpacing(row, 20);
+        controlsLayout->addItem(batteryLayout, row, 0, 1, 3);
         row++;
 
         Plasma::Label *brightnessLabel = new Plasma::Label(controls);
-        brightnessLabel->setStyleSheet(QString("font: bold;"));
         brightnessLabel->setText(i18n("Screen Brightness"));
         brightnessLabel->nativeWidget()->setWordWrap(false);
         controlsLayout->addItem(brightnessLabel, row, 0, 1, 3);
@@ -429,12 +420,12 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         brightnessIcon->setIcon("ktip");
         connect(brightnessIcon, SIGNAL(clicked()),
                 this, SLOT(setFullBrightness()));
+        brightnessIcon->resize(rowHeight, rowHeight);
         controlsLayout->addItem(brightnessIcon, row, 2, 1, 1);
-        controlsLayout->setRowSpacing(row, 20);
+        controlsLayout->setRowSpacing(row, 10);
         row++;
 
         m_profileLabel = new Plasma::Label(controls);
-        m_profileLabel->setStyleSheet(QString("font: bold;"));
         m_profileLabel->setText(i18n("Power Profile"));
         controlsLayout->addItem(m_profileLabel, row, 0, 1, 3);
         row++;
@@ -444,11 +435,10 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
                 this, SLOT(setProfile(QString)));
 
         controlsLayout->addItem(m_profileCombo, row, 1, 1, 2);
-        controlsLayout->setRowSpacing(row, 20);
+        controlsLayout->setRowSpacing(row, 10);
         row++;
 
         Plasma::Label *actionsLabel = new Plasma::Label(controls);
-        actionsLabel->setStyleSheet(QString("font: bold;"));
         actionsLabel->setText(i18n("Actions"));
         actionsLabel->nativeWidget()->setWordWrap(false);
         controlsLayout->addItem(actionsLabel, row, 0, 1, 3);
@@ -472,7 +462,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
                 suspendButton->setMaximumHeight(36);
                 actionsLayout->addItem(suspendButton, 0, 0);
                 connect(suspendButton, SIGNAL(clicked()), this, SLOT(suspend()));
-
+                actionsLayout->setColumnSpacing(0, 20);
             } else if (sleepstate == Solid::PowerManagement::HibernateState) {
                 Plasma::Icon *hibernateButton = new Plasma::Icon(controls);
                 hibernateButton->setIcon("system-suspend-hibernate");
@@ -483,18 +473,23 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
                 connect(hibernateButton, SIGNAL(clicked()), this, SLOT(hibernate()));
             }
         }
+        controlsLayout->addItem(actionsLayout, row, 1, 1, 2);
+        controlsLayout->setRowSpacing(row, 10);
+        row++;
 
         // More settings button
-        actionsLayout->setRowSpacing(0, 10);
         Plasma::PushButton *configButton = new Plasma::PushButton(controls);
-        configButton->setText(i18n("More ..."));
+        configButton->setText(i18n("More..."));
+        configButton->nativeWidget()->setIcon(KIcon("preferences-system-power-management"));
         configButton->nativeWidget()->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
         connect(configButton, SIGNAL(clicked()),
                 this, SLOT(openConfig()));
-        actionsLayout->addItem(configButton, 1, 1);
 
-        controlsLayout->addItem(actionsLayout, row, 1, 1, 2);
-        row++;
+        QGraphicsGridLayout *moreLayout = new QGraphicsGridLayout(controlsLayout);
+        moreLayout->setColumnPreferredWidth(0, columnWidth*1.5);
+        moreLayout->addItem(configButton, 0, 1, Qt::AlignRight);
+
+        controlsLayout->addItem(moreLayout, row, 1, 1, 2);
 
         controls->setLayout(controlsLayout);
         item->setWidget(controls);
@@ -516,7 +511,7 @@ void Battery::updateStatus()
 
     if (m_numOfBattery && m_batteryLabel) {
         QHashIterator<QString, QHash<QString, QVariant > > battery_data(m_batteries_data);
-        QString batteryLabelText;
+        QString batteryLabelText = QString("<br />");
         int bnum = 0;
         while (battery_data.hasNext()) {
             battery_data.next();
@@ -534,10 +529,10 @@ void Battery::updateStatus()
             }
             batteryLabelText.append("%");
             if (m_acadapter_plugged) {
-                batteryLabelText.append((i18n(" charged<br />")));
+                batteryLabelText.append((i18n(" charged")));
                 batteryLabelText.append(i18n("<br /><b>AC Adapter:</b> Plugged in"));
             } else {
-                batteryLabelText.append((i18n(" (discharging)<br />")));
+                batteryLabelText.append((i18n(" remaining")));
                 batteryLabelText.append(i18n("<br /><b>AC Adapter:</b> Not plugged in"));
             }
         }
@@ -852,7 +847,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
             // paint battery with appropriate charge level
             paintBattery(p, corect, battery_data.value()[I18N_NOOP("Percent")].toInt(), battery_data.value()[I18N_NOOP("Plugged in")].toBool());
 
-            if (m_isEmbedded || m_showBatteryString || m_isHovered) {
+            if (!m_isEmbedded || m_showBatteryString || m_isHovered) {
                 // Show the charge percentage with a box on top of the battery
                 QString batteryLabel;
                 if (battery_data.value()[I18N_NOOP("Plugged in")].toBool()) {
