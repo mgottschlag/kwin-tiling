@@ -1020,8 +1020,6 @@ void LockProcess::deactivatePlasma()
         mPlasmaDBus->call(QDBus::NoBlock, "deactivate");
     }
     if (!mLocked && mLockGrace >=0) {
-        //I can't remember why we do nothing on mLockGrace=0
-        //wouldn't we want to lock immediately? FIXME
         QTimer::singleShot(mLockGrace, this, SLOT(startLock()));
     }
 }
@@ -1040,18 +1038,12 @@ void LockProcess::unSuppressUnlock()
     mSuppressUnlock.stop();
 }
 
-//TODO can we rename this to tryQuit() or attemptExit() or something?
-void LockProcess::unlock()
+void LockProcess::quit()
 {
     mSuppressUnlock.stop();
     if (!mLocked || checkPass()) {
         quitSaver();
     }
-}
-
-void LockProcess::endFreeUnlock()
-{
-    startLock(); //TODO rename or delete this func
 }
 
 void LockProcess::suspend()
@@ -1130,6 +1122,15 @@ bool LockProcess::checkPass(const QString &reason)
         //so that the user doesn't have to type their password twice
         mLocked = false;
         KDisplayManager().setLock(false);
+        //FIXME while suppressUnlock *should* always be running, if it isn't
+        //(say if someone's doing things they shouldn't with dbus) then it won't get started by this
+        //which means that a successful unlock will never re-lock
+        //in fact, the next bit of activity would lead to the screensaver quitting.
+        //possible solutions:
+        //-treat this function like activity: quit if already unlocked, ensure suppress is started
+        //if we're locked and the dialog's rejected
+        //-return true if already unlocked, without doing anything, same as above if locked
+        //-let it quit, and tell people not to do such silly things :P
         return true;
     }
     return false;
@@ -1256,6 +1257,7 @@ bool LockProcess::x11Event(XEvent *event)
         case KeyPress:
         case MotionNotify:
             if (mBusy || !mDialogs.isEmpty())
+                //FIXME shouldn't we be resetting some timers?
                 break;
             mBusy = true;
             //something happened. do we quit, ask for a password or forward it to plasma?

@@ -82,20 +82,18 @@ public Q_SLOTS:
      * bring up the password dialog with @param reason displayed instead of the usual "this session
      * is locked" message.
      * @return true if the password was entered correctly
-     * if this returns true, there is a grace period where the screensaver can be freely unlocked
-     * with the unlock method without re-entering the password.
+     * if this returns true, it will also unlock the screensaver without quitting.
+     * it will re-lock after the lock timeout in the settings
      */
     Q_SCRIPTABLE bool checkPass(const QString &reason);
     /**
      * this will unlock and quit the screensaver, asking for a password first if necessary
      */
-    Q_SCRIPTABLE void unlock();
+    Q_SCRIPTABLE void quit();
     /**
-     * immediately end the "free unlock" grace period; if the screen is locked, it will now require
-     * a password to unlock.
-     * this has no effect if the screen wasn't locked in the first place.
+     * immediately lock the screen; it will now require a password to unlock.
      */
-    Q_SCRIPTABLE void endFreeUnlock();
+    Q_SCRIPTABLE bool startLock();
 
 protected:
     virtual bool x11Event(XEvent *);
@@ -105,7 +103,6 @@ protected:
 private Q_SLOTS:
     void hackExited();
     void signalPipeSignal();
-    bool startLock();
     void suspend();
     void checkDPMSActive();
     void slotDeadTimePassed();

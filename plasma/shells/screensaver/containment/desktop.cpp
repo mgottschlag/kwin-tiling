@@ -177,7 +177,8 @@ void SaverDesktop::toggleLock()
             "local.LockProcess", QDBusConnection::sessionBus(), this); //FIXME local??
     if (corona()->immutability() == Mutable) {
         corona()->setImmutability(UserImmutable);
-        lockprocess.call(QDBus::NoBlock, "endFreeUnlock");
+        lockprocess.call(QDBus::NoBlock, "startLock");
+        kDebug() << "blaaaaaaaaaaaaaaaaa!!!!";
         emit locked();
     } else if (corona()->immutability() == UserImmutable) {
         QList<QVariant> args;
@@ -209,7 +210,7 @@ void SaverDesktop::unlockDesktop()
 {
     QDBusInterface lockprocess("org.kde.krunner_lock", "/LockProcess",
             "local.LockProcess", QDBusConnection::sessionBus(), this); //FIXME local??
-    lockprocess.call(QDBus::NoBlock, "unlock");
+    lockprocess.call(QDBus::NoBlock, "quit");
 }
 
 void SaverDesktop::createConfigurationInterface(KConfigDialog *parent)
