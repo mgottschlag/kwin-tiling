@@ -135,8 +135,7 @@ private:
     void stopPlasma();
     void setupSignals();
     /**
-     * if the password dialog is not suppressed, this execs it
-     * if the dialog *is* suppressed we just restart the timer
+     * exec the password dialog
      * @return true iff the password was checked and is valid
      */
     bool checkPass();
@@ -155,6 +154,7 @@ private:
     WindowType windowType(WId id);
 
     static QVariant getConf(void *ctx, const char *key, const QVariant &dflt);
+    bool loadGreetPlugin();
 
     bool        mLocked;
     int         mLockGrace;

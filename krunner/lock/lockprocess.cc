@@ -801,6 +801,22 @@ i18n("<i>kcheckpass</i> is unable to operate. Possibly it is not setuid root.");
 //
 bool LockProcess::startLock()
 {
+    if (loadGreetPlugin()) {
+        mLocked = true;
+        KDisplayManager().setLock(true);
+        lockPlasma();
+        return true;
+    }
+    return false;
+}
+
+bool LockProcess::loadGreetPlugin()
+{
+    if (greetPlugin.library) {
+        //we were locked once before, so all the plugin loading's done already
+        //FIXME should I be unloading the plugin on unlock instead?
+        return true;
+    }
     for (QStringList::ConstIterator it = mPlugins.begin(); it != mPlugins.end(); ++it) {
         GreeterPluginHandle plugin;
         KLibrary *lib = new KLibrary( (*it)[0] == '/' ? *it : "kgreet_" + *it );
@@ -836,9 +852,7 @@ bool LockProcess::startLock()
         }
         kDebug(1204) << "GreeterPlugin " << *it << " (" << plugin.info->method << ", " << plugin.info->name << ") loaded";
         greetPlugin = plugin;
-	mLocked = true;
-	KDisplayManager().setLock( true );
-	return true;
+        return true;
     }
     cantLock( i18n("No appropriate greeter plugin configured.") );
     return false;
@@ -993,9 +1007,13 @@ void LockProcess::newService(QString name)
 
 void LockProcess::deactivatePlasma()
 {
-    mFreeUnlock = false;
     if (mPlasmaDBus && mPlasmaDBus->isValid()) {
         mPlasmaDBus->call(QDBus::NoBlock, "deactivate");
+    }
+    if (!mLocked && mLockGrace >=0) {
+        //I can't remember why we do nothing on mLockGrace=0
+        //wouldn't we want to lock immediately? FIXME
+        QTimer::singleShot(mLockGrace, this, SLOT(startLock()));
     }
 }
 
@@ -1008,21 +1026,23 @@ void LockProcess::lockPlasma()
 
 void LockProcess::unSuppressUnlock()
 {
+    //note: suppressing unlock also now means suppressing quit-on-activity
+    //maybe some var renaming is in order.
     mSuppressUnlock.stop();
-    mFreeUnlock = false;
 }
 
+//TODO can we rename this to tryQuit() or attemptExit() or something?
 void LockProcess::unlock()
 {
     mSuppressUnlock.stop();
-    if (!mLocked || mFreeUnlock || checkPass()) {
+    if (!mLocked || checkPass()) {
         quitSaver();
     }
 }
 
 void LockProcess::endFreeUnlock()
 {
-    mFreeUnlock = false;
+    startLock(); //TODO rename or delete this func
 }
 
 void LockProcess::suspend()
@@ -1097,7 +1117,10 @@ bool LockProcess::checkPass(const QString &reason)
 
     //FIXME do we need to copy&paste that SubstructureNotifyMask code above?
     if (ret == QDialog::Accepted) {
-        mFreeUnlock = true; //now we don't need the password for a while
+        //we don't quit on a custom checkpass, but we do unlock
+        //so that the user doesn't have to type their password twice
+        mLocked = false;
+        KDisplayManager().setLock(false);
         return true;
     }
     return false;
