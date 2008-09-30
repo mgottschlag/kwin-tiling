@@ -64,9 +64,9 @@ void PowerDevilRunner::initUpdateTriggers()
     // listen for changes to the profiles
     KDirWatch *profilesWatch = new KDirWatch(this);
     profilesWatch->addFile(KStandardDirs::locate("config", "powerdevilprofilesrc"));
-    connect(profilesWatch,SIGNAL(dirty(QString)),this,SLOT(updateStatus()()));
-    connect(profilesWatch,SIGNAL(created(QString)),this,SLOT(updateStatus()()));
-    connect(profilesWatch,SIGNAL(deleted(QString)),this,SLOT(updateStatus()()));
+    connect(profilesWatch,SIGNAL(dirty(QString)),this,SLOT(updateStatus()));
+    connect(profilesWatch,SIGNAL(created(QString)),this,SLOT(updateStatus()));
+    connect(profilesWatch,SIGNAL(deleted(QString)),this,SLOT(updateStatus()));
 
     // Also receive updates triggered through the DBus
     QStringList modules;
