@@ -82,9 +82,10 @@ class ItemSpace
     class ItemSpaceItem
     {
       public:
-        bool pushBack;
         QRectF preferredGeometry;
         QRectF lastGeometry;
+        bool pushBack : 1;
+        bool animateMovement : 1;
     };
 
     QList<ItemSpaceItem> items;

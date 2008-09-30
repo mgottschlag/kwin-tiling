@@ -242,8 +242,9 @@ void DesktopLayout::setGeometry(const QRectF &rect)
 
         QRectF absoluteGeom = (item.temporaryGeometry.isValid() ? item.temporaryGeometry : spaceItem.lastGeometry).translated(workingStart);
         if (item.item->geometry() != absoluteGeom) {
+            kDebug() << "item's temp geom is" << item.temporaryGeometry.isValid() << spaceItem.animateMovement;
             QGraphicsWidget *w = dynamic_cast<QGraphicsWidget*>(item.item);
-            if (w)  {
+            if (w && spaceItem.animateMovement)  {
                 Plasma::Animator *anim = Plasma::Animator::self();
                 bool animating = m_animatingItems.contains(w);
                 if (animating) {
@@ -256,6 +257,8 @@ void DesktopLayout::setGeometry(const QRectF &rect)
                 } else if (animating) {
                     m_animatingItems.remove(w);
                 }
+
+                spaceItem.animateMovement = false;
             } else {
                 item.item->setGeometry(absoluteGeom);
             }
@@ -281,7 +284,7 @@ void DesktopLayout::itemGeometryChanged(QGraphicsLayoutItem *layoutItem)
             if (spaceItem.lastGeometry != currentRelative) {
                 spaceItem.lastGeometry = currentRelative;
                 spaceItem.preferredGeometry = currentRelative;
-                kDebug() << "Repositioned" << i << "to" << currentRelative;
+                //kDebug() << "Repositioned" << i << "to" << currentRelative;
                 invalidate();
             }
             break;

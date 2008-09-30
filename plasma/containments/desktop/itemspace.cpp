@@ -24,6 +24,7 @@ void ItemSpace::addItem(bool pushBack, const QRectF &preferredGeom, const QRectF
 {
     ItemSpaceItem newItem;
     newItem.pushBack = pushBack;
+    newItem.animateMovement = false;
     newItem.preferredGeometry = preferredGeom;
     newItem.lastGeometry = (lastGeom.isValid() ? lastGeom : preferredGeom);
     items.append(newItem);
@@ -69,24 +70,28 @@ void ItemSpace::activate()
         // left border
         push = screenSpacing - item.lastGeometry.left();
         if (push > 0) {
+            item.animateMovement = true;
             performPush(i, DirRight, push, 0, (spaceAlignment & Qt::AlignLeft));
         }
 
         // right border
         push = item.lastGeometry.right()+screenSpacing - workingGeom.width();
         if (push > 0) {
+            item.animateMovement = true;
             performPush(i, DirLeft, push, 0, (spaceAlignment & Qt::AlignRight));
         }
 
         // top border
         push = screenSpacing - item.lastGeometry.top();
         if (push > 0) {
+            item.animateMovement = true;
             performPush(i, DirDown, push, 0, (spaceAlignment & Qt::AlignTop));
         }
 
         // bottom border
         push = item.lastGeometry.bottom()+screenSpacing - workingGeom.height();
         if (push > 0) {
+            item.animateMovement = true;
             performPush(i, DirUp, push, 0, (spaceAlignment & Qt::AlignBottom));
         }
 
