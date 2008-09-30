@@ -11,13 +11,19 @@
 #define _DESKTOPLAYOUT_H
 
 #include <QGraphicsLayout>
+#include <QHash>
 #include <QList>
+#include <QObject>
 
 #include "itemspace.h"
 
-class DesktopLayout : public QGraphicsLayout
+class QGraphicsItem;
+
+class DesktopLayout : public QObject, public QGraphicsLayout
 {
-  public:
+    Q_OBJECT
+
+public:
     DesktopLayout (QGraphicsLayoutItem *parent = 0);
 
     /**
@@ -110,7 +116,10 @@ class DesktopLayout : public QGraphicsLayout
     void setGeometry(const QRectF &rect);
     QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint = QSizeF()) const;
 
-  private:
+private slots:
+    void movementFinished(QGraphicsItem*);
+
+private:
 
     class DesktopLayoutItem
     {
@@ -123,6 +132,7 @@ class DesktopLayout : public QGraphicsLayout
 
     ItemSpace itemSpace;
     QList<DesktopLayoutItem> items;
+    QHash<QGraphicsItem*, int> m_animatingItems;
     QPointF workingStart;
 
     // layout configuration

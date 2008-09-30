@@ -7,6 +7,8 @@
   (at your option) any later version.
 */
 
+#include "desktoplayout.h"
+
 #include <limits>
 
 #include <QCoreApplication>
@@ -17,17 +19,20 @@
 
 #include <KDebug>
 
-#include "desktoplayout.h"
+#include <plasma/animator.h>
 
-DesktopLayout::DesktopLayout (QGraphicsLayoutItem *parent)
-  : QGraphicsLayout(parent),
-    autoWorkingArea(true),
-    temporaryPlacement(false),
-    itemRelativeTolerance(0)
+DesktopLayout::DesktopLayout(QGraphicsLayoutItem *parent)
+      : QObject(0),
+        QGraphicsLayout(parent),
+        autoWorkingArea(true),
+        temporaryPlacement(false),
+        itemRelativeTolerance(0)
 {
+    connect(Plasma::Animator::self(), SIGNAL(movementFinished(QGraphicsItem*)),
+            this, SLOT(movementFinished(QGraphicsItem*)));
 }
 
-void DesktopLayout::addItem (QGraphicsLayoutItem *item, bool pushBack, const QRectF &preferredGeom, const QRectF &lastGeom)
+void DesktopLayout::addItem(QGraphicsLayoutItem *item, bool pushBack, const QRectF &preferredGeom, const QRectF &lastGeom)
 {
     DesktopLayoutItem newItem;
     newItem.item = item;
@@ -39,7 +44,7 @@ void DesktopLayout::addItem (QGraphicsLayoutItem *item, bool pushBack, const QRe
     invalidate();
 }
 
-void DesktopLayout::addItem (QGraphicsLayoutItem *item, bool pushBack, const QSizeF &size)
+void DesktopLayout::addItem(QGraphicsLayoutItem *item, bool pushBack, const QSizeF &size)
 {
     QSizeF itemSize = ( size.isValid() ? size : item->effectiveSizeHint(Qt::PreferredSize) );
 
@@ -94,33 +99,33 @@ void DesktopLayout::addItem (QGraphicsLayoutItem *item, bool pushBack, const QSi
     kDebug() << "Positioned item to" << bestGeometry;
 }
 
-bool DesktopLayout::getPushBack (int index)
+bool DesktopLayout::getPushBack(int index)
 {
     return itemSpace.items[index].pushBack;
 }
 
-QRectF DesktopLayout::getPreferredGeometry (int index)
+QRectF DesktopLayout::getPreferredGeometry(int index)
 {
     return itemSpace.items[index].preferredGeometry;
 }
 
-QRectF DesktopLayout::getLastGeometry (int index)
+QRectF DesktopLayout::getLastGeometry(int index)
 {
     return itemSpace.items[index].lastGeometry;
 }
 
-void DesktopLayout::setPlacementSpacing (qreal spacing)
+void DesktopLayout::setPlacementSpacing(qreal spacing)
 {
     itemSpace.placementSpacing = spacing;
 }
 
-void DesktopLayout::setScreenSpacing (qreal spacing)
+void DesktopLayout::setScreenSpacing(qreal spacing)
 {
     itemSpace.screenSpacing = spacing;
     invalidate();
 }
 
-void DesktopLayout::setShiftingSpacing (qreal spacing)
+void DesktopLayout::setShiftingSpacing(qreal spacing)
 {
     itemSpace.shiftingSpacing = spacing;
     // NOTE: not wise to call that during operation yet
@@ -132,20 +137,20 @@ void DesktopLayout::setItemRelativeTolerance(qreal part)
     invalidate();
 }
 
-void DesktopLayout::setWorkingArea (QRectF area)
+void DesktopLayout::setWorkingArea(QRectF area)
 {
     itemSpace.setWorkingArea(area.size());
     workingStart = area.topLeft();
     invalidate();
 }
 
-void DesktopLayout::setAlignment (Qt::Alignment alignment)
+void DesktopLayout::setAlignment(Qt::Alignment alignment)
 {
     itemSpace.spaceAlignment = alignment;
     invalidate();
 }
 
-void DesktopLayout::setTemporaryPlacement (bool enabled)
+void DesktopLayout::setTemporaryPlacement(bool enabled)
 {
     temporaryPlacement = enabled;
     invalidate();
@@ -186,14 +191,14 @@ void DesktopLayout::performTemporaryPlacement (int itemIndex)
     if (possiblePositions.count() > 0) {
         newPos = possiblePositions[0];
     }
-    
+
     kDebug() << "Temp placing" << itemIndex << "to" << newPos;
     spaceItem.lastGeometry = origGeom;
     item.temporaryGeometry = QRectF(newPos, origGeom.size());
     item.item->setGeometry(item.temporaryGeometry.translated(workingStart));
 }
 
-void DesktopLayout::revertTemporaryPlacement (int itemIndex)
+void DesktopLayout::revertTemporaryPlacement(int itemIndex)
 {
     DesktopLayoutItem &item = items[itemIndex];
     ItemSpace::ItemSpaceItem &spaceItem = itemSpace.items[itemIndex];
@@ -219,7 +224,7 @@ void DesktopLayout::setGeometry(const QRectF &rect)
       Temporarily place items that could not be pushed inside the working area.
       Put them back if they fit again.
     */
-    for (int i=0; i<items.size(); i++) {
+    for (int i = 0; i < items.size(); ++i) {
         DesktopLayoutItem &item = items[i];
         if (itemSpace.positionVisibility(i) < itemRelativeTolerance) {
             if (temporaryPlacement) {
@@ -231,13 +236,29 @@ void DesktopLayout::setGeometry(const QRectF &rect)
     }
 
     // reset the absolute positions of applets
-    for (int i=0; i<items.size(); i++) {
+    for (int i = 0; i < items.size(); ++i) {
         DesktopLayoutItem &item = items[i];
         ItemSpace::ItemSpaceItem &spaceItem = itemSpace.items[i];
 
         QRectF absoluteGeom = (item.temporaryGeometry.isValid() ? item.temporaryGeometry : spaceItem.lastGeometry).translated(workingStart);
         if (item.item->geometry() != absoluteGeom) {
-            item.item->setGeometry(absoluteGeom);
+            QGraphicsWidget *w = dynamic_cast<QGraphicsWidget*>(item.item);
+            if (w)  {
+                Plasma::Animator *anim = Plasma::Animator::self();
+                bool animating = m_animatingItems.contains(w);
+                if (animating) {
+                    anim->stopItemMovement(m_animatingItems.value(w));
+                }
+                int id = Plasma::Animator::self()->moveItem(w, Plasma::Animator::FastSlideInMovement,
+                                                            absoluteGeom.topLeft().toPoint());
+                if (id > 0) {
+                    m_animatingItems.insert(w, id);
+                } else if (animating) {
+                    m_animatingItems.remove(w);
+                }
+            } else {
+                item.item->setGeometry(absoluteGeom);
+            }
         }
     }
 }
@@ -245,11 +266,13 @@ void DesktopLayout::setGeometry(const QRectF &rect)
 // This should be called when the geometry of an item has been changed.
 // If the change was made by the user, the new position is used as the preferred position.
 // TODO: refresh the layout without that item so things jump back and then add the item to the new position
-void DesktopLayout::itemGeometryChanged (QGraphicsLayoutItem *layoutItem)
+void DesktopLayout::itemGeometryChanged(QGraphicsLayoutItem *layoutItem)
 {
-    if (isActivated()) return;
+    if (isActivated() || m_animatingItems.contains(dynamic_cast<QGraphicsWidget*>(layoutItem))) {
+        return;
+    }
 
-    for (int i=0; i<items.size(); i++) {
+    for (int i = 0; i < items.size(); ++i) {
         DesktopLayoutItem &item = items[i];
         ItemSpace::ItemSpaceItem &spaceItem = itemSpace.items[i];
 
@@ -268,5 +291,17 @@ void DesktopLayout::itemGeometryChanged (QGraphicsLayoutItem *layoutItem)
 
 QSizeF DesktopLayout::sizeHint (Qt::SizeHint which, const QSizeF &constraint) const
 {
+    Q_UNUSED(which)
+    Q_UNUSED(constraint)
     return QSizeF();
 }
+
+void DesktopLayout::movementFinished(QGraphicsItem* item)
+{
+    if (m_animatingItems.contains(item)) {
+        m_animatingItems.remove(item);
+    }
+}
+
+#include <desktoplayout.moc>
+
