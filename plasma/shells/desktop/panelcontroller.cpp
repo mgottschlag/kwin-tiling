@@ -328,6 +328,9 @@ PanelController::PanelController(QWidget* parent)
 {
     Q_UNUSED(parent)
 
+    QPalette pal = palette();
+    pal.setBrush(backgroundRole(), Qt::transparent);
+    setPalette(pal);
 
     d->background = new Plasma::PanelSvg(this);
     d->background->setImagePath("dialogs/background");
