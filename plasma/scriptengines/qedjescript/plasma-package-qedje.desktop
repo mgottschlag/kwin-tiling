@@ -1,20 +1,6 @@
 [Desktop Entry]
 Name=QEdje Gadgets
-Name[gl]=Gadgets de QEdje
-Name[km]=ធាតុ​ក្រាហ្វិក QEdje
-Name[pt]=Itens do QEdje
-Name[pt_BR]=Itens do QEdje
-Name[sv]=Qedje-komponenter
-Name[uk]=Елементи QEdje
-Name[x-test]=xxQEdje Gadgetsxx
 Comment=QEdje Gadget
-Comment[gl]=Gadget de QEdje
-Comment[km]=ធាតុ​ក្រាហ្វិក QEdje
-Comment[pt]=Item do QEdje
-Comment[pt_BR]=Item do QEdje
-Comment[sv]=Qedje-komponent
-Comment[uk]=Елемент QEdje
-Comment[x-test]=xxQEdje Gadgetxx
 Type=Service
 
 X-EngineName=qedjescript
