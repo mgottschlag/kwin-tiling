@@ -1,0 +1,28 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=RSS
+Name[x-test]=xxRSSxx
+Comment=RSS News Data Engine
+Comment[el]=Μηχανή δεδομένων ειδήσεων RSS
+Comment[es]=Motor de datos de noticias RSS
+Comment[gl]=Motor de datos de novas RSS
+Comment[nds]=RSS-Stroom-Datenkarn
+Comment[pt]=Motor de Dados de Notícias por RSS
+Comment[pt_BR]=Motor de Dados de Notícias por RSS
+Comment[sv]=Datagränssnitt för RSS-nyheter
+Comment[uk]=Рушій даних новин RSS
+Comment[x-test]=xxRSS News Data Enginexx
+Comment[zh_TW]=RSS 新聞資料引擎
+ServiceTypes=Plasma/DataEngine
+Type=Service
+Icon=application-rss+xml
+X-KDE-Library=plasma_engine_rss
+
+X-KDE-PluginInfo-Author=
+X-KDE-PluginInfo-Email=
+X-KDE-PluginInfo-Name=rss
+X-KDE-PluginInfo-Version=
+X-KDE-PluginInfo-Website=
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Depends=
+
