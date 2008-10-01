@@ -39,6 +39,7 @@ class KConfigDialog;
 class PlasmaApp : public KUniqueApplication
 {
     Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.kde.plasmaoverlay.App")
 public:
     ~PlasmaApp();
 

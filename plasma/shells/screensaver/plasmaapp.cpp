@@ -126,7 +126,7 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     //load translations for libplasma
     KGlobal::locale()->insertCatalog("libplasma");
 
-    new PlasmaAppAdaptor(this);
+    new AppAdaptor(this);
     QDBusConnection::sessionBus().registerObject("/App", this);
 
     //FIXME this is probably totally invalid
