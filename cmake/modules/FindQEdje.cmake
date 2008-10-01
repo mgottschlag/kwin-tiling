@@ -21,7 +21,7 @@ endif( NOT WIN32 )
 if (QEdje_FOUND)
   FIND_LIBRARY(QEdje_LIBRARY NAMES qedje)
 else (QEdje_FOUND)
-  MESSAGE(STATUS "Could not find QZion and/or QEdje.")
+  MESSAGE(STATUS "Could not find QZion and/or QEdje. Please download them here (http://dev.openbossa.org/trac/qedje).")
 endif (QEdje_FOUND)
 
 INCLUDE(FindPackageHandleStandardArgs)
