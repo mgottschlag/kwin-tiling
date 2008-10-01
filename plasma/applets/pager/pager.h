@@ -90,7 +90,6 @@ class Pager : public Plasma::Applet
 
     private:
         QTimer* m_timer;
-        KDialog *m_dialog;
         Ui::pagerConfig ui;
         enum DisplayedText
         {

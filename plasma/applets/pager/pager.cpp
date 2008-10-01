@@ -52,7 +52,6 @@ const int DRAG_SWITCH_DELAY = 1000;
 
 Pager::Pager(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
-      m_dialog(0),
       m_displayedText(Number),
       m_showWindowIcons(false),
       m_showOwnBackground(false),
