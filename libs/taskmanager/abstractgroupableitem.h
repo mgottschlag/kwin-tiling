@@ -66,7 +66,7 @@ public:
     bool isGroupMember(const GroupPtr group);
     virtual bool isGroupItem() const = 0;
 
-public slots:
+public Q_SLOTS:
     /** Functions that both, Tasks and Groups have */
     virtual void toDesktop(int) = 0;
     virtual bool isOnCurrentDesktop() = 0;
@@ -108,7 +108,7 @@ public slots:
     /*void removedFromGroup();
     void addedToGroup(const GroupPtr group);*/
 
-signals:
+Q_SIGNALS:
     void changed();
     void destroyed(AbstractGroupableItem *);
 

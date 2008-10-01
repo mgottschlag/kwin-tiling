@@ -58,7 +58,7 @@ public:
     /** Moves Item to new index*/
     bool moveItem(AbstractPtr, int);
 
-protected slots:
+protected Q_SLOTS:
      /** Handles a new item*/
     virtual void handleItem(AbstractPtr);
      /** Checks if the order has to be updated must be connect to AbstractGroupableItem* */

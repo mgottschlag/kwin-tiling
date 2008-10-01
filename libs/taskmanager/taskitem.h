@@ -48,11 +48,11 @@ public:
     StartupPtr startupPointer() const;
     bool isGroupItem() const{return false;};
 
-signals:
+Q_SIGNALS:
     /** Indicates that the startup task now is a normal task */
     void gotTaskPointer();
 
-public slots:
+public Q_SLOTS:
 
     void toDesktop(int);
     bool isOnCurrentDesktop();

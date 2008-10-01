@@ -112,7 +112,7 @@ public:
      */
     void setScreen(int screen);
 
-signals:
+Q_SIGNALS:
     /** Signal that the rootGroup has to be reloaded in the visualization */
     void reload();
     /** Signal that the item is no longer available */
@@ -120,7 +120,7 @@ signals:
     /** Signal that the item is no longer available */
    // void startupRemoved(AbstractGroupableItem*);
 
-public slots:
+public Q_SLOTS:
     /**
     * Slots for newly added tasks from TaskManager
     */

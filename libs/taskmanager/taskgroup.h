@@ -62,7 +62,7 @@ public:
     /** This function is used by the sortingStrategy to inform the visualization that the position of an item has changed */
     void itemMoved(AbstractPtr);
 
-public slots:
+public Q_SLOTS:
     /** the following are functions which perform the corresponding actions on all member tasks */
     void toDesktop(int);
     bool isOnCurrentDesktop();
@@ -115,7 +115,7 @@ public slots:
     /** remove this group, passes all members to grouping strategy*/
  //   void closeGroup();
     
-signals:
+Q_SIGNALS:
     /** inform visualization about wat is added and removed */
     void itemAdded(const AbstractPtr item);
     void itemRemoved(const AbstractPtr item);
