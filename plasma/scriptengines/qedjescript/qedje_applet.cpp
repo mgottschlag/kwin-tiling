@@ -22,8 +22,7 @@ QEdjeAppletScript::~QEdjeAppletScript()
     // so we need to free the applet in order to avoid segfaults later
     proxy->setWidget(0);
 
-    if (dialog)
-        delete dialog;
+    delete dialog;
 
     delete world;
     delete canvas;
