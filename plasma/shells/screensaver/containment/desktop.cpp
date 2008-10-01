@@ -20,7 +20,7 @@
 #include "desktop.h"
 
 #include <QAction>
-//#include <QApplication>
+#include <QApplication>
 //#include <QDesktopWidget>
 #include <QGraphicsScene>
 #include <QGraphicsView>
@@ -143,6 +143,7 @@ void SaverDesktop::paintInterface(QPainter *painter,
 {
     //kDebug() << "paintInterface of background";
 
+    //TODO learn how the new wallpaper plugins work
     painter->save();
 
     if (painter->worldMatrix() == QMatrix()) {
@@ -203,14 +204,25 @@ void SaverDesktop::dbusError(QDBusError error)
 {
     //Q_UNUSED(error)
     kDebug() << error.errorString(error.type());
-    //ok, now i care. if it was the quit call and it failed, we should quit immediately. TODO
+    kDebug() << "bailing out";
+    //ok, now i care. if it was the quit call and it failed, we shouldn't leave the user stuck in
+    //plasma-overlay forever.
+    qApp->quit();
 }
 
 void SaverDesktop::unlockDesktop()
 {
     QDBusInterface lockprocess("org.kde.krunner_lock", "/LockProcess",
             "org.kde.krunner_lock.LockProcess", QDBusConnection::sessionBus(), this);
-    lockprocess.call(QDBus::NoBlock, "quit"); //FIXME really need to catch errors here. really really.
+    bool sent = (lockprocess.isValid() &&
+            lockprocess.callWithCallback("quit", QList<QVariant>(), this, SLOT(unlock(QDBusMessage)), SLOT(dbusError(QDBusError))));
+    //the unlock slot above is a dummy that should never be called.
+    //somehow I need a valid reply slot or the error slot is never ever used.
+    if (!sent) {
+        //ah crud.
+        kDebug() << "bailing out!";
+        qApp->quit();
+    }
 }
 
 void SaverDesktop::createConfigurationInterface(KConfigDialog *parent)
