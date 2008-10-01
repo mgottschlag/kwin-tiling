@@ -16,7 +16,7 @@ target_link_libraries(plasma_appletscript_qedje
 
 kde4_add_plugin(plasma_package_qedje ${package_SRCS})
 target_link_libraries(plasma_package_qedje
-  plasma ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS})
+  plasma ${QEdje_LIBRARIES} ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS})
 
 
 install(TARGETS plasma_appletscript_qedje

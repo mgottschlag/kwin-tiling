@@ -9,6 +9,7 @@
 #include <plasma/packagemetadata.h>
 
 #include <qedje_package.h>
+#include <qedje.h>
 
 K_EXPORT_PLASMA_PACKAGESTRUCTURE(qedjescripts, QEdjePackage)
 
@@ -30,6 +31,13 @@ bool QEdjePackage::installPackage(const QString &archive_path,
            << archive_path
            << "packageRoot=" << package_root;
 
+  // check if it's a valid file by trying to load it's groups
+  QStringList groups = groupNamesFromFile(archive_path);
+  if (groups.isEmpty()) {
+      kDebug() << "Invalid file format";
+      return false;
+  }
+
   QString file = archive_path.split("/", QString::SkipEmptyParts).last();
   QString package_name = file.split(".", QString::SkipEmptyParts).first();
 
@@ -38,12 +46,16 @@ bool QEdjePackage::installPackage(const QString &archive_path,
 
   // Create the directory so we can copy the edje file inside it
   QDir contents(dest_dir);
-  if (!contents.exists() && !contents.mkpath(dest_dir))
+  if (!contents.exists() && !contents.mkpath(dest_dir)) {
+      kDebug() << "It was not possible to create the destination directory";
       return false;
+  }
 
   // Copy the edje file to the package's directory
-  if (!QFile::copy(archive_path, QString(dest_dir + "file.edj")))
+  if (!QFile::copy(archive_path, QString(dest_dir + "file.edj"))) {
+      kDebug() << "It was not possible to copy " << archive_path << "to " << dest_dir;
       return false;
+  }
 
   setPath(dest_dir);
 
