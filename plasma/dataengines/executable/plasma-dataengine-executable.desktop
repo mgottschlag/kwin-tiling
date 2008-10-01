@@ -1,0 +1,37 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Run Commands
+Name[el]=Εκτέλεση εντολών
+Name[es]=Ejecutar órdenes
+Name[gl]=Executar comandos
+Name[nds]=Befehlen utföhren
+Name[pt]=Execução de Comandos
+Name[pt_BR]=Execução de Comandos
+Name[sv]=Kör kommandon
+Name[uk]=Виконання команд
+Name[x-test]=xxRun Commandsxx
+Name[zh_TW]=執行指令
+Comment=Run Executable Data Engine
+Comment[el]=Μηχανή δεδομένων εκκίνησης εκτελέσιμων
+Comment[es]=Ejecutar motor de datos
+Comment[gl]=Executa o motor de dados de executábeis
+Comment[nds]=Programmoproop-Datenkarn
+Comment[pt]=Motor de Dados de Execução
+Comment[pt_BR]=Motor de Dados de Execução
+Comment[sv]=Datagränssnitt för körning av program
+Comment[uk]=Виконати програму рушія даних
+Comment[x-test]=xxRun Executable Data Enginexx
+Comment[zh_TW]=執行可執行資料引擎
+ServiceTypes=Plasma/DataEngine
+Type=Service
+Icon=application-x-executable-script
+X-KDE-Library=plasma_engine_executable
+
+X-KDE-PluginInfo-Author=
+X-KDE-PluginInfo-Email=
+X-KDE-PluginInfo-Name=executable
+X-KDE-PluginInfo-Version=
+X-KDE-PluginInfo-Website=
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Depends=
+
