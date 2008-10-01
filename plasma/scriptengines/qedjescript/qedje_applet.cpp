@@ -100,7 +100,7 @@ void QEdjeAppletScript::showConfigurationInterface()
         config_widget = new QWidget(dialog);
         previewCanvas = new QZionCanvas(config_widget);
 
-        dialog->setCaption("QEdje Applet Config");
+        dialog->setCaption(i18n("QEdje Applet Config"));
         dialog->setButtons(KDialog::Ok | KDialog::Cancel);
 
         ui.setupUi(config_widget);
