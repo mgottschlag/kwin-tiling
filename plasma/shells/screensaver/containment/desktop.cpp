@@ -174,7 +174,7 @@ void SaverDesktop::toggleLock()
         return; //I'm lazy, I know this'll never happen
     }
     QDBusInterface lockprocess("org.kde.krunner_lock", "/LockProcess",
-            "local.LockProcess", QDBusConnection::sessionBus(), this); //FIXME local??
+            "org.kde.krunner_lock.LockProcess", QDBusConnection::sessionBus(), this);
     if (corona()->immutability() == Mutable) {
         corona()->setImmutability(UserImmutable);
         lockprocess.call(QDBus::NoBlock, "startLock");
@@ -203,14 +203,14 @@ void SaverDesktop::dbusError(QDBusError error)
 {
     //Q_UNUSED(error)
     kDebug() << error.errorString(error.type());
-    //I don't really give a fuck.
+    //ok, now i care. if it was the quit call and it failed, we should quit immediately. TODO
 }
 
 void SaverDesktop::unlockDesktop()
 {
     QDBusInterface lockprocess("org.kde.krunner_lock", "/LockProcess",
-            "local.LockProcess", QDBusConnection::sessionBus(), this); //FIXME local??
-    lockprocess.call(QDBus::NoBlock, "quit");
+            "org.kde.krunner_lock.LockProcess", QDBusConnection::sessionBus(), this);
+    lockprocess.call(QDBus::NoBlock, "quit"); //FIXME really need to catch errors here. really really.
 }
 
 void SaverDesktop::createConfigurationInterface(KConfigDialog *parent)
