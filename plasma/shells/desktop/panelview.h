@@ -146,6 +146,7 @@ protected:
     void leaveEvent(QEvent *event);
     void drawBackground(QPainter * painter, const QRectF & rect);
     void paintEvent(QPaintEvent *event);
+    bool event(QEvent *event);
 
 private:
     void createUnhideTrigger();

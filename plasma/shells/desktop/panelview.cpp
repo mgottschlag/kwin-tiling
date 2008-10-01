@@ -91,6 +91,10 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+    QPalette pal = palette();
+    pal.setBrush(backgroundRole(), Qt::transparent);
+    setPalette(pal);
+
     // KWin setup
     KWindowSystem::setOnAllDesktops(winId(), true);
 
@@ -797,7 +801,7 @@ void PanelView::drawBackground(QPainter *painter, const QRectF &rect)
 {
     if (PlasmaApp::hasComposite()) {
         painter->setCompositionMode(QPainter::CompositionMode_Source);
-        painter->fillRect(rect, Qt::transparent);
+        painter->fillRect(rect.toAlignedRect(), Qt::transparent);
     } else {
         Plasma::View::drawBackground(painter, rect);
     }
@@ -816,6 +820,16 @@ void PanelView::paintEvent(QPaintEvent *event)
 
         m_firstPaint = false;
     }
+}
+
+bool PanelView::event(QEvent *event)
+{
+    if (event->type() == QEvent::Paint) {
+        QPainter p(this);
+        p.setCompositionMode(QPainter::CompositionMode_Source);
+        p.fillRect(rect(), Qt::transparent);
+    }
+    return Plasma::View::event(event);
 }
 
 void PanelView::animateHide(qreal progress)
