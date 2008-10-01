@@ -122,7 +122,7 @@ int kdemain(int argc, char **argv)
     slave.dispatchLoop();
 
     return 0;
-}   
+}
 
 namespace KFI
 {
@@ -570,7 +570,7 @@ static bool isAType1(const QString &fname)
     }
     else if(Misc::checkExt(name, "pfb"))
     {
-        static const char constPfbMarker=0x80;
+        static const char constPfbMarker = static_cast<char>(0x80);
 
         FILE *f=fopen(name.constData(), "r");
 
