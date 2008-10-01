@@ -1,6 +1,5 @@
 #include <QtCore/QDir>
 #include <QtCore/QFile>
-#include <QBuffer>
 #include <QDir>
 #include <QFile>
 

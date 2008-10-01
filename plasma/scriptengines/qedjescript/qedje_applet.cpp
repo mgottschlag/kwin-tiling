@@ -1,6 +1,5 @@
 #include <QtGui/QGraphicsProxyWidget>
 
-#include <KConfigDialog>
 #include <plasma/package.h>
 #include <plasma/applet.h>
 
