@@ -1,7 +1,19 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Run Commands
+Name[gu]=આદેશ ચલાવો
+Name[nds]=Befehlen utföhren
+Name[pt]=Execução de Comandos
+Name[pt_BR]=Execução de Comandos
+Name[uk]=Виконання команд
+Name[zh_TW]=執行指令
 Comment=Run Executable Data Engine
+Comment[gu]=ચલાવી શકાય તેવું માહિતી એન્જિન ચલાવો
+Comment[nds]=Programmoproop-Hanteerkarn
+Comment[pt]=Motor de Dados de Execução de Comandos
+Comment[pt_BR]=Motor de Dados de Execução de Comandos
+Comment[uk]=Виконати програму рушія даних
+Comment[zh_TW]=執行可執行資料引擎
 ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=application-x-executable-script

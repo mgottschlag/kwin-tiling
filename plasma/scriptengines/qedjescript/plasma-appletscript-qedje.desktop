@@ -1,6 +1,12 @@
 [Desktop Entry]
 Name=QEdje
 Comment=QEdje Gadgets
+Comment[gu]=QEdje ગેજેટ્સ
+Comment[nds]=QEdje-Lüttprogrammen
+Comment[pt]=Itens do QEdje
+Comment[pt_BR]=Itens do QEdje
+Comment[uk]=Елементи QEdje
+Comment[zh_TW]=QEdje 小玩意
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/ScriptEngine

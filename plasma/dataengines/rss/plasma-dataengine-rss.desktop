@@ -2,6 +2,12 @@
 Encoding=UTF-8
 Name=RSS
 Comment=RSS News Data Engine
+Comment[gu]=RSS સમાચાર માહિતી એન્જિન
+Comment[nds]=RSS-Stroom-Hanteerkarn
+Comment[pt]=Motor de Dados de Notícias RSS
+Comment[pt_BR]=Motor de Dados de Notícias RSS
+Comment[uk]=Рушій даних новин RSS
+Comment[zh_TW]=RSS 新聞資料引擎
 ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=application-rss+xml

@@ -1,6 +1,18 @@
 [Desktop Entry]
 Name=QEdje Gadgets
+Name[gu]=QEdje ગેજેટ્સ
+Name[nds]=QEdje-Lüttprogrammen
+Name[pt]=Itens do QEdje
+Name[pt_BR]=Itens do QEdje
+Name[uk]=Елементи QEdje
+Name[zh_TW]=QEdje 小玩意
 Comment=QEdje Gadget
+Comment[gu]=QEdje ગેજેટ
+Comment[nds]=QEdje-Lüttprogramm
+Comment[pt]=Item do QEdje
+Comment[pt_BR]=Item do QEdje
+Comment[uk]=Елемент QEdje
+Comment[zh_TW]=QEdje 小玩意
 Type=Service
 
 X-EngineName=qedjescript
