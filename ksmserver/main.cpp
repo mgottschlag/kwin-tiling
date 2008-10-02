@@ -266,6 +266,8 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
     }
     fcntl(ConnectionNumber(QX11Info::display()), F_SETFD, 1);
 
+    a->setQuitOnLastWindowClosed(false); // #169486
+
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
     if( !QDBusConnection::sessionBus().interface()->registerService( "org.kde.ksmserver", QDBusConnectionInterface::DontQueueService ) )
