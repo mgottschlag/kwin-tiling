@@ -68,8 +68,6 @@ public:
     QList<QAction*> contextualActions();
 
 protected:
-    void saveContents(KConfigGroup &group) const;
-    void restoreContents(KConfigGroup &group);
     void dropEvent(QGraphicsSceneDragDropEvent *event);
 
 protected Q_SLOTS:
@@ -99,7 +97,6 @@ private:
     QAction *m_separator2;
 
     DesktopLayout *m_layout;
-    bool restoring;
     bool dropping;
 };
 

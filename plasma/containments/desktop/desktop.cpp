@@ -67,7 +67,6 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
       m_runCommandAction(0),
       m_lockScreenAction(0),
       m_logoutAction(0),
-      restoring(false),
       dropping(false)
 {
     qRegisterMetaType<QImage>("QImage");
@@ -237,7 +236,7 @@ void DefaultDesktop::onAppletAdded(Plasma::Applet *applet, const QPointF &pos)
     if (dropping) {
         // add dropped item to the layout using the current position
         m_layout->addItem(applet, true, applet->geometry());
-    } else if (!restoring) {
+    } else {
         /*
             There seems to be no uniform way to get the applet's preferred size.
             Regular applets properly set their current size when created, but report useless size hints.
@@ -281,46 +280,6 @@ void DefaultDesktop::refreshWorkingArea()
         workingGeom = mapFromScene(workingGeom).boundingRect();
     }
     m_layout->setWorkingArea(workingGeom);
-}
-
-void DefaultDesktop::saveContents(KConfigGroup &group) const
-{
-    KConfigGroup applets(&group, "Applets");
-    for (int i=0; i < m_layout->count(); i++) {
-        Applet *applet = (Applet *)m_layout->itemAt(i);
-        KConfigGroup appletConfig(&applets, QString::number(applet->id()));
-        applet->save(appletConfig);
-        appletConfig.writeEntry("desktoplayout_preferredGeometry", m_layout->getPreferredGeometry(i));
-        appletConfig.writeEntry("desktoplayout_lastGeometry", m_layout->getLastGeometry(i));
-    }
-}
-
-void DefaultDesktop::restoreContents(KConfigGroup &group)
-{
-    // prevent onAppletAdded from adding applets to the layout
-    restoring = true;
-    Containment::restoreContents(group);
-    restoring = false;
-
-    KConfigGroup appletsConfig(&group, "Applets");
-
-    // add restored applets to the layout
-    foreach (const QString &appletGroup, appletsConfig.groupList()) {
-        KConfigGroup appletConfig(&appletsConfig, appletGroup);
-        uint appId = appletConfig.name().toUInt();
-        foreach (Applet *applet, applets()) {
-            if (applet->id() == appId) {
-                QRectF preferredGeom = appletConfig.readEntry("desktoplayout_preferredGeometry", QRectF());
-                QRectF lastGeom = appletConfig.readEntry("desktoplayout_lastGeometry", QRectF());
-                if (preferredGeom.isValid() && lastGeom.isValid()) {
-                    m_layout->addItem(applet, true, preferredGeom, lastGeom);
-                } else {
-                    m_layout->addItem(applet, true, applet->geometry());
-                }
-                break;
-            }
-        }
-    }
 }
 
 void DefaultDesktop::dropEvent(QGraphicsSceneDragDropEvent *event)
