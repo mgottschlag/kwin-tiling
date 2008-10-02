@@ -443,6 +443,9 @@ void Panel::paintInterface(QPainter *painter,
     if (viewGeom != m_lastViewGeom) {
         m_lastViewGeom = viewGeom;
         updateBorders(viewGeom);
+        if (containmentOpt && containmentOpt->view) {
+            containmentOpt->view->setMask(m_background->mask());
+        }
     }
 
     // blit the background (saves all the per-pixel-products that blending does)
@@ -450,10 +453,6 @@ void Panel::paintInterface(QPainter *painter,
     painter->setRenderHint(QPainter::Antialiasing);
 
     m_background->paintPanel(painter, option->exposedRect);
-
-    if (containmentOpt && containmentOpt->view) {
-        containmentOpt->view->setMask(m_background->mask());
-    }
 
     // restore transformation and composition mode
     painter->restore();
