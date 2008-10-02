@@ -53,6 +53,20 @@ NotifierView::~NotifierView()
 
 }
 
+QModelIndex NotifierView::indexAt(const QPoint& point) const
+{
+    // simple linear search through the item rects, this will
+    // be inefficient when the viewport is large
+    QHashIterator<QModelIndex,QRect> iter(itemRects);
+    while (iter.hasNext()) {
+        iter.next();
+        if (iter.value().contains(point + QPoint(0,verticalOffset()))) {
+            return iter.key();
+        }
+    }
+    return QModelIndex();
+}
+
 void NotifierView::resizeEvent(QResizeEvent * event)
 {
     //the columns after the first are squares KIconLoader::SizeMedium x KIconLoader::SizeMedium,
@@ -71,7 +85,6 @@ void NotifierView::mouseMoveEvent(QMouseEvent *event)
         state() == NoState) {
         update(itemUnderMouse);
         update(m_hoveredIndex);
-
         m_hoveredIndex = itemUnderMouse;
         setCurrentIndex(m_hoveredIndex);
     } else if (!itemUnderMouse.isValid()) {
@@ -121,12 +134,9 @@ void NotifierView::paintEvent(QPaintEvent *event)
               QRect itemRect(QPoint(HEADER_LEFT_MARGIN, verticalOffset), QSize(0,0));
               const QFontMetrics fm(KGlobalSettings::smallestReadableFont());
               int minHeight = HEADER_HEIGHT;
-              itemRect.setSize(QSize(width() - HEADER_LEFT_MARGIN,
-                          qMax(fm.height() + (HEADER_TOP_MARGIN), minHeight)
-                          + HEADER_BOTTOM_MARGIN));
-
+              itemRect.setSize(QSize(width() - HEADER_LEFT_MARGIN,minHeight));
               verticalOffset += itemRect.size().height();
-
+              itemRects.insert(index, itemRect);
 
               //paint the parent
               if (event->region().contains(itemRect)) {
@@ -164,11 +174,18 @@ void NotifierView::paintEvent(QPaintEvent *event)
             for (int j=0; j < currentItem->rowCount(); ++j) {
                 for (int k=0; k < currentItem->columnCount(); ++k) {
                     QStandardItem *childItem = currentItem->child(j, k);
-                    //const QRect itemChildRect = visualRect(childItem->index());
-                    QRect itemChildRect(QPoint(HEADER_LEFT_MARGIN, verticalOffset), QSize(0,0));
                     QModelIndex childIndex = childItem->index();
-                    itemChildRect.setSize(QSize(width() - style()->pixelMetric(QStyle::PM_ScrollBarExtent) + 2,sizeHintForIndex(index).height()));
-                    verticalOffset += itemChildRect.size().height();
+                    QRect itemChildRect;
+                    if (k % 2 == 0) {
+                        itemChildRect = QRect(QPoint(HEADER_LEFT_MARGIN, verticalOffset), QSize(0,0));
+                        itemChildRect.setSize(QSize(width() - COLUMN_EJECT_SIZE,sizeHintForIndex(index).height()));
+                        itemRects.insert(childIndex, itemChildRect);
+                    } else {
+                        itemChildRect = QRect(QPoint(width() - (COLUMN_EJECT_SIZE - COLUMN_EJECT_MARGIN ), verticalOffset), QSize(0,0));
+                        itemChildRect.setSize(QSize(COLUMN_EJECT_SIZE - style()->pixelMetric(QStyle::PM_ScrollBarExtent) + 2,sizeHintForIndex(index).height()));
+                        itemRects.insert(childIndex, itemChildRect);
+                        verticalOffset += itemChildRect.size().height();
+                    }
                     if (event->region().contains(itemChildRect)) {
                         paintItem(painter,itemChildRect,childIndex);
                     }

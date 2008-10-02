@@ -84,24 +84,24 @@ namespace Notifier
       **/
       void paintItem(QPainter &painter,const QRect &itemRect,const QModelIndex &index);
 
-        // margin is equivalent to ItemDelegate::BACK_ARROW_WIDTH + ItemDelegate::BACK_ARROW_SPACING
-        static const int HEADER_LEFT_MARGIN = 5;
-        static const int HEADER_TOP_MARGIN = 5;
-        static const int HEADER_BOTTOM_MARGIN = 4;
-        static const int HEADER_HEIGHT = 35;
-        static const int FIRST_HEADER_HEIGHT = 20;
+      /**
+      * Return an index at the position "point" if exist otherwise return a default
+      * constructed value of QModelIndex
+      * @param point the point where we will looking for an item
+      **/
+      QModelIndex indexAt(const QPoint& point) const;
 
-        static const int ITEM_LEFT_MARGIN = 7;
-        static const int ITEM_RIGHT_MARGIN = 7;
-        static const int TOP_OFFSET = 5;
-
-        static const int BACK_ARROW_WIDTH = 20;
-        static const int BACK_ARROW_SPACING = 5;
-
+      static const int HEADER_LEFT_MARGIN = 5;
+      static const int HEADER_TOP_MARGIN = 5;
+      static const int HEADER_HEIGHT = 35;
+      static const int COLUMN_EJECT_MARGIN = 5;
+      static const int COLUMN_EJECT_SIZE = 50;
+      static const int TOP_OFFSET = 5;
 
   private:
       ///The hovered index
       QModelIndex m_hoveredIndex;
+      QHash<QModelIndex,QRect> itemRects;
   };
 
 }
