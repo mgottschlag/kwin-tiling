@@ -141,11 +141,6 @@ void Tasks::registerWindowTasks()
 
     while (iter.hasNext()) {
         iter.next();
-        if ((!iter.value()->isOnCurrentDesktop() && m_showOnlyCurrentDesktop) ||
-            (!isOnMyScreen(iter.value()) && m_showOnlyCurrentScreen)) {
-            connect(iter.value().data(), SIGNAL(changed(::TaskManager::TaskChanges)),
-                    this, SLOT(addAttentionTask(::TaskManager::TaskChanges)));
-        }
         addWindowTask(iter.value());
     }
     updatePreferredSize();
@@ -153,15 +148,17 @@ void Tasks::registerWindowTasks()
 
 void Tasks::addWindowTask(TaskPtr task)
 {
+    disconnect(task.data(), SIGNAL(changed(::TaskManager::TaskChanges)),
+                this, SLOT(addAttentionTask(::TaskManager::TaskChanges)));
     if (!task->showInTaskbar()) {
         return;
     }
 
-    if (m_showOnlyCurrentDesktop && !task->isOnCurrentDesktop() && !task->demandsAttention()) {
-        return;
-    }
-
-    if (m_showOnlyCurrentScreen && !isOnMyScreen(task) && !task->demandsAttention()) {
+    if ((m_showOnlyCurrentDesktop && !task->isOnCurrentDesktop() && !task->demandsAttention())
+        || (m_showOnlyCurrentScreen && !isOnMyScreen(task) && !task->demandsAttention())) {
+        
+        connect(task.data(), SIGNAL(changed(::TaskManager::TaskChanges)),
+                this, SLOT(addAttentionTask(::TaskManager::TaskChanges)));
         return;
     }
 
@@ -380,6 +377,8 @@ void Tasks::taskMovedDesktop(TaskPtr task)
 
     if (!task->isOnCurrentDesktop() && !task->demandsAttention()) {
         removeWindowTask(task);
+        connect(task.data(), SIGNAL(changed(::TaskManager::TaskChanges)),
+                this, SLOT(addAttentionTask(::TaskManager::TaskChanges)));
     } else if (!m_windowTaskItems.contains(task)) {
         addWindowTask(task);
     }
