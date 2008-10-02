@@ -434,6 +434,8 @@ void Interface::runDefaultResultItem()
 
 void Interface::queryTextEdited(const QString &query)
 {
+    m_delayedRun = false;
+
     if (query.isEmpty()) {
         resetInterface();
         m_queryRunning = false;
