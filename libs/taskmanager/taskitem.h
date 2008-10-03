@@ -53,11 +53,11 @@ public:
     QIcon icon() const;
     QString name() const;
 
-Q_SIGNALS::
+Q_SIGNALS:
     /** Indicates that the startup task now is a normal task */
     void gotTaskPointer();
 
-public Q_SLOTS::
+public Q_SLOTS:
 
     void toDesktop(int);
     bool isOnCurrentDesktop();
