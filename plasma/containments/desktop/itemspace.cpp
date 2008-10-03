@@ -281,7 +281,6 @@ bool ItemSpace::positionedProperly(QRectF itemGeom)
     return (QRectF(QPointF(), workingGeom).contains(fullGeom));
 }
 
-// TODO: explain stuff
 QList<QPointF> ItemSpace::positionVertically(
     const QSizeF &itemSize,
     Qt::Alignment align,
@@ -295,21 +294,43 @@ QList<QPointF> ItemSpace::positionVertically(
     qreal spB = placementSpacing;
     QList<QPointF> possiblePositions;
 
+    // basically, position searching is done by repetedly looking for obstacles at
+    // one position and looking for a next position to try
+
+    // add spacing to the size
     QSizeF size = QSizeF(itemSize.width()+spL+spR, itemSize.height()+spT+spB);
 
+    // the initial x coordinate to start testing
+    // start either on the left or the right, and advance inside
     qreal x = ((align & Qt::AlignLeft) ? 0 : workingGeom.width()-size.width());
+    // try different x coordinates
     while (1) {
+        // stop testing if we're limited by the working area and positions at the next x would reach outside
         bool outOfX = ((align & Qt::AlignLeft) ? (x + size.width() > workingGeom.width()) : (x < 0));
         if (outOfX && limitedSpace) {
             break;
         }
 
+        // the initial y coordinate to start testing heights at the current x
+        // start either on the top or the bottom, and advance inside
         qreal y = ((align & Qt::AlignTop) ? 0 : workingGeom.height()-size.height());
+        // try different y coordinates
         while (1) {
+            // stop testing at this x if we're limited by the working area and positions at the next y would reach outside
             bool outOfY = ((align & Qt::AlignTop) ? (y + size.height() > workingGeom.height()) : (y < 0));
             if (outOfY && limitedSpace) {
                 break;
             }
+
+            // Z would come here :)
+
+            // Check for intersecting items, or a new y coordinate to try.
+            // Suppose we're aligning to top:
+            // Find all items that intersect the region we're testing.
+            // If no items were found, we have space.
+            // Oterwise pick the one with the lowest bottom border
+            // and use that border as the new y coordinate to try.
+            // The logic is inverted when aligning to bottom.
 
             QRectF a;
             if ((align & Qt::AlignTop)) {
@@ -319,15 +340,27 @@ QList<QPointF> ItemSpace::positionVertically(
             }
 
             if (!a.isValid()) {
+                // found a valid position
                 possiblePositions.append(QPointF(x+spL, y+spT));
                 if (!findAll) {
                     return possiblePositions;
                 }
+                // don't look at this X anymore, one position is enough
                 break;
             }
 
             y = ((align & Qt::AlignTop) ? a.bottom() : a.y() - size.height());
         }
+
+        // Find next possible x coordinate
+        // Suppose we're aligning to left:
+        // Take a vertical strap of the area we have been testing previously,
+        // extending over the height of the working area.
+        // Find all items that intersect the region we're testing.
+        // If no items were found, stop all testing.
+        // Otherwise, pick the one with the most-left right border
+        // and use that border as the new x coordinate to try.
+        // The logic is inverted when aligning to right.
 
         QRectF a;
         if ((align & Qt::AlignLeft)) {

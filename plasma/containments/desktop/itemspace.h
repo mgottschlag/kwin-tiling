@@ -61,6 +61,25 @@ class ItemSpace
     void findPullGroup(int thisItem, QList<int> *currentItems);
     qreal pushItem(int itemIndex, Direction direction, qreal amount, const QList<int> *previousItems, bool doPush, bool ignoreBorder);
 
+    /**
+     * Finds an empty place for an item.
+     * Tries to stack the item vertically, starting in the corner
+     * of alignment, and advances horizontally once no more positions
+     * are valid.
+     *
+     * @param itemSize the size of the item; placementSpacing is already
+     *                 considered
+     * @param align the corner of the screen where position testing will
+     *              begin (and in what directions it will advance)
+     *              must be an OR of Qt::AlignLeft or Qt::AlignRight
+     *              and Qt::AlignTop or Qt::AlignBottom
+     * @param limitedSpace if true, positions outside the working area
+     *                     will not be considered; otherwise, positions
+     *                     will only be limited by the borders at the
+     *                     alignment corner.
+     * @param findAll if false, searching will stop after the first valid
+     *                position
+     **/
     QList<QPointF> positionVertically(
         const QSizeF &itemSize,
         Qt::Alignment align,
