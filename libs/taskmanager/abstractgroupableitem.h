@@ -112,7 +112,7 @@ public Q_SLOTS:
     /*void removedFromGroup();
     void addedToGroup(const GroupPtr group);*/
 
-Q_SIGNALS::
+Q_SIGNALS:
     void changed();
     void destroyed(AbstractGroupableItem *);
 

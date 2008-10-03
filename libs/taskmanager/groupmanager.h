@@ -110,7 +110,7 @@ signals:
     /** Signal that the item is no longer available */
     void itemRemoved(AbstractGroupableItem*);
 
-public Q_SLOTS::
+public Q_SLOTS:
     /**
     * Slots for newly added tasks from TaskManager
     */
