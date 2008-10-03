@@ -135,7 +135,7 @@ void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
 {
     Q_UNUSED(event)
 
-    //kDebug();
+    //kDebug() << m_clickDrag;
     if (m_clickDrag) {
         setMouseTracking(false);
         m_clickDrag = false;
@@ -144,7 +144,7 @@ void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
     }
 
     if (event->button() != Qt::LeftButton) {
-        kDebug() << "sending even to" << (QWidget*)parent();
+        //kDebug() << "sending even to" << (QWidget*)parent();
         Plasma::View *view = dynamic_cast<Plasma::View*>(parent());
 
         if (view && view->containment()) {
@@ -173,6 +173,7 @@ void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
     } else {
         m_offset = geometry().y() - m_origin.y();
     }
+
     grabMouse();
 }
 
@@ -187,6 +188,7 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
     QPoint p = mapToParent(event->pos());
     QRect g = geometry();
 
+    //kDebug() << p << g << "<-- movin'?";
     if (m_orientation == Qt::Horizontal) {
         g.moveLeft(p.x() + m_offset);
     } else {
@@ -195,9 +197,10 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
 
     m_applet->setGeometry(g);
 
-    // swap items if we pass completely over the next/previou item or cross
+    // swap items if we pass completely over the next/previous item or cross
     // more than halfway across it, whichever comes first
     if (m_orientation == Qt::Horizontal) {
+        //kDebug() << m_prevGeom << g << m_nextGeom;
         if (m_prevGeom.isValid() && g.left() <= m_prevGeom.left()) {
             swapWithPrevious();
         } else if (m_nextGeom.isValid() && g.right() >= m_nextGeom.right()) {
@@ -216,8 +219,8 @@ void PanelAppletOverlay::mouseReleaseEvent(QMouseEvent *event)
 {
     Q_UNUSED(event)
 
-    releaseMouse();
     if (!m_spacer) {
+        releaseMouse();
         return;
     }
 
@@ -237,6 +240,7 @@ void PanelAppletOverlay::mouseReleaseEvent(QMouseEvent *event)
         }
     }
 
+    releaseMouse();
     //kDebug();
     m_layout->removeItem(m_spacer);
     m_spacer->deleteLater();
@@ -310,6 +314,7 @@ void PanelAppletOverlay::syncGeometry()
         m_prevGeom = QRectF();
     }
 
+    //kDebug() << m_index << m_layout->count();
     if (m_index < m_layout->count() - 1) {
         m_nextGeom = m_layout->itemAt(m_index + 1)->geometry();
     } else {
