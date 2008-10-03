@@ -1,0 +1,146 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+<!ENTITY % addindex "IGNORE">
+<!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<article lang="&language;">
+<articleinfo>
+
+<title>Desktop Effects</title>
+<authorgroup>
+<author>&Mike.McBride; &Mike.McBride.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2008-09-30</date>
+<releaseinfo>&kde; 4.2</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>KControl</keyword>
+<keyword>desktop</keyword>
+<keyword>effects</keyword>
+</keywordset>
+</articleinfo>
+<sect1 id="desktop-effects">
+<title>Desktop Effects</title>
+
+<sect2 id="desktop-effects-intro">
+<title>Introduction</title>
+
+<para>This module is used to configure desktop effects
+for &kde;.</para>
+
+
+<para>This panel is divided into two tabs:  <guilabel>General</guilabel> 
+and <guilabel>All Effects</guilabel>.</para>
+
+<sect3 id="desktop-effects-general">
+<title><guilabel>General</guilabel> tab</title>
+
+<para>At the top of this tab is a checkbox labeled <guilabel>Enable 
+desktop effects</guilabel>.  If there is no mark in front of this checkbox, then all 
+visual effects of this panel are disabled.  To edit any of these effects, simply 
+place a mark in this checkbox.</para>
+
+<para>Below that checkbox, are the following choices: </para>
+<!-- outdated needs a rewrite
+<variablelist>
+<varlistentry>
+<term><guilabel>Combobox effect:</guilabel></term>
+<listitem><para>This combobox has two options.  If this option is set to <guilabel>Animate</guilabel> 
+then when a combo box is selected, it will appear to scroll down.  If <guilabel>Disable</guilabel> 
+is selected, then the combobox list appears instantly.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Tool tip effect:</guilabel></term>
+<listitem><para>This combobox has three options.  If this option is set to <guilabel>Animate</guilabel> 
+then when a tool tip appears, it will have a short animation.  If <guilabel>Fade</guilabel> is 
+selected, the tool tip appears to fade from the background.  If <guilabel>Disable</guilabel> 
+is selected, then the tool tip appears instantly.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Menu effect:</guilabel></term>
+<listitem><para>This combobox has four options.  If this option is set to <guilabel>Animate</guilabel> 
+then when a menu list appears, it will appear to scroll downward.  If <guilabel>Fade</guilabel> is 
+selected, the menu list appears to fade from the background.  If <guilabel>Make Transparent</guilabel> 
+is selected, the menu list will have a transparent look to it.  The details of that transparency is 
+configured in the next part of the dialog.  If <guilabel>Disable</guilabel> 
+is selected, then the menu list appears instantly.</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Menu tear-off handles:</guilabel></term>
+<listitem><para>If this option is set to <guilabel>Disable</guilabel>, then no menus can be separated 
+from the application. If <guilabel>Application Level</guilabel> is selected, then it is left up 
+to each individual application to determine which menus can be torn separated from the application.</para>
+<note><para>Many applications do not have tear off menus.  You cannot tell &kde; to force an 
+application to allow tear off menus.  This is determined by the authors of the application.</para></note></listitem>
+</varlistentry>
+</variablelist>
+
+<para>The next checkbox, labeled <guilabel>Menu drop shadow</guilabel> is used to toggle the drop shadow behind all 
+&kde; menus.  A drop shadow is a dark, soft line on the bottom and right sides of the menu, which give the menus the 
+appearance that the menu is lifted off the application, and the menu is creating a shadow on the application.</para>
+
+<para>The next section only applies if the combobox labeled <guilabel>Menu Effect</guilabel> is set to 
+<guilabel>Make Transparent</guilabel>.  You can use the combo box labeled <guilabel>Menu transparency type:</guilabel> 
+to select the method &kde; uses to generate the transparency.  You can use the slider to determine the level of 
+transparency in menus.  A preview is visible on the right side of this section.</para>
+-->
+</sect3>
+
+<sect3 id="desktop-alleffects">
+<title><guilabel>All Effects</guilabel> tab</title>
+
+<para>The main part of this page is a list of all available effects grouped 
+by <guilabel>Accessibility</guilabel>, <guilabel>Appearance</guilabel>, 
+<guilabel>Candy</guilabel>, <guilabel>Focus</guilabel> and <guilabel>Tools</guilabel>.
+Use the incremental search bar above the list window to find items in the list.</para>
+
+<para>Check an effect in the list to enable it. Display the <guilabel>About</guilabel> 
+dialog by clicking the info button at the right side of the list item. 
+Some effects have settings options, in this case there is a tool button 
+at the left of the info button. Click it to open a configuration dialog.</para>
+<!--
+<variablelist> 
+
+<varlistentry> 
+<term><guilabel>Highlight buttons under mouse.</guilabel></term>
+<listitem>
+<para>If there is a mark in this checkbox, when the mouse pointer is above a toolbar 
+button, that button will be highlighted with a square around the button.  This is a good visual 
+indicator of which button will be selected with a mouse click.</para>
+</listitem> 
+</varlistentry> 
+
+<varlistentry> 
+<term><guilabel>Transparent toolbars when moving</guilabel></term>
+<listitem>
+<para>As the title suggests, if this option is selected, the toolbars will be transparent when 
+you are moving them around on the screen.</para>
+</listitem> 
+</varlistentry> 
+
+<varlistentry> 
+<term><guilabel>Text position</guilabel></term>
+<listitem>
+<para>This combo box lets you determine where on the button the text name of the button will appear as the default.  
+If <guilabel>Icon Only</guilabel> is selected, then there is no text on the toolbar buttons.  If  <guilabel>Text Only</guilabel> is selected, then the button's icon is replaced with a text name of  the button. If <guilabel>Text Alongside Icons</guilabel> is selected, then the name of the button will be placed to the <emphasis>right</emphasis> of the icon. If <guilabel>Text Under Icons</guilabel> is selected, the default will be to have the text of the button <emphasis>below</emphasis> the icon.</para>
+<tip><para>This option only specifies the <emphasis>default</emphasis> location.  Each application can override the setting used in this panel.</para></tip>
+</listitem> 
+</varlistentry> 
+
+</variablelist>
+-->
+</sect3>
+
+</sect2>
+
+</sect1>
+
+</article>

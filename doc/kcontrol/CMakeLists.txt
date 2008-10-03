@@ -6,6 +6,7 @@ add_subdirectory(kcmdisplay)
 add_subdirectory(kcmstyle)
 add_subdirectory(splashscreen)
 add_subdirectory(powerdevil)
+add_subdirectory(kwincompositing)
 
 if ( Q_WS_X11 )
 add_subdirectory(autostart)
