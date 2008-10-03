@@ -651,7 +651,7 @@ void PanelView::updateStruts()
         int rightOffset = wholeScreen.right() - thisScreen.right();
         int bottomOffset = wholeScreen.bottom() - thisScreen.bottom();
         int topOffset = wholeScreen.top() - thisScreen.top();
-        kDebug() << "screen l/r/b/t offsets are:" << leftOffset << rightOffset << bottomOffset << topOffset;
+        kDebug() << "screen l/r/b/t offsets are:" << leftOffset << rightOffset << bottomOffset << topOffset << location();
 
         switch (location())
         {
