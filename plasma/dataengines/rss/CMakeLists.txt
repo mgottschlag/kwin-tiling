@@ -1,3 +1,7 @@
+find_package(Boost REQUIRED)
+
+include_directories(${Boost_INCLUDE_DIR})
+
 set(rss_engine_SRCS
     rss.cpp
 )
