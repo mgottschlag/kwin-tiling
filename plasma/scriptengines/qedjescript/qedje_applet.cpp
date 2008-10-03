@@ -23,9 +23,11 @@ QEdjeAppletScript::~QEdjeAppletScript()
     proxy->setWidget(0);
 
     // deleting setting's dialog stuff
-    delete previewWorld;
-    delete previewCanvas;
-    delete dialog;
+    if (dialog) {
+        delete previewWorld;
+        delete previewCanvas;
+        delete dialog;
+    }
 
     delete world;
     delete canvas;
