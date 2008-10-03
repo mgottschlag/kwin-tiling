@@ -22,6 +22,9 @@ QEdjeAppletScript::~QEdjeAppletScript()
     // so we need to free the applet in order to avoid segfaults later
     proxy->setWidget(0);
 
+    // deleting setting's dialog stuff
+    delete previewWorld;
+    delete previewCanvas;
     delete dialog;
 
     delete world;
