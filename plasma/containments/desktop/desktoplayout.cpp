@@ -7,19 +7,18 @@
   (at your option) any later version.
 */
 
-#include "desktoplayout.h"
-
 #include <limits>
 
 #include <QCoreApplication>
 #include <QGraphicsWidget>
 #include <QGraphicsProxyWidget>
-
 #include <QWaitCondition>
 
 #include <KDebug>
 
 #include <plasma/animator.h>
+
+#include "desktoplayout.h"
 
 DesktopLayout::DesktopLayout(QGraphicsLayoutItem *parent)
       : QObject(0),
@@ -55,11 +54,8 @@ void DesktopLayout::addItem(QGraphicsLayoutItem *item, bool pushBack, const QSiz
     // prefer free positions
     QRectF bestGeometry = QRectF();
     foreach (QPointF position, possiblePositions) {
-        kDebug() << "Checkfreeing" << position;
-
         QRectF geom = QRectF(position, itemSize);
         if (itemSpace.positionedProperly(geom)) {
-            kDebug() << "FREE";
             bestGeometry = geom;
             break;
         }

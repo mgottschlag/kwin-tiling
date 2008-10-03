@@ -57,9 +57,7 @@ class ItemSpace
     };
 
     void offsetPositions(const QPointF &offset);
-    qreal performPush(int itemIndex, Direction direction, qreal amount, qreal minAmount, bool ignoreBorder);
-    void findPullGroup(int thisItem, QList<int> *currentItems);
-    qreal pushItem(int itemIndex, Direction direction, qreal amount, const QList<int> *previousItems, bool doPush, bool ignoreBorder);
+    qreal performPush(int itemIndex, Direction direction, qreal amount, bool ignoreBorder);
 
     /**
      * Finds an empty place for an item.
@@ -115,6 +113,60 @@ class ItemSpace
     qreal placementSpacing;
     qreal screenSpacing;
     qreal shiftingSpacing;
+
+    // TODO: explain
+    class PushTreeItem
+    {
+      public:
+        PushTreeItem(
+            ItemSpace *itemSpace,
+            PushTreeItem *parent,
+            qreal parentPushRequested,
+            int firstItem,
+            Direction direction,
+            qreal amount,
+            bool ignoreBorder
+        );
+        ~PushTreeItem();
+
+        void applyResults(ItemSpace *itemSpace, Direction direction);
+
+        qreal m_pushAvailable;
+
+      private:
+        // return true if the item is either in this group
+        // of any of the groups above
+        bool itemIsCurrentOrAbove(int item);
+        // find all items intersecting with the item specified and
+        // populate m_groupItems
+        void findGroup(ItemSpace *itemSpace, int thisItem);
+
+        PushTreeItem *m_parent;
+        // the amount the parent wanted to move itself when we were created
+        qreal m_parentPushRequested;
+        // the amount we were asked to move (can be reduced while applying)
+        qreal m_pushRequested;
+
+        // the items belonging to this group
+        QList<int> m_groupItems;
+        // our children, the obstacle groups we asked to move
+        QList<PushTreeItem *> m_obstacles;
+
+        // TODO
+        // right not this is a tree structure corresponding to the recursion
+        // path, and more than one node will refer to the same item group 
+        // if it is in the way of multiple groups
+        // ideally, each group would be represented by no more that one node,
+        // and could be linked to from multiple nodes, thus our structure would
+        // become a directed acyclic graph
+        // this would also improve performance
+
+        // HACK
+        // take care to only move a group the maximum move of all the nodes 
+        // referring to it, not just apply them all, by keeping track of moves
+        QRectF boundingRect(ItemSpace *itemSpace);
+        QRectF m_initialBoundingRect;
+    };
 };
 
 #endif
