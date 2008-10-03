@@ -67,7 +67,7 @@ public:
     TaskGroupTemplate *parentGroup();
     void setParentGroup(TaskGroupTemplate *);
 
-Q_SIGNALS::
+Q_SIGNALS:
     /** Unprotects group so it can get closed
     */
     void unprotectGroup(TaskGroup *);
@@ -78,7 +78,7 @@ Q_SIGNALS::
     
     void destroyed(AbstractGroupableItem *);
 
-private Q_SLOTS::
+private Q_SLOTS:
     void itemDestroyed(AbstractGroupableItem *);
 
 
