@@ -52,10 +52,10 @@ public:
 
     EditableGroupProperties editableGroupProperties(){return None;};
 
-protected slots:
+protected Q_SLOTS:
     /** Checks if the group is still necessary */
     void checkGroup();
-private slots:
+private Q_SLOTS:
     /** The program of the sender() of this function is started or stopped being grouped
     *	by this strategy. This is done by adding the program to d->blackList
     */

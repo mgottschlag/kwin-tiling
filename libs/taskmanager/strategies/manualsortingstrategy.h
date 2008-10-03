@@ -46,7 +46,7 @@ public:
     /** DesktopChanges, time to backup any needed data */
     void desktopChanged(int newDesktop);
 
-protected slots:
+protected Q_SLOTS:
      /** Handles a new item*/
     virtual void handleItem(AbstractPtr);
 

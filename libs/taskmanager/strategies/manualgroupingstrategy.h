@@ -67,7 +67,7 @@ public:
     TaskGroupTemplate *parentGroup();
     void setParentGroup(TaskGroupTemplate *);
 
-signals:
+Q_SIGNALS::
     /** Unprotects group so it can get closed
     */
     void unprotectGroup(TaskGroup *);
@@ -78,11 +78,11 @@ signals:
     
     void destroyed(AbstractGroupableItem *);
 
-private slots:
+private Q_SLOTS::
     void itemDestroyed(AbstractGroupableItem *);
 
 
-public slots:
+public Q_SLOTS:
     /** Needed because we subclass AbstractGroupableItem */
     void toDesktop(int){};
     bool isOnCurrentDesktop(){return false;};
