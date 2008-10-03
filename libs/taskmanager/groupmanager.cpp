@@ -120,14 +120,10 @@ GroupManager::~GroupManager()
     delete d;
 }
 
-//TODO optimize: only remove what really is removed readd the rest to update grouping. if (!add(task)){remove(task);} an
 void GroupManagerPrivate::reloadTasks()
 {
     kDebug() << "number of tasks available " << TaskManager::self()->tasks().size();
-   /* foreach(TaskPtr task, d->itemList.keys()) { //Remove all tasks
-        remove(task);
-    }*/
-    //d->rootGroup->clear();
+
     QList <TaskPtr> taskList = TaskManager::self()->tasks().values();
     foreach(TaskPtr task, taskList) { //Add all existing tasks
         if ((showOnlyCurrentDesktop && !task->isOnCurrentDesktop()) ||
@@ -198,7 +194,7 @@ bool GroupManager::add(TaskPtr task)
         return false;
     }
 
-    if (showOnlyCurrentScreen() && !task->isOnScreen(d->currentScreen) && !task->demandsAttention()) {//FIXME implement
+    if (showOnlyCurrentScreen() && !task->isOnScreen(d->currentScreen) && !task->demandsAttention()) {
         kDebug() << "Not on this screen and showOnlyCurrentScreen";
         return false;
     }

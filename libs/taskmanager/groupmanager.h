@@ -90,14 +90,6 @@ public:
 
     bool showOnlyCurrentDesktop() const;
     void setShowOnlyCurrentDesktop(bool);
-  /*TODO
-    bool onlyGroupWhenFull() const;
-    void setOnlyGroupWhenFull(bool);
-    /** Must be set by the visualization.
-     *  If onlyGroupWhenFull() groups are only created when d->groupIsFull is set
-     */
-   /* void groupIsFull(bool); */
-
 
     /** 
      * Functions to call if the user wants to do something manually, the strategy allows or refuses the request
@@ -112,15 +104,13 @@ public:
      */
     void setScreen(int screen);
 
-Q_SIGNALS:
+signals:
     /** Signal that the rootGroup has to be reloaded in the visualization */
     void reload();
     /** Signal that the item is no longer available */
     void itemRemoved(AbstractGroupableItem*);
-    /** Signal that the item is no longer available */
-   // void startupRemoved(AbstractGroupableItem*);
 
-public Q_SLOTS:
+public Q_SLOTS::
     /**
     * Slots for newly added tasks from TaskManager
     */

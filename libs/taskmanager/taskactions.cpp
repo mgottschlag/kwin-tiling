@@ -299,6 +299,8 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* task, GroupManager *strategy, bo
     Q_ASSERT(task);
     Q_ASSERT(strategy);
 
+    setTitle(task->name());
+    setIcon(task->icon());
     addMenu(new AdvancedMenu(this, task));
 
     if (TaskManager::self()->numberOfDesktops() > 1)
@@ -327,42 +329,43 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* task, GroupManager *strategy, bo
         }
     }
 
-    if (task->isGrouped()) {
+    /*if (task->isGrouped()) {
         addSeparator();
         addMenu(new BasicMenu(this, task->parentGroup(), strategy, showAll));
-    }
+    }*/
  
     addSeparator();
     addAction(new CloseActionImpl(this, task));
 
 }
 
-BasicMenu::BasicMenu(QWidget *parent, GroupPtr task, GroupManager *strategy, bool showAll)
+BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, bool showAll)
     :QMenu(parent)
 {
-    Q_ASSERT(task);
+    Q_ASSERT(group);
     Q_ASSERT(strategy);
 
-    setTitle(task->name());
-    addMenu(new AdvancedMenu(this, task));
+    setTitle(group->name());
+    setIcon(group->icon());
+    addMenu(new AdvancedMenu(this, group));
 
     if (TaskManager::self()->numberOfDesktops() > 1)
     {
-        addMenu(new DesktopsMenu(this, task));
+        addMenu(new DesktopsMenu(this, group));
         if (showAll)
         {
-            addAction(new ToCurrentDesktopActionImpl(this, task));
+            addAction(new ToCurrentDesktopActionImpl(this, group));
         }
     }
 
-//    addAction(new MoveActionImpl(this, task));
-//    addAction(new ResizeActionImpl(this, task));
-    addAction(new MinimizeActionImpl(this, task));
-    addAction(new MaximizeActionImpl(this, task));
-    addAction(new ShadeActionImpl(this, task));
+//    addAction(new MoveActionImpl(this, group));
+//    addAction(new ResizeActionImpl(this, group));
+    addAction(new MinimizeActionImpl(this, group));
+    addAction(new MaximizeActionImpl(this, group));
+    addAction(new ShadeActionImpl(this, group));
 
     if (strategy->taskGrouper()) {
-        QList<QAction*> groupingStrategyActions = strategy->taskGrouper()->strategyActions(this, task);
+        QList<QAction*> groupingStrategyActions = strategy->taskGrouper()->strategyActions(this, group);
         if (!groupingStrategyActions.isEmpty()) {
             addSeparator();
             foreach (QAction *action, groupingStrategyActions) {
@@ -371,14 +374,36 @@ BasicMenu::BasicMenu(QWidget *parent, GroupPtr task, GroupManager *strategy, boo
         }
     }
 
-    if (task->isGrouped()) {
+    /*if (group->isGrouped()) {
         addSeparator();
-        addMenu(new BasicMenu(parent, task->parentGroup(), strategy, showAll));
-    }
+        addMenu(new BasicMenu(parent, group->parentGroup(), strategy, showAll));
+    }*/
 
     addSeparator();
-    addAction(new CloseActionImpl(this, task));
+    addAction(new CloseActionImpl(this, group));
 
+}
+
+GroupPopupMenu::GroupPopupMenu(QWidget *parent, TaskGroup *group, GroupManager *groupManager, bool showAll)
+    :QMenu(parent)
+{
+    setTitle(group->name());
+    setIcon(group->icon());
+    foreach (AbstractGroupableItem *item, group->members()) {
+	if (!item) {
+	    kDebug() << "invalid Item";
+	    continue;
+	}
+
+	if (item->isGroupItem()) {
+	    QMenu* menu = new GroupPopupMenu (this, qobject_cast<TaskGroup*>(item), groupManager, false);
+	    addMenu(menu);
+	} else {
+	    QAction* action = new QAction(item->icon(), item->name(), this);
+	    connect(action, SIGNAL(triggered(bool)), (qobject_cast<TaskItem*>(item))->taskPointer().data() , SLOT(activateRaiseOrIconify()));
+	    addAction(action);
+	}
+    }
 }
 
 } // TaskManager namespace

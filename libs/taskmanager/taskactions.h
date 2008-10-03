@@ -25,8 +25,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define TASKACTIONS_H
 
 // Qt
-#include <QtGui/QMenu>
-#include <QtGui/QAction>
+#include <QMenu>
+#include <QAction>
 
 // Own
 #include <taskmanager/groupmanager.h>
@@ -116,6 +116,14 @@ class TASKMANAGER_EXPORT BasicMenu : public QMenu
 public:
     BasicMenu(QWidget *parent, GroupPtr task, GroupManager *strategy, bool showAll);
     BasicMenu(QWidget *parent, TaskItem* task, GroupManager *strategy, bool showAll);
+};
+
+/** A Menu that shows  a list of all tasks of the group, and shows a BasicMenu on right click on an item*/
+class TASKMANAGER_EXPORT GroupPopupMenu : public QMenu
+{
+    Q_OBJECT
+public:
+    GroupPopupMenu(QWidget *parent, GroupPtr task, GroupManager *strategy, bool showAll);
 };
 
 

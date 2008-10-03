@@ -80,11 +80,20 @@ void AbstractSortingStrategy::handleGroup(TaskGroup *group)
     disconnect(group, 0, this, 0); //To avoid duplicate connections
    // connect(group, SIGNAL(changed()), this, SLOT(check()));
     connect(group, SIGNAL(itemAdded(AbstractPtr)), this, SLOT(handleItem(AbstractPtr)));
-    connect(group, SIGNAL(destroyed()), this, SLOT(removeGroup())); //FIXME necessary
+    connect(group, SIGNAL(destroyed()), this, SLOT(removeGroup())); //FIXME necessary?
     foreach (AbstractPtr item, group->members()) {
         handleItem(item);
     }
 
+}
+
+void AbstractSortingStrategy::removeGroup()
+{
+    TaskGroup *group = dynamic_cast<TaskGroup*>(sender());
+    if (!group) {
+	return;
+    }
+    d->managedGroups.removeAll(group);
 }
 
 void AbstractSortingStrategy::handleItem(AbstractPtr item)
@@ -149,17 +158,20 @@ bool AbstractSortingStrategy::moveItem(AbstractPtr item, int newIndex)
         return false;
     }
     ItemList &list = item->parentGroup()->members();
-    if (newIndex < 0) {
-        newIndex = list.size() - 1;
+    if ((newIndex < 0) || (newIndex >= list.size())) {
+        newIndex = list.size();
     }
-
+    
+    if (newIndex > list.indexOf(item)) {
+        newIndex--; //the index has to be adjusted if we move the item from right to left because the item on the left is removed first
+    }
+    
     if ((list.size() <= newIndex) || (newIndex < 0)) {
         kDebug() << "index out of bounds";
         return false;
     }
-    if (newIndex >= list.indexOf(item)) {
-        newIndex--; //the index has to be adjusted if we move the item from right to left because the item onthe left is removed first
-    }
+    
+
     list.move(list.indexOf(item), newIndex);
     kDebug() << "new index " << item->parentGroup()->members().indexOf(item); 
     TaskGroup* group = item->parentGroup();

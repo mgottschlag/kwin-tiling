@@ -24,6 +24,8 @@
 #include <taskmanager/task.h>
 #include <taskmanager/taskmanager_export.h>
 
+#include <QtGui/QIcon>
+
 namespace TaskManager
 {
 
@@ -48,11 +50,14 @@ public:
     StartupPtr startupPointer() const;
     bool isGroupItem() const{return false;};
 
-Q_SIGNALS:
+    QIcon icon() const;
+    QString name() const;
+
+Q_SIGNALS::
     /** Indicates that the startup task now is a normal task */
     void gotTaskPointer();
 
-public Q_SLOTS:
+public Q_SLOTS::
 
     void toDesktop(int);
     bool isOnCurrentDesktop();

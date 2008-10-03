@@ -50,7 +50,7 @@ class ToCurrentDesktopActionImpl : public QAction
     Q_OBJECT
 public:
     ToCurrentDesktopActionImpl(QObject *parent, AbstractPtr task);
-private slots:
+private Q_SLOTS::
     void slotToCurrentDesktop();
 private:
     AbstractPtr m_task;
@@ -94,7 +94,7 @@ class ToDesktopActionImpl : public QAction
     Q_OBJECT
 public:
     ToDesktopActionImpl(QObject *parent, AbstractPtr task, int desktop);
-private slots:
+private Q_SLOTS::
     void slotToDesktop();
 private:
     int m_desktop;
@@ -134,7 +134,7 @@ class LeaveGroupActionImpl : public QAction
 public:
     LeaveGroupActionImpl(QObject *parent, AbstractPtr task, GroupManager*);
 
-private slots:
+private Q_SLOTS::
     void leaveGroup();
 
 private:

@@ -25,6 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define ABSTRACTGROUPABLEITEM_H
 
 #include <QtCore/QObject>
+#include <QtGui/QIcon>
 
 #include <KDE/KWindowSystem>
 
@@ -52,6 +53,9 @@ class TASKMANAGER_EXPORT AbstractGroupableItem : public QObject
 public:
     AbstractGroupableItem(QObject *parent);
     virtual ~AbstractGroupableItem();
+
+    virtual QIcon icon() const {return QIcon();};
+    virtual QString name() const {return QString();};
 
     /**
     *   Returns the parent group of this item
@@ -108,7 +112,7 @@ public Q_SLOTS:
     /*void removedFromGroup();
     void addedToGroup(const GroupPtr group);*/
 
-Q_SIGNALS:
+Q_SIGNALS::
     void changed();
     void destroyed(AbstractGroupableItem *);
 

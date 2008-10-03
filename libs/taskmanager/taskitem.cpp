@@ -100,6 +100,22 @@ StartupPtr TaskItem::startupPointer() const
     return d->startupTask;
 }
 
+QIcon TaskItem::icon() const
+{
+    if (!d->task) {
+        return QIcon();
+    }
+    return taskPointer()->icon();
+}
+
+QString TaskItem::name() const
+{
+    if (!d->task) {
+        return QString();
+    }
+    return taskPointer()->visibleName();
+}
+
 void TaskItem::setShaded(bool state)
 {
     if (!d->task) {

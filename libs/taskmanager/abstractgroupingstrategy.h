@@ -92,7 +92,7 @@ public:
     /** Returns a list of icons*/
     virtual QList<QIcon> iconSuggestions(TaskGroup *);
 
-protected Q_SLOTS:
+protected Q_SLOTS::
     /** Adds all group members to the parentgroup of group and removes the group */
     virtual void closeGroup(TaskGroup *group);
 

@@ -58,12 +58,12 @@ public:
     /** Moves Item to new index*/
     bool moveItem(AbstractPtr, int);
 
-protected Q_SLOTS:
+protected Q_SLOTS::
      /** Handles a new item*/
     virtual void handleItem(AbstractPtr);
      /** Checks if the order has to be updated must be connect to AbstractGroupableItem* */
     void check(AbstractPtr item = 0);
-//void removeGroup(); //FIXME necessary?
+    void removeGroup(); //FIXME necessary?
 
 protected:
     void setType(GroupManager::TaskSortingStrategy strategy);

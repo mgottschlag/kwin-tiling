@@ -85,6 +85,7 @@ TaskGroup::TaskGroup(GroupManager *parent)
 TaskGroup::~TaskGroup()
 {
     kDebug() << name();
+    //clear();
     delete d;
 }
 /*
