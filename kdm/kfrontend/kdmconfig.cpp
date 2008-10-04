@@ -134,7 +134,11 @@ void initConfig( void )
 			case 's': ptr = tuname.sysname; break;
 			case 'r': ptr = tuname.release; break;
 			case 'm': ptr = tuname.machine; break;
-			default: _greetString += i18n("[fix kdmrc]"); continue;
+			default: _greetString += i18nc("@item:intext substitution for "
+			                               "an undefined %X placeholder wrongly "
+			                               "given in the config file 'kdmrc', "
+			                               "telling the user to fix it",
+			                               "[fix kdmrc]"); continue;
 			}
 			_greetString += QString::fromLocal8Bit( ptr );
 		} else
