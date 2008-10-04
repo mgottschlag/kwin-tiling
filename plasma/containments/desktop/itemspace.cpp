@@ -423,9 +423,11 @@ ItemSpace::ItemGroup::~ItemGroup()
     // delete obstacles recursively
     foreach (ItemGroup *child, m_obstacles) {
         // remove our requests
-        for (int i = 0; i < child->m_requests.count(); i++) {
+        for (int i = 0; i < child->m_requests.count();) {
             if (child->m_requests[i].m_sourceGroup == this) {
                 child->m_requests.removeAt(i);
+            } else {
+                i++;
             }
         }
         // delete the group if it has no requests left
