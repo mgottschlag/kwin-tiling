@@ -115,57 +115,86 @@ class ItemSpace
     qreal shiftingSpacing;
 
     // TODO: explain
-    class PushTreeItem
+    class RootItemGroup;
+    class ItemGroup
     {
       public:
-        PushTreeItem(
-            ItemSpace *itemSpace,
-            PushTreeItem *parent,
-            qreal parentPushRequested,
-            int firstItem,
-            Direction direction,
-            qreal amount,
-            bool ignoreBorder
-        );
-        ~PushTreeItem();
+        ItemGroup(RootItemGroup *rootGroup);
+        ~ItemGroup();
 
-        void applyResults(ItemSpace *itemSpace, Direction direction);
+        // find all items intersecting with the item specified and
+        // populate m_groupItems
+        void populateGroup(int thisItem);
 
+        class Request
+        {
+          public:
+            Request(
+                ItemGroup *sourceGroup,
+                qreal sourceGroupPushRequested,
+                qreal pushRequested
+            );
+
+            void activate(ItemGroup *group);
+
+            ItemGroup *m_sourceGroup;
+            // the amount the parent wanted to move itself when we were asked to move
+            qreal m_sourceGroupPushRequested;
+            // the amount we were asked to move
+            qreal m_pushRequested;
+
+            // true if results have been applied to the group
+            bool m_applied;
+        };
+
+        // posts a move request
+        void addRequest (const class Request &request);
+
+        // recursively hanges the positions of items according to the results
+        // of move requests
+        void applyResults(ItemGroup *cameFrom);
+
+        // the maximum of all push requests
+        qreal m_largestPushRequested;
+        // the available space calculated so-far
         qreal m_pushAvailable;
 
       private:
+        // TODO: improve performance of these recursive lookup functions
+
         // return true if the item is either in this group
         // of any of the groups above
         bool itemIsCurrentOrAbove(int item);
-        // find all items intersecting with the item specified and
-        // populate m_groupItems
-        void findGroup(ItemSpace *itemSpace, int thisItem);
+        bool itemIsCurrentOrAboveRecurser(QList<ItemGroup *> *visited, ItemGroup *current, int item);
 
-        PushTreeItem *m_parent;
-        // the amount the parent wanted to move itself when we were created
-        qreal m_parentPushRequested;
-        // the amount we were asked to move (can be reduced while applying)
-        qreal m_pushRequested;
+        // check if a group node containing the item already exists
+        ItemGroup * findGroup(int item);
+        ItemGroup * findGroupRecurser(QList<ItemGroup *> *visited, ItemGroup *current, int item);
 
-        // the items belonging to this group
+        // the root group
+        RootItemGroup *m_root;
+
+        // move requests posted to this group
+        QList<Request> m_requests;
+        // items belonging to this group
         QList<int> m_groupItems;
-        // our children, the obstacle groups we asked to move
-        QList<PushTreeItem *> m_obstacles;
+        // groups we asked to move
+        QList<ItemGroup *> m_obstacles;
+    };
 
-        // TODO
-        // right not this is a tree structure corresponding to the recursion
-        // path, and more than one node will refer to the same item group 
-        // if it is in the way of multiple groups
-        // ideally, each group would be represented by no more that one node,
-        // and could be linked to from multiple nodes, thus our structure would
-        // become a directed acyclic graph
-        // this would also improve performance
+    // root group, contains some config vars
+    class RootItemGroup : public ItemGroup
+    {
+      public:
+        ItemSpace *m_itemSpace;
+        bool m_ignoreBorder;
+        Direction m_direction;
 
-        // HACK
-        // take care to only move a group the maximum move of all the nodes 
-        // referring to it, not just apply them all, by keeping track of moves
-        QRectF boundingRect(ItemSpace *itemSpace);
-        QRectF m_initialBoundingRect;
+        RootItemGroup(
+            ItemSpace *itemSpace,
+            bool ignoreBorder,
+            Direction direction
+        );
     };
 };
 
