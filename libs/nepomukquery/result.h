@@ -27,7 +27,7 @@
 
 #include <Soprano/Statement>
 
-#include <nepomuk/nepomuk_export.h>
+#include "nepomukquery_export.h"
 
 namespace Nepomuk {
     namespace Search {
@@ -38,7 +38,7 @@ namespace Nepomuk {
          *
          * \author Sebastian Trueg <trueg@kde.org>
          */
-        class NEPOMUK_EXPORT Result
+        class NEPOMUKQUERY_EXPORT Result
         {
         public:
             Result();

@@ -26,7 +26,7 @@
 
 #include <Soprano/LiteralValue>
 
-#include <nepomuk/nepomuk_export.h>
+#include "nepomukquery_export.h"
 
 
 namespace Nepomuk {
@@ -41,7 +41,7 @@ namespace Nepomuk {
          *
          * \author Sebastian Trueg <trueg@kde.org>
          */
-        class NEPOMUK_EXPORT Term
+        class NEPOMUKQUERY_EXPORT Term
         {
         public:
             /**
@@ -272,10 +272,10 @@ namespace Nepomuk {
             QSharedDataPointer<Private> d; 
         };
 
-        NEPOMUK_EXPORT uint qHash( const Nepomuk::Search::Term& );
+        NEPOMUKQUERY_EXPORT uint qHash( const Nepomuk::Search::Term& );
     }
 }
 
-NEPOMUK_EXPORT QDebug operator<<( QDebug, const Nepomuk::Search::Term& );
+NEPOMUKQUERY_EXPORT QDebug operator<<( QDebug, const Nepomuk::Search::Term& );
 
 #endif
