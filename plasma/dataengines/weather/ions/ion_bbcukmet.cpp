@@ -24,8 +24,12 @@
 class UKMETIon::Private : public QObject
 {
 public:
-    Private() { m_url = 0;}
-    ~Private() { delete m_url; }
+    Private() {
+        m_url = 0;
+    }
+    ~Private() {
+        delete m_url;
+    }
 
 private:
     struct XMLMapInfo {
@@ -92,49 +96,49 @@ void UKMETIon::init()
     setInitialized(true);
 }
 
-QMap<QString,IonInterface::ConditionIcons> UKMETIon::setupDayIconMappings(void)
+QMap<QString, IonInterface::ConditionIcons> UKMETIon::setupDayIconMappings(void)
 {
 //    ClearDay, FewCloudsDay, PartlyCloudyDay, Overcast,
 //    Showers, ScatteredShowers, Thunderstorm, Snow,
 //    FewCloudsNight, PartlyCloudyNight, ClearNight,
 //    Mist, NotAvailable
 
-      QMap<QString,ConditionIcons> dayList;
-      dayList["sunny"] = ClearDay;
-      dayList["sunny intervals"] = PartlyCloudyDay;
-      dayList["partly cloudy"] = PartlyCloudyDay;
-      dayList["cloudy"] = Overcast;
-      dayList["drizzle"] = LightRain;
-      dayList["misty"] = Mist;
-      dayList["hail showers"] = Hail;
-      dayList["light showers"] = Showers;
-      dayList["heavy showers"] = Rain;
-      return dayList;
+    QMap<QString, ConditionIcons> dayList;
+    dayList["sunny"] = ClearDay;
+    dayList["sunny intervals"] = PartlyCloudyDay;
+    dayList["partly cloudy"] = PartlyCloudyDay;
+    dayList["cloudy"] = Overcast;
+    dayList["drizzle"] = LightRain;
+    dayList["misty"] = Mist;
+    dayList["hail showers"] = Hail;
+    dayList["light showers"] = Showers;
+    dayList["heavy showers"] = Rain;
+    return dayList;
 }
 
-QMap<QString,IonInterface::ConditionIcons> UKMETIon::setupNightIconMappings(void)
+QMap<QString, IonInterface::ConditionIcons> UKMETIon::setupNightIconMappings(void)
 {
-      QMap<QString,ConditionIcons> nightList;
-      nightList["clear"] = ClearNight;
-      nightList["cloudy"] = Overcast;
-      nightList["partly cloudy"] = PartlyCloudyNight;
-      nightList["light showers"] = Showers;
-      nightList["drizzle"] = LightRain;
-      nightList["misty"] = Mist;
-      nightList["hail showers"] = Showers;
-      nightList["heavy showers"] = Rain;
-      return nightList;
+    QMap<QString, ConditionIcons> nightList;
+    nightList["clear"] = ClearNight;
+    nightList["cloudy"] = Overcast;
+    nightList["partly cloudy"] = PartlyCloudyNight;
+    nightList["light showers"] = Showers;
+    nightList["drizzle"] = LightRain;
+    nightList["misty"] = Mist;
+    nightList["hail showers"] = Showers;
+    nightList["heavy showers"] = Rain;
+    return nightList;
 }
 
-QMap<QString,IonInterface::ConditionIcons> const& UKMETIon::dayIcons(void)
+QMap<QString, IonInterface::ConditionIcons> const& UKMETIon::dayIcons(void)
 {
-    static QMap<QString,ConditionIcons> const dval = setupDayIconMappings();
+    static QMap<QString, ConditionIcons> const dval = setupDayIconMappings();
     return dval;
 }
 
-QMap<QString,IonInterface::ConditionIcons> const& UKMETIon::nightIcons(void)
+QMap<QString, IonInterface::ConditionIcons> const& UKMETIon::nightIcons(void)
 {
-    static QMap<QString,ConditionIcons> const nval = setupNightIconMappings();
+    static QMap<QString, ConditionIcons> const nval = setupNightIconMappings();
     return nval;
 }
 
@@ -157,9 +161,9 @@ bool UKMETIon::updateIonSource(const QString& source)
             d->m_place[QString("bbcukmet|%1").arg(sourceAction[2])].XMLurl = sourceAction[3];
             getXMLData(QString("%1|%2").arg(sourceAction[0]).arg(sourceAction[2]));
             return true;
-	} else { 
-	    return false;
-	}
+        } else {
+            return false;
+        }
     }
     return false;
 }
@@ -198,9 +202,9 @@ void UKMETIon::findPlace(const QString& place, const QString& source)
                 SLOT(setup_slotDataArrived(KIO::Job *, const QByteArray &)));
         connect(d->m_job, SIGNAL(result(KJob *)), this, SLOT(setup_slotJobFinished(KJob *)));
 
-	// Handle redirects for direct hit places.
-	connect(d->m_job, SIGNAL(redirection(KIO::Job *, const KUrl &)), this,
-		SLOT(setup_slotRedirected(KIO::Job *, const KUrl &)));
+        // Handle redirects for direct hit places.
+        connect(d->m_job, SIGNAL(redirection(KIO::Job *, const KUrl &)), this,
+                SLOT(setup_slotRedirected(KIO::Job *, const KUrl &)));
     }
 }
 
@@ -267,12 +271,12 @@ void UKMETIon::parseSearchLocations(const QString& source, QXmlStreamReader& xml
         }
 
         if (currentParagraph == 2) {
-           if (xml.isCharacters() && !xml.isWhitespace())  {
-	       QString dataText = xml.text().toString().trimmed();
-	       if (dataText.contains("No locations")) {
-		   break;
-	       }
-	   }
+            if (xml.isCharacters() && !xml.isWhitespace())  {
+                QString dataText = xml.text().toString().trimmed();
+                if (dataText.contains("No locations")) {
+                    break;
+                }
+            }
         }
 
         if (xml.isStartElement()) {
@@ -310,7 +314,7 @@ void UKMETIon::parseSearchLocations(const QString& source, QXmlStreamReader& xml
                         d->m_place[tmp].ukPlace = false;
                     }
                     d->m_locations.append(tmp);
-                } 
+                }
             }
         }
     }
@@ -342,26 +346,26 @@ void UKMETIon::setup_slotRedirected(KIO::Job *job, const KUrl &url)
     QStringList tokens = url.url().split("=");
     if (url.url().contains("xhtml")) { // We don't care about the first redirection (there is two)
         if (url.url().contains("world")) {
-	    obsUrl = "http://feeds.bbc.co.uk/weather/feeds/obs/world/" + tokens[2] + ".xml";
-	    flag = false;
-	} else {
-	    obsUrl = "http://feeds.bbc.co.uk/weather/feeds/obs/id/" + tokens[2] + ".xml";
-	    flag = true;
-	}
-	place = d->m_jobList[job].split("|")[2]; // Contains the source name (place in this case)
-	tmp = QString("bbcukmet|%1").arg(place);
-	place[0] = place[0].toUpper();
+            obsUrl = "http://feeds.bbc.co.uk/weather/feeds/obs/world/" + tokens[2] + ".xml";
+            flag = false;
+        } else {
+            obsUrl = "http://feeds.bbc.co.uk/weather/feeds/obs/id/" + tokens[2] + ".xml";
+            flag = true;
+        }
+        place = d->m_jobList[job].split("|")[2]; // Contains the source name (place in this case)
+        tmp = QString("bbcukmet|%1").arg(place);
+        place[0] = place[0].toUpper();
 
-	if (flag) { // This is a UK specific location
-	    d->m_place[tmp].XMLurl = obsUrl;
-	    d->m_place[tmp].place = place;
-	    d->m_place[tmp].ukPlace = true;
-	} else {
-	    d->m_place[tmp].XMLurl = obsUrl;
-	    d->m_place[tmp].place = place;
-	    d->m_place[tmp].ukPlace = false;
-	}
-	d->m_locations.append(tmp);
+        if (flag) { // This is a UK specific location
+            d->m_place[tmp].XMLurl = obsUrl;
+            d->m_place[tmp].place = place;
+            d->m_place[tmp].ukPlace = true;
+        } else {
+            d->m_place[tmp].XMLurl = obsUrl;
+            d->m_place[tmp].place = place;
+            d->m_place[tmp].ukPlace = false;
+        }
+        d->m_locations.append(tmp);
         validate(d->m_jobList[job]);
     }
 }
@@ -522,7 +526,7 @@ void UKMETIon::parseWeatherObservation(const QString& source, WeatherData& data,
                 d->m_dateFormat =  QDateTime::fromString(data.obsTime.split("at")[1].trimmed(), "hhmm 'GMT'");
                 data.iconPeriodHour = d->m_dateFormat.toString("hh").toInt();
                 data.iconPeriodAP = d->m_dateFormat.toString("ap");
- 
+
                 data.condition = conditionData[1].split(".")[0].trimmed();
 
             } else if (xml.name() == "link") {
@@ -681,10 +685,10 @@ void UKMETIon::validate(const QString& source)
 
     if (!d->m_locations.count()) {
         QStringList invalidPlace = source.split('|');
-	if (d->m_place[QString("bbcukmet|%1").arg(invalidPlace[2])].place.isEmpty()) {
+        if (d->m_place[QString("bbcukmet|%1").arg(invalidPlace[2])].place.isEmpty()) {
             setData(source, "validate", QString("bbcukmet|invalid|multiple|%1").arg(invalidPlace[2]));
-	}
-	d->m_locations.clear();
+        }
+        d->m_locations.clear();
         return;
     } else {
         QString placeList;
@@ -696,12 +700,12 @@ void UKMETIon::validate(const QString& source)
                 placeList.append(QString("|place|%1|extra|%2").arg(place.split("|")[1]).arg(d->m_place[place].XMLurl));
             }
         }
-	if (d->m_locations.count() > 1) {
+        if (d->m_locations.count() > 1) {
             setData(source, "validate", QString("bbcukmet|valid|multiple|place|%1").arg(placeList));
-	} else {
-	    placeList[0] = placeList[0].toUpper();
-	    setData(source, "validate", QString("bbcukmet|valid|single|place|%1").arg(placeList));
-	}
+        } else {
+            placeList[0] = placeList[0].toUpper();
+            setData(source, "validate", QString("bbcukmet|valid|single|place|%1").arg(placeList));
+        }
     }
     d->m_locations.clear();
 }
@@ -751,7 +755,7 @@ void UKMETIon::updateWeather(const QString& source)
 
     // Set number of forecasts per day/night supported
     setData(weatherSource, QString("Total Weather Days"), d->m_weatherData[source].forecasts.size());
- 
+
     foreach(const QString &forecastItem, forecastList) {
         fieldList = forecastItem.split('|');
 
@@ -888,8 +892,8 @@ QVector<QString> UKMETIon::forecasts(const QString& source)
                             .arg(d->m_weatherData[source].forecasts[i]->tempHigh) \
                             .arg(d->m_weatherData[source].forecasts[i]->tempLow) \
                             .arg("N/U"));
-                            //.arg(d->m_weatherData[source].forecasts[i]->windSpeed)
-                            //arg(d->m_weatherData[source].forecasts[i]->windDirection));
+        //.arg(d->m_weatherData[source].forecasts[i]->windSpeed)
+        //arg(d->m_weatherData[source].forecasts[i]->windDirection));
     }
 
     return forecastData;

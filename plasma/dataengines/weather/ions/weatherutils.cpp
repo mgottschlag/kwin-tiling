@@ -52,7 +52,7 @@ float convert(float value, int srcUnit, int destUnit)
         case WeatherUtils::Fahrenheit:
             return ((value - 273.15) * 1.8) + 32;
         };
-  
+
     case WeatherUtils::Kilometers:
         switch (destUnit) {
         case WeatherUtils::Miles:
@@ -76,7 +76,7 @@ float convert(float value, int srcUnit, int destUnit)
         case WeatherUtils::Beaufort:
             return metersPerSecondToBeaufort(value);
         };
-    
+
     case WeatherUtils::Miles:
         switch (destUnit) {
         case WeatherUtils::Kilometers:
@@ -97,7 +97,7 @@ float convert(float value, int srcUnit, int destUnit)
         case WeatherUtils::Hectopascals:
             return (value / 0.10);
         };
-   
+
     case WeatherUtils::InchesHG:
         switch (destUnit) {
         case WeatherUtils::Kilopascals:
@@ -106,13 +106,13 @@ float convert(float value, int srcUnit, int destUnit)
         case WeatherUtils::Hectopascals:
             return (value * 33.8637526);
         };
-    
+
     case WeatherUtils::Millibars:
         switch (destUnit) {
         case WeatherUtils::Kilopascals:
             return (value * 0.10);
         case WeatherUtils::InchesHG:
-	    return (value * 0.0295333727);
+            return (value * 0.0295333727);
         };
 
     case WeatherUtils::Centimeters:
@@ -122,15 +122,15 @@ float convert(float value, int srcUnit, int destUnit)
         case WeatherUtils::Inches:
             return (value * 0.393700787);
         };
-    
+
     case WeatherUtils::Millimeters:
         switch (destUnit) {
-        case WeatherUtils::Centimeters: 
-            return (value * 0.1);           
+        case WeatherUtils::Centimeters:
+            return (value * 0.1);
         case WeatherUtils::Inches:
             return (value * 0.0393700787);
         };
-   
+
     case WeatherUtils::Inches:
         switch (destUnit) {
         case WeatherUtils::Centimeters:
@@ -138,7 +138,7 @@ float convert(float value, int srcUnit, int destUnit)
         case WeatherUtils::Millimeters:
             return (value * 25.4);
         };
-  
+
     case WeatherUtils::Knots:
         switch (destUnit) {
         case WeatherUtils::Kilometers:
@@ -151,144 +151,144 @@ float convert(float value, int srcUnit, int destUnit)
             return knotsToBeaufort(value);
         };
     };
-   return 0;
+    return 0;
 }
 
 QString getUnitString(int unit, bool plain)
 {
     switch (unit) {
-        case WeatherUtils::Celsius:
-            if(plain)
-                return QString("C");
-            else
-                return i18nc("Celsius, temperature unit", "⁰C");
-                
-        case WeatherUtils::Fahrenheit:
-            if(plain)
-                return QString("F");
-            else
-                return i18nc("Fahrenheit, temperature unit", "⁰F");
-            
-        case WeatherUtils::Kelvin:
-            if(plain)
-                return QString("K");
-            else
-                return i18nc("Kelvin, temperature unit", "K");
-            
-        case WeatherUtils::Kilometers:
-            if(plain)
-                return QString("kmh");
-            else
-                return i18nc("kilometers per hour, windspeed unit", "km/h");
-            
-        case WeatherUtils::MetersPerSecond:
-            if(plain)
-                return QString("ms");
-            else
-                return i18nc("meters per second, windspeed unit", "m/s");
-            
-        case WeatherUtils::Miles:
-            if(plain)
-                return QString("mph");
-            else
-                return i18nc("miles per hour, windspeed unit", "mph");
-            
-        case WeatherUtils::Kilopascals:
-            if(plain)
-                return QString("kpa");
-            else
-                return i18nc("kilopascals, airpressure unit", "kPa");
-            
-        case WeatherUtils::InchesHG:
-            if(plain)
-                return QString("in");
-            else
-                return i18nc("inches hg, airpressure unit", "inHg");
-            
-        case WeatherUtils::Millibars:
-            if(plain)
-                return QString("mbar");
-            else
-                return i18nc("millibars, airpressure unit", "mbar");
-            
-        case WeatherUtils::Hectopascals:
-            if(plain)
-                return QString("hpa");
-            else
-                return i18nc("hectopascals, airpressure unit", "hPa");
-            
-        case WeatherUtils::Centimeters:
-            if(plain)
-                return QString("cm");
-            else
-                return i18nc("centimeters, length unit", "cm");
-            
-        case WeatherUtils::Millimeters:
-            if(plain)
-                return QString("mm");
-            else
-                return i18nc("millimeters, length unit", "mm");
-            
-        case WeatherUtils::Inches:
-            if(plain)
-                return QString("in");
-            else
-                return i18nc("inches, length unit", "in");
-            
-        case WeatherUtils::Knots:
-            if(plain)
-                return QString("kt");
-            else
-                return i18nc("knots, wind speed unit", "kt");
-            
-        case WeatherUtils::Beaufort:
-            if(plain)
-                return QString("bft");
-            else
-                return i18nc("beaufort, wind speed unit", "Bft");
-            
-        default:
-            return QString();
+    case WeatherUtils::Celsius:
+        if (plain)
+            return QString("C");
+        else
+            return i18nc("Celsius, temperature unit", "⁰C");
+
+    case WeatherUtils::Fahrenheit:
+        if (plain)
+            return QString("F");
+        else
+            return i18nc("Fahrenheit, temperature unit", "⁰F");
+
+    case WeatherUtils::Kelvin:
+        if (plain)
+            return QString("K");
+        else
+            return i18nc("Kelvin, temperature unit", "K");
+
+    case WeatherUtils::Kilometers:
+        if (plain)
+            return QString("kmh");
+        else
+            return i18nc("kilometers per hour, windspeed unit", "km/h");
+
+    case WeatherUtils::MetersPerSecond:
+        if (plain)
+            return QString("ms");
+        else
+            return i18nc("meters per second, windspeed unit", "m/s");
+
+    case WeatherUtils::Miles:
+        if (plain)
+            return QString("mph");
+        else
+            return i18nc("miles per hour, windspeed unit", "mph");
+
+    case WeatherUtils::Kilopascals:
+        if (plain)
+            return QString("kpa");
+        else
+            return i18nc("kilopascals, airpressure unit", "kPa");
+
+    case WeatherUtils::InchesHG:
+        if (plain)
+            return QString("in");
+        else
+            return i18nc("inches hg, airpressure unit", "inHg");
+
+    case WeatherUtils::Millibars:
+        if (plain)
+            return QString("mbar");
+        else
+            return i18nc("millibars, airpressure unit", "mbar");
+
+    case WeatherUtils::Hectopascals:
+        if (plain)
+            return QString("hpa");
+        else
+            return i18nc("hectopascals, airpressure unit", "hPa");
+
+    case WeatherUtils::Centimeters:
+        if (plain)
+            return QString("cm");
+        else
+            return i18nc("centimeters, length unit", "cm");
+
+    case WeatherUtils::Millimeters:
+        if (plain)
+            return QString("mm");
+        else
+            return i18nc("millimeters, length unit", "mm");
+
+    case WeatherUtils::Inches:
+        if (plain)
+            return QString("in");
+        else
+            return i18nc("inches, length unit", "in");
+
+    case WeatherUtils::Knots:
+        if (plain)
+            return QString("kt");
+        else
+            return i18nc("knots, wind speed unit", "kt");
+
+    case WeatherUtils::Beaufort:
+        if (plain)
+            return QString("bft");
+        else
+            return i18nc("beaufort, wind speed unit", "Bft");
+
+    default:
+        return QString();
     }
 }
 
 QString degreesToCardinal(float degrees)
 {
     QString direction;
-    if((degrees >= 348.75 && degrees <= 360) || (degrees > 0 && degrees <= 11.25))
+    if ((degrees >= 348.75 && degrees <= 360) || (degrees > 0 && degrees <= 11.25))
         direction = "N";
-    else if(degrees >= 11.25 && degrees < 33.75)
+    else if (degrees >= 11.25 && degrees < 33.75)
         direction = "NNE";
-    else if(degrees >= 33.75 && degrees < 56.25)
+    else if (degrees >= 33.75 && degrees < 56.25)
         direction = "NE";
-    else if(degrees >= 56.25 && degrees < 78.75)
+    else if (degrees >= 56.25 && degrees < 78.75)
         direction = "ENE";
-    else if(degrees >= 78.75 && degrees < 101.25)
+    else if (degrees >= 78.75 && degrees < 101.25)
         direction = "E";
-    else if(degrees >= 101.25 && degrees < 123.75)
+    else if (degrees >= 101.25 && degrees < 123.75)
         direction = "ESE";
-    else if(degrees >= 123.75 && degrees < 146.25)
+    else if (degrees >= 123.75 && degrees < 146.25)
         direction = "SE";
-    else if(degrees >= 146.25 && degrees < 168.75)
+    else if (degrees >= 146.25 && degrees < 168.75)
         direction = "SSE";
-    else if(degrees >= 168.75 && degrees < 191.25)
+    else if (degrees >= 168.75 && degrees < 191.25)
         direction = "S";
-    else if(degrees >= 191.25 && degrees < 213.75) 
+    else if (degrees >= 191.25 && degrees < 213.75)
         direction = "SSW";
-    else if(degrees >= 213.75 && degrees < 236.25)
+    else if (degrees >= 213.75 && degrees < 236.25)
         direction = "SW";
-    else if(degrees >= 236.25 && degrees < 258.75) 
+    else if (degrees >= 236.25 && degrees < 258.75)
         direction = "WSW";
-    else if(degrees >= 258.75 && degrees < 281.25)
+    else if (degrees >= 258.75 && degrees < 281.25)
         direction = "W";
-    else if(degrees >= 281.25 && degrees < 303.75) 
+    else if (degrees >= 281.25 && degrees < 303.75)
         direction = "WNW";
-    else if(degrees >= 303.75 && degrees < 326.25)
+    else if (degrees >= 303.75 && degrees < 326.25)
         direction = "NW";
-    else if(degrees >= 326.25 && degrees < 248.75) 
+    else if (degrees >= 326.25 && degrees < 248.75)
         direction = "NNW";
-    
-    if(!direction.isEmpty())
+
+    if (!direction.isEmpty())
         return direction;
     else
         return QString();

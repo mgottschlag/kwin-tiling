@@ -24,8 +24,12 @@
 class NOAAIon::Private : public QObject
 {
 public:
-    Private() { m_url=0; }
-    ~Private() { delete m_url; }
+    Private() {
+        m_url = 0;
+    }
+    ~Private() {
+        delete m_url;
+    }
 
 private:
     struct XMLMapInfo {
@@ -56,7 +60,7 @@ public:
     QDateTime m_dateFormat;
 };
 
-QMap<QString,IonInterface::ConditionIcons> NOAAIon::setupDayIconMappings(void)
+QMap<QString, IonInterface::ConditionIcons> NOAAIon::setupDayIconMappings(void)
 {
 
 //    ClearDay, FewCloudsDay, PartlyCloudyDay, Overcast,
@@ -64,27 +68,27 @@ QMap<QString,IonInterface::ConditionIcons> NOAAIon::setupDayIconMappings(void)
 //    FewCloudsNight, PartlyCloudyNight, ClearNight,
 //    Mist, NotAvailable
 //
-    QMap<QString,ConditionIcons> dayList;
+    QMap<QString, ConditionIcons> dayList;
     dayList["fair"] = FewCloudsDay;
     return dayList;
 }
 
-QMap<QString,IonInterface::ConditionIcons> NOAAIon::setupNightIconMappings(void)
+QMap<QString, IonInterface::ConditionIcons> NOAAIon::setupNightIconMappings(void)
 {
-    QMap<QString,ConditionIcons> nightList;
+    QMap<QString, ConditionIcons> nightList;
     nightList["fair"] = FewCloudsNight;
     return nightList;
 }
 
-QMap<QString,IonInterface::ConditionIcons> const& NOAAIon::dayIcons(void)
+QMap<QString, IonInterface::ConditionIcons> const& NOAAIon::dayIcons(void)
 {
-    static QMap<QString,ConditionIcons> const dval = setupDayIconMappings();
+    static QMap<QString, ConditionIcons> const dval = setupDayIconMappings();
     return dval;
 }
 
-QMap<QString,IonInterface::ConditionIcons> const& NOAAIon::nightIcons(void)
+QMap<QString, IonInterface::ConditionIcons> const& NOAAIon::nightIcons(void)
 {
-    static QMap<QString,ConditionIcons> const nval = setupNightIconMappings();
+    static QMap<QString, ConditionIcons> const nval = setupNightIconMappings();
     return nval;
 }
 
@@ -484,7 +488,7 @@ void NOAAIon::updateWeather(const QString& source)
 
     // Set number of forecasts per day/night supported, none for this ion right now
     setData(source, QString("Total Weather Days"), 0);
-    
+
     dataFields = wind(source);
     setData(source, "Wind Speed", dataFields["windSpeed"]);
 

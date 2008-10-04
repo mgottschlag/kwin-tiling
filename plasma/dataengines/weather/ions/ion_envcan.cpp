@@ -24,8 +24,12 @@
 class EnvCanadaIon::Private : public QObject
 {
 public:
-    Private() { m_url = 0; }
-    ~Private() { delete m_url; }
+    Private() {
+        m_url = 0;
+    }
+    ~Private() {
+        delete m_url;
+    }
 
 private:
     struct XMLMapInfo {
@@ -52,7 +56,7 @@ public:
     QXmlStreamReader m_xmlSetup;
     KUrl *m_url;
     KIO::TransferJob *m_job;
-    
+
     QDateTime m_dateFormat;
 };
 
@@ -97,14 +101,14 @@ void EnvCanadaIon::init()
     getXMLSetup();
 }
 
-QMap<QString,IonInterface::ConditionIcons> EnvCanadaIon::setupDayIconMappings(void)
+QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupDayIconMappings(void)
 {
 //    ClearDay, FewCloudsDay, PartlyCloudyDay, Overcast,
 //    Showers, ScatteredShowers, Thunderstorm, Snow,
 //    FewCloudsNight, PartlyCloudyNight, ClearNight,
 //    Mist, NotAvailable
 //
-    QMap<QString,ConditionIcons> dayList;
+    QMap<QString, ConditionIcons> dayList;
     dayList["sunny"] = ClearDay;
     dayList["mainly sunny"] = FewCloudsDay;
     dayList["partly cloudy"] = PartlyCloudyDay;
@@ -114,6 +118,7 @@ QMap<QString,IonInterface::ConditionIcons> EnvCanadaIon::setupDayIconMappings(vo
     dayList["increasing cloudiness"] = Overcast;
     dayList["cloudy"] = Overcast;
     dayList["overcast"] = Overcast;
+    dayList["snow at times heavy and blowing snow"] = Snow;
     dayList["light snow"] = LightSnow;
     dayList["snow grains"] = Flurries;
     dayList["light rainshower"] = LightRain;
@@ -132,7 +137,7 @@ QMap<QString,IonInterface::ConditionIcons> EnvCanadaIon::setupDayIconMappings(vo
     dayList["chance of flurries"] = Flurries; // ChanceFlurriesDay
     dayList["a few clouds"] = FewCloudsDay;
     dayList["a few showers"] = ChanceShowersDay;
-    dayList["a few rain showers or flurries"] = NotAvailable; 
+    dayList["a few rain showers or flurries"] = NotAvailable;
     dayList["chance of flurries or rain showers"] = NotAvailable;
     dayList["a few flurries"] = Flurries;
     dayList["hail"] = Hail;
@@ -147,9 +152,9 @@ QMap<QString,IonInterface::ConditionIcons> EnvCanadaIon::setupDayIconMappings(vo
     return dayList;
 }
 
-QMap<QString,IonInterface::ConditionIcons> EnvCanadaIon::setupNightIconMappings(void)
+QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupNightIconMappings(void)
 {
-    QMap<QString,ConditionIcons> nightList;
+    QMap<QString, ConditionIcons> nightList;
     nightList["clear"] = ClearNight;
     nightList["mainly clear"] = FewCloudsNight;
     nightList["clearing"] = ClearNight;
@@ -160,6 +165,7 @@ QMap<QString,IonInterface::ConditionIcons> EnvCanadaIon::setupNightIconMappings(
     nightList["cloudy"] = Overcast;
     nightList["overcast"] = Overcast;
     nightList["light snow"] = LightSnow;
+    nightList["snow at times heavy and blowing snow"] = Snow;
     nightList["snow grains"] = LightSnow;
     nightList["light rainshower"] = LightRain;
     nightList["light rain"] = LightRain;
@@ -187,15 +193,15 @@ QMap<QString,IonInterface::ConditionIcons> EnvCanadaIon::setupNightIconMappings(
     return nightList;
 }
 
-QMap<QString,IonInterface::ConditionIcons> const& EnvCanadaIon::dayIcons(void)
+QMap<QString, IonInterface::ConditionIcons> const& EnvCanadaIon::dayIcons(void)
 {
-    static QMap<QString,ConditionIcons> const dval = setupDayIconMappings();
+    static QMap<QString, ConditionIcons> const dval = setupDayIconMappings();
     return dval;
 }
 
-QMap<QString,IonInterface::ConditionIcons> const& EnvCanadaIon::nightIcons(void)
+QMap<QString, IonInterface::ConditionIcons> const& EnvCanadaIon::nightIcons(void)
 {
-    static QMap<QString,ConditionIcons> const nval = setupNightIconMappings();
+    static QMap<QString, ConditionIcons> const nval = setupNightIconMappings();
     return nval;
 }
 
@@ -265,7 +271,7 @@ void EnvCanadaIon::getXMLSetup()
 void EnvCanadaIon::getXMLData(const QString& source)
 {
     KUrl url;
-    
+
     // Demunge source name for key only.
     QString dataKey = source;
     dataKey.replace("|weather", "");
@@ -401,7 +407,7 @@ bool EnvCanadaIon::readXMLData(const QString& source, QXmlStreamReader& xml)
     data.comforttemp = "N/A";
     data.recordHigh = 0.0;
     data.recordLow = 0.0;
-   
+
     QString dataKey = source;
     dataKey.replace("|weather", "");
     data.shortTerritoryName = d->m_place[dataKey].territoryName;
@@ -464,30 +470,30 @@ void EnvCanadaIon::parseDateTime(WeatherData& data, QXmlStreamReader& xml, Weath
             else if (xml.name() == "timeStamp")
                 selectTimeStamp = xml.readElementText();
             else if (xml.name() == "textSummary") {
-                    if (dateType == "eventIssue") {
-                        if (event) {
-                            event->timestamp = xml.readElementText();
-                        }
-                    } else if (dateType == "observation") {
-                        xml.readElementText();
-                        d->m_dateFormat = QDateTime::fromString(selectTimeStamp,"yyyyMMddHHmmss");
-                        data.obsTimestamp = d->m_dateFormat.toString("dd.MM.yyyy @ hh:mm ap");
-                        data.iconPeriodHour = d->m_dateFormat.toString("hh").toInt();
-                        data.iconPeriodAP = d->m_dateFormat.toString("ap");
-                    } else if (dateType == "forecastIssue") {
-                        data.forecastTimestamp = xml.readElementText();
-                    } else if (dateType == "sunrise") {
-                        data.sunriseTimestamp = xml.readElementText();
-                    } else if (dateType == "sunset") {
-                        data.sunsetTimestamp = xml.readElementText();
-                    } else if (dateType == "moonrise") {
-                        data.moonriseTimestamp = xml.readElementText();
-                    } else if (dateType == "moonset") {
-                        data.moonsetTimestamp = xml.readElementText();
+                if (dateType == "eventIssue") {
+                    if (event) {
+                        event->timestamp = xml.readElementText();
                     }
+                } else if (dateType == "observation") {
+                    xml.readElementText();
+                    d->m_dateFormat = QDateTime::fromString(selectTimeStamp, "yyyyMMddHHmmss");
+                    data.obsTimestamp = d->m_dateFormat.toString("dd.MM.yyyy @ hh:mm ap");
+                    data.iconPeriodHour = d->m_dateFormat.toString("hh").toInt();
+                    data.iconPeriodAP = d->m_dateFormat.toString("ap");
+                } else if (dateType == "forecastIssue") {
+                    data.forecastTimestamp = xml.readElementText();
+                } else if (dateType == "sunrise") {
+                    data.sunriseTimestamp = xml.readElementText();
+                } else if (dateType == "sunset") {
+                    data.sunsetTimestamp = xml.readElementText();
+                } else if (dateType == "moonrise") {
+                    data.moonriseTimestamp = xml.readElementText();
+                } else if (dateType == "moonset") {
+                    data.moonsetTimestamp = xml.readElementText();
                 }
             }
         }
+    }
 }
 
 void EnvCanadaIon::parseLocations(WeatherData& data, QXmlStreamReader& xml)
@@ -617,7 +623,7 @@ void EnvCanadaIon::parseWarnings(WeatherData &data, QXmlStreamReader& xml)
             if (xml.name() == "dateTime") {
                 if (flag == 1) {
                     parseDateTime(data, xml, watch);
-                } 
+                }
                 if (flag == 2) {
                     parseDateTime(data, xml, warning);
                 }
@@ -640,10 +646,10 @@ void EnvCanadaIon::parseWarnings(WeatherData &data, QXmlStreamReader& xml)
                     watch->priority = xml.attributes().value("priority").toString();
                     watch->description = xml.attributes().value("description").toString();
                     flag = 1;
-                 }
+                }
 
                 if (eventType == "warning") {
-                    warning->url = eventURL; 
+                    warning->url = eventURL;
                     warning->type = eventType;
                     warning->priority = xml.attributes().value("priority").toString();
                     warning->description = xml.attributes().value("description").toString();
@@ -653,7 +659,7 @@ void EnvCanadaIon::parseWarnings(WeatherData &data, QXmlStreamReader& xml)
                 if (xml.name() != "dateTime") {
                     parseUnknownElement(xml);
                 }
-              }
+            }
         }
     }
     delete watch;
@@ -772,11 +778,11 @@ void EnvCanadaIon::parseShortForecast(WeatherData::ForecastInfo *forecast, QXmlS
             if (xml.name() == "textSummary") {
                 shortText = xml.readElementText();
                 if ((forecast->forecastPeriod == "tonight") || (forecast->forecastPeriod.contains("night"))) {
-                     forecast->iconName = getWeatherIcon(nightIcons(), shortText.toLower());
-                     forecast->shortForecast = shortText;
+                    forecast->iconName = getWeatherIcon(nightIcons(), shortText.toLower());
+                    forecast->shortForecast = shortText;
                 } else {
-                     forecast->iconName = getWeatherIcon(dayIcons(), shortText.toLower());
-                     forecast->shortForecast = shortText;
+                    forecast->iconName = getWeatherIcon(dayIcons(), shortText.toLower());
+                    forecast->shortForecast = shortText;
                 }
             }
         }
@@ -1077,11 +1083,11 @@ void EnvCanadaIon::updateWeather(const QString& source)
 
     // Check if we have warnings or watches
     for (int i = 0; i < d->m_weatherData[source].watches.size(); i++) {
-         fieldList = dataFields[QString("watch %1").arg(i)].split('|');
-         setData(source, QString("Watch Priority %1").arg(i), fieldList[0]);
-         setData(source, QString("Watch Description %1").arg(i), fieldList[1]);
-         setData(source, QString("Watch Info %1").arg(i), fieldList[2]);
-         setData(source, QString("Watch Timestamp %1").arg(i), fieldList[3]);
+        fieldList = dataFields[QString("watch %1").arg(i)].split('|');
+        setData(source, QString("Watch Priority %1").arg(i), fieldList[0]);
+        setData(source, QString("Watch Description %1").arg(i), fieldList[1]);
+        setData(source, QString("Watch Info %1").arg(i), fieldList[2]);
+        setData(source, QString("Watch Timestamp %1").arg(i), fieldList[3]);
     }
 
     dataFields = warnings(source);
@@ -1089,11 +1095,11 @@ void EnvCanadaIon::updateWeather(const QString& source)
     setData(source, QString("Total Warnings Issued"), d->m_weatherData[source].warnings.size());
 
     for (int k = 0; k < d->m_weatherData[source].warnings.size(); k++) {
-         fieldList = dataFields[QString("warning %1").arg(k)].split('|');
-         setData(source, QString("Warning Priority %1").arg(k), fieldList[0]);
-         setData(source, QString("Warning Description %1").arg(k), fieldList[1]);
-         setData(source, QString("Warning Info %1").arg(k), fieldList[2]);
-         setData(source, QString("Warning Timestamp %1").arg(k), fieldList[3]);
+        fieldList = dataFields[QString("warning %1").arg(k)].split('|');
+        setData(source, QString("Warning Priority %1").arg(k), fieldList[0]);
+        setData(source, QString("Warning Description %1").arg(k), fieldList[1]);
+        setData(source, QString("Warning Info %1").arg(k), fieldList[2]);
+        setData(source, QString("Warning Timestamp %1").arg(k), fieldList[3]);
     }
 
     forecastList = forecasts(source);
@@ -1107,11 +1113,11 @@ void EnvCanadaIon::updateWeather(const QString& source)
         setData(source, QString("Short Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5|%6") \
                 .arg(fieldList[0]).arg(fieldList[1]).arg(fieldList[2]).arg(fieldList[3]).arg(fieldList[4]).arg(fieldList[5]));
 
-/*
-        setData(source, QString("Long Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5|%6|%7|%8") \
-                .arg(fieldList[0]).arg(fieldList[2]).arg(fieldList[3]).arg(fieldList[4]).arg(fieldList[6]) \
-                .arg(fieldList[7]).arg(fieldList[8]).arg(fieldList[9]));
-*/
+        /*
+                setData(source, QString("Long Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5|%6|%7|%8") \
+                        .arg(fieldList[0]).arg(fieldList[2]).arg(fieldList[3]).arg(fieldList[4]).arg(fieldList[6]) \
+                        .arg(fieldList[7]).arg(fieldList[8]).arg(fieldList[9]));
+        */
         i++;
     }
 
@@ -1249,11 +1255,11 @@ QMap<QString, QString> EnvCanadaIon::watches(const QString& source)
     QMap<QString, QString> watchData;
     QString watchType;
     for (int i = 0; i < d->m_weatherData[source].watches.size(); ++i) {
-         watchType = QString("watch %1").arg(i);
-         watchData[watchType] = QString("%1|%2|%3|%4").arg(d->m_weatherData[source].watches[i]->priority) \
-                                .arg(d->m_weatherData[source].watches[i]->description) \
-                                .arg(d->m_weatherData[source].watches[i]->url) \
-                                .arg(d->m_weatherData[source].watches[i]->timestamp);
+        watchType = QString("watch %1").arg(i);
+        watchData[watchType] = QString("%1|%2|%3|%4").arg(d->m_weatherData[source].watches[i]->priority) \
+                               .arg(d->m_weatherData[source].watches[i]->description) \
+                               .arg(d->m_weatherData[source].watches[i]->url) \
+                               .arg(d->m_weatherData[source].watches[i]->timestamp);
     }
     return watchData;
 }
@@ -1263,8 +1269,8 @@ QMap<QString, QString> EnvCanadaIon::warnings(const QString& source)
     QMap<QString, QString> warningData;
     QString warnType;
     for (int i = 0; i < d->m_weatherData[source].warnings.size(); ++i) {
-         warnType = QString("warning %1").arg(i);
-         warningData[warnType] = QString("%1|%2|%3|%4").arg(d->m_weatherData[source].warnings[i]->priority) \
+        warnType = QString("warning %1").arg(i);
+        warningData[warnType] = QString("%1|%2|%3|%4").arg(d->m_weatherData[source].warnings[i]->priority) \
                                 .arg(d->m_weatherData[source].warnings[i]->description) \
                                 .arg(d->m_weatherData[source].warnings[i]->url) \
                                 .arg(d->m_weatherData[source].warnings[i]->timestamp);
@@ -1318,19 +1324,19 @@ QVector<QString> EnvCanadaIon::forecasts(const QString& source)
         if (d->m_weatherData[source].forecasts[i]->forecastPeriod.contains("Tonight")) {
             d->m_weatherData[source].forecasts[i]->forecastPeriod.replace("Tonight", "nite");
         }
-       
+
         if (d->m_weatherData[source].forecasts[i]->forecastPeriod.contains("night")) {
-            d->m_weatherData[source].forecasts[i]->forecastPeriod.replace("night","nt");
+            d->m_weatherData[source].forecasts[i]->forecastPeriod.replace("night", "nt");
         }
- 
+
         if (d->m_weatherData[source].forecasts[i]->forecastPeriod.contains("Saturday")) {
             d->m_weatherData[source].forecasts[i]->forecastPeriod.replace("Saturday", "Sat");
         }
-        
+
         if (d->m_weatherData[source].forecasts[i]->forecastPeriod.contains("Sunday")) {
             d->m_weatherData[source].forecasts[i]->forecastPeriod.replace("Sunday", "Sun");
         }
-        
+
         if (d->m_weatherData[source].forecasts[i]->forecastPeriod.contains("Monday")) {
             d->m_weatherData[source].forecasts[i]->forecastPeriod.replace("Monday", "Mon");
         }
@@ -1351,12 +1357,12 @@ QVector<QString> EnvCanadaIon::forecasts(const QString& source)
         }
 
         forecastData.append(QString("%1|%2|%3|%4|%5|%6") \
-                             .arg(d->m_weatherData[source].forecasts[i]->forecastPeriod) \
-                             .arg(d->m_weatherData[source].forecasts[i]->iconName) \
-                             .arg(d->m_weatherData[source].forecasts[i]->shortForecast) \
-                             .arg(d->m_weatherData[source].forecasts[i]->forecastTempHigh) \
-                             .arg(d->m_weatherData[source].forecasts[i]->forecastTempLow) \
-                             .arg(d->m_weatherData[source].forecasts[i]->popPrecent));
+                            .arg(d->m_weatherData[source].forecasts[i]->forecastPeriod) \
+                            .arg(d->m_weatherData[source].forecasts[i]->iconName) \
+                            .arg(d->m_weatherData[source].forecasts[i]->shortForecast) \
+                            .arg(d->m_weatherData[source].forecasts[i]->forecastTempHigh) \
+                            .arg(d->m_weatherData[source].forecasts[i]->forecastTempLow) \
+                            .arg(d->m_weatherData[source].forecasts[i]->popPrecent));
     }
     return forecastData;
 }
@@ -1482,7 +1488,7 @@ QMap<QString, QString> EnvCanadaIon::yesterdayWeather(const QString& source)
         } else if (d->m_weatherData[source].prevPrecipType == "cm") {
             yesterdayInfo.insert("prevPrecipUnit", QString::number(WeatherUtils::Centimeters));
         } else {
-            yesterdayInfo.insert("prevPrecipUnit", QString::number(WeatherUtils::NoUnit)); 
+            yesterdayInfo.insert("prevPrecipUnit", QString::number(WeatherUtils::NoUnit));
         }
     }
 

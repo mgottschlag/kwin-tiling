@@ -87,11 +87,11 @@ protected slots:
 
 private:
     /* NOAA Methods - Internal for Ion */
-    QMap<QString,ConditionIcons> setupDayIconMappings(void);
-    QMap<QString,ConditionIcons> setupNightIconMappings(void);
+    QMap<QString, ConditionIcons> setupDayIconMappings(void);
+    QMap<QString, ConditionIcons> setupNightIconMappings(void);
 
-    QMap<QString,ConditionIcons> const& nightIcons(void);
-    QMap<QString,ConditionIcons> const& dayIcons(void);
+    QMap<QString, ConditionIcons> const& nightIcons(void);
+    QMap<QString, ConditionIcons> const& dayIcons(void);
 
     // Place information
     QString country(const QString& source);

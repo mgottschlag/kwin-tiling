@@ -105,45 +105,45 @@ void IonInterface::setInitialized(bool initialized)
  */
 QString IonInterface::getWeatherIcon(const QMap<QString, ConditionIcons> &ConditionList, const QString& condition)
 {
-    switch(ConditionList[condition.toLower()]) {
-          case ClearDay:
-               return "weather-clear";
-          case FewCloudsDay:
-               return "weather-few-clouds";
-          case PartlyCloudyDay:
-               return "weather-clouds";
-          case Overcast:
-               return "weather-many-clouds";
-          case Rain:
-               return "weather-showers";
-          case LightRain:
-               return "weather-showers-scattered";
-          case Showers:
-               return "weather-showers-scattered";
-          case ChanceShowersDay:
-               return "weather-showers-scattered-day";
-          case ChanceShowersNight:
-               return "weather-showers-scattered-night";
-          case Thunderstorm:
-               return "weather-storm";
-          case Hail:
-               return "weather-hail";
-          case Snow:
-               return "weather-snow";
-          case LightSnow:
-               return "weather-snow-scattered";
-          case Flurries:
-               return "weather-snow-scattered";
-          case FewCloudsNight:
-               return "weather-few-clouds-night";
-          case PartlyCloudyNight:
-               return "weather-clouds-night";
-          case ClearNight:
-               return "weather-clear-night";
-          case Mist:
-               return "weather-mist";
-          case NotAvailable:
-               return "weather-none-available";
-          }
-     return "weather-none-available";
+    switch (ConditionList[condition.toLower()]) {
+    case ClearDay:
+        return "weather-clear";
+    case FewCloudsDay:
+        return "weather-few-clouds";
+    case PartlyCloudyDay:
+        return "weather-clouds";
+    case Overcast:
+        return "weather-many-clouds";
+    case Rain:
+        return "weather-showers";
+    case LightRain:
+        return "weather-showers-scattered";
+    case Showers:
+        return "weather-showers-scattered";
+    case ChanceShowersDay:
+        return "weather-showers-scattered-day";
+    case ChanceShowersNight:
+        return "weather-showers-scattered-night";
+    case Thunderstorm:
+        return "weather-storm";
+    case Hail:
+        return "weather-hail";
+    case Snow:
+        return "weather-snow";
+    case LightSnow:
+        return "weather-snow-scattered";
+    case Flurries:
+        return "weather-snow-scattered";
+    case FewCloudsNight:
+        return "weather-few-clouds-night";
+    case PartlyCloudyNight:
+        return "weather-clouds-night";
+    case ClearNight:
+        return "weather-clear-night";
+    case Mist:
+        return "weather-mist";
+    case NotAvailable:
+        return "weather-none-available";
+    }
+    return "weather-none-available";
 }

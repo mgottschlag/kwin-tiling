@@ -42,7 +42,8 @@ public:
     enum ConditionIcons { ClearDay = 1, FewCloudsDay, PartlyCloudyDay, Overcast,
                           Rain, LightRain, Showers, ChanceShowersDay, Thunderstorm, Hail,
                           Snow, LightSnow, Flurries, FewCloudsNight, ChanceShowersNight,
-                          PartlyCloudyNight, ClearNight, Mist, NotAvailable };
+                          PartlyCloudyNight, ClearNight, Mist, NotAvailable
+                        };
 
     typedef QHash<QString, IonInterface*> IonDict; // Define Dict as a QHash for Ions
 
@@ -79,7 +80,7 @@ public:
      * @return icon name
      */
     QString getWeatherIcon(const QMap<QString, ConditionIcons> &ConditionList, const QString& condition);
-  
+
 public Q_SLOTS:
 
     /**
