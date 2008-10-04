@@ -40,9 +40,9 @@ class ION_EXPORT IonInterface : public Plasma::DataEngine
 public:
 
     enum ConditionIcons { ClearDay = 1, FewCloudsDay, PartlyCloudyDay, Overcast,
-                          Showers, ScatteredShowers, Thunderstorm, Snow,
-                          FewCloudsNight, PartlyCloudyNight, ClearNight,
-                          Mist, NotAvailable };
+                          Rain, LightRain, Showers, ChanceShowersDay, Thunderstorm, Hail,
+                          Snow, LightSnow, Flurries, FewCloudsNight, ChanceShowersNight,
+                          PartlyCloudyNight, ClearNight, Mist, NotAvailable };
 
     typedef QHash<QString, IonInterface*> IonDict; // Define Dict as a QHash for Ions
 

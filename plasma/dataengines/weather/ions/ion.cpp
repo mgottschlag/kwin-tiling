@@ -114,14 +114,26 @@ QString IonInterface::getWeatherIcon(const QMap<QString, ConditionIcons> &Condit
                return "weather-clouds";
           case Overcast:
                return "weather-many-clouds";
-          case Showers:
+          case Rain:
                return "weather-showers";
-          case ScatteredShowers:
+          case LightRain:
                return "weather-showers-scattered";
+          case Showers:
+               return "weather-showers-scattered";
+          case ChanceShowersDay:
+               return "weather-showers-scattered-day";
+          case ChanceShowersNight:
+               return "weather-showers-scattered-night";
           case Thunderstorm:
                return "weather-storm";
+          case Hail:
+               return "weather-hail";
           case Snow:
                return "weather-snow";
+          case LightSnow:
+               return "weather-snow-scattered";
+          case Flurries:
+               return "weather-snow-scattered";
           case FewCloudsNight:
                return "weather-few-clouds-night";
           case PartlyCloudyNight:
