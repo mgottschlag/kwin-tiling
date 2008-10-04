@@ -104,11 +104,11 @@ QMap<QString,IonInterface::ConditionIcons> UKMETIon::setupDayIconMappings(void)
       dayList["sunny intervals"] = PartlyCloudyDay;
       dayList["partly cloudy"] = PartlyCloudyDay;
       dayList["cloudy"] = Overcast;
-      dayList["drizzle"] = ScatteredShowers;
+      dayList["drizzle"] = LightRain;
       dayList["misty"] = Mist;
-      dayList["hail showers"] = Showers;
-      dayList["light showers"] = ScatteredShowers;
-      dayList["heavy showers"] = Showers;
+      dayList["hail showers"] = Hail;
+      dayList["light showers"] = Showers;
+      dayList["heavy showers"] = Rain;
       return dayList;
 }
 
@@ -118,11 +118,11 @@ QMap<QString,IonInterface::ConditionIcons> UKMETIon::setupNightIconMappings(void
       nightList["clear"] = ClearNight;
       nightList["cloudy"] = Overcast;
       nightList["partly cloudy"] = PartlyCloudyNight;
-      nightList["light showers"] = ScatteredShowers;
-      nightList["drizzle"] = ScatteredShowers;
+      nightList["light showers"] = Showers;
+      nightList["drizzle"] = LightRain;
       nightList["misty"] = Mist;
       nightList["hail showers"] = Showers;
-      nightList["heavy showers"] = Showers;
+      nightList["heavy showers"] = Rain;
       return nightList;
 }
 
