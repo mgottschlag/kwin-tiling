@@ -45,7 +45,9 @@
 #include <kshell.h>
 #include <khbox.h>
 
+#ifndef Q_WS_WIN
 #include "khotkeys.h"
+#endif
 
 #include "menuinfo.h"
 
@@ -240,10 +242,10 @@ BasicTab::BasicTab( QWidget *parent )
     advancedLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::MinimumExpanding));
     
     addTab(advanced, i18n("Advanced"));
-
+#ifndef Q_WS_WIN
     if (!KHotKeys::present())
         general_group_keybind->hide();
-
+#endif
     slotDisableAction();
 }
 
@@ -373,6 +375,7 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
     _iconButton->setIcon(df->readIcon());
 
     // key binding part
+#ifndef Q_WS_WIN
     if( KHotKeys::present())
     {
         if ( !entryInfo->shortcut().isEmpty() )
@@ -380,7 +383,7 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
         else
             _keyEdit->clearKeySequence();
     }
-
+#endif
     QString temp = df->desktopGroup().readEntry("Exec");
     if (temp.startsWith("ksystraycmd "))
     {
@@ -523,7 +526,7 @@ void BasicTab::slotCapturedKeySequence(const QKeySequence& seq)
     if (signalsBlocked())
        return;
     KShortcut cut(seq, QKeySequence());
-
+#ifndef Q_WS_WIN
     if (_menuEntryInfo->isShortcutAvailable( cut ) && KHotKeys::present() )
     {
        _menuEntryInfo->setShortcut( cut );
@@ -533,7 +536,7 @@ void BasicTab::slotCapturedKeySequence(const QKeySequence& seq)
        // We will not assign the shortcut so reset the visible key sequence
        _keyEdit->setKeySequence(QKeySequence());
     }
-
+#endif
     if (_menuEntryInfo)
        emit changed( _menuEntryInfo );
 }

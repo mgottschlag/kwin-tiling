@@ -23,7 +23,9 @@
 #include <QRegExp>
 
 #include <kdesktopfile.h>
+#ifndef Q_WS_WIN
 #include <khotkeys.h>
+#endif
 #include <kstandarddirs.h>
 #include <kconfiggroup.h>
 
@@ -179,6 +181,7 @@ void MenuFolderInfo::save(MenuFile *menuFile)
 {
    if (s_deletedApps)
    {
+#ifndef Q_WS_WIN
       // Remove hotkeys for applications that have been deleted
       for(QStringList::ConstIterator it = s_deletedApps->begin();
           it != s_deletedApps->end(); ++it)
@@ -186,6 +189,7 @@ void MenuFolderInfo::save(MenuFile *menuFile)
          // The shorcut is deleted if we set a empty sequence
          KHotKeys::changeMenuEntryShortcut(*it, "");
       }
+#endif
       delete s_deletedApps;
       s_deletedApps = 0;
    }
@@ -343,7 +347,7 @@ void MenuEntryInfo::save()
       m_desktopFile->sync();
       dirty = false;
    }
-
+#ifndef Q_WS_WIN
    if (shortcutDirty)
    {
       if( KHotKeys::present())
@@ -352,6 +356,7 @@ void MenuEntryInfo::save()
       }
       shortcutDirty = false;
    }
+#endif
 }
 
 void MenuEntryInfo::setCaption(const QString &_caption)
@@ -384,6 +389,7 @@ void MenuEntryInfo::setIcon(const QString &_icon)
 
 KShortcut MenuEntryInfo::shortcut()
 {
+#ifndef Q_WS_WIN
    if (!shortcutLoaded)
    {
       shortcutLoaded = true;
@@ -392,6 +398,7 @@ KShortcut MenuEntryInfo::shortcut()
          shortCut = KShortcut(KHotKeys::getMenuEntryShortcut( service->storageId() ));
       }
    }
+#endif
    return shortCut;
 }
 

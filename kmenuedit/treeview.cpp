@@ -60,7 +60,6 @@
 
 #include "treeview.h"
 #include "treeview.moc"
-#include "khotkeys.h"
 #include "menufile.h"
 #include "menuinfo.h"
 
