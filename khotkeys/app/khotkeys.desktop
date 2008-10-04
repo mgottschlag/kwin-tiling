@@ -37,6 +37,7 @@ Name[wa]=KTchôdèsTapes
 Name[x-test]=xxKHotKeysxx
 Name[zh_TW]=KDE 熱鍵
 Comment=KHotKeys daemon. No daemon, no hotkeys.
+Comment[el]=Δαίμονας KHotKeys.
 Comment[gl]=Daemon KHotKey. Se non funciona o daemon, non hai hotkeys.
 Comment[kk]=KHotKeys қызметі. Бұл қызметсіз перне тіркесімідері де жоқ.
 Comment[km]=ដេមិន KHotKeys ។ គ្មាន​ដេមិន គ្មាន​ hotkeys ។
