@@ -653,7 +653,6 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
    aaSettings=new FontAASettings(this);
 #endif
 
-   load();
 }
 
 KFonts::~KFonts()
