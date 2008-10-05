@@ -50,7 +50,7 @@ public:
     QString name() const;
     void setName(const QString &newName);
 
-    virtual bool isGroupItem() const{return true;};
+    virtual bool isGroupItem() const{ return true; }
     bool isRootGroup();
 
     /** only true if item is in this group */
