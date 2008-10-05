@@ -49,7 +49,8 @@ TaskItem::TaskItem(QObject *parent,TaskPtr task)
     d(new Private)
 {
     d->task = task;
-    connect(task.data(), SIGNAL(changed(::TaskManager::TaskChanges)), this, SIGNAL(changed()));
+    connect(task.data(), SIGNAL(changed(::TaskManager::TaskChanges)),
+            this, SIGNAL(changed(::TaskManager::TaskChanges)));
     connect(task.data(), SIGNAL(destroyed()), this, SLOT(deleteLater())); //this item isn't useful anymore if the Task was closed
 }
 
@@ -79,7 +80,8 @@ void TaskItem::setTaskPointer(TaskPtr task)
         d->startupTask = 0;
     }
     d->task = task;
-    connect(task.data(), SIGNAL(changed(::TaskManager::TaskChanges)), this, SIGNAL(changed()));
+    connect(task.data(), SIGNAL(changed(::TaskManager::TaskChanges)),
+            this, SIGNAL(changed(::TaskManager::TaskChanges)));
     connect(task.data(), SIGNAL(destroyed()), this, SLOT(deleteLater()));
     emit gotTaskPointer();
 }
