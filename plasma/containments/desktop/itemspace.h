@@ -114,8 +114,12 @@ class ItemSpace
     qreal screenSpacing;
     qreal shiftingSpacing;
 
-    // TODO: explain
     class RootItemGroup;
+
+    /**
+     * Represents a group of overlapping items in the process of
+     * push calculation.
+     **/
     class ItemGroup
     {
       public:
@@ -129,29 +133,71 @@ class ItemSpace
         class Request
         {
           public:
+            /**
+             * Create a push request. No calculations will be performed.
+             *
+             * @param sourceGroup the group that posted the request, or
+             *                    NULL if it was posted manually.
+             * @param sourceGroupPushRequested how much the posting group wanted
+             *                                 to move itself when the request was
+             *                                 posted (if sourceGroup is not NULL)
+             * @param pushRequested how much the group concerned is asked to move
+             **/
             Request(
                 ItemGroup *sourceGroup,
                 qreal sourceGroupPushRequested,
                 qreal pushRequested
             );
 
+            /**
+             * Perform obstacle searching and post push request to obstacle groups.
+             * This is the main method involved in recursive push calculation.
+             *
+             * If an item is found to be in the way of any of the group's items,
+             * its ItemGroup will be created if it doesn't have one already,
+             * and a new push request will bo posted to it.
+             *
+             * If the offending group can not move as much as we need it to,
+             * we limit the amount our group wants to move, and future obstacles
+             * will be asked to move less than they would have been had there
+             * been no obstacle.
+             *
+             * @param group the ItemGroup this push request belongs to
+             **/
             void activate(ItemGroup *group);
 
+            // saved from constructor
             ItemGroup *m_sourceGroup;
-            // the amount the parent wanted to move itself when we were asked to move
             qreal m_sourceGroupPushRequested;
-            // the amount we were asked to move
             qreal m_pushRequested;
 
-            // true if results have been applied to the group
-            bool m_applied;
+            // true if the request has already been reached by applyResults
+            // and compensated for the reduction of the requester's move
+            bool m_compensated;
         };
 
-        // posts a move request
+        /**
+         * Post a move request.
+         * This adds the request to the group and calls activate on it.
+         **/
         void addRequest (const class Request &request);
 
-        // recursively hanges the positions of items according to the results
-        // of move requests
+        /**
+         * Apply the results of initial push calculation, moving the items.
+         *
+         * For each push request belonging to the calling/requesting group,
+         * the requesting group is checked for how much it still wants to
+         * move itself, and the value is compared to how much it wanted to
+         * when the request was posted. The amount of the request is reduced
+         * by the difference.
+         *
+         * If all requests have been compensated, it updates the amount it
+         * would like to move (the maximum of all move requests) and
+         * physically moves its items. In that case it also calls applyResults
+         * on the item groups it has requested to move, which will see the new
+         * push amount.
+         * (Otherwise, another requesting group will reach it later on.)
+         **/
         void applyResults(ItemGroup *cameFrom);
 
         // the maximum of all push requests

@@ -451,7 +451,7 @@ ItemSpace::ItemGroup::Request::Request(
   : m_sourceGroup(sourceGroup),
     m_sourceGroupPushRequested(sourceGroupPushRequested),
     m_pushRequested(pushRequested),
-    m_applied(false)
+    m_compensated(false)
 {
 }
 
@@ -577,8 +577,8 @@ void ItemSpace::ItemGroup::applyResults(ItemGroup *cameFrom)
         if (request.m_sourceGroup == cameFrom) {
             qreal pushLost = request.m_sourceGroupPushRequested - cameFrom->m_pushAvailable;
             request.m_pushRequested -= pushLost;
-            request.m_applied = true;
-        } else if (!request.m_applied) {
+            request.m_compensated = true;
+        } else if (!request.m_compensated) {
             notComplete = true;
         }
     }
