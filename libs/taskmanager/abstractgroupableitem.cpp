@@ -58,7 +58,7 @@ AbstractGroupableItem::AbstractGroupableItem(QObject *parent)
 
 AbstractGroupableItem::~AbstractGroupableItem()
 {
-    kDebug();
+    //kDebug();
     emit destroyed(this);
     if (parentGroup()) {
         kDebug() << "Error: item gets destroyed but still has a parent group";
