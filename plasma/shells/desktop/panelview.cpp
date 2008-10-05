@@ -75,11 +75,11 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
         connect(panel, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
         connect(panel, SIGNAL(destroyed(QObject*)), this, SLOT(panelDeleted()));
         connect(panel, SIGNAL(toolBoxToggled()), this, SLOT(togglePanelController()));
+
+        kDebug() << "Panel geometry is" << panel->geometry();
     }
 
     connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
-
-    kDebug() << "Panel geometry is" << panel->geometry();
 
     // Graphics view setup
     setFrameStyle(QFrame::NoFrame);
