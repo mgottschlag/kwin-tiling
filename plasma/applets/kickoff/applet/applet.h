@@ -46,7 +46,7 @@ public:
 
         void init();
 
-        //void constraintsEvent(Plasma::Constraints constraints);
+        void constraintsEvent(Plasma::Constraints constraints);
 
         virtual QList<QAction*> contextualActions();
 
