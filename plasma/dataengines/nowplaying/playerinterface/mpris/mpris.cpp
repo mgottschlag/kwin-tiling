@@ -341,7 +341,7 @@ void Mpris::capsChanged(int caps)
 {
     kDebug() << m_playerName << "capabilities:" << caps;
     m_caps = (DBusCaps)caps;
-    if (!caps & CAN_PROVIDE_METADATA) {
+    if (!(caps & CAN_PROVIDE_METADATA)) {
         m_metadata.clear();
     }
 }
