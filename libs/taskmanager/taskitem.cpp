@@ -107,7 +107,7 @@ QIcon TaskItem::icon() const
     if (!d->task) {
         return QIcon();
     }
-    return task()->icon();
+    return d->task->icon();
 }
 
 QString TaskItem::name() const
@@ -115,7 +115,7 @@ QString TaskItem::name() const
     if (!d->task) {
         return QString();
     }
-    return task()->visibleName();
+    return d->task->visibleName();
 }
 
 void TaskItem::setShaded(bool state)
@@ -123,7 +123,7 @@ void TaskItem::setShaded(bool state)
     if (!d->task) {
         return;
     }
-    task()->setShaded(state);
+    d->task->setShaded(state);
 }
 
 void TaskItem::toggleShaded()
@@ -131,15 +131,15 @@ void TaskItem::toggleShaded()
     if (!d->task) {
         return;
     }
-    task()->toggleShaded();
+    d->task->toggleShaded();
 }
 
-bool TaskItem::isShaded()
+bool TaskItem::isShaded() const
 {
     if (!d->task) {
         return false;
     }
-    return task()->isShaded();
+    return d->task->isShaded();
 }
 
 void TaskItem::toDesktop(int desk)
@@ -147,31 +147,25 @@ void TaskItem::toDesktop(int desk)
     if (!d->task) {
         return;
     }
-    task()->toDesktop(desk);
+    d->task->toDesktop(desk);
 }
 
-bool TaskItem::isOnCurrentDesktop()
+bool TaskItem::isOnCurrentDesktop() const
 {
-    if (!d->task) {
-        return false;
-    }
-    return task()->isOnCurrentDesktop();
+    return d->task && d->task->isOnCurrentDesktop();
 }
 
-bool TaskItem::isOnAllDesktops()
+bool TaskItem::isOnAllDesktops() const
 {
-    if (!d->task) {
-        return false;
-    }
-    return task()->isOnAllDesktops();
+    return d->task && d->task->isOnAllDesktops();
 }
 
-int TaskItem::desktop()
+int TaskItem::desktop() const
 {
     if (!d->task) {
         return 0;
     }
-    return task()->desktop();
+    return d->task->desktop();
 }
 
 void TaskItem::setMaximized(bool state)
@@ -179,7 +173,7 @@ void TaskItem::setMaximized(bool state)
     if (!d->task) {
         return;
     }
-    task()->setMaximized(state);
+    d->task->setMaximized(state);
 }
 
 void TaskItem::toggleMaximized()
@@ -187,15 +181,12 @@ void TaskItem::toggleMaximized()
     if (!d->task) {
         return;
     }
-    task()->toggleMaximized();
+    d->task->toggleMaximized();
 }
 
-bool TaskItem::isMaximized()
+bool TaskItem::isMaximized() const
 {
-    if (!d->task) {
-        return false;
-    }
-    return task()->isMaximized();
+    return d->task && d->task->isMaximized();
 }
 
 void TaskItem::setMinimized(bool state)
@@ -203,7 +194,7 @@ void TaskItem::setMinimized(bool state)
     if (!d->task) {
         return;
     }
-    task()->setIconified(state);
+    d->task->setIconified(state);
 }
 
 void TaskItem::toggleMinimized()
@@ -211,15 +202,15 @@ void TaskItem::toggleMinimized()
     if (!d->task) {
         return;
     }
-    task()->toggleIconified();
+    d->task->toggleIconified();
 }
 
-bool TaskItem::isMinimized()
+bool TaskItem::isMinimized() const
 {
     if (!d->task) {
         return false;
     }
-    return task()->isMinimized();
+    return d->task->isMinimized();
 }
 
 void TaskItem::setFullScreen(bool state)
@@ -227,7 +218,7 @@ void TaskItem::setFullScreen(bool state)
     if (!d->task) {
         return;
     }
-    task()->setFullScreen(state);
+    d->task->setFullScreen(state);
 }
 
 void TaskItem::toggleFullScreen()
@@ -235,15 +226,15 @@ void TaskItem::toggleFullScreen()
     if (!d->task) {
         return;
     }
-    task()->toggleFullScreen();
+    d->task->toggleFullScreen();
 }
 
-bool TaskItem::isFullScreen()
+bool TaskItem::isFullScreen() const
 {
     if (!d->task) {
         return false;
     }
-    return task()->isFullScreen();
+    return d->task->isFullScreen();
 }
 
 void TaskItem::setKeptBelowOthers(bool state)
@@ -251,7 +242,7 @@ void TaskItem::setKeptBelowOthers(bool state)
     if (!d->task) {
         return;
     }
-    task()->setKeptBelowOthers(state);
+    d->task->setKeptBelowOthers(state);
 }
 
 void TaskItem::toggleKeptBelowOthers()
@@ -259,15 +250,15 @@ void TaskItem::toggleKeptBelowOthers()
     if (!d->task) {
         return;
     }
-    task()->toggleKeptBelowOthers();
+    d->task->toggleKeptBelowOthers();
 }
 
-bool TaskItem::isKeptBelowOthers()
+bool TaskItem::isKeptBelowOthers() const
 {       
     if (!d->task) {
         return false;
     }
-    return task()->isKeptBelowOthers();
+    return d->task->isKeptBelowOthers();
 }
 
 void TaskItem::setAlwaysOnTop(bool state)
@@ -275,7 +266,7 @@ void TaskItem::setAlwaysOnTop(bool state)
     if (!d->task) {
         return;
     }
-    task()->setAlwaysOnTop(state);
+    d->task->setAlwaysOnTop(state);
 }
 
 void TaskItem::toggleAlwaysOnTop()
@@ -283,25 +274,27 @@ void TaskItem::toggleAlwaysOnTop()
     if (!d->task) {
         return;
     }
-    task()->toggleAlwaysOnTop();
+    d->task->toggleAlwaysOnTop();
 }
 
-bool TaskItem::isAlwaysOnTop()
+bool TaskItem::isAlwaysOnTop() const
 {
     if (!d->task) {
         return false;
     }
-    return task()->isAlwaysOnTop();
+    return d->task->isAlwaysOnTop();
 }
 
-bool TaskItem::isActionSupported(NET::Action action)
+bool TaskItem::isActionSupported(NET::Action action) const
 {
     if (!d->task) {
         return false;
     }
+
     if (KWindowSystem::allowedActionsSupported()) {
-       return (task()->info().actionSupported(action));
+       return (d->task->info().actionSupported(action));
     }
+
     return false;
     //return (!KWindowSystem::allowedActionsSupported() || d->task->info().isActionSupported(action));
 }
@@ -311,23 +304,23 @@ void TaskItem::close()
     if (!d->task) {
         return;
     }
-    task()->close();
+    d->task->close();
 }
 
-bool TaskItem::isActive()
+bool TaskItem::isActive() const
 {
     if (!d->task) {
         return false;
     }
-    return task()->isActive();
+    return d->task->isActive();
 }
 
-bool TaskItem::demandsAttention()
+bool TaskItem::demandsAttention() const
 {
     if (!d->task) {
         return false;
     }
-    return task()->demandsAttention();
+    return d->task->demandsAttention();
 }
 
 } // TaskManager namespace

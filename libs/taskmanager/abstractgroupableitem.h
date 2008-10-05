@@ -68,46 +68,46 @@ public:
     */
     bool isGrouped() const;
 
-    bool isGroupMember(const GroupPtr group);
+    bool isGroupMember(const GroupPtr group) const;
     virtual bool isGroupItem() const = 0;
+
+    virtual bool isOnCurrentDesktop() const = 0;
+    virtual bool isOnAllDesktops() const = 0;
+    virtual int desktop() const = 0;
+    virtual bool isShaded() const = 0;
+    virtual bool isMaximized() const = 0;
+    virtual bool isMinimized() const = 0;
+    virtual bool isFullScreen() const = 0;
+    virtual bool isKeptBelowOthers() const = 0;
+    virtual bool isAlwaysOnTop() const = 0;
+    virtual bool isActionSupported(NET::Action) const = 0;
+    virtual bool isActive() const = 0;
+    virtual bool demandsAttention() const = 0;
+
 
 public Q_SLOTS:
     /** Functions that both, Tasks and Groups have */
     virtual void toDesktop(int) = 0;
-    virtual bool isOnCurrentDesktop() = 0;
-    virtual bool isOnAllDesktops() = 0;
-    virtual int desktop() = 0;
 
     virtual void setShaded(bool) = 0;
     virtual void toggleShaded() = 0;
-    virtual bool isShaded() = 0;
 
     virtual void setMaximized(bool) = 0;
     virtual void toggleMaximized() = 0;
-    virtual bool isMaximized() = 0;
 
     virtual void setMinimized(bool) = 0;
     virtual void toggleMinimized() = 0;
-    virtual bool isMinimized() = 0;
 
     virtual void setFullScreen(bool) = 0;
     virtual void toggleFullScreen() = 0;
-    virtual bool isFullScreen() = 0;
 
     virtual void setKeptBelowOthers(bool) = 0;
     virtual void toggleKeptBelowOthers() = 0;
-    virtual bool isKeptBelowOthers() = 0;
 
     virtual void setAlwaysOnTop(bool) = 0;
     virtual void toggleAlwaysOnTop() = 0;
-    virtual bool isAlwaysOnTop() = 0;
-
-    virtual bool isActionSupported(NET::Action) = 0;
 
     virtual void close() = 0;
-
-    virtual bool isActive() = 0;
-    virtual bool demandsAttention() = 0;
 
     void setParentGroup(const GroupPtr group);
     /*void removedFromGroup();

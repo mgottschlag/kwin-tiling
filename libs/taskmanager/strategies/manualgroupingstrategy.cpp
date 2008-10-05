@@ -434,7 +434,7 @@ void TaskGroupTemplate::closeGroup()
 }
 
 
-TaskGroupTemplate *TaskGroupTemplate::parentGroup()
+TaskGroupTemplate *TaskGroupTemplate::parentGroup() const
 {
     return d->parentGroup;
 }
@@ -446,13 +446,13 @@ void TaskGroupTemplate::setParentGroup(TaskGroupTemplate *group)
 
 
 /** only true if item is in this group */
-bool TaskGroupTemplate::hasDirectMember(AbstractPtr item)
+bool TaskGroupTemplate::hasDirectMember(AbstractPtr item) const
 {
     return d->members.contains(item);
 }
 
 /** true if item is in this or any sub group */
-bool TaskGroupTemplate::hasMember(AbstractPtr item)
+bool TaskGroupTemplate::hasMember(AbstractPtr item) const
 {
     kDebug();
     if (members().contains(item)) {
@@ -472,7 +472,7 @@ bool TaskGroupTemplate::hasMember(AbstractPtr item)
 }
 
 /** Returns Direct Member group if the passed item is in a subgroup */
-AbstractPtr TaskGroupTemplate::directMember(AbstractPtr item)
+AbstractPtr TaskGroupTemplate::directMember(AbstractPtr item) const
 {
     if (members().contains(item)) {
         return item;
@@ -492,10 +492,10 @@ AbstractPtr TaskGroupTemplate::directMember(AbstractPtr item)
     return AbstractPtr();
 }
 
-TaskGroupTemplate *TaskGroupTemplate::findParentGroup(AbstractPtr item)
+TaskGroupTemplate *TaskGroupTemplate::findParentGroup(AbstractPtr item) const
 {
     if (members().contains(item)) {
-        return this;
+        return const_cast<TaskGroupTemplate*>(this);
     } else {
         ItemList::const_iterator iterator = members().constBegin();
         while (iterator != members().constEnd()) {

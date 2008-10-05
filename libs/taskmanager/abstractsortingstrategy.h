@@ -69,8 +69,15 @@ protected:
     void setType(GroupManager::TaskSortingStrategy strategy);
 
 private:
-    /** Sorts list of items according to startegy. Has to be reimlemented by every sortingStrategy*/
-    virtual void sortItems(ItemList&) = 0;
+    /**
+     * Sorts list of items according to startegy.
+     * Has to be reimplemented by every SortingStrategy.
+     *
+     * @param items the items that are to be sorted; the list is passed
+     *        in by value and should be in the proprer sorting order when
+     *        the method returns.
+     */
+    virtual void sortItems(ItemList &ites) = 0;
 
     class Private;
     Private * const d;

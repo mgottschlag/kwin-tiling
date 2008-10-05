@@ -134,14 +134,13 @@ void AbstractSortingStrategy::check(AbstractPtr itemToCheck)
         kDebug() << "No parent group";
         return;
     }
+
     ItemList sortedList = item->parentGroup()->members();
     sortItems(sortedList);
     int oldIndex = item->parentGroup()->members().indexOf(item);
     int newIndex = sortedList.indexOf(item);
     if (oldIndex != newIndex) {
-        TaskGroup* group = item->parentGroup();
-        item->parentGroup()->members().move(oldIndex, newIndex);
-        group->itemMoved(item);
+        item->parentGroup()->moveItem(oldIndex, newIndex);
     }
 }
 
@@ -154,29 +153,21 @@ bool AbstractSortingStrategy::moveItem(AbstractPtr item, int newIndex)
 {
     kDebug() << "move to " << newIndex;
     if (!item->parentGroup()) {
-        kDebug() << "error";
+        kDebug() << "error: no parentgroup but the item was asked to move";
         return false;
     }
-    ItemList &list = item->parentGroup()->members();
+
+    const ItemList list = item->parentGroup()->members();
     if ((newIndex < 0) || (newIndex >= list.size())) {
         newIndex = list.size();
     }
-    
-    if (newIndex > list.indexOf(item)) {
+
+    int oldIndex = list.indexOf(item);
+    if (newIndex > oldIndex) {
         newIndex--; //the index has to be adjusted if we move the item from right to left because the item on the left is removed first
     }
-    
-    if ((list.size() <= newIndex) || (newIndex < 0)) {
-        kDebug() << "index out of bounds";
-        return false;
-    }
-    
 
-    list.move(list.indexOf(item), newIndex);
-    kDebug() << "new index " << item->parentGroup()->members().indexOf(item); 
-    TaskGroup* group = item->parentGroup();
-    group->itemMoved(item);
-    return true;
+    return item->parentGroup()->moveItem(oldIndex, newIndex);
 }
 
 } //namespace

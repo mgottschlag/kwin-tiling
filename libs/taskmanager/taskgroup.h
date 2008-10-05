@@ -39,7 +39,7 @@ public:
     TaskGroup(GroupManager *parent);
     ~TaskGroup();
 
-    ItemList &members() const;
+    ItemList members() const;
 
     QIcon icon() const;
     void setIcon(const QIcon &icon);
@@ -50,58 +50,62 @@ public:
     QString name() const;
     void setName(const QString &newName);
 
-    virtual bool isGroupItem() const{ return true; }
-    bool isRootGroup();
+    virtual bool isGroupItem() const { return true; }
+    bool isRootGroup() const;
 
     /** only true if item is in this group */
-    bool hasDirectMember(AbstractPtr item);
+    bool hasDirectMember(AbstractPtr item) const;
     /** only true if item is in this or any sub group */
-    bool hasMember(AbstractPtr item);
+    bool hasMember(AbstractPtr item) const;
     /** Returns Direct Member group if the passed item is in a subgroup */
-    AbstractPtr directMember(AbstractPtr);
-    /** This function is used by the sortingStrategy to inform the visualization that the position of an item has changed */
-    void itemMoved(AbstractPtr);
+    AbstractPtr directMember(AbstractPtr) const;
+
+    int desktop() const;
+    bool isShaded() const;
+    bool isMaximized() const;
+    bool isMinimized() const;
+    bool isFullScreen() const;
+    bool isKeptBelowOthers() const;
+    bool isAlwaysOnTop() const;
+    bool isActionSupported(NET::Action) const;
+    /** returns true if at least one member is active */
+    bool isActive() const;
+    /** returns true if at least one member is demands attention */
+    bool demandsAttention() const;
+    bool isOnAllDesktops() const;
+    bool isOnCurrentDesktop() const;
+
+    /**
+     * Sorting strategies may use this to move items around
+     * @param oldIndex the index the item to be moved is currently at
+     * @param newIndex the index the item will be moved to
+     */
+    bool moveItem(int oldIndex, int newIndex);
 
 public Q_SLOTS:
     /** the following are functions which perform the corresponding actions on all member tasks */
     void toDesktop(int);
-    bool isOnCurrentDesktop();
-    bool isOnAllDesktops();
-    int desktop();
 
     void setShaded(bool);
     void toggleShaded();
-    bool isShaded();
 
     void setMaximized(bool);
     void toggleMaximized();
-    bool isMaximized();
 
     void setMinimized(bool);
     void toggleMinimized();
-    bool isMinimized();
 
     void setFullScreen(bool);
     void toggleFullScreen();
-    bool isFullScreen();
 
     void setKeptBelowOthers(bool);
     void toggleKeptBelowOthers();
-    bool isKeptBelowOthers();
 
     void setAlwaysOnTop(bool);
     void toggleAlwaysOnTop();
-    bool isAlwaysOnTop();
-
-    bool isActionSupported(NET::Action);
 
     /** close all members of this group */
     void close();
-
-    /** returns true if at least one member is active */
-    bool isActive();
-    /** returns true if at least one member is demands attention */
-    bool demandsAttention();
 
     /** add item to group */
     void add(AbstractPtr);

@@ -53,47 +53,45 @@ public:
     QIcon icon() const;
     QString name() const;
 
-Q_SIGNALS:
-    /** Indicates that the startup task now is a normal task */
-    void gotTaskPointer();
+    bool isOnCurrentDesktop() const;
+    bool isOnAllDesktops() const;
+    int desktop() const;
+    bool isShaded() const;
+    bool isMaximized() const;
+    bool isMinimized() const;
+    bool isFullScreen() const;
+    bool isKeptBelowOthers() const;
+    bool isAlwaysOnTop() const;
+    bool isActive() const;
+    bool demandsAttention() const;
+    bool isActionSupported(NET::Action) const;
 
 public Q_SLOTS:
-
     void toDesktop(int);
-    bool isOnCurrentDesktop();
-    bool isOnAllDesktops();
-    int desktop();
 
     void setShaded(bool);
     void toggleShaded();
-    bool isShaded();
 
     void setMaximized(bool);
     void toggleMaximized();
-    bool isMaximized();
 
     void setMinimized(bool);
     void toggleMinimized();
-    bool isMinimized();
 
     void setFullScreen(bool);
     void toggleFullScreen();
-    bool isFullScreen();
 
     void setKeptBelowOthers(bool);
     void toggleKeptBelowOthers();
-    bool isKeptBelowOthers();
 
     void setAlwaysOnTop(bool);
     void toggleAlwaysOnTop();
-    bool isAlwaysOnTop();
-
-    bool isActive();
-    bool demandsAttention();
-
-    bool isActionSupported(NET::Action);
 
     void close();
+
+Q_SIGNALS:
+    /** Indicates that the startup task now is a normal task */
+    void gotTaskPointer();
 
 private:
     class Private;

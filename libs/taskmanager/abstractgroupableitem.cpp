@@ -113,21 +113,19 @@ void AbstractGroupableItem::setParentGroup(const GroupPtr group)
 
 
 //Item is member of group
-bool AbstractGroupableItem::isGroupMember(const GroupPtr group)
+bool AbstractGroupableItem::isGroupMember(const GroupPtr group) const
 {
     kDebug();
     if (!group) {
         kDebug() << "Null Group Pointer";
         return false;
     }
+
     if (!parentGroup()) {
         return false;
     }
 
-    if (group->members().contains(this)) {
-        return true;
-    }
-    return false;
+    return group->members().contains(const_cast<AbstractGroupableItem*>(this));
 }
 
 

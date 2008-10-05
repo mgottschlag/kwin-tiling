@@ -50,18 +50,18 @@ public:
     QColor color() const;
     QString name() const;
 
-    bool isGroupItem() const { return true; };
+    bool isGroupItem() const { return true; }
 
     /** only true if item is in this group */
-    bool hasDirectMember(AbstractPtr item);
+    bool hasDirectMember(AbstractPtr item) const;
     /** only true if item is in this or any sub group */
-    bool hasMember(AbstractPtr item);
+    bool hasMember(AbstractPtr item) const;
     /** Returns Direct Member group if the passed item is in a subgroup */
-    AbstractPtr directMember(AbstractPtr);
+    AbstractPtr directMember(AbstractPtr) const;
 
-    TaskGroupTemplate *findParentGroup(AbstractPtr item);
+    TaskGroupTemplate *findParentGroup(AbstractPtr item) const;
 
-    TaskGroupTemplate *parentGroup();
+    TaskGroupTemplate *parentGroup() const;
     void setParentGroup(TaskGroupTemplate *);
 
 Q_SIGNALS:
@@ -72,7 +72,7 @@ Q_SIGNALS:
     *	be closed when empty
     */
     void protectGroup(TaskGroup *);
-    
+
     void destroyed(AbstractGroupableItem *);
 
 private Q_SLOTS:
@@ -81,44 +81,44 @@ private Q_SLOTS:
 
 public Q_SLOTS:
     /** Needed because we subclass AbstractGroupableItem */
-    void toDesktop(int){};
-    bool isOnCurrentDesktop(){return false;};
-    bool isOnAllDesktops(){return false;};
-    int desktop(){return 0;};
+    void toDesktop(int) {}
+    bool isOnCurrentDesktop() const { return false; }
+    bool isOnAllDesktops() const  { return false; }
+    int desktop() const {return 0; }
 
-    void setShaded(bool){};
-    void toggleShaded(){};
-    bool isShaded(){return false;};
+    void setShaded(bool) {}
+    void toggleShaded() {}
+    bool isShaded() const {return false; }
 
-    void setMaximized(bool){};
-    void toggleMaximized(){};
-    bool isMaximized(){return false;};
+    void setMaximized(bool) {}
+    void toggleMaximized() {}
+    bool isMaximized() const {return false; }
 
-    void setMinimized(bool){};
-    void toggleMinimized(){};
-    bool isMinimized(){return false;};
+    void setMinimized(bool) {}
+    void toggleMinimized() {}
+    bool isMinimized() const { return false; }
 
-    void setFullScreen(bool){};
-    void toggleFullScreen(){};
-    bool isFullScreen(){return false;};
+    void setFullScreen(bool) {}
+    void toggleFullScreen() {}
+    bool isFullScreen() const { return false; }
 
-    void setKeptBelowOthers(bool){};
-    void toggleKeptBelowOthers(){};
-    bool isKeptBelowOthers(){return false;};
+    void setKeptBelowOthers(bool) {}
+    void toggleKeptBelowOthers() {}
+    bool isKeptBelowOthers() const { return false; }
 
-    void setAlwaysOnTop(bool){};
-    void toggleAlwaysOnTop(){};
-    bool isAlwaysOnTop(){return false;};
+    void setAlwaysOnTop(bool) {}
+    void toggleAlwaysOnTop() {}
+    bool isAlwaysOnTop() const { return false; }
 
-    bool isActionSupported(NET::Action){return false;};
+    bool isActionSupported(NET::Action) const { return false; }
 
     /** close all members of this group */
-    void close(){};
+    void close() {}
 
     /** returns true if at least one member is active */
-    bool isActive(){return false;};
+    bool isActive() const { return false; }
     /** returns true if at least one member is demands attention */
-    bool demandsAttention(){return false;};
+    bool demandsAttention() const { return false; }
 
     /** add item to group */
     void add(AbstractPtr);
@@ -131,7 +131,6 @@ public Q_SLOTS:
 
     /** remove this group, passes all members to grouping strategy*/
     void closeGroup();
-
 
 private:
     class Private;
