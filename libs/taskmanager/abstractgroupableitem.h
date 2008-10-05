@@ -55,8 +55,8 @@ public:
     AbstractGroupableItem(QObject *parent);
     virtual ~AbstractGroupableItem();
 
-    virtual QIcon icon() const {return QIcon();};
-    virtual QString name() const {return QString();};
+    virtual QIcon icon() const;
+    virtual QString name() const;
 
     /**
     *   Returns the parent group of this item

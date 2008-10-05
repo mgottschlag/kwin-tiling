@@ -48,7 +48,7 @@ public:
     TaskPtr task() const;
 
     StartupPtr startupPointer() const;
-    bool isGroupItem() const{return false;};
+    bool isGroupItem() const { return false; }
 
     QIcon icon() const;
     QString name() const;

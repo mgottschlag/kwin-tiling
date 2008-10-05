@@ -72,6 +72,16 @@ bool AbstractGroupableItem::isGrouped() const
     return parentGroup() && parentGroup()->parentGroup();
 }
 
+QIcon AbstractGroupableItem::icon() const
+{
+    return QIcon();
+}
+
+QString AbstractGroupableItem::name() const
+{
+    return QString();
+}
+
 GroupPtr AbstractGroupableItem::parentGroup() const
 {
     //kDebug();
