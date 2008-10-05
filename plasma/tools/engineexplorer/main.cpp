@@ -52,18 +52,18 @@ int main(int argc, char **argv)
     KApplication app;
     EngineExplorer* w = new EngineExplorer;
 
-    bool ok1,ok2 = false;
+    bool ok1, ok2 = false;
     //get pos if available
     int x = args->getOption("height").toInt(&ok1);
     int y = args->getOption("width").toInt(&ok2);
-    if (ok1 & ok2) {
+    if (ok1 && ok2) {
         w->resize(x,y);
     }
 
     //get size
     x = args->getOption("x").toInt(&ok1);
     y = args->getOption("y").toInt(&ok2);
-    if (ok1 & ok2) {
+    if (ok1 && ok2) {
         w->move(x,y);
     }
 
