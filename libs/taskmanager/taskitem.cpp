@@ -84,7 +84,7 @@ void TaskItem::setTaskPointer(TaskPtr task)
     emit gotTaskPointer();
 }
 
-TaskPtr TaskItem::taskPointer() const
+TaskPtr TaskItem::task() const
 {
     if (d->task.isNull()) {
         kDebug() << "pointer is Null";
@@ -105,7 +105,7 @@ QIcon TaskItem::icon() const
     if (!d->task) {
         return QIcon();
     }
-    return taskPointer()->icon();
+    return task()->icon();
 }
 
 QString TaskItem::name() const
@@ -113,7 +113,7 @@ QString TaskItem::name() const
     if (!d->task) {
         return QString();
     }
-    return taskPointer()->visibleName();
+    return task()->visibleName();
 }
 
 void TaskItem::setShaded(bool state)
@@ -121,7 +121,7 @@ void TaskItem::setShaded(bool state)
     if (!d->task) {
         return;
     }
-    taskPointer()->setShaded(state);
+    task()->setShaded(state);
 }
 
 void TaskItem::toggleShaded()
@@ -129,7 +129,7 @@ void TaskItem::toggleShaded()
     if (!d->task) {
         return;
     }
-    taskPointer()->toggleShaded();
+    task()->toggleShaded();
 }
 
 bool TaskItem::isShaded()
@@ -137,7 +137,7 @@ bool TaskItem::isShaded()
     if (!d->task) {
         return false;
     }
-    return taskPointer()->isShaded();
+    return task()->isShaded();
 }
 
 void TaskItem::toDesktop(int desk)
@@ -145,7 +145,7 @@ void TaskItem::toDesktop(int desk)
     if (!d->task) {
         return;
     }
-    taskPointer()->toDesktop(desk);
+    task()->toDesktop(desk);
 }
 
 bool TaskItem::isOnCurrentDesktop()
@@ -153,7 +153,7 @@ bool TaskItem::isOnCurrentDesktop()
     if (!d->task) {
         return false;
     }
-    return taskPointer()->isOnCurrentDesktop();
+    return task()->isOnCurrentDesktop();
 }
 
 bool TaskItem::isOnAllDesktops()
@@ -161,7 +161,7 @@ bool TaskItem::isOnAllDesktops()
     if (!d->task) {
         return false;
     }
-    return taskPointer()->isOnAllDesktops();
+    return task()->isOnAllDesktops();
 }
 
 int TaskItem::desktop()
@@ -169,7 +169,7 @@ int TaskItem::desktop()
     if (!d->task) {
         return 0;
     }
-    return taskPointer()->desktop();
+    return task()->desktop();
 }
 
 void TaskItem::setMaximized(bool state)
@@ -177,7 +177,7 @@ void TaskItem::setMaximized(bool state)
     if (!d->task) {
         return;
     }
-    taskPointer()->setMaximized(state);
+    task()->setMaximized(state);
 }
 
 void TaskItem::toggleMaximized()
@@ -185,7 +185,7 @@ void TaskItem::toggleMaximized()
     if (!d->task) {
         return;
     }
-    taskPointer()->toggleMaximized();
+    task()->toggleMaximized();
 }
 
 bool TaskItem::isMaximized()
@@ -193,7 +193,7 @@ bool TaskItem::isMaximized()
     if (!d->task) {
         return false;
     }
-    return taskPointer()->isMaximized();
+    return task()->isMaximized();
 }
 
 void TaskItem::setMinimized(bool state)
@@ -201,7 +201,7 @@ void TaskItem::setMinimized(bool state)
     if (!d->task) {
         return;
     }
-    taskPointer()->setIconified(state);
+    task()->setIconified(state);
 }
 
 void TaskItem::toggleMinimized()
@@ -209,7 +209,7 @@ void TaskItem::toggleMinimized()
     if (!d->task) {
         return;
     }
-    taskPointer()->toggleIconified();
+    task()->toggleIconified();
 }
 
 bool TaskItem::isMinimized()
@@ -217,7 +217,7 @@ bool TaskItem::isMinimized()
     if (!d->task) {
         return false;
     }
-    return taskPointer()->isMinimized();
+    return task()->isMinimized();
 }
 
 void TaskItem::setFullScreen(bool state)
@@ -225,7 +225,7 @@ void TaskItem::setFullScreen(bool state)
     if (!d->task) {
         return;
     }
-    taskPointer()->setFullScreen(state);
+    task()->setFullScreen(state);
 }
 
 void TaskItem::toggleFullScreen()
@@ -233,7 +233,7 @@ void TaskItem::toggleFullScreen()
     if (!d->task) {
         return;
     }
-    taskPointer()->toggleFullScreen();
+    task()->toggleFullScreen();
 }
 
 bool TaskItem::isFullScreen()
@@ -241,7 +241,7 @@ bool TaskItem::isFullScreen()
     if (!d->task) {
         return false;
     }
-    return taskPointer()->isFullScreen();
+    return task()->isFullScreen();
 }
 
 void TaskItem::setKeptBelowOthers(bool state)
@@ -249,7 +249,7 @@ void TaskItem::setKeptBelowOthers(bool state)
     if (!d->task) {
         return;
     }
-    taskPointer()->setKeptBelowOthers(state);
+    task()->setKeptBelowOthers(state);
 }
 
 void TaskItem::toggleKeptBelowOthers()
@@ -257,7 +257,7 @@ void TaskItem::toggleKeptBelowOthers()
     if (!d->task) {
         return;
     }
-    taskPointer()->toggleKeptBelowOthers();
+    task()->toggleKeptBelowOthers();
 }
 
 bool TaskItem::isKeptBelowOthers()
@@ -265,7 +265,7 @@ bool TaskItem::isKeptBelowOthers()
     if (!d->task) {
         return false;
     }
-    return taskPointer()->isKeptBelowOthers();
+    return task()->isKeptBelowOthers();
 }
 
 void TaskItem::setAlwaysOnTop(bool state)
@@ -273,7 +273,7 @@ void TaskItem::setAlwaysOnTop(bool state)
     if (!d->task) {
         return;
     }
-    taskPointer()->setAlwaysOnTop(state);
+    task()->setAlwaysOnTop(state);
 }
 
 void TaskItem::toggleAlwaysOnTop()
@@ -281,7 +281,7 @@ void TaskItem::toggleAlwaysOnTop()
     if (!d->task) {
         return;
     }
-    taskPointer()->toggleAlwaysOnTop();
+    task()->toggleAlwaysOnTop();
 }
 
 bool TaskItem::isAlwaysOnTop()
@@ -289,7 +289,7 @@ bool TaskItem::isAlwaysOnTop()
     if (!d->task) {
         return false;
     }
-    return taskPointer()->isAlwaysOnTop();
+    return task()->isAlwaysOnTop();
 }
 
 bool TaskItem::isActionSupported(NET::Action action)
@@ -298,7 +298,7 @@ bool TaskItem::isActionSupported(NET::Action action)
         return false;
     }
     if (KWindowSystem::allowedActionsSupported()) {
-       return (taskPointer()->info().actionSupported(action));
+       return (task()->info().actionSupported(action));
     }
     return false;
     //return (!KWindowSystem::allowedActionsSupported() || d->task->info().isActionSupported(action));
@@ -309,7 +309,7 @@ void TaskItem::close()
     if (!d->task) {
         return;
     }
-    taskPointer()->close();
+    task()->close();
 }
 
 bool TaskItem::isActive()
@@ -317,7 +317,7 @@ bool TaskItem::isActive()
     if (!d->task) {
         return false;
     }
-    return taskPointer()->isActive();
+    return task()->isActive();
 }
 
 bool TaskItem::demandsAttention()
@@ -325,7 +325,7 @@ bool TaskItem::demandsAttention()
     if (!d->task) {
         return false;
     }
-    return taskPointer()->demandsAttention();
+    return task()->demandsAttention();
 }
 
 } // TaskManager namespace

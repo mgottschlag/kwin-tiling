@@ -84,10 +84,10 @@ QString ProgramGroupingStrategy::className(AbstractGroupableItem *item)
     if (item->isGroupItem()) { //maybe add the condition that the subgroup was created by programGrouping
         TaskGroup *group = qobject_cast<TaskGroup*>(item);
         TaskItem *task = qobject_cast<TaskItem*>(group->members().first()); //There are only TaskItems in programGrouping groups
-        return task->taskPointer()->classClass();
+        return task->task()->classClass();
     }
 
-    return (qobject_cast<TaskItem*>(item))->taskPointer()->classClass();
+    return (qobject_cast<TaskItem*>(item))->task()->classClass();
 }
 
 void ProgramGroupingStrategy::toggleGrouping()
@@ -119,7 +119,7 @@ void ProgramGroupingStrategy::handleItem(AbstractPtr item)
     if (item->isGroupItem()) {
         d->groupManager->rootGroup()->add(item);
         return;
-    } else if (d->blackList.contains((qobject_cast<TaskItem*>(item))->taskPointer()->classClass())) {
+    } else if (d->blackList.contains((qobject_cast<TaskItem*>(item))->task()->classClass())) {
 	d->groupManager->rootGroup()->add(item);
         return;
     }
@@ -142,23 +142,23 @@ bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* gro
             }
         } else {
 	    TaskItem *task = dynamic_cast<TaskItem*>(item);
-	    QString name = task->taskPointer()->classClass();
+	    QString name = task->task()->classClass();
 	    itemMap.insertMulti(name,item);
 	}
     }
 
     if (!itemMap.values().contains(taskItem)) {
-	itemMap.insertMulti(taskItem->taskPointer()->classClass(), taskItem);
+	itemMap.insertMulti(taskItem->task()->classClass(), taskItem);
     }
 
-    QString name = taskItem->taskPointer()->classClass();
+    QString name = taskItem->task()->classClass();
     if (itemMap.count(name) >= groupItem->members().count()) { //join this group
         kDebug() << "joined this Group";
         groupItem->add(taskItem);
         return true;
     } else if (itemMap.count(name) >= 2) { //create new subgroup with at least 2 other task
         kDebug() << "create Group";
-        QIcon icon = taskItem->taskPointer()->icon();
+        QIcon icon = taskItem->task()->icon();
         QList <AbstractPtr> list(itemMap.values(name));
         TaskGroup* group = createGroup(list);
         group->setName(name);

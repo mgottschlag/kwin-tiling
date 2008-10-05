@@ -63,11 +63,11 @@ void AlphaSortingStrategy::sortItems(ItemList &items)
         if (item->isGroupItem()) {
             map.insertMulti((dynamic_cast<TaskGroup*>(item))->name(), item);
         } else {
-            if (!(dynamic_cast<TaskItem*>(item))->taskPointer()) {
+            if (!(dynamic_cast<TaskItem*>(item))->task()) {
                 kDebug() << "Null Pointer";
                 continue;
             }
-            map.insertMulti((dynamic_cast<TaskItem*>(item))->taskPointer()->classClass(), item); //sort by programname not windowname
+            map.insertMulti((dynamic_cast<TaskItem*>(item))->task()->classClass(), item); //sort by programname not windowname
         }
     }
     items.clear();

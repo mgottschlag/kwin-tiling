@@ -139,7 +139,7 @@ ShadeActionImpl::ShadeActionImpl(QObject *parent, AbstractPtr item)
 ResizeActionImpl::ResizeActionImpl(QObject *parent, TaskItem* item)
     : QAction(parent)
 {
-    TaskPtr task = item->taskPointer();
+    TaskPtr task = item->task();
     connect(this, SIGNAL(triggered()), task.data(), SLOT(resize()));
     setText(i18n("Re&size"));
     setEnabled(item->isActionSupported(NET::ActionResize));
@@ -148,7 +148,7 @@ ResizeActionImpl::ResizeActionImpl(QObject *parent, TaskItem* item)
 MoveActionImpl::MoveActionImpl(QObject *parent, TaskItem* item)
     : QAction(parent)
 {   
-    TaskPtr task = item->taskPointer();
+    TaskPtr task = item->task();
     connect(this, SIGNAL(triggered()), task.data(), SLOT(move()));
     setText(i18n("&Move"));
     setIcon(KIcon("transform-move"));
@@ -400,7 +400,7 @@ GroupPopupMenu::GroupPopupMenu(QWidget *parent, TaskGroup *group, GroupManager *
 	    addMenu(menu);
 	} else {
 	    QAction* action = new QAction(item->icon(), item->name(), this);
-	    connect(action, SIGNAL(triggered(bool)), (qobject_cast<TaskItem*>(item))->taskPointer().data() , SLOT(activateRaiseOrIconify()));
+	    connect(action, SIGNAL(triggered(bool)), (qobject_cast<TaskItem*>(item))->task().data() , SLOT(activateRaiseOrIconify()));
 	    addAction(action);
 	}
     }

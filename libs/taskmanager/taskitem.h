@@ -45,7 +45,7 @@ public:
     /** Sets the taskpointer after the startup pointer */
     void setTaskPointer(TaskPtr);
     /** Returns the shared pointer to the  Task */
-    TaskPtr taskPointer() const;
+    TaskPtr task() const;
 
     StartupPtr startupPointer() const;
     bool isGroupItem() const{return false;};

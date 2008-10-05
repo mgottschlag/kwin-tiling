@@ -100,7 +100,7 @@ void AbstractSortingStrategy::handleItem(AbstractPtr item)
 {
     if (item->isGroupItem()) {
         handleGroup(qobject_cast<TaskGroup*>(item));
-    } else if (!(qobject_cast<TaskItem*>(item))->taskPointer()) { //ignore startup tasks
+    } else if (!(qobject_cast<TaskItem*>(item))->task()) { //ignore startup tasks
         return;
     }
     disconnect(item, 0, this, 0); //To avoid duplicate connections
@@ -125,7 +125,7 @@ void AbstractSortingStrategy::check(AbstractPtr itemToCheck)
     }
 
     if (!item->isGroupItem()) {
-        if (!(qobject_cast<TaskItem*>(item))->taskPointer()) { //ignore startup tasks
+        if (!(qobject_cast<TaskItem*>(item))->task()) { //ignore startup tasks
             return;
         }
     }

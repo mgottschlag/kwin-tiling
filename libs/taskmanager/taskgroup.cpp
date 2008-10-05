@@ -109,8 +109,8 @@ void TaskGroup::itemMoved(AbstractPtr item)
 void TaskGroup::add(AbstractPtr item)
 {
     if (!item->isGroupItem()) {
-        if ((dynamic_cast<TaskItem*>(item))->taskPointer()) {
-            kDebug() << "Add item" << (dynamic_cast<TaskItem*>(item))->taskPointer()->visibleName();
+        if ((dynamic_cast<TaskItem*>(item))->task()) {
+            kDebug() << "Add item" << (dynamic_cast<TaskItem*>(item))->task()->visibleName();
         }
         kDebug() << " to Group " << name();
     }
@@ -134,7 +134,7 @@ void TaskGroup::add(AbstractPtr item)
         if (item->isGroupItem()) {
             kDebug() << (dynamic_cast<TaskGroup*>(item))->name();
         } else {
-            kDebug() << (dynamic_cast<TaskItem*>(item))->taskPointer()->visibleName();
+            kDebug() << (dynamic_cast<TaskItem*>(item))->task()->visibleName();
         }
     }*/
     emit itemAdded(item);
@@ -148,8 +148,8 @@ void TaskGroup::remove(AbstractPtr item)
 
     if (item->isGroupItem()) {
         kDebug() << "Remove group" << (dynamic_cast<TaskGroup*>(item))->name();
-    } else if ((dynamic_cast<TaskItem*>(item))->taskPointer()) {
-        kDebug() << "Remove item" << (dynamic_cast<TaskItem*>(item))->taskPointer()->visibleName();
+    } else if ((dynamic_cast<TaskItem*>(item))->task()) {
+        kDebug() << "Remove item" << (dynamic_cast<TaskItem*>(item))->task()->visibleName();
     }
     kDebug() << "from Group: " << name();
 
@@ -158,7 +158,7 @@ void TaskGroup::remove(AbstractPtr item)
         if (item->isGroupItem()) {
             kDebug() << (dynamic_cast<TaskGroup*>(item))->name();
         } else {
-            kDebug() << (dynamic_cast<TaskItem*>(item))->taskPointer()->visibleName();
+            kDebug() << (dynamic_cast<TaskItem*>(item))->task()->visibleName();
         }
     }*/
 

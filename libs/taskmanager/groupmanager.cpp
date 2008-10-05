@@ -212,7 +212,7 @@ bool GroupManager::add(TaskPtr task)
 
         while (it != d->itemList.end()) {
             TaskItem *item = it.value();
-            if (item->taskPointer()->hasTransient(task->window())) {
+            if (item->task()->hasTransient(task->window())) {
                 kDebug() << "TRANSIENT TRANSIENT TRANSIENT!";
             }
             ++it;
