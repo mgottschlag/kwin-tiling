@@ -60,14 +60,13 @@ void AlphaSortingStrategy::sortItems(ItemList &items)
     QMap<QString, AbstractGroupableItem*> map;
 
     foreach (AbstractGroupableItem *item, items) {
-	
         if (item->isGroupItem()) {
             map.insertMulti((dynamic_cast<TaskGroup*>(item))->name(), item);
         } else {
-	    if (!(dynamic_cast<TaskItem*>(item))->taskPointer()) {
-		kDebug() << "Null Pointer";
-		continue;
-	    }
+            if (!(dynamic_cast<TaskItem*>(item))->taskPointer()) {
+                kDebug() << "Null Pointer";
+                continue;
+            }
             map.insertMulti((dynamic_cast<TaskItem*>(item))->taskPointer()->classClass(), item); //sort by programname not windowname
         }
     }
@@ -79,7 +78,6 @@ void AlphaSortingStrategy::sortItems(ItemList &items)
     while (!map.empty()) {
         items.append(map.take(keyList.takeFirst()));
     }
-
 }
 
 } //namespace

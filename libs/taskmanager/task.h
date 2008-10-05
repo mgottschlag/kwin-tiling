@@ -29,7 +29,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtGui/QDrag>
 #include <QtGui/QPixmap>
 #include <QtGui/QWidget>
-#include <QtCore/QHash>
 #include <QtGui/QIcon>
 
 // KDE
@@ -37,30 +36,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <KDE/KWindowSystem>
 #include <KDE/NETWinInfo>
 
+#include <taskmanager/taskmanager.h>
 #include <taskmanager/taskmanager_export.h>
 
 namespace TaskManager
 {
-
-typedef QList<WId> WindowList;
-
-class Task;
-typedef KSharedPtr<Task> TaskPtr;
-typedef QVector<TaskPtr> TaskList;
-typedef QHash<WId, TaskPtr> TaskDict;
-
-enum TaskChange { TaskUnchanged = 0,
-                  NameChanged = 1,
-                  StateChanged = 2,
-                  DesktopChanged = 32,
-                  GeometryChanged = 64,
-                  WindowTypeChanged = 128,
-                  ActionsChanged = 256,
-                  TransientsChanged = 512,
-                  IconChanged = 1024,
-                  EverythingChanged = 0xffff
-                };
-Q_DECLARE_FLAGS(TaskChanges, TaskChange)
 
 /**
  * A dynamic interface to a task (main window).
@@ -456,7 +436,5 @@ private:
 };
 
 } // TaskManager namespace
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(TaskManager::TaskChanges)
 
 #endif

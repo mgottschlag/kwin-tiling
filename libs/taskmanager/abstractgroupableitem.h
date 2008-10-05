@@ -29,6 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <KDE/KWindowSystem>
 
+#include <taskmanager/taskmanager.h>
 #include <taskmanager/taskmanager_export.h>
 
 namespace TaskManager
@@ -113,7 +114,7 @@ public Q_SLOTS:
     void addedToGroup(const GroupPtr group);*/
 
 Q_SIGNALS:
-    void changed();
+    void changed(::TaskManager::TaskChanges changes);
     void destroyed(AbstractGroupableItem *);
 
 private:

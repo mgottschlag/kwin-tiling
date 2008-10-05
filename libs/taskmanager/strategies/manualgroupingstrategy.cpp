@@ -354,19 +354,22 @@ void TaskGroupTemplate::setGroup(TaskGroup *group)
     d->group = group;
 }
 
-ItemList &TaskGroupTemplate::members()
+ItemList &TaskGroupTemplate::members() const
 {
     return d->members;
 }
-QIcon &TaskGroupTemplate::icon()
+
+QIcon TaskGroupTemplate::icon() const
 {
     return d->icon;
 }
-QColor &TaskGroupTemplate::color()
+
+QColor TaskGroupTemplate::color() const
 {
     return d->color;
 }
-QString &TaskGroupTemplate::name()
+
+QString TaskGroupTemplate::name() const
 {
     return d->name;
 }

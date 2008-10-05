@@ -127,7 +127,8 @@ void TaskGroup::add(AbstractPtr item)
     d->m_members.append(item);
     item->setParentGroup(this);
 
-    connect(item, SIGNAL(changed()), this, SIGNAL(changed()));
+    connect(item, SIGNAL(changed(::TaskManager::TaskChanges changes)),
+            this, SIGNAL(changed(::TaskManager::TaskChanges changes)));
     //For debug
    /* foreach (AbstractGroupableItem *item, d->m_members) {
         if (item->isGroupItem()) {
@@ -197,12 +198,10 @@ ItemList &TaskGroup::members() const
     return d->m_members;
 }
 
-
-
 void TaskGroup::setColor(const QColor &color)
 {
     d->m_groupColor = color;
-    emit changed();
+    emit changed(ColorChanged);
 }
 
 QColor TaskGroup::color() const
@@ -218,7 +217,7 @@ QString TaskGroup::name() const
 void TaskGroup::setName(const QString &newName)
 {
     d->m_groupName = newName;
-    emit changed();
+    emit changed(NameChanged);
 }
 
 QIcon TaskGroup::icon() const
@@ -229,7 +228,7 @@ QIcon TaskGroup::icon() const
 void TaskGroup::setIcon(const QIcon &newIcon)
 {
     d->m_groupIcon = newIcon;
-    emit changed();
+    emit changed(IconChanged);
 }
 
 

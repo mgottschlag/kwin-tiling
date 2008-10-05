@@ -333,7 +333,7 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* task, GroupManager *strategy, bo
         addSeparator();
         addMenu(new BasicMenu(this, task->parentGroup(), strategy, showAll));
     }*/
- 
+
     addSeparator();
     addAction(new CloseActionImpl(this, task));
 

@@ -25,6 +25,36 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef TASKMANAGER_H
 #define TASKMANAGER_H
 
+#include <QtCore/QHash>
+#include <QtCore/QVector>
+
+#include <KDE/KSharedPtr>
+#include <KDE/KWindowSystem>
+
+namespace TaskManager
+{
+typedef QList<WId> WindowList;
+
+class Task;
+typedef KSharedPtr<Task> TaskPtr;
+typedef QVector<TaskPtr> TaskList;
+typedef QHash<WId, TaskPtr> TaskDict;
+
+enum TaskChange { TaskUnchanged = 0,
+                  NameChanged = 1,
+                  StateChanged = 2,
+                  DesktopChanged = 32,
+                  GeometryChanged = 64,
+                  WindowTypeChanged = 128,
+                  ActionsChanged = 256,
+                  TransientsChanged = 512,
+                  IconChanged = 1024,
+                  ColorChanged = 2048,
+                  EverythingChanged = 0xffff
+                };
+Q_DECLARE_FLAGS(TaskChanges, TaskChange)
+} // namespace TaskManager
+
 // Own
 #include <taskmanager/startup.h>
 #include <taskmanager/task.h>
@@ -172,5 +202,6 @@ private:
 
 } // TaskManager namespace
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(TaskManager::TaskChanges)
 
 #endif

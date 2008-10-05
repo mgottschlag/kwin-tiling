@@ -38,7 +38,7 @@ public:
     TaskGroup(GroupManager *parent, QString name, QColor color);
     TaskGroup(GroupManager *parent);
     ~TaskGroup();
-    
+
     ItemList &members() const;
 
     QIcon icon() const;
@@ -114,7 +114,7 @@ public Q_SLOTS:
 
     /** remove this group, passes all members to grouping strategy*/
  //   void closeGroup();
-    
+
 Q_SIGNALS:
     /** inform visualization about wat is added and removed */
     void itemAdded(const AbstractPtr item);

@@ -28,6 +28,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // Qt
 #include <QSet>
 
+#include "taskmanager.h"
+
 namespace TaskManager
 {
 

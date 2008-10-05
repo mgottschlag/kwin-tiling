@@ -44,16 +44,13 @@ public:
 
     TaskGroup *group();
     void setGroup(TaskGroup *);
-    
-    ItemList &members();
 
-    QIcon &icon();
+    ItemList &members() const;
+    QIcon icon() const;
+    QColor color() const;
+    QString name() const;
 
-    QColor &color();
-
-    QString &name();
-
-    bool isGroupItem() const{return true;};
+    bool isGroupItem() const { return true; };
 
     /** only true if item is in this group */
     bool hasDirectMember(AbstractPtr item);
