@@ -86,7 +86,7 @@ void ServiceViewer::updateOperations()
     m_operations->clear();
     m_operationDescription->clear();
 
-    if (m_operations) {
+    if (m_service) {
         QStringList operations = m_service->operationNames();
 
         if (!operations.isEmpty()) {
