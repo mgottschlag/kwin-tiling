@@ -82,8 +82,8 @@ void AlphaSortingStrategy::sortItems(ItemList &items)
             map.insertMulti(item->task()->classClass(), item);
         }
     }
-    items.clear();
 
+    items.clear();
     foreach (AbstractGroupableItem *item, map) {
         //kDebug() << item->name();
         items.append(item);

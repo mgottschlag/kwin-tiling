@@ -127,8 +127,8 @@ void TaskGroup::add(AbstractPtr item)
     d->m_members.append(item);
     item->setParentGroup(this);
 
-    connect(item, SIGNAL(changed(::TaskManager::TaskChanges changes)),
-            this, SIGNAL(changed(::TaskManager::TaskChanges changes)));
+    connect(item, SIGNAL(changed(::TaskManager::TaskChanges)),
+            this, SIGNAL(changed(::TaskManager::TaskChanges)));
     //For debug
    /* foreach (AbstractGroupableItem *item, d->m_members) {
         if (item->isGroupItem()) {

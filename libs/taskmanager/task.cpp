@@ -204,16 +204,19 @@ void Task::refreshIcon()
 
 void Task::refresh(unsigned int dirty)
 {
-    QString name = visibleName();
-    d->info = KWindowSystem::windowInfo(d->win,
+    KWindowInfo info = KWindowSystem::windowInfo(d->win,
         NET::WMState | NET::XAWMState | NET::WMDesktop | NET::WMVisibleName | NET::WMGeometry | NET::WMWindowType,
         NET::WM2AllowedActions);
 
     TaskChanges changes = TaskUnchanged;
 
-    if (name != visibleName()) {
+    if (d->info.visibleName() != info.visibleName() ||
+        d->info.visibleNameWithState() != info.visibleNameWithState() ||
+        d->info.name() != info.name()) {
         changes |= NameChanged;
     }
+
+    d->info = info;
 
     if (dirty & NET::WMState || dirty & NET::XAWMState) {
         changes |= StateChanged;
