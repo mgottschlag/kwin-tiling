@@ -74,7 +74,7 @@ Q_SIGNALS:
     //void linkUpChanged(bool linkActivated);
     void connectionStateChanged(int state);
 protected Q_SLOTS:
-    void stateChanged(uint);
+    void stateChanged(uint,uint,uint);
 private:
     void init();
     Solid::Control::NetworkInterface::Capabilities convertCapabilities(uint theirCaps);

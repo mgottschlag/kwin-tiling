@@ -72,7 +72,7 @@ void NMNetworkInterface::init()
     d->capabilities = convertCapabilities(d->deviceIface.capabilities());
     d->connectionState = convertState(d->deviceIface.state());
 
-    connect(&d->deviceIface, SIGNAL(StateChanged(uint)), this, SLOT(stateChanged(uint)));
+    connect(&d->deviceIface, SIGNAL(StateChanged(uint,uint,uint)), this, SLOT(stateChanged(uint,uint,uint)));
 }
 
 NMNetworkInterface::~NMNetworkInterface()
@@ -234,10 +234,10 @@ Solid::Control::NetworkInterface::ConnectionState NMNetworkInterface::convertSta
     return ourState;
 }
 
-void NMNetworkInterface::stateChanged(uint state)
+void NMNetworkInterface::stateChanged(uint new_state, uint old_state, uint reason)
 {
     Q_D(NMNetworkInterface);
-    d->connectionState = convertState(state);
+    d->connectionState = convertState(new_state);
 }
 
 #include "networkinterface.moc"
