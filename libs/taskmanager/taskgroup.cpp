@@ -49,11 +49,11 @@ public:
     {
     }
 
-    ItemList m_members;
-    QString m_groupName;
-    QColor m_groupColor;
-    QIcon m_groupIcon;
-    bool m_aboutToDie;
+    ItemList members;
+    QString groupName;
+    QColor groupColor;
+    QIcon groupIcon;
+    bool aboutToDie;
     GroupManager *groupingStrategy;
 };
 
@@ -62,11 +62,11 @@ TaskGroup::TaskGroup(GroupManager *parent,QString name, QColor color)
     d(new Private)
 {
     d->groupingStrategy = parent;
-    d->m_groupName = name;
-    d->m_groupColor = color;
-    d->m_groupIcon = KIcon("xorg");
+    d->groupName = name;
+    d->groupColor = color;
+    d->groupIcon = KIcon("xorg");
 
-    kDebug() << "Group Created: Name: " << d->m_groupName << "Color: " << d->m_groupColor;
+    kDebug() << "Group Created: Name: " << d->groupName << "Color: " << d->groupColor;
 }
 
 TaskGroup::TaskGroup(GroupManager *parent)
@@ -74,11 +74,11 @@ TaskGroup::TaskGroup(GroupManager *parent)
     d(new Private)
 {
     d->groupingStrategy = parent;
-    d->m_groupName = "default";
-    d->m_groupColor = Qt::red;
-    d->m_groupIcon = KIcon("xorg");
+    d->groupName = "default";
+    d->groupColor = Qt::red;
+    d->groupIcon = KIcon("xorg");
 
-    kDebug() << "Group Created: Name: " << d->m_groupName << "Color: " << d->m_groupColor;
+    kDebug() << "Group Created: Name: " << d->groupName << "Color: " << d->groupColor;
 }
 
 
@@ -91,7 +91,7 @@ TaskGroup::~TaskGroup()
 /*
 void TaskGroup::closeGroup()
 {
-    foreach(AbstractPtr item, d->m_members) { //delete all existing tasks
+    foreach(AbstractPtr item, d->members) { //delete all existing tasks
         if (item->isGroupItem()) { 
             (dynamic_cast<GroupPtr>(item))->clear();//FIXME is this reasonable or should they only be removed?
         }
@@ -110,7 +110,7 @@ void TaskGroup::add(AbstractPtr item)
         kDebug() << " to Group " << name();
     }
 
-    if (d->m_members.contains(item)) {
+    if (d->members.contains(item)) {
         kDebug() << "already in this group";
         return;
     }
@@ -119,13 +119,13 @@ void TaskGroup::add(AbstractPtr item)
         item->parentGroup()->remove(item);
     }
 
-    d->m_members.append(item);
+    d->members.append(item);
     item->setParentGroup(this);
 
     connect(item, SIGNAL(changed(::TaskManager::TaskChanges)),
             this, SIGNAL(changed(::TaskManager::TaskChanges)));
     //For debug
-   /* foreach (AbstractGroupableItem *item, d->m_members) {
+   /* foreach (AbstractGroupableItem *item, d->members) {
         if (item->isGroupItem()) {
             kDebug() << (dynamic_cast<TaskGroup*>(item))->name();
         } else {
@@ -157,15 +157,15 @@ void TaskGroup::remove(AbstractPtr item)
         }
     }*/
 
-    if (!d->m_members.contains(item)) {
+    if (!d->members.contains(item)) {
         kDebug() << "couldn't find item";
         return;
     }
     disconnect(item, 0, this, 0);
 
-    d->m_members.removeAll(item);
+    d->members.removeAll(item);
     item->setParentGroup(0);
-    /*if(d->m_members.isEmpty()){
+    /*if(d->members.isEmpty()){
         kDebug() << "empty";
         emit empty(this);
     }*/
@@ -174,8 +174,8 @@ void TaskGroup::remove(AbstractPtr item)
 
 void TaskGroup::clear()
 {
-   // kDebug() << "size " << d->m_members.size();
-    foreach(AbstractGroupableItem *item, d->m_members) {
+   // kDebug() << "size " << d->members.size();
+    foreach(AbstractGroupableItem *item, d->members) {
     //    kDebug();
         Q_ASSERT(item);
         if (item->isGroupItem()) { 
@@ -183,46 +183,46 @@ void TaskGroup::clear()
         }
         remove(item);
     }
-    if (!d->m_members.isEmpty()) {
+    if (!d->members.isEmpty()) {
         kDebug() << "clear doesn't work";
     }
 }
 
 ItemList TaskGroup::members() const
 {
-    return d->m_members;
+    return d->members;
 }
 
 void TaskGroup::setColor(const QColor &color)
 {
-    d->m_groupColor = color;
+    d->groupColor = color;
     emit changed(ColorChanged);
 }
 
 QColor TaskGroup::color() const
 {
-    return d->m_groupColor;
+    return d->groupColor;
 }
 
 QString TaskGroup::name() const
 {
-    return d->m_groupName;
+    return d->groupName;
 }
 
 void TaskGroup::setName(const QString &newName)
 {
-    d->m_groupName = newName;
+    d->groupName = newName;
     emit changed(NameChanged);
 }
 
 QIcon TaskGroup::icon() const
 {
-    return d->m_groupIcon;
+    return d->groupIcon;
 }
 
 void TaskGroup::setIcon(const QIcon &newIcon)
 {
-    d->m_groupIcon = newIcon;
+    d->groupIcon = newIcon;
     emit changed(IconChanged);
 }
 
@@ -234,7 +234,7 @@ bool TaskGroup::isRootGroup() const
 /** only true if item is in this group */
 bool TaskGroup::hasDirectMember(AbstractPtr item) const
 {
-    return d->m_members.contains(item);
+    return d->members.contains(item);
 }
 
 /** true if item is in this or any sub group */
@@ -256,7 +256,7 @@ AbstractPtr TaskGroup::directMember(AbstractPtr item) const
 {
     AbstractPtr tempItem = item;
     while (tempItem) {
-        if (d->m_members.contains(item)) {
+        if (d->members.contains(item)) {
             return item;
         }
         tempItem = tempItem->parentGroup();
@@ -431,7 +431,7 @@ void TaskGroup::toggleAlwaysOnTop()
 
 bool TaskGroup::isAlwaysOnTop() const
 {
-    foreach (AbstractPtr item, d->m_members) {
+    foreach (AbstractPtr item, d->members) {
         if (!item->isAlwaysOnTop()) {
             return false;
         }
@@ -443,7 +443,7 @@ bool TaskGroup::isAlwaysOnTop() const
 bool TaskGroup::isActionSupported(NET::Action action) const
 {
     if (KWindowSystem::allowedActionsSupported()) {
-        foreach (AbstractPtr item, d->m_members) {
+        foreach (AbstractPtr item, d->members) {
             if (!item->isActionSupported(action)) {
                 return false;
             }
@@ -473,7 +473,7 @@ bool TaskGroup::isActive() const
 
 bool TaskGroup::demandsAttention() const
 {
-    foreach (AbstractPtr item, d->m_members) {
+    foreach (AbstractPtr item, d->members) {
         if (item->demandsAttention()) {
             return true;
         }
@@ -484,15 +484,15 @@ bool TaskGroup::demandsAttention() const
 
 bool TaskGroup::moveItem(int oldIndex, int newIndex)
 {
-    if ((d->m_members.count() <= newIndex) || (newIndex < 0) ||
-        (d->m_members.count() <= oldIndex || oldIndex < 0)) {
+    if ((d->members.count() <= newIndex) || (newIndex < 0) ||
+        (d->members.count() <= oldIndex || oldIndex < 0)) {
         kDebug() << "index out of bounds";
         return false;
     }
 
-    AbstractPtr item = d->m_members.at(oldIndex);
-    d->m_members.move(oldIndex, newIndex);
-    kDebug() << "new index " << d->m_members.indexOf(item); 
+    AbstractPtr item = d->members.at(oldIndex);
+    d->members.move(oldIndex, newIndex);
+    kDebug() << "new index " << d->members.indexOf(item); 
     emit itemChanged(item);
     return true;
 }
