@@ -181,7 +181,11 @@ void NetworkEngine::updateWirelessData(const QString &source, const Solid::Contr
 {
     Q_ASSERT(iface);
     QString currentAP = iface->activeAccessPoint();
-    Solid::Control::AccessPoint *ap = iface->findAccessPoint(currentAP);
+
+    using namespace Solid::Control;
+    AccessPoint *ap = iface->findAccessPoint(currentAP);
+    WirelessNetworkInterface::OperationMode mode(WirelessNetworkInterface::Unassociated);
+    WirelessNetworkInterface::Capabilities capabilities(WirelessNetworkInterface::NoCapability);
 
     if (ap) {
         setData(source, I18N_NOOP("Link quality"), ap->signalStrength());
@@ -189,6 +193,7 @@ void NetworkEngine::updateWirelessData(const QString &source, const Solid::Contr
         setData(source, I18N_NOOP("ESSID"), ap->ssid());
         setData(source, I18N_NOOP("Bitrate"), ap->maxBitRate());
         setData(source, I18N_NOOP("Accesspoint"), ap->hardwareAddress());
+        mode = ap->mode();
     } else {
         setData(source, I18N_NOOP("Accesspoint"), i18n("None"));
         removeData(source, I18N_NOOP("Link quality"));
@@ -197,20 +202,20 @@ void NetworkEngine::updateWirelessData(const QString &source, const Solid::Contr
         removeData(source, I18N_NOOP("Bitrate"));
     }
 
-    switch (ap->mode()) {
-    case Solid::Control::WirelessNetworkInterface::Unassociated:
+    switch (mode) {
+    case WirelessNetworkInterface::Unassociated:
         setData(source, I18N_NOOP("Mode"), "Unassociated");
         break;
-    case Solid::Control::WirelessNetworkInterface::Adhoc:
+    case WirelessNetworkInterface::Adhoc:
         setData(source, I18N_NOOP("Mode"), "Adhoc");
         break;
-    case Solid::Control::WirelessNetworkInterface::Managed:
+    case WirelessNetworkInterface::Managed:
         setData(source, I18N_NOOP("Mode"), "Managed");
         break;
-    case Solid::Control::WirelessNetworkInterface::Master:
+    case WirelessNetworkInterface::Master:
         setData(source, I18N_NOOP("Mode"), "Master");
         break;
-    case Solid::Control::WirelessNetworkInterface::Repeater:
+    case WirelessNetworkInterface::Repeater:
         setData(source, I18N_NOOP("Mode"), "Repeater");
         break;
     default:
@@ -219,7 +224,7 @@ void NetworkEngine::updateWirelessData(const QString &source, const Solid::Contr
     }
 
     setData(source, I18N_NOOP("Encryption"),
-            (ap->capabilities() & Solid::Control::AccessPoint::Privacy)  != 0);
+            (capabilities & Solid::Control::AccessPoint::Privacy) != 0);
 }
 
 #include "networkengine.moc"
