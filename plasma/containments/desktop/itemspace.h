@@ -7,34 +7,33 @@
   (at your option) any later version.
 */
 
-/*
-  ItemSpace class
-  Implements "push and pull" dynamics of rectangular items in 2D space.
-
-  All isolated motion folows these rules:
-   - overlapping items stay at the same positions relative to each other
-   - non-overlapping items stay such and do not jump one over another
-
-  There are two types of motion:
-   - forced motion: an item moves all items on its way, even if any of them
-     would intersect the border of the working area
-   - non-forced motion: an item moves items on its way only as much as the border
-     of the working area
-
-  Items are pushed to fit inside the working area:
-  if an item is in the way of one of the borders of alignment, the move is forced;
-  if an item is in the way of one of the opposite borders, the move is non-forced.
-
-  An item can have a "preferred position". Such item is moved non-forced in the
-  direction towards the preferred position.
-*/
-
 #ifndef _ITEMSPACE_H
 #define _ITEMSPACE_H
 
 #include <QRectF>
 #include <QList>
 
+/**
+ * ItemSpace class
+ * Implements "push and pull" dynamics of rectangular items in 2D space.
+ *
+ * All isolated motion folows these rules:
+ *  - overlapping items stay at the same positions relative to each other
+ *  - non-overlapping items stay such and do not jump one over another
+ *
+ * There are two types of motion:
+ *  - forced motion: an item moves all items on its way, even if any of them
+ *    would intersect the border of the working area
+ *  - non-forced motion: an item moves items on its way only as much as the border
+ *    of the working area
+ *
+ * Items are pushed to fit inside the working area:
+ * if an item is in the way of one of the borders of alignment, the move is forced;
+ * if an item is in the way of one of the opposite borders, the move is non-forced.
+ *
+ * An item can have a "preferred position". Such item is moved non-forced in the
+ * direction towards the preferred position.
+ **/
 class ItemSpace
 {
   public:
@@ -49,15 +48,23 @@ class ItemSpace
 
     qreal positionVisibility(int itemIndex);
 
-    enum Direction {
+    enum DirectionFlag {
         DirLeft = 1,
         DirRight = 2,
         DirUp = 4,
         DirDown = 8
     };
+    Q_DECLARE_FLAGS(Direction, DirectionFlag);
+
+    enum PushPowerFlag {
+        NoPower = 0,
+        PushAwayFromPreferred = 1,
+        PushOverBorder = 2
+    };
+    Q_DECLARE_FLAGS(PushPower, PushPowerFlag);
 
     void offsetPositions(const QPointF &offset);
-    qreal performPush(int itemIndex, Direction direction, qreal amount, bool ignoreBorder);
+    qreal performPush(int itemIndex, Direction direction, qreal amount, PushPower power);
 
     /**
      * Finds an empty place for an item.
@@ -206,6 +213,18 @@ class ItemSpace
         qreal m_pushAvailable;
 
       private:
+        struct RemainingItem;
+        struct RemainingItem
+        {
+            int item;
+            RemainingItem *prev;
+            RemainingItem *next;
+            int locked;
+            bool deleteLater;
+        };
+        void RemainingUnlink(struct RemainingItem **remainingFirst, struct RemainingItem *item);
+        void populateGroupRecurser(int thisItem, struct RemainingItem **remainingFirst);
+
         // TODO: improve performance of these recursive lookup functions
 
         // return true if the item is either in this group
@@ -233,12 +252,12 @@ class ItemSpace
     {
       public:
         ItemSpace *m_itemSpace;
-        bool m_ignoreBorder;
+        PushPower m_power;
         Direction m_direction;
 
         RootItemGroup(
             ItemSpace *itemSpace,
-            bool ignoreBorder,
+            PushPower power,
             Direction direction
         );
     };
