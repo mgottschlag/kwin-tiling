@@ -240,21 +240,30 @@ void ClockApplet::wheelEvent(QGraphicsSceneWheelEvent *event)
     }
 
     QString newTimezone;
-    int current = d->selectedTimezones.indexOf(currentTimezone());
 
-    if (event->delta() > 0) {
-        int previous = current - 1;
-        if (previous < 0) {
+    if (isLocalTimezone()) {
+        if (event->delta() > 0) {
             newTimezone = d->selectedTimezones.last();
         } else {
-            newTimezone = d->selectedTimezones.at(previous);
+            newTimezone = d->selectedTimezones.first();
         }
     } else {
-        int next = current + 1;
-        if (next > d->selectedTimezones.count() - 1) {
-            newTimezone = d->selectedTimezones.first();
+        int current = d->selectedTimezones.indexOf(currentTimezone());
+
+        if (event->delta() > 0) {
+            int previous = current - 1;
+            if (previous < 0) {
+                newTimezone = localTimezone();
+            } else {
+                newTimezone = d->selectedTimezones.at(previous);
+            }
         } else {
-            newTimezone = d->selectedTimezones.at(next);
+            int next = current + 1;
+            if (next > d->selectedTimezones.count() - 1) {
+                newTimezone = localTimezone();
+            } else {
+                newTimezone = d->selectedTimezones.at(next);
+            }
         }
     }
 
