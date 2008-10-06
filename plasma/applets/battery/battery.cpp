@@ -582,12 +582,16 @@ void Battery::setProfile(const QString &profile)
 
 void Battery::inhibitToggled(const bool checked)
 {
+    kDebug() << "beginSuppressingSleep / stopSuppressingSleep toggled:" << checked;
     if (!checked) {
-        kDebug() << "Inhibiting suspend ...";
         m_inhibitCookie = Solid::PowerManagement::beginSuppressingSleep("Plasmoids never sleep.");
+        if (m_inhibitCookie == -1) {
+            kDebug() << "Inhibiting suspend didn't work out for some reason...";
+        }
     } else {
-        kDebug() << "Automatic suspend ...";
-        Solid::PowerManagement::stopSuppressingSleep(m_inhibitCookie);
+        if (!Solid::PowerManagement::stopSuppressingSleep(m_inhibitCookie)) {
+            kDebug() << "Re-enabling suspend failed, cookie invalid.";
+        }
     }
 }
 
