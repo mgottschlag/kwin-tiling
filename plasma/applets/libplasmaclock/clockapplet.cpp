@@ -61,6 +61,15 @@ public:
     QPoint clicked;
     QStringList selectedTimezones;
     QString prettyTimezone;
+
+    void addTzToTipText(QString &subText, QString tz) 
+    {
+        Plasma::Applet applet;
+        Plasma::DataEngine::Data data = applet.dataEngine("time")->query(tz);
+        subText += "<br><b>" + data["Timezone City"].toString().replace("_", " ")+"</b> ";
+        subText += KGlobal::locale()->formatTime(data["Time"].toTime(), false) + ", ";
+        subText += KGlobal::locale()->formatDate(data["Date"].toDate());
+    }
 };
 
 ClockApplet::ClockApplet(QObject *parent, const QVariantList &args)
@@ -99,15 +108,14 @@ void ClockApplet::updateToolTipContent()
     }
 
     QString subText;
+    if (!isLocalTimezone()) { 
+        d->addTzToTipText(subText, localTimezone()); 
+    }
     foreach (QString tz, getSelectedTimezones()) {
         if (tz == currentTimezone()) {
             continue;
         }
-
-        Plasma::DataEngine::Data data = dataEngine("time")->query(tz);
-        subText += "<br><b>" + data["Timezone City"].toString().replace("_", " ")+"</b> ";
-        subText += KGlobal::locale()->formatTime(data["Time"].toTime(), false) + ", ";
-        subText += KGlobal::locale()->formatDate(data["Date"].toDate());
+        d->addTzToTipText(subText, tz);
     }
     tipData.subText = subText;
 
