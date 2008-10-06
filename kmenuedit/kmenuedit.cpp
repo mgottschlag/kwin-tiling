@@ -66,7 +66,7 @@ KMenuEdit::~KMenuEdit()
 
 void KMenuEdit::setupActions()
 {
-    QAction *action = actionCollection()->addAction("newsubmenu");
+    KAction *action = actionCollection()->addAction("newsubmenu");
     action->setIcon(KIcon("menu_new"));
     action->setText(i18n("&New Submenu..."));
     action = actionCollection()->addAction("newitem");
