@@ -527,6 +527,30 @@ void ItemSpace::ItemGroup::Request::activate (ItemGroup *group)
             }
         }
 
+        // limit push to not push the item away from its preferred position
+        if (!(group->m_root->m_power & PushAwayFromPreferred) && groupItem.pushBack) {
+            qreal limit;
+            switch (group->m_root->m_direction) {
+                case DirLeft:
+                    limit = origGeom.left() - groupItem.preferredGeometry.left();
+                    break;
+                case DirRight:
+                    limit = -(origGeom.left() - groupItem.preferredGeometry.left());
+                    break;
+                case DirUp:
+                    limit = origGeom.top() - groupItem.preferredGeometry.top();
+                    break;
+                case DirDown:
+                    limit = -(origGeom.top() - groupItem.preferredGeometry.top());
+                    break;
+            }
+            limit = qMax(0.0, limit);
+            group->m_pushAvailable = qMin(group->m_pushAvailable, limit);
+            if (group->m_pushAvailable == 0) {
+                break;
+            }
+        }
+
         // look for items in the way
         QList<ItemSpaceItem> &items = itemSpace->items;
         for (int j = 0; j < items.size(); ++j) {
