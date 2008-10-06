@@ -412,6 +412,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         brightnessIcon->setIcon("ktip");
         connect(brightnessIcon, SIGNAL(clicked()),
                 this, SLOT(setFullBrightness()));
+        brightnessIcon->setDrawBackground(true);
         brightnessIcon->resize(rowHeight, rowHeight);
         controlsLayout->addItem(brightnessIcon, row, 2, 1, 1);
         controlsLayout->setRowSpacing(row, 10);
