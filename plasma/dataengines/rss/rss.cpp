@@ -237,7 +237,8 @@ void RssEngine::updateFeeds(const QString & source, const QString & title)
     setData(source, "items", list);
     QStringList sources = source.split(" ", QString::SkipEmptyParts);
     if (sources.size() >  1) {
-        setData(source, "title", i18n("%1 RSS feeds fetched", sources.size()));
+        setData(source, "title", i18np("1 RSS feed fetched",
+                                       "%1 RSS feeds fetched", sources.size()));
     } else {
         setData(source, "title", title);
     }
