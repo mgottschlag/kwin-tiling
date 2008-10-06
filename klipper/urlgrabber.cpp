@@ -226,7 +226,8 @@ void URLGrabber::actionMenu( bool wm_class_check )
 
 void URLGrabber::slotItemSelected(QAction *action)
 {
-    myMenu->hide(); // deleted by the timer or the next action
+    if (myMenu)
+        myMenu->hide(); // deleted by the timer or the next action
 
     QString id = action->data().toString();
 
@@ -402,8 +403,10 @@ void URLGrabber::slotKillPopupMenu()
         }
     }
 
-    myMenu->deleteLater();
-    myMenu = 0;
+    if ( myMenu ) {
+        myMenu->deleteLater();
+        myMenu = 0;
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////
