@@ -231,6 +231,7 @@ BasicTab::BasicTab( QWidget *parent )
     keybindLayout->setSpacing( KDialog::spacingHint());
 
     _keyEdit = new KKeySequenceWidget(general_group_keybind);
+    _keyEdit->setMultiKeyShortcutsAllowed(false);
     QLabel *l = new QLabel( i18n("Current shortcut &key:"), general_group_keybind);
     l->setBuddy( _keyEdit );
     keybindLayout->addWidget(l);
