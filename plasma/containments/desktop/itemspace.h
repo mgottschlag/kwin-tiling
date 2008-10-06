@@ -54,14 +54,14 @@ class ItemSpace
         DirUp = 4,
         DirDown = 8
     };
-    Q_DECLARE_FLAGS(Direction, DirectionFlag);
+    Q_DECLARE_FLAGS(Direction, DirectionFlag)
 
     enum PushPowerFlag {
         NoPower = 0,
         PushAwayFromPreferred = 1,
         PushOverBorder = 2
     };
-    Q_DECLARE_FLAGS(PushPower, PushPowerFlag);
+    Q_DECLARE_FLAGS(PushPower, PushPowerFlag)
 
     void offsetPositions(const QPointF &offset);
     qreal performPush(int itemIndex, Direction direction, qreal amount, PushPower power);
