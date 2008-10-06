@@ -57,6 +57,7 @@
 #include <plasma/widgets/label.h>
 #include <plasma/widgets/slider.h>
 #include <plasma/widgets/pushbutton.h>
+#include <plasma/widgets/checkbox.h>
 #include <plasma/widgets/combobox.h>
 #include <plasma/widgets/icon.h>
 
@@ -426,6 +427,13 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
                 this, SLOT(setProfile(QString)));
 
         controlsLayout->addItem(m_profileCombo, row, 1, 1, 2);
+        row++;
+
+        Plasma::CheckBox *inhibitCheck = new Plasma::CheckBox(controls);
+        inhibitCheck->setText("Suspend automatically");
+        inhibitCheck->setChecked("true"); // Do we want to store this in the config ...?
+        connect(inhibitCheck, SIGNAL(toggled(bool)), this, SLOT(inhibitToggled(bool)));
+        controlsLayout->addItem(inhibitCheck, row, 1, 1, 2);
         controlsLayout->setRowSpacing(row, 10);
         row++;
 
@@ -451,6 +459,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
                 suspendButton->setText(i18n("Sleep"));
                 suspendButton->setOrientation(Qt::Horizontal);
                 suspendButton->setMaximumHeight(36);
+                suspendButton->setDrawBackground(true);
                 actionsLayout->addItem(suspendButton, 0, 0);
                 connect(suspendButton, SIGNAL(clicked()), this, SLOT(suspend()));
                 actionsLayout->setColumnSpacing(0, 20);
@@ -460,6 +469,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
                 hibernateButton->setText(i18n("Hibernate"));
                 hibernateButton->setOrientation(Qt::Horizontal);
                 hibernateButton->setMaximumHeight(36);
+                hibernateButton->setDrawBackground(true);
                 actionsLayout->addItem(hibernateButton, 0, 1);
                 connect(hibernateButton, SIGNAL(clicked()), this, SLOT(hibernate()));
             }
@@ -567,6 +577,17 @@ void Battery::setProfile(const QString &profile)
         QDBusInterface iface( "org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus );
         iface.call( "refreshStatus" );
         iface.call( "setProfile", profile );
+    }
+}
+
+void Battery::inhibitToggled(const bool checked)
+{
+    if (!checked) {
+        kDebug() << "Inhibiting suspend ...";
+        m_inhibitCookie = Solid::PowerManagement::beginSuppressingSleep("Plasmoids never sleep.");
+    } else {
+        kDebug() << "Automatic suspend ...";
+        Solid::PowerManagement::stopSuppressingSleep(m_inhibitCookie);
     }
 }
 

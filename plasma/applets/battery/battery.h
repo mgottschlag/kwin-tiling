@@ -81,6 +81,7 @@ class Battery : public Plasma::PopupApplet
         void setFullBrightness();
         void openConfig();
         void setProfile(const QString &profile);
+        void inhibitToggled(const bool checked);
         void suspend();
         void hibernate();
 
@@ -106,6 +107,7 @@ class Battery : public Plasma::PopupApplet
         Plasma::Label *m_profileLabel;
         Plasma::ComboBox *m_profileCombo;
         Plasma::Slider *m_brightnessSlider;
+        int m_inhibitCookie;
 
         int m_batteryStyle;
         /* Paint battery with proper charge level */
