@@ -81,7 +81,6 @@ class Battery : public Plasma::PopupApplet
         void setFullBrightness();
         void openConfig();
         void setProfile(const QString &profile);
-        void inhibitToggled(const bool checked);
         void suspend();
         void hibernate();
 
@@ -155,6 +154,7 @@ class Battery : public Plasma::PopupApplet
         QHash<QString, QHash<QString, QVariant> > m_batteries_data;
         QFont m_font;
         bool m_isHovered;
+        bool m_firstRun;
         QColor m_boxColor;
         QColor m_textColor;
         QRectF m_textRect;

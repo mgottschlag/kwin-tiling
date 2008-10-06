@@ -61,6 +61,7 @@
 #include <plasma/widgets/combobox.h>
 #include <plasma/widgets/icon.h>
 
+
 Battery::Battery(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args),
       m_isEmbedded(false),
@@ -84,6 +85,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_batteryAlpha(1),
       m_batteryFadeIn(true),
       m_isHovered(false),
+      m_firstRun(true),
       m_numOfBattery(0)
 {
     kDebug() << "Loading applet battery";
@@ -92,7 +94,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     setPopupIcon(QIcon());
     resize(128, 128);
     setAspectRatioMode(Plasma::ConstrainedSquare );
-    m_textRect = QRect();
+    m_textRect = QRectF();
 }
 
 void Battery::setSvgTheme(int style)
@@ -165,18 +167,18 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & (Plasma::FormFactorConstraint | Plasma::SizeConstraint)) {
         if (formFactor() == Plasma::Vertical) {
             if (!m_showMultipleBatteries) {
-                setMaximumSize(QWIDGETSIZE_MAX, qMax(m_textRect.height(), contentsRect().width()));
+                setMinimumHeight(qMax(m_textRect.height(), contentsRect().width()));
             } else {
-                setMaximumSize(QWIDGETSIZE_MAX, qMax(m_textRect.height(), contentsRect().width()*m_numOfBattery));
+                setMinimumHeight(qMax(m_textRect.height(), contentsRect().width()*m_numOfBattery));
             }
             //kDebug() << "Vertical FormFactor";
         } else if (formFactor() == Plasma::Horizontal) {
             if (!m_showMultipleBatteries) {
-                setMaximumSize(qMax(m_textRect.width(), contentsRect().height()), QWIDGETSIZE_MAX);
+                setMinimumWidth(qMax(m_textRect.width(), contentsRect().height()));
             } else {
-                setMaximumSize(qMax(m_textRect.width(), contentsRect().height()*m_numOfBattery), QWIDGETSIZE_MAX);
+                setMinimumWidth(qMax(m_textRect.width(), contentsRect().height()*m_numOfBattery));
             }
-            //kDebug() << "Horizontal FormFactor" << m_textRect.width() << contentsRect().height();
+            kDebug() << "Horizontal FormFactor" << m_textRect.width() << contentsRect().height();
         } else {
             setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
         }
@@ -354,17 +356,17 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         QGraphicsWidget *controls = new QGraphicsWidget(item);
         QGraphicsGridLayout *controlsLayout = new QGraphicsGridLayout(controls);
         controlsLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
         controlsLayout->setColumnPreferredWidth(0, rowHeight);
         controlsLayout->setColumnMinimumWidth(1, 2*columnWidth);
         controlsLayout->setColumnPreferredWidth(2, rowHeight);
         controlsLayout->setHorizontalSpacing(0);
-
         QGraphicsGridLayout *batteryLayout = new QGraphicsGridLayout(controlsLayout);
-        batteryLayout->setColumnPreferredWidth(0, columnWidth);
+        batteryLayout->setColumnPreferredWidth(0, 100);
         batteryLayout->setColumnPreferredWidth(1, columnWidth);
-
+        batteryLayout->setRowPreferredHeight(row, 60);
         m_batteryLabel = new Plasma::Label(controls);
-        m_batteryLabel->setMinimumSize(60, columnWidth);
+        m_batteryLabel->setMinimumSize(160, 60);
         m_batteryLabel->nativeWidget()->setWordWrap(false);
         m_batteryLabel->nativeWidget()->setAlignment(Qt::AlignTop);
 
@@ -372,16 +374,17 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
 
         Battery *m_extenderApplet = static_cast<Battery*>(Plasma::Applet::load("battery"));
         if (m_extenderApplet) {
-            m_extenderApplet ->setParent(this);
-            m_extenderApplet ->setAcceptsHoverEvents(true);
-            m_extenderApplet ->setParentItem(controls);
-            m_extenderApplet ->setEmbedded(true);
-            m_extenderApplet ->setSvgTheme(m_batteryStyle);
-            m_extenderApplet ->setMinimumSize(100, columnWidth);
-            m_extenderApplet ->setBackgroundHints(NoBackground);
-            m_extenderApplet ->setFlag(QGraphicsItem::ItemIsMovable, false);
-            m_extenderApplet ->init();
-            batteryLayout->addItem(m_extenderApplet , 0, 1, 1, 1, Qt::AlignRight);
+            m_extenderApplet->setParent(this);
+            m_extenderApplet->setAcceptsHoverEvents(true);
+            m_extenderApplet->setParentItem(controls);
+            m_extenderApplet->setEmbedded(true);
+            m_extenderApplet->setSvgTheme(m_batteryStyle);
+            m_extenderApplet->setMinimumSize(64, 64); // TODO: Multiple batteries?
+            m_extenderApplet->resize(64, 64);
+            m_extenderApplet->setBackgroundHints(NoBackground);
+            m_extenderApplet->setFlag(QGraphicsItem::ItemIsMovable, false);
+            m_extenderApplet->init();
+            batteryLayout->addItem(m_extenderApplet, 0, 1, 1, 1, Qt::AlignRight);
         }
 
         controlsLayout->addItem(batteryLayout, row, 0, 1, 3);
@@ -413,7 +416,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         connect(brightnessIcon, SIGNAL(clicked()),
                 this, SLOT(setFullBrightness()));
         brightnessIcon->setDrawBackground(true);
-        brightnessIcon->resize(rowHeight, rowHeight);
+        brightnessIcon->setMinimumSize(rowHeight, rowHeight);
         controlsLayout->addItem(brightnessIcon, row, 2, 1, 1);
         controlsLayout->setRowSpacing(row, 10);
         row++;
@@ -428,14 +431,6 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
                 this, SLOT(setProfile(QString)));
 
         controlsLayout->addItem(m_profileCombo, row, 1, 1, 2);
-        row++;
-
-        Plasma::CheckBox *inhibitCheck = new Plasma::CheckBox(controls);
-        inhibitCheck->setText("Suspend automatically");
-        inhibitCheck->setChecked("true"); // Do we want to store this in the config ...?
-        connect(inhibitCheck, SIGNAL(toggled(bool)), this, SLOT(inhibitToggled(bool)));
-        controlsLayout->addItem(inhibitCheck, row, 1, 1, 2);
-        controlsLayout->setRowSpacing(row, 10);
         row++;
 
         Plasma::Label *actionsLabel = new Plasma::Label(controls);
@@ -530,6 +525,7 @@ void Battery::updateStatus()
                 batteryLabelText.append(i18nc("Battery is not plugged in", "not present"));
             }
             batteryLabelText.append("%");
+            batteryLabelText.append(QString("<br /><b>Battery X: 66%</b> ")); // FIXME: Remove
             if (m_acadapter_plugged) {
                 batteryLabelText.append((i18n(" charged")));
                 batteryLabelText.append(i18n("<br /><b>AC Adapter:</b> Plugged in"));
@@ -581,20 +577,6 @@ void Battery::setProfile(const QString &profile)
     }
 }
 
-void Battery::inhibitToggled(const bool checked)
-{
-    kDebug() << "beginSuppressingSleep / stopSuppressingSleep toggled:" << checked;
-    if (!checked) {
-        m_inhibitCookie = Solid::PowerManagement::beginSuppressingSleep("Plasmoids never sleep.");
-        if (m_inhibitCookie == -1) {
-            kDebug() << "Inhibiting suspend didn't work out for some reason...";
-        }
-    } else {
-        if (!Solid::PowerManagement::stopSuppressingSleep(m_inhibitCookie)) {
-            kDebug() << "Re-enabling suspend failed, cookie invalid.";
-        }
-    }
-}
 
 void Battery::showLabel(bool show)
 {
@@ -736,12 +718,19 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
     }
     p->setFont(m_font);
 
-    // Let's find a good position for painting the background
+    // Let's find a good position for painting the percentage on top of the battery
     m_textRect = QRectF(qMax(qreal(0.0), contentsRect.left() + (contentsRect.width() - text_width) / 2),
                             contentsRect.top() + ((contentsRect.height() - (int)fm.height()) / 2 * 0.9),
                             qMin(contentsRect.width(), (int)text_width),
                             fm.height() * 1.2 );
+    //kDebug() << contentsRect << m_textRect;
+    //p->setBrush(QColor("green"));
+    //p->drawRect(m_textRect);
 
+    if (m_firstRun) {
+        m_firstRun = false;
+        return;
+    }
     // Poor man's highlighting
     m_boxColor.setAlphaF(m_alpha);
     p->setPen(m_boxColor);
@@ -851,7 +840,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         return;
     }
 
-    if (m_isEmbedded || m_showMultipleBatteries) {
+    if (m_isEmbedded || m_showMultipleBatteries || m_firstRun) {
         // paint each battery with own charge level
         int battery_num = 0;
         int width = contentsRect.width()/m_numOfBattery;
@@ -865,7 +854,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
             // paint battery with appropriate charge level
             paintBattery(p, corect, battery_data.value()[I18N_NOOP("Percent")].toInt(), battery_data.value()[I18N_NOOP("Plugged in")].toBool());
 
-            if (!m_isEmbedded || m_showBatteryString || m_isHovered) {
+            if (m_showBatteryString || m_isHovered || m_firstRun) {
                 // Show the charge percentage with a box on top of the battery
                 QString batteryLabel;
                 if (battery_data.value()[I18N_NOOP("Plugged in")].toBool()) {
