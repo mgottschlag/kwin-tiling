@@ -145,7 +145,6 @@ bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* gro
         } else {
             TaskItem *task = static_cast<TaskItem*>(item);
             if (task->task()) { //omit startup tasks
-                continue;
                 QString name = task->task()->classClass();
                 itemMap.insertMulti(name,item);
             }
