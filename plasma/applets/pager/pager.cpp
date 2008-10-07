@@ -58,6 +58,7 @@ Pager::Pager(QObject *parent, const QVariantList &args)
       m_rows(2),
       m_columns(0),
       m_hoverIndex(-1),
+      m_colorScheme(0),
       m_dragId(0),
       m_dirtyDesktop(-1),
       m_dragStartDesktop(-1),
@@ -118,9 +119,16 @@ void Pager::init()
     if ( !m_desktopLayoutOwner->claim( false ))
         lostDesktopLayoutOwner();
 
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeRefresh()));
+
     recalculateGeometry();
 
     m_currentDesktop = KWindowSystem::currentDesktop();
+}
+
+Pager::~Pager()
+{
+    delete m_colorScheme;
 }
 
 void Pager::constraintsEvent(Plasma::Constraints constraints)
@@ -142,6 +150,15 @@ void Pager::constraintsEvent(Plasma::Constraints constraints)
             setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         }
     }
+}
+
+KColorScheme *Pager::colorScheme()
+{
+    if (!m_colorScheme) {
+        m_colorScheme = new KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::defaultTheme()->colorScheme());
+    }
+
+    return m_colorScheme;
 }
 
 void Pager::createMenu()
@@ -830,7 +847,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
     Q_UNUSED( option );
     Q_UNUSED( contentsRect );
 
-    KColorScheme plasmaColorTheme = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::defaultTheme()->colorScheme());
+    KColorScheme* plasmaColorTheme = colorScheme();
     painter->setFont(KGlobalSettings::taskbarFont());
 
     // Desktop background
@@ -839,7 +856,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
     hoverColor.setAlpha(64);
 
     // Inactive windows
-    QColor drawingColor = plasmaColorTheme.foreground(KColorScheme::InactiveText).color();
+    QColor drawingColor = plasmaColorTheme->foreground(KColorScheme::InactiveText).color();
     drawingColor.setAlpha(50);
     QBrush windowBrush(drawingColor);
     // Inactive windows Active desktop
@@ -847,7 +864,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
     QBrush windowBrushActiveDesk(drawingColor);
 
     // Inactive window borders
-    drawingColor = plasmaColorTheme.foreground(KColorScheme::NeutralText).color();
+    drawingColor = plasmaColorTheme->foreground(KColorScheme::NeutralText).color();
     drawingColor.setAlpha(238);
     QPen windowPen(drawingColor);
 
@@ -951,7 +968,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
                 defaultTextColor.setAlphaF(1);
                 drawingPen = QPen(defaultTextColor);
             } else {
-                drawingPen = QPen(plasmaColorTheme.foreground(KColorScheme::InactiveText).color());
+                drawingPen = QPen(plasmaColorTheme->foreground(KColorScheme::InactiveText).color());
             }
 
             painter->setPen(drawingPen);
@@ -991,6 +1008,12 @@ QRect Pager::fixViewportPosition( const QRect& r )
     if( y < 0 )
         y = y + qApp->desktop()->height();
     return QRect( x - r.width() / 2, y - r.height() / 2, r.width(), r.height());
+}
+
+void Pager::themeRefresh()
+{
+    delete m_colorScheme;
+    m_colorScheme = 0;
 }
 
 #include "pager.moc"

@@ -30,6 +30,7 @@
 
 class KDialog;
 class KSelectionOwner;
+class KColorScheme;
 
 namespace Plasma
 {
@@ -41,7 +42,7 @@ class Pager : public Plasma::Applet
     Q_OBJECT
     public:
         Pager(QObject *parent, const QVariantList &args);
-
+        ~Pager();
         void init();
         void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option,
                             const QRect &contents);
@@ -51,6 +52,7 @@ class Pager : public Plasma::Applet
     public slots:
         void recalculateGeometry();
         void recalculateWindowRects();
+        void themeRefresh();
 
     protected slots:
         virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -82,6 +84,7 @@ class Pager : public Plasma::Applet
 
     protected:
         void createMenu();
+        KColorScheme *colorScheme();
         QRect fixViewportPosition( const QRect& r );
         void createConfigurationInterface(KConfigDialog *parent);
         bool posOnDesktopRect(const QRectF& r, const QPointF& pos);
@@ -126,6 +129,7 @@ class Pager : public Plasma::Applet
         QList<QAction*> m_actions;
         KSelectionOwner* m_desktopLayoutOwner;
         Plasma::PanelSvg *m_background;
+        KColorScheme *m_colorScheme;
 
         // dragging of windows
         QRect m_dragOriginal;
