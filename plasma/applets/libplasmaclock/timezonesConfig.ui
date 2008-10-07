@@ -18,6 +18,18 @@
        <height>150</height>
       </size>
      </property>
+     <property name="toolTip" >
+      <string>Select several time zones.</string>
+     </property>
+     <property name="whatsThis" >
+      <string>Your local time and time zone are defined in System Settings, in the Date and Time tab. As default, your plasma clock will 
+use this setting.
+The plasma clock tooltip can display the time in several other time zones: to do so, 
+select one or several more time zones in the list. After you click the OK button, when your mouse is over the clock, 
+a tooltip will display the time in all the selected time zones.
+To select a default time zone: you can either scroll over the clock with your mouse wheel and set the one 
+you want or you can set it with "Clock defaults to:". </string>
+     </property>
      <property name="selectionMode" >
       <enum>QAbstractItemView::MultiSelection</enum>
      </property>
@@ -54,6 +66,13 @@
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="toolTip" >
+        <string>The time the clock will display</string>
+       </property>
+       <property name="whatsThis" >
+        <string>The clock will display the time for the selected default zone. 
+Local is the time you set in System Settings.</string>
        </property>
        <property name="insertPolicy" >
         <enum>QComboBox::InsertAlphabetically</enum>
