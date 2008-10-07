@@ -30,27 +30,9 @@ namespace ggadget {
 
 class PanelDecorator::Private {
  public:
-  Private(GadgetInfo *info) : owner_(NULL), info_(info){}
+  Private(GadgetInfo *info)
+      : owner_(NULL), info_(info), minimized_width_(0), vertical_(true) {}
 
-  void ShowDebugInfo(const char*) {
-    QString msg = "Applet size:(%1, %2)\nWidget size:(%3, %4)\nView size:(%5, %6)\n";
-    qt::QtViewWidget *widget = static_cast<qt::QtViewWidget*>(info_->main_view_host->GetNativeWidget());
-    ViewInterface *view = info_->main_view_host->GetViewDecorator();
-    QMessageBox::information(NULL,
-                             "Debug",
-                             msg.arg(info_->applet->size().width())
-                             .arg(info_->applet->size().height())
-                             .arg(widget->size().width())
-                             .arg(widget->size().height())
-                             .arg(view->GetWidth())
-                             .arg(view->GetHeight()));
-  }
-  void ShowIcon(const char*) {
-    owner_->SetMinimizedIconVisible(!owner_->IsMinimizedIconVisible());
-  }
-  void ShowCaption(const char*) {
-    owner_->SetMinimizedCaptionVisible(!owner_->IsMinimizedCaptionVisible());
-  }
   void OnAddDecoratorMenuItems(MenuInterface *menu) {
     int priority = MenuInterface::MENU_ITEM_PRI_DECORATOR;
     owner_->AddCollapseExpandMenuItem(menu);
@@ -69,8 +51,58 @@ class PanelDecorator::Private {
         "Debug", 0, 0,
         NewSlot(this, &Private::ShowDebugInfo), priority);
   }
+
+  void ShowDebugInfo(const char*) {
+    QString msg = "Applet size:(%1, %2)\nWidget size:(%3, %4)\nView size:(%5, %6)\n";
+    qt::QtViewWidget *widget = static_cast<qt::QtViewWidget*>(info_->main_view_host->GetNativeWidget());
+    ViewInterface *view = info_->main_view_host->GetViewDecorator();
+    QMessageBox::information(NULL,
+                             "Debug",
+                             msg.arg(info_->applet->size().width())
+                             .arg(info_->applet->size().height())
+                             .arg(widget->size().width())
+                             .arg(widget->size().height())
+                             .arg(view->GetWidth())
+                             .arg(view->GetHeight()));
+  }
+
+  void ShowIcon(const char*) {
+    bool caption = owner_->IsMinimizedCaptionVisible();
+    owner_->SetMinimizedIconVisible(!owner_->IsMinimizedIconVisible());
+    if (caption != owner_->IsMinimizedCaptionVisible())
+      UpdateIconizeStatus();
+  }
+
+  void ShowCaption(const char*) {
+    owner_->SetMinimizedCaptionVisible(!owner_->IsMinimizedCaptionVisible());
+    UpdateIconizeStatus();
+  }
+
+  void UpdateIconizeStatus() {
+    if (vertical_ || !owner_->IsMinimized()) return;
+    if (!owner_->IsMinimizedCaptionVisible()) {
+      minimized_width_ = owner_->GetWidth();
+      owner_->SetWidth(38);
+      owner_->SetResizeBorderVisible(false, false, false, false);
+    } else {
+      owner_->SetWidth(minimized_width_);
+      owner_->SetResizeBorderVisible(false, false, false, true);
+    }
+  }
+
+  void LoadMinimizedWidth() {
+    DLOG("LoadMinimizedWidth:");
+    Variant width = owner_->GetOption("minimized_width");
+    if (width.type() == Variant::TYPE_DOUBLE) {
+      minimized_width_ = VariantValue<double>()(width);
+      DLOG("\t%f", VariantValue<double>()(width));
+    }
+    UpdateIconizeStatus();
+  }
   PanelDecorator *owner_;
   GadgetInfo *info_;
+  double minimized_width_;
+  bool vertical_; 
 };
 
 PanelDecorator::PanelDecorator(ViewHostInterface *host, GadgetInfo *info)
@@ -78,6 +110,7 @@ PanelDecorator::PanelDecorator(ViewHostInterface *host, GadgetInfo *info)
   SetButtonVisible(MainViewDecoratorBase::POP_IN_OUT_BUTTON, false);
   SetButtonVisible(MainViewDecoratorBase::MENU_BUTTON, false);
   SetButtonVisible(MainViewDecoratorBase::CLOSE_BUTTON, false);
+  SetOptionPrefix("plasma_panel");
   d->owner_ = this;
 }
 
@@ -87,5 +120,47 @@ void PanelDecorator::OnAddDecoratorMenuItems(MenuInterface *menu) {
   d->OnAddDecoratorMenuItems(menu);
 }
 
+void PanelDecorator::SetSize(double width, double height) {
+  DockedMainViewDecorator::SetSize(width, height);
+  if (IsMinimized() && IsMinimizedCaptionVisible()) {
+    SetOption("minimized_width", Variant(GetWidth()));
+    DLOG("SaveMinimizedWidth:%f", GetWidth());
+  }
+}
+
+/*void PanelDecorator::GetClientExtents(double *width, double *height) const {
+  MainViewDecoratorBase::GetClientExtents(width, height);
+  if (IsMinimized()) {
+    if (!IsMinimizedCaptionVisible())
+      *width = 38;
+    else
+      *width = d->minimized_width_;
+  }
+}*/
+
+void PanelDecorator::OnChildViewChanged() {
+  DockedMainViewDecorator::OnChildViewChanged();
+  // this methods is called not only when a main view assigned to this
+  // decorator for the first time, but also when a main view popped in/out.
+  // We only want to init minimized_width_ the first time
+  if (d->minimized_width_ == 0)
+    d->LoadMinimizedWidth();
+}
+
+void PanelDecorator::SetVertical() {
+  SetAllowYMargin(false);
+  SetAllowXMargin(true);
+  bool border = !IsMinimized();
+  SetResizeBorderVisible(false, border, false, false);
+  d->vertical_ = true;
+}
+
+void PanelDecorator::SetHorizontal() {
+  SetAllowYMargin(true);
+  SetAllowXMargin(false);
+  bool border = !IsMinimized() || IsMinimizedCaptionVisible();
+  SetResizeBorderVisible(false, false, false, border);
+  d->vertical_ = false;
+}
 
 } // namespace ggadget

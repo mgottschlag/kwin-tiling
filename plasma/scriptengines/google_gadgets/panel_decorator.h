@@ -28,6 +28,13 @@ class PanelDecorator : public DockedMainViewDecorator {
   PanelDecorator(ViewHostInterface *host, GadgetInfo *info);
   virtual ~PanelDecorator();
   virtual void OnAddDecoratorMenuItems(MenuInterface *menu);
+  virtual void SetSize(double width, double height);
+  void SetVertical();
+  void SetHorizontal();
+
+ protected:
+//  virtual void GetClientExtents(double *width, double *height) const;
+  virtual void OnChildViewChanged();
 
  private:
   class Private;

@@ -139,9 +139,9 @@ ViewHostInterface *PlasmaHost::NewViewHost(Gadget *,
       PanelDecorator *decorator = new PanelDecorator(vh, d->info);
       if (d->info->applet->location() == Plasma::TopEdge
           || d->info->applet->location() == Plasma::BottomEdge) {
-        decorator->SetAllowYMargin(true);
-        decorator->SetAllowXMargin(false);
-        decorator->SetResizeBorderVisible(false, false, false, true);
+        decorator->SetHorizontal();
+      } else {
+        decorator->SetVertical();
       }
       decorator->ConnectOnPopOut(NewSlot(d, &Private::OnPopOutHandler));
       decorator->ConnectOnPopIn(NewSlot(d, &Private::OnPopInHandler));
