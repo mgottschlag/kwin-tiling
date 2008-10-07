@@ -47,7 +47,7 @@ public:
     /** Returns the shared pointer to the  Task */
     TaskPtr task() const;
 
-    StartupPtr startupPointer() const;
+    StartupPtr startup() const;
     bool isGroupItem() const { return false; }
 
     QIcon icon() const;

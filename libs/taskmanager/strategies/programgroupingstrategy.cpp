@@ -120,10 +120,12 @@ void ProgramGroupingStrategy::handleItem(AbstractPtr item)
         d->groupManager->rootGroup()->add(item);
         return;
     } else if (d->blackList.contains((qobject_cast<TaskItem*>(item))->task()->classClass())) {
-	d->groupManager->rootGroup()->add(item);
+        d->groupManager->rootGroup()->add(item);
         return;
     }
-    if (!programGrouping(dynamic_cast<TaskItem*>(item), d->groupManager->rootGroup())) {
+
+    TaskItem *task = dynamic_cast<TaskItem*>(item);
+    if (task && !programGrouping(task, d->groupManager->rootGroup())) {
         kDebug() << "joined rootGroup ";
         d->groupManager->rootGroup()->add(item);
     }
@@ -134,24 +136,24 @@ bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* gro
     kDebug();
     QHash <QString,AbstractPtr> itemMap;
 
-    foreach(AbstractPtr item, groupItem->members()) { //search for an existing group
+    foreach (AbstractPtr item, groupItem->members()) { //search for an existing group
         if (item->isGroupItem()) { //maybe add the condition that the subgroup was created by programGrouping
-            if (programGrouping(taskItem, dynamic_cast<TaskGroup*>(item))) {
+            if (programGrouping(taskItem, static_cast<TaskGroup*>(item))) {
                 kDebug() << "joined subGroup";
                 return true;
             }
         } else {
-	    TaskItem *task = dynamic_cast<TaskItem*>(item);
-	    if (!task->task()) { //omit startup tasks
-		continue;
-	    }
-	    QString name = task->task()->classClass();
-	    itemMap.insertMulti(name,item);
-	}
+            TaskItem *task = static_cast<TaskItem*>(item);
+            if (task->task()) { //omit startup tasks
+                continue;
+                QString name = task->task()->classClass();
+                itemMap.insertMulti(name,item);
+            }
+        }
     }
 
     if (!itemMap.values().contains(taskItem)) {
-	itemMap.insertMulti(taskItem->task()->classClass(), taskItem);
+        itemMap.insertMulti(taskItem->task()->classClass(), taskItem);
     }
 
     QString name = taskItem->task()->classClass();

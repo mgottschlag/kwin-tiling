@@ -94,7 +94,7 @@ TaskPtr TaskItem::task() const
     return d->task;
 }
 
-StartupPtr TaskItem::startupPointer() const
+StartupPtr TaskItem::startup() const
 {
     if (d->startupTask.isNull()) {
         kDebug() << "pointer is Null";

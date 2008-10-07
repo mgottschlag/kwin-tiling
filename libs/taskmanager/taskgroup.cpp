@@ -103,12 +103,13 @@ void TaskGroup::closeGroup()
 
 void TaskGroup::add(AbstractPtr item)
 {
-    if (!item->isGroupItem()) {
+/*    if (!item->isGroupItem()) {
         if ((dynamic_cast<TaskItem*>(item))->task()) {
             kDebug() << "Add item" << (dynamic_cast<TaskItem*>(item))->task()->visibleName();
         }
         kDebug() << " to Group " << name();
     }
+*/
 
     if (d->members.contains(item)) {
         kDebug() << "already in this group";

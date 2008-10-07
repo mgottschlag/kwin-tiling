@@ -90,9 +90,11 @@ void AbstractSortingStrategy::handleGroup(TaskGroup *group)
 void AbstractSortingStrategy::removeGroup()
 {
     TaskGroup *group = dynamic_cast<TaskGroup*>(sender());
+
     if (!group) {
-	return;
+        return;
     }
+
     d->managedGroups.removeAll(group);
 }
 
