@@ -66,7 +66,12 @@ public:
     {
         Plasma::Applet applet;
         Plasma::DataEngine::Data data = applet.dataEngine("time")->query(tz);
-        subText += "<br><b>" + data["Timezone City"].toString().replace("_", " ")+"</b> ";
+        if (tz == "UTC")  {
+            subText += "<br><b>UTC</b> ";
+        }
+        else  {
+            subText += "<br><b>" + data["Timezone City"].toString().replace("_", " ")+"</b> ";
+        }
         subText += KGlobal::locale()->formatTime(data["Time"].toTime(), false) + ", ";
         subText += KGlobal::locale()->formatDate(data["Date"].toDate());
     }
@@ -304,8 +309,12 @@ void ClockApplet::init()
     KConfigGroup cg = config();
     d->selectedTimezones = cg.readEntry("timeZones", QStringList());
     d->timezone = cg.readEntry("timezone", d->timezone);
-    QStringList tzParts = d->timezone.split("/");
-    d->prettyTimezone = tzParts.value(1);
+    if (d->timezone == "UTC")  {
+        d->prettyTimezone = d->timezone;
+    } else {
+        QStringList tzParts = d->timezone.split("/");
+        d->prettyTimezone = tzParts.value(1);
+    }
 
     //avoid duplication
     if (!extender()->item("calendar")) {
@@ -324,9 +333,12 @@ void ClockApplet::setCurrentTimezone(const QString &tz)
     }
 
     d->timezone = tz;
-    QStringList tzParts = tz.split("/");
-    d->prettyTimezone = tzParts.value(1);
-
+    if (tz == "UTC") {
+        d->prettyTimezone = tz;
+    } else {
+        QStringList tzParts = tz.split("/");
+        d->prettyTimezone = tzParts.value(1);
+    }
     KConfigGroup cg = config();
     cg.writeEntry("timezone", tz);
     emit configNeedsSaving();
