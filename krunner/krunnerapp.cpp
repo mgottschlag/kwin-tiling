@@ -121,7 +121,11 @@ KRunnerApp* KRunnerApp::self()
 }
 
 KRunnerApp::KRunnerApp(Display *display, Qt::HANDLE visual, Qt::HANDLE colormap)
+#ifdef Q_WS_X11
     : KUniqueApplication(display, visual, colormap),
+#else
+    : KUniqueApplication(),
+#endif
       m_interface(0),
       m_tasks(0),
       m_startupId(NULL)
