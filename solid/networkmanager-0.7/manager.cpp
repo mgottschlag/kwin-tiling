@@ -145,15 +145,21 @@ bool NMNetworkManager::isWirelessHardwareEnabled() const
 void NMNetworkManager::activateConnection(const QString & interfaceUni, const QString & connectionUni, const QVariantMap & connectionParameters)
 {
     Q_D(NMNetworkManager);
-    QString serviceName = connectionUni.split(' ')[0];
-    QString connectionPath = connectionUni.split(' ')[1];
+    QString serviceName = connectionUni.section(' ', 0, 0);
+    QString connectionPath = connectionUni.section(' ', 1, 1);
     // ### FIXME find a better name for the parameter needed for NM 0.7
     QString extra_connection_parameter = connectionParameters.value("extra_connection_parameter").toString();
+    if (extra_connection_parameter.isEmpty()) {
+        extra_connection_parameter = QLatin1String("/foo");
+    }
     if ( serviceName.isEmpty() || connectionPath.isEmpty() ) {
         return;
     }
     // TODO store error code
-    d->iface.ActivateConnection(serviceName, QDBusObjectPath(connectionPath), QDBusObjectPath(interfaceUni), QDBusObjectPath(extra_connection_parameter));
+    QDBusObjectPath connPath(connectionPath);
+    QDBusObjectPath interfacePath(interfaceUni);
+    kDebug() << "Activating connection " << connPath.path() << " on service " << serviceName << " on interface " << interfacePath.path();
+    d->iface.ActivateConnection(serviceName, connPath, interfacePath, QDBusObjectPath(extra_connection_parameter));
 }
 
 void NMNetworkManager::deactivateConnection( const QString & activeConnectionPath )
