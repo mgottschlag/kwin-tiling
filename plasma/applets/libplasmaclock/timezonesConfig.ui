@@ -19,7 +19,7 @@
       </size>
      </property>
      <property name="toolTip" >
-      <string>Select several time zones.</string>
+      <string>Select one or several time zones.</string>
      </property>
      <property name="whatsThis" >
       <string>Your local time and time zone are defined in System Settings, in the Date and Time tab. As default, your plasma clock will 
