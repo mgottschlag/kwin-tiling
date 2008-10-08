@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=RSS
+Name[ru]=Ленты RSS
 Comment=RSS News Data Engine
 Comment[el]=Μηχανή δεδομένων ειδήσεων RSS
 Comment[gl]=Motor de dados de novas RSS
@@ -10,6 +11,7 @@ Comment[km]=ម៉ាស៊ីន​ទិន្នន័យព័ត៌មា�
 Comment[nds]=RSS-Stroom-Hanteerkarn
 Comment[pt]=Motor de Dados de Notícias RSS
 Comment[pt_BR]=Motor de Dados de Notícias RSS
+Comment[ru]=Поставщик лент RSS
 Comment[tr]=RSS Haber Veri Motoru
 Comment[uk]=Рушій даних новин RSS
 Comment[zh_TW]=RSS 新聞資料引擎
