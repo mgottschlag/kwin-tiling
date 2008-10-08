@@ -171,7 +171,7 @@ ToCurrentDesktopActionImpl::ToCurrentDesktopActionImpl(QObject *parent, Abstract
 {
     connect(this, SIGNAL(triggered()), this, SLOT(slotToCurrentDesktop()));
     setText(i18n("&To Current Desktop"));
-    setEnabled(!task->isOnCurrentDesktop());
+    setEnabled(!task->isOnCurrentDesktop() && task->isActionSupported(NET::ActionChangeDesktop));
 }
 
 void ToCurrentDesktopActionImpl::slotToCurrentDesktop() 
