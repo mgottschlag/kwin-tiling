@@ -437,8 +437,9 @@ PanelController::PanelController(QWidget* parent)
     d->settingsTool = d->addTool("configure", i18n("More settings..."), this);
     d->layout->addWidget(d->settingsTool);
     connect(d->settingsTool, SIGNAL(pressed()), this, SLOT(settingsPopup()));
-    d->optionsDialog = new Plasma::Dialog(this);
+    d->optionsDialog = new Plasma::Dialog(0); // don't pass in a parent; breaks with some lesser WMs
     d->optionsDialog->installEventFilter(this);
+    KWindowSystem::setState(d->optionsDialog->winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky);
     d->optDialogLayout = new QVBoxLayout(d->optionsDialog);
     d->optDialogLayout->setMargin(0);
     d->optDialogLayout->addWidget(alignFrame);
@@ -462,6 +463,8 @@ PanelController::~PanelController()
     //TODO: should we try and only call this when something has actually been
     //      altered that we care about?
     PlasmaApp::self()->corona()->requestConfigSync();
+    delete d->optionsDialog;
+    d->optionsDialog = 0;
     delete d;
 }
 
