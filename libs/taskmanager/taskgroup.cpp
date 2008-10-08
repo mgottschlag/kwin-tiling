@@ -91,7 +91,7 @@ TaskGroup::~TaskGroup()
 /*
 void TaskGroup::closeGroup()
 {
-    foreach(AbstractPtr item, d->members) { //delete all existing tasks
+    foreach(AbstractItemPtr item, d->members) { //delete all existing tasks
         if (item->isGroupItem()) { 
             (dynamic_cast<GroupPtr>(item))->clear();//FIXME is this reasonable or should they only be removed?
         }
@@ -101,7 +101,7 @@ void TaskGroup::closeGroup()
     kDebug() << "Not implemented";
 }*/
 
-void TaskGroup::add(AbstractPtr item)
+void TaskGroup::add(AbstractItemPtr item)
 {
 /*    if (!item->isGroupItem()) {
         if ((dynamic_cast<TaskItem*>(item))->task()) {
@@ -138,7 +138,7 @@ void TaskGroup::add(AbstractPtr item)
 
 
 
-void TaskGroup::remove(AbstractPtr item)
+void TaskGroup::remove(AbstractItemPtr item)
 {
     Q_ASSERT(item);
 
@@ -233,13 +233,13 @@ bool TaskGroup::isRootGroup() const
 }
 
 /** only true if item is in this group */
-bool TaskGroup::hasDirectMember(AbstractPtr item) const
+bool TaskGroup::hasDirectMember(AbstractItemPtr item) const
 {
     return d->members.contains(item);
 }
 
 /** true if item is in this or any sub group */
-bool TaskGroup::hasMember(AbstractPtr item) const
+bool TaskGroup::hasMember(AbstractItemPtr item) const
 {
     kDebug();
     TaskGroup *group = item->parentGroup();
@@ -253,9 +253,9 @@ bool TaskGroup::hasMember(AbstractPtr item) const
 }
 
 /** Returns Direct Member group if the passed item is in a subgroup */
-AbstractPtr TaskGroup::directMember(AbstractPtr item) const
+AbstractItemPtr TaskGroup::directMember(AbstractItemPtr item) const
 {
-    AbstractPtr tempItem = item;
+    AbstractItemPtr tempItem = item;
     while (tempItem) {
         if (d->members.contains(item)) {
             return item;
@@ -263,12 +263,12 @@ AbstractPtr TaskGroup::directMember(AbstractPtr item) const
         tempItem = tempItem->parentGroup();
     }
     kDebug() << "item not found";
-    return AbstractPtr();
+    return AbstractItemPtr();
 }
 
 void TaskGroup::setShaded(bool state)
 {
-    foreach (AbstractPtr item, d->members) {
+    foreach (AbstractItemPtr item, d->members) {
         item->setShaded(state);
     }
 }
@@ -280,7 +280,7 @@ void TaskGroup::toggleShaded()
 
 bool TaskGroup::isShaded() const
 {
-    foreach (AbstractPtr item, d->members) {
+    foreach (AbstractItemPtr item, d->members) {
         if (!item->isShaded()) {
             return false;
         }
@@ -290,7 +290,7 @@ bool TaskGroup::isShaded() const
 
 void TaskGroup::toDesktop(int desk)
 {
-    foreach (AbstractPtr item, d->members) {
+    foreach (AbstractItemPtr item, d->members) {
         item->toDesktop(desk);
     }
     emit movedToDesktop(desk);
@@ -298,7 +298,7 @@ void TaskGroup::toDesktop(int desk)
 
 bool TaskGroup::isOnCurrentDesktop() const
 {
-    foreach (AbstractPtr item, d->members) {
+    foreach (AbstractItemPtr item, d->members) {
         if (!item->isOnCurrentDesktop()) {
             return false;
         }
@@ -308,7 +308,7 @@ bool TaskGroup::isOnCurrentDesktop() const
 
 bool TaskGroup::isOnAllDesktops() const
 {
-    foreach (AbstractPtr item, d->members) {
+    foreach (AbstractItemPtr item, d->members) {
         if (!item->isOnAllDesktops()) {
             return false;
         }
@@ -324,7 +324,7 @@ int TaskGroup::desktop() const
     }
 
     int desk = d->members.first()->desktop();
-    foreach (AbstractPtr item, d->members) {
+    foreach (AbstractItemPtr item, d->members) {
         if (item->desktop() != desk) {
             return 0;
         }
@@ -335,7 +335,7 @@ int TaskGroup::desktop() const
 
 void TaskGroup::setMaximized(bool state)
 {
-    foreach (AbstractPtr item, d->members) {
+    foreach (AbstractItemPtr item, d->members) {
         item->setMaximized(state);
     }
 }
@@ -347,7 +347,7 @@ void TaskGroup::toggleMaximized()
 
 bool TaskGroup::isMaximized() const
 {
-    foreach (AbstractPtr item, d->members) {
+    foreach (AbstractItemPtr item, d->members) {
         if (!item->isMaximized()) {
             return false;
         }
@@ -357,7 +357,7 @@ bool TaskGroup::isMaximized() const
 
 void TaskGroup::setMinimized(bool state)
 {
-    foreach (AbstractPtr item, d->members) {
+    foreach (AbstractItemPtr item, d->members) {
         item->setMinimized(state);
     }
 }
@@ -369,7 +369,7 @@ void TaskGroup::toggleMinimized()
 
 bool TaskGroup::isMinimized() const
 {
-    foreach (AbstractPtr item, d->members) {
+    foreach (AbstractItemPtr item, d->members) {
         if (!item->isMinimized()) {
             return false;
         }
@@ -379,7 +379,7 @@ bool TaskGroup::isMinimized() const
 
 void TaskGroup::setFullScreen(bool state)
 {
-    foreach (AbstractPtr item, d->members) {
+    foreach (AbstractItemPtr item, d->members) {
         item->setFullScreen(state);
     }
 }
@@ -391,7 +391,7 @@ void TaskGroup::toggleFullScreen()
 
 bool TaskGroup::isFullScreen() const
 {
-    foreach (AbstractPtr item, d->members) {
+    foreach (AbstractItemPtr item, d->members) {
         if (!item->isFullScreen()) {
             return false;
         }
@@ -401,7 +401,7 @@ bool TaskGroup::isFullScreen() const
 
 void TaskGroup::setKeptBelowOthers(bool state)
 {
-    foreach (AbstractPtr item, d->members) {
+    foreach (AbstractItemPtr item, d->members) {
         item->setKeptBelowOthers(state);
     }
 }
@@ -413,7 +413,7 @@ void TaskGroup::toggleKeptBelowOthers()
 
 bool TaskGroup::isKeptBelowOthers() const
 {
-    foreach (AbstractPtr item, d->members) {
+    foreach (AbstractItemPtr item, d->members) {
         if (!item->isKeptBelowOthers()) {
             return false;
         }
@@ -423,7 +423,7 @@ bool TaskGroup::isKeptBelowOthers() const
 
 void TaskGroup::setAlwaysOnTop(bool state)
 {
-    foreach (AbstractPtr item, d->members) {
+    foreach (AbstractItemPtr item, d->members) {
         item->setAlwaysOnTop(state);
     }
 }
@@ -435,7 +435,7 @@ void TaskGroup::toggleAlwaysOnTop()
 
 bool TaskGroup::isAlwaysOnTop() const
 {
-    foreach (AbstractPtr item, d->members) {
+    foreach (AbstractItemPtr item, d->members) {
         if (!item->isAlwaysOnTop()) {
             return false;
         }
@@ -447,7 +447,7 @@ bool TaskGroup::isAlwaysOnTop() const
 bool TaskGroup::isActionSupported(NET::Action action) const
 {
     if (KWindowSystem::allowedActionsSupported()) {
-        foreach (AbstractPtr item, d->members) {
+        foreach (AbstractItemPtr item, d->members) {
             if (!item->isActionSupported(action)) {
                 return false;
             }
@@ -459,14 +459,14 @@ bool TaskGroup::isActionSupported(NET::Action action) const
 
 void TaskGroup::close()
 {
-    foreach (AbstractPtr item, d->members) {
+    foreach (AbstractItemPtr item, d->members) {
         item->close();
     }
 }
 
 bool TaskGroup::isActive() const
 {
-    foreach (AbstractPtr item, d->members) {
+    foreach (AbstractItemPtr item, d->members) {
         if (item->isActive()) {
             return true;
         }
@@ -477,7 +477,7 @@ bool TaskGroup::isActive() const
 
 bool TaskGroup::demandsAttention() const
 {
-    foreach (AbstractPtr item, d->members) {
+    foreach (AbstractItemPtr item, d->members) {
         if (item->demandsAttention()) {
             return true;
         }
@@ -494,7 +494,7 @@ bool TaskGroup::moveItem(int oldIndex, int newIndex)
         return false;
     }
 
-    AbstractPtr item = d->members.at(oldIndex);
+    AbstractItemPtr item = d->members.at(oldIndex);
     d->members.move(oldIndex, newIndex);
     kDebug() << "new index " << d->members.indexOf(item); 
     emit itemChanged(item);

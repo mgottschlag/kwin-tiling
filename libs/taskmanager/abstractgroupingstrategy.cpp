@@ -99,8 +99,8 @@ TaskGroup* AbstractGroupingStrategy::createGroup(ItemList items)
     TaskGroup *newGroup = new TaskGroup(d->groupManager);
     d->createdGroups.append(newGroup);
     //connect(newGroup, SIGNAL(empty(TaskGroup*)), this, SLOT(closeGroup(TaskGroup*)));
-    connect(newGroup, SIGNAL(itemRemoved(AbstractPtr)), this, SLOT(checkGroup()));
-    foreach (AbstractPtr item, items) {
+    connect(newGroup, SIGNAL(itemRemoved(AbstractItemPtr)), this, SLOT(checkGroup()));
+    foreach (AbstractItemPtr item, items) {
         newGroup->add(item);
     }
     oldGroup->add(newGroup);
@@ -120,12 +120,12 @@ void AbstractGroupingStrategy::closeGroup(TaskGroup *group)
     d->usedColors.removeAll(group->color());
     //d->usedIcons.removeAll(group->icon());//TODO
     if (group->parentGroup()) {
-        foreach (AbstractPtr item, group->members()) {
+        foreach (AbstractItemPtr item, group->members()) {
             group->parentGroup()->add(item);
         }
         group->parentGroup()->remove(group);
     } else {
-        foreach (AbstractPtr item, group->members()) {
+        foreach (AbstractItemPtr item, group->members()) {
             d->groupManager->rootGroup()->add(item);
         }
         //group->clear();

@@ -139,7 +139,7 @@ void ManualSortingStrategy::sortItems(ItemList &items)
     }*/
 }
 
-void ManualSortingStrategy::handleItem(AbstractPtr item)
+void ManualSortingStrategy::handleItem(AbstractItemPtr item)
 {
     if (d->managedItems->contains(item)) {
         if (item->isGroupItem()) {

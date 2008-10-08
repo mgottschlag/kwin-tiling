@@ -114,7 +114,7 @@ void ProgramGroupingStrategy::toggleGrouping()
     d->tempItem = 0;
 }
 
-void ProgramGroupingStrategy::handleItem(AbstractPtr item)
+void ProgramGroupingStrategy::handleItem(AbstractItemPtr item)
 {
     if (item->isGroupItem()) {
         d->groupManager->rootGroup()->add(item);
@@ -134,9 +134,9 @@ void ProgramGroupingStrategy::handleItem(AbstractPtr item)
 bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* groupItem)
 {
     kDebug();
-    QHash <QString,AbstractPtr> itemMap;
+    QHash <QString,AbstractItemPtr> itemMap;
 
-    foreach (AbstractPtr item, groupItem->members()) { //search for an existing group
+    foreach (AbstractItemPtr item, groupItem->members()) { //search for an existing group
         if (item->isGroupItem()) { //maybe add the condition that the subgroup was created by programGrouping
             if (programGrouping(taskItem, static_cast<TaskGroup*>(item))) {
                 kDebug() << "joined subGroup";
@@ -163,7 +163,7 @@ bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* gro
     } else if (itemMap.count(name) >= 2) { //create new subgroup with at least 2 other task
         kDebug() << "create Group";
         QIcon icon = taskItem->task()->icon();
-        QList <AbstractPtr> list(itemMap.values(name));
+        QList <AbstractItemPtr> list(itemMap.values(name));
         TaskGroup* group = createGroup(list);
         group->setName(name);
         group->setColor(Qt::red);

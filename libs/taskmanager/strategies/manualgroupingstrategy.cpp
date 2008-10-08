@@ -138,7 +138,7 @@ void ManualGroupingStrategy::protectGroup(TaskGroup *group)
 }
 
 //Check if the item was previously manually grouped
-void ManualGroupingStrategy::handleItem(AbstractPtr item)
+void ManualGroupingStrategy::handleItem(AbstractItemPtr item)
 {
     kDebug();
     if (d->currentTemplate) { //TODO this won't work over sessions because the task is identified by the pointer (maybe the name without the current status would work), one way would be to store the items per name if the session is closed and load them per name on startup but use the pointer otherwise because of changing names of browsers etc
@@ -375,7 +375,7 @@ QString TaskGroupTemplate::name() const
 }
 
 /** add item to group */
-void TaskGroupTemplate::add(AbstractPtr item)
+void TaskGroupTemplate::add(AbstractItemPtr item)
 {
     if (d->members.contains(item)) {
         return;
@@ -388,7 +388,7 @@ void TaskGroupTemplate::add(AbstractPtr item)
 }
 
 /** remove item from group */
-void TaskGroupTemplate::remove(AbstractPtr item)
+void TaskGroupTemplate::remove(AbstractItemPtr item)
 {
     disconnect(item, 0, this, 0);
     disconnect(this, 0, item, 0);
@@ -446,13 +446,13 @@ void TaskGroupTemplate::setParentGroup(TaskGroupTemplate *group)
 
 
 /** only true if item is in this group */
-bool TaskGroupTemplate::hasDirectMember(AbstractPtr item) const
+bool TaskGroupTemplate::hasDirectMember(AbstractItemPtr item) const
 {
     return d->members.contains(item);
 }
 
 /** true if item is in this or any sub group */
-bool TaskGroupTemplate::hasMember(AbstractPtr item) const
+bool TaskGroupTemplate::hasMember(AbstractItemPtr item) const
 {
     kDebug();
     if (members().contains(item)) {
@@ -472,7 +472,7 @@ bool TaskGroupTemplate::hasMember(AbstractPtr item) const
 }
 
 /** Returns Direct Member group if the passed item is in a subgroup */
-AbstractPtr TaskGroupTemplate::directMember(AbstractPtr item) const
+AbstractItemPtr TaskGroupTemplate::directMember(AbstractItemPtr item) const
 {
     if (members().contains(item)) {
         return item;
@@ -489,10 +489,10 @@ AbstractPtr TaskGroupTemplate::directMember(AbstractPtr item) const
         }
     }
     kDebug() << "item not found";
-    return AbstractPtr();
+    return AbstractItemPtr();
 }
 
-TaskGroupTemplate *TaskGroupTemplate::findParentGroup(AbstractPtr item) const
+TaskGroupTemplate *TaskGroupTemplate::findParentGroup(AbstractItemPtr item) const
 {
     if (members().contains(item)) {
         return const_cast<TaskGroupTemplate*>(this);

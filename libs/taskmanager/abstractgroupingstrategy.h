@@ -48,7 +48,7 @@ public:
     virtual ~AbstractGroupingStrategy();
 
      /** Handles a new item */
-    virtual void handleItem(AbstractPtr) = 0;
+    virtual void handleItem(AbstractItemPtr) = 0;
 
      /** Returns the strategy type */
     GroupManager::TaskGroupingStrategy type() const;

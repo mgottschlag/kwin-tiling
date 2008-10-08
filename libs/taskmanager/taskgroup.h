@@ -54,11 +54,11 @@ public:
     bool isRootGroup() const;
 
     /** only true if item is in this group */
-    bool hasDirectMember(AbstractPtr item) const;
+    bool hasDirectMember(AbstractItemPtr item) const;
     /** only true if item is in this or any sub group */
-    bool hasMember(AbstractPtr item) const;
+    bool hasMember(AbstractItemPtr item) const;
     /** Returns Direct Member group if the passed item is in a subgroup */
-    AbstractPtr directMember(AbstractPtr) const;
+    AbstractItemPtr directMember(AbstractItemPtr) const;
 
     int desktop() const;
     bool isShaded() const;
@@ -108,10 +108,10 @@ public Q_SLOTS:
     void close();
 
     /** add item to group */
-    void add(AbstractPtr);
+    void add(AbstractItemPtr);
 
     /** remove item from group */
-    void remove(AbstractPtr);
+    void remove(AbstractItemPtr);
 
     /** Removes all tasks and groups from this group */
     void clear();
@@ -121,10 +121,10 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     /** inform visualization about wat is added and removed */
-    void itemAdded(const AbstractPtr item);
-    void itemRemoved(const AbstractPtr item);
+    void itemAdded(const AbstractItemPtr item);
+    void itemRemoved(const AbstractItemPtr item);
    // void empty(TaskGroup*);
-    void itemChanged(AbstractPtr item);
+    void itemChanged(AbstractItemPtr item);
     /** The group changed the desktop, is emitted in the toDesktop function */
     void movedToDesktop(int newDesk);
 

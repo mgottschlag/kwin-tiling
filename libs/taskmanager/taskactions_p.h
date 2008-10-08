@@ -32,7 +32,7 @@ class MaximizeActionImpl : public QAction
 {
     Q_OBJECT
 public:
-    MaximizeActionImpl(QObject *parent, AbstractPtr task);
+    MaximizeActionImpl(QObject *parent, AbstractItemPtr task);
 };
 
 
@@ -41,7 +41,7 @@ class MinimizeActionImpl : public QAction
 {
     Q_OBJECT
 public:
-    MinimizeActionImpl(QObject *parent, AbstractPtr task);
+    MinimizeActionImpl(QObject *parent, AbstractItemPtr task);
 };
 
 /** Move window to current desktop*/
@@ -49,11 +49,11 @@ class ToCurrentDesktopActionImpl : public QAction
 {
     Q_OBJECT
 public:
-    ToCurrentDesktopActionImpl(QObject *parent, AbstractPtr task);
+    ToCurrentDesktopActionImpl(QObject *parent, AbstractItemPtr task);
 private Q_SLOTS:
     void slotToCurrentDesktop();
 private:
-    AbstractPtr m_item;
+    AbstractItemPtr m_item;
 };
 
 /** Shade a window or all windows in a group*/
@@ -61,7 +61,7 @@ class ShadeActionImpl : public QAction
 {
     Q_OBJECT
 public:
-    ShadeActionImpl(QObject *parent, AbstractPtr task);
+    ShadeActionImpl(QObject *parent, AbstractItemPtr task);
 };
 
 /** Resize a window or all windows in a group*/
@@ -85,7 +85,7 @@ class CloseActionImpl : public QAction
 {
     Q_OBJECT
 public:
-    CloseActionImpl(QObject *parent, AbstractPtr task);
+    CloseActionImpl(QObject *parent, AbstractItemPtr task);
 };
 
 /** Send a Task to a specific Desktop*/
@@ -93,12 +93,12 @@ class ToDesktopActionImpl : public QAction
 {
     Q_OBJECT
 public:
-    ToDesktopActionImpl(QObject *parent, AbstractPtr task, int desktop);
+    ToDesktopActionImpl(QObject *parent, AbstractItemPtr task, int desktop);
 private Q_SLOTS:
     void slotToDesktop();
 private:
     int m_desktop;
-    AbstractPtr m_item;
+    AbstractItemPtr m_item;
 };
 
 
@@ -107,7 +107,7 @@ class ViewFullscreenActionImpl : public QAction
 {
     Q_OBJECT
 public:
-    ViewFullscreenActionImpl(QObject *parent, AbstractPtr task);
+    ViewFullscreenActionImpl(QObject *parent, AbstractItemPtr task);
 };
 
 /** Keep a Window or all windows in a group above the rest */
@@ -115,7 +115,7 @@ class KeepAboveActionImpl : public QAction
 {
     Q_OBJECT
 public:
-    KeepAboveActionImpl(QObject *parent, AbstractPtr task);
+    KeepAboveActionImpl(QObject *parent, AbstractItemPtr task);
 };
 
 /** Keep a Window or all windows in a group below the rest*/
@@ -123,7 +123,7 @@ class KeepBelowActionImpl : public QAction
 {
     Q_OBJECT
 public:
-    KeepBelowActionImpl(QObject *parent, AbstractPtr task);
+    KeepBelowActionImpl(QObject *parent, AbstractItemPtr task);
 };
 
 
@@ -132,13 +132,13 @@ class LeaveGroupActionImpl : public QAction
 {
     Q_OBJECT
 public:
-    LeaveGroupActionImpl(QObject *parent, AbstractPtr task, GroupManager*);
+    LeaveGroupActionImpl(QObject *parent, AbstractItemPtr task, GroupManager*);
 
 private Q_SLOTS:
     void leaveGroup();
 
 private:
-    AbstractPtr abstractItem;
+    AbstractItemPtr abstractItem;
     GroupManager *groupingStrategy;
 };
 
@@ -147,7 +147,7 @@ class RemoveGroupActionImpl : public QAction
 {
     Q_OBJECT
 public:
-    RemoveGroupActionImpl(QObject *parent, AbstractPtr task);
+    RemoveGroupActionImpl(QObject *parent, AbstractItemPtr task);
 };
 */
 

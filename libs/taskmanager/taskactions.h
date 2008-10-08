@@ -63,7 +63,7 @@ enum GroupingAction { LeaveGroupAction = 0
  * @param parent the parent for the action
  * @param desktop the desktop to associate the action with, only used for ToDesktopAction
  */
-QAction *standardGroupableAction(GroupableAction action, AbstractPtr item, QObject *parent = 0, int desktop = 0);
+QAction *standardGroupableAction(GroupableAction action, AbstractItemPtr item, QObject *parent = 0, int desktop = 0);
 
 /**
  * Factory method to create standard actions for groupable items.
@@ -82,7 +82,7 @@ QAction *standardTaskAction(TaskAction action, TaskItem *task, QObject *parent =
  * @param strategy the GroupManager used to coorinate the grouping
  * @param parent the parent for the action
  */
-QAction* standardGroupingAction(GroupingAction action, AbstractPtr item,
+QAction* standardGroupingAction(GroupingAction action, AbstractItemPtr item,
                                 GroupManager *strategy, QObject *parent = 0);
 
 /** The ToDesktop menu */
@@ -90,7 +90,7 @@ class TASKMANAGER_EXPORT DesktopsMenu : public QMenu
 {
     Q_OBJECT
 public:
-    DesktopsMenu(QWidget *parent, AbstractPtr task);
+    DesktopsMenu(QWidget *parent, AbstractItemPtr task);
 };
 
 /** Menu with the actions that the groupingStrategy provides*/
@@ -106,7 +106,7 @@ class TASKMANAGER_EXPORT AdvancedMenu : public QMenu
 {
     Q_OBJECT
 public:
-    AdvancedMenu(QWidget *parent, AbstractPtr task);
+    AdvancedMenu(QWidget *parent, AbstractItemPtr task);
 };
 
 /** The standard menu*/

@@ -160,7 +160,7 @@ void GroupManager::add(StartupPtr task)
 void GroupManager::remove(StartupPtr task)
 {
     kDebug() << "startup";
-    AbstractPtr item = d->startupList.take(task);
+    AbstractItemPtr item = d->startupList.take(task);
     if (!item) {
         kDebug() << "invalid item";
         return;

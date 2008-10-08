@@ -79,9 +79,9 @@ void AbstractSortingStrategy::handleGroup(TaskGroup *group)
     d->managedGroups.append(group);
     disconnect(group, 0, this, 0); //To avoid duplicate connections
    // connect(group, SIGNAL(changed()), this, SLOT(check()));
-    connect(group, SIGNAL(itemAdded(AbstractPtr)), this, SLOT(handleItem(AbstractPtr)));
+    connect(group, SIGNAL(itemAdded(AbstractItemPtr)), this, SLOT(handleItem(AbstractItemPtr)));
     connect(group, SIGNAL(destroyed()), this, SLOT(removeGroup())); //FIXME necessary?
-    foreach (AbstractPtr item, group->members()) {
+    foreach (AbstractItemPtr item, group->members()) {
         handleItem(item);
     }
 
@@ -98,7 +98,7 @@ void AbstractSortingStrategy::removeGroup()
     d->managedGroups.removeAll(group);
 }
 
-void AbstractSortingStrategy::handleItem(AbstractPtr item)
+void AbstractSortingStrategy::handleItem(AbstractItemPtr item)
 {
     if (item->isGroupItem()) {
         handleGroup(qobject_cast<TaskGroup*>(item));
@@ -110,13 +110,13 @@ void AbstractSortingStrategy::handleItem(AbstractPtr item)
     check(item);
 }
 
-void AbstractSortingStrategy::check(AbstractPtr itemToCheck)
+void AbstractSortingStrategy::check(AbstractItemPtr itemToCheck)
 {
     kDebug();
-    AbstractPtr item;
+    AbstractItemPtr item;
     if (!itemToCheck) {
         //return;
-        item = dynamic_cast<AbstractPtr>(sender());
+        item = dynamic_cast<AbstractItemPtr>(sender());
     } else {
         item = itemToCheck;
     }
@@ -151,7 +151,7 @@ void AbstractSortingStrategy::desktopChanged(int newDesktop)
     Q_UNUSED(newDesktop)
 }
 
-bool AbstractSortingStrategy::moveItem(AbstractPtr item, int newIndex)
+bool AbstractSortingStrategy::moveItem(AbstractItemPtr item, int newIndex)
 {
     kDebug() << "move to " << newIndex;
     if (!item->parentGroup()) {
