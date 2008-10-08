@@ -75,16 +75,16 @@ QAction *standardGroupableAction(GroupableAction action, AbstractPtr item, QObje
     return 0;
 }
 
-QAction* standardTaskAction(TaskAction action, TaskItem *task, QObject *parent)
+QAction* standardTaskAction(TaskAction action, TaskItem *item, QObject *parent)
 {
-    Q_ASSERT(task);
+    Q_ASSERT(item);
 
     switch (action) {
         case ResizeAction:
-            return new ResizeActionImpl(parent, task);
+            return new ResizeActionImpl(parent, item);
             break;
         case MoveAction:
-            return new MoveActionImpl(parent, task);
+            return new MoveActionImpl(parent, item);
             break;
     }
 
@@ -165,43 +165,43 @@ CloseActionImpl::CloseActionImpl(QObject *parent, AbstractPtr item)
 }
 
 
-ToCurrentDesktopActionImpl::ToCurrentDesktopActionImpl(QObject *parent, AbstractPtr task)
+ToCurrentDesktopActionImpl::ToCurrentDesktopActionImpl(QObject *parent, AbstractPtr item)
     : QAction(parent),
-     m_task(task)
+      m_item(item)
 {
     connect(this, SIGNAL(triggered()), this, SLOT(slotToCurrentDesktop()));
     setText(i18n("&To Current Desktop"));
-    setEnabled(!task->isOnCurrentDesktop() && task->isActionSupported(NET::ActionChangeDesktop));
+    setEnabled(!item->isOnCurrentDesktop() && item->isActionSupported(NET::ActionChangeDesktop));
 }
 
 void ToCurrentDesktopActionImpl::slotToCurrentDesktop() 
 {
-    m_task->toDesktop(KWindowSystem::currentDesktop());
+    m_item->toDesktop(KWindowSystem::currentDesktop());
 }
 
 
 
-ToDesktopActionImpl::ToDesktopActionImpl(QObject *parent, AbstractPtr task, int desktop)
+ToDesktopActionImpl::ToDesktopActionImpl(QObject *parent, AbstractPtr item, int desktop)
     : QAction(parent),
       m_desktop(desktop),
-      m_task(task)
+      m_item(item)
 {
     connect(this, SIGNAL(triggered()), this, SLOT(slotToDesktop()));
     setCheckable(true);
     if (!desktop) { //to All Desktops
         setText(i18n("&All Desktops"));
-        setChecked( task->isOnAllDesktops() );
+        setChecked(item->isOnAllDesktops());
     } else {
         QString name = QString("&%1 %2").arg(desktop).arg(TaskManager::self()->desktopName(desktop).replace('&', "&&"));
         setText(name);
-        setChecked( !task->isOnAllDesktops() && task->desktop() == desktop );
+        setChecked(!item->isOnAllDesktops() && item->desktop() == desktop);
     }
 
 }
 
 void ToDesktopActionImpl::slotToDesktop() 
 {
-    m_task->toDesktop(m_desktop);
+    m_item->toDesktop(m_desktop);
 }
 
 
@@ -249,13 +249,13 @@ ViewFullscreenActionImpl::ViewFullscreenActionImpl(QObject *parent, AbstractPtr 
     setEnabled(item->isActionSupported(NET::ActionFullScreen));
 }
 
-AdvancedMenu::AdvancedMenu(QWidget *parent, AbstractPtr task)
+AdvancedMenu::AdvancedMenu(QWidget *parent, AbstractPtr item)
     :QMenu(parent)
 {
     setTitle(i18n("Ad&vanced"));
-    addAction(new KeepAboveActionImpl(this, task));
-    addAction(new KeepBelowActionImpl(this, task));
-    addAction(new ViewFullscreenActionImpl(this, task));
+    addAction(new KeepAboveActionImpl(this, item));
+    addAction(new KeepBelowActionImpl(this, item));
+    addAction(new ViewFullscreenActionImpl(this, item));
 }
 
 LeaveGroupActionImpl::LeaveGroupActionImpl(QObject *parent, AbstractPtr item, GroupManager *strategy)
@@ -273,15 +273,15 @@ void LeaveGroupActionImpl::leaveGroup()
     groupingStrategy->manualGroupingRequest(abstractItem,abstractItem->parentGroup()->parentGroup());
 }
 
-GroupingStrategyMenu::GroupingStrategyMenu(QWidget *parent, AbstractGroupableItem* task, GroupManager *strategy)
+GroupingStrategyMenu::GroupingStrategyMenu(QWidget *parent, AbstractGroupableItem* item, GroupManager *strategy)
     : QMenu(parent)
 {
-    Q_ASSERT(task);
+    Q_ASSERT(item);
     Q_ASSERT(strategy);
 
     setTitle("Grouping strategy actions");
     if (strategy->taskGrouper()) {
-        QList<QAction*> groupingStrategyActions = strategy->taskGrouper()->strategyActions(this, task);
+        QList<QAction*> groupingStrategyActions = strategy->taskGrouper()->strategyActions(this, item);
         if (!groupingStrategyActions.empty()) {
             addSeparator();
             foreach (QAction *action, groupingStrategyActions) {
@@ -293,29 +293,29 @@ GroupingStrategyMenu::GroupingStrategyMenu(QWidget *parent, AbstractGroupableIte
 }
 
 
-BasicMenu::BasicMenu(QWidget *parent, TaskItem* task, GroupManager *strategy)
+BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy)
     : QMenu(parent)
 {
-    Q_ASSERT(task);
+    Q_ASSERT(item);
     Q_ASSERT(strategy);
 
-    setTitle(task->name());
-    setIcon(task->icon());
-    addMenu(new AdvancedMenu(this, task));
+    setTitle(item->name());
+    setIcon(item->icon());
+    addMenu(new AdvancedMenu(this, item));
 
     if (TaskManager::self()->numberOfDesktops() > 1) {
-        addMenu(new DesktopsMenu(this, task));
-        addAction(new ToCurrentDesktopActionImpl(this, task));
+        addMenu(new DesktopsMenu(this, item));
+        addAction(new ToCurrentDesktopActionImpl(this, item));
     }
 
-    addAction(new MoveActionImpl(this, task));
-    addAction(new ResizeActionImpl(this, task));
-    addAction(new MinimizeActionImpl(this, task));
-    addAction(new MaximizeActionImpl(this, task));
-    addAction(new ShadeActionImpl(this, task));
+    addAction(new MoveActionImpl(this, item));
+    addAction(new ResizeActionImpl(this, item));
+    addAction(new MinimizeActionImpl(this, item));
+    addAction(new MaximizeActionImpl(this, item));
+    addAction(new ShadeActionImpl(this, item));
 
     if (strategy->taskGrouper()) {
-        QList<QAction*> groupingStrategyActions = strategy->taskGrouper()->strategyActions(this, task);
+        QList<QAction*> groupingStrategyActions = strategy->taskGrouper()->strategyActions(this, item);
         if (!groupingStrategyActions.isEmpty()) {
             addSeparator();
             foreach (QAction *action, groupingStrategyActions) {
@@ -325,13 +325,13 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* task, GroupManager *strategy)
         }
     }
 
-    /*if (task->isGrouped()) {
+    /*if (item->isGrouped()) {
         addSeparator();
-        addMenu(new BasicMenu(this, task->parentGroup(), strategy));
+        addMenu(new BasicMenu(this, item->parentGroup(), strategy));
     }*/
 
     addSeparator();
-    addAction(new CloseActionImpl(this, task));
+    addAction(new CloseActionImpl(this, item));
 }
 
 BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy)

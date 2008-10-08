@@ -53,7 +53,7 @@ public:
 private Q_SLOTS:
     void slotToCurrentDesktop();
 private:
-    AbstractPtr m_task;
+    AbstractPtr m_item;
 };
 
 /** Shade a window or all windows in a group*/
@@ -98,7 +98,7 @@ private Q_SLOTS:
     void slotToDesktop();
 private:
     int m_desktop;
-    AbstractPtr m_task;
+    AbstractPtr m_item;
 };
 
 
