@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>426</width>
+    <width>437</width>
     <height>439</height>
    </rect>
   </property>
@@ -15,6 +15,9 @@
    </property>
    <item>
     <widget class="QGroupBox" name="groupBox" >
+     <property name="toolTip" >
+      <string>Font properties for the clock</string>
+     </property>
      <property name="title" >
       <string>Font</string>
      </property>
@@ -39,6 +42,12 @@
        <layout class="QHBoxLayout" name="horizontalLayout_2" >
         <item>
          <widget class="KFontComboBox" name="plainClockFont" >
+          <property name="toolTip" >
+           <string>Choose the font family</string>
+          </property>
+          <property name="whatsThis" >
+           <string>You can change the default family font for the clock. Choose the new one in the list.</string>
+          </property>
           <item>
            <property name="text" >
             <string>Sans Serif</string>
@@ -488,6 +497,12 @@
       </item>
       <item row="1" column="1" >
        <widget class="QCheckBox" name="plainClockFontBold" >
+        <property name="toolTip" >
+         <string>Check if you want the font in bold</string>
+        </property>
+        <property name="whatsThis" >
+         <string>When this is checked, the clock font will be bold.</string>
+        </property>
         <property name="text" >
          <string>&amp;Bold</string>
         </property>
@@ -495,6 +510,12 @@
       </item>
       <item row="2" column="1" >
        <widget class="QCheckBox" name="plainClockFontItalic" >
+        <property name="toolTip" >
+         <string>Check if you want the font in italic</string>
+        </property>
+        <property name="whatsThis" >
+         <string>When this is checked, the clock font will be in italic.</string>
+        </property>
         <property name="text" >
          <string>&amp;Italic</string>
         </property>
@@ -537,6 +558,12 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="toolTip" >
+         <string>Use current desktop theme color</string>
+        </property>
+        <property name="whatsThis" >
+         <string>This is default. The clock will get its font color from the current desktop theme.</string>
+        </property>
         <property name="text" >
          <string>Use theme color</string>
         </property>
@@ -555,6 +582,12 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="toolTip" >
+           <string>Choose your own font color</string>
+          </property>
+          <property name="whatsThis" >
+           <string>When checked you can choose a custom color for the clock font by clicking on the font widget on the right.</string>
+          </property>
           <property name="text" >
            <string>Use custom color</string>
           </property>
@@ -564,6 +597,12 @@
          <widget class="KColorButton" name="plainClockColor" >
           <property name="enabled" >
            <bool>false</bool>
+          </property>
+          <property name="toolTip" >
+           <string>Color chooser</string>
+          </property>
+          <property name="whatsThis" >
+           <string>Click on this button and the KDE standard color dialog will show. You can then choose the new color you want for your clock.</string>
           </property>
          </widget>
         </item>
@@ -587,6 +626,9 @@
    </item>
    <item>
     <widget class="QGroupBox" name="groupBox_2" >
+     <property name="toolTip" >
+      <string>Display additional information</string>
+     </property>
      <property name="title" >
       <string>Information</string>
      </property>
@@ -611,6 +653,12 @@
        <layout class="QHBoxLayout" name="horizontalLayout_5" >
         <item>
          <widget class="QCheckBox" name="showDate" >
+          <property name="toolTip" >
+           <string>Display the date of the day</string>
+          </property>
+          <property name="whatsThis" >
+           <string/>
+          </property>
           <property name="text" >
            <string/>
           </property>
@@ -654,6 +702,12 @@
           <property name="enabled" >
            <bool>false</bool>
           </property>
+          <property name="toolTip" >
+           <string>Display day of the week</string>
+          </property>
+          <property name="whatsThis" >
+           <string>Add the day of the wek to the date display.</string>
+          </property>
           <property name="text" >
            <string>Show day of the &amp;week</string>
           </property>
@@ -679,6 +733,12 @@
          <widget class="QCheckBox" name="showYear" >
           <property name="enabled" >
            <bool>false</bool>
+          </property>
+          <property name="toolTip" >
+           <string>Display the current year</string>
+          </property>
+          <property name="whatsThis" >
+           <string>Add the year to the date string.</string>
           </property>
           <property name="text" >
            <string>Show &amp;year</string>
@@ -720,6 +780,12 @@
        <layout class="QHBoxLayout" name="horizontalLayout_3" >
         <item>
          <widget class="QCheckBox" name="showTimeZone" >
+          <property name="toolTip" >
+           <string>Display the time zone name</string>
+          </property>
+          <property name="whatsThis" >
+           <string>Display the time zone name under the time.</string>
+          </property>
           <property name="text" >
            <string/>
           </property>
