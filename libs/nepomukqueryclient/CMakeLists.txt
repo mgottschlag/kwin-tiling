@@ -47,6 +47,7 @@ target_link_libraries(nepomukqueryclient
 install(TARGETS nepomukqueryclient DESTINATION ${LIB_INSTALL_DIR})
 
 install(FILES
+  nepomukqueryclient_export.h
   queryserviceclient.h
   DESTINATION ${INCLUDE_INSTALL_DIR}/nepomuk
 )

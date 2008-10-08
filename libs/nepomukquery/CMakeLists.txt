@@ -32,6 +32,7 @@ target_link_libraries(nepomukquery
 install(TARGETS nepomukquery DESTINATION ${LIB_INSTALL_DIR})
 
 install(FILES
+  nepomukquery_export.h
   queryparser.h
   result.h
   term.h
