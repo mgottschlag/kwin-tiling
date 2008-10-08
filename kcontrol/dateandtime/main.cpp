@@ -109,7 +109,7 @@ void KclockModule::save()
     }
   }
   if( !ok )
-    KMessageBox::error( this, i18n( "Failed to set system date/time/timezone."), i18n( "Date/Time Error" ));
+    KMessageBox::error( this, i18n( "Failed to set system date/time/time zone."), i18n( "Date/Time Error" ));
 }
 void KclockModule::slotDateTimeHelperFinished(int exitCode)
 {

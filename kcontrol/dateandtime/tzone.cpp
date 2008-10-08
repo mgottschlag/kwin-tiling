@@ -62,7 +62,7 @@
 Tzone::Tzone(QWidget * parent)
   : QGroupBox(parent)
 {
-    setTitle(i18n("To change the timezone, select your area from the list below"));
+    setTitle(i18n("To change the local time zone, select your area from the list below"));
 
     QVBoxLayout *lay = new QVBoxLayout(this);
 
@@ -92,7 +92,7 @@ void Tzone::currentZone()
     time_t now = time(0);
     tzset();
     strftime(result.data(), result.size(), "%Z", localtime(&now));
-    m_local->setText(i18n("Current local timezone: %1 (%2)",
+    m_local->setText(i18n("Current local time zone: %1 (%2)",
                           KTimeZoneWidget::displayName(KSystemTimeZones::local()),
                           QLatin1String(result)));
 }
@@ -117,6 +117,6 @@ void Tzone::save( QStringList& helperargs )
 void Tzone::processHelperErrors( int code )
 {
   if( code & ERROR_TZONE )
-    KMessageBox::error( this, i18n("Error setting new timezone."),
-        i18n("Timezone Error"));
+    KMessageBox::error( this, i18n("Error setting new time zone."),
+        i18n("Time zone Error"));
 }
