@@ -182,9 +182,9 @@ void ToCurrentDesktopActionImpl::slotToCurrentDesktop()
 
 
 ToDesktopActionImpl::ToDesktopActionImpl(QObject *parent, AbstractPtr task, int desktop)
-        : QAction(parent),
-     m_desktop(desktop),
-     m_task(task)
+    : QAction(parent),
+      m_desktop(desktop),
+      m_task(task)
 {
     connect(this, SIGNAL(triggered()), this, SLOT(slotToDesktop()));
     setCheckable(true);
@@ -344,8 +344,7 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy)
     setIcon(group->icon());
     addMenu(new AdvancedMenu(this, group));
 
-    if (TaskManager::self()->numberOfDesktops() > 1)
-    {
+    if (TaskManager::self()->numberOfDesktops() > 1) {
         addMenu(new DesktopsMenu(this, group));
         addAction(new ToCurrentDesktopActionImpl(this, group));
     }
@@ -382,19 +381,19 @@ GroupPopupMenu::GroupPopupMenu(QWidget *parent, TaskGroup *group, GroupManager *
     setTitle(group->name());
     setIcon(group->icon());
     foreach (AbstractGroupableItem *item, group->members()) {
-	if (!item) {
-	    kDebug() << "invalid Item";
-	    continue;
-	}
+        if (!item) {
+            kDebug() << "invalid Item";
+            continue;
+        }
 
-	if (item->isGroupItem()) {
-	    QMenu* menu = new GroupPopupMenu (this, qobject_cast<TaskGroup*>(item), groupManager);
-	    addMenu(menu);
-	} else {
-	    QAction* action = new QAction(item->icon(), item->name(), this);
-	    connect(action, SIGNAL(triggered(bool)), (qobject_cast<TaskItem*>(item))->task().data() , SLOT(activateRaiseOrIconify()));
-	    addAction(action);
-	}
+        if (item->isGroupItem()) {
+            QMenu* menu = new GroupPopupMenu (this, qobject_cast<TaskGroup*>(item), groupManager);
+            addMenu(menu);
+        } else {
+            QAction* action = new QAction(item->icon(), item->name(), this);
+            connect(action, SIGNAL(triggered(bool)), (qobject_cast<TaskItem*>(item))->task().data() , SLOT(activateRaiseOrIconify()));
+            addAction(action);
+        }
     }
 }
 
