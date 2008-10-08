@@ -108,6 +108,11 @@ private Q_SLOTS:
     void checkDPMSActive();
     void slotDeadTimePassed();
     /**
+     * check that plasma started properly (used for timeout)
+     * and disable it if it failed
+     */
+    void checkPlasma();
+    /**
      * a new dbus service has come in
      */
     void newService(QString name);
@@ -152,6 +157,15 @@ private:
      * @return true iff the password was checked and is valid
      */
     bool checkPass();
+    /**
+     * returns true if plasma is up and the dbus interface is valid
+     */
+    bool isPlasmaValid();
+    /**
+     * give up on plasma, probably because it crashed.
+     * this does *not* tell plasma to quit. it just stops using it.
+     */
+    void disablePlasma();
     void stayOnTop();
     void lockXF86();
     void unlockXF86();

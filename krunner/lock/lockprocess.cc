@@ -962,8 +962,52 @@ bool LockProcess::startPlasma()
     if (mSetupMode) {
         mPlasmaProc << "--setup";
     }
+    kDebug() << "about to start plasma";
     mPlasmaProc.start();
+    kDebug() << "woo, plasma started";
+    //plasma gets 15 seconds to load, or we assume it failed
+    QTimer::singleShot(15 * 1000, this, SLOT(checkPlasma()));
     return true;
+}
+
+void LockProcess::checkPlasma()
+{
+    if (!mPlasmaEnabled) {
+        kDebug() << "You're Doing It Wrong!";
+        return;
+    }
+    if (mPlasmaDBus && mPlasmaDBus->isValid()) {
+        //hooray, looks like it started ok
+        return;
+    }
+
+    //if we get down here... ohnoes. plasma = teh fail.
+    disablePlasma();
+}
+
+bool LockProcess::isPlasmaValid()
+{
+    //FIXME I'm assuming that if it's valid, calls will succeed. so if that's not the case we'll
+    //need to change things so that plasma's disabled properly if it fails
+    //damn. isValid is not quite enough. a call may still fail, and then we need to bail.
+    if (!(mPlasmaEnabled && mPlasmaDBus)) {
+        return false; //no plasma, at least not yet
+    }
+    if (mPlasmaDBus->isValid()) {
+        return true;
+    }
+    //oh crap, it ran away on us.
+    disablePlasma();
+    return false;
+}
+//FIXME this is only checked at useless times. realllly need that check on input forwarding.
+void LockProcess::disablePlasma()
+{
+    kDebug();
+    mPlasmaEnabled = false;
+    mSuppressUnlock.stop(); //FIXME we might need to start the lock timer ala deactivatePlasma()
+    delete mPlasmaDBus;
+    mPlasmaDBus=0;
 }
 
 void LockProcess::stopPlasma()
@@ -980,6 +1024,7 @@ void LockProcess::newService(QString name)
     //kDebug() << name;
     if (mPlasmaDBus) {
         kDebug() << "can't happen"; //but it does.
+        //maybe we should check if plasma was going *down*
         return;
     }
     if (name != "org.kde.plasma-overlay") {
@@ -995,7 +1040,7 @@ void LockProcess::newService(QString name)
             QDBusConnection::sessionBus(), this);
     if (!mPlasmaDBus->isValid()) {
         kDebug() << "wtf! not valid!?"; //we're screwed now.
-        //FIXME delete it anyways?
+        disablePlasma();
         return;
     }
 
@@ -1016,17 +1061,17 @@ void LockProcess::newService(QString name)
 
 void LockProcess::deactivatePlasma()
 {
-    if (mPlasmaDBus && mPlasmaDBus->isValid()) {
+    if (isPlasmaValid()) {
         mPlasmaDBus->call(QDBus::NoBlock, "deactivate");
     }
     if (!mLocked && mLockGrace >=0) {
-        QTimer::singleShot(mLockGrace, this, SLOT(startLock()));
+        QTimer::singleShot(mLockGrace, this, SLOT(startLock())); //this is only ok because any activity will quit
     }
 }
 
 void LockProcess::lockPlasma()
 {
-    if (mPlasmaDBus && mPlasmaDBus->isValid()) {
+    if (isPlasmaValid()) {
         mPlasmaDBus->call(QDBus::NoBlock, "lock");
     }
 }
@@ -1083,14 +1128,14 @@ bool LockProcess::checkPass()
 {
     killTimer(mAutoLogoutTimerId);
 
-    if (mPlasmaDBus && mPlasmaDBus->isValid()) {
+    if (isPlasmaValid()) {
         mPlasmaDBus->call(QDBus::NoBlock, "activate");
     }
 
     PasswordDlg passDlg( this, &greetPlugin);
     int ret = execDialog( &passDlg );
 
-    if (mPlasmaDBus && mPlasmaDBus->isValid()) {
+    if (isPlasmaValid()) {
         if (ret == QDialog::Rejected) {
             mSuppressUnlock.start(mSuppressUnlockTimeout);
         } else if (ret == TIMEOUT_CODE) {
