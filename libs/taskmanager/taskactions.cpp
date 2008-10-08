@@ -167,7 +167,7 @@ CloseActionImpl::CloseActionImpl(QObject *parent, AbstractPtr item)
 
 ToCurrentDesktopActionImpl::ToCurrentDesktopActionImpl(QObject *parent, AbstractPtr task)
     : QAction(parent),
-m_task(task)      
+     m_task(task)
 {
     connect(this, SIGNAL(triggered()), this, SLOT(slotToCurrentDesktop()));
     setText(i18n("&To Current Desktop"));
@@ -293,7 +293,7 @@ GroupingStrategyMenu::GroupingStrategyMenu(QWidget *parent, AbstractGroupableIte
 }
 
 
-BasicMenu::BasicMenu(QWidget *parent, TaskItem* task, GroupManager *strategy, bool showAll)
+BasicMenu::BasicMenu(QWidget *parent, TaskItem* task, GroupManager *strategy)
     : QMenu(parent)
 {
     Q_ASSERT(task);
@@ -303,13 +303,9 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* task, GroupManager *strategy, bo
     setIcon(task->icon());
     addMenu(new AdvancedMenu(this, task));
 
-    if (TaskManager::self()->numberOfDesktops() > 1)
-    {
+    if (TaskManager::self()->numberOfDesktops() > 1) {
         addMenu(new DesktopsMenu(this, task));
-        if (showAll)
-        {
-            addAction(new ToCurrentDesktopActionImpl(this, task));
-        }
+        addAction(new ToCurrentDesktopActionImpl(this, task));
     }
 
     addAction(new MoveActionImpl(this, task));
@@ -331,15 +327,14 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* task, GroupManager *strategy, bo
 
     /*if (task->isGrouped()) {
         addSeparator();
-        addMenu(new BasicMenu(this, task->parentGroup(), strategy, showAll));
+        addMenu(new BasicMenu(this, task->parentGroup(), strategy));
     }*/
 
     addSeparator();
     addAction(new CloseActionImpl(this, task));
-
 }
 
-BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, bool showAll)
+BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy)
     :QMenu(parent)
 {
     Q_ASSERT(group);
@@ -352,10 +347,7 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, 
     if (TaskManager::self()->numberOfDesktops() > 1)
     {
         addMenu(new DesktopsMenu(this, group));
-        if (showAll)
-        {
-            addAction(new ToCurrentDesktopActionImpl(this, group));
-        }
+        addAction(new ToCurrentDesktopActionImpl(this, group));
     }
 
 //    addAction(new MoveActionImpl(this, group));
@@ -376,7 +368,7 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, 
 
     /*if (group->isGrouped()) {
         addSeparator();
-        addMenu(new BasicMenu(parent, group->parentGroup(), strategy, showAll));
+        addMenu(new BasicMenu(parent, group->parentGroup(), strategy));
     }*/
 
     addSeparator();
@@ -384,7 +376,7 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, 
 
 }
 
-GroupPopupMenu::GroupPopupMenu(QWidget *parent, TaskGroup *group, GroupManager *groupManager, bool showAll)
+GroupPopupMenu::GroupPopupMenu(QWidget *parent, TaskGroup *group, GroupManager *groupManager)
     :QMenu(parent)
 {
     setTitle(group->name());
@@ -396,7 +388,7 @@ GroupPopupMenu::GroupPopupMenu(QWidget *parent, TaskGroup *group, GroupManager *
 	}
 
 	if (item->isGroupItem()) {
-	    QMenu* menu = new GroupPopupMenu (this, qobject_cast<TaskGroup*>(item), groupManager, false);
+	    QMenu* menu = new GroupPopupMenu (this, qobject_cast<TaskGroup*>(item), groupManager);
 	    addMenu(menu);
 	} else {
 	    QAction* action = new QAction(item->icon(), item->name(), this);
