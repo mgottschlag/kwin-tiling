@@ -29,6 +29,7 @@ Color::Color(QObject *parent, const QVariantList &args)
 
 void Color::paint(QPainter *painter, const QRectF& exposedRect)
 {
+    painter->setCompositionMode(QPainter::CompositionMode_Source);
     painter->fillRect(exposedRect, QBrush(m_color));
 }
 
