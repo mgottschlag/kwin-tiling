@@ -706,7 +706,7 @@
            <string>Display day of the week</string>
           </property>
           <property name="whatsThis" >
-           <string>Add the day of the wek to the date display.</string>
+           <string>Add the day of the week to the date display.</string>
           </property>
           <property name="text" >
            <string>Show day of the &amp;week</string>
