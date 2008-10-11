@@ -24,6 +24,7 @@
 #include "outputs/backendoutputs.h"
 #include "kephal/screens.h"
 
+#include <QDebug>
 #include <QDir>
 
 

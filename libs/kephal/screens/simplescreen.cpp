@@ -93,3 +93,7 @@ namespace kephal {
     }
     
 }
+
+#ifndef NO_KDE
+#include "simplescreen.moc"
+#endif

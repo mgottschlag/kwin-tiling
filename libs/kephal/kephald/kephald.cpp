@@ -23,6 +23,10 @@
 #include <QApplication>
 #include <QAbstractEventDispatcher>
 
+#include "xrandr12/randrdisplay.h"
+#include "xrandr12/randrscreen.h"
+
+#include "kephald.h"
 
 #include "outputs/desktopwidget/desktopwidgetoutputs.h"
 #include "screens/configuration/configurationscreens.h"
@@ -32,46 +36,31 @@
 #include "dbus/dbusapi_configurations.h"
 //#include "xml/configurations_xml.h"
 #include "configurations/xml/xmlconfigurations.h"
-#include "xrandr12/randrdisplay.h"
-#include "xrandr12/randrscreen.h"
 
-#include "kephald.h"
+#include <kpluginfactory.h>
+#include <kpluginloader.h>
+
+K_PLUGIN_FACTORY(KephalDFactory,
+                 registerPlugin<KephalD>();
+    )
+K_EXPORT_PLUGIN(KephalDFactory("kephal"))
+
 
 
 using namespace kephal;
 
 
-int main(int argc, char *argv[])
-{
-    KephalD app(argc, argv);
 
-    return app.exec();
-}
-
-
-KephalD::KephalD(int & argc, char ** argv)
-    : QApplication(argc, argv),
+KephalD::KephalD(QObject* parent, const QList<QVariant>&)
+    : KDEDModule(parent),
     m_noXRandR(false)
 {
     qDebug() << "kephald starting up";
-    
-    parseArgs(argc, argv);
     init();
 }
 
 KephalD::~KephalD()
 {
-}
-
-void KephalD::parseArgs(int & argc, char ** argv) {
-    for (int i = 0; i < argc; ++i) {
-        QString arg(argv[i]);
-        qDebug() << "arg:" << i << arg;
-        
-        if (arg == "--no-xrandr") {
-            m_noXRandR = true;
-        }
-    }
 }
 
 void KephalD::init() {
@@ -144,14 +133,14 @@ void KephalD::poll() {
     }
 }
 
-bool KephalD::x11EventFilter(XEvent* e)
+/*bool KephalD::x11EventFilter(XEvent* e)
 {
     if (m_outputs && m_outputs->display()->canHandle(e)) {
         m_outputs->display()->handleEvent(e);
     }
     
     return QApplication::x11EventFilter(e);
-}
+}*/
 
 void KephalD::activateConfiguration() {
     BackendConfigurations * configs = BackendConfigurations::instance();
@@ -173,3 +162,4 @@ void KephalD::outputConnected(Output * output) {
 }
 
 
+#include "kephald.moc"

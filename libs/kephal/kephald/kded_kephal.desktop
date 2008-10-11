@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Service
+
+X-KDE-ServiceTypes=KDEDModule
+X-KDE-Library=kephal
+X-KDE-DBus-ModuleName=kded_kephal
+X-KDE-Kded-autoload=false
+X-KDE-Kded-load-on-demand=true
+
+Name=KDED-module for screen-management

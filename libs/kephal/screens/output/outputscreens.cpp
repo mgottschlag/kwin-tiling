@@ -224,3 +224,6 @@ namespace kephal {
     
 }
 
+#ifndef NO_KDE
+#include "outputscreens.moc"
+#endif

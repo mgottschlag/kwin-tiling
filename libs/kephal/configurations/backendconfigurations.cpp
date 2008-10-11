@@ -273,3 +273,5 @@ namespace kephal {
     }
 
 }
+
+#include "backendconfigurations.moc"

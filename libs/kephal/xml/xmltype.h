@@ -25,7 +25,6 @@
 #include <QDomNode>
 #include <QMap>
 #include <QFile>
-#include <QDebug>
 
 
 namespace kephal {

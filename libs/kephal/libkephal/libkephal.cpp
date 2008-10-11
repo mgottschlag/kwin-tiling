@@ -18,6 +18,8 @@
  */
 
 
+#include <QDBusInterface>
+
 #include "screens/dbus/dbusscreens.h"
 #include "outputs/dbus/dbusoutputs.h"
 #include "configurations/dbus/dbusconfigurations.h"
@@ -30,6 +32,8 @@ using namespace kephal;
 
 void libkephal_factory() {
     //qDebug() << "trying to access kephald...";
+    QDBusInterface interface("org.kde.kded", "/modules/kded_kephal");
+    
     DBusConfigurations * configurations = new DBusConfigurations(qApp);
     DBusOutputs * outputs = new DBusOutputs(qApp);
     DBusScreens * screens = new DBusScreens(qApp);

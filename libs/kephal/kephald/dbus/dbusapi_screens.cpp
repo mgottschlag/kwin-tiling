@@ -109,3 +109,4 @@ QStringList DBusAPIScreens::outputs(int id) {
     return result;
 }
 
+#include "dbusapi_screens.moc"

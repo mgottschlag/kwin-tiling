@@ -20,7 +20,6 @@
 #ifndef __RANDRDISPLAY_H__
 #define __RANDRDISPLAY_H__
 
-#include <QWidget>
 #include "randr.h"
 
 #include <X11/Xlib.h>

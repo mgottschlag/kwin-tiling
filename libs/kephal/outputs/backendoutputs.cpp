@@ -107,3 +107,5 @@ namespace kephal {
     }
     
 }
+
+#include "backendoutputs.moc"

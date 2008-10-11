@@ -111,3 +111,6 @@ namespace kephal {
 
 }
 
+#ifndef NO_KDE
+#include "outputs.moc"
+#endif

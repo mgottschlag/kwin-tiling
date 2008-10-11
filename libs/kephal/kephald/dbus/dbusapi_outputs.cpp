@@ -230,4 +230,4 @@ void DBusAPIOutputs::outputReflectedSlot(kephal::Output * o, bool oldX, bool old
     return 0;
 }*/
 
-
+#include "dbusapi_outputs.moc"

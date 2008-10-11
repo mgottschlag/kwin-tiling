@@ -7,18 +7,19 @@ INCLUDE_DIRECTORIES (. .. ${CMAKE_CURRENT_SOURCE_DIR}/../kephal/ ${QT_INCLUDES} 
 ADD_DEFINITIONS (-DSCREENS_FACTORY=libkephal_factory)
 ADD_DEFINITIONS (-DOUTPUTS_FACTORY=libkephal_factory)
 ADD_DEFINITIONS (-DCONFIGURATIONS_FACTORY=libkephal_factory)
+ADD_DEFINITIONS (-DNO_KDE)
 
 SET (libkephal_SRCS
         libkephal.cpp
-        ../screens/screens.cpp
+        ../kephal/screens.cpp
         ../screens/simplescreen.cpp
         ../screens/dbus/dbusscreens.cpp
         ../screens/output/outputscreens.cpp
         ../outputs/simpleoutput.cpp
         ../outputs/dbus/dbusoutputs.cpp
         ../outputs/desktopwidget/desktopwidgetoutputs.cpp
-        ../outputs/outputs.cpp
-        ../configurations/configurations.cpp
+        ../kephal/outputs.cpp
+        ../kephal/configurations.cpp
         ../configurations/dbus/dbusconfigurations.cpp
         ../configurations/noconfigurations.cpp)
 QT4_WRAP_CPP (libkephal_SRCS

@@ -212,3 +212,4 @@ void DBusAPIConfigurations::revert() {
     Configurations::instance()->revert();
 }
 
+#include "dbusapi_configurations.moc"

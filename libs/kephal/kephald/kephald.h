@@ -21,8 +21,11 @@
 #ifndef KEPHALD_H
 #define KEPHALD_H
 
-#include <QApplication>
-#include <QTimer>
+#include <QList>
+#include <kdedmodule.h>
+
+class QTimer;
+class QVariant;
 
 namespace kephal {
     class Output;
@@ -32,14 +35,12 @@ namespace kephal {
 using namespace kephal;
 
 
-class KephalD : public QApplication
+class KephalD : public KDEDModule
 {
     Q_OBJECT
     public:
-        KephalD(int & argc, char ** argv);
+        KephalD(QObject* parent, const QList<QVariant>&);
         ~KephalD();
-        
-        virtual bool x11EventFilter(XEvent * e);
         
     private Q_SLOTS:
         void outputDisconnected(kephal::Output * output);
@@ -50,7 +51,6 @@ class KephalD : public QApplication
         
     private:
         void init();
-        void parseArgs(int & argc, char ** argv);
         void activateConfiguration();
         
         bool m_noXRandR;
