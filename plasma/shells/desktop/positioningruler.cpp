@@ -505,7 +505,19 @@ void PositioningRuler::paintEvent(QPaintEvent *event)
     if (d->alignment != Qt::AlignLeft) {
         painter.save();
         QTransform transform;
-        transform.scale(-1, 1);
+
+        switch (d->location) {
+        case Plasma::LeftEdge:
+        case Plasma::RightEdge:
+            transform.scale(1, -1);
+            break;
+        case Plasma::TopEdge:
+        case Plasma::BottomEdge:
+        default:
+            transform.scale(-1, 1);
+            break;
+        }
+        
         painter.setTransform(transform);
         d->sliderGraphics->paint(&painter, transform.mapRect(d->leftMaxSliderRect), elementPrefix + "maxslider");
         d->sliderGraphics->paint(&painter, transform.mapRect(d->leftMinSliderRect), elementPrefix + "minslider");

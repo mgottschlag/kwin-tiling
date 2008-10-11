@@ -337,7 +337,7 @@ void PanelView::updatePanelGeometry()
         } else if (m_alignment == Qt::AlignRight) {
             geom.moveBottomLeft(QPoint(screenGeom.left(), screenGeom.bottom() - m_offset));
         } else if (m_alignment == Qt::AlignCenter) {
-            geom.moveTopLeft(QPoint(screenGeom.left(), screenGeom.center().y() - geom.width()/2 + m_offset));
+            geom.moveTopLeft(QPoint(screenGeom.left(), screenGeom.center().y() - geom.height()/2 + m_offset));
         }
 
         //enable borders if needed
