@@ -221,7 +221,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     
     //optionally paint the time string
     if (m_showTimezoneString) {
-        QString time = currentTimezone();
+        QString time = prettyTimezone();
         QFontMetrics fm(QApplication::font());
         const int margin = 4;
 
