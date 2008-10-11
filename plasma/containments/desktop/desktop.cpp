@@ -232,9 +232,8 @@ void DefaultDesktop::logout()
 
 void DefaultDesktop::onAppletAdded(Plasma::Applet *applet, const QPointF &pos)
 {
-    Q_UNUSED(pos)
-    if (dropping) {
-        // add dropped item to the layout using the current position
+    if (dropping || pos != QPointF(-1,-1) || applet->geometry().topLeft() != QPointF(0,0)) {
+        // add item to the layout using the current position
         m_layout->addItem(applet, true, applet->geometry());
     } else {
         /*
