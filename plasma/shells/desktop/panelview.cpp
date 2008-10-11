@@ -324,7 +324,7 @@ void PanelView::updatePanelGeometry()
         } else if (m_alignment == Qt::AlignRight) {
             geom.moveTopRight(QPoint(screenGeom.right() - m_offset, screenGeom.top()));
         } else if (m_alignment == Qt::AlignCenter) {
-            geom.moveCenter(QPoint(screenGeom.center().x() + m_offset, screenGeom.top() + geom.height()/2  - 1));
+            geom.moveTopLeft(QPoint(screenGeom.center().x() - geom.width()/2 + m_offset, screenGeom.top()));
         }
 
         //enable borders if needed
@@ -337,7 +337,7 @@ void PanelView::updatePanelGeometry()
         } else if (m_alignment == Qt::AlignRight) {
             geom.moveBottomLeft(QPoint(screenGeom.left(), screenGeom.bottom() - m_offset));
         } else if (m_alignment == Qt::AlignCenter) {
-            geom.moveCenter(QPoint(screenGeom.left()+size.width()/2 - 1, screenGeom.center().y() + m_offset -1));
+            geom.moveTopLeft(QPoint(screenGeom.left(), screenGeom.center().y() - geom.width()/2 + m_offset));
         }
 
         //enable borders if needed
@@ -346,11 +346,11 @@ void PanelView::updatePanelGeometry()
 
     case Plasma::RightEdge:
         if (m_alignment == Qt::AlignLeft) {
-            geom.moveTopLeft(QPoint(screenGeom.right() - size.width() + 1, m_offset));
+            geom.moveTopRight(QPoint(screenGeom.right(), m_offset));
         } else if (m_alignment == Qt::AlignRight) {
-            geom.moveBottomLeft(QPoint(screenGeom.right() - size.width() + 1, screenGeom.bottom() - m_offset));
+            geom.moveBottomRight(QPoint(screenGeom.right(), screenGeom.bottom() - m_offset));
         } else if (m_alignment == Qt::AlignCenter) {
-            geom.moveCenter(QPoint(screenGeom.right() - size.width()/2, screenGeom.center().y() + m_offset));
+            geom.moveTopRight(QPoint(screenGeom.right(), screenGeom.center().y() - geom.height()/2 + m_offset));
         }
 
         //enable borders if needed
@@ -360,11 +360,11 @@ void PanelView::updatePanelGeometry()
     case Plasma::BottomEdge:
     default:
         if (m_alignment == Qt::AlignLeft) {
-            geom.moveTopLeft(QPoint(m_offset, screenGeom.bottom() - size.height() + 1));
+            geom.moveBottomLeft(QPoint(m_offset, screenGeom.bottom()));
         } else if (m_alignment == Qt::AlignRight) {
-            geom.moveTopRight(QPoint(screenGeom.right() - m_offset, screenGeom.bottom() - size.height() + 1));
+            geom.moveBottomRight(QPoint(screenGeom.right() - m_offset, screenGeom.bottom()));
         } else if (m_alignment == Qt::AlignCenter) {
-            geom.moveCenter(QPoint(screenGeom.center().x() + m_offset, screenGeom.bottom() - size.height()/2));
+            geom.moveBottomLeft(QPoint(screenGeom.center().x() - geom.width()/2 + m_offset, screenGeom.bottom()));
         }
 
         //enable borders if needed
