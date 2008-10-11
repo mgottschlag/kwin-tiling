@@ -187,13 +187,22 @@ void Pager::createConfigurationInterface(KConfigDialog *parent)
     parent->addPage(widget, parent->windowTitle(), icon());
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+    connect(ui.configureDesktopsButton, SIGNAL(clicked()), SLOT(slotConfigureDesktop()));
 
-    ui.displayedTextComboBox->clear();
-    ui.displayedTextComboBox->addItem(i18n("Desktop Number"));
-    ui.displayedTextComboBox->addItem(i18n("Desktop Name"));
-    ui.displayedTextComboBox->addItem(i18n("None"));
-    ui.displayedTextComboBox->setCurrentIndex((int)m_displayedText);
-    ui.displayedTextComboBox->setToolTip(i18n("What will appear when the mouse is over a desktop miniature"));
+    switch (m_displayedText){
+        case Number:
+            ui. desktopNumberRadioButton->setChecked(true);
+            break;
+
+        case Name:
+            ui.desktopNameRadioButton->setChecked(true);
+            break;
+
+        case None:
+            ui.displayNoneRadioButton->setChecked(true);
+            break;
+    }
+
     ui.showWindowIconsCheckBox->setChecked(m_showWindowIcons);
     ui.spinRows->setValue(m_rows);
     ui.spinRows->setMaximum(m_desktopCount);
@@ -386,8 +395,20 @@ void Pager::configAccepted()
     KConfigGroup cg = config();
     bool changed = false;
 
-    if ((int)m_displayedText != ui.displayedTextComboBox->currentIndex()) {
-        m_displayedText = (DisplayedText)ui.displayedTextComboBox->currentIndex();
+    DisplayedText displayedText;
+
+    if (ui.desktopNumberRadioButton->isChecked()){
+        displayedText = Number;
+
+    }else if (ui.desktopNameRadioButton->isChecked()){
+        displayedText = Name;
+
+    }else{
+        displayedText = None;
+    }
+
+    if ((int)m_displayedText != (int)displayedText) {
+        m_displayedText = displayedText;
         cg.writeEntry("displayedText", (int)m_displayedText);
         changed = true;
     }
