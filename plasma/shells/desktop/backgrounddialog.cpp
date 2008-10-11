@@ -506,6 +506,7 @@ void BackgroundDialog::reloadConfig()
     }
 
     // Theme
+    m_themeModel->reload();
     m_theme->setCurrentIndex(m_themeModel->indexOf(Plasma::Theme::defaultTheme()->themeName()));
 
     connect(m_wallpaperMode, SIGNAL(currentIndexChanged(int)), this, SLOT(changeBackgroundMode(int)));
