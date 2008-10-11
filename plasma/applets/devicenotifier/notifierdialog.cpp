@@ -130,11 +130,11 @@ void NotifierDialog::insertDevice(const QString &name)
     item->setData(name, SolidUdiRole);
     item->setData(Plasma::Delegate::MainColumn, ScopeRole);
     item->setData(false, SubTitleMandatoryRole);
-    
+
     QStandardItem *actionItem = new QStandardItem();
     actionItem->setData(name, SolidUdiRole);
     actionItem->setData(Plasma::Delegate::SecondaryActionColumn, ScopeRole);
-    
+
     //search or create the category for inserted device
     QString udi = item->data(SolidUdiRole).toString();
     if(!udi.isNull()) {
@@ -147,6 +147,8 @@ void NotifierDialog::insertDevice(const QString &name)
             currentCategory->setChild(0, 1, actionItem);
         }
     }
+
+    m_notifierView->calculateRects();
 }
 
 void NotifierDialog::setUnMount(bool unmount, const QString &name) 
@@ -210,11 +212,14 @@ void NotifierDialog::removeDevice(const QString &name)
     {
         m_rootItem->removeRow(category->row());
     }
+
+    m_notifierView->calculateRects();
 }
 
 void NotifierDialog::removeDevice(int index)
 {
     m_hotplugModel->removeRow(index);
+    m_notifierView->calculateRects();
 }
 
 int NotifierDialog::countDevices()
@@ -258,7 +263,7 @@ void NotifierDialog::buildDialog(DialogArea area)
     l_layout2->setAlignment(Qt::AlignCenter);
 
 
-    m_notifierView= new NotifierView(m_widget);
+    m_notifierView = new NotifierView(m_widget);
     m_notifierView->setModel(m_hotplugModel);
     m_notifierView->setMinimumSize(150,300);
     m_notifierView->setFocusPolicy(Qt::NoFocus);

@@ -39,11 +39,16 @@ namespace Notifier
       * @param parent the parent of this object
       **/
       NotifierView(QWidget *parent = 0);
-      
+
       /**
       * Default destructor
       **/
       virtual ~NotifierView();
+
+      /**
+       * Creates rects in widget coordinates for the model
+       */
+      void calculateRects();
 
   protected:
       /**
@@ -51,13 +56,13 @@ namespace Notifier
       * @param event the resize event
       **/
       void resizeEvent(QResizeEvent * event);
-      
+
       /**
       * Call when a mouse move event is catch
       * @param event the mouse event
       **/
       void mouseMoveEvent(QMouseEvent *event);
-      
+
       /**
       * Call when cursor leave the widget
       * @param event the leave event
@@ -69,12 +74,20 @@ namespace Notifier
       * @param cursorAction the cursor action
       **/
       QModelIndex moveCursor(CursorAction cursorAction,Qt::KeyboardModifiers );
-      
+
       /**
       * Call when the view is paint
       * @param event the paint event
       **/
       void paintEvent(QPaintEvent *event);
+
+      /**
+      * Paint a header item
+      * @param painter the painter used to paint
+      * @param itemRect the rect where the item will be paint
+      * @param index the QModelIndex that represent the item to paint
+      **/
+      void paintHeaderItem(QPainter &painter,const QRect &itemRect,const QModelIndex &index);
 
       /**
       * Paint an item in the view by using the delegate

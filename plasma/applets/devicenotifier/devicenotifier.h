@@ -38,7 +38,6 @@ class KIcon;
 
 namespace Notifier
 {
-    class NotifierView;
     class NotifierDialog;
 }
 
@@ -47,6 +46,7 @@ namespace Plasma
 {
     class Icon;
 }
+
 /**
 * @short Applet used to display hot plug devices
 *
