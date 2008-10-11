@@ -192,6 +192,10 @@ void SaverDesktop::toggleLock()
 void SaverDesktop::unlock(QDBusMessage reply)
 {
     //assuming everything went as expected
+    if (reply.arguments().isEmpty()) {
+        kDebug() << "quit succeeded, I guess";
+        return;
+    }
     bool success = reply.arguments().first().toBool();
     kDebug() << success;
     if (success) {
