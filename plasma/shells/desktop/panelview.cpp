@@ -324,7 +324,7 @@ void PanelView::updatePanelGeometry()
         } else if (m_alignment == Qt::AlignRight) {
             geom.moveTopRight(QPoint(screenGeom.right() - m_offset, screenGeom.top()));
         } else if (m_alignment == Qt::AlignCenter) {
-            geom.moveTopLeft(QPoint(screenGeom.center().x() - geom.width()/2 + m_offset, screenGeom.top()));
+            geom.moveTopLeft(QPoint(screenGeom.center().x() - geom.width()/2 + 1 - geom.width()%2 + m_offset, screenGeom.top()));
         }
 
         //enable borders if needed
@@ -337,7 +337,7 @@ void PanelView::updatePanelGeometry()
         } else if (m_alignment == Qt::AlignRight) {
             geom.moveBottomLeft(QPoint(screenGeom.left(), screenGeom.bottom() - m_offset));
         } else if (m_alignment == Qt::AlignCenter) {
-            geom.moveTopLeft(QPoint(screenGeom.left(), screenGeom.center().y() - geom.height()/2 + m_offset));
+            geom.moveTopLeft(QPoint(screenGeom.left(), screenGeom.center().y() - geom.height()/2 + 1 - geom.height()%2 + m_offset));
         }
 
         //enable borders if needed
@@ -350,7 +350,7 @@ void PanelView::updatePanelGeometry()
         } else if (m_alignment == Qt::AlignRight) {
             geom.moveBottomRight(QPoint(screenGeom.right(), screenGeom.bottom() - m_offset));
         } else if (m_alignment == Qt::AlignCenter) {
-            geom.moveTopRight(QPoint(screenGeom.right(), screenGeom.center().y() - geom.height()/2 + m_offset));
+            geom.moveTopRight(QPoint(screenGeom.right(), screenGeom.center().y() - geom.height()/2 + 1 - geom.height()%2 + m_offset));
         }
 
         //enable borders if needed
@@ -364,7 +364,7 @@ void PanelView::updatePanelGeometry()
         } else if (m_alignment == Qt::AlignRight) {
             geom.moveBottomRight(QPoint(screenGeom.right() - m_offset, screenGeom.bottom()));
         } else if (m_alignment == Qt::AlignCenter) {
-            geom.moveBottomLeft(QPoint(screenGeom.center().x() - geom.width()/2 + m_offset, screenGeom.bottom()));
+            geom.moveBottomLeft(QPoint(screenGeom.center().x() - geom.width()/2 + 1 - geom.width()%2 + m_offset, screenGeom.bottom()));
         }
 
         //enable borders if needed
