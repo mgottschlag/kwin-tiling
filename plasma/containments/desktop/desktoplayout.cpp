@@ -62,7 +62,7 @@ void DesktopLayout::addItem(QGraphicsLayoutItem *item, bool pushBack, const QSiz
 
     // prefer free positions
     QRectF bestGeometry = QRectF();
-    foreach (QPointF position, possiblePositions) {
+    foreach (const QPointF &position, possiblePositions) {
         QRectF geom = QRectF(position, itemSize);
         if (itemSpace.positionedProperly(geom)) {
             bestGeometry = geom;
@@ -74,7 +74,7 @@ void DesktopLayout::addItem(QGraphicsLayoutItem *item, bool pushBack, const QSiz
         // choose the position that with the best resulting visibility
         QPointF bestPosition = QPointF();
         qreal bestVisibility = 0;
-        foreach (QPointF position, possiblePositions) {
+        foreach (const QPointF &position, possiblePositions) {
             // see how much the item can be pushed into the working area:
             // copy our ItemSpace, add the item to the copy, activate it
             // and check the resulting position's visibility

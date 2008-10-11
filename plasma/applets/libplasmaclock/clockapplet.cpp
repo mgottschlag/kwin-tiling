@@ -116,7 +116,7 @@ void ClockApplet::updateToolTipContent()
     if (!isLocalTimezone()) { 
         d->addTzToTipText(subText, localTimezone()); 
     }
-    foreach (QString tz, getSelectedTimezones()) {
+    foreach (const QString &tz, getSelectedTimezones()) {
         if (tz == currentTimezone()) {
             continue;
         }
@@ -159,7 +159,7 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
 
     parent->addPage(widget, i18n("Time Zones"), Applet::icon());
 
-    foreach (QString tz, d->selectedTimezones) {
+    foreach (const QString &tz, d->selectedTimezones) {
         d->ui.timeZones->setSelected(tz, true);
     }
 

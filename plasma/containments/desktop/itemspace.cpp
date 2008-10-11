@@ -572,7 +572,7 @@ void ItemSpace::ItemGroup::applyResults(ItemSpace *itemSpace, int cameFrom)
 
 bool ItemSpace::ItemGroup::groupIsAbove(ItemSpace *itemSpace, QList<int> &visited, int groupId)
 {
-    foreach (Request request, m_requests) {
+    foreach (const Request &request, m_requests) {
         if (request.m_sourceGroup == -1 || visited.contains(request.m_sourceGroup)) {
             continue;
         }
@@ -633,7 +633,7 @@ void ItemSpace::removeItem(int removeGroup, int removeItemInGroup)
     // remove group
     m_groups.removeAt(removeGroup);
     // re-add other group items
-    foreach (ItemSpaceItem item, otherGroupItems) {
+    foreach (const ItemSpaceItem &item, otherGroupItems) {
         addItem(item);
     }
 }

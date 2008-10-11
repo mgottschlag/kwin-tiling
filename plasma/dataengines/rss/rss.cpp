@@ -248,7 +248,7 @@ bool RssEngine::cachesUpToDate(const QString & source) const
 {
     QStringList sources = source.split(" ", QString::SkipEmptyParts);
     bool outOfDate = false;
-    foreach (QString url, sources) {
+    foreach (const QString &url, sources) {
         if (QDateTime::currentDateTime() >
             m_feedTimes[url.toLower()].addSecs(CACHE_TIMEOUT)){
             outOfDate = true;

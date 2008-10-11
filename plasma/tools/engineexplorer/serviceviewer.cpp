@@ -143,7 +143,7 @@ void ServiceViewer::operationSelected(const QString &operation)
     int i = 0;
     QStringList keys = desc.keyList();
     m_operationDescription->setRowCount(keys.count());
-    foreach (const QString key, keys) {
+    foreach (const QString &key, keys) {
         QTableWidgetItem *item = new QTableWidgetItem(key);
         item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         m_operationDescription->setItem(i, 0, item);
