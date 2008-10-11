@@ -324,7 +324,7 @@ QDebug operator<<( QDebug dbg, const Nepomuk::Search::Term& term )
         if ( term.type() == Nepomuk::Search::Term::AndTerm ||
              term.type() == Nepomuk::Search::Term::OrTerm ) {
             dbg << "Subterms: [";
-            foreach( Nepomuk::Search::Term t, term.subTerms() ) {
+            foreach( const Nepomuk::Search::Term &t, term.subTerms() ) {
                 dbg << t;
             }
             dbg << "]";
