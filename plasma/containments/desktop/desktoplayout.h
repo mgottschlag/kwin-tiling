@@ -12,6 +12,7 @@
 
 #include <QGraphicsLayout>
 #include <QHash>
+#include <QMap>
 #include <QList>
 #include <QObject>
 
@@ -70,7 +71,7 @@ public:
      * Sets the tolerance for temporary placement in terms of surface
      * of the item concerned.
      **/
-    void setItemRelativeTolerance(qreal part);
+    void setVisibilityTolerance(qreal part);
 
     /**
      * Sets whether the working area should always be
@@ -128,10 +129,23 @@ private:
         QRectF temporaryGeometry;
     };
 
+    int newItemKey();
+
     // layout status
 
+    /**
+     * The ItemSpace where items are stored and calculations are done.
+     * We use the 'user' item option as an identifier that survives
+     * regrouping.
+     **/
     ItemSpace itemSpace;
-    QList<DesktopLayoutItem> items;
+
+    /**
+     * Item-specific data that cannot be stored in the ItemSpace.
+     * Maps integer IDs in the 'user' item field to their local data.
+     **/
+    QMap<int, DesktopLayoutItem> items;
+
     QHash<QGraphicsItem*, int> m_animatingItems;
     QPointF workingStart;
 
@@ -140,11 +154,11 @@ private:
     bool autoWorkingArea;
     bool temporaryPlacement;
 
-    qreal itemRelativeTolerance;
+    qreal visibilityTolerance;
 
     // item manipulation functions
-    void performTemporaryPlacement(int itemIndex);
-    void revertTemporaryPlacement(int itemIndex);
+    void performTemporaryPlacement(int group, int itemInGroup);
+    void revertTemporaryPlacement(int group, int itemInGroup);
 };
 
 #endif

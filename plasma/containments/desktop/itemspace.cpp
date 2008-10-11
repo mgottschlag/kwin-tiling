@@ -13,33 +13,13 @@
 
 #include "itemspace.h"
 
-ItemSpace::ItemSpace ()
+ItemSpace::ItemSpace()
   : spaceAlignment(Qt::AlignTop|Qt::AlignLeft),
     workingGeom(QSizeF()),
     placementSpacing(0),
     screenSpacing(0),
     shiftingSpacing(0)
 {
-}
-
-void ItemSpace::addItem(bool pushBack, const QRectF &preferredGeom, const QRectF &lastGeom)
-{
-    ItemSpaceItem newItem;
-    newItem.pushBack = pushBack;
-    newItem.animateMovement = false;
-    newItem.preferredGeometry = preferredGeom;
-    newItem.lastGeometry = (lastGeom.isValid() ? lastGeom : preferredGeom);
-    items.append(newItem);
-}
-
-void ItemSpace::removeAt (int itemIndex)
-{
-    items.removeAt(itemIndex);
-}
-
-int ItemSpace::count ()
-{
-    return items.count();
 }
 
 void ItemSpace::setWorkingArea (QSizeF area)
@@ -58,115 +38,121 @@ void ItemSpace::setWorkingArea (QSizeF area)
 
 void ItemSpace::activate()
 {
-    for (int i=0; i<items.size(); i++) {
-        ItemSpaceItem &item = items[i];
+    for (int groupId = 0; groupId < m_groups.size(); groupId++) {
+        ItemGroup &group = m_groups[groupId];
 
-        qreal push;
-        PushPower power;
+        for (int itemId = 0; itemId < group.m_groupItems.size(); itemId++) {
+            ItemSpaceItem &item = group.m_groupItems[itemId];
 
-        /*
-          Push items intersecting working area borders inside.
-          For borders adjunct to the corner of alignment, allow pushing
-          over the opposite border (and items there may be temporarily placed).
-        */
+            qreal push;
+            PushPower power;
 
-        // left border
-        push = screenSpacing - item.lastGeometry.left();
-        if (push > 0) {
-            item.animateMovement = true;
-            power = PushAwayFromPreferred;
-            if ((spaceAlignment & Qt::AlignLeft)) {
-                power |= PushOverBorder;
-            }
-            performPush(i, DirRight, push, power);
-        }
+            /*
+              Push items intersecting working area borders inside.
+              For borders adjunct to the corner of alignment, allow pushing
+              over the opposite border (and items there may be temporarily placed).
+            */
 
-        // right border
-        push = item.lastGeometry.right()+screenSpacing - workingGeom.width();
-        if (push > 0) {
-            item.animateMovement = true;
-            power = PushAwayFromPreferred;
-            if ((spaceAlignment & Qt::AlignRight)) {
-                power |= PushOverBorder;
-            }
-            performPush(i, DirLeft, push, power);
-        }
-
-        // top border
-        push = screenSpacing - item.lastGeometry.top();
-        if (push > 0) {
-            item.animateMovement = true;
-            power = PushAwayFromPreferred;
-            if ((spaceAlignment & Qt::AlignTop)) {
-                power |= PushOverBorder;
-            }
-            performPush(i, DirDown, push, power);
-        }
-
-        // bottom border
-        push = item.lastGeometry.bottom()+screenSpacing - workingGeom.height();
-        if (push > 0) {
-            item.animateMovement = true;
-            power = PushAwayFromPreferred;
-            if ((spaceAlignment & Qt::AlignBottom)) {
-                power |= PushOverBorder;
-            }
-            performPush(i, DirUp, push, power);
-        }
-
-        /*
-          Push items back towards their perferred positions.
-          Cannot push items out of the working area,
-          cannot push items away from their preferred positions.
-        */
-        if (item.pushBack) {
-            // left/right
-            push = item.preferredGeometry.left() - item.lastGeometry.left();
+            // left border
+            push = screenSpacing - item.lastGeometry.left();
             if (push > 0) {
-                performPush(i, DirRight, push, NoPower);
-            } else if (push < 0) {
-                performPush(i, DirLeft, -push, NoPower);
+                item.animateMovement = true;
+                power = PushAwayFromPreferred;
+                if ((spaceAlignment & Qt::AlignLeft)) {
+                    power |= PushOverBorder;
+                }
+                performPush(groupId, DirRight, push, power);
             }
-            // up/down
-            push = item.preferredGeometry.top() - item.lastGeometry.top();
+
+            // right border
+            push = item.lastGeometry.right()+screenSpacing - workingGeom.width();
             if (push > 0) {
-                performPush(i, DirDown, push, NoPower);
-            } else if (push < 0) {
-                performPush(i, DirUp, -push, NoPower);
+                item.animateMovement = true;
+                power = PushAwayFromPreferred;
+                if ((spaceAlignment & Qt::AlignRight)) {
+                    power |= PushOverBorder;
+                }
+                performPush(groupId, DirLeft, push, power);
+            }
+
+            // top border
+            push = screenSpacing - item.lastGeometry.top();
+            if (push > 0) {
+                item.animateMovement = true;
+                power = PushAwayFromPreferred;
+                if ((spaceAlignment & Qt::AlignTop)) {
+                    power |= PushOverBorder;
+                }
+                performPush(groupId, DirDown, push, power);
+            }
+
+            // bottom border
+            push = item.lastGeometry.bottom()+screenSpacing - workingGeom.height();
+            if (push > 0) {
+                item.animateMovement = true;
+                power = PushAwayFromPreferred;
+                if ((spaceAlignment & Qt::AlignBottom)) {
+                    power |= PushOverBorder;
+                }
+                performPush(groupId, DirUp, push, power);
+            }
+
+            /*
+              Push items back towards their perferred positions.
+              Cannot push items out of the working area,
+              cannot push items away from their preferred positions.
+            */
+            if (item.pushBack) {
+                // left/right
+                push = item.preferredGeometry.left() - item.lastGeometry.left();
+                if (push > 0) {
+                    performPush(groupId, DirRight, push, NoPower);
+                } else if (push < 0) {
+                    performPush(groupId, DirLeft, -push, NoPower);
+                }
+                // up/down
+                push = item.preferredGeometry.top() - item.lastGeometry.top();
+                if (push > 0) {
+                    performPush(groupId, DirDown, push, NoPower);
+                } else if (push < 0) {
+                    performPush(groupId, DirUp, -push, NoPower);
+                }
             }
         }
     }
 }
 
-qreal ItemSpace::positionVisibility (int itemIndex)
+qreal ItemSpace::positionVisibility (QRectF geom)
 {
-    ItemSpaceItem &item = items[itemIndex];
     QRectF visibleArea = QRectF(QPointF(), workingGeom);
-    QRectF visibleItemPart = visibleArea.intersected(item.lastGeometry);
-    qreal itemSurface = item.lastGeometry.width() * item.lastGeometry.height();
+    QRectF visibleItemPart = visibleArea.intersected(geom);
+    qreal itemSurface = geom.width() * geom.height();
     qreal itemVisibleSurface = visibleItemPart.width() * visibleItemPart.height();
     return (itemVisibleSurface / itemSurface);
 }
 
 void ItemSpace::offsetPositions(const QPointF &offset)
 {
-    for (int i=0; i<items.size(); i++) {
-        ItemSpaceItem &item = items[i];
-        item.preferredGeometry.adjust(offset.x(), offset.y(), offset.x(), offset.y());
-        item.lastGeometry.adjust(offset.x(), offset.y(), offset.x(), offset.y());
+    for (int groupId = 0; groupId < m_groups.size(); groupId++) {
+        ItemGroup &group = m_groups[groupId];
+
+        for (int itemId = 0; itemId < group.m_groupItems.size(); itemId++) {
+            ItemSpaceItem &item = group.m_groupItems[itemId];
+
+            item.preferredGeometry.adjust(offset.x(), offset.y(), offset.x(), offset.y());
+            item.lastGeometry.adjust(offset.x(), offset.y(), offset.x(), offset.y());
+        }
     }
 }
 
-qreal ItemSpace::performPush(int itemIndex, Direction direction, qreal amount, PushPower power)
+qreal ItemSpace::performPush(int groupId, Direction direction, qreal amount, PushPower power)
 {
-    // create root item group
-    RootItemGroup rootGroup(this, power, direction);
-    rootGroup.populateGroup(itemIndex);
-    // post a move request
-    rootGroup.addRequest(RootItemGroup::Request(NULL, 0, amount));
-    // perform the move
-    rootGroup.applyResults(NULL);
-    return rootGroup.m_pushAvailable;
+    ItemGroup &group = m_groups[groupId];
+
+    preparePush(direction, power);
+    group.addRequest(this, ItemGroup::Request(-1, 0, amount));
+    group.applyResults(this, -1);
+    return group.m_pushAvailable;
 }
 
 bool ItemSpace::positionedProperly(QRectF itemGeom)
@@ -273,92 +259,26 @@ QList<QPointF> ItemSpace::positionVertically(
     return possiblePositions;
 }
 
-QRectF ItemSpace::itemInRegionStartingFirstHoriz(const QRectF &region) const
-{
-    QRectF ret = QRectF(0,0,-1,-1);
-    qreal l = std::numeric_limits<qreal>::max();
-    for (int i=0; i<items.count(); i++) {
-      ItemSpaceItem item = items[i];
-      if (!item.lastGeometry.isValid()) {
-        continue;
-      }
-      qreal cl = item.lastGeometry.x();
-      if (item.lastGeometry.intersects(region) && cl < l) {
-          ret = item.lastGeometry;
-          l = cl;
-      }
-    }
-    return ret;
-}
-
-QRectF ItemSpace::itemInRegionEndingLastHoriz(const QRectF &region) const
-{
-    QRectF ret = QRectF(0,0,-1,-1);
-    qreal l = -1;
-    for (int i=0; i<items.count(); i++) {
-      ItemSpaceItem item = items[i];
-      if (!item.lastGeometry.isValid()) {
-        continue;
-      }
-      qreal cl = item.lastGeometry.x() + item.lastGeometry.width();
-      if (item.lastGeometry.intersects(region) && cl > l) {
-          ret = item.lastGeometry;
-          l = cl;
-      }
-    }
-    return ret;
-}
-
-QRectF ItemSpace::itemInRegionEndingFirstVert(const QRectF &region) const
-{
-    QRectF ret = QRectF(0,0,-1,-1);
-    qreal l = std::numeric_limits<qreal>::max();
-    for (int i=0; i<items.count(); i++) {
-      ItemSpaceItem item = items[i];
-      if (!item.lastGeometry.isValid()) {
-        continue;
-      }
-      qreal cl = item.lastGeometry.y() + item.lastGeometry.height();
-      if (item.lastGeometry.intersects(region) && cl < l) {
-          ret = item.lastGeometry;
-          l = cl;
-      }
-    }
-    return ret;
-}
-
-QRectF ItemSpace::itemInRegionStartingLastVert(const QRectF &region) const
-{
-    QRectF ret = QRectF(0,0,-1,-1);
-    qreal l = -1;
-    for (int i=0; i<items.count(); i++) {
-      ItemSpaceItem item = items[i];
-      if (!item.lastGeometry.isValid()) {
-        continue;
-      }
-      qreal cl = item.lastGeometry.y();
-      if (item.lastGeometry.intersects(region) && cl > l) {
-          ret = item.lastGeometry;
-          l = cl;
-      }
-    }
-    return ret;
-}
-
 QRectF ItemSpace::itemInRegionStartingFirstVert(const QRectF &region) const
 {
     QRectF ret = QRectF(0,0,-1,-1);
     qreal l = std::numeric_limits<qreal>::max();
-    for (int i=0; i<items.count(); i++) {
-      ItemSpaceItem item = items[i];
-      if (!item.lastGeometry.isValid()) {
-        continue;
-      }
-      qreal cl = item.lastGeometry.y();
-      if (item.lastGeometry.intersects(region) && cl < l) {
-          ret = item.lastGeometry;
-          l = cl;
-      }
+
+    for (int groupId = 0; groupId < m_groups.size(); groupId++) {
+        const ItemGroup &group = m_groups[groupId];
+
+        for (int itemId = 0; itemId < group.m_groupItems.size(); itemId++) {
+            const ItemSpaceItem &item = group.m_groupItems[itemId];
+
+            if (!item.lastGeometry.isValid()) {
+              continue;
+            }
+            qreal cl = item.lastGeometry.y();
+            if (item.lastGeometry.intersects(region) && cl < l) {
+                ret = item.lastGeometry;
+                l = cl;
+            }
+        }
     }
     return ret;
 }
@@ -367,16 +287,22 @@ QRectF ItemSpace::itemInRegionEndingLastVert(const QRectF &region) const
 {
     QRectF ret = QRectF(0,0,-1,-1);
     qreal l = -1;
-    for (int i=0; i<items.count(); i++) {
-      ItemSpaceItem item = items[i];
-      if (!item.lastGeometry.isValid()) {
-        continue;
-      }
-      qreal cl = item.lastGeometry.y() + item.lastGeometry.height();
-      if (item.lastGeometry.intersects(region) && cl > l) {
-          ret = item.lastGeometry;
-          l = cl;
-      }
+
+    for (int groupId = 0; groupId < m_groups.size(); groupId++) {
+        const ItemGroup &group = m_groups[groupId];
+
+        for (int itemId = 0; itemId < group.m_groupItems.size(); itemId++) {
+            const ItemSpaceItem &item = group.m_groupItems[itemId];
+
+            if (!item.lastGeometry.isValid()) {
+              continue;
+            }
+            qreal cl = item.lastGeometry.y() + item.lastGeometry.height();
+            if (item.lastGeometry.intersects(region) && cl > l) {
+                ret = item.lastGeometry;
+                l = cl;
+            }
+        }
     }
     return ret;
 }
@@ -385,16 +311,22 @@ QRectF ItemSpace::itemInRegionEndingFirstHoriz(const QRectF &region) const
 {
     QRectF ret = QRectF(0,0,-1,-1);
     qreal l = std::numeric_limits<qreal>::max();
-    for (int i=0; i<items.count(); i++) {
-      ItemSpaceItem item = items[i];
-      if (!item.lastGeometry.isValid()) {
-        continue;
-      }
-      qreal cl = item.lastGeometry.x() + item.lastGeometry.width();
-      if (item.lastGeometry.intersects(region) && cl < l) {
-          ret = item.lastGeometry;
-          l = cl;
-      }
+
+    for (int groupId = 0; groupId < m_groups.size(); groupId++) {
+        const ItemGroup &group = m_groups[groupId];
+
+        for (int itemId = 0; itemId < group.m_groupItems.size(); itemId++) {
+            const ItemSpaceItem &item = group.m_groupItems[itemId];
+
+            if (!item.lastGeometry.isValid()) {
+              continue;
+            }
+            qreal cl = item.lastGeometry.x() + item.lastGeometry.width();
+            if (item.lastGeometry.intersects(region) && cl < l) {
+                ret = item.lastGeometry;
+                l = cl;
+            }
+        }
     }
     return ret;
 }
@@ -403,66 +335,28 @@ QRectF ItemSpace::itemInRegionStartingLastHoriz(const QRectF &region) const
 {
     QRectF ret = QRectF(0,0,-1,-1);
     qreal l = -1;
-    for (int i=0; i<items.count(); i++) {
-      ItemSpaceItem item = items[i];
-      if (!item.lastGeometry.isValid()) {
-        continue;
-      }
-      qreal cl = item.lastGeometry.x();
-      if (item.lastGeometry.intersects(region) && cl > l) {
-          ret = item.lastGeometry;
-          l = cl;
-      }
+
+    for (int groupId = 0; groupId < m_groups.size(); groupId++) {
+        const ItemGroup &group = m_groups[groupId];
+
+        for (int itemId = 0; itemId < group.m_groupItems.size(); itemId++) {
+            const ItemSpaceItem &item = group.m_groupItems[itemId];
+
+            if (!item.lastGeometry.isValid()) {
+              continue;
+            }
+            qreal cl = item.lastGeometry.x();
+            if (item.lastGeometry.intersects(region) && cl > l) {
+                ret = item.lastGeometry;
+                l = cl;
+            }
+        }
     }
     return ret;
 }
 
-ItemSpace::RootItemGroup::RootItemGroup(
-    ItemSpace *itemSpace,
-    PushPower power,
-    Direction direction
-)
-  : ItemGroup(this),
-    m_itemSpace(itemSpace),
-    m_power(power),
-    m_direction(direction)
-{
-}
-
-ItemSpace::ItemGroup::ItemGroup(RootItemGroup *rootGroup)
-  : m_largestPushRequested(0),
-    m_pushAvailable(std::numeric_limits<qreal>::max()),
-    m_root(rootGroup)
-{
-}
-
-ItemSpace::ItemGroup::~ItemGroup()
-{
-    // delete obstacles recursively
-    foreach (ItemGroup *child, m_obstacles) {
-        // remove our requests
-        for (int i = 0; i < child->m_requests.count();) {
-            if (child->m_requests[i].m_sourceGroup == this) {
-                child->m_requests.removeAt(i);
-            } else {
-                i++;
-            }
-        }
-        // delete the group if it has no requests left
-        if (child->m_requests.count() == 0) {
-            delete child;
-        }
-    }
-}
-
-void ItemSpace::ItemGroup::addRequest (const class Request &request)
-{
-    m_requests.append(request);
-    m_requests[m_requests.count()-1].activate(this);
-}
-
 ItemSpace::ItemGroup::Request::Request(
-    ItemGroup *sourceGroup,
+    int sourceGroup,
     qreal sourceGroupPushRequested,
     qreal pushRequested
 )
@@ -473,10 +367,8 @@ ItemSpace::ItemGroup::Request::Request(
 {
 }
 
-void ItemSpace::ItemGroup::Request::activate (ItemGroup *group)
+void ItemSpace::ItemGroup::Request::activate (ItemSpace *itemSpace, ItemGroup *group)
 {
-    //kDebug() << "group" << group->m_groupItems << "request" << m_pushRequested;
-
     // don't do anything if the group was already asked to move at
     // least as much as we ask
     if (group->m_largestPushRequested >= m_pushRequested) {
@@ -495,19 +387,17 @@ void ItemSpace::ItemGroup::Request::activate (ItemGroup *group)
     // and limit it as obstacles are found
     group->m_pushAvailable = m_pushRequested;
 
-    ItemSpace *itemSpace = group->m_root->m_itemSpace;
-
     // look for obstacles for every item in the group
-    foreach (const int i, group->m_groupItems) {
-        ItemSpaceItem &groupItem = itemSpace->items[i];
-        QRectF origGeom = groupItem.lastGeometry;
+    for (int itemId = 0; itemId < group->m_groupItems.size(); itemId++) {
+        ItemSpaceItem &item = group->m_groupItems[itemId];
+        QRectF origGeom = item.lastGeometry;
         QRectF fullGeom = origGeom.adjusted(-itemSpace->shiftingSpacing, -itemSpace->shiftingSpacing,
                                             itemSpace->shiftingSpacing, itemSpace->shiftingSpacing);
 
         // limit push by screen boundaries
-        if (!(group->m_root->m_power & PushOverBorder)) {
+        if (!(itemSpace->m_power & PushOverBorder)) {
             qreal limit;
-            switch (group->m_root->m_direction) {
+            switch (itemSpace->m_direction) {
                 case DirLeft:
                     limit = origGeom.left() - itemSpace->screenSpacing;
                     break;
@@ -528,20 +418,20 @@ void ItemSpace::ItemGroup::Request::activate (ItemGroup *group)
         }
 
         // limit push to not push the item away from its preferred position
-        if (!(group->m_root->m_power & PushAwayFromPreferred) && groupItem.pushBack) {
+        if (!(itemSpace->m_power & PushAwayFromPreferred) && item.pushBack) {
             qreal limit;
-            switch (group->m_root->m_direction) {
+            switch (itemSpace->m_direction) {
                 case DirLeft:
-                    limit = origGeom.left() - groupItem.preferredGeometry.left();
+                    limit = origGeom.left() - item.preferredGeometry.left();
                     break;
                 case DirRight:
-                    limit = -(origGeom.left() - groupItem.preferredGeometry.left());
+                    limit = -(origGeom.left() - item.preferredGeometry.left());
                     break;
                 case DirUp:
-                    limit = origGeom.top() - groupItem.preferredGeometry.top();
+                    limit = origGeom.top() - item.preferredGeometry.top();
                     break;
                 case DirDown:
-                    limit = -(origGeom.top() - groupItem.preferredGeometry.top());
+                    limit = -(origGeom.top() - item.preferredGeometry.top());
                     break;
             }
             limit = qMax(0.0, limit);
@@ -552,74 +442,92 @@ void ItemSpace::ItemGroup::Request::activate (ItemGroup *group)
         }
 
         // look for items in the way
-        QList<ItemSpaceItem> &items = itemSpace->items;
-        for (int j = 0; j < items.size(); ++j) {
-            ItemSpaceItem &item = items[j];
+        for (int testGroupId = 0; testGroupId < itemSpace->m_groups.size(); testGroupId++) {
+            QList<int> asa;
+            if (testGroupId == group->m_id || group->groupIsAbove(itemSpace, asa, testGroupId)) {
+                continue;
+            }
+            ItemGroup &testGroup = itemSpace->m_groups[testGroupId];
 
-            QRectF newlyTakenSpace;
-            qreal push;
-            switch (group->m_root->m_direction) {
-            case DirLeft:
-                newlyTakenSpace = QRectF(fullGeom.left() - group->m_pushAvailable, fullGeom.top(), group->m_pushAvailable, fullGeom.height());
-                push = item.lastGeometry.right() - newlyTakenSpace.left();
-                break;
-            case DirRight:
-                newlyTakenSpace = QRectF(fullGeom.right(), fullGeom.top(), group->m_pushAvailable, fullGeom.height());
-                push = newlyTakenSpace.right() - item.lastGeometry.left();
-                break;
-            case DirUp:
-                newlyTakenSpace = QRectF(fullGeom.left(), fullGeom.top() - group->m_pushAvailable, fullGeom.width(), group->m_pushAvailable);
-                push = item.lastGeometry.bottom() - newlyTakenSpace.top();
-                break;
-            case DirDown:
-                newlyTakenSpace = QRectF(fullGeom.left(), fullGeom.bottom(), fullGeom.width(), group->m_pushAvailable);
-                push = newlyTakenSpace.bottom() - item.lastGeometry.top();
-                break;
+            // calculate how much the offending group needs to be pushed
+            qreal groupPush = 0;
+            for (int testItemId = 0; testItemId < testGroup.m_groupItems.size(); testItemId++) {
+                ItemSpaceItem &testItem = testGroup.m_groupItems[testItemId];
+
+                QRectF newlyTakenSpace;
+                qreal push;
+                switch (itemSpace->m_direction) {
+                case DirLeft:
+                    newlyTakenSpace = QRectF(fullGeom.left() - group->m_pushAvailable, fullGeom.top(), group->m_pushAvailable, fullGeom.height());
+                    push = testItem.lastGeometry.right() - newlyTakenSpace.left();
+                    break;
+                case DirRight:
+                    newlyTakenSpace = QRectF(fullGeom.right(), fullGeom.top(), group->m_pushAvailable, fullGeom.height());
+                    push = newlyTakenSpace.right() - testItem.lastGeometry.left();
+                    break;
+                case DirUp:
+                    newlyTakenSpace = QRectF(fullGeom.left(), fullGeom.top() - group->m_pushAvailable, fullGeom.width(), group->m_pushAvailable);
+                    push = testItem.lastGeometry.bottom() - newlyTakenSpace.top();
+                    break;
+                case DirDown:
+                    newlyTakenSpace = QRectF(fullGeom.left(), fullGeom.bottom(), fullGeom.width(), group->m_pushAvailable);
+                    push = newlyTakenSpace.bottom() - testItem.lastGeometry.top();
+                    break;
+                }
+
+                // check if it is an obstacle
+                if (testItem.lastGeometry.intersects(newlyTakenSpace)) {
+                    groupPush = qMax(groupPush, push);
+                }
             }
 
-            // check if the item is in the way
-            if (!item.lastGeometry.intersects(newlyTakenSpace) || group->itemIsCurrentOrAbove(j)) {
+            if (groupPush == 0) {
                 continue;
             }
 
-            // create the item's group if it doesn't exist
-            ItemGroup *childGroup = group->findGroup(j);
-            if (!childGroup) {
-                childGroup = new ItemGroup(group->m_root);
-                childGroup->populateGroup(j);
-            }
-
-            //kDebug() << "group" << group->m_groupItems << "requesting" << childGroup->m_groupItems << "push" << push;
-
             // post a move request to the obstacle
-            if (!group->m_obstacles.contains(childGroup)) {
-                group->m_obstacles.append(childGroup);
+            if (!group->m_obstacles.contains(testGroupId)) {
+                group->m_obstacles.append(testGroupId);
             }
-            childGroup->addRequest(Request(group, group->m_pushAvailable, push));
+            testGroup.addRequest(itemSpace, Request(group->m_id, group->m_pushAvailable, groupPush));
 
             // limit our push by how much the obstacle can actually move
-            if (childGroup->m_pushAvailable < push) {
-                group->m_pushAvailable = qMax(0.0, group->m_pushAvailable - (push - childGroup->m_pushAvailable));
+            if (testGroup.m_pushAvailable < groupPush) {
+                group->m_pushAvailable = qMax(0.0, group->m_pushAvailable - (groupPush - testGroup.m_pushAvailable));
                 if (group->m_pushAvailable == 0) {
                     break;
                 }
             }
         }
     }
-    //kDebug() << "group" << group->m_groupItems << "available" << group->m_pushAvailable;
 }
 
-void ItemSpace::ItemGroup::applyResults(ItemGroup *cameFrom)
+void ItemSpace::ItemGroup::resetPush(int id)
+{
+    m_id = id;
+    m_largestPushRequested = 0,
+    m_pushAvailable = std::numeric_limits<qreal>::max();
+    m_requests = QList<Request>();
+    m_obstacles = QList<int>();
+}
+
+void ItemSpace::ItemGroup::addRequest (ItemSpace *itemSpace, const class Request &request)
+{
+    m_requests.append(request);
+    m_requests.last().activate(itemSpace, this);
+}
+
+void ItemSpace::ItemGroup::applyResults(ItemSpace *itemSpace, int cameFrom)
 {
     bool notComplete = false;
     for (int i = 0; i < m_requests.size(); i++) {
         Request &request = m_requests[i];
-        if (!request.m_sourceGroup) {
+        if (request.m_sourceGroup == -1) {
             continue;
         }
 
         if (request.m_sourceGroup == cameFrom) {
-            qreal pushLost = request.m_sourceGroupPushRequested - cameFrom->m_pushAvailable;
+            qreal pushLost = request.m_sourceGroupPushRequested - itemSpace->m_groups[cameFrom].m_pushAvailable;
             request.m_pushRequested -= pushLost;
             request.m_compensated = true;
         } else if (!request.m_compensated) {
@@ -638,9 +546,10 @@ void ItemSpace::ItemGroup::applyResults(ItemGroup *cameFrom)
     }
     m_pushAvailable = qMin(m_pushAvailable, totalPushRequired);
 
-    foreach (const int i, m_groupItems) {
-        ItemSpaceItem &groupItem = m_root->m_itemSpace->items[i];
-        switch (m_root->m_direction) {
+    for (int groupId = 0; groupId < m_groupItems.size(); groupId++) {
+        ItemSpaceItem &groupItem = m_groupItems[groupId];
+
+        switch (itemSpace->m_direction) {
             case DirLeft:
                 groupItem.lastGeometry = groupItem.lastGeometry.adjusted(-m_pushAvailable, 0, -m_pushAvailable, 0);
                 break;
@@ -656,170 +565,124 @@ void ItemSpace::ItemGroup::applyResults(ItemGroup *cameFrom)
         }
     }
 
-    foreach (ItemGroup *child, m_obstacles) {
-        child->applyResults(this);
+    foreach (int obstacleId, m_obstacles) {
+        itemSpace->m_groups[obstacleId].applyResults(itemSpace, m_id);
     }
 }
 
-bool ItemSpace::ItemGroup::itemIsCurrentOrAbove(int item)
+bool ItemSpace::ItemGroup::groupIsAbove(ItemSpace *itemSpace, QList<int> &visited, int groupId)
 {
-    QList<ItemGroup *> visited;
-    return itemIsCurrentOrAboveRecurser(&visited, this, item);
-}
-
-bool ItemSpace::ItemGroup::itemIsCurrentOrAboveRecurser(QList<ItemGroup *> *visited, ItemGroup *current, int item)
-{
-    if (visited->contains(current)) {
-        return FALSE;
-    }
-    if (current->m_groupItems.contains(item)) {
-        return TRUE;
-    }
-    visited->append(current);
-
-    foreach (Request request, current->m_requests) {
-        if (request.m_sourceGroup && itemIsCurrentOrAboveRecurser(visited, request.m_sourceGroup, item)) {
-            return TRUE;
-        }
-    }
-
-    return FALSE;
-}
-
-void ItemSpace::ItemGroup::populateGroup(int firstItem)
-{
-    ItemSpace *itemSpace = m_root->m_itemSpace;
-
-    // add this item to the group
-    m_groupItems.append(firstItem);
-
-    // create a linked list of all items except the first one
-    struct RemainingItem *first = NULL;
-    struct RemainingItem *current = NULL;
-    for (int i = 0; i < itemSpace->items.size(); i++) {
-        if (i == firstItem) {
+    foreach (Request request, m_requests) {
+        if (request.m_sourceGroup == -1 || visited.contains(request.m_sourceGroup)) {
             continue;
         }
+        if (request.m_sourceGroup == groupId) {
+            return true;
+        }
+        visited.append(request.m_sourceGroup);
+        if (itemSpace->m_groups[request.m_sourceGroup].groupIsAbove(itemSpace, visited, groupId)) {
+            return true;
+        }
+    }
+    return false;
+}
 
-        struct RemainingItem *newItem = new struct RemainingItem;
-        newItem->item = i;
-        newItem->next = NULL;
-        newItem->locked = 0;
-        newItem->deleteLater = false;
-        if (!current) {
-            first = newItem;
-            newItem->prev = NULL;
+// TODO: optimize
+void ItemSpace::addItem(ItemSpaceItem newItem)
+{
+    QList<ItemSpaceItem> newGroupItems;
+    QRectF newItemGeom = newItem.lastGeometry.adjusted(-shiftingSpacing, -shiftingSpacing,
+                                                      shiftingSpacing, shiftingSpacing);
+
+    // look for items overlapping with the new item
+    for (int groupId = 0; groupId < m_groups.size();) {
+        ItemGroup &group = m_groups[groupId];
+
+        // if any item in the group overlaps it, save its items and remove the group
+        bool removeGroup = false;
+        for (int itemId = 0; itemId < group.m_groupItems.size(); itemId++) {
+            ItemSpaceItem &item = group.m_groupItems[itemId];
+            if (newItemGeom.intersects(item.lastGeometry)) {
+                removeGroup = true;
+                break;
+            }
+        }
+
+        if (removeGroup) {
+            newGroupItems << group.m_groupItems;
+            m_groups.removeAt(groupId);
         } else {
-            current->next = newItem;
-            newItem->prev = current;
+            groupId++;
         }
-        current = newItem;
     }
 
-    // look for overlapping items
-    populateGroupRecurser(firstItem, &first);
+    // create the new group
+    m_groups.append(ItemGroup());
+    ItemGroup &newGroup = m_groups.last();
+    newGroup.m_groupItems.append(newItem);
+    newGroup.m_groupItems << newGroupItems;
+}
 
-    // remove remaining elements from the list
-    struct RemainingItem *next;
-    current = first;
-    while (current) {
-        next = current->next;
-        delete current;
-        current = next;
+// TODO: optimize
+void ItemSpace::removeItem(int removeGroup, int removeItemInGroup)
+{
+    // remove items from group
+    m_groups[removeGroup].m_groupItems.removeAt(removeItemInGroup);
+    // save other group items
+    QList<ItemSpaceItem> otherGroupItems = m_groups[removeGroup].m_groupItems;
+    // remove group
+    m_groups.removeAt(removeGroup);
+    // re-add other group items
+    foreach (ItemSpaceItem item, otherGroupItems) {
+        addItem(item);
     }
 }
 
-void ItemSpace::ItemGroup::RemainingUnlink(struct RemainingItem **remainingFirst, struct RemainingItem *item)
+// TODO: optimize
+void ItemSpace::updateItem(int group, int itemInGroup)
 {
-    if (item->prev) {
-        item->prev->next = item->next;
-    } else {
-        *remainingFirst = item->next;
-    }
-
-    if (item->next) {
-        item->next->prev = item->prev;
-    }
-
-    delete item;
+    ItemSpaceItem copy = m_groups[group].m_groupItems[itemInGroup];
+    removeItem(group, itemInGroup);
+    addItem(copy);
 }
 
-void ItemSpace::ItemGroup::populateGroupRecurser(int thisItem, struct RemainingItem **remainingFirst)
+bool ItemSpace::locateItemByPosition(int pos, int *groupIndex, int *itemInGroup) const
 {
-    ItemSpace *itemSpace = m_root->m_itemSpace;
-    ItemSpaceItem &groupItem = m_root->m_itemSpace->items[thisItem];
-
-    // look for intersecting items
-    QRectF fullGeom = groupItem.lastGeometry.adjusted(-itemSpace->shiftingSpacing, -itemSpace->shiftingSpacing,
-                                                     itemSpace->shiftingSpacing, itemSpace->shiftingSpacing);
-    struct RemainingItem *current = *remainingFirst;
-    struct RemainingItem *next;
-    while (current) {
-        if (current->deleteLater) {
-            current = current->next;
-            continue;
+    int current = 0;
+    for (int groupId = 0; groupId < m_groups.size(); groupId++) {
+        ItemGroup group = m_groups[groupId];
+        if (current + group.m_groupItems.size() > pos) {
+            *groupIndex = groupId;
+            *itemInGroup = pos - current;
+            return true;
         }
+        current += group.m_groupItems.size();
+    }
+    return false;
+}
 
-        int itemId = current->item;
-        ItemSpaceItem &testItem = itemSpace->items[itemId];
-
-        // check if it intersects our item
-        if (!testItem.lastGeometry.intersects(fullGeom)) {
-            current = current->next;
-            continue;
-        }
-
-        // add it to the group list
-        m_groupItems.append(itemId);
-
-        // remove it from the remaining list
-        next = current->next;
-        if (current->locked) {
-            current->deleteLater = true;
-        } else {
-            RemainingUnlink(remainingFirst, current);
-        }
-        current = next;
-
-        if (current) {
-            current->locked++;
-        }
-
-        populateGroupRecurser(itemId, remainingFirst);
-
-        if (current) {
-            current->locked--;
-            if (current->deleteLater && !current->locked) {
-                next = current->next;
-                RemainingUnlink(remainingFirst, current);
-                current = next;
+bool ItemSpace::locateItemByUser(QVariant user, int *groupIndex, int *itemInGroup) const
+{
+    for (int groupId = 0; groupId < m_groups.size(); groupId++) {
+        ItemGroup group = m_groups[groupId];
+        for (int itemId = 0; itemId < group.m_groupItems.size(); itemId++) {
+            ItemSpaceItem &item = group.m_groupItems[itemId];
+            if (item.user == user) {
+                *groupIndex = groupId;
+                *itemInGroup = itemId;
+                return true;
             }
         }
     }
+    return false;
 }
 
-ItemSpace::ItemGroup * ItemSpace::ItemGroup::findGroup(int item)
+void ItemSpace::preparePush(Direction direction, PushPower power)
 {
-    QList<ItemGroup *> visited;
-    return findGroupRecurser(&visited, m_root, item);
-}
+    m_direction = direction;
+    m_power = power;
 
-ItemSpace::ItemGroup * ItemSpace::ItemGroup::findGroupRecurser(QList<ItemGroup *> *visited, ItemGroup *current, int item)
-{
-    if (visited->contains(current)) {
-        return NULL;
+    for (int i=0; i<m_groups.size(); i++) {
+        m_groups[i].resetPush(i);
     }
-    if (current->m_groupItems.contains(item)) {
-        return current;
-    }
-    visited->append(current);
-
-    foreach (ItemGroup *child, current->m_obstacles) {
-        ItemGroup *result = findGroupRecurser(visited, child, item);
-        if (result) {
-            return result;
-        }
-    }
-
-    return NULL;
 }

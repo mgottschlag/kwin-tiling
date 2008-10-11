@@ -83,7 +83,7 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
     m_layout->setScreenSpacing(5);
     m_layout->setShiftingSpacing(0);
     m_layout->setTemporaryPlacement(true);
-    m_layout->setItemRelativeTolerance(0.5);
+    m_layout->setVisibilityTolerance(0.5);
     setLayout(m_layout);
     setHasConfigurationInterface(true);
 

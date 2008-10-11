@@ -12,6 +12,7 @@
 
 #include <QRectF>
 #include <QList>
+#include <QVariant>
 
 /**
  * ItemSpace class
@@ -37,16 +38,27 @@
 class ItemSpace
 {
   public:
-    ItemSpace ();
-
-    void addItem(bool pushBack, const QRectF &preferredGeom, const QRectF &lastGeom = QRectF());
-    void removeAt(int itemIndex);
-    int count();
+    ItemSpace();
 
     void setWorkingArea(QSizeF area);
+
     void activate();
 
-    qreal positionVisibility(int itemIndex);
+    /**
+     * Returns the visibility of an item at a given position.
+     * This is the part of the item inside the working area.
+     **/
+    qreal positionVisibility(QRectF geom);
+
+    class ItemSpaceItem
+    {
+      public:
+        QRectF preferredGeometry;
+        QRectF lastGeometry;
+        bool pushBack : 1;
+        bool animateMovement : 1;
+        QVariant user;
+    };
 
     enum DirectionFlag {
         DirLeft = 1,
@@ -63,8 +75,70 @@ class ItemSpace
     };
     Q_DECLARE_FLAGS(PushPower, PushPowerFlag)
 
+    /**
+     * Offset the positions of all items.
+     **/
     void offsetPositions(const QPointF &offset);
-    qreal performPush(int itemIndex, Direction direction, qreal amount, PushPower power);
+
+    /**
+     * Push an item group. Requires no initialization.
+     *
+     * @param groupId the index of the group
+     * @param direction in which direction pushing will be done
+     * @param amount how much to push
+     * @param power how 'powerful' the push is; what types of obstacles
+     *              can be pushed or ignored
+     *
+     * @return how much the item group was really pushed
+     **/
+    qreal performPush(int groupId, Direction direction, qreal amount, PushPower power);
+
+    /**
+     * Add a new item.
+     * Groups will be updated to reflect the change.
+     *
+     * @param newItem the item to add; must be initialized
+     **/
+    void addItem(ItemSpaceItem newItem);
+
+    /**
+     * Removes an item by its location.
+     *
+     * @param groupIndex the index of the item's group
+     * @param itemInGroup the index of the item in its group
+     **/
+    void removeItem(int groupIndex, int itemInGroup);
+
+    /**
+     * Updates groups to reflect the item's geometry. 
+     *
+     * @param groupIndex the index of the item's group
+     * @param itemInGroup the index of the item in its group
+     **/
+    void updateItem(int groupIndex, int itemInGroup);
+
+    /**
+     * Find an item by its number as if we iterated over
+     * all groups and over all items in each group.
+     **/
+    bool locateItemByPosition(int pos, int *groupIndex, int *itemInGroup) const;
+
+    /**
+     * Find an item by its 'user' parameter.
+     **/
+    bool locateItemByUser(QVariant user, int *groupIndex, int *itemInGroup) const;
+
+    /**
+     * Prepare for pushing.
+     * After that, move requests can be posted to item groups
+     * with ItemGroup::addRequest and the move can be performed
+     * with ItemGroup::applyResults.
+     *
+     * @param direction in which direction pushing will be done
+     * @param power how 'powerful' the push is; what types of obstacles
+     *              can be pushed or ignored
+     **/
+    void preparePush(Direction direction, PushPower power);
 
     /**
      * Finds an empty place for an item.
@@ -84,6 +158,8 @@ class ItemSpace
      *                     alignment corner.
      * @param findAll if false, searching will stop after the first valid
      *                position
+     *
+     * @return all positions found
      **/
     QList<QPointF> positionVertically(
         const QSizeF &itemSize,
@@ -94,48 +170,12 @@ class ItemSpace
 
     bool positionedProperly(QRectF itemGeom);
 
-    QRectF itemInRegionStartingFirstHoriz(const QRectF &region) const;
-    QRectF itemInRegionEndingLastHoriz(const QRectF &region) const;
-    QRectF itemInRegionEndingFirstVert(const QRectF &region) const;
-    QRectF itemInRegionStartingLastVert(const QRectF &region) const;
-    QRectF itemInRegionStartingFirstVert(const QRectF &region) const;
-    QRectF itemInRegionEndingLastVert(const QRectF &region) const;
-    QRectF itemInRegionEndingFirstHoriz(const QRectF &region) const;
-    QRectF itemInRegionStartingLastHoriz(const QRectF &region) const;
-
-    class ItemSpaceItem
-    {
-      public:
-        QRectF preferredGeometry;
-        QRectF lastGeometry;
-        bool pushBack : 1;
-        bool animateMovement : 1;
-    };
-
-    QList<ItemSpaceItem> items;
-
-    Qt::Alignment spaceAlignment;
-    QSizeF workingGeom;
-
-    qreal placementSpacing;
-    qreal screenSpacing;
-    qreal shiftingSpacing;
-
-    class RootItemGroup;
-
     /**
-     * Represents a group of overlapping items in the process of
-     * push calculation.
+     * Represents a group of overlapping items.
      **/
     class ItemGroup
     {
       public:
-        ItemGroup(RootItemGroup *rootGroup);
-        ~ItemGroup();
-
-        // find all items intersecting with the item specified and
-        // populate m_groupItems
-        void populateGroup(int thisItem);
 
         class Request
         {
@@ -144,14 +184,14 @@ class ItemSpace
              * Create a push request. No calculations will be performed.
              *
              * @param sourceGroup the group that posted the request, or
-             *                    NULL if it was posted manually.
+             *                    -1 if it was posted manually.
              * @param sourceGroupPushRequested how much the posting group wanted
              *                                 to move itself when the request was
-             *                                 posted (if sourceGroup is not NULL)
+             *                                 posted (if sourceGroup is -1)
              * @param pushRequested how much the group concerned is asked to move
              **/
             Request(
-                ItemGroup *sourceGroup,
+                int sourceGroup,
                 qreal sourceGroupPushRequested,
                 qreal pushRequested
             );
@@ -171,10 +211,10 @@ class ItemSpace
              *
              * @param group the ItemGroup this push request belongs to
              **/
-            void activate(ItemGroup *group);
+            void activate(ItemSpace *itemSpace, ItemGroup *group);
 
             // saved from constructor
-            ItemGroup *m_sourceGroup;
+            int m_sourceGroup;
             qreal m_sourceGroupPushRequested;
             qreal m_pushRequested;
 
@@ -183,11 +223,13 @@ class ItemSpace
             bool m_compensated;
         };
 
+        void resetPush(int id);
+
         /**
          * Post a move request.
          * This adds the request to the group and calls activate on it.
          **/
-        void addRequest (const class Request &request);
+        void addRequest(ItemSpace *itemSpace, const class Request &request);
 
         /**
          * Apply the results of initial push calculation, moving the items.
@@ -205,62 +247,49 @@ class ItemSpace
          * push amount.
          * (Otherwise, another requesting group will reach it later on.)
          **/
-        void applyResults(ItemGroup *cameFrom);
+        void applyResults(ItemSpace *itemSpace, int cameFrom);
 
+        // items belonging to this group
+        QList<ItemSpaceItem> m_groupItems;
+
+        // the list index of this group in the calculation process
+        int m_id;
         // the maximum of all push requests
         qreal m_largestPushRequested;
         // the available space calculated so-far
         qreal m_pushAvailable;
 
       private:
-        struct RemainingItem;
-        struct RemainingItem
-        {
-            int item;
-            RemainingItem *prev;
-            RemainingItem *next;
-            int locked;
-            bool deleteLater;
-        };
-        void RemainingUnlink(struct RemainingItem **remainingFirst, struct RemainingItem *item);
-        void populateGroupRecurser(int thisItem, struct RemainingItem **remainingFirst);
-
-        // TODO: improve performance of these recursive lookup functions
-
-        // return true if the item is either in this group
-        // of any of the groups above
-        bool itemIsCurrentOrAbove(int item);
-        bool itemIsCurrentOrAboveRecurser(QList<ItemGroup *> *visited, ItemGroup *current, int item);
-
-        // check if a group node containing the item already exists
-        ItemGroup * findGroup(int item);
-        ItemGroup * findGroupRecurser(QList<ItemGroup *> *visited, ItemGroup *current, int item);
-
-        // the root group
-        RootItemGroup *m_root;
+        // return true if the group is above this one (its requests lead here)
+        bool groupIsAbove(ItemSpace *itemSpace, QList<int> &visited, int groupId);
 
         // move requests posted to this group
         QList<Request> m_requests;
-        // items belonging to this group
-        QList<int> m_groupItems;
         // groups we asked to move
-        QList<ItemGroup *> m_obstacles;
+        QList<int> m_obstacles;
     };
 
-    // root group, contains some config vars
-    class RootItemGroup : public ItemGroup
-    {
-      public:
-        ItemSpace *m_itemSpace;
-        PushPower m_power;
-        Direction m_direction;
+    /**
+     * All item groups.
+     **/
+    QList<ItemGroup> m_groups;
 
-        RootItemGroup(
-            ItemSpace *itemSpace,
-            PushPower power,
-            Direction direction
-        );
-    };
+    Qt::Alignment spaceAlignment;
+    QSizeF workingGeom;
+
+    qreal placementSpacing;
+    qreal screenSpacing;
+    qreal shiftingSpacing;
+
+  private:
+
+    QRectF itemInRegionStartingFirstVert(const QRectF &region) const;
+    QRectF itemInRegionEndingLastVert(const QRectF &region) const;
+    QRectF itemInRegionEndingFirstHoriz(const QRectF &region) const;
+    QRectF itemInRegionStartingLastHoriz(const QRectF &region) const;
+
+    Direction m_direction;
+    PushPower m_power;
 };
 
 #endif
