@@ -66,16 +66,9 @@ HalPower::HalPower(QObject *parent, const QStringList  & /*args */)
 
 HalPower::~HalPower()
 {
-    QList<Solid::Device *> devices;
-
-    devices << m_acAdapters.values();
-    devices << m_batteries.values();
-    devices << m_buttons.values();
-
-    foreach (Solid::Device *dev, devices)
-    {
-        delete dev;
-    }
+    qDeleteAll(m_acAdapters);
+    qDeleteAll(m_batteries);
+    qDeleteAll(m_buttons);
 }
 
 QStringList HalPower::supportedSchemes() const
@@ -493,7 +486,7 @@ void HalPower::updateBatteryStats()
     m_lowBatteryCharge = 0;
     m_criticalBatteryCharge = 0;
 
-    foreach (Solid::Device *d, m_batteries.values())
+    foreach (Solid::Device *d, m_batteries)
     {
         Solid::GenericInterface *interface = d->as<Solid::GenericInterface>();
 
@@ -603,7 +596,7 @@ void HalPower::slotDeviceRemoved(const QString &udi)
 
         m_pluggedAdapterCount = 0;
 
-        foreach (Solid::Device *d, m_acAdapters.values())
+        foreach (Solid::Device *d, m_acAdapters)
         {
             if (d->as<Solid::AcAdapter>()!=0
               && d->as<Solid::AcAdapter>()->isPlugged())
