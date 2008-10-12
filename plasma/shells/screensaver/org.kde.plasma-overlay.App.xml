@@ -1,0 +1,21 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kde.plasmaoverlay.App">
+    <signal name="viewCreated">
+      <arg name="id" type="u" direction="out"/>
+    </signal>
+    <signal name="hidden">
+    </signal>
+    <method name="activate">
+    </method>
+    <method name="deactivate">
+    </method>
+    <method name="lock">
+    </method>
+    <method name="viewWinId">
+      <arg type="u" direction="out"/>
+    </method>
+    <method name="quit">
+    </method>
+  </interface>
+</node>

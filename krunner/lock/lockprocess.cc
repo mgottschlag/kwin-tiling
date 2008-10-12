@@ -937,8 +937,10 @@ bool LockProcess::startPlasma()
     if (!mPlasmaDBus) {
         //try to get it, in case it's already running somehow
         //FIXME I don't like hardcoded strings
-        mPlasmaDBus = new QDBusInterface("org.kde.plasma-overlay", "/MainApplication", QString(),
+        //mPlasmaDBus = new QDBusInterface("org.kde.plasma-overlay", "/MainApplication", QString(),
+        mPlasmaDBus = new org::kde::plasmaoverlay::App("org.kde.plasma-overlay", "/App",
                 QDBusConnection::sessionBus(), this);
+        //FIXME this might-already-be-running stuff seems really really Wrong.
     }
     if (mPlasmaDBus->isValid()) {
         kDebug() << "weird, plasma-overlay is already running";
@@ -969,6 +971,7 @@ bool LockProcess::startPlasma()
         mPlasmaProc << "--setup";
     }
     mPlasmaProc.start();
+    kDebug() << "process begun";
     //plasma gets 15 seconds to load, or we assume it failed
     QTimer::singleShot(15 * 1000, this, SLOT(checkPlasma()));
     return true;
@@ -1028,7 +1031,8 @@ void LockProcess::stopPlasma()
 
 void LockProcess::newService(QString name)
 {
-    //kDebug() << name;
+    //TODO reorganize this part to take all 3 strings (oldOwner, newOwner)
+    //and notice plasma quitting
     if (mPlasmaDBus) {
         kDebug() << "can't happen"; //but it does.
         //maybe we should check if plasma was going *down*
@@ -1039,17 +1043,12 @@ void LockProcess::newService(QString name)
     }
 
     kDebug() << "plasma! yaay!";
-    disconnect(QDBusConnection::sessionBus().interface(), 0, this, 0); //no need for you any more
+    //disconnect(QDBusConnection::sessionBus().interface(), 0, this, 0); //no need for you any more
     //FIXME might we want to know if the interface goes away?
     //FIXME that disconnect isn't working anyways! wtf
 
-    mPlasmaDBus = new QDBusInterface(name, "/MainApplication", QString(),
+    mPlasmaDBus = new org::kde::plasmaoverlay::App(name, "/App",
             QDBusConnection::sessionBus(), this);
-    if (!mPlasmaDBus->isValid()) {
-        kDebug() << "wtf! not valid!?"; //we're screwed now.
-        disablePlasma();
-        return;
-    }
 
     connect(mPlasmaDBus, SIGNAL(hidden()), SLOT(unSuppressUnlock()));
     //TODO can we conect to this only when we don't have an ID?
@@ -1309,9 +1308,11 @@ bool LockProcess::x11Event(XEvent *event)
             }
         case KeyPress:
         case MotionNotify:
-            if (mBusy || !mDialogs.isEmpty())
+            if (mBusy || !mDialogs.isEmpty()) {
+                //kDebug() << "busy";
                 //FIXME shouldn't we be resetting some timers?
                 break;
+            }
             mBusy = true;
             //something happened. do we quit, ask for a password or forward it to plasma?
             //if we're supposed to be forwarding, we check that there's actually a plasma window up

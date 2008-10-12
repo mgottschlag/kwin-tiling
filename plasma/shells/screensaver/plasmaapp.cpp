@@ -426,7 +426,7 @@ bool PlasmaApp::eventFilter(QObject *obj, QEvent *event)
             Qt::WindowFlags oldFlags = widget->windowFlags();
             Qt::WindowFlags newFlags = oldFlags | Qt::X11BypassWindowManagerHint;
             if (oldFlags != newFlags) {
-                //kDebug() << "!!!!!!!setting flags on!!!!!" << widget;
+                kDebug() << "!!!!!!!setting flags on!!!!!" << widget;
                 m_dialogs.append(widget);
                 connect(widget, SIGNAL(destroyed(QObject*)), SLOT(dialogDestroyed(QObject*)));
                 widget->setWindowFlags(newFlags);
@@ -447,7 +447,7 @@ bool PlasmaApp::eventFilter(QObject *obj, QEvent *event)
             }
 
             XChangeProperty(QX11Info::display(), widget->effectiveWinId(), tag, tag, 8, PropModeReplace, &data, 1);
-            kDebug() << "tagged" << widget << widget->effectiveWinId() << (data != 0);
+            kDebug() << "tagged" << widget << widget->effectiveWinId() << "as" << data;
         }
     }
     return false;
@@ -517,6 +517,11 @@ void PlasmaApp::lock()
         }
         corona()->setImmutability(Plasma::UserImmutable);
     }
+}
+
+void PlasmaApp::quit()
+{
+    qApp->quit();
 }
 
 #include "plasmaapp.moc"

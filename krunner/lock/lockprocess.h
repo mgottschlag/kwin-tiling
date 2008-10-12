@@ -23,7 +23,8 @@
 #include <X11/Xlib.h>
 #include <fixx11h.h>
 
-class QDBusInterface;
+#include "plasmaapp_interface.h"
+
 class KLibrary;
 
 struct KGreeterPluginInfo;
@@ -189,7 +190,7 @@ private:
     bool        mBusy;
     KProcess    mHackProc;
     KProcess    mPlasmaProc;
-    QDBusInterface *mPlasmaDBus;
+    org::kde::plasmaoverlay::App *mPlasmaDBus;
     WId         mPlasmaView;
     bool        mPlasmaEnabled;
     bool        mSetupMode;

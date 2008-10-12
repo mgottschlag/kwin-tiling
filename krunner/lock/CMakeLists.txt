@@ -15,6 +15,9 @@ set(krunner_lock_SRCS
    autologout.cc
    main.cc )
 
+set(plasmaapp_dbusXML ../../plasma/shells/screensaver/org.kde.plasma-overlay.App.xml)
+qt4_add_dbus_interface(krunner_lock_SRCS ${plasmaapp_dbusXML} plasmaapp_interface)
+
 set(lockprocess_dbusXML org.kde.krunner_lock.LockProcess.xml)
 qt4_generate_dbus_interface(lockprocess.h ${lockprocess_dbusXML} OPTIONS -m)
 qt4_add_dbus_adaptor(krunner_lock_SRCS ${CMAKE_CURRENT_BINARY_DIR}/${lockprocess_dbusXML} lockprocess.h LockProcess)
