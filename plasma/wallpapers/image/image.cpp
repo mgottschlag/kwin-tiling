@@ -313,7 +313,7 @@ void Image::startSlideshow()
 
 void Image::getNewWallpaper()
 {
-    KNS::Engine engine(0);
+    KNS::Engine engine(m_widget);
     if (engine.init("wallpaper.knsrc")) {
         KNS::Entry::List entries = engine.downloadDialogModal(m_widget);
 
