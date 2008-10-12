@@ -3,8 +3,8 @@
 #include <QObject>
 
 #include "bluez-bluetoothmanager.h"
-#include "bluez-bluetoothinterface.h"
-#include "bluez-bluetoothremotedevice.h"
+//#include "bluez-bluetoothinterface.h"
+//#include "bluez-bluetoothremotedevice.h"
 
 int main(int argc, char **argv)
 {
@@ -15,13 +15,13 @@ int main(int argc, char **argv)
     kDebug() << "Interfaces: " << mgr.bluetoothInterfaces();
     kDebug() << "Default Interface: " << mgr.defaultInterface();
 
-    kDebug() << "Bluetooth Input Devices: " << mgr.bluetoothInputDevices();
+//  kDebug() << "Bluetooth Input Devices: " << mgr.bluetoothInputDevices();
 
-    BluezBluetoothInterface iface(mgr.defaultInterface());
+//  BluezBluetoothInterface iface(mgr.defaultInterface());
 
 //    iface.discoverDevices();
 
-    iface.startPeriodicDiscovery();
+//    iface.startPeriodicDiscovery();
 
 #if 0
     BluezBluetoothRemoteDevice remote("/org/bluez/hci0/00:16:BC:15:A3:FF");
