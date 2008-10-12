@@ -312,8 +312,12 @@ void ClockApplet::init()
     if (d->timezone == "UTC")  {
         d->prettyTimezone = d->timezone;
     } else {
-        QStringList tzParts = d->timezone.split("/");
-        d->prettyTimezone = tzParts.value(1);
+        if (!isLocalTimezone()) {
+            QStringList tzParts = d->timezone.split("/");
+            d->prettyTimezone = tzParts.value(1);
+       } else {
+           d->prettyTimezone = localTimezone();
+       }
     }
 
     //avoid duplication
