@@ -28,7 +28,7 @@ TasksEngine::TasksEngine(QObject* parent, const QVariantList& args)
 
 void TasksEngine::init()
 {
-    foreach(const TaskPtr& task, TaskManager::TaskManager::self()->tasks().values()) {
+    foreach(const TaskPtr& task, TaskManager::TaskManager::self()->tasks()) {
         connect(task.constData(), SIGNAL(changed()),
                 this,             SLOT(taskChanged()));
         setDataForTask(task);
