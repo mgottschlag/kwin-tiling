@@ -337,12 +337,13 @@ QScriptValue QScriptApplet::loadui(QScriptContext *context, QScriptEngine *engin
         return context->throwError("loadui takes one argument");
     }
 
-    QUiLoader loader;
     QString filename = context->argument(0).toString();
     QFile f(filename);
-    if (!f.open(QIODevice::ReadOnly))
+    if (!f.open(QIODevice::ReadOnly)) {
         return context->throwError(QString("Unable to open '%1'").arg(filename));
+    }
 
+    QUiLoader loader;
     QWidget *w = loader.load(&f);
     f.close();
 
