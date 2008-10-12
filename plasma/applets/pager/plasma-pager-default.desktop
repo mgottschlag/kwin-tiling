@@ -69,7 +69,7 @@ Comment[tr]=Sanal masaüstleri arasında gezin
 Comment[uk]=Перемкніть віртуальні стільниці
 Comment[x-test]=xxSwitch between virtual desktopsxx
 Comment[zh_TW]=在虛擬桌面間切換
-Icon=pager
+# Icon=pager //TODO: fix icon
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
 

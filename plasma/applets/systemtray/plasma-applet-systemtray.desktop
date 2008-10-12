@@ -88,7 +88,7 @@ Comment[tr]=Sistem çekmecesine küçültülen uygulamalara erişin
 Comment[uk]=Доступ до прихованих програму, мінімізованих до системного лотка
 Comment[x-test]=xxAccess hidden applications minimized in the system trayxx
 Comment[zh_TW]=存取最小化在系統匣內的隱藏應用程式
-Icon=systemtray
+# Icon=systemtray //TODO: fix icon
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
 

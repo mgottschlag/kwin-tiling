@@ -81,7 +81,7 @@ Comment[tr]=Çalışan uygulamalar arasında gezin
 Comment[uk]=Перемкніть запущені програми
 Comment[x-test]=xxSwitch between running applicationsxx
 Comment[zh_TW]=在執行中的應用程式間切換
-Icon=taskbar
+# Icon=taskbar //TODO: fix icon
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
 
