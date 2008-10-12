@@ -162,7 +162,7 @@ void KGlobalShortcutsEditor::allDefault()
 {
     // The editors are responsible for the reset
     kDebug() << "Reset";
-    foreach (const componentData &cd, d->components.values()) {
+    foreach (const componentData &cd, d->components) {
         cd.editor->allDefault();
     }
 }
@@ -171,7 +171,7 @@ void KGlobalShortcutsEditor::allDefault()
 void KGlobalShortcutsEditor::clear()
 {
     // Remove all components and their associated editors
-    foreach (const componentData &cd, d->components.values()) {
+    foreach (const componentData &cd, d->components) {
         delete cd.editor;
     }
     d->components.clear();
@@ -184,7 +184,7 @@ void KGlobalShortcutsEditor::save()
 {
     // The editors are responsible for the saving
     kDebug() << "Save the changes";
-    foreach (const componentData &cd, d->components.values()) {
+    foreach (const componentData &cd, d->components) {
         cd.editor->commit();
     }
 }
@@ -193,7 +193,7 @@ void KGlobalShortcutsEditor::save()
 void KGlobalShortcutsEditor::importConfiguration(KConfig *config)
 {
     // The editors are responsible for the writing of the scheme
-    foreach (const componentData &cd, d->components.values()) {
+    foreach (const componentData &cd, d->components) {
         cd.editor->importConfiguration(config);
     }
 }
@@ -201,7 +201,7 @@ void KGlobalShortcutsEditor::importConfiguration(KConfig *config)
 void KGlobalShortcutsEditor::exportConfiguration(KConfig *config) const
 {
     // The editors are responsible for the writing of the scheme
-    foreach (const componentData &cd, d->components.values()) {
+    foreach (const componentData &cd, d->components) {
         cd.editor->exportConfiguration(config);
     }
 }
@@ -211,7 +211,7 @@ void KGlobalShortcutsEditor::undo()
 {
     // The editors are responsible for the undo
     kDebug() << "Undo the changes";
-    foreach (const componentData &cd, d->components.values()) {
+    foreach (const componentData &cd, d->components) {
         cd.editor->undoChanges();
     }
 }
@@ -219,7 +219,7 @@ void KGlobalShortcutsEditor::undo()
 
 bool KGlobalShortcutsEditor::isModified() const
 {
-    foreach (const componentData &cd, d->components.values()) {
+    foreach (const componentData &cd, d->components) {
         if (cd.editor->isModified()) {
             return true;
         }

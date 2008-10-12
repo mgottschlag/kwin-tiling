@@ -74,7 +74,7 @@ ManualSortingStrategy::~ManualSortingStrategy()
 {
    // d->managedItems = 0;
     if (d->desktops) {
-        foreach(itemHashTable *table, d->desktops->values()) {
+        foreach(itemHashTable *table, *d->desktops) {
             if (table) {
                 delete table;       
             }

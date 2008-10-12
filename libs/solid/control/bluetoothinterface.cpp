@@ -83,7 +83,7 @@ Solid::Control::BluetoothInterface::~BluetoothInterface()
     typedef QPair<BluetoothRemoteDevice *, Ifaces::BluetoothRemoteDevice *> BluetoothRemoteDeviceIfacePair;
 
     // Delete all the devices, they are now outdated
-    foreach (const BluetoothRemoteDeviceIfacePair &pair, d->remoteDeviceMap.values()) {
+    foreach (const BluetoothRemoteDeviceIfacePair &pair, d->remoteDeviceMap) {
         delete pair.first;
         delete pair.second;
     }

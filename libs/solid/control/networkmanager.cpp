@@ -60,7 +60,7 @@ Solid::Control::NetworkManagerPrivate::~NetworkManagerPrivate()
     // Delete all the devices, they are now outdated
     typedef QPair<NetworkInterface *, QObject *> NetworkInterfaceIfacePair;
 
-    foreach (const NetworkInterfaceIfacePair &pair, m_networkInterfaceMap.values()) {
+    foreach (const NetworkInterfaceIfacePair &pair, m_networkInterfaceMap) {
         delete pair.first;
         delete pair.second;
     }
