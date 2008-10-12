@@ -73,12 +73,20 @@ public:
     virtual QString defaultInterface() const = 0;
 
     /**
+     * Returns the UBI of the Bluetooth Interface given its name (e.g. 'hci0'),
+     * if found on the system.
+     *
+     * @return the found UBI of the named bluetooth interface
+     */
+    virtual QString findInterface(const QString &name) const = 0;
+
+    /**
      * Instantiates a new BluetoothInterface object from this backend given its UBI.
      *
      * @param ubi the identifier of the bluetooth interface instantiated
      * @returns a new BluetoothInterface object if there's a device having the given UBI, 0 otherwise
      */
-    virtual QObject *createInterface(const QString &ubi) = 0;
+     virtual QObject *createInterface(const QString &ubi) = 0;
 
     /**
      * Retrieves the list of Universal Bluetooth Identifiers (UBIs) of bluetooth input devices
@@ -86,7 +94,7 @@ public:
      *
      * @return the list of bluetooth input devices configured in this system
      */
-    virtual QStringList bluetoothInputDevices() const = 0;
+//  virtual QStringList bluetoothInputDevices() const = 0;
 
     /**
      * Instantiates a new BluetoothInputDevice object from this backend given its UBI.
@@ -94,7 +102,7 @@ public:
      * @param ubi the identifier of the bluetooth input device instantiated
      * @returns a new BluetoothInputDevice object if there's a device having the given UBI, 0 otherwise
      */
-    virtual QObject *createBluetoothInputDevice(const QString &ubi) = 0;
+//  virtual QObject *createBluetoothInputDevice(const QString &ubi) = 0;
 
     /**
      * Setup a new bluetooth input device.
@@ -102,12 +110,12 @@ public:
      * @param ubi the ubi of the bluetooth input device
      * @returns job handling of the operation.
      */
-    virtual KJob *setupInputDevice(const QString &ubi) = 0;
+//  virtual KJob *setupInputDevice(const QString &ubi) = 0;
     
     /**
      * Gets an instance of BluetoothSecurity to handle pairing/authorization requests
      */
-    virtual Solid::Control::Ifaces::BluetoothSecurity* security(const QString &interface) = 0;
+//  virtual Solid::Control::Ifaces::BluetoothSecurity* security(const QString &interface) = 0;
 
 public Q_SLOTS:
     /**
@@ -115,7 +123,7 @@ public Q_SLOTS:
      *
      * @param ubi the bluetooth input device identifier
      */
-    virtual void removeInputDevice(const QString  & ubi) = 0;
+//  virtual void removeInputDevice(const QString  & ubi) = 0;
 
 Q_SIGNALS:
     /**
@@ -144,14 +152,14 @@ Q_SIGNALS:
      *
      * @param ubi the bluetooth input device identifier
      */
-    void inputDeviceCreated(const QString  & ubi);
+//   void inputDeviceCreated(const QString  & ubi);
 
     /**
      * This signal is emitted when a bluetooth input device configuration is not available anymore.
      *
      * @param ubi the bluetooth input device identifier
      */
-    void inputDeviceRemoved(const QString  & ubi);
+//    void inputDeviceRemoved(const QString  & ubi);
 
 };
 
