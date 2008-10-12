@@ -215,7 +215,6 @@ private:
     QPixmap     mSavedScreen;
     int         mAutoLogoutTimerId;
     int         mAutoLogoutTimeout;
-    bool        mAutoLogout;
     QTimer      mSuppressUnlock;
     int         mSuppressUnlockTimeout;
     QList<WId>  mForeignWindows;

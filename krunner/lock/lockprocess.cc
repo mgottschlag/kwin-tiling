@@ -130,6 +130,8 @@ const int TIMEOUT_CODE = 2; //from PasswordDlg
 //
 LockProcess::LockProcess(bool child, bool useBlankOnly)
     : QWidget(0L, Qt::X11BypassWindowManagerHint),
+      mLocked(false),
+      mBusy(false),
       mPlasmaDBus(0),
       mPlasmaView(0),
       mSetupMode(false),
@@ -141,7 +143,7 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
       mVisibility(false),
       mRestoreXF86Lock(false),
       mForbidden(false),
-      mAutoLogout(false)
+      mAutoLogoutTimerId(0)
 {
     setObjectName("save window");
     setupSignals();
@@ -368,7 +370,6 @@ void LockProcess::configure()
     }
 
     if ( KScreenSaverSettings::autoLogout() ) {
-        mAutoLogout = true;
         mAutoLogoutTimeout = KScreenSaverSettings::autoLogoutTimeout();
         mAutoLogoutTimerId = startTimer(mAutoLogoutTimeout * 1000); // in milliseconds
     }
@@ -1325,10 +1326,10 @@ bool LockProcess::x11Event(XEvent *event)
                 mBusy = false;
                 return true; //it's better not to forward any input while quitting, right?
             }
-            if (mAutoLogout) // we need to restart the auto logout countdown
+            if (mAutoLogoutTimerId) // we need to restart the auto logout countdown
             {
                 killTimer(mAutoLogoutTimerId);
-                mAutoLogoutTimerId = startTimer(mAutoLogoutTimeout);
+                mAutoLogoutTimerId = startTimer(mAutoLogoutTimeout * 1000);
             }
             mBusy = false;
             ret = true;
