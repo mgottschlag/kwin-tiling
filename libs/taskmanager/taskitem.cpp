@@ -60,7 +60,7 @@ TaskItem::TaskItem(QObject *parent, StartupPtr task)
     d(new Private)
 {
     d->startupTask = task;
-    connect(task.data(), SIGNAL(changed(::TaskManager::TaskChanges)), this, SIGNAL(changed()));
+    connect(task.data(), SIGNAL(changed(::TaskManager::TaskChanges)), this, SIGNAL(changed(::TaskManager::TaskChanges)));
     connect(task.data(), SIGNAL(destroyed()), this, SLOT(deleteLater())); //this item isn't useful anymore if the Task was closed
 }
 
