@@ -272,7 +272,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                                        "%1 day of the week with date, %2 currentTimezone",
                                        "%1 %2", dateString, currentTimezone);
                 }
-            } else if (m_showTimezone && !isLocalTimezone()) {
+            } else if (m_showTimezone) {
                 dateString = prettyTimezone();
             }
 
