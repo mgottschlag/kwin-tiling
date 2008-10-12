@@ -340,7 +340,7 @@ QScriptValue QScriptApplet::loadui(QScriptContext *context, QScriptEngine *engin
     QString filename = context->argument(0).toString();
     QFile f(filename);
     if (!f.open(QIODevice::ReadOnly)) {
-        return context->throwError(QString("Unable to open '%1'").arg(filename));
+        return context->throwError(i18n("Unable to open '%1'",filename));
     }
 
     QUiLoader loader;
@@ -353,7 +353,7 @@ QScriptValue QScriptApplet::loadui(QScriptContext *context, QScriptEngine *engin
 QScriptValue QScriptApplet::newPlasmaSvg(QScriptContext *context, QScriptEngine *engine)
 {
     if (context->argumentCount() == 0) {
-        return context->throwError("Constructor takes at least 1 argument");
+        return context->throwError(i18n("Constructor takes at least 1 argument"));
     }
 
     QString filename = context->argument(0).toString();
@@ -396,7 +396,7 @@ QScriptValue QScriptApplet::createWidget(QScriptContext *context, QScriptEngine 
         parent = qscriptvalue_cast<QGraphicsWidget*>(context->argument(0));
 
         if (!parent) {
-            return context->throwError("The parent must be a QGraphicsWidget");
+            return context->throwError(i18n("The parent must be a QGraphicsWidget"));
         }
     }
 
@@ -417,7 +417,7 @@ QScriptValue QScriptApplet::createWidget(QScriptContext *context, QScriptEngine 
 QScriptValue QScriptApplet::print(QScriptContext *context, QScriptEngine *engine)
 {
     if (context->argumentCount() != 1) {
-        return context->throwError("print takes one argument");
+        return context->throwError(i18n("print takes one argument"));
     }
 
     kDebug() << context->argument(0).toString();
@@ -431,12 +431,12 @@ QScriptValue QScriptApplet::update(QScriptContext *context, QScriptEngine *engin
 
     QObject *appletObject = appletValue.toQObject();
     if (!appletObject) {
-        return context->throwError("Could not extract the AppletObject");
+        return context->throwError(i18n("Could not extract the AppletObject"));
     }
 
     Applet *applet = qobject_cast<Applet*>(appletObject);
     if (!applet) {
-        return context->throwError("Could not extract the Applet");
+        return context->throwError(i18n("Could not extract the Applet"));
     }
 
     applet->update();
