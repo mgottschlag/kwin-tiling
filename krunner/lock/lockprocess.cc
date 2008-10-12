@@ -927,12 +927,12 @@ bool LockProcess::startPlasma()
     if (!mPlasmaEnabled) {
         return false;
     }
-    kDebug() << "starting plasma-overlay";
     if (mSetupMode) {
         mSuppressUnlock.start(mSuppressUnlockTimeout);
         XChangeActivePointerGrab( QX11Info::display(), GRABEVENTS,
                 QCursor(Qt::ArrowCursor).handle(), CurrentTime);
     }
+    kDebug() << "looking for plasma-overlay";
     if (!mPlasmaDBus) {
         //try to get it, in case it's already running somehow
         //FIXME I don't like hardcoded strings
@@ -941,6 +941,9 @@ bool LockProcess::startPlasma()
     }
     if (mPlasmaDBus->isValid()) {
         kDebug() << "weird, plasma-overlay is already running";
+        //FIXME I'd like to just kill it off or ignore it
+        //then I could get rid of the dbus calls for the winid and just wait for it to map
+        //maybe it should *not* be a kuniqueapp?
         connect(mPlasmaDBus, SIGNAL(viewCreated(uint)), SLOT(setPlasmaView(uint)));
         if (mSetupMode) {
             mPlasmaDBus->call(QDBus::NoBlock, "activate");
@@ -953,8 +956,10 @@ bool LockProcess::startPlasma()
                 SLOT(setPlasmaView(uint)));
         return true;
     }
+    kDebug () << "...not found";
     delete mPlasmaDBus;
     mPlasmaDBus = 0;
+    kDebug() << "starting plasma-overlay";
     connect(QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(QString, QString,
                     QString)),
             SLOT(newService(QString)));
@@ -962,9 +967,7 @@ bool LockProcess::startPlasma()
     if (mSetupMode) {
         mPlasmaProc << "--setup";
     }
-    kDebug() << "about to start plasma";
     mPlasmaProc.start();
-    kDebug() << "woo, plasma started";
     //plasma gets 15 seconds to load, or we assume it failed
     QTimer::singleShot(15 * 1000, this, SLOT(checkPlasma()));
     return true;
@@ -978,10 +981,11 @@ void LockProcess::checkPlasma()
     }
     if (mPlasmaDBus && mPlasmaDBus->isValid()) {
         //hooray, looks like it started ok
+        kDebug() << "success!";
         return;
     }
 
-    //if we get down here... ohnoes. plasma = teh fail.
+    kDebug() << "ohnoes. plasma = teh fail.";
     disablePlasma();
 }
 
@@ -1000,12 +1004,14 @@ bool LockProcess::isPlasmaValid()
     disablePlasma();
     return false;
 }
-//FIXME this is only checked at useless times. realllly need that check on input forwarding.
+
 void LockProcess::disablePlasma()
 {
     kDebug();
     mPlasmaEnabled = false;
+    mSetupMode = false;
     mSuppressUnlock.stop(); //FIXME we might need to start the lock timer ala deactivatePlasma()
+    //actually we could be lazy and just call deactivatePlasma() TODO check that this'll really work
     delete mPlasmaDBus;
     mPlasmaDBus=0;
 }
@@ -1202,6 +1208,7 @@ void LockProcess::setPlasmaView(uint id)
     mPlasmaView = id;
     if (mSetupMode) {
         fakeFocusIn(mPlasmaView);
+        mSetupMode = false;
     }
     kDebug() << id;
     stayOnTop();
@@ -1306,9 +1313,13 @@ bool LockProcess::x11Event(XEvent *event)
                 break;
             mBusy = true;
             //something happened. do we quit, ask for a password or forward it to plasma?
-            if (mSuppressUnlock.isActive()) {
-                //help, help, I'm being suppressed!
-                mSuppressUnlock.start(); //reset the timeout
+            //if we're supposed to be forwarding, we check that there's actually a plasma window up
+            //so that the user isn't trapped if plasma crashes or is slow to load.
+            //however, if plasma started in setup mode, we don't want to let anything happen until
+            //it has a chance to load.
+            //note: mSetupMode should end when we either get a winid or hit the checkPlasma timeout
+            if (mSuppressUnlock.isActive() && (mSetupMode || !mForeignInputWindows.isEmpty())) {
+                mSuppressUnlock.start(); //help, help, I'm being suppressed!
             } else if (!mLocked || checkPass()) {
                 quitSaver();
                 mBusy = false;
@@ -1371,12 +1382,14 @@ bool LockProcess::x11Event(XEvent *event)
                         mForeignWindows.prepend(event->xmap.window);
                     }
                     if (type & InputWindow) {
+                        kDebug() << "input window";
                         if (mForeignInputWindows.contains(event->xmap.window)) {
                             kDebug() << "uhoh! duplicate again"; //never happens
                         } else {
                             //ordered youngest-on-top
                             mForeignInputWindows.prepend(event->xmap.window);
                         }
+                        //TODO someday we should just set the main winid from here
                     }
                 }
                 stayOnTop();
@@ -1426,6 +1439,7 @@ bool LockProcess::x11Event(XEvent *event)
             break;
         }
     }
+
     return ret;
 }
 
@@ -1441,12 +1455,13 @@ LockProcess::WindowType LockProcess::windowType(WId id)
     int result = XGetWindowProperty(display, id, tag, 0, 1, False, tag, &actualType,
             &actualFormat, &nitems, &remaining, &data);
 
-    kDebug() << (result == Success) << (actualType == tag);
+    //kDebug() << (result == Success) << (actualType == tag);
     WindowType type = IgnoreWindow;
     if (result == Success && actualType == tag) {
         if (nitems != 1 || actualFormat != 8) {
             kDebug() << "malformed property";
         } else {
+            kDebug() << "i can haz plasma window?";
             switch (data[0]) {
                 case 0: //FIXME magic numbers
                     type = SimpleWindow;
