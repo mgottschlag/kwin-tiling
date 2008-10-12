@@ -425,7 +425,7 @@ void BackgroundDialog::cleanup()
 
 void BackgroundDialog::getNewThemes()
 {
-    KNS::Engine engine(0);
+    KNS::Engine engine(this);
     if (engine.init("plasma-themes.knsrc")) {
         KNS::Entry::List entries = engine.downloadDialogModal(this);
 
