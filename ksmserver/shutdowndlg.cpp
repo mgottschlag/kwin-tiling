@@ -339,7 +339,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     m_btnLogout(0),
     m_btnHalt(0),
     m_btnReboot(0),
-    m_automaticallyDoSeconds(60)
+    m_automaticallyDoSeconds(30)
     // this is a WType_Popup on purpose. Do not change that! Not
     // having a popup here has severe side effects.
 {
@@ -361,14 +361,19 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     m_svg->setImagePath("dialogs/shutdowndialog");
     connect( m_svg, SIGNAL(repaintNeeded()), this, SLOT(update()) );
     setModal( true );
-    resize(400, 220);
+    resize(400, 120);
     KDialog::centerOnScreen(this);
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
 
     mainLayout->setContentsMargins(12, 9, 12, 7);
+
     QVBoxLayout *buttonLayout = new QVBoxLayout();
     QHBoxLayout *buttonMainLayout = new QHBoxLayout();
+
+    m_automaticallyDoLabel = new QLabel(this);
+    mainLayout->addWidget(m_automaticallyDoLabel, 0, Qt::AlignRight);
+
     if (m_svg->hasElement("picture")) {
         buttonMainLayout->addSpacing(m_svg->elementRect("picture").toRect().right() + 12);
     }
@@ -383,9 +388,12 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     QPalette palette;
     palette.setColor(QPalette::WindowText, fntColor);
 
+    buttonLayout->addSpacing(10);
+
     m_btnLogout = new KSMPushButton( i18n("&Logout"), this );
     m_btnLogout->setPixmap(KIconLoader::global()->loadIcon("system-log-out", KIconLoader::NoGroup, 32));
-    m_btnLogout->setFocus();
+    if ( sdtype == KWorkSpace::ShutdownTypeLogout )
+        m_btnLogout->setFocus();
     connect(m_btnLogout, SIGNAL(clicked()), SLOT(slotLogout()));
     buttonLayout->addWidget(m_btnLogout, Qt::AlignRight | Qt::AlignTop);
 
@@ -449,21 +457,39 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         }
     }
 
-    KSMPushButton* btnBack = new KSMPushButton(i18n("&Cancel"), this, true);
+    if ( sdtype == KWorkSpace::ShutdownTypeLogout ) {
+        m_btnReboot->setHidden(true);
+        m_btnHalt->setHidden(true);
+	buttonLayout->addSpacing(70);
+    }
+    else if ( sdtype == KWorkSpace::ShutdownTypeHalt ) {
+        m_btnReboot->setHidden(true);
+        m_btnLogout->setHidden(true);
+	buttonLayout->addSpacing(70);
+    }
+    else if ( sdtype == KWorkSpace::ShutdownTypeReboot ) {
+        m_btnHalt->setHidden(true);
+        m_btnLogout->setHidden(true);
+	buttonLayout->addSpacing(70);
+    }
+
+    btnBack = new KSMPushButton(i18n("&Cancel"), this, true);
     btnBack->setPixmap(KIconLoader::global()->loadIcon( "dialog-cancel", KIconLoader::NoGroup, 16));
 
-    m_automaticallyDoLabel = new QLabel(this);
+    //m_automaticallyDoLabel = new QLabel(this);
     m_automaticallyDoLabel->setPalette(palette);
     fnt.setPixelSize(11);
     m_automaticallyDoLabel->setFont(fnt);
-    m_automaticallyDoLabel->setWordWrap(true);
+    //m_automaticallyDoLabel->setWordWrap(true);
     automaticallyDoTimeout();
 
     QTimer *automaticallyDoTimer = new QTimer(this);
     connect(automaticallyDoTimer, SIGNAL(timeout()), this, SLOT(automaticallyDoTimeout()));
     automaticallyDoTimer->start(1000);
 
-    bottomLayout->addWidget(m_automaticallyDoLabel, 1, Qt::AlignBottom);
+    //bottomLayout->addWidget(m_automaticallyDoLabel, 1, Qt::AlignBottom);
+    bottomLayout->addStretch();
+    //buttonLayout->addWidget(m_automaticallyDoLabel);
     bottomLayout->addWidget(btnBack);
     connect(btnBack, SIGNAL(clicked()), SLOT(reject()));
 
@@ -482,14 +508,14 @@ void KSMShutdownDlg::automaticallyDoTimeout()
                 focusedButton->click();
         // following code is required to provide a clean way to translate strings
         } else if (focusedButton == m_btnLogout) {
-            m_automaticallyDoLabel->setText(i18np("Log out in 1 second.",
-                                            "Log out in %1 seconds.", m_automaticallyDoSeconds));
+            m_automaticallyDoLabel->setText(i18np("Logging out in 1 second.",
+                                            "Logging out in %1 seconds.", m_automaticallyDoSeconds));
         } else if (focusedButton == m_btnHalt) {
-                m_automaticallyDoLabel->setText(i18np("Turn off computer in 1 second.",
-                                                      "Turn off computer in %1 seconds.", m_automaticallyDoSeconds));
+                m_automaticallyDoLabel->setText(i18np("Turning off computer in 1 second.",
+                                                      "Turning off computer in %1 seconds.", m_automaticallyDoSeconds));
         } else if (focusedButton == m_btnReboot) {
-                m_automaticallyDoLabel->setText(i18np("Reboot computer in 1 second.",
-                                                      "Reboot computer in %1 seconds.", m_automaticallyDoSeconds));
+                m_automaticallyDoLabel->setText(i18np("Restarting computer in 1 second.",
+                                                      "Restarting computer in %1 seconds.", m_automaticallyDoSeconds));
         } else {
             m_automaticallyDoLabel->setText(QString());
         }
@@ -511,9 +537,19 @@ void KSMShutdownDlg::paintEvent(QPaintEvent *e)
     p.fillRect(QRect(0, 0, width(), height()), Qt::transparent);
     m_svg->paint(&p, QRect(0, 0, width(), height()), "background");
 
+    //FIXME should crop rather than resize this
     if (m_svg->hasElement("picture")) {
         QRect r = m_svg->elementRect("picture").toRect();
-        r.moveTop(m_btnLogout->geometry().top());
+        KSMPushButton* button;
+        if (m_btnLogout->isVisible()) {
+	  button = m_btnLogout;
+	} else if (m_btnHalt->isVisible()) {
+	  button = m_btnHalt;
+	} else {
+	  button = m_btnReboot;
+	}      
+        r.moveTop(button->geometry().top() - 10);
+       	r.setBottom(btnBack->geometry().top());
         m_svg->paint(&p, r, "picture");
     }
 }

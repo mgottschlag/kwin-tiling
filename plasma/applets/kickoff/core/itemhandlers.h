@@ -42,6 +42,10 @@ private Q_SLOTS:
     void logout();
     void lock();
     void switchUser();
+    void saveSession();
+    void standby();
+    void suspendRAM();
+    void suspendDisk();
 
 private:
     QString m_logoutAction;

@@ -36,6 +36,8 @@ public:
 
     static QStandardItem* createStandardItem(const QString& url);
 
+    void updateModel();
+
 private:
     class Private;
     Private * const d;

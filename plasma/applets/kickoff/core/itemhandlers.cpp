@@ -40,6 +40,7 @@
 // DBus
 #include "krunner_interface.h"
 #include "screensaver_interface.h"
+#include "ksmserver_interface.h"
 
 using namespace Kickoff;
 
@@ -107,10 +108,26 @@ bool LeaveItemHandler::openUrl(const KUrl& url)
         // decouple dbus call, otherwise we'll run into a dead-lock
         QTimer::singleShot(0, this, SLOT(switchUser()));
         return true;
-    } else if (m_logoutAction == "logout" ||
+    } else if (m_logoutAction == "logout" || m_logoutAction == "logoutonly" ||
                m_logoutAction == "restart" || m_logoutAction == "shutdown" ) {
         // decouple dbus call, otherwise we'll run into a dead-lock
         QTimer::singleShot(0, this, SLOT(logout()));
+        return true;
+    } else if (m_logoutAction == "savesession") {
+        // decouple dbus call, otherwise we'll run into a dead-lock
+        QTimer::singleShot(0, this, SLOT(saveSession()));
+        return true;
+    } else if (m_logoutAction == "standby") {
+        // decouple dbus call, otherwise we'll run into a dead-lock
+        QTimer::singleShot(0, this, SLOT(standby()));
+        return true;
+    } else if (m_logoutAction == "suspendram") {
+        // decouple dbus call, otherwise we'll run into a dead-lock
+        QTimer::singleShot(0, this, SLOT(suspendRAM()));
+        return true;
+    } else if (m_logoutAction == "suspenddisk") {
+        // decouple dbus call, otherwise we'll run into a dead-lock
+        QTimer::singleShot(0, this, SLOT(suspendDisk()));
         return true;
     }
 
@@ -124,6 +141,8 @@ void LeaveItemHandler::logout()
 
     if (m_logoutAction == "logout") {
         type = KWorkSpace::ShutdownTypeNone;
+    } else if (m_logoutAction == "logoutonly") {
+        type = KWorkSpace::ShutdownTypeLogout;
     } else if (m_logoutAction == "lock") {
         kDebug() << "Locking screen";
     } else if (m_logoutAction == "switch") {
@@ -153,4 +172,39 @@ void LeaveItemHandler::switchUser()
     QString interface("org.kde.krunner");
     org::kde::krunner::App krunner(interface, "/App", QDBusConnection::sessionBus());
     krunner.switchUser();
+}
+
+void LeaveItemHandler::saveSession()
+{
+    QString interface("org.kde.ksmserver");
+
+    org::kde::KSMServerInterface ksmserver(interface, "/KSMServer",
+                                         QDBusConnection::sessionBus());
+    if (ksmserver.isValid()) {
+        ksmserver.saveCurrentSession();
+    }
+}
+
+void LeaveItemHandler::standby()
+{
+    Solid::Control::PowerManager::SuspendMethod spdMethod = Solid::Control::PowerManager::Standby;
+    KJob *job = Solid::Control::PowerManager::suspend( spdMethod );
+    if (job != 0)
+       job->start();
+}
+
+void LeaveItemHandler::suspendRAM()
+{
+    Solid::Control::PowerManager::SuspendMethod spdMethod = Solid::Control::PowerManager::ToRam;
+    KJob *job = Solid::Control::PowerManager::suspend( spdMethod );
+    if (job != 0)
+       job->start();
+}
+
+void LeaveItemHandler::suspendDisk()
+{
+    Solid::Control::PowerManager::SuspendMethod spdMethod = Solid::Control::PowerManager::ToDisk;
+    KJob *job = Solid::Control::PowerManager::suspend( spdMethod );
+    if (job != 0)
+       job->start();
 }

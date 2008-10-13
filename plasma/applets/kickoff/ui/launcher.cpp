@@ -77,6 +77,7 @@ public:
         , applet(0)
         , urlLauncher(new UrlItemLauncher(launcher))
         , searchModel(0)
+        , leaveModel(0)
         , searchBar(0)
         , footer(0)
         , contentArea(0)
@@ -149,14 +150,14 @@ public:
 
     void setupLeaveView()
     {
-        LeaveModel *model = new LeaveModel(q);
+        leaveModel = new LeaveModel(q);
         UrlItemView *view = new UrlItemView;
         ItemDelegate *delegate = new ItemDelegate(q);
         delegate->setRoleMapping(Plasma::Delegate::SubTitleRole, SubTitleRole);
         delegate->setRoleMapping(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
-        addView(i18n("Leave"), KIcon("system-shutdown"), model, view);
+        addView(i18n("Leave"), KIcon("system-shutdown"), leaveModel, view);
     }
 
     void setupFavoritesView()
@@ -416,6 +417,7 @@ public:
     FlipScrollView *applicationView;
     QAbstractItemView *searchView;
     QAbstractItemView *favoritesView;
+    LeaveModel *leaveModel;
     ContextMenuFactory *contextMenuFactory;
     bool autoHide;
     int visibleItemCount;
@@ -595,6 +597,7 @@ void Launcher::reset()
     d->contentArea->setCurrentWidget(d->favoritesView);
     d->searchBar->clear();
     d->applicationView->viewRoot();
+    d->leaveModel->updateModel();
 }
 
 Launcher::~Launcher()

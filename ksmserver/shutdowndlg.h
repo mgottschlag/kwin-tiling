@@ -131,6 +131,7 @@ private:
     KSMPushButton *m_btnLogout;
     KSMPushButton *m_btnHalt;
     KSMPushButton *m_btnReboot;
+    KSMPushButton *btnBack;
     int m_automaticallyDoSeconds;
 
 private Q_SLOTS:

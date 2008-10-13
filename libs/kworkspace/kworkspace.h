@@ -52,7 +52,7 @@ namespace KWorkSpace
      */
     ShutdownTypeDefault = -1,
     /**
-     * Only log out.
+     * Only show log out dialog
      */
     ShutdownTypeNone = 0,
     /**
@@ -62,7 +62,11 @@ namespace KWorkSpace
     /**
      * Log out and halt the machine.
      */
-    ShutdownTypeHalt = 2
+    ShutdownTypeHalt = 2,
+    /**
+     * Only log out
+     */
+    ShutdownTypeLogout = 3
   };
 
   /**

@@ -24,6 +24,7 @@
 #include <QFileInfo>
 
 // KDE
+#include <KConfigGroup>
 #include <KDebug>
 #include <KLocalizedString>
 #include <KIcon>
@@ -45,7 +46,7 @@ QStandardItem* LeaveModel::createStandardItem(const QString& url)
     QStandardItem *item = new QStandardItem();
     const QString basename = QFileInfo(url).baseName();
     kDebug() << "basename is" << basename;
-    if (basename == "logout") {
+    if (basename == "logoutonly") {
         item->setText(i18n("Logout"));
         item->setIcon(KIcon("system-log-out"));
         item->setData(i18n("End session"),Kickoff::SubTitleRole);
@@ -73,6 +74,22 @@ QStandardItem* LeaveModel::createStandardItem(const QString& url)
         item->setText(i18n("Restart"));
         item->setIcon(KIcon("system-restart"));
         item->setData(i18n("Restart the computer"),Kickoff::SubTitleRole);
+    } else if (basename == "savesession") {
+        item->setText(i18n("Save Session"));
+        item->setIcon(KIcon("document-save"));
+        item->setData(i18n("Save current session for next login"),Kickoff::SubTitleRole);
+    } else if (basename == "standby") {
+        item->setText(i18n("Standby"));
+        item->setIcon(KIcon("system-suspend"));
+        item->setData(i18n("Pause without logging out"),Kickoff::SubTitleRole);
+    } else if (basename == "suspenddisk") {
+        item->setText(i18n("Suspend to Disk"));
+        item->setIcon(KIcon("system-suspend-hibernate"));
+        item->setData(i18n("Pause without logging out"),Kickoff::SubTitleRole);
+    } else if (basename == "suspendram") {
+        item->setText(i18n("Suspend to RAM"));
+        item->setIcon(KIcon("system-suspend-hibernate"));
+        item->setData(i18n("Pause without logging out"),Kickoff::SubTitleRole);
     } else {
         item->setText(basename);
         item->setData(url,Kickoff::SubTitleRole);
@@ -85,16 +102,29 @@ LeaveModel::LeaveModel(QObject *parent)
     : QStandardItemModel(parent)
     , d(0)
 {
+}
+
+void LeaveModel::updateModel()
+{
+    clear();
+
     // Session Options
     QStandardItem *sessionOptions = new QStandardItem(i18n("Session"));
 
     // Logout
-    QStandardItem *logoutOption = createStandardItem("leave:/logout");
+    QStandardItem *logoutOption = createStandardItem("leave:/logoutonly");
     sessionOptions->appendRow(logoutOption);
 
     // Lock
     QStandardItem *lockOption = createStandardItem("leave:/lock");
     sessionOptions->appendRow(lockOption);
+
+    // Save Session
+    KConfigGroup c(KSharedConfig::openConfig("ksmserverrc", KConfig::NoGlobals), "General");
+    if (c.readEntry( "loginMode") == "restoreSavedSession") {
+        QStandardItem *saveSessionOption = createStandardItem("leave:/savesession");
+        sessionOptions->appendRow(saveSessionOption);
+    }
 
     // Switch User
     QStandardItem *switchUserOption = createStandardItem("leave:/switch");
@@ -125,6 +155,22 @@ LeaveModel::LeaveModel(QObject *parent)
 
 //FIXME: the proper fix is to implement the KWorkSpace methods for Windows
 #ifndef Q_WS_WIN
+    Solid::Control::PowerManager::SuspendMethods spdMethods = Solid::Control::PowerManager::supportedSuspendMethods();
+    if( spdMethods & Solid::Control::PowerManager::Standby ) {
+        QStandardItem *standbyOption = createStandardItem("leave:/standby");
+        systemOptions->appendRow(standbyOption);
+    }
+
+    if( spdMethods & Solid::Control::PowerManager::ToRam ) {
+        QStandardItem *suspendramOption = createStandardItem("leave:/suspendram");
+        systemOptions->appendRow(suspendramOption);
+    }
+
+    if( spdMethods & Solid::Control::PowerManager::ToDisk ) {
+        QStandardItem *suspenddiskOption = createStandardItem("leave:/suspenddisk");
+        systemOptions->appendRow(suspenddiskOption);
+    }
+
     if (KWorkSpace::canShutDown(KWorkSpace::ShutdownConfirmDefault, KWorkSpace::ShutdownTypeHalt)) {
         // Shutdown
         QStandardItem *shutDownOption = createStandardItem("leave:/shutdown");
