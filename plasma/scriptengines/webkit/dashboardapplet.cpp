@@ -1,5 +1,6 @@
 /*
 Copyright (c) 2007 Zack Rusin <zack@kde.org>
+Copyright (c) 2008 Beat Wolf <asraniel@fryx.ch>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +26,8 @@ THE SOFTWARE.
 
 #include <plasma/widgets/webcontent.h>
 #include <plasma/applet.h>
+
+#include "dashboardjs.h"
 
 DashboardApplet::DashboardApplet(QObject *parent, const QVariantList &args)
     : WebApplet(parent, args)
@@ -62,6 +65,7 @@ void DashboardApplet::initJsObjects()
     QWebFrame *frame = qobject_cast<QWebFrame*>(sender());
     Q_ASSERT(frame);
     frame->addToJavaScriptWindowObject(QLatin1String("applet"), this);
+    frame->addToJavaScriptWindowObject(QLatin1String("widget"), new DashboardJs(this, applet()));
 }
 
 #include "dashboardapplet.moc"

@@ -25,10 +25,11 @@ THE SOFTWARE.
 #include "webapplet.h"
 #include "bundle.h"
 
+#include "dashboardjs.h"
+
 #include <plasma/dataengine.h>
 
 #include <QtGui/QWidget>
-
 
 class DashboardApplet : public WebApplet
 {

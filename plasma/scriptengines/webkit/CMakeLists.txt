@@ -15,7 +15,7 @@ target_link_libraries(plasma_packagestructure_web plasma ${KDE4_KIO_LIBS} ${QT_Q
 install(TARGETS plasma_packagestructure_web DESTINATION ${PLUGIN_INSTALL_DIR})
 
 set(dashboardapplet_SRCS
-    webpage.cpp webapplet.cpp dashboardapplet.cpp bundle.cpp)
+    webpage.cpp webapplet.cpp dashboardapplet.cpp bundle.cpp dashboardjs.cpp)
 kde4_add_plugin(plasma_appletscriptengine_dashboard ${dashboardapplet_SRCS})
 target_link_libraries(plasma_appletscriptengine_dashboard plasma ${KDE4_KIO_LIBS} ${QT_QTWEBKIT_LIBRARY} )
 install(TARGETS plasma_appletscriptengine_dashboard DESTINATION ${PLUGIN_INSTALL_DIR})
