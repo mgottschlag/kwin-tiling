@@ -90,15 +90,7 @@ void SaverEngine::Lock()
     bool ok = true;
     if (mState == Waiting)
     {
-        ok = startLockProcess( ForceLock );
-// It takes a while for krunner_lock to start and lock the screen.
-// Therefore delay the DBus call until it tells krunner that the locking is in effect.
-// This is done only for --forcelock .
-        if( ok && calledFromDBus())
-        {
-            mLockTransactions.append(message().createReply());
-            setDelayedReply(true);
-        }
+        startLockProcess( ForceLock );
     }
     else
     {
@@ -285,6 +277,14 @@ bool SaverEngine::startLockProcess( LockType lock_type )
 
     emit ActiveChanged(true); // DBus signal
     mState = Preparing;
+
+    // It takes a while for krunner_lock to start and lock the screen.
+    // Therefore delay the DBus call until it tells krunner that the locking is in effect.
+    // This is done only for --forcelock .
+    if (lock_type == ForceLock && calledFromDBus()) {
+        mLockTransactions.append(message().createReply());
+        setDelayedReply(true);
+    }
 
     return true;
 }
