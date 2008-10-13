@@ -1,7 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2007 Will Stephenson <wstephenson@kde.org>
     Copyright (C) 2007 Daniel Gollub <dgollub@suse.de>
-    Copyright (C) 2008 Tom Patzig <tpatzig@suse.de>
 
 
     This library is free software; you can redistribute it and/or
@@ -24,8 +23,6 @@
 #define BLUEZ_BLUETOOTHINPUTDEVICE_H
 
 #include <kdemacros.h>
-#include <QMap>
-#include <QtDBus>
 
 #include <solid/control/ifaces/bluetoothinputdevice.h>
 
@@ -36,22 +33,22 @@ class KDE_EXPORT BluezBluetoothInputDevice : public Solid::Control::Ifaces::Blue
     Q_OBJECT
     Q_INTERFACES(Solid::Control::Ifaces::BluetoothInputDevice)
 public:
-    BluezBluetoothInputDevice(const QString &objectPath);
+    BluezBluetoothInputDevice(const QString &objectPath, const QString &dest);
     virtual ~BluezBluetoothInputDevice();
     QString ubi() const;
-    QMap<QString,QVariant> getProperties();
-
-private Q_SLOTS:
-    void slotPropertyChanged(const QString &, const QDBusVariant &);
-
+    QString address() const;
+    bool isConnected() const;
+    QString name() const;
+    QString productID() const;
+    QString vendorID() const;
 
 public Q_SLOTS:
-    void disconnect();
-    void connect();
+    void slotConnect();
+    void slotDisconnect();
 
 Q_SIGNALS:
-
-    void propertyChanged(const QString &, const QVariant &);
+    void connected();
+    void disconnected();
 
 private:
     QString m_objectPath;

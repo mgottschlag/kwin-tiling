@@ -52,72 +52,257 @@ public:
      * Destructs a BluetoothRemoteDevice object.
      */
     virtual ~BluetoothRemoteDevice();
+
     /**
-     * Retrieve all properties from the remote device.
+     * Retrieves the Universal Bluetooth Identifier (UBI) of the remote device.
+     * This identifier is unique for each remote device and bluetooth interface in the system.
      *
-     * @returns a hash of named properties
-     */
-    virtual QMap<QString,QVariant> getProperties() const = 0;
-    /**
-     * Discover all available Services from the remote Device.
-     * When the call is finished serviceDiscoverAvailable is thrown.
-     *
-     * @param pattern a service handle pattern to search for
-     */
-    virtual void discoverServices(const QString &pattern) const = 0;
-    /**
-     * List all defined Nodes.
-     *
-     * @returns a List of ObjectPaths from all defined Nodes
-     */
-    virtual QStringList listNodes() const = 0;
-    /**
-     * The UBI of the remote device.
+     * @returns the Universal Bluetooth Identifier of the current remote device.
      */
     virtual QString ubi() const = 0;
+
+    /**
+     * Retrieves MAC address of the bluetooth remote device.
+     *
+     * @returns MAC address of remote device.
+     */
+    virtual QString address() const = 0;
+
+
+    /**
+     * Retrieves true if remote device is connected.
+     *
+     * @returns true if remote bluetooth device is connected otherwise false.
+     */
+    virtual bool isConnected() const = 0;
+
+    /**
+     * Retrieves the bluetooth version of the remote device.
+     * LMP version (+ EDR support)
+     *
+     * @returns version of bluetooth chip.
+     */
+    virtual QString version() const = 0;
+
+    /**
+     * Retrieves the revision of the bluetooth chip of the remote device.
+     *
+     * @returns revision of bluetooth chip.
+     */
+    virtual QString revision() const = 0;
+
+    /**
+     * Retrieves company name based on the device address.
+     *
+     * @returns manufacturer string of bluetooth chip.
+     */
+    virtual QString manufacturer() const = 0;
+
+    /**
+     * Retrieves the manufacturer of the bluetooth chip of the remote device.
+     *
+     * @returns company string of the bluetooth chip.
+     */
+    virtual QString company() const = 0;
+
+    /**
+     * Retrieves the major class of the remote device.
+     * Example: "computer"
+     *
+     * @returns major class of remote device.
+     */
+    virtual QString majorClass() const = 0;
+
+    /**
+     * Retrieves the minor class of the remote device.
+     * Exampe: "laptop"
+     *
+     * @returns minor class of the remote device.
+     */
+    virtual QString minorClass() const = 0;
+
+    /**
+     * Retrieves a list of service classes of the remote device.
+     * Example: ["networking", "object transfer"]
+     *
+     * @returns list of service classes of the remote device.
+     */
+    virtual QStringList serviceClasses() const = 0;
+    /**
+     * Retrieves the real name of the remote device. See also alias().
+     * Example: "Daniel's mobile"
+     *
+     * @returns name of remote device.
+     */
+    virtual QString name() const = 0;
+
+    /**
+     * Retrieves alias of remote device. This is a local alias name for the remote device.
+     * If this string is empty the frontend should should use name(). This is handy if
+     * someone is using several bluetooth remote device with the same name. alias() should
+     * be preferred used by the frontend.
+     * Example: "Company mobile"
+     *
+     * @retuns local alias of remote device.
+     */
+    virtual QString alias() const = 0;
+
+    /**
+     * Retrieves the date and time when the remote device has been seen.
+     * Example: "2007-03-20 22:14:00 GMT"
+     *
+     * @returns date and time when the remote device has been seen.
+     */
+    virtual QString lastSeen() const = 0;
+
+    /**
+     * Retrieves the date and time when the remote device has been used.
+     * Example: "2007-03-20 22:14:00 GMT"
+     *
+     * @returns date and time when the remote device has been used.
+     */
+    virtual QString lastUsed() const = 0;
+
+    /**
+     * Retrieves true if remote device has bonding.
+     *
+     * @returns true if remote device has bonding.
+     */
+    virtual bool hasBonding() const = 0;
+
+    /**
+     * Retrieves PIN code length that was used in the pairing process of remote device.
+     *
+     * @returns PIN code length of pairing.
+     */
+    virtual int pinCodeLength() const = 0;
+
+    /**
+     * Retrieves currently used encryption key size of remote device.
+     *
+     * @returns encryption key size.
+     */
+    virtual int encryptionKeySize() const = 0;
+
+    /**
+     * Create bonding ("pairing") with remote device.
+     *
+     * @returns the job handling of the operation.
+     */
+    virtual KJob *createBonding() = 0;
 
 
 public Q_SLOTS:
     /**
-     * Set a new Value for a named property.
+     * Set alias for remote device.
      *
-     * @param name the name of the property
-     * @param value the new value to be set
+     * @param alias new alias name
      */
-    virtual void setProperty(const QString &name, const QVariant &value) const = 0;
+    virtual void setAlias(const QString &alias) = 0;
+
     /**
-     * Cancel a started service Discovery.
+     * Clear alias for remote device.
      */
-    virtual void cancelDiscovery() const = 0;
+    virtual void clearAlias() = 0;
+
     /**
-     * Request a disconnect from the remote device.
+     * Disconnect remote device.
      */
-    virtual void disconnect() const = 0;
+    virtual void disconnect() = 0;
 
+    /**
+     * Cancel bonding process of remote device.
+     */
+    virtual void cancelBondingProcess() = 0;
 
-
+    /**
+     * Remove bonding bonding of remote device.
+     */
+    virtual void removeBonding() = 0;
+    /**
+     * Obtains a list of unique identifiers to each service provided by this remote device.
+     * As this is a slow operation, this method only queues the message
+     * in the dbus and returns the list of handles using the serviceHandlesAvailable signal
+     * 
+     * NOTE: Most local adapters won't support more than one search at a time, so serialize your requests
+     * 
+     * @param filter A filter to apply to the search (look at http://wiki.bluez.org/wiki/HOWTO/DiscoveringServices#Searchpatterns)
+     */
+    virtual void serviceHandles(const QString &filter) const = 0;
+    /**
+     * Requests the service record associated with the given handle.
+     * As this is a slow operation, this method only queues the message
+     * in the dbus and returns the XML record using the serviceRecordXmlAvailable signal.
+     * 
+     * NOTE: Most local adapters won't support more than one search at a time, so serialize your requests
+     * 
+     * @param handle The handle that uniquely identifies the service record requested.
+       */
+    virtual void serviceRecordAsXml(uint handle) const = 0;
 Q_SIGNALS:
     /**
-     * Search for services is done.
+     * Class has been changed of remote device.
      *
-     * @param status the result of the discovering.
-     * @param services the discovered Services.
+     * @params deviceClass the device class of the remote device
      */
-    virtual void serviceDiscoverAvailable(const QString &status, const QMap<uint,QString> &services) = 0;
+    virtual void classChanged(uint deviceClass) = 0;
+
     /**
-     * A Property for the remote device has changed.
+     * Name has beend changed of remote device.
      *
-     * @param name the name of the changed property
-     * @param value the new value
+     * @params name the name of the remote device
      */
-    virtual void propertyChanged(const QString &name, const QVariant &value) = 0;
+    virtual void nameChanged(const QString &name) = 0;
+
     /**
-     * Disconnect to the remote device requested.
+     * Resolving of remote device name failed.
      */
-    virtual void disconnectRequested() = 0;
+    virtual void nameResolvingFailed() = 0;
 
+    /**
+     * Alias has been changed of remote device.
+     *
+     * @params alias the alias of the remote device
+     */
+    virtual void aliasChanged(const QString &alias) = 0;
 
+    /**
+     * Alias got cleared of remote device.
+     */
+    virtual void aliasCleared() = 0;
 
+    /**
+     * Remote device has been connected.
+     */
+    virtual void connected() = 0;
+
+    /**
+     * Disconnection has been requested for remote device.
+     */
+    virtual void requestDisconnection() = 0;
+
+    /**
+     * Remote device has been disconnected.
+     */
+    virtual void disconnected() = 0;
+
+    /**
+     * Bonding with remote device has been created.
+     */
+    virtual void bondingCreated() = 0;
+
+    /**
+     * Bonding has been removed of remote device.
+     */
+    virtual void bondingRemoved() = 0;
+    /**
+     * A new service record is available
+     */
+    virtual void serviceRecordXmlAvailable(const QString &ubi, const QString &record) = 0;
+    /**
+     * Search for service handles is done
+     */
+    virtual void serviceHandlesAvailable(const QString &ubi, const QList<uint> &handles) = 0;
 };
 
 } // Ifaces

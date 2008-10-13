@@ -1,7 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2007 Will Stephenson <wstephenson@kde.org>
     Copyright (C) 2007 Daniel Gollub <dgollub@suse.de>
-    Copyright (C) 2008 Tom Patzig <tpatzig@suse.de>
 
 
     This library is free software; you can redistribute it and/or
@@ -38,24 +37,28 @@ BluezBluetoothRemoteDevice::BluezBluetoothRemoteDevice(const QString &objectPath
 {
 
     // size("/FF:FF:FF:FF:FF:FF") == 18
-	//Q_ASSERT(objectPath.startsWith('/'));
+	Q_ASSERT(objectPath.startsWith('/'));
 	m_adapter = m_objectPath.left(objectPath.size() - 18);
 	m_address = m_objectPath.right(17);
 
 
-	device = new QDBusInterface("org.bluez", objectPath,
-				    "org.bluez.Device", QDBusConnection::systemBus());
-	#define connectDeviceToThis(signal, slot) \
+	device = new QDBusInterface("org.bluez", m_adapter,
+				    "org.bluez.Adapter", QDBusConnection::systemBus());
+	#define connectAdapterToThis(signal, slot) \
 		device->connection().connect("org.bluez", \
-			objectPath, \
-			"org.bluez.Device", \
+			m_adapter, \
+			"org.bluez.Adapter", \
 			signal, this, SLOT(slot))
-        connectDeviceToThis("PropertyChanged",slotPropertyChanged(const QString &,const QDBusVariant &));
-        connectDeviceToThis("DisconnectRequested",slotDisconnectRequested());
-        connectDeviceToThis("NodeCreated",slotNodeCreated(const QDBusObjectPath &));
-        connectDeviceToThis("NodeRemoved",slotNodeRemoved(const QDBusObjectPath &));
-
-
+	connectAdapterToThis("RemoteClassUpdated",slotClassChanged(const QString&, uint));
+	connectAdapterToThis("RemoteNameUpdated",slotNameUpdated(const QString &,const QString &));
+	connectAdapterToThis("RemoteNameFailed",slotNameResolvingFailed(const QString &));
+	connectAdapterToThis("RemoteAliasChanged",slotAliasChanged(const QString &,const QString &));
+	connectAdapterToThis("RemoteAliasCleared",slotAliasCleared(const QString &));
+	connectAdapterToThis("RemoteDeviceConnected",slotConnected(const QString &));
+	connectAdapterToThis("RemoteDeviceDisconnectRequested",slotRequestDisconnection(const QString &));
+	connectAdapterToThis("RemoteDeviceDisconnected",slotDisconnected(const QString &));
+	connectAdapterToThis("BondingCreated",slotBonded(const QString &));
+	connectAdapterToThis("BondingRemoved",slotUnbonded(const QString &));
 }
 
 BluezBluetoothRemoteDevice::~BluezBluetoothRemoteDevice()
@@ -63,62 +66,100 @@ BluezBluetoothRemoteDevice::~BluezBluetoothRemoteDevice()
 	delete device;
 }
 
-QString BluezBluetoothRemoteDevice::ubi()
+QString BluezBluetoothRemoteDevice::ubi() const
 {
-    return device->path();
+	return m_objectPath;
 }
 
-QMap<QString,QVariant> BluezBluetoothRemoteDevice::getProperties()
+QString BluezBluetoothRemoteDevice::address() const
 {
-    QDBusReply< QMap<QString,QVariant> > path = device->call("GetProperties");
-        if (!path.isValid())
-	    return QMap<QString,QVariant>();
+	return m_address;
+}
+
+bool BluezBluetoothRemoteDevice::isConnected() const
+{
+	return boolReply("IsConnected");
+}
+
+QString BluezBluetoothRemoteDevice::name() const
+{
+	return stringReply("GetRemoteName");
+}
+
+QString BluezBluetoothRemoteDevice::version() const
+{
+	return stringReply("GetRemoteVersion");
+}
+
+QString BluezBluetoothRemoteDevice::revision() const
+{
+	return stringReply("GetRemoteRevision");
+}
+
+QString BluezBluetoothRemoteDevice::manufacturer() const
+{
+	return stringReply("GetRemoteManufacturer");
+}
+
+QString BluezBluetoothRemoteDevice::company() const
+{
+	return stringReply("GetRemoteCompany");
+}
+
+QString BluezBluetoothRemoteDevice::majorClass() const
+{
+	return stringReply("GetRemoteMajorClass");
+}
+
+QString BluezBluetoothRemoteDevice::minorClass() const
+{
+	return stringReply("GetRemoteMinorClass");
+}
+
+QStringList BluezBluetoothRemoteDevice::serviceClasses() const
+{
+	return listReply("GetRemoteServiceClasses");
+}
+
+QString BluezBluetoothRemoteDevice::alias() const
+{
+	return stringReply("GetRemoteAlias");
+}
+
+QString BluezBluetoothRemoteDevice::lastSeen() const
+{
+	return stringReply("LastSeen");
+}
+
+QString BluezBluetoothRemoteDevice::lastUsed() const
+{
+	return stringReply("LastUsed");
+}
+
+bool BluezBluetoothRemoteDevice::hasBonding() const
+{
+
+	return boolReply("HasBonding");
+}
+
+int BluezBluetoothRemoteDevice::pinCodeLength() const
+{
+	QDBusReply< int > path = device->call("PinCodeLength", m_address);
+	if (!path.isValid())
+		return false;
 
 	return path.value();
 }
 
-void BluezBluetoothRemoteDevice::setProperty(const QString &name, const QVariant &value)
+int BluezBluetoothRemoteDevice::encryptionKeySize() const
 {
-    device->call("SetProperty",name,value);
+	QDBusReply< int > path = device->call("EncryptionKeySize", m_address);
+	if (!path.isValid())
+		return false;
+
+	return path.value();
 }
 
-void BluezBluetoothRemoteDevice::discoverServices(const QString& pattern)
-{
-    QList<QVariant> args;
-    args << pattern;
-    device->callWithCallback("DiscoverServices",
-            args,
-            (QObject*)this,
-            SLOT(slotServiceDiscover(const QMap<uint,QString> &)),
-            SLOT(dbusErrorServiceDiscover(const QDBusError &)));
-   
-}
-
-void BluezBluetoothRemoteDevice::cancelDiscovery()
-{
-    device->call("CancelDiscovery");
-}
-
-void BluezBluetoothRemoteDevice::disconnect()
-{
-    device->call("Disconnect");
-}
-
-QStringList BluezBluetoothRemoteDevice::listNodes()
-{
-    QStringList list;
-    QDBusReply< QList<QDBusObjectPath> > path = device->call("ListNodes");
-        if (path.isValid()) {
-            foreach(QDBusObjectPath objectPath, path.value()) {
-                list.append(objectPath.path());
-            }
-	    return list;
-        }
-
-	return QStringList();
-}
-
-/*
 KJob *BluezBluetoothRemoteDevice::createBonding()
 {
 	QList<QVariant> params;
@@ -128,6 +169,30 @@ KJob *BluezBluetoothRemoteDevice::createBonding()
 				"org.bluez.Adapter", "CreateBonding", params);
 }
 
+void BluezBluetoothRemoteDevice::setAlias(const QString &alias)
+{
+	device->call("SetRemoteAlias",m_address,alias);
+}
+
+void BluezBluetoothRemoteDevice::clearAlias()
+{
+	device->call("ClearRemoteAlias", m_address);
+}
+
+void BluezBluetoothRemoteDevice::disconnect()
+{
+	device->call("DisconnectRemoteDevice", m_address);
+}
+
+void BluezBluetoothRemoteDevice::cancelBondingProcess()
+{
+	device->call("CancelBondingProcess", m_address);
+}
+
+void BluezBluetoothRemoteDevice::removeBonding()
+{
+	device->call("RemoveBonding", m_address);
+}
 
 void BluezBluetoothRemoteDevice::serviceHandles(const QString &filter) const
 {
@@ -151,18 +216,15 @@ void BluezBluetoothRemoteDevice::serviceRecordAsXml(uint handle) const
 				 SLOT(slotServiceRecordAsXml(const QString &)),
 				 SLOT(dbusErrorRecordAsXml(const QDBusError &)));
 }
+void BluezBluetoothRemoteDevice::slotServiceHandles(const QList< uint > & handles)
+{
+	emit serviceHandlesAvailable(ubi(),handles);
+}
 
 void BluezBluetoothRemoteDevice::slotServiceRecordAsXml(const QString & record)
 {
 	emit serviceRecordXmlAvailable(ubi(),record);
 }
-*/
-void BluezBluetoothRemoteDevice::slotServiceDiscover(const QMap< uint,QString > & handles)
-{
-	emit serviceDiscoverAvailable("success",handles);
-}
-
-
 /******************************/
 
 QStringList BluezBluetoothRemoteDevice::listReply(const QString &method) const
@@ -192,31 +254,86 @@ bool BluezBluetoothRemoteDevice::boolReply(const QString &method) const
 	return reply.value();
 }
 
-void BluezBluetoothRemoteDevice::dbusErrorServiceDiscover(const QDBusError &error)
+void BluezBluetoothRemoteDevice::dbusErrorHandles(const QDBusError &error)
 {
-	kDebug() << "Error on dbus call for DiscoverServices: " << error.message();
-	emit serviceDiscoverAvailable("failed",QMap<uint,QString>());
+	kDebug() << "Error on dbus call for handles: " << error.message();
+	emit serviceHandlesAvailable("failed",QList<uint>());
 }
 
-void BluezBluetoothRemoteDevice::slotPropertyChanged(const QString &prop, const QDBusVariant &value)
+void BluezBluetoothRemoteDevice::dbusErrorRecordAsXml(const QDBusError & error)
 {
-    emit propertyChanged(prop, value.variant());
+	kDebug() << "Error on dbus call for record as xml: " << error.message();
+	emit serviceRecordXmlAvailable("failed","");
 }
 
-void BluezBluetoothRemoteDevice::slotDisconnectRequested()
+void BluezBluetoothRemoteDevice::slotClassChanged(const QString & address, uint newClass)
 {
-    emit disconnectRequested();
+	if (address == this->address()) {
+		emit classChanged(newClass);
+	}
 }
 
-void BluezBluetoothRemoteDevice::slotNodeCreated(const QDBusObjectPath &path)
+void BluezBluetoothRemoteDevice::slotNameResolvingFailed(const QString & address)
 {
-    emit nodeCreated(path.path());
+	if (address == this->address()) {
+		emit nameResolvingFailed();
+	}
 }
 
-void BluezBluetoothRemoteDevice::slotNodeRemoved(const QDBusObjectPath &path)
+void BluezBluetoothRemoteDevice::slotNameUpdated(const QString & address, const QString & newName)
 {
-    emit nodeRemoved(path.path());
+	if (address == this->address()) {
+		emit nameChanged(newName);
+	}
 }
 
+void BluezBluetoothRemoteDevice::slotAliasChanged(const QString & address, const QString & newAlias)
+{
+	if (address == this->address()) {
+		emit aliasChanged(newAlias);
+	}
+}
+
+void BluezBluetoothRemoteDevice::slotAliasCleared(const QString & address)
+{
+	if (address == this->address()) {
+		emit aliasCleared();
+	}
+}
+
+void BluezBluetoothRemoteDevice::slotConnected(const QString & address)
+{
+	if (address == this->address()) {
+		emit connected();
+	}
+}
+
+void BluezBluetoothRemoteDevice::slotRequestDisconnection(const QString & address)
+{
+	if (address == this->address()) {
+		emit requestDisconnection();
+	}
+}
+
+void BluezBluetoothRemoteDevice::slotDisconnected(const QString & address)
+{
+	if (address == this->address()) {
+		emit disconnected();
+	}
+}
+
+void BluezBluetoothRemoteDevice::slotBonded(const QString & address)
+{
+	if (address == this->address()) {
+		emit bondingCreated();
+	}
+}
+
+void BluezBluetoothRemoteDevice::slotUnbonded(const QString & address)
+{
+	if (address == this->address()) {
+		emit bondingRemoved();
+	}
+}
 
 #include "bluez-bluetoothremotedevice.moc"

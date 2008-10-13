@@ -25,7 +25,6 @@
 #include <QtCore/QDateTime>
 #include <QtCore/QPair>
 #include <QtCore/QObject>
-#include <QMap>
 
 #include "bluetoothremotedevice.h"
 #include "ifaces/bluetoothremotedevice.h"
@@ -55,7 +54,7 @@ public:
      * - Discoverable : The interface may be discovered by other devices and connected to
      * - Connectable : The interface may only be connected to but not discovered
      */
-    //enum Mode { Off, Discoverable, Connectable };
+    enum Mode { Off, Discoverable, Connectable };
     /**
      * Constructs an invalid bluetooth interface
      */
@@ -110,7 +109,7 @@ public:
      * @param ubi the identifier of the bluetooth device to instantiate
      * @returns a bluetooth object, if a bluetooth device having the given UBI, for this interface exists, 0 otherwise
      */
-    Solid::Control::BluetoothRemoteDevice* createBluetoothRemoteDevice(const QString &address);
+    BluetoothRemoteDevice *createBluetoothRemoteDevice(const QString &address);
 
     /**
      * Finds a BluetoothRemoteDevice object given its UBI.
@@ -118,14 +117,14 @@ public:
      * @param ubi the identifier of the bluetooth remote device to find from this bluetooth interface
      * @returns a valid BluetoothRemoteDevice object if a remote device having the given UBI for this interface exists, an invalid BluetoothRemoteDevice object otherwise.
      */
-    Solid::Control::BluetoothRemoteDevice findBluetoothRemoteDevice(const QString &address) const;
+    BluetoothRemoteDevice findBluetoothRemoteDevice(const QString &ubi) const;
 
     /**
      * Retrieves the MAC address of the bluetooth interface/adapter.
      *
      * @returns MAC address of bluetooth interface
      */
-    //QString address() const;
+    QString address() const;
 
     /**
      * Retrieves the version of the chip of the bluetooth interface/adapter.
@@ -133,7 +132,7 @@ public:
      *
      * @returns bluetooth chip version
      */
-    //QString version() const;
+    QString version() const;
 
     /**
      * Retrieves the revision of the chip of the bluetooth interface/adapter.
@@ -141,7 +140,7 @@ public:
      *
      * @returns bluetooth chip revision
      */
-    //QString revision() const;
+    QString revision() const;
 
     /**
      * Retrieves the name of the bluetooth chip manufacturer.
@@ -149,7 +148,7 @@ public:
      *
      * @returns manufacturer string of bluetooth interface/adapter
      */
-    //QString manufacturer() const;
+    QString manufacturer() const;
 
     /**
      * Retrieves the name of the manufacturer of the bluetooth interface,
@@ -158,14 +157,14 @@ public:
      *
      * @returns company string of bluetooth interface/adapter
      */
-    //QString company() const;
+    QString company() const;
 
     /**
      * Retrieves the current mode of the bluetooth interface/adapter.
      *
      * @returns the current mode of bluetooth interface/adapter
      */
-    //Mode mode() const;
+    Mode mode() const;
 
     /**
      * Retrieves the discoverable timeout of the bluetooth interface/adapter.
@@ -173,14 +172,14 @@ public:
      *
      * @returns current discoverable timeout in seconds
      */
-    //int discoverableTimeout() const;
+    int discoverableTimeout() const;
 
     /**
      * Retrieves the current discoverable staut of the bluetooth interface/adapter.
      *
      * @returns current discoverable status of bluetooth interface/adapter
      */
-    //bool isDiscoverable() const;
+    bool isDiscoverable() const;
 
     /**
      * List all UBIs of connected remote bluetooth devices of this handled bluetooth
@@ -188,14 +187,14 @@ public:
      *
      * @returns list UBIs of connected bluetooth remote devices
      */
-    //BluetoothRemoteDeviceList listConnections() const;
+    BluetoothRemoteDeviceList listConnections() const;
 
     /**
      * Retrieves major class of the bluetooth interface/adapter.
      * @todo enum
      * @returns current major class of the bluetooth interface/adapter
      */
-    //QString majorClass() const;
+    QString majorClass() const;
 
     /**
      * List supported minor classes of the bluetooth interface/adapter.
@@ -203,7 +202,7 @@ public:
      *
      * @returns list of supported minor classes by bluetooth interface/adapter
      */
-    //QStringList listAvailableMinorClasses() const;
+    QStringList listAvailableMinorClasses() const;
 
     /**
      * Retrieves minor class of the bluetooth interface/adapter.
@@ -212,7 +211,7 @@ public:
      *
      * @returns minor class of the bluetooth interface/adapter.
      */
-    //QString minorClass() const;
+    QString minorClass() const;
 
     /**
      * List services class of the bluetooth interface/adapter.
@@ -220,7 +219,7 @@ public:
      *
      * @returns list of service classes or empty list if no services registered
      */
-    //QStringList serviceClasses() const;
+    QStringList serviceClasses() const;
 
     /**
      * Retrieves name of bluetooth interface/adapter.
@@ -228,14 +227,14 @@ public:
      *
      * @returns name of bluetooth interface/adapter
      */
-    //QString name() const;
+    QString name() const;
 
     /**
      * Returns the name of the remote device, given its mac address (mac).
      *
      * @return the name of the remote device
      */
-    //QString getRemoteName(const QString & mac);
+    QString getRemoteName(const QString & mac);
 
     /**
      * List UBIs of bonded/paired remote bluetooth devices with this bluetooth
@@ -243,14 +242,14 @@ public:
      *
      * @returns UBIs of bonded/paired bluetooth remote devices
      */
-    //QStringList listBondings() const;
+    QStringList listBondings() const;
 
     /**
      * Periodic discovery status of this bluetooth interface/adapter.
      *
      * @returns true if periodic discovery is already active otherwise false
      */
-   // bool isPeriodicDiscoveryActive() const;
+    bool isPeriodicDiscoveryActive() const;
 
     /**
      * Name resolving status of periodic discovery routing.
@@ -258,7 +257,7 @@ public:
      * @returns true if name got resolved while periodic discovery of this bluetooth
      * interface/adapter
      */
-    //bool isPeriodicDiscoveryNameResolvingActive() const;
+    bool isPeriodicDiscoveryNameResolvingActive() const;
 
     /**
      * List the Unique Bluetooth Identifier (UBI) of all known remote devices, 
@@ -268,7 +267,7 @@ public:
      *
      * @returns a QStringList of UBIs of all known remote bluetooth devices
      */
-    //QStringList listRemoteDevices() const;
+    QStringList listRemoteDevices() const;
 
     /**
      * List the Unique Bluetooth Identifier (UBI) of all known remote devices since a specific
@@ -280,23 +279,14 @@ public:
      * @param date the datestamp of the beginning of recent used devices
      * @returns a QStringList of UBIs of all known remote bluetooth devices
      */
-  //  QStringList listRecentRemoteDevices(const QDateTime &date) const;
+    QStringList listRecentRemoteDevices(const QDateTime &date) const;
 
     /**
      * Returns true if the remote bluetooth device is trusted otherwise false.
      *
      * @param mac the address of the remote device
      */
-//    bool isTrusted(const QString &);
-
-
-    QString createPairedDevice(const QString &, const QString &, const QString &) const;
-
-    QMap< QString, QVariant > getProperties() const;
-
-    BluetoothRemoteDeviceList listDevices() const;
-
-
+    bool isTrusted(const QString &);
 
 
 public Q_SLOTS:
@@ -306,92 +296,73 @@ public Q_SLOTS:
      *
      * @param mode the mode of the bluetooth interface/adapter
      */
-    //void setMode(const Mode mode);
+    void setMode(const Mode mode);
 
     /**
      * Set discoverable timeout of bluetooth interface/adapter.
      *
      * @param timeout timeout in seconds
      */
-    //void setDiscoverableTimeout(int timeout);
+    void setDiscoverableTimeout(int timeout);
 
     /**
      * Set minor class of bluetooth interface/adapter.
      *
      * @param minor set minor class. Valid mode see listAvaliableMinorClasses()
      */
-    //void setMinorClass(const QString &minor);
+    void setMinorClass(const QString &minor);
 
     /**
      * Set name of bluetooth interface/adapter.
      *
      * @param name the name of bluetooth interface/adapter
      */
-    //void setName(const QString &name);
+    void setName(const QString &name);
 
     /**
      * Start discovery of remote bluetooth devices with device name resolving.
      */
-    //void discoverDevices();
+    void discoverDevices();
     /**
      * Start discovery of remote bluetooth devices without device name resolving.
      */
-    //void discoverDevicesWithoutNameResolving();
+    void discoverDevicesWithoutNameResolving();
     /**
      * Cancel discovery of remote bluetooth devices.
      */
-    //void cancelDiscovery();
+    void cancelDiscovery();
 
     /**
      * Start periodic discovery of remote bluetooth devices.
      * See stopPeriodicDiscovery()
      */
-    //void startPeriodicDiscovery();
+    void startPeriodicDiscovery();
 
     /**
      * Stop periodic discovery of remote bluetooth devices.
      */
-    //void stopPeriodicDiscovery();
+    void stopPeriodicDiscovery();
 
     /**
      * Enable/Disable name resolving of remote bluetooth devices in periodic discovery.
      *
      * @param resolveName true to enable name resolving otherwise false
      */
-    //void setPeriodicDiscoveryNameResolving(bool resolveNames);
+    void setPeriodicDiscoveryNameResolving(bool resolveNames);
 
     /**
      * Marks the device as trusted.
      *
      * @param mac the address of the remote device
      */
-    //void setTrusted(const QString &);
+    void setTrusted(const QString &);
 
     /**
      * Marks the device as not trusted.
      *
      * @param mac the address of the remote device
      */
-    //void removeTrust(const QString &);
-
-    void registerAgent(const QString &,const QString &) const;
-
-    void releaseSession() const;
-
-    void removeDevice(const QString &) const;
-
-    void requestSession() const;
-
-    void setProperty(const QString &, const QVariant &) const;
-
-    void startDiscovery() const;
-
-    void stopDiscovery() const;
-
-    void unregisterAgent(const QString &) const;
-
-    void cancelDeviceCreation(const QString &) const;
-
+    void removeTrust(const QString &);
 
 
 Q_SIGNALS:
@@ -402,7 +373,7 @@ Q_SIGNALS:
      *
      * @param mode the changed mode
      */
-    //void modeChanged(Solid::Control::BluetoothInterface::Mode);
+    void modeChanged(Solid::Control::BluetoothInterface::Mode);
 
     /**
      * The signal is emitted if the discoverable timeout of the bluetooth interface/adapter
@@ -410,31 +381,31 @@ Q_SIGNALS:
      *
      * @param timeout the changed timeout in seconds
      */
-    //void discoverableTimeoutChanged(int timeout);
+    void discoverableTimeoutChanged(int timeout);
 
     /**
      * The signal is emitted if the minor class of the bluetooth interface/adapter has changed.
      *
      * @param minor the new minor class
      */
-    //void minorClassChanged(const QString &minor);
+    void minorClassChanged(const QString &minor);
 
     /**
      * The signal is emitted if the name of the bluetooth interface/adapter has changed.
      *
      * @param name the new name of the device
      */
-    //void nameChanged(const QString &name);
+    void nameChanged(const QString &name);
 
     /**
      * This signal is emitted if a discovery has started.
      */
-    //void discoveryStarted();
+    void discoveryStarted();
 
     /**
      * This signal is emitted if a discovery has completed.
      */
-    //void discoveryCompleted();
+    void discoveryCompleted();
 
     /**
      * This signal is emitted if the bluetooth interface/adapter detects a new remote bluetooth device.
@@ -445,7 +416,7 @@ Q_SIGNALS:
      * @param deviceClass the device class of the remote device
      * @param rssi the Received Signal Strength Information (RSSI) of the remote device
      */
-    //void remoteDeviceFound(const QString &ubi, int deviceClass, int rssi);
+    void remoteDeviceFound(const QString &ubi, int deviceClass, int rssi);
 
     /**
      * This signal is emitted if the bluetooth interface/adapter detectes a bluetooth device
@@ -453,7 +424,7 @@ Q_SIGNALS:
      *
      * @param ubi the ubi of the disappering bluetooth remote device
      */
-    //void remoteDeviceDisappeared(const QString &ubi);
+    void remoteDeviceDisappeared(const QString &ubi);
 
     /**
      * This signal is emitted if the bluetooth interface/adapter detectes a new name for a 
@@ -462,88 +433,49 @@ Q_SIGNALS:
      * @param address the address of the bluetooth remote device
      * @param name the name of the bluetooth remote device
      */
-    //void remoteNameUpdated(const QString &address, const QString &name);
+    void remoteNameUpdated(const QString &address, const QString &name);
 
     /**
      * This signal is emitted if a bluetooth connection has been created. 
      *
      * @param address the address of the connected bluetooth remote device
      */
-    //void remoteDeviceConnected(const QString &address);
+    void remoteDeviceConnected(const QString &address);
 
     /**
      * This signal is emitted if a bluetooth connection has been terminated.
      *
      * @param address the address of the disconnected bluetooth remote device
      */
-    //void remoteDeviceDisconnected(const QString &address);
+    void remoteDeviceDisconnected(const QString &address);
 
     /**
      * This signal is emitted if a bluetooth device was set trusted.
      *
      * @param address the address of the trusted bluetooth remote device
      */
-    //void trustAdded(const QString &address);
+    void trustAdded(const QString &address);
 
     /**
      * This signal is emitted if the trust to the bluetooth device was removed. 
      *
      * @param address the address of the bluetooth remote device
      */
-    //void trustRemoved(const QString &address);
+    void trustRemoved(const QString &address);
 
     /**
      * This signal is emitted if a successful bonding has been created. 
      *
      * @param address the address of the bluetooth remote device
      */
-    //void bondingCreated(const QString &address);
+    void bondingCreated(const QString &address);
 
     /**
      * This signal is emitted if the bonding to a bluetooth device has been removed. 
      *
      * @param address the address of the bluetooth remote device
      */
-    //void bondingRemoved(const QString &address);
-/**
-     * This signal is emitted when a remote device is created.
-     *
-     * @param ubi the object path of the device on the system bus
-     */
-    void deviceCreated(const QString &ubi);
-
-    /**
-     * This signal is emitted when an inquiry session for a periodic discovery finishes and previously found
-     * devices are no longer in range or visible.
-     *
-     * @param address the address of the remote device
-     */
-    void deviceDisappeared(const QString &address);
-
-    /**
-     * This signal will be emitted every time an inquiry result has been found by the service daemon.
-     * In general they only appear during a device discovery.
-     *
-     * @param address the address of the remote device
-     * @param properties the properties of the remote device
-     */
-    void deviceFound(const QString &address, const QMap< QString, QVariant > &properties);
-
-    /**
-     * This signal is emitted when a remote device is removed from the system bus.
-     *
-     * @param ubi the object path on the system bus from the remote device
-     */
-    void deviceRemoved(const QString &ubi);
-
-    /**
-     * This signal is emitted when a property of the adapter is set to a new value.
-     *
-     * @param property the named property of the adapter
-     * @value the new value for the property
-     */
-    void propertyChanged(const QString &property, const QVariant &value);
-
+    void bondingRemoved(const QString &address);
 
 private:
     Q_PRIVATE_SLOT(d, void _k_destroyed(QObject *))

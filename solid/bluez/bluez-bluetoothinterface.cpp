@@ -1,7 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2007 Will Stephenson <wstephenson@kde.org>
     Copyright (C) 2007 Daniel Gollub <dgollub@suse.de>
-    Copyright (C) 2008 Tom Patzig <tpatzig@suse.de>
 
 
     This library is free software; you can redistribute it and/or
@@ -22,11 +21,12 @@
 
 #include "bluez-bluetoothinterface.h"
 
+#include <QtDBus>
+
 #include <solid/control/bluetoothinterface.h>
 
 #include "bluez-bluetoothremotedevice.h"
 #include <KDebug>
-
 
 
 class BluezBluetoothInterfacePrivate
@@ -42,10 +42,8 @@ public:
     QDBusInterface iface;
     QString objectPath;
 
-//    QMap<QString, BluezBluetoothRemoteDevice *> devices;
+    QMap<QString, BluezBluetoothRemoteDevice *> devices;
 };
-
-
 
 BluezBluetoothInterface::BluezBluetoothInterface(const QString  & objectPath)
         : BluetoothInterface(0), d(new BluezBluetoothInterfacePrivate(objectPath))
@@ -56,7 +54,7 @@ BluezBluetoothInterface::BluezBluetoothInterface(const QString  & objectPath)
                                    objectPath, \
                                    "org.bluez.Adapter", \
                                    signal, this, SLOT(slot));
-/*  
+
     connectInterfaceToThis("ModeChanged", slotModeChanged(const QString &));
     connectInterfaceToThis("DiscoverableTimeoutChanged", slotDiscoverableTimeoutChanged(int));
     connectInterfaceToThis("MinorClassChanged", slotMinorClassChanged(const QString &));
@@ -72,15 +70,6 @@ BluezBluetoothInterface::BluezBluetoothInterface(const QString  & objectPath)
     connectInterfaceToThis("TrustRemoved", slotTrustRemoved(const QString &));
     connectInterfaceToThis("BondingCreated", slotBondingCreated(const QString &));
     connectInterfaceToThis("BondingRemoved", slotBondingRemoved(const QString &));
-*/
-
-    connectInterfaceToThis("PropertyChanged", slotPropertyChanged(const QString &, const QVariant &));
-    connectInterfaceToThis("DeviceCreated", slotDeviceCreated(const QDBusObjectPath &));
-    connectInterfaceToThis("DeviceRemoved", slotDeviceRemoved(const QDBusObjectPath &));
-    connectInterfaceToThis("DeviceDisappeared", slotDeviceDisappeared(const QString &));
-    connectInterfaceToThis("DeviceFound", slotDeviceFound(const QString &, const QMap< QString,QVariant > &));
-
-
 }
 
 BluezBluetoothInterface::~BluezBluetoothInterface()
@@ -92,102 +81,6 @@ QString BluezBluetoothInterface::ubi() const
 {
     return d->objectPath;
 }
-
-void BluezBluetoothInterface::cancelDeviceCreation(const QString &addr) const
-{
-    d->iface.call("CancelDeviceCreation",addr);
-}
-
-QString BluezBluetoothInterface::createDevice(const QString &addr) const
-{
-    QDBusObjectPath path = objectReply("CreateDevice",addr);
-    return path.path();
-}
-
-QString BluezBluetoothInterface::createPairedDevice(const QString &addr, const QString &agentUBI, const QString &capab) const
-{
-    QDBusReply< QDBusObjectPath > reply;
-    reply = d->iface.call("CreatePairedDevice",addr,agentUBI,capab);
-
-    if (!reply.isValid()) {
-        return QString();
-    }
-    return reply.value().path();
-}
-
-QString BluezBluetoothInterface::findDevice(const QString &addr) const
-{
-    QDBusObjectPath path = objectReply("FindDevice",addr);
-    return path.path();
-}
-
-
-QMap<QString, QVariant> BluezBluetoothInterface::getProperties() const
-{
-    QDBusReply< QMap<QString,QVariant> > prop = d->iface.call("GetProperties");
-    if (!prop.isValid()) {
-        return QMap< QString,QVariant >();
-    }
-    return prop.value();
-}
-
-QStringList BluezBluetoothInterface::listDevices() const
-{
-    QStringList deviceList;
-
-    QDBusReply< QList<QDBusObjectPath> > devices = d->iface.call("ListDevices");
-    if(!devices.isValid()) {
-        return QStringList();
-    }
-    foreach(QDBusObjectPath path, devices.value()) {
-        deviceList.append(path.path());
-    }
-    return deviceList;
-}
-
-void BluezBluetoothInterface::registerAgent(const QString &agentUBI, const QString &capab) const
-{
-    d->iface.call("RegisterAgent",agentUBI,capab);
-}
-
-void BluezBluetoothInterface::releaseSession() const
-{
-    d->iface.call("ReleaseSession");
-}
-
-void BluezBluetoothInterface::removeDevice(const QString &deviceUBI ) const
-{
-    d->iface.call("RemoveDevice",deviceUBI);
-}
-
-void BluezBluetoothInterface::requestSession() const
-{
-    d->iface.call("RequestSession");
-}
-
-void BluezBluetoothInterface::setProperty(const QString &property, const QVariant &value) const
-{
-    d->iface.call("SetProperty",property,value);
-}
-
-void BluezBluetoothInterface::startDiscovery() const
-{
-    d->iface.call("StartDiscovery");
-}
-
-void BluezBluetoothInterface::stopDiscovery() const
-{
-    d->iface.call("StopDiscovery");
-}
-
-void BluezBluetoothInterface::unregisterAgent(const QString &agentUBI) const
-{
-    d->iface.call("UnregisterAgent",agentUBI);
-}
-
-
-
-/*
 
 QString BluezBluetoothInterface::address() const
 {
@@ -393,12 +286,6 @@ void BluezBluetoothInterface::removeTrust(const QString& mac)
     d->iface.call("RemoveTrust", mac);
 }
 
-*/
-
-
-
-/*
-
 void BluezBluetoothInterface::slotModeChanged(const Solid::Control::BluetoothInterface::Mode mode)
 {
     emit modeChanged(mode);
@@ -476,41 +363,6 @@ void BluezBluetoothInterface::slotBondingRemoved(const QString &address)
    emit bondingRemoved(address);
 }
 
-*/
-
-void BluezBluetoothInterface::slotDeviceCreated(const QDBusObjectPath &path)
-{
-    kDebug() << "device created";
-    emit deviceCreated(path.path());
-}
-
-void BluezBluetoothInterface::slotDeviceDisappeared(const QString &address)
-{
-    kDebug() << "device disappeared";
-    emit deviceDisappeared(address);
-}
-
-void BluezBluetoothInterface::slotDeviceFound(const QString &address, const QMap< QString, QVariant > &properties)
-{
-    kDebug() << "device found " << address << " " << properties["Name"];
-    emit deviceFound(address,properties);
-}
-
-void BluezBluetoothInterface::slotDeviceRemoved(const QDBusObjectPath &path)
-{
-    kDebug() << "device removed";
-    emit deviceRemoved(path.path());
-}
-
-void BluezBluetoothInterface::slotPropertyChanged(const QString & property, const QVariant &value)
-{
-    kDebug() << "Property " << property << " changed to " << value;
-    emit propertyChanged(property,value);
-}
-
-
-/*
-
 QObject *BluezBluetoothInterface::createBluetoothRemoteDevice(const QString &ubi)
 {
     BluezBluetoothRemoteDevice *bluetoothInterface;
@@ -523,9 +375,7 @@ QObject *BluezBluetoothInterface::createBluetoothRemoteDevice(const QString &ubi
     return bluetoothInterface;
 }
 
-*/
-
-/******************* DBus Calls *******************************/
+/*******************************/
 
 QStringList BluezBluetoothInterface::listReply(const QString &method) const
 {
@@ -567,22 +417,6 @@ bool BluezBluetoothInterface::boolReply(const QString &method, const QString &pa
     }
 
     return false;
-}
-
-QDBusObjectPath BluezBluetoothInterface::objectReply(const QString &method, const QString &param) const
-{
-    QDBusReply< QDBusObjectPath > reply;
-
-    if (param.isEmpty())
-	    reply = d->iface.call(method);
-    else
-	    reply = d->iface.call(method, param);
-	    	
-    if (reply.isValid()) {
-        return reply.value();
-    }
-
-    return QDBusObjectPath();
 }
 
 #include "bluez-bluetoothinterface.moc"

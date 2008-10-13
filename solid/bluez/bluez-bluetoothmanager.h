@@ -1,7 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2007 Will Stephenson <wstephenson@kde.org>
     Copyright (C) 2007 Daniel Gollub <dgollub@suse.de>
-    Copyright (C) 2008 Tom Patzig <tpatzig@suse.de>
 
 
     This library is free software; you can redistribute it and/or
@@ -32,7 +31,7 @@
 
 #include <solid/control/ifaces/bluetoothmanager.h>
 
-//class BluezBluetoothSecurity;
+class BluezBluetoothSecurity;
 class BluezBluetoothManagerPrivate;
 class KDE_EXPORT BluezBluetoothManager : public Solid::Control::Ifaces::BluetoothManager
 {
@@ -43,28 +42,27 @@ public:
     virtual ~BluezBluetoothManager();
     QStringList bluetoothInterfaces() const;
     QObject * createInterface(const QString &);
-//  QStringList bluetoothInputDevices() const;
+    QStringList bluetoothInputDevices() const;
     QString defaultInterface() const;
-    QString findInterface(const QString &) const;
 
-//  QObject * createBluetoothInputDevice(const QString &);
-//  KJob *setupInputDevice(const QString &);
-//  Solid::Control::Ifaces::BluetoothSecurity* security(const QString &interface);
+    QObject * createBluetoothInputDevice(const QString &);
+    KJob *setupInputDevice(const QString &);
+    Solid::Control::Ifaces::BluetoothSecurity* security(const QString &interface);
 public Q_SLOTS:
-//  void removeInputDevice(const QString &);
+    void removeInputDevice(const QString &);
 
 protected Q_SLOTS:
 
-    void slotDeviceAdded(const QDBusObjectPath &);
-    void slotDeviceRemoved(const QDBusObjectPath &);
-    void slotDefaultDeviceChanged(const QDBusObjectPath &);
+    void slotDeviceAdded(const QString &);
+    void slotDeviceRemoved(const QString &);
+    void slotDefaultDeviceChanged(const QString &);
 
-//  void slotInputDeviceCreated(const QString &);
-//  void slotInputDeviceRemoved(const QString &);
+    void slotInputDeviceCreated(const QString &);
+    void slotInputDeviceRemoved(const QString &);
 
 private:
     BluezBluetoothManagerPrivate * d;
-//  QString m_inputManagerDest;
+    QString m_inputManagerDest;
 };
 
 #endif

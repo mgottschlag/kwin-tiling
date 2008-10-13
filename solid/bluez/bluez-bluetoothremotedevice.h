@@ -1,7 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2007 Will Stephenson <wstephenson@kde.org>
     Copyright (C) 2007 Daniel Gollub <dgollub@suse.de>
-    Copyright (C) 2008 Tom Patzig <tpatzig@suse.de>
 
 
     This library is free software; you can redistribute it and/or
@@ -36,35 +35,63 @@ class KDE_EXPORT BluezBluetoothRemoteDevice : public Solid::Control::Ifaces::Blu
 public:
     BluezBluetoothRemoteDevice(const QString &objectPath);
     virtual ~BluezBluetoothRemoteDevice();
+    QString ubi() const;
+    QString address() const;
+    bool isConnected() const;
+    QString version() const;
+    QString revision() const;
+    QString manufacturer() const;
+    QString company() const;
+    QString majorClass() const;
+    QString minorClass() const;
+    QStringList serviceClasses() const;
+    QString name() const;
+    QString alias() const;
+    QString lastSeen() const;
+    QString lastUsed() const;
+    bool hasBonding() const;
+    int pinCodeLength() const;
+    int encryptionKeySize() const;
 
-    QString ubi();
-    QMap<QString,QVariant> getProperties();
-    void discoverServices(const QString &pattern);
-    QStringList listNodes();
-
+    KJob *createBonding();
 private Q_SLOTS:
-
-    void slotPropertyChanged(const QString &, const QDBusVariant &);
-    void slotDisconnectRequested();
-    void slotNodeCreated(const QDBusObjectPath &); 
-    void slotNodeRemoved(const QDBusObjectPath &);
-
-    void slotServiceDiscover(const QMap<uint,QString> &handles);
-    void dbusErrorServiceDiscover(const QDBusError &error);
+    void slotClassChanged(const QString &address, uint newClass);
+    void slotNameUpdated(const QString &address,const QString &newName);
+    void slotNameResolvingFailed(const QString &address);
+    void slotAliasChanged(const QString &address,const QString &newAlias);
+    void slotAliasCleared(const QString &address);
+    void slotConnected(const QString &address);
+    void slotRequestDisconnection(const QString &address);
+    void slotDisconnected(const QString &address);
+    void slotBonded(const QString &address);
+    void slotUnbonded(const QString &address);
+    
+    void slotServiceHandles(const QList<uint> &handles);
+    void dbusErrorHandles(const QDBusError &error);
+    void slotServiceRecordAsXml(const QString &record);
+    void dbusErrorRecordAsXml(const QDBusError &error);
 
 public Q_SLOTS:
-
-    void setProperty(const QString &, const QVariant &);
-    void cancelDiscovery();
+    void setAlias(const QString &alias);
+    void clearAlias();
     void disconnect();
-
+    void cancelBondingProcess();
+    void removeBonding();
+    void serviceHandles(const QString &filter ="") const;
+    void serviceRecordAsXml(uint handle) const;
 Q_SIGNALS:
-
-    void serviceDiscoverAvailable(const QString &state, const QMap<uint,QString> &handles);
-    void propertyChanged(const QString &, const QVariant &);
-    void disconnectRequested();
-    void nodeCreated(const QString &);
-    void nodeRemoved(const QString &);
+    void classChanged(uint deviceClass);
+    void nameChanged(const QString &name);
+    void nameResolvingFailed();
+    void aliasChanged(const QString &alias);
+    void aliasCleared();
+    void connected();
+    void requestDisconnection();
+    void disconnected();
+    void bondingCreated();
+    void bondingRemoved();
+    void serviceRecordXmlAvailable(const QString &ubi, const QString &record);
+    void serviceHandlesAvailable(const QString &ubi, const QList<uint> &handles);
 
 private:
     QString m_objectPath;

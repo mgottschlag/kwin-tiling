@@ -1,7 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2007 Will Stephenson <wstephenson@kde.org>
     Copyright (C) 2007 Daniel Gollub <dgollub@suse.de>
-    Copyright (C) 2008 Tom Patzig <tpatzig@suse.de>
 
 
     This library is free software; you can redistribute it and/or
@@ -26,16 +25,11 @@
 
 #include <kdebug.h>
 
-BluezBluetoothInputDevice::BluezBluetoothInputDevice(const QString &objectPath) : BluetoothInputDevice(0), m_objectPath(objectPath)
+BluezBluetoothInputDevice::BluezBluetoothInputDevice(const QString &objectPath,
+        const QString &dest) : BluetoothInputDevice(0), m_objectPath(objectPath)
 {
-    device = new QDBusInterface("org.bluez", m_objectPath,
-                                "org.bluez.Input", QDBusConnection::systemBus());
-    #define connectInputDeviceToThis(signal, slot) \
-        device->connection().connect("org.bluez", \
-            objectPath, \
-            "org.bluez.Input", \
-            signal, this, SLOT(slot))
-    connectInputDeviceToThis("PropertyChanged",slotPropertyChanged(const QString &,const QDBusVariant &));
+    device = new QDBusInterface(dest, m_objectPath,
+                                "org.bluez.input.Device", QDBusConnection::systemBus());
 
 }
 
@@ -49,25 +43,40 @@ QString BluezBluetoothInputDevice::ubi() const
     return m_objectPath;
 }
 
-QMap<QString,QVariant> BluezBluetoothInputDevice::getProperties()
+QString BluezBluetoothInputDevice::address() const
 {
-    QDBusReply< QMap<QString,QVariant> > path = device->call("GetProperties");
-        if (!path.isValid())
-	    return QMap<QString,QVariant>();
-
-	return path.value();
+    return stringReply("GetAddress");
 }
 
-void BluezBluetoothInputDevice::disconnect()
+bool BluezBluetoothInputDevice::isConnected() const
 {
-    device->call("Disconnect");
+    return boolReply("IsConnected");
 }
 
-void BluezBluetoothInputDevice::connect()
+QString BluezBluetoothInputDevice::name() const
+{
+    return stringReply("GetName");
+}
+
+QString BluezBluetoothInputDevice::productID() const
+{
+    return stringReply("GetProductID");
+}
+
+QString BluezBluetoothInputDevice::vendorID() const
+{
+    return stringReply("GetVendorID");
+}
+
+void BluezBluetoothInputDevice::slotConnect()
 {
     device->call("Connect");
 }
 
+void BluezBluetoothInputDevice::slotDisconnect()
+{
+    device->call("Disconnect");
+}
 
 /******************************/
 
@@ -87,13 +96,6 @@ bool BluezBluetoothInputDevice::boolReply(const QString &method) const
         return false;
 
     return reply.value();
-}
-
-/******************************/
-
-void BluezBluetoothInputDevice::slotPropertyChanged(const QString & name, const QDBusVariant& value)
-{
-    emit propertyChanged(name,value.variant());
 }
 
 #include "bluez-bluetoothinputdevice.moc"

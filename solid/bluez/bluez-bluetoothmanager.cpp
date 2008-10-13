@@ -1,7 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2007 Will Stephenson <wstephenson@kde.org>
     Copyright (C) 2007 Daniel Gollub <dgollub@suse.de>
-    Copyright (C) 2008 Tom Patzig <tpatzig@suse.de>
 
 
     This library is free software; you can redistribute it and/or
@@ -37,14 +36,14 @@ class BluezBluetoothManagerPrivate
 public:
 
 
-    BluezBluetoothManagerPrivate() : manager("org.bluez", "/", "org.bluez.Manager", QDBusConnection::systemBus())
+    BluezBluetoothManagerPrivate() : manager("org.bluez", "/org/bluez", "org.bluez.Manager", QDBusConnection::systemBus())
     {}
 
     QDBusInterface manager;
-//  QDBusInterface *inputManager;
+    QDBusInterface *inputManager;
 
     QMap<QString, BluezBluetoothInterface *> interfaces;
-//  QMap<QString, BluezBluetoothInputDevice *> inputDevices;
+    QMap<QString, BluezBluetoothInputDevice *> inputDevices;
 
 };
 
@@ -53,20 +52,18 @@ BluezBluetoothManager::BluezBluetoothManager(QObject * parent, const QStringList
 {
 #define connectManagerToThis(signal, slot) \
     d->manager.connection().connect("org.bluez", \
-                                     "/", \
+                                     "/org/bluez", \
                                      "org.bluez.Manager", \
                                      signal, this, SLOT(slot));
-    connectManagerToThis("AdapterAdded", slotDeviceAdded(const QDBusObjectPath &));
-    connectManagerToThis("AdapterRemoved", slotDeviceRemoved(const QDBusObjectPath &));
-    connectManagerToThis("DefaultAdapterChanged", slotDefaultDeviceChanged(const QDBusObjectPath &));
+    connectManagerToThis("AdapterAdded", slotDeviceAdded(const QString &));
+    connectManagerToThis("AdapterRemoved", slotDeviceRemoved(const QString &));
+    connectManagerToThis("DefaultAdapterChanged", slotDefaultDeviceChanged(const QString &));
 
-// in bluez4 no input Manager needed
 
-/*  QDBusReply< QString > busId = d->manager.call("ActivateService", "input");
+    QDBusReply< QString > busId = d->manager.call("ActivateService", "input");
     if (busId.isValid()) {
         m_inputManagerDest = busId.value();
     }
-
 
     d->inputManager = new QDBusInterface(m_inputManagerDest, "/org/bluez/input",
                                          "org.bluez.input.Manager", QDBusConnection::systemBus());
@@ -79,12 +76,11 @@ BluezBluetoothManager::BluezBluetoothManager(QObject * parent, const QStringList
 
     connectInputManagerToThis("DeviceCreated", inputDeviceCreated(const QString &));
     connectInputManagerToThis("DeviceRemoved", inputDeviceRemoved(const QString &));
-*/
 }
 
 BluezBluetoothManager::~BluezBluetoothManager()
 {
-//  delete d->inputManager;
+    delete d->inputManager;
     delete d;
 }
 
@@ -92,11 +88,11 @@ QStringList BluezBluetoothManager::bluetoothInterfaces() const
 {
     QStringList bluetoothInterfaces;
 
-    QDBusReply< QList<QDBusObjectPath> > deviceList = d->manager.call("ListAdapters");
+    QDBusReply< QStringList > deviceList = d->manager.call("ListAdapters");
     if (deviceList.isValid()) {
-        QList<QDBusObjectPath> devices = deviceList.value();
-        foreach (const QDBusObjectPath& path, devices) {
-            bluetoothInterfaces.append(path.path());
+        QStringList devices = deviceList.value();
+        foreach (const QString& path, devices) {
+            bluetoothInterfaces.append(path);
         }
     }
     return bluetoothInterfaces;
@@ -104,20 +100,11 @@ QStringList BluezBluetoothManager::bluetoothInterfaces() const
 
 QString BluezBluetoothManager::defaultInterface() const
 {
-    QDBusReply< QDBusObjectPath > path = d->manager.call("DefaultAdapter");
+    QDBusReply< QString > path = d->manager.call("DefaultAdapter");
     if (!path.isValid())
         return QString();
 
-    return path.value().path();
-}
-
-QString BluezBluetoothManager::findInterface(const QString &adapterName) const
-{
-    QDBusReply< QDBusObjectPath > devicePath = d->manager.call("FindAdapter",adapterName);
-    if (!devicePath.isValid())
-        return QString();
-
-    return devicePath.value().path();
+    return path.value();
 }
 
 QObject * BluezBluetoothManager::createInterface(const QString  & ubi)
@@ -132,7 +119,6 @@ QObject * BluezBluetoothManager::createInterface(const QString  & ubi)
     return bluetoothInterface;
 }
 
-/*
 KJob *BluezBluetoothManager::setupInputDevice(const QString &ubi)
 {
     QString address = ubi.right(17);
@@ -143,9 +129,7 @@ KJob *BluezBluetoothManager::setupInputDevice(const QString &ubi)
     return new BluezCallJob(QDBusConnection::systemBus(), m_inputManagerDest, "/org/bluez/input", "org.bluez.input.Manager",
                             "CreateDevice", params);
 }
-*/
 
-/*
 QStringList BluezBluetoothManager::bluetoothInputDevices() const
 {
     QStringList bluetoothInputDevices;
@@ -176,28 +160,23 @@ QObject *BluezBluetoothManager::createBluetoothInputDevice(QString const &ubi)
     }
     return bluetoothInputDevice;
 }
-*/
 
-void BluezBluetoothManager::slotDeviceAdded(const QDBusObjectPath &adapter)
+void BluezBluetoothManager::slotDeviceAdded(const QString &adapter)
 {
     // TODO free the adapter device...
-    kDebug() << "interfaceAdded " << adapter.path();
-    emit interfaceAdded(adapter.path());
+    emit interfaceAdded(adapter);
 }
 
-void BluezBluetoothManager::slotDeviceRemoved(const QDBusObjectPath &adapter)
+void BluezBluetoothManager::slotDeviceRemoved(const QString &adapter)
 {
-    kDebug() << "interfaceRemoved " << adapter.path();
-    emit interfaceRemoved(adapter.path());
+    emit interfaceRemoved(adapter);
 }
 
-void BluezBluetoothManager::slotDefaultDeviceChanged(const QDBusObjectPath &adapter)
+void BluezBluetoothManager::slotDefaultDeviceChanged(const QString &adapter)
 {
-    kDebug() << "defaultDeviceChanged " << adapter.path();
-    emit defaultInterfaceChanged(adapter.path());
+    emit defaultInterfaceChanged(adapter);
 }
 
-/*
 void BluezBluetoothManager::slotInputDeviceCreated(const QString &path)
 {
     emit inputDeviceCreated(path);
@@ -208,9 +187,7 @@ void BluezBluetoothManager::slotInputDeviceRemoved(const QString &path)
     // TODO free the input device...
     emit inputDeviceRemoved(path);
 }
-*/
 
-/*
 Solid::Control::Ifaces::BluetoothSecurity *BluezBluetoothManager::security(const QString &interface)
 {
     BluezBluetoothSecurity *out;
@@ -223,7 +200,7 @@ Solid::Control::Ifaces::BluetoothSecurity *BluezBluetoothManager::security(const
     new BluezBluetoothSecurityAuthorizationAgentAdaptor(out);
     return out;
 }
-*/
+
 #include "bluez-bluetoothmanager.moc"
 
 
