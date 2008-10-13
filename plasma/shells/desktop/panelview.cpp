@@ -626,6 +626,10 @@ void PanelView::edittingComplete()
     containment()->closeToolBox();
     updateStruts();
     m_firstPaint = true; // triggers autohide
+
+    // not overly efficient since we may not have changed any settings,
+    // but ensures that if we have, a config sync will occur
+    PlasmaApp::self()->corona()->requestConfigSync();
 }
 
 Qt::Alignment PanelView::alignmentFilter(Qt::Alignment align) const
