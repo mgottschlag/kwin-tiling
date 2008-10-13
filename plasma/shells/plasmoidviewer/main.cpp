@@ -1,5 +1,6 @@
 /*
  * Copyright 2007 Frerich Raabe <raabe@kde.org>
+ * Copyright 2007-2008 Aaron Seigo <aseigo@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,34 +37,34 @@
 
 using namespace Plasma;
 
-static const char description[] = I18N_NOOP( "Run Plasma applets in their own window" );
+static const char description[] = I18N_NOOP("Run Plasma widgets in their own window");
 
 int main(int argc, char **argv)
 {
-    KAboutData aboutData( "plasmoidviewer", 0, ki18n( "Plasma Applet Viewer" ),
-                          "1.0", ki18n( description ), KAboutData::License_BSD,
-                         ki18n( "(C) 2007, The KDE Team" ) );
-    aboutData.setProgramIconName( "plasma" );
-    aboutData.addAuthor( ki18n( "Frerich Raabe" ),
-                         ki18n( "Original author" ),
-                        "raabe@kde.org" );
+    KAboutData aboutData("plasmoidviewer", 0, ki18n("Plasma Widget Viewer"),
+                         "1.0", ki18n(description), KAboutData::License_BSD,
+                         ki18n("2007-2008, Frerich Raabe"));
+    aboutData.setProgramIconName("plasma");
+    aboutData.addAuthor(ki18n("Frerich Raabe"),
+                         ki18n("Original author"),
+                        "raabe@kde.org");
 
-    KCmdLineArgs::init( argc, argv, &aboutData );
+    KCmdLineArgs::init(argc, argv, &aboutData);
 
     KCmdLineOptions options;
-    options.add( "f" );
-    options.add( "formfactor <name>", ki18n( "The formfactor to use (horizontal, vertical, mediacenter or planar)" ), "planar");
-    options.add( "l" );
-    options.add( "location <name>", ki18n( "The location constraint to start the Containment with (floating, desktop, fullscreen, top, bottom, left, right)" ), "floating");
-    options.add( "c" );
-    options.add( "containment <name>", ki18n( "Name of the containment plugin" ), "null");
-    options.add( "w" );
-    options.add( "wallpaper <name>", ki18n( "Name of the wallpaper plugin" ), QByteArray());
-    options.add( "p" );
-    options.add( "pixmapcache <size>", ki18n("The size in KB to set the pixmap cache to"));
-    options.add( "+applet", ki18n( "Name of applet to add (required)" ) );
-    options.add( "+[args]", ki18n( "Optional arguments of the applet to add" ) );
-    KCmdLineArgs::addCmdLineOptions( options );
+    options.add("f");
+    options.add("formfactor <name>", ki18n("The formfactor to use (horizontal, vertical, mediacenter or planar)"), "planar");
+    options.add("l");
+    options.add("location <name>", ki18n("The location constraint to start the Containment with (floating, desktop, fullscreen, top, bottom, left, right)"), "floating");
+    options.add("c");
+    options.add("containment <name>", ki18n("Name of the containment plugin"), "null");
+    options.add("w");
+    options.add("wallpaper <name>", ki18n("Name of the wallpaper plugin"), QByteArray());
+    options.add("p");
+    options.add("pixmapcache <size>", ki18n("The size in KB to set the pixmap cache to"));
+    options.add("+applet", ki18n("Name of applet to add (required)"));
+    options.add("+[args]", ki18n("Optional arguments of the applet to add"));
+    KCmdLineArgs::addCmdLineOptions(options);
 
     KApplication app;
 
