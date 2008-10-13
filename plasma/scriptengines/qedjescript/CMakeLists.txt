@@ -28,6 +28,6 @@ install(TARGETS plasma_package_qedje
 install(FILES plasma-appletscript-qedje.desktop
   DESTINATION ${SERVICES_INSTALL_DIR})
 
-install(FILES plasma-package-qedje.desktop
+install(FILES plasma-packagestructure-qedje.desktop
   DESTINATION ${SERVICES_INSTALL_DIR})
 

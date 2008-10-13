@@ -37,7 +37,7 @@ class DashboardJs : public QObject
 {
     Q_OBJECT
 public:
-    DashboardJs(QObject *parent=0, Plasma::Applet *applet = 0);
+    DashboardJs(QObject *parent = 0, Plasma::Applet *applet = 0);
 
 public slots:
     void hello(int test);
