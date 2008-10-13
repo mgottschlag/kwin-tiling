@@ -242,13 +242,14 @@ void ClockApplet::updateClockDefaultsTo()
 
 void ClockApplet::changeEngineTimezone(const QString &oldTimezone, const QString &newTimezone)
 {
+    // reimplemented by subclasses to get the new data
     Q_UNUSED(oldTimezone);
     Q_UNUSED(newTimezone);
 }
 
 void ClockApplet::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
-    if (d->selectedTimezones.count() <= 1) {
+    if (d->selectedTimezones.count() < 1) {
         return;
     }
 
