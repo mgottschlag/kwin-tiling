@@ -94,29 +94,34 @@ GlobalShortcutsModule::~GlobalShortcutsModule()
 
 void GlobalShortcutsModule::load()
 {
-    // Undo all changes not yet applied
-    editor->clear();
-
     // Connect to kdedglobalaccel. If that fails there is no need to continue.
     qRegisterMetaType<QList<int> >();
     qDBusRegisterMetaType<QList<int> >();
     QDBusConnection bus = QDBusConnection::sessionBus();
-    QPointer<QDBusInterface> iface = new QDBusInterface("org.kde.kded", "/KdedGlobalAccel",
-                                                        "org.kde.KdedGlobalAccel", bus, this);
-    if (!iface->isValid()) {
+    QDBusInterface iface(
+            "org.kde.kded",
+            "/modules/kdedglobalaccel",
+            "org.kde.KdedGlobalAccel",
+            bus);
+
+    if (!iface.isValid()) {
         QString errorString;
-        QDBusError error = iface->lastError();
+        QDBusError error = iface.lastError();
         // The global shortcuts DBus service manages all global shortcuts and we
         // can't do anything useful without it.
         if (error.isValid()) {
             errorString = i18n("Message: %1\nError: %2", error.message(), error.name());
         }
+
         KMessageBox::sorry(
             this,
             i18n("Failed to contact the KDE global shortcuts daemon\n")
                 + errorString );
         return;
     }
+
+    // Undo all changes not yet applied
+    editor->clear();
 
     KGlobalAccel *kga = KGlobalAccel::self();
     QList<QStringList> components = kga->allMainComponents();
@@ -146,7 +151,7 @@ void GlobalShortcutsModule::load()
             // The default shortcut will never be loaded because it's pointless in a real
             // application. There are no scarce resources [i.e. physical keys] to manage
             // so applications can set them at will and there's no autoloading.
-            QDBusReply<QList<int> > defaultShortcut = iface->call("defaultShortcut", qVariantFromValue(actionId));
+            QDBusReply<QList<int> > defaultShortcut = iface.call("defaultShortcut", qVariantFromValue(actionId));
             if (!defaultShortcut.value().isEmpty()) {
                 int key = defaultShortcut.value().first();
                 action->setGlobalShortcut(KShortcut(key), KAction::DefaultShortcut);
