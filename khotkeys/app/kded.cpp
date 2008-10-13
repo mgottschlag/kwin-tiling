@@ -15,7 +15,6 @@
 #include "actions/actions.h"
 
 #include "triggers/gestures.h"
-#include "khotkeysadaptor.h"
 
 
 #include <kaboutdata.h>
@@ -47,8 +46,6 @@ KHotKeysModule::KHotKeysModule(QObject* parent, const QList<QVariant>&)
 
     // Read the configuration from file khotkeysrc
     reread_configuration();
-
-    new KhotkeysAdaptor(this);
     }
 
 

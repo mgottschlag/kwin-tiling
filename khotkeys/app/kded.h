@@ -31,9 +31,12 @@ class KHotKeysModule
     {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.kde.khotkeys")
+
     public Q_SLOTS:
-        Q_NOREPLY void reread_configuration();
-        Q_NOREPLY void quit();
+
+        Q_SCRIPTABLE Q_NOREPLY void reread_configuration();
+
+        Q_SCRIPTABLE Q_NOREPLY void quit();
 
         /**
          * Register an shortcut for service @serviceStorageId with the key
@@ -45,7 +48,7 @@ class KHotKeysModule
          * @returns @c true if the key sequence was successfully set, @c if
          * the sequence is not available.
          */
-        QString register_menuentry_shortcut(const QString &storageId, const QString &sequence);
+        Q_SCRIPTABLE QString register_menuentry_shortcut(const QString &storageId, const QString &sequence);
 
         /**
          * Get the currently active shortcut for service @p serviceStorageId.
@@ -54,11 +57,13 @@ class KHotKeysModule
          *
          * @returns the active global shortcuts for that service
          */
-        QString get_menuentry_shortcut(const QString &storageId);
+        Q_SCRIPTABLE QString get_menuentry_shortcut(const QString &storageId);
 
     public:
+
         KHotKeysModule(QObject* parent, const QList<QVariant>&);
         virtual ~KHotKeysModule();
+
     private:
 
         //! The action list from _settings for convenience
