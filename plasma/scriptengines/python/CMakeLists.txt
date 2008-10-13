@@ -39,7 +39,7 @@ install(FILES pydataengine.py DESTINATION ${DATA_INSTALL_DIR}/plasma_scriptengin
 
 install(FILES plasma-scriptengine-python-applet.desktop
         DESTINATION ${SERVICES_INSTALL_DIR})
-install(FILES plasma-scriptengine-python-package.desktop
+install(FILES plasma-packagestructure-python.desktop
         DESTINATION ${SERVICES_INSTALL_DIR})
 install(FILES plasma-scriptengine-python-dataengine.desktop
         DESTINATION ${SERVICES_INSTALL_DIR})
