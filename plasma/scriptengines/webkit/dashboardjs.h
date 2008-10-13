@@ -46,7 +46,7 @@ public slots:
      * opens a certain application
      */
     void openApplication(QString name);
-    
+
     /**
      * opens a URL. Does not open file urls by default.
      * TODO: find out what protocols dashboard widgets support. filter out the others
@@ -71,22 +71,22 @@ public slots:
 
     void system(QString command, QString handler);
 
+    QString identifier() const;
+
 private:
     //TODO: execute when needed
-    QString onshow;
-    QString onhide;
-    QString onremove;
+    QString m_onshow;
+    QString m_onhide;
+    QString m_onremove;
 
-    QString onfocus;
-    QString onblur;
+    QString m_onfocus;
+    QString m_onblur;
 
-    QString ondragstart;
-    QString ondragstop;
-
-    QString identifier;
+    QString m_ondragstart;
+    QString m_ondragstop;
 
     //my private stuff
-    Plasma::Applet *applet;
+    Plasma::Applet *m_applet;
 };
 
 #endif

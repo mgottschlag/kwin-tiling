@@ -26,10 +26,10 @@ THE SOFTWARE.
 #include <KRun>
 #include <KConfigGroup>
 
-DashboardJs::DashboardJs(QObject *parent, Plasma::Applet *appl)
+DashboardJs::DashboardJs(QObject *parent, Plasma::Applet *applet)
     : QObject(parent)
 {
-    applet = appl;
+    m_applet = applet;
 }
 
 void DashboardJs::openApplication(QString name)
@@ -52,10 +52,9 @@ void DashboardJs::openURL(QString name)
 
 QVariant DashboardJs::preferenceForKey(QString key)
 {
-    KConfigGroup conf = applet->config();
+    KConfigGroup conf = m_applet->config();
 
-    if(!conf.hasKey(key))
-    {
+    if (!conf.hasKey(key)) {
       return QVariant();
     }
 
@@ -87,8 +86,8 @@ void DashboardJs::setCloseBoxOffset(int x, int y)
 void DashboardJs::setPreferenceForKey(QString value, QString key)
 {
     kDebug() << "save key" << key << value;
-    KConfigGroup conf = applet->config();
-    conf.writeEntry(key,value);
+    KConfigGroup conf = m_applet->config();
+    conf.writeEntry(key, value);
 }
 
 void DashboardJs::system(QString command, QString handler)
@@ -98,9 +97,15 @@ void DashboardJs::system(QString command, QString handler)
     kDebug() << "not implemented: system command:" << command << handler;
 }
 
+QString DashboardJs::identifier() const
+{
+    return QString::number(m_applet->id());
+}
+
 //only for testing purpose
 //TODO: remove when not needed anymore
 void DashboardJs::hello(int test)
 {
     kDebug() << "hello world" << test;
 }
+
