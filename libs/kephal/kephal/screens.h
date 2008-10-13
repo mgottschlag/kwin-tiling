@@ -26,7 +26,7 @@
 #include <QObject>
 #include <QRect>
 
-#include <kephal_export.h>
+#include "kephal_export.h"
 
 namespace kephal {
 
@@ -178,6 +178,21 @@ namespace kephal {
             
         protected:
             static Screens * m_instance;
+    };
+    
+    /**
+     * Defines a handful help methods for common tasks
+     */
+    class KEPHAL_EXPORT ScreenUtils {
+        public:
+            /** Returns the number of screens. */
+            static int numScreens();
+            
+            /** Returns the geometry of the given screen */
+            static QRect screenGeometry(int id);
+            
+            /** Returns the size of the given screen */
+            static QSize screenSize(int id);
     };
     
 }

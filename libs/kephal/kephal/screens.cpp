@@ -21,6 +21,8 @@
 #include "kephal/screens.h"
 #include "kephal/configurations.h"
 
+#include <QApplication>
+#include <QDesktopWidget>
 
 #ifdef SCREENS_FACTORY
 void SCREENS_FACTORY();
@@ -79,6 +81,31 @@ namespace kephal {
     bool Screen::isPrimary() {
         return Screens::instance()->primaryScreen() == this;
     }
+    
+    int ScreenUtils::numScreens() {
+        return Screens::instance()->screens().size();
+    }
+    
+    QRect ScreenUtils::screenGeometry(int id) {
+        if (id >= numScreens()) 
+            return QRect();
+        
+        if (id == -1) 
+            return QApplication::desktop()->screenGeometry();
+        else
+            return Screens::instance()->screen(id)->geom();
+    }
+    
+    QSize ScreenUtils::screenSize(int id) {
+        if (id >= numScreens()) 
+            return QSize();
+        
+        if (id == -1) 
+            return QApplication::desktop()->screenGeometry().size();
+        else
+            return Screens::instance()->screen(id)->size();
+    }            
+
     
 }
 
