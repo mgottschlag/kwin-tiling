@@ -1,6 +1,8 @@
 
 add_subdirectory( pics ) 
-include_directories( ${X11_dpms_INCLUDE_PATH}   )
+if(HAVE_DPMS)
+  include_directories( ${X11_dpms_INCLUDE_PATH}   )
+endif(HAVE_DPMS)
 
 
 ########### next target ###############
