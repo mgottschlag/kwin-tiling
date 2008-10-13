@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Python Package Structure
+Comment=Format of a Python Script Engine Package
+X-KDE-ServiceTypes=Plasma/PackageStructure
+Type=Service
+Icon=text-x-script
+X-KDE-Library=kpythonpluginfactory
+X-KDE-PluginKeyword=plasma_scriptengine_python/package_pythoid.py
+X-KDE-PluginInfo-Name=Pythoid

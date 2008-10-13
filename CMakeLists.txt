@@ -1,7 +1,7 @@
 project(KDEBASE_WORKSPACE)
 
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules )
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH} )
 
 if(CMAKE_SOURCE_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
     set(BUILDING_WORKSPACE_SEPARATELY true)
@@ -28,6 +28,32 @@ macro_log_feature(QEdje_FOUND "QEdje" "QEdje library"
   "Needed to build plasma scriptengine for edje files")
 
 macro_optional_find_package(OpenGL)
+
+#### Python support ####
+macro_optional_find_package(PythonLibrary)
+
+macro_optional_find_package(SIP)
+if(SIP_FOUND AND SIP_VERSION STRLESS "040701")
+    message(FATAL_ERROR "The version of SIP found is too old. 4.7.1 or later is needed.")
+endif(SIP_FOUND AND SIP_VERSION STRLESS "040701")
+
+include(SIPMacros)
+
+macro_optional_find_package(PyQt4)
+if(PYQT4_FOUND AND PYQT4_VERSION STRLESS "040400")
+    message(FATAL_ERROR "The version of PyQt found is too old. 4.4.0 or later is required.")
+endif(PYQT4_FOUND AND PYQT4_VERSION STRLESS "040400")
+
+macro_optional_find_package(PyKDE4)
+set(PythonSupport_FOUND FALSE)
+if (PYTHONLIBRARY_FOUND AND SIP_FOUND AND PYQT4_FOUND AND PYKDE4_FOUND)
+  set(PythonSupport_FOUND TRUE)
+endif (PYTHONLIBRARY_FOUND AND SIP_FOUND AND PYQT4_FOUND AND PYKDE4_FOUND)
+
+macro_log_feature(PythonSupport_FOUND "Python" "KDE Python support"
+  "http://techbase.kde.org/Development/Languages/Python" FALSE ""
+  "Needed to build plasma scriptengine for Python")
+#### End Python support ####
 
 include (MacroLibrary)
 include (KDE4Defaults)
