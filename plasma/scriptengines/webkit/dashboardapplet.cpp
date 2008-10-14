@@ -65,7 +65,7 @@ void DashboardApplet::initJsObjects()
     QWebFrame *frame = qobject_cast<QWebFrame*>(sender());
     Q_ASSERT(frame);
     frame->addToJavaScriptWindowObject(QLatin1String("applet"), this);
-    frame->addToJavaScriptWindowObject(QLatin1String("widget"), new DashboardJs(this, applet()));
+    frame->addToJavaScriptWindowObject(QLatin1String("widget"), new DashboardJs(frame, this, applet()));
 }
 
 #include "dashboardapplet.moc"

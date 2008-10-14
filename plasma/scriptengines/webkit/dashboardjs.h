@@ -25,6 +25,9 @@ THE SOFTWARE.
 
 #include <QObject>
 #include <QVariant>
+#include <QGraphicsItem>
+
+#include <QWebFrame>
 
 #include <plasma/applet.h>
 
@@ -36,8 +39,34 @@ THE SOFTWARE.
 class DashboardJs : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString identifier READ identifier);
+
+    Q_PROPERTY(QString onshow READ onshow WRITE setOnshow);
+    Q_PROPERTY(QString onhide READ onhide WRITE setOnhide);
+    Q_PROPERTY(QString onremove READ onremove WRITE setOnremove);
+    Q_PROPERTY(QString ondragstart READ ondragstart WRITE setOndragstart);
+    Q_PROPERTY(QString ondragstop READ ondragstop WRITE setOndragstop);
+    
 public:
-    DashboardJs(QObject *parent = 0, Plasma::Applet *applet = 0);
+    DashboardJs(QWebFrame *frame, QObject *parent= 0, Plasma::Applet *applet = 0);
+    ~DashboardJs();
+
+    QString identifier() const;
+    
+    QString onshow() const;
+    void setOnshow(QString onshow);
+
+    QString onhide() const;
+    void setOnhide(QString onhide);
+
+    QString onremove() const;
+    void setOnremove(QString onremove);
+    
+    QString ondragstart() const;
+    void setOndragstart(QString ondragstart);
+
+    QString ondragstop() const;
+    void setOndragstop(QString ondragstop);
 
 public slots:
     void hello(int test);
@@ -45,48 +74,43 @@ public slots:
     /**
      * opens a certain application
      */
-    void openApplication(QString name);
+    void openApplication(QString name); 
 
     /**
      * opens a URL. Does not open file urls by default.
      * TODO: find out what protocols dashboard widgets support. filter out the others
      */
-    void openURL(QString name);
+    void openURL(QString name); //ok
 
     /**
      * Returns the value assosiated with a certain key
      */
-    QVariant preferenceForKey(QString key);
+    QVariant preferenceForKey(QString key); //ok
 
     void prepareForTransition(QString transition);
 
     void performTransition();
 
-    void setCloseBoxOffset(int x, int y);
+    void setCloseBoxOffset(int x, int y); //not needed
 
     /**
      * Saves a value to a key
      */
-    void setPreferenceForKey(QString value, QString key);
+    void setPreferenceForKey(QString value, QString key); //ok
 
-    void system(QString command, QString handler);
-
-    QString identifier() const;
-
+    void system(QString command, QString handler); //cannot really be implemented
 private:
     //TODO: execute when needed
-    QString m_onshow;
-    QString m_onhide;
-    QString m_onremove;
-
-    QString m_onfocus;
-    QString m_onblur;
+    QString m_onshow; //has no equivalent in plasma, because always shown
+    QString m_onhide; //has no equivalent in plasma, because always shown
+    QString m_onremove; //ok
 
     QString m_ondragstart;
     QString m_ondragstop;
 
     //my private stuff
     Plasma::Applet *m_applet;
+    QWebFrame *m_frame;
 };
 
 #endif

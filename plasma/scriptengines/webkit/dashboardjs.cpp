@@ -26,10 +26,27 @@ THE SOFTWARE.
 #include <KRun>
 #include <KConfigGroup>
 
-DashboardJs::DashboardJs(QObject *parent, Plasma::Applet *applet)
+#include <QPainter>
+#include <QStyleOptionGraphicsItem>
+#include <QWidget>
+
+#include <QGraphicsItem>
+#include <QEvent>
+#include <QGraphicsScene>
+
+DashboardJs::DashboardJs(QWebFrame *frame, QObject *parent, Plasma::Applet *applet)
     : QObject(parent)
 {
     m_applet = applet;
+    m_frame = frame;
+}
+
+DashboardJs::~DashboardJs()
+{
+    if(m_frame){
+        kDebug() << "deconstructor calles javascript: " << m_onremove;
+        m_frame->evaluateJavaScript(m_onremove);
+    }
 }
 
 void DashboardJs::openApplication(QString name)
@@ -97,11 +114,62 @@ void DashboardJs::system(QString command, QString handler)
     kDebug() << "not implemented: system command:" << command << handler;
 }
 
+//Property sets and gets
 QString DashboardJs::identifier() const
-{
+{ 
     return QString::number(m_applet->id());
 }
 
+QString DashboardJs::onshow() const 
+{
+    return m_onshow;
+}
+
+void DashboardJs::setOnshow(QString value)
+{
+    m_onshow = value;
+}
+
+QString DashboardJs::onhide() const
+{
+    return m_onhide;
+}
+
+void DashboardJs::setOnhide(QString value)
+{
+    m_onhide = value;
+}
+
+QString DashboardJs::onremove() const
+{
+    return m_onremove;
+}
+
+void DashboardJs::setOnremove(QString value)
+{
+    m_onremove = value;
+}
+
+
+QString DashboardJs::ondragstart() const
+{
+    return m_ondragstart;
+}
+
+void DashboardJs::setOndragstart(QString value)
+{
+    m_ondragstart = value;
+}
+
+QString DashboardJs::ondragstop() const
+{
+    return m_ondragstop;
+}
+
+void DashboardJs::setOndragstop(QString value)
+{
+    m_ondragstop = value;
+}
 //only for testing purpose
 //TODO: remove when not needed anymore
 void DashboardJs::hello(int test)
