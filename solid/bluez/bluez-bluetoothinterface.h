@@ -1,6 +1,7 @@
 /*  This file is part of the KDE project
     Copyright (C) 2007 Will Stephenson <wstephenson@kde.org>
     Copyright (C) 2007 Daniel Gollub <dgollub@suse.de>
+    Copyright (C) 2008 Tom Patzig <tpatzig@suse.de>
 
 
     This library is free software; you can redistribute it and/or
@@ -23,19 +24,27 @@
 #define BLUEZ_BLUETOOTHINTERFACE_H
 
 #include <kdemacros.h>
+#include <QtDBus>
+#include <QVariant>
+#include <QDBusVariant>
+#include <QDBusObjectPath>
+#include <QMetaType>
 
 #include <solid/control/ifaces/bluetoothinterface.h>
 
 class BluezBluetoothInterfacePrivate;
 
+
 class KDE_EXPORT BluezBluetoothInterface : public Solid::Control::Ifaces::BluetoothInterface
 {
     Q_OBJECT
     Q_INTERFACES(Solid::Control::Ifaces::BluetoothInterface)
+    
 public:
     BluezBluetoothInterface(const QString  & objectPath);
     virtual ~BluezBluetoothInterface();
     QString ubi() const;
+/*
     QString address() const;
     QString version() const;
     QString revision() const;
@@ -58,9 +67,29 @@ public:
     QString getRemoteName(const QString &);
     bool isTrusted(const QString &);
 
+*/    
     QObject *createBluetoothRemoteDevice(const QString &);
 
+    QString createDevice(const QString &) const;
+    QString createPairedDevice(const QString &,const QString &,const QString &) const;
+    QString findDevice(const QString &) const;
+    QMap< QString, QVariant > getProperties() const;
+    QStringList listDevices() const;
+
+
 public Q_SLOTS:
+
+    void cancelDeviceCreation(const QString &) const;
+    void registerAgent(const QString &,const QString &) const;
+    void releaseSession() const;
+    void removeDevice(const QString &) const;
+    void requestSession() const;
+    void setProperty(const QString &, const QVariant &) const;
+    void startDiscovery() const;
+    void stopDiscovery() const;
+    void unregisterAgent(const QString &) const;
+
+/*
     void setMode(const Solid::Control::BluetoothInterface::Mode);
     void setDiscoverableTimeout(int);
     void setMinorClass(const QString &);
@@ -89,6 +118,12 @@ public Q_SLOTS:
     void slotTrustRemoved(const QString&);
     void slotBondingCreated(const QString&);
     void slotBondingRemoved(const QString&);
+*/    
+    void slotDeviceCreated(const QDBusObjectPath &);
+    void slotDeviceDisappeared(const QString &);
+    void slotDeviceFound(const QString &, const QMap< QString, QVariant > &);
+    void slotDeviceRemoved(const QDBusObjectPath &);
+    void slotPropertyChanged(const QString &,const QVariant &);
 
 private:
     BluezBluetoothInterfacePrivate * d;
@@ -96,6 +131,7 @@ private:
     QStringList listReply(const QString &method) const;
     QString stringReply(const QString &method, const QString &param = "") const;
     bool boolReply(const QString &method, const QString &param = "") const;
+    QDBusObjectPath objectReply(const QString &method, const QString &param = "" ) const;
 };
 
 #endif
