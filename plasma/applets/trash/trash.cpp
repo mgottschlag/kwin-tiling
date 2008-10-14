@@ -67,17 +67,10 @@ Trash::Trash(QObject *parent, const QVariantList &args)
 {
     setHasConfigurationInterface(true);
     setAspectRatioMode(Plasma::ConstrainedSquare);
-    setBackgroundHints(NoBackground);
 
     m_icon = new Plasma::Icon(KIcon("user-trash"),QString(),this);
     m_icon->setNumDisplayLines(2);
     m_icon->setDrawBackground(true);
-    registerAsDragHandle(m_icon);
-
-    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSpacing(0);
-    layout->addItem(m_icon);
 
     resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
     createMenu();
@@ -89,6 +82,13 @@ Trash::~Trash()
 
 void Trash::init()
 {
+    registerAsDragHandle(m_icon);
+
+    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
+    layout->addItem(m_icon);
+
     setAcceptDrops(true);
 
     m_dirLister = new KDirLister();
