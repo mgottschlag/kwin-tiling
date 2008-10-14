@@ -52,7 +52,7 @@ install(FILES plasma.py DESTINATION ${PYTHON_SITE_PACKAGES_DIR})
 #install(FILES test/plasma-hello-python-world.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 #install(DIRECTORY test/plasma-hello-python-world DESTINATION ${DATA_INSTALL_DIR}/plasma/plasmoids)
 
-install(FILES test/plasma-pyclock.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+install(FILES test/plasma-applet-pyclock.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 install(DIRECTORY test/plasma-pyclock DESTINATION ${DATA_INSTALL_DIR}/plasma/plasmoids)
 
 #install(FILES test/plasma-nestclock.desktop DESTINATION ${SERVICES_INSTALL_DIR})
