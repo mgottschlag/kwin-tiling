@@ -54,19 +54,19 @@ public:
     QString identifier() const;
     
     QString onshow() const;
-    void setOnshow(QString onshow);
+    void setOnshow(const QString &onshow);
 
     QString onhide() const;
-    void setOnhide(QString onhide);
+    void setOnhide(const QString &onhide);
 
     QString onremove() const;
-    void setOnremove(QString onremove);
+    void setOnremove(const QString &onremove);
     
     QString ondragstart() const;
-    void setOndragstart(QString ondragstart);
+    void setOndragstart(const QString &ondragstart);
 
     QString ondragstop() const;
-    void setOndragstop(QString ondragstop);
+    void setOndragstop(const QString &ondragstop);
 
 public slots:
     void hello(int test);

@@ -125,7 +125,7 @@ QString DashboardJs::onshow() const
     return m_onshow;
 }
 
-void DashboardJs::setOnshow(QString value)
+void DashboardJs::setOnshow(const QString &value)
 {
     m_onshow = value;
 }
@@ -135,7 +135,7 @@ QString DashboardJs::onhide() const
     return m_onhide;
 }
 
-void DashboardJs::setOnhide(QString value)
+void DashboardJs::setOnhide(const QString &value)
 {
     m_onhide = value;
 }
@@ -145,7 +145,7 @@ QString DashboardJs::onremove() const
     return m_onremove;
 }
 
-void DashboardJs::setOnremove(QString value)
+void DashboardJs::setOnremove(const QString &value)
 {
     m_onremove = value;
 }
@@ -156,7 +156,7 @@ QString DashboardJs::ondragstart() const
     return m_ondragstart;
 }
 
-void DashboardJs::setOndragstart(QString value)
+void DashboardJs::setOndragstart(const QString &value)
 {
     m_ondragstart = value;
 }
@@ -166,7 +166,7 @@ QString DashboardJs::ondragstop() const
     return m_ondragstop;
 }
 
-void DashboardJs::setOndragstop(QString value)
+void DashboardJs::setOndragstop(const QString &value)
 {
     m_ondragstop = value;
 }
