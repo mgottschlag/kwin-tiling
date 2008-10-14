@@ -8,6 +8,7 @@ X-KDE-Kded-autoload=false
 X-KDE-Kded-load-on-demand=true
 
 Name=KDED-module for screen-management
+Name[km]=ម៉ូឌុល KDED សម្រាប់​កា​រគ្រប់គ្រង​អេក្រង់
 Name[pt]=Módulo do KDED para a gestão do ecrã
 Name[pt_BR]=Módulo do KDED para a gestão do ecrã
 Name[sv]=KDED-modul för skärmhantering
