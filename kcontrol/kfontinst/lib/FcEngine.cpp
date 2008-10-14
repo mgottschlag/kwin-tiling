@@ -565,8 +565,6 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
         bgndCol.setAlphaF(0.0);
         pix.fill(bgndCol);
 
-        QPainter painter(&pix);
-
         if(itsSizes.size())
         {
             const QX11Info &x11Info(pix.x11Info());
@@ -670,7 +668,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                             uppercase(getUppercaseLetters()),
                             punctuation(getPunctuation());
 
-                    drawName(painter, xftDraw, &xftCol, x, y, w, h);
+                    drawName(pix, xftDraw, &xftCol, x, y, w, h);
 
                     xftFont=getFont(alphaSize());
                     if(xftFont)
@@ -694,7 +692,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                                 drawString(xftDraw, xftFont, &xftCol, validPunc, x, y, h);
                             XftFontClose(QX11Info::display(), xftFont);
                             if(lc || uc || punc)
-                                painter.drawLine(0, y, w-1, y);
+                                drawLine(pix, 0, y+2, w-1, 1);
                             y+=8;
                         }
 
@@ -727,7 +725,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                 {
                     if(range.first().null())
                     {
-                        drawName(painter, xftDraw, &xftCol, x, y, w, h);
+                        drawName(pix, xftDraw, &xftCol, x, y, w, h);
 
                         if((xftFont=getFont(alphaSize())))
                         {
@@ -754,7 +752,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                     if((xftFont=getFont(alphaSize())))
                     {
                         rv=true;
-                        drawName(painter, xftDraw, &xftCol, x, y, w, h);
+                        drawName(pix, xftDraw, &xftCol, x, y, w, h);
                         y+=alphaSize();
 
                         bool  stop=false;
@@ -1388,7 +1386,15 @@ void CFcEngine::getSizes()
 #endif
 }
 
-void CFcEngine::drawName(QPainter &painter, XftDraw *xftDraw, XftColor *xftCol, int x, int &y, int w, int h)
+void CFcEngine::drawLine(QPixmap &pix, int x, int y, int w, int h)
+{
+    QPainter painter(&pix);
+    painter.setPen(theirTextCol);
+    painter.drawLine(x, y, x+w-1, y+h-1);
+    painter.end();
+}
+
+void CFcEngine::drawName(QPixmap &pix, XftDraw *xftDraw, XftColor *xftCol, int x, int &y, int w, int h)
 {
     QString title(itsDescriptiveName.isEmpty()
                     ? i18n("ERROR: Could not determine font's name.")
@@ -1400,8 +1406,7 @@ void CFcEngine::drawName(QPainter &painter, XftDraw *xftDraw, XftColor *xftCol, 
     drawString(xftDraw, xftCol, title, x, y, h);
 
     y+=4;
-    painter.setPen(theirTextCol);
-    painter.drawLine(0, y, w-1, y);
+    drawLine(pix, x, y, w-1, 1);
     y+=8;
 }
 
