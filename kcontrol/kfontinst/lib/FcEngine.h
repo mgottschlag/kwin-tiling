@@ -116,7 +116,8 @@ class KDE_EXPORT CFcEngine
     XftFont *             getFont(int size);
     bool                  isCorrect(XftFont *f, bool checkFamily);
     void                  getSizes();
-    void                  drawName(QPainter &painter, XftDraw *xftDraw, XftColor *xftCol, int x, int &y, int w, int h);
+    void                  drawLine(QPixmap &pix, int x, int y, int w, int h);
+    void                  drawName(QPixmap &pix, XftDraw *xftDraw, XftColor *xftCol, int x, int &y, int w, int h);
     void                  addFontFile(const QString &file);
     void                  reinit();
 
