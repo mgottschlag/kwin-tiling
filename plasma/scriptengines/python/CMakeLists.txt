@@ -37,11 +37,11 @@ install(FILES plasma_importer.py DESTINATION ${DATA_INSTALL_DIR}/plasma_scripten
 install(FILES package_pythoid.py DESTINATION ${DATA_INSTALL_DIR}/plasma_scriptengine_python)
 install(FILES pydataengine.py DESTINATION ${DATA_INSTALL_DIR}/plasma_scriptengine_python)
 
-install(FILES plasma-scriptengine-python-applet.desktop
+install(FILES plasma-scriptengine-applet-python.desktop
         DESTINATION ${SERVICES_INSTALL_DIR})
 install(FILES plasma-packagestructure-python.desktop
         DESTINATION ${SERVICES_INSTALL_DIR})
-install(FILES plasma-scriptengine-python-dataengine.desktop
+install(FILES plasma-scriptengine-dataengine-python.desktop
         DESTINATION ${SERVICES_INSTALL_DIR})
 install(FILES plasma.py DESTINATION ${PYTHON_SITE_PACKAGES_DIR})
 
