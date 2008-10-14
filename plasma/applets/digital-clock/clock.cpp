@@ -112,6 +112,7 @@ void Clock::updateSize() {
     if (m_showSeconds) {
         aspect = 3;
     }
+
     if (formFactor() == Plasma::Horizontal) {
         // We have a fixed height, set some sensible width
         if (m_showDate || m_showTimezone) {
@@ -125,6 +126,10 @@ void Clock::updateSize() {
         // We have a fixed width, set some sensible height
         setMinimumHeight((int)contentsRect().width() / aspect);
         setMinimumWidth(0);
+    } else {
+        QFontMetricsF metrics(KGlobalSettings::smallestReadableFont());
+        QString timeString = KGlobal::locale()->formatTime(QTime(23, 59), m_showSeconds);
+        setMinimumSize(metrics.size(Qt::TextSingleLine, timeString));
     }
 }
 
