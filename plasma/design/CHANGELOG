@@ -22,14 +22,17 @@ libplasma
     * Package system
         * PackageStructure supports arbitrary URIs (in addition to auto-discovery for package) structure description files.
         * Package removal
+        * Package browsing interface can be provided by the PackageStructure plugin, allowing for 3rd party widget collectionsto offer online browsing and fetching customizations
     * PanelSvg
         * setting the margins via in-SVG hints
         * paintPanel API additions to make it more like QPainter and Plasma::Svg
-    * Theme
-        * Support compressed SVGs (*.svgz)
+    * Runners
+        * TryExec key in .desktop file now supported, allowing runners that rely on an external application to be conditional loaded at runtime
     * Service
         * Allow enabling/disabling of operations at runtime
         * Associate widgets with operations
+    * Theme
+        * Support compressed SVGs (*.svgz)
     * Widgets
         * NEW: Plasma::Slider based on QSlider
         * NEW: Plasma::TabBar (usable with both QWidget and QGraphicsItems)
@@ -143,6 +146,11 @@ Plugins/Addons
         * NEW: Konsole sessions runner
         * NEW: KFilePlacesModel (as seen in dolphin, file dialog, kickoff, etc) runner
         * Converter runner now does speed, masses and nautical distances; conversion code moved to a shared lib
+
+    * Wallpapers
+        * NEW: Image, Slideshow and Color plugins, based on previous code
+        * Directories recursed for images in Image and Slideshow plugin
+        * Slideshow images are randomized
 
 * Significant Fixes
     * Various clocks ported to AppletClock for calendar and timezone consistency
