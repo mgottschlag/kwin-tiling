@@ -175,6 +175,7 @@ void IconApplet::showConfigurationInterface()
         m_dialog = new KPropertiesDialog(m_url, 0 /*no parent widget*/);
         connect(m_dialog, SIGNAL(applied()), this, SLOT(acceptedPropertiesDialog()));
         connect(m_dialog, SIGNAL(propertiesClosed()), this, SLOT(propertiesDialogClosed()));
+        m_dialog->setWindowTitle(i18n("%1 Icon Settings", m_url.fileName()));
         m_dialog->show();
     } else {
         KWindowSystem::setOnDesktop(m_dialog->winId(), KWindowSystem::currentDesktop());
