@@ -39,13 +39,13 @@ THE SOFTWARE.
 class DashboardJs : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString identifier READ identifier);
+    Q_PROPERTY(QString identifier READ identifier)
 
-    Q_PROPERTY(QString onshow READ onshow WRITE setOnshow);
-    Q_PROPERTY(QString onhide READ onhide WRITE setOnhide);
-    Q_PROPERTY(QString onremove READ onremove WRITE setOnremove);
-    Q_PROPERTY(QString ondragstart READ ondragstart WRITE setOndragstart);
-    Q_PROPERTY(QString ondragstop READ ondragstop WRITE setOndragstop);
+    Q_PROPERTY(QString onshow READ onshow WRITE setOnshow)
+    Q_PROPERTY(QString onhide READ onhide WRITE setOnhide)
+    Q_PROPERTY(QString onremove READ onremove WRITE setOnremove)
+    Q_PROPERTY(QString ondragstart READ ondragstart WRITE setOndragstart)
+    Q_PROPERTY(QString ondragstop READ ondragstop WRITE setOndragstop)
     
 public:
     DashboardJs(QWebFrame *frame, QObject *parent= 0, Plasma::Applet *applet = 0);
