@@ -409,6 +409,7 @@ public:
     Plasma::Applet *applet;
     UrlItemLauncher *urlLauncher;
     SearchModel *searchModel;
+    LeaveModel *leaveModel;
     SearchBar *searchBar;
     QWidget *footer;
     QStackedWidget *contentArea;
@@ -417,7 +418,6 @@ public:
     FlipScrollView *applicationView;
     QAbstractItemView *searchView;
     QAbstractItemView *favoritesView;
-    LeaveModel *leaveModel;
     ContextMenuFactory *contextMenuFactory;
     bool autoHide;
     int visibleItemCount;
