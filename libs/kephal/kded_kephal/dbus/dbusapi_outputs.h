@@ -26,10 +26,10 @@
 
 #include "kephal/kephal.h"
 
-class QVariant;
-class QSize;
-class QPoint;
-class QStringList;
+#include <QVariant>
+#include <QSize>
+#include <QPoint>
+#include <QStringList>
 
 namespace kephal {
     class Output;

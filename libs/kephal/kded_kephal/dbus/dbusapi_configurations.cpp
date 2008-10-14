@@ -212,4 +212,7 @@ void DBusAPIConfigurations::revert() {
     Configurations::instance()->revert();
 }
 
+#ifndef NO_KDE
 #include "dbusapi_configurations.moc"
+#endif
+
