@@ -108,4 +108,7 @@ namespace kephal {
     
 }
 
+#ifndef NO_KDE
 #include "backendoutputs.moc"
+#endif
+

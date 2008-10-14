@@ -23,10 +23,11 @@
 
 
 #include <QObject>
-#include <QVariant>
-#include <QStringList>
-#include <QPoint>
-#include <QSize>
+
+class QVariant;
+class QStringList;
+class QPoint;
+class QSize;
 
 
 namespace kephal {

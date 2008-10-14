@@ -23,10 +23,10 @@
 
 
 #include <QObject>
-#include <QSize>
-#include <QPoint>
-#include <QStringList>
 
+class QPoint;
+class QSize;
+class QStringList;
 
 namespace kephal {
     class Screen;

@@ -274,4 +274,7 @@ namespace kephal {
 
 }
 
+#ifndef NO_KDE
 #include "backendconfigurations.moc"
+#endif
+
