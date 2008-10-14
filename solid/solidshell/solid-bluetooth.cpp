@@ -205,6 +205,17 @@ int main(int argc, char **argv)
       cout << "  solid-bluetooth defaultadapter" << endl;
       cout << i18n("             # List bluetooth default adapter/interface\n") << endl;
 
+      cout << "  solid-bluetooth createdevice (interface 'ubi') 'remote-mac'" << endl;
+      cout << i18n("             # Request to create a remote bluetooth device on the bus\n") << endl;
+
+      cout << "  solid-bluetooth removedevice (interface 'ubi') 'remote-mac'" << endl;
+      cout << i18n("             # Request to remove the remote bluetooth device from the bus\n") << endl;
+
+      cout << "  solid-bluetooth getproperties (interface 'ubi') " << endl;
+      cout << i18n("             # Request the properties from the bluetooth adapter\n") << endl;
+
+
+/*
       cout << "  solid-bluetooth getremotename (interface 'ubi') 'remote-mac'" << endl;
       cout << i18n("             # Query the name from the remote device 'remote-mac' with 'ubi'\n") << endl;
 
@@ -231,7 +242,7 @@ int main(int argc, char **argv)
       cout << i18n("             # Create bonding (pairing) with bluetooth remote device.\n"
                     "             # Remove bonding of bluetooth remote device.\n"
                     "             # Check for bonding of bluetooth remote device.\n") << endl;
-
+*/
       return 0;
   }
 
@@ -252,11 +263,35 @@ bool SolidBluetooth::doIt()
     if (command == "listadapters")
     {
         return shell.bluetoothListAdapters();
-    }
+    } 
     else if (command == "defaultadapter")
     {
         return shell.bluetoothDefaultAdapter();
     }
+    else if (command == "createdevice")
+    {
+        checkArgumentCount(3, 3);
+    	QString adapterUbi(args->arg(1));
+    	QString mac(args->arg(2));		
+    	return shell.bluetoothCreateDevice(adapterUbi, mac);
+    }
+    else if (command == "removedevice")
+    {
+        checkArgumentCount(3, 3);
+    	QString adapterUbi(args->arg(1));
+    	QString remoteUbi(args->arg(2));		
+    	return shell.bluetoothRemoveDevice(adapterUbi, remoteUbi);
+    }
+    else if (command == "getproperties")
+    {
+        checkArgumentCount(2, 2);
+        QString ubi (args->arg(1));
+        return shell.bluetoothGetProperties(ubi);
+    }
+
+
+
+#if 0    
     else if (command == "getremotename")
     {
         checkArgumentCount(3, 3);
@@ -366,6 +401,7 @@ bool SolidBluetooth::doIt()
         }
 
     }
+#endif    
     else
     {
         cerr << i18n("Syntax Error: Unknown command '%1'" , command) << endl;
@@ -378,11 +414,11 @@ bool SolidBluetooth::bluetoothListAdapters()
 {
     Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
 
-    const Solid::Control::BluetoothInterfaceList all = manager.bluetoothInterfaces();
+    QStringList all = manager.bluetoothInterfaces();
 
-    foreach (const Solid::Control::BluetoothInterface device, all)
+    foreach (QString device, all)
     {
-        cout << "UBI = '" << device.ubi() << "'" << endl;
+        cout << "UBI = '" << device << "'" << endl;
     }
     return true;
 }
@@ -396,6 +432,33 @@ bool SolidBluetooth::bluetoothDefaultAdapter()
     return true;
 }
 
+bool SolidBluetooth::bluetoothCreateDevice(const QString &adapterUbi, const QString &/*mac*/)
+{
+    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
+    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface(adapterUbi);
+//    QString remoteDeviceUBI = adapter.createDevice(mac);
+//    cout << "Remote Device UBI: " << remoteDeviceUBI << endl;
+}
+
+bool SolidBluetooth::bluetoothRemoveDevice(const QString &adapterUbi, const QString &/*remoteDeviceUbi*/)
+{
+    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
+    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface(adapterUbi);
+//    adapter.removeDevice(remoteDeviceUbi);
+}
+
+bool SolidBluetooth::bluetoothGetProperties(const QString &adapterUbi)
+{
+    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
+    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface(adapterUbi);
+    QMap<QString,QVariant> props = adapter.getProperties();
+    foreach (QString valName, props.keys()) {
+        cout << valName << ": " << props[valName] << endl;
+    }
+}
+
+
+#if 0
 bool SolidBluetooth::bluetoothGetRemoteName(const QString &adapterUbi, const QString &mac)
 {
     Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
@@ -685,5 +748,6 @@ void SolidBluetooth::slotStorageResult(Solid::ErrorType error, const QVariant &e
     }
     m_loop.exit();
 }
+#endif
 
 #include "solid-bluetooth.moc"

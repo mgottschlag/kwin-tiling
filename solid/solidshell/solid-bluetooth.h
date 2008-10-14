@@ -44,6 +44,10 @@ public:
 
     bool bluetoothListAdapters();
     bool bluetoothDefaultAdapter();
+    bool bluetoothCreateDevice(const QString &adapterUbi, const QString &mac);
+    bool bluetoothRemoveDevice(const QString &adapterUbi, const QString &mac);
+    bool bluetoothGetProperties(const QString &adapterUbi);
+#if 0    
     bool bluetoothGetRemoteName(const QString &adapterUbi, const QString &mac);
     bool bluetoothAdapterAddress(const QString &ubi);
     bool bluetoothAdapterName(const QString &ubi);
@@ -63,6 +67,7 @@ public:
     bool bluetoothRemoteCreateBonding(const QString &adapterUbi, const QString &deviceUbi);
     bool bluetoothRemoteRemoveBonding(const QString &adapterUbi, const QString &deviceUbi);
     bool bluetoothRemoteHasBonding(const QString &adapterUbi, const QString &deviceUbi);
+#endif
 
 private:
     void connectJob(KJob *job);
@@ -71,12 +76,14 @@ private:
     int m_error;
     QString m_errorString;
 private slots:
+#if 0
     void slotStorageResult(Solid::ErrorType error, const QVariant &errorData);
     void slotResult(KJob *job);
     void slotPercent(KJob *job, unsigned long percent);
     void slotInfoMessage(KJob *job, const QString &message);
     void slotBluetoothDeviceFound(const QString &ubi, int deviceClass, int rssi);
     void slotBluetoothDiscoveryCompleted();
+#endif    
 };
 
 
