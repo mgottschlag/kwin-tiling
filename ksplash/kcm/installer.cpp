@@ -141,13 +141,14 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
   mBtnRemove = new KPushButton( KIcon("edit-delete"), i18n("Remove Theme"), this );
   mBtnRemove->setToolTip(i18n("Remove the selected theme from your disk"));
   mBtnRemove->setWhatsThis(i18n("This will remove the selected theme from your disk."));
+  mBtnRemove->setEnabled( false );
   leftbox->addWidget( mBtnRemove );
   connect(mBtnRemove, SIGNAL(clicked()), SLOT(slotRemove()));
 
   mBtnTest = new KPushButton( KIcon("document-preview"), i18n("Test Theme"), this );
   mBtnTest->setToolTip(i18n("Test the selected theme"));
   mBtnTest->setWhatsThis(i18n("This will test the selected theme."));
-
+  mBtnTest->setEnabled( false );
   leftbox->addWidget( mBtnTest );
   connect(mBtnTest, SIGNAL(clicked()), SLOT(slotTest()));
 
@@ -173,6 +174,7 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
   mText->setReadOnly(true);
   rightbox->addWidget(mText);
   rightbox->setStretchFactor( mText, 1 );
+
 
   readThemesList();
   load();
@@ -222,13 +224,13 @@ void SplashInstaller::addNewTheme(const KUrl &srcURL)
     // Get the name of the Theme from the theme.rc file
     KConfig _cnf(srcURL.path());
     KConfigGroup cnf(&_cnf, QString("KSplash Theme: %1").arg(themeName) );
-    
+
     // copy directory of theme.rc to ThemesDir
     KIO::NetAccess::dircopy(KUrl(srcURL.directory()), KUrl(dir + themeName));
 
     themeNames << themeName;
   }
-  else 
+  else
   {
     bool rc = KIO::NetAccess::file_copy(srcURL, url, 0);
     if (!rc)
@@ -494,7 +496,7 @@ void SplashInstaller::slotAdd()
   if (path.isEmpty()) path = QDir::homePath();
 
   KFileDialog dlg(path, "*.tgz *.tar.gz *.tar.bz2 theme.rc|" + i18n( "KSplash Theme Files" ), this);
-  dlg.setCaption(i18n("Add Theme")); 
+  dlg.setCaption(i18n("Add Theme"));
   if (!dlg.exec())
     return;
 
