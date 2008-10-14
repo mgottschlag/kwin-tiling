@@ -41,16 +41,6 @@
 #include <KPluginFactory>
 #include <KPushButton>
 
-//### copied over from kdedglobalaccel.cpp (figure out a header file to put it in!)
-enum actionIdFields
-{
-    ComponentUnique = 0,
-    ActionUnique = 1,
-    ComponentFriendly = 2,
-    ActionFriendly = 3
-};
-
-
 K_PLUGIN_FACTORY(GlobalShortcutsModuleFactory, registerPlugin<GlobalShortcutsModule>();)
 K_EXPORT_PLUGIN(GlobalShortcutsModuleFactory("kcmkeys"))
 
@@ -130,16 +120,16 @@ void GlobalShortcutsModule::load()
 
     foreach (const QStringList &componentId, components) {
         // kDebug() << "component:" << componentId;
-        const QString &componentUnique = componentId[ComponentUnique];
+        const QString &componentUnique = componentId[KGlobalAccel::ComponentUnique];
         KActionCollection* col = new KActionCollection(this, KComponentData(componentUnique.toAscii()));
         actionCollections[componentUnique] = col;
 
         QList<QStringList> actions = kga->allActionsForComponent(componentId);
         foreach (const QStringList &actionId, actions) {
-            const QString &objectName = actionId[ActionUnique];
+            const QString &objectName = actionId[KGlobalAccel::ActionUnique];
             KAction *action = col->addAction(objectName);
             action->setProperty("isConfigurationAction", QVariant(true)); // see KAction::~KAction
-            action->setText(actionId[ActionFriendly]);
+            action->setText(actionId[KGlobalAccel::ActionFriendly]);
 
             // Always call this to enable global shortcuts for the action. The editor widget
             // checks it.
@@ -162,7 +152,7 @@ void GlobalShortcutsModule::load()
     // Add components and their keys to the editor
     foreach (const QStringList &componentId, components) {
         // kDebug() << "Adding collection " << component;
-        editor->addCollection(actionCollections[componentId[ComponentUnique]], componentId);
+        editor->addCollection(actionCollections[componentId[KGlobalAccel::ComponentUnique]], componentId);
     }
 }
 
