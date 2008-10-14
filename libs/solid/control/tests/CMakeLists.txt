@@ -16,15 +16,15 @@ set( EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR} )
 
 ########### solidbluetoothtest ###############
 
-set(solidbluetoothtest_SRCS
-   solidbluetoothtest.cpp )
+#set(solidbluetoothtest_SRCS
+#   solidbluetoothtest.cpp )
 
 
-kde4_add_unit_test(solidbluetoothtest ${solidbluetoothtest_SRCS})
-add_definitions(-DFAKE_BLUETOOTH_XML="\\"${CMAKE_CURRENT_SOURCE_DIR}/../backends/fakebluetooth/fakebluetooth.xml\\"")
+#kde4_add_unit_test(solidbluetoothtest ${solidbluetoothtest_SRCS})
+#add_definitions(-DFAKE_BLUETOOTH_XML="\\"${CMAKE_CURRENT_SOURCE_DIR}/../backends/fakebluetooth/fakebluetooth.xml\\"")
 
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../backends/fakebluetooth )
+#include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../backends/fakebluetooth )
 
-target_link_libraries(solidbluetoothtest ${KDE4_KDECORE_LIBS} ${QT_QTTEST_LIBRARY} solidcontrol solidcontrolifaces solid_fakebluetooth_static)
+#target_link_libraries(solidbluetoothtest ${KDE4_KDECORE_LIBS} ${QT_QTTEST_LIBRARY} solidcontrol solidcontrolifaces solid_fakebluetooth_static)
 
 ########### install files ###############
