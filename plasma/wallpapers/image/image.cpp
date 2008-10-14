@@ -14,13 +14,16 @@
 
 #include <QPainter>
 #include <QFile>
+
 #include <KDirSelectDialog>
-#include <KStandardDirs>
 #include <KDirWatch>
-#include <KGlobalSettings>
 #include <KFileDialog>
+#include <KGlobalSettings>
 #include <KImageFilePreview>
 #include <KNS/Engine>
+#include <KRandom>
+#include <KStandardDirs>
+
 #include <plasma/theme.h>
 #include "backgroundlistmodel.h"
 #include "backgrounddelegate.h"
@@ -28,9 +31,11 @@
 
 
 Image::Image(QObject *parent, const QVariantList &args)
-: Plasma::Wallpaper(parent, args)
-, m_dialog(0)
-, m_rendererToken(-1)
+    : Plasma::Wallpaper(parent, args),
+      m_dialog(0),
+      m_currentSlide(-1),
+      m_rendererToken(-1),
+      m_randomize(true)
 {
     qRegisterMetaType<QImage>("QImage");
     connect(&m_renderer, SIGNAL(done(int, QImage)), this, SLOT(updateBackground(int, QImage)));
@@ -49,7 +54,7 @@ void Image::init(const KConfigGroup &config)
     m_mode = renderingMode().name();
     calculateGeometry();
 
-    m_delay = config.readEntry("slideTimer", 60);
+    m_delay = config.readEntry("slideTimer", 600);
     m_resizeMethod = (Background::ResizeMethod)config.readEntry("wallpaperposition",
                                                                 (int)Background::Scale);
     m_wallpaper = config.readEntry("wallpaper", QString());
@@ -439,26 +444,43 @@ void Image::browse()
 
 void Image::nextSlide()
 {
+    if (m_slideshowBackgrounds.size() < 1) {
+        return;
+    }
+
     QString previous;
     if (m_currentSlide >= 0 && m_currentSlide < m_slideshowBackgrounds.size()) {
-        previous = m_slideshowBackgrounds[m_currentSlide]->path();
+        previous = m_slideshowBackgrounds[m_currentSlide]->findBackground(m_size, m_resizeMethod);
     }
-    if (++m_currentSlide >= m_slideshowBackgrounds.size()) {
+
+    if (m_randomize) {
+        m_currentSlide = KRandom::random() % m_slideshowBackgrounds.size();
+    } else if (++m_currentSlide >= m_slideshowBackgrounds.size()) {
         m_currentSlide = 0;
     }
 
-    if (m_slideshowBackgrounds.size() > 0) {
-        // do not change to the same background if we have a choice
-        // if there is only one background, it may be changed by someone else
-        if (m_slideshowBackgrounds.size() > 1 &&
-            m_slideshowBackgrounds[m_currentSlide]->path() == previous) {
-            // try next one, they can't be the same (at least the same path)
+    QString current = m_slideshowBackgrounds[m_currentSlide]->findBackground(m_size, m_resizeMethod);
+    if (current == previous) {
+        QFileInfo info(previous);
+        if (m_previousModified == info.lastModified()) {
+            // it hasn't changed since we last loaded it, so try the next one instead
+            if (m_slideshowBackgrounds.count() == 1) {
+                // only one slide, same image, continue on
+                return;
+            }
+
             if (++m_currentSlide >= m_slideshowBackgrounds.size()) {
                 m_currentSlide = 0;
             }
+
+            current = m_slideshowBackgrounds[m_currentSlide]->findBackground(m_size, m_resizeMethod);
         }
-        render(m_slideshowBackgrounds[m_currentSlide]->findBackground(m_size, m_resizeMethod));
     }
+
+    QFileInfo info(current);
+    m_previousModified = info.lastModified();
+
+    render(current);
 }
 
 void Image::render(const QString& image)

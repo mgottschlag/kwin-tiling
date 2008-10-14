@@ -11,8 +11,10 @@
 
 #include <QFile>
 #include <QDir>
+
 #include <KGlobal>
 #include <KStandardDirs>
+
 #include "backgroundpackage.h"
 #include "backgrounddelegate.h"
 
@@ -146,17 +148,20 @@ Background* BackgroundListModel::package(int index) const
 QList<Background *> BackgroundListModel::findAllBackgrounds(const BackgroundContainer *container,
                                                             const QString &path, float ratio)
 {
+    //kDebug() << "looking for" << path;
     QList<Background *> res;
 
     // get all packages in this directory
     QStringList packages = Plasma::Package::listInstalled(path);
-    foreach (const QString &packagePath, packages)
-    {
-        kDebug() << packagePath;
-        std::auto_ptr<Background> pkg(new BackgroundPackage(path+packagePath, ratio));
+    QSet<QString> validPackages;
+    foreach (const QString &packagePath, packages) {
+        //kDebug() << packagePath;
+        std::auto_ptr<Background> pkg(new BackgroundPackage(path + packagePath, ratio));
         if (pkg->isValid() &&
             (!container || !container->contains(pkg->path()))) {
             res.append(pkg.release());
+            //kDebug() << "adding valid package:" << packagePath;
+            validPackages << packagePath;
         }
     }
 
@@ -165,12 +170,21 @@ QList<Background *> BackgroundListModel::findAllBackgrounds(const BackgroundCont
     QStringList filters;
     filters << "*.png" << "*.jpeg" << "*.jpg" << "*.svg" << "*.svgz";
     dir.setNameFilters(filters);
-    dir.setFilter(QDir::Files | QDir::Hidden);
+    dir.setFilter(QDir::Files | QDir::Hidden | QDir::Readable);
     QFileInfoList files = dir.entryInfoList();
-    foreach (const QFileInfo &wp, files)
-    {
+    foreach (const QFileInfo &wp, files) {
         if (!container || !container->contains(wp.filePath())) {
             res.append(new BackgroundFile(wp.filePath(), ratio));
+        }
+    }
+
+    // now recurse the dirs, skipping ones we found packages in
+    dir.setFilter(QDir::AllDirs | QDir::Readable);
+    files = dir.entryInfoList();
+    foreach (const QFileInfo &wp, files) {
+        QString name = wp.fileName();
+        if (name != "." && name != ".." && !validPackages.contains(wp.fileName())) {
+            res += findAllBackgrounds(container, wp.filePath(), ratio);
         }
     }
     return res;

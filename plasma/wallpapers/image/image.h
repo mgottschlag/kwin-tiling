@@ -84,6 +84,8 @@ class Image : public Plasma::Wallpaper
         int m_rendererToken;
         QSize m_size;
         QString m_img;
+        QDateTime m_previousModified;
+        bool m_randomize;
 };
 
 K_EXPORT_PLASMA_WALLPAPER(image, Image)
