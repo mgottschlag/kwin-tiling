@@ -137,7 +137,8 @@ Plugins/Addons
             * Added a new source for managing PowerDevil profiles
 
     * ScriptEngines
-        * NEW: GoogleGadgets support
+        * NEW: Google Gadgets
+        * NEW: Python Plasmoids
 
     * Runners
         * NEW: Spellcheck runner
