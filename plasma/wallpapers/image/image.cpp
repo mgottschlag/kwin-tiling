@@ -32,8 +32,8 @@
 
 Image::Image(QObject *parent, const QVariantList &args)
     : Plasma::Wallpaper(parent, args),
-      m_dialog(0),
       m_currentSlide(-1),
+      m_dialog(0),
       m_rendererToken(-1),
       m_randomize(true)
 {
