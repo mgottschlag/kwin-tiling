@@ -4,7 +4,7 @@
 
 #include "bluez-bluetoothmanager.h"
 #include "bluez-bluetoothinterface.h"
-#include "bluez-bluetoothremotedevice.h"
+//#include "bluez-bluetoothremotedevice.h"
 
 int main(int argc, char **argv)
 {
@@ -14,14 +14,23 @@ int main(int argc, char **argv)
 
     kDebug() << "Interfaces: " << mgr.bluetoothInterfaces();
     kDebug() << "Default Interface: " << mgr.defaultInterface();
+    kDebug() << "Finding Interface hci0: " << mgr.findInterface("hci0");
 
-    kDebug() << "Bluetooth Input Devices: " << mgr.bluetoothInputDevices();
+
+//  kDebug() << "Bluetooth Input Devices: " << mgr.bluetoothInputDevices();
 
     BluezBluetoothInterface iface(mgr.defaultInterface());
 
-//    iface.discoverDevices();
+    iface.setProperty("Name","testNAME");
 
-    iface.startPeriodicDiscovery();
+    QMap<QString, QVariant> props =  iface.getProperties();
+
+    foreach(QString key, props.keys()) {
+        kDebug() << "Interface Property: " << key << " : " << props[key];
+    }
+
+
+    iface.startDiscovery();
 
 #if 0
     BluezBluetoothRemoteDevice remote("/org/bluez/hci0/00:16:BC:15:A3:FF");
