@@ -28,7 +28,7 @@
 #include <QString>
 
 
-namespace kephal {
+namespace Kephal {
 
     class ScreenXML : public XMLType {
         Q_OBJECT

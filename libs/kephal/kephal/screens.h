@@ -28,7 +28,7 @@
 
 #include "kephal_export.h"
 
-namespace kephal {
+namespace Kephal {
 
     class Output;
 
@@ -154,7 +154,7 @@ namespace kephal {
              * being activated or the Configuration
              * being changed.
              */
-            void screenAdded(kephal::Screen * s);
+            void screenAdded(Kephal::Screen * s);
 
             /**
              * This signal is emitted when a
@@ -168,13 +168,13 @@ namespace kephal {
              * This signal is emitted when the size
              * of the Screen changes.
              */
-            void screenResized(kephal::Screen * s, QSize oldSize, QSize newSize);
+            void screenResized(Kephal::Screen * s, QSize oldSize, QSize newSize);
 
             /**
              * This signal is emitted when the
              * position of the Screen changes.
              */
-            void screenMoved(kephal::Screen * s, QPoint oldPosition, QPoint newPosition);
+            void screenMoved(Kephal::Screen * s, QPoint oldPosition, QPoint newPosition);
             
         protected:
             static Screens * m_instance;

@@ -24,7 +24,7 @@
 #include "kephal/outputs.h"
 
 
-namespace kephal {
+namespace Kephal {
 
     class BackendOutput : public Output {
         Q_OBJECT

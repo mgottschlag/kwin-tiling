@@ -25,7 +25,7 @@
 #include "kephal/backend.h"
 
 
-namespace kephal {
+namespace Kephal {
 
     BackendConfigurations * BackendConfigurations::self() {
         return BackendConfigurations::m_instance;

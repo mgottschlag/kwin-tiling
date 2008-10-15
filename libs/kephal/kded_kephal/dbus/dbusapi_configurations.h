@@ -29,7 +29,7 @@
 #include <QSize>
 
 
-namespace kephal {
+namespace Kephal {
     class Configuration;
     class StatusMessage;
 }
@@ -81,8 +81,8 @@ class DBusAPIConfigurations : public QObject
         void reverted();
         
     private Q_SLOTS:
-        //void statusChangedSlot(kephal::StatusMessage * status);
-        void configurationActivatedSlot(kephal::Configuration * configuration);
+        //void statusChangedSlot(Kephal::StatusMessage * status);
+        void configurationActivatedSlot(Kephal::Configuration * configuration);
         
     private:
         QMap<QString, QList<QPoint> > m_outputAvailablePositions;

@@ -27,7 +27,7 @@
 #include "outputs_interface.h"
 
 
-namespace kephal {
+namespace Kephal {
 
     class DBusOutputs : public Outputs {
         Q_OBJECT

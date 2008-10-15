@@ -27,7 +27,7 @@
 #include "outputs_interface.h"
 
 
-namespace kephal {
+namespace Kephal {
 
     DBusOutputs::DBusOutputs(QObject * parent)
             : Outputs(parent)

@@ -28,7 +28,7 @@
 #include <QDir>
 
 
-namespace kephal {
+namespace Kephal {
 
     XMLConfiguration::XMLConfiguration(XMLConfigurations * parent, ConfigurationXML * config)
         : BackendConfiguration(parent),

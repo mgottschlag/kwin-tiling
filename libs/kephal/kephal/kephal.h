@@ -33,7 +33,7 @@ inline uint qHash(const QPoint & key) {
 }
 
 
-namespace kephal {
+namespace Kephal {
 
     enum Position {
         RightOf,

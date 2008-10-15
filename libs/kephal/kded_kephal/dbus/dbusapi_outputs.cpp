@@ -27,7 +27,7 @@
 #include <QVariant>
 
 
-using namespace kephal;
+using namespace Kephal;
 
 DBusAPIOutputs::DBusAPIOutputs(QObject * parent)
     : QObject(parent)
@@ -39,15 +39,15 @@ DBusAPIOutputs::DBusAPIOutputs(QObject * parent)
     result = dbus.registerObject("/Outputs", this);
     qDebug() << "outputs registered on the bus:" << result;
     
-    connect(Outputs::self(), SIGNAL(outputConnected(kephal::Output *)), this, SLOT(outputConnectedSlot(kephal::Output *)));
-    connect(Outputs::self(), SIGNAL(outputDisconnected(kephal::Output *)), this, SLOT(outputDisconnectedSlot(kephal::Output *)));
-    connect(Outputs::self(), SIGNAL(outputActivated(kephal::Output *)), this, SLOT(outputActivatedSlot(kephal::Output *)));
-    connect(Outputs::self(), SIGNAL(outputDeactivated(kephal::Output *)), this, SLOT(outputDeactivatedSlot(kephal::Output *)));
-    connect(Outputs::self(), SIGNAL(outputResized(kephal::Output *, QSize, QSize)), this, SLOT(outputResizedSlot(kephal::Output *, QSize, QSize)));
-    connect(Outputs::self(), SIGNAL(outputMoved(kephal::Output *, QPoint, QPoint)), this, SLOT(outputMovedSlot(kephal::Output *, QPoint, QPoint)));
-    connect(Outputs::self(), SIGNAL(outputRotated(kephal::Output *, kephal::Rotation, kephal::Rotation)), this, SLOT(outputRotatedSlot(kephal::Output *, kephal::Rotation, kephal::Rotation)));
-    connect(Outputs::self(), SIGNAL(outputRateChanged(kephal::Output *, float, float)), this, SLOT(outputRateChangedSlot(kephal::Output *, float, float)));
-    connect(Outputs::self(), SIGNAL(outputReflected(kephal::Output *, bool, bool, bool, bool)), this, SLOT(outputReflectedSlot(kephal::Output *, bool, bool, bool, bool)));
+    connect(Outputs::self(), SIGNAL(outputConnected(Kephal::Output *)), this, SLOT(outputConnectedSlot(Kephal::Output *)));
+    connect(Outputs::self(), SIGNAL(outputDisconnected(Kephal::Output *)), this, SLOT(outputDisconnectedSlot(Kephal::Output *)));
+    connect(Outputs::self(), SIGNAL(outputActivated(Kephal::Output *)), this, SLOT(outputActivatedSlot(Kephal::Output *)));
+    connect(Outputs::self(), SIGNAL(outputDeactivated(Kephal::Output *)), this, SLOT(outputDeactivatedSlot(Kephal::Output *)));
+    connect(Outputs::self(), SIGNAL(outputResized(Kephal::Output *, QSize, QSize)), this, SLOT(outputResizedSlot(Kephal::Output *, QSize, QSize)));
+    connect(Outputs::self(), SIGNAL(outputMoved(Kephal::Output *, QPoint, QPoint)), this, SLOT(outputMovedSlot(Kephal::Output *, QPoint, QPoint)));
+    connect(Outputs::self(), SIGNAL(outputRotated(Kephal::Output *, Kephal::Rotation, Kephal::Rotation)), this, SLOT(outputRotatedSlot(Kephal::Output *, Kephal::Rotation, Kephal::Rotation)));
+    connect(Outputs::self(), SIGNAL(outputRateChanged(Kephal::Output *, float, float)), this, SLOT(outputRateChangedSlot(Kephal::Output *, float, float)));
+    connect(Outputs::self(), SIGNAL(outputReflected(Kephal::Output *, bool, bool, bool, bool)), this, SLOT(outputReflectedSlot(Kephal::Output *, bool, bool, bool, bool)));
 }
 
 QSize DBusAPIOutputs::size(QString id)
@@ -172,47 +172,47 @@ bool DBusAPIOutputs::reflectY(QString id) {
     return false;
 }
 
-void DBusAPIOutputs::outputConnectedSlot(kephal::Output * o) {
+void DBusAPIOutputs::outputConnectedSlot(Kephal::Output * o) {
     emit outputConnected(o->id());
 }
 
-void DBusAPIOutputs::outputDisconnectedSlot(kephal::Output * o) {
+void DBusAPIOutputs::outputDisconnectedSlot(Kephal::Output * o) {
     emit outputDisconnected(o->id());
 }
 
-void DBusAPIOutputs::outputActivatedSlot(kephal::Output * o) {
+void DBusAPIOutputs::outputActivatedSlot(Kephal::Output * o) {
     emit outputActivated(o->id());
 }
 
-void DBusAPIOutputs::outputDeactivatedSlot(kephal::Output * o) {
+void DBusAPIOutputs::outputDeactivatedSlot(Kephal::Output * o) {
     emit outputDeactivated(o->id());
 }
 
-void DBusAPIOutputs::outputResizedSlot(kephal::Output * o, QSize oldSize, QSize newSize) {
+void DBusAPIOutputs::outputResizedSlot(Kephal::Output * o, QSize oldSize, QSize newSize) {
     Q_UNUSED(oldSize)
     Q_UNUSED(newSize)
     emit outputResized(o->id());
 }
 
-void DBusAPIOutputs::outputMovedSlot(kephal::Output * o, QPoint oldPosition, QPoint newPosition) {
+void DBusAPIOutputs::outputMovedSlot(Kephal::Output * o, QPoint oldPosition, QPoint newPosition) {
     Q_UNUSED(oldPosition)
     Q_UNUSED(newPosition)
     emit outputMoved(o->id());
 }
 
-void DBusAPIOutputs::outputRateChangedSlot(kephal::Output * o, float oldRate, float newRate) {
+void DBusAPIOutputs::outputRateChangedSlot(Kephal::Output * o, float oldRate, float newRate) {
     Q_UNUSED(oldRate)
     Q_UNUSED(newRate)
     emit outputRateChanged(o->id());
 }
 
-void DBusAPIOutputs::outputRotatedSlot(kephal::Output * o, Rotation oldRotation, Rotation newRotation) {
+void DBusAPIOutputs::outputRotatedSlot(Kephal::Output * o, Rotation oldRotation, Rotation newRotation) {
     Q_UNUSED(oldRotation)
     Q_UNUSED(newRotation)
     emit outputRotated(o->id());
 }
 
-void DBusAPIOutputs::outputReflectedSlot(kephal::Output * o, bool oldX, bool oldY, bool newX, bool newY) {
+void DBusAPIOutputs::outputReflectedSlot(Kephal::Output * o, bool oldX, bool oldY, bool newX, bool newY) {
     Q_UNUSED(oldX)
     Q_UNUSED(oldY)
     Q_UNUSED(newX)

@@ -24,12 +24,12 @@
 #include "configurations/backendconfigurations.h"
 
 
-namespace kephal {
+namespace Kephal {
 
     ConfigurationScreens::ConfigurationScreens(QObject * parent)
         : OutputScreens(parent)
     {
-        connect(Configurations::self(), SIGNAL(configurationActivated(kephal::Configuration *)), this, SLOT(configurationActivated(kephal::Configuration *)));
+        connect(Configurations::self(), SIGNAL(configurationActivated(Kephal::Configuration *)), this, SLOT(configurationActivated(Kephal::Configuration *)));
     }
     
     void ConfigurationScreens::configurationActivated(Configuration * configuration) {

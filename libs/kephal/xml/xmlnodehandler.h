@@ -27,7 +27,7 @@
 #include <QDomNode>
 
 
-namespace kephal {
+namespace Kephal {
 
     class XMLType;
     class XMLFactory;

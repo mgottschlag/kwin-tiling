@@ -26,7 +26,7 @@
 #include "configurations_interface.h"
 
 
-namespace kephal {
+namespace Kephal {
 
     class DBusConfigurations;
 

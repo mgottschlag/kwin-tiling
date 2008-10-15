@@ -23,7 +23,7 @@
 #include "backendoutputs.h"
 
 
-namespace kephal {
+namespace Kephal {
 
     BackendOutput::BackendOutput(QObject * parent)
         : Output(parent)

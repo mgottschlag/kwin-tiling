@@ -21,7 +21,7 @@
 #include "simpleoutput.h"
 
 
-namespace kephal {
+namespace Kephal {
 
     SimpleOutput::SimpleOutput(QObject * parent, QString id, QSize size, QPoint position, bool connected, bool activated)
         : Output(parent)

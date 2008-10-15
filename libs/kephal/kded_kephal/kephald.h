@@ -27,12 +27,12 @@
 class QTimer;
 class QVariant;
 
-namespace kephal {
+namespace Kephal {
     class Output;
     class XRandROutputs;
 }
 
-using namespace kephal;
+using namespace Kephal;
 
 
 class KephalD : public KDEDModule
@@ -43,8 +43,8 @@ class KephalD : public KDEDModule
         ~KephalD();
         
     private Q_SLOTS:
-        void outputDisconnected(kephal::Output * output);
-        void outputConnected(kephal::Output * output);
+        void outputDisconnected(Kephal::Output * output);
+        void outputConnected(Kephal::Output * output);
         void poll();
         void pollingActivated();
         void pollingDeactivated();

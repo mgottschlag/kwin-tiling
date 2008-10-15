@@ -21,7 +21,7 @@
 #include "xmlnodehandler.h"
 
 
-namespace kephal {
+namespace Kephal {
     
 }
 

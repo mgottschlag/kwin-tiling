@@ -30,7 +30,7 @@
 #include "kephal.h"
 #include "kephal_export.h"
 
-namespace kephal {
+namespace Kephal {
 
     class Screen;
 
@@ -252,56 +252,56 @@ namespace kephal {
              * This signal is emitted when an Output
              * is connected.
              */
-            void outputConnected(kephal::Output * o);
+            void outputConnected(Kephal::Output * o);
 
             /**
              * This signal is emitted when an Output
              * is disconnected.
              */
-            void outputDisconnected(kephal::Output * o);
+            void outputDisconnected(Kephal::Output * o);
 
             /**
              * This signal is emitted when an Output
              * is activated.
              */
-            void outputActivated(kephal::Output * o);
+            void outputActivated(Kephal::Output * o);
 
             /**
              * This signal is emitted when an Output
              * is deactivated.
              */
-            void outputDeactivated(kephal::Output * o);
+            void outputDeactivated(Kephal::Output * o);
 
             /**
              * This signal is emitted when an Output
              * is resized from oldSize to newSize.
              */
-            void outputResized(kephal::Output * o, QSize oldSize, QSize newSize);
+            void outputResized(Kephal::Output * o, QSize oldSize, QSize newSize);
 
             /**
              * This signal is emitted when an Output
              * is moved on the framebuffer from
              * oldPosition to newPosition.
              */
-            void outputMoved(kephal::Output * o, QPoint oldPosition, QPoint newPosition);
+            void outputMoved(Kephal::Output * o, QPoint oldPosition, QPoint newPosition);
             
             /**
              * This signal is emitted when the refresh-rate
              * of Output o changes.
              */
-            void outputRateChanged(kephal::Output * o, float oldRate, float newRate);
+            void outputRateChanged(Kephal::Output * o, float oldRate, float newRate);
             
             /**
              * This signal is emitted when the rotation of
              * Output o changes.
              */
-            void outputRotated(kephal::Output * o, kephal::Rotation oldRotation, kephal::Rotation newRotation);
+            void outputRotated(Kephal::Output * o, Kephal::Rotation oldRotation, Kephal::Rotation newRotation);
             
             /**
              * This signal is emitted when the reflection
              * state of Output o is changed.
              */
-            void outputReflected(kephal::Output * o, bool oldX, bool oldY, bool newX, bool newY);
+            void outputReflected(Kephal::Output * o, bool oldX, bool oldY, bool newX, bool newY);
             
         protected:
             static Outputs * m_instance;

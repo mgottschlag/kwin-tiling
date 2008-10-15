@@ -29,7 +29,7 @@ void OUTPUTS_FACTORY();
 #endif
 
 
-namespace kephal {
+namespace Kephal {
 
     Outputs * Outputs::self() {
 #ifdef OUTPUTS_FACTORY

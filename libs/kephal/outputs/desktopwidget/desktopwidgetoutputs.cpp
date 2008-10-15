@@ -26,7 +26,7 @@
 #include <QDebug>
 
 
-namespace kephal {
+namespace Kephal {
 
     DesktopWidgetOutputs::DesktopWidgetOutputs(QObject * parent)
             : Outputs(parent)

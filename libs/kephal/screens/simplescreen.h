@@ -28,7 +28,7 @@
 #include <QObject>
 
 
-namespace kephal {
+namespace Kephal {
 
     class SimpleScreen : public Screen {
         Q_OBJECT

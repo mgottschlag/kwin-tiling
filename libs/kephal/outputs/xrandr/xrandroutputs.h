@@ -25,7 +25,7 @@
 #include "xrandr12/randrdisplay.h"
 
 
-namespace kephal {
+namespace Kephal {
 
     class XRandROutputs;
 
@@ -61,15 +61,15 @@ namespace kephal {
             void _changed();
 
         Q_SIGNALS:
-            void outputConnected(kephal::Output * o);
-            void outputDisconnected(kephal::Output * o);
-            void outputActivated(kephal::Output * o);
-            void outputDeactivated(kephal::Output * o);
-            void outputResized(kephal::Output * o, QSize oldSize, QSize newSize);
-            void outputMoved(kephal::Output * o, QPoint oldPosition, QPoint newPosition);
-            void outputRateChanged(kephal::Output * o, float oldRate, float newRate);
-            void outputRotated(kephal::Output * o, kephal::Rotation oldRotation, kephal::Rotation newRotation);
-            void outputReflected(kephal::Output * o, bool oldX, bool oldY, bool newX, bool newY);
+            void outputConnected(Kephal::Output * o);
+            void outputDisconnected(Kephal::Output * o);
+            void outputActivated(Kephal::Output * o);
+            void outputDeactivated(Kephal::Output * o);
+            void outputResized(Kephal::Output * o, QSize oldSize, QSize newSize);
+            void outputMoved(Kephal::Output * o, QPoint oldPosition, QPoint newPosition);
+            void outputRateChanged(Kephal::Output * o, float oldRate, float newRate);
+            void outputRotated(Kephal::Output * o, Kephal::Rotation oldRotation, Kephal::Rotation newRotation);
+            void outputReflected(Kephal::Output * o, bool oldX, bool oldY, bool newX, bool newY);
             
         private:
             RandROutput * output();

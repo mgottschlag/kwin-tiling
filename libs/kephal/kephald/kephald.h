@@ -24,12 +24,12 @@
 #include <QApplication>
 #include <QTimer>
 
-namespace kephal {
+namespace Kephal {
     class Output;
     class XRandROutputs;
 }
 
-using namespace kephal;
+using namespace Kephal;
 
 
 class KephalD : public QApplication
@@ -42,8 +42,8 @@ class KephalD : public QApplication
         virtual bool x11EventFilter(XEvent * e);
         
     private Q_SLOTS:
-        void outputDisconnected(kephal::Output * output);
-        void outputConnected(kephal::Output * output);
+        void outputDisconnected(Kephal::Output * output);
+        void outputConnected(Kephal::Output * output);
         void poll();
         void pollingActivated();
         void pollingDeactivated();

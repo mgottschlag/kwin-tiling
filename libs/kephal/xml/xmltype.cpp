@@ -25,7 +25,7 @@
 #include <QDebug>
 
 
-namespace kephal {
+namespace Kephal {
 
     XMLFactory::XMLFactory() {
         m_schema = false;

@@ -19,7 +19,7 @@
 
 
 
-namespace kephal {
+namespace Kephal {
     
     template <class ElementType, typename SimpleType>
     XMLSimpleNodeHandler<ElementType, SimpleType>::XMLSimpleNodeHandler(Getter getter, Setter setter) {

@@ -27,7 +27,7 @@
 
 
 
-using namespace kephal;
+using namespace Kephal;
 
 DBusAPIScreens::DBusAPIScreens(QObject * parent)
         : QObject(parent)
@@ -39,25 +39,25 @@ DBusAPIScreens::DBusAPIScreens(QObject * parent)
     result = dbus.registerObject("/Screens", this);
     qDebug() << "screens registered on the bus:" << result;
     
-    connect(Screens::self(), SIGNAL(screenResized(kephal::Screen *, QSize, QSize)), this, SLOT(screenResized(kephal::Screen *, QSize, QSize)));
-    connect(Screens::self(), SIGNAL(screenMoved(kephal::Screen *, QPoint, QPoint)), this, SLOT(screenMoved(kephal::Screen *, QPoint, QPoint)));
-    connect(Screens::self(), SIGNAL(screenAdded(kephal::Screen *)), this, SLOT(screenAdded(kephal::Screen *)));
+    connect(Screens::self(), SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)), this, SLOT(screenResized(Kephal::Screen *, QSize, QSize)));
+    connect(Screens::self(), SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)), this, SLOT(screenMoved(Kephal::Screen *, QPoint, QPoint)));
+    connect(Screens::self(), SIGNAL(screenAdded(Kephal::Screen *)), this, SLOT(screenAdded(Kephal::Screen *)));
     connect(Screens::self(), SIGNAL(screenRemoved(int)), this, SLOT(screenRemovedSlot(int)));
 }
 
-void DBusAPIScreens::screenResized(kephal::Screen * s, QSize oldSize, QSize newSize) {
+void DBusAPIScreens::screenResized(Kephal::Screen * s, QSize oldSize, QSize newSize) {
     Q_UNUSED(oldSize)
     Q_UNUSED(newSize)
     emit screenResized(s->id());
 }
 
-void DBusAPIScreens::screenMoved(kephal::Screen * s, QPoint oldPosition, QPoint newPosition) {
+void DBusAPIScreens::screenMoved(Kephal::Screen * s, QPoint oldPosition, QPoint newPosition) {
     Q_UNUSED(oldPosition)
     Q_UNUSED(newPosition)
     emit screenMoved(s->id());
 }
 
-void DBusAPIScreens::screenAdded(kephal::Screen * s) {
+void DBusAPIScreens::screenAdded(Kephal::Screen * s) {
     emit screenAdded(s->id());
 }
 

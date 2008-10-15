@@ -24,7 +24,7 @@
 #include "kephal/configurations.h"
 
 
-namespace kephal {
+namespace Kephal {
 
     class NoConfigurations;
 

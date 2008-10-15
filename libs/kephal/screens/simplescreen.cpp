@@ -21,7 +21,7 @@
 #include "simplescreen.h"
 
 
-namespace kephal {
+namespace Kephal {
 
     SimpleScreen::SimpleScreen(QObject * parent, int id, const QSize & size, const QPoint & position, bool privacy)
         : Screen(parent)

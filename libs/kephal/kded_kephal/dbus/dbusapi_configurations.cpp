@@ -29,7 +29,7 @@
 #include <QVariant>
 
 
-using namespace kephal;
+using namespace Kephal;
 
 DBusAPIConfigurations::DBusAPIConfigurations(QObject * parent)
     : QObject(parent)
@@ -41,8 +41,8 @@ DBusAPIConfigurations::DBusAPIConfigurations(QObject * parent)
     result = dbus.registerObject("/Configurations", this);
     qDebug() << "configurations registered on the bus:" << result;
     
-    //connect(Configurations::self(), SIGNAL(statusChanged(kephal::StatusMessage *)), this, SLOT(statusChangedSlot(kephal::StatusMessage *)));
-    connect(Configurations::self(), SIGNAL(configurationActivated(kephal::Configuration *)), this, SLOT(configurationActivatedSlot(kephal::Configuration *)));
+    //connect(Configurations::self(), SIGNAL(statusChanged(Kephal::StatusMessage *)), this, SLOT(statusChangedSlot(Kephal::StatusMessage *)));
+    connect(Configurations::self(), SIGNAL(configurationActivated(Kephal::Configuration *)), this, SLOT(configurationActivatedSlot(Kephal::Configuration *)));
     connect(Configurations::self(), SIGNAL(confirmed()), this, SIGNAL(confirmed()));
     connect(Configurations::self(), SIGNAL(reverted()), this, SIGNAL(reverted()));
     connect(Configurations::self(), SIGNAL(confirmTimeout(int)), this, SIGNAL(confirmTimeout(int)));
@@ -195,12 +195,12 @@ QString DBusAPIConfigurations::statusDescription() {
     return Configurations::self()->status()->description();
 }
 
-void DBusAPIConfigurations::statusChangedSlot(kephal::StatusMessage * status) {
+void DBusAPIConfigurations::statusChangedSlot(Kephal::StatusMessage * status) {
     Q_UNUSED(status)
     emit statusChanged();
 }*/
 
-void DBusAPIConfigurations::configurationActivatedSlot(kephal::Configuration * configuration) {
+void DBusAPIConfigurations::configurationActivatedSlot(Kephal::Configuration * configuration) {
     emit configurationActivated(configuration->name());
 }
 

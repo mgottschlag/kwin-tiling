@@ -23,7 +23,7 @@
 #include "outputscreens.h"
 
 
-namespace kephal {
+namespace Kephal {
 
     OutputScreens::OutputScreens(QObject * parent)
         : Screens(parent)
@@ -51,25 +51,25 @@ namespace kephal {
     void OutputScreens::init() {
         buildScreens();
         
-        connect(Outputs::self(), SIGNAL(outputResized(kephal::Output *, QSize, QSize)), this, SLOT(outputResized(kephal::Output *, QSize, QSize)));
-        connect(Outputs::self(), SIGNAL(outputMoved(kephal::Output *, QPoint, QPoint)), this, SLOT(outputMoved(kephal::Output *, QPoint, QPoint)));
-        connect(Outputs::self(), SIGNAL(outputActivated(kephal::Output *)), this, SLOT(outputActivated(kephal::Output *)));
-        connect(Outputs::self(), SIGNAL(outputDeactivated(kephal::Output *)), this, SLOT(outputDeactivated(kephal::Output *)));
+        connect(Outputs::self(), SIGNAL(outputResized(Kephal::Output *, QSize, QSize)), this, SLOT(outputResized(Kephal::Output *, QSize, QSize)));
+        connect(Outputs::self(), SIGNAL(outputMoved(Kephal::Output *, QPoint, QPoint)), this, SLOT(outputMoved(Kephal::Output *, QPoint, QPoint)));
+        connect(Outputs::self(), SIGNAL(outputActivated(Kephal::Output *)), this, SLOT(outputActivated(Kephal::Output *)));
+        connect(Outputs::self(), SIGNAL(outputDeactivated(Kephal::Output *)), this, SLOT(outputDeactivated(Kephal::Output *)));
     }
     
-    void OutputScreens::outputActivated(kephal::Output * o) {
+    void OutputScreens::outputActivated(Kephal::Output * o) {
         Q_UNUSED(o)
         
         rebuildScreens();
     }
 
-    void OutputScreens::outputDeactivated(kephal::Output * o) {
+    void OutputScreens::outputDeactivated(Kephal::Output * o) {
         Q_UNUSED(o)
         
         rebuildScreens();
     }
 
-    void OutputScreens::outputMoved(kephal::Output * o, QPoint oldPosition, QPoint newPosition) {
+    void OutputScreens::outputMoved(Kephal::Output * o, QPoint oldPosition, QPoint newPosition) {
         Q_UNUSED(o)
         Q_UNUSED(oldPosition)
         Q_UNUSED(newPosition)
@@ -77,7 +77,7 @@ namespace kephal {
         rebuildScreens();
     }
 
-    void OutputScreens::outputResized(kephal::Output * o, QSize oldSize, QSize newSize) {
+    void OutputScreens::outputResized(Kephal::Output * o, QSize oldSize, QSize newSize) {
         Q_UNUSED(o)
         Q_UNUSED(oldSize)
         Q_UNUSED(newSize)

@@ -28,7 +28,7 @@
 #include <QObject>
 
 
-namespace kephal {
+namespace Kephal {
 
     class SimpleOutput : public Output {
         Q_OBJECT

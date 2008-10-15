@@ -27,7 +27,7 @@
 #include <QFile>
 
 
-namespace kephal {
+namespace Kephal {
 
     class XMLNodeHandler;
     

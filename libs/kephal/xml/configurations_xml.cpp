@@ -24,7 +24,7 @@
 #include "xmlnodehandler.h"
 
 
-namespace kephal {
+namespace Kephal {
 
     class ScreenXMLFactory : public XMLFactory {
         protected:

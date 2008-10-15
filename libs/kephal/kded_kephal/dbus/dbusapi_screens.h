@@ -27,7 +27,7 @@
 #include <QSize>
 #include <QStringList>
 
-namespace kephal {
+namespace Kephal {
     class Screen;
 }
 
@@ -48,9 +48,9 @@ class DBusAPIScreens : public QObject
         QStringList outputs(int id);
         
     private Q_SLOTS:
-        void screenResized(kephal::Screen * s, QSize oldSize, QSize newSize);
-        void screenMoved(kephal::Screen * s, QPoint oldPosition, QPoint newPosition);
-        void screenAdded(kephal::Screen * s);
+        void screenResized(Kephal::Screen * s, QSize oldSize, QSize newSize);
+        void screenMoved(Kephal::Screen * s, QPoint oldPosition, QPoint newPosition);
+        void screenAdded(Kephal::Screen * s);
         void screenRemovedSlot(int id);
         
     Q_SIGNALS:

@@ -27,7 +27,7 @@
 #include "screens/output/outputscreens.h"
 #include "outputs/desktopwidget/desktopwidgetoutputs.h"
 
-using namespace kephal;
+using namespace Kephal;
 
 
 void libkephal_factory() {

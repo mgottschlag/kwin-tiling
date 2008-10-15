@@ -26,7 +26,7 @@
 #include "kephal/outputs.h"
 
 
-namespace kephal {
+namespace Kephal {
 
     class DesktopWidgetOutputs : public Outputs {
         Q_OBJECT

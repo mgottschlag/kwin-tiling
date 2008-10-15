@@ -29,7 +29,7 @@
 #include "kephal/configurations.h"
 
 
-namespace kephal {
+namespace Kephal {
 
     class BackendConfiguration : public Configuration {
         Q_OBJECT

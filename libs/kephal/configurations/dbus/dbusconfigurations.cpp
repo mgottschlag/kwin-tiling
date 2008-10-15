@@ -28,7 +28,7 @@
 #include "kephal/outputs.h"
 
 
-namespace kephal {
+namespace Kephal {
 
     DBusConfiguration::DBusConfiguration(DBusConfigurations * parent, QString name)
         : Configuration(parent),

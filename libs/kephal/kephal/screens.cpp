@@ -29,7 +29,7 @@ void SCREENS_FACTORY();
 #endif
 
 
-namespace kephal {
+namespace Kephal {
 
     Screens * Screens::self() {
 #ifdef SCREENS_FACTORY

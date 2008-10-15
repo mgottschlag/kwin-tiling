@@ -29,7 +29,7 @@
 #include <X11/Xatom.h>
 
 
-namespace kephal {
+namespace Kephal {
 
     XRandROutputs::XRandROutputs(QObject * parent, RandRDisplay * display)
             : BackendOutputs(parent)
@@ -86,15 +86,15 @@ namespace kephal {
         
         saveAsPrevious();
         
-        connect(this, SIGNAL(outputConnected(kephal::Output *)), parent, SIGNAL(outputConnected(kephal::Output *)));
-        connect(this, SIGNAL(outputDisconnected(kephal::Output *)), parent, SIGNAL(outputDisconnected(kephal::Output *)));
-        connect(this, SIGNAL(outputActivated(kephal::Output *)), parent, SIGNAL(outputActivated(kephal::Output *)));
-        connect(this, SIGNAL(outputDeactivated(kephal::Output *)), parent, SIGNAL(outputDeactivated(kephal::Output *)));
-        connect(this, SIGNAL(outputResized(kephal::Output *, QSize, QSize)), parent, SIGNAL(outputResized(kephal::Output *, QSize, QSize)));
-        connect(this, SIGNAL(outputMoved(kephal::Output *, QPoint, QPoint)), parent, SIGNAL(outputMoved(kephal::Output *, QPoint, QPoint)));
-        connect(this, SIGNAL(outputRateChanged(kephal::Output *, float, float)), parent, SIGNAL(outputRateChanged(kephal::Output *, float, float)));
-        connect(this, SIGNAL(outputRotated(kephal::Output *, kephal::Rotation, kephal::Rotation)), parent, SIGNAL(outputRotated(kephal::Output *, kephal::Rotation, kephal::Rotation)));
-        connect(this, SIGNAL(outputReflected(kephal::Output *, bool, bool, bool, bool)), parent, SIGNAL(outputReflected(kephal::Output *, bool, bool, bool, bool)));
+        connect(this, SIGNAL(outputConnected(Kephal::Output *)), parent, SIGNAL(outputConnected(Kephal::Output *)));
+        connect(this, SIGNAL(outputDisconnected(Kephal::Output *)), parent, SIGNAL(outputDisconnected(Kephal::Output *)));
+        connect(this, SIGNAL(outputActivated(Kephal::Output *)), parent, SIGNAL(outputActivated(Kephal::Output *)));
+        connect(this, SIGNAL(outputDeactivated(Kephal::Output *)), parent, SIGNAL(outputDeactivated(Kephal::Output *)));
+        connect(this, SIGNAL(outputResized(Kephal::Output *, QSize, QSize)), parent, SIGNAL(outputResized(Kephal::Output *, QSize, QSize)));
+        connect(this, SIGNAL(outputMoved(Kephal::Output *, QPoint, QPoint)), parent, SIGNAL(outputMoved(Kephal::Output *, QPoint, QPoint)));
+        connect(this, SIGNAL(outputRateChanged(Kephal::Output *, float, float)), parent, SIGNAL(outputRateChanged(Kephal::Output *, float, float)));
+        connect(this, SIGNAL(outputRotated(Kephal::Output *, Kephal::Rotation, Kephal::Rotation)), parent, SIGNAL(outputRotated(Kephal::Output *, Kephal::Rotation, Kephal::Rotation)));
+        connect(this, SIGNAL(outputReflected(Kephal::Output *, bool, bool, bool, bool)), parent, SIGNAL(outputReflected(Kephal::Output *, bool, bool, bool, bool)));
         
         connect(output(), SIGNAL(outputChanged(RROutput, int)), parent, SLOT(outputChanged(RROutput, int)));
         //connect(this, SLOT(_activate()), output(), SLOT(slotEnable()));

@@ -27,7 +27,7 @@
 #include "kephal/outputs.h"
 
 
-namespace kephal {
+namespace Kephal {
 
     class OutputScreen : public SimpleScreen {
         Q_OBJECT
@@ -55,10 +55,10 @@ namespace kephal {
             void rebuildScreens();
             
         private Q_SLOTS:
-            void outputActivated(kephal::Output * o);
-            void outputDeactivated(kephal::Output * o);
-            void outputResized(kephal::Output * o, QSize oldSize, QSize newSize);
-            void outputMoved(kephal::Output * o, QPoint oldPosition, QPoint newPosition);
+            void outputActivated(Kephal::Output * o);
+            void outputDeactivated(Kephal::Output * o);
+            void outputResized(Kephal::Output * o, QSize oldSize, QSize newSize);
+            void outputMoved(Kephal::Output * o, QPoint oldPosition, QPoint newPosition);
             
         private:
             void init();

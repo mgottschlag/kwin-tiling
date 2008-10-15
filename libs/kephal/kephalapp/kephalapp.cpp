@@ -29,7 +29,7 @@
 #include <QTextStream>
 
 
-using namespace kephal;
+using namespace Kephal;
 
 int main(int argc, char *argv[])
 {

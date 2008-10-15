@@ -25,7 +25,7 @@
 #include "../output/outputscreens.h"
 
 
-namespace kephal {
+namespace Kephal {
 
     class Configuration;
 
@@ -38,7 +38,7 @@ namespace kephal {
             void prepareScreens(QMap<int, OutputScreen *> & screens);
             
         private Q_SLOTS:
-            void configurationActivated(kephal::Configuration * configuration);
+            void configurationActivated(Kephal::Configuration * configuration);
     };
     
 }

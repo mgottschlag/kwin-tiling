@@ -29,7 +29,7 @@
 #include "kephal/kephal.h"
 #include "kephal_export.h"
 
-namespace kephal {
+namespace Kephal {
 
     class Output;
 
@@ -176,7 +176,7 @@ namespace kephal {
              * This signal is emitted when the active
              * Configuration is changed.
              */
-            void configurationActivated(kephal::Configuration * configuration);
+            void configurationActivated(Kephal::Configuration * configuration);
             
             void pollingActivated();
             void pollingDeactivated();
@@ -185,7 +185,7 @@ namespace kephal {
             void confirmed();
             void reverted();
             
-            //void statusChanged(kephal::StatusMessage * status);
+            //void statusChanged(Kephal::StatusMessage * status);
             
         protected:
             static Configurations * m_instance;

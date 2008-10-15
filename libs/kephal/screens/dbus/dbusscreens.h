@@ -27,7 +27,7 @@
 #include "screens_interface.h"
 
 
-namespace kephal {
+namespace Kephal {
 
     class DBusScreens : public Screens {
         Q_OBJECT

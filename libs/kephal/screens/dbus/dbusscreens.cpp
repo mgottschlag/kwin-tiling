@@ -27,7 +27,7 @@
 #include "kephal/outputs.h"
 
 
-namespace kephal {
+namespace Kephal {
 
     DBusScreens::DBusScreens(QObject * parent)
             : Screens(parent)

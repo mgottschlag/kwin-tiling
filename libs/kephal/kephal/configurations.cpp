@@ -32,7 +32,7 @@ void CONFIGURATIONS_FACTORY();
 #include "kephal/backend.h"
 
 
-namespace kephal {
+namespace Kephal {
 
     Configurations * Configurations::self() {
 #ifdef CONFIGURATIONS_FACTORY

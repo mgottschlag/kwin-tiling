@@ -38,7 +38,7 @@
 #include "kephald.h"
 
 
-using namespace kephal;
+using namespace Kephal;
 
 
 int main(int argc, char *argv[])
@@ -94,13 +94,13 @@ void KephalD::init() {
     new XMLConfigurations(this);
     new ConfigurationScreens(this);
     
-    foreach (kephal::Screen * screen, Screens::self()->screens()) {
+    foreach (Kephal::Screen * screen, Screens::self()->screens()) {
         qDebug() << "screen:" << screen->id() << screen->geom();
     }
     
     activateConfiguration();
-    connect(Outputs::self(), SIGNAL(outputDisconnected(kephal::Output *)), this, SLOT(outputDisconnected(kephal::Output *)));
-    connect(Outputs::self(), SIGNAL(outputConnected(kephal::Output *)), this, SLOT(outputConnected(kephal::Output *)));
+    connect(Outputs::self(), SIGNAL(outputDisconnected(Kephal::Output *)), this, SLOT(outputDisconnected(Kephal::Output *)));
+    connect(Outputs::self(), SIGNAL(outputConnected(Kephal::Output *)), this, SLOT(outputConnected(Kephal::Output *)));
     
     qDebug() << "will check for possible positions...";
     foreach (Output * output, Outputs::self()->outputs()) {

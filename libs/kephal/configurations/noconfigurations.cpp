@@ -21,7 +21,7 @@
 #include "noconfigurations.h"
 
 
-namespace kephal {
+namespace Kephal {
 
     SimpleConfiguration::SimpleConfiguration(NoConfigurations * parent)
         : Configuration(parent)
