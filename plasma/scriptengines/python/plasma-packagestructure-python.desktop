@@ -1,6 +1,24 @@
 [Desktop Entry]
 Name=Python Package Structure
+Name[el]=Δομή πακέτου Python
+Name[gl]=Estrutura de paquete de Python
+Name[km]=រចនាសម្ព័ន្ធ​កញ្ចប់ Python
+Name[pt]=Estrutura de Pacotes em Python
+Name[pt_BR]=Estrutura de Pacotes em Python
+Name[sv]=Python paketstruktur
+Name[tr]=Python Paket Yapısı
+Name[uk]=Структура пакунка Python
+Name[zh_TW]=Python 套件結構
 Comment=Format of a Python Script Engine Package
+Comment[el]=Μορφή ενός πακέτου σεναρίου μηχανής Python
+Comment[gl]=Formato dun motor de paquete de scripts en Python
+Comment[km]=ទ្រង់ទ្រាយ​របស់​កញ្ចប់​ម៉ាស៊ីន​ទិន្នន័យ​ស្គ្រីប Python
+Comment[pt]=Formato de um Pacote de Motor em Python
+Comment[pt_BR]=Formato de um Pacote de Motor em Python
+Comment[sv]=Format för ett Python skriptgränssnittpaket
+Comment[tr]=Bir Python Betik Motoru Paketinin Yapısı
+Comment[uk]=Формат пакунка рушія скриптів на Python
+Comment[zh_TW]=Python 文稿引擎套件的格式
 X-KDE-ServiceTypes=Plasma/PackageStructure
 Type=Service
 Icon=text-x-script

@@ -1,6 +1,24 @@
 [Desktop Entry]
 Name=Python Widget
+Name[el]=Συστατικό Python
+Name[gl]=Widget de Python
+Name[km]=ធាតុ​ក្រាហ្វិក Python
+Name[pt]=Elemento em Python
+Name[pt_BR]=Elemento em Python
+Name[sv]=Grafisk Python-komponent
+Name[tr]=Python Programcığı
+Name[uk]=Віджет Python
+Name[zh_TW]=Python 元件
 Comment=Plasma widget support written in Python
+Comment[el]=Υποστήριξη συστατικού Plasma γραμμένο σε Python
+Comment[gl]=Widget nativo de Plasma escrito en Pythont
+Comment[km]=ការ​គាំទ្រ​ធាតុក្រាហ្វិក​ប្លាស្មា​ត្រូវបាន​សរសេរ​នៅ​ក្នុង​ភាសា Python
+Comment[pt]=Elemento nativo do Plasma feito em Python
+Comment[pt_BR]=Elemento nativo do Plasma feito em Python
+Comment[sv]=Stöd för grafisk Plasma-komponent skriven i Python
+Comment[tr]=Python ile yazılmış Plasma programcık desteği
+Comment[uk]=Віджет Плазми, написаний на Python
+Comment[zh_TW]=用 Python 寫的 Plasma 元件支援
 X-KDE-ServiceTypes=Plasma/ScriptEngine
 Type=Service
 Icon=text-x-script

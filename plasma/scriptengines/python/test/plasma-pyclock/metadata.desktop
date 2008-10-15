@@ -1,6 +1,15 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Python Clock
+Name[el]=Ρολόι Python
+Name[gl]=Reloxo en Python
+Name[km]=នាឡិកា Python
+Name[pt]=Relógio em Python
+Name[pt_BR]=Relógio em Python
+Name[sv]=Python klocka
+Name[tr]=Python Saati
+Name[uk]=Годинник Python
+Name[zh_TW]=Python 時鐘
 Type=Service
 ServiceTypes=Plasma/Applet
 X-Plasma-API=python

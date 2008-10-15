@@ -1,6 +1,24 @@
 [Desktop Entry]
 Name=Python data engine
+Name[el]=Μηχανή δεδομένων Python
+Name[gl]=Motor de datos de Python
+Name[km]=ម៉ាស៊ីន​ទិន្នន័យ Python
+Name[pt]=Motor de dados Python
+Name[pt_BR]=Motor de dados Python
+Name[sv]=Python datagränssnitt
+Name[tr]=Python veri motoru
+Name[uk]=Рушій даних Python
+Name[zh_TW]=Python 資料引擎
 Comment=Plasma data engine support for Python
+Comment[el]=Υποστήριξη μηχανής δεδομένων Plasma για την Python
+Comment[gl]=Motor de datos de Plasma para dar soporte a Python
+Comment[km]=កា​រគាំទ្រ​ម៉ាស៊ីន​ទិន្នន័យ​ប្លាស្មា​សម្រាប់ Python
+Comment[pt]=Suporte para os motores de dados do Plasma em Python
+Comment[pt_BR]=Suporte para os motores de dados do Plasma em Python
+Comment[sv]=Plasma datagränssnittstöd för Python
+Comment[tr]=Python için Plasma veri motoru desteği
+Comment[uk]=Підтримка у рушіях даних для Python
+Comment[zh_TW]=支援 Python 的 Plasma 資料引擎
 
 X-KDE-ServiceTypes=Plasma/ScriptEngine
 Type=Service
