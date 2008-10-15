@@ -336,23 +336,23 @@ public:
      */
     //virtual void removeTrust(const QString &) = 0;
 
-    virtual void registerAgent(const QString &,const QString &) const = 0; 
+    virtual void registerAgent(const QString &,const QString &) = 0; 
 
-    virtual void releaseSession() const = 0;
+    virtual void releaseSession() = 0;
 
-    virtual void removeDevice(const QString &) const = 0;
+    virtual void removeDevice(const QString &) = 0;
 
-    virtual void requestSession() const = 0;
+    virtual void requestSession() = 0;
 
-    virtual void setProperty(const QString &, const QVariant &) const = 0;
+    virtual void setProperty(const QString &, const QVariant &) = 0;
 
-    virtual void startDiscovery() const = 0;
+    virtual void startDiscovery() = 0;
 
-    virtual void stopDiscovery() const = 0;
+    virtual void stopDiscovery() = 0;
 
-    virtual void unregisterAgent(const QString &) const = 0;
+    virtual void unregisterAgent(const QString &) = 0;
 
-    virtual void cancelDeviceCreation(const QString &) const = 0;
+    virtual void cancelDeviceCreation(const QString &) = 0;
 
 
 Q_SIGNALS:

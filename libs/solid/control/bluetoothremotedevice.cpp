@@ -1,6 +1,7 @@
 /*  This file is part of the KDE project
     Copyright (C) 2006 Will Stephenson <wstephenson@kde.org>
     Copyright (C) 2007 Daniel Gollub <dgollub@suse.de>
+    Copyright (C) 2008 Tom Patzig <tpatzig@suse.de>
 
 
     This library is free software; you can redistribute it and/or
@@ -81,6 +82,39 @@ QString Solid::Control::BluetoothRemoteDevice::ubi() const
     return_SOLID_CALL(Ifaces::BluetoothRemoteDevice *, d->backendObject(), QString(), ubi());
 }
 
+QMap<QString,QVariant> Solid::Control::BluetoothRemoteDevice::getProperties()
+{
+    Q_D(const BluetoothRemoteDevice);
+    return_SOLID_CALL(Ifaces::BluetoothRemoteDevice *, d->backendObject(), (QMap< QString,QVariant >()), getProperties());
+}
+
+QStringList Solid::Control::BluetoothRemoteDevice::listNodes()
+{
+    Q_D(const BluetoothRemoteDevice);
+    return_SOLID_CALL(Ifaces::BluetoothRemoteDevice *, d->backendObject(), QStringList(), listNodes());
+}
+
+void Solid::Control::BluetoothRemoteDevice::setProperty(const QString &name, const QVariant &value)
+{
+    Q_D(const BluetoothRemoteDevice);
+    SOLID_CALL(Ifaces::BluetoothRemoteDevice *, d->backendObject(), setProperty(name,value));
+}
+
+void Solid::Control::BluetoothRemoteDevice::cancelDiscovery()
+{
+    Q_D(const BluetoothRemoteDevice);
+    SOLID_CALL(Ifaces::BluetoothRemoteDevice *, d->backendObject(), cancelDiscovery());
+}
+
+void Solid::Control::BluetoothRemoteDevice::disconnect()
+{
+    Q_D(const BluetoothRemoteDevice);
+    SOLID_CALL(Ifaces::BluetoothRemoteDevice *, d->backendObject(), disconnect());
+}
+
+
+
+/*
 QString Solid::Control::BluetoothRemoteDevice::address() const
 {
     Q_D(const BluetoothRemoteDevice);
@@ -222,12 +256,20 @@ void Solid::Control::BluetoothRemoteDevice::serviceRecordAsXml(uint handle) cons
     Q_D(const BluetoothRemoteDevice);
     SOLID_CALL(Ifaces::BluetoothRemoteDevice *, d->backendObject(), serviceRecordAsXml(handle));
 }
+*/
+
+void Solid::Control::BluetoothRemoteDevice::discoverServices(const QString &filter)
+{
+    Q_D(const BluetoothRemoteDevice);
+    SOLID_CALL(Ifaces::BluetoothRemoteDevice *, d->backendObject(), discoverServices(filter));
+}
 
 void Solid::Control::BluetoothRemoteDevicePrivate::setBackendObject(QObject *object)
 {
     FrontendObjectPrivate::setBackendObject(object);
 
     if (object) {
+        /*
         QObject::connect(object, SIGNAL(classChanged(uint)),
                          parent(), SIGNAL(classChanged(uint)));
         QObject::connect(object, SIGNAL(nameChanged(const QString &)),
@@ -252,6 +294,20 @@ void Solid::Control::BluetoothRemoteDevicePrivate::setBackendObject(QObject *obj
 			 parent(), SIGNAL(serviceHandlesAvailable(const QString &, const QList<uint> &)));
 	QObject::connect(object, SIGNAL(serviceRecordXmlAvailable(const QString &, const QString &)),
 			 parent(), SIGNAL(serviceRecordXmlAvailable(const QString &, const QString &)));
+        */
+
+        QObject::connect(object, SIGNAL(serviceDiscoverAvailable(const QString &, const QMap< uint,QString> &)),
+                         parent(), SIGNAL(serviceDiscoverAvailable(const QString &, const QMap< uint,QString > &)));
+        QObject::connect(object, SIGNAL(propertyChanged(const QString &, const QVariant &)),
+                         parent(), SIGNAL(propertyChanged(const QString &, const QVariant &)));
+        QObject::connect(object, SIGNAL(disconnectRequested()),
+                         parent(), SIGNAL(disconnectRequested()));
+        QObject::connect(object, SIGNAL(nodeCreated(const QString &)),
+                         parent(), SIGNAL(nodeCreated(const QString &)));
+        QObject::connect(object, SIGNAL(nodeRemoved(const QString &)),
+                         parent(), SIGNAL(nodeRemoved(const QString &)));
+
+
 	
     }
 }
