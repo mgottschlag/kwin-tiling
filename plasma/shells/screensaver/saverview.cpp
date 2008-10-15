@@ -33,7 +33,8 @@
 #include "plasma/corona.h"
 #include "plasma/containment.h"
 #include "plasma/svg.h"
-#include "plasma/appletbrowser.h"
+
+#include "appletbrowser.h"
 #include "plasmaapp.h"
 
 static const int SUPPRESS_SHOW_TIMEOUT = 500; // Number of millis to prevent reshow of dashboard

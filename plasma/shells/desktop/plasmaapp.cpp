@@ -55,10 +55,10 @@
 
 #include <ksmserver_interface.h>
 
-#include "plasma/appletbrowser.h"
 #include <plasma/containment.h>
 #include <plasma/theme.h>
 
+#include "appletbrowser.h"
 #include "appadaptor.h"
 #include "desktopcorona.h"
 #include "desktopview.h"
