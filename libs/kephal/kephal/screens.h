@@ -116,7 +116,7 @@ namespace kephal {
     /**
      * Screens is the entrance-point for all Screen-
      * related operations.
-     * Use: Screens::instance() for the currently
+     * Use: Screens::self() for the currently
      * active instance.
      */
     class KEPHAL_EXPORT Screens : public QObject {
@@ -125,7 +125,7 @@ namespace kephal {
             /**
              * Returns the currently active instance.
              */
-            static Screens * instance();
+            static Screens * self();
             
             Screens(QObject * parent);
             

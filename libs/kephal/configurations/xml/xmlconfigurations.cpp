@@ -354,7 +354,7 @@ namespace kephal {
     
     OutputsXML * XMLConfigurations::findKnownOutputs()
     {
-        QList<Output *> currentOutputs = Outputs::instance()->outputs();
+        QList<Output *> currentOutputs = Outputs::self()->outputs();
         int connected = 0;
         foreach (Output * output, currentOutputs) {
             if (output->isConnected()) {
@@ -403,7 +403,7 @@ namespace kephal {
     
     OutputsXML * XMLConfigurations::findBestOutputs()
     {
-        QList<Output *> currentOutputs = Outputs::instance()->outputs();
+        QList<Output *> currentOutputs = Outputs::self()->outputs();
         int connected = 0;
         foreach (Output * output, currentOutputs) {
             if (output->isConnected()) {
@@ -698,7 +698,7 @@ namespace kephal {
         QMap<Output *, int> outputs;
         Output * add = (match.contains(-1) ? output : 0);
         Output * remove = (add ? 0 : output);
-        foreach (Output * o, Outputs::instance()->outputs()) {
+        foreach (Output * o, Outputs::self()->outputs()) {
             Screen * screen = o->screen();
             if (remove && (remove == o)) {
                 outputs.insert(o, -1);
@@ -721,7 +721,7 @@ namespace kephal {
     }
     
     void XMLConfigurations::translateToOther(QMap<int, QRect> & layout, Output * output, QMap<int, int> match) {
-        foreach (Output * o, Outputs::instance()->outputs()) {
+        foreach (Output * o, Outputs::self()->outputs()) {
             if (o == output) {
                 continue;
             }
@@ -740,7 +740,7 @@ namespace kephal {
         if (! output->isActivated()) {
             cloned = true;
         } else {
-            foreach (Output * o, Outputs::instance()->outputs()) {
+            foreach (Output * o, Outputs::self()->outputs()) {
                 if (o == output) {
                     continue;
                 }
@@ -815,7 +815,7 @@ namespace kephal {
             cloned = true;
         } else {
             int count = 0;
-            foreach (Output * o, Outputs::instance()->outputs()) {
+            foreach (Output * o, Outputs::self()->outputs()) {
                 if (o->isActivated()) {
                     ++count;
                 }
@@ -879,7 +879,7 @@ namespace kephal {
             //qDebug() << "trying" << possible << "as" << screenId << "in layout" << noCloneConfig->name() << noCloneLayout;
             
             QMap<Output *, int> outputIndexes;
-            foreach (Output * o, Outputs::instance()->outputs()) {
+            foreach (Output * o, Outputs::self()->outputs()) {
                 Screen * s = o->screen();
                 outputIndexes.insert(o, (s ? s->id() : -1));
             }
@@ -910,7 +910,7 @@ namespace kephal {
         if (! output->isActivated()) {
             cloned = true;
         } else {
-            foreach (Output * o, Outputs::instance()->outputs()) {
+            foreach (Output * o, Outputs::self()->outputs()) {
                 if (o == output) {
                     continue;
                 }
@@ -931,7 +931,7 @@ namespace kephal {
         //qDebug() << "trying" << possible << "as" << screenId << "in layout" << m_activeConfiguration->name() << currentLayout;
         
         QMap<Output *, int> outputIndexes;
-        foreach (Output * o, Outputs::instance()->outputs()) {
+        foreach (Output * o, Outputs::self()->outputs()) {
             Screen * s = o->screen();
             outputIndexes.insert(o, (s ? s->id() : -1));
         }
@@ -976,7 +976,7 @@ namespace kephal {
                 currentMap.insert(o->actualOutput(), o);
             }
             
-            QList<Output *> outputs = Outputs::instance()->outputs();
+            QList<Output *> outputs = Outputs::self()->outputs();
             foreach (Output * output, outputs) {
                 if (! output->isConnected()) {
                     continue;
@@ -1085,7 +1085,7 @@ namespace kephal {
     
     QMap<Output *, int> XMLConfigurations::currentOutputScreens() {
         QMap<Output *, int> outputScreens;
-        foreach (Output * output, Outputs::instance()->outputs()) {
+        foreach (Output * output, Outputs::self()->outputs()) {
             int screen = this->screen(output);
             if (screen >= 0) {
                 outputScreens.insert(output, screen);
@@ -1119,14 +1119,14 @@ namespace kephal {
         
         qDebug() << "layout:" << layout;
         if (! m_awaitingConfirm) {
-            foreach (BackendOutput * o, BackendOutputs::instance()->backendOutputs()) {
+            foreach (BackendOutput * o, BackendOutputs::self()->backendOutputs()) {
                 o->mark();
             }
         }
         
-        if (! BackendOutputs::instance()->activateLayout(layout)) {
+        if (! BackendOutputs::self()->activateLayout(layout)) {
             if (! m_awaitingConfirm) {
-                foreach (BackendOutput * o, BackendOutputs::instance()->backendOutputs()) {
+                foreach (BackendOutput * o, BackendOutputs::self()->backendOutputs()) {
                     o->revert();
                 }
             }
@@ -1199,7 +1199,7 @@ namespace kephal {
         }
 
         foreach (OutputXML * o, m_currentOutputs->outputs()) {
-            BackendOutput * output = BackendOutputs::instance()->backendOutput(o->name());
+            BackendOutput * output = BackendOutputs::self()->backendOutput(o->name());
             if (output) {
                 bool failed = false;
                 output->mark();
@@ -1243,7 +1243,7 @@ namespace kephal {
     }
 
     bool XMLConfigurations::rotate(Output * output, Rotation rotation) {
-        BackendOutput * o = BackendOutputs::instance()->backendOutput(output->id());
+        BackendOutput * o = BackendOutputs::self()->backendOutput(output->id());
         if (o) {
             bool resizeNeeded = ((output->rotation() + rotation) % 180) != 0;
             if (resizeNeeded) {
@@ -1300,7 +1300,7 @@ namespace kephal {
     }
 
     bool XMLConfigurations::reflectX(Output * output, bool reflect) {
-        BackendOutput * o = BackendOutputs::instance()->backendOutput(output->id());
+        BackendOutput * o = BackendOutputs::self()->backendOutput(output->id());
         if (o) {
             requireConfirm();
             if (o->applyOrientation(o->rotation(), reflect, o->reflectY())) {
@@ -1321,7 +1321,7 @@ namespace kephal {
     }
 
     bool XMLConfigurations::reflectY(Output * output, bool reflect) {
-        BackendOutput * o = BackendOutputs::instance()->backendOutput(output->id());
+        BackendOutput * o = BackendOutputs::self()->backendOutput(output->id());
         if (o) {
             requireConfirm();
             if (o->applyOrientation(o->rotation(), o->reflectX(), reflect)) {
@@ -1342,7 +1342,7 @@ namespace kephal {
     }
 
     bool XMLConfigurations::changeRate(Output * output, float rate) {
-        BackendOutput * o = BackendOutputs::instance()->backendOutput(output->id());
+        BackendOutput * o = BackendOutputs::self()->backendOutput(output->id());
         if (o) {
             requireConfirm();
             if (o->applyGeom(o->geom(), rate)) {
@@ -1403,7 +1403,7 @@ namespace kephal {
         m_awaitingConfirm = false;
         
         m_activeConfiguration = m_markedConfiguration;
-        foreach (BackendOutput * o, BackendOutputs::instance()->backendOutputs()) {
+        foreach (BackendOutput * o, BackendOutputs::self()->backendOutputs()) {
             o->revert();
         }
         loadXml();
@@ -1421,7 +1421,7 @@ namespace kephal {
             m_awaitingConfirm = true;
             m_confirmTimer->start(1000);
             
-            foreach (BackendOutput * o, BackendOutputs::instance()->backendOutputs()) {
+            foreach (BackendOutput * o, BackendOutputs::self()->backendOutputs()) {
                 o->mark();
             }
             m_markedConfiguration = m_activeConfiguration;

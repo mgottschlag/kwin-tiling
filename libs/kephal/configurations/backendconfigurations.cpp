@@ -27,7 +27,7 @@
 
 namespace kephal {
 
-    BackendConfigurations * BackendConfigurations::instance() {
+    BackendConfigurations * BackendConfigurations::self() {
         return BackendConfigurations::m_instance;
     }
     
@@ -69,8 +69,8 @@ namespace kephal {
     
     QMap<int, QRect> BackendConfiguration::realLayout() {
         QMap<Output *, int> outputScreens;
-        foreach (Output * output, Outputs::instance()->outputs()) {
-            int screen = Configurations::instance()->screen(output);
+        foreach (Output * output, Outputs::self()->outputs()) {
+            int screen = Configurations::self()->screen(output);
             outputScreens.insert(output, screen);
         }
         return realLayout(outputScreens);

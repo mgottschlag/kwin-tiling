@@ -61,7 +61,7 @@ namespace kephal {
             
             QStringList outputIds = m_interface->outputs(id);
             foreach (const QString& outputId, outputIds) {
-                Output * output = Outputs::instance()->output(outputId);
+                Output * output = Outputs::self()->output(outputId);
                 if (output) {
                     screen->_outputs() << output;
                 }
@@ -106,7 +106,7 @@ namespace kephal {
 
         QStringList outputIds = m_interface->outputs(id);
         foreach (const QString& outputId, outputIds) {
-            Output * output = Outputs::instance()->output(outputId);
+            Output * output = Outputs::self()->output(outputId);
             if (output) {
                 screen->_outputs() << output;
             }

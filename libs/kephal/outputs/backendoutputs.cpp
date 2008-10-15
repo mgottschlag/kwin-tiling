@@ -54,7 +54,7 @@ namespace kephal {
     
     BackendOutputs * BackendOutputs::m_instance = 0;
     
-    BackendOutputs * BackendOutputs::instance() {
+    BackendOutputs * BackendOutputs::self() {
         return m_instance;
     }
     

@@ -31,7 +31,7 @@ void SCREENS_FACTORY();
 
 namespace kephal {
 
-    Screens * Screens::instance() {
+    Screens * Screens::self() {
 #ifdef SCREENS_FACTORY
         if (Screens::m_instance == 0) {
             SCREENS_FACTORY();
@@ -56,7 +56,7 @@ namespace kephal {
     }
     
     Screen * Screens::primaryScreen() {
-        Configuration * config = Configurations::instance()->activeConfiguration();
+        Configuration * config = Configurations::self()->activeConfiguration();
         if (! config) {
             return 0;
         }
@@ -79,11 +79,11 @@ namespace kephal {
     }
     
     bool Screen::isPrimary() {
-        return Screens::instance()->primaryScreen() == this;
+        return Screens::self()->primaryScreen() == this;
     }
     
     int ScreenUtils::numScreens() {
-        return Screens::instance()->screens().size();
+        return Screens::self()->screens().size();
     }
     
     QRect ScreenUtils::screenGeometry(int id) {
@@ -93,7 +93,7 @@ namespace kephal {
         if (id == -1) 
             return QApplication::desktop()->screenGeometry();
         else
-            return Screens::instance()->screen(id)->geom();
+            return Screens::self()->screen(id)->geom();
     }
     
     QSize ScreenUtils::screenSize(int id) {
@@ -103,7 +103,7 @@ namespace kephal {
         if (id == -1) 
             return QApplication::desktop()->screenGeometry().size();
         else
-            return Screens::instance()->screen(id)->size();
+            return Screens::self()->screen(id)->size();
     }            
 
     

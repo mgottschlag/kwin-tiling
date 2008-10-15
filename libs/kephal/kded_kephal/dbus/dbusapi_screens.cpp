@@ -39,10 +39,10 @@ DBusAPIScreens::DBusAPIScreens(QObject * parent)
     result = dbus.registerObject("/Screens", this);
     qDebug() << "screens registered on the bus:" << result;
     
-    connect(Screens::instance(), SIGNAL(screenResized(kephal::Screen *, QSize, QSize)), this, SLOT(screenResized(kephal::Screen *, QSize, QSize)));
-    connect(Screens::instance(), SIGNAL(screenMoved(kephal::Screen *, QPoint, QPoint)), this, SLOT(screenMoved(kephal::Screen *, QPoint, QPoint)));
-    connect(Screens::instance(), SIGNAL(screenAdded(kephal::Screen *)), this, SLOT(screenAdded(kephal::Screen *)));
-    connect(Screens::instance(), SIGNAL(screenRemoved(int)), this, SLOT(screenRemovedSlot(int)));
+    connect(Screens::self(), SIGNAL(screenResized(kephal::Screen *, QSize, QSize)), this, SLOT(screenResized(kephal::Screen *, QSize, QSize)));
+    connect(Screens::self(), SIGNAL(screenMoved(kephal::Screen *, QPoint, QPoint)), this, SLOT(screenMoved(kephal::Screen *, QPoint, QPoint)));
+    connect(Screens::self(), SIGNAL(screenAdded(kephal::Screen *)), this, SLOT(screenAdded(kephal::Screen *)));
+    connect(Screens::self(), SIGNAL(screenRemoved(int)), this, SLOT(screenRemovedSlot(int)));
 }
 
 void DBusAPIScreens::screenResized(kephal::Screen * s, QSize oldSize, QSize newSize) {
@@ -67,25 +67,25 @@ void DBusAPIScreens::screenRemovedSlot(int id) {
 
 QSize DBusAPIScreens::size(int id)
 {
-    Screen * s = Screens::instance()->screen(id);
+    Screen * s = Screens::self()->screen(id);
     return s ? s->size() : QSize(0,0);
 }
 
 QPoint DBusAPIScreens::position(int id)
 {
-    Screen * s = Screens::instance()->screen(id);
+    Screen * s = Screens::self()->screen(id);
     return s ? s->position() : QPoint(0,0);
 }
 
 int DBusAPIScreens::numScreens()
 {
-    QList<Screen *> screens = Screens::instance()->screens();
+    QList<Screen *> screens = Screens::self()->screens();
     return screens.size();
 }
 
 int DBusAPIScreens::id(int index)
 {
-    QList<Screen *> screens = Screens::instance()->screens();
+    QList<Screen *> screens = Screens::self()->screens();
     if (index < screens.size()) {
         return screens[index]->id();
     }
@@ -94,12 +94,12 @@ int DBusAPIScreens::id(int index)
 
 int DBusAPIScreens::primaryScreen()
 {
-    Screen * s = Screens::instance()->primaryScreen();
+    Screen * s = Screens::self()->primaryScreen();
     return s ? s->id() : 0;
 }
 
 QStringList DBusAPIScreens::outputs(int id) {
-    Screen * s = Screens::instance()->screen(id);
+    Screen * s = Screens::self()->screen(id);
     QStringList result;
     if (s) {
         foreach (Output * output, s->outputs()) {

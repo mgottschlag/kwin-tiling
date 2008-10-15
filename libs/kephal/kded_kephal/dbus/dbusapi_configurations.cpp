@@ -41,23 +41,23 @@ DBusAPIConfigurations::DBusAPIConfigurations(QObject * parent)
     result = dbus.registerObject("/Configurations", this);
     qDebug() << "configurations registered on the bus:" << result;
     
-    //connect(Configurations::instance(), SIGNAL(statusChanged(kephal::StatusMessage *)), this, SLOT(statusChangedSlot(kephal::StatusMessage *)));
-    connect(Configurations::instance(), SIGNAL(configurationActivated(kephal::Configuration *)), this, SLOT(configurationActivatedSlot(kephal::Configuration *)));
-    connect(Configurations::instance(), SIGNAL(confirmed()), this, SIGNAL(confirmed()));
-    connect(Configurations::instance(), SIGNAL(reverted()), this, SIGNAL(reverted()));
-    connect(Configurations::instance(), SIGNAL(confirmTimeout(int)), this, SIGNAL(confirmTimeout(int)));
+    //connect(Configurations::self(), SIGNAL(statusChanged(kephal::StatusMessage *)), this, SLOT(statusChangedSlot(kephal::StatusMessage *)));
+    connect(Configurations::self(), SIGNAL(configurationActivated(kephal::Configuration *)), this, SLOT(configurationActivatedSlot(kephal::Configuration *)));
+    connect(Configurations::self(), SIGNAL(confirmed()), this, SIGNAL(confirmed()));
+    connect(Configurations::self(), SIGNAL(reverted()), this, SIGNAL(reverted()));
+    connect(Configurations::self(), SIGNAL(confirmTimeout(int)), this, SIGNAL(confirmTimeout(int)));
 }
 
 QStringList DBusAPIConfigurations::configurations() {
     QStringList result;
-    foreach (const QString& name, Configurations::instance()->configurations().keys()) {
+    foreach (const QString& name, Configurations::self()->configurations().keys()) {
         result << name;
     }
     return result;
 }
 
 int DBusAPIConfigurations::numAvailablePositions(QString output) {
-    Output * o = Outputs::instance()->output(output);
+    Output * o = Outputs::self()->output(output);
     if (o) {
         m_outputAvailablePositions.insert(output, o->availablePositions());
         return m_outputAvailablePositions[output].size();
@@ -74,14 +74,14 @@ QPoint DBusAPIConfigurations::availablePosition(QString output, int index) {
 
 QStringList DBusAPIConfigurations::alternateConfigurations() {
     QStringList result;
-    foreach (Configuration * config, Configurations::instance()->alternateConfigurations()) {
+    foreach (Configuration * config, Configurations::self()->alternateConfigurations()) {
         result << config->name();
     }
     return result;
 }
 
 QString DBusAPIConfigurations::activeConfiguration() {
-    Configuration * config = Configurations::instance()->activeConfiguration();
+    Configuration * config = Configurations::self()->activeConfiguration();
     if (config) {
         return config->name();
     }
@@ -89,55 +89,55 @@ QString DBusAPIConfigurations::activeConfiguration() {
 }
 
 bool DBusAPIConfigurations::move(QString output, QPoint position) {
-    Output * o = Outputs::instance()->output(output);
+    Output * o = Outputs::self()->output(output);
     if (o) {
-        return Configurations::instance()->move(o, position);
+        return Configurations::self()->move(o, position);
     }
     return false;
 }
 
 bool DBusAPIConfigurations::resize(QString output, QSize size) {
-    Output * o = Outputs::instance()->output(output);
+    Output * o = Outputs::self()->output(output);
     if (o) {
-        return Configurations::instance()->resize(o, size);
+        return Configurations::self()->resize(o, size);
     }
     return false;
 }
 
 bool DBusAPIConfigurations::rotate(QString output, int rotation) {
-    Output * o = Outputs::instance()->output(output);
+    Output * o = Outputs::self()->output(output);
     if (o) {
-        return Configurations::instance()->rotate(o, (Rotation) rotation);
+        return Configurations::self()->rotate(o, (Rotation) rotation);
     }
     return false;
 }
 
 bool DBusAPIConfigurations::changeRate(QString output, qreal rate) {
-    Output * o = Outputs::instance()->output(output);
+    Output * o = Outputs::self()->output(output);
     if (o) {
-        return Configurations::instance()->changeRate(o, rate);
+        return Configurations::self()->changeRate(o, rate);
     }
     return false;
 }
 
 bool DBusAPIConfigurations::reflectX(QString output, bool reflect) {
-    Output * o = Outputs::instance()->output(output);
+    Output * o = Outputs::self()->output(output);
     if (o) {
-        return Configurations::instance()->reflectX(o, reflect);
+        return Configurations::self()->reflectX(o, reflect);
     }
     return false;
 }
 
 bool DBusAPIConfigurations::reflectY(QString output, bool reflect) {
-    Output * o = Outputs::instance()->output(output);
+    Output * o = Outputs::self()->output(output);
     if (o) {
-        return Configurations::instance()->reflectY(o, reflect);
+        return Configurations::self()->reflectY(o, reflect);
     }
     return false;
 }
 
 bool DBusAPIConfigurations::isModifiable(QString config) {
-    Configuration * c = Configurations::instance()->configuration(config);
+    Configuration * c = Configurations::self()->configuration(config);
     if (c) {
         return c->isModifiable();
     }
@@ -145,7 +145,7 @@ bool DBusAPIConfigurations::isModifiable(QString config) {
 }
 
 bool DBusAPIConfigurations::isActivated(QString config) {
-    Configuration * c = Configurations::instance()->configuration(config);
+    Configuration * c = Configurations::self()->configuration(config);
     if (c) {
         return c->isActivated();
     }
@@ -153,14 +153,14 @@ bool DBusAPIConfigurations::isActivated(QString config) {
 }
 
 void DBusAPIConfigurations::activate(QString config) {
-    Configuration * c = Configurations::instance()->configuration(config);
+    Configuration * c = Configurations::self()->configuration(config);
     if (c) {
         c->activate();
     }
 }
 
 int DBusAPIConfigurations::primaryScreen(QString config) {
-    Configuration * c = Configurations::instance()->configuration(config);
+    Configuration * c = Configurations::self()->configuration(config);
     if (c) {
         return c->primaryScreen();
     }
@@ -168,31 +168,31 @@ int DBusAPIConfigurations::primaryScreen(QString config) {
 }
 
 int DBusAPIConfigurations::screen(QString outputId) {
-    Output * output = Outputs::instance()->output(outputId);
+    Output * output = Outputs::self()->output(outputId);
     if (output) {
-        return Configurations::instance()->screen(output);
+        return Configurations::self()->screen(output);
     }
     return -1;
 }
 
 void DBusAPIConfigurations::setPolling(bool polling) {
-    Configurations::instance()->setPolling(polling);
+    Configurations::self()->setPolling(polling);
 }
 
 bool DBusAPIConfigurations::polling() {
-    return Configurations::instance()->polling();
+    return Configurations::self()->polling();
 }
 
 /*int DBusAPIConfigurations::statusType() {
-    return Configurations::instance()->status()->type();
+    return Configurations::self()->status()->type();
 }
 
 int DBusAPIConfigurations::statusMessage() {
-    return Configurations::instance()->status()->message();
+    return Configurations::self()->status()->message();
 }
 
 QString DBusAPIConfigurations::statusDescription() {
-    return Configurations::instance()->status()->description();
+    return Configurations::self()->status()->description();
 }
 
 void DBusAPIConfigurations::statusChangedSlot(kephal::StatusMessage * status) {
@@ -205,11 +205,11 @@ void DBusAPIConfigurations::configurationActivatedSlot(kephal::Configuration * c
 }
 
 void DBusAPIConfigurations::confirm() {
-    Configurations::instance()->confirm();
+    Configurations::self()->confirm();
 }
 
 void DBusAPIConfigurations::revert() {
-    Configurations::instance()->revert();
+    Configurations::self()->revert();
 }
 
 #ifndef NO_KDE

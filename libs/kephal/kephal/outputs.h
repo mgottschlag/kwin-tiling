@@ -220,7 +220,7 @@ namespace kephal {
     /**
      * Outputs is the entrance-point to all Output
      * related operations.
-     * Use: Outputs::instance() to obtain the currently
+     * Use: Outputs::self() to obtain the currently
      * active instance.
      */
     class KEPHAL_EXPORT Outputs : public QObject {
@@ -230,7 +230,7 @@ namespace kephal {
              * Returns the currently active
              * instance.
              */
-            static Outputs * instance();
+            static Outputs * self();
             
             Outputs(QObject * parent);
             

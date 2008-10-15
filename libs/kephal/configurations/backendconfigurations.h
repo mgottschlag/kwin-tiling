@@ -117,7 +117,7 @@ namespace kephal {
     class BackendConfigurations : public Configurations {
         Q_OBJECT
         public:
-            static BackendConfigurations * instance();
+            static BackendConfigurations * self();
             
             BackendConfigurations(QObject * parent);
             

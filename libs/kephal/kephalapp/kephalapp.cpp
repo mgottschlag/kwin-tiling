@@ -63,7 +63,7 @@ void KephalApp::run() {
 void KephalApp::query() {
     QTextStream cout(stdout);
     cout << "Screens:\n";
-    foreach (Screen * screen, Screens::instance()->screens()) {
+    foreach (Screen * screen, Screens::self()->screens()) {
         cout << "  Screen " << screen->id() << ":\n";
         cout << "    Size: " << screen->size().width() << "x" << screen->size().height() << "\n";
         cout << "    Position: (" << screen->position().x() << "," << screen->position().y() << ")\n";

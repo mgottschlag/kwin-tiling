@@ -29,7 +29,7 @@ namespace kephal {
     ConfigurationScreens::ConfigurationScreens(QObject * parent)
         : OutputScreens(parent)
     {
-        connect(Configurations::instance(), SIGNAL(configurationActivated(kephal::Configuration *)), this, SLOT(configurationActivated(kephal::Configuration *)));
+        connect(Configurations::self(), SIGNAL(configurationActivated(kephal::Configuration *)), this, SLOT(configurationActivated(kephal::Configuration *)));
     }
     
     void ConfigurationScreens::configurationActivated(Configuration * configuration) {
@@ -38,7 +38,7 @@ namespace kephal {
     }
     
     void ConfigurationScreens::prepareScreens(QMap<int, OutputScreen *> & screens) {
-        BackendConfiguration * config = BackendConfigurations::instance()->activeBackendConfiguration();
+        BackendConfiguration * config = BackendConfigurations::self()->activeBackendConfiguration();
         if (! config) {
             return;
         }

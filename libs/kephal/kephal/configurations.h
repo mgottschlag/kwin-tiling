@@ -91,7 +91,7 @@ namespace kephal {
     /**
      * Configurations is the entrance-point to all
      * Configuration related operations.
-     * Use: Configurations::instance() to obtain the currently
+     * Use: Configurations::self() to obtain the currently
      * active instance.
      */
     class KEPHAL_EXPORT Configurations : public QObject {
@@ -101,7 +101,7 @@ namespace kephal {
              * Returns the currently active
              * instance.
              */
-            static Configurations * instance();
+            static Configurations * self();
             
             Configurations(QObject * parent);
             

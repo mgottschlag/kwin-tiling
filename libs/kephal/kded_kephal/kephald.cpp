@@ -76,24 +76,24 @@ void KephalD::init() {
         new DesktopWidgetOutputs(this);
     }
     
-    foreach (Output * output, Outputs::instance()->outputs()) {
+    foreach (Output * output, Outputs::self()->outputs()) {
         qDebug() << "output:" << output->id() << output->geom() << output->rotation() << output->reflectX() << output->reflectY();
     }
     
     new XMLConfigurations(this);
     new ConfigurationScreens(this);
     
-    foreach (kephal::Screen * screen, Screens::instance()->screens()) {
+    foreach (kephal::Screen * screen, Screens::self()->screens()) {
         qDebug() << "screen:" << screen->id() << screen->geom();
     }
     
     activateConfiguration();
-    connect(Outputs::instance(), SIGNAL(outputDisconnected(kephal::Output *)), this, SLOT(outputDisconnected(kephal::Output *)));
-    connect(Outputs::instance(), SIGNAL(outputConnected(kephal::Output *)), this, SLOT(outputConnected(kephal::Output *)));
+    connect(Outputs::self(), SIGNAL(outputDisconnected(kephal::Output *)), this, SLOT(outputDisconnected(kephal::Output *)));
+    connect(Outputs::self(), SIGNAL(outputConnected(kephal::Output *)), this, SLOT(outputConnected(kephal::Output *)));
     
     qDebug() << "will check for possible positions...";
-    foreach (Output * output, Outputs::instance()->outputs()) {
-        qDebug() << "possible positions for:" << output->id() << Configurations::instance()->possiblePositions(output);
+    foreach (Output * output, Outputs::self()->outputs()) {
+        qDebug() << "possible positions for:" << output->id() << Configurations::self()->possiblePositions(output);
     }
     
     QDBusConnection dbus = QDBusConnection::sessionBus();
@@ -107,7 +107,7 @@ void KephalD::init() {
     if (m_outputs) {
         m_pollTimer = new QTimer(this);
         connect(m_pollTimer, SIGNAL(timeout()), this, SLOT(poll()));
-        if (Configurations::instance()->polling()) {
+        if (Configurations::self()->polling()) {
             m_pollTimer->start(10000);
         }
     } else {
@@ -143,7 +143,7 @@ void KephalD::poll() {
 }*/
 
 void KephalD::activateConfiguration() {
-    BackendConfigurations * configs = BackendConfigurations::instance();
+    BackendConfigurations * configs = BackendConfigurations::self();
     Configuration * config = configs->findConfiguration();
     configs->applyOutputSettings();
     if (config) {

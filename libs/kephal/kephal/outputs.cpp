@@ -31,7 +31,7 @@ void OUTPUTS_FACTORY();
 
 namespace kephal {
 
-    Outputs * Outputs::instance() {
+    Outputs * Outputs::self() {
 #ifdef OUTPUTS_FACTORY
         if (Outputs::m_instance == 0) {
             OUTPUTS_FACTORY();
@@ -73,7 +73,7 @@ namespace kephal {
             return 0;
         }
         
-        foreach (Screen * screen, Screens::instance()->screens()) {
+        foreach (Screen * screen, Screens::self()->screens()) {
             if (screen->outputs().contains(this)) {
                 return screen;
             }
@@ -82,31 +82,31 @@ namespace kephal {
     }
     
     QList<QPoint> Output::availablePositions() {
-        return Configurations::instance()->possiblePositions(this);
+        return Configurations::self()->possiblePositions(this);
     }
     
     bool Output::move(const QPoint & position) {
-        return Configurations::instance()->move(this, position);
+        return Configurations::self()->move(this, position);
     }
     
     bool Output::resize(const QSize & size) {
-        return Configurations::instance()->resize(this, size);
+        return Configurations::self()->resize(this, size);
     }
     
     bool Output::rotate(Rotation rotation) {
-        return Configurations::instance()->rotate(this, rotation);
+        return Configurations::self()->rotate(this, rotation);
     }
     
     bool Output::reflectX(bool reflect) {
-        return Configurations::instance()->reflectX(this, reflect);
+        return Configurations::self()->reflectX(this, reflect);
     }
 
     bool Output::reflectY(bool reflect) {
-        return Configurations::instance()->reflectY(this, reflect);
+        return Configurations::self()->reflectY(this, reflect);
     }
 
     bool Output::changeRate(double rate) {
-        return Configurations::instance()->changeRate(this, rate);
+        return Configurations::self()->changeRate(this, rate);
     }
 
 }

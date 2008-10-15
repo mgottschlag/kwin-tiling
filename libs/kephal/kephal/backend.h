@@ -29,15 +29,15 @@
         type name() { return m_##name; }
 
 
-/*#define RESET_STATUS BackendConfigurations::instance()->setStatus(new StatusMessage());
+/*#define RESET_STATUS BackendConfigurations::self()->setStatus(new StatusMessage());
 
-#define INVALID_CONFIGURATION(desc) BackendConfigurations::instance()->setStatus(new StatusMessage(StatusMessage::TypeError, StatusMessage::InvalidConfiguration, desc));
+#define INVALID_CONFIGURATION(desc) BackendConfigurations::self()->setStatus(new StatusMessage(StatusMessage::TypeError, StatusMessage::InvalidConfiguration, desc));
 
-#define CONFIGURATION_NOT_FOUND(name) BackendConfigurations::instance()->setStatus(new StatusMessage(StatusMessage::TypeError, StatusMessage::ConfigurationNotFound, name));
+#define CONFIGURATION_NOT_FOUND(name) BackendConfigurations::self()->setStatus(new StatusMessage(StatusMessage::TypeError, StatusMessage::ConfigurationNotFound, name));
 
-#define FIX_ME(desc) BackendConfigurations::instance()->setStatus(new StatusMessage(StatusMessage::TypeWarning, StatusMessage::FixMe, desc));
+#define FIX_ME(desc) BackendConfigurations::self()->setStatus(new StatusMessage(StatusMessage::TypeWarning, StatusMessage::FixMe, desc));
 
-#define OPERATION_FAILED(desc) BackendConfigurations::instance()->setStatus(new StatusMessage(StatusMessage::TypeError, StatusMessage::OperationFailed, desc));*/
+#define OPERATION_FAILED(desc) BackendConfigurations::self()->setStatus(new StatusMessage(StatusMessage::TypeError, StatusMessage::OperationFailed, desc));*/
 
 #define INVALID_CONFIGURATION(desc) qDebug() << "INVALID CONFIGURATION:" << desc;
 

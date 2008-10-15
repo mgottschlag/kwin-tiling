@@ -34,7 +34,7 @@ void CONFIGURATIONS_FACTORY();
 
 namespace kephal {
 
-    Configurations * Configurations::instance() {
+    Configurations * Configurations::self() {
 #ifdef CONFIGURATIONS_FACTORY
         if (Configurations::m_instance == 0) {
             CONFIGURATIONS_FACTORY();

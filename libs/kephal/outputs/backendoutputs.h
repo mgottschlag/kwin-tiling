@@ -51,7 +51,7 @@ namespace kephal {
     class BackendOutputs : public Outputs {
         Q_OBJECT
         public:
-            static BackendOutputs * instance();
+            static BackendOutputs * self();
             
             BackendOutputs(QObject * parent);
             
