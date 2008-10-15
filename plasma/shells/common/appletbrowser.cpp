@@ -17,7 +17,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "plasma/appletbrowser.h"
+#include "appletbrowser.h"
 
 #include <QVBoxLayout>
 #include <QLabel>
@@ -34,10 +34,10 @@
 #include "plasma/applet.h"
 #include "plasma/corona.h"
 #include "plasma/containment.h"
-#include "plasma/appletbrowser/kcategorizeditemsview_p.h"
-#include "plasma/appletbrowser/plasmaappletitemmodel_p.h"
-#include "plasma/appletbrowser/openwidgetassistant_p.h"
 #include "plasma/private/packages_p.h"
+#include "kcategorizeditemsview_p.h"
+#include "plasmaappletitemmodel_p.h"
+#include "openwidgetassistant_p.h"
 
 namespace Plasma
 {
@@ -349,13 +349,13 @@ void AppletBrowserWidget::downloadWidgets(const QString &type)
         }
     }
 
-    if (!installer) {
+    if (installer) {
+        installer->createNewWidgetBrowser(this);
+    } else {
         // we don't need to delete the default Applet::packageStructure as that
         // belongs to the applet
-        installer = new PlasmoidPackage();
+        Applet::packageStructure()->createNewWidgetBrowser(this);
     }
-
-    installer->createNewWidgetBrowser(this);
 }
 
 void AppletBrowserWidget::openWidgetFile()

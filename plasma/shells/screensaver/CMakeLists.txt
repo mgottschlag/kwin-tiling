@@ -1,11 +1,26 @@
-include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs)
+include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/shells/common)
 
+set(appletbrowserdialog_SRCS
+    ../common/appletbrowser.cpp
+    ../common/customdragtreeview.cpp
+    ../common/kcategorizeditemsview.cpp
+    ../common/kcategorizeditemsviewdelegate.cpp
+    ../common/kcategorizeditemsviewmodels.cpp
+    ../common/openwidgetassistant.cpp
+    ../common/plasmaappletitemmodel.cpp
+)
+
+kde4_add_ui_files (
+    appletbrowserdialog_SRCS
+    ../common/kcategorizeditemsviewbase.ui
+)
 
 set(plasma-overlay_SRCS
     savercorona.cpp
     saverview.cpp
     main.cpp
     plasmaapp.cpp
+    ${appletbrowserdialog_SRCS}
 )
 
 add_subdirectory(containment)
@@ -17,7 +32,7 @@ qt4_add_dbus_adaptor(plasma-overlay_SRCS ${plasmaapp_dbusXML} plasmaapp.h Plasma
 kde4_add_ui_files(plasma-overlay_SRCS saverconfig.ui)
 kde4_add_executable(plasma-overlay ${plasma-overlay_SRCS})
 
-target_link_libraries(plasma-overlay plasma kworkspace  ${KDE4_KIO_LIBS})
+target_link_libraries(plasma-overlay plasma kworkspace  ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS})
 if(X11_Xrender_FOUND)
   target_link_libraries(plasma-overlay ${X11_Xrender_LIB})
 endif(X11_Xrender_FOUND)

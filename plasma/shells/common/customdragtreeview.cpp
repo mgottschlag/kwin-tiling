@@ -17,6 +17,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "customdragtreeview_p.h"
 #include "kcategorizeditemsview_p.h"
 
 #define PIX_SIZE 64

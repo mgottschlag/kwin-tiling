@@ -1,6 +1,21 @@
-include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs)
+include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/shells/common)
 
 add_subdirectory(configupdates)
+
+set(appletbrowserdialog_SRCS
+    ../common/appletbrowser.cpp
+    ../common/customdragtreeview.cpp
+    ../common/kcategorizeditemsview.cpp
+    ../common/kcategorizeditemsviewdelegate.cpp
+    ../common/kcategorizeditemsviewmodels.cpp
+    ../common/openwidgetassistant.cpp
+    ../common/plasmaappletitemmodel.cpp
+)
+
+kde4_add_ui_files (
+    appletbrowserdialog_SRCS
+    ../common/kcategorizeditemsviewbase.ui
+)
 
 set(plasma_SRCS
     backgrounddialog.cpp
@@ -15,6 +30,7 @@ set(plasma_SRCS
     positioningruler.cpp
     toolbutton.cpp
     wallpaperpreview.cpp
+    ${appletbrowserdialog_SRCS}
 )
 
 kde4_add_ui_files(plasma_SRCS BackgroundDialog.ui)
@@ -32,9 +48,9 @@ qt4_add_dbus_interface(plasma_SRCS ${ksmserver_xml} ksmserver_interface)
 kde4_add_kdeinit_executable(plasma_qgv ${plasma_SRCS})
 
 if(WIN32)
-target_link_libraries(kdeinit_plasma_qgv plasma ${KDE4_KIO_LIBS})
+target_link_libraries(kdeinit_plasma_qgv plasma ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS})
 else(WIN32)
-target_link_libraries(kdeinit_plasma_qgv plasma kworkspace ${KDE4_KNEWSTUFF2_LIBS} ${KDE4_KIO_LIBS} ${X11_LIBRARIES})
+target_link_libraries(kdeinit_plasma_qgv plasma kworkspace ${KDE4_KNEWSTUFF2_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS} ${X11_LIBRARIES})
 endif(WIN32)
 if(X11_Xrender_FOUND)
   target_link_libraries(kdeinit_plasma_qgv ${X11_Xrender_LIB})
