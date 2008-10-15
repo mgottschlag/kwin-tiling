@@ -79,15 +79,15 @@ public:
 
 public Q_SLOTS:
 
-    void cancelDeviceCreation(const QString &) const;
-    void registerAgent(const QString &,const QString &) const;
-    void releaseSession() const;
-    void removeDevice(const QString &) const;
-    void requestSession() const;
-    void setProperty(const QString &, const QVariant &) const;
-    void startDiscovery() const;
-    void stopDiscovery() const;
-    void unregisterAgent(const QString &) const;
+    void cancelDeviceCreation(const QString &);
+    void registerAgent(const QString &,const QString &);
+    void releaseSession();
+    void removeDevice(const QString &);
+    void requestSession();
+    void setProperty(const QString &, const QVariant &);
+    void startDiscovery();
+    void stopDiscovery();
+    void unregisterAgent(const QString &);
 
 /*
     void setMode(const Solid::Control::BluetoothInterface::Mode);

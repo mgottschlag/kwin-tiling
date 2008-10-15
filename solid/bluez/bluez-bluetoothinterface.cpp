@@ -93,7 +93,7 @@ QString BluezBluetoothInterface::ubi() const
     return d->objectPath;
 }
 
-void BluezBluetoothInterface::cancelDeviceCreation(const QString &addr) const
+void BluezBluetoothInterface::cancelDeviceCreation(const QString &addr)
 {
     d->iface.call("CancelDeviceCreation",addr);
 }
@@ -145,42 +145,42 @@ QStringList BluezBluetoothInterface::listDevices() const
     return deviceList;
 }
 
-void BluezBluetoothInterface::registerAgent(const QString &agentUBI, const QString &capab) const
+void BluezBluetoothInterface::registerAgent(const QString &agentUBI, const QString &capab)
 {
     d->iface.call("RegisterAgent",agentUBI,capab);
 }
 
-void BluezBluetoothInterface::releaseSession() const
+void BluezBluetoothInterface::releaseSession()
 {
     d->iface.call("ReleaseSession");
 }
 
-void BluezBluetoothInterface::removeDevice(const QString &deviceUBI ) const
+void BluezBluetoothInterface::removeDevice(const QString &deviceUBI )
 {
     d->iface.call("RemoveDevice",deviceUBI);
 }
 
-void BluezBluetoothInterface::requestSession() const
+void BluezBluetoothInterface::requestSession()
 {
     d->iface.call("RequestSession");
 }
 
-void BluezBluetoothInterface::setProperty(const QString &property, const QVariant &value) const
+void BluezBluetoothInterface::setProperty(const QString &property, const QVariant &value)
 {
     d->iface.call("SetProperty",property,value);
 }
 
-void BluezBluetoothInterface::startDiscovery() const
+void BluezBluetoothInterface::startDiscovery()
 {
     d->iface.call("StartDiscovery");
 }
 
-void BluezBluetoothInterface::stopDiscovery() const
+void BluezBluetoothInterface::stopDiscovery()
 {
     d->iface.call("StopDiscovery");
 }
 
-void BluezBluetoothInterface::unregisterAgent(const QString &agentUBI) const
+void BluezBluetoothInterface::unregisterAgent(const QString &agentUBI)
 {
     d->iface.call("UnregisterAgent",agentUBI);
 }
