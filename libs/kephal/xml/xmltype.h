@@ -40,7 +40,7 @@ namespace kephal {
     class XMLFactory {
         public:
             XMLFactory();
-            ~XMLFactory();
+            virtual ~XMLFactory();
             
             QDomNode save(XMLType * data, QDomDocument doc, QString name);
             XMLType * load(QDomNode node);
@@ -62,7 +62,7 @@ namespace kephal {
     class XMLRootFactory : public XMLFactory {
         public:
             XMLRootFactory(QString name);
-            
+            virtual ~XMLRootFactory() {}
             bool save(XMLType * data, QString fileName);
             XMLType * load(QString fileName);
             

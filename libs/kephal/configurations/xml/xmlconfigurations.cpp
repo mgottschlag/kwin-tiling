@@ -1239,6 +1239,7 @@ namespace kephal {
                 return o;
             }
         }
+        return 0; 
     }
 
     bool XMLConfigurations::rotate(Output * output, Rotation rotation) {
