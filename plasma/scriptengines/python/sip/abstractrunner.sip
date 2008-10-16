@@ -25,7 +25,6 @@
 #include <plasma/animationdriver.h>
 #include <plasma/animator.h>
 #include <plasma/applet.h>
-#include <plasma/appletbrowser.h>
 #include <plasma/scripting/appletscript.h>
 #include <plasma/widgets/checkbox.h>
 #include <plasma/widgets/combobox.h>
@@ -139,10 +138,6 @@ public:
             else if (dynamic_cast<Plasma::GLApplet*>(sipCpp))
                 sipClass = sipClass_Plasma_GLApplet;
         }
-    else if (dynamic_cast<Plasma::AppletBrowser*>(sipCpp))
-        sipClass = sipClass_Plasma_AppletBrowser;
-    else if (dynamic_cast<Plasma::AppletBrowserWidget*>(sipCpp))
-        sipClass = sipClass_Plasma_AppletBrowserWidget;
     else if (dynamic_cast<Plasma::CheckBox*>(sipCpp))
         sipClass = sipClass_Plasma_CheckBox;
     else if (dynamic_cast<Plasma::ComboBox*>(sipCpp))

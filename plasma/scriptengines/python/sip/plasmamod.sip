@@ -35,7 +35,6 @@
 %Include animationdriver.sip
 %Include animator.sip
 %Include applet.sip
-%Include appletbrowser.sip
 %Include configxml.sip
 %Include containment.sip
 %Include corona.sip
