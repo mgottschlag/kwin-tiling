@@ -20,9 +20,12 @@
 #ifndef PLASMA_APP_H
 #define PLASMA_APP_H
 
+#include <QHash>
 #include <QList>
 
 #include <KUniqueApplication>
+
+#include <plasma/plasma.h>
 
 namespace Plasma
 {
@@ -31,9 +34,10 @@ namespace Plasma
     class Corona;
 } // namespace Plasma
 
+class DesktopView;
+class BackgroundDialog;
 class RootWidget;
 class PanelView;
-class DesktopView;
 
 class PlasmaApp : public KUniqueApplication
 {
@@ -50,13 +54,13 @@ public:
 
     /**
      * Sets all DesktopView widgets that belong to this PlasmaApp
-     * as a desktop window if @p isDesktop is true or an ordinary 
+     * as a desktop window if @p isDesktop is true or an ordinary
      * window otherwise.
      *
      * Desktop windows are displayed beneath all other windows, have
      * no window decoration and occupy the full size of the desktop.
      *
-     * The value of @p isDesktop will be remembered, so that any 
+     * The value of @p isDesktop will be remembered, so that any
      * DesktopView widgets that are created afterwards will have the
      * same setting.
      * The default is to create DesktopView widgets as desktop
@@ -64,7 +68,7 @@ public:
      */
     void setIsDesktop(bool isDesktop);
 
-    /** 
+    /**
      * Returns true if this widget is currently a desktop window.
      * See setIsDesktop()
      */
@@ -80,10 +84,16 @@ public:
      */
     void panelHidden(bool hidden);
 
+    /**
+     * Current desktop zoom level
+     */
+    Plasma::ZoomLevel desktopZoomLevel() const;
+
 public Q_SLOTS:
     // DBUS interface. if you change these methods, you MUST run:
     // qdbuscpp2xml plasmaapp.h -o org.kde.plasma.App.xml
     void toggleDashboard();
+    void zoom(Plasma::Containment*, Plasma::ZoomDirection);
 
 protected:
 #ifdef Q_WS_X11
@@ -93,20 +103,29 @@ protected:
 private:
     PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap);
     DesktopView* viewForScreen(int screen) const;
+    void zoomIn(Plasma::Containment *containment);
+    void zoomOut(Plasma::Containment *containment);
 
 private Q_SLOTS:
+    void containmentAdded(Plasma::Containment *containment);
     void cleanup();
     void syncConfig();
     void appletBrowserDestroyed();
     void createView(Plasma::Containment *containment);
     void panelRemoved(QObject* panel);
+    void configDialogRemoved(QObject* configDialogRemoved);
     void adjustSize(int screen);
+    void showAppletBrowser();
+    void addContainment(Plasma::Containment *fromContainment = 0);
+    void configureContainment(Plasma::Containment*);
 
 private:
     Plasma::Corona *m_corona;
     QList<PanelView*> m_panels;
     Plasma::AppletBrowser *m_appletBrowser;
     QList<DesktopView*> m_desktops;
+    QHash<Plasma::Containment *, BackgroundDialog *> m_configDialogs;
+    Plasma::ZoomLevel m_zoomLevel;
     int m_panelHidden;
     bool m_isDesktop;
 };

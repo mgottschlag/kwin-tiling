@@ -72,7 +72,6 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 
 
     if (panel) {
-        connect(panel, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
         connect(panel, SIGNAL(destroyed(QObject*)), this, SLOT(panelDeleted()));
         connect(panel, SIGNAL(toolBoxToggled()), this, SLOT(togglePanelController()));
 
@@ -550,11 +549,6 @@ void PanelView::setAlignment(Qt::Alignment align)
 Qt::Alignment PanelView::alignment() const
 {
     return m_alignment;
-}
-
-void PanelView::showAppletBrowser()
-{
-    PlasmaApp::self()->showAppletBrowser(containment());
 }
 
 void PanelView::togglePanelController()

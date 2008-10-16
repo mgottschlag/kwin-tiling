@@ -166,7 +166,6 @@ private:
 
 private Q_SLOTS:
     void checkForActivation();
-    void showAppletBrowser();
     void togglePanelController();
     void edittingComplete();
     void animateHide(qreal);

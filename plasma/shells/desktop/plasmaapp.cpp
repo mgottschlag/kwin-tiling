@@ -60,6 +60,7 @@
 
 #include "appletbrowser.h"
 #include "appadaptor.h"
+#include "backgrounddialog.h"
 #include "desktopcorona.h"
 #include "desktopview.h"
 #include "panelview.h"
@@ -134,7 +135,9 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
 #endif
       m_corona(0),
       m_appletBrowser(0),
-      m_panelHidden(0)
+      m_zoomLevel(Plasma::DesktopZoom),
+      m_panelHidden(0),
+      m_isDesktop(true)
 {
     KGlobal::locale()->insertCatalog("libplasma");
     KCrash::setFlags(KCrash::AutoRestart);
@@ -168,7 +171,7 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     size_t size = sizeof(sysctlbuf);
     int memorySize;
     // This could actually use hw.physmem instead, but I can't find
-    // reliable documentation on how to read the value (which may 
+    // reliable documentation on how to read the value (which may
     // not fit in a 32 bit integer).
     if (!sysctlbyname("vm.stats.vm.v_page_size", sysctlbuf, &size, NULL, 0)) {
         memorySize = sysctlbuf[0] / 1024;
@@ -266,6 +269,11 @@ void PlasmaApp::cleanup()
     QList<PanelView*> panels = m_panels;
     m_panels.clear();
     qDeleteAll(panels);
+
+    QHash<Plasma::Containment *, BackgroundDialog *> dialogs = m_configDialogs;
+    m_configDialogs.clear();
+    qDeleteAll(dialogs);
+
     delete m_corona;
 
     //TODO: This manual sync() should not be necessary. Remove it when
@@ -307,6 +315,11 @@ void PlasmaApp::panelHidden(bool hidden)
         }
         //kDebug() << "panel unhidden" << m_panelHidden;
     }
+}
+
+Plasma::ZoomLevel PlasmaApp::desktopZoomLevel() const
+{
+    return m_zoomLevel;
 }
 
 #ifdef Q_WS_X11
@@ -407,12 +420,12 @@ Plasma::Corona* PlasmaApp::corona()
     if (!m_corona) {
         DesktopCorona *c = new DesktopCorona(this);
         connect(c, SIGNAL(containmentAdded(Plasma::Containment*)),
-                this, SLOT(createView(Plasma::Containment*)));
+                this, SLOT(containmentAdded(Plasma::Containment*)));
         connect(c, SIGNAL(configSynced()), this, SLOT(syncConfig()));
 
         foreach (DesktopView *view, m_desktops) {
             connect(c, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
-                            view, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
+                    view, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
         }
 
         c->setItemIndexMethod(QGraphicsScene::NoIndex);
@@ -422,6 +435,24 @@ Plasma::Corona* PlasmaApp::corona()
     }
 
     return m_corona;
+}
+
+void PlasmaApp::showAppletBrowser()
+{
+    Plasma::Containment *containment = dynamic_cast<Plasma::Containment *>(sender());
+
+    if (!containment) {
+        return;
+    }
+
+    foreach (DesktopView *view, m_desktops) {
+        if (view->containment() == containment && view->isDashboardVisible()) {
+            // the dashboard will pick this one up!
+            return;
+        }
+    }
+
+    showAppletBrowser(containment);
 }
 
 void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
@@ -487,7 +518,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
     int id = viewIds.readEntry(QString::number(containment->id()), 0);
 
     WId viewWindow = 0;
-    
+
     switch (containment->containmentType()) {
         case Plasma::Containment::PanelContainment: {
             PanelView *panelView = new PanelView(containment, id);
@@ -515,6 +546,9 @@ void PlasmaApp::createView(Plasma::Containment *containment)
                     connect(m_corona, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
                             view, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
                 }
+
+                connect(view, SIGNAL(zoom(Plasma::Containment*,Plasma::ZoomDirection)),
+                        this, SLOT(zoom(Plasma::Containment*,Plasma::ZoomDirection)));
                 view->setGeometry(QApplication::desktop()->screenGeometry(containment->screen()));
                 m_desktops.append(view);
                 view->setIsDesktop(m_isDesktop);
@@ -536,9 +570,141 @@ void PlasmaApp::createView(Plasma::Containment *containment)
 #endif
 }
 
+void PlasmaApp::containmentAdded(Plasma::Containment *containment)
+{
+    createView(containment);
+    connect(containment, SIGNAL(zoomRequested(Plasma::Containment*,Plasma::ZoomDirection)),
+            this, SLOT(zoom(Plasma::Containment*,Plasma::ZoomDirection)));
+    connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
+    connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
+            this, SLOT(configureContainment(Plasma::Containment*)));
+
+    if (containment->containmentType() != Plasma::Containment::PanelContainment) {
+        connect(containment, SIGNAL(addSiblingContainment(Plasma::Containment *)),
+                this, SLOT(addContainment(Plasma::Containment *)));
+    }
+}
+
+void PlasmaApp::configureContainment(Plasma::Containment *containment)
+{
+    BackgroundDialog *configDialog = 0;
+
+    if (m_configDialogs.contains(containment)) {
+        configDialog = m_configDialogs.value(containment);
+        configDialog->reloadConfig();
+    } else {
+        const QSize resolution = QApplication::desktop()->screenGeometry(containment->screen()).size();
+        configDialog = new BackgroundDialog(resolution, viewForScreen(containment->screen()));
+        configDialog->setAttribute(Qt::WA_DeleteOnClose);
+        connect(configDialog, SIGNAL(destroyed(QObject*)),
+                this, SLOT(configDialogRemoved(QObject*)));
+    }
+
+    configDialog->show();
+    KWindowSystem::setOnDesktop(configDialog->winId(), KWindowSystem::currentDesktop());
+    KWindowSystem::activateWindow(configDialog->winId());
+}
+
+void PlasmaApp::addContainment(Plasma::Containment *fromContainment)
+{
+    QString plugin = fromContainment ? fromContainment->pluginName() : QString();
+    Plasma::Containment *c = m_corona->addContainment(plugin);
+
+    if (c && fromContainment) {
+        foreach (DesktopView *view, m_desktops) {
+            if (view->containment() == c){
+                view->setContainment(c);
+                break;
+            }
+        }
+    }
+}
+
+void PlasmaApp::zoom(Plasma::Containment *containment, Plasma::ZoomDirection direction)
+{
+    if (direction == Plasma::ZoomIn) {
+        zoomIn(containment);
+        foreach (DesktopView *view, m_desktops) {
+            view->zoomIn(view->containment() == containment ? containment : 0, m_zoomLevel);
+        }
+
+        if (m_zoomLevel == Plasma::DesktopZoom) {
+            DesktopView *view = viewForScreen(desktop()->screenNumber(QCursor::pos()));
+
+            if (view && view->containment() != containment) {
+                // zooming in all the way, so lets swap containments about if need be
+                view->setContainment(containment);
+            }
+        }
+    } else if (direction == Plasma::ZoomOut) {
+        zoomOut(containment);
+        foreach (DesktopView *view, m_desktops) {
+            view->zoomOut(view->containment() == containment ? containment : 0, m_zoomLevel);
+        }
+    }
+}
+
+void PlasmaApp::zoomIn(Plasma::Containment *containment)
+{
+    if (m_zoomLevel == Plasma::GroupZoom) {
+        m_zoomLevel = Plasma::DesktopZoom;
+        containment->closeToolBox();
+        containment->enableAction("zoom in", false);
+        containment->enableAction("add sibling containment", false);
+    } else if (m_zoomLevel == Plasma::OverviewZoom) {
+        m_zoomLevel = Plasma::GroupZoom;
+        //make sure everybody can zoom out again
+        foreach (Plasma::Containment *c, m_corona->containments()) {
+            if (c->containmentType() == Plasma::Containment::PanelContainment) {
+                continue;
+            }
+
+            c->enableAction("zoom in", true);
+            c->enableAction("zoom out", true);
+        }
+    }
+}
+
+void PlasmaApp::zoomOut(Plasma::Containment *)
+{
+    if (m_zoomLevel == Plasma::DesktopZoom) {
+        m_zoomLevel = Plasma::GroupZoom;
+        //make sure nobody can zoom out further
+        foreach (Plasma::Containment *c, m_corona->containments()) {
+            if (c->containmentType() == Plasma::Containment::PanelContainment) {
+                continue;
+            }
+
+            c->enableAction("zoom in", true);
+            c->enableAction("zoom out", true);
+        }
+    } else if (m_zoomLevel == Plasma::GroupZoom) {
+        m_zoomLevel = Plasma::OverviewZoom;
+        //make sure nobody can zoom out further
+        foreach (Plasma::Containment *c, m_corona->containments()) {
+            if (c->containmentType() == Plasma::Containment::PanelContainment) {
+                continue;
+            }
+
+            c->enableAction("zoom out", false);
+        }
+    }
+}
+
 void PlasmaApp::panelRemoved(QObject* panel)
 {
     m_panels.removeAll((PanelView*)panel);
+}
+
+void PlasmaApp::configDialogRemoved(QObject* dialog)
+{
+    QMutableHashIterator<Plasma::Containment *, BackgroundDialog *> it(m_configDialogs);
+    while (it.hasNext()) {
+        it.next();
+        if (it.value() == (BackgroundDialog*)dialog) {
+           it.remove();
+        }
+    }
 }
 
 #include "plasmaapp.moc"

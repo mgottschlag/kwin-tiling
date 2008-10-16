@@ -41,8 +41,6 @@
 #include "dashboardview.h"
 #include "plasmaapp.h"
 
-#include "backgrounddialog.h"
-
 #ifdef Q_WS_WIN
 #include "windows.h"
 #include "windef.h"
@@ -52,15 +50,12 @@
 
 DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *parent)
     : Plasma::View(containment, id, parent),
-      m_zoomLevel(Plasma::DesktopZoom),
       m_dashboard(0),
-      m_configDialog(0),
       m_dashboardFollowsDesktop(true)
 {
     setFocusPolicy(Qt::NoFocus);
 
     if (containment) {
-        connectContainment(containment);
         containment->enableAction("zoom in", false);
         containment->enableAction("add sibling containment", false);
     }
@@ -91,20 +86,7 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
 
 DesktopView::~DesktopView()
 {
-    delete m_configDialog;
     delete m_dashboard;
-}
-
-void DesktopView::connectContainment(Plasma::Containment *containment)
-{
-    if (containment) {
-        connect(containment, SIGNAL(zoomRequested(Plasma::Containment*,Plasma::ZoomDirection)),
-                this, SLOT(zoom(Plasma::Containment*,Plasma::ZoomDirection)));
-        connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
-        connect(containment, SIGNAL(addSiblingContainment(Plasma::Containment *)), this, SLOT(addContainment(Plasma::Containment *)));
-        connect(containment, SIGNAL(focusRequested(Plasma::Containment *)), this, SLOT(setContainment(Plasma::Containment *)));
-        connect(containment, SIGNAL(configureRequested()), this, SLOT(configureContainment()));
-    }
 }
 
 void DesktopView::toggleDashboard()
@@ -178,6 +160,11 @@ bool DesktopView::isDesktop() const
     return KWindowInfo(winId(), NET::WMWindowType).windowType(NET::Desktop);
 }
 
+bool DesktopView::isDashboardVisible() const
+{
+    return m_dashboard && m_dashboard->isVisible();
+}
+
 void DesktopView::setContainment(Plasma::Containment *containment)
 {
     Plasma::Containment *oldContainment = this->containment();
@@ -185,7 +172,8 @@ void DesktopView::setContainment(Plasma::Containment *containment)
         return;
     }
 
-    if (m_zoomLevel == Plasma::DesktopZoom) {
+    Plasma::ZoomLevel zoomLevel = PlasmaApp::self()->desktopZoomLevel();
+    if (zoomLevel == Plasma::DesktopZoom) {
         //make sure actions are up-to-date
         //this is icky but necessary to have the toolbox show the right actions for the zoom level
         containment->enableAction("zoom in", false);
@@ -196,10 +184,7 @@ void DesktopView::setContainment(Plasma::Containment *containment)
         m_dashboard->setContainment(containment);
     }
 
-    if (m_zoomLevel == Plasma::DesktopZoom) {
-        //switch connections
-        disconnect(oldContainment, 0, this, 0);
-        connectContainment(containment);
+    if (zoomLevel == Plasma::DesktopZoom) {
         //make sure actions are up-to-date
         oldContainment->enableAction("zoom in", true);
         oldContainment->enableAction("add sibling containment", true);
@@ -208,58 +193,15 @@ void DesktopView::setContainment(Plasma::Containment *containment)
     View::setContainment(containment);
 }
 
-void DesktopView::addContainment(Plasma::Containment *fromContainment)
-{
-    if (fromContainment) {
-        Plasma::Corona *corona = fromContainment->corona();
-        if (corona) {
-            //make it the same type of containment
-            Plasma::Containment *c = corona->addContainment(fromContainment->pluginName());
-            if (m_zoomLevel != Plasma::DesktopZoom) {
-                connectContainment(c);
-            }
-            //note: this will set a sane size too, assuming we have a screen
-            setContainment(c);
-            kDebug() << "containment added at" << c->geometry();
-        }
-    }
-}
-
-void DesktopView::configureContainment()
-{
-    if (m_configDialog == 0) {
-        const QSize resolution =
-            QApplication::desktop()->screenGeometry(screen()).size();
-        m_configDialog = new BackgroundDialog(resolution, this);
-    }
-    else {
-        m_configDialog->reloadConfig();
-    }
-
-    m_configDialog->show();
-    KWindowSystem::setOnDesktop(m_configDialog->winId(), KWindowSystem::currentDesktop());
-    KWindowSystem::activateWindow(m_configDialog->winId());
-}
-
-void DesktopView::zoom(Plasma::Containment *containment, Plasma::ZoomDirection direction)
-{
-    if (direction == Plasma::ZoomIn) {
-        zoomIn(containment);
-    } else if (direction == Plasma::ZoomOut) {
-        zoomOut(containment);
-    }
-}
-
-void DesktopView::zoomIn(Plasma::Containment *toContainment)
+void DesktopView::zoomIn(Plasma::Containment *toContainment, Plasma::ZoomLevel zoomLevel)
 {
     if (toContainment && containment() != toContainment) {
         setContainment(toContainment);
     }
 
-    if (m_zoomLevel == Plasma::GroupZoom) {
+    if (zoomLevel == Plasma::DesktopZoom) {
         setDragMode(NoDrag);
-        m_zoomLevel = Plasma::DesktopZoom;
-        qreal factor = Plasma::scalingFactor(m_zoomLevel) / matrix().m11();
+        qreal factor = Plasma::scalingFactor(zoomLevel) / matrix().m11();
         scale(factor, factor);
         if (containment()) {
             //disconnect from other containments
@@ -274,95 +216,28 @@ void DesktopView::zoomIn(Plasma::Containment *toContainment)
                 }
             }
             setSceneRect(containment()->geometry());
-            containment()->closeToolBox();
-            containment()->enableAction("zoom in", false);
-            containment()->enableAction("add sibling containment", false);
         }
-    } else if (m_zoomLevel == Plasma::OverviewZoom) {
-        m_zoomLevel = Plasma::GroupZoom;
-        qreal factor = Plasma::scalingFactor(m_zoomLevel);
+    } else if (zoomLevel == Plasma::GroupZoom) {
+        qreal factor = Plasma::scalingFactor(zoomLevel);
         factor = factor / matrix().m11();
         scale(factor, factor);
         setSceneRect(QRectF(0, 0, scene()->sceneRect().right(), scene()->sceneRect().bottom()));
-
-        if (containment()) {
-            //make sure everyone can zoom out again
-            Plasma::Corona *corona = containment()->corona();
-            if (corona) {
-                QList<Plasma::Containment*> containments = corona->containments();
-                foreach (Plasma::Containment *c, containments) {
-                    if (c->containmentType() == Plasma::Containment::PanelContainment) {
-                        continue;
-                    }
-                    c->enableAction("zoom out", true);
-                }
-            }
-
-            ensureVisible(containment()->sceneBoundingRect());
-        }
     } else {
         setDragMode(NoDrag);
-        if (containment()) {
-            containment()->closeToolBox();
-            containment()->enableAction("zoom in", false);
-            containment()->enableAction("add sibling containment", false);
-        }
     }
 }
 
-void DesktopView::zoomOut(Plasma::Containment *fromContainment)
+void DesktopView::zoomOut(Plasma::Containment *fromContainment, Plasma::ZoomLevel zoomLevel)
 {
-    if (m_zoomLevel == Plasma::DesktopZoom) {
-        fromContainment->enableAction("zoom in", true);
-        fromContainment->enableAction("add sibling containment", true);
-        m_zoomLevel = Plasma::GroupZoom;
-        //connect to other containments
-        //FIXME if some other view is zoomed out, a little madness will ensue
-        Plasma::Corona *corona = containment()->corona();
-        if (corona) {
-            QList<Plasma::Containment*> containments = corona->containments();
-            foreach (Plasma::Containment *c, containments) {
-                if (c == fromContainment ||
-                    c->containmentType() == Plasma::Containment::PanelContainment) {
-                    continue;
-                }
-                connectContainment(c);
-            }
-        }
-    } else if (m_zoomLevel == Plasma::GroupZoom) {
-        //make sure nobody can zoom out
-        Plasma::Corona *corona = fromContainment->corona();
-        if (corona) {
-            QList<Plasma::Containment*> containments = corona->containments();
-            foreach (Plasma::Containment *c, containments) {
-                if (c->containmentType() == Plasma::Containment::PanelContainment) {
-                    continue;
-                }
-                c->enableAction("zoom out", false);
-            }
-        }
-        m_zoomLevel = Plasma::OverviewZoom;
-    } else {
-        fromContainment->enableAction("zoom out", false);
-        return;
-    }
-
     setDragMode(ScrollHandDrag);
-    qreal factor = Plasma::scalingFactor(m_zoomLevel);
+    qreal factor = Plasma::scalingFactor(zoomLevel);
     qreal s = factor / matrix().m11();
     scale(s, s);
     setSceneRect(QRectF(0, 0, scene()->sceneRect().right(), scene()->sceneRect().bottom()));
 
-    ensureVisible(fromContainment->sceneBoundingRect());
-}
-
-void DesktopView::showAppletBrowser()
-{
-    if (m_dashboard && m_dashboard->isVisible()) {
-        return;
+    if (fromContainment) {
+        ensureVisible(fromContainment->sceneBoundingRect());
     }
-
-    PlasmaApp::self()->showAppletBrowser(containment());
 }
 
 void DesktopView::wheelEvent(QWheelEvent* event)
@@ -372,9 +247,9 @@ void DesktopView::wheelEvent(QWheelEvent* event)
     if ((!item || item == (QGraphicsItem*)containment()) && event->modifiers() & Qt::ControlModifier) {
         if (event->modifiers() & Qt::ControlModifier) {
             if (event->delta() < 0) {
-                zoomOut(containment());
+                PlasmaApp::self()->zoom(containment(), Plasma::ZoomOut);
             } else {
-                zoomIn(containment());
+                PlasmaApp::self()->zoom(containment(), Plasma::ZoomIn);
             }
         }
 

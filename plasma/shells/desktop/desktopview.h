@@ -29,7 +29,6 @@ namespace Plasma
 } // namespace Plasma
 
 class DashboardView;
-class BackgroundDialog;
 
 class DesktopView : public Plasma::View
 {
@@ -38,11 +37,6 @@ class DesktopView : public Plasma::View
 public:
     DesktopView(Plasma::Containment *containment, int id, QWidget *parent);
     ~DesktopView();
-
-    /**
-     * hook up all needed signals to a containment
-     */
-    void connectContainment(Plasma::Containment *containment);
 
     /**
      * Sets this DesktopView as a desktop window if @p isDesktop is
@@ -59,23 +53,21 @@ public:
      */
     bool isDesktop() const;
 
+    /**
+     * Returns whether or not the dashboard view is visible
+     */
+    bool isDashboardVisible() const;
+
 public slots:
     /**
      * zoom in towards the given containment.
      * if toContainment is null, the current containment is used instead.
      * zooming in also sets toContainment as current.
      */
-    void zoom(Plasma::Containment *containment, Plasma::ZoomDirection direction);
-    void zoomIn(Plasma::Containment *toContainment);
-    void zoomOut(Plasma::Containment *fromContainment);
-    void showAppletBrowser();
+    void zoomIn(Plasma::Containment *toContainment, Plasma::ZoomLevel zoomLevel);
+    void zoomOut(Plasma::Containment *fromContainment, Plasma::ZoomLevel zoomLevel);
     void toggleDashboard();
     void adjustSize();
-
-    /**
-     * create a new containment based on fromContainment
-     */
-    void addContainment(Plasma::Containment *fromContainment = 0);
 
     void screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment);
 
@@ -97,21 +89,12 @@ public slots:
      */
     void setContainment(Plasma::Containment *containment);
 
-    /**
-     * Configure containment.
-     *
-     * @arg containment to configure
-     */
-    void configureContainment();
-
 protected:
     void wheelEvent(QWheelEvent *event);
     void drawBackground(QPainter *painter, const QRectF &rect);
 
 private:
-    Plasma::ZoomLevel m_zoomLevel;
     DashboardView *m_dashboard;
-    BackgroundDialog *m_configDialog;
     bool m_dashboardFollowsDesktop;
 };
 
