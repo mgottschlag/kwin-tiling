@@ -25,7 +25,7 @@
       <string>Check this if you want to show the seconds.</string>
      </property>
      <property name="text" >
-      <string>Show &amp;seconds</string>
+      <string>Show &amp;seconds hand</string>
      </property>
     </widget>
    </item>
@@ -38,7 +38,7 @@
       <string>Check this if you want to display Timezone in text.</string>
      </property>
      <property name="text" >
-      <string>Also show the Timezone as text</string>
+      <string>Show &amp;time zone</string>
      </property>
     </widget>
    </item>
@@ -48,7 +48,7 @@
       <enum>Qt::Vertical</enum>
      </property>
      <property name="sizeType" >
-      <enum>QSizePolicy::Minimum</enum>
+      <enum>QSizePolicy::Expanding</enum>
      </property>
      <property name="sizeHint" stdset="0" >
       <size>
