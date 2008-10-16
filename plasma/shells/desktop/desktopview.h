@@ -64,8 +64,8 @@ public slots:
      * if toContainment is null, the current containment is used instead.
      * zooming in also sets toContainment as current.
      */
-    void zoomIn(Plasma::Containment *toContainment, Plasma::ZoomLevel zoomLevel);
-    void zoomOut(Plasma::Containment *fromContainment, Plasma::ZoomLevel zoomLevel);
+    void zoomIn(Plasma::ZoomLevel zoomLevel);
+    void zoomOut(Plasma::ZoomLevel zoomLevel);
     void toggleDashboard();
     void adjustSize();
 

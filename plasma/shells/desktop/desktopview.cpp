@@ -193,12 +193,8 @@ void DesktopView::setContainment(Plasma::Containment *containment)
     View::setContainment(containment);
 }
 
-void DesktopView::zoomIn(Plasma::Containment *toContainment, Plasma::ZoomLevel zoomLevel)
+void DesktopView::zoomIn(Plasma::ZoomLevel zoomLevel)
 {
-    if (toContainment && containment() != toContainment) {
-        setContainment(toContainment);
-    }
-
     if (zoomLevel == Plasma::DesktopZoom) {
         setDragMode(NoDrag);
         qreal factor = Plasma::scalingFactor(zoomLevel) / matrix().m11();
@@ -227,7 +223,7 @@ void DesktopView::zoomIn(Plasma::Containment *toContainment, Plasma::ZoomLevel z
     }
 }
 
-void DesktopView::zoomOut(Plasma::Containment *fromContainment, Plasma::ZoomLevel zoomLevel)
+void DesktopView::zoomOut(Plasma::ZoomLevel zoomLevel)
 {
     setDragMode(ScrollHandDrag);
     qreal factor = Plasma::scalingFactor(zoomLevel);
@@ -235,8 +231,8 @@ void DesktopView::zoomOut(Plasma::Containment *fromContainment, Plasma::ZoomLeve
     scale(s, s);
     setSceneRect(QRectF(0, 0, scene()->sceneRect().right(), scene()->sceneRect().bottom()));
 
-    if (fromContainment) {
-        ensureVisible(fromContainment->sceneBoundingRect());
+    if (containment()) {
+        ensureVisible(containment()->sceneBoundingRect());
     }
 }
 

@@ -625,7 +625,7 @@ void PlasmaApp::zoom(Plasma::Containment *containment, Plasma::ZoomDirection dir
     if (direction == Plasma::ZoomIn) {
         zoomIn(containment);
         foreach (DesktopView *view, m_desktops) {
-            view->zoomIn(view->containment() == containment ? containment : 0, m_zoomLevel);
+            view->zoomIn(m_zoomLevel);
         }
 
         if (m_zoomLevel == Plasma::DesktopZoom) {
@@ -639,7 +639,7 @@ void PlasmaApp::zoom(Plasma::Containment *containment, Plasma::ZoomDirection dir
     } else if (direction == Plasma::ZoomOut) {
         zoomOut(containment);
         foreach (DesktopView *view, m_desktops) {
-            view->zoomOut(view->containment() == containment ? containment : 0, m_zoomLevel);
+            view->zoomOut(m_zoomLevel);
         }
     }
 }
