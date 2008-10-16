@@ -25,8 +25,8 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QStringList>
-#include <QMap>
-#include <QVariant>
+#include <QtCore/QMap>
+#include <QtCore/QVariant>
 
 #include "bluetoothmanager.h"
 #include "bluetoothinterface.h"

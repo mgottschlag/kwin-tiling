@@ -25,7 +25,7 @@
 #include <QtCore/QDateTime>
 #include <QtCore/QPair>
 #include <QtCore/QObject>
-#include <QMap>
+#include <QtCore/QMap>
 
 #include "bluetoothremotedevice.h"
 #include "ifaces/bluetoothremotedevice.h"
