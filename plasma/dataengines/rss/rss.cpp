@@ -84,7 +84,7 @@ bool RssEngine::updateSourceEvent(const QString &name)
         if (QDateTime::currentDateTime() >
             m_feedTimes[source.toLower()].addSecs(CACHE_TIMEOUT)){
             kDebug() << "Cache from " << source <<
-                        " older then 60 seconds, refreshing...";
+                        " older than 60 seconds, refreshing...";
 
             Syndication::Loader * loader = Syndication::Loader::create();
             connect(loader, SIGNAL(loadingComplete(Syndication::Loader*,
