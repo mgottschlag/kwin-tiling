@@ -9,6 +9,7 @@ Name[pt_BR]=Relógio em Python
 Name[sv]=Python klocka
 Name[tr]=Python Saati
 Name[uk]=Годинник Python
+Name[x-test]=xxPython Clockxx
 Name[zh_TW]=Python 時鐘
 Type=Service
 ServiceTypes=Plasma/Applet

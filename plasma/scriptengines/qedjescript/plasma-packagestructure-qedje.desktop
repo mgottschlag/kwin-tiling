@@ -11,6 +11,7 @@ Name[pt_BR]=Itens do QEdje
 Name[sv]=QEdje-grejer
 Name[tr]=QEdje Programcıkları
 Name[uk]=Елементи QEdje
+Name[x-test]=xxQEdje Gadgetsxx
 Name[zh_TW]=QEdje 小玩意
 Comment=QEdje Gadget
 Comment[el]=Συστατικά QEdje
@@ -24,6 +25,7 @@ Comment[pt_BR]=Item do QEdje
 Comment[sv]=QEdje-grejer
 Comment[tr]=QEdje Programcığı 
 Comment[uk]=Елемент QEdje
+Comment[x-test]=xxQEdje Gadgetxx
 Comment[zh_TW]=QEdje 小玩意
 Type=Service
 

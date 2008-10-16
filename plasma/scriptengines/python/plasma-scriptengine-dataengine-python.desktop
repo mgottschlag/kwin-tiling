@@ -8,6 +8,7 @@ Name[pt_BR]=Motor de dados Python
 Name[sv]=Python datagränssnitt
 Name[tr]=Python veri motoru
 Name[uk]=Рушій даних Python
+Name[x-test]=xxPython data enginexx
 Name[zh_TW]=Python 資料引擎
 Comment=Plasma data engine support for Python
 Comment[el]=Υποστήριξη μηχανής δεδομένων Plasma για την Python
@@ -18,6 +19,7 @@ Comment[pt_BR]=Suporte para os motores de dados do Plasma em Python
 Comment[sv]=Plasma datagränssnittstöd för Python
 Comment[tr]=Python için Plasma veri motoru desteği
 Comment[uk]=Підтримка у рушіях даних для Python
+Comment[x-test]=xxPlasma data engine support for Pythonxx
 Comment[zh_TW]=支援 Python 的 Plasma 資料引擎
 
 X-KDE-ServiceTypes=Plasma/ScriptEngine
