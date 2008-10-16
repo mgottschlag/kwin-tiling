@@ -193,6 +193,15 @@ namespace Kephal {
             
             /** Returns the size of the given screen */
             static QSize screenSize(int id);
+            
+            /** Returns the geometry of the whole desktop */
+            static QRect desktopGeometry();
+            
+            /** Returns the id of the screen that contains the given point */
+            static int screenId(QPoint p);
+            
+            /** Returns the id of the primary screen */
+            static int primaryScreenId();
     };
     
 }

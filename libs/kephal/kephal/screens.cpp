@@ -106,6 +106,18 @@ namespace Kephal {
             return Screens::self()->screen(id)->size();
     }            
 
+    QRect ScreenUtils::desktopGeometry() {
+        return QApplication::desktop()->geometry();
+    }
     
+    int ScreenUtils::screenId(QPoint p) {
+        // TODO: this is wrong, only for testing
+        return QApplication::desktop()->screenNumber(p);
+    }
+    
+    int ScreenUtils::primaryScreenId() {
+        return Screens::instance()->primaryScreen()->id();
+    }
+
 }
 
