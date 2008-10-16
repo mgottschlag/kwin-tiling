@@ -427,6 +427,8 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         row++;
 
         m_profileCombo = new Plasma::ComboBox(controls);
+        // This is necessary until Qt task #217874 is fixed
+        m_profileCombo->setZValue(100);
         connect(m_profileCombo, SIGNAL(activated(QString)),
                 this, SLOT(setProfile(QString)));
 
