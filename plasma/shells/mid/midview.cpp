@@ -57,8 +57,10 @@ void MidView::connectContainment(Plasma::Containment *containment)
     }
 
     connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
-    connect(containment, SIGNAL(focusRequested(Plasma::Containment *)), this, SLOT(setContainment(Plasma::Containment *)));
-    connect(containment, SIGNAL(configureRequested()), this, SLOT(configureContainment()));
+    connect(containment, SIGNAL(focusRequested(Plasma::Containment*)),
+            this, SLOT(setContainment(Plasma::Containment*)));
+    connect(containment, SIGNAL(configureRequested(Plasma::Containment*)), this,
+            SLOT(configureContainment(Plasma::Containment*)));
 }
 
 void MidView::setContainment(Plasma::Containment *c)
@@ -76,7 +78,7 @@ void MidView::setContainment(Plasma::Containment *c)
     c->resize(size());
 }
 
-void MidView::configureContainment()
+void MidView::configureContainment(Plasma::Containment *containment)
 {
     /* TODO: implement; suggestion: as an overlay that takes the whole screen
     m_configDialog->show();

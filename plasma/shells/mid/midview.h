@@ -57,7 +57,7 @@ public slots:
      *
      * @arg containment to configure
      */
-    void configureContainment();
+    void configureContainment(Plasma::Containment *containment);
 
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
