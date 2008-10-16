@@ -43,7 +43,6 @@
 #include <KWindowSystem>
 
 #include "plasma/corona.h"
-#include "plasma/appletbrowser.h"
 #include "plasma/animator.h"
 #include "plasma/theme.h"
 #include "kworkspace/kworkspace.h"
