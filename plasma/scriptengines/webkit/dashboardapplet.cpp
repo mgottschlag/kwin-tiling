@@ -29,6 +29,7 @@ THE SOFTWARE.
 #include <plasma/widgets/webcontent.h>
 #include <plasma/applet.h>
 #include <plasma/package.h>
+#include <kstandarddirs.h>
 
 #include "dashboardjs.h"
 
@@ -77,6 +78,12 @@ QByteArray DashboardApplet::dataFor(const QString &str)
     f.open(QIODevice::ReadOnly);
     QByteArray data = f.readAll();
     f.close();
+
+    //TODO: this is wrong, but won't break anything, and is just for testing
+    // check out http://api.kde.org/4.x-api/kdelibs-apidocs/kdecore/html/classKStandardDirs.html
+    data.replace("file:///System/Library/WidgetResources", "/home/kde-devel/kde/share/apps/dashboard");
+    data.replace("/System/Library/WidgetResources", "/home/kde-devel/kde/share/apps/dashboard");
+
     return data;
 }
 

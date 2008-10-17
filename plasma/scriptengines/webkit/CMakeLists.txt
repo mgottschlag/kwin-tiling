@@ -1,3 +1,5 @@
+add_subdirectory(dashboard)
+
 project(plasma-webapplet)
 
 include_directories( ${QT_INCLUDE_DIR}/QtWebKit )
