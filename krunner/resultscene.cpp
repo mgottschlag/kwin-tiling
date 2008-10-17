@@ -278,6 +278,12 @@ void ResultScene::keyPressEvent(QKeyEvent * keyEvent)
         break;
     }
 
+    if (m_items[m_cIndex]->pos().y() + m_items[m_cIndex]->size().height() > sceneRect().y() + sceneRect().height()){
+        setPage(m_currentPage + 1);
+    }else if (m_items[m_cIndex]->pos().y() < sceneRect().y()){
+        setPage(m_currentPage - 1);
+    }
+
     // If we arrive here, it was due to an arrow button.
     Q_ASSERT(m_cIndex  >= 0);
     Q_ASSERT(m_cIndex < m_items.count());
