@@ -73,6 +73,7 @@ class ResultScene : public QGraphicsScene
     protected:
         void keyPressEvent(QKeyEvent * keyEvent);
         void focusOutEvent(QFocusEvent *focusEvent);
+        void wheelEvent(QGraphicsSceneWheelEvent * wheelEvent);
 
     private:
         ResultItem* addQueryMatch(const Plasma::QueryMatch &match, bool useAnyId);

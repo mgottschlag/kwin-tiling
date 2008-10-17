@@ -26,6 +26,7 @@
 #include <QtGui/QKeyEvent>
 #include <QtGui/QPainter>
 #include <QtCore/QTimeLine>
+#include <QtGui/QGraphicsSceneWheelEvent>
 #include <QtGui/QGraphicsGridLayout>
 #include <QtGui/QGraphicsWidget>
 #include <QtGui/QGraphicsProxyWidget>
@@ -282,6 +283,15 @@ void ResultScene::keyPressEvent(QKeyEvent * keyEvent)
     Q_ASSERT(m_cIndex < m_items.count());
     //kDebug() << "m_cIndex: " << m_cIndex << "\n";
     setFocusItem(m_items.at(m_cIndex));
+}
+
+void ResultScene::wheelEvent(QGraphicsSceneWheelEvent *event)
+{
+    if (event->delta() > 0) {
+        setPage(m_currentPage - 1);
+    }else{
+        setPage(m_currentPage + 1);
+    }
 }
 
 void ResultScene::slotArrowResultItemPressed()
