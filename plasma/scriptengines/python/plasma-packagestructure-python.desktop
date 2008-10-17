@@ -2,6 +2,7 @@
 Name=Python Package Structure
 Name[el]=Δομή πακέτου Python
 Name[gl]=Estrutura de paquete de Python
+Name[kk]=Python дестесінің құрылымы
 Name[km]=រចនាសម្ព័ន្ធ​កញ្ចប់ Python
 Name[pt]=Estrutura de Pacotes em Python
 Name[pt_BR]=Estrutura de Pacotes em Python
@@ -13,6 +14,7 @@ Name[zh_TW]=Python 套件結構
 Comment=Format of a Python Script Engine Package
 Comment[el]=Μορφή ενός πακέτου σεναρίου μηχανής Python
 Comment[gl]=Formato dun motor de paquete de scripts en Python
+Comment[kk]=Python скрипт тетігі дестесінің пішімі
 Comment[km]=ទ្រង់ទ្រាយ​របស់​កញ្ចប់​ម៉ាស៊ីន​ទិន្នន័យ​ស្គ្រីប Python
 Comment[pt]=Formato de um Pacote de Motor em Python
 Comment[pt_BR]=Formato de um Pacote de Motor em Python
