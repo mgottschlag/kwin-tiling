@@ -283,35 +283,6 @@ void DeviceNotifier::onClickNotifier()
     }    
 }
 
-void DeviceNotifier::createConfigurationInterface(KConfigDialog *parent)
-{
-    QWidget *widget = new QWidget;
-    ui.setupUi(widget);
-    parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
-    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
-    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-    parent->addPage(widget, parent->windowTitle(), icon());
-
-    ui.spinTime->setValue(m_displayTime);
-    ui.spinItems->setValue(m_numberItems);
-    ui.spinTimeItems->setValue(m_itemsValidity);
-}
-
-void DeviceNotifier::configAccepted()
-{
-    kDebug() << "DeviceNotifier:: Config Accepted with params" << ui.spinTime->value() \
-             << "," << ui.spinItems->value() \
-             << "," << ui.spinTimeItems->value();
-    m_displayTime = ui.spinTime->value();
-    m_numberItems = ui.spinItems->value();
-    m_itemsValidity = ui.spinTimeItems->value();
-    KConfigGroup cg = config();
-    cg.writeEntry("TimeDisplayed", m_displayTime);
-    cg.writeEntry("NumberItems", m_numberItems);
-    cg.writeEntry("ItemsValidity", m_itemsValidity);
-    emit configNeedsSaving();
-}
-
 void DeviceNotifier::onItemDialogClicked()
 {
     if (m_icon) {

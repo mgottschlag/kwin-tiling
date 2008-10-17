@@ -27,8 +27,6 @@
 #include <plasma/applet.h>
 #include <plasma/dataengine.h>
 
-#include "ui_deviceNotifierConfig.h"
-
 class QStandardItemModel;
 class QGraphicsLinearLayout;
 class QGraphicsProxyWidget;
@@ -103,11 +101,6 @@ class DeviceNotifier : public Plasma::Applet
         void dataUpdated(const QString &source, Plasma::DataEngine::Data data);
 
         /**
-        * slot called when user has accepted the config in the config dialog
-        **/
-        void configAccepted();
-
-        /**
         * slot called when user has clicked on an item
         **/
         void onItemDialogClicked();
@@ -121,13 +114,6 @@ class DeviceNotifier : public Plasma::Applet
         * slot called when user click on the icon when applet is in the taskbar
         **/
         void onClickNotifier();
-
-    protected:
-        /**
-         * @internal called to create the config dialog
-         * @param parent the KConfigDialog parent
-        **/
-        void createConfigurationInterface(KConfigDialog *parent);
 
     private:
         /**
@@ -175,10 +161,6 @@ class DeviceNotifier : public Plasma::Applet
        
         ///bool to know if notifications are enabled
         bool isNotificationEnabled;
-
-        /// Designer Config file
-        Ui::solidNotifierConfig ui;
-
 };
 
 #endif
