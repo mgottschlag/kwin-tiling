@@ -61,10 +61,10 @@ void CalculatorRunner::powSubstitutions(QString& cmd)
         int postIndex = where + 1;
         int count = 0;
 
-        QChar decimalSymbol = KGlobal::locale()->decimalSymbol().at(0);     
+        QChar decimalSymbol = KGlobal::locale()->decimalSymbol().at(0);
         //avoid out of range on weird commands 
         preIndex = qMax(0, preIndex);
-        postIndex = qMin(postIndex, cmd.length()-1); 
+        postIndex = qMin(postIndex, cmd.length()-1);
 
         //go backwards looking for the beginning of the number or expression
         while (preIndex != 0) {
@@ -76,7 +76,7 @@ void CalculatorRunner::powSubstitutions(QString& cmd)
             } else if (current == '(') {
                 count--;
             } else {
-                if (((next < '9' ) && (next > '0')) || next == decimalSymbol) {
+                if (((next <= '9' ) && (next >= '0')) || next == decimalSymbol) {
                     preIndex--;
                     continue;
                 }
@@ -97,7 +97,7 @@ void CalculatorRunner::powSubstitutions(QString& cmd)
             } else if (current == ')') {
                 count--;
             } else {
-                if (((next < '9' ) && (next > '0')) || next == decimalSymbol) {
+                if (((next <= '9' ) && (next >= '0')) || next == decimalSymbol) {
                     postIndex++;
                     continue;
                  }
