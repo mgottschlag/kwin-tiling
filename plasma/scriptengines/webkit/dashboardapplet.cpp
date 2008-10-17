@@ -23,9 +23,12 @@ THE SOFTWARE.
 #include "dashboardapplet.h"
 
 #include <QWebFrame>
+#include <QFile>
+#include <QByteArray>
 
 #include <plasma/widgets/webcontent.h>
 #include <plasma/applet.h>
+#include <plasma/package.h>
 
 #include "dashboardjs.h"
 
@@ -66,6 +69,15 @@ void DashboardApplet::initJsObjects()
     Q_ASSERT(frame);
     frame->addToJavaScriptWindowObject(QLatin1String("applet"), this);
     frame->addToJavaScriptWindowObject(QLatin1String("widget"), new DashboardJs(frame, this, applet()));
+}
+
+QByteArray DashboardApplet::dataFor(const QString &str)
+{
+    QFile f(str);
+    f.open(QIODevice::ReadOnly);
+    QByteArray data = f.readAll();
+    f.close();
+    return data;
 }
 
 #include "dashboardapplet.moc"

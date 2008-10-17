@@ -40,6 +40,9 @@ public:
 
     bool init();
 
+protected:
+    virtual QByteArray dataFor(const QString &str);
+
 protected slots:
     virtual void loadFinished(bool success);
     virtual void initJsObjects();

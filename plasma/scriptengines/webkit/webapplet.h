@@ -48,7 +48,7 @@ protected:
     void paintInterface(QPainter *painter,
                                 const QStyleOptionGraphicsItem *option,
                                 const QRect &contentsRect);
-    static QByteArray dataFor(const QString &str);
+    virtual QByteArray dataFor(const QString &str);
     Plasma::WebContent* page();
     bool loaded();
 
