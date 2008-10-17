@@ -79,10 +79,12 @@ QByteArray DashboardApplet::dataFor(const QString &str)
     QByteArray data = f.readAll();
     f.close();
 
-    //TODO: this is wrong, but won't break anything, and is just for testing
-    // check out http://api.kde.org/4.x-api/kdelibs-apidocs/kdecore/html/classKStandardDirs.html
-    data.replace("file:///System/Library/WidgetResources", "/home/kde-devel/kde/share/apps/dashboard");
-    data.replace("/System/Library/WidgetResources", "/home/kde-devel/kde/share/apps/dashboard");
+    //replace the apple javascript imports with the kde ones
+    KStandardDirs a;
+    QString jsBaseDir = a.findResourceDir("data","dashboard/button/genericButton.js") + "dashboard";
+
+    data.replace("file:///System/Library/WidgetResources", jsBaseDir.toUtf8());
+    data.replace("/System/Library/WidgetResources", jsBaseDir.toUtf8());
 
     return data;
 }
