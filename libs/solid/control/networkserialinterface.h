@@ -64,6 +64,7 @@ namespace Control
         virtual NetworkInterface::Type type() const;
 
     Q_SIGNALS:
+        void pppStats(uint in, uint out);
     protected:
         /**
          * @internal

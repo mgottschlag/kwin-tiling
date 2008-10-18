@@ -64,18 +64,11 @@ Solid::Control::NetworkInterface::Type Solid::Control::GsmNetworkInterface::type
 
 void Solid::Control::GsmNetworkInterface::makeConnections(QObject * source)
 {
-    connect(source, SIGNAL(accessPointAppeared(const QString &)),
-            this, SLOT(_k_accessPointAdded(const QString &)));
 }
 
 void Solid::Control::GsmNetworkInterfacePrivate::setBackendObject(QObject *object)
 {
     SerialNetworkInterfacePrivate::setBackendObject(object);
-
-    if (object) {
-        QObject::connect(object, SIGNAL(bitRateChanged(int)),
-                         parent(), SIGNAL(bitRateChanged(int)));
-    }
 }
 
 void Solid::Control::GsmNetworkInterface::_k_destroyed(QObject *object)

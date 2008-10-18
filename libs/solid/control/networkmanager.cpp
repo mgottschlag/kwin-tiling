@@ -22,6 +22,8 @@
 #include "ifaces/networkinterface.h"
 #include "ifaces/wirednetworkinterface.h"
 #include "ifaces/wirelessnetworkinterface.h"
+#include "ifaces/networkgsminterface.h"
+#include "ifaces/networkcdmainterface.h"
 
 #include "soliddefs_p.h"
 #include "networkmanager_p.h"
@@ -32,6 +34,8 @@
 #include "networkmanager.h"
 
 #include <kglobal.h>
+
+#include <kdebug.h>
 
 K_GLOBAL_STATIC(Solid::Control::NetworkManagerPrivate, globalNetworkManager)
 
@@ -224,6 +228,12 @@ Solid::Control::NetworkManagerPrivate::findRegisteredNetworkInterface(const QStr
                 device = new WirelessNetworkInterface(iface);
             } else if (qobject_cast<Ifaces::WiredNetworkInterface *>(iface) != 0) {
                 device = new WiredNetworkInterface(iface);
+            } else if (qobject_cast<Ifaces::GsmNetworkInterface *>(iface) != 0) {
+                device = new GsmNetworkInterface(iface);
+            } else if (qobject_cast<Ifaces::CdmaNetworkInterface *>(iface) != 0) {
+                device = new CdmaNetworkInterface(iface);
+            } else {
+                kDebug() << "Unhandled network interface: " << uni;
             }
             if (device != 0) {
                 QPair<NetworkInterface *, QObject *> pair(device, iface);

@@ -1,5 +1,4 @@
-/*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+/* Copyright 2008 Will Stephenson <wstephenson@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -64,18 +63,11 @@ Solid::Control::NetworkInterface::Type Solid::Control::CdmaNetworkInterface::typ
 
 void Solid::Control::CdmaNetworkInterface::makeConnections(QObject * source)
 {
-    connect(source, SIGNAL(accessPointAppeared(const QString &)),
-            this, SLOT(_k_accessPointAdded(const QString &)));
 }
 
 void Solid::Control::CdmaNetworkInterfacePrivate::setBackendObject(QObject *object)
 {
     SerialNetworkInterfacePrivate::setBackendObject(object);
-
-    if (object) {
-        QObject::connect(object, SIGNAL(bitRateChanged(int)),
-                         parent(), SIGNAL(bitRateChanged(int)));
-    }
 }
 
 void Solid::Control::CdmaNetworkInterface::_k_destroyed(QObject *object)

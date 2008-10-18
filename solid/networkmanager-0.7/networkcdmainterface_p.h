@@ -17,42 +17,18 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public 
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef NETWORKCDMAINTERFACE_P_H
+#define NETWORKCDMAINTERFACE_P_H
 
-#ifndef SOLID_IFACES_GSMNETWORKINTERFACE_H
-#define SOLID_IFACES_GSMNETWORKINTERFACE_H
-
-#include "../solid_control_export.h"
-
-#include <QtCore/QStringList>
-
-#include "../networkgsminterface.h"
-#include "networkserialinterface.h"
+#include "networkserialinterface_p.h"
+#include "dbus/nm-device-cdmainterface.h"
 
 
-namespace Solid
+class NMCdmaNetworkInterfacePrivate : public NMSerialNetworkInterfacePrivate
 {
-namespace Control
-{
-namespace Ifaces
-{
-    /**
-     * Represents a wireless network interface
-     */
-    class SOLIDCONTROLIFACES_EXPORT GsmNetworkInterface : virtual public SerialNetworkInterface
-    {
-    public:
-        /**
-         * Destroys a GsmNetworkInterface object
-         */
-        virtual ~GsmNetworkInterface();
-    protected:
-    //Q_SIGNALS:
-    };
-} //Ifaces
-} //Control
-} //Solid
+public:
+    NMCdmaNetworkInterfacePrivate(const QString &path, QObject *owner);
+    OrgFreedesktopNetworkManagerDeviceCdmaInterface cdmaIface;
+};
 
-Q_DECLARE_INTERFACE(Solid::Control::Ifaces::GsmNetworkInterface, "org.kde.Solid.Control.Ifaces.GsmNetworkInterface/0.1")
-
-#endif //SOLID_IFACES_GSMNETWORKINTERFACE_H
-
+#endif // NETWORKCDMAINTERFACE_P_H

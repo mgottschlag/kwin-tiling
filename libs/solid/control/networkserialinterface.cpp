@@ -64,18 +64,13 @@ Solid::Control::NetworkInterface::Type Solid::Control::SerialNetworkInterface::t
 
 void Solid::Control::SerialNetworkInterface::makeConnections(QObject * source)
 {
-    connect(source, SIGNAL(accessPointAppeared(const QString &)),
-            this, SLOT(_k_accessPointAdded(const QString &)));
+    connect(source, SIGNAL(pppStats(uint,uint)),
+            this, SIGNAL(pppStats(uint,uint)));
 }
 
 void Solid::Control::SerialNetworkInterfacePrivate::setBackendObject(QObject *object)
 {
     NetworkInterfacePrivate::setBackendObject(object);
-
-    if (object) {
-        QObject::connect(object, SIGNAL(bitRateChanged(int)),
-                         parent(), SIGNAL(bitRateChanged(int)));
-    }
 }
 
 void Solid::Control::SerialNetworkInterface::_k_destroyed(QObject *object)

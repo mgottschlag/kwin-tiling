@@ -46,6 +46,7 @@ namespace Ifaces
 
     protected:
     //Q_SIGNALS:
+        void pppStats(uint in, uint out);
     };
 } //Ifaces
 } //Control

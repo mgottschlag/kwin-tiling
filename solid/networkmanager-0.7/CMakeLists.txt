@@ -6,7 +6,7 @@ include_directories(
    ${CMAKE_CURRENT_BUILD_DIR}
 )
 
-#add_subdirectory(dbus)
+add_subdirectory(dbus)
 
 #add_subdirectory(tests)
 
@@ -21,6 +21,9 @@ set(solid_networkmanager_PART_SRCS
    networkinterface.cpp
    wirednetworkinterface.cpp
    wirelessnetworkinterface.cpp
+   networkserialinterface.cpp
+   networkcdmainterface.cpp
+   networkgsminterface.cpp
    nmpropertyhelper.cpp
 )
 
@@ -31,6 +34,9 @@ set( DBUS_INTERFACES_FILES
    dbus/nm-access-pointinterface.cpp
    dbus/nm-device-ethernetinterface.cpp
    dbus/nm-device-wifiinterface.cpp
+   dbus/nm-device-serialinterface.cpp
+   dbus/nm-device-cdmainterface.cpp
+   dbus/nm-device-gsminterface.cpp
    dbus/nm-ip4-configinterface.cpp
    dbus/nm-dhcp4-configinterface.cpp
 )

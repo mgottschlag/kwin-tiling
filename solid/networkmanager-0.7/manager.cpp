@@ -28,6 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "networkmanagerdefinitions.h"
 #include "wirednetworkinterface.h"
 #include "wirelessnetworkinterface.h"
+#include "networkgsminterface.h"
+#include "networkcdmainterface.h"
 
 const QString NMNetworkManager::DBUS_SERVICE(QString::fromLatin1("org.freedesktop.NetworkManager"));
 const QString NMNetworkManager::DBUS_DAEMON_PATH(QString::fromLatin1("/org/freedesktop/NetworkManager"));
@@ -110,14 +112,24 @@ QObject *NMNetworkManager::createNetworkInterface(const QString &uni)
     NMNetworkInterface * createdInterface = 0;
     switch ( deviceType ) {
         case DEVICE_TYPE_802_3_ETHERNET:
-            createdInterface = new NMWiredNetworkInterface(uni, this, 0); // these are deleted by the frontent manager
+            createdInterface = new NMWiredNetworkInterface(uni, this, 0); // these are deleted by the frontend manager
             break;
         case DEVICE_TYPE_802_11_WIRELESS:
             createdInterface = new NMWirelessNetworkInterface(uni, this, 0);
             break;
         case DEVICE_TYPE_GSM:
+            createdInterface = new NMGsmNetworkInterface(uni, this, 0);
+            break;
         case DEVICE_TYPE_CDMA:
+            createdInterface = new NMCdmaNetworkInterface(uni, this, 0);
+            break;
+            /*
+        case DEVICE_TYPE_SERIAL:
+            createdInterface = new NMSerialNetworkInterface(uni, this, 0);
+            break;
+            */
         default:
+            kDebug() << "Can't create object of type " << deviceType;
             break;
     }
 

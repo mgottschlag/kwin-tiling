@@ -14,16 +14,19 @@
 
 
 set( INTERFACE_INTROSPECTION_XML_FILES
-   introspection/nm-manager-client.xml
-   introspection/nm-device.xml
-   introspection/nm-access-point.xml
-   introspection/nm-device-wifi.xml
-   introspection/nm-device-ethernet.xml
-#   introspection/nm-exported-connection.xml
-   introspection/nm-ip4-config.xml
-   introspection/nm-dhcp4-config.xml
+   #   introspection/nm-manager-client.xml
+   #introspection/nm-device.xml
+   #introspection/nm-access-point.xml
+   #introspection/nm-device-wifi.xml
+   #introspection/nm-device-ethernet.xml
+   #   introspection/nm-exported-connection.xml
+#introspection/nm-ip4-config.xml
+#   introspection/nm-dhcp4-config.xml
 #   introspection/nm-vpn-connection.xml
 #   introspection/nm-vpn-plugin.xml
+   introspection/nm-device-gsm.xml
+   introspection/nm-device-cdma.xml
+   introspection/nm-device-serial.xml
    )
 
 set( ADAPTER_INTROSPECTION_XML_FILES
@@ -36,7 +39,10 @@ set( UNUSED_XML
 )
 
 
-set( FILES_TO_BUILD activeconnection.cpp
+set( FILES_TO_BUILD
+   )
+set ( UNUSED_FILES
+   activeconnection.cpp
    nm-manager-clientinterface.cpp
    nm-deviceinterface.cpp
    nm-access-pointinterface.cpp 
