@@ -418,6 +418,8 @@ DesktopView* PlasmaApp::viewForScreen(int screen) const
 Plasma::Corona* PlasmaApp::corona()
 {
     if (!m_corona) {
+        QTime t;
+        t.start();
         DesktopCorona *c = new DesktopCorona(this);
         connect(c, SIGNAL(containmentAdded(Plasma::Containment*)),
                 this, SLOT(containmentAdded(Plasma::Containment*)));
@@ -432,6 +434,7 @@ Plasma::Corona* PlasmaApp::corona()
         c->initializeLayout();
         c->checkScreens();
         m_corona = c;
+        kDebug() << " ------------------------------------------>" << t.elapsed();
     }
 
     return m_corona;
@@ -594,7 +597,22 @@ void PlasmaApp::configureContainment(Plasma::Containment *containment)
         configDialog->reloadConfig();
     } else {
         const QSize resolution = QApplication::desktop()->screenGeometry(containment->screen()).size();
-        configDialog = new BackgroundDialog(resolution, viewForScreen(containment->screen()));
+        Plasma::View *view = viewForScreen(containment->screen());
+
+        if (!view) {
+            view = viewForScreen(desktop()->screenNumber(QCursor::pos()));
+
+            if (!view) {
+                if (m_desktops.count() < 1) {
+                    return;
+                }
+
+                view = m_desktops.at(0);
+            }
+
+        }
+
+        configDialog = new BackgroundDialog(resolution, containment, view);
         configDialog->setAttribute(Qt::WA_DeleteOnClose);
         connect(configDialog, SIGNAL(destroyed(QObject*)),
                 this, SLOT(configDialogRemoved(QObject*)));
