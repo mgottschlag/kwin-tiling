@@ -22,8 +22,6 @@
 
 #include <KDE/KDialog>
 
-#include <plasma/plasma_export.h>
-
 namespace Plasma
 {
 
