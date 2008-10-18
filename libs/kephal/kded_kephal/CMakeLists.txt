@@ -33,6 +33,7 @@ SET (kded_kephal_SRCS
         dbus/dbusapi_outputs.cpp
         dbus/dbusapi_configurations.cpp
         ../kephal/configurations.cpp
+        ../configurations/externalconfiguration.cpp
         ../configurations/backendconfigurations.cpp
         ../configurations/xml/xmlconfigurations.cpp)
 QT4_GENERATE_DBUS_INTERFACE(dbus/dbusapi_screens.h org.kde.Kephal.Screens.xml)

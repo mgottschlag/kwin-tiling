@@ -30,7 +30,6 @@
 #include "dbus/dbusapi_screens.h"
 #include "dbus/dbusapi_outputs.h"
 #include "dbus/dbusapi_configurations.h"
-//#include "xml/configurations_xml.h"
 #include "configurations/xml/xmlconfigurations.h"
 #include "xrandr12/randrdisplay.h"
 #include "xrandr12/randrscreen.h"
@@ -99,8 +98,8 @@ void KephalD::init() {
     }
     
     activateConfiguration();
-    connect(Outputs::self(), SIGNAL(outputDisconnected(Kephal::Output *)), this, SLOT(outputDisconnected(Kephal::Output *)));
-    connect(Outputs::self(), SIGNAL(outputConnected(Kephal::Output *)), this, SLOT(outputConnected(Kephal::Output *)));
+    connect(Outputs::self(), SIGNAL(outputDisconnected(kephal::Output *)), this, SLOT(outputDisconnected(kephal::Output *)));
+    connect(Outputs::self(), SIGNAL(outputConnected(kephal::Output *)), this, SLOT(outputConnected(kephal::Output *)));
     
     qDebug() << "will check for possible positions...";
     foreach (Output * output, Outputs::self()->outputs()) {
