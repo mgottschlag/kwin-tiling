@@ -86,7 +86,7 @@ private:
     AppletBrowserWidgetPrivate * const d;
 };
 
-class PLASMA_EXPORT AppletBrowser: public KDialog
+class AppletBrowser: public KDialog
 {
     Q_OBJECT
 public:
