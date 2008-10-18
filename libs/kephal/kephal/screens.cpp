@@ -116,7 +116,7 @@ namespace Kephal {
     }
     
     int ScreenUtils::primaryScreenId() {
-        return Screens::instance()->primaryScreen()->id();
+        return Screens::self()->primaryScreen()->id();
     }
 
 }
