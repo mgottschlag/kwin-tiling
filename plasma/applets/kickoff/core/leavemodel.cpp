@@ -58,43 +58,35 @@ QStandardItem* LeaveModel::createStandardItem(const QString& url)
         item->setText(i18n("Switch User"));
         item->setIcon(KIcon("system-switch-user"));
         item->setData(i18n("Start a parallel session as a different user"),Kickoff::SubTitleRole);
-    } else if (basename == "sleep") {
-        item->setText(i18n("Sleep"));
-        item->setIcon(KIcon("system-suspend"));
-        item->setData(i18n("Suspend to RAM"), Kickoff::SubTitleRole);
-    } else if (basename == "hibernate") {
-        item->setText(i18n("Hibernate"));
-        item->setIcon(KIcon("system-suspend-hibernate"));
-        item->setData(i18n("Suspend to disk"), Kickoff::SubTitleRole);
     } else if (basename == "shutdown") {
         item->setText(i18n("Shutdown"));
         item->setIcon(KIcon("system-shutdown"));
-        item->setData(i18n("Turn off the computer"),Kickoff::SubTitleRole);
+        item->setData(i18n("Turn off the computer"), Kickoff::SubTitleRole);
     } else if (basename == "restart") {
         item->setText(i18n("Restart"));
         item->setIcon(KIcon("system-restart"));
-        item->setData(i18n("Restart the computer"),Kickoff::SubTitleRole);
+        item->setData(i18n("Restart the computer"), Kickoff::SubTitleRole);
     } else if (basename == "savesession") {
         item->setText(i18n("Save Session"));
         item->setIcon(KIcon("document-save"));
-        item->setData(i18n("Save current session for next login"),Kickoff::SubTitleRole);
+        item->setData(i18n("Save current session for next login"), Kickoff::SubTitleRole);
     } else if (basename == "standby") {
         item->setText(i18n("Standby"));
         item->setIcon(KIcon("system-suspend"));
-        item->setData(i18n("Pause without logging out"),Kickoff::SubTitleRole);
+        item->setData(i18n("Pause without logging out"), Kickoff::SubTitleRole);
     } else if (basename == "suspenddisk") {
         item->setText(i18n("Suspend to Disk"));
         item->setIcon(KIcon("system-suspend-hibernate"));
-        item->setData(i18n("Pause without logging out"),Kickoff::SubTitleRole);
+        item->setData(i18n("Pause without logging out"), Kickoff::SubTitleRole);
     } else if (basename == "suspendram") {
         item->setText(i18n("Suspend to RAM"));
         item->setIcon(KIcon("system-suspend-hibernate"));
-        item->setData(i18n("Pause without logging out"),Kickoff::SubTitleRole);
+        item->setData(i18n("Pause without logging out"), Kickoff::SubTitleRole);
     } else {
         item->setText(basename);
-        item->setData(url,Kickoff::SubTitleRole);
+        item->setData(url, Kickoff::SubTitleRole);
     }
-    item->setData(url,Kickoff::UrlRole);
+    item->setData(url, Kickoff::UrlRole);
     return item;
 }
 
@@ -106,6 +98,7 @@ LeaveModel::LeaveModel(QObject *parent)
 
 void LeaveModel::updateModel()
 {
+    kDebug() << "updating, go!";
     clear();
 
     // Session Options
@@ -134,41 +127,25 @@ void LeaveModel::updateModel()
     QStandardItem *systemOptions = new QStandardItem(i18n("System"));
     bool addSystemSession = false;
 
-    {
-        using namespace Solid::Control::PowerManager;
-        SuspendMethods sleepStates = supportedSuspendMethods();
-
-        // Sleep
-        if (sleepStates & ToRam) {
-            QStandardItem *sleepOption = createStandardItem("leave:/sleep");
-            systemOptions->appendRow(sleepOption);
-            addSystemSession = true;
-        }
-
-        // Hibernate
-        if (sleepStates & ToDisk) {
-            QStandardItem *hibernateOption = createStandardItem("leave:/hibernate");
-            systemOptions->appendRow(hibernateOption);
-            addSystemSession = true;
-        }
-    }
-
 //FIXME: the proper fix is to implement the KWorkSpace methods for Windows
 #ifndef Q_WS_WIN
     Solid::Control::PowerManager::SuspendMethods spdMethods = Solid::Control::PowerManager::supportedSuspendMethods();
-    if( spdMethods & Solid::Control::PowerManager::Standby ) {
+    if (spdMethods & Solid::Control::PowerManager::Standby) {
         QStandardItem *standbyOption = createStandardItem("leave:/standby");
         systemOptions->appendRow(standbyOption);
+        addSystemSession = true;
     }
 
-    if( spdMethods & Solid::Control::PowerManager::ToRam ) {
+    if (spdMethods & Solid::Control::PowerManager::ToRam) {
         QStandardItem *suspendramOption = createStandardItem("leave:/suspendram");
         systemOptions->appendRow(suspendramOption);
+        addSystemSession = true;
     }
 
-    if( spdMethods & Solid::Control::PowerManager::ToDisk ) {
+    if (spdMethods & Solid::Control::PowerManager::ToDisk) {
         QStandardItem *suspenddiskOption = createStandardItem("leave:/suspenddisk");
         systemOptions->appendRow(suspenddiskOption);
+        addSystemSession = true;
     }
 
     if (KWorkSpace::canShutDown(KWorkSpace::ShutdownConfirmDefault, KWorkSpace::ShutdownTypeHalt)) {

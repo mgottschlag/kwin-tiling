@@ -91,11 +91,9 @@ QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString)
         item->setData(subTitle, Kickoff::SubTitleRole);
 
         setSpecialUrlProperties(desktopUrl, item);
-    }
-    else if (url.scheme() == "leave") {
+    } else if (url.scheme() == "leave") {
         item = LeaveModel::createStandardItem(urlString);
-    }
-    else {
+    } else {
         item = new QStandardItem;
         const QString subTitle = url.isLocalFile() ? url.path() : url.prettyUrl();
         QString basename = QFileInfo(urlString).completeBaseName();

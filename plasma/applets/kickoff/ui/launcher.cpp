@@ -151,6 +151,7 @@ public:
     void setupLeaveView()
     {
         leaveModel = new LeaveModel(q);
+        leaveModel->updateModel();
         UrlItemView *view = new UrlItemView;
         ItemDelegate *delegate = new ItemDelegate(q);
         delegate->setRoleMapping(Plasma::Delegate::SubTitleRole, SubTitleRole);
