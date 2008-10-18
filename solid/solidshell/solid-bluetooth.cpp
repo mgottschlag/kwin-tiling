@@ -438,6 +438,7 @@ bool SolidBluetooth::bluetoothCreateDevice(const QString &adapterUbi, const QStr
     Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface(adapterUbi);
 //    QString remoteDeviceUBI = adapter.createDevice(mac);
 //    cout << "Remote Device UBI: " << remoteDeviceUBI << endl;
+    return true;
 }
 
 bool SolidBluetooth::bluetoothRemoveDevice(const QString &adapterUbi, const QString &/*remoteDeviceUbi*/)
@@ -445,6 +446,7 @@ bool SolidBluetooth::bluetoothRemoveDevice(const QString &adapterUbi, const QStr
     Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
     Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface(adapterUbi);
 //    adapter.removeDevice(remoteDeviceUbi);
+    return true;
 }
 
 bool SolidBluetooth::bluetoothGetProperties(const QString &adapterUbi)
@@ -455,6 +457,7 @@ bool SolidBluetooth::bluetoothGetProperties(const QString &adapterUbi)
     foreach (QString valName, props.keys()) {
         cout << valName << ": " << props[valName] << endl;
     }
+    return true;
 }
 
 
