@@ -64,6 +64,12 @@ namespace Notifier
       void mouseMoveEvent(QMouseEvent *event);
 
       /**
+       * Call when a mouse move event is catch
+       * @param event the mouse event
+       **/
+      void mousePressEvent(QMouseEvent *event);
+
+      /**
       * Call when cursor leave the widget
       * @param event the leave event
       **/

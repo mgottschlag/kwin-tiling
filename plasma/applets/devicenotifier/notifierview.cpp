@@ -95,6 +95,15 @@ void NotifierView::mouseMoveEvent(QMouseEvent *event)
     QAbstractItemView::mouseMoveEvent(event);
 }
 
+void NotifierView::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() != Qt::LeftButton) {
+        return;
+    }
+
+    QAbstractItemView::mousePressEvent(event);
+}
+
 void NotifierView::leaveEvent(QEvent *event)
 {
     Q_UNUSED(event)
