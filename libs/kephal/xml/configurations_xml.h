@@ -126,7 +126,7 @@ namespace Kephal {
         Q_OBJECT
         PROPERTY(bool, polling, setPolling)
         public:
-            ConfigurationsXML() : m_polling(true) {}
+            ConfigurationsXML() : m_polling(false) {}
             
             QList<ConfigurationXML *> & configurations();
             QList<OutputsXML *> & outputs();

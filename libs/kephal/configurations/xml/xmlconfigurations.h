@@ -25,6 +25,7 @@
 #include <QTimer>
 
 #include "configurations/backendconfigurations.h"
+#include "configurations/externalconfiguration.h"
 #include "kephal/configurations.h"
 
 
@@ -89,6 +90,7 @@ namespace Kephal {
         private Q_SLOTS:
             void confirmTimerTimeout();
             bool activate(XMLConfiguration * configuration);
+            void activateExternal();
             
         private:
             void init();
@@ -119,6 +121,7 @@ namespace Kephal {
             QMap<QString, XMLConfiguration *> m_configurations;
             XMLConfiguration * m_activeConfiguration;
             XMLConfiguration * m_markedConfiguration;
+            ExternalConfiguration * m_externalConfiguration;
             ConfigurationsXML * m_configXml;
             QString m_configPath;
             OutputsXML * m_currentOutputs;

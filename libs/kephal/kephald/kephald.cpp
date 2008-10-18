@@ -98,8 +98,8 @@ void KephalD::init() {
     }
     
     activateConfiguration();
-    connect(Outputs::self(), SIGNAL(outputDisconnected(kephal::Output *)), this, SLOT(outputDisconnected(kephal::Output *)));
-    connect(Outputs::self(), SIGNAL(outputConnected(kephal::Output *)), this, SLOT(outputConnected(kephal::Output *)));
+    connect(Outputs::self(), SIGNAL(outputDisconnected(Kephal::Output *)), this, SLOT(outputDisconnected(Kephal::Output *)));
+    connect(Outputs::self(), SIGNAL(outputConnected(Kephal::Output *)), this, SLOT(outputConnected(Kephal::Output *)));
     
     qDebug() << "will check for possible positions...";
     foreach (Output * output, Outputs::self()->outputs()) {

@@ -52,6 +52,7 @@ namespace Kephal {
     }
     
     void ExternalConfiguration::activate() {
+        emit activateExternal();
     }
 
 }

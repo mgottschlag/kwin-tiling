@@ -165,6 +165,9 @@ namespace Kephal {
         dir.cd(".local");
         m_configPath = dir.filePath("screen-configurations.xml");
         
+        m_externalConfiguration = new ExternalConfiguration(this);
+        connect(m_externalConfiguration, SIGNAL(activateExternal()), this, SLOT(activateExternal()));
+        
         connect(m_confirmTimer, SIGNAL(timeout()), this, SLOT(confirmTimerTimeout()));
         
         init();
@@ -268,7 +271,7 @@ namespace Kephal {
             outputs->setParent(m_configXml);
             m_configXml->outputs().append(outputs);
             
-            outputs->setConfiguration("single");
+            outputs->setConfiguration("external");
             
             OutputXML * output = new OutputXML();
             output->setParent(outputs);
@@ -286,7 +289,7 @@ namespace Kephal {
             outputs->setParent(m_configXml);
             m_configXml->outputs().append(outputs);
             
-            outputs->setConfiguration("extended-right");
+            outputs->setConfiguration("external");
             
             output = new OutputXML();
             output->setParent(outputs);
@@ -331,6 +334,10 @@ namespace Kephal {
             return 0;
         }
         qDebug() << "found outputs, known:" << m_currentOutputsKnown;
+        
+        if (m_currentOutputs->configuration() == "external") {
+            return m_externalConfiguration;
+        }
         
         XMLConfiguration * config = m_configurations[m_currentOutputs->configuration()];
         if (! config) {
@@ -554,7 +561,7 @@ namespace Kephal {
     }
     
     bool XMLConfigurations::move(Output * output, const QPoint & position) {
-        if (! output->isConnected()) {
+        if ((! m_activeConfiguration) || (! output->isConnected())) {
             return false;
         }
         if (position == output->position()) {
@@ -612,7 +619,7 @@ namespace Kephal {
     
     bool XMLConfigurations::resize(Output * output, const QSize & size) {
         qDebug() << "XMLConfigurations::resize() called" << output->id() << size;
-        if ((! output->isConnected()) || (! output->isActivated())) {
+        if ((! m_activeConfiguration) || (! output->isConnected()) || (! output->isActivated())) {
             return false;
         }
         if (size == output->size()) {
@@ -955,6 +962,11 @@ namespace Kephal {
         return positions;
     }
     
+    void XMLConfigurations::activateExternal() {
+        qDebug() << "activate external configuration!!";
+        m_activeConfiguration = 0;
+    }
+    
     bool XMLConfigurations::activate(XMLConfiguration * configuration) {
         qDebug() << "activate configuration:" << configuration->name();
         if (configuration == m_activeConfiguration) {
@@ -1137,7 +1149,7 @@ namespace Kephal {
     }
     
     Configuration * XMLConfigurations::activeConfiguration() {
-        return m_activeConfiguration;
+        return m_activeConfiguration ? (Configuration *) m_activeConfiguration : (Configuration *) m_externalConfiguration;
     }
     
     XMLConfiguration * XMLConfigurations::simpleConfiguration(int numScreens) {
@@ -1243,6 +1255,10 @@ namespace Kephal {
     }
 
     bool XMLConfigurations::rotate(Output * output, Rotation rotation) {
+        if (! m_activeConfiguration) {
+            return false;
+        }
+        
         BackendOutput * o = BackendOutputs::self()->backendOutput(output->id());
         if (o) {
             bool resizeNeeded = ((output->rotation() + rotation) % 180) != 0;

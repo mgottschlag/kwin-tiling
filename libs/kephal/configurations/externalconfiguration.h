@@ -38,6 +38,8 @@ namespace Kephal {
             int primaryScreen();
         public Q_SLOTS:
             void activate();
+        Q_SIGNALS:
+            void activateExternal();
         private:
             BackendConfigurations * m_parent;
     };

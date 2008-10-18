@@ -91,11 +91,6 @@ void KephalD::init() {
     connect(Outputs::self(), SIGNAL(outputDisconnected(Kephal::Output *)), this, SLOT(outputDisconnected(Kephal::Output *)));
     connect(Outputs::self(), SIGNAL(outputConnected(Kephal::Output *)), this, SLOT(outputConnected(Kephal::Output *)));
     
-    qDebug() << "will check for possible positions...";
-    foreach (Output * output, Outputs::self()->outputs()) {
-        qDebug() << "possible positions for:" << output->id() << Configurations::self()->possiblePositions(output);
-    }
-    
     QDBusConnection dbus = QDBusConnection::sessionBus();
     bool result = dbus.registerService("org.kde.Kephal");
     qDebug() << "registered the service:" << result;
