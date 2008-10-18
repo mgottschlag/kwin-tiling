@@ -126,6 +126,11 @@ namespace Control
          */
         SOLIDCONTROL_EXPORT void deactivateConnection(const QString & activeConnectionUni);
 
+        /**
+         * Access the list of any active connections
+         */
+        QStringList SOLIDCONTROL_EXPORT activeConnections();
+
         class SOLIDCONTROL_EXPORT Notifier : public QObject
         {
             Q_OBJECT
@@ -155,6 +160,10 @@ namespace Control
              * This signal is emitted when the status of the wireless hardware changed
              */
             void wirelessHardwareEnabledChanged(bool enabled);
+            /**
+             * This signal is emitted when the set of active connections changes
+             */
+            void activeConnectionsChanged();
         };
 
         SOLIDCONTROL_EXPORT Notifier *notifier();

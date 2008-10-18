@@ -2,8 +2,7 @@
 Copyright 2008 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2 of
+modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of
 the License or (at your option) version 3 or any later version
 accepted by the membership of KDE e.V. (or its successor approved
 by the membership of KDE e.V.), which shall act as a proxy 
@@ -236,7 +235,7 @@ void NMNetworkManager::propertiesChanged(const QVariantMap &properties)
             d->activeConnections.append(ac.path());
             kDebug(1441) << "  " << ac.path();
         }
-        emit activeConnectionsChanged(d->activeConnections);
+        emit activeConnectionsChanged();
     }
     it = properties.find(wifiHwKey);
     if ( it != properties.end()) {
@@ -293,5 +292,6 @@ QStringList NMNetworkManager::activeConnections() const
     Q_D(const NMNetworkManager);
     return d->activeConnections;
 }
+
 #include "manager.moc"
 

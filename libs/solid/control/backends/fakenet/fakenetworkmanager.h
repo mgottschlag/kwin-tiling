@@ -57,6 +57,7 @@ Q_OBJECT
         void activateConnection(const QString & interfaceUni, const QString & connectionUni, const QVariantMap & connectionParameters);
 
         void deactivateConnection(const QString & activeConnection);
+        QStringList activeConnections() const;
 
     public Q_SLOTS:
         void setWirelessEnabled(bool);
@@ -71,6 +72,7 @@ Q_OBJECT
         bool mUserWirelessEnabled;
         bool mRfKillEnabled;
         QMap<QString, FakeNetworkInterface *> mNetworkInterfaces;
+        QStringList mActiveConnections;
         QString mXmlFile;
 };
 

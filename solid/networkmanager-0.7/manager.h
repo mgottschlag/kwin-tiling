@@ -61,7 +61,7 @@ Q_SIGNALS:
     void networkInterfaceRemoved(const QString & uni);
     void wirelessEnabledChanged(bool);
     void networkingEnabledChanged(bool);
-    void activeConnectionsChanged(const QStringList& );
+    void activeConnectionsChanged();
 
 protected Q_SLOTS:
     void deviceAdded(const QDBusObjectPath &state);

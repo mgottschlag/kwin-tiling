@@ -56,6 +56,8 @@ Solid::Control::NetworkManagerPrivate::NetworkManagerPrivate() : m_invalidDevice
                 this, SIGNAL(wirelessEnabledChanged(bool)));
         connect(managerBackend(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
                 this, SIGNAL(wirelessHardwareEnabledChanged(bool)));
+        connect(managerBackend(), SIGNAL(activeConnectionsChanged()),
+                this, SIGNAL(activeConnectionsChanged()));
     }
 }
 
@@ -263,6 +265,11 @@ void Solid::Control::NetworkManager::activateConnection(const QString & interfac
 void Solid::Control::NetworkManager::deactivateConnection(const QString & activeConnectionUni)
 {
     SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), deactivateConnection(activeConnectionUni));
+}
+
+QStringList Solid::Control::NetworkManager::activeConnections()
+{
+    return_SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), QStringList(), activeConnections());
 }
 
 #include "networkmanager_p.moc"

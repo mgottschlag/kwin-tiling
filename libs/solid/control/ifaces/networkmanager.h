@@ -21,6 +21,7 @@
 #define SOLID_IFACES_NETWORKMANAGER
 
 #include <QtCore/QObject>
+#include <QStringList>
 #include <solid/networking.h>
 #include "../solid_control_export.h"
 #include "../networkmanager.h"
@@ -102,6 +103,11 @@ namespace Ifaces
 
         virtual void deactivateConnection(const QString & activeConnection) = 0;
 
+        /**
+         * Access the list of active connection UNIs
+         */
+        virtual QStringList activeConnections() const = 0;
+
     public Q_SLOTS:
         /**
          * Activates or deactivates networking (as a whole).
@@ -146,6 +152,11 @@ namespace Ifaces
          * This signal is emitted when the status of the wireless hardware changed
          */
         void wirelessHardwareEnabledChanged(bool enabled);
+
+        /**
+         * This signal is emitted when the set of active connections changes
+         */
+        void activeConnectionsChanged();
     };
 
 } // Ifaces

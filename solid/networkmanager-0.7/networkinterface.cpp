@@ -238,6 +238,7 @@ void NMNetworkInterface::stateChanged(uint new_state, uint old_state, uint reaso
 {
     Q_D(NMNetworkInterface);
     d->connectionState = convertState(new_state);
+    emit connectionStateChanged(d->connectionState);
 }
 
 #include "networkinterface.moc"

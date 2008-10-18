@@ -34,7 +34,6 @@ FakeNetworkManager::FakeNetworkManager(QObject * parent, const QStringList  &) :
     mUserNetworkingEnabled = true;
     mUserWirelessEnabled = true;
     mRfKillEnabled = false;
-
     mXmlFile = KStandardDirs::locate("data", "solidfakebackend/fakenetworking.xml");
 
 //     QDBusConnection::sessionBus().registerObject("/org/kde/solid/fake", this, QDBusConnection::ExportNonScriptableSlots);
@@ -268,14 +267,19 @@ QMap<QString,QVariant> FakeNetworkManager::parseAPElement(const QDomElement &dev
 
 void FakeNetworkManager::activateConnection(const QString & interfaceUni, const QString & connectionUni, const QVariantMap & connectionParameters)
 {
-
+    mActiveConnections.append(connectionUni);
+    QTimer::singleShot(0, this, SIGNAL(activeConnectionsChanged()));
 }
 
 void FakeNetworkManager::deactivateConnection(const QString & activeConnection)
 {
-
+    mActiveConnections.removeAll(activeConnection);
 }
 
+QStringList FakeNetworkManager::activeConnections() const
+{
+    return mActiveConnections;
+}
 
 #include "fakenetworkmanager.moc"
 
