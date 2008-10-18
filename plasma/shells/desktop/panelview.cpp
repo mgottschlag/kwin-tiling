@@ -943,7 +943,6 @@ void PanelView::destroyUnhideTrigger()
 
 void PanelView::panelDeleted()
 {
-    setContainment(0);
     if (!QApplication::closingDown()) {
         // the panel was removed at runtime; clean up our configuration object as well
         KConfigGroup c = config();
