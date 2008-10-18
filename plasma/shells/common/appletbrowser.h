@@ -33,7 +33,7 @@ class Applet;
 class AppletBrowserPrivate;
 class AppletBrowserWidgetPrivate;
 
-class PLASMA_EXPORT AppletBrowserWidget : public QWidget
+class AppletBrowserWidget : public QWidget
 {
     Q_OBJECT
 public:
