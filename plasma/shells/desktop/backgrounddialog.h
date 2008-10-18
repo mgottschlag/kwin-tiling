@@ -27,7 +27,8 @@ class BackgroundDialog : public KDialog, public Ui::BackgroundDialog
 {
     Q_OBJECT
 public:
-    BackgroundDialog(const QSize& res, Plasma::View* view, QWidget* parent = 0);
+    BackgroundDialog(const QSize &res, Plasma::Containment *containment,
+                     Plasma::View *view, QWidget *parent = 0);
     ~BackgroundDialog();
 
     void reloadConfig();

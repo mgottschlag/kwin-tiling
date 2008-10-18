@@ -351,13 +351,13 @@ QSize AppletDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelI
     return QSize(200, calcItemHeight(option));
 }
 
-BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::View* view, QWidget* parent)
+BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Plasma::View* view, QWidget* parent)
     : KDialog(parent),
       m_themeModel(0),
       m_containmentModel(0),
       m_wallpaper(0),
       m_view(view),
-      m_containment(m_view->containment()),
+      m_containment(c),
       m_preview(0)
 {
     setWindowIcon(KIcon("preferences-desktop-wallpaper"));
@@ -440,7 +440,6 @@ void BackgroundDialog::getNewThemes()
 void BackgroundDialog::reloadConfig()
 {
     disconnect(m_wallpaperMode, SIGNAL(currentIndexChanged(int)), this, SLOT(changeBackgroundMode(int)));
-    m_containment = m_view->containment();
     int containmentIndex = 0;
     int wallpaperIndex = 0;
 
@@ -533,9 +532,10 @@ void BackgroundDialog::changeBackgroundMode(int mode)
     }
 
     if (m_wallpaper) {
+        m_wallpaper->setRenderingMode(wallpaperInfo.second);
         KConfigGroup cfg = wallpaperConfig(wallpaperInfo.first);
         kDebug() << "making a" << wallpaperInfo.first << "in mode" << wallpaperInfo.second;
-        m_wallpaper->restore(cfg, wallpaperInfo.second);
+        m_wallpaper->restore(cfg);
         w = m_wallpaper->createConfigurationInterface(m_wallpaperGroup);
     }
 
@@ -567,7 +567,7 @@ void BackgroundDialog::saveConfig()
 
     // Containment
     if (m_containment->pluginName() != containment) {
-        m_containment = m_view->swapContainment(containment);
+        m_containment = m_view->swapContainment(m_containment, containment);
     }
 
     m_containment->setActivity(m_activityName->text());
