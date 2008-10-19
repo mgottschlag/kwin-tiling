@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=QEdje Gadgets
+Name[be@latin]=Gadžety „QEdje”
 Name[el]=Συστατικά QEdje
 Name[gl]=Gadgets de QEdje
 Name[gu]=QEdje ગેજેટ્સ
@@ -14,6 +15,7 @@ Name[uk]=Елементи QEdje
 Name[x-test]=xxQEdje Gadgetsxx
 Name[zh_TW]=QEdje 小玩意
 Comment=QEdje Gadget
+Comment[be@latin]=Gadžet „QEdje”
 Comment[el]=Συστατικά QEdje
 Comment[gl]=Gadget de QEdje
 Comment[gu]=QEdje ગેજેટ

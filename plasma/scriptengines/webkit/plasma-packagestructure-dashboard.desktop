@@ -1,7 +1,9 @@
 [Desktop Entry]
 Name=MacOS Dashboard Widgets
+Name[be@latin]=Widžety „Dashboard” dla systemy „MacOS”
 Name[el]=Συστατικά του MacOS dashboard
 Name[gl]=Widget do Dashboard de MacOS
+Name[gu]=MacOS ડેશબોર્ડ વિજેટ
 Name[kk]=MacOS аспаптар панелі
 Name[km]=ធាតុក្រាហ្វិក​ផ្ទាំង​គ្រប់គ្រង MacOS
 Name[pt]=Elementos do Painel do MacOS
@@ -12,7 +14,7 @@ Name[uk]=Віджети панелі приладів MacOS
 Name[x-test]=xxMacOS Dashboard Widgetsxx
 Name[zh_TW]=MacOS 儀表板元件
 Comment=MacOS dashboard widget
-Comment[be@latin]=Widžet „Dashboard” systemy „MacOS”
+Comment[be@latin]=Widžet „Dashboard” dla systemy „MacOS”
 Comment[ca]=Estri del tauler del MacOS
 Comment[da]=MacOS dashboard-widget
 Comment[de]=MacOS-Dashboard-Miniprogramm

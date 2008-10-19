@@ -37,6 +37,7 @@ Name[wa]=KTchôdèsTapes
 Name[x-test]=xxKHotKeysxx
 Name[zh_TW]=KDE 熱鍵
 Comment=KHotKeys daemon. No daemon, no hotkeys.
+Comment[be@latin]=Słužba skarotaŭ „KHotKeys”.
 Comment[el]=Δαίμονας KHotKeys.
 Comment[gl]=Daemon KHotKey. Se non funciona o daemon, non hai hotkeys.
 Comment[gu]=KHotKeys ડેમન. કોઇ ડેમન નથી, કોઇ હોટકી નથી.

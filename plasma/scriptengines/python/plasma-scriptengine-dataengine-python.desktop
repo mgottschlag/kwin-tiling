@@ -2,6 +2,7 @@
 Name=Python data engine
 Name[el]=Μηχανή δεδομένων Python
 Name[gl]=Motor de datos de Python
+Name[gu]=પાયથોન માહિતી એન્જિન
 Name[kk]=Python деректер тетігі
 Name[km]=ម៉ាស៊ីន​ទិន្នន័យ Python
 Name[pt]=Motor de dados Python
@@ -14,6 +15,7 @@ Name[zh_TW]=Python 資料引擎
 Comment=Plasma data engine support for Python
 Comment[el]=Υποστήριξη μηχανής δεδομένων Plasma για την Python
 Comment[gl]=Motor de datos de Plasma para dar soporte a Python
+Comment[gu]=પાયથોન માટે પ્લાઝમા માહિતી એન્જિન આધાર
 Comment[kk]=Python деректер тетігінің Plasma қолдауы
 Comment[km]=កា​រគាំទ្រ​ម៉ាស៊ីន​ទិន្នន័យ​ប្លាស្មា​សម្រាប់ Python
 Comment[pt]=Suporte para os motores de dados do Plasma em Python
