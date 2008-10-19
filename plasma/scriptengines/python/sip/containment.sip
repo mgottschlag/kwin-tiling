@@ -76,7 +76,6 @@ public:
     void                    clearApplets ();
     void                    setScreen (int screen);
     int                     screen () const;
-    QPoint                  effectiveScreenPos () const;
     void                    save (KConfigGroup& group) const;
     void                    restore (KConfigGroup& group);
     void                    enableAction (const QString& name, bool enable);
