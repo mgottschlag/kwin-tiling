@@ -307,7 +307,7 @@ GroupingStrategyMenu::GroupingStrategyMenu(QWidget *parent, AbstractGroupableIte
 }
 
 
-BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy)
+BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QList <QAction*> visualizationActions)
     : QMenu(parent)
 {
     Q_ASSERT(item);
@@ -339,10 +339,9 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy)
         }
     }
 
-    /*if (item->isGrouped()) {
-        addSeparator();
-        addMenu(new BasicMenu(this, item->parentGroup(), strategy));
-    }*/
+    foreach(QAction *action, visualizationActions) {
+        addAction(action);
+    }
 
     addSeparator();
     addAction(new CloseActionImpl(this, item));
