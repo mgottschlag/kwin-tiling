@@ -114,7 +114,7 @@ class TASKMANAGER_EXPORT BasicMenu : public QMenu
 {
     Q_OBJECT
 public:
-    BasicMenu(QWidget *parent, GroupPtr task, GroupManager *strategy);
+    BasicMenu(QWidget *parent, GroupPtr task, GroupManager *strategy, QList <QAction*> visualizationActions = QList <QAction*>());
     BasicMenu(QWidget *parent, TaskItem* task, GroupManager *strategy);
 };
 

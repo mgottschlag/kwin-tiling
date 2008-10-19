@@ -123,7 +123,7 @@ Q_SIGNALS:
     /** inform visualization about wat is added and removed */
     void itemAdded(const AbstractItemPtr item);
     void itemRemoved(const AbstractItemPtr item);
-   // void empty(TaskGroup*);
+    void groupEditRequest();
     void itemChanged(AbstractItemPtr item);
     /** The group changed the desktop, is emitted in the toDesktop function */
     void movedToDesktop(int newDesk);

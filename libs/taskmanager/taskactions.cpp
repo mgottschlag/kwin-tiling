@@ -273,6 +273,20 @@ void LeaveGroupActionImpl::leaveGroup()
     groupingStrategy->manualGroupingRequest(abstractItem,abstractItem->parentGroup()->parentGroup());
 }
 
+EditGroupActionImpl::EditGroupActionImpl(QObject *parent, TaskGroup *group, GroupManager *groupManager)
+    : QAction(parent)
+{
+    Q_ASSERT(groupManager);
+    connect(this, SIGNAL(triggered()), group, SIGNAL(groupEditRequest()));
+    setText(i18n("&Edit Group"));
+    //setIcon(KIcon("window-close"));
+    if (groupManager->groupingStrategy()) {
+        setEnabled(groupManager->taskGrouper()->editableGroupProperties());
+    } else {
+        setEnabled(false);
+    }
+}
+
 GroupingStrategyMenu::GroupingStrategyMenu(QWidget *parent, AbstractGroupableItem* item, GroupManager *strategy)
     : QMenu(parent)
 {
@@ -334,7 +348,7 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy)
     addAction(new CloseActionImpl(this, item));
 }
 
-BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy)
+BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, QList <QAction*> visualizationActions)
     :QMenu(parent)
 {
     Q_ASSERT(group);
@@ -342,6 +356,14 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy)
 
     setTitle(group->name());
     setIcon(group->icon());
+    foreach (AbstractGroupableItem *item, group->members()) {
+        if (item->isGroupItem()) {
+            addMenu(new BasicMenu(this, dynamic_cast<TaskGroup*>(item), strategy));
+        } else {
+            addMenu(new BasicMenu(this, dynamic_cast<TaskItem*>(item), strategy));
+        }
+    }
+    addSeparator();
     addMenu(new AdvancedMenu(this, group));
 
     if (TaskManager::self()->numberOfDesktops() > 1) {
@@ -349,8 +371,6 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy)
         addAction(new ToCurrentDesktopActionImpl(this, group));
     }
 
-//    addAction(new MoveActionImpl(this, group));
-//    addAction(new ResizeActionImpl(this, group));
     addAction(new MinimizeActionImpl(this, group));
     addAction(new MaximizeActionImpl(this, group));
     addAction(new ShadeActionImpl(this, group));
@@ -364,11 +384,10 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy)
             }
         }
     }
-
-    /*if (group->isGrouped()) {
-        addSeparator();
-        addMenu(new BasicMenu(parent, group->parentGroup(), strategy));
-    }*/
+    addAction(new EditGroupActionImpl(this, group, strategy));
+    foreach(QAction *action, visualizationActions) {
+        addAction(action);
+    }
 
     addSeparator();
     addAction(new CloseActionImpl(this, group));

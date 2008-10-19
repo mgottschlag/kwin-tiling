@@ -65,7 +65,7 @@ TaskGroup::TaskGroup(GroupManager *parent,QString name, QColor color)
     d->groupName = name;
     d->groupColor = color;
     d->groupIcon = KIcon("xorg");
-
+    connect(this, SLOT(editRequest()), this, SIGNAL(groupEditRequest()));
     kDebug() << "Group Created: Name: " << d->groupName << "Color: " << d->groupColor;
 }
 
@@ -77,7 +77,7 @@ TaskGroup::TaskGroup(GroupManager *parent)
     d->groupName = "default";
     d->groupColor = Qt::red;
     d->groupIcon = KIcon("xorg");
-
+    connect(this, SLOT(editRequest()), this, SIGNAL(groupEditRequest()));
     kDebug() << "Group Created: Name: " << d->groupName << "Color: " << d->groupColor;
 }
 

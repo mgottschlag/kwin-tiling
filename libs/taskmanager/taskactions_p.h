@@ -142,6 +142,14 @@ private:
     GroupManager *groupingStrategy;
 };
 
+/** Edit current Group*/
+class EditGroupActionImpl : public QAction
+{
+    Q_OBJECT
+public:
+    EditGroupActionImpl(QObject *parent, TaskGroup *group, GroupManager*);
+};
+
 /** Remove Group
 class RemoveGroupActionImpl : public QAction
 {
