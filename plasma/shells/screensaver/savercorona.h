@@ -39,13 +39,7 @@ public:
      **/
     void loadDefaultLayout();
 
-    /**
-     * Ensures we have a desktop containment for every screen
-     */
-    //void checkScreens();
-
 protected Q_SLOTS:
-    //void screenResized(int);
 
 private:
     void init();
