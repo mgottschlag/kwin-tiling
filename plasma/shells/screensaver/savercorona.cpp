@@ -40,36 +40,8 @@ void SaverCorona::init()
     kDebug();
     QDesktopWidget *desktop = QApplication::desktop();
     m_numScreens = desktop->numScreens();
-//    QObject::connect(desktop, SIGNAL(resized(int)), this, SLOT(screenResized(int)));
 }
-/*
-void DesktopCorona::checkScreens()
-{
-    // quick sanity check to ensure we have containments for each screen!
-    int numScreens = QApplication::desktop()->numScreens();
-    for (int i = 0; i < numScreens; ++i) {
-        if (!containmentForScreen(i)) {
-            //TODO: should we look for containments that aren't asigned but already exist?
-            Plasma::Containment* c = addContainment("desktop");
-            c->setScreen(i);
-            c->setFormFactor(Plasma::Planar);
-            c->flushPendingConstraintsEvents();
-        } else if (i >= m_numScreens) {
-            // now ensure that if our screen count changed we actually get views
-            // for them, even if the Containment already existed for that screen
-            // so we "lie" and emit a containmentAdded signal for every new screen
-            // regardless of whether it actually already existed, or just got added
-            // and therefore had this signal emitted. plasma can handle such
-            // multiple emissions of the signal, and this is simply the most
-            // straightforward way of accomplishing this
-            kDebug() << "Notifying of new screen: " << i;
-            emit containmentAdded(containmentForScreen(i));
-        }
-    }
 
-    m_numScreens = numScreens;
-}
-*/
 void SaverCorona::loadDefaultLayout()
 {
     kDebug();
@@ -111,33 +83,7 @@ void SaverCorona::loadDefaultLayout()
         emit containmentAdded(c);
     }
 
-    // some default applets to get a usable UI
-    /*
-    Plasma::Applet *launcher =  panel->addApplet("launcher");
-    launcher->setGlobalShortcut(KShortcut("Alt+F1"));
-    panel->addApplet("notifier");
-    panel->addApplet("pager");
-    panel->addApplet("tasks");
-    panel->addApplet("systemtray");
-    panel->addApplet("digital-clock");*/
 }
-/*
-void DesktopCorona::screenResized(int screen)
-{
-    int numScreens = QApplication::desktop()->numScreens();
-    if (screen < numScreens) {
-        foreach (Plasma::Containment *c, containments()) {
-            if (c->screen() == screen) {
-                // trigger a relayout
-                c->setScreen(screen);
-            }
-        }
 
-        checkScreens(); // ensure we have containments for every screen
-    } else {
-        m_numScreens = numScreens;
-    }
-}
-*/
 #include "savercorona.moc"
 
