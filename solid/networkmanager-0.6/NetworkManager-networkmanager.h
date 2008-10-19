@@ -43,6 +43,7 @@ Q_OBJECT
         bool isNetworkingEnabled() const;
         bool isWirelessEnabled() const;
         bool isWirelessHardwareEnabled() const;
+        QStringList activeConnections() const;
     public Q_SLOTS:
         void setWirelessEnabled(bool);
         void setNetworkingEnabled(bool);

@@ -234,6 +234,25 @@ bool NMNetworkManager::isWirelessHardwareEnabled() const
     return d->wirelessHardwareEnabled;
 }
 
+QStringList NMNetworkManager::activeConnections() const
+{
+    kDebug(1441);
+#ifdef __GNUC__
+#warning FIXME: please check this code
+#endif
+    QStringList activeConnections;
+    QHash<QString, NMNetworkInterface *>::ConstIterator it = d->interfaces.constBegin();
+    while (it != d->interfaces.end())
+    {
+        NMNetworkInterface * interface = it.value();
+        if (interface && interface->isActive())
+        {
+            activeConnections << it.key();
+        }
+    }
+    return activeConnections;
+}
+
 void NMNetworkManager::activateConnection(const QString & interfaceUni, const QString & connectionUni, const QVariantMap & connectionParameters)
 {
     kDebug(1441) << interfaceUni << connectionUni << connectionParameters;
