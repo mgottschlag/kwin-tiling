@@ -25,7 +25,7 @@
 #include "../solid_control_export.h"
 #include "../bluetoothsecurity.h" // So we know about Solid::Control::BluetoothPassKeyAgent
 
-#include <QObject>
+#include <QtCore/QObject>
 
 namespace Solid
 {
