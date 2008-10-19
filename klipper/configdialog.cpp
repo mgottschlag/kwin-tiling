@@ -329,7 +329,7 @@ void ActionWidget::slotItemChanged(QTreeWidgetItem *item, int column)
 void ActionWidget::slotAddAction()
 {
     QTreeWidgetItem *item = new QTreeWidgetItem(treeWidget,
-                                                QStringList() << i18n("Double-click here to set the regexp")
+                                                QStringList() << i18n("Double-click here to set the regular expression")
                                                               << i18n("<new action>"));
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
 }

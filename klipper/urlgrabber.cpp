@@ -175,9 +175,8 @@ void URLGrabber::actionMenu( bool wm_class_check )
             action = it.next();
             QListIterator<ClipCommand*> it2( action->commands() );
             if ( it2.hasNext() )
-                myMenu->addTitle(KIcon( "klipper" ), action->description() +
-                                 i18n(" - Actions For: ") +
-                                 KStringHandler::csqueeze(myClipData, 45));
+                myMenu->addTitle(KIcon( "klipper" ),
+                                 i18n("%1 - Actions For: %2", action->description(), KStringHandler::csqueeze(myClipData, 45)));
             while (it2.hasNext()) {
                 command = it2.next();
                 item = command->description;
