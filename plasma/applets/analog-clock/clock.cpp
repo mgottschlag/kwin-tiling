@@ -64,7 +64,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
 
     m_theme = new Plasma::Svg(this);
     m_theme->setImagePath("widgets/clock");
-    m_theme->setContainsMultipleImages(false);
+    m_theme->setContainsMultipleImages(true);
     m_theme->resize(size());
 }
 
@@ -194,9 +194,10 @@ void Clock::drawHand(QPainter *p, qreal rotation, const QString &handName)
 
     p->translate(boundSize.width() / 2, boundSize.height() / 2);
     p->rotate(rotation);
-    p->translate(-elementRect.width() / 2, -(m_theme->elementRect("clockFace").center().y() - elementRect.top()) );
+    p->translate(-elementRect.width() / 2, -elementRect.width() / 2);
+
     m_theme->paint(p, QRectF(QPointF(0, 0), elementRect.size()), handName);
-   
+
     p->restore();
 }
 
