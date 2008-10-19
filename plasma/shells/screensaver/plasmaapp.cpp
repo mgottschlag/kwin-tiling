@@ -192,8 +192,6 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     m_activeOpacity = cg.readEntry("activeOpacity", 1.0);
     m_idleOpacity = cg.readEntry("idleOpacity", 1.0);
 
-    enableCheats(KCmdLineArgs::parsedArgs()->isSet("cheats"));
-
     //we have to keep an eye on created windows
     tag = XInternAtom(QX11Info::display(), "_KDE_SCREENSAVER_OVERRIDE", False);
     qApp->installEventFilter(this);
@@ -220,16 +218,6 @@ void PlasmaApp::cleanup()
 
     delete m_view;
     delete m_corona;
-}
-
-void PlasmaApp::enableCheats(bool enable)
-{
-    m_cheats = enable;
-}
-
-bool PlasmaApp::cheatsEnabled() const
-{
-    return m_cheats;
 }
 
 void PlasmaApp::setActiveOpacity(qreal opacity)
@@ -375,15 +363,6 @@ void PlasmaApp::createView(Plasma::Containment *containment)
                 }*/
     //FIXME is this the right geometry for multi-screen?
     m_view->setGeometry(QApplication::desktop()->screenGeometry(containment->screen()));
-
-    if (m_cheats) {
-        //TODO quit button...
-        kDebug() << "cheats enabled";
-        KAction *showAction = new KAction(this);
-        showAction->setObjectName("Show plasma-overlay"); // NO I18N
-        showAction->setGlobalShortcut(KShortcut(Qt::CTRL + Qt::Key_F11));
-        connect(showAction, SIGNAL(triggered()), m_view, SLOT(showView()));
-    }
 
     //FIXME why do I get BadWindow?
     //unsigned char data = VIEW;

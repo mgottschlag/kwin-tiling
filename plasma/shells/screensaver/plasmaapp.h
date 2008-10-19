@@ -48,18 +48,6 @@ public:
 
     Plasma::Corona* corona();
 
-    /**
-     * enables or disables cheats useful for debugging.
-     * FIXME maybe this shouldn't be public.
-     */
-    void enableCheats(bool enable);
-
-    /** 
-     * Returns true if cheats are enabled
-     * @see enableCheats
-     */
-    bool cheatsEnabled() const;
-
     void setActiveOpacity(qreal opacity);
     void setIdleOpacity(qreal opacity);
     qreal activeOpacity() const;
@@ -122,7 +110,6 @@ private:
 
     qreal m_activeOpacity;
     qreal m_idleOpacity;
-    bool m_cheats;
 };
 
 #endif // multiple inclusion guard
