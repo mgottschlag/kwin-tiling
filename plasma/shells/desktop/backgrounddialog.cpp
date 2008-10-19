@@ -380,8 +380,8 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
     monitorPix.fill(Qt::transparent);
 
     QPainter painter(&monitorPix);
-    QPoint standPosizion(monitorSize.width()/2 - svg->elementSize("base").width()/2, svg->contentsRect().bottom());
-    svg->paint(&painter, standPosizion, "base");
+    QPoint standPosition(monitorSize.width()/2 - svg->elementSize("base").width()/2, svg->contentsRect().bottom());
+    svg->paint(&painter, QRect(standPosition, svg->elementSize("base")), "base");
     svg->paintPanel(&painter);
     painter.end();
 
