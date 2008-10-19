@@ -37,9 +37,11 @@ SaverCorona::SaverCorona(QObject *parent)
 
 void SaverCorona::init()
 {
-    kDebug();
     QDesktopWidget *desktop = QApplication::desktop();
     m_numScreens = desktop->numScreens();
+    if (m_numScreens > 1) {
+        kDebug() << "maybe someone should implement multiple screen support";
+    }
 }
 
 void SaverCorona::loadDefaultLayout()
@@ -53,35 +55,22 @@ void SaverCorona::loadDefaultLayout()
     }
 
     QDesktopWidget *desktop = QApplication::desktop();
-    int numScreens = desktop->numScreens();
-    kDebug() << "number of screens is" << numScreens;
-    int topLeftScreen = 0;
-    QPoint topLeftCorner = desktop->screenGeometry(0).topLeft();
 
-    // create a containment for each screen
-    for (int i = 0; i < 1; ++i) {
-        QRect g = desktop->screenGeometry(i);
-        kDebug() << "     screen " << i << "geometry is" << g;
-        Plasma::Containment* c = addContainment("saverdesktop");
-        c->setScreen(i);
-        c->setFormFactor(Plasma::Planar);
-        c->flushPendingConstraintsEvents();
+    // create a containment for the screen
+    QRect g = desktop->screenGeometry(0);
+    kDebug() << "     screen geometry is" << g;
+    Plasma::Containment *c = addContainment("saverdesktop");
+    c->setScreen(0);
+    c->setFormFactor(Plasma::Planar);
+    c->flushPendingConstraintsEvents();
 
-        // put a folder view on the first screen
-        if (i == 0) {
-            Plasma::Applet *folderView =  Plasma::Applet::load("clock", c->id() + 1);
-            c->addApplet(folderView, QPointF(KDialog::spacingHint(), KDialog::spacingHint()), true);
-            folderView->init();
-            folderView->flushPendingConstraintsEvents();
-        }
+    // a default clock
+    Plasma::Applet *clock =  Plasma::Applet::load("clock", c->id() + 1);
+    c->addApplet(clock, QPointF(KDialog::spacingHint(), KDialog::spacingHint()), true);
+    clock->init();
+    clock->flushPendingConstraintsEvents();
 
-        if (g.x() <= topLeftCorner.x() && g.y() >= topLeftCorner.y()) {
-            topLeftCorner = g.topLeft();
-            topLeftScreen = i;
-        }
-
-        emit containmentAdded(c);
-    }
+    emit containmentAdded(c);
 
 }
 
