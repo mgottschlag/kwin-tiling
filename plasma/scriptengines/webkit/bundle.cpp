@@ -314,7 +314,7 @@ bool Bundle::parsePlist(const QString &loc)
     }
     m_iconLocation = QString("%1Icon.png").arg(path());
     kDebug() << path();
-    addDirectoryDefinition("root", "/", i18n("Root html dir"));
+    addDirectoryDefinition("root", "/", i18n("Root HTML directory"));
 
     //qDebug()<<"name = "<<m_name;
     //qDebug()<<"id   = "<<m_bundleId;

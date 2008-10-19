@@ -32,5 +32,5 @@ WebAppletPackage::WebAppletPackage(QObject *parent, QVariantList args)
     Plasma::PackageStructure::operator=(*Plasma::Applet::packageStructure());
     addFileDefinition("mainscript", "code/main.html", i18n("Main Script File"));
     // For Webapplet::init()
-    addDirectoryDefinition("root", "/", i18n("Root html dir"));
+    addDirectoryDefinition("root", "/", i18n("Root HTML directory"));
 }
