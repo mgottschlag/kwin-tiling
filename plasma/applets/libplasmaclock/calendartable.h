@@ -54,7 +54,7 @@ public:
 
     bool setCalendar(KCalendarSystem *calendar = 0);
 
-signals:
+Q_SIGNALS:
     void dateChanged(const QDate &cur, const QDate &old);
     void dateChanged(const QDate &date);
     void tableClicked();

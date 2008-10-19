@@ -52,12 +52,12 @@ public:
 
     CalendarTable *calendarTable() const;
 
-signals:
+Q_SIGNALS:
     void dateChanged(const QDate &cur, const QDate &old);
     void dateChanged(const QDate &date);
     void tableClicked();
 
-private slots:
+private Q_SLOTS:
     void displayedMonthChanged(int calendarSystemYear, int calendarSystemMonth);
     void prevMonth();
     void nextMonth();
