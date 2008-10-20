@@ -1,18 +1,6 @@
 # Project Needs a name ofcourse
 project(desktopthemedetails)
  
-# Find the required Libaries
-find_package(KDE4 REQUIRED)
-include(KDE4Defaults)
-find_package(Plasma REQUIRED)
- 
-add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
-include_directories(
-   ${CMAKE_SOURCE_DIR}
-   ${CMAKE_BINARY_DIR}
-   ${KDE4_INCLUDES}
-   )
-
 set(kcmdesktopthemedetails_SRCS desktopthemedetails.cpp)
 kde4_add_ui_files(kcmdesktopthemedetails_SRCS DesktopThemeDetails.ui)
 
