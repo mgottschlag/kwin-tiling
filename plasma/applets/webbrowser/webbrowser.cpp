@@ -25,24 +25,20 @@
 #include <QGraphicsProxyWidget>
 #include <QGraphicsSceneMouseEvent>
 #include <QStandardItemModel>
-#include <QTreeView>
 #include <QModelIndex>
 #include <QAction>
-#include <QtWebKit/QWebPage>
-#include <QtWebKit/QWebHistory>
-#include <QWebFrame>
 #include <QTimer>
+#include <QTreeView>
 
 #include <KIcon>
-#include <KHistoryComboBox>
 #include <KCompletion>
 #include <KBookmarkManager>
-#include <KStandardDirs>
 #include <KIconLoader>
 #include <KUrlPixmapProvider>
 #include <KUriFilter>
 #include <KMessageBox>
 #include <KConfigDialog>
+#include <KHistoryComboBox>
 
 #include <plasma/widgets/icon.h>
 #include <plasma/widgets/lineedit.h>

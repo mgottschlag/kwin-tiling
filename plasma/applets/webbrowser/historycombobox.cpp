@@ -20,7 +20,6 @@
 #include "historycombobox.h"
 
 #include <KHistoryComboBox>
-#include <KPixmapProvider>
 
 
 namespace Plasma

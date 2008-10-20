@@ -24,13 +24,11 @@
 
 #include <QtGui/QGraphicsProxyWidget>
 
-#include <KGlobalSettings>
-#include <KCompletionBase>
 
 class KHistoryComboBox;
-class KPixmapProvider;
 
 #include "webbrowser_export.h"
+#include <KUrl>
 
 namespace Plasma
 {

@@ -24,19 +24,14 @@
 #include <math.h>
 
 // Qt
-#include <QApplication>
-#include <QFontMetrics>
-#include <QIcon>
 #include <QModelIndex>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QStyleOptionViewItem>
 
 // KDE
-#include <KColorUtils>
 #include <KDebug>
 #include <KGlobal>
-#include <KGlobalSettings>
 #include <KColorScheme>
 #include <KIcon>
 #include <KIconLoader>

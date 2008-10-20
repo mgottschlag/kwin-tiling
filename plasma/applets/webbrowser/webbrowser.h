@@ -26,8 +26,6 @@
 #include "ui_webbrowserconfig.h"
 
 class QGraphicsLinearLayout;
-class QGraphicsProxyWidget;
-class QGraphicsWidget;
 class QStandardItemModel;
 class QStandardItem;
 class QTimer;
@@ -43,7 +41,6 @@ class BookmarkItem;
 
 namespace Plasma
 {
-    class LineEdit;
     class Icon;
     class Meter;
     class HistoryComboBox;
