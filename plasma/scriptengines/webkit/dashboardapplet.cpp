@@ -82,7 +82,8 @@ QByteArray DashboardApplet::dataFor(const QString &str)
     f.close();
 
     //replace the apple javascript imports with the kde ones
-    QString jsBaseDir = KGlobal::dirs()->locate("data","plasma/dashboard/AppleClasses");
+    QString jsBaseDir = KGlobal::dirs()->findResourceDir("data","plasma/dashboard/button/genericButton.js") 
+                            + "plasma/dashboard";
 
     data.replace("file:///System/Library/WidgetResources", jsBaseDir.toUtf8());
     data.replace("/System/Library/WidgetResources", jsBaseDir.toUtf8());
