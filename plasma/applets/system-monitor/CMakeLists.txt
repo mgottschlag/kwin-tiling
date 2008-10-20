@@ -8,7 +8,7 @@ set(lib_SRCS
     applet.cpp
 )
 kde4_add_library(plasma_applet-system-monitor SHARED ${lib_SRCS})
-target_link_libraries(plasma_applet-system-monitor ${PLASMA_LIBS} ${KDE4_KDEUI_LIBS})
+target_link_libraries(plasma_applet-system-monitor plasma ${KDE4_KDEUI_LIBS})
 
 # HDD Monitor
 
@@ -17,7 +17,7 @@ set(hdd_SRCS
 )
 kde4_add_ui_files(hdd_SRCS hdd-config.ui)
 kde4_add_plugin(plasma_applet_sm_hdd ${hdd_SRCS})
-target_link_libraries(plasma_applet_sm_hdd ${PLASMA_LIBS} ${KDE4_KDEUI_LIBS} plasma_applet-system-monitor)
+target_link_libraries(plasma_applet_sm_hdd plasma ${KDE4_KDEUI_LIBS} plasma_applet-system-monitor)
 
 # Temperature Monitor
 
@@ -26,7 +26,7 @@ set(temparature_SRCS
 )
 kde4_add_ui_files(temparature_SRCS temperature-config.ui)
 kde4_add_plugin(plasma_applet_sm_temperature ${temparature_SRCS})
-target_link_libraries(plasma_applet_sm_temperature ${PLASMA_LIBS} ${KDE4_KDEUI_LIBS} plasma_applet-system-monitor)
+target_link_libraries(plasma_applet_sm_temperature plasma ${KDE4_KDEUI_LIBS} plasma_applet-system-monitor)
 
 # Network Monitor
 
@@ -35,7 +35,7 @@ set(net_SRCS
 )
 kde4_add_ui_files(net_SRCS net-config.ui)
 kde4_add_plugin(plasma_applet_sm_net ${net_SRCS})
-target_link_libraries(plasma_applet_sm_net ${PLASMA_LIBS} ${KDE4_KDEUI_LIBS} plasma_applet-system-monitor)
+target_link_libraries(plasma_applet_sm_net plasma ${KDE4_KDEUI_LIBS} plasma_applet-system-monitor)
 
 # CPU Monitor
 
@@ -44,7 +44,7 @@ set(cpu_SRCS
 )
 kde4_add_ui_files(cpu_SRCS cpu-config.ui)
 kde4_add_plugin(plasma_applet_sm_cpu ${cpu_SRCS})
-target_link_libraries(plasma_applet_sm_cpu ${PLASMA_LIBS} ${KDE4_KDEUI_LIBS} plasma_applet-system-monitor)
+target_link_libraries(plasma_applet_sm_cpu plasma ${KDE4_KDEUI_LIBS} plasma_applet-system-monitor)
 
 # Harware Info
 
@@ -52,7 +52,7 @@ set(hwinfo_SRCS
     hwinfo.cpp
 )
 kde4_add_plugin(plasma_applet_sm_hwinfo ${hwinfo_SRCS})
-target_link_libraries(plasma_applet_sm_hwinfo ${PLASMA_LIBS} ${KDE4_KDEUI_LIBS} plasma_applet-system-monitor)
+target_link_libraries(plasma_applet_sm_hwinfo plasma ${KDE4_KDEUI_LIBS} plasma_applet-system-monitor)
 
 # Ram Monitor
 
@@ -61,7 +61,7 @@ target_link_libraries(plasma_applet_sm_hwinfo ${PLASMA_LIBS} ${KDE4_KDEUI_LIBS} 
 #)
 #kde4_add_ui_files(ram_SRCS ram-config.ui)
 #kde4_add_plugin(plasma_applet_sm_ram ${ram_SRCS})
-#target_link_libraries(plasma_applet_sm_ram ${PLASMA_LIBS} ${KDE4_KDEUI_LIBS} plasma_applet-system-monitor)
+#target_link_libraries(plasma_applet_sm_ram plasma ${KDE4_KDEUI_LIBS} plasma_applet-system-monitor)
 
 # Main applet
 
@@ -70,7 +70,7 @@ set(system-monitor_SRCS
     monitorbutton.cpp
 )
 kde4_add_plugin(plasma_applet_system-monitor ${system-monitor_SRCS})
-target_link_libraries(plasma_applet_system-monitor ${PLASMA_LIBS} ${KDE4_KDEUI_LIBS} plasma_applet-system-monitor)
+target_link_libraries(plasma_applet_system-monitor plasma ${KDE4_KDEUI_LIBS} plasma_applet-system-monitor)
 
 # Install
 install(TARGETS
