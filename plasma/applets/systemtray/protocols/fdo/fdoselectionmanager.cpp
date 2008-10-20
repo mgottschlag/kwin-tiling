@@ -183,7 +183,7 @@ SelectionManager::SelectionManager()
 SelectionManager::~SelectionManager()
 {
 #if defined(HAVE_XFIXES) && defined(HAVE_XDAMAGE) && defined(HAVE_XCOMPOSITE)
-    if (d->haveComposite) {
+    if (d->haveComposite && QCoreApplication::instance()) {
         QCoreApplication::instance()->setEventFilter(oldEventFilter);
     }
 #endif
