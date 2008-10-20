@@ -67,7 +67,7 @@ public:
     * Keep track of changes in Taskmanager
     */
     void currentDesktopChanged(int);
-    void taskChangedDesktop(TaskPtr);
+    void taskChanged(TaskPtr, ::TaskManager::TaskChanges);
     void addAttentionTask();
     void windowChangedGeometry(TaskPtr task);
 
@@ -88,8 +88,8 @@ public:
     QList<TaskPtr> geometryTasks;
     bool showOnlyCurrentDesktop : 1;
     bool showOnlyCurrentScreen : 1;
-    bool onlyGroupWhenFull;
-    bool groupIsFull;
+    bool onlyGroupWhenFull : 1;
+    bool groupIsFull : 1;
 };
 
 
@@ -359,17 +359,26 @@ void GroupManagerPrivate::currentDesktopChanged(int newDesktop)
     reloadTasks();
 }
 
-/* On deskto change this signal is first emmitted for all tasks on this desktop and TaskManager::self()->currentDesktop() is also still the old desk, then currentDesktopChanged is emitted and in the end this signal is
-emitted for every task on the new desktop. For tasks on all desktops this signal isn't emitted at all;
-*/
-void GroupManagerPrivate::taskChangedDesktop(TaskPtr task)
+void GroupManagerPrivate::taskChanged(TaskPtr task, ::TaskManager::TaskChanges changes)
 {
-    kDebug() << task->visibleName() << "on" << TaskManager::self()->currentDesktop(); 
-    if (!task->isOnCurrentDesktop() && !task->demandsAttention()) {
-        kDebug() << "remove(task);";
+    bool takeAction = false;
+    bool remove = false;
+    if (showOnlyCurrentDesktop && changes & ::TaskManager::DesktopChanged) {
+        takeAction = true;
+        remove = !task->isOnCurrentDesktop() && !task->demandsAttention();
+        //kDebug() << task->visibleName() << "on" << TaskManager::self()->currentDesktop();
+    }
+
+    if (!takeAction) {
+        return;
+    }
+
+
+    if (remove) {
+        //kDebug() << "remove(task);";
         q->remove(task);
-    } else if (!itemList.contains(task)) {
-        kDebug() << "add(task);";
+    } else {
+        //kDebug() << "add(task);";
         q->add(task);
     }
 }
@@ -414,21 +423,21 @@ void GroupManager::reconnect()
     disconnect(TaskManager::self(), SIGNAL(desktopChanged(int)),
                this, SLOT(currentDesktopChanged(int)));
     disconnect(TaskManager::self(), SIGNAL(windowChanged(TaskPtr)),
-               this, SLOT(taskChangedDesktop(TaskPtr)));
+               this, SLOT(taskChanged(TaskPtr)));
 
-    if (showOnlyCurrentDesktop()) {
+    if (d->showOnlyCurrentDesktop) {
         // listen to the relevant task manager signals
         connect(TaskManager::TaskManager::self(), SIGNAL(desktopChanged(int)),
                 this, SLOT(currentDesktopChanged(int)));
 
-        connect(TaskManager::self(), SIGNAL(windowChanged(TaskPtr)),
-                this, SLOT(taskChangedDesktop(TaskPtr)));
+        connect(TaskManager::self(), SIGNAL(windowChanged(TaskPtr,::TaskManager::TaskChanges)),
+                this, SLOT(taskChanged(TaskPtr,::TaskManager::TaskChanges)));
     }
 
     disconnect(TaskManager::TaskManager::self(), SIGNAL(windowChangedGeometry(TaskPtr)),
                this, SLOT(windowChangedGeometry(TaskPtr))); //FIXME: Needs to be implemented
 
-    if (showOnlyCurrentScreen()) {
+    if (d->showOnlyCurrentScreen) {
         // listen to the relevant task manager signals
         connect(TaskManager::TaskManager::self(), SIGNAL(windowChangedGeometry(TaskPtr)),
                 this, SLOT(windowChangedGeometry(TaskPtr)));
