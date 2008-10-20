@@ -93,14 +93,26 @@ Tools
 * Plasma Engine Explorer
     * Remove/update sources via context menu
     * NEW: Plasma::Service interaction UI, using DataEngine::serviceForSource
+* NEW: Destkop Theme Details
+    * Customize and create new desktop themes with kcmshell4 destkopthemedetails 
 
 Plugins/Addons
 --------------
 * Features
     * Plasmoids and Containments
+        * NEW: Incoming messages: listens to various F/OSS email and IM apps for messages arriving
+        * NEW: Incoming message: let people leave you notes on your computer, particularly handy for Plasma widets on the screensaver
+        * NEW: Previewer: drop files to preview them right on your desktop or panels
+        * NEW: System monitor
+        * NEW: Web browser: a WebKit browser in a desktop widget!
+        * NEW: Activity bar: quick switcher for Plasma activities
+        * NEW: Conway's game of life
+        * NEW: RSSNow! fancy online news ticker
+        * NEW: Pastebin, drop text/data to upload it to a pastebin server
+        * NEW: Bouncing ball, throw it and watch it bounce around!
         * NEW: Calendar
         * NEW: Character selector
-        * Now Playing media player controls
+        * Now Playing media player controls: play, pause, stop, switch tracks and more from Plasma
         * Notes
             * Custom colors
             * Export notes to file
@@ -129,6 +141,9 @@ Plugins/Addons
             * KRunner integration
 
     * DataEngines
+        * NEW: Web site icons (favicons) engine
+        * NEW: Desktop notifications engines
+        * NEW: System monitor engine based on ksysguard (cpu, memory, heat, sensors, etc)
         * NEW: Network engine
         * NowPlaying
             * Plasma::Service for controlling media players
@@ -139,8 +154,11 @@ Plugins/Addons
     * ScriptEngines
         * NEW: Google Gadgets
         * NEW: Python Plasmoids
+        * MacOS Dashboard widgets: improved JS API compliance
 
     * Runners
+        * NEW: Kate sessions runner
+        * NEW: Recent documents runner
         * NEW: Spellcheck runner
         * NEW: Konqueror history runner
         * NEW: Konqueror sessions runner
