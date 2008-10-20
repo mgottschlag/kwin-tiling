@@ -61,7 +61,6 @@ class DefaultDesktop : public Plasma::Containment
 
 public:
     DefaultDesktop(QObject *parent, const QVariantList &args);
-    ~DefaultDesktop();
 
     void constraintsEvent(Plasma::Constraints constraints);
 

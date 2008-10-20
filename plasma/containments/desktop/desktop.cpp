@@ -90,12 +90,6 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
     //kDebug() << "!!! loading desktop";
 }
 
-DefaultDesktop::~DefaultDesktop()
-{
-    disconnect(KWindowSystem::self(), SIGNAL(workAreaChanged()),
-               this, SLOT(refreshWorkingArea()));
-}
-
 QSize DefaultDesktop::resolution() const
 {
     return QApplication::desktop()->screenGeometry(screen()).size();
