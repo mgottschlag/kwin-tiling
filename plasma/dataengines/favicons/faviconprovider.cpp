@@ -91,6 +91,7 @@ FaviconProvider::FaviconProvider(QObject *parent, const QString &url)
 
 FaviconProvider::~FaviconProvider()
 {
+    delete d;
 }
 
 QImage FaviconProvider::image() const
