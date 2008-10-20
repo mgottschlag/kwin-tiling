@@ -29,6 +29,9 @@
 #include <QAction>
 #include <QTimer>
 #include <QTreeView>
+#include <QWebPage>
+#include <QWebFrame>
+#include <QWebHistory>
 
 #include <KIcon>
 #include <KCompletion>
