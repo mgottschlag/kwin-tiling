@@ -1,6 +1,7 @@
 add_definitions(-DKDE_DEFAULT_DEBUG_AREA=1204)
 
 add_subdirectory(animators)
+add_subdirectory(libs)
 add_subdirectory(applets)
 add_subdirectory(containments)
 add_subdirectory(dataengines)
