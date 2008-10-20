@@ -1,0 +1,34 @@
+[Desktop Entry]
+Name=Activity Bar
+Name[gl]=Barra de actividade
+Name[nds]=Aktivitetenbalken
+Name[pt]=Barra de Actividades
+Name[pt_BR]=Barra de Actividades
+Name[sv]=Aktivitetsrad
+Name[uk]=Панель дій
+Name[x-test]=xxActivity Barxx
+Name[zh_TW]=活動列
+Comment=Tabbar to switch activities
+Comment[gl]=Barra de lingüetas para trocar entre actividades
+Comment[nds]=Paneelbalken, mit den sik de Aktiviteet wesseln lett
+Comment[pt]=Uma barra de páginas para mudar de actividades
+Comment[pt_BR]=Uma barra de páginas para mudar de actividades
+Comment[sv]=Flikrad för att byta aktiviteter
+Comment[uk]=Панель з вкладками для перемикання дій
+Comment[x-test]=xxTabbar to switch activitiesxx
+Comment[zh_TW]=切換活動的分頁列
+Type=Service
+Icon=tab-new
+
+X-KDE-ServiceTypes=Plasma/Applet
+X-KDE-Library=plasma_applet_activitybar
+X-KDE-PluginInfo-Author=Marco Martin
+X-KDE-PluginInfo-Email=notmart@gmail.com
+X-KDE-PluginInfo-Name=activitybar
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=Windows and Tasks
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true
+
