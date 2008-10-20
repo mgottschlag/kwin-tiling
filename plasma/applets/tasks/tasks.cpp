@@ -422,7 +422,7 @@ void Tasks::createConfigurationInterface(KConfigDialog *parent)
              m_ui.sortingStrategy->setCurrentIndex(-1);
     }
  //   kDebug() << m_groupManager->sortingStrategy();
-   // m_ui.maxRows->setCurrentIndex()
+    m_ui.maxRows->setValue(m_rootGroupItem->maxRows());
 }
 
 void Tasks::configAccepted()
@@ -462,7 +462,6 @@ void Tasks::configAccepted()
         changed = true;
     }
 
-    kDebug() << "swojlfjslkj?!" << m_rootGroupItem->maxRows() << m_ui.maxRows->value();
     if (m_rootGroupItem->maxRows() != (m_ui.maxRows->value())) {
         m_rootGroupItem->setMaxRows(m_ui.maxRows->value());
         KConfigGroup cg = config();
@@ -488,7 +487,6 @@ void Tasks::configAccepted()
         emit configNeedsSaving();
         update();
     }
-    kDebug() << "swojlfjslkj?!" << m_rootGroupItem->maxRows() << m_ui.maxRows->value();
 }
 
 
