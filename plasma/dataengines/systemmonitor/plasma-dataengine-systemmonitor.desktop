@@ -1,0 +1,29 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=System Monitor
+Name[gl]=Vixiante do sistema
+Name[pt]=Monitor do Sistema
+Name[pt_BR]=Monitor do Sistema
+Name[sv]=Systemövervakare
+Name[uk]=Монітор системи
+Name[x-test]=xxSystem Monitorxx
+Name[zh_TW]=系統監視器
+Comment=System information for Plasmoids
+Comment[gl]=Información acerca do sistema para Plasmoides
+Comment[pt]=Informação do sistema para os Plasmóides
+Comment[pt_BR]=Informação do sistema para os Plasmóides
+Comment[sv]=Systeminformation för Plasmoider
+Comment[uk]=Інформація системи для плазмоїдів
+Comment[x-test]=xxSystem information for Plasmoidsxx
+Comment[zh_TW]=Plasmoids 的系統資訊
+ServiceTypes=Plasma/DataEngine
+Icon=utilities-system-monitor
+Type=Service
+X-KDE-Library=plasma_engine_systemmonitor
+
+X-KDE-PluginInfo-Author=
+X-KDE-PluginInfo-Email=
+X-KDE-PluginInfo-Name=systemmonitor
+X-KDE-PluginInfo-Version=
+X-KDE-PluginInfo-Website=
+X-KDE-PluginInfo-Category=
