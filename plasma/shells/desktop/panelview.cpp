@@ -45,6 +45,8 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     : Plasma::View(panel, id, parent),
       m_panelController(0),
       m_timeLine(0),
+      m_spacer(0),
+      m_spacerIndex(-1),
 #ifdef Q_WS_X11
       m_unhideTrigger(None),
 #endif
@@ -791,7 +793,7 @@ void PanelView::leaveEvent(QEvent *event)
             }
         }
     }
-
+    
     Plasma::View::leaveEvent(event);
 }
 
@@ -951,6 +953,96 @@ void PanelView::panelDeleted()
 
     deleteLater();
 }
+
+void PanelView::positionSpacer(const QPoint pos)
+{
+    if (!containment()) {
+        return;
+    }
+
+    QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout*>(containment()->layout());
+
+    if (!lay) {
+        return;
+    }
+
+    Plasma::FormFactor f = containment()->formFactor();
+    int insertIndex = -1;
+
+    //FIXME: needed in two places, make it a function?
+    for (int i = 0; i < lay->count(); ++i) {
+        QRectF siblingGeometry = lay->itemAt(i)->geometry();
+
+        if (f == Plasma::Horizontal) {
+            qreal middle = (siblingGeometry.left() + siblingGeometry.right()) / 2.0;
+            if (pos.x() < middle) {
+                insertIndex = i;
+                break;
+            } else if (pos.x() <= siblingGeometry.right()) {
+                insertIndex = i + 1;
+                break;
+            }
+        } else { // Plasma::Vertical
+            qreal middle = (siblingGeometry.top() + siblingGeometry.bottom()) / 2.0;
+            if (pos.y() < middle) {
+                insertIndex = i;
+                break;
+            } else if (pos.y() <= siblingGeometry.bottom()) {
+                insertIndex = i + 1;
+                break;
+            }
+        }
+    }
+
+    m_spacerIndex = insertIndex;
+    if (insertIndex != -1) {
+        if (!m_spacer) {
+            m_spacer = new QGraphicsWidget(containment());
+            //m_spacer->panel = this;
+        }
+        lay->removeItem(m_spacer);
+        m_spacer->show();
+        lay->insertItem(insertIndex, m_spacer);
+    }
+}
+
+void PanelView::dragEnterEvent(QDragEnterEvent *event)
+{
+    if (containment()) {
+        containment()->showDropZone(event->pos());
+    }
+
+    //the containment will do the last decision whether accept it or not
+    Plasma::View::dragEnterEvent(event);
+}
+
+void PanelView::dragMoveEvent(QDragMoveEvent *event)
+{
+    if (containment()) {
+        containment()->showDropZone(event->pos());
+    }
+
+    Plasma::View::dragMoveEvent(event);
+}
+
+void PanelView::dragLeaveEvent(QDragLeaveEvent *event)
+{
+    if (containment()) {
+        containment()->showDropZone(QPoint());
+    }
+
+    Plasma::View::dragLeaveEvent(event);
+}
+
+void PanelView::dropEvent(QDropEvent *event)
+{
+    Plasma::View::dropEvent(event);
+
+    if (containment()) {
+        containment()->showDropZone(QPoint());
+    }
+}
+
 
 #include "panelview.moc"
 

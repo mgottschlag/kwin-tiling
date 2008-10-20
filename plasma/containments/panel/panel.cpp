@@ -31,6 +31,7 @@
 #include <QComboBox>
 #include <QAction>
 #include <QGraphicsLayout>
+#include <QGraphicsSceneDragDropEvent>
 
 
 #include <KDebug>
@@ -46,12 +47,36 @@
 
 using namespace Plasma;
 
+class Spacer : public QGraphicsWidget
+{
+public:
+    Spacer(QGraphicsWidget *parent)
+         : QGraphicsWidget(parent)
+    {
+        setAcceptDrops(true);
+    }
+
+    ~Spacer()
+    {}
+
+    Panel *panel;
+
+protected:
+    void dropEvent(QGraphicsSceneDragDropEvent *event)
+    {
+        event->setPos(mapToParent(event->pos()));
+        panel->dropEvent(event);
+    }
+};
+
 Panel::Panel(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
       m_configureAction(0),
       m_addPanelAction(0),
       m_currentSize(QSize(QApplication::desktop()->screenGeometry(screen()).width(), 38)),
-      m_lastViewGeom()
+      m_lastViewGeom(),
+      m_spacerIndex(-1),
+      m_spacer(0)
 {
     m_background = new Plasma::PanelSvg(this);
     m_background->setImagePath("widgets/panel-background");
@@ -478,6 +503,61 @@ void Panel::setFormFactorFromLocation(Plasma::Location loc) {
             kDebug() << "invalid location!!";
     }
 }
+
+void Panel::showDropZone(const QPoint pos)
+{
+    QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout*>(layout());
+
+    if (!lay) {
+        return;
+    }
+
+    if (m_spacer && pos == QPoint()) {
+        lay->removeItem(m_spacer);
+        m_spacer->hide();
+        return;
+    }
+
+    Plasma::FormFactor f = formFactor();
+    int insertIndex = -1;
+
+    //FIXME: needed in two places, make it a function?
+    for (int i = 0; i < lay->count(); ++i) {
+        QRectF siblingGeometry = lay->itemAt(i)->geometry();
+
+        if (f == Plasma::Horizontal) {
+            qreal middle = (siblingGeometry.left() + siblingGeometry.right()) / 2.0;
+            if (pos.x() < middle) {
+                insertIndex = i;
+                break;
+            } else if (pos.x() <= siblingGeometry.right()) {
+                insertIndex = i + 1;
+                break;
+            }
+        } else { // Plasma::Vertical
+            qreal middle = (siblingGeometry.top() + siblingGeometry.bottom()) / 2.0;
+            if (pos.y() < middle) {
+                insertIndex = i;
+                break;
+            } else if (pos.y() <= siblingGeometry.bottom()) {
+                insertIndex = i + 1;
+                break;
+            }
+        }
+    }
+
+    m_spacerIndex = insertIndex;
+    if (insertIndex != -1) {
+        if (!m_spacer) {
+            m_spacer = new Spacer(this);
+            m_spacer->panel = this;
+        }
+        lay->removeItem(m_spacer);
+        m_spacer->show();
+        lay->insertItem(insertIndex, m_spacer);
+    }
+}
+
 
 K_EXPORT_PLASMA_APPLET(panel, Panel)
 

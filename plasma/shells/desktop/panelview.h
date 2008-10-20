@@ -147,6 +147,10 @@ protected:
     void drawBackground(QPainter * painter, const QRectF & rect);
     void paintEvent(QPaintEvent *event);
     bool event(QEvent *event);
+    void dragEnterEvent(QDragEnterEvent *event);
+    void dragMoveEvent(QDragMoveEvent *event);
+    void dragLeaveEvent(QDragLeaveEvent *event);
+    void dropEvent(QDropEvent *event);
 
 private:
     void createUnhideTrigger();
@@ -154,6 +158,7 @@ private:
     Qt::Alignment alignmentFilter(Qt::Alignment align) const;
     bool isHorizontal() const;
     QTimeLine *timeLine();
+    void positionSpacer(const QPoint pos);
 
 #ifdef Q_WS_WIN
     bool registerAccessBar(HWND hwndAccessBar, bool fRegister);
@@ -182,6 +187,8 @@ private:
     PanelController *m_panelController;
     QList<PanelAppletOverlay*> m_moveOverlays;
     QTimeLine *m_timeLine;
+    QGraphicsWidget *m_spacer;
+    int m_spacerIndex;
 
     int m_offset;
     Qt::Alignment m_alignment;

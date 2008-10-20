@@ -27,6 +27,7 @@ class QComboBox;
 class QAction;
 class KDialog;
 class KIntNumInput;
+class Spacer;
 
 namespace Plasma
 {
@@ -48,6 +49,7 @@ public:
                         const QStyleOptionGraphicsItem *option,
                         const QRect &contentsRect);
     void paintBackground(QPainter *painter, const QRect &contentsRect);
+    void showDropZone(const QPoint pos);
 
 protected:
     void saveState(KConfigGroup &config) const;
@@ -78,6 +80,10 @@ private:
     //cached values
     QSize m_currentSize;
     QRect m_lastViewGeom;
+    int m_spacerIndex;
+    Spacer *m_spacer;
+
+    friend class Spacer;
 };
 
 
