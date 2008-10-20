@@ -1,0 +1,33 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=System Monitor - Hard Disk
+Name[gl]=Vixiante do sistema - Disco duro
+Name[pt]=Monitor do Sistema - Disco Rígido
+Name[pt_BR]=Monitor do Sistema - Disco Rígido
+Name[sv]=Systemövervakare - Hårddisk
+Name[uk]=Монітор системи — Жорсткий диск
+Name[x-test]=xxSystem Monitor - Hard Diskxx
+Name[zh_TW]=系統監視器─硬碟
+Comment=A hard disk usage monitor
+Comment[gl]=Un vixiante do uso do disco duro
+Comment[pt]=Um monitor de utilização do disco rígido
+Comment[pt_BR]=Um monitor de utilização do disco rígido
+Comment[sv]=Övervakning av hårddiskanvändning
+Comment[uk]=Монітор використання жорсткого диска
+Comment[x-test]=xxA hard disk usage monitorxx
+Comment[zh_TW]=硬碟使用量監視器
+Type=Service
+Icon=drive-harddisk
+ServiceTypes=Plasma/Applet
+
+X-KDE-Library=plasma_applet_sm_hdd
+X-KDE-PluginInfo-Author=Petri Damstén
+X-KDE-PluginInfo-Email=damu@iki.fi
+X-KDE-PluginInfo-Name=sm_hdd
+X-KDE-PluginInfo-Version=pre0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=System Information
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true
+

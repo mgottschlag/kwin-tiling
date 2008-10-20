@@ -1,0 +1,32 @@
+[Desktop Entry]
+Name=System Monitor
+Name[gl]=Vixiante do sistema
+Name[pt]=Monitor do Sistema
+Name[pt_BR]=Monitor do Sistema
+Name[sv]=Systemövervakare
+Name[uk]=Монітор системи
+Name[x-test]=xxSystem Monitorxx
+Name[zh_TW]=系統監視器
+Comment=System monitoring applet
+Comment[gl]=Applet de vixilancia do sistema
+Comment[pt]='Applet' de monitorização do sistema
+Comment[pt_BR]='Applet' de monitorização do sistema
+Comment[sv]=Miniprogram för systemövervakning
+Comment[uk]=Аплет моніторингу системи
+Comment[x-test]=xxSystem monitoring appletxx
+Comment[zh_TW]=系統監控小程式
+Type=Service
+Icon=utilities-system-monitor
+ServiceTypes=Plasma/Applet
+
+X-KDE-Library=plasma_applet_system-monitor
+X-KDE-PluginInfo-Author=Petri Damstén
+X-KDE-PluginInfo-Email=damu@iki.fi
+X-KDE-PluginInfo-Name=system-monitor_applet
+X-KDE-PluginInfo-Version=pre0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=System Information
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true
+

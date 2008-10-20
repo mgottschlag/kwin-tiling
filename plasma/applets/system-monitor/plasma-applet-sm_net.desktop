@@ -1,0 +1,33 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=System Monitor - Network
+Name[gl]=Vixiante do sistema - Rede
+Name[pt]=Monitor do Sistema - Rede
+Name[pt_BR]=Monitor do Sistema - Rede
+Name[sv]=Systemövervakare - Nätverk
+Name[uk]=Монітор системи — Мережа
+Name[x-test]=xxSystem Monitor - Networkxx
+Name[zh_TW]=系統監視器─網路
+Comment=A network usage monitor
+Comment[gl]=Un vixiante da utilización da rede
+Comment[pt]=Um monitor de utilização da rede
+Comment[pt_BR]=Um monitor de utilização da rede
+Comment[sv]=Övervakning av nätverksanvändning
+Comment[uk]=Монітор використання мережі
+Comment[x-test]=xxA network usage monitorxx
+Comment[zh_TW]=網路使用量監視器
+Type=Service
+Icon=network-workgroup
+ServiceTypes=Plasma/Applet
+
+X-KDE-Library=plasma_applet_sm_net
+X-KDE-PluginInfo-Author=Petri Damstén
+X-KDE-PluginInfo-Email=damu@iki.fi
+X-KDE-PluginInfo-Name=sm_net
+X-KDE-PluginInfo-Version=pre0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=System Information
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true
+
