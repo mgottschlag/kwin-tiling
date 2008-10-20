@@ -1,0 +1,30 @@
+[Desktop Entry]
+Exec=kcmshell4 desktopthemedetails
+Icon=preferences-desktop
+Type=Service
+X-DocPath=
+
+X-KDE-ServiceTypes=KCModule
+X-KDE-Library=kcm_desktopthemedetails
+X-KDE-ParentApp=kcontrol
+X-KDE-System-Settings-Parent-Category=advanced-user-settings
+
+Name=Desktop Theme Details
+Name[gl]=Detalles do tema do escritorio
+Name[nds]=Schriefdischmuster-Enkelheiten
+Name[pt]=Detalhes do Tema do Ambiente de Trabalho
+Name[pt_BR]=Detalhes do Tema do Ambiente de Trabalho
+Name[sv]=Anpassa skrivbordstemat
+Name[uk]=Відомості щодо тем стільниці
+Name[x-test]=xxDesktop Theme Detailsxx
+Name[zh_TW]=桌面佈景主題詳細資料
+Comment=Customize individual desktop theme items
+Comment[gl]=Personaliza itens individuais do tema do escritorio
+Comment[nds]=Egen Schriefdischmustern topassen
+Comment[pt]=Personalizar os itens individuais do ambiente de trabalho
+Comment[pt_BR]=Personalizar os itens individuais do ambiente de trabalho
+Comment[sv]=Individuell anpassning av skrivbordstemats objekt
+Comment[uk]=Налаштуйте окремі пункти тем стільниці
+Comment[x-test]=xxCustomize individual desktop theme itemsxx
+Comment[zh_TW]=自訂個別的桌面主題項目
+X-KDE-Keywords=Desktop Theme details

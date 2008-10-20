@@ -1,0 +1,13 @@
+Color Scheme=colors,preferences-desktop-color
+Panel Background=widgets/panel-background,plasma
+Kickoff=dialogs/kickoff,kde
+Task Items=widgets/tasks,preferences-system-windows
+Widget Background=widgets/background,plasma
+Translucent Background=widgets/translucentbackground,plasma
+Dialog Background=dialogs/background,plasma
+Analog Clock=widgets/clock,chronometer
+Notes=widgets/notes,view-pim-notes
+Tooltip=widgets/tooltip,plasma
+Pager=widgets/pager,plasma
+Run Command Dialog=dialogs/krunner,system-run
+Shutdown Dialog=dialogs/shutdowndialog,system-shutdown
