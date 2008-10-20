@@ -75,7 +75,7 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet, const
 
     QFontMetrics fm(KGlobalSettings::taskbarFont());
     QSize mSize = fm.size(0, "M");
-    setPreferredSize(QSize(mSize.width()*15 + m_applet->itemLeftMargin() + m_applet->itemRightMargin() + IconSize(KIconLoader::Panel),
+    setPreferredSize(QSize(mSize.width()*15 + m_applet->itemLeftMargin() + m_applet->itemRightMargin() + KIconLoader::SizeSmall,
                            mSize.height()*3 + m_applet->itemTopMargin() + m_applet->itemBottomMargin()));
 }
 

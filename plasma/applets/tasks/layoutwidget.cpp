@@ -219,8 +219,7 @@ int LayoutWidget::rowWidth()
 
     //kDebug() << geometry().height() << int(geometry().height() / 22) << m_maxRows;
     int maxRows;
-    //in this cas rows are columns, columns are rows...
-    //TODO: use not hardcoded values
+    //in this case rows are columns, columns are rows...
     if (m_applet->formFactor() == Plasma::Vertical) {
         maxRows = qMin(qMax(1, int(geometry().width() / itemSize.width())), m_maxRows);
     } else {
@@ -245,15 +244,24 @@ void LayoutWidget::layoutItems()
         //kDebug() << "remove";
     }
 
+    int maxRows;
+    if (m_itemPositions.count() > 0) {
+        QSizeF itemPreferredSize = m_itemPositions[0]->preferredSize();
+        int maxRows = qMin(qMax(1, int(geometry().height() / itemPreferredSize.height())), m_maxRows);
+    } else {
+        maxRows = m_maxRows;
+    }
+
     // make sure columns is not 0, as that will crash divisions.
     int columns = qMax(1, rowWidth());
-    kDebug() << "Laying out with" << columns << m_maxRows;
+    kDebug() << "Laying out with" << columns << maxRows;
 
     if (columns) {
         m_columnWidth = geometry().size().width()/columns;
         kDebug() << "column width set to " << m_columnWidth;
     }
-    m_rowHeight = geometry().size().height()/m_maxRows;
+
+    m_rowHeight = geometry().height()/maxRows;
 
    int numberOfItems = 0;
    foreach (AbstractTaskItem *item, m_itemPositions) {
