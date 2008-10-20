@@ -211,14 +211,20 @@ int LayoutWidget::rowWidth()
         return 1;
     }
 
+    if (m_itemPositions.count() == 0) {
+        return 1;
+    }
+
+    QSizeF itemSize = m_itemPositions[0]->preferredSize();
+
     //kDebug() << geometry().height() << int(geometry().height() / 22) << m_maxRows;
     int maxRows;
     //in this cas rows are columns, columns are rows...
     //TODO: use not hardcoded values
     if (m_applet->formFactor() == Plasma::Vertical) {
-        maxRows = qMin(qMax(1, int(geometry().width() / 150)), m_maxRows);
+        maxRows = qMin(qMax(1, int(geometry().width() / itemSize.width())), m_maxRows);
     } else {
-        maxRows = qMin(qMax(1, int(geometry().height() / 22)), m_maxRows);
+        maxRows = qMin(qMax(1, int(geometry().height() / itemSize.height())), m_maxRows);
     }
 
     int totalSize = size();
