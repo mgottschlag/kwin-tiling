@@ -664,48 +664,53 @@ void PlasmaApp::zoom(Plasma::Containment *containment, Plasma::ZoomDirection dir
 
 void PlasmaApp::zoomIn(Plasma::Containment *containment)
 {
+    bool zoomIn = true;
+    bool zoomOut = true;
+    bool addSibling = true;
+
     if (m_zoomLevel == Plasma::GroupZoom) {
         m_zoomLevel = Plasma::DesktopZoom;
         containment->closeToolBox();
-        containment->enableAction("zoom in", false);
-        containment->enableAction("add sibling containment", false);
+        addSibling = false;
+        zoomIn = false;
     } else if (m_zoomLevel == Plasma::OverviewZoom) {
         m_zoomLevel = Plasma::GroupZoom;
-        //make sure everybody can zoom out again
-        foreach (Plasma::Containment *c, m_corona->containments()) {
-            if (c->containmentType() == Plasma::Containment::PanelContainment) {
-                continue;
-            }
+    }
 
-            c->enableAction("zoom in", true);
-            c->enableAction("zoom out", true);
+    //make sure everybody can zoom out again
+    foreach (Plasma::Containment *c, m_corona->containments()) {
+        if (c->containmentType() == Plasma::Containment::PanelContainment) {
+            continue;
         }
+
+        c->enableAction("zoom in", zoomIn);
+        c->enableAction("zoom out", zoomOut);
+        c->enableAction("add sibling containment", addSibling);
     }
 }
 
 void PlasmaApp::zoomOut(Plasma::Containment *)
 {
+    bool zoomIn = true;
+    bool zoomOut = true;
+    bool addSibling = true;
+
     if (m_zoomLevel == Plasma::DesktopZoom) {
         m_zoomLevel = Plasma::GroupZoom;
-        //make sure nobody can zoom out further
-        foreach (Plasma::Containment *c, m_corona->containments()) {
-            if (c->containmentType() == Plasma::Containment::PanelContainment) {
-                continue;
-            }
-
-            c->enableAction("zoom in", true);
-            c->enableAction("zoom out", true);
-        }
     } else if (m_zoomLevel == Plasma::GroupZoom) {
         m_zoomLevel = Plasma::OverviewZoom;
-        //make sure nobody can zoom out further
-        foreach (Plasma::Containment *c, m_corona->containments()) {
-            if (c->containmentType() == Plasma::Containment::PanelContainment) {
-                continue;
-            }
+        zoomOut = false;
+    }
 
-            c->enableAction("zoom out", false);
+    //make sure everybody can zoom out again
+    foreach (Plasma::Containment *c, m_corona->containments()) {
+        if (c->containmentType() == Plasma::Containment::PanelContainment) {
+            continue;
         }
+
+        c->enableAction("zoom in", zoomIn);
+        c->enableAction("zoom out", zoomOut);
+        c->enableAction("add sibling containment", addSibling);
     }
 }
 
