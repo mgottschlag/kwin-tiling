@@ -81,7 +81,7 @@ void Tasks::init()
     m_groupManager = new TaskManager::GroupManager(this);
     Plasma::Containment* appletContainment = containment();
     if (appletContainment) {
-        m_groupManager->setScreen(appletContainment->screen()); 
+        m_groupManager->setScreen(appletContainment->screen());
     }
 
    // connect(m_groupManager, SIGNAL(reload()), this, SLOT(reload()));
@@ -105,13 +105,13 @@ void Tasks::init()
     //TODO : Qt's bug??
     setMaximumSize(INT_MAX,INT_MAX);
 
-    layout = new QGraphicsLinearLayout(this); 
+    layout = new QGraphicsLinearLayout(this);
     layout->setContentsMargins(0,0,0,0);
     layout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
     //TODO : Qt's bug??
     layout->setMaximumSize(INT_MAX,INT_MAX);
     layout->setOrientation(Qt::Vertical);
-    layout->addItem(m_rootGroupItem); 
+    layout->addItem(m_rootGroupItem);
 
 
     setLayout(layout);
@@ -120,6 +120,7 @@ void Tasks::init()
 
     m_groupManager->setShowOnlyCurrentDesktop( cg.readEntry("showOnlyCurrentDesktop", false));
     m_groupManager->setShowOnlyCurrentScreen( cg.readEntry("showOnlyCurrentScreen", false));
+    m_groupManager->setShowOnlyMinimized( cg.readEntry("showOnlyMinimized", false));
     m_showTooltip = cg.readEntry("showTooltip", true);
     m_groupManager->setGroupingStrategy( static_cast<TaskManager::GroupManager::TaskGroupingStrategy>(cg.readEntry("groupingStrategy", static_cast<int>(TaskManager::GroupManager::ProgramGrouping))));
     m_groupManager->setSortingStrategy( static_cast<TaskManager::GroupManager::TaskSortingStrategy>(cg.readEntry("sortingStrategy", static_cast<int>(TaskManager::GroupManager::AlphaSorting))));
@@ -213,7 +214,7 @@ void Tasks::removeItem(AbstractTaskItem *item)
             m_windowTaskItems.remove(m_windowTaskItems.key(windowItem));
         } else if (m_startupTaskItems.values().contains(windowItem)) {
             m_startupTaskItems.remove(m_startupTaskItems.key(windowItem));
-        }       
+        }
     } else {
         m_groupTaskItems.remove(m_groupTaskItems.key(dynamic_cast<TaskGroupItem*>(item)));
     }
@@ -275,7 +276,7 @@ void Tasks::constraintsEvent(Plasma::Constraints constraints)
     if (m_groupManager && constraints & Plasma::ScreenConstraint) {
         Plasma::Containment* appletContainment = containment();
         if (appletContainment) {
-            m_groupManager->setScreen(appletContainment->screen()); 
+            m_groupManager->setScreen(appletContainment->screen());
         }
     }
 
@@ -339,7 +340,7 @@ void Tasks::resizeItemBackground(const QSizeF &size)
         return;
     }
 
-    
+
     m_taskItemBackground->clearCache();
     m_taskItemBackground->resizePanel(size);
     //get the margins now
@@ -382,6 +383,7 @@ void Tasks::createConfigurationInterface(KConfigDialog *parent)
     m_ui.showTooltip->setChecked(m_showTooltip);
     m_ui.showOnlyCurrentDesktop->setChecked(m_groupManager->showOnlyCurrentDesktop());
     m_ui.showOnlyCurrentScreen->setChecked(m_groupManager->showOnlyCurrentScreen());
+    m_ui.showOnlyMinimized->setChecked(m_groupManager->showOnlyMinimized());
 
     m_ui.groupingStrategy->addItem("No grouping",QVariant(TaskManager::GroupManager::NoGrouping));
     m_ui.groupingStrategy->addItem("Manual grouping",QVariant(TaskManager::GroupManager::ManualGrouping));
@@ -439,6 +441,12 @@ void Tasks::configAccepted()
         cg.writeEntry("showOnlyCurrentScreen", m_groupManager->showOnlyCurrentScreen());
         changed = true;
     }
+    if (m_groupManager->showOnlyMinimized() != (m_ui.showOnlyMinimized->isChecked())) {
+        m_groupManager->setShowOnlyMinimized(!m_groupManager->showOnlyMinimized());
+        KConfigGroup cg = config();
+        cg.writeEntry("showOnlyMinimized", m_groupManager->showOnlyMinimized());
+        changed = true;
+    }
 
     if (m_groupManager->groupingStrategy() != (m_ui.groupingStrategy->currentIndex())) {
         m_groupManager->setGroupingStrategy(static_cast<TaskManager::GroupManager::TaskGroupingStrategy>(m_ui.groupingStrategy->itemData(m_ui.groupingStrategy->currentIndex()).toInt()));
@@ -452,12 +460,12 @@ void Tasks::configAccepted()
         cg.writeEntry("sortingStrategy", static_cast<int>(m_groupManager->sortingStrategy()));
         changed = true;
     }
-    
+
     if (m_rootGroupItem->maxRows() != (m_ui.maxRows->value())) {
-	m_rootGroupItem->setMaxRows(m_ui.maxRows->value());
-	KConfigGroup cg = config();
-	cg.writeEntry("maxRows", m_rootGroupItem->maxRows());
-	changed = true;
+        m_rootGroupItem->setMaxRows(m_ui.maxRows->value());
+        KConfigGroup cg = config();
+        cg.writeEntry("maxRows", m_rootGroupItem->maxRows());
+        changed = true;
     }
 
     if (changed) {
