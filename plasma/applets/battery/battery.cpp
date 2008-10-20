@@ -499,26 +499,34 @@ void Battery::updateStatus()
         QString batteryLabelText = QString("<br />");
         int bnum = 0;
         while (battery_data.hasNext()) {
+            bnum++;
             battery_data.next();
-
+            QString state = battery_data.value()["State"].toString();
             if (m_numOfBattery == 1) {
-                batteryLabelText.append("<b>Battery:</b> ");
+                if (battery_data.value()["Plugged in"].toBool()) {
+                    if (state == "NoCharge") {
+                            batteryLabelText.append(i18n("<b>Battery:</b> %1\% (fully charged)", battery_data.value()["Percent"].toString()));
+                    } else if (state == "Discharging") {
+                            batteryLabelText.append(i18n("<b>Battery:</b> %1\% (discharging)", battery_data.value()["Percent"].toString()));
+                    } else {
+                        batteryLabelText.append(i18n("<b>Battery:</b> %1\% (charging)", battery_data.value()["Percent"].toString()));
+                    }
+                } else {
+                    batteryLabelText.append(i18nc("Battery is not plugged in", "<b>Battery:</b> not present"));
+                }
             } else {
-                batteryLabelText.append(QString("<b>Battery %1:</b> ").arg(bnum));
+                if (state == "NoCharge") {
+                    batteryLabelText.append(i18n("<b>Battery %1:</b> %2\% (fully charged)", bnum, battery_data.value()["Percent"].toString()));
+                } else if (state == "Discharging") {
+                    batteryLabelText.append(i18n("<b>Battery %1:</b> %2\% (discharging)", bnum, battery_data.value()["Percent"].toString()));
+                } else {
+                    batteryLabelText.append(i18n("<b>Battery %1:</b> %2\% (charging)", bnum, battery_data.value()["Percent"].toString()));
+                }
             }
 
-            if (battery_data.value()["Plugged in"].toBool()) {
-                batteryLabelText.append(battery_data.value()["Percent"].toString());
-            } else {
-                batteryLabelText.append(i18nc("Battery is not plugged in", "not present"));
-            }
-            batteryLabelText.append("%");
-            //batteryLabelText.append(QString("<br /><b>Battery X: 66%</b> ")); // FIXME: Remove
             if (m_acadapter_plugged) {
-                batteryLabelText.append((i18n(" charged")));
                 batteryLabelText.append(i18n("<br /><b>AC Adapter:</b> Plugged in"));
             } else {
-                batteryLabelText.append((i18n(" remaining")));
                 batteryLabelText.append(i18n("<br /><b>AC Adapter:</b> Not plugged in"));
             }
         }
