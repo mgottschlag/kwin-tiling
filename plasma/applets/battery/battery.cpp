@@ -140,7 +140,7 @@ void Battery::init()
     readColors();
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(readColors()));
 
-    const QStringList& battery_sources = dataEngine("powermanagement")->query(I18N_NOOP("Battery"))[I18N_NOOP("sources")].toStringList();
+    const QStringList& battery_sources = dataEngine("powermanagement")->query("Battery")["sources"].toStringList();
 
     //connect sources
     connectSources();
@@ -151,7 +151,7 @@ void Battery::init()
     }
     m_numOfBattery = battery_sources.size();
 
-    dataUpdated(I18N_NOOP("AC Adapter"), dataEngine("powermanagement")->query(I18N_NOOP("AC Adapter")));
+    dataUpdated("AC Adapter", dataEngine("powermanagement")->query("AC Adapter"));
 
 
     if (!m_isEmbedded) {
@@ -199,14 +199,14 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
 
 void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {
-    if (source.startsWith(I18N_NOOP("Battery"))) {
+    if (source.startsWith("Battery")) {
         m_batteries_data[source] = data;
-    } else if (source == I18N_NOOP("AC Adapter")) {
-        m_acadapter_plugged = data[I18N_NOOP("Plugged in")].toBool();
+    } else if (source == "AC Adapter") {
+        m_acadapter_plugged = data["Plugged in"].toBool();
         showAcAdapter(m_acadapter_plugged);
-    } else if (source == I18N_NOOP("PowerDevil")) {
-        m_availableProfiles = data[I18N_NOOP("availableProfiles")].toStringList();
-        m_currentProfile = data[I18N_NOOP("currentProfile")].toString();
+    } else if (source == "PowerDevil") {
+        m_availableProfiles = data["availableProfiles"].toStringList();
+        m_currentProfile = data["currentProfile"].toString();
         //kDebug() << "PowerDevil profiles:" << m_availableProfiles << "[" << m_currentProfile << "]";
     } else {
         kDebug() << "Applet::Dunno what to do with " << source;
@@ -246,7 +246,7 @@ void Battery::configAccepted()
     }
 
     if (ui.styleGroup->selected() != m_batteryStyle) {
-        setSvgTheme(ui.styleGroup->selected());
+        //setSvgTheme(ui.styleGroup->selected());
         if (m_extenderApplet) {
             // Also switch the theme in the extenderApplet
             //m_extenderApplet->setSvgTheme(ui.styleGroup->selected()); // FIXME: crashes
@@ -507,8 +507,8 @@ void Battery::updateStatus()
                 batteryLabelText.append(QString("<b>Battery %1:</b> ").arg(bnum));
             }
 
-            if (battery_data.value()[I18N_NOOP("Plugged in")].toBool()) {
-                batteryLabelText.append(battery_data.value()[I18N_NOOP("Percent")].toString());
+            if (battery_data.value()["Plugged in"].toBool()) {
+                batteryLabelText.append(battery_data.value()["Percent"].toString());
             } else {
                 batteryLabelText.append(i18nc("Battery is not plugged in", "not present"));
             }
@@ -824,7 +824,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
             m_theme->paint(p, ac_contentsRect, "AcAdapter");
         }
         // Show that there's no battery
-        paintLabel(p, contentsRect, I18N_NOOP("n/a"));
+        paintLabel(p, contentsRect, "n/a");
         return;
     }
 
@@ -840,16 +840,16 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
                                  width, contentsRect.height());
 
             // paint battery with appropriate charge level
-            paintBattery(p, corect, battery_data.value()[I18N_NOOP("Percent")].toInt(), battery_data.value()[I18N_NOOP("Plugged in")].toBool());
+            paintBattery(p, corect, battery_data.value()["Percent"].toInt(), battery_data.value()["Plugged in"].toBool());
 
             if (m_showBatteryString || m_isHovered || m_firstRun) {
                 // Show the charge percentage with a box on top of the battery
                 QString batteryLabel;
-                if (battery_data.value()[I18N_NOOP("Plugged in")].toBool()) {
-                    batteryLabel = battery_data.value()[I18N_NOOP("Percent")].toString();
+                if (battery_data.value()["Plugged in"].toBool()) {
+                    batteryLabel = battery_data.value()["Percent"].toString();
                     batteryLabel.append("%");
                 } else {
-                    batteryLabel = I18N_NOOP("n/a");
+                    batteryLabel = "n/a";
                 }
                 paintLabel(p, corect, batteryLabel);
             }
@@ -863,8 +863,8 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         QHashIterator<QString, QHash<QString, QVariant > > battery_data(m_batteries_data);
         while (battery_data.hasNext()) {
             battery_data.next();
-            if (battery_data.value()[I18N_NOOP("Plugged in")].toBool()) {
-                battery_charge += battery_data.value()[I18N_NOOP("Percent")].toInt();
+            if (battery_data.value()["Plugged in"].toBool()) {
+                battery_charge += battery_data.value()["Percent"].toInt();
                 has_battery = true;
                 ++battery_num;
             }
@@ -881,7 +881,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
                 batteryLabel = QString::number(battery_charge);
                 batteryLabel.append("%");
             } else {
-                batteryLabel = I18N_NOOP("n/a");
+                batteryLabel = "n/a";
             }
             paintLabel(p, contentsRect, batteryLabel);
         }
@@ -889,14 +889,14 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
 }
 
 void Battery::connectSources() {
-    const QStringList& battery_sources = dataEngine("powermanagement")->query(I18N_NOOP("Battery"))[I18N_NOOP("sources")].toStringList();
+    const QStringList& battery_sources = dataEngine("powermanagement")->query("Battery")["sources"].toStringList();
 
     foreach (const QString &battery_source, battery_sources) {
         dataEngine("powermanagement")->connectSource(battery_source, this);
     }
 
-    dataEngine("powermanagement")->connectSource(I18N_NOOP("AC Adapter"), this);
-    dataEngine("powermanagement")->connectSource(I18N_NOOP("PowerDevil"), this);
+    dataEngine("powermanagement")->connectSource("AC Adapter", this);
+    dataEngine("powermanagement")->connectSource("PowerDevil", this);
 
     connect(dataEngine("powermanagement"), SIGNAL(sourceAdded(QString)),
             this,                          SLOT(sourceAdded(QString)));
@@ -906,14 +906,14 @@ void Battery::connectSources() {
 
 void Battery::disconnectSources()
 {
-    const QStringList& battery_sources = dataEngine("powermanagement")->query(I18N_NOOP("Battery"))[I18N_NOOP("sources")].toStringList();
+    const QStringList& battery_sources = dataEngine("powermanagement")->query("Battery")["sources"].toStringList();
 
     foreach (const QString &battery_source ,battery_sources) {
         dataEngine("powermanagement")->disconnectSource(battery_source, this);
     }
 
-    dataEngine("powermanagement")->disconnectSource(I18N_NOOP("AC Adapter"), this);
-    dataEngine("powermanagement")->disconnectSource(I18N_NOOP("PowerDevil"), this);
+    dataEngine("powermanagement")->disconnectSource("AC Adapter", this);
+    dataEngine("powermanagement")->disconnectSource("PowerDevil", this);
 
     disconnect(SLOT(sourceAdded(QString)));
     disconnect(SLOT(sourceRemoved(QString)));
