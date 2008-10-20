@@ -80,7 +80,7 @@ void WindowTaskItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->buttons() & Qt::MidButton) {
         if (isGrouped()) {
-            getParentGroup()->collapse();
+            parentGroup()->collapse();
         }
     } else {
         AbstractTaskItem::mousePressEvent(event);
@@ -264,7 +264,7 @@ void WindowTaskItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
     QAction *a;
     if (m_task->isGrouped()) {
         a = new QAction("Collapse Parent Group", this);
-        connect(a, SIGNAL(triggered()), m_applet->getGroupItem(m_task->parentGroup()), SLOT(collapse()));
+        connect(a, SIGNAL(triggered()), m_applet->groupItem(m_task->parentGroup()), SLOT(collapse()));
     }
 
     QList <QAction*> actionList;

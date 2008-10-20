@@ -461,24 +461,13 @@ void Tasks::configAccepted()
         changed = true;
     }
 
+    kDebug() << "swojlfjslkj?!" << m_rootGroupItem->maxRows() << m_ui.maxRows->value();
     if (m_rootGroupItem->maxRows() != (m_ui.maxRows->value())) {
         m_rootGroupItem->setMaxRows(m_ui.maxRows->value());
         KConfigGroup cg = config();
         cg.writeEntry("maxRows", m_rootGroupItem->maxRows());
         changed = true;
     }
-
-    if (changed) {
-        emit settingsChanged();
-    }
-/*
-if (m_showTooltip != (m_ui.showTooltip->isChecked())) { //FIXME new implemenation
-        m_showTooltip = !m_showTooltip;
-        KConfigGroup cg = config();
-        cg.writeEntry("showTooltip", m_showTooltip);
-        changed = true;
-    }*/
-
 
     if (m_showTooltip != (m_ui.showTooltip->checkState() == Qt::Checked)) {
         m_showTooltip = !m_showTooltip;
@@ -494,9 +483,11 @@ if (m_showTooltip != (m_ui.showTooltip->isChecked())) { //FIXME new implemenatio
     }
 
     if (changed) {
-        update();
+        emit settingsChanged();
         emit configNeedsSaving();
+        update();
     }
+    kDebug() << "swojlfjslkj?!" << m_rootGroupItem->maxRows() << m_ui.maxRows->value();
 }
 
 
@@ -515,7 +506,7 @@ void Tasks::themeRefresh()
 }
 
 
-WindowTaskItem* Tasks::getWindowItem(TaskPtr task)
+WindowTaskItem* Tasks::windowItem(TaskPtr task)
 {
     if (m_windowTaskItems.contains(task)) {
         return m_windowTaskItems.value(task);
@@ -524,7 +515,7 @@ WindowTaskItem* Tasks::getWindowItem(TaskPtr task)
     return 0;
 }
 
-TaskGroupItem* Tasks::getGroupItem(GroupPtr group)
+TaskGroupItem* Tasks::groupItem(GroupPtr group)
 {
     if (m_groupTaskItems.contains(group)) {
         return m_groupTaskItems.value(group);
@@ -533,7 +524,7 @@ TaskGroupItem* Tasks::getGroupItem(GroupPtr group)
     return 0;
 }
 
-AbstractTaskItem* Tasks::getAbstractItem(AbstractItemPtr item)
+AbstractTaskItem* Tasks::abstractItem(AbstractItemPtr item)
 {
     if (m_items.contains(item)) {
         return m_items.value(item);
@@ -542,12 +533,9 @@ AbstractTaskItem* Tasks::getAbstractItem(AbstractItemPtr item)
     return 0;
 }
 
-TaskGroupItem* Tasks::getRootGroupItem()
+TaskGroupItem* Tasks::rootGroupItem()
 {
-    if (m_rootGroupItem) {
-        return m_rootGroupItem;
-    }
-    return 0;
+    return m_rootGroupItem;
 }
 
 

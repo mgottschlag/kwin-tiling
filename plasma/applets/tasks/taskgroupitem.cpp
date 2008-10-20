@@ -62,8 +62,8 @@ TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet, const bool 
       m_activeTaskIndex(0),
       m_maximumRows(1),
       m_isCollapsed(true),
-      m_childSplitGroup(0),
-      m_parentSplitGroup(0)
+      m_parentSplitGroup(0),
+      m_childSplitGroup(0)
 {
     setAcceptDrops(true);
     //setMinimumSize(300,40);
@@ -95,8 +95,7 @@ void TaskGroupItem::unsplitGroup()
     if (!isSplit()) {
         return;
     }
-    QList <AbstractTaskItem*> itemList = m_childSplitGroup->getMemberList();
-    m_childSplitGroup->clear();
+    QList <AbstractTaskItem*> itemList = m_childSplitGroup->memberList();
     foreach (AbstractTaskItem *item, itemList) {
         m_layoutWidget->addTaskItem(item);
     }
@@ -111,20 +110,13 @@ TaskGroupItem * TaskGroupItem::splitGroup()
     return m_childSplitGroup;
 }
 
-void TaskGroupItem::clear()
-{
-    foreach (AbstractTaskItem *member, m_groupMembers) {
-       // m_layoutWidget->removeTaskItem(member);
-    }
-}
-
 void TaskGroupItem::setSplitIndex(int position)
 {
     kDebug() << position;
-    for (int i = position ; i < m_parentSplitGroup->getMemberList().size() ; i++) {
-        kDebug() << "Add item to split gorup" << i;
-        m_groupMembers.append(m_parentSplitGroup->getMemberList().at(i));
-        m_layoutWidget->addTaskItem(m_parentSplitGroup->getMemberList().at(i));
+    for (int i = position ; i < m_parentSplitGroup->memberList().size() ; i++) {
+        kDebug() << "Add item to split group" << i;
+        m_groupMembers.append(m_parentSplitGroup->memberList().at(i));
+        m_layoutWidget->addTaskItem(m_parentSplitGroup->memberList().at(i));
     }
     m_splitPosition = position;
 }
@@ -275,7 +267,7 @@ void TaskGroupItem::reload()
             continue;
         }
         if (item->isGroupItem()) {
-            TaskGroupItem *groupItem = m_applet->getGroupItem(qobject_cast<GroupPtr>(item));
+            TaskGroupItem *groupItem = m_applet->groupItem(qobject_cast<GroupPtr>(item));
             groupItem->reload();
         }
         itemAdded(item);
@@ -324,7 +316,7 @@ void TaskGroupItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
         return;
     }
     Q_ASSERT(m_applet);
-    if (this == m_applet->getRootGroupItem()) {
+    if (this == m_applet->rootGroupItem()) {
         e->ignore();
         return;
     }
@@ -348,7 +340,7 @@ void TaskGroupItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
 }
 
 
-QList<AbstractTaskItem*> TaskGroupItem::getMemberList() const
+QList<AbstractTaskItem*> TaskGroupItem::memberList() const
 {
     return m_groupMembers;
 }
@@ -389,7 +381,7 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
 
     if (item->isActive()) {
         //kDebug() << "item is Active" ;
-        m_activeTaskIndex = m_group->members().indexOf(groupableItem);//m_layoutWidget->getIndex(item);
+        m_activeTaskIndex = m_group->members().indexOf(groupableItem);
     } else if (m_group->members().size() == 1) {
         m_activeTaskIndex = 0;
     }
@@ -406,7 +398,7 @@ void TaskGroupItem::itemRemoved(TaskManager::AbstractItemPtr groupableItem)
         kDebug() << "No Applet";
         return;
     }
-    AbstractTaskItem *item = m_applet->getAbstractItem(groupableItem);
+    AbstractTaskItem *item = m_applet->abstractItem(groupableItem);
 
     if (!item) {
         kDebug() << "Item not found";
@@ -555,7 +547,7 @@ void TaskGroupItem::updatePreferredSize()
 
 
 
-AbstractTaskItem *TaskGroupItem::getDirectMember(AbstractTaskItem *item)
+AbstractTaskItem *TaskGroupItem::directMember(AbstractTaskItem *item)
 {
     Q_ASSERT(item);
     Q_ASSERT(m_group);
@@ -563,7 +555,7 @@ AbstractTaskItem *TaskGroupItem::getDirectMember(AbstractTaskItem *item)
     if (!directMember) {
         kDebug() << "Error" << item->abstractItem();
     }
-    return m_applet->getAbstractItem(directMember);
+    return m_applet->abstractItem(directMember);
 }
 
 void TaskGroupItem::paint(QPainter *painter,
@@ -611,11 +603,11 @@ void  TaskGroupItem::itemChanged(AbstractItemPtr item)
     Q_ASSERT(item);
     Q_ASSERT(m_layoutWidget);
     if (item->isGroupItem()) {
-        TaskGroupItem *groupItem = static_cast<TaskGroupItem*>(m_applet->getAbstractItem(item));
+        TaskGroupItem *groupItem = static_cast<TaskGroupItem*>(m_applet->abstractItem(item));
         groupItem->unsplitGroup(); 
     }
 
-    AbstractTaskItem *taskItem = m_applet->getAbstractItem(item);
+    AbstractTaskItem *taskItem = m_applet->abstractItem(item);
     
     m_layoutWidget->removeTaskItem(taskItem);
     m_layoutWidget->insert(m_group->members().indexOf(item), taskItem);
@@ -668,12 +660,12 @@ void TaskGroupItem::dropEvent(QGraphicsSceneDragDropEvent *event)
                     //kDebug() << "no targetTask"; 
                     noTargetTask = true;
                 }
-                if (!taskItem->getParentGroup()) {
+                if (!taskItem->parentGroup()) {
                     //kDebug() << "group invalid";
                     return;
                 }
 
-                TaskManager::GroupPtr group = static_cast<TaskManager::GroupPtr>(taskItem->getParentGroup()->abstractItem());
+                TaskManager::GroupPtr group = static_cast<TaskManager::GroupPtr>(taskItem->parentGroup()->abstractItem());
 
                 if ((event->modifiers() == m_applet->groupModifierKey()) &&
                     m_applet->groupManager().groupingStrategy() == TaskManager::GroupManager::ManualGrouping) {
@@ -682,8 +674,8 @@ void TaskGroupItem::dropEvent(QGraphicsSceneDragDropEvent *event)
                     if (!noTargetTask) {
                         if (targetTask->isWindowItem() && (group == m_group)) { //Both Items in same group
                             //Group Items together
-                            int targetIndex = m_group->members().indexOf(targetTask->abstractItem());//m_layoutWidget->getIndex(targetTask);
-                            int sourceIndex = m_group->members().indexOf(taskItem->abstractItem());//m_layoutWidget->getIndex(taskItem);
+                            int targetIndex = m_group->members().indexOf(targetTask->abstractItem());
+                            int sourceIndex = m_group->members().indexOf(taskItem->abstractItem());
                             TaskManager::ItemList members;
                             members.append(targetTask->abstractItem());
                             members.append(taskItem->abstractItem());
@@ -714,7 +706,7 @@ void TaskGroupItem::dropEvent(QGraphicsSceneDragDropEvent *event)
                             //kDebug() << "Drag within group";
                             layoutTaskItem(taskItem, event->pos());
                         } else { //task item was dragged outside of group -> group move
-                            AbstractTaskItem *directMember = m_applet->getAbstractItem(m_group->directMember(group));
+                            AbstractTaskItem *directMember = m_applet->abstractItem(m_group->directMember(group));
                             if (directMember) {
                                 layoutTaskItem(directMember, event->pos()); //we need to get the group right under the receiver group
                             } else { //group isn't a member of this Group, this is the case if a task is dragged into a expanded group
@@ -738,7 +730,7 @@ void TaskGroupItem::layoutTaskItem(AbstractTaskItem* item, const QPointF &pos)
     }
     Q_ASSERT(m_layoutWidget);
 
-    int insertIndex = m_layoutWidget->getInsertIndex(pos);
+    int insertIndex = m_layoutWidget->insertionIndexAt(pos);
    // kDebug() << "Item inserting at: " << insertIndex << "of: " << numberOfItems();
     if (insertIndex == -1) {
         m_applet->groupManager().manualSortingRequest(item->abstractItem(), -1);
@@ -746,7 +738,8 @@ void TaskGroupItem::layoutTaskItem(AbstractTaskItem* item, const QPointF &pos)
         if (!m_parentSplitGroup) {
             m_applet->groupManager().manualSortingRequest(item->abstractItem(), insertIndex);
         } else {
-            m_applet->groupManager().manualSortingRequest(item->abstractItem(), insertIndex + m_parentSplitGroup->getMemberList().size());
+            m_applet->groupManager().manualSortingRequest(item->abstractItem(), insertIndex +
+                                                          m_parentSplitGroup->memberList().size());
         }
     }
 }
@@ -759,7 +752,7 @@ void TaskGroupItem::updateActive(AbstractTaskItem *task)
     }
     Q_ASSERT(m_layoutWidget);
 
-    m_activeTaskIndex = m_group->members().indexOf(task->abstractItem());//m_layoutWidget->getIndex(task);
+    m_activeTaskIndex = m_group->members().indexOf(task->abstractItem());
 }
 
 

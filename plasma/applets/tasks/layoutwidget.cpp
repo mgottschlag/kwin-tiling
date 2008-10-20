@@ -31,7 +31,7 @@ LayoutWidget::LayoutWidget(TaskGroupItem *parent, Tasks *applet, TaskGroup *grou
 {
     init();
     //kDebug();
-    foreach(AbstractTaskItem *item, m_groupItem->getMemberList()) {
+    foreach(AbstractTaskItem *item, m_groupItem->memberList()) {
         addTaskItem(item);
     }
 }
@@ -95,7 +95,7 @@ void LayoutWidget::addTaskItem(AbstractTaskItem * item)
     //item->setParentItem(m_groupItem);
 
    // if (!insert(m_group->members().indexOf(item->abstractItem()), item)) {
-   if (!insert(m_groupItem->getMemberList().indexOf(item), item)) {
+   if (!insert(m_groupItem->memberList().indexOf(item), item)) {
         kDebug() << "error on  insert";
         return;
     }
@@ -177,9 +177,9 @@ void LayoutWidget::update()
 /** size including expanded groups*/
 int LayoutWidget::size()
 {
-    int groupSize = 0;// = m_groupItem->getMemberList().size();
+    int groupSize = 0;
     TaskGroupItem *group;
-    foreach (AbstractTaskItem *item, m_groupItem->getMemberList()) {
+    foreach (AbstractTaskItem *item, m_groupItem->memberList()) {
         if (!item->abstractItem()) {
             kDebug() << "error";
             continue;
@@ -192,7 +192,7 @@ int LayoutWidget::size()
                     kDebug() << "Error";
                     continue;
                 }
-                groupSize += group->getMemberList().size();//layout->size();// increase number of items since expanded groups occupy several spaces
+                groupSize += group->memberList().size();//layout->size();// increase number of items since expanded groups occupy several spaces
                 continue;
             }
         }
@@ -365,7 +365,7 @@ void LayoutWidget::setMaximumRows(int rows)
     m_maxRows = rows;
 }
 
-int LayoutWidget::getInsertIndex(const QPointF &pos)//FIXME implement vertical
+int LayoutWidget::insertionIndexAt(const QPointF &pos)//FIXME implement vertical
 {
     int insertIndex = -1;
     int row = 0;

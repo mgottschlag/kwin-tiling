@@ -57,7 +57,7 @@ public:
     void setOrientation(Plasma::FormFactor);
     void setSpacer(bool);
 
-    int getInsertIndex(const QPointF &pos);
+    int insertionIndexAt(const QPointF &pos);
     void setMaximumRows(int);
 
     Qt::Orientation orientation();

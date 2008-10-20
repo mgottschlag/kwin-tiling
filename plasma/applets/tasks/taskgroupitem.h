@@ -59,7 +59,7 @@ public:
 
     virtual void close();
 
-    QList <AbstractTaskItem*> getMemberList() const;
+    QList <AbstractTaskItem*> memberList() const;
 
     virtual bool isWindowItem() const;
     virtual bool isActive() const;
@@ -67,7 +67,7 @@ public:
     bool collapsed() const;
 
     /** Returns Direct Member group if the passed item is in a subgroup */
-    AbstractTaskItem *getDirectMember(AbstractTaskItem *);
+    AbstractTaskItem *directMember(AbstractTaskItem *);
     
     /** Maximum number of Rows the group will have */
     int maxRows();
@@ -148,7 +148,6 @@ private slots:
 
 private:
     void setSplitIndex(int position);
-    void clear();
     GroupPtr m_group;
     QList<AbstractTaskItem*> m_groupMembers;
     LayoutWidget *m_layoutWidget;

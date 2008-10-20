@@ -94,14 +94,14 @@ public:
         qreal itemBottomMargin() { return m_bottomMargin; }
         void resizeItemBackground(const QSizeF &newSize);
 
-        TaskGroupItem*  getRootGroupItem();
-        WindowTaskItem* getWindowItem(TaskPtr);
-        TaskGroupItem*  getGroupItem(GroupPtr);
-        AbstractTaskItem* getAbstractItem(AbstractItemPtr);
+        TaskGroupItem*  rootGroupItem();
+        WindowTaskItem* windowItem(TaskPtr);
+        TaskGroupItem*  groupItem(GroupPtr);
+        AbstractTaskItem* abstractItem(AbstractItemPtr);
 
         AbstractTaskItem* createAbstractItem(AbstractItemPtr groupableItem);
         TaskGroupItem* createNewGroup(QList <AbstractTaskItem *> members);
-    
+
         void removeItem(AbstractTaskItem *item);
 
         TaskManager::GroupManager &groupManager() const;

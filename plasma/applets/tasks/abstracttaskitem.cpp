@@ -705,14 +705,14 @@ bool AbstractTaskItem::isGrouped()
 }
 
 
-TaskGroupItem * AbstractTaskItem::getParentGroup()
+TaskGroupItem * AbstractTaskItem::parentGroup()
 {
     if (!m_abstractItem) {
         kDebug() << "no task";
         return 0;
     }
-    //return dynamic_cast<TaskManager::TaskGroup *>(m_abstractItem->getParentGroup());
-    TaskGroupItem * group = m_applet->getGroupItem(m_abstractItem->parentGroup());
+    //return dynamic_cast<TaskManager::TaskGroup *>(m_abstractItem->parentGroup());
+    TaskGroupItem * group = m_applet->groupItem(m_abstractItem->parentGroup());
     /*
     if (!group) {
         kDebug() << "null group";

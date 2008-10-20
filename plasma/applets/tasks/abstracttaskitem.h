@@ -114,7 +114,7 @@ public:
     /** Only true if the task is not only member of rootGroup */
     bool isGrouped();
     bool isGroupMember(const TaskGroupItem *group) ;
-    TaskGroupItem *getParentGroup();
+    TaskGroupItem *parentGroup();
 
     virtual bool isWindowItem() const = 0;
     virtual bool isActive() const = 0;
