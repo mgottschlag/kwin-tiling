@@ -180,7 +180,7 @@ int LayoutWidget::size()
     int groupSize = 0;// = m_groupItem->getMemberList().size();
     TaskGroupItem *group;
     foreach (AbstractTaskItem *item, m_groupItem->getMemberList()) {
-        if(!item->abstractItem()) {
+        if (!item->abstractItem()) {
             kDebug() << "error";
             continue;
         }
@@ -206,9 +206,9 @@ int LayoutWidget::size()
 int LayoutWidget::rowWidth()
 {
     int columns = m_rowSize;
-    if (!columns) {
+    if (columns < 1) {
         kDebug() << "divider collumns is 0!!!";
-        return 0;
+        return 1;
     }
 
     //kDebug() << geometry().height() << int(geometry().height() / 22) << m_maxRows;
@@ -222,12 +222,13 @@ int LayoutWidget::rowWidth()
     }
 
     int totalSize = size();
-  
+
     while ((totalSize / columns) > maxRows) {     
         columns++;  //more rows needed than allowed so we add some collumns instead
     }
+
     kDebug() << "groupWidth" << columns;
-    return qMin(columns,totalSize);
+    return qMax(1, qMin(columns, totalSize));
 }
 
 void LayoutWidget::layoutItems()
@@ -239,7 +240,7 @@ void LayoutWidget::layoutItems()
     }
 
     // make sure columns is not 0, as that will crash divisions.
-    int columns =  qMax(1, rowWidth());
+    int columns = qMax(1, rowWidth());
 
     if (columns) {
         m_columnWidth = geometry().size().width()/columns;
