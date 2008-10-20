@@ -12,7 +12,6 @@
 #include <QPainter>
 #include <QFile>
 #include <QAbstractItemView>
-#include <QStandardItemModel>
 #include <QtGui/QHeaderView>
 
 #include <KIcon>
@@ -27,7 +26,6 @@
 #include <KZip>
 #include <kio/netaccess.h>
 #include <kgenericfactory.h>
-#include <kdecore_export.h>
 
 #include <plasma/panelsvg.h>
 #include <plasma/theme.h>
