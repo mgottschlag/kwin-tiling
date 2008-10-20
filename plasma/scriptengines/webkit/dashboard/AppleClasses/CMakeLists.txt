@@ -4,4 +4,4 @@ install(FILES AppleButton.js
               AppleScrollArea.js
               AppleScrollbar.js
               AppleSlider.js
-        DESTINATION ${DATA_INSTALL_DIR}/dashboard/AppleClasses/)
+        DESTINATION ${DATA_INSTALL_DIR}/plasma/dashboard/AppleClasses/)

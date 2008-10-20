@@ -2,8 +2,6 @@ add_subdirectory(dashboard)
 
 project(plasma-webapplet)
 
-include_directories( ${QT_INCLUDE_DIR}/QtWebKit )
-
 set(webapplet_SRCS
     webpage.cpp webapplet.cpp plasmawebapplet.cpp plasmajs.cpp webapplet_plugin.cpp)
 kde4_add_plugin(plasma_appletscriptengine_webapplet ${webapplet_SRCS})

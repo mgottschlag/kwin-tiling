@@ -26,10 +26,12 @@ THE SOFTWARE.
 #include <QFile>
 #include <QByteArray>
 
+#include <KGlobal>
+#include <KStandardDirs>
+
 #include <plasma/widgets/webcontent.h>
 #include <plasma/applet.h>
 #include <plasma/package.h>
-#include <kstandarddirs.h>
 
 #include "dashboardjs.h"
 
@@ -80,8 +82,7 @@ QByteArray DashboardApplet::dataFor(const QString &str)
     f.close();
 
     //replace the apple javascript imports with the kde ones
-    KStandardDirs a;
-    QString jsBaseDir = a.findResourceDir("data","dashboard/button/genericButton.js") + "dashboard";
+    QString jsBaseDir = KGlobal::dirs()->locate("data","plasma/dashboard/AppleClasses");
 
     data.replace("file:///System/Library/WidgetResources", jsBaseDir.toUtf8());
     data.replace("/System/Library/WidgetResources", jsBaseDir.toUtf8());
