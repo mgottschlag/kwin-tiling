@@ -114,7 +114,9 @@ PanelDecorator::PanelDecorator(ViewHostInterface *host, GadgetInfo *info)
   d->owner_ = this;
 }
 
-PanelDecorator::~PanelDecorator() {}
+PanelDecorator::~PanelDecorator() {
+  delete d;
+}
 
 void PanelDecorator::OnAddDecoratorMenuItems(MenuInterface *menu) {
   d->OnAddDecoratorMenuItems(menu);
