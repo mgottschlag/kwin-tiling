@@ -1,21 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=System Monitor - Temperature
-Name[gl]=Vixiante do sistema - Temperatura
-Name[pt]=Monitor do Sistema - Temperatura
-Name[pt_BR]=Monitor do Sistema - Temperatura
-Name[sv]=Systemövervakare - Temperatur
-Name[uk]=Монітор системи — Температура
-Name[x-test]=xxSystem Monitor - Temperaturexx
-Name[zh_TW]=系統監視器─溫度
 Comment=A system temperature monitor
-Comment[gl]=Un vixiante da temperatura do sistema
-Comment[pt]=Um monitor da temperatura do sistema
-Comment[pt_BR]=Um monitor da temperatura do sistema
-Comment[sv]=Övervakning av systemtemperatur
-Comment[uk]=Монітор системної температури
-Comment[x-test]=xxA system temperature monitorxx
-Comment[zh_TW]=系統溫度監視器
 Type=Service
 Icon=media-flash
 ServiceTypes=Plasma/Applet

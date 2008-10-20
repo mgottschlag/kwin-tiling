@@ -1,14 +1,24 @@
 [Desktop Entry]
 Name=Recent Documents
-Name[es]=Documentos recientes
-Name[gl]=Documentos recentes
-Name[nds]=Tolest bruukt Dokmenten
-Name[pt]=Documentos Recentes
-Name[pt_BR]=Documentos Recentes
-Name[sv]=Senaste dokument
-Name[uk]=Недавні документи
-Name[x-test]=xxRecent Documentsxx
-Name[zh_TW]=最近的文件
+Name[be]=Нядаўнія дакументы
+Name[be@latin]=Нядаўнія дакументы
+Name[bn]=সম্প্রতি ব্যবহৃত নথী
+Name[bn_IN]=সম্প্রতি ব্যবহৃত নথী
+Name[br]=Teulioù nevez
+Name[cy]=Dogfenni Diweddar
+Name[de]=Zuletzt geöffnete Dokumente
+Name[et]=Viimati kasutatud dokumendid
+Name[fa]=سندهای اخیر
+Name[ga]=Cáipéisí is déanaí
+Name[hi]=हाल ही में प्रयुक्त दस्तावेज़
+Name[hr]=Nedavno pristupljeni dokumenti
+Name[ka]=ბოლო დოკუმენტები
+Name[lt]=Neseni dokumentai
+Name[sk]=Nedávne dokumenty
+Name[uz]=Yaqinda ochilgan hujjatlar
+Name[uz@cyrillic]=Яқинда очилган ҳужжатлар
+Name[vi]=Tài liệu gần đây
+Name[xh]=Uxwebhu Olusandukusebenziswa
 Icon=document-open-recent
 
 X-KDE-ServiceTypes=Plasma/Runner

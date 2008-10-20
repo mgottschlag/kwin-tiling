@@ -1,13 +1,5 @@
 [Desktop Entry]
 Name=Application Notifications
-Name[gl]=Notificacións de programas
-Name[nds]=Programmbescheden
-Name[pt]=Notificações das Aplicações
-Name[pt_BR]=Notificações das Aplicações
-Name[sv]=Programunderrättelser
-Name[uk]=Сповіщення програм
-Name[x-test]=xxApplication Notificationsxx
-Name[zh_TW]=應用程式通知
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=notifier

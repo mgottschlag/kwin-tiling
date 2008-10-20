@@ -1,21 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=System Monitor - CPU
-Name[gl]=Vixiante do sistema - CPU
-Name[pt]=Monitor do Sistema - CPU
-Name[pt_BR]=Monitor do Sistema - CPU
-Name[sv]=Systemövervakare - Processor
-Name[uk]=Монітор системи — ЦП
-Name[x-test]=xxSystem Monitor - CPUxx
-Name[zh_TW]=系統監視器─CPU
 Comment=A CPU usage monitor
-Comment[gl]=Un vixiante do utilización da CPU
-Comment[pt]=Um monitor de utilização do CPU
-Comment[pt_BR]=Um monitor de utilização do CPU
-Comment[sv]=Övervakning av processoranvändning
-Comment[uk]=Монітор використання ЦП
-Comment[x-test]=xxA CPU usage monitorxx
-Comment[zh_TW]=CPU 使用量監視器
 Type=Service
 Icon=cpu
 ServiceTypes=Plasma/Applet

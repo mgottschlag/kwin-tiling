@@ -1,21 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Favicons
-Name[gl]=Ícones de páxina
-Name[nds]=Sietlüttbiller
-Name[sv]=Favoritikoner
-Name[uk]=Піктограми «Вибраного»
-Name[x-test]=xxFaviconsxx
-Name[zh_TW]=網站圖示
 Comment=Data Engine for getting favicons of web sites
-Comment[gl]=Motor de dados para obter os ícones de páxina dos sitios web
-Comment[nds]=Datenkarn för't Halen vun Nettsieden-Lüttbiller
-Comment[pt]=Motor de Dados para obter os 'favicons' das páginas Web
-Comment[pt_BR]=Motor de Dados para obter os 'favicons' das páginas Web
-Comment[sv]=Datagränssnitt för att hämta favoritikoner för webbplatser
-Comment[uk]=Рушій даних для отримання піктограм для веб-сайтів
-Comment[x-test]=xxData Engine for getting favicons of web sitesxx
-Comment[zh_TW]=取得網站的圖示的資料引擎
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=view-web-browser-dom-tree

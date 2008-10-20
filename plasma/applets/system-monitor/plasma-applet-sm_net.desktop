@@ -1,21 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=System Monitor - Network
-Name[gl]=Vixiante do sistema - Rede
-Name[pt]=Monitor do Sistema - Rede
-Name[pt_BR]=Monitor do Sistema - Rede
-Name[sv]=Systemövervakare - Nätverk
-Name[uk]=Монітор системи — Мережа
-Name[x-test]=xxSystem Monitor - Networkxx
-Name[zh_TW]=系統監視器─網路
 Comment=A network usage monitor
-Comment[gl]=Un vixiante da utilización da rede
-Comment[pt]=Um monitor de utilização da rede
-Comment[pt_BR]=Um monitor de utilização da rede
-Comment[sv]=Övervakning av nätverksanvändning
-Comment[uk]=Монітор використання мережі
-Comment[x-test]=xxA network usage monitorxx
-Comment[zh_TW]=網路使用量監視器
 Type=Service
 Icon=network-workgroup
 ServiceTypes=Plasma/Applet
