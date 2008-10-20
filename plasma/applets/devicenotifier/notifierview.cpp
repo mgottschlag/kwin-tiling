@@ -71,6 +71,8 @@ void NotifierView::resizeEvent(QResizeEvent * event)
 {
     //the columns after the first are squares KIconLoader::SizeMedium x KIconLoader::SizeMedium,
     //the first column takes all the remaining space
+    calculateRects();
+
     if (header()->count() > 0) {
         const int newWidth = event->size().width() -
                              (header()->count()-1)*(sizeHintForRow(0));
