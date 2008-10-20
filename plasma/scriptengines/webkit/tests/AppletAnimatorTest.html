@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <script type="text/javascript" src="AppleClasses/AppleAnimator.js" charset='utf-8'></script>
+        <script>
+            function colorchanger(animation, cur, from, to) 
+            {
+                var box = document.getElementById('testbox');
+                box.style.background = 'rgb(127,0,' + parseInt(cur) + ')';
+            };
+
+            function boxchanger(animation, cur, from, to)
+            {
+                var box = document.getElementById('testbox');
+                box.style.left = cur.left + 'px';
+                box.style.top = cur.top + 'px';
+                box.style.width = (cur.right - cur.left) + 'px';
+                box.style.height = (cur.bottom - cur.top) + 'px';
+             };
+
+             window.onload = function ()
+             {
+                 var element = document.getElementById('testbox');
+                 element.style.height = '100px';
+                 element.style.width = '250px';
+                 element.style.background = 'rgb(127,0,0)';
+                 element.style.position = 'absolute';
+                 element.style.left = '50px';
+                 element.style.top = '100px';
+                 var animator = new AppleAnimator(10000,100,0,255,colorchanger);
+                 var rectanim = new AppleRectAnimation( new AppleRect(50,100,400,200), new AppleRect(75,100,500,300), boxchanger);
+                 animator.addAnimation(rectanim);
+                 animator.start();
+             }
+        </script>
+    </head>
+    <body>
+         <div id="testbox"></div>
+    </body>
+</html>
