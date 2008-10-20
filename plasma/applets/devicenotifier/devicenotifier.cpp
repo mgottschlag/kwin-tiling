@@ -33,6 +33,7 @@
 #include <KStandardDirs>
 #include <KDesktopFile>
 #include <kdesktopfileactions.h>
+#include <KIconLoader>
 
 //plasma
 #include <plasma/dialog.h>
@@ -51,44 +52,44 @@ using namespace Notifier;
 K_EXPORT_PLASMA_APPLET(devicenotifier, DeviceNotifier)
 
 DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
-    : Plasma::Applet(parent, args),
+    : Plasma::PopupApplet(parent, args),
       m_solidEngine(0),
       m_icon(0),
       m_iconName(""),
-      m_layout(0),
-      m_proxy(0),
-      m_displayTime(0),
+      m_dialog(0),
       m_numberItems(0),
-      m_itemsValidity(0),
-      m_timer(0)
+      m_itemsValidity(0)
 {
     setHasConfigurationInterface(true);
+    setBackgroundHints(StandardBackground);
     int iconSize = IconSize(KIconLoader::Desktop);
+
+    // let's initiate the widget
+    (void)widget();
+
     resize(iconSize, iconSize);
 }
 
 DeviceNotifier::~DeviceNotifier()
 {
     delete m_dialog;
-    delete m_timer;
 }
 
 void DeviceNotifier::init()
 {
     KConfigGroup cg = config();
-    m_timer = new QTimer(this);
-    m_displayTime = cg.readEntry("TimeDisplayed", 8);
     m_numberItems = cg.readEntry("NumberItems", 4);
     m_itemsValidity = cg.readEntry("ItemsValidity", 5);
 
     m_solidEngine = dataEngine("hotplug");
     m_solidDeviceEngine = dataEngine("soliddevice");
 
-    //main layout, used both in desktop and panel mode
-    m_layout = new QGraphicsLinearLayout(this);
-    m_layout->setContentsMargins(0, 0, 0, 0);
-    m_layout->setSpacing(0);
-    setLayout(m_layout);
+    m_icon = new Plasma::Icon(KIcon("device-notifier",NULL), QString());
+    m_iconName = QString("device-notifier");
+
+    Plasma::ToolTipManager::self()->registerWidget(this);
+
+    setPopupIcon(m_icon->icon());
 
     //feed the list with what is already reported by the engine
 
@@ -97,66 +98,27 @@ void DeviceNotifier::init()
             this, SLOT(onSourceAdded(const QString&)));
     connect(m_solidEngine, SIGNAL(sourceRemoved(const QString&)),
             this, SLOT(onSourceRemoved(const QString&)));
-
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(onTimerExpired()));
 }
 
 void DeviceNotifier::constraintsEvent(Plasma::Constraints constraints)
 {
-    bool isSizeConstrained = formFactor() != Plasma::Planar && formFactor() != Plasma::MediaCenter;
-
-    if (constraints & FormFactorConstraint) {
-        if (isSizeConstrained) {
-            m_dialog = new NotifierDialog(this, NotifierDialog::PanelArea);
-            // on the panel we don't want a background, and our proxy widget in Planar has one
-            setBackgroundHints(NoBackground);
-            if (m_proxy) {
-                m_layout->removeItem(m_proxy);
-                delete m_proxy;
-                m_proxy = 0;
-            }
-            fillPreviousDevices();
-            initSysTray();
-        } else {
-            delete m_icon;
-            m_icon = 0;
-            // on the panel we don't want a background, and our proxy widget in Planar has one
-            setBackgroundHints(StandardBackground);
-            m_dialog = new NotifierDialog(this, NotifierDialog::DesktopArea);
-            m_proxy = new QGraphicsProxyWidget(this);
-            m_proxy->setWidget(m_dialog->dialog());
-            m_layout->addItem(m_proxy);
-            fillPreviousDevices();
-            resize(m_dialog->dialog()->size() + QSize(60,60));
-            setMinimumSize(m_dialog->dialog()->minimumSizeHint());
-        }
-
-        connect(m_dialog, SIGNAL(itemSelected()), this, SLOT(onItemDialogClicked()));
-    }
-
-    if (m_icon && constraints & Plasma::SizeConstraint) {
-        m_icon->resize(geometry().size());
+    if (constraints & StartupCompletedConstraint) {
+        fillPreviousDevices();
     }
 }
 
-void DeviceNotifier::initSysTray()
+QWidget *DeviceNotifier::widget()
 {
-    if (m_icon) {
-        return;
+    if (!m_dialog) {
+        m_dialog = new NotifierDialog(this);
     }
 
-    m_icon = new Plasma::Icon(KIcon("device-notifier",NULL), QString(), this);
-    m_iconName = QString("device-notifier");
-
-    connect(m_icon, SIGNAL(clicked()), this, SLOT(onClickNotifier()));
-
-    m_layout->addItem(m_icon);
-    setAspectRatioMode(Plasma::ConstrainedSquare);
+    return m_dialog->dialog();
 }
 
 void DeviceNotifier::fillPreviousDevices()
 {
-    isNotificationEnabled = false;
+    m_fillingPreviousDevices = true;
     foreach (const QString &source, m_solidEngine->sources()) {
             Solid::Device *device = new Solid::Device(source);
             Solid::Device parentDevice = device->parent();
@@ -165,7 +127,7 @@ void DeviceNotifier::fillPreviousDevices()
                 onSourceAdded(source);
             }
     }
-    isNotificationEnabled = true;
+    m_fillingPreviousDevices = false;
 }
 
 void DeviceNotifier::changeNotifierIcon(const QString& name)
@@ -175,6 +137,8 @@ void DeviceNotifier::changeNotifierIcon(const QString& name)
     } else if (m_icon) {
         m_icon->setIcon(name);
     }
+
+    setPopupIcon(m_icon->icon());
 }
 
 void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data data)
@@ -209,11 +173,6 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
                 m_dialog->setDeviceData(source,last_action_label, NotifierDialog::ActionRole);
             }
 
-            if (m_icon && isNotificationEnabled) {
-                m_dialog->dialog()->move(popupPosition(m_dialog->dialog()->sizeHint()));
-                m_dialog->show();
-                m_timer->start(m_displayTime*1000);
-            }
         //data from soliddevice engine
         } else {
             kDebug() << "DeviceNotifier::solidDeviceEngine updated" << source;
@@ -243,6 +202,43 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
    }
 }
 
+void DeviceNotifier::notifyDevice(const QString &name)
+{
+    m_lastPlugged<<name;
+
+    if (!m_fillingPreviousDevices) {
+        showPopup();
+    }
+}
+
+void DeviceNotifier::toolTipAboutToShow()
+{
+    Plasma::ToolTipManager::ToolTipContent toolTip;
+    if (!m_lastPlugged.isEmpty()) {
+        Solid::Device *device = new Solid::Device(m_lastPlugged.last());
+
+        toolTip.subText = i18n("Last plugged in device: %1", device->product());
+        toolTip.image = KIcon(device->icon()).pixmap(IconSize(KIconLoader::Desktop));
+
+       delete device;
+    } else {
+        toolTip.subText = i18n("No devices plugged in");
+        toolTip.image = KIcon("device-notifier").pixmap(IconSize(KIconLoader::Desktop));
+    }
+
+    Plasma::ToolTipManager::self()->setToolTipContent(this, toolTip);
+}
+
+void DeviceNotifier::toolTipHidden()
+{
+    Plasma::ToolTipManager::self()->setToolTipContent(this, Plasma::ToolTipManager::ToolTipContent());
+}
+
+void DeviceNotifier::removeLastDeviceNotification(const QString &name)
+{
+    m_lastPlugged.removeAll(name);
+}
+
 void DeviceNotifier::onSourceAdded(const QString &name)
 {
     kDebug() << "DeviceNotifier:: source added" << name;
@@ -256,6 +252,8 @@ void DeviceNotifier::onSourceAdded(const QString &name)
     }
 
     m_dialog->insertDevice(name);
+    notifyDevice(name);
+
     m_solidEngine->connectSource(name, this);
     m_solidDeviceEngine->connectSource(name, this);
 }
@@ -264,36 +262,9 @@ void DeviceNotifier::onSourceRemoved(const QString &name)
 {
     m_solidEngine->disconnectSource(name, this);
     m_solidDeviceEngine->disconnectSource(name, this);
-    if (m_icon && m_dialog->countDevices() == 0) {
-        m_dialog->hide();
-    }
+
     m_dialog->removeDevice(name);
-}
-
-void DeviceNotifier::onClickNotifier()
-{
-    if (m_dialog->dialog()->isVisible()) {
-        m_dialog->hide();
-    } else {
-        m_dialog->dialog()->move(popupPosition(m_dialog->dialog()->sizeHint()));
-        m_dialog->show();
-    }
-}
-
-void DeviceNotifier::onItemDialogClicked()
-{
-    if (m_icon) {
-        m_dialog->hide();
-        m_timer->stop();
-    }
-}
-
-void DeviceNotifier::onTimerExpired()
-{
-    if (m_icon) {
-        m_timer->stop();
-        m_dialog->hide();
-    }
+    removeLastDeviceNotification(name);
 }
 
 #include "devicenotifier.moc"

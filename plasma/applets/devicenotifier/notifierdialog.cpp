@@ -56,7 +56,7 @@
 using namespace Notifier;
 using namespace Plasma;
 
-NotifierDialog::NotifierDialog(DeviceNotifier * notifier,DialogArea area,QObject *parent) :
+NotifierDialog::NotifierDialog(DeviceNotifier * notifier,QObject *parent) :
 QObject(parent),
 m_hotplugModel(0),
 m_widget(0),
@@ -66,7 +66,7 @@ m_notifier(notifier),
 m_rootItem(0)
 {
     m_hotplugModel = new QStandardItemModel(this);
-    buildDialog(area);
+    buildDialog();
     //make the invisible root for tree device
     m_rootItem = m_hotplugModel->invisibleRootItem();
 }
@@ -233,16 +233,10 @@ QString NotifierDialog::getDeviceUdi(int index)
     return m_hotplugModel->data(modelIndex, SolidUdiRole).toString();
 }
 
-void NotifierDialog::buildDialog(DialogArea area)
+void NotifierDialog::buildDialog()
 {
-    if (DesktopArea != area) {
-        m_widget = new Dialog();
-        m_widget->setWindowFlags(Qt::Popup);
-    }
-    else {
-        m_widget = new QWidget();
-        m_widget->setBackgroundRole(QPalette::Shadow);
-    }
+    m_widget = new QWidget();
+
     QVBoxLayout *l_layout = new QVBoxLayout(m_widget);
     l_layout->setSpacing(0);
     l_layout->setMargin(0);
@@ -391,6 +385,10 @@ void NotifierDialog::updateColors()
 {
     KColorScheme colorTheme = KColorScheme(QPalette::Active, KColorScheme::View,Plasma::Theme::defaultTheme()->colorScheme());
     m_label->setText(i18n("<font color=\"%1\">Devices recently plugged in:</font>",colorTheme.foreground(KColorScheme::NormalText).color().name()));
+
+    QPalette p = m_widget->palette();
+    p.setColor(QPalette::Window, Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
+    m_widget->setPalette(p);
 }
 
 #include "notifierdialog.moc"

@@ -63,12 +63,6 @@ namespace Notifier
   
       public:
 
-          ///Enum type for the area where the dialog is displayed
-          enum DialogArea
-          {
-              DesktopArea = 0,
-              PanelArea = 1
-          };
           
           ///Specific role for the data-model
           enum SpecificRoles {
@@ -86,7 +80,7 @@ namespace Notifier
           * @param area where the dialog is displayed
           * @param parent the parent of this object
           **/
-          NotifierDialog(DeviceNotifier * notifier,DialogArea area,QObject *parent = 0);
+          NotifierDialog(DeviceNotifier * notifier,QObject *parent = 0);
  
           /**
           * Default destructor
@@ -94,7 +88,7 @@ namespace Notifier
           virtual ~NotifierDialog();
 
           /**
-          * Hide the dialog
+          * Returns the related QWidget.
           **/
           QWidget * dialog();
          
@@ -195,9 +189,8 @@ namespace Notifier
       private :
           /**
           * @internal build the dialog depending where it is 
-          * @param area where is the panel??!!
           **/
-          void buildDialog(DialogArea area);
+          void buildDialog();
 
           /**
           * @internal get the model index in the data-model by using the udi in parameter 

@@ -24,8 +24,9 @@
 #include <solid/solidnamespace.h>
 
 //Plasma
-#include <plasma/applet.h>
+#include <plasma/popupapplet.h>
 #include <plasma/dataengine.h>
+#include <plasma/tooltipmanager.h>
 
 class QStandardItemModel;
 class QGraphicsLinearLayout;
@@ -49,7 +50,7 @@ namespace Plasma
 * @short Applet used to display hot plug devices
 *
 */
-class DeviceNotifier : public Plasma::Applet
+class DeviceNotifier : public Plasma::PopupApplet
 {
     Q_OBJECT
 
@@ -69,16 +70,27 @@ class DeviceNotifier : public Plasma::Applet
         * initialize the applet (called by plasma automatically)
         **/
         void init();
-        
-        /**
-        * When applets constraints have changed, it call this function
-        **/
-        void constraintsEvent(Plasma::Constraints constraints);
 
         /**
         *  allow to change the icon of the notifier if this applet is in icon mode
         **/
         void changeNotifierIcon(const QString& name = QString());
+
+        /**
+         * The widget that displays the list of devices.
+         */
+        QWidget *widget();
+
+    public slots:
+        /**
+         * @internal Sets the tooltip content properly before showing.
+         */
+         void toolTipAboutToShow();
+
+        /**
+         * @internal Clears memory when needed.
+         */
+         void toolTipHidden();
     
     protected slots:
         /**
@@ -100,20 +112,9 @@ class DeviceNotifier : public Plasma::Applet
         **/
         void dataUpdated(const QString &source, Plasma::DataEngine::Data data);
 
-        /**
-        * slot called when user has clicked on an item
-        **/
-        void onItemDialogClicked();
+    protected:
+        void constraintsEvent(Plasma::Constraints constraints);
 
-        /**
-        * slot called when timer has expired
-        **/
-        void onTimerExpired();
-
-        /**
-        * slot called when user click on the icon when applet is in the taskbar
-        **/
-        void onClickNotifier();
 
     private:
         /**
@@ -122,9 +123,14 @@ class DeviceNotifier : public Plasma::Applet
         void fillPreviousDevices();
 
         /**
-        * @internal Specific init when applet is in the taskbar
-        **/
-        void initSysTray();
+         * @internal Used to popup the device view.
+         */
+        void notifyDevice(const QString &name);
+
+        /**
+         * @internal Used to remove the last device notification.
+         */
+        void removeLastDeviceNotification(const QString &name);
 
         ///the engine used to get hot plug devices
         Plasma::DataEngine *m_solidEngine;
@@ -140,12 +146,6 @@ class DeviceNotifier : public Plasma::Applet
 
         ///The dialog where devices are displayed
         Notifier::NotifierDialog * m_dialog;
-
-        ///The layout for this applet (used when the applet is in the desktop)
-        QGraphicsLinearLayout *m_layout;
-
-        ///Proxy used to embeeded QWidget
-        QGraphicsProxyWidget * m_proxy;
         
         ///the time durin when the dialog will be show
         int m_displayTime;
@@ -161,6 +161,12 @@ class DeviceNotifier : public Plasma::Applet
        
         ///bool to know if notifications are enabled
         bool isNotificationEnabled;
+
+        ///last plugged udi
+        QList<QString> m_lastPlugged;
+
+        ///true if fillPreviousDevices is running
+        bool m_fillingPreviousDevices;
 };
 
 #endif
