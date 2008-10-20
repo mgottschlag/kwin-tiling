@@ -1,0 +1,22 @@
+[Desktop Entry]
+Name=Recent Documents
+Name[es]=Documentos recientes
+Name[gl]=Documentos recentes
+Name[nds]=Tolest bruukt Dokmenten
+Name[pt]=Documentos Recentes
+Name[pt_BR]=Documentos Recentes
+Name[sv]=Senaste dokument
+Name[uk]=Недавні документи
+Name[x-test]=xxRecent Documentsxx
+Name[zh_TW]=最近的文件
+Icon=document-open-recent
+
+X-KDE-ServiceTypes=Plasma/Runner
+Type=Service
+X-KDE-Library=krunner_recentdocuments
+X-KDE-PluginInfo-Author=Sebastian Kügler
+X-KDE-PluginInfo-Email=sebas@kde.org
+X-KDE-PluginInfo-Name=recentdocuments
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-License=LGPL
+X-KDE-PluginInfo-EnabledByDefault=true
