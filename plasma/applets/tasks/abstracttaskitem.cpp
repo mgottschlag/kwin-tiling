@@ -75,8 +75,9 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet, const
 
     QFontMetrics fm(KGlobalSettings::taskbarFont());
     QSize mSize = fm.size(0, "M");
-    setPreferredSize(QSize(mSize.width()*15 + m_applet->itemLeftMargin() + m_applet->itemRightMargin() + KIconLoader::SizeSmall,
-                           mSize.height()*3 + m_applet->itemTopMargin() + m_applet->itemBottomMargin()));
+    //the 4 should be the default spacing between layout items, is there a way to fetch it without hardcoding?
+    setPreferredSize(QSize(mSize.width()*12 + m_applet->itemLeftMargin() + m_applet->itemRightMargin() + KIconLoader::SizeSmall,
+                           KIconLoader::SizeSmall + m_applet->itemTopMargin() + m_applet->itemBottomMargin() + 4));
 }
 
 void AbstractTaskItem::setShowTooltip(const bool showit)
