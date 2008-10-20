@@ -20,12 +20,12 @@
 #include <QPainter>
 #include <QGraphicsLinearLayout>
 
-#include <Plasma/Svg>
-#include <Plasma/Theme>
-#include <KDialog>
 #include <KDebug>
 
-#include "calendartest.h"
+#include <plasma/svg.h>
+#include <plasma/theme.h>
+
+#include "calendar.h"
 
 CalendarTest::CalendarTest(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
@@ -88,4 +88,4 @@ void CalendarTest::constraintsEvent(Plasma::Constraints constraints)
     }
 }
 
-#include "calendartest.moc"
+#include "calendar.moc"

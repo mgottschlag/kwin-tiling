@@ -23,7 +23,7 @@
 #include <Plasma/Applet>
 #include <Plasma/Label>
 
-#include "../calendar.h"
+#include "libplasmaclock/calendar.h"
 
 class CalendarTest : public Plasma::Applet
 {
