@@ -44,7 +44,7 @@ PowermanagementEngine::PowermanagementEngine(QObject* parent, const QVariantList
 {
     Q_UNUSED(args)
 
-    m_sources << I18N_NOOP("Battery") << I18N_NOOP("AC Adapter") << I18N_NOOP("Sleepstates") << I18N_NOOP("PowerDevil");
+    m_sources << "Battery" << "AC Adapter" << "Sleepstates" << "PowerDevil";
 
     // This following call can be removed, but if we do, the
     // data is not shown in the plasmaengineexplorer.
@@ -93,11 +93,11 @@ QStringList PowermanagementEngine::sources() const
 
 bool PowermanagementEngine::sourceRequestEvent(const QString &name)
 {
-    if (name == I18N_NOOP("Battery")) {
+    if (name == "Battery") {
         QList<Solid::Device> list_battery =
                         Solid::Device::listFromType(Solid::DeviceInterface::Battery, QString());
         if (list_battery.count() == 0) {
-            setData(I18N_NOOP("Battery"), I18N_NOOP("has Battery"), false);
+            setData("Battery", "has Battery", false);
             return true;
         }
 
@@ -109,7 +109,7 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
 
             if(battery != 0) {
                 if(battery->type() == Solid::Battery::PrimaryBattery) {
-                    QString source = QString(I18N_NOOP("Battery%1")).arg(index++);
+                    QString source = QString("Battery%1").arg(index++);
 
                     battery_sources<<source;
 
@@ -131,10 +131,10 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
         }
 
         if (battery_sources.count() > 0) {
-            setData(I18N_NOOP("Battery"), I18N_NOOP("has Battery"), true);
-            setData(I18N_NOOP("Battery"), I18N_NOOP("sources"), battery_sources);
+            setData("Battery", "has Battery", true);
+            setData("Battery", "sources", battery_sources);
         }
-    } else if (name == I18N_NOOP("AC Adapter")) {
+    } else if (name == "AC Adapter") {
         // AC Adapter handling
         QList<Solid::Device> list_ac =
                         Solid::Device::listFromType(Solid::DeviceInterface::AcAdapter, QString());
@@ -144,25 +144,25 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
             connect(m_acadapter, SIGNAL(plugStateChanged(bool, const QString &)), this,
                     SLOT(updateAcPlugState(bool)));
         }
-    } else if (name == I18N_NOOP("Sleepstates")) {
+    } else if (name == "Sleepstates") {
         QSet<Solid::PowerManagement::SleepState> sleepstates =
                                 Solid::PowerManagement::supportedSleepStates();
         // We first set all possible sleepstates to false, then enable the ones that are available
-        setData(I18N_NOOP("Sleepstates"), I18N_NOOP("Standby"), false);
-        setData(I18N_NOOP("Sleepstates"), I18N_NOOP("Suspend"), false);
-        setData(I18N_NOOP("Sleepstates"), I18N_NOOP("Hibernate"), false);
+        setData("Sleepstates", "Standby", false);
+        setData("Sleepstates", "Suspend", false);
+        setData("Sleepstates", "Hibernate", false);
 
         foreach (const Solid::PowerManagement::SleepState &sleepstate, sleepstates) {
             if (sleepstate == Solid::PowerManagement::StandbyState) {
-                setData(I18N_NOOP("Sleepstates"), I18N_NOOP("Supports standby"), true);
+                setData("Sleepstates", "Supports standby", true);
             } else if (sleepstate == Solid::PowerManagement::SuspendState) {
-                setData(I18N_NOOP("Sleepstates"), I18N_NOOP("Supports suspend"), true);
+                setData("Sleepstates", "Supports suspend", true);
             } else if (sleepstate == Solid::PowerManagement::HibernateState) {
-                setData(I18N_NOOP("Sleepstates"), I18N_NOOP("Supports hibernate"), true);
+                setData("Sleepstates", "Supports hibernate", true);
             }
             kDebug() << "Sleepstate \"" << sleepstate << "\" supported.";
         }
-    } else if (name == I18N_NOOP("PowerDevil")) {
+    } else if (name == "PowerDevil") {
         QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.kded", "/modules/powerdevil",
                            "org.kde.PowerDevil", "streamData");
         m_dbus.call(msg);
@@ -176,36 +176,36 @@ void PowermanagementEngine::updateBatteryChargeState(int newState, const QString
 {
     QString state;
     if (newState == Solid::Battery::NoCharge) {
-        state = I18N_NOOP("NoCharge");
+        state = "NoCharge";
     } else if (newState == Solid::Battery::Charging) {
-        state = I18N_NOOP("Charging");
+        state = "Charging";
     } else if (newState == Solid::Battery::Discharging) {
-        state = I18N_NOOP("Discharging");
+        state = "Discharging";
     } else {
-        state = I18N_NOOP("Could not determine battery status. Something is fishy here. :o");
+        state = "Could not determine battery status. Something is fishy here. :o";
     }
     const QString& source = m_batterySources[udi];
-    setData(source, I18N_NOOP("State"), state);
+    setData(source, "State", state);
     scheduleSourcesUpdated();
 }
 
 void PowermanagementEngine::updateBatteryPlugState(bool newState, const QString& udi)
 {
     const QString& source = m_batterySources[udi];
-    setData(source, I18N_NOOP("Plugged in"), newState);
+    setData(source, "Plugged in", newState);
     scheduleSourcesUpdated();
 }
 
 void PowermanagementEngine::updateBatteryChargePercent(int newValue, const QString& udi)
 {
     const QString& source = m_batterySources[udi];
-    setData(source, I18N_NOOP("Percent"), newValue);
+    setData(source, "Percent", newValue);
     scheduleSourcesUpdated();
 }
 
 void PowermanagementEngine::updateAcPlugState(bool newState)
 {
-    setData(I18N_NOOP("AC Adapter"), I18N_NOOP("Plugged in"), newState);
+    setData("AC Adapter", "Plugged in", newState);
     scheduleSourcesUpdated();
 }
 
@@ -258,8 +258,8 @@ void PowermanagementEngine::deviceAdded(const QString& udi)
 
 void PowermanagementEngine::profilesChanged( const QString &current, const QStringList &profiles )
 {
-    setData(I18N_NOOP("PowerDevil"), I18N_NOOP("currentProfile"), current);
-    setData(I18N_NOOP("PowerDevil"), I18N_NOOP("availableProfiles"), profiles);
+    setData("PowerDevil", "currentProfile", current);
+    setData("PowerDevil", "availableProfiles", profiles);
     scheduleSourcesUpdated();
 }
 
