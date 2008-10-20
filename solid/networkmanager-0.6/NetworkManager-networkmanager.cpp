@@ -237,12 +237,9 @@ bool NMNetworkManager::isWirelessHardwareEnabled() const
 QStringList NMNetworkManager::activeConnections() const
 {
     kDebug(1441);
-#ifdef __GNUC__
-#warning FIXME: please check this code
-#endif
     QStringList activeConnections;
-    QHash<QString, NMNetworkInterface *>::ConstIterator it = d->interfaces.constBegin();
-    while (it != d->interfaces.end())
+    QHash<QString, NMNetworkInterface *>::ConstIterator it = d->interfaces.constBegin(), itEnd = d->interfaces.constEnd();
+    for ( ; it != itEnd; ++it)
     {
         NMNetworkInterface * interface = it.value();
         if (interface && interface->isActive())
