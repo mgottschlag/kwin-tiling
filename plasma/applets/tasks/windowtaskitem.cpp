@@ -261,18 +261,17 @@ void WindowTaskItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
         return;
     }
 
-    QAction *a;
+    QList <QAction*> actionList;
+    QAction *a(0);
     if (m_task->isGrouped()) {
         a = new QAction("Collapse Parent Group", this);
+        actionList.append(a);
         connect(a, SIGNAL(triggered()), m_applet->groupItem(m_task->parentGroup()), SLOT(collapse()));
     }
 
-    QList <QAction*> actionList;
-    actionList.append(a);
-
-    TaskManager::BasicMenu menu(qobject_cast<QWidget*>(this), m_task, &m_applet->groupManager(), actionList);
-
+    TaskManager::BasicMenu menu(0, m_task, &m_applet->groupManager(), actionList);
     menu.exec(e->screenPos());
+    delete a;
 }
 
 
