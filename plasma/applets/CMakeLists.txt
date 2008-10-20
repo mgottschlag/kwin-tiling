@@ -1,5 +1,3 @@
-add_subdirectory(libplasmaclock)
-
 add_subdirectory(analog-clock)
 add_subdirectory(activitybar)
 add_subdirectory(battery)

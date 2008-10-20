@@ -227,21 +227,23 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         const int margin = 4;
 
 
-        QRect textRect((rect.width()/2 - fm.width(time) / 2),((rect.height()/2) - fm.height()*2),
-              fm.width(time), fm.height());
+        if (!time.isEmpty()){
+            QRect textRect((rect.width()/2 - fm.width(time) / 2),((rect.height()/2) - fm.height()*2),
+                  fm.width(time), fm.height());
 
-        p->setPen(Qt::NoPen);
-        QColor background = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
-        background.setAlphaF(0.5);
-        p->setBrush(background);
+            p->setPen(Qt::NoPen);
+            QColor background = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
+            background.setAlphaF(0.5);
+            p->setBrush(background);
 
-        p->setRenderHint(QPainter::Antialiasing, true);
-        p->drawPath(Plasma::PaintUtils::roundedRectangle(textRect.adjusted(-margin, -margin, margin, margin), margin));
-        p->setRenderHint(QPainter::Antialiasing, false);
+            p->setRenderHint(QPainter::Antialiasing, true);
+            p->drawPath(Plasma::PaintUtils::roundedRectangle(textRect.adjusted(-margin, -margin, margin, margin), margin));
+            p->setRenderHint(QPainter::Antialiasing, false);
 
-        p->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+            p->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
         
-        p->drawText(textRect, Qt::AlignCenter, time);
+            p->drawText(textRect, Qt::AlignCenter, time);
+        }
     }
 
 
