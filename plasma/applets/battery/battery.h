@@ -51,7 +51,6 @@ class Battery : public Plasma::PopupApplet
         void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option,
                             const QRect &contents);
         void setPath(const QString&);
-        QSizeF sizeHint(const Qt::SizeHint which, const QSizeF& constraint) const;
         Qt::Orientations expandingDirections() const;
         void constraintsEvent(Plasma::Constraints constraints);
         void popupEvent(bool show);

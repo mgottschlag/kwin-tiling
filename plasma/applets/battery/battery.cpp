@@ -164,7 +164,7 @@ void Battery::init()
 
 void Battery::constraintsEvent(Plasma::Constraints constraints)
 {
-    kDebug() << "ConstraintsEvent, Dude.";
+    //kDebug() << "ConstraintsEvent, Dude." << contentsRect();
     if (constraints & (Plasma::FormFactorConstraint | Plasma::SizeConstraint)) {
         if (formFactor() == Plasma::Vertical) {
             if (!m_showMultipleBatteries) {
@@ -179,7 +179,7 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
             } else {
                 setMinimumWidth(qMax(m_textRect.width(), contentsRect().height()*m_numOfBattery));
             }
-            kDebug() << "Horizontal FormFactor" << m_textRect.width() << contentsRect().height();
+            //kDebug() << "Horizontal FormFactor" << m_textRect.width() << contentsRect().height();
         } else {
             setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
         }
@@ -195,23 +195,6 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
         m_font.setPointSize(qMax(KGlobalSettings::smallestReadableFont().pointSize(),
                                  qRound(contentsRect().height() / 10)));
     }
-}
-
-QSizeF Battery::sizeHint(const Qt::SizeHint which, const QSizeF& constraint) const
-{
-    Q_UNUSED( which );
-    Q_UNUSED( constraint );
-    QSizeF sizeHint = contentsRect().size();
-    switch (formFactor()) {
-        case Plasma::Vertical:
-            sizeHint.setHeight(sizeHint.width() * qMax(1, m_numOfBattery));
-            break;
-
-        default:
-            sizeHint.setWidth(sizeHint.height() * qMax(1, m_numOfBattery));
-            break;
-    }
-    return sizeHint;
 }
 
 void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
@@ -488,8 +471,8 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         connect(configButton, SIGNAL(clicked()), this, SLOT(openConfig()));
 
         QGraphicsGridLayout *moreLayout = new QGraphicsGridLayout(controlsLayout);
-        moreLayout->setColumnPreferredWidth(0, columnWidth*1.5);
-        moreLayout->addItem(configButton, 0, 1, Qt::AlignRight);
+        moreLayout->setColumnPreferredWidth(0, columnWidth);
+        moreLayout->addItem(configButton, 0, 1, Qt::AlignLeft);
 
         controlsLayout->addItem(moreLayout, row, 1, 1, 2);
 
