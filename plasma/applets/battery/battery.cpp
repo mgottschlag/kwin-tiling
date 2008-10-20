@@ -505,22 +505,22 @@ void Battery::updateStatus()
             if (m_numOfBattery == 1) {
                 if (battery_data.value()["Plugged in"].toBool()) {
                     if (state == "NoCharge") {
-                            batteryLabelText.append(i18n("<b>Battery:</b> %1\% (fully charged)", battery_data.value()["Percent"].toString()));
+                            batteryLabelText.append(i18n("<b>Battery:</b> %1% (fully charged)", battery_data.value()["Percent"].toString()));
                     } else if (state == "Discharging") {
-                            batteryLabelText.append(i18n("<b>Battery:</b> %1\% (discharging)", battery_data.value()["Percent"].toString()));
+                            batteryLabelText.append(i18n("<b>Battery:</b> %1% (discharging)", battery_data.value()["Percent"].toString()));
                     } else {
-                        batteryLabelText.append(i18n("<b>Battery:</b> %1\% (charging)", battery_data.value()["Percent"].toString()));
+                        batteryLabelText.append(i18n("<b>Battery:</b> %1% (charging)", battery_data.value()["Percent"].toString()));
                     }
                 } else {
                     batteryLabelText.append(i18nc("Battery is not plugged in", "<b>Battery:</b> not present"));
                 }
             } else {
                 if (state == "NoCharge") {
-                    batteryLabelText.append(i18n("<b>Battery %1:</b> %2\% (fully charged)", bnum, battery_data.value()["Percent"].toString()));
+                    batteryLabelText.append(i18n("<b>Battery %1:</b> %2% (fully charged)", bnum, battery_data.value()["Percent"].toString()));
                 } else if (state == "Discharging") {
-                    batteryLabelText.append(i18n("<b>Battery %1:</b> %2\% (discharging)", bnum, battery_data.value()["Percent"].toString()));
+                    batteryLabelText.append(i18n("<b>Battery %1:</b> %2% (discharging)", bnum, battery_data.value()["Percent"].toString()));
                 } else {
-                    batteryLabelText.append(i18n("<b>Battery %1:</b> %2\% (charging)", bnum, battery_data.value()["Percent"].toString()));
+                    batteryLabelText.append(i18n("<b>Battery %1:</b> %2% (charging)", bnum, battery_data.value()["Percent"].toString()));
                 }
             }
 
