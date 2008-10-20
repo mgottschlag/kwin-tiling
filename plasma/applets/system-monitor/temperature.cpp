@@ -20,8 +20,8 @@
 #include "temperature.h"
 #include <plasma/widgets/signalplotter.h>
 #include <plasma/widgets/meter.h>
-#include <Plasma/Containment>
-#include <Plasma/Theme>
+#include <plasma/containment.h>
+#include <plasma/theme.h>
 #include <KConfigDialog>
 #include <QGraphicsLinearLayout>
 #include <QTimer>

@@ -19,8 +19,8 @@
 #include "hdd.h"
 #include "monitoricon.h"
 #include <plasma/widgets/meter.h>
-#include <Plasma/Containment>
-#include <Plasma/Theme>
+#include <plasma/containment.h>
+#include <plasma/theme.h>
 #include <KConfigDialog>
 #include <QFileInfo>
 #include <QGraphicsLinearLayout>

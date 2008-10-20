@@ -17,9 +17,9 @@
  */
 
 #include "applet.h"
-#include <Plasma/DataEngine>
-#include <Plasma/Containment>
-#include <Plasma/Frame>
+#include <plasma/dataengine.h>
+#include <plasma/containment.h>
+#include <plasma/widgets/frame.h>
 #include <KDebug>
 #include <QGraphicsLinearLayout>
 

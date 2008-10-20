@@ -21,7 +21,7 @@
 
 #include <applet.h>
 #include "ui_temperature-config.h"
-#include <Plasma/DataEngine>
+#include <plasma/dataengine.h>
 #include <QStandardItemModel>
 
 namespace Plasma {

@@ -19,9 +19,9 @@
 #include "hwinfo.h"
 #include <plasma/widgets/webcontent.h>
 #include <plasma/widgets/icon.h>
-#include <Plasma/Containment>
-#include <Plasma/ToolTipManager>
-#include <Plasma/Theme>
+#include <plasma/containment.h>
+#include <plasma/tooltipmanager.h>
+#include <plasma/theme.h>
 #include <KStandardDirs>
 #include <KIcon>
 #include <KTextEdit>

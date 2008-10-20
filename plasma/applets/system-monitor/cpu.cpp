@@ -18,7 +18,7 @@
 
 #include "cpu.h"
 #include <plasma/widgets/signalplotter.h>
-#include <Plasma/Theme>
+#include <plasma/theme.h>
 #include <KConfigDialog>
 #include <QTimer>
 #include <QGraphicsLinearLayout>

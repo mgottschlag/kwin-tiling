@@ -19,8 +19,8 @@
 #ifndef SYSTEM_MONITOR_HEADER
 #define SYSTEM_MONITOR_HEADER
 
-#include <Plasma/PopupApplet>
-#include <Plasma/DataEngine>
+#include <plasma/popupapplet.h>
+#include <plasma/dataengine.h>
 
 namespace SM {
     class Applet;

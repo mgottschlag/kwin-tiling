@@ -19,7 +19,7 @@
 #ifndef SM_APPLET_HEADER
 #define SM_APPLET_HEADER
 
-#include <Plasma/Applet>
+#include <plasma/applet.h>
 
 #include "sm_export.h"
 

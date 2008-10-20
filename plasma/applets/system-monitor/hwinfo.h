@@ -20,7 +20,7 @@
 #define HWINFO_HEADER
 
 #include <applet.h>
-#include <Plasma/DataEngine>
+#include <plasma/dataengine.h>
 
 namespace Plasma {
     class WebContent;
