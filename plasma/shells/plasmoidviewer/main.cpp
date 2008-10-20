@@ -35,6 +35,10 @@
 #include <KLocale>
 #include <KStandardAction>
 
+// for --list
+#include <Plasma/Applet>
+#include <iostream>
+
 using namespace Plasma;
 
 static const char description[] = I18N_NOOP("Run Plasma widgets in their own window");
@@ -52,6 +56,7 @@ int main(int argc, char **argv)
     KCmdLineArgs::init(argc, argv, &aboutData);
 
     KCmdLineOptions options;
+    options.add("list", ki18n("Displays a list of known applets"));
     options.add("f");
     options.add("formfactor <name>", ki18n("The formfactor to use (horizontal, vertical, mediacenter or planar)"), "planar");
     options.add("l");
@@ -69,6 +74,38 @@ int main(int argc, char **argv)
     KApplication app;
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs() ;
+
+    if (args->isSet("list")) {
+        int maxLen = 0;
+        QMap<QString, QString> applets;
+        foreach (const KPluginInfo &info, Plasma::Applet::listAppletInfo()) {
+            if (info.property("NoDisplay").toBool())
+                continue;
+
+            int len = info.pluginName().length();
+            if (len > maxLen)
+                maxLen = len;
+
+            QString name = info.pluginName();
+            QString comment = info.comment();
+
+            if(comment.isEmpty())
+                comment = i18n("No description available");
+
+            applets.insert(name, comment);
+        }
+
+        QMap<QString, QString>::const_iterator it;
+        for(it = applets.constBegin(); it != applets.constEnd(); it++) {
+            QString applet("%1 - %2");
+
+            applet = applet.arg(it.key().leftJustified(maxLen, ' ')).arg(it.value());
+            std::cout << applet.toLocal8Bit().data() << std::endl;
+        }
+
+        return 0;
+    }
+
     QString pluginName;
     if (args->count() == 0) {
         KCmdLineArgs::usageError(i18n("No applet name specified"));
