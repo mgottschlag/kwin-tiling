@@ -78,6 +78,7 @@ Plasma Desktop Shell
     * Panel
         * Resizes itself when an applet changes its sizehint according to its maximum and minimum sizes
         * Autohide and windows-cover-panel options
+        * Easier drag and drop to panel by showing an empty area between the two applets nearest to the mouse cursor
 
 * Significant Fixes
     * Reposition toolbox when zooming out/in to avoid panel overlap
