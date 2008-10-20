@@ -104,10 +104,10 @@ void DeviceNotifier::init()
 void DeviceNotifier::constraintsEvent(Plasma::Constraints constraints)
 {
     bool isSizeConstrained = formFactor() != Plasma::Planar && formFactor() != Plasma::MediaCenter;
-  
+
     if (constraints & FormFactorConstraint) {
         if (isSizeConstrained) {
-            m_dialog = new NotifierDialog(this,NotifierDialog::PanelArea);
+            m_dialog = new NotifierDialog(this, NotifierDialog::PanelArea);
             // on the panel we don't want a background, and our proxy widget in Planar has one
             setBackgroundHints(NoBackground);
             if (m_proxy) {
@@ -122,7 +122,7 @@ void DeviceNotifier::constraintsEvent(Plasma::Constraints constraints)
             m_icon = 0;
             // on the panel we don't want a background, and our proxy widget in Planar has one
             setBackgroundHints(StandardBackground);
-            m_dialog = new NotifierDialog(this,NotifierDialog::DesktopArea);
+            m_dialog = new NotifierDialog(this, NotifierDialog::DesktopArea);
             m_proxy = new QGraphicsProxyWidget(this);
             m_proxy->setWidget(m_dialog->dialog());
             m_layout->addItem(m_proxy);
@@ -130,10 +130,10 @@ void DeviceNotifier::constraintsEvent(Plasma::Constraints constraints)
             resize(m_dialog->dialog()->size() + QSize(60,60));
             setMinimumSize(m_dialog->dialog()->minimumSizeHint());
         }
-        connect(m_dialog,SIGNAL(itemSelected()),this,SLOT(onItemDialogClicked()));
 
+        connect(m_dialog, SIGNAL(itemSelected()), this, SLOT(onItemDialogClicked()));
     }
-  
+
     if (m_icon && constraints & Plasma::SizeConstraint) {
         m_icon->resize(geometry().size());
     }
@@ -144,18 +144,18 @@ void DeviceNotifier::initSysTray()
     if (m_icon) {
         return;
     }
+
     m_icon = new Plasma::Icon(KIcon("device-notifier",NULL), QString(), this);
     m_iconName = QString("device-notifier");
-    
+
     connect(m_icon, SIGNAL(clicked()), this, SLOT(onClickNotifier()));
-    
-    setAspectRatioMode(Plasma::ConstrainedSquare);
-  
+
     m_layout->addItem(m_icon);
+    setAspectRatioMode(Plasma::ConstrainedSquare);
 }
 
 void DeviceNotifier::fillPreviousDevices()
-{    
+{
     isNotificationEnabled = false;
     foreach (const QString &source, m_solidEngine->sources()) {
             Solid::Device *device = new Solid::Device(source);
@@ -172,10 +172,9 @@ void DeviceNotifier::changeNotifierIcon(const QString& name)
 {
     if (m_icon && name.isNull()) {
         m_icon->setIcon(m_iconName);
-    }
-    else if (m_icon) {
+    } else if (m_icon) {
         m_icon->setIcon(name);
-    }  
+    }
 }
 
 void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data data)
@@ -209,6 +208,7 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
             } else {
                 m_dialog->setDeviceData(source,last_action_label, NotifierDialog::ActionRole);
             }
+
             if (m_icon && isNotificationEnabled) {
                 m_dialog->dialog()->move(popupPosition(m_dialog->dialog()->sizeHint()));
                 m_dialog->show();
@@ -220,22 +220,20 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
             if (data["Device Types"].toStringList().contains("Storage Access")) {
                 if (data["Accessible"].toBool() == true) {
                     m_dialog->setUnMount(true,source);
-  
+
                     //set icon to mounted device
                     QStringList overlays;
                     overlays << "emblem-mounted";
                     m_dialog->setDeviceData(source, KIcon(m_dialog->getDeviceData(source,NotifierDialog::IconNameRole).toString(), NULL, overlays), Qt::DecorationRole);
-                }
-                //Unmounted optical drive
-                else if (data["Device Types"].toStringList().contains("OpticalDisc")) {
+                } else if (data["Device Types"].toStringList().contains("OpticalDisc")) {
+                    //Unmounted optical drive
                     m_dialog->setDeviceData(source, KIcon("media-eject"), Qt::DecorationRole);
                     //set icon to unmounted device
                     m_dialog->setUnMount(true,source);
                     m_dialog->setDeviceData(source, KIcon(m_dialog->getDeviceData(source,NotifierDialog::IconNameRole).toString()), Qt::DecorationRole);
-                }
-                else {
+                } else {
                     m_dialog->setUnMount(false,source);
-  
+
                     //set icon to unmounted device
                     m_dialog->setDeviceData(source, KIcon(m_dialog->getDeviceData(source,NotifierDialog::IconNameRole).toString()), Qt::DecorationRole);
                 }
@@ -258,7 +256,6 @@ void DeviceNotifier::onSourceAdded(const QString &name)
     }
 
     m_dialog->insertDevice(name);
-
     m_solidEngine->connectSource(name, this);
     m_solidDeviceEngine->connectSource(name, this);
 }
@@ -280,7 +277,7 @@ void DeviceNotifier::onClickNotifier()
     } else {
         m_dialog->dialog()->move(popupPosition(m_dialog->dialog()->sizeHint()));
         m_dialog->show();
-    }    
+    }
 }
 
 void DeviceNotifier::onItemDialogClicked()
