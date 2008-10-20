@@ -1,0 +1,19 @@
+* Fix crash when removing and then readding applet
+* Fix sizing on the desktop
+
+* Try overriding QPaintDevice to obtain the background pixmap
+  - Will get rid of the double painting
+  - Will possibly allow calling XSetBackgroundPixmap without having to call XClearWindow()
+  - Might allow paints that result in an identical background pixmap to be discarded
+
+* Remove X11EmbedContainer's dependency on SelectionManager
+  - X11EmbedContainer needs to be a self-contained QX11EmbedContainer implementation
+
+* Add checks for XRender presence and fail nicely if necessary
+* Don't do all the extra QX11EmbedContainer hacks if the client window is of the same depth
+* Handle taskId clashes better
+
+* Positioning of the extender is wrong. (Notifications are drawn part off screen and behind systray icons)
+* Misbehavior of certain applets within the plasmoid protocol or vice-versa. (Still needs investigating)
+* Notifications aren't grouped by application. (Not critical but preferred)
+* Integrate kuiserver
