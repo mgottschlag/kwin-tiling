@@ -166,8 +166,8 @@ Q_SIGNALS:
     /**
      * Emitted when a window changes desktop.
      */
-    void windowChanged(TaskPtr);
-    void windowChangedGeometry(TaskPtr);
+    void windowChanged(TaskPtr task, ::TaskManager::TaskChanges change);
+    void windowChangedGeometry(TaskPtr task);
 
 protected Q_SLOTS:
     //* @internal

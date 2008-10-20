@@ -237,7 +237,7 @@ public:
     // internal
 
     //* @internal
-    void refresh(unsigned int dirty);
+    ::TaskManager::TaskChanges refresh(unsigned int dirty);
     //* @internal
     void refreshIcon();
     //* @internal

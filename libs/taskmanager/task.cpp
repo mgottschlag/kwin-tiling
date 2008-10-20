@@ -202,7 +202,7 @@ void Task::refreshIcon()
     emit changed(IconChanged);
 }
 
-void Task::refresh(unsigned int dirty)
+::TaskManager::TaskChanges Task::refresh(unsigned int dirty)
 {
     KWindowInfo info = KWindowSystem::windowInfo(d->win,
         NET::WMState | NET::XAWMState | NET::WMDesktop | NET::WMVisibleName | NET::WMGeometry | NET::WMWindowType,
@@ -223,6 +223,7 @@ void Task::refresh(unsigned int dirty)
     }
 
     if (dirty & NET::WMDesktop) {
+        kDebug() << "cool, desktop changed!";
         changes |= DesktopChanged;
     }
 
@@ -241,6 +242,8 @@ void Task::refresh(unsigned int dirty)
     if (changes != TaskUnchanged) {
         emit changed(changes);
     }
+
+    return changes;
 }
 
 void Task::setActive(bool a)

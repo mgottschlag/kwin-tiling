@@ -287,21 +287,17 @@ void TaskManager::windowRemoved(WId w)
 
 void TaskManager::windowChanged(WId w, unsigned int dirty)
 {
-    if (dirty & NET::WMState)
-    {
+    if (dirty & NET::WMState) {
         NETWinInfo info (QX11Info::display(), w, QX11Info::appRootWindow(),
                          NET::WMState | NET::XAWMState);
-        if (info.state() & NET::SkipTaskbar)
-        {
+
+        if (info.state() & NET::SkipTaskbar) {
             windowRemoved(w);
             d->skiptaskbarWindows.push_front(w);
             return;
-        }
-        else
-        {
+        } else {
             d->skiptaskbarWindows.removeAll(w);
-            if (info.mappingState() != NET::Withdrawn && !findTask(w))
-            {
+            if (info.mappingState() != NET::Withdrawn && !findTask(w)) {
                 // skipTaskBar state was removed and the window is still
                 // mapped, so add this window
                 windowAdded( w );
@@ -313,64 +309,44 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
     if (!(dirty & (NET::WMVisibleName |NET::WMName |
                    NET::WMState | NET::WMIcon |
                    NET::XAWMState | NET::WMDesktop) ||
-          (d->trackGeometry && dirty & NET::WMGeometry)))
-    {
+          (d->trackGeometry && dirty & NET::WMGeometry))) {
         return;
     }
 
     // find task
     TaskPtr t = findTask(w);
-    if (!t)
-    {
+    if (!t) {
         return;
     }
 
     //kDebug() << "TaskManager::windowChanged " << w << " " << dirty;
 
-    if (dirty & NET::WMState)
-    {
+    if (dirty & NET::WMState) {
         t->updateDemandsAttentionState(w);
     }
 
     // refresh icon pixmap if necessary
-    if (dirty & NET::WMIcon)
-    {
+    if (dirty & NET::WMIcon) {
+        //TODO should we forward on icon changes, too?
         t->refreshIcon();
         dirty ^= NET::WMIcon;
     }
 
-    if (dirty)
-    {
+    TaskChanges changes = TaskUnchanged;
+
+    //kDebug() << "got changes, but will we refresh?" << dirty;
+    if (dirty) {
         // only refresh this stuff if we have other changes besides icons
-        t->refresh(dirty);
+        changes = t->refresh(dirty);
     }
 
-    if (dirty & (NET::WMDesktop | NET::WMState | NET::XAWMState))
-    {
-        // moved to different desktop or is on all or change in iconification/withdrawnnes
-        emit windowChanged(t);
-
-#if 0
-        if (KWindowSystem::compositingActive() && dirty & NET::WMState)
-        {
-            // update on restoring a minimized window
-            updateWindowPixmap(w);
-        }
-#endif
-
-    }
-    else if (dirty & NET::WMGeometry)
-    {
+    if (changes & GeometryChanged) {
+        changes ^= GeometryChanged;
         emit windowChangedGeometry(t);
+    }
 
-#if 0
-        if (KWindowSystem::compositingActive())
-        {
-            // update on size changes, not on task drags
-            updateWindowPixmap(w);
-        }
-#endif
-
+    if (changes != TaskUnchanged) {
+        emit windowChanged(t, changes);
     }
 }
 
