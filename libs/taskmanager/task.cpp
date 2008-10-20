@@ -223,7 +223,6 @@ void Task::refreshIcon()
     }
 
     if (dirty & NET::WMDesktop) {
-        kDebug() << "cool, desktop changed!";
         changes |= DesktopChanged;
     }
 
