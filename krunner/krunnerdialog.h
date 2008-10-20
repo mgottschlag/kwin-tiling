@@ -45,9 +45,10 @@ class KRunnerDialog : public KDialog
         virtual void clearHistory() = 0;
 
     protected:
-        void paintEvent( QPaintEvent *e );
-        void resizeEvent( QResizeEvent *e );
-        void mousePressEvent( QMouseEvent *e );
+        void paintEvent(QPaintEvent *event);
+        void resizeEvent(QResizeEvent *event);
+        void mousePressEvent(QMouseEvent *event);
+        bool event(QEvent *event);
 
     protected Q_SLOTS:
         void showConfigDialog();
