@@ -4,7 +4,7 @@ set(calendar_SRCS
     calendar.cpp)
 
 add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
-include_directories(../ ${CMAKE_CURRENT_BINARY_DIR}/../libplasmaclock/)
+include_directories(../../libs)
 
 kde4_add_plugin(plasma_applet_calendar ${calendar_SRCS})
 target_link_libraries(plasma_applet_calendar plasma plasmaclock ${KDE4_KIO_LIBS})
