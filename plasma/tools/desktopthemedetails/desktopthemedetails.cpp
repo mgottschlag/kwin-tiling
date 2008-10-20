@@ -249,7 +249,7 @@ K_EXPORT_PLUGIN(DesktopThemeDetailsFactory("desktopthemedetails", "kcm_desktopth
 DesktopThemeDetails::DesktopThemeDetails(QWidget* parent, const QVariantList &args)
     : KCModule(DesktopThemeDetailsFactory::componentData(), parent, args),
       m_themeModel(0)
-      
+
 {
     KAboutData *about = new KAboutData("kcm_desktopthemedetails", 0, ki18n("Desktop Theme Details"), "1.0");
     setAboutData(about);
@@ -270,12 +270,13 @@ DesktopThemeDetails::DesktopThemeDetails(QWidget* parent, const QVariantList &ar
     connect(m_enableAdvanced, SIGNAL(toggled(bool)), this, SLOT(toggleAdvancedVisible()));
     connect(m_removeThemeButton, SIGNAL(clicked()), this, SLOT(removeTheme()));
     connect(m_exportThemeButton, SIGNAL(clicked()), this, SLOT(exportTheme()));
-    
+    //Reenabled when function is implemented
+    m_exportThemeButton->setEnabled(false);
     resetThemeDetails();
     m_themeCustomized = false;
 
     reloadConfig();
-    adjustSize();    
+    adjustSize();
 }
 
 DesktopThemeDetails::~DesktopThemeDetails()
@@ -325,7 +326,7 @@ void DesktopThemeDetails::reloadConfig()
             }
             customSettingsFile.close();
         }
-    }    
+    }
 
 }
 
@@ -358,7 +359,7 @@ void DesktopThemeDetails::save()
             customSettingsFile.setFileName(dirs.locateLocal("data", "desktoptheme/" + theme +"/settings"));
             customSettingsFileOpen = customSettingsFile.open(QFile::WriteOnly);
         }
-        
+
         //Copy each theme file to new theme folder
         QHashIterator<QString, QString> i(m_themeReplacements);
         while (i.hasNext()) {
@@ -386,10 +387,10 @@ void DesktopThemeDetails::save()
 
         }
         if (customSettingsFileOpen) customSettingsFile.close();
-    
+
         // Create new theme FDO desktop file
         QFile desktopFile(dirs.locateLocal("data", "desktoptheme/" + theme +"/metadata.desktop"));
-        QString desktopFileData; 
+        QString desktopFileData;
         if (isCustomized(theme)) {
             desktopFileData = "Name=(Customized) \r\n Comment=User customized theme \r\n X-KDE-PluginInfo-Name=" + theme + "\r\n";
         } else {
@@ -399,20 +400,20 @@ void DesktopThemeDetails::save()
             QTextStream out(&desktopFile);
             out << "[Desktop Entry] \r\n " + desktopFileData +" \r\n";
             desktopFile.close();
-            newThemeExists = true;                
+            newThemeExists = true;
         } else {
             KMessageBox::error(this, i18n("Unable to save theme."), i18n("Desktop Theme Details"));
         }
-        m_themeCustomized = false;     
+        m_themeCustomized = false;
     }
- 
+
     // Plasma Theme
     //Plasma::Theme::defaultTheme()->setThemeName(theme);
 
     //Tidy up after new/customized theme creation
     if (isCustomized(oldTheme) && oldTheme != theme) {
-        KIO::NetAccess::del(KUrl(dirs.locateLocal("data", "desktoptheme/" + 
-                                      oldTheme + 
+        KIO::NetAccess::del(KUrl(dirs.locateLocal("data", "desktoptheme/" +
+                                      oldTheme +
                                       "/", false)), this);
     }
     if (newThemeExists) {
@@ -445,8 +446,8 @@ void DesktopThemeDetails::removeTheme()
     }
     KStandardDirs dirs;
     if (removeTheme) {
-        KIO::NetAccess::del(KUrl(dirs.locateLocal("data", "desktoptheme/" + 
-                                      theme + 
+        KIO::NetAccess::del(KUrl(dirs.locateLocal("data", "desktoptheme/" +
+                                      theme +
                                       "/", false)), this);
     }
     m_themeModel->reload();
@@ -459,7 +460,7 @@ void DesktopThemeDetails::exportTheme()
     return;
 
     /* FIXME: Commented till I can figure out how to use KZip
-    if (m_themeCustomized || 
+    if (m_themeCustomized ||
              (m_theme->currentText() == "(Customized)" && m_newThemeName->text() == "")) {
         KMessageBox::information(this, i18n("Please apply theme item changes (with a new theme name) before attempting to export theme."), i18n("Export desktop theme"));
     } else {
@@ -514,7 +515,7 @@ void DesktopThemeDetails::loadThemeItems()
         KMessageBox::sorry(this, i18n("Theme items data file could not be found."), i18n("Desktop theme details"));
         return;
     }
-    
+
     m_themeItemList->setRowCount(themeItemList.size());
     m_themeItemList->setColumnCount(2);
     m_themeItemList->setHorizontalHeaderLabels(QStringList()<< i18n("Theme Item")<<i18n("Source"));
@@ -551,7 +552,7 @@ void DesktopThemeDetails::updateReplaceItemList(const QString& item)
     // Repopulate combobox droplist
     int itemRow = m_themeItemList->row(m_themeItemList->findItems(item, Qt::MatchExactly).at(0));
     QComboBox *currentComboBox = static_cast<QComboBox*>(m_themeItemList->cellWidget(itemRow,1));
-    disconnect(currentComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(replacementItemChanged()));    
+    disconnect(currentComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(replacementItemChanged()));
     currentComboBox->clear();
     KStandardDirs dirs;
     QStringList themes = dirs.findAllResources("data", "desktoptheme/*/metadata.desktop",
@@ -573,7 +574,7 @@ void DesktopThemeDetails::updateReplaceItemList(const QString& item)
         //Get correct extension for svg files
         if (QFile::exists(themeItemFile + ".svg")) {
             themeItemFile = themeRoot + '/' + m_themeItems[item] + ".svg";
-        } 
+        }
         if (QFile::exists(themeItemFile + ".svgz")) {
             themeItemFile = themeRoot + '/' + m_themeItems[item] + ".svgz";
         }
@@ -584,11 +585,11 @@ void DesktopThemeDetails::updateReplaceItemList(const QString& item)
             }
             dropList << dropListItem;
             m_dropListFiles[dropListItem] = themeItemFile;
-        } 
+        }
     }
     if (currentReplacement.isEmpty()) m_themeReplacements[item] = m_dropListFiles[replacementDropListItem];
     currentComboBox->addItems(dropList << i18n("File..."));
-    currentComboBox->setCurrentIndex(currentComboBox->findText(replacementDropListItem));    
+    currentComboBox->setCurrentIndex(currentComboBox->findText(replacementDropListItem));
     connect(currentComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(replacementItemChanged()));
 }
 
@@ -692,10 +693,10 @@ bool DesktopThemeDetails::isCustomized(const QString& theme) {
 void DesktopThemeDetails::clearCustomized() {
     KStandardDirs dirs;
     if (KIO::NetAccess::del(KUrl(dirs.locateLocal("data", "desktoptheme/.customized/", false)), this)) {
-        m_themeModel->reload();       
+        m_themeModel->reload();
     }
     if (KIO::NetAccess::del(KUrl(dirs.locateLocal("data", "desktoptheme/.customized1/", false)), this)) {
-        m_themeModel->reload();       
+        m_themeModel->reload();
     }
 }
 
