@@ -164,6 +164,7 @@ void Battery::init()
 
 void Battery::constraintsEvent(Plasma::Constraints constraints)
 {
+    kDebug() << "ConstraintsEvent, Dude.";
     if (constraints & (Plasma::FormFactorConstraint | Plasma::SizeConstraint)) {
         if (formFactor() == Plasma::Vertical) {
             if (!m_showMultipleBatteries) {
@@ -477,12 +478,14 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         row++;
 
         // More settings button
-        Plasma::PushButton *configButton = new Plasma::PushButton(controls);
+        Plasma::Icon *configButton = new Plasma::Icon(controls);
         configButton->setText(i18n("More..."));
-        configButton->nativeWidget()->setIcon(KIcon("preferences-system-power-management"));
-        configButton->nativeWidget()->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-        connect(configButton, SIGNAL(clicked()),
-                this, SLOT(openConfig()));
+        configButton->setOrientation(Qt::Horizontal);
+        configButton->setMaximumHeight(36);
+        configButton->setDrawBackground(true);
+        configButton->setIcon("preferences-system-power-management");
+        //configButton->nativeWidget()->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+        connect(configButton, SIGNAL(clicked()), this, SLOT(openConfig()));
 
         QGraphicsGridLayout *moreLayout = new QGraphicsGridLayout(controlsLayout);
         moreLayout->setColumnPreferredWidth(0, columnWidth*1.5);
@@ -527,7 +530,7 @@ void Battery::updateStatus()
                 batteryLabelText.append(i18nc("Battery is not plugged in", "not present"));
             }
             batteryLabelText.append("%");
-            batteryLabelText.append(QString("<br /><b>Battery X: 66%</b> ")); // FIXME: Remove
+            //batteryLabelText.append(QString("<br /><b>Battery X: 66%</b> ")); // FIXME: Remove
             if (m_acadapter_plugged) {
                 batteryLabelText.append((i18n(" charged")));
                 batteryLabelText.append(i18n("<br /><b>AC Adapter:</b> Plugged in"));
