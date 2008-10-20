@@ -238,7 +238,8 @@ void LayoutWidget::layoutItems()
         //kDebug() << "remove";
     }
 
-    int columns = rowWidth();
+    // make sure columns is not 0, as that will crash divisions.
+    int columns =  qMax(1, rowWidth());
 
     if (columns) {
         m_columnWidth = geometry().size().width()/columns;
