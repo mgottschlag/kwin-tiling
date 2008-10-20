@@ -1,0 +1,115 @@
+
+* Function of grouping
+     
+    This is an organisational tool which allows the user to group
+    together tasks which are related to each other.  For example,
+    a spreadsheet document and an email from a co-worker concerning
+    that document, or a game and instructions on how to play it.
+   
+    Grouping allows working sets of windows to be treated as one so 
+    that they can be easily:
+
+        - Raise (bring to foreground) together
+        - Minimized together
+        - Closed together
+        - Laid out on screen
+          (eg. Windows from a group laid out vertically side-by-side,
+               occupying corners of a screen, top and bottom etc.)
+
+    Use Case:  Developing a KDE application
+
+                Mike is writing KDE code in Kate and is using
+                the Qt Assistant tool as a reference to help him
+                write his code.
+            
+            1.  Mike launches Kate and Qt Assistant
+                
+            2.  He places Kate and Qt Assistant in a group
+                together because they are logically part of the same
+                task.
+                
+                It is convenient for Mike to view Kate and Qt
+                Assistant side-by-side so he can see his code and 
+                the reference documentation at the same time.
+            
+            3.  Mike right-clicks on the group in the task-bar
+                and selects Layout -> [ Picture of two windows
+                laid out side-by-side vertically filling the 
+                entire screen ]
+
+                The two windows are then laid out as per the picture.
+
+* Manual grouping
+
+    - Manual grouping is performed by dragging one task's 
+      representation (typically an icon + text) on top of another.  
+      This groups the two tasks are grouped together.
+
+      Each group has an associated:
+        
+        - Name
+            This is used to identify the purpose of a particular
+            group and also to provide a name to refer to the group
+            by in menus
+
+        - Colour
+            This is used to render the background of the group
+            and the group's name.
+
+            The idea is to allow quick location of a group of 
+            related tasks on screen and also to allow the user
+            to establish a connection between a particular
+            colour and a project.
+
+            (eg.  The user might pick 'Pink' for research,
+             'Green' for entertainment, 'Blue' for business)
+
+        These are chosen automatically in a deterministic fashion
+        initially (using information about the tasks in the group),
+        but can be changed manually by the user.
+        Perhaps allow the possibility of pre-defining groups 
+        (name + colour) and allow the user to switch a group's
+        name and colour to that of a pre-defined group.
+        
+
+* Possible strategies for automatic grouping:
+
+    - Learned from user's manual grouping habits
+        
+        eg. 
+            1.  User places 'Konsole' , 'KDevelop'
+                and 'Qt Assistant' in the same group
+                several times manually.
+
+            2.  In future, when two or more of the 
+                above applications are running,
+                they are automatically grouped
+                together.
+
+        Problems:
+            - Some applications (eg. Dolphin, Konsole, Konqueror) will
+              be used for many different, unrelated, tasks.
+
+              eg.  Might want several instances of Konqueror, each in different
+                   groups.  It is probably not possible to make a sensible guess
+                   as to whether a new Konqueror instance should be grouped
+                   with other open windows.
+
+              -> Could consider other aspects of a window besides the application
+                 it belongs to.  For example, the Url of the document it is working
+                 with, the people associated with a particular task.
+
+                 This requires information about the window which is not currently
+                 available.  Applications could use Nepomuk perhaps to create an
+                 association between a particular window and a document Url
+                 for example?
+
+    - Grouping by application (as in KDE 3, Windows XP/Vista)
+
+    - Grouping by application category 
+        
+        - Need to be able to find .desktop file associated with a particular
+          task 
+    
+
+
