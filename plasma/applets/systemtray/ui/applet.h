@@ -39,6 +39,7 @@ class Applet : public Plasma::PopupApplet
 
 public:
     explicit Applet(QObject *parent, const QVariantList &arguments = QVariantList());
+    ~Applet();
 
     void init();
     void constraintsEvent(Plasma::Constraints constraints);

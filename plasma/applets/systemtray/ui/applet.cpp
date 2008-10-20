@@ -83,6 +83,10 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
     setHasConfigurationInterface(true);
 }
 
+Applet::~Applet()
+{
+    delete d;
+}
 
 void Applet::init()
 {
