@@ -20,17 +20,19 @@
 #include <plasma/package.h>
 #include <plasma/packagestructure.h>
 #include <plasma/packagemetadata.h>
+class GadgetBrowserHost;
+class GglPackage : public Plasma::PackageStructure {
+  Q_OBJECT
+ public:
+  GglPackage(QObject *parent, const QVariantList &args);
 
-class GglPackage : public Plasma::PackageStructure
-{
-    Q_OBJECT
-public:
+  virtual ~GglPackage();
+  virtual bool installPackage(const QString &archivePath,
+                              const QString &packageRoot);
+  virtual void createNewWidgetBrowser(QWidget *parent = 0);
 
-    GglPackage(QObject *parent, const QVariantList &args);
-
-    virtual ~GglPackage();
-    virtual bool installPackage(const QString &archivePath,
-                                const QString &packageRoot);
+ private:
+  GadgetBrowserHost *host_;
 };
 
 #endif

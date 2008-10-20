@@ -109,7 +109,7 @@ void PlasmaViewHost::EnableInputShapeMask(bool enable) {
 }
 
 void PlasmaViewHost::SetResizable(ViewInterface::ResizableMode mode) {
-  // TODO:
+  kDebug() << "SetResizable:" << mode;
 }
 
 void PlasmaViewHost::SetCaption(const char *caption) {
@@ -124,11 +124,11 @@ void PlasmaViewHost::SetShowCaptionAlways(bool always) {
 
 void PlasmaViewHost::SetCursor(int type) {
   kDebug() << "SetCursor: " << type;
-  QCursor cursor(ggadget::qt::GetQtCursorShape(type));
+  Qt::CursorShape shape = ggadget::qt::GetQtCursorShape(type);
   // FIXME: Neither way to set cursor works...
-  //  d->info->applet->setCursor(cursor);
+  d->info->applet->setCursor(shape);
   if (d->widget_)
-    d->widget_->setCursor(cursor);
+    d->widget_->setCursor(shape);
 }
 
 void PlasmaViewHost::SetTooltip(const char *tooltip) {

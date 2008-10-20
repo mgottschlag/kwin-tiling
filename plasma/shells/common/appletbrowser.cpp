@@ -399,8 +399,9 @@ void AppletBrowserPrivate::populateWidgetsMenu()
         if (service->property("X-Plasma-ProvidesWidgetBrowser").toBool()) {
             QAction *action = new QAction(KIcon("applications-internet"),
                                           i18n("Download New %1", service->name()), q);
-            widgetsMenu->addAction(action);
+            QObject::connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
             mapper->setMapping(action, service->property("X-KDE-PluginInfo-Name").toString());
+            widgetsMenu->addAction(action);
         }
     }
 

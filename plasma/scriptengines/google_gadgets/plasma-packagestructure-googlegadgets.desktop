@@ -45,3 +45,4 @@ X-KDE-PluginInfo-Name=googlegadgets
 X-KDE-ServiceTypes=Plasma/PackageStructure
 X-KDE-Library=plasma_package_ggl
 X-Plasma-PackageFileFilter=*.gg
+X-Plasma-ProvidesWidgetBrowser=true

@@ -36,6 +36,8 @@ class PlasmaViewHost::Private : public QObject {
       info(i),
       is_popout_(popout),
       onoptionchanged_connection_(NULL),
+      gadget_w_(0),
+      gadget_h_(0),
       feedback_handler_(NULL) {}
 
   ~Private() {
@@ -155,10 +157,37 @@ class PlasmaViewHost::Private : public QObject {
     else if (info->applet)
       info->applet->update();
   }
+  
+  void AdjustAppletSize() {
+    if (!info->main_view_host) return;
+    ViewInterface *view = info->main_view_host->GetViewDecorator();
+    double w = view->GetWidth();
+    double h = view->GetHeight();
+    if (w <= 0 || h <= 0) return;
+    if (gadget_w_ == w && gadget_h_ == h) return;
+
+    gadget_w_ = w;
+    gadget_h_ = h;
+    kDebug() << "view size:" << w << " " << h;
+    kDebug() << "applet old size:" << info->applet->size();
+
+    if (widget_) kDebug() << "widget old size:" << widget_->size();
+    if (info->is_floating) {
+      info->applet->resize(w, h);
+    } else {
+      info->applet->setPreferredSize(w, h);
+    }
+    if (widget_) {
+      widget_->AdjustToViewSize();
+      widget_->resize(w, h);
+    }
+    kDebug() << "applet new size:" << info->applet->size();
+    if (widget_) kDebug() << "widget new size:" << widget_->size();
+  }
 
   void QueueResize() {
     if (type_ == ViewHostInterface::VIEW_HOST_MAIN && !is_popout_) {
-      info->host->AdjustAppletSize();
+      AdjustAppletSize();
     } else if (widget_) {
       widget_->AdjustToViewSize();
     }
@@ -184,6 +213,8 @@ class PlasmaViewHost::Private : public QObject {
   GadgetInfo *info;
   bool is_popout_;
   Connection *onoptionchanged_connection_;
+  double gadget_w_;
+  double gadget_h_;
 
   Slot1<bool, int> *feedback_handler_;
   QString caption_;

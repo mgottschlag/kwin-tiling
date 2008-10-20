@@ -203,39 +203,11 @@ Gadget* PlasmaHost::LoadGadget(const char *path, const char *options_name) {
 }
 
 int PlasmaHost::GetDefaultFontSize() {
-    return kDefaultFontSize;
+  return kDefaultFontSize;
 }
 
 bool PlasmaHost::OpenURL(const ggadget::Gadget *gadget, const char *url) {
     return ggadget::qt::OpenURL(gadget, url);
-}
-
-void PlasmaHost::AdjustAppletSize() {
-  if (!d->info->main_view_host) return;
-  ViewInterface *view = d->info->main_view_host->GetViewDecorator();
-  double w = view->GetWidth();
-  double h = view->GetHeight();
-  if (w <= 0 || h <= 0) return;
-  if (d->gadget_w_ == w && d->gadget_h_ == h) return;
-
-  d->gadget_w_ = w;
-  d->gadget_h_ = h;
-  kDebug() << "view size:" << w << " " << h;
-
-  QtViewWidget *widget = static_cast<QtViewWidget*>(d->info->main_view_host->GetNativeWidget());
-  kDebug() << "applet old size:" << d->info->applet->size();
-  if (widget) kDebug() << "widget old size:" << widget->size();
-  if (d->info->is_floating) {
-    d->info->applet->resize(w, h);
-  } else {
-    d->info->applet->setPreferredSize(w, h);
-  }
-  if (widget) {
-    widget->AdjustToViewSize();
-    widget->resize(w, h);
-  }
-  kDebug() << "applet new size:" << d->info->applet->size();
-  if (widget) kDebug() << "widget new size:" << widget->size();
 }
 
 void PlasmaHost::OnConstraintsEvent(Plasma::Constraints constraints) {

@@ -62,12 +62,11 @@ static const char *kGlobalExtensions[] = {
   "gst-mediaplayer-element",
   "linux-system-framework",
   "qt-xml-http-request",
+  "google-gadget-manager",
+  "smjs-script-runtime",
+  "qt-script-runtime",
   NULL
 };
-
-static bool g_initialized = false;
-static ggadget::qt::QtMainLoop main_loop;
-static QMutex mutex;
 
 class GglAppletScript::Private {
  public:
@@ -102,42 +101,16 @@ bool GglAppletScript::init() {
   Q_ASSERT(applet());
   Q_ASSERT(package());
 
-  if (!g_initialized) {
-    QMutexLocker lock(&mutex);
-    if (!g_initialized) {
-      ggadget::SetGlobalMainLoop(&main_loop);
-      ggadget::SetupLogger(ggadget::LOG_TRACE, true);
-
-      std::string profile_dir =
+  std::string profile_dir =
           ggadget::BuildFilePath(ggadget::GetHomeDirectory().c_str(),
-                                 ggadget::kDefaultProfileDirectory, NULL);
-      ggadget::EnsureDirectories(profile_dir.c_str());
+                                 ".google/gadgets-plasma", NULL);
 
-      // Set global file manager.
-      ggadget::SetupGlobalFileManager(profile_dir.c_str());
-
-      // Load global extensions.
-      ggadget::ExtensionManager *ext_manager =
-          ggadget::ExtensionManager::CreateExtensionManager();
-      ggadget::ExtensionManager::SetGlobalExtensionManager(ext_manager);
-
-      // Ignore errors when loading extensions.
-      for (size_t i = 0; kGlobalExtensions[i]; ++i)
-        ext_manager->LoadExtension(kGlobalExtensions[i], false);
-
-      if (!ext_manager->LoadExtension("smjs-script-runtime", false))
-        ext_manager->LoadExtension("qt-script-runtime", false);
-
-      // Register JavaScript runtime.
-      ggadget::ScriptRuntimeManager *manager =
-          ggadget::ScriptRuntimeManager::get();
-      ggadget::ScriptRuntimeExtensionRegister script_runtime_register(manager);
-      ext_manager->RegisterLoadedExtensions(&script_runtime_register);
-
-      ext_manager->SetReadonly();
-      ggadget::InitXHRUserAgent("ggl-plasma");
-      g_initialized = true;
-    }
+  std::string error;
+  if (!ggadget::qt::InitGGL(NULL, "ggl-plasma", profile_dir.c_str(),
+                       kGlobalExtensions, 0, false, &error)) {
+    kError() << "Failed to init GGL system:"
+             << QString::fromUtf8(error.c_str());
+    return false;
   }
 
   QFile config_file(package()->path() + "/config.txt");
