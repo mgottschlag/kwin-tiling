@@ -47,6 +47,8 @@
 #include <plasma/extenderitem.h>
 #include <plasma/theme.h>
 
+#include "calendar.h"
+
 #include "ui_timezonesConfig.h"
 
 class ClockApplet::Private
@@ -289,9 +291,8 @@ void ClockApplet::wheelEvent(QGraphicsSceneWheelEvent *event)
 
 void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
 {
-    QGraphicsProxyWidget *proxy = new QGraphicsProxyWidget(item);
-    KDatePicker *calendar = new KDatePicker();
-    calendar->setMinimumSize(calendar->sizeHint());
+    Plasma::Calendar *calendar = new Plasma::Calendar;
+    calendar->setMinimumSize(QSize(200, 180));
 
     Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
     QDate date = data["Date"].toDate();
@@ -299,9 +300,7 @@ void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
         calendar->setDate(date);
     }
 
-    proxy->setWidget(calendar);
-
-    item->setWidget(proxy);
+    item->setWidget(calendar);
     item->setTitle(i18n("Calendar"));
 }
 
