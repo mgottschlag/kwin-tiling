@@ -38,7 +38,7 @@ public:
     X11EmbedContainer(QWidget *parent = 0);
     ~X11EmbedContainer();
 
-    void embedClient(WId id);
+    void embedSystemTrayClient(WId id);
 
 protected:
     void paintEvent(QPaintEvent *event);

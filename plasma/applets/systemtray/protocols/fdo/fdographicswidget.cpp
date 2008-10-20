@@ -115,7 +115,7 @@ void GraphicsWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
         connect(d->widget->container(), SIGNAL(error(QX11EmbedContainer::Error)),
                 this, SLOT(handleClientError(QX11EmbedContainer::Error)));
 
-        d->widget->container()->embedClient(d->winId);
+        d->widget->container()->embedSystemTrayClient(d->winId);
 
         return;
 

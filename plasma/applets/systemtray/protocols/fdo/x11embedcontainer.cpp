@@ -92,7 +92,7 @@ X11EmbedContainer::~X11EmbedContainer()
 }
 
 
-void X11EmbedContainer::embedClient(WId clientId)
+void X11EmbedContainer::embedSystemTrayClient(WId clientId)
 {
     Display *display = QX11Info::display();
 
@@ -150,7 +150,7 @@ void X11EmbedContainer::embedClient(WId clientId)
 
     XFlush(display);
 
-    QX11EmbedContainer::embedClient(clientId);
+    embedClient(clientId);
 
     // FIXME: This checks that the client is still valid. Qt won't pick it up
     // if the client closes before embedding completes. However, what happens
