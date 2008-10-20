@@ -207,7 +207,7 @@ int LayoutWidget::rowWidth()
 {
     int columns = m_rowSize;
     if (columns < 1) {
-        kDebug() << "divider collumns is 0!!!";
+        //kDebug() << "divider collumns is 0!!!";
         return 1;
     }
 
@@ -223,11 +223,11 @@ int LayoutWidget::rowWidth()
 
     int totalSize = size();
 
-    while ((totalSize / columns) > maxRows) {     
+    while ((totalSize / columns) + 1 > maxRows) {
         columns++;  //more rows needed than allowed so we add some collumns instead
     }
 
-    kDebug() << "groupWidth" << columns;
+    //kDebug() << "groupWidth" << columns << maxRows << m_maxRows;
     return qMax(1, qMin(columns, totalSize));
 }
 
@@ -241,6 +241,7 @@ void LayoutWidget::layoutItems()
 
     // make sure columns is not 0, as that will crash divisions.
     int columns = qMax(1, rowWidth());
+    kDebug() << "Laying out with" << columns << m_maxRows;
 
     if (columns) {
         m_columnWidth = geometry().size().width()/columns;

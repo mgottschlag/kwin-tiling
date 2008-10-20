@@ -454,6 +454,7 @@ void Tasks::configAccepted()
         cg.writeEntry("groupingStrategy", static_cast<int>(m_groupManager->groupingStrategy()));
         changed = true;
     }
+
     if (m_groupManager->sortingStrategy() != (m_ui.sortingStrategy->currentIndex())) {
         m_groupManager->setSortingStrategy(static_cast<TaskManager::GroupManager::TaskSortingStrategy>(m_ui.sortingStrategy->itemData(m_ui.sortingStrategy->currentIndex()).toInt()));
         KConfigGroup cg = config();
