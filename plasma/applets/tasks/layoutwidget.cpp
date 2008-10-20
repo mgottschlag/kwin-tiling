@@ -263,8 +263,8 @@ void LayoutWidget::layoutItems()
         setColumnPreferredWidth(col, m_columnWidth);//Somehow this line is absolutely crucial
         setRowPreferredHeight(row, m_rowHeight);//Somehow this line is absolutely crucial
 
-        TaskGroupItem *group = static_cast<TaskGroupItem*>(item);
-        if (item->abstractItem()->isGroupItem()) {
+        if (item->abstractItem() && item->abstractItem()->isGroupItem()) {
+            TaskGroupItem *group = static_cast<TaskGroupItem*>(item);
          //   kDebug() << "splitIndex" << splitIndex << "second Row: " << secondRow;
             if (!group->collapsed()) { 
                 LayoutWidget *layout = dynamic_cast<LayoutWidget*>(group->layout());
@@ -274,13 +274,13 @@ void LayoutWidget::layoutItems()
                 }
                 int groupRowWidth = layout->rowWidth();
                 int secondRow = ((groupRowWidth - 1 + numberOfItems)/columns); //row of the last item in the group 
-             
+
                 if (secondRow > row) {//we need to split the group TODO if (splitIndex < group->size())
                     m_itemPositions.removeAll(group->splitGroup());
                     int splitIndex = columns - col;//number of items in group that are on this row
                     TaskGroupItem *splitChild = group->splitGroup(splitIndex);
                     addItem(item, row, col, 1, splitIndex); //Add the normal item 
-                    
+
                     for (int i = 1; i<splitIndex; i++) {
                       //  addItem(item, row, col+i, 1, 1); //Necessary to make sure the 
                     } 
