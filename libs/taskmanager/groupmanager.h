@@ -91,6 +91,9 @@ public:
     bool showOnlyCurrentDesktop() const;
     void setShowOnlyCurrentDesktop(bool);
 
+    bool showOnlyMinimized() const;
+    void setShowOnlyMinimized(bool);
+
     /** 
      * Functions to call if the user wants to do something manually, the strategy allows or refuses the request
      */

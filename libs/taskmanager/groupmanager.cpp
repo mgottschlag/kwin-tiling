@@ -55,8 +55,9 @@ public:
           currentScreen(-1),
           showOnlyCurrentDesktop(false),
           showOnlyCurrentScreen(false),
-	  onlyGroupWhenFull(false),
-	  groupIsFull(false)
+          showOnlyMinimized(false),
+          onlyGroupWhenFull(false),
+          groupIsFull(false)
     {
     }
 
@@ -88,6 +89,7 @@ public:
     QList<TaskPtr> geometryTasks;
     bool showOnlyCurrentDesktop : 1;
     bool showOnlyCurrentScreen : 1;
+    bool showOnlyMinimized : 1;
     bool onlyGroupWhenFull : 1;
     bool groupIsFull : 1;
 };
@@ -362,11 +364,18 @@ void GroupManagerPrivate::currentDesktopChanged(int newDesktop)
 void GroupManagerPrivate::taskChanged(TaskPtr task, ::TaskManager::TaskChanges changes)
 {
     bool takeAction = false;
-    bool remove = false;
+    bool show = true;
+
     if (showOnlyCurrentDesktop && changes & ::TaskManager::DesktopChanged) {
         takeAction = true;
-        remove = !task->isOnCurrentDesktop() && !task->demandsAttention();
+        show = task->isOnCurrentDesktop() || task->demandsAttention();
         //kDebug() << task->visibleName() << "on" << TaskManager::self()->currentDesktop();
+    }
+
+    if (showOnlyMinimized && changes & ::TaskManager::StateChanged) {
+        //TODO: wouldn't it be nice to get notification of JUST minimization?
+        takeAction = true;
+        show = task->isMinimized();
     }
 
     if (!takeAction) {
@@ -374,12 +383,12 @@ void GroupManagerPrivate::taskChanged(TaskPtr task, ::TaskManager::TaskChanges c
     }
 
 
-    if (remove) {
-        //kDebug() << "remove(task);";
-        q->remove(task);
-    } else {
+    if (show) {
         //kDebug() << "add(task);";
         q->add(task);
+    } else {
+        //kDebug() << "remove(task);";
+        q->remove(task);
     }
 }
 
@@ -422,13 +431,15 @@ void GroupManager::reconnect()
     kDebug();
     disconnect(TaskManager::self(), SIGNAL(desktopChanged(int)),
                this, SLOT(currentDesktopChanged(int)));
-    disconnect(TaskManager::self(), SIGNAL(windowChanged(TaskPtr)),
-               this, SLOT(taskChanged(TaskPtr)));
+    disconnect(TaskManager::self(), SIGNAL(windowChanged(TaskPtr,::TaskManager::TaskChanges)),
+               this, SLOT(taskChanged(TaskPtr,::TaskManager::TaskChanges)));
 
-    if (d->showOnlyCurrentDesktop) {
+    if (d->showOnlyCurrentDesktop || d->showOnlyMinimized) {
         // listen to the relevant task manager signals
-        connect(TaskManager::TaskManager::self(), SIGNAL(desktopChanged(int)),
-                this, SLOT(currentDesktopChanged(int)));
+        if (d->showOnlyCurrentDesktop) {
+            connect(TaskManager::TaskManager::self(), SIGNAL(desktopChanged(int)),
+                    this, SLOT(currentDesktopChanged(int)));
+        }
 
         connect(TaskManager::self(), SIGNAL(windowChanged(TaskPtr,::TaskManager::TaskChanges)),
                 this, SLOT(taskChanged(TaskPtr,::TaskManager::TaskChanges)));
@@ -467,9 +478,9 @@ bool GroupManager::showOnlyCurrentScreen() const
     return d->showOnlyCurrentScreen;
 }
 
-void GroupManager::setShowOnlyCurrentScreen(bool state)
+void GroupManager::setShowOnlyCurrentScreen(bool showOnlyCurrentScreen)
 {
-    d->showOnlyCurrentScreen = state;
+    d->showOnlyCurrentScreen = showOnlyCurrentScreen;
 }
 
 bool GroupManager::showOnlyCurrentDesktop() const
@@ -477,9 +488,19 @@ bool GroupManager::showOnlyCurrentDesktop() const
     return d->showOnlyCurrentDesktop;
 }
 
-void GroupManager::setShowOnlyCurrentDesktop(bool state)
+void GroupManager::setShowOnlyCurrentDesktop(bool showOnlyCurrentDesktop)
 {
-    d->showOnlyCurrentDesktop = state;
+    d->showOnlyCurrentDesktop = showOnlyCurrentDesktop;
+}
+
+bool GroupManager::showOnlyMinimized() const
+{
+    return d->showOnlyMinimized;
+}
+
+void GroupManager::setShowOnlyMinimized(bool showOnlyMinimized)
+{
+    d->showOnlyMinimized = showOnlyMinimized;
 }
 
 GroupManager::TaskSortingStrategy GroupManager::sortingStrategy() const
