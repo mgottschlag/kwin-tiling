@@ -37,6 +37,9 @@
 #include <KConfigDialog>
 #include <KMenu>
 #include <KProcess>
+#include <KActionCollection>
+#include <KBookmarkMenu>
+#include <KRun>
 
 // Plasma
 #include <plasma/widgets/icon.h>
@@ -52,6 +55,17 @@
 #include "core/leavemodel.h"
 #include "core/urlitemlauncher.h"
 
+class BookmarkOwner : public KBookmarkOwner
+{
+    public:
+        BookmarkOwner() : KBookmarkOwner() {}
+        virtual bool enableOption(BookmarkOption) const { return false; }
+        virtual bool supportsTabs() const { return false; }
+        virtual void openBookmark(const KBookmark& b, Qt::MouseButtons, Qt::KeyboardModifiers) {
+            new KRun(b.url(), (QWidget*)0);
+        }
+};
+
 /// @internal d-pointer class
 class MenuLauncherApplet::Private
 {
@@ -59,6 +73,10 @@ public:
         QPointer<Kickoff::MenuView> menuview;
         Plasma::Icon *icon;
         QPointer<Kickoff::UrlItemLauncher> launcher;
+
+        KActionCollection* collection;
+        BookmarkOwner* bookmarkowner;
+        KBookmarkMenu* bookmarkmenu;
 
         MenuLauncherApplet::ViewType viewtype;
         MenuLauncherApplet::FormatType formattype;
@@ -73,12 +91,17 @@ public:
             : menuview(0),
               icon(0),
               launcher(0),
+              collection(0),
+              bookmarkowner(0),
+              bookmarkmenu(0),
               viewComboBox(0),
               formatComboBox(0),
               switcher(0)
         {}
         ~Private()
         {
+            delete bookmarkmenu;
+            delete bookmarkowner;
             delete menuview;
         }
 
@@ -147,6 +170,8 @@ public:
                     return "start-here-kde";
                 case Favorites:
                     return "bookmarks";
+                case Bookmarks:
+                    return "folder-bookmarks";
                 case Applications:
                     return "applications-other";
                 case Computer:
@@ -273,6 +298,7 @@ void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     viewLabel->setBuddy(d->viewComboBox);
     d->addItem(d->viewComboBox, i18nc("@item:inlistbox View:", "Standard"), MenuLauncherApplet::Combined, "start-here-kde");
     d->addItem(d->viewComboBox, i18nc("@item:inlistbox View:", "Favorites"), MenuLauncherApplet::Favorites, "bookmarks");
+    d->addItem(d->viewComboBox, i18nc("@item:inlistbox View:", "Bookmarks"), MenuLauncherApplet::Bookmarks, "folder-bookmarks");
     d->addItem(d->viewComboBox, i18nc("@item:inlistbox View:", "Applications"), MenuLauncherApplet::Applications, "applications-other");
     d->addItem(d->viewComboBox, i18nc("@item:inlistbox View:", "Computer"), MenuLauncherApplet::Computer, "computer");
     d->addItem(d->viewComboBox, i18nc("@item:inlistbox View:", "Recently Used"), MenuLauncherApplet::RecentlyUsed, "document-open-recent");
@@ -386,6 +412,15 @@ void MenuLauncherApplet::toggleMenu()
             case RecentlyUsed: {
                 Kickoff::MenuView *recentlyview = d->createMenuView(new Kickoff::RecentlyUsedModel(d->menuview));
                 d->addMenu(recentlyview, true);
+            } break;
+            case Bookmarks: {
+                KBookmarkManager* mgr = KBookmarkManager::userBookmarksManager();
+                if( ! d->collection ) {
+                    d->collection = new KActionCollection(this);
+                    d->bookmarkowner = new BookmarkOwner();
+                }
+                delete d->bookmarkmenu;
+                d->bookmarkmenu = new KBookmarkMenu(mgr, d->bookmarkowner, d->menuview, d->collection);
             } break;
             case Leave: {
                 Kickoff::MenuView *leaveview = d->createMenuView(new Kickoff::LeaveModel(d->menuview));

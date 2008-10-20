@@ -46,6 +46,7 @@ class MenuLauncherApplet : public Plasma::Applet
             Applications, ///< Applications Menu
             Computer, ///< Computer Menu
             RecentlyUsed, ///< Recently Used Menu
+            Bookmarks, ///< Bookmarks Menu
             Leave ///< Leave Menu
         };
 
