@@ -35,7 +35,7 @@
 #include <plasma/containment.h>
 #include <plasma/dataengine.h>
 
-#include "clockapplet.h"
+#include "libplasmaclock/clockapplet.h"
 #include "ui_clockConfig.h"
 #include "ui_calendar.h"
 

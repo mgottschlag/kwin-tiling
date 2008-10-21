@@ -4,7 +4,7 @@ set(clock_SRCS
 
 kde4_add_ui_files(clock_SRCS clockConfig.ui )
 kde4_add_plugin(plasma_applet_clock ${clock_SRCS})
-include_directories( ../libplasmaclock/ ${CMAKE_CURRENT_BINARY_DIR}/../libplasmaclock/)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../libs/)
 target_link_libraries(plasma_applet_clock plasma plasmaclock ${KDE4_KIO_LIBS})
 
 install(TARGETS plasma_applet_clock DESTINATION ${PLUGIN_INSTALL_DIR})

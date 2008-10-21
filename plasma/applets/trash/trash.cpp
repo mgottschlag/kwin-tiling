@@ -210,7 +210,7 @@ void Trash::slotEmpty()
 
 void Trash::updateIcon()
 {
-    Plasma::ToolTipManager::ToolTipContent data;
+    Plasma::ToolTipManager::Content data;
     data.mainText = i18n("Trash");
 
     if (m_count > 0) {
@@ -236,7 +236,7 @@ void Trash::updateIcon()
     if (!m_showText) {
         Plasma::ToolTipManager::self()->setContent(this, data);
     } else {
-        Plasma::ToolTipManager::self()->setContent(this, Plasma::ToolTipManager::ToolTipContent());
+        Plasma::ToolTipManager::self()->setContent(this, Plasma::ToolTipManager::Content());
     }
 
     emptyTrash->setEnabled(m_count>0);

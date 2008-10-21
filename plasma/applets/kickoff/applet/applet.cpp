@@ -79,7 +79,7 @@ void LauncherApplet::Private::createLauncher()
 
 void LauncherApplet::Private::initToolTip()
 {
-    Plasma::ToolTipManager::ToolTipContent data;
+    Plasma::ToolTipManager::Content data;
     data.mainText = i18n("Kickoff Application Launcher");
     data.subText = i18n("Favorites, applications, computer places, recently used items and desktop sessions");
     data.image = q->popupIcon().pixmap(IconSize(KIconLoader::Desktop));

@@ -140,7 +140,7 @@ void Clock::dataUpdated(const QString &source, const Plasma::DataEngine::Data &d
     m_date = data["Date"].toDate();
 
     if (Plasma::ToolTipManager::self()->isVisible(this)) {
-        updateToolTipContent();
+        updateContent();
     }
 
     // avoid unnecessary repaints

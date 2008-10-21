@@ -213,7 +213,7 @@ void DeviceNotifier::notifyDevice(const QString &name)
 
 void DeviceNotifier::toolTipAboutToShow()
 {
-    Plasma::ToolTipManager::ToolTipContent toolTip;
+    Plasma::ToolTipManager::Content toolTip;
     if (!m_lastPlugged.isEmpty()) {
         Solid::Device *device = new Solid::Device(m_lastPlugged.last());
 
@@ -231,7 +231,7 @@ void DeviceNotifier::toolTipAboutToShow()
 
 void DeviceNotifier::toolTipHidden()
 {
-    Plasma::ToolTipManager::self()->setContent(this, Plasma::ToolTipManager::ToolTipContent());
+    Plasma::ToolTipManager::self()->setContent(this, Plasma::ToolTipManager::Content());
 }
 
 void DeviceNotifier::removeLastDeviceNotification(const QString &name)
