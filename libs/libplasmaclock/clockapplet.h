@@ -28,7 +28,6 @@
 #include <plasma/dialog.h>
 #include <plasma/popupapplet.h>
 #include <plasma/tooltipmanager.h>
-#include "ui_calendar.h"
 
 #include "plasmaclock_export.h"
 
