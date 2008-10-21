@@ -22,7 +22,7 @@
 
 #include <QtGui/QGraphicsWidget>
 
-#include <plasma/plasma_export.h>
+#include <plasmaclock_export.h>
 
 #include <kcalendarsystem.h>
 
@@ -34,7 +34,7 @@ namespace Plasma
 class CalendarTable;
 class CalendarPrivate;
 
-class PLASMA_EXPORT Calendar : public QGraphicsWidget
+class PLASMACLOCK_EXPORT Calendar : public QGraphicsWidget
 {
     Q_OBJECT
 
