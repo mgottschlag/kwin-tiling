@@ -20,6 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "networkinterface.h"
 #include "networkinterface_p.h"
+
+#include <arpa/inet.h>
+
 #include <KDebug>
 
 #include "dbus/nm-ip4-configinterface.h"
@@ -61,6 +64,8 @@ NMNetworkInterface::NMNetworkInterface(const QString & path, NMNetworkManager * 
 
 NMNetworkInterface::NMNetworkInterface(NMNetworkInterfacePrivate & dd, NMNetworkManager * manager, QObject * parent) : QObject(parent), d_ptr(&dd)
 {
+    qDBusRegisterMetaType<UIntList>();
+    qDBusRegisterMetaType<UIntListList>();
     Q_D(NMNetworkInterface);
     init();
     d->manager = manager;
@@ -137,7 +142,7 @@ Solid::Control::IPv4Config NMNetworkInterface::ipV4Config() const
             QList<Solid::Control::IPv4Address> addressObjects;
             foreach (UIntList addressList, addresses) {
                 if ( addressList.count() == 3 ) {
-                    Solid::Control::IPv4Address addr(addressList[0], addressList[1], addressList[2]);
+                    Solid::Control::IPv4Address addr(htonl(addressList[0]), htonl(addressList[1]), htonl(addressList[2]));
                     addressObjects.append(addr);
                 }
             }
