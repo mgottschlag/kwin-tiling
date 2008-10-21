@@ -120,7 +120,7 @@ int NMAccessPoint::signalStrength() const
 void NMAccessPoint::propertiesChanged(const QVariantMap &properties)
 {
     QStringList propKeys = properties.keys();
-    kDebug(1441) << propKeys;
+    //kDebug(1441) << propKeys;
     QLatin1String flagsKey("Flags"),
                   wpaFlagsKey("WpaFlags"),
                   rsnFlagsKey("RsnFlags"),
@@ -178,7 +178,7 @@ void NMAccessPoint::propertiesChanged(const QVariantMap &properties)
     it = properties.find(strengthKey);
     if (it != properties.end()) {
         d->signalStrength = it->toInt();
-        kDebug(1441) << "UNI: " << d->uni << "MAC: " << d->hardwareAddress << "SignalStrength: " << d->signalStrength;
+        //kDebug(1441) << "UNI: " << d->uni << "MAC: " << d->hardwareAddress << "SignalStrength: " << d->signalStrength;
         emit signalStrengthChanged(d->signalStrength);
         propKeys.removeOne(strengthKey);
     }
