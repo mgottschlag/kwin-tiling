@@ -21,7 +21,7 @@ Name[x-test]=xxPower Managementxx
 Name[zh_TW]=電源管理
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
-Icon=power
+Icon=preferences-system-power-management
 X-KDE-Library=plasma_engine_powermanagement
 
 X-KDE-PluginInfo-Author=
