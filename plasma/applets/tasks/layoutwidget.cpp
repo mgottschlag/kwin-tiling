@@ -247,7 +247,7 @@ void LayoutWidget::layoutItems()
     int maxRows;
     if (m_itemPositions.count() > 0) {
         QSizeF itemPreferredSize = m_itemPositions[0]->preferredSize();
-        int maxRows = qMin(qMax(1, int(geometry().height() / itemPreferredSize.height())), m_maxRows);
+        maxRows = qMin(qMax(1, int(geometry().height() / itemPreferredSize.height())), m_maxRows);
     } else {
         maxRows = m_maxRows;
     }
@@ -257,11 +257,11 @@ void LayoutWidget::layoutItems()
     kDebug() << "Laying out with" << columns << maxRows;
 
     if (columns) {
-        m_columnWidth = geometry().size().width()/columns;
+        m_columnWidth = qMax(1, int(geometry().size().width() / columns));
         kDebug() << "column width set to " << m_columnWidth;
     }
 
-    m_rowHeight = geometry().height()/maxRows;
+    m_rowHeight = qMax(1, int(geometry().height() / maxRows));
 
    int numberOfItems = 0;
    foreach (AbstractTaskItem *item, m_itemPositions) {
