@@ -173,7 +173,7 @@ void DesktopView::setContainment(Plasma::Containment *containment)
     }
 
     Plasma::ZoomLevel zoomLevel = PlasmaApp::self()->desktopZoomLevel();
-    if (zoomLevel == Plasma::DesktopZoom) {
+    if (zoomLevel == Plasma::DesktopZoom && containment) {
         //make sure actions are up-to-date
         //this is icky but necessary to have the toolbox show the right actions for the zoom level
         containment->enableAction("zoom in", false);
