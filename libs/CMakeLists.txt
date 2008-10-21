@@ -1,6 +1,7 @@
 add_subdirectory(kdm)
 add_subdirectory(solid)
 add_subdirectory(plasma)
+add_subdirectory(libplasmaclock)
 if(NOT WIN32)
  add_subdirectory(taskmanager)
  add_subdirectory(ksysguard)

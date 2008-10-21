@@ -93,17 +93,17 @@ ClockApplet::~ClockApplet()
 
 void ClockApplet::toolTipAboutToShow()
 {
-    updateToolTipContent();
+    updateContent();
 }
 
 void ClockApplet::toolTipHidden()
 {
-    Plasma::ToolTipManager::self()->setToolTipContent(this);
+    Plasma::ToolTipManager::self()->setContent(this);
 }
 
-void ClockApplet::updateToolTipContent()
+void ClockApplet::updateContent()
 {
-    Plasma::ToolTipManager::ToolTipContent tipData;
+    Plasma::ToolTipManager::Content tipData;
 
     {
         // the main text contains the current timezone's time and date
@@ -127,7 +127,7 @@ void ClockApplet::updateToolTipContent()
     tipData.subText = subText;
 
     // query for custom content
-    Plasma::ToolTipManager::ToolTipContent customContent = toolTipContent();
+    Plasma::ToolTipManager::Content customContent = toolTipContent();
     if (customContent.image.isNull()) {
         tipData.image = KIcon("chronometer").pixmap(IconSize(KIconLoader::Desktop));
     } else {
@@ -144,12 +144,12 @@ void ClockApplet::updateToolTipContent()
         tipData.subText = customContent.subText + "<br>" + tipData.subText;
     }
 
-    Plasma::ToolTipManager::self()->setToolTipContent(this, tipData);
+    Plasma::ToolTipManager::self()->setContent(this, tipData);
 }
 
-Plasma::ToolTipManager::ToolTipContent ClockApplet::toolTipContent()
+Plasma::ToolTipManager::Content ClockApplet::toolTipContent()
 {
-    return Plasma::ToolTipManager::ToolTipContent();
+    return Plasma::ToolTipManager::Content();
 }
 
 void ClockApplet::createConfigurationInterface(KConfigDialog *parent)

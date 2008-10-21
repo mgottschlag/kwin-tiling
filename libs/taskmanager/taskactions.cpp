@@ -307,7 +307,7 @@ GroupingStrategyMenu::GroupingStrategyMenu(QWidget *parent, AbstractGroupableIte
 }
 
 
-BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QList <QAction*> visualizationActions)
+BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QList<QAction *> visualizationActions)
     : QMenu(parent)
 {
     Q_ASSERT(item);
@@ -339,7 +339,7 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QL
         }
     }
 
-    foreach(QAction *action, visualizationActions) {
+    foreach (QAction *action, visualizationActions) {
         addAction(action);
     }
 
