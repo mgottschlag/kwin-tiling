@@ -71,6 +71,7 @@ public:
     
     /** Maximum number of Rows the group will have */
     int maxRows();
+    //TODO remove and calculate reasonable value in the layout itself
     void setMaxRows(int);
 
 
@@ -95,6 +96,7 @@ signals:
     /** Emitted when a window is selected for activation, minimization, iconification */
     void groupSelected(TaskGroupItem *);
     void sizeHintChanged(Qt::SizeHint);
+    /** informs the LayoutWidget about changes */
     void changed();
 
 public slots:
@@ -128,9 +130,6 @@ protected:
 protected slots:
     virtual void wheelEvent(QGraphicsSceneWheelEvent *event);
 
-private:
-    void layoutTaskItem(AbstractTaskItem* item, const QPointF &pos);
-
 private slots:
     void updateTask(::TaskManager::TaskChanges changes);
 
@@ -147,7 +146,9 @@ private slots:
     
 
 private:
+    void layoutTaskItem(AbstractTaskItem* item, const QPointF &pos);
     void setSplitIndex(int position);
+
     GroupPtr m_group;
     QList<AbstractTaskItem*> m_groupMembers;
     LayoutWidget *m_layoutWidget;

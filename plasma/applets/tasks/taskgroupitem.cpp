@@ -124,13 +124,10 @@ void TaskGroupItem::setSplitIndex(int position)
 
 TaskGroupItem * TaskGroupItem::splitGroup(int position)
 {
-    //unsplitGroup();//TODO replace by just updating the splitIndex if possible
     kDebug() << "split position" << position;
     
-   // QList <AbstractTaskItem*> itemList;
     for (int i = position ; i < m_groupMembers.size() ; i++) {
         m_layoutWidget->removeTaskItem(m_groupMembers.at(i));
-        //itemList.append(m_groupMembers.at(i));
     }
 
     for (int i = m_splitPosition ; i < position ; i++) {
@@ -139,7 +136,6 @@ TaskGroupItem * TaskGroupItem::splitGroup(int position)
 
     if (!m_childSplitGroup) {
         kDebug() << "Normal scene " << scene();
-        //m_childSplitGroup = new  SplitGroupItem(this, m_applet, true, m_group);
           m_childSplitGroup = new  TaskGroupItem(this, m_applet, true);
           m_childSplitGroup->setSplitGroup(m_group);
     }
@@ -481,7 +477,7 @@ void TaskGroupItem::expand()
 
     //kDebug();
     Q_ASSERT(m_group);
-    m_layoutWidget = new LayoutWidget(this, m_applet, m_group);
+    m_layoutWidget = new LayoutWidget(this, m_applet);
     m_layoutWidget->setOrientation(m_applet->formFactor());
     m_layoutWidget->setMaximumRows(m_maximumRows);
     m_isCollapsed = false;
@@ -533,7 +529,7 @@ void TaskGroupItem::updatePreferredSize()
     if (layout()) {
         setPreferredSize(layout()->preferredSize());
         layout()->invalidate();
-        kDebug() << "expanded group" << layout()->preferredSize();
+        //kDebug() << "expanded group" << layout()->preferredSize();
     } else {
         //FIXME: copypaste from abstracttaskitem: to be done better with proper sizeHint()
         QFontMetrics fm(KGlobalSettings::taskbarFont());

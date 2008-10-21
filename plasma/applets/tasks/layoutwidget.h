@@ -48,7 +48,7 @@ class LayoutWidget : public QObject, public QGraphicsGridLayout
     Q_OBJECT
 
 public:
-    LayoutWidget(TaskGroupItem * parent, Tasks *applet, TaskManager::TaskGroup *group);
+    LayoutWidget(TaskGroupItem * parent, Tasks *applet);
     ~LayoutWidget();
 
     void addTaskItem(AbstractTaskItem*);
@@ -92,7 +92,6 @@ private:
     bool m_hasSpacer;
     QGraphicsWidget *m_spacer;
 
-    TaskManager::TaskGroup *m_group;
     TaskGroupItem *m_groupItem;
     QList <AbstractTaskItem*> m_itemPositions;
 
@@ -103,8 +102,6 @@ private:
     int m_maxRows;
 
     Tasks *m_applet;
-    int m_columnWidth;
-    int m_rowHeight;
 };
 
 #endif
