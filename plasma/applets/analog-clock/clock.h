@@ -37,7 +37,7 @@
 
 #include "libplasmaclock/clockapplet.h"
 #include "ui_clockConfig.h"
-#include "ui_calendar.h"
+#include "libplasmaclock/ui_calendar.h"
 
 class QTimer;
 

@@ -29,7 +29,7 @@
 #include <plasma/dialog.h>
 
 #include "ui_clockConfig.h"
-#include "ui_calendar.h"
+#include "libplasmaclock/ui_calendar.h"
 #include "libplasmaclock/clockapplet.h"
 
 class Clock : public ClockApplet

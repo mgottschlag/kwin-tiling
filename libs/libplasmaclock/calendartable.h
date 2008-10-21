@@ -22,7 +22,7 @@
 
 #include <QtGui/QGraphicsWidget>
 
-#include <plasmaclock_export.h>
+#include "plasmaclock_export.h"
 
 #include <kcalendarsystem.h>
 
