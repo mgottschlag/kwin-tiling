@@ -79,7 +79,6 @@ void LauncherApplet::Private::createLauncher()
 
 void LauncherApplet::Private::initToolTip()
 {
-    Plasma::ToolTipManager::self()->registerWidget(q);
     Plasma::ToolTipManager::ToolTipContent data;
     data.mainText = i18n("Kickoff Application Launcher");
     data.subText = i18n("Favorites, applications, computer places, recently used items and desktop sessions");
@@ -114,9 +113,8 @@ void LauncherApplet::init()
     d->actions.append(d->switcher);
     connect(d->switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
 
-    d->initToolTip();
-
     constraintsEvent(Plasma::ImmutableConstraint);
+    Plasma::ToolTipManager::self()->registerWidget(this);
 }
 
 void LauncherApplet::constraintsEvent(Plasma::Constraints constraints)
@@ -163,11 +161,18 @@ void LauncherApplet::createConfigurationInterface(KConfigDialog *parent)
 void LauncherApplet::popupEvent(bool show)
 {
     if (show) {
-        Plasma::ToolTipManager::self()->setToolTipActivated(this, false);
+        Plasma::ToolTipManager::self()->setToolTipContent(this);
         d->launcher->setLauncherOrigin(popupPlacement(), location());
         d->createLauncher();
+    }
+}
+
+void LauncherApplet::toolTipAboutToShow()
+{
+    if (d->launcher->isVisible()) {
+        Plasma::ToolTipManager::self()->setToolTipContent(this);
     } else {
-        Plasma::ToolTipManager::self()->setToolTipActivated(this, true);
+        d->initToolTip();
     }
 }
 
