@@ -53,6 +53,7 @@ public:
     uint                    maxSourceCount () const;
     QString                 icon () const;
     const Plasma::Package*  package () const;
+    QString pluginName() const;
 
 signals:
     void                    sourceAdded (const QString& source);
