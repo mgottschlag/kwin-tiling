@@ -71,6 +71,10 @@ ThemeModel::ThemeModel( QObject *parent )
 
 ThemeModel::~ThemeModel()
 {
+    foreach (const QString& key, m_themes.keys()) {
+        delete m_themes[key].svg;
+    }
+    m_themes.clear();
 }
 
 void ThemeModel::reload()
