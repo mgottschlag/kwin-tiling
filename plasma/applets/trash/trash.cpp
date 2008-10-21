@@ -234,9 +234,9 @@ void Trash::updateIcon()
     data.image = m_icon->icon().pixmap(IconSize(KIconLoader::Desktop));
 
     if (!m_showText) {
-        Plasma::ToolTipManager::self()->setToolTipContent(this, data);
+        Plasma::ToolTipManager::self()->setContent(this, data);
     } else {
-        Plasma::ToolTipManager::self()->setToolTipContent(this, Plasma::ToolTipManager::ToolTipContent());
+        Plasma::ToolTipManager::self()->setContent(this, Plasma::ToolTipManager::ToolTipContent());
     }
 
     emptyTrash->setEnabled(m_count>0);

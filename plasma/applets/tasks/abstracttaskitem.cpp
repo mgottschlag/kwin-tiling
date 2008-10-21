@@ -140,7 +140,7 @@ void AbstractTaskItem::toolTipHidden()
 {
     m_showingTooltip = false;
     Plasma::ToolTipManager::ToolTipContent data;
-    Plasma::ToolTipManager::self()->setToolTipContent(this, data);
+    Plasma::ToolTipManager::self()->setContent(this, data);
 }
 
 void AbstractTaskItem::queueUpdate()

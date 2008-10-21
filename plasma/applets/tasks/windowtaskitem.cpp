@@ -196,7 +196,7 @@ void WindowTaskItem::updateToolTip()
     data.image = m_task->task()->icon(KIconLoader::SizeSmall, KIconLoader::SizeSmall, false);
     data.windowToPreview = m_task->task()->window();
 
-    Plasma::ToolTipManager::self()->setToolTipContent(this, data);
+    Plasma::ToolTipManager::self()->setContent(this, data);
 }
 
 void WindowTaskItem::setStartupTask(TaskItem *task)

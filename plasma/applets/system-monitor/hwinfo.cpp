@@ -140,7 +140,7 @@ void HWInfo::dataUpdated(const QString& source,
         Plasma::ToolTipManager::ToolTipContent data;
         data.mainText = i18n("Hardware Info");
         data.subText = html;
-        Plasma::ToolTipManager::self()->setToolTipContent(m_icon, data);
+        Plasma::ToolTipManager::self()->setContent(m_icon, data);
     }
 }
 

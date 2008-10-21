@@ -226,12 +226,12 @@ void DeviceNotifier::toolTipAboutToShow()
         toolTip.image = KIcon("device-notifier").pixmap(IconSize(KIconLoader::Desktop));
     }
 
-    Plasma::ToolTipManager::self()->setToolTipContent(this, toolTip);
+    Plasma::ToolTipManager::self()->setContent(this, toolTip);
 }
 
 void DeviceNotifier::toolTipHidden()
 {
-    Plasma::ToolTipManager::self()->setToolTipContent(this, Plasma::ToolTipManager::ToolTipContent());
+    Plasma::ToolTipManager::self()->setContent(this, Plasma::ToolTipManager::ToolTipContent());
 }
 
 void DeviceNotifier::removeLastDeviceNotification(const QString &name)

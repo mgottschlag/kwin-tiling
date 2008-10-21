@@ -83,7 +83,7 @@ void LauncherApplet::Private::initToolTip()
     data.mainText = i18n("Kickoff Application Launcher");
     data.subText = i18n("Favorites, applications, computer places, recently used items and desktop sessions");
     data.image = q->popupIcon().pixmap(IconSize(KIconLoader::Desktop));
-    Plasma::ToolTipManager::self()->setToolTipContent(q, data);
+    Plasma::ToolTipManager::self()->setContent(q, data);
 }
 
 LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
@@ -161,7 +161,7 @@ void LauncherApplet::createConfigurationInterface(KConfigDialog *parent)
 void LauncherApplet::popupEvent(bool show)
 {
     if (show) {
-        Plasma::ToolTipManager::self()->setToolTipContent(this);
+        Plasma::ToolTipManager::self()->setContent(this);
         d->launcher->setLauncherOrigin(popupPlacement(), location());
         d->createLauncher();
     }
@@ -170,7 +170,7 @@ void LauncherApplet::popupEvent(bool show)
 void LauncherApplet::toolTipAboutToShow()
 {
     if (d->launcher->isVisible()) {
-        Plasma::ToolTipManager::self()->setToolTipContent(this);
+        Plasma::ToolTipManager::self()->setContent(this);
     } else {
         d->initToolTip();
     }

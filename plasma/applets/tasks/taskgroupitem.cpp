@@ -242,7 +242,7 @@ void TaskGroupItem::updateToolTip()
 //    data.image = m_group->icon().pixmap(QSize::small);
 //    data.windowToPreview = m_task->window();
 
-    Plasma::ToolTipManager::self()->setToolTipContent(this, data);
+    Plasma::ToolTipManager::self()->setContent(this, data);
 }
 
 void TaskGroupItem::reload()
