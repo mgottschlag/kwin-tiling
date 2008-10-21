@@ -1,7 +1,15 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Favicons
+Name[pt]='Favicons'
+Name[pt_BR]='Favicons'
+Name[sv]=Favoritikoner
+Name[uk]=Піктограми «Вибраного»
 Comment=Data Engine for getting favicons of web sites
+Comment[pt]=Um motor de dados para obter os 'favicons' das páginas Web
+Comment[pt_BR]=Um motor de dados para obter os 'favicons' das páginas Web
+Comment[sv]=Datagränssnitt för att hämta favoritikoner för webbplatser
+Comment[uk]=Рушій даних для отримання піктограм для веб-сайтів
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=view-web-browser-dom-tree

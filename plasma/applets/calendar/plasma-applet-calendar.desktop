@@ -1,6 +1,14 @@
 [Desktop Entry]
 Name=Calendar
+Name[pt]=Calendário
+Name[pt_BR]=Calendário
+Name[sv]=Kalender
+Name[uk]=Календар
 Comment=View and pick dates from the calendar
+Comment[pt]=Ver e escolher datas do calendário
+Comment[pt_BR]=Ver e escolher datas do calendário
+Comment[sv]=Visa och välj datum i kalendern
+Comment[uk]=Перегляньте і оберіть дати з календаря
 Type=Service
 Icon=view-pim-calendar
 X-KDE-ServiceTypes=Plasma/Applet

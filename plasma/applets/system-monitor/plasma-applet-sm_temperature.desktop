@@ -1,7 +1,15 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=System Monitor - Temperature
+Name[pt]=Monitor do Sistema - Temperatura
+Name[pt_BR]=Monitor do Sistema - Temperatura
+Name[sv]=Systemövervakare - Temperatur
+Name[uk]=Монітор системи — Температура
 Comment=A system temperature monitor
+Comment[pt]=Um monitor da temperatura do sistema
+Comment[pt_BR]=Um monitor da temperatura do sistema
+Comment[sv]=Övervakning av systemtemperatur
+Comment[uk]=Монітор системної температури
 Type=Service
 Icon=media-flash
 ServiceTypes=Plasma/Applet

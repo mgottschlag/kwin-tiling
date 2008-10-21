@@ -1,6 +1,14 @@
 [Desktop Entry]
 Name=Activity Bar
+Name[pt]=Barra de Actividades
+Name[pt_BR]=Barra de Actividades
+Name[sv]=Aktivitetsrad
+Name[uk]=Панель дій
 Comment=Tabbar to switch activities
+Comment[pt]=Barra de páginas para mudar de actividades
+Comment[pt_BR]=Barra de páginas para mudar de actividades
+Comment[sv]=Flikrad för att byta aktiviteter
+Comment[uk]=Панель з вкладками для перемикання дій
 Type=Service
 Icon=tab-new
 

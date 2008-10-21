@@ -1,7 +1,15 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=System Monitor - Hard Disk
+Name[pt]=Monitor do Sistema - Disco Rígido
+Name[pt_BR]=Monitor do Sistema - Disco Rígido
+Name[sv]=Systemövervakare - Hårddisk
+Name[uk]=Монітор системи — Жорсткий диск
 Comment=A hard disk usage monitor
+Comment[pt]=Um monitor da utilização do disco rígido
+Comment[pt_BR]=Um monitor da utilização do disco rígido
+Comment[sv]=Övervakning av hårddiskanvändning
+Comment[uk]=Монітор використання жорсткого диска
 Type=Service
 Icon=drive-harddisk
 ServiceTypes=Plasma/Applet

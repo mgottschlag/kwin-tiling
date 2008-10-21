@@ -1,7 +1,15 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=System Monitor - Hardware Info
+Name[pt]=Monitor do Sistema - Informação do 'Hardware'
+Name[pt_BR]=Monitor do Sistema - Informação do 'Hardware'
+Name[sv]=Systemövervakare - Hårdvaruinformation
+Name[uk]=Монітор системи — Інформація про обладнання
 Comment=Show hardware info
+Comment[pt]=Mostrar informações sobre o 'hardware'
+Comment[pt_BR]=Mostrar informações sobre o 'hardware'
+Comment[sv]=Visa hårdvaruinformation
+Comment[uk]=Показати інформацію про обладнання
 Type=Service
 Icon=hwinfo
 ServiceTypes=Plasma/Applet
