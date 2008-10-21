@@ -168,20 +168,23 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & (Plasma::FormFactorConstraint | Plasma::SizeConstraint)) {
         if (formFactor() == Plasma::Vertical) {
             if (!m_showMultipleBatteries) {
-                setMinimumHeight(qMax(m_textRect.height(), contentsRect().width()));
+                setMinimumHeight(qMax(m_textRect.height(), size().width()));
             } else {
-                setMinimumHeight(qMax(m_textRect.height(), contentsRect().width()*m_numOfBattery));
+                setMinimumHeight(qMax(m_textRect.height(), size().width()*m_numOfBattery));
             }
+            setMinimumWidth(0);
             //kDebug() << "Vertical FormFactor";
         } else if (formFactor() == Plasma::Horizontal) {
             if (!m_showMultipleBatteries) {
-                setMinimumWidth(qMax(m_textRect.width(), contentsRect().height()));
+                setMinimumWidth(qMax(m_textRect.width(), size().height()));
             } else {
-                setMinimumWidth(qMax(m_textRect.width(), contentsRect().height()*m_numOfBattery));
+                setMinimumWidth(qMax(m_textRect.width(), size().height()*m_numOfBattery));
             }
+            setMinimumHeight(0);
             //kDebug() << "Horizontal FormFactor" << m_textRect.width() << contentsRect().height();
         } else {
             setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+            setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
         }
     }
     if (!m_showMultipleBatteries || m_numOfBattery < 2) {
