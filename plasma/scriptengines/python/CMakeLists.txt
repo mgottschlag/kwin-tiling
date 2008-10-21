@@ -1,9 +1,4 @@
-
-# set up
-#cmake_minimum_required(VERSION 2.6)
-
 project(plasma-python)
-#set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 
 # compile SIP
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}  ${SIP_INCLUDE_DIR} ${PYTHON_INCLUDE_PATH}
@@ -47,16 +42,21 @@ install(FILES plasma.py DESTINATION ${PYTHON_SITE_PACKAGES_DIR})
 
 ###########################################################################
 # Test plasmoids
+OPTION(INSTALL_PYTHON_TEST_PLASMA "Install test python applet" OFF)
 
-# install the test plugin
-#install(FILES test/plasma-hello-python-world.desktop DESTINATION ${SERVICES_INSTALL_DIR})
-#install(DIRECTORY test/plasma-hello-python-world DESTINATION ${DATA_INSTALL_DIR}/plasma/plasmoids)
+if(INSTALL_PYTHON_TEST_PLASMA )
 
-#install(FILES test/plasma-applet-pyclock.desktop DESTINATION ${SERVICES_INSTALL_DIR})
-#install(DIRECTORY test/plasma-pyclock DESTINATION ${DATA_INSTALL_DIR}/plasma/plasmoids)
+ # install the test plugin
+ install(FILES test/plasma-hello-python-world.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+ install(DIRECTORY test/plasma-hello-python-world DESTINATION ${DATA_INSTALL_DIR}/plasma/plasmoids)
 
-#install(FILES test/plasma-nestclock.desktop DESTINATION ${SERVICES_INSTALL_DIR})
-#install(DIRECTORY test/plasma-nestclock DESTINATION ${DATA_INSTALL_DIR}/plasma/plasmoids)
+ install(FILES test/plasma-applet-pyclock.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+ install(DIRECTORY test/plasma-pyclock DESTINATION ${DATA_INSTALL_DIR}/plasma/plasmoids)
 
-#install(FILES test/plasma-dataengine-pytime.desktop DESTINATION ${SERVICES_INSTALL_DIR})
-#install(DIRECTORY test/plasma-dataengine-pytime DESTINATION ${DATA_INSTALL_DIR}/plasma/engines)
+ install(FILES test/plasma-nestclock.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+ install(DIRECTORY test/plasma-nestclock DESTINATION ${DATA_INSTALL_DIR}/plasma/plasmoids)
+
+ install(FILES test/plasma-dataengine-pytime.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+ install(DIRECTORY test/plasma-dataengine-pytime DESTINATION ${DATA_INSTALL_DIR}/plasma/engines)
+
+endif(INSTALL_PYTHON_TEST_PLASMA)
