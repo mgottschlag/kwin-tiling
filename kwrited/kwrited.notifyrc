@@ -1,0 +1,9 @@
+[Global]
+IconName=utilities-terminal
+Comment=KDE write daemon
+
+[Event/NewMessage]
+Name=New message received
+Comment=The daemon received a new message sent with wall(1) or write(1)
+Sound=KDE-Sys-App-Message.ogg
+Action=Popup|Sound

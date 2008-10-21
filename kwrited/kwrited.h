@@ -1,6 +1,7 @@
 /*
     kwrited is a write(1) receiver for KDE.
     Copyright 1997,1998 by Lars Doelle <lars.doelle@on-line.de>
+    Copyright 2008 by George Kiagiadakis <gkiagia@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,24 +23,20 @@
 #define KWRITED_H
 
 #include <kdedmodule.h>
-#include <QtGui/QTextEdit>
-#include <QtGui/QMenu>
+class KPtyDevice;
 
-class KPty;
-
-class KWrited : public QTextEdit
-{ Q_OBJECT
+class KWrited : public QObject
+{
+  Q_OBJECT
 public:
   KWrited();
  ~KWrited();
-protected:
-  virtual void contextMenuEvent(QContextMenuEvent *);
 
 private Q_SLOTS:
-  void block_in(int fd);
-  void clearText(void);
+  void block_in();
+
 private:
-  KPty* pty;
+  KPtyDevice* pty;
 };
 
 class KWritedModule : public KDEDModule

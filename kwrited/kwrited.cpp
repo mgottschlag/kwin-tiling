@@ -1,6 +1,7 @@
 /*
     kwrited is a write(1) receiver for KDE.
     Copyright 1997,1998 by Lars Doelle <lars.doelle@on-line.de>
+    Copyright 2008 by George Kiagiadakis <gkiagia@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,29 +22,10 @@
 // Own
 #include "kwrited.h"
 
-#include <QtCore/QSocketNotifier>
-#include <QtGui/QKeyEvent>
-
-#include <kuniqueapplication.h>
-#include <kcmdlineargs.h>
-#include <klocale.h>
-#include <kglobalsettings.h>
 #include <kdebug.h>
-#include <kcrash.h>
-#include <kpty.h>
+#include <kptydevice.h>
 #include <kuser.h>
-#include <kglobal.h>
-
-
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <signal.h>
-
-#ifdef Q_WS_X11
-#include <X11/Xlib.h>
-#include <fixx11h.h>
-#endif
+#include <knotification.h>
 
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
@@ -51,47 +33,17 @@
 K_PLUGIN_FACTORY(KWritedFactory,
                  registerPlugin<KWritedModule>();
     )
-K_EXPORT_PLUGIN(KWritedFactory("konsole"))
+K_EXPORT_PLUGIN(KWritedFactory("kwrited"))
 
 
-/* TODO
-   for anyone who likes to do improvements here, go ahead.
-   - check FIXMEs below
-   - add Menu
-     - accept messages (on/off)
-     - pop up on incoming messages
-     - clear messages
-     - allow max. lines
-   - add DBus interface?
-   - add session awareness.
-   - add client complements.
-   - kwrited is disabled by default if built without utempter,
-     see ../Makefile.am - kwrited doesn't seem to work well without utempter
-*/
-
-KWrited::KWrited() : QTextEdit()
+KWrited::KWrited() : QObject()
 {
-  int pref_width, pref_height;
-
-  setFont(KGlobalSettings::fixedFont());
-  pref_width = (2 * KGlobalSettings::desktopGeometry(0).width()) / 3;
-  pref_height = fontMetrics().lineSpacing() * 10;
-  setMinimumWidth(pref_width);
-  setMinimumHeight(pref_height);
-  setReadOnly(true);
-//  setFocusPolicy(QWidget::NoFocus);
-//  setWordWrap(QTextEdit::WidgetWidth);
-//  setTextFormat(Qt::PlainText);
-
-  pty = new KPty();
+  pty = new KPtyDevice();
   pty->open();
   pty->login(KUser().loginName().toLocal8Bit().data(), qgetenv("DISPLAY"));
-  QSocketNotifier *sn = new QSocketNotifier(pty->masterFd(), QSocketNotifier::Read, this);
-  connect(sn, SIGNAL(activated(int)), this, SLOT(block_in(int)));
+  connect(pty, SIGNAL(readyRead()), this, SLOT(block_in()));
 
-  QString txt = i18n("KWrited - Listening on Device %1", pty->ttyName());
-  setWindowTitle(txt);
-  puts(txt.toLocal8Bit().data());
+  kDebug() << "listening on device" << pty->ttyName();
 }
 
 KWrited::~KWrited()
@@ -100,45 +52,29 @@ KWrited::~KWrited()
     delete pty;
 }
 
-void KWrited::block_in(int fd)
+void KWrited::block_in()
 {
-  char buf[4096];
-  int len = read(fd, buf, 4096);
-  if (len <= 0)
-     return;
+  QByteArray buf = pty->readAll();
+  QString msg = QString::fromLocal8Bit( buf.constData(), buf.size() );
+  msg.remove('\r');
+  msg.remove('\a');
 
-  insertPlainText( QString::fromLocal8Bit( buf, len ).remove('\r') );
-  show();
-  raise();
-}
-
-void KWrited::clearText()
-{
-   clear();
-}
-
-void KWrited::contextMenuEvent(QContextMenuEvent * e)
-{
-   QMenu *menu = createStandardContextMenu();
-   menu->addAction("Clear Messages");
-   // Add connection and shortcut if possible
-   menu->exec(e->globalPos());
-   delete menu;
+  KNotification *notification = new KNotification("NewMessage", 0, KNotification::Persistent);
+  notification->setComponentData( KWritedFactory::componentData() );
+  notification->setText( msg );
+  connect(notification, SIGNAL(closed()), notification, SLOT(deleteLater()) );
+  notification->sendEvent();
 }
 
 KWritedModule::KWritedModule(QObject* parent, const QList<QVariant>&)
     : KDEDModule(parent)
 {
-    // Done by the factory now
-    //KGlobal::locale()->insertCatalog("konsole");
     pro = new KWrited;
 }
 
 KWritedModule::~KWritedModule()
 {
     delete pro;
-    // Done by the factory now
-    //KGlobal::locale()->removeCatalog("konsole");
 }
 
 #include "kwrited.moc"
