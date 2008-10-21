@@ -335,8 +335,8 @@ void TaskGroupItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
     actionList.append(a);
 
     TaskManager::BasicMenu menu(qobject_cast<QWidget*>(this), m_group, &m_applet->groupManager(), actionList);
-
-    menu.exec(e->screenPos());
+    menu.adjustSize();
+    menu.exec(Plasma::popupPosition(this, menu.size()));
 }
 
 
@@ -428,7 +428,6 @@ void TaskGroupItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 { //TODO add delay so we can still drag group items
     if (event->buttons() & Qt::LeftButton) {
     if (m_applet->groupManager().sortingStrategy() == TaskManager::GroupManager::ManualSorting || m_applet->groupManager().groupingStrategy() == TaskManager::GroupManager::ManualGrouping) {
-        m_popupPos = event->screenPos();
         if (!m_popupMenuTimer) {
         m_popupMenuTimer = new QTimer(this);
         m_popupMenuTimer->setSingleShot(true);
@@ -437,7 +436,6 @@ void TaskGroupItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         }
         m_popupMenuTimer->start(300);
     } else {
-        m_popupPos = event->screenPos();
         popupMenu();
     }
     }
@@ -460,7 +458,8 @@ void TaskGroupItem::popupMenu()
 {
     if (m_isCollapsed) {
         TaskManager::GroupPopupMenu menu(qobject_cast<QWidget*>(this), m_group,  &m_applet->groupManager());
-        menu.exec(m_popupPos);
+        menu.adjustSize();
+        menu.exec(Plasma::popupPosition(this, menu.size()));
     }
 }
 

@@ -153,7 +153,6 @@ private:
     LayoutWidget *m_layoutWidget;
     QTimer *m_popupMenuTimer;
     QHash <int, Order> m_taskOrder;
-    QPoint m_popupPos;
     int m_lastActivated;
     int m_activeTaskIndex;
     int m_maximumRows;

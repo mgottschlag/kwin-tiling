@@ -270,7 +270,8 @@ void WindowTaskItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
     }
 
     TaskManager::BasicMenu menu(0, m_task, &m_applet->groupManager(), actionList);
-    menu.exec(e->screenPos());
+    menu.adjustSize();
+    menu.exec(Plasma::popupPosition(this, menu.size()));
     delete a;
 }
 
