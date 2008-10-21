@@ -34,7 +34,7 @@ X-Plasma-API=python
 
 X-KDE-PluginInfo-Author=Simon Edwards
 X-KDE-PluginInfo-Email=simon@simonzone.com
-X-KDE-PluginInfo-Name=pytime
+X-KDE-PluginInfo-Name=plasma-dataengine-pytime
 X-KDE-PluginInfo-Version=1.0
 X-KDE-PluginInfo-Website=http://plasma.kde.org/
 X-KDE-PluginInfo-Category=Python Date and Time

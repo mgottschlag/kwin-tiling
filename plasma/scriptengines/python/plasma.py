@@ -83,13 +83,13 @@ class DataEngine(QObject):
         QObject.__init__(self, parent)
         self.dataengine = None
 
-    def setDataEngine(self,dataengine):
-        self.dataengine = dataengine
+    def setDataEngineScript(self,dataEngineScript):
+        self.data_engine_script = dataEngineScript
 
     def __getattr__(self, key):
         # provide transparent access to the real dataengine instance
         #if self._forward_to_applet:
-        return getattr(self.dataengine, key)
+        return getattr(self.data_engine_script, key)
         #else:
         #    raise AttributeError(key)
 

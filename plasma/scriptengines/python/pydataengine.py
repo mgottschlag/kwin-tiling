@@ -29,16 +29,32 @@ class PythonDataEngineScript(Plasma.DataEngineScript):
         self.initialized = False
 
     def init(self):
-        print("Script Name: " + self.dataEngine().name()))
-        
-        print("Mainscript: " + self.mainScript())
-        return False
-        #self.pydataengine = klass.new(self)
-        #self.pydataengine.init()
-        #return True
+        print("Script Name: " + self.dataEngine().name())
+
+        self.m_moduleName = str(self.dataEngine().pluginName())
+        print("pluginname: " + str(self.dataEngine().pluginName()))
+        plugin_name = str(self.dataEngine().pluginName()).replace('-','_')
+
+        self.importer.register_top_level(plugin_name, str(self.dataEngine().package().path()))
+
+        print("mainscript: " + str(self.dataEngine().package().filePath("mainscript")))
+        print("package path: " + str(self.dataEngine().package().path()))
+
+        # import the code at the file name reported by mainScript()
+        self.module = __import__(plugin_name+'.main')
+        self.pydataengine = self.module.main.CreateDataEngine(None)
+        #self.pydataengine.setDataEngine(self.dataEngine())
+        self.pydataengine.setDataEngineScript(self)
+        self.pydataengine.init()
+
+        self.initialized = True
+        return True
 
     def sourceRequestEvent(self,name):
-        self.pydataengine.sourceRequestEvent(name)
+        return self.pydataengine.sourceRequestEvent(name)
 
     def updateSourceEvent(self,source):
-        self.pydataengine.updateSourceEvent(source)
+        return self.pydataengine.updateSourceEvent(source)
+
+def CreatePlugin(widget_parent, parent, component_data):
+    return PythonDataEngineScript(parent)
