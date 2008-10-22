@@ -38,7 +38,6 @@ LayoutWidget::LayoutWidget(TaskGroupItem *parent, Tasks *applet)
 
 LayoutWidget::~LayoutWidget()
 {
-    setParent(0);
     //kDebug();
 }
 
