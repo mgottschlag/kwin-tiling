@@ -209,14 +209,6 @@ void WindowTaskItem::setStartupTask(TaskItem *task)
     connect(task, SIGNAL(gotTaskPointer()), this, SLOT(gotTaskPointer()));
     setText(task->startup()->text());
     setIcon(KIcon(task->startup()->icon()));
-#ifdef TOOLTIP_MANAGER
-    if (m_showTooltip) {
-        Plasma::ToolTipData tip;
-        tip.mainText = task->startup()->text();
-        tip.image = task->startup()->icon();
-        setToolTip(tip);
-    }
-#endif
 }
 
 void WindowTaskItem::gotTaskPointer()
