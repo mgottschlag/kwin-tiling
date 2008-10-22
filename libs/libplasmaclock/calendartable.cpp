@@ -461,6 +461,12 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
     //kDebug() << "exposed: " << option->exposedRect;
     for (int week = 0; week < 5; week++) {
         for (int weekDay = 0; weekDay < daysInWeek; weekDay++) {
+
+            // do not draw non-existent days
+            if ( !d->calendar->isValid(d->date.year(), d->date.month(), (week * 7) + (weekDay + 1))) {
+                continue;
+            }
+
             int x = cellX(weekDay);
             int y = cellY(week);
 
