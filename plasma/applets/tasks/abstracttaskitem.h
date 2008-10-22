@@ -52,10 +52,10 @@ class AbstractTaskItem : public QGraphicsWidget
     Q_OBJECT
 
 public:
-    /** Constructs a new representation for a abstract task. */
+    /** Constructs a new representation for an abstract task. */
     AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet, const bool showTooltip);
 
-     /** Destruct a new representation for a abstract task. */
+     /** Destruct the representation for an abstract task. */
     ~AbstractTaskItem();
 
     /** Switch on/off tooltips above tasks */
