@@ -154,7 +154,7 @@ void X11EmbedContainer::embedSystemTrayClient(WId clientId)
 
     // FIXME: This checks that the client is still valid. Qt won't pick it up
     // if the client closes before embedding completes. However, what happens
-    // if the client happens after this point? Should checks happen on a timer
+    // if the close happens after this point? Should checks happen on a timer
     // until embedding completes perhaps?
     if (!XGetWindowAttributes(QX11Info::display(), clientId, &d->attr)) {
         emit error(QX11EmbedContainer::Unknown);
