@@ -1,11 +1,15 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Favicons
+Name[el]=Αγαπημένα εικονίδια
+Name[gl]=Ícones de páxina web
 Name[pt]='Favicons'
 Name[pt_BR]='Favicons'
 Name[sv]=Favoritikoner
 Name[uk]=Піктограми «Вибраного»
 Comment=Data Engine for getting favicons of web sites
+Comment[el]=Μηχανή δεδομένων για ανάκτηση αγαπημένων εικονιδίων από ιστοσελίδες
+Comment[gl]=Motor de dados para obter os ícones de páxina dos sitios web
 Comment[pt]=Um motor de dados para obter os 'favicons' das páginas Web
 Comment[pt_BR]=Um motor de dados para obter os 'favicons' das páginas Web
 Comment[sv]=Datagränssnitt för att hämta favoritikoner för webbplatser

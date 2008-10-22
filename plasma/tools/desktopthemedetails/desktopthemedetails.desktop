@@ -10,11 +10,15 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=advanced-user-settings
 
 Name=Desktop Theme Details
+Name[el]=Λεπτομέρειες θέματος επιφάνειας εργασίας
+Name[gl]=Detalles do tema do escritorio
 Name[pt]=Detalhes do Tema do Ambiente de Trabalho
 Name[pt_BR]=Detalhes do Tema do Ambiente de Trabalho
 Name[sv]=Anpassa skrivbordstemat
 Name[uk]=Відомості щодо тем стільниці
 Comment=Customize individual desktop theme items
+Comment[el]=Προσαρμογή ανεξέρτητων αντικειμένων ενός θέματος της επιφάνειας εργασίας
+Comment[gl]=Personaliza os itens individuais do tema do escritorio
 Comment[pt]=Personalizar os itens individuais do tema do ambiente de trabalho
 Comment[pt_BR]=Personalizar os itens individuais do tema do ambiente de trabalho
 Comment[sv]=Individuell anpassning av skrivbordstemats objekt

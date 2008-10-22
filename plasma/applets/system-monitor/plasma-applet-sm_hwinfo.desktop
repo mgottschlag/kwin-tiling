@@ -1,11 +1,15 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=System Monitor - Hardware Info
+Name[el]=Επόπτης συστήματος - πληροφορίες υλικού
+Name[gl]=Vixiante do sistema - Información do hardware
 Name[pt]=Monitor do Sistema - Informação do 'Hardware'
 Name[pt_BR]=Monitor do Sistema - Informação do 'Hardware'
 Name[sv]=Systemövervakare - Hårdvaruinformation
 Name[uk]=Монітор системи — Інформація про обладнання
 Comment=Show hardware info
+Comment[el]=Εμφάνιση πληροφοριών υλικού
+Comment[gl]=Mostra información acerca do hardware
 Comment[pt]=Mostrar informações sobre o 'hardware'
 Comment[pt_BR]=Mostrar informações sobre o 'hardware'
 Comment[sv]=Visa hårdvaruinformation

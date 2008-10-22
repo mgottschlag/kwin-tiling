@@ -1,10 +1,14 @@
 [Desktop Entry]
 Name=Calendar
+Name[el]=Ημερολόγιο
+Name[gl]=Calendario
 Name[pt]=Calendário
 Name[pt_BR]=Calendário
 Name[sv]=Kalender
 Name[uk]=Календар
 Comment=View and pick dates from the calendar
+Comment[el]=Προβολή και επιλογή ημερομηνιών από το ημερολόγιο
+Comment[gl]=Ve e escolle datas do calendario
 Comment[pt]=Ver e escolher datas do calendário
 Comment[pt_BR]=Ver e escolher datas do calendário
 Comment[sv]=Visa och välj datum i kalendern

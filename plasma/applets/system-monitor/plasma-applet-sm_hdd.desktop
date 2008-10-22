@@ -1,11 +1,15 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=System Monitor - Hard Disk
+Name[el]=Επόπτης συστήματος - σκληρός δίσκος
+Name[gl]=Vixiante do sistema - Disco duro
 Name[pt]=Monitor do Sistema - Disco Rígido
 Name[pt_BR]=Monitor do Sistema - Disco Rígido
 Name[sv]=Systemövervakare - Hårddisk
 Name[uk]=Монітор системи — Жорсткий диск
 Comment=A hard disk usage monitor
+Comment[el]=Ένας επόπτης χρήσης του σκληρού δίσκου
+Comment[gl]=Un vixiante do uso do disco duro
 Comment[pt]=Um monitor da utilização do disco rígido
 Comment[pt_BR]=Um monitor da utilização do disco rígido
 Comment[sv]=Övervakning av hårddiskanvändning

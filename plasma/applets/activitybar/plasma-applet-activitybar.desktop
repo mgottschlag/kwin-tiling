@@ -1,10 +1,14 @@
 [Desktop Entry]
 Name=Activity Bar
+Name[el]=Γραμμή δραστηριότητας
+Name[gl]=Barra de actividades
 Name[pt]=Barra de Actividades
 Name[pt_BR]=Barra de Actividades
 Name[sv]=Aktivitetsrad
 Name[uk]=Панель дій
 Comment=Tabbar to switch activities
+Comment[el]=Γραμμή καρτελών για την εναλλαγή δραστηριότητας
+Comment[gl]=Barra de lingüetas para trocar entre actividades
 Comment[pt]=Barra de páginas para mudar de actividades
 Comment[pt_BR]=Barra de páginas para mudar de actividades
 Comment[sv]=Flikrad för att byta aktiviteter
