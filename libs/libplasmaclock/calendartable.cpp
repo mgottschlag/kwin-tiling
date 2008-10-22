@@ -401,6 +401,13 @@ void CalendarTable::paintCell(QPainter *p, int cell, int week, int weekDay, Cell
 {
     QString cellSuffix = cellSVGSuffix(cell, week, weekDay, type & NotInCurrentMonth, cellDate);
     d->svg->paint(p, QRectF(cellX(weekDay), cellY(week), d->cellW, d->cellH), cellSuffix);
+    p->save();
+    QFont font = p->font();
+    font.setBold(true);
+    p->setFont(font);
+    p->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+    p->drawText(QRectF(cellX(weekDay), cellY(week), d->cellW, d->cellH), Qt::AlignCenter, QString().setNum((week * 7) + (weekDay + 1)));
+    p->restore();
 }
 
 void CalendarTable::paintBorder(QPainter *p, int cell, int week, int weekDay, CellTypes type, const QDate &cellDate)
@@ -496,7 +503,7 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
 
     // Draw days
     if (option->exposedRect.intersects(QRect(r.x(), r.y(), r.width(), d->headerHeight))) {
-        p->setPen(Qt::white);
+        p->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::HighlightColor));
         int weekStartDay = d->calendar->weekStartDay();
         for (int i = 0; i < daysInWeek; i++){
             int weekDay = ((i + weekStartDay - 1) % daysInWeek) + 1;
