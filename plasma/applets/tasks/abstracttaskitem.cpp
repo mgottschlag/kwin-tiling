@@ -66,7 +66,6 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet, const
       m_showTooltip(showTooltip),
       m_showingTooltip(false)
 {
-    m_showTooltip = showTooltip;
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
     setAcceptsHoverEvents(true);
     setAcceptDrops(true);
@@ -87,7 +86,6 @@ AbstractTaskItem::~AbstractTaskItem()
 void AbstractTaskItem::setShowTooltip(const bool showit)
 {
     m_showTooltip = showit;
-    updateToolTip();
 }
 
 void AbstractTaskItem::setText(const QString &text)
@@ -136,8 +134,12 @@ AbstractTaskItem::TaskFlags AbstractTaskItem::taskFlags() const
 
 void AbstractTaskItem::toolTipAboutToShow()
 {
-    m_showingTooltip = true;
-    updateToolTip();
+    if (m_showTooltip) {
+        m_showingTooltip = true;
+        updateToolTip();
+    } else {
+        Plasma::ToolTipManager::self()->setContent(this);
+    }
 }
 
 void AbstractTaskItem::toolTipHidden()
@@ -208,7 +210,7 @@ void AbstractTaskItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if (QPoint(event->screenPos() - event->buttonDownScreenPos(Qt::LeftButton)).manhattanLength() < QApplication::startDragDistance()) {
         return;
      } //Wait a bit before starting drag
-    
+
   /*  if((m_applet->taskSortOrder() != Tasks::NoSorting) && (m_applet->taskSortOrder() != Tasks::GroupSorting)){ //FIXME check somhow if drag is allowed
         return;
     }*/
@@ -225,7 +227,7 @@ void AbstractTaskItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     drag->setMimeData(mimeData);
     drag->setPixmap(m_icon.pixmap(20));
    // drag->setDragCursor( set the correct cursor //TODO
-    drag->exec(); 
+    drag->exec();
 }
 
 void AbstractTaskItem::timerEvent(QTimerEvent *event)
@@ -279,11 +281,11 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     const qreal hoverAlpha = 0.4;
     bool hasSvg = false;
 
-    /*FIXME -could be done more elegant with caching in tasks in a qhash <size,svg>. 
-    -dont use size() directly because this introduces the blackline syndrom. 
+    /*FIXME -could be done more elegant with caching in tasks in a qhash <size,svg>.
+    -dont use size() directly because this introduces the blackline syndrom.
     -This line is only needed when we have different items in the taskbar because of an expanded group for example. otherwise the resizing in the resizeEvent is sufficient
     */
-    m_applet->resizeItemBackground(geometry().size().toSize()); 
+    m_applet->resizeItemBackground(geometry().size().toSize());
     Plasma::PanelSvg *itemBackground = m_applet->itemBackground();
 
     if ((m_flags & TaskWantsAttention) && !(m_attentionTicks % 2)) {
@@ -592,7 +594,7 @@ void AbstractTaskItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
         event->ignore(); //ignore it so the taskbar gets the event
         return;
     }
- 
+
     event->accept();
 
     if (!m_activateTimer) {
