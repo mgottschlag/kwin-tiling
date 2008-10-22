@@ -20,13 +20,14 @@
 
 //GroupItem Constructor
 LayoutWidget::LayoutWidget(TaskGroupItem *parent, Tasks *applet)
-    : QObject(parent), QGraphicsGridLayout(parent),
+    : QObject(parent),
       m_hasSpacer(false),
       m_spacer(0),
       m_groupItem(parent),
       m_rowSize(6), //TODO calculate a reasonable default value
       m_maxRows(1),
-      m_applet(applet)
+      m_applet(applet),
+      m_layout(0)
 {
     init();
     //kDebug();
@@ -43,9 +44,7 @@ LayoutWidget::~LayoutWidget()
 
 void LayoutWidget::init()
 {
-    setContentsMargins(0,0,0,0);
-    setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
-    setMaximumSize(INT_MAX,INT_MAX);
+    createLayout();
     setOrientation(Plasma::Horizontal);
 }
 
@@ -70,15 +69,19 @@ void LayoutWidget::addTaskItem(AbstractTaskItem * item)
         kDebug() << "invalid item";
         return;
     }
+    if (m_itemPositions.contains(item)) {
+	kDebug() << "already in this layout";
+	return;
+    }
     if (item->abstractItem()) {
         if (item->abstractItem()->isGroupItem()) {
             connect(static_cast<TaskGroupItem*>(item), SIGNAL(changed()), this, SLOT(update())); //update on expanding group
         }
     }
     if (m_groupItem->scene() && !item->scene()) {
-        kDebug() << "layout widget got scene"<<m_groupItem->scene()<< "add item to scene" <<item->scene();
+        //kDebug() << "layout widget got scene"<<m_groupItem->scene()<< "add item to scene" <<item->scene();
         m_groupItem->scene()->addItem(item);
-        kDebug() << "itemScene" << item->scene();
+        //kDebug() << "itemScene" << item->scene();
     }
 
    if (!insert(m_groupItem->memberList().indexOf(item), item)) {
@@ -169,7 +172,7 @@ int LayoutWidget::size()
         if (item->abstractItem()->isGroupItem()) {
            group = static_cast<TaskGroupItem*>(item);
             if (!group->collapsed()) { 
-                LayoutWidget *layout = dynamic_cast<LayoutWidget*>(group->layout());
+                LayoutWidget *layout = dynamic_cast<LayoutWidget*>(group->layoutWidget());
                 if (!layout) {
                     kDebug() << "Error";
                     continue;
@@ -197,16 +200,17 @@ int LayoutWidget::rowWidth(int groupSize)
         return 1;
     }
 
-    QSizeF itemSize = m_itemPositions[0]->preferredSize();
+    QSizeF itemSize = m_itemPositions[0]->basicPreferredSize();
 
     //kDebug() << geometry().height() << int(geometry().height() / 22) << m_maxRows;
     int maxRows;
     //in this case rows are columns, columns are rows...
     if (m_applet->formFactor() == Plasma::Vertical) {
-        maxRows = qMin(qMax(1, int(geometry().width() / itemSize.width())), m_maxRows);
+        maxRows = qMin(qMax(1, int(m_groupItem->geometry().width() / itemSize.width())), m_maxRows);
     } else {
-        maxRows = qMin(qMax(1, int(geometry().height() / itemSize.height())), m_maxRows);
+        maxRows = qMin(qMax(1, int(m_groupItem->geometry().height() / itemSize.height())), m_maxRows);
     }
+    //kDebug() << m_layout->geometry() << m_groupItem->geometry();
     
     while (ceil(static_cast<float>(groupSize)/static_cast<float>(columns)) > maxRows) {
         columns++;  //more rows needed than allowed so we add some collumns instead
@@ -215,27 +219,39 @@ int LayoutWidget::rowWidth(int groupSize)
     return qMax(1, qMin(columns, groupSize));
 }
 
-void LayoutWidget::layoutItems()
-{ //TODO optimize by only removing items from the item on that is inserted
-    kDebug();
-    while (numberOfItems()) { //clear the grid
-        removeAt(0);
-        //kDebug() << "remove";
-    }
 
+void LayoutWidget::createLayout()
+{
+    if (m_layout) {
+	//m_groupItem->setLayout(0); //this also delets the layout
+	m_layout = 0;
+    }
+    m_layout = new QGraphicsGridLayout(m_groupItem);
+    m_layout->setContentsMargins(0,0,0,0);
+    m_layout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
+    m_layout->setMaximumSize(INT_MAX,INT_MAX);
+    setOrientation(Plasma::Horizontal);    
+}
+
+void LayoutWidget::layoutItems()
+{ 
+    kDebug();
+    
     int totalSize = size(); //get the size including all expanded groups
     // make sure columns is not 0, as that will crash divisions.
     int columns = qMax(1, rowWidth(totalSize)); //now adjust columns if necessary 
     //kDebug() << "totalSize/columns" << totalSize << columns;
     int rows = ceil(static_cast<float>(totalSize)/static_cast<float>(columns)); //and calculate the rows (rowWidth already took the maximum rows setting into account
     kDebug() << "Laying out with" << columns << rows;
-    //kDebug() << "geometry" << geometry();
-    int rowHeight = qMax(1, int(geometry().height() / rows));
+    //kDebug() << "geometry" << m_groupItem->geometry();
+    int rowHeight = qMax(1, int(m_groupItem->geometry().height() / rows));
     //kDebug() << "rowHeight" << rowHeight;
-    int columnWidth = qMax(1, int(geometry().size().width() / columns));
+    int columnWidth = qMax(1, int(m_groupItem->geometry().size().width() / columns));
     //kDebug() << "column width set to " << columnWidth;
     
-    //go thorugh all items of this layoutwidget and populate the layout with items
+    createLayout(); //its a shame that we have to create a new layout every time but the QGraphicsGridLayout is just to buggy yet
+
+    //go through all items of this layoutwidget and populate the layout with items
     int numberOfItems = 0;
     foreach (AbstractTaskItem *item, m_itemPositions) {
         int row;
@@ -248,15 +264,15 @@ void LayoutWidget::layoutItems()
             col = numberOfItems % columns;
         }
 
-        setColumnPreferredWidth(col, columnWidth);//Somehow this line is absolutely crucial
-        setRowPreferredHeight(row, rowHeight);//Somehow this line is absolutely crucial
+        m_layout->setColumnPreferredWidth(col, columnWidth);//Somehow this line is absolutely crucial
+        m_layout->setRowPreferredHeight(row, rowHeight);//Somehow this line is absolutely crucial
 
         if (item->abstractItem() && item->abstractItem()->isGroupItem()) {
             TaskGroupItem *group = static_cast<TaskGroupItem*>(item);
             if (!group->collapsed()) { 
-                LayoutWidget *layout = dynamic_cast<LayoutWidget*>(group->layout());
+                LayoutWidget *layout = group->layoutWidget();
                 if (!layout) {
-                    kDebug() << "Error";
+                    kDebug() << "group has no valid layout";
                     continue;
                 }
                 int groupRowWidth = layout->rowWidth(layout->size());
@@ -264,25 +280,25 @@ void LayoutWidget::layoutItems()
                 if ((columns-col) < groupRowWidth) {//we need to split the group
                     int splitIndex = columns - col;//number of items in group that are on this row
                     TaskGroupItem *splitChild = group->splitGroup(splitIndex);
-                    addItem(item, row, col, 1, splitIndex); //Add the normal item 
+                    m_layout->addItem(item, row, col, 1, splitIndex); //Add the normal item 
                     kDebug() << "add normal item: split index = column span " << splitIndex;
                     if (splitChild) {
-                        addItem(splitChild, row + 1, 0, 1, groupRowWidth - splitIndex);//also add the second part of the group if there is one
+                        m_layout->addItem(splitChild, row + 1, 0, 1, groupRowWidth - splitIndex);//also add the second part of the group if there is one
                     }
                     kDebug() << "add split item: column span " << groupRowWidth - splitIndex;
                 } else  {
                     group->unsplitGroup();
-                    addItem(item, row, col, 1, groupRowWidth); //Add the normal item 
+                    m_layout->addItem(item, row, col, 1, groupRowWidth); //Add the normal item 
                     kDebug() << "add unsplit expanded item over columns " << groupRowWidth;
                 }
                 numberOfItems += groupRowWidth - 1;
             } else {
                 group->unsplitGroup();
-                addItem(item, row, col, 1, 1); 
+                m_layout->addItem(item, row, col, 1, 1); 
             }
 
         } else {
-            addItem(item, row, col, 1, 1); 
+            m_layout->addItem(item, row, col, 1, 1); 
         }
 
         kDebug() << "addItem at: " << row  <<  col;
@@ -291,31 +307,33 @@ void LayoutWidget::layoutItems()
 
     //invalidate();
     updatePreferredSize();
+    m_groupItem->setLayout(m_layout);
 }
 
 
 void LayoutWidget::updatePreferredSize()
 {
-    kDebug() << "column count: " << columnCount();
+    kDebug() << "column count: " << m_layout->columnCount();
 
-    if (count() > 0) {
-        QGraphicsLayoutItem *item = itemAt(0);
+    if (m_layout->count() > 0) {
+        AbstractTaskItem *item = dynamic_cast<AbstractTaskItem *>(m_layout->itemAt(0));
         Q_ASSERT(item);
         if (orientation() == Qt::Vertical) {
-            setPreferredSize(item->preferredSize().width()*rowCount(), item->preferredSize().height()*columnCount());
+            m_layout->setPreferredSize(item->basicPreferredSize().width()*m_layout->rowCount(), item->basicPreferredSize().height()*m_layout->columnCount());
         } else {
-            setPreferredSize(item->preferredSize().width()*columnCount(), item->preferredSize().height()*rowCount());
+            m_layout->setPreferredSize(item->basicPreferredSize().width()*m_layout->columnCount(), item->basicPreferredSize().height()*m_layout->rowCount());
             //kDebug() << "horizontal size set";
         }
     //Empty taskbar, arbitrary small value
     } else {
         kDebug() << "Empty layout!!!!!!!!!!!!!!!!!!";
         if (orientation() == Qt::Vertical) {
-            setPreferredSize(preferredSize().width(), 10);
+            m_layout->setPreferredSize(/*m_layout->preferredSize().width()*/10, 10); //since we recreate the layout we don't have the previous values
         } else {
-            setPreferredSize(10, preferredSize().height());
+            m_layout->setPreferredSize(10, /*m_layout->preferredSize().height()*/10);
         }
     }
+    kDebug() << "preferred size: " << m_layout->preferredSize();
     emit sizeHintChanged(Qt::PreferredSize);
 }
 
@@ -341,8 +359,8 @@ int LayoutWidget::insertionIndexAt(const QPointF &pos)//FIXME implement vertical
         return -1;
     } else {
         QRectF siblingGeometry;
-        for (int i = 0; i < rowCount(); i++) {
-            siblingGeometry = itemAt(i, 0)->geometry();//set geometry of single item
+        for (int i = 0; i < m_layout->rowCount(); i++) {
+            siblingGeometry = m_layout->itemAt(i, 0)->geometry();//set geometry of single item
             if (pos.y() <= siblingGeometry.bottom()) {
                 row = i;
                 break;
@@ -350,7 +368,7 @@ int LayoutWidget::insertionIndexAt(const QPointF &pos)//FIXME implement vertical
         }
 
         for (int i = 0; i < itemsInRow(row); i++) {
-            siblingGeometry = itemAt(0, i)->geometry();//set geometry of single item
+            siblingGeometry = m_layout->itemAt(0, i)->geometry();//set geometry of single item
             qreal horizMiddle = (siblingGeometry.left() + siblingGeometry.right()) / 2.0;
             //kDebug() << "pos middle " << pos.x() << horizMiddle;
             if (pos.x() < horizMiddle) {
@@ -365,7 +383,7 @@ int LayoutWidget::insertionIndexAt(const QPointF &pos)//FIXME implement vertical
         //kDebug() << row << col;
     }
 
-    insertIndex = row *columnCount() + col;
+    insertIndex = row *m_layout->columnCount() + col;
 
     if (insertIndex > numberOfItems()) {
         insertIndex--;
@@ -381,17 +399,17 @@ int LayoutWidget::numberOfItems()
     //kDebug() << m_layout->count();
     if (m_hasSpacer) {
         //kDebug() << "spacer";
-        return (count() - 1); //last item is a Spacer
+        return (m_layout->count() - 1); //last item is a Spacer
     }
-    return (count());
+    return (m_layout->count());
 }
 
 int LayoutWidget::numberOfRows()
 {
     if (orientation() == Qt::Vertical) {
-        return columnCount();
+        return m_layout->columnCount();
     } else {
-        return rowCount();
+        return m_layout->rowCount();
     }
 }
 
@@ -399,18 +417,18 @@ int LayoutWidget::itemsInRow(int row)
 {
     //kDebug() << m_layout->count();
     if (row * m_rowSize < numberOfItems()) { //we are in a full row
-        return columnCount();
+        return m_layout->columnCount();
     } else {
         int val;
         if (orientation() == Qt::Vertical) {
-            val = numberOfItems() % rowCount();
+            val = numberOfItems() % m_layout->rowCount();
             if (!val) {
-                val = rowCount();
+                val = m_layout->rowCount();
             }
         } else {
-            val = numberOfItems() % columnCount();
+            val = numberOfItems() % m_layout->columnCount();
             if (!val) {
-                val = columnCount();
+                val = m_layout->columnCount();
             }
         }
         return val;

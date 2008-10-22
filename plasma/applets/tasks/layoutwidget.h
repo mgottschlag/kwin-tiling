@@ -43,7 +43,7 @@ using TaskManager::GroupManager;
 /**
  * A task item for a task which represents a expanded group.
  */
-class LayoutWidget : public QObject, public QGraphicsGridLayout
+class LayoutWidget : public QObject
 {
     Q_OBJECT
 
@@ -102,6 +102,9 @@ private:
     int m_maxRows;
 
     Tasks *m_applet;
+
+    void createLayout();
+    QGraphicsGridLayout *m_layout;
 };
 
 #endif

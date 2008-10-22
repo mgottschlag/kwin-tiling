@@ -91,6 +91,7 @@ public:
     void setSplitGroup(TaskGroup *group);
     bool isSplit();
 
+    LayoutWidget *layoutWidget();
 
 signals:
     /** Emitted when a window is selected for activation, minimization, iconification */

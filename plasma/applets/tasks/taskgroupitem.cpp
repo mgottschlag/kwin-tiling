@@ -63,10 +63,10 @@ TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet, const bool 
       m_maximumRows(1),
       m_isCollapsed(true),
       m_parentSplitGroup(0),
-      m_childSplitGroup(0)
+      m_childSplitGroup(0),
+      m_splitPosition(0)
 {
     setAcceptDrops(true);
-    //setMinimumSize(300,40);
 }
 
 
@@ -114,7 +114,7 @@ void TaskGroupItem::setSplitIndex(int position)
 {
     kDebug() << position;
     for (int i = position ; i < m_parentSplitGroup->memberList().size() ; i++) {
-        kDebug() << "Add item to split group" << i;
+        //kDebug() << "add item to childSplitGroup" << i;
         m_groupMembers.append(m_parentSplitGroup->memberList().at(i));
         m_layoutWidget->addTaskItem(m_parentSplitGroup->memberList().at(i));
     }
@@ -122,25 +122,30 @@ void TaskGroupItem::setSplitIndex(int position)
 }
 
 
-TaskGroupItem * TaskGroupItem::splitGroup(int position)
+TaskGroupItem * TaskGroupItem::splitGroup(int newSplitPosition)
 {
-    kDebug() << "split position" << position;
-    
-    for (int i = position ; i < m_groupMembers.size() ; i++) {
-        m_layoutWidget->removeTaskItem(m_groupMembers.at(i));
-    }
+    kDebug() << "split position" << newSplitPosition;
 
-    for (int i = m_splitPosition ; i < position ; i++) {
-        m_layoutWidget->addTaskItem(m_groupMembers.at(i));
+    //remove all items which move to the splitgroup
+    for (int i = newSplitPosition ; i < m_groupMembers.size() ; i++) { 
+        m_layoutWidget->removeTaskItem(m_groupMembers.at(i));
+	//kDebug() << "remove from parentSplitGroup" << i;
+    }
+    //add items which arent in the splitgroup anymore and should be displayed again
+    if (m_splitPosition) { //if 0 is the init value and shouldn't happen otherwise
+	for (int i = m_splitPosition ; i < newSplitPosition ; i++) {
+	    m_layoutWidget->addTaskItem(m_groupMembers.at(i));
+	    //kDebug() << "add Item to parentSplitGroup" << i;
+	}
     }
 
     if (!m_childSplitGroup) {
-        kDebug() << "Normal scene " << scene();
+	  //kDebug() << "Normal scene " << scene();
           m_childSplitGroup = new  TaskGroupItem(this, m_applet, true);
           m_childSplitGroup->setSplitGroup(m_group);
     }
-    m_childSplitGroup->setSplitIndex(position);
-    m_splitPosition = position;    
+    m_childSplitGroup->setSplitIndex(newSplitPosition);
+    m_splitPosition = newSplitPosition;    
 
     return m_childSplitGroup;
 }
@@ -483,7 +488,7 @@ void TaskGroupItem::expand()
     m_isCollapsed = false;
 
 
-    setLayout(m_layoutWidget);
+    //setLayout(m_layoutWidget);
 
     connect(m_applet, SIGNAL(constraintsChanged(Plasma::Constraints)), m_layoutWidget, SLOT(constraintsChanged(Plasma::Constraints)));
     connect(m_layoutWidget, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updatePreferredSize()));
@@ -491,6 +496,11 @@ void TaskGroupItem::expand()
     emit changed();
     kDebug() << "expanded";
 
+}
+
+LayoutWidget *TaskGroupItem::layoutWidget()
+{
+    return m_layoutWidget;
 }
 
 void TaskGroupItem::collapse()
@@ -532,11 +542,9 @@ void TaskGroupItem::updatePreferredSize()
         //kDebug() << "expanded group" << layout()->preferredSize();
     } else {
         //FIXME: copypaste from abstracttaskitem: to be done better with proper sizeHint()
-        QFontMetrics fm(KGlobalSettings::taskbarFont());
-        QSize mSize = fm.size(0, "M");
-        setPreferredSize(QSize(mSize.width()*15 + m_applet->itemLeftMargin() + m_applet->itemRightMargin() + IconSize(KIconLoader::Panel),
-                           mSize.height()*3 + m_applet->itemTopMargin() + m_applet->itemBottomMargin()));
+	setPreferredSize(basicPreferredSize());
     }
+    //kDebug() << preferredSize();
     emit sizeHintChanged(Qt::PreferredSize);
 }
 
