@@ -278,6 +278,15 @@ public:
         }
     }
 
+    void maximizePanel()
+    {
+        const int length = ruler->availableLength();
+        rulersMoved(0, length, length);
+        ruler->setOffset(0);
+        ruler->setMaxLength(length);
+        ruler->setMinLength(length);
+    }
+
      enum DragElement { NoElement = 0,
                         ResizeButtonElement,
                         MoveButtonElement
@@ -311,6 +320,7 @@ public:
     ToolButton *normalPanelTool;
     ToolButton *autoHideTool;
     ToolButton *underWindowsTool;
+    ToolButton *expandTool;
 
     //Widgets for actions
     QList<QWidget *> actionWidgets;
@@ -446,6 +456,12 @@ PanelController::PanelController(QWidget* parent)
     d->optDialogLayout->addWidget(modeFrame);
 
 
+    d->expandTool = d->addTool(QString(), i18n("Maximize panel"), this);
+    d->expandTool->setIcon(d->iconSvg->pixmap("size-horizontal"));
+    d->expandTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    d->optDialogLayout->addWidget(d->expandTool);
+    connect(d->expandTool, SIGNAL(clicked()), this, SLOT(maximizePanel()));
+
     ToolButton *closeControllerTool = d->addTool("window-close", i18n("Close this configuration window"), this, Qt::ToolButtonIconOnly, false);
     d->layout->addWidget(closeControllerTool);
     connect(closeControllerTool, SIGNAL(clicked()), this, SLOT(hide()));
@@ -486,7 +502,7 @@ void PanelController::setContainment(Plasma::Containment *containment)
         child->deleteLater();
     }
 
-    int insertIndex = d->layout->count() - 2;
+    int insertIndex = d->layout->count() - 3;
 
     QAction *action = containment->action("add widgets");
     if (action) {
@@ -622,6 +638,7 @@ void PanelController::setLocation(const Plasma::Location &loc)
         d->sizeTool->setCursor(Qt::SizeHorCursor);
         d->sizeTool->setText(i18n("Width"));
         d->sizeTool->setIcon(d->iconSvg->pixmap("size-horizontal"));
+        d->expandTool->setIcon(d->iconSvg->pixmap("size-vertical"));
         d->leftAlignTool->setText(i18n("Top"));
         d->rightAlignTool->setText(i18n("Bottom"));
 
@@ -634,6 +651,7 @@ void PanelController::setLocation(const Plasma::Location &loc)
         d->sizeTool->setCursor(Qt::SizeVerCursor);
         d->sizeTool->setText(i18n("Height"));
         d->sizeTool->setIcon(d->iconSvg->pixmap("size-vertical"));
+        d->expandTool->setIcon(d->iconSvg->pixmap("size-horizontal"));
         d->leftAlignTool->setText(i18n("Left"));
         d->rightAlignTool->setText(i18n("Right"));
 

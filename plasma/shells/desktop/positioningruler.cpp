@@ -226,6 +226,7 @@ public:
             offsetSliderRect.moveCenter(QPoint(offsetPos, totalSize.height()/4));
             break;
         }
+
     }
 
     enum SubElement { NoElement = 0,
@@ -328,6 +329,7 @@ void PositioningRuler::setOffset(int newOffset)
     d->offset = newOffset;
 
     d->setupSliders(size());
+    update();
 }
 
 int PositioningRuler::offset() const
@@ -372,6 +374,7 @@ void PositioningRuler::setMaxLength(int newMax)
     if (d->minLength > d->maxLength) {
         setMinLength(newMax);
     }
+    update();
 }
 
 int PositioningRuler::maxLength() const
@@ -417,6 +420,7 @@ void PositioningRuler::setMinLength(int newMin)
     if (d->minLength > d->minLength) {
         setMaxLength(newMin);
     }
+    update();
 }
 
 int PositioningRuler::minLength() const
