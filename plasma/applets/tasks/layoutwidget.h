@@ -61,8 +61,8 @@ public:
     void setMaximumRows(int);
 
     Qt::Orientation orientation();
-    /** the calculated width according to size() and maxRows*/
-    int rowWidth();
+    /** the calculated width according to groupSize and maxRows*/
+    int rowWidth(int groupSize);
     /** the size including expanded groups*/
     int size();
     

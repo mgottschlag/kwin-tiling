@@ -12,6 +12,8 @@
 #include <QGraphicsGridLayout>
 #include <QPainter>
 
+#include <math.h>
+
 #include "windowtaskitem.h"
 #include "taskgroupitem.h"
 
@@ -183,7 +185,7 @@ int LayoutWidget::size()
 }
 
 /** width including expanded groups*/
-int LayoutWidget::rowWidth()
+int LayoutWidget::rowWidth(int groupSize)
 {
     int columns = m_rowSize;
     if (columns < 1) {
@@ -205,15 +207,12 @@ int LayoutWidget::rowWidth()
     } else {
         maxRows = qMin(qMax(1, int(geometry().height() / itemSize.height())), m_maxRows);
     }
-
-    int totalSize = size();
-
-    while ((totalSize / columns) + 1 > maxRows) {
+    
+    while (ceil(static_cast<float>(groupSize)/static_cast<float>(columns)) > maxRows) {
         columns++;  //more rows needed than allowed so we add some collumns instead
     }
-
     //kDebug() << "groupWidth" << columns << maxRows << m_maxRows;
-    return qMax(1, qMin(columns, totalSize));
+    return qMax(1, qMin(columns, groupSize));
 }
 
 void LayoutWidget::layoutItems()
@@ -224,25 +223,19 @@ void LayoutWidget::layoutItems()
         //kDebug() << "remove";
     }
 
-    int maxRows;
-    if (m_itemPositions.count() > 0) {
-        QSizeF itemPreferredSize = m_itemPositions[0]->preferredSize();
-        maxRows = qMin(qMax(1, int(geometry().height() / itemPreferredSize.height())), m_maxRows);
-    } else {
-        maxRows = m_maxRows;
-    }
-
+    int totalSize = size(); //get the size including all expanded groups
     // make sure columns is not 0, as that will crash divisions.
-    int columns = qMax(1, rowWidth());
-    kDebug() << "Laying out with" << columns << maxRows;
-
-    int rowHeight;
-    int columnWidth;
-
-    rowHeight = qMax(1, int(geometry().height() / maxRows));
-    columnWidth = qMax(1, int(geometry().size().width() / columns));
-    //kDebug() << "column width set to " << m_columnWidth;
+    int columns = qMax(1, rowWidth(totalSize)); //now adjust columns if necessary 
+    //kDebug() << "totalSize/columns" << totalSize << columns;
+    int rows = ceil(static_cast<float>(totalSize)/static_cast<float>(columns)); //and calculate the rows (rowWidth already took the maximum rows setting into account
+    kDebug() << "Laying out with" << columns << rows;
+    //kDebug() << "geometry" << geometry();
+    int rowHeight = qMax(1, int(geometry().height() / rows));
+    //kDebug() << "rowHeight" << rowHeight;
+    int columnWidth = qMax(1, int(geometry().size().width() / columns));
+    //kDebug() << "column width set to " << columnWidth;
     
+    //go thorugh all items of this layoutwidget and populate the layout with items
     int numberOfItems = 0;
     foreach (AbstractTaskItem *item, m_itemPositions) {
         int row;
@@ -260,22 +253,18 @@ void LayoutWidget::layoutItems()
 
         if (item->abstractItem() && item->abstractItem()->isGroupItem()) {
             TaskGroupItem *group = static_cast<TaskGroupItem*>(item);
-         //   kDebug() << "splitIndex" << splitIndex << "second Row: " << secondRow;
             if (!group->collapsed()) { 
                 LayoutWidget *layout = dynamic_cast<LayoutWidget*>(group->layout());
                 if (!layout) {
                     kDebug() << "Error";
                     continue;
                 }
-                int groupRowWidth = layout->rowWidth();
+                int groupRowWidth = layout->rowWidth(layout->size());
 
-                if ((columns-col) < groupRowWidth) {//we need to split the group TODO if (splitIndex < group->size())
+                if ((columns-col) < groupRowWidth) {//we need to split the group
                     int splitIndex = columns - col;//number of items in group that are on this row
                     TaskGroupItem *splitChild = group->splitGroup(splitIndex);
                     addItem(item, row, col, 1, splitIndex); //Add the normal item 
-                    /*for (int i = 1; i<splitIndex; i++) {
-                        addItem(item, row, col+i, 1, 1); //Necessary to make sure the 
-                    } */
                     kDebug() << "add normal item: split index = column span " << splitIndex;
                     if (splitChild) {
                         addItem(splitChild, row + 1, 0, 1, groupRowWidth - splitIndex);//also add the second part of the group if there is one
