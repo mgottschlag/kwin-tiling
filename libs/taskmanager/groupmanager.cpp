@@ -98,8 +98,8 @@ public:
 
 
 GroupManager::GroupManager(QObject *parent)
-    :QObject(parent),
-     d(new GroupManagerPrivate(this))
+    : QObject(parent),
+      d(new GroupManagerPrivate(this))
 {
     connect(TaskManager::self(), SIGNAL(taskAdded(TaskPtr)), this, SLOT(add(TaskPtr)));
     connect(TaskManager::self(), SIGNAL(taskRemoved(TaskPtr)), this, SLOT(remove(TaskPtr)));
@@ -108,10 +108,8 @@ GroupManager::GroupManager(QObject *parent)
     d->rootGroup = new TaskGroup(this, "RootGroup", Qt::transparent);
     //reloadTasks();
     d->screenTimer.setSingleShot(true);
-    d->screenTimer.setInterval(300);
+    d->screenTimer.setInterval(100);
     connect(&d->screenTimer, SIGNAL(timeout()), this, SLOT(checkScreenChange()));
-
-    kDebug();
 }
 
 GroupManager::~GroupManager()
@@ -124,7 +122,7 @@ GroupManager::~GroupManager()
 
 void GroupManagerPrivate::reloadTasks()
 {
-    kDebug() << "number of tasks available " << TaskManager::self()->tasks().size();
+    //kDebug() << "number of tasks available " << TaskManager::self()->tasks().size();
 
     QList <TaskPtr> taskList = TaskManager::self()->tasks().values();
     foreach(TaskPtr task, taskList) { //Add all existing tasks
@@ -418,7 +416,7 @@ void GroupManagerPrivate::checkScreenChange()
     foreach (const TaskPtr &task, geometryTasks) {
         if (!task->isOnScreen(currentScreen) && !task->demandsAttention()) {
             q->remove(task);
-        } else if (!itemList.contains(task)) {
+        } else {
             q->add(task);
         }
     }
@@ -446,7 +444,7 @@ void GroupManager::reconnect()
     }
 
     disconnect(TaskManager::TaskManager::self(), SIGNAL(windowChangedGeometry(TaskPtr)),
-               this, SLOT(windowChangedGeometry(TaskPtr))); //FIXME: Needs to be implemented
+               this, SLOT(windowChangedGeometry(TaskPtr)));
 
     if (d->showOnlyCurrentScreen) {
         // listen to the relevant task manager signals
