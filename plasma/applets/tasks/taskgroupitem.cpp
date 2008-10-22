@@ -113,9 +113,12 @@ TaskGroupItem * TaskGroupItem::splitGroup()
 void TaskGroupItem::setSplitIndex(int position)
 {
     kDebug() << position;
+    
     for (int i = position ; i < m_parentSplitGroup->memberList().size() ; i++) {
         //kDebug() << "add item to childSplitGroup" << i;
-        m_groupMembers.append(m_parentSplitGroup->memberList().at(i));
+        if (!m_groupMembers.contains(m_parentSplitGroup->memberList().at(i))) {
+            m_groupMembers.insert(i, m_parentSplitGroup->memberList().at(i));
+        }
         m_layoutWidget->addTaskItem(m_parentSplitGroup->memberList().at(i));
     }
     m_splitPosition = position;
@@ -251,17 +254,6 @@ void TaskGroupItem::reload()
     //kDebug();
     m_groupMembers.clear();
     
-    /*int from;
-    int to;
-    if (isSplit()) {
-        from = 0;
-        to = m_splitPosition;
-    } else {
-        from = m_splitPostition;
-        to = group()->members().size();
-    }
-    for (int i = from; i<= to; i++) {
-    AbstractItemPtr item = group()->members().at(i)*/
     foreach (AbstractItemPtr item,group()->members()) {
         if (!item) {
             kDebug() << "invalid Item";
@@ -355,15 +347,6 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
         return;
     }
 
-   /* if (isSplit()) {
-        if (m_group->members().indexOf(groupableItem) > m_splitPostition) {
-            return;
-        }
-    } else {
-        if (m_group->members().indexOf(groupableItem) <= m_splitPostition) {
-            return;
-        }
-    }*/
     //returns the corresponding item or creates a new one
     AbstractTaskItem *item = m_applet->createAbstractItem(groupableItem);
 
@@ -376,6 +359,10 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
     item->setParentItem(this);
     if (collapsed()) {
         item->hide();
+    } else if (isSplit()) {
+        splitGroup(m_splitPosition);
+        //emit changed();
+        //m_childSplitGroup->reload();
     } else {
         m_layoutWidget->addTaskItem(item);
     }
