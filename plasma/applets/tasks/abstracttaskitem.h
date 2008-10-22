@@ -55,6 +55,9 @@ public:
     /** Constructs a new representation for a abstract task. */
     AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet, const bool showTooltip);
 
+     /** Destruct a new representation for a abstract task. */
+    ~AbstractTaskItem();
+
     /** Switch on/off tooltips above tasks */
     void setShowTooltip(const bool showit);
 

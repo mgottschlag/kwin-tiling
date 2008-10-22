@@ -79,6 +79,10 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet, const
     setPreferredSize(QSize(mSize.width()*12 + m_applet->itemLeftMargin() + m_applet->itemRightMargin() + KIconLoader::SizeSmall,
                            KIconLoader::SizeSmall + m_applet->itemTopMargin() + m_applet->itemBottomMargin() + 4));
 }
+AbstractTaskItem::~AbstractTaskItem()
+{
+    Plasma::ToolTipManager::self()->unregisterWidget(this);
+}
 
 void AbstractTaskItem::setShowTooltip(const bool showit)
 {
