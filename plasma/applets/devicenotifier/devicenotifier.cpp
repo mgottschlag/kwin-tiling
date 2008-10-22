@@ -62,12 +62,11 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
 {
     setHasConfigurationInterface(true);
     setBackgroundHints(StandardBackground);
-    int iconSize = IconSize(KIconLoader::Desktop);
 
-    // let's initiate the widget
+    // let's initialize the widget
     (void)widget();
 
-    resize(iconSize, iconSize);
+    resize(widget()->sizeHint());
 }
 
 DeviceNotifier::~DeviceNotifier()
