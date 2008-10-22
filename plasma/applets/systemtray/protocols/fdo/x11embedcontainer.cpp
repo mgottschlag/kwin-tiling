@@ -235,8 +235,9 @@ void X11EmbedContainer::Private::updateClientBackground()
                      None, picture, 0, 0, 0, 0, 0, 0, q->width(), q->height());
 
     XSetWindowBackgroundPixmap(display, q->clientWinId(), bg);
-    XFreePixmap(display, bg);
+
     XRenderFreePicture(display, picture);
+    XFreePixmap(display, bg);
 
     sendExposeToClient();
 }

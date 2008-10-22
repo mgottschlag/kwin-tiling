@@ -95,9 +95,9 @@ void GraphicsWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 
     if (!d->widget) {
 #if QT_VERSION < 0x040401
-        Qt::ApplicationAttribute attr = (Qt::ApplicationAttribute)4;
+        const Qt::ApplicationAttribute attr = (Qt::ApplicationAttribute)4;
 #else
-        Qt::ApplicationAttribute attr = Qt::AA_DontCreateNativeWidgetSiblings;
+        const Qt::ApplicationAttribute attr = Qt::AA_DontCreateNativeWidgetSiblings;
 #endif
         if (!QApplication::testAttribute(attr)) {
             QApplication::setAttribute(attr);
