@@ -596,8 +596,8 @@ static bool waitState( int expected_state )
 #ifdef DEBUG
                 fprintf( stderr,"MESSAGE: %s\n", s );
 #endif
-                int new_state = 0;
-                for( int i = 1;
+                int new_state = -1;
+                for( int i = 0;
                      i < int( sizeof( states ) / sizeof( states[ 0 ] ));
                      ++i )
                     {
@@ -607,7 +607,7 @@ static bool waitState( int expected_state )
                         break;
                         }
                     }
-                if( new_state == 0 )
+                if( new_state == -1 )
                     {
 #ifdef DEBUG
                     fprintf( stderr, "UNKNOWN SPLASH STATE: %s\n", s );
@@ -1182,8 +1182,8 @@ void runSplash( const char* them, bool t, int p )
         else if( sscanf( line, "WAIT_STATE %s", buf ) == 1 )
             {
             handled = true;
-            int new_state = 0;
-            for( int i = 1;
+            int new_state = -1;
+            for( int i = 0;
                  i < int( sizeof( states ) / sizeof( states[ 0 ] ));
                  ++i )
                 {
@@ -1193,7 +1193,7 @@ void runSplash( const char* them, bool t, int p )
                     break;
                     }
                 }
-            if( new_state == 0 )
+            if( new_state == -1 )
                 {
                 fprintf( stderr, "Unknown splash state: %s\n", buf );
                 // don't make fatal, may be a theme for a newer version
