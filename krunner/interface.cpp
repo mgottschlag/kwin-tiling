@@ -529,6 +529,7 @@ void Interface::hideResultsArea()
     m_previousPage->hide();
     m_nextPage->hide();
     m_dividerLine->hide();
+    m_searchTerm->setFocus();
     setMinimumSize(QSize(MIN_WIDTH, 0));
     adjustSize();
     resize(minimumSizeHint());
