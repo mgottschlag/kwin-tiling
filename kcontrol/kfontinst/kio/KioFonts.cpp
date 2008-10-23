@@ -321,7 +321,7 @@ static void getFontFiles(const CDisabledFonts::TFileList &entries, CDisabledFont
         QString     file(removeSymLinks ? getReal(*it) : (*it).path);
 
         if(-1==files.indexOf(file) && Misc::fExists(file))
-            files.append(file);
+            files.append(CDisabledFonts::TFile(file, (*it).face, (*it).foundry));
 
         Misc::getAssociatedFiles(*it, assoc);
 
