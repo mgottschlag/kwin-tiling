@@ -5,97 +5,291 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>588</width>
-    <height>298</height>
+    <width>507</width>
+    <height>316</height>
    </rect>
   </property>
-  <property name="minimumSize" >
-   <size>
-    <width>200</width>
-    <height>50</height>
-   </size>
-  </property>
-  <layout class="QGridLayout" >
-   <item row="3" column="1" >
-    <layout class="QVBoxLayout" name="verticalLayout_2" >
+  <layout class="QGridLayout" name="gridLayout" >
+   <item row="0" column="0" colspan="3" >
+    <widget class="QLabel" name="label_5" >
+     <property name="font" >
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text" >
+      <string>Appearance</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <spacer name="horizontalSpacer" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>13</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="1" colspan="2" >
+    <widget class="QLabel" name="label_7" >
+     <property name="text" >
+      <string>Show tooltips:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="3" >
+    <widget class="QCheckBox" name="showTooltip" >
+     <property name="text" >
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" colspan="2" >
+    <spacer name="verticalSpacer_6" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>64</width>
+       <height>5</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="3" column="3" >
+    <layout class="QHBoxLayout" name="horizontalLayout" >
      <item>
-      <widget class="QCheckBox" name="showTooltip" >
-       <property name="text" >
-        <string>Show tooltips</string>
+      <widget class="QSpinBox" name="maxRows" >
+       <property name="minimum" >
+        <number>1</number>
+       </property>
+       <property name="value" >
+        <number>2</number>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="showOnlyCurrentDesktop" >
-       <property name="text" >
-        <string>Only show tasks from the current desktop</string>
+      <spacer name="horizontalSpacer_2" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="showOnlyCurrentScreen" >
-       <property name="text" >
-        <string>Only show tasks from the current screen</string>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>47</width>
+         <height>23</height>
+        </size>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="showOnlyMinimized" >
-       <property name="text" >
-        <string>Only show tasks that are minimized</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_3" >
-       <item>
-        <widget class="QLabel" name="label" >
-         <property name="text" >
-          <string>Grouping Strategy</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="groupingStrategy" />
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_4" >
-       <item>
-        <widget class="QLabel" name="label_2" >
-         <property name="text" >
-          <string>Sorting Strategy</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="sortingStrategy" />
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_5" >
-       <item>
-        <widget class="QLabel" name="label_3" >
-         <property name="text" >
-          <string>Maximum Rows</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSpinBox" name="maxRows" >
-         <property name="minimum" >
-          <number>1</number>
-         </property>
-         <property name="value" >
-          <number>2</number>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      </spacer>
      </item>
     </layout>
+   </item>
+   <item row="3" column="1" colspan="2" >
+    <widget class="QLabel" name="label_3" >
+     <property name="text" >
+      <string>Maximum Rows</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" colspan="2" >
+    <spacer name="verticalSpacer_2" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>64</width>
+       <height>10</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="5" column="0" colspan="4" >
+    <widget class="QLabel" name="label_6" >
+     <property name="font" >
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text" >
+      <string>Grouping and Sorting</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1" colspan="2" >
+    <widget class="QLabel" name="label" >
+     <property name="text" >
+      <string>Grouping:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="3" >
+    <layout class="QHBoxLayout" name="horizontalLayout_2" >
+     <item>
+      <widget class="QComboBox" name="groupingStrategy" >
+       <property name="minimumSize" >
+        <size>
+         <width>200</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_3" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="7" column="1" colspan="2" >
+    <spacer name="verticalSpacer_5" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>64</width>
+       <height>5</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="8" column="3" >
+    <layout class="QHBoxLayout" name="horizontalLayout_3" >
+     <item>
+      <widget class="QComboBox" name="sortingStrategy" >
+       <property name="minimumSize" >
+        <size>
+         <width>200</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_4" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="8" column="1" colspan="2" >
+    <widget class="QLabel" name="label_2" >
+     <property name="text" >
+      <string>Sorting:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0" >
+    <widget class="QLabel" name="label_4" >
+     <property name="font" >
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text" >
+      <string>Filters</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="1" colspan="2" >
+    <spacer name="verticalSpacer_4" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>10</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="10" column="1" colspan="3" >
+    <widget class="QCheckBox" name="showOnlyCurrentDesktop" >
+     <property name="text" >
+      <string>Only show tasks from the current desktop</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="1" colspan="3" >
+    <widget class="QCheckBox" name="showOnlyCurrentScreen" >
+     <property name="text" >
+      <string>Only show tasks from the current screen</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="1" colspan="3" >
+    <widget class="QCheckBox" name="showOnlyMinimized" >
+     <property name="text" >
+      <string>Only show tasks that are minimized</string>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="2" >
+    <spacer name="verticalSpacer" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>0</width>
+       <height>5</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
