@@ -525,7 +525,7 @@ void UKMETIon::parseWeatherObservation(const QString& source, WeatherData& data,
                 // Friday at 0200 GMT
                 d->m_dateFormat =  QDateTime::fromString(data.obsTime.split("at")[1].trimmed(), "hhmm 'GMT'");
                 data.iconPeriodHour = d->m_dateFormat.toString("hh").toInt();
-                data.iconPeriodAP = d->m_dateFormat.toString("ap");
+                //data.iconPeriodAP = d->m_dateFormat.toString("ap");
 
                 data.condition = conditionData[1].split(".")[0].trimmed();
 
@@ -727,10 +727,11 @@ void UKMETIon::updateWeather(const QString& source)
     setData(weatherSource, "Current Conditions", condition(source));
 
     // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
-    if (night(source) && periodHour(source) >= 16) {
-        setData(weatherSource, "Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
-    } else {
+    
+    if (periodHour(source) >= 6 && periodHour(source) < 16) {
         setData(weatherSource, "Condition Icon", getWeatherIcon(dayIcons(), condition(source)));
+    } else {
+        setData(weatherSource, "Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
     }
 
     setData(weatherSource, "Humidity", humidity(source));
@@ -783,13 +784,14 @@ QString UKMETIon::observationTime(const QString& source)
     return d->m_weatherData[source].obsTime;
 }
 
+/*
 bool UKMETIon::night(const QString& source)
 {
     if (d->m_weatherData[source].iconPeriodAP == "pm") {
         return true;
     }
     return false;
-}
+} */
 
 int UKMETIon::periodHour(const QString& source)
 {
