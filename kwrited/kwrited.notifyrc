@@ -1,9 +1,26 @@
 [Global]
 IconName=utilities-terminal
 Comment=KDE write daemon
+Comment[gl]=Daemon de escritura de KDE
+Comment[gu]=KDE રાઇટ ડેમોન
+Comment[pt]=Servidor do Write para o KDE
+Comment[pt_BR]=Servidor do Write para o KDE
+Comment[sv]=KDE-skrivdemon
+Comment[uk]=Фонова служба запису KDE
 
 [Event/NewMessage]
 Name=New message received
+Name[gl]=Recibiuse unha mensaxe nova
+Name[gu]=નવો સંદેશ મેળવાયો
+Name[pt]=Foi recebida uma mensagem nova
+Name[pt_BR]=Foi recebida uma mensagem nova
+Name[sv]=Nytt meddelande mottaget
+Name[uk]=Отримано нове повідомлення
 Comment=The daemon received a new message sent with wall(1) or write(1)
+Comment[gl]=O daemon recibiu unha mensaxe nova enviada con wall(1) ou write(1)
+Comment[pt]=O servidor recebeu uma mensagem nova enviada a partir do 'wall(1)' ou do 'write(1)'
+Comment[pt_BR]=O servidor recebeu uma mensagem nova enviada a partir do 'wall(1)' ou do 'write(1)'
+Comment[sv]=Demonen tog emot ett nytt meddelande skickat med wall(1) eller write(1)
+Comment[uk]=Фоновою службою отримано нове повідомлення, надіслане за допомогою wall(1) або write(1)
 Sound=KDE-Sys-App-Message.ogg
 Action=Popup|Sound

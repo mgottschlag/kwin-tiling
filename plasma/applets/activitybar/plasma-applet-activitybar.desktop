@@ -2,17 +2,23 @@
 Name=Activity Bar
 Name[el]=Γραμμή δραστηριότητας
 Name[gl]=Barra de actividades
+Name[gu]=ક્રિયા પટ્ટી
 Name[pt]=Barra de Actividades
 Name[pt_BR]=Barra de Actividades
 Name[sv]=Aktivitetsrad
+Name[tr]=Eylem Çubuğu
 Name[uk]=Панель дій
+Name[zh_TW]=活動列
 Comment=Tabbar to switch activities
 Comment[el]=Γραμμή καρτελών για την εναλλαγή δραστηριότητας
 Comment[gl]=Barra de lingüetas para trocar entre actividades
+Comment[gu]=ક્રિયાઓ બદલવા માટે ટેબપટ્ટી
 Comment[pt]=Barra de páginas para mudar de actividades
 Comment[pt_BR]=Barra de páginas para mudar de actividades
 Comment[sv]=Flikrad för att byta aktiviteter
+Comment[tr]=Eylemleri seçmek için sekme çubuğu
 Comment[uk]=Панель з вкладками для перемикання дій
+Comment[zh_TW]=切換活動的分頁列
 Type=Service
 Icon=tab-new
 

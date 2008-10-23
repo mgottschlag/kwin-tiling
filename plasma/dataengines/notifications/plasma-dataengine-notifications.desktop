@@ -2,10 +2,13 @@
 Name=Application Notifications
 Name[el]=Ειδοποιήσεις εφαρμογής
 Name[gl]=Notificacións dos programas
+Name[gu]=કાર્યક્રમ નોંધણીઓ
 Name[pt]=Notificações das Aplicações
 Name[pt_BR]=Notificações das Aplicações
 Name[sv]=Programunderrättelser
+Name[tr]=Uygulama Bildirimleri
 Name[uk]=Сповіщення програм
+Name[zh_TW]=應用程式通知
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=notifier
