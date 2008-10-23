@@ -105,14 +105,47 @@ QMap<QString, IonInterface::ConditionIcons> UKMETIon::setupDayIconMappings(void)
 
     QMap<QString, ConditionIcons> dayList;
     dayList["sunny"] = ClearDay;
+    //dayList["sunny night"] = ClearNight;
     dayList["sunny intervals"] = PartlyCloudyDay;
+    //dayList["sunny intervals night"] = ClearNight;
     dayList["partly cloudy"] = PartlyCloudyDay;
     dayList["cloudy"] = Overcast;
+    //dayList["low level cloud"] = NotAvailable;
+    //dayList["medium level cloud"] = NotAvailable;
+    //dayList["sandstorm"] = NotAvailable;
     dayList["drizzle"] = LightRain;
     dayList["misty"] = Mist;
-    dayList["hail showers"] = Hail;
+    dayList["mist"] = Mist;
+    dayList["fog"] = Mist;
+    dayList["foggy"] = Mist;
+    dayList["tropical storm"] = Thunderstorm;
+    dayList["hazy"] = NotAvailable;
+    dayList["light shower"] = Showers;
+    dayList["light rain shower"] = Showers;
     dayList["light showers"] = Showers;
+    dayList["light rain"] = Showers;
+    dayList["heavy rain"] = Rain;
     dayList["heavy showers"] = Rain;
+    dayList["heavy shower"] = Rain;
+    dayList["thundery shower"] = Thunderstorm;
+    dayList["thunderstorm"] = Thunderstorm;
+    dayList["cloudy with sleet"] = NotAvailable;
+    dayList["sleet shower"] = NotAvailable;
+    dayList["sleet showers"] = NotAvailable;
+    dayList["sleet"] = NotAvailable;
+    dayList["cloudy with hail"] = Hail;
+    dayList["hail shower"] = Hail;
+    dayList["hail showers"] = Hail;
+    dayList["hail"] = Hail;
+    dayList["light snow"] = LightSnow;
+    dayList["light snow shower"] = Flurries;
+    dayList["light snow showers"] = Flurries;
+    dayList["cloudy with light snow"] = LightSnow;
+    dayList["heavy snow"] = Snow;
+    dayList["heavy snow shower"] = Snow;
+    dayList["heavy snow showers"] = Snow;
+    dayList["cloudy with heavy snow"] = Snow;
+    dayList["na"] = NotAvailable;
     return dayList;
 }
 
@@ -120,13 +153,44 @@ QMap<QString, IonInterface::ConditionIcons> UKMETIon::setupNightIconMappings(voi
 {
     QMap<QString, ConditionIcons> nightList;
     nightList["clear"] = ClearNight;
+    nightList["clear intervals"] = PartlyCloudyNight;
+    nightList["sunny intervals"] = PartlyCloudyNight; // it's not really sunny
     nightList["cloudy"] = Overcast;
     nightList["partly cloudy"] = PartlyCloudyNight;
-    nightList["light showers"] = Showers;
     nightList["drizzle"] = LightRain;
     nightList["misty"] = Mist;
-    nightList["hail showers"] = Showers;
+    nightList["mist"] = Mist;
+    nightList["fog"] = Mist;
+    nightList["foggy"] = Mist;
+    nightList["tropical storm"] = Thunderstorm;
+    nightList["hazy"] = NotAvailable;
+    nightList["light shower"] = Showers;
+    nightList["light rain shower"] = Showers;
+    nightList["light showers"] = Showers;
+    nightList["light rain"] = Showers;
+    nightList["heavy rain"] = Rain;
     nightList["heavy showers"] = Rain;
+    nightList["heavy shower"] = Rain;
+    nightList["thundery shower"] = Thunderstorm;
+    nightList["thunderstorm"] = Thunderstorm;
+    nightList["cloudy with sleet"] = NotAvailable;
+    nightList["sleet shower"] = NotAvailable;
+    nightList["sleet showers"] = NotAvailable;
+    nightList["sleet"] = NotAvailable;
+    nightList["cloudy with hail"] = Hail;
+    nightList["hail shower"] = Hail;
+    nightList["hail showers"] = Hail;
+    nightList["hail"] = Hail;
+    nightList["light snow"] = LightSnow;
+    nightList["light snow shower"] = Flurries;
+    nightList["light snow showers"] = Flurries;
+    nightList["cloudy with light snow"] = LightSnow;
+    nightList["heavy snow"] = Snow;
+    nightList["heavy snow shower"] = Snow;
+    nightList["heavy snow showers"] = Snow;
+    nightList["cloudy with heavy snow"] = Snow;
+    nightList["na"] = NotAvailable;
+
     return nightList;
 }
 
@@ -727,7 +791,7 @@ void UKMETIon::updateWeather(const QString& source)
     setData(weatherSource, "Current Conditions", condition(source));
 
     // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
-    
+   
     if (periodHour(source) >= 6 && periodHour(source) < 16) {
         setData(weatherSource, "Condition Icon", getWeatherIcon(dayIcons(), condition(source)));
     } else {
