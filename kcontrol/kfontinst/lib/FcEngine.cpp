@@ -1257,9 +1257,8 @@ void CFcEngine::getSizes()
 #ifdef KFI_FC_DEBUG
     kDebug();
 #endif
-
     XftFont *f=queryFont();
-    int     oldAlphaSize(itsAlphaSizeIndex);
+    int     alphaSize(itsSizes.size()>itsAlphaSizeIndex && itsAlphaSizeIndex>=0 ? itsSizes[itsAlphaSizeIndex] : constDefaultAlphaSize);
 
     itsScalable=FcTrue;
 
@@ -1319,7 +1318,7 @@ void CFcEngine::getSizes()
 #ifdef KFI_FC_DEBUG
                             kDebug() << "got fixed: " << px;
 #endif
-                            if (px<=constDefaultAlphaSize)
+                            if (px<=alphaSize)
                                 itsAlphaSizeIndex=size;
                             size++;
                         }
@@ -1358,7 +1357,7 @@ void CFcEngine::getSizes()
 #endif
                         itsSizes.push_back((int)px);
 
-                        if (px<=constDefaultAlphaSize)
+                        if (px<=alphaSize)
                             itsAlphaSizeIndex=size;
                     }
                 }
@@ -1374,12 +1373,14 @@ void CFcEngine::getSizes()
         itsSizes.reserve(sizeof(constScalableSizes)/sizeof(int));
 
         for (int i=0; constScalableSizes[i]; ++i)
-            itsSizes.push_back(point2Pixel(constScalableSizes[i]));
-        itsAlphaSizeIndex=itsSizes.indexOf(point2Pixel(constDefaultAlphaSize));
-    }
+        {
+            int px=point2Pixel(constScalableSizes[i]);
 
-    if(-1!=oldAlphaSize && oldAlphaSize<itsSizes.count())
-        itsAlphaSizeIndex=oldAlphaSize;
+            if (px<=alphaSize)
+                itsAlphaSizeIndex=i;
+            itsSizes.push_back(px);
+        }
+    }
 
 #ifdef KFI_FC_DEBUG
     kDebug() << "end";
