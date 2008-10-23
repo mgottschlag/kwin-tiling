@@ -144,7 +144,9 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget* parent)
     lineEdit->setCompletionObject(m_completion);
     lineEdit->setCompletionMode(static_cast<KGlobalSettings::Completion>(KRunnerSettings::queryTextCompletionMode()));
     lineEdit->setClearButtonShown(true);
-    m_searchTerm->setHistoryItems(KRunnerSettings::pastQueries());
+    QStringList pastQueryItems = KRunnerSettings::pastQueries();
+    m_searchTerm->setHistoryItems(pastQueryItems);
+    m_completion->insertItems(pastQueryItems);
     bottomLayout->insertWidget(2, m_searchTerm, 10);
 
     m_statusLayout = new QHBoxLayout();
@@ -246,6 +248,7 @@ Interface::~Interface()
 {
     KRunnerSettings::setPastQueries(m_searchTerm->historyItems());
     KRunnerSettings::setQueryTextCompletionMode(m_searchTerm->completionMode());
+    KRunnerSettings::self()->writeConfig();
     KConfigGroup interfaceConfig(KGlobal::config(), "Interface");
     saveDialogSize(interfaceConfig);
     KGlobal::config()->sync();

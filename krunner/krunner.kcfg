@@ -17,20 +17,19 @@
             </choices>
             <default>CommandOriented</default>
         </entry>
+        <entry key="QueryTextCompletionMode" type="Int">
+            <default code="true">(int)KGlobalSettings::CompletionAuto</default>
+            <label>Completion mode used for the query text.</label>
+        </entry>
+
+        <entry name="PastQueries" key="PastQueries" type="StringList">
+            <default></default>
+            <label>History if past queries successfully completed</label>
+            <whatsthis></whatsthis>
+    </entry>
     </group>
 
     <group name="TaskDialog">
- 
-    <entry key="QueryTextCompletionMode" type="Int">
-      <default code="true">int(KGlobalSettings::CompletionAuto)</default>
-      <label>Completion mode used for the query text.</label>
-    </entry>
-
-    <entry name="PastQueries" key="pastqueries" type="StringList">
-      <default></default>
-      <label>History if past queries successfully completed</label>
-      <whatsthis></whatsthis>
-    </entry>
 
    <entry key="KeepAbove" name="KeepTaskDialogAbove" type="Bool">
       <default>true</default>
