@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>363</width>
-    <height>134</height>
+    <height>80</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -15,7 +15,7 @@
   <property name="accessibleName" >
    <string>Configure Battery Monitor</string>
   </property>
-  <layout class="QVBoxLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout" >
    <item>
     <widget class="QCheckBox" name="showBatteryStringCheckBox" >
      <property name="toolTip" >
@@ -37,38 +37,20 @@
     </widget>
    </item>
    <item>
-    <widget class="KButtonGroup" name="styleGroup" >
-     <layout class="QVBoxLayout" >
-      <item>
-       <widget class="QRadioButton" name="oxygenBattery" >
-        <property name="text" >
-         <string>Oxygen theme</string>
-        </property>
-        <property name="checked" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="classicBattery" >
-        <property name="text" >
-         <string>Classic theme</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
+    <spacer name="verticalSpacer" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>15</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>KButtonGroup</class>
-   <extends>QGroupBox</extends>
-   <header>kbuttongroup.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>
