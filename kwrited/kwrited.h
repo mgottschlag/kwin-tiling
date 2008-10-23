@@ -22,7 +22,8 @@
 #ifndef KWRITED_H
 #define KWRITED_H
 
-#include <kdedmodule.h>
+#include <config-kwrited.h>
+#include <QtCore/QObject>
 class KPtyDevice;
 
 class KWrited : public QObject
@@ -39,14 +40,18 @@ private:
   KPtyDevice* pty;
 };
 
+#if !defined(BUILD_AS_EXECUTABLE)
+# include <kdedmodule.h>
+
 class KWritedModule : public KDEDModule
 {
-  Q_OBJECT
 public:
   KWritedModule(QObject* parent, const QList<QVariant>&);
  ~KWritedModule();
 private:
   KWrited* pro;
 };
+
+#endif
 
 #endif
