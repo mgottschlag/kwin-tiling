@@ -59,6 +59,7 @@ public:
 
     int insertionIndexAt(const QPointF &pos);
     void setMaximumRows(int);
+    void setFillRows(bool);
 
     Qt::Orientation orientation();
     /** the calculated width according to groupSize and maxRows*/
@@ -78,6 +79,7 @@ Q_SIGNALS:
 private:
     void init();
 
+    void calculatePreferredRowSize();
     bool remove(AbstractTaskItem* item);
 
     void adjustStretch();
@@ -100,6 +102,8 @@ private:
     int m_rowSize;
     /** How many rows  should be used. -1 for autoexpanding until maxRows*/
     int m_maxRows;
+
+    bool m_fillRows;
 
     Tasks *m_applet;
 

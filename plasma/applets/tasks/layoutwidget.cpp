@@ -24,10 +24,11 @@ LayoutWidget::LayoutWidget(TaskGroupItem *parent, Tasks *applet)
       m_hasSpacer(false),
       m_spacer(0),
       m_groupItem(parent),
-      m_rowSize(6), //TODO calculate a reasonable default value
+      m_rowSize(1),
       m_maxRows(1),
       m_applet(applet),
-      m_layout(0)
+      m_layout(0),
+      m_fillRows(true)
 {
     init();
     //kDebug();
@@ -41,10 +42,20 @@ LayoutWidget::~LayoutWidget()
     //kDebug();
 }
 
+void LayoutWidget::calculatePreferredRowSize()
+{
+    if (m_fillRows) {
+        m_rowSize = 1;
+    } else {
+        m_rowSize = 6;//TODO calculate a reasonable default value (depending on the Font size or the icon size or something)
+    }   
+}
+
 void LayoutWidget::init()
 {
     createLayout();
     setOrientation(Plasma::Horizontal);
+    calculatePreferredRowSize();
 }
 
 
@@ -57,6 +68,7 @@ void LayoutWidget::constraintsChanged(Plasma::Constraints constraints)
     }
 
     if (constraints & Plasma::SizeConstraint) {
+        calculatePreferredRowSize();
         layoutItems();
     }
 }
@@ -343,6 +355,11 @@ Qt::Orientation LayoutWidget::orientation()
 void LayoutWidget::setMaximumRows(int rows)
 {
     m_maxRows = rows;
+}
+
+void LayoutWidget::setFillRows(bool fillRows)
+{
+    m_fillRows = fillRows;
 }
 
 int LayoutWidget::insertionIndexAt(const QPointF &pos)//FIXME implement vertical
