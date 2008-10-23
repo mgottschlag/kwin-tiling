@@ -139,7 +139,7 @@ public:
 protected:
 
     /**
-     * Read settings from \a cfg_P. \a include_disabled_P controls wether
+     * Read settings from \a cfg_P. \a include_disabled_P controls whether
      * disabled actions should be discarded.
      */
     bool read_settings( KConfig& cfg_P, bool include_disabled_P, ImportType import_P );

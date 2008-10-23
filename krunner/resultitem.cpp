@@ -467,7 +467,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         if (d->highlight > 2) {
 #else
         // here's what the next line means:
-        // we check to see if the scene has focus, but that's overriden by the mouse hovering an
+        // we check to see if the scene has focus, but that's overridden by the mouse hovering an
         // item ... or unless we are over 2 ticks into the higlight anim. complex but it works
         if (((scene() && !scene()->views().isEmpty() && !scene()->views()[0]->hasFocus()) && !(option->state & QStyle::State_MouseOver)) || d->highlight > 2) {
 #endif

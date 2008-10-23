@@ -67,7 +67,7 @@ class FaviconProvider : public QObject
         void finished( FaviconProvider *provider );
 
         /**
-         * This signal is emitted whenever an error has occured.
+         * This signal is emitted whenever an error has occurred.
          *
          * @param provider The provider which emitted the signal.
          */

@@ -65,7 +65,7 @@ public:
      *                  configuration dialog
      * \param shortcut  Shortcut that triggers the action
      *
-     * \return The new action or 0 if an error occured.
+     * \return The new action or 0 if an error occurred.
      *
      * \see KAction::registerGlobalShortcut()
      */

@@ -31,7 +31,7 @@ namespace TaskManager
 
 
 /**
- * Wrapper class so we dont have to use the Task class directly and the TaskPtr remains guarded
+ * Wrapper class so we do not have to use the Task class directly and the TaskPtr remains guarded
  */
 class TASKMANAGER_EXPORT TaskItem : public AbstractGroupableItem
 {

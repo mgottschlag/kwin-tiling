@@ -191,7 +191,7 @@ int LayoutWidget::rowWidth(int groupSize)
 {
     int columns = m_rowSize;
     if (columns < 1) {
-        //kDebug() << "divider collumns is 0!!!";
+        //kDebug() << "divider columns is 0!!!";
         return 1;
     }
 
@@ -203,7 +203,7 @@ int LayoutWidget::rowWidth(int groupSize)
 
     //kDebug() << geometry().height() << int(geometry().height() / 22) << m_maxRows;
     int maxRows;
-    //in this case rows are columns, columns are rows...
+    // in this case rows are columns, columns are rows...
     if (m_applet->formFactor() == Plasma::Vertical) {
         maxRows = qMin(qMax(1, int(m_groupItem->geometry().width() / itemSize.width())), m_maxRows);
     } else {
@@ -212,7 +212,7 @@ int LayoutWidget::rowWidth(int groupSize)
     //kDebug() << m_layout->geometry() << m_groupItem->geometry();
     
     while (ceil(static_cast<float>(groupSize)/static_cast<float>(columns)) > maxRows) {
-        columns++;  //more rows needed than allowed so we add some collumns instead
+        columns++;  // more rows needed than allowed so we add some columns instead
     }
     //kDebug() << "groupWidth" << columns << maxRows << m_maxRows;
     return qMax(1, qMin(columns, groupSize));

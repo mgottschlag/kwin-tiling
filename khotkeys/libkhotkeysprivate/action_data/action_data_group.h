@@ -114,7 +114,7 @@ class KDE_EXPORT ActionDataGroup
         //! Remove a child from this collection
         void remove_child( ActionDataBase* child_P );
 
-        //! The childs
+        //! The children
         QList< ActionDataBase* > _list;
 
         //! System group type

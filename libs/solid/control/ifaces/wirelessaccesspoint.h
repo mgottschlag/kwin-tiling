@@ -91,7 +91,7 @@ namespace Ifaces
         virtual uint maxBitRate() const = 0;
 
         /**
-         * Retrieves the operation mode of this acess point
+         * Retrieves the operation mode of this access point
          *
          * @return the current mode
          * @see Solid::Control::WirelessNetworkInterface::OperationMode

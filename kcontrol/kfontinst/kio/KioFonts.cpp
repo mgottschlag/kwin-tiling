@@ -2467,7 +2467,7 @@ bool CKioFonts::getRootPasswd(const KUrl &url, bool askPasswd)
         return true;
     }
 
-    // If pids dont match, its possible (probable!) that the calling app has already
+    // If pids do not match, its possible (probable!) that the calling app has already
     // authenticated, if so ObtainAuthorization returns false on sucessive attempts!
     return itsPid!=getpid();
 #else

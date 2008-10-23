@@ -83,7 +83,7 @@ void DashboardJs::prepareForTransition(QString transition)
     //STUB
     kDebug() << "not implemented: transition with name" << transition;
     //TODO:freeze widget drawing. possible?
-    //not realy needed for things to work, but would be prettier
+    //not really needed for things to work, but would be prettier
 }
 
 void DashboardJs::performTransition()
@@ -91,7 +91,7 @@ void DashboardJs::performTransition()
     //STUB
     //TODO: enable widget drawing again, perform nice animation.
     kDebug() << "not implemented: perform transition";
-    //not realy needed for things to work, but would be prettier
+    //not really needed for things to work, but would be prettier
 }
 
 void DashboardJs::setCloseBoxOffset(int x, int y)

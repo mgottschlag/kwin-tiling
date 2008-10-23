@@ -32,7 +32,7 @@ class QSignalMapper;
 /**
  * This class can be used to fetch one or more rss feeds. By
  * requesting a datasource with the url's of one or more rss
- * feeds seperated by " ", you will receive a merged list
+ * feeds separated by " ", you will receive a merged list
  * containing the items of all feeds requested. This list is
  * sorted by timestamp.
  * This class also fetches the favicons from all requested

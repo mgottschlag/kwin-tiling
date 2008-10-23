@@ -201,7 +201,7 @@ namespace Notifier
           ///The data-model used to store devices
           QStandardItemModel *m_hotplugModel;
 
-          ///The widget wich display the panel
+          // The widget which display the panel
           QWidget *m_widget;
           ///The tree view used to display the content
           NotifierView *m_notifierView;

@@ -51,7 +51,7 @@ public:
 
     /**
     * Returns a group which contains all items and subgroups.
-    * Visualisations should be based on this.
+    * Visualizations should be based on this.
     */
     GroupPtr rootGroup() const;
 

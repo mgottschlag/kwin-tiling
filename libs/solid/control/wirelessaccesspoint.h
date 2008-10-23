@@ -108,7 +108,7 @@ namespace Control
         uint maxBitRate() const;
 
         /**
-         * Retrieves the operation mode of this acess point
+         * Retrieves the operation mode of this access point
          *
          * @return the current mode
          * @see Solid::Control::WirelessNetworkInterface::OperationMode

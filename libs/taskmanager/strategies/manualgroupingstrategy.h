@@ -142,7 +142,7 @@ private:
 
 class GroupManager;
 /**
- * Remebers manually grouped tasks
+ * Remembers manually grouped tasks
  * To do this it keeps an exact copy of the rootGroup and all subgroups
  * for each desktop/screen 
  */

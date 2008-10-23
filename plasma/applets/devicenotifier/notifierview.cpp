@@ -147,7 +147,7 @@ void NotifierView::calculateRects()
 
                 QStandardItemModel * currentModel = dynamic_cast<QStandardItemModel *>(model());
                 QStandardItem *currentItem = currentModel->itemFromIndex(index);
-                // we display the childs of this item
+                // we display the children of this item
                 for (int k = 0; k < currentItem->rowCount(); ++k) {
                     for (int l = 0; l < currentItem->columnCount(); ++l) {
                         QStandardItem *childItem = currentItem->child(k, l);

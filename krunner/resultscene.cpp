@@ -113,7 +113,7 @@ void ResultScene::clearMatches()
 
 void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
 {
-    //kDebug() << "============================" << endl << "matches retreived: " << m.count();
+    // kDebug() << "============================" << endl << "matches retrieved: " << m.count();
     if (m.count() == 0) {
         //kDebug() << "clearing";
         emit itemHoverEnter(0);

@@ -111,7 +111,7 @@ public:
 
 signals:
     /**
-    * emitted whenever we recieve a constraintsEvent
+    * emitted whenever we receive a constraintsEvent
     */
     void constraintsChanged(Plasma::Constraints);
 

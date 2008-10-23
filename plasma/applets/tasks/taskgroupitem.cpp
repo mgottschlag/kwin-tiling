@@ -289,7 +289,7 @@ void TaskGroupItem::setGroup(TaskManager::GroupPtr group)
     connect(m_group, SIGNAL(itemChanged(AbstractItemPtr)), this, SLOT(itemChanged(AbstractItemPtr)));
     connect(m_group, SIGNAL(groupEditRequest()), this, SLOT(editGroup()));
 
-    //Add already exisiting items
+    //Add already existing items
     reload();
     updateTask(::TaskManager::EverythingChanged);
 
@@ -677,13 +677,13 @@ void TaskGroupItem::dropEvent(QGraphicsSceneDragDropEvent *event)
                                 targetIndex--; //fix because the taskItem is removed so the index of the group should be targetIndex - 1
                             }
                             m_applet->groupManager().manualSortingRequest(taskItem->abstractItem()->parentGroup(), targetIndex);//move group to appropriate index if possible
-                            event->acceptProposedAction();//We dont care about the type of action
+                            event->acceptProposedAction(); // We do not care about the type of action
                             //kDebug() << "Group Created";
                             return;
                         } else if (!targetTask->isWindowItem()) { //Drop on collapsed group item
                             //kDebug() << "Add item to Group";
                             m_applet->groupManager().manualGroupingRequest(taskItem->abstractItem(), dynamic_cast<TaskManager::GroupPtr>(targetTask->abstractItem()));
-                            event->acceptProposedAction();//We dont care about the type of action
+                            event->acceptProposedAction(); // We do not care about the type of action
                             return;
                         }
                     } 
@@ -706,7 +706,7 @@ void TaskGroupItem::dropEvent(QGraphicsSceneDragDropEvent *event)
                         }
                     }//group Sorting
                 }//Move action
-        event->acceptProposedAction();//We dont care about the type of action
+        event->acceptProposedAction(); // We do not care about the type of action
     } else {
         event->ignore();
     }

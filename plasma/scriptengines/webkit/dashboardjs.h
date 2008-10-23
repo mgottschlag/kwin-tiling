@@ -83,7 +83,7 @@ public slots:
     void openURL(QString name); //ok
 
     /**
-     * Returns the value assosiated with a certain key
+     * Returns the value associated with a certain key
      */
     QVariant preferenceForKey(QString key); //ok
 

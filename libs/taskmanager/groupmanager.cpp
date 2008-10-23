@@ -182,10 +182,10 @@ bool GroupManager::add(TaskPtr task)
     kDebug() <<  task->className();
     kDebug() <<  task->classClass();*/
 
-    //Go through all filters wether the task should be displayed or not
+    // Go through all filters whether the task should be displayed or not
 
     if (!task->showInTaskbar()) {
-        kDebug() << "Dont show in taskbar";
+        kDebug() << "Do not show in taskbar";
         return false;
     }
 
@@ -255,9 +255,9 @@ bool GroupManager::add(TaskPtr task)
     return true;
 }
 
- /** Adds a windowTaskItem that is demanding attention to the taskbar if it is not currently shown and is not on the current desktop.
-*This funtion applies when the showOnlyCurrentDesktop or showOnlyCurrentScreen switch is set. 
-*/
+/** Adds a windowTaskItem that is demanding attention to the taskbar if it is not currently shown and is not on the current desktop.
+ * This function applies when the showOnlyCurrentDesktop or showOnlyCurrentScreen switch is set. 
+ */
 void GroupManagerPrivate::addAttentionTask()
 {
     TaskPtr task;

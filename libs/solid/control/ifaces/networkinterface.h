@@ -34,7 +34,7 @@ namespace Ifaces
     /**
      * Represents a generic network interface as seen by the networking subsystem.
      *
-     * For specialised interfaces @see Solid::Control::Ifaces::WiredNetworkInterface and @see
+     * For specialized interfaces @see Solid::Control::Ifaces::WiredNetworkInterface and @see
      * Solid::Control::Ifaces::WirelessNetworkInterface
      */
     class SOLIDCONTROLIFACES_EXPORT NetworkInterface

@@ -57,7 +57,7 @@ public:
     virtual void desktopChanged(int newDesktop);
 
     /** Returns list of actions that a task can do in this groupingStrategy
-    *  If the visualisation supports grouping it has to show these actions.
+    *  If the visualization supports grouping it has to show these actions.
     */
     virtual QList<QAction*> strategyActions(QObject *parent, AbstractGroupableItem *item);
 

@@ -86,7 +86,7 @@ class ResultScene : public QGraphicsScene
         QPixmap     m_forePixmap1;
         QPixmap     m_forePixmap2;
 
-        //for resize optimisation
+        // for resize optimization
         QTimer      m_resizeTimer;
         QTimer      m_clearTimer;
         bool        m_successfullyResized;

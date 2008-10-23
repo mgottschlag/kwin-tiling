@@ -159,9 +159,9 @@ public:
 
         switch (alignment) {
         case Qt::AlignLeft:
-            //Here substracting one to everything because QRect.moveCenter(pos) moves the rect with
-            //the width/2 th pixel at pos.x (and so for y) resulting in the painted image moved
-            //one pixel to the right
+            // Here subtracting one to everything because QRect.moveCenter(pos) moves the rect with
+            // the width/2 th pixel at pos.x (and so for y) resulting in the painted image moved
+            // one pixel to the right
             rightMaxPos = offset + maxLength;
             leftMaxPos = 0;
             rightMinPos = offset + minLength;

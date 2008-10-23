@@ -497,7 +497,7 @@ void CJobRunner::cfgResult(KJob *job)
 {
     stopAnimation();
 
-    // KIO::file_xxxx() dont seem to emit kdirnotify signals, so do this now...
+    // KIO::file_xxxx() do not seem to emit kdirnotify signals, so do this now...
     if(itsModified && (CMD_COPY==itsCmd || CMD_INSTALL==itsCmd))
         org::kde::KDirNotify::emitFilesAdded(itsDest.url());
 
@@ -572,7 +572,7 @@ CJobRunner::Item::Item(const KUrl &u, const QString &n)
 
 bool CJobRunner::Item::operator<(const Item &o) const
 {
-    // Dont care about the order of non type1 fonts/metrics...
+    // Do not care about the order of non type1 fonts/metrics...
     if(OTHER_FONT==type)
         return true;
 

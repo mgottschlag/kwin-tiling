@@ -53,7 +53,7 @@ namespace Nepomuk {
                  * A literal term is the simplest form of Term. It matches all resource
                  * that contain the value.
                  *
-                 * It is also used to specify literal values in comparision Terms such
+                 * It is also used to specify literal values in comparison Terms such
                  * as ContainsTerm or EqualityTerm.
                  */
                 LiteralTerm,
@@ -76,7 +76,7 @@ namespace Nepomuk {
                 OrTerm,
 
                 /**
-                 * A comparision. The comparision operator needs to be specified in addition.
+                 * A comparison. The comparison operator needs to be specified in addition.
                  * For specifying the %property the same applies as for ContainsTerm.
                  *
                  * A single subterm specifies the resource or value to match (resource terms
@@ -263,7 +263,7 @@ namespace Nepomuk {
             void addSubTerm( const Term& );
 
             /**
-             * Comparision operator.
+             * Comparison operator.
              */
             bool operator==( const Term& ) const;
 

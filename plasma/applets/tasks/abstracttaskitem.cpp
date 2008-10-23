@@ -277,7 +277,7 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
 {
 // FIXME  Check the usage of KColorScheme here with various color schemes
 
-    //Don't paint with invalid sizes, the happens when the layout i's being initialized
+    // Do not paint with invalid sizes, the happens when the layout i's being initialized
     if (!option->rect.isValid()) {
         return;
     }
@@ -286,7 +286,7 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     bool hasSvg = false;
 
     /*FIXME -could be done more elegant with caching in tasks in a qhash <size,svg>.
-    -dont use size() directly because this introduces the blackline syndrom.
+    -do not use size() directly because this introduces the blackline syndrome.
     -This line is only needed when we have different items in the taskbar because of an expanded group for example. otherwise the resizing in the resizeEvent is sufficient
     */
     m_applet->resizeItemBackground(geometry().size().toSize());

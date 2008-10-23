@@ -52,7 +52,7 @@ public:
      * Desktop windows are displayed beneath all other windows, have
      * no window decoration and occupy the full size of the screen.
      *
-     * The default behaviour is not to regsiter the view as the desktop
+     * The default behaviour is not to register the view as the desktop
      * window.
      */
     void setIsDesktop(bool isDesktop);

@@ -71,7 +71,7 @@ bool RssEngine::updateSourceEvent(const QString &name)
      * multiple feeds at the same time, so we allow a comma
      * separated list of url's
      */
-    // NOTE: A comma seperated list of feeds is not url compliant. Urls 
+    // NOTE: A comma separated list of feeds is not url compliant. Urls 
     // may and do contain commas see http://www.spiegel.de/schlagzeilen/rss/0,5291,,00.xml
     // I have changed it to something more not url compliant " " three dots
     // Otherwise take a list instead
