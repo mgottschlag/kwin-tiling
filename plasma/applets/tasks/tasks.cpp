@@ -385,9 +385,9 @@ void Tasks::createConfigurationInterface(KConfigDialog *parent)
     m_ui.showOnlyCurrentScreen->setChecked(m_groupManager->showOnlyCurrentScreen());
     m_ui.showOnlyMinimized->setChecked(m_groupManager->showOnlyMinimized());
 
-    m_ui.groupingStrategy->addItem("No grouping",QVariant(TaskManager::GroupManager::NoGrouping));
-    m_ui.groupingStrategy->addItem("Manual grouping",QVariant(TaskManager::GroupManager::ManualGrouping));
-    m_ui.groupingStrategy->addItem("Grouping by programname",QVariant(TaskManager::GroupManager::ProgramGrouping));
+    m_ui.groupingStrategy->addItem(i18n("Don't group"),QVariant(TaskManager::GroupManager::NoGrouping));
+    m_ui.groupingStrategy->addItem(i18n("Manually"),QVariant(TaskManager::GroupManager::ManualGrouping));
+    m_ui.groupingStrategy->addItem(i18n("By program name"),QVariant(TaskManager::GroupManager::ProgramGrouping));
 
     switch (m_groupManager->groupingStrategy()) {
         case TaskManager::GroupManager::NoGrouping:
@@ -404,9 +404,9 @@ void Tasks::createConfigurationInterface(KConfigDialog *parent)
     }
   //  kDebug() << m_groupManager->groupingStrategy();
 
-    m_ui.sortingStrategy->addItem("No sorting",QVariant(TaskManager::GroupManager::NoSorting));
-    m_ui.sortingStrategy->addItem("Manual sorting",QVariant(TaskManager::GroupManager::ManualSorting));
-    m_ui.sortingStrategy->addItem("Sorting by alpha",QVariant(TaskManager::GroupManager::AlphaSorting));
+    m_ui.sortingStrategy->addItem(i18n("Don't sort"),QVariant(TaskManager::GroupManager::NoSorting));
+    m_ui.sortingStrategy->addItem(i18n("Manually"),QVariant(TaskManager::GroupManager::ManualSorting));
+    m_ui.sortingStrategy->addItem(i18n("Alphabetically"),QVariant(TaskManager::GroupManager::AlphaSorting));
 
     switch (m_groupManager->sortingStrategy()) {
         case TaskManager::GroupManager::NoSorting:
