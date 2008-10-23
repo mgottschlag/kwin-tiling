@@ -206,6 +206,10 @@ void WindowTaskItem::setStartupTask(TaskItem *task)
         kDebug() << "Error";
         return;
     }
+    m_abstractItem = qobject_cast<TaskManager::AbstractGroupableItem *>(task);
+    if (!m_abstractItem) {
+        kDebug() << "error";
+    }
     connect(task, SIGNAL(gotTaskPointer()), this, SLOT(gotTaskPointer()));
     setText(task->startup()->text());
     setIcon(KIcon(task->startup()->icon()));

@@ -164,8 +164,8 @@ int LayoutWidget::size()
     int groupSize = 0;
     TaskGroupItem *group;
     foreach (AbstractTaskItem *item, m_groupItem->memberList()) {
-        if (!item->abstractItem()) {
-            kDebug() << "error";
+        if (!item->abstractItem()) { //this item is a startup task
+            kDebug() << "Error, invalid item in groupMembers";
             continue;
         }
         if (item->abstractItem()->isGroupItem()) {
@@ -173,7 +173,7 @@ int LayoutWidget::size()
             if (!group->collapsed()) { 
                 LayoutWidget *layout = dynamic_cast<LayoutWidget*>(group->layoutWidget());
                 if (!layout) {
-                    kDebug() << "Error";
+                    kDebug() << "Error group has no layout";
                     continue;
                 }
                 groupSize += layout->size();// increase number of items since expanded groups occupy several spaces
@@ -280,15 +280,15 @@ void LayoutWidget::layoutItems()
                     int splitIndex = columns - col;//number of items in group that are on this row
                     TaskGroupItem *splitChild = group->splitGroup(splitIndex);
                     m_layout->addItem(item, row, col, 1, splitIndex); //Add the normal item 
-                    kDebug() << "add normal item: split index = column span " << splitIndex;
+                    //kDebug() << "add normal item: split index = column span " << splitIndex;
                     if (splitChild) {
-                        m_layout->addItem(splitChild, row + 1, 0, 1, groupRowWidth - splitIndex);//also add the second part of the group if there is one
+                       m_layout->addItem(splitChild, row + 1, 0, 1, groupRowWidth - splitIndex);//also add the second part of the group if there is one
                     }
-                    kDebug() << "add split item: column span " << groupRowWidth - splitIndex;
+                    //kDebug() << "add split item: column span " << groupRowWidth - splitIndex;
                 } else  {
                     group->unsplitGroup();
                     m_layout->addItem(item, row, col, 1, groupRowWidth); //Add the normal item 
-                    kDebug() << "add unsplit expanded item over columns " << groupRowWidth;
+                    //kDebug() << "add unsplit expanded item over columns " << groupRowWidth;
                 }
                 numberOfItems += groupRowWidth - 1;
             } else {
@@ -304,7 +304,6 @@ void LayoutWidget::layoutItems()
         numberOfItems++;
     }
 
-    //invalidate();
     updatePreferredSize();
     m_groupItem->setLayout(m_layout);
 }

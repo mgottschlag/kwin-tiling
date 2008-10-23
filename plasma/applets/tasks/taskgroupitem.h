@@ -78,7 +78,7 @@ public:
     /*
     *Why the split group works.
     *drag split group: in the drop event the getDirectMember function is used which retrieves the parent item of the split group
-    *drop on split group: //on unsplitGroup the group adds all items from splitgroup / the grouping is done via the taskgroup in lib TODO rigth insert index detected?
+    *drop on split group: //on unsplitGroup the group adds all items from splitgroup / the grouping is done via the taskgroup in lib
     *collapse on split group: because windowTaskItems retrive its parentgroup via tasks
     */
     /** Splits the group into two items, returns the second, new part (splitgroup)*/
