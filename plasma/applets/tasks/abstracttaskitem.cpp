@@ -277,7 +277,7 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
 {
 // FIXME  Check the usage of KColorScheme here with various color schemes
 
-    // Do not paint with invalid sizes, the happens when the layout i's being initialized
+    // Do not paint with invalid sizes, the happens when the layout is being initialized
     if (!option->rect.isValid()) {
         return;
     }
