@@ -142,7 +142,7 @@ void AbstractTaskItem::toolTipAboutToShow()
         m_showingTooltip = true;
         updateToolTip();
     } else {
-        Plasma::ToolTipManager::self()->setContent(this);
+        Plasma::ToolTipManager::self()->clearContent(this);
     }
 }
 

@@ -98,7 +98,7 @@ void ClockApplet::toolTipAboutToShow()
 
 void ClockApplet::toolTipHidden()
 {
-    Plasma::ToolTipManager::self()->setContent(this);
+    Plasma::ToolTipManager::self()->clearContent(this);
 }
 
 void ClockApplet::updateContent()

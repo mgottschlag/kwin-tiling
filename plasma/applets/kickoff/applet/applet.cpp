@@ -161,7 +161,7 @@ void LauncherApplet::createConfigurationInterface(KConfigDialog *parent)
 void LauncherApplet::popupEvent(bool show)
 {
     if (show) {
-        Plasma::ToolTipManager::self()->setContent(this);
+        Plasma::ToolTipManager::self()->clearContent(this);
         d->launcher->setLauncherOrigin(popupPlacement(), location());
         d->createLauncher();
     }
@@ -170,7 +170,7 @@ void LauncherApplet::popupEvent(bool show)
 void LauncherApplet::toolTipAboutToShow()
 {
     if (d->launcher->isVisible()) {
-        Plasma::ToolTipManager::self()->setContent(this);
+        Plasma::ToolTipManager::self()->clearContent(this);
     } else {
         d->initToolTip();
     }
