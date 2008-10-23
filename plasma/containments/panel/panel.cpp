@@ -191,6 +191,9 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 
 void Panel::appletRemoved(Plasma::Applet* applet)
 {
+    QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout*>(layout());
+    lay->removeItem(applet);
+
     //shrink the panel if possible
     if (formFactor() == Plasma::Horizontal) {
         resize(size().width() - applet->size().width(), size().height());
