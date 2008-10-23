@@ -71,7 +71,6 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_batteryLabel(0),
       m_profileLabel(0),
       m_profileCombo(0),
-      m_batteryStyle(0),
       m_theme(0),
       m_availableProfiles(QStringList()),
       m_currentProfile(0),
@@ -97,38 +96,23 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     m_textRect = QRectF();
 }
 
-void Battery::setSvgTheme(int style)
-{
-    if (style == 0) {
-        m_batteryStyle = OxygenBattery;
-        m_svgFile= "widgets/battery-oxygen";
-    } else {
-        m_batteryStyle = ClassicBattery;
-        m_svgFile= "widgets/battery";
-    }
-    showBattery(false);
-    delete m_theme;
-    m_theme = new Plasma::Svg(this);
-    m_theme->setImagePath(m_svgFile);
-    m_theme->setContainsMultipleImages(false);
-    kDebug() << "Changing theme to " << m_svgFile;
-    m_theme->resize(contentsRect().size());
-    if (m_acadapter_plugged) {
-        showAcAdapter(true);
-    }
-    showBattery(true);
-}
-
 void Battery::init()
 {
     KConfigGroup cg = config();
     m_showBatteryString = cg.readEntry("showBatteryString", false);
     m_showMultipleBatteries = cg.readEntry("showMultipleBatteries", !m_isEmbedded);
 
-    if (!m_isEmbedded) {
-        m_svgFile= QString();
-        setSvgTheme(cg.readEntry("style", 0));
+    m_svgFile = QString();
+
+    showBattery(false);;
+    m_theme = new Plasma::Svg(this);
+    m_theme->setImagePath("widgets/battery-oxygen");
+    m_theme->setContainsMultipleImages(false);
+    m_theme->resize(contentsRect().size());
+    if (m_acadapter_plugged) {
+        showAcAdapter(true);
     }
+    showBattery(true);
 
     m_theme->resize(contentsRect().size());
     m_font = QApplication::font();
@@ -226,7 +210,6 @@ void Battery::createConfigurationInterface(KConfigDialog *parent)
     parent->addPage(widget, parent->windowTitle(), Applet::icon());
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-    ui.styleGroup->setSelected(m_batteryStyle);
     ui.showBatteryStringCheckBox->setChecked(m_showBatteryString ? Qt::Checked : Qt::Unchecked);
     ui.showMultipleBatteriesCheckBox->setChecked(m_showMultipleBatteries ? Qt::Checked : Qt::Unchecked);
 }
@@ -246,14 +229,6 @@ void Battery::configAccepted()
         cg.writeEntry("showMultipleBatteries", m_showMultipleBatteries);
         kDebug() << "Show multiple battery changed: " << m_showMultipleBatteries;
         emit sizeHintChanged(Qt::PreferredSize);
-    }
-
-    if (ui.styleGroup->selected() != m_batteryStyle) {
-        //setSvgTheme(ui.styleGroup->selected());
-        if (m_extenderApplet) {
-            // Also switch the theme in the extenderApplet
-            //m_extenderApplet->setSvgTheme(ui.styleGroup->selected()); // FIXME: crashes
-        }
     }
 
     //reconnect sources
@@ -365,7 +340,6 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
             m_extenderApplet->setAcceptsHoverEvents(true);
             m_extenderApplet->setParentItem(controls);
             m_extenderApplet->setEmbedded(true);
-            m_extenderApplet->setSvgTheme(m_batteryStyle);
             m_extenderApplet->setMinimumSize(64, 64); // TODO: Multiple batteries?
             m_extenderApplet->resize(64, 64);
             m_extenderApplet->setBackgroundHints(NoBackground);
@@ -758,41 +732,17 @@ void Battery::paintBattery(QPainter *p, const QRect &contentsRect, const int bat
     if (plugState && m_theme->hasElement("Battery")) {
         m_theme->paint(p, scaleRectF(m_batteryAlpha, contentsRect), "Battery");
 
-        if (m_batteryStyle == OxygenBattery) {
-            if (batteryPercent > 95) {
-                fill_element = "Fill100";
-            } else if (batteryPercent > 80) {
-                fill_element = "Fill80";
-            } else if (batteryPercent > 50) {
-                fill_element = "Fill60";
-            } else if (batteryPercent > 20) {
-                fill_element = "Fill40";
-            } else if (batteryPercent > 10) {
-                fill_element = "Fill20";
-            } // Don't show a fillbar below 11% charged
-        } else { // OxyenStyle
-            if (batteryPercent > 95) {
-                fill_element = "Fill100";
-            } else if (batteryPercent > 90) {
-                fill_element = "Fill90";
-            } else if (batteryPercent > 80) {
-                fill_element = "Fill80";
-            } else if (batteryPercent > 70) {
-                fill_element = "Fill70";
-            } else if (batteryPercent > 55) {
-                fill_element = "Fill60";
-            } else if (batteryPercent > 40) {
-                fill_element = "Fill50";
-            } else if (batteryPercent > 30) {
-                fill_element = "Fill40";
-            } else if (batteryPercent > 20) {
-                fill_element = "Fill30";
-            } else if (batteryPercent > 10) {
-                fill_element = "Fill20";
-            } else if (batteryPercent >= 5) {
-                fill_element = "Fill10";
-            } // Lower than 5%? Show no fillbar.
-        }
+        if (batteryPercent > 95) {
+            fill_element = "Fill100";
+        } else if (batteryPercent > 80) {
+            fill_element = "Fill80";
+        } else if (batteryPercent > 50) {
+            fill_element = "Fill60";
+        } else if (batteryPercent > 20) {
+            fill_element = "Fill40";
+        } else if (batteryPercent > 10) {
+            fill_element = "Fill20";
+        } // Don't show a fillbar below 11% charged
     }
     //kDebug() << "plugState:" << plugState;
 

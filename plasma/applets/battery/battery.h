@@ -67,7 +67,6 @@ class Battery : public Plasma::PopupApplet
     protected:
         void createConfigurationInterface(KConfigDialog *parent);
         void setEmbedded(const bool embedded);
-        void setSvgTheme(int style);
 
     private slots:
         void animationUpdate(qreal progress);
@@ -84,16 +83,10 @@ class Battery : public Plasma::PopupApplet
         void hibernate();
 
     private:
-        Q_ENUMS( m_batteryStyle )
-        enum BatteryStyle {
-            // Keep the order of styles the same order as the items in the configdialog!
-            OxygenBattery, ClassicBattery
-        };
         void connectSources();
         void disconnectSources();
         void initBatteryExtender(Plasma::ExtenderItem *item);
         void updateStatus();
-        void setSvg(Plasma::Svg &theme);
 
         /* Prevent creating infinite loops by embedding applets inside applets */
         bool m_isEmbedded;
@@ -107,7 +100,6 @@ class Battery : public Plasma::PopupApplet
         Plasma::Slider *m_brightnessSlider;
         int m_inhibitCookie;
 
-        int m_batteryStyle;
         /* Paint battery with proper charge level */
         void paintBattery(QPainter *p, const QRect &contentsRect, const int batteryPercent, const bool plugState);
         /* Paint a label on top of the battery */
