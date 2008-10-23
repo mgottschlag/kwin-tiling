@@ -329,14 +329,14 @@ static void getFontFiles(const CDisabledFonts::TFileList &entries, CDisabledFont
         QString     file(removeSymLinks ? getReal(*it) : (*it).path);
 
         if(-1==files.indexOf(file) && Misc::fExists(file))
-            files.append(file);
+            files.append(CDisabledFonts::TFile(file, (*it).face, (*it).foundry));
 
         Misc::getAssociatedFiles(*it, assoc);
 
         if(assoc.count())
         {
             QStringList::const_iterator fIt,
-                                  fEnd=assoc.end();
+                                        fEnd=assoc.end();
 
             for(fIt=assoc.begin(); fIt!=fEnd; ++fIt)
             {
