@@ -114,8 +114,8 @@ KWrited::KWrited() : QObject()
   
 #if defined(BUILD_AS_EXECUTABLE)
   //drop privileges again
-  setuid(getuid());
-  setgid(getgid());
+  seteuid(getuid());
+  setegid(getgid());
 #endif
 
   connect(pty, SIGNAL(readyRead()), this, SLOT(block_in()));
@@ -124,7 +124,20 @@ KWrited::KWrited() : QObject()
 
 KWrited::~KWrited()
 {
+#if defined(BUILD_AS_EXECUTABLE)
+  //restore elevated privileges
+  seteuid(original_euid);
+  setegid(original_egid);
+#endif
+
     pty->logout();
+
+#if defined(BUILD_AS_EXECUTABLE)
+  //drop privileges again
+  seteuid(getuid());
+  setegid(getgid());
+#endif
+
     delete pty;
 }
 
