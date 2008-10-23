@@ -32,7 +32,7 @@
 <title><guilabel>Joystick configuration module</guilabel></title>
 
 <para>This module provides an interface to calibrate your joystick device as well as
-see which funtions on your joystick are mapped to which logical button or
+see which functions on your joystick are mapped to which logical button or
 axis.</para>
 
 <para>
