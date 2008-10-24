@@ -46,18 +46,11 @@ OPTION(INSTALL_PYTHON_TEST_PLASMA "Install test python applet" OFF)
 
 if(INSTALL_PYTHON_TEST_PLASMA )
 
- # install the test plugin
- #install(FILES test/plasma-hello-python-world.desktop DESTINATION ${SERVICES_INSTALL_DIR})
- #install(DIRECTORY test/plasma-hello-python-world DESTINATION ${DATA_INSTALL_DIR}/plasma/plasmoids)
-
  install(FILES test/plasma-applet-pyclock.desktop DESTINATION ${SERVICES_INSTALL_DIR})
  install(DIRECTORY test/plasma-applet-pyclock DESTINATION ${DATA_INSTALL_DIR}/plasma/plasmoids/ PATTERN .svn EXCLUDE)
- #install(DIRECTORY test/plasma-pyclock DESTINATION ${DATA_INSTALL_DIR}/plasma/plasmoids)
 
- #install(FILES test/plasma-nestclock.desktop DESTINATION ${SERVICES_INSTALL_DIR})
- #install(DIRECTORY test/plasma-nestclock DESTINATION ${DATA_INSTALL_DIR}/plasma/plasmoids)
-
- install(FILES test/plasma-dataengine-pytime.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+ #TODO where install it ?
+ #install(FILES test/plasma-dataengine-pytime.desktop DESTINATION ${SERVICES_INSTALL_DIR})
  #install(DIRECTORY test/plasma-dataengine-pytime DESTINATION ${DATA_INSTALL_DIR}/plasma/engines)
 
 endif(INSTALL_PYTHON_TEST_PLASMA)
