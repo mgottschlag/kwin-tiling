@@ -19,6 +19,8 @@
 #ifndef __RANDRSCREEN_H__
 #define __RANDRSCREEN_H__
 
+#include <QDebug>
+
 #include "randr.h"
 
 #include <QX11Info>

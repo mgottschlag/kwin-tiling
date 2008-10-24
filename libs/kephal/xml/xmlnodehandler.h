@@ -18,8 +18,8 @@
  */
 
 
-#ifndef KEPHAL_XMLNODES_H
-#define KEPHAL_XMLNODES_H
+#ifndef KEPHAL_XMLNODEHANDLER_H
+#define KEPHAL_XMLNODEHANDLER_H
 
 
 #include "xmltype.h"
@@ -203,5 +203,5 @@ namespace Kephal {
 #define COMPLEX_ELEMENT_LIST(name, class, listGetter, factory, complex) element(name, new XMLComplexListNodeHandler<class, complex>(factory, &class::listGetter))
 
 
-#endif // KEPHAL_XMLNODES_H
+#endif // KEPHAL_XMLNODEHANDLER_H
 

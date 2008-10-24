@@ -18,10 +18,11 @@
  */
 
 
+#include "dbusscreens.h"
+
 #include <QApplication>
 #include <QDebug>
 
-#include "dbusscreens.h"
 #include "../simplescreen.h"
 #include "screens_interface.h"
 #include "kephal/outputs.h"

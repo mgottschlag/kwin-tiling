@@ -18,6 +18,8 @@
  */
 
 
+#include "kephald.h"
+
 #include <QDebug>
 #include <QDBusConnection>
 #include <QApplication>
@@ -25,8 +27,6 @@
 
 #include "xrandr12/randrdisplay.h"
 #include "xrandr12/randrscreen.h"
-
-#include "kephald.h"
 
 #include "outputs/desktopwidget/desktopwidgetoutputs.h"
 #include "screens/configuration/configurationscreens.h"

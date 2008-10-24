@@ -528,7 +528,7 @@ namespace Kephal {
         }
         
         if (! m_activeConfiguration) {
-            qDebug() << "dont have an active configuration";
+            qDebug() << "don't have an active configuration";
             return result;
         }
         
@@ -1050,7 +1050,7 @@ namespace Kephal {
         }
         
         if (screens.size() > m_currentOutputs->outputs().size()) {
-            INVALID_CONFIGURATION("configuration and outputs dont match");
+            INVALID_CONFIGURATION("configuration and outputs don't match");
         }
         
         foreach (OutputXML * output, m_currentOutputs->outputs()) {

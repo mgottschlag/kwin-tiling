@@ -19,9 +19,7 @@
  */
 
 #include <QDebug>
-
-#include <QApplication>
-#include <QDesktopWidget>
+#include <QWidget>
 #include <QX11Info>
 
 #include "randrdisplay.h"

@@ -18,8 +18,6 @@
  */
 
 
-#include <QDebug>
-
 #include "xrandroutputs.h"
 #include "edid.h"
 

@@ -17,8 +17,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <QDebug>
-
 #include "randroutput.h"
 #include "randrscreen.h"
 #include "randrcrtc.h"
@@ -281,7 +279,7 @@ SizeList RandROutput::sizes() const
 {
 	SizeList sizeList;
 
-	foreach(RRMode m, m_modes)
+	foreach(const RRMode & m, m_modes)
 	{
 		RandRMode mode = m_screen->mode(m);
 		if (!mode.isValid())
@@ -307,7 +305,7 @@ RateList RandROutput::refreshRates(const QSize &s) const
 	if (!size.isValid())
 		size = rect().size();
 
-	foreach(RRMode m, m_modes)
+	foreach(const RRMode & m, m_modes)
 	{
 		RandRMode mode = m_screen->mode(m);
 		if (!mode.isValid())
@@ -392,7 +390,7 @@ RandRCrtc *RandROutput::findEmptyCrtc()
 {
 	RandRCrtc *crtc = 0;
 
-	foreach(RRCrtc c, m_possibleCrtcs)
+	foreach(const RRCrtc & c, m_possibleCrtcs)
 	{
 		crtc = m_screen->crtc(c);
 		if (crtc->connectedOutputs().count() == 0)

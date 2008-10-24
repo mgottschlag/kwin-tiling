@@ -18,11 +18,11 @@
  */
 
 
-#include <QDebug>
-
 #include "backendconfigurations.h"
 #include "kephal/outputs.h"
 #include "kephal/backend.h"
+
+#include <QDebug>
 
 
 namespace Kephal {
@@ -106,7 +106,7 @@ namespace Kephal {
             }
             
             if (! screenSizes.contains(outputScreens[output])) {
-                INVALID_CONFIGURATION("outputs and configuration dont match");
+                INVALID_CONFIGURATION("outputs and configuration don't match");
                 return screens;
             }
             screenSizes[outputScreens[output]] = screenSizes[outputScreens[output]].expandedTo(outputSizes[output]);

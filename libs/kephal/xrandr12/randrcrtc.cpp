@@ -16,8 +16,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <QDebug>
-
 #include "randrcrtc.h"
 #include "randrscreen.h"
 #include "randroutput.h"
@@ -222,7 +220,7 @@ bool RandRCrtc::applyProposed()
 		ModeList modeList = modes();
 		ModeList matchModes;
 
-		foreach(RRMode m, modeList)
+		foreach(const RRMode & m, modeList)
 		{
 			RandRMode mode = m_screen->mode(m);
 			if (mode.size() == m_proposedRect.size())
@@ -238,7 +236,7 @@ bool RandRCrtc::applyProposed()
 		else
 			mode = m_screen->mode(matchModes.first());
 
-		foreach(RRMode m, matchModes)
+		foreach(const RRMode & m, matchModes)
 		{
 			RandRMode testMode = m_screen->mode(m);
 			if (testMode.refreshRate() == m_proposedRate)
@@ -426,7 +424,7 @@ ModeList RandRCrtc::modes() const
 
 	bool first = true;
 
-	foreach(RROutput o, m_connectedOutputs)
+	foreach(const RROutput & o, m_connectedOutputs)
 	{
 		RandROutput *output = m_screen->output(o);
 		if (first)
@@ -436,7 +434,7 @@ ModeList RandRCrtc::modes() const
 		}
 		else
 		{
-			foreach(RRMode m, modeList)
+			foreach(const RRMode & m, modeList)
 			{
 				if (output->modes().indexOf(m) == -1)
 					modeList.removeAll(m);
@@ -446,6 +444,4 @@ ModeList RandRCrtc::modes() const
 
 	return modeList;
 }
-
-
 

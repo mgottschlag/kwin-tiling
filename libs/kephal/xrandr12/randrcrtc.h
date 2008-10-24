@@ -19,6 +19,8 @@
 #ifndef __RANDRCRTC_H__
 #define __RANDRCRTC_H__
 
+#include <QDebug>
+
 #include "randr.h"
 
 #include <QX11Info>

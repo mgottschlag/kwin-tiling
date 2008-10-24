@@ -18,11 +18,11 @@
  */
 
 
-#include <QApplication>
+#include "dbusoutputs.h"
+
 #include <QDebug>
 #include <QVariant>
 
-#include "dbusoutputs.h"
 #include "../simpleoutput.h"
 #include "outputs_interface.h"
 

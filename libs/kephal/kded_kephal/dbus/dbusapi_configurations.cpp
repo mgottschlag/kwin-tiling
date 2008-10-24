@@ -18,14 +18,13 @@
  */
 
 
-#include <QDebug>
-#include <QObject>
-
 #include "dbusapi_configurations.h"
 #include "kephal/configurations.h"
 #include "configurationsadaptor.h"
 #include "kephal/outputs.h"
 
+#include <QDebug>
+#include <QObject>
 #include <QVariant>
 
 

@@ -18,12 +18,11 @@
  */
 
 
-#include <QDebug>
-
 #include "dbusapi_outputs.h"
 #include "kephal/outputs.h"
 #include "outputsadaptor.h"
 
+#include <QDebug>
 #include <QVariant>
 
 

@@ -44,8 +44,8 @@ namespace Kephal {
         QFile file(fileName);
         if (! file.open(QIODevice::ReadOnly)) {
             //qDebug() << "couldnt open file" << fileName;
-            if (! fileName.endsWith("~")) {
-                return load(fileName + "~");
+            if (! fileName.endsWith('~')) {
+                return load(fileName + '~');
             }
             return 0;
         }
@@ -54,8 +54,8 @@ namespace Kephal {
         if (! dom.setContent(&file)) {
             //qDebug() << "couldnt parse xml!!";
             file.close();
-            if (! fileName.endsWith("~")) {
-                return load(fileName + "~");
+            if (! fileName.endsWith('~')) {
+                return load(fileName + '~');
             }
             return 0;
         }
@@ -139,7 +139,7 @@ namespace Kephal {
         QString content = doc.toString();
         
         QFile file(fileName);
-        QFile backup(fileName + "~");
+        QFile backup(fileName + '~');
         if (file.exists()) {
             if (backup.exists()) {
                 if (! backup.remove()) {

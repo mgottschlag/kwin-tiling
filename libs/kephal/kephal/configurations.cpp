@@ -18,10 +18,10 @@
  */
 
 
+#include "configurations.h"
+
 #include <QDebug>
 #include <QRegExp>
-
-#include "kephal/configurations.h"
 
 #ifdef CONFIGURATIONS_FACTORY
 void CONFIGURATIONS_FACTORY();

@@ -75,3 +75,4 @@ namespace Kephal {
 }
 
 #endif // KEPHAL_NOCONFIGURATIONS_H
+

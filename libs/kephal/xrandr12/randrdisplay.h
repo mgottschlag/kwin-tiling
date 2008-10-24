@@ -22,7 +22,7 @@
 
 #include "randr.h"
 
-#include <X11/Xlib.h>
+//#include <X11/Xlib.h>
 
 class RandRDisplay
 {

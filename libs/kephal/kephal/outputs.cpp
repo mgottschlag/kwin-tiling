@@ -18,9 +18,10 @@
  */
 
 
+#include "kephal/outputs.h"
+
 #include <QDebug>
 
-#include "kephal/outputs.h"
 #include "kephal/screens.h"
 #include "kephal/configurations.h"
 

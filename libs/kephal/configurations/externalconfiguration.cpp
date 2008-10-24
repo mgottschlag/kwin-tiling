@@ -18,9 +18,9 @@
  */
 
 
-#include <QDebug>
-
 #include "externalconfiguration.h"
+
+#include <QDebug>
 
 
 namespace Kephal {

@@ -18,11 +18,11 @@
  */
 
 
-#include <QApplication>
+#include "dbusconfigurations.h"
+
 #include <QDebug>
 #include <QVariant>
 
-#include "dbusconfigurations.h"
 #include "configurations_interface.h"
 
 #include "kephal/outputs.h"
@@ -103,7 +103,7 @@ namespace Kephal {
     
     Configuration * DBusConfigurations::activeConfiguration() {
         QString name = m_interface->activeConfiguration();
-        if ((name != "") && m_configs.contains(name)) {
+        if ((! name.isEmpty()) && m_configs.contains(name)) {
             return m_configs[name];
         }
         return 0;
@@ -197,7 +197,7 @@ namespace Kephal {
     }*/
     
     void DBusConfigurations::configurationActivatedSlot(QString name) {
-        if ((name != "") && m_configs.contains(name)) {
+        if ((! name.isEmpty()) && m_configs.contains(name)) {
             emit configurationActivated(m_configs[name]);
         }
     }

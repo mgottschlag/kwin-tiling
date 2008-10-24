@@ -21,6 +21,8 @@
 #ifndef KEPHAL_XRANDROUTPUTS_H
 #define KEPHAL_XRANDROUTPUTS_H
 
+#include <QDebug>
+
 #include "../backendoutputs.h"
 #include "xrandr12/randrdisplay.h"
 

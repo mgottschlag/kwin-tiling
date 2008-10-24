@@ -20,6 +20,7 @@
 #ifndef __RANDROUTPUT_H__
 #define __RANDROUTPUT_H__
 
+#include <QDebug>
 #include <QObject>
 #include <QString>
 #include <QRect>

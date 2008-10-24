@@ -18,9 +18,9 @@
  */
 
 
-#include <QDebug>
-
 #include "outputscreens.h"
+
+#include <QDebug>
 
 
 namespace Kephal {

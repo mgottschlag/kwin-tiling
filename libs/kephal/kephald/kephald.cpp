@@ -18,6 +18,8 @@
  */
 
 
+#include "kephald.h"
+
 #include <QDebug>
 #include <QDBusConnection>
 #include <QApplication>
@@ -33,8 +35,6 @@
 #include "configurations/xml/xmlconfigurations.h"
 #include "xrandr12/randrdisplay.h"
 #include "xrandr12/randrscreen.h"
-
-#include "kephald.h"
 
 
 using namespace Kephal;

@@ -18,9 +18,9 @@
  */
 
 
-#include <QDebug>
-
 #include "backendoutputs.h"
+
+#include <QDebug>
 
 
 namespace Kephal {

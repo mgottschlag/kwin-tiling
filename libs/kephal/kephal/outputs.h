@@ -121,14 +121,14 @@ namespace Kephal {
             virtual Rotation rotation() = 0;
             
             /**
-             * Returns wether this Output is
+             * Returns whether this Output is
              * currently reflected over the
              * x-axis.
              */
             virtual bool reflectX() = 0;
             
             /**
-             * Returns wether this Output is
+             * Returns whether this Output is
              * currently reflected over the
              * y-axis.
              */
