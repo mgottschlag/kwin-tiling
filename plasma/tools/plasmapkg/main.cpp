@@ -142,7 +142,7 @@ int main(int argc, char **argv)
         if (args->isSet("install")) {
             QString package = KShell::tildeExpand(args->getOption("install"));
             if (!QDir::isAbsolutePath(package)) {
-                package = QDir(QDir::currentPath() + "/" + package).absolutePath();
+                package = QDir(QDir::currentPath() + '/' + package).absolutePath();
             }
 
             if (installer->installPackage(package, packageRoot)) {
