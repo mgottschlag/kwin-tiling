@@ -59,6 +59,7 @@ public:
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     int indexOf(const QString &path) const;
     void reload();
+    void clearThemeList();
 private:
     QMap<QString, ThemeInfo> m_themes;
 };
@@ -71,6 +72,11 @@ ThemeModel::ThemeModel( QObject *parent )
 
 ThemeModel::~ThemeModel()
 {
+    clearThemeList();
+}
+
+void ThemeModel::clearThemeList()
+{
     foreach (const QString& key, m_themes.keys()) {
         delete m_themes[key].svg;
     }
@@ -80,10 +86,7 @@ ThemeModel::~ThemeModel()
 void ThemeModel::reload()
 {
     reset();
-    foreach (const QString& key, m_themes.keys()) {
-        delete m_themes[key].svg;
-    }
-    m_themes.clear();
+    clearThemeList();
 
     // get all desktop themes
     KStandardDirs dirs;
