@@ -31,6 +31,7 @@
 #include <ggadget/permissions.h>
 #include <ggadget/qt/qt_view_host.h>
 #include <ggadget/qt/utilities.h>
+#include "ggl_extensions.h"
 #include "ggl_package.h"
 
 using namespace ggadget;
@@ -44,6 +45,7 @@ class GadgetBrowserHost : public ggadget::HostInterface {
     connection_ = GetGadgetManager()->ConnectOnNewGadgetInstance(
         NewSlot(this, &GadgetBrowserHost::NewGadgetInstanceCallback));
   }
+
   ~GadgetBrowserHost() {
     kDebug() << "Destroy GadgetBrowserHost:" << this;
     connection_->Disconnect();
@@ -123,23 +125,6 @@ class GadgetBrowserHost : public ggadget::HostInterface {
 
   GadgetManagerInterface *gadget_manager_;
   Connection *connection_;
-};
-
-static const char *kGlobalExtensions[] = {
-  "default-framework",
-  "libxml2-xml-parser",
-  "default-options",
-  "qtwebkit-browser-element",
-  "qt-system-framework",
-  "qt-edit-element",
-  "phonon-audio-framework",
-  "gst-video-element",
-  "linux-system-framework",
-  "qt-xml-http-request",
-  "google-gadget-manager",
-  "smjs-script-runtime",
-  "qt-script-runtime",
-  NULL
 };
 
 GglPackage::GglPackage(QObject *parent, const QVariantList &args)

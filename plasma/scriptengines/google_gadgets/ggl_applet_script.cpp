@@ -47,26 +47,10 @@
 #include <ggadget/host_interface.h>
 #include <ggadget/decorated_view_host.h>
 #include "plasma_host.h"
+#include "ggl_extensions.h"
 #include "ggl_applet_script.h"
 
 K_EXPORT_PLASMA_APPLETSCRIPTENGINE(googlegadget, GglAppletScript)
-
-static const char *kGlobalExtensions[] = {
-  "default-framework",
-  "libxml2-xml-parser",
-  "default-options",
-  "qtwebkit-browser-element",
-  "qt-system-framework",
-  "qt-edit-element",
-  "phonon-audio-framework",
-  "gst-mediaplayer-element",
-  "linux-system-framework",
-  "qt-xml-http-request",
-  "google-gadget-manager",
-  "smjs-script-runtime",
-  "qt-script-runtime",
-  NULL
-};
 
 class GglAppletScript::Private {
  public:
