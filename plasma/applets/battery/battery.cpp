@@ -137,7 +137,6 @@ void Battery::init()
 
     dataUpdated("AC Adapter", dataEngine("powermanagement")->query("AC Adapter"));
 
-
     if (!m_isEmbedded) {
         Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
         eItem->setName("powermanagement");
@@ -550,7 +549,6 @@ void Battery::setProfile(const QString &profile)
     }
 }
 
-
 void Battery::showLabel(bool show)
 {
     if (m_fadeIn == show) {
@@ -567,7 +565,8 @@ void Battery::showLabel(bool show)
                                                       "animationUpdate");
 }
 
-QRectF Battery::scaleRectF(const qreal progress, QRectF rect) {
+QRectF Battery::scaleRectF(const qreal progress, QRectF rect)
+{
     if (progress == 1) {
         return rect;
     }
@@ -849,7 +848,8 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
     }
 }
 
-void Battery::connectSources() {
+void Battery::connectSources()
+{
     const QStringList& battery_sources = dataEngine("powermanagement")->query("Battery")["sources"].toStringList();
 
     foreach (const QString &battery_source, battery_sources) {
