@@ -34,7 +34,7 @@ public:
         setHasConfigurationInterface(hasInterface);
     }
 };
-};
+}
 
 %End
 
