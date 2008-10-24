@@ -44,6 +44,7 @@
 #include <plasma/panelsvg.h>
 #include <plasma/theme.h>
 #include <plasma/view.h>
+#include <plasma/paintutils.h>
 
 using namespace Plasma;
 
@@ -66,6 +67,20 @@ protected:
     {
         event->setPos(mapToParent(event->pos()));
         panel->dropEvent(event);
+    }
+
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget * widget = 0)
+    {
+        Q_UNUSED(option)
+        Q_UNUSED(widget)
+
+        //TODO: make this a pretty gradient?
+        painter->setRenderHint(QPainter::Antialiasing);
+        QPainterPath p = Plasma::PaintUtils::roundedRectangle(contentsRect().adjusted(1, 1, -2, -2), 4);
+        QColor c = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+        c.setAlphaF(0.3);
+
+        painter->fillPath(p, c);
     }
 };
 
