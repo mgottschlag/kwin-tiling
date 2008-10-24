@@ -29,7 +29,11 @@
 namespace ggadget {
 
 FloatingDecorator::FloatingDecorator(ViewHostInterface *host)
-    : FloatingMainViewDecorator(host, true) {
+    : MainViewDecoratorBase(host,
+                            "main_view_floating",
+                            false,
+                            false,
+                            true) {
   SetButtonVisible(MainViewDecoratorBase::POP_IN_OUT_BUTTON, false);
   SetButtonVisible(MainViewDecoratorBase::MENU_BUTTON, false);
   SetButtonVisible(MainViewDecoratorBase::CLOSE_BUTTON, false);

@@ -17,11 +17,11 @@
 #ifndef GGADGET_FLOATING_DECORATOR_H__
 #define GGADGET_FLOATING_DECORATOR_H__
 
-#include <ggadget/floating_main_view_decorator.h>
+#include <ggadget/main_view_decorator_base.h>
 
 namespace ggadget {
 
-class FloatingDecorator : public FloatingMainViewDecorator {
+class FloatingDecorator : public MainViewDecoratorBase {
  public:
   FloatingDecorator(ViewHostInterface *host);
   virtual ~FloatingDecorator();
