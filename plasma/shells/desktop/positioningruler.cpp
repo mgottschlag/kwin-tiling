@@ -479,11 +479,13 @@ void PositioningRuler::paintEvent(QPaintEvent *event)
 
     //Draw center indicators
     if (d->alignment == Qt::AlignCenter && (d->location == Plasma::LeftEdge || d->location == Plasma::RightEdge)) {
-        d->sliderGraphics->paint(&painter, QPoint(event->rect().left(), event->rect().center().y()), "vertical-centerindicator");
+        QSize indicatorSize = d->sliderGraphics->elementSize("vertical-centerindicator");
+        d->sliderGraphics->paint(&painter, QRect(QPoint(event->rect().left(), event->rect().center().y()), indicatorSize), "vertical-centerindicator");
         //this because rect.moveCenter will cause a rect moved one pixel off respect where we need it
         painter.translate(0, -1);
     } else if (d->alignment == Qt::AlignCenter) {
-        d->sliderGraphics->paint(&painter, QPoint(event->rect().center().x(), event->rect().top()), "horizontal-centerindicator");
+        QSize indicatorSize = d->sliderGraphics->elementSize("horizontal-centerindicator");
+        d->sliderGraphics->paint(&painter, QRect(QPoint(event->rect().center().x(), event->rect().top()), indicatorSize), "horizontal-centerindicator");
         painter.translate(-1, 0);
     }
 
