@@ -185,6 +185,7 @@ namespace Kephal {
     }
     
     void OutputScreens::prepareScreens(QMap<int, OutputScreen *> & screens) {
+        Q_UNUSED(screens)
     }
     
     

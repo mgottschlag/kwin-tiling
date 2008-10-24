@@ -99,6 +99,7 @@ namespace Kephal {
             QList<Output *> outputs();
             
             RandROutput * output(RROutput rrId);
+            using Outputs::output;
             RandRDisplay * display();
             
         public Q_SLOTS:

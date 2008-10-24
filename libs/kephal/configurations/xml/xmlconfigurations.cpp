@@ -62,6 +62,7 @@ namespace Kephal {
     }
     
     void XMLConfiguration::setLayout(const QMap<int, QPoint> & layout) {
+        m_layout = layout;
     }
     
     int XMLConfiguration::primaryScreen() {
@@ -585,16 +586,19 @@ namespace Kephal {
             
             positions = simpleConfigurationsPositions(output, true);
             foreach (const QPoint& point, positions) {
+                Q_UNUSED(point)
                 FIX_ME("handle moving of output");
             }
         } else {
             positions = sameConfigurationsPositions(output, false);
             foreach (const QPoint& point, positions) {
+                Q_UNUSED(point)
                 FIX_ME("handle moving of output");
             }
             
             positions = simpleConfigurationsPositions(output, false);
             foreach (const QPoint& point, positions) {
+                Q_UNUSED(point)
                 FIX_ME("handle moving of output");
             }
         }
@@ -661,7 +665,7 @@ namespace Kephal {
     }
     
     QMap<int, int> XMLConfigurations::matchLayouts(const QMap<int, QPoint> & currentLayout, const QMap<int, QPoint> & layout) {
-        int removed = layout.size() - currentLayout.size();
+        //int removed = layout.size() - currentLayout.size();
         QList<int> indexes = layout.keys();
         if (! currentLayout.empty()) {
             indexes.insert(0, currentLayout.keys()[0]);
@@ -912,6 +916,8 @@ namespace Kephal {
     }
     
     QMap<XMLConfiguration *, QPoint> XMLConfigurations::sameConfigurationsPositions(Output * output, bool sameCount) {
+        Q_UNUSED(sameCount)
+        
         Screen * screen = output->screen();
         bool cloned = false;
         if (! output->isActivated()) {

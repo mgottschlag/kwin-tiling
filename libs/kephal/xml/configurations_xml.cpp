@@ -44,10 +44,6 @@ namespace Kephal {
         m_primaryScreen(0)
     { }
     
-    QString ConfigurationXML::name() { return m_name; }
-    void ConfigurationXML::setName(QString name) { m_name = name; }
-    bool ConfigurationXML::modifiable() { return m_modifiable; }
-    void ConfigurationXML::setModifiable(bool modifiable) { m_modifiable = modifiable; }
     QList<ScreenXML *> & ConfigurationXML::screens() { return m_screens; }
     
     

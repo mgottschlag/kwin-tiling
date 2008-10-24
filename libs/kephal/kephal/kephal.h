@@ -47,33 +47,6 @@ namespace Kephal {
         RotateNormal = 0, RotateRight = 90, RotateInverted = 180, RotateLeft = 270
     };
     
-    /*class StatusMessage : public QObject {
-        Q_OBJECT
-        public:
-            enum MessageType {
-                TypeNone, TypeInfo, TypeWarning, TypeError
-            };
-
-            enum Message {
-                NoMessage, FixMe, InvalidConfiguration, ConfigurationNotFound, OperationFailed
-            };
-
-            StatusMessage(MessageType type = TypeNone, Message message = NoMessage, QString description = "", QObject * parent = 0);
-            StatusMessage(MessageType type, Message message, QObject * parent);
-            StatusMessage(QObject * parent);
-
-            MessageType type();
-            Message message();
-            QString description();
-
-            QString toString();
-
-        private:
-            MessageType m_type;
-            Message m_message;
-            QString m_description;
-    };*/
-
 }
 
 #endif // KEPHAL_KEPHAL_H

@@ -35,6 +35,8 @@ namespace Kephal {
 
     class XMLNodeHandler {
         public:
+            virtual ~XMLNodeHandler() {}
+            
             virtual void beginSave(XMLType * element) = 0;
             virtual void beginLoad(XMLType * element) = 0;
             virtual bool hasMore(XMLType * element) = 0;

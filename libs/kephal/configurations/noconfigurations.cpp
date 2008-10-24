@@ -96,6 +96,7 @@ namespace Kephal {
     }
     
     int NoConfigurations::screen(Output * output) {
+        Q_UNUSED(output)
         return -1;
     }
 
@@ -103,22 +104,31 @@ namespace Kephal {
     }
 
     bool NoConfigurations::rotate(Output * output, Rotation rotation) {
+        Q_UNUSED(output)
+        Q_UNUSED(rotation)
         return false;
     }
 
     bool NoConfigurations::changeRate(Output * output, float rate) {
+        Q_UNUSED(output)
+        Q_UNUSED(rate)
         return false;
     }
 
     bool NoConfigurations::reflectX(Output * output, bool reflect) {
+        Q_UNUSED(output)
+        Q_UNUSED(reflect)
         return false;
     }
 
     bool NoConfigurations::reflectY(Output * output, bool reflect) {
+        Q_UNUSED(output)
+        Q_UNUSED(reflect)
         return false;
     }
 
     void NoConfigurations::setPolling(bool polling) {
+        Q_UNUSED(polling)
     }
     
     bool NoConfigurations::polling() {

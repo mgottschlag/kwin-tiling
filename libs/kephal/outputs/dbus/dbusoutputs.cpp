@@ -95,6 +95,7 @@ namespace Kephal {
     
     void DBusOutputs::activateLayout(const QMap<Output *, QRect> & layout)
     {
+        Q_UNUSED(layout)
     }
     
     bool DBusOutputs::isValid() {

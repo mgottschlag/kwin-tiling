@@ -78,8 +78,8 @@ namespace Kephal {
             QSize m_preferredSize;
             QList<QSize> m_availableSizes;
             QPoint m_position;
-            bool m_activated;
             bool m_connected;
+            bool m_activated;
             QString m_vendor;
             int m_productId;
             unsigned int m_serialNumber;

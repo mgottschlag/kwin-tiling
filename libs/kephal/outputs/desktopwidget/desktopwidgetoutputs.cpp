@@ -77,10 +77,13 @@ namespace Kephal {
     
     void DesktopWidgetOutputs::activateLayout(const QMap<Output *, QRect> & layout)
     {
+        Q_UNUSED(layout)
     }
     
     void DesktopWidgetOutputs::screenChanged(int screen)
     {
+        Q_UNUSED(screen)
+        
         QDesktopWidget * desktop = QApplication::desktop();
         for(int i = m_outputs.size() - 1; i >= desktop->numScreens(); i--) {
             SimpleOutput * output = m_outputs.last();

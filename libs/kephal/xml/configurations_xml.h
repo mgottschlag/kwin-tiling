@@ -33,22 +33,13 @@ namespace Kephal {
     class ScreenXML : public XMLType {
         Q_OBJECT
         
+        PROPERTY(int, id, setId)
+        PROPERTY(int, rightOf, setRightOf)
         PROPERTY(int, bottomOf, setBottomOf)
+        PROPERTY(bool, privacy, setPrivacy)
+        
         public:
             ScreenXML() : m_rightOf(-1), m_bottomOf(-1) {}
-            
-            int id() { return m_id; }
-            void setId(int id) { m_id = id; }
-            bool privacy() { return m_privacy; }
-            void setPrivacy(bool b) { m_privacy = b; }
-            
-            int rightOf() { return m_rightOf; }
-            void setRightOf(int screen) { m_rightOf = screen; }
-            
-        private:
-            int m_id;
-            bool m_privacy;
-            int m_rightOf;
     };
 
 
@@ -56,20 +47,17 @@ namespace Kephal {
     class ConfigurationXML : public XMLType {
         Q_OBJECT
         
+        PROPERTY(QString, name, setName)
+        PROPERTY(bool, modifiable, setModifiable)
         PROPERTY(int, primaryScreen, setPrimaryScreen)
+        
         public:
             ConfigurationXML();
             
-            QString name();
-            void setName(QString name);
-            bool modifiable();
-            void setModifiable(bool modifiable);
             QList<ScreenXML *> & screens();
             
         private:
-            QString m_name;
             QList<ScreenXML *> m_screens;
-            bool m_modifiable;
     };
     
     

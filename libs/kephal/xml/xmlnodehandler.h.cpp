@@ -29,15 +29,18 @@ namespace Kephal {
     
     template <class ElementType, typename SimpleType>
     void XMLSimpleNodeHandler<ElementType, SimpleType>::beginSave(XMLType * element) {
+        Q_UNUSED(element)
         m_saved = false;
     }
     
     template <class ElementType, typename SimpleType>
     void XMLSimpleNodeHandler<ElementType, SimpleType>::beginLoad(XMLType * element) {
+        Q_UNUSED(element)
     }
     
     template <class ElementType, typename SimpleType>
     bool XMLSimpleNodeHandler<ElementType, SimpleType>::hasMore(XMLType * element) {
+        Q_UNUSED(element)
         return ! m_saved;
     }
     
@@ -152,15 +155,18 @@ namespace Kephal {
     
     template <class ElementType, typename ComplexType>
     void XMLComplexNodeHandler<ElementType, ComplexType>::beginSave(XMLType * element) {
+        Q_UNUSED(element)
         m_saved = false;
     }
     
     template <class ElementType, typename ComplexType>
     void XMLComplexNodeHandler<ElementType, ComplexType>::beginLoad(XMLType * element) {
+        Q_UNUSED(element)
     }
     
     template <class ElementType, typename ComplexType>
     bool XMLComplexNodeHandler<ElementType, ComplexType>::hasMore(XMLType * element) {
+        Q_UNUSED(element)
         return ! m_saved;
     }
     
@@ -172,6 +178,7 @@ namespace Kephal {
     
     template <class ElementType, typename ComplexType>
     QDomNode XMLComplexNodeHandler<ElementType, ComplexType>::node(XMLType * element, QDomDocument doc, QString name) {
+        Q_UNUSED(element)
         m_saved = true;
         QDomNode node;
         return node;
@@ -179,6 +186,7 @@ namespace Kephal {
     
     template <class ElementType, typename ComplexType>
     QString XMLComplexNodeHandler<ElementType, ComplexType>::str(XMLType * element) {
+        Q_UNUSED(element)
         return "";
     }
     
@@ -210,6 +218,7 @@ namespace Kephal {
     
     template <class ElementType, typename ComplexType>
     void XMLComplexListNodeHandler<ElementType, ComplexType>::beginSave(XMLType * element) {
+        Q_UNUSED(element)
         m_pos = 0;
     }
     
@@ -220,6 +229,7 @@ namespace Kephal {
     
     template <class ElementType, typename ComplexType>
     QString XMLComplexListNodeHandler<ElementType, ComplexType>::str(XMLType * element) {
+        Q_UNUSED(element)
         return "";
     }
     

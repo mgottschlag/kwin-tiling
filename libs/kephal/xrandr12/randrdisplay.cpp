@@ -208,10 +208,3 @@ RandRScreen* RandRDisplay::currentScreen()
 	return m_screens.at(m_currentScreenIndex);
 }
 
-void RandRDisplay::applyProposed(bool confirm)
-{
-    /*foreach(RandRScreen *s, m_screens) {
-        s->applyProposed(confirm);
-    }*/
-}
-

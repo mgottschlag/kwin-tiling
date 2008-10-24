@@ -23,7 +23,6 @@ SET (libkephal_SRCS
         ../configurations/dbus/dbusconfigurations.cpp
         ../configurations/noconfigurations.cpp)
 QT4_WRAP_CPP (libkephal_SRCS
-        ../kephal/kephal.h
         ../kephal/screens.h
         ../screens/simplescreen.h
         ../screens/dbus/dbusscreens.h

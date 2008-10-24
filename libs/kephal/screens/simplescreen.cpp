@@ -62,7 +62,7 @@ namespace Kephal {
     
     void SimpleScreen::setPrivacyMode(bool privacy)
     {
-        emit privacyModeChangeRequested(this, m_privacy);
+        emit privacyModeChangeRequested(this, privacy);
     }
     
     void SimpleScreen::_setId(const int & id) {

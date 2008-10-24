@@ -43,7 +43,6 @@ QT4_WRAP_CPP (kephald_SRCS
         ../xrandr12/randroutput.h
         ../xrandr12/randrcrtc.h
         kephald.h
-        ../kephal/kephal.h
         ../kephal/screens.h
         ../screens/simplescreen.h
         ../screens/output/outputscreens.h
