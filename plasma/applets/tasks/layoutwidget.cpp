@@ -215,11 +215,16 @@ int LayoutWidget::rowWidth(int groupSize)
 
     //kDebug() << geometry().height() << int(geometry().height() / 22) << m_maxRows;
     int maxRows;
-    // in this case rows are columns, columns are rows...
-    if (m_applet->formFactor() == Plasma::Vertical) {
-        maxRows = qMin(qMax(1, int(m_groupItem->geometry().width() / itemSize.width())), m_maxRows);
+    
+    if(m_fillRows) {
+        maxRows = m_maxRows;
     } else {
-        maxRows = qMin(qMax(1, int(m_groupItem->geometry().height() / itemSize.height())), m_maxRows);
+        // in this case rows are columns, columns are rows...
+        if (m_applet->formFactor() == Plasma::Vertical) {
+            maxRows = qMin(qMax(1, int(m_groupItem->geometry().width() / itemSize.width())), m_maxRows);
+        } else {
+            maxRows = qMin(qMax(1, int(m_groupItem->geometry().height() / itemSize.height())), m_maxRows);
+        }
     }
     //kDebug() << m_layout->geometry() << m_groupItem->geometry();
     
@@ -253,7 +258,7 @@ void LayoutWidget::layoutItems()
     int columns = qMax(1, rowWidth(totalSize)); //now adjust columns if necessary 
     //kDebug() << "totalSize/columns" << totalSize << columns;
     int rows = ceil(static_cast<float>(totalSize)/static_cast<float>(columns)); //and calculate the rows (rowWidth already took the maximum rows setting into account
-    kDebug() << "Laying out with" << columns << rows;
+    kDebug() << "Laying out with" << columns << rows << totalSize;
     //kDebug() << "geometry" << m_groupItem->geometry();
     int rowHeight = qMax(1, int(m_groupItem->geometry().height() / rows));
     //kDebug() << "rowHeight" << rowHeight;
