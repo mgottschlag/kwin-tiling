@@ -343,7 +343,7 @@ void DesktopThemeDetails::save()
     if (m_newThemeName->text().isEmpty()) {
         theme = ".customized";
     } else {
-        theme = m_newThemeName->text().replace(" ","_").remove(QRegExp("[^A-Za-z0-9_]"));
+        theme = m_newThemeName->text().replace(' ',"_").remove(QRegExp("[^A-Za-z0-9_]"));
     }
 
     //Customized Theme
@@ -357,7 +357,7 @@ void DesktopThemeDetails::save()
     if (m_themeCustomized || !m_newThemeName->text().isEmpty()) {
         //Toggle theme directory name to ensure theme reload
         if (theme == oldTheme) {
-            theme = theme + "1";
+            theme = theme + '1';
         }
         KIO::NetAccess::del(KUrl(dirs.locateLocal("data", "desktoptheme/" + theme +"/", false)), this);
 
@@ -372,7 +372,7 @@ void DesktopThemeDetails::save()
         while (i.hasNext()) {
             i.next();
             QString source = i.value();
-            QString itemDir = "desktoptheme/" + theme + "/" + m_themeItems[i.key()];
+            QString itemDir = "desktoptheme/" + theme + '/' + m_themeItems[i.key()];
             if (source.right(4).toLower() == ".svg") {
                 itemDir.append(".svg");
             } else if (source.right(5).toLower() == ".svgz") {
@@ -421,7 +421,7 @@ void DesktopThemeDetails::save()
     if (isCustomized(oldTheme) && oldTheme != theme) {
         KIO::NetAccess::del(KUrl(dirs.locateLocal("data", "desktoptheme/" +
                                       oldTheme +
-                                      "/", false)), this);
+                                      '/', false)), this);
     }
     if (newThemeExists) {
         m_themeModel->reload();
@@ -455,7 +455,7 @@ void DesktopThemeDetails::removeTheme()
     if (removeTheme) {
         KIO::NetAccess::del(KUrl(dirs.locateLocal("data", "desktoptheme/" +
                                       theme +
-                                      "/", false)), this);
+                                      '/', false)), this);
     }
     m_themeModel->reload();
     m_theme->setCurrentIndex(m_themeModel->indexOf("default"));
