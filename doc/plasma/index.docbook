@@ -109,7 +109,7 @@ the type of machine) is the <application>Device Notifier</application>. Plug in 
 </para>
 
 <para>
-The next item on your panel is the <application>Pager</application>. It allows you to switch between your virtual desktops. If you change the layout of the <application>Pager</application> through the <guimenuitem>Number of rows</guimenuitem> option, which will also affect the layout and animations that are shown in &kwin;&apos;s <guimenuitem>Desktop Grid</guimenuitem> effect -- (Switch on desktop effect, press <keycombo>&Ctrl;<keycap>F8</keycap></keycombo> to see it.) For larger pagers, selecting <guimenuitem>Display windows icons</guimenuitem> typically makes sense.
+The next item on your panel is the <application>Pager</application>. It allows you to switch between your virtual desktops. If you change the layout of the <application>Pager</application> through the <guimenuitem>Number of rows</guimenuitem> option, which will also affect the layout and animations that are shown in &kwin;&apos;s <guimenuitem>Desktop Grid</guimenuitem> effect -- (Switch on desktop effect, press <keycombo action="simul">&Ctrl;<keycap>F8</keycap></keycombo> to see it.) For larger pagers, selecting <guimenuitem>Display windows icons</guimenuitem> typically makes sense.
 </para>
 
 <para>
@@ -131,7 +131,7 @@ The right-most &plasmoid; in the default panel holds the <application>System Tra
 <title>The Panel Toolboxes</title>
 
 <para>
-If you have unlocked your desktop (you can do that by <mousebutton>right</mousebutton> clicking on the desktop, or when no application has the focus, with <keycombo>&Ctrl;<keycap>L</keycap></keycombo>). A small &plasma;
+If you have unlocked your desktop (you can do that by <mousebutton>right</mousebutton> clicking on the desktop, or when no application has the focus, with <keycombo action="simul">&Ctrl;<keycap>L</keycap></keycombo>). A small &plasma;
 logo will appear in the bottom right corner (it's commonly named the &quot;cashew&quot;). Click on this cashew, and the panel controller opens. The panel controller allows you to reposition, re-size and realign the panel. The &plasmoids; living in this panel will adjust their size automatically. &plasmoids; have basic knowledge about sizing, provided by the containment. They are programmed to take advantage of that size, and inform the applet about how much space they possibly need. In the end, the containment gives a possible size to the applets, the applets obey.
 </para>
 
@@ -172,7 +172,7 @@ desktop. The <emphasis role="bold">Dashboard</emphasis> gets those &plasmoids; i
 <para>
 &krunner; is a versatile mini command-line. You can use it to start applications,
 open web pages, access bookmarks, search through your desktop data, calculate
-short equations, and many more. Pressing <keycombo>&Alt;<keycap>F2</keycap></keycombo> opens the &krunner; dialog. You just start typing and &krunner; will start searching matches as soon as you've entered more than two characters. You can open the settings dialog to learn about &krunner;&apos;s functionality, provided by plugins. You can navigate through the matches using the tab and arrow keys.
+short equations, and many more. Pressing <keycombo action="simul">&Alt;<keycap>F2</keycap></keycombo> opens the &krunner; dialog. You just start typing and &krunner; will start searching matches as soon as you've entered more than two characters. You can open the settings dialog to learn about &krunner;&apos;s functionality, provided by plugins. You can navigate through the matches using the tab and arrow keys.
 </para>
 
 <para>
@@ -200,53 +200,53 @@ Most of &plasma;&apos;s functionality is also accessible through keyboard shortc
 
 <variablelist>
 <varlistentry>
-<term><keycombo>&Ctrl;<keycap>A</keycap></keycombo></term>
+<term><keycombo action="simul">&Ctrl;<keycap>A</keycap></keycombo></term>
 <listitem><para>Add widgets</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><keycombo>&Ctrl;<keycap>L</keycap></keycombo></term>
+<term><keycombo action="simul">&Ctrl;<keycap>L</keycap></keycombo></term>
 <listitem><para>Lock widgets</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><keycombo>&Ctrl;<keycap>-</keycap></keycombo></term>
+<term><keycombo action="simul">&Ctrl;<keycap>-</keycap></keycombo></term>
 <listitem><para>Zoom out</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><keycombo>&Ctrl;<keycap>=</keycap></keycombo></term>
+<term><keycombo action="simul">&Ctrl;<keycap>=</keycap></keycombo></term>
 <listitem><para>Zoom in</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><keycombo>&Ctrl;<keycap>N</keycap></keycombo></term>
+<term><keycombo action="simul">&Ctrl;<keycap>N</keycap></keycombo></term>
 <listitem><para>Next applet</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><keycombo>&Ctrl;<keycap>P</keycap></keycombo></term>
+<term><keycombo action="simul">&Ctrl;<keycap>P</keycap></keycombo></term>
 <listitem><para>Previous applet</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><keycombo>&Ctrl;<keycap>]</keycap></keycombo></term>
+<term><keycombo action="simul">&Ctrl;<keycap>]</keycap></keycombo></term>
 <listitem><para>Next containment</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><keycombo>&Ctrl;<keycap>[</keycap></keycombo></term>
+<term><keycombo action="simul">&Ctrl;<keycap>[</keycap></keycombo></term>
 <listitem><para>Previous containment</para></listitem>
 </varlistentry>
 
 <varlistentry>
-<term><keycombo>&Ctrl;<keycap>S</keycap></keycombo></term>
+<term><keycombo action="simul">&Ctrl;<keycap>S</keycap></keycombo></term>
 <listitem><para>Applet settings</para></listitem>
 </varlistentry>
 
 <varlistentry>
 <term>
-<keycombo>
+<keycombo action="simul">
 &Shift;&Ctrl;<keycap>S</keycap>
 </keycombo>
 </term>
@@ -254,7 +254,7 @@ Most of &plasma;&apos;s functionality is also accessible through keyboard shortc
 </varlistentry>
 
 <varlistentry>
-<term><keycombo>&Ctrl;<keycap>R</keycap></keycombo></term>
+<term><keycombo action="simul">&Ctrl;<keycap>R</keycap></keycombo></term>
 <listitem><para>Remove applet</para></listitem>
 </varlistentry>
 
