@@ -380,11 +380,22 @@ void PlasmaApp::createView(Plasma::Containment *containment)
     if (KCmdLineArgs::parsedArgs()->isSet("setup")) {
         m_view->enableSetupMode();
         activate();
-    } else if (m_idleOpacity > 0) {
-        m_view->setWindowOpacity(m_idleOpacity);
-        m_view->showView();
+    } else {
+        kDebug() << "checking lockprocess is still around";
+        QDBusInterface lockprocess("org.kde.krunner_lock", "/LockProcess",
+                "org.kde.krunner_lock.LockProcess", QDBusConnection::sessionBus(), this);
+        if (lockprocess.isValid()) {
+            kDebug() << "success!";
+            if (m_idleOpacity > 0) {
+                m_view->setWindowOpacity(m_idleOpacity);
+                m_view->showView();
+                emit viewCreated(m_view->effectiveWinId()); //FIXME this won't work for invisible-idle and is Wrong anyways
+            }
+        } else {
+            kDebug() << "bailing out";
+            qApp->quit();
+        }
     }
-    emit viewCreated(m_view->effectiveWinId());
 }
 
 bool PlasmaApp::eventFilter(QObject *obj, QEvent *event)
