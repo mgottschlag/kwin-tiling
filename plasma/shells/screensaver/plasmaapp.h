@@ -55,32 +55,38 @@ public:
 
 Q_SIGNALS:
     // DBUS interface.
-    //if you change stuff, remember to regenerate with -S -M
+    //if you change stuff, remember to regenerate with:
+    //qdbuscpp2xml -S -M plasmaapp.h > org.kde.plasma-overlay.App.xml
+
     void viewCreated(uint id); //XXX this is actually a WId but qdbuscpp2xml is dumb
     void hidden();
 
 public Q_SLOTS:
     // DBUS interface.
-    //if you change stuff, remember to regenerate with -S -M
+    //if you change stuff, remember to regenerate
     /**
      * tell plasma to go into active mode, ready for interaction
      */
     void activate();
+
     /**
      * tell plasma to go into idle mode
      * this does not mean exit, it just means the computer is idle
      */
     void deactivate();
+
     /**
      * lock widgets
      */
     void lock();
+
     //not really slots, but we want them in dbus
     /**
      * @return the window id of our view, or 0 if there is none
      * again, this is really a WId but dbus doesn't like those.
      */
     uint viewWinId();
+
     /**
      * quit the application
      * this is a duplicate so we can have everything we need in one dbus interface
