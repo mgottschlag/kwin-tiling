@@ -318,10 +318,10 @@ void TaskGroupItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
     QAction *a;
 
     if (m_isCollapsed) {
-        a = new QAction("Expand Group", this);
+        a = new QAction(i18n("Expand Group"), this);
         connect(a, SIGNAL(triggered()), this, SLOT(expand()));
     } else {
-        a = new QAction("Collapse Group", this);
+        a = new QAction(i18n("Collapse Group"), this);
         connect(a, SIGNAL(triggered()), this, SLOT(collapse()));
     }
 
