@@ -1205,6 +1205,10 @@ static void fakeFocusIn( WId window )
 
 void LockProcess::setPlasmaView(uint id)
 {
+    if (mPlasmaView == id) {
+        //kDebug() << "unchanged!!!!!!!!" << id;
+        return;
+    }
     mPlasmaView = id;
     if (mSetupMode) {
         fakeFocusIn(mPlasmaView);
