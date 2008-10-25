@@ -23,6 +23,9 @@
 #define SOLID_IFACES_BLUETOOTHINPUTDEVICE
 
 #include <QtCore/QObject>
+#include <QtCore/QMap>
+#include <QtCore/QVariant>
+
 #include "../solid_control_export.h"
 
 namespace Solid
@@ -56,67 +59,34 @@ public:
      * @returns ubi of bluetooth input device
      */
     virtual QString ubi() const = 0;
-
     /**
-     * Retrieves connection status of bluetooth input device.
+     * Retrieve all properties from the input device.
      *
-     * @returns true if bluetooth input device is connected
+     * @returns a hash of named properties
      */
-    virtual bool isConnected() const = 0;
+    virtual QMap<QString,QVariant> getProperties() const = 0;
 
-    /**
-     * Retrieves MAC address of bluetooth input device.
-     *
-     * @returns MAC address of bluetooth input device
-     */
-    virtual QString address() const = 0;
-
-    /**
-     * Retrievies Name of bluetooth input device.
-     *
-     * @returns Name of bluetooth input device
-     */
-    virtual QString name() const = 0;
-
-    /**
-     * Retrieves Product ID of bluetooth input device.
-     *
-     * @returns Product ID of bluetooth input device
-     */
-    virtual QString productID() const = 0;
-
-    /**
-     * Retrieves Vendor ID of bluetooth input device.
-     *
-     * @returns Vendor ID of bluetooth input device
-     */
-    virtual QString vendorID() const = 0;
 
 public Q_SLOTS:
     /**
      * Connect bluetooth input device.
      */
-    virtual void slotConnect() = 0;
+    virtual void connect() = 0;
 
     /**
      * Disconnect bluetooth input device.
      */
-    virtual void slotDisconnect() = 0;
+    virtual void disconnect() = 0;
 
 Q_SIGNALS:
-    /**
-     * This signal is emitted when the bluetooth input device is connected.
+     /**
+     * A Property for the input device has changed.
      *
-     * @param ubi the bluetooth input device identifier
+     * @param name the name of the changed property
+     * @param value the new value
      */
-    virtual void connected() = 0;
+    virtual void propertyChanged(const QString &name, const QVariant &value) = 0;
 
-    /**
-     * This signal is emitted when the bluetooth input device is not available anymore.
-     *
-     * @param ubi the bluetooth input device identifier
-     */
-    virtual void disconnected() = 0;
 };
 
 } // Ifaces

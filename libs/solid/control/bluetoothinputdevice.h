@@ -1,6 +1,7 @@
 /*  This file is part of the KDE project
     Copyright (C) 2007 Will Stephenson <wstephenson@kde.org>
     Copyright (C) 2007 Daniel Gollub <dgollub@suse.de>
+    Copyright (C) 2008 Tom Patzig <tpatzig@suse.de>
 
 
     This library is free software; you can redistribute it and/or
@@ -23,6 +24,8 @@
 #define SOLID_CONTROL_BLUETOOTHINPUTDEVICE_H
 
 #include <QtCore/QObject>
+#include <QtCore/QMap>
+#include <QtCore/QVariant>
 
 #include "solid_control_export.h"
 
@@ -74,65 +77,36 @@ public:
      * @returns the Universal Network Identifier of the current bluetooth remote device
      */
     QString ubi() const;
-
     /**
-     * Retrieves connection status of bluetooth input device.
+     * Retrieve all properties from the input device.
      *
-     * @returns true if bluetooth input device is connected
+     * @returns a hash of named properties
      */
-    bool isConnected() const;
+    QMap<QString,QVariant> getProperties() const;
 
-    /**
-     * Retrieves MAC address of bluetooth input device.
-     *
-     * @returns MAC address of bluetooth input device
-     */
-    QString address() const;
-
-    /**
-     * Retrievies Name of bluetooth input device.
-     *
-     * @returns Name of bluetooth input device
-     */
-    QString name() const;
-
-    /**
-     * Retrieves Product ID of bluetooth input device.
-     *
-     * @returns Product ID of bluetooth input device
-     */
-    QString productID() const;
-
-    /**
-     * Retrieves Vendor ID of bluetooth input device.
-     *
-     * @returns Vendor ID of bluetooth input device
-     */
-    QString vendorID() const;
 
 
 public Q_SLOTS:
     /**
      * Connect bluetooth input device.
      */
-    void slotConnect();
+    void connect();
 
     /**
      * Disconnect bluetooth input device.
      */
-    void slotDisconnect();
+    void disconnect();
 
 
 Q_SIGNALS:
-    /**
-     * This signal is emitted when the bluetooth input device is connected.
+     /**
+     * A Property for the input device has changed.
+     *
+     * @param name the name of the changed property
+     * @param value the new value
      */
-    void connected();
+    void propertyChanged(const QString &name, const QVariant &value);
 
-    /**
-     * This signal is emitted when the bluetooth input device is not available anymore.
-     */
-    void disconnected();
 
 private:
     Q_PRIVATE_SLOT(d, void _k_destroyed(QObject *))

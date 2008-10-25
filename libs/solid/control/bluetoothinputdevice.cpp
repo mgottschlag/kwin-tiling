@@ -19,7 +19,6 @@
 
 */
 
-#include <QMap>
 #include <QStringList>
 
 #include "ifaces/bluetoothinputdevice.h"
@@ -72,39 +71,19 @@ QString Solid::Control::BluetoothInputDevice::ubi() const
     return_SOLID_CALL(Ifaces::BluetoothInputDevice *, d->backendObject(), QString(), ubi());
 }
 
-bool Solid::Control::BluetoothInputDevice::isConnected() const
+QMap<QString,QVariant> Solid::Control::BluetoothInputDevice::getProperties() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInputDevice *, d->backendObject(), false, isConnected());
+    return_SOLID_CALL(Ifaces::BluetoothInputDevice *, d->backendObject(), (QMap< QString,QVariant >()), getProperties());
 }
 
-QString Solid::Control::BluetoothInputDevice::name() const
+void Solid::Control::BluetoothInputDevice::connect()
 {
-    return_SOLID_CALL(Ifaces::BluetoothInputDevice *, d->backendObject(), QString(), name());
+    SOLID_CALL(Ifaces::BluetoothInputDevice *, d->backendObject(), connect());
 }
 
-QString Solid::Control::BluetoothInputDevice::address() const
+void Solid::Control::BluetoothInputDevice::disconnect()
 {
-    return_SOLID_CALL(Ifaces::BluetoothInputDevice *, d->backendObject(), QString(), address());
-}
-
-QString Solid::Control::BluetoothInputDevice::productID() const
-{
-    return_SOLID_CALL(Ifaces::BluetoothInputDevice *, d->backendObject(), QString(), productID());
-}
-
-QString Solid::Control::BluetoothInputDevice::vendorID() const
-{
-    return_SOLID_CALL(Ifaces::BluetoothInputDevice *, d->backendObject(), QString(), vendorID());
-}
-
-void Solid::Control::BluetoothInputDevice::slotConnect()
-{
-    SOLID_CALL(Ifaces::BluetoothInputDevice *, d->backendObject(), slotConnect());
-}
-
-void Solid::Control::BluetoothInputDevice::slotDisconnect()
-{
-    SOLID_CALL(Ifaces::BluetoothInputDevice *, d->backendObject(), slotDisconnect());
+    SOLID_CALL(Ifaces::BluetoothInputDevice *, d->backendObject(), disconnect());
 }
 
 void Solid::Control::BluetoothInputDevicePrivate::setBackendObject(QObject *object)
@@ -112,10 +91,8 @@ void Solid::Control::BluetoothInputDevicePrivate::setBackendObject(QObject *obje
     FrontendObjectPrivate::setBackendObject(object);
 
     if (object) {
-        QObject::connect(object, SIGNAL(connected()),
-                         parent(), SIGNAL(connected()));
-        QObject::connect(object, SIGNAL(disconnected()),
-                         parent(), SIGNAL(disconnected()));
+        QObject::connect(object, SIGNAL(propertyChanged(QString,QVariant)),
+                         parent(), SIGNAL(propertyChanged(QString,QVariant)));
     }
 }
 
