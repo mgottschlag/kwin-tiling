@@ -115,9 +115,9 @@ public:
 
     /** Convenience Functions to get information about Grouping */
     /** Only true if the task is not only member of rootGroup */
-    bool isGrouped();
-    bool isGroupMember(const TaskGroupItem *group) ;
-    TaskGroupItem *parentGroup();
+    bool isGrouped() const;
+    bool isGroupMember(const TaskGroupItem *group) const;
+    TaskGroupItem *parentGroup() const;
 
     virtual bool isWindowItem() const = 0;
     virtual bool isActive() const = 0;
@@ -184,6 +184,7 @@ protected:
     virtual void updateTask(::TaskManager::TaskChanges changes) = 0; // pure virtual function
     virtual void updateToolTip() = 0; // pure virtual function
     void finished();
+    QString expanderElement() const;
 
 protected Q_SLOTS:
     void animationUpdate(qreal progress);
@@ -191,6 +192,8 @@ protected Q_SLOTS:
 protected:
     // area of item occupied by task's icon
     QRectF iconRect(const QRectF &bounds) const;
+    // area for the expander arrow for group items
+    QRectF expanderRect(const QRectF &b) const;
     // area of item occupied by task's text
     QRectF textRect(const QRectF &bounds) const;
 

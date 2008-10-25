@@ -457,6 +457,10 @@ void AbstractTaskItem::drawTask(QPainter *painter,const QStyleOptionGraphicsItem
 
     layoutText(layout, m_text, rect.size());
     drawTextLayout(painter, layout, rect);
+
+    if (!isWindowItem()) {
+        m_applet->itemBackground()->paint(painter, expanderRect(bounds), expanderElement());
+    }
 }
 
 QTextOption AbstractTaskItem::textOption() const
@@ -675,13 +679,32 @@ QRectF AbstractTaskItem::iconRect(const QRectF &b) const
                                iconSize, bounds.toRect());
 }
 
+QRectF AbstractTaskItem::expanderRect(const QRectF &bounds) const
+{
+    QSize expanderSize = m_applet->itemBackground()->elementSize(expanderElement());
+
+    return QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignRight | Qt::AlignVCenter,
+                               expanderSize, bounds.toRect());
+}
+
 QRectF AbstractTaskItem::textRect(const QRectF &bounds) const
 {
     QSize size(bounds.size().toSize());
+    QRectF effectiveBounds(bounds);
+
     size.rwidth() -= int(iconRect(bounds).width()) + qMax(0, IconTextSpacing - 2);
+    if (!isWindowItem()) {
+        size.rwidth() -= int(expanderRect(bounds).width()) + qMax(0, IconTextSpacing - 2);
+
+        if (QApplication::layoutDirection() == Qt::RightToLeft) {
+            effectiveBounds.setLeft(expanderRect(bounds).right());
+        } else {
+            effectiveBounds.setRight(expanderRect(bounds).left());
+        }
+    }
 
     return QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignRight | Qt::AlignVCenter,
-                                     size, bounds.toRect());
+                                     size, effectiveBounds.toRect());
 }
 
 //inform parent about removal
@@ -694,8 +717,23 @@ void AbstractTaskItem::finished()
 }
 
 
+QString AbstractTaskItem::expanderElement() const
+{
+    switch (m_applet->location()) {
+    case Plasma::TopEdge:
+        return "group-expander-top";
+    case Plasma::RightEdge:
+        return "group-expander-right";
+    case Plasma::LeftEdge:
+        return "group-expander-left";
+    case Plasma::BottomEdge:
+    default:
+        return "group-expander-bottom";
+    }
+}
 
-bool AbstractTaskItem::isGroupMember(const TaskGroupItem *group)
+
+bool AbstractTaskItem::isGroupMember(const TaskGroupItem *group) const
 {
     if (!m_abstractItem || !group) {
         kDebug() <<"no task";
@@ -706,7 +744,7 @@ bool AbstractTaskItem::isGroupMember(const TaskGroupItem *group)
 
 }
 
-bool AbstractTaskItem::isGrouped()
+bool AbstractTaskItem::isGrouped() const
 {
     if (!m_abstractItem) {
         kDebug() <<"no item";
@@ -716,7 +754,7 @@ bool AbstractTaskItem::isGrouped()
 }
 
 
-TaskGroupItem * AbstractTaskItem::parentGroup()
+TaskGroupItem * AbstractTaskItem::parentGroup() const
 {
     if (!m_abstractItem) {
         kDebug() << "no task";
