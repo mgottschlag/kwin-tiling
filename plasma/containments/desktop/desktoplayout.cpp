@@ -25,7 +25,8 @@ DesktopLayout::DesktopLayout(QGraphicsLayoutItem *parent)
         QGraphicsLayout(parent),
         autoWorkingArea(true),
         temporaryPlacement(false),
-        visibilityTolerance(0)
+        visibilityTolerance(0),
+        m_activated(false)
 {
     connect(Plasma::Animator::self(), SIGNAL(movementFinished(QGraphicsItem*)),
             this, SLOT(movementFinished(QGraphicsItem*)));
@@ -251,6 +252,7 @@ void DesktopLayout::revertTemporaryPlacement(int group, int itemInGroup)
 // update anything that needs updating
 void DesktopLayout::setGeometry(const QRectF &rect)
 {
+    m_activated = true;
     QGraphicsLayout::setGeometry(rect);
 
     if (autoWorkingArea || !itemSpace.workingGeom.isValid()) {
@@ -301,13 +303,14 @@ void DesktopLayout::setGeometry(const QRectF &rect)
             }
         }
     }
+    m_activated = false;
 }
 
 // This should be called when the geometry of an item has been changed.
 // If the change was made by the user, the new position is used as the preferred position.
 void DesktopLayout::itemGeometryChanged(QGraphicsLayoutItem *layoutItem)
 {
-    if (isActivated() || m_animatingItems.contains(dynamic_cast<QGraphicsWidget*>(layoutItem))) {
+    if (m_activated || m_animatingItems.contains(dynamic_cast<QGraphicsWidget*>(layoutItem))) {
         return;
     }
 

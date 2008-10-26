@@ -159,6 +159,8 @@ private:
     // item manipulation functions
     void performTemporaryPlacement(int group, int itemInGroup);
     void revertTemporaryPlacement(int group, int itemInGroup);
+
+    bool m_activated;
 };
 
 #endif
