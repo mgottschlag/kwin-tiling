@@ -74,8 +74,8 @@ public:
     //TODO remove and calculate reasonable value in the layout itself
     void setMaxRows(int);
 
-    void setFillRows(bool);
-    bool fillRows();
+    void setForceRows(bool);
+    bool forceRows();
 
     /*
     *Why the split group works.
@@ -160,7 +160,7 @@ private:
     int m_lastActivated;
     int m_activeTaskIndex;
     int m_maximumRows;
-    bool m_fillRows;
+    bool m_forceRows;
     bool m_isCollapsed;
     int m_splitPosition;
     TaskGroupItem *m_parentSplitGroup;

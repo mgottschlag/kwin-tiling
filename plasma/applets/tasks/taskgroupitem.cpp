@@ -65,7 +65,7 @@ TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet, const bool 
       m_parentSplitGroup(0),
       m_childSplitGroup(0),
       m_splitPosition(0),
-      m_fillRows(false)
+      m_forceRows(false)
 {
     setAcceptDrops(true);
 }
@@ -471,9 +471,8 @@ void TaskGroupItem::expand()
     //kDebug();
     Q_ASSERT(m_group);
     m_layoutWidget = new LayoutWidget(this, m_applet);
-    m_layoutWidget->setOrientation(m_applet->formFactor());
     m_layoutWidget->setMaximumRows(m_maximumRows);
-    m_layoutWidget->setFillRows(m_fillRows);
+    m_layoutWidget->setForceRows(m_forceRows);
     m_isCollapsed = false;
 
 
@@ -794,16 +793,16 @@ void TaskGroupItem::setMaxRows(int rows)
     }
 }
 
-bool TaskGroupItem::fillRows()
+bool TaskGroupItem::forceRows()
 {
-    return m_fillRows;
+    return m_forceRows;
 }
 
-void TaskGroupItem::setFillRows(bool fillRows)
+void TaskGroupItem::setForceRows(bool forceRows)
 {
-    m_fillRows = fillRows;
+    m_forceRows = forceRows;
     if (m_layoutWidget) {
-        m_layoutWidget->setFillRows(m_fillRows);
+        m_layoutWidget->setForceRows(m_forceRows);
     }
 }
 #include "taskgroupitem.moc"

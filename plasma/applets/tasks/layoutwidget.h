@@ -33,7 +33,6 @@
 
 class TaskGroupItem;
 class AbstractTaskItem;
-//class QList;
 
 using TaskManager::StartupPtr;
 using TaskManager::TaskPtr;
@@ -41,7 +40,7 @@ using TaskManager::GroupManager;
 
 
 /**
- * A task item for a task which represents a expanded group.
+ * A Layout for the expanded group
  */
 class LayoutWidget : public QObject
 {
@@ -50,23 +49,27 @@ class LayoutWidget : public QObject
 public:
     LayoutWidget(TaskGroupItem * parent, Tasks *applet);
     ~LayoutWidget();
-
+    /** insert the item on the index in TaskGroupItem::getMemberList */
     void addTaskItem(AbstractTaskItem*);
     void removeTaskItem(AbstractTaskItem*);
+    /** insert the item on a specific index*/
     bool insert(int index, AbstractTaskItem* item);
-    void setOrientation(Plasma::FormFactor);
-    void setSpacer(bool);
 
+    /** returns the insert index for a task drop on pos */
     int insertionIndexAt(const QPointF &pos);
+    /** set the maximum number of rows */
     void setMaximumRows(int);
-    void setFillRows(bool);
+    /** force the layout to use maximumRows setting and fill rows before columns */
+    void setForceRows(bool);
 
-    Qt::Orientation orientation();
-    /** the calculated width according to groupSize and maxRows*/
-    int rowWidth(int groupSize);
     /** the size including expanded groups*/
     int size();
-    
+
+    /** returns columnCount or rowCount depending on m_applet->formFactor() */
+    int numberOfRows();
+    /** returns columnCount or rowCount depending on m_applet->formFactor()*/
+    int numberOfColumns();
+
 public Q_SLOTS:
     void update();
 
@@ -79,34 +82,37 @@ Q_SIGNALS:
 private:
     void init();
 
-    void calculatePreferredRowSize();
+    //void calculatePreferredRowSize();
     bool remove(AbstractTaskItem* item);
 
     void adjustStretch();
     void updatePreferredSize();
 
+    /** Populates the actual QGraphicsGridLayout with items*/
     void layoutItems();
 
-    int numberOfItems();
-    int itemsInRow(int);
-    int numberOfRows();
-
+    /** Returns the preferred number of rows based on the user settings but limited by calculation to honor AbstractGroupableItem::basicPreferredSize()*/
+    int maximumRows();
+    /** Returns the preferred number of columns calculated on base of AbstractGroupableItem::basicPreferredSize()*/
+    int preferredColumns();
     bool m_hasSpacer;
     QGraphicsWidget *m_spacer;
 
     TaskGroupItem *m_groupItem;
     QList <AbstractTaskItem*> m_itemPositions;
 
-    Qt::Orientation m_orientation;
+    /** Calculates the number of columns and rows for the layoutItems function and returns <columns/rows>*/
+    QPair<int, int> gridLayoutSize();
+
     /** Limit before row is full, more columns are added if maxRows is exeeded*/
     int m_rowSize;
-    /** How many rows  should be used. -1 for autoexpanding until maxRows*/
+    /** How many rows should be used*/
     int m_maxRows;
 
-    bool m_fillRows;
+    bool m_forceRows;
 
     Tasks *m_applet;
-
+    /** Creates and initialises a new QGraphicsGridLayout*/
     void createLayout();
     QGraphicsGridLayout *m_layout;
 };

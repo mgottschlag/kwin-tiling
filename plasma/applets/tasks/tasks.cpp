@@ -125,7 +125,7 @@ void Tasks::init()
     m_groupManager->setGroupingStrategy( static_cast<TaskManager::GroupManager::TaskGroupingStrategy>(cg.readEntry("groupingStrategy", static_cast<int>(TaskManager::GroupManager::ProgramGrouping))));
     m_groupManager->setSortingStrategy( static_cast<TaskManager::GroupManager::TaskSortingStrategy>(cg.readEntry("sortingStrategy", static_cast<int>(TaskManager::GroupManager::AlphaSorting))));
     m_rootGroupItem->setMaxRows( cg.readEntry("maxRows", 2));
-    m_rootGroupItem->setFillRows( cg.readEntry("fillRows", false));
+    m_rootGroupItem->setForceRows( cg.readEntry("forceRows", false));
 
     m_rootGroupItem->expand();
     emit settingsChanged();
@@ -385,7 +385,7 @@ void Tasks::createConfigurationInterface(KConfigDialog *parent)
     m_ui.showOnlyCurrentDesktop->setChecked(m_groupManager->showOnlyCurrentDesktop());
     m_ui.showOnlyCurrentScreen->setChecked(m_groupManager->showOnlyCurrentScreen());
     m_ui.showOnlyMinimized->setChecked(m_groupManager->showOnlyMinimized());
-    m_ui.fillRows->setChecked(m_rootGroupItem->fillRows());
+    m_ui.fillRows->setChecked(m_rootGroupItem->forceRows());
 
     m_ui.groupingStrategy->addItem(i18n("Don't group"),QVariant(TaskManager::GroupManager::NoGrouping));
     m_ui.groupingStrategy->addItem(i18n("Manually"),QVariant(TaskManager::GroupManager::ManualGrouping));
@@ -471,10 +471,10 @@ void Tasks::configAccepted()
         changed = true;
     }
 
-    if (m_rootGroupItem->fillRows() != m_ui.fillRows->isChecked()) {
-        m_rootGroupItem->setFillRows(m_ui.fillRows->isChecked());
+    if (m_rootGroupItem->forceRows() != m_ui.fillRows->isChecked()) {
+        m_rootGroupItem->setForceRows(m_ui.fillRows->isChecked());
         KConfigGroup cg = config();
-        cg.writeEntry("fillRows", m_rootGroupItem->fillRows());
+        cg.writeEntry("forceRows", m_rootGroupItem->forceRows());
         changed = true;
     }
 
