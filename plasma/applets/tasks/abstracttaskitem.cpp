@@ -571,7 +571,10 @@ void AbstractTaskItem::drawTextLayout(QPainter *painter, const QTextLayout &layo
     }
 
     p.end();
+    QImage shadow = pixmap.toImage();
+    Plasma::PaintUtils::shadowBlur(shadow, 3, Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
 
+    painter->drawImage(rect.topLeft() + QPoint(2,2), shadow);
     painter->drawPixmap(rect.topLeft(), pixmap);
 }
 
