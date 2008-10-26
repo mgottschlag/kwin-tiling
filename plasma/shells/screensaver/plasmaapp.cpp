@@ -393,7 +393,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
             }
         } else {
             kDebug() << "bailing out";
-            qApp->quit();
+            qApp->quit(); //this failed once. why?
         }
     }
 }
@@ -407,33 +407,32 @@ bool PlasmaApp::eventFilter(QObject *obj, QEvent *event)
         //harmless but kinda wasteful.
         QWidget *widget = qobject_cast<QWidget*>(obj);
         if (widget && widget->isWindow() && !(qobject_cast<QDesktopWidget*>(widget) ||
-                    /*qobject_cast<SaverView*>(widget) ||*/
                     widget->testAttribute(Qt::WA_DontShowOnScreen))) {
             unsigned char data = 0;
-            //now we're *really* fucking with things
-            //we force-disable window management and frames to cut off access to wm-y stuff
-            //and to make it easy to check the tag (frames are a pain)
-            Qt::WindowFlags oldFlags = widget->windowFlags();
-            Qt::WindowFlags newFlags = oldFlags | Qt::X11BypassWindowManagerHint;
-            if (oldFlags != newFlags) {
-                kDebug() << "!!!!!!!setting flags on!!!!!" << widget;
-                m_dialogs.append(widget);
-                connect(widget, SIGNAL(destroyed(QObject*)), SLOT(dialogDestroyed(QObject*)));
-                widget->setWindowFlags(newFlags);
-                widget->show(); //setting the flags hid it :(
-                //qApp->setActiveWindow(widget); //gives kbd but not mouse events
-                //kDebug() << "parent" << widget->parentWidget();
-                //FIXME why can I only activate these dialogs from this exact line?
-                widget->activateWindow(); //gives keyboard focus
-                return false; //we'll be back when we get the new show event
-            } else if (qobject_cast<SaverView*>(widget)) {
+            if (qobject_cast<SaverView*>(widget)) {
                 data = VIEW;
             } else if (m_dialogs.contains(widget)) {
                 data = DIALOG;
             } else {
-                widget->activateWindow(); //gives keyboard focus
-                //FIXME when returning from a subdialog to another dialog,
-                //kbd focus is broken, only esc/enter work
+                Qt::WindowFlags oldFlags = widget->windowFlags();
+                Qt::WindowFlags newFlags = oldFlags | Qt::X11BypassWindowManagerHint;
+                if (oldFlags != newFlags) {
+                    //now we're *really* fucking with things
+                    //we force-disable window management and frames to cut off access to wm-y stuff
+                    //and to make it easy to check the tag (frames are a pain)
+                    kDebug() << "!!!!!!!setting flags on!!!!!" << widget;
+                    m_dialogs.append(widget);
+                    connect(widget, SIGNAL(destroyed(QObject*)), SLOT(dialogDestroyed(QObject*)));
+                    widget->setWindowFlags(newFlags);
+                    widget->show(); //setting the flags hid it :(
+                    //qApp->setActiveWindow(widget); //gives kbd but not mouse events
+                    //kDebug() << "parent" << widget->parentWidget();
+                    //FIXME why can I only activate these dialogs from this exact line?
+                    widget->activateWindow(); //gives keyboard focus
+                    return false; //we'll be back when we get the new show event
+                } else {
+                    widget->activateWindow(); //gives keyboard focus
+                }
             }
 
             XChangeProperty(QX11Info::display(), widget->effectiveWinId(), tag, tag, 8, PropModeReplace, &data, 1);
