@@ -118,12 +118,14 @@ void ClockApplet::updateContent()
     if (!isLocalTimezone()) { 
         d->addTzToTipText(subText, localTimezone()); 
     }
+
     foreach (const QString &tz, getSelectedTimezones()) {
         if (tz == currentTimezone()) {
             continue;
         }
         d->addTzToTipText(subText, tz);
     }
+
     tipData.subText = subText;
 
     // query for custom content
@@ -144,6 +146,7 @@ void ClockApplet::updateContent()
         tipData.subText = customContent.subText + "<br>" + tipData.subText;
     }
 
+    tipData.autohide = false;
     Plasma::ToolTipManager::self()->setContent(this, tipData);
 }
 
