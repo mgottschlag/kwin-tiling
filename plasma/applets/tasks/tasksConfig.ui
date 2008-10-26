@@ -102,7 +102,7 @@
    <item row="4" column="1" colspan="2" >
     <widget class="QLabel" name="label_3" >
      <property name="text" >
-      <string>Maximum Rows</string>
+      <string>Maximum rows:</string>
      </property>
      <property name="alignment" >
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -134,7 +134,7 @@
       </font>
      </property>
      <property name="text" >
-      <string>Grouping and Sorting</string>
+      <string>Grouping &amp; Sorting</string>
      </property>
     </widget>
    </item>

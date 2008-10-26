@@ -16,7 +16,7 @@
    <item>
     <widget class="QLabel" name="label" >
      <property name="text" >
-      <string>&amp;Available Temperatures:</string>
+      <string>&amp;Available temperatures:</string>
      </property>
      <property name="buddy" >
       <cstring>treeView</cstring>

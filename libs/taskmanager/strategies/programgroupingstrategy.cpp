@@ -66,9 +66,9 @@ QList<QAction*> ProgramGroupingStrategy::strategyActions(QObject *parent, Abstra
     QAction *a = new QAction(parent);
     QString name = className(item);
     if (d->blackList.contains(name)) {
-        a->setText(i18n("Allow this program to be grouped"));
+        a->setText(i18n("Allow This Program to Be Grouped"));
     } else {
-        a->setText(i18n("Do not allow this program to be grouped"));
+        a->setText(i18n("Do Not Allow This Program to Be Grouped"));
     }
     connect(a, SIGNAL(triggered()), this, SLOT(toggleGrouping()));
 
