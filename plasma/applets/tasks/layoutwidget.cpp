@@ -261,7 +261,12 @@ void LayoutWidget::layoutItems()
     //kDebug() << "rowHeight" << rowHeight;
     int columnWidth = qMax(1, int(m_groupItem->geometry().size().width() / columns));
     //kDebug() << "column width set to " << columnWidth;
-    
+
+    QSizeF maximumCellSize;
+    if (m_itemPositions.count() > 0) {
+        maximumCellSize = m_itemPositions[0]->basicPreferredSize() * 1.8;
+    }
+
     createLayout(); //its a shame that we have to create a new layout every time but the QGraphicsGridLayout is just to buggy yet
 
     //go through all items of this layoutwidget and populate the layout with items
@@ -277,8 +282,17 @@ void LayoutWidget::layoutItems()
             col = numberOfItems % columns;
         }
 
+
         m_layout->setColumnPreferredWidth(col, columnWidth);//Somehow this line is absolutely crucial
         m_layout->setRowPreferredHeight(row, rowHeight);//Somehow this line is absolutely crucial
+
+        if (maximumCellSize.isValid()) {
+            if (m_applet->formFactor() == Plasma::Vertical) {
+                m_layout->setRowMaximumHeight(row, maximumCellSize.height());
+            } else {
+                m_layout->setColumnMaximumWidth(col, maximumCellSize.width());
+            }
+        }
 
         if (item->abstractItem() && item->abstractItem()->isGroupItem()) {
             TaskGroupItem *group = static_cast<TaskGroupItem*>(item);
