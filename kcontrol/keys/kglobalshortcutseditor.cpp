@@ -122,13 +122,12 @@ void KGlobalShortcutsEditor::activateComponent(const QString &component)
 }
 
 
-void KGlobalShortcutsEditor::addCollection(KActionCollection *collection, const QStringList &componentId)
+void KGlobalShortcutsEditor::addCollection(
+        KActionCollection *collection,
+        const QString &id,
+        const QString &friendlyName)
 {
     KShortcutsEditor *editor;
-    const QString &friendlyName = 
-        componentId[ComponentFriendly].isEmpty()
-        ? componentId[ComponentUnique]
-        : componentId[ComponentFriendly];
     // Check if this component is known
     QHash<QString, componentData>::Iterator iter = d->components.find(friendlyName);
     if (iter == d->components.end()) {
@@ -140,7 +139,7 @@ void KGlobalShortcutsEditor::addCollection(KActionCollection *collection, const 
         // Add to our component registry
         componentData cd;
         cd.editor = editor;
-        cd.uniqueName = componentId[ComponentUnique];
+        cd.uniqueName = id;
         d->components.insert(friendlyName, cd);
         connect(editor, SIGNAL(keyChange()), this, SLOT(_k_key_changed()));
     } else {

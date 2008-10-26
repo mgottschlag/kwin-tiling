@@ -19,6 +19,8 @@
 #include "globalshortcuts.h"
 #include "kglobalshortcutseditor.h"
 #include "select_scheme_dialog.h"
+#include "kdedglobalaccel_interface.h"
+#include "kdedglobalaccel_component_interface.h"
 #include <kdebug.h>
 
 #include <QCoreApplication>
@@ -35,7 +37,6 @@
 #include <KConfig>
 #include <KConfigGroup>
 #include <KFileDialog>
-#include <KGlobalAccel>
 #include <KLocale>
 #include <KMessageBox>
 #include <KPluginFactory>
@@ -43,8 +44,6 @@
 
 K_PLUGIN_FACTORY(GlobalShortcutsModuleFactory, registerPlugin<GlobalShortcutsModule>();)
 K_EXPORT_PLUGIN(GlobalShortcutsModuleFactory("kcmkeys"))
-
-Q_DECLARE_METATYPE(QList<int>)
 
 GlobalShortcutsModule::GlobalShortcutsModule(QWidget *parent, const QVariantList &args)
  : KCModule(GlobalShortcutsModuleFactory::componentData(), parent, args),
@@ -87,16 +86,17 @@ void GlobalShortcutsModule::load()
     // Connect to kdedglobalaccel. If that fails there is no need to continue.
     qRegisterMetaType<QList<int> >();
     qDBusRegisterMetaType<QList<int> >();
+    qDBusRegisterMetaType<QList<KGlobalShortcutInfo> >();
+    qDBusRegisterMetaType<KGlobalShortcutInfo>();
     QDBusConnection bus = QDBusConnection::sessionBus();
-    QDBusInterface iface(
+    org::kde::KdedGlobalAccel kdedglobalaccel(
             "org.kde.kded",
             "/modules/kdedglobalaccel",
-            "org.kde.KdedGlobalAccel",
             bus);
 
-    if (!iface.isValid()) {
+    if (!kdedglobalaccel.isValid()) {
         QString errorString;
-        QDBusError error = iface.lastError();
+        QDBusError error = kdedglobalaccel.lastError();
         // The global shortcuts DBus service manages all global shortcuts and we
         // can't do anything useful without it.
         if (error.isValid()) {
@@ -113,47 +113,108 @@ void GlobalShortcutsModule::load()
     // Undo all changes not yet applied
     editor->clear();
 
-    KGlobalAccel *kga = KGlobalAccel::self();
-    QList<QStringList> components = kga->allMainComponents();
-
-    QHash<QString, KActionCollection *> actionCollections;
-
-    foreach (const QStringList &componentId, components) {
-        // kDebug() << "component:" << componentId;
-        const QString &componentUnique = componentId[KGlobalAccel::ComponentUnique];
-        KActionCollection* col = new KActionCollection(this, KComponentData(componentUnique.toAscii()));
-        actionCollections[componentUnique] = col;
-
-        QList<QStringList> actions = kga->allActionsForComponent(componentId);
-        foreach (const QStringList &actionId, actions) {
-            const QString &objectName = actionId[KGlobalAccel::ActionUnique];
-            KAction *action = col->addAction(objectName);
-            action->setProperty("isConfigurationAction", QVariant(true)); // see KAction::~KAction
-            action->setText(actionId[KGlobalAccel::ActionFriendly]);
-
-            // Always call this to enable global shortcuts for the action. The editor widget
-            // checks it.
-            // Also actually load the shortcut using the KAction::Autoloading mechanism.
-            // Avoid setting the default shortcut; it would just be written to the global
-            // configuration so we would not get the real one below.
-            action->setGlobalShortcut(KShortcut(), KAction::ActiveShortcut);
-
-            // The default shortcut will never be loaded because it's pointless in a real
-            // application. There are no scarce resources [i.e. physical keys] to manage
-            // so applications can set them at will and there's no autoloading.
-            QDBusReply<QList<int> > defaultShortcut = iface.call("defaultShortcut", qVariantFromValue(actionId));
-            if (!defaultShortcut.value().isEmpty()) {
-                int key = defaultShortcut.value().first();
-                action->setGlobalShortcut(KShortcut(key), KAction::DefaultShortcut);
-            }
+    QDBusReply< QList<QDBusObjectPath> > componentsRc = kdedglobalaccel.allComponents();
+    if (!componentsRc.isValid())
+        {
+        kDebug() << "allComponents() failed!";
+        return;
         }
-    }
+    QList<QDBusObjectPath> components = componentsRc;
 
-    // Add components and their keys to the editor
-    foreach (const QStringList &componentId, components) {
-        // kDebug() << "Adding collection " << component;
-        editor->addCollection(actionCollections[componentId[KGlobalAccel::ComponentUnique]], componentId);
-    }
+    Q_FOREACH(QDBusObjectPath componentPath, components) {
+
+        // Get the component
+        org::kde::kdedglobalaccel::Component component(
+                "org.kde.kded",
+                componentPath.path(),
+                bus);
+        if (!component.isValid()) {
+            kDebug() << "Component " << componentPath.path() << "not valid! Skipping!";
+            continue;
+        }
+
+        // Get the shortcut contexts.
+        QDBusReply<QStringList> shortcutContextsRc = component.getShortcutContexts();
+        if (!shortcutContextsRc.isValid()) {
+            kDebug() << "Failed to get contexts for component "
+                     << componentPath.path() <<"! Skipping!";
+            continue;
+        }
+        QStringList shortcutContexts = shortcutContextsRc;
+
+        // We add shortcut all shortcut context to the editor. Thias way the
+        // user keep full control of it's shortcuts.
+        Q_FOREACH (QString shortcutContext, shortcutContexts) {
+
+            QDBusReply< QList<KGlobalShortcutInfo> > shortcutsRc =
+                component.allShortcutInfos(shortcutContext);
+            if (!shortcutsRc.isValid())
+                {
+                kDebug() << "allShortcutInfos() failed for " << componentPath.path() << shortcutContext;
+                continue;
+                }
+            QList<KGlobalShortcutInfo> shortcuts = shortcutsRc;
+            // Shouldn't happen. But you never know
+            if (shortcuts.isEmpty()) {
+                kDebug() << "Got shortcut context" << shortcutContext << "without shortcuts for"
+                    << componentPath.path();
+                continue;
+            }
+
+            // It's safe now
+            const QString componentUnique = shortcuts[0].componentUniqueName();
+            QString componentContextId = componentUnique;
+            // kdedglobalaccel knows that '|' is our separator between
+            // component and context
+            if (shortcutContext == "default") {
+                componentContextId += QString("|") + shortcutContext;
+            }
+
+
+            // Create a action collection for our current component:context
+            KActionCollection* col = new KActionCollection(this, KComponentData(componentContextId.toAscii()));
+
+            // Now add the shortcuts.
+            foreach (const KGlobalShortcutInfo &shortcut, shortcuts) {
+
+                const QString &objectName = shortcut.uniqueName();
+                KAction *action = col->addAction(objectName);
+                action->setProperty("isConfigurationAction", QVariant(true)); // see KAction::~KAction
+                action->setText(shortcut.friendlyName());
+
+                // Always call this to enable global shortcuts for the action. The editor widget
+                // checks it.
+                // Also actually loads the shortcut using the KAction::Autoloading mechanism.
+                // Avoid setting the default shortcut; it would just be written to the global
+                // configuration so we would not get the real one below.
+                action->setGlobalShortcut(KShortcut(), KAction::ActiveShortcut);
+
+                // The default shortcut will never be loaded because it's pointless in a real
+                // application. There are no scarce resources [i.e. physical keys] to manage
+                // so applications can set them at will and there's no autoloading.
+                QList<QKeySequence> sc = shortcut.defaultKeys();
+                if (sc.count()>0) {
+                    action->setGlobalShortcut(KShortcut(sc[0]), KAction::DefaultShortcut);
+                }
+            } // Q_FOREACH(shortcut)
+
+            QString componentFriendlyName =
+                shortcuts[0].componentFriendlyName().isEmpty()
+                ? shortcuts[0].componentUniqueName()
+                : shortcuts[0].componentFriendlyName();
+
+            if (shortcuts[0].contextUniqueName() != "default")
+                {
+                componentFriendlyName +=
+                    shortcuts[0].contextFriendlyName().isEmpty()
+                    ? shortcuts[0].contextUniqueName()
+                    : shortcuts[0].contextFriendlyName();
+                }
+
+            editor->addCollection(col, componentContextId, componentFriendlyName);
+
+        } // Q_FOREACH(context)
+    } // Q_FOREACH(component)
 }
 
 void GlobalShortcutsModule::defaults()
