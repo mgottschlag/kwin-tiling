@@ -179,14 +179,50 @@ void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
 
 void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
 {
-    Q_UNUSED(event)
+
+    Plasma::FormFactor f = m_applet->formFactor();
+
+    if ( ((f != Plasma::Horizontal && f != Plasma::Vertical) && rect().intersects(m_applet->rect().toRect())) ||
+          ((f == Plasma::Horizontal || f == Plasma::Vertical) && !rect().contains(event->globalPos())) ) {
+        Plasma::View *view = Plasma::View::topLevelViewAt(event->globalPos());
+
+        if (!view) {
+            return;
+        }
+
+        QPointF pos = view->mapFromGlobal(event->globalPos());
+        if (view != m_applet->view()) {
+
+            Plasma::Containment *c = view->containment();
+            c->addApplet(m_applet, pos);
+
+            if (m_spacer) {
+                m_layout->removeItem(m_spacer);
+                m_spacer->deleteLater();
+                m_spacer = 0;
+            }
+        }
+    }
+
+    if (m_applet->formFactor() != Plasma::Horizontal && m_applet->formFactor() != Plasma::Vertical){
+            QPointF pos = m_applet->view()->mapFromGlobal(event->globalPos());
+            QRectF g = m_applet->geometry();
+            pos += QPoint(m_offset, m_offset);
+            g.moveTo(pos);
+            m_applet->setGeometry(g);
+            return;
+    }
 
     if (!m_spacer) {
-        return;
+        m_spacer = new AppletMoveSpacer(m_applet);
+        m_spacer->setMinimumSize(m_applet->geometry().size());
+        m_spacer->setMaximumSize(m_applet->geometry().size());
+        m_layout->removeItem(m_applet);
+        m_layout->insertItem(m_index, m_spacer);
     }
 
     QPoint p = mapToParent(event->pos());
-    QRect g = geometry();
+    QRectF g = m_applet->geometry();
 
     //kDebug() << p << g << "<-- movin'?";
     if (m_orientation == Qt::Horizontal) {
@@ -218,7 +254,6 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
 void PanelAppletOverlay::mouseReleaseEvent(QMouseEvent *event)
 {
     Q_UNUSED(event)
-
     if (!m_spacer) {
         releaseMouse();
         return;
@@ -245,6 +280,7 @@ void PanelAppletOverlay::mouseReleaseEvent(QMouseEvent *event)
     m_layout->removeItem(m_spacer);
     m_spacer->deleteLater();
     m_spacer = 0;
+
     m_layout->insertItem(m_index, m_applet);
     m_applet->setZValue(m_applet->zValue() - 1);
 }
