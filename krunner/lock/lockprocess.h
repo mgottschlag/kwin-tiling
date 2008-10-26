@@ -167,6 +167,10 @@ private:
      * this does *not* tell plasma to quit. it just stops using it.
      */
     void disablePlasma();
+    /**
+     * give a fakefocusin to the right window
+     */
+    void updateFocus();
     void stayOnTop();
     void lockXF86();
     void unlockXF86();

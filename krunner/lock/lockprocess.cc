@@ -1211,7 +1211,6 @@ void LockProcess::setPlasmaView(uint id)
     }
     mPlasmaView = id;
     if (mSetupMode) {
-        fakeFocusIn(mPlasmaView);
         mSetupMode = false;
     }
     kDebug() << id;
@@ -1255,19 +1254,9 @@ int LockProcess::execDialog( QDialog *dlg )
     if (pos != -1)
         mDialogs.remove( pos );
     if( mDialogs.isEmpty() ) {
-        //blank pointer + plasma = confused user
-        //FIXME we need to fakefocusin plasma for the qactions to work
-        //but we never seem to get a focus*out*
-        //and what about the config dialogs?
-        if (mPlasmaView) {
-            fakeFocusIn(mPlasmaView);
-        } else {
-            XChangeActivePointerGrab( QX11Info::display(), GRABEVENTS,
-                    QCursor(Qt::BlankCursor).handle(), CurrentTime);
-        }
         resume( false );
-    } else
-        fakeFocusIn( mDialogs.first()->winId());
+    }
+    updateFocus();
 
     dlg->removeEventFilter(this);
     mFrames.remove(dlg);
@@ -1288,7 +1277,21 @@ void LockProcess::cleanupPopup()
 
     int pos = mDialogs.indexOf( dlg );
     mDialogs.remove( pos );
-    fakeFocusIn( mDialogs.first()->winId() );
+    updateFocus();
+}
+
+void LockProcess::updateFocus()
+{
+    if (mDialogs.isEmpty()) {
+        if (mForeignInputWindows.isEmpty()) {
+            XChangeActivePointerGrab( QX11Info::display(), GRABEVENTS,
+                    QCursor(Qt::BlankCursor).handle(), CurrentTime);
+        } else {
+            fakeFocusIn(mForeignInputWindows.first());
+        }
+    } else {
+        fakeFocusIn(mDialogs.first()->winId());
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -1394,6 +1397,7 @@ bool LockProcess::x11Event(XEvent *event)
                         } else {
                             //ordered youngest-on-top
                             mForeignInputWindows.prepend(event->xmap.window);
+                            fakeFocusIn(event->xmap.window);
                         }
                         //TODO someday we should just set the main winid from here
                     }
@@ -1405,7 +1409,9 @@ bool LockProcess::x11Event(XEvent *event)
             if (event->xmap.event == QX11Info::appRootWindow()) {
                 kDebug() << "UnmapNotify:" << event->xunmap.window;
                 mForeignWindows.removeAll(event->xunmap.window);
-                mForeignInputWindows.removeAll(event->xunmap.window);
+                if (mForeignInputWindows.removeAll(event->xunmap.window)) {
+                    updateFocus();
+                }
             }
     }
 
