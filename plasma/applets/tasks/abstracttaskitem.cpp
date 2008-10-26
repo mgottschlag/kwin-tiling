@@ -34,6 +34,7 @@
 #include <KAuthorized>
 #include <KDebug>
 #include <KIcon>
+#include <KIconEffect>
 #include <KLocalizedString>
 #include <KGlobalSettings>
 #include <KIconLoader>
@@ -356,28 +357,8 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     }
 
     //Draw task background fading away if needed
-    if (hasSvg) {
-        if (!m_animId) {
-             if (~option->state & QStyle::State_MouseOver) {
-                 itemBackground->paintPanel(painter);
-             }
-        } else {
-            QPixmap *alphaPixmap = m_applet->taskAlphaPixmap(itemBackground->panelSize().toSize());
-            //kDebug() << (QObject*)this << "setting alpha to" << (255 * (1.0 - m_alpha)) << m_alpha;
-            if (m_alpha < 0.95) {
-                alphaPixmap->fill(QColor(0, 0, 0, 255 * (1.0 - m_alpha)));
-            } else {
-                alphaPixmap->fill(Qt::transparent);
-            }
-
-            {
-                QPainter buffPainter(alphaPixmap);
-                buffPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-                itemBackground->paintPanel(&buffPainter);
-            }
-
-            painter->drawPixmap(QPoint(0, 0), *alphaPixmap);
-        }
+    if (hasSvg && !m_animId && ~option->state & QStyle::State_MouseOver) {
+        itemBackground->paintPanel(painter);
     }
 
     if (option->state & QStyle::State_MouseOver || m_animId) {
@@ -386,25 +367,32 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
                 itemBackground->setElementPrefix("hover");
                 itemBackground->paintPanel(painter);
             } else {
-                //Draw task background from theme svg "hover" element
-                QPixmap *alphaPixmap = m_applet->taskAlphaPixmap(itemBackground->panelSize().toSize());
-
-                if (option->state & QStyle::State_Sunken) {
-                    alphaPixmap->fill(QColor(0, 0, 0, 50));
-                } else if (m_alpha < 0.9) {
-                    alphaPixmap->fill(QColor(0, 0, 0, 255 * m_alpha));
-                } else {
-                    alphaPixmap->fill(Qt::transparent);
-                }
-
-                {
-                    QPainter buffPainter(alphaPixmap);
-                    buffPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+                if (hasSvg) {
+                    QPixmap normal(itemBackground->panelPixmap());
                     itemBackground->setElementPrefix("hover");
-                    itemBackground->paintPanel(&buffPainter);
-                }
+                    QPixmap result = Plasma::PaintUtils::transition(normal, itemBackground->panelPixmap(), m_alpha);
+                    painter->drawPixmap(QPoint(0, 0), result);
+                } else {
+                    //Draw task background from theme svg "hover" element
+                    QPixmap *alphaPixmap = m_applet->taskAlphaPixmap(itemBackground->panelSize().toSize());
 
-                painter->drawPixmap(QPoint(0, 0), *alphaPixmap);
+                    if (option->state & QStyle::State_Sunken) {
+                        alphaPixmap->fill(QColor(0, 0, 0, 50));
+                    } else if (m_alpha < 0.9) {
+                        alphaPixmap->fill(QColor(0, 0, 0, 255 * m_alpha));
+                    } else {
+                        alphaPixmap->fill(Qt::transparent);
+                    }
+
+                    {
+                        QPainter buffPainter(alphaPixmap);
+                        buffPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+                        itemBackground->setElementPrefix("hover");
+                        itemBackground->paintPanel(&buffPainter);
+                    }
+
+                    painter->drawPixmap(QPoint(0, 0), *alphaPixmap);
+                }
             }
         } else {
             //Draw task background without svg theming
@@ -443,7 +431,25 @@ void AbstractTaskItem::drawTask(QPainter *painter,const QStyleOptionGraphicsItem
     Q_UNUSED(option)
 
     QRectF bounds = boundingRect().adjusted(m_applet->itemLeftMargin(), m_applet->itemTopMargin(), -m_applet->itemRightMargin(), -m_applet->itemBottomMargin());
-    m_icon.paint(painter, iconRect(bounds).toRect());
+
+    if (!m_animId && !(option->state & QStyle::State_MouseOver)) {
+        m_icon.paint(painter, iconRect(bounds).toRect());
+    } else {
+        KIconEffect *effect = KIconLoader::global()->iconEffect();
+        QPixmap result = m_icon.pixmap(iconRect(bounds).toRect().size());
+
+        if (effect->hasEffect(KIconLoader::Desktop, KIconLoader::ActiveState)) {
+            if (qFuzzyCompare(qreal(1.0), m_alpha)) {
+                result = effect->apply(result, KIconLoader::Desktop, KIconLoader::ActiveState);
+            } else {
+                result = Plasma::PaintUtils::transition(
+                    result,
+                    effect->apply(result, KIconLoader::Desktop,
+                                  KIconLoader::ActiveState), m_alpha);
+            }
+        }
+        painter->drawPixmap(iconRect(bounds).topLeft(), result);
+    }
 
     painter->setPen(QPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor), 1.0));
 
