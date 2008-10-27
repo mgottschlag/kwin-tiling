@@ -478,7 +478,7 @@ void EnvCanadaIon::parseDateTime(WeatherData& data, QXmlStreamReader& xml, Weath
                     xml.readElementText();
                     d->m_dateFormat = QDateTime::fromString(selectTimeStamp, "yyyyMMddHHmmss");
                     data.obsTimestamp = d->m_dateFormat.toString("dd.MM.yyyy @ hh:mm ap");
-                    data.iconPeriodHour = d->m_dateFormat.toString("hh").toInt();
+                    data.iconPeriodHour = d->m_dateFormat.toString("HH").toInt();
                     data.iconPeriodAP = d->m_dateFormat.toString("ap");
                 } else if (dateType == "forecastIssue") {
                     data.forecastTimestamp = xml.readElementText();
@@ -1010,7 +1010,7 @@ void EnvCanadaIon::updateWeather(const QString& source)
     setData(source, "Current Conditions", condition(source));
 
     // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
-    if (night(source) && periodHour(source) >= 16) {  // 24 hour time
+    if (night(source) && periodHour(source) >= 18) {  // 24 hour time
         setData(source, "Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
     } else {
         setData(source, "Condition Icon", getWeatherIcon(dayIcons(), condition(source)));

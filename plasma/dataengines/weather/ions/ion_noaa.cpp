@@ -70,13 +70,25 @@ QMap<QString, IonInterface::ConditionIcons> NOAAIon::setupDayIconMappings(void)
 //
     QMap<QString, ConditionIcons> dayList;
     dayList["fair"] = FewCloudsDay;
+    dayList["partly cloudy"] = PartlyCloudyDay;
+    dayList["fair with haze"] = FewCloudsDay;
+    dayList["fair and windy"] = FewCloudsDay;
+    dayList["a few clouds"] = FewCloudsDay;
+    dayList["overcast"] = Overcast;
+    dayList["mostly cloudy"] = Overcast;
     return dayList;
 }
 
 QMap<QString, IonInterface::ConditionIcons> NOAAIon::setupNightIconMappings(void)
 {
     QMap<QString, ConditionIcons> nightList;
+    nightList["partly cloudy"] = PartlyCloudyNight;
     nightList["fair"] = FewCloudsNight;
+    nightList["fair with haze"] = FewCloudsNight;
+    nightList["fair and windy"] = FewCloudsNight;
+    nightList["a few clouds"] = FewCloudsNight;
+    nightList["mostly cloudy"] = Overcast;
+    nightList["overcast"] = Overcast;
     return nightList;
 }
 
@@ -334,13 +346,13 @@ WeatherData NOAAIon::parseWeatherSite(WeatherData& data, QXmlStreamReader& xml)
                 QStringList tmpDateStr = data.observationTime.split(" ");
                 data.observationTime = QString("%1 %2").arg(tmpDateStr[5]).arg(tmpDateStr[6]);
                 d->m_dateFormat = QDateTime::fromString(data.observationTime, "h:mm ap");
-                data.iconPeriodHour = d->m_dateFormat.toString("h");
+                data.iconPeriodHour = d->m_dateFormat.toString("HH");
                 data.iconPeriodAP = d->m_dateFormat.toString("ap");
 
             } else if (xml.name() == "weather") {
                 data.weather = xml.readElementText();
                 // Pick which icon set depending on period of day
-                if (data.iconPeriodAP == "pm" && data.iconPeriodHour.toInt() >= 4) {
+                if (data.iconPeriodAP == "pm" && data.iconPeriodHour.toInt() >= 18) {
                     data.iconName = getWeatherIcon(nightIcons(), data.weather.toLower());
                 } else {
                     data.iconName = getWeatherIcon(dayIcons(), data.weather.toLower());
@@ -437,7 +449,7 @@ void NOAAIon::updateWeather(const QString& source)
     setData(source, "Observation Period", observationTime(source));
     setData(source, "Current Conditions", condition(source));
 
-    if (night(source) && periodHour(source) >= 4) {
+    if (night(source) && periodHour(source) >= 18) {
         setData(source, "Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
     } else {
         setData(source, "Condition Icon", getWeatherIcon(dayIcons(), condition(source)));
