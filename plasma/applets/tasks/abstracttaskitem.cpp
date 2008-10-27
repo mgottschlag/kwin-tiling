@@ -451,7 +451,11 @@ void AbstractTaskItem::drawTask(QPainter *painter,const QStyleOptionGraphicsItem
         painter->drawPixmap(iconRect(bounds).topLeft(), result);
     }
 
-    painter->setPen(QPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor), 1.0));
+    if (m_flags & TaskHasFocus && m_applet->itemBackground()->hasElement("hint-focus-is-button")) {
+        painter->setPen(QPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::ButtonTextColor), 1.0));
+    } else {
+        painter->setPen(QPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor), 1.0));
+    }
 
     QRect rect = textRect(bounds).toRect();
     if (rect.height() > 20) {
@@ -577,8 +581,16 @@ void AbstractTaskItem::drawTextLayout(QPainter *painter, const QTextLayout &layo
     }
 
     p.end();
+
+    QColor shadowColor;
+    if (m_flags & TaskHasFocus && m_applet->itemBackground()->hasElement("hint-focus-is-button")) {
+        shadowColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::ButtonBackgroundColor);
+    } else {
+        shadowColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
+    }
+
     QImage shadow = pixmap.toImage();
-    Plasma::PaintUtils::shadowBlur(shadow, 3, Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
+    Plasma::PaintUtils::shadowBlur(shadow, 3, shadowColor);
 
     painter->drawImage(rect.topLeft() + QPoint(2,2), shadow);
     painter->drawPixmap(rect.topLeft(), pixmap);
