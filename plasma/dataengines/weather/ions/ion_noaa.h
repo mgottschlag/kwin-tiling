@@ -47,7 +47,6 @@ public:
     QString observationTime;
     QString iconPeriodHour;
     QString iconPeriodAP;
-    QString iconName;
     QString weather;
 
     QString temperature_F;
@@ -100,7 +99,7 @@ private:
 
     // Current Conditions Weather info
     QString observationTime(const QString& source);
-    bool night(const QString& source);
+    //bool night(const QString& source);
     int periodHour(const QString& source);
     QString condition(const QString& source);
     QMap<QString, QString> temperature(const QString& source);

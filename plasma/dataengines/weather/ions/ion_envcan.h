@@ -168,7 +168,7 @@ private:
 
     // Current Conditions Weather info
     QString observationTime(const QString& source);
-    bool night(const QString& source);
+    //bool night(const QString& source);
     int periodHour(const QString& source);
     QMap<QString, QString> watches(const QString& source);
     QMap<QString, QString> warnings(const QString& source);

@@ -352,11 +352,6 @@ WeatherData NOAAIon::parseWeatherSite(WeatherData& data, QXmlStreamReader& xml)
             } else if (xml.name() == "weather") {
                 data.weather = xml.readElementText();
                 // Pick which icon set depending on period of day
-                if (data.iconPeriodAP == "pm" && data.iconPeriodHour.toInt() >= 18) {
-                    data.iconName = getWeatherIcon(nightIcons(), data.weather.toLower());
-                } else {
-                    data.iconName = getWeatherIcon(dayIcons(), data.weather.toLower());
-                }
             } else if (xml.name() == "temp_f") {
                 data.temperature_F = xml.readElementText();
             } else if (xml.name() == "temp_c") {
@@ -449,7 +444,9 @@ void NOAAIon::updateWeather(const QString& source)
     setData(source, "Observation Period", observationTime(source));
     setData(source, "Current Conditions", condition(source));
 
-    if (night(source) && periodHour(source) >= 18) {
+    if (periodHour(source) >= 0 && periodHour(source) < 6) {
+        setData(source, "Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
+    } else if (periodHour(source) >= 18) {
         setData(source, "Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
     } else {
         setData(source, "Condition Icon", getWeatherIcon(dayIcons(), condition(source)));
@@ -533,6 +530,7 @@ QString NOAAIon::observationTime(const QString& source)
     return d->m_weatherData[source].observationTime;
 }
 
+/*
 bool NOAAIon::night(const QString& source)
 {
     if (d->m_weatherData[source].iconPeriodAP == "pm") {
@@ -540,6 +538,7 @@ bool NOAAIon::night(const QString& source)
     }
     return false;
 }
+*/
 
 int NOAAIon::periodHour(const QString& source)
 {

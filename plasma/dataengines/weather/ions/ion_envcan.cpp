@@ -1198,6 +1198,7 @@ QString EnvCanadaIon::observationTime(const QString& source)
     return d->m_weatherData[source].obsTimestamp;
 }
 
+/*
 bool EnvCanadaIon::night(const QString& source)
 {
     if (d->m_weatherData[source].iconPeriodAP == "pm") {
@@ -1205,6 +1206,7 @@ bool EnvCanadaIon::night(const QString& source)
     }
     return false;
 }
+*/
 
 int EnvCanadaIon::periodHour(const QString& source)
 {

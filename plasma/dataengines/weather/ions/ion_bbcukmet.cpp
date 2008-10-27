@@ -791,11 +791,12 @@ void UKMETIon::updateWeather(const QString& source)
     setData(weatherSource, "Current Conditions", condition(source));
 
     // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
-   
-    if (periodHour(source) >= 6 && periodHour(source) < 18) {
-        setData(weatherSource, "Condition Icon", getWeatherIcon(dayIcons(), condition(source)));
-    } else {
+    if (periodHour(source) >= 0 && periodHour(source) < 6) {
         setData(weatherSource, "Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
+    } else if (periodHour(source) >= 18) {
+        setData(weatherSource, "Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
+    } else {
+        setData(weatherSource, "Condition Icon", getWeatherIcon(dayIcons(), condition(source)));
     }
 
     setData(weatherSource, "Humidity", humidity(source));
