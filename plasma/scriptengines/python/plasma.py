@@ -19,10 +19,12 @@
 
 # Plasma applet API for Python
 
-from PyKDE4.plasma import Plasma # Plasma C++ namespace
 from PyQt4.QtCore import QObject
-import sip
-import gc
+from PyQt4.QtGui import QGraphicsWidget
+from PyKDE4.plasma import Plasma # Plasma C++ namespace
+
+#import sip
+#import gc
 
 class Applet(QObject):
     ''' Subclass Applet in your module and return an instance of it in a global function named 
@@ -49,10 +51,6 @@ class Applet(QObject):
         self._forward_to_applet = False
 
     # Events
-
-#    def _long_setApplet(self,applet):
-#        self.setApplet(sip.wrapinstance(applet,Plasma.Applet))
-
     def setApplet(self,applet):
         self.applet = applet
 
@@ -64,9 +62,6 @@ class Applet(QObject):
         
     def constraintsEvent(self, flags):
         pass
-        
-#    def _long_constraintsEvent(self, flags):
-#        self.constraintsEvent(Plasma.Constraints(Plasma.Constraint(flags)))
 
     def showConfigurationInterface(self):
         pass
@@ -76,6 +71,9 @@ class Applet(QObject):
 
     def setHasConfigurationInterface(self,hasInterface):
         Plasma.AppletProtectedThunk.static_public_setHasConfigurationInterface(self.applet,hasInterface)
+
+    def shape(self):
+        return QGraphicsWidget.shape(self.applet)
 
 ###########################################################################
 class DataEngine(QObject):
