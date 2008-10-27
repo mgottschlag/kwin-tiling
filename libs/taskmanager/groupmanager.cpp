@@ -69,7 +69,6 @@ public:
     */
     void currentDesktopChanged(int);
     void taskChanged(TaskPtr, ::TaskManager::TaskChanges);
-    void addAttentionTask();
     void windowChangedGeometry(TaskPtr task);
 
     void checkScreenChange();
@@ -126,16 +125,9 @@ void GroupManagerPrivate::reloadTasks()
 
     QList <TaskPtr> taskList = TaskManager::self()->tasks().values();
     foreach(TaskPtr task, taskList) { //Add all existing tasks
-        if ((showOnlyCurrentDesktop && !task->isOnCurrentDesktop()) ||
-            (showOnlyCurrentScreen && !task->isOnScreen(currentScreen))) {
-            QObject::connect(task.data(),SIGNAL(changed()),
-                             q, SLOT(addAttentionTask()));
-        }
-
         if (!q->add(task)) {
             q->remove(task); //remove what isn't needed anymore
         }
-
         taskList.removeAll(task);
     }
 
@@ -183,27 +175,31 @@ bool GroupManager::add(TaskPtr task)
     kDebug() <<  task->classClass();*/
 
     // Go through all filters whether the task should be displayed or not
-
+    bool show = true;
     if (!task->showInTaskbar()) {
         kDebug() << "Do not show in taskbar";
-        return false;
+        show = false;
     }
 
-    if (showOnlyCurrentDesktop() && !task->isOnCurrentDesktop() && !task->demandsAttention()) {
+    if (showOnlyCurrentDesktop() && !task->isOnCurrentDesktop()) {
         kDebug() << "Not on this desktop and showOnlyCurrentDesktop";
-        return false;
+        show = false;
     }
 
-    if (showOnlyCurrentScreen() && !task->isOnScreen(d->currentScreen) && !task->demandsAttention()) {
+    if (showOnlyCurrentScreen() && !task->isOnScreen(d->currentScreen)) {
         kDebug() << "Not on this screen and showOnlyCurrentScreen";
-        return false;
+        show = false;
+    }
+
+    if (showOnlyMinimized() && !task->isMinimized()) {
+        show = false;
     }
 
     NET::WindowType type = task->info().windowType(NET::NormalMask | NET::DialogMask |
                                                    NET::OverrideMask | NET::UtilityMask);
     if (type == NET::Utility) {
         kDebug() << "skipping utility window" << task->name();
-        return false;
+        show = false;
     }
 
         //TODO: should we check for transiency? if so the following code can detect it.
@@ -219,7 +215,13 @@ bool GroupManager::add(TaskPtr task)
         }
     */
 
+    if (task->demandsAttention()) { //override all other limitations
+        show = true;
+    }
 
+    if (!show) {
+        return false;
+    }
     //Ok the Task should be displayed
     TaskItem *item = 0;
     if (!d->itemList.contains(task)) {
@@ -255,17 +257,6 @@ bool GroupManager::add(TaskPtr task)
     return true;
 }
 
-/** Adds a windowTaskItem that is demanding attention to the taskbar if it is not currently shown and is not on the current desktop.
- * This function applies when the showOnlyCurrentDesktop or showOnlyCurrentScreen switch is set. 
- */
-void GroupManagerPrivate::addAttentionTask()
-{
-    TaskPtr task;
-    task.attach(qobject_cast<Task*>(q->sender()));
-    if (task->demandsAttention() && !itemList.contains(task)) {
-        q->add(task);
-    }
-}
 
 void GroupManager::remove(TaskPtr task)
 {
@@ -275,7 +266,6 @@ void GroupManager::remove(TaskPtr task)
         kDebug() << "invalid item";
         return;
     }
-    //GroupPtr group = d->directory.take(item);
     if (item->parentGroup()) {
         item->parentGroup()->remove(item);
     }
@@ -359,14 +349,16 @@ void GroupManagerPrivate::currentDesktopChanged(int newDesktop)
     reloadTasks();
 }
 
+
 void GroupManagerPrivate::taskChanged(TaskPtr task, ::TaskManager::TaskChanges changes)
 {
+    //kDebug();
     bool takeAction = false;
     bool show = true;
 
     if (showOnlyCurrentDesktop && changes & ::TaskManager::DesktopChanged) {
         takeAction = true;
-        show = task->isOnCurrentDesktop() || task->demandsAttention();
+        show = task->isOnCurrentDesktop();
         //kDebug() << task->visibleName() << "on" << TaskManager::self()->currentDesktop();
     }
 
@@ -376,10 +368,15 @@ void GroupManagerPrivate::taskChanged(TaskPtr task, ::TaskManager::TaskChanges c
         show = task->isMinimized();
     }
 
+    //show tasks anyway if they demand attention
+    if (changes & ::TaskManager::StateChanged && task->demandsAttention()) {
+        takeAction = true;
+        show = true;
+    }
+
     if (!takeAction) {
         return;
     }
-
 
     if (show) {
         //kDebug() << "add(task);";

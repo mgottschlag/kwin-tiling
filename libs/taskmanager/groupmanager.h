@@ -131,7 +131,6 @@ public Q_SLOTS:
 private:
     Q_PRIVATE_SLOT(d, void currentDesktopChanged(int))
     Q_PRIVATE_SLOT(d, void taskChanged(TaskPtr, ::TaskManager::TaskChanges))
-    Q_PRIVATE_SLOT(d, void addAttentionTask())
     Q_PRIVATE_SLOT(d, void windowChangedGeometry(TaskPtr task))
     Q_PRIVATE_SLOT(d, void checkScreenChange())
     Q_PRIVATE_SLOT(d, void itemDestroyed())
