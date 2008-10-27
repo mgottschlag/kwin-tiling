@@ -59,6 +59,7 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet, const
       m_activateTimer(0),
       m_flags(0),
       m_animId(0),
+      m_backgroundPrefix("normal"),
       m_alpha(1),
       m_updateTimerId(0),
       m_attentionTimerId(0),
@@ -130,7 +131,32 @@ void AbstractTaskItem::setTaskFlags(const TaskFlags flags)
     }
 
     m_flags = flags;
+
+    QString newBackground;
+    if (m_flags & TaskIsMinimized) {
+        newBackground = "minimized";
+    } else if (m_flags & TaskHasFocus) {
+        newBackground = "focus";
+    } else {
+        newBackground = "normal";
+    }
+
+    fadeBackground(newBackground, 100, true);
 }
+
+void AbstractTaskItem::fadeBackground(const QString &newBackground, int duration, bool fadeIn)
+{
+    m_oldBackgroundPrefix = m_backgroundPrefix;
+    m_backgroundPrefix = newBackground;
+
+    if (m_animId) {
+        Plasma::Animator::self()->stopCustomAnimation(m_animId);
+    }
+
+    m_fadeIn = fadeIn;
+    m_animId = Plasma::Animator::self()->customAnimation(40 / (1000 / duration), duration,Plasma::Animator::LinearCurve, this, "animationUpdate");
+}
+
 
 AbstractTaskItem::TaskFlags AbstractTaskItem::taskFlags() const
 {
@@ -173,28 +199,24 @@ void AbstractTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event)
 
-    const int FadeInDuration = 75;
-
-    if (m_animId) {
-        Plasma::Animator::self()->stopCustomAnimation(m_animId);
-    }
-
-    m_fadeIn = true;
-    m_animId = Plasma::Animator::self()->customAnimation(40 / (1000 / FadeInDuration), FadeInDuration,Plasma::Animator::LinearCurve, this, "animationUpdate");
+    fadeBackground("hover", 75, true);
 }
 
 void AbstractTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event)
 
-    const int FadeOutDuration = 150;
+    QString backgroundPrefix;
 
-    if (m_animId) {
-        Plasma::Animator::self()->stopCustomAnimation(m_animId);
+    if (m_flags & TaskIsMinimized) {
+        backgroundPrefix = "minimized";
+    } else if (m_flags & TaskHasFocus) {
+        backgroundPrefix = "focus";
+    } else {
+        backgroundPrefix = "normal";
     }
 
-    m_fadeIn = false;
-    m_animId = Plasma::Animator::self()->customAnimation(40 / (1000 / FadeOutDuration), FadeOutDuration,Plasma::Animator::LinearCurve, this, "animationUpdate");
+    fadeBackground(backgroundPrefix, 150, false);
 }
 
 void AbstractTaskItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -249,6 +271,12 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
             m_attentionTicks = 0;
         }
 
+        if (m_attentionTicks % 2 == 0) {
+            fadeBackground("attention", 100, false);
+        } else {
+            fadeBackground("normal", 150, false);
+        }
+
         update();
     }
 }
@@ -276,8 +304,6 @@ void AbstractTaskItem::paint(QPainter *painter,
 
 void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
-// FIXME  Check the usage of KColorScheme here with various color schemes
-
     // Do not paint with invalid sizes, the happens when the layout is being initialized
     if (!option->rect.isValid()) {
         return;
@@ -292,37 +318,29 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     m_applet->resizeItemBackground(geometry().size().toSize());
     Plasma::PanelSvg *itemBackground = m_applet->itemBackground();
 
-    if ((m_flags & TaskWantsAttention) && !(m_attentionTicks % 2)) {
-        //Draw task background from theme svg "attention" element
-        itemBackground->setElementPrefix("attention");
-    } else if (m_flags & TaskIsMinimized) {
-        //Draw task background from theme svg "attention" element
-        itemBackground->setElementPrefix("minimized");
-    } else if (m_flags & TaskHasFocus) {
-        //Draw task background from theme svg "focus" element
-        itemBackground->setElementPrefix("focus");
-    //Default is a normal task
-    } else {
-        //Draw task background from theme svg "normal" element
-        itemBackground->setElementPrefix("normal");
-    }
-
-    //Draw task background fading away if needed
-    if (!m_animId && ~option->state & QStyle::State_MouseOver) {
+    if (!m_animId && ~option->state & QStyle::State_Sunken) {
+        itemBackground->setElementPrefix(m_backgroundPrefix);
         itemBackground->paintPanel(painter);
+        return;
     }
 
-    if (option->state & QStyle::State_MouseOver || m_animId) {
-        if ((!m_animId || m_alpha == 1) && (~option->state & QStyle::State_Sunken)) {
-            itemBackground->setElementPrefix("hover");
-            itemBackground->paintPanel(painter);
-        } else {
-            QPixmap normal(itemBackground->panelPixmap());
-            itemBackground->setElementPrefix("hover");
-            QPixmap result = Plasma::PaintUtils::transition(normal, itemBackground->panelPixmap(), m_alpha);
-            painter->drawPixmap(QPoint(0, 0), result);
-        }
+    itemBackground->setElementPrefix(m_oldBackgroundPrefix);
+    QPixmap oldBackground;
+
+    if (option->state & QStyle::State_Sunken) {
+        oldBackground = QPixmap(geometry().size().toSize());
+        oldBackground.fill(Qt::transparent);
+        m_alpha = 0.4;
+    } else {
+        oldBackground = itemBackground->panelPixmap();
     }
+
+    itemBackground->setElementPrefix(m_backgroundPrefix);
+    QPixmap result = Plasma::PaintUtils::transition( oldBackground, itemBackground->panelPixmap(), m_alpha);
+
+    painter->drawPixmap(QPoint(0, 0), result);
+
+    return;
 }
 
 void AbstractTaskItem::drawTask(QPainter *painter,const QStyleOptionGraphicsItem *option,QWidget *)
@@ -331,7 +349,8 @@ void AbstractTaskItem::drawTask(QPainter *painter,const QStyleOptionGraphicsItem
 
     QRectF bounds = boundingRect().adjusted(m_applet->itemLeftMargin(), m_applet->itemTopMargin(), -m_applet->itemRightMargin(), -m_applet->itemBottomMargin());
 
-    if (!m_animId && !(option->state & QStyle::State_MouseOver)) {
+    if ((!m_animId && ~option->state & QStyle::State_MouseOver) ||
+         (m_oldBackgroundPrefix != "hover" && m_backgroundPrefix != "hover")) {
         m_icon.paint(painter, iconRect(bounds).toRect());
     } else {
         KIconEffect *effect = KIconLoader::global()->iconEffect();
@@ -344,7 +363,7 @@ void AbstractTaskItem::drawTask(QPainter *painter,const QStyleOptionGraphicsItem
                 result = Plasma::PaintUtils::transition(
                     result,
                     effect->apply(result, KIconLoader::Desktop,
-                                  KIconLoader::ActiveState), m_alpha);
+                                  KIconLoader::ActiveState), m_fadeIn?m_alpha:1-m_alpha);
             }
         }
         painter->drawPixmap(iconRect(bounds).topLeft(), result);
@@ -505,6 +524,7 @@ void AbstractTaskItem::animationUpdate(qreal progress)
     }
 
     m_alpha = m_fadeIn ? progress : 1 - progress;
+    m_alpha = progress;
 
     // explicit update
     update();

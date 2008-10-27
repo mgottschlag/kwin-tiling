@@ -196,6 +196,8 @@ protected:
     QRectF expanderRect(const QRectF &b) const;
     // area of item occupied by task's text
     QRectF textRect(const QRectF &bounds) const;
+    // start an animation to chnge the task background
+    void fadeBackground(const QString &newBackground, int duration, bool fadeIn);
 
     TaskManager::AbstractItemPtr m_abstractItem;
     LayoutWidget *m_layoutWidget;
@@ -212,6 +214,8 @@ protected:
 
     int m_animId;
     qreal m_alpha;
+    QString m_oldBackgroundPrefix;
+    QString m_backgroundPrefix;
 
     QPointF _dragOffset;
     QTime m_lastUpdate;
