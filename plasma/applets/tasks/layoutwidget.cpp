@@ -183,6 +183,11 @@ int LayoutWidget::maximumRows()
     if (!m_itemPositions.size()) {
         return 1;
     }
+
+    if(m_forceRows) {
+        return m_maxRows;
+    }
+
     // in this case rows are columns, columns are rows...
     //TODO basicPreferredSize isn't the optimal source here because  it changes because of margins probably
     QSizeF itemSize = m_itemPositions[0]->basicPreferredSize();
