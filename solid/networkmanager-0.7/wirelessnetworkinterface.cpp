@@ -55,6 +55,11 @@ NMWirelessNetworkInterface::NMWirelessNetworkInterface(const QString & path, NMN
 
     connect( &d->wirelessIface, SIGNAL(PropertiesChanged(const QVariantMap &)),
                 this, SLOT(wirelessPropertiesChanged(const QVariantMap &)));
+    connect( &d->wirelessIface, SIGNAL(AccessPointAdded(const QDBusObjectPath &)),
+                this, SLOT(accessPointAdded(const QDBusObjectPath &)));
+    connect( &d->wirelessIface, SIGNAL(AccessPointRemoved(const QDBusObjectPath &)),
+                this, SLOT(accessPointRemoved(const QDBusObjectPath &)));
+
 
     qDBusRegisterMetaType<QList<QDBusObjectPath> >();
     QDBusReply< QList <QDBusObjectPath> > apPathList = d->wirelessIface.GetAccessPoints();
@@ -165,8 +170,10 @@ void NMWirelessNetworkInterface::accessPointAdded(const QDBusObjectPath &apPath)
 {
     kDebug(1441) << apPath.path();
     Q_D(NMWirelessNetworkInterface);
-    d->accessPoints.append(apPath.path());
-    emit accessPointAppeared(apPath.path());
+    if (!d->accessPoints.contains(apPath.path())) {
+        d->accessPoints.append(apPath.path());
+        emit accessPointAppeared(apPath.path());
+    }
 }
 
 void NMWirelessNetworkInterface::accessPointRemoved(const QDBusObjectPath &apPath)

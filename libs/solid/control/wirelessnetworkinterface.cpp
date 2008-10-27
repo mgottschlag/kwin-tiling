@@ -146,11 +146,10 @@ void Solid::Control::WirelessNetworkInterface::_k_accessPointAdded(const QString
     if (mapIt != d->apMap.end())
     {
         // Oops, I'm not sure it should happen...
-        // But well in this case we'd better kill the old device we got, it's probably outdated
-        AccessPointPair pair = mapIt.value();
-
-        delete pair.first;
-        delete pair.second;
+        // But for an unknown reason it does
+        // We were deleting the existing items here, which caused problems later
+        // when the client calls find AccessPoint and gets a frontend object with a
+        // null private object - dangling pointer
     } else {
         mapIt = d->apMap.insert(uni, AccessPointPair(0, 0));
     }
