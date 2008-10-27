@@ -25,9 +25,42 @@
 
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusConnectionInterface>
 #include <QtDBus/QDBusReply>
 
+#include <QtCore/QEventLoop>
+#include <QtCore/QTimer>
+
 #include <KDebug>
+#include <KGlobal>
+
+
+namespace {
+    /**
+     * Each thread needs its own QDBusConnection. We do it the very easy
+     * way and just create a new connection for each client
+     * Why does Qt not handle this automatically?
+     */
+    class QDBusConnectionPerThreadHelper
+    {
+    public:
+        QDBusConnectionPerThreadHelper()
+            : m_counter( 0 ) {
+        }
+
+        QDBusConnection newConnection() {
+            QMutexLocker lock( &m_mutex );
+            return QDBusConnection::connectToBus( QDBusConnection::SessionBus,
+                                                  QString("NepomukQueryServiceConnection%1").arg(++m_counter) );
+        }
+
+    private:
+        int m_counter;
+        QMutex m_mutex;
+    };
+
+    K_GLOBAL_STATIC( QDBusConnectionPerThreadHelper, s_globalDBusConnectionPerThreadHelper )
+}
 
 
 class Nepomuk::Search::QueryServiceClient::Private
@@ -36,10 +69,12 @@ public:
     Private()
         : queryServiceInterface( 0 ),
           queryInterface( 0 ),
-          dbusConnection( QDBusConnection::connectToBus( QDBusConnection::SessionBus, "NepomukQueryServiceConnection" ) ) {
+          dbusConnection( s_globalDBusConnectionPerThreadHelper->newConnection() ),
+          loop( 0 ) {
     }
 
     void _k_entriesRemoved( const QStringList& );
+    void _k_finishedListing();
     bool handleQueryReply( QDBusReply<QDBusObjectPath> reply );
 
     org::kde::nepomuk::QueryService* queryServiceInterface;
@@ -48,6 +83,8 @@ public:
     QueryServiceClient* q;
 
     QDBusConnection dbusConnection;
+
+    QEventLoop* loop;
 };
 
 
@@ -58,6 +95,15 @@ void Nepomuk::Search::QueryServiceClient::Private::_k_entriesRemoved( const QStr
         ul.append( QUrl( s ) );
     }
     emit q->entriesRemoved( ul );
+}
+
+
+void Nepomuk::Search::QueryServiceClient::Private::_k_finishedListing()
+{
+    emit q->finishedListing();
+    if( loop ) {
+        q->close();
+    }
 }
 
 
@@ -72,8 +118,10 @@ bool Nepomuk::Search::QueryServiceClient::Private::handleQueryReply( QDBusReply<
         connect( queryInterface, SIGNAL( entriesRemoved( QStringList ) ),
                  q, SLOT( _k_entriesRemoved( QStringList ) ) );
         connect( queryInterface, SIGNAL( finishedListing() ),
-                 q, SIGNAL( finishedListing() ) );
-        queryInterface->list();
+                 q, SLOT( _k_finishedListing() ) );
+        // run the listing async in case the event loop below is the only one we have
+        // and we need it to handle the signals and list returns results immediately
+        QTimer::singleShot( 0, queryInterface, SLOT(list()) );
         return true;
     }
     else {
@@ -100,6 +148,7 @@ Nepomuk::Search::QueryServiceClient::QueryServiceClient( QObject* parent )
 
 Nepomuk::Search::QueryServiceClient::~QueryServiceClient()
 {
+    close();
     delete d;
 }
 
@@ -132,13 +181,52 @@ bool Nepomuk::Search::QueryServiceClient::query( const Query& query )
 }
 
 
+bool Nepomuk::Search::QueryServiceClient::blockingQuery( const QString& q )
+{
+    if( query( q ) ) {
+        QEventLoop loop;
+        d->loop = &loop;
+        loop.exec();
+        d->loop = 0;
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+
+bool Nepomuk::Search::QueryServiceClient::blockingQuery( const Query& q )
+{
+    if( query( q ) ) {
+        QEventLoop loop;
+        d->loop = &loop;
+        loop.exec();
+        d->loop = 0;
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+
 void Nepomuk::Search::QueryServiceClient::close()
 {
     if ( d->queryInterface ) {
+        kDebug();
         d->queryInterface->close();
         delete d->queryInterface;
         d->queryInterface = 0;
+        if( d->loop )
+            d->loop->exit();
     }
+}
+
+
+bool Nepomuk::Search::QueryServiceClient::serviceAvailable()
+{
+    return QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.nepomuk.services.nepomukqueryservice" );
 }
 
 #include "queryserviceclient.moc"
