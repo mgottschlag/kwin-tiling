@@ -133,7 +133,6 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
       mLocked(false),
       mBusy(false),
       mPlasmaDBus(0),
-      mPlasmaView(0),
       mSetupMode(false),
       mOpenGLVisual(false),
       child_saver(child),
@@ -945,9 +944,9 @@ bool LockProcess::startPlasma()
     if (mPlasmaDBus->isValid()) {
         kDebug() << "weird, plasma-overlay is already running";
         //FIXME I'd like to just kill it off or ignore it
-        //then I could get rid of the dbus calls for the winid and just wait for it to map
         //maybe it should *not* be a kuniqueapp?
-        connect(mPlasmaDBus, SIGNAL(viewCreated(uint)), SLOT(setPlasmaView(uint)));
+        //FIXME oh, and if it's already visible then we won't get a mapnotify for it
+        //and then it won't be in our foreign window lists and so stuff will break
         if (mSetupMode) {
             mPlasmaDBus->call(QDBus::NoBlock, "activate");
             //it'll be locked because we haven't put plasma in setup mode. doh.
@@ -955,8 +954,6 @@ bool LockProcess::startPlasma()
         } else {
             mPlasmaDBus->call(QDBus::NoBlock, "deactivate");
         }
-        mPlasmaDBus->callWithCallback("viewWinId", QList<QVariant>(), this,
-                SLOT(setPlasmaView(uint)));
         return true;
     }
     kDebug () << "...not found";
@@ -986,6 +983,8 @@ void LockProcess::checkPlasma()
     if (mPlasmaDBus && mPlasmaDBus->isValid()) {
         //hooray, looks like it started ok
         kDebug() << "success!";
+        //...but just in case, make sure we're not waiting on it
+        mSetupMode = false;
         return;
     }
 
@@ -1050,14 +1049,9 @@ void LockProcess::newService(QString name)
     mPlasmaDBus = new org::kde::plasmaoverlay::App(name, "/App",
             QDBusConnection::sessionBus(), this);
 
+    //XXX this isn't actually used any more iirc
     connect(mPlasmaDBus, SIGNAL(hidden()), SLOT(unSuppressUnlock()));
-    //TODO can we conect to this only when we don't have an ID?
-    connect(mPlasmaDBus, SIGNAL(viewCreated(uint)), SLOT(setPlasmaView(uint)));
     //kDebug() << "should be connected";
-    //however, we may have connnected too *late*, so now we have to see if we can grab the winid
-    //ourselves
-    mPlasmaDBus->callWithCallback("viewWinId", QList<QVariant>(), this,
-            SLOT(setPlasmaView(uint)));
 
     if (!mDialogs.isEmpty()) {
         //whoops, activation probably failed earlier
@@ -1201,20 +1195,6 @@ static void fakeFocusIn( WId window )
     ev.xfocus.mode = NotifyNormal;
     ev.xfocus.detail = NotifyAncestor;
     XSendEvent( QX11Info::display(), window, False, NoEventMask, &ev );
-}
-
-void LockProcess::setPlasmaView(uint id)
-{
-    if (mPlasmaView == id) {
-        //kDebug() << "unchanged!!!!!!!!" << id;
-        return;
-    }
-    mPlasmaView = id;
-    if (mSetupMode) {
-        mSetupMode = false;
-    }
-    kDebug() << id;
-    stayOnTop();
 }
 
 bool LockProcess::eventFilter(QObject *o, QEvent *e)
@@ -1362,7 +1342,7 @@ bool LockProcess::x11Event(XEvent *event)
                     kDebug() << "no plasma; saver obscured";
                     stayOnTop();
                 }
-            } else if (mPlasmaView && event->xvisibility.window == mPlasmaView &&
+            } else if (!mForeignWindows.isEmpty() && event->xvisibility.window == mForeignWindows.last() &&
                     event->xvisibility.state != VisibilityUnobscured) {
                 //FIXME now that we have several plasma winids this doesn't feel valid
                 //but I don't know what to do about it!
@@ -1399,7 +1379,7 @@ bool LockProcess::x11Event(XEvent *event)
                             mForeignInputWindows.prepend(event->xmap.window);
                             fakeFocusIn(event->xmap.window);
                         }
-                        //TODO someday we should just set the main winid from here
+                        mSetupMode = false; //no more waiting for plasma
                     }
                 }
                 stayOnTop();
@@ -1473,7 +1453,7 @@ LockProcess::WindowType LockProcess::windowType(WId id)
         if (nitems != 1 || actualFormat != 8) {
             kDebug() << "malformed property";
         } else {
-            kDebug() << "i can haz plasma window?";
+            kDebug() << "i can haz plasma window?" << data[0];
             switch (data[0]) {
                 case 0: //FIXME magic numbers
                     type = SimpleWindow;
@@ -1540,10 +1520,6 @@ void LockProcess::stayOnTop()
         foreach (const WId w, mForeignWindows) {
             stack[count++] = w;
         }
-        /*if (mPlasmaView) {
-            stack[count++] = mPlasmaView;
-            kDebug() << "plasma on stack";
-        }*/
         //finally, the saver window
         stack[ count++ ] = winId();
         XRestackWindows( x11Info().display(), stack, count );

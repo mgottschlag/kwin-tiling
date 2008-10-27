@@ -118,11 +118,6 @@ private Q_SLOTS:
      */
     void newService(QString name);
     /**
-     * set the winid of plasma's view
-     * so that we can control it
-     */
-    void setPlasmaView(uint id); //it's really a WId but qdbuscpp2xml is dumb
-    /**
      * tell plasma we're in idle mode
      */
     void deactivatePlasma();
@@ -195,7 +190,6 @@ private:
     KProcess    mHackProc;
     KProcess    mPlasmaProc;
     org::kde::plasmaoverlay::App *mPlasmaDBus;
-    WId         mPlasmaView;
     bool        mPlasmaEnabled;
     bool        mSetupMode;
     QString     mSaverExec;
