@@ -284,7 +284,6 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     }
 
     const qreal hoverAlpha = 0.4;
-    bool hasSvg = false;
 
     /*FIXME -could be done more elegant with caching in tasks in a qhash <size,svg>.
     -do not use size() directly because this introduces the blackline syndrome.
@@ -294,134 +293,34 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     Plasma::PanelSvg *itemBackground = m_applet->itemBackground();
 
     if ((m_flags & TaskWantsAttention) && !(m_attentionTicks % 2)) {
-        if (itemBackground && itemBackground->hasElementPrefix("attention")) {
-            //Draw task background from theme svg "attention" element
-            itemBackground->setElementPrefix("attention");
-            hasSvg = true;
-        } else {
-            //Draw task background without svg theming
-            QColor background = m_applet->colorScheme()->background(KColorScheme::ActiveBackground).color();
-            background.setAlphaF(hoverAlpha+0.2);
-            painter->setBrush(QBrush(background));
-            painter->drawPath(Plasma::PaintUtils::roundedRectangle(option->rect, 6));
-        }
+        //Draw task background from theme svg "attention" element
+        itemBackground->setElementPrefix("attention");
     } else if (m_flags & TaskIsMinimized) {
-        if (itemBackground && itemBackground->hasElementPrefix("minimized")) {
-            //Draw task background from theme svg "attention" element
-            itemBackground->setElementPrefix("minimized");
-            hasSvg = true;
-        } else {
-            //Not painting anything by default
-            painter->setBrush(QBrush());
-        }
+        //Draw task background from theme svg "attention" element
+        itemBackground->setElementPrefix("minimized");
     } else if (m_flags & TaskHasFocus) {
-            if (itemBackground && itemBackground->hasElementPrefix("focus")) {
-                //Draw task background from theme svg "focus" element
-                itemBackground->setElementPrefix("focus");
-                hasSvg = true;
-            } else {
-                //Draw task background without svg theming
-                QLinearGradient background(boundingRect().topLeft(), boundingRect().bottomLeft());
-
-                QColor startColor = m_applet->colorScheme()->background(KColorScheme::NormalBackground).color();
-                QColor endColor = m_applet->colorScheme()->shade(startColor,KColorScheme::DarkShade);
-
-                endColor.setAlphaF(qMin(0.8,startColor.alphaF()+0.2));
-                startColor.setAlphaF(0);
-
-                background.setColorAt(0, startColor);
-                background.setColorAt(1, endColor);
-
-                painter->setBrush(background);
-                painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
-
-                painter->drawPath(Plasma::PaintUtils::roundedRectangle(option->rect, 6));
-            }
+        //Draw task background from theme svg "focus" element
+        itemBackground->setElementPrefix("focus");
     //Default is a normal task
     } else {
-        if (itemBackground && itemBackground->hasElementPrefix("normal")) {
-            //Draw task background from theme svg "normal" element
-            itemBackground->setElementPrefix("normal");
-            hasSvg = true;
-        } else {
-            //Draw task background without svg theming
-            KColorScheme *colorScheme = m_applet->colorScheme();
-            QColor background = colorScheme->shade(colorScheme->background(KColorScheme::AlternateBackground).color(),
-                                                   KColorScheme::DarkShade);
-            background.setAlphaF(0.2);
-            painter->setBrush(QBrush(background));
-            painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
-
-            painter->drawPath(Plasma::PaintUtils::roundedRectangle(option->rect, 6));
-        }
+        //Draw task background from theme svg "normal" element
+        itemBackground->setElementPrefix("normal");
     }
 
     //Draw task background fading away if needed
-    if (hasSvg && !m_animId && ~option->state & QStyle::State_MouseOver) {
+    if (!m_animId && ~option->state & QStyle::State_MouseOver) {
         itemBackground->paintPanel(painter);
     }
 
     if (option->state & QStyle::State_MouseOver || m_animId) {
-        if (itemBackground && itemBackground->hasElementPrefix("hover")) {
-            if ((!m_animId || m_alpha == 1) && (~option->state & QStyle::State_Sunken)) {
-                itemBackground->setElementPrefix("hover");
-                itemBackground->paintPanel(painter);
-            } else {
-                if (hasSvg) {
-                    QPixmap normal(itemBackground->panelPixmap());
-                    itemBackground->setElementPrefix("hover");
-                    QPixmap result = Plasma::PaintUtils::transition(normal, itemBackground->panelPixmap(), m_alpha);
-                    painter->drawPixmap(QPoint(0, 0), result);
-                } else {
-                    //Draw task background from theme svg "hover" element
-                    QPixmap *alphaPixmap = m_applet->taskAlphaPixmap(itemBackground->panelSize().toSize());
-
-                    if (option->state & QStyle::State_Sunken) {
-                        alphaPixmap->fill(QColor(0, 0, 0, 50));
-                    } else if (m_alpha < 0.9) {
-                        alphaPixmap->fill(QColor(0, 0, 0, 255 * m_alpha));
-                    } else {
-                        alphaPixmap->fill(Qt::transparent);
-                    }
-
-                    {
-                        QPainter buffPainter(alphaPixmap);
-                        buffPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-                        itemBackground->setElementPrefix("hover");
-                        itemBackground->paintPanel(&buffPainter);
-                    }
-
-                    painter->drawPixmap(QPoint(0, 0), *alphaPixmap);
-                }
-            }
+        if ((!m_animId || m_alpha == 1) && (~option->state & QStyle::State_Sunken)) {
+            itemBackground->setElementPrefix("hover");
+            itemBackground->paintPanel(painter);
         } else {
-            //Draw task background without svg theming
-            QLinearGradient background(boundingRect().topLeft(),
-                                       boundingRect().bottomLeft());
-
-            QColor startColor = m_applet->colorScheme()->background(KColorScheme::AlternateBackground).color();
-            QColor endColor = m_applet->colorScheme()->shade(startColor,KColorScheme::DarkShade);
-
-            const qreal pressedAlpha = 0.2;
-
-            qreal alpha = 0;
-
-            if (option->state & QStyle::State_Sunken) {
-                alpha = pressedAlpha;
-            } else {
-                alpha = hoverAlpha;
-            }
-
-            startColor.setAlphaF(alpha);
-            endColor.setAlphaF(m_alpha);
-
-            background.setColorAt(0, startColor);
-            background.setColorAt(1, endColor);
-
-            painter->setBrush(background);
-            painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
-
-            painter->drawPath(Plasma::PaintUtils::roundedRectangle(option->rect, 6));
+            QPixmap normal(itemBackground->panelPixmap());
+            itemBackground->setElementPrefix("hover");
+            QPixmap result = Plasma::PaintUtils::transition(normal, itemBackground->panelPixmap(), m_alpha);
+            painter->drawPixmap(QPoint(0, 0), result);
         }
     }
 }
