@@ -149,6 +149,11 @@ void AbstractTaskItem::fadeBackground(const QString &newBackground, int duration
     m_oldBackgroundPrefix = m_backgroundPrefix;
     m_backgroundPrefix = newBackground;
 
+    //FIXME: fix the random crashes
+    m_alpha=1;
+    update();
+    return;
+
     if (m_animId) {
         Plasma::Animator::self()->stopCustomAnimation(m_animId);
     }
@@ -523,7 +528,6 @@ void AbstractTaskItem::animationUpdate(qreal progress)
         m_fadeIn = true;
     }
 
-    m_alpha = m_fadeIn ? progress : 1 - progress;
     m_alpha = progress;
 
     // explicit update
