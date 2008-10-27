@@ -578,7 +578,7 @@ void EnvCanadaIon::parseConditions(WeatherData& data, QXmlStreamReader& xml)
             } else if (xml.name() == "condition") {
                 data.condition = xml.readElementText();
             } else if (xml.name() == "temperature") {
-                data.temperature = xml.readElementText();;
+                data.temperature = xml.readElementText();
             } else if (xml.name() == "dewpoint") {
                 data.dewpoint = xml.readElementText();
             } else if (xml.name() == "humidex" || xml.name() == "windChill") {
@@ -600,6 +600,9 @@ void EnvCanadaIon::parseConditions(WeatherData& data, QXmlStreamReader& xml)
             //    parseUnknownElement(xml);
             //}
         }
+    }
+    if (data.condition.isEmpty())  {
+        data.temperature = "N/A";
     }
 }
 
@@ -1240,7 +1243,12 @@ QMap<QString, QString> EnvCanadaIon::temperature(const QString& source)
     QMap<QString, QString> temperatureInfo;
     if (!d->m_weatherData[source].temperature.isEmpty()) {
         temperatureInfo.insert("temperature", QString::number(d->m_weatherData[source].temperature.toFloat(), 'f', 1));
+    } 
+
+    if (d->m_weatherData[source].temperature == "N/A") {
+        temperatureInfo.insert("temperature", "N/A");
     }
+
     temperatureInfo.insert("temperatureUnit", QString::number(WeatherUtils::Celsius));
     temperatureInfo.insert("comfortTemperature", "N/A");
 
