@@ -95,6 +95,7 @@ public:
     QString windSpeed;
     QString windGust;
     QString windDirection;
+    QString windDegrees;
 
     QVector <WeatherData::WeatherEvent *> watches;
     QVector <WeatherData::WeatherEvent *> warnings;

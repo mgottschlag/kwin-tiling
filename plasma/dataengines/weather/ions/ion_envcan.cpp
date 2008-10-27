@@ -545,6 +545,8 @@ void EnvCanadaIon::parseWindInfo(WeatherData& data, QXmlStreamReader& xml)
                 data.windGust = xml.readElementText();
             } else if (xml.name() == "direction") {
                 data.windDirection = xml.readElementText();
+            } else if (xml.name() == "bearing") {
+                data.windDegrees = xml.attributes().value("degrees").toString();
             } else {
                 parseUnknownElement(xml);
             }
@@ -1014,7 +1016,10 @@ void EnvCanadaIon::updateWeather(const QString& source)
     setData(source, "Current Conditions", condition(source));
 
     // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
-    if (night(source) && periodHour(source) >= 18) {  // 24 hour time
+    if (periodHour(source) >= 0 && periodHour(source) < 6) { 
+        setData(source, "Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
+    }
+    else if (periodHour(source) >= 18) {  
         setData(source, "Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
     } else {
         setData(source, "Condition Icon", getWeatherIcon(dayIcons(), condition(source)));
@@ -1067,6 +1072,7 @@ void EnvCanadaIon::updateWeather(const QString& source)
     }
     setData(source, "Wind Gust", dataFields["windGust"]);
     setData(source, "Wind Direction", dataFields["windDirection"]);
+    setData(source, "Wind Degrees", dataFields["windDegrees"]);
     setData(source, "Wind Gust Unit", dataFields["windGustUnit"]);
 
     dataFields = regionalTemperatures(source);
@@ -1421,10 +1427,12 @@ QMap<QString, QString> EnvCanadaIon::wind(const QString& source)
 
     if (d->m_weatherData[source].windDirection.isEmpty() && d->m_weatherData[source].windSpeed.isEmpty()) {
         windInfo.insert("windDirection", "N/A");
+        windInfo.insert("windDegrees", "N/A");
     } else if (d->m_weatherData[source].windSpeed.toInt() == 0) {
         windInfo.insert("windDirection", "VR");
     } else {
         windInfo.insert("windDirection", d->m_weatherData[source].windDirection);
+        windInfo.insert("windDegrees", d->m_weatherData[source].windDegrees);
     }
     return windInfo;
 }
