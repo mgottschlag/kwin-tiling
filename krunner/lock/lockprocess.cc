@@ -962,7 +962,7 @@ bool LockProcess::startPlasma()
     kDebug() << "starting plasma-overlay";
     connect(QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(QString, QString,
                     QString)),
-            SLOT(newService(QString)));
+            SLOT(newService(QString, QString, QString)));
     mPlasmaProc.setProgram("plasma-overlay");
     if (mSetupMode) {
         mPlasmaProc << "--setup";
@@ -1028,30 +1028,29 @@ void LockProcess::stopPlasma()
     }
 }
 
-void LockProcess::newService(QString name)
+void LockProcess::newService(QString name, QString oldOwner, QString newOwner)
 {
-    //TODO reorganize this part to take all 3 strings (oldOwner, newOwner)
-    //and notice plasma quitting
-    if (mPlasmaDBus) {
-        kDebug() << "can't happen"; //but it does.
-        //maybe we should check if plasma was going *down*
-        return;
-    }
+    Q_UNUSED(oldOwner);
     if (name != "org.kde.plasma-overlay") {
         return;
     }
 
-    kDebug() << "plasma! yaay!";
-    //disconnect(QDBusConnection::sessionBus().interface(), 0, this, 0); //no need for you any more
-    //FIXME might we want to know if the interface goes away?
-    //FIXME that disconnect isn't working anyways! wtf
+    if (mPlasmaDBus) {
+        if (newOwner.isEmpty()) {
+            kDebug() << "plasma ran away?";
+            disablePlasma();
+        } else {
+            kDebug() << "I'm confused!!";
+        }
+        return;
+    }
 
+    kDebug() << "plasma! yaay!";
     mPlasmaDBus = new org::kde::plasmaoverlay::App(name, "/App",
             QDBusConnection::sessionBus(), this);
 
     //XXX this isn't actually used any more iirc
     connect(mPlasmaDBus, SIGNAL(hidden()), SLOT(unSuppressUnlock()));
-    //kDebug() << "should be connected";
 
     if (!mDialogs.isEmpty()) {
         //whoops, activation probably failed earlier

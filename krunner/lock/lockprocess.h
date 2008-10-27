@@ -116,7 +116,7 @@ private Q_SLOTS:
     /**
      * a new dbus service has come in
      */
-    void newService(QString name);
+    void newService(QString name, QString oldOwner, QString newOwner);
     /**
      * tell plasma we're in idle mode
      */
