@@ -58,7 +58,7 @@ Q_SIGNALS:
     //if you change stuff, remember to regenerate with:
     //qdbuscpp2xml -S -M plasmaapp.h > org.kde.plasma-overlay.App.xml
 
-    void viewCreated(uint id); //XXX this is actually a WId but qdbuscpp2xml is dumb
+    //XXX can this be deleted? probably. if lockprocess really cares it can use the unmapnotify
     void hidden();
 
 public Q_SLOTS:
@@ -81,11 +81,6 @@ public Q_SLOTS:
     void lock();
 
     //not really slots, but we want them in dbus
-    /**
-     * @return the window id of our view, or 0 if there is none
-     * again, this is really a WId but dbus doesn't like those.
-     */
-    uint viewWinId();
 
     /**
      * quit the application
