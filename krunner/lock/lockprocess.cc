@@ -1361,7 +1361,6 @@ bool LockProcess::x11Event(XEvent *event)
             if( event->xmap.event == QX11Info::appRootWindow()) {
                 kDebug() << "MapNotify:" << event->xmap.window;
                 WindowType type = windowType(event->xmap.window);
-                //TODO get the view id here
                 if (type != IgnoreWindow) {
                     if (mForeignWindows.contains(event->xmap.window)) {
                         kDebug() << "uhoh! duplicate!";
