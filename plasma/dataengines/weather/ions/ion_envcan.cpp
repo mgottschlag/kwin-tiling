@@ -119,6 +119,8 @@ QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupDayIconMappings(v
     dayList["cloudy"] = Overcast;
     dayList["overcast"] = Overcast;
     dayList["snow at times heavy and blowing snow"] = Snow;
+    dayList["snow"] = Snow;
+    dayList["periods of snow"] = Snow;
     dayList["light snow"] = LightSnow;
     dayList["snow grains"] = Flurries;
     dayList["light rainshower"] = LightRain;
@@ -165,6 +167,8 @@ QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupNightIconMappings
     nightList["cloudy"] = Overcast;
     nightList["overcast"] = Overcast;
     nightList["light snow"] = LightSnow;
+    nightList["snow"] = Snow;
+    nightList["periods of snow"] = Snow;
     nightList["snow at times heavy and blowing snow"] = Snow;
     nightList["snow grains"] = LightSnow;
     nightList["light rainshower"] = LightRain;
