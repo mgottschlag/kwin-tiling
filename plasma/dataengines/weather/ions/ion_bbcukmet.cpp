@@ -588,7 +588,7 @@ void UKMETIon::parseWeatherObservation(const QString& source, WeatherData& data,
                 data.obsTime = conditionData[0];
                 // Friday at 0200 GMT
                 d->m_dateFormat =  QDateTime::fromString(data.obsTime.split("at")[1].trimmed(), "hhmm 'GMT'");
-                data.iconPeriodHour = d->m_dateFormat.toString("hh").toInt();
+                data.iconPeriodHour = d->m_dateFormat.toString("HH").toInt();
                 //data.iconPeriodAP = d->m_dateFormat.toString("ap");
 
                 data.condition = conditionData[1].split(".")[0].trimmed();
@@ -792,7 +792,7 @@ void UKMETIon::updateWeather(const QString& source)
 
     // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
    
-    if (periodHour(source) >= 6 && periodHour(source) < 16) {
+    if (periodHour(source) >= 6 && periodHour(source) < 18) {
         setData(weatherSource, "Condition Icon", getWeatherIcon(dayIcons(), condition(source)));
     } else {
         setData(weatherSource, "Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
