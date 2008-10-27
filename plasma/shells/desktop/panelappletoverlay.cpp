@@ -205,12 +205,13 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
     }
 
     if (m_applet->formFactor() != Plasma::Horizontal && m_applet->formFactor() != Plasma::Vertical){
-            QPointF pos = m_applet->view()->mapFromGlobal(event->globalPos());
-            QRectF g = m_applet->geometry();
-            pos += QPoint(m_offset, m_offset);
-            g.moveTo(pos);
-            m_applet->setGeometry(g);
-            return;
+        QPointF pos = m_applet->view()->mapFromGlobal(event->globalPos());
+        QRectF g = m_applet->geometry();
+        pos += QPoint(m_offset, m_offset);
+        g.moveTo(pos);
+        m_applet->setGeometry(g);
+        releaseMouse();
+        return;
     }
 
     if (!m_spacer) {
