@@ -198,17 +198,12 @@ void GlobalShortcutsModule::load()
                 }
             } // Q_FOREACH(shortcut)
 
-            QString componentFriendlyName =
-                shortcuts[0].componentFriendlyName().isEmpty()
-                ? shortcuts[0].componentUniqueName()
-                : shortcuts[0].componentFriendlyName();
+            QString componentFriendlyName = shortcuts[0].componentFriendlyName();
 
             if (shortcuts[0].contextUniqueName() != "default")
                 {
                 componentFriendlyName +=
-                    shortcuts[0].contextFriendlyName().isEmpty()
-                    ? shortcuts[0].contextUniqueName()
-                    : shortcuts[0].contextFriendlyName();
+                    QString('[') + shortcuts[0].contextFriendlyName() + QString(']');
                 }
 
             editor->addCollection(col, componentContextId, componentFriendlyName);
