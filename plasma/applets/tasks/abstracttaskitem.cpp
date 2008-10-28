@@ -38,6 +38,7 @@
 #include <KLocalizedString>
 #include <KGlobalSettings>
 #include <KIconLoader>
+#include <KColorUtils>
 
 #include <taskmanager/task.h>
 #include <taskmanager/taskmanager.h>
@@ -215,7 +216,9 @@ void AbstractTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
     QString backgroundPrefix;
 
-    if (m_flags & TaskIsMinimized) {
+    if (m_flags & TaskWantsAttention) {
+        backgroundPrefix = "attention";
+    } else if (m_flags & TaskIsMinimized) {
         backgroundPrefix = "minimized";
     } else if (m_flags & TaskHasFocus) {
         backgroundPrefix = "focus";
@@ -374,11 +377,7 @@ void AbstractTaskItem::drawTask(QPainter *painter,const QStyleOptionGraphicsItem
         painter->drawPixmap(iconRect(bounds).topLeft(), result);
     }
 
-    if (m_flags & TaskHasFocus && m_applet->itemBackground()->hasElement("hint-focus-is-button")) {
-        painter->setPen(QPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::ButtonTextColor), 1.0));
-    } else {
-        painter->setPen(QPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor), 1.0));
-    }
+    painter->setPen(QPen(textColor(false), 1.0));
 
     QRect rect = textRect(bounds).toRect();
     if (rect.height() > 20) {
@@ -505,15 +504,8 @@ void AbstractTaskItem::drawTextLayout(QPainter *painter, const QTextLayout &layo
 
     p.end();
 
-    QColor shadowColor;
-    if (m_flags & TaskHasFocus && m_applet->itemBackground()->hasElement("hint-focus-is-button")) {
-        shadowColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::ButtonBackgroundColor);
-    } else {
-        shadowColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
-    }
-
     QImage shadow = pixmap.toImage();
-    Plasma::PaintUtils::shadowBlur(shadow, 3, shadowColor);
+    Plasma::PaintUtils::shadowBlur(shadow, 3, textColor(true));
 
     painter->drawImage(rect.topLeft() + QPoint(2,2), shadow);
     painter->drawPixmap(rect.topLeft(), pixmap);
@@ -650,6 +642,45 @@ QRectF AbstractTaskItem::textRect(const QRectF &bounds) const
     return QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignRight | Qt::AlignVCenter,
                                      size, effectiveBounds.toRect());
 }
+
+QColor AbstractTaskItem::textColor(bool shadow) const
+{
+    QColor color;
+    QColor color1;
+    QColor color2;
+    qreal bias;
+    Plasma::Theme *theme = Plasma::Theme::defaultTheme();
+
+    if (shadow) {
+        color1 = theme->color(Plasma::Theme::BackgroundColor);
+        color2 = theme->color(Plasma::Theme::ButtonBackgroundColor);
+    } else {
+        color1 = theme->color(Plasma::Theme::TextColor);
+        color2 = theme->color(Plasma::Theme::ButtonTextColor);
+    }
+
+    if ((m_oldBackgroundPrefix == "attention" || m_backgroundPrefix == "attention") &&
+        m_applet->itemBackground()->hasElement("hint-attention-button-color")) {
+        if (!m_animId && m_backgroundPrefix != "attention") {
+            color = color1;
+        } else if (!m_animId) {
+            color = color2;
+        } else {
+            if (m_oldBackgroundPrefix == "attention") {
+                bias = 1 - m_alpha;
+            } else {
+                bias = m_alpha;
+            }
+
+            color = KColorUtils::mix(color1, color2, bias);
+        }
+    } else {
+        color = color1;
+    }
+
+    return color;
+}
+
 
 //inform parent about removal
 void AbstractTaskItem::finished()

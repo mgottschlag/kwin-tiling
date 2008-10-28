@@ -198,6 +198,8 @@ protected:
     QRectF textRect(const QRectF &bounds) const;
     // start an animation to chnge the task background
     void fadeBackground(const QString &newBackground, int duration, bool fadeIn);
+    // text and shadow colors, use this because they could be animated
+    QColor textColor(bool shadow) const;
 
     TaskManager::AbstractItemPtr m_abstractItem;
     LayoutWidget *m_layoutWidget;
