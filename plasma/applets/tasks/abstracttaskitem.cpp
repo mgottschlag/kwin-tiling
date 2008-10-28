@@ -390,8 +390,20 @@ void AbstractTaskItem::drawTask(QPainter *painter,const QStyleOptionGraphicsItem
     layoutText(layout, m_text, rect.size());
     drawTextLayout(painter, layout, rect);
 
-    if (!isWindowItem()) {
-        m_applet->itemBackground()->paint(painter, expanderRect(bounds), expanderElement());
+    TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(this);
+    if (groupItem) {
+        QFont font(KGlobalSettings::smallestReadableFont());
+        QFontMetrics fm(font);
+
+        QRectF rect(expanderRect(bounds));
+        QSizeF arrowSize(m_applet->itemBackground()->elementSize(expanderElement()));
+        QRectF arrowRect(rect.center()-QPointF(arrowSize.width()/2, arrowSize.height()+fm.xHeight()), arrowSize);
+
+        m_applet->itemBackground()->paint(painter, arrowRect, expanderElement());
+
+        painter->setFont(font);
+
+        painter->drawText(QPoint(rect.left(), rect.center().y()+fm.xHeight()), QString::number(groupItem->memberList().count()));
     }
 }
 
@@ -617,7 +629,15 @@ QRectF AbstractTaskItem::iconRect(const QRectF &b) const
 
 QRectF AbstractTaskItem::expanderRect(const QRectF &bounds) const
 {
-    QSize expanderSize = m_applet->itemBackground()->elementSize(expanderElement());
+    const TaskGroupItem *groupItem = qobject_cast<const TaskGroupItem *>(this);
+    if (!groupItem) {
+        return QRectF();
+    }
+
+    QFontMetrics fm(KGlobalSettings::smallestReadableFont());
+    QSize expanderSize(qMax(fm.width(QString::number(groupItem->memberList().count())),
+                            m_applet->itemBackground()->elementSize(expanderElement()).width()),
+                       size().height());
 
     return QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignRight | Qt::AlignVCenter,
                                expanderSize, bounds.toRect());
