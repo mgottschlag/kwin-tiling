@@ -59,8 +59,8 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet, const
       m_activateTimer(0),
       m_flags(0),
       m_animId(0),
-      m_backgroundPrefix("normal"),
       m_alpha(1),
+      m_backgroundPrefix("normal"),
       m_updateTimerId(0),
       m_attentionTimerId(0),
       m_attentionTicks(0),
@@ -84,8 +84,13 @@ QSize AbstractTaskItem::basicPreferredSize() const
     return QSize(mSize.width()*12 + m_applet->itemLeftMargin() + m_applet->itemRightMargin() + KIconLoader::SizeSmall,
                            KIconLoader::SizeSmall + m_applet->itemTopMargin() + m_applet->itemBottomMargin() + 4);
 }
+
 AbstractTaskItem::~AbstractTaskItem()
 {
+    if (m_animId) {
+        Plasma::Animator::self()->stopCustomAnimation(m_animId);
+    }
+
     Plasma::ToolTipManager::self()->unregisterWidget(this);
 }
 
@@ -141,18 +146,15 @@ void AbstractTaskItem::setTaskFlags(const TaskFlags flags)
         newBackground = "normal";
     }
 
-    fadeBackground(newBackground, 100, true);
+    if (newBackground != m_backgroundPrefix) {
+        fadeBackground(newBackground, 100, true);
+    }
 }
 
 void AbstractTaskItem::fadeBackground(const QString &newBackground, int duration, bool fadeIn)
 {
     m_oldBackgroundPrefix = m_backgroundPrefix;
     m_backgroundPrefix = newBackground;
-
-    //FIXME: fix the random crashes
-    m_alpha=1;
-    update();
-    return;
 
     if (m_animId) {
         Plasma::Animator::self()->stopCustomAnimation(m_animId);
@@ -313,8 +315,6 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     if (!option->rect.isValid()) {
         return;
     }
-
-    const qreal hoverAlpha = 0.4;
 
     /*FIXME -could be done more elegant with caching in tasks in a qhash <size,svg>.
     -do not use size() directly because this introduces the blackline syndrome.
@@ -523,7 +523,7 @@ void AbstractTaskItem::drawTextLayout(QPainter *painter, const QTextLayout &layo
 
 void AbstractTaskItem::animationUpdate(qreal progress)
 {
-    if (progress == 1) {
+    if (qFuzzyCompare(qreal(1.0), progress)) {
         m_animId = 0;
         m_fadeIn = true;
     }
