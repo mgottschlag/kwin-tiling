@@ -38,11 +38,38 @@ using namespace ggadget;
 
 K_EXPORT_PLASMA_PACKAGESTRUCTURE(googlegadget, GglPackage)
 
+class GadgetBrowserViewHost : public qt::QtViewHost {
+ public:
+  GadgetBrowserViewHost(GglPackage *package, Type type)
+      : QtViewHost(type, 1.0, false, true, false, 0, NULL),
+        package_(package) {}
+
+  virtual ~GadgetBrowserViewHost() {
+    package_->gadgetBrowserClosed();
+  }
+  GglPackage *package_;
+};
+
 class GadgetBrowserHost : public ggadget::HostInterface {
  public:
-  GadgetBrowserHost() : gadget_manager_(GetGadgetManager()) {
+  GadgetBrowserHost(GglPackage *package)
+      : gadget_manager_(NULL),
+        package_(package),
+        connection_(NULL) {
     kDebug() << "Create GadgetBrowserHost:" << this;
-    connection_ = GetGadgetManager()->ConnectOnNewGadgetInstance(
+    std::string profile_dir =
+        ggadget::BuildFilePath(ggadget::GetHomeDirectory().c_str(),
+                               ".google/gadgets-plasma", NULL);
+
+    std::string error;
+    if (!ggadget::qt::InitGGL(NULL, "ggl-plasma", profile_dir.c_str(),
+                              kGlobalExtensions, 0, false, &error)) {
+      kError() << "Failed to init GGL system:"
+               << QString::fromUtf8(error.c_str());
+      return;
+    }
+    gadget_manager_ = GetGadgetManager();
+    connection_ = gadget_manager_->ConnectOnNewGadgetInstance(
         NewSlot(this, &GadgetBrowserHost::NewGadgetInstanceCallback));
   }
 
@@ -107,8 +134,7 @@ class GadgetBrowserHost : public ggadget::HostInterface {
 
   virtual ViewHostInterface *NewViewHost(Gadget *gadget,
                                          ViewHostInterface::Type type) {
-    return new qt::QtViewHost(type, 1.0, false, true, false,
-                              0, NULL);
+    return new GadgetBrowserViewHost(package_, type);
   }
   virtual void RemoveGadget(Gadget *gadget, bool save_data) { }
   virtual bool LoadFont(const char *filename) {
@@ -124,24 +150,13 @@ class GadgetBrowserHost : public ggadget::HostInterface {
   virtual bool OpenURL(const Gadget *, const char *) { return false; }
 
   GadgetManagerInterface *gadget_manager_;
+  GglPackage *package_;
   Connection *connection_;
 };
 
 GglPackage::GglPackage(QObject *parent, const QVariantList &args)
   : Plasma::PackageStructure(parent), host_(NULL) {
   Q_UNUSED(args);
-  std::string profile_dir =
-      ggadget::BuildFilePath(ggadget::GetHomeDirectory().c_str(),
-                             ".google/gadgets-plasma", NULL);
-
-  std::string error;
-  if (!ggadget::qt::InitGGL(NULL, "ggl-plasma", profile_dir.c_str(),
-                            kGlobalExtensions, 0, false, &error)) {
-    kError() << "Failed to init GGL system:"
-             << QString::fromUtf8(error.c_str());
-    return;
-  }
-  host_ = new GadgetBrowserHost();
 
   setDefaultMimetypes(QStringList() << "application/zip"
                       << "application/x-googlegadget" );
@@ -153,16 +168,38 @@ GglPackage::~GglPackage() {
 
 bool GglPackage::installPackage(const QString &archive_path,
                                 const QString &package_root) {
-  if (host_->gadget_manager_->NewGadgetInstanceFromFile(
-      archive_path.toUtf8().data()) == -1)
+  ASSERT(!host_);
+  host_ = new GadgetBrowserHost(this);
+  if (!host_ || !host_->gadget_manager_) {
+    delete host_;
+    host_ = NULL;
     return false;
-  return true;
+  }
+
+  int result = host_->gadget_manager_->NewGadgetInstanceFromFile(
+      archive_path.toUtf8().data());
+
+  delete host_;
+  host_ = NULL;
+
+  if (result == -1)
+    return false;
+  else
+    return true;
 }
 
 void GglPackage::createNewWidgetBrowser(QWidget *parent) {
-  if (!host_) {
-    emit newWidgetBrowserFinished();
+  ASSERT(!host_);
+  host_ = new GadgetBrowserHost(this);
+  if (!host_ || !host_->gadget_manager_) {
+    gadgetBrowserClosed(); // Actually, it's never opened
     return;
   }
   GetGadgetManager()->ShowGadgetBrowserDialog(host_);
+}
+
+void GglPackage::gadgetBrowserClosed() {
+  delete host_;
+  host_ = NULL;
+  emit newWidgetBrowserFinished();
 }

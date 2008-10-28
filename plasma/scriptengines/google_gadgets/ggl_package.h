@@ -31,6 +31,8 @@ class GglPackage : public Plasma::PackageStructure {
                               const QString &packageRoot);
   virtual void createNewWidgetBrowser(QWidget *parent = 0);
 
+  void gadgetBrowserClosed();
+
  private:
   GadgetBrowserHost *host_;
 };
