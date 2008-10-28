@@ -76,6 +76,12 @@ void Solid::Control::WirelessNetworkInterface::makeConnections(QObject * source)
             this, SLOT(_k_accessPointAdded(const QString &)));
     connect(source, SIGNAL(accessPointDisappeared(const QString &)),
             this, SLOT(_k_accessPointRemoved(const QString &)));
+    connect(source, SIGNAL(bitRateChanged(int)),
+            this, SIGNAL(bitRateChanged(int)));
+    connect(source, SIGNAL(activeAccessPointChanged(const QString&)),
+            this, SIGNAL(activeAccessPointChanged(const QString&)));
+    connect(source, SIGNAL(modeChanged(Solid::Control::WirelessNetworkInterface::OperationMode)),
+            this, SIGNAL(modeChanged(Solid::Control::WirelessNetworkInterface::OperationMode)));
 }
 
 QString Solid::Control::WirelessNetworkInterface::hardwareAddress() const
@@ -119,16 +125,6 @@ void Solid::Control::WirelessNetworkInterfacePrivate::setBackendObject(QObject *
     NetworkInterfacePrivate::setBackendObject(object);
 
     if (object) {
-        QObject::connect(object, SIGNAL(bitRateChanged(int)),
-                         parent(), SIGNAL(bitRateChanged(int)));
-        QObject::connect(object, SIGNAL(activeAccessPointChanged(const QString&)),
-                         parent(), SIGNAL(activeAccessPointChanged(const QString&)));
-        QObject::connect(object, SIGNAL(modeChanged(Solid::Control::WirelessNetworkInterface::OperationMode)),
-                         parent(), SIGNAL(modeChanged(Solid::Control::WirelessNetworkInterface::OperationMode)));
-        QObject::connect(object, SIGNAL(accessPointAppeared(const QString&)),
-                         parent(), SIGNAL(accessPointAppeared(const QString&)));
-        QObject::connect(object, SIGNAL(accessPointDisappeared(const QString&)),
-                         parent(), SIGNAL(accessPointDisappeared(const QString&)));
     }
 }
 
