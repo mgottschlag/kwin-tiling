@@ -138,7 +138,9 @@ Plugins/Addons
         * Comics
             * Respects web proxy and other relevant KDE settings
             * Improved mouse interaction (middle mouse zooms, context menu, etc)
-            * NEW comics supported: Doonesbury, The Boondocks, Extralife, Unshelved, Ctrl+Alt+Delete, NichtLustig, Calvin and Hobbes, Shit Happens
+            * Comicproviders can be written in any language supported by Kross
+            * Comicproviders can be downloaded via "Get Hot New Stuff"
+            * New comicproviders can be added on kde-files.org
         * NEW: Lancelot
             * Parts applet
             * Contacts section
