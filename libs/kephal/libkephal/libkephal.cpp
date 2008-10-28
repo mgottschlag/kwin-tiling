@@ -30,6 +30,19 @@
 using namespace Kephal;
 
 
+/**
+ * This factory-method is invoked the first time any of Screens::self(),
+ * Outputs::self() or Configurations::self() is called.
+ * It will create the singleton-instances and check for their validity.
+ * If the dbus-based implementations are not valid a fallback to
+ * QDesktopWidget will be used instead.
+ *
+ * The method is hooked into the ...::self()-methods with these lines
+ * in the cmake-file:
+ * ADD_DEFINITIONS (-DSCREENS_FACTORY=libkephal_factory)
+ * ADD_DEFINITIONS (-DOUTPUTS_FACTORY=libkephal_factory)
+ * ADD_DEFINITIONS (-DCONFIGURATIONS_FACTORY=libkephal_factory)
+ */
 void libkephal_factory() {
     //qDebug() << "trying to access kephald...";
     QDBusInterface interface("org.kde.kded", "/modules/kded_kephal");

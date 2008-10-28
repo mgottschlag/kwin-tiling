@@ -76,8 +76,8 @@ namespace Kephal {
         PROPERTY(bool, reflectX, setReflectX)
         PROPERTY(bool, reflectY, setReflectY)
         PROPERTY(double, rate, setRate)
-
         PROPERTY(QString, actualOutput, setActualOutput)
+        
         public:
             OutputXML() : m_screen(-1), m_product(-1), m_serial(0),
                 m_width(-1), m_height(-1), m_rotation(0),
@@ -89,21 +89,22 @@ namespace Kephal {
     
     class OutputsXML : public XMLType {
         Q_OBJECT
+        
+        PROPERTY(QString, configuration, setConfiguration)
+
         public:
             QList<OutputXML *> & outputs() { return m_outputs; }
-            QString configuration() { return m_configuration; }
-            void setConfiguration(QString configuration) { m_configuration = configuration; }
-            
         private:
             QList<OutputXML *> m_outputs;
-            QString m_configuration;
     };
     
     
     
     class ConfigurationsXML : public XMLType {
         Q_OBJECT
+        
         PROPERTY(bool, polling, setPolling)
+        
         public:
             ConfigurationsXML() : m_polling(false) {}
             
