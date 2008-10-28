@@ -1,3 +1,4 @@
+macro_optional_find_package(Nepomuk)
 add_subdirectory(bookmarks)
 add_subdirectory(calculator)
 add_subdirectory(locations)
