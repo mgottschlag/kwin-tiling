@@ -60,6 +60,9 @@ macro_log_feature(PythonSupport_FOUND "Python" "KDE Python support"
 include (MacroLibrary)
 include (KDE4Defaults)
 
+macro_optional_find_package(Nepomuk)
+macro_log_feature(Nepomuk_FOUND "Nepomuk" "Nepomuk Libraries" "kdelibs" FALSE "" "Required to build Nepomuk features.")
+
 include(ConfigureChecks.cmake)
 if (NOT WIN32)
     configure_file(config-unix.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-unix.h )

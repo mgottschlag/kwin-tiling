@@ -8,8 +8,6 @@ if(NOT WIN32)
  add_subdirectory(kworkspace)
 endif(NOT WIN32)
 
-macro_optional_find_package(Nepomuk)
-macro_log_feature(Nepomuk_FOUND "Nepomuk" "Nepomuk Libraries" "kdelibs" FALSE "" "Required to build Nepomuk.")
 if(Nepomuk_FOUND)
   add_subdirectory(nepomukquery)
   add_subdirectory(nepomukqueryclient)
