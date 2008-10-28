@@ -91,12 +91,6 @@ public:
 		ChangeRate       = 0x40
 	};
 
-	/*static QString rotationName(int rotation, bool pastTense = false, bool capitalised = true);
-	static QPixmap rotationIcon(int rotation, int currentRotation);
-
-	static bool confirm(const QRect &rect = QRect());
-
-	static SizeList sortSizes(const SizeList &sizes);*/
 };
 
 #endif

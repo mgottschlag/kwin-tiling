@@ -120,41 +120,6 @@ void RandROutput::loadSettings(bool notify)
 	
 	qDebug() << "STUB: calling queryOutputInfo instead. Check if this has "
 	         << "any undesired effects. ";
-		    
-	/*
-	int changes = 0;
-	
-	XRROutputInfo *info = XRRGetOutputInfo(QX11Info::display(), m_screen->resources(), m_id);
-	Q_ASSERT(info);
-	
-	if (RandR::timestamp != info->timestamp)
-		RandR::timestamp = info->timestamp;
-	
-	m_possibleCrtcs.clear();
-	for (int i = 0; i < info->ncrtc; ++i)
-		m_possibleCrtcs.append(info->crtcs[i]);
-
-	//check if the crtc changed
-	if (info->crtc != m_crtc->id())
-	{
-		kDebug() << "CRTC changed for " << m_name << ": " << info->crtc;
-		setCrtc(m_screen->crtc(info->crtc));
-		changes |= RandR::ChangeCrtc;
-	}
-
-	bool connected = (info->connection == RR_Connected);
-	if (connected != m_connected)
-	{
-		m_connected = connected;
-		changes |= RandR::ChangeConnection;
-	}
-
-	// free the info
-	XRRFreeOutputInfo(info);
-
-	if (changes && notify)
-		emit outputChanged(m_id, changes);
-	*/
 }
 
 void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
@@ -198,10 +163,6 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 		if (!m_connected && currentCrtc != None)
 			setCrtc(None);
 	}
-
-	// check if we are still connected, if not, release the crtc connection
-	//if(!m_connected && m_crtc->isValid())
-	//	setCrtc(None);
 
 	if(changed)
 		emit outputChanged(m_id, changed);

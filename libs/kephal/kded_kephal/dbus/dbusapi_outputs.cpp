@@ -219,16 +219,6 @@ void DBusAPIOutputs::outputReflectedSlot(Kephal::Output * o, bool oldX, bool old
     emit outputReflected(o->id());
 }
 
-/*Output * DBusAPIOutputs::output(QString id) {
-    QList<Output *> outputs = Outputs::self()->outputs();
-    foreach (Output * output, outputs) {
-        if (output->id() == id) {
-            return output;
-        }
-    }
-    return 0;
-}*/
-
 #ifndef NO_KDE
 #include "dbusapi_outputs.moc"
 #endif

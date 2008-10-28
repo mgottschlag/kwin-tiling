@@ -39,6 +39,11 @@ void libkephal_factory() {
     DBusScreens * screens = new DBusScreens(qApp);
     if ((! screens->isValid()) || (! outputs->isValid()) || (! configurations->isValid())) {
         qWarning() << "could not access kephald, falling back to QDesktopWidget";
+        
+        delete screens;
+        delete outputs;
+        delete configurations;
+        
         new NoConfigurations(qApp);
         new DesktopWidgetOutputs(qApp);
         new OutputScreens(qApp);

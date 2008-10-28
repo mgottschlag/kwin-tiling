@@ -34,7 +34,6 @@
 #include "dbus/dbusapi_screens.h"
 #include "dbus/dbusapi_outputs.h"
 #include "dbus/dbusapi_configurations.h"
-//#include "xml/configurations_xml.h"
 #include "configurations/xml/xmlconfigurations.h"
 
 #include <kpluginfactory.h>
@@ -127,15 +126,6 @@ void KephalD::poll() {
         m_outputs->display()->screen(0)->pollState();
     }
 }
-
-/*bool KephalD::x11EventFilter(XEvent* e)
-{
-    if (m_outputs && m_outputs->display()->canHandle(e)) {
-        m_outputs->display()->handleEvent(e);
-    }
-    
-    return QApplication::x11EventFilter(e);
-}*/
 
 void KephalD::activateConfiguration() {
     BackendConfigurations * configs = BackendConfigurations::self();

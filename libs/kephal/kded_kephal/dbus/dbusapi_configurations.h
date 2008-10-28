@@ -66,22 +66,16 @@ class DBusAPIConfigurations : public QObject
         void setPolling(bool polling);
         bool polling();
         
-        /*int statusType();
-        int statusMessage();
-        QString statusDescription();*/
-        
         void confirm();
         void revert();
         
     Q_SIGNALS:
-        //void statusChanged();
         void configurationActivated(QString name);
         void confirmTimeout(int seconds);
         void confirmed();
         void reverted();
         
     private Q_SLOTS:
-        //void statusChangedSlot(Kephal::StatusMessage * status);
         void configurationActivatedSlot(Kephal::Configuration * configuration);
         
     private:

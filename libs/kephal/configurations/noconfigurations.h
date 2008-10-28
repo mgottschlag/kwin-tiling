@@ -63,13 +63,11 @@ namespace Kephal {
             void applyOutputSettings();
             void setPolling(bool polling);
             bool polling();
-            //StatusMessage * status();
             void confirm();
             void revert();
             
         private:
             SimpleConfiguration * m_config;
-            //StatusMessage * m_status;
     };
     
 }

@@ -91,7 +91,7 @@ namespace Kephal {
         connect(m_interface, SIGNAL(reverted()), this, SIGNAL(reverted()));
         connect(m_interface, SIGNAL(confirmTimeout(int)), this, SIGNAL(confirmTimeout(int)));
     }
-
+    
 
     QMap<QString, Configuration *> DBusConfigurations::configurations() {
         QMap<QString, Configuration *> result;
@@ -175,26 +175,6 @@ namespace Kephal {
     bool DBusConfigurations::polling() {
         return m_interface->polling();
     }
-    
-    /*void DBusConfigurations::statusChangedSlot() {
-        if (m_status) {
-            delete m_status;
-        }
-        
-        int type = m_interface->statusType();
-        int message = m_interface->statusMessage();
-        m_status = new StatusMessage(
-                (StatusMessage::MessageType) type,
-                (StatusMessage::Message) message,
-                m_interface->statusDescription(),
-                this);
-        
-        emit statusChanged(m_status);
-    }
-    
-    StatusMessage * DBusConfigurations::status() {
-        return m_status;
-    }*/
     
     void DBusConfigurations::configurationActivatedSlot(QString name) {
         if ((! name.isEmpty()) && m_configs.contains(name)) {

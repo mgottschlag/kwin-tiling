@@ -117,10 +117,7 @@ namespace Kephal {
 
         if (type == XA_INTEGER && format == 8 && EDID_TEST_HEADER(data)) {
             qDebug() << "got a valid edid block...";
-            /*for (int i = 0; i < size; ++i) {
-                qDebug() << data[i];
-            }*/
-            
+
             /**
              * parse the 3 letter vendor code
              */

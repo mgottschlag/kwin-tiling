@@ -40,22 +40,6 @@ namespace Kephal {
     
     BackendConfigurations * BackendConfigurations::m_instance = 0;
     
-    /*void BackendConfigurations::setStatus(StatusMessage * status) {
-        if (! status) {
-            return;
-        }
-        
-        delete m_status;
-        m_status = status;
-        
-        qDebug() << "STATUS:" << status->toString();
-        emit statusChanged(status);
-    }
-    
-    StatusMessage * BackendConfigurations::status() {
-        return m_status;
-    }*/
-    
     BackendConfiguration * BackendConfigurations::activeBackendConfiguration() {
         return (BackendConfiguration *) activeConfiguration();
     }

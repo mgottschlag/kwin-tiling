@@ -187,9 +187,6 @@ namespace Kephal {
     
     void XMLConfigurations::init()
     {
-        /*ConfigurationsXMLFactory * factory = new ConfigurationsXMLFactory();
-        m_configXml = (ConfigurationsXML *) factory->load(m_configPath);
-        delete factory;*/
         loadXml();
         
         if (! m_configXml) {
@@ -640,7 +637,6 @@ namespace Kephal {
             if (o) {
                 o->setWidth(size.width());
                 o->setHeight(size.height());
-                //saveXml();
             }
             return true;
         }
@@ -665,7 +661,6 @@ namespace Kephal {
     }
     
     QMap<int, int> XMLConfigurations::matchLayouts(const QMap<int, QPoint> & currentLayout, const QMap<int, QPoint> & layout) {
-        //int removed = layout.size() - currentLayout.size();
         QList<int> indexes = layout.keys();
         if (! currentLayout.empty()) {
             indexes.insert(0, currentLayout.keys()[0]);
@@ -801,9 +796,6 @@ namespace Kephal {
         }
         
         for (QMap<XMLConfiguration *, QPoint>::iterator i = positions.begin(); i != positions.end();) {
-            /*if (i.value() == output->position()) {
-                i = positions.erase(i);
-            } else {*/
                 QPoint pos = i.value();
                 for (QMap<XMLConfiguration *, QPoint>::iterator j = i + 1; j != positions.end();) {
                     if (j.value() == pos) {
@@ -813,7 +805,6 @@ namespace Kephal {
                     }
                 }
                 ++i;
-            //}
         }
         
         return positions;
@@ -896,10 +887,6 @@ namespace Kephal {
             }
             outputIndexes.insert(output, screenId);
             
-            /*for (QMap<Output *, int>::const_iterator i = outputIndexes.constBegin(); i != outputIndexes.constEnd(); ++i) {
-                qDebug() << "output:" << i.value() << i.key()->id();
-            }*/
-            
             foreach (const QPoint& p, possible) {
                 noCloneLayout.insert(screenId, p);
                 //qDebug() << "layout:" << noCloneLayout;
@@ -949,10 +936,6 @@ namespace Kephal {
             outputIndexes.insert(o, (s ? s->id() : -1));
         }
         outputIndexes.insert(output, screenId);
-        
-        /*for (QMap<Output *, int>::const_iterator i = outputIndexes.constBegin(); i != outputIndexes.constEnd(); ++i) {
-            qDebug() << "output:" << i.value() << i.key()->id();
-        }*/
         
         foreach (const QPoint& p, possible) {
             currentLayout.insert(screenId, p);
@@ -1329,7 +1312,6 @@ namespace Kephal {
                 OutputXML * xml = outputXml(o->id());
                 if (xml) {
                     xml->setReflectX(reflect);
-                    //saveXml();
                 }
                 
                 return true;
@@ -1350,7 +1332,6 @@ namespace Kephal {
                 OutputXML * xml = outputXml(o->id());
                 if (xml) {
                     xml->setReflectY(reflect);
-                    //saveXml();
                 }
                 
                 return true;
@@ -1371,7 +1352,6 @@ namespace Kephal {
                 OutputXML * xml = outputXml(o->id());
                 if (xml) {
                     xml->setRate(rate);
-                    //saveXml();
                 }
                 
                 return true;

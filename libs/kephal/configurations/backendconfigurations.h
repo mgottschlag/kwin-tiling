@@ -133,15 +133,10 @@ namespace Kephal {
              */
             virtual void applyOutputSettings() = 0;
             
-            //StatusMessage * status();
-            //void setStatus(StatusMessage * status);
-            
             virtual BackendConfiguration * activeBackendConfiguration();
             
         private:
             static BackendConfigurations * m_instance;
-            
-            //StatusMessage * m_status;
     };
     
 }

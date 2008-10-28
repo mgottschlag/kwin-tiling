@@ -69,7 +69,6 @@ namespace Kephal {
             void applyOutputSettings();
             void setPolling(bool polling);
             bool polling();
-            //StatusMessage * status();
             void confirm();
             void revert();
             
@@ -77,14 +76,12 @@ namespace Kephal {
             org::kde::Kephal::Configurations * interface();
             
         private Q_SLOTS:
-            //void statusChangedSlot();
             void configurationActivatedSlot(QString name);
             
         private:
             org::kde::Kephal::Configurations * m_interface;
             bool m_valid;
             QMap<QString, DBusConfiguration *> m_configs;
-            //StatusMessage * m_status;
     };
     
 }

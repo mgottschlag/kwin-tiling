@@ -83,15 +83,6 @@ namespace Kephal {
                 m_width(-1), m_height(-1), m_rotation(0),
                 m_reflectX(false), m_reflectY(false), m_rate(0)
                 { }
-            /*QString name() { return m_name; }
-            void setName(QString name) { m_name = name; }*/
-            
-        private:
-            //QString m_name;
-            //int m_screen;
-            //QString m_vendor;
-            //int m_product;
-            //QString m_serial;
     };
     
     

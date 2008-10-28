@@ -60,27 +60,6 @@ RandRDisplay::RandRDisplay()
             m_screens.append(new RandRScreen(i));
 	}
 
-#if 0
-//#ifdef HAS_RANDR_1_2
-	// check if we have more than one output, if no, revert to the legacy behavior
-	if (RandR::has_1_2)
-	{
-		int count = 0;
-		foreach(RandRScreen *screen, m_screens)
-			count += screen->outputs().count();
-
-		if (count < 2)
-		{
-			RandR::has_1_2 = false;
-			for (int i = 0; i < m_numScreens; ++i)
-			{
-				delete m_screens[i];
-				m_legacyScreens.append(new LegacyRandRScreen(i));
-			}
-			m_screens.clear();
-		}
-	}
-#endif
 	setCurrentScreen(DefaultScreen(QX11Info::display()));
 }
 
@@ -122,9 +101,6 @@ void RandRDisplay::setCurrentScreen(int index)
 
 int RandRDisplay::screenIndexOfWidget(QWidget* widget)
 {
-	//int ret = QApplication::desktop()->screenNumber(widget);
-	//return ret != -1 ? ret : QApplication::desktop()->primaryScreen();
-	
 	// get info from Qt's X11 info directly; QDesktopWidget seems to use
 	// Xinerama by default, which doesn't work properly with randr.
 	// It will return more screens than exist for the display, causing

@@ -50,10 +50,6 @@ RandRScreen::~RandRScreen()
 {
 	if (m_resources)
 		XRRFreeScreenResources(m_resources);
-
-	//qDeleteAll(m_crtcs);
-	//qDeleteAll(m_outputs);
-	//qDeleteAll(m_modes);
 }
 
 int RandRScreen::index() const

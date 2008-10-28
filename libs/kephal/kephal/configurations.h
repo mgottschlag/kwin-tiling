@@ -43,6 +43,7 @@ namespace Kephal {
         Q_OBJECT
         public:
             Configuration(QObject * parent);
+            virtual ~Configuration() {}
 
             /**
              * The name of the Configuration.
@@ -104,6 +105,7 @@ namespace Kephal {
             static Configurations * self();
             
             Configurations(QObject * parent);
+            virtual ~Configurations() {}
             
             /**
              * Returns a list of all known Configurations.
@@ -184,8 +186,6 @@ namespace Kephal {
             void confirmTimeout(int seconds);
             void confirmed();
             void reverted();
-            
-            //void statusChanged(Kephal::StatusMessage * status);
             
         protected:
             static Configurations * m_instance;

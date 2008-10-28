@@ -40,7 +40,6 @@ DBusAPIConfigurations::DBusAPIConfigurations(QObject * parent)
     result = dbus.registerObject("/Configurations", this);
     qDebug() << "configurations registered on the bus:" << result;
     
-    //connect(Configurations::self(), SIGNAL(statusChanged(Kephal::StatusMessage *)), this, SLOT(statusChangedSlot(Kephal::StatusMessage *)));
     connect(Configurations::self(), SIGNAL(configurationActivated(Kephal::Configuration *)), this, SLOT(configurationActivatedSlot(Kephal::Configuration *)));
     connect(Configurations::self(), SIGNAL(confirmed()), this, SIGNAL(confirmed()));
     connect(Configurations::self(), SIGNAL(reverted()), this, SIGNAL(reverted()));
@@ -181,23 +180,6 @@ void DBusAPIConfigurations::setPolling(bool polling) {
 bool DBusAPIConfigurations::polling() {
     return Configurations::self()->polling();
 }
-
-/*int DBusAPIConfigurations::statusType() {
-    return Configurations::self()->status()->type();
-}
-
-int DBusAPIConfigurations::statusMessage() {
-    return Configurations::self()->status()->message();
-}
-
-QString DBusAPIConfigurations::statusDescription() {
-    return Configurations::self()->status()->description();
-}
-
-void DBusAPIConfigurations::statusChangedSlot(Kephal::StatusMessage * status) {
-    Q_UNUSED(status)
-    emit statusChanged();
-}*/
 
 void DBusAPIConfigurations::configurationActivatedSlot(Kephal::Configuration * configuration) {
     emit configurationActivated(configuration->name());

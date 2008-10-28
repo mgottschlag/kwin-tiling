@@ -54,8 +54,7 @@ namespace Kephal {
     
     
     NoConfigurations::NoConfigurations(QObject * parent)
-        : Configurations(parent)/*,
-        m_status(new StatusMessage(this))*/
+        : Configurations(parent)
     {
         m_config = new SimpleConfiguration(this);
     }
@@ -134,10 +133,6 @@ namespace Kephal {
     bool NoConfigurations::polling() {
         return false;
     }
-    
-    /*StatusMessage * NoConfigurations::status() {
-        return m_status;
-    }*/
     
     void NoConfigurations::confirm() {
     }
