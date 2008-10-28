@@ -27,12 +27,10 @@
 
 #include "result.h"
 
-class QEventLoop;
 
 namespace Nepomuk {
 
-    class QueryServiceClient;
-
+    
     class SearchRunner : public Plasma::AbstractRunner
     {
         Q_OBJECT
