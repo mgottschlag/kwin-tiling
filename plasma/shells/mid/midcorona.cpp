@@ -131,5 +131,23 @@ void MidCorona::screenResized(int screen)
     }
 }
 
+int MidCorona::numScreens() const
+{
+    return QApplication::desktop()->numScreens();
+}
+
+QRect MidCorona::screenGeometry(int id) const
+{
+    return QApplication::desktop()->screenGeometry(id);
+}
+
+QRegion MidCorona::availableScreenRegion(int id) const
+{
+    // TODO: more precise implementation needed
+    return QRegion(QApplication::desktop()->availableGeometry(id));
+}
+
+
+
 #include "midcorona.moc"
 

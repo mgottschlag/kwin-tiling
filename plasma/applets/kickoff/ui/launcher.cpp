@@ -25,7 +25,6 @@
 
 // Qt
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QKeyEvent>
 #include <QLabel>
 #include <QMouseEvent>

@@ -74,5 +74,15 @@ void SaverCorona::loadDefaultLayout()
 
 }
 
+int SaverCorona::numScreens() const
+{
+    return QApplication::desktop()->numScreens();
+}
+
+QRect SaverCorona::screenGeometry(int id) const
+{
+    return QApplication::desktop()->screenGeometry(id);
+}
+
 #include "savercorona.moc"
 

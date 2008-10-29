@@ -49,6 +49,8 @@
 #include "plasma/theme.h"
 #include "plasma/panelsvg.h"
 #include "plasma/tooltipmanager.h"
+#include "plasma/corona.h"
+#include "plasma/containment.h"
 
 #include "tasks.h"
 #include "layoutwidget.h"
@@ -330,7 +332,10 @@ void TaskGroupItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
 
     TaskManager::BasicMenu menu(qobject_cast<QWidget*>(this), m_group, &m_applet->groupManager(), actionList);
     menu.adjustSize();
-    menu.exec(Plasma::popupPosition(this, menu.size()));
+
+    Q_ASSERT(m_applet->containment());
+    Q_ASSERT(m_applet->containment()->corona());
+    menu.exec(m_applet->containment()->corona()->popupPosition(this, menu.size()));
 }
 
 
@@ -448,7 +453,9 @@ void TaskGroupItem::popupMenu()
     if (m_isCollapsed) {
         TaskManager::GroupPopupMenu menu(qobject_cast<QWidget*>(this), m_group,  &m_applet->groupManager());
         menu.adjustSize();
-        menu.exec(Plasma::popupPosition(this, menu.size()));
+        Q_ASSERT(m_applet->containment());
+        Q_ASSERT(m_applet->containment()->corona());
+        menu.exec(m_applet->containment()->corona()->popupPosition(this, menu.size()));
     }
 }
 

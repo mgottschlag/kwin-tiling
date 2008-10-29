@@ -49,6 +49,10 @@ public:
      */
     void checkScreens();
 
+    virtual int numScreens() const;
+    virtual QRect screenGeometry(int id) const;
+    virtual QRegion availableScreenRegion(int id) const;
+
 protected Q_SLOTS:
     void screenResized(int);
 

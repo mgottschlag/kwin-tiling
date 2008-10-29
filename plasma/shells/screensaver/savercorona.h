@@ -39,6 +39,9 @@ public:
      **/
     void loadDefaultLayout();
 
+    virtual int numScreens() const;
+    virtual QRect screenGeometry(int id) const;
+
 protected Q_SLOTS:
 
 private:

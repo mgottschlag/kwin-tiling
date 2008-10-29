@@ -45,6 +45,8 @@
 #include "plasma/theme.h"
 #include "plasma/panelsvg.h"
 #include "plasma/tooltipmanager.h"
+#include "plasma/corona.h"
+#include "plasma/containment.h"
 
 #include "tasks.h"
 
@@ -267,7 +269,9 @@ void WindowTaskItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
 
     TaskManager::BasicMenu menu(0, m_task, &m_applet->groupManager(), actionList);
     menu.adjustSize();
-    menu.exec(Plasma::popupPosition(this, menu.size()));
+    Q_ASSERT(m_applet->containment());
+    Q_ASSERT(m_applet->containment()->corona());
+    menu.exec(m_applet->containment()->corona()->popupPosition(this, menu.size()));
     delete a;
 }
 

@@ -21,7 +21,6 @@
 
 //QT
 #include <QGraphicsSceneDragDropEvent>
-#include <QDesktopWidget>
 #include <QApplication>
 #include <QGraphicsLinearLayout>
 

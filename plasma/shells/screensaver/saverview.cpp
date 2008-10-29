@@ -23,7 +23,6 @@
 #include "saverview.h"
 
 #include <QAction>
-#include <QDesktopWidget>
 #include <QKeyEvent>
 #include <QTimer>
 

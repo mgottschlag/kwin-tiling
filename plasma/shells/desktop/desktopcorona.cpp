@@ -73,6 +73,22 @@ void DesktopCorona::checkScreens()
     m_numScreens = numScreens;
 }
 
+int DesktopCorona::numScreens() const
+{
+    return QApplication::desktop()->numScreens();
+}
+
+QRect DesktopCorona::screenGeometry(int id) const
+{
+    return QApplication::desktop()->screenGeometry(id);
+}
+
+QRegion DesktopCorona::availableScreenRegion(int id) const
+{
+    // TODO: more precise implementation needed
+    return QRegion(QApplication::desktop()->availableGeometry(id));
+}
+
 void DesktopCorona::loadDefaultLayout()
 {
     QString defaultConfig = KStandardDirs::locate("appdata", "plasma-default-layoutrc");

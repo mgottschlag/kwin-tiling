@@ -23,7 +23,6 @@
 // Qt
 #include <QAction>
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QGraphicsView>
 #include <QCheckBox>
 #include <QVBoxLayout>
