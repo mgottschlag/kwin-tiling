@@ -46,7 +46,7 @@
 #include <plasma/widgets/iconwidget.h>
 #include <plasma/widgets/lineedit.h>
 #include <plasma/widgets/meter.h>
-#include <plasma/widgets/webcontent.h>
+#include <plasma/widgets/webview.h>
 #include <plasma/widgets/treeview.h>
 #include <plasma/widgets/slider.h>
 
@@ -97,7 +97,7 @@ void WebBrowser::init()
     m_layout->addItem(m_toolbarLayout);
 
 
-    m_browser = new Plasma::WebContent(this);
+    m_browser = new Plasma::WebView(this);
     //FIXME: sounds wrong, but...
     m_browser->setPreferredSize(INT_MAX, INT_MAX);
 

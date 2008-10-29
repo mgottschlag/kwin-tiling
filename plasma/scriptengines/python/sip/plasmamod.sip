@@ -74,5 +74,5 @@
 %Include radiobutton.sip
 %Include signalplotter.sip
 %Include textedit.sip
-%Include webcontent.sip
+%Include webview.sip
 

@@ -17,7 +17,7 @@
  */
 
 #include "hwinfo.h"
-#include <plasma/widgets/webcontent.h>
+#include <plasma/widgets/webview.h>
 #include <plasma/widgets/iconwidget.h>
 #include <plasma/containment.h>
 #include <plasma/tooltipmanager.h>
@@ -60,7 +60,7 @@ void HWInfo::init()
 bool HWInfo::addMeter(const QString&)
 {
     if (mode() != SM::Applet::Panel) {
-        m_info = new Plasma::WebContent(this);
+        m_info = new Plasma::WebView(this);
         m_info->setHtml(QString(START + i18n("Getting hardware information...") + END));
         m_icon = 0;
         mainLayout()->addItem(m_info);

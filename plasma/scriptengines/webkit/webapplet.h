@@ -31,7 +31,7 @@ class QWebFrame;
 
 namespace Plasma
 {
-    class WebContent;
+    class WebView;
 } // namespace Plasma
 
 class WebApplet : public Plasma::AppletScript
@@ -44,12 +44,12 @@ public:
     bool init();
 
 protected:
-    Plasma::WebContent *view() const;
+    Plasma::WebView *view() const;
     void paintInterface(QPainter *painter,
                                 const QStyleOptionGraphicsItem *option,
                                 const QRect &contentsRect);
     virtual QByteArray dataFor(const QString &str);
-    Plasma::WebContent* page();
+    Plasma::WebView* page();
     bool loaded();
 
 protected slots:

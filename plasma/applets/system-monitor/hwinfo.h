@@ -23,7 +23,7 @@
 #include <plasma/dataengine.h>
 
 namespace Plasma {
-    class WebContent;
+    class WebView;
     class IconWidget;
 }
 class Header;
@@ -46,7 +46,7 @@ class HWInfo : public SM::Applet
     private:
         void connectToEngine();
 
-        Plasma::WebContent *m_info;
+        Plasma::WebView *m_info;
         Plasma::IconWidget *m_icon;
         QString m_cpu;
         QString m_gpu;

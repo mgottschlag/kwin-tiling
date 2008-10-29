@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include <KColorScheme>
 
-#include "plasma/widgets/webcontent.h"
+#include "plasma/widgets/webview.h"
 #include "plasma/applet.h"
 #include "plasma/theme.h"
 

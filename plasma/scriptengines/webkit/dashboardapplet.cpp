@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include <KGlobal>
 #include <KStandardDirs>
 
-#include <plasma/widgets/webcontent.h>
+#include <plasma/widgets/webview.h>
 #include <plasma/applet.h>
 #include <plasma/package.h>
 

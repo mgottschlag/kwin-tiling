@@ -44,7 +44,7 @@ namespace Plasma
     class IconWidget;
     class Meter;
     class HistoryComboBox;
-    class WebContent;
+    class WebView;
     class TreeView;
     class Slider;
 }
@@ -96,7 +96,7 @@ private:
     QGraphicsLinearLayout *m_layout;
     QGraphicsLinearLayout *m_toolbarLayout;
     QGraphicsLinearLayout *m_statusbarLayout;
-    Plasma::WebContent *m_browser;
+    Plasma::WebView *m_browser;
     KUrl m_url;
     int m_verticalScrollValue;
     int m_horizontalScrollValue;

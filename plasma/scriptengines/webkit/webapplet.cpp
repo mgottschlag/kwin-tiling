@@ -31,7 +31,7 @@ THE SOFTWARE.
 
 #include <plasma/applet.h>
 #include <plasma/package.h>
-#include <plasma/widgets/webcontent.h>
+#include <plasma/widgets/webview.h>
 
 using namespace Plasma;
 
@@ -50,7 +50,7 @@ public:
         Plasma::Applet *applet = q->applet();
         applet->setAcceptsHoverEvents(true);
 
-        page = new Plasma::WebContent(applet);
+        page = new Plasma::WebView(applet);
         page->setPage(new WebPage(page));
         QObject::connect(page, SIGNAL(loadFinished(bool)),
                          q, SLOT(loadFinished(bool)));
@@ -66,7 +66,7 @@ public:
         page->setPalette(palette);
     }
 
-    Plasma::WebContent *page;
+    Plasma::WebView *page;
     bool loaded;
 };
 
@@ -106,7 +106,7 @@ void WebApplet::paintInterface(QPainter *painter,
     Q_UNUSED(contentsRect)
 }
 
-Plasma::WebContent* WebApplet::view() const
+Plasma::WebView* WebApplet::view() const
 {
     return d->page;
 }
@@ -135,7 +135,7 @@ QByteArray WebApplet::dataFor(const QString &str)
     return data;
 }
 
-Plasma::WebContent* WebApplet::page()
+Plasma::WebView* WebApplet::page()
 {
     return d->page;
 }

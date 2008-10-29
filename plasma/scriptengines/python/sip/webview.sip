@@ -21,14 +21,14 @@
 namespace Plasma
 {
 
-class WebContent : QGraphicsWidget
+class WebView : QGraphicsWidget
 {
 %TypeHeaderCode
-#include <plasma/widgets/webcontent.h>
+#include <plasma/widgets/webview.h>
 %End
 
 public:
-    explicit                WebContent (QGraphicsItem* parent = 0);
+    explicit                WebView (QGraphicsItem* parent = 0);
     void                    setUrl (const QUrl& url);
     void                    setHtml (const QByteArray& html, const QUrl& baseUrl = QUrl());
     void                    setHtml (const QString& html, const QUrl& baseUrl = QUrl());
@@ -73,7 +73,7 @@ protected:
     void                    dragLeaveEvent (QGraphicsSceneDragDropEvent* event);
     void                    dragMoveEvent (QGraphicsSceneDragDropEvent* event);
     void                    dropEvent (QGraphicsSceneDragDropEvent* event);
-};   // WebContent
+};   // WebView
 
 };   // Plasma
 
