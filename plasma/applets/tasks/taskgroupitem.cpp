@@ -756,10 +756,6 @@ void TaskGroupItem::updateActive(AbstractTaskItem *task)
 
 void TaskGroupItem::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
-    if (collapsed()) {
-        return;
-    }
-
     //zero or one tasks don't cycle
     if (m_groupMembers.size() < 1) {
         return;
