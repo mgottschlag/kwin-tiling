@@ -122,6 +122,7 @@ Comment[zh_CN]=应用程序、控制面板和服务
 Comment[zh_TW]=應用程式、控制面板與服務
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
+Icon=applications-other
 X-KDE-Library=krunner_services
 X-Plasma-RunnerPhase=first
 X-KDE-PluginInfo-Author=Plasma Team
