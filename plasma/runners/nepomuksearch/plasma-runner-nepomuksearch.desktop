@@ -1,6 +1,12 @@
 [Desktop Entry]
 Name=Nepomuk Desktop Search Runner
+Name[pt]=Execução de Pesquisas no Ambiente de Trabalho do Nepomuk
+Name[pt_BR]=Execução de Pesquisas no Ambiente de Trabalho do Nepomuk
+Name[uk]=Інструмент запуску стільничного пошуку Nepomuk
 Comment=KRunner which performs desktop searches via Nepomuk
+Comment[pt]=Um KRunner que efectua pesquisas no ambiente de trabalho com o Nepomuk
+Comment[pt_BR]=Um KRunner que efectua pesquisas no ambiente de trabalho com o Nepomuk
+Comment[uk]=KRunner, який виконуватиме стільничний пошук за допомогою Nepomuk
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 X-KDE-Library=krunner_nepomuksearchrunner
