@@ -29,7 +29,7 @@ target_link_libraries(nepomukquery
   ${SOPRANO_LIBRARIES}
   )
 
-install(TARGETS nepomukquery DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS nepomukquery ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 install(FILES
   nepomukquery_export.h

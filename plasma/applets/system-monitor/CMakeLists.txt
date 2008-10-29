@@ -75,7 +75,7 @@ target_link_libraries(plasma_applet_system-monitor plasma ${KDE4_KDEUI_LIBS} pla
 # Install
 install(TARGETS
     plasma_applet-system-monitor
-    DESTINATION ${LIB_INSTALL_DIR})
+    ${INSTALL_TARGETS_DEFAULT_ARGS})
 install(TARGETS
     plasma_applet_sm_hdd
     plasma_applet_sm_temperature

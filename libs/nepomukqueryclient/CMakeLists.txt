@@ -1,8 +1,5 @@
 project(nepomukqueryclient)
 
-# need 2.6 for set_source_files_properties
-cmake_minimum_required(VERSION 2.6)
-
 include_directories(
   ${QT_INCLUDES}
   ${KDE4_INCLUDES}
@@ -44,7 +41,7 @@ target_link_libraries(nepomukqueryclient
   ${SOPRANO_LIBRARIES}
   )
 
-install(TARGETS nepomukqueryclient DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS nepomukqueryclient ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 install(FILES
   nepomukqueryclient_export.h

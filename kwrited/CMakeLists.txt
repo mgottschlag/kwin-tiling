@@ -22,7 +22,7 @@ configure_file(config-kwrited.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kwrited
 if (BUILD_AS_EXECUTABLE)
     kde4_add_executable(kwrited kwrited.cpp)
     target_link_libraries(kwrited  ${KDE4_KDEUI_LIBS} ${KDE4_KPTY_LIBS})
-    install(TARGETS kwrited  DESTINATION ${BIN_INSTALL_DIR} )
+    install(TARGETS kwrited  ${INSTALL_TARGETS_DEFAULT_ARGS} )
     install(CODE "
                set(KWRITED_PATH \"\$ENV{DESTDIR}${BIN_INSTALL_DIR}/kwrited\")
 

@@ -13,8 +13,6 @@ SET(nepomuksearchrunner_SRCS
     queryclientwrapper.cpp
 )
 
-qt4_automoc(${nepomuksearchrunner_SRCS})
-
 kde4_add_plugin(krunner_nepomuksearchrunner ${nepomuksearchrunner_SRCS})
 
 target_link_libraries(krunner_nepomuksearchrunner
