@@ -46,7 +46,7 @@
 
 #include "plasma/theme.h"
 #include "plasma/paintutils.h"
-#include "plasma/panelsvg.h"
+#include "plasma/framesvg.h"
 #include "plasma/tooltipmanager.h"
 
 #include "tasks.h"
@@ -324,11 +324,11 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     -This line is only needed when we have different items in the taskbar because of an expanded group for example. otherwise the resizing in the resizeEvent is sufficient
     */
     m_applet->resizeItemBackground(geometry().size().toSize());
-    Plasma::PanelSvg *itemBackground = m_applet->itemBackground();
+    Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
 
     if (!m_animId && ~option->state & QStyle::State_Sunken) {
         itemBackground->setElementPrefix(m_backgroundPrefix);
-        itemBackground->paintPanel(painter);
+        itemBackground->paintFrame(painter);
         return;
     }
 
@@ -340,11 +340,11 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
         oldBackground.fill(Qt::transparent);
         m_alpha = 0.4;
     } else {
-        oldBackground = itemBackground->panelPixmap();
+        oldBackground = itemBackground->framePixmap();
     }
 
     itemBackground->setElementPrefix(m_backgroundPrefix);
-    QPixmap result = Plasma::PaintUtils::transition( oldBackground, itemBackground->panelPixmap(), m_alpha);
+    QPixmap result = Plasma::PaintUtils::transition( oldBackground, itemBackground->framePixmap(), m_alpha);
 
     painter->drawPixmap(QPoint(0, 0), result);
 

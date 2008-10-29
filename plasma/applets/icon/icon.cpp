@@ -42,7 +42,7 @@
 #include <kio/netaccess.h>
 
 #include <plasma/theme.h>
-#include <plasma/widgets/icon.h>
+#include <plasma/widgets/iconwidget.h>
 #include <plasma/containment.h>
 #include <plasma/tooltipmanager.h>
 
@@ -54,7 +54,7 @@ IconApplet::IconApplet(QObject *parent, const QVariantList &args)
     setAcceptDrops(true);
     setBackgroundHints(NoBackground);
     setHasConfigurationInterface(true);
-    m_icon = new Plasma::Icon(this);
+    m_icon = new Plasma::IconWidget(this);
 
     if (args.count() > 0) {
         setUrl(args.value(0).toString());

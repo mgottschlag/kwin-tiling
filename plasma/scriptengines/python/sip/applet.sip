@@ -71,7 +71,7 @@ public:
     virtual void            save (KConfigGroup& group) const;
     virtual void            restore (KConfigGroup& group);
     KConfigGroup            globalConfig () const;
-    Plasma::ConfigXml*      configScheme () const;
+    Plasma::ConfigLoader*   configScheme () const;
     Plasma::DataEngine*     dataEngine (const QString& name) const;
     const Plasma::Package*  package () const;
     QGraphicsView*          view () const;

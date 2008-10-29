@@ -35,7 +35,7 @@
 %Include animationdriver.sip
 %Include animator.sip
 %Include applet.sip
-%Include configxml.sip
+%Include configloader.sip
 %Include containment.sip
 %Include corona.sip
 %Include datacontainer.sip
@@ -48,7 +48,7 @@
 %Include packagemetadata.sip
 %Include packagestructure.sip
 %Include paintutils.sip
-%Include panelsvg.sip
+%Include framesvg.sip
 %Include plasma.sip
 %Include querymatch.sip
 %Include runnercontext.sip
@@ -64,9 +64,9 @@
 %Include view.sip
 %Include checkbox.sip
 %Include combobox.sip
-%Include flash.sip
+%Include flashinglabel.sip
 %Include groupbox.sip
-%Include icon.sip
+%Include iconwidget.sip
 %Include label.sip
 %Include lineedit.sip
 %Include meter.sip

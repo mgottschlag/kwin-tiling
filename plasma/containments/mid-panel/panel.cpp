@@ -41,7 +41,7 @@
 #include <KMessageBox>
 
 #include <plasma/corona.h>
-#include <plasma/panelsvg.h>
+#include <plasma/framesvg.h>
 #include <plasma/theme.h>
 #include <plasma/view.h>
 
@@ -53,9 +53,9 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
       m_configureAction(0)
 {
-    m_background = new Plasma::PanelSvg(this);
+    m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/panel-background");
-    m_background->setEnabledBorders(Plasma::PanelSvg::AllBorders);
+    m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
     connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(backgroundChanged()));
     setZValue(150);
     setContainmentType(Containment::PanelContainment);
@@ -192,21 +192,21 @@ void Panel::updateSize()
 
 void Panel::updateBorders()
 {
-    PanelSvg::EnabledBorders enabledBorders = PanelSvg::AllBorders;
+    FrameSvg::EnabledBorders enabledBorders = FrameSvg::AllBorders;
 
     kDebug() << "!!!!!!!!!!!!!!!! location be:" << location();
     switch (location()) {
         case BottomEdge:
-            enabledBorders = PanelSvg::TopBorder;
+            enabledBorders = FrameSvg::TopBorder;
             break;
         case TopEdge:
-            enabledBorders = PanelSvg::BottomBorder;
+            enabledBorders = FrameSvg::BottomBorder;
             break;
         case LeftEdge:
-            enabledBorders = PanelSvg::RightBorder;
+            enabledBorders = FrameSvg::RightBorder;
             break;
         case RightEdge:
-            enabledBorders = PanelSvg::LeftBorder;
+            enabledBorders = FrameSvg::LeftBorder;
             break;
         default:
             break;
@@ -291,7 +291,7 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
             m_background->setElementPrefix(QString());
         }
 
-        m_background->resizePanel(size);
+        m_background->resizeFrame(size);
         updateBorders();
     }
 
@@ -379,7 +379,7 @@ void Panel::paintInterface(QPainter *painter,
     painter->setCompositionMode(QPainter::CompositionMode_Source);
     painter->setRenderHint(QPainter::Antialiasing);
 
-    m_background->paintPanel(painter, option->exposedRect, option->exposedRect);
+    m_background->paintFrame(painter, option->exposedRect, option->exposedRect);
 
     if (containmentOpt && containmentOpt->view) {
         containmentOpt->view->setMask(m_background->mask());

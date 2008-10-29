@@ -41,7 +41,7 @@
 #include <KMessageBox>
 
 #include <plasma/corona.h>
-#include <plasma/panelsvg.h>
+#include <plasma/framesvg.h>
 #include <plasma/theme.h>
 #include <plasma/view.h>
 #include <plasma/paintutils.h>
@@ -93,9 +93,9 @@ Panel::Panel(QObject *parent, const QVariantList &args)
       m_spacerIndex(-1),
       m_spacer(0)
 {
-    m_background = new Plasma::PanelSvg(this);
+    m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/panel-background");
-    m_background->setEnabledBorders(Plasma::PanelSvg::AllBorders);
+    m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
     connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(backgroundChanged()));
     setZValue(150);
     setContainmentType(Containment::PanelContainment);
@@ -261,7 +261,7 @@ void Panel::addPanel()
 void Panel::updateBorders(const QRect &geom)
 {
     Plasma::Location loc = location();
-    PanelSvg::EnabledBorders enabledBorders = PanelSvg::AllBorders;
+    FrameSvg::EnabledBorders enabledBorders = FrameSvg::AllBorders;
 
     int s = screen();
     //kDebug() << loc << s << formFactor() << geometry();
@@ -278,19 +278,19 @@ void Panel::updateBorders(const QRect &geom)
         QRect r = QApplication::desktop()->screenGeometry(s);
 
         if (loc == BottomEdge) {
-            enabledBorders ^= PanelSvg::BottomBorder;
+            enabledBorders ^= FrameSvg::BottomBorder;
             bottomHeight = 0;
         } else {
-            enabledBorders ^= PanelSvg::TopBorder;
+            enabledBorders ^= FrameSvg::TopBorder;
             topHeight = 0;
         }
 
         if (geom.x() <= r.x()) {
-            enabledBorders ^= PanelSvg::LeftBorder;
+            enabledBorders ^= FrameSvg::LeftBorder;
             leftWidth = 0;
         }
         if (geom.right() >= r.right()) {
-            enabledBorders ^= PanelSvg::RightBorder;
+            enabledBorders ^= FrameSvg::RightBorder;
             rightWidth = 0;
         }
 
@@ -299,18 +299,18 @@ void Panel::updateBorders(const QRect &geom)
         QRect r = QApplication::desktop()->screenGeometry(s);
 
         if (loc == RightEdge) {
-            enabledBorders ^= PanelSvg::RightBorder;
+            enabledBorders ^= FrameSvg::RightBorder;
             rightWidth = 0;
         } else {
-            enabledBorders ^= PanelSvg::LeftBorder;
+            enabledBorders ^= FrameSvg::LeftBorder;
             leftWidth = 0;
         }
         if (geom.y() <= r.y()) {
-            enabledBorders ^= PanelSvg::TopBorder;
+            enabledBorders ^= FrameSvg::TopBorder;
             topHeight = 0;
         }
         if (geom.bottom() >= r.bottom()) {
-            enabledBorders ^= PanelSvg::BottomBorder;
+            enabledBorders ^= FrameSvg::BottomBorder;
             bottomHeight = 0;
         }
 
@@ -393,7 +393,7 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
             m_background->setElementPrefix(QString());
         }
 
-        m_background->resizePanel(m_currentSize);
+        m_background->resizeFrame(m_currentSize);
     }
 
     //FIXME: this seems the only way to correctly resize the layout the first time when the
@@ -495,7 +495,7 @@ void Panel::paintInterface(QPainter *painter,
     painter->setCompositionMode(QPainter::CompositionMode_Source);
     painter->setRenderHint(QPainter::Antialiasing);
 
-    m_background->paintPanel(painter, option->exposedRect);
+    m_background->paintFrame(painter, option->exposedRect);
 
     // restore transformation and composition mode
     painter->restore();

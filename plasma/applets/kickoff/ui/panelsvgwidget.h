@@ -22,7 +22,7 @@
 
 namespace Plasma
 {
-    class PanelSvg;
+    class FrameSvg;
 }
 
 class PanelSvgWidget : public QWidget
@@ -37,5 +37,5 @@ class PanelSvgWidget : public QWidget
         virtual void resizeEvent(QResizeEvent* event);
 
     private:
-        Plasma::PanelSvg *background;
+        Plasma::FrameSvg *background;
 };

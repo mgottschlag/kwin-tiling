@@ -25,7 +25,7 @@
 namespace Plasma
 {
     class RunnerManager;
-    class PanelSvg;
+    class FrameSvg;
 }
 
 class KRunnerConfigDialog;
@@ -69,7 +69,7 @@ class KRunnerDialog : public KDialog
 
         KRunnerConfigDialog *m_configDialog;
         Plasma::RunnerManager *m_runnerManager;
-        Plasma::PanelSvg *m_background;
+        Plasma::FrameSvg *m_background;
         QPixmap *m_cachedBackground;
 };
 

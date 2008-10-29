@@ -21,10 +21,10 @@
 namespace Plasma
 {
 
-class PanelSvg : Plasma::Svg
+class FrameSvg : Plasma::Svg
 {
 %TypeHeaderCode
-#include <plasma/panelsvg.h>
+#include <plasma/framesvg.h>
 %End
 
 public:
@@ -39,12 +39,12 @@ public:
         AllBorders
     };
 
-    typedef QFlags<Plasma::PanelSvg::EnabledBorder> EnabledBorders;
+    typedef QFlags<Plasma::FrameSvg::EnabledBorder> EnabledBorders;
 
-    explicit                PanelSvg (QObject* parent /TransferThis/ = 0);
+    explicit                FrameSvg (QObject* parent /TransferThis/ = 0);
     void                    setImagePath (const QString& path);
-    void                    setEnabledBorders (const Plasma::PanelSvg::EnabledBorders borders);
-    Plasma::PanelSvg::EnabledBorders  enabledBorders () const;
+    void                    setEnabledBorders (const Plasma::FrameSvg::EnabledBorders borders);
+    Plasma::FrameSvg::EnabledBorders  enabledBorders () const;
     void                    resizePanel (const QSizeF& size);
     QSizeF                  panelSize () const;
     qreal                   marginSize (const Plasma::MarginEdge edge) const;
@@ -68,7 +68,7 @@ public:
     void                    clearCache ();
     void                    paintPanel(QPainter* painter, const QRectF& target, const QRectF& source = QRectF());
     void                    paintPanel(QPainter* painter, const QPointF& pos = QPointF(0, 0));
-};   // PanelSvg
+};   // FrameSvg
 
 };   // Plasma
 

@@ -24,7 +24,7 @@
 
 namespace Plasma {
     class WebContent;
-    class Icon;
+    class IconWidget;
 }
 class Header;
 class QGraphicsLinearLayout;
@@ -47,7 +47,7 @@ class HWInfo : public SM::Applet
         void connectToEngine();
 
         Plasma::WebContent *m_info;
-        Plasma::Icon *m_icon;
+        Plasma::IconWidget *m_icon;
         QString m_cpu;
         QString m_gpu;
         QString m_audio;

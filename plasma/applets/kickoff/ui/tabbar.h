@@ -25,7 +25,7 @@
 
 namespace Plasma
 {
-    class PanelSvg;
+    class FrameSvg;
 }
 
 namespace Kickoff
@@ -81,7 +81,7 @@ private:
     QRect m_currentAnimRect;
     int m_lastIndex[2];
     qreal m_animProgress;
-    Plasma::PanelSvg *background;
+    Plasma::FrameSvg *background;
 
     QSize tabSize(int index) const;
     void storeLastIndex();

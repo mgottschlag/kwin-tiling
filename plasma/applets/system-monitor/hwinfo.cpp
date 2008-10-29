@@ -18,7 +18,7 @@
 
 #include "hwinfo.h"
 #include <plasma/widgets/webcontent.h>
-#include <plasma/widgets/icon.h>
+#include <plasma/widgets/iconwidget.h>
 #include <plasma/containment.h>
 #include <plasma/tooltipmanager.h>
 #include <plasma/theme.h>
@@ -68,7 +68,7 @@ bool HWInfo::addMeter(const QString&)
         //setPreferredItemHeight(m_info->nativeWidget()->document()->size().height());
         setPreferredItemHeight(135);
     } else {
-        m_icon = new Plasma::Icon(KIcon("hwinfo"), QString(), this);
+        m_icon = new Plasma::IconWidget(KIcon("hwinfo"), QString(), this);
         m_info = 0;
         mainLayout()->addItem(m_icon);
     }

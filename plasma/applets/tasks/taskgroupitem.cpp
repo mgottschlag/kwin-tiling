@@ -47,7 +47,7 @@
 #include <taskmanager/abstractgroupingstrategy.h>
 
 #include "plasma/theme.h"
-#include "plasma/panelsvg.h"
+#include "plasma/framesvg.h"
 #include "plasma/tooltipmanager.h"
 #include "plasma/corona.h"
 #include "plasma/containment.h"
@@ -73,7 +73,7 @@ TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet, const bool 
 }
 
 
-bool TaskGroupItem::isSplit() 
+bool TaskGroupItem::isSplit()
 {
     if (m_childSplitGroup) {
         return true;
@@ -81,7 +81,7 @@ bool TaskGroupItem::isSplit()
     return false;
 }
 
-void TaskGroupItem::setSplitGroup(TaskGroup *group) 
+void TaskGroupItem::setSplitGroup(TaskGroup *group)
 {
     m_group = group;
     m_parentSplitGroup = dynamic_cast<TaskGroupItem*>(parentWidget());
@@ -116,7 +116,7 @@ TaskGroupItem * TaskGroupItem::splitGroup()
 void TaskGroupItem::setSplitIndex(int position)
 {
     kDebug() << position;
-    
+
     for (int i = position ; i < m_parentSplitGroup->memberList().size() ; i++) {
         //kDebug() << "add item to childSplitGroup" << i;
         if (!m_groupMembers.contains(m_parentSplitGroup->memberList().at(i))) {
@@ -133,7 +133,7 @@ TaskGroupItem * TaskGroupItem::splitGroup(int newSplitPosition)
     kDebug() << "split position" << newSplitPosition;
 
     //remove all items which move to the splitgroup
-    for (int i = newSplitPosition ; i < m_groupMembers.size() ; i++) { 
+    for (int i = newSplitPosition ; i < m_groupMembers.size() ; i++) {
         m_layoutWidget->removeTaskItem(m_groupMembers.at(i));
 	//kDebug() << "remove from parentSplitGroup" << i;
     }
@@ -151,7 +151,7 @@ TaskGroupItem * TaskGroupItem::splitGroup(int newSplitPosition)
           m_childSplitGroup->setSplitGroup(m_group);
     }
     m_childSplitGroup->setSplitIndex(newSplitPosition);
-    m_splitPosition = newSplitPosition;    
+    m_splitPosition = newSplitPosition;
 
     return m_childSplitGroup;
 }
@@ -256,7 +256,7 @@ void TaskGroupItem::reload()
 {
     //kDebug();
     m_groupMembers.clear();
-    
+
     foreach (AbstractItemPtr item,group()->members()) {
         if (!item) {
             kDebug() << "invalid Item";
@@ -382,7 +382,7 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
     connect(item, SIGNAL(activated(AbstractTaskItem*)),
             this, SLOT(updateActive(AbstractTaskItem*)));
 
-    
+
 }
 
 void TaskGroupItem::itemRemoved(TaskManager::AbstractItemPtr groupableItem)
@@ -580,7 +580,7 @@ void TaskGroupItem::editGroup()
     //kDebug();
     Q_ASSERT(m_group);
     Q_ASSERT(m_applet);
-    if (m_applet->groupManager().taskGrouper()->editableGroupProperties() & TaskManager::AbstractGroupingStrategy::Name) { 
+    if (m_applet->groupManager().taskGrouper()->editableGroupProperties() & TaskManager::AbstractGroupingStrategy::Name) {
         bool ok;
         QString text = QInputDialog::getText(qobject_cast<QWidget*>(this), tr("Edit Group"),
                                              tr("New Group Name: "), QLineEdit::Normal,
@@ -602,11 +602,11 @@ void  TaskGroupItem::itemChanged(AbstractItemPtr item)
     Q_ASSERT(m_layoutWidget);
     if (item->isGroupItem()) {
         TaskGroupItem *groupItem = static_cast<TaskGroupItem*>(m_applet->abstractItem(item));
-        groupItem->unsplitGroup(); 
+        groupItem->unsplitGroup();
     }
 
     AbstractTaskItem *taskItem = m_applet->abstractItem(item);
-    
+
     m_layoutWidget->removeTaskItem(taskItem);
     m_layoutWidget->insert(m_group->members().indexOf(item), taskItem);
 }
@@ -641,7 +641,7 @@ void TaskGroupItem::dropEvent(QGraphicsSceneDragDropEvent *event)
         }
 
         //grouping stuff
-         //if (m_taskItems.contains(taskItem)) { 
+         //if (m_taskItems.contains(taskItem)) {
                // Q_ASSERT(m_groupItem);
                // kDebug()<< "Task has Group";
 
@@ -655,7 +655,7 @@ void TaskGroupItem::dropEvent(QGraphicsSceneDragDropEvent *event)
                 // kDebug() << "first item: " << dynamic_cast<QGraphicsItem*>(m_taskItems.first()) << "layout widget" << dynamic_cast<QGraphicsItem*>(this);
 
                 if (!targetTask) {
-                    //kDebug() << "no targetTask"; 
+                    //kDebug() << "no targetTask";
                     noTargetTask = true;
                 }
                 if (!taskItem->parentGroup()) {
@@ -694,12 +694,12 @@ void TaskGroupItem::dropEvent(QGraphicsSceneDragDropEvent *event)
                             event->acceptProposedAction(); // We do not care about the type of action
                             return;
                         }
-                    } 
+                    }
                     //add item to this group
                     m_applet->groupManager().manualGroupingRequest(taskItem->abstractItem(), m_group);
 
                 } else { //Move action
-                    if((m_applet->groupManager().sortingStrategy() == TaskManager::GroupManager::ManualSorting)){ 
+                    if((m_applet->groupManager().sortingStrategy() == TaskManager::GroupManager::ManualSorting)){
                         if (group == m_group) { //same group
                             //kDebug() << "Drag within group";
                             layoutTaskItem(taskItem, event->pos());

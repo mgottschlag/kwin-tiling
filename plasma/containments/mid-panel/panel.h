@@ -4,7 +4,7 @@
 *
 *
 *   This program is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU Library General Public License version 2, 
+*   it under the terms of the GNU Library General Public License version 2,
 *   or (at your option) any later version.
 *
 *   This program is distributed in the hope that it will be useful,
@@ -29,7 +29,7 @@ class KIntNumInput;
 
 namespace Plasma
 {
-    class PanelSvg;
+    class FrameSvg;
 }
 
 class Panel : public Plasma::Containment
@@ -69,7 +69,7 @@ private:
      */
     void updateBorders();
 
-    Plasma::PanelSvg *m_background;
+    Plasma::FrameSvg *m_background;
     QAction* m_configureAction;
 };
 

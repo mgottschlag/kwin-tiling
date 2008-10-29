@@ -37,7 +37,7 @@ class QAction;
 
 namespace Plasma
 {
-    class Icon;
+    class IconWidget;
 }
 
 class Trash : public Plasma::Applet
@@ -69,7 +69,7 @@ class Trash : public Plasma::Applet
         void slotApplyConfig();
 
     private:
-        Plasma::Icon* m_icon;
+        Plasma::IconWidget* m_icon;
         QList<QAction*> actions;
         KDirLister *m_dirLister;
         KMenu m_menu;

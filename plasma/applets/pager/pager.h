@@ -34,7 +34,7 @@ class KColorScheme;
 
 namespace Plasma
 {
-    class PanelSvg;
+    class FrameSvg;
 }
 
 class Pager : public Plasma::Applet
@@ -48,7 +48,7 @@ class Pager : public Plasma::Applet
                             const QRect &contents);
         void constraintsEvent(Plasma::Constraints);
         virtual QList<QAction*> contextualActions();
-        
+
     public slots:
         void recalculateGeometry();
         void recalculateWindowRects();
@@ -128,7 +128,7 @@ class Pager : public Plasma::Applet
         QList<QRect> m_activeWindows;
         QList<QAction*> m_actions;
         KSelectionOwner* m_desktopLayoutOwner;
-        Plasma::PanelSvg *m_background;
+        Plasma::FrameSvg *m_background;
         KColorScheme *m_colorScheme;
 
         // dragging of windows

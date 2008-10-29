@@ -32,7 +32,7 @@
 #include <KWindowSystem>
 
 #include <plasma/theme.h>
-#include <plasma/panelsvg.h>
+#include <plasma/framesvg.h>
 #include <plasma/containment.h>
 
 
@@ -250,7 +250,7 @@ public:
     QRect leftMinSliderRect;
     QRect rightMinSliderRect;
     QRect offsetSliderRect;
-    Plasma::PanelSvg *sliderGraphics;
+    Plasma::FrameSvg *sliderGraphics;
     QString elementPrefix;
 };
 
@@ -258,7 +258,7 @@ PositioningRuler::PositioningRuler(QWidget* parent)
    : QWidget(parent),
      d(new Private())
 {
-   d->sliderGraphics = new Plasma::PanelSvg(this);
+   d->sliderGraphics = new Plasma::FrameSvg(this);
    d->sliderGraphics->setImagePath("widgets/containment-controls");
 
    d->loadSlidersGraphics();
@@ -272,7 +272,7 @@ PositioningRuler::~PositioningRuler()
 QSize PositioningRuler::sizeHint() const
 {
     //FIXME:why must add 6 pixels????
-    
+
     switch (d->location) {
     case Plasma::LeftEdge:
     case Plasma::RightEdge:
@@ -284,7 +284,7 @@ QSize PositioningRuler::sizeHint() const
         return QSize(d->availableLength, d->leftMaxSliderRect.height() + d->leftMinSliderRect.height() + 6);
         break;
     }
-    
+
 }
 
 void PositioningRuler::setLocation(const Plasma::Location &loc)
@@ -431,7 +431,7 @@ int PositioningRuler::minLength() const
 void PositioningRuler::setAvailableLength(int newAvail)
 {
     d->availableLength = newAvail;
-    
+
     if (d->maxLength > newAvail) {
         setMaxLength(newAvail);
     }
@@ -474,8 +474,8 @@ void PositioningRuler::paintEvent(QPaintEvent *event)
 
     QPainter painter(this);
 
-    d->sliderGraphics->resizePanel(event->rect().size());
-    d->sliderGraphics->paintPanel(&painter);
+    d->sliderGraphics->resizeFrame(event->rect().size());
+    d->sliderGraphics->paintFrame(&painter);
 
     //Draw center indicators
     if (d->alignment == Qt::AlignCenter && (d->location == Plasma::LeftEdge || d->location == Plasma::RightEdge)) {
@@ -523,7 +523,7 @@ void PositioningRuler::paintEvent(QPaintEvent *event)
             transform.scale(-1, 1);
             break;
         }
-        
+
         painter.setTransform(transform);
         d->sliderGraphics->paint(&painter, transform.mapRect(d->leftMaxSliderRect), elementPrefix + "maxslider");
         d->sliderGraphics->paint(&painter, transform.mapRect(d->leftMinSliderRect), elementPrefix + "minslider");

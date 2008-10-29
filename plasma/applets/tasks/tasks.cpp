@@ -41,7 +41,7 @@
 
 // Plasma
 #include <plasma/containment.h>
-#include <plasma/panelsvg.h>
+#include <plasma/framesvg.h>
 #include <plasma/theme.h>
 
 Tasks::Tasks(QObject* parent, const QVariantList &arguments)
@@ -284,15 +284,15 @@ void Tasks::constraintsEvent(Plasma::Constraints constraints)
     emit constraintsChanged(constraints);
 }
 
-Plasma::PanelSvg* Tasks::itemBackground()
+Plasma::FrameSvg* Tasks::itemBackground()
 {
     if (!m_taskItemBackground) {
         QString tasksThemePath = Plasma::Theme::defaultTheme()->imagePath("widgets/tasks");
 
         if (!tasksThemePath.isEmpty()) {
-            m_taskItemBackground = new Plasma::PanelSvg(this);
+            m_taskItemBackground = new Plasma::FrameSvg(this);
             m_taskItemBackground->setImagePath(tasksThemePath);
-            m_taskItemBackground->setCacheAllRenderedPanels(true);
+            m_taskItemBackground->setCacheAllRenderedFrames(true);
         }
     }
 
@@ -336,14 +336,14 @@ void Tasks::resizeItemBackground(const QSizeF &size)
         }
     }
 
-    if (m_taskItemBackground->panelSize() == size) {
+    if (m_taskItemBackground->frameSize() == size) {
         //kDebug() << "Error2";
         return;
     }
 
 
     m_taskItemBackground->clearCache();
-    m_taskItemBackground->resizePanel(size);
+    m_taskItemBackground->resizeFrame(size);
     //get the margins now
     m_taskItemBackground->getMargins(m_leftMargin, m_topMargin, m_rightMargin, m_bottomMargin);
     //if the task height is too little reset the top and bottom margins

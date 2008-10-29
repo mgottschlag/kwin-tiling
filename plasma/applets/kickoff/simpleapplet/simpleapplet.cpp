@@ -42,7 +42,7 @@
 #include <KRun>
 
 // Plasma
-#include <plasma/widgets/icon.h>
+#include <plasma/widgets/iconwidget.h>
 #include <plasma/containment.h>
 
 // Local
@@ -71,7 +71,7 @@ class MenuLauncherApplet::Private
 {
 public:
         QPointer<Kickoff::MenuView> menuview;
-        Plasma::Icon *icon;
+        Plasma::IconWidget *icon;
         QPointer<Kickoff::UrlItemLauncher> launcher;
 
         KActionCollection* collection;
@@ -197,7 +197,7 @@ MenuLauncherApplet::MenuLauncherApplet(QObject *parent, const QVariantList &args
 
     resize(IconSize(KIconLoader::Desktop) * 2, IconSize(KIconLoader::Desktop) * 2);
 
-    d->icon = new Plasma::Icon(QString(), this);
+    d->icon = new Plasma::IconWidget(QString(), this);
     d->icon->setFlag(ItemIsMovable, false);
     connect(d->icon, SIGNAL(pressed(bool)), this, SLOT(toggleMenu(bool)));
     connect(this, SIGNAL(activate()), this, SLOT(toggleMenu()));

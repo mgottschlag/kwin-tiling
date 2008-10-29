@@ -38,7 +38,7 @@
 //plasma
 #include <plasma/dialog.h>
 //use for desktop view
-#include <plasma/widgets/icon.h>
+#include <plasma/widgets/iconwidget.h>
 #include <plasma/theme.h>
 
 //solid
@@ -83,7 +83,7 @@ void DeviceNotifier::init()
     m_solidEngine = dataEngine("hotplug");
     m_solidDeviceEngine = dataEngine("soliddevice");
 
-    m_icon = new Plasma::Icon(KIcon("device-notifier",NULL), QString());
+    m_icon = new Plasma::IconWidget(KIcon("device-notifier",NULL), QString());
     m_iconName = QString("device-notifier");
 
     Plasma::ToolTipManager::self()->registerWidget(this);

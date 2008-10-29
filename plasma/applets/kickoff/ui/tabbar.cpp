@@ -35,7 +35,7 @@
 #include "plasma/plasma.h"
 #include "plasma/animator.h"
 #include "plasma/theme.h"
-#include "plasma/panelsvg.h"
+#include "plasma/framesvg.h"
 
 using namespace Kickoff;
 
@@ -55,14 +55,14 @@ TabBar::TabBar(QWidget *parent)
     setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred );
     setUsesScrollButtons( false );
 
-    background = new Plasma::PanelSvg(this);
+    background = new Plasma::FrameSvg(this);
     background->setImagePath("dialogs/kickoff");
     background->setEnabledBorders(
-                                  Plasma::PanelSvg::BottomBorder |
-                                  Plasma::PanelSvg::LeftBorder |
-                                  Plasma::PanelSvg::RightBorder
+                                  Plasma::FrameSvg::BottomBorder |
+                                  Plasma::FrameSvg::LeftBorder |
+                                  Plasma::FrameSvg::RightBorder
                                  );
-    background->resizePanel(size());
+    background->resizeFrame(size());
     background->setElementPrefix("plain");
 
     connect(background, SIGNAL(repaintNeeded()), this, SLOT(update()));
@@ -70,8 +70,8 @@ TabBar::TabBar(QWidget *parent)
 
 void TabBar::setShape( Shape shape )
 {
-  resize( 0, 0 );  // This is required, so that the custom implementation of tabSizeHint, 
-                   // which expands the tabs to the full width of the widget does not pick up 
+  resize( 0, 0 );  // This is required, so that the custom implementation of tabSizeHint,
+                   // which expands the tabs to the full width of the widget does not pick up
                    // the previous width, e.g. if the panel is moved from the bottom to the left
   QTabBar::setShape( shape );
 }
@@ -277,7 +277,7 @@ void TabBar::paintEvent(QPaintEvent *event)
     //int numTabs = count();
     int currentTab = currentIndex();
 
-    background->paintPanel(&painter);
+    background->paintFrame(&painter);
 
     //bool ltr = painter.layoutDirection() == Qt::LeftToRight; // Not yet used
     painter.setFont(KGlobalSettings::smallestReadableFont());
@@ -344,7 +344,7 @@ void TabBar::resizeEvent(QResizeEvent* event)
     QTabBar::resizeEvent(event);
     m_currentAnimRect = tabRect(currentIndex());
 
-    background->resizePanel(event->size());
+    background->resizeFrame(event->size());
 
     update();
 }

@@ -41,7 +41,7 @@
 #include <kmanagerselection.h>
 
 #include <plasma/svg.h>
-#include <plasma/panelsvg.h>
+#include <plasma/framesvg.h>
 #include <plasma/paintutils.h>
 #include <plasma/theme.h>
 #include <plasma/animator.h>
@@ -69,9 +69,9 @@ Pager::Pager(QObject *parent, const QVariantList &args)
     setAcceptDrops(true);
     setHasConfigurationInterface(true);
 
-    m_background = new Plasma::PanelSvg(this);
+    m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/pager");
-    m_background->setCacheAllRenderedPanels(true);
+    m_background->setCacheAllRenderedFrames(true);
 
     // initialize with a decent default
     m_desktopCount = KWindowSystem::numberOfDesktops();
@@ -82,7 +82,7 @@ Pager::Pager(QObject *parent, const QVariantList &args)
 void Pager::init()
 {
     createMenu();
-    
+
     KConfigGroup cg = config();
     m_displayedText = (DisplayedText)cg.readEntry("displayedText", (int)m_displayedText);
     m_showWindowIcons = cg.readEntry("showWindowIcons", m_showWindowIcons);
@@ -138,7 +138,7 @@ void Pager::constraintsEvent(Plasma::Constraints constraints)
         recalculateWindowRects();
         if (m_background->hasElementPrefix(QString())) {
             m_background->setElementPrefix(QString());
-            m_background->resizePanel(size());
+            m_background->resizeFrame(size());
         }
     }
     if (constraints & Plasma::FormFactorConstraint) {
@@ -317,15 +317,15 @@ void Pager::recalculateGeometry()
     //Resize background svgs as needed
     if (m_background->hasElementPrefix("normal")) {
         m_background->setElementPrefix("normal");
-        m_background->resizePanel(itemRect.size());
+        m_background->resizeFrame(itemRect.size());
     }
     if (m_background->hasElementPrefix("active")) {
         m_background->setElementPrefix("active");
-        m_background->resizePanel(itemRect.size());
+        m_background->resizeFrame(itemRect.size());
     }
     if (m_background->hasElementPrefix("hover")) {
         m_background->setElementPrefix("hover");
-        m_background->resizePanel(itemRect.size());
+        m_background->resizeFrame(itemRect.size());
     }
 
     m_size = QSizeF(ceil(columns * itemWidth + padding * (columns - 1) + leftMargin + rightMargin),
@@ -901,7 +901,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
 
     if (m_showOwnBackground && (formFactor() == Plasma::Vertical || formFactor() == Plasma::Horizontal)) {
         m_background->setElementPrefix(QString());
-        m_background->paintPanel(painter);
+        m_background->paintFrame(painter);
     }
 
     // Draw backgrounds of desktops only when there are not the proper theme elements
@@ -971,16 +971,16 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
         if (m_background->hasElementPrefix(prefix)) {
             m_background->setElementPrefix(prefix);
             if (m_animations[i].animId > -1) {
-                QPixmap normal = m_background->panelPixmap();
+                QPixmap normal = m_background->framePixmap();
                 m_background->setElementPrefix("hover");
-                QPixmap result = Plasma::PaintUtils::transition(normal, m_background->panelPixmap(), m_animations[i].alpha);
+                QPixmap result = Plasma::PaintUtils::transition(normal, m_background->framePixmap(), m_animations[i].alpha);
                 painter->drawPixmap(m_rects[i].topLeft(), result);
             } else {
                 //no anims, simpler thing
                 if (m_rects[i] == m_hoverRect) {
                     m_background->setElementPrefix("hover");
                 }
-                m_background->paintPanel(painter, m_rects[i].topLeft());
+                m_background->paintFrame(painter, m_rects[i].topLeft());
             }
         } else {
             QPen drawingPen;

@@ -27,7 +27,7 @@
 #include <kio/netaccess.h>
 #include <kgenericfactory.h>
 
-#include <plasma/panelsvg.h>
+#include <plasma/framesvg.h>
 #include <plasma/theme.h>
 
 //Theme selector code by Andre Duffeck (modified to add package description)
@@ -35,7 +35,7 @@ class ThemeInfo
 {
 public:
     QString package;
-    Plasma::PanelSvg *svg;
+    Plasma::FrameSvg *svg;
     QString description;
     QString author;
     QString version;
@@ -109,14 +109,14 @@ void ThemeModel::reload()
         QString version = df.desktopGroup().readEntry("X-KDE-PluginInfo-Version",QString());
 
 
-        Plasma::PanelSvg *svg = new Plasma::PanelSvg(this);
+        Plasma::FrameSvg *svg = new Plasma::FrameSvg(this);
         QString svgFile = themeRoot + "/widgets/background.svg";
         if (QFile::exists(svgFile)) {
             svg->setImagePath(svgFile);
         } else {
             svg->setImagePath(svgFile + "z");
         }
-        svg->setEnabledBorders(Plasma::PanelSvg::AllBorders);
+        svg->setEnabledBorders(Plasma::FrameSvg::AllBorders);
         ThemeInfo info;
         info.package = packageName;
         info.description = comment;
@@ -221,13 +221,13 @@ void ThemeDelegate::paint(QPainter *painter,
     painter->restore();
 
     // draw image
-    Plasma::PanelSvg *svg = static_cast<Plasma::PanelSvg *>(
+    Plasma::FrameSvg *svg = static_cast<Plasma::FrameSvg *>(
             index.model()->data(index, ThemeModel::SvgRole).value<void *>());
-    svg->resizePanel(QSize(option.rect.width() - (2 * MARGIN), 100 - (2 * MARGIN)));
+    svg->resizeFrame(QSize(option.rect.width() - (2 * MARGIN), 100 - (2 * MARGIN)));
     QRect imgRect = QRect(option.rect.topLeft(),
             QSize(option.rect.width() - (2 * MARGIN), 100 - (2 * MARGIN)))
             .translated(MARGIN, MARGIN);
-    svg->paintPanel(painter, QPoint(option.rect.left() + MARGIN, option.rect.top() + MARGIN));
+    svg->paintFrame(painter, QPoint(option.rect.left() + MARGIN, option.rect.top() + MARGIN));
 
     // draw text
     painter->save();

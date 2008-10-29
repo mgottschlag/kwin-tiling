@@ -20,7 +20,7 @@
 #include "lockout.h"
 
 // Plasma
-#include <plasma/widgets/icon.h>
+#include <plasma/widgets/iconwidget.h>
 
 // Qt
 #include <QtDBus/QDBusInterface>
@@ -54,11 +54,11 @@ void LockOut::init()
     m_layout->setContentsMargins(0,0,0,0);
     m_layout->setSpacing(0);
 
-    Plasma::Icon *icon_lock = new Plasma::Icon(KIcon("system-lock-screen"), "", this);
+    Plasma::IconWidget *icon_lock = new Plasma::IconWidget(KIcon("system-lock-screen"), "", this);
     m_layout->addItem(icon_lock);
     connect(icon_lock, SIGNAL(clicked()), this, SLOT(clickLock()));
 #ifndef Q_OS_WIN
-    Plasma::Icon *icon_logout = new Plasma::Icon(KIcon("system-shutdown"), "", this);
+    Plasma::IconWidget *icon_logout = new Plasma::IconWidget(KIcon("system-shutdown"), "", this);
     m_layout->addItem(icon_logout);
     connect(icon_logout, SIGNAL(clicked()), this, SLOT(clickLogout()));
 #endif

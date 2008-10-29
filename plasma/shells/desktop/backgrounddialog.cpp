@@ -22,7 +22,7 @@
 #include <KNS/Engine>
 
 #include <plasma/containment.h>
-#include <plasma/panelsvg.h>
+#include <plasma/framesvg.h>
 #include <plasma/theme.h>
 #include <plasma/wallpaper.h>
 #include <plasma/view.h>
@@ -37,7 +37,7 @@ class ThemeInfo
 {
 public:
     QString package;
-    Plasma::PanelSvg *svg;
+    Plasma::FrameSvg *svg;
 };
 
 class ThemeModel : public QAbstractListModel
@@ -93,14 +93,14 @@ void ThemeModel::reload()
             name = packageName;
         }
 
-        Plasma::PanelSvg *svg = new Plasma::PanelSvg(this);
+        Plasma::FrameSvg *svg = new Plasma::FrameSvg(this);
         QString svgFile = themeRoot + "/widgets/background.svg";
         if (QFile::exists(svgFile)) {
             svg->setImagePath(svgFile);
         } else {
             svg->setImagePath(svgFile + "z");
         }
-        svg->setEnabledBorders(Plasma::PanelSvg::AllBorders);
+        svg->setEnabledBorders(Plasma::FrameSvg::AllBorders);
         ThemeInfo info;
         info.package = packageName;
         info.svg = svg;
@@ -195,13 +195,13 @@ void ThemeDelegate::paint(QPainter *painter,
     painter->restore();
 
     // draw image
-    Plasma::PanelSvg *svg = static_cast<Plasma::PanelSvg *>(
+    Plasma::FrameSvg *svg = static_cast<Plasma::FrameSvg *>(
             index.model()->data(index, ThemeModel::SvgRole).value<void *>());
-    svg->resizePanel(QSize(option.rect.width() - (2 * MARGIN), 100 - (2 * MARGIN)));
+    svg->resizeFrame(QSize(option.rect.width() - (2 * MARGIN), 100 - (2 * MARGIN)));
     QRect imgRect = QRect(option.rect.topLeft(),
             QSize(option.rect.width() - (2 * MARGIN), 100 - (2 * MARGIN)))
             .translated(MARGIN, MARGIN);
-    svg->paintPanel(painter, QPoint(option.rect.left() + MARGIN, option.rect.top() + MARGIN));
+    svg->paintFrame(painter, QPoint(option.rect.left() + MARGIN, option.rect.top() + MARGIN));
 
     // draw text
     painter->save();
@@ -373,16 +373,16 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
     qreal previewRatio = (qreal)res.height() / (qreal)res.width();
     QSize monitorSize(200, int(200 * previewRatio));
 
-    Plasma::PanelSvg *svg = new Plasma::PanelSvg(this);
+    Plasma::FrameSvg *svg = new Plasma::FrameSvg(this);
     svg->setImagePath("widgets/monitor");
-    svg->resizePanel(monitorSize);
+    svg->resizeFrame(monitorSize);
     QPixmap monitorPix(monitorSize + QSize(0, svg->elementSize("base").height() - svg->marginSize(Plasma::BottomMargin)));
     monitorPix.fill(Qt::transparent);
 
     QPainter painter(&monitorPix);
     QPoint standPosition(monitorSize.width()/2 - svg->elementSize("base").width()/2, svg->contentsRect().bottom());
     svg->paint(&painter, QRect(standPosition, svg->elementSize("base")), "base");
-    svg->paintPanel(&painter);
+    svg->paintFrame(&painter);
     painter.end();
 
     m_monitor->setPixmap(monitorPix);

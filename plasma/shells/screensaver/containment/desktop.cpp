@@ -70,15 +70,15 @@ void SaverDesktop::init()
     }
 
     //remove the desktop actions
-    //FIXME do we really need to removeToolBoxTool?
+    //FIXME do we really need to removeToolBoxAction?
     QAction *unwanted = action("zoom in");
-    removeToolBoxTool(unwanted);
+    removeToolBoxAction(unwanted);
     delete unwanted;
     unwanted = action("zoom out");
-    removeToolBoxTool(unwanted);
+    removeToolBoxAction(unwanted);
     delete unwanted;
     unwanted = action("add sibling containment");
-    removeToolBoxTool(unwanted);
+    removeToolBoxAction(unwanted);
     delete unwanted;
 
     lock = new QAction(unlocked ? i18n("Quit") : i18n("Unlock and Quit"), this);
@@ -88,19 +88,19 @@ void SaverDesktop::init()
     lock->setShortcut(QKeySequence("esc"));
     connect(lock, SIGNAL(triggered(bool)), this, SLOT(unlockDesktop()));
     addAction("unlock desktop", lock);
-    addToolBoxTool(lock);
+    addToolBoxAction(lock);
 
     QAction *a = action("configure");
     if (a) {
         a->setText(i18n("Settings"));
-        addToolBoxTool(a);
+        addToolBoxAction(a);
     }
 
     //rearrange the toolboxtools
     a = action("add widgets");
     if (a) {
-        removeToolBoxTool(a);
-        addToolBoxTool(a);
+        removeToolBoxAction(a);
+        addToolBoxAction(a);
     }
 }
 

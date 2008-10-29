@@ -43,7 +43,7 @@ namespace Notifier
 //desktop view
 namespace Plasma
 {
-    class Icon;
+    class IconWidget;
 }
 
 /**
@@ -139,7 +139,7 @@ class DeviceNotifier : public Plasma::PopupApplet
         Plasma::DataEngine *m_solidDeviceEngine;
   
         ///the icon used when the applet is in the taskbar
-        Plasma::Icon *m_icon;
+        Plasma::IconWidget *m_icon;
     
         ///default icon of the notifier
         QString m_iconName;

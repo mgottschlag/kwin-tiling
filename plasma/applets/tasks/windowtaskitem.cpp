@@ -43,7 +43,7 @@
 #include <taskmanager/taskgroup.h>
 
 #include "plasma/theme.h"
-#include "plasma/panelsvg.h"
+#include "plasma/framesvg.h"
 #include "plasma/tooltipmanager.h"
 #include "plasma/corona.h"
 #include "plasma/containment.h"

@@ -43,7 +43,7 @@
 #include <KConfigDialog>
 #include <KHistoryComboBox>
 
-#include <plasma/widgets/icon.h>
+#include <plasma/widgets/iconwidget.h>
 #include <plasma/widgets/lineedit.h>
 #include <plasma/widgets/meter.h>
 #include <plasma/widgets/webcontent.h>
@@ -206,9 +206,9 @@ WebBrowser::~WebBrowser()
     delete m_bookmarkModel;
 }
 
-Plasma::Icon *WebBrowser::addTool(const QString &iconString, QGraphicsLinearLayout *layout)
+Plasma::IconWidget *WebBrowser::addTool(const QString &iconString, QGraphicsLinearLayout *layout)
 {
-    Plasma::Icon *icon = new Plasma::Icon(this);
+    Plasma::IconWidget *icon = new Plasma::IconWidget(this);
     QAction *action = new QAction(KIcon(iconString), QString(), this);
     icon->setAction(action);
     icon->setPreferredSize(icon->sizeFromIconSize(IconSize(KIconLoader::Toolbar)));

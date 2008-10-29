@@ -46,7 +46,7 @@ class KColorScheme;
 namespace Plasma
 {
     class LayoutAnimator;
-    class PanelSvg;
+    class FrameSvg;
 } // namespace Plasma
 
 class WindowTaskItem;
@@ -84,7 +84,7 @@ public:
 
         void constraintsEvent(Plasma::Constraints constraints);
 
-        Plasma::PanelSvg *itemBackground();
+        Plasma::FrameSvg *itemBackground();
         QPixmap *taskAlphaPixmap(const QSize &size);
         KColorScheme *colorScheme();
 
@@ -153,7 +153,7 @@ private:
         Ui::tasksConfig m_ui;
         QTimer m_screenTimer;
 
-        Plasma::PanelSvg *m_taskItemBackground;
+        Plasma::FrameSvg *m_taskItemBackground;
         QPixmap *m_taskAlphaPixmap;
 	QHash <int,QPixmap*> m_taskAlphaPixmapList;
         KColorScheme *m_colorScheme;
@@ -164,7 +164,7 @@ private:
 
         TaskGroupItem *m_rootGroupItem;
         GroupManager *m_groupManager;
-    
+
         Qt::KeyboardModifier m_groupModifierKey;
 
         int m_currentDesktop;

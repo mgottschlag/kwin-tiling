@@ -33,7 +33,7 @@
 
 #include <plasma/extender.h>
 #include <plasma/extenderitem.h>
-#include <plasma/panelsvg.h>
+#include <plasma/framesvg.h>
 #include <plasma/theme.h>
 
 #include "../core/manager.h"
@@ -65,7 +65,7 @@ public:
     TaskArea *taskArea;
     QPointer<KActionSelector> configInterface;
 
-    Plasma::PanelSvg *background;
+    Plasma::FrameSvg *background;
     bool backgroundEnabled;
 };
 
@@ -74,7 +74,7 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
     : Plasma::PopupApplet(parent, arguments),
       d(new Private(this))
 {
-    d->background = new Plasma::PanelSvg(this);
+    d->background = new Plasma::FrameSvg(this);
     d->background->setImagePath("widgets/systemtray");
 
     setPopupIcon(QIcon());
@@ -226,8 +226,8 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
     Q_UNUSED(contentsRect);
 
     if (d->backgroundEnabled) {
-        d->background->resizePanel(size());
-        d->background->paintPanel(painter);
+        d->background->resizeFrame(size());
+        d->background->paintFrame(painter);
     }
 }
 

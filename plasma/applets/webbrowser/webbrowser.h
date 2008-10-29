@@ -41,7 +41,7 @@ class BookmarkItem;
 
 namespace Plasma
 {
-    class Icon;
+    class IconWidget;
     class Meter;
     class HistoryComboBox;
     class WebContent;
@@ -70,7 +70,7 @@ public Q_SLOTS:
 
 protected:
     void saveState(KConfigGroup &cg) const;
-    Plasma::Icon *addTool(const QString &iconString, QGraphicsLinearLayout *layout);
+    Plasma::IconWidget *addTool(const QString &iconString, QGraphicsLinearLayout *layout);
     void createConfigurationInterface(KConfigDialog *parent);
 
 protected Q_SLOTS:
@@ -113,19 +113,19 @@ private:
     Plasma::HistoryComboBox *m_historyCombo;
     BookmarksDelegate *m_bookmarksDelegate;
 
-    Plasma::Icon *m_back;
-    Plasma::Icon *m_forward;
+    Plasma::IconWidget *m_back;
+    Plasma::IconWidget *m_forward;
 
-    Plasma::Icon *m_go;
+    Plasma::IconWidget *m_go;
     QAction *m_goAction;
     QAction *m_reloadAction;
 
-    Plasma::Icon *m_addBookmark;
+    Plasma::IconWidget *m_addBookmark;
     QAction *m_addBookmarkAction;
     QAction *m_removeBookmarkAction;
 
-    Plasma::Icon *m_organizeBookmarks;
-    Plasma::Icon *m_stop;
+    Plasma::IconWidget *m_organizeBookmarks;
+    Plasma::IconWidget *m_stop;
     Plasma::Meter *m_progress;
     Plasma::Slider *m_zoom;
 

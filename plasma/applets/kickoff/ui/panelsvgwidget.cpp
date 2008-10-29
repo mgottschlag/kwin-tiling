@@ -23,15 +23,15 @@
 #include <QPainter>
 #include <QResizeEvent>
 
-#include <plasma/panelsvg.h>
+#include <plasma/framesvg.h>
 
 PanelSvgWidget::PanelSvgWidget(QWidget *parent)
     : QWidget(parent)
 {
-    background = new Plasma::PanelSvg(this);
+    background = new Plasma::FrameSvg(this);
     background->setImagePath("dialogs/kickoff");
-    background->setEnabledBorders(Plasma::PanelSvg::AllBorders);
-    background->resizePanel(size());
+    background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
+    background->resizeFrame(size());
     background->setElementPrefix("borderview");
 
     connect(background, SIGNAL(repaintNeeded()), this, SLOT(update()));
@@ -40,14 +40,14 @@ PanelSvgWidget::PanelSvgWidget(QWidget *parent)
 void PanelSvgWidget::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
-    background->paintPanel(&painter);
+    background->paintFrame(&painter);
 }
 
 void PanelSvgWidget::resizeEvent(QResizeEvent* event)
 {
     QWidget::resizeEvent(event);
 
-    background->resizePanel(event->size());
+    background->resizeFrame(event->size());
 
     update();
 }

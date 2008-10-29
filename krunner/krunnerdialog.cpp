@@ -33,7 +33,7 @@
 #include <NETRootInfo>
 #endif
 
-#include "plasma/panelsvg.h"
+#include "plasma/framesvg.h"
 #include "plasma/runnermanager.h"
 #include "plasma/theme.h"
 
@@ -50,9 +50,9 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
       m_runnerManager(runnerManager)
 {
     setButtons(0);
-    m_background = new Plasma::PanelSvg(this);
+    m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("dialogs/krunner");
-    m_background->setEnabledBorders(Plasma::PanelSvg::AllBorders);
+    m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
 
     connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(update()));
 
@@ -100,7 +100,7 @@ void KRunnerDialog::paintEvent(QPaintEvent *e)
     p.setClipRect(e->rect());
     //kDebug() << "clip rect set to: " << e->rect();
 
-    m_background->paintPanel(&p);
+    m_background->paintFrame(&p);
 }
 
 bool KRunnerDialog::event(QEvent *event)
@@ -116,7 +116,7 @@ bool KRunnerDialog::event(QEvent *event)
 
 void KRunnerDialog::resizeEvent(QResizeEvent *e)
 {
-    m_background->resizePanel(e->size());
+    m_background->resizeFrame(e->size());
     setMask(m_background->mask());
     KDialog::resizeEvent(e);
 }

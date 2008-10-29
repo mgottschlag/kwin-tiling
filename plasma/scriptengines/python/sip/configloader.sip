@@ -21,18 +21,18 @@
 namespace Plasma
 {
 
-class ConfigXml : KConfigSkeleton
+class ConfigLoader : KConfigSkeleton
 {
 %TypeHeaderCode
-#include <plasma/configxml.h>
+#include <plasma/configloader.h>
 %End
 
 public:
-                            ConfigXml (const QString& configFile, QIODevice* xml, QObject* parent /TransferThis/ = 0);
-                            ConfigXml (KSharedConfigPtr config, QIODevice* xml, QObject* parent /TransferThis/ = 0);
-                            ConfigXml (const KConfigGroup* config, QIODevice* xml, QObject* parent /TransferThis/ = 0);
+                            ConfigLoader (const QString& configFile, QIODevice* xml, QObject* parent /TransferThis/ = 0);
+                            ConfigLoader (KSharedConfigPtr config, QIODevice* xml, QObject* parent /TransferThis/ = 0);
+                            ConfigLoader (const KConfigGroup* config, QIODevice* xml, QObject* parent /TransferThis/ = 0);
     KConfigSkeletonItem*    findItem (const QString& group, const QString& key);
-};   // ConfigXml
+};   // ConfigLoader
 
 };   // Plasma
 

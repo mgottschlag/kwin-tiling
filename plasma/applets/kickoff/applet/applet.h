@@ -32,7 +32,7 @@ namespace Kickoff
 }
 namespace Plasma
 {
-    class Icon;
+    class IconWidget;
     class PushButton;
 }
 

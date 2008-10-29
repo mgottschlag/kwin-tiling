@@ -28,7 +28,7 @@
 
 #include <plasma/paintutils.h>
 #include <plasma/theme.h>
-#include <plasma/panelsvg.h>
+#include <plasma/framesvg.h>
 
 ToolButton::ToolButton()
     : QToolButton(),
@@ -36,9 +36,9 @@ ToolButton::ToolButton()
 {
     setAttribute(Qt::WA_NoSystemBackground);
 
-    m_background = new Plasma::PanelSvg(this);
+    m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/button");
-    m_background->setCacheAllRenderedPanels(true);
+    m_background->setCacheAllRenderedFrames(true);
     m_background->setElementPrefix("plain");
 }
 
@@ -47,9 +47,9 @@ ToolButton::ToolButton(QWidget *parent)
     : QToolButton(parent),
       m_action(0)
 {
-    m_background = new Plasma::PanelSvg(this);
+    m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/button");
-    m_background->setCacheAllRenderedPanels(true);
+    m_background->setCacheAllRenderedFrames(true);
     m_background->setElementPrefix("plain");
 }
 
@@ -112,8 +112,8 @@ void ToolButton::paintEvent(QPaintEvent *event)
         } else {
             m_background->setElementPrefix("normal");
         }
-        m_background->resizePanel(size());
-        m_background->paintPanel(&painter);
+        m_background->resizeFrame(size());
+        m_background->paintFrame(&painter);
 
         buttonOpt.palette.setColor(QPalette::ButtonText, Plasma::Theme::defaultTheme()->color(Plasma::Theme::ButtonTextColor));
     } else {

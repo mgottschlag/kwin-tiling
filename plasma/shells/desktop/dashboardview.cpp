@@ -62,7 +62,7 @@ DashboardView::DashboardView(Plasma::Containment *containment, QWidget *parent)
     m_hideAction = new QAction(i18n("Hide Dashboard"), this);
     m_hideAction->setIcon(KIcon("preferences-desktop-display"));
     m_hideAction->setEnabled(false);
-    containment->addToolBoxTool(m_hideAction);
+    containment->addToolBoxAction(m_hideAction);
     connect(m_hideAction, SIGNAL(triggered()), this, SLOT(hideView()));
 
     installEventFilter(this);
@@ -240,9 +240,9 @@ void DashboardView::setContainment(Plasma::Containment *newContainment)
 
     Plasma::Containment *oldContainment = containment();
     if (oldContainment) {
-        oldContainment->removeToolBoxTool(m_hideAction);
+        oldContainment->removeToolBoxAction(m_hideAction);
     }
-    newContainment->addToolBoxTool(m_hideAction);
+    newContainment->addToolBoxAction(m_hideAction);
 
     if (isVisible()) {
         if (oldContainment) {

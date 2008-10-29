@@ -37,7 +37,7 @@
 #include <KProcess>
 
 // Plasma
-#include <plasma/widgets/icon.h>
+#include <plasma/widgets/iconwidget.h>
 #include <plasma/containment.h>
 #include <plasma/view.h>
 #include <plasma/tooltipmanager.h>

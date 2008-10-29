@@ -39,7 +39,7 @@
 #include <plasma/corona.h>
 #include <plasma/paintutils.h>
 #include <plasma/theme.h>
-#include <plasma/panelsvg.h>
+#include <plasma/framesvg.h>
 #include <plasma/dialog.h>
 
 #include "plasmaapp.h"
@@ -52,7 +52,7 @@ public:
     ButtonGroup(QWidget *parent)
        : QFrame(parent)
     {
-        background = new Plasma::PanelSvg(this);
+        background = new Plasma::FrameSvg(this);
         background->setImagePath("widgets/frame");
         background->setElementPrefix("plain");
     }
@@ -62,11 +62,11 @@ public:
         Q_UNUSED(event)
 
         QPainter painter(this);
-        background->resizePanel(size());
-        background->paintPanel(&painter);
+        background->resizeFrame(size());
+        background->paintFrame(&painter);
     }
 
-    Plasma::PanelSvg *background;
+    Plasma::FrameSvg *background;
 };
 
 
@@ -122,7 +122,7 @@ public:
         return tool;
     }
 
-    void resizePanelHeight(const int newHeight)
+    void resizeFrameHeight(const int newHeight)
     {
         if (!containment) {
             return;
@@ -302,7 +302,7 @@ public:
     QLabel *modeLabel;
     DragElement dragging;
     QPoint startDragPos;
-    Plasma::PanelSvg *background;
+    Plasma::FrameSvg *background;
     Plasma::Dialog *optionsDialog;
     QBoxLayout *optDialogLayout;
     ToolButton *settingsTool;
@@ -342,7 +342,7 @@ PanelController::PanelController(QWidget* parent)
     pal.setBrush(backgroundRole(), Qt::transparent);
     setPalette(pal);
 
-    d->background = new Plasma::PanelSvg(this);
+    d->background = new Plasma::FrameSvg(this);
     d->background->setImagePath("dialogs/background");
     d->background->setContainsMultipleImages(true);
 
@@ -361,7 +361,7 @@ PanelController::PanelController(QWidget* parent)
     d->extLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
     setLayout(d->extLayout);
 
-    d->background->setEnabledBorders(Plasma::PanelSvg::TopBorder);
+    d->background->setEnabledBorders(Plasma::FrameSvg::TopBorder);
     d->extLayout->setContentsMargins(0, d->background->marginSize(Plasma::TopMargin), 0, 0);
 
     d->layout = new QBoxLayout(QBoxLayout::LeftToRight);
@@ -592,7 +592,7 @@ void PanelController::setLocation(const Plasma::Location &loc)
         } else {
             d->extLayout->setDirection(QBoxLayout::RightToLeft);
         }
-        d->background->setEnabledBorders(Plasma::PanelSvg::RightBorder);
+        d->background->setEnabledBorders(Plasma::FrameSvg::RightBorder);
         d->extLayout->setContentsMargins(0, 0, d->background->marginSize(Plasma::RightMargin), 0);
 
         break;
@@ -603,7 +603,7 @@ void PanelController::setLocation(const Plasma::Location &loc)
         } else {
             d->extLayout->setDirection(QBoxLayout::LeftToRight);
         }
-        d->background->setEnabledBorders(Plasma::PanelSvg::LeftBorder);
+        d->background->setEnabledBorders(Plasma::FrameSvg::LeftBorder);
         d->extLayout->setContentsMargins(d->background->marginSize(Plasma::LeftMargin), 0, 0, 0);
 
         break;
@@ -614,7 +614,7 @@ void PanelController::setLocation(const Plasma::Location &loc)
             d->layout->setDirection(QBoxLayout::LeftToRight);
         }
         d->extLayout->setDirection(QBoxLayout::BottomToTop);
-        d->background->setEnabledBorders(Plasma::PanelSvg::BottomBorder);
+        d->background->setEnabledBorders(Plasma::FrameSvg::BottomBorder);
         d->extLayout->setContentsMargins(0, 0, 0, d->background->marginSize(Plasma::BottomMargin));
 
         break;
@@ -626,7 +626,7 @@ void PanelController::setLocation(const Plasma::Location &loc)
             d->layout->setDirection(QBoxLayout::LeftToRight);
         }
         d->extLayout->setDirection(QBoxLayout::TopToBottom);
-        d->background->setEnabledBorders(Plasma::PanelSvg::TopBorder);
+        d->background->setEnabledBorders(Plasma::FrameSvg::TopBorder);
         d->extLayout->setContentsMargins(0, d->background->marginSize(Plasma::TopMargin), 0, 0);
 
         break;
@@ -759,8 +759,8 @@ void PanelController::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.setCompositionMode(QPainter::CompositionMode_Source );
 
-    d->background->resizePanel(size());
-    d->background->paintPanel(&painter);
+    d->background->resizeFrame(size());
+    d->background->paintFrame(&painter);
 }
 
 bool PanelController::eventFilter(QObject *watched, QEvent *event)
@@ -791,17 +791,17 @@ bool PanelController::eventFilter(QObject *watched, QEvent *event)
             if (d->dragging == Private::ResizeButtonElement) {
                 switch (location()) {
                 case Plasma::LeftEdge:
-                    d->resizePanelHeight(geometry().left() - screenGeom.left());
+                    d->resizeFrameHeight(geometry().left() - screenGeom.left());
                     break;
                 case Plasma::RightEdge:
-                    d->resizePanelHeight(screenGeom.right() - geometry().right());
+                    d->resizeFrameHeight(screenGeom.right() - geometry().right());
                     break;
                 case Plasma::TopEdge:
-                    d->resizePanelHeight(geometry().top() - screenGeom.top());
+                    d->resizeFrameHeight(geometry().top() - screenGeom.top());
                     break;
                 case Plasma::BottomEdge:
                 default:
-                    d->resizePanelHeight(screenGeom.bottom() - geometry().bottom());
+                    d->resizeFrameHeight(screenGeom.bottom() - geometry().bottom());
                     break;
                 }
             }
@@ -892,7 +892,7 @@ void PanelController::mouseMoveEvent(QMouseEvent *event)
         }
 
         return;
-    } 
+    }
 
     //Resize handle moved
     switch (location()) {

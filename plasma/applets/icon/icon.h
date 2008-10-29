@@ -32,7 +32,7 @@ class QEvent;
 
 namespace Plasma
 {
-    class Icon;
+    class IconWidget;
 }
 
 class IconApplet : public Plasma::Applet
@@ -67,7 +67,7 @@ class IconApplet : public Plasma::Applet
                       const KUrl& destination,
                       Qt::KeyboardModifiers modifier);
 
-        Plasma::Icon* m_icon;
+        Plasma::IconWidget* m_icon;
         QString m_text;
         QString m_genericName;
         KPropertiesDialog *m_dialog;

@@ -45,7 +45,7 @@
 #include <plasma/widgets/lineedit.h>
 #include <plasma/widgets/meter.h>
 #include <plasma/packagestructure.h>
-#include <plasma/panelsvg.h>
+#include <plasma/framesvg.h>
 #include <plasma/widgets/pushbutton.h>
 #include <plasma/widgets/radiobutton.h>
 #include <plasma/runnercontext.h>
@@ -142,8 +142,8 @@ public:
         sipClass = sipClass_Plasma_CheckBox;
     else if (dynamic_cast<Plasma::ComboBox*>(sipCpp))
         sipClass = sipClass_Plasma_ComboBox;
-    else if (dynamic_cast<Plasma::ConfigXml*>(sipCpp))
-        sipClass = sipClass_Plasma_ConfigXml;
+    else if (dynamic_cast<Plasma::ConfigLoader*>(sipCpp))
+        sipClass = sipClass_Plasma_ConfigLoader;
     else if (dynamic_cast<Plasma::Corona*>(sipCpp))
         sipClass = sipClass_Plasma_Corona;
     else if (dynamic_cast<Plasma::DataContainer*>(sipCpp))
@@ -191,8 +191,8 @@ public:
     else if (dynamic_cast<Plasma::Svg*>(sipCpp))
         {
             sipClass = sipClass_Plasma_Svg;
-            if (dynamic_cast<Plasma::PanelSvg*>(sipCpp))
-                sipClass = sipClass_Plasma_PanelSvg;
+            if (dynamic_cast<Plasma::FrameSvg*>(sipCpp))
+                sipClass = sipClass_Plasma_FrameSvg;
         }
     else if (dynamic_cast<Plasma::TextEdit*>(sipCpp))
         sipClass = sipClass_Plasma_TextEdit;

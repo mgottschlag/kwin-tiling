@@ -59,7 +59,7 @@
 #include <plasma/widgets/pushbutton.h>
 #include <plasma/widgets/checkbox.h>
 #include <plasma/widgets/combobox.h>
-#include <plasma/widgets/icon.h>
+#include <plasma/widgets/iconwidget.h>
 
 
 Battery::Battery(QObject *parent, const QVariantList &args)
@@ -371,7 +371,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
                 this, SLOT(updateSlider(float)));
         controlsLayout->addItem(m_brightnessSlider, row, 1, 1, 1);
 
-        Plasma::Icon *brightnessIcon = new Plasma::Icon(controls);
+        Plasma::IconWidget *brightnessIcon = new Plasma::IconWidget(controls);
         brightnessIcon->setIcon("ktip");
         connect(brightnessIcon, SIGNAL(clicked()),
                 this, SLOT(setFullBrightness()));
@@ -412,7 +412,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
                 // Not interesting at this point ...
 
             } else if (sleepstate == Solid::PowerManagement::SuspendState) {
-                Plasma::Icon *suspendButton = new Plasma::Icon(controls);
+                Plasma::IconWidget *suspendButton = new Plasma::IconWidget(controls);
                 suspendButton->setIcon("system-suspend");
                 suspendButton->setText(i18n("Sleep"));
                 suspendButton->setOrientation(Qt::Horizontal);
@@ -422,7 +422,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
                 connect(suspendButton, SIGNAL(clicked()), this, SLOT(suspend()));
                 actionsLayout->setColumnSpacing(0, 20);
             } else if (sleepstate == Solid::PowerManagement::HibernateState) {
-                Plasma::Icon *hibernateButton = new Plasma::Icon(controls);
+                Plasma::IconWidget *hibernateButton = new Plasma::IconWidget(controls);
                 hibernateButton->setIcon("system-suspend-hibernate");
                 hibernateButton->setText(i18n("Hibernate"));
                 hibernateButton->setOrientation(Qt::Horizontal);
@@ -437,7 +437,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         row++;
 
         // More settings button
-        Plasma::Icon *configButton = new Plasma::Icon(controls);
+        Plasma::IconWidget *configButton = new Plasma::IconWidget(controls);
         configButton->setText(i18n("More..."));
         configButton->setOrientation(Qt::Horizontal);
         configButton->setMaximumHeight(36);

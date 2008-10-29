@@ -23,7 +23,7 @@ libplasma
         * PackageStructure supports arbitrary URIs (in addition to auto-discovery for package) structure description files.
         * Package removal
         * Package browsing interface can be provided by the PackageStructure plugin, allowing for 3rd party widget collectionsto offer online browsing and fetching customizations
-    * PanelSvg
+    * FrameSvg
         * setting the margins via in-SVG hints
         * paintPanel API additions to make it more like QPainter and Plasma::Svg
     * Runners

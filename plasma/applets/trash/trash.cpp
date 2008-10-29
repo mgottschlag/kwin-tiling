@@ -44,7 +44,7 @@
 #include <KIO/JobUiDelegate>
 
 //Plasma
-#include <plasma/widgets/icon.h>
+#include <plasma/widgets/iconwidget.h>
 #include <plasma/containment.h>
 #include <plasma/tooltipmanager.h>
 
@@ -67,7 +67,7 @@ Trash::Trash(QObject *parent, const QVariantList &args)
     setHasConfigurationInterface(true);
     setAspectRatioMode(Plasma::ConstrainedSquare);
 
-    m_icon = new Plasma::Icon(KIcon("user-trash"),QString(),this);
+    m_icon = new Plasma::IconWidget(KIcon("user-trash"),QString(),this);
     m_icon->setNumDisplayLines(2);
     m_icon->setDrawBackground(true);
 
@@ -229,7 +229,7 @@ void Trash::updateIcon()
     }
 
     m_icon->update();
-    
+
     data.image = m_icon->icon().pixmap(IconSize(KIconLoader::Desktop));
 
     if (!m_showText) {

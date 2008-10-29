@@ -25,7 +25,7 @@
 
 namespace Plasma
 {
-    class PanelSvg;
+    class FrameSvg;
 }
 
 class ToolButton: public QToolButton
@@ -45,7 +45,7 @@ protected slots:
 
 private:
     QAction *m_action;
-    Plasma::PanelSvg *m_background;
+    Plasma::FrameSvg *m_background;
 };
 
 #endif
