@@ -3,7 +3,7 @@ Exec=kcmshell4 keyboard_layout
 Icon=preferences-desktop-keyboard-layout
 Type=Service
 X-KDE-ServiceTypes=KCModule,KCModuleInit
-X-DocPath=kcontrol/kxkb/index.html
+X-DocPath=kxkb/index.html
 
 X-KDE-Library=kcm_keyboard_layout
 X-KDE-PluginKeyword=keyboard_layout
