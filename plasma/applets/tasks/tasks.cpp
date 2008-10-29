@@ -98,7 +98,7 @@ void Tasks::init()
     */
 
     m_groupTaskItems.insert(m_rootGroupItem->group(), m_rootGroupItem);
-    connect(m_rootGroupItem, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SIGNAL(sizeHintChanged(Qt::SizeHint)));
+    connect(m_rootGroupItem, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(changeSizeHint(Qt::SizeHint)));
 
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
     //like in Qt's designer
@@ -122,7 +122,16 @@ void Tasks::init()
     m_groupManager->setShowOnlyCurrentScreen( cg.readEntry("showOnlyCurrentScreen", false));
     m_groupManager->setShowOnlyMinimized( cg.readEntry("showOnlyMinimized", false));
     m_showTooltip = cg.readEntry("showTooltip", true);
-    m_groupManager->setGroupingStrategy( static_cast<TaskManager::GroupManager::TaskGroupingStrategy>(cg.readEntry("groupingStrategy", static_cast<int>(TaskManager::GroupManager::ProgramGrouping))));
+
+    m_groupingStrategy = static_cast<TaskManager::GroupManager::TaskGroupingStrategy>(cg.readEntry("groupingStrategy", static_cast<int>(TaskManager::GroupManager::ProgramGrouping)));
+    m_groupWhenFull = cg.readEntry("groupWhenFull", true);
+
+    if (m_groupWhenFull && m_groupingStrategy == TaskManager::GroupManager::ProgramGrouping) {
+        m_groupManager->setGroupingStrategy(TaskManager::GroupManager::NoGrouping);
+    } else {
+        m_groupManager->setGroupingStrategy(m_groupingStrategy);
+    }
+
     m_groupManager->setSortingStrategy( static_cast<TaskManager::GroupManager::TaskSortingStrategy>(cg.readEntry("sortingStrategy", static_cast<int>(TaskManager::GroupManager::AlphaSorting))));
     m_rootGroupItem->setMaxRows( cg.readEntry("maxRows", 2));
     m_rootGroupItem->setForceRows( cg.readEntry("forceRows", false));
@@ -196,7 +205,7 @@ void Tasks::itemRemoved(TaskManager::AbstractGroupableItem *item)
 {
     //kDebug();
     if (!item->isGroupItem()) {
-	removeItem(m_items.value(item));
+        removeItem(m_items.value(item));
     }
 }
 
@@ -279,6 +288,10 @@ void Tasks::constraintsEvent(Plasma::Constraints constraints)
         if (appletContainment) {
             m_groupManager->setScreen(appletContainment->screen());
         }
+    }
+
+    if (constraints & Plasma::SizeConstraint) {
+        adjustGroupingStrategy();
     }
 
     emit constraintsChanged(constraints);
@@ -372,6 +385,39 @@ QSizeF Tasks::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
     }
 }
 
+void Tasks::adjustGroupingStrategy()
+{
+    if (m_groupingStrategy != TaskManager::GroupManager::ProgramGrouping ||
+        !m_groupWhenFull) {
+        if (m_groupingStrategy != m_groupManager->groupingStrategy()) {
+             m_groupManager->setGroupingStrategy(m_groupingStrategy);
+        }
+        return;
+    }
+
+    bool wantsGrouping;
+
+    if (m_items.count() == 0) {
+        wantsGrouping = false;
+    } else {
+        //FIXME: should use AbstractTaskItem::basicPreferredSize() but it seems to cause crashes
+        QSize itemSize = QSize(200, 20);
+        wantsGrouping = ((size().width()*size().height()) / (itemSize.width()*itemSize.height())) < m_items.count();
+    }
+
+    if (wantsGrouping) {
+        m_groupManager->setGroupingStrategy(TaskManager::GroupManager::ProgramGrouping);
+    } else {
+        m_groupManager->setGroupingStrategy(TaskManager::GroupManager::NoGrouping);
+    }
+}
+
+void Tasks::changeSizeHint(Qt::SizeHint which)
+{
+    emit sizeHintChanged(which);
+    adjustGroupingStrategy();
+}
+
 void Tasks::createConfigurationInterface(KConfigDialog *parent)
 {
      QWidget *widget = new QWidget;
@@ -391,7 +437,9 @@ void Tasks::createConfigurationInterface(KConfigDialog *parent)
     m_ui.groupingStrategy->addItem(i18n("Manually"),QVariant(TaskManager::GroupManager::ManualGrouping));
     m_ui.groupingStrategy->addItem(i18n("By Program Name"),QVariant(TaskManager::GroupManager::ProgramGrouping));
 
-    switch (m_groupManager->groupingStrategy()) {
+    connect(m_ui.groupingStrategy, SIGNAL(currentIndexChanged(int)), this, SLOT(dialogGroupingChanged(int)));
+
+    switch (m_groupingStrategy) {
         case TaskManager::GroupManager::NoGrouping:
             m_ui.groupingStrategy->setCurrentIndex(0);
             break;
@@ -406,9 +454,13 @@ void Tasks::createConfigurationInterface(KConfigDialog *parent)
     }
   //  kDebug() << m_groupManager->groupingStrategy();
 
+    m_ui.groupWhenFull->setChecked(m_groupWhenFull);
+
+
     m_ui.sortingStrategy->addItem(i18n("Do Not Sort"),QVariant(TaskManager::GroupManager::NoSorting));
     m_ui.sortingStrategy->addItem(i18n("Manually"),QVariant(TaskManager::GroupManager::ManualSorting));
     m_ui.sortingStrategy->addItem(i18n("Alphabetically"),QVariant(TaskManager::GroupManager::AlphaSorting));
+
 
     switch (m_groupManager->sortingStrategy()) {
         case TaskManager::GroupManager::NoSorting:
@@ -425,6 +477,11 @@ void Tasks::createConfigurationInterface(KConfigDialog *parent)
     }
  //   kDebug() << m_groupManager->sortingStrategy();
     m_ui.maxRows->setValue(m_rootGroupItem->maxRows());
+}
+
+void Tasks::dialogGroupingChanged(int index)
+{
+     m_ui.groupWhenFull->setEnabled(static_cast<TaskManager::GroupManager::TaskGroupingStrategy>(m_ui.groupingStrategy->itemData(index).toInt()) == TaskManager::GroupManager::ProgramGrouping);
 }
 
 void Tasks::configAccepted()
@@ -450,9 +507,15 @@ void Tasks::configAccepted()
         changed = true;
     }
 
-    if (m_groupManager->groupingStrategy() != (m_ui.groupingStrategy->currentIndex())) {
-        m_groupManager->setGroupingStrategy(static_cast<TaskManager::GroupManager::TaskGroupingStrategy>(m_ui.groupingStrategy->itemData(m_ui.groupingStrategy->currentIndex()).toInt()));
+    if (m_groupingStrategy != (m_ui.groupingStrategy->currentIndex()) ||
+        m_groupWhenFull != m_ui.groupWhenFull->isChecked()) {
+        m_groupingStrategy = static_cast<TaskManager::GroupManager::TaskGroupingStrategy>(m_ui.groupingStrategy->itemData(m_ui.groupingStrategy->currentIndex()).toInt());
+        m_groupWhenFull = m_ui.groupWhenFull->isChecked();
+
+        adjustGroupingStrategy();
+
         KConfigGroup cg = config();
+        cg.writeEntry("groupWhenFull", m_groupWhenFull);
         cg.writeEntry("groupingStrategy", static_cast<int>(m_groupManager->groupingStrategy()));
         changed = true;
     }

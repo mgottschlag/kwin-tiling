@@ -68,7 +68,7 @@ public:
 
     /** Returns Direct Member group if the passed item is in a subgroup */
     AbstractTaskItem *directMember(AbstractTaskItem *);
-    
+
     /** Maximum number of Rows the group will have */
     int maxRows();
     //TODO remove and calculate reasonable value in the layout itself

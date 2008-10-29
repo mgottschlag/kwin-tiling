@@ -124,7 +124,7 @@ public:
 
     void setLayoutWidget(LayoutWidget* widget);
     TaskManager::AbstractItemPtr abstractItem();
-    
+
     /** Returns the preferred size calculated on base of the fontsize and the iconsize*/
     QSize basicPreferredSize() const;
 

@@ -125,6 +125,7 @@ protected slots:
 protected:
         void createConfigurationInterface(KConfigDialog *parent);
         QSizeF sizeHint(Qt::SizeHint which, const QSizeF & constraint = QSizeF()) const;
+        void adjustGroupingStrategy();
 
 private slots:
         /**
@@ -132,10 +133,11 @@ private slots:
         */
         void reload();
         void itemRemoved(AbstractGroupableItem*);
+        void changeSizeHint(Qt::SizeHint which);
+        void dialogGroupingChanged(int index);
         //startupRemoved(TaskManager::AbstractGroupableItem*);
 
 private:
-
         QHash<TaskPtr,WindowTaskItem*> m_windowTaskItems;
         QHash<GroupPtr,TaskGroupItem*> m_groupTaskItems;
         QHash<StartupPtr,WindowTaskItem*> m_startupTaskItems;
@@ -155,7 +157,7 @@ private:
 
         Plasma::FrameSvg *m_taskItemBackground;
         QPixmap *m_taskAlphaPixmap;
-	QHash <int,QPixmap*> m_taskAlphaPixmapList;
+        QHash <int,QPixmap*> m_taskAlphaPixmapList;
         KColorScheme *m_colorScheme;
         qreal m_leftMargin;
         qreal m_topMargin;
@@ -164,7 +166,8 @@ private:
 
         TaskGroupItem *m_rootGroupItem;
         GroupManager *m_groupManager;
-
+        TaskManager::GroupManager::TaskGroupingStrategy m_groupingStrategy;
+        bool m_groupWhenFull;
         Qt::KeyboardModifier m_groupModifierKey;
 
         int m_currentDesktop;
