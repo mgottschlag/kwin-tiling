@@ -32,7 +32,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "groupmanager.h"
 #include "taskmanager.h"
 
-//#define QT_NO_DEBUG
 
 namespace TaskManager
 {
@@ -88,7 +87,6 @@ QList<QAction*> ManualGroupingStrategy::strategyActions(QObject *parent, Abstrac
         connect(a, SIGNAL(triggered()), this, SLOT(leaveGroup()));
         actionList.append(a);
         d->tempItem = item;
-     //   actionList.append(LeaveGroupAction(groupManager,))
     }
 
     if (item->isGroupItem()) {
@@ -189,10 +187,10 @@ void ManualGroupingStrategy::desktopChanged(int newDesktop)
     if (d->oldDesktop == newDesktop) {
         return;
     }
-    
+
     //Store the group under the current Desktop
     if (d->currentTemplate) {
-        d->currentTemplate->clear(); //crash, for some reason the template seems to be invalid here
+        d->currentTemplate->clear();
     }
     kDebug();
     TaskGroupTemplate *group = createDuplication(d->groupManager->rootGroup());
@@ -200,7 +198,7 @@ void ManualGroupingStrategy::desktopChanged(int newDesktop)
     if (d->templateTrees.contains(newDesktop)) {
         kDebug() << "Template found";
         d->currentTemplate = d->templateTrees.value(newDesktop);
-        connect (d->currentTemplate, SIGNAL(destroyed()), this, SLOT(resetCurrentTemplate())); //because the template is possibly already destroyed on the next clear from above
+        connect (d->currentTemplate, SIGNAL(destroyed()), this, SLOT(resetCurrentTemplate()));
     } else {
         d->currentTemplate = 0;
     }
@@ -313,7 +311,6 @@ TaskGroupTemplate::TaskGroupTemplate(ManualGroupingStrategy *parent, TaskGroup *
         d->color = group->color();
         d->icon = group->icon();
         setGroup(group);
-        //connect(group, SIGNAL(destroyed()), this, SLOT(closeGroup()));
         foreach (AbstractGroupableItem *item, group->members()) {
             //We don't use TaskGroup::add because this would inform the tasks about the change of the group
             //and we use the taskgroup just as a temporary container

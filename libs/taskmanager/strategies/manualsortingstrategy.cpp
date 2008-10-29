@@ -72,11 +72,10 @@ ManualSortingStrategy::ManualSortingStrategy(GroupManager *parent)
 
 ManualSortingStrategy::~ManualSortingStrategy()
 {
-   // d->managedItems = 0;
     if (d->desktops) {
         foreach(itemHashTable *table, *d->desktops) {
             if (table) {
-                delete table;       
+                delete table;
             }
         }
         delete d->desktops;
@@ -87,25 +86,29 @@ ManualSortingStrategy::~ManualSortingStrategy()
 void ManualSortingStrategy::storePositions(TaskGroup *group)
 {
     Q_ASSERT(group);
-    foreach (AbstractGroupableItem *item, group->members()) {
+    for(int i = 0; i < group->members().size(); i++) {
+        AbstractGroupableItem *item = group->members().at(i);
         Q_ASSERT(item);
         if (item->isGroupItem()) {
-            d->managedItems->insert(item, group->members().indexOf(item));
+            d->managedItems->insert(item, i);
             storePositions(dynamic_cast<TaskGroup*>(item));
         } else {
-            d->managedItems->insert(item, group->members().indexOf(item));
+            d->managedItems->insert(item, i);
         }
+        kDebug() << item << i;
     }
 }
 
-//Here we should store all infos about the grouping
+//Here we should store all infos about the sorting
 void ManualSortingStrategy::desktopChanged(int newDesktop)
 {
+    kDebug() << "Desktop changed" << d->oldDesktop << newDesktop;
     //store positions of old desktop
     d->managedItems->clear();
     storePositions(d->groupingStrategy->rootGroup());
     d->desktops->insert(d->oldDesktop, d->managedItems);
 
+    //load positions of new desktop
     if (d->desktops->contains(newDesktop)) {
         d->managedItems = d->desktops->value(newDesktop);
     } else {
@@ -117,12 +120,11 @@ void ManualSortingStrategy::desktopChanged(int newDesktop)
 
 void ManualSortingStrategy::sortItems(ItemList &items)
 {
-
     kDebug();
+
     QMap<int, AbstractGroupableItem*> map;
     int i = 1000;
     foreach (AbstractGroupableItem *item, items) {
-       // if (item->isGroupItem()) {
         if (d->managedItems->contains(item)) {
             map.insertMulti(d->managedItems->value(item), item);
         } else {//make sure unkwown items are appended
@@ -133,12 +135,9 @@ void ManualSortingStrategy::sortItems(ItemList &items)
     }
     items.clear();
     items = map.values();
-
-    /*while (!map.empty()) {
-        items.append(map.take(keyList.takeFirst()));
-    }*/
 }
 
+//since we have no way of knowing about a desktop change before it happens we have to track every single change....
 void ManualSortingStrategy::handleItem(AbstractItemPtr item)
 {
     if (d->managedItems->contains(item)) {

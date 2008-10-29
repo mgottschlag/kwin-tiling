@@ -352,14 +352,14 @@ void GroupManagerPrivate::currentDesktopChanged(int newDesktop)
 
 void GroupManagerPrivate::taskChanged(TaskPtr task, ::TaskManager::TaskChanges changes)
 {
-    //kDebug();
+    kDebug();
     bool takeAction = false;
     bool show = true;
 
     if (showOnlyCurrentDesktop && changes & ::TaskManager::DesktopChanged) {
         takeAction = true;
         show = task->isOnCurrentDesktop();
-        //kDebug() << task->visibleName() << "on" << TaskManager::self()->currentDesktop();
+        kDebug() << task->visibleName() << "on" << TaskManager::self()->currentDesktop();
     }
 
     if (showOnlyMinimized && changes & ::TaskManager::StateChanged) {
@@ -379,10 +379,10 @@ void GroupManagerPrivate::taskChanged(TaskPtr task, ::TaskManager::TaskChanges c
     }
 
     if (show) {
-        //kDebug() << "add(task);";
+        kDebug() << "add(task);";
         q->add(task);
     } else {
-        //kDebug() << "remove(task);";
+        kDebug() << "remove(task);";
         q->remove(task);
     }
 }

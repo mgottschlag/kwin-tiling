@@ -116,9 +116,6 @@ public Q_SLOTS:
     /** Removes all tasks and groups from this group */
     void clear();
 
-    /** remove this group, passes all members to grouping strategy*/
- //   void closeGroup();
-
 Q_SIGNALS:
     /** inform visualization about wat is added and removed */
     void itemAdded(const AbstractItemPtr item);

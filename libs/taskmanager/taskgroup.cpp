@@ -26,7 +26,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "taskmanager.h"
 #include "taskitem.h"
 #include "groupmanager.h"
-//#include "abstractsortingstrategy.h"
 
 // Qt
 #include <QColor>
@@ -85,21 +84,9 @@ TaskGroup::TaskGroup(GroupManager *parent)
 TaskGroup::~TaskGroup()
 {
     kDebug() << name();
-    //clear();
     delete d;
 }
-/*
-void TaskGroup::closeGroup()
-{
-    foreach(AbstractItemPtr item, d->members) { //delete all existing tasks
-        if (item->isGroupItem()) { 
-            (dynamic_cast<GroupPtr>(item))->clear();//FIXME is this reasonable or should they only be removed?
-        }
-        remove(item);
-    }
-    deleteLater();
-    kDebug() << "Not implemented";
-}*/
+
 
 void TaskGroup::add(AbstractItemPtr item)
 {

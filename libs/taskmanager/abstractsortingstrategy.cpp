@@ -78,13 +78,11 @@ void AbstractSortingStrategy::handleGroup(TaskGroup *group)
     }
     d->managedGroups.append(group);
     disconnect(group, 0, this, 0); //To avoid duplicate connections
-   // connect(group, SIGNAL(changed()), this, SLOT(check()));
     connect(group, SIGNAL(itemAdded(AbstractItemPtr)), this, SLOT(handleItem(AbstractItemPtr)));
     connect(group, SIGNAL(destroyed()), this, SLOT(removeGroup())); //FIXME necessary?
     foreach (AbstractItemPtr item, group->members()) {
         handleItem(item);
     }
-
 }
 
 void AbstractSortingStrategy::removeGroup()
@@ -106,7 +104,7 @@ void AbstractSortingStrategy::handleItem(AbstractItemPtr item)
         return;
     }
     disconnect(item, 0, this, 0); //To avoid duplicate connections
-    connect(item, SIGNAL(changed()), this, SLOT(check()));
+   // connect(item, SIGNAL(changed(::TaskManager::TaskChanges)), this, SLOT(check()));
     check(item);
 }
 

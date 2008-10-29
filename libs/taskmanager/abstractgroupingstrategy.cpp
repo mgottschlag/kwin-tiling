@@ -26,7 +26,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <KDebug>
 #include <KIcon>
 
-//#include "abstractsortingstrategy.h"
 #include "task.h"
 
 namespace TaskManager
@@ -98,15 +97,11 @@ TaskGroup* AbstractGroupingStrategy::createGroup(ItemList items)
 
     TaskGroup *newGroup = new TaskGroup(d->groupManager);
     d->createdGroups.append(newGroup);
-    //connect(newGroup, SIGNAL(empty(TaskGroup*)), this, SLOT(closeGroup(TaskGroup*)));
     connect(newGroup, SIGNAL(itemRemoved(AbstractItemPtr)), this, SLOT(checkGroup()));
     foreach (AbstractItemPtr item, items) {
         newGroup->add(item);
     }
     oldGroup->add(newGroup);
-  /*  if (d->groupManager->taskSorter()) {
-        //d->groupManager->taskSorter()->handleGroup(newGroup);
-    }*/
     return newGroup;
 }
 

@@ -33,8 +33,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 namespace TaskManager
 {
 
-//class GroupManager;
-
 /**
  * Base class for strategies which can be used to
  * automatically sort tasks.
@@ -49,7 +47,7 @@ public:
      /** Returns the strategy type */
     GroupManager::TaskSortingStrategy type() const;
 
-    /** Adds group under control of sorting strategy. all added supgroups are automatically added to this sortingStrategy*/
+    /** Adds group under control of sorting strategy. all added subgroups are automatically added to this sortingStrategy*/
     void handleGroup(TaskGroup *);
 
     /** DesktopChanges time to backup any needed data */
@@ -59,9 +57,9 @@ public:
     bool moveItem(AbstractItemPtr, int);
 
 protected Q_SLOTS:
-     /** Handles a new item*/
+     /** Handles a new item, is typically called after an item was added to a handled group*/
     virtual void handleItem(AbstractItemPtr);
-     /** Checks if the order has to be updated must be connect to AbstractGroupableItem* */
+     /** Checks if the order has to be updated. Must be connected to a AbstractGroupableItem* */
     void check(AbstractItemPtr item = 0);
     void removeGroup(); //FIXME necessary?
 
