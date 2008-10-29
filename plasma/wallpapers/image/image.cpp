@@ -408,9 +408,8 @@ void Image::showFileDialog()
 {
     if (!m_dialog) {
         m_dialog = new KFileDialog(KUrl(), "*.png *.jpeg *.jpg *.svg *.svgz", m_widget);
-        KImageFilePreview *previewWidget = new KImageFilePreview(m_dialog);
-        m_dialog->setPreviewWidget(previewWidget);
         m_dialog->setOperationMode(KFileDialog::Opening);
+        m_dialog->setInlinePreviewShown(true);
         m_dialog->setCaption(i18n("Select Wallpaper Image File"));
         m_dialog->setModal(false);
     }
