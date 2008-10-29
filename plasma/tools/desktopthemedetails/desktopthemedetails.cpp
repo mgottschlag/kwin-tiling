@@ -477,7 +477,7 @@ void DesktopThemeDetails::exportTheme()
         QString themePath = dirs.locate("data", "desktoptheme/" + themeStoragePath);
         QString expFileName = KFileDialog::getSaveFileName(KUrl(), "*.zip", this, "Export theme to file");
         if (!expFileName.endsWith(".zip")) expFileName = expFileName + ".zip";
-        if (expFileName != "") {
+        if (!expFileName.isEmpty()) {
             KZip expFile(expFileName);
             expFile.open(QIODevice::WriteOnly);
             expFile.addLocalDirectory(themePath, themeStoragePath);
