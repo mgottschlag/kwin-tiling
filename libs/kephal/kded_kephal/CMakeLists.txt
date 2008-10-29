@@ -46,7 +46,7 @@ QT4_ADD_DBUS_ADAPTOR (kded_kephal_SRCS ${CMAKE_CURRENT_BINARY_DIR}/org.kde.Kepha
         dbus/dbusapi_configurations.h DBusAPIConfigurations)
         
 KDE4_ADD_PLUGIN (kded_kephal ${kded_kephal_SRCS})
-TARGET_LINK_LIBRARIES (kded_kephal ${KDE4_KDECORE_LIBS} ${QT_LIBRARIES} ${X11_LIBRARIES} ${X11_Xrandr_LIB})
+TARGET_LINK_LIBRARIES (kded_kephal ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} ${QT_LIBRARIES} ${X11_LIBRARIES} ${X11_Xrandr_LIB})
 
 INSTALL (TARGETS kded_kephal DESTINATION ${PLUGIN_INSTALL_DIR})
 INSTALL (FILES

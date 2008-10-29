@@ -24,6 +24,7 @@
 #include <QDBusConnection>
 #include <QApplication>
 #include <QAbstractEventDispatcher>
+#include <QThread>
 
 
 #include "outputs/desktopwidget/desktopwidgetoutputs.h"
@@ -35,6 +36,8 @@
 #include "configurations/xml/xmlconfigurations.h"
 #include "xrandr12/randrdisplay.h"
 #include "xrandr12/randrscreen.h"
+
+
 
 
 using namespace Kephal;

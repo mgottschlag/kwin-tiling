@@ -145,7 +145,7 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 		if (currentCrtc != None)
 			m_crtc->loadSettings(true);
 			//m_screen->crtc(m_currentCrtc)->loadSettings(true);
-		setCrtc(m_screen->crtc(event->crtc));
+		m_crtc = m_screen->crtc(event->crtc);
 		if (currentCrtc != None)
 			m_crtc->loadSettings(true);
 	}
@@ -161,7 +161,7 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 		changed |= RandR::ChangeConnection;
 		m_connected = (event->connection == RR_Connected);
 		if (!m_connected && currentCrtc != None)
-			setCrtc(None);
+			m_crtc = None;
 	}
 
 	if(changed)

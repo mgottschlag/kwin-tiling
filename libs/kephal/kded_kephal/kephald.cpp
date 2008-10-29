@@ -60,6 +60,9 @@ KephalD::KephalD(QObject* parent, const QList<QVariant>&)
 
 KephalD::~KephalD()
 {
+    if (m_eventFilter) {
+        delete m_eventFilter;
+    }
 }
 
 void KephalD::init() {
@@ -99,6 +102,9 @@ void KephalD::init() {
     new DBusAPIConfigurations(this);
     
     if (m_outputs) {
+        m_eventFilter = new X11EventFilter(m_outputs);
+        kapp->installX11EventFilter(m_eventFilter);
+
         m_pollTimer = new QTimer(this);
         connect(m_pollTimer, SIGNAL(timeout()), this, SLOT(poll()));
         if (Configurations::self()->polling()) {
@@ -106,6 +112,7 @@ void KephalD::init() {
         }
     } else {
         m_pollTimer = 0;
+        m_eventFilter = 0;
     }
 }
 
@@ -146,6 +153,15 @@ void KephalD::outputDisconnected(Output * output) {
 void KephalD::outputConnected(Output * output) {
     Q_UNUSED(output)
     activateConfiguration();
+}
+
+
+bool X11EventFilter::x11Event(XEvent * e) {
+    if (m_outputs && m_outputs->display()->canHandle(e)) {
+        m_outputs->display()->handleEvent(e);
+    }
+    
+    return false;
 }
 
 

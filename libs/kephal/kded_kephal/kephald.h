@@ -22,6 +22,8 @@
 #define KEPHALD_H
 
 #include <QList>
+#include <QWidget>
+#include <KApplication>
 #include <kdedmodule.h>
 
 class QTimer;
@@ -33,6 +35,21 @@ namespace Kephal {
 }
 
 using namespace Kephal;
+
+
+class X11EventFilter : public QWidget
+{
+    Q_OBJECT
+    public:
+        X11EventFilter(XRandROutputs * outputs)
+            : m_outputs(outputs) { }
+
+    protected:
+        bool x11Event(XEvent * event);
+
+    private:
+        XRandROutputs * m_outputs;
+};
 
 
 class KephalD : public KDEDModule
@@ -56,6 +73,7 @@ class KephalD : public KDEDModule
         bool m_noXRandR;
         XRandROutputs * m_outputs;
         QTimer * m_pollTimer;
+        X11EventFilter * m_eventFilter;
 };
 
 

@@ -153,7 +153,7 @@ namespace Kephal {
     }
     
     void OutputScreens::rebuildScreens() {
-        qDebug() << "OutputScreens::rebuildScreens()";
+        //qDebug() << "OutputScreens::rebuildScreens()";
         
         QMap<int, QRect> geoms;
         for (QMap<int, OutputScreen *>::const_iterator i = m_screens.constBegin(); i != m_screens.constEnd(); ++i) {

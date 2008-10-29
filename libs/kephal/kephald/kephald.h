@@ -21,8 +21,13 @@
 #ifndef KEPHALD_H
 #define KEPHALD_H
 
+#include <QDebug>
+#include <QDBusConnection>
 #include <QApplication>
 #include <QTimer>
+
+#include "outputs/xrandr/xrandroutputs.h"
+
 
 namespace Kephal {
     class Output;

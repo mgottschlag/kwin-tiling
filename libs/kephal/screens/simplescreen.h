@@ -46,7 +46,7 @@ namespace Kephal {
             
             QList<Output *> outputs();
             
-            void _setId(const int & id);
+            void _setId(int id);
             void _setSize(const QSize & size);
             void _setPosition(const QPoint & position);
             void _setGeom(const QRect & geom);

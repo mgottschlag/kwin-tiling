@@ -137,6 +137,7 @@ namespace Kephal {
         SimpleOutput * o = (SimpleOutput *) output(id);
         if (o) {
             o->_setActivated(true);
+            o->_setSize(m_interface->size(id));
             emit outputActivated(o);
         }
     }

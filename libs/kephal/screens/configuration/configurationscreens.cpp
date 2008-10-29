@@ -43,6 +43,11 @@ namespace Kephal {
             return;
         }
         
+        if (config->name() == "external") {
+            screens.clear();
+            return;
+        }
+        
         QMap<int, QRect> layout = config->realLayout();
         for (QMap<int, QRect>::const_iterator i = layout.constBegin(); i != layout.constEnd(); ++i) {
             if (screens.contains(i.key())) {
