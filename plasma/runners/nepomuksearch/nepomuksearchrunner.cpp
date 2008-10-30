@@ -26,6 +26,8 @@
 
 #include <Nepomuk/Resource>
 
+#include <Soprano/Vocabulary/NAO>
+
 
 Q_DECLARE_METATYPE(Nepomuk::Resource)
 
@@ -115,7 +117,16 @@ void Nepomuk::SearchRunner::match( Plasma::RunnerContext& context )
 void Nepomuk::SearchRunner::run( const Plasma::RunnerContext&, const Plasma::QueryMatch& match )
 {
     Nepomuk::Resource res = match.data().value<Nepomuk::Resource>();
-    (void)new KRun( res.resourceUri(), 0 );
+    QUrl url;
+
+    if( res.hasType( Soprano::Vocabulary::NAO::Tag() ) ) {
+        url = QUrl( QString( "nepomuksearch:/hasTag:\"%1\"" ).arg( res.genericLabel() ) );
+    }
+    else {
+        url = res.resourceUri();
+    }
+	
+    (void)new KRun( url, 0 );
 }
 
 K_EXPORT_PLASMA_RUNNER(nepomuksearchrunner, Nepomuk::SearchRunner)
