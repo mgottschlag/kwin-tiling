@@ -108,6 +108,7 @@ class ResultScene : public QGraphicsScene
         void slotArrowResultItemPressed();
         void slotArrowResultItemReleased();
         void clearMatches();
+        void ensureItemVisible(ResultItem *item);
 };
 
 #endif
