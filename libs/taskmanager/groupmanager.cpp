@@ -69,7 +69,6 @@ public:
     */
     void currentDesktopChanged(int);
     void taskChanged(TaskPtr, ::TaskManager::TaskChanges);
-    void windowChangedGeometry(TaskPtr task);
 
     void checkScreenChange();
 
@@ -368,6 +367,17 @@ void GroupManagerPrivate::taskChanged(TaskPtr task, ::TaskManager::TaskChanges c
         show = task->isMinimized();
     }
 
+    if (changes & ::TaskManager::GeometryChanged) {
+        //kDebug() << "geomtery Changed";
+        if (!geometryTasks.contains(task)) {
+            geometryTasks.append(task);
+        }
+
+        if (!screenTimer.isActive()) {
+            screenTimer.start();
+        }
+    }
+
     //show tasks anyway if they demand attention
     if (changes & ::TaskManager::StateChanged && task->demandsAttention()) {
         takeAction = true;
@@ -394,22 +404,9 @@ void GroupManager::setScreen(int screen)
 }
 
 
-void GroupManagerPrivate::windowChangedGeometry(TaskPtr task)
-{
-    kDebug();
-    if (!geometryTasks.contains(task)) {
-        geometryTasks.append(task);
-    }
-
-    if (!screenTimer.isActive()) {
-        screenTimer.start();
-    }
-}
-
-
 void GroupManagerPrivate::checkScreenChange()
 {
-    kDebug();
+    //kDebug();
     foreach (const TaskPtr &task, geometryTasks) {
         if (!task->isOnScreen(currentScreen) && !task->demandsAttention()) {
             q->remove(task);
@@ -429,7 +426,7 @@ void GroupManager::reconnect()
     disconnect(TaskManager::self(), SIGNAL(windowChanged(TaskPtr,::TaskManager::TaskChanges)),
                this, SLOT(taskChanged(TaskPtr,::TaskManager::TaskChanges)));
 
-    if (d->showOnlyCurrentDesktop || d->showOnlyMinimized) {
+    if (d->showOnlyCurrentDesktop || d->showOnlyMinimized || d->showOnlyCurrentScreen) {
         // listen to the relevant task manager signals
         if (d->showOnlyCurrentDesktop) {
             connect(TaskManager::TaskManager::self(), SIGNAL(desktopChanged(int)),
@@ -440,14 +437,10 @@ void GroupManager::reconnect()
                 this, SLOT(taskChanged(TaskPtr,::TaskManager::TaskChanges)));
     }
 
-    disconnect(TaskManager::TaskManager::self(), SIGNAL(windowChangedGeometry(TaskPtr)),
-               this, SLOT(windowChangedGeometry(TaskPtr)));
-
     if (d->showOnlyCurrentScreen) {
-        // listen to the relevant task manager signals
-        connect(TaskManager::TaskManager::self(), SIGNAL(windowChangedGeometry(TaskPtr)),
-                this, SLOT(windowChangedGeometry(TaskPtr)));
-        TaskManager::TaskManager::self()->trackGeometry();
+        TaskManager::TaskManager::self()->trackGeometry(true);
+    } else {
+        TaskManager::TaskManager::self()->trackGeometry(false);
     }
 
     d->reloadTasks();

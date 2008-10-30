@@ -128,7 +128,7 @@ public:
      * updates. This generates a lot of activity so should only be used
      * when necessary.
      */
-    void trackGeometry();
+    void trackGeometry(bool);
 
     /**
     * Returns whether the Window with WId wid is on the screen screen
@@ -167,7 +167,6 @@ Q_SIGNALS:
      * Emitted when a window changes desktop.
      */
     void windowChanged(TaskPtr task, ::TaskManager::TaskChanges change);
-    void windowChangedGeometry(TaskPtr task);
 
 protected Q_SLOTS:
     //* @internal

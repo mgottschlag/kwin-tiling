@@ -340,11 +340,6 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
         changes = t->refresh(dirty);
     }
 
-    if (changes & GeometryChanged) {
-        changes ^= GeometryChanged;
-        emit windowChangedGeometry(t);
-    }
-
     if (changes != TaskUnchanged) {
         emit windowChanged(t, changes);
     }
@@ -512,9 +507,9 @@ bool TaskManager::isOnTop(const Task* task)
     return false;
 }
 
-void TaskManager::trackGeometry()
+void TaskManager::trackGeometry(bool state)
 {
-    d->trackGeometry = true;
+    d->trackGeometry = state;
 }
 
 bool TaskManager::isOnScreen(int screen, const WId wid)
