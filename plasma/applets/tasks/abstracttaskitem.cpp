@@ -517,9 +517,9 @@ void AbstractTaskItem::drawTextLayout(QPainter *painter, const QTextLayout &layo
     p.end();
 
     QImage shadow = pixmap.toImage();
-    Plasma::PaintUtils::shadowBlur(shadow, 3, textColor(true));
+    Plasma::PaintUtils::shadowBlur(shadow, 2, textColor(true));
 
-    painter->drawImage(rect.topLeft() + QPoint(2,2), shadow);
+    painter->drawImage(rect.topLeft() + QPoint(1,2), shadow);
     painter->drawPixmap(rect.topLeft(), pixmap);
 }
 
