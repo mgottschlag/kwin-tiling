@@ -87,8 +87,8 @@ typing <command>kcmshell4 keyboard_layout</command> from the terminal.</para>
 <sect1 id="general-config">
 <title>General Information</title>
 <para>
-&kxkb; configuration consists of three tabs: Layout, Switching Options, and 
-Advanced. The first one defines layouts you want to use and their options 
+&kxkb; configuration consists of three tabs: <guilabel>Layout</guilabel>, <guilabel>Switching Options</guilabel>, and 
+<guilabel>Advanced</guilabel>. The first one defines layouts you want to use and their options 
 (variant, display label etc.), second defines how the layout switching is done, 
 including which shortcut is used and wether the layout should be remembered for
 each window, application &etc;. Third tab allows to set options for Xkb extension.
@@ -103,17 +103,17 @@ switching is done by X itself.
 </para>
 <note><para>
 &kxkb; configuration does not change anything in X.org configuration 
-files. If <option>Enable keyboard layouts</option> is selected Layout settings 
-from X.org configuration will be overridden and if <option>Reset old options</option> 
+files. If <guilabel>Enable keyboard layouts</guilabel> is selected Layout settings 
+from X.org configuration will be overridden and if <guilabel>Reset old options</guilabel> 
 is turned on Xkb options will be overriden too.
 </para></note>
 <note><para>
-If <option>Reset Old Options</option> is turned off, xkb options selected 
+If <guilabel>Reset old options</guilabel> is turned off, xkb options selected 
 in the configuration will be merged with currently active ones, &ie;
 the ones from the X.org configuration file plus any set later.
 </para></note>
 <para>
-If <option>Enable keyboard layouts</option> is selected &kxkb; initializes 
+If <guilabel>Enable keyboard layouts</guilabel> is selected &kxkb; initializes 
 the layouts with <command>setxkbmap</command> command. In the configuration window
 you can see the command line to be executed during initialization. The same is true
 for xkb options. These commands can be useful for troubleshooting or customizing
@@ -168,13 +168,13 @@ allows you to have one layout per desktop.
 </para>
 <para>
 In shortcuts section you can choose which shortcut is used for switching layouts.
-Shortcut can be modifier-only key combination (&ie; Ctrl+Shift), non-modifier keys
-(&ie; Ctrl+Shift+K) or you can use both. 
+Shortcut can be modifier-only key combination (&ie; <keycombo action="simul">&Ctrl;&Shift;</keycombo>, non-modifier keys
+(&ie; <keycombo action="simul">&Ctrl;&Shift;<keycap>K</keycap></keycombo>) or you can use both. 
 </para>
 <sect2 id="modifier-only-keys">
 <title>Modifier-only shortcuts</title>
 <para>
-These shortcuts are handled by X.org (not &Qt;/&kde;) and are configured in Advanced tab. 
+These shortcuts are handled by X.org (not &Qt;/&kde;) and are configured in <guilabel>Advanced</guilabel> tab. 
 Availabe list of shortcuts is fixed but you can define your own if you know how to 
 change xkb rules and maps. Just note if you hack xkb maps don't forget to change xorg.xml
 rules file as that's where &kxkb; takes the configuration information from.
@@ -224,7 +224,7 @@ from your layout as you type, please check your local settings, &eg;
 <filename>~/.i18n</filename> or
 <filename>/etc/sysconfig/i18n</filename>, locale you have before
 starting &kde; applications must have an encoding which contains
-characters from your layout. Recommended encodning is UTF-8 which should 
+characters from your layout. Recommended encoding is UTF-8 which should 
 work for most languages.
 </para>
 
