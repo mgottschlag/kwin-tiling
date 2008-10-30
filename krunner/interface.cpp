@@ -68,7 +68,6 @@ Interface::Interface(QWidget* parent)
       m_running(false)
 {
     setWindowTitle( i18n("Run Command") );
-    setWindowIcon(KIcon("system-run"));
 
     m_hideResultsTimer.setSingleShot(true);
     connect(&m_hideResultsTimer, SIGNAL(timeout()), this, SLOT(hideResultsArea()));

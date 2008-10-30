@@ -121,6 +121,8 @@ KRunnerApp::~KRunnerApp()
 
 void KRunnerApp::initialize()
 {
+    setWindowIcon(KIcon("system-run"));
+
     setQuitOnLastWindowClosed(false);
     initializeStartupNotification();
     m_interface = new Interface;
