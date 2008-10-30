@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Ruby Package Structure
+Comment=Format of a Ruby Script Engine Package
+X-KDE-ServiceTypes=Plasma/PackageStructure
+Type=Service
+Icon=text-x-script
+X-KDE-Library=krubypluginfactory
+X-KDE-PluginKeyword=plasma_scriptengine_ruby/package_ruboid.rb
+X-KDE-PluginInfo-Name=Ruboid

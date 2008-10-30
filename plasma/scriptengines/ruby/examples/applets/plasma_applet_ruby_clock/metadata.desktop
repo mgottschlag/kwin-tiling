@@ -1,0 +1,35 @@
+[Desktop Entry]
+Name=Ruby Analog Clock
+Name[bg]=Аналогов часовник (Ruby)
+Name[de]=Ruby-Analoguhr
+Name[es]=Reloj analógico en Ruby
+Name[et]=Ruby analoogkell
+Name[ja]=Ruby アナログ時計
+Name[pt]=Relógio Analógico Rubi
+Name[pt_BR]=Relógio Analógico Rubi
+Name[sv]=Ruby Analog klocka
+Name[xx]=xxRuby Analog Clockxx
+Comment=An SVG themable clock
+Comment[bg]=Часовник със SVG тема
+Comment[es]=Un reloj con un tema basado en SVG
+Comment[et]=SVG teemadega kell
+Comment[ja]=SVG テーマを使った時計
+Comment[nl]=Een klok met SVG-thema's
+Comment[pt]=Um relógio com temas em SVG
+Comment[pt_BR]=Um relógio com temas em SVG
+Comment[sv]=En klocka med SVG-teman
+Comment[xx]=xxAn SVG themable clockxx
+Icon=chronometer
+Type=Service
+ServiceTypes=Plasma/Applet
+X-Plasma-API=ruby-script
+
+X-KDE-PluginInfo-Author=The Plasma Team
+X-KDE-PluginInfo-Email=panel-devel@kde.org
+X-KDE-PluginInfo-Name=plasma_applet_ruby_clock
+X-KDE-PluginInfo-Version=pre0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=Date and Time
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true

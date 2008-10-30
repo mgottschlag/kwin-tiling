@@ -1,4 +1,5 @@
 add_subdirectory(qtscript)
+add_subdirectory(ruby)
 
 if(QT_QTWEBKIT_FOUND)
     add_subdirectory(webkit)

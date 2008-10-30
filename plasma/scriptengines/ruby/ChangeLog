@@ -1,0 +1,60 @@
+2008-10-30  Richard Dale  <richard.j.dale@gmail.com>
+* Separated the script engine plugins from the plasma ruby extension and moved
+  the script engine code to kdebase with the other script engines
+
+2008-10-23  Richard Dale  <richard.j.dale@gmail.com>
+* Converted the webapplet to use the script engine api, and renamed it
+  plasma_applet_ruby_webapplet
+
+2008-08-15  Richard Dale  <richard.j.dale@gmail.com>
+* Re-added the ruby version of the plasmoidviewer app
+
+2008-08-12  Arno Rehn  <arno@arnorehn.de>
+* Fix restoring of applet sizes.
+
+2008-08-07  Richard Dale  <richard.j.dale@gmail.com>
+* The marshaller for Plasma::DataEngine::Data was creating Qt::Variants with
+  the wrong smoke pointer in the smokeruby_object struct, and this was causing
+  a crash in the GC marking function.
+* In PlasmaScripting::Applet, if a constant such as NoBackground is referenced
+  and found to be missing, then look for it in Plasma::Applet.
+* Fix bugs in the PlasmaScripting::Applet#showConfigurationInterface method
+* Special case Plasma::Applet#id so it doesn't get a Ruby warning.
+* In PlasmaScriptengineRuby::Applet the module name wasn't being derived 
+  correctly from the Package path
+* Add two versions of the clock applet
+    * plasma_applet_ruby_clock uses the ScriptEngine api and is packaged as a
+      plasmoid. It can be installed by typing the following command in the
+      examples/applets directory:
+
+      $ plasmapkg --install plasma_applet_ruby_clock --type plasmoid
+
+    * analog-clock uses the C++ plugin api. Normally Ruby applets should be 
+      written using the script engine api, and this example is only included
+      to show how the two apis differ. The clocks are functionally identical.
+
+2008-08-06  Richard Dale  <richard.j.dale@gmail.com>
+* Add some fixes for the new Plasma::Frame and Plasma::Slider widgets
+
+2008-07-03  Richard Dale  <richard.j.dale@gmail.com>
+* Add slots and signals for scripting applets and data engines corresponding
+  to the ones in Plasma::Applet and Plasma::DataEngine
+* Change the install destination to plasma_scriptengine_ruby and the modules
+  of the plugin classes to match
+
+2008-06-30  Richard Dale  <richard.j.dale@gmail.com>
+* For script engine based applets, add the directory where the mainScript was
+  found to the ruby load path.
+
+2008-06-29  Richard Dale  <richard.j.dale@gmail.com>
+* If a method call is invoked on a PlasmaScripting::Applet, then relay it to
+  the underlying Plasma::Applet in the script engine.
+* Add an event filter to the RubyAppletScript::Applet class so that scripting
+  applets can implement event method handling overrides.
+* Change various methods in the QGraphicsView and Plasma api so that they can
+  accept instances of PlasmaScripting::Applet, and the instance is substituted
+  for the underlying Plasma::Applet in the ScriptEngine.
+
+2008-06-28  Richard Dale  <richard.j.dale@gmail.com>
+* Make the Ruby ScriptEngine based plugins work
+* Add a Ruby version of the Javascript Tiger applet

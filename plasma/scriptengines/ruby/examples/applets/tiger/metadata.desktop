@@ -1,0 +1,20 @@
+[Desktop Entry]
+Name=Tiger
+Name[bg]=Тигър
+Name[pt]=Tigre
+Name[pt_BR]=Tigre
+Name[xx]=xxTigerxx
+Comment=An example of displaying an SVG
+Type=Service
+ServiceTypes=Plasma/Applet
+
+X-KDE-PluginInfo-Author=Richard Dale
+X-KDE-PluginInfo-Email=panel-devel@kde.org
+X-KDE-PluginInfo-Name=tiger
+X-KDE-PluginInfo-Version=pre0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=Examples
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true
+X-Plasma-API=ruby-script
