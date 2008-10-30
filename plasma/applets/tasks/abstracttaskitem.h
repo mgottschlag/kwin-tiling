@@ -190,12 +190,6 @@ protected Q_SLOTS:
     void animationUpdate(qreal progress);
 
 protected:
-    enum AnimationType {
-        NoAnimation,
-        StateChange = 2,
-        MouseOver = 3
-    };
-
     // area of item occupied by task's icon
     QRectF iconRect(const QRectF &bounds) const;
     // area for the expander arrow for group items
@@ -230,7 +224,6 @@ protected:
     int m_updateTimerId;
     int m_attentionTimerId;
     int m_attentionTicks;
-    AnimationType m_animType;
 
     bool m_fadeIn : 1;
     bool m_showTooltip : 1;

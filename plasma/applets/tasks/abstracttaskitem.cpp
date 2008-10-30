@@ -65,7 +65,6 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet, const
       m_updateTimerId(0),
       m_attentionTimerId(0),
       m_attentionTicks(0),
-      m_animType(NoAnimation),
       m_fadeIn(true),
       m_showTooltip(showTooltip),
       m_showingTooltip(false)
@@ -164,8 +163,6 @@ void AbstractTaskItem::fadeBackground(const QString &newBackground, int duration
 
     m_fadeIn = fadeIn;
     m_animId = Plasma::Animator::self()->customAnimation(40 / (1000 / duration), duration,Plasma::Animator::LinearCurve, this, "animationUpdate");
-
-    m_animType = StateChange;
 }
 
 
@@ -210,32 +207,26 @@ void AbstractTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event)
 
-    static int duration = 70;
-
-    if (m_animId) {
-        Plasma::Animator::self()->stopCustomAnimation(m_animId);
-    }
-
-    m_fadeIn = true;
-    m_animId = Plasma::Animator::self()->customAnimation(40 / (1000 / duration), duration,Plasma::Animator::LinearCurve, this, "animationUpdate");
-
-    m_animType = MouseOver;
+    fadeBackground("hover", 75, true);
 }
 
 void AbstractTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event)
 
-    static int duration = 150;
+    QString backgroundPrefix;
 
-    if (m_animId) {
-        Plasma::Animator::self()->stopCustomAnimation(m_animId);
+    if (m_flags & TaskWantsAttention) {
+        backgroundPrefix = "attention";
+    } else if (m_flags & TaskIsMinimized) {
+        backgroundPrefix = "minimized";
+    } else if (m_flags & TaskHasFocus) {
+        backgroundPrefix = "focus";
+    } else {
+        backgroundPrefix = "normal";
     }
 
-    m_fadeIn = false;
-    m_animId = Plasma::Animator::self()->customAnimation(40 / (1000 / duration), duration,Plasma::Animator::LinearCurve, this, "animationUpdate");
-
-    m_animType = MouseOver;
+    fadeBackground(backgroundPrefix, 150, false);
 }
 
 void AbstractTaskItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -335,51 +326,27 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     m_applet->resizeItemBackground(geometry().size().toSize());
     Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
 
-    if (m_animType != StateChange) {
-        if (~option->state & QStyle::State_Sunken) {
-            itemBackground->setElementPrefix(m_backgroundPrefix);
-            itemBackground->paintFrame(painter);
-        //if mouse it's pressed it's a bit more transparent
-        } else {
-            itemBackground->setElementPrefix(m_oldBackgroundPrefix);
-            QPixmap result(itemBackground->framePixmap());
-
-            QPainter buffPainter(&result);
-            buffPainter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-            buffPainter.fillRect(QRect(QPoint(0,0), geometry().size().toSize()), QColor(0,0,0,120));
-            buffPainter.end();
-
-            painter->drawPixmap(QPoint(0, 0), result);
-        }
-    } else {
-        itemBackground->setElementPrefix(m_oldBackgroundPrefix);
-        QPixmap oldBackground(itemBackground->framePixmap());
-
+    if (!m_animId && ~option->state & QStyle::State_Sunken) {
         itemBackground->setElementPrefix(m_backgroundPrefix);
-        QPixmap result = Plasma::PaintUtils::transition( oldBackground, itemBackground->framePixmap(), m_alpha);
-
-        painter->drawPixmap(QPoint(0, 0), result);
-    }
-
-
-    //mouse over, animating
-    if (m_animType == MouseOver) {
-        itemBackground->setElementPrefix("hover");
-        QPixmap result(itemBackground->framePixmap());
-        QColor alphaColor(Qt::black);
-        alphaColor.setAlphaF(qMin(m_fadeIn?m_alpha:1-m_alpha, 0.99));
-
-        QPainter buffPainter(&result);
-        buffPainter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-        buffPainter.fillRect(QRect(QPoint(0,0), geometry().size().toSize()), alphaColor);
-        buffPainter.end();
-
-        painter->drawPixmap(QPoint(0, 0), result);
-    //mouse over, static
-    } else if (option->state & QStyle::State_MouseOver) {
-        itemBackground->setElementPrefix("hover");
         itemBackground->paintFrame(painter);
+        return;
     }
+
+    itemBackground->setElementPrefix(m_oldBackgroundPrefix);
+    QPixmap oldBackground;
+
+    if (option->state & QStyle::State_Sunken) {
+        oldBackground = QPixmap(geometry().size().toSize());
+        oldBackground.fill(Qt::transparent);
+        m_alpha = 0.4;
+    } else {
+        oldBackground = itemBackground->framePixmap();
+    }
+
+    itemBackground->setElementPrefix(m_backgroundPrefix);
+    QPixmap result = Plasma::PaintUtils::transition( oldBackground, itemBackground->framePixmap(), m_alpha);
+
+    painter->drawPixmap(QPoint(0, 0), result);
 
     return;
 }
@@ -390,8 +357,8 @@ void AbstractTaskItem::drawTask(QPainter *painter,const QStyleOptionGraphicsItem
 
     QRectF bounds = boundingRect().adjusted(m_applet->itemLeftMargin(), m_applet->itemTopMargin(), -m_applet->itemRightMargin(), -m_applet->itemBottomMargin());
 
-    if ( ~option->state & QStyle::State_MouseOver &&
-         m_animType != MouseOver) {
+    if ((!m_animId && ~option->state & QStyle::State_MouseOver) ||
+         (m_oldBackgroundPrefix != "hover" && m_backgroundPrefix != "hover")) {
         m_icon.paint(painter, iconRect(bounds).toRect());
     } else {
         KIconEffect *effect = KIconLoader::global()->iconEffect();
@@ -562,7 +529,6 @@ void AbstractTaskItem::animationUpdate(qreal progress)
 {
     if (qFuzzyCompare(qreal(1.0), progress)) {
         m_animId = 0;
-        m_animType = NoAnimation;
         m_fadeIn = true;
     }
 
@@ -713,8 +679,7 @@ QColor AbstractTaskItem::textColor(bool shadow) const
         color2 = theme->color(Plasma::Theme::ButtonTextColor);
     }
 
-    if (m_animType == StateChange &&
-        (m_oldBackgroundPrefix == "attention" || m_backgroundPrefix == "attention") &&
+    if ((m_oldBackgroundPrefix == "attention" || m_backgroundPrefix == "attention") &&
         m_applet->itemBackground()->hasElement("hint-attention-button-color")) {
         if (!m_animId && m_backgroundPrefix != "attention") {
             color = color1;
