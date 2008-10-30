@@ -23,6 +23,7 @@
 
 #include <KRun>
 #include <KDebug>
+#include <KUrl>
 
 #include <Nepomuk/Resource>
 
@@ -117,11 +118,12 @@ void Nepomuk::SearchRunner::match( Plasma::RunnerContext& context )
 void Nepomuk::SearchRunner::run( const Plasma::RunnerContext&, const Plasma::QueryMatch& match )
 {
     Nepomuk::Resource res = match.data().value<Nepomuk::Resource>();
-    QUrl url;
+    KUrl url;
 
     if( res.hasType( Soprano::Vocabulary::NAO::Tag() ) ) {
-        url = QUrl( QString( "nepomuksearch:/hasTag:\"%1\"" ).arg( res.genericLabel() ) );
-    }
+        url.setProtocol( "nepomuksearch" );
+        url.setPath( QString( "/hasTag:\"%1\"" ).arg( res.genericLabel() ) );
+     }
     else {
         url = res.resourceUri();
     }
