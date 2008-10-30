@@ -63,7 +63,7 @@
 */
 
 ClipboardPoll::ClipboardPoll()
-    : xfixes_event_base( -1 )
+    : m_xfixes_event_base( -1 )
 {
     hide();
     const char* names[ 6 ]
@@ -75,24 +75,24 @@ ClipboardPoll::ClipboardPoll()
             "KLIPPER_CLIPBOARD_TIMESTAMP" };
     Atom atoms[ 6 ];
     XInternAtoms( QX11Info::display(), const_cast< char** >( names ), 6, False, atoms );
-    selection.sentinel_atom = atoms[ 0 ];
-    clipboard.sentinel_atom = atoms[ 1 ];
-    xa_clipboard = atoms[ 2 ];
-    xa_timestamp = atoms[ 3 ];
-    selection.timestamp_atom = atoms[ 4 ];
-    clipboard.timestamp_atom = atoms[ 5 ];
+    m_selection.sentinel_atom = atoms[ 0 ];
+    m_clipboard.sentinel_atom = atoms[ 1 ];
+    m_xa_clipboard = atoms[ 2 ];
+    m_xa_timestamp = atoms[ 3 ];
+    m_selection.timestamp_atom = atoms[ 4 ];
+    m_clipboard.timestamp_atom = atoms[ 5 ];
     bool use_polling = true;
     kapp->installX11EventFilter( this );
-    timer.setSingleShot( false );
+    m_timer.setSingleShot( false );
 #ifdef HAVE_XFIXES
     int dummy;
-    if( XFixesQueryExtension( QX11Info::display(), &xfixes_event_base, &dummy ))
+    if( XFixesQueryExtension( QX11Info::display(), &m_xfixes_event_base, &dummy ))
     {
         XFixesSelectSelectionInput( QX11Info::display(), QX11Info::appRootWindow( 0 ), XA_PRIMARY,
             XFixesSetSelectionOwnerNotifyMask |
             XFixesSelectionWindowDestroyNotifyMask |
             XFixesSelectionClientCloseNotifyMask );
-        XFixesSelectSelectionInput( QX11Info::display(), QX11Info::appRootWindow( 0 ), xa_clipboard,
+        XFixesSelectSelectionInput( QX11Info::display(), QX11Info::appRootWindow( 0 ), m_xa_clipboard,
             XFixesSetSelectionOwnerNotifyMask |
             XFixesSelectionWindowDestroyNotifyMask |
             XFixesSelectionClientCloseNotifyMask );
@@ -115,23 +115,23 @@ void ClipboardPoll::initPolling()
 {
     connect( kapp->clipboard(), SIGNAL( selectionChanged() ), SLOT(qtSelectionChanged()));
     connect( kapp->clipboard(), SIGNAL( dataChanged() ), SLOT( qtClipboardChanged() ));
-    connect( &timer, SIGNAL( timeout()), SLOT( timeout()));
-    timer.start( 1000 );
-    selection.atom = XA_PRIMARY;
-    clipboard.atom = xa_clipboard;
-    selection.last_change = clipboard.last_change = QX11Info::appTime(); // don't trigger right after startup
-    selection.last_owner = XGetSelectionOwner( QX11Info::display(), XA_PRIMARY );
+    connect( &m_timer, SIGNAL( timeout()), SLOT( timeout()));
+    m_timer.start( 1000 );
+    m_selection.atom = XA_PRIMARY;
+    m_clipboard.atom = m_xa_clipboard;
+    m_selection.last_change = m_clipboard.last_change = QX11Info::appTime(); // don't trigger right after startup
+    m_selection.last_owner = XGetSelectionOwner( QX11Info::display(), XA_PRIMARY );
 #ifdef NOISY_KLIPPER_
-    kDebug() << "(1) Setting last_owner for =" << "selection" << ":" << selection.last_owner;
+    kDebug() << "(1) Setting last_owner for =" << "selection" << ":" << m_selection.last_owner;
 #endif
-    clipboard.last_owner = XGetSelectionOwner( QX11Info::display(), xa_clipboard );
+    m_clipboard.last_owner = XGetSelectionOwner( QX11Info::display(), m_xa_clipboard );
 #ifdef NOISY_KLIPPER_
-    kDebug() << "(2) Setting last_owner for =" << "clipboard" << ":" << clipboard.last_owner;
+    kDebug() << "(2) Setting last_owner for =" << "clipboard" << ":" << m_clipboard.last_owner;
 #endif
-    selection.waiting_for_timestamp = false;
-    clipboard.waiting_for_timestamp = false;
-    updateQtOwnership( selection );
-    updateQtOwnership( clipboard );
+    m_selection.waiting_for_timestamp = false;
+    m_clipboard.waiting_for_timestamp = false;
+    updateQtOwnership( m_selection );
+    updateQtOwnership( m_clipboard );
 }
 
 void ClipboardPoll::qtSelectionChanged()
@@ -148,7 +148,7 @@ bool ClipboardPoll::x11Event( XEvent* e )
 {
 // note that this is also installed as app-wide filter
 #ifdef HAVE_XFIXES
-    if( xfixes_event_base != -1 && e->type == xfixes_event_base + XFixesSelectionNotify )
+    if( m_xfixes_event_base != -1 && e->type == m_xfixes_event_base + XFixesSelectionNotify )
     {
         XFixesSelectionNotifyEvent* ev = reinterpret_cast< XFixesSelectionNotifyEvent* >( e );
         if( ev->selection == XA_PRIMARY && !kapp->clipboard()->ownsSelection())
@@ -159,7 +159,7 @@ bool ClipboardPoll::x11Event( XEvent* e )
             QX11Info::setAppTime( ev->timestamp );
             emit clipboardChanged( true );
         }
-        else if( ev->selection == xa_clipboard && !kapp->clipboard()->ownsClipboard())
+        else if( ev->selection == m_xa_clipboard && !kapp->clipboard()->ownsClipboard())
         {
 #ifdef NOISY_KLIPPER_
             kDebug() << "CLIPBOARD CHANGED (XFIXES)";
@@ -171,14 +171,14 @@ bool ClipboardPoll::x11Event( XEvent* e )
 #endif
     if( e->type == SelectionNotify && e->xselection.requestor == winId())
     {
-        if( changedTimestamp( selection, *e ) ) {
+        if( changedTimestamp( m_selection, *e ) ) {
 #ifdef NOISY_KLIPPER_
             kDebug() << "SELECTION CHANGED (GOT TIMESTAMP)";
 #endif
             emit clipboardChanged( true );
         }
 
-        if ( changedTimestamp( clipboard, *e ) )
+        if ( changedTimestamp( m_clipboard, *e ) )
         {
 #ifdef NOISY_KLIPPER_
             kDebug() << "CLIPBOARD CHANGED (GOT TIMESTAMP)";
@@ -215,20 +215,20 @@ void ClipboardPoll::updateQtOwnership( SelectionData& data )
     data.owner_is_qt = ( owner == current_owner );
 #ifdef REALLY_NOISY_KLIPPER_
     kDebug() << "owner=" << owner << "; current_owner=" << current_owner;
-    kDebug() << "UPDATEQT:" << ( &data == &selection ? "selection" : "clipboard" )  << ":" << data.owner_is_qt;
+    kDebug() << "UPDATEQT:" << ( &data == &m_selection ? "selection" : "clipboard" )  << ":" << data.owner_is_qt;
 #endif
 }
 
 void ClipboardPoll::timeout()
 {
     Klipper::updateTimestamp();
-    if( !kapp->clipboard()->ownsSelection() && checkTimestamp( selection ) ) {
+    if( !kapp->clipboard()->ownsSelection() && checkTimestamp( m_selection ) ) {
 #ifdef NOISY_KLIPPER_
         kDebug() << "SELECTION CHANGED";
 #endif
         emit clipboardChanged( true );
     }
-    if( !kapp->clipboard()->ownsClipboard() && checkTimestamp( clipboard ) ) {
+    if( !kapp->clipboard()->ownsClipboard() && checkTimestamp( m_clipboard ) ) {
 #ifdef NOISY_KLIPPER_
         kDebug() << "CLIPBOARD CHANGED";
 #endif
@@ -246,7 +246,7 @@ bool ClipboardPoll::checkTimestamp( SelectionData& data )
     {
         data.last_change = CurrentTime;
 #ifdef REALLY_NOISY_KLIPPER_
-        kDebug() << "(3) Setting last_owner for =" << ( &data==&selection ?"selection":"clipboard" ) << ":" << current_owner;
+        kDebug() << "(3) Setting last_owner for =" << ( &data==&m_selection ?"selection":"clipboard" ) << ":" << current_owner;
 #endif
         data.last_owner = current_owner;
         data.waiting_for_timestamp = false;
@@ -257,7 +257,7 @@ bool ClipboardPoll::checkTimestamp( SelectionData& data )
         signal = true; // owner has changed
         data.last_owner = current_owner;
 #ifdef REALLY_NOISY_KLIPPER_
-        kDebug() << "(4) Setting last_owner for =" << ( &data==&selection ?"selection":"clipboard" ) << ":" << current_owner;
+        kDebug() << "(4) Setting last_owner for =" << ( &data==&m_selection ?"selection":"clipboard" ) << ":" << current_owner;
 #endif
         data.waiting_for_timestamp = false;
         data.last_change = CurrentTime;
@@ -274,7 +274,7 @@ bool ClipboardPoll::checkTimestamp( SelectionData& data )
         return false;
     }
     XDeleteProperty( QX11Info::display(), winId(), data.timestamp_atom );
-    XConvertSelection( QX11Info::display(), data.atom, xa_timestamp, data.timestamp_atom, winId(), QX11Info::appTime() );
+    XConvertSelection( QX11Info::display(), data.atom, m_xa_timestamp, data.timestamp_atom, winId(), QX11Info::appTime() );
     data.waiting_for_timestamp = true;
     data.waiting_x_time = QX11Info::appTime();
 #ifdef REALLY_NOISY_KLIPPER_

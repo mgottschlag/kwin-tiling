@@ -119,93 +119,93 @@ public:
     ConfigDialog( QWidget *parent, KConfigSkeleton *config, const ActionList *list, KActionCollection *collection, bool isApplet );
     ~ConfigDialog();
 
-    ActionList * actionList() const { return actionWidget->actionList(); }
+    ActionList * actionList() const { return m_actionWidget->actionList(); }
 
     bool keepContents()    const {
-	return generalWidget->cbSaveContents->isChecked();
+	return m_generalWidget->cbSaveContents->isChecked();
     }
     bool popupAtMousePos() const {
-	return generalWidget->cbMousePos->isChecked();
+	return m_generalWidget->cbMousePos->isChecked();
     }
     bool trimmed() const {
-        return generalWidget->cbStripWhitespace->isChecked();
+        return m_generalWidget->cbStripWhitespace->isChecked();
     }
     bool replayActionInHistory() const {
-	return generalWidget->cbReplayAIH->isChecked();
+	return m_generalWidget->cbReplayAIH->isChecked();
     }
     bool noNullClipboard() const {
-        return generalWidget->cbNoNull->isChecked();
+        return m_generalWidget->cbNoNull->isChecked();
     }
 
     int popupTimeout() const {
-	return generalWidget->popupTimeout->value();
+	return m_generalWidget->popupTimeout->value();
     }
     int maxItems() const {
-	return generalWidget->maxItems->value();
+	return m_generalWidget->maxItems->value();
     }
     bool ignoreSelection() const
     {
-        return generalWidget->cbIgnoreSelection->isChecked();
+        return m_generalWidget->cbIgnoreSelection->isChecked();
     }
     QStringList noActionsFor() const {
-	return actionWidget->wmClasses();
+	return m_actionWidget->wmClasses();
     }
     bool useGUIRegExpEditor() const
     {
-      return actionWidget->cbUseGUIRegExpEditor->isChecked();
+      return m_actionWidget->cbUseGUIRegExpEditor->isChecked();
     }
 
     bool synchronize() const {
-        return generalWidget->cbSynchronize->isChecked();
+        return m_generalWidget->cbSynchronize->isChecked();
     }
     bool implicitSelection() const {
-        return generalWidget->cbImplicitSelection->isChecked();
+        return m_generalWidget->cbImplicitSelection->isChecked();
     }
 
     void setKeepContents( bool enable ) {
-	generalWidget->cbSaveContents->setChecked( enable );
+	m_generalWidget->cbSaveContents->setChecked( enable );
     }
     void setPopupAtMousePos( bool enable ) {
-	generalWidget->cbMousePos->setChecked( enable );
+	m_generalWidget->cbMousePos->setChecked( enable );
     }
     void setStripWhiteSpace( bool enable ) {
-        generalWidget->cbStripWhitespace->setChecked( enable );
+        m_generalWidget->cbStripWhitespace->setChecked( enable );
     }
     void setReplayActionInHistory( bool enable ) {
-	generalWidget->cbReplayAIH->setChecked( enable );
+	m_generalWidget->cbReplayAIH->setChecked( enable );
     }
     void setNoNullClipboard( bool enable ) {
-        generalWidget->cbNoNull->setChecked( enable );
+        m_generalWidget->cbNoNull->setChecked( enable );
     }
     void setPopupTimeout( int timeout ) {
-	generalWidget->popupTimeout->setValue( timeout );
+	m_generalWidget->popupTimeout->setValue( timeout );
     }
     void setMaxItems( int items ) {
-	generalWidget->maxItems->setValue( items );
+	m_generalWidget->maxItems->setValue( items );
     }
     void setIgnoreSelection( bool ignore ) {
-        generalWidget->cbIgnoreSelection->setChecked( ignore );
+        m_generalWidget->cbIgnoreSelection->setChecked( ignore );
     }
     void setSynchronize( bool synchronize ) {
-        generalWidget->cbSynchronize->setChecked( synchronize );
+        m_generalWidget->cbSynchronize->setChecked( synchronize );
     }
     void setNoActionsFor( const QStringList& items ) {
-	actionWidget->setWMClasses( items );
+	m_actionWidget->setWMClasses( items );
     }
     void setUseGUIRegExpEditor( bool enabled )
     {
 	// the checkbox is only hidden explicitly when there's no
 	// regexp editor component available.
-	if ( !actionWidget->cbUseGUIRegExpEditor->isHidden() )
-            actionWidget->cbUseGUIRegExpEditor->setChecked( enabled );
+	if ( !m_actionWidget->cbUseGUIRegExpEditor->isHidden() )
+            m_actionWidget->cbUseGUIRegExpEditor->setChecked( enabled );
     }
 
     void commitShortcuts();
 
 private:
-    GeneralWidget *generalWidget;
-    ActionWidget *actionWidget;
-    KShortcutsEditor *shortcutsWidget;
+    GeneralWidget *m_generalWidget;
+    ActionWidget *m_actionWidget;
+    KShortcutsEditor *m_shortcutsWidget;
 
 };
 

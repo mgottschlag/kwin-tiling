@@ -109,10 +109,10 @@ static void ensureGlobalSyncOff(KSharedConfigPtr config);
 Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     : QObject( parent )
     , m_overflowCounter( 0 )
-    , locklevel( 0 )
+    , m_locklevel( 0 )
     , m_config( config )
     , m_pendingContentsCheck( false )
-    , session_managed( new KlipperSessionManager( this ))
+    , m_session_managed( new KlipperSessionManager( this ))
 {
     QDBusConnection::sessionBus().registerObject("/klipper", this, QDBusConnection::ExportScriptableSlots);
 
@@ -120,7 +120,7 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     ensureGlobalSyncOff(m_config);
 
     updateTimestamp(); // read initial X user time
-    clip = kapp->clipboard();
+    m_clip = kapp->clipboard();
 
     connect( &m_overflowClearTimer, SIGNAL( timeout()), SLOT( slotClearOverflow()));
     m_overflowClearTimer.start( 1000 );
@@ -132,61 +132,61 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
 
     // we need that collection, otherwise KToggleAction is not happy :}
     //QString defaultGroup( "default" );
-    collection = new KActionCollection( this );
-    toggleURLGrabAction = new KToggleAction( this );
-    collection->addAction( "toggleUrlGrabAction", toggleURLGrabAction );
-    toggleURLGrabAction->setEnabled( true );
-    toggleURLGrabAction->setText(i18n("Enable &Actions"));
-    //toggleURLGrabAction->setGroup( defaultGroup );
-    clearHistoryAction = collection->addAction( "clearHistoryAction" );
-    clearHistoryAction->setIcon( KIcon("edit-clear-history") );
-    clearHistoryAction->setText( i18n("C&lear Clipboard History") );
-    connect(clearHistoryAction, SIGNAL(triggered() ), history(), SLOT( slotClear() ));
-    connect( clearHistoryAction, SIGNAL( triggered() ), SLOT( slotClearClipboard() ) );
-    //clearHistoryAction->setGroup( defaultGroup );
-    configureAction = collection->addAction( "configureAction" );
-    configureAction->setIcon( KIcon("configure") );
-    configureAction->setText( i18n("&Configure Klipper...") );
-    connect(configureAction, SIGNAL(triggered(bool) ), SLOT( slotConfigure() ));
-    //configureAction->setGroup( defaultGroup );
-    quitAction = collection->addAction( "quitAction" );
-    quitAction->setIcon( KIcon("application-exit") );
-    quitAction->setText( i18n("&Quit") );
-    connect(quitAction, SIGNAL(triggered(bool) ), SLOT( slotQuit() ));
+    m_collection = new KActionCollection( this );
+    m_toggleURLGrabAction = new KToggleAction( this );
+    m_collection->addAction( "toggleUrlGrabAction", m_toggleURLGrabAction );
+    m_toggleURLGrabAction->setEnabled( true );
+    m_toggleURLGrabAction->setText(i18n("Enable &Actions"));
+    //m_toggleURLGrabAction->setGroup( defaultGroup );
+    m_clearHistoryAction = m_collection->addAction( "clearHistoryAction" );
+    m_clearHistoryAction->setIcon( KIcon("edit-clear-history") );
+    m_clearHistoryAction->setText( i18n("C&lear Clipboard History") );
+    connect(m_clearHistoryAction, SIGNAL(triggered() ), history(), SLOT( slotClear() ));
+    connect( m_clearHistoryAction, SIGNAL( triggered() ), SLOT( slotClearClipboard() ) );
+    //m_clearHistoryAction->setGroup( defaultGroup );
+    m_configureAction = m_collection->addAction( "configureAction" );
+    m_configureAction->setIcon( KIcon("configure") );
+    m_configureAction->setText( i18n("&Configure Klipper...") );
+    connect(m_configureAction, SIGNAL(triggered(bool) ), SLOT( slotConfigure() ));
+    //m_configureAction->setGroup( defaultGroup );
+    m_quitAction = m_collection->addAction( "quitAction" );
+    m_quitAction->setIcon( KIcon("application-exit") );
+    m_quitAction->setText( i18n("&Quit") );
+    connect(m_quitAction, SIGNAL(triggered(bool) ), SLOT( slotQuit() ));
     //quitAction->setGroup( "exit" );
-    myURLGrabber = 0L;
+    m_myURLGrabber = 0L;
     KConfig *kc = m_config.data();
     readConfiguration( kc );
-    setURLGrabberEnabled( bURLGrabber );
+    setURLGrabberEnabled( m_bURLGrabber );
 
-    hideTimer = new QTime();
-    showTimer = new QTime();
+    m_hideTimer = new QTime();
+    m_showTimer = new QTime();
 
     readProperties(m_config.data());
     connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), SLOT(slotSettingsChanged(int)));
 
-    poll = new ClipboardPoll;
-    connect( poll, SIGNAL( clipboardChanged( bool ) ),
+    m_poll = new ClipboardPoll;
+    connect( m_poll, SIGNAL( clipboardChanged( bool ) ),
              this, SLOT( newClipData( bool ) ) );
 
-    QAction *a = collection->addAction("show_klipper_popup");
+    QAction *a = m_collection->addAction("show_klipper_popup");
     a->setText(i18n("Show Klipper Popup-Menu"));
     qobject_cast<KAction*>(a)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_V));
     connect(a, SIGNAL(triggered()), SLOT(slotPopupMenu()));
 
-    a = collection->addAction("repeat_action");
+    a = m_collection->addAction("repeat_action");
     a->setText(i18n("Manually Invoke Action on Current Clipboard"));
     qobject_cast<KAction*>(a)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_R));
     connect(a, SIGNAL(triggered()), SLOT(slotRepeatAction()));
 
-    a = collection->addAction("clipboard_action");
+    a = m_collection->addAction("clipboard_action");
     a->setText(i18n("Enable/Disable Clipboard Actions"));
     qobject_cast<KAction*>(a)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_X));
     connect(a, SIGNAL(triggered()), SLOT(toggleURLGrabber()));
 
-    toggleURLGrabAction->setShortcut(qobject_cast<KAction*>(collection->action("clipboard_action"))->globalShortcut());
+    m_toggleURLGrabAction->setShortcut(qobject_cast<KAction*>(m_collection->action("clipboard_action"))->globalShortcut());
 
-    connect( toggleURLGrabAction, SIGNAL( toggled( bool )),
+    connect( m_toggleURLGrabAction, SIGNAL( toggled( bool )),
              this, SLOT( setURLGrabberEnabled( bool )));
 
     KlipperPopup* popup = history()->popup();
@@ -194,21 +194,21 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     connect( popup, SIGNAL( aboutToHide() ), SLOT( slotStartHideTimer() ) );
     connect( popup, SIGNAL( aboutToShow() ), SLOT( slotStartShowTimer() ) );
 
-    popup->plugAction( toggleURLGrabAction );
-    popup->plugAction( clearHistoryAction );
-    popup->plugAction( configureAction );
+    popup->plugAction( m_toggleURLGrabAction );
+    popup->plugAction( m_clearHistoryAction );
+    popup->plugAction( m_configureAction );
     if ( !isApplet() ) {
-        popup->plugAction( quitAction );
+        popup->plugAction( m_quitAction );
     }
 }
 
 Klipper::~Klipper()
 {
-    delete poll;
-    delete session_managed;
-    delete showTimer;
-    delete hideTimer;
-    delete myURLGrabber;
+    delete m_poll;
+    delete m_session_managed;
+    delete m_showTimer;
+    delete m_hideTimer;
+    delete m_myURLGrabber;
 }
 
 // DCOP
@@ -230,7 +230,7 @@ void Klipper::setClipboardContents(QString s)
 {
     if (s.isEmpty())
         return;
-    Ignore lock( locklevel );
+    Ignore lock( m_locklevel );
     updateTimestamp();
     HistoryStringItem* item = new HistoryStringItem( s );
     setClipboard( *item, Clipboard | Selection);
@@ -256,12 +256,12 @@ void Klipper::clearClipboardHistory()
 
 void Klipper::slotStartHideTimer()
 {
-    hideTimer->start();
+    m_hideTimer->start();
 }
 
 void Klipper::slotStartShowTimer()
 {
-    showTimer->start();
+    m_showTimer->start();
 }
 
 void Klipper::showPopupMenu( QMenu *menu )
@@ -269,7 +269,7 @@ void Klipper::showPopupMenu( QMenu *menu )
     Q_ASSERT( menu != 0L );
 
     QSize size = menu->sizeHint(); // geometry is not valid until it's shown
-    if (bPopupAtMouse) {
+    if (m_bPopupAtMouse) {
         QPoint g = QCursor::pos();
         if ( size.height() < g.y() )
             menu->popup(QPoint( g.x(), g.y() - size.height()));
@@ -401,7 +401,7 @@ void Klipper::readProperties(KConfig *kc)
 
     history()->slotClear();
 
-    if (bKeepContents) { // load old clipboard if configured
+    if (m_bKeepContents) { // load old clipboard if configured
         if ( !loadHistory() ) {
             // Try to load from the old config file.
             // Remove this at some point.
@@ -430,36 +430,36 @@ void Klipper::readProperties(KConfig *kc)
 void Klipper::readConfiguration( KConfig *_kc )
 {
     KConfigGroup kc( _kc, "General");
-    bPopupAtMouse = kc.readEntry("PopupAtMousePosition", false);
-    bKeepContents = kc.readEntry("KeepClipboardContents", true);
-    bURLGrabber = kc.readEntry("URLGrabberEnabled", false);
-    bReplayActionInHistory = kc.readEntry("ReplayActionInHistory", false);
-    bNoNullClipboard = kc.readEntry("NoEmptyClipboard", true);
-    bUseGUIRegExpEditor = kc.readEntry("UseGUIRegExpEditor", true);
+    m_bPopupAtMouse = kc.readEntry("PopupAtMousePosition", false);
+    m_bKeepContents = kc.readEntry("KeepClipboardContents", true);
+    m_bURLGrabber = kc.readEntry("URLGrabberEnabled", false);
+    m_bReplayActionInHistory = kc.readEntry("ReplayActionInHistory", false);
+    m_bNoNullClipboard = kc.readEntry("NoEmptyClipboard", true);
+    m_bUseGUIRegExpEditor = kc.readEntry("UseGUIRegExpEditor", true);
     history()->max_size( kc.readEntry("MaxClipItems", 7) );
-    bIgnoreSelection = kc.readEntry("IgnoreSelection", false);
-    bSynchronize = kc.readEntry("Synchronize", false);
-    bSelectionTextOnly = kc.readEntry("SelectionTextOnly",true);
-    bIgnoreImages = kc.readEntry("IgnoreImages",true);
+    m_bIgnoreSelection = kc.readEntry("IgnoreSelection", false);
+    m_bSynchronize = kc.readEntry("Synchronize", false);
+    m_bSelectionTextOnly = kc.readEntry("SelectionTextOnly",true);
+    m_bIgnoreImages = kc.readEntry("IgnoreImages",true);
 }
 
 void Klipper::writeConfiguration( KConfig *_kc )
 {
     KConfigGroup kc( _kc, "General");
-    kc.writeEntry("PopupAtMousePosition", bPopupAtMouse);
-    kc.writeEntry("KeepClipboardContents", bKeepContents);
-    kc.writeEntry("ReplayActionInHistory", bReplayActionInHistory);
-    kc.writeEntry("NoEmptyClipboard", bNoNullClipboard);
-    kc.writeEntry("UseGUIRegExpEditor", bUseGUIRegExpEditor);
+    kc.writeEntry("PopupAtMousePosition", m_bPopupAtMouse);
+    kc.writeEntry("KeepClipboardContents", m_bKeepContents);
+    kc.writeEntry("ReplayActionInHistory", m_bReplayActionInHistory);
+    kc.writeEntry("NoEmptyClipboard", m_bNoNullClipboard);
+    kc.writeEntry("UseGUIRegExpEditor", m_bUseGUIRegExpEditor);
     kc.writeEntry("MaxClipItems", history()->max_size() );
-    kc.writeEntry("IgnoreSelection", bIgnoreSelection);
-    kc.writeEntry("Synchronize", bSynchronize );
-    kc.writeEntry("SelectionTextOnly", bSelectionTextOnly);
-    kc.writeEntry("TrackImages", bIgnoreImages);
+    kc.writeEntry("IgnoreSelection", m_bIgnoreSelection);
+    kc.writeEntry("Synchronize", m_bSynchronize );
+    kc.writeEntry("SelectionTextOnly", m_bSelectionTextOnly);
+    kc.writeEntry("TrackImages", m_bIgnoreImages);
     kc.writeEntry("Version", klipper_version );
 
-    if ( myURLGrabber )
-        myURLGrabber->writeConfiguration( _kc );
+    if ( m_myURLGrabber )
+        m_myURLGrabber->writeConfiguration( _kc );
 
     kc.sync();
 }
@@ -467,7 +467,7 @@ void Klipper::writeConfiguration( KConfig *_kc )
 // save session on shutdown. Don't simply use the c'tor, as that may not be called.
 void Klipper::saveSession()
 {
-    if ( bKeepContents ) { // save the clipboard eventually
+    if ( m_bKeepContents ) { // save the clipboard eventually
         saveHistory();
     }
 }
@@ -475,7 +475,7 @@ void Klipper::saveSession()
 void Klipper::slotSettingsChanged( int category )
 {
     if ( category == (int) KGlobalSettings::SETTINGS_SHORTCUTS ) {
-        toggleURLGrabAction->setShortcut(qobject_cast<KAction*>(collection->action("clipboard_action"))->globalShortcut());
+        m_toggleURLGrabAction->setShortcut(qobject_cast<KAction*>(m_collection->action("clipboard_action"))->globalShortcut());
     }
 }
 
@@ -490,41 +490,41 @@ void Klipper::disableURLGrabber()
 
 void Klipper::slotConfigure()
 {
-    bool haveURLGrabber = bURLGrabber;
-    if ( !myURLGrabber ) { // temporary, for the config-dialog
+    bool haveURLGrabber = m_bURLGrabber;
+    if ( !m_myURLGrabber ) { // temporary, for the config-dialog
         setURLGrabberEnabled( true );
         readConfiguration( m_config.data() );
     }
     KConfigSkeleton *skeleton = new KConfigSkeleton();
-    ConfigDialog *dlg = new ConfigDialog( 0, skeleton, myURLGrabber->actionList(), collection, isApplet() );
-    dlg->setKeepContents( bKeepContents );
-    dlg->setPopupAtMousePos( bPopupAtMouse );
-    dlg->setStripWhiteSpace( myURLGrabber->trimmed() );
-    dlg->setReplayActionInHistory( bReplayActionInHistory );
-    dlg->setNoNullClipboard( bNoNullClipboard );
-    dlg->setUseGUIRegExpEditor( bUseGUIRegExpEditor );
-    dlg->setPopupTimeout( myURLGrabber->popupTimeout() );
+    ConfigDialog *dlg = new ConfigDialog( 0, skeleton, m_myURLGrabber->actionList(), m_collection, isApplet() );
+    dlg->setKeepContents( m_bKeepContents );
+    dlg->setPopupAtMousePos( m_bPopupAtMouse );
+    dlg->setStripWhiteSpace( m_myURLGrabber->trimmed() );
+    dlg->setReplayActionInHistory( m_bReplayActionInHistory );
+    dlg->setNoNullClipboard( m_bNoNullClipboard );
+    dlg->setUseGUIRegExpEditor( m_bUseGUIRegExpEditor );
+    dlg->setPopupTimeout( m_myURLGrabber->popupTimeout() );
     dlg->setMaxItems( history()->max_size() );
-    dlg->setIgnoreSelection( bIgnoreSelection );
-    dlg->setSynchronize( bSynchronize );
-    dlg->setNoActionsFor( myURLGrabber->avoidWindows() );
+    dlg->setIgnoreSelection( m_bIgnoreSelection );
+    dlg->setSynchronize( m_bSynchronize );
+    dlg->setNoActionsFor( m_myURLGrabber->avoidWindows() );
 
     if ( dlg->exec() == QDialog::Accepted ) {
-        bKeepContents = dlg->keepContents();
-        bPopupAtMouse = dlg->popupAtMousePos();
-        bReplayActionInHistory = dlg->replayActionInHistory();
-        bNoNullClipboard = dlg->noNullClipboard();
-        bIgnoreSelection = dlg->ignoreSelection();
-        bSynchronize = dlg->synchronize();
-        bUseGUIRegExpEditor = dlg->useGUIRegExpEditor();
+        m_bKeepContents = dlg->keepContents();
+        m_bPopupAtMouse = dlg->popupAtMousePos();
+        m_bReplayActionInHistory = dlg->replayActionInHistory();
+        m_bNoNullClipboard = dlg->noNullClipboard();
+        m_bIgnoreSelection = dlg->ignoreSelection();
+        m_bSynchronize = dlg->synchronize();
+        m_bUseGUIRegExpEditor = dlg->useGUIRegExpEditor();
         dlg->commitShortcuts();
 
-        toggleURLGrabAction->setShortcut(qobject_cast<KAction*>(collection->action("clipboard_action"))->globalShortcut());
+        m_toggleURLGrabAction->setShortcut(qobject_cast<KAction*>(m_collection->action("clipboard_action"))->globalShortcut());
 
-        myURLGrabber->setActionList( dlg->actionList() );
-        myURLGrabber->setPopupTimeout( dlg->popupTimeout() );
-        myURLGrabber->setStripWhiteSpace( dlg->trimmed() );
-        myURLGrabber->setAvoidWindows( dlg->noActionsFor() );
+        m_myURLGrabber->setActionList( dlg->actionList() );
+        m_myURLGrabber->setPopupTimeout( dlg->popupTimeout() );
+        m_myURLGrabber->setStripWhiteSpace( dlg->trimmed() );
+        m_myURLGrabber->setAvoidWindows( dlg->noActionsFor() );
 
         history()->max_size( dlg->maxItems() );
 
@@ -542,7 +542,7 @@ void Klipper::slotQuit()
     // If the menu was just opened, likely the user
     // selected quit by accident while attempting to
     // click the Klipper icon.
-    if ( showTimer->elapsed() < 300 ) {
+    if ( m_showTimer->elapsed() < 300 ) {
         return;
     }
 
@@ -573,43 +573,43 @@ void Klipper::slotPopupMenu() {
 
 void Klipper::slotRepeatAction()
 {
-    if ( !myURLGrabber ) {
-        myURLGrabber = new URLGrabber( m_config );
-        connect( myURLGrabber, SIGNAL( sigPopup( QMenu * )),
+    if ( !m_myURLGrabber ) {
+        m_myURLGrabber = new URLGrabber( m_config );
+        connect( m_myURLGrabber, SIGNAL( sigPopup( QMenu * )),
                  SLOT( showPopupMenu( QMenu * )) );
-        connect( myURLGrabber, SIGNAL( sigDisablePopup() ),
+        connect( m_myURLGrabber, SIGNAL( sigDisablePopup() ),
                  this, SLOT( disableURLGrabber() ) );
     }
 
     const HistoryStringItem* top = dynamic_cast<const HistoryStringItem*>( history()->first() );
     if ( top ) {
-        myURLGrabber->invokeAction( top->text() );
+        m_myURLGrabber->invokeAction( top->text() );
     }
 }
 
 void Klipper::setURLGrabberEnabled( bool enable )
 {
-    if (enable != bURLGrabber) {
-      bURLGrabber = enable;
+    if (enable != m_bURLGrabber) {
+      m_bURLGrabber = enable;
       KConfigGroup kc(m_config.data(), "General");
-      kc.writeEntry("URLGrabberEnabled", bURLGrabber);
+      kc.writeEntry("URLGrabberEnabled", m_bURLGrabber);
       m_lastURLGrabberTextSelection = QString();
       m_lastURLGrabberTextClipboard = QString();
     }
 
-    toggleURLGrabAction->setChecked( enable );
+    m_toggleURLGrabAction->setChecked( enable );
 
-    if ( !bURLGrabber ) {
-        delete myURLGrabber;
-        myURLGrabber = 0L;
+    if ( !m_bURLGrabber ) {
+        delete m_myURLGrabber;
+        m_myURLGrabber = 0L;
     }
 
     else {
-        if ( !myURLGrabber ) {
-            myURLGrabber = new URLGrabber( m_config );
-            connect( myURLGrabber, SIGNAL( sigPopup( QMenu * )),
+        if ( !m_myURLGrabber ) {
+            m_myURLGrabber = new URLGrabber( m_config );
+            connect( m_myURLGrabber, SIGNAL( sigPopup( QMenu * )),
                      SLOT( showPopupMenu( QMenu * )) );
-            connect( myURLGrabber, SIGNAL( sigDisablePopup() ),
+            connect( m_myURLGrabber, SIGNAL( sigDisablePopup() ),
                      this, SLOT( disableURLGrabber() ) );
         }
     }
@@ -617,11 +617,11 @@ void Klipper::setURLGrabberEnabled( bool enable )
 
 void Klipper::toggleURLGrabber()
 {
-    setURLGrabberEnabled( !bURLGrabber );
+    setURLGrabberEnabled( !m_bURLGrabber );
 }
 
 void Klipper::slotHistoryTopChanged() {
-    if ( locklevel ) {
+    if ( m_locklevel ) {
         return;
     }
 
@@ -629,20 +629,17 @@ void Klipper::slotHistoryTopChanged() {
     if ( topitem ) {
         setClipboard( *topitem, Clipboard | Selection );
     }
-    if ( bReplayActionInHistory && bURLGrabber ) {
+    if ( m_bReplayActionInHistory && m_bURLGrabber ) {
         slotRepeatAction();
     }
-
 }
 
 void Klipper::slotClearClipboard()
 {
-    Ignore lock( locklevel );
+    Ignore lock( m_locklevel );
 
-    clip->clear(QClipboard::Selection);
-    clip->clear(QClipboard::Clipboard);
-
-
+    m_clip->clear(QClipboard::Selection);
+    m_clip->clear(QClipboard::Clipboard);
 }
 
 
@@ -677,16 +674,16 @@ QString Klipper::clipboardContents( bool * /*isSelection*/ )
 
 void Klipper::applyClipChanges( const QMimeData* clipData )
 {
-    if ( locklevel )
+    if ( m_locklevel )
         return;
-    Ignore lock( locklevel );
+    Ignore lock( m_locklevel );
     history()->insert( HistoryItem::create( clipData ) );
 
 }
 
 void Klipper::newClipData( bool selectionMode )
 {
-    if ( locklevel ) {
+    if ( m_locklevel ) {
         return;
     }
 
@@ -699,7 +696,7 @@ void Klipper::newClipData( bool selectionMode )
 
 void Klipper::clipboardSignalArrived( bool selectionMode )
 {
-    if ( locklevel ) {
+    if ( m_locklevel ) {
         return;
     }
     if( blockFetchingNewData())
@@ -801,7 +798,7 @@ void Klipper::checkClipData( bool selectionMode )
         qDebug( "    format: %s", format);
     }
 #endif
-    const QMimeData* data = clip->mimeData( selectionMode ? QClipboard::Selection : QClipboard::Clipboard );
+    const QMimeData* data = m_clip->mimeData( selectionMode ? QClipboard::Selection : QClipboard::Clipboard );
     if ( !data ) {
         kWarning("No data in clipboard. This not not supposed to happen." );
         return;
@@ -812,7 +809,7 @@ void Klipper::checkClipData( bool selectionMode )
     bool changed = true; // ### FIXME
     bool clipEmpty = data->formats().isEmpty();
 
-    if ( changed && clipEmpty && bNoNullClipboard ) {
+    if ( changed && clipEmpty && m_bNoNullClipboard ) {
         const HistoryItem* top = history()->first();
         if ( top ) {
             // keep old clipboard after someone set it to null
@@ -827,10 +824,10 @@ void Klipper::checkClipData( bool selectionMode )
     // this must be below the "bNoNullClipboard" handling code!
     // XXX: I want a better handling of selection/clipboard in general.
     // XXX: Order sensitive code. Must die.
-    if ( selectionMode && bIgnoreSelection )
+    if ( selectionMode && m_bIgnoreSelection )
         return;
 
-    if( selectionMode && bSelectionTextOnly && !data->hasText())
+    if( selectionMode && m_bSelectionTextOnly && !data->hasText())
         return;
 
 // TODO: This should be maybe extended for KDE4 or at least get a checkbox somewhere in UI
@@ -843,7 +840,7 @@ void Klipper::checkClipData( bool selectionMode )
 // Limit mimetypes that are tracked by Klipper (this is basically a workaround
 // for #109032). Can't add UI in 3.5 because of string freeze, and I'm not sure
 // if this actually needs to be more configurable than only text vs all klipper knows.
-        if( bIgnoreImages )
+        if( m_bIgnoreImages )
             return;
     }
     else // unknown, ignore
@@ -861,7 +858,7 @@ void Klipper::checkClipData( bool selectionMode )
         ? m_lastURLGrabberTextSelection : m_lastURLGrabberTextClipboard;
     if( data->hasText() )
     {
-        if ( bURLGrabber && myURLGrabber )
+        if ( m_bURLGrabber && m_myURLGrabber )
         {
             QString text = data->text();
 
@@ -872,7 +869,7 @@ void Klipper::checkClipData( bool selectionMode )
             if ( text != lastURLGrabberText )
             {
                 lastURLGrabberText = text;
-                if ( myURLGrabber->checkNewData( text ) )
+                if ( m_myURLGrabber->checkNewData( text ) )
                 {
                     return; // don't add into the history
                 }
@@ -889,7 +886,7 @@ void Klipper::checkClipData( bool selectionMode )
 #ifdef NOISY_KLIPPER
         kDebug() << "Synchronize?" << ( bSynchronize ? "yes" : "no" );
 #endif
-        if ( bSynchronize ) {
+        if ( m_bSynchronize ) {
             const HistoryItem* topItem = history()->first();
             if ( topItem ) {
                 setClipboard( *topItem, selectionMode ? Clipboard : Selection );
@@ -900,7 +897,7 @@ void Klipper::checkClipData( bool selectionMode )
 
 void Klipper::setClipboard( const HistoryItem& item, int mode )
 {
-    Ignore lock( locklevel );
+    Ignore lock( m_locklevel );
 
     Q_ASSERT( ( mode & 1 ) == 0 ); // Warn if trying to pass a boolean as a mode.
 
@@ -908,7 +905,7 @@ void Klipper::setClipboard( const HistoryItem& item, int mode )
 #ifdef NOSIY_KLIPPER
         kDebug() << "Setting selection to <" << item.text() << ">";
 #endif
-        clip->setMimeData( item.mimeData(), QClipboard::Selection );
+        m_clip->setMimeData( item.mimeData(), QClipboard::Selection );
 #if 0
         m_lastSelection = clip->data()->serialNumber();<
 #endif
@@ -917,7 +914,7 @@ void Klipper::setClipboard( const HistoryItem& item, int mode )
 #ifdef NOSIY_KLIPPER
         kDebug() << "Setting clipboard to <" << item.text() << ">";
 #endif
-        clip->setMimeData( item.mimeData(), QClipboard::Clipboard );
+        m_clip->setMimeData( item.mimeData(), QClipboard::Clipboard );
 #if 0
         m_lastClipboard = clip->data()->serialNumber();
 #endif
@@ -1055,44 +1052,44 @@ static const char * const description =
 
 void Klipper::createAboutData()
 {
-  about_data = new KAboutData("klipper", 0, ki18n("Klipper"),
+  m_about_data = new KAboutData("klipper", 0, ki18n("Klipper"),
     klipper_version, ki18n(description), KAboutData::License_GPL,
 		       ki18n("(c) 1998, Andrew Stanley-Jones\n"
 		       "1998-2002, Carsten Pfeiffer\n"
 		       "2001, Patrick Dubroy"));
 
-  about_data->addAuthor(ki18n("Carsten Pfeiffer"),
+  m_about_data->addAuthor(ki18n("Carsten Pfeiffer"),
                       ki18n("Author"),
                       "pfeiffer@kde.org");
 
-  about_data->addAuthor(ki18n("Andrew Stanley-Jones"),
+  m_about_data->addAuthor(ki18n("Andrew Stanley-Jones"),
                       ki18n( "Original Author" ),
                       "asj@cban.com");
 
-  about_data->addAuthor(ki18n("Patrick Dubroy"),
+  m_about_data->addAuthor(ki18n("Patrick Dubroy"),
                       ki18n("Contributor"),
                       "patrickdu@corel.com");
 
-  about_data->addAuthor( ki18n("Luboš Luňák"),
+  m_about_data->addAuthor( ki18n("Luboš Luňák"),
                       ki18n("Bugfixes and optimizations"),
                       "l.lunak@kde.org");
 
-  about_data->addAuthor( ki18n("Esben Mose Hansen"),
+  m_about_data->addAuthor( ki18n("Esben Mose Hansen"),
                       ki18n("Maintainer"),
                       "kde@mosehansen.dk");
 }
 
 void Klipper::destroyAboutData()
 {
-  delete about_data;
-  about_data = NULL;
+  delete m_about_data;
+  m_about_data = NULL;
 }
 
-KAboutData* Klipper::about_data;
+KAboutData* Klipper::m_about_data;
 
 KAboutData* Klipper::aboutData()
 {
-  return about_data;
+  return m_about_data;
 }
 
 static void ensureGlobalSyncOff(KSharedConfigPtr config) {

@@ -31,11 +31,11 @@
 KlipperTray::KlipperTray()
     : KSystemTrayIcon( "klipper" )
 {
-    klipper = new Klipper( this, KGlobal::config());
+    m_klipper = new Klipper( this, KGlobal::config());
     setToolTip( i18n("Klipper - clipboard tool"));
     setContextMenu( NULL );
     show();
-    connect( this, SIGNAL( activated( QSystemTrayIcon::ActivationReason )), klipper,
+    connect( this, SIGNAL( activated( QSystemTrayIcon::ActivationReason )), m_klipper,
         SLOT( slotPopupMenu()));
 }
 

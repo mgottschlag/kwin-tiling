@@ -85,14 +85,14 @@ protected:
 
 KlipperPopup::KlipperPopup( History* history )
     : m_dirty( true ),
-      QSempty( i18n( "<empty clipboard>" ) ),
-      QSnomatch( i18n( "<no matches>" ) ),
+      m_qsEmpty( i18n( "<empty clipboard>" ) ),
+      m_qsNoMatch( i18n( "<no matches>" ) ),
       m_history( history ),
-      helpmenu( new KHelpMenu( this, Klipper::aboutData(), false ) ),
+      m_helpmenu( new KHelpMenu( this, Klipper::aboutData(), false ) ),
       m_popupProxy( 0 ),
       m_filterWidget( 0 ),
       m_filterWidgetAction( 0 ),
-      n_history_items( 0 )
+      m_nHistoryItems( 0 )
 {
     KWindowInfo i = KWindowSystem::windowInfo( winId(), NET::WMGeometry );
     QRect g = i.geometry();
@@ -147,7 +147,7 @@ void KlipperPopup::buildFromScratch() {
             addSeparator();
 
         if (i + 1 == m_actions.count()) {
-            addMenu(helpmenu->menu())->setIcon(KIcon("help-contents"));
+            addMenu(m_helpmenu->menu())->setIcon(KIcon("help-contents"));
             addSeparator();
         }
 
@@ -164,7 +164,7 @@ void KlipperPopup::rebuild( const QString& filter ) {
     if (actions().isEmpty()) {
         buildFromScratch();
     } else {
-        for ( int i=0; i<n_history_items; i++ ) {
+        for ( int i=0; i<m_nHistoryItems; i++ ) {
             Q_ASSERT(TOP_HISTORY_ITEM_INDEX < actions().count());
             removeAction(actions().at(TOP_HISTORY_ITEM_INDEX));
         }
@@ -177,15 +177,15 @@ void KlipperPopup::rebuild( const QString& filter ) {
     } else {
         palette.setColor( m_filterWidget->foregroundRole(), Qt::red );
     }
-    n_history_items = m_popupProxy->buildParent( TOP_HISTORY_ITEM_INDEX, filterexp );
-    if ( n_history_items == 0 ) {
+    m_nHistoryItems = m_popupProxy->buildParent( TOP_HISTORY_ITEM_INDEX, filterexp );
+    if ( m_nHistoryItems == 0 ) {
         if ( m_history->empty() ) {
-            insertAction(actions().at(TOP_HISTORY_ITEM_INDEX), new QAction(QSempty, this));
+            insertAction(actions().at(TOP_HISTORY_ITEM_INDEX), new QAction(m_qsEmpty, this));
         } else {
             palette.setColor( m_filterWidget->foregroundRole(), Qt::red );
-            insertAction(actions().at(TOP_HISTORY_ITEM_INDEX), new QAction(QSnomatch, this));
+            insertAction(actions().at(TOP_HISTORY_ITEM_INDEX), new QAction(m_qsNoMatch, this));
         }
-        n_history_items++;
+        m_nHistoryItems++;
     } else {
         if ( history()->topIsUserSelected() ) {
             actions().at(TOP_HISTORY_ITEM_INDEX)->setCheckable(true);

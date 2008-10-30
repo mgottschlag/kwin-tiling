@@ -39,16 +39,16 @@ ConfigDialog::ConfigDialog(QWidget *parent, KConfigSkeleton *skeleton, const Act
     QWidget *w = 0; // the parent for the widgets
 
     w = new QWidget(this);
-    generalWidget = new GeneralWidget(w);
-    addPage(generalWidget, i18nc("General Config", "General"), "klipper", i18n("General Config"));
+    m_generalWidget = new GeneralWidget(w);
+    addPage(m_generalWidget, i18nc("General Config", "General"), "klipper", i18n("General Config"));
 
     w = new QWidget(this);
-    actionWidget = new ActionWidget(list, w);
-    addPage(actionWidget, i18nc("Actions Config", "Actions"), "system-run", i18n("Actions Config"));
+    m_actionWidget = new ActionWidget(list, w);
+    addPage(m_actionWidget, i18nc("Actions Config", "Actions"), "system-run", i18n("Actions Config"));
 
     w = new QWidget(this);
-    shortcutsWidget = new KShortcutsEditor( collection, w, KShortcutsEditor::GlobalAction );
-    addPage(shortcutsWidget, i18nc("Shortcuts Config", "Shortcuts"), "configure-shortcuts", i18n("Shortcuts Config"));
+    m_shortcutsWidget = new KShortcutsEditor( collection, w, KShortcutsEditor::GlobalAction );
+    addPage(m_shortcutsWidget, i18nc("Shortcuts Config", "Shortcuts"), "configure-shortcuts", i18n("Shortcuts Config"));
 }
 
 

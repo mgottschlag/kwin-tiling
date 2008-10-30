@@ -22,34 +22,34 @@
 #include <QMimeData>
 
 HistoryURLItem::HistoryURLItem( const KUrl::List &_urls, KUrl::MetaDataMap _metaData, bool _cut )
-    : urls( _urls ), metaData( _metaData ), cut( _cut )
+    : m_urls( _urls ), m_metaData( _metaData ), m_cut( _cut )
 {
 }
 
 /* virtual */
 void HistoryURLItem::write( QDataStream& stream ) const
 {
-    stream << QString( "url" ) << urls << metaData << (int)cut;
+    stream << QString( "url" ) << m_urls << m_metaData << (int)m_cut;
 }
 
 QString HistoryURLItem::text() const {
-    return urls.toStringList().join( " " );
+    return m_urls.toStringList().join( " " );
 }
 
 QMimeData* HistoryURLItem::mimeData() const {
     QMimeData *data = new QMimeData();
-    urls.populateMimeData(data, metaData);
-    data->setData("application/x-kde-cutselection", QByteArray(cut ? "1" : "0"));
+    m_urls.populateMimeData(data, m_metaData);
+    data->setData("application/x-kde-cutselection", QByteArray(m_cut ? "1" : "0"));
     return data;
 }
 
 bool HistoryURLItem::operator==( const HistoryItem& rhs) const
 {
     if ( const HistoryURLItem* casted_rhs = dynamic_cast<const HistoryURLItem*>( &rhs ) ) {
-        return casted_rhs->urls == urls
-            && casted_rhs->metaData.count() == metaData.count()
-            && qEqual( casted_rhs->metaData.begin(), casted_rhs->metaData.end(), metaData.begin())
-            && casted_rhs->cut == cut;
+        return casted_rhs->m_urls == m_urls
+            && casted_rhs->m_metaData.count() == m_metaData.count()
+            && qEqual( casted_rhs->m_metaData.begin(), casted_rhs->m_metaData.end(), m_metaData.begin())
+            && casted_rhs->m_cut == m_cut;
     }
     return false;
 }

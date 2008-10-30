@@ -74,13 +74,13 @@ private:
     /**
      * Contains the string shown if the menu is empty.
      */
-    QString QSempty;
+    QString m_qsEmpty;
 
     /**
      * Contains the string shown if the search string has no
      * matches and the menu is not empty.
      */
-    QString QSnomatch;
+    QString m_qsNoMatch;
 
     /**
      * The "document" (clipboard history)
@@ -90,7 +90,7 @@ private:
     /**
      * The help menu
      */
-    KHelpMenu* helpmenu;
+    KHelpMenu* m_helpmenu;
 
     /**
      * (unowned) actions to plug into the primary popup menu
@@ -115,7 +115,7 @@ private:
     /**
      * The current number of history items in the clipboard
      */
-    int n_history_items;
+    int m_nHistoryItems;
 
 Q_SIGNALS:
     void clearHistory();

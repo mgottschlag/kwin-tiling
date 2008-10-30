@@ -55,12 +55,12 @@ class ClipboardPoll
         bool checkTimestamp( SelectionData& data );
         bool changedTimestamp( SelectionData& data, const XEvent& e );
         void initPolling();
-        QTimer timer;
-        SelectionData selection;
-        SelectionData clipboard;
-        Atom xa_clipboard;
-        Atom xa_timestamp;
-        int xfixes_event_base;
+        QTimer m_timer;
+        SelectionData m_selection;
+        SelectionData m_clipboard;
+        Atom m_xa_clipboard;
+        Atom m_xa_timestamp;
+        int m_xfixes_event_base;
     };
     
 #endif

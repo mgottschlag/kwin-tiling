@@ -52,16 +52,16 @@ public:
   bool checkNewData( const QString& clipData );
   void invokeAction( const QString& clip = QString() );
 
-  const ActionList * actionList() const { return myActions; }
+  const ActionList * actionList() const { return m_myActions; }
   void setActionList( ActionList * );
   void readConfiguration( KConfig * );
   void writeConfiguration( KConfig * );
 
-  int popupTimeout() const { return myPopupKillTimeout; }
-  void setPopupTimeout( int timeout ) { myPopupKillTimeout = timeout; }
+  int popupTimeout() const { return m_myPopupKillTimeout; }
+  void setPopupTimeout( int timeout ) { m_myPopupKillTimeout = timeout; }
 
-  const QStringList& avoidWindows() const { return myAvoidWindows; }
-  void setAvoidWindows( const QStringList& list ) { myAvoidWindows = list; }
+  const QStringList& avoidWindows() const { return m_myAvoidWindows; }
+  void setAvoidWindows( const QStringList& list ) { m_myAvoidWindows = list; }
 
   bool trimmed() const { return m_trimmed; }
   void setStripWhiteSpace( bool enable ) { m_trimmed = enable; }
@@ -72,15 +72,15 @@ private:
   bool isAvoidedWindow() const;
   void actionMenu( bool wm_class_check );
 
-  ActionList *myActions;
-  ActionList myMatches;
-  QStringList myAvoidWindows;
-  QString myClipData;
-  ClipAction *myCurrentAction;
-  QHash<QString, ClipCommand*> myCommandMapper;
-  KMenu *myMenu;
-  QTimer *myPopupKillTimer;
-  int myPopupKillTimeout;
+  ActionList *m_myActions;
+  ActionList m_myMatches;
+  QStringList m_myAvoidWindows;
+  QString m_myClipData;
+  ClipAction *m_myCurrentAction;
+  QHash<QString, ClipCommand*> m_myCommandMapper;
+  KMenu *m_myMenu;
+  QTimer *m_myPopupKillTimer;
+  int m_myPopupKillTimeout;
   bool m_trimmed;
   KSharedConfigPtr m_config;
 
@@ -121,23 +121,23 @@ public:
   ClipAction( KConfig *kc, const QString& );
   ~ClipAction();
 
-  void  setRegExp( const QString& r) 	      { myRegExp = QRegExp( r ); }
-  QString regExp() 			const { return myRegExp.pattern(); }
+  void  setRegExp( const QString& r) 	      { m_myRegExp = QRegExp( r ); }
+  QString regExp() 			const { return m_myRegExp.pattern(); }
   inline bool matches( const QString& string ) const {
-      return ( myRegExp.indexIn( string ) != -1 );
+      return ( m_myRegExp.indexIn( string ) != -1 );
   }
-  QStringList regExpMatches() { return myRegExp.capturedTexts(); }
+  QStringList regExpMatches() { return m_myRegExp.capturedTexts(); }
 
-  void 	setDescription( const QString& d)     { myDescription = d; }
-  const QString& description() 		const { return myDescription; }
+  void 	setDescription( const QString& d)     { m_myDescription = d; }
+  const QString& description() 		const { return m_myDescription; }
 
   /**
    * Removes all ClipCommands associated with this ClipAction.
    */
-  void clearCommands() { myCommands.clear(); }
+  void clearCommands() { m_myCommands.clear(); }
 
-  void  addCommand( const QString& command, const QString& description, bool, const QString& icon = "" );
-  const QList<ClipCommand*>& commands() 	const { return myCommands; }
+  void  addCommand( const QString& command, const QString& description, bool, const QString& icon = QString() );
+  const QList<ClipCommand*>& commands() 	const { return m_myCommands; }
 
   /**
    * Saves this action to a a given KConfig object
@@ -146,9 +146,9 @@ public:
 
 
 private:
-  QRegExp 		myRegExp;
-  QString 		myDescription;
-  QList<ClipCommand*> 	myCommands;
+  QRegExp 		m_myRegExp;
+  QString 		m_myDescription;
+  QList<ClipCommand*> 	m_myCommands;
 
 };
 

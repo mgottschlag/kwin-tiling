@@ -32,7 +32,7 @@ class KlipperTray : public KSystemTrayIcon
 public:
     KlipperTray();
 private:
-    Klipper* klipper;
+    Klipper* m_klipper;
 };
 
 #endif

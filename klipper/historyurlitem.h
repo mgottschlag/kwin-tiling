@@ -41,9 +41,9 @@ public:
      */
     virtual void write( QDataStream& stream ) const;
 private:
-    KUrl::List urls;
-    KUrl::MetaDataMap metaData;
-    bool cut;
+    KUrl::List m_urls;
+    KUrl::MetaDataMap m_metaData;
+    bool m_cut;
 };
 
 #endif

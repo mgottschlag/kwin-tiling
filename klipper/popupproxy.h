@@ -80,13 +80,12 @@ private:
     void deleteMoreMenus();
 
 private:
-    KMenu* proxy_for_menu;
-    History::iterator spillPointer;
+    KMenu* m_proxy_for_menu;
+    History::iterator m_spillPointer;
     QRegExp m_filter;
     int m_menu_height;
     int m_menu_width;
-    int nextItemNumber;
-
+    int m_nextItemNumber;
 };
 
 #endif

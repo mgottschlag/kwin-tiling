@@ -35,14 +35,14 @@
 
 PopupProxy::PopupProxy( KlipperPopup* parent, int menu_height, int menu_width )
     : QObject( parent ),
-      proxy_for_menu( parent ),
-      spillPointer( parent->history()->youngest() ),
+      m_proxy_for_menu( parent ),
+      m_spillPointer( parent->history()->youngest() ),
       m_menu_height( menu_height ),
       m_menu_width( menu_width ),
-      nextItemNumber( 0 )
+      m_nextItemNumber( 0 )
 {
     connect( parent->history(), SIGNAL( changed() ), SLOT( slotHistoryChanged() ) );
-    connect(proxy_for_menu, SIGNAL(triggered(QAction*)), parent->history(), SLOT(slotMoveToTop(QAction*)));
+    connect(m_proxy_for_menu, SIGNAL(triggered(QAction*)), parent->history(), SLOT(slotMoveToTop(QAction*)));
 }
 
 void PopupProxy::slotHistoryChanged() {
@@ -52,12 +52,12 @@ void PopupProxy::slotHistoryChanged() {
 
 void PopupProxy::deleteMoreMenus() {
     const KMenu* myParent = parent();
-    if ( myParent != proxy_for_menu ) {
-        KMenu* delme = proxy_for_menu;
-        proxy_for_menu = static_cast<KMenu*>( proxy_for_menu->parent() );
-        while ( proxy_for_menu != myParent ) {
-            delme = proxy_for_menu;
-            proxy_for_menu = static_cast<KMenu*>( proxy_for_menu->parent() );
+    if ( myParent != m_proxy_for_menu ) {
+        KMenu* delme = m_proxy_for_menu;
+        m_proxy_for_menu = static_cast<KMenu*>( m_proxy_for_menu->parent() );
+        while ( m_proxy_for_menu != myParent ) {
+            delme = m_proxy_for_menu;
+            m_proxy_for_menu = static_cast<KMenu*>( m_proxy_for_menu->parent() );
         }
         // We are called probably from within the menus event-handler (triggered=>slotMoveToTop=>changed=>slotHistoryChanged=>deleteMoreMenus)
         // what can result in a crash if we just delete the menu here (#155196 and #165154) So, delay the delete.
@@ -68,8 +68,8 @@ void PopupProxy::deleteMoreMenus() {
 int PopupProxy::buildParent( int index, const QRegExp& filter ) {
     deleteMoreMenus();
     // Start from top of  history (again)
-    spillPointer = parent()->history()->youngest();
-    nextItemNumber = 0;
+    m_spillPointer = parent()->history()->youngest();
+    m_nextItemNumber = 0;
     if ( filter.isValid() ) {
         m_filter = filter;
     }
@@ -90,11 +90,11 @@ void PopupProxy::tryInsertItem( HistoryItem const * const item,
                                 int& remainingHeight,
                                 const int index )
 {
-    QAction *action = new QAction(proxy_for_menu);
+    QAction *action = new QAction(m_proxy_for_menu);
     QPixmap image( item->image() );
     if ( image.isNull() ) {
         // Squeeze text strings so that do not take up the entire screen (or more)
-        QString text = proxy_for_menu->fontMetrics().elidedText( item->text().simplified(), Qt::ElideMiddle, m_menu_width );
+        QString text = m_proxy_for_menu->fontMetrics().elidedText( item->text().simplified(), Qt::ElideMiddle, m_menu_width );
         text.replace( "&", "&&" );
         action->setText(text);
     } else {
@@ -105,24 +105,24 @@ void PopupProxy::tryInsertItem( HistoryItem const * const item,
         action->setIcon(QIcon(image));
     }
 
-    action->setData(nextItemNumber);
+    action->setData(m_nextItemNumber);
 
-    // if the proxy_for_menu is a submenu (aka a "More" menu) then it may the case, that there is no other action in that menu yet.
-    QAction *before = index < proxy_for_menu->actions().count() ? proxy_for_menu->actions().at(index) : 0;
-    // insert the new action to the proxy_for_menu
-    proxy_for_menu->insertAction(before, action);
+    // if the m_proxy_for_menu is a submenu (aka a "More" menu) then it may the case, that there is no other action in that menu yet.
+    QAction *before = index < m_proxy_for_menu->actions().count() ? m_proxy_for_menu->actions().at(index) : 0;
+    // insert the new action to the m_proxy_for_menu
+    m_proxy_for_menu->insertAction(before, action);
 
     // Determine height of a menu item.
-    int itemheight = QFontMetrics(proxy_for_menu->fontMetrics()).height();
+    int itemheight = QFontMetrics(m_proxy_for_menu->fontMetrics()).height();
 
 //TODO Use old-style QStyle and QStyleOption API
 #if 0
     Q_ASSERT( id != -1 ); // Be sure that the item was inserted.
-    QMenuItem* mi = proxy_for_menu->findItem( id );
+    QMenuItem* mi = m_proxy_for_menu->findItem( id );
 
 
-    int itemheight = proxy_for_menu->style().sizeFromContents(QStyle::CT_PopupMenuItem,
-                                                              proxy_for_menu,
+    int itemheight = m_proxy_for_menu->style().sizeFromContents(QStyle::CT_PopupMenuItem,
+                                                              m_proxy_for_menu,
                                                               QSize( 0, fontheight ),
                                                               QStyleOption(mi,10,0) ).height();
 #endif
@@ -134,35 +134,35 @@ int PopupProxy::insertFromSpill( int index ) {
 
     // This menu is going to be filled, so we don't need the aboutToShow()
     // signal anymore
-    disconnect( proxy_for_menu, 0, this, 0 );
+    disconnect( m_proxy_for_menu, 0, this, 0 );
 
-    // Insert history items into the current proxy_for_menu,
+    // Insert history items into the current m_proxy_for_menu,
     // discarding any that doesn't match the current filter.
     // stop when the total number of items equal m_itemsPerMenu;
     int count = 0;
-    int remainingHeight = m_menu_height - proxy_for_menu->sizeHint().height();
+    int remainingHeight = m_menu_height - m_proxy_for_menu->sizeHint().height();
     // Force at least one item to be inserted.
     remainingHeight = qMax( remainingHeight, 0 );
 
-    while (spillPointer.hasNext() && remainingHeight >= 0) {
-        const HistoryItem *item = spillPointer.next();
+    while (m_spillPointer.hasNext() && remainingHeight >= 0) {
+        const HistoryItem *item = m_spillPointer.next();
         if ( m_filter.indexIn( item->text() ) == -1) {
-            nextItemNumber++; // also count hidden items
+            m_nextItemNumber++; // also count hidden items
             continue;
         }
         tryInsertItem( item, remainingHeight, index++ );
         count++;
-        nextItemNumber++;
+        m_nextItemNumber++;
     }
 
     // If there is more items in the history, insert a new "More..." menu and
     // make *this a proxy for that menu ('s content).
-    if (spillPointer.hasNext()) {
-        KMenu* moreMenu = new KMenu(i18n("&More"), proxy_for_menu);
+    if (m_spillPointer.hasNext()) {
+        KMenu* moreMenu = new KMenu(i18n("&More"), m_proxy_for_menu);
         connect(moreMenu, SIGNAL(aboutToShow()), SLOT(slotAboutToShow()));
-        QAction *before = index < proxy_for_menu->actions().count() ? proxy_for_menu->actions().at(index) : 0;
-        proxy_for_menu->insertMenu(before, moreMenu);
-        proxy_for_menu = moreMenu;
+        QAction *before = index < m_proxy_for_menu->actions().count() ? m_proxy_for_menu->actions().at(index) : 0;
+        m_proxy_for_menu->insertMenu(before, moreMenu);
+        m_proxy_for_menu = moreMenu;
     }
 
     // Return the number of items inserted.

@@ -157,31 +157,31 @@ private Q_SLOTS:
 
 private:
 
-    QClipboard *clip;
+    QClipboard *m_clip;
 
-    QTime *hideTimer;
-    QTime *showTimer;
+    QTime *m_hideTimer;
+    QTime *m_showTimer;
 
     int m_lastClipboard;
     int m_lastSelection;
     History* m_history;
     int m_overflowCounter;
-    KToggleAction *toggleURLGrabAction;
-    QAction* clearHistoryAction;
-    QAction* configureAction;
-    QAction* quitAction;
+    KToggleAction *m_toggleURLGrabAction;
+    QAction* m_clearHistoryAction;
+    QAction* m_configureAction;
+    QAction* m_quitAction;
     QPixmap m_pixmap;
-    bool bPopupAtMouse :1;
-    bool bKeepContents :1;
-    bool bURLGrabber   :1;
-    bool bReplayActionInHistory :1;
-    bool bUseGUIRegExpEditor    :1;
-    bool bNoNullClipboard       :1;
-    bool bTearOffHandle         :1;
-    bool bIgnoreSelection       :1;
-    bool bSynchronize           :1;
-    bool bSelectionTextOnly     :1;
-    bool bIgnoreImages          :1;
+    bool m_bPopupAtMouse :1;
+    bool m_bKeepContents :1;
+    bool m_bURLGrabber   :1;
+    bool m_bReplayActionInHistory :1;
+    bool m_bUseGUIRegExpEditor    :1;
+    bool m_bNoNullClipboard       :1;
+    bool m_bTearOffHandle         :1;
+    bool m_bIgnoreSelection       :1;
+    bool m_bSynchronize           :1;
+    bool m_bSelectionTextOnly     :1;
+    bool m_bIgnoreImages          :1;
 
     /**
      * Avoid reacting to our own changes, using this
@@ -189,21 +189,21 @@ private:
      * Don't manupulate this object directly... use the Ignore struct
      * instead
      */
-    int locklevel;
+    int m_locklevel;
 
-    URLGrabber *myURLGrabber;
+    URLGrabber *m_myURLGrabber;
     QString m_lastURLGrabberTextSelection;
     QString m_lastURLGrabberTextClipboard;
     KSharedConfigPtr m_config;
     QTimer m_overflowClearTimer;
     QTimer m_pendingCheckTimer;
     bool m_pendingContentsCheck;
-    ClipboardPoll* poll;
-    static KAboutData* about_data;
+    ClipboardPoll* m_poll;
+    static KAboutData* m_about_data;
 
     bool blockFetchingNewData();
-    KlipperSessionManager* session_managed;
-    KActionCollection *collection;
+    KlipperSessionManager* m_session_managed;
+    KActionCollection *m_collection;
 };
 
 #endif
