@@ -750,7 +750,7 @@ void TaskGroupItem::updateActive(AbstractTaskItem *task)
     }
     Q_ASSERT(m_layoutWidget);
 
-    m_activeTaskIndex = m_group->members().indexOf(task->abstractItem());
+    m_activeTaskIndex = m_groupMembers.indexOf(task);
 }
 
 
