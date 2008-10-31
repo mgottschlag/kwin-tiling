@@ -1,6 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2007 by Robert Knight <robertknight@gmail.com>          *
  *   Copyright (C) 2008 by Alexis Ménard <darktears31@gmail.com>           *
+ *   Copyright (C) 2008 by Marco Martin <notmart@gmail.com>                *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -198,8 +199,8 @@ protected:
     QRectF textRect(const QRectF &bounds) const;
     // start an animation to chnge the task background
     void fadeBackground(const QString &newBackground, int duration, bool fadeIn);
-    // text and shadow colors, use this because they could be animated
-    QColor textColor(bool shadow) const;
+    // text color, use this because it could be animated
+    QColor textColor() const;
 
     TaskManager::AbstractItemPtr m_abstractItem;
     LayoutWidget *m_layoutWidget;

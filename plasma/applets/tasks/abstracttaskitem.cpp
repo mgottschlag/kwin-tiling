@@ -1,6 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2007 by Robert Knight <robertknight@gmail.com>          *
  *   Copyright (C) 2008 by Alexis Ménard <darktears31@gmail.com>           *
+ *   Copyright (C) 2008 by Marco Martin <notmart@gmail.com>                *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -377,7 +378,7 @@ void AbstractTaskItem::drawTask(QPainter *painter,const QStyleOptionGraphicsItem
         painter->drawPixmap(iconRect(bounds).topLeft(), result);
     }
 
-    painter->setPen(QPen(textColor(false), 1.0));
+    painter->setPen(QPen(textColor(), 1.0));
 
     QRect rect = textRect(bounds).toRect();
     if (rect.height() > 20) {
@@ -403,7 +404,7 @@ void AbstractTaskItem::drawTask(QPainter *painter,const QStyleOptionGraphicsItem
 
         painter->setFont(font);
 
-        painter->drawText(QPoint(rect.left(), rect.center().y()+fm.xHeight()), QString::number(groupItem->memberList().count()));
+        painter->drawText(rect, Qt::AlignCenter, QString::number(groupItem->memberList().count()));
     }
 }
 
@@ -516,8 +517,16 @@ void AbstractTaskItem::drawTextLayout(QPainter *painter, const QTextLayout &layo
 
     p.end();
 
+
+    QColor shadowColor;
+    if (textColor().value() < 128) {
+        shadowColor = Qt::white;
+    } else {
+        shadowColor = Qt::black;
+    }
+
     QImage shadow = pixmap.toImage();
-    Plasma::PaintUtils::shadowBlur(shadow, 2, textColor(true));
+    Plasma::PaintUtils::shadowBlur(shadow, 2, shadowColor);
 
     painter->drawImage(rect.topLeft() + QPoint(1,2), shadow);
     painter->drawPixmap(rect.topLeft(), pixmap);
@@ -663,28 +672,18 @@ QRectF AbstractTaskItem::textRect(const QRectF &bounds) const
                                      size, effectiveBounds.toRect());
 }
 
-QColor AbstractTaskItem::textColor(bool shadow) const
+QColor AbstractTaskItem::textColor() const
 {
     QColor color;
-    QColor color1;
-    QColor color2;
     qreal bias;
     Plasma::Theme *theme = Plasma::Theme::defaultTheme();
-
-    if (shadow) {
-        color1 = theme->color(Plasma::Theme::BackgroundColor);
-        color2 = theme->color(Plasma::Theme::ButtonBackgroundColor);
-    } else {
-        color1 = theme->color(Plasma::Theme::TextColor);
-        color2 = theme->color(Plasma::Theme::ButtonTextColor);
-    }
 
     if ((m_oldBackgroundPrefix == "attention" || m_backgroundPrefix == "attention") &&
         m_applet->itemBackground()->hasElement("hint-attention-button-color")) {
         if (!m_animId && m_backgroundPrefix != "attention") {
-            color = color1;
+            color = theme->color(Plasma::Theme::TextColor);
         } else if (!m_animId) {
-            color = color2;
+            color = theme->color(Plasma::Theme::ButtonTextColor);
         } else {
             if (m_oldBackgroundPrefix == "attention") {
                 bias = 1 - m_alpha;
@@ -692,10 +691,11 @@ QColor AbstractTaskItem::textColor(bool shadow) const
                 bias = m_alpha;
             }
 
-            color = KColorUtils::mix(color1, color2, bias);
+            color = KColorUtils::mix(theme->color(Plasma::Theme::TextColor),
+                                     theme->color(Plasma::Theme::ButtonTextColor), bias);
         }
     } else {
-        color = color1;
+        color = theme->color(Plasma::Theme::TextColor);
     }
 
     if (m_flags & TaskIsMinimized) {
