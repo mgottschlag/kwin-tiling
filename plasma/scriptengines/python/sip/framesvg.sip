@@ -50,11 +50,7 @@ public:
     qreal                   marginSize (const Plasma::MarginEdge edge) const;
 
 
-//io ambiguous symbol: qreal& left -- specify In, Out or both
-//io ambiguous symbol: qreal& top -- specify In, Out or both
-//io ambiguous symbol: qreal& right -- specify In, Out or both
-//io ambiguous symbol: qreal& bottom -- specify In, Out or both
-//io     void               getMargins (qreal& left, qreal& top, qreal& right, qreal& bottom) const;
+    void                    getMargins (qreal& left /out/, qreal& top /out/, qreal& right /out/, qreal& bottom /out/) const;
 
 
     void                    setElementPrefix (Plasma::Location location);
