@@ -1,9 +1,5 @@
 [Desktop Entry]
 Name=Tiger
-Name[bg]=Тигър
-Name[pt]=Tigre
-Name[pt_BR]=Tigre
-Name[xx]=xxTigerxx
 Comment=An example of displaying an SVG
 Type=Service
 ServiceTypes=Plasma/Applet
