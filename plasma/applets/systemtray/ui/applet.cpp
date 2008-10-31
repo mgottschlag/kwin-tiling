@@ -54,7 +54,7 @@ public:
           taskArea(0),
           configInterface(0),
           background(0),
-          backgroundEnabled(false)
+          marginsEnabled(false)
     {
     }
 
@@ -66,7 +66,7 @@ public:
     QPointer<KActionSelector> configInterface;
 
     Plasma::FrameSvg *background;
-    bool backgroundEnabled;
+    bool marginsEnabled;
 };
 
 
@@ -160,17 +160,23 @@ void Applet::checkSizes()
     qreal leftMargin, topMargin, rightMargin, bottomMargin;
     d->background->getMargins(leftMargin, topMargin, rightMargin, bottomMargin);
 
-    bool backgroundEnabled;
+    bool marginsEnabled;
     switch (formFactor()) {
     case Plasma::Horizontal:
-        backgroundEnabled = actualSize.height() >= (preferredSize.height() + topMargin + bottomMargin);
+        marginsEnabled = actualSize.height() >= (preferredSize.height() + topMargin + bottomMargin);
         break;
     default:
-        backgroundEnabled = true;
+        marginsEnabled = true;
     }
 
-    if (backgroundEnabled) {
+    if (marginsEnabled) {
         setContentsMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+    } else if (formFactor() == Plasma::Horizontal) {
+        setContentsMargins(leftMargin, 0, rightMargin, 0);
+        topMargin = bottomMargin = 0;
+    } else if (formFactor() == Plasma::Vertical) {
+        setContentsMargins(0, topMargin, 0, bottomMargin);
+        leftMargin = rightMargin = 0;
     } else {
         setContentsMargins(0, 0, 0, 0);
         leftMargin = topMargin = rightMargin = bottomMargin = 0;
@@ -198,8 +204,8 @@ void Applet::checkSizes()
         return;
     }
 
-    if (backgroundEnabled != d->backgroundEnabled) {
-        d->backgroundEnabled = backgroundEnabled;
+    if (marginsEnabled != d->marginsEnabled) {
+        d->marginsEnabled = marginsEnabled;
         update();
     }
 }
@@ -225,10 +231,8 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
     Q_UNUSED(option)
     Q_UNUSED(contentsRect);
 
-    if (d->backgroundEnabled) {
-        d->background->resizeFrame(size());
-        d->background->paintFrame(painter);
-    }
+    d->background->resizeFrame(size());
+    d->background->paintFrame(painter);
 }
 
 
