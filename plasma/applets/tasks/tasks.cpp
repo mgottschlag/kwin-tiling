@@ -47,7 +47,6 @@
 Tasks::Tasks(QObject* parent, const QVariantList &arguments)
      : Plasma::Applet(parent, arguments),
        m_taskItemBackground(0),
-       m_taskAlphaPixmap(0),
        m_colorScheme(0),
        m_leftMargin(0),
        m_topMargin(0),
@@ -70,7 +69,6 @@ Tasks::Tasks(QObject* parent, const QVariantList &arguments)
 Tasks::~Tasks()
 {
     delete m_colorScheme;
-    delete m_taskAlphaPixmap;
     delete m_groupManager;
 }
 
@@ -312,31 +310,6 @@ Plasma::FrameSvg* Tasks::itemBackground()
     return m_taskItemBackground;
 }
 
-QPixmap *Tasks::taskAlphaPixmap(const QSize &size) //FIXME huge memory leak like this
-{
-    /*QPixmap *m_taskAlphaPixmap;
-    if (!m_taskAlphaPixmapList.contains(size.width())) {
-	kDebug() << "pixmap created";
-        m_taskAlphaPixmap = new QPixmap(size);
-        //fills the pixmap of transparent, because otherwise if the first time would be filled with
-        //a fully opaque color that would disable the alpha channel
-        m_taskAlphaPixmap->fill(Qt::transparent);
-	m_taskAlphaPixmapList.insert(size.width(), m_taskAlphaPixmap);
-    } else {
-	kDebug() << "pixmap size found";
-	m_taskAlphaPixmap = m_taskAlphaPixmapList.value(size.width());
-    }
-*/
-    if (!m_taskAlphaPixmap) {
-        m_taskAlphaPixmap = new QPixmap(size);
-    } else if (m_taskAlphaPixmap->size() != size) {
-        delete m_taskAlphaPixmap;
-        m_taskAlphaPixmap = new QPixmap(size);
-    }
-
-    return m_taskAlphaPixmap;
-}
-
 void Tasks::resizeItemBackground(const QSizeF &size)
 {
   //kDebug();
@@ -359,10 +332,9 @@ void Tasks::resizeItemBackground(const QSizeF &size)
     m_taskItemBackground->resizeFrame(size);
     //get the margins now
     m_taskItemBackground->getMargins(m_leftMargin, m_topMargin, m_rightMargin, m_bottomMargin);
-    //if the task height is too little reset the top and bottom margins
+    //if the task height is too little shrink the top and bottom margins
     if (size.height() - m_topMargin - m_bottomMargin < KIconLoader::SizeSmall) {
-        m_topMargin = 0;
-        m_bottomMargin = 0;
+        m_topMargin = m_bottomMargin = qMax(1, int((size.height() - KIconLoader::SizeSmall)/2));
     }
 }
 

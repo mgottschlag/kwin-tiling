@@ -85,7 +85,6 @@ public:
         void constraintsEvent(Plasma::Constraints constraints);
 
         Plasma::FrameSvg *itemBackground();
-        QPixmap *taskAlphaPixmap(const QSize &size);
         KColorScheme *colorScheme();
 
         qreal itemLeftMargin() { return m_leftMargin; }
@@ -156,8 +155,6 @@ private:
         QTimer m_screenTimer;
 
         Plasma::FrameSvg *m_taskItemBackground;
-        QPixmap *m_taskAlphaPixmap;
-        QHash <int,QPixmap*> m_taskAlphaPixmapList;
         KColorScheme *m_colorScheme;
         qreal m_leftMargin;
         qreal m_topMargin;
