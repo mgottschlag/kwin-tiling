@@ -21,16 +21,16 @@
 namespace Plasma
 {
 
-class Icon : QGraphicsWidget
+class IconWidget : QGraphicsWidget
 {
 %TypeHeaderCode
-#include <plasma/widgets/icon.h>
+#include <plasma/widgets/iconwidget.h>
 %End
 
 public:
-    explicit                Icon (QGraphicsItem* parent = 0);
-    explicit                Icon (const QString& text, QGraphicsItem* parent = 0);
-                            Icon (const QIcon& icon, const QString& text, QGraphicsItem* parent = 0);
+    explicit                IconWidget (QGraphicsItem* parent = 0);
+    explicit                IconWidget (const QString& text, QGraphicsItem* parent = 0);
+                            IconWidget (const QIcon& icon, const QString& text, QGraphicsItem* parent = 0);
     QString                 text () const;
     void                    setText (const QString& text);
     void                    setSvg (const QString& svgFilePath, const QString& svgIconElement = QString());
@@ -76,7 +76,7 @@ protected:
 
 public:
     void                    drawActionButtonBase (QPainter* painter, const QSize& size, int element);
-};   // Icon
+};   // IconWidget
 
 };   // Plasma
 

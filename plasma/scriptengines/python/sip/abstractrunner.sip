@@ -28,7 +28,7 @@
 #include <plasma/scripting/appletscript.h>
 #include <plasma/widgets/checkbox.h>
 #include <plasma/widgets/combobox.h>
-#include <plasma/configxml.h>
+#include <plasma/configloader.h>
 #include <plasma/containment.h>
 #include <plasma/corona.h>
 #include <plasma/datacontainer.h>
@@ -37,10 +37,10 @@
 #include <plasma/scripting/dataenginescript.h>
 #include <plasma/delegate.h>
 #include <plasma/dialog.h>
-#include <plasma/widgets/flash.h>
+#include <plasma/widgets/flashinglabel.h>
 #include <plasma/glapplet.h>
 #include <plasma/widgets/groupbox.h>
-#include <plasma/widgets/icon.h>
+#include <plasma/widgets/iconwidget.h>
 #include <plasma/widgets/label.h>
 #include <plasma/widgets/lineedit.h>
 #include <plasma/widgets/meter.h>
@@ -58,7 +58,7 @@
 #include <plasma/theme.h>
 #include <plasma/uiloader.h>
 #include <plasma/view.h>
-#include <plasma/widgets/webcontent.h>
+#include <plasma/widgets/webview.h>
 %End
 
 namespace Plasma
@@ -154,12 +154,12 @@ public:
         sipClass = sipClass_Plasma_DataEngineManager;
     else if (dynamic_cast<Plasma::Delegate*>(sipCpp))
         sipClass = sipClass_Plasma_Delegate;
-    else if (dynamic_cast<Plasma::Flash*>(sipCpp))
-        sipClass = sipClass_Plasma_Flash;
+    else if (dynamic_cast<Plasma::FlashingLabel*>(sipCpp))
+        sipClass = sipClass_Plasma_FlashingLabel;
     else if (dynamic_cast<Plasma::GroupBox*>(sipCpp))
         sipClass = sipClass_Plasma_GroupBox;
-    else if (dynamic_cast<Plasma::Icon*>(sipCpp))
-        sipClass = sipClass_Plasma_Icon;
+    else if (dynamic_cast<Plasma::IconWidget*>(sipCpp))
+        sipClass = sipClass_Plasma_IconWidget;
     else if (dynamic_cast<Plasma::Label*>(sipCpp))
         sipClass = sipClass_Plasma_Label;
     else if (dynamic_cast<Plasma::LineEdit*>(sipCpp))
@@ -202,8 +202,8 @@ public:
         sipClass = sipClass_Plasma_UiLoader;
     else if (dynamic_cast<Plasma::View*>(sipCpp))
         sipClass = sipClass_Plasma_View;
-    else if (dynamic_cast<Plasma::WebContent*>(sipCpp))
-        sipClass = sipClass_Plasma_WebContent;
+    else if (dynamic_cast<Plasma::WebView*>(sipCpp))
+        sipClass = sipClass_Plasma_WebView;
 %End
 
 };   // AbstractRunner

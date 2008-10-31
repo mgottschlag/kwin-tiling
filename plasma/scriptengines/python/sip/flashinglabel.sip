@@ -21,14 +21,14 @@
 namespace Plasma
 {
 
-class Flash : QGraphicsWidget
+class FlashingLabel : QGraphicsWidget
 {
 %TypeHeaderCode
-#include <plasma/widgets/flash.h>
+#include <plasma/widgets/flashinglabel.h>
 %End
 
 public:
-    explicit                Flash (QGraphicsItem* parent = 0);
+    explicit                FlashingLabel (QGraphicsItem* parent = 0);
     void                    paint (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
     void                    setFont (const QFont&);
     void                    setColor (const QColor&);
@@ -45,7 +45,7 @@ public:
 protected:
     void                    fadeIn ();
     void                    fadeOut ();
-};   // Flash
+};   // FlashingLabel
 
 };   // Plasma
 

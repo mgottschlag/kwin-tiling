@@ -79,8 +79,8 @@ public:
     void                    save (KConfigGroup& group) const;
     void                    restore (KConfigGroup& group);
     void                    enableAction (const QString& name, bool enable);
-    void                    addToolBoxTool (QAction* action);
-    void                    removeToolBoxTool (QAction* action);
+    void                    addToolBoxAction (QAction* action);
+    void                    removeToolBoxAction (QAction* action);
     void                    setToolBoxOpen (bool open);
     void                    openToolBox ();
     void                    closeToolBox ();

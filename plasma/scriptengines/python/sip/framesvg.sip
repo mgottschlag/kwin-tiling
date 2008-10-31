@@ -45,8 +45,8 @@ public:
     void                    setImagePath (const QString& path);
     void                    setEnabledBorders (const Plasma::FrameSvg::EnabledBorders borders);
     Plasma::FrameSvg::EnabledBorders  enabledBorders () const;
-    void                    resizePanel (const QSizeF& size);
-    QSizeF                  panelSize () const;
+    void                    resizeFrame (const QSizeF& size);
+    QSizeF                  frameSize () const;
     qreal                   marginSize (const Plasma::MarginEdge edge) const;
 
 
@@ -63,11 +63,11 @@ public:
     bool                    hasElementPrefix (Plasma::Location location) const;
     QString                 prefix ();
     QBitmap                 mask () const;
-    void                    setCacheAllRenderedPanels (bool cache);
-    bool                    cacheAllRenderedPanels () const;
+    void                    setCacheAllRenderedFrames (bool cache);
+    bool                    cacheAllRenderedFrames () const;
     void                    clearCache ();
-    void                    paintPanel(QPainter* painter, const QRectF& target, const QRectF& source = QRectF());
-    void                    paintPanel(QPainter* painter, const QPointF& pos = QPointF(0, 0));
+    void                    paintFrame(QPainter* painter, const QRectF& target, const QRectF& source = QRectF());
+    void                    paintFrame(QPainter* painter, const QPointF& pos = QPointF(0, 0));
 };   // FrameSvg
 
 };   // Plasma
