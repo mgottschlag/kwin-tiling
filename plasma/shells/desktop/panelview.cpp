@@ -1008,7 +1008,8 @@ void PanelView::positionSpacer(const QPoint pos)
 
 void PanelView::dragEnterEvent(QDragEnterEvent *event)
 {
-    if (containment()) {
+    Plasma::Containment *c = containment();
+    if (c && c->immutability() == Plasma::Mutable) {
         containment()->showDropZone(event->pos());
     }
 
@@ -1018,7 +1019,8 @@ void PanelView::dragEnterEvent(QDragEnterEvent *event)
 
 void PanelView::dragMoveEvent(QDragMoveEvent *event)
 {
-    if (containment()) {
+    Plasma::Containment *c = containment();
+    if (c && c->immutability() == Plasma::Mutable) {
         containment()->showDropZone(event->pos());
     }
 
