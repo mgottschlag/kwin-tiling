@@ -44,7 +44,7 @@ class GadgetBrowserViewHost : public qt::QtViewHost {
       : QtViewHost(type, 1.0, false, true, false, 0, NULL),
         package_(package) {}
 
-  virtual ~GadgetBrowserViewHost() {
+  virtual void CloseView() {
     package_->gadgetBrowserClosed();
   }
   GglPackage *package_;
