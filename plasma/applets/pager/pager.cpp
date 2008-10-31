@@ -248,6 +248,13 @@ void Pager::recalculateGeometry()
     int padding = 2; // Space between miniatures of desktops
     int textMargin = 3; // Space between name of desktop and border
     int columns = m_desktopCount / m_rows + m_desktopCount % m_rows;
+    int rows = m_rows;
+
+    //inverse rows and columns in vertical panel
+    if(formFactor() == Plasma::Vertical) {
+        rows = columns;
+        columns = m_rows;
+    }
 
     qreal leftMargin;
     qreal topMargin;
@@ -262,7 +269,7 @@ void Pager::recalculateGeometry()
 
         //if the final size is going to be really tiny avoid to add extra margins
         if (geometry().width() - leftMargin - rightMargin < KIconLoader::SizeSmall*ratio * columns + padding*(columns-1) ||
-            geometry().height() - topMargin - bottomMargin < KIconLoader::SizeSmall * m_rows + padding*(m_rows-1)) {
+            geometry().height() - topMargin - bottomMargin < KIconLoader::SizeSmall * rows + padding*(rows-1)) {
             m_showOwnBackground = false;
             leftMargin = topMargin = rightMargin = bottomMargin = padding = textMargin = 0;
         } else {
@@ -281,7 +288,7 @@ void Pager::recalculateGeometry()
         itemHeight = QApplication::desktop()->height() * m_widthScaleFactor;
         m_heightScaleFactor = m_widthScaleFactor;
     } else {
-        itemHeight = (geometry().height() - topMargin -  bottomMargin - padding * (m_rows - 1)) / m_rows;
+        itemHeight = (geometry().height() - topMargin -  bottomMargin - padding * (rows - 1)) / rows;
         m_heightScaleFactor = itemHeight / QApplication::desktop()->height();
         itemWidth = QApplication::desktop()->width() * m_heightScaleFactor;
         if (m_displayedText == Name) {
@@ -304,8 +311,8 @@ void Pager::recalculateGeometry()
     itemRect.setWidth(floor(itemWidth - 1));
     itemRect.setHeight(floor(itemHeight - 1));
     for (int i = 0; i < m_desktopCount; i++) {
-        itemRect.moveLeft(leftMargin + floor((i % columns) * (itemWidth + padding)));
-        itemRect.moveTop(topMargin + floor((i / columns) * (itemHeight + padding)));
+        itemRect.moveLeft(leftMargin + floor(i % columns  * (itemWidth + padding)));
+        itemRect.moveTop(topMargin + floor(i / columns * (itemHeight + padding)));
         m_rects.append(itemRect);
         AnimInfo anim;
         anim.animId = -1;
@@ -329,7 +336,7 @@ void Pager::recalculateGeometry()
     }
 
     m_size = QSizeF(ceil(columns * itemWidth + padding * (columns - 1) + leftMargin + rightMargin),
-                    ceil(m_rows * itemHeight + padding * (m_rows - 1) + topMargin + bottomMargin));
+                    ceil(rows * itemHeight + padding * (rows - 1) + topMargin + bottomMargin));
 
     //kDebug() << "new size set" << m_size << m_rows << m_columns << columns << itemWidth;
 
@@ -340,7 +347,7 @@ void Pager::recalculateGeometry()
         m_columns = columns;
         NET::Orientation orient = NET::OrientationHorizontal;
         NETRootInfo i( QX11Info::display(), 0 );
-        i.setDesktopLayout( orient, columns, m_rows, NET::DesktopLayoutCornerTopLeft );
+        i.setDesktopLayout( orient, columns, rows, NET::DesktopLayoutCornerTopLeft );
     }
 }
 
