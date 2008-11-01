@@ -1009,7 +1009,9 @@ void PanelView::positionSpacer(const QPoint pos)
 void PanelView::dragEnterEvent(QDragEnterEvent *event)
 {
     Plasma::Containment *c = containment();
-    if (c && c->immutability() == Plasma::Mutable) {
+    if (c && c->immutability() == Plasma::Mutable &&
+        (event->mimeData()->hasFormat(static_cast<Plasma::Corona*>(scene())->appletMimeType()) ||
+         KUrl::List::canDecode(event->mimeData()))) {
         containment()->showDropZone(event->pos());
     }
 
@@ -1020,7 +1022,9 @@ void PanelView::dragEnterEvent(QDragEnterEvent *event)
 void PanelView::dragMoveEvent(QDragMoveEvent *event)
 {
     Plasma::Containment *c = containment();
-    if (c && c->immutability() == Plasma::Mutable) {
+    if (c && c->immutability() == Plasma::Mutable &&
+        (event->mimeData()->hasFormat(static_cast<Plasma::Corona*>(scene())->appletMimeType()) ||
+         KUrl::List::canDecode(event->mimeData()))) {
         containment()->showDropZone(event->pos());
     }
 
