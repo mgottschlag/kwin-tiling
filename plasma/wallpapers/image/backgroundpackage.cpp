@@ -286,9 +286,10 @@ void BackgroundPackage::generateScreenshot(QPersistentModelIndex) const
 
 QString BackgroundPackage::title() const
 {
-    QString title = metadata()->name();
+    Plasma::PackageMetadata md = metadata();
+    QString title = md.name();
     if (title.isEmpty()) {
-        title = metadata()->pluginName();
+        title = md.pluginName();
         title.replace("_", " ");
     }
     return title;
@@ -296,17 +297,17 @@ QString BackgroundPackage::title() const
 
 QString BackgroundPackage::author() const
 {
-    return metadata()->author();
+    return metadata().author();
 }
 
 QString BackgroundPackage::email() const
 {
-    return metadata()->email();
+    return metadata().email();
 }
 
 QString BackgroundPackage::license() const
 {
-    return metadata()->license();
+    return metadata().license();
 }
 
 bool BackgroundPackage::isValid() const
