@@ -123,7 +123,7 @@ QString Hdd::title(const QString& uuid, const Plasma::DataEngine::Data &data)
         if (label.isEmpty()) {
             QString path = data["File Path"].toString();
             if (path == "/")
-                return i18n("root");
+                return i18nc("the root filesystem", "root");
             QFileInfo fi(path);
             label = fi.fileName();
             if (label.isEmpty()) {
