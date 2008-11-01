@@ -71,7 +71,7 @@ QStandardItem* LeaveModel::createStandardItem(const QString& url)
         item->setIcon(KIcon("document-save"));
         item->setData(i18n("Save current session for next login"), Kickoff::SubTitleRole);
     } else if (basename == "standby") {
-        item->setText(i18n("Standby"));
+        item->setText(i18nc("Puts the system on standby", "Standby"));
         item->setIcon(KIcon("system-suspend"));
         item->setData(i18n("Pause without logging out"), Kickoff::SubTitleRole);
     } else if (basename == "suspenddisk") {
