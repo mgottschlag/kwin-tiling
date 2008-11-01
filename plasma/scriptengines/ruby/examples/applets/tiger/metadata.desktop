@@ -1,6 +1,17 @@
 [Desktop Entry]
 Name=Tiger
+Name[kk]=Жолбарыс
+Name[pt]=Tigre
+Name[pt_BR]=Tigre
+Name[tr]=Kaplan
+Name[uk]=Тигр
 Comment=An example of displaying an SVG
+Comment[kk]=SVG көрсету мысалы
+Comment[pt]=Um exemplo de visualização de um SVG
+Comment[pt_BR]=Um exemplo de visualização de um SVG
+Comment[sv]=Ett exempel på att visa en SVG
+Comment[tr]=Bir SVG resim gösteriminin bir örneği
+Comment[uk]=Приклад показу SVG
 Type=Service
 ServiceTypes=Plasma/Applet
 

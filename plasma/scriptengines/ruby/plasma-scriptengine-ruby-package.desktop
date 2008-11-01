@@ -1,6 +1,18 @@
 [Desktop Entry]
 Name=Ruby Package Structure
+Name[kk]=Ruby дестесінің құрылымы
+Name[pt]=Estrutura de Pacotes em Ruby
+Name[pt_BR]=Estrutura de Pacotes em Ruby
+Name[sv]=Ruby paketstruktur
+Name[tr]=Ruby Paket Yapısı
+Name[uk]=Структура пакунка Ruby
 Comment=Format of a Ruby Script Engine Package
+Comment[kk]=Ruby скрипт тетігі дестесінің пішімі
+Comment[pt]=Formato de um Pacote de Motor em Ruby
+Comment[pt_BR]=Formato de um Pacote de Motor em Ruby
+Comment[sv]=Format för ett paket med Ruby-skriptgränssnitt
+Comment[tr]=Bir Ruby Betik Motoru Paketinin Yapısı
+Comment[uk]=Формат пакунка рушія скриптів на Ruby
 X-KDE-ServiceTypes=Plasma/PackageStructure
 Type=Service
 Icon=text-x-script
