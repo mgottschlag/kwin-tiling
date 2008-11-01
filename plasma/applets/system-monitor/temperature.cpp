@@ -208,9 +208,9 @@ void Temperature::dataUpdated(const QString& source,
     qreal celsius = ((qreal)data["value"].toDouble());
 
     if (KGlobal::locale()->measureSystem() == KLocale::Metric) {
-        w->setLabel(1, i18n(" %1 °C", celsius));
+        w->setLabel(1, i18n("%1 °C", celsius));
     } else {
-        w->setLabel(1, i18n(" %1 °F", (celsius * 1.8) + 32));
+        w->setLabel(1, i18n("%1 °F", (celsius * 1.8) + 32));
     }
 
     if (m_showPlotters) {
