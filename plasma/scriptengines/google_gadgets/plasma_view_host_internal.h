@@ -47,6 +47,7 @@ class PlasmaViewHost::Private : public QObject {
   }
 
   static void EmbededWidget(QGraphicsWidget *parent, QWidget *widget) {
+    DLOG("EmbededWidget: %p", widget);
     widget->setAttribute(Qt::WA_NoSystemBackground);
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(parent);
     layout->setSpacing(0);
@@ -55,6 +56,17 @@ class PlasmaViewHost::Private : public QObject {
     layout->addItem(proxy);
     parent->setLayout(layout);
   }
+
+  static void UnEmbededWidget(QGraphicsWidget *parent) {
+    QGraphicsLayout *layout = parent->layout();
+    if (!layout) return;
+    QGraphicsLayoutItem *proxy = layout->itemAt(0);
+    ASSERT(proxy);
+    layout->removeAt(0);
+    delete proxy;
+    parent->setLayout(NULL);
+  }
+
   /* Show the view in right place
    *    - floating main view: Shown within the applet
    *    - popouted main view and details view: Shown in QtViewWidget
@@ -110,7 +122,7 @@ class PlasmaViewHost::Private : public QObject {
       widget_ = new QtViewWidget(view_, false, true, false, false);
       EmbededWidget(info->applet, widget_);
       info->applet->setBackgroundHints(Plasma::Applet::NoBackground);
-      if (info->is_floating) {
+      if (info->applet->location() == Plasma::Floating) {
         connect(widget_, SIGNAL(moved(int, int)),
                 this, SLOT(OnViewMoved(int, int)));
         connect(widget_, SIGNAL(geometryChanged(int, int, int, int)),
@@ -148,6 +160,12 @@ class PlasmaViewHost::Private : public QObject {
       delete parent_widget_;
       parent_widget_ = NULL;
       widget_ = NULL;
+    } else {
+      // UnEmbed widget_ from applet and delte it
+      if (info->applet && widget_) {
+        UnEmbededWidget(info->applet);
+        widget_ = NULL;
+      }
     }
   }
 
@@ -157,7 +175,7 @@ class PlasmaViewHost::Private : public QObject {
     else if (info->applet)
       info->applet->update();
   }
-  
+
   void AdjustAppletSize() {
     if (!info->main_view_host) return;
     ViewInterface *view = info->main_view_host->GetViewDecorator();
@@ -172,7 +190,7 @@ class PlasmaViewHost::Private : public QObject {
     kDebug() << "applet old size:" << info->applet->size();
 
     if (widget_) kDebug() << "widget old size:" << widget_->size();
-    if (info->is_floating) {
+    if (info->applet->location() == Plasma::Floating) {
       info->applet->resize(w, h);
     } else {
       info->applet->setPreferredSize(w, h);
@@ -232,7 +250,6 @@ class PlasmaViewHost::Private : public QObject {
     }
     parent_widget_->hide();
   }
-
 
  public slots:
   void OnViewMoved(int x, int y);

@@ -37,11 +37,11 @@ class PanelDecorator::Private {
     int priority = MenuInterface::MENU_ITEM_PRI_DECORATOR;
     owner_->AddCollapseExpandMenuItem(menu);
     if (owner_->IsMinimized()) {
-      menu->AddItem("Show Icon", 
+      menu->AddItem("Show Icon",
                     owner_->IsMinimizedIconVisible()?MenuInterface::MENU_ITEM_FLAG_CHECKED:0,
                     0,
                     NewSlot(this, &Private::ShowIcon), priority);
-      menu->AddItem("Show Caption", 
+      menu->AddItem("Show Caption",
                     owner_->IsMinimizedCaptionVisible()?MenuInterface::MENU_ITEM_FLAG_CHECKED:0,
                     0,
                     NewSlot(this, &Private::ShowCaption), priority);
@@ -102,7 +102,7 @@ class PanelDecorator::Private {
   PanelDecorator *owner_;
   GadgetInfo *info_;
   double minimized_width_;
-  bool vertical_; 
+  bool vertical_;
 };
 
 PanelDecorator::PanelDecorator(ViewHostInterface *host, GadgetInfo *info)
@@ -160,6 +160,15 @@ void PanelDecorator::SetVertical() {
 void PanelDecorator::SetHorizontal() {
   SetAllowYMargin(true);
   SetAllowXMargin(false);
+
+  // If gadget is added to horizontal panel for the first time, it should be
+  // set to minimized.
+  Variant first_horizontal = GetOption("first_horizontal");
+  if (first_horizontal.type() != Variant::TYPE_BOOL) {
+    SetOption("first_horizontal", Variant(false));
+    SetMinimized(true);
+  }
+
   bool border = !IsMinimized() || IsMinimizedCaptionVisible();
   SetResizeBorderVisible(false, false, false, border);
   d->vertical_ = false;

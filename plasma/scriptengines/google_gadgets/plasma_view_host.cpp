@@ -71,6 +71,7 @@ void PlasmaViewHost::Destroy() {
 }
 
 void PlasmaViewHost::SetView(ViewInterface *view) {
+  DLOG("SetView: %p, %p", this, view);
   if (d->view_ == view) return;
   d->Detach();
   d->view_ = view;
@@ -126,9 +127,9 @@ void PlasmaViewHost::SetShowCaptionAlways(bool always) {
 }
 
 void PlasmaViewHost::SetCursor(int type) {
-  kDebug() << "SetCursor: " << type;
   Qt::CursorShape shape = ggadget::qt::GetQtCursorShape(type);
-  // FIXME: Neither way to set cursor works...
+  // Up to Qt4.4.3, There is a bug in handling cursor when
+  // QGraphicsProxyWidget is involved.
   d->info->applet->setCursor(shape);
   if (d->widget_)
     d->widget_->setCursor(shape);

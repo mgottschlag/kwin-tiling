@@ -119,9 +119,7 @@ void GglAppletScript::loadGadget() {
   kDebug() << "Loading gadget " << d->gg_file_
            << "with options " << d->options_;
 
-  if (applet()->location() != Plasma::Floating) {
-    d->info.is_floating = false;
-  }
+  d->info.location = applet()->location();
   d->info.applet = applet();
   d->info.host = new ggadget::PlasmaHost(&d->info);
   d->info.gadget = d->info.host->LoadGadget(d->gg_file_.toUtf8(),

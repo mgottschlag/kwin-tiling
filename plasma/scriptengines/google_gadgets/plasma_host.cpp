@@ -40,6 +40,15 @@ namespace ggadget {
 
 static const double kConstraint = 99999;
 
+static inline bool IsHorizontal(Plasma::Location loc) {
+  return loc == Plasma::TopEdge || loc == Plasma::BottomEdge;
+}
+
+static inline bool IsVertical(Plasma::Location loc) {
+  return loc == Plasma::LeftEdge || loc == Plasma::RightEdge;
+}
+
+
 class PlasmaHost::Private {
  public:
   Private(GadgetInfo *i)
@@ -100,13 +109,45 @@ class PlasmaHost::Private {
     if (child) {
       // Close details view
       child->GetGadget()->CloseDetailsView();
-           
+
       child->SwitchViewHost(info->main_view_host);
       SimpleEvent event(Event::EVENT_POPIN);
       info->main_view_host->GetViewDecorator()->OnOtherEvent(event);
       info->expanded_main_view_host->Destroy();
       info->expanded_main_view_host = NULL;
     }
+  }
+
+  DecoratedViewHost *NewFloatingViewHost() {
+    ViewHostInterface* vh =  new PlasmaViewHost(
+        info, ViewHostInterface::VIEW_HOST_MAIN);
+
+    FloatingDecorator *decorator = new FloatingDecorator(vh);
+    decorator->ConnectOnClose(NewSlot(this, &Private::OnCloseMainViewHandler));
+    decorator->ConnectOnPopOut(NewSlot(this, &Private::OnPopOutHandler));
+    decorator->ConnectOnPopIn(NewSlot(this, &Private::OnPopInHandler));
+    DecoratedViewHost *dvh = new DecoratedViewHost(decorator);
+
+    DLOG("NewViewHost: dvh(%p), pvh(%p), vd(%p)",
+         dvh, vh, decorator);
+    return dvh;
+  }
+
+  DecoratedViewHost *NewPanelViewHost() {
+    ViewHostInterface* vh =  new PlasmaViewHost(
+        info, ViewHostInterface::VIEW_HOST_MAIN);
+
+    PanelDecorator *decorator = new PanelDecorator(vh, info);
+    if (IsHorizontal(info->applet->location()))
+      decorator->SetHorizontal();
+    else
+      decorator->SetVertical();
+    decorator->ConnectOnPopOut(NewSlot(this, &Private::OnPopOutHandler));
+    decorator->ConnectOnPopIn(NewSlot(this, &Private::OnPopInHandler));
+    DecoratedViewHost *dvh = new DecoratedViewHost(decorator);
+    DLOG("NewViewHost: dvh(%p), pvh(%p), vd(%p)",
+         dvh, vh, decorator);
+    return dvh;
   }
 
   GadgetInfo *info;
@@ -125,36 +166,21 @@ PlasmaHost::~PlasmaHost() {
 
 ViewHostInterface *PlasmaHost::NewViewHost(Gadget *,
                                            ViewHostInterface::Type type) {
-  ViewHostInterface* vh =  new PlasmaViewHost(d->info, type);
-
-  DecoratedViewHost *dvh;
   if (type == ViewHostInterface::VIEW_HOST_MAIN) {
-    if (d->info->is_floating) {
-      FloatingDecorator *decorator = new FloatingDecorator(vh);
-      dvh = new DecoratedViewHost(decorator);
-      decorator->ConnectOnClose(NewSlot(d, &Private::OnCloseMainViewHandler));
-      decorator->ConnectOnPopOut(NewSlot(d, &Private::OnPopOutHandler));
-      decorator->ConnectOnPopIn(NewSlot(d, &Private::OnPopInHandler));
+    if (d->info->applet->location() == Plasma::Floating) {
+      d->info->main_view_host = d->NewFloatingViewHost();
     } else {
-      PanelDecorator *decorator = new PanelDecorator(vh, d->info);
-      if (d->info->applet->location() == Plasma::TopEdge
-          || d->info->applet->location() == Plasma::BottomEdge) {
-        decorator->SetHorizontal();
-      } else {
-        decorator->SetVertical();
-      }
-      decorator->ConnectOnPopOut(NewSlot(d, &Private::OnPopOutHandler));
-      decorator->ConnectOnPopIn(NewSlot(d, &Private::OnPopInHandler));
-      dvh = new DecoratedViewHost(decorator);
+      d->info->main_view_host = d->NewPanelViewHost();
     }
-    d->info->main_view_host = dvh;
-    return dvh;
+    return d->info->main_view_host;
   } else if (type == ViewHostInterface::VIEW_HOST_OPTIONS) {
+    ViewHostInterface* vh =  new PlasmaViewHost(d->info, type);
     d->info->options_view_host = vh;
     return vh;
   } else {
+    ViewHostInterface* vh =  new PlasmaViewHost(d->info, type);
     DetailsViewDecorator *view_decorator = new DetailsViewDecorator(vh);
-    dvh = new DecoratedViewHost(view_decorator);
+    DecoratedViewHost *dvh = new DecoratedViewHost(view_decorator);
     view_decorator->ConnectOnClose(
         NewSlot(d, &Private::OnCloseDetailsViewHandler));
     d->info->details_view_host = dvh;
@@ -212,14 +238,49 @@ bool PlasmaHost::OpenURL(const ggadget::Gadget *gadget, const char *url) {
 
 void PlasmaHost::OnConstraintsEvent(Plasma::Constraints constraints) {
   if (!d->info->main_view_host) return;
-  ViewInterface *view = d->info->main_view_host->GetViewDecorator();
-  if (!view) return;
 
   if (constraints & Plasma::FormFactorConstraint) {
     // TODO: Do something to handle it right
-    kDebug() << "FormFactorConstraint changed";
+    kDebug() << "FormFactorConstraint changed:" << d->info->applet->formFactor();
   }
+
+  if ((constraints & Plasma::LocationConstraint) &&
+      d->info->applet->location() != d->info->location) {
+    d->OnPopInHandler();
+    d->OnCloseDetailsViewHandler();
+    Plasma::Location loc = d->info->applet->location();
+
+    kDebug() << "LocationConstraint changed from " << d->info->location
+             << " to " << loc;
+
+    if ((d->info->location == Plasma::Floating && loc != Plasma::Floating) ||
+        (d->info->location != Plasma::Floating && loc == Plasma::Floating)) {
+      DecoratedViewHost *vh;
+      if (loc == Plasma::Floating)
+        vh = d->NewFloatingViewHost();
+      else
+        vh = d->NewPanelViewHost();
+
+      ViewInterface *child = d->info->main_view_host->GetView();
+      ViewHostInterface *old = child->SwitchViewHost(vh);
+      old->Destroy();
+      d->info->main_view_host = vh;
+      vh->ShowView(false, 0, NULL);
+    } else if (IsVertical(d->info->location) != IsVertical(loc)) {
+      PanelDecorator *decorator = static_cast<PanelDecorator*>(
+          d->info->main_view_host->GetViewDecorator());
+      if (IsVertical(loc))
+        decorator->SetVertical();
+      else
+        decorator->SetHorizontal();
+    }
+    d->info->location = loc;
+    return;
+  }
+
   if (constraints & Plasma::SizeConstraint) {
+    ViewInterface *view = d->info->main_view_host->GetViewDecorator();
+    if (!view) return;
     QSizeF s = d->info->applet->size();
     kDebug() << "size requested:" << s;
     d->constraint_w_ = s.width();

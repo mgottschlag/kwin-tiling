@@ -41,7 +41,7 @@ class GadgetInfo {
         details_view_host(NULL),
         options_view_host(NULL),
         view_debug_mode(0),
-        is_floating(true)
+        location(Plasma::Floating)
   {}
   ggadget::PlasmaHost *host;
   ggadget::Gadget *gadget;
@@ -52,7 +52,7 @@ class GadgetInfo {
   ggadget::ViewHostInterface *details_view_host;
   ggadget::ViewHostInterface *options_view_host;
   int view_debug_mode;
-  bool is_floating;
+  Plasma::Location location;
 };
 
 class GglAppletScript : public Plasma::AppletScript {
