@@ -66,7 +66,7 @@ SensorManager::SensorManager()
   // Fill the sensor description dictionary.
   m_dict.insert( QLatin1String( "cpu" ), i18n( "CPU Load" ) );
   m_dict.insert( QLatin1String( "idle" ), i18n( "Idling" ) );
-  m_dict.insert( QLatin1String( "nice" ), i18n( "Nice Load" ) );
+  m_dict.insert( QLatin1String( "nice" ), i18nc("Nice as in 'man nice'", "Nice Load" ) );
   m_dict.insert( QLatin1String( "user" ), i18n( "User Load" ) );
   m_dict.insert( QLatin1String( "sys" ), i18n( "System Load" ) );
   m_dict.insert( QLatin1String( "wait" ), i18n( "Waiting" ) );
