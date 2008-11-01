@@ -127,7 +127,7 @@ void HWInfo::dataUpdated(const QString& source,
     html += QString(INFO_ROW).arg(i18n("CPU")).arg(m_cpu);
     html += QString(INFO_ROW).arg(i18n("GPU")).arg(m_gpu);
     html += QString(INFO_ROW).arg(i18n("Audio")).arg(m_audio);
-    html += QString(INFO_ROW).arg(i18n("Net")).arg(m_net);
+    html += QString(INFO_ROW).arg(i18n("Network")).arg(m_net);
     html += END_TABLE END;
     if (m_info) {
         Plasma::Theme* theme = Plasma::Theme::defaultTheme();
