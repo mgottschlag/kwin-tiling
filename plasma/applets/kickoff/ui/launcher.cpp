@@ -484,9 +484,9 @@ void Launcher::init()
     QString fullName = user.property(KUser::FullName).toString();
     QString labelText;
     if (fullName.isEmpty()) {
-        labelText = i18nc("login name, hostname", "User&nbsp;<b>%1</b>&nbsp;on&nbsp;<b>%2</b>", user.loginName(), hostname);
+        labelText = i18nc("login name, hostname", "User <b>%1</b> on <b>%2</b>", user.loginName(), hostname);
     } else {
-        labelText = i18nc("full name, login name, hostname", "<b>%1 (%2)</b>&nbsp;on&nbsp;<b>%3</b>", fullName, user.loginName(), hostname);
+        labelText = i18nc("full name, login name, hostname", "<b>%1 (%2)</b> on <b>%3</b>", fullName, user.loginName(), hostname);
     }
     QLabel *userinfo = new QLabel(labelText);
     QColor color = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
