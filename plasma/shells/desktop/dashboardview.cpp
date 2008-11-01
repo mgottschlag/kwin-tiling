@@ -200,6 +200,17 @@ bool DashboardView::eventFilter(QObject *watched, QEvent *event)
     return false;
 }
 
+bool DashboardView::event(QEvent *event)
+{
+    if (event->type() == QEvent::Paint) {
+        QPainter p(this);
+        p.setCompositionMode(QPainter::CompositionMode_Source);
+        p.fillRect(rect(), Qt::transparent);
+    }
+
+    return Plasma::View::event(event);
+}
+
 void DashboardView::toggleVisibility()
 {
     if (isHidden() && containment()) {

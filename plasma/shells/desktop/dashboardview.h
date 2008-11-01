@@ -46,6 +46,7 @@ protected:
     void showEvent(QShowEvent *event);
     void paintEvent(QPaintEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
+    bool event(QEvent *event);
 
 public slots:
     void toggleVisibility();
