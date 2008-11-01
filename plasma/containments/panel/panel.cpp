@@ -536,6 +536,11 @@ void Panel::showDropZone(const QPoint pos)
         return;
     }
 
+    //lucky case: the spacer is already in the right position
+    if (m_spacer && m_spacer->geometry().contains(pos)) {
+        return;
+    }
+
     Plasma::FormFactor f = formFactor();
     int insertIndex = -1;
 
