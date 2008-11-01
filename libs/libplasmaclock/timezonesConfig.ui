@@ -72,7 +72,7 @@ p, li { white-space: pre-wrap; }
         <string>The time the clock will display</string>
        </property>
        <property name="whatsThis" >
-        <string>The clock will display the time for the selected default zone. 
+        <string>The clock will display the time for the selected default zone.
 Local is the time you set in System Settings.</string>
        </property>
        <property name="insertPolicy" >
