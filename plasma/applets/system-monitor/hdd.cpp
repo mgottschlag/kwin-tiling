@@ -277,8 +277,7 @@ void Hdd::dataUpdated(const QString& source,
             w->setValue(0);
         }
         if (mode() != SM::Applet::Panel) {
-            w->setLabel(1, i18n("%1", KGlobal::locale()->formatByteSize(
-                                    availBytes)));
+            w->setLabel(1, KGlobal::locale()->formatByteSize(availBytes));
             QStringList overlays;
             if (data["Accessible"].toBool()) {
                 overlays << "emblem-mounted";
