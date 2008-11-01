@@ -141,6 +141,8 @@ KRunnerApp::~KRunnerApp()
 
 void KRunnerApp::initialize()
 {
+    setWindowIcon(KIcon("system-run"));
+
     setQuitOnLastWindowClosed(false);
     KCrash::setFlags(KCrash::AutoRestart);
     initializeStartupNotification();

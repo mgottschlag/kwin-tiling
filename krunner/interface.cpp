@@ -66,7 +66,6 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget* parent)
       m_queryRunning(false)
 {
     setWindowTitle( i18n("Run Command") );
-    setWindowIcon(KIcon("system-run"));
 
     m_iconSvg = new Plasma::Svg(this);
     m_iconSvg->setImagePath("widgets/configuration-icons");
