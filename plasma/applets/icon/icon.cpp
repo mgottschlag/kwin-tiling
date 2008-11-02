@@ -159,10 +159,7 @@ void IconApplet::constraintsEvent(Plasma::Constraints constraints)
             //in the panel the icon behaves like a button
             connect(m_icon, SIGNAL(clicked()), this, SLOT(openUrl()));
             m_icon->setText(QString());
-            Plasma::ToolTipManager::Content data;
-            data.mainText = m_text;
-            data.subText = m_genericName;
-            data.image = m_icon->icon().pixmap(IconSize(KIconLoader::Desktop));
+            Plasma::ToolTipContent data(m_text, m_genericName, m_icon->icon());
             Plasma::ToolTipManager::self()->setContent(m_icon, data);
             m_icon->setDrawBackground(false);
         }

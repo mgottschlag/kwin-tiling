@@ -137,9 +137,7 @@ void HWInfo::dataUpdated(const QString& source,
         m_info->setHtml(html);
     } else if (m_icon) {
         html = START_BASIC START_TABLE + html;
-        Plasma::ToolTipManager::Content data;
-        data.mainText = i18n("Hardware Info");
-        data.subText = html;
+        Plasma::ToolTipContent data(i18n("Hardware Info"), html);
         Plasma::ToolTipManager::self()->setContent(m_icon, data);
     }
 }

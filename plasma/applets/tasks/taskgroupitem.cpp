@@ -63,11 +63,11 @@ TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet, const bool 
       m_lastActivated(-1),
       m_activeTaskIndex(0),
       m_maximumRows(1),
+      m_forceRows(false),
       m_isCollapsed(true),
-      m_parentSplitGroup(0),
-      m_childSplitGroup(0),
       m_splitPosition(0),
-      m_forceRows(false)
+      m_parentSplitGroup(0),
+      m_childSplitGroup(0)
 {
     setAcceptDrops(true);
 }
@@ -242,10 +242,9 @@ void TaskGroupItem::updateToolTip()
         return;
     }
 
-    Plasma::ToolTipManager::Content data;
-    data.mainText = m_group->name();
-    data.subText = i18nc("Which virtual desktop a window is currently on", "On %1",
-                         KWindowSystem::desktopName(m_group->desktop()));
+    Plasma::ToolTipContent data(m_group->name(),
+                                i18nc("Which virtual desktop a window is currently on", "On %1",
+                                      KWindowSystem::desktopName(m_group->desktop())));
 //    data.image = m_group->icon().pixmap(QSize::small);
 //    data.windowToPreview = m_task->window();
 

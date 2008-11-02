@@ -212,17 +212,17 @@ void DeviceNotifier::notifyDevice(const QString &name)
 
 void DeviceNotifier::toolTipAboutToShow()
 {
-    Plasma::ToolTipManager::Content toolTip;
+    Plasma::ToolTipContent toolTip;
     if (!m_lastPlugged.isEmpty()) {
         Solid::Device *device = new Solid::Device(m_lastPlugged.last());
 
-        toolTip.subText = i18n("Last plugged in device: %1", device->product());
-        toolTip.image = KIcon(device->icon()).pixmap(IconSize(KIconLoader::Desktop));
+        toolTip.setSubText(i18n("Last plugged in device: %1", device->product()));
+        toolTip.setImage(KIcon(device->icon()));
 
-       delete device;
+        delete device;
     } else {
-        toolTip.subText = i18n("No devices plugged in");
-        toolTip.image = KIcon("device-notifier").pixmap(IconSize(KIconLoader::Desktop));
+        toolTip.setSubText(i18n("No devices plugged in"));
+        toolTip.setImage(KIcon("device-notifier"));
     }
 
     Plasma::ToolTipManager::self()->setContent(this, toolTip);
@@ -230,7 +230,7 @@ void DeviceNotifier::toolTipAboutToShow()
 
 void DeviceNotifier::toolTipHidden()
 {
-    Plasma::ToolTipManager::self()->setContent(this, Plasma::ToolTipManager::Content());
+    Plasma::ToolTipManager::self()->clearContent(this);
 }
 
 void DeviceNotifier::removeLastDeviceNotification(const QString &name)

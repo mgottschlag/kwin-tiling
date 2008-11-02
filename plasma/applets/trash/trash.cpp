@@ -209,20 +209,20 @@ void Trash::slotEmpty()
 
 void Trash::updateIcon()
 {
-    Plasma::ToolTipManager::Content data;
-    data.mainText = i18n("Trash");
+    Plasma::ToolTipContent data;
+    data.setMainText(i18n("Trash"));
 
     if (m_count > 0) {
         m_icon->setIcon(KIcon("user-trash-full"));
 
-        data.subText = i18np("One item", "%1 items", m_count);
+        data.setSubText(i18np("One item", "%1 items", m_count));
         if (m_showText) {
             m_icon->setInfoText(i18np("One item", "%1 items", m_count));
         }
     } else {
         m_icon->setIcon(KIcon("user-trash"));
 
-        data.subText = i18nc("The trash is empty. This is not an action, but a state", "Empty");
+        data.setSubText(i18nc("The trash is empty. This is not an action, but a state", "Empty"));
         if (m_showText) {
             m_icon->setInfoText(i18nc("The trash is empty. This is not an action, but a state", "Empty"));
         }
@@ -230,15 +230,15 @@ void Trash::updateIcon()
 
     m_icon->update();
 
-    data.image = m_icon->icon().pixmap(IconSize(KIconLoader::Desktop));
+    data.setImage(m_icon->icon().pixmap(IconSize(KIconLoader::Desktop)));
 
     if (!m_showText) {
         Plasma::ToolTipManager::self()->setContent(this, data);
     } else {
-        Plasma::ToolTipManager::self()->setContent(this, Plasma::ToolTipManager::Content());
+        Plasma::ToolTipManager::self()->clearContent(this);
     }
 
-    emptyTrash->setEnabled(m_count>0);
+    emptyTrash->setEnabled(m_count > 0);
 }
 
 void Trash::slotClear()

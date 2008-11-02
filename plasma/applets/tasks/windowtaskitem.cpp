@@ -191,12 +191,11 @@ void WindowTaskItem::updateToolTip()
         return;
     }
 
-    Plasma::ToolTipManager::Content data;
-    data.mainText = m_task->name();
-    data.subText = i18nc("Which virtual desktop a window is currently on", "On %1",
-                         KWindowSystem::desktopName(m_task->desktop()));
-    data.image = m_task->task()->icon(KIconLoader::SizeSmall, KIconLoader::SizeSmall, false);
-    data.windowToPreview = m_task->task()->window();
+    Plasma::ToolTipContent data(m_task->name(),
+                                i18nc("Which virtual desktop a window is currently on", "On %1",
+                                      KWindowSystem::desktopName(m_task->desktop())),
+                                m_task->task()->icon(KIconLoader::SizeSmall, KIconLoader::SizeSmall, false));
+    data.setWindowToPreview(m_task->task()->window());
 
     Plasma::ToolTipManager::self()->setContent(this, data);
 }
