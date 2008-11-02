@@ -18,7 +18,6 @@ macro_optional_find_package(GLIB2)
 macro_log_feature(GLIB2_FOUND "glib2" "Low-level core library for data structure handling, portability wrappers, etc." "http://www.gtk.org" FALSE "2.x" "Needed to build the NowPlaying Plasma dataengine and the kxkb keyboard map control program")
 
 macro_optional_find_package(Fontconfig)
-macro_optional_find_package(Freetype)
 
 macro_optional_find_package(Googlegadgets)
 macro_log_feature(GOOGLEGADGETS_FOUND "GoogleGadgets" "Google Gadgets library" "http://code.google.com/p/google-gadgets-for-linux/" FALSE "" "Needed to build plasma scriptengine for google gadgets")
