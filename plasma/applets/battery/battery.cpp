@@ -330,7 +330,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         m_batteryLabel->setMinimumSize(160, 60);
         m_batteryLabel->nativeWidget()->setWordWrap(false);
         m_batteryLabel->nativeWidget()->setAlignment(Qt::AlignTop);
-
+        // FIXME: larger fonts screw up this label
         batteryLayout->addItem(m_batteryLabel, 0, 0, 1, 1, Qt::AlignLeft);
 
         Battery *m_extenderApplet = static_cast<Battery*>(Plasma::Applet::load("battery"));
