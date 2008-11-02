@@ -1,5 +1,5 @@
 project(plasma-system-monitor)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${PLASMA_INCLUDE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} )
 
 # lib
 
