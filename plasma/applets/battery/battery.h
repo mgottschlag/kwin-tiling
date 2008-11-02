@@ -22,6 +22,7 @@
 
 #include <QLabel>
 #include <QGraphicsSceneHoverEvent>
+#include <QGraphicsGridLayout>
 #include <QPair>
 #include <QMap>
 
@@ -93,6 +94,9 @@ class Battery : public Plasma::PopupApplet
         Battery *m_extenderApplet;
         bool m_extenderVisible;
         QString m_svgFile;
+
+        QGraphicsGridLayout *m_controlsLayout;
+        QGraphicsGridLayout *m_batteryLayout;
         Plasma::Label *m_statusLabel;
         Plasma::Label *m_batteryLabel;
         Plasma::Label *m_profileLabel;

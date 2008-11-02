@@ -67,6 +67,8 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_isEmbedded(false),
       m_extenderVisible(false),
       m_svgFile(0),
+      m_controlsLayout(0),
+      m_batteryLayout(0),
       m_statusLabel(0),
       m_batteryLabel(0),
       m_profileLabel(0),
@@ -312,26 +314,31 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
     if (!m_isEmbedded) {
         int row = 0;
         int rowHeight = 20;
-        int columnWidth = 80;
+        int columnWidth = 120;
 
         QGraphicsWidget *controls = new QGraphicsWidget(item);
-        QGraphicsGridLayout *controlsLayout = new QGraphicsGridLayout(controls);
-        controlsLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        //controls->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+        //controls->resize(500, 500);
+        m_controlsLayout = new QGraphicsGridLayout(controls);
+        m_controlsLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-        controlsLayout->setColumnPreferredWidth(0, rowHeight);
-        controlsLayout->setColumnMinimumWidth(1, 2*columnWidth);
-        controlsLayout->setColumnPreferredWidth(2, rowHeight);
-        controlsLayout->setHorizontalSpacing(0);
-        QGraphicsGridLayout *batteryLayout = new QGraphicsGridLayout(controlsLayout);
-        batteryLayout->setColumnPreferredWidth(0, 100);
-        batteryLayout->setColumnPreferredWidth(1, columnWidth);
-        batteryLayout->setRowPreferredHeight(row, 60);
+        m_controlsLayout->setColumnPreferredWidth(0, rowHeight);
+        m_controlsLayout->setColumnMinimumWidth(1, 2*columnWidth);
+        m_controlsLayout->setColumnPreferredWidth(2, rowHeight);
+        m_controlsLayout->setHorizontalSpacing(0);
+        m_batteryLayout = new QGraphicsGridLayout(m_controlsLayout);
+
+        //m_batteryLayout->setColumnPreferredWidth(0, 100);
+        m_batteryLayout->setColumnPreferredWidth(1, columnWidth);
+        //m_batteryLayout->setRowPreferredHeight(row, 60);
         m_batteryLabel = new Plasma::Label(controls);
-        m_batteryLabel->setMinimumSize(160, 60);
+        m_batteryLabel->setMinimumSize(200, 80);
+        m_batteryLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
         m_batteryLabel->nativeWidget()->setWordWrap(false);
         m_batteryLabel->nativeWidget()->setAlignment(Qt::AlignTop);
         // FIXME: larger fonts screw up this label
-        batteryLayout->addItem(m_batteryLabel, 0, 0, 1, 1, Qt::AlignLeft);
+        m_batteryLayout->addItem(m_batteryLabel, 0, 0, 1, 1, Qt::AlignLeft);
 
         Battery *m_extenderApplet = static_cast<Battery*>(Plasma::Applet::load("battery"));
         if (m_extenderApplet) {
@@ -339,21 +346,21 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
             m_extenderApplet->setAcceptsHoverEvents(true);
             m_extenderApplet->setParentItem(controls);
             m_extenderApplet->setEmbedded(true);
-            m_extenderApplet->setMinimumSize(64, 64); // TODO: Multiple batteries?
-            m_extenderApplet->resize(64, 64);
+            m_extenderApplet->setMinimumSize(80, 80); // TODO: Multiple batteries?
+            m_extenderApplet->resize(80, 80);
             m_extenderApplet->setBackgroundHints(NoBackground);
             m_extenderApplet->setFlag(QGraphicsItem::ItemIsMovable, false);
             m_extenderApplet->init();
-            batteryLayout->addItem(m_extenderApplet, 0, 1, 1, 1, Qt::AlignRight);
+            m_batteryLayout->addItem(m_extenderApplet, 0, 1, 1, 1, Qt::AlignRight);
         }
 
-        controlsLayout->addItem(batteryLayout, row, 0, 1, 3);
+        m_controlsLayout->addItem(m_batteryLayout, row, 0, 1, 3);
         row++;
 
         Plasma::Label *brightnessLabel = new Plasma::Label(controls);
         brightnessLabel->setText(i18n("Screen Brightness"));
         brightnessLabel->nativeWidget()->setWordWrap(false);
-        controlsLayout->addItem(brightnessLabel, row, 0, 1, 3);
+        m_controlsLayout->addItem(brightnessLabel, row, 0, 1, 3);
         brightnessLabel->nativeWidget()->setWordWrap(false);
         row++;
 
@@ -369,7 +376,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
 
         connect(notifier, SIGNAL(brightnessChanged(float)),
                 this, SLOT(updateSlider(float)));
-        controlsLayout->addItem(m_brightnessSlider, row, 1, 1, 1);
+        m_controlsLayout->addItem(m_brightnessSlider, row, 1, 1, 1);
 
         Plasma::IconWidget *brightnessIcon = new Plasma::IconWidget(controls);
         brightnessIcon->setIcon("ktip");
@@ -377,13 +384,13 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
                 this, SLOT(setFullBrightness()));
         brightnessIcon->setDrawBackground(true);
         brightnessIcon->setMinimumSize(rowHeight, rowHeight);
-        controlsLayout->addItem(brightnessIcon, row, 2, 1, 1);
-        controlsLayout->setRowSpacing(row, 10);
+        m_controlsLayout->addItem(brightnessIcon, row, 2, 1, 1);
+        m_controlsLayout->setRowSpacing(row, 10);
         row++;
 
         m_profileLabel = new Plasma::Label(controls);
         m_profileLabel->setText(i18n("Power Profile"));
-        controlsLayout->addItem(m_profileLabel, row, 0, 1, 3);
+        m_controlsLayout->addItem(m_profileLabel, row, 0, 1, 3);
         row++;
 
         m_profileCombo = new Plasma::ComboBox(controls);
@@ -392,16 +399,16 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         connect(m_profileCombo, SIGNAL(activated(QString)),
                 this, SLOT(setProfile(QString)));
 
-        controlsLayout->addItem(m_profileCombo, row, 1, 1, 2);
+        m_controlsLayout->addItem(m_profileCombo, row, 1, 1, 2);
         row++;
 
         Plasma::Label *actionsLabel = new Plasma::Label(controls);
         actionsLabel->setText(i18n("Actions"));
         actionsLabel->nativeWidget()->setWordWrap(false);
-        controlsLayout->addItem(actionsLabel, row, 0, 1, 3);
+        m_controlsLayout->addItem(actionsLabel, row, 0, 1, 3);
         row++;
 
-        QGraphicsGridLayout *actionsLayout = new QGraphicsGridLayout(controlsLayout);
+        QGraphicsGridLayout *actionsLayout = new QGraphicsGridLayout(m_controlsLayout);
         actionsLayout->setColumnSpacing(0, 0);
         actionsLayout->setColumnSpacing(1, 0);
 
@@ -432,8 +439,8 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
                 connect(hibernateButton, SIGNAL(clicked()), this, SLOT(hibernate()));
             }
         }
-        controlsLayout->addItem(actionsLayout, row, 1, 1, 2);
-        controlsLayout->setRowSpacing(row, 10);
+        m_controlsLayout->addItem(actionsLayout, row, 1, 1, 2);
+        m_controlsLayout->setRowSpacing(row, 10);
         row++;
 
         // More settings button
@@ -446,13 +453,13 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         //configButton->nativeWidget()->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
         connect(configButton, SIGNAL(clicked()), this, SLOT(openConfig()));
 
-        QGraphicsGridLayout *moreLayout = new QGraphicsGridLayout(controlsLayout);
-        moreLayout->setColumnPreferredWidth(0, columnWidth);
-        moreLayout->addItem(configButton, 0, 1, Qt::AlignLeft);
+        //QGraphicsGridLayout *moreLayout = new QGraphicsGridLayout(m_controlsLayout);
+        //moreLayout->setColumnPreferredWidth(0, columnWidth);
+        actionsLayout->addItem(configButton, 1, 1, Qt::AlignLeft);
 
-        controlsLayout->addItem(moreLayout, row, 1, 1, 2);
+        //m_controlsLayout->addItem(moreLayout, row, 1, 1, 2);
 
-        controls->setLayout(controlsLayout);
+        controls->setLayout(m_controlsLayout);
         item->setWidget(controls);
         item->setTitle(i18n("Power Management"));
     }
@@ -528,6 +535,11 @@ void Battery::updateStatus()
             m_profileLabel->show();
         }
     }
+    kDebug() << "SIZE LABEL" << m_batteryLabel->size() << m_batteryLabel->preferredSize();// << m_batteryLayout->sizeHint();
+    m_controlsLayout->setColumnPreferredWidth(1,280);
+    m_batteryLayout->setColumnPreferredWidth(0,200);
+    m_batteryLayout->invalidate();
+    m_controlsLayout->invalidate();
 }
 
 void Battery::openConfig()
