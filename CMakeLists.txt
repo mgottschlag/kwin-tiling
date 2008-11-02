@@ -14,7 +14,6 @@ find_package(Strigi REQUIRED)
 find_package(QImageBlitz REQUIRED)
 find_package(ZLIB REQUIRED)
 
-macro_optional_find_package(USB)
 macro_optional_find_package(Fontconfig)
 macro_optional_find_package(Freetype)
 
