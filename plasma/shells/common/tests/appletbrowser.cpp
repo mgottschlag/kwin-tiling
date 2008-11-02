@@ -27,7 +27,7 @@
 #include <KConfig>
 #include <KDebug>
 
-#include "plasma/appletbrowser.h"
+#include "appletbrowser.h"
 
 static const char description[] = I18N_NOOP("Applet browser dialog");
 static const char version[] = "1.0";
