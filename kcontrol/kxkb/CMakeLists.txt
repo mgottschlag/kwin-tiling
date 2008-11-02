@@ -9,7 +9,6 @@ OPTION(USE_XKLAVIER "Use libxklavier to get keyboard layouts configuration" ON)
 SET(HAVE_XKLAVIER FALSE)
 if(USE_XKLAVIER STREQUAL ON)
   macro_optional_find_package(LibXKlavier)
-  macro_optional_find_package(GLIB2)
   macro_optional_find_package(GObject)
 
   if(LIBXKLAVIER_FOUND AND GLIB2_FOUND AND GOBJECT_FOUND)
