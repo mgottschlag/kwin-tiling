@@ -440,7 +440,7 @@ void Klipper::readConfiguration( KConfig *_kc )
     m_bIgnoreSelection = kc.readEntry("IgnoreSelection", false);
     m_bSynchronize = kc.readEntry("Synchronize", false);
     m_bSelectionTextOnly = kc.readEntry("SelectionTextOnly",true);
-    m_bIgnoreImages = kc.readEntry("IgnoreImages",true);
+    m_bIgnoreImages = kc.readEntry("IgnoreImages", true);
 }
 
 void Klipper::writeConfiguration( KConfig *_kc )
@@ -455,7 +455,7 @@ void Klipper::writeConfiguration( KConfig *_kc )
     kc.writeEntry("IgnoreSelection", m_bIgnoreSelection);
     kc.writeEntry("Synchronize", m_bSynchronize );
     kc.writeEntry("SelectionTextOnly", m_bSelectionTextOnly);
-    kc.writeEntry("TrackImages", m_bIgnoreImages);
+    kc.writeEntry("IgnoreImages", m_bIgnoreImages);
     kc.writeEntry("Version", klipper_version );
 
     if ( m_myURLGrabber )
@@ -506,6 +506,7 @@ void Klipper::slotConfigure()
     dlg->setPopupTimeout( m_myURLGrabber->popupTimeout() );
     dlg->setMaxItems( history()->max_size() );
     dlg->setIgnoreSelection( m_bIgnoreSelection );
+    dlg->setIgnoreImages( m_bIgnoreImages );
     dlg->setSynchronize( m_bSynchronize );
     dlg->setNoActionsFor( m_myURLGrabber->avoidWindows() );
 
@@ -515,6 +516,7 @@ void Klipper::slotConfigure()
         m_bReplayActionInHistory = dlg->replayActionInHistory();
         m_bNoNullClipboard = dlg->noNullClipboard();
         m_bIgnoreSelection = dlg->ignoreSelection();
+        m_bIgnoreImages = dlg->ignoreImages();
         m_bSynchronize = dlg->synchronize();
         m_bUseGUIRegExpEditor = dlg->useGUIRegExpEditor();
         dlg->commitShortcuts();
@@ -830,16 +832,12 @@ void Klipper::checkClipData( bool selectionMode )
     if( selectionMode && m_bSelectionTextOnly && !data->hasText())
         return;
 
-// TODO: This should be maybe extended for KDE4 or at least get a checkbox somewhere in UI
     if( KUrl::List::canDecode( data ) )
         ; // ok
     else if( data->hasText() )
         ; // ok
     else if( data->hasImage() )
     {
-// Limit mimetypes that are tracked by Klipper (this is basically a workaround
-// for #109032). Can't add UI in 3.5 because of string freeze, and I'm not sure
-// if this actually needs to be more configurable than only text vs all klipper knows.
         if( m_bIgnoreImages )
             return;
     }

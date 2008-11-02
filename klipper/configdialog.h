@@ -52,7 +52,7 @@ private Q_SLOTS:
 
 private:
     QCheckBox *cbMousePos, *cbSaveContents, *cbReplayAIH, *cbNoNull;
-    QCheckBox *cbIgnoreSelection, *cbStripWhitespace;
+    QCheckBox *cbIgnoreSelection, *cbStripWhitespace, *cbIgnoreImages;
     QRadioButton *cbSynchronize, *cbImplicitSelection, *cbSeparate;
     KIntNumInput *popupTimeout, *maxItems;
 
@@ -147,6 +147,10 @@ public:
     {
         return m_generalWidget->cbIgnoreSelection->isChecked();
     }
+    bool ignoreImages() const
+    {
+        return m_generalWidget->cbIgnoreImages->isChecked();
+    }
     QStringList noActionsFor() const {
 	return m_actionWidget->wmClasses();
     }
@@ -185,6 +189,9 @@ public:
     }
     void setIgnoreSelection( bool ignore ) {
         m_generalWidget->cbIgnoreSelection->setChecked( ignore );
+    }
+    void setIgnoreImages( bool ignore ) {
+        m_generalWidget->cbIgnoreImages->setChecked( ignore );
     }
     void setSynchronize( bool synchronize ) {
         m_generalWidget->cbSynchronize->setChecked( synchronize );

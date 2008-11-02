@@ -95,13 +95,15 @@ void PopupProxy::tryInsertItem( HistoryItem const * const item,
     if ( image.isNull() ) {
         // Squeeze text strings so that do not take up the entire screen (or more)
         QString text = m_proxy_for_menu->fontMetrics().elidedText( item->text().simplified(), Qt::ElideMiddle, m_menu_width );
-        text.replace( "&", "&&" );
+        text.replace( '&', "&&" );
         action->setText(text);
     } else {
+#if 0 // not used because QAction#setIcon does not respect this size; it does scale anyway. TODO: find a way to set a bigger image
         const QSize max_size( m_menu_width,m_menu_height/4 );
         if ( image.height() > max_size.height() || image.width() > max_size.width() ) {
             image = image.scaled( max_size, Qt::KeepAspectRatio, Qt::SmoothTransformation );
         }
+#endif
         action->setIcon(QIcon(image));
     }
 

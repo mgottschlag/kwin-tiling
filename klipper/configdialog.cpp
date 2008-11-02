@@ -94,6 +94,9 @@ GeneralWidget::GeneralWidget( QWidget *parent )
                                          "changes are recorded."));
     mainLayout->addWidget(cbIgnoreSelection);
 
+    cbIgnoreImages = new QCheckBox(i18n("Ignore images"), this);
+    mainLayout->addWidget(cbIgnoreImages);
+
     QGroupBox *group = new QGroupBox(i18n("Clipboard/Selection Behavior"), this);
     group->setWhatsThis(i18n("<qt>There are two different clipboard buffers available:<br /><br />"
                              "<b>Clipboard</b> is filled by selecting something "
