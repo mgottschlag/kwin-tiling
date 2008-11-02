@@ -31,7 +31,6 @@
 #include "pollingwatcher.h"
 #include "mpris.h"
 #include "juk.h"
-#include "amarok.h"
 #ifdef XMMS_FOUND
 #include "xmms.h"
 #endif // XMMS_FOUND
@@ -55,7 +54,6 @@ NowPlayingEngine::NowPlayingEngine(QObject* parent,
 
     dbusWatcher->addFactory(new MprisFactory(dbusWatcher));
     dbusWatcher->addFactory(new JukFactory(dbusWatcher));
-    dbusWatcher->addFactory(new AmarokFactory(dbusWatcher));
 #ifdef XMMS_FOUND
     pollingWatcher->addFactory(new XmmsFactory(pollingWatcher));
 #endif

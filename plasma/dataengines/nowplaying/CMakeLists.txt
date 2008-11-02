@@ -8,11 +8,9 @@ set(nowplaying_engine_SRCS
     pollingwatcher.cpp
     mpris.cpp
     juk.cpp
-    amarok.cpp
 )
 
 QT4_ADD_DBUS_INTERFACE(nowplaying_engine_SRCS org.kde.juk.player.xml juk_interface)
-QT4_ADD_DBUS_INTERFACE(nowplaying_engine_SRCS org.kde.amarok.player.xml amarok_interface)
 QT4_ADD_DBUS_INTERFACE(nowplaying_engine_SRCS mpris_interface.xml mpris_interface)
 
 macro_optional_find_package(GLIB2)
