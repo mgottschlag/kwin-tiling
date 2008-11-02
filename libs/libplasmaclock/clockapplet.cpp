@@ -103,7 +103,7 @@ void ClockApplet::toolTipHidden()
 
 void ClockApplet::updateContent()
 {
-    Plasma::ToolTipManager::Content tipData;
+    Plasma::ToolTipContent tipData;
 
     {
         // the main text contains the current timezone's time and date
@@ -111,7 +111,7 @@ void ClockApplet::updateContent()
         QString mainText = d->prettyTimezone + " ";
         mainText += KGlobal::locale()->formatTime(data["Time"].toTime(), false) + "<br>";
         mainText += KGlobal::locale()->formatDate(data["Date"].toDate());
-        tipData.mainText = mainText;
+        tipData.setMainText(mainText);
     }
 
     QString subText;
@@ -126,33 +126,33 @@ void ClockApplet::updateContent()
         d->addTzToTipText(subText, tz);
     }
 
-    tipData.subText = subText;
+    tipData.setSubText(subText);
 
     // query for custom content
-    Plasma::ToolTipManager::Content customContent = toolTipContent();
-    if (customContent.image.isNull()) {
-        tipData.image = KIcon("chronometer").pixmap(IconSize(KIconLoader::Desktop));
+    Plasma::ToolTipContent customContent = toolTipContent();
+    if (customContent.image().isNull()) {
+        tipData.setImage(KIcon("chronometer").pixmap(IconSize(KIconLoader::Desktop)));
     } else {
-        tipData.image = customContent.image;
+        tipData.setImage(customContent.image());
     }
 
-    if (!customContent.mainText.isEmpty()) {
+    if (!customContent.mainText().isEmpty()) {
         // add their main text
-        tipData.mainText = customContent.mainText + "<br>" + tipData.mainText;
+        tipData.setMainText(customContent.mainText() + "<br>" + tipData.mainText());
     }
 
-    if (!customContent.subText.isEmpty()) {
+    if (!customContent.subText().isEmpty()) {
         // add their sub text
-        tipData.subText = customContent.subText + "<br>" + tipData.subText;
+        tipData.setSubText(customContent.subText() + "<br>" + tipData.subText());
     }
 
-    tipData.autohide = false;
+    tipData.setAutohide(false);
     Plasma::ToolTipManager::self()->setContent(this, tipData);
 }
 
-Plasma::ToolTipManager::Content ClockApplet::toolTipContent()
+Plasma::ToolTipContent ClockApplet::toolTipContent()
 {
-    return Plasma::ToolTipManager::Content();
+    return Plasma::ToolTipContent();
 }
 
 void ClockApplet::createConfigurationInterface(KConfigDialog *parent)

@@ -63,7 +63,7 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::PopupApplet
         virtual void createClockConfigurationInterface(KConfigDialog *parent);
         virtual void clockConfigAccepted();
         virtual void changeEngineTimezone(const QString &oldTimezone, const QString &newTimezone);
-        virtual Plasma::ToolTipManager::Content toolTipContent();
+        virtual Plasma::ToolTipContent toolTipContent();
         void wheelEvent(QGraphicsSceneWheelEvent *event);
         void createConfigurationInterface(KConfigDialog *parent);
         void initExtenderItem(Plasma::ExtenderItem *item);
