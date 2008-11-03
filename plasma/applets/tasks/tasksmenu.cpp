@@ -33,6 +33,7 @@
 //Plasma
 #include <plasma/applet.h>
 #include <plasma/framesvg.h>
+#include <plasma/theme.h>
 
 namespace TaskManager
 {
@@ -43,13 +44,6 @@ TasksMenu::TasksMenu(QWidget *parent, TaskGroup *group, GroupManager *groupManag
        m_applet(applet)
 {
     setAttribute(Qt::WA_NoSystemBackground);
-    //setWindowFlags(Qt::FramelessWindowHint);
-    QPalette pal(palette());
-    pal.setColor(QPalette::Window, Qt::transparent);
-    pal.setColor(QPalette::WindowText, Qt::white);
-    pal.setColor(QPalette::ButtonText, Qt::white);
-    pal.setColor(QPalette::Text, Qt::white);
-    setPalette(pal);
 
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("dialogs/background");
@@ -122,7 +116,7 @@ void TasksMenu::paintEvent(QPaintEvent *event)
         }
 
         painter.drawPixmap(iconRect, a->icon().pixmap(iconRect.size()));
-        painter.setPen(Qt::white);
+        painter.setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
         painter.drawText(textRect, Qt::AlignLeft|Qt::AlignVCenter, a->text());
     }
 
