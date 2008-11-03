@@ -47,7 +47,6 @@ THE SOFTWARE.
 "var NoBackground = %1;\n"\
 "var StandardBackground = %2;\n"\
 "var TranslucentBackground = %3;\n"\
-"var ShadowedBackground = %4;\n"\
 "var DefaultBackground = %5;\n"
 
 #define JS_CONSTANTS_SCROLLBAR \
@@ -117,7 +116,6 @@ PlasmaWebApplet::PlasmaWebApplet(QObject *parent, const QVariantList &args)
                 .arg(Plasma::Applet::NoBackground)
                 .arg(Plasma::Applet::StandardBackground)
                 .arg(Plasma::Applet::TranslucentBackground)
-                .arg(Plasma::Applet::ShadowedBackground)
                 .arg(Plasma::Applet::DefaultBackground);
         m_jsConstants += QString(JS_CONSTANTS_SCROLLBAR)
                 .arg(Qt::Horizontal)
