@@ -1,18 +1,22 @@
 [Desktop Entry]
 Name=Ruby Widget
 Name[kk]=Ruby бөлшегі
+Name[nds]=Ruby-Lüttprogramm
 Name[pt]=Elemento Ruby
 Name[pt_BR]=Elemento Ruby
 Name[sv]=Grafisk Ruby-komponent
 Name[tr]=Ruby Parçacığı
 Name[uk]=Віджет Ruby
+Name[zh_TW]=Ruby 元件
 Comment=Native Plasma widget written in Ruby
 Comment[kk]=Ruby-дег жазылған Plasma интерфейс бөлшегі
+Comment[nds]=En orginaal Plasmaelement, schreven in Ruby
 Comment[pt]=Elemento nativo do Plasma feito em Ruby
 Comment[pt_BR]=Elemento nativo do Plasma feito em Ruby
 Comment[sv]=Inbyggd grafisk Plasma-komponent skriven i Ruby
 Comment[tr]=Ruby ile yazılmış gerçek Plasma Programcığı
 Comment[uk]=Віджет Плазми, написаний на Ruby
+Comment[zh_TW]=用 Ruby 寫的原始 Plasma 元件
 X-KDE-ServiceTypes=Plasma/ScriptEngine
 Type=Service
 Icon=text-x-script
