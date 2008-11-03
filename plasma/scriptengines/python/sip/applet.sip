@@ -58,7 +58,6 @@ public:
         NoBackground,
         StandardBackground,
         TranslucentBackground,
-        ShadowedBackground,
         DefaultBackground
     };
 
