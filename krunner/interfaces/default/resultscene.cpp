@@ -199,9 +199,6 @@ ResultItem* ResultScene::addQueryMatch(const Plasma::QueryMatch &match, bool use
             item->hide();
             int rowStride = sceneRect().width() / (ResultItem::BOUNDING_WIDTH);
             item->setRowStride(rowStride);
-
-            connect(item, SIGNAL(hoverEnter(ResultItem*)), this, SLOT(ensureItemVisible(ResultItem*)));
-
             connect(item, SIGNAL(activated(ResultItem*)), this, SIGNAL(itemActivated(ResultItem*)));
             connect(item, SIGNAL(hoverEnter(ResultItem*)), this, SIGNAL(itemHoverEnter(ResultItem*)));
             connect(item, SIGNAL(hoverLeave(ResultItem*)), this, SIGNAL(itemHoverLeave(ResultItem*)));
@@ -281,7 +278,11 @@ void ResultScene::keyPressEvent(QKeyEvent * keyEvent)
         break;
     }
 
-    ensureItemVisible(m_items[m_cIndex]);
+    if (m_items[m_cIndex]->pos().y() + m_items[m_cIndex]->size().height() > sceneRect().y() + sceneRect().height()){
+        setPage(m_currentPage + 1);
+    }else if (m_items[m_cIndex]->pos().y() < sceneRect().y()){
+        setPage(m_currentPage - 1);
+    }
 
     // If we arrive here, it was due to an arrow button.
     Q_ASSERT(m_cIndex  >= 0);
@@ -307,19 +308,6 @@ void ResultScene::slotArrowResultItemPressed()
 void ResultScene::slotArrowResultItemReleased()
 {
 
-}
-
-void ResultScene::ensureItemVisible(ResultItem *item)
-{
-    if (!item) {
-        return;
-    }
-
-    if (item->pos().y() + item->size().height() > sceneRect().y() + sceneRect().height()){
-        setPage(m_currentPage + 1);
-    }else if (item->pos().y() < sceneRect().y()){
-        setPage(m_currentPage - 1);
-    }
 }
 
 void ResultScene::launchQuery(const QString &term)

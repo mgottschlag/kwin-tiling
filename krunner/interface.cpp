@@ -54,8 +54,8 @@
 
 #include "collapsiblewidget.h"
 #include "krunnersettings.h"
-#include "resultscene.h"
-#include "resultitem.h"
+#include "interfaces/default/resultscene.h"
+#include "interfaces/default/resultitem.h"
 
 static const int MIN_WIDTH = 400;
 

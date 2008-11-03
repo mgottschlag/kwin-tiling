@@ -44,8 +44,8 @@ set(krunner_SRCS
    interface.cpp
    krunnerapp.cpp
    main.cpp
-   resultitem.cpp
-   resultscene.cpp
+   interfaces/default/resultitem.cpp
+   interfaces/default/resultscene.cpp
    stackblur_shadows.cpp)
 if(NOT WIN32)
 set(krunner_SRCS
