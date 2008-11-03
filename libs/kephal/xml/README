@@ -1,9 +1,0 @@
-These classes allow a simple type of xml-data-binding. I'll add some
-docs to this once i find some time, currently these are only for
-internal use in Kephal.
-
-configurations_xml.[h|cpp] has the actual xml-classes for Kephals
-        xml-file.
-
-all other files just offer the basics for schema-definition, loading
-        and saving of xml.
