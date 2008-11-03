@@ -38,6 +38,7 @@ libplasma
         * NEW: Plasma::TabBar (usable with both QWidget and QGraphicsItems)
         * NEW: Plasma::Frame used to visually group widgets
         * NEW: Plasma::TreeView used to put tree views or simple list in the canvas
+        * NEW: Plasma::BusyWidget used to indicate the loading of something
         * Plasma::PushButton is svg-themed
 
 * Significant Fixes
