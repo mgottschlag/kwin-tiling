@@ -34,7 +34,7 @@ public:
     QString                 filePath (const char* fileType, const QString& filename) const;
     QString                 filePath (const char* fileType) const;
     QStringList             entryList (const char* fileType) const;
-    const Plasma::PackageMetadata*  metadata () const;
+    Plasma::PackageMetadata  metadata () const;
     const QString           path () const;
     const Plasma::PackageStructure::Ptr  structure () const;
     static QStringList      listInstalled (const QString& packageRoot);
