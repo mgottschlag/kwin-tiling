@@ -1,7 +1,7 @@
 project(plasma-tasks)
 
 set(tasks_SRCS
-    windowtaskitem.cpp tasks.cpp layoutwidget.cpp abstracttaskitem.cpp taskgroupitem.cpp)
+    windowtaskitem.cpp tasks.cpp layoutwidget.cpp abstracttaskitem.cpp taskgroupitem.cpp tasksmenu.cpp)
 
 kde4_add_ui_files(tasks_SRCS tasksConfig.ui )
 kde4_add_plugin(plasma_applet_tasks ${tasks_SRCS})

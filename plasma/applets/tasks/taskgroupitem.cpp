@@ -22,6 +22,7 @@
 #include "taskgroupitem.h"
 #include "layoutwidget.h"
 #include "windowtaskitem.h"
+#include "tasksmenu.h"
 
 // Qt
 #include <QGraphicsSceneContextMenuEvent>
@@ -450,7 +451,7 @@ void TaskGroupItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 void TaskGroupItem::popupMenu()
 {
     if (m_isCollapsed) {
-        TaskManager::GroupPopupMenu menu(qobject_cast<QWidget*>(this), m_group,  &m_applet->groupManager());
+        TaskManager::TasksMenu menu(qobject_cast<QWidget*>(this), m_group,  &m_applet->groupManager(), m_applet);
         menu.adjustSize();
         Q_ASSERT(m_applet->containment());
         Q_ASSERT(m_applet->containment()->corona());
