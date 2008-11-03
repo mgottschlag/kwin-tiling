@@ -29,7 +29,8 @@
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QIcon>
 #include <QtGui/QPixmap>
-#include <plasma/querymatch.h>
+
+#include <Plasma/QueryMatch>
 
 namespace Plasma
 {

@@ -40,7 +40,7 @@
 #include <KMessageBox>
 #include <KWindowSystem>
 
-#include <plasma/runnermanager.h>
+#include <Plasma/RunnerManager>
 
 #include "processui/ksysguardprocesslist.h"
 

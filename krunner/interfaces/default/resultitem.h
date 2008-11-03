@@ -24,7 +24,8 @@
 
 #include <QtGui/QGraphicsWidget>
 #include <QtGui/QIcon>
-#include <plasma/querymatch.h>
+
+#include <Plasma/QueryMatch>
 
 class QGraphicsLinearLayout;
 

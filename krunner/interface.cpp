@@ -45,14 +45,13 @@
 #include <KTitleWidget>
 #include <KWindowSystem>
 
-#include <plasma/abstractrunner.h>
-#include <plasma/runnermanager.h>
-#include <plasma/theme.h>
-#include <plasma/svg.h>
+#include <Plasma/AbstractRunner>
+#include <Plasma/RunnerManager>
+#include <Plasma/Theme>
+#include <Plasma/Svg>
 
 #include "kworkspace/kdisplaymanager.h"
 
-#include "collapsiblewidget.h"
 #include "krunnersettings.h"
 #include "interfaces/default/resultscene.h"
 #include "interfaces/default/resultitem.h"

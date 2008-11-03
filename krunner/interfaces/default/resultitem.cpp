@@ -39,9 +39,9 @@
 #include <KDebug>
 #include <KIcon>
 
-#include <plasma/plasma.h>
-#include <plasma/runnermanager.h>
-#include <plasma/paintutils.h>
+#include <Plasma/Plasma>
+#include <Plasma/RunnerManager>
+#include <Plasma/PaintUtils>
 
 #define TEXT_AREA_HEIGHT ResultItem::MARGIN + ResultItem::TEXT_MARGIN*2 + ResultItem::Private::s_fontHeight
 //#define NO_GROW_ANIM

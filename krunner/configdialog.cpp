@@ -30,7 +30,7 @@
 #include <KPluginSelector>
 #include <KServiceTypeTrader>
 
-#include <plasma/runnermanager.h>
+#include <Plasma/RunnerManager>
 
 KRunnerConfigDialog::KRunnerConfigDialog(Plasma::RunnerManager* manager, QWidget* parent)
     : KDialog(parent),
