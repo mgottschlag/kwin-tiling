@@ -20,6 +20,7 @@
 #include <iostream>
 
 #include <QDir>
+#include <QDBusInterface>
 
 #include <KApplication>
 #include <KAboutData>
@@ -30,8 +31,13 @@
 #include <KServiceTypeTrader>
 #include <KShell>
 #include <KStandardDirs>
+#include <KProcess>
+#include <KSycoca>
+#include <KConfigGroup>
 
 #include <plasma/packagestructure.h>
+#include <plasma/package.h>
+#include <plasma/packagemetadata.h>
 
 static const char description[] = I18N_NOOP("Install, list, remove Plasma packages");
 static const char version[] = "0.1";
@@ -41,10 +47,29 @@ void output(const QString &msg)
     std::cout << msg.toLocal8Bit().constData() << std::endl;
 }
 
-void listPackages()
+void runKbuildsycoca()
 {
-    //TODO: implement
-    output(i18n("Listing is not yet implemented."));
+    QDBusInterface dbus("org.kde.kded", "/kbuildsycoca", "org.kde.kbuildsycoca");
+    dbus.call(QDBus::NoBlock, "recreate");
+}
+
+QStringList packages(const QString& type)
+{
+    QStringList result;
+    KService::List services = KServiceTypeTrader::self()->query("Plasma/" + type);
+    foreach(const KService::Ptr &service, services) {
+        result << service->property("X-KDE-PluginInfo-Name", QVariant::String).toString();
+    }
+    return result;
+}
+
+void listPackages(const QString& type)
+{
+    QStringList list = packages(type);
+    list.sort();
+    foreach(const QString& package, list) {
+        output(package);
+    }
 }
 
 int main(int argc, char **argv)
@@ -70,6 +95,8 @@ int main(int argc, char **argv)
     options.add("s");
     options.add("i");
     options.add("install <path>", ki18n("Install the package at <path>"));
+    options.add("u");
+    options.add("upgrade <path>", ki18n("Upgrade the package at <path>"));
     options.add("l");
     options.add("list", ki18n("List installed packages"));
     options.add("r");
@@ -79,56 +106,58 @@ int main(int argc, char **argv)
     KCmdLineArgs::addCmdLineOptions( options );
 
     KApplication app;
-    //QCoreApplication app;
-
-    //TODOs:
-    //   implement list
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-    if (args->isSet("list")) {
-        listPackages();
+    const QString type = args->getOption("type").toLower();
+    QString packageRoot = type;
+    QString servicePrefix;
+    QString pluginType;
+    Plasma::PackageStructure *installer = 0;
+
+    if (type == i18n("plasmoid") || type == "plasmoid") {
+        packageRoot = "plasma/plasmoids/";
+        servicePrefix = "plasma-applet-";
+        pluginType = "Applet";
+    } else if (type == i18n("theme") || type == "theme") {
+        packageRoot = "desktoptheme/";
+    } else if (type == i18n("wallpaper") || type == "wallpaper") {
+        packageRoot = "wallpapers/";
+    } else if (type == i18n("dataengine") || type == "dataengine") {
+        packageRoot = "plasma/dataengines/";
+        servicePrefix = "plasma-dataengine-";
+        pluginType = "DataEngine";
+    } else if (type == i18n("runner") || type == "runner") {
+        packageRoot = "plasma/runners/";
+        servicePrefix = "plasma-runner-";
+        pluginType = "Runner";
     } else {
-        // install and remove
-        const QString type = args->getOption("type").toLower();
-        QString packageRoot = args->getOption("type").toLower();
-        QString servicePrefix;
+        QString constraint = QString("'%1' == [X-KDE-PluginInfo-Name]").arg(packageRoot);
+        KService::List offers = KServiceTypeTrader::self()->query("Plasma/PackageStructure", constraint);
+        if (offers.isEmpty()) {
+            output(i18n("Could not find a suitable installer for package of type %1", type));
+            return 1;
+        }
 
-        Plasma::PackageStructure *installer = new Plasma::PackageStructure();
-        if (type == i18n("plasmoid") || type == "plasmoid") {
-            packageRoot = "plasma/plasmoids/";
-            installer->setServicePrefix("plasma-applet-");
-        } else if (type == i18n("theme") || type == "theme") {
-            packageRoot = "desktoptheme/";
-        } else if (type == i18n("wallpaper") || type == "wallpaper") {
-            packageRoot = "wallpapers/";
-        } else if (type == i18n("dataengine") || type == "dataengine") {
-            packageRoot = "plasma/dataengines/";
-            installer->setServicePrefix("plasma-dataengine-");
-        } else if (type == i18n("runner") || type == "runner") {
-            packageRoot = "plasma/runners/";
-            installer->setServicePrefix("plasma-runner-");
-        } else {
-            // support for non-native widget packages
-            delete installer;
-            installer = 0;
+        KService::Ptr offer = offers.first();
+        QString error;
+        installer = offer->createInstance<Plasma::PackageStructure>(0, QVariantList(), &error);
 
-            QString constraint = QString("'%1' == [X-KDE-PluginInfo-Name]").arg(packageRoot);
-            KService::List offers = KServiceTypeTrader::self()->query("Plasma/PackageStructure", constraint);
-            if (offers.isEmpty()) {
-                output(i18n("Could not find a suitable installer for package of type %1", type));
-                return 1;
-            }
+        if (!installer) {
+            output(i18n("Could not load installer for package of type %1. Error reported was: %2",
+                        type, error));
+            return 1;
+        }
+        packageRoot = installer->defaultPackageRoot();
+        pluginType = installer->type();
+    }
 
-            KService::Ptr offer = offers.first();
-            QString error;
-            installer = offer->createInstance<Plasma::PackageStructure>(0, QVariantList(), &error);
-
-            if (!installer) {
-                output(i18n("Could not load installer for package of type %1. Error reported was: %2",
-                            type, error));
-                return 1;
-            }
-            packageRoot = installer->defaultPackageRoot();
+    if (args->isSet("list")) {
+        listPackages(pluginType);
+    } else {
+        // install, remove or upgrade
+        if (!installer) {
+            installer = new Plasma::PackageStructure();
+            installer->setServicePrefix(servicePrefix);
         }
 
         if (args->isSet("packageroot")) {
@@ -139,31 +168,60 @@ int main(int argc, char **argv)
             packageRoot = KStandardDirs::locateLocal("data", packageRoot);
         }
 
-        if (args->isSet("install")) {
-            QString package = KShell::tildeExpand(args->getOption("install"));
-            if (!QDir::isAbsolutePath(package)) {
-                package = QDir(QDir::currentPath() + '/' + package).absolutePath();
+        QString package;
+        QString packageFile;
+        if (args->isSet("remove")) {
+            package = args->getOption("remove");
+        } else if (args->isSet("upgrade")) {
+            package = args->getOption("upgrade");
+        } else if (args->isSet("install")) {
+            package = args->getOption("install");
+        }
+        if (!QDir::isAbsolutePath(package)) {
+            packageFile = QDir(QDir::currentPath() + '/' + package).absolutePath();
+        } else {
+            packageFile = package;
+        }
+
+        if (args->isSet("remove") || args->isSet("upgrade")) {
+            installer->setPath(packageFile);
+            Plasma::PackageMetadata metadata = installer->metadata();
+
+            QString pluginName;
+            if (metadata.pluginName().isEmpty()) {
+                // plugin name given in command line
+                pluginName = package;
+            } else {
+                // Parameter was a plasma package, get plugin name from the package
+                pluginName = metadata.pluginName();
             }
 
-            if (installer->installPackage(package, packageRoot)) {
-                QString msg = i18n("Successfully installed %1", package);
+            QStringList installed = packages(pluginType);
+            if (installed.contains(pluginName)) {
+                if (installer->uninstallPackage(pluginName, packageRoot)) {
+                    output(i18n("Successfully removed %1", pluginName));
+                } else if (!args->isSet("upgrade")) {
+                    output(i18n("Removal of %1 failed.", pluginName));
+                    return 1;
+                }
             } else {
-                output(i18n("Installation of %1 failed.", package));
+                output(i18n("Plugin %1 is not installed.", pluginName));
+            }
+        }
+        if (args->isSet("install") || args->isSet("upgrade")) {
+            if (installer->installPackage(packageFile, packageRoot)) {
+                output(i18n("Successfully installed %1", packageFile));
+            } else {
+                output(i18n("Installation of %1 failed.", packageFile));
                 return 1;
             }
-        } else if (args->isSet("remove")) {
-            QString package = args->getOption("remove");
-            if (installer->uninstallPackage(package, packageRoot)) {
-                output(i18n("Successfully removed %1", package));
-            } else {
-                output(i18n("Removal of %1 failed.", package));
-                return 1;
-            }
+        }
+        if (package.isEmpty()) {
+            KCmdLineArgs::usageError(i18n("One of install, remove, upgrade or list is required."));
         } else {
-            KCmdLineArgs::usageError(i18n("One of install, remove or list is required."));
+            runKbuildsycoca();
         }
     }
-
     return 0;
 }
 
