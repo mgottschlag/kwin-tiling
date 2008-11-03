@@ -154,7 +154,8 @@ QMap<QString, IonInterface::ConditionIcons> UKMETIon::setupNightIconMappings(voi
     QMap<QString, ConditionIcons> nightList;
     nightList["clear"] = ClearNight;
     nightList["clear intervals"] = PartlyCloudyNight;
-    nightList["sunny intervals"] = PartlyCloudyNight; // it's not really sunny
+    nightList["sunny intervals"] = PartlyCloudyDay; // it's not really sunny
+    nightList["sunny"] = ClearDay;
     nightList["cloudy"] = Overcast;
     nightList["partly cloudy"] = PartlyCloudyNight;
     nightList["drizzle"] = LightRain;
