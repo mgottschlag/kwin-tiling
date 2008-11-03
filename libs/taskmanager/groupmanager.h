@@ -94,7 +94,18 @@ public:
     bool showOnlyMinimized() const;
     void setShowOnlyMinimized(bool);
 
-    /** 
+    bool onlyGroupWhenFull() const;
+    /**
+    * Only apply the grouping startegy when the taskbar is full according to
+    * setFullLimit(int). This is currently limited to ProgramGrouping.
+    */
+    void setOnlyGroupWhenFull(bool state);
+    /**
+    * Set the limit when the taskbar is considered as full
+    */
+    void setFullLimit(int limit);
+
+    /**
      * Functions to call if the user wants to do something manually, the strategy allows or refuses the request
      */
     bool manualGroupingRequest(AbstractGroupableItem* taskItem, TaskGroup* groupItem);
@@ -133,6 +144,7 @@ private:
     Q_PRIVATE_SLOT(d, void taskChanged(TaskPtr, ::TaskManager::TaskChanges))
     Q_PRIVATE_SLOT(d, void checkScreenChange())
     Q_PRIVATE_SLOT(d, void itemDestroyed())
+    Q_PRIVATE_SLOT(d, void checkIfFull())
 
     friend class GroupManagerPrivate;
     GroupManagerPrivate * const d;

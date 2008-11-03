@@ -57,7 +57,8 @@ public:
           showOnlyCurrentScreen(false),
           showOnlyMinimized(false),
           onlyGroupWhenFull(false),
-          groupIsFull(false)
+          groupIsFullLimit(0),
+          lastGroupingStrategy(GroupManager::NoGrouping)
     {
     }
 
@@ -73,6 +74,7 @@ public:
     void checkScreenChange();
 
     void itemDestroyed();
+    void checkIfFull();
 
     GroupManager *q;
     QHash<TaskPtr, TaskItem*> itemList; //holds all tasks of the Taskmanager
@@ -89,7 +91,8 @@ public:
     bool showOnlyCurrentScreen : 1;
     bool showOnlyMinimized : 1;
     bool onlyGroupWhenFull : 1;
-    bool groupIsFull : 1;
+    int groupIsFullLimit;
+    GroupManager::TaskGroupingStrategy lastGroupingStrategy;
 };
 
 
@@ -166,7 +169,7 @@ void GroupManager::remove(StartupPtr task)
 
 bool GroupManager::add(TaskPtr task)
 {
-    kDebug();
+    //kDebug();
     /*kDebug() << task->visibleName();
     kDebug() <<  task->visibleNameWithState();
     kDebug() <<  task->name();
@@ -259,7 +262,7 @@ bool GroupManager::add(TaskPtr task)
 
 void GroupManager::remove(TaskPtr task)
 {
-    kDebug() << "remove: " << task->visibleName();
+    //kDebug() << "remove: " << task->visibleName();
     TaskItem *item = d->itemList.value(task);
     if (!item) {
         kDebug() << "invalid item";
@@ -358,7 +361,7 @@ void GroupManagerPrivate::taskChanged(TaskPtr task, ::TaskManager::TaskChanges c
     if (showOnlyCurrentDesktop && changes & ::TaskManager::DesktopChanged) {
         takeAction = true;
         show = task->isOnCurrentDesktop();
-        kDebug() << task->visibleName() << "on" << TaskManager::self()->currentDesktop();
+        //kDebug() << task->visibleName() << "on" << TaskManager::self()->currentDesktop();
     }
 
     if (showOnlyMinimized && changes & ::TaskManager::StateChanged) {
@@ -389,10 +392,10 @@ void GroupManagerPrivate::taskChanged(TaskPtr task, ::TaskManager::TaskChanges c
     }
 
     if (show) {
-        kDebug() << "add(task);";
+        //kDebug() << "add(task);";
         q->add(task);
     } else {
-        kDebug() << "remove(task);";
+        //kDebug() << "remove(task);";
         q->remove(task);
     }
 }
@@ -446,20 +449,55 @@ void GroupManager::reconnect()
     d->reloadTasks();
 }
 
-/*bool GroupManager::onlyGroupWhenFull() const
+
+bool GroupManager::onlyGroupWhenFull() const
 {
     return d->onlyGroupWhenFull;
 }
 
 void GroupManager::setOnlyGroupWhenFull(bool state)
 {
+    kDebug() << state;
     d->onlyGroupWhenFull = state;
+
+    if (state) {
+        connect(d->rootGroup, SIGNAL(itemAdded(AbstractItemPtr)), this, SLOT(checkIfFull()));
+        connect(d->rootGroup, SIGNAL(itemRemoved(AbstractItemPtr)), this, SLOT(checkIfFull()));
+    } else {
+        disconnect(d->rootGroup, SIGNAL(itemAdded(AbstractItemPtr)), this, SLOT(checkIfFull()));
+        disconnect(d->rootGroup, SIGNAL(itemRemoved(AbstractItemPtr)), this, SLOT(checkIfFull()));
+    }
 }
 
-void GroupManager::groupIsFull(bool state)
+void GroupManager::setFullLimit(int limit)
 {
-    d->groupIsFull = state;
-}*/
+    kDebug() << limit;
+    d->groupIsFullLimit = limit;
+    if (!onlyGroupWhenFull()) {
+        return;
+    }
+    d->checkIfFull();
+}
+
+void GroupManagerPrivate::checkIfFull()
+{
+    kDebug();
+    if (!q->onlyGroupWhenFull()) {
+        return;
+    }
+    if (groupingStrategy != GroupManager::ProgramGrouping) {
+        return;
+    }
+    if (itemList.size() >= groupIsFullLimit) {
+        //kDebug() << "group is full, setting program grouping";
+        q->setGroupingStrategy(GroupManager::ProgramGrouping);
+    } else {
+        //kDebug() << "group is not full";
+        q->setGroupingStrategy(GroupManager::NoGrouping);
+        //let the visualization thing we still use the programGrouping
+        groupingStrategy = GroupManager::ProgramGrouping;
+    }
+}
 
 bool GroupManager::showOnlyCurrentScreen() const
 {
