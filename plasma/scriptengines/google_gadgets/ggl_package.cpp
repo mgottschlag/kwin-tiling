@@ -25,7 +25,9 @@
 #include <ggadget/host_interface.h>
 #include <ggadget/string_utils.h>
 #include <ggadget/gadget_manager_interface.h>
+#include <ggadget/file_manager_interface.h>
 #include <ggadget/system_utils.h>
+#include <ggadget/scoped_ptr.h>
 #include <ggadget/view.h>
 #include <ggadget/messages.h>
 #include <ggadget/permissions.h>
@@ -78,6 +80,36 @@ class GadgetBrowserHost : public ggadget::HostInterface {
     connection_->Disconnect();
   }
 
+  QString ExtractGadgetIcon(const std::string& gadget_path,
+                            const QString& dest_dir) {
+    ggadget::StringMap map;
+
+    if (!ggadget::Gadget::GetGadgetManifest(gadget_path.c_str(), &map))
+      return "";
+
+    std::string icon = map[ggadget::kManifestIcon];
+    if (icon.empty()) return "";
+
+    ggadget::scoped_ptr<ggadget::FileManagerInterface> fm(
+        ggadget::Gadget::GetGadgetFileManagerForLocale(gadget_path.c_str(),
+                                                       NULL));
+
+    if (!fm.get()) return "";
+
+    std::string data;
+    fm->ReadFile(icon.c_str(), &data);
+    if (data.empty()) return "";
+
+    QPixmap pixmap;
+    if (pixmap.loadFromData(reinterpret_cast<const uchar *>(data.c_str()),
+                            static_cast<int>(data.length()))) {
+      QString dest = dest_dir + "/icon.png";
+      if (pixmap.save(dest, "png"))
+        return dest;
+    }
+    return "";
+  }
+
   bool InstallPlasmaApplet(int id) {
     std::string author, download_url, title, description;
     if (!gadget_manager_->GetGadgetInstanceInfo(id, "", &author, &download_url,
@@ -109,11 +141,15 @@ class GadgetBrowserHost : public ggadget::HostInterface {
     Plasma::PackageMetadata data;
     data.setPluginName(pkg_name);
     data.setType("Service");
+    data.setAuthor(QString::fromUtf8(author.c_str()));
     data.setImplementationApi("googlegadgets");
     data.setName(QString::fromUtf8(title.c_str()));
     data.setDescription(QString::fromUtf8(description.c_str()));
 
-    Plasma::Package::registerPackage(data, "google-gadgets");
+    // Extract the icon
+    QString icon = ExtractGadgetIcon(path, root.path());
+
+    Plasma::Package::registerPackage(data, icon);
     return true;
   }
 
