@@ -102,6 +102,6 @@ install(TARGETS kdeinit_krunner ${INSTALL_TARGETS_DEFAULT_ARGS} )
 install(TARGETS krunner         ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 install(FILES krunner.desktop  DESTINATION  ${AUTOSTART_INSTALL_DIR})
-install(FILES kscreensaversettings.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
-install(FILES klaunch.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
+install(FILES kcfg/kscreensaversettings.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
+install(FILES kcfg/klaunch.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
 install(FILES ${krunner_dbusAppXML} ${screensaver_dbusXML} ${kscreensaver_dbusXML} DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
