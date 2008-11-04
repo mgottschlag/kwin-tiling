@@ -53,10 +53,12 @@ class PlasmaViewHost : public ViewHostInterface {
   virtual void QueueResize();
   virtual void EnableInputShapeMask(bool enable);
   virtual void SetResizable(ViewInterface::ResizableMode mode);
-  virtual void SetCaption(const char *caption);
+  virtual void SetCaption(const std::string &caption);
   virtual void SetShowCaptionAlways(bool always);
   virtual void SetCursor(int type);
-  virtual void SetTooltip(const char *tooltip);
+  virtual void ShowTooltip(const std::string &tooltip);
+  virtual void ShowTooltipAtPosition(const std::string &tooltip,
+                                     double x, double y);
   virtual bool ShowView(bool modal, int flags,
                         Slot1<bool, int> *feedback_handler);
   virtual void CloseView();

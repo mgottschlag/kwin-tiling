@@ -116,8 +116,8 @@ void PlasmaViewHost::SetResizable(ViewInterface::ResizableMode mode) {
     d->info->applet->setAspectRatioMode(Plasma::KeepAspectRatio);
 }
 
-void PlasmaViewHost::SetCaption(const char *caption) {
-  d->caption_ = QString::fromUtf8(caption);
+void PlasmaViewHost::SetCaption(const std::string &caption) {
+  d->caption_ = QString::fromUtf8(caption.c_str());
   if (d->parent_widget_)
     d->parent_widget_->setWindowTitle(d->caption_);
 }
@@ -135,8 +135,13 @@ void PlasmaViewHost::SetCursor(int type) {
     d->widget_->setCursor(shape);
 }
 
-void PlasmaViewHost::SetTooltip(const char *tooltip) {
-  QToolTip::showText(QCursor::pos(), QString::fromUtf8(tooltip));
+void PlasmaViewHost::ShowTooltip(const std::string &tooltip) {
+  QToolTip::showText(QCursor::pos(), QString::fromUtf8(tooltip.c_str()));
+}
+
+void PlasmaViewHost::ShowTooltipAtPosition(const std::string &tooltip,
+                                           double x, double y) {
+  // TODO:
 }
 
 bool PlasmaViewHost::ShowView(bool modal, int flags,
