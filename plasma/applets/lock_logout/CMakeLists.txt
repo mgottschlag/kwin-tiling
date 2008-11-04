@@ -10,7 +10,7 @@ set(ksmserver_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerInt
 QT4_ADD_DBUS_INTERFACE(lockout_SRCS ${ksmserver_xml} ksmserver_interface)
 
 kde4_add_plugin(plasma_applet_lockout ${lockout_SRCS})
-target_link_libraries(plasma_applet_lockout plasma ${KDE4_KIO_LIBS})
+target_link_libraries(plasma_applet_lockout ${PLASMA_LIBS} ${KDE4_KIO_LIBS})
 if(NOT WIN32)
 target_link_libraries(plasma_applet_lockout kworkspace)
 endif(NOT WIN32)

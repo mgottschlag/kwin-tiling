@@ -60,7 +60,7 @@ IF (CMAKE_BUILD_TYPE MATCHES Debug)
          main.cpp )
 
    kde4_add_executable(kickoff ${Application_SRCS})
-   target_link_libraries(kickoff plasma ${Kickoff_LIBS})
+   target_link_libraries(kickoff ${PLASMA_LIBS} ${Kickoff_LIBS})
 
    install(TARGETS kickoff ${INSTALL_TARGETS_DEFAULT_ARGS})
 ENDIF (CMAKE_BUILD_TYPE MATCHES Debug)
@@ -68,13 +68,13 @@ ENDIF (CMAKE_BUILD_TYPE MATCHES Debug)
 # Kickoff Plasma Applet
 set ( Applet_SRCS ${Kickoff_SRCS} applet/applet.cpp )
 kde4_add_plugin(plasma_applet_launcher ${Applet_SRCS})
-target_link_libraries(plasma_applet_launcher plasma solidcontrol ${Kickoff_LIBS}) 
+target_link_libraries(plasma_applet_launcher ${PLASMA_LIBS} solidcontrol ${Kickoff_LIBS}) 
 install(TARGETS plasma_applet_launcher DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES applet/plasma-applet-launcher.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 
 # Simple KMenu Plasma Applet
 set ( SimpleApplet_SRCS ${Kickoff_SRCS} simpleapplet/menuview.cpp simpleapplet/simpleapplet.cpp )
 kde4_add_plugin(plasma_applet_simplelauncher ${SimpleApplet_SRCS})
-target_link_libraries(plasma_applet_simplelauncher plasma solidcontrol ${Kickoff_LIBS}) 
+target_link_libraries(plasma_applet_simplelauncher ${PLASMA_LIBS} solidcontrol ${Kickoff_LIBS}) 
 install(TARGETS plasma_applet_simplelauncher DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES simpleapplet/plasma-applet-simplelauncher.desktop DESTINATION ${SERVICES_INSTALL_DIR})

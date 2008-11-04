@@ -18,7 +18,7 @@ kde4_add_ui_files (
 
 include_directories(../)
 kde4_add_executable(plasmaappletbrowser ${appletbrowser_SRCS})
-target_link_libraries(plasmaappletbrowser plasma ${KDE4_KDEUI_LIBS})
+target_link_libraries(plasmaappletbrowser ${PLASMA_LIBS} ${KDE4_KDEUI_LIBS})
 
 endif (KDE4_BUILD_TESTS)
 

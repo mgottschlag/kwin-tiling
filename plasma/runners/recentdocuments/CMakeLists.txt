@@ -3,7 +3,7 @@ set(krunner_recentdocuments_SRCS
 )
 
 kde4_add_plugin(krunner_recentdocuments ${krunner_recentdocuments_SRCS})
-target_link_libraries(krunner_recentdocuments plasma ${KDE4_KIO_LIBS})
+target_link_libraries(krunner_recentdocuments ${PLASMA_LIBS} ${KDE4_KIO_LIBS})
 
 install(TARGETS krunner_recentdocuments DESTINATION ${PLUGIN_INSTALL_DIR} )
 

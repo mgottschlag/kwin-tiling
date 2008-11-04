@@ -4,7 +4,7 @@ set(powermanagement_engine_SRCS
 )
 
 kde4_add_plugin(plasma_engine_powermanagement ${powermanagement_engine_SRCS})
-target_link_libraries(plasma_engine_powermanagement ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} plasma )
+target_link_libraries(plasma_engine_powermanagement ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} ${PLASMA_LIBS} )
 
 install(TARGETS plasma_engine_powermanagement DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-dataengine-powermanagement.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
