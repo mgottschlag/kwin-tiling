@@ -28,7 +28,7 @@ namespace Plasma
 {
     class Applet;
     class FrameSvg;
-};
+}
 
 namespace TaskManager
 {
@@ -53,6 +53,6 @@ protected:
     Plasma::FrameSvg *m_itemBackground;
     Plasma::Applet *m_applet;
 };
-};
+}
 
 #endif
