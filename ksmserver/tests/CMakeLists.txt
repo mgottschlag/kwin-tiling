@@ -9,4 +9,4 @@ set(testsh_SRCS
 
 kde4_add_executable(testsh TEST ${testsh_SRCS})
 
-target_link_libraries(testsh ${PLASMA_LIBS} solidcontrol kworkspace ${KDE4_KDEUI_LIBS} ${QIMAGEBLITZ_LIBRARIES})
+target_link_libraries(testsh ${KDE4_PLASMA_LIBS} solidcontrol kworkspace ${KDE4_KDEUI_LIBS} ${QIMAGEBLITZ_LIBRARIES})

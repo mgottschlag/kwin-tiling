@@ -8,7 +8,7 @@ qt4_add_dbus_adaptor( notifications_engine_SRCS org.kde.VisualNotifications.xml 
 
 kde4_add_plugin(plasma_engine_notifications ${notifications_engine_SRCS})
 
-target_link_libraries(plasma_engine_notifications ${PLASMA_LIBS} ${KDE4_KDECORE_LIBS})
+target_link_libraries(plasma_engine_notifications ${KDE4_PLASMA_LIBS} ${KDE4_KDECORE_LIBS})
 
 install(TARGETS plasma_engine_notifications DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-dataengine-notifications.desktop DESTINATION ${SERVICES_INSTALL_DIR} )

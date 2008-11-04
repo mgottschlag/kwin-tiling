@@ -1,6 +1,6 @@
 SET (ionlib_SRCS ion.cpp weatherutils.cpp)
 kde4_add_library (weather_ion SHARED ${ionlib_SRCS})
-TARGET_LINK_LIBRARIES (weather_ion ${KDE4_KIO_LIBS} ${PLASMA_LIBS})
+TARGET_LINK_LIBRARIES (weather_ion ${KDE4_KIO_LIBS} ${KDE4_PLASMA_LIBS})
 set_target_properties(weather_ion PROPERTIES
    VERSION ${GENERIC_LIB_VERSION}
    SOVERSION ${GENERIC_LIB_SOVERSION}
@@ -17,9 +17,9 @@ kde4_add_plugin(ion_envcan ${ion_envcan_SRCS})
 kde4_add_plugin(ion_noaa ${ion_noaa_SRCS})
 kde4_add_plugin(ion_bbcukmet ${ion_bbcukmet_SRCS})
 
-TARGET_LINK_LIBRARIES (ion_envcan ${KDE4_KDEUI_LIBS} ${PLASMA_LIBS} weather_ion)
-TARGET_LINK_LIBRARIES (ion_noaa ${KDE4_KDEUI_LIBS} ${PLASMA_LIBS} weather_ion)
-TARGET_LINK_LIBRARIES (ion_bbcukmet ${KDE4_KDEUI_LIBS} ${PLASMA_LIBS} weather_ion)
+TARGET_LINK_LIBRARIES (ion_envcan ${KDE4_KDEUI_LIBS} ${KDE4_PLASMA_LIBS} weather_ion)
+TARGET_LINK_LIBRARIES (ion_noaa ${KDE4_KDEUI_LIBS} ${KDE4_PLASMA_LIBS} weather_ion)
+TARGET_LINK_LIBRARIES (ion_bbcukmet ${KDE4_KDEUI_LIBS} ${KDE4_PLASMA_LIBS} weather_ion)
 
 INSTALL (FILES ion.h
                ion_export.h

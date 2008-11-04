@@ -40,7 +40,7 @@ endif(GLIB2_FOUND)
 configure_file(config-nowplaying.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-nowplaying.h)
 
 kde4_add_plugin(plasma_engine_nowplaying ${nowplaying_engine_SRCS})
-target_link_libraries(plasma_engine_nowplaying ${KDE4_KIO_LIBS} ${PLASMA_LIBS} ${QT_QTGUI_LIBRARY})
+target_link_libraries(plasma_engine_nowplaying ${KDE4_KIO_LIBS} ${KDE4_PLASMA_LIBS} ${QT_QTGUI_LIBRARY})
 if(XMMS_FOUND)
    target_link_libraries(plasma_engine_nowplaying ${XMMS_LDFLAGS})
 endif(XMMS_FOUND)
