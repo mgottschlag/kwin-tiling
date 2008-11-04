@@ -22,7 +22,7 @@ target_link_libraries(krunner_nepomuksearchrunner
   ${NEPOMUK_LIBRARIES}
   ${QT_QTGUI_LIBRARY}
   ${SOPRANO_LIBRARIES}
-  plasma
+  ${PLASMA_LIBS}
   nepomukquery
   nepomukqueryclient
 )
