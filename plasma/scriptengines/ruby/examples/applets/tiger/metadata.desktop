@@ -1,5 +1,7 @@
 [Desktop Entry]
 Name=Tiger
+Name[el]=Τίγρης
+Name[gu]=વાઘ
 Name[kk]=Жолбарыс
 Name[pt]=Tigre
 Name[pt_BR]=Tigre
@@ -7,6 +9,8 @@ Name[tr]=Kaplan
 Name[uk]=Тигр
 Name[zh_TW]=老虎
 Comment=An example of displaying an SVG
+Comment[el]=Ένα παράδειγμα εμφάνισης μιας SVG
+Comment[gu]=SVG દર્શાવતું ઉદાહરણ
 Comment[kk]=SVG көрсету мысалы
 Comment[nds]=En Bispill för en SVG
 Comment[pt]=Um exemplo de visualização de um SVG
