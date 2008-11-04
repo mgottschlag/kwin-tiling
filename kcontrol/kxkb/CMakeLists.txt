@@ -128,7 +128,7 @@ set(plasma_applet_kxkb_SRCS kxkb_applet.cpp ${kxkb_COMMON_SRCS}
 
 kde4_add_plugin(plasma_applet_kxkb ${plasma_applet_kxkb_SRCS})
 
-target_link_libraries(plasma_applet_kxkb plasma
+target_link_libraries(plasma_applet_kxkb ${PLASMA_LIBS}
     ${KDE4_KDEUI_LIBS} ${XKB_SUPPORT_LIB})
         
 if(X11_XTest_FOUND)

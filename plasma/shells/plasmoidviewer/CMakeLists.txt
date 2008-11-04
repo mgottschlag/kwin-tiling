@@ -5,7 +5,7 @@ set(plasmoidviewer_SRCS
 
 kde4_add_executable(plasmoidviewer ${plasmoidviewer_SRCS})
 
-target_link_libraries(plasmoidviewer plasma)
+target_link_libraries(plasmoidviewer ${PLASMA_LIBS})
 
 install(TARGETS plasmoidviewer ${INSTALL_TARGETS_DEFAULT_ARGS})
 

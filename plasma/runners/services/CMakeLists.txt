@@ -3,7 +3,7 @@ set(krunner_services_SRCS
 )
 
 kde4_add_plugin(krunner_services ${krunner_services_SRCS})
-target_link_libraries(krunner_services ${KDE4_KIO_LIBS} plasma)
+target_link_libraries(krunner_services ${KDE4_KIO_LIBS} ${PLASMA_LIBS})
 
 install(TARGETS krunner_services DESTINATION ${PLUGIN_INSTALL_DIR} )
 

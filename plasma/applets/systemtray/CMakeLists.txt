@@ -33,7 +33,7 @@ set(systemtray_SRCS
 
 kde4_add_plugin(plasma_applet_systemtray ${systemtray_SRCS})
 include_directories(${CMAKE_SOURCE_DIR})
-target_link_libraries(plasma_applet_systemtray ${KDE4_KDEUI_LIBS} plasma ${X11_LIBRARIES} ${X11_Xrender_LIB}
+target_link_libraries(plasma_applet_systemtray ${KDE4_KDEUI_LIBS} ${PLASMA_LIBS} ${X11_LIBRARIES} ${X11_Xrender_LIB}
                       ${X11_Xfixes_LIB} ${X11_Xdamage_LIB} ${X11_Xcomposite_LIB})
 
 install(TARGETS plasma_applet_systemtray DESTINATION ${PLUGIN_INSTALL_DIR})
