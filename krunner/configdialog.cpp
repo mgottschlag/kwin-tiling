@@ -36,7 +36,7 @@
 
 #include <Plasma/RunnerManager>
 
-#include "interface.h"
+#include "interfaces/default/interface.h"
 #include "krunnersettings.h"
 #include "interfaces/quicksand/qs_dialog.h"
 

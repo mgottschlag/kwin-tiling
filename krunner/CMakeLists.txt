@@ -33,20 +33,16 @@ include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/ksysguard
 configure_file(config-xautolock.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-xautolock.h)
 
 set(krunner_KCFG_SRCS krunnersettings.kcfgc kscreensaversettings.kcfgc klaunchsettings.kcfgc)
-set(krunner_dbusAppXML org.kde.krunner.App.xml)
-set(screensaver_dbusXML org.freedesktop.ScreenSaver.xml)
-set(kscreensaver_dbusXML org.kde.screensaver.xml)
+set(krunner_dbusAppXML dbus/org.kde.krunner.App.xml)
+set(screensaver_dbusXML dbus/org.freedesktop.ScreenSaver.xml)
+set(kscreensaver_dbusXML dbus/org.kde.screensaver.xml)
 
-set(krunner_SRCS
-   krunnerdialog.cpp
-   collapsiblewidget.cpp
-   configdialog.cpp
-   interface.cpp
-   krunnerapp.cpp
-   main.cpp
+set(default_interface_SRCS
    interfaces/default/resultitem.cpp
    interfaces/default/resultscene.cpp
-   stackblur_shadows.cpp
+   interfaces/default/interface.cpp)
+
+set(quicksand_interface_SRCS
    interfaces/quicksand/qs_completionbox.cpp
    interfaces/quicksand/qs_dialog.cpp
    interfaces/quicksand/qs_matchitem.cpp
@@ -54,6 +50,16 @@ set(krunner_SRCS
    interfaces/quicksand/qs_queryactionitem.cpp
    interfaces/quicksand/qs_querymatchitem.cpp
    interfaces/quicksand/qs_statusbar.cpp)
+
+set(krunner_SRCS
+   krunnerdialog.cpp
+   configdialog.cpp
+   krunnerapp.cpp
+   main.cpp
+   stackblur_shadows.cpp
+   ${default_interface_SRCS}
+   ${quicksand_interface_SRCS})
+
 if(NOT WIN32)
 set(krunner_SRCS
     ${krunner_SRCS}
@@ -63,7 +69,6 @@ set(krunner_SRCS
     xautolock_diy.c
     xautolock_engine.c)
 endif(NOT WIN32)
-    
 
 kde4_add_kcfg_files(krunner_SRCS ${krunner_KCFG_SRCS})
 
@@ -72,7 +77,7 @@ if(NOT WIN32)
 qt4_add_dbus_adaptor(krunner_SRCS ${screensaver_dbusXML} saverengine.h SaverEngine)
 qt4_add_dbus_adaptor(krunner_SRCS ${kscreensaver_dbusXML} saverengine.h SaverEngine kscreensaveradaptor KScreenSaverAdaptor)
 endif(NOT WIN32)
-dbus_add_activation_service(org.kde.krunner.service.in)
+dbus_add_activation_service(dbus/org.kde.krunner.service.in)
 
 kde4_add_kdeinit_executable(krunner ${krunner_SRCS})
 if(NOT WIN32)
