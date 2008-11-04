@@ -39,6 +39,7 @@
 #include <KDebug>
 #include <KIcon>
 
+#include <Plasma/PaintUtils>
 #include <Plasma/Plasma>
 #include <Plasma/RunnerManager>
 #include <Plasma/PaintUtils>
@@ -570,31 +571,15 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     Qt::Alignment textAlign = (option->fontMetrics.width(name()) < textRect.width()) ? Qt::AlignCenter : Qt::AlignLeft;
     {
         const int padding = 2;
-        const int blur = 2;
         const int offset = 0;
 
         textRect.adjust(0, MARGIN, -1, MARGIN);
-        QPixmap pixmap(textRect.size());
-        pixmap.fill(Qt::transparent);
 
-        QPainter p(&pixmap);
-
-        //FIXME: hardcoded colors: Qt::white, Qt::black
-        p.setPen(Qt::white);
-        p.drawText(pixmap.rect(), textAlign, name());
-        p.end();
-
-        QImage img(textRect.size() + QSize(padding * 2, padding * 2),
-                   QImage::Format_ARGB32_Premultiplied);
-        img.fill(Qt::transparent);
-        p.begin(&img);
-        p.drawImage(padding, padding, pixmap.toImage());
-        p.end();
-
-        shadowBlur(img, blur, Qt::black);
-
-        painter->drawImage(textRect.topLeft() - QPoint(padding + offset, padding + offset), img);
-        painter->drawPixmap(textRect.topLeft(), pixmap);
+        QPixmap shadowedText = Plasma::PaintUtils::shadowText(name());
+        QRect pixmapRect(textRect);
+        pixmapRect.moveTopLeft(QPoint(0, 0));
+        painter->drawPixmap(textRect.topLeft() - QPoint(padding + offset, padding + offset),
+                shadowedText, pixmapRect);
     }
 
     painter->setClipping(oldClipping);
