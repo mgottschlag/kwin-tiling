@@ -102,7 +102,6 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     //bottomLayout->addStretch(10);
 
     m_closeButton = new QToolButton(m_buttonContainer);
-    //TODO: use a better string for this dialog when we are out of string freeze?
     KGuiItem guiItem = KStandardGuiItem::close();
     m_closeButton->setText(guiItem.text());
     m_closeButton->setToolTip(guiItem.text().remove('&'));
