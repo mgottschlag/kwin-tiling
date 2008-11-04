@@ -166,13 +166,14 @@ void GlobalShortcutsModule::load()
             QString componentContextId = componentUnique;
             // kdedglobalaccel knows that '|' is our separator between
             // component and context
-            if (shortcutContext == "default") {
+            if (shortcutContext != "default") {
                 componentContextId += QString("|") + shortcutContext;
             }
 
-
             // Create a action collection for our current component:context
-            KActionCollection* col = new KActionCollection(this, KComponentData(componentContextId.toAscii()));
+            KActionCollection* col = new KActionCollection(
+                    this,
+                    KComponentData(componentContextId.toAscii()));
 
             // Now add the shortcuts.
             foreach (const KGlobalShortcutInfo &shortcut, shortcuts) {
