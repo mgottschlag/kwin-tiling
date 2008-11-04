@@ -39,13 +39,13 @@
 #include <KDialog>
 #include <KGlobalSettings>
 
-#include <plasma/containment.h>
-#include <plasma/corona.h>
-#include <plasma/dataengine.h>
-#include <plasma/dialog.h>
-#include <plasma/extender.h>
-#include <plasma/extenderitem.h>
-#include <plasma/theme.h>
+#include <Plasma/Containment>
+#include <Plasma/Corona>
+#include <Plasma/DataEngine>
+#include <Plasma/Dialog>
+#include <Plasma/Extender>
+#include <Plasma/ExtenderItem>
+#include <Plasma/Theme>
 
 #include "calendar.h"
 

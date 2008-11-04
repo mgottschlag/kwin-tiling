@@ -31,8 +31,8 @@
 #include <kdebug.h>
 
 //Plasma
-#include <plasma/svg.h>
-#include <plasma/theme.h>
+#include <Plasma/Svg>
+#include <Plasma/Theme>
 
 namespace Plasma
 {

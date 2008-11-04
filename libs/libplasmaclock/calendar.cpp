@@ -32,9 +32,9 @@
 #include <kdebug.h>
 
 //Plasma
-#include <plasma/svg.h>
-#include <plasma/theme.h>
-#include <plasma/widgets/label.h>
+#include <Plasma/Svg>
+#include <Plasma/Theme>
+#include <Plasma/Label>
 
 #include "toolbutton.h"
 
