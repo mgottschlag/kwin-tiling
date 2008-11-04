@@ -3,7 +3,7 @@ project(plasma-lockout)
 set(lockout_SRCS
     lockout.cpp)
 
-set(screensaver_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/org.freedesktop.ScreenSaver.xml)
+set(screensaver_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/dbus/org.freedesktop.ScreenSaver.xml)
 QT4_ADD_DBUS_INTERFACE(lockout_SRCS ${screensaver_xml} screensaver_interface)
 
 set(ksmserver_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerInterface.xml)
