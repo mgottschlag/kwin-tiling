@@ -40,7 +40,6 @@
 #include <KLineEdit>
 #include <KLocale>
 #include <KGlobalSettings>
-#include <KPluginInfo>
 #include <KPushButton>
 #include <KTitleWidget>
 #include <KWindowSystem>
@@ -50,31 +49,22 @@
 #include <Plasma/Theme>
 #include <Plasma/Svg>
 
-#include "kworkspace/kdisplaymanager.h"
-
 #include "krunnersettings.h"
 #include "interfaces/default/resultscene.h"
 #include "interfaces/default/resultitem.h"
 
 static const int MIN_WIDTH = 400;
 
-Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget* parent)
+Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     : KRunnerDialog(runnerManager, parent),
       m_delayedRun(false),
       m_running(false),
       m_queryRunning(false)
 {
-    setWindowTitle( i18n("Run Command") );
-
-    m_iconSvg = new Plasma::Svg(this);
-    m_iconSvg->setImagePath("widgets/configuration-icons");
-    m_iconSvg->setContainsMultipleImages(true);
-    m_iconSvg->resize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
-
     m_hideResultsTimer.setSingleShot(true);
     connect(&m_hideResultsTimer, SIGNAL(timeout()), this, SLOT(hideResultsArea()));
 
-    QWidget* w = mainWidget();
+    QWidget *w = mainWidget();
     m_layout = new QVBoxLayout(w);
     m_layout->setMargin(0);
 
@@ -292,7 +282,7 @@ void Interface::clearHistory()
     KRunnerSettings::setPastQueries(m_searchTerm->historyItems());
 }
 
-void Interface::display(const QString& term)
+void Interface::display(const QString &term)
 {
     m_searchTerm->setFocus();
 
@@ -458,36 +448,6 @@ void Interface::updateDescriptionLabel(ResultItem *item)
         m_descriptionLabel->setText(item->name());
     } else {
         m_descriptionLabel->setText(item->name() + ": " + item->description());
-    }
-}
-
-void Interface::switchUser()
-{
-    KService::Ptr service = KService::serviceByStorageId("plasma-runner-sessions.desktop");
-    KPluginInfo info(service);
-
-    if (info.isValid()) {
-        SessList sessions;
-        KDisplayManager dm;
-        dm.localSessions(sessions);
-
-        if (sessions.isEmpty()) {
-            // no sessions to switch between, let's just start up another session directly
-            Plasma::AbstractRunner *sessionRunner = m_resultsScene->manager()->runner(info.pluginName());
-            if (sessionRunner) {
-                Plasma::QueryMatch switcher(sessionRunner);
-                sessionRunner->run(*m_resultsScene->manager()->searchContext(), switcher);
-            }
-        } else {
-            display(QString());
-            //TODO: create a "single runner" mode
-            //m_header->setText(i18n("Switch users"));
-            //m_header->setPixmap("system-switch-user");
-
-            //TODO: ugh, magic strings. See sessions/sessionrunner.cpp
-            setStaticQueryMode(true);
-            m_resultsScene->launchQuery("SESSIONS", info.pluginName());
-        }
     }
 }
 

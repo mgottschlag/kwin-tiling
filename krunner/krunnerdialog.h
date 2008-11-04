@@ -26,6 +26,7 @@ namespace Plasma
 {
     class RunnerManager;
     class FrameSvg;
+    class Svg;
 }
 
 class KRunnerConfigDialog;
@@ -41,14 +42,17 @@ class KRunnerDialog : public KDialog
 
     public Q_SLOTS:
         virtual void display(const QString& term = QString()) = 0;
-        virtual void switchUser() = 0;
         virtual void clearHistory() = 0;
+
+        void switchUser();
 
     protected:
         void paintEvent(QPaintEvent *event);
         void resizeEvent(QResizeEvent *event);
         void mousePressEvent(QMouseEvent *event);
         bool event(QEvent *event);
+
+        virtual void setStaticQueryMode(bool staticQuery);
 
     protected Q_SLOTS:
         void showConfigDialog();
@@ -64,11 +68,14 @@ class KRunnerDialog : public KDialog
          */
         void configCompleted();
 
+    protected:
+        Plasma::Svg *m_iconSvg;
+        Plasma::RunnerManager *m_runnerManager;
+
     private:
         void paintBackground(QPainter* painter, const QRect &exposedRect);
 
         KRunnerConfigDialog *m_configDialog;
-        Plasma::RunnerManager *m_runnerManager;
         Plasma::FrameSvg *m_background;
         QPixmap *m_cachedBackground;
 };

@@ -29,9 +29,12 @@
 
 #include <KDebug>
 #include <KWindowSystem>
+#include <KPluginInfo>
 #ifdef Q_WS_X11
 #include <NETRootInfo>
 #endif
+
+#include "kworkspace/kdisplaymanager.h"
 
 #include "plasma/framesvg.h"
 #include "plasma/runnermanager.h"
@@ -46,13 +49,21 @@
 
 KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *parent, Qt::WindowFlags f )
     : KDialog(parent, f),
-      m_configDialog(0),
-      m_runnerManager(runnerManager)
+      m_runnerManager(runnerManager),
+      m_configDialog(0)
 {
     setButtons(0);
+    setWindowTitle( i18n("Run Command") );
+    setWindowIcon(KIcon("system-run"));
+
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("dialogs/krunner");
     m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
+
+    m_iconSvg = new Plasma::Svg(this);
+    m_iconSvg->setImagePath("widgets/configuration-icons");
+    m_iconSvg->setContainsMultipleImages(true);
+    m_iconSvg->resize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
 
     connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(update()));
 
@@ -62,6 +73,41 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
 
 KRunnerDialog::~KRunnerDialog()
 {
+}
+
+void KRunnerDialog::setStaticQueryMode(bool staticQuery)
+{
+    Q_UNUSED(staticQuery)
+}
+
+void KRunnerDialog::switchUser()
+{
+    KService::Ptr service = KService::serviceByStorageId("plasma-runner-sessions.desktop");
+    KPluginInfo info(service);
+
+    if (info.isValid()) {
+        SessList sessions;
+        KDisplayManager dm;
+        dm.localSessions(sessions);
+
+        if (sessions.isEmpty()) {
+            // no sessions to switch between, let's just start up another session directly
+            Plasma::AbstractRunner *sessionRunner = m_runnerManager->runner(info.pluginName());
+            if (sessionRunner) {
+                Plasma::QueryMatch switcher(sessionRunner);
+                sessionRunner->run(*m_runnerManager->searchContext(), switcher);
+            }
+        } else {
+            display(QString());
+            //TODO: create a "single runner" mode
+            //m_header->setText(i18n("Switch users"));
+            //m_header->setPixmap("system-switch-user");
+
+            //TODO: ugh, magic strings. See sessions/sessionrunner.cpp
+            setStaticQueryMode(true);
+            m_runnerManager->launchQuery("SESSIONS", info.pluginName());
+        }
+    }
 }
 
 void KRunnerDialog::showConfigDialog()

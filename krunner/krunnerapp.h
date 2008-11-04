@@ -34,7 +34,7 @@ namespace Plasma
     class RunnerManager;
 }
 
-class Interface;
+class KRunnerDialog;
 class StartupId;
 
 class KRunnerApp : public KUniqueApplication
@@ -48,7 +48,7 @@ public:
 
     void logout( KWorkSpace::ShutdownConfirm confirm, KWorkSpace::ShutdownType sdtype );
     // The action collection of the active widget
-    KActionCollection *actionCollection();
+    KActionCollection* actionCollection();
 
     virtual int newInstance();
 #ifdef Q_WS_X11
@@ -92,6 +92,7 @@ private slots:
      * Called when the task dialog emits its finished() signal
      */
     void taskDialogFinished();
+    void reloadConfig();
 
 private:
     KRunnerApp(Display *display, Qt::HANDLE visual = 0, Qt::HANDLE colormap = 0);
@@ -102,9 +103,9 @@ private:
 #ifdef Q_WS_X11
     SaverEngine m_saver;
 #endif
-    Interface* m_interface;
-    KDialog* m_tasks;
-    StartupId* m_startupId;
+    KRunnerDialog *m_interface;
+    KDialog *m_tasks;
+    StartupId *m_startupId;
 };
 
 #endif /* KRUNNERAPP_H */

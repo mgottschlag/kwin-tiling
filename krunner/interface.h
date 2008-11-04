@@ -58,7 +58,6 @@ class Interface : public KRunnerDialog
 
     public Q_SLOTS:
         void display(const QString& term = QString());
-        void switchUser();
         void clearHistory();
 
     protected:
@@ -88,7 +87,6 @@ class Interface : public KRunnerDialog
         QLabel *m_descriptionLabel;
         QLabel *m_previousPage;
         QLabel *m_nextPage;
-        Plasma::Svg *m_iconSvg;
         QToolButton *m_configButton;
         QToolButton *m_activityButton;
         QToolButton *m_closeButton;

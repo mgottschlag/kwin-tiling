@@ -46,7 +46,14 @@ set(krunner_SRCS
    main.cpp
    interfaces/default/resultitem.cpp
    interfaces/default/resultscene.cpp
-   stackblur_shadows.cpp)
+   stackblur_shadows.cpp
+   interfaces/quicksand/qs_completionbox.cpp
+   interfaces/quicksand/qs_dialog.cpp
+   interfaces/quicksand/qs_matchitem.cpp
+   interfaces/quicksand/qs_matchview.cpp
+   interfaces/quicksand/qs_queryactionitem.cpp
+   interfaces/quicksand/qs_querymatchitem.cpp
+   interfaces/quicksand/qs_statusbar.cpp)
 if(NOT WIN32)
 set(krunner_SRCS
     ${krunner_SRCS}

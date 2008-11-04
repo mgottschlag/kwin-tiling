@@ -22,6 +22,8 @@
 
 #include <KDialog>
 
+class KRunnerDialog;
+
 class KPluginSelector;
 class QDialogButtonBox;
 class QTabWidget;
@@ -34,20 +36,24 @@ class KRunnerConfigDialog : public KDialog
 {
 Q_OBJECT
     public:
-        KRunnerConfigDialog(Plasma::RunnerManager* manager, QWidget* parent = 0);
+        KRunnerConfigDialog(Plasma::RunnerManager *manager, QWidget *parent = 0);
         ~KRunnerConfigDialog();
 
     public slots:
         void accept();
 
     private slots:
-        void updateRunner(const QByteArray&);
+        void previewInterface();
+        void setInterface(int type);
+        void updateRunner(const QByteArray& runnerName);
 
     private:
         void init();
 
-        KPluginSelector* m_sel;
-        Plasma::RunnerManager* m_manager;
+        int m_interfaceType;
+        KRunnerDialog *m_preview;
+        KPluginSelector *m_sel;
+        Plasma::RunnerManager *m_manager;
 };
 
 #endif

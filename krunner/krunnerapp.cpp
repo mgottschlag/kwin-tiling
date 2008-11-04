@@ -47,6 +47,7 @@
 #include "appadaptor.h"
 #include "kworkspace.h"
 #include "interface.h"
+#include "interfaces/quicksand/qs_dialog.h"
 #ifdef Q_WS_X11
 #include "startupid.h"
 #endif
@@ -147,14 +148,18 @@ void KRunnerApp::initialize()
     KCrash::setFlags(KCrash::AutoRestart);
     initializeStartupNotification();
 
+    connect(KRunnerSettings::self(), SIGNAL(configChanged()), this, SLOT(reloadConfig()));
+
     m_runnerManager = new Plasma::RunnerManager;
     m_runnerManager->reloadConfiguration(); // pre-load the runners
 
     switch (KRunnerSettings::interface()) {
-        case KRunnerSettings::EnumInterface::CommandOriented:
-        case KRunnerSettings::EnumInterface::TaskOriented:
         default:
+        case KRunnerSettings::EnumInterface::CommandOriented:
             m_interface = new Interface(m_runnerManager);
+            break;
+        case KRunnerSettings::EnumInterface::TaskOriented:
+            m_interface = new QsDialog(m_runnerManager);
             break;
     }
 
@@ -169,19 +174,19 @@ void KRunnerApp::initialize()
 #endif
 
     // Global keys
-    m_actionCollection = new KActionCollection( m_interface );
+    m_actionCollection = new KActionCollection(this);
     KAction* a = 0;
 
     if ( KAuthorized::authorizeKAction( "run_command" ) ) {
         a = m_actionCollection->addAction( I18N_NOOP("Run Command") );
         a->setText( i18n( I18N_NOOP( "Run Command" ) ) );
         a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::Key_F2));
-        connect( a, SIGNAL(triggered(bool)), m_interface, SLOT(display()) );
+        connect( a, SIGNAL(triggered(bool)), SLOT(display()) );
 
         a = m_actionCollection->addAction( I18N_NOOP("Run Command on clipboard contents") );
         a->setText( i18n( I18N_NOOP( "Run Command on clipboard contents" ) ) );
         a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::SHIFT+Qt::Key_F2));
-        connect( a, SIGNAL(triggered(bool)), m_interface, SLOT(displayWithClipboardContents()) );
+        connect( a, SIGNAL(triggered(bool)), SLOT(displayWithClipboardContents()) );
     }
 
     a = m_actionCollection->addAction( I18N_NOOP( "Show System Activity" ) );
@@ -199,7 +204,7 @@ void KRunnerApp::initialize()
     a = m_actionCollection->addAction( I18N_NOOP("Switch User") );
     a->setText( i18n( I18N_NOOP("Switch User") ) );
     a->setGlobalShortcut( KShortcut( Qt::ALT+Qt::CTRL+Qt::Key_Insert ) );
-    connect(a, SIGNAL(triggered(bool)), m_interface, SLOT(switchUser()));
+    connect(a, SIGNAL(triggered(bool)), SLOT(switchUser()));
 
 #ifdef Q_WS_X11
     if ( KAuthorized::authorizeKAction( "lock_screen" ) ) {
@@ -415,6 +420,26 @@ bool KRunnerApp::hasCompositeManager() const
 #else
     return false;
 #endif
+}
+
+void KRunnerApp::reloadConfig()
+{
+    //Prevent Interface destructor from triggering this method
+    disconnect(KRunnerSettings::self(), SIGNAL(configChanged()), this, SLOT(reloadConfig()));
+
+    int interface = KRunnerSettings::interface();
+    if (qobject_cast<Interface*>(m_interface) &&
+        interface == KRunnerSettings::EnumInterface::TaskOriented) {
+        delete m_interface;
+        m_interface = new QsDialog(m_runnerManager);
+        m_interface->display();
+    } else if (interface == KRunnerSettings::EnumInterface::CommandOriented) {
+        delete m_interface;
+        m_interface = new Interface(m_runnerManager);
+        m_interface->display();
+    }
+
+    connect(KRunnerSettings::self(), SIGNAL(configChanged()), this, SLOT(reloadConfig()));
 }
 
 #include "krunnerapp.moc"
