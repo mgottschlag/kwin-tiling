@@ -33,34 +33,27 @@ namespace Plasma
     class ExtenderItem;
 }
 
+class NotificationWidgetPrivate;
 
 /**
- *  A graphics item, representing notification message
+ *  A graphics item, representing notification message.
  */
 class NotificationWidget : public QGraphicsWidget
 {
     Q_OBJECT
 
 public:
-    static int desiredMinimumHeight();
-
     NotificationWidget(SystemTray::Notification *notification, Plasma::ExtenderItem *parent);
     ~NotificationWidget();
-
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
 
-private slots:
-    void updateNotification();
-    void destroy();
-    void checkAction(const QString &actionId);
-    void removeCloseActionIfSelf(Plasma::ExtenderItem *extenderItem);
-
 private:
-    class Private;
-    Private* const d;
+    NotificationWidgetPrivate* const d;
+
+    Q_PRIVATE_SLOT(d, void updateNotification());
+    Q_PRIVATE_SLOT(d, void destroy());
 };
 
-#endif // NOTIFICATIONITEM_H
+#endif // NOTIFICATIONWIDGET_H

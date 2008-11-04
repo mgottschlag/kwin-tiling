@@ -22,120 +22,111 @@
  ***************************************************************************/
 
 #include "notificationwidget.h"
-#include "notifytextitem.h"
 
+#include <QSignalMapper>
+
+#include <QtGui/QGraphicsLinearLayout>
+#include <QtGui/QTextDocument>
 #include <QtGui/QFontMetrics>
 #include <QtGui/QGraphicsSceneResizeEvent>
 #include <QtGui/QPainter>
 
+#include <KColorScheme>
+#include <KPushButton>
 #include <KGlobalSettings>
 #include <KIcon>
 #include <KLocalizedString>
 
 #include <plasma/extender.h>
 #include <plasma/extenderitem.h>
+#include <plasma/theme.h>
+#include <plasma/widgets/pushbutton.h>
 
-
-static const int ICON_SIZE = 48;
-static const int HOR_SPACING = 5;
-
-
-int NotificationWidget::desiredMinimumHeight()
-{
-    QFont smallFont = KGlobalSettings::smallestReadableFont();
-    QFontMetrics fm(smallFont);
-
-    const int MARGIN = 4;
-
-    return MARGIN * 2 + fm.height() * 3;
-}
-
-
-class NotificationWidget::Private
+class NotificationWidgetPrivate
 {
 public:
-    Private(NotificationWidget *q)
+    NotificationWidgetPrivate(NotificationWidget *q)
         : q(q),
           notification(0),
-          textWidget(0),
-          destroyOnClose(true)
+          destroyOnClose(true),
+          body(new QGraphicsTextItem(q)),
+          actionsWidget(0),
+          signalMapper(new QSignalMapper(q))
     {
     }
 
-    void updateLayout(const QSizeF &newSize);
     void setTextFields(const QString &applicationName, const QString &summary, const QString &message);
     void completeDetach();
+    void updateActions();
+    void updateNotification();
+    void destroy();
 
     NotificationWidget *q;
 
-    KIcon applicationIcon;
     SystemTray::Notification *notification;
-    NotifyTextItem *textWidget;
     bool destroyOnClose;
-};
 
+    QString message;
+    QGraphicsTextItem *body;
+    QGraphicsWidget *actionsWidget;
+    QHash<QString, QString> actions;
+    QStringList actionOrder;
+
+    QSignalMapper *signalMapper;
+};
 
 NotificationWidget::NotificationWidget(SystemTray::Notification *notification, Plasma::ExtenderItem *extenderItem)
     : QGraphicsWidget(extenderItem),
-      d(new Private(this))
+      d(new NotificationWidgetPrivate(this))
 {
-    extenderItem->setIcon("preferences-desktop-notification");
-    setMinimumSize(QSizeF(275, desiredMinimumHeight()));
-    d->textWidget = new NotifyTextItem(this);
+    setMinimumWidth(300);
+
+    Plasma::Theme *theme = Plasma::Theme::defaultTheme();
+    d->body->setFont(theme->font(Plasma::Theme::DefaultFont));
+    d->body->setDefaultTextColor(theme->color(Plasma::Theme::TextColor));
+
+    QTextOption option = d->body->document()->defaultTextOption();
+    option.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+    d->body->document()->setDefaultTextOption(option);
 
     if (notification) {
         d->notification = notification;
 
+        connect(d->signalMapper, SIGNAL(mapped(const QString &)),
+                d->notification, SLOT(triggerAction(const QString &)));
         connect(notification, SIGNAL(changed()),
                 this, SLOT(updateNotification()));
         connect(notification, SIGNAL(destroyed()),
                 this, SLOT(destroy()));
-        connect(d->textWidget, SIGNAL(actionInvoked(const QString&)),
-                this, SLOT(checkAction(const QString&)));
-        connect(extenderItem->extender(), SIGNAL(itemDetached(Plasma::ExtenderItem*)),
-                this, SLOT(removeCloseActionIfSelf(Plasma::ExtenderItem*)));
 
-        updateNotification();
+        d->updateNotification();
     } else {
         d->setTextFields(extenderItem->config().readEntry("applicationName", ""),
                          extenderItem->config().readEntry("summary", ""),
                          extenderItem->config().readEntry("message", ""));
+        qreal bodyHeight = d->body->boundingRect().height();
+        setPreferredHeight(bodyHeight);
+        extenderItem->showCloseButton();
     }
 }
-
 
 NotificationWidget::~NotificationWidget()
 {
     delete d;
 }
 
-
-void NotificationWidget::updateNotification()
+void NotificationWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
-    Plasma::ExtenderItem *extenderItem = dynamic_cast<Plasma::ExtenderItem*>(parentWidget());
-
-    extenderItem->config().writeEntry("applicationName", d->notification->applicationName());
-    extenderItem->config().writeEntry("summary", d->notification->summary());
-    extenderItem->config().writeEntry("message", d->notification->message());
-
-    d->setTextFields(d->notification->applicationName(), d->notification->summary(), d->notification->message());
-    d->applicationIcon = KIcon(d->notification->applicationIcon());
-
-    if (!d->notification->actions().isEmpty() || !d->destroyOnClose) {
-        d->textWidget->setActions(d->notification->actions(), d->notification->actionOrder());
-    } else {
-        QHash<QString, QString> actions;
-        QStringList actionOrder;
-        actions.insert("close", i18n("Close"));
-        actionOrder.append("close");
-        d->textWidget->setActions(actions, actionOrder);
+    d->body->setTextWidth(event->newSize().width());
+    d->body->setPos(0, 0);
+    if (d->actionsWidget) {
+        d->actionsWidget->setPos(event->newSize().width() - d->actionsWidget->size().width(),
+                                 event->newSize().height() - d->actionsWidget->size().height());
     }
-
-    d->updateLayout(size());
 }
 
-
-void NotificationWidget::Private::setTextFields(const QString &applicationName, const QString &summary, const QString &message)
+void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
+                                                const QString &summary, const QString &message)
 {
     Plasma::ExtenderItem *extenderItem = dynamic_cast<Plasma::ExtenderItem*>(q->parentWidget());
 
@@ -145,83 +136,89 @@ void NotificationWidget::Private::setTextFields(const QString &applicationName, 
         extenderItem->setTitle(i18n("Notification from %1", applicationName));
     }
 
-    textWidget->setBody(message);
+    body->setHtml(message);
 }
 
-
-void NotificationWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void NotificationWidgetPrivate::completeDetach()
 {
-    Q_UNUSED(option);
-    Q_UNUSED(widget);
+    actions.clear();
+    actionOrder.clear();
 
-    painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->drawPixmap(0, 5, d->applicationIcon.pixmap(ICON_SIZE));
+    delete actionsWidget;
+    actionsWidget = 0;
 }
 
-
-void NotificationWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
+void NotificationWidgetPrivate::updateActions()
 {
-    d->updateLayout(event->newSize());
-}
-
-
-void NotificationWidget::Private::updateLayout(const QSizeF &newSize)
-{
-    int bodyRectWidth = newSize.width() - ICON_SIZE - HOR_SPACING;
-    int bodyRectHeight = newSize.height();
-
-    if (textWidget) {
-        textWidget->setSize(bodyRectWidth, bodyRectHeight);
-        textWidget->setPos(ICON_SIZE + HOR_SPACING, 0);
-    }
-
-    q->update();
-}
-
-
-void NotificationWidget::destroy()
-{
-    Plasma::ExtenderItem *extenderItem = dynamic_cast<Plasma::ExtenderItem *>(parentItem());
-
-    if (d->destroyOnClose) {
-        extenderItem->destroy();
-    } else {
-        d->completeDetach();
-    }
-
-    d->notification = 0;
-}
-
-
-void NotificationWidget::checkAction(const QString &actionId)
-{
-    if (d->notification->actions().contains(actionId)) {
-        d->notification->triggerAction(actionId);
-    } else {
-        destroy();
-    }
-}
-
-
-void NotificationWidget::removeCloseActionIfSelf(Plasma::ExtenderItem *extenderItem)
-{
-    if (extenderItem != parentWidget()) {
+    if (actions.isEmpty() || actionsWidget) {
         return;
     }
 
-    d->destroyOnClose = false;
-    if (d->notification->actions().isEmpty()) {
-        d->completeDetach();
+    actionsWidget = new QGraphicsWidget(q);
+    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(actionsWidget);
+    layout->setOrientation(Qt::Horizontal);
+    actionsWidget->setContentsMargins(0, 0, 0, 0);
+
+    foreach (const QString &actionId, actionOrder) {
+        Plasma::PushButton *button = new Plasma::PushButton(actionsWidget);
+        QString &action = actions[actionId];
+        button->setText(action);
+        button->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+        //TODO: we need smaller buttons but I don't like this method of accomplishing it.
+        button->setPreferredHeight(button->minimumHeight() - 6);
+
+        q->connect(button, SIGNAL(clicked()), signalMapper, SLOT(map()));
+        signalMapper->setMapping(button, actionId);
+
+        layout->addItem(button);
+    }
+
+    layout->updateGeometry();
+    actionsWidget->setPos(q->size().width() - actionsWidget->size().width(),
+                          q->size().width() - actionsWidget->size().height());
+}
+
+void NotificationWidgetPrivate::updateNotification()
+{
+    Plasma::ExtenderItem *extenderItem = dynamic_cast<Plasma::ExtenderItem*>(q->parentWidget());
+
+    //store the notification
+    extenderItem->config().writeEntry("applicationName", notification->applicationName());
+    extenderItem->config().writeEntry("summary", notification->summary());
+    extenderItem->config().writeEntry("message", notification->message());
+
+    //set text fields and icon
+    setTextFields(notification->applicationName(), notification->summary(), notification->message());
+    extenderItem->setIcon(notification->applicationIcon());
+
+    //set the actions provided
+    actions = notification->actions();
+    actionOrder = notification->actionOrder();
+    updateActions();
+
+    //set the correct size hint and display a close action if no actions are provided by the
+    //notification
+    qreal bodyHeight = body->boundingRect().height();
+    if (actionsWidget) {
+        extenderItem->hideCloseButton();
+        q->setPreferredHeight(bodyHeight + actionsWidget->size().height());
+    } else {
+        extenderItem->showCloseButton();
+        q->setPreferredHeight(bodyHeight);
     }
 }
 
-
-void NotificationWidget::Private::completeDetach()
+void NotificationWidgetPrivate::destroy()
 {
-    textWidget->clearActions();
-    applicationIcon = KIcon();
-    q->update();
-}
+    Plasma::ExtenderItem *extenderItem = dynamic_cast<Plasma::ExtenderItem *>(q->parentItem());
 
+    if (destroyOnClose) {
+        extenderItem->destroy();
+    } else {
+        completeDetach();
+    }
+
+    notification = 0;
+}
 
 #include "notificationwidget.moc"

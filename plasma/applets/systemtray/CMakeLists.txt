@@ -27,8 +27,6 @@ set(systemtray_SRCS
     ui/compactlayout.cpp
     ui/taskarea.cpp
     ui/notificationwidget.cpp
-    ui/notifytextitem.cpp
-
     )
 
 kde4_add_plugin(plasma_applet_systemtray ${systemtray_SRCS})
