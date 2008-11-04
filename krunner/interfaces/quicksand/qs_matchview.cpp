@@ -150,6 +150,7 @@ QsMatchView::~QsMatchView()
 {
     qDeleteAll(d->m_items);
     d->m_items.clear();
+    delete d;
 }
 
 void QsMatchView::reset()
