@@ -52,8 +52,8 @@ protected:
 private:
     NotificationWidgetPrivate* const d;
 
-    Q_PRIVATE_SLOT(d, void updateNotification());
-    Q_PRIVATE_SLOT(d, void destroy());
+    Q_PRIVATE_SLOT(d, void updateNotification())
+    Q_PRIVATE_SLOT(d, void destroy())
 };
 
 #endif // NOTIFICATIONWIDGET_H
