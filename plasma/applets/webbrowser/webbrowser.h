@@ -20,8 +20,8 @@
 #ifndef WEBBROWSER_H
 #define WEBBROWSER_H
 
-#include <plasma/applet.h>
-#include <plasma/dataengine.h>
+#include <Plasma/Applet>
+#include <Plasma/DataEngine>
 
 #include "ui_webbrowserconfig.h"
 

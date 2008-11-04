@@ -23,7 +23,7 @@
 #include <QPainter>
 #include <QResizeEvent>
 
-#include <plasma/framesvg.h>
+#include <Plasma/FrameSvg>
 
 PanelSvgWidget::PanelSvgWidget(QWidget *parent)
     : QWidget(parent)

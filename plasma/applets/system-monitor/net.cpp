@@ -17,8 +17,8 @@
  */
 
 #include "net.h"
-#include <plasma/widgets/signalplotter.h>
-#include <plasma/theme.h>
+#include <Plasma/SignalPlotter>
+#include <Plasma/Theme>
 #include <KConfigDialog>
 #include <QTimer>
 #include <QGraphicsLinearLayout>

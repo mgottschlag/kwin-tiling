@@ -31,9 +31,9 @@
 #include <KIconLoader>
 
 //Plasma
-#include <plasma/applet.h>
-#include <plasma/framesvg.h>
-#include <plasma/theme.h>
+#include <Plasma/Applet>
+#include <Plasma/FrameSvg>
+#include <Plasma/Theme>
 
 namespace TaskManager
 {

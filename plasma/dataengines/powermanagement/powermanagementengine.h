@@ -21,7 +21,7 @@
 #ifndef POWERMANAGEMENTENGINE_H
 #define POWERMANAGEMENTENGINE_H
 
-#include "plasma/dataengine.h"
+#include <Plasma/DataEngine>
 
 #include <solid/battery.h>
 #include <solid/acadapter.h>

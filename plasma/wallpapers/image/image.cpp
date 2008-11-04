@@ -24,7 +24,7 @@
 #include <KRandom>
 #include <KStandardDirs>
 
-#include <plasma/theme.h>
+#include <Plasma/Theme>
 #include "backgroundlistmodel.h"
 #include "backgrounddelegate.h"
 #include "ksmserver_interface.h"

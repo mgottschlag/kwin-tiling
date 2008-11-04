@@ -36,10 +36,10 @@
 #include <KIconLoader>
 
 //plasma
-#include <plasma/dialog.h>
+#include <Plasma/Dialog>
 //use for desktop view
-#include <plasma/widgets/iconwidget.h>
-#include <plasma/theme.h>
+#include <Plasma/IconWidget>
+#include <Plasma/Theme>
 
 //solid
 #include <solid/device.h>

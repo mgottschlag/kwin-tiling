@@ -41,9 +41,9 @@
 #include <KGlobalSettings>
 #include <KConfigDialog>
 #include <KDatePicker>
-#include <plasma/theme.h>
-#include <plasma/dialog.h>
-#include <plasma/tooltipmanager.h>
+#include <Plasma/Theme>
+#include <Plasma/Dialog>
+#include <Plasma/ToolTipManager>
 
 
 Clock::Clock(QObject *parent, const QVariantList &args)

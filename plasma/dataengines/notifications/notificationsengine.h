@@ -21,7 +21,7 @@
 #ifndef NOTIFICATIONSENGINE_H
 #define NOTIFICATIONSENGINE_H
 
-#include "plasma/dataengine.h"
+#include <Plasma/DataEngine>
 
 class QSignalMapper;
 class QTimer;

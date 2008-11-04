@@ -37,7 +37,7 @@
 #include <KLocalizedString>
 
 //Plasma
-#include <plasma/theme.h>
+#include <Plasma/Theme>
 
 #include "ui/itemdelegate.h"
 

@@ -18,10 +18,10 @@
  */
 
 #include "temperature.h"
-#include <plasma/widgets/signalplotter.h>
-#include <plasma/widgets/meter.h>
-#include <plasma/containment.h>
-#include <plasma/theme.h>
+#include <Plasma/SignalPlotter>
+#include <Plasma/Meter>
+#include <Plasma/Containment>
+#include <Plasma/Theme>
 #include <KConfigDialog>
 #include <QGraphicsLinearLayout>
 #include <QTimer>

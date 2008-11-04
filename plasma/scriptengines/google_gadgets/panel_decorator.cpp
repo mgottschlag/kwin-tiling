@@ -23,7 +23,7 @@
 #include <ggadget/decorated_view_host.h>
 #include <ggadget/qt/qt_view_widget.h>
 
-#include <plasma/applet.h>
+#include <Plasma/Applet>
 #include "panel_decorator.h"
 
 namespace ggadget {

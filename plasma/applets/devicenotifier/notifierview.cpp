@@ -35,7 +35,7 @@
 #include <KGlobalSettings>
 
 //Plasma
-#include <plasma/delegate.h>
+#include <Plasma/Delegate>
 
 using namespace Notifier;
 

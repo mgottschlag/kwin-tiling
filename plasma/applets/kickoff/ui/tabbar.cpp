@@ -32,10 +32,10 @@
 #include <QGradient>
 #include <QLinearGradient>
 
-#include "plasma/plasma.h"
-#include "plasma/animator.h"
-#include "plasma/theme.h"
-#include "plasma/framesvg.h"
+#include <Plasma/Plasma>
+#include <Plasma/Animator>
+#include <Plasma/Theme>
+#include <Plasma/FrameSvg>
 
 using namespace Kickoff;
 

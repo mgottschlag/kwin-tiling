@@ -24,7 +24,7 @@
 #include <QtGui/QAbstractItemDelegate>
 
 //Plasma
-#include <plasma/delegate.h>
+#include <Plasma/Delegate>
 
 // Local
 #include "core/models.h"

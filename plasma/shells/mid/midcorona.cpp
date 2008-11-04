@@ -30,8 +30,8 @@
 #include <KGlobalSettings>
 #include <KStandardDirs>
 
-#include <plasma/containment.h>
-#include <plasma/dataenginemanager.h>
+#include <Plasma/Containment>
+#include <Plasma/DataEngineManager>
 
 MidCorona::MidCorona(QObject *parent, QWidget *mainWindow)
     : Plasma::Corona(parent),

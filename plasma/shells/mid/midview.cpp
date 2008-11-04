@@ -23,9 +23,9 @@
 
 #include <KWindowSystem>
 
-#include "plasma/applet.h"
-#include "plasma/corona.h"
-#include "plasma/containment.h"
+#include <Plasma/Applet>
+#include <Plasma/Corona>
+#include <Plasma/Containment>
 
 MidView::MidView(Plasma::Containment *containment, int uid, QWidget *parent)
     : Plasma::View(containment, uid, parent)

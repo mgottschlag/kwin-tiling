@@ -30,7 +30,7 @@
 #include <solid/deviceinterface.h>
 #include <solid/predicate.h>
 
-#include "plasma/dataengine.h"
+#include <Plasma/DataEngine>
 #include "devicesignalmapmanager.h"
 #include "devicesignalmapper.h"
 #include "hddtemp.h"

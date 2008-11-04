@@ -25,7 +25,7 @@
 #include <QString>
 #include <QList>
 
-#include "plasma/dataengine.h"
+#include <Plasma/DataEngine>
 
 /**
  * This class is connected with solid, filter devices and provide signal with source for applet in Plasma

@@ -21,8 +21,8 @@
 #ifndef DASHBOARDVIEW_H
 #define DASHBOARDVIEW_H
 
-#include "plasma/plasma.h"
-#include "plasma/view.h"
+#include <Plasma/Plasma>
+#include <Plasma/View>
 
 class QAction;
 

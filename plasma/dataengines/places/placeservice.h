@@ -20,7 +20,7 @@
 #ifndef PLACESERVICE_H
 #define PLACESERVICE_H
 
-#include <plasma/service.h>
+#include <Plasma/Service>
 
 #include "placesengine.h"
 

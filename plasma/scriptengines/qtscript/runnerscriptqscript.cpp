@@ -21,8 +21,8 @@
 #include <QScriptEngine>
 #include <QFile>
 
-#include <plasma/abstractrunner.h>
-#include <plasma/querymatch.h>
+#include <Plasma/AbstractRunner>
+#include <Plasma/QueryMatch>
 
 
 typedef const Plasma::RunnerContext* ConstRunnerContextStar;

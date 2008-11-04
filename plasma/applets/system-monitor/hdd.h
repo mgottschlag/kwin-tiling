@@ -19,7 +19,7 @@
 #ifndef HDD_HEADER
 #define HDD_HEADER
 
-#include <plasma/dataengine.h>
+#include <Plasma/DataEngine>
 #include <QHash>
 #include <QStandardItemModel>
 #include <applet.h>

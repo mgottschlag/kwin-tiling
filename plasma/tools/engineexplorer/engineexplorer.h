@@ -23,7 +23,7 @@
 class QStandardItemModel;
 class QStandardItem;
 
-#include "plasma/dataengine.h"
+#include <Plasma/DataEngine>
 
 #include "ui_engineexplorer.h"
 

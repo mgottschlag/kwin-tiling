@@ -31,12 +31,12 @@
 #include <KToggleAction>
 #include <KWindowSystem>
 
-#include "plasma/applet.h"
-#include "plasma/corona.h"
-#include "plasma/containment.h"
-#include "plasma/svg.h"
-#include "plasma/wallpaper.h"
-#include "plasma/theme.h"
+#include <Plasma/Applet>
+#include <Plasma/Corona>
+#include <Plasma/Containment>
+#include <Plasma/Svg>
+#include <Plasma/Wallpaper>
+#include <Plasma/Theme>
 
 #include "dashboardview.h"
 #include "plasmaapp.h"

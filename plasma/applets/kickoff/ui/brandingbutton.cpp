@@ -23,10 +23,10 @@
 
 #include <KDebug>
 
-#include "plasma/svg.h"
+#include <Plasma/Svg>
 
 
-#include "plasma/theme.h"
+#include <Plasma/Theme>
 #include <KStandardDirs>
 namespace Kickoff
 {

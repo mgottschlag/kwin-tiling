@@ -22,7 +22,7 @@
 
 #include <QtGui/QGraphicsScene>
 
-#include <plasma/corona.h>
+#include <Plasma/Corona>
 
 /**
  * @short A Corona with desktop-y considerations

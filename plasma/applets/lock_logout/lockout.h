@@ -20,7 +20,7 @@
 #ifndef LOCKOUT_H
 #define LOCKOUT_H
 
-#include <plasma/applet.h>
+#include <Plasma/Applet>
 
 class QGraphicsLinearLayout;
 

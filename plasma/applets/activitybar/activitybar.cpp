@@ -21,11 +21,11 @@
 
 #include <QGraphicsLinearLayout>
 
-#include <plasma/view.h>
-#include <plasma/corona.h>
-#include <plasma/context.h>
-#include <plasma/containment.h>
-#include <plasma/widgets/tabbar.h>
+#include <Plasma/View>
+#include <Plasma/Corona>
+#include <Plasma/Context>
+#include <Plasma/Containment>
+#include <Plasma/TabBar>
 
 
 ActivityBar::ActivityBar(QObject *parent, const QVariantList &args)

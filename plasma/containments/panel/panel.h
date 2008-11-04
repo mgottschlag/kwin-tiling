@@ -21,7 +21,7 @@
 #ifndef PLASMA_PANEL_H
 #define PLASMA_PANEL_H
 
-#include <plasma/containment.h>
+#include <Plasma/Containment>
 
 class QComboBox;
 class QAction;

@@ -20,7 +20,7 @@
 #define TASKSENGINE_H
 
 // Plasma
-#include <plasma/dataengine.h>
+#include <Plasma/DataEngine>
 #include <taskmanager/taskmanager.h>
 
 using TaskManager::StartupPtr;

@@ -38,9 +38,9 @@
 #include <KMessageBox>
 
 //plasma
-#include <plasma/dialog.h>
-#include <plasma/delegate.h>
-#include <plasma/theme.h>
+#include <Plasma/Dialog>
+#include <Plasma/Delegate>
+#include <Plasma/Theme>
 
 //solid
 #include <solid/device.h>

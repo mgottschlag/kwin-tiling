@@ -17,9 +17,9 @@
 #ifndef GGADGET_PACKAGE_H
 #define GGADGET_PACKAGE_H
 
-#include <plasma/package.h>
-#include <plasma/packagestructure.h>
-#include <plasma/packagemetadata.h>
+#include <Plasma/Package>
+#include <Plasma/PackageStructure>
+#include <Plasma/PackageMetadata>
 class GadgetBrowserHost;
 class GglPackage : public Plasma::PackageStructure {
   Q_OBJECT

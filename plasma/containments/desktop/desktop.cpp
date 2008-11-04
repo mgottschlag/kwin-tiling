@@ -42,9 +42,9 @@
 #include <KStandardDirs>
 #include <KWindowSystem>
 
-#include "plasma/corona.h"
-#include "plasma/animator.h"
-#include "plasma/theme.h"
+#include <Plasma/Corona>
+#include <Plasma/Animator>
+#include <Plasma/Theme>
 #include "kworkspace/kworkspace.h"
 #include "knewstuff2/engine.h"
 

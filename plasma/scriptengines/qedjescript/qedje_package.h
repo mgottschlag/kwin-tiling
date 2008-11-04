@@ -1,9 +1,9 @@
 #ifndef QEDJE_PACKAGE_H
 #define QEDJE_PACKAGE_H
 
-#include <plasma/package.h>
-#include <plasma/packagestructure.h>
-#include <plasma/packagemetadata.h>
+#include <Plasma/Package>
+#include <Plasma/PackageStructure>
+#include <Plasma/PackageMetadata>
 
 class QEdjePackage : public Plasma::PackageStructure
 {

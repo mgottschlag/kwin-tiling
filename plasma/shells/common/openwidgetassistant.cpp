@@ -30,7 +30,7 @@
 #include <KServiceTypeTrader>
 #include <KStandardDirs>
 
-#include "plasma/packagestructure.h"
+#include <Plasma/PackageStructure>
 
 namespace Plasma
 {

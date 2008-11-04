@@ -23,9 +23,9 @@
 #include <KMessageBox>
 #include <KStringHandler>
 
-#include "plasma/dataengine.h"
-#include "plasma/service.h"
-#include "plasma/servicejob.h"
+#include <Plasma/DataEngine>
+#include <Plasma/Service>
+#include <Plasma/ServiceJob>
 
 ServiceViewer::ServiceViewer(Plasma::DataEngine *engine, const QString &source, QWidget *parent)
     : KDialog(parent),

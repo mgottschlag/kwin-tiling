@@ -22,7 +22,7 @@
 #define SIMPLEAPPLET_H
 
 // Plasma
-#include <plasma/applet.h>
+#include <Plasma/Applet>
 
 class QAction;
 

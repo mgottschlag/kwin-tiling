@@ -22,8 +22,8 @@ THE SOFTWARE.
 #include "plasmajs.h"
 #include "plasmawebapplet.h"
 
-#include "plasma/dataenginemanager.h"
-#include "plasma/dataengine.h"
+#include <Plasma/DataEngineManager>
+#include <Plasma/DataEngine>
 
 using namespace Plasma;
 

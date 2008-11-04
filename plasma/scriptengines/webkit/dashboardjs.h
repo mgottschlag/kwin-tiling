@@ -29,7 +29,7 @@ THE SOFTWARE.
 
 #include <QWebFrame>
 
-#include <plasma/applet.h>
+#include <Plasma/Applet>
 
 /**
   * Implements the Mac OS X Dashboard widget javascript functions.

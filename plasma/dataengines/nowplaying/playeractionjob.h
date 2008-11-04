@@ -20,7 +20,7 @@
 #ifndef PLAYERACTIONJOB_H
 #define PLAYERACTIONJOB_H
 
-#include <plasma/servicejob.h>
+#include <Plasma/ServiceJob>
 #include <QTimer>
 #include "playerinterface/player.h"
 

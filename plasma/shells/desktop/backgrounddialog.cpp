@@ -21,12 +21,12 @@
 #include <KColorScheme>
 #include <KNS/Engine>
 
-#include <plasma/containment.h>
-#include <plasma/framesvg.h>
-#include <plasma/theme.h>
-#include <plasma/wallpaper.h>
-#include <plasma/view.h>
-#include <plasma/corona.h>
+#include <Plasma/Containment>
+#include <Plasma/FrameSvg>
+#include <Plasma/Theme>
+#include <Plasma/Wallpaper>
+#include <Plasma/View>
+#include <Plasma/Corona>
 
 #include "wallpaperpreview.h"
 

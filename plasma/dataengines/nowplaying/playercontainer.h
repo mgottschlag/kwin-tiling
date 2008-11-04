@@ -20,7 +20,7 @@
 #ifndef PLAYERCONTAINER_H
 #define PLAYERCONTAINER_H
 
-#include <plasma/datacontainer.h>
+#include <Plasma/DataContainer>
 
 #include "playerinterface/player.h"
 

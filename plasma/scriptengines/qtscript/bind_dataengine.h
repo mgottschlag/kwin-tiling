@@ -22,7 +22,7 @@
 #include <QtScript/QtScript>
 #include <KDebug>
 
-#include <plasma/dataengine.h>
+#include <Plasma/DataEngine>
 
 using namespace Plasma;
 

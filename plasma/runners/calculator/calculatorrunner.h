@@ -21,7 +21,7 @@
 
 #include <KGenericFactory>
 
-#include <plasma/abstractrunner.h>
+#include <Plasma/AbstractRunner>
 
 class QWidget;
 

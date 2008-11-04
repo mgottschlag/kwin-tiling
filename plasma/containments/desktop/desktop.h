@@ -30,8 +30,8 @@
 #include <KDialog>
 #include <KIcon>
 
-#include <plasma/containment.h>
-#include <plasma/animator.h>
+#include <Plasma/Containment>
+#include <Plasma/Animator>
 
 #include "desktoplayout.h"
 

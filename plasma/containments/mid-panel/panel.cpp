@@ -40,10 +40,10 @@
 #include <KIntNumInput>
 #include <KMessageBox>
 
-#include <plasma/corona.h>
-#include <plasma/framesvg.h>
-#include <plasma/theme.h>
-#include <plasma/view.h>
+#include <Plasma/Corona>
+#include <Plasma/FrameSvg>
+#include <Plasma/Theme>
+#include <Plasma/View>
 
 using namespace Plasma;
 

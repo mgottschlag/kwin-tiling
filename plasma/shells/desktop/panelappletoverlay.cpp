@@ -27,11 +27,11 @@
 #include <KGlobalSettings>
 #include <KIcon>
 
-#include <plasma/applet.h>
-#include <plasma/containment.h>
-#include <plasma/paintutils.h>
-#include <plasma/theme.h>
-#include <plasma/view.h>
+#include <Plasma/Applet>
+#include <Plasma/Containment>
+#include <Plasma/PaintUtils>
+#include <Plasma/Theme>
+#include <Plasma/View>
 
 class AppletMoveSpacer : public QGraphicsWidget
 {

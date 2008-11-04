@@ -40,9 +40,9 @@
 #include <QVariant>
 
 // Plasma
-#include <plasma/containment.h>
-#include <plasma/framesvg.h>
-#include <plasma/theme.h>
+#include <Plasma/Containment>
+#include <Plasma/FrameSvg>
+#include <Plasma/Theme>
 
 Tasks::Tasks(QObject* parent, const QVariantList &arguments)
      : Plasma::Applet(parent, arguments),

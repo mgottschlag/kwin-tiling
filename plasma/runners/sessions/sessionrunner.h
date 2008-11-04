@@ -20,7 +20,7 @@
 #define SESSIONRUNNER_H
 
 #include <kworkspace/kdisplaymanager.h>
-#include <plasma/abstractrunner.h>
+#include <Plasma/AbstractRunner>
 
 class QAction;
 

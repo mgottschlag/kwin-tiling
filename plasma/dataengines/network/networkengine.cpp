@@ -32,7 +32,7 @@
 #include <KDebug>
 #include <KLocale>
 #include <kio/global.h>
-#include <plasma/datacontainer.h>
+#include <Plasma/DataContainer>
 #include <solid/control/networkmanager.h>
 #include <solid/control/wirelessnetworkinterface.h>
 #include <solid/control/wirelessaccesspoint.h>

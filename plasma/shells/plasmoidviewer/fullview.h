@@ -26,7 +26,7 @@
 #ifndef FULLVIEW_H
 #define FULLVIEW_H
 
-#include <plasma/corona.h>
+#include <Plasma/Corona>
 
 #include <QGraphicsView>
 

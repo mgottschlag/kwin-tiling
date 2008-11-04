@@ -39,7 +39,7 @@ class QString;
 
 
 // Plasma
-#include <plasma/animator.h>
+#include <Plasma/Animator>
 
 class Tasks;
 class TaskGroupItem;

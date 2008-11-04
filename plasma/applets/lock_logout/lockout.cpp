@@ -20,7 +20,7 @@
 #include "lockout.h"
 
 // Plasma
-#include <plasma/widgets/iconwidget.h>
+#include <Plasma/IconWidget>
 
 // Qt
 #include <QtDBus/QDBusInterface>

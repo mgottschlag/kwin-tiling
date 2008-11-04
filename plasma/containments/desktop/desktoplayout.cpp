@@ -16,7 +16,7 @@
 
 #include <KDebug>
 
-#include <plasma/animator.h>
+#include <Plasma/Animator>
 
 #include "desktoplayout.h"
 

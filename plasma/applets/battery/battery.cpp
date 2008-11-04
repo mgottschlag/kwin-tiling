@@ -48,18 +48,18 @@
 #include <solid/control/powermanager.h>
 #include <solid/powermanagement.h>
 
-#include <plasma/svg.h>
-#include <plasma/theme.h>
-#include <plasma/animator.h>
-#include <plasma/extender.h>
-#include <plasma/extenderitem.h>
-#include <plasma/popupapplet.h>
-#include <plasma/widgets/label.h>
-#include <plasma/widgets/slider.h>
-#include <plasma/widgets/pushbutton.h>
-#include <plasma/widgets/checkbox.h>
-#include <plasma/widgets/combobox.h>
-#include <plasma/widgets/iconwidget.h>
+#include <Plasma/Svg>
+#include <Plasma/Theme>
+#include <Plasma/Animator>
+#include <Plasma/Extender>
+#include <Plasma/ExtenderItem>
+#include <Plasma/PopupApplet>
+#include <Plasma/Label>
+#include <Plasma/Slider>
+#include <Plasma/PushButton>
+#include <Plasma/CheckBox>
+#include <Plasma/ComboBox>
+#include <Plasma/IconWidget>
 
 
 Battery::Battery(QObject *parent, const QVariantList &args)

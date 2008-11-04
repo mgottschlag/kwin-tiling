@@ -22,7 +22,7 @@
 
 #include <QWidget>
 
-#include <plasma/plasma.h>
+#include <Plasma/Plasma>
 
 
 

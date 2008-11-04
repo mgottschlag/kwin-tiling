@@ -20,7 +20,7 @@
 #ifndef TIMEENGINE_H
 #define TIMEENGINE_H
 
-#include "plasma/dataengine.h"
+#include <Plasma/DataEngine>
 
 /**
  * This engine provides the current date and time for a given

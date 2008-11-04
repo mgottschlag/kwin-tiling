@@ -28,7 +28,7 @@
 #include <KFileItem>
 #include <KDirLister>
 
-#include <plasma/applet.h>
+#include <Plasma/Applet>
 
 class KCModuleProxy;
 class KPropertiesDialog;

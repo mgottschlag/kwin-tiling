@@ -17,7 +17,7 @@
 #ifndef GGADGET_GGL_APPLET_SCRIPT_H__
 #define GGADGET_GGL_APPLET_SCRIPT_H__
 
-#include <plasma/scripting/appletscript.h>
+#include <Plasma/AppletScript>
 
 namespace ggadget {
   class PlasmaHost;

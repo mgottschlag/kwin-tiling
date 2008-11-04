@@ -30,7 +30,7 @@
 #include <ggadget/qt/utilities.h>
 #include <ggadget/gadget.h>
 
-#include <plasma/applet.h>
+#include <Plasma/Applet>
 #include "plasma_view_host.h"
 #include "plasma_host.h"
 #include "panel_decorator.h"

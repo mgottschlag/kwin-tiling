@@ -37,7 +37,7 @@
 #include <KDialog>
 
 // Plasma
-#include <plasma/applet.h>
+#include <Plasma/Applet>
 
 class QGraphicsLinearLayout;
 

@@ -23,7 +23,7 @@
 #include <KMimeType>
 #include <KUrl>
 
-#include <plasma/applet.h>
+#include <Plasma/Applet>
 
 class KPropertiesDialog;
 class QGraphicsItem;

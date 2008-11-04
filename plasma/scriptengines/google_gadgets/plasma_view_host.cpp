@@ -35,7 +35,7 @@
 #include "plasma_view_host.h"
 #include "plasma_view_host_internal.h"
 
-#include <plasma/applet.h>
+#include <Plasma/Applet>
 
 using namespace ggadget::qt;
 namespace ggadget {

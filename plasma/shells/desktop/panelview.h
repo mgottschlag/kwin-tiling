@@ -24,8 +24,8 @@
 
 #include <KConfigGroup>
 
-#include <plasma/plasma.h>
-#include <plasma/view.h>
+#include <Plasma/Plasma>
+#include <Plasma/View>
 
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>

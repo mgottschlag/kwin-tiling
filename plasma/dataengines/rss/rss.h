@@ -24,7 +24,7 @@
 #include <syndication/item.h>
 #include <syndication/loader.h>
 #include <syndication/feed.h> 
-#include <plasma/dataengine.h>
+#include <Plasma/DataEngine>
 
 class QDBusInterface;
 class QSignalMapper;

@@ -37,10 +37,10 @@
 #include <KProcess>
 
 // Plasma
-#include <plasma/widgets/iconwidget.h>
-#include <plasma/containment.h>
-#include <plasma/view.h>
-#include <plasma/tooltipmanager.h>
+#include <Plasma/IconWidget>
+#include <Plasma/Containment>
+#include <Plasma/View>
+#include <Plasma/ToolTipManager>
 
 // Local
 #include "ui/launcher.h"

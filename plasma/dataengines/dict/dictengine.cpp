@@ -23,7 +23,7 @@
 #include <KDebug>
 #include <KLocale>
 
-#include <plasma/datacontainer.h>
+#include <Plasma/DataContainer>
 
 DictEngine::DictEngine(QObject* parent, const QVariantList& args)
     : Plasma::DataEngine(parent, args),

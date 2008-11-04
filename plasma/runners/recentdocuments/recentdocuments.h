@@ -20,7 +20,7 @@
 #ifndef RECENTDOCUMENTS_H
 #define RECENTDOCUMENTS_H
 
-#include <plasma/abstractrunner.h>
+#include <Plasma/AbstractRunner>
 
 #include <KIcon>
 

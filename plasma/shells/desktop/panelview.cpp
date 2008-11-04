@@ -31,11 +31,11 @@
 #include <KWindowSystem>
 #include <KDebug>
 
-#include <plasma/containment.h>
-#include <plasma/corona.h>
-#include <plasma/plasma.h>
-#include <plasma/svg.h>
-#include <plasma/theme.h>
+#include <Plasma/Containment>
+#include <Plasma/Corona>
+#include <Plasma/Plasma>
+#include <Plasma/Svg>
+#include <Plasma/Theme>
 
 #include "panelappletoverlay.h"
 #include "panelcontroller.h"

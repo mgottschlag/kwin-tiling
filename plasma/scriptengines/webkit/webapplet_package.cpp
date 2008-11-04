@@ -22,7 +22,7 @@ THE SOFTWARE.
 
 #include "webapplet_package.h"
 
-#include "plasma/applet.h"
+#include <Plasma/Applet>
 
 WebAppletPackage::WebAppletPackage(QObject *parent, QVariantList args)
 : Plasma::PackageStructure(parent, "Web")

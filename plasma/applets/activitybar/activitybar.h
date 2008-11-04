@@ -21,7 +21,7 @@
 #define ACTIVITYBAR_H
 
 
-#include <plasma/applet.h>
+#include <Plasma/Applet>
 
 namespace Plasma
 {

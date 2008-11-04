@@ -37,8 +37,8 @@
 #include <KIconLoader>
 
 // plasma
-#include <plasma/paintutils.h>
-#include <plasma/theme.h>
+#include <Plasma/PaintUtils>
+#include <Plasma/Theme>
 
 
 class BookmarksDelegatePrivate

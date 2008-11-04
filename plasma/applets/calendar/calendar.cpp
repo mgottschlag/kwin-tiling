@@ -21,8 +21,8 @@
 
 #include <KDebug>
 
-#include <plasma/svg.h>
-#include <plasma/theme.h>
+#include <Plasma/Svg>
+#include <Plasma/Theme>
 
 #include "calendar.h"
 

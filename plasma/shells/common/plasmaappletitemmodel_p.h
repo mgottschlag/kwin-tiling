@@ -22,7 +22,7 @@
 
 #include <KPluginInfo>
 
-#include <plasma/applet.h>
+#include <Plasma/Applet>
 
 #include "kcategorizeditemsview_p.h"
 

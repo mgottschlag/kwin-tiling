@@ -53,8 +53,8 @@
 
 //#include <ksmserver_interface.h>
 
-#include <plasma/containment.h>
-#include <plasma/theme.h>
+#include <Plasma/Containment>
+#include <Plasma/Theme>
 
 #include "appadaptor.h"
 #include "savercorona.h"

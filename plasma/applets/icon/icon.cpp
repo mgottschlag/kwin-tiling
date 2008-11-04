@@ -41,10 +41,10 @@
 #include <kio/copyjob.h>
 #include <kio/netaccess.h>
 
-#include <plasma/theme.h>
-#include <plasma/widgets/iconwidget.h>
-#include <plasma/containment.h>
-#include <plasma/tooltipmanager.h>
+#include <Plasma/Theme>
+#include <Plasma/IconWidget>
+#include <Plasma/Containment>
+#include <Plasma/ToolTipManager>
 
 IconApplet::IconApplet(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),

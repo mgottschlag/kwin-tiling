@@ -23,7 +23,7 @@ THE SOFTWARE.
 #ifndef WEBAPPLET_PACKAGE_H
 #define WEBAPPLET_PACKAGE_H
 
-#include "plasma/packagestructure.h"
+#include <Plasma/PackageStructure>
 
 class WebAppletPackage : public Plasma::PackageStructure
 {

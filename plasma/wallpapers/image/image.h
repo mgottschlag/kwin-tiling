@@ -14,7 +14,7 @@
 #include <QTimer>
 #include <QPixmap>
 #include <QStringList>
-#include <plasma/wallpaper.h>
+#include <Plasma/Wallpaper>
 #include "backgroundpackage.h"
 #include "renderthread.h"
 #include "ui_imageconfig.h"

@@ -19,7 +19,7 @@
 #ifndef PLACESENGINE_H
 #define PLACESENGINE_H
 
-#include <plasma/dataengine.h>
+#include <Plasma/DataEngine>
 
 #include <kfileplacesmodel.h>
 

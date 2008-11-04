@@ -24,8 +24,8 @@
 #include <QGraphicsSceneHoverEvent>
 #include <QList>
 
-#include <plasma/applet.h>
-#include <plasma/dataengine.h>
+#include <Plasma/Applet>
+#include <Plasma/DataEngine>
 #include "ui_pagerConfig.h"
 
 class KDialog;

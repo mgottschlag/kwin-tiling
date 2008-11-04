@@ -23,7 +23,7 @@
 #include <KGenericFactory>
 #include <KIcon>
 
-#include <plasma/abstractrunner.h>
+#include <Plasma/AbstractRunner>
 
 class QWidget;
 

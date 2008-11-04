@@ -27,7 +27,7 @@ THE SOFTWARE.
 
 #include "dashboardjs.h"
 
-#include <plasma/dataengine.h>
+#include <Plasma/DataEngine>
 
 #include <QtGui/QWidget>
 

@@ -21,7 +21,7 @@
 #define COLOR_HEADER
 
 #include <QColor>
-#include <plasma/wallpaper.h>
+#include <Plasma/Wallpaper>
 #include "ui_config.h"
 
 class Color : public Plasma::Wallpaper

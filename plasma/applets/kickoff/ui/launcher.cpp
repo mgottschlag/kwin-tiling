@@ -42,8 +42,8 @@
 #include <KStandardDirs>
 #include <ktoolinvocation.h>
 #include <kuser.h>
-#include <plasma/theme.h>
-#include <plasma/delegate.h>
+#include <Plasma/Theme>
+#include <Plasma/Delegate>
 #include <solid/device.h>
 #include <solid/deviceinterface.h>
 #include <KColorScheme>

@@ -19,7 +19,7 @@
 #ifndef WEBSHORTCUTRUNNER_H
 #define WEBSHORTCUTRUNNER_H
 
-#include <plasma/abstractrunner.h>
+#include <Plasma/AbstractRunner>
 
 #include <KIcon>
 #include <KService>

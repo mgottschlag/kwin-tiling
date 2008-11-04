@@ -45,10 +45,10 @@
 #include <taskmanager/taskmanager.h>
 #include <taskmanager/taskgroup.h>
 
-#include "plasma/theme.h"
-#include "plasma/paintutils.h"
-#include "plasma/framesvg.h"
-#include "plasma/tooltipmanager.h"
+#include <Plasma/Theme>
+#include <Plasma/PaintUtils>
+#include <Plasma/FrameSvg>
+#include <Plasma/ToolTipManager>
 
 #include "tasks.h"
 #include "taskgroupitem.h"

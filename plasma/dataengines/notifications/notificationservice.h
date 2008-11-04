@@ -19,7 +19,7 @@
 #ifndef NOTIFICATIONSERVICE_H
 #define NOTIFICATIONSERVICE_H
 
-#include <plasma/service.h>
+#include <Plasma/Service>
 
 class NotificationsEngine;
 

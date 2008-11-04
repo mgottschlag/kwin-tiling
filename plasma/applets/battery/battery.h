@@ -26,10 +26,10 @@
 #include <QPair>
 #include <QMap>
 
-#include <plasma/applet.h>
-#include <plasma/animator.h>
-#include <plasma/dataengine.h>
-#include <plasma/popupapplet.h>
+#include <Plasma/Applet>
+#include <Plasma/Animator>
+#include <Plasma/DataEngine>
+#include <Plasma/PopupApplet>
 #include "ui_batteryConfig.h"
 
 namespace Plasma

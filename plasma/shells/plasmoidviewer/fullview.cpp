@@ -27,8 +27,8 @@
 
 #include "fullview.h"
 
-#include <plasma/containment.h>
-#include <plasma/wallpaper.h>
+#include <Plasma/Containment>
+#include <Plasma/Wallpaper>
 #include <KStandardDirs>
 #include <KIconLoader>
 #include <QIcon>

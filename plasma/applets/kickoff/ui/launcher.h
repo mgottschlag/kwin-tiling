@@ -24,7 +24,7 @@
 #include <QWidget>
 
 // Plasma
-#include <plasma/applet.h>
+#include <Plasma/Applet>
 
 namespace Kickoff
 {

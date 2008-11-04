@@ -24,7 +24,7 @@
 #include <KIcon>
 
 // Plasma
-#include <plasma/popupapplet.h>
+#include <Plasma/PopupApplet>
 
 namespace Kickoff
 {

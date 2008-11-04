@@ -20,7 +20,7 @@
 #ifndef POWERDEVILRUNNER_H
 #define POWERDEVILRUNNER_H
 
-#include <plasma/abstractrunner.h>
+#include <Plasma/AbstractRunner>
 #include <QDBusConnection>
 
 class PowerDevilRunner : public Plasma::AbstractRunner

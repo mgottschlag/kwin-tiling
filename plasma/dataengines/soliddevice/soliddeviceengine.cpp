@@ -23,7 +23,7 @@
 #include <KDebug>
 #include <KLocale>
 
-#include "plasma/datacontainer.h"
+#include <Plasma/DataContainer>
 
 // The pattern here is:
 //	FreeBSD: param + mount

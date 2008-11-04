@@ -20,7 +20,7 @@
 #define HWINFO_HEADER
 
 #include <applet.h>
-#include <plasma/dataengine.h>
+#include <Plasma/DataEngine>
 
 namespace Plasma {
     class WebView;

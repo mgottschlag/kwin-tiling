@@ -21,7 +21,7 @@
 
 #include "ui_cpu-config.h"
 #include "applet.h"
-#include <plasma/dataengine.h>
+#include <Plasma/DataEngine>
 #include <QStandardItemModel>
 
 class QStandardItemModel;

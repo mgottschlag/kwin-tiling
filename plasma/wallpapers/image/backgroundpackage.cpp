@@ -28,8 +28,8 @@
 #include <KLocalizedString>
 #include <KStandardDirs>
 #include <KSvgRenderer>
-#include <plasma/packagestructure.h>
-#include <plasma/packagemetadata.h>
+#include <Plasma/PackageStructure>
+#include <Plasma/PackageMetadata>
 #include <ThreadWeaver/Weaver>
 
 using namespace Plasma;

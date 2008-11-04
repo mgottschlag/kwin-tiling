@@ -19,7 +19,7 @@
 #ifndef _NEPOMUK_SEARCH_RUNNER_H_
 #define _NEPOMUK_SEARCH_RUNNER_H_
 
-#include <plasma/abstractrunner.h>
+#include <Plasma/AbstractRunner>
 
 #include <QtCore/QMutex>
 #include <QtCore/QWaitCondition>

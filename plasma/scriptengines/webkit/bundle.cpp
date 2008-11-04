@@ -31,8 +31,8 @@ THE SOFTWARE.
 #include <KIO/CopyJob>
 #include <KIO/Job>
 
-#include <plasma/packagemetadata.h>
-#include <plasma/package.h>
+#include <Plasma/PackageMetadata>
+#include <Plasma/Package>
 
 void recursive_print(const KArchiveDirectory *dir, const QString &path)
 {

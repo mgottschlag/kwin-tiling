@@ -3,9 +3,9 @@
 #include <QDir>
 #include <QFile>
 
-#include <plasma/package.h>
-#include <plasma/packagestructure.h>
-#include <plasma/packagemetadata.h>
+#include <Plasma/Package>
+#include <Plasma/PackageStructure>
+#include <Plasma/PackageMetadata>
 
 #include <qedje_package.h>
 #include <qedje.h>

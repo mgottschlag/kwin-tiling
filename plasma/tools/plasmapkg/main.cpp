@@ -35,9 +35,9 @@
 #include <KSycoca>
 #include <KConfigGroup>
 
-#include <plasma/packagestructure.h>
-#include <plasma/package.h>
-#include <plasma/packagemetadata.h>
+#include <Plasma/PackageStructure>
+#include <Plasma/Package>
+#include <Plasma/PackageMetadata>
 
 static const char description[] = I18N_NOOP("Install, list, remove Plasma packages");
 static const char version[] = "0.1";

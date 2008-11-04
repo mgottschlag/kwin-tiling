@@ -43,12 +43,12 @@
 #include <KConfigDialog>
 #include <KHistoryComboBox>
 
-#include <plasma/widgets/iconwidget.h>
-#include <plasma/widgets/lineedit.h>
-#include <plasma/widgets/meter.h>
-#include <plasma/widgets/webview.h>
-#include <plasma/widgets/treeview.h>
-#include <plasma/widgets/slider.h>
+#include <Plasma/IconWidget>
+#include <Plasma/LineEdit>
+#include <Plasma/Meter>
+#include <Plasma/WebView>
+#include <Plasma/TreeView>
+#include <Plasma/Slider>
 
 #include "historycombobox.h"
 #include "bookmarksdelegate.h"

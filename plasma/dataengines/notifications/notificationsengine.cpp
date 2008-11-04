@@ -21,7 +21,7 @@
 #include "notificationservice.h"
 #include "visualnotificationsadaptor.h"
 
-#include <plasma/service.h>
+#include <Plasma/Service>
 
 NotificationsEngine::NotificationsEngine( QObject* parent, const QVariantList& args )
     : Plasma::DataEngine( parent, args ), m_nextId( 1 ), m_sigMapper(0)

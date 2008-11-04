@@ -24,9 +24,9 @@
 #include <QtCore/QTime>
 #include <QtCore/QDate>
 
-#include <plasma/applet.h>
-#include <plasma/dataengine.h>
-#include <plasma/dialog.h>
+#include <Plasma/Applet>
+#include <Plasma/DataEngine>
+#include <Plasma/Dialog>
 
 #include "ui_clockConfig.h"
 #include <libplasmaclock/clockapplet.h>

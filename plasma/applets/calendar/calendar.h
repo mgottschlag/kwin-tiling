@@ -20,8 +20,8 @@
 #ifndef CALENDARTEST_H
 #define CALENDARTEST_H
 
-#include <plasma/applet.h>
-#include <plasma/widgets/label.h>
+#include <Plasma/Applet>
+#include <Plasma/Label>
 
 #include "libplasmaclock/calendar.h"
 

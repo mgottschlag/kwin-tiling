@@ -17,11 +17,11 @@
  */
 
 #include "hwinfo.h"
-#include <plasma/widgets/webview.h>
-#include <plasma/widgets/iconwidget.h>
-#include <plasma/containment.h>
-#include <plasma/tooltipmanager.h>
-#include <plasma/theme.h>
+#include <Plasma/WebView>
+#include <Plasma/IconWidget>
+#include <Plasma/Containment>
+#include <Plasma/ToolTipManager>
+#include <Plasma/Theme>
 #include <KStandardDirs>
 #include <KIcon>
 #include <KTextEdit>

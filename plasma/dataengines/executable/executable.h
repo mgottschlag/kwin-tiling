@@ -20,8 +20,8 @@
 #define EXECUTABLE_DATAENGINE_H
 
 #include <KProcess>
-#include <plasma/dataengine.h>
-#include <plasma/datacontainer.h>
+#include <Plasma/DataEngine>
+#include <Plasma/DataContainer>
 
 class ExecutableContainer : public Plasma::DataContainer
 {

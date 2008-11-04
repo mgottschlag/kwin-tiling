@@ -19,7 +19,7 @@
 #ifndef NOWPLAYINGENGINE_H
 #define NOWPLAYINGENGINE_H
 
-#include <plasma/dataengine.h>
+#include <Plasma/DataEngine>
 
 #include <QMap>
 #include <QString>

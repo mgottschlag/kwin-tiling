@@ -42,11 +42,11 @@
 #include <taskmanager/taskmanager.h>
 #include <taskmanager/taskgroup.h>
 
-#include "plasma/theme.h"
-#include "plasma/framesvg.h"
-#include "plasma/tooltipmanager.h"
-#include "plasma/corona.h"
-#include "plasma/containment.h"
+#include <Plasma/Theme>
+#include <Plasma/FrameSvg>
+#include <Plasma/ToolTipManager>
+#include <Plasma/Corona>
+#include <Plasma/Containment>
 
 #include "tasks.h"
 

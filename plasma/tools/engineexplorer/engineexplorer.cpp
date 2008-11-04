@@ -39,7 +39,7 @@
 Q_DECLARE_METATYPE(Soprano::Node)
 #endif // FOUND_SOPRANO
 
-#include "plasma/dataenginemanager.h"
+#include <Plasma/DataEngineManager>
 
 #include "serviceviewer.h"
 #include "titlecombobox.h"

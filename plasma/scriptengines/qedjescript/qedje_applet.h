@@ -1,7 +1,7 @@
 #ifndef QEDJEAPPLETSCRIPT_HEADER
 #define QEDJEAPPLETSCRIPT_HEADER
 
-#include <plasma/scripting/appletscript.h>
+#include <Plasma/AppletScript>
 
 // Include qedje stuff
 #include <qzion.h>

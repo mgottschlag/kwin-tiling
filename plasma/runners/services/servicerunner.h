@@ -23,7 +23,7 @@
 
 #include <KService>
 
-#include <plasma/abstractrunner.h>
+#include <Plasma/AbstractRunner>
 
 class QWidget;
 

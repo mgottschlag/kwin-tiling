@@ -25,7 +25,7 @@
 
 #include <KUniqueApplication>
 
-#include <plasma/plasma.h>
+#include <Plasma/Plasma>
 
 namespace Plasma
 {

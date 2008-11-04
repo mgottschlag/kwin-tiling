@@ -35,12 +35,12 @@
 #include <KIcon>
 #include <KWindowSystem>
 
-#include <plasma/containment.h>
-#include <plasma/corona.h>
-#include <plasma/paintutils.h>
-#include <plasma/theme.h>
-#include <plasma/framesvg.h>
-#include <plasma/dialog.h>
+#include <Plasma/Containment>
+#include <Plasma/Corona>
+#include <Plasma/PaintUtils>
+#include <Plasma/Theme>
+#include <Plasma/FrameSvg>
+#include <Plasma/Dialog>
 
 #include "plasmaapp.h"
 #include "positioningruler.h"

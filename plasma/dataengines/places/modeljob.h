@@ -19,7 +19,7 @@
 #ifndef MODELJOB_H
 #define MODELJOB_H
 
-#include <plasma/servicejob.h>
+#include <Plasma/ServiceJob>
 #include <kfileplacesmodel.h>
 
 class ModelJob : public Plasma::ServiceJob

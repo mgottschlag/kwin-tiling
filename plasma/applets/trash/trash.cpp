@@ -44,9 +44,9 @@
 #include <KIO/JobUiDelegate>
 
 //Plasma
-#include <plasma/widgets/iconwidget.h>
-#include <plasma/containment.h>
-#include <plasma/tooltipmanager.h>
+#include <Plasma/IconWidget>
+#include <Plasma/Containment>
+#include <Plasma/ToolTipManager>
 
 //Solid
 #include <solid/devicenotifier.h>

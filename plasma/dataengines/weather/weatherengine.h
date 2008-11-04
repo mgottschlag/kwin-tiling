@@ -22,7 +22,7 @@
 
 #include <KService>
 #include <KGenericFactory>
-#include <plasma/dataengine.h>
+#include <Plasma/DataEngine>
 #include "ions/ion.h"
 
 class QTimer;

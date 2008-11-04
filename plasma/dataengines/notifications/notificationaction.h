@@ -23,7 +23,7 @@
 
 #include <kdebug.h>
 
-#include <plasma/servicejob.h>
+#include <Plasma/ServiceJob>
 
 class NotificationAction : public Plasma::ServiceJob
 {

@@ -19,7 +19,7 @@
 #ifndef LOCATIONRUNNER_H
 #define LOCATIONRUNNER_H
 
-#include <plasma/abstractrunner.h>
+#include <Plasma/AbstractRunner>
 
 class QAction;
 

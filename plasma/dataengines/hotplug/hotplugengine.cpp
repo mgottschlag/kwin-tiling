@@ -24,7 +24,7 @@
 #include <KLocale>
 #include <KStandardDirs>
 #include <KDesktopFile>
-#include "plasma/datacontainer.h"
+#include <Plasma/DataContainer>
 
 //solid specific includes
 #include <solid/devicenotifier.h>

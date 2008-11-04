@@ -27,7 +27,7 @@
 #include <KDialog>
 #include <KStandardDirs>
 
-#include <plasma/containment.h>
+#include <Plasma/Containment>
 
 SaverCorona::SaverCorona(QObject *parent)
     : Plasma::Corona(parent)

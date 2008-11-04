@@ -26,8 +26,8 @@
 #include <QtGui/QColor>
 #include <QtGui/QGraphicsSceneMouseEvent>
 
-#include <plasma/applet.h>
-#include <plasma/package.h>
+#include <Plasma/Applet>
+#include <Plasma/Package>
 
 #include <ggadget/logger.h>
 #include <ggadget/script_runtime_interface.h>

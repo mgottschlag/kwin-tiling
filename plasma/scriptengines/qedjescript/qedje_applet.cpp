@@ -1,7 +1,7 @@
 #include <QtGui/QGraphicsProxyWidget>
 
-#include <plasma/package.h>
-#include <plasma/applet.h>
+#include <Plasma/Package>
+#include <Plasma/Applet>
 
 #include "qedje_applet.h"
 

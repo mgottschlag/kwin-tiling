@@ -36,7 +36,7 @@
 #include <KStandardAction>
 
 // for --list
-#include <plasma/applet.h>
+#include <Plasma/Applet>
 #include <iostream>
 
 using namespace Plasma;

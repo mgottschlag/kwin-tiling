@@ -31,9 +31,9 @@
 #include <KColorUtils>
 #include <KWindowSystem>
 
-#include <plasma/theme.h>
-#include <plasma/framesvg.h>
-#include <plasma/containment.h>
+#include <Plasma/Theme>
+#include <Plasma/FrameSvg>
+#include <Plasma/Containment>
 
 
 class PositioningRuler::Private

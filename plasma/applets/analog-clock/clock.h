@@ -32,8 +32,8 @@
 #include <QGraphicsItem>
 #include <QColor>
 
-#include <plasma/containment.h>
-#include <plasma/dataengine.h>
+#include <Plasma/Containment>
+#include <Plasma/DataEngine>
 
 #include <libplasmaclock/clockapplet.h>
 #include "ui_clockConfig.h"

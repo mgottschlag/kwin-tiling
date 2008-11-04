@@ -45,10 +45,10 @@
 #include <KTimeZoneWidget>
 #include <KDialog>
 
-#include <plasma/dialog.h>
-#include <plasma/paintutils.h>
-#include <plasma/svg.h>
-#include <plasma/theme.h>
+#include <Plasma/Dialog>
+#include <Plasma/PaintUtils>
+#include <Plasma/Svg>
+#include <Plasma/Theme>
 
 Clock::Clock(QObject *parent, const QVariantList &args)
     : ClockApplet(parent, args),

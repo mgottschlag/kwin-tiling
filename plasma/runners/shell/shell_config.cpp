@@ -27,7 +27,7 @@
 #include <KPluginFactory>
 #include <KPluginLoader>
 
-#include <plasma/abstractrunner.h>
+#include <Plasma/AbstractRunner>
 
 K_EXPORT_RUNNER_CONFIG(shell, ShellConfig)
 

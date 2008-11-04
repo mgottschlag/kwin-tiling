@@ -23,7 +23,7 @@
 
 #include <KLocale>
 
-#include "plasma/datacontainer.h"
+#include <Plasma/DataContainer>
 
 #include "sensormanager.h"
 

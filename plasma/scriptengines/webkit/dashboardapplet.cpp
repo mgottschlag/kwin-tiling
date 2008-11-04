@@ -29,9 +29,9 @@ THE SOFTWARE.
 #include <KGlobal>
 #include <KStandardDirs>
 
-#include <plasma/widgets/webview.h>
-#include <plasma/applet.h>
-#include <plasma/package.h>
+#include <Plasma/WebView>
+#include <Plasma/Applet>
+#include <Plasma/Package>
 
 #include "dashboardjs.h"
 

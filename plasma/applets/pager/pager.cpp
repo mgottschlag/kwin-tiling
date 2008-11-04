@@ -40,11 +40,11 @@
 #include <KToolInvocation>
 #include <kmanagerselection.h>
 
-#include <plasma/svg.h>
-#include <plasma/framesvg.h>
-#include <plasma/paintutils.h>
-#include <plasma/theme.h>
-#include <plasma/animator.h>
+#include <Plasma/Svg>
+#include <Plasma/FrameSvg>
+#include <Plasma/PaintUtils>
+#include <Plasma/Theme>
+#include <Plasma/Animator>
 
 const int FAST_UPDATE_DELAY = 200;
 const int UPDATE_DELAY = 500;

@@ -20,7 +20,7 @@
 #ifndef MONITORBUTTON_HEADER
 #define MONITORBUTTON_HEADER
 
-#include <plasma/widgets/pushbutton.h>
+#include <Plasma/PushButton>
 #include "sm_export.h"
 
 class SM_EXPORT MonitorButton : public Plasma::PushButton

@@ -24,9 +24,9 @@
 #include <solid/solidnamespace.h>
 
 //Plasma
-#include <plasma/popupapplet.h>
-#include <plasma/dataengine.h>
-#include <plasma/tooltipmanager.h>
+#include <Plasma/PopupApplet>
+#include <Plasma/DataEngine>
+#include <Plasma/ToolTipManager>
 
 class QStandardItemModel;
 class QGraphicsLinearLayout;

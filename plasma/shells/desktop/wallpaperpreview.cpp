@@ -18,8 +18,8 @@
 #include "wallpaperpreview.h"
 #include <QPainter>
 #include <QPaintEvent>
-#include <plasma/wallpaper.h>
-#include <plasma/svg.h>
+#include <Plasma/Wallpaper>
+#include <Plasma/Svg>
 
 WallpaperPreview::WallpaperPreview(QWidget *parent) : QWidget(parent), m_wallpaper(0)
 {

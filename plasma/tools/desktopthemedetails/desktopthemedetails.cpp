@@ -27,8 +27,8 @@
 #include <kio/netaccess.h>
 #include <kgenericfactory.h>
 
-#include <plasma/framesvg.h>
-#include <plasma/theme.h>
+#include <Plasma/FrameSvg>
+#include <Plasma/Theme>
 
 //Theme selector code by Andre Duffeck (modified to add package description)
 class ThemeInfo

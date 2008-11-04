@@ -29,8 +29,8 @@
 #include <KGlobalSettings>
 #include <KStandardDirs>
 
-#include <plasma/containment.h>
-#include <plasma/dataenginemanager.h>
+#include <Plasma/Containment>
+#include <Plasma/DataEngineManager>
 
 DesktopCorona::DesktopCorona(QObject *parent)
     : Plasma::Corona(parent)

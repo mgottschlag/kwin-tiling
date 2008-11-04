@@ -25,7 +25,7 @@ THE SOFTWARE.
 #include <KZip>
 #include <KTempDir>
 
-#include <plasma/packagestructure.h>
+#include <Plasma/PackageStructure>
 
 class KArchiveDirectory;
 

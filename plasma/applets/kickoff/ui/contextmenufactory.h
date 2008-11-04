@@ -23,7 +23,7 @@
 #include <QAction>
 
 // Plasma
-#include <plasma/applet.h>
+#include <Plasma/Applet>
 
 class QAbstractItemView;
 

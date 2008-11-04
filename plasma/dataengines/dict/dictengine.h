@@ -18,7 +18,7 @@
 
 #ifndef DICTENGINE_H
 #define DICTENGINE_H
-#include <plasma/dataengine.h>
+#include <Plasma/DataEngine>
 #include <QMap>
 #include <QString>
 #include <QList>

@@ -19,7 +19,7 @@
 #ifndef MOUSEENGINE_H
 #define MOUSEENGINE_H
 
-#include <plasma/dataengine.h>
+#include <Plasma/DataEngine>
 
 
 class CursorNotificationHandler;

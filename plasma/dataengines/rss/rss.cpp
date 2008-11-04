@@ -30,7 +30,7 @@
 #include <syndication/image.h>
 
 //Plasma
-#include <plasma/dataengine.h>
+#include <Plasma/DataEngine>
 
 //Qt
 #include <QDateTime>

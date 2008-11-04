@@ -42,8 +42,8 @@
 #include <KRun>
 
 // Plasma
-#include <plasma/widgets/iconwidget.h>
-#include <plasma/containment.h>
+#include <Plasma/IconWidget>
+#include <Plasma/Containment>
 
 // Local
 #include "core/itemhandlers.h"

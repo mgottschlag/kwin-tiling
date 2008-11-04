@@ -19,7 +19,7 @@
 #ifndef NETWORKENGINE_H
 #define NETWORKENGINE_H
 
-#include <plasma/dataengine.h>
+#include <Plasma/DataEngine>
 
 namespace Solid
 {

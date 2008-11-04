@@ -26,9 +26,9 @@
 #include <QStyle>
 #include <QStyleOptionToolButton>
 
-#include <plasma/paintutils.h>
-#include <plasma/theme.h>
-#include <plasma/framesvg.h>
+#include <Plasma/PaintUtils>
+#include <Plasma/Theme>
+#include <Plasma/FrameSvg>
 
 ToolButton::ToolButton(QWidget *parent)
     : QToolButton(parent),

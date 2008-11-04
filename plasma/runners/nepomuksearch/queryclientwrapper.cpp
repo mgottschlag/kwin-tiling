@@ -30,8 +30,8 @@
 #include <KDebug>
 #include <KMimeType>
 
-#include <plasma/querymatch.h>
-#include <plasma/runnercontext.h>
+#include <Plasma/QueryMatch>
+#include <Plasma/RunnerContext>
 
 #include <QtCore/QTimer>
 

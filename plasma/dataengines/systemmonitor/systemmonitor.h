@@ -19,7 +19,7 @@
 #ifndef SYSTEMMONITORENGINE_H
 #define SYSTEMMONITORENGINE_H
 
-#include "plasma/dataengine.h"
+#include <Plasma/DataEngine>
 
 #include "sensorclient.h"
 

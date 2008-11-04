@@ -19,7 +19,7 @@
 
 #include "filebrowserengine.h"
 
-#include "plasma/datacontainer.h"
+#include <Plasma/DataContainer>
 
 #include <QDir>
 #include <KDirWatch>

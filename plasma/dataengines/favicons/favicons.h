@@ -21,7 +21,7 @@
 #ifndef FAVICONS_DATAENGINE_H
 #define FAVICONS_DATAENGINE_H
 
-#include "plasma/dataengine.h"
+#include <Plasma/DataEngine>
 
 class FaviconProvider;
 

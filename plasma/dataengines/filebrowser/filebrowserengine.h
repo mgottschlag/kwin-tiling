@@ -20,7 +20,7 @@
 #ifndef FILEBROWSERENGINE_H
 #define FILEBROWSERENGINE_H
 
-#include "plasma/dataengine.h"
+#include <Plasma/DataEngine>
 #include <QMap>
 
 class KDirWatch;

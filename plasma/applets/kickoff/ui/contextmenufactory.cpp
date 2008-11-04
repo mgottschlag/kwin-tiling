@@ -38,8 +38,8 @@
 #include <KUrl>
 
 // Plasma
-#include <plasma/containment.h>
-#include <plasma/corona.h>
+#include <Plasma/Containment>
+#include <Plasma/Corona>
 
 // Local
 #include "core/favoritesmodel.h"

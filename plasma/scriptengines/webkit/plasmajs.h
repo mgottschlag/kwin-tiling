@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 #include <QObject>
 #include <KConfigGroup>
-#include <plasma/dataengine.h>
+#include <Plasma/DataEngine>
 
 class PlasmaJs : public QObject
 {

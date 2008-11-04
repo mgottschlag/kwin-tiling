@@ -39,7 +39,7 @@
 #include <kcapacitybar.h>
 
 // plasma
-#include <plasma/plasma.h>
+#include <Plasma/Plasma>
 
 using namespace Kickoff;
 

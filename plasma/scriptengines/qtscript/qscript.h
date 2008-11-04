@@ -21,8 +21,8 @@
 
 #include <QScriptValue>
 
-#include <plasma/scripting/appletscript.h>
-#include <plasma/dataengine.h>
+#include <Plasma/AppletScript>
+#include <Plasma/DataEngine>
 
 class QScriptEngine;
 class QScriptContext;

@@ -29,9 +29,9 @@ THE SOFTWARE.
 #include <QWebPage>
 #include <QFile>
 
-#include <plasma/applet.h>
-#include <plasma/package.h>
-#include <plasma/widgets/webview.h>
+#include <Plasma/Applet>
+#include <Plasma/Package>
+#include <Plasma/WebView>
 
 using namespace Plasma;
 

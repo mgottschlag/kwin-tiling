@@ -23,7 +23,7 @@
 
 #include <QScriptValue>
 
-#include <plasma/scripting/runnerscript.h>
+#include <Plasma/RunnerScript>
 
 class QScriptEngine;
 class QScriptContext;

@@ -27,9 +27,9 @@
 #include <KLocale>
 #include <KStandardDirs>
 
-#include <plasma/applet.h>
-#include <plasma/svg.h>
-#include <plasma/uiloader.h>
+#include <Plasma/Applet>
+#include <Plasma/Svg>
+#include <Plasma/UiLoader>
 
 using namespace Plasma;
 

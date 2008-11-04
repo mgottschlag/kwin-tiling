@@ -31,9 +31,9 @@
 #include <KServiceTypeTrader>
 #include <KStandardAction>
 
-#include "plasma/applet.h"
-#include "plasma/corona.h"
-#include "plasma/containment.h"
+#include <Plasma/Applet>
+#include <Plasma/Corona>
+#include <Plasma/Containment>
 #include "kcategorizeditemsview_p.h"
 #include "plasmaappletitemmodel_p.h"
 #include "openwidgetassistant_p.h"
