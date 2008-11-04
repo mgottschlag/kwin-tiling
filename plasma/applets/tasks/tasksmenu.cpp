@@ -128,7 +128,7 @@ void TasksMenu::resizeEvent(QResizeEvent *event)
     setMask(m_background->mask());
 }
 
-};
+}
 
 #include "tasksmenu.moc"
 
