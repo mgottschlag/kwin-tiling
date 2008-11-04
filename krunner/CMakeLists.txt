@@ -28,7 +28,8 @@ macro(dbus_add_activation_service _sources)
 endmacro(dbus_add_activation_service _sources)
 
 include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/ksysguard
-   ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/ksysguard/processcore/)
+                    ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/ksysguard/processcore/
+                    ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/screensaver)
 
 configure_file(config-xautolock.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-xautolock.h)
 
@@ -56,30 +57,29 @@ set(krunner_SRCS
    configdialog.cpp
    krunnerapp.cpp
    main.cpp
-   stackblur_shadows.cpp
    ${default_interface_SRCS}
    ${quicksand_interface_SRCS})
-
-if(NOT WIN32)
-set(krunner_SRCS
-    ${krunner_SRCS}
-    saverengine.cpp
-    startupid.cpp
-    xautolock.cpp
-    xautolock_diy.c
-    xautolock_engine.c)
-endif(NOT WIN32)
 
 kde4_add_kcfg_files(krunner_SRCS ${krunner_KCFG_SRCS})
 
 qt4_add_dbus_adaptor(krunner_SRCS ${krunner_dbusAppXML} krunnerapp.h KRunnerApp)
+dbus_add_activation_service(dbus/org.kde.krunner.service.in)
+
 if(NOT WIN32)
+set(krunner_SRCS
+    ${krunner_SRCS}
+    startupid.cpp
+    screensaver/saverengine.cpp
+    screensaver/xautolock.cpp
+    screensaver/xautolock_diy.c
+    screensaver/xautolock_engine.c)
+
 qt4_add_dbus_adaptor(krunner_SRCS ${screensaver_dbusXML} saverengine.h SaverEngine)
 qt4_add_dbus_adaptor(krunner_SRCS ${kscreensaver_dbusXML} saverengine.h SaverEngine kscreensaveradaptor KScreenSaverAdaptor)
 endif(NOT WIN32)
-dbus_add_activation_service(dbus/org.kde.krunner.service.in)
 
 kde4_add_kdeinit_executable(krunner ${krunner_SRCS})
+
 if(NOT WIN32)
 target_link_libraries(kdeinit_krunner kworkspace processui ${KDE4_PLASMA_LIBS} ${KDE4_SOLID_LIBRARIES} ${KDE4_THREADWEAVER_LIBRARIES} ${X11_Xrender_LIB} ${KDE4_KDEUI_LIBS}  ${KDE4_KUTILS_LIBS} ${X11_LIBRARIES})
 else(NOT WIN32)
