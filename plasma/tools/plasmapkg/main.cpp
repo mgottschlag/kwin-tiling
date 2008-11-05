@@ -50,7 +50,7 @@ void output(const QString &msg)
 void runKbuildsycoca()
 {
     QDBusInterface dbus("org.kde.kded", "/kbuildsycoca", "org.kde.kbuildsycoca");
-    dbus.call(QDBus::NoBlock, "recreate");
+    dbus.call(QDBus::Block, "recreate");
 }
 
 QStringList packages(const QString& type)
