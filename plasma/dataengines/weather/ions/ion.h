@@ -42,7 +42,7 @@ public:
     enum ConditionIcons { ClearDay = 1, FewCloudsDay, PartlyCloudyDay, Overcast,
                           Rain, LightRain, Showers, ChanceShowersDay, Thunderstorm, Hail,
                           Snow, LightSnow, Flurries, FewCloudsNight, ChanceShowersNight,
-                          PartlyCloudyNight, ClearNight, Mist, NotAvailable
+                          PartlyCloudyNight, ClearNight, Mist, Haze, FreezingRain, FreezingDrizzle, NotAvailable
                         };
 
     enum WindDirections { N, NNE, NE, ENE, E, SSE, SE, ESE, S, NNW, NW, WNW, W, SSW, SW, WSW, VR };
