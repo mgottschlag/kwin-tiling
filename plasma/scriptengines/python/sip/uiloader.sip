@@ -24,7 +24,7 @@ namespace Plasma
 class UiLoader : QObject
 {
 %TypeHeaderCode
-#include <plasma/uiloader.h>
+#include <plasma/scripting/uiloader.h>
 %End
 
 public:
