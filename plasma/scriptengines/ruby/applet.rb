@@ -291,6 +291,16 @@ module Plasma
   # argument passed for the real Plasma::Applet in the ScriptEngine
   #
 
+  class BusyWidget < Qt::Base
+    def initialize(parent = nil)
+      if parent.kind_of?(PlasmaScripting::Applet)
+        super(parent.applet_script.applet)
+      else
+        super
+      end
+    end
+  end
+
   class CheckBox < Qt::Base
     def initialize(parent = nil)
       if parent.kind_of?(PlasmaScripting::Applet)
@@ -302,6 +312,16 @@ module Plasma
   end
 
   class ComboBox < Qt::Base
+    def initialize(parent = nil)
+      if parent.kind_of?(PlasmaScripting::Applet)
+        super(parent.applet_script.applet)
+      else
+        super
+      end
+    end
+  end
+
+  class Extender < Qt::Base
     def initialize(parent = nil)
       if parent.kind_of?(PlasmaScripting::Applet)
         super(parent.applet_script.applet)
@@ -405,6 +425,16 @@ module Plasma
     end
   end
 
+  class ScrollBar < Qt::Base
+    def initialize(orientation, parent = nil)
+      if parent.kind_of?(PlasmaScripting::Applet)
+        super(orientation, parent.applet_script.applet)
+      else
+        super
+      end
+    end
+  end
+
   class SignalPlotter < Qt::Base
     def initialize(parent = nil)
       if parent.kind_of?(PlasmaScripting::Applet)
@@ -425,6 +455,20 @@ module Plasma
     end
   end
 
+  class SvgWidget < Qt::Base
+    def initialize(*args)
+      if args.length > 0 && args[0].kind_of?(PlasmaScripting::Applet)
+        args[0] = args[0].applet_script.applet
+        super(*args)
+      elsif args.length > 2 && args[2].kind_of?(PlasmaScripting::Applet)
+        args[2] = args[2].applet_script.applet
+        super(*args)
+      else
+        super
+      end
+    end
+  end
+
   class TabBar < Qt::Base
     def initialize(parent = nil)
       if parent.kind_of?(PlasmaScripting::Applet)
@@ -436,6 +480,16 @@ module Plasma
   end
 
   class TextEdit < Qt::Base
+    def initialize(parent = nil)
+      if parent.kind_of?(PlasmaScripting::Applet)
+        super(parent.applet_script.applet)
+      else
+        super
+      end
+    end
+  end
+
+  class TreeView < Qt::Base
     def initialize(parent = nil)
       if parent.kind_of?(PlasmaScripting::Applet)
         super(parent.applet_script.applet)
@@ -572,3 +626,5 @@ module Qt
     end
   end
 end
+
+# kate: space-indent on; indent-width 2; replace-tabs on; mixed-indent off;

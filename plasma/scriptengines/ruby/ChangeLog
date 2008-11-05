@@ -1,3 +1,10 @@
+2008-11-05  Richard Dale  <richard.j.dale@gmail.com>
+* Fixed some bugs in the DataEngineScript class. The expected path was 
+  'plasma/engines' whereas the plasmapkg tool installs them in 
+  'plasma/dataengines'. The mainScript() and package() methods hadn't been
+  implemented and were added.
+* Added a 'ruby_time' example scripting data engine
+
 2008-10-30  Richard Dale  <richard.j.dale@gmail.com>
 * Separated the script engine plugins from the plasma ruby extension and moved
   the script engine code to kdebase with the other script engines

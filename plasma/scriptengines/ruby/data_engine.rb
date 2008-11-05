@@ -39,6 +39,11 @@ module PlasmaScripting
     end
 
     def setData(*args)
+      if args.length == 2 && !args[1].kind_of?(Qt::Variant)
+        args[1] = Qt::Variant.new(args[1])
+      elsif args.length == 3 && !args[2].kind_of?(Qt::Variant)
+        args[2] = Qt::Variant.new(args[2])
+      end
       @data_engine_script.setData(*args)
     end
 
@@ -99,7 +104,7 @@ module PlasmaScriptengineRuby
       program = Qt::FileInfo.new(mainScript)
       $: << program.path
       load Qt::File.encodeName(program.filePath).to_s
-      moduleName = camelize(package.metadata.name)
+      moduleName = camelize(Qt::Dir.new(package.path).dirName)
       className = camelize(program.baseName)
       puts "RubyAppletScript::DataEngine#init instantiating: #{moduleName}::#{className}"
       klass = Object.const_get(moduleName.to_sym).const_get(className.to_sym)
@@ -108,12 +113,19 @@ module PlasmaScriptengineRuby
       return true
     end
 
+    def sources
+      @data_engine_script.sources
+    end
+
     def sourceRequestEvent(name)
-      @data_engine.sourceRequestEvent(name)
+      @data_engine_script.sourceRequestEvent(name)
     end
 
     def updateSourceEvent(source)
-      @data_engine.updateSourceEvent(source)
+      @data_engine_script.updateSourceEvent(source)
     end
   end
 end
+
+# kate: space-indent on; indent-width 2; replace-tabs on; mixed-indent off;
+
