@@ -29,9 +29,9 @@ namespace WeatherUtils
 {
 
 // Enumerations for unit types
-enum Unit { NoUnit = 0, Celsius, Fahrenheit, Kelvin, Kilometers, MetersPerSecond, Miles, Kilopascals,
+enum Unit { NoUnit = 0, Celsius, Fahrenheit, Kelvin, KilometersAnHour, MetersPerSecond, MilesAnHour, Kilopascals,
             InchesHG, Millibars, Hectopascals, Centimeters, Millimeters, Inches,
-            Knots, Beaufort
+            Knots, Beaufort, Kilometers, Miles
           };
 
 // Convert Units

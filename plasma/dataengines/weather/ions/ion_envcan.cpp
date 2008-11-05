@@ -1031,10 +1031,10 @@ void EnvCanadaIon::updateWeather(const QString& source)
     // Do we have a comfort temperature? if so display it
     if (dataFields["comfortTemperature"] != "N/A" && !dataFields["comfortTemperature"].isEmpty()) {
         if (dataFields["comfortTemperature"].toFloat() <= 0) {
-            setData(source, "Windchill", QString("%1%2").arg(dataFields["comfortTemperature"]).arg(QChar(176)));
+            setData(source, "Windchill", QString("%1").arg(dataFields["comfortTemperature"]));
             setData(source, "Humidex", "N/A");
         } else {
-            setData(source, "Humidex", QString("%1%2").arg(dataFields["comfortTemperature"]).arg(QChar(176)));
+            setData(source, "Humidex", QString("%1").arg(dataFields["comfortTemperature"])));
             setData(source, "Windchill", "N/A");
         }
     } else {
@@ -1415,7 +1415,7 @@ QMap<QString, QString> EnvCanadaIon::wind(const QString& source)
         windInfo.insert("windUnit", QString::number(WeatherUtils::NoUnit));
     } else {
         windInfo.insert("windSpeed", QString::number(d->m_weatherData[source].windSpeed.toInt()));
-        windInfo.insert("windUnit", QString::number(WeatherUtils::Kilometers));
+        windInfo.insert("windUnit", QString::number(WeatherUtils::KilometersAnHour));
     }
 
     // May not always have gusty winds
@@ -1424,7 +1424,7 @@ QMap<QString, QString> EnvCanadaIon::wind(const QString& source)
         windInfo.insert("windGustUnit", QString::number(WeatherUtils::NoUnit));
     } else {
         windInfo.insert("windGust", QString::number(d->m_weatherData[source].windGust.toInt()));
-        windInfo.insert("windGustUnit", QString::number(WeatherUtils::Kilometers));
+        windInfo.insert("windGustUnit", QString::number(WeatherUtils::KilometersAnHour));
     }
 
     if (d->m_weatherData[source].windDirection.isEmpty() && d->m_weatherData[source].windSpeed.isEmpty()) {

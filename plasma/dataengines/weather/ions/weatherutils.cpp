@@ -175,11 +175,17 @@ QString getUnitString(int unit, bool plain)
         else
             return i18nc("Kelvin, temperature unit", "K");
 
-    case WeatherUtils::Kilometers:
+    case WeatherUtils::KilometersAnHour:
         if (plain)
             return QString("kmh");
         else
             return i18nc("kilometers per hour, windspeed unit", "km/h");
+
+    case WeatherUtils::Kilometers:
+        if (plain)
+            return QString("km");
+        else
+            return i18nc("kilometers, distance unit", "km");
 
     case WeatherUtils::MetersPerSecond:
         if (plain)
@@ -187,11 +193,17 @@ QString getUnitString(int unit, bool plain)
         else
             return i18nc("meters per second, windspeed unit", "m/s");
 
-    case WeatherUtils::Miles:
+    case WeatherUtils::MilesAnHour:
         if (plain)
             return QString("mph");
         else
             return i18nc("miles per hour, windspeed unit", "mph");
+
+    case WeatherUtils::Miles:
+        if (plain)
+            return QString("mi");
+        else
+            return i18nc("miles, distance unit", "mi");
 
     case WeatherUtils::Kilopascals:
         if (plain)
