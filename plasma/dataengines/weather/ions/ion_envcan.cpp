@@ -1034,7 +1034,7 @@ void EnvCanadaIon::updateWeather(const QString& source)
             setData(source, "Windchill", QString("%1").arg(dataFields["comfortTemperature"]));
             setData(source, "Humidex", "N/A");
         } else {
-            setData(source, "Humidex", QString("%1").arg(dataFields["comfortTemperature"])));
+            setData(source, "Humidex", QString("%1").arg(dataFields["comfortTemperature"]));
             setData(source, "Windchill", "N/A");
         }
     } else {

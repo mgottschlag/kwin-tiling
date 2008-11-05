@@ -60,6 +60,21 @@ public:
     QDateTime m_dateFormat;
 };
 
+QMap<QString, IonInterface::WindDirections> NOAAIon::setupWindIconMappings(void)
+{
+    QMap<QString, WindDirections> windDir;
+    windDir["north"] = N;
+    windDir["northeast"] = NE;
+    windDir["south"] = S;
+    windDir["southwest"] = SW;
+    windDir["east"] = E;
+    windDir["southeast"] = SE;
+    windDir["west"] = W;
+    windDir["northwest"] = NW;
+    windDir["calm"] = VR;
+    return windDir;
+}
+
 QMap<QString, IonInterface::ConditionIcons> NOAAIon::setupDayIconMappings(void)
 {
 
@@ -102,6 +117,12 @@ QMap<QString, IonInterface::ConditionIcons> const& NOAAIon::nightIcons(void)
 {
     static QMap<QString, ConditionIcons> const nval = setupNightIconMappings();
     return nval;
+}
+
+QMap<QString, IonInterface::WindDirections> const& NOAAIon::windIcons(void)
+{
+    static QMap<QString, WindDirections> const wval = setupWindIconMappings();
+    return wval;
 }
 
 // ctor, dtor
@@ -507,7 +528,7 @@ void NOAAIon::updateWeather(const QString& source)
 
     setData(source, "Wind Gust", dataFields["windGust"]);
     setData(source, "Wind Gust Unit", dataFields["windGustUnit"]);
-    setData(source, "Wind Direction", dataFields["windDirection"]);
+    setData(source, "Wind Direction", getWindDirectionIcon(windIcons(), dataFields["windDirection"].toLower()));
     setData(source, "Credit", "Data provided by NOAA National Weather Service");
 }
 

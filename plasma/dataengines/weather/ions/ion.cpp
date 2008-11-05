@@ -101,6 +101,52 @@ void IonInterface::setInitialized(bool initialized)
 }
 
 /**
+ * Return wind direction svg element to display in applet when given a wind direction.
+ */
+QString IonInterface::getWindDirectionIcon(const QMap<QString, WindDirections> &windDirList, const QString& windDirection)
+{
+    switch (windDirList[windDirection.toLower()]) {   
+    case N:
+        return "N";
+    case NNE:
+        return "NNE";
+    case NE:
+        return "NE";
+    case ENE:
+        return "ENE";
+    case E:
+        return "E";
+    case SSE:
+        return "SSE";
+    case SE:
+        return "SE";
+    case ESE:
+        return "ESE";
+    case S:
+        return "S";
+    case NNW:
+        return "NNW";
+    case NW:
+        return "NW";
+    case WNW:
+        return "WNW";
+    case W:
+        return "W";
+    case SSW:
+        return "SSW";
+    case SW:
+        return "SW";
+    case WSW:
+        return "WSW";
+    case VR:
+        return "N/A"; // For now, we'll make a variable wind icon later on
+    }
+
+    // No icon available, use 'X'
+    return "N/A";
+}
+  
+/**
  * Return weather icon to display in an applet when given a condition.
  */
 QString IonInterface::getWeatherIcon(const QMap<QString, ConditionIcons> &ConditionList, const QString& condition)

@@ -45,6 +45,8 @@ public:
                           PartlyCloudyNight, ClearNight, Mist, NotAvailable
                         };
 
+    enum WindDirections { N, NNE, NE, ENE, E, SSE, SE, ESE, S, NNW, NW, WNW, W, SSW, SW, WSW, VR };
+
     typedef QHash<QString, IonInterface*> IonDict; // Define Dict as a QHash for Ions
 
     /**
@@ -80,6 +82,14 @@ public:
      * @return icon name
      */
     QString getWeatherIcon(const QMap<QString, ConditionIcons> &ConditionList, const QString& condition);
+
+    /**
+     * Returns wind icon element to display in applet.
+     * @param windDirList a QList map pair of wind directions mapped to a enumeration of directions.
+     * @param windDirection the current wind direction.
+     * @return svg element for wind direction
+     */
+    QString getWindDirectionIcon(const QMap<QString, WindDirections> &windDirList, const QString& windDirection);
 
 public Q_SLOTS:
 
