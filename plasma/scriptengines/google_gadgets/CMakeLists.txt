@@ -9,7 +9,7 @@ include_directories(
 
 execute_process(COMMAND pkg-config --variable=ggl_resource_dir libggadget-1.0
     OUTPUT_VARIABLE gadgets_path)
-string(REPLACE \n "" gadgets_path ${gadgets_path})
+string(REPLACE "\n" "" "gadgets_path" "${gadgets_path}")
 
 macro(install_ggl_gadget _name)
   find_file(${_name}_path ${_name}.gg ${gadgets_path})
