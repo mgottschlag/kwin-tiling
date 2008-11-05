@@ -1,4 +1,22 @@
-#!/usr/bin/python
+#
+# Copyright (C) 2005,2006,2007 by Siraj Razick
+# Copyright 2008 Simon Edwards <simon@simonzone.com> (Translated to Python)
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as
+# published by the Free Software Foundation; either version 2, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details
+#
+# You should have received a copy of the GNU Library General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -7,7 +25,7 @@ from PyKDE4.kdeui import *
 from PyKDE4.plasma import Plasma
 from analog_clock_config_ui import *
 from calendar_ui import *
-import plasma
+from PyKDE4 import plasmascript
 
 class AnalogClockConfig(QWidget,Ui_clockConfig):
     def __init__(self,parent):
@@ -19,9 +37,9 @@ class AnalogClockConfig(QWidget,Ui_clockConfig):
     def slotLocalTimeZoneToggled(self,b):
         self.timeZones.setDisabled(b)
 
-class PyClockApplet(plasma.Applet):
+class PyClockApplet(plasmascript.Applet):
     def __init__(self,parent,args=None):
-        plasma.Applet.__init__(self,parent)
+        plasmascript.Applet.__init__(self,parent)
 
         self.calendar = None
         self.currentTimezone = "Local"

@@ -12,7 +12,9 @@ install(FILES plasma-packagestructure-python.desktop
         DESTINATION ${SERVICES_INSTALL_DIR})
 install(FILES plasma-scriptengine-dataengine-python.desktop
         DESTINATION ${SERVICES_INSTALL_DIR})
-install(FILES plasma.py DESTINATION ${PYTHON_SITE_PACKAGES_DIR})
+
+install(FILES plasma.py DESTINATION ${PYTHON_SITE_PACKAGES_DIR}/PyKDE4/plasmascript)
+
 
 ###########################################################################
 # Test plasmoids
