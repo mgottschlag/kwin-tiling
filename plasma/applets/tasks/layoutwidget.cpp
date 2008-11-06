@@ -27,8 +27,8 @@ LayoutWidget::LayoutWidget(TaskGroupItem *parent, Tasks *applet)
       m_rowSize(1),
       m_maxRows(1),
       m_applet(applet),
-      m_layout(0),
-      m_forceRows(false)
+      m_forceRows(false),
+      m_layout(0)
 {
     init();
     //kDebug();
