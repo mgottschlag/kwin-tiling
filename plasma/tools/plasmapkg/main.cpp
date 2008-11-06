@@ -90,7 +90,7 @@ int main(int argc, char **argv)
     options.add("global", ki18n("For install or remove, operates on packages installed for all users."));
     options.add("t");
     options.add("type <type>",
-                ki18n("The type of package, e.g. theme, wallpaper, plasmoid, DataEngine, Runner, etc."),
+                ki18n("The type of package, e.g. theme, wallpaper, plasmoid, dataengine, runner, etc."),
                 "plasmoid");
     options.add("s");
     options.add("i");
