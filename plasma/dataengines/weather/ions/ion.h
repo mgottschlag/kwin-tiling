@@ -43,7 +43,8 @@ public:
                           Rain, LightRain, Showers, ChanceShowersDay, Thunderstorm, Hail,
                           Snow, LightSnow, Flurries, FewCloudsNight, ChanceShowersNight,
                           PartlyCloudyNight, ClearNight, Mist, Haze, FreezingRain, 
-                          RainSnow, FreezingDrizzle, NotAvailable
+                          RainSnow, FreezingDrizzle, ChanceThunderstormDay, ChanceThunderstormNight,
+                          NotAvailable
                         };
 
     enum WindDirections { N, NNE, NE, ENE, E, SSE, SE, ESE, S, NNW, NW, WNW, W, SSW, SW, WSW, VR };

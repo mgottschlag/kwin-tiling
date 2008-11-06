@@ -196,6 +196,10 @@ QString IonInterface::getWeatherIcon(const QMap<QString, ConditionIcons> &Condit
         return "weather-freezing-rain";
     case FreezingDrizzle:
         return "weather-freezing-rain";
+    case ChanceThunderstormDay:
+        return "weather-scattered-storms-day";
+    case ChanceThunderstormNight:
+        return "weather-scattered-storms-night";
     case NotAvailable:
         return "weather-none-available";
     }
