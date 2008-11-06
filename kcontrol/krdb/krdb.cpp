@@ -170,14 +170,10 @@ static void applyQtColors( KConfigGroup kglobals, QSettings& settings, QPalette&
 
 static void applyQtSettings( KConfigGroup kglobals, QSettings& settings )
 {
-  /* export kde's plugin library path to qtrc */
-
-  QMap <QString, bool> pathDb;
-    // OK, this isn't fun at all.
-    // KApp adds paths ending with /, QApp those without slash, and if
-    // one gives it something that is other way around, it will complain and scare
-    // users. So we need to know whether a path being added is from KApp, and in this case
-    // end it with.. So keep a QMap to bool, specifying whether the path is KDE-specified..
+    // export KDE's plugin library path to Trolltech.conf
+    // This is only needed for Qt applications that run outside of a KDE session but still should
+    // use a KDE style. In order to load the style (or any KDE code in that regard) Qt needs to
+    // know the plugin path of KDE.
 
   QString qversion = qVersion();
   if ( qversion.count( '.' ) > 1 )
@@ -185,76 +181,42 @@ static void applyQtSettings( KConfigGroup kglobals, QSettings& settings )
   if ( qversion.contains( '-' ) )
      qversion.truncate( qversion.lastIndexOf( '-' ) );
 
-  QStringList kdeAdded =
-    settings.value("/qt/KDE/kdeAddedLibraryPaths").toStringList();
-  QString libPathKey =
-    QString("/qt/%1/libraryPath").arg( qversion );
+    // paths that KDE added
+    QStringList kdeAdded = settings.value("/qt/KDE/kdeAddedLibraryPaths").toStringList();
 
-  //Read qt library path..
-  QStringList plugins = settings.value(libPathKey, ':').toStringList();
-  for (QStringList::ConstIterator it = plugins.begin(); it != plugins.end(); ++it)
-  {
-    QString path = *it;
-    if (path.endsWith('/'))
-      path.truncate(path.length()-1);
+    const QString &libPathKey = QString("/qt/%1/libraryPath").arg(qversion);
+    // paths that Qt currently adds. Don't use toStringList! That's a different storage format
+    QStringList libraryPath = settings.value(libPathKey, QString()).toString().split(QLatin1Char(':'), QString::SkipEmptyParts);
 
-    pathDb[path]=false;
-  }
-
-  //Get rid of old KDE-added ones...
-  for (QStringList::ConstIterator it = kdeAdded.begin(); it != kdeAdded.end(); ++it)
-  {
-    //Normalize..
-    QString path = *it;
-    if (path.endsWith('/'))
-      path.truncate(path.length()-1);
-
-    //Remove..
-    pathDb.remove(path);
-  }
-
-  kdeAdded.clear();
-
-  //Merge in KDE ones..
-  plugins = KGlobal::dirs()->resourceDirs( "qtplugins" );
-
-  for (QStringList::ConstIterator it = plugins.begin(); it != plugins.end(); ++it)
-  {
-    QString path = *it;
-    if (path.endsWith('/'))
-      path.truncate(path.length()-1);
-
-    pathDb[path]=true;
-
-    if(path.contains("/lib64/"))
-        path.replace("/lib64/","/lib/");
-    pathDb[path]=true;
-  }
-
-  QStringList paths;
-  for (QMap <QString, bool>::ConstIterator it = pathDb.begin();
-         it != pathDb.end(); ++it)
-  {
-    QString path = it.key();
-    bool fromKDE = it.value();
-
-    char new_path[PATH_MAX+1];
-    if (realpath(QFile::encodeName(path), new_path))
-      path = QFile::decodeName(new_path);
-
-    if (fromKDE)
-    {
-      if (!path.endsWith('/'))
-        path += '/';
-      kdeAdded.push_back(path); //Add for the new list -- do it here to have it in the right form..
+    // only keep entries that are not from KDE
+    foreach (const QString &path, const_cast<const QStringList &>(kdeAdded)) {
+        libraryPath.removeAll(path);
     }
 
-    paths.append(path);
-  }
+    kdeAdded.clear();
 
-   //Write the list out..
-  settings.setValue("/qt/KDE/kdeAddedLibraryPaths", kdeAdded);
-  settings.setValue(libPathKey, paths.join(QString(':')));
+    // paths that need to be in the list
+    const QStringList &plugins = KGlobal::dirs()->resourceDirs("qtplugins");
+    foreach (const QString &_path, plugins) {
+        QString path = QDir(_path).canonicalPath();
+        if (path.isEmpty() || kdeAdded.contains(path)) {
+            continue;
+        }
+        kdeAdded.prepend(path);
+        if (path.contains("/lib64/")) {
+            path.replace("/lib64/", "/lib/");
+            if (!kdeAdded.contains(path)) {
+                kdeAdded.prepend(path);
+            }
+        }
+    }
+    foreach (const QString &path, const_cast<const QStringList &>(kdeAdded)) {
+        libraryPath.append(path);
+    }
+
+    // Write the list out..
+    settings.setValue("/qt/KDE/kdeAddedLibraryPaths", kdeAdded);
+    settings.setValue(libPathKey, libraryPath.join(QLatin1String(":")));
 
   /* export widget style */
   kglobals.changeGroup("General");
