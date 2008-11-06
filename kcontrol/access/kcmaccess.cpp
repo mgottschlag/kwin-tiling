@@ -57,7 +57,8 @@ ExtendedIntNumInput::~ExtendedIntNumInput () {
 }
 
 void ExtendedIntNumInput::setRange(int min, int max, int step, bool withSlider) {
-	KIntNumInput::setRange (min, max, step, withSlider);
+	KIntNumInput::setRange (min, max, step);
+	KIntNumInput::setSliderEnabled (withSlider);
 
 	if (withSlider) {
 		disconnect(slider(), SIGNAL(valueChanged(int)),
