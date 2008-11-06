@@ -186,7 +186,7 @@ void khotkeys_send_reread_config()
         }
     else
         {
-        org::kde::khotkeys iface("org.kde.khotkeys", "/modules/KHotKeys", bus);
+        org::kde::khotkeys iface("org.kde.khotkeys", "/KHotKeys", bus);
         iface.reread_configuration();
         kDebug( 1217 ) << "telling khotkeys daemon to reread configuration";
         }

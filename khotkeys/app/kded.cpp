@@ -10,19 +10,17 @@
 
 #include "kded.h"
 
-#include "action_data_group.h"
+#include "action_data.h"
 #include "gestures.h"
 #include "khotkeysadaptor.h"
 #include "settings.h"
 
-
-#include <kaboutdata.h>
 #include <kdebug.h>
+
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
 
 #include <unistd.h>
-
 
 K_PLUGIN_FACTORY(KHotKeysModuleFactory,
                  registerPlugin<KHotKeysModule>();
@@ -34,36 +32,39 @@ K_EXPORT_PLUGIN(KHotKeysModuleFactory("khotkeys"))
 
 KHotKeysModule::KHotKeysModule(QObject* parent, const QList<QVariant>&)
     : KDEDModule(parent)
-    , actions_root(NULL)
-    , dbus_adaptor(NULL)
     {
-    setModuleName("khotkeys");
-    (void) new KhotkeysAdaptor(this);
-
-    // Initialize the global data, grab keys
-    KHotKeys::init_global_data( true, this );
-
-    // Read the configuration from file khotkeysrc
+    new KhotkeysAdaptor(this);
+    for( int i = 0;
+         i < 5;
+         ++i )
+        {
+        if( QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.khotkeys" ))
+            {
+            // wait for it to finish
+            QDBusConnection::sessionBus().send( QDBusMessage::createMethodCall( "org.kde.khotkeys", "/KHotKeys", "", "quit" ));
+            sleep( 1 );
+            }
+        }
+    QDBusConnection::sessionBus().registerService( "org.kde.khotkeys" );
+    QDBusConnection::sessionBus().registerObject("/KHotKeys", this);
+    KHotKeys::init_global_data( true, this ); // grab keys
+    // CHECKME triggery a dalsi vytvaret az tady za inicializaci
+    actions_root = NULL;
     reread_configuration();
     }
 
-
 KHotKeysModule::~KHotKeysModule()
     {
+    // CHECKME triggery a dalsi rusit uz tady pred cleanupem
     delete actions_root;
+    QDBusConnection::sessionBus().unregisterService( "org.kde.khotkeys" );
     }
 
-
 void KHotKeysModule::reread_configuration()
-    {
-    kDebug() << "Reloading the khotkeys configuration";
-    // Delete a previous configuration
+    { // TODO
+    kDebug( 1217 ) << "reading configuration";
     delete actions_root;
-
-    // Stop listening
     KHotKeys::khotkeys_set_active( false );
-
-    // Load the settings
     KHotKeys::Settings settings;
     settings.read_settings( false );
     KHotKeys::gesture_handler->set_mouse_button( settings.gestureMouseButton() );
@@ -77,11 +78,12 @@ void KHotKeysModule::reread_configuration()
 #endif
     actions_root = settings.takeActions();
     KHotKeys::khotkeys_set_active( true );
+    actions_root->update_triggers();
     }
 
 void KHotKeysModule::quit()
     {
-    deleteLater();
+    delete this;
     }
 
 
