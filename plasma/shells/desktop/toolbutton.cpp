@@ -25,14 +25,19 @@
 #include <QPaintEvent>
 #include <QStyle>
 #include <QStyleOptionToolButton>
+#include <QGraphicsSceneHoverEvent>
 
 #include <Plasma/PaintUtils>
 #include <Plasma/Theme>
 #include <Plasma/FrameSvg>
+#include <Plasma/Animator>
 
 ToolButton::ToolButton(QWidget *parent)
     : QToolButton(parent),
-      m_action(0)
+      m_action(0),
+      m_animationId(0),
+      m_alpha(0),
+      m_fadeIn(true)
 {
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/button");
@@ -93,14 +98,26 @@ void ToolButton::paintEvent(QPaintEvent *event)
     QStyleOptionToolButton buttonOpt;
     initStyleOption(&buttonOpt);
 
-    if ((buttonOpt.state & QStyle::State_MouseOver) || (buttonOpt.state & QStyle::State_On)) {
+    if (m_animationId || (buttonOpt.state & QStyle::State_MouseOver) || (buttonOpt.state & QStyle::State_On)) {
         if (buttonOpt.state & QStyle::State_Sunken || (buttonOpt.state & QStyle::State_On)) {
             m_background->setElementPrefix("pressed");
         } else {
             m_background->setElementPrefix("normal");
         }
         m_background->resizeFrame(size());
-        m_background->paintFrame(&painter);
+
+        if (m_animationId) {
+            QPixmap buffer = m_background->framePixmap();
+            QPainter bufferPainter(&buffer);
+            bufferPainter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+            QColor alphaColor(Qt::black);
+            alphaColor.setAlphaF(qMin(0.95, m_alpha));
+            bufferPainter.fillRect(buffer.rect(), alphaColor);
+            bufferPainter.end();
+            painter.drawPixmap(QPoint(0,0), buffer);
+        } else {
+            m_background->paintFrame(&painter);
+        }
 
         buttonOpt.palette.setColor(QPalette::ButtonText, Plasma::Theme::defaultTheme()->color(Plasma::Theme::ButtonTextColor));
     } else {
@@ -108,6 +125,48 @@ void ToolButton::paintEvent(QPaintEvent *event)
     }
 
     style()->drawControl(QStyle::CE_ToolButtonLabel, &buttonOpt, &painter, this);
+}
+
+void ToolButton::enterEvent(QEvent *event)
+{
+    const int FadeInDuration = 75;
+
+    if (m_animationId) {
+        Plasma::Animator::self()->stopElementAnimation(m_animationId);
+    }
+
+    m_fadeIn = true;
+    m_animationId = Plasma::Animator::self()->customAnimation(
+        40 / (1000 / FadeInDuration), FadeInDuration,
+        Plasma::Animator::LinearCurve, this, "animationUpdate");
+}
+
+void ToolButton::leaveEvent(QEvent *event)
+{
+    const int FadeOutDuration = 150;
+
+    if (m_animationId) {
+        Plasma::Animator::self()->stopElementAnimation(m_animationId);
+    }
+
+    m_fadeIn = false;
+    m_animationId = Plasma::Animator::self()->customAnimation(
+        40 / (1000 / FadeOutDuration), FadeOutDuration,
+        Plasma::Animator::LinearCurve, this, "animationUpdate");
+}
+
+
+void ToolButton::animationUpdate(qreal progress)
+{
+    if (qFuzzyCompare(progress, 1)) {
+        m_animationId = 0;
+        m_fadeIn = true;
+    }
+
+    m_alpha = m_fadeIn ? progress : 1 - progress;
+
+    // explicit update
+    update();
 }
 
 #include "toolbutton.moc"

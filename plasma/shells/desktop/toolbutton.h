@@ -38,14 +38,20 @@ public:
 
 protected:
     void paintEvent(QPaintEvent *event);
+    void enterEvent(QEvent *event);
+    void leaveEvent(QEvent *event);
 
 protected slots:
     void actionDestroyed(QObject *);
     void syncToAction();
+    void animationUpdate(qreal progress);
 
 private:
     QAction *m_action;
     Plasma::FrameSvg *m_background;
+    int m_animationId;
+    qreal m_alpha;
+    bool m_fadeIn;
 };
 
 #endif
