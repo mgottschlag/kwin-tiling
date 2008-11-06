@@ -41,15 +41,23 @@ ShortcutsHandler::ShortcutsHandler( HandlerType type, QObject *parent )
          ,_type(type)
          ,_actions(new KActionCollection(this))
     {
-    _actions->setComponentData(KComponentData("khotkeys"));
+    kDebug() << "Initializing shortcuts_handler";
+    Q_ASSERT( keyboard_handler == 0 );
+    keyboard_handler = this;
     }
+
 
 ShortcutsHandler::~ShortcutsHandler()
     {
-    kDebug() << "Destroying ShortcutsHandler";
-    delete _actions;
+    kDebug() << "Goodbye from shortcuts_handler";
     }
 
+
+static
+inline QString idConv( const QString& id )
+    { // khotkeys keeps track of the shortcuts, not kdedglobalaccel
+    return "_k_session:" + id;
+    }
 
 KAction *ShortcutsHandler::addAction(
         const QString &id,
@@ -58,7 +66,7 @@ KAction *ShortcutsHandler::addAction(
     {
     kDebug() << "Creating action for " << id << " - " << text << ":" << shortcut.primary();
     // Create the action
-    KAction *newAction = _actions->addAction(id);
+    KAction *newAction = _actions->addAction( idConv( id ) );
     if (!newAction)
         {
         return 0;
@@ -91,7 +99,7 @@ KAction *ShortcutsHandler::addAction(
 
 QAction *ShortcutsHandler::getAction( const QString &id )
     {
-    return _actions->action(id);
+    return _actions->action( idConv( id )) ;
     }
 
 
@@ -135,8 +143,7 @@ static bool xtest()
 bool ShortcutsHandler::send_macro_key( const QString& key, Window window_P )
     {
     kError() << "ShortcutsHandler::send_macro_key not implemented!!!";
-    Q_UNUSED( key );
-    Q_UNUSED( window_P );
+    Q_UNUSED( key )
     return false;
 
 #if 0

@@ -7,4 +7,5 @@ install( FILES
     khotkeys_32b1_update.upd
     konqueror_gestures_kde321_update.upd
     khotkeys_printscreen.upd
+    khotkeys_remove_shortcuts.upd
     DESTINATION  ${KCONF_UPDATE_INSTALL_DIR} )
