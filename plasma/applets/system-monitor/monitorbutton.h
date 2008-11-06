@@ -36,9 +36,15 @@ public:
     void setImage(const QString &image);
 
 protected:
+    void hoverEnterEvent(QGraphicsSceneHoverEvent * event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent * event);
     virtual void paint(QPainter *p,
                        const QStyleOptionGraphicsItem *option,
                        QWidget *widget = 0);
+
+private slots:
+    void highlight();
+
 private:
     class Private;
     Private * const d;

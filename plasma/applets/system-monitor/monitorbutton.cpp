@@ -18,20 +18,30 @@
  */
 
 #include "monitorbutton.h"
+
+#include <QIcon>
+#include <QPainter>
+#include <QTimeLine>
+
 #include <KDebug>
 #include <KIcon>
-#include <QPainter>
-#include <QIcon>
 #include <KPushButton>
+
+#include <Plasma/PaintUtils>
+
 #define MARGIN 2
 
 class MonitorButton::Private
 {
-    public:
-        Private() : imageSize(32, 32) { }
+public:
+    Private() : imageSize(32, 32)
+    {
+    }
 
-        QSizeF imageSize;
-        QString image;
+    QSize imageSize;
+    QString image;
+    KIcon icon;
+    QTimeLine highlighter;
 };
 
 MonitorButton::MonitorButton(QGraphicsWidget *parent) :
@@ -40,6 +50,11 @@ MonitorButton::MonitorButton(QGraphicsWidget *parent) :
 {
    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
    setPreferredSize(d->imageSize.width() + 2 * MARGIN, d->imageSize.height() + 2 * MARGIN);
+
+   d->highlighter.setDuration(100);
+   d->highlighter.setFrameRange(0, 10);
+   d->highlighter.setCurveShape(QTimeLine::EaseInCurve);
+   connect(&d->highlighter, SIGNAL(valueChanged(qreal)), this, SLOT(highlight()));
 }
 
 MonitorButton::~MonitorButton()
@@ -55,7 +70,33 @@ QString MonitorButton::image() const
 void MonitorButton::setImage(const QString &image)
 {
     d->image = image;
+    d->icon = KIcon(image);
     update();
+}
+
+void MonitorButton::highlight()
+{
+    update();
+}
+
+void MonitorButton::hoverEnterEvent(QGraphicsSceneHoverEvent * event)
+{
+    if (nativeWidget()->isChecked()) {
+        return;
+    }
+
+    d->highlighter.setDirection(QTimeLine::Forward);
+    d->highlighter.start();
+}
+
+void MonitorButton::hoverLeaveEvent(QGraphicsSceneHoverEvent * event)
+{
+    if (nativeWidget()->isChecked()) {
+        return;
+    }
+
+    d->highlighter.setDirection(QTimeLine::Backward);
+    d->highlighter.start();
 }
 
 void MonitorButton::paint(QPainter *p,
@@ -65,13 +106,17 @@ void MonitorButton::paint(QPainter *p,
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
-    QIcon::Mode mode = QIcon::Normal;
+    QIcon::Mode mode = QIcon::Disabled;
     if (nativeWidget()->isChecked()) {
-        mode = QIcon::Disabled;
+        mode = QIcon::Normal;
     }
+
+    QPixmap icon = Plasma::PaintUtils::transition(d->icon.pixmap(d->imageSize, QIcon::Disabled),
+                                                  d->icon.pixmap(d->imageSize, QIcon::Normal),
+                                                  nativeWidget()->isChecked() ? 1 : d->highlighter.currentValue());
     p->drawPixmap(QPointF((size().width() - d->imageSize.width()) / 2,
                         (size().height() - d->imageSize.height()) / 2),
-                  KIcon(d->image).pixmap(d->imageSize.toSize(), mode));
+                  icon);
 }
 
 #include "monitorbutton.moc"
