@@ -55,9 +55,9 @@ int main( int argc, char* argv[] )
         }
     settings.write_settings();
     QDBusConnection bus = QDBusConnection::sessionBus();
-    if( bus.interface()->isServiceRegistered( "org.kde.khotkeys" ))
+    if( bus.interface()->isServiceRegistered( "org.kde.kded" ))
         {
-        org::kde::khotkeys iface("org.kde.khotkeys", "/modules/khotkeys", bus);
+        org::kde::khotkeys iface("org.kde.kded", "/modules/khotkeys", bus);
         iface.reread_configuration();
         kDebug() << "telling khotkeys daemon to reread configuration";
         }
