@@ -22,6 +22,7 @@
 #include <QFile>
 #include <QUiLoader>
 #include <QGraphicsLayout>
+#include <QWidget>
 
 #include <KDebug>
 #include <KLocale>
