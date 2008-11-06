@@ -23,6 +23,7 @@
 #include <Plasma/IconWidget>
 
 // Qt
+#include <QtGui/QWidget> // QWIDGETSIZE_MAX
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusReply>
 #include <QGraphicsLinearLayout>
