@@ -153,7 +153,7 @@ void PanelDecorator::SetVertical() {
   SetAllowYMargin(false);
   SetAllowXMargin(true);
   bool border = !IsMinimized();
-  SetResizeBorderVisible(false, border, false, false);
+  SetResizeBorderVisible(false, false, border, false);
   d->vertical_ = true;
 }
 

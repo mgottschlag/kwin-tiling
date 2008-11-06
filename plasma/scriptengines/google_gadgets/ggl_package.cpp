@@ -80,25 +80,25 @@ class GadgetBrowserHost : public ggadget::HostInterface {
     connection_->Disconnect();
   }
 
-  QString ExtractGadgetIcon(const std::string& gadget_path,
+  static QString ExtractGadgetIcon(const std::string& gadget_path,
                             const QString& dest_dir) {
     ggadget::StringMap map;
 
     if (!ggadget::Gadget::GetGadgetManifest(gadget_path.c_str(), &map))
-      return "";
+      return QString();
 
     std::string icon = map[ggadget::kManifestIcon];
-    if (icon.empty()) return "";
+    if (icon.empty()) return QString();
 
     ggadget::scoped_ptr<ggadget::FileManagerInterface> fm(
         ggadget::Gadget::GetGadgetFileManagerForLocale(gadget_path.c_str(),
                                                        NULL));
 
-    if (!fm.get()) return "";
+    if (!fm.get()) return QString();
 
     std::string data;
     fm->ReadFile(icon.c_str(), &data);
-    if (data.empty()) return "";
+    if (data.empty()) return QString();
 
     QPixmap pixmap;
     if (pixmap.loadFromData(reinterpret_cast<const uchar *>(data.c_str()),
@@ -107,7 +107,7 @@ class GadgetBrowserHost : public ggadget::HostInterface {
       if (pixmap.save(dest, "png"))
         return dest;
     }
-    return "";
+    return QString();
   }
 
   bool InstallPlasmaApplet(int id) {
