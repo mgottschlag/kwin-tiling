@@ -21,6 +21,8 @@
 #include <QIcon>
 #include <QPainter>
 
+#include <KIcon>
+
 #include "qs_matchitem.h"
 
 namespace QuickSand
@@ -29,15 +31,20 @@ namespace QuickSand
 MatchItem::MatchItem(const QIcon &icon, const QString &name, const QString &desc, QGraphicsWidget *parent)
     : QGraphicsWidget(parent),
       m_anim(0),
-      m_icon(icon),
       m_name(name),
       m_desc(desc)
 {
+    if (icon.isNull()) {
+        m_icon = KIcon("unknown");
+    } else {
+        m_icon = icon;
+    }
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFlag(QGraphicsItem::ItemIsSelectable);
     setAcceptHoverEvents(true);
     resize(ITEM_SIZE, ITEM_SIZE);
     m_bgColor = QColor(Qt::white);
+    setToolTip(QString("%1: %2").arg(name).arg(desc));
 }
 
 MatchItem::~MatchItem()
@@ -67,6 +74,12 @@ void MatchItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
         painter->drawPixmap(0, 0, m_icon.pixmap(64, 64, QIcon::Disabled));
     }
     //TODO: Make items glow on hover and draw text over them
+}
+
+void MatchItem::mousePressEvent(QGraphicsSceneMouseEvent *e)
+{
+    Q_UNUSED(e)
+    emit activated(this);
 }
 
 } // namespace QuickSand

@@ -24,6 +24,7 @@
 #include <QIcon>
 
 class QGraphicsItemAnimation;
+class QGraphicsSceneMouseEvent;
 
 namespace QuickSand
 {
@@ -35,7 +36,7 @@ namespace QuickSand
             MatchItem(const QIcon &icon, const QString &name, const QString &desc = QString(), QGraphicsWidget *parent = 0);
             ~MatchItem();
 
-            void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
+            void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
             QString id() const
             {
@@ -69,7 +70,11 @@ namespace QuickSand
             QGraphicsItemAnimation* anim(bool create = false);
 
             static const int ITEM_SIZE = 64;
+        signals:
+            void activated(MatchItem *item);
         private:
+            void mousePressEvent(QGraphicsSceneMouseEvent *e);
+
             QGraphicsItemAnimation *m_anim;
             QIcon m_icon;
             QString m_id;
