@@ -24,10 +24,10 @@
 #include <QtCore/QTime>
 #include <QtCore/QDate>
 
-#include <Plasma/DataEngine>
-#include <Plasma/Dialog>
-#include <Plasma/PopupApplet>
-#include <Plasma/ToolTipManager>
+#include <KDE/Plasma/DataEngine>
+#include <KDE/Plasma/Dialog>
+#include <KDE/Plasma/PopupApplet>
+#include <KDE/Plasma/ToolTipManager>
 
 #include "plasmaclock_export.h"
 
