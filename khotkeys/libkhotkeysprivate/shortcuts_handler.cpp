@@ -72,7 +72,14 @@ KAction *ShortcutsHandler::addAction(
         return 0;
         }
     newAction->setText(text);
+// It is important that this does not do any shortcut grabbing or even talk to kded,
+// as this is also used by the update tool called from kconf_update, and that can lead to a deadlock.
+// Other usage such as from kmenuedit should not need to do this either., if it for some reason does,
+// it needs to be an extra mode.
+    if (_type==Configuration)
+        return newAction;
     newAction->setGlobalShortcut( shortcut, KAction::DefaultShortcut | KAction::ActiveShortcut );
+#if 0
     // If our HandlerType is configuration we have to tell kdedglobalaccel
     // that this action is only for configuration purposes.
     // see KAction::~KAction
@@ -81,6 +88,7 @@ KAction *ShortcutsHandler::addAction(
         kDebug() << "Making it a configuration action";
         newAction->setProperty("isConfigurationAction", QVariant(true));
         }
+#endif
     // Enable global shortcut. If that fails there is no sense in proceeding
     if (!newAction->isGlobalShortcutEnabled())
         {
