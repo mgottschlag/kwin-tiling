@@ -483,8 +483,8 @@ bool TaskGroup::moveItem(int oldIndex, int newIndex)
 
     AbstractItemPtr item = d->members.at(oldIndex);
     d->members.move(oldIndex, newIndex);
-    kDebug() << "new index " << d->members.indexOf(item); 
-    emit itemChanged(item);
+    kDebug() << "new index " << d->members.indexOf(item);
+    emit itemPositionChanged(item);
     return true;
 }
 

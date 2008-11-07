@@ -77,7 +77,7 @@ QString Startup::icon() const
 void Startup::update(const KStartupInfoData& data)
 {
     d->data.update(data);
-    emit changed();
+    emit changed(::TaskManager::TaskUnchanged);
 }
 
 KStartupInfoId Startup::id() const

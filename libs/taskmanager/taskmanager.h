@@ -40,6 +40,10 @@ typedef KSharedPtr<Task> TaskPtr;
 typedef QVector<TaskPtr> TaskList;
 typedef QHash<WId, TaskPtr> TaskDict;
 
+class Startup;
+typedef KSharedPtr<Startup> StartupPtr;
+typedef QVector<StartupPtr> StartupList;
+
 enum TaskChange { TaskUnchanged = 0,
                   NameChanged = 1,
                   StateChanged = 2,

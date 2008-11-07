@@ -44,15 +44,6 @@ AlphaSortingStrategy::AlphaSortingStrategy(QObject *parent)
     setType(GroupManager::AlphaSorting);
 }
 
-// used in sortItems
-bool lessThan(const QString &s1, const QString &s2)
-{
-    if (s1.localeAwareCompare(s2) < 0) {
-        return true;
-    }
-    return false;
-}
-
 void AlphaSortingStrategy::sortItems(ItemList &items)
 {
     kDebug();
@@ -77,16 +68,13 @@ void AlphaSortingStrategy::sortItems(ItemList &items)
             }
 
             //sort by programname not windowname
-            //kDebug() << "inserting multi item" <<  item->task()->classClass();
+            kDebug() << "inserting multi item" <<  item->task()->classClass();
             map.insertMulti(item->task()->classClass(), item);
         }
     }
 
     items.clear();
-    foreach (AbstractGroupableItem *item, map) {
-        //kDebug() << item->name();
-        items.append(item);
-    }
+    items = map.values();
 }
 
 } //namespace

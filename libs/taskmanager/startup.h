@@ -32,14 +32,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <KDE/KSharedPtr>
 #include <KDE/KStartupInfo>
 
+#include <taskmanager/taskmanager.h>
 #include <taskmanager/taskmanager_export.h>
 
 namespace TaskManager
 {
-
-class Startup;
-typedef KSharedPtr<Startup> StartupPtr;
-typedef QVector<StartupPtr> StartupList;
 
 /**
  * Represents a task which is in the process of starting.
@@ -82,7 +79,7 @@ Q_SIGNALS:
     /**
      * Indicates that this startup has changed in some way.
      */
-    void changed();
+    void changed(::TaskManager::TaskChanges);
 
 private:
     class Private;

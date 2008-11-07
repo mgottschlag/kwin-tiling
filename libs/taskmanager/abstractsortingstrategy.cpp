@@ -73,6 +73,7 @@ void AbstractSortingStrategy::setType(GroupManager::TaskSortingStrategy type)
 
 void AbstractSortingStrategy::handleGroup(TaskGroup *group)
 {
+    //kDebug();
     if (d->managedGroups.contains(group) || !group) {
         return;
     }
@@ -98,13 +99,13 @@ void AbstractSortingStrategy::removeGroup()
 
 void AbstractSortingStrategy::handleItem(AbstractItemPtr item)
 {
+    //kDebug() << item->name();
     if (item->isGroupItem()) {
         handleGroup(qobject_cast<TaskGroup*>(item));
     } else if (!(qobject_cast<TaskItem*>(item))->task()) { //ignore startup tasks
+        connect(item, SIGNAL(gotTaskPointer()), this, SLOT(check())); //sort the task as soon its a real one
         return;
     }
-    disconnect(item, 0, this, 0); //To avoid duplicate connections
-   // connect(item, SIGNAL(changed(::TaskManager::TaskChanges)), this, SLOT(check()));
     check(item);
 }
 
@@ -113,7 +114,6 @@ void AbstractSortingStrategy::check(AbstractItemPtr itemToCheck)
     kDebug();
     AbstractItemPtr item;
     if (!itemToCheck) {
-        //return;
         item = dynamic_cast<AbstractItemPtr>(sender());
     } else {
         item = itemToCheck;

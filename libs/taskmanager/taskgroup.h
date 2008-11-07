@@ -121,7 +121,8 @@ Q_SIGNALS:
     void itemAdded(const AbstractItemPtr item);
     void itemRemoved(const AbstractItemPtr item);
     void groupEditRequest();
-    void itemChanged(AbstractItemPtr item);
+    /** inform visualization about position change */
+    void itemPositionChanged(AbstractItemPtr item);
     /** The group changed the desktop, is emitted in the toDesktop function */
     void movedToDesktop(int newDesk);
 
