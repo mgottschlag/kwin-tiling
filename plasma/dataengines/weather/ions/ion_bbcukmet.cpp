@@ -106,6 +106,7 @@ QMap<QString, IonInterface::ConditionIcons> UKMETIon::setupDayIconMappings(void)
     QMap<QString, ConditionIcons> dayList;
     dayList["sunny"] = ClearDay;
     //dayList["sunny night"] = ClearNight;
+    dayList["clear"] = ClearDay;
     dayList["sunny intervals"] = PartlyCloudyDay;
     //dayList["sunny intervals night"] = ClearNight;
     dayList["partly cloudy"] = PartlyCloudyDay;

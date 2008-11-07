@@ -85,18 +85,21 @@ QMap<QString, IonInterface::ConditionIcons> NOAAIon::setupDayIconMappings(void)
 //
     QMap<QString, ConditionIcons> dayList;
     dayList["fair"] = FewCloudsDay;
+    dayList["clear"] = ClearDay;
     dayList["partly cloudy"] = PartlyCloudyDay;
     dayList["fair with haze"] = FewCloudsDay;
     dayList["fair and windy"] = FewCloudsDay;
     dayList["a few clouds"] = FewCloudsDay;
     dayList["overcast"] = Overcast;
     dayList["mostly cloudy"] = Overcast;
+    dayList["light snow fog/mist"] = LightSnow;
     return dayList;
 }
 
 QMap<QString, IonInterface::ConditionIcons> NOAAIon::setupNightIconMappings(void)
 {
     QMap<QString, ConditionIcons> nightList;
+    nightList["clear"] = ClearNight;
     nightList["partly cloudy"] = PartlyCloudyNight;
     nightList["fair"] = FewCloudsNight;
     nightList["fair with haze"] = FewCloudsNight;
@@ -104,6 +107,7 @@ QMap<QString, IonInterface::ConditionIcons> NOAAIon::setupNightIconMappings(void
     nightList["a few clouds"] = FewCloudsNight;
     nightList["mostly cloudy"] = Overcast;
     nightList["overcast"] = Overcast;
+    nightList["light snow fog/mist"] = LightSnow;
     return nightList;
 }
 
@@ -245,7 +249,6 @@ void NOAAIon::setup_slotDataArrived(KIO::Job *job, const QByteArray &data)
 
 void NOAAIon::slotDataArrived(KIO::Job *job, const QByteArray &data)
 {
-
     if (data.isEmpty() || !d->m_jobXml.contains(job)) {
         return;
     }

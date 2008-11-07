@@ -110,6 +110,7 @@ QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupDayIconMappings(v
 //
     QMap<QString, ConditionIcons> dayList;
     dayList["sunny"] = ClearDay;
+    dayList["clear"] = ClearNight; // Arctic areas are in night 24/7 when we're in winter :)
     dayList["mainly sunny"] = FewCloudsDay;
     dayList["partly cloudy"] = PartlyCloudyDay;
     dayList["mostly cloudy"] = PartlyCloudyDay;
@@ -121,8 +122,10 @@ QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupDayIconMappings(v
     dayList["snow at times heavy and blowing snow"] = Snow;
     dayList["snow"] = Snow;
     dayList["periods of snow"] = Snow;
+    dayList["periods of light snow"] = LightSnow;
     dayList["light snow"] = LightSnow;
     dayList["snow grains"] = Flurries;
+    dayList["snow pellets"] = Hail;
     dayList["light rainshower"] = LightRain;
     dayList["light rain"] = LightRain;
     dayList["light drizzle"] = LightRain;
@@ -145,6 +148,9 @@ QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupDayIconMappings(v
     dayList["hail"] = Hail;
     dayList["fog patches"] = Mist;
     dayList["fog"] = Mist;
+    dayList["periods of light snow mixed with freezing drizzle"] = LightSnow;
+    dayList["haze"] = Haze;
+    dayList["drifting snow"] = Flurries;
 
     // forecasts that are explicit on period.
     dayList["a mix of sun and cloud"] = PartlyCloudyDay;
@@ -169,8 +175,10 @@ QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupNightIconMappings
     nightList["light snow"] = LightSnow;
     nightList["snow"] = Snow;
     nightList["periods of snow"] = Snow;
+    nightList["periods of light snow"] = LightSnow;
     nightList["snow at times heavy and blowing snow"] = Snow;
     nightList["snow grains"] = LightSnow;
+    nightList["snow pellets"] = Hail;
     nightList["light rainshower"] = LightRain;
     nightList["light rain"] = LightRain;
     nightList["light drizzle"] = LightRain;
@@ -193,6 +201,9 @@ QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupNightIconMappings
     nightList["hail"] = Hail;
     nightList["fog patches"] = Mist;
     nightList["fog"] = Mist;
+    nightList["periods of light snow mixed with freezing drizzle"] = LightSnow;
+    nightList["haze"] = Mist;
+    nightList["drifting snow"] = Flurries;
 
     return nightList;
 }
