@@ -24,7 +24,6 @@ import plasma_importer
 class PythonDataEngineScript(Plasma.DataEngineScript):
     def __init__(self, parent):
         Plasma.DataEngineScript.__init__(self,parent)
-        print("PythonDataEngineScript()")
         self.importer = plasma_importer.PlasmaImporter()
         self.initialized = False
 
@@ -49,6 +48,12 @@ class PythonDataEngineScript(Plasma.DataEngineScript):
 
         self.initialized = True
         return True
+
+    def sources(self):
+        return self.pydataengine.sources()
+
+    def serviceForSource(self,source):
+        return self.pydataengine.serviceForSource(source)
 
     def sourceRequestEvent(self,name):
         return self.pydataengine.sourceRequestEvent(name)

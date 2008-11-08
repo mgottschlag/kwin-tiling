@@ -94,8 +94,14 @@ class DataEngine(QObject):
     def init(self):
         pass
 
+    def sources(self):
+        return []
+
     def sourceRequestEvent(self,name):
         return False
 
     def updateSourceEvent(self,source):
         return False
+
+    def serviceForSource(self,source):
+        return None
