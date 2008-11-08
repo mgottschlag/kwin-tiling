@@ -23,8 +23,6 @@
 #include <limits>
 
 #include <QAction>
-#include <QApplication>
-#include <QDesktopWidget>
 #include <QGraphicsProxyWidget>
 #include <QFile>
 #include <QFileInfo>
@@ -72,8 +70,6 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
     qRegisterMetaType<QPersistentModelIndex>("QPersistentModelIndex");
     connect(this, SIGNAL(appletAdded(Plasma::Applet *, const QPointF &)),
             this, SLOT(onAppletAdded(Plasma::Applet *, const QPointF &)));
-    connect(KWindowSystem::self(), SIGNAL(workAreaChanged()),
-            this, SLOT(refreshWorkingArea()));
 
     m_layout = new DesktopLayout;
     m_layout->setAutoWorkingArea(false);
@@ -90,17 +86,18 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
     //kDebug() << "!!! loading desktop";
 }
 
-QSize DefaultDesktop::resolution() const
-{
-    return QApplication::desktop()->screenGeometry(screen()).size();
-}
-
 void DefaultDesktop::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::ImmutableConstraint && m_appletBrowserAction) {
         // we need to update the menu items that have already been created
         bool locked = immutability() != Mutable;
         m_addPanelAction->setVisible(!locked);
+    }
+
+    if (constraints & Plasma::StartupCompletedConstraint) {
+        connect(corona(), SIGNAL(availableScreenRegionChanged()),
+                this, SLOT(refreshWorkingArea()));
+        refreshWorkingArea();
     }
 }
 
@@ -261,18 +258,29 @@ void DefaultDesktop::onAppletGeometryChanged()
 
 void DefaultDesktop::refreshWorkingArea()
 {
+    Corona *c = corona();
+    if (!c) {
+        //kDebug() << "no corona?!";
+        return;
+    }
+
     QRectF workingGeom;
     if (screen() != -1) {
         // we are associated with a screen, make sure not to overlap panels
-        QDesktopWidget *desktop = qApp->desktop();
-        workingGeom = desktop->availableGeometry(screen());
+        workingGeom = c->availableScreenRegion(screen()).boundingRect();
+        //kDebug() << "got" << workingGeom;
         // From screen coordinates to containment coordinates
-        workingGeom.translate(-desktop->screenGeometry(screen()).topLeft());
+        workingGeom.translate(-c->screenGeometry(screen()).topLeft());
     } else {
         workingGeom = geometry();
         workingGeom = mapFromScene(workingGeom).boundingRect();
+        //kDebug() << "defaults due to no screen; got:" << workingGeom;
     }
-    m_layout->setWorkingArea(workingGeom);
+
+    if (workingGeom != QRectF()) {
+        //kDebug() << "!!!!!!!!!!!!! workingGeom is" << workingGeom;
+        m_layout->setWorkingArea(workingGeom);
+    }
 }
 
 void DefaultDesktop::dropEvent(QGraphicsSceneDragDropEvent *event)

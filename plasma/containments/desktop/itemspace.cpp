@@ -22,7 +22,7 @@ ItemSpace::ItemSpace()
 {
 }
 
-void ItemSpace::setWorkingArea (QSizeF area)
+void ItemSpace::setWorkingArea(QSizeF area)
 {
     if (workingGeom.isValid()) {
         // if the working area size changed and alignment includes right or bottom,

@@ -61,7 +61,6 @@ class DefaultDesktop : public Plasma::Containment
 
 public:
     DefaultDesktop(QObject *parent, const QVariantList &args);
-
     void constraintsEvent(Plasma::Constraints constraints);
 
     QList<QAction*> contextualActions();
@@ -83,8 +82,6 @@ protected Q_SLOTS:
     void refreshWorkingArea();
 
 private:
-    QSize resolution() const;
-
     QAction *m_lockDesktopAction;
     QAction *m_appletBrowserAction;
     QAction *m_addPanelAction;
