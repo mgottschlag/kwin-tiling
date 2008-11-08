@@ -117,6 +117,7 @@ QList<QAction*> SaverDesktop::contextualActions()
         m_lockDesktopAction = action("lock widgets");
     }
     QAction *config = action("configure");
+    QAction *quit = action("unlock desktop");
 
     QList<QAction*> actions;
     actions.append(m_appletBrowserAction);
@@ -124,6 +125,7 @@ QList<QAction*> SaverDesktop::contextualActions()
         actions.append(config);
     }
     actions.append(m_lockDesktopAction);
+    actions.append(quit);
 
     return actions;
 }
