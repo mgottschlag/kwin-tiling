@@ -53,8 +53,7 @@ public:
         : q(q),
           taskArea(0),
           configInterface(0),
-          background(0),
-          marginsEnabled(false)
+          background(0)
     {
     }
 
@@ -66,7 +65,6 @@ public:
     QPointer<KActionSelector> configInterface;
 
     Plasma::FrameSvg *background;
-    bool marginsEnabled;
 };
 
 
@@ -154,38 +152,16 @@ void Applet::checkSizes()
 {
     d->taskArea->layout()->updateGeometry();
 
-    QSizeF preferredSize = d->taskArea->effectiveSizeHint(Qt::PreferredSize);
-    QSizeF actualSize = size();
-
     qreal leftMargin, topMargin, rightMargin, bottomMargin;
     d->background->getMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+    setContentsMargins(leftMargin, topMargin, rightMargin, bottomMargin);
 
-    bool marginsEnabled;
-    switch (formFactor()) {
-    case Plasma::Horizontal:
-        marginsEnabled = actualSize.height() >= (preferredSize.height() + topMargin + bottomMargin);
-        break;
-    default:
-        marginsEnabled = true;
-    }
-
-    if (marginsEnabled) {
-        setContentsMargins(leftMargin, topMargin, rightMargin, bottomMargin);
-    } else if (formFactor() == Plasma::Horizontal) {
-        setContentsMargins(leftMargin, 0, rightMargin, 0);
-        topMargin = bottomMargin = 0;
-    } else if (formFactor() == Plasma::Vertical) {
-        setContentsMargins(0, topMargin, 0, bottomMargin);
-        leftMargin = rightMargin = 0;
-    } else {
-        setContentsMargins(0, 0, 0, 0);
-        leftMargin = topMargin = rightMargin = bottomMargin = 0;
-    }
-
+    QSizeF preferredSize = d->taskArea->effectiveSizeHint(Qt::PreferredSize);
     preferredSize.setWidth(preferredSize.width() + leftMargin + rightMargin);
     preferredSize.setHeight(preferredSize.height() + topMargin + bottomMargin);
     setPreferredSize(preferredSize);
 
+    QSizeF actualSize = size();
     if (formFactor() == Plasma::Planar && (actualSize.width() < preferredSize.width() ||
                                            actualSize.height() < preferredSize.height())) {
 
@@ -201,12 +177,6 @@ void Applet::checkSizes()
         preferredSize.setHeight(qMax(actualSize.height(), preferredSize.height()));
 
         resize(preferredSize);
-        return;
-    }
-
-    if (marginsEnabled != d->marginsEnabled) {
-        d->marginsEnabled = marginsEnabled;
-        update();
     }
 }
 

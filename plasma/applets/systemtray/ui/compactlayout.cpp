@@ -221,10 +221,8 @@ QHash<QGraphicsLayoutItem*, QRectF> CompactLayout::Private::calculateGeometries(
         QRectF rect;
         rect.setSize(item->effectiveSizeHint(which));
 
-        // Strictly speaking, this should check the item's minimum width/height
-        // but in practice, doing so will lead to a worse visual result.
-        rect.setWidth(qMin(rect.width(), constraint.width()));
-        rect.setHeight(qMin(rect.height(), constraint.height()));
+        rect.setWidth(qBound(item->minimumWidth(), rect.width(), constraint.width()));
+        rect.setHeight(qBound(item->minimumHeight(), rect.height(), constraint.height()));
 
         // Try to find an empty space for the item within the bounds
         // of the already positioned out items
@@ -332,12 +330,16 @@ QSizeF CompactLayout::Private::hackedConstraint(const QSizeF &constraint) const
         widget = widget->parentWidget();
         parentSize = widget->size();
 
+        qreal left, top, right, bottom;
+
         if (widget->layout()) {
-            qreal left, top, right, bottom;
             widget->layout()->getContentsMargins(&left, &top, &right, &bottom);
-            xMargins += left + right;
-            yMargins += top + bottom;
+        } else {
+            widget->getContentsMargins(&left, &top, &right, &bottom);
         }
+
+        xMargins += left + right;
+        yMargins += top + bottom;
     }
 
     return parentSize - QSizeF(xMargins, yMargins);
