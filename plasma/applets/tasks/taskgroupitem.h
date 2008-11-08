@@ -95,6 +95,8 @@ public:
 
     LayoutWidget *layoutWidget();
 
+    int indexOf (AbstractTaskItem *task);
+
 signals:
     /** Emitted when a window is selected for activation, minimization, iconification */
     void groupSelected(TaskGroupItem *);
@@ -142,17 +144,17 @@ private slots:
 
     /** show a menu for editing group */
     void editGroup();
-    /** Check if something has to be updated (postion, ....) */
-    void itemChanged(AbstractItemPtr);
+    /** Update to new position*/
+    void itemPositionChanged(AbstractItemPtr);
 
     void popupMenu();
-    
 
 private:
     void layoutTaskItem(AbstractTaskItem* item, const QPointF &pos);
     void setSplitIndex(int position);
 
     GroupPtr m_group;
+    //arbitrarily ordered
     QList<AbstractTaskItem*> m_groupMembers;
     LayoutWidget *m_layoutWidget;
     QTimer *m_popupMenuTimer;

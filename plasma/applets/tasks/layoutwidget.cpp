@@ -62,12 +62,12 @@ void LayoutWidget::constraintsChanged(Plasma::Constraints constraints)
 
 void LayoutWidget::addTaskItem(AbstractTaskItem * item)
 {
-//    kDebug();
+    //kDebug();
     if (!item) {
         kDebug() << "invalid item";
         return;
     }
-    if (m_itemPositions.contains(item)) {
+    if (m_itemPositions.values().contains(item)) {
         kDebug() << "already in this layout";
         return;
     }
@@ -82,7 +82,7 @@ void LayoutWidget::addTaskItem(AbstractTaskItem * item)
         //kDebug() << "itemScene" << item->scene();
     }
 
-   if (!insert(m_groupItem->memberList().indexOf(item), item)) {
+   if (!insert(m_groupItem->indexOf(item), item)) {
         kDebug() << "error on  insert";
         return;
     }
@@ -115,17 +115,13 @@ void LayoutWidget::removeTaskItem(AbstractTaskItem * item)
 
 bool LayoutWidget::insert(int index, AbstractTaskItem* item)
 {
-   // kDebug();
+    kDebug() << item->text() << index;
     if (!item ) {
         kDebug() << "error";
         return false;
     }
 
-    if ((index <= m_layout->count()) && (index >= 0)) {
-        m_itemPositions.insert(index, item);
-    } else {
-        m_itemPositions.insert(m_layout->count(), item);
-    }
+    m_itemPositions.insert(index, item);
 
     layoutItems();
     return true;
@@ -136,7 +132,7 @@ bool LayoutWidget::remove(AbstractTaskItem* item)
     if (!item) {
         kDebug() << "null Item";
     }
-    m_itemPositions.removeAll(item);
+    m_itemPositions.remove(m_itemPositions.key(item), item);
     layoutItems();
     return true;
 }
@@ -172,7 +168,7 @@ int LayoutWidget::size()
         }
         groupSize++;
     }
-    kDebug() << "group size" << groupSize;
+    //kDebug() << "group size" << groupSize;
     return groupSize;
 }
 
@@ -190,13 +186,13 @@ int LayoutWidget::maximumRows()
 
     // in this case rows are columns, columns are rows...
     //TODO basicPreferredSize isn't the optimal source here because  it changes because of margins probably
-    QSizeF itemSize = m_itemPositions[0]->basicPreferredSize();
+    QSizeF itemSize = m_itemPositions.values().first()->basicPreferredSize();
     if (m_applet->formFactor() == Plasma::Vertical) {
         maxRows = qMin(qMax(1, int(m_groupItem->geometry().width() / itemSize.width())), m_maxRows);
     } else {
         maxRows = qMin(qMax(1, int(m_groupItem->geometry().height() / itemSize.height())), m_maxRows);
     }
-    kDebug() << "maximum rows: " << maxRows << m_maxRows << m_groupItem->geometry().height() << itemSize.height();
+    //kDebug() << "maximum rows: " << maxRows << m_maxRows << m_groupItem->geometry().height() << itemSize.height();
     return maxRows;
 }
 
@@ -210,7 +206,7 @@ int LayoutWidget::preferredColumns()
             return 1;
         }
         //TODO basicPreferredSize isn't the optimal source here because  it changes because of margins probably
-        QSizeF itemSize = m_itemPositions[0]->basicPreferredSize();
+        QSizeF itemSize = m_itemPositions.values().first()->basicPreferredSize();
         kDebug() << itemSize.width() << m_groupItem->geometry().width();
         if (m_applet->formFactor() == Plasma::Vertical) {
             m_rowSize = qMax(1, int(m_groupItem->geometry().height() / itemSize.height()));
@@ -218,7 +214,7 @@ int LayoutWidget::preferredColumns()
             m_rowSize = qMax(1, int(m_groupItem->geometry().width() / itemSize.width()));
         }
     }
-    kDebug() << "preferred columns: " << qMax(1, qMin(m_rowSize, size()));
+    //kDebug() << "preferred columns: " << qMax(1, qMin(m_rowSize, size()));
     return qMax(1, qMin(m_rowSize, size()));
 }
 // <columns,rows>
@@ -260,7 +256,7 @@ void LayoutWidget::layoutItems()
     int columns = grid.first;
     int rows = grid.second;
 
-    kDebug() << "Laying out with" << columns << rows;
+    //kDebug() << "Laying out with" << columns << rows;
     //kDebug() << "geometry" << m_groupItem->geometry();
     int rowHeight = qMax(1, int(m_groupItem->geometry().height() / rows));
     //kDebug() << "rowHeight" << rowHeight;
@@ -269,7 +265,7 @@ void LayoutWidget::layoutItems()
 
     QSizeF maximumCellSize;
     if (m_itemPositions.count() > 0) {
-        maximumCellSize = m_itemPositions[0]->basicPreferredSize() * 1.8;
+        maximumCellSize = m_itemPositions.values().first()->basicPreferredSize() * 1.8;
     }
 
     createLayout(); //its a shame that we have to create a new layout every time but the QGraphicsGridLayout is just to buggy yet
@@ -330,10 +326,10 @@ void LayoutWidget::layoutItems()
             }
 
         } else {
-            m_layout->addItem(item, row, col, 1, 1); 
+            m_layout->addItem(item, row, col, 1, 1);
         }
 
-        kDebug() << "addItem at: " << row  <<  col;
+        //kDebug() << "addItem at: " << row  <<  col;
         numberOfItems++;
     }
 
@@ -344,7 +340,7 @@ void LayoutWidget::layoutItems()
 
 void LayoutWidget::updatePreferredSize()
 {
-    kDebug() << "column count: " << m_layout->columnCount();
+    //kDebug() << "column count: " << m_layout->columnCount();
 
     if (m_layout->count() > 0) {
         AbstractTaskItem *item = dynamic_cast<AbstractTaskItem *>(m_layout->itemAt(0));
@@ -364,7 +360,7 @@ void LayoutWidget::updatePreferredSize()
             m_layout->setPreferredSize(10, /*m_layout->preferredSize().height()*/10);
         }
     }
-    kDebug() << "preferred size: " << m_layout->preferredSize();
+    //kDebug() << "preferred size: " << m_layout->preferredSize();
     emit sizeHintChanged(Qt::PreferredSize);
 }
 

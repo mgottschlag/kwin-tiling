@@ -29,6 +29,7 @@
 #include <QObject>
 #include <QGraphicsGridLayout>
 #include <QList>
+#include <QMultiMap>
 
 
 class TaskGroupItem;
@@ -99,7 +100,7 @@ private:
     QGraphicsWidget *m_spacer;
 
     TaskGroupItem *m_groupItem;
-    QList <AbstractTaskItem*> m_itemPositions;
+    QMultiMap <int, AbstractTaskItem*> m_itemPositions;
 
     /** Calculates the number of columns and rows for the layoutItems function and returns <columns/rows>*/
     QPair<int, int> gridLayoutSize();

@@ -289,7 +289,7 @@ void TaskGroupItem::setGroup(TaskManager::GroupPtr group)
     connect(m_group, SIGNAL(changed(::TaskManager::TaskChanges)),
             this, SLOT(updateTask(::TaskManager::TaskChanges)));
 
-    connect(m_group, SIGNAL(itemChanged(AbstractItemPtr)), this, SLOT(itemChanged(AbstractItemPtr)));
+    connect(m_group, SIGNAL(itemPositionChanged(AbstractItemPtr)), this, SLOT(itemPositionChanged(AbstractItemPtr)));
     connect(m_group, SIGNAL(groupEditRequest()), this, SLOT(editGroup()));
 
     //Add already existing items
@@ -360,7 +360,7 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
         kDebug() << "invalid Item";
         return;
     }
-    m_groupMembers.insert(m_group->members().indexOf(item->abstractItem()), item);//keep ordering
+    m_groupMembers.append(item);
 
     item->setParentItem(this);
     if (collapsed()) {
@@ -592,7 +592,7 @@ void TaskGroupItem::editGroup()
 }
 
 
-void  TaskGroupItem::itemChanged(AbstractItemPtr item)
+void  TaskGroupItem::itemPositionChanged(AbstractItemPtr item)
 {
     //kDebug();
     if (collapsed()) {
@@ -750,7 +750,17 @@ void TaskGroupItem::updateActive(AbstractTaskItem *task)
     }
     Q_ASSERT(m_layoutWidget);
 
-    m_activeTaskIndex = m_groupMembers.indexOf(task);
+    m_activeTaskIndex = indexOf(task);
+}
+
+int TaskGroupItem::indexOf (AbstractTaskItem *task)
+{
+    if (!m_group || !task) {
+        kDebug() << "Error";
+        return -1;
+    }
+
+    return m_group->members().indexOf(task->abstractItem());
 }
 
 

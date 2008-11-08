@@ -68,10 +68,6 @@ public:
     /** Sets the icon for this task item. */
     void setIcon(const QIcon &icon);
 
-   // QIcon icon() const;
-
-  //  QString text() const;
-
     /**
      * This enum describes the generic flags which are currently
      * set by the task.
