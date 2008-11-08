@@ -30,18 +30,10 @@ class PyTimeEngine(plasmascript.DataEngine):
     def init(self):
         self.setMinimumPollingInterval(333)
 
-        """
-    QStringList TimeEngine::sources() const
-{
-    QStringList timezones(KSystemTimeZones::zones().keys());
-    timezones << "Local";
-    return timezones;
-}
-"""
     def sources(self):
-        print(repr( KSystemTimeZones.zones() ))
-        return ["Local"]
-        #KSystemTimeZones.zones()
+        sources = ["Local"]
+        sources.extend(KSystemTimeZones.zones().keys())
+        return sources
 
     def sourceRequestEvent(self, name):
         return self.updateSourceEvent(name)
@@ -64,7 +56,6 @@ class PyTimeEngine(plasmascript.DataEngine):
 
         trTimezone = timezone
         self.setData(tz, "Timezone", QVariant(trTimezone));
-        print("trTimezone:"+trTimezone)
         tzParts = str(trTimezone).split("/")
         if len(tzParts)>=2:
             self.setData(tz, "Timezone Continent", QVariant(tzParts[0]))
