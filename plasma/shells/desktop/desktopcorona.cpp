@@ -28,6 +28,7 @@
 #include <KDialog>
 #include <KGlobalSettings>
 #include <KStandardDirs>
+#include <KWindowSystem>
 
 #include <Plasma/Containment>
 #include <Plasma/DataEngineManager>
@@ -42,7 +43,9 @@ void DesktopCorona::init()
 {
     QDesktopWidget *desktop = QApplication::desktop();
     m_numScreens = desktop->numScreens();
-    QObject::connect(desktop, SIGNAL(resized(int)), this, SLOT(screenResized(int)));
+    connect(desktop, SIGNAL(resized(int)), this, SLOT(screenResized(int)));
+    connect(KWindowSystem::self(), SIGNAL(workAreaChanged()),
+            this, SIGNAL(availableScreenRegionChanged()));
 }
 
 void DesktopCorona::checkScreens()
