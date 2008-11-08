@@ -175,10 +175,12 @@ void X11EmbedContainer::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
 
+    if (d->updatingBackground) {
+        return;
+    }
+
     if (!d->picture) {
-        if (!d->updatingBackground) {
-            QTimer::singleShot(0, this, SLOT(updateBackgroundImage()));
-        }
+        QTimer::singleShot(0, this, SLOT(updateBackgroundImage()));
         return;
     }
 
