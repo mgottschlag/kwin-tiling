@@ -175,8 +175,14 @@ bool NOAAIon::updateIonSource(const QString& source)
     // ionname:validate:place_name - Triggers validation of place
     // ionname:weather:place_name - Triggers receiving weather of place
 
-    kDebug() << "updateIonSource() SOURCE: " << source;
     QStringList sourceAction = source.split('|');
+
+    // Guard: if the size of array is not 2 then we have bad data, return an error
+    if (sourceAction.size() < 2) {
+        setData(source, "validate", QString("noaa|timeout"));
+        return true;
+    }
+    
     if (sourceAction[1] == QString("validate")) {
         kDebug() << "Initiate Validating of place: " << sourceAction[2];
         QStringList result = validate(QString("%1|%2").arg(sourceAction[0]).arg(sourceAction[2]));
@@ -223,6 +229,13 @@ void NOAAIon::getXMLData(const QString& source)
     url = d->m_place[dataKey].XMLurl;
 
     kDebug() << "URL Location: " << url.url();
+
+    // If this is empty we have no valid data, send out an error and abort.
+    //
+    if (url.url().isEmpty()) { 
+        setData(source, "validate", QString("noaa|timeout"));
+        return;
+    }
 
     d->m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
     d->m_jobXml.insert(d->m_job, new QXmlStreamReader);

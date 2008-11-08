@@ -247,6 +247,13 @@ bool EnvCanadaIon::updateIonSource(const QString& source)
     // ionname|weather|place_name - Triggers receiving weather of place
 
     QStringList sourceAction = source.split('|');
+
+    // Guard: if the size of array is not 2 then we have bad data, return an error
+    if (sourceAction.size() < 2) {
+        setData(source, "validate", QString("envcan|timeout"));
+        return true;
+    }
+
     if (sourceAction[1] == QString("validate")) {
         QStringList result = validate(QString("%1|%2").arg(sourceAction[0]).arg(sourceAction[2]));
 
@@ -292,6 +299,11 @@ void EnvCanadaIon::getXMLData(const QString& source)
     dataKey.replace("|weather", "");
     url = "http://dd.weatheroffice.ec.gc.ca/EC_sites/xml/" + d->m_place[dataKey].territoryName + "/" + d->m_place[dataKey].cityCode + "_e.xml";
     //url="file:///home/spstarr/Desktop/s0000649_e.xml";
+
+    if (d->m_place[dataKey].territoryName.isEmpty() && d->m_place[dataKey].cityCode.isEmpty()) {
+        setData(source, "validate", QString("envcan|timeout"));
+        return;
+    }
 
     d->m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
     d->m_jobXml.insert(d->m_job, new QXmlStreamReader);
