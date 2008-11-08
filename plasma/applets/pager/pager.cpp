@@ -1010,11 +1010,20 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
         defaultTextColor.setAlphaF(m_animations[i].alpha / 2 + 0.5);
         painter->setPen(defaultTextColor);
 
+        QColor shadowColor(Qt::black);
+        if (defaultTextColor.value() < 128) {
+            shadowColor = Qt::white;
+        }
+
+        QString desktopText;
         if (m_displayedText==Number) { // Display number of desktop
-            painter->drawText(m_rects[i], Qt::AlignCenter, QString::number(i+1));
+            desktopText = QString::number(i+1);
         } else if (m_displayedText==Name) { // Display name of desktop
-            painter->drawText(m_rects[i], Qt::AlignCenter, KWindowSystem::desktopName(i+1));
-         }
+            desktopText = KWindowSystem::desktopName(i+1);
+        }
+
+        QPixmap result = Plasma::PaintUtils::shadowText(desktopText, defaultTextColor, shadowColor, QPoint(1,2), 2);
+        painter->drawPixmap(m_rects[i].center() - result.rect().center(), result);
     }
 }
 
