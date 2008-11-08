@@ -21,24 +21,15 @@
 
 #include <QAction>
 #include <QApplication>
-//#include <QDesktopWidget>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QPainter>
 #include <QDBusConnection>
 #include <QDBusInterface>
 #include <QDBusMessage>
 
-//#include <KAuthorized>
 #include <KDebug>
-//#include <KWindowSystem>
-//#include <KActionCollection>
 #include <KConfigDialog>
 
 #include "plasma/corona.h"
 #include "plasma/theme.h"
-//#include "kworkspace/kworkspace.h"
-//#include "knewstuff2/engine.h"
 
 //TODO offer a way to change the theme and other such not-really-our-responsibility things
 
@@ -135,37 +126,6 @@ QList<QAction*> SaverDesktop::contextualActions()
     actions.append(m_lockDesktopAction);
 
     return actions;
-}
-
-void SaverDesktop::paintInterface(QPainter *painter,
-                                    const QStyleOptionGraphicsItem *option,
-                                    const QRect& contentsRect)
-{
-    //kDebug() << "paintInterface of background";
-
-    //TODO learn how the new wallpaper plugins work
-    painter->save();
-
-    if (painter->worldMatrix() == QMatrix()) {
-        // draw the background untransformed when possible;(saves lots of per-pixel-math)
-        painter->resetTransform();
-    }
-
-    // blit the background (saves all the per-pixel-products that blending does)
-    painter->setCompositionMode(QPainter::CompositionMode_Source);
-
-    QColor color = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
-    //FIXME should I use the contents rect or the exposed rect?
-    painter->fillRect(contentsRect, color);
-
-
-    // for pixmaps we draw only the exposed part (untransformed since the
-    // bitmapBackground already has the size of the viewport)
-    //painter->drawPixmap(option->exposedRect, m_bitmapBackground, option->exposedRect);
-    //kDebug() << "draw pixmap of background to" << option->exposedRect;
-
-    // restore transformation and composition mode
-    painter->restore();
 }
 
 void SaverDesktop::toggleLock()

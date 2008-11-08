@@ -22,11 +22,8 @@
 
 #include <QList>
 #include <QObject>
-#include <QStyleOptionGraphicsItem>
 
 #include <plasma/containment.h>
-//#include <plasma/animator.h>
-//#include <plasma/widgets/widget.h>
 
 class QAction;
 class QDBusMessage;
@@ -49,14 +46,6 @@ public:
 
     void constraintsEvent(Plasma::Constraints constraints);
     QList<QAction*> contextualActions();
-
-    /**
-     * Paints a default background colour. Nothing fancy, but that's what plugins
-     * are for. Reimplemented from Plasma::Containment;
-     */
-    void paintInterface(QPainter *painter,
-                        const QStyleOptionGraphicsItem *option,
-                        const QRect& contentsRect);
 
 signals:
     void locked();
