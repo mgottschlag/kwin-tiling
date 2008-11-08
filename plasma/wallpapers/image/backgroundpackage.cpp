@@ -143,14 +143,13 @@ QImage Background::defaultScreenshot()
 class BackgroundPackageStructure : public PackageStructure
 {
 public:
-    static const PackageStructure::Ptr self();
+    BackgroundPackageStructure(QObject *parent = 0);
 private:
-    BackgroundPackageStructure(); // should be used as a singleton
     void addResolution(const char *res);
 };
 
-BackgroundPackageStructure::BackgroundPackageStructure()
-: PackageStructure(0, "Background")
+BackgroundPackageStructure::BackgroundPackageStructure(QObject *parent)
+: PackageStructure(parent, "Background")
 {
     QStringList mimetypes;
     mimetypes << "image/svg" << "image/png" << "image/jpeg" << "image/jpg";
@@ -161,21 +160,9 @@ BackgroundPackageStructure::BackgroundPackageStructure()
 }
 
 
-const PackageStructure::Ptr BackgroundPackageStructure::self()
-{
-    static BackgroundPackageStructure::Ptr instance(0);
-
-    if (!instance) {
-        instance = new BackgroundPackageStructure;
-    }
-
-    return instance;
-}
-
-
 
 BackgroundPackage::BackgroundPackage(const QString &path, float ratio)
-: Package(path, BackgroundPackageStructure::self())
+: Package(path, KSharedPtr<Plasma::PackageStructure>(new BackgroundPackageStructure(this)))
 , m_path(path)
 , m_ratio(ratio)
 {
