@@ -76,6 +76,7 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet, const
 
     Plasma::ToolTipManager::self()->registerWidget(this);
     setPreferredSize(basicPreferredSize());
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(syncActiveRect()));
 }
 
 QSize AbstractTaskItem::basicPreferredSize() const
@@ -207,7 +208,7 @@ void AbstractTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event)
 
-    fadeBackground("hover", 75, true);
+    fadeBackground("hover", 175, true);
 }
 
 void AbstractTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
@@ -291,14 +292,6 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
     }
 }
 
-void AbstractTaskItem::resizeEvent(QGraphicsSceneResizeEvent *event)
-{
-    //kDebug();
-    // we need to lose precision here because all our drawing later on
-    // is done with ints, not floats
-    m_applet->resizeItemBackground(event->newSize().toSize());
-}
-
 void AbstractTaskItem::paint(QPainter *painter,
                              const QStyleOptionGraphicsItem *option,
                              QWidget *widget)
@@ -312,6 +305,26 @@ void AbstractTaskItem::paint(QPainter *painter,
     drawTask(painter, option, widget);
 }
 
+void AbstractTaskItem::syncActiveRect()
+{
+    Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
+
+    itemBackground->setElementPrefix("normal");
+
+    qreal left, top, right, bottom;
+    itemBackground->getMargins(left, top, right, bottom);
+
+    itemBackground->setElementPrefix("focus");
+    qreal activeLeft, activeTop, activeRight, activeBottom;
+    itemBackground->getMargins(activeLeft, activeTop, activeRight, activeBottom);
+
+    m_activeRect = QRectF(QPointF(0, 0), size());
+    m_activeRect.adjust(left - activeLeft, top - activeTop,
+                        -(right - activeRight), -(bottom - activeBottom));
+
+    itemBackground->setElementPrefix(m_backgroundPrefix);
+}
+
 void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
     // Do not paint with invalid sizes, the happens when the layout is being initialized
@@ -323,12 +336,38 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     -do not use size() directly because this introduces the blackline syndrome.
     -This line is only needed when we have different items in the taskbar because of an expanded group for example. otherwise the resizing in the resizeEvent is sufficient
     */
-    m_applet->resizeItemBackground(geometry().size().toSize());
     Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
+
+    //if the size is changed have to resize all the elements
+    if (itemBackground->size() != size().toSize() && itemBackground->size() != m_activeRect.size().toSize()) {
+        syncActiveRect();
+        Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
+
+        itemBackground->setElementPrefix("focus");
+        m_applet->resizeItemBackground(m_activeRect.size().toSize());
+        itemBackground->setElementPrefix("normal");
+        m_applet->resizeItemBackground(size().toSize());
+        itemBackground->setElementPrefix("minimized");
+        m_applet->resizeItemBackground(size().toSize());
+        itemBackground->setElementPrefix("attention");
+        m_applet->resizeItemBackground(size().toSize());
+        itemBackground->setElementPrefix("hover");
+        m_applet->resizeItemBackground(m_activeRect.size().toSize());
+
+        //restore the prefix
+        itemBackground->setElementPrefix(m_backgroundPrefix);
+    }
+
+   
 
     if (!m_animId && ~option->state & QStyle::State_Sunken) {
         itemBackground->setElementPrefix(m_backgroundPrefix);
-        itemBackground->paintFrame(painter);
+        if (itemBackground->frameSize() == m_activeRect.size().toSize()) {
+            itemBackground->paintFrame(painter, m_activeRect.topLeft());
+        } else {
+            itemBackground->paintFrame(painter);
+        }
+        //itemBackground->paintFrame(painter, backgroundPosition);
         return;
     }
 
@@ -336,7 +375,7 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     QPixmap oldBackground;
 
     if (option->state & QStyle::State_Sunken) {
-        oldBackground = QPixmap(geometry().size().toSize());
+        oldBackground = QPixmap(m_activeRect.size().toSize());
         oldBackground.fill(Qt::transparent);
         m_alpha = 0.4;
     } else {
@@ -344,9 +383,13 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     }
 
     itemBackground->setElementPrefix(m_backgroundPrefix);
-    QPixmap result = Plasma::PaintUtils::transition( oldBackground, itemBackground->framePixmap(), m_alpha);
+    QPixmap result = Plasma::PaintUtils::transition(oldBackground, itemBackground->framePixmap(), m_alpha);
 
-    painter->drawPixmap(QPoint(0, 0), result);
+    if (result.size() == m_activeRect.size().toSize()) {
+        painter->drawPixmap(m_activeRect.topLeft(), result);
+    } else {
+        painter->drawPixmap(QPoint(0,0), result);
+    }
 
     return;
 }

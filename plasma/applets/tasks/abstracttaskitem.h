@@ -148,7 +148,6 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void timerEvent(QTimerEvent *event);
-    void resizeEvent(QGraphicsSceneResizeEvent *event);
     void paint(QPainter *painter,const QStyleOptionGraphicsItem *option,QWidget *widget);
 
     /** Draws the background for the task item. */
@@ -185,6 +184,7 @@ protected:
 
 protected Q_SLOTS:
     void animationUpdate(qreal progress);
+    void syncActiveRect();
 
 protected:
     // area of item occupied by task's icon
@@ -215,6 +215,7 @@ protected:
     qreal m_alpha;
     QString m_oldBackgroundPrefix;
     QString m_backgroundPrefix;
+    QRectF m_activeRect;
 
     QPointF _dragOffset;
     QTime m_lastUpdate;

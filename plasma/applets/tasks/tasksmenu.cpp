@@ -50,7 +50,7 @@ TasksMenu::TasksMenu(QWidget *parent, TaskGroup *group, GroupManager *groupManag
 
     m_itemBackground = new Plasma::FrameSvg(this);
     m_itemBackground->setImagePath("widgets/tasks");
-    m_itemBackground->setElementPrefix("hover");
+    m_itemBackground->setElementPrefix("normal");
 
     //since the thing gets destroyed on close we can set this just one time for now
     const int topHeight = m_background->marginSize(Plasma::TopMargin);
@@ -111,8 +111,8 @@ void TasksMenu::paintEvent(QPaintEvent *event)
                               QSize(actionRect.width()-iconRect.width()-3, actionRect.height()), actionRect));
 
         if (activeAction() == a) {
-            m_itemBackground->resizeFrame(actionRect.size() + QSize(4,4));
-            m_itemBackground->paintFrame(&painter, actionRect.topLeft() - QPoint(2,2));
+            m_itemBackground->resizeFrame(actionRect.size());
+            m_itemBackground->paintFrame(&painter, actionRect.topLeft());
         }
 
         painter.drawPixmap(iconRect, a->icon().pixmap(iconRect.size()));

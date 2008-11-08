@@ -322,7 +322,7 @@ void Tasks::resizeItemBackground(const QSizeF &size)
     }
 
 
-    m_taskItemBackground->clearCache();
+    //m_taskItemBackground->clearCache();
     m_taskItemBackground->resizeFrame(size);
     //get the margins now
     m_taskItemBackground->getMargins(m_leftMargin, m_topMargin, m_rightMargin, m_bottomMargin);
