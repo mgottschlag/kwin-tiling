@@ -180,6 +180,7 @@ void X11EmbedContainer::paintEvent(QPaintEvent *event)
     }
 
     if (!d->picture) {
+        d->updatingBackground = true;
         QTimer::singleShot(0, this, SLOT(updateBackgroundImage()));
         return;
     }
@@ -206,7 +207,6 @@ void X11EmbedContainer::updateBackgroundImage()
 
     QImage bgImage = QImage(size(), QImage::Format_RGB32);
 
-    d->updatingBackground = true;
     topWidget->render(&bgImage, QPoint(0, 0), QRect(mapTo(topWidget, QPoint(0, 0)), size()));
     d->updatingBackground = false;
 
