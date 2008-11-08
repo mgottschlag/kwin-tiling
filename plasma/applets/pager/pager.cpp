@@ -1023,7 +1023,8 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
         }
 
         QPixmap result = Plasma::PaintUtils::shadowText(desktopText, defaultTextColor, shadowColor, QPoint(1,2), 2);
-        painter->drawPixmap(m_rects[i].center() - result.rect().center(), result);
+        //take also shadow position and radius into account
+        painter->drawPixmap(m_rects[i].center() - result.rect().center() + QPoint(1,3), result);
     }
 }
 
