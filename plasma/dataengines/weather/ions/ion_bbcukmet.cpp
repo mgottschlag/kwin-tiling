@@ -217,10 +217,6 @@ bool UKMETIon::updateIonSource(const QString& source)
 
     QStringList sourceAction = source.split('|');
 
-    if (sourceAction.size() < 4) {
-        setData(source, "validate", QString("bbcukmet|timeout"));
-        return true;
-    } 
     if (sourceAction[1] == QString("validate")) {
         // Look for places to match
         findPlace(sourceAction[2], source);
@@ -755,7 +751,6 @@ void UKMETIon::validate(const QString& source)
 
     if (!d->m_locations.count()) {
         QStringList invalidPlace = source.split('|');
-
         if (d->m_place[QString("bbcukmet|%1").arg(invalidPlace[2])].place.isEmpty()) {
             setData(source, "validate", QString("bbcukmet|invalid|multiple|%1").arg(invalidPlace[2]));
         }
