@@ -150,6 +150,8 @@ void X11EmbedPainter::performUpdates()
 
     foreach (X11EmbedContainer *container, d->containers) {
         container->setUpdatesEnabled(true);
+        disconnect(container, SIGNAL(destroyed(QObject*)),
+                   this, SLOT(removeContainer(QObject*)));
     }
 
     d->containers.clear();
