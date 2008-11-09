@@ -20,6 +20,8 @@
 #include "kcategorizeditemsviewmodels_p.h"
 #include <klocale.h>
 
+#define COLUMN_COUNT 4
+
 namespace KCategorizedItemsViewModels {
 
 // AbstractItem
@@ -110,7 +112,7 @@ QStandardItemModel *DefaultItemFilterProxyModel::sourceModel() const
 int DefaultItemFilterProxyModel::columnCount(const QModelIndex &index) const
 {
     Q_UNUSED(index);
-    return 3;
+    return COLUMN_COUNT;
 }
 
 QVariant DefaultItemFilterProxyModel::data(const QModelIndex &index, int role) const
@@ -250,7 +252,7 @@ QMimeData *DefaultItemFilterProxyModel::InnerProxyModel::mimeData(
 int DefaultItemFilterProxyModel::InnerProxyModel::columnCount(const QModelIndex &index) const
 {
     Q_UNUSED(index);
-    return 3; //FIXME: a hardcoded magic number that appears in two places CANNOT be good
+    return COLUMN_COUNT;
 }
 
 void DefaultItemFilterProxyModel::InnerProxyModel::setSourceModel(QStandardItemModel *sourceModel)

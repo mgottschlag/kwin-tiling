@@ -78,6 +78,11 @@ public Q_SLOTS:
      */
     void openWidgetFile();
 
+    /**
+     * Shows infos about applets.
+     */
+    void infoAboutApplet(const QString &name);
+
 private:
     Q_PRIVATE_SLOT(d, void appletAdded(Plasma::Applet*))
     Q_PRIVATE_SLOT(d, void appletRemoved(Plasma::Applet*))

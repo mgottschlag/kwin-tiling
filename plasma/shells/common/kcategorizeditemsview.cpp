@@ -64,6 +64,8 @@ KCategorizedItemsView::KCategorizedItemsView(QWidget * parent, Qt::WindowFlags f
 
     connect (m_delegate, SIGNAL(destroyApplets(const QString)),
              parent, SLOT(destroyApplets(const QString)));
+    connect (m_delegate, SIGNAL(infoAboutApplet(const QString &)),
+             parent, SLOT(infoAboutApplet(const QString &)));
 
     comboFilters->setItemDelegate(new KCategorizedItemsViewFilterDelegate(this));
 
@@ -149,7 +151,7 @@ void KCategorizedItemsView::itemActivated(const QModelIndex &index)
     // don't emit activated signal for "favicon" and "remove applet"
     // columns so double clicking on these columns won't unexpectedly
     // add an applet to the containment
-    if (index.column() == 1 || index.column() == 2) {
+    if (index.column() == 1 || index.column() == 2 || index.column() == 3) {
         return;
     }
 
@@ -161,7 +163,7 @@ void KCategorizedItemsView::itemDoubleClicked(const QModelIndex &index)
     // don't emit activated signal for "favicon" and "remove applet"
     // columns so double clicking on these columns won't unexpectedly
     // add an applet to the containment
-    if (index.column() == 1 || index.column() == 2) {
+    if (index.column() == 1 || index.column() == 2 || index.column() == 3) {
         return;
     }
 
@@ -184,6 +186,7 @@ void KCategorizedItemsView::updateColumnsWidth(bool force)
     itemsView->setColumnWidth(0, m_delegate->columnWidth(0, m_viewWidth));
     itemsView->setColumnWidth(1, m_delegate->columnWidth(1, m_viewWidth));
     itemsView->setColumnWidth(2, m_delegate->columnWidth(2, m_viewWidth));
+    itemsView->setColumnWidth(3, m_delegate->columnWidth(3, m_viewWidth));
 }
 
 void KCategorizedItemsView::addEmblem(const QString &title, const QIcon &icon,

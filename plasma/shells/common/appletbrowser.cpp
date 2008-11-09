@@ -30,6 +30,10 @@
 #include <KPushButton>
 #include <KServiceTypeTrader>
 #include <KStandardAction>
+#include <KAboutData>
+#include <KAboutApplicationDialog>
+#include <KComponentData>
+#include <KPluginLoader>
 
 #include <Plasma/Applet>
 #include <Plasma/Corona>
@@ -318,6 +322,33 @@ void AppletBrowserWidget::destroyApplets(const QString &name)
 
     d->runningApplets.remove(name);
     d->itemModel.setRunningApplets(name, 0);
+}
+
+void AppletBrowserWidget::infoAboutApplet(const QString &name)
+{
+    if (!d->containment) {
+        return;
+    }
+
+    KPluginInfo::List applets = Plasma::Applet::listAppletInfo();
+    foreach (const KPluginInfo &info, applets) {
+        if (info.name() == name) {
+            KAboutData aboutData = KAboutData(info.name().toUtf8(),
+                                              info.name().toUtf8(),
+                                              ki18n(info.name().toUtf8()),
+                                              info.version().toUtf8(), ki18n(info.comment().toUtf8()),
+                                              info.fullLicense().key(), ki18n(QByteArray()), ki18n(QByteArray()), info.website().toLatin1(),
+                                              info.email().toLatin1());
+
+            aboutData.setProgramIconName(info.icon());
+
+            aboutData.addAuthor(ki18n(info.author().toUtf8()), ki18n(QByteArray()), info.email().toLatin1());
+
+            KAboutApplicationDialog aboutDialog(&aboutData, this);
+            aboutDialog.exec();
+            break;
+        }
+    }
 }
 
 void AppletBrowserWidget::downloadWidgets(const QString &type)

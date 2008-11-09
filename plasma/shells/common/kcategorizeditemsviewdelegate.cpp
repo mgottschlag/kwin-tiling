@@ -38,6 +38,7 @@
 KCategorizedItemsViewDelegate::KCategorizedItemsViewDelegate(QObject * parent)
         : QItemDelegate(parent), m_favoriteIcon("bookmarks"),
         m_favoriteAddIcon("list-add"), m_removeIcon("list-remove"),
+        m_infoIcon("dialog-information"),
         m_onFavoriteIconItem(NULL)
 {
     m_parent = (KCategorizedItemsView *) parent;
@@ -65,6 +66,8 @@ void KCategorizedItemsViewDelegate::paint(QPainter *painter,
     case 2:
         paintColRemove(painter, option, item);
         break;
+    case 3:
+        paintColInfo(painter, option, item);
     default:
         kDebug() << "unexpected column";
     }
@@ -241,6 +244,31 @@ void KCategorizedItemsViewDelegate::paintColFav(
     }
 }
 
+void KCategorizedItemsViewDelegate::paintColInfo(
+    QPainter *painter, const QStyleOptionViewItem &option,
+    const KCategorizedItemsViewModels::AbstractItem *item) const
+{
+    QIcon::Mode infoMode = QIcon::Normal;
+    if (!(option.state & QStyle::State_MouseOver)) {
+        return;
+    }
+
+    int left = option.rect.left();
+    int top = option.rect.top();
+    int width = option.rect.width();
+
+    // Painting info icon column
+
+    m_infoIcon.paint(
+        painter,
+        left + width - FAV_ICON_SIZE - UNIVERSAL_PADDING,
+        top + UNIVERSAL_PADDING,
+        FAV_ICON_SIZE,
+        FAV_ICON_SIZE,
+        Qt::AlignCenter,
+        infoMode);
+}
+
 void KCategorizedItemsViewDelegate::paintColRemove(
     QPainter *painter, const QStyleOptionViewItem &option,
     const KCategorizedItemsViewModels::AbstractItem *item) const
@@ -293,6 +321,9 @@ bool KCategorizedItemsViewDelegate::editorEvent(
             item->setRunning(0);
             emit destroyApplets(item->name());
             return true;
+        } else if (index.column() == 3) {
+            emit infoAboutApplet(item->name());
+            return true;
         }
     }
 
@@ -308,9 +339,9 @@ QSize KCategorizedItemsViewDelegate::sizeHint(const QStyleOptionViewItem &option
 
 int KCategorizedItemsViewDelegate::columnWidth (int column, int viewWidth) const {
     if (column != 0) {
-        return FAV_ICON_SIZE + 2 * UNIVERSAL_PADDING;
+        return FAV_ICON_SIZE + 3 * UNIVERSAL_PADDING;
     } else {
-        return viewWidth - 2 * columnWidth(1, viewWidth);
+        return viewWidth - 3 * columnWidth(1, viewWidth);
     }
 }
 

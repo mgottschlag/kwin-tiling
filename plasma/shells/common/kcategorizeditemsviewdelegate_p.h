@@ -54,13 +54,15 @@ public:
                      const QModelIndex &index);
 
 Q_SIGNALS:
-    void destroyApplets(const QString name);
+    void destroyApplets(const QString &name);
+    void infoAboutApplet(const QString &name);
 private:
 
     KCategorizedItemsView *m_parent;
     KIcon m_favoriteIcon;
     KIcon m_favoriteAddIcon;
     KIcon m_removeIcon;
+    KIcon m_infoIcon;
 
     mutable KCategorizedItemsViewModels::AbstractItem *m_onFavoriteIconItem;
 
@@ -71,6 +73,8 @@ private:
                      const KCategorizedItemsViewModels::AbstractItem * item) const;
     void paintColRemove(QPainter *painter, const QStyleOptionViewItem &option,
                         const KCategorizedItemsViewModels::AbstractItem * item) const;
+    void paintColInfo(QPainter *painter, const QStyleOptionViewItem &option,
+                      const KCategorizedItemsViewModels::AbstractItem * item) const;
 
     int calcItemHeight(const QStyleOptionViewItem &option) const;
 };
