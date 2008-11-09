@@ -1,0 +1,35 @@
+[Desktop Entry]
+Name=Application Job Information
+Name[el]=Πληροφορίες εργασιών εφαρμογών
+Name[fr]=Information sur une tâche d'application
+Name[gl]=Información de tarefas de programa
+Name[km]=ព័ត៌មាន​​ការងារ​របស់​កម្មវិធី
+Name[pt]=Informação das Tarefas da Aplicação
+Name[pt_BR]=Informação das Tarefas da Aplicação
+Name[sv]=Information om programjobb
+Name[uk]=Відомості про завдання програми
+Name[x-test]=xxApplication Job Informationxx
+Comment=Kuiserver data for Plasmoids
+Comment[el]=Δεδομένα Kuiserver για τα πλασμοειδή
+Comment[es]=Datos de Kuiserver para plasmoides
+Comment[et]=Kuiserveri andmed plasmoididele
+Comment[fr]=Données Kuiserver pour les Plasmoïdes
+Comment[ga]=Sonraí Kuiserver le haghaidh Plasmoids
+Comment[gl]=Dados de Kuiserver para Plasmoides
+Comment[km]=ទិន្នន័យ​របស់ Kuiserver សម្រាប់ Plasmoids
+Comment[pt]=Dados do Kuiserver para os plasmóides
+Comment[pt_BR]=Dados do Kuiserver para os plasmóides
+Comment[sv]=Kuiserver-data för Plasmoider
+Comment[uk]=Дані Kuiserver для плазмоїдів
+Comment[x-test]=xxKuiserver data for Plasmoidsxx
+Type=Service
+X-KDE-ServiceTypes=Plasma/DataEngine
+Icon=tool-animator
+X-KDE-Library=plasma_engine_applicationjobs
+
+X-KDE-PluginInfo-Author=
+X-KDE-PluginInfo-Email=
+X-KDE-PluginInfo-Name=applicationjobs
+X-KDE-PluginInfo-Version=
+X-KDE-PluginInfo-Website=
+X-KDE-PluginInfo-Category=
