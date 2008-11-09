@@ -1,6 +1,7 @@
 add_subdirectory(bookmarks)
 add_subdirectory(calculator)
 add_subdirectory(locations)
+add_subdirectory(places)
 add_subdirectory(services)
 if(NOT WIN32)
 add_subdirectory(sessions)
