@@ -586,7 +586,7 @@
            <string>Choose your own font color</string>
           </property>
           <property name="whatsThis" >
-           <string>When checked you can choose a custom color for the clock font by clicking on the font widget on the right.</string>
+           <string>When checked you can choose a custom color for the clock font by clicking on the color widget on the right.</string>
           </property>
           <property name="text" >
            <string>Use custom color</string>
