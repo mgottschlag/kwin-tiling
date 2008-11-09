@@ -47,6 +47,7 @@ public:
 
 private slots:
     void performUpdates();
+    void removeContainer(QObject *container);
 
 private:
     class Private;

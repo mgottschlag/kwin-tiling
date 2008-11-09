@@ -89,7 +89,14 @@ X11EmbedPainter::~X11EmbedPainter()
 
 void X11EmbedPainter::updateContainer(X11EmbedContainer *container)
 {
+    if (d->containers.contains(container)) {
+        return;
+    }
+
     d->containers.insert(container);
+
+    connect(container, SIGNAL(destroyed(QObject*)),
+            this, SLOT(removeContainer(QObject*)));
 
     if (!d->delayedPaintTimer.isActive()) {
         int msecsToNextPaint = MIN_TIME_BETWEEN_PAINTS - d->lastPaintTime.elapsed();
@@ -100,6 +107,12 @@ void X11EmbedPainter::updateContainer(X11EmbedContainer *container)
             d->delayedPaintTimer.start(0);
         }
     }
+}
+
+
+void X11EmbedPainter::removeContainer(QObject *container)
+{
+    d->containers.remove(static_cast<X11EmbedContainer*>(container));
 }
 
 
