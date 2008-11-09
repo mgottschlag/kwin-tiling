@@ -87,7 +87,8 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_batteryFadeIn(true),
       m_isHovered(false),
       m_firstRun(true),
-      m_numOfBattery(0)
+      m_numOfBattery(0),
+      m_acadapter_plugged(false)
 {
     kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
