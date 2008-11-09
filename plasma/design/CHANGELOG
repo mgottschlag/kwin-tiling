@@ -19,6 +19,7 @@ libplasma
         * Toolbox can be positioned in any corner or edge
     * Corona
         * addOffscreenWidget/removeOffscreenWidget: manage canvas items that should not appear in a primary view (e.g. Extenders)
+        * "screen" information querying added to Corona to allow different approaches for viewports; e.g. using KWindowSystem and QDesktopWidget for the Plasma shell, but window coordinates for plasmodviewer or other non-desktop apps.
     * Package system
         * PackageStructure supports arbitrary URIs (in addition to auto-discovery for package) structure description files.
         * Package removal
@@ -89,12 +90,20 @@ Plasma Desktop Shell
 Other Shells
 ------------
 * NEW: plasma-mid, a shell for mobile internet devices
+* plasmoidviewer new command line options:
+    * --list lists known applets
+    * --formfactor (-f)
+    * --containment (-c)
+    * --wallpaper (-w)
+    * --pixmapcache (-p)
 
 Tools
 -----
 * Plasma Engine Explorer
     * Remove/update sources via context menu
     * NEW: Plasma::Service interaction UI, using DataEngine::serviceForSource
+* plasmapkg
+    * now supports listing, updating and removing packages
 * NEW: Destkop Theme Details
     * Customize and create new desktop themes with kcmshell4 destkopthemedetails 
 
@@ -114,11 +123,17 @@ Plugins/Addons
         * NEW: Bouncing ball, throw it and watch it bounce around!
         * NEW: Calendar
         * NEW: Character selector
+        * NEW: Eyes
         * Task bar
             * Grouping: manually or by application
             * Sorting: manually or by program name
             * Limit windows shown by desktop, screen or minimized status
             * Multiple rows of windows
+            * Theming improved to look more consistent with other buttons and generally be more sexy
+        * System tray
+            * Supports hiding of icons
+            * Supports non-Freedesktop.org icons (e.g. full plasmoids or future creations) through a protocol abstraction
+            * Listens for and displays popup notifications
         * Now Playing media player controls: play, pause, stop, switch tracks and more from Plasma
         * Notes
             * Custom colors
@@ -160,11 +175,6 @@ Plugins/Addons
         * Powermanagement
             * Added a new source for managing PowerDevil profiles
 
-    * ScriptEngines
-        * NEW: Google Gadgets
-        * NEW: Python Plasmoids
-        * MacOS Dashboard widgets: improved JS API compliance
-
     * Runners
         * NEW: Kate sessions runner
         * NEW: Recent documents runner
@@ -172,8 +182,16 @@ Plugins/Addons
         * NEW: Konqueror history runner
         * NEW: Konqueror sessions runner
         * NEW: Konsole sessions runner
+        * NEW: Nepomuk search runner
+        * NEW: Power management controller (via PowerDevil)
         * NEW: KFilePlacesModel (as seen in dolphin, file dialog, kickoff, etc) runner
         * Converter runner now does speed, masses and nautical distances; conversion code moved to a shared lib
+
+    * ScriptEngines
+        * NEW: Google Gadgets
+        * NEW: Python Plasmoids
+        * NEW: Ruby Plasmoids
+        * MacOS Dashboard widgets: improved JS API compliance
 
     * Wallpapers
         * NEW: Image, Slideshow and Color plugins, based on previous code
@@ -197,9 +215,11 @@ KRunner
 * Features
     * Plasma Screensaver: Plasma widget overlay for screensavers
     * D-Bus autoactivation, so even if it has perma-crashed, selecting Run Command from Plasma will resurect it
+    * Alternate user interface: QuickSand
 
 * Significant Fixes
     * Screensaver activation fixed to compensate for system clock changes
+    * Several crashes related to access of non thread safe code
 
 Platforms
 ---------
