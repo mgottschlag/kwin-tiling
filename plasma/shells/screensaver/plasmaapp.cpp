@@ -49,7 +49,6 @@
 #include <KCmdLineArgs>
 #include <KWindowSystem>
 #include <KAction>
-#include <KConfigDialog>
 
 //#include <ksmserver_interface.h>
 
@@ -364,8 +363,6 @@ void PlasmaApp::createView(Plasma::Containment *containment)
     connect(containment, SIGNAL(locked()), SLOT(hideDialogs()));
     connect(containment, SIGNAL(locked()), m_view, SLOT(disableSetupMode()));
     connect(containment, SIGNAL(unlocked()), SLOT(showDialogs()));
-    //connect(containment, SIGNAL(delegateConfigurationInterface(KConfigDialog *)),
-    //        SLOT(createConfigurationInterface(KConfigDialog *)));
     connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
             this, SLOT(configureContainment(Plasma::Containment*)));
 
@@ -494,6 +491,7 @@ void PlasmaApp::configDialogRemoved(QObject* dialog)
     m_configDialog = 0;
 }
 
+/*
 void PlasmaApp::createConfigurationInterface(KConfigDialog *parent)
 {
     //FIXME put this stuff into BackgroundDialog
@@ -515,6 +513,7 @@ void PlasmaApp::configAccepted()
     setActiveOpacity(ui.activeSlider->value() / 10.0);
     setIdleOpacity(ui.idleSlider->value() / 10.0);
 }
+*/
 
 void PlasmaApp::lock()
 {

@@ -25,8 +25,6 @@
 
 #include <KUniqueApplication>
 
-#include "ui_saverconfig.h"
-
 namespace Plasma
 {
     class Containment;
@@ -96,8 +94,6 @@ private Q_SLOTS:
     void dialogDestroyed(QObject *obj);
     void hideDialogs();
     void showDialogs();
-    void createConfigurationInterface(KConfigDialog *parent);
-    void configAccepted();
     void configureContainment(Plasma::Containment*);
     void configDialogRemoved(QObject* dialog);
 
@@ -110,7 +106,6 @@ private:
     Plasma::Corona *m_corona;
     SaverView *m_view;
     QList<QWidget*> m_dialogs;
-    Ui::saverConfig ui;
     BackgroundDialog *m_configDialog;
 
     qreal m_activeOpacity;
