@@ -22,7 +22,6 @@
 
 #include "saverview.h"
 
-#include <QAction>
 #include <QKeyEvent>
 #include <QTimer>
 

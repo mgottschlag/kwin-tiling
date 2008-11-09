@@ -48,7 +48,6 @@
 #include <KDebug>
 #include <KCmdLineArgs>
 #include <KWindowSystem>
-#include <KAction>
 
 //#include <ksmserver_interface.h>
 

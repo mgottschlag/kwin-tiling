@@ -33,7 +33,6 @@ namespace Plasma
 
 class SaverView;
 class BackgroundDialog;
-class KConfigDialog;
 
 class PlasmaApp : public KUniqueApplication
 {
