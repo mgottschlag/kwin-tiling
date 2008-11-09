@@ -129,6 +129,10 @@ void ToolButton::paintEvent(QPaintEvent *event)
 
 void ToolButton::enterEvent(QEvent *event)
 {
+    if (isChecked()) {
+        return;
+    }
+
     const int FadeInDuration = 75;
 
     if (m_animationId) {
@@ -143,6 +147,10 @@ void ToolButton::enterEvent(QEvent *event)
 
 void ToolButton::leaveEvent(QEvent *event)
 {
+    if (isChecked()) {
+        return;
+    }
+
     const int FadeOutDuration = 150;
 
     if (m_animationId) {
