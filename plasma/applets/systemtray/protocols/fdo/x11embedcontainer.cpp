@@ -1,5 +1,5 @@
 /***************************************************************************
- *   systemtraywidget.h                                                    *
+ *   x11embedcontainer.cpp                                                 *
  *                                                                         *
  *   Copyright (C) 2008 Jason Stubbs <jasonbstubbs@gmail.com>              *
  *                                                                         *
@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 #include "x11embedcontainer.h"
+#include "x11embedpainter.h"
 #include "fdoselectionmanager.h"
 
 // KDE
@@ -57,7 +58,7 @@ public:
     Private(X11EmbedContainer *q)
         : q(q),
           picture(None),
-          updatingBackground(false)
+          updatesEnabled(true)
     {
         lastPaintTime = QTime::currentTime();
         lastPaintTime.addMSecs(-MIN_TIME_BETWEEN_PAINTS);
@@ -81,8 +82,7 @@ public:
 
     XWindowAttributes attr;
     Picture picture;
-    QImage bgImage;
-    bool updatingBackground;
+    bool updatesEnabled;
     QTime lastPaintTime;
     QTimer delayedPaintTimer;
 };
@@ -183,11 +183,17 @@ void X11EmbedContainer::ensureValidSize()
 }
 
 
+void X11EmbedContainer::setUpdatesEnabled(bool enabled)
+{
+    d->updatesEnabled = enabled;
+}
+
+
 void X11EmbedContainer::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
 
-    if (d->updatingBackground || d->delayedPaintTimer.isActive()) {
+    if (!d->updatesEnabled || d->delayedPaintTimer.isActive()) {
         return;
     }
 
@@ -201,8 +207,7 @@ void X11EmbedContainer::paintEvent(QPaintEvent *event)
     d->lastPaintTime.start();
 
     if (!d->picture) {
-        d->updatingBackground = true;
-        QTimer::singleShot(0, this, SLOT(updateBackgroundImage()));
+        X11EmbedPainter::self()->updateContainer(this);
         return;
     }
 
@@ -219,71 +224,39 @@ void X11EmbedContainer::paintEvent(QPaintEvent *event)
 }
 
 
-void X11EmbedContainer::updateBackgroundImage()
+void X11EmbedContainer::setBackgroundPixmap(QPixmap background)
 {
-    QWidget *topWidget = this;
-    while (topWidget->parentWidget()) {
-        topWidget = topWidget->parentWidget();
-    }
-
-    QImage bgImage = QImage(size(), QImage::Format_RGB32);
-
-    topWidget->render(&bgImage, QPoint(0, 0), QRect(mapTo(topWidget, QPoint(0, 0)), size()));
-    d->updatingBackground = false;
-
-    // FIXME: The client background isn't painted correctly after a parent
-    // widget is reparented, so currently need to update it all the time.
-    //if (d->bgImage != bgImage) {
-        d->bgImage = bgImage;
-        d->updateClientBackground();
-    //}
-}
-
-
-void X11EmbedContainer::Private::updateClientBackground()
-{
-    if (!q->clientWinId()) {
+    if (!clientWinId()) {
         return;
     }
 
-    QPixmap bgPixmap = QPixmap::fromImage(bgImage);
-
     Display *display = QX11Info::display();
-    Pixmap bg = XCreatePixmap(display, q->clientWinId(), q->width(), q->height(), attr.depth);
+    Pixmap bg = XCreatePixmap(display, clientWinId(), width(), height(), d->attr.depth);
 
-    XRenderPictFormat *format = XRenderFindVisualFormat(display, attr.visual);
+    XRenderPictFormat *format = XRenderFindVisualFormat(display, d->attr.visual);
     Picture picture = XRenderCreatePicture(display, bg, format, 0, 0);
 
-    XRenderComposite(display, PictOpSrc, bgPixmap.x11PictureHandle(),
-                     None, picture, 0, 0, 0, 0, 0, 0, q->width(), q->height());
+    XRenderComposite(display, PictOpSrc, background.x11PictureHandle(),
+                     None, picture, 0, 0, 0, 0, 0, 0, width(), height());
 
-    XSetWindowBackgroundPixmap(display, q->clientWinId(), bg);
+    XSetWindowBackgroundPixmap(display, clientWinId(), bg);
 
     XRenderFreePicture(display, picture);
     XFreePixmap(display, bg);
-
-    sendExposeToClient();
-}
-
-
-void
-X11EmbedContainer::Private::sendExposeToClient()
-{
-    Display *display = QX11Info::display();
 
     XExposeEvent expose;
     expose.type = Expose;
     expose.serial = 0;
     expose.send_event = True;
     expose.display = display;
-    expose.window = q->clientWinId();
+    expose.window = clientWinId();
     expose.x = 0;
     expose.y = 0;
-    expose.width = q->width();
-    expose.height = q->height();
+    expose.width = width();
+    expose.height = height();
     expose.count = 0;
 
-    XSendEvent(display, q->clientWinId(), True, 0, (XEvent*)&expose);
+    XSendEvent(display, clientWinId(), True, 0, (XEvent*)&expose);
 }
 
 

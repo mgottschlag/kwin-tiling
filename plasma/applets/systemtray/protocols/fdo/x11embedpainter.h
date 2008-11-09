@@ -1,5 +1,5 @@
 /***************************************************************************
- *   x11embedcontainer.h                                                   *
+ *   x11embedpainter.h                                                     *
  *                                                                         *
  *   Copyright (C) 2008 Jason Stubbs <jasonbstubbs@gmail.com>              *
  *                                                                         *
@@ -19,10 +19,12 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef X11EMBEDCONTAINER_H
-#define X11EMBEDCONTAINER_H
+#ifndef X11EMBEDPAINTER_H
+#define X11EMBEDPAINTER_H
 
-#include <QtGui/QX11EmbedContainer>
+#include "x11embedcontainer.h"
+
+#include <QtCore/QObject>
 
 
 namespace SystemTray
@@ -30,23 +32,21 @@ namespace SystemTray
 namespace FDO
 {
 
-class X11EmbedContainer : public QX11EmbedContainer
+class X11EmbedPainter : public QObject
 {
     Q_OBJECT
 
 public:
-    X11EmbedContainer(QWidget *parent = 0);
-    ~X11EmbedContainer();
+    class Singleton;
+    static X11EmbedPainter* self();
 
-    void embedSystemTrayClient(WId id);
-    void setUpdatesEnabled(bool enabled);
-    void setBackgroundPixmap(QPixmap background);
+    X11EmbedPainter();
+    ~X11EmbedPainter();
 
-protected:
-    void paintEvent(QPaintEvent *event);
+    void updateContainer(X11EmbedContainer *container);
 
 private slots:
-    void ensureValidSize();
+    void performUpdates();
 
 private:
     class Private;
