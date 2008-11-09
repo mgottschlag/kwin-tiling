@@ -169,6 +169,7 @@ Plugins/Addons
         * NEW: Desktop notifications engines
         * NEW: System monitor engine based on ksysguard (cpu, memory, heat, sensors, etc)
         * NEW: Network engine
+        * NEW: Application jobs (aka kuiserver) engine; shows any published KJobs such as file operations
         * NowPlaying
             * Plasma::Service for controlling media players
             * supports MPRIS
