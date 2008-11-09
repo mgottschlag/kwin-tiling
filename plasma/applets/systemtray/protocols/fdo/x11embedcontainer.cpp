@@ -26,6 +26,7 @@
 #include <KDebug>
 
 // Qt
+#include <QtCore/QTime>
 #include <QtCore/QTimer>
 #include <QtGui/QPainter>
 #include <QtGui/QX11Info>
@@ -41,6 +42,8 @@
 #endif
 
 
+#define MAX_PAINTS_PER_SEC 10
+#define MIN_TIME_BETWEEN_PAINTS (1000 / MAX_PAINTS_PER_SEC)
 
 namespace SystemTray
 {
@@ -56,7 +59,14 @@ public:
           picture(None),
           updatingBackground(false)
     {
+        lastPaintTime = QTime::currentTime();
+        lastPaintTime.addMSecs(-MIN_TIME_BETWEEN_PAINTS);
+
+        delayedPaintTimer.setSingleShot(true);
+        connect(&delayedPaintTimer, SIGNAL(timeout()),
+                q, SLOT(update()));
     }
+
     ~Private()
     {
         if (picture) {
@@ -73,6 +83,8 @@ public:
     Picture picture;
     QImage bgImage;
     bool updatingBackground;
+    QTime lastPaintTime;
+    QTimer delayedPaintTimer;
 };
 
 
@@ -175,9 +187,18 @@ void X11EmbedContainer::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
 
-    if (d->updatingBackground) {
+    if (d->updatingBackground || d->delayedPaintTimer.isActive()) {
         return;
     }
+
+    int msecsToNextPaint = MIN_TIME_BETWEEN_PAINTS - d->lastPaintTime.elapsed();
+    if (msecsToNextPaint > 0 && msecsToNextPaint < MIN_TIME_BETWEEN_PAINTS) {
+        kDebug() << "Delaying paint by" << msecsToNextPaint << "msecs";
+        d->delayedPaintTimer.start(msecsToNextPaint);
+        return;
+    }
+
+    d->lastPaintTime.start();
 
     if (!d->picture) {
         d->updatingBackground = true;
