@@ -20,6 +20,7 @@
 
 #include "toolbutton.h"
 
+//Qt
 #include <QAction>
 #include <QPainter>
 #include <QPaintEvent>
@@ -27,6 +28,10 @@
 #include <QStyleOptionToolButton>
 #include <QGraphicsSceneHoverEvent>
 
+//KDE
+#include <KColorUtils>
+
+//Plasma
 #include <Plasma/PaintUtils>
 #include <Plasma/Theme>
 #include <Plasma/FrameSvg>
@@ -108,18 +113,22 @@ void ToolButton::paintEvent(QPaintEvent *event)
 
         if (m_animationId) {
             QPixmap buffer = m_background->framePixmap();
+
             QPainter bufferPainter(&buffer);
             bufferPainter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
             QColor alphaColor(Qt::black);
             alphaColor.setAlphaF(qMin(0.95, m_alpha));
             bufferPainter.fillRect(buffer.rect(), alphaColor);
             bufferPainter.end();
+
             painter.drawPixmap(QPoint(0,0), buffer);
+
+            buttonOpt.palette.setColor(QPalette::ButtonText, KColorUtils::mix(Plasma::Theme::defaultTheme()->color(Plasma::Theme::ButtonTextColor), Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor), 1-m_alpha));
         } else {
             m_background->paintFrame(&painter);
+            buttonOpt.palette.setColor(QPalette::ButtonText, Plasma::Theme::defaultTheme()->color(Plasma::Theme::ButtonTextColor));
         }
 
-        buttonOpt.palette.setColor(QPalette::ButtonText, Plasma::Theme::defaultTheme()->color(Plasma::Theme::ButtonTextColor));
     } else {
         buttonOpt.palette.setColor(QPalette::ButtonText, Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
     }
