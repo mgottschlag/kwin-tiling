@@ -59,6 +59,7 @@
 #include "appadaptor.h"
 #include "savercorona.h"
 #include "saverview.h"
+#include "backgrounddialog.h"
 
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrender.h>
@@ -121,7 +122,8 @@ PlasmaApp* PlasmaApp::self()
 PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     : KUniqueApplication(display, visual, colormap),
       m_corona(0),
-      m_view(0)
+      m_view(0),
+      m_configDialog(0)
 {
     //load translations for libplasma
     KGlobal::locale()->insertCatalog("libplasma");
@@ -362,9 +364,10 @@ void PlasmaApp::createView(Plasma::Containment *containment)
     connect(containment, SIGNAL(locked()), SLOT(hideDialogs()));
     connect(containment, SIGNAL(locked()), m_view, SLOT(disableSetupMode()));
     connect(containment, SIGNAL(unlocked()), SLOT(showDialogs()));
-    //ohhh, what a hack
-    connect(containment, SIGNAL(delegateConfigurationInterface(KConfigDialog *)),
-            SLOT(createConfigurationInterface(KConfigDialog *)));
+    //connect(containment, SIGNAL(delegateConfigurationInterface(KConfigDialog *)),
+    //        SLOT(createConfigurationInterface(KConfigDialog *)));
+    connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
+            this, SLOT(configureContainment(Plasma::Containment*)));
 
     connect(m_view, SIGNAL(hidden()), SLOT(lock()));
     connect(m_view, SIGNAL(hidden()), SIGNAL(hidden()));
@@ -466,8 +469,34 @@ void PlasmaApp::showDialogs()
     //FIXME where does the focus go?
 }
 
+void PlasmaApp::configureContainment(Plasma::Containment *containment)
+{
+    if (!m_view) {
+        return;
+    }
+
+    if (m_configDialog) {
+        m_configDialog->reloadConfig();
+    } else {
+        const QSize resolution = QApplication::desktop()->screenGeometry(containment->screen()).size();
+
+        m_configDialog = new BackgroundDialog(resolution, containment, m_view);
+        m_configDialog->setAttribute(Qt::WA_DeleteOnClose);
+        connect(m_configDialog, SIGNAL(destroyed(QObject*)),
+                this, SLOT(configDialogRemoved(QObject*)));
+    }
+
+    m_configDialog->show();
+}
+
+void PlasmaApp::configDialogRemoved(QObject* dialog)
+{
+    m_configDialog = 0;
+}
+
 void PlasmaApp::createConfigurationInterface(KConfigDialog *parent)
 {
+    //FIXME put this stuff into BackgroundDialog
     QWidget *widget = new QWidget();
     ui.setupUi(widget);
     parent->setWindowTitle(i18nc("@title:window", "Settings"));

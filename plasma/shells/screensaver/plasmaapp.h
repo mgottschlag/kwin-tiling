@@ -34,6 +34,7 @@ namespace Plasma
 } // namespace Plasma
 
 class SaverView;
+class BackgroundDialog;
 class KConfigDialog;
 
 class PlasmaApp : public KUniqueApplication
@@ -97,6 +98,8 @@ private Q_SLOTS:
     void showDialogs();
     void createConfigurationInterface(KConfigDialog *parent);
     void configAccepted();
+    void configureContainment(Plasma::Containment*);
+    void configDialogRemoved(QObject* dialog);
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
@@ -108,6 +111,7 @@ private:
     SaverView *m_view;
     QList<QWidget*> m_dialogs;
     Ui::saverConfig ui;
+    BackgroundDialog *m_configDialog;
 
     qreal m_activeOpacity;
     qreal m_idleOpacity;

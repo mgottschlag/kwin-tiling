@@ -12,6 +12,10 @@ set(appletbrowserdialog_SRCS
     ../common/plasmaappletitemmodel.cpp
 )
 
+set(wallpaper_SRCS
+    ../common/wallpaperpreview.cpp
+)
+
 kde4_add_ui_files (
     appletbrowserdialog_SRCS
     ../common/kcategorizeditemsviewbase.ui
@@ -29,8 +33,8 @@ set(plasma_SRCS
     plasmaapp.cpp
     positioningruler.cpp
     toolbutton.cpp
-    wallpaperpreview.cpp
     ${appletbrowserdialog_SRCS}
+    ${wallpaper_SRCS}
 )
 
 kde4_add_ui_files(plasma_SRCS BackgroundDialog.ui)

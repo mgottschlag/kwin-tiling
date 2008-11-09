@@ -193,6 +193,7 @@ void SaverDesktop::unlockDesktop()
 
 void SaverDesktop::createConfigurationInterface(KConfigDialog *parent)
 {
+    kDebug() << "config interface????";
     emit delegateConfigurationInterface(parent);
 }
 

@@ -10,18 +10,26 @@ set(appletbrowserdialog_SRCS
     ../common/plasmaappletitemmodel.cpp
 )
 
+set(wallpaper_SRCS
+    ../common/wallpaperpreview.cpp
+)
+
 kde4_add_ui_files (
     appletbrowserdialog_SRCS
     ../common/kcategorizeditemsviewbase.ui
 )
 
 set(plasma-overlay_SRCS
-    savercorona.cpp
-    saverview.cpp
+    backgrounddialog.cpp
     main.cpp
     plasmaapp.cpp
+    savercorona.cpp
+    saverview.cpp
     ${appletbrowserdialog_SRCS}
+    ${wallpaper_SRCS}
 )
+
+kde4_add_ui_files(plasma-overlay_SRCS BackgroundDialog.ui)
 
 add_subdirectory(containment)
 
