@@ -94,18 +94,14 @@ void X11EmbedPainter::performUpdates()
         QList<X11EmbedContainer*> containers = containersByParent.values(parent);
         containersByParent.remove(parent);
 
-        QRect boundingRect;
+        QRegion paintRegion;
         foreach (X11EmbedContainer *container, containers) {
             QRect rect = QRect(container->mapTo(parent, QPoint(0, 0)), container->size());
-            if (boundingRect.isNull()) {
-                boundingRect = rect;
-            } else {
-                boundingRect = boundingRect.united(rect);
-            }
+            paintRegion = paintRegion.united(rect);
         }
 
         QPixmap background = QPixmap(parent->size());
-        parent->render(&background, boundingRect.topLeft(), boundingRect);
+        parent->render(&background, paintRegion.boundingRect().topLeft(), paintRegion);
 
         foreach (X11EmbedContainer *container, containers) {
             QRect rect = QRect(container->mapTo(parent, QPoint(0, 0)), container->size());
