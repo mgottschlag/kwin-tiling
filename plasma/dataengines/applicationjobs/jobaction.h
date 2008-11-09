@@ -21,7 +21,6 @@
 
 #include "kuiserverengine.h"
 
-#include <QTimer>
 
 #include <kdebug.h>
 

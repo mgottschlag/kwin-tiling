@@ -21,7 +21,6 @@
 #include "kuiserverengine.h"
 #include "jobcontrol.h"
 
-#include <KUrl>
 
 #include <Plasma/DataEngine>
 
