@@ -43,9 +43,6 @@
 #endif
 
 
-#define MAX_PAINTS_PER_SEC 10
-#define MIN_TIME_BETWEEN_PAINTS (1000 / MAX_PAINTS_PER_SEC)
-
 namespace SystemTray
 {
 namespace FDO
@@ -60,12 +57,6 @@ public:
           picture(None),
           updatesEnabled(true)
     {
-        lastPaintTime = QTime::currentTime();
-        lastPaintTime.addMSecs(-MIN_TIME_BETWEEN_PAINTS);
-
-        delayedPaintTimer.setSingleShot(true);
-        connect(&delayedPaintTimer, SIGNAL(timeout()),
-                q, SLOT(update()));
     }
 
     ~Private()
@@ -83,8 +74,6 @@ public:
     XWindowAttributes attr;
     Picture picture;
     bool updatesEnabled;
-    QTime lastPaintTime;
-    QTimer delayedPaintTimer;
 };
 
 
@@ -193,18 +182,9 @@ void X11EmbedContainer::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
 
-    if (!d->updatesEnabled || d->delayedPaintTimer.isActive()) {
+    if (!d->updatesEnabled) {
         return;
     }
-
-    int msecsToNextPaint = MIN_TIME_BETWEEN_PAINTS - d->lastPaintTime.elapsed();
-    if (msecsToNextPaint > 0 && msecsToNextPaint < MIN_TIME_BETWEEN_PAINTS) {
-        kDebug() << "Delaying paint by" << msecsToNextPaint << "msecs";
-        d->delayedPaintTimer.start(msecsToNextPaint);
-        return;
-    }
-
-    d->lastPaintTime.start();
 
     if (!d->picture) {
         X11EmbedPainter::self()->updateContainer(this);

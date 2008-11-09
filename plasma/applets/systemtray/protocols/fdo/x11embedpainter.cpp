@@ -22,9 +22,15 @@
 #include "x11embedpainter.h"
 
 #include <QtCore/QSet>
+#include <QtCore/QTime>
 #include <QtCore/QTimer>
 
+#include <KDebug>
 #include <KGlobal>
+
+
+#define MAX_PAINTS_PER_SEC 20
+#define MIN_TIME_BETWEEN_PAINTS (1000 / MAX_PAINTS_PER_SEC)
 
 
 namespace SystemTray
@@ -51,12 +57,26 @@ X11EmbedPainter* X11EmbedPainter::self()
 class X11EmbedPainter::Private
 {
 public:
+    Private(X11EmbedPainter *parent)
+        : q(parent)
+    {
+        lastPaintTime = QTime::currentTime();
+        lastPaintTime.addMSecs(-MIN_TIME_BETWEEN_PAINTS);
+
+        delayedPaintTimer.setSingleShot(true);
+        connect(&delayedPaintTimer, SIGNAL(timeout()),
+                q, SLOT(performUpdates()));
+    }
+
+    X11EmbedPainter *q;
     QSet<X11EmbedContainer*> containers;
+    QTime lastPaintTime;
+    QTimer delayedPaintTimer;
 };
 
 
 X11EmbedPainter::X11EmbedPainter()
-    : d(new Private())
+    : d(new Private(this))
 {
 }
 
@@ -69,11 +89,17 @@ X11EmbedPainter::~X11EmbedPainter()
 
 void X11EmbedPainter::updateContainer(X11EmbedContainer *container)
 {
-    if (d->containers.isEmpty()) {
-        QTimer::singleShot(0, this, SLOT(performUpdates()));
-    }
-
     d->containers.insert(container);
+
+    if (!d->delayedPaintTimer.isActive()) {
+        int msecsToNextPaint = MIN_TIME_BETWEEN_PAINTS - d->lastPaintTime.elapsed();
+        if (msecsToNextPaint > 0 && msecsToNextPaint < MIN_TIME_BETWEEN_PAINTS) {
+            kDebug() << "Delaying paint by" << msecsToNextPaint << "msecs";
+            d->delayedPaintTimer.start(msecsToNextPaint);
+        } else {
+            d->delayedPaintTimer.start(0);
+        }
+    }
 }
 
 
@@ -112,6 +138,9 @@ void X11EmbedPainter::performUpdates()
     foreach (X11EmbedContainer *container, d->containers) {
         container->setUpdatesEnabled(true);
     }
+
+    d->containers.clear();
+    d->lastPaintTime.start();
 }
 
 
