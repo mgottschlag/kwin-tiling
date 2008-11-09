@@ -26,12 +26,10 @@
 #include <QDBusMessage>
 
 #include <KDebug>
-#include <KConfigDialog>
+#include <KIcon>
 
 #include "plasma/corona.h"
 #include "plasma/theme.h"
-
-//TODO offer a way to change the theme and other such not-really-our-responsibility things
 
 using namespace Plasma;
 
@@ -189,12 +187,6 @@ void SaverDesktop::unlockDesktop()
         kDebug() << "bailing out!";
         qApp->quit();
     }
-}
-
-void SaverDesktop::createConfigurationInterface(KConfigDialog *parent)
-{
-    kDebug() << "config interface????";
-    emit delegateConfigurationInterface(parent);
 }
 
 K_EXPORT_PLASMA_APPLET(saverdesktop, SaverDesktop)
