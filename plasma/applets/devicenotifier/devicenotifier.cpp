@@ -119,8 +119,8 @@ void DeviceNotifier::fillPreviousDevices()
 {
     m_fillingPreviousDevices = true;
     foreach (const QString &source, m_solidEngine->sources()) {
-            Solid::Device *device = new Solid::Device(source);
-            Solid::Device parentDevice = device->parent();
+            Solid::Device device = Solid::Device(source);
+            Solid::Device parentDevice = device.parent();
             Solid::StorageDrive *drive = parentDevice.as<Solid::StorageDrive>();
             if(drive && (drive->isHotpluggable() || drive->isRemovable())) {
                 onSourceAdded(source);
