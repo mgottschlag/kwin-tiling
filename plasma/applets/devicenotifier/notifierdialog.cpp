@@ -28,6 +28,7 @@
 #include <QtDBus/QDBusReply>
 #include <QHeaderView>
 #include <QTimer>
+#include <QMetaEnum>
 
 //KDE
 #include <KDebug>
