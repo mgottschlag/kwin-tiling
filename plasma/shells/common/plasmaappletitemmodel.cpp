@@ -124,7 +124,7 @@ void PlasmaAppletItemModel::populateModel()
     //         <<  Plasma::Applet::listAppletInfo(QString(), m_application).count();
     foreach (const KPluginInfo &info, Plasma::Applet::listAppletInfo(QString(), m_application)) {
         //kDebug() << info.pluginName() << "NoDisplay" << info.property("NoDisplay").toBool();
-        if (info.property("NoDisplay").toBool()) {
+        if (info.property("NoDisplay").toBool() || info.category() == i18n("Containments")) {
             // we don't want to show the hidden category
             continue;
         }
