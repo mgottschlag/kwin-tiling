@@ -927,48 +927,46 @@ bool LockProcess::startPlasma()
     if (!mPlasmaEnabled) {
         return false;
     }
+
     if (mSetupMode) {
         mSuppressUnlock.start(mSuppressUnlockTimeout);
-        XChangeActivePointerGrab( QX11Info::display(), GRABEVENTS,
-                QCursor(Qt::ArrowCursor).handle(), CurrentTime);
+        XChangeActivePointerGrab(QX11Info::display(), GRABEVENTS,
+                                 QCursor(Qt::ArrowCursor).handle(), CurrentTime);
     }
+
     kDebug() << "looking for plasma-overlay";
     if (!mPlasmaDBus) {
         //try to get it, in case it's already running somehow
         //FIXME I don't like hardcoded strings
         //mPlasmaDBus = new QDBusInterface("org.kde.plasma-overlay", "/MainApplication", QString(),
         mPlasmaDBus = new org::kde::plasmaoverlay::App("org.kde.plasma-overlay", "/App",
-                QDBusConnection::sessionBus(), this);
+                                                       QDBusConnection::sessionBus(), this);
         //FIXME this might-already-be-running stuff seems really really Wrong.
     }
+
     if (mPlasmaDBus->isValid()) {
         kDebug() << "weird, plasma-overlay is already running";
-        //FIXME I'd like to just kill it off or ignore it
-        //maybe it should *not* be a kuniqueapp?
-        //FIXME oh, and if it's already visible then we won't get a mapnotify for it
-        //and then it won't be in our foreign window lists and so stuff will break
-        if (mSetupMode) {
-            mPlasmaDBus->call(QDBus::NoBlock, "activate");
-            //it'll be locked because we haven't put plasma in setup mode. doh.
-            //FIXME make a dbus call to change that
-        } else {
-            mPlasmaDBus->call(QDBus::NoBlock, "deactivate");
-        }
+        mPlasmaDBus->call(QDBus::NoBlock, "setActive", mSetupMode);
+        // aseigo: put a dbus call here to the "setup" mode method
+        //         that method should also take care of initial visibility
         return true;
     }
-    kDebug () << "...not found";
+
+    kDebug () << "...not found" << "starting plasma-overlay";
     delete mPlasmaDBus;
     mPlasmaDBus = 0;
-    kDebug() << "starting plasma-overlay";
-    connect(QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(QString, QString,
-                    QString)),
-            SLOT(newService(QString, QString, QString)));
-    mPlasmaProc.setProgram("plasma-overlay");
+
+    connect(QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(QString, QString, QString)),
+            this, SLOT(newService(QString, QString, QString)));
+
+    KProcess plasmaProc;
+    plasmaProc.setProgram("plasma-overlay");
     if (mSetupMode) {
-        mPlasmaProc << "--setup";
+        plasmaProc << "--setup";
     }
-    mPlasmaProc.start();
+    plasmaProc.start();
     kDebug() << "process begun";
+
     //plasma gets 15 seconds to load, or we assume it failed
     QTimer::singleShot(15 * 1000, this, SLOT(checkPlasma()));
     return true;

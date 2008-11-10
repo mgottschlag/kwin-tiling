@@ -188,7 +188,6 @@ private:
     int         mPriority;
     bool        mBusy;
     KProcess    mHackProc;
-    KProcess    mPlasmaProc;
     org::kde::plasmaoverlay::App *mPlasmaDBus;
     bool        mPlasmaEnabled;
     bool        mSetupMode;
