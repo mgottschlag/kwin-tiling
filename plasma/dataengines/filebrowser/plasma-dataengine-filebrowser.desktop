@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Files and Directories
 Name[be@latin]=Fajły j katalohi
+Name[ca]=Fitxers i directoris
 Name[el]=Αρχεία και κατάλογοι
 Name[gl]=Ficheiros e cartafoles
 Name[gu]=ફાઇલો અને ડિરેક્ટરીઓ
@@ -23,7 +24,7 @@ Name[zh_TW]=檔案與目錄
 Comment=Info about files and directories for Plasmoids
 Comment[be@latin]=Źviestki pra fajły j katalohi dla widžetaŭ
 Comment[bg]=Информация за файлове и директории (Plasmoids)
-Comment[ca]=Informació quant a fitxers i directoris pels plasmoides
+Comment[ca]=Informació quant a fitxers i directoris pels Plasmoides
 Comment[da]=Information om filer og mapper til plasmoids
 Comment[de]=Informationen über Dateien und Ordner für Plasmoide
 Comment[el]=Πληροφορίες για αρχεία και καταλόγους για πλασμοειδή

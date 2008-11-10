@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Date and Time
 Name[be@latin]=Data j čas
+Name[ca]=Data i hora
 Name[el]=Ημερομηνία και ώρα
 Name[gl]=Data e hora
 Name[gu]=તારીખ અને સમય
@@ -23,7 +24,7 @@ Name[zh_TW]=日期與時間
 Comment=Time data for Plasmoids
 Comment[be@latin]=Źviestki pra čas dla widžetaŭ
 Comment[bg]=Време (Plasmoids)
-Comment[ca]=Dades d'hora pels plasmoides
+Comment[ca]=Dades d'hora pels Plasmoides
 Comment[csb]=Czérownik czasu ë datuma dlô plazmoidów
 Comment[da]=Tiddata til plasmoids
 Comment[de]=Zeitdaten für Plasmoide

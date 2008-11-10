@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Activity Bar
+Name[ca]=Barra d'activitat
 Name[el]=Γραμμή δραστηριότητας
 Name[gl]=Barra de actividades
 Name[gu]=ક્રિયા પટ્ટી
@@ -15,6 +16,7 @@ Name[tr]=Eylem Çubuğu
 Name[uk]=Панель дій
 Name[zh_TW]=活動列
 Comment=Tabbar to switch activities
+Comment[ca]=Barra de pestanyes per a canviar d'activitats
 Comment[el]=Γραμμή καρτελών για την εναλλαγή δραστηριότητας
 Comment[gl]=Barra de lingüetas para trocar entre actividades
 Comment[gu]=ક્રિયાઓ બદલવા માટે ટેબપટ્ટી

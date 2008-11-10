@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=System Monitor - CPU
+Name[ca]=Controlador del sistema - CPU
 Name[el]=Επόπτης συστήματος - ΚΜΕ
 Name[gl]=Vixiante do sistema - CPU
 Name[gu]=સિસ્ટમ દેખરેખ - સીપીયુ
@@ -16,6 +17,7 @@ Name[tr]=Sistem İzleyici - İşlemci
 Name[uk]=Монітор системи — ЦП
 Name[zh_TW]=系統監視器─CPU
 Comment=A CPU usage monitor
+Comment[ca]=Un controlador d'ús de la CPU
 Comment[el]=Ένας επόπτης χρήσης ΚΜΕ
 Comment[gl]=Un vixiante do utilización da CPU
 Comment[gu]=CPU વપરાશ દેખરેખ

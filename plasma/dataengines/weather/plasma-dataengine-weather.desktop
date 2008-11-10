@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Weather
+Name[ca]=Meteorologia
 Name[el]=Καιρός
 Name[gl]=O tempo
 Name[gu]=હવામાન
@@ -22,7 +23,7 @@ Name[zh_TW]=天氣
 Comment=Weather data for Plasmoids
 Comment[be@latin]=Źviestki pra nadvorje dla widžetaŭ
 Comment[bg]=Време (Plasmoids)
-Comment[ca]=Dades meteorològiques pels plasmoides
+Comment[ca]=Dades meteorològiques pels Plasmoides
 Comment[csb]=Czérownik ùsłëżnotów wiodra dlô plazmoidów
 Comment[da]=Vejrdata til plasmoids
 Comment[de]=Wetterdienst-Daten für Plasmoide

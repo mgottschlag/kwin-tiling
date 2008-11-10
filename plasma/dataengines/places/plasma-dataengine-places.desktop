@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Places
 Name[be@latin]=Miescy
+Name[ca]=Llocs
 Name[el]=Τοποθεσίες
 Name[gl]=Lugares
 Name[gu]=જગ્યાઓ
@@ -23,7 +24,7 @@ Name[zh_TW]=地方
 Comment=Places data for Plasmoids
 Comment[be@latin]=Źviestki ź miescaŭ dla widžetaŭ
 Comment[bg]=Места за Plasmoids
-Comment[ca]=Dades de llocs pels plasmoides
+Comment[ca]=Dades de llocs pels Plasmoides
 Comment[da]=Steddata til plasmoids
 Comment[de]=„Orte“ für Plasmoide
 Comment[el]=Δεδομένα τοποθεσιών για πλασμοειδή

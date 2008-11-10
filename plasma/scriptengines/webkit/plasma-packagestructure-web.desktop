@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Web Widgets
 Name[be@latin]=Sieciŭnyja widžety
+Name[ca]=Estris web
 Name[el]=Συστατικά ιστού
 Name[gl]=Widgets web
 Name[gu]=વેબ વિજેટ્સ
@@ -19,6 +20,7 @@ Name[x-test]=xxWeb Widgetsxx
 Name[zh_TW]=網頁元件
 Comment=HTML widget
 Comment[be@latin]=Widžet HTML
+Comment[ca]=Estri HTML
 Comment[el]=Συστατικό HTML
 Comment[gl]=Widget HTML
 Comment[gu]=HTML વિજેટ

@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Networking
 Name[be@latin]=Sietka
+Name[ca]=Treball en xarxa
 Name[el]=Δίκτυο
 Name[gl]=Rede
 Name[gu]=નેટવર્કિંગ
@@ -22,6 +23,7 @@ Name[x-test]=xxNetworkingxx
 Name[zh_TW]=網路
 Comment=Network information for Plasmoids
 Comment[be@latin]=Sietkavyja źviestki dla widžetaŭ
+Comment[ca]=Informació de xarxa pels Plasmoides
 Comment[el]=Πληροφορίες δικτύου για πλασμοειδή
 Comment[gl]=Información da rede para os Plasmoides
 Comment[gu]=પ્લાઝમોઇડ માટે નેટવર્ક માહિતી

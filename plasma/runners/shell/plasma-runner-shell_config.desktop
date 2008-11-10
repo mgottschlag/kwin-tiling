@@ -8,6 +8,7 @@ X-KDE-PluginKeyword=kcm_krunner_shell
 
 Name=Shell Runner Config
 Name[be@latin]=Nałady zahadnaha radka
+Name[ca]=Configuració de l'intèrpret de l'executador
 Name[el]=Ρύθμιση εκτελεστή κελύφους
 Name[et]=Shelli käivitaja seadistused
 Name[gl]=Configuración do executor de shell

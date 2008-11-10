@@ -2,6 +2,7 @@
 Type=Service
 Name=Image
 Name[be@latin]=Vyjava
+Name[ca]=Imatge
 Name[el]=Εικόνα
 Name[et]=Pilt
 Name[ga]=Íomhá
@@ -44,6 +45,7 @@ X-KDE-PluginInfo-EnabledByDefault=true
 [Desktop Action SingleImage]
 Name=Image
 Name[be@latin]=Vyjava
+Name[ca]=Imatge
 Name[el]=Εικόνα
 Name[et]=Pilt
 Name[ga]=Íomhá
@@ -76,6 +78,7 @@ Exec=plasma
 [Desktop Action Slideshow]
 Name=Slideshow
 Name[be@latin]=Słajdy
+Name[ca]=Passi de diapositives
 Name[el]=Προβολή σλάιντ
 Name[et]=Slaidiseanss
 Name[ga]=Taispeántas Sleamhnán

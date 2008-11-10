@@ -10,6 +10,7 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=advanced-user-settings
 
 Name=Desktop Theme Details
+Name[ca]=Detalls del tema d'escriptori
 Name[el]=Λεπτομέρειες θέματος επιφάνειας εργασίας
 Name[gl]=Detalles do tema do escritorio
 Name[gu]=ડેસ્કટોપ થીમ વિગતો
@@ -25,6 +26,7 @@ Name[tr]=Masaüstü Teması Ayrıntıları
 Name[uk]=Відомості щодо тем стільниці
 Name[zh_TW]=桌面佈景主題詳細資料
 Comment=Customize individual desktop theme items
+Comment[ca]=Personalització individual dels elements del tema d'escriptori
 Comment[el]=Προσαρμογή ανεξέρτητων αντικειμένων ενός θέματος της επιφάνειας εργασίας
 Comment[gl]=Personaliza os itens individuais do tema do escritorio
 Comment[gu]=અલગ ડેસ્કટોપ થીમ વસ્તુઓને બદલો

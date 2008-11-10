@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Device Information
 Name[be@latin]=Źviestki z pryłady
+Name[ca]=Informació dels dispositius
 Name[el]=Πληροφορίες συσκευής
 Name[gl]=Información de dispositivos
 Name[gu]=ઉપકરણ માહિતી
@@ -23,7 +24,7 @@ Name[zh_TW]=裝置資訊
 Comment=SolidDevice data for Plasmoids
 Comment[be@latin]=Źviestki „SolidDevice” dla widžetaŭ
 Comment[bg]=Данни за SolidDevice (Plasmoids)
-Comment[ca]=Dades del SolidDevice pels plasmoides
+Comment[ca]=Dades del SolidDevice pels Plasmoides
 Comment[csb]=Czérownik ùrządzeniów Solid dlô plazmoidów
 Comment[da]=SolidDevice-data til plasmoids
 Comment[de]=Solid-Gerätedaten für Plasmoide

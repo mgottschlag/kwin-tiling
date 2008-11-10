@@ -1,6 +1,7 @@
 [Global]
 IconName=utilities-terminal
 Comment=KDE write daemon
+Comment[ca]=Dimoni d'escriptura del KDE
 Comment[el]=Δαίμονας write του KDE
 Comment[gl]=Daemon de escritura de KDE
 Comment[gu]=KDE રાઇટ ડેમોન
@@ -18,6 +19,7 @@ Comment[zh_TW]=KDE Write 伺服程式
 
 [Event/NewMessage]
 Name=New message received
+Name[ca]=S'ha rebut un missatge nou
 Name[el]=Λήφθηκε νέο μήνυμα
 Name[gl]=Recibiuse unha mensaxe nova
 Name[gu]=નવો સંદેશ મેળવાયો
@@ -33,6 +35,7 @@ Name[tr]=Yeni ileti alındı
 Name[uk]=Отримано нове повідомлення
 Name[zh_TW]=接到新訊息
 Comment=The daemon received a new message sent with wall(1) or write(1)
+Comment[ca]=El dimoni ha rebut un missatge nou enviat amb wall(1) o write(1)
 Comment[el]=Ο δαίμονας έλαβε ένα νέο μήνυμα μέσω του wall(1) ή του write(1)
 Comment[gl]=O daemon recibiu unha mensaxe nova enviada con wall(1) ou write(1)
 Comment[gu]=ડેમોને wall(1) અથવા write(1) સાથે મોકલેલ નવો સંદેશ મેળવ્યો

@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Python Package Structure
+Name[ca]=Estructura de paquets en Python
 Name[el]=Δομή πακέτου Python
 Name[gl]=Estrutura de paquete de Python
 Name[gu]=પાયથોન પેકેજ માળખું
@@ -15,6 +16,7 @@ Name[uk]=Структура пакунка Python
 Name[x-test]=xxPython Package Structurexx
 Name[zh_TW]=Python 套件結構
 Comment=Format of a Python Script Engine Package
+Comment[ca]=Format d'un paquet de motor d'script en Python
 Comment[el]=Μορφή ενός πακέτου σεναρίου μηχανής Python
 Comment[gl]=Formato dun motor de paquete de scripts en Python
 Comment[gu]=પાયથોન સ્ક્રિપ્ટ એન્જિન પેકેજનું બંધારણ

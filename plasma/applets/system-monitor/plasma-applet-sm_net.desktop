@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=System Monitor - Network
+Name[ca]=Controlador del sistema - Xarxa
 Name[el]=Επόπτης συστήματος - δίκτυο
 Name[gl]=Vixiante do sistema - Rede
 Name[gu]=સિસ્ટમ દેખરેખ - નેટવર્ક
@@ -16,6 +17,7 @@ Name[tr]=Sistem İzleyici - Ağ
 Name[uk]=Монітор системи — Мережа
 Name[zh_TW]=系統監視器─網路
 Comment=A network usage monitor
+Comment[ca]=Un controlador d'ús de la xarxa
 Comment[el]=Ένας επόπτης χρήσης του δικτύου
 Comment[gl]=Un vixiante do estado da rede
 Comment[gu]=નેટવર્ક સ્થિતિ દેખરેખ

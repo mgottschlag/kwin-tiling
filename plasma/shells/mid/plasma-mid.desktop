@@ -2,6 +2,7 @@
 Exec=plasma-mid --desktop
 X-DBUS-StartupType=wait
 Name=Plasma MID
+Name[ca]=MID del Plasma
 Name[gl]=MID de Plasma
 Name[gu]=પ્લાઝમા MID
 Name[kk]=Plasma МИҚ
@@ -16,6 +17,7 @@ Name[uk]=Плазма МІП
 Name[x-test]=xxPlasma MIDxx
 Comment=Workspace shell for mobile internet devices
 Comment[be@latin]=Rabočy abšar dla mabilnych internetnych pryładaŭ.
+Comment[ca]=Intèrpret d l'espai de treball per a dispositius d'internet mòbils
 Comment[el]=Χώρος εργασίας για κινητές διαδικτυακές συσκευές
 Comment[et]=Tööruumi kest mobiilsetele internetiseadmetele
 Comment[gl]=Shell da área de traballo para dispositivo móbiles de internet

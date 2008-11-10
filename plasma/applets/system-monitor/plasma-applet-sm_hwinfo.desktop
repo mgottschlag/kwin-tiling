@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=System Monitor - Hardware Info
+Name[ca]=Controlador del sistema - Informació del maquinari
 Name[el]=Επόπτης συστήματος - πληροφορίες υλικού
 Name[gl]=Vixiante do sistema - Información do hardware
 Name[gu]=સિસ્ટમ દેખરેખ - હાર્ડવેર માહિતી
@@ -16,6 +17,7 @@ Name[tr]=Sistem İzleyici - Donanım Bilgileri
 Name[uk]=Монітор системи — Інформація про обладнання
 Name[zh_TW]=系統監視器─硬體資訊
 Comment=Show hardware info
+Comment[ca]=Mostra la informació del maquinari
 Comment[el]=Εμφάνιση πληροφοριών υλικού
 Comment[gl]=Mostra información acerca do hardware
 Comment[gu]=હાર્ડવેર માહિતી બતાવો

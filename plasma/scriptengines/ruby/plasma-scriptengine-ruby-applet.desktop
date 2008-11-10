@@ -1,8 +1,10 @@
 [Desktop Entry]
 Name=Ruby Widget
+Name[ca]=Estri Ruby
 Name[el]=Συστατικό Ruby
 Name[gu]=રૂબી વિજેટ
 Name[kk]=Ruby бөлшегі
+Name[nb]=Ruby-element
 Name[nds]=Ruby-Lüttprogramm
 Name[pt]=Elemento Ruby
 Name[pt_BR]=Elemento Ruby
@@ -11,9 +13,11 @@ Name[tr]=Ruby Parçacığı
 Name[uk]=Віджет Ruby
 Name[zh_TW]=Ruby 元件
 Comment=Native Plasma widget written in Ruby
+Comment[ca]=Estri nadiu del Plasma escrit en Ruby
 Comment[el]=Εγγενές συστατικό Plasma γραμμένο σε Ruby
 Comment[gu]=રૂબીમાં લખાયેલ મૂળભૂત પ્લાઝમા વિજેટ
 Comment[kk]=Ruby-дег жазылған Plasma интерфейс бөлшегі
+Comment[nb]=Plasmaelement for dette systemet, skrevet i Ruby
 Comment[nds]=En orginaal Plasmaelement, schreven in Ruby
 Comment[pt]=Elemento nativo do Plasma feito em Ruby
 Comment[pt_BR]=Elemento nativo do Plasma feito em Ruby

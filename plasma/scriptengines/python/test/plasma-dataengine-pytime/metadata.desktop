@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Python Date and Time
 Name[be@latin]=Data j čas dla „Python”
+Name[ca]=Dia i hora en Python
 Name[el]=Ημερομηνία και ώρα Python
 Name[gl]=Data e hora en Python
 Name[gu]=પાયથોન તારીખ અને સમય
@@ -18,6 +19,7 @@ Name[x-test]=xxPython Date and Timexx
 Name[zh_TW]=Python 日期與時間
 Comment=Python Time data for Plasmoids
 Comment[be@latin]=Źviestki pra čas dla widžetaŭ „Python”
+Comment[ca]=Dades d'hora en Python pels Plasmoides
 Comment[el]=Δεδομένα χρόνου για πλασμοειδή Python
 Comment[gl]=Datos de tempo para os Plasmoides en Python
 Comment[gu]=પ્લાઝમોઇડ માટે પાયથોન સમય માહિતી

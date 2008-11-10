@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=System Monitor - Hard Disk
+Name[ca]=Controlador del sistema - Disc dur
 Name[el]=Επόπτης συστήματος - σκληρός δίσκος
 Name[gl]=Vixiante do sistema - Disco duro
 Name[gu]=સિસ્ટમ દેખરેખ - હાર્ડ ડિસ્ક
@@ -16,6 +17,7 @@ Name[tr]=Sistem İzleyici - Sabit Disk
 Name[uk]=Монітор системи — Жорсткий диск
 Name[zh_TW]=系統監視器─硬碟
 Comment=A hard disk usage monitor
+Comment[ca]=Un controlador d'ús del disc dur
 Comment[el]=Ένας επόπτης χρήσης του σκληρού δίσκου
 Comment[gl]=Un vixiante do uso do disco duro
 Comment[gu]=હાર્ડ ડિસ્ક વપરાશ દેખરેખ
