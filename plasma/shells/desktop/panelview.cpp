@@ -738,9 +738,9 @@ void PanelView::unhide()
 
     // with composite, we can quite do some nice animations with transparent
     // backgrounds; without it we can't so we just show/hide
+    QTimeLine * tl = timeLine();
+    tl->setDirection(QTimeLine::Backward);
     if (PlasmaApp::hasComposite()) {
-        QTimeLine * tl = timeLine();
-        tl->setDirection(QTimeLine::Backward);
         if (tl->state() == QTimeLine::NotRunning) {
             tl->start();
         }
@@ -765,16 +765,14 @@ void PanelView::leaveEvent(QEvent *event)
         if (!havePopup) {
             QWidget *popup = QApplication::activeWindow();
 
-            if (popup) {
-                kDebug() << "got a popup!" << popup
-                         << popup->window() << popup->window()->parentWidget() << popup->parentWidget() << this;
+            if (popup &&
+                (popup->window()->parentWidget() == this ||
+                 popup->parentWidget() == this ||
+                 (popup->parentWidget() && popup->parentWidget()->window() == this))) {
+                    kDebug() << "got a popup!" << popup
+                             << popup->window() << popup->window()->parentWidget() << popup->parentWidget() << this;
 
-
-                if (popup->window()->parentWidget() == this ||
-                    popup->parentWidget() == this ||
-                    (popup->parentWidget() && popup->parentWidget()->window() == this)) {
                     havePopup = true;
-                }
             } /* else {
                 kDebug() << "no popup?!";
             } */
@@ -783,11 +781,11 @@ void PanelView::leaveEvent(QEvent *event)
         }
 
         if (!havePopup) {
+            // with composite, we can quite do some nice animations with transparent
+            // backgrounds; without it we can't so we just show/hide
             QTimeLine * tl = timeLine();
             tl->setDirection(QTimeLine::Forward);
 
-            // with composite, we can quite do some nice animations with transparent
-            // backgrounds; without it we can't so we just show/hide
             if (PlasmaApp::hasComposite()) {
                 if (tl->state() == QTimeLine::NotRunning) {
                     tl->start();
@@ -797,7 +795,7 @@ void PanelView::leaveEvent(QEvent *event)
             }
         }
     }
-    
+
     Plasma::View::leaveEvent(event);
 }
 
@@ -819,7 +817,9 @@ void PanelView::paintEvent(QPaintEvent *event)
         if (m_panelMode == AutoHide) {
             QTimeLine * tl = timeLine();
             tl->setDirection(QTimeLine::Forward);
-            tl->start();
+            if (tl->state() == QTimeLine::NotRunning) {
+                tl->start();
+            }
         }
 
         m_firstPaint = false;
