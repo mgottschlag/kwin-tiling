@@ -184,7 +184,11 @@ Plasma::Location PanelView::location() const
 
 void PanelView::checkForActivation()
 {
-    //kDebug() << "stacking order changed!" << KWindowSystem::self()->stackingOrder().last() << winId();
+    /*kDebug() << "stacking order changed!"
+             << KWindowSystem::self()->stackingOrder().first()
+             << KWindowSystem::self()->stackingOrder().last()
+             << winId();*/
+
     if (KWindowSystem::self()->stackingOrder().last() == winId()) {
         destroyUnhideTrigger();
     } else {
@@ -732,11 +736,11 @@ void PanelView::unhide()
     //kDebug();
     destroyUnhideTrigger();
 
-    QTimeLine * tl = timeLine();
-    tl->setDirection(QTimeLine::Backward);
     // with composite, we can quite do some nice animations with transparent
     // backgrounds; without it we can't so we just show/hide
     if (PlasmaApp::hasComposite()) {
+        QTimeLine * tl = timeLine();
+        tl->setDirection(QTimeLine::Backward);
         if (tl->state() == QTimeLine::NotRunning) {
             tl->start();
         }
@@ -748,7 +752,7 @@ void PanelView::unhide()
     KWindowSystem::setState(winId(), state);
     if (m_panelMode == LetWindowsCover) {
         KWindowSystem::raiseWindow(winId());
-        KWindowSystem::activateWindow(winId());
+        KWindowSystem::forceActiveWindow(winId());
     }
 }
 
