@@ -93,7 +93,7 @@ ClockApplet::~ClockApplet()
 
 void ClockApplet::toolTipAboutToShow()
 {
-    updateContent();
+    updateTipContent();
 }
 
 void ClockApplet::toolTipHidden()
@@ -101,7 +101,7 @@ void ClockApplet::toolTipHidden()
     Plasma::ToolTipManager::self()->clearContent(this);
 }
 
-void ClockApplet::updateContent()
+void ClockApplet::updateTipContent()
 {
     Plasma::ToolTipContent tipData;
 
