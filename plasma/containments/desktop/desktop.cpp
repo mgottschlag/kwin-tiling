@@ -80,7 +80,6 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
     m_layout->setTemporaryPlacement(true);
     m_layout->setVisibilityTolerance(0.5);
     setLayout(m_layout);
-    setHasConfigurationInterface(true);
 
     resize(800, 600);
     //kDebug() << "!!! loading desktop";
@@ -162,7 +161,7 @@ QList<QAction*> DefaultDesktop::contextualActions()
         connect(m_runCommandAction, SIGNAL(triggered(bool)), this, SLOT(runCommand()));
         m_runCommandAction->setIcon(KIcon("system-run"));
 
-        m_setupDesktopAction = action("configure");
+        m_setupDesktopAction = action("activity settings");
         m_lockDesktopAction = action("lock widgets");
 
         m_lockScreenAction = new QAction(i18n("Lock Screen"), this);
