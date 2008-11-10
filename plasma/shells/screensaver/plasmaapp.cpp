@@ -255,29 +255,26 @@ qreal PlasmaApp::idleOpacity() const
 }
 
 
-void PlasmaApp::activate()
+void PlasmaApp::setActive(bool activate)
 {
-    if (m_view) {
+    if (!m_view) {
+        return;
+    }
+
+    if (activate) {
         m_view->setWindowOpacity(m_activeOpacity);
         m_view->showView();
         m_view->containment()->openToolBox();
-    }
-}
-
-void PlasmaApp::deactivate()
-{
-    if (m_view) {
-        if (m_view->isVisible()) {
-            if (qFuzzyCompare(m_idleOpacity, qreal(0.0))) {
-                m_view->hideView();
-            } else {
-                lock();
-                m_view->setWindowOpacity(m_idleOpacity);
-                m_view->containment()->closeToolBox();
-            }
+    } else if (m_view->isVisible()) {
+        if (qFuzzyCompare(m_idleOpacity + 1.0, qreal(1.0))) {
+            m_view->hideView();
         } else {
             lock();
+            m_view->setWindowOpacity(m_idleOpacity);
+            m_view->containment()->closeToolBox();
         }
+    } else {
+        lock();
     }
 }
 
@@ -308,6 +305,7 @@ Plasma::Corona* PlasmaApp::corona()
         c->setItemIndexMethod(QGraphicsScene::NoIndex);
         c->initializeLayout();
 
+        //aseigo: put this "setup" code in a method that can be called later.
         if (KCmdLineArgs::parsedArgs()->isSet("setup")) {
             if (c->immutability() == Plasma::UserImmutable) {
                 c->setImmutability(Plasma::Mutable);
@@ -367,9 +365,10 @@ void PlasmaApp::createView(Plasma::Containment *containment)
 
     connect(m_view, SIGNAL(hidden()), SLOT(lock()));
     connect(m_view, SIGNAL(hidden()), SIGNAL(hidden()));
+    //aseigo: put this "setup" code ito a setup method
     if (KCmdLineArgs::parsedArgs()->isSet("setup")) {
         m_view->enableSetupMode();
-        activate();
+        setActive(true);
     } else {
         kDebug() << "checking lockprocess is still around";
         QDBusInterface lockprocess("org.kde.krunner_lock", "/LockProcess",

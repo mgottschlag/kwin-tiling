@@ -3,9 +3,8 @@
   <interface name="org.kde.plasmaoverlay.App">
     <signal name="hidden">
     </signal>
-    <method name="activate">
-    </method>
-    <method name="deactivate">
+    <method name="setActive">
+      <arg name="activate" type="b" direction="in"/>
     </method>
     <method name="lock">
     </method>

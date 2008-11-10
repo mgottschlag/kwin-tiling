@@ -65,13 +65,7 @@ public Q_SLOTS:
     /**
      * tell plasma to go into active mode, ready for interaction
      */
-    void activate();
-
-    /**
-     * tell plasma to go into idle mode
-     * this does not mean exit, it just means the computer is idle
-     */
-    void deactivate();
+    void setActive(bool activate);
 
     /**
      * lock widgets
