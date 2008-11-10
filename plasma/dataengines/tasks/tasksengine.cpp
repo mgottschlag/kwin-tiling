@@ -18,6 +18,8 @@
 
 #include "tasksengine.h"
 
+#include <QMetaProperty>
+
 using namespace Plasma;
 
 TasksEngine::TasksEngine(QObject* parent, const QVariantList& args)
