@@ -44,19 +44,18 @@ QsDialog::QsDialog(Plasma::RunnerManager *runnerManager, QWidget *parent)
     QWidget *w = mainWidget();
     QVBoxLayout *layout = new QVBoxLayout(w);
 
-    QWidget *header = new QWidget(this);
     QHBoxLayout *hLayout = new QHBoxLayout();
 
-    QToolButton *m_configButton = new QToolButton(header);
+    QToolButton *m_configButton = new QToolButton(w);
     m_configButton->setText(i18n("Settings"));
     m_configButton->setToolTip(i18n("Settings"));
     m_configButton->setIcon(m_iconSvg->pixmap("configure"));
     connect(m_configButton, SIGNAL(clicked()), SLOT(showConfigDialog()));
 
-    QLabel *label = new QLabel(header);
+    QLabel *label = new QLabel(w);
     label->setText("<b>QuickSand</b>");
 
-    QToolButton *m_closeButton = new QToolButton(header);
+    QToolButton *m_closeButton = new QToolButton(w);
     KGuiItem guiItem = KStandardGuiItem::close();
     m_closeButton->setText(guiItem.text());
     m_closeButton->setToolTip(guiItem.text().remove('&'));
