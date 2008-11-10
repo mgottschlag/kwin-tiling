@@ -167,9 +167,9 @@ bool DashboardView::eventFilter(QObject *watched, QEvent *event)
         QMouseEvent *me = static_cast<QMouseEvent *>(event);
         m_appletBrowserDragStart = me->globalPos();
     } else if (event->type() == QEvent::MouseMove && m_appletBrowserDragStart != QPoint()) {
-        QMouseEvent *me = static_cast<QMouseEvent *>(event);
-        QPoint newPos = me->globalPos();
-        QPoint curPos = m_appletBrowser->pos();
+        const QMouseEvent *me = static_cast<QMouseEvent *>(event);
+        const QPoint newPos = me->globalPos();
+        const QPoint curPos = m_appletBrowser->pos();
         int x = curPos.x();
         int y = curPos.y();
 
@@ -183,7 +183,7 @@ bool DashboardView::eventFilter(QObject *watched, QEvent *event)
         }
 
         if (x == 0 || x + m_appletBrowser->width() >= width()) {
-            y = m_appletBrowser->y() + (newPos.y() - m_appletBrowserDragStart.y());
+            y = curPos.y() + (newPos.y() - m_appletBrowserDragStart.y());
 
             if (y < 0) {
                 y = 0;
@@ -191,6 +191,7 @@ bool DashboardView::eventFilter(QObject *watched, QEvent *event)
                 y = height() - m_appletBrowser->height();
             }
         }
+
         m_appletBrowser->move(x, y);
         m_appletBrowserDragStart = newPos;
     } else if (event->type() == QEvent::MouseButtonRelease) {
