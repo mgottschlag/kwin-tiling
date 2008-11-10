@@ -48,10 +48,13 @@ class HWInfo : public SM::Applet
 
         Plasma::WebView *m_info;
         Plasma::IconWidget *m_icon;
-        QString m_cpu;
         QString m_gpu;
-        QString m_audio;
-        QString m_net;
+        QStringList m_cpus;
+        QStringList m_cpuNames;
+        QStringList m_networks;
+        QStringList m_networkNames;
+        QStringList m_audios;
+        QStringList m_audioNames;
 };
 
 K_EXPORT_PLASMA_APPLET(sm_hwinfo, HWInfo)

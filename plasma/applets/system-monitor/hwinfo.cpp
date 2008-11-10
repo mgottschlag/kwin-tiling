@@ -79,18 +79,17 @@ void HWInfo::connectToEngine()
 {
     Applet::connectToEngine();
     setEngine(dataEngine("soliddevice"));
-    QStringList ids;
 
-    ids = engine()->query("IS Processor")["IS Processor"].toStringList();
-    foreach (const QString& id, ids) {
+    m_cpus = engine()->query("IS Processor")["IS Processor"].toStringList();
+    foreach (const QString& id, m_cpus) {
         engine()->connectSource(id, this);
     }
-    ids = engine()->query("IS NetworkInterface")["IS NetworkInterface"].toStringList();
-    foreach (const QString& id, ids) {
+    m_networks = engine()->query("IS NetworkInterface")["IS NetworkInterface"].toStringList();
+    foreach (const QString& id, m_networks) {
         engine()->connectSource(id, this);
     }
-    ids = engine()->query("IS AudioInterface")["IS AudioInterface"].toStringList();
-    foreach (const QString& id, ids) {
+    m_audios = engine()->query("IS AudioInterface")["IS AudioInterface"].toStringList();
+    foreach (const QString& id, m_audios) {
         engine()->connectSource(id, this);
     }
     // TODO: get this from soliddevice
@@ -109,25 +108,30 @@ void HWInfo::connectToEngine()
 void HWInfo::dataUpdated(const QString& source,
                      const Plasma::DataEngine::Data &data)
 {
-    // TODO: Handle multiple devices
-    if (source.indexOf("playback") > -1) {
-        //kDebug() << "audio" << source;
-        m_audio = data["Name"].toString();
+    if (m_audios.contains(source) && !m_audioNames.contains(data["Name"].toString()) && 
+        !data["Name"].toString().isEmpty()) {
+        m_audioNames.append(data["Name"].toString());
+    } else if (m_networks.contains(source) && !m_networkNames.contains(data["Product"].toString()) && 
+               !data["Product"].toString().isEmpty()) {
+        m_networkNames.append(data["Product"].toString());
+    } else if (m_cpus.contains(source) && !m_cpuNames.contains(data["Product"].toString()) && 
+               !data["Product"].toString().isEmpty()) {
+        m_cpuNames.append(data["Product"].toString().trimmed());
     } else if (source.indexOf("VGA") > -1) {
-        //kDebug() << "gpu" << source;
         m_gpu = data["stdout"].toString().trimmed();
-    } else if (source.indexOf("net") > -1) {
-        //kDebug() << "net" << source;
-        m_net = data["Product"].toString();
-    } else if (source.indexOf("CPU") > -1) {
-        //kDebug() << "cpu" << source;
-        m_cpu = data["Product"].toString();
     }
+
     QString html;
-    html += QString(INFO_ROW).arg(i18n("CPU")).arg(m_cpu);
+    foreach(const QString& cpu, m_cpuNames) {
+        html += QString(INFO_ROW).arg(i18n("CPU")).arg(cpu);
+    }
     html += QString(INFO_ROW).arg(i18n("GPU")).arg(m_gpu);
-    html += QString(INFO_ROW).arg(i18n("Audio")).arg(m_audio);
-    html += QString(INFO_ROW).arg(i18n("Network")).arg(m_net);
+    foreach(const QString& audio, m_audioNames) {
+        html += QString(INFO_ROW).arg(i18n("Audio")).arg(audio);
+    }
+    foreach(const QString& network, m_networkNames) {
+        html += QString(INFO_ROW).arg(i18n("Network")).arg(network);
+    }
     html += END_TABLE END;
     if (m_info) {
         Plasma::Theme* theme = Plasma::Theme::defaultTheme();
