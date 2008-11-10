@@ -40,10 +40,10 @@ endif(X11_Xinerama_FOUND)
 add_subdirectory( hardware )
 add_subdirectory(autostart)
 
-if(FONTCONFIG_FOUND AND FREETYPE_FOUND)
+if(FONTCONFIG_FOUND AND FREETYPE_FOUND AND NOT WIN32)
     add_subdirectory( fonts )
     add_subdirectory( kfontinst )
-endif(FONTCONFIG_FOUND AND FREETYPE_FOUND)
+endif(FONTCONFIG_FOUND AND FREETYPE_FOUND AND NOT WIN32)
 
 message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(KSMCARD_SUBDIR)")
 
