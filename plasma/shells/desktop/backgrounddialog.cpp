@@ -448,6 +448,10 @@ void BackgroundDialog::reloadConfig()
     m_containmentModel->clear();
     int i = 0;
     foreach (KPluginInfo info, plugins) {
+        if (!info.service()->property("X-Plasma-ContainmentCategories").toStringList().contains("desktop")) {
+            continue;
+        }
+
         QStandardItem* item = new QStandardItem(KIcon(info.icon()), info.name());
         item->setData(info.comment(), AppletDelegate::DescriptionRole);
         item->setData(info.pluginName(), AppletDelegate::PluginNameRole);
@@ -465,6 +469,7 @@ void BackgroundDialog::reloadConfig()
     bool doWallpaper = m_containment->drawWallpaper();
     m_wallpaperLabel->setVisible(doWallpaper);
     m_wallpaperGroup->setVisible(doWallpaper);
+    kDebug() << "do wallpapers?!" << doWallpaper;
     if (doWallpaper) {
         // Load wallpaper plugins
         QString currentPlugin;
@@ -480,6 +485,7 @@ void BackgroundDialog::reloadConfig()
         m_wallpaperMode->clear();
         i = 0;
         foreach (KPluginInfo info, plugins) {
+            kDebug() << "doing wallpaper" << info.pluginName();
             bool matches = info.pluginName() == currentPlugin;
             const QList<KServiceAction>& modes = info.service()->actions();
             if (modes.count() > 0) {
