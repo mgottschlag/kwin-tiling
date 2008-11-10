@@ -127,14 +127,14 @@ void GroupManagerPrivate::reloadTasks()
     //kDebug() << "number of tasks available " << TaskManager::self()->tasks().size();
 
     QList <TaskPtr> taskList = TaskManager::self()->tasks().values();
-    foreach(TaskPtr task, taskList) { //Add all existing tasks
+    foreach (TaskPtr task, taskList) { //Add all existing tasks
         if (!q->add(task)) {
             q->remove(task); //remove what isn't needed anymore
         }
         taskList.removeAll(task);
     }
 
-    foreach(TaskPtr task, taskList) { //Remove the remaining
+    foreach (TaskPtr task, taskList) { //Remove the remaining
         q->remove(task);
     }
 
@@ -264,17 +264,22 @@ bool GroupManager::add(TaskPtr task)
 void GroupManager::remove(TaskPtr task)
 {
     //kDebug() << "remove: " << task->visibleName();
+    if (!d->geometryTasks.isEmpty()) {
+        d->geometryTasks.removeAll(task);
+    }
+
     TaskItem *item = d->itemList.value(task);
     if (!item) {
         kDebug() << "invalid item";
         return;
     }
+
     if (item->parentGroup()) {
         item->parentGroup()->remove(item);
     }
+
     emit itemRemoved(item);
     //the item must exist as long as the TaskPtr does because of activate calls so don't delete the item here, it will delete itself. We keep it in the itemlist because it may return
-    
 }
 
 void GroupManagerPrivate::itemDestroyed()
@@ -403,7 +408,7 @@ void GroupManagerPrivate::taskChanged(TaskPtr task, ::TaskManager::TaskChanges c
 
 void GroupManager::setScreen(int screen)
 {
-    kDebug() << "new Screen: " << screen;
+    //kDebug() << "new Screen: " << screen;
     d->currentScreen = screen;
 }
 
@@ -412,10 +417,10 @@ void GroupManagerPrivate::checkScreenChange()
 {
     //kDebug();
     foreach (const TaskPtr &task, geometryTasks) {
-        if (!task->isOnScreen(currentScreen) && !task->demandsAttention()) {
-            q->remove(task);
-        } else {
+        if (task->isOnScreen(currentScreen) || task->demandsAttention()) {
             q->add(task);
+        } else {
+            q->remove(task);
         }
     }
     geometryTasks.clear();
@@ -424,7 +429,7 @@ void GroupManagerPrivate::checkScreenChange()
 
 void GroupManager::reconnect()
 {
-    kDebug();
+    //kDebug();
     disconnect(TaskManager::self(), SIGNAL(desktopChanged(int)),
                this, SLOT(currentDesktopChanged(int)));
     disconnect(TaskManager::self(), SIGNAL(windowChanged(TaskPtr,::TaskManager::TaskChanges)),
@@ -441,10 +446,10 @@ void GroupManager::reconnect()
                 this, SLOT(taskChanged(TaskPtr,::TaskManager::TaskChanges)));
     }
 
-    if (d->showOnlyCurrentScreen) {
-        TaskManager::TaskManager::self()->trackGeometry(true);
-    } else {
-        TaskManager::TaskManager::self()->trackGeometry(false);
+    TaskManager::TaskManager::self()->trackGeometry(d->showOnlyCurrentScreen);
+
+    if (!d->showOnlyCurrentScreen) {
+        d->geometryTasks.clear();
     }
 
     d->reloadTasks();
@@ -458,7 +463,7 @@ bool GroupManager::onlyGroupWhenFull() const
 
 void GroupManager::setOnlyGroupWhenFull(bool state)
 {
-    kDebug() << state;
+    //kDebug() << state;
     d->onlyGroupWhenFull = state;
 
     if (state) {
@@ -472,7 +477,7 @@ void GroupManager::setOnlyGroupWhenFull(bool state)
 
 void GroupManager::setFullLimit(int limit)
 {
-    kDebug() << limit;
+    //kDebug() << limit;
     d->groupIsFullLimit = limit;
     if (!onlyGroupWhenFull()) {
         return;
@@ -482,7 +487,7 @@ void GroupManager::setFullLimit(int limit)
 
 void GroupManagerPrivate::checkIfFull()
 {
-    kDebug();
+    ////kDebug();
     if (!q->onlyGroupWhenFull()) {
         return;
     }
@@ -542,7 +547,7 @@ AbstractSortingStrategy* GroupManager::taskSorter() const
 
 void GroupManager::setSortingStrategy(TaskSortingStrategy sortOrder)
 {
-    kDebug() << sortOrder;
+    //kDebug() << sortOrder;
 
     if (d->abstractSortingStrategy) {
         if (d->abstractSortingStrategy->type() == sortOrder){
@@ -591,7 +596,7 @@ AbstractGroupingStrategy* GroupManager::taskGrouper() const
 
 void GroupManager::setGroupingStrategy(TaskGroupingStrategy strategy)
 {
-    kDebug() << strategy;
+    //kDebug() << strategy;
 
     if (d->abstractGroupingStrategy) {
         if (d->abstractGroupingStrategy->type() == strategy){
