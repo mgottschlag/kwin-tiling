@@ -959,12 +959,16 @@ bool LockProcess::startPlasma()
     connect(QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(QString, QString, QString)),
             this, SLOT(newService(QString, QString, QString)));
 
-    //KProcess plasmaProc;
-    mPlasmaProc.setProgram("plasma-overlay");
+    KProcess *plasmaProc = new KProcess;
+    plasmaProc->setProgram("plasma-overlay");
     if (mSetupMode) {
-        mPlasmaProc << "--setup";
+        *plasmaProc << "--setup";
     }
-    mPlasmaProc.start();
+
+    //make sure it goes away when it's done (and not before)
+    connect(plasmaProc, SIGNAL(finished(int,QProcess::ExitStatus)), plasmaProc, SLOT(deleteLater()));
+
+    plasmaProc->start();
     kDebug() << "process begun";
 
     //plasma gets 15 seconds to load, or we assume it failed
