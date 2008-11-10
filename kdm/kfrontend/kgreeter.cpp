@@ -520,9 +520,11 @@ KGreeter::setPrevWM( QAction *wm )
 	if (curPrev != wm) {
 		if (curPrev)
 			curPrev->setText( sessionTypes[curPrev->data().toInt()].name );
-		if (wm)
+		if (wm) {
 			wm->setText( sessionTypes[wm->data().toInt()].name +
 			             i18nc("appended to session type", " (previous)") );
+			wm->toggle();
+		}
 		curPrev = wm;
 	}
 }
