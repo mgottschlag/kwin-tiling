@@ -212,10 +212,10 @@ void NotificationWidgetPrivate::destroy()
 {
     Plasma::ExtenderItem *extenderItem = dynamic_cast<Plasma::ExtenderItem *>(q->parentItem());
 
-    if (destroyOnClose) {
-        extenderItem->destroy();
-    } else {
+    if (extenderItem->isDetached()) {
         completeDetach();
+    } else {
+        extenderItem->destroy();
     }
 
     notification = 0;
