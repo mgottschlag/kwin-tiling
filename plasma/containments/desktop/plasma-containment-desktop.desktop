@@ -97,6 +97,7 @@ Comment[zh_TW]=預設桌面容器
 Icon=user-desktop
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet,Plasma/Containment
+X-Plasma-ContainmentCategories=desktop
 NoDisplay=true
 
 X-KDE-Library=plasma_containment_desktop

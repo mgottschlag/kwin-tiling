@@ -71,6 +71,7 @@ Comment[zh_TW]=面板容器
 Icon=
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet,Plasma/Containment
+X-Plasma-ContainmentCategories=mid
 NoDisplay=true
 
 X-KDE-Library=plasma_containment_midpanel
