@@ -81,7 +81,9 @@ void AbstractSortingStrategy::handleGroup(TaskGroup *group)
     disconnect(group, 0, this, 0); //To avoid duplicate connections
     connect(group, SIGNAL(itemAdded(AbstractItemPtr)), this, SLOT(handleItem(AbstractItemPtr)));
     connect(group, SIGNAL(destroyed()), this, SLOT(removeGroup())); //FIXME necessary?
-    foreach (AbstractItemPtr item, group->members()) {
+    ItemList sortedList = group->members();
+    sortItems(sortedList); //the sorting doesn't work with totally unsorted lists, therefore we sort it in the correct order the first time
+    foreach (AbstractItemPtr item, sortedList) {
         handleItem(item);
     }
 }
@@ -111,7 +113,6 @@ void AbstractSortingStrategy::handleItem(AbstractItemPtr item)
 
 void AbstractSortingStrategy::check(AbstractItemPtr itemToCheck)
 {
-    kDebug();
     AbstractItemPtr item;
     if (!itemToCheck) {
         item = dynamic_cast<AbstractItemPtr>(sender());
@@ -123,6 +124,7 @@ void AbstractSortingStrategy::check(AbstractItemPtr itemToCheck)
         kDebug() << "invalid item";
         return;
     }
+    //kDebug() << item->name();
 
     if (!item->isGroupItem()) {
         if (!(qobject_cast<TaskItem*>(item))->task()) { //ignore startup tasks
@@ -151,7 +153,7 @@ void AbstractSortingStrategy::desktopChanged(int newDesktop)
 
 bool AbstractSortingStrategy::moveItem(AbstractItemPtr item, int newIndex)
 {
-    kDebug() << "move to " << newIndex;
+    //kDebug() << "move to " << newIndex;
     if (!item->parentGroup()) {
         kDebug() << "error: no parentgroup but the item was asked to move";
         return false;
@@ -166,11 +168,12 @@ bool AbstractSortingStrategy::moveItem(AbstractItemPtr item, int newIndex)
     if (newIndex > oldIndex) {
         newIndex--; //the index has to be adjusted if we move the item from right to left because the item on the left is removed first
     }
-
-    return item->parentGroup()->moveItem(oldIndex, newIndex);
+    if (oldIndex != newIndex) {
+        return item->parentGroup()->moveItem(oldIndex, newIndex);
+    }
+    return -1;
 }
 
 } //namespace
 
 #include "abstractsortingstrategy.moc"
-

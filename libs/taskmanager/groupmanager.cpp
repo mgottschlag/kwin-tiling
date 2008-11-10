@@ -35,6 +35,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "taskgroup.h"
 #include "taskmanager.h"
 #include "strategies/alphasortingstrategy.h"
+#include "strategies/desktopsortingstrategy.h"
 #include "strategies/programgroupingstrategy.h"
 #include "strategies/manualgroupingstrategy.h"
 #include "strategies/manualsortingstrategy.h"
@@ -566,8 +567,8 @@ void GroupManager::setSortingStrategy(TaskSortingStrategy sortOrder)
             break;
 
         case DesktopSorting:
-            kDebug() << "Strategy not implemented";
-            //d->abstractSortingStrategy = new DesktopSortingStrategy(this);
+            d->abstractSortingStrategy = new DesktopSortingStrategy(this);
+            d->abstractSortingStrategy->handleGroup(d->rootGroup);
             break;
 
         default:

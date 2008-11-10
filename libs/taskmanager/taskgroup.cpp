@@ -475,6 +475,7 @@ bool TaskGroup::demandsAttention() const
 
 bool TaskGroup::moveItem(int oldIndex, int newIndex)
 {
+    //kDebug() << oldIndex << newIndex;
     if ((d->members.count() <= newIndex) || (newIndex < 0) ||
         (d->members.count() <= oldIndex || oldIndex < 0)) {
         kDebug() << "index out of bounds";

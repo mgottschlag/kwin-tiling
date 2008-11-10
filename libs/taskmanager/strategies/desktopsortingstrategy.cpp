@@ -21,27 +21,57 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#ifndef ALPHASORTINGSTRATEGY_H
-#define ALPHASORTINGSTRATEGY_H
+#include "desktopsortingstrategy.h"
 
-#include <QtCore/QObject>
+#include <QMap>
+#include <QString>
+#include <QtAlgorithms>
+#include <QList>
 
-#include <taskmanager/abstractsortingstrategy.h>
+#include <KDebug>
+
+#include "abstractgroupableitem.h"
+
 
 namespace TaskManager
 {
 
-/** Sorts the tasks alphabetically by programname found in Task::classClass()*/
-class AlphaSortingStrategy : public AbstractSortingStrategy
+DesktopSortingStrategy::DesktopSortingStrategy(QObject *parent)
+:AbstractSortingStrategy(parent)
 {
-    Q_OBJECT
-public:
-    AlphaSortingStrategy(QObject *parent);
+    setType(GroupManager::DesktopSorting);
+}
 
-private:
-    /** Sorts list of items according to strategy*/
-    void sortItems(ItemList&);
-};
+void DesktopSortingStrategy::sortItems(ItemList &items)
+{
+    kDebug();
+    QMap<int, AbstractGroupableItem*> map;
+    foreach (AbstractGroupableItem *item, items) {
+        if (!item) {
+            kDebug() << "Null Pointer";
+            continue;
+        }
+        kDebug() << item->name() << item->desktop();
+        map.insertMulti(item->desktop(), item);
+    }
 
-} // TaskManager namespace
-#endif
+    items.clear();
+    items = map.values();
+    kDebug();
+    foreach (AbstractGroupableItem *item, items) {
+        kDebug() << item->name() << item->desktop();
+    }
+}
+
+void DesktopSortingStrategy::handleItem(AbstractItemPtr item)
+{
+    kDebug();
+    disconnect(item, 0, this, 0); //To avoid duplicate connections
+    connect(item, SIGNAL(changed(::TaskManager::TaskChanges)), this, SLOT(check()));
+    AbstractSortingStrategy::handleItem(item);
+}
+
+} //namespace
+
+#include "desktopsortingstrategy.moc"
+

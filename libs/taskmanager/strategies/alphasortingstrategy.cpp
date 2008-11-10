@@ -46,7 +46,7 @@ AlphaSortingStrategy::AlphaSortingStrategy(QObject *parent)
 
 void AlphaSortingStrategy::sortItems(ItemList &items)
 {
-    kDebug();
+    //kDebug();
     QMap<QString, AbstractGroupableItem*> map;
 
     foreach (AbstractGroupableItem *groupable, items) {
