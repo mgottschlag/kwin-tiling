@@ -20,6 +20,7 @@ Name[zh_TW]=保護程式桌面
 Icon=Plasma
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet,Plasma/Containment
+X-Plasma-ContainmentCategories=screensaver
 NoDisplay=true
 
 X-KDE-Library=plasma_containment_saverdesktop

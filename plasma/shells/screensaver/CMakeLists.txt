@@ -31,8 +31,6 @@ set(plasma-overlay_SRCS
 
 kde4_add_ui_files(plasma-overlay_SRCS BackgroundDialog.ui)
 
-add_subdirectory(containment)
-
 set(plasmaapp_dbusXML org.kde.plasma-overlay.App.xml)
 #qt4_generate_dbus_interface(plasmaapp.h ${plasmaapp_dbusXML} OPTIONS -S -M)
 qt4_add_dbus_adaptor(plasma-overlay_SRCS ${plasmaapp_dbusXML} plasmaapp.h PlasmaApp)
