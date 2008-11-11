@@ -379,9 +379,13 @@ void Pager::recalculateWindowRects()
             if (!info.isOnDesktop(i+1)) {
                 continue;
             }
+
             QRect windowRect = info.frameGeometry();
-            if( KWindowSystem::mapViewport())
+
+            if (KWindowSystem::mapViewport()) {
                 windowRect = fixViewportPosition( windowRect );
+            }
+
             windowRect = QRectF(windowRect.x() * m_widthScaleFactor,
                                 windowRect.y() * m_heightScaleFactor,
                                 windowRect.width() * m_widthScaleFactor,
@@ -586,7 +590,7 @@ void Pager::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->buttons() != Qt::RightButton)
     {
-        for (int i = 0; i < m_desktopCount; i++) {
+        for (int i = 0; i < m_rects.count(); ++i) {
             if (posOnDesktopRect(m_rects[i], event->pos())) {
                 m_dragStartDesktop = m_dragHighlightedDesktop = i;
                 m_dragOriginalPos = m_dragCurrentPos = event->pos();
@@ -629,7 +633,7 @@ void Pager::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if (m_dragId > 0) {
         m_dragCurrentPos = event->pos();
         m_dragHighlightedDesktop = -1;
-        for (int i = 0; i < m_desktopCount; i++) {
+        for (int i = 0; i < m_rects.count(); ++i) {
             if (m_rects[i].contains(event->pos().toPoint())) {
                 m_dragHighlightedDesktop = i;
                 break;
@@ -671,12 +675,22 @@ void Pager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             dest = QPointF(dest.x()/m_widthScaleFactor, dest.y()/m_heightScaleFactor);
             // don't move windows to negative positions
             dest = QPointF(qMax(dest.x(), qreal(0.0)), qMax(dest.y(), qreal(0.0)));
-            if( !KWindowSystem::mapViewport()) {
-                KWindowSystem::setOnDesktop(m_dragId, m_dragHighlightedDesktop+1);
-                // use _NET_MOVERESIZE_WINDOW rather than plain move, so that the WM knows this is a pager request
-                NETRootInfo i( QX11Info::display(), 0 );
-                int flags = ( 0x20 << 12 ) | ( 0x03 << 8 ) | 1; // from tool, x/y, northwest gravity
-                i.moveResizeWindowRequest( m_dragId, flags, dest.toPoint().x(), dest.toPoint().y(), 0, 0 );
+            if (!KWindowSystem::mapViewport()) {
+                KWindowInfo info = KWindowSystem::windowInfo(m_dragId, NET::WMDesktop);
+
+                if (!info.onAllDesktops()) {
+                    KWindowSystem::setOnDesktop(m_dragId, m_dragHighlightedDesktop+1);
+                }
+
+                // only move the window if it is kept within the same desktop
+                // moving when dropping between desktop is too annoying due to
+                // the small drop area.
+                if (m_dragHighlightedDesktop == m_dragStartDesktop || info.onAllDesktops()) {
+                    // use _NET_MOVERESIZE_WINDOW rather than plain move, so that the WM knows this is a pager request
+                    NETRootInfo i( QX11Info::display(), 0 );
+                    int flags = ( 0x20 << 12 ) | ( 0x03 << 8 ) | 1; // from tool, x/y, northwest gravity
+                    i.moveResizeWindowRequest( m_dragId, flags, dest.toPoint().x(), dest.toPoint().y(), 0, 0 );
+                }
             } else {
                 // setOnDesktop() with viewports is also moving a window, and since it takes a moment
                 // for the WM to do the move, there's a race condition with figuring out how much to move,
@@ -914,7 +928,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
     // Draw backgrounds of desktops only when there are not the proper theme elements
     painter->setPen(Qt::NoPen);
     if (!m_background->hasElementPrefix("hover")) {
-        for (int i = 0; i < m_desktopCount; i++) {
+        for (int i = 0; i < m_rects.count(); i++) {
             if (m_rects[i] == m_hoverRect) {
                 QColor animHoverColor = hoverColor;
                 if (m_animations[i].animId > -1) {
@@ -967,7 +981,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
     painter->setBrush(Qt::NoBrush);
 
     QString prefix;
-    for (int i = 0; i < m_desktopCount; i++) {
+    for (int i = 0; i < m_rects.count(); i++) {
         if (i + 1 == m_currentDesktop || i == m_dragHighlightedDesktop) {
             prefix = "active";
         } else {
