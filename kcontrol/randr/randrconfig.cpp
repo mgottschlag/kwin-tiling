@@ -150,18 +150,20 @@ void RandRConfig::apply()
 		
 		if(!res.isNull()) {
 			if(output->rect() == configuredRect) {
-				kDebug() << "Ignoring identical config for " << output->name();
+				kDebug() << "Ignoring identical config for" << output->name();
 				continue;
 			}
 			
-			kDebug() << "Output config: rect =" << configuredRect << ", rot = "
-			         << config->rotation() << ", rate =" << config->refreshRate();
-				    
+			kDebug() << "Output config for" << output->name() << ":\n"
+			            "  rect =" << configuredRect
+			         << ", rot =" << config->rotation()
+			         << ", rate =" << config->refreshRate();
+			
 			output->proposeRect(configuredRect);
 			output->proposeRotation(config->rotation());
 			output->proposeRefreshRate(config->refreshRate());
 		} else { // user wants to disable this output
-			kDebug() << "Disabling " << output->name();
+			kDebug() << "Disabling" << output->name();
 			output->slotDisable();
 		}
 	}

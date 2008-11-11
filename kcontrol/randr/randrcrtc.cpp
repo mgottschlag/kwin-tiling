@@ -198,9 +198,9 @@ bool RandRCrtc::applyProposed()
 {
 	kDebug() << "[CRTC] Going to apply (" << m_id << ") ....";
 	kDebug() << "       Current Screen rect: " << m_screen->rect();
-	kDebug() << "       Current CRTC Rect: " << m_currentRect;
-	kDebug() << "       Current Rotation: " << m_currentRotation;
-	kDebug() << "       Proposed rect: " << m_proposedRect;
+	kDebug() << "       Current CRTC rect: " << m_currentRect;
+	kDebug() << "       Current rotation: " << m_currentRotation;
+	kDebug() << "       Proposed CRTC rect: " << m_proposedRect;
 	kDebug() << "       Proposed rotation: " << m_proposedRotation;
 	kDebug() << "       Proposed refresh rate: " << m_proposedRate;
 	kDebug() << "       Outputs: ";

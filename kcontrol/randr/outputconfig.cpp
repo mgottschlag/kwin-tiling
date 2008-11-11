@@ -93,14 +93,14 @@ int OutputConfig::rotation(void) const
 void OutputConfig::outputChanged(RROutput output, int changes)
 {
 	Q_ASSERT(m_output->id() == output);
-	kDebug() << "Output " << m_output->name() << " changed. (mask = " << changes << ")";
+	kDebug() << "Output" << m_output->name() << "changed. (mask = " + QString::number(changes) + ")";
 	
 	if(changes & RandR::ChangeOutputs) {
-		kDebug() << "Outputs changed";
+		kDebug() << "Outputs changed.";
 	}
 	
 	if(changes & RandR::ChangeCrtc) {
-		kDebug() << "Output CRTC changed";
+		kDebug() << "Output CRTC changed.";
 		
 		updateSizeList();
 		updateRateList();
@@ -109,24 +109,24 @@ void OutputConfig::outputChanged(RROutput output, int changes)
 	
 	if(changes & RandR::ChangeRect) {
 		QRect r = m_output->rect();
-		kDebug() << "Output rect changed: " << r;
+		kDebug() << "Output rect changed:" << r;
 		//m_item->setRect(0, 0, r.width(), r.height());
 		m_item->setRect(r);
 		//m_item->setPos
 	}
 	
 	if(changes & RandR::ChangeRotation) {
-		kDebug() << "Output rotation changed";
+		kDebug() << "Output rotation changed.";
 		updateRotationList();
 	}
 	
 	if(changes & RandR::ChangeConnection) {
-		kDebug() << "Output connection status changed";
+		kDebug() << "Output connection status changed.";
 		setEnabled(m_output->isConnected());
 	}
 	
 	if(changes & RandR::ChangeRate) {
-		kDebug() << "Output rate changed";
+		kDebug() << "Output rate changed.";
 		updateRateList();
 	}
 	
