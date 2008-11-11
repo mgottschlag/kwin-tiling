@@ -444,7 +444,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
             m_btnReboot->setPopupMenu( rebootMenu );
 
             int index = 0;
-            for (QStringList::ConstIterator it = rebootOptions.begin(); it != rebootOptions.end(); ++it, ++index) {
+            for (QStringList::ConstIterator it = rebootOptions.constBegin(); it != rebootOptions.constEnd(); ++it, ++index) {
                 QString label = (*it);
                 label=label.replace('&',"&&");
                 QAction* action = new QAction(label, rebootActionGroup);

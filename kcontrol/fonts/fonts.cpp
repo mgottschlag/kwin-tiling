@@ -563,7 +563,7 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
 
   unsigned int count = 0;
 
-  while (it != nameGroupKeyRc.end()) {
+  while (it != nameGroupKeyRc.constEnd()) {
 
     QString name = *it; it++;
     QString group = *it; it++;

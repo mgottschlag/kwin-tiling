@@ -433,8 +433,8 @@ void runRdb( uint flags )
 
     QStringList list;
 
-    QStringList adPaths = KGlobal::dirs()->findDirs("appdefaults", "");
-    for (QStringList::ConstIterator it = adPaths.begin(); it != adPaths.end(); ++it) {
+    const QStringList adPaths = KGlobal::dirs()->findDirs("appdefaults", "");
+    for (QStringList::ConstIterator it = adPaths.constBegin(); it != adPaths.constEnd(); ++it) {
       QDir dSys( *it );
 
       if ( dSys.exists() ) {
@@ -445,7 +445,7 @@ void runRdb( uint flags )
       }
     }
 
-    for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it)
+    for (QStringList::ConstIterator it = list.constBegin(); it != list.constEnd(); ++it)
       copyFile(tmpFile, KStandardDirs::locate("appdefaults", *it ), true);
   }
 

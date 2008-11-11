@@ -203,12 +203,12 @@ KWinbindGreeter::slotChangedDomain( const QString &dom )
 		return;
 	QStringList users;
 	if (dom == "<local>") {
-		for (QStringList::ConstIterator it = allUsers.begin(); it != allUsers.end(); ++it)
+		for (QStringList::ConstIterator it = allUsers.constBegin(); it != allUsers.constEnd(); ++it)
 			if ((*it).indexOf( separator ) < 0)
 				users << *it;
 	} else {
 		QString st( dom + separator );
-		for (QStringList::ConstIterator it = allUsers.begin(); it != allUsers.end(); ++it)
+		for (QStringList::ConstIterator it = allUsers.constBegin(); it != allUsers.constEnd(); ++it)
 			if ((*it).startsWith( st ))
 				users << (*it).mid( st.length() );
 	}

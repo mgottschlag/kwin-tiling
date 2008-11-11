@@ -93,7 +93,7 @@ void CFontPreview::showFont()
         update();
         emit status(false);
     }
-    itsLastChar=itsChars.end();
+    itsLastChar=itsChars.constEnd();
 }
 
 void CFontPreview::zoomIn()

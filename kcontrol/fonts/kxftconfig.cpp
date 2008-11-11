@@ -375,7 +375,7 @@ bool KXftConfig::apply()
                 QStringList::const_iterator it(list.begin()),
                                       end(list.end());
 
-                for(it=list.begin(); it!=list.end(); ++it)
+                for(it=list.constBegin(); it!=list.constEnd(); ++it)
                     newConfig.addDir(*it);
             }
 

@@ -80,7 +80,7 @@ bool KxkbConfig::load(int loadMode)
 	    layoutList.append("us");
 
 	m_layouts.clear();
-	for(QStringList::ConstIterator it = layoutList.begin(); it != layoutList.end() ; ++it) {
+	for(QStringList::ConstIterator it = layoutList.constBegin(); it != layoutList.constEnd() ; ++it) {
 		LayoutUnit layoutUnit(*it);
 		m_layouts.append( layoutUnit );
 		kDebug() << " added layout" << layoutUnit.toPair();
@@ -91,7 +91,7 @@ bool KxkbConfig::load(int loadMode)
 	QStringList displayNamesList;
 	displayNamesList = config.readEntry("DisplayNames", displayNamesList);
         int i=0;
-	for(QStringList::ConstIterator it = displayNamesList.begin(); it != displayNamesList.end() ; ++it) {
+	for(QStringList::ConstIterator it = displayNamesList.constBegin(); it != displayNamesList.constEnd() ; ++it) {
             if( i < m_layouts.count() ) {
 		m_layouts[i].setDisplayName(*it);
                 i++;
@@ -198,7 +198,7 @@ void KxkbConfig::save()
 	QStringList displayNamesList;
 
 	QList<LayoutUnit>::ConstIterator it;
-	for(it = m_layouts.begin(); it != m_layouts.end(); ++it) {
+	for(it = m_layouts.constBegin(); it != m_layouts.constEnd(); ++it) {
 		const LayoutUnit& layoutUnit = *it;
 
 		layoutList.append( layoutUnit.toPair() );
@@ -258,7 +258,7 @@ void KxkbConfig::setDefaults()
 QStringList KxkbConfig::getLayoutStringList(/*bool compact*/)
 {
 	QStringList layoutList;
-	for(QList<LayoutUnit>::ConstIterator it = m_layouts.begin(); it != m_layouts.end(); ++it) {
+	for(QList<LayoutUnit>::ConstIterator it = m_layouts.constBegin(); it != m_layouts.constEnd(); ++it) {
 		const LayoutUnit& layoutUnit = *it;
 		layoutList.append( layoutUnit.toPair() );
 	}

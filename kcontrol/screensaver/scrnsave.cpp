@@ -496,8 +496,8 @@ void KScreenSaver::findSavers()
         else
             mLoadTimer->start( 50 );
     }
-    for( KService::List::const_iterator it = mSaverServices.begin();
-        it != mSaverServices.end(); it++,mNumLoaded++)
+    for( KService::List::const_iterator it = mSaverServices.constBegin();
+        it != mSaverServices.constEnd(); it++,mNumLoaded++)
     {
       SaverConfig *saver = new SaverConfig;
       QString file = KStandardDirs::locate("services", (*it)->entryPath());

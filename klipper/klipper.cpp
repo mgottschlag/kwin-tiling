@@ -347,8 +347,8 @@ bool Klipper::loadHistory() {
         reverseList.prepend( item );
     }
 
-    for ( QList<HistoryItem*>::const_iterator it = reverseList.begin();
-          it != reverseList.end();
+    for ( QList<HistoryItem*>::const_iterator it = reverseList.constBegin();
+          it != reverseList.constEnd();
           ++it )
     {
         history()->forceInsert( *it );
@@ -408,8 +408,8 @@ void Klipper::readProperties(KConfig *kc)
             KConfigGroup configGroup(kc, "General");
             dataList = configGroup.readEntry("ClipboardData",QStringList());
 
-            for (QStringList::ConstIterator it = dataList.end();
-                 it != dataList.begin();
+            for (QStringList::ConstIterator it = dataList.constEnd();
+                 it != dataList.constBegin();
              )
             {
                 history()->forceInsert( new HistoryStringItem( *( --it ) ) );

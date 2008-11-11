@@ -211,7 +211,7 @@ void KSMServer::storeLegacySession( KConfig* config )
     config->deleteGroup( "Legacy" + sessionGroup );
     KConfigGroup group( config, "Legacy" + sessionGroup );
     int count = 0;
-    for (WindowMap::ConstIterator it = legacyWindows.begin(); it != legacyWindows.end(); ++it) {
+    for (WindowMap::ConstIterator it = legacyWindows.constBegin(); it != legacyWindows.constEnd(); ++it) {
         if ( (*it).type != SM_ERROR) {
             if( excludeApps.contains( (*it).wmclass1.toLower())
                 || excludeApps.contains( (*it).wmclass2.toLower()))
@@ -244,12 +244,12 @@ void KSMServer::restoreLegacySession( KConfig* config )
                 continue;
             QStringList restartCommand =
                 group.readEntry( QString("restartCommand")+n, QStringList() );
-            for( QStringList::ConstIterator it = restartCommand.begin();
-                it != restartCommand.end();
+            for( QStringList::ConstIterator it = restartCommand.constBegin();
+                it != restartCommand.constEnd();
                 ++it ) {
                 if( (*it) == "-session" ) {
                     ++it;
-                    if( it != restartCommand.end()) {
+                    if( it != restartCommand.constEnd()) {
                         KConfig cfg( "session/" + wm + '_' + (*it) );
                         KConfigGroup group(&cfg, "LegacySession");
                         restoreLegacySessionInternal( &group, ' ' );

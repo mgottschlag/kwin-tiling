@@ -325,8 +325,8 @@ KDisplayManager::localSessions( SessList &list )
 	if (DMType == GDM) {
 		if (!exec( "CONSOLE_SERVERS\n", re ))
 			return false;
-		QStringList sess = QString(re.data() +3).split( QChar(';'), QString::SkipEmptyParts);
-		for (QStringList::ConstIterator it = sess.begin(); it != sess.end(); ++it) {
+		const QStringList sess = QString(re.data() +3).split( QChar(';'), QString::SkipEmptyParts);
+		for (QStringList::ConstIterator it = sess.constBegin(); it != sess.constEnd(); ++it) {
 			QStringList ts = (*it).split( QChar(',') );
 			SessEnt se;
 			se.display = ts[0];
@@ -340,8 +340,8 @@ KDisplayManager::localSessions( SessList &list )
 	} else {
 		if (!exec( "list\talllocal\n", re ))
 			return false;
-		QStringList sess = QString(re.data() + 3).split(QChar('\t'), QString::SkipEmptyParts );
-		for (QStringList::ConstIterator it = sess.begin(); it != sess.end(); ++it) {
+		const QStringList sess = QString(re.data() + 3).split(QChar('\t'), QString::SkipEmptyParts );
+		for (QStringList::ConstIterator it = sess.constBegin(); it != sess.constEnd(); ++it) {
 			QStringList ts = (*it).split( QChar(',') );
 			SessEnt se;
 			se.display = ts[0];

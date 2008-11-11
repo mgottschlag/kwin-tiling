@@ -154,9 +154,9 @@ static bool changeFileStatus(const QString &f, bool enable)
         if(files.count())
         {
             QStringList::const_iterator fIt,
-                                  fEnd=files.end();
+                                  fEnd=files.constEnd();
 
-            for(fIt=files.begin(); fIt!=fEnd; ++fIt)
+            for(fIt=files.constBegin(); fIt!=fEnd; ++fIt)
                 ::rename(QFile::encodeName(*fIt).data(),
                          QFile::encodeName(changeName(*fIt, enable)).data());
         }

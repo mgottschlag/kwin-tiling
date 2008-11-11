@@ -336,9 +336,9 @@ static void getFontFiles(const CDisabledFonts::TFileList &entries, CDisabledFont
         if(assoc.count())
         {
             QStringList::const_iterator fIt,
-                                        fEnd=assoc.end();
+                                        fEnd=assoc.constEnd();
 
-            for(fIt=assoc.begin(); fIt!=fEnd; ++fIt)
+            for(fIt=assoc.constBegin(); fIt!=fEnd; ++fIt)
             {
                 file=removeSymLinks ? getReal(*fIt) : *fIt;
 
@@ -1502,8 +1502,8 @@ bool CKioFonts::createFontUDSEntry(KIO::UDSEntry &entry, const QString &name,
             else
                 sorted.append(*it);
         files=sorted;
-        it=files.begin();
-        end=files.end();
+        it=files.constBegin();
+        end=files.constEnd();
     }
 
     entry.clear();
@@ -2004,7 +2004,7 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, KIO::JobFlags flags)
                             c.args.append((*enabledIt).writingSystems);
                             c.args.append((int)(nameIt.key()));
                             c.args.append((*enabledIt).files.count());
-                            for(it=(*enabledIt).files.begin(); it!=end; ++it)
+                            for(it=(*enabledIt).files.constBegin(); it!=end; ++it)
                             {
                                 c.args.append((*it).path);
                                 c.args.append((*it).foundry);
@@ -2196,9 +2196,9 @@ void CKioFonts::del(const KUrl &url, bool)
                     if(files.count())
                     {
                         QStringList::const_iterator fIt,
-                                              fEnd=files.end();
+                                              fEnd=files.constEnd();
 
-                        for(fIt=files.begin(); fIt!=fEnd; ++fIt)
+                        for(fIt=files.constBegin(); fIt!=fEnd; ++fIt)
                             cmd.append(TCommand(KFI::CMD_DELETE_FILE, *fIt));
                     }
                 }
@@ -2234,9 +2234,9 @@ void CKioFonts::del(const KUrl &url, bool)
                     if(files.count())
                     {
                         QStringList::const_iterator fIt,
-                                              fEnd=files.end();
+                                              fEnd=files.constEnd();
 
-                        for(fIt=files.begin(); fIt!=fEnd; ++fIt)
+                        for(fIt=files.constBegin(); fIt!=fEnd; ++fIt)
                             unlink(QFile::encodeName(*fIt).constData());
                     }
                 }
@@ -3091,9 +3091,9 @@ QStringList CKioFonts::getFontNameEntries(EFolder folder, const QString &file, b
         for(it=itsFolders[folder].fontMap.begin(); it!=end; ++it)
         {
             CDisabledFonts::TFileList::ConstIterator patIt,
-                                                     patEnd=it.value().files.end();
+                                                     patEnd=it.value().files.constEnd();
 
-            for(patIt=it.value().files.begin(); patIt!=patEnd; ++patIt)
+            for(patIt=it.value().files.constBegin(); patIt!=patEnd; ++patIt)
                 if((*patIt).path==file)
                 {
                     rv.append(it.key());
@@ -3392,9 +3392,9 @@ bool CKioFonts::confirmMultiple(const KUrl &url, const CDisabledFonts::TFileList
         QString               out,
                               question;
         QStringList::const_iterator it,
-                              end=fonts.end();
+                              end=fonts.constEnd();
 
-        for(it=fonts.begin(); it!=end; ++it)
+        for(it=fonts.constBegin(); it!=end; ++it)
             out+=QString("<li>")+*it+QString("</li>");
 
         switch(op)

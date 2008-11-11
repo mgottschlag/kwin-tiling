@@ -178,7 +178,7 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
 
     QStringList dmopt =
         QString::fromLatin1( ::getenv( "XDM_MANAGED" )).split(QChar(','), QString::SkipEmptyParts);
-    for (QStringList::ConstIterator it = dmopt.begin(); it != dmopt.end(); ++it)
+    for (QStringList::ConstIterator it = dmopt.constBegin(); it != dmopt.constEnd(); ++it)
         if ((*it).startsWith("method="))
             mMethod = (*it).mid(7);
 
@@ -777,7 +777,7 @@ void LockProcess::stopSaver()
             KDisplayManager().setLock( false );
         ungrabInput();
         const char *out = "GOAWAY!";
-        for (QList<int>::ConstIterator it = child_sockets.begin(); it != child_sockets.end(); ++it)
+        for (QList<int>::ConstIterator it = child_sockets.constBegin(); it != child_sockets.constEnd(); ++it)
             write(*it, out, sizeof(out));
     }
 }
@@ -787,8 +787,8 @@ QVariant LockProcess::getConf(void *ctx, const char *key, const QVariant &dflt)
 {
     LockProcess *that = (LockProcess *)ctx;
     QString fkey = QLatin1String( key ) + '=';
-    for (QStringList::ConstIterator it = that->mPluginOptions.begin();
-         it != that->mPluginOptions.end(); ++it)
+    for (QStringList::ConstIterator it = that->mPluginOptions.constBegin();
+         it != that->mPluginOptions.constEnd(); ++it)
         if ((*it).startsWith( fkey ))
             return (*it).mid( fkey.length() );
     return dflt;
@@ -826,7 +826,7 @@ bool LockProcess::loadGreetPlugin()
         //FIXME should I be unloading the plugin on unlock instead?
         return true;
     }
-    for (QStringList::ConstIterator it = mPlugins.begin(); it != mPlugins.end(); ++it) {
+    for (QStringList::ConstIterator it = mPlugins.constBegin(); it != mPlugins.constEnd(); ++it) {
         GreeterPluginHandle plugin;
         KLibrary *lib = new KLibrary( (*it)[0] == '/' ? *it : "kgreet_" + *it );
         if (lib->fileName().isEmpty()) {
@@ -1509,8 +1509,8 @@ void LockProcess::stayOnTop()
         if (!mDialogs.isEmpty()) {
             XRaiseWindow( QX11Info::display(), mDialogs.first()->winId()); // raise topmost
             // and stack others below it
-            for( QVector< QWidget* >::ConstIterator it = mDialogs.begin();
-                    it != mDialogs.end();
+            for( QVector< QWidget* >::ConstIterator it = mDialogs.constBegin();
+                    it != mDialogs.constEnd();
                     ++it )
                 stack[ count++ ] = (*it)->winId();
         } else {

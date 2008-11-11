@@ -120,8 +120,8 @@ int main( int argc, char **argv )
             KConfigGroup cg(&cfg, group);
             QMap< QString, QString > entries = cg.entryMap( );
             startupconfig << "# " << line << "\n";
-            for( QMap< QString, QString >::ConstIterator it = entries.begin();
-                 it != entries.end();
+            for( QMap< QString, QString >::ConstIterator it = entries.constBegin();
+                 it != entries.constEnd();
                  ++it )
                 {
                 QString key = it.key();
@@ -147,9 +147,9 @@ int main( int argc, char **argv )
             }
         startupconfigfiles << line << endl;
         // use even currently non-existing paths in $KDEDIRS
-        QStringList dirs = KGlobal::dirs()->kfsstnd_prefixes().split( KPATH_SEPARATOR, QString::SkipEmptyParts);
-        for( QStringList::ConstIterator it = dirs.begin();
-             it != dirs.end();
+        const QStringList dirs = KGlobal::dirs()->kfsstnd_prefixes().split( KPATH_SEPARATOR, QString::SkipEmptyParts);
+        for( QStringList::ConstIterator it = dirs.constBegin();
+             it != dirs.constEnd();
              ++it )
             {
             QString cfg = *it + "share/config/" + file;

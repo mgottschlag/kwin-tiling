@@ -240,10 +240,10 @@ QString getFolder(const QString &defaultDir, const QString &root, QStringList &d
     else
     {
         QStringList::const_iterator it,
-                              end=dirs.end();
+                              end=dirs.constEnd();
         bool                  found=false;
 
-        for(it=dirs.begin(); it!=end && !found; ++it)
+        for(it=dirs.constBegin(); it!=end && !found; ++it)
             if(0==(*it).indexOf(root))
                 return *it;
     }

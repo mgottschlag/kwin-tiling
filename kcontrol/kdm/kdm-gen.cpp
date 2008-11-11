@@ -169,9 +169,9 @@ void KDMGeneralWidget::makeReadOnly()
 void KDMGeneralWidget::loadColorSchemes( KBackedComboBox *combo )
 {
 	// XXX: Global + local schemes
-	QStringList list = KGlobal::dirs()->
+	const QStringList list = KGlobal::dirs()->
 		findAllResources( "data", "color-schemes/*.colors", KStandardDirs::NoDuplicates );
-	for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it)
+	for (QStringList::ConstIterator it = list.constBegin(); it != list.constEnd(); ++it)
 	{
 		KConfig _config( *it, KConfig::SimpleConfig );
 		KConfigGroup config( &_config, "General" );
@@ -189,9 +189,9 @@ void KDMGeneralWidget::loadColorSchemes( KBackedComboBox *combo )
 void KDMGeneralWidget::loadGuiStyles( KBackedComboBox *combo )
 {
 	// XXX: Global + local schemes
-	QStringList list = KGlobal::dirs()->
+	const QStringList list = KGlobal::dirs()->
 		findAllResources( "data", "kstyle/themes/*.themerc", KStandardDirs::NoDuplicates );
-	for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it)
+	for (QStringList::ConstIterator it = list.constBegin(); it != list.constEnd(); ++it)
 	{
 		KConfig config( *it, KConfig::SimpleConfig );
 

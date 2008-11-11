@@ -183,8 +183,8 @@ void MenuFolderInfo::save(MenuFile *menuFile)
    {
 #ifndef Q_WS_WIN
       // Remove hotkeys for applications that have been deleted
-      for(QStringList::ConstIterator it = s_deletedApps->begin();
-          it != s_deletedApps->end(); ++it)
+      for(QStringList::ConstIterator it = s_deletedApps->constBegin();
+          it != s_deletedApps->constEnd(); ++it)
       {
          // The shorcut is deleted if we set a empty sequence
          KHotKeys::changeMenuEntryShortcut(*it, "");

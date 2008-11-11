@@ -246,8 +246,8 @@ void RandRConfig::identifyOutputs()
 			continue;
 		ids[ output->rect().center() ].append( output->name());
 	}
-	for( QHash< QPoint, QStringList >::ConstIterator it = ids.begin();
-	     it != ids.end();
+	for( QHash< QPoint, QStringList >::ConstIterator it = ids.constBegin();
+	     it != ids.constEnd();
 	     ++it )
 	{
 		QLabel *si = new QLabel(it->join("\n"), NULL, Qt::X11BypassWindowManagerHint);

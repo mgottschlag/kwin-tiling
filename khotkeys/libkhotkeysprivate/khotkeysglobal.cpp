@@ -69,9 +69,9 @@ bool khotkeys_active()
 // "/opt/kde2/share/applnk/System/konsole.desktop" -> "System/konsole.desktop"
 QString get_menu_entry_from_path( const QString& path_P )
     {
-    QStringList dirs = KGlobal::dirs()->resourceDirs( "apps" );
-    for( QStringList::ConstIterator it = dirs.begin();
-         it != dirs.end();
+    const QStringList dirs = KGlobal::dirs()->resourceDirs( "apps" );
+    for( QStringList::ConstIterator it = dirs.constBegin();
+         it != dirs.constEnd();
          ++it )
         if( path_P.indexOf( *it ) == 0 )
             {

@@ -310,8 +310,8 @@ void MenuFile::setLayout(const QString &menuName, const QStringList &layout)
    QDomElement layoutNode = m_doc.createElement(MF_LAYOUT);
    elem.appendChild(layoutNode);
 
-   for(QStringList::ConstIterator it = layout.begin();
-       it != layout.end(); ++it)
+   for(QStringList::ConstIterator it = layout.constBegin();
+       it != layout.constEnd(); ++it)
    {
       QString li = *it;
       if (li == ":S")
@@ -532,8 +532,8 @@ bool MenuFile::performAllActions()
    // so that they don't re-appear in Lost & Found
    QStringList removed = m_removedEntries;
    m_removedEntries.clear();
-   for(QStringList::ConstIterator it = removed.begin();
-       it != removed.end(); ++it)
+   for(QStringList::ConstIterator it = removed.constBegin();
+       it != removed.constEnd(); ++it)
    {
       addEntry("/.hidden/", *it);
    }

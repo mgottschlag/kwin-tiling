@@ -70,9 +70,9 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
          SLOT(slotProgramItemClicked(QTreeWidgetItem *)));
 
    // Load programs
-   QStringList lst = KBackgroundProgram::list();
+   const QStringList lst = KBackgroundProgram::list();
    QStringList::const_iterator it;
-   for (it=lst.begin(); it != lst.end(); ++it)
+   for (it=lst.constBegin(); it != lst.constEnd(); ++it)
       addProgram(*it);
 
     // FIXME: support it proper

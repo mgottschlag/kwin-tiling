@@ -165,8 +165,8 @@ KDModule::KDModule( QWidget *parent, const QVariantList & )
 			if ((*tgmapi).count() == 1 && (*tgmapi).first() == gn)
 				delme = true;
 			else
-				for (QStringList::ConstIterator it = (*tgmapi).begin();
-				     it != (*tgmapi).end(); ++it)
+				for (QStringList::ConstIterator it = (*tgmapi).constBegin();
+				     it != (*tgmapi).constEnd(); ++it)
 			usermap[*it].second.append( gn );
 			tgmap.erase( tgmapi );
 		}
@@ -184,7 +184,7 @@ KDModule::KDModule( QWidget *parent, const QVariantList & )
 	}
 	endgrent();
 
-	for (tgmapci = tgmap.begin(); tgmapci != tgmap.end(); ++tgmapci)
+	for (tgmapci = tgmap.constBegin(); tgmapci != tgmap.constEnd(); ++tgmapci)
 		kWarning() << "user(s) '" << tgmapci.value().join( "," )
 		<< "' have unknown GID " << tgmapci.key() << endl;
 
@@ -321,7 +321,7 @@ void KDModule::propagateUsers()
 	QMap<QString, QPair<int,QStringList> >::const_iterator it;
 	QStringList::ConstIterator jt;
 	QMap<QString,int>::Iterator gmapi;
-	for (it = usermap.begin(); it != usermap.end(); ++it) {
+	for (it = usermap.constBegin(); it != usermap.constEnd(); ++it) {
 		int uid = it.value().first;
 		if (!uid || (uid >= minshowuid && uid <= maxshowuid)) {
 			lusers[it.key()] = uid;
@@ -344,7 +344,7 @@ void KDModule::slotMinMaxUID( int min, int max )
 		QMap<QString, QPair<int,QStringList> >::const_iterator it;
 		QStringList::ConstIterator jt;
 		QMap<QString,int>::Iterator gmapi;
-		for (it = usermap.begin(); it != usermap.end(); ++it) {
+		for (it = usermap.constBegin(); it != usermap.constEnd(); ++it) {
 			int uid = it.value().first;
 			if (!uid)
 				continue;

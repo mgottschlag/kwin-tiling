@@ -314,8 +314,8 @@ int CJobRunner::exec(ECommand cmd, const ItemList &urls, const KUrl &dest)
     itsUrls=urls;
     if(CMD_INSTALL==cmd)
         qSort(itsUrls.begin(), itsUrls.end());  // Sort list of fonts so that we have type1 fonts followed by their metrics...
-    itsIt=itsUrls.begin();
-    itsEnd=itsUrls.end();
+    itsIt=itsUrls.constBegin();
+    itsEnd=itsUrls.constEnd();
     itsProgress->setValue(0);
     itsProgress->setRange(0, itsUrls.count()+1);
     itsProgress->show();
@@ -351,7 +351,7 @@ void CJobRunner::doNext()
                 itsProgress->setValue(itsProgress->maximum());
 
             itsUrls.empty();
-            itsIt=itsEnd=itsUrls.end();
+            itsIt=itsEnd=itsUrls.constEnd();
 
             KIO::Job *job=KIO::special(KUrl(KFI_KIO_FONTS_PROTOCOL":/"), packedArgs, KIO::HideProgressInfo);
             setMetaData(job);
@@ -487,7 +487,7 @@ void CJobRunner::jobResult(KJob *job)
         else
         {
             itsUrls.empty();
-            itsIt=itsEnd=itsUrls.end();
+            itsIt=itsEnd=itsUrls.constEnd();
         }
         doNext();
     }

@@ -320,8 +320,8 @@ void Settings::write_settings()
 
 // CHECKME    smazat stare sekce ?
     QStringList groups = cfg.groupList();
-    for( QStringList::ConstIterator it = groups.begin();
-         it != groups.end();
+    for( QStringList::ConstIterator it = groups.constBegin();
+         it != groups.constEnd();
          ++it )
         cfg.deleteGroup( *it );
     KConfigGroup mainGroup( &cfg, "Main" ); // main group

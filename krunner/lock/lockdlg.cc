@@ -591,7 +591,7 @@ void PasswordDlg::slotSwitchUser()
         QTreeWidgetItem *itm = 0;
         QString user, loc;
         int ns = 0;
-        for (SessList::ConstIterator it = sess.begin(); it != sess.end(); ++it) {
+        for (SessList::ConstIterator it = sess.constBegin(); it != sess.constEnd(); ++it) {
             KDisplayManager::sess2Str2( *it, user, loc );
             itm = new LockListViewItem( lv, user, loc, (*it).vt );
             if (!(*it).vt)

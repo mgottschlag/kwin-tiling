@@ -81,7 +81,7 @@ void KCMDisplay::addTab( const QString &name, const QString &label )
 
 void KCMDisplay::load()
 {
-  for (QMap<KCModule*, bool>::ConstIterator it = m_modules.begin(); it != m_modules.end(); ++it)
+  for (QMap<KCModule*, bool>::ConstIterator it = m_modules.constBegin(); it != m_modules.constEnd(); ++it)
     it.key()->load();
 }
 
@@ -103,7 +103,7 @@ void KCMDisplay::moduleChanged( bool isChanged )
 
   bool c = false;
 
-  for (QMap<KCModule*, bool>::ConstIterator it = m_modules.begin(); it != m_modules.end(); ++it) {
+  for (QMap<KCModule*, bool>::ConstIterator it = m_modules.constBegin(); it != m_modules.constEnd(); ++it) {
     if (it.value()) {
       c = true;
       break;

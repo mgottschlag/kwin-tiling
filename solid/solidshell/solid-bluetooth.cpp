@@ -70,8 +70,8 @@ std::ostream &operator<<(std::ostream &out, const QVariant &value)
 
         QStringList list = value.toStringList();
 
-        QStringList::ConstIterator it = list.begin();
-        QStringList::ConstIterator end = list.end();
+        QStringList::ConstIterator it = list.constBegin();
+        QStringList::ConstIterator end = list.constEnd();
 
         for (; it!=end; ++it)
         {

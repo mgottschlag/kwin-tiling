@@ -417,7 +417,7 @@ void BGDialog::initUI()
    m_patterns = KBackgroundPattern::list();
    m_patterns.sort(); // Defined order
    QStringList::const_iterator it;
-   for (it=m_patterns.begin(); it != m_patterns.end(); ++it)
+   for (it=m_patterns.constBegin(); it != m_patterns.constEnd(); ++it)
    {
       KBackgroundPattern pat(*it);
       if (pat.isAvailable())
@@ -460,7 +460,7 @@ void BGDialog::loadWallpaperFilesList() {
    //search for .desktop files before searching for images without .desktop files
    QStringList lst = m_pDirs->findAllResources("wallpaper", "*desktop", KStandardDirs::NoDuplicates);
    QStringList files;
-   for (QStringList::ConstIterator it = lst.begin(); it != lst.end(); ++it)
+   for (QStringList::ConstIterator it = lst.constBegin(); it != lst.constEnd(); ++it)
    {
       KDesktopFile fileConfig(*it);
       KConfigGroup cg = fileConfig.group("Wallpaper");
@@ -493,7 +493,7 @@ void BGDialog::loadWallpaperFilesList() {
 
    //now find any wallpapers that don't have a .desktop file
    lst = m_pDirs->findAllResources("wallpaper", "*", KStandardDirs::NoDuplicates);
-   for (QStringList::ConstIterator it = lst.begin(); it != lst.end(); ++it)
+   for (QStringList::ConstIterator it = lst.constBegin(); it != lst.constEnd(); ++it)
    {
       if ( !(*it).endsWith(".desktop") && files.filter(*it).empty() ) {
          // First try to see if we have a comment describing the image.  If we do
@@ -596,8 +596,8 @@ void BGDialog::slotWallpaperSelection()
 
    int j = m_urlWallpaperBox->currentIndex();
    QString uri;
-   for(QMap<QString,int>::ConstIterator it = m_wallpaper.begin();
-       it != m_wallpaper.end();
+   for(QMap<QString,int>::ConstIterator it = m_wallpaper.constBegin();
+       it != m_wallpaper.constEnd();
        ++it)
    {
       if (it.value() == j)
@@ -860,8 +860,8 @@ void BGDialog::slotWallpaperTypeChanged(int i)
 
       int j = m_urlWallpaperBox->currentIndex();
       QString path;
-      for(QMap<QString,int>::ConstIterator it = m_wallpaper.begin();
-          it != m_wallpaper.end();
+      for(QMap<QString,int>::ConstIterator it = m_wallpaper.constBegin();
+          it != m_wallpaper.constEnd();
           ++it)
       {
          if (it.value() == j)

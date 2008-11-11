@@ -185,8 +185,8 @@ Solid::Control::WirelessNetworkInterface::findRegisteredAccessPoint(const QStrin
 {
     Q_D(const WirelessNetworkInterface);
 
-    AccessPointMap::ConstIterator mapIt = d->apMap.find(uni);
-    if (mapIt != d->apMap.end() && mapIt.value().second) {
+    AccessPointMap::ConstIterator mapIt = d->apMap.constFind(uni);
+    if (mapIt != d->apMap.constEnd() && mapIt.value().second) {
         return mapIt.value();
     } else {
         AccessPointPair pair = d->createAP(uni);

@@ -318,9 +318,9 @@ QString TreeView::findName(KDesktopFile *df, bool deleted)
           QString res = df->resource();
 
           bool isLocal = true;
-          QStringList files = KGlobal::dirs()->findAllResources(res.toLatin1(), file);
-          for(QStringList::ConstIterator it = files.begin();
-              it != files.end();
+          const QStringList files = KGlobal::dirs()->findAllResources(res.toLatin1(), file);
+          for(QStringList::ConstIterator it = files.constBegin();
+              it != files.constEnd();
               ++it)
           {
              if (isLocal)
@@ -593,8 +593,8 @@ QStringList TreeView::fileList(const QString& rPath)
     QStringList filelist;
 
     // loop through all resource dirs and build a file list
-    QStringList resdirlist = KGlobal::dirs()->resourceDirs("apps");
-    for (QStringList::ConstIterator it = resdirlist.begin(); it != resdirlist.end(); ++it)
+    const QStringList resdirlist = KGlobal::dirs()->resourceDirs("apps");
+    for (QStringList::ConstIterator it = resdirlist.constBegin(); it != resdirlist.constEnd(); ++it)
     {
         QDir dir((*it) + '/' + relativePath);
         if(!dir.exists()) continue;
@@ -603,8 +603,8 @@ QStringList TreeView::fileList(const QString& rPath)
         dir.setNameFilters(QStringList() << "*.desktop;*.kdelnk");
 
         // build a list of files
-        QStringList files = dir.entryList();
-        for (QStringList::ConstIterator it = files.begin(); it != files.end(); ++it) {
+        const QStringList files = dir.entryList();
+        for (QStringList::ConstIterator it = files.constBegin(); it != files.constEnd(); ++it) {
             // does not work?!
             //if (filelist.contains(*it)) continue;
 
@@ -632,16 +632,16 @@ QStringList TreeView::dirList(const QString& rPath)
     QStringList dirlist;
 
     // loop through all resource dirs and build a subdir list
-    QStringList resdirlist = KGlobal::dirs()->resourceDirs("apps");
-    for (QStringList::ConstIterator it = resdirlist.begin(); it != resdirlist.end(); ++it)
+    const QStringList resdirlist = KGlobal::dirs()->resourceDirs("apps");
+    for (QStringList::ConstIterator it = resdirlist.constBegin(); it != resdirlist.constEnd(); ++it)
     {
         QDir dir((*it) + '/' + relativePath);
         if(!dir.exists()) continue;
         dir.setFilter(QDir::Dirs);
 
         // build a list of subdirs
-        QStringList subdirs = dir.entryList();
-        for (QStringList::ConstIterator it = subdirs.begin(); it != subdirs.end(); ++it) {
+        const QStringList subdirs = dir.entryList();
+        for (QStringList::ConstIterator it = subdirs.constBegin(); it != subdirs.constEnd(); ++it) {
             if ((*it) == "." || (*it) == "..") continue;
             // does not work?!
             // if (dirlist.contains(*it)) continue;
