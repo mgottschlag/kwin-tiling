@@ -36,8 +36,8 @@ THE SOFTWARE.
 
 void recursive_print(const KArchiveDirectory *dir, const QString &path)
 {
-    QStringList l = dir->entries();
-    QStringList::const_iterator it = l.begin();
+    const QStringList l = dir->entries();
+    QStringList::const_iterator it = l.constBegin();
     for (; it != l.end(); ++it)
     {
         const KArchiveEntry* entry = dir->entry((*it));
@@ -64,9 +64,9 @@ void recursive_print(const KArchiveDirectory *dir, const QString &path)
 
 static const KArchiveDirectory *recursiveFind(const KArchiveDirectory *dir)
 {
-    QStringList l = dir->entries();
+    const QStringList l = dir->entries();
     QStringList::const_iterator it;
-    for (it = l.begin(); it != l.end(); ++it) {
+    for (it = l.constBegin(); it != l.constEnd(); ++it) {
         const KArchiveEntry* entry = dir->entry((*it));
         if (entry->isDirectory()) {
             QString name = *it;
@@ -189,10 +189,10 @@ bool Bundle::close()
 
 bool Bundle::extractArchive(const KArchiveDirectory *dir, const QString &path)
 {
-    QStringList l = dir->entries();
+    const QStringList l = dir->entries();
 
     QStringList::const_iterator it;
-    for (it = l.begin(); it != l.end(); ++it) {
+    for (it = l.constBegin(); it != l.constEnd(); ++it) {
         const KArchiveEntry* entry = dir->entry((*it));
         QString fullPath = QString("%1/%2").arg(path).arg(*it);
         if (entry->isDirectory()) {

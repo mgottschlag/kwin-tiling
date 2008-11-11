@@ -75,8 +75,8 @@ public:
  */
 IonInterface* WeatherEngine::Ion(const QString& name) const
 {
-    IonInterface::IonDict::const_iterator it = d->m_ions.find(name);
-    if (it != d->m_ions.end()) {
+    IonInterface::IonDict::const_iterator it = d->m_ions.constFind(name);
+    if (it != d->m_ions.constEnd()) {
         return *it;
     }
 
@@ -99,9 +99,9 @@ IonInterface* WeatherEngine::loadIon(const QString& plugName)
     }
 
     // Check if the plugin is already loaded if so, return the plugin thats already loaded.
-    IonInterface::IonDict::const_iterator it = d->m_ions.find(plugName);
+    IonInterface::IonDict::const_iterator it = d->m_ions.constFind(plugName);
 
-    if (it != d->m_ions.end()) {
+    if (it != d->m_ions.constEnd()) {
         ion = *it;
         ion->ref();
         return ion;

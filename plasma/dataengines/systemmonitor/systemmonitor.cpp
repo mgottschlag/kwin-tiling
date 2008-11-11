@@ -89,7 +89,7 @@ void SystemMonitorEngine::answerReceived( const QString &sensor, const QList<QBy
         reply = QString::fromUtf8(answer[0]);
 
     DataEngine::SourceDict sources = containerDict();
-    DataEngine::SourceDict::const_iterator it = sources.find(sensor);
+    DataEngine::SourceDict::const_iterator it = sources.constFind(sensor);
     if (it != sources.constEnd()) {
         it.value()->setData("value", reply);
     }

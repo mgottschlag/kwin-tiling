@@ -137,12 +137,12 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
    KServiceGroup::Ptr root = KServiceGroup::group(_relPath);
    if (!root || !root->isValid()) return;
 
-   KServiceGroup::List list = root->entries();
+   const KServiceGroup::List list = root->entries();
 
    // application name <-> service map for detecting duplicate entries
    QHash<QString,KService::Ptr> existingServices;
-   for (KServiceGroup::List::ConstIterator it = list.begin();
-        it != list.end(); ++it)
+   for (KServiceGroup::List::ConstIterator it = list.constBegin();
+        it != list.constEnd(); ++it)
    {
       QString icon;
       QString appName;
