@@ -144,7 +144,7 @@ void Clock::dataUpdated(const QString &source, const Plasma::DataEngine::Data &d
     }
 
     // avoid unnecessary repaints
-    if ((m_showSeconds && m_time.secs() != m_lastTimeSeen.secs()) ||
+    if ((m_showSeconds && m_time.second() != m_lastTimeSeen.second()) ||
         m_time.minute() != m_lastTimeSeen.minute()) {
         m_lastTimeSeen = m_time;
         update();
