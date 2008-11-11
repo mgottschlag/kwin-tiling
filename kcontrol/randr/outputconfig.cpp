@@ -256,10 +256,11 @@ void OutputConfig::updateSizeList(void)
 	sizeCombo->addItem( i18n("Disabled"), QSize(0, 0) );
 	
 	foreach (QSize s, sizes) {
-		QString sizeDesc = QString("%1x%2").arg(s.width()).arg(s.height());		
-		if(s == m_output->preferredMode().size())
-			sizeDesc += i18nc("Automatic (native resolution)", " (Auto)");
-		
+		QString sizeDesc = QString("%1x%2").arg(s.width()).arg(s.height());
+		if (s == m_output->preferredMode().size()) {
+			sizeDesc = i18nc("Automatic screen size (native resolution)",
+			                 "%1 (Auto)", sizeDesc);
+		}
 		sizeCombo->addItem( sizeDesc, s );
 	}
 	

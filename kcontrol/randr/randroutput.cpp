@@ -112,8 +112,8 @@ void RandROutput::loadSettings(bool notify)
 	queryOutputInfo();
 	
 	kDebug() << "STUB: calling queryOutputInfo instead. Check if this has "
-	         << "any undesired effects. ";
-		    
+	            "any undesired effects. ";
+
 	/*
 	int changes = 0;
 	
@@ -232,7 +232,7 @@ QString RandROutput::icon() const
 	// video-x-generic might work, but that's a mimetype, which is inappropriate
 	// for an output connection type.
 	else if (m_name.contains("TV"))
-		return "multimedia-player";
+		return "video-television";
 
 	return "video-display";
 }

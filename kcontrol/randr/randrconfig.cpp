@@ -106,8 +106,9 @@ void RandRConfig::load(void)
 
 		OutputConfig *config = new OutputConfig(0, output, o);
 		
-		QString description = output->name() + 
-		                     (output->isConnected() ? " (Connected)" : "");
+		QString description = output->isConnected()
+			? i18n("%1 (Connected)", output->name())
+			: output->name();
 		w = m_container->insertWidget(config, description);
 		if(output->isConnected()) {
 			w->setExpanded(true);
