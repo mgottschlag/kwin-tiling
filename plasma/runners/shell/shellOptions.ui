@@ -357,9 +357,6 @@
   <tabstop>cbPriority</tabstop>
   <tabstop>slPriority</tabstop>
  </tabstops>
- <includes>
-  <include location="global" >fixx11h.h</include>
- </includes>
  <resources/>
  <connections>
   <connection>
