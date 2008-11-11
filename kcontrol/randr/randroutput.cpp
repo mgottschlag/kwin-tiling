@@ -79,10 +79,13 @@ void RandROutput::queryOutputInfo(void)
 	
 	//TODO: is it worth notifying changes on mode list changing?
 	m_modes.clear();
-	m_preferredMode = m_screen->mode(info->modes[info->npreferred]);
 	
-	for (int i = 0; i < info->nmode; ++i)
+	for (int i = 0; i < info->nmode; ++i) {
+		if (i < info->npreferred) {
+			m_preferredMode = m_screen->mode(info->modes[i]);
+		}
 		m_modes.append(info->modes[i]);
+	}
 	
 	//get all possible rotations
 	m_rotations = 0;

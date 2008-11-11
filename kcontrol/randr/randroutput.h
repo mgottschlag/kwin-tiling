@@ -75,8 +75,9 @@ public:
 	/** Returns the current mode for this output. */
 	RandRMode mode() const;
 
-	/** Returns the preferred mode for this output. */
-	RandRMode preferredMode(void) const;
+	/** Returns the preferred mode for this output,
+	 * or an invalid mode if no preferred mode is known. */
+	RandRMode preferredMode() const;
 	
 	/** The list of supported sizes */
 	SizeList sizes() const;
