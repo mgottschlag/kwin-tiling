@@ -36,10 +36,11 @@ libplasma
         * Support compressed SVGs (*.svgz)
     * Widgets
         * NEW: Plasma::Slider based on QSlider
-        * NEW: Plasma::TabBar (usable with both QWidget and QGraphicsItems)
+        * NEW: Plasma::TabBar based on QTabBar, usable as both a standalone tabbar or as a tabwidget
         * NEW: Plasma::Frame used to visually group widgets
         * NEW: Plasma::TreeView used to put tree views or simple list in the canvas
         * NEW: Plasma::BusyWidget used to indicate the loading of something
+        * NEW: Plasma::ToolButton based on QToolButton
         * Plasma::PushButton is svg-themed
 
 * Significant Fixes
