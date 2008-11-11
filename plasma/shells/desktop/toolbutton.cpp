@@ -105,7 +105,7 @@ void ToolButton::paintEvent(QPaintEvent *event)
 
     if (m_animationId || (buttonOpt.state & QStyle::State_MouseOver) || (buttonOpt.state & QStyle::State_On)) {
         if (buttonOpt.state & QStyle::State_Sunken || (buttonOpt.state & QStyle::State_On)) {
-            m_background->setElementPrefix("toolbutton-pressed");
+            m_background->setElementPrefix("pressed");
         } else {
             m_background->setElementPrefix("normal");
         }
