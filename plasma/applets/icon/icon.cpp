@@ -130,13 +130,15 @@ void IconApplet::setUrl(const KUrl& url)
     if (m_icon->icon().isNull()) {
         m_icon->setIcon("unknown");
     }
+
+    kDebug() << "url was" << url << "and is" << m_url;
 }
 
 void IconApplet::openUrl()
 {
     if (m_url.isValid()) {
         emit releaseVisualFocus();
-        KRun::runUrl(m_url, m_mimetype->name(), 0);
+        KRun *run = new KRun(m_url, 0);
     }
 }
 
