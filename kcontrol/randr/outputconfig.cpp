@@ -132,6 +132,8 @@ void OutputConfig::outputChanged(RROutput output, int changes)
 	
 	if(changes & RandR::ChangeMode) {
 		kDebug() << "Output mode changed.";
+		updateSizeList();
+		
 		// This NEEDS to be fixed..
 		//QSize modeSize = m_output->screen()->mode(m_output->mode()).size();
 		QSize modeSize = m_output->mode().size();
