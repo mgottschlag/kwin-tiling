@@ -44,6 +44,7 @@
 #include <Plasma/FrameSvg>
 #include <Plasma/PaintUtils>
 #include <Plasma/Theme>
+#include <Plasma/ToolTipManager>
 #include <Plasma/Animator>
 
 const int FAST_UPDATE_DELAY = 200;
@@ -753,6 +754,7 @@ void Pager::handleHoverMove(const QPointF& pos)
                 m_animations[m_hoverIndex].alpha = 0;
                 m_animations[m_hoverIndex].animId = anim->customAnimation(40 / (1000 / s_FadeInDuration), s_FadeInDuration,Plasma::Animator::EaseInCurve, this,"animationUpdate");
                 update();
+                updateToolTip();
             }
             return;
         }
@@ -1066,6 +1068,22 @@ void Pager::themeRefresh()
 {
     delete m_colorScheme;
     m_colorScheme = 0;
+}
+
+void Pager::updateToolTip()
+{
+    int hoverDesktopNumber;
+
+    for (int i = 0; i < m_desktopCount; i++) {
+        if (m_rects[i] == m_hoverRect) {
+            hoverDesktopNumber = i + 1;
+        }
+    }
+
+    Plasma::ToolTipContent data;
+    data.setMainText(KWindowSystem::desktopName(hoverDesktopNumber));
+
+    Plasma::ToolTipManager::self()->setContent(this, data);   
 }
 
 #include "pager.moc"

@@ -90,6 +90,7 @@ class Pager : public Plasma::Applet
         bool posOnDesktopRect(const QRectF& r, const QPointF& pos);
         void handleHoverMove(const QPointF& pos);
         void handleHoverLeave();
+        void updateToolTip();
 
     private:
         QTimer* m_timer;
