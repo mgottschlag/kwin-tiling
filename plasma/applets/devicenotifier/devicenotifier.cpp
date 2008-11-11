@@ -54,6 +54,7 @@ K_EXPORT_PLASMA_APPLET(devicenotifier, DeviceNotifier)
 DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args),
       m_solidEngine(0),
+      m_solidDeviceEngine(0),
       m_icon(0),
       m_iconName(""),
       m_dialog(0),
@@ -97,13 +98,8 @@ void DeviceNotifier::init()
             this, SLOT(onSourceAdded(const QString&)));
     connect(m_solidEngine, SIGNAL(sourceRemoved(const QString&)),
             this, SLOT(onSourceRemoved(const QString&)));
-}
 
-void DeviceNotifier::constraintsEvent(Plasma::Constraints constraints)
-{
-    if (constraints & StartupCompletedConstraint) {
-        fillPreviousDevices();
-    }
+    fillPreviousDevices();
 }
 
 QWidget *DeviceNotifier::widget()
@@ -122,7 +118,7 @@ void DeviceNotifier::fillPreviousDevices()
             Solid::Device device = Solid::Device(source);
             Solid::Device parentDevice = device.parent();
             Solid::StorageDrive *drive = parentDevice.as<Solid::StorageDrive>();
-            if(drive && (drive->isHotpluggable() || drive->isRemovable())) {
+            if (drive && (drive->isHotpluggable() || drive->isRemovable())) {
                 onSourceAdded(source);
             }
     }

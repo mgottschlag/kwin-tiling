@@ -112,10 +112,6 @@ class DeviceNotifier : public Plasma::PopupApplet
         **/
         void dataUpdated(const QString &source, Plasma::DataEngine::Data data);
 
-    protected:
-        void constraintsEvent(Plasma::Constraints constraints);
-
-
     private:
         /**
         * @internal Used to fill the notifier from previous plugged devices
