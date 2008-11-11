@@ -36,7 +36,7 @@
 #include <Plasma/Theme>
 #include <Plasma/Label>
 
-#include "toolbutton.h"
+#include <plasma/widgets/toolbutton.h>
 
 namespace Plasma
 {
@@ -74,13 +74,11 @@ Calendar::Calendar(QGraphicsWidget *parent)
     d->calendarTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(d->calendarTable, SIGNAL(displayedMonthChanged(int, int)), this, SLOT(displayedMonthChanged(int, int)));
 
-    QGraphicsProxyWidget *backProxy = new QGraphicsProxyWidget(this);
-    d->back = new ToolButton();
+    d->back = new ToolButton(this);
     d->back->setText("<");
     d->back->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(d->back, SIGNAL(clicked()), this, SLOT(prevMonth()));
-    backProxy->setWidget(d->back);
-    m_hLayout->addItem(backProxy);
+    m_hLayout->addItem(d->back);
 
     d->spacer0 = new Plasma::Label(this);
     d->spacer0->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
@@ -109,13 +107,11 @@ Calendar::Calendar(QGraphicsWidget *parent)
     d->spacer1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     m_hLayout->addItem(d->spacer1);
 
-    QGraphicsProxyWidget *forwardProxy = new QGraphicsProxyWidget(this);
-    d->forward = new ToolButton();
+    d->forward = new ToolButton(this);
     d->forward->setText(">");
     d->forward->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(d->forward, SIGNAL(clicked()), this, SLOT(nextMonth()));
-    forwardProxy->setWidget(d->forward);
-    m_hLayout->addItem(forwardProxy);
+    m_hLayout->addItem(d->forward);
 
     m_layout->addItem(m_hLayout);
 
