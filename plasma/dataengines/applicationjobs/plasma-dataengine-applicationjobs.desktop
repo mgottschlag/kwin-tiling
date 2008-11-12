@@ -1,10 +1,22 @@
 [Desktop Entry]
 Name=Application Job Information
+Name[el]=Πληροφορίες εργασιών εφαρμογών
 Name[gu]=કાર્યક્રમ કાર્ય માહિતી
+Name[nds]=Programm-Opgaavinformatschoon
+Name[pt]=Informação da Tarefa da Aplicação
+Name[pt_BR]=Informação da Tarefa da Aplicação
+Name[sv]=Information om programjobb
+Name[tr]=Uygulama Görev Bilgileri
 Name[uk]=Відомості про завдання програми
 Name[zh_TW]=應用程式工作資訊
 Comment=Kuiserver data for Plasmoids
+Comment[el]=Δεδομένα Kuiserver για τα πλασμοειδή
 Comment[gu]=પ્લાઝમોઇડ માટે Kuiserver માહિતી
+Comment[nds]=KUIServer-Daten för Plasma-Lüttprogrammen
+Comment[pt]=Dados do Kuiserver para os Plasmóides
+Comment[pt_BR]=Dados do Kuiserver para os Plasmóides
+Comment[sv]=Kuiserver-data för Plasmoider
+Comment[tr]=Plasma programcıkları için Kuiserver verileri
 Comment[uk]=Дані Kuiserver для плазмоїдів
 Comment[zh_TW]=Plasmoid 的 Kuiserver 資料
 Type=Service
