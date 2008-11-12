@@ -321,15 +321,17 @@ void Tasks::resizeItemBackground(const QSizeF &size)
         return;
     }
 
-
-    //m_taskItemBackground->clearCache();
     m_taskItemBackground->resizeFrame(size);
+
+    QString oldPrefix = m_taskItemBackground->prefix();
+    m_taskItemBackground->setElementPrefix("normal");
     //get the margins now
     m_taskItemBackground->getMargins(m_leftMargin, m_topMargin, m_rightMargin, m_bottomMargin);
     //if the task height is too little shrink the top and bottom margins
     if (size.height() - m_topMargin - m_bottomMargin < KIconLoader::SizeSmall) {
         m_topMargin = m_bottomMargin = qMax(1, int((size.height() - KIconLoader::SizeSmall)/2));
     }
+    m_taskItemBackground->setElementPrefix(oldPrefix);
 }
 
 KColorScheme *Tasks::colorScheme()
