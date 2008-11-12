@@ -224,19 +224,7 @@ void X11EmbedContainer::setBackgroundPixmap(QPixmap background)
     XRenderFreePicture(display, picture);
     XFreePixmap(display, bg);
 
-    XExposeEvent expose;
-    expose.type = Expose;
-    expose.serial = 0;
-    expose.send_event = True;
-    expose.display = display;
-    expose.window = clientWinId();
-    expose.x = 0;
-    expose.y = 0;
-    expose.width = width();
-    expose.height = height();
-    expose.count = 0;
-
-    XSendEvent(display, clientWinId(), True, 0, (XEvent*)&expose);
+    XClearArea(display, clientWinId(), 0, 0, 0, 0, True);
 }
 
 
