@@ -31,6 +31,7 @@
 class KDialog;
 class KSelectionOwner;
 class KColorScheme;
+class KWindowInfo;
 
 namespace Plasma
 {
@@ -128,6 +129,7 @@ class Pager : public Plasma::Applet
         QList<QList<QPair<WId, QRect> > > m_windowRects;
         QList<QRect> m_activeWindows;
         QList<QAction*> m_actions;
+        QList<KWindowInfo> m_windowInfo;
         KSelectionOwner* m_desktopLayoutOwner;
         Plasma::FrameSvg *m_background;
         KColorScheme *m_colorScheme;

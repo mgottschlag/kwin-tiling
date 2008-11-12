@@ -360,8 +360,9 @@ void Pager::recalculateWindowRects()
         m_windowRects.append(QList<QPair<WId, QRect> >());
     }
     m_activeWindows.clear();
+    m_windowInfo.clear();
     foreach(WId window, windows) {
-        KWindowInfo info = KWindowSystem::windowInfo(window, NET::WMGeometry | NET::WMFrameExtents | NET::WMWindowType | NET::WMDesktop | NET::WMState | NET::XAWMState);
+        KWindowInfo info = KWindowSystem::windowInfo(window, NET::WMGeometry | NET::WMFrameExtents | NET::WMWindowType | NET::WMDesktop | NET::WMState | NET::XAWMState | NET::WMVisibleName);
         NET::WindowType type = info.windowType(NET::NormalMask | NET::DialogMask | NET::OverrideMask |
                                                NET::UtilityMask | NET::DesktopMask | NET::DockMask |
                                                NET::TopMenuMask | NET::SplashMask | NET::ToolbarMask |
@@ -396,6 +397,7 @@ void Pager::recalculateWindowRects()
             if (window == KWindowSystem::activeWindow()) {
                 m_activeWindows.append(windowRect);
             }
+            m_windowInfo.append(info);
         }
     }
 
@@ -1080,8 +1082,31 @@ void Pager::updateToolTip()
         }
     }
 
+    QString subtext = "";
+    int taskCounter = 0;
+    int displayedTaskCounter = 0;
+    foreach(KWindowInfo winInfo, m_windowInfo){
+        if (winInfo.isOnDesktop(hoverDesktopNumber) || winInfo.onAllDesktops()){
+            if (winInfo.win() == KWindowSystem::activeWindow()){
+                subtext += "<br />&bull;  <u>" + winInfo.visibleName() + "</u>";
+                displayedTaskCounter++;
+
+            }else if (taskCounter < 4){
+                subtext += "<br />&bull;  " + winInfo.visibleName();
+                displayedTaskCounter++; 
+            }
+            taskCounter++;
+        }
+    }
+
+    subtext.prepend(i18np("One window:", "%1 windows:", taskCounter));
+    if (taskCounter - displayedTaskCounter > 0){
+        subtext.append("<br>&bull; <i>" + i18np("and 1 other", "and %1 others", taskCounter - displayedTaskCounter) + "</i>");
+    }
+
     Plasma::ToolTipContent data;
     data.setMainText(KWindowSystem::desktopName(hoverDesktopNumber));
+    data.setSubText(subtext);
 
     Plasma::ToolTipManager::self()->setContent(this, data);   
 }
