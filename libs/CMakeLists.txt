@@ -5,6 +5,7 @@ if(NOT WIN32)
  add_subdirectory(taskmanager)
  add_subdirectory(ksysguard)
  add_subdirectory(kworkspace)
+ add_subdirectory(kephal)
 endif(NOT WIN32)
 
 if(Nepomuk_FOUND)
