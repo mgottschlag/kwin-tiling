@@ -72,7 +72,7 @@ void RandROutput::queryOutputInfo(void)
 	m_name = info->name;
 	
 	kDebug() << "XID" << m_id << "is output" << m_name <<
-	            (isConnected() ? "(connected)" : "(not connected)");
+	            (isConnected() ? "(connected)" : "(disconnected)");
 	
 	setCrtc(m_screen->crtc(info->crtc));
 	m_crtc->loadSettings(false);
@@ -382,7 +382,9 @@ void RandROutput::load(KConfig &config)
 	// if the outputs are unified, the screen will handle size changing
 	if (!m_screen->outputsUnified() || m_screen->connectedCount() <= 1)
 	{
-		m_proposedRect = cg.readEntry("Rect", QRect());
+		m_proposedRect = (cg.readEntry("Rect", "0,0,0,0") == "0,0,0,0")
+			? QRect() // "0,0,0,0" (serialization for QRect()) does not convert to a QRect
+			: cg.readEntry("Rect", QRect());
 		m_proposedRotation = cg.readEntry("Rotation", (int) RandR::Rotate0);
 	}
 	m_proposedRate = cg.readEntry("RefreshRate", 0);
