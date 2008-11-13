@@ -53,8 +53,7 @@ public:
     virtual void setFavorite(bool favorite);
     //set how many instances of this applet are running
     virtual void setRunning(int count);
-    virtual bool passesFiltering(
-            const KCategorizedItemsViewModels::Filter & filter) const;
+    virtual bool passesFiltering(const KCategorizedItemsViewModels::Filter & filter) const;
     virtual QVariantList arguments() const;
 
 private:

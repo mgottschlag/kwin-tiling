@@ -213,14 +213,12 @@ void PlasmaAppletItemModel::setFavorite(const QString &plugin, bool favorite)
         if (!m_favorites.contains(plugin)) {
             m_favorites.append(plugin);
         }
-    } else {
-        if (m_favorites.contains(plugin)) {
-            m_favorites.removeAll(plugin);
-        }
+    } else if (m_favorites.contains(plugin)) {
+        m_favorites.removeAll(plugin);
     }
+
     m_configGroup.writeEntry("favorites", m_favorites.join(","));
     m_configGroup.sync();
-
 }
 
 void PlasmaAppletItemModel::setApplication(const QString &app)
