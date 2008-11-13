@@ -125,6 +125,7 @@ void RandRScreen::loadSettings(bool notify)
 			RandRCrtc *c = new RandRCrtc(this, m_resources->crtcs[i]);
 			connect(c, SIGNAL(crtcChanged(RRCrtc, int)), this, SIGNAL(configChanged()));
 			connect(c, SIGNAL(crtcChanged(RRCrtc, int)), this, SLOT(save()));
+			c->loadSettings(notify);
 			m_crtcs[m_resources->crtcs[i]] = c;
 			changed = true;
 		}

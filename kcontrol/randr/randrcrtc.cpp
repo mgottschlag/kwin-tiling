@@ -89,6 +89,7 @@ void RandRCrtc::loadSettings(bool notify)
 	OutputList outputs;
 
 	for (int i = 0; i < info->noutput; ++i) {
+		kDebug() << "Output" << info->outputs[i] << "possible on CRTC" << m_id;
 		outputs.append(info->outputs[i]);
 	}
 
@@ -206,7 +207,7 @@ bool RandRCrtc::applyProposed()
 	kDebug() << "       Proposed CRTC rect:" << m_proposedRect;
 	kDebug() << "       Proposed rotation:" << m_proposedRotation;
 	kDebug() << "       Proposed refresh rate:" << m_proposedRate;
-	kDebug() << "       Connected outputs:";
+	kDebug() << "       Enabled outputs:";
 	if (!m_connectedOutputs.count())
 		kDebug() << "          none";
 	for (int i = 0; i < m_connectedOutputs.count(); ++i)

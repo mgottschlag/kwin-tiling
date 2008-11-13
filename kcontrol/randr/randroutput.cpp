@@ -75,7 +75,6 @@ void RandROutput::queryOutputInfo(void)
 	            (isConnected() ? "(connected)" : "(disconnected)");
 	
 	setCrtc(m_screen->crtc(info->crtc));
-	m_crtc->loadSettings(false);
 	
 	for(int i = 0; i < info->ncrtc; ++i) {
 		kDebug() << "CRTC" << info->crtcs[i] << "possible for output" << m_name;
