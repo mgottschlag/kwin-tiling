@@ -107,7 +107,7 @@ bool OutputConfig::hasPendingChanges(void) const
 void OutputConfig::outputChanged(RROutput output, int changes)
 {
 	Q_ASSERT(m_output->id() == output);
-	kDebug() << "Output" << m_output->name() << "changed. (mask = " + QString::number(changes) + ")";
+	kDebug() << "Output" << m_output->name() << "changed. ( mask =" << QString::number(changes) << ")";
 	
 	if(changes & RandR::ChangeOutputs) {
 		kDebug() << "Outputs changed.";

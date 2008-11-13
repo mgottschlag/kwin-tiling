@@ -484,6 +484,8 @@ bool RandRScreen::applyProposed(bool confirm)
 		}
 	}*/
 
+	kDebug() << "Changes have been applied to all outputs.";
+
 	// if we could apply the config clean, ask for confirmation
 	if (succeed && confirm)
 		succeed = RandR::confirm(r);
@@ -492,6 +494,8 @@ bool RandRScreen::applyProposed(bool confirm)
 	// just return from here 
 	if (succeed)
 		return true;
+
+	kDebug() << "Changes canceled, reverting to original setup.";
 
 	//Revert changes if not succeed
 	foreach(RandROutput *o, m_outputs)
@@ -540,8 +544,7 @@ void RandRScreen::unifyOutputs()
 		//o->load(cfg);
 		o->proposeRect(m_unifiedRect);
 		o->proposeRotation(m_unifiedRotation);
-		o->applyProposed(RandR::ChangeRect | 
-				 RandR::ChangeRotation, false);
+		o->applyProposed(RandR::ChangeRect | RandR::ChangeRotation, false);
 	}
 
 	// FIXME: if by any reason we were not able to unify the outputs, we should 

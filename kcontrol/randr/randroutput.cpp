@@ -350,6 +350,10 @@ bool RandROutput::isActive() const
 
 void RandROutput::proposeOriginal()
 {
+	m_proposedRect = m_originalRect;
+	m_proposedRate = m_originalRate;
+	m_proposedRotation = m_originalRotation;
+
 	if (m_crtc->id() != None)
 		m_crtc->proposeOriginal();
 }
@@ -538,9 +542,9 @@ bool RandROutput::applyProposed(int changes, bool confirm)
 	}
 	// Don't try to change an enabled output if there is nothing to change.
 	if (m_crtc->isValid()
-	    && m_crtc->rect() == m_proposedRect
-	    && m_crtc->rotation() == m_proposedRotation
-		&& (m_crtc->refreshRate() == m_proposedRate || !m_proposedRate))
+	    && (m_crtc->rect() == m_proposedRect || !(changes & RandR::ChangeRect))
+	    && (m_crtc->rotation() == m_proposedRotation || !(changes & RandR::ChangeRotation))
+	    && ((m_crtc->refreshRate() == m_proposedRate || !m_proposedRate || !(changes & RandR::ChangeRate))))
 	{
 		return true;
 	}
@@ -548,11 +552,6 @@ bool RandROutput::applyProposed(int changes, bool confirm)
 
 	KConfig cfg("krandrrc");
 	RandRCrtc *crtc;
-
-	QRect r;
-
-	if (changes & RandR::ChangeRect)
-		r = m_proposedRect;
 
 	// first try to apply to the already attached crtc if any
 	if (m_crtc->isValid())
@@ -581,7 +580,7 @@ bool RandROutput::applyProposed(int changes, bool confirm)
 	// connection
 	if (!crtc)
 		return false;
-		
+
 	// try the crtc, and if no confirmation is needed or the user confirm, save the new settings
 	if (tryCrtc(crtc, changes)) 
 	{
