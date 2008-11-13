@@ -227,18 +227,17 @@ QString RandROutput::name() const
 
 QString RandROutput::icon() const
 {
-	// FIXME: check what names we should use and what kind of outputs randr can 
-	// report. It would also be interesting to be able to get the monitor name
+	// http://www.thinkwiki.org/wiki/Xorg_RandR_1.2#Output_port_names has a
+	// list of possible output names, at least for the intel and radeon drivers
+	// that support RandR 1.2. (nVidia drivers are not yet there at the time
+	// of writing, 2008.)
+	// FIXME: It would also be interesting to be able to get the monitor name
 	// using EDID or something like that, just don't know if it is even possible.
-	if (m_name.contains("VGA"))
+	if (m_name.contains("VGA") || m_name.contains("DVI") || m_name.contains("TMDS"))
 		return "video-display";
 	else if (m_name.contains("LVDS"))
 		return "video-display";
-	
-	// I doubt this is a good choice; can't find anything better in the spec.
-	// video-x-generic might work, but that's a mimetype, which is inappropriate
-	// for an output connection type.
-	else if (m_name.contains("TV"))
+	else if (m_name.contains("TV") || m_name.contains("S-video"))
 		return "video-television";
 
 	return "video-display";
