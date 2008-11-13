@@ -34,6 +34,7 @@
 
 #ifdef Q_WS_WIN
 #include <windows.h>
+#include <shellapi.h>
 #endif
 
 class QWidget;
