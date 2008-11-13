@@ -174,7 +174,6 @@ void OutputConfig::load()
 	kDebug() << "Loading output configuration for" << m_output->name();
 	setEnabled( m_output->isConnected() );
 
-	sizeCombo->clear();
 	orientationCombo->clear();
 
 	m_item->setVisible(m_output->isActive());	
@@ -224,6 +223,9 @@ void OutputConfig::positionComboChanged(int item)
 
 void OutputConfig::updatePositionList(void)
 {
+	positionCombo->clear();
+	positionOutputCombo->clear();
+
 	Relation rel = SameAs;
 	// FIXME: get default value from KConfig
 	for(int i = -1; i < 5; i++)
@@ -243,11 +245,11 @@ void OutputConfig::updatePositionList(void)
 		index = positionOutputCombo->findData((int)m_output->relation(0)->id());
 		if(index != -1)
 			positionOutputCombo->setCurrentIndex(index);
-	} else*/ if(m_output->screen()->activeCount() < 2) {
-		positionLabel->setEnabled(false);
-		positionCombo->setEnabled(false);
-		positionOutputCombo->setEnabled(false);
-	}
+	}*/
+	bool enabled = (m_output->screen()->activeCount() >= 2);
+	positionLabel->setEnabled(enabled);
+	positionCombo->setEnabled(enabled);
+	positionOutputCombo->setEnabled(enabled);
 }
 
 void OutputConfig::updateRotationList(void)
