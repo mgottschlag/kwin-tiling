@@ -68,6 +68,7 @@ void KCategorizedItemsViewDelegate::paint(QPainter *painter,
         break;
     case 3:
         paintColInfo(painter, option, item);
+        break;
     default:
         kDebug() << "unexpected column";
     }
