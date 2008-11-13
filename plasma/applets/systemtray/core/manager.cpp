@@ -30,7 +30,7 @@
 #include "task.h"
 #include "taskprotocol.h"
 
-#include "../protocols/dbus/dbusnotificationprotocol.h"
+#include "../protocols/notifications/dbusnotificationprotocol.h"
 #include "../protocols/fdo/fdonotificationprotocol.h"
 #include "../protocols/fdo/fdotaskprotocol.h"
 #include "../protocols/plasmoid/plasmoidtaskprotocol.h"

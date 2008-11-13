@@ -21,8 +21,8 @@ set(systemtray_SRCS
     protocols/plasmoid/plasmoidtaskprotocol.cpp
     protocols/plasmoid/plasmoidtask.cpp
 
-    protocols/dbus/dbusnotificationprotocol.cpp
-    protocols/dbus/dbusnotification.cpp
+    protocols/notifications/dbusnotificationprotocol.cpp
+    protocols/notifications/dbusnotification.cpp
 
     ui/applet.cpp
     ui/compactlayout.cpp
