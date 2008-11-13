@@ -43,6 +43,8 @@ Solid::Control::PowerManagerPrivate::PowerManagerPrivate()
                 this, SIGNAL(buttonPressed(int)));
         connect(managerBackend(), SIGNAL(brightnessChanged(float)),
                 this, SIGNAL(brightnessChanged(float)));
+        connect(managerBackend(), SIGNAL(batteryRemainingTimeChanged(int)),
+                this, SIGNAL(batteryRemainingTimeChanged(int)));
     }
 }
 
@@ -83,6 +85,12 @@ int Solid::Control::PowerManager::batteryChargePercent()
 {
     return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
                       -1, batteryChargePercent());
+}
+
+int Solid::Control::PowerManager::batteryRemainingTime()
+{
+    return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
+                      -1, batteryRemainingTime());
 }
 
 Solid::Control::PowerManager::AcAdapterState Solid::Control::PowerManager::acAdapterState()

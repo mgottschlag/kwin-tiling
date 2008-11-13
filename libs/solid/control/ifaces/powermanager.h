@@ -1,5 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2006 Kevin Ottens <ervin@kde.org>
+    Copyright (C) 2008 Dario Freddi <drf54321@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -104,6 +105,13 @@ namespace Ifaces
          * @return the current global battery charge percentage
          */
         virtual int batteryChargePercent() const = 0;
+
+        /**
+         * Retrieves the current estimated remaining time of the system batteries
+         *
+         * @return the current global estimated remaining time in milliseconds
+         */
+        virtual int batteryRemainingTime() const = 0;
 
         /**
          * Retrieves the current state of the system AC adapter.
@@ -237,6 +245,13 @@ namespace Ifaces
          * @param brightness the new brightness level
          */
         void brightnessChanged(float brightness);
+
+        /**
+         * This signal is emitted when the estimated battery remaining time changes.
+         *
+         * @param brightness the new remaining time
+         */
+        void batteryRemainingTimeChanged(int time);
     };
 }
 }

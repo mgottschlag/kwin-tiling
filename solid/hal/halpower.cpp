@@ -1,5 +1,6 @@
  /*  This file is part of the KDE project
     Copyright (C) 2006 Kevin Ottens <ervin@kde.org>
+    Copyright (C) 2008 Dario Freddi <drf54321@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -159,6 +160,11 @@ int HalPower::batteryChargePercent() const
     if (!m_maxBatteryCharge) return 0;
 
     return (m_currentBatteryCharge *100)/m_maxBatteryCharge;
+}
+
+int HalPower::batteryRemainingTime() const
+{
+    return m_estimatedBatteryTime;
 }
 
 Solid::Control::PowerManager::AcAdapterState HalPower::acAdapterState() const
@@ -460,6 +466,8 @@ void HalPower::computeBatteries()
         m_batteries[battery.udi()] = new Solid::Device(battery);
         connect(m_batteries[battery.udi()]->as<Solid::Battery>(), SIGNAL(chargePercentChanged(int, const QString &)),
                  this, SLOT(updateBatteryStats()));
+        connect(m_batteries[battery.udi()]->as<Solid::GenericInterface>(), SIGNAL(propertyChanged(const QMap<QString,int> &)),
+                 this, SLOT(slotBatteryPropertyChanged(const QMap<QString,int> &)));
     }
 
     updateBatteryStats();
@@ -485,6 +493,7 @@ void HalPower::updateBatteryStats()
     m_warningBatteryCharge = 0;
     m_lowBatteryCharge = 0;
     m_criticalBatteryCharge = 0;
+    m_estimatedBatteryTime = 0;
 
     foreach (Solid::Device *d, m_batteries)
     {
@@ -496,6 +505,7 @@ void HalPower::updateBatteryStats()
         m_maxBatteryCharge+= interface->property("battery.charge_level.last_full").toInt();
         m_warningBatteryCharge+= interface->property("battery.charge_level.warning").toInt();
         m_lowBatteryCharge+= interface->property("battery.charge_level.low").toInt();
+        m_estimatedBatteryTime+= interface->property("battery.remaining_time").toInt() * 1000;
     }
 
     m_criticalBatteryCharge = m_lowBatteryCharge/2;
@@ -571,6 +581,8 @@ void HalPower::slotDeviceAdded(const QString &udi)
         m_batteries[udi] = device;
         connect(m_batteries[udi]->as<Solid::Battery>(), SIGNAL(chargePercentChanged(int, const QString &)),
                  this, SLOT(updateBatteryStats()));
+        connect(m_batteries[udi]->as<Solid::GenericInterface>(), SIGNAL(propertyChanged(const QMap<QString,int> &)),
+                 this, SLOT(slotBatteryPropertyChanged(const QMap<QString,int> &)));
     }
     else if (device->is<Solid::Button>())
     {
@@ -623,6 +635,18 @@ void HalPower::slotDeviceRemoved(const QString &udi)
     {
         delete device;
         return;
+    }
+}
+
+void HalPower::slotBatteryPropertyChanged(const QMap<QString,int> &changes)
+{
+    /* This slot catches property changes on battery devices. At
+     * the moment it is used to find out remaining time on batteries.
+     */
+
+    if (changes.contains("battery.remaining_time")) {
+        updateBatteryStats();
+        emit batteryRemainingTimeChanged(batteryRemainingTime());
     }
 }
 

@@ -1,5 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2006-2007 Kevin Ottens <ervin@kde.org>
+    Copyright (C) 2008 Dario Freddi <drf54321@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -167,6 +168,13 @@ namespace Control
         SOLIDCONTROL_EXPORT int batteryChargePercent();
 
         /**
+         * Retrieves the current estimated remaining time of the system batteries
+         *
+         * @return the current global estimated remaining time in milliseconds
+         */
+        SOLIDCONTROL_EXPORT int batteryRemainingTime();
+
+        /**
          * Retrieves the current state of the system AC adapter.
          *
          * @return the current AC adapter state
@@ -301,6 +309,13 @@ namespace Control
              * @param brightness the new brightness level
              */
              void brightnessChanged(float brightness);
+
+            /**
+             * This signal is emitted when the estimated battery remaining time changes.
+             *
+             * @param brightness the new remaining time
+             */
+             void batteryRemainingTimeChanged(int time);
         };
 
         SOLIDCONTROL_EXPORT Notifier *notifier();

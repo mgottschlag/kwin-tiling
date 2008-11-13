@@ -1,5 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2006 Kevin Ottens <ervin@kde.org>
+    Copyright (C) 2008 Dario Freddi <drf54321@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -46,6 +47,7 @@ public:
 
     virtual Solid::Control::PowerManager::BatteryState batteryState() const;
     virtual int batteryChargePercent() const;
+    virtual int batteryRemainingTime() const;
     virtual Solid::Control::PowerManager::AcAdapterState acAdapterState() const;
 
     virtual Solid::Control::PowerManager::SuspendMethods supportedSuspendMethods() const;
@@ -72,6 +74,7 @@ private slots:
     void slotButtonPressed(Solid::Button::ButtonType type);
     void slotDeviceAdded(const QString &udi);
     void slotDeviceRemoved(const QString &udi);
+    void slotBatteryPropertyChanged(const QMap<QString,int> &changes);
 
 private:
     QMap<QString, Solid::Device *> m_acAdapters;
@@ -85,6 +88,7 @@ private:
     int m_warningBatteryCharge;
     int m_lowBatteryCharge;
     int m_criticalBatteryCharge;
+    int m_estimatedBatteryTime;
 
     mutable QDBusInterface m_halComputer;
     mutable QDBusInterface m_halPowerManagement;
