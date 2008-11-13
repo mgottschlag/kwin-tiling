@@ -21,6 +21,7 @@
 #include "timeengine.h"
 
 #include <QDate>
+#include <QDBusConnection>
 #include <QStringList>
 #include <QTime>
 
@@ -42,6 +43,13 @@ TimeEngine::TimeEngine(QObject *parent, const QVariantList &args)
     // To have translated timezone names
     // (effectively a noop if the catalog is already present).
     KGlobal::locale()->insertCatalog("timezones4");
+}
+
+void TimeEngine::init()
+{
+    //QDBusInterface *ktimezoned = new QDBusInterface("org.kde.kded", "/modules/ktimezoned", "org.kde.KTimeZoned");
+    QDBusConnection dbus = QDBusConnection::sessionBus();
+    dbus.connect(QString(), QString(), "org.kde.KTimeZoned", "configChanged", this, SLOT(updateAllSources()));
 }
 
 QStringList TimeEngine::sources() const

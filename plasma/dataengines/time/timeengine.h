@@ -35,6 +35,7 @@ class TimeEngine : public Plasma::DataEngine
 
     public:
         TimeEngine(QObject *parent, const QVariantList &args);
+        void init();
         QStringList sources() const;
 
     protected:
