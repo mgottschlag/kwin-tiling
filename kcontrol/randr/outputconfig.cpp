@@ -253,9 +253,10 @@ void OutputConfig::updateRotationList(void)
 }
 
 void OutputConfig::updateSizeList(void)
-{	
+{
 	SizeList sizes = m_output->sizes();
 	RandRMode preferredMode = m_output->preferredMode();
+	sizeCombo->clear();
 	sizeCombo->addItem( i18n("Disabled"), QSize(0, 0) );
 	
 	foreach (QSize s, sizes) {
