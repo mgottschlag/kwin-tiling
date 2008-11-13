@@ -71,11 +71,16 @@ void RandROutput::queryOutputInfo(void)
 	m_connected = (info->connection == RR_Connected);
 	m_name = info->name;
 	
+	kDebug() << "XID" << m_id << "is output" << m_name <<
+	            (isConnected() ? "(connected)" : "(not connected)");
+	
 	setCrtc(m_screen->crtc(info->crtc));
 	m_crtc->loadSettings(false);
 	
-	for(int i = 0; i < info->ncrtc; ++i)
+	for(int i = 0; i < info->ncrtc; ++i) {
+		kDebug() << "CRTC" << info->crtcs[i] << "possible for output" << m_name;
 		m_possibleCrtcs.append(info->crtcs[i]);
+	}
 	
 	//TODO: is it worth notifying changes on mode list changing?
 	m_modes.clear();
@@ -100,10 +105,9 @@ void RandROutput::queryOutputInfo(void)
 	m_originalRect     = m_crtc->rect();
 	
 	if(isConnected()) {
-		kDebug() << "Output name:" << m_name;
-		kDebug() << "Output refresh rate:" << m_originalRate;
-		kDebug() << "Output rect:" << m_originalRect;
-		kDebug() << "Output rotation:" << m_originalRotation;
+		kDebug() << m_name << "refresh rate:" << m_originalRate;
+		kDebug() << m_name << "rect:" << m_originalRect;
+		kDebug() << m_name << "rotation:" << m_originalRotation;
 	}
 	
 	XRRFreeOutputInfo(info);
@@ -577,7 +581,9 @@ bool RandROutput::setCrtc(RandRCrtc *crtc, bool applyNow)
 	if( !crtc || (m_crtc && crtc->id() == m_crtc->id()) )
 		return false;
 	
-	kDebug() << "Setting CRTC" << crtc->id() << "on output" << m_name;
+	kDebug() << "Setting CRTC" << crtc->id()
+	         << (crtc->isValid() ? "(enabled)" : "(disabled)")
+	         << "on output" << m_name;
 
 	if(m_crtc && m_crtc->isValid()) {
 		disconnect(m_crtc, SIGNAL(crtcChanged(RRCrtc, int)), 

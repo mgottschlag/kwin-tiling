@@ -68,6 +68,8 @@ void RandRCrtc::loadSettings(bool notify)
 	if(m_id == None)
 		return;
 	
+	kDebug() << "Querying information about CRTC" << m_id;
+	
 	int changes = 0;
 	XRRCrtcInfo *info = XRRGetCrtcInfo(QX11Info::display(), m_screen->resources(), m_id);
 	Q_ASSERT(info);
@@ -86,8 +88,9 @@ void RandRCrtc::loadSettings(bool notify)
 	// and create a list of modes that are available in all connected outputs
 	OutputList outputs;
 
-	for (int i = 0; i < info->noutput; ++i)
+	for (int i = 0; i < info->noutput; ++i) {
 		outputs.append(info->outputs[i]);
+	}
 
 	// check if the list changed from the original one
 	if (outputs != m_connectedOutputs)
@@ -196,16 +199,18 @@ float RandRCrtc::refreshRate() const
 
 bool RandRCrtc::applyProposed()
 {
-	kDebug() << "[CRTC] Going to apply (" << m_id << ") ....";
-	kDebug() << "       Current Screen rect: " << m_screen->rect();
-	kDebug() << "       Current CRTC rect: " << m_currentRect;
-	kDebug() << "       Current rotation: " << m_currentRotation;
-	kDebug() << "       Proposed CRTC rect: " << m_proposedRect;
-	kDebug() << "       Proposed rotation: " << m_proposedRotation;
-	kDebug() << "       Proposed refresh rate: " << m_proposedRate;
-	kDebug() << "       Outputs: ";
+	kDebug() << "[CRTC] Going to apply ( XID" << m_id << ") ...";
+	kDebug() << "       Current Screen rect:" << m_screen->rect();
+	kDebug() << "       Current CRTC rect:" << m_currentRect;
+	kDebug() << "       Current rotation:" << m_currentRotation;
+	kDebug() << "       Proposed CRTC rect:" << m_proposedRect;
+	kDebug() << "       Proposed rotation:" << m_proposedRotation;
+	kDebug() << "       Proposed refresh rate:" << m_proposedRate;
+	kDebug() << "       Connected outputs:";
+	if (!m_connectedOutputs.count())
+		kDebug() << "          none";
 	for (int i = 0; i < m_connectedOutputs.count(); ++i)
-		kDebug() << "               - " << m_screen->output(m_connectedOutputs.at(i))->name();
+		kDebug() << "          -" << m_screen->output(m_connectedOutputs.at(i))->name();
 
 	RandRMode mode;
 	if (m_proposedRect.size() == m_currentRect.size() && m_proposedRate == m_currentRate)

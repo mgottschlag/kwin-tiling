@@ -111,6 +111,7 @@ void RandRScreen::loadSettings(bool notify)
 	}
 
 	//get all crtcs
+	kDebug() << "Creating CRTC object for XID 0 (\"None\")";
 	RandRCrtc *c_none = new RandRCrtc(this, None);
 	m_crtcs[None] = c_none;
 	
@@ -120,6 +121,7 @@ void RandRScreen::loadSettings(bool notify)
 			m_crtcs[m_resources->crtcs[i]]->loadSettings(notify);
 		else
 		{
+			kDebug() << "Creating CRTC object for XID" << m_resources->crtcs[i];
 			RandRCrtc *c = new RandRCrtc(this, m_resources->crtcs[i]);
 			connect(c, SIGNAL(crtcChanged(RRCrtc, int)), this, SIGNAL(configChanged()));
 			connect(c, SIGNAL(crtcChanged(RRCrtc, int)), this, SLOT(save()));
@@ -135,6 +137,7 @@ void RandRScreen::loadSettings(bool notify)
 			;//m_outputs[m_resources->outputs[i]]->loadSettings(notify);
 		else
 		{
+			kDebug() << "Creating output object for XID" << m_resources->outputs[i];
 			RandROutput *o = new RandROutput(this, m_resources->outputs[i]);
 			connect(o, SIGNAL(outputChanged(RROutput, int)), this,
 				      SLOT(slotOutputChanged(RROutput, int)));

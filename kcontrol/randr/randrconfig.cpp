@@ -112,7 +112,7 @@ void RandRConfig::load(void)
 		w = m_container->insertWidget(config, description);
 		if(output->isConnected()) {
 			w->setExpanded(true);
-			kDebug() << "Output rect: " << output->rect();
+			kDebug() << "Output rect:" << output->rect();
 		}
 		m_outputList.append(w);
 		
@@ -137,7 +137,7 @@ void RandRConfig::defaults()
 
 void RandRConfig::apply()
 {
-	kDebug() << "Applying settings... ";
+	kDebug() << "Applying settings...";
 	foreach(CollapsibleWidget *w, m_outputList) {
 		OutputConfig *config = static_cast<OutputConfig *>(w->innerWidget());
 		RandROutput *output = config->output();
@@ -194,7 +194,7 @@ void RandRConfig::resizeEvent(QResizeEvent *event)
 void RandRConfig::slotAdjustOutput(OutputGraphicsItem *o)
 {
     Q_UNUSED(o);
-	kDebug() << "Output graphics item changed: ";
+	kDebug() << "Output graphics item changed:";
 	
 	// TODO: Implement
 }

@@ -96,7 +96,7 @@ void KRandRModule::defaults()
 
 void KRandRModule::load()
 {
-	kDebug() << "Loading KRandRMode...";
+	kDebug() << "Loading KRandRModule...";
 	
 #ifdef HAS_RANDR_1_2
 	if (RandR::has_1_2)

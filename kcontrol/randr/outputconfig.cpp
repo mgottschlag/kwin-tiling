@@ -157,7 +157,7 @@ QString OutputConfig::positionName(Relation position)
 
 void OutputConfig::load()
 {
-	kDebug() << "Loading output configuration for " << m_output->name();
+	kDebug() << "Loading output configuration for" << m_output->name();
 	setEnabled( m_output->isConnected() );
 
 	sizeCombo->clear();
