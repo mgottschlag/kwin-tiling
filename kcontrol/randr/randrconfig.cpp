@@ -146,13 +146,13 @@ void RandRConfig::apply()
 			continue;
 		
 		QSize res = config->resolution();
-		QRect configuredRect(config->position(), res);
 		
 		if(!res.isNull()) {
-			if(output->rect() == configuredRect) {
+			if(!config->hasPendingChanges()) {
 				kDebug() << "Ignoring identical config for" << output->name();
 				continue;
 			}
+			QRect configuredRect(config->position(), res);
 			
 			kDebug() << "Output config for" << output->name() << ":\n"
 			            "  rect =" << configuredRect

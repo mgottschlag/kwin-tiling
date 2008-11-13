@@ -90,6 +90,20 @@ int OutputConfig::rotation(void) const
 	return orientationCombo->itemData(orientationCombo->currentIndex()).toInt();
 }
 
+bool OutputConfig::hasPendingChanges(void) const
+{
+	if (m_output->rect() != QRect(position(), resolution())) {
+		return true;
+	}
+	else if (m_output->rotation() != rotation()) {
+		return true;
+	}
+	else if (m_output->refreshRate() != refreshRate()) {
+		return true;
+	}
+	return false;
+}
+
 void OutputConfig::outputChanged(RROutput output, int changes)
 {
 	Q_ASSERT(m_output->id() == output);

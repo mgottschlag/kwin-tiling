@@ -89,7 +89,6 @@ void RandRCrtc::loadSettings(bool notify)
 	OutputList outputs;
 
 	for (int i = 0; i < info->noutput; ++i) {
-		kDebug() << "Output" << info->outputs[i] << "possible on CRTC" << m_id;
 		outputs.append(info->outputs[i]);
 	}
 
@@ -200,7 +199,7 @@ float RandRCrtc::refreshRate() const
 
 bool RandRCrtc::applyProposed()
 {
-	kDebug() << "[CRTC] Going to apply ( XID" << m_id << ") ...";
+	kDebug() << "Applying proposed changes for CRTC" << m_id << "...";
 	kDebug() << "       Current Screen rect:" << m_screen->rect();
 	kDebug() << "       Current CRTC rect:" << m_currentRect;
 	kDebug() << "       Current rotation:" << m_currentRotation;
@@ -208,8 +207,8 @@ bool RandRCrtc::applyProposed()
 	kDebug() << "       Proposed rotation:" << m_proposedRotation;
 	kDebug() << "       Proposed refresh rate:" << m_proposedRate;
 	kDebug() << "       Enabled outputs:";
-	if (!m_connectedOutputs.count())
-		kDebug() << "          none";
+	if (m_connectedOutputs.isEmpty())
+		kDebug() << "          - none";
 	for (int i = 0; i < m_connectedOutputs.count(); ++i)
 		kDebug() << "          -" << m_screen->output(m_connectedOutputs.at(i))->name();
 
@@ -258,10 +257,6 @@ bool RandRCrtc::applyProposed()
 	else if (!mode.isValid())
 		return false;
 
-	RROutput *outputs = new RROutput[m_connectedOutputs.count()];
-	for (int i = 0; i < m_connectedOutputs.count(); ++i)
-		outputs[i] = m_connectedOutputs.at(i);
-
 	if (mode.isValid())
 	{
 		if (m_currentRotation == m_proposedRotation ||
@@ -302,8 +297,11 @@ bool RandRCrtc::applyProposed()
 			}
 		}
 	}
-
-
+	
+	RROutput *outputs = new RROutput[m_connectedOutputs.count()];
+	for (int i = 0; i < m_connectedOutputs.count(); ++i)
+		outputs[i] = m_connectedOutputs.at(i);
+	
 	Status s = XRRSetCrtcConfig(QX11Info::display(), m_screen->resources(), m_id, 
 				    RandR::timestamp, m_proposedRect.x(), m_proposedRect.y(), mode.id(),
 				    m_proposedRotation, outputs, m_connectedOutputs.count()); 
@@ -313,6 +311,7 @@ bool RandRCrtc::applyProposed()
 	bool ret;
 	if (s == RRSetConfigSuccess)
 	{
+		kDebug() << "Changes for CRTC" << m_id << "successfully applied.";
 		m_currentMode = mode.id();
 		m_currentRotation = m_proposedRotation;
 		m_currentRect = m_proposedRect;
@@ -322,6 +321,7 @@ bool RandRCrtc::applyProposed()
 	}
 	else
 	{
+		kDebug() << "Failed to apply changes for CRTC" << m_id;
 		ret = false;
 		// Invalidate the XRRScreenResources cache
 		if(s == RRSetConfigInvalidConfigTime)

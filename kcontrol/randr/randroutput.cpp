@@ -75,9 +75,13 @@ void RandROutput::queryOutputInfo(void)
 	            (isConnected() ? "(connected)" : "(disconnected)");
 	
 	setCrtc(m_screen->crtc(info->crtc));
-	
+	kDebug() << "Possible CRTCs for output" << m_name << ":";
+
+	if (!info->ncrtc) {
+		kDebug() << "   - none";
+	}
 	for(int i = 0; i < info->ncrtc; ++i) {
-		kDebug() << "CRTC" << info->crtcs[i] << "possible for output" << m_name;
+		kDebug() << "   - CRTC" << info->crtcs[i];
 		m_possibleCrtcs.append(info->crtcs[i]);
 	}
 	
@@ -104,9 +108,10 @@ void RandROutput::queryOutputInfo(void)
 	m_originalRect     = m_crtc->rect();
 	
 	if(isConnected()) {
-		kDebug() << m_name << "refresh rate:" << m_originalRate;
-		kDebug() << m_name << "rect:" << m_originalRect;
-		kDebug() << m_name << "rotation:" << m_originalRotation;
+		kDebug() << "Current configuration for output" << m_name << ":";
+		kDebug() << "   - Refresh rate:" << m_originalRate;
+		kDebug() << "   - Rect:" << m_originalRect;
+		kDebug() << "   - Rotation:" << m_originalRotation;
 	}
 	
 	XRRFreeOutputInfo(info);
@@ -456,6 +461,8 @@ void RandROutput::slotChangeRefreshRate(QAction *action)
 
 void RandROutput::slotDisable()
 {
+	proposeRect(QRect());
+	proposeRefreshRate(0);
 	setCrtc(m_screen->crtc(None));
 }
 
@@ -464,7 +471,7 @@ void RandROutput::slotEnable()
 	if(!m_connected)
 		return;
 	
-	kDebug() << "Attempting to enable " << m_name;
+	kDebug() << "Attempting to enable" << m_name;
 	RandRCrtc *crtc = findEmptyCrtc();
 	
 	if(crtc)
@@ -487,6 +494,7 @@ RandRCrtc *RandROutput::findEmptyCrtc()
 
 bool RandROutput::tryCrtc(RandRCrtc *crtc, int changes)
 {
+	kDebug() << "Trying to change output" << m_name << "to CRTC" << crtc->id() << "...";
 	RandRCrtc *oldCrtc = m_crtc;
 
 	// if we are not yet using this crtc, switch to use it
@@ -505,20 +513,39 @@ bool RandROutput::tryCrtc(RandRCrtc *crtc, int changes)
 	if (changes & RandR::ChangeRate)
 		crtc->proposeRefreshRate(m_proposedRate);
 
-	if (crtc->applyProposed())
+	if (crtc->applyProposed()) {
+		kDebug() << "Changed output" << m_name << "to CRTC" << crtc->id();
+		kDebug() << "   ( from old CRTC" << oldCrtc->id() << ")";
 		return true;
+	}
 
 	// revert changes if we didn't succeed
 	crtc->proposeOriginal();
 	crtc->applyProposed();
 
 	// switch back to the old crtc
+	kDebug() << "Failed to change output" << m_name << "to CRTC" << crtc->id();
+	kDebug() << "   Switching back to old CRTC" << oldCrtc->id();
 	setCrtc(oldCrtc);
 	return false;
 }
 
 bool RandROutput::applyProposed(int changes, bool confirm)
 {
+	// Don't try to disable an already disabled output.
+	if (!m_proposedRect.isValid() && !m_crtc->isValid()) {
+		return true;
+	}
+	// Don't try to change an enabled output if there is nothing to change.
+	if (m_crtc->isValid()
+	    && m_crtc->rect() == m_proposedRect
+	    && m_crtc->rotation() == m_proposedRotation
+		&& (m_crtc->refreshRate() == m_proposedRate || !m_proposedRate))
+	{
+		return true;
+	}
+	kDebug() << "Applying proposed changes for output" << m_name << "...";
+
 	KConfig cfg("krandrrc");
 	RandRCrtc *crtc;
 
@@ -526,7 +553,6 @@ bool RandROutput::applyProposed(int changes, bool confirm)
 
 	if (changes & RandR::ChangeRect)
 		r = m_proposedRect;
-
 
 	// first try to apply to the already attached crtc if any
 	if (m_crtc->isValid())

@@ -432,6 +432,8 @@ void RandRScreen::load()
 
 bool RandRScreen::applyProposed(bool confirm)
 {
+	kDebug() << "Applying proposed changes for screen" << m_index << "...";
+	
 	bool succeed = true;
 	QRect r;
 	
