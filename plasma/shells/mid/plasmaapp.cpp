@@ -80,6 +80,7 @@ void checkComposite()
                 break;
             }
         }
+	XFree(xvi);
     }
 
     kDebug() << (colormap ? "Plasma has an argb visual" : "Plasma lacks an argb visual") << visual << colormap;

@@ -277,6 +277,7 @@ void SelectionManager::initSelection()
             break;
         }
     }
+    XFree(xvi);
 
     XChangeProperty(d->display, winId(), d->visualAtom, XA_VISUALID, 32,
                     PropModeReplace, (const unsigned char*)&visual, 1);
