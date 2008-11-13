@@ -740,19 +740,19 @@ void PanelView::unhide()
     // backgrounds; without it we can't so we just show/hide
     QTimeLine * tl = timeLine();
     tl->setDirection(QTimeLine::Backward);
-    if (PlasmaApp::hasComposite()) {
-        if (tl->state() == QTimeLine::NotRunning) {
-            tl->start();
-        }
-    }
 
     show();
     KWindowSystem::setOnAllDesktops(winId(), true);
     unsigned long state = NET::Sticky;
     KWindowSystem::setState(winId(), state);
+
     if (m_panelMode == LetWindowsCover) {
         KWindowSystem::raiseWindow(winId());
         KWindowSystem::forceActiveWindow(winId());
+    } else if (PlasmaApp::hasComposite()) {
+        if (tl->state() == QTimeLine::NotRunning) {
+            tl->start();
+        }
     }
 }
 
@@ -838,39 +838,39 @@ bool PanelView::event(QEvent *event)
 
 void PanelView::animateHide(qreal progress)
 {
-    int margin = 0;
-    Plasma::Location loc = location();
+    if (m_panelMode == AutoHide && PlasmaApp::hasComposite()) {
+        int margin = 0;
+        Plasma::Location loc = location();
 
-    if (loc == Plasma::TopEdge || loc == Plasma::BottomEdge) {
-        margin = progress * height();
-    } else {
-        margin = progress * width();
-    }
+        if (loc == Plasma::TopEdge || loc == Plasma::BottomEdge) {
+            margin = progress * height();
+        } else {
+            margin = progress * width();
+        }
 
-    int xtrans = 0;
-    int ytrans = 0;
+        int xtrans = 0;
+        int ytrans = 0;
 
-    switch (loc) {
-        case Plasma::TopEdge:
-            ytrans = -margin;
-            break;
-        case Plasma::BottomEdge:
-            ytrans = margin;
-            break;
-        case Plasma::RightEdge:
-            xtrans = margin;
-            break;
-        case Plasma::LeftEdge:
-            xtrans = -margin;
-            break;
-        default:
-            // no hiding unless we're on an edge.
-            return;
-            break;
-    }
+        switch (loc) {
+            case Plasma::TopEdge:
+                ytrans = -margin;
+                break;
+            case Plasma::BottomEdge:
+                ytrans = margin;
+                break;
+            case Plasma::RightEdge:
+                xtrans = margin;
+                break;
+            case Plasma::LeftEdge:
+                xtrans = -margin;
+                break;
+            default:
+                // no hiding unless we're on an edge.
+                return;
+                break;
+        }
 
-    //kDebug() << progress << xtrans << ytrans;
-    if (PlasmaApp::hasComposite()) {
+    //kDebug() << progress << xtrans << ytransLetWindowsCover;
         viewport()->move(xtrans, ytrans);
     }
 
