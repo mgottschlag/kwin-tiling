@@ -356,9 +356,11 @@ QSizeF Tasks::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
 void Tasks::adjustGroupingStrategy()
 {
     //FIXME: should use AbstractTaskItem::basicPreferredSize() but it seems to cause crashes
-    QSize itemSize = QSize(300, 30);
-    m_groupManager->setFullLimit(((size().width()*size().height()) / (itemSize.width()*itemSize.height())));  
+    //QSize itemSize = QSize(300, 30);
+    //m_groupManager->setFullLimit(((size().width()*size().height()) / (itemSize.width()*itemSize.height())));  
     //kDebug() << ((size().width()*size().height()) / (itemSize.width()*itemSize.height()));
+
+    m_groupManager->setFullLimit(rootGroupItem()->optimumCapacity());  
 }
 
 void Tasks::changeSizeHint(Qt::SizeHint which)

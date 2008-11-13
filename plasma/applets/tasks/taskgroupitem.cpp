@@ -818,5 +818,11 @@ void TaskGroupItem::setForceRows(bool forceRows)
         m_layoutWidget->setForceRows(m_forceRows);
     }
 }
+
+int TaskGroupItem::optimumCapacity()
+{
+    return layoutWidget()->maximumRows()*layoutWidget()->preferredColumns();
+}
+
 #include "taskgroupitem.moc"
 

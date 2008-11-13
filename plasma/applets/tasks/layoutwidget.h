@@ -71,6 +71,11 @@ public:
     /** returns columnCount or rowCount depending on m_applet->formFactor()*/
     int numberOfColumns();
 
+    /** Returns the preferred number of rows based on the user settings but limited by calculation to honor AbstractGroupableItem::basicPreferredSize()*/
+    int maximumRows();
+    /** Returns the preferred number of columns calculated on base of AbstractGroupableItem::basicPreferredSize()*/
+    int preferredColumns();
+
 public Q_SLOTS:
     void update();
 
@@ -92,10 +97,6 @@ private:
     /** Populates the actual QGraphicsGridLayout with items*/
     void layoutItems();
 
-    /** Returns the preferred number of rows based on the user settings but limited by calculation to honor AbstractGroupableItem::basicPreferredSize()*/
-    int maximumRows();
-    /** Returns the preferred number of columns calculated on base of AbstractGroupableItem::basicPreferredSize()*/
-    int preferredColumns();
     bool m_hasSpacer;
     QGraphicsWidget *m_spacer;
 
