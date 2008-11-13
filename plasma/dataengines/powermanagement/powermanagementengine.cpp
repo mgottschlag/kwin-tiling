@@ -27,6 +27,7 @@
 #include <solid/deviceinterface.h>
 #include <solid/battery.h>
 #include <solid/powermanagement.h>
+#include <solid/control/powermanager.h>
 
 #include <KDebug>
 #include <KLocale>
@@ -60,6 +61,8 @@ void PowermanagementEngine::init()
             this,                              SLOT(deviceRemoved(QString)));
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(QString)),
             this,                              SLOT(deviceAdded(QString)));
+    connect(Solid::Control::PowerManager::notifier(), SIGNAL(batteryRemainingTimeChanged(int)),
+            this,                                     SLOT(batteryRemainingTimeChanged(int)));
 
     QStringList modules;
     QDBusInterface kdedInterface("org.kde.kded", "/kded", "org.kde.kded");
@@ -133,6 +136,7 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
         if (battery_sources.count() > 0) {
             setData("Battery", "has Battery", true);
             setData("Battery", "sources", battery_sources);
+            setData("Battery", "remaining_time", Solid::Control::PowerManager::batteryRemainingTime());
         }
     } else if (name == "AC Adapter") {
         // AC Adapter handling
@@ -260,6 +264,12 @@ void PowermanagementEngine::profilesChanged( const QString &current, const QStri
 {
     setData("PowerDevil", "currentProfile", current);
     setData("PowerDevil", "availableProfiles", profiles);
+    scheduleSourcesUpdated();
+}
+
+void PowermanagementEngine::batteryRemainingTimeChanged(int time)
+{
+    setData("Battery", "remaining_time", time);
     scheduleSourcesUpdated();
 }
 

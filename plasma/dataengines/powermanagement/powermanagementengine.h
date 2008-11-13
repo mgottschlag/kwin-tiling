@@ -54,6 +54,7 @@ private slots:
     void deviceRemoved(const QString& udi);
     void deviceAdded(const QString& udi);
     void profilesChanged(const QString &current, const QStringList &profiles);
+    void batteryRemainingTimeChanged(int time);
 
 private:
     Solid::AcAdapter* m_acadapter;
