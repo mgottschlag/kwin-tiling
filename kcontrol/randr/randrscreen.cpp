@@ -389,7 +389,9 @@ void RandRScreen::load(KConfig &config)
 {
 	KConfigGroup group = config.group("Screen_" + QString::number(m_index));
 	m_outputsUnified = group.readEntry("OutputsUnified", false);
-	m_unifiedRect = group.readEntry("UnifiedRect", QRect());
+	m_unifiedRect = (group.readEntry("UnifiedRect", "0,0,0,0") == "0,0,0,0")
+		? QRect() // "0,0,0,0" (serialization for QRect()) does not convert to a QRect
+		: group.readEntry("UnifiedRect", QRect());
 	m_unifiedRotation = group.readEntry("UnifiedRotation", (int) RandR::Rotate0);
 
 	slotUnifyOutputs(m_outputsUnified);
