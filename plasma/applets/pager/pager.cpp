@@ -1099,7 +1099,10 @@ void Pager::updateToolTip()
         }
     }
 
-    subtext.prepend(i18np("One window:", "%1 windows:", taskCounter));
+    if (taskCounter){
+        subtext.prepend(i18np("One window:", "%1 windows:", taskCounter));
+    }
+
     if (taskCounter - displayedTaskCounter > 0){
         subtext.append("<br>&bull; <i>" + i18np("and 1 other", "and %1 others", taskCounter - displayedTaskCounter) + "</i>");
     }
