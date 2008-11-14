@@ -43,7 +43,7 @@ K_EXPORT_PLASMA_PACKAGESTRUCTURE(googlegadget, GglPackage)
 class GadgetBrowserViewHost : public qt::QtViewHost {
  public:
   GadgetBrowserViewHost(GglPackage *package, Type type)
-      : QtViewHost(type, 1.0, false, true, false, 0, NULL),
+      : QtViewHost(type, 1.0, true, false, true, 0, NULL),
         package_(package) {}
 
   virtual void CloseView() {
@@ -172,7 +172,11 @@ class GadgetBrowserHost : public ggadget::HostInterface {
                                          ViewHostInterface::Type type) {
     return new GadgetBrowserViewHost(package_, type);
   }
-  virtual void RemoveGadget(Gadget *gadget, bool save_data) { }
+
+  virtual void RemoveGadget(Gadget *gadget, bool save_data) {
+    gadget_manager_->RemoveGadgetInstance(gadget->GetInstanceID());
+  }
+
   virtual bool LoadFont(const char *filename) {
     if (QFontDatabase::addApplicationFont(filename) != -1)
       return true;
