@@ -88,7 +88,8 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_isHovered(false),
       m_firstRun(true),
       m_numOfBattery(0),
-      m_acadapter_plugged(false)
+      m_acadapter_plugged(false),
+      m_remainingMSecs(0)
 {
     kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
@@ -97,6 +98,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     resize(128, 128);
     setAspectRatioMode(Plasma::ConstrainedSquare );
     m_textRect = QRectF();
+    m_remainingMSecs = 0;
 }
 
 void Battery::init()
@@ -200,6 +202,11 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
     } else {
         kDebug() << "Applet::Dunno what to do with " << source;
     }
+    if (source == "Battery0") {
+        m_remainingMSecs  = data["Remaining msec"].toInt();
+        //kDebug() << "Remaining msecs on battery:" << m_remainingMSecs;
+    }
+
     updateStatus();
     update();
 }
@@ -327,6 +334,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         m_controlsLayout->setColumnMinimumWidth(1, 2*columnWidth);
         m_controlsLayout->setColumnPreferredWidth(2, rowHeight);
         m_controlsLayout->setHorizontalSpacing(0);
+
         m_batteryLayout = new QGraphicsGridLayout(m_controlsLayout);
 
         //m_batteryLayout->setColumnPreferredWidth(0, 100);
@@ -352,6 +360,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
             m_extenderApplet->setBackgroundHints(NoBackground);
             m_extenderApplet->setFlag(QGraphicsItem::ItemIsMovable, false);
             m_extenderApplet->init();
+            m_extenderApplet->showLabel(true);
             m_batteryLayout->addItem(m_extenderApplet, 0, 1, 1, 1, Qt::AlignRight);
         }
 
@@ -482,32 +491,71 @@ void Battery::updateStatus()
         QHashIterator<QString, QHash<QString, QVariant > > battery_data(m_batteries_data);
         QString batteryLabelText = QString("<br />");
         int bnum = 0;
+        int hours = m_remainingMSecs/1000/3600;
+        int minutes = qRound(m_remainingMSecs/60000);
         while (battery_data.hasNext()) {
             bnum++;
             battery_data.next();
             QString state = battery_data.value()["State"].toString();
-            if (m_numOfBattery == 1) {
-                if (battery_data.value()["Plugged in"].toBool()) {
-                    if (state == "NoCharge") {
-                            batteryLabelText.append(i18n("<b>Battery:</b> %1% (fully charged)<br />", battery_data.value()["Percent"].toString()));
-                    } else if (state == "Discharging") {
-                            batteryLabelText.append(i18n("<b>Battery:</b> %1% (discharging)<br />", battery_data.value()["Percent"].toString()));
+            if (state == "Discharging" && m_remainingMSecs > 0) {
+                if (hours == 0 && minutes > 0) {
+                    // less than one hour and one minute
+                    minutes = qRound(m_remainingMSecs/60000) % 60;
+                    batteryLabelText.append(i18n("<b>One hour and %1 minutes</b> remaining<br />", minutes));
+                } else if (hours > 1) {
+                    minutes = qRound(m_remainingMSecs/60000) % 60;
+                    // at least two hours
+                    if (minutes > 0) {
+                        batteryLabelText.append(i18n("<b>%1 hours and %2 minutes</b> remaining<br />", hours, minutes));
                     } else {
-                        batteryLabelText.append(i18n("<b>Battery:</b> %1% (charging)<br />", battery_data.value()["Percent"].toString()));
+                        batteryLabelText.append(i18n("<b>%1 hours</b> remaining<br />", hours));
                     }
                 } else {
-                    batteryLabelText.append(i18nc("Battery is not plugged in", "<b>Battery:</b> not present<br />"));
+                    // less than one hour
+                    batteryLabelText.append(i18n("<b>%1 minutes</b> remaining<br />", minutes));
                 }
+                //kDebug() << "hours:" << hours << "minutes:" << minutes;
             } else {
-                if (state == "NoCharge") {
-                    batteryLabelText.append(i18n("<b>Battery %1:</b> %2% (fully charged)<br />", bnum, battery_data.value()["Percent"].toString()));
-                } else if (state == "Discharging") {
-                    batteryLabelText.append(i18n("<b>Battery %1:</b> %2% (discharging)<br />", bnum, battery_data.value()["Percent"].toString()));
+                if (m_numOfBattery == 1) {
+                    if (battery_data.value()["Plugged in"].toBool()) {
+                        if (state == "NoCharge") {
+                                batteryLabelText.append(i18n("<b>Battery:</b> %1% (fully charged)<br />", battery_data.value()["Percent"].toString()));
+                        } else if (state == "Discharging") {
+                                if (m_remainingMSecs > 0) {
+                                    int hours = m_remainingMSecs/1000/3600;
+                                    int minutes = qRound(m_remainingMSecs/60000);
+                                    if (hours == 1 && minutes > 0) {
+                                        // less than one hour and one minute
+                                        minutes = qRound(m_remainingMSecs/60000) % 60;
+                                        batteryLabelText.append(i18n("One hour and %1 minutes remaining<br />", minutes));
+                                    } else if (hours > 1) {
+                                        batteryLabelText.append(i18n("%1 hours and %2 minutes remaining<br />", hours, minutes));
+                                    } else {
+                                        // less than one hour
+                                        batteryLabelText.append(i18n("%1 minutes remaining<br />", minutes));
+                                    }
+                                    kDebug() << "hours:" << hours << "minutes:" << minutes;
+                                } else {
+                                    batteryLabelText.append(i18nc("Shown when a time estimate is not available", "<b>Battery:</b> %1% (discharging)<br />", battery_data.value()["Percent"].toString()));
+                                }
+                        } else {
+                            batteryLabelText.append(i18n("<b>Battery:</b> %1% (charging)<br />", battery_data.value()["Percent"].toString()));
+                        }
+                    } else {
+                        batteryLabelText.append(i18nc("Battery is not plugged in", "<b>Battery:</b> not present<br />"));
+                    }
                 } else {
-                    batteryLabelText.append(i18n("<b>Battery %1:</b> %2% (charging)<br />", bnum, battery_data.value()["Percent"].toString()));
+                    if (state == "NoCharge") {
+                        batteryLabelText.append(i18n("<b>Battery %1:</b> %2% (fully charged)<br />", bnum, battery_data.value()["Percent"].toString()));
+                    } else if (state == "Discharging") {
+                        batteryLabelText.append(i18n("<b>Battery %1:</b> %2% (discharging)<br />", bnum, battery_data.value()["Percent"].toString()));
+                    } else {
+                        batteryLabelText.append(i18n("<b>Battery %1:</b> %2% (charging)<br />", bnum, battery_data.value()["Percent"].toString()));
+                    }
                 }
             }
         }
+
         if (m_acadapter_plugged) {
             batteryLabelText.append(i18n("<b>AC Adapter:</b> Plugged in"));
         } else {
@@ -535,9 +583,9 @@ void Battery::updateStatus()
             m_profileLabel->show();
         }
     }
-    kDebug() << "SIZE LABEL" << m_batteryLabel->size() << m_batteryLabel->preferredSize();// << m_batteryLayout->sizeHint();
-    m_controlsLayout->setColumnPreferredWidth(1,280);
-    m_batteryLayout->setColumnPreferredWidth(0,200);
+    //kDebug() << "SIZE LABEL" << m_batteryLabel->size() << m_batteryLabel->preferredSize() << m_batteryLabel->preferredSize();
+    m_controlsLayout->setColumnMinimumWidth(1,280);
+    m_batteryLayout->setColumnMinimumWidth(0,200);
     m_batteryLayout->invalidate();
     m_controlsLayout->invalidate();
 }
@@ -814,7 +862,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
             // paint battery with appropriate charge level
             paintBattery(p, corect, battery_data.value()["Percent"].toInt(), battery_data.value()["Plugged in"].toBool());
 
-            if (m_showBatteryString || m_isHovered || m_firstRun) {
+            if (m_isEmbedded || m_showBatteryString || m_isHovered || m_firstRun) {
                 // Show the charge percentage with a box on top of the battery
                 QString batteryLabel;
                 if (battery_data.value()["Plugged in"].toBool()) {

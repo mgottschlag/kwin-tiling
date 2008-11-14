@@ -55,6 +55,8 @@ class Battery : public Plasma::PopupApplet
         Qt::Orientations expandingDirections() const;
         void constraintsEvent(Plasma::Constraints constraints);
         void popupEvent(bool show);
+        /* Fade in/out the label above the battery. */
+        void showLabel(bool show);
 
     public slots:
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
@@ -108,8 +110,6 @@ class Battery : public Plasma::PopupApplet
         void paintBattery(QPainter *p, const QRect &contentsRect, const int batteryPercent, const bool plugState);
         /* Paint a label on top of the battery */
         void paintLabel(QPainter *p, const QRect &contentsRect, const QString& labelText);
-        /* Fade in/out the label above the battery. */
-        void showLabel(bool show);
         /* Scale in/out Battery. */
         void showBattery(bool show);
         /* Scale in/out Ac Adapter. */
@@ -123,7 +123,6 @@ class Battery : public Plasma::PopupApplet
         QSizeF m_size;
         int m_pixelSize;
         Plasma::Svg* m_theme;
-        bool m_acadapter_plugged;
 
         QStringList m_availableProfiles;
         QString m_currentProfile;
@@ -156,6 +155,8 @@ class Battery : public Plasma::PopupApplet
         int m_boxAlpha;
         int m_boxHoverAlpha;
         int m_numOfBattery;
+        bool m_acadapter_plugged;
+        int m_remainingMSecs;
 };
 
 K_EXPORT_PLASMA_APPLET(battery, Battery)

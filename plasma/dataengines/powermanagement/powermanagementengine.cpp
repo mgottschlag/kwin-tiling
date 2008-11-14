@@ -136,7 +136,7 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
         if (battery_sources.count() > 0) {
             setData("Battery", "has Battery", true);
             setData("Battery", "sources", battery_sources);
-            setData("Battery", "remaining_time", Solid::Control::PowerManager::batteryRemainingTime());
+            setData("Battery", "Remaining msec", Solid::Control::PowerManager::batteryRemainingTime());
         }
     } else if (name == "AC Adapter") {
         // AC Adapter handling
@@ -269,7 +269,8 @@ void PowermanagementEngine::profilesChanged( const QString &current, const QStri
 
 void PowermanagementEngine::batteryRemainingTimeChanged(int time)
 {
-    setData("Battery", "remaining_time", time);
+    //kDebug() << "Remaining Time changed:" << time;
+    setData("Battery0", "Remaining msec", time);
     scheduleSourcesUpdated();
 }
 
