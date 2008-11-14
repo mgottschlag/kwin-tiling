@@ -32,15 +32,15 @@ class PythonDataEngineScript(Plasma.DataEngineScript):
 
         self.m_moduleName = str(self.dataEngine().pluginName())
         print("pluginname: " + str(self.dataEngine().pluginName()))
-        plugin_name = str(self.dataEngine().pluginName()).replace('-','_')
+        self.plugin_name = str(self.dataEngine().pluginName()).replace('-','_')
 
-        self.importer.register_top_level(plugin_name, str(self.dataEngine().package().path()))
+        self.importer.register_top_level(self.plugin_name, str(self.dataEngine().package().path()))
 
         print("mainscript: " + str(self.dataEngine().package().filePath("mainscript")))
         print("package path: " + str(self.dataEngine().package().path()))
 
         # import the code at the file name reported by mainScript()
-        self.module = __import__(plugin_name+'.main')
+        self.module = __import__(self.plugin_name+'.main')
         self.pydataengine = self.module.main.CreateDataEngine(None)
         #self.pydataengine.setDataEngine(self.dataEngine())
         self.pydataengine.setDataEngineScript(self)
@@ -48,6 +48,11 @@ class PythonDataEngineScript(Plasma.DataEngineScript):
 
         self.initialized = True
         return True
+
+    def __dtor__(self):
+        print("~PythonDataEngineScript()")
+        PythonAppletScript.importer.unregister_top_level(self.plugin_name)
+        self.pydataengine = None
 
     def sources(self):
         return self.pydataengine.sources()

@@ -22,10 +22,13 @@ from PyKDE4.plasma import Plasma
 import plasma_importer
 
 class PythonAppletScript(Plasma.AppletScript):
+    importer = None
+
     def __init__(self, parent):
         Plasma.AppletScript.__init__(self,parent)
         print("PythonAppletScript()")
-        self.importer = plasma_importer.PlasmaImporter()
+        if PythonAppletScript.importer is None:
+             PythonAppletScript.importer = plasma_importer.PlasmaImporter()
         self.initialized = False
 
     def init(self):
@@ -40,15 +43,15 @@ class PythonAppletScript(Plasma.AppletScript):
         self.m_moduleName = str(self.applet().pluginName())
         print("pluginname: " + str(self.applet().pluginName()))
         
-        plugin_name = str(self.applet().pluginName()).replace('-','_')
+        self.plugin_name = str(self.applet().pluginName()).replace('-','_')
 
-        self.importer.register_top_level(plugin_name, str(self.applet().package().path()))
+        PythonAppletScript.importer.register_top_level(self.plugin_name, str(self.applet().package().path()))
 
         print("mainScript: " + str(self.mainScript()))
         print("package path: " + str(self.applet().package().path()))
 
         # import the code at the file name reported by mainScript()
-        self.module = __import__(plugin_name+'.main')
+        self.module = __import__(self.plugin_name+'.main')
         self.pyapplet = self.module.main.CreateApplet(None)
         self.pyapplet.setApplet(self.applet())
         self.pyapplet.init()
@@ -59,6 +62,7 @@ class PythonAppletScript(Plasma.AppletScript):
 
     def __dtor__(self):
         print("~PythonAppletScript()")
+        PythonAppletScript.importer.unregister_top_level(self.plugin_name)
         self.pyapplet = None
 
     def constraintsEvent(self, constraints):

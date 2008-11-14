@@ -24,8 +24,10 @@ import imp
 class PlasmaImporter(object):
     def __init__(self):
         self.toplevel = {}
+        self.toplevelcount = {}
         sys.path.append('<plasma>')
         sys.path_hooks.append(self.hook)
+        print("PlasmaImporter.__init__: sys.path:" + repr(sys.path))
 
     def hook(self,path):
       if path=='<plasma>':
@@ -36,7 +38,24 @@ class PlasmaImporter(object):
 
     def register_top_level(self,name,path):
         if name not in self.toplevel:
+            self.toplevelcount[name] = 1
             self.toplevel[name] = path
+        else:
+            self.toplevelcount[name] += 1
+
+    def unregister_top_level(self,name):
+        value = self.toplevelcount[name]-1
+        self.toplevelcount[name] = value
+        if value==0:
+            del self.toplevelcount[name]
+            del self.toplevel[name]
+            print("name: "+name)
+            print(repr(sys.modules.keys()))
+            for key in list(sys.modules.keys()):
+                print(key)
+                if key==name or key.startswith(name+"."):
+                    del sys.modules[key]
+            print(repr(sys.modules.keys()))
 
     def find_module(self,fullname, path=None):
         print('find_module(%s,%s)' % (fullname,path) )
