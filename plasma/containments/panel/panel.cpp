@@ -88,7 +88,7 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
       m_configureAction(0),
       m_addPanelAction(0),
-      m_currentSize(QSize(QApplication::desktop()->screenGeometry(screen()).width(), 38)),
+      m_currentSize(QSize(QApplication::desktop()->screenGeometry(screen()).width(), 35)),
       m_lastViewGeom(),
       m_spacerIndex(-1),
       m_spacer(0)
