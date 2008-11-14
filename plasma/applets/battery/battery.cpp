@@ -265,7 +265,7 @@ void Battery::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 
 void Battery::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-    if (!m_showBatteryString) {
+    if (!m_showBatteryString && !m_isEmbedded) {
         showLabel(false);
     }
     //showAcAdapter(true); // to test the animation without constant plugging
@@ -344,7 +344,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         m_batteryLabel->setMinimumSize(200, 80);
         m_batteryLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-        m_batteryLabel->nativeWidget()->setWordWrap(false);
+        //m_batteryLabel->nativeWidget()->setWordWrap(false);
         m_batteryLabel->nativeWidget()->setAlignment(Qt::AlignTop);
         // FIXME: larger fonts screw up this label
         m_batteryLayout->addItem(m_batteryLabel, 0, 0, 1, 1, Qt::AlignLeft);
@@ -498,15 +498,15 @@ void Battery::updateStatus()
             battery_data.next();
             QString state = battery_data.value()["State"].toString();
             if (state == "Discharging" && m_remainingMSecs > 0) {
-                if (hours == 0 && minutes > 0) {
+                if (hours == 1 && minutes > 0) {
                     // less than one hour and one minute
                     minutes = qRound(m_remainingMSecs/60000) % 60;
-                    batteryLabelText.append(i18n("<b>One hour and %1 minutes</b> remaining<br />", minutes));
+                    batteryLabelText.append(i18n("<b>1 hour %1 minutes</b> remaining<br />", minutes));
                 } else if (hours > 1) {
                     minutes = qRound(m_remainingMSecs/60000) % 60;
                     // at least two hours
                     if (minutes > 0) {
-                        batteryLabelText.append(i18n("<b>%1 hours and %2 minutes</b> remaining<br />", hours, minutes));
+                        batteryLabelText.append(i18n("<b>%1 hours %2 minutes</b> remaining<br />", hours, minutes));
                     } else {
                         batteryLabelText.append(i18n("<b>%1 hours</b> remaining<br />", hours));
                     }
@@ -514,7 +514,14 @@ void Battery::updateStatus()
                     // less than one hour
                     batteryLabelText.append(i18n("<b>%1 minutes</b> remaining<br />", minutes));
                 }
-                //kDebug() << "hours:" << hours << "minutes:" << minutes;
+                kDebug() << "hours:" << hours << "minutes:" << minutes;
+                QTime t = QTime(hours, minutes);
+                kDebug() << t;
+                KLocale tmpLocale(*KGlobal::locale());
+                tmpLocale.setTimeFormat("%k:h %Mm remaining");
+                kDebug() << tmpLocale.formatTime(t, false, true); // minutes, hours as duration
+                //QString day = tmpLocale.formatDate(m_date);
+
             } else {
                 if (m_numOfBattery == 1) {
                     if (battery_data.value()["Plugged in"].toBool()) {
