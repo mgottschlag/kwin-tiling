@@ -84,11 +84,11 @@ Type=Service
 Icon=
 X-KDE-Library=plasma_engine_weather
 
-X-KDE-PluginInfo-Author=
-X-KDE-PluginInfo-Email=
+X-KDE-PluginInfo-Author=Shawn Starr
+X-KDE-PluginInfo-Email=shawn.starr@rogers.com
 X-KDE-PluginInfo-Name=weather
-X-KDE-PluginInfo-Version=
-X-KDE-PluginInfo-Website=
-X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Version=1.0
+X-KDE-PluginInfo-Website=http://www.kde.org
+X-KDE-PluginInfo-Category=eataengine
 X-KDE-PluginInfo-Depends=
 
