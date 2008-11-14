@@ -21,10 +21,10 @@
 #ifndef KEPHAL_SCREENS_H
 #define KEPHAL_SCREENS_H
 
-#include <QPoint>
-#include <QSize>
-#include <QObject>
-#include <QRect>
+#include <QtCore/QPoint>
+#include <QtCore/QSize>
+#include <QtCore/QObject>
+#include <QtCore/QRect>
 
 #include "kephal_export.h"
 

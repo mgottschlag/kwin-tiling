@@ -21,11 +21,11 @@
 #ifndef KEPHAL_OUTPUTS_H
 #define KEPHAL_OUTPUTS_H
 
-#include <QObject>
-#include <QSize>
-#include <QPoint>
-#include <QRect>
-#include <QMap>
+#include <QtCore/QObject>
+#include <QtCore/QSize>
+#include <QtCore/QPoint>
+#include <QtCore/QRect>
+#include <QtCore/QMap>
 
 #include "kephal.h"
 #include "kephal_export.h"

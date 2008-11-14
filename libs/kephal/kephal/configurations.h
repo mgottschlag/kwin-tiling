@@ -21,12 +21,12 @@
 #ifndef KEPHAL_CONFIGURATIONS_H
 #define KEPHAL_CONFIGURATIONS_H
 
-#include <QObject>
-#include <QMap>
-#include <QPoint>
-#include <QRect>
+#include <QtCore/QObject>
+#include <QtCore/QMap>
+#include <QtCore/QPoint>
+#include <QtCore/QRect>
 
-#include "kephal/kephal.h"
+#include "kephal.h"
 #include "kephal_export.h"
 
 namespace Kephal {

@@ -21,7 +21,7 @@
 #define KEPHAL_EXPORT_H
 
 
-#include <qglobal.h>
+#include <QtCore/qglobal.h>
 
 #ifdef Q_WS_WIN
 # if defined(MAKE_KEPHAL_LIB)

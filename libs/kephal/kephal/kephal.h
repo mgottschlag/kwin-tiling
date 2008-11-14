@@ -21,8 +21,8 @@
 #ifndef KEPHAL_KEPHAL_H
 #define KEPHAL_KEPHAL_H
 
-#include <QObject>
-#include <QPoint>
+#include <QtCore/QObject>
+#include <QtCore/QPoint>
 
 
 #define CONFIRMATION_TIME 30
