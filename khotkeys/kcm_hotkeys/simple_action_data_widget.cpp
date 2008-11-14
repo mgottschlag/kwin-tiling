@@ -19,10 +19,10 @@
 
 #include "simple_action_data_widget.h"
 
-#include "command_url_action_widget.h"
-#include "dbus_action_widget.h"
-#include "menuentry_action_widget.h"
-#include "shortcut_trigger_widget.h"
+#include "actions/command_url_action_widget.h"
+#include "actions/dbus_action_widget.h"
+#include "actions/menuentry_action_widget.h"
+#include "triggers/shortcut_trigger_widget.h"
 
 #include <KDE/KDebug>
 

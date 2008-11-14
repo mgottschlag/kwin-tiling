@@ -12,14 +12,14 @@ set(
     hotkeys_tree_view.cpp
 
     # TRIGGER WIDGETS
-    trigger_widget_base.cpp
-    shortcut_trigger_widget.cpp
+    triggers/trigger_widget_base.cpp
+    triggers/shortcut_trigger_widget.cpp
 
     # ACTION WIDGETS
-    action_widget_base.cpp
-    command_url_action_widget.cpp
-    dbus_action_widget.cpp
-    menuentry_action_widget.cpp
+    actions/action_widget_base.cpp
+    actions/command_url_action_widget.cpp
+    actions/dbus_action_widget.cpp
+    actions/menuentry_action_widget.cpp
 
     # ACTION_DATA WIDGETS
     hotkeys_widget_iface.cpp
