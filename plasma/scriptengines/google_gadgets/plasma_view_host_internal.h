@@ -178,7 +178,7 @@ class PlasmaViewHost::Private : public QObject {
   }
 
   void adjustAppletSize() {
-    if (!info->main_view_host) return;
+    if (!info->main_view_host || !info->applet) return;
     ViewInterface *view = info->main_view_host->GetViewDecorator();
     double w = view->GetWidth();
     double h = view->GetHeight();
