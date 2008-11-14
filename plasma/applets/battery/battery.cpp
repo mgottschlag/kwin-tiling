@@ -522,7 +522,7 @@ void Battery::updateStatus()
                     }
                 } else {
                     // less than one hour
-                    batteryLabelText.append(i18np("<b>%1 minutes</b> remaining<br />", "<b>%1 minutes</b> remaining<br />", minutes));
+                    batteryLabelText.append(i18np("<b>%1 minute</b> remaining<br />", "<b>%1 minutes</b> remaining<br />", minutes));
                 }
                 /* might be useful for the tooltip
                 kDebug() << "hours:" << hours << "minutes:" << minutes;
