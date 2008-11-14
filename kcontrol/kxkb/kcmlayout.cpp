@@ -415,6 +415,7 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
     connect( widget->chkShowSingle, SIGNAL( toggled( bool )), this, SLOT(changed()));
 //    connect( widget->chkShowFlag, SIGNAL( toggled( bool )), this, SLOT(changed()));
     connect( widget->chkShowFlag, SIGNAL(toggled(bool)), this, SLOT(showFlagChanged(bool)));
+    connect( widget->comboModel, SIGNAL(activated(int)), this, SLOT(updateLayoutCommand()));
     connect( widget->comboModel, SIGNAL(activated(int)), this, SLOT(changed()));
 
     connect( widget->srcTableView, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(add()));
