@@ -61,7 +61,6 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
       m_numberItems(0),
       m_itemsValidity(0)
 {
-    setHasConfigurationInterface(true);
     setBackgroundHints(StandardBackground);
 
     // let's initialize the widget
