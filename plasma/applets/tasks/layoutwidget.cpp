@@ -377,8 +377,8 @@ void LayoutWidget::setForceRows(bool forceRows)
 int LayoutWidget::insertionIndexAt(const QPointF &pos)
 {
     int insertIndex = -1;
-    int row = 0;
-    int col = 0;
+    int row = numberOfRows();
+    int col = numberOfColumns();
 
     //if pos is (-1,-1) insert at the end of the panel
     if (pos.toPoint() == QPoint(-1, -1)) {
