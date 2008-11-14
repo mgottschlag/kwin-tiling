@@ -40,22 +40,22 @@
 using namespace ggadget::qt;
 namespace ggadget {
 
-void PlasmaViewHost::Private::OnViewMoved(int x, int y) {
+void PlasmaViewHost::Private::onViewMoved(int x, int y) {
   if (type_ == ViewHostInterface::VIEW_HOST_MAIN && !is_popout_)
     info->applet->moveBy(x, y);
 }
 
-void PlasmaViewHost::Private::OnGeometryChanged(int dleft, int dtop, int dw, int dh) {
+void PlasmaViewHost::Private::onGeometryChanged(int dleft, int dtop, int dw, int dh) {
   kDebug() << info->applet->geometry();
   info->applet->moveBy(dleft, dtop);
 }
 
-void PlasmaViewHost::Private::OnOptionViewOK() {
-  HandleOptionViewResponse(ViewInterface::OPTIONS_VIEW_FLAG_OK);
+void PlasmaViewHost::Private::onOptionViewOK() {
+  handleOptionViewResponse(ViewInterface::OPTIONS_VIEW_FLAG_OK);
 }
 
-void PlasmaViewHost::Private::OnOptionViewCancel() {
-  HandleOptionViewResponse(ViewInterface::OPTIONS_VIEW_FLAG_CANCEL);
+void PlasmaViewHost::Private::onOptionViewCancel() {
+  handleOptionViewResponse(ViewInterface::OPTIONS_VIEW_FLAG_CANCEL);
 }
 
 PlasmaViewHost::PlasmaViewHost(GadgetInfo *info, ViewHostInterface::Type type, bool popout)
@@ -73,7 +73,7 @@ void PlasmaViewHost::Destroy() {
 void PlasmaViewHost::SetView(ViewInterface *view) {
   DLOG("SetView: %p, %p", this, view);
   if (d->view_ == view) return;
-  d->Detach();
+  d->detach();
   d->view_ = view;
 }
 
@@ -99,17 +99,18 @@ void PlasmaViewHost::NativeWidgetCoordToViewCoord(
 }
 
 void PlasmaViewHost::QueueDraw() {
-  d->QueueDraw();
+  d->queueDraw();
 }
 
 void PlasmaViewHost::QueueResize() {
-  d->QueueResize();
+  d->queueResize();
 }
 
 void PlasmaViewHost::EnableInputShapeMask(bool enable) {
 }
 
 void PlasmaViewHost::SetResizable(ViewInterface::ResizableMode mode) {
+  if (!d->info->applet) return;
   if (mode == ViewInterface::RESIZABLE_TRUE)
     d->info->applet->setAspectRatioMode(Plasma::IgnoreAspectRatio);
   else
@@ -146,7 +147,7 @@ void PlasmaViewHost::ShowTooltipAtPosition(const std::string &tooltip,
 
 bool PlasmaViewHost::ShowView(bool modal, int flags,
                               Slot1<bool, int> *feedback_handler) {
-  if (d->ShowView(modal, flags, feedback_handler)) {
+  if (d->showView(modal, flags, feedback_handler)) {
     if (d->parent_widget_)
       d->parent_widget_->setWindowTitle(d->caption_);
     return true;
@@ -155,11 +156,11 @@ bool PlasmaViewHost::ShowView(bool modal, int flags,
 }
 
 void PlasmaViewHost::CloseView() {
-  d->CloseView();
+  d->closeView();
 }
 
 bool PlasmaViewHost::ShowContextMenu(int button) {
-  return d->ShowContextMenu(button);
+  return d->showContextMenu(button);
 }
 
 void PlasmaViewHost::Alert(const ViewInterface *view, const char *message) {

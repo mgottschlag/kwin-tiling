@@ -29,8 +29,8 @@ class PanelDecorator : public DockedMainViewDecorator {
   virtual ~PanelDecorator();
   virtual void OnAddDecoratorMenuItems(MenuInterface *menu);
   virtual void SetSize(double width, double height);
-  void SetVertical();
-  void SetHorizontal();
+  void setVertical();
+  void setHorizontal();
 
  protected:
 //  virtual void GetClientExtents(double *width, double *height) const;

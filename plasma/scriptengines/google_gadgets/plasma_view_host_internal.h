@@ -43,11 +43,10 @@ class PlasmaViewHost::Private : public QObject {
   ~Private() {
     if (onoptionchanged_connection_)
       onoptionchanged_connection_->Disconnect();
-    CloseView();
+    closeView();
   }
 
-  static void EmbededWidget(QGraphicsWidget *parent, QWidget *widget) {
-    DLOG("EmbededWidget: %p", widget);
+  static void embedWidget(QGraphicsWidget *parent, QWidget *widget) {
     widget->setAttribute(Qt::WA_NoSystemBackground);
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(parent);
     layout->setSpacing(0);
@@ -55,16 +54,8 @@ class PlasmaViewHost::Private : public QObject {
     proxy->setWidget(widget);
     layout->addItem(proxy);
     parent->setLayout(layout);
-  }
-
-  static void UnEmbededWidget(QGraphicsWidget *parent) {
-    QGraphicsLayout *layout = parent->layout();
-    if (!layout) return;
-    QGraphicsLayoutItem *proxy = layout->itemAt(0);
-    ASSERT(proxy);
-    layout->removeAt(0);
-    delete proxy;
-    parent->setLayout(NULL);
+    DLOG("EmbededWidget: widget:%p, applet:%p, layout:%p, proxy:%p",
+         widget, parent, layout, proxy);
   }
 
   /* Show the view in right place
@@ -72,7 +63,7 @@ class PlasmaViewHost::Private : public QObject {
    *    - popouted main view and details view: Shown in QtViewWidget
    *    - options view: Shown in QDialog
    */
-  bool ShowView(bool modal, int flags, Slot1<bool, int> *feedback_handler) {
+  bool showView(bool modal, int flags, Slot1<bool, int> *feedback_handler) {
     ASSERT(view_);
     if (feedback_handler_ && feedback_handler_ != feedback_handler)
       delete feedback_handler_;
@@ -102,10 +93,10 @@ class PlasmaViewHost::Private : public QObject {
 
         if (flags & ViewInterface::OPTIONS_VIEW_FLAG_OK)
           dialog->connect(buttons, SIGNAL(accepted()),
-                           this, SLOT(OnOptionViewOK()));
+                          this, SLOT(onOptionViewOK()));
         if (flags & ViewInterface::OPTIONS_VIEW_FLAG_CANCEL)
           dialog->connect(buttons, SIGNAL(rejected()),
-                           this, SLOT(OnOptionViewCancel()));
+                          this, SLOT(onOptionViewCancel()));
         layout->addWidget(buttons);
       }
 
@@ -118,15 +109,24 @@ class PlasmaViewHost::Private : public QObject {
         dialog->show();
     } else if (type_ == ViewHostInterface::VIEW_HOST_MAIN && !is_popout_) {
       // normal main view
-      // Create a Widget (composite, decorated, movable, input_mask)
-      widget_ = new QtViewWidget(view_, false, true, false, false);
-      EmbededWidget(info->applet, widget_);
+      if (info->widget == NULL) {
+        // Create a Widget (composite, decorated, movable, input_mask)
+        widget_ = new QtViewWidget(view_, false, true, false, false);
+        embedWidget(info->applet, widget_);
+        info->widget = widget_;
+      } else {
+        widget_ = info->widget;
+        widget_->SetView(view_);
+        adjustAppletSize();
+      }
       info->applet->setBackgroundHints(Plasma::Applet::NoBackground);
       if (info->applet->location() == Plasma::Floating) {
         connect(widget_, SIGNAL(moved(int, int)),
-                this, SLOT(OnViewMoved(int, int)));
+                this, SLOT(onViewMoved(int, int)));
         connect(widget_, SIGNAL(geometryChanged(int, int, int, int)),
-                this, SLOT(OnGeometryChanged(int, int, int, int)));
+                this, SLOT(onGeometryChanged(int, int, int, int)));
+      } else {
+        disconnect();
       }
 
       if (info->applet->formFactor() == Plasma::Vertical)
@@ -154,29 +154,30 @@ class PlasmaViewHost::Private : public QObject {
     return true;
   }
 
-  void CloseView() {
+  void closeView() {
     kDebug() << "CloseView";
     if (parent_widget_) {
       delete parent_widget_;
       parent_widget_ = NULL;
       widget_ = NULL;
     } else {
-      // UnEmbed widget_ from applet and delte it
       if (info->applet && widget_) {
-        UnEmbededWidget(info->applet);
-        widget_ = NULL;
+        // widget_ is owned by applet, so if applet is null, widget_ is
+        // destroyed already
+        widget_->SetView(NULL);
       }
+      widget_ = NULL;
     }
   }
 
-  void QueueDraw() {
+  void queueDraw() {
     if (parent_widget_)
       parent_widget_->update();
     else if (info->applet)
       info->applet->update();
   }
 
-  void AdjustAppletSize() {
+  void adjustAppletSize() {
     if (!info->main_view_host) return;
     ViewInterface *view = info->main_view_host->GetViewDecorator();
     double w = view->GetWidth();
@@ -203,15 +204,15 @@ class PlasmaViewHost::Private : public QObject {
     if (widget_) kDebug() << "widget new size:" << widget_->size();
   }
 
-  void QueueResize() {
+  void queueResize() {
     if (type_ == ViewHostInterface::VIEW_HOST_MAIN && !is_popout_) {
-      AdjustAppletSize();
+      adjustAppletSize();
     } else if (widget_) {
       widget_->AdjustToViewSize();
     }
   }
 
-  bool ShowContextMenu(int button) {
+  bool showContextMenu(int button) {
     ASSERT(view_);
     context_menu_.clear();
     QtMenu qt_menu(&context_menu_);
@@ -238,11 +239,11 @@ class PlasmaViewHost::Private : public QObject {
   QString caption_;
   QMenu context_menu_;
 
-  void Detach() {
+  void detach() {
     view_ = NULL;
   }
 
-  void HandleOptionViewResponse(ViewInterface::OptionsViewFlags flag) {
+  void handleOptionViewResponse(ViewInterface::OptionsViewFlags flag) {
     if (feedback_handler_) {
       (*feedback_handler_)(flag);
       delete feedback_handler_;
@@ -252,10 +253,10 @@ class PlasmaViewHost::Private : public QObject {
   }
 
  public slots:
-  void OnViewMoved(int x, int y);
-  void OnGeometryChanged(int dleft, int dtop, int dw, int dh);
-  void OnOptionViewOK();
-  void OnOptionViewCancel();
+  void onViewMoved(int x, int y);
+  void onGeometryChanged(int dleft, int dtop, int dw, int dh);
+  void onOptionViewOK();
+  void onOptionViewCancel();
 };
 
 } // namespace ggadget

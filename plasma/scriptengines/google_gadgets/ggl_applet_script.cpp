@@ -122,7 +122,7 @@ void GglAppletScript::loadGadget() {
   d->info.location = applet()->location();
   d->info.applet = applet();
   d->info.host = new ggadget::PlasmaHost(&d->info);
-  d->info.gadget = d->info.host->LoadGadget(d->gg_file_.toUtf8(),
+  d->info.gadget = d->info.host->loadGadget(d->gg_file_.toUtf8(),
                                             d->options_.toUtf8());
 }
 
@@ -169,7 +169,7 @@ QList<QAction*> GglAppletScript::contextualActions() {
 
 void GglAppletScript::constraintsEvent(Plasma::Constraints constraints) {
   if (d->info.host)
-    d->info.host->OnConstraintsEvent(constraints);
+    d->info.host->onConstraintsEvent(constraints);
 }
 
 void GglAppletScript::showConfigurationInterface() {

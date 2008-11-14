@@ -72,7 +72,7 @@ class GadgetBrowserHost : public ggadget::HostInterface {
     }
     gadget_manager_ = GetGadgetManager();
     connection_ = gadget_manager_->ConnectOnNewGadgetInstance(
-        NewSlot(this, &GadgetBrowserHost::NewGadgetInstanceCallback));
+        NewSlot(this, &GadgetBrowserHost::newGadgetInstanceCallback));
   }
 
   ~GadgetBrowserHost() {
@@ -80,7 +80,7 @@ class GadgetBrowserHost : public ggadget::HostInterface {
     connection_->Disconnect();
   }
 
-  static QString ExtractGadgetIcon(const std::string& gadget_path,
+  static QString extractGadgetIcon(const std::string& gadget_path,
                             const QString& dest_dir) {
     ggadget::StringMap map;
 
@@ -110,7 +110,7 @@ class GadgetBrowserHost : public ggadget::HostInterface {
     return QString();
   }
 
-  bool InstallPlasmaApplet(int id) {
+  bool installPlasmaApplet(int id) {
     std::string author, download_url, title, description;
     if (!gadget_manager_->GetGadgetInstanceInfo(id, "", &author, &download_url,
                                                 &title, &description))
@@ -147,15 +147,15 @@ class GadgetBrowserHost : public ggadget::HostInterface {
     data.setDescription(QString::fromUtf8(description.c_str()));
 
     // Extract the icon
-    QString icon = ExtractGadgetIcon(path, root.path());
+    QString icon = extractGadgetIcon(path, root.path());
 
     Plasma::Package::registerPackage(data, icon);
     return true;
   }
 
-  bool NewGadgetInstanceCallback(int id) {
+  bool newGadgetInstanceCallback(int id) {
     if (ggadget::qt::ConfirmGadget(gadget_manager_, id)) {
-        return InstallPlasmaApplet(id);
+        return installPlasmaApplet(id);
     } else {
       QMessageBox::information(
           NULL,
