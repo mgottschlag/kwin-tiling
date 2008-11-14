@@ -64,12 +64,35 @@ class ApplicationModel : public KickoffAbstractModel
         };
 
         /**
+         * This enum describes the policy for
+         * handling applications that are configured to appear
+         * in the System tab.
+         */
+        enum SystemApplicationPolicy
+        {
+            /** Display entries in Applications tab and System tab. */
+            ShowApplicationAndSystemPolicy,
+            /** Display entry only in System tab. */
+            ShowSystemOnlyPolicy
+        };
+
+
+        /**
          * Sets the policy for handling duplicate applications.
          * See DuplicatePolicy
          */
         void setDuplicatePolicy(DuplicatePolicy policy);
         /** See setDuplicatePolicy() */
         DuplicatePolicy duplicatePolicy() const;
+
+        /**
+         * Sets the policy for handling System applications.
+         * See SystemApplicationPolicy
+         */
+        void setSystemApplicationPolicy(SystemApplicationPolicy policy);
+        /** See setSystemApplicationPolicy() */
+        SystemApplicationPolicy systemApplicationPolicy() const;
+
 
         // reimplemented from QAbstractItemModel
         virtual bool canFetchMore(const QModelIndex &parent) const;

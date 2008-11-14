@@ -380,6 +380,7 @@ void MenuLauncherApplet::toggleMenu()
             case Combined: {
                 Kickoff::ApplicationModel *appModel = new Kickoff::ApplicationModel(d->menuview);
                 appModel->setDuplicatePolicy(Kickoff::ApplicationModel::ShowLatestOnlyPolicy);
+                appModel->setSystemApplicationPolicy(Kickoff::ApplicationModel::ShowApplicationAndSystemPolicy);
                 Kickoff::MenuView *appview = d->createMenuView(appModel);
                 d->addMenu(appview, false);
 

@@ -97,6 +97,7 @@ public:
         : q(qq),
           root(new AppNode()),
           duplicatePolicy(ApplicationModel::ShowDuplicatesPolicy),
+          systemApplicationPolicy(ApplicationModel::ShowSystemOnlyPolicy),
           sortOrder(Qt::AscendingOrder),
           sortColumn(Qt::DisplayRole)
     {
@@ -115,6 +116,7 @@ public:
     ApplicationModel *q;
     AppNode *root;
     ApplicationModel::DuplicatePolicy duplicatePolicy;
+    ApplicationModel::SystemApplicationPolicy systemApplicationPolicy;
     Qt::SortOrder sortOrder;
     int sortColumn;
     QStringList systemApplications;
@@ -166,22 +168,23 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
          // check for duplicates (eg. KDE 3 and KDE 4 versions of application
          // both present)
          if (duplicatePolicy == ApplicationModel::ShowLatestOnlyPolicy &&
-             existingServices.contains(appName)
-            ) {
+             existingServices.contains(appName)) {
                 if (Kickoff::isLaterVersion(existingServices[appName],service)) {
                     continue;
                 } else {
                     // find and remove the existing entry with the same name
                     for (int i = 0 ; i < node->children.count() ; i++) {
-                        if ( node->children[i]->appName == appName ) {
+                        if (node->children[i]->appName == appName) {
                             delete node->children.takeAt(i);
                         }
                     }
                 }
          }
-         // don't duplicate applications that are configured to appear in the System tab
-         // in the Applications tab
-         if ( systemApplications.contains( service->desktopEntryName() ) ) {
+
+         if (systemApplicationPolicy == ApplicationModel::ShowSystemOnlyPolicy &&
+             systemApplications.contains(service->desktopEntryName())) {
+             // don't duplicate applications that are configured to appear in the System tab
+             // in the Applications tab
              continue;
          }
 
@@ -378,6 +381,15 @@ void ApplicationModel::setDuplicatePolicy(DuplicatePolicy policy)
     reset();
 }
 
+void ApplicationModel::setSystemApplicationPolicy(SystemApplicationPolicy policy)
+{
+    delete d->root;
+    d->systemApplicationPolicy = policy;
+    d->root = new AppNode();
+    d->fillNode(QString(), d->root);
+    reset();
+}
+
 void ApplicationModel::slotReloadMenu()
 {
     delete d->root;
@@ -396,6 +408,11 @@ void ApplicationModel::checkSycocaChange()
 ApplicationModel::DuplicatePolicy ApplicationModel::duplicatePolicy() const
 {
     return d->duplicatePolicy;
+}
+
+ApplicationModel::SystemApplicationPolicy ApplicationModel::systemApplicationPolicy() const
+{
+    return d->systemApplicationPolicy;
 }
 
 /**
