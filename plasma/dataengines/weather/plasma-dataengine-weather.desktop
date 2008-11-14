@@ -89,6 +89,7 @@ X-KDE-PluginInfo-Email=shawn.starr@rogers.com
 X-KDE-PluginInfo-Name=weather
 X-KDE-PluginInfo-Version=1.0
 X-KDE-PluginInfo-Website=http://www.kde.org
+X-KDE-PluginInfo-License=GPLv2+
 X-KDE-PluginInfo-Category=dataengine
 X-KDE-PluginInfo-Depends=
 
