@@ -32,6 +32,6 @@ Type=Service
 X-KDE-Library=krunner_nepomuksearchrunner
 X-KDE-PluginInfo-Author=Sebastian Trueg
 X-KDE-PluginInfo-Email=trueg@kde.org
-X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-Version=1.0
 X-KDE-PluginInfo-License=LGPL
 X-KDE-PluginInfo-EnabledByDefault=true

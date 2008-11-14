@@ -111,6 +111,6 @@ X-Plasma-RunnerPhase=first
 X-KDE-PluginInfo-Author=Plasma Team
 X-KDE-PluginInfo-Email=panel-devel@kde.org
 X-KDE-PluginInfo-Name=shell
-X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-Version=1.0
 X-KDE-PluginInfo-License=LGPL
 X-KDE-PluginInfo-EnabledByDefault=true
