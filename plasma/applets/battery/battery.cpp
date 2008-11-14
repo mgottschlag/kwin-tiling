@@ -507,18 +507,22 @@ void Battery::updateStatus()
                 if (hours == 1 && minutes > 0) {
                     // less than one hour and one minute
                     minutes = qRound(m_remainingMSecs/60000) % 60;
-                    batteryLabelText.append(i18n("<b>1 hour %1 minutes</b> remaining<br />", minutes));
+                    batteryLabelText.append(i18np("<b>1 hour 1 minute</b> remaining<br />", "<b>1 hour %1 minutes</b> remaining<br />", minutes));
                 } else if (hours > 1) {
                     minutes = qRound(m_remainingMSecs/60000) % 60;
                     // at least two hours
                     if (minutes > 0) {
-                        batteryLabelText.append(i18n("<b>%1 hours %2 minutes</b> remaining<br />", hours, minutes));
+                        if (minutes == 1) {
+                            batteryLabelText.append(i18np("<b>%1 hour 1 minute</b> remaining<br />", "<b>%1 hours 1 minute</b> remaining<br />", hours, minutes));
+                        } else {
+                            batteryLabelText.append(i18np("<b>%1 hour %2 minutes</b> remaining<br />", "<b>%1 hours %2 minutes</b> remaining<br />", hours, minutes));
+                        }
                     } else {
                         batteryLabelText.append(i18n("<b>%1 hours</b> remaining<br />", hours));
                     }
                 } else {
                     // less than one hour
-                    batteryLabelText.append(i18n("<b>%1 minutes</b> remaining<br />", minutes));
+                    batteryLabelText.append(i18np("<b>%1 minutes</b> remaining<br />", "<b>%1 minutes</b> remaining<br />", minutes));
                 }
                 /* might be useful for the tooltip
                 kDebug() << "hours:" << hours << "minutes:" << minutes;
