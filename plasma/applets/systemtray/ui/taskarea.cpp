@@ -89,6 +89,7 @@ void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
             addTask(task);
         }
     }
+    emit sizeHintChanged(Qt::PreferredSize);
 }
 
 
