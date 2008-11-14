@@ -344,6 +344,23 @@ void Panel::updateBorders(const QRect &geom)
 
     //invalidate the layout and set again
     if (layout()) {
+        //FIXME: why there is a two pixels discrepancy between the applet icon sizes and their effective icon size?
+        switch (location()) {
+        case LeftEdge:
+            rightWidth = qMin(rightWidth, qMax(qreal(1), size().width() - KIconLoader::SizeMedium - 2));
+            break;
+        case RightEdge:
+            leftWidth = qMin(leftWidth, qMax(qreal(1), size().width() - KIconLoader::SizeMedium - 2));
+            break;
+        case TopEdge:
+            bottomHeight = qMin(bottomHeight, qMax(qreal(1), size().height() - KIconLoader::SizeMedium - 2));
+            break;
+        case BottomEdge:
+            topHeight = qMin(topHeight, qMax(qreal(1), size().height() - KIconLoader::SizeMedium - 2));
+            break;
+        default:
+            break;
+        }
         layout()->setContentsMargins(leftWidth, topHeight, rightWidth, bottomHeight);
         layout()->invalidate();
     }
