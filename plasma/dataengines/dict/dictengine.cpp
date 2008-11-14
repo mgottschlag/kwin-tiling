@@ -26,9 +26,8 @@
 #include <Plasma/DataContainer>
 
 DictEngine::DictEngine(QObject* parent, const QVariantList& args)
-    : Plasma::DataEngine(parent, args),
-      dictHash(0),
-      tcpSocket(0)
+    : Plasma::DataEngine(parent, args)
+    , tcpSocket(0)
 {
     Q_UNUSED(args)
     serverName="dict.org"; //In case we need to switch it later
@@ -47,6 +46,52 @@ void DictEngine::setDict(const QString &dict)
 void DictEngine::setServer(const QString &server)
 {
     serverName=server;
+}
+
+
+static QString wnToHtml(const QString &word, QByteArray &text)
+{
+    QList<QByteArray> splitText = text.split('\n');
+    QString def;
+    def += "<dl>\n";
+    QRegExp linkRx("\\{(.*)\\}");
+    linkRx.setMinimal(true);
+
+    bool isFirst=true;
+    while (!splitText.empty()) {
+        //150 n definitions retrieved - definitions follow
+        //151 word database name - text follows
+        //250 ok (optional timing information here)
+        //552 No match
+        QString currentLine = splitText.takeFirst();
+        if (currentLine.startsWith("151")) {
+            isFirst = true;
+            continue;
+        }
+        if (currentLine.startsWith('.')) {
+            def += "</dd>";
+            continue;
+        }
+        if (!(currentLine.startsWith("150") || currentLine.startsWith("151")
+           || currentLine.startsWith("250") || currentLine.startsWith("552"))) {
+            currentLine.replace(linkRx,"<a href=\"\\1\">\\1</a>");
+            if (isFirst) {
+                def += "<dt><b>" + currentLine + "</b></dt>\n<dd>";
+                isFirst = false;
+                continue;
+            } else {
+                if (currentLine.contains(QRegExp("([1-9]{1,2}:)"))) {
+                    def += "\n<br>\n";
+                }
+                currentLine.replace(QRegExp("^([\\s\\S]*[1-9]{1,2}:)"), "<b>\\1</b>");
+                def += currentLine;
+                continue;
+            }
+        }
+
+    }
+    def += "</dl>";
+    return def;
 }
 
 void DictEngine::getDefinition()
@@ -76,79 +121,13 @@ void DictEngine::getDefinition()
 
       connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(socketClosed()));
       tcpSocket->disconnectFromHost();
-      setData(currentWord, dictName, ret);
+//       setData(currentWord, dictName, ret);
+//       qWarning()<<ret;
+      setData(currentWord, "text", wnToHtml(currentWord,ret));
 }
 
 
-QString DictEngine::parseToHtml(QByteArray &text)
-{
-      QList<QByteArray> retLines = text.split('\n');
-      QString def;
-      if(currentWord == QLatin1String("plasma")) //EASTER EGG!
-      {
-          def += "<dl><!--PAGE START--><!--DEFINITION START--><dt><b>Plasma</b>  \\Plas\"ma\\, a.(for awesome)</dt><!--PAGE START--><dd>OOH! I know that one! Plasma is that awesome new desktop thing for KDE4! Oh wait, you want an actual definition? Here, No fun...</dd></dl><br />";
-      }
-      def += "<dl>\n";
 
-      bool isFirst=true;
-      QString wordRegex; //case insensitive regex of the word
-      for(int i=0;i<currentWord.size();i++)
-      {
-          wordRegex += ('['+QString(currentWord[i].toUpper())+QString(currentWord[i].toLower())+']');
-      }
-
-      while (!retLines.empty()) //iterate through all the lines
-      {
-          QString currentLine = QString(retLines.takeFirst());
-          if (currentLine.startsWith("552")) //if no match was found
-          {
-              def += "<dt>";
-              def += i18n("<b>No match found for %1 in database %2.</b>", currentWord, dictName);
-              def += "</dt>";
-              break;
-          }
-          if (currentLine.startsWith("151")) //begin definition
-          {
-              isFirst = true;
-              continue;
-          }
-          if (currentLine.startsWith('.')) //end definition
-          {
-              def += "</dd><!--PERIOD-->";
-              continue;
-          }
-          if (!(currentLine.startsWith("150") || currentLine.startsWith("151")// if it is a definition line
-             || currentLine.startsWith("250") || currentLine.startsWith("552")))
-          {
-              currentLine = currentLine.trimmed();
-              if (currentLine.startsWith("1."))
-                  def += "<br />";
-              if (currentLine.contains(QRegExp("^([1-9]{1,2}\\.)")))
-                  def += "<br />";
-              currentLine.replace(QRegExp("\\{([A-Za-z ]+)\\}"), "<a href=\"\\1\" style=\"color: #0000FF\" >\\1</a>");
-              currentLine.replace(QRegExp("^([1-9]{1,2}\\.)"), "<!--PAGE START--><b>\\1</b>");
-              currentLine.replace(QRegExp("((^| |\\.)"+wordRegex+"( |\\.|(i?e)?s|$))"), "<b>\\1</b>"); //the i?e?s is for most plurals... i'll fix it soon
-              currentLine.replace(QRegExp("(^| |\\.)(\\[[^]]+\\])( |\\.|$)"), "<i>\\2</i>");
-
-              //currentLine.replace(currentWord, "<b>"+currentWord+"</b>", Qt::CaseInsensitive);
-
-              if(isFirst)
-              {
-                  def += "<!--PAGE START--><!--DEFINITION START--><dt>" + currentLine.toAscii() + "</dt>\n<dd>\n";
-                  isFirst = false;
-                  continue;
-              }
-
-              if(currentLine == "." || currentLine.isEmpty())
-                  def += "\n<br />\n";
-              else
-                  def += currentLine.toAscii() + '\n';
-          }
-
-      }
-      def+="</dl>";
-      return def;
-}
 
 void DictEngine::getDicts()
 {
@@ -188,12 +167,12 @@ void DictEngine::getDicts()
             tmp2=curr.section(' ',1);
   //          theHash.insert(tmp1, tmp2);
             kDebug() << tmp1 + "  " + tmp2;
-            setData("showDictionaries",tmp1,tmp2);
+            setData("list-dictionaries",tmp1,tmp2);
         }
     }
     connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(socketClosed()));
     tcpSocket->disconnectFromHost();
-//    setData("showDictionaries", "dictionaries", QByteArray(theHash);
+//    setData("list-dictionaries", "dictionaries", QByteArray(theHash);
 }
 
 
@@ -218,7 +197,7 @@ bool DictEngine::sourceRequestEvent(const QString &word)
           setData(currentWord, dictName, QString());
           tcpSocket = new QTcpSocket(this);
           tcpSocket->abort();
-          if (currentWord == "showDictionaries")
+          if (currentWord == "list-dictionaries")
           {
               connect(tcpSocket, SIGNAL(connected()), this, SLOT(getDicts()));
           } else {

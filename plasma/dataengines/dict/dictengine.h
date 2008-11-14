@@ -29,7 +29,7 @@ class QTcpSocket;
  */
 
 
-class DictEngine : public Plasma::DataEngine
+class DictEngine: public Plasma::DataEngine
 {
     Q_OBJECT
 
@@ -49,8 +49,7 @@ class DictEngine : public Plasma::DataEngine
         void setDict(const QString &dict);
         void setServer(const QString &server);
 
-        QHash<QString, QString> *dictHash;
-	QString parseToHtml(QByteArray &text);
+        QHash<QString, QString> dictNameToDictCode;
 	QTcpSocket *tcpSocket;
 	QString currentWord;
 	QString dictName;
