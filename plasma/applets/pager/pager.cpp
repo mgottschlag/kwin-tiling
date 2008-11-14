@@ -1084,17 +1084,23 @@ void Pager::updateToolTip()
         }
     }
 
+    Plasma::ToolTipContent data;
     QString subtext = "";
     int taskCounter = 0;
     int displayedTaskCounter = 0;
     foreach(KWindowInfo winInfo, m_windowInfo){
         if (winInfo.isOnDesktop(hoverDesktopNumber) || winInfo.onAllDesktops()){
-            if (winInfo.win() == KWindowSystem::activeWindow()){
-                subtext += "<br />&bull;  <u>" + winInfo.visibleName() + "</u>";
-                displayedTaskCounter++;
+            bool active = (winInfo.win() == KWindowSystem::activeWindow());
+            if ((taskCounter < 4) || active){    
+                QPixmap icon = KWindowSystem::icon(winInfo.win(), 16, 16, true);
+                if (icon.isNull()){
+                     subtext += "<br />&bull;" + winInfo.visibleName();
+                }else{
+                    data.addResource(Plasma::ToolTipContent::ImageResource, QUrl("wicon://" + QString::number(taskCounter)), QVariant(icon));
+                    subtext += "<br /><img src=\"wicon://" + QString::number(taskCounter) + "\"/>";
+                }
+                subtext += (active ? "<u>" : "") + winInfo.visibleName() + (active ? "</u>" : "");
 
-            }else if (taskCounter < 4){
-                subtext += "<br />&bull;  " + winInfo.visibleName();
                 displayedTaskCounter++; 
             }
             taskCounter++;
@@ -1109,7 +1115,6 @@ void Pager::updateToolTip()
         subtext.append("<br>&bull; <i>" + i18np("and 1 other", "and %1 others", taskCounter - displayedTaskCounter) + "</i>");
     }
 
-    Plasma::ToolTipContent data;
     data.setMainText(KWindowSystem::desktopName(hoverDesktopNumber));
     data.setSubText(subtext);
 
