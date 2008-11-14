@@ -97,6 +97,7 @@ public Q_SLOTS:
 
 protected:
 #ifdef Q_WS_X11
+    PanelView *findPanelForTrigger(WId trigger) const;
     bool x11EventFilter(XEvent *event);
 #endif
 

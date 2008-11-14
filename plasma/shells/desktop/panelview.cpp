@@ -41,9 +41,79 @@
 #include "panelcontroller.h"
 #include "plasmaapp.h"
 
+class GlowBar : public QWidget
+{
+public:
+    GlowBar(Plasma::Direction direction)
+        : QWidget(0),
+          m_svg(new Plasma::Svg(this)),
+          m_direction(direction)
+    {
+        KWindowSystem::setOnAllDesktops(winId(), true);
+        unsigned long state = NET::Sticky | NET::StaysOnTop | NET::KeepAbove;
+        KWindowSystem::setState(winId(), state);
+        KWindowSystem::setType(winId(), NET::Dock);
+        m_svg->setImagePath("widgets/button");
+    }
+
+    void paintEvent(QPaintEvent* e)
+    {
+        QPainter p(this);
+//        p.fillRect(e->rect(), Qt::red);
+        QPixmap l, r, c;
+
+        switch (m_direction) {
+            case Plasma::Down:
+                l = m_svg->pixmap("active-top-left");
+                r = m_svg->pixmap("active-top-right");
+                c = m_svg->pixmap("active-top");
+                break;
+            case Plasma::Up:
+                l = m_svg->pixmap("active-bottom-left");
+                r = m_svg->pixmap("active-bottom-right");
+                c = m_svg->pixmap("active-bottom");
+                break;
+            case Plasma::Right:
+                l = m_svg->pixmap("active-right-left");
+                r = m_svg->pixmap("active-right-right");
+                c = m_svg->pixmap("active-right");
+            case Plasma::Left:
+                l = m_svg->pixmap("active-left-left");
+                r = m_svg->pixmap("active-left-left");
+                c = m_svg->pixmap("active-left");
+                break;
+        }
+
+        if (m_direction == Plasma::Left || m_direction == Plasma::Right) {
+            p.drawPixmap(QPoint(0, 0), l);
+            p.drawTiledPixmap(QRect(0, l.height(), c.width(), height() - l.height() - r.height()), c);
+            p.drawPixmap(QPoint(0, height() - r.height()), r);
+        } else {
+            p.drawPixmap(QPoint(0, 0), l);
+            p.drawTiledPixmap(QRect(l.width(), 0, width() - l.width() - r.width(), c.height()), c);
+            p.drawPixmap(QPoint(width() - r.width(), 0), r);
+        }
+    }
+
+    bool event(QEvent *event)
+    {
+        if (event->type() == QEvent::Paint) {
+            QPainter p(this);
+            p.setCompositionMode(QPainter::CompositionMode_Source);
+            p.fillRect(rect(), Qt::transparent);
+        }
+        return QWidget::event(event);
+    }
+
+private:
+    Plasma::Svg *m_svg;
+    Plasma::Direction m_direction;
+};
+
 PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     : Plasma::View(panel, id, parent),
       m_panelController(0),
+      m_glowBar(0),
       m_timeLine(0),
       m_spacer(0),
       m_spacerIndex(-1),
@@ -108,6 +178,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 
 PanelView::~PanelView()
 {
+    delete m_glowBar;
 #ifdef Q_WS_WIN
     registerAccessBar(winId(), false);
 #endif
@@ -731,9 +802,45 @@ QTimeLine *PanelView::timeLine()
     return m_timeLine;
 }
 
+void PanelView::hintOrUnhide(const QPoint &point)
+{
+    if (!PlasmaApp::hasComposite()) {
+        unhide();
+        return;
+    }
+
+    if (point == QPoint()) {
+        //kDebug() << "enter, we should start glowing!";
+        if (!m_glowBar) {
+            m_glowBar = new GlowBar(Plasma::locationToDirection(location()));
+            QRect glowGeom = m_triggerZone;
+            if (m_triggerZone.height() == 1) {
+                glowGeom.setHeight(6);
+            } else {
+                glowGeom.setWidth(6);
+            }
+            m_glowBar->setGeometry(glowGeom);
+            m_glowBar->show();
+        }
+    } else if (m_triggerZone.contains(point)) {
+        //kDebug() << "unhide!" << point;
+        unhide();
+    } else {
+        //kDebug() << "keep glowing";
+    }
+}
+
+void PanelView::unhintHide()
+{
+    //kDebug() << "hide the glow";
+    delete m_glowBar;
+    m_glowBar = 0;
+}
+
 void PanelView::unhide()
 {
     //kDebug();
+    unhintHide();
     destroyUnhideTrigger();
 
     // with composite, we can quite do some nice animations with transparent
@@ -891,24 +998,49 @@ void PanelView::createUnhideTrigger()
         return;
     }
 
-    int triggerWidth = 1;
-    int triggerHeight = 1;
+    bool fancy = PlasmaApp::hasComposite();
+    int actualWidth = 1;
+    int actualHeight = 1;
+    int triggerWidth = fancy ? 30 : 1;
+    int triggerHeight = fancy ? 30 : 1;
+
+    QPoint actualTriggerPoint = pos();
     QPoint triggerPoint = pos();
 
     switch (location()) {
         case Plasma::TopEdge:
-            triggerWidth = width();
+            actualWidth = triggerWidth = width();
+
+            if (fancy) {
+                triggerWidth += 30;
+                triggerPoint.setX(qMax(0, triggerPoint.x() - 15));
+            }
             break;
         case Plasma::BottomEdge:
-            triggerWidth = width();
-            triggerPoint = geometry().bottomLeft();
+            actualWidth = triggerWidth = width();
+            actualTriggerPoint = triggerPoint = geometry().bottomLeft();
+
+            if (fancy) {
+                triggerWidth += 30;
+                triggerPoint.setX(qMax(0, triggerPoint.x() - 15));
+            }
             break;
         case Plasma::RightEdge:
-            triggerHeight = height();
-            triggerPoint = geometry().topRight();
+            actualHeight = triggerHeight = height();
+            actualTriggerPoint = triggerPoint = geometry().topRight();
+
+            if (fancy) {
+                triggerHeight += 30;
+                triggerPoint.setY(qMax(0, triggerPoint.y() - 15));
+            }
             break;
         case Plasma::LeftEdge:
-            triggerHeight = height();
+            actualHeight = triggerHeight = height();
+
+            if (fancy) {
+                triggerHeight += 30;
+                triggerPoint.setY(qMax(0, triggerPoint.y() - 15));
+            }
             break;
         default:
             // no hiding unless we're on an edge.
@@ -919,12 +1051,18 @@ void PanelView::createUnhideTrigger()
     XSetWindowAttributes attributes;
     attributes.override_redirect = True;
     attributes.event_mask = EnterWindowMask;
+
+    if (fancy) {
+        attributes.event_mask |= LeaveWindowMask | PointerMotionMask;
+    }
+
     unsigned long valuemask = CWOverrideRedirect | CWEventMask;
     m_unhideTrigger = XCreateWindow(QX11Info::display(), QX11Info::appRootWindow(),
                                     triggerPoint.x(), triggerPoint.y(), triggerWidth, triggerHeight,
                                     0, CopyFromParent, InputOnly, CopyFromParent,
                                     valuemask, &attributes);
     XMapWindow(QX11Info::display(), m_unhideTrigger);
+    m_triggerZone = QRect(actualTriggerPoint, QSize(actualWidth, actualHeight));
 //    KWindowSystem::setState(m_unhideTrigger, NET::StaysOnTop);
 
 #endif

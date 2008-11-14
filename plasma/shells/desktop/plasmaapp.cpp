@@ -324,15 +324,36 @@ Plasma::ZoomLevel PlasmaApp::desktopZoomLevel() const
 }
 
 #ifdef Q_WS_X11
+PanelView *PlasmaApp::findPanelForTrigger(WId trigger) const
+{
+    foreach (PanelView *panel, m_panels) {
+        if (panel->unhideTrigger() == trigger) {
+            return panel;
+        }
+    }
+
+    return 0;
+}
+
 bool PlasmaApp::x11EventFilter(XEvent *event)
 {
-    if (m_panelHidden && event->type == EnterNotify) {
-        //kDebug();
-        foreach (PanelView *panel, m_panels) {
-            //kDebug() << panel->unhideTrigger() << event->xcrossing.window;
-            if (panel->unhideTrigger() == event->xcrossing.window) {
-                panel->unhide();
-                return true;
+    if (m_panelHidden) {
+        if (event->type == EnterNotify) {
+            PanelView *panel = findPanelForTrigger(event->xcrossing.window);
+            if (panel) {
+                panel->hintOrUnhide(QPoint());
+            }
+        } else if (event->type == LeaveNotify) {
+            PanelView *panel = findPanelForTrigger(event->xcrossing.window);
+            if (panel) {
+                panel->unhintHide();
+            }
+        } else if (event->type == MotionNotify) {
+            PanelView *panel = findPanelForTrigger(event->xcrossing.window);
+            if (panel) {
+                XMotionEvent *motion = (XMotionEvent*)event;
+                //kDebug() << "motion" << motion->x << motion->y << panel->location();
+                panel->hintOrUnhide(QPoint(motion->x_root, motion->y_root));
             }
         }
     }

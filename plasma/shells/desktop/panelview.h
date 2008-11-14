@@ -40,6 +40,8 @@
 class QWidget;
 class QTimeLine;
 
+class GlowBar;
+
 namespace Plasma
 {
     class Containment;
@@ -104,6 +106,17 @@ public:
      */
     Window unhideTrigger() { return m_unhideTrigger; }
 #endif
+
+    /**
+     * Show a visual hint or perhaps even unhide, based on the position of the event
+     */
+    void hintOrUnhide(const QPoint &point);
+
+    /**
+     * Hides any hide hinting
+     */
+    void unhintHide();
+
     /**
      * unhides the panel if it is hidden
      */
@@ -187,6 +200,7 @@ private:
     Plasma::Svg *m_background;
     PanelController *m_panelController;
     QList<PanelAppletOverlay*> m_moveOverlays;
+    GlowBar *m_glowBar;
     QTimeLine *m_timeLine;
     QGraphicsWidget *m_spacer;
     int m_spacerIndex;
@@ -195,6 +209,7 @@ private:
     Qt::Alignment m_alignment;
 #ifdef Q_WS_X11
     Window m_unhideTrigger;
+    QRect m_triggerZone;
 #endif
 
     QSizeF m_lastMin;
