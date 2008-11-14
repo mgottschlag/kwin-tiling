@@ -53,7 +53,7 @@ public:
         unsigned long state = NET::Sticky | NET::StaysOnTop | NET::KeepAbove;
         KWindowSystem::setState(winId(), state);
         KWindowSystem::setType(winId(), NET::Dock);
-        m_svg->setImagePath("widgets/button");
+        m_svg->setImagePath("widgets/glowbar");
     }
 
     void paintEvent(QPaintEvent* e)
@@ -61,26 +61,30 @@ public:
         QPainter p(this);
 //        p.fillRect(e->rect(), Qt::red);
         QPixmap l, r, c;
+        const QSize glowRadius = m_svg->elementSize("hint-glow-radius");
+        QPoint pixmapPosition(0, 0);
 
         switch (m_direction) {
             case Plasma::Down:
-                l = m_svg->pixmap("active-top-left");
-                r = m_svg->pixmap("active-top-right");
-                c = m_svg->pixmap("active-top");
+                l = m_svg->pixmap("bottomleft");
+                r = m_svg->pixmap("bottomright");
+                c = m_svg->pixmap("bottom");
+                pixmapPosition = QPoint(0, -glowRadius.height());
                 break;
             case Plasma::Up:
-                l = m_svg->pixmap("active-bottom-left");
-                r = m_svg->pixmap("active-bottom-right");
-                c = m_svg->pixmap("active-bottom");
+                l = m_svg->pixmap("topleft");
+                r = m_svg->pixmap("topright");
+                c = m_svg->pixmap("top");
                 break;
             case Plasma::Right:
-                l = m_svg->pixmap("active-right-left");
-                r = m_svg->pixmap("active-right-right");
-                c = m_svg->pixmap("active-right");
+                l = m_svg->pixmap("topright");
+                r = m_svg->pixmap("bottomright");
+                c = m_svg->pixmap("right");
+                pixmapPosition = QPoint(-glowRadius.width(), 0);
             case Plasma::Left:
-                l = m_svg->pixmap("active-left-left");
-                r = m_svg->pixmap("active-left-left");
-                c = m_svg->pixmap("active-left");
+                l = m_svg->pixmap("topleft");
+                r = m_svg->pixmap("bottomleft");
+                c = m_svg->pixmap("left");
                 break;
         }
 
@@ -89,10 +93,15 @@ public:
             p.drawTiledPixmap(QRect(0, l.height(), c.width(), height() - l.height() - r.height()), c);
             p.drawPixmap(QPoint(0, height() - r.height()), r);
         } else {
-            p.drawPixmap(QPoint(0, 0), l);
-            p.drawTiledPixmap(QRect(l.width(), 0, width() - l.width() - r.width(), c.height()), c);
-            p.drawPixmap(QPoint(width() - r.width(), 0), r);
+            p.drawPixmap(pixmapPosition, l);
+            p.drawTiledPixmap(QRect(l.width(), pixmapPosition.y(), width() - l.width() - r.width(), c.height()), c);
+            p.drawPixmap(QPoint(width() - r.width(), pixmapPosition.y()), r);
         }
+    }
+
+    QSize sizeHint() const
+    {
+        return m_svg->elementSize("bottomright") - m_svg->elementSize("hint-glow-radius");
     }
 
     bool event(QEvent *event)
@@ -815,9 +824,9 @@ void PanelView::hintOrUnhide(const QPoint &point)
             m_glowBar = new GlowBar(Plasma::locationToDirection(location()));
             QRect glowGeom = m_triggerZone;
             if (m_triggerZone.height() == 1) {
-                glowGeom.setHeight(6);
+                glowGeom.setHeight(m_glowBar->sizeHint().height());
             } else {
-                glowGeom.setWidth(6);
+                glowGeom.setWidth(m_glowBar->sizeHint().width());
             }
             m_glowBar->setGeometry(glowGeom);
             m_glowBar->show();
