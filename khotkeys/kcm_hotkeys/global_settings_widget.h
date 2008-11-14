@@ -21,13 +21,16 @@
 
 #include <ui_global_settings_widget.h>
 
-#include <QtGui/QWidget>
+#include "hotkeys_widget_iface.h"
+
+#include <KSharedConfig>
+
 
 
 /**
  * @author Michael Jansen <kde@michael-jansen.biz>
  */
-class GlobalSettingsWidget : public QWidget
+class GlobalSettingsWidget : public HotkeysWidgetIFace
     {
     Q_OBJECT
 
@@ -43,11 +46,20 @@ public:
      */
     ~GlobalSettingsWidget();
 
+private Q_SLOTS:
+
+    bool isChanged() const;
+
+protected:
+
+    virtual void doCopyFromObject();
+    virtual void doCopyToObject();
 
 private:
 
-    Ui::GlobalSettingsWidget ui;
+    KSharedConfigPtr _config;
 
+    Ui::GlobalSettingsWidget ui;
 
 };
 

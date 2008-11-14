@@ -68,7 +68,6 @@ public:
 
     virtual bool isChanged() const;
 
-
 protected:
 
     virtual void doCopyFromObject();

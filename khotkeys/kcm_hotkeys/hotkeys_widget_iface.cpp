@@ -36,6 +36,12 @@ HotkeysWidgetIFace::~HotkeysWidgetIFace()
     {}
 
 
+void HotkeysWidgetIFace::apply()
+    {
+    copyToObject();
+    }
+
+
 void HotkeysWidgetIFace::copyFromObject()
     {
     _changedSignals->blockSignals(true);

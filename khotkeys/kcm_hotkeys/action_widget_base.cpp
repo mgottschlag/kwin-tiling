@@ -25,8 +25,10 @@ ActionWidgetBase::ActionWidgetBase( KHotKeys::Action *action, QWidget *parent )
          ,_action(action)
     {}
 
+
 ActionWidgetBase::~ActionWidgetBase()
     {}
+
 
 #include "moc_action_widget_base.cpp"
 

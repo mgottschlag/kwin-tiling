@@ -24,8 +24,11 @@
 #include <QtCore/QModelIndex>
 
 class KCMHotkeysPrivate;
-
 class QWidget;
+
+namespace KHotKeys {
+    class ActionDataBase;
+}
 
 /**
  * @brief KCMHotkeys KDE KCM Hotkeys Configuration Module
@@ -77,6 +80,9 @@ public Q_SLOTS:
     void currentChanged( const QModelIndex &current, const QModelIndex &previous );
 
 private:
+
+    Q_PRIVATE_SLOT(d, void slotHotkeyChanged(KHotKeys::ActionDataBase*))
+
     KCMHotkeysPrivate *d;
 };
 

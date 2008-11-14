@@ -49,6 +49,8 @@ public:
     void copyFromObject();
     void copyToObject();
 
+    virtual void apply();
+
 Q_SIGNALS:
 
     virtual void changed(bool) const;

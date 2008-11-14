@@ -45,6 +45,13 @@ HotkeysWidgetBase::~HotkeysWidgetBase()
     }
 
 
+void HotkeysWidgetBase::apply()
+    {
+    HotkeysWidgetIFace::apply();
+    emit changed(_data);
+    }
+
+
 bool HotkeysWidgetBase::isChanged() const
     {
     return _data->comment() != ui.comment->toPlainText()

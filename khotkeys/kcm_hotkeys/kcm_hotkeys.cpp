@@ -76,7 +76,7 @@ class KCMHotkeysPrivate
         ActionGroupWidget *action_group;
 
         //! The currently shown dialog
-        HotkeysWidgetBase *current;
+        HotkeysWidgetIFace *current;
 
         //! GlobalSettingsWidget
         GlobalSettingsWidget *global_settings;
@@ -93,6 +93,11 @@ class KCMHotkeysPrivate
          * Applies the changes from the current item
          */
         void applyCurrentItem();
+
+        /**
+         * A Hotkey was changed. Update the treeview.
+         */
+        void slotHotkeyChanged(KHotKeys::ActionDataBase*);
 
         void load();
         void save();
@@ -129,6 +134,16 @@ KCMHotkeys::KCMHotkeys( QWidget *parent, const QVariantList & /* args */ )
     connect(
         d->simple_action, SIGNAL(changed(bool)),
         this, SIGNAL(changed(bool)) );
+    connect(
+        d->global_settings, SIGNAL(changed(bool)),
+        this, SIGNAL(changed(bool)) );
+    // Update TreeView if hotkeys was changed
+    connect(
+        d->simple_action, SIGNAL(changed(KHotKeys::ActionDataBase*)),
+        this, SLOT(slotHotkeyChanged(KHotKeys::ActionDataBase*)));
+    connect(
+        d->action_group, SIGNAL(changed(KHotKeys::ActionDataBase*)),
+        this, SLOT(slotHotkeyChanged(KHotKeys::ActionDataBase*)));
     }
 
 
@@ -158,7 +173,8 @@ void KCMHotkeys::currentChanged( const QModelIndex &pCurrent, const QModelIndex 
 
     if (!current.isValid())
         {
-        d->current = NULL;
+        d->current = d->global_settings;
+        d->global_settings->copyFromObject();
         d->stack->setCurrentWidget( d->global_settings );
         return;
         }
@@ -247,8 +263,13 @@ KCMHotkeysPrivate::KCMHotkeysPrivate( KCMHotkeys *host )
      ,current(0)
      ,simple_action(0)
     {
+    // The widget for groups
     action_group = new ActionGroupWidget(q);
+
+    // The widget for simple hotkeys (one trigger - one action)
     simple_action = new SimpleActionDataWidget(q);
+
+    // The widget for the global settings
     global_settings = new GlobalSettingsWidget(q);
 
     // Setup the stack
@@ -271,6 +292,9 @@ KCMHotkeysPrivate::KCMHotkeysPrivate( KCMHotkeys *host )
     KHotKeys::init_global_data(false, q);
 
     treeView->setModel(model);
+
+    current=global_settings;
+    global_settings->copyFromObject();
     }
 
 
@@ -300,6 +324,9 @@ void KCMHotkeysPrivate::load()
     QObject::connect(
         treeView->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)),
         q, SLOT(currentChanged(QModelIndex,QModelIndex)) );
+
+    // Start khotkeys
+    KHotKeys::Daemon::start();
     }
 
 
@@ -374,9 +401,14 @@ void KCMHotkeysPrivate::applyCurrentItem()
     // Only save when really changed
     if (current->isChanged())
         {
-        current->copyToObject();
-        model->emitChanged(current->data());
+        current->apply();
         }
+    }
+
+
+void KCMHotkeysPrivate::slotHotkeyChanged(KHotKeys::ActionDataBase* hotkey)
+    {
+    model->emitChanged(hotkey);
     }
 
 

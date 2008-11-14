@@ -19,15 +19,79 @@
 
 #include "global_settings_widget.h"
 
+#include <KDebug>
+#include <KDesktopFile>
+#include <KGlobal>
+#include <KStandardDirs>
+
 
 GlobalSettingsWidget::GlobalSettingsWidget( QWidget *parent )
-    : QWidget( parent )
+    : HotkeysWidgetIFace( parent )
     {
     ui.setupUi(this);
+
+    QString path = KGlobal::dirs()->findResource( "services", "kded/khotkeys.desktop");
+    if ( KDesktopFile::isDesktopFile(path) )
+        {
+        _config = KSharedConfig::openConfig(
+                path,
+                KConfig::NoGlobals,
+                "services" );
+        }
+
+    connect(
+            ui.enabled, SIGNAL(stateChanged(int)),
+            _changedSignals, SLOT(map()) );
+    _changedSignals->setMapping(ui.enabled, "enabled" );
     }
+
 
 GlobalSettingsWidget::~GlobalSettingsWidget()
     {
     }
+
+
+void GlobalSettingsWidget::doCopyFromObject()
+    {
+    if ( _config )
+        {
+        KConfigGroup file(_config, "Desktop Entry");
+        ui.enabled->setChecked(file.readEntry("X-KDE-Kded-autoload", false));
+        }
+    }
+
+
+void GlobalSettingsWidget::doCopyToObject()
+    {
+    kDebug();
+    if (_config)
+        {
+        KConfigGroup file(_config, "Desktop Entry");
+        file.writeEntry("X-KDE-Kded-autoload", ui.enabled->checkState()==Qt::Checked);
+        _config->sync();
+        }
+    }
+
+
+bool GlobalSettingsWidget::isChanged() const
+    {
+    if (_config)
+        {
+        KConfigGroup file(_config, "Desktop Entry");
+        bool enabled = file.readEntry("X-KDE-Kded-autoload", false);
+
+        if ( enabled && ( ui.enabled->checkState() != Qt::Checked ) )
+            {
+            return true;
+            }
+
+        if ( !enabled && ( ui.enabled->checkState() != Qt::Unchecked ) )
+            {
+            return true;
+            }
+        }
+    return false;
+    }
+
 
 #include "moc_global_settings_widget.cpp"

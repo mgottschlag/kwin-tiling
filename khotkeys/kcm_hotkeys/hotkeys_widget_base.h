@@ -48,6 +48,8 @@ public:
      */
     virtual ~HotkeysWidgetBase();
 
+    virtual void apply();
+
     /**
      * The associated action.
      */
@@ -65,6 +67,10 @@ public:
 
     virtual QString title() const;
 
+
+Q_SIGNALS:
+
+    void changed(KHotKeys::ActionDataBase*);
 
 protected:
 
