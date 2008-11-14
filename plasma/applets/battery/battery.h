@@ -55,8 +55,7 @@ class Battery : public Plasma::PopupApplet
         Qt::Orientations expandingDirections() const;
         void constraintsEvent(Plasma::Constraints constraints);
         void popupEvent(bool show);
-        /* Fade in/out the label above the battery. */
-        void showLabel(bool show);
+        void showBatteryLabel(bool show);
 
     public slots:
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
@@ -114,6 +113,8 @@ class Battery : public Plasma::PopupApplet
         void showBattery(bool show);
         /* Scale in/out Ac Adapter. */
         void showAcAdapter(bool show);
+        /* Fade in/out the label above the battery. */
+        void showLabel(bool show);
         /* Scale in a QRectF */
         QRectF scaleRectF(qreal progress, QRectF rect);
         /* Show multiple batteries with individual icons and charge info? */

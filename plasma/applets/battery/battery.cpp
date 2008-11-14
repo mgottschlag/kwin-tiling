@@ -30,7 +30,6 @@
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsGridLayout>
 #include <QGraphicsLinearLayout>
-#include <QTimer>
 
 #include <KDebug>
 #include <KIcon>
@@ -99,6 +98,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     setAspectRatioMode(Plasma::ConstrainedSquare );
     m_textRect = QRectF();
     m_remainingMSecs = 0;
+    m_extenderApplet = 0;
 }
 
 void Battery::init()
@@ -352,7 +352,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         Battery *m_extenderApplet = static_cast<Battery*>(Plasma::Applet::load("battery"));
         if (m_extenderApplet) {
             m_extenderApplet->setParent(this);
-            m_extenderApplet->setAcceptsHoverEvents(true);
+            m_extenderApplet->setAcceptsHoverEvents(false);
             m_extenderApplet->setParentItem(controls);
             m_extenderApplet->setEmbedded(true);
             m_extenderApplet->setMinimumSize(80, 80); // TODO: Multiple batteries?
@@ -360,7 +360,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
             m_extenderApplet->setBackgroundHints(NoBackground);
             m_extenderApplet->setFlag(QGraphicsItem::ItemIsMovable, false);
             m_extenderApplet->init();
-            m_extenderApplet->showLabel(true);
+            m_extenderApplet->showBatteryLabel(false);
             m_batteryLayout->addItem(m_extenderApplet, 0, 1, 1, 1, Qt::AlignRight);
         }
 
@@ -493,11 +493,17 @@ void Battery::updateStatus()
         int bnum = 0;
         int hours = m_remainingMSecs/1000/3600;
         int minutes = qRound(m_remainingMSecs/60000);
+
         while (battery_data.hasNext()) {
             bnum++;
             battery_data.next();
             QString state = battery_data.value()["State"].toString();
             if (state == "Discharging" && m_remainingMSecs > 0) {
+
+                // FIXME: Somehow, m_extenderApplet is null here, so the label never becomes visible
+                if (m_extenderApplet) {
+                    m_extenderApplet->showBatteryLabel(true);
+                }
                 if (hours == 1 && minutes > 0) {
                     // less than one hour and one minute
                     minutes = qRound(m_remainingMSecs/60000) % 60;
@@ -514,37 +520,24 @@ void Battery::updateStatus()
                     // less than one hour
                     batteryLabelText.append(i18n("<b>%1 minutes</b> remaining<br />", minutes));
                 }
+                /* might be useful for the tooltip
                 kDebug() << "hours:" << hours << "minutes:" << minutes;
                 QTime t = QTime(hours, minutes);
                 kDebug() << t;
                 KLocale tmpLocale(*KGlobal::locale());
                 tmpLocale.setTimeFormat("%k:h %Mm remaining");
                 kDebug() << tmpLocale.formatTime(t, false, true); // minutes, hours as duration
-                //QString day = tmpLocale.formatDate(m_date);
-
+                */
             } else {
+                if (m_extenderApplet) {
+                    m_extenderApplet->showBatteryLabel(false);
+                }
                 if (m_numOfBattery == 1) {
                     if (battery_data.value()["Plugged in"].toBool()) {
                         if (state == "NoCharge") {
-                                batteryLabelText.append(i18n("<b>Battery:</b> %1% (fully charged)<br />", battery_data.value()["Percent"].toString()));
+                            batteryLabelText.append(i18n("<b>Battery:</b> %1% (fully charged)<br />", battery_data.value()["Percent"].toString()));
                         } else if (state == "Discharging") {
-                                if (m_remainingMSecs > 0) {
-                                    int hours = m_remainingMSecs/1000/3600;
-                                    int minutes = qRound(m_remainingMSecs/60000);
-                                    if (hours == 1 && minutes > 0) {
-                                        // less than one hour and one minute
-                                        minutes = qRound(m_remainingMSecs/60000) % 60;
-                                        batteryLabelText.append(i18n("One hour and %1 minutes remaining<br />", minutes));
-                                    } else if (hours > 1) {
-                                        batteryLabelText.append(i18n("%1 hours and %2 minutes remaining<br />", hours, minutes));
-                                    } else {
-                                        // less than one hour
-                                        batteryLabelText.append(i18n("%1 minutes remaining<br />", minutes));
-                                    }
-                                    kDebug() << "hours:" << hours << "minutes:" << minutes;
-                                } else {
-                                    batteryLabelText.append(i18nc("Shown when a time estimate is not available", "<b>Battery:</b> %1% (discharging)<br />", battery_data.value()["Percent"].toString()));
-                                }
+                            batteryLabelText.append(i18nc("Shown when a time estimate is not available", "<b>Battery:</b> %1% (discharging)<br />", battery_data.value()["Percent"].toString()));
                         } else {
                             batteryLabelText.append(i18n("<b>Battery:</b> %1% (charging)<br />", battery_data.value()["Percent"].toString()));
                         }
@@ -869,7 +862,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
             // paint battery with appropriate charge level
             paintBattery(p, corect, battery_data.value()["Percent"].toInt(), battery_data.value()["Plugged in"].toBool());
 
-            if (m_isEmbedded || m_showBatteryString || m_isHovered || m_firstRun) {
+            if (m_showBatteryString || m_isHovered || m_firstRun) {
                 // Show the charge percentage with a box on top of the battery
                 QString batteryLabel;
                 if (battery_data.value()["Plugged in"].toBool()) {
@@ -901,7 +894,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         }
         // paint battery with appropriate charge level
         paintBattery(p, contentsRect,  battery_charge, has_battery);
-        if (m_isEmbedded || m_showBatteryString || m_isHovered) {
+        if (m_showBatteryString || m_isHovered) {
             // Show the charge percentage with a box on top of the battery
             QString batteryLabel;
             if (has_battery) {
@@ -912,6 +905,15 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
             }
             paintLabel(p, contentsRect, batteryLabel);
         }
+    }
+}
+
+void Battery::showBatteryLabel(bool show)
+{
+    kDebug() << show;
+    if (show != m_showBatteryString) {
+        showLabel(show);
+        m_showBatteryString = show;
     }
 }
 
