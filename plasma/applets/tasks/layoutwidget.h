@@ -101,8 +101,7 @@ private:
     QGraphicsWidget *m_spacer;
 
     TaskGroupItem *m_groupItem;
-    QMultiMap <int, AbstractTaskItem*> m_itemPositions;
-
+    QList <AbstractTaskItem*> m_itemPositions;
     /** Calculates the number of columns and rows for the layoutItems function and returns <columns/rows>*/
     QPair<int, int> gridLayoutSize();
 

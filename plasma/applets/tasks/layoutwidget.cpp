@@ -67,7 +67,7 @@ void LayoutWidget::addTaskItem(AbstractTaskItem * item)
         kDebug() << "invalid item";
         return;
     }
-    if (m_itemPositions.values().contains(item)) {
+    if (m_itemPositions.contains(item)) {
         kDebug() << "already in this layout";
         return;
     }
@@ -120,8 +120,14 @@ bool LayoutWidget::insert(int index, AbstractTaskItem* item)
         kDebug() << "error";
         return false;
     }
+    int listIndex;
+    for (listIndex = 0; listIndex < m_itemPositions.size(); listIndex++) {
+	if (index <= m_groupItem->indexOf(m_itemPositions.at(listIndex))) {
+	    break;
+	}
+    }
 
-    m_itemPositions.insert(index, item);
+    m_itemPositions.insert(listIndex, item);
 
     layoutItems();
     return true;
@@ -132,7 +138,7 @@ bool LayoutWidget::remove(AbstractTaskItem* item)
     if (!item) {
         kDebug() << "null Item";
     }
-    m_itemPositions.remove(m_itemPositions.key(item), item);
+    m_itemPositions.removeAll(item);
     layoutItems();
     return true;
 }
@@ -186,7 +192,7 @@ int LayoutWidget::maximumRows()
 
     // in this case rows are columns, columns are rows...
     //TODO basicPreferredSize isn't the optimal source here because  it changes because of margins probably
-    QSizeF itemSize = m_itemPositions.values().first()->basicPreferredSize();
+    QSizeF itemSize = m_itemPositions.first()->basicPreferredSize();
     if (m_applet->formFactor() == Plasma::Vertical) {
         maxRows = qMin(qMax(1, int(m_groupItem->geometry().width() / itemSize.width())), m_maxRows);
     } else {
@@ -206,7 +212,7 @@ int LayoutWidget::preferredColumns()
             return 1;
         }
         //TODO basicPreferredSize isn't the optimal source here because  it changes because of margins probably
-        QSizeF itemSize = m_itemPositions.values().first()->basicPreferredSize();
+        QSizeF itemSize = m_itemPositions.first()->basicPreferredSize();
         //kDebug() << itemSize.width() << m_groupItem->geometry().width();
         if (m_applet->formFactor() == Plasma::Vertical) {
             m_rowSize = qMax(1, int(m_groupItem->geometry().height() / itemSize.height()));
@@ -265,7 +271,7 @@ void LayoutWidget::layoutItems()
 
     QSizeF maximumCellSize;
     if (m_itemPositions.count() > 0) {
-        maximumCellSize = m_itemPositions.values().first()->basicPreferredSize() * 1.8;
+        maximumCellSize = m_itemPositions.first()->basicPreferredSize() * 1.8;
     }
 
     createLayout(); //its a shame that we have to create a new layout every time but the QGraphicsGridLayout is just to buggy yet
