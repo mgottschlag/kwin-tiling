@@ -48,6 +48,7 @@ class GlowBar : public QWidget
 public:
     GlowBar(Plasma::Direction direction, const QRect &triggerZone)
         : QWidget(0),
+          m_strength(0),
           m_svg(new Plasma::Svg(this)),
           m_direction(direction)
     {
@@ -76,15 +77,18 @@ public:
 
         //kDebug() << "glow geom is" << glowGeom << "from" << triggerZone;
         setGeometry(glowGeom);
+        m_buffer = QPixmap(size());
     }
 
     void paintEvent(QPaintEvent* e)
     {
-        QPainter p(this);
-//        p.fillRect(e->rect(), Qt::red);
         QPixmap l, r, c;
         const QSize glowRadius = m_svg->elementSize("hint-glow-radius");
         QPoint pixmapPosition(0, 0);
+
+        m_buffer.fill(QColor(0, 0, 0, 255*m_strength));
+        QPainter p(&m_buffer);
+        p.setCompositionMode(QPainter::CompositionMode_SourceIn);
 
         switch (m_direction) {
             case Plasma::Down:
@@ -103,6 +107,7 @@ public:
                 r = m_svg->pixmap("bottomright");
                 c = m_svg->pixmap("right");
                 pixmapPosition = QPoint(-glowRadius.width(), 0);
+                break;
             case Plasma::Left:
                 l = m_svg->pixmap("topleft");
                 r = m_svg->pixmap("bottomleft");
@@ -119,6 +124,10 @@ public:
             p.drawTiledPixmap(QRect(l.width(), pixmapPosition.y(), width() - l.width() - r.width(), c.height()), c);
             p.drawPixmap(QPoint(width() - r.width(), pixmapPosition.y()), r);
         }
+
+        p.end();
+        p.begin(this);
+        p.drawPixmap(QPoint(0, 0), m_buffer);
     }
 
     QSize sizeHint() const
@@ -136,9 +145,35 @@ public:
         return QWidget::event(event);
     }
 
+    void updateStrength(QPoint point)
+    {
+        QPoint localPoint = mapFromGlobal(point);
+
+        switch (m_direction) {
+        case Plasma::Up:
+            m_strength = qreal(localPoint.y())/m_triggerDistance;
+            break;
+        case Plasma::Right:
+            m_strength = 1 - qreal(localPoint.x())/m_triggerDistance;
+            break;
+        case Plasma::Left:
+            m_strength = qreal(localPoint.x())/m_triggerDistance;
+            break;
+        case Plasma::Down:
+        default:
+            m_strength = 1- qreal(localPoint.y())/m_triggerDistance;
+            break;
+        }
+        update();
+    }
+
+
 private:
+    static const int m_triggerDistance = 30;
+    qreal m_strength;
     Plasma::Svg *m_svg;
     Plasma::Direction m_direction;
+    QPixmap m_buffer;
 };
 
 PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
@@ -859,6 +894,7 @@ void PanelView::hintOrUnhide(const QPoint &point)
         //kDebug() << "unhide!" << point;
         unhide();
     } else {
+        m_glowBar->updateStrength(point);
         //kDebug() << "keep glowing";
     }
 }
@@ -1026,7 +1062,7 @@ void PanelView::animateHide(qreal progress)
 
 bool PanelView::shouldHintHide() const
 {
-    return false; // PlasmaApp::hasComposite();
+    return false;//PlasmaApp::hasComposite();
 }
 
 void PanelView::createUnhideTrigger()
