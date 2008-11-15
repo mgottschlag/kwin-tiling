@@ -95,7 +95,7 @@ void TaskGroupItem::setSplitGroup(TaskGroup *group)
 
 void TaskGroupItem::unsplitGroup()
 {
-    kDebug();
+    //kDebug();
     if (!isSplit()) {
         return;
     }
@@ -116,7 +116,7 @@ TaskGroupItem * TaskGroupItem::splitGroup()
 
 void TaskGroupItem::setSplitIndex(int position)
 {
-    kDebug() << position;
+    //kDebug() << position;
 
     for (int i = position ; i < m_parentSplitGroup->memberList().size() ; i++) {
         //kDebug() << "add item to childSplitGroup" << i;
@@ -131,29 +131,29 @@ void TaskGroupItem::setSplitIndex(int position)
 
 TaskGroupItem * TaskGroupItem::splitGroup(int newSplitPosition)
 {
-    kDebug() << "split position" << newSplitPosition;
+    //kDebug() << "split position" << newSplitPosition;
 
     //remove all items which move to the splitgroup
     for (int i = newSplitPosition ; i < m_groupMembers.size() ; i++) {
         m_layoutWidget->removeTaskItem(m_groupMembers.at(i));
-	//kDebug() << "remove from parentSplitGroup" << i;
+        //kDebug() << "remove from parentSplitGroup" << i;
     }
     //add items which arent in the splitgroup anymore and should be displayed again
     if (m_splitPosition) { //if 0 is the init value and shouldn't happen otherwise
-	for (int i = m_splitPosition ; i < newSplitPosition ; i++) {
-	    m_layoutWidget->addTaskItem(m_groupMembers.at(i));
-	    //kDebug() << "add Item to parentSplitGroup" << i;
-	}
+        for (int i = m_splitPosition ; i < newSplitPosition ; i++) {
+            m_layoutWidget->addTaskItem(m_groupMembers.at(i));
+            //kDebug() << "add Item to parentSplitGroup" << i;
+        }
     }
 
     if (!m_childSplitGroup) {
-	  //kDebug() << "Normal scene " << scene();
-          m_childSplitGroup = new  TaskGroupItem(this, m_applet, true);
-          m_childSplitGroup->setSplitGroup(m_group);
+        //kDebug() << "Normal scene " << scene();
+        m_childSplitGroup = new  TaskGroupItem(this, m_applet, true);
+        m_childSplitGroup->setSplitGroup(m_group);
     }
+
     m_childSplitGroup->setSplitIndex(newSplitPosition);
     m_splitPosition = newSplitPosition;
-
     return m_childSplitGroup;
 }
 
@@ -489,7 +489,7 @@ void TaskGroupItem::expand()
     connect(m_layoutWidget, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updatePreferredSize()));
     updatePreferredSize();
     emit changed();
-    kDebug() << "expanded";
+    //kDebug() << "expanded";
 
 }
 

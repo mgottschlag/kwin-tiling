@@ -394,7 +394,7 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     return;
 }
 
-void AbstractTaskItem::drawTask(QPainter *painter,const QStyleOptionGraphicsItem *option,QWidget *)
+void AbstractTaskItem::drawTask(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
     Q_UNUSED(option)
 
@@ -476,8 +476,7 @@ QSize AbstractTaskItem::layoutText(QTextLayout &layout, const QString &text,
     layout.setText(text);
 
     layout.beginLayout();
-    while ((line = layout.createLine()).isValid())
-    {
+    while ((line = layout.createLine()).isValid()) {
         height += leading;
 
         // Make the last line that will fit infinitely long.

@@ -53,7 +53,7 @@ void LayoutWidget::init()
 void LayoutWidget::constraintsChanged(Plasma::Constraints constraints)
 {
     Q_ASSERT(m_applet);
-    kDebug();
+    //kDebug();
 
     if (constraints & Plasma::SizeConstraint) {
         layoutItems();
@@ -115,7 +115,7 @@ void LayoutWidget::removeTaskItem(AbstractTaskItem * item)
 
 bool LayoutWidget::insert(int index, AbstractTaskItem* item)
 {
-    kDebug() << item->text() << index;
+    //kDebug() << item->text() << index;
     if (!item ) {
         kDebug() << "error";
         return false;
@@ -139,7 +139,7 @@ bool LayoutWidget::remove(AbstractTaskItem* item)
 
 void LayoutWidget::update()
 {
-    kDebug();
+    //kDebug();
     layoutItems();
 }
 
@@ -207,7 +207,7 @@ int LayoutWidget::preferredColumns()
         }
         //TODO basicPreferredSize isn't the optimal source here because  it changes because of margins probably
         QSizeF itemSize = m_itemPositions.values().first()->basicPreferredSize();
-        kDebug() << itemSize.width() << m_groupItem->geometry().width();
+        //kDebug() << itemSize.width() << m_groupItem->geometry().width();
         if (m_applet->formFactor() == Plasma::Vertical) {
             m_rowSize = qMax(1, int(m_groupItem->geometry().height() / itemSize.height()));
         } else {
@@ -250,7 +250,7 @@ void LayoutWidget::createLayout()
 
 void LayoutWidget::layoutItems()
 {
-    kDebug();
+    //kDebug();
 
     QPair <int,int> grid = gridLayoutSize();
     int columns = grid.first;
