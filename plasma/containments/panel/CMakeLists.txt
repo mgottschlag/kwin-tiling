@@ -2,6 +2,9 @@
 set(panel_SRCS
     panel.cpp)
 
+include_directories(
+    ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal)
+
 kde4_add_plugin(plasma_containment_panel ${panel_SRCS})
 target_link_libraries(plasma_containment_panel ${KDE4_PLASMA_LIBS} ${KDE4_KIO_LIBS} kephal)
 

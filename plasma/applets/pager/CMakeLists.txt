@@ -1,5 +1,8 @@
 project(plasma-pager)
 
+include_directories(
+    ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal)
+
 set(pager_SRCS
     pager.cpp)
 
