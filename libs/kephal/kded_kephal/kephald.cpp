@@ -81,8 +81,15 @@ void KephalD::init() {
     
     if ((! m_noXRandR) && display->isValid()) {
         m_outputs = new XRandROutputs(this, display);
+        if (m_outputs->outputs().size() <= 1) {
+            delete m_outputs;
+            m_outputs = 0;
+        }
     } else {
         m_outputs = 0;
+    }
+    
+    if (! m_outputs) {
         new DesktopWidgetOutputs(this);
     }
     
