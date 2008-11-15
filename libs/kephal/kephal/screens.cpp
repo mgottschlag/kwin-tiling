@@ -111,8 +111,11 @@ namespace Kephal {
     }
     
     int ScreenUtils::screenId(QPoint p) {
-        // TODO: this is wrong, only for testing
-        return QApplication::desktop()->screenNumber(p);
+        // TODO: Needs clean up
+        for(int i = 0; i < numScreens(); i++)
+            if(screenGeometry(i).contains(p))
+                return i;
+        return -1;
     }
     
     int ScreenUtils::primaryScreenId() {
