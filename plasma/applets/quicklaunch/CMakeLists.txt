@@ -18,4 +18,3 @@ target_link_libraries(plasma_applet_quicklaunch ${KDE4_PLASMA_LIBS} ${KDE4_KIO_L
 
 install(TARGETS plasma_applet_quicklaunch DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-applet-quicklaunch.desktop DESTINATION ${SERVICES_INSTALL_DIR})
-install(FILES quicklaunch.svg DESTINATION ${DATA_INSTALL_DIR}/desktoptheme/default/widgets/)
