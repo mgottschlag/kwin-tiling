@@ -44,7 +44,7 @@ public:
      *  This function implements part of Notifications DBus interface.
      *  Once called, will add notification source to the engine
      */
-    uint Notify(const QString &app_name, uint replaces_id, const QString &app_icon, const QString &summary, const QString &body, const QStringList &actions, const QVariantMap &hints, int timeout);
+    uint Notify(const QString &app_name, uint replaces_id, const QString &event_id, const QString &app_icon, const QString &summary, const QString &body, const QStringList &actions, const QVariantMap &hints, int timeout);
 
     void CloseNotification( uint id );
 

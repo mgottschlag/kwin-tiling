@@ -47,9 +47,9 @@ void NotificationsEngine::init()
 {
 }
 
-uint NotificationsEngine::Notify(const QString &app_name, uint replaces_id, const QString &app_icon,
-                                 const QString &summary, const QString &body, const QStringList &actions,
-                                 const QVariantMap &hints, int timeout)
+uint NotificationsEngine::Notify(const QString &app_name, uint replaces_id, const QString &event_id,
+                                 const QString &app_icon, const QString &summary, const QString &body,
+                                 const QStringList &actions, const QVariantMap &hints, int timeout)
 {
     uint id = 0;
     if (replaces_id == 0) {
@@ -69,6 +69,7 @@ uint NotificationsEngine::Notify(const QString &app_name, uint replaces_id, cons
         notificationData.insert("id", QString::number(id ));
         notificationData.insert("appName", appname_str );
         notificationData.insert("appIcon", app_icon );
+        notificationData.insert("eventId", event_id );
         notificationData.insert("summary", summary );
         notificationData.insert("body", body );
         notificationData.insert("actions", actions );
