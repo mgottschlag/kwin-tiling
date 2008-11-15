@@ -48,7 +48,7 @@ QT4_ADD_DBUS_INTERFACE(libkephal_SRCS ${CMAKE_CURRENT_BINARY_DIR}/org.kde.Kephal
 ADD_LIBRARY (kephal SHARED ${libkephal_SRCS})
 TARGET_LINK_LIBRARIES (kephal ${QT_LIBRARIES})
 
-INSTALL (TARGETS kephal DESTINATION lib)
+INSTALL (TARGETS kephal ${INSTALL_TARGETS_DEFAULT_ARGS})
 INSTALL (FILES 
         ../kephal/screens.h
         ../kephal/outputs.h
