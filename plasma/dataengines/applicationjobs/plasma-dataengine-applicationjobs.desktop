@@ -2,6 +2,7 @@
 Name=Application Job Information
 Name[el]=Πληροφορίες εργασιών εφαρμογών
 Name[gu]=કાર્યક્રમ કાર્ય માહિતી
+Name[kk]=Қолданба тапсырмасының ақпараты
 Name[nds]=Programm-Opgaavinformatschoon
 Name[nl]=Programmataakmeldingen
 Name[pt]=Informação da Tarefa da Aplicação
@@ -13,6 +14,7 @@ Name[zh_TW]=應用程式工作資訊
 Comment=Kuiserver data for Plasmoids
 Comment[el]=Δεδομένα Kuiserver για τα πλασμοειδή
 Comment[gu]=પ્લાઝમોઇડ માટે Kuiserver માહિતી
+Comment[kk]=Плазмоидтерге арналған Kuiserver дерегі
 Comment[nds]=KUIServer-Daten för Plasma-Lüttprogrammen
 Comment[nl]=Kuiserver-gegevens voor Plasmoids
 Comment[pt]=Dados do Kuiserver para os Plasmóides
