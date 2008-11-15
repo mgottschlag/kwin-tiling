@@ -233,6 +233,7 @@ namespace Kephal {
             static Outputs * self();
             
             Outputs(QObject * parent);
+            virtual ~Outputs();
             
             /**
              * Returns a list of all known Outputs,

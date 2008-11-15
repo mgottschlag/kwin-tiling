@@ -105,7 +105,7 @@ namespace Kephal {
             static Configurations * self();
             
             Configurations(QObject * parent);
-            virtual ~Configurations() {}
+            virtual ~Configurations();
             
             /**
              * Returns a list of all known Configurations.

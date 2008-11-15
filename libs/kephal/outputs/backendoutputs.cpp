@@ -64,6 +64,11 @@ namespace Kephal {
         m_instance = this;
     }
     
+    BackendOutputs::~BackendOutputs()
+    {
+        m_instance = 0;
+    }
+    
     QList<BackendOutput *> BackendOutputs::backendOutputs() {
         QList<BackendOutput *> result;
         foreach (Output * output, outputs()) {

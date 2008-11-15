@@ -128,6 +128,7 @@ namespace Kephal {
             static Screens * self();
             
             Screens(QObject * parent);
+            virtual ~Screens();
             
             /**
              * Returns the list of all current

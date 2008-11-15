@@ -54,6 +54,7 @@ namespace Kephal {
             static BackendOutputs * self();
             
             BackendOutputs(QObject * parent);
+            virtual ~BackendOutputs();
             
             virtual bool activateLayout(const QMap<Output *, QRect> & layout);
             virtual QList<BackendOutput *> backendOutputs();

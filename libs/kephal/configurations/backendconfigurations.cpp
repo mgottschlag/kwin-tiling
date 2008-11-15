@@ -38,6 +38,11 @@ namespace Kephal {
         BackendConfigurations::m_instance = this;
     }
     
+    BackendConfigurations::~BackendConfigurations()
+    {
+        BackendConfigurations::m_instance = 0;
+    }
+    
     BackendConfigurations * BackendConfigurations::m_instance = 0;
     
     BackendConfiguration * BackendConfigurations::activeBackendConfiguration() {

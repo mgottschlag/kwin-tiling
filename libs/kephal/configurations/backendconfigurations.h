@@ -120,6 +120,7 @@ namespace Kephal {
             static BackendConfigurations * self();
             
             BackendConfigurations(QObject * parent);
+            virtual ~BackendConfigurations();
             
             /**
              * Find the Configuration for the currently

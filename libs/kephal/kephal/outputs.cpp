@@ -47,6 +47,10 @@ namespace Kephal {
         Outputs::m_instance = this;
     }
     
+    Outputs::~Outputs() {
+        Outputs::m_instance = 0;
+    }
+    
     Output * Outputs::output(const QString & id) {
         foreach (Output * o, outputs()) {
             if (o->id() == id) {

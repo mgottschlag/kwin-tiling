@@ -49,6 +49,11 @@ namespace Kephal {
         Configurations::m_instance = this;
     }
     
+    Configurations::~Configurations()
+    {
+        Configurations::m_instance = 0;
+    }
+    
     Configurations * Configurations::m_instance = 0;
     
     Configuration * Configurations::configuration(QString name) {

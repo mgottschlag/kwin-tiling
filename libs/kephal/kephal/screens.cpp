@@ -46,6 +46,11 @@ namespace Kephal {
         Screens::m_instance = this;
     }
     
+    Screens::~Screens()
+    {
+        Screens::m_instance = 0;
+    }
+    
     Screen * Screens::screen(int id) {
         foreach (Screen * screen, screens()) {
             if (screen->id() == id) {
