@@ -46,7 +46,9 @@
 #include <Plasma/View>
 #include <Plasma/PaintUtils>
 
+#ifndef _WIN32
 #include <kephal/screens.h>
+#endif
 
 using namespace Plasma;
 
@@ -90,7 +92,11 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
       m_configureAction(0),
       m_addPanelAction(0),
+#ifndef _WIN32
       m_currentSize(QSize(Kephal::ScreenUtils::screenSize(screen()).width(), 35)),
+#else
+      m_currentSize(QSize(QApplication::desktop()->screenGeometry(screen()).width(), 35)),
+#endif
       m_lastViewGeom(),
       m_spacerIndex(-1),
       m_spacer(0)
@@ -277,7 +283,11 @@ void Panel::updateBorders(const QRect &geom)
     if (s < 0) {
         // do nothing in this case, we want all the borders
     } else if (loc == BottomEdge || loc == TopEdge) {
+#ifndef _WIN32
         QRect r = Kephal::ScreenUtils::screenGeometry(s);
+#else
+        QRect r = QApplication::desktop()->screenGeometry(s);
+#endif
 
         if (loc == BottomEdge) {
             enabledBorders ^= FrameSvg::BottomBorder;
@@ -298,7 +308,11 @@ void Panel::updateBorders(const QRect &geom)
 
         //kDebug() << "top/bottom: Width:" << width << ", height:" << height;
     } else if (loc == LeftEdge || loc == RightEdge) {
+#ifndef _WIN32
         QRect r = Kephal::ScreenUtils::screenGeometry(s);
+#else
+        QRect r = QApplication::desktop()->screenGeometry(s);
+#endif
 
         if (loc == RightEdge) {
             enabledBorders ^= FrameSvg::RightBorder;
@@ -402,7 +416,11 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
     //we need to know if the width or height is 100%
     if (constraints & Plasma::LocationConstraint || constraints & Plasma::SizeConstraint) {
         m_currentSize = geometry().size().toSize();
+#ifndef _WIN32
         QRectF screenRect = screen() >= 0 ? Kephal::ScreenUtils::screenGeometry(screen()) :
+#else
+        QRectF screenRect = screen() >= 0 ? QApplication::desktop()->screenGeometry(screen()) :
+#endif
             geometry();
 
         if ((formFactor() == Horizontal && m_currentSize.width() >= screenRect.width()) ||
