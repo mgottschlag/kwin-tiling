@@ -61,19 +61,20 @@ public:
         QSize s = sizeHint();
         switch (m_direction) {
             case Plasma::Up:
-                glowGeom.setY(glowGeom.y() - s.height());
+                glowGeom.setY(glowGeom.y() - s.height() + 1);
                 // fallthrough
             case Plasma::Down:
                 glowGeom.setHeight(s.height());
                 break;
-            case Plasma::Right:
-                glowGeom.setX(glowGeom.x() - s.width());
-                // fallthrough
             case Plasma::Left:
+                glowGeom.setX(glowGeom.x() - s.width() + 1);
+                // fallthrough
+            case Plasma::Right:
                 glowGeom.setWidth(s.width());
                 break;
         }
 
+        //kDebug() << "glow geom is" << glowGeom << "from" << triggerZone;
         setGeometry(glowGeom);
     }
 
@@ -841,6 +842,7 @@ void PanelView::hintOrUnhide(const QPoint &point)
         return;
     }
 
+    //kDebug() << point << m_triggerZone;
     if (point == QPoint()) {
         //kDebug() << "enter, we should start glowing!";
         if (!m_glowBar) {
@@ -1049,6 +1051,7 @@ void PanelView::createUnhideTrigger()
             if (fancy) {
                 triggerWidth += 30;
                 triggerPoint.setX(qMax(0, triggerPoint.x() - 15));
+                triggerPoint.setY(qMax(0, triggerPoint.y() - 29));
             }
             break;
         case Plasma::RightEdge:
@@ -1058,6 +1061,7 @@ void PanelView::createUnhideTrigger()
             if (fancy) {
                 triggerHeight += 30;
                 triggerPoint.setY(qMax(0, triggerPoint.y() - 15));
+                triggerPoint.setX(qMax(0, triggerPoint.x() - 29));
             }
             break;
         case Plasma::LeftEdge:
