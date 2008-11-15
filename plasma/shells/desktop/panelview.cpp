@@ -873,6 +873,7 @@ QTimeLine *PanelView::timeLine()
 
 void PanelView::unhideHintMousePoll()
 {
+#ifdef Q_WS_X11
     const int triggerSize = 30;
 
     QPoint mousePos = QCursor::pos();
@@ -882,15 +883,19 @@ void PanelView::unhideHintMousePoll()
         unhintHide();
         XMoveResizeWindow(QX11Info::display(), m_unhideTrigger, m_unhideTriggerGeom.x(), m_unhideTriggerGeom.y(), m_unhideTriggerGeom.width(), m_unhideTriggerGeom.height());
     }
+#endif
 }
 
 QRect PanelView::unhideHintGeometry() const
 {
+#ifdef Q_WS_X11
     return m_unhideTriggerGeom;
+#endif
 }
 
 void PanelView::hintOrUnhide(const QPoint &point)
 {
+#ifdef Q_WS_X11
     if (!shouldHintHide()) {
         unhide();
         return;
@@ -917,6 +922,7 @@ void PanelView::hintOrUnhide(const QPoint &point)
         //m_glowBar->updateStrength(point);
         //kDebug() << "keep glowing";
     }
+#endif
 }
 
 void PanelView::unhintHide()
