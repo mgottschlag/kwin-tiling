@@ -255,21 +255,42 @@ void QuicklaunchApplet::createConfigurationInterface(KConfigDialog *parent)
     connect(parent, SIGNAL(accepted()), SLOT(configAccepted()));
     uiConfig.rowCount->setValue(m_rowCount);
     uiConfig.dialogRowCount->setValue(m_dialogRowCount);
+    uiConfig.dialogRowCount->hide();
+    uiConfig.dialogrowLabel->hide();
     uiConfig.icons->setValue(m_visibleIcons);
     parent->addPage(widget, parent->windowTitle());
 }
 
 void QuicklaunchApplet::configAccepted()
 {
-    m_rowCount = uiConfig.rowCount->value();
-    m_visibleIcons = uiConfig.icons->value();
-    m_dialogRowCount = uiConfig.dialogRowCount->value();
+    bool changed = false;
+    int temp = uiConfig.rowCount->value();
+
     KConfigGroup cg = config();
-    cg.writeEntry("rowCount", m_rowCount);
-    cg.writeEntry("dialogRowCount", m_dialogRowCount);
-    cg.writeEntry("visibleIcons", m_visibleIcons);
-    emit configNeedsSaving();
-    refactorUi();
+    if (temp != m_rowCount) {
+        m_rowCount = temp;
+        cg.writeEntry("rowCount", m_rowCount);
+        changed = true;
+    }
+
+    temp = uiConfig.icons->value();
+    if (temp != m_visibleIcons) {
+        m_visibleIcons = temp;
+        cg.writeEntry("visibleIcons", m_visibleIcons);
+        changed = true;
+    }
+
+    temp = uiConfig.dialogRowCount->value();
+    if (temp != m_dialogRowCount) {
+        m_dialogRowCount = temp;
+        cg.writeEntry("dialogRowCount", m_dialogRowCount);
+        changed = true;
+    }
+
+    if (changed) {
+        emit configNeedsSaving();
+        refactorUi();
+    }
 }
 
 QList<QAction*> QuicklaunchApplet::contextActions(QuicklaunchIcon *icon)
