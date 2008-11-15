@@ -791,10 +791,11 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
 
 void Battery::paintBattery(QPainter *p, const QRect &contentsRect, const int batteryPercent, const bool plugState)
 {
-    QString fill_element = QString();
-    if (plugState && m_theme->hasElement("Battery")) {
+    if (m_theme->hasElement("Battery")) {
         m_theme->paint(p, scaleRectF(m_batteryAlpha, contentsRect), "Battery");
-
+    }
+    QString fill_element = QString();
+    if (plugState) {
         if (batteryPercent > 95) {
             fill_element = "Fill100";
         } else if (batteryPercent > 80) {
@@ -806,11 +807,13 @@ void Battery::paintBattery(QPainter *p, const QRect &contentsRect, const int bat
         } else if (batteryPercent > 10) {
             fill_element = "Fill20";
         } // Don't show a fillbar below 11% charged
+    } else {
+        fill_element = "Unavailable";
     }
     //kDebug() << "plugState:" << plugState;
 
     // Now let's find out which fillstate to show
-    if (plugState && !fill_element.isEmpty()) {
+    if (!fill_element.isEmpty()) {
         if (m_theme->hasElement(fill_element)) {
             m_theme->paint(p, scaleRectF(m_batteryAlpha, contentsRect), fill_element);
         } else {
@@ -847,8 +850,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         if (m_acadapter_plugged) {
             m_theme->paint(p, ac_contentsRect, "AcAdapter");
         }
-        // Show that there's no battery
-        paintLabel(p, contentsRect, "n/a");
+        paintBattery(p, contentsRect, 0, false);
         return;
     }
 
@@ -872,10 +874,8 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
                 if (battery_data.value()["Plugged in"].toBool()) {
                     batteryLabel = battery_data.value()["Percent"].toString();
                     batteryLabel.append("%");
-                } else {
-                    batteryLabel = "n/a";
+                    paintLabel(p, corect, batteryLabel);
                 }
-                paintLabel(p, corect, batteryLabel);
             }
             ++battery_num;
         }
@@ -904,10 +904,8 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
             if (has_battery) {
                 batteryLabel = QString::number(battery_charge);
                 batteryLabel.append("%");
-            } else {
-                batteryLabel = "n/a";
+                paintLabel(p, contentsRect, batteryLabel);
             }
-            paintLabel(p, contentsRect, batteryLabel);
         }
     }
 }
