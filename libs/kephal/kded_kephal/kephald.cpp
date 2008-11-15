@@ -25,6 +25,9 @@
 #include <QApplication>
 #include <QAbstractEventDispatcher>
 
+#include <KConfig>
+#include <KConfigGroup>
+
 #include "xrandr12/randrdisplay.h"
 #include "xrandr12/randrscreen.h"
 
@@ -38,6 +41,7 @@
 
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
+
 
 K_PLUGIN_FACTORY(KephalDFactory,
                  registerPlugin<KephalD>();
@@ -66,6 +70,10 @@ KephalD::~KephalD()
 }
 
 void KephalD::init() {
+    KConfig config("kephalrc");
+    KConfigGroup general(&config, "General");
+    m_noXRandR = general.readEntry("NoXRandR", false);
+    
     RandRDisplay * display;
     if (! m_noXRandR) {
         display = new RandRDisplay();

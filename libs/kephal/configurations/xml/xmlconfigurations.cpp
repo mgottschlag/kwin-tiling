@@ -1194,6 +1194,10 @@ namespace Kephal {
     }
     
     void XMLConfigurations::applyOutputSettings() {
+        if (! BackendOutputs::self()) {
+            return;
+        }
+        
         findOutputs();
         if (! m_currentOutputs) {
             return;
