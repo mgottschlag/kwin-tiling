@@ -263,10 +263,16 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
         devicetypes << I18N_NOOP("Storage Volume");
 
         QStringList usagetypes;
-        usagetypes << I18N_NOOP("File System") << I18N_NOOP("Partition Table") << I18N_NOOP("Raid") << I18N_NOOP("Other") << I18N_NOOP("Unused");
+        usagetypes << i18n("Other") << i18n("Unused") << i18n("File System")
+                   << i18n("Partition Table") << i18n("Raid") << i18n("Encrypted");
+
+        if (usagetypes.count() > storagevolume->usage()) {
+            setData(name, I18N_NOOP("Usage"), usagetypes.at((int)storagevolume->usage()));
+        } else {
+            setData(name, I18N_NOOP("Usage"), i18n("Unknown"));
+        }
 
         setData(name, I18N_NOOP("Ignored"), storagevolume->isIgnored());
-        setData(name, I18N_NOOP("Usage"), usagetypes.at((int)storagevolume->usage()));
         setData(name, I18N_NOOP("File System Type"), storagevolume->fsType());
         setData(name, I18N_NOOP("Label"), storagevolume->label());
         setData(name, I18N_NOOP("Uuid"), storagevolume->uuid());
