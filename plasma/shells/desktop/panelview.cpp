@@ -218,6 +218,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 
     connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
 
+
     // Graphics view setup
     setFrameStyle(QFrame::NoFrame);
     //setAutoFillBackground(true);
@@ -870,6 +871,19 @@ QTimeLine *PanelView::timeLine()
     return m_timeLine;
 }
 
+void PanelView::unhideHintMousePoll()
+{
+    const int triggerSize = 30;
+
+    QPoint mousePos = QCursor::pos();
+    m_glowBar->updateStrength(mousePos);
+
+    if (!m_unhideTriggerGeom.contains(mousePos)) {
+        unhintHide();
+        XMoveResizeWindow(QX11Info::display(), m_unhideTrigger, m_unhideTriggerGeom.x(), m_unhideTriggerGeom.y(), m_unhideTriggerGeom.width(), m_unhideTriggerGeom.height());
+    }
+}
+
 QRect PanelView::unhideHintGeometry() const
 {
     return m_unhideTriggerGeom;
@@ -889,12 +903,18 @@ void PanelView::hintOrUnhide(const QPoint &point)
             Plasma::Direction direction = Plasma::locationToDirection(location());
             m_glowBar = new GlowBar(direction, m_triggerZone);
             m_glowBar->show();
+            XMoveResizeWindow(QX11Info::display(), m_unhideTrigger, m_triggerZone.x(), m_triggerZone.y(), m_triggerZone.width(), m_triggerZone.height());
+            //This is ugly as hell but well, yeah
+            m_mousePollTimer = new QTimer();
+            connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(unhideHintMousePoll()));
+            m_mousePollTimer->start(200);
         }
     } else if (m_triggerZone.contains(point)) {
         //kDebug() << "unhide!" << point;
         unhide();
     } else {
-        m_glowBar->updateStrength(point);
+        //this if we could avoid the polling
+        //m_glowBar->updateStrength(point);
         //kDebug() << "keep glowing";
     }
 }
@@ -902,6 +922,7 @@ void PanelView::hintOrUnhide(const QPoint &point)
 void PanelView::unhintHide()
 {
     //kDebug() << "hide the glow";
+    delete m_mousePollTimer;
     delete m_glowBar;
     m_glowBar = 0;
 }
@@ -1062,7 +1083,7 @@ void PanelView::animateHide(qreal progress)
 
 bool PanelView::shouldHintHide() const
 {
-    return false;//PlasmaApp::hasComposite();
+    return PlasmaApp::hasComposite();
 }
 
 void PanelView::createUnhideTrigger()
@@ -1123,6 +1144,7 @@ void PanelView::createUnhideTrigger()
             return;
             break;
     }
+
 
     XSetWindowAttributes attributes;
     attributes.override_redirect = True;

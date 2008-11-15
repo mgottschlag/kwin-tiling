@@ -39,6 +39,7 @@
 
 class QWidget;
 class QTimeLine;
+class QTimer;
 
 class GlowBar;
 
@@ -195,6 +196,7 @@ private Q_SLOTS:
     void edittingComplete();
     void animateHide(qreal);
     void panelDeleted();
+    void unhideHintMousePoll();
 
     /**
      * Updates the panel's position according to the screen and containment
@@ -221,6 +223,7 @@ private:
 
     QSizeF m_lastMin;
     QSizeF m_lastMax;
+    QTimer *m_mousePollTimer;
     PanelMode m_panelMode;
     int m_lastSeenSize;
     bool m_lastHorizontal : 1;
