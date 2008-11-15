@@ -113,6 +113,11 @@ public:
     void hintOrUnhide(const QPoint &point);
 
     /**
+     * Returns the geometry of the current unhide hint window
+     */
+    QRect unhideHintGeometry() const;
+
+    /**
      * Hides any hide hinting
      */
     void unhintHide();
@@ -169,6 +174,7 @@ protected:
 private:
     void createUnhideTrigger();
     void destroyUnhideTrigger();
+    bool shouldHintHide() const;
     Qt::Alignment alignmentFilter(Qt::Alignment align) const;
     bool isHorizontal() const;
     QTimeLine *timeLine();
@@ -210,6 +216,7 @@ private:
 #ifdef Q_WS_X11
     Window m_unhideTrigger;
     QRect m_triggerZone;
+    QRect m_unhideTriggerGeom;
 #endif
 
     QSizeF m_lastMin;

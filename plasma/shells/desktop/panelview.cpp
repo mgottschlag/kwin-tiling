@@ -835,9 +835,14 @@ QTimeLine *PanelView::timeLine()
     return m_timeLine;
 }
 
+QRect PanelView::unhideHintGeometry() const
+{
+    return m_unhideTriggerGeom;
+}
+
 void PanelView::hintOrUnhide(const QPoint &point)
 {
-    if (!PlasmaApp::hasComposite()) {
+    if (!shouldHintHide()) {
         unhide();
         return;
     }
@@ -1019,6 +1024,11 @@ void PanelView::animateHide(qreal progress)
     }*/
 }
 
+bool PanelView::shouldHintHide() const
+{
+    return false; // PlasmaApp::hasComposite();
+}
+
 void PanelView::createUnhideTrigger()
 {
 #ifdef Q_WS_X11
@@ -1026,7 +1036,7 @@ void PanelView::createUnhideTrigger()
         return;
     }
 
-    bool fancy = PlasmaApp::hasComposite();
+    bool fancy = shouldHintHide();
     int actualWidth = 1;
     int actualHeight = 1;
     int triggerWidth = fancy ? 30 : 1;
@@ -1083,7 +1093,14 @@ void PanelView::createUnhideTrigger()
     attributes.event_mask = EnterWindowMask;
 
     if (fancy) {
-        attributes.event_mask |= LeaveWindowMask | PointerMotionMask;
+        attributes.event_mask = EnterWindowMask | LeaveWindowMask | PointerMotionMask |
+                                KeyPressMask | KeyPressMask | ButtonPressMask |
+                                ButtonReleaseMask | ButtonMotionMask |
+                                KeymapStateMask | VisibilityChangeMask |
+                                StructureNotifyMask | ResizeRedirectMask |
+                                SubstructureNotifyMask |
+                                SubstructureRedirectMask | FocusChangeMask |
+                                PropertyChangeMask | ColormapChangeMask | OwnerGrabButtonMask;
     }
 
     unsigned long valuemask = CWOverrideRedirect | CWEventMask;
@@ -1092,6 +1109,7 @@ void PanelView::createUnhideTrigger()
                                     0, CopyFromParent, InputOnly, CopyFromParent,
                                     valuemask, &attributes);
     XMapWindow(QX11Info::display(), m_unhideTrigger);
+    m_unhideTriggerGeom = QRect(triggerPoint, QSize(triggerWidth, triggerHeight));
     m_triggerZone = QRect(actualTriggerPoint, QSize(actualWidth, actualHeight));
 //    KWindowSystem::setState(m_unhideTrigger, NET::StaysOnTop);
 
@@ -1109,6 +1127,7 @@ void PanelView::destroyUnhideTrigger()
 
     XDestroyWindow(QX11Info::display(), m_unhideTrigger);
     m_unhideTrigger = None;
+    m_triggerZone = m_unhideTriggerGeom = QRect();
 #endif
 
     //kDebug();

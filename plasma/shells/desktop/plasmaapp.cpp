@@ -337,24 +337,21 @@ PanelView *PlasmaApp::findPanelForTrigger(WId trigger) const
 
 bool PlasmaApp::x11EventFilter(XEvent *event)
 {
-    if (m_panelHidden) {
-        if (event->type == EnterNotify) {
-            PanelView *panel = findPanelForTrigger(event->xcrossing.window);
-            if (panel) {
+    if (m_panelHidden && event->xany.send_event != True) {
+        PanelView *panel = findPanelForTrigger(event->xcrossing.window);
+        if (panel) {
+            if (event->type == EnterNotify) {
                 panel->hintOrUnhide(QPoint());
-            }
-        } else if (event->type == LeaveNotify) {
-            PanelView *panel = findPanelForTrigger(event->xcrossing.window);
-            if (panel) {
+            } else if (event->type == LeaveNotify) {
+                PanelView *panel = findPanelForTrigger(event->xcrossing.window);
                 panel->unhintHide();
-            }
-        } else if (event->type == MotionNotify) {
-            PanelView *panel = findPanelForTrigger(event->xcrossing.window);
-            if (panel) {
+            } else if (event->type == MotionNotify) {
                 XMotionEvent *motion = (XMotionEvent*)event;
                 //kDebug() << "motion" << motion->x << motion->y << panel->location();
                 panel->hintOrUnhide(QPoint(motion->x_root, motion->y_root));
             }
+
+            return true;
         }
     }
 
@@ -417,13 +414,12 @@ void PlasmaApp::screenRemoved(int id)
 void PlasmaApp::screenResized(Kephal::Screen *s, QSize oldSize, QSize newSize)
 {
     // TODO: that check should not be necessary, fix kephal
-    if (oldSize == newSize) 
+    if (oldSize == newSize) {
         return;
-    
+    }
+
     DesktopView *view = viewForScreen(s->id());
-
     kDebug() << "adjust size for screen" << s->id() << oldSize << newSize << view;
-
     view->adjustSize();
 
     //TODO: should we remove panels when the screen
@@ -435,22 +431,22 @@ void PlasmaApp::screenResized(Kephal::Screen *s, QSize oldSize, QSize newSize)
             panel->pinchContainment(s->geom());
         }
     }
-    
+
     kDebug() << "Done.";
 }
 
 void PlasmaApp::screenMoved(Kephal::Screen *s, QPoint oldPosition, QPoint newPosition)
 {
     // TODO: that check should not be necessary, fix kephal
-    if (oldPosition == newPosition) 
+    if (oldPosition == newPosition)  {
         return;
-    
+    }
+
     DesktopView *view = viewForScreen(s->id());
     kDebug() << "adjust size for screen" << s->id() << oldPosition << newPosition << view;
     view->adjustSize();
     kDebug() << "Done.";
 }
-
 
 
 DesktopView* PlasmaApp::viewForScreen(int screen) const
@@ -538,6 +534,7 @@ void PlasmaApp::appletBrowserDestroyed()
 
 bool PlasmaApp::hasComposite()
 {
+//    return true;
 #ifdef Q_WS_X11
     return colormap && KWindowSystem::compositingActive();
 #else
