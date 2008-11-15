@@ -44,7 +44,7 @@
 class GlowBar : public QWidget
 {
 public:
-    GlowBar(Plasma::Direction direction)
+    GlowBar(Plasma::Direction direction, const QRect &triggerZone)
         : QWidget(0),
           m_svg(new Plasma::Svg(this)),
           m_direction(direction)
@@ -54,6 +54,25 @@ public:
         KWindowSystem::setState(winId(), state);
         KWindowSystem::setType(winId(), NET::Dock);
         m_svg->setImagePath("widgets/glowbar");
+
+        QRect glowGeom = triggerZone;
+        QSize s = sizeHint();
+        switch (m_direction) {
+            case Plasma::Up:
+                glowGeom.setY(glowGeom.y() - s.height());
+                // fallthrough
+            case Plasma::Down:
+                glowGeom.setHeight(s.height());
+                break;
+            case Plasma::Right:
+                glowGeom.setX(glowGeom.x() - s.width());
+                // fallthrough
+            case Plasma::Left:
+                glowGeom.setWidth(s.width());
+                break;
+        }
+
+        setGeometry(glowGeom);
     }
 
     void paintEvent(QPaintEvent* e)
@@ -821,14 +840,8 @@ void PanelView::hintOrUnhide(const QPoint &point)
     if (point == QPoint()) {
         //kDebug() << "enter, we should start glowing!";
         if (!m_glowBar) {
-            m_glowBar = new GlowBar(Plasma::locationToDirection(location()));
-            QRect glowGeom = m_triggerZone;
-            if (m_triggerZone.height() == 1) {
-                glowGeom.setHeight(m_glowBar->sizeHint().height());
-            } else {
-                glowGeom.setWidth(m_glowBar->sizeHint().width());
-            }
-            m_glowBar->setGeometry(glowGeom);
+            Plasma::Direction direction = Plasma::locationToDirection(location());
+            m_glowBar = new GlowBar(direction, m_triggerZone);
             m_glowBar->show();
         }
     } else if (m_triggerZone.contains(point)) {
