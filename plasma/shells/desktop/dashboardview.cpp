@@ -22,7 +22,6 @@
 #include "dashboardview.h"
 
 #include <QAction>
-#include <QDesktopWidget>
 #include <QKeyEvent>
 #include <QTimer>
 
@@ -33,6 +32,8 @@
 #include <Plasma/Containment>
 #include <Plasma/Svg>
 #include "plasmaapp.h"
+
+#include <kephal/screens.h>
 
 #include "appletbrowser.h"
 
@@ -52,8 +53,7 @@ DashboardView::DashboardView(Plasma::Containment *containment, QWidget *parent)
         setAttribute(Qt::WA_NoSystemBackground);
     }
 
-    QDesktopWidget *desktop = QApplication::desktop();
-    setGeometry(desktop->screenGeometry(containment->screen()));
+    setGeometry(Kephal::ScreenUtils::screenGeometry(containment->screen()));
 
     setWallpaperEnabled(!PlasmaApp::hasComposite());
 

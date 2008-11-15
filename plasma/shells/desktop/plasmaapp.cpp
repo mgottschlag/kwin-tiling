@@ -65,6 +65,8 @@
 #include "desktopview.h"
 #include "panelview.h"
 
+#include <kephal/screens.h>
+
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrender.h>
@@ -151,10 +153,9 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     // Calculate the size required to hold background pixmaps for all screens.
     // Add 10% so that other (smaller) pixmaps can also be cached.
     int cacheSize = 0;
-    QDesktopWidget *desktop = QApplication::desktop();
-    for (int i = 0; i < desktop->numScreens(); i++) {
-        QRect geometry = desktop->screenGeometry(i);
-        cacheSize += 4 * geometry.width() * geometry.height() / 1024;
+    for (int i = 0; i < Kephal::ScreenUtils::numScreens(); i++) {
+        QSize size = Kephal::ScreenUtils::screenSize(i);
+        cacheSize += 4 * size.width() * size.height() / 1024;
     }
     cacheSize += cacheSize / 10;
 
@@ -255,8 +256,7 @@ void PlasmaApp::cleanup()
         }
     }
 
-    int numScreens = QApplication::desktop()->numScreens();
-    for (int i = 0; i < numScreens; ++i) {
+    for (int i = 0; i < Kephal::ScreenUtils::numScreens(); i++) {
         DesktopView *v = viewForScreen(i);
         if (v && v->containment()) {
             viewIds.writeEntry(QString::number(v->containment()->id()), v->id());
@@ -290,8 +290,8 @@ void PlasmaApp::syncConfig()
 void PlasmaApp::toggleDashboard()
 {
     int currentScreen = 0;
-    if (QApplication::desktop()->numScreens() > 1) {
-        currentScreen = QApplication::desktop()->screenNumber(QCursor::pos());
+    if (Kephal::ScreenUtils::numScreens() > 1) {
+        currentScreen = Kephal::ScreenUtils::screenId(QCursor::pos());
     }
 
     DesktopView *view = viewForScreen(currentScreen);
@@ -369,10 +369,17 @@ void PlasmaApp::setIsDesktop(bool isDesktop)
         view->setIsDesktop(isDesktop);
     }
 
+    Kephal::Screens *screens = Kephal::Screens::self();
     if (isDesktop) {
-        connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(adjustSize(int)));
+        connect(screens, SIGNAL(screenAdded(Kephal::Screen *)), SLOT(screenAdded(Kephal::Screen *)));
+        connect(screens, SIGNAL(screenRemoved(int)), SLOT(screenRemoved(int)));
+        connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)), SLOT(screenResized(Kephal::Screen *, QSize, QSize)));
+        connect(screens, SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)), SLOT(screenMoved(Kephal::Screen *, QPoint, QPoint)));
     } else {
-        disconnect(QApplication::desktop(), SIGNAL(resized(int)), this, SLOT(adjustSize(int)));
+        disconnect(screens, SIGNAL(screenAdded(Kephal::Screen *)), this, SLOT(screenAdded(Kephal::Screen *)));
+        disconnect(screens, SIGNAL(screenRemoved(int)), this, SLOT(screenRemoved(int)));
+        disconnect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)), this, SLOT(screenResized(Kephal::Screen *, QSize, QSize)));
+        disconnect(screens, SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)), this, SLOT(screenMoved(Kephal::Screen *, QPoint, QPoint)));
     }
 }
 
@@ -383,47 +390,68 @@ bool PlasmaApp::isDesktop() const
 
 void PlasmaApp::adjustSize(int screen)
 {
-    QDesktopWidget *desktop = QApplication::desktop();
-    bool screenExists = screen < desktop->numScreens();
+}
 
-    QRect screenGeom;
-    if (screenExists) {
-        screenGeom = desktop->screenGeometry(screen);
-    }
+void PlasmaApp::screenAdded(Kephal::Screen *s)
+{
+    kDebug() << s->id();
+    corona(); // Ensure the corona is created.
+    m_corona->checkScreens(); // Then use the field as we need DesktopCorona-specific stuff
+    createView(m_corona->containmentForScreen(s->id()));
+}
 
-    DesktopView *view = viewForScreen(screen);
-
-    kDebug() << "adjust size for screen" << screen << screenGeom << view;
-
+void PlasmaApp::screenRemoved(int id)
+{
+    kDebug() << id;
+    DesktopView *view = viewForScreen(id);
     if (view) {
-        if (screenExists) {
-            kDebug() << "here we go ... adjusting size";
-            view->adjustSize();
-        } else {
-            // the screen was removed, so we'll destroy the
-            // corresponding view
-            kDebug() << "removing the view for screen" << screen;
-            view->setContainment(0);
-            m_desktops.removeAll(view);
-            delete view;
-        }
-    } else if (screenExists) {
-        //TODO: we have a screen that has changed, but no view.
-        //      perhaps we should make one.
+        // the screen was removed, so we'll destroy the
+        // corresponding view
+        kDebug() << "removing the view for screen" << id;
+        view->setContainment(0);
+        m_desktops.removeAll(view);
+        delete view;
     }
+}
+
+void PlasmaApp::screenResized(Kephal::Screen *s, QSize oldSize, QSize newSize)
+{
+    // TODO: that check should not be necessary, fix kephal
+    if (oldSize == newSize) 
+        return;
+    
+    DesktopView *view = viewForScreen(s->id());
+
+    kDebug() << "adjust size for screen" << s->id() << oldSize << newSize << view;
+
+    view->adjustSize();
 
     //TODO: should we remove panels when the screen
     //      disappears? this would mean having some
     //      way of alerting that we have a new screen
     //      that appears
-    if (screenExists) {
-        foreach (PanelView *panel, m_panels) {
-            if (panel->screen() == screen) {
-                panel->pinchContainment(screenGeom);
-            }
+    foreach (PanelView *panel, m_panels) {
+        if (panel->screen() == s->id()) {
+            panel->pinchContainment(s->geom());
         }
     }
+    
+    kDebug() << "Done.";
 }
+
+void PlasmaApp::screenMoved(Kephal::Screen *s, QPoint oldPosition, QPoint newPosition)
+{
+    // TODO: that check should not be necessary, fix kephal
+    if (oldPosition == newPosition) 
+        return;
+    
+    DesktopView *view = viewForScreen(s->id());
+    kDebug() << "adjust size for screen" << s->id() << oldPosition << newPosition << view;
+    view->adjustSize();
+    kDebug() << "Done.";
+}
+
+
 
 DesktopView* PlasmaApp::viewForScreen(int screen) const
 {
@@ -555,14 +583,14 @@ void PlasmaApp::createView(Plasma::Containment *containment)
         }
         default:
             if (containment->screen() > -1 &&
-                containment->screen() < QApplication::desktop()->numScreens()) {
+                containment->screen() < Kephal::ScreenUtils::numScreens()) {
                 if (viewForScreen(containment->screen())) {
                     // we already have a view for this screen
                     return;
                 }
 
                 kDebug() << "creating a view for" << containment->screen() << "and we have"
-                    << QApplication::desktop()->numScreens() << "screens";
+                    << Kephal::ScreenUtils::numScreens() << "screens";
 
                 // we have a new screen. neat.
                 DesktopView *view = new DesktopView(containment, id, 0);
@@ -574,7 +602,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
 
                 connect(view, SIGNAL(zoom(Plasma::Containment*,Plasma::ZoomDirection)),
                         this, SLOT(zoom(Plasma::Containment*,Plasma::ZoomDirection)));
-                view->setGeometry(QApplication::desktop()->screenGeometry(containment->screen()));
+                view->setGeometry(Kephal::ScreenUtils::screenGeometry(containment->screen()));
                 m_desktops.append(view);
                 view->setIsDesktop(m_isDesktop);
                 view->show();

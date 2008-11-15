@@ -22,6 +22,8 @@
 
 #include <QHash>
 #include <QList>
+#include <QSize>
+#include <QPoint>
 
 #include <KUniqueApplication>
 
@@ -34,10 +36,15 @@ namespace Plasma
     class Corona;
 } // namespace Plasma
 
+namespace Kephal {
+    class Screen;
+} // namespace Kephal
+
 class DesktopView;
 class BackgroundDialog;
 class RootWidget;
 class PanelView;
+class DesktopCorona;
 
 class PlasmaApp : public KUniqueApplication
 {
@@ -116,12 +123,18 @@ private Q_SLOTS:
     void panelRemoved(QObject* panel);
     void configDialogRemoved(QObject* configDialogRemoved);
     void adjustSize(int screen);
+    
+    void screenAdded(Kephal::Screen *s);
+    void screenRemoved(int id);
+    void screenResized(Kephal::Screen *s, QSize oldSize, QSize newSize);
+    void screenMoved(Kephal::Screen *s, QPoint oldPosition, QPoint newPosition);
+            
     void showAppletBrowser();
     void addContainment(Plasma::Containment *fromContainment = 0);
     void configureContainment(Plasma::Containment*);
 
 private:
-    Plasma::Corona *m_corona;
+    DesktopCorona *m_corona;
     QList<PanelView*> m_panels;
     Plasma::AppletBrowser *m_appletBrowser;
     QList<DesktopView*> m_desktops;

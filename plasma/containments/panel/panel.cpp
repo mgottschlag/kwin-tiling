@@ -46,6 +46,8 @@
 #include <Plasma/View>
 #include <Plasma/PaintUtils>
 
+#include <kephal/screens.h>
+
 using namespace Plasma;
 
 class Spacer : public QGraphicsWidget
@@ -88,7 +90,7 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
       m_configureAction(0),
       m_addPanelAction(0),
-      m_currentSize(QSize(QApplication::desktop()->screenGeometry(screen()).width(), 35)),
+      m_currentSize(QSize(Kephal::ScreenUtils::screenSize(screen()).width(), 35)),
       m_lastViewGeom(),
       m_spacerIndex(-1),
       m_spacer(0)
@@ -275,7 +277,7 @@ void Panel::updateBorders(const QRect &geom)
     if (s < 0) {
         // do nothing in this case, we want all the borders
     } else if (loc == BottomEdge || loc == TopEdge) {
-        QRect r = QApplication::desktop()->screenGeometry(s);
+        QRect r = Kephal::ScreenUtils::screenGeometry(s);
 
         if (loc == BottomEdge) {
             enabledBorders ^= FrameSvg::BottomBorder;
@@ -296,7 +298,7 @@ void Panel::updateBorders(const QRect &geom)
 
         //kDebug() << "top/bottom: Width:" << width << ", height:" << height;
     } else if (loc == LeftEdge || loc == RightEdge) {
-        QRect r = QApplication::desktop()->screenGeometry(s);
+        QRect r = Kephal::ScreenUtils::screenGeometry(s);
 
         if (loc == RightEdge) {
             enabledBorders ^= FrameSvg::RightBorder;
@@ -400,7 +402,7 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
     //we need to know if the width or height is 100%
     if (constraints & Plasma::LocationConstraint || constraints & Plasma::SizeConstraint) {
         m_currentSize = geometry().size().toSize();
-        QRectF screenRect = screen() >= 0 ? QApplication::desktop()->screenGeometry(screen()) :
+        QRectF screenRect = screen() >= 0 ? Kephal::ScreenUtils::screenGeometry(screen()) :
             geometry();
 
         if ((formFactor() == Horizontal && m_currentSize.width() >= screenRect.width()) ||

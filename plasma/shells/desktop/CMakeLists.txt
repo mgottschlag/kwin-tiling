@@ -62,6 +62,8 @@ endif(X11_Xrender_FOUND)
 set_target_properties(kdeinit_plasma_qgv PROPERTIES OUTPUT_NAME kdeinit4_plasma)
 set_target_properties(plasma_qgv PROPERTIES OUTPUT_NAME plasma)
 
+target_link_libraries(kdeinit_plasma_qgv kephal)
+
 install(TARGETS kdeinit_plasma_qgv DESTINATION ${LIB_INSTALL_DIR})
 install(TARGETS plasma_qgv ${INSTALL_TARGETS_DEFAULT_ARGS})
 install(FILES plasma.desktop DESTINATION ${AUTOSTART_INSTALL_DIR})

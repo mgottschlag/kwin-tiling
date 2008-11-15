@@ -46,6 +46,8 @@
 #include "positioningruler.h"
 #include "toolbutton.h"
 
+#include <kephal/screens.h>
+
 class PanelController::ButtonGroup: public QFrame
 {
 public:
@@ -240,7 +242,7 @@ public:
                 }
             }
 
-            QRect screenRect = QApplication::desktop()->screenGeometry(containment->screen());
+            QRect screenRect = Kephal::ScreenUtils::screenGeometry(containment->screen());
 
             if (pos.rx() + s.width() > screenRect.right()) {
                 pos.rx() -= ((pos.rx() + s.width()) - screenRect.right());
@@ -259,7 +261,7 @@ public:
     void syncRuler()
     {
         QRect screenGeom =
-              QApplication::desktop()->screenGeometry(containment->screen());
+              Kephal::ScreenUtils::screenGeometry(containment->screen());
 
         switch (location) {
         case Plasma::LeftEdge:
@@ -534,7 +536,7 @@ void PanelController::setContainment(Plasma::Containment *containment)
 QSize PanelController::sizeHint() const
 {
     QRect screenGeom =
-    QApplication::desktop()->screenGeometry(d->containment->screen());
+        Kephal::ScreenUtils::screenGeometry(d->containment->screen());
 
     switch (d->location) {
     case Plasma::LeftEdge:
@@ -552,7 +554,7 @@ QSize PanelController::sizeHint() const
 QPoint PanelController::positionForPanelGeometry(const QRect &panelGeom) const
 {
     QRect screenGeom =
-    QApplication::desktop()->screenGeometry(d->containment->screen());
+        Kephal::ScreenUtils::screenGeometry(d->containment->screen());
 
     switch (d->location) {
     case Plasma::LeftEdge:
@@ -580,7 +582,7 @@ void PanelController::setLocation(const Plasma::Location &loc)
     d->location = loc;
     d->ruler->setLocation(loc);
     QRect screenGeom =
-    QApplication::desktop()->screenGeometry(d->containment->screen());
+        Kephal::ScreenUtils::screenGeometry(d->containment->screen());
 
     switch (loc) {
     case Plasma::LeftEdge:
@@ -787,7 +789,7 @@ bool PanelController::eventFilter(QObject *watched, QEvent *event)
         } else if (event->type() == QEvent::MouseButtonRelease) {
             //FIXME: for now resizes here instead of on mouse move, for a serious performance problem, maybe in Qt
             QRect screenGeom =
-            QApplication::desktop()->screenGeometry(d->containment->screen());
+                Kephal::ScreenUtils::screenGeometry(d->containment->screen());
             if (d->dragging == Private::ResizeButtonElement) {
                 switch (location()) {
                 case Plasma::LeftEdge:
@@ -825,8 +827,7 @@ void PanelController::mouseMoveEvent(QMouseEvent *event)
         return;
     }
 
-    QDesktopWidget *desktop = QApplication::desktop();
-    QRect screenGeom = desktop->screenGeometry(d->containment->screen());
+    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(d->containment->screen());
 
     if (d->dragging == Private::MoveButtonElement) {
         //only move when the mouse cursor is out of the controller to avoid an endless reposition cycle
@@ -836,7 +837,7 @@ void PanelController::mouseMoveEvent(QMouseEvent *event)
 
         if (!screenGeom.contains(event->globalPos())) {
             //move panel to new screen if dragged there
-            int targetScreen = desktop->screenNumber(event->globalPos());
+            int targetScreen = Kephal::ScreenUtils::screenId(event->globalPos());
             //kDebug() << "Moving panel from screen" << d->containment->screen() << "to screen" << targetScreen;
             d->containment->setScreen(targetScreen);
             return;

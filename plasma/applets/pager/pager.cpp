@@ -26,7 +26,6 @@
 #include <QStyleOptionGraphicsItem>
 #include <QFont>
 #include <QGraphicsSceneHoverEvent>
-#include <QDesktopWidget>
 #include <QTimer>
 #include <QX11Info>
 
@@ -46,6 +45,8 @@
 #include <Plasma/Theme>
 #include <Plasma/ToolTipManager>
 #include <Plasma/Animator>
+
+#include <kephal/screens.h>
 
 const int FAST_UPDATE_DELAY = 200;
 const int UPDATE_DELAY = 500;
@@ -112,7 +113,10 @@ void Pager::init()
     connect(KWindowSystem::self(), SIGNAL(stackingOrderChanged()), this, SLOT(stackingOrderChanged()));
     connect(KWindowSystem::self(), SIGNAL(windowChanged(WId,unsigned int)), this, SLOT(windowChanged(WId,unsigned int)));
     connect(KWindowSystem::self(), SIGNAL(showingDesktopChanged(bool)), this, SLOT(showingDesktopChanged(bool)));
-    connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(desktopsSizeChanged()));
+    connect(Kephal::Screens::self(), SIGNAL(screenAdded(Kephal::Screen *)), SLOT(desktopsSizeChanged()));
+    connect(Kephal::Screens::self(), SIGNAL(screenRemoved(int)), SLOT(desktopsSizeChanged()));
+    connect(Kephal::Screens::self(), SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)), SLOT(desktopsSizeChanged()));
+    connect(Kephal::Screens::self(), SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)), SLOT(desktopsSizeChanged()));
 
     m_desktopLayoutOwner = new KSelectionOwner( QString( "_NET_DESKTOP_LAYOUT_S%1" )
         .arg( QX11Info::appScreen()).toLatin1().constData(), QX11Info::appScreen(), this );
@@ -266,7 +270,7 @@ void Pager::recalculateGeometry()
         m_background->setElementPrefix(QString());
         m_background->getMargins(leftMargin, topMargin, rightMargin, bottomMargin);
 
-        qreal ratio = (qreal)QApplication::desktop()->width() / (qreal)QApplication::desktop()->height();
+        qreal ratio = (qreal)Kephal::ScreenUtils::desktopGeometry().width() / (qreal)Kephal::ScreenUtils::desktopGeometry().height();
 
         //if the final size is going to be really tiny avoid to add extra margins
         if (geometry().width() - leftMargin - rightMargin < KIconLoader::SizeSmall*ratio * columns + padding*(columns-1) ||
@@ -285,13 +289,13 @@ void Pager::recalculateGeometry()
 
     if (formFactor() == Plasma::Vertical) {
         itemWidth = (geometry().width() - leftMargin - rightMargin - padding * (columns - 1)) / columns;
-        m_widthScaleFactor = itemWidth / QApplication::desktop()->width();
-        itemHeight = QApplication::desktop()->height() * m_widthScaleFactor;
+        m_widthScaleFactor = itemWidth / Kephal::ScreenUtils::desktopGeometry().width();
+        itemHeight = Kephal::ScreenUtils::desktopGeometry().height() * m_widthScaleFactor;
         m_heightScaleFactor = m_widthScaleFactor;
     } else {
         itemHeight = (geometry().height() - topMargin -  bottomMargin - padding * (rows - 1)) / rows;
-        m_heightScaleFactor = itemHeight / QApplication::desktop()->height();
-        itemWidth = QApplication::desktop()->width() * m_heightScaleFactor;
+        m_heightScaleFactor = itemHeight / Kephal::ScreenUtils::desktopGeometry().height();
+        itemWidth = Kephal::ScreenUtils::desktopGeometry().width() * m_heightScaleFactor;
         if (m_displayedText == Name) {
             // When containment is in this position we are not limited by low width and we can
             // afford increasing width of applet to be able to display every name of desktops
@@ -303,7 +307,7 @@ void Pager::recalculateGeometry()
                 }
             }
         }
-        m_widthScaleFactor = itemWidth / QApplication::desktop()->width();
+        m_widthScaleFactor = itemWidth / Kephal::ScreenUtils::desktopGeometry().width();
     }
 
     m_rects.clear();
@@ -1059,12 +1063,13 @@ void Pager::lostDesktopLayoutOwner()
 // so the offscreen coordinates need to be fixed
 QRect Pager::fixViewportPosition( const QRect& r )
 {
-    int x = r.center().x() % qApp->desktop()->width();
-    int y = r.center().y() % qApp->desktop()->height();
+    QRect desktopGeom = Kephal::ScreenUtils::desktopGeometry();
+    int x = r.center().x() % desktopGeom.width();
+    int y = r.center().y() % desktopGeom.height();
     if( x < 0 )
-        x = x + qApp->desktop()->width();
+        x = x + desktopGeom.width();
     if( y < 0 )
-        y = y + qApp->desktop()->height();
+        y = y + desktopGeom.height();
     return QRect( x - r.width() / 2, y - r.height() / 2, r.width(), r.height());
 }
 

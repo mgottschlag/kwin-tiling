@@ -20,7 +20,6 @@
 #include "desktopview.h"
 
 #include <QAction>
-#include <QDesktopWidget>
 #include <QFile>
 #include <QWheelEvent>
 #include <QCoreApplication>
@@ -40,6 +39,8 @@
 
 #include "dashboardview.h"
 #include "plasmaapp.h"
+
+#include <kephal/screens.h>
 
 #ifdef Q_WS_WIN
 #include "windows.h"
@@ -120,14 +121,17 @@ void DesktopView::toggleDashboard()
 void DesktopView::adjustSize()
 {
     // adapt to screen resolution changes
-    QDesktopWidget *desktop = QApplication::desktop();
-    QRect geom = desktop->screenGeometry(screen());
+    QRect geom = Kephal::ScreenUtils::screenGeometry(screen());
+    kDebug() << "screen" << screen() << "geom" << geom;
     setGeometry(geom);
     containment()->resize(geom.size());
+    kDebug() << "Containment's geom after resize" << containment()->geometry(); 
 
     if (m_dashboard) {
         m_dashboard->setGeometry(geom);
     }
+    
+    kDebug() << "Done" << screen();
 }
 
 void DesktopView::setIsDesktop(bool isDesktop)

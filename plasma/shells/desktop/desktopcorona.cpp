@@ -20,7 +20,6 @@
 #include "desktopcorona.h"
 
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QDir>
 #include <QGraphicsLayout>
 
@@ -33,6 +32,8 @@
 #include <Plasma/Containment>
 #include <Plasma/DataEngineManager>
 
+#include <kephal/screens.h>
+
 DesktopCorona::DesktopCorona(QObject *parent)
     : Plasma::Corona(parent)
 {
@@ -41,9 +42,10 @@ DesktopCorona::DesktopCorona(QObject *parent)
 
 void DesktopCorona::init()
 {
-    QDesktopWidget *desktop = QApplication::desktop();
-    m_numScreens = desktop->numScreens();
-    connect(desktop, SIGNAL(resized(int)), this, SLOT(screenResized(int)));
+    Kephal::Screens *screens = Kephal::Screens::self();
+    connect(screens, SIGNAL(screenAdded(Kephal::Screen *)), SLOT(screenAdded(Kephal::Screen *)));
+    connect(screens, SIGNAL(screenRemoved(int)), SLOT(screenRemoved(int)));
+    connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)), SLOT(screenResized(Kephal::Screen *, QSize, QSize)));
     connect(KWindowSystem::self(), SIGNAL(workAreaChanged()),
             this, SIGNAL(availableScreenRegionChanged()));
 }
@@ -51,8 +53,7 @@ void DesktopCorona::init()
 void DesktopCorona::checkScreens()
 {
     // quick sanity check to ensure we have containments for each screen!
-    int numScreens = QApplication::desktop()->numScreens();
-    for (int i = 0; i < numScreens; ++i) {
+    for (int i = 0; i < Kephal::ScreenUtils::numScreens(); ++i) {
         if (!containmentForScreen(i)) {
             //TODO: should we look for containments that aren't asigned but already exist?
             Plasma::Containment* c = addContainment("desktop");
@@ -60,7 +61,7 @@ void DesktopCorona::checkScreens()
             c->setFormFactor(Plasma::Planar);
             c->flushPendingConstraintsEvents();
             c->setActivity(i18n("Desktop"));
-        } else if (i >= m_numScreens) {
+        } else if (i >= Kephal::ScreenUtils::numScreens()) {
             // now ensure that if our screen count changed we actually get views
             // for them, even if the Containment already existed for that screen
             // so we "lie" and emit a containmentAdded signal for every new screen
@@ -72,24 +73,22 @@ void DesktopCorona::checkScreens()
             emit containmentAdded(containmentForScreen(i));
         }
     }
-
-    m_numScreens = numScreens;
 }
 
 int DesktopCorona::numScreens() const
 {
-    return QApplication::desktop()->numScreens();
+    return Kephal::ScreenUtils::numScreens();
 }
 
 QRect DesktopCorona::screenGeometry(int id) const
 {
-    return QApplication::desktop()->screenGeometry(id);
+    return Kephal::ScreenUtils::screenGeometry(id);
 }
 
 QRegion DesktopCorona::availableScreenRegion(int id) const
 {
     // TODO: more precise implementation needed
-    return QRegion(QApplication::desktop()->availableGeometry(id));
+    return QRegion(screenGeometry(id));
 }
 
 void DesktopCorona::loadDefaultLayout()
@@ -101,15 +100,13 @@ void DesktopCorona::loadDefaultLayout()
         return;
     }
 
-    QDesktopWidget *desktop = QApplication::desktop();
-    int numScreens = desktop->numScreens();
-    kDebug() << "number of screens is" << numScreens;
+    kDebug() << "number of screens is" << Kephal::ScreenUtils::numScreens();
     int topLeftScreen = 0;
-    QPoint topLeftCorner = desktop->screenGeometry(0).topLeft();
+    QPoint topLeftCorner = Kephal::ScreenUtils::screenGeometry(0).topLeft();
 
     // find our "top left" screen, use it as the primary
-    for (int i = 0; i < numScreens; ++i) {
-        QRect g = desktop->screenGeometry(i);
+    for (int i = 0; i < Kephal::ScreenUtils::numScreens(); ++i) {
+        QRect g = Kephal::ScreenUtils::screenGeometry(i);
         kDebug() << "     screen " << i << "geometry is" << g;
 
         if (g.x() <= topLeftCorner.x() && g.y() >= topLeftCorner.y()) {
@@ -122,7 +119,7 @@ void DesktopCorona::loadDefaultLayout()
     KConfigGroup invalidConfig;
 
     // create a containment for each screen
-    for (int i = 0; i < numScreens; ++i) {
+    for (int i = 0; i < Kephal::ScreenUtils::numScreens(); ++i) {
         // passing in an empty string will get us whatever the default
         // containment type is!
         Plasma::Containment* c = addContainmentDelayed(QString());
@@ -224,22 +221,38 @@ Plasma::Applet *DesktopCorona::loadDefaultApplet(const QString &pluginName, Plas
     return applet;
 }
 
-void DesktopCorona::screenResized(int screen)
+void DesktopCorona::screenResized(Kephal::Screen *s, QSize oldSize, QSize newSize)
 {
-    int numScreens = QApplication::desktop()->numScreens();
-    if (screen < numScreens) {
-        foreach (Plasma::Containment *c, containments()) {
-            if (c->screen() == screen) {
-                // trigger a relayout
-                c->setScreen(screen);
-            }
+    // TODO: that check should not be necessary, fix kephal
+    if (oldSize == newSize) 
+        return;
+    
+    kDebug();
+    foreach (Plasma::Containment *c, containments()) {
+        if (c->screen() == s->id()) {
+            // trigger a relayout
+            c->setScreen(s->id());
         }
-
-        checkScreens(); // ensure we have containments for every screen
-    } else {
-        m_numScreens = numScreens;
     }
+
+    checkScreens(); // ensure we have containments for every screen
+    kDebug() << "Done";
 }
+
+void DesktopCorona::screenAdded(Kephal::Screen *s)
+{
+    kDebug();
+    checkScreens(); // ensure we have containments for every screen
+    kDebug() << "Done";
+}
+
+void DesktopCorona::screenRemoved(int id)
+{
+    kDebug();
+    checkScreens(); // ensure we have containments for every screen
+    kDebug() << "Done";
+}
+
 
 #include "desktopcorona.moc"
 

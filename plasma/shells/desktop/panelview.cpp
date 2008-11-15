@@ -41,6 +41,8 @@
 #include "panelcontroller.h"
 #include "plasmaapp.h"
 
+#include <kephal/screens.h>
+
 class GlowBar : public QWidget
 {
 public:
@@ -162,7 +164,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 
     // pinchContainment calls updatePanelGeometry for us
 
-    QRect screenRect = QApplication::desktop()->screenGeometry(containment()->screen());
+    QRect screenRect = Kephal::ScreenUtils::screenGeometry(containment()->screen());
     m_lastHorizontal = isHorizontal();
     KConfigGroup sizes = KConfigGroup(&viewConfig, "Sizes");
     m_lastSeenSize = sizes.readEntry("lastsize", m_lastHorizontal ? screenRect.width() : screenRect.height());
@@ -230,7 +232,7 @@ void PanelView::setLocation(Plasma::Location location)
             // we're switching! swap the sizes about
             panelHeight = s.width();
             if (wasFullSize) {
-                QRect screenGeom = QApplication::desktop()->screenGeometry(c->screen());
+                QRect screenGeom = Kephal::ScreenUtils::screenGeometry(c->screen());
                 panelWidth = screenGeom.width();
             } else {
                 panelWidth = s.height();
@@ -245,7 +247,7 @@ void PanelView::setLocation(Plasma::Location location)
             // we're switching! swap the sizes about
 
             if (wasFullSize) {
-                QRect screenGeom = QApplication::desktop()->screenGeometry(c->screen());
+                QRect screenGeom = Kephal::ScreenUtils::screenGeometry(c->screen());
                 panelHeight = screenGeom.height();
             } else {
                 panelHeight = s.width();
@@ -270,7 +272,7 @@ void PanelView::setLocation(Plasma::Location location)
     c->setMinimumSize(min);
     c->setMaximumSize(max);
 
-    QRect screenRect = QApplication::desktop()->screenGeometry(c->screen());
+    QRect screenRect = Kephal::ScreenUtils::screenGeometry(c->screen());
     pinchContainment(screenRect);
     //updatePanelGeometry();
     connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
@@ -339,7 +341,7 @@ Plasma::Corona *PanelView::corona() const
 void PanelView::updatePanelGeometry()
 {
     Plasma::Containment *c = containment();
-    //kDebug() << "New panel geometry is" << c->geometry();
+    kDebug() << "New panel geometry is" << c->geometry();
 
     QSize size = c->size().toSize();
     QRect geom(QPoint(0,0), size);
@@ -350,7 +352,7 @@ void PanelView::updatePanelGeometry()
         screen = 0;
     }
 
-    QRect screenGeom = QApplication::desktop()->screenGeometry(screen);
+    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(screen);
 
     if (m_alignment != Qt::AlignCenter) {
         m_offset = qMax(m_offset, 0);
@@ -476,7 +478,7 @@ void PanelView::updatePanelGeometry()
         break;
     }
 
-    kDebug() << (QObject*)this << "thinks its panel is at " << geom;
+    kDebug() << (QObject*)this << "thinks its panel is at " << geom << "was" << geometry();
     if (geom == geometry()) {
         // our geometry is the same, but the panel moved around
         // so make sure our struts are still valid
@@ -511,7 +513,7 @@ bool PanelView::isHorizontal() const
 
 void PanelView::pinchContainment(const QRect &screenGeom)
 {
-    //kDebug() << "**************************** pinching" << screenGeom << m_lastSeenSize;
+    kDebug() << "**************************** pinching" << screenGeom << m_lastSeenSize;
     bool horizontal = isHorizontal();
 
     int sw = screenGeom.width();
@@ -624,6 +626,8 @@ void PanelView::pinchContainment(const QRect &screenGeom)
         m_panelController->setContainment(c);
         m_panelController->setOffset(m_offset);
     }
+    
+    kDebug() << "Done pinching, containement's geom" << c->geometry() << "own geom" << geometry();
 }
 
 void PanelView::setOffset(int newOffset)
@@ -746,8 +750,8 @@ void PanelView::updateStruts()
     NETExtendedStrut strut;
 
     if (m_panelMode == NormalPanel) {
-        QRect thisScreen = QApplication::desktop()->screenGeometry(containment()->screen());
-        QRect wholeScreen = QApplication::desktop()->geometry();
+        QRect thisScreen = Kephal::ScreenUtils::screenGeometry(containment()->screen());
+        QRect wholeScreen = Kephal::ScreenUtils::desktopGeometry();
 
         // extended struts are to the combined screen geoms, not the single screen
         int leftOffset = wholeScreen.x() - thisScreen.x();
@@ -813,7 +817,7 @@ void PanelView::moveEvent(QMoveEvent *event)
 
 void PanelView::resizeEvent(QResizeEvent *event)
 {
-    //kDebug();
+    kDebug() << event->oldSize() << event->size();
     QWidget::resizeEvent(event);
     updateStruts();
 }

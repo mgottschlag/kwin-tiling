@@ -29,6 +29,10 @@ namespace Plasma
     class Applet;
 } // namespace Plasma
 
+namespace Kephal {
+    class Screen;
+} // namespace Kephal
+
 /**
  * @short A Corona with desktop-y considerations
  */
@@ -54,13 +58,13 @@ public:
     virtual QRegion availableScreenRegion(int id) const;
 
 protected Q_SLOTS:
-    void screenResized(int);
+    void screenAdded(Kephal::Screen *s);
+    void screenRemoved(int id);
+    void screenResized(Kephal::Screen *s, QSize oldSize, QSize newSize);
 
 private:
     void init();
     Plasma::Applet *loadDefaultApplet(const QString &pluginName, Plasma::Containment *c);
-
-    int m_numScreens;
 };
 
 #endif
