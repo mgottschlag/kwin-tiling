@@ -11,6 +11,7 @@ libplasma
     * Applet
         * sizeHintChanged() signal. A containment (such as a panel) can adjust its size based on changed sizehints of an applet
         * ContextConstraint events and access to the current Context object
+        * Shortcut editor in Applet configuration dialog allows setting of global shortcuts per-widget
         * NEW: Plasma::Extender and Plasma::ExtenderItem, allowing visual, relocatable extensions to Applet
         * NEW: PopupApplet, which switches between an icon with a popup in a Horizontal/Vertical containment (such as a panel) and the widget directly on the canvas in a Planer containment (such as a desktop), the icon can be replaced with custom graphics or widgets by the implementation
     * Containment
