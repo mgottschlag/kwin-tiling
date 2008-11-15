@@ -1,11 +1,11 @@
 add_subdirectory(kdm)
 add_subdirectory(solid)
 add_subdirectory(libplasmaclock)
+add_subdirectory(kephal)
 if(NOT WIN32)
  add_subdirectory(taskmanager)
  add_subdirectory(ksysguard)
  add_subdirectory(kworkspace)
- add_subdirectory(kephal)
 endif(NOT WIN32)
 
 if(Nepomuk_FOUND)

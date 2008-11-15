@@ -26,8 +26,9 @@
 #include <QApplication>
 #include <QTimer>
 
+#ifdef Q_WS_X11
 #include "outputs/xrandr/xrandroutputs.h"
-
+#endif
 
 namespace Kephal {
     class Output;
@@ -43,9 +44,9 @@ class KephalD : public QApplication
     public:
         KephalD(int & argc, char ** argv);
         ~KephalD();
-        
+#ifdef Q_WS_X11
         virtual bool x11EventFilter(XEvent * e);
-        
+#endif
     private Q_SLOTS:
         void outputDisconnected(Kephal::Output * output);
         void outputConnected(Kephal::Output * output);

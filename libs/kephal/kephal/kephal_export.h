@@ -21,16 +21,21 @@
 #define KEPHAL_EXPORT_H
 
 
-#include <QtCore/qglobal.h>
+/* needed for KDE_EXPORT and KDE_IMPORT macros */
+#include <kdemacros.h>
 
-#ifdef Q_WS_WIN
-# if defined(MAKE_KEPHAL_LIB)
-#  define KEPHAL_EXPORT Q_DECL_EXPORT
+#ifndef KEPHAL_EXPORT
+# if defined(MAKE_KEPHAL_LIB) || defined(MAKE_KDED_KEPHAL_LIB) || defined(kephal_EXPORTS)
+/* We are building this library */
+#  define KEPHAL_EXPORT KDE_EXPORT
 # else
-#  define KEPHAL_EXPORT Q_DECL_IMPORT
+/* We are using this library */
+#  define KEPHAL_EXPORT KDE_IMPORT
 # endif
-#else
-# define KEPHAL_EXPORT Q_DECL_EXPORT
-#endif 
+#endif
+
+# ifndef KEPHAL_EXPORT_DEPRECATED
+#  define KEPHAL_EXPORT_DEPRECATED KDE_DEPRECATED KEPHAL_EXPORT
+# endif
 
 #endif

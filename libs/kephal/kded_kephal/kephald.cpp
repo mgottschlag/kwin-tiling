@@ -28,12 +28,16 @@
 #include <KConfig>
 #include <KConfigGroup>
 
+#ifdef Q_WS_X11
 #include "xrandr12/randrdisplay.h"
 #include "xrandr12/randrscreen.h"
+#endif
 
 #include "outputs/desktopwidget/desktopwidgetoutputs.h"
 #include "screens/configuration/configurationscreens.h"
+#ifdef Q_WS_X11
 #include "outputs/xrandr/xrandroutputs.h"
+#endif
 #include "dbus/dbusapi_screens.h"
 #include "dbus/dbusapi_outputs.h"
 #include "dbus/dbusapi_configurations.h"
@@ -73,26 +77,27 @@ void KephalD::init() {
     KConfig config("kephalrc");
     KConfigGroup general(&config, "General");
     m_noXRandR = general.readEntry("NoXRandR", false);
-    
+
+    m_outputs = 0;
+#ifdef Q_WS_X11
     RandRDisplay * display;
     if (! m_noXRandR) {
         display = new RandRDisplay();
     }
-    
+
     if ((! m_noXRandR) && display->isValid()) {
         m_outputs = new XRandROutputs(this, display);
         if (m_outputs->outputs().size() <= 1) {
             delete m_outputs;
             m_outputs = 0;
         }
-    } else {
-        m_outputs = 0;
     }
-    
+#endif
     if (! m_outputs) {
         new DesktopWidgetOutputs(this);
+
     }
-    
+
     foreach (Output * output, Outputs::self()->outputs()) {
         qDebug() << "output:" << output->id() << output->geom() << output->rotation() << output->reflectX() << output->reflectY();
     }
@@ -144,9 +149,11 @@ void KephalD::pollingDeactivated() {
 }
 
 void KephalD::poll() {
+#ifdef Q_WS_X11
     if (m_outputs) {
         m_outputs->display()->screen(0)->pollState();
     }
+#endif
 }
 
 void KephalD::activateConfiguration() {
@@ -170,7 +177,7 @@ void KephalD::outputConnected(Output * output) {
     activateConfiguration();
 }
 
-
+#ifdef Q_WS_X11
 bool X11EventFilter::x11Event(XEvent * e) {
     if (m_outputs && m_outputs->display()->canHandle(e)) {
         m_outputs->display()->handleEvent(e);
@@ -178,6 +185,7 @@ bool X11EventFilter::x11Event(XEvent * e) {
     
     return false;
 }
+#endif
 
 
 #include "kephald.moc"

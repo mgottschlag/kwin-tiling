@@ -36,7 +36,6 @@ namespace Kephal {
 
 using namespace Kephal;
 
-
 class X11EventFilter : public QWidget
 {
     Q_OBJECT
@@ -45,12 +44,12 @@ class X11EventFilter : public QWidget
             : m_outputs(outputs) { }
 
     protected:
+#ifdef Q_WS_X11
         bool x11Event(XEvent * event);
-
+#endif
     private:
         XRandROutputs * m_outputs;
 };
-
 
 class KephalD : public KDEDModule
 {
