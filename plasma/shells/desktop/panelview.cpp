@@ -904,7 +904,7 @@ void PanelView::hintOrUnhide(const QPoint &point)
             m_glowBar = new GlowBar(direction, m_triggerZone);
             m_glowBar->show();
             XMoveResizeWindow(QX11Info::display(), m_unhideTrigger, m_triggerZone.x(), m_triggerZone.y(), m_triggerZone.width(), m_triggerZone.height());
-            //This is ugly as hell but well, yeah
+            //FIXME: This is ugly as hell but well, yeah
             m_mousePollTimer = new QTimer();
             connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(unhideHintMousePoll()));
             m_mousePollTimer->start(200);

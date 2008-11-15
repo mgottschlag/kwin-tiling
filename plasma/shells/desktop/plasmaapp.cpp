@@ -342,10 +342,13 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
         if (panel) {
             if (event->type == EnterNotify) {
                 panel->hintOrUnhide(QPoint());
-            } else if (event->type == LeaveNotify) {
-                /*PanelView *panel = findPanelForTrigger(event->xcrossing.window);
-                panel->unhintHide();*/
-            } else if (event->type == MotionNotify) {
+            }
+            //FIXME: this if it was possible to avoid the polling
+            /*else if (event->type == LeaveNotify) {
+                PanelView *panel = findPanelForTrigger(event->xcrossing.window);
+                panel->unhintHide();
+            }*/
+            else if (event->type == MotionNotify) {
                 XMotionEvent *motion = (XMotionEvent*)event;
                 //kDebug() << "motion" << motion->x << motion->y << panel->location();
                 panel->hintOrUnhide(QPoint(motion->x_root, motion->y_root));
