@@ -5,854 +5,345 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>437</width>
-    <height>439</height>
+    <width>531</width>
+    <height>381</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
-   <property name="spacing" >
-    <number>10</number>
-   </property>
-   <item>
-    <widget class="QGroupBox" name="groupBox" >
-     <property name="toolTip" >
-      <string>Font properties for the clock</string>
+  <layout class="QGridLayout" name="gridLayout_2" >
+   <item row="1" column="1" >
+    <widget class="QLabel" name="label" >
+     <property name="text" >
+      <string>Font style:</string>
      </property>
-     <property name="title" >
-      <string>Font</string>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
-     <property name="flat" >
-      <bool>true</bool>
+     <property name="buddy" >
+      <cstring>plainClockFont</cstring>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2" >
-      <item row="0" column="0" >
-       <widget class="QLabel" name="label" >
-        <property name="text" >
-         <string>Font style:</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="buddy" >
-         <cstring>plainClockFont</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1" >
-       <layout class="QHBoxLayout" name="horizontalLayout_2" >
-        <item>
-         <widget class="KFontComboBox" name="plainClockFont" >
-          <property name="toolTip" >
-           <string>Choose the font family</string>
-          </property>
-          <property name="whatsThis" >
-           <string>You can change the default family font for the clock. Choose the new one in the list.</string>
-          </property>
-          <item>
-           <property name="text" >
-            <string>Sans Serif</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Serif</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Monospace</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Adobe Courier</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Adobe Helvetica</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Adobe New Century Schoolbook</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Adobe Times</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Adobe Utopia</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Albany AMT</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Andale Sans</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Andy MT</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Arabic Newspaper</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Arial Black</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Bell MT</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>B&amp;H Lucida</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>B&amp;H LucidaBright</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>B&amp;H LucidaTypewriter</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Bitstream Charter</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Bitstream Terminal</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Century Schoolbook L</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Courier</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Courier 10 Pitch</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Cumberland AMT</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Cursor</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>DEC Terminal</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>DejaVu Sans</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>DejaVu Sans Mono</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>DejaVu Serif</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Dingbats</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>East Syriac Adiabene</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>East Syriac Ctesiphon</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Efont Biwidth</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Efont Fixed</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Efont Fixed Wide</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Estrangelo Antioch</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Estrangelo Edessa</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Estrangelo Midyat</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Estrangelo Nisibin</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Estrangelo Nisibin Outline</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Estrangelo Quenneshrin</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Estrangelo Talada</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Estrangelo TurAbdin</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>ETL Fixed</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>FreeMono</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>FreeSans</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>FreeSerif</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Goha-Tibeb Zemen</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Impact</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Liberation Mono</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Liberation Sans</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Liberation Serif</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Lucida Bright</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Lucida Sans</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Lucida Sans Typewriter</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Luxi Mono</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Luxi Sans</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Luxi Serif</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Misc Console</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Misc Fixed</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Misc Fixed Wide</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Monotype Sorts</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>MUTT ClearlyU Alternate Glyphs Wide</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>MUTT ClearlyU PUA</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>MUTT ClearlyU Wide</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Nimbus Mono L</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Nimbus Roman No9 L</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Nimbus Sans L</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Nimbus Sans L Condensed</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>OpenSymbol</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Schumacher Clean</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Serto Batnan</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Serto Jerusalem</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Serto Jerusalem Outline</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Serto Kharput</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Serto Malankara</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Serto Mardin</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Serto Urhoy</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Sony Fixed</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Standard Symbols L</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Thorndale AMT</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>URW Bookman L</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>URW Chancery L</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>URW Gothic L</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>URW Palladio L</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Utah MT</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Utopia</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_3" >
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0" >
-           <size>
-            <width>78</width>
-            <height>17</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-      <item row="1" column="1" >
-       <widget class="QCheckBox" name="plainClockFontBold" >
-        <property name="toolTip" >
-         <string>Check if you want the font in bold</string>
-        </property>
-        <property name="whatsThis" >
-         <string>When this is checked, the clock font will be bold.</string>
-        </property>
-        <property name="text" >
-         <string>&amp;Bold</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" >
-       <widget class="QCheckBox" name="plainClockFontItalic" >
-        <property name="toolTip" >
-         <string>Check if you want the font in italic</string>
-        </property>
-        <property name="whatsThis" >
-         <string>When this is checked, the clock font will be in italic.</string>
-        </property>
-        <property name="text" >
-         <string>&amp;Italic</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0" colspan="2" >
-       <spacer name="verticalSpacer_2" >
-        <property name="orientation" >
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeType" >
-         <enum>QSizePolicy::Fixed</enum>
-        </property>
-        <property name="sizeHint" stdset="0" >
-         <size>
-          <width>20</width>
-          <height>5</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="4" column="0" >
-       <widget class="QLabel" name="label_2" >
-        <property name="text" >
-         <string>Font color:</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="buddy" >
-         <cstring>useThemeColor</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1" >
-       <widget class="QRadioButton" name="useThemeColor" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="toolTip" >
-         <string>Use current desktop theme color</string>
-        </property>
-        <property name="whatsThis" >
-         <string>This is default. The clock will get its font color from the current desktop theme.</string>
-        </property>
-        <property name="text" >
-         <string>Use theme color</string>
-        </property>
-        <property name="checked" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="1" >
-       <layout class="QHBoxLayout" name="horizontalLayout" >
-        <item>
-         <widget class="QRadioButton" name="useCustomColor" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip" >
-           <string>Choose your own font color</string>
-          </property>
-          <property name="whatsThis" >
-           <string>When checked you can choose a custom color for the clock font by clicking on the color widget on the right.</string>
-          </property>
-          <property name="text" >
-           <string>Use custom color</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="KColorButton" name="plainClockColor" >
-          <property name="enabled" >
-           <bool>false</bool>
-          </property>
-          <property name="toolTip" >
-           <string>Color chooser</string>
-          </property>
-          <property name="whatsThis" >
-           <string>Click on this button and the KDE standard color dialog will show. You can then choose the new color you want for your clock.</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_6" >
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0" >
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-     </layout>
     </widget>
    </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox_2" >
+   <item row="1" column="2" colspan="2" >
+    <layout class="QHBoxLayout" name="horizontalLayout_2" >
+     <item>
+      <widget class="KFontComboBox" name="plainClockFont" />
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_3" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>78</width>
+         <height>17</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="2" colspan="2" >
+    <widget class="QCheckBox" name="plainClockFontBold" >
      <property name="toolTip" >
-      <string>Display additional information</string>
+      <string>Check if you want the font in bold</string>
      </property>
-     <property name="title" >
-      <string>Information</string>
+     <property name="whatsThis" >
+      <string>When this is checked, the clock font will be bold.</string>
      </property>
-     <property name="flat" >
-      <bool>true</bool>
+     <property name="text" >
+      <string>&amp;Bold</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_3" >
-      <item row="0" column="0" >
-       <widget class="QLabel" name="label_3" >
-        <property name="text" >
-         <string>Show date:</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="buddy" >
-         <cstring>showDate</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1" >
-       <layout class="QHBoxLayout" name="horizontalLayout_5" >
-        <item>
-         <widget class="QCheckBox" name="showDate" >
-          <property name="toolTip" >
-           <string>Display the date of the day</string>
-          </property>
-          <property name="whatsThis" >
-           <string/>
-          </property>
-          <property name="text" >
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_7" >
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0" >
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-      <item row="1" column="1" >
-       <layout class="QGridLayout" name="gridLayout" >
-        <item row="0" column="0" >
-         <spacer name="horizontalSpacer" >
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" stdset="0" >
-           <size>
-            <width>20</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="0" column="1" >
-         <widget class="QCheckBox" name="showDay" >
-          <property name="enabled" >
-           <bool>false</bool>
-          </property>
-          <property name="toolTip" >
-           <string>Display day of the week</string>
-          </property>
-          <property name="whatsThis" >
-           <string>Add the day of the week to the date display.</string>
-          </property>
-          <property name="text" >
-           <string>Show day of the &amp;week</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" >
-         <spacer name="horizontalSpacer_2" >
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" stdset="0" >
-           <size>
-            <width>20</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="1" column="1" >
-         <widget class="QCheckBox" name="showYear" >
-          <property name="enabled" >
-           <bool>false</bool>
-          </property>
-          <property name="toolTip" >
-           <string>Display the current year</string>
-          </property>
-          <property name="whatsThis" >
-           <string>Add the year to the date string.</string>
-          </property>
-          <property name="text" >
-           <string>Show &amp;year</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="2" column="1" >
-       <spacer name="verticalSpacer" >
-        <property name="orientation" >
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeType" >
-         <enum>QSizePolicy::Fixed</enum>
-        </property>
-        <property name="sizeHint" stdset="0" >
-         <size>
-          <width>20</width>
-          <height>5</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="3" column="0" >
-       <widget class="QLabel" name="label_4" >
-        <property name="text" >
-         <string>Show time zone:</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="buddy" >
-         <cstring>showTimeZone</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1" >
-       <layout class="QHBoxLayout" name="horizontalLayout_3" >
-        <item>
-         <widget class="QCheckBox" name="showTimeZone" >
-          <property name="toolTip" >
-           <string>Display the time zone name</string>
-          </property>
-          <property name="whatsThis" >
-           <string>Display the time zone name under the time.</string>
-          </property>
-          <property name="text" >
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_4" >
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0" >
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-      <item row="4" column="0" >
-       <widget class="QLabel" name="label_5" >
-        <property name="text" >
-         <string>Show seconds:</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="buddy" >
-         <cstring>secondsCheckbox</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1" >
-       <layout class="QHBoxLayout" name="horizontalLayout_4" >
-        <item>
-         <widget class="QCheckBox" name="secondsCheckbox" >
-          <property name="toolTip" >
-           <string>Show the seconds</string>
-          </property>
-          <property name="whatsThis" >
-           <string>Check this if you want to show the seconds.</string>
-          </property>
-          <property name="text" >
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_5" >
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0" >
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-     </layout>
     </widget>
    </item>
-   <item>
+   <item row="3" column="2" colspan="2" >
+    <widget class="QCheckBox" name="plainClockFontItalic" >
+     <property name="toolTip" >
+      <string>Check if you want the font in italic</string>
+     </property>
+     <property name="whatsThis" >
+      <string>When this is checked, the clock font will be in italic.</string>
+     </property>
+     <property name="text" >
+      <string>&amp;Italic</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" colspan="3" >
+    <spacer name="verticalSpacer_2" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>409</width>
+       <height>5</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="5" column="1" >
+    <widget class="QLabel" name="label_2" >
+     <property name="text" >
+      <string>Font color:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy" >
+      <cstring>useThemeColor</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2" colspan="2" >
+    <widget class="QRadioButton" name="useThemeColor" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="toolTip" >
+      <string>Use current desktop theme color</string>
+     </property>
+     <property name="whatsThis" >
+      <string>This is default. The clock will get its font color from the current desktop theme.</string>
+     </property>
+     <property name="text" >
+      <string>Use theme color</string>
+     </property>
+     <property name="checked" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="2" colspan="2" >
+    <layout class="QHBoxLayout" name="horizontalLayout" >
+     <item>
+      <widget class="QRadioButton" name="useCustomColor" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip" >
+        <string>Choose your own font color</string>
+       </property>
+       <property name="whatsThis" >
+        <string>When checked you can choose a custom color for the clock font by clicking on the color widget on the right.</string>
+       </property>
+       <property name="text" >
+        <string>Use custom color</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="KColorButton" name="plainClockColor" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
+       <property name="toolTip" >
+        <string>Color chooser</string>
+       </property>
+       <property name="whatsThis" >
+        <string>Click on this button and the KDE standard color dialog will show. You can then choose the new color you want for your clock.</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_6" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="8" column="3" >
+    <layout class="QHBoxLayout" name="horizontalLayout_5" >
+     <item>
+      <widget class="QCheckBox" name="showDate" >
+       <property name="toolTip" >
+        <string>Display the date of the day</string>
+       </property>
+       <property name="whatsThis" >
+        <string/>
+       </property>
+       <property name="text" >
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_7" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="9" column="3" >
+    <layout class="QGridLayout" name="gridLayout" >
+     <item row="0" column="0" >
+      <spacer name="horizontalSpacer" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="0" column="1" >
+      <widget class="QCheckBox" name="showDay" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
+       <property name="toolTip" >
+        <string>Display day of the week</string>
+       </property>
+       <property name="whatsThis" >
+        <string>Add the day of the week to the date display.</string>
+       </property>
+       <property name="text" >
+        <string>Show day of the &amp;week</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" >
+      <spacer name="horizontalSpacer_2" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="1" >
+      <widget class="QCheckBox" name="showYear" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
+       <property name="toolTip" >
+        <string>Display the current year</string>
+       </property>
+       <property name="whatsThis" >
+        <string>Add the year to the date string.</string>
+       </property>
+       <property name="text" >
+        <string>Show &amp;year</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="10" column="3" >
+    <spacer name="verticalSpacer" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>5</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="11" column="3" >
+    <layout class="QHBoxLayout" name="horizontalLayout_3" >
+     <item>
+      <widget class="QCheckBox" name="showTimeZone" >
+       <property name="toolTip" >
+        <string>Display the time zone name</string>
+       </property>
+       <property name="whatsThis" >
+        <string>Display the time zone name under the time.</string>
+       </property>
+       <property name="text" >
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_4" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="12" column="3" >
+    <layout class="QHBoxLayout" name="horizontalLayout_4" >
+     <item>
+      <widget class="QCheckBox" name="secondsCheckbox" >
+       <property name="toolTip" >
+        <string>Show the seconds</string>
+       </property>
+       <property name="whatsThis" >
+        <string>Check this if you want to show the seconds.</string>
+       </property>
+       <property name="text" >
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_5" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="13" column="3" >
     <spacer>
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
@@ -864,6 +355,87 @@
       </size>
      </property>
     </spacer>
+   </item>
+   <item row="0" column="0" colspan="2" >
+    <widget class="QLabel" name="label_6" >
+     <property name="font" >
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text" >
+      <string>Font</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0" colspan="2" >
+    <widget class="QLabel" name="label_7" >
+     <property name="font" >
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text" >
+      <string>Information</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <spacer name="horizontalSpacer_9" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="11" column="1" >
+    <widget class="QLabel" name="label_4" >
+     <property name="text" >
+      <string>Show time zone:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy" >
+      <cstring>showTimeZone</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="1" >
+    <widget class="QLabel" name="label_5" >
+     <property name="text" >
+      <string>Show seconds:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy" >
+      <cstring>secondsCheckbox</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1" >
+    <widget class="QLabel" name="label_3" >
+     <property name="text" >
+      <string>Show date:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy" >
+      <cstring>showDate</cstring>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
