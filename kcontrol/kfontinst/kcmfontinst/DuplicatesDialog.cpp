@@ -125,7 +125,7 @@ void CDuplicatesDialog::scanFinished()
         {
             QSize sizeB4(size());
 
-            itsLabel->setText(i18n("%1 duplicate fonts found.", duplicates.count()));
+            itsLabel->setText(i18np("%1 duplicate font found.", "%1 duplicate fonts found.", duplicates.count()));
             itsView->show();
 
             CFontFileList::TFontMap::ConstIterator it(duplicates.begin()),
