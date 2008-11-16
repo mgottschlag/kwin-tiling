@@ -513,7 +513,7 @@ void Battery::updateStatus()
                     // at least two hours
                     if (minutes > 0) {
                         if (minutes == 1) {
-                            batteryLabelText.append(i18np("<b>%1 hour 1 minute</b> remaining<br />", "<b>%1 hours 1 minute</b> remaining<br />", hours, minutes));
+                            batteryLabelText.append(i18np("<b>%1 hour %1 minute</b> remaining<br />", "<b>%1 hours %2 minute</b> remaining<br />", hours, minutes));
                         } else {
                             batteryLabelText.append(i18np("<b>%1 hour %2 minutes</b> remaining<br />", "<b>%1 hours %2 minutes</b> remaining<br />", hours, minutes));
                         }
