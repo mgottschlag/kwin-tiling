@@ -23,6 +23,7 @@
 #include <QtCore/QDate>
 #include <QtGui/QPainter>
 #include <QtGui/QWidget>
+#include <QtGui/QLabel>
 #include <QtGui/QGraphicsSceneWheelEvent>
 #include <QtGui/QGraphicsLinearLayout>
 #include <QtGui/QGraphicsProxyWidget>
@@ -87,6 +88,7 @@ Calendar::Calendar(QGraphicsWidget *parent)
     d->month = new Plasma::Label(this);
     d->month->setText(d->calendarTable->calendar()->monthName(d->calendarTable->calendar()->month(d->calendarTable->date()), d->calendarTable->calendar()->year(d->calendarTable->date())));
     d->month->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    d->month->nativeWidget()->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     m_hLayout->addItem(d->month);
 
     #ifdef COOL_SPINBOX
