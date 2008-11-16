@@ -1,28 +1,6 @@
 [Desktop Entry]
 Name=Quicklaunch
-Name[el]=Γρήγορη εκτέλεση
-Name[et]=Kiirkäivitaja
-Name[ga]=Meardhúisigh
-Name[km]=ចាប់ផ្ដើម​រហ័ស
-Name[pt]=Lançamento Rápido
-Name[pt_BR]=Lançamento Rápido
-Name[sv]=Snabbstart
-Name[x-test]=xxQuicklaunchxx
 Comment=Launch your favourite Applications
-Comment[el]=Εκτελέστε τις αγαπημένες σας εφαρμογές
-Comment[es]=Lanza tus aplicaciones favoritas
-Comment[et]=Lemmikrakenduste käivitaja
-Comment[fr]=Lancer vos applications préférées
-Comment[ga]=Tosaigh na Feidhmchláir is ansa leat
-Comment[gl]=Inicia os seus programas favoritos
-Comment[ja]=お気に入りのアプリケーションを起動します
-Comment[km]=ចាប់ផ្ដើម​កម្មវិធី​សំណព្វ​របស់​អ្នក
-Comment[pt]=Lança as suas aplicações favoritas
-Comment[pt_BR]=Lança as suas aplicações favoritas
-Comment[sv]=Starta favoritprogram
-Comment[tr]=Beğendiğiniz uygulamaları çalıştırın
-Comment[uk]=Запуск ваших улюблений програм
-Comment[x-test]=xxLaunch your favourite Applicationsxx
 
 Icon=kget
 Type=Service
