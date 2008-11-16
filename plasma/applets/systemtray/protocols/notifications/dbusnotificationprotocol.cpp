@@ -105,6 +105,7 @@ void NotificationProtocol::dataUpdated(const QString &source, const Plasma::Data
     Notification* notification = d->notifications[source];
     notification->setApplicationName(data.value("appName").toString());
     notification->setApplicationIcon(KIcon(data.value("appIcon").toString()));
+    notification->setEventId(data.value("eventId").toString());
     notification->setSummary(data.value("summary").toString());
     notification->setMessage(data.value("body").toString());
     notification->setTimeout(data.value("expireTimeout").toInt());
