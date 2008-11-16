@@ -220,27 +220,23 @@ bool Pager::posOnDesktopRect(const QRectF& r, const QPointF& pos)
     qreal rightMargin;
     qreal bottomMargin;
 
-    if (m_showOwnBackground && m_background) {
-        m_background->setElementPrefix(QString());
-        m_background->getMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+    m_background->setElementPrefix(QString());
+    m_background->getMargins(leftMargin, topMargin, rightMargin, bottomMargin);
 
-        if (r.left() > leftMargin) {
-            leftMargin = 0;
-        }
-        if (r.top() > topMargin) {
-            leftMargin = 0;
-        }
-        if (geometry().width() - r.right() < rightMargin) {
-            leftMargin = 0;
-        }
-        if (geometry().bottom() - r.bottom() < bottomMargin) {
-            leftMargin = 0;
-        }
-
-        return r.adjusted(-leftMargin, -topMargin, rightMargin, bottomMargin).contains(pos);
-    } else {
-        return r.contains(pos);
+    if (r.left() > leftMargin) {
+        leftMargin = 0;
     }
+    if (r.top() > topMargin) {
+        leftMargin = 0;
+    }
+    if (geometry().width() - r.right() < rightMargin) {
+        leftMargin = 0;
+    }
+    if (geometry().bottom() - r.bottom() < bottomMargin) {
+        leftMargin = 0;
+    }
+
+    return r.adjusted(-leftMargin, -topMargin, rightMargin, bottomMargin).contains(pos);
 }
 
 void Pager::recalculateGeometry()
