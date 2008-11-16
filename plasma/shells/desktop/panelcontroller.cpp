@@ -787,27 +787,6 @@ bool PanelController::eventFilter(QObject *watched, QEvent *event)
             d->startDragPos = mouseEvent->pos();
             d->dragging = Private::ResizeButtonElement;
         } else if (event->type() == QEvent::MouseButtonRelease) {
-            //FIXME: for now resizes here instead of on mouse move, for a serious performance problem, maybe in Qt
-            QRect screenGeom =
-                Kephal::ScreenUtils::screenGeometry(d->containment->screen());
-            if (d->dragging == Private::ResizeButtonElement) {
-                switch (location()) {
-                case Plasma::LeftEdge:
-                    d->resizeFrameHeight(geometry().left() - screenGeom.left());
-                    break;
-                case Plasma::RightEdge:
-                    d->resizeFrameHeight(screenGeom.right() - geometry().right());
-                    break;
-                case Plasma::TopEdge:
-                    d->resizeFrameHeight(geometry().top() - screenGeom.top());
-                    break;
-                case Plasma::BottomEdge:
-                default:
-                    d->resizeFrameHeight(screenGeom.bottom() - geometry().bottom());
-                    break;
-                }
-            }
-
             //resets properties saved during the drag
             d->startDragPos = QPoint(0, 0);
             d->dragging = Private::NoElement;
@@ -902,7 +881,7 @@ void PanelController::mouseMoveEvent(QMouseEvent *event)
             d->startDragPos.x() - d->minimumHeight >
             screenGeom.left()) {
             move(mapToGlobal(event->pos()).x() - d->startDragPos.x(), pos().y());
-            //FIXME: Panel resize deferred, should be here
+            d->resizeFrameHeight(geometry().left() - screenGeom.left());
         }
         break;
     case Plasma::RightEdge:
@@ -910,6 +889,7 @@ void PanelController::mouseMoveEvent(QMouseEvent *event)
             d->startDragPos.x() + width() + d->minimumHeight <
             screenGeom.right()) {
             move(mapToGlobal(event->pos()).x() - d->startDragPos.x(), pos().y());
+            d->resizeFrameHeight(screenGeom.right() - geometry().right());
         }
         break;
     case Plasma::TopEdge:
@@ -917,6 +897,7 @@ void PanelController::mouseMoveEvent(QMouseEvent *event)
             d->startDragPos.y() - d->minimumHeight >
             screenGeom.top()) {
             move(pos().x(), mapToGlobal(event->pos()).y() - d->startDragPos.y());
+            d->resizeFrameHeight(geometry().top() - screenGeom.top());
         }
         break;
     case Plasma::BottomEdge:
@@ -925,6 +906,7 @@ void PanelController::mouseMoveEvent(QMouseEvent *event)
             d->startDragPos.y() + height() + d->minimumHeight <
             screenGeom.bottom()) {
             move(pos().x(), mapToGlobal(event->pos()).y() - d->startDragPos.y());
+            d->resizeFrameHeight(screenGeom.bottom() - geometry().bottom());
         }
         break;
     }
