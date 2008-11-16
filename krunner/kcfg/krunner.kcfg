@@ -18,7 +18,7 @@
             <default>CommandOriented</default>
         </entry>
         <entry key="QueryTextCompletionMode" type="Int">
-            <default code="true">(int)KGlobalSettings::CompletionAuto</default>
+            <default code="true">(int)KGlobalSettings::CompletionMan</default>
             <label>Completion mode used for the query text.</label>
         </entry>
 
