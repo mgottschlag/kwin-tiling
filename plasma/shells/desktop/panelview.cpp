@@ -180,6 +180,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     : Plasma::View(panel, id, parent),
       m_panelController(0),
       m_glowBar(0),
+      m_mousePollTimer(0),
       m_timeLine(0),
       m_spacer(0),
       m_spacerIndex(-1),
@@ -910,7 +911,7 @@ void PanelView::hintOrUnhide(const QPoint &point)
             m_glowBar->show();
             XMoveResizeWindow(QX11Info::display(), m_unhideTrigger, m_triggerZone.x(), m_triggerZone.y(), m_triggerZone.width(), m_triggerZone.height());
             //FIXME: This is ugly as hell but well, yeah
-            m_mousePollTimer = new QTimer();
+            m_mousePollTimer = new QTimer(this);
             connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(unhideHintMousePoll()));
             m_mousePollTimer->start(200);
         }
@@ -929,6 +930,7 @@ void PanelView::unhintHide()
 {
     //kDebug() << "hide the glow";
     delete m_mousePollTimer;
+    m_mousePollTimer = 0;
     delete m_glowBar;
     m_glowBar = 0;
 }

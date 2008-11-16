@@ -209,6 +209,7 @@ private:
     PanelController *m_panelController;
     QList<PanelAppletOverlay*> m_moveOverlays;
     GlowBar *m_glowBar;
+    QTimer *m_mousePollTimer;
     QTimeLine *m_timeLine;
     QGraphicsWidget *m_spacer;
     int m_spacerIndex;
@@ -223,7 +224,6 @@ private:
 
     QSizeF m_lastMin;
     QSizeF m_lastMax;
-    QTimer *m_mousePollTimer;
     PanelMode m_panelMode;
     int m_lastSeenSize;
     bool m_lastHorizontal : 1;
