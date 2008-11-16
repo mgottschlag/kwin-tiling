@@ -272,11 +272,21 @@ void Pager::recalculateGeometry()
 
         qreal ratio = (qreal)Kephal::ScreenUtils::desktopGeometry().width() / (qreal)Kephal::ScreenUtils::desktopGeometry().height();
 
-        //if the final size is going to be really tiny avoid to add extra margins
-        if (geometry().width() - leftMargin - rightMargin < KIconLoader::SizeSmall*ratio * columns + padding*(columns-1) ||
-            geometry().height() - topMargin - bottomMargin < KIconLoader::SizeSmall * rows + padding*(rows-1)) {
-            m_showOwnBackground = false;
-            leftMargin = topMargin = rightMargin = bottomMargin = padding = textMargin = 0;
+        if (formFactor() == Plasma::Vertical ) {
+            qreal optimalSize = (geometry().width() - KIconLoader::SizeSmall*ratio * columns + padding*(columns-1))/2;
+
+            if (optimalSize < leftMargin || optimalSize < rightMargin) {
+                leftMargin = rightMargin = qMax(qreal(1), optimalSize);
+                 m_showOwnBackground = false;
+            }
+
+        } else if (formFactor() == Plasma::Horizontal ) {
+            qreal optimalSize = (geometry().height() - KIconLoader::SizeSmall*rows + padding*(rows-1))/2;
+
+            if (optimalSize < topMargin || optimalSize < bottomMargin) {
+                topMargin = bottomMargin =  qMax(qreal(1), optimalSize);
+                 m_showOwnBackground = false;
+            }
         } else {
             m_showOwnBackground = true;
         }
