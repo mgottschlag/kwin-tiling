@@ -170,6 +170,10 @@ QString IonInterface::getWeatherIcon(const QMap<QString, ConditionIcons> &Condit
         return "weather-showers-scattered-day";
     case ChanceShowersNight:
         return "weather-showers-scattered-night";
+    case ChanceSnowDay:
+        return "weather-snow-scattered-day";
+    case ChanceSnowNight:
+        return "weather-snow-scattered-night";
     case Thunderstorm:
         return "weather-storm";
     case Hail:
