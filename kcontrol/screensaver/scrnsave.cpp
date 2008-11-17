@@ -264,6 +264,11 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
              this, SLOT( slotAdvanced() ) );
     advancedLayout->addWidget( advancedBt );
     advancedLayout->addWidget( new QWidget( this ) );
+
+    QString plasmagroup(i18n("Desktop Widgets"));
+    QString plasmacheckbox(i18n("Allow widgets on screen saver"));
+    QString plasmacheckbox2(i18n("Add widgets to your screensaver"));
+    QString plasmasetup(i18n("Setup..."));
 /*
     QGroupBox *plasmaGroup = new QGroupBox(i18n("Desktop Widgets"), this);
     groupLayout = new QVBoxLayout(plasmaGroup);
