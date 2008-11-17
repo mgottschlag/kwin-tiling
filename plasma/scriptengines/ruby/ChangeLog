@@ -1,3 +1,8 @@
+2008-11-17  Richard Dale  <richard.j.dale@gmail.com>
+* Fixed missing constructor bug in Qt::GraphicsProxyWidget reported by David
+  Palacio. Thanks to David for reporting the bug.
+* Improved the names of the Ruby applet and dataengine examples
+
 2008-11-05  Richard Dale  <richard.j.dale@gmail.com>
 * Fixed some bugs in the DataEngineScript class. The expected path was 
   'plasma/engines' whereas the plasmapkg tool installs them in 

@@ -86,10 +86,10 @@ Type=Service
 ServiceTypes=Plasma/DataEngine
 X-Plasma-API=ruby-script
 
-X-KDE-PluginInfo-Author=The Plasma Team
-X-KDE-PluginInfo-Email=panel-devel@kde.org
-X-KDE-PluginInfo-Name=ruby_time
-X-KDE-PluginInfo-Version=pre0.1
+X-KDE-PluginInfo-Author=Richard Dale
+X-KDE-PluginInfo-Email=richard.j.dale@gmail.com
+X-KDE-PluginInfo-Name=ruby-time
+X-KDE-PluginInfo-Version=1.0
 X-KDE-PluginInfo-Website=http://plasma.kde.org/
 X-KDE-PluginInfo-Category=Date and Time
 X-KDE-PluginInfo-Depends=

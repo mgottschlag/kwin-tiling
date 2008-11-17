@@ -13,16 +13,15 @@ Name[pt_BR]=Navegador Web em Ruby
 Name[sv]=Ruby webbläsare
 Name[tr]=Ruby Web Tarayıcı
 Name[uk]=Навігатор Тенет на Ruby
-Name[x-test]=xxRuby Web Browserxx
 Name[zh_TW]=Ruby 網頁瀏覽器
 
 Type=Service
 ServiceTypes=Plasma/Applet
 
 X-KDE-PluginInfo-Author=Richard Dale
-X-KDE-PluginInfo-Email=panel-devel@kde.org
-X-KDE-PluginInfo-Name=plasma_applet_ruby_webapplet
-X-KDE-PluginInfo-Version=pre0.1
+X-KDE-PluginInfo-Email=richard.j.dale@gmail.com
+X-KDE-PluginInfo-Name=ruby-webapplet
+X-KDE-PluginInfo-Version=1.0
 X-KDE-PluginInfo-Website=http://plasma.kde.org/
 X-KDE-PluginInfo-Category=Examples
 X-KDE-PluginInfo-Depends=

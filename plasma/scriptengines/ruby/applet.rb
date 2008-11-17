@@ -512,6 +512,28 @@ module Plasma
 end
 
 module Qt
+  class GraphicsProxyWidget < Qt::Base
+    def initialize(parent = nil, wFlags = nil)
+      if parent.kind_of?(PlasmaScripting::Applet)
+        super(parent.applet_script.applet, wFlags)
+      else
+        super
+      end
+    end
+
+    def parentItem=(item)
+      setParentItem(item)
+    end
+
+    def setParentItem(item)
+      if item.kind_of?(PlasmaScripting::Applet)
+        super(item.applet_script.applet)
+      else
+        super
+      end
+    end
+  end
+
   class GraphicsWidget < Qt::Base
     def initialize(parent = nil, wFlags = nil)
       if parent.kind_of?(PlasmaScripting::Applet)
