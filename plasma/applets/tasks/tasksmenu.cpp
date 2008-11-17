@@ -26,6 +26,7 @@
 #include <QStyle>
 #include <QApplication>
 #include <QBitmap>
+#include <QTimer>
 
 //KDE
 #include <KIconLoader>
@@ -41,6 +42,7 @@ namespace TaskManager
 
 TasksMenu::TasksMenu(QWidget *parent, TaskGroup *group, GroupManager *groupManager, Plasma::Applet *applet)
     :  GroupPopupMenu(parent, group, groupManager),
+       m_activateTimer(0),
        m_applet(applet)
 {
     setAttribute(Qt::WA_NoSystemBackground);
@@ -57,6 +59,8 @@ TasksMenu::TasksMenu(QWidget *parent, TaskGroup *group, GroupManager *groupManag
     const int leftWidth = m_background->marginSize(Plasma::LeftMargin);
     const int rightWidth = m_background->marginSize(Plasma::RightMargin);
     const int bottomHeight = m_background->marginSize(Plasma::BottomMargin);
+
+    setAcceptDrops(true);
 
     switch (m_applet->location()) {
     case Plasma::BottomEdge:
@@ -126,6 +130,51 @@ void TasksMenu::resizeEvent(QResizeEvent *event)
 {
     m_background->resizeFrame(event->size());
     setMask(m_background->mask());
+}
+
+
+void TasksMenu::dragEnterEvent(QDragEnterEvent *event)
+{
+    //kDebug()<<"Drag enter";
+    event->accept();
+}
+
+void TasksMenu::dragMoveEvent(QDragMoveEvent *event)
+{
+    if (!m_activateTimer) {
+        m_activateTimer = new QTimer(this);
+        m_activateTimer->setSingleShot(true);
+        m_activateTimer->setInterval(300);
+        connect(m_activateTimer, SIGNAL(timeout()), this, SLOT(activate()));
+    }
+
+    m_lastMousePos = event->pos();
+    m_activateTimer->start(300);
+}
+
+void TasksMenu::dragLeaveEvent(QDragLeaveEvent *event)
+{
+    m_activateTimer->stop();
+    m_activateTimer = 0;
+
+    close();
+}
+
+void TasksMenu::dropEvent(QDropEvent *event)
+{
+    m_activateTimer->stop();
+    m_activateTimer = 0;
+
+    close();
+}
+
+void TasksMenu::activate()
+{
+    QAction *action = actionAt(m_lastMousePos);
+
+    if (action) {
+        action->trigger();
+    }
 }
 
 }

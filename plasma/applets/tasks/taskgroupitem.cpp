@@ -619,7 +619,14 @@ void TaskGroupItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
         event->acceptProposedAction();
         //kDebug()<<"Drag enter accepted";
     } else {
-        event->ignore();
+        event->accept();
+        if (!m_popupMenuTimer) {
+            m_popupMenuTimer = new QTimer(this);
+            m_popupMenuTimer->setSingleShot(true);
+            m_popupMenuTimer->setInterval(300);
+            connect(m_popupMenuTimer, SIGNAL(timeout()), this, SLOT(popupMenu()));
+        }
+        m_popupMenuTimer->start(300);
     }
 }
 

@@ -30,6 +30,8 @@ namespace Plasma
     class FrameSvg;
 }
 
+class QTimer;
+
 namespace TaskManager
 {
 
@@ -48,10 +50,20 @@ public:
 protected:
     void paintEvent(QPaintEvent *event);
     void resizeEvent(QResizeEvent *event);
+    void dragEnterEvent(QDragEnterEvent *event);
+    void dragMoveEvent(QDragMoveEvent *event);
+    void dragLeaveEvent(QDragLeaveEvent *event);
+    void dropEvent(QDropEvent *event);
 
+protected Q_SLOTS:
+    void activate();
+
+private:
+    QTimer *m_activateTimer;
     Plasma::FrameSvg *m_background;
     Plasma::FrameSvg *m_itemBackground;
     Plasma::Applet *m_applet;
+    QPoint m_lastMousePos;
 };
 }
 
