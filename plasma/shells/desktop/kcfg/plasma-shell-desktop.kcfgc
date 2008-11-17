@@ -1,0 +1,4 @@
+File=plasma-shell-desktop.kcfg
+ClassName=AppSettings
+Singleton=true
+Mutators=true
