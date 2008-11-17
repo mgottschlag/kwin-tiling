@@ -118,7 +118,12 @@ void Clock::updateSize() {
         // We have a fixed height, set some sensible width
         if (m_showDate || m_showTimezone) {
             QFontMetricsF metrics(KGlobalSettings::smallestReadableFont());
-            int w = (int)metrics.size(Qt::TextSingleLine, m_dateString).width();
+            int w;
+            if (contentsRect().height() < KGlobalSettings::smallestReadableFont().pointSize()*6) {
+                w = (int)metrics.size(Qt::TextSingleLine, m_dateString).width();
+            } else {
+                w = (int)metrics.size(Qt::TextWordWrap, m_dateString).width();
+            }
             setMinimumWidth(qMax(w, (int)(contentsRect().height() * aspect)));
         } else {
             setMinimumWidth((int)(contentsRect().height() * aspect));
@@ -303,10 +308,16 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                                 contentsRect.bottom());
 
             //p->fillRect(myRect, QBrush(QColor("green")));
-            p->drawText(myRect,
-                        Qt::AlignHCenter,
-                        dateString.trimmed()
-                    );
+            // When we're relatively low, force everything into a single line
+            if (formFactor() == Plasma::Horizontal && (contentsRect.height() < f.pointSize()*6)) {
+                p->drawText(myRect,
+                        Qt::TextSingleLine | Qt::AlignHCenter,
+                        dateString.trimmed());
+            } else {
+                p->drawText(myRect,
+                        Qt::TextWordWrap | Qt::AlignHCenter,
+                        dateString.trimmed());
+            }
 
             // Now find out how much space is left for painting the time
             timeRect = QRect(   contentsRect.left(),
@@ -340,7 +351,8 @@ QRect Clock::preparePainter(QPainter *p, const QRect &rect, const QFont &font, c
     do {
         p->setFont(tmpFont);
         tmpFont.setPointSize(qMax(KGlobalSettings::smallestReadableFont().pointSize(), tmpFont.pointSize() - 1));
-        int flags = (formFactor() == Plasma::Horizontal) ? Qt::TextSingleLine : Qt::TextWordWrap;
+        int flags = ((formFactor() == Plasma::Horizontal) && (contentsRect().height() < tmpFont.pointSize()*6)) ? Qt::TextSingleLine : Qt::TextWordWrap;
+
         tmpRect = p->boundingRect(rect, flags, text);
     } while (tmpFont.pointSize() > KGlobalSettings::smallestReadableFont().pointSize() && (tmpRect.width() > rect.width() ||
             tmpRect.height() > rect.height()));
