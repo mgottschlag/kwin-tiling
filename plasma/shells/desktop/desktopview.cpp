@@ -37,10 +37,11 @@
 #include <Plasma/Wallpaper>
 #include <Plasma/Theme>
 
+#include <kephal/screens.h>
+
 #include "dashboardview.h"
 #include "plasmaapp.h"
-
-#include <kephal/screens.h>
+#include "plasma-shell-desktop.h"
 
 #ifdef Q_WS_WIN
 #include "windows.h"
@@ -64,8 +65,9 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
     setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
 #endif
 
-    if (containment->desktop() > -1) {
-        KWindowSystem::setOnDesktop(winId(), containment->desktop());
+    if (AppSettings::perVirtualDesktopViews()) {
+        kDebug() << "setting to desktop" << containment->desktop() + 1;
+        KWindowSystem::setOnDesktop(winId(), containment->desktop() + 1);
     } else {
         KWindowSystem::setOnAllDesktops(winId(), true);
     }

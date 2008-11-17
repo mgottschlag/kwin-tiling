@@ -513,6 +513,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
     kDebug() << "Containment name:" << containment->name()
              << "| type" << containment->containmentType()
              <<  "| screen:" << containment->screen()
+             <<  "| desktop:" << containment->desktop()
              << "| geometry:" << containment->geometry()
              << "| zValue:" << containment->zValue();
 

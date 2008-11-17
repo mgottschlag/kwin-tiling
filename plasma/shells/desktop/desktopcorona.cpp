@@ -76,6 +76,7 @@ void DesktopCorona::addDesktopContainment(int screen, int desktop)
     c->setFormFactor(Plasma::Planar);
     c->flushPendingConstraintsEvents();
     c->setActivity(i18n("Desktop"));
+    emit containmentAdded(c);
 }
 
 int DesktopCorona::numScreens() const
@@ -132,7 +133,7 @@ void DesktopCorona::loadDefaultLayout()
         }
 
         c->init();
-        c->setScreen(i);
+        c->setScreen(i, 0);
         c->setWallpaper("image", "SingleImage");
         c->setFormFactor(Plasma::Planar);
         c->updateConstraints(Plasma::StartupCompletedConstraint);
