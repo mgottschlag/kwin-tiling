@@ -286,6 +286,19 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                     seconds += -anglePerSec + (anglePerSec * val);
                 }
             }
+        } else {
+            if (!m_secondHandUpdateTimer) {
+                m_secondHandUpdateTimer = new QTimer(this);
+                connect(m_secondHandUpdateTimer, SIGNAL(timeout()), this, SLOT(moveSecondHand()));
+            }
+
+            if (!m_secondHandUpdateTimer->isActive()) {
+                m_secondHandUpdateTimer->start(50);
+                seconds += 1;
+            } else {
+                m_secondHandUpdateTimer->stop();
+                seconds -= 1;
+            }
         }
     }
 
