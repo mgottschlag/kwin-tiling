@@ -262,9 +262,8 @@ void PlasmaApp::cleanup()
         }
     }
 
-    for (int i = 0; i < Kephal::ScreenUtils::numScreens(); i++) {
-        DesktopView *v = viewForScreen(i);
-        if (v && v->containment()) {
+    foreach (DesktopView *v, m_desktops) {
+        if (v->containment()) {
             viewIds.writeEntry(QString::number(v->containment()->id()), v->id());
         }
     }
@@ -300,9 +299,14 @@ void PlasmaApp::toggleDashboard()
         currentScreen = Kephal::ScreenUtils::screenId(QCursor::pos());
     }
 
-    DesktopView *view = viewForScreen(currentScreen);
+    int currentDesktop = -1;
+    if (AppSettings::perVirtualDesktopViews()) {
+        currentDesktop = KWindowSystem::currentDesktop();
+    }
+
+    DesktopView *view = viewForScreen(currentScreen, currentDesktop);
     if (!view) {
-        kWarning() << "we don't have a DesktopView for the current screen!";
+        kWarning() << "we don't have a DesktopView for the current screen!" << currentScreen << currentDesktop;
         return;
     }
 
@@ -371,14 +375,17 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
 void PlasmaApp::screenRemoved(int id)
 {
     kDebug() << id;
-    DesktopView *view = viewForScreen(id);
-    if (view) {
-        // the screen was removed, so we'll destroy the
-        // corresponding view
-        kDebug() << "removing the view for screen" << id;
-        view->setContainment(0);
-        m_desktops.removeAll(view);
-        delete view;
+    QMutableListIterator<DesktopView *> it(m_desktops);
+    while (it.hasNext()) {
+        DesktopView *view = it.next();
+        if (view->screen() == id) {
+            // the screen was removed, so we'll destroy the
+            // corresponding view
+            kDebug() << "removing the view for screen" << id;
+            view->setContainment(0);
+            it.remove();
+            delete view;
+        }
     }
 
     /*
@@ -396,11 +403,11 @@ void PlasmaApp::screenRemoved(int id)
     */
 }
 
-DesktopView* PlasmaApp::viewForScreen(int screen) const
+DesktopView* PlasmaApp::viewForScreen(int screen, int desktop) const
 {
     foreach (DesktopView *view, m_desktops) {
         //kDebug() << "comparing" << view->screen() << screen;
-        if (view->screen() == screen) {
+        if (view->screen() == screen && (desktop < 0 || view->desktop() == desktop)) {
             return view;
         }
     }
@@ -528,13 +535,14 @@ void PlasmaApp::createView(Plasma::Containment *containment)
         default:
             if (containment->screen() > -1 &&
                 containment->screen() < Kephal::ScreenUtils::numScreens()) {
-                if (viewForScreen(containment->screen())) {
+                if (viewForScreen(containment->screen(), containment->desktop())) {
+                    kDebug() << "had a view for" << containment->screen() << containment->desktop();
                     // we already have a view for this screen
                     return;
                 }
 
-                kDebug() << "creating a view for" << containment->screen() << "and we have"
-                    << Kephal::ScreenUtils::numScreens() << "screens";
+                kDebug() << "creating a view for" << containment->screen() << containment->desktop()
+                         << "and we have" << Kephal::ScreenUtils::numScreens() << "screens";
 
                 // we have a new screen. neat.
                 DesktopView *view = new DesktopView(containment, id, 0);
@@ -588,10 +596,10 @@ void PlasmaApp::configureContainment(Plasma::Containment *containment)
         configDialog->reloadConfig();
     } else {
         const QSize resolution = QApplication::desktop()->screenGeometry(containment->screen()).size();
-        Plasma::View *view = viewForScreen(containment->screen());
+        Plasma::View *view = viewForScreen(containment->screen(), containment->desktop());
 
         if (!view) {
-            view = viewForScreen(desktop()->screenNumber(QCursor::pos()));
+            view = viewForScreen(desktop()->screenNumber(QCursor::pos()), containment->desktop());
 
             if (!view) {
                 if (m_desktops.count() < 1) {
@@ -638,7 +646,12 @@ void PlasmaApp::zoom(Plasma::Containment *containment, Plasma::ZoomDirection dir
         }
 
         if (m_zoomLevel == Plasma::DesktopZoom) {
-            DesktopView *view = viewForScreen(desktop()->screenNumber(QCursor::pos()));
+            int currentDesktop = -1;
+            if (AppSettings::perVirtualDesktopViews()) {
+                currentDesktop = KWindowSystem::currentDesktop();
+            }
+
+            DesktopView *view = viewForScreen(desktop()->screenNumber(QCursor::pos()), currentDesktop);
 
             if (view && view->containment() != containment) {
                 // zooming in all the way, so lets swap containments about if need be

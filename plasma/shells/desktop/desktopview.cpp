@@ -59,12 +59,17 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
     setWindowFlags(Qt::FramelessWindowHint);
     SetWindowPos(winId(), HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
     HWND hwndDesktop = ::FindWindowW(L"Progman", NULL);
-    SetParent(winId(),hwndDesktop);
+    SetParent(winId(), hwndDesktop);
 #else
     setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
 #endif
 
-    KWindowSystem::setOnAllDesktops(winId(), true);
+    if (containment->desktop() > -1) {
+        KWindowSystem::setOnDesktop(winId(), containment->desktop());
+    } else {
+        KWindowSystem::setOnAllDesktops(winId(), true);
+    }
+
     KWindowSystem::setType(winId(), NET::Desktop);
     lower();
 

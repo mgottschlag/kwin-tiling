@@ -57,7 +57,7 @@ void DesktopCorona::checkScreens()
         if (AppSettings::perVirtualDesktopViews()) {
             int numDesktops = KWindowSystem::numberOfDesktops();
 
-            for (int j = 0; j < numDesktops; ++i) {
+            for (int j = 0; j < numDesktops; ++j) {
                 if (!containmentForScreen(i, j)) {
                     addDesktopContainment(i, j);
                 }
@@ -70,6 +70,7 @@ void DesktopCorona::checkScreens()
 
 void DesktopCorona::addDesktopContainment(int screen, int desktop)
 {
+    kDebug() << screen << desktop;
     Plasma::Containment* c = addContainment("desktop");
     c->setScreen(screen, desktop);
     c->setFormFactor(Plasma::Planar);
