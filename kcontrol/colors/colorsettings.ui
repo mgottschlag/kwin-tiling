@@ -101,6 +101,12 @@
        </item>
        <item row="1" column="0" colspan="2" >
         <widget class="QGroupBox" name="groupBox_3" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="title" >
           <string>Preview</string>
          </property>
@@ -585,6 +591,12 @@
        </item>
        <item row="2" column="0" colspan="2" >
         <widget class="QGroupBox" name="groupBox_4" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimumSize" >
           <size>
            <width>0</width>
