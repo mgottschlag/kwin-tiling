@@ -31,7 +31,6 @@
 
 namespace Kephal {
     class Configuration;
-    class StatusMessage;
 }
 
 
