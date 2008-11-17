@@ -20,7 +20,6 @@
 
 #include "dbusscreens.h"
 
-#include <QApplication>
 #include <QDebug>
 
 #include "../simplescreen.h"

@@ -21,7 +21,6 @@
 #ifndef KEPHAL_DBUSSCREENS_H
 #define KEPHAL_DBUSSCREENS_H
 
-#include <QPoint>
 #include "../simplescreen.h"
 #include "kephal/screens.h"
 #include "screens_interface.h"

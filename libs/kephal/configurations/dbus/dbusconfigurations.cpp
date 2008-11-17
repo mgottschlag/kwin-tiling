@@ -20,8 +20,6 @@
 
 #include "dbusconfigurations.h"
 
-#include <QDebug>
-#include <QVariant>
 
 #include "configurations_interface.h"
 
