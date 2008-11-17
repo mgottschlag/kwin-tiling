@@ -44,7 +44,7 @@ if(WIN32)
     set(plasma_SRCS ${plasma_SRCS} panelview_win.cpp)
 endif(WIN32)
 
-set(plasmaapp_dbusXML org.kde.plasma.App.xml)
+set(plasmaapp_dbusXML dbus/org.kde.plasma.App.xml)
 qt4_add_dbus_adaptor(plasma_SRCS ${plasmaapp_dbusXML} plasmaapp.h PlasmaApp)
 
 set(ksmserver_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerInterface.xml)
