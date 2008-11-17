@@ -130,10 +130,10 @@ QMap<QString, IonInterface::ConditionIcons> UKMETIon::setupDayIconMappings(void)
     dayList["heavy shower"] = Rain;
     dayList["thundery shower"] = Thunderstorm;
     dayList["thunderstorm"] = Thunderstorm;
-    dayList["cloudy with sleet"] = NotAvailable;
-    dayList["sleet shower"] = NotAvailable;
-    dayList["sleet showers"] = NotAvailable;
-    dayList["sleet"] = NotAvailable;
+    dayList["cloudy with sleet"] = RainSnow;
+    dayList["sleet shower"] = RainSnow;
+    dayList["sleet showers"] = RainSnow;
+    dayList["sleet"] = RainSnow;
     dayList["cloudy with hail"] = Hail;
     dayList["hail shower"] = Hail;
     dayList["hail showers"] = Hail;
