@@ -283,16 +283,21 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
             }
 
             // Check sizes
-            m_dateRect = preparePainter(p, contentsRect, KGlobalSettings::smallestReadableFont(), dateString);
+            QFont f = KGlobalSettings::smallestReadableFont();
+            f.setPointSizeF(qMax(contentsRect.height()/10, f.pointSize()));
+
+            m_dateRect = preparePainter(p, contentsRect, f, dateString);
             int subtitleHeight = m_dateRect.height();
 
-            QRectF myRect = QRectF(0,
+            QRectF myRect = QRectF(contentsRect.left(),
                                 contentsRect.bottom()-subtitleHeight,
-                                contentsRect.right(),
+                                contentsRect.width(),
                                 contentsRect.bottom());
+
+            //p->fillRect(myRect, QBrush(QColor("green")));
             p->drawText(myRect,
-                        Qt::AlignHCenter | Qt::TextDontClip,
-                        dateString
+                        Qt::AlignHCenter,
+                        dateString.trimmed()
                     );
 
             // Now find out how much space is left for painting the time
@@ -303,6 +308,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         } else {
             timeRect = contentsRect;
         }
+        //p->fillRect(timeRect, QBrush(QColor("red")));
 
         QString timeString = KGlobal::locale()->formatTime(m_time, m_showSeconds);
         // Choose a relatively big font size to start with
