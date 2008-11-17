@@ -47,7 +47,6 @@ SaverDesktop::~SaverDesktop()
 void SaverDesktop::init()
 {
     Containment::init();
-    setHasConfigurationInterface(true);
 
     bool unlocked = immutability() == Mutable;
     //re-wire the lock action so we can check for a password
