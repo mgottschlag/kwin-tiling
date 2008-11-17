@@ -84,6 +84,7 @@ Comment[ro]=Informație despre sistem pentru plasmoizi
 Comment[sv]=Systeminformation för Plasmoider
 Comment[tr]=Plasma programcıkları için sistem bilgileri
 Comment[uk]=Інформація системи для плазмоїдів
+Comment[x-test]=xxSystem information for Plasmoidsxx
 Comment[zh_TW]=Plasmoids 的系統資訊
 ServiceTypes=Plasma/DataEngine
 Icon=utilities-system-monitor

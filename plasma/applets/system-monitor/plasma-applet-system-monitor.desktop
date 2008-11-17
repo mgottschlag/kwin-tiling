@@ -84,6 +84,7 @@ Comment[ro]=Miniaplicație de monitorizare a sistemului
 Comment[sv]=Miniprogram för systemövervakning
 Comment[tr]=Sistem izleme programcığı
 Comment[uk]=Аплет моніторингу системи
+Comment[x-test]=xxSystem monitoring appletxx
 Comment[zh_TW]=系統監控小程式
 Type=Service
 Icon=utilities-system-monitor

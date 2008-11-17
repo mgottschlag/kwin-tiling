@@ -1,6 +1,16 @@
 [Desktop Entry]
 Name=Quicklaunch
+Name[el]=Γρήγορη εκτέλεση
+Name[sv]=Snabbstart
+Name[x-test]=xxQuicklaunchxx
+Name[zh_TW]=快速啟動
 Comment=Launch your favourite Applications
+Comment[ca]=Inicieu les aplicacions preferides
+Comment[el]=Εκτελέστε τις αγαπημένες σας εφαρμογές
+Comment[sv]=Start dina favoritprogram
+Comment[uk]=Запуск ваших улюблених програм
+Comment[x-test]=xxLaunch your favourite Applicationsxx
+Comment[zh_TW]=啟動您最常用的應用程式
 
 Icon=kget
 Type=Service

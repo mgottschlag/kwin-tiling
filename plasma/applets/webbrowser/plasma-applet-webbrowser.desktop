@@ -97,6 +97,7 @@ Comment[ro]=Un navigator web simplu
 Comment[sv]=En enkel webbläsare
 Comment[tr]=Basit bir Web tarayıcı
 Comment[uk]=Простий переглядач Тенет
+Comment[x-test]=xxA simple web browserxx
 Comment[zh_TW]=簡易瀏覽器
 Type=Service
 Icon=konqueror

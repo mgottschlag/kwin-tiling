@@ -17,6 +17,7 @@ Comment[ro]=Demon „write” KDE
 Comment[sv]=KDE-skrivdemon
 Comment[tr]=KDE write servisi
 Comment[uk]=Фонова служба запису KDE
+Comment[x-test]=xxKDE write daemonxx
 Comment[zh_TW]=KDE Write 伺服程式
 
 [Event/NewMessage]
@@ -36,6 +37,7 @@ Name[ro]=A fost recepționat un mesaj nou
 Name[sv]=Nytt meddelande mottaget
 Name[tr]=Yeni ileti alındı
 Name[uk]=Отримано нове повідомлення
+Name[x-test]=xxNew message receivedxx
 Name[zh_TW]=接到新訊息
 Comment=The daemon received a new message sent with wall(1) or write(1)
 Comment[ca]=El dimoni ha rebut un missatge nou enviat amb wall(1) o write(1)
@@ -53,6 +55,7 @@ Comment[ro]=Demonul a recepționat un mesaj nou trimis cu wall(1) sau write(1)
 Comment[sv]=Demonen tog emot ett nytt meddelande skickat med wall(1) eller write(1)
 Comment[tr]=Servis wall(1) ya da write(1) ile gönderilen yeni bir ileti aldı
 Comment[uk]=Фоновою службою отримано нове повідомлення, надіслане за допомогою wall(1) або write(1)
+Comment[x-test]=xxThe daemon received a new message sent with wall(1) or write(1)xx
 Comment[zh_TW]=伺服程式接收到從 wall(1) 或 write(1) 送出的新訊息
 Sound=KDE-Sys-App-Message.ogg
 Action=Popup|Sound

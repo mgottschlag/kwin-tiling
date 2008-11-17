@@ -15,6 +15,7 @@ Name[ro]=Notificări aplicații
 Name[sv]=Programunderrättelser
 Name[tr]=Uygulama Bildirimleri
 Name[uk]=Сповіщення програм
+Name[x-test]=xxApplication Notificationsxx
 Name[zh_TW]=應用程式通知
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service

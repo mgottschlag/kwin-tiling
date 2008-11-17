@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Application Job Information
+Name[ca]=Informació de les tasques de les aplicacions
 Name[el]=Πληροφορίες εργασιών εφαρμογών
 Name[gu]=કાર્યક્રમ કાર્ય માહિતી
 Name[kk]=Қолданба тапсырмасының ақпараты
@@ -10,8 +11,10 @@ Name[pt_BR]=Informação da Tarefa da Aplicação
 Name[sv]=Information om programjobb
 Name[tr]=Uygulama Görev Bilgileri
 Name[uk]=Відомості про завдання програми
+Name[x-test]=xxApplication Job Informationxx
 Name[zh_TW]=應用程式工作資訊
 Comment=Kuiserver data for Plasmoids
+Comment[ca]=Dades del «kuiserver» pels Plasmoides
 Comment[el]=Δεδομένα Kuiserver για τα πλασμοειδή
 Comment[gu]=પ્લાઝમોઇડ માટે Kuiserver માહિતી
 Comment[kk]=Плазмоидтерге арналған Kuiserver дерегі
@@ -22,6 +25,7 @@ Comment[pt_BR]=Dados do Kuiserver para os Plasmóides
 Comment[sv]=Kuiserver-data för Plasmoider
 Comment[tr]=Plasma programcıkları için Kuiserver verileri
 Comment[uk]=Дані Kuiserver для плазмоїдів
+Comment[x-test]=xxKuiserver data for Plasmoidsxx
 Comment[zh_TW]=Plasmoid 的 Kuiserver 資料
 Type=Service
 X-KDE-ServiceTypes=Plasma/DataEngine
