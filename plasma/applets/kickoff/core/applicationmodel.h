@@ -36,84 +36,82 @@ class ApplicationModel : public KickoffAbstractModel
 {
     Q_OBJECT
 
-    public:
-        ApplicationModel(QObject *parent = 0);
-        virtual ~ApplicationModel();
+public:
+    ApplicationModel(QObject *parent = 0);
+    virtual ~ApplicationModel();
 
+    /**
+     * This enum describes the policy for
+     * handling duplicate applications (that is,
+     * two applications with the same name in the same group)
+     */
+    enum DuplicatePolicy {
+        /** Display duplicate entries. */
+        ShowDuplicatesPolicy,
         /**
-         * This enum describes the policy for
-         * handling duplicate applications (that is,
-         * two applications with the same name in the same group)
+         * Show only the entry for the most recent
+         * version of the application.
+         *
+         * Currently only a crude heuristic to determine whether the
+         * application is from KDE 3 or KDE 4 is used to determine
+         * recent-ness.
+         *
+         * eg.  If MyGame/KDE 3 and MyGame/KDE 4 are found
+         * show only MyGame/KDE 4
          */
-        enum DuplicatePolicy
-        {
-            /** Display duplicate entries. */
-            ShowDuplicatesPolicy,
-            /**
-             * Show only the entry for the most recent
-             * version of the application.
-             *
-             * Currently only a crude heuristic to determine whether the
-             * application is from KDE 3 or KDE 4 is used to determine
-             * recent-ness.
-             *
-             * eg.  If MyGame/KDE 3 and MyGame/KDE 4 are found
-             * show only MyGame/KDE 4
-             */
-            ShowLatestOnlyPolicy
-        };
+        ShowLatestOnlyPolicy
+    };
 
-        /**
-         * This enum describes the policy for
-         * handling applications that are configured to appear
-         * in the System tab.
-         */
-        enum SystemApplicationPolicy
-        {
-            /** Display entries in Applications tab and System tab. */
-            ShowApplicationAndSystemPolicy,
-            /** Display entry only in System tab. */
-            ShowSystemOnlyPolicy
-        };
+    /**
+     * This enum describes the policy for
+     * handling applications that are configured to appear
+     * in the System tab.
+     */
+    enum SystemApplicationPolicy {
+        /** Display entries in Applications tab and System tab. */
+        ShowApplicationAndSystemPolicy,
+        /** Display entry only in System tab. */
+        ShowSystemOnlyPolicy
+    };
 
 
-        /**
-         * Sets the policy for handling duplicate applications.
-         * See DuplicatePolicy
-         */
-        void setDuplicatePolicy(DuplicatePolicy policy);
-        /** See setDuplicatePolicy() */
-        DuplicatePolicy duplicatePolicy() const;
+    /**
+     * Sets the policy for handling duplicate applications.
+     * See DuplicatePolicy
+     */
+    void setDuplicatePolicy(DuplicatePolicy policy);
+    /** See setDuplicatePolicy() */
+    DuplicatePolicy duplicatePolicy() const;
 
-        /**
-         * Sets the policy for handling System applications.
-         * See SystemApplicationPolicy
-         */
-        void setSystemApplicationPolicy(SystemApplicationPolicy policy);
-        /** See setSystemApplicationPolicy() */
-        SystemApplicationPolicy systemApplicationPolicy() const;
+    /**
+     * Sets the policy for handling System applications.
+     * See SystemApplicationPolicy
+     */
+    void setSystemApplicationPolicy(SystemApplicationPolicy policy);
+    /** See setSystemApplicationPolicy() */
+    SystemApplicationPolicy systemApplicationPolicy() const;
 
 
-        // reimplemented from QAbstractItemModel
-        virtual bool canFetchMore(const QModelIndex &parent) const;
-        virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
-        virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-        virtual void fetchMore(const QModelIndex &parent);
-        virtual bool hasChildren(const QModelIndex &parent = QModelIndex()) const;
-        virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-        virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
-        virtual QModelIndex parent(const QModelIndex &index) const;
-        virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    // reimplemented from QAbstractItemModel
+    virtual bool canFetchMore(const QModelIndex &parent) const;
+    virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    virtual void fetchMore(const QModelIndex &parent);
+    virtual bool hasChildren(const QModelIndex &parent = QModelIndex()) const;
+    virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+    virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
+    virtual QModelIndex parent(const QModelIndex &index) const;
+    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
-    public slots:
-        void slotReloadMenu();
-        void checkSycocaChange();
+public slots:
+    void slotReloadMenu();
+    void checkSycocaChange();
 
-    private:
-        friend class ApplicationModelPrivate;
-        ApplicationModelPrivate *const d;
+private:
+    friend class ApplicationModelPrivate;
+    ApplicationModelPrivate *const d;
 
-        Q_DISABLE_COPY(ApplicationModel)
+    Q_DISABLE_COPY(ApplicationModel)
 };
 
 }

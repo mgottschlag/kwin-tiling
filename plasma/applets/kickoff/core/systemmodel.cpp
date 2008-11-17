@@ -55,12 +55,11 @@ static const int REMOVABLE_ROW = 2;
 static const int FIXED_ROW = 3;
 static const int LAST_ROW = FIXED_ROW;
 
-struct UsageInfo
-{
+struct UsageInfo {
     UsageInfo()
-        : used(0),
-          available(0),
-          dirty(true) {}
+            : used(0),
+            available(0),
+            dirty(true) {}
 
     quint64 used;
     quint64 available;
@@ -71,26 +70,25 @@ class SystemModel::Private
 {
 public:
     Private(SystemModel *parent)
-        :q(parent)
-        ,placesModel(new KFilePlacesModel(parent))
-    {
+            : q(parent)
+            , placesModel(new KFilePlacesModel(parent)) {
         q->setSourceModel(placesModel);
 
-        connect(placesModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
-                q, SLOT(sourceDataChanged(QModelIndex,QModelIndex)));
-        connect(placesModel, SIGNAL(rowsAboutToBeInserted(QModelIndex,int,int)),
-                q, SLOT(sourceRowsAboutToBeInserted(QModelIndex,int,int)));
-        connect(placesModel, SIGNAL(rowsInserted(QModelIndex,int,int)),
-                q, SLOT(sourceRowsInserted(QModelIndex,int,int)));
-        connect(placesModel, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)),
-                q, SLOT(sourceRowsAboutToBeRemoved(QModelIndex,int,int)));
-        connect(placesModel, SIGNAL(rowsRemoved(QModelIndex,int,int)),
-                q, SLOT(sourceRowsRemoved(QModelIndex,int,int)));
+        connect(placesModel, SIGNAL(dataChanged(QModelIndex, QModelIndex)),
+                q, SLOT(sourceDataChanged(QModelIndex, QModelIndex)));
+        connect(placesModel, SIGNAL(rowsAboutToBeInserted(QModelIndex, int, int)),
+                q, SLOT(sourceRowsAboutToBeInserted(QModelIndex, int, int)));
+        connect(placesModel, SIGNAL(rowsInserted(QModelIndex, int, int)),
+                q, SLOT(sourceRowsInserted(QModelIndex, int, int)));
+        connect(placesModel, SIGNAL(rowsAboutToBeRemoved(QModelIndex, int, int)),
+                q, SLOT(sourceRowsAboutToBeRemoved(QModelIndex, int, int)));
+        connect(placesModel, SIGNAL(rowsRemoved(QModelIndex, int, int)),
+                q, SLOT(sourceRowsRemoved(QModelIndex, int, int)));
 
         topLevelSections << i18n("Applications")
-                         << i18n("Places")
-                         << i18n("Removable Storage")
-                         << i18n("Storage");
+        << i18n("Places")
+        << i18n("Removable Storage")
+        << i18n("Storage");
         loadApplications();
         connect(&refreshTimer, SIGNAL(timeout()),
                 q, SLOT(startRefreshingUsageInfo()));
@@ -99,20 +97,18 @@ public:
         connect(KSycoca::self(), SIGNAL(databaseChanged()), q, SLOT(reloadApplications()));
     }
 
-    void queryFreeSpace(const QString& mountPoint)
-    {
+    void queryFreeSpace(const QString& mountPoint) {
         KDiskFreeSpaceInfo freeSpace = KDiskFreeSpaceInfo::freeSpaceInfo(mountPoint);
-        if(freeSpace.isValid())
+        if (freeSpace.isValid())
             q->freeSpaceInfoAvailable(freeSpace.mountPoint(), freeSpace.size() / 1024,
-                    freeSpace.used() / 1024, freeSpace.available() / 1024);
+                                      freeSpace.used() / 1024, freeSpace.available() / 1024);
     }
 
-    void loadApplications()
-    {
+    void loadApplications() {
         QStringList apps = Kickoff::systemApplicationList();
         appsList.clear();
 
-        foreach (const QString &app, apps) {
+        foreach(const QString &app, apps) {
             KService::Ptr service = KService::serviceByStorageId(app);
 
             if (!service) {
@@ -134,8 +130,8 @@ public:
 };
 
 SystemModel::SystemModel(QObject *parent)
-    : KickoffProxyModel(parent)
-    , d(new Private(this))
+        : KickoffProxyModel(parent)
+        , d(new Private(this))
 {
 }
 
@@ -188,13 +184,13 @@ QModelIndex SystemModel::index(int row, int column, const QModelIndex &parent) c
     }
 
     // We use the row+1 of the parent as internal Id.
-    return createIndex(row, column, parent.row()+1);
+    return createIndex(row, column, parent.row() + 1);
 }
 
 QModelIndex SystemModel::parent(const QModelIndex &item) const
 {
-    if (item.internalId()>0) {
-        return index(item.internalId()-1, 0);
+    if (item.internalId() > 0) {
+        return index(item.internalId() - 1, 0);
     } else {
         return QModelIndex();
     }
@@ -206,17 +202,17 @@ int SystemModel::rowCount(const QModelIndex &parent) const
         return LAST_ROW + 1;
     } else if (!parent.parent().isValid()) {
         switch (parent.row()) {
-            case APPLICATIONS_ROW:
-                return d->appsList.size();
-                break;
-            case BOOKMARKS_ROW:
-                return d->placesModel->rowCount();
-                break;
-            case REMOVABLE_ROW:
-                return d->placesModel->rowCount();
-                break;
-            default:
-                return 0;
+        case APPLICATIONS_ROW:
+            return d->appsList.size();
+            break;
+        case BOOKMARKS_ROW:
+            return d->placesModel->rowCount();
+            break;
+        case REMOVABLE_ROW:
+            return d->placesModel->rowCount();
+            break;
+        default:
+            return 0;
         }
     }
 
@@ -249,7 +245,7 @@ QVariant SystemModel::data(const QModelIndex &index, int role) const
 
         KService::Ptr service = d->appsList[index.row()];
 
-        switch(role) {
+        switch (role) {
         case Qt::DisplayRole:
             return service->name();
         case Qt::DecorationRole:
@@ -263,14 +259,14 @@ QVariant SystemModel::data(const QModelIndex &index, int role) const
         }
     }
 
-    if (role==UrlRole && !d->placesModel->isHidden(mapToSource(index))) {
+    if (role == UrlRole && !d->placesModel->isHidden(mapToSource(index))) {
         QModelIndex parent = index.parent();
         QModelIndex sourceIndex = mapToSource(index);
 
         bool isDevice = d->placesModel->isDevice(sourceIndex);
         bool wellPlaced = false;
 
-        if (!isDevice && parent.row()==BOOKMARKS_ROW) {
+        if (!isDevice && parent.row() == BOOKMARKS_ROW) {
             wellPlaced = true;
         } else if (isDevice) {
             Solid::Device dev = d->placesModel->deviceForIndex(sourceIndex);
@@ -284,9 +280,9 @@ QVariant SystemModel::data(const QModelIndex &index, int role) const
 
             bool fixed = !drive || (!drive->isHotpluggable() && !drive->isRemovable());
 
-            if (!fixed && parent.row()==REMOVABLE_ROW) {
+            if (!fixed && parent.row() == REMOVABLE_ROW) {
                 wellPlaced = true;
-            } else if (fixed && parent.row()==FIXED_ROW) {
+            } else if (fixed && parent.row() == FIXED_ROW) {
                 wellPlaced = true;
             }
         }
@@ -296,7 +292,7 @@ QVariant SystemModel::data(const QModelIndex &index, int role) const
         } else {
             return QVariant();
         }
-    } else if (role==DeviceUdiRole) {
+    } else if (role == DeviceUdiRole) {
         QModelIndex sourceIndex = mapToSource(index);
 
         if (d->placesModel->isDevice(sourceIndex)) {
@@ -305,7 +301,7 @@ QVariant SystemModel::data(const QModelIndex &index, int role) const
         } else {
             return QVariant();
         }
-    } else if (role==SubTitleRole) {
+    } else if (role == SubTitleRole) {
         QModelIndex sourceIndex = mapToSource(index);
 
         if (d->placesModel->isDevice(sourceIndex)) {
@@ -315,13 +311,13 @@ QVariant SystemModel::data(const QModelIndex &index, int role) const
             if (access) {
                 return access->filePath();
             }
-        } else if (index.parent().row()!=APPLICATIONS_ROW) {
+        } else if (index.parent().row() != APPLICATIONS_ROW) {
             KUrl url = d->placesModel->url(sourceIndex);
             return url.isLocalFile() ? url.path() : url.prettyUrl();
         }
 
         return QVariant();
-    } else if (role==DiskUsedSpaceRole || role== DiskFreeSpaceRole) {
+    } else if (role == DiskUsedSpaceRole || role == DiskFreeSpaceRole) {
         QModelIndex sourceIndex = mapToSource(index);
         QString mp;
 
@@ -337,7 +333,7 @@ QVariant SystemModel::data(const QModelIndex &index, int role) const
         if (!mp.isEmpty() && d->usageByMountpoint.contains(mp)) {
             UsageInfo info = d->usageByMountpoint[mp];
 
-            if (role==DiskUsedSpaceRole) {
+            if (role == DiskUsedSpaceRole) {
                 return info.used;
             } else {
                 return info.available;
@@ -355,7 +351,7 @@ void SystemModel::startRefreshingUsageInfo()
     }
 
     int rowCount = d->placesModel->rowCount();
-    for (int i=0; i<rowCount; ++i) {
+    for (int i = 0; i < rowCount; ++i) {
         QModelIndex index = d->placesModel->index(i, 0);
         if (d->placesModel->isDevice(index)) {
             Solid::Device dev = d->placesModel->deviceForIndex(index);
@@ -378,7 +374,7 @@ void SystemModel::reloadApplications()
 }
 
 void SystemModel::freeSpaceInfoAvailable(const QString& mountPoint, quint64,
-                                         quint64 kbUsed, quint64 kbAvailable)
+        quint64 kbUsed, quint64 kbAvailable)
 {
     UsageInfo info;
     info.used = kbUsed;
@@ -394,7 +390,7 @@ void SystemModel::freeSpaceInfoAvailable(const QString& mountPoint, quint64,
 
     // We're done, let's emit the changes
     int rowCount = d->placesModel->rowCount();
-    for (int i=0; i<rowCount; ++i) {
+    for (int i = 0; i < rowCount; ++i) {
         QModelIndex sourceIndex = d->placesModel->index(i, 0);
         if (d->placesModel->isDevice(sourceIndex)) {
             Solid::Device dev = d->placesModel->deviceForIndex(sourceIndex);
@@ -421,7 +417,7 @@ void Kickoff::SystemModel::sourceDataChanged(const QModelIndex &start, const QMo
 {
     if (start.parent().isValid()) return;
 
-    for (int row = BOOKMARKS_ROW; row<=LAST_ROW; ++row) {
+    for (int row = BOOKMARKS_ROW; row <= LAST_ROW; ++row) {
         QModelIndex section = index(row, 0);
 
         QModelIndex new_start = index(start.row(), start.column(), section);
@@ -434,7 +430,7 @@ void Kickoff::SystemModel::sourceRowsAboutToBeInserted(const QModelIndex &parent
 {
     if (parent.isValid()) return;
 
-    for (int row = BOOKMARKS_ROW; row<=LAST_ROW; ++row) {
+    for (int row = BOOKMARKS_ROW; row <= LAST_ROW; ++row) {
         QModelIndex section = index(row, 0);
         beginInsertRows(section, start, end);
     }
@@ -451,7 +447,7 @@ void Kickoff::SystemModel::sourceRowsAboutToBeRemoved(const QModelIndex &parent,
 {
     if (parent.isValid()) return;
 
-    for (int row = BOOKMARKS_ROW; row<=LAST_ROW; ++row) {
+    for (int row = BOOKMARKS_ROW; row <= LAST_ROW; ++row) {
         QModelIndex section = index(row, 0);
         beginRemoveRows(section, start, end);
     }

@@ -72,41 +72,37 @@ class Launcher::Private
 {
 public:
     Private(Launcher *launcher)
-        : q(launcher)
-        , applet(0)
-        , urlLauncher(new UrlItemLauncher(launcher))
-        , searchModel(0)
-        , leaveModel(0)
-        , searchBar(0)
-        , footer(0)
-        , contentArea(0)
-        , contentAreaBorder(0)
-        , contentSwitcher(0)
-        , searchView(0)
-        , favoritesView(0)
-        , contextMenuFactory(0)
-        , autoHide(false)
-        , visibleItemCount(10)
-        , placement(Plasma::TopPosedLeftAlignedPopup)
-        , panelEdge(Plasma::BottomEdge)
-    {
+            : q(launcher)
+            , applet(0)
+            , urlLauncher(new UrlItemLauncher(launcher))
+            , searchModel(0)
+            , leaveModel(0)
+            , searchBar(0)
+            , footer(0)
+            , contentArea(0)
+            , contentAreaBorder(0)
+            , contentSwitcher(0)
+            , searchView(0)
+            , favoritesView(0)
+            , contextMenuFactory(0)
+            , autoHide(false)
+            , visibleItemCount(10)
+            , placement(Plasma::TopPosedLeftAlignedPopup)
+            , panelEdge(Plasma::BottomEdge) {
     }
 
-    ~Private()
-    {
+    ~Private() {
     }
 
     enum TabOrder { NormalTabOrder, ReverseTabOrder };
 
-    void setupEventHandler(QAbstractItemView *view)
-    {
+    void setupEventHandler(QAbstractItemView *view) {
         view->viewport()->installEventFilter(q);
         view->installEventFilter(q);
     }
 
     void addView(const QString& name, const QIcon& icon,
-                 QAbstractItemModel *model = 0, QAbstractItemView *view = 0)
-    {
+                 QAbstractItemModel *model = 0, QAbstractItemView *view = 0) {
         view->setFrameStyle(QFrame::NoFrame);
         // prevent the view from stealing focus from the search bar
         view->setFocusPolicy(Qt::NoFocus);
@@ -115,7 +111,11 @@ public:
         view->setDragEnabled(true);
         view->setAcceptDrops(true);
         view->setDropIndicatorShown(true);
-        view->setDragDropMode(QAbstractItemView::InternalMove);
+        if (name == "Favorites") {
+            view->setDragDropMode(QAbstractItemView::DragDrop);
+        } else {
+            view->setDragDropMode(QAbstractItemView::InternalMove);
+        }
         view->setModel(model);
         //view->setCurrentIndex(QModelIndex());
         setupEventHandler(view);
@@ -126,8 +126,7 @@ public:
         contentArea->addWidget(view);
     }
 
-    void initTabs()
-    {
+    void initTabs() {
         // Favorites view
         setupFavoritesView();
 
@@ -147,11 +146,10 @@ public:
         setupSearchView();
     }
 
-    void setupLeaveView()
-    {
+    void setupLeaveView() {
         leaveModel = new LeaveModel(q);
         leaveModel->updateModel();
-        UrlItemView *view = new UrlItemView;
+        UrlItemView *view = new UrlItemView();
         ItemDelegate *delegate = new ItemDelegate(q);
         delegate->setRoleMapping(Plasma::Delegate::SubTitleRole, SubTitleRole);
         delegate->setRoleMapping(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
@@ -160,10 +158,9 @@ public:
         addView(i18n("Leave"), KIcon("system-shutdown"), leaveModel, view);
     }
 
-    void setupFavoritesView()
-    {
+    void setupFavoritesView() {
         FavoritesModel *model = new FavoritesModel(q);
-        UrlItemView *view = new UrlItemView;
+        UrlItemView *view = new UrlItemView();
         ItemDelegate *delegate = new ItemDelegate(q);
         delegate->setRoleMapping(Plasma::Delegate::SubTitleRole, SubTitleRole);
         delegate->setRoleMapping(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
@@ -176,8 +173,7 @@ public:
         favoritesView = view;
     }
 
-    void setupAllProgramsView()
-    {
+    void setupAllProgramsView() {
         ApplicationModel *applicationModel = new ApplicationModel(q);
         applicationModel->setDuplicatePolicy(ApplicationModel::ShowLatestOnlyPolicy);
 
@@ -188,13 +184,12 @@ public:
         applicationView->setItemDelegate(delegate);
 
         addView(i18n("Applications"), KIcon("applications-other"),
-                    applicationModel, applicationView);
+                applicationModel, applicationView);
     }
 
-    void setupRecentView()
-    {
+    void setupRecentView() {
         RecentlyUsedModel *model = new RecentlyUsedModel(q);
-        UrlItemView *view = new UrlItemView;
+        UrlItemView *view = new UrlItemView();
         ItemDelegate *delegate = new ItemDelegate(q);
         delegate->setRoleMapping(Plasma::Delegate::SubTitleRole, SubTitleRole);
         delegate->setRoleMapping(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
@@ -211,10 +206,9 @@ public:
         contextMenuFactory->setViewActions(view, QList<QAction*>() << clearApplications << clearDocuments);
     }
 
-    void setupSystemView()
-    {
+    void setupSystemView() {
         SystemModel *model = new SystemModel(q);
-        UrlItemView *view = new UrlItemView;
+        UrlItemView *view = new UrlItemView();
         ItemDelegate *delegate = new ItemDelegate(q);
         delegate->setRoleMapping(Plasma::Delegate::SubTitleRole, SubTitleRole);
         delegate->setRoleMapping(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
@@ -224,10 +218,9 @@ public:
         addView(i18n("Computer"), systemIcon(), model, view);
     }
 
-    void setupSearchView()
-    {
+    void setupSearchView() {
         searchModel = new SearchModel(q);
-        UrlItemView *view = new UrlItemView;
+        UrlItemView *view = new UrlItemView();
         ItemDelegate *delegate = new ItemDelegate(q);
         delegate->setRoleMapping(Plasma::Delegate::SubTitleRole, SubTitleRole);
         delegate->setRoleMapping(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
@@ -252,91 +245,60 @@ public:
         searchView = view;
     }
 
-    void registerUrlHandlers()
-    {
+    void registerUrlHandlers() {
         UrlItemLauncher::addGlobalHandler(UrlItemLauncher::ExtensionHandler, "desktop", new ServiceItemHandler);
         UrlItemLauncher::addGlobalHandler(UrlItemLauncher::ProtocolHandler, "leave", new LeaveItemHandler);
     }
 
-    QIcon systemIcon()
-    {
-       QList<Solid::Device> batteryList = Solid::Device::listFromType(Solid::DeviceInterface::Battery, QString());
+    QIcon systemIcon() {
+        QList<Solid::Device> batteryList = Solid::Device::listFromType(Solid::DeviceInterface::Battery, QString());
 
-       if (batteryList.isEmpty()) {
-          return KIcon("computer");
-       } else {
-          return KIcon("computer-laptop");
-       }
-    }
-
-    void setNorthLayout(TabOrder tabOrder)
-    {
-        contentSwitcher->setShape( QTabBar::RoundedNorth );
-        QLayout * layout = q->layout();
-        delete layout;
-        layout = new QVBoxLayout();
-        layout->addWidget(contentSwitcher);
-        layout->addWidget(contentAreaBorder);
-        layout->addWidget(searchBar);
-        layout->addWidget(footer);
-        layout->setSpacing(0);
-        layout->setMargin(0);
-        q->setLayout(layout);
-        setTabOrder( tabOrder );
-    }
-
-    void setSouthLayout(TabOrder tabOrder)
-    {
-        contentSwitcher->setShape( QTabBar::RoundedSouth );
-        QLayout * layout = q->layout();
-        delete layout;
-        layout = new QVBoxLayout();
-        layout->addWidget(footer);
-        layout->addWidget(searchBar);
-        layout->addWidget(contentAreaBorder);
-        layout->addWidget(contentSwitcher);
-        layout->setSpacing(0);
-        layout->setMargin(0);
-        q->setLayout(layout);
-        setTabOrder( tabOrder );
-    }
-
-    void setWestLayout(TabOrder tabOrder)
-    {
-        contentSwitcher->setShape( QTabBar::RoundedWest );
-        QLayout * layout = q->layout();
-        delete layout;
-        layout = new QHBoxLayout();
-        layout->addWidget(contentSwitcher);
-        layout->addWidget(contentAreaBorder);
-        QBoxLayout * layout2 = new QVBoxLayout();
-        if ( tabOrder == NormalTabOrder ) {
-            layout2->addLayout(layout);
-            layout2->addWidget(searchBar);
-            layout2->addWidget(footer);
+        if (batteryList.isEmpty()) {
+            return KIcon("computer");
         } else {
-            layout2->addWidget(footer);
-            layout2->addWidget(searchBar);
-            layout2->addLayout(layout);
+            return KIcon("computer-laptop");
         }
-        layout->setSpacing(0);
-        layout->setMargin(0);
-        layout2->setSpacing(0);
-        layout2->setMargin(0);
-        q->setLayout(layout2);
-        setTabOrder( tabOrder );
     }
 
-    void setEastLayout(TabOrder tabOrder)
-    {
-        contentSwitcher->setShape( QTabBar::RoundedEast );
+    void setNorthLayout(TabOrder tabOrder) {
+        contentSwitcher->setShape(QTabBar::RoundedNorth);
+        QLayout * layout = q->layout();
+        delete layout;
+        layout = new QVBoxLayout();
+        layout->addWidget(contentSwitcher);
+        layout->addWidget(contentAreaBorder);
+        layout->addWidget(searchBar);
+        layout->addWidget(footer);
+        layout->setSpacing(0);
+        layout->setMargin(0);
+        q->setLayout(layout);
+        setTabOrder(tabOrder);
+    }
+
+    void setSouthLayout(TabOrder tabOrder) {
+        contentSwitcher->setShape(QTabBar::RoundedSouth);
+        QLayout * layout = q->layout();
+        delete layout;
+        layout = new QVBoxLayout();
+        layout->addWidget(footer);
+        layout->addWidget(searchBar);
+        layout->addWidget(contentAreaBorder);
+        layout->addWidget(contentSwitcher);
+        layout->setSpacing(0);
+        layout->setMargin(0);
+        q->setLayout(layout);
+        setTabOrder(tabOrder);
+    }
+
+    void setWestLayout(TabOrder tabOrder) {
+        contentSwitcher->setShape(QTabBar::RoundedWest);
         QLayout * layout = q->layout();
         delete layout;
         layout = new QHBoxLayout();
-        layout->addWidget(contentAreaBorder);
         layout->addWidget(contentSwitcher);
+        layout->addWidget(contentAreaBorder);
         QBoxLayout * layout2 = new QVBoxLayout();
-        if ( tabOrder == NormalTabOrder ) {
+        if (tabOrder == NormalTabOrder) {
             layout2->addLayout(layout);
             layout2->addWidget(searchBar);
             layout2->addWidget(footer);
@@ -353,51 +315,74 @@ public:
         setTabOrder(tabOrder);
     }
 
-    void setTabOrder(TabOrder newOrder)
-    {
+    void setEastLayout(TabOrder tabOrder) {
+        contentSwitcher->setShape(QTabBar::RoundedEast);
+        QLayout * layout = q->layout();
+        delete layout;
+        layout = new QHBoxLayout();
+        layout->addWidget(contentAreaBorder);
+        layout->addWidget(contentSwitcher);
+        QBoxLayout * layout2 = new QVBoxLayout();
+        if (tabOrder == NormalTabOrder) {
+            layout2->addLayout(layout);
+            layout2->addWidget(searchBar);
+            layout2->addWidget(footer);
+        } else {
+            layout2->addWidget(footer);
+            layout2->addWidget(searchBar);
+            layout2->addLayout(layout);
+        }
+        layout->setSpacing(0);
+        layout->setMargin(0);
+        layout2->setSpacing(0);
+        layout2->setMargin(0);
+        q->setLayout(layout2);
+        setTabOrder(tabOrder);
+    }
+
+    void setTabOrder(TabOrder newOrder) {
         // identify current TabOrder, assumes favoritesView is first in normal order
         TabOrder oldOrder;
-        if ( contentArea->widget( 0 ) == favoritesView  ) {
+        if (contentArea->widget(0) == favoritesView) {
             oldOrder = NormalTabOrder;
         } else {
             oldOrder = ReverseTabOrder;
         }
-        if ( newOrder == oldOrder ) {
+        if (newOrder == oldOrder) {
             return;
         }
         // remove the and widgets and store their data in a separate structure
         // remove this first so we can cleanly remove the widgets controlled by contentSwitcher
-        contentArea->removeWidget( searchView );
-        Q_ASSERT( contentArea->count() == contentSwitcher->count() );
+        contentArea->removeWidget(searchView);
+        Q_ASSERT(contentArea->count() == contentSwitcher->count());
 
         QList<WidgetTabData> removedTabs;
-        for ( int i = contentSwitcher->count() - 1; i >= 0 ; i-- ) {
+        for (int i = contentSwitcher->count() - 1; i >= 0 ; i--) {
             WidgetTabData wtd;
-            wtd.tabText = contentSwitcher->tabText( i );
-            wtd.tabToolTip = contentSwitcher->tabToolTip( i );
-            wtd.tabWhatsThis = contentSwitcher->tabWhatsThis( i );
-            wtd.tabIcon = contentSwitcher->tabIcon( i );
-            wtd.widget = contentArea->widget( i );
-            removedTabs.append( wtd );
+            wtd.tabText = contentSwitcher->tabText(i);
+            wtd.tabToolTip = contentSwitcher->tabToolTip(i);
+            wtd.tabWhatsThis = contentSwitcher->tabWhatsThis(i);
+            wtd.tabIcon = contentSwitcher->tabIcon(i);
+            wtd.widget = contentArea->widget(i);
+            removedTabs.append(wtd);
 
-            contentSwitcher->removeTab( i );
-            contentArea->removeWidget( contentArea->widget( i ) );
+            contentSwitcher->removeTab(i);
+            contentArea->removeWidget(contentArea->widget(i));
         }
         // then reinsert them in reversed order
         int i = 0;
-        foreach (const WidgetTabData &wtd, removedTabs) {
-            contentSwitcher->addTab( wtd.tabIcon, wtd.tabText );
-            contentSwitcher->setTabToolTip( i, wtd.tabToolTip );
-            contentSwitcher->setTabWhatsThis( i, wtd.tabWhatsThis );
-            contentArea->addWidget( wtd.widget );
+        foreach(const WidgetTabData &wtd, removedTabs) {
+            contentSwitcher->addTab(wtd.tabIcon, wtd.tabText);
+            contentSwitcher->setTabToolTip(i, wtd.tabToolTip);
+            contentSwitcher->setTabWhatsThis(i, wtd.tabWhatsThis);
+            contentArea->addWidget(wtd.widget);
             ++i;
         }
         //finally replace the searchView
-        contentArea->addWidget( searchView );
+        contentArea->addWidget(searchView);
     }
 
-    struct WidgetTabData
-    {
+    struct WidgetTabData {
         QString tabText;
         QString tabToolTip;
         QString tabWhatsThis;
@@ -426,15 +411,15 @@ public:
 };
 
 Launcher::Launcher(QWidget *parent)
-    : QWidget(parent, Qt::Window)
-    , d(new Private(this))
+        : QWidget(parent, Qt::Window)
+        , d(new Private(this))
 {
     init();
 }
 
 Launcher::Launcher(Plasma::Applet *applet)
-    : QWidget(0, Qt::Window)
-    , d(new Private(this))
+        : QWidget(0, Qt::Window)
+        , d(new Private(this))
 {
     init();
     setApplet(applet);
@@ -463,10 +448,10 @@ void Launcher::init()
 
     d->contentSwitcher = new TabBar(this);
     d->contentSwitcher->installEventFilter(this);
-    d->contentSwitcher->setIconSize(QSize(48,48));
+    d->contentSwitcher->setIconSize(QSize(48, 48));
     d->contentSwitcher->setShape(QTabBar::RoundedSouth);
     connect(d->contentSwitcher, SIGNAL(currentChanged(int)),
-            d->contentArea, SLOT(setCurrentIndex(int)) );
+            d->contentArea, SLOT(setCurrentIndex(int)));
     d->contextMenuFactory = new ContextMenuFactory(this);
 
     d->initTabs();
@@ -477,8 +462,8 @@ void Launcher::init()
 
     char hostname[256];
     hostname[0] = '\0';
-    if (!gethostname( hostname, sizeof(hostname) )) {
-       hostname[sizeof(hostname)-1] = '\0';
+    if (!gethostname(hostname, sizeof(hostname))) {
+        hostname[sizeof(hostname)-1] = '\0';
     }
     KUser user;
     QString fullName = user.property(KUser::FullName).toString();
@@ -498,7 +483,7 @@ void Launcher::init()
     QToolButton *branding = new BrandingButton(this);
     branding->setAutoRaise(false);
     branding->setToolButtonStyle(Qt::ToolButtonIconOnly);
-    connect( branding, SIGNAL(clicked()), SLOT(openHomepage()));
+    connect(branding, SIGNAL(clicked()), SLOT(openHomepage()));
 
     QHBoxLayout *brandingLayout = new QHBoxLayout;
     brandingLayout->setMargin(3);
@@ -523,22 +508,22 @@ QSize Launcher::minimumSizeHint() const
 {
     QSize size;
 
-    switch ( d->panelEdge ) {
-        case Plasma::LeftEdge:
-        case Plasma::RightEdge:
-            size.rheight() = d->searchBar->sizeHint().height() +
-                     d->footer->sizeHint().height() +
-                     qMax( d->favoritesView->sizeHintForRow(0)*3 + ItemDelegate::HEADER_HEIGHT, d->contentSwitcher->sizeHint().height() );
-            size.rwidth() = d->contentSwitcher->sizeHint().width() + d->favoritesView->sizeHint().width();
-            break;
-        case Plasma::TopEdge:
-        case Plasma::BottomEdge:
-        default:
-            size.rheight() = d->searchBar->sizeHint().height() +
-                     d->contentSwitcher->sizeHint().height() + d->footer->sizeHint().height() +
-                     d->favoritesView->sizeHintForRow(0)*3 + ItemDelegate::HEADER_HEIGHT;
-            size.rwidth() = d->contentSwitcher->sizeHint().width();
-            break;
+    switch (d->panelEdge) {
+    case Plasma::LeftEdge:
+    case Plasma::RightEdge:
+        size.rheight() = d->searchBar->sizeHint().height() +
+                         d->footer->sizeHint().height() +
+                         qMax(d->favoritesView->sizeHintForRow(0) * 3 + ItemDelegate::HEADER_HEIGHT, d->contentSwitcher->sizeHint().height());
+        size.rwidth() = d->contentSwitcher->sizeHint().width() + d->favoritesView->sizeHint().width();
+        break;
+    case Plasma::TopEdge:
+    case Plasma::BottomEdge:
+    default:
+        size.rheight() = d->searchBar->sizeHint().height() +
+                         d->contentSwitcher->sizeHint().height() + d->footer->sizeHint().height() +
+                         d->favoritesView->sizeHintForRow(0) * 3 + ItemDelegate::HEADER_HEIGHT;
+        size.rwidth() = d->contentSwitcher->sizeHint().width();
+        break;
     }
 
     return size;
@@ -629,11 +614,11 @@ bool Launcher::eventFilter(QObject *object, QEvent *event)
     // deliver unhandled key presses from the search bar
     // (mainly arrow keys, enter) to the active view
     if ((object == d->contentSwitcher || object == d->searchBar) && event->type() == QEvent::KeyPress) {
-            // we want left/right to still nav the tabbar
+        // we want left/right to still nav the tabbar
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
         if (keyEvent->modifiers() == Qt::NoModifier &&
-            (keyEvent->key() == Qt::Key_Left ||
-             keyEvent->key() == Qt::Key_Right)) {
+                (keyEvent->key() == Qt::Key_Left ||
+                 keyEvent->key() == Qt::Key_Right)) {
             if (object == d->contentSwitcher) {
                 return false;
             } else {
@@ -653,7 +638,7 @@ bool Launcher::eventFilter(QObject *object, QEvent *event)
     // the mouse events we are interested in are delivered to the viewport,
     // other events are delivered to the view itself.
     QAbstractItemView *view = qobject_cast<QAbstractItemView*>(object);
-    if(!view) {
+    if (!view) {
         view = qobject_cast<QAbstractItemView*>(object->parent());
     }
 
@@ -663,15 +648,15 @@ bool Launcher::eventFilter(QObject *object, QEvent *event)
             QMouseEvent *mouseEvent = (QMouseEvent*)event;
             const QModelIndex index = view->indexAt(mouseEvent->pos());
             if (index.isValid() &&
-                index.model()->hasChildren(index) == false &&
-                mouseEvent->button() == Qt::LeftButton) {
+                    index.model()->hasChildren(index) == false &&
+                    mouseEvent->button() == Qt::LeftButton) {
                 openIndex = index;
             }
         } else if (event->type() == QEvent::KeyPress) {
             QKeyEvent *keyEvent = (QKeyEvent*)event;
             const QModelIndex index = view->currentIndex();
             if (index.isValid() && index.model()->hasChildren(index) == false &&
-                (keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return)) {
+                    (keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return)) {
                 openIndex = index;
             }
         }
@@ -712,10 +697,10 @@ void Launcher::keyPressEvent(QKeyEvent *event)
 #if 0
     // allow tab switching by pressing the left or right arrow keys
     if (event->key() == Qt::Key_Left && d->contentSwitcher->currentIndex() > 0) {
-        d->contentSwitcher->setCurrentIndex(d->contentSwitcher->currentIndex()-1);
+        d->contentSwitcher->setCurrentIndex(d->contentSwitcher->currentIndex() - 1);
     } else if (event->key() == Qt::Key_Right &&
-        d->contentSwitcher->currentIndex() < d->contentSwitcher->count()-1) {
-        d->contentSwitcher->setCurrentIndex(d->contentSwitcher->currentIndex()+1);
+               d->contentSwitcher->currentIndex() < d->contentSwitcher->count() - 1) {
+        d->contentSwitcher->setCurrentIndex(d->contentSwitcher->currentIndex() + 1);
     }
 #endif
 }
@@ -739,10 +724,11 @@ void Launcher::resultsAvailable()
     d->searchView->setCurrentIndex(d->searchModel->index(0, 0, root));
 }
 
-void Launcher::setLauncherOrigin(const Plasma::PopupPlacement placement, Plasma::Location location) {
+void Launcher::setLauncherOrigin(const Plasma::PopupPlacement placement, Plasma::Location location)
+{
     if (d->placement != placement) {
         d->placement = placement;
- 
+
         switch (placement) {
         case Plasma::TopPosedRightAlignedPopup:
             d->setSouthLayout(Private::ReverseTabOrder);

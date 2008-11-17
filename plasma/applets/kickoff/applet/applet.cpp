@@ -49,7 +49,9 @@ class LauncherApplet::Private
 {
 public:
     Private(LauncherApplet *lApplet) : launcher(0), switcher(0), q(lApplet) { }
-    ~Private() { delete launcher; }
+    ~Private() {
+        delete launcher;
+    }
     void createLauncher();
     void initToolTip();
 
@@ -86,8 +88,8 @@ void LauncherApplet::Private::initToolTip()
 }
 
 LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
-    : Plasma::PopupApplet(parent,args),
-      d(new Private(this))
+        : Plasma::PopupApplet(parent, args),
+        d(new Private(this))
 {
     KGlobal::locale()->insertCatalog("plasma_applet_launcher");
     setHasConfigurationInterface(true);
@@ -107,7 +109,7 @@ void LauncherApplet::init()
         connect(menueditor, SIGNAL(triggered(bool)), this, SLOT(startMenuEditor()));
     }
 
-    Q_ASSERT( ! d->switcher );
+    Q_ASSERT(! d->switcher);
     d->switcher = new QAction(i18n("Switch to Classic Menu Style"), this);
     d->actions.append(d->switcher);
     connect(d->switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
@@ -142,11 +144,9 @@ void LauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     QVBoxLayout *layout = new QVBoxLayout(widget);
     widget->setLayout(layout);
 
-    QHBoxLayout *vl = new QHBoxLayout(widget);
-    layout->addLayout(vl);
-
     d->switchOnHoverCheckBox = new QCheckBox(i18n("Switch tabs on hover"), widget);
     layout->addWidget(d->switchOnHoverCheckBox);
+    layout->addStretch();
 
     parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
@@ -190,7 +190,7 @@ void LauncherApplet::configAccepted()
 
 QList<QAction*> LauncherApplet::contextualActions()
 {
-  return d->actions;
+    return d->actions;
 }
 
 QWidget *LauncherApplet::widget()

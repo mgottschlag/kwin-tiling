@@ -26,7 +26,7 @@
 #include <Plasma/FrameSvg>
 
 PanelSvgWidget::PanelSvgWidget(QWidget *parent)
-    : QWidget(parent)
+        : QWidget(parent)
 {
     background = new Plasma::FrameSvg(this);
     background->setImagePath("dialogs/kickoff");

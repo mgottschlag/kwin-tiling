@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -26,19 +26,19 @@
 namespace Kickoff
 {
 
-/** 
+/**
  * A model which provides an ordered list of 'favorite' items chosen by the user.
  * The items may represent documents, folders, applications, devices or anything else
  * identified by a URL.
  *
  * The information persists between sessions.
  */
-class FavoritesModel : public KickoffModel 
+class FavoritesModel : public KickoffModel
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
-    FavoritesModel(QObject *parent); 
+    FavoritesModel(QObject *parent);
     virtual ~FavoritesModel();
 
     /** Add a new item for @p url to the user's favorites list. */
@@ -46,7 +46,13 @@ public:
     /** Remove the item associated with @p url from the user's favorites list. */
     static void remove(const QString& url);
     /** Returns true if @p url is in the list of the user's favorite URLs. */
+    static void move(int startRow, int destRow);
+    static int numberOfFavorites();
+    static void sortFavorites(Qt::SortOrder order);
     static bool isFavorite(const QString& url);
+
+    virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action,
+                              int row, int column, const QModelIndex & parent);
 
 private:
     class Private;

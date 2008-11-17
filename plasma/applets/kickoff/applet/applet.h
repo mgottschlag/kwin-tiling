@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -28,47 +28,47 @@
 
 namespace Kickoff
 {
-    class Launcher;
+class Launcher;
 }
 namespace Plasma
 {
-    class IconWidget;
-    class PushButton;
+class IconWidget;
+class PushButton;
 }
 
 class LauncherApplet : public Plasma::PopupApplet
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
-        LauncherApplet(QObject *parent, const QVariantList &args);
-        virtual ~LauncherApplet();
+    LauncherApplet(QObject *parent, const QVariantList &args);
+    virtual ~LauncherApplet();
 
-        void init();
+    void init();
 
-        void constraintsEvent(Plasma::Constraints constraints);
+    void constraintsEvent(Plasma::Constraints constraints);
 
-        virtual QList<QAction*> contextualActions();
+    virtual QList<QAction*> contextualActions();
 
-        QWidget *widget();
+    QWidget *widget();
 
 public slots:
-        void switchMenuStyle();
-        void startMenuEditor();
-        void toolTipAboutToShow();
+    void switchMenuStyle();
+    void startMenuEditor();
+    void toolTipAboutToShow();
 
 protected slots:
-        void configAccepted();
-        //void toggleMenu();
-        //void toggleMenu(bool pressed);
+    void configAccepted();
+    //void toggleMenu();
+    //void toggleMenu(bool pressed);
 
 protected:
-        void createConfigurationInterface(KConfigDialog *parent);
-        void popupEvent(bool show);
+    void createConfigurationInterface(KConfigDialog *parent);
+    void popupEvent(bool show);
 
 private:
-        class Private;
-        Private * const d;
+    class Private;
+    Private * const d;
 };
 
 K_EXPORT_PLASMA_APPLET(launcher, LauncherApplet)

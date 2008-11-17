@@ -53,14 +53,13 @@ public:
  */
 class UrlItemLauncher : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     UrlItemLauncher(QObject *parent = 0);
     virtual ~UrlItemLauncher();
 
-    enum HandlerType
-    {
+    enum HandlerType {
         ProtocolHandler,
         ExtensionHandler
     };

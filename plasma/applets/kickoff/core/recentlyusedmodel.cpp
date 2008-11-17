@@ -43,12 +43,10 @@ class RecentlyUsedModel::Private
 {
 public:
     Private(RecentlyUsedModel *parent)
-        : q(parent)
-        , recentDocumentItem(0)
-    {
+            : q(parent)
+            , recentDocumentItem(0) {
     }
-    void removeExistingItem(const QString& path)
-    {
+    void removeExistingItem(const QString& path) {
         if (!itemsByPath.contains(path)) {
             return;
         }
@@ -59,22 +57,20 @@ public:
         existingItem->parent()->removeRow(existingItem->row());
         itemsByPath.remove(path);
     }
-    void addRecentApplication(KService::Ptr service,bool append)
-    {
+    void addRecentApplication(KService::Ptr service, bool append) {
         // remove existing item if any
         removeExistingItem(service->entryPath());
 
         QStandardItem *appItem = StandardItemFactory::createItemForService(service);
-        itemsByPath.insert(service->entryPath(),appItem);
+        itemsByPath.insert(service->entryPath(), appItem);
 
         if (append) {
             recentAppItem->appendRow(appItem);
         } else {
-            recentAppItem->insertRow(0,appItem);
+            recentAppItem->insertRow(0, appItem);
         }
     }
-    void addRecentDocument(const QString& desktopPath,bool append)
-    {
+    void addRecentDocument(const QString& desktopPath, bool append) {
         // remove existing item if any
         KDesktopFile desktopFile(desktopPath);
         KUrl documentUrl = desktopFile.readUrl();
@@ -83,31 +79,29 @@ public:
 
         QStandardItem *documentItem = StandardItemFactory::createItemForUrl(desktopPath);
         documentItem->setData(true, Kickoff::SubTitleMandatoryRole);
-        itemsByPath.insert(desktopPath,documentItem);
+        itemsByPath.insert(desktopPath, documentItem);
 
         //kDebug() << "Document item" << documentItem << "text" << documentItem->text() << "url" << documentUrl.url();
         if (append) {
             recentDocumentItem->appendRow(documentItem);
         } else {
-            recentDocumentItem->insertRow(0,documentItem);
+            recentDocumentItem->insertRow(0, documentItem);
         }
     }
-    void loadRecentDocuments()
-    {
+    void loadRecentDocuments() {
         // create branch for documents and add existing items
         recentDocumentItem = new QStandardItem(i18n("Documents"));
         QStringList documents = KRecentDocument::recentDocuments();
-        foreach (const QString& document,documents) {
-            addRecentDocument(document,true);
+        foreach(const QString& document, documents) {
+            addRecentDocument(document, true);
         }
         q->appendRow(recentDocumentItem);
     }
-    void loadRecentApplications()
-    {
+    void loadRecentApplications() {
         recentAppItem = new QStandardItem(i18n("Applications"));
         QList<KService::Ptr> services = RecentApplications::self()->recentApplications();
-        foreach (const KService::Ptr& service, services) {
-            addRecentApplication(service,true);
+        foreach(const KService::Ptr& service, services) {
+            addRecentApplication(service, true);
         }
         q->appendRow(recentAppItem);
     }
@@ -120,8 +114,8 @@ public:
 };
 
 RecentlyUsedModel::RecentlyUsedModel(QObject *parent)
-    : KickoffModel(parent)
-    , d(new Private(this))
+        : KickoffModel(parent)
+        , d(new Private(this))
 {
     QDBusConnection dbus = QDBusConnection::sessionBus();
     (void)new RecentAdaptor(this);
@@ -133,17 +127,17 @@ RecentlyUsedModel::RecentlyUsedModel(QObject *parent)
 
     // listen for changes to the list of recent documents
     KDirWatch *recentDocWatch = new KDirWatch(this);
-    recentDocWatch->addDir(KRecentDocument::recentDocumentDirectory(),KDirWatch::WatchFiles);
-    connect(recentDocWatch,SIGNAL(created(QString)),this,SLOT(recentDocumentAdded(QString)));
-    connect(recentDocWatch,SIGNAL(deleted(QString)),this,SLOT(recentDocumentRemoved(QString)));
+    recentDocWatch->addDir(KRecentDocument::recentDocumentDirectory(), KDirWatch::WatchFiles);
+    connect(recentDocWatch, SIGNAL(created(QString)), this, SLOT(recentDocumentAdded(QString)));
+    connect(recentDocWatch, SIGNAL(deleted(QString)), this, SLOT(recentDocumentRemoved(QString)));
 
     // listen for changes to the list of recent applications
-    connect(RecentApplications::self(),SIGNAL(applicationAdded(KService::Ptr,int)),
-            this,SLOT(recentApplicationAdded(KService::Ptr,int)));
-    connect(RecentApplications::self(),SIGNAL(applicationRemoved(KService::Ptr)),
-            this,SLOT(recentApplicationRemoved(KService::Ptr)));
-    connect(RecentApplications::self(),SIGNAL(cleared()),
-            this,SLOT(recentApplicationsCleared()));
+    connect(RecentApplications::self(), SIGNAL(applicationAdded(KService::Ptr, int)),
+            this, SLOT(recentApplicationAdded(KService::Ptr, int)));
+    connect(RecentApplications::self(), SIGNAL(applicationRemoved(KService::Ptr)),
+            this, SLOT(recentApplicationRemoved(KService::Ptr)));
+    connect(RecentApplications::self(), SIGNAL(cleared()),
+            this, SLOT(recentApplicationsCleared()));
 }
 RecentlyUsedModel::~RecentlyUsedModel()
 {
@@ -152,7 +146,7 @@ RecentlyUsedModel::~RecentlyUsedModel()
 void RecentlyUsedModel::recentDocumentAdded(const QString& path)
 {
     kDebug() << "Recent document added" << path;
-    d->addRecentDocument(path,false);
+    d->addRecentDocument(path, false);
 }
 void RecentlyUsedModel::recentDocumentRemoved(const QString& path)
 {
@@ -160,10 +154,10 @@ void RecentlyUsedModel::recentDocumentRemoved(const QString& path)
     d->removeExistingItem(path);
 }
 
-void RecentlyUsedModel::recentApplicationAdded(KService::Ptr service,int)
+void RecentlyUsedModel::recentApplicationAdded(KService::Ptr service, int)
 {
     if (service) {
-        d->addRecentApplication(service,false);
+        d->addRecentApplication(service, false);
     }
 }
 
@@ -178,10 +172,10 @@ void RecentlyUsedModel::recentApplicationsCleared()
 {
     QSet<QStandardItem*> appItems;
     const int rows = d->recentAppItem->rowCount();
-    for(int i=0;i<rows;i++) {
+    for (int i = 0;i < rows;i++) {
         appItems << d->recentAppItem->child(i);
     }
-    QMutableHashIterator<QString,QStandardItem*> iter(d->itemsByPath);
+    QMutableHashIterator<QString, QStandardItem*> iter(d->itemsByPath);
     while (iter.hasNext()) {
         iter.next();
         if (appItems.contains(iter.value())) {
@@ -189,7 +183,7 @@ void RecentlyUsedModel::recentApplicationsCleared()
         }
     }
 
-    d->recentAppItem->removeRows(0,d->recentAppItem->rowCount());
+    d->recentAppItem->removeRows(0, d->recentAppItem->rowCount());
 }
 void RecentlyUsedModel::clearRecentApplications()
 {

@@ -55,11 +55,11 @@
 #include "core/models.h"
 
 template <> inline
-void KConfigGroup::writeEntry( const char *pKey,
+void KConfigGroup::writeEntry(const char *pKey,
                               const KGlobalSettings::Completion& aValue,
                               KConfigBase::WriteConfigFlags flags)
 {
-  writeEntry(pKey, int(aValue), flags);
+    writeEntry(pKey, int(aValue), flags);
 }
 
 namespace Kickoff
@@ -69,11 +69,9 @@ class AppNode
 {
 public:
     AppNode()
-        : isDir(false), parent(0), fetched(false)
-    {
+            : isDir(false), parent(0), fetched(false) {
     }
-    ~AppNode()
-    {
+    ~AppNode() {
         qDeleteAll(children);
     }
 
@@ -94,24 +92,22 @@ class ApplicationModelPrivate
 {
 public:
     ApplicationModelPrivate(ApplicationModel *qq)
-        : q(qq),
-          root(new AppNode()),
-          duplicatePolicy(ApplicationModel::ShowDuplicatesPolicy),
-          systemApplicationPolicy(ApplicationModel::ShowSystemOnlyPolicy),
-          sortOrder(Qt::AscendingOrder),
-          sortColumn(Qt::DisplayRole)
-    {
+            : q(qq),
+            root(new AppNode()),
+            duplicatePolicy(ApplicationModel::ShowDuplicatesPolicy),
+            systemApplicationPolicy(ApplicationModel::ShowSystemOnlyPolicy),
+            sortOrder(Qt::AscendingOrder),
+            sortColumn(Qt::DisplayRole) {
         systemApplications = Kickoff::systemApplicationList();
     }
 
-    ~ApplicationModelPrivate()
-    {
+    ~ApplicationModelPrivate() {
         delete root;
     }
 
     static bool AppNodeLessThan(AppNode *n1, AppNode *n2);
     void fillNode(const QString &relPath, AppNode *node);
-    static QHash<QString,QString> iconNameMap();
+    static QHash<QString, QString> iconNameMap();
 
     ApplicationModel *q;
     AppNode *root;
@@ -136,40 +132,38 @@ bool ApplicationModelPrivate::AppNodeLessThan(AppNode *n1, AppNode *n2)
 
 void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
 {
-   KServiceGroup::Ptr root = KServiceGroup::group(_relPath);
-   if (!root || !root->isValid()) return;
+    KServiceGroup::Ptr root = KServiceGroup::group(_relPath);
+    if (!root || !root->isValid()) return;
 
-   const KServiceGroup::List list = root->entries();
+    const KServiceGroup::List list = root->entries();
 
-   // application name <-> service map for detecting duplicate entries
-   QHash<QString,KService::Ptr> existingServices;
-   for (KServiceGroup::List::ConstIterator it = list.constBegin();
-        it != list.constEnd(); ++it)
-   {
-      QString icon;
-      QString appName;
-      QString genericName;
-      QString relPath = _relPath;
-      QString desktopEntry;
-      bool isDir = false;
-      const KSycocaEntry::Ptr p = (*it);
-      if (p->isType(KST_KService))
-      {
-         const KService::Ptr service = KService::Ptr::staticCast(p);
+    // application name <-> service map for detecting duplicate entries
+    QHash<QString, KService::Ptr> existingServices;
+    for (KServiceGroup::List::ConstIterator it = list.constBegin();
+            it != list.constEnd(); ++it) {
+        QString icon;
+        QString appName;
+        QString genericName;
+        QString relPath = _relPath;
+        QString desktopEntry;
+        bool isDir = false;
+        const KSycocaEntry::Ptr p = (*it);
+        if (p->isType(KST_KService)) {
+            const KService::Ptr service = KService::Ptr::staticCast(p);
 
-         if (service->noDisplay())
-            continue;
+            if (service->noDisplay())
+                continue;
 
-         icon = service->icon();
-         appName = service->name();
-         genericName = service->genericName();
-         desktopEntry = service->entryPath();
+            icon = service->icon();
+            appName = service->name();
+            genericName = service->genericName();
+            desktopEntry = service->entryPath();
 
-         // check for duplicates (eg. KDE 3 and KDE 4 versions of application
-         // both present)
-         if (duplicatePolicy == ApplicationModel::ShowLatestOnlyPolicy &&
-             existingServices.contains(appName)) {
-                if (Kickoff::isLaterVersion(existingServices[appName],service)) {
+            // check for duplicates (eg. KDE 3 and KDE 4 versions of application
+            // both present)
+            if (duplicatePolicy == ApplicationModel::ShowLatestOnlyPolicy &&
+                    existingServices.contains(appName)) {
+                if (Kickoff::isLaterVersion(existingServices[appName], service)) {
                     continue;
                 } else {
                     // find and remove the existing entry with the same name
@@ -179,59 +173,55 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
                         }
                     }
                 }
-         }
+            }
 
-         if (systemApplicationPolicy == ApplicationModel::ShowSystemOnlyPolicy &&
-             systemApplications.contains(service->desktopEntryName())) {
-             // don't duplicate applications that are configured to appear in the System tab
-             // in the Applications tab
-             continue;
-         }
+            if (systemApplicationPolicy == ApplicationModel::ShowSystemOnlyPolicy &&
+                    systemApplications.contains(service->desktopEntryName())) {
+                // don't duplicate applications that are configured to appear in the System tab
+                // in the Applications tab
+                continue;
+            }
 
-         existingServices[appName] = service;
-      }
-      else if (p->isType(KST_KServiceGroup))
-      {
-         const KServiceGroup::Ptr serviceGroup = KServiceGroup::Ptr::staticCast(p);
+            existingServices[appName] = service;
+        } else if (p->isType(KST_KServiceGroup)) {
+            const KServiceGroup::Ptr serviceGroup = KServiceGroup::Ptr::staticCast(p);
 
-         if (serviceGroup->noDisplay() || serviceGroup->childCount() == 0)
+            if (serviceGroup->noDisplay() || serviceGroup->childCount() == 0)
+                continue;
+
+            kDebug(250) << "Service group" << serviceGroup->entryPath() << serviceGroup->icon()
+            << serviceGroup->relPath() << serviceGroup->directoryEntryPath();
+
+            icon = serviceGroup->icon();
+            if (iconNameMap().contains(icon)) {
+                icon = iconNameMap().value(icon);
+            }
+
+            genericName = serviceGroup->caption();
+            relPath = serviceGroup->relPath();
+            appName = serviceGroup->comment();
+            isDir = true;
+        } else {
+            kWarning(250) << "KServiceGroup: Unexpected object in list!";
             continue;
+        }
 
-         kDebug(250) << "Service group" << serviceGroup->entryPath() << serviceGroup->icon()
-             << serviceGroup->relPath() << serviceGroup->directoryEntryPath();
+        AppNode *newnode = new AppNode();
+        newnode->icon = KIcon(icon);
+        newnode->appName = appName;
+        newnode->genericName = genericName;
+        newnode->relPath = relPath;
+        newnode->desktopEntry = desktopEntry;
+        newnode->isDir = isDir;
+        newnode->parent = node;
+        node->children.append(newnode);
+    }
 
-         icon = serviceGroup->icon();
-         if (iconNameMap().contains(icon)) {
-            icon = iconNameMap().value(icon);
-         }
-
-         genericName = serviceGroup->caption();
-         relPath = serviceGroup->relPath();
-         appName = serviceGroup->comment();
-         isDir = true;
-      }
-      else
-      {
-         kWarning(250) << "KServiceGroup: Unexpected object in list!";
-         continue;
-      }
-
-      AppNode *newnode = new AppNode();
-      newnode->icon = KIcon(icon);
-      newnode->appName = appName;
-      newnode->genericName = genericName;
-      newnode->relPath = relPath;
-      newnode->desktopEntry = desktopEntry;
-      newnode->isDir = isDir;
-      newnode->parent = node;
-      node->children.append(newnode);
-   }
-
-   qStableSort(node->children.begin(), node->children.end(), ApplicationModelPrivate::AppNodeLessThan);
+    qStableSort(node->children.begin(), node->children.end(), ApplicationModelPrivate::AppNodeLessThan);
 }
 
 ApplicationModel::ApplicationModel(QObject *parent)
-    : KickoffAbstractModel(parent), d(new ApplicationModelPrivate(this))
+        : KickoffAbstractModel(parent), d(new ApplicationModelPrivate(this))
 {
     QDBusConnection dbus = QDBusConnection::sessionBus();
     (void)new KickoffAdaptor(this);
@@ -277,7 +267,7 @@ QVariant ApplicationModel::data(const QModelIndex &index, int role) const
         }
         break;
     case Kickoff::SubTitleRole:
-        if(!node->genericName.isEmpty()) {
+        if (!node->genericName.isEmpty()) {
             return node->appName;
         }
         break;
@@ -355,11 +345,10 @@ QModelIndex ApplicationModel::parent(const QModelIndex &index) const
         int id = node->parent->parent->children.indexOf(node->parent);
 
         if (id >= 0 && id < node->parent->parent->children.count())
-           return createIndex(id, 0, node->parent);
+            return createIndex(id, 0, node->parent);
         else
             return QModelIndex();
-    }
-    else
+    } else
         return QModelIndex();
 }
 
@@ -426,21 +415,21 @@ ApplicationModel::SystemApplicationPolicy ApplicationModel::systemApplicationPol
  *
  * This needs to be discussed on kde-core-devel and fixed
  */
-QHash<QString,QString> ApplicationModelPrivate::iconNameMap()
+QHash<QString, QString> ApplicationModelPrivate::iconNameMap()
 {
-    static QHash<QString,QString> map;
+    static QHash<QString, QString> map;
     if (map.isEmpty()) {
-        map.insert("gnome-util","applications-accessories");
+        map.insert("gnome-util", "applications-accessories");
         // accessibility Oxygen icon was missing when this list was compiled
-        map.insert("accessibility-directory","applications-other");
-        map.insert("gnome-devel","applications-development");
-        map.insert("package_edutainment","applications-education");
-        map.insert("gnome-joystick","applications-games");
-        map.insert("gnome-graphics","applications-graphics");
-        map.insert("gnome-globe","applications-internet");
-        map.insert("gnome-multimedia","applications-multimedia");
-        map.insert("gnome-applications","applications-office");
-        map.insert("gnome-system","applications-system");
+        map.insert("accessibility-directory", "applications-other");
+        map.insert("gnome-devel", "applications-development");
+        map.insert("package_edutainment", "applications-education");
+        map.insert("gnome-joystick", "applications-games");
+        map.insert("gnome-graphics", "applications-graphics");
+        map.insert("gnome-globe", "applications-internet");
+        map.insert("gnome-multimedia", "applications-multimedia");
+        map.insert("gnome-applications", "applications-office");
+        map.insert("gnome-system", "applications-system");
     }
     return map;
 }

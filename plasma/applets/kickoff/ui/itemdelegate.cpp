@@ -44,19 +44,19 @@
 using namespace Kickoff;
 
 ItemDelegate::ItemDelegate(QObject *parent)
-    : Plasma::Delegate(parent)
+        : Plasma::Delegate(parent)
 {
 }
 
 void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-  Plasma::Delegate::paint(painter, option, index);
+    Plasma::Delegate::paint(painter, option, index);
 
     qreal freeSpace = -1;
     qreal usedSpace = -1;
     if (!index.data(DiskFreeSpaceRole).isNull()) {
-        freeSpace = index.data(DiskFreeSpaceRole).value<int>()/1024.0/1024.0;
-        usedSpace = index.data(DiskUsedSpaceRole).value<int>()/1024.0/1024.0;
+        freeSpace = index.data(DiskFreeSpaceRole).value<int>() / 1024.0 / 1024.0;
+        usedSpace = index.data(DiskUsedSpaceRole).value<int>() / 1024.0 / 1024.0;
     }
 
 
@@ -66,20 +66,20 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
 
         QRect emptyRect = rectAfterTitle(option, index);
 
-        QSize barSize = QSize(qMin(emptyRect.width(), option.rect.width()/3), emptyRect.height());
+        QSize barSize = QSize(qMin(emptyRect.width(), option.rect.width() / 3), emptyRect.height());
 
         if (barSize.width() > 0) {
             // if the item view is gradually resized smaller or larger, make the bar fade out/in
             // as enough space for it becomes available
             if (barSize.width() < 20.0) {
-                painter->setOpacity(barSize.width()/20.0);
+                painter->setOpacity(barSize.width() / 20.0);
             }
 
             QRect spaceRect = QStyle::alignedRect(option.direction,
                                                   Qt::AlignRight, barSize, emptyRect);
 
-            if (!(option.state & (QStyle::State_Selected|QStyle::State_MouseOver|QStyle::State_HasFocus))) {
-                painter->setOpacity(painter->opacity()/2.5);
+            if (!(option.state & (QStyle::State_Selected | QStyle::State_MouseOver | QStyle::State_HasFocus))) {
+                painter->setOpacity(painter->opacity() / 2.5);
             } else {
             }
 
@@ -89,10 +89,10 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
 
             // -- Removed the free space text because it added too much 'visual noise' to the item
             //
-                // some precision is lost here, but it is acceptible given that the disk-free bar
-                // is only shown as a guide
-                // QString freeSpaceString = KGlobal::locale()->formatByteSize(freeSpace*1024*1024*1024);
-                // painter->drawText(spaceRect,Qt::AlignCenter,i18n("%1 free",freeSpaceString));
+            // some precision is lost here, but it is acceptible given that the disk-free bar
+            // is only shown as a guide
+            // QString freeSpaceString = KGlobal::locale()->formatByteSize(freeSpace*1024*1024*1024);
+            // painter->drawText(spaceRect,Qt::AlignCenter,i18n("%1 free",freeSpaceString));
         }
 
         painter->restore();
@@ -106,7 +106,7 @@ bool ItemDelegate::isVisible(const QModelIndex& index) const
 
     if (index.model()->hasChildren(index)) {
         int childCount = index.model()->rowCount(index);
-        for (int i=0; i<childCount; ++i) {
+        for (int i = 0; i < childCount; ++i) {
             QModelIndex child = index.model()->index(i, 0, index);
             if (!child.data(UrlRole).isNull()) {
                 return true;

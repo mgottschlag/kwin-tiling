@@ -49,9 +49,8 @@ public:
 class GenericItemHandler : public UrlItemHandler
 {
 public:
-    virtual bool openUrl(const KUrl& url)
-    {
-        new KRun(url,0);
+    virtual bool openUrl(const KUrl& url) {
+        new KRun(url, 0);
         return true;
     }
 };
@@ -59,11 +58,10 @@ public:
 class UrlItemLauncher::Private
 {
 public:
-    static QHash<QString,HandlerInfo> globalHandlers;
+    static QHash<QString, HandlerInfo> globalHandlers;
     static GenericItemHandler genericHandler;
 
-    static bool openUrl(const QString &urlString)
-    {
+    static bool openUrl(const QString &urlString) {
         kDebug() << "Opening item with URL" << urlString;
 
         KUrl url(urlString);
@@ -82,12 +80,12 @@ public:
     }
 };
 
-QHash<QString,HandlerInfo> UrlItemLauncher::Private::globalHandlers;
+QHash<QString, HandlerInfo> UrlItemLauncher::Private::globalHandlers;
 GenericItemHandler UrlItemLauncher::Private::genericHandler;
 
 UrlItemLauncher::UrlItemLauncher(QObject *parent)
-    : QObject(parent)
-    , d(new Private)
+        : QObject(parent)
+        , d(new Private)
 {
 }
 
@@ -129,7 +127,7 @@ void UrlItemLauncher::onSetupDone(Solid::ErrorType error, QVariant errorData, co
 {
     Q_UNUSED(errorData);
 
-    if (error!=Solid::NoError) {
+    if (error != Solid::NoError) {
         return;
     }
 
@@ -138,18 +136,18 @@ void UrlItemLauncher::onSetupDone(Solid::ErrorType error, QVariant errorData, co
 
     Q_ASSERT(access);
 
-    QString urlString = "file://"+access->filePath();
+    QString urlString = "file://" + access->filePath();
     Private::openUrl(urlString);
 }
 
 // FIXME: the handlers are leaked, as they are added with each new Kickoff instance,
 //        but never deleted.
-void UrlItemLauncher::addGlobalHandler(HandlerType type,const QString& name,UrlItemHandler *handler)
+void UrlItemLauncher::addGlobalHandler(HandlerType type, const QString& name, UrlItemHandler *handler)
 {
     HandlerInfo info;
     info.type = type;
     info.handler = handler;
-    Private::globalHandlers.insert(name,info);
+    Private::globalHandlers.insert(name, info);
 }
 
 

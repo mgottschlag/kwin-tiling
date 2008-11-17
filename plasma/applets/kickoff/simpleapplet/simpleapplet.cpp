@@ -57,138 +57,138 @@
 
 class BookmarkOwner : public KBookmarkOwner
 {
-    public:
-        BookmarkOwner() : KBookmarkOwner() {}
-        virtual bool enableOption(BookmarkOption) const { return false; }
-        virtual bool supportsTabs() const { return false; }
-        virtual void openBookmark(const KBookmark& b, Qt::MouseButtons, Qt::KeyboardModifiers) {
-            new KRun(b.url(), (QWidget*)0);
-        }
+public:
+    BookmarkOwner() : KBookmarkOwner() {}
+    virtual bool enableOption(BookmarkOption) const {
+        return false;
+    }
+    virtual bool supportsTabs() const {
+        return false;
+    }
+    virtual void openBookmark(const KBookmark& b, Qt::MouseButtons, Qt::KeyboardModifiers) {
+        new KRun(b.url(), (QWidget*)0);
+    }
 };
 
 /// @internal d-pointer class
 class MenuLauncherApplet::Private
 {
 public:
-        QPointer<Kickoff::MenuView> menuview;
-        Plasma::IconWidget *icon;
-        QPointer<Kickoff::UrlItemLauncher> launcher;
+    QPointer<Kickoff::MenuView> menuview;
+    Plasma::IconWidget *icon;
+    QPointer<Kickoff::UrlItemLauncher> launcher;
 
-        KActionCollection* collection;
-        BookmarkOwner* bookmarkowner;
-        KBookmarkMenu* bookmarkmenu;
+    KActionCollection* collection;
+    BookmarkOwner* bookmarkowner;
+    KBookmarkMenu* bookmarkmenu;
 
-        MenuLauncherApplet::ViewType viewtype;
-        MenuLauncherApplet::FormatType formattype;
+    MenuLauncherApplet::ViewType viewtype;
+    MenuLauncherApplet::FormatType formattype;
 
-        QComboBox *viewComboBox;
-        QComboBox *formatComboBox;
+    QComboBox *viewComboBox;
+    QComboBox *formatComboBox;
 
-        QList<QAction*> actions;
-        QAction* switcher;
+    QList<QAction*> actions;
+    QAction* switcher;
 
-        Private()
+    Private()
             : menuview(0),
-              icon(0),
-              launcher(0),
-              collection(0),
-              bookmarkowner(0),
-              bookmarkmenu(0),
-              viewComboBox(0),
-              formatComboBox(0),
-              switcher(0)
-        {}
-        ~Private()
-        {
-            delete bookmarkmenu;
-            delete bookmarkowner;
-            delete menuview;
-        }
+            icon(0),
+            launcher(0),
+            collection(0),
+            bookmarkowner(0),
+            bookmarkmenu(0),
+            viewComboBox(0),
+            formatComboBox(0),
+            switcher(0) {}
+    ~Private() {
+        delete bookmarkmenu;
+        delete bookmarkowner;
+        delete menuview;
+    }
 
-        void addItem(QComboBox* combo, const QString& caption, int index, const QString& icon = QString()) {
-            if( icon.isEmpty() ) {
-                combo->addItem(caption, index);
-            }
-            else {
-                combo->addItem(KIcon(icon), caption, index);
+    void addItem(QComboBox* combo, const QString& caption, int index, const QString& icon = QString()) {
+        if (icon.isEmpty()) {
+            combo->addItem(caption, index);
+        } else {
+            combo->addItem(KIcon(icon), caption, index);
+        }
+    }
+
+    void setCurrentItem(QComboBox* combo, int currentIndex) {
+        for (int i = combo->count() - 1; i >= 0; --i) {
+            if (combo->itemData(i).toInt() == currentIndex) {
+                combo->setCurrentIndex(i);
+                return;
             }
         }
+        if (combo->count() > 0) {
+            combo->setCurrentIndex(0);
+        }
+    }
 
-        void setCurrentItem(QComboBox* combo, int currentIndex) {
-            for(int i = combo->count() - 1; i >= 0; --i) {
-                if( combo->itemData(i).toInt() == currentIndex ) {
-                    combo->setCurrentIndex(i);
-                    return;
+    Kickoff::MenuView *createMenuView(QAbstractItemModel *model = 0) {
+        Kickoff::MenuView *view = new Kickoff::MenuView(menuview);
+        view->setFormatType((Kickoff::MenuView::FormatType) formattype);
+        if (model) {
+            view->setModel(model);
+        }
+        return view;
+    }
+
+    void addMenu(Kickoff::MenuView *view, bool mergeFirstLevel) {
+        QList<QAction*> actions = view->actions();
+        foreach(QAction *action, actions) {
+            if (action->menu() && mergeFirstLevel) {
+                QMetaObject::invokeMethod(action->menu(), "aboutToShow"); //fetch the children
+                if (actions.count() > 1 && action->menu()->actions().count() > 0) {
+                    menuview->addTitle(action->text());
                 }
-            }
-            if( combo->count() > 0 ) {
-                combo->setCurrentIndex(0);
-            }
-        }
-
-        Kickoff::MenuView *createMenuView(QAbstractItemModel *model = 0) {
-            Kickoff::MenuView *view = new Kickoff::MenuView(menuview);
-            view->setFormatType( (Kickoff::MenuView::FormatType) formattype );
-            if( model ) {
-                view->setModel(model);
-            }
-            return view;
-        }
-
-        void addMenu(Kickoff::MenuView *view, bool mergeFirstLevel) {
-            QList<QAction*> actions = view->actions();
-            foreach(QAction *action, actions) {
-                if( action->menu() && mergeFirstLevel ) {
-                    QMetaObject::invokeMethod(action->menu(),"aboutToShow"); //fetch the children
-                    if( actions.count() > 1 && action->menu()->actions().count() > 0 ) {
-                        menuview->addTitle(action->text());
-                    }
-                    foreach(QAction *a, action->menu()->actions()) {
-                        a->setVisible(a->menu() || ! view->indexForAction(a).data(Kickoff::UrlRole).isNull());
-                        menuview->addAction(a);
-                    }
+                foreach(QAction *a, action->menu()->actions()) {
+                    a->setVisible(a->menu() || ! view->indexForAction(a).data(Kickoff::UrlRole).isNull());
+                    menuview->addAction(a);
                 }
-                else {
-                    action->setVisible(action->menu() || ! view->indexForAction(action).data(Kickoff::UrlRole).isNull());
-                    menuview->addAction(action);
-                }
+            } else {
+                action->setVisible(action->menu() || ! view->indexForAction(action).data(Kickoff::UrlRole).isNull());
+                menuview->addAction(action);
             }
-
-            // if the model asks us for a reset we can't do much except to invalidate our
-            // menuview to be able to rebuild it what is needed to prevent dealing with
-            // invalid items.
-            // the problem here is, that if the menu is currently displayed, it will just
-            // close itself what is evil++ but still better than crashes. anyway, the
-            // right(TM) solution would be to introduce logic to update the content of the
-            // menu even on a reset.
-            connect(view->model(), SIGNAL(modelReset()), menuview, SLOT(deleteLater()));
         }
 
-        QString viewIcon() {
-            switch( viewtype ) {
-                case Combined:
-                    return "start-here-kde";
-                case Favorites:
-                    return "bookmarks";
-                case Bookmarks:
-                    return "folder-bookmarks";
-                case Applications:
-                    return "applications-other";
-                case Computer:
-                    return "computer";
-                case RecentlyUsed:
-                    return "document-open-recent";
-                case Leave:
-                    return "application-exit";
-            }
-            return QString();
+        // if the model asks us for a reset we can't do much except to invalidate our
+        // menuview to be able to rebuild it what is needed to prevent dealing with
+        // invalid items.
+        // the problem here is, that if the menu is currently displayed, it will just
+        // close itself what is evil++ but still better than crashes. anyway, the
+        // right(TM) solution would be to introduce logic to update the content of the
+        // menu even on a reset.
+        connect(view->model(), SIGNAL(modelReset()), menuview, SLOT(deleteLater()));
+    }
+
+    QString viewIcon() {
+        switch (viewtype) {
+        case Combined:
+            return "start-here-kde";
+        case Favorites:
+            return "bookmarks";
+        case Bookmarks:
+            return "folder-bookmarks";
+        case Applications:
+            return "applications-other";
+        case Computer:
+            return "computer";
+        case RecentlyUsed:
+            return "document-open-recent";
+        case Leave:
+            return "application-exit";
         }
+        return QString();
+    }
 
 };
 
 MenuLauncherApplet::MenuLauncherApplet(QObject *parent, const QVariantList &args)
-    : Plasma::Applet(parent,args),
-      d(new Private)
+        : Plasma::Applet(parent, args),
+        d(new Private)
 {
     KGlobal::locale()->insertCatalog("plasma_applet_launcher");
 
@@ -238,7 +238,7 @@ void MenuLauncherApplet::init()
 
     setAspectRatioMode(Plasma::ConstrainedSquare);
 
-    Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ExtensionHandler,"desktop",new Kickoff::ServiceItemHandler);
+    Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ExtensionHandler, "desktop", new Kickoff::ServiceItemHandler);
     Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ProtocolHandler, "leave", new Kickoff::LeaveItemHandler);
 
     if (KService::serviceByStorageId("kde4-kmenuedit.desktop")) {
@@ -247,7 +247,7 @@ void MenuLauncherApplet::init()
         connect(menueditor, SIGNAL(triggered(bool)), this, SLOT(startMenuEditor()));
     }
 
-    Q_ASSERT( ! d->switcher );
+    Q_ASSERT(! d->switcher);
     d->switcher = new QAction(i18n("Switch to Kickoff Menu Style"), this);
     d->actions.append(d->switcher);
     connect(d->switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
@@ -260,7 +260,7 @@ void MenuLauncherApplet::constraintsEvent(Plasma::Constraints constraints)
     setBackgroundHints(NoBackground);
     if (constraints & Plasma::FormFactorConstraint) {
         if (formFactor() == Plasma::Planar ||
-            formFactor() == Plasma::MediaCenter) {
+                formFactor() == Plasma::MediaCenter) {
             //FIXME set correct minimum size
             //setMinimumContentSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
         } else {
@@ -316,7 +316,7 @@ void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     d->addItem(d->formatComboBox, i18nc("@item:inlistbox Format:", "Name - Description"), MenuLauncherApplet::NameDashDescription);
     l->addWidget(d->formatComboBox, 1, 1);
 
-    l->setColumnStretch(1,1);
+    l->setColumnStretch(1, 1);
 
     d->setCurrentItem(d->viewComboBox, d->viewtype);
     d->setCurrentItem(d->formatComboBox, d->formattype);
@@ -333,7 +333,7 @@ void MenuLauncherApplet::configAccepted()
     KConfigGroup cg = config();
 
     int vt = d->viewComboBox->itemData(d->viewComboBox->currentIndex()).toInt();
-    if( vt != d->viewtype ) {
+    if (vt != d->viewtype) {
         d->viewtype = (MenuLauncherApplet::ViewType) vt;
         needssaving = true;
 
@@ -345,7 +345,7 @@ void MenuLauncherApplet::configAccepted()
     }
 
     int ft = d->formatComboBox->itemData(d->formatComboBox->currentIndex()).toInt();
-    if( ft != d->formattype ) {
+    if (ft != d->formattype) {
         d->formattype = (MenuLauncherApplet::FormatType) ft;
         needssaving = true;
 
@@ -353,7 +353,7 @@ void MenuLauncherApplet::configAccepted()
         cg.writeEntry("format", QByteArray(e.valueToKey(d->formattype)));
     }
 
-    if( needssaving ) {
+    if (needssaving) {
         emit configNeedsSaving();
 
         delete d->menuview;
@@ -376,57 +376,64 @@ void MenuLauncherApplet::toggleMenu()
         connect(d->menuview, SIGNAL(aboutToHide()), d->icon, SLOT(setUnpressed()));
         connect(d->menuview, SIGNAL(aboutToHide()), d->menuview, SLOT(deleteLater()));
 
-        switch( d->viewtype ) {
-            case Combined: {
-                Kickoff::ApplicationModel *appModel = new Kickoff::ApplicationModel(d->menuview);
-                appModel->setDuplicatePolicy(Kickoff::ApplicationModel::ShowLatestOnlyPolicy);
-                appModel->setSystemApplicationPolicy(Kickoff::ApplicationModel::ShowApplicationAndSystemPolicy);
-                Kickoff::MenuView *appview = d->createMenuView(appModel);
-                d->addMenu(appview, false);
+        switch (d->viewtype) {
+        case Combined: {
+            Kickoff::ApplicationModel *appModel = new Kickoff::ApplicationModel(d->menuview);
+            appModel->setDuplicatePolicy(Kickoff::ApplicationModel::ShowLatestOnlyPolicy);
+            appModel->setSystemApplicationPolicy(Kickoff::ApplicationModel::ShowApplicationAndSystemPolicy);
+            Kickoff::MenuView *appview = d->createMenuView(appModel);
+            d->addMenu(appview, false);
 
-                d->menuview->addSeparator();
-                Kickoff::MenuView *favview = d->createMenuView(new Kickoff::FavoritesModel(d->menuview));
-                d->addMenu(favview, false);
+            d->menuview->addSeparator();
+            Kickoff::MenuView *favview = d->createMenuView(new Kickoff::FavoritesModel(d->menuview));
+            d->addMenu(favview, false);
 
-                d->menuview->addSeparator();
-                QAction *switchaction = d->menuview->addAction(KIcon("system-switch-user"),i18n("Switch User"));
-                switchaction->setData(KUrl("leave:/switch"));
-                QAction *lockaction = d->menuview->addAction(KIcon("system-lock-screen"),i18n("Lock"));
-                lockaction->setData(KUrl("leave:/lock"));
-                QAction *logoutaction = d->menuview->addAction(KIcon("system-shutdown"),i18n("Leave..."));
-                logoutaction->setData(KUrl("leave:/logout"));
-            } break;
-            case Favorites: {
-                Kickoff::MenuView *favview = d->createMenuView(new Kickoff::FavoritesModel(d->menuview));
-                d->addMenu(favview, true);
-            } break;
-            case Applications: {
-                Kickoff::ApplicationModel *appModel = new Kickoff::ApplicationModel(d->menuview);
-                appModel->setDuplicatePolicy(Kickoff::ApplicationModel::ShowLatestOnlyPolicy);
-                Kickoff::MenuView *appview = d->createMenuView(appModel);
-                d->addMenu(appview, false);
-            } break;
-            case Computer: {
-                Kickoff::MenuView *systemview = d->createMenuView(new Kickoff::SystemModel(d->menuview));
-                d->addMenu(systemview, true);
-            } break;
-            case RecentlyUsed: {
-                Kickoff::MenuView *recentlyview = d->createMenuView(new Kickoff::RecentlyUsedModel(d->menuview));
-                d->addMenu(recentlyview, true);
-            } break;
-            case Bookmarks: {
-                KBookmarkManager* mgr = KBookmarkManager::userBookmarksManager();
-                if( ! d->collection ) {
-                    d->collection = new KActionCollection(this);
-                    d->bookmarkowner = new BookmarkOwner();
-                }
-                delete d->bookmarkmenu;
-                d->bookmarkmenu = new KBookmarkMenu(mgr, d->bookmarkowner, d->menuview, d->collection);
-            } break;
-            case Leave: {
-                Kickoff::MenuView *leaveview = d->createMenuView(new Kickoff::LeaveModel(d->menuview));
-                d->addMenu(leaveview, true);
-            } break;
+            d->menuview->addSeparator();
+            QAction *switchaction = d->menuview->addAction(KIcon("system-switch-user"), i18n("Switch User"));
+            switchaction->setData(KUrl("leave:/switch"));
+            QAction *lockaction = d->menuview->addAction(KIcon("system-lock-screen"), i18n("Lock"));
+            lockaction->setData(KUrl("leave:/lock"));
+            QAction *logoutaction = d->menuview->addAction(KIcon("system-shutdown"), i18n("Leave..."));
+            logoutaction->setData(KUrl("leave:/logout"));
+        }
+        break;
+        case Favorites: {
+            Kickoff::MenuView *favview = d->createMenuView(new Kickoff::FavoritesModel(d->menuview));
+            d->addMenu(favview, true);
+        }
+        break;
+        case Applications: {
+            Kickoff::ApplicationModel *appModel = new Kickoff::ApplicationModel(d->menuview);
+            appModel->setDuplicatePolicy(Kickoff::ApplicationModel::ShowLatestOnlyPolicy);
+            Kickoff::MenuView *appview = d->createMenuView(appModel);
+            d->addMenu(appview, false);
+        }
+        break;
+        case Computer: {
+            Kickoff::MenuView *systemview = d->createMenuView(new Kickoff::SystemModel(d->menuview));
+            d->addMenu(systemview, true);
+        }
+        break;
+        case RecentlyUsed: {
+            Kickoff::MenuView *recentlyview = d->createMenuView(new Kickoff::RecentlyUsedModel(d->menuview));
+            d->addMenu(recentlyview, true);
+        }
+        break;
+        case Bookmarks: {
+            KBookmarkManager* mgr = KBookmarkManager::userBookmarksManager();
+            if (! d->collection) {
+                d->collection = new KActionCollection(this);
+                d->bookmarkowner = new BookmarkOwner();
+            }
+            delete d->bookmarkmenu;
+            d->bookmarkmenu = new KBookmarkMenu(mgr, d->bookmarkowner, d->menuview, d->collection);
+        }
+        break;
+        case Leave: {
+            Kickoff::MenuView *leaveview = d->createMenuView(new Kickoff::LeaveModel(d->menuview));
+            d->addMenu(leaveview, true);
+        }
+        break;
         }
     }
 
@@ -439,13 +446,13 @@ void MenuLauncherApplet::actionTriggered(QAction *action)
 {
     KUrl url = action->data().value<KUrl>();
     if (url.scheme() == "leave") {
-        if ( ! d->launcher ) {
+        if (! d->launcher) {
             d->launcher = new Kickoff::UrlItemLauncher(d->menuview);
         }
         d->launcher->openUrl(url.url());
         return;
     }
-    for(QWidget* w = action->parentWidget(); w; w = w->parentWidget()) {
+    for (QWidget* w = action->parentWidget(); w; w = w->parentWidget()) {
         if (Kickoff::MenuView *view = dynamic_cast<Kickoff::MenuView*>(w)) {
             view->actionTriggered(action);
             break;

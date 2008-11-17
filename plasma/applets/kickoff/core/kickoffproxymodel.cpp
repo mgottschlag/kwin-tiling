@@ -33,7 +33,7 @@
 using namespace Kickoff;
 
 KickoffProxyModel::KickoffProxyModel(QObject *parent)
-    : QAbstractProxyModel(parent)
+        : QAbstractProxyModel(parent)
 {}
 
 KickoffProxyModel::~KickoffProxyModel()
@@ -55,7 +55,7 @@ QMimeData *KickoffProxyModel::mimeData(const QModelIndexList &indexes) const
     KUrl::List urls;
     QByteArray itemData;
 
-    foreach (const QModelIndex &index, indexes) {
+    foreach(const QModelIndex &index, indexes) {
         KUrl itemUrl = KUrl(data(index, UrlRole).toString());
         if (itemUrl.isValid()) {
             urls << itemUrl;

@@ -51,54 +51,52 @@ class ContextMenuFactory::Private
 {
 public:
     Private()
-      : applet(0)
-    {
+            : applet(0) {
     }
 
-    QAction *advancedActionsMenu(const QString& url) const
-    {
-       KUrl kUrl(url);
-       KActionCollection actionCollection((QObject*)0);
-       KFileItemList items;
-       QString mimeType = KMimeType::findByUrl(kUrl,0,false,true)->name();
-       items << KFileItem(url,mimeType,KFileItem::Unknown);
-       KParts::BrowserExtension::PopupFlags browserFlags = KParts::BrowserExtension::DefaultPopupItems;
-       if (items.first().isLocalFile()) {
-           browserFlags |= KParts::BrowserExtension::ShowProperties;
-       }
-       KParts::BrowserExtension::ActionGroupMap actionGroupMap;
-       return 0;
-       // ### TODO: remove kdebase-apps dependency
+    QAction *advancedActionsMenu(const QString& url) const {
+        KUrl kUrl(url);
+        KActionCollection actionCollection((QObject*)0);
+        KFileItemList items;
+        QString mimeType = KMimeType::findByUrl(kUrl, 0, false, true)->name();
+        items << KFileItem(url, mimeType, KFileItem::Unknown);
+        KParts::BrowserExtension::PopupFlags browserFlags = KParts::BrowserExtension::DefaultPopupItems;
+        if (items.first().isLocalFile()) {
+            browserFlags |= KParts::BrowserExtension::ShowProperties;
+        }
+        KParts::BrowserExtension::ActionGroupMap actionGroupMap;
+        return 0;
+        // ### TODO: remove kdebase-apps dependency
 #if 0
-       KonqPopupMenu *menu = new KonqPopupMenu(items, kUrl,actionCollection,
-                                               0, 0, browserFlags,
-                                               0, KBookmarkManager::userBookmarksManager(), actionGroupMap);
+        KonqPopupMenu *menu = new KonqPopupMenu(items, kUrl, actionCollection,
+                                                0, 0, browserFlags,
+                                                0, KBookmarkManager::userBookmarksManager(), actionGroupMap);
 
-       if (!menu->isEmpty()) {
+        if (!menu->isEmpty()) {
             QAction *action = menu->menuAction();
             action->setText(i18n("Advanced"));
             action->setIcon(KIcon("list-add"));
             return action;
-       } else {
+        } else {
             delete menu;
             return 0;
-       }
+        }
 #endif
     }
 
-    QMap<QAbstractItemView*,QList<QAction*> > viewActions;
+    QMap<QAbstractItemView*, QList<QAction*> > viewActions;
     Plasma::Applet *applet;
 };
 
 ContextMenuFactory::ContextMenuFactory(QObject *parent)
- : QObject(parent)
- , d(new Private)
+        : QObject(parent)
+        , d(new Private)
 {
 }
 
 ContextMenuFactory::~ContextMenuFactory()
 {
-  delete d;
+    delete d;
 }
 
 void ContextMenuFactory::showContextMenu(QAbstractItemView *view, const QPoint &pos)
@@ -128,6 +126,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view, const QPoint &
 
     actions << favoriteAction;
 
+
     // add to desktop
     QAction *addToDesktopAction = new QAction(this);
 
@@ -152,10 +151,26 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view, const QPoint &
         }
 
         if (containment && containment->immutability() == Plasma::Mutable &&
-            containment->containmentType() == Plasma::Containment::PanelContainment) {
+                containment->containmentType() == Plasma::Containment::PanelContainment) {
             addToPanelAction->setText(i18n("Add to Panel"));
             actions << addToPanelAction;
         }
+    }
+
+
+    QAction *sortAscendingAction = new QAction(this);
+    QAction *sortDescendingAction = new QAction(this);
+    if (isFavorite) {
+        QAction *favoritesSeparator = new QAction(this);
+        favoritesSeparator->setSeparator(true);
+        sortAscendingAction->setText(i18n("Sort Ascending"));
+        sortAscendingAction->setIcon(KIcon("view-sort-ascending"));
+
+        sortDescendingAction->setText(i18n("Sort Descending"));
+        sortDescendingAction->setIcon(KIcon("view-sort-descending"));
+
+        actions << favoritesSeparator;
+        actions << sortAscendingAction << sortDescendingAction;
     }
 
     // advanced item actions
@@ -188,7 +203,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view, const QPoint &
     // display menu
     KMenu menu;
     menu.addTitle(index.data(Qt::DisplayRole).value<QString>());
-    foreach (QAction* action, actions) {
+    foreach(QAction* action, actions) {
         menu.addAction(action);
     }
 
@@ -200,6 +215,12 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view, const QPoint &
         } else {
             FavoritesModel::add(url);
         }
+    } else if (sortAscendingAction && result == sortAscendingAction) {
+        if (isFavorite)
+            FavoritesModel::sortFavorites(Qt::AscendingOrder);
+    } else if (sortDescendingAction && result == sortDescendingAction) {
+        if (isFavorite)
+            FavoritesModel::sortFavorites(Qt::DescendingOrder);
     } else if (ejectAction && result == ejectAction) {
         access->teardown();
     } else if (addToDesktopAction && result == addToDesktopAction) {
@@ -226,7 +247,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view, const QPoint &
                 args << url;
 
                 // move it to the middle of the panel
-                QRectF rect(panel->geometry().width()/2, 0, 150, panel->boundingRect().height());
+                QRectF rect(panel->geometry().width() / 2, 0, 150, panel->boundingRect().height());
                 panel->addApplet("icon", args, rect);
             }
         }
@@ -235,15 +256,17 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view, const QPoint &
     delete favoriteAction;
     delete addToDesktopAction;
     delete addToPanelAction;
+    delete sortAscendingAction;
+    delete sortDescendingAction;
     delete viewSeparator;
     delete ejectAction;
 }
-void ContextMenuFactory::setViewActions(QAbstractItemView *view,const QList<QAction*>& actions)
+void ContextMenuFactory::setViewActions(QAbstractItemView *view, const QList<QAction*>& actions)
 {
     if (actions.isEmpty()) {
         d->viewActions.remove(view);
     } else {
-        d->viewActions.insert(view,actions);
+        d->viewActions.insert(view, actions);
     }
 }
 QList<QAction*> ContextMenuFactory::viewActions(QAbstractItemView *view) const

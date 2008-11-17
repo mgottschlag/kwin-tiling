@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -46,29 +46,29 @@ using namespace Kickoff;
 class SearchBar::Private
 {
 public:
-    Private() : editWidget(0),timer(0) {}
+    Private() : editWidget(0), timer(0) {}
 
     KLineEdit *editWidget;
     QTimer *timer;
 };
 
 SearchBar::SearchBar(QWidget *parent)
- : QWidget(parent)
- , d(new Private)
+        : QWidget(parent)
+        , d(new Private)
 {
     // timer for buffered updates
     d->timer = new QTimer(this);
     d->timer->setInterval(300);
     d->timer->setSingleShot(true);
-    connect(d->timer,SIGNAL(timeout()),this,SLOT(updateTimerExpired()));
-    connect(this,SIGNAL(startUpdateTimer()),d->timer,SLOT(start()));
+    connect(d->timer, SIGNAL(timeout()), this, SLOT(updateTimerExpired()));
+    connect(this, SIGNAL(startUpdateTimer()), d->timer, SLOT(start()));
 
     // setup UI
     QHBoxLayout *layout = new QHBoxLayout;
     layout->setMargin(3);
     layout->setSpacing(0); // we do the spacing manually to line up with the views below
 
-    QLabel *searchLabel = new QLabel(i18n("Search:"),this);
+    QLabel *searchLabel = new QLabel(i18n("Search:"), this);
     QColor color = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     QPalette p = searchLabel->palette();
     p.setColor(QPalette::Normal, QPalette::WindowText, color);
@@ -80,15 +80,14 @@ SearchBar::SearchBar(QWidget *parent)
     QFileInfo fi(QDir(QDir::homePath()), ".face.icon");
     if (fi.exists()) {
         searchIcon->setPixmap(QPixmap(fi.absoluteFilePath()).scaled(KIconLoader::SizeMedium, KIconLoader::SizeMedium, Qt::KeepAspectRatio));
-    }
-    else {
+    } else {
         searchIcon->setPixmap(KIcon("system-search").pixmap(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
     }
 
     d->editWidget = new KLineEdit(this);
     d->editWidget->installEventFilter(this);
     d->editWidget->setClearButtonShown(true);
-    connect(d->editWidget,SIGNAL(textChanged(QString)),this,SIGNAL(startUpdateTimer()));
+    connect(d->editWidget, SIGNAL(textChanged(QString)), this, SIGNAL(startUpdateTimer()));
 
     //add arbitrary spacing
     layout->addSpacing(2);
@@ -112,7 +111,7 @@ SearchBar::~SearchBar()
     delete d;
 }
 
-bool SearchBar::eventFilter(QObject *watched,QEvent *event)
+bool SearchBar::eventFilter(QObject *watched, QEvent *event)
 {
     // left and right arrow key presses in the search edit when the
     // edit is empty are propagated up to the parent widget
@@ -121,12 +120,12 @@ bool SearchBar::eventFilter(QObject *watched,QEvent *event)
     if (watched == d->editWidget && event->type() == QEvent::KeyPress) {
         QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
         if ((keyEvent->key() == Qt::Key_Left || keyEvent->key() == Qt::Key_Right) &&
-            d->editWidget->text().isEmpty()) {
-            QCoreApplication::sendEvent(this,event);
+                d->editWidget->text().isEmpty()) {
+            QCoreApplication::sendEvent(this, event);
             return true;
         }
     }
-    return false; 
+    return false;
 }
 
 void SearchBar::clear()

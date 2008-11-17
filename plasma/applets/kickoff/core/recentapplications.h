@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -18,7 +18,7 @@
 */
 
 #ifndef RECENTAPPLICATIONS_H
-#define RECENTAPPLICATIONS_H 
+#define RECENTAPPLICATIONS_H
 
 // Qt
 #include <QtCore/QObject>
@@ -30,7 +30,7 @@
 namespace Kickoff
 {
 
-/** 
+/**
  * Singleton class which can be used to keep track of recently started applications
  * in the Kickoff launcher.
  *
@@ -38,14 +38,14 @@ namespace Kickoff
  */
 class RecentApplications : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 public:
     class Private;
     friend class Private;
 
     static RecentApplications *self();
 
-    /** 
+    /**
      * List of service pointers for recently started applications in the order in which
      * they were started, with the most recently used application first.
      */
@@ -61,7 +61,7 @@ public:
     int maximum() const;
 
 public Q_SLOTS:
-    /** 
+    /**
      * Registers the startup of an application.  This should be called whenever a new application
      * or service is started.
      */
@@ -71,7 +71,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     /** Emitted after add() has been called. */
-    void applicationAdded(KService::Ptr service,int startCount);
+    void applicationAdded(KService::Ptr service, int startCount);
     /** Emitted after remove() has been called. */
     void applicationRemoved(KService::Ptr service);
     /** Emitted after clear() has been called. */

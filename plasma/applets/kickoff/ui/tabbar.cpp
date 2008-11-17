@@ -52,28 +52,28 @@ TabBar::TabBar(QWidget *parent)
     m_tabSwitchTimer.setSingleShot(true);
     connect(&m_tabSwitchTimer, SIGNAL(timeout()), this, SLOT(switchToHoveredTab()));
     setMouseTracking(true);
-    setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred );
-    setUsesScrollButtons( false );
+    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    setUsesScrollButtons(false);
 
     background = new Plasma::FrameSvg(this);
     background->setImagePath("dialogs/kickoff");
     background->setEnabledBorders(
-                                  Plasma::FrameSvg::BottomBorder |
-                                  Plasma::FrameSvg::LeftBorder |
-                                  Plasma::FrameSvg::RightBorder
-                                 );
+        Plasma::FrameSvg::BottomBorder |
+        Plasma::FrameSvg::LeftBorder |
+        Plasma::FrameSvg::RightBorder
+    );
     background->resizeFrame(size());
     background->setElementPrefix("plain");
 
     connect(background, SIGNAL(repaintNeeded()), this, SLOT(update()));
 }
 
-void TabBar::setShape( Shape shape )
+void TabBar::setShape(Shape shape)
 {
-  resize( 0, 0 );  // This is required, so that the custom implementation of tabSizeHint,
-                   // which expands the tabs to the full width of the widget does not pick up
-                   // the previous width, e.g. if the panel is moved from the bottom to the left
-  QTabBar::setShape( shape );
+    resize(0, 0);    // This is required, so that the custom implementation of tabSizeHint,
+    // which expands the tabs to the full width of the widget does not pick up
+    // the previous width, e.g. if the panel is moved from the bottom to the left
+    QTabBar::setShape(shape);
 }
 
 void TabBar::setCurrentIndexWithoutAnimation(int index)
@@ -140,33 +140,33 @@ QSize TabBar::tabSizeHint(int index) const
 
     Shape s = shape();
     switch (s) {
-        case RoundedSouth:
-        case TriangularSouth:
-        case RoundedNorth:
-        case TriangularNorth:
-            if (count() > 0) {
-                for (int i = count() - 1; i >= 0; i--) {
-                    minwidth += tabSize(i).width();
-                }
-                if (minwidth < width()) {
-                    hint.rwidth() += (width() - minwidth) / count();
-                }
+    case RoundedSouth:
+    case TriangularSouth:
+    case RoundedNorth:
+    case TriangularNorth:
+        if (count() > 0) {
+            for (int i = count() - 1; i >= 0; i--) {
+                minwidth += tabSize(i).width();
             }
-            break;
-        case RoundedWest:
-        case TriangularWest:
-        case RoundedEast:
-        case TriangularEast:
-            if (count() > 0) {
-                for (int i = count() - 1; i >= 0; i--) {
-                    minheight += tabSize(i).height();
-                }
-                if (minheight < height()) {
-                    hint.rheight() += (height() - minheight) / count();
-                }
+            if (minwidth < width()) {
+                hint.rwidth() += (width() - minwidth) / count();
             }
-            hint.rwidth() = qMax( hint.width(), width() );
-            break;
+        }
+        break;
+    case RoundedWest:
+    case TriangularWest:
+    case RoundedEast:
+    case TriangularEast:
+        if (count() > 0) {
+            for (int i = count() - 1; i >= 0; i--) {
+                minheight += tabSize(i).height();
+            }
+            if (minheight < height()) {
+                hint.rheight() += (height() - minheight) / count();
+            }
+        }
+        hint.rwidth() = qMax(hint.width(), width());
+        break;
     }
     return hint;
 }
@@ -178,13 +178,13 @@ QSize TabBar::sizeHint() const
 
     if (isVertical()) {
         for (int i = count() - 1; i >= 0; i--) {
-             height += tabSize(i).height();
+            height += tabSize(i).height();
         }
 
         width = tabSize(0).width();
     } else {
         for (int i = count() - 1; i >= 0; i--) {
-             width += tabSize(i).width();
+            width += tabSize(i).width();
         }
 
         height = tabSize(0).height();
@@ -200,71 +200,71 @@ QPainterPath TabBar::tabPath(const QRect &_r)
     QRect r = _r;
 
     switch (s) {
-        case RoundedSouth:
-        case TriangularSouth:
-            r.adjust(0, 0, 0, -3);
-            path.moveTo(r.topLeft());
-            // Top left corner
-            path.quadTo(r.topLeft() + QPoint(radius, 0), r.topLeft() + QPoint(radius, radius));
-            path.lineTo(r.bottomLeft() + QPoint(radius, -radius));
-            // Bottom left corner
-            path.quadTo(r.bottomLeft() + QPoint(radius, 0), r.bottomLeft() + QPoint(radius * 2, 0));
-            path.lineTo(r.bottomRight() + QPoint(-radius * 2, 0));
-            // Bottom right corner
-            path.quadTo(r.bottomRight() + QPoint(-radius, 0), r.bottomRight() + QPoint(-radius, -radius));
-            path.lineTo(r.topRight() + QPoint(-radius, radius));
-            // Top right corner
-            path.quadTo(r.topRight() + QPoint(-radius, 0), r.topRight());
-            break;
-        case RoundedNorth:
-        case TriangularNorth:
-            r.adjust(0, 3, 0, 1);
-            path.moveTo(r.bottomLeft());
-            // Bottom left corner
-            path.quadTo(r.bottomLeft() + QPoint(radius, 0), r.bottomLeft() + QPoint(radius, -radius));
-            // Top left corner
-            path.lineTo(r.topLeft() + QPoint(radius, radius));
-            path.quadTo(r.topLeft() + QPoint(radius, 0), r.topLeft() + QPoint(radius * 2, 0));
-            // Top right corner
-            path.lineTo(r.topRight() + QPoint(-radius * 2, 0));
-            path.quadTo(r.topRight() + QPoint(-radius, 0), r.topRight() + QPoint(-radius, radius));
-            // Bottom right corner
-            path.lineTo(r.bottomRight() + QPoint(-radius, -radius));
-            path.quadTo(r.bottomRight() + QPoint(-radius, 0), r.bottomRight());
-            break;
-        case RoundedWest:
-        case TriangularWest:
-            r.adjust(3, 0, 1, 0);
-            path.moveTo(r.topRight());
-            // Top right corner
-            path.lineTo(r.topRight());
-            path.quadTo(r.topRight() + QPoint(0, radius), r.topRight() + QPoint(-radius, radius));
-            // Top left corner
-            path.lineTo(r.topLeft() + QPoint(radius, radius));
-            path.quadTo(r.topLeft() + QPoint(0, radius), r.topLeft() + QPoint(0, radius * 2));
-            // Bottom left corner
-            path.lineTo(r.bottomLeft() + QPoint(0, -radius * 2));
-            path.quadTo(r.bottomLeft() + QPoint(0, -radius), r.bottomLeft() + QPoint(radius, -radius));
-            // Bottom right corner
-            path.lineTo(r.bottomRight() + QPoint(-radius, -radius));
-            path.quadTo(r.bottomRight() + QPoint(0, -radius), r.bottomRight());
-            break;
-        case RoundedEast:
-        case TriangularEast:
-            r.adjust(0, 0, -3, 0);
-            path.moveTo(r.topLeft());
-            // Top left corner
-            path.quadTo(r.topLeft() + QPoint(0, radius), r.topLeft() + QPoint(radius, radius));
-            // Top right corner
-            path.lineTo(r.topRight() + QPoint(-radius, radius));
-            path.quadTo(r.topRight() + QPoint(0, radius), r.topRight() + QPoint(0, radius * 2));
-            // Bottom right corner
-            path.lineTo(r.bottomRight() + QPoint(0, -radius * 2));
-            path.quadTo(r.bottomRight() + QPoint(0, -radius), r.bottomRight() + QPoint(-radius, -radius));
-            // Bottom left corner
-            path.lineTo(r.bottomLeft() + QPoint(radius, -radius));
-            path.quadTo(r.bottomLeft() + QPoint(0, -radius), r.bottomLeft());
-            break;
+    case RoundedSouth:
+    case TriangularSouth:
+        r.adjust(0, 0, 0, -3);
+        path.moveTo(r.topLeft());
+        // Top left corner
+        path.quadTo(r.topLeft() + QPoint(radius, 0), r.topLeft() + QPoint(radius, radius));
+        path.lineTo(r.bottomLeft() + QPoint(radius, -radius));
+        // Bottom left corner
+        path.quadTo(r.bottomLeft() + QPoint(radius, 0), r.bottomLeft() + QPoint(radius * 2, 0));
+        path.lineTo(r.bottomRight() + QPoint(-radius * 2, 0));
+        // Bottom right corner
+        path.quadTo(r.bottomRight() + QPoint(-radius, 0), r.bottomRight() + QPoint(-radius, -radius));
+        path.lineTo(r.topRight() + QPoint(-radius, radius));
+        // Top right corner
+        path.quadTo(r.topRight() + QPoint(-radius, 0), r.topRight());
+        break;
+    case RoundedNorth:
+    case TriangularNorth:
+        r.adjust(0, 3, 0, 1);
+        path.moveTo(r.bottomLeft());
+        // Bottom left corner
+        path.quadTo(r.bottomLeft() + QPoint(radius, 0), r.bottomLeft() + QPoint(radius, -radius));
+        // Top left corner
+        path.lineTo(r.topLeft() + QPoint(radius, radius));
+        path.quadTo(r.topLeft() + QPoint(radius, 0), r.topLeft() + QPoint(radius * 2, 0));
+        // Top right corner
+        path.lineTo(r.topRight() + QPoint(-radius * 2, 0));
+        path.quadTo(r.topRight() + QPoint(-radius, 0), r.topRight() + QPoint(-radius, radius));
+        // Bottom right corner
+        path.lineTo(r.bottomRight() + QPoint(-radius, -radius));
+        path.quadTo(r.bottomRight() + QPoint(-radius, 0), r.bottomRight());
+        break;
+    case RoundedWest:
+    case TriangularWest:
+        r.adjust(3, 0, 1, 0);
+        path.moveTo(r.topRight());
+        // Top right corner
+        path.lineTo(r.topRight());
+        path.quadTo(r.topRight() + QPoint(0, radius), r.topRight() + QPoint(-radius, radius));
+        // Top left corner
+        path.lineTo(r.topLeft() + QPoint(radius, radius));
+        path.quadTo(r.topLeft() + QPoint(0, radius), r.topLeft() + QPoint(0, radius * 2));
+        // Bottom left corner
+        path.lineTo(r.bottomLeft() + QPoint(0, -radius * 2));
+        path.quadTo(r.bottomLeft() + QPoint(0, -radius), r.bottomLeft() + QPoint(radius, -radius));
+        // Bottom right corner
+        path.lineTo(r.bottomRight() + QPoint(-radius, -radius));
+        path.quadTo(r.bottomRight() + QPoint(0, -radius), r.bottomRight());
+        break;
+    case RoundedEast:
+    case TriangularEast:
+        r.adjust(0, 0, -3, 0);
+        path.moveTo(r.topLeft());
+        // Top left corner
+        path.quadTo(r.topLeft() + QPoint(0, radius), r.topLeft() + QPoint(radius, radius));
+        // Top right corner
+        path.lineTo(r.topRight() + QPoint(-radius, radius));
+        path.quadTo(r.topRight() + QPoint(0, radius), r.topRight() + QPoint(0, radius * 2));
+        // Bottom right corner
+        path.lineTo(r.bottomRight() + QPoint(0, -radius * 2));
+        path.quadTo(r.bottomRight() + QPoint(0, -radius), r.bottomRight() + QPoint(-radius, -radius));
+        // Bottom left corner
+        path.lineTo(r.bottomLeft() + QPoint(radius, -radius));
+        path.quadTo(r.bottomLeft() + QPoint(0, -radius), r.bottomLeft());
+        break;
     }
 
     return path;
@@ -313,9 +313,9 @@ void TabBar::paintEvent(QPaintEvent *event)
         tabIcon(i).paint(&painter, iconRect);
 
         // draw tab text
-        if (i != currentTab || m_animProgress < 0.9){
+        if (i != currentTab || m_animProgress < 0.9) {
             painter.setPen(QPen(KColorScheme(QPalette::Active).foreground(KColorScheme::InactiveText), 0));
-        }else{
+        } else {
             painter.setPen(QPen(KColorScheme(QPalette::Active).foreground(KColorScheme::NormalText), 0));
         }
         QRect textRect = rect;
@@ -357,8 +357,7 @@ void TabBar::switchToHoveredTab()
 
     if (m_animateSwitch) {
         setCurrentIndex(m_hoveredTabIndex);
-    }
-    else {
+    } else {
         setCurrentIndexWithoutAnimation(m_hoveredTabIndex);
     }
 }
@@ -396,10 +395,10 @@ void TabBar::animationFinished()
 bool TabBar::isVertical() const
 {
     Shape s = shape();
-    if( s == RoundedWest ||
-        s == RoundedEast ||
-        s == TriangularWest ||
-        s == TriangularEast ) {
+    if (s == RoundedWest ||
+            s == RoundedEast ||
+            s == TriangularWest ||
+            s == TriangularEast) {
         return true;
     }
     return false;
@@ -407,7 +406,7 @@ bool TabBar::isVertical() const
 
 bool TabBar::isHorizontal() const
 {
-  return !isVertical();
+    return !isVertical();
 }
 
 #include "tabbar.moc"

@@ -50,11 +50,10 @@ public:
 
     Private(MenuView *parent) : q(parent) , model(0) , column(0), launcher(new UrlItemLauncher(parent)), formattype(MenuView::DescriptionName) {}
 
-    QAction *createActionForIndex(const QModelIndex& index, QMenu *parent)
-    {
+    QAction *createActionForIndex(const QModelIndex& index, QMenu *parent) {
         Q_ASSERT(index.isValid());
 
-        QAction *action = 0; 
+        QAction *action = 0;
 
         if (model->hasChildren(index)) {
             KMenu *childMenu = new KMenu(parent);
@@ -68,16 +67,15 @@ public:
 
             buildBranch(childMenu, index);
         } else {
-            action = q->createLeafAction(index,parent);
+            action = q->createLeafAction(index, parent);
         }
 
-        q->updateAction(action,index);
+        q->updateAction(action, index);
 
         return action;
     }
 
-    void buildBranch(QMenu *menu, const QModelIndex& parent)
-    {
+    void buildBranch(QMenu *menu, const QModelIndex& parent) {
         int rowCount = model->rowCount(parent);
         for (int i = 0; i < rowCount; i++) {
             QAction *action = createActionForIndex(model->index(i, column, parent), menu);
@@ -94,8 +92,8 @@ public:
 };
 
 MenuView::MenuView(QWidget *parent)
-    : KMenu(parent)
-    , d(new Private(this))
+        : KMenu(parent)
+        , d(new Private(this))
 {
     installEventFilter(this);
 }
@@ -105,57 +103,58 @@ MenuView::~MenuView()
     delete d;
 }
 
-QAction *MenuView::createLeafAction(const QModelIndex&,QObject *parent)
+QAction *MenuView::createLeafAction(const QModelIndex&, QObject *parent)
 {
     return new QAction(parent);
 }
 
-void MenuView::updateAction(QAction *action,const QModelIndex& index)
+void MenuView::updateAction(QAction *action, const QModelIndex& index)
 {
     Q_ASSERT(d->model);
 
-    QString text = index.data(Qt::DisplayRole).value<QString>().replace("&","&&"); // describing text, e.g. "Spreadsheet" or "Rekall" (right, sometimes the text is also used for the generic app-name)
-    QString name = index.data(Kickoff::SubTitleRole).value<QString>().replace("&","&&"); // the generic name, e.g. "kspread" or "OpenOffice.org Spreadsheet" or just "" (right, it's a mess too)
-    if( action->menu()!=0 ) { // if its an item with sub-menuitems, we probably like to thread them another way...
+    QString text = index.data(Qt::DisplayRole).value<QString>().replace("&", "&&"); // describing text, e.g. "Spreadsheet" or "Rekall" (right, sometimes the text is also used for the generic app-name)
+    QString name = index.data(Kickoff::SubTitleRole).value<QString>().replace("&", "&&"); // the generic name, e.g. "kspread" or "OpenOffice.org Spreadsheet" or just "" (right, it's a mess too)
+    if (action->menu() != 0) { // if its an item with sub-menuitems, we probably like to thread them another way...
         action->setText(text);
-    }
-    else {
-        switch( d->formattype ) {
-            case Name: {
-                if (name.isEmpty()) {
-                    action->setText(text);
-                } else {
-                    action->setText(name);
-                }
-            } break;
-            case Description: {
-                if (name.contains(text,Qt::CaseInsensitive)) {
-                    text = name;
-                }
+    } else {
+        switch (d->formattype) {
+        case Name: {
+            if (name.isEmpty()) {
                 action->setText(text);
-            } break;
-            case NameDescription: // fall through
-            case NameDashDescription: // fall through
-            case DescriptionName: {
-                if (!name.isEmpty()) { // seems we have a program, but some of them don't define a name at all
-                    if (text.contains(name,Qt::CaseInsensitive)) { // sometimes the description contains also the name
-                        action->setText(text);
-                    } else if (name.contains(text,Qt::CaseInsensitive)) { // and sometimes the name also contains the description
-                        action->setText(name);
-                    } else { // seems we have a perfect desktop-file (likely a KDE one, heh) and name+description are clear separated
-                        if (d->formattype == NameDescription) {
-                            action->setText(QString("%1 %2").arg(name).arg(text));
-                        } else if (d->formattype == NameDashDescription) {
-                            action->setText(QString("%1 - %2").arg(name).arg(text));
-                        } else {
-                            action->setText(QString("%1 (%2)").arg(text).arg(name));
-                        }
+            } else {
+                action->setText(name);
+            }
+        }
+        break;
+        case Description: {
+            if (name.contains(text, Qt::CaseInsensitive)) {
+                text = name;
+            }
+            action->setText(text);
+        }
+        break;
+        case NameDescription: // fall through
+        case NameDashDescription: // fall through
+        case DescriptionName: {
+            if (!name.isEmpty()) { // seems we have a program, but some of them don't define a name at all
+                if (text.contains(name, Qt::CaseInsensitive)) { // sometimes the description contains also the name
+                    action->setText(text);
+                } else if (name.contains(text, Qt::CaseInsensitive)) { // and sometimes the name also contains the description
+                    action->setText(name);
+                } else { // seems we have a perfect desktop-file (likely a KDE one, heh) and name+description are clear separated
+                    if (d->formattype == NameDescription) {
+                        action->setText(QString("%1 %2").arg(name).arg(text));
+                    } else if (d->formattype == NameDashDescription) {
+                        action->setText(QString("%1 - %2").arg(name).arg(text));
+                    } else {
+                        action->setText(QString("%1 (%2)").arg(text).arg(name));
                     }
                 }
-                else { // if there is no name, let's just use the describing text
-                    action->setText(text);
-                }
-            } break;
+            } else { // if there is no name, let's just use the describing text
+                action->setText(text);
+            }
+        }
+        break;
         }
     }
 
@@ -178,7 +177,7 @@ bool MenuView::eventFilter(QObject *watched, QEvent *event)
         const int mousePressDistance = !d->mousePressPos.isNull() ? (mouseEvent->pos() - d->mousePressPos).manhattanLength() : 0;
 
         if (watchedMenu && mouseEvent->buttons() & Qt::LeftButton
-            && mousePressDistance >= QApplication::startDragDistance()) {
+                && mousePressDistance >= QApplication::startDragDistance()) {
             QAction *action = watchedMenu->actionAt(mouseEvent->pos());
             if (!action) {
                 return KMenu::eventFilter(watched, event);
@@ -234,10 +233,10 @@ void MenuView::setModel(QAbstractItemModel *model)
     d->model = model;
     clear();
     if (d->model) {
-        d->buildBranch(this,QModelIndex());
-        connect(d->model, SIGNAL(rowsAboutToBeInserted(QModelIndex,int,int)), this, SLOT(rowsAboutToBeInserted(QModelIndex,int,int)));
-        connect(d->model, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)), this, SLOT(rowsAboutToBeRemoved(QModelIndex,int,int)));
-        connect(d->model, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
+        d->buildBranch(this, QModelIndex());
+        connect(d->model, SIGNAL(rowsAboutToBeInserted(QModelIndex, int, int)), this, SLOT(rowsAboutToBeInserted(QModelIndex, int, int)));
+        connect(d->model, SIGNAL(rowsAboutToBeRemoved(QModelIndex, int, int)), this, SLOT(rowsAboutToBeRemoved(QModelIndex, int, int)));
+        connect(d->model, SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SLOT(dataChanged(QModelIndex, QModelIndex)));
         connect(d->model, SIGNAL(modelReset()), this, SLOT(modelReset()));
     }
 }
@@ -282,7 +281,7 @@ bool MenuView::isValidIndex(const QModelIndex& index) const
     return v.isValid() && v.value<QAction*>();
 }
 
-void MenuView::rowsAboutToBeInserted(const QModelIndex& parent,int start,int end)
+void MenuView::rowsAboutToBeInserted(const QModelIndex& parent, int start, int end)
 {
     if (!isValidIndex(parent)) {
         // can happen if the models data is incomplete yet
@@ -305,13 +304,13 @@ void MenuView::rowsAboutToBeInserted(const QModelIndex& parent,int start,int end
     }
 
     if (start < menu->actions().count()) {
-        menu->insertActions(menu->actions()[start],newActions);
+        menu->insertActions(menu->actions()[start], newActions);
     } else {
         menu->addActions(newActions);
     }
 }
 
-void MenuView::rowsAboutToBeRemoved(const QModelIndex& parent,int start,int end)
+void MenuView::rowsAboutToBeRemoved(const QModelIndex& parent, int start, int end)
 {
     if (!isValidIndex(parent)) {
         // can happen if the models data is incomplete yet
@@ -333,7 +332,7 @@ void MenuView::rowsAboutToBeRemoved(const QModelIndex& parent,int start,int end)
     }
 }
 
-void MenuView::dataChanged(const QModelIndex& topLeft,const QModelIndex& bottomRight)
+void MenuView::dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight)
 {
     if (!isValidIndex(topLeft.parent())) {
         // can happen if the models data is incomplete yet
@@ -352,7 +351,7 @@ void MenuView::dataChanged(const QModelIndex& topLeft,const QModelIndex& bottomR
     Q_ASSERT(bottomRight.row() < actions.count());
 
     for (int row = topLeft.row(); row <= bottomRight.row(); row++) {
-        updateAction(actions[row], d->model->index(row,d->column,topLeft.parent()));
+        updateAction(actions[row], d->model->index(row, d->column, topLeft.parent()));
     }
 }
 

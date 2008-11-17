@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -29,7 +29,7 @@ namespace Kickoff
 class ItemStateProvider;
 class UrlItemView : public QAbstractItemView
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     UrlItemView(QWidget *parent = 0);
@@ -38,20 +38,23 @@ public:
     void setItemStateProvider(ItemStateProvider *provider);
     ItemStateProvider *itemStateProvider() const;
 
-    // reimplemented from QAbstractItemView 
+    // reimplemented from QAbstractItemView
     virtual QModelIndex indexAt(const QPoint& point) const;
-    virtual void scrollTo(const QModelIndex& index, ScrollHint hint = EnsureVisible); 
+    virtual void scrollTo(const QModelIndex& index, ScrollHint hint = EnsureVisible);
     virtual QRect visualRect(const QModelIndex& index) const;
     virtual void setModel(QAbstractItemModel *model);
 protected:
-    // reimplemented from QAbstractItemView 
+    // reimplemented from QAbstractItemView
     virtual int horizontalOffset() const;
     virtual bool isIndexHidden(const QModelIndex& index) const;
-    virtual QModelIndex moveCursor(CursorAction action,Qt::KeyboardModifiers modifiers);
-    virtual void setSelection(const QRect& rect,QItemSelectionModel::SelectionFlags flags);
+    virtual QModelIndex moveCursor(CursorAction action, Qt::KeyboardModifiers modifiers);
+    virtual void setSelection(const QRect& rect, QItemSelectionModel::SelectionFlags flags);
     virtual int verticalOffset() const;
     virtual QRegion visualRegionForSelection(const QItemSelection& selection) const;
     virtual void startDrag(Qt::DropActions supportedActions);
+    virtual void dragEnterEvent(QDragEnterEvent *event);
+    virtual void dragLeaveEvent(QDragLeaveEvent *event);
+    virtual void dragMoveEvent(QDragMoveEvent *event);
 
     // reimplemented from QWidget
     virtual void paintEvent(QPaintEvent *event);
@@ -61,6 +64,7 @@ protected:
     virtual void mouseReleaseEvent(QMouseEvent *event);
     virtual void dropEvent(QDropEvent *event);
     virtual void leaveEvent(QEvent *event);
+
 
 private Q_SLOTS:
     // lays out all items in the view and sets the current index to the first

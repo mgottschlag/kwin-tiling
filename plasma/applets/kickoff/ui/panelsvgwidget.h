@@ -22,20 +22,20 @@
 
 namespace Plasma
 {
-    class FrameSvg;
+class FrameSvg;
 }
 
 class PanelSvgWidget : public QWidget
 {
     Q_OBJECT
 
-    public:
-        PanelSvgWidget(QWidget *parent);
+public:
+    PanelSvgWidget(QWidget *parent);
 
-    protected:
-        virtual void paintEvent(QPaintEvent *event);
-        virtual void resizeEvent(QResizeEvent* event);
+protected:
+    virtual void paintEvent(QPaintEvent *event);
+    virtual void resizeEvent(QResizeEvent* event);
 
-    private:
-        Plasma::FrameSvg *background;
+private:
+    Plasma::FrameSvg *background;
 };

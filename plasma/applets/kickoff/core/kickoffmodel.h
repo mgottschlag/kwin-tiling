@@ -29,12 +29,12 @@
 namespace Kickoff
 {
 
-/** 
+/**
  * Base model for Kickoff models based on QStandardItemModel, enables drag and drop support
  */
 class KickoffModel : public QStandardItemModel
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     /** Construct a new KickoffModel with the specified parent. */
@@ -47,6 +47,8 @@ public:
     virtual QStringList mimeTypes() const;
     virtual Qt::DropActions supportedDropActions() const;
     virtual Qt::DropActions supportedDragActions() const;
+
+private:
 };
 
 }

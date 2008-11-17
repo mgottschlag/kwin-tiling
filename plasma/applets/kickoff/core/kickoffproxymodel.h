@@ -29,12 +29,12 @@
 namespace Kickoff
 {
 
-/** 
+/**
  * Base model for Kickoff models based on QAbstractProxyModel, enables drag and drop support
  */
 class KickoffProxyModel : public QAbstractProxyModel
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     /** Construct a new KickoffModel with the specified parent. */

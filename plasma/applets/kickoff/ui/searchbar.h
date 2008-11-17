@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@ namespace Kickoff
 
 class SearchBar : public QWidget
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     SearchBar(QWidget *parent);

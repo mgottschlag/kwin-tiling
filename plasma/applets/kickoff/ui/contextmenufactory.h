@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -32,19 +32,19 @@ namespace Kickoff
 
 class ContextMenuFactory : public QObject
 {
-Q_OBJECT 
+    Q_OBJECT
 
 public:
     ContextMenuFactory(QObject *parent = 0);
     ~ContextMenuFactory();
 
-    void setViewActions(QAbstractItemView *view,const QList<QAction*>& actions);
+    void setViewActions(QAbstractItemView *view, const QList<QAction*>& actions);
     QList<QAction*> viewActions(QAbstractItemView *view) const;
 
     void setApplet(Plasma::Applet *applet);
 
 public Q_SLOTS:
-    void showContextMenu(QAbstractItemView *view,const QPoint& pos); 
+    void showContextMenu(QAbstractItemView *view, const QPoint& pos);
 
 private:
     class Private;

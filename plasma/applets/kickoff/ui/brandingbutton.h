@@ -24,7 +24,7 @@
 
 namespace Plasma
 {
-    class Svg;
+class Svg;
 } // namespace Plasma
 
 namespace Kickoff

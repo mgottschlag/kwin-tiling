@@ -46,7 +46,7 @@ using namespace Kickoff;
 
 bool ServiceItemHandler::openUrl(const KUrl& url)
 {
-    int result = KToolInvocation::startServiceByDesktopPath(url.pathOrUrl(),QStringList(),0,0,0,"",true);
+    int result = KToolInvocation::startServiceByDesktopPath(url.pathOrUrl(), QStringList(), 0, 0, 0, "", true);
 
     if (result == 0) {
         KService::Ptr service = KService::serviceByDesktopPath(url.pathOrUrl());
@@ -74,9 +74,9 @@ bool LeaveItemHandler::openUrl(const KUrl& url)
         QDBusReply<QStringList> reply = kdedInterface.call("loadedModules");
         if (reply.isValid() && reply.value().contains("powerdevil")) {
             kDebug() << "Using powerdevil to suspend";
-            QDBusConnection dbus( QDBusConnection::sessionBus() );
-            QDBusInterface iface( "org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus );
-            iface.call( "suspend", Solid::Control::PowerManager::ToRam );
+            QDBusConnection dbus(QDBusConnection::sessionBus());
+            QDBusInterface iface("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus);
+            iface.call("suspend", Solid::Control::PowerManager::ToRam);
         } else {
             kDebug() << "Powerdevil not available, using solid to suspend";
             KJob * job = Solid::Control::PowerManager::suspend(Solid::Control::PowerManager::ToRam);
@@ -91,9 +91,9 @@ bool LeaveItemHandler::openUrl(const KUrl& url)
         QDBusReply<QStringList> reply = kdedInterface.call("loadedModules");
         if (reply.isValid() && reply.value().contains("powerdevil")) {
             kDebug() << "Using powerdevil to hibernate";
-            QDBusConnection dbus( QDBusConnection::sessionBus() );
-            QDBusInterface iface( "org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus );
-            iface.call( "suspend", Solid::Control::PowerManager::ToDisk );
+            QDBusConnection dbus(QDBusConnection::sessionBus());
+            QDBusInterface iface("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus);
+            iface.call("suspend", Solid::Control::PowerManager::ToDisk);
         } else {
             kDebug() << "Powerdevil not available, using solid to hibernate";
             KJob * job = Solid::Control::PowerManager::suspend(Solid::Control::PowerManager::ToDisk);
@@ -109,7 +109,7 @@ bool LeaveItemHandler::openUrl(const KUrl& url)
         QTimer::singleShot(0, this, SLOT(switchUser()));
         return true;
     } else if (m_logoutAction == "logout" || m_logoutAction == "logoutonly" ||
-               m_logoutAction == "restart" || m_logoutAction == "shutdown" ) {
+               m_logoutAction == "restart" || m_logoutAction == "shutdown") {
         // decouple dbus call, otherwise we'll run into a dead-lock
         QTimer::singleShot(0, this, SLOT(logout()));
         return true;
@@ -155,7 +155,7 @@ void LeaveItemHandler::logout()
 
 //FIXME: the proper fix is to implement the KWorkSpace methods for Windows
 #ifndef Q_WS_WIN
-    KWorkSpace::requestShutDown(confirm,type);
+    KWorkSpace::requestShutDown(confirm, type);
 #endif
 }
 
@@ -163,7 +163,7 @@ void LeaveItemHandler::lock()
 {
     QString interface("org.freedesktop.ScreenSaver");
     org::freedesktop::ScreenSaver screensaver(interface, "/ScreenSaver",
-                                              QDBusConnection::sessionBus());
+            QDBusConnection::sessionBus());
     screensaver.Lock();
 }
 
@@ -179,7 +179,7 @@ void LeaveItemHandler::saveSession()
     QString interface("org.kde.ksmserver");
 
     org::kde::KSMServerInterface ksmserver(interface, "/KSMServer",
-                                         QDBusConnection::sessionBus());
+                                           QDBusConnection::sessionBus());
     if (ksmserver.isValid()) {
         ksmserver.saveCurrentSession();
     }
@@ -188,23 +188,23 @@ void LeaveItemHandler::saveSession()
 void LeaveItemHandler::standby()
 {
     Solid::Control::PowerManager::SuspendMethod spdMethod = Solid::Control::PowerManager::Standby;
-    KJob *job = Solid::Control::PowerManager::suspend( spdMethod );
+    KJob *job = Solid::Control::PowerManager::suspend(spdMethod);
     if (job != 0)
-       job->start();
+        job->start();
 }
 
 void LeaveItemHandler::suspendRAM()
 {
     Solid::Control::PowerManager::SuspendMethod spdMethod = Solid::Control::PowerManager::ToRam;
-    KJob *job = Solid::Control::PowerManager::suspend( spdMethod );
+    KJob *job = Solid::Control::PowerManager::suspend(spdMethod);
     if (job != 0)
-       job->start();
+        job->start();
 }
 
 void LeaveItemHandler::suspendDisk()
 {
     Solid::Control::PowerManager::SuspendMethod spdMethod = Solid::Control::PowerManager::ToDisk;
-    KJob *job = Solid::Control::PowerManager::suspend( spdMethod );
+    KJob *job = Solid::Control::PowerManager::suspend(spdMethod);
     if (job != 0)
-       job->start();
+        job->start();
 }

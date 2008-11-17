@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -29,14 +29,14 @@
 namespace Kickoff
 {
 
-/** 
+/**
  * The main window class for the Kickoff launcher.  This class is responsible
  * for creating the various tabs, views and models which make up the launcher's
  * user interface.
  */
 class Launcher : public QWidget
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     /** Construct a new Launcher with the specified parent. */

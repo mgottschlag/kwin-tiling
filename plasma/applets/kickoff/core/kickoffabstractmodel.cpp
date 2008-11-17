@@ -33,7 +33,7 @@
 using namespace Kickoff;
 
 KickoffAbstractModel::KickoffAbstractModel(QObject *parent)
-    : QAbstractItemModel(parent)
+        : QAbstractItemModel(parent)
 {}
 
 KickoffAbstractModel::~KickoffAbstractModel()
@@ -55,7 +55,7 @@ QMimeData *KickoffAbstractModel::mimeData(const QModelIndexList &indexes) const
     KUrl::List urls;
     QByteArray itemData;
 
-    foreach (const QModelIndex &index, indexes) {
+    foreach(const QModelIndex &index, indexes) {
         KUrl itemUrl = KUrl(data(index, UrlRole).toString());
         if (itemUrl.isValid()) {
             urls << itemUrl;

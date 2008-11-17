@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -40,11 +40,10 @@ public:
     class ServiceInfo;
 
     Private()
-        : maxServices(DEFAULT_MAX_SERVICES)
-    {
+            : maxServices(DEFAULT_MAX_SERVICES) {
         KConfigGroup recentGroup = componentData().config()->group("RecentlyUsed");
-        QList<QString> recentApplications = recentGroup.readEntry("Applications",QList<QString>());
-        maxServices = recentGroup.readEntry("MaxApplications",maxServices);
+        QList<QString> recentApplications = recentGroup.readEntry("Applications", QList<QString>());
+        maxServices = recentGroup.readEntry("MaxApplications", maxServices);
 
         // TESTING
         //      the actual last date/time is not currently recorded, instead we just use
@@ -52,71 +51,68 @@ public:
         //      to preserve the order of the applications in the list loaded from the KConfig
         //      source
         QDateTime dateTime = QDateTime::currentDateTime();
-        foreach(const QString& application,recentApplications) {
+        foreach(const QString& application, recentApplications) {
             ServiceInfo info;
             info.storageId = application;
             info.startCount = 1;
             info.lastStartedTime = dateTime;
-            addEntry(info.storageId,info);
+            addEntry(info.storageId, info);
             dateTime = dateTime.addSecs(1);
         }
     };
-    ~Private()
-    {
+    ~Private() {
         KConfigGroup recentGroup = componentData().config()->group("RecentlyUsed");
-        
+
         QList<ServiceInfo> services = serviceInfo.values();
-        qSort(services.begin(),services.end());
+        qSort(services.begin(), services.end());
 
         // TESTING
         //      only the desktop file used is currently recorded, information such
-        //      as start count and date/time of last used is lost 
+        //      as start count and date/time of last used is lost
         QList<QString> recentApplications;
-        foreach(const ServiceInfo& info,services) {
+        foreach(const ServiceInfo& info, services) {
             recentApplications << info.storageId;
         }
 
-        recentGroup.writeEntry("Applications",recentApplications);
+        recentGroup.writeEntry("Applications", recentApplications);
 
         if (maxServices != DEFAULT_MAX_SERVICES) {
-            recentGroup.writeEntry("MaxApplications",maxServices);
+            recentGroup.writeEntry("MaxApplications", maxServices);
         }
     }
-    void addEntry(const QString& id,ServiceInfo& info)
-    {
+    void addEntry(const QString& id, ServiceInfo& info) {
         // if this service is already in the list then remove the existing
         // queue entry (so that there are no duplicates in the queue)
         if (serviceInfo.contains(id)) {
             kDebug() << "Duplicate entry added.  Removing existing entry from queue.";
             serviceQueue.erase(serviceInfo[id].queueIter);
-        } 
+        }
 
         serviceQueue.append(id);
         info.queueIter = --serviceQueue.end();
-        serviceInfo.insert(id,info);
-        
+        serviceInfo.insert(id, info);
+
         // if more than the maximum number of services have been added
         // remove the least recently used service
         if (serviceQueue.count() > maxServices) {
-           QString removeId = serviceQueue.takeFirst();
-           kDebug() << "More than max services added.  Removing" << removeId << "from queue."; 
-           serviceInfo.remove(removeId);
-           emit instance.applicationRemoved(KService::serviceByStorageId(removeId));
+            QString removeId = serviceQueue.takeFirst();
+            kDebug() << "More than max services added.  Removing" << removeId << "from queue.";
+            serviceInfo.remove(removeId);
+            emit instance.applicationRemoved(KService::serviceByStorageId(removeId));
         }
     }
 
     class ServiceInfo
     {
     public:
-        ServiceInfo() : startCount(0){}
+        ServiceInfo() : startCount(0) {}
 
         QString storageId;
         int startCount;
         QDateTime lastStartedTime;
         QLinkedList<QString>::iterator queueIter;
 
-        bool operator<(const ServiceInfo& rhs) const
-        {
+        bool operator<(const ServiceInfo& rhs) const {
             return this->lastStartedTime < rhs.lastStartedTime;
         }
     };
@@ -126,12 +122,12 @@ public:
     // queue to keep track of the order in which services have been used
     // (most recently used at the back)
     QLinkedList<QString> serviceQueue;
-    QHash<QString,ServiceInfo> serviceInfo;
+    QHash<QString, ServiceInfo> serviceInfo;
     RecentApplications instance;
 };
-K_GLOBAL_STATIC(RecentApplications::Private,privateSelf)
+K_GLOBAL_STATIC(RecentApplications::Private, privateSelf)
 
-RecentApplications *RecentApplications::self() 
+RecentApplications *RecentApplications::self()
 {
     return &privateSelf->instance;
 }
@@ -142,10 +138,10 @@ RecentApplications::RecentApplications()
 QList<KService::Ptr> RecentApplications::recentApplications() const
 {
     QList<Private::ServiceInfo> services = privateSelf->serviceInfo.values();
-    qSort(services.begin(),services.end(),qGreater<Private::ServiceInfo>());
+    qSort(services.begin(), services.end(), qGreater<Private::ServiceInfo>());
 
     QList<KService::Ptr> servicePtrs;
-    foreach (const Private::ServiceInfo& info,services) {
+    foreach(const Private::ServiceInfo& info, services) {
         KService::Ptr s = KService::serviceByStorageId(info.storageId);
 
         if (s) {
@@ -178,11 +174,11 @@ void RecentApplications::add(KService::Ptr service)
     info.startCount++;
     info.lastStartedTime = QDateTime::currentDateTime();
 
-    privateSelf->addEntry(info.storageId,info);
+    privateSelf->addEntry(info.storageId, info);
 
     kDebug() << "Recent app added" << info.storageId << info.startCount;
 
-    emit applicationAdded(service,info.startCount);
+    emit applicationAdded(service, info.startCount);
 }
 void RecentApplications::clear()
 {

@@ -32,89 +32,89 @@ class QAction;
 */
 class MenuLauncherApplet : public Plasma::Applet
 {
-        Q_OBJECT
-        Q_ENUMS(ViewType)
-        Q_ENUMS(FormatType)
-    public:
+    Q_OBJECT
+    Q_ENUMS(ViewType)
+    Q_ENUMS(FormatType)
+public:
 
-        /**
-        * The menu we like to display.
-        */
-        enum ViewType {
-            Combined = 0, ///< Standard Menu
-            Favorites, ///< Favorites Menu
-            Applications, ///< Applications Menu
-            Computer, ///< Computer Menu
-            RecentlyUsed, ///< Recently Used Menu
-            Bookmarks, ///< Bookmarks Menu
-            Leave ///< Leave Menu
-        };
+    /**
+    * The menu we like to display.
+    */
+    enum ViewType {
+        Combined = 0, ///< Standard Menu
+        Favorites, ///< Favorites Menu
+        Applications, ///< Applications Menu
+        Computer, ///< Computer Menu
+        RecentlyUsed, ///< Recently Used Menu
+        Bookmarks, ///< Bookmarks Menu
+        Leave ///< Leave Menu
+    };
 
-        /**
-        * How the text of the menuitems got formatted.
-        */
-        enum FormatType {
-            Name = 0, ///< Name only
-            Description, ///< Description only
-            NameDescription, ///< Name Description
-            DescriptionName, ///< Description (Name)
-            NameDashDescription ///< Name - Description
-        };
+    /**
+    * How the text of the menuitems got formatted.
+    */
+    enum FormatType {
+        Name = 0, ///< Name only
+        Description, ///< Description only
+        NameDescription, ///< Name Description
+        DescriptionName, ///< Description (Name)
+        NameDashDescription ///< Name - Description
+    };
 
-        /**
-        * Constructor.
-        *
-        * \param parent The parent QObject.
-        * \param args The optional list of arguments.
-        */
-        MenuLauncherApplet(QObject *parent, const QVariantList &args);
+    /**
+    * Constructor.
+    *
+    * \param parent The parent QObject.
+    * \param args The optional list of arguments.
+    */
+    MenuLauncherApplet(QObject *parent, const QVariantList &args);
 
-        /**
-        * Destructor.
-        */
-        virtual ~MenuLauncherApplet();
+    /**
+    * Destructor.
+    */
+    virtual ~MenuLauncherApplet();
 
-        /**
-         * This method is called once the applet is loaded and added to a Corona.
-         **/
-        void init();
+    /**
+     * This method is called once the applet is loaded and added to a Corona.
+     **/
+    void init();
 
-        /**
-         * Called when any of the geometry constraints have been updated.
-         *
-         * @param constraints the type of constraints that were updated
-         */
-        void constraintsEvent(Plasma::Constraints constraints);
+    /**
+     * Called when any of the geometry constraints have been updated.
+     *
+     * @param constraints the type of constraints that were updated
+     */
+    void constraintsEvent(Plasma::Constraints constraints);
 
-        /**
-         * Returns a list of context-related QAction instances.
-         */
-        virtual QList<QAction*> contextualActions();
+    /**
+     * Returns a list of context-related QAction instances.
+     */
+    virtual QList<QAction*> contextualActions();
 
 public Q_SLOTS:
-        /**
-         * Switch the menu style from the traditional aka classic KDE3 like
-         * KMenu to the new Kickoff menu.
-         */
-        void switchMenuStyle();
+    /**
+     * Switch the menu style from the traditional aka classic KDE3 like
+     * KMenu to the new Kickoff menu.
+     */
+    void switchMenuStyle();
 
-        void startMenuEditor();
+    void startMenuEditor();
 
 protected:
-        /**
-         * Create a configuration dialog.
-         */
-        void createConfigurationInterface(KConfigDialog *parent);
+    /**
+     * Create a configuration dialog.
+     */
+    void createConfigurationInterface(KConfigDialog *parent);
 
 private Q_SLOTS:
-        void configAccepted();
-        void toggleMenu(bool pressed);
-        void toggleMenu();
-        void actionTriggered(QAction *action);
+    void configAccepted();
+    void toggleMenu(bool pressed);
+    void toggleMenu();
+    void actionTriggered(QAction *action);
 
 private:
-        class Private;
-        Private * const d;
+    class Private;
+    Private * const d;
 };
 
 K_EXPORT_PLASMA_APPLET(menulauncher, MenuLauncherApplet)

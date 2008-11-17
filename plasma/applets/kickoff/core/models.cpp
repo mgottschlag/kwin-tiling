@@ -110,7 +110,7 @@ QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString)
     return item;
 }
 
-void StandardItemFactory::setSpecialUrlProperties(const KUrl& url,QStandardItem *item)
+void StandardItemFactory::setSpecialUrlProperties(const KUrl& url, QStandardItem *item)
 {
     // specially handled URLs
     if (homeUrl() && url == *homeUrl()) {
@@ -130,10 +130,10 @@ QStandardItem *StandardItemFactory::createItemForService(KService::Ptr service)
 
     appItem->setText(genericName.isEmpty() ? appName : genericName);
     appItem->setIcon(KIcon(service->icon()));
-    appItem->setData(service->entryPath(),Kickoff::UrlRole);
+    appItem->setData(service->entryPath(), Kickoff::UrlRole);
 
     if (!genericName.isEmpty()) {
-        appItem->setData(service->name(),Kickoff::SubTitleRole);
+        appItem->setData(service->name(), Kickoff::SubTitleRole);
     }
 
     return appItem;
@@ -159,7 +159,7 @@ QStringList Kickoff::systemApplicationList()
 }
 
 #if 0
-void Kickoff::swapModelIndexes(QModelIndex& first,QModelIndex& second)
+void Kickoff::swapModelIndexes(QModelIndex& first, QModelIndex& second)
 {
     Q_ASSERT(first.isValid());
     Q_ASSERT(second.isValid());
@@ -169,15 +169,15 @@ void Kickoff::swapModelIndexes(QModelIndex& first,QModelIndex& second)
 
     Q_ASSERT(firstModel && secondModel);
 
-    QMap<int,QVariant> firstIndexData = firstModel->itemData(first);
-    QMap<int,QVariant> secondIndexData = secondModel->itemData(second);
+    QMap<int, QVariant> firstIndexData = firstModel->itemData(first);
+    QMap<int, QVariant> secondIndexData = secondModel->itemData(second);
 
-    firstModel->setItemData(first,secondIndexData);
-    secondModel->setItemData(second,firstIndexData);
+    firstModel->setItemData(first, secondIndexData);
+    secondModel->setItemData(second, firstIndexData);
 }
 #endif
 
-K_GLOBAL_STATIC_WITH_ARGS(KComponentData,kickoffComponent,("kickoff",QByteArray(),KComponentData::SkipMainComponentRegistration))
+K_GLOBAL_STATIC_WITH_ARGS(KComponentData, kickoffComponent, ("kickoff", QByteArray(), KComponentData::SkipMainComponentRegistration))
 KComponentData Kickoff::componentData()
 {
     return *kickoffComponent;

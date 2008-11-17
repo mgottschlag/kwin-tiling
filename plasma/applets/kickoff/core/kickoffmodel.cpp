@@ -33,8 +33,9 @@
 using namespace Kickoff;
 
 KickoffModel::KickoffModel(QObject *parent)
-    : QStandardItemModel(parent)
-{}
+        : QStandardItemModel(parent)
+{
+}
 
 KickoffModel::~KickoffModel()
 {}
@@ -55,7 +56,7 @@ QMimeData *KickoffModel::mimeData(const QModelIndexList &indexes) const
     KUrl::List urls;
     QByteArray itemData;
 
-    foreach (const QModelIndex &index, indexes) {
+    foreach(const QModelIndex &index, indexes) {
         KUrl itemUrl = KUrl(data(index, UrlRole).toString());
         if (itemUrl.isValid()) {
             urls << itemUrl;
@@ -80,7 +81,7 @@ QStringList KickoffModel::mimeTypes() const
 
 Qt::DropActions KickoffModel::supportedDropActions() const
 {
-    return 0;
+    return Qt::MoveAction;
 }
 
 Qt::DropActions KickoffModel::supportedDragActions() const

@@ -49,15 +49,15 @@ QStandardItem* LeaveModel::createStandardItem(const QString& url)
     if (basename == "logoutonly") {
         item->setText(i18n("Logout"));
         item->setIcon(KIcon("system-log-out"));
-        item->setData(i18n("End session"),Kickoff::SubTitleRole);
+        item->setData(i18n("End session"), Kickoff::SubTitleRole);
     } else if (basename == "lock") {
         item->setText(i18n("Lock"));
         item->setIcon(KIcon("system-lock-screen"));
-        item->setData(i18n("Lock the screen"),Kickoff::SubTitleRole);
+        item->setData(i18n("Lock the screen"), Kickoff::SubTitleRole);
     } else if (basename == "switch") {
         item->setText(i18n("Switch User"));
         item->setIcon(KIcon("system-switch-user"));
-        item->setData(i18n("Start a parallel session as a different user"),Kickoff::SubTitleRole);
+        item->setData(i18n("Start a parallel session as a different user"), Kickoff::SubTitleRole);
     } else if (basename == "shutdown") {
         item->setText(i18n("Shutdown"));
         item->setIcon(KIcon("system-shutdown"));
@@ -91,8 +91,8 @@ QStandardItem* LeaveModel::createStandardItem(const QString& url)
 }
 
 LeaveModel::LeaveModel(QObject *parent)
-    : QStandardItemModel(parent)
-    , d(0)
+        : QStandardItemModel(parent)
+        , d(0)
 {
 }
 
@@ -114,7 +114,7 @@ void LeaveModel::updateModel()
 
     // Save Session
     KConfigGroup c(KSharedConfig::openConfig("ksmserverrc", KConfig::NoGlobals), "General");
-    if (c.readEntry( "loginMode") == "restoreSavedSession") {
+    if (c.readEntry("loginMode") == "restoreSavedSession") {
         QStandardItem *saveSessionOption = createStandardItem("leave:/savesession");
         sessionOptions->appendRow(saveSessionOption);
     }
@@ -165,7 +165,7 @@ void LeaveModel::updateModel()
 
     appendRow(sessionOptions);
     if (addSystemSession) {
-       appendRow(systemOptions);
+        appendRow(systemOptions);
     } else {
         delete systemOptions;
     }

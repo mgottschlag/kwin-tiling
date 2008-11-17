@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -27,18 +27,18 @@
 
 #define KICKOFF_VERSION "1.9.3"
 
-int main(int argc,char** argv)
+int main(int argc, char** argv)
 {
-    KAboutData about("kickoff",0,ki18n("Kickoff"),KICKOFF_VERSION,
+    KAboutData about("kickoff", 0, ki18n("Kickoff"), KICKOFF_VERSION,
                      ki18n("Application Launcher"),
                      KAboutData::License_GPL_V2);
-    KCmdLineArgs::init(argc,argv,&about);
+    KCmdLineArgs::init(argc, argv, &about);
 
     KApplication app;
 
     Kickoff::Launcher *launcher = new Kickoff::Launcher((QWidget*)0);
     launcher->setWindowTitle("Kickoff KDE 4 Test Application");
-    // ensure launcher gets deleted when the app closes so that favorites, 
+    // ensure launcher gets deleted when the app closes so that favorites,
     // recent applications etc. are saved
     launcher->setAttribute(Qt::WA_DeleteOnClose);
     launcher->show();

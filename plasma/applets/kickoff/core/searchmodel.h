@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -18,12 +18,12 @@
 */
 
 #ifndef SEARCHMODEL_H
-#define SEARCHMODEL_H 
+#define SEARCHMODEL_H
 
 // Qt
 #include "core/kickoffmodel.h"
 
-namespace Kickoff 
+namespace Kickoff
 {
 
 class SearchResult
@@ -37,7 +37,7 @@ typedef QList<SearchResult> ResultList;
 
 class SearchModel : public KickoffModel
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     SearchModel(QObject *parent);
@@ -60,7 +60,7 @@ private:
 
 class SearchInterface : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     SearchInterface(QObject *parent);
@@ -68,7 +68,7 @@ public:
     virtual QString name() const = 0;
     virtual void setQuery(const QString& query) = 0;
 
-        
+
 Q_SIGNALS:
     void resultsAvailable(const QStringList& results);
     void resultsAvailable(const ResultList& results);
@@ -76,7 +76,7 @@ Q_SIGNALS:
 
 class ApplicationSearch : public SearchInterface
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     ApplicationSearch(QObject *parent);
@@ -85,12 +85,12 @@ public:
     virtual void setQuery(const QString& query);
 
 private:
-   QString mimeNameForQuery(const QString& query) const;
+    QString mimeNameForQuery(const QString& query) const;
 };
 
 class WebSearch : public SearchInterface
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     WebSearch(QObject *parent);
@@ -100,7 +100,7 @@ public:
 
 class IndexerSearch : public SearchInterface
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     IndexerSearch(QObject *parent);

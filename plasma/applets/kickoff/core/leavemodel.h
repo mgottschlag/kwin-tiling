@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -26,9 +26,9 @@
 namespace Kickoff
 {
 
-class LeaveModel : public QStandardItemModel 
+class LeaveModel : public QStandardItemModel
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     LeaveModel(QObject *parent);

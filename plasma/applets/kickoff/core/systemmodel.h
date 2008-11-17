@@ -32,14 +32,14 @@ namespace Kickoff
  */
 class SystemModel : public KickoffProxyModel
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     /** Constructs a new SystemModel with the specified parent. */
     SystemModel(QObject *parent = 0);
     virtual ~SystemModel();
 
-    virtual QModelIndex mapFromSource (const QModelIndex &sourceIndex) const;
+    virtual QModelIndex mapFromSource(const QModelIndex &sourceIndex) const;
     virtual QModelIndex mapToSource(const QModelIndex &proxyIndex) const;
     virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
     virtual QModelIndex parent(const QModelIndex &item) const;

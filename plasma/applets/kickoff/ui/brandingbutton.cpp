@@ -32,8 +32,8 @@ namespace Kickoff
 {
 
 BrandingButton::BrandingButton(QWidget *parent)
-    : QToolButton(parent),
-      m_svg(new Plasma::Svg(this))
+        : QToolButton(parent),
+        m_svg(new Plasma::Svg(this))
 {
     //FIXME: we have to change it
     m_svg->setImagePath("widgets/kickoff-branding");
@@ -53,7 +53,7 @@ QSize BrandingButton::sizeHint() const
 
 void BrandingButton::paintEvent(QPaintEvent *event)
 {
-    Q_UNUSED( event );
+    Q_UNUSED(event);
     if (!m_svg->isValid()) {
         kDebug() << "bad branding svg!";
         return;

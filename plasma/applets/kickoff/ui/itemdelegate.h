@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -44,7 +44,7 @@ class ItemDelegate : public Plasma::Delegate , public ItemStateProvider
 {
 public:
     ItemDelegate(QObject *parent = 0);
-    virtual void paint(QPainter *painter,const QStyleOptionViewItem& option,const QModelIndex& index) const;
+    virtual void paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
     // reimplemented from ItemStateProvider
     virtual bool isVisible(const QModelIndex& index) const;
