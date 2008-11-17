@@ -534,10 +534,264 @@ module Qt
     end
   end
 
+  class QAbstractGraphicsShapeItem < Qt::Base
+    def initialize(parent = nil, wFlags = nil)
+      if parent.kind_of?(PlasmaScripting::Applet)
+        super(parent.applet_script.applet, wFlags)
+      else
+        super
+      end
+    end
+
+    def parentItem=(item)
+      setParentItem(item)
+    end
+
+    def setParentItem(item)
+      if item.kind_of?(PlasmaScripting::Applet)
+        super(item.applet_script.applet)
+      else
+        super
+      end
+    end
+  end
+
+  class GraphicsEllipseItem < Qt::Base
+    def initialize(parent = nil, wFlags = nil)
+      if parent.kind_of?(PlasmaScripting::Applet)
+        super(parent.applet_script.applet, wFlags)
+      else
+        super
+      end
+    end
+
+    def parentItem=(item)
+      setParentItem(item)
+    end
+
+    def setParentItem(item)
+      if item.kind_of?(PlasmaScripting::Applet)
+        super(item.applet_script.applet)
+      else
+        super
+      end
+    end
+  end
+
+  class GraphicsItemGroup < Qt::Base
+    def initialize(parent = nil, wFlags = nil)
+      if parent.kind_of?(PlasmaScripting::Applet)
+        super(parent.applet_script.applet, wFlags)
+      else
+        super
+      end
+    end
+
+    def parentItem=(item)
+      setParentItem(item)
+    end
+
+    def setParentItem(item)
+      if item.kind_of?(PlasmaScripting::Applet)
+        super(item.applet_script.applet)
+      else
+        super
+      end
+    end
+  end
+
+  class GraphicsLineItem < Qt::Base
+    def initialize(parent = nil, wFlags = nil)
+      if parent.kind_of?(PlasmaScripting::Applet)
+        super(parent.applet_script.applet, wFlags)
+      else
+        super
+      end
+    end
+
+    def parentItem=(item)
+      setParentItem(item)
+    end
+
+    def setParentItem(item)
+      if item.kind_of?(PlasmaScripting::Applet)
+        super(item.applet_script.applet)
+      else
+        super
+      end
+    end
+  end
+
+  class GraphicsPathItem < Qt::Base
+    def initialize(parent = nil, wFlags = nil)
+      if parent.kind_of?(PlasmaScripting::Applet)
+        super(parent.applet_script.applet, wFlags)
+      else
+        super
+      end
+    end
+
+    def parentItem=(item)
+      setParentItem(item)
+    end
+
+    def setParentItem(item)
+      if item.kind_of?(PlasmaScripting::Applet)
+        super(item.applet_script.applet)
+      else
+        super
+      end
+    end
+  end
+
+  class GraphicsPixmapItem < Qt::Base
+    def initialize(parent = nil, wFlags = nil)
+      if parent.kind_of?(PlasmaScripting::Applet)
+        super(parent.applet_script.applet, wFlags)
+      else
+        super
+      end
+    end
+
+    def parentItem=(item)
+      setParentItem(item)
+    end
+
+    def setParentItem(item)
+      if item.kind_of?(PlasmaScripting::Applet)
+        super(item.applet_script.applet)
+      else
+        super
+      end
+    end
+  end
+
+  class GraphicsPolygonItem < Qt::Base
+    def initialize(parent = nil, wFlags = nil)
+      if parent.kind_of?(PlasmaScripting::Applet)
+        super(parent.applet_script.applet, wFlags)
+      else
+        super
+      end
+    end
+
+    def parentItem=(item)
+      setParentItem(item)
+    end
+
+    def setParentItem(item)
+      if item.kind_of?(PlasmaScripting::Applet)
+        super(item.applet_script.applet)
+      else
+        super
+      end
+    end
+  end
+
+  class GraphicsRectItem < Qt::Base
+    def initialize(parent = nil, wFlags = nil)
+      if parent.kind_of?(PlasmaScripting::Applet)
+        super(parent.applet_script.applet, wFlags)
+      else
+        super
+      end
+    end
+
+    def parentItem=(item)
+      setParentItem(item)
+    end
+
+    def setParentItem(item)
+      if item.kind_of?(PlasmaScripting::Applet)
+        super(item.applet_script.applet)
+      else
+        super
+      end
+    end
+  end
+
+  class GraphicsSimpleTextItem < Qt::Base
+    def initialize(parent = nil, wFlags = nil)
+      if parent.kind_of?(PlasmaScripting::Applet)
+        super(parent.applet_script.applet, wFlags)
+      else
+        super
+      end
+    end
+
+    def parentItem=(item)
+      setParentItem(item)
+    end
+
+    def setParentItem(item)
+      if item.kind_of?(PlasmaScripting::Applet)
+        super(item.applet_script.applet)
+      else
+        super
+      end
+    end
+  end
+
+  class GraphicsSvgItem < Qt::Base
+    def initialize(parent = nil, wFlags = nil)
+      if parent.kind_of?(PlasmaScripting::Applet)
+        super(parent.applet_script.applet, wFlags)
+      else
+        super
+      end
+    end
+
+    def parentItem=(item)
+      setParentItem(item)
+    end
+
+    def setParentItem(item)
+      if item.kind_of?(PlasmaScripting::Applet)
+        super(item.applet_script.applet)
+      else
+        super
+      end
+    end
+  end
+
+  class GraphicsTextItem < Qt::Base
+    def initialize(parent = nil, wFlags = nil)
+      if parent.kind_of?(PlasmaScripting::Applet)
+        super(parent.applet_script.applet, wFlags)
+      else
+        super
+      end
+    end
+
+    def parentItem=(item)
+      setParentItem(item)
+    end
+
+    def setParentItem(item)
+      if item.kind_of?(PlasmaScripting::Applet)
+        super(item.applet_script.applet)
+      else
+        super
+      end
+    end
+  end
+
   class GraphicsWidget < Qt::Base
     def initialize(parent = nil, wFlags = nil)
       if parent.kind_of?(PlasmaScripting::Applet)
         super(parent.applet_script.applet, wFlags)
+      else
+        super
+      end
+    end
+
+    def parentItem=(item)
+      setParentItem(item)
+    end
+
+    def setParentItem(item)
+      if item.kind_of?(PlasmaScripting::Applet)
+        super(item.applet_script.applet)
       else
         super
       end
