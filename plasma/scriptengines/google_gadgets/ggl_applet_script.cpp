@@ -91,7 +91,7 @@ bool GglAppletScript::init() {
 
   std::string error;
   if (!ggadget::qt::InitGGL(NULL, "ggl-plasma", profile_dir.c_str(),
-                       kGlobalExtensions, 0, false, &error)) {
+                            kGlobalExtensions, 0, false, &error)) {
     kError() << "Failed to init GGL system:"
              << QString::fromUtf8(error.c_str());
     return false;

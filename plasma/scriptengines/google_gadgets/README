@@ -4,7 +4,7 @@ Build:
 To build this package, you need to install the HEAD version of
 google-gadgets-for-linux(GGL). Please visit this url for more
 information about GGL.
-  
+
   http://code.google.com/p/google-gadgets-for-linux/
 
 To get the lastest version of GGL, please check out the code from svn:
