@@ -264,7 +264,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
              this, SLOT( slotAdvanced() ) );
     advancedLayout->addWidget( advancedBt );
     advancedLayout->addWidget( new QWidget( this ) );
-
+/*
     QGroupBox *plasmaGroup = new QGroupBox(i18n("Desktop Widgets"), this);
     groupLayout = new QVBoxLayout(plasmaGroup);
     rightColumnLayout->addWidget(plasmaGroup);
@@ -279,7 +279,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
     mPlasmaSetup->setEnabled(mPlasmaEnabled);
     connect(mPlasmaSetup, SIGNAL(clicked()), this, SLOT(slotPlasmaSetup()));
     groupLayout->addWidget(mPlasmaSetup);
-
+*/
     rightColumnLayout->addStretch();
 
     if (mImmutable)
@@ -287,7 +287,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
        setButtons(buttons() & ~Default);
        mSettingsGroup->setEnabled(false);
        mSaverGroup->setEnabled(false);
-       plasmaGroup->setEnabled(false);
+//       plasmaGroup->setEnabled(false);
     }
 
     // finding the savers can take some time, so defer loading until
@@ -450,8 +450,8 @@ void KScreenSaver::defaults()
     slotLockTimeoutChanged( 60 );
     slotLock( false );
     mEnabledCheckBox->setChecked(false);
-    mPlasmaCheckBox->setChecked(false);
-    mPlasmaSetup->setEnabled(false);
+    //mPlasmaCheckBox->setChecked(false);
+    //mPlasmaSetup->setEnabled(false);
 
     updateValues();
 
