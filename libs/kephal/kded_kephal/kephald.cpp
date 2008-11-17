@@ -45,7 +45,7 @@
 
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
-
+#include <KApplication>
 
 K_PLUGIN_FACTORY(KephalDFactory,
                  registerPlugin<KephalD>();

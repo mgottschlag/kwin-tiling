@@ -23,11 +23,10 @@
 
 
 #include <QObject>
-#include <QVariant>
 #include <QStringList>
 #include <QPoint>
 #include <QSize>
-
+#include <QMap>
 
 namespace Kephal {
     class Configuration;

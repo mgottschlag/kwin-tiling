@@ -25,7 +25,6 @@
 
 #include <QDebug>
 #include <QObject>
-#include <QVariant>
 
 
 using namespace Kephal;

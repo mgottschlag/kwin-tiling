@@ -23,7 +23,6 @@
 
 #include <QList>
 #include <QWidget>
-#include <KApplication>
 #include <kdedmodule.h>
 
 class QTimer;

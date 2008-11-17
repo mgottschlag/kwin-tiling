@@ -23,7 +23,6 @@
 #include "outputsadaptor.h"
 
 #include <QDebug>
-#include <QVariant>
 
 
 using namespace Kephal;
