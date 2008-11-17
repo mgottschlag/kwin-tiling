@@ -201,7 +201,6 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     setPanelMode((PanelMode)viewConfig.readEntry("panelMode", (int)m_panelMode));
 
     // pinchContainment calls updatePanelGeometry for us
-
     QRect screenRect = Kephal::ScreenUtils::screenGeometry(containment()->screen());
     m_lastHorizontal = isHorizontal();
     KConfigGroup sizes = KConfigGroup(&viewConfig, "Sizes");
@@ -245,8 +244,10 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     updateStruts();
 
     Kephal::Screens *screens = Kephal::Screens::self();
-    connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)), SLOT(pinchContainment()));
-    connect(screens, SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)), SLOT(updatePanelGeometry()));
+    connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)),
+            this, SLOT(pinchContainmentToCurrentScreen()));
+    connect(screens, SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)),
+            this, SLOT(updatePanelGeometry()));
 }
 
 PanelView::~PanelView()
@@ -552,6 +553,12 @@ bool PanelView::isHorizontal() const
 {
     return location() == Plasma::BottomEdge ||
            location() == Plasma::TopEdge;
+}
+
+void PanelView::pinchContainmentToCurrentScreen()
+{
+    QRect screenRect = Kephal::ScreenUtils::screenGeometry(containment()->screen());
+    pinchContainment(screenRect);
 }
 
 void PanelView::pinchContainment(const QRect &screenGeom)

@@ -130,6 +130,11 @@ public:
 
 public Q_SLOTS:
     /**
+     * Pinches the min/max sizes of the containment to the current screen resolution
+     */
+    void pinchContainmentToCurrentScreen();
+
+    /**
      * Sets the offset the left border, the offset is the distance of the left
      * border of the panel from the left border of the screen when the alignment is
      * Qt::AlignLeft, right border and right edge if the alignment is Qt::alignRight
