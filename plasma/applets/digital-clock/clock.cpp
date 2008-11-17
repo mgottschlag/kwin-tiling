@@ -56,6 +56,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_showDay(false),
       m_showSeconds(false),
       m_showTimezone(false),
+      m_dateString(0),
       m_layout(0)
 {
     KGlobal::locale()->insertCatalog("libplasmaclock");
@@ -116,7 +117,9 @@ void Clock::updateSize() {
     if (formFactor() == Plasma::Horizontal) {
         // We have a fixed height, set some sensible width
         if (m_showDate || m_showTimezone) {
-            setMinimumWidth(qMax(m_dateRect.width(), (int)(contentsRect().height() * aspect)));
+            QFontMetricsF metrics(KGlobalSettings::smallestReadableFont());
+            int w = (int)metrics.size(Qt::TextSingleLine, m_dateString).width();
+            setMinimumWidth(qMax(w, (int)(contentsRect().height() * aspect)));
         } else {
             setMinimumWidth((int)(contentsRect().height() * aspect));
         }
@@ -281,7 +284,12 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
             } else if (m_showTimezone) {
                 dateString = prettyTimezone();
             }
-
+            if (m_dateString != dateString) {
+                // If this string has changed (for example due to changes in the config
+                // we have to reset the sizing of the applet
+                m_dateString = dateString;
+                updateSize();
+            }
             // Check sizes
             QFont f = KGlobalSettings::smallestReadableFont();
             f.setPointSizeF(qMax(contentsRect.height()/10, f.pointSize()));

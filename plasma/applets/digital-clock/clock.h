@@ -73,6 +73,7 @@ class Clock : public ClockApplet
 
         QTime m_time;
         QDate m_date;
+        QString m_dateString;
         QVBoxLayout *m_layout;
         QTime m_lastTimeSeen;
         QPixmap m_toolTipIcon;
