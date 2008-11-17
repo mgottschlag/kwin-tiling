@@ -60,6 +60,7 @@ protected Q_SLOTS:
 
 private:
     QTimer *m_activateTimer;
+    QAction *m_lasttriggeredAction;
     Plasma::FrameSvg *m_background;
     Plasma::FrameSvg *m_itemBackground;
     Plasma::Applet *m_applet;

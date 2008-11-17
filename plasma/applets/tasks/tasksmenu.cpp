@@ -43,6 +43,7 @@ namespace TaskManager
 TasksMenu::TasksMenu(QWidget *parent, TaskGroup *group, GroupManager *groupManager, Plasma::Applet *applet)
     :  GroupPopupMenu(parent, group, groupManager),
        m_activateTimer(0),
+       m_lasttriggeredAction(0),
        m_applet(applet)
 {
     setAttribute(Qt::WA_NoSystemBackground);
@@ -172,7 +173,8 @@ void TasksMenu::activate()
 {
     QAction *action = actionAt(m_lastMousePos);
 
-    if (action) {
+    if (action && action != m_lasttriggeredAction) {
+        m_lasttriggeredAction = action;
         action->trigger();
     }
 }
