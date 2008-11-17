@@ -901,6 +901,8 @@ QRect PanelView::unhideHintGeometry() const
 {
 #ifdef Q_WS_X11
     return m_unhideTriggerGeom;
+#else
+    return QRect();
 #endif
 }
 
