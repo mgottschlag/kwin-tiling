@@ -68,6 +68,7 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::PopupApplet
         void createConfigurationInterface(KConfigDialog *parent);
         void initExtenderItem(Plasma::ExtenderItem *item);
         void updateTipContent();
+        void popupEvent(bool show);
 
     protected Q_SLOTS:
         void setCurrentTimezone(const QString &tz);

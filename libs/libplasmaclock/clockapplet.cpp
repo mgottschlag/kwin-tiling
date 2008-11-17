@@ -333,6 +333,20 @@ void ClockApplet::init()
     Plasma::ToolTipManager::self()->registerWidget(this);
 }
 
+void ClockApplet::popupEvent(bool show)
+{
+    if (show){
+        Plasma::Calendar *calendar = dynamic_cast<Plasma::Calendar *>(extender()->item("calendar")->widget());
+        if (calendar){
+            Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
+            QDate date = data["Date"].toDate();
+            if (date.isValid()) {
+                calendar->setDate(date);
+            }
+        }
+    }
+}
+
 void ClockApplet::setCurrentTimezone(const QString &tz)
 {
     if (d->timezone == tz) {
