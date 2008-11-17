@@ -586,7 +586,7 @@ void DesktopThemeDetails::updateReplaceItemList(const QString& item)
             themeItemFile = themeRoot + '/' + m_themeItems[item] + ".svgz";
         }
         if ((name != "(Customized)") || (name == "(Customized)" && themeItemFile == currentReplacement)) {
-            QString dropListItem = name + " " + item;
+            QString dropListItem = i18n("%1 %2",name,item);
             if (themeItemFile == currentReplacement) {
                 replacementDropListItem = dropListItem;
             }
