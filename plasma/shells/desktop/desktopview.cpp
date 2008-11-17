@@ -55,6 +55,18 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
       m_dashboardFollowsDesktop(true)
 {
     setFocusPolicy(Qt::NoFocus);
+#ifdef Q_WS_WIN
+    setWindowFlags(Qt::FramelessWindowHint);
+    SetWindowPos(winId(), HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+    HWND hwndDesktop = ::FindWindowW(L"Progman", NULL);
+    SetParent(winId(),hwndDesktop);
+#else
+    setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
+#endif
+
+    KWindowSystem::setOnAllDesktops(winId(), true);
+    KWindowSystem::setType(winId(), NET::Desktop);
+    lower();
 
     if (containment) {
         containment->enableAction("zoom in", false);
@@ -83,6 +95,10 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
     pt.end();
     QBrush b(tile);
     setBackgroundBrush(tile);
+
+    Kephal::Screens *screens = Kephal::Screens::self();
+    connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)), SLOT(adjustSize()));
+    connect(screens, SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)), SLOT(adjustSize()));
 }
 
 DesktopView::~DesktopView()
@@ -130,38 +146,8 @@ void DesktopView::adjustSize()
     if (m_dashboard) {
         m_dashboard->setGeometry(geom);
     }
-    
+
     kDebug() << "Done" << screen();
-}
-
-void DesktopView::setIsDesktop(bool isDesktop)
-{
-    if (isDesktop) {
-#ifdef Q_WS_WIN
-        setWindowFlags(Qt::FramelessWindowHint);
-        SetWindowPos(winId(), HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-        HWND hwndDesktop = ::FindWindowW(L"Progman", NULL);
-        SetParent(winId(),hwndDesktop);
-#else
-        setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
-#endif
-
-        KWindowSystem::setOnAllDesktops(winId(), true);
-        KWindowSystem::setType(winId(), NET::Desktop);
-        lower();
-
-        adjustSize();
-    } else {
-        setWindowFlags(windowFlags() & ~Qt::FramelessWindowHint);
-
-        KWindowSystem::setOnAllDesktops(winId(), false);
-        KWindowSystem::setType(winId(), NET::Normal);
-    }
-}
-
-bool DesktopView::isDesktop() const
-{
-    return KWindowInfo(winId(), NET::WMWindowType).windowType(NET::Desktop);
 }
 
 bool DesktopView::isDashboardVisible() const

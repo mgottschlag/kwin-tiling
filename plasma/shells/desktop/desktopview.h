@@ -39,21 +39,6 @@ public:
     ~DesktopView();
 
     /**
-     * Sets this DesktopView as a desktop window if @p isDesktop is
-     * true or an ordinary window otherwise.
-     *
-     * Desktop windows are displayed beneath all other windows, have
-     * no window decoration and occupy the full size of the desktop.
-     */
-    void setIsDesktop(bool isDesktop);
-
-    /**
-     * Returns true if this widget is currently a desktop window.
-     * See setAsDesktop()
-     */
-    bool isDesktop() const;
-
-    /**
      * Returns whether or not the dashboard view is visible
      */
     bool isDashboardVisible() const;

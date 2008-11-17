@@ -140,8 +140,7 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
       m_corona(0),
       m_appletBrowser(0),
       m_zoomLevel(Plasma::DesktopZoom),
-      m_panelHidden(0),
-      m_isDesktop(true)
+      m_panelHidden(0)
 {
     KGlobal::locale()->insertCatalog("libplasma");
     KCrash::setFlags(KCrash::AutoRestart);
@@ -215,8 +214,6 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     kDebug() << "Setting the pixmap cache size to" << cacheSize << "kilobytes";
     QPixmapCache::setCacheLimit(cacheSize);
 
-    setIsDesktop(KCmdLineArgs::parsedArgs()->isSet("desktop"));
-
     //TODO: Make the shortcut configurable
     KAction *showAction = new KAction( this );
     showAction->setText( i18n( "Show Dashboard" ) );
@@ -240,6 +237,9 @@ void PlasmaApp::setupDesktop()
 
     // this line initializes the corona.
     corona();
+
+    Kephal::Screens *screens = Kephal::Screens::self();
+    connect(screens, SIGNAL(screenRemoved(int)), SLOT(screenRemoved(int)));
 
     // and now, let everyone know we're ready!
     notifyStartup(true);
@@ -368,44 +368,6 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
 }
 #endif
 
-void PlasmaApp::setIsDesktop(bool isDesktop)
-{
-    m_isDesktop = isDesktop;
-    foreach (DesktopView *view, m_desktops) {
-        view->setIsDesktop(isDesktop);
-    }
-
-    Kephal::Screens *screens = Kephal::Screens::self();
-    if (isDesktop) {
-        connect(screens, SIGNAL(screenAdded(Kephal::Screen *)), SLOT(screenAdded(Kephal::Screen *)));
-        connect(screens, SIGNAL(screenRemoved(int)), SLOT(screenRemoved(int)));
-        connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)), SLOT(screenResized(Kephal::Screen *, QSize, QSize)));
-        connect(screens, SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)), SLOT(screenMoved(Kephal::Screen *, QPoint, QPoint)));
-    } else {
-        disconnect(screens, SIGNAL(screenAdded(Kephal::Screen *)), this, SLOT(screenAdded(Kephal::Screen *)));
-        disconnect(screens, SIGNAL(screenRemoved(int)), this, SLOT(screenRemoved(int)));
-        disconnect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)), this, SLOT(screenResized(Kephal::Screen *, QSize, QSize)));
-        disconnect(screens, SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)), this, SLOT(screenMoved(Kephal::Screen *, QPoint, QPoint)));
-    }
-}
-
-bool PlasmaApp::isDesktop() const
-{
-    return m_isDesktop;
-}
-
-void PlasmaApp::adjustSize(int screen)
-{
-}
-
-void PlasmaApp::screenAdded(Kephal::Screen *s)
-{
-    kDebug() << s->id();
-    corona(); // Ensure the corona is created.
-    m_corona->checkScreens(); // Then use the field as we need DesktopCorona-specific stuff
-    createView(m_corona->containmentForScreen(s->id()));
-}
-
 void PlasmaApp::screenRemoved(int id)
 {
     kDebug() << id;
@@ -418,45 +380,21 @@ void PlasmaApp::screenRemoved(int id)
         m_desktops.removeAll(view);
         delete view;
     }
-}
 
-void PlasmaApp::screenResized(Kephal::Screen *s, QSize oldSize, QSize newSize)
-{
-    // TODO: that check should not be necessary, fix kephal
-    if (oldSize == newSize) {
-        return;
-    }
-
-    DesktopView *view = viewForScreen(s->id());
-    kDebug() << "adjust size for screen" << s->id() << oldSize << newSize << view;
-    view->adjustSize();
-
-    //TODO: should we remove panels when the screen
-    //      disappears? this would mean having some
-    //      way of alerting that we have a new screen
-    //      that appears
-    foreach (PanelView *panel, m_panels) {
-        if (panel->screen() == s->id()) {
-            panel->pinchContainment(s->geom());
+    /*
+    TODO: remove panels when screen goes away.
+          first, however, we need to be able to reserve and restore the panelsettings
+          even when the view itself goes away
+    QMutableListIterator<PanelView*> it(m_panels);
+    while (it.hasNext()) {
+        PanelView *panel = it.next();
+        if (panel->screen() == i) {
+            delete panel;
+            it.remove();
         }
     }
-
-    kDebug() << "Done.";
+    */
 }
-
-void PlasmaApp::screenMoved(Kephal::Screen *s, QPoint oldPosition, QPoint newPosition)
-{
-    // TODO: that check should not be necessary, fix kephal
-    if (oldPosition == newPosition)  {
-        return;
-    }
-
-    DesktopView *view = viewForScreen(s->id());
-    kDebug() << "adjust size for screen" << s->id() << oldPosition << newPosition << view;
-    view->adjustSize();
-    kDebug() << "Done.";
-}
-
 
 DesktopView* PlasmaApp::viewForScreen(int screen) const
 {
@@ -606,11 +544,8 @@ void PlasmaApp::createView(Plasma::Containment *containment)
                             view, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
                 }
 
-                connect(view, SIGNAL(zoom(Plasma::Containment*,Plasma::ZoomDirection)),
-                        this, SLOT(zoom(Plasma::Containment*,Plasma::ZoomDirection)));
                 view->setGeometry(Kephal::ScreenUtils::screenGeometry(containment->screen()));
                 m_desktops.append(view);
-                view->setIsDesktop(m_isDesktop);
                 view->show();
             }
             break;

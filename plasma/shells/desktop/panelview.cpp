@@ -82,6 +82,7 @@ public:
 
     void paintEvent(QPaintEvent* e)
     {
+        Q_UNUSED(e)
         QPixmap l, r, c;
         const QSize glowRadius = m_svg->elementSize("hint-glow-radius");
         QPoint pixmapPosition(0, 0);
@@ -242,6 +243,10 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 #endif
 
     updateStruts();
+
+    Kephal::Screens *screens = Kephal::Screens::self();
+    connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)), SLOT(pinchContainment()));
+    connect(screens, SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)), SLOT(updatePanelGeometry()));
 }
 
 PanelView::~PanelView()
@@ -664,7 +669,7 @@ void PanelView::pinchContainment(const QRect &screenGeom)
         m_panelController->setContainment(c);
         m_panelController->setOffset(m_offset);
     }
-    
+
     kDebug() << "Done pinching, containement's geom" << c->geometry() << "own geom" << geometry();
 }
 
@@ -875,8 +880,6 @@ QTimeLine *PanelView::timeLine()
 void PanelView::unhideHintMousePoll()
 {
 #ifdef Q_WS_X11
-    const int triggerSize = 30;
-
     QPoint mousePos = QCursor::pos();
     m_glowBar->updateStrength(mousePos);
 

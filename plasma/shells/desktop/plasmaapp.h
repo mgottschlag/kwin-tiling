@@ -60,28 +60,6 @@ public:
     void showAppletBrowser(Plasma::Containment *containment);
 
     /**
-     * Sets all DesktopView widgets that belong to this PlasmaApp
-     * as a desktop window if @p isDesktop is true or an ordinary
-     * window otherwise.
-     *
-     * Desktop windows are displayed beneath all other windows, have
-     * no window decoration and occupy the full size of the desktop.
-     *
-     * The value of @p isDesktop will be remembered, so that any
-     * DesktopView widgets that are created afterwards will have the
-     * same setting.
-     * The default is to create DesktopView widgets as desktop
-     * window.
-     */
-    void setIsDesktop(bool isDesktop);
-
-    /**
-     * Returns true if this widget is currently a desktop window.
-     * See setIsDesktop()
-     */
-    bool isDesktop() const;
-
-    /**
      * Creates a view for the given containment
      */
     void createDesktopView(Plasma::Containment *containment, int id = 0);
@@ -94,13 +72,17 @@ public:
     /**
      * Current desktop zoom level
      */
-    Plasma::ZoomLevel desktopZoomLevel() const;
+     Plasma::ZoomLevel desktopZoomLevel() const;
+
+    /**
+     * Request a zoom based on the containment
+     */
+    void zoom(Plasma::Containment*, Plasma::ZoomDirection);
 
 public Q_SLOTS:
     // DBUS interface. if you change these methods, you MUST run:
-    // qdbuscpp2xml plasmaapp.h -o org.kde.plasma.App.xml
+    // qdbuscpp2xml plasmaapp.h -o dbus/org.kde.plasma.App.xml
     void toggleDashboard();
-    void zoom(Plasma::Containment*, Plasma::ZoomDirection);
 
 protected:
 #ifdef Q_WS_X11
@@ -123,12 +105,8 @@ private Q_SLOTS:
     void createView(Plasma::Containment *containment);
     void panelRemoved(QObject* panel);
     void configDialogRemoved(QObject* configDialogRemoved);
-    void adjustSize(int screen);
 
-    void screenAdded(Kephal::Screen *s);
     void screenRemoved(int id);
-    void screenResized(Kephal::Screen *s, QSize oldSize, QSize newSize);
-    void screenMoved(Kephal::Screen *s, QPoint oldPosition, QPoint newPosition);
 
     void showAppletBrowser();
     void addContainment(Plasma::Containment *fromContainment = 0);
