@@ -491,6 +491,7 @@ void KCMStyle::defaults()
 	comboToolbarIcons->setCurrentIndex(0);
 	cbIconsOnButtons->setChecked(true);
 	comboGraphicEffectsLevel->setCurrentIndex(comboGraphicEffectsLevel->findData(((int) KGlobalSettings::graphicEffectsLevelDefault())));
+	emit changed(true);
 }
 
 void KCMStyle::setEffectsDirty()
