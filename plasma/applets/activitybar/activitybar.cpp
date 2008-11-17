@@ -21,6 +21,8 @@
 
 #include <QGraphicsLinearLayout>
 
+#include <KWindowSystem>
+
 #include <Plasma/View>
 #include <Plasma/Corona>
 #include <Plasma/Context>
@@ -75,7 +77,9 @@ void ActivityBar::init()
                 m_tabBar->addTab(cont->activity());
             }
 
-            if (cont->screen() != -1 && cont->screen() == myScreen) {
+            if (cont->screen() != -1 &&
+                cont->screen() == myScreen &&
+                (cont->desktop() == -1 || cont->desktop() == KWindowSystem::currentDesktop()-1)) {
                 m_view = qobject_cast<Plasma::View *>(cont->view());
                 m_activeContainment = m_containments.count() - 1;
                 m_tabBar->setCurrentIndex(m_activeContainment);
@@ -90,6 +94,7 @@ void ActivityBar::init()
     }
 
     connect(m_tabBar, SIGNAL(currentChanged(int)), this, SLOT(switchContainment(int)));
+    connect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)), this, SLOT(currentDesktopChanged(int)));
 
     setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
     setMinimumSize(m_tabBar->nativeWidget()->minimumSizeHint() + (size() - contentsRect().size()));
@@ -133,22 +138,46 @@ void ActivityBar::switchContainment(int newActive)
     }
 }
 
-void ActivityBar::containmentAdded(Plasma::Containment *containment)
+void ActivityBar::currentDesktopChanged(const int currentDesktop)
 {
-    if (containment->containmentType() == Plasma::Containment::PanelContainment || m_containments.contains(containment)) {
+    Plasma::Corona *c = containment()->corona();
+    if (!c) {
         return;
     }
 
-    m_containments.append(containment);
-    if (containment->activity().isNull()) {
-        m_tabBar->addTab(containment->name());
-    } else {
-        m_tabBar->addTab(containment->activity());
+    //-1 because kwindowsystem counts desktop from 1 :)
+    Plasma::Containment *cont = c->containmentForScreen(containment()->screen(), currentDesktop - 1);
+
+    if (!cont) {
+        return;
     }
 
-    connect(containment, SIGNAL(destroyed(QObject *)), this, SLOT(containmentDestroyed(QObject *)));
-    connect(containment, SIGNAL(screenChanged(int, int, Plasma::Containment *)), this, SLOT(screenChanged(int, int, Plasma::Containment *)));
-    connect(containment, SIGNAL(contextChanged(Plasma::Context *)), this, SLOT(contextChanged(Plasma::Context *)));
+    int index = m_containments.indexOf(cont);
+
+    if (index != -1 &&
+        index != m_activeContainment) {
+        m_activeContainment = index;
+        m_tabBar->setCurrentIndex(index);
+        m_view = qobject_cast<Plasma::View *>(cont->view());
+    }
+}
+
+void ActivityBar::containmentAdded(Plasma::Containment *cont)
+{
+    if (cont->containmentType() == Plasma::Containment::PanelContainment || m_containments.contains(cont)) {
+        return;
+    }
+
+    m_containments.append(cont);
+    if (cont->activity().isNull()) {
+        m_tabBar->addTab(cont->name());
+    } else {
+        m_tabBar->addTab(cont->activity());
+    }
+
+    connect(cont, SIGNAL(destroyed(QObject *)), this, SLOT(containmentDestroyed(QObject *)));
+    connect(cont, SIGNAL(screenChanged(int, int, Plasma::Containment *)), this, SLOT(screenChanged(int, int, Plasma::Containment *)));
+    connect(cont, SIGNAL(contextChanged(Plasma::Context *)), this, SLOT(contextChanged(Plasma::Context *)));
 
     setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
     emit sizeHintChanged(Qt::PreferredSize);
@@ -172,15 +201,21 @@ void ActivityBar::containmentDestroyed(QObject *obj)
     emit sizeHintChanged(Qt::PreferredSize);
 }
 
-void ActivityBar::screenChanged(int wasScreen, int isScreen, Plasma::Containment *containment)
+void ActivityBar::screenChanged(int wasScreen, int isScreen, Plasma::Containment *cont)
 {
     Q_UNUSED(wasScreen)
-    Q_UNUSED(isScreen)
+    //Q_UNUSED(isScreen)
 
-    int index = m_containments.indexOf(containment);
-    if (index != -1 && index != m_activeContainment) {
+    int index = m_containments.indexOf(cont);
+
+    //FIXME: how is supposed to work containment()->desktop() when the pervirtialthing is off?
+    if (index != -1 &&
+        index != m_activeContainment &&
+        containment()->screen() == isScreen &&
+        (cont->desktop() == -1 || cont->desktop() == KWindowSystem::currentDesktop()-1)) {
         m_activeContainment = index;
         m_tabBar->setCurrentIndex(index);
+        m_view = qobject_cast<Plasma::View *>(cont->view());
     }
 }
 

@@ -46,6 +46,7 @@ private Q_SLOTS:
     void containmentDestroyed(QObject *obj);
     void screenChanged(int wasScreen, int isScreen, Plasma::Containment *containment);
     void contextChanged(Plasma::Context *context);
+    void currentDesktopChanged(const int currentDesktop);
 
 private:
     int m_activeContainment;
