@@ -75,7 +75,7 @@ bool Task::isValid() const
 
 QString Task::name() const
 {
-    return i18n("toggle_extender");
+    return i18n("Show or hide notifications and jobs");
 }
 
 
