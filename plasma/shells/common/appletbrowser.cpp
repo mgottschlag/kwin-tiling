@@ -439,7 +439,7 @@ void AppletBrowserPrivate::populateWidgetsMenu()
     widgetsMenu->addSeparator();
 
     action = new QAction(KIcon("package-x-generic"),
-                         i18n("Install A Widget From A Local File..."), q);
+                         i18n("Install Widget From Local File..."), q);
     QObject::connect(action, SIGNAL(triggered(bool)), widget, SLOT(openWidgetFile()));
     widgetsMenu->addAction(action);
 }

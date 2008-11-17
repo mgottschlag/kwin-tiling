@@ -59,8 +59,8 @@ KRunnerConfigDialog::KRunnerConfigDialog(Plasma::RunnerManager *manager, QWidget
 
     m_interfaceType = KRunnerSettings::interface();
 
-    QRadioButton *commandButton = new QRadioButton(i18n("Command Oriented"), grp);
-    QRadioButton *taskButton = new QRadioButton(i18n("Task Oriented"), grp);
+    QRadioButton *commandButton = new QRadioButton(i18n("Command oriented"), grp);
+    QRadioButton *taskButton = new QRadioButton(i18n("Task oriented"), grp);
 
     displayButtons->addButton(commandButton, KRunnerSettings::EnumInterface::CommandOriented);
     displayButtons->addButton(taskButton, KRunnerSettings::EnumInterface::TaskOriented);

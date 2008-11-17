@@ -74,8 +74,8 @@ EngineExplorer::EngineExplorer(QWidget* parent)
     m_engines->setFocus();
 
     setButtons(KDialog::Close | KDialog::User1 | KDialog::User2);
-    setButtonText(KDialog::User1, i18n("Collapse all"));
-    setButtonText(KDialog::User2, i18n("Expand all"));
+    setButtonText(KDialog::User1, i18n("Collapse All"));
+    setButtonText(KDialog::User2, i18n("Expand All"));
     connect(this, SIGNAL(user1Clicked()), m_data, SLOT(collapseAll()));
     connect(this, SIGNAL(user2Clicked()), m_data, SLOT(expandAll()));
     enableButton(KDialog::User1, false);

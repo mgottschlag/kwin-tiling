@@ -85,7 +85,7 @@ void KMenuEdit::setupActions()
     actionCollection()->addAction(KStandardAction::Copy);
     actionCollection()->addAction(KStandardAction::Paste);
 
-    action = new KAction( i18n("Restore to system menu"), this );
+    action = new KAction( i18n("Restore to System Menu"), this );
     actionCollection()->addAction( "restore_system_menu", action );
     connect( action, SIGNAL(triggered(bool) ), SLOT(slotRestoreMenu()) );
     KStandardAction::preferences( this, SLOT( slotConfigure() ), actionCollection() );

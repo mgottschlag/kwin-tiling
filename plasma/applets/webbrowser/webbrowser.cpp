@@ -361,7 +361,7 @@ void WebBrowser::removeBookmark(const QModelIndex &index)
         const bool del = KMessageBox::warningContinueCancel(0,
                                                             text,
                                                             QString(),
-                                                            KGuiItem(i18nc("@action:button", "Delete bookmark"))
+                                                            KGuiItem(i18nc("@action:button", "Delete Bookmark"))
                                                             ) == KMessageBox::Continue;
 
         if (!del) {

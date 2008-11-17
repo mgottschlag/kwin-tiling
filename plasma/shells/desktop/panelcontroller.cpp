@@ -386,7 +386,7 @@ PanelController::PanelController(QWidget* parent)
     QVBoxLayout *alignLayout = new QVBoxLayout(alignFrame);
 
 
-    d->alignLabel = new QLabel(i18n("Panel alignment"), this);
+    d->alignLabel = new QLabel(i18n("Panel Alignment"), this);
     alignLayout->addWidget(d->alignLabel);
 
     d->leftAlignTool = d->addTool("format-justify-left", i18n("Left"), alignFrame,  Qt::ToolButtonTextBesideIcon, true);
@@ -430,7 +430,7 @@ PanelController::PanelController(QWidget* parent)
     connect(d->underWindowsTool, SIGNAL(toggled(bool)), this, SLOT(panelModeChanged(bool)));
 
     d->layout->addStretch();
-    d->moveTool = d->addTool(QString(), i18n("Screen edge"), this);
+    d->moveTool = d->addTool(QString(), i18n("Screen Edge"), this);
     d->moveTool->setIcon(d->iconSvg->pixmap("move"));
     d->moveTool->installEventFilter(this);
     d->moveTool->setCursor(Qt::SizeAllCursor);
@@ -446,7 +446,7 @@ PanelController::PanelController(QWidget* parent)
     d->layout->addSpacing(20);
 
     //Settings popup menu
-    d->settingsTool = d->addTool("configure", i18n("More settings..."), this);
+    d->settingsTool = d->addTool("configure", i18n("More Settings"), this);
     d->layout->addWidget(d->settingsTool);
     connect(d->settingsTool, SIGNAL(pressed()), this, SLOT(settingsPopup()));
     d->optionsDialog = new Plasma::Dialog(0); // don't pass in a parent; breaks with some lesser WMs
@@ -458,7 +458,7 @@ PanelController::PanelController(QWidget* parent)
     d->optDialogLayout->addWidget(modeFrame);
 
 
-    d->expandTool = d->addTool(QString(), i18n("Maximize panel"), this);
+    d->expandTool = d->addTool(QString(), i18n("Maximize Panel"), this);
     d->expandTool->setIcon(d->iconSvg->pixmap("size-horizontal"));
     d->expandTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     d->optDialogLayout->addWidget(d->expandTool);

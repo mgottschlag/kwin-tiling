@@ -262,7 +262,7 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent )
 
     buttonLayout->addStretch();
 
-    QPushButton *advanced = new QPushButton(KIcon("configure"), i18n("Advanced..."), this);
+    QPushButton *advanced = new QPushButton(KIcon("configure"), i18n("Advanced"), this);
     connect(advanced, SIGNAL(clicked()), SLOT(slotAdvanced()));
     buttonLayout->addWidget(advanced);
 
