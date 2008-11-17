@@ -64,6 +64,7 @@
 #include "desktopcorona.h"
 #include "desktopview.h"
 #include "panelview.h"
+#include "plasma-shell-desktop.h"
 
 #include <kephal/screens.h>
 
@@ -214,9 +215,6 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     kDebug() << "Setting the pixmap cache size to" << cacheSize << "kilobytes";
     QPixmapCache::setCacheLimit(cacheSize);
 
-    KConfigGroup cg(KGlobal::config(), "General");
-    Plasma::Theme::defaultTheme()->setFont(cg.readEntry("desktopFont", font()));
-
     setIsDesktop(KCmdLineArgs::parsedArgs()->isSet("desktop"));
 
     //TODO: Make the shortcut configurable
@@ -226,17 +224,25 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     showAction->setGlobalShortcut( KShortcut( Qt::CTRL + Qt::Key_F12 ) );
     connect( showAction, SIGNAL( triggered() ), this, SLOT( toggleDashboard() ) );
 
-    // this line initializes the corona.
-    corona();
-
-    notifyStartup(true);
-
     connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanup()));
+    QTimer::singleShot(0, this, SLOT(setupDesktop()));
 }
 
 PlasmaApp::~PlasmaApp()
 {
     delete m_appletBrowser;
+}
+
+void PlasmaApp::setupDesktop()
+{
+    // intialize the default theme and set the font
+    Plasma::Theme::defaultTheme()->setFont(AppSettings::desktopFont());
+
+    // this line initializes the corona.
+    corona();
+
+    // and now, let everyone know we're ready!
+    notifyStartup(true);
 }
 
 void PlasmaApp::cleanup()

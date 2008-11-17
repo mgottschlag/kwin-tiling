@@ -38,6 +38,7 @@ set(plasma_SRCS
 )
 
 kde4_add_ui_files(plasma_SRCS BackgroundDialog.ui)
+kde4_add_kcfg_files(plasma_SRCS kcfg/plasma-shell-desktop.kcfgc)
 
 if(WIN32)
     set(plasma_SRCS ${plasma_SRCS} panelview_win.cpp)
@@ -67,5 +68,5 @@ target_link_libraries(kdeinit_plasma_qgv kephal)
 install(TARGETS kdeinit_plasma_qgv DESTINATION ${LIB_INSTALL_DIR})
 install(TARGETS plasma_qgv ${INSTALL_TARGETS_DEFAULT_ARGS})
 install(FILES plasma.desktop DESTINATION ${AUTOSTART_INSTALL_DIR})
-
+install(FILES kcfg/plasma-shell-desktop.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
 install(FILES plasma-themes.knsrc DESTINATION  ${CONFIG_INSTALL_DIR})

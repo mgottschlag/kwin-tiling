@@ -115,20 +115,21 @@ private:
     void zoomOut(Plasma::Containment *containment);
 
 private Q_SLOTS:
-    void containmentAdded(Plasma::Containment *containment);
+    void setupDesktop();
     void cleanup();
+    void containmentAdded(Plasma::Containment *containment);
     void syncConfig();
     void appletBrowserDestroyed();
     void createView(Plasma::Containment *containment);
     void panelRemoved(QObject* panel);
     void configDialogRemoved(QObject* configDialogRemoved);
     void adjustSize(int screen);
-    
+
     void screenAdded(Kephal::Screen *s);
     void screenRemoved(int id);
     void screenResized(Kephal::Screen *s, QSize oldSize, QSize newSize);
     void screenMoved(Kephal::Screen *s, QPoint oldPosition, QPoint newPosition);
-            
+
     void showAppletBrowser();
     void addContainment(Plasma::Containment *fromContainment = 0);
     void configureContainment(Plasma::Containment*);
