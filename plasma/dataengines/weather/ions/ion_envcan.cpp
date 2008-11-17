@@ -101,123 +101,349 @@ void EnvCanadaIon::init()
     getXMLSetup();
 }
 
-QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupDayIconMappings(void)
+QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupConditionIconMappings(void)
 {
-//    ClearDay, FewCloudsDay, PartlyCloudyDay, Overcast,
-//    Showers, ScatteredShowers, Thunderstorm, Snow,
-//    FewCloudsNight, PartlyCloudyNight, ClearNight,
-//    Mist, NotAvailable
-//
-    QMap<QString, ConditionIcons> dayList;
-    dayList["sunny"] = ClearDay;
-    dayList["clear"] = ClearNight; // Arctic areas are in night 24/7 when we're in winter :)
-    dayList["mainly sunny"] = FewCloudsDay;
-    dayList["partly cloudy"] = PartlyCloudyDay;
-    dayList["mostly cloudy"] = PartlyCloudyDay;
-    dayList["cloudy periods"] = PartlyCloudyDay;
-    dayList["cloudy with sunny periods"] = PartlyCloudyDay;
-    dayList["increasing cloudiness"] = Overcast;
-    dayList["cloudy"] = Overcast;
-    dayList["overcast"] = Overcast;
-    dayList["snow at times heavy and blowing snow"] = Snow;
-    dayList["snow"] = Snow;
-    dayList["periods of snow"] = Snow;
-    dayList["periods of light snow"] = LightSnow;
-    dayList["light snow"] = LightSnow;
-    dayList["snow grains"] = Flurries;
-    dayList["snow pellets"] = Hail;
-    dayList["light rainshower"] = LightRain;
-    dayList["light rain"] = LightRain;
-    dayList["light drizzle"] = LightRain;
-    dayList["rain"] = Rain;
-    dayList["heavy rain"] = Rain;
-    dayList["rain at times heavy"] = Rain;
-    dayList["periods of rain"] = Rain;
-    dayList["periods of drizzle"] = LightRain;
-    dayList["recent thunderstorm"] = Thunderstorm;
-    dayList["showers"] = Showers;
-    dayList["chance of showers"] = ChanceShowersDay;
-    dayList["chance of showers or drizzle"] = ChanceShowersDay;
-    dayList["periods of rain or drizzle"] = Rain;
-    dayList["chance of flurries"] = Flurries; // ChanceFlurriesDay
-    dayList["a few clouds"] = FewCloudsDay;
-    dayList["a few showers"] = ChanceShowersDay;
-    dayList["a few rain showers or flurries"] = NotAvailable;
-    dayList["chance of flurries or rain showers"] = NotAvailable;
-    dayList["a few flurries"] = Flurries;
-    dayList["hail"] = Hail;
-    dayList["fog patches"] = Mist;
-    dayList["fog"] = Mist;
-    dayList["periods of light snow mixed with freezing drizzle"] = LightSnow;
-    dayList["haze"] = Haze;
-    dayList["drifting snow"] = Flurries;
+    QMap<QString, ConditionIcons> conditionList;
 
-    // forecasts that are explicit on period.
-    dayList["a mix of sun and cloud"] = PartlyCloudyDay;
-    dayList["sunny with cloudy periods"] = PartlyCloudyDay;
-    dayList["cloudy with sunny periods"] = PartlyCloudyDay;
+    // Explicit periods
+    conditionList["mainly sunny"] = FewCloudsDay;
+    conditionList["mainly clear"] = FewCloudsNight;
+    conditionList["sunny"] = ClearDay;
+    conditionList["clear"] = ClearNight; 
 
-    return dayList;
+    // Available conditions
+    conditionList["blowing snow"] = Snow;
+    conditionList["cloudy"] = Overcast;
+    conditionList["distance precipitation"] = LightRain;
+    conditionList["drifting snow"] = Flurries;
+    conditionList["drizzle"] = LightRain;
+    conditionList["dust"] = NotAvailable;
+    conditionList["dust devils"] = NotAvailable;
+    conditionList["fog"] = Mist;
+    conditionList["fog bank near station"] = Mist;
+    conditionList["fog depositing ice"] = Mist;
+    conditionList["fog patches"] = Mist;
+    conditionList["freezing drizzle"] = FreezingDrizzle;
+    conditionList["freezing rain"] = FreezingRain;
+    conditionList["funnel cloud"] = NotAvailable;
+    conditionList["hail"] = Hail;
+    conditionList["haze"] = Haze;
+    conditionList["heavy blowing snow"] = Snow;
+    conditionList["heavy drifting snow"] = Snow;
+    conditionList["heavy drizzle"] = LightRain;
+    conditionList["heavy hail"] = Hail;
+    conditionList["heavy mixed rain and drizzle"] = LightRain;
+    conditionList["heavy mixed rain and snow shower"] = RainSnow;
+    conditionList["heavy rain"] = Rain;
+    conditionList["heavy rain and snow"] = RainSnow;
+    conditionList["heavy rainshower"] = Rain;
+    conditionList["heavy snow"] = Snow;
+    conditionList["heavy snow pellets"] = Snow;
+    conditionList["heavy snowshower"] = Snow;
+    conditionList["heavy thunderstorm with hail"] = Thunderstorm;
+    conditionList["heavy thunderstorm with rain"] = Thunderstorm;
+    conditionList["ice crystals"] = Flurries;
+    conditionList["ice pellets"] = Hail;
+    conditionList["increasing cloud"] = Overcast;
+    conditionList["light drizzle"] = LightRain;
+    conditionList["light freezing drizzle"] = FreezingRain;
+    conditionList["light freezing rain"] = FreezingRain;
+    conditionList["light rain"] = LightRain;
+    conditionList["light rainshower"] = LightRain;
+    conditionList["light snow"] = LightSnow;
+    conditionList["light snow pellets"] = LightSnow;
+    conditionList["light snowshower"] = Flurries;
+    conditionList["lightning visible"] = Thunderstorm;
+    conditionList["mist"] = Mist;
+    conditionList["mixed rain and drizzle"] = LightRain;
+    conditionList["mixed rain and snow shower"] = RainSnow;
+    conditionList["not reported"] = NotAvailable;
+    conditionList["rain"] = Rain;
+    conditionList["rain and snow"] = RainSnow;
+    conditionList["rainshower"] = LightRain;
+    conditionList["recent drizzle"] = LightRain;
+    conditionList["recent dust or sand storm"] = NotAvailable;
+    conditionList["recent fog"] = Mist;
+    conditionList["recent freezing precipitation"] = FreezingDrizzle;
+    conditionList["recent hail"] = Hail;
+    conditionList["recent rain"] = Rain;
+    conditionList["recent rain and snow"] = RainSnow;
+    conditionList["recent rainshower"] = Rain;
+    conditionList["recent snow"] = Snow;
+    conditionList["recent snowshower"] = Flurries;
+    conditionList["recent thunderstorm"] = Thunderstorm;
+    conditionList["recent thunderstorm with hail"] = Thunderstorm;
+    conditionList["recent thunderstorm with heavy hail"] = Thunderstorm;
+    conditionList["recent thunderstorm with heavy rain"] = Thunderstorm;
+    conditionList["recent thunderstorm with rain"] = Thunderstorm;
+    conditionList["sand or dust storm"] = NotAvailable;
+    conditionList["severe sand or dust storm"] = NotAvailable;
+    conditionList["shallow fog"] = Mist;
+    conditionList["smoke"] = NotAvailable;
+    conditionList["snow"] = Snow;
+    conditionList["snow crystals"] = Flurries;
+    conditionList["snow grains"] = Flurries;
+    conditionList["squalls"] = Snow;
+    conditionList["thunderstorm with hail"] = Thunderstorm;
+    conditionList["thuderstorm with rain"] = Thunderstorm;
+    conditionList["thunderstorm with sand or dust storm"] = Thunderstorm;
+    conditionList["thunderstorm without precipitation"] = Thunderstorm;
+    conditionList["tornado"] = NotAvailable;
+    return conditionList;
 }
 
-QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupNightIconMappings(void)
-{
-    QMap<QString, ConditionIcons> nightList;
-    nightList["clear"] = ClearNight;
-    nightList["mainly clear"] = FewCloudsNight;
-    nightList["clearing"] = ClearNight;
-    nightList["partly cloudy"] = PartlyCloudyNight;
-    nightList["mostly cloudy"] = PartlyCloudyNight;
-    nightList["increasing cloudiness"] = Overcast;
-    nightList["cloudy periods"] = PartlyCloudyNight;
-    nightList["cloudy"] = Overcast;
-    nightList["overcast"] = Overcast;
-    nightList["light snow"] = LightSnow;
-    nightList["snow"] = Snow;
-    nightList["periods of snow"] = Snow;
-    nightList["periods of light snow"] = LightSnow;
-    nightList["snow at times heavy and blowing snow"] = Snow;
-    nightList["snow grains"] = LightSnow;
-    nightList["snow pellets"] = Hail;
-    nightList["light rainshower"] = LightRain;
-    nightList["light rain"] = LightRain;
-    nightList["light drizzle"] = LightRain;
-    nightList["rain"] = Rain;
-    nightList["rain at times heavy"] = Rain;
-    nightList["showers"] = LightRain;
-    nightList["heavy rain"] = Rain;
-    nightList["periods of rain"] = Rain;
-    nightList["periods of drizzle"] = LightRain;
-    nightList["periods of rain or drizzle"] = Rain;
-    nightList["recent thunderstorm"] = Thunderstorm;
-    nightList["chance of showers"] = ChanceShowersNight;
-    nightList["chance of showers or drizzle"] = ChanceShowersNight;
-    nightList["chance of flurries"] = Flurries; // ChanceFlurriesNight
-    nightList["a few clouds"] = FewCloudsNight;
-    nightList["a few showers"] = ChanceShowersNight;
-    nightList["a few rain showers or flurries"] = NotAvailable;
-    nightList["chance of flurries or rain showers"] = NotAvailable;
-    nightList["a few flurries"] = Flurries;
-    nightList["hail"] = Hail;
-    nightList["fog patches"] = Mist;
-    nightList["fog"] = Mist;
-    nightList["periods of light snow mixed with freezing drizzle"] = LightSnow;
-    nightList["haze"] = Mist;
-    nightList["drifting snow"] = Flurries;
 
-    return nightList;
+QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupForecastIconMappings(void)
+{
+    QMap<QString, ConditionIcons> forecastList;
+
+    // Abbreviated forecast descriptions 
+    forecastList["a few flurries"] = Flurries;
+    forecastList["a few flurries mixed with ice pellets"] = RainSnow;
+    forecastList["a few flurries or rain showers"] = RainSnow;
+    forecastList["a few flurries or thundershowers"] = RainSnow;
+    forecastList["a few rain showers or flurries"] = RainSnow;
+    forecastList["a few rain showers or wet flurries"] = RainSnow;
+    forecastList["a few showers"] = LightRain;
+    forecastList["a few showers or drizzle"] = LightRain;
+    forecastList["a few showers or thundershowers"] = Thunderstorm;
+    forecastList["a few showers or thunderstorms"] = Thunderstorm;
+    forecastList["a few thundershowers"] = Thunderstorm;
+    forecastList["a few thunderstorms"] = Thunderstorm;
+    forecastList["a few wet flurries"] = RainSnow;
+    forecastList["a few wet flurries or rain showers"] = RainSnow;
+    forecastList["a mix of sun and cloud"] = PartlyCloudyDay;
+    forecastList["cloudy with sunny periods"] = PartlyCloudyDay;
+    forecastList["sunny"] = ClearDay;
+    forecastList["blizzard"] = Snow;
+    forecastList["clear"] = ClearNight;
+    forecastList["cloudy"] = Overcast;
+    forecastList["drizzle"] = LightRain;
+    forecastList["drizzle mixed with freezing drizzle"] = FreezingDrizzle;
+    forecastList["drizzle mixed with rain"] = LightRain;
+    forecastList["drizzle or freezing drizzle"] = LightRain;
+    forecastList["drizzle or rain"] = LightRain;
+    forecastList["flurries"] = Flurries;
+    forecastList["flurries at times heavy"] = Flurries;
+    forecastList["flurries at times heavy or rain snowers"] = RainSnow;
+    forecastList["flurries mixed with ice pellets"] = FreezingRain;
+    forecastList["flurries or ice pellets"] = FreezingRain;
+    forecastList["flurries or rain showers"] = RainSnow;
+    forecastList["flurries or thundershowers"] = Flurries;
+    forecastList["fog"] = Mist;
+    forecastList["fog developing"] = Mist;
+    forecastList["fog dissipating"] = Mist;
+    forecastList["fog patches"] = Mist;
+    forecastList["freezing drizzle"] = FreezingDrizzle;
+    forecastList["freezing rain"] = FreezingRain;
+    forecastList["freezing rain mixed with rain"] = FreezingRain;
+    forecastList["freezing rain mixed with snow"] = FreezingRain;
+    forecastList["freezing rain or ice pellets"] = FreezingRain;
+    forecastList["freezing rain or rain"] = FreezingRain;
+    forecastList["freezing rain or snow"] = FreezingRain;
+    forecastList["ice fog"] = Mist;
+    forecastList["ice fog developing"] = Mist;
+    forecastList["ice fog dissipating"] = Mist;
+    forecastList["ice pellet"] = Hail;
+    forecastList["ice pellet mixed with freezing rain"] = Hail;
+    forecastList["ice pellet mixed with snow"] = Hail;
+    forecastList["ice pellet or snow"] = RainSnow;
+    forecastList["light snow"] = LightSnow;
+    forecastList["light snow and blizzard"] = LightSnow;
+    forecastList["light snow and blizzard and blowing snow"] = Snow;
+    forecastList["light snow and blowing snow"] = LightSnow;
+    forecastList["light snow mixed with freezing drizzle"] = FreezingDrizzle;
+    forecastList["light snow mixed with freezing rain"] = FreezingRain;
+    forecastList["light snow or ice pellets"] = LightSnow;
+    forecastList["light snow or rain"] = RainSnow;
+    forecastList["light wet snow"] = RainSnow;
+    forecastList["light wet snow or rain"] = RainSnow;
+    forecastList["local snow squalls"] = Snow;
+    forecastList["near blizzard"] = Snow;
+    forecastList["overcast"] = Overcast;
+    forecastList["periods of drizzle"] = LightRain;
+    forecastList["periods of drizzle mixed with freezing drizzle"] = FreezingDrizzle;
+    forecastList["periods of drizzle mixed with rain"] = LightRain;
+    forecastList["periods of drizzle or freezing drizzle"] = FreezingDrizzle;
+    forecastList["periods of drizzle or rain"] = LightRain;
+    forecastList["periods of freezing drizzle"] = FreezingDrizzle;
+    forecastList["periods of freezing drizzle or drizzle"] = FreezingDrizzle;
+    forecastList["periods of freezing drizzle or rain"] = FreezingDrizzle;
+    forecastList["periods of freezing rain"] = FreezingRain;
+    forecastList["periods of freezing rain mixed with ice pellets"] = FreezingRain;
+    forecastList["periods of freezing rain mixed with rain"] = FreezingRain;
+    forecastList["periods of freezing rain mixed with snow"] = FreezingRain;
+    forecastList["periods of freezing rain or ice pellets"] = FreezingRain;
+    forecastList["periods of freezing rain or rain"] = FreezingRain;
+    forecastList["periods of freezing rain or snow"] = FreezingRain;
+    forecastList["periods of ice pellet"] = Hail;
+    forecastList["periods of ice pellet mixed with freezing rain"] = Hail;
+    forecastList["periods of ice pellet mixed with snow"] = Hail;
+    forecastList["periods of ice pellet or freezing rain"] = Hail;
+    forecastList["periods of ice pellet or snow"] = Hail;
+    forecastList["periods of light snow"] = LightSnow;
+    forecastList["periods of light snow and blizzard"] = Snow;
+    forecastList["periods of light snow and blizzard and blowing snow"] = Snow;
+    forecastList["periods of light snow and blowing snow"] = LightSnow;
+    forecastList["periods of light snow mixed with freezing drizzle"] = RainSnow;
+    forecastList["periods of light snow mixed with freezing rain"] = RainSnow;
+    forecastList["periods of light snow mixed with ice pelletS"] = LightSnow;
+    forecastList["periods of light snow mixed with rain"] = RainSnow;
+    forecastList["periods of light snow or freezing drizzle"] = RainSnow;
+    forecastList["periods of light snow or freezing rain"] = RainSnow;
+    forecastList["periods of light snow or ice pellets"] = LightSnow;
+    forecastList["periods of light snow or rain"] = RainSnow;
+    forecastList["periods of light wet snow"] = LightSnow;
+    forecastList["periods of light wet snow mixed with rain"] = RainSnow;
+    forecastList["periods of light wet snow or rain"] = RainSnow;
+    forecastList["periods of rain"] = Rain;
+    forecastList["periods of rain mixed with freezing rain"] = Rain;
+    forecastList["periods of rain mixed with snow"] = RainSnow;
+    forecastList["periods of rain or drizzle"] = Rain;
+    forecastList["periods of rain or freezing rain"] = Rain;
+    forecastList["periods of rain or thundershowers"] = Thunderstorm;
+    forecastList["periods of rain or thunderstorms"] = Thunderstorm;
+    forecastList["periods of snow"] = Snow;
+    forecastList["periods of snow and blizzard"] = Snow;
+    forecastList["periods of snow and blizzard and blowing snow"] = Snow;
+    forecastList["periods of snow and blowing snow"] = Snow;
+    forecastList["periods of snow mixed with freezing drizzle"] = RainSnow;
+    forecastList["periods of snow mixed with freezing rain"] = RainSnow;
+    forecastList["periods of snow mixed with ice pellets"] = Snow;
+    forecastList["periods of snow mixed with rain"] = RainSnow;
+    forecastList["periods of snow or freezing drizzle"] = RainSnow;
+    forecastList["periods of snow or freezing rain"] = RainSnow;
+    forecastList["periods of snow or ice pellets"] = Snow;
+    forecastList["periods of snow or rain"] = RainSnow;
+    forecastList["periods of wet snow"] = Snow;
+    forecastList["periods of wet snow mixed with rain"] = RainSnow;
+    forecastList["periods of wet snow or rain"] = RainSnow;
+    forecastList["rain"] = Rain;
+    forecastList["rain at times heavy"] = Rain;
+    forecastList["Rain at times heavy mixed with freezing rain"] = FreezingRain;
+    forecastList["Rain at times heavy mixed with snow"] = RainSnow;
+    forecastList["Rain at times heavy or drizzle"] = Rain;
+    forecastList["Rain at times heavy or freezing rain"] = Rain;
+    forecastList["Rain at times heavy or snow"] = RainSnow;
+    forecastList["Rain at times heavy or thundershowers"] = Thunderstorm;
+    forecastList["Rain at times heavy or thunderstorms"] = Thunderstorm;
+    forecastList["Rain mixed with freezing rain"] = FreezingRain;
+    forecastList["Rain mixed with snow"] = RainSnow;
+    forecastList["Rain or drizzle"] = Rain;
+    forecastList["Rain or freezing rain"] = Rain;
+    forecastList["Rain or snow"] = RainSnow;
+    forecastList["Rain or thundershowers"] = Thunderstorm;
+    forecastList["Rain or thunderstorms"] = Thunderstorm;
+    forecastList["Rain showers or flurries"] = RainSnow;
+    forecastList["Rain showers or wet flurries"] = RainSnow;
+    forecastList["Showers"] = Showers;
+    forecastList["Showers at times heavy"] = Showers;
+    forecastList["Showers at times heavy or thundershowers"] = Thunderstorm;
+    forecastList["Showers at times heavy or thunderstorms"] = Thunderstorm;
+    forecastList["Showers or drizzle"] = Showers;
+    forecastList["Showers or thundershowers"] = Showers;
+    forecastList["Showers or thunderstorms"] = Showers;
+    forecastList["Smoke"] = NotAvailable;
+    forecastList["Snow"] = Snow;
+    forecastList["Snow and blizzard"] = Snow;
+    forecastList["Snow and blizzard and blowing snow"] = Snow;
+    forecastList["Snow and blowing snow"] = Snow;
+    forecastList["Snow at times heavy"] = Snow;
+    forecastList["Snow at times heavy and blizzard"] = Snow;
+    forecastList["Snow at times heavy and blowing snow"] = Snow;
+    forecastList["Snow at times heavy mixed with freezing drizzle"] = RainSnow;
+    forecastList["Snow at times heavy mixed with freezing rain"] = RainSnow;
+    forecastList["Snow at times heavy mixed with ice pellets"] = Snow;
+    forecastList["Snow at times heavy mixed with rain"] = RainSnow;
+    forecastList["Snow at times heavy or freezing rain"] = RainSnow;
+    forecastList["Snow at times heavy or ice pellets"] = Snow;
+    forecastList["Snow at times heavy or rain"] = RainSnow;
+    forecastList["Snow mixed with freezing drizzle"] = RainSnow;
+    forecastList["Snow mixed with freezing rain"] = RainSnow;
+    forecastList["Snow mixed with ice pellets"] = Snow;
+    forecastList["Snow mixed with rain"] = RainSnow;
+    forecastList["Snow or freezing drizzle"] = RainSnow;
+    forecastList["Snow or freezing rain"] = RainSnow;
+    forecastList["Snow or ice pellets"] = Snow;
+    forecastList["Snow or rain"] = RainSnow;
+    forecastList["Snow squalls"] = Snow;
+    forecastList["Sunny"] = ClearDay;
+    forecastList["Sunny with cloudy periods"] = PartlyCloudyDay;
+    forecastList["Thunderstorms"] = Thunderstorm;
+    forecastList["Thunderstorms and possible hail"] = Thunderstorm;
+    forecastList["Wet flurries"] = Flurries;
+    forecastList["Wet flurries at times heavy"] = Flurries;
+    forecastList["Wet flurries at times heavy or rain snowers"] = RainSnow;
+    forecastList["Wet flurries or rain snowers"] = RainSnow;
+    forecastList["Wet snow"] = Snow;
+    forecastList["wet snow at times heavy"] = Snow;
+    forecastList["wet snow at times heavy mixed with rain"] = RainSnow;
+    forecastList["wet snow mixed with rain"] = RainSnow;
+    forecastList["wet snow or rain"] = RainSnow;
+    forecastList["windy"] = NotAvailable;
+    
+    forecastList["chance of drizzle mixed with freezing drizzle"] = LightRain;
+    forecastList["Chance of flurries mixed with ice pellets"] = Flurries;
+    forecastList["chance of flurries or ice pellets"] = Flurries;
+    forecastList["chance of flurries or rain showers"] = RainSnow;
+    forecastList["chance of flurries or thundershowers"] = RainSnow;
+    forecastList["chance of freezing drizzle"] = FreezingDrizzle;
+    forecastList["chance of freezing rain"] = FreezingRain;
+    forecastList["chance of freezing rain mixed with snow"] = RainSnow;
+    forecastList["chance of freezing rain or rain"] = FreezingRain;
+    forecastList["chance of freezing rain or snow"] = RainSnow;
+    forecastList["chance of light snow and blowing snow"] = LightSnow;
+    forecastList["chance of light snow mixed with freezing drizzle"] = LightSnow;
+    forecastList["chance of light snow mixed with ice pellets"] = LightSnow;
+    forecastList["chance of light snow mixed with rain"] = RainSnow;
+    forecastList["chance of light snow or freezing rain"] = RainSnow;
+    forecastList["chance of light snow or ice pellets"] = LightSnow;
+    forecastList["chance of light snow or rain"] = RainSnow;
+    forecastList["chance of light wet snow"] = Snow;
+    forecastList["chance of rain"] = Rain;
+    forecastList["chance of rain at times heavy"] = Rain;
+    forecastList["chance of rain mixed with snow"] = RainSnow;
+    forecastList["chance of rain or drizzle"] = Rain;
+    forecastList["chance of rain or freezing rain"] = Rain;
+    forecastList["chance of rain or snow"] = RainSnow;
+    forecastList["chance of rain showers or flurries"] = RainSnow;
+    forecastList["chance of rain showers or wet flurries"] = RainSnow;
+    forecastList["chance of severe thunderstorms"] = Thunderstorm;
+    forecastList["chance of showers at times heavy"] = Rain;
+    forecastList["chance of showers at times heavy or thundershowers"] = Thunderstorm;
+    forecastList["chance of showers at times heavy or thunderstorms"] = Thunderstorm;
+    forecastList["chance of showers or thundershowers"] = Showers;
+    forecastList["chance of showers or thunderstorms"] = Thunderstorm;
+    forecastList["chance of snow"] = Snow;
+    forecastList["chance of snow and blizzard"] = Snow;
+    forecastList["chance of snow mixed with freezing drizzle"] = Snow;
+    forecastList["chance of snow mixed with freezing rain"] = RainSnow;
+    forecastList["chance of snow mixed with rain"] = RainSnow;
+    forecastList["chance of snow or rain"] = RainSnow;
+    forecastList["chance of snow squalls"] = Snow;
+    forecastList["chance of thundershowers"] = Thunderstorm;
+    forecastList["chance of thunderstorms"] = Thunderstorm;
+    forecastList["chance of thunderstorms and possible hail"] = Thunderstorm;
+    forecastList["chance of wet flurries"] = Flurries;
+    forecastList["chance of wet flurries at times heavy"] = Flurries;
+    forecastList["chance of wet flurries or rain showers"] = RainSnow;
+    forecastList["chance of wet snow"] = Snow;
+    forecastList["chance of wet snow mixed with rain"] = RainSnow;
+    forecastList["chance of wet snow or rain"] = RainSnow;
+
+    return forecastList;
 }
 
-QMap<QString, IonInterface::ConditionIcons> const& EnvCanadaIon::dayIcons(void)
+QMap<QString, IonInterface::ConditionIcons> const& EnvCanadaIon::conditionIcons(void)
 {
-    static QMap<QString, ConditionIcons> const dval = setupDayIconMappings();
-    return dval;
+    static QMap<QString, ConditionIcons> const condval = setupConditionIconMappings();
+    return condval;
 }
 
-QMap<QString, IonInterface::ConditionIcons> const& EnvCanadaIon::nightIcons(void)
+QMap<QString, IonInterface::ConditionIcons> const& EnvCanadaIon::forecastIcons(void)
 {
-    static QMap<QString, ConditionIcons> const nval = setupNightIconMappings();
-    return nval;
+    static QMap<QString, ConditionIcons> const foreval = setupForecastIconMappings();
+    return foreval;
 }
 
 QStringList EnvCanadaIon::validate(const QString& source) const
@@ -809,13 +1035,33 @@ void EnvCanadaIon::parseShortForecast(WeatherData::ForecastInfo *forecast, QXmlS
             }
             if (xml.name() == "textSummary") {
                 shortText = xml.readElementText();
+                QMap<QString, ConditionIcons> forecastList;
+                forecastList = forecastIcons();
                 if ((forecast->forecastPeriod == "tonight") || (forecast->forecastPeriod.contains("night"))) {
-                    forecast->iconName = getWeatherIcon(nightIcons(), shortText.toLower());
-                    forecast->shortForecast = shortText;
+	             forecastList["a few clouds"] = FewCloudsNight;
+                     forecastList["cloudy periods"] = PartlyCloudyNight;
+		     forecastList["chance of drizzle mixed with rain"] = ChanceShowersNight;
+                     forecastList["chance of drizzle"] = ChanceShowersNight;	     
+                     forecastList["chance of drizzle or rain"] = ChanceShowersNight; 
+                     forecastList["chance of flurries"] = ChanceSnowNight;
+                     forecastList["chance of light snow"] = ChanceSnowNight;
+                     forecastList["chance of flurries at times heavy"] = ChanceSnowNight;
+		     forecastList["chance of showers or drizzle"] = ChanceShowersNight;
+                     forecastList["chance of showers"] = ChanceShowersNight;
                 } else {
-                    forecast->iconName = getWeatherIcon(dayIcons(), shortText.toLower());
-                    forecast->shortForecast = shortText;
+	             forecastList["a few clouds"] = FewCloudsDay;
+                     forecastList["cloudy periods"] = PartlyCloudyDay;
+		     forecastList["chance of drizzle mixed with rain"] = ChanceShowersDay;
+                     forecastList["chance of drizzle"] = ChanceShowersDay;	     
+                     forecastList["chance of drizzle or rain"] = ChanceShowersDay; 
+                     forecastList["chance of flurries"] = ChanceSnowDay;
+                     forecastList["chance of light snow"] = ChanceSnowDay;
+                     forecastList["chance of flurries at times heavy"] = ChanceSnowDay;
+		     forecastList["chance of showers or drizzle"] = ChanceShowersDay;
+                     forecastList["chance of showers"] = ChanceShowersDay;
                 }
+                    forecast->shortForecast = shortText;
+                    forecast->iconName = getWeatherIcon(forecastList, shortText.toLower());
             }
         }
     }
@@ -1039,14 +1285,27 @@ void EnvCanadaIon::updateWeather(const QString& source)
     setData(source, "Current Conditions", condition(source));
 
     // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
-    if (periodHour(source) >= 0 && periodHour(source) < 6) { 
-        setData(source, "Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
-    }
-    else if (periodHour(source) >= 18) {  
-        setData(source, "Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
+    QMap<QString, ConditionIcons> conditionList;
+    conditionList = conditionIcons();
+
+    if (periodHour(source) >= 0 && periodHour(source) < 6) {
+        conditionList["decreasing cloud"] = FewCloudsNight;
+        conditionList["mostly cloudy"] = PartlyCloudyNight;
+        conditionList["partly cloudy"] = PartlyCloudyNight;
+        conditionList["fair"] = FewCloudsNight;
+    } else if (periodHour(source) >= 18) {
+        conditionList["decreasing cloud"] = ClearNight;
+        conditionList["mostly cloudy"] = PartlyCloudyNight;
+        conditionList["partly cloudy"] = PartlyCloudyNight;
+        conditionList["fair"] = FewCloudsNight;
     } else {
-        setData(source, "Condition Icon", getWeatherIcon(dayIcons(), condition(source)));
+        conditionList["decreasing cloud"] = FewCloudsDay;
+        conditionList["mostly cloudy"] = PartlyCloudyDay;
+        conditionList["partly cloidy"] = PartlyCloudyDay;
+        conditionList["fair"] = FewCloudsDay;
     }
+
+    setData(source, "Condition Icon", getWeatherIcon(conditionList, condition(source)));
 
     dataFields = temperature(source);
     setData(source, "Temperature", dataFields["temperature"]);
