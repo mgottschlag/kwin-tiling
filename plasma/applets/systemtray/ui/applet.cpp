@@ -21,6 +21,7 @@
  ***************************************************************************/
 
 #include "applet.h"
+#include "jobwidget.h"
 #include "notificationwidget.h"
 #include "taskarea.h"
 
@@ -38,6 +39,7 @@
 
 #include "../core/manager.h"
 #include "../core/task.h"
+#include "extendertask.h"
 
 
 namespace SystemTray
@@ -53,7 +55,8 @@ public:
         : q(q),
           taskArea(0),
           configInterface(0),
-          background(0)
+          background(0),
+          extenderTask(0)
     {
     }
 
@@ -65,6 +68,7 @@ public:
     QPointer<KActionSelector> configInterface;
 
     Plasma::FrameSvg *background;
+    SystemTray::Extender::Task *extenderTask;
 };
 
 
@@ -110,9 +114,12 @@ void Applet::init()
 
     d->taskArea->syncTasks(Manager::self()->tasks());
 
-    extender()->setEmptyExtenderMessage(i18n("No notifications..."));
+    extender()->setEmptyExtenderMessage(i18n("No notifications and no jobs"));
     connect(SystemTray::Manager::self(), SIGNAL(notificationAdded(SystemTray::Notification*)),
             this, SLOT(addNotification(SystemTray::Notification*)));
+    connect(SystemTray::Manager::self(), SIGNAL(jobAdded(SystemTray::Job*)),
+            this, SLOT(addJob(SystemTray::Job*)));
+
 }
 
 
@@ -269,6 +276,7 @@ void Applet::configAccepted()
 void Applet::addNotification(Notification *notification)
 {
     Plasma::ExtenderItem *extenderItem = new Plasma::ExtenderItem(extender());
+    extenderItem->config().writeEntry("type", "notification");
     extenderItem->setWidget(new NotificationWidget(notification, extenderItem));
 
     connect(extenderItem, SIGNAL(destroyed()),
@@ -277,10 +285,25 @@ void Applet::addNotification(Notification *notification)
     showPopup();
 }
 
+void Applet::addJob(Job *job)
+{
+    Plasma::ExtenderItem *extenderItem = new Plasma::ExtenderItem(extender());
+    extenderItem->config().writeEntry("type", "job");
+    extenderItem->setWidget(new JobWidget(job, extenderItem));
+
+    connect(extenderItem, SIGNAL(destroyed()),
+            this, SLOT(hidePopupIfEmpty()));
+
+    showPopup(5000);
+}
 
 void Applet::initExtenderItem(Plasma::ExtenderItem *extenderItem)
 {
-    extenderItem->setWidget(new NotificationWidget(0, extenderItem));
+    if (extenderItem->config().readEntry("type", "") == "notification") {
+        extenderItem->setWidget(new NotificationWidget(0, extenderItem));
+    } else {
+        extenderItem->setWidget(new JobWidget(0, extenderItem));
+    }
 }
 
 
@@ -288,6 +311,26 @@ void Applet::hidePopupIfEmpty()
 {
     if (extender()->items().isEmpty()) {
         hidePopup();
+    }
+}
+
+void Applet::popupEvent(bool visibility)
+{
+    if (!extender()->attachedItems().isEmpty()) {
+        if (!d->extenderTask) {
+            d->extenderTask = new SystemTray::Extender::Task(this);
+        }
+
+        if (visibility) {
+            d->extenderTask->setIcon("arrow-down");
+        } else {
+            d->extenderTask->setIcon("arrow-up");
+        }
+        Manager::self()->addTask(d->extenderTask);
+    } else {
+        delete d->extenderTask;
+        //Manager::self()->removeTask(d->extenderTask);
+        d->extenderTask = 0;
     }
 }
 

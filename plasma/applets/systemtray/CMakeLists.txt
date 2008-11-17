@@ -7,6 +7,8 @@ set(systemtray_SRCS
     core/task.cpp
     core/notificationprotocol.cpp
     core/notification.cpp
+    core/jobprotocol.cpp
+    core/job.cpp
 
     protocols/fdo/fdotaskprotocol.cpp
     protocols/fdo/fdotask.cpp
@@ -24,10 +26,15 @@ set(systemtray_SRCS
     protocols/notifications/dbusnotificationprotocol.cpp
     protocols/notifications/dbusnotification.cpp
 
+    protocols/jobs/dbusjobprotocol.cpp
+    protocols/jobs/dbusjob.cpp
+
     ui/applet.cpp
     ui/compactlayout.cpp
+    ui/extendertask.cpp
     ui/taskarea.cpp
     ui/notificationwidget.cpp
+    ui/jobwidget.cpp
     )
 
 kde4_add_plugin(plasma_applet_systemtray ${systemtray_SRCS})

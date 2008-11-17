@@ -21,10 +21,12 @@
 #include "kuiserverengine.h"
 #include "jobcontrol.h"
 
+#include <QDBusConnection>
+
+#include <KJob>
 
 #include <Plasma/DataEngine>
 
-#include <QDBusConnection>
 
 uint KuiserverEngine::s_jobId = 0;
 
@@ -59,52 +61,14 @@ void JobView::setSuspended(bool suspended)
 
 void JobView::setTotalAmount(qlonglong amount, const QString &unit)
 {
-    if (unit == "bytes") {
-        m_totalAmountSize = amount;
-    } else if (unit == "files") {
-        m_totalAmountFiles = amount;
-    } else {
-        kDebug() << "setTotalAmount unknown unit: " << amount << " unit " << unit;
-    }
-
+    m_totalMap[unit] = amount;
     emit viewUpdated(this);
-}
-
-QString JobView::totalAmountSize() const
-{
-    return KGlobal::locale()->formatByteSize(m_totalAmountSize);
-}
-
-QString JobView::totalAmountFiles() const
-{
-    if (m_totalAmountFiles) {
-        return i18np("1 file", "%1 files", m_totalAmountFiles);
-    } else {
-        return QString();
-    }
 }
 
 void JobView::setProcessedAmount(qlonglong amount, const QString &unit)
 {
-    if (unit == "bytes") {
-        m_processedAmountSize = amount;
-    } else if (unit == "files") {
-        m_processedAmountFiles = amount;
-    } else {
-        kDebug() << "setProcessedAmount unknown unit: " << amount << " unit " << unit;
-    }
-
+    m_processedMap[unit] = amount;
     emit viewUpdated(this);
-}
-
-QString JobView::processedAmountSize() const
-{
-    return KGlobal::locale()->formatByteSize(m_processedAmountSize);
-}
-
-QString JobView::processedAmountFiles() const
-{
-    return i18np("1 file", "%1 files", m_processedAmountFiles);
 }
 
 void JobView::setPercent(uint percent)
@@ -178,7 +142,7 @@ KuiserverEngine::KuiserverEngine(QObject* parent, const QVariantList& args)
     QDBusConnection::sessionBus().registerService(QLatin1String("org.kde.JobViewServer"));
     QDBusConnection::sessionBus().registerObject(QLatin1String("/JobViewServer"), this);
 
-    setMinimumPollingInterval(200);
+    setMinimumPollingInterval(500);
 }
 
 KuiserverEngine::~KuiserverEngine()
@@ -190,8 +154,6 @@ KuiserverEngine::~KuiserverEngine()
 QDBusObjectPath KuiserverEngine::requestView(const QString &appName,
                                              const QString &appIconName, int capabilities)
 {
-    Q_UNUSED(capabilities)
-
     JobView *jobView = new JobView();
     connect(jobView, SIGNAL(viewUpdated(JobView*)),
             this, SLOT(sourceUpdated(JobView*)));
@@ -227,14 +189,8 @@ void KuiserverEngine::sourceUpdated(JobView *jobView)
     data["appName"] = jobView->m_appName;
     data["appIconName"] = jobView->m_appIconName;
     data["percentage"] = jobView->m_percent;
-    data["capabilities"] = jobView->m_capabilities;
-    data["error"] = jobView->m_error;
-    data["totalAmountFiles"] = jobView->totalAmountFiles();
-    data["totalAmountSize"] = jobView->totalAmountSize();
-    data["processedAmountFiles"] = jobView->processedAmountFiles();
-    data["processedAmountSize"] = jobView->processedAmountSize();
-    data["progress"] = QString("%1/%2").arg(jobView->processedAmountSize())
-                                       .arg(jobView->totalAmountSize());
+    data["suspendable"] = (jobView->m_capabilities & KJob::Suspendable);
+    data["killable"] = (jobView->m_capabilities & KJob::Killable);
     data["infoMessage"] = jobView->m_infoMessage;
 
     if (!jobView->m_error.isEmpty()) {
@@ -250,6 +206,18 @@ void KuiserverEngine::sourceUpdated(JobView *jobView)
         data[QString("labelName%1").arg(i)] = jobView->m_labelNames[i];
     }
 
+    int i = 0;
+    foreach (const QString &unit, jobView->m_totalMap.keys()) {
+        data[QString("totalUnit%1").arg(i)] = unit;
+        data[QString("totalAmount%1").arg(i++)] = jobView->m_totalMap[unit];
+    }
+
+    i = 0;
+    foreach (const QString &unit, jobView->m_processedMap.keys()) {
+        data[QString("processedUnit%1").arg(i)] = unit;
+        data[QString("processedAmount%1").arg(i++)] = jobView->m_processedMap[unit];
+    }
+
     switch (jobView->m_state) {
         case JobView::Running:
             data["state"] = "running";
@@ -260,6 +228,7 @@ void KuiserverEngine::sourceUpdated(JobView *jobView)
             setData(sourceName, data);
             break;
         case JobView::Stopped:
+            data["state"] = "stopped";
             setData(sourceName, data);
             removeSource(sourceName);
             break;

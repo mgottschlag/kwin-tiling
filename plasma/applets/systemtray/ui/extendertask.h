@@ -1,7 +1,5 @@
 /***************************************************************************
- *   applet.h                                                              *
- *                                                                         *
- *   Copyright (C) 2008 Jason Stubbs <jasonbstubbs@gmail.com>              *
+ *   Copyright (C) 2008 Rob Scheepmaker <r.scheepmaker@student.utwente.nl> *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,53 +17,51 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef APPLET_H
-#define APPLET_H
+#ifndef EXTENDERTASK_H
+#define EXTENDERTASK_H
 
-#include <plasma/popupapplet.h>
+#include "../core/task.h"
+
+
+namespace Plasma
+{
+    class PopupApplet;
+}
 
 namespace SystemTray
 {
 
-class Notification;
-class Job;
+namespace Extender
+{
 
-class Applet : public Plasma::PopupApplet
+class Task : public SystemTray::Task
 {
     Q_OBJECT
 
 public:
-    explicit Applet(QObject *parent, const QVariantList &arguments = QVariantList());
-    ~Applet();
+    Task(Plasma::PopupApplet *systemTray);
+    virtual ~Task();
 
-    void init();
-    void constraintsEvent(Plasma::Constraints constraints);
-    void setGeometry(const QRectF &rect);
+    bool isValid() const;
+    virtual bool isEmbeddable() const;
+    virtual QString name() const;
+    virtual QString typeId() const;
+    virtual QIcon icon() const;
+    void setIcon(const QString &icon);
+
+signals:
+    void taskDeleted(QString typeId);
 
 protected:
-    void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
-    void createConfigurationInterface(KConfigDialog *parent);
-    void initExtenderItem(Plasma::ExtenderItem *extenderItem);
-
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) { Q_UNUSED(event); }
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) { Q_UNUSED(event); }
-
-    void popupEvent(bool show);
-
-private slots:
-    void configAccepted();
-    void propogateSizeHintChange(Qt::SizeHint which);
-    void checkSizes();
-    void addNotification(SystemTray::Notification *notification);
-    void addJob(SystemTray::Job *job);
-    void hidePopupIfEmpty();
+    virtual QGraphicsWidget* createWidget(Plasma::Applet *applet);
 
 private:
     class Private;
     Private* const d;
 };
 
-}
 
+}
+}
 
 #endif

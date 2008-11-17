@@ -29,11 +29,14 @@
 #include "notificationprotocol.h"
 #include "task.h"
 #include "taskprotocol.h"
+#include "job.h"
+#include "jobprotocol.h"
 
 #include "../protocols/notifications/dbusnotificationprotocol.h"
 #include "../protocols/fdo/fdonotificationprotocol.h"
 #include "../protocols/fdo/fdotaskprotocol.h"
 #include "../protocols/plasmoid/plasmoidtaskprotocol.h"
+#include "../protocols/jobs/dbusjobprotocol.h"
 
 namespace SystemTray
 {
@@ -58,14 +61,17 @@ public:
         registerTaskProtocol(new FDO::TaskProtocol(q));
         registerNotificationProtocol(new FDO::NotificationProtocol(q));
         registerNotificationProtocol(new DBus::NotificationProtocol(q));
+        registerJobProtocol(new DBus::JobProtocol(q));
     }
 
     void registerTaskProtocol(TaskProtocol *protocol);
     void registerNotificationProtocol(NotificationProtocol *protocol);
+    void registerJobProtocol(JobProtocol *protocol);
 
     Manager *q;
     QList<Task*> tasks;
     QList<Notification*> notifications;
+    QList<Job*> jobs;
 };
 
 
@@ -149,6 +155,35 @@ void Manager::removeNotification(Notification *notification)
 QList<Notification*> Manager::notifications() const
 {
     return d->notifications;
+}
+
+void Manager::Private::registerJobProtocol(JobProtocol *protocol)
+{
+    connect(protocol, SIGNAL(jobCreated(SystemTray::Job*)),
+            q, SLOT(addJob(SystemTray::Job*)));
+    protocol->init();
+}
+
+void Manager::addJob(Job *job)
+{
+    connect(job, SIGNAL(destroyed(SystemTray::Job*)),
+            this, SLOT(removeJob(SystemTray::Job*)));
+    connect(job, SIGNAL(changed(SystemTray::Job*)),
+            this, SIGNAL(jobChanged(SystemTray::Job*)));
+
+    d->jobs.append(job);
+    emit jobAdded(job);
+}
+
+void Manager::removeJob(Job *job)
+{
+    d->jobs.removeAll(job);
+    emit jobRemoved(job);
+}
+
+QList<Job*> Manager::jobs() const
+{
+    return d->jobs;
 }
 
 }

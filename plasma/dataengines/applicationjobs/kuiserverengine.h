@@ -75,8 +75,6 @@ public:
     QString totalAmountFiles() const;
 
     void setProcessedAmount(qlonglong amount, const QString &unit);
-    QString processedAmountSize() const;
-    QString processedAmountFiles() const;
 
     void setSpeed(qlonglong bytesPerSecond);
     QString speedString() const;
@@ -111,14 +109,9 @@ private:
 
     uint m_capabilities;
     uint m_jobId;
-
     uint m_percent;
 
     qlonglong m_speed;
-    qlonglong m_totalAmountSize;
-    qlonglong m_totalAmountFiles;
-    qlonglong m_processedAmountSize;
-    qlonglong m_processedAmountFiles;
 
     State m_state;
 
@@ -129,6 +122,8 @@ private:
 
     QMap<int, QString> m_labels;
     QMap<int, QString> m_labelNames;
+    QMap<QString, qlonglong> m_totalMap;
+    QMap<QString, qlonglong> m_processedMap;
 
     friend class KuiserverEngine;
     friend class JobAction;

@@ -1,7 +1,5 @@
 /***************************************************************************
- *   applet.h                                                              *
- *                                                                         *
- *   Copyright (C) 2008 Jason Stubbs <jasonbstubbs@gmail.com>              *
+ *   Copyright (C) 2008 Rob Scheepmaker <r.scheepmaker@student.utwente.nl> *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,52 +17,44 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef APPLET_H
-#define APPLET_H
+#ifndef DBUSJOB_H
+#define DBUSJOB_H
 
-#include <plasma/popupapplet.h>
+#include "../../core/job.h"
+
 
 namespace SystemTray
 {
+namespace DBus
+{
 
-class Notification;
-class Job;
-
-class Applet : public Plasma::PopupApplet
+class Job : public SystemTray::Job
 {
     Q_OBJECT
 
+    friend class JobProtocol;
+
 public:
-    explicit Applet(QObject *parent, const QVariantList &arguments = QVariantList());
-    ~Applet();
+    Job(const QString &source, QObject *parent = 0);
+    ~Job();
 
-    void init();
-    void constraintsEvent(Plasma::Constraints constraints);
-    void setGeometry(const QRectF &rect);
+public slots:
+    void suspend();
+    void resume();
+    void stop();
 
-protected:
-    void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
-    void createConfigurationInterface(KConfigDialog *parent);
-    void initExtenderItem(Plasma::ExtenderItem *extenderItem);
-
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) { Q_UNUSED(event); }
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) { Q_UNUSED(event); }
-
-    void popupEvent(bool show);
-
-private slots:
-    void configAccepted();
-    void propogateSizeHintChange(Qt::SizeHint which);
-    void checkSizes();
-    void addNotification(SystemTray::Notification *notification);
-    void addJob(SystemTray::Job *job);
-    void hidePopupIfEmpty();
+signals:
+    void jobDeleted(const QString &source);
+    void suspend(const QString &source);
+    void resume(const QString &source);
+    void stop(const QString &source);
 
 private:
     class Private;
     Private* const d;
 };
 
+}
 }
 
 

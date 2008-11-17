@@ -6,7 +6,7 @@ add_subdirectory(devicenotifier)
 add_subdirectory(digital-clock)
 add_subdirectory(icon)
 add_subdirectory(kickoff)
-add_subdirectory(lock_logout)
+#add_subdirectory(lock_logout)
 add_subdirectory(quicklaunch)
 add_subdirectory(trash)
 

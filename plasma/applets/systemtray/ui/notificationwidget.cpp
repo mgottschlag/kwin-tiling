@@ -215,6 +215,7 @@ void NotificationWidgetPrivate::destroy()
     if (extenderItem->isDetached()) {
         completeDetach();
     } else {
+        completeDetach();
         extenderItem->destroy();
     }
 

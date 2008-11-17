@@ -26,10 +26,13 @@
 
 namespace SystemTray
 {
+    class Applet;
     class Notification;
     class Task;
+    class Job;
 
 /**
+ * w
  * @short Creator and amalgamator of the supported system tray specifications
  **/
 class Manager : public QObject
@@ -53,6 +56,11 @@ public:
      * @return a list of all known Task instances
      **/
     QList<Notification*> notifications() const;
+
+    /**
+     * @return a list of all known Job instances
+     **/
+    QList<Job*> jobs() const;
 
 signals:
     /**
@@ -86,11 +94,29 @@ signals:
      **/
     void notificationRemoved(SystemTray::Notification *notification);
 
+    /**
+     * Emitted when a new job has been added
+     **/
+    void jobAdded(SystemTray::Job *job);
+
+    /**
+     * Emitted when something about a job changes
+     **/
+    void jobChanged(SystemTray::Job *job);
+
+    /**
+     * Emitted when a job has been removed
+     **/
+    void jobRemoved(SystemTray::Job *job);
+
+
 private slots:
     void addTask(SystemTray::Task *task);
     void removeTask(SystemTray::Task *task);
     void addNotification(SystemTray::Notification *notification);
     void removeNotification(SystemTray::Notification *notification);
+    void addJob(SystemTray::Job *job);
+    void removeJob(SystemTray::Job *job);
 
 private:
     Manager();
@@ -98,6 +124,8 @@ private:
 
     class Private;
     Private* const d;
+
+    friend class Applet;
 };
 
 }
