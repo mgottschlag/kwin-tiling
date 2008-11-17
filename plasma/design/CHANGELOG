@@ -140,7 +140,7 @@ Plugins/Addons
         * System tray
             * Supports hiding of icons
             * Supports non-Freedesktop.org icons (e.g. full plasmoids or future creations) through a protocol abstraction
-            * Listens for and displays popup notifications
+            * Listens for and displays popup notifications and application jobs (e.g. file transfers)
         * Now Playing media player controls: play, pause, stop, switch tracks and more from Plasma
         * Notes
             * Custom colors
