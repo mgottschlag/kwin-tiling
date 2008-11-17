@@ -100,7 +100,9 @@ void BackgroundDialog::reloadConfig()
     // Wallpaper
     bool doWallpaper = m_containment->drawWallpaper();
     m_wallpaperLabel->setVisible(doWallpaper);
-    m_wallpaperGroup->setVisible(doWallpaper);
+    m_wallpaperTypeLabel->setVisible(doWallpaper);
+    m_wallpaperMode->setVisible(doWallpaper);
+    m_wallpaperConfig->setVisible(doWallpaper);
     if (doWallpaper) {
         // Load wallpaper plugins
         QString currentPlugin;
@@ -115,6 +117,8 @@ void BackgroundDialog::reloadConfig()
         KPluginInfo::List plugins = Plasma::Wallpaper::listWallpaperInfo();
         m_wallpaperMode->clear();
         int i = 0;
+        m_wallpaperMode->addItem(KIcon(), i18n("No Wallpaper"),
+                                 QVariant::fromValue(WallpaperInfo(QString(), QString())));
         foreach (KPluginInfo info, plugins) {
             bool matches = info.pluginName() == currentPlugin;
             const QList<KServiceAction>& modes = info.service()->actions();
@@ -149,13 +153,21 @@ void BackgroundDialog::changeBackgroundMode(int mode)
     QWidget* w = 0;
     WallpaperInfo wallpaperInfo = m_wallpaperMode->itemData(mode).value<WallpaperInfo>();
 
-    if (m_wallpaperGroup->layout()->count() > 1) {
-        delete dynamic_cast<QWidgetItem*>(m_wallpaperGroup->layout()->takeAt(1))->widget();
+    if (!m_wallpaperConfig->layout()) {
+        new QVBoxLayout(m_wallpaperConfig);
+    }
+
+    if (m_wallpaperConfig->layout()->count() > 0) {
+        delete dynamic_cast<QWidgetItem*>(m_wallpaperConfig->layout()->takeAt(0))->widget();
     }
 
     if (m_wallpaper && m_wallpaper->pluginName() != wallpaperInfo.first) {
         delete m_wallpaper;
         m_wallpaper = 0;
+    }
+
+    if (wallpaperInfo.first.isEmpty()) {
+        return;
     }
 
     if (!m_wallpaper) {
@@ -168,14 +180,14 @@ void BackgroundDialog::changeBackgroundMode(int mode)
         KConfigGroup cfg = wallpaperConfig(wallpaperInfo.first);
         kDebug() << "making a" << wallpaperInfo.first << "in mode" << wallpaperInfo.second;
         m_wallpaper->restore(cfg);
-        w = m_wallpaper->createConfigurationInterface(m_wallpaperGroup);
+        w = m_wallpaper->createConfigurationInterface(m_wallpaperConfig);
     }
 
     if (!w) {
-        w = new QWidget(m_wallpaperGroup);
+        w = new QWidget(m_wallpaperConfig);
     }
 
-    m_wallpaperGroup->layout()->addWidget(w);
+    m_wallpaperConfig->layout()->addWidget(w);
 }
 
 KConfigGroup BackgroundDialog::wallpaperConfig(const QString &plugin)
