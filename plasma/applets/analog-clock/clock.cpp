@@ -195,10 +195,11 @@ void Clock::drawHand(QPainter *p, qreal rotation, const QString &handName)
     p->save();
     const QSizeF boundSize = boundingRect().size();
     const QRectF elementRect = m_theme->elementRect(handName);
+    const QRectF screwRect = m_theme->elementRect("HandCenterScrew");
 
     p->translate(boundSize.width() / 2, boundSize.height() / 2);
     p->rotate(rotation);
-    p->translate(-elementRect.width() / 2, -elementRect.width() / 2);
+    p->translate(-elementRect.width() / 2, -elementRect.width() / 2 + (elementRect.y() - screwRect.center().y()));
 
     m_theme->paint(p, QRectF(QPointF(0, 0), elementRect.size()), handName);
 
@@ -223,7 +224,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
     m_theme->paint(p, rect, "ClockFace");
 
-    
+
     //optionally paint the time string
     if (m_showTimezoneString) {
         QString time = prettyTimezone();
@@ -245,7 +246,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
             p->setRenderHint(QPainter::Antialiasing, false);
 
             p->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
-        
+
             p->drawText(textRect, Qt::AlignCenter, time);
         }
     }
