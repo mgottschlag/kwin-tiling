@@ -66,6 +66,7 @@ EngineExplorer::EngineExplorer(QWidget* parent)
     connect(m_engines, SIGNAL(activated(QString)), this, SLOT(showEngine(QString)));
     connect(m_sourceRequesterButton, SIGNAL(clicked(bool)), this, SLOT(requestSource()));
     m_data->setModel(m_dataModel);
+    m_data->setWordWrap(true);
 
     m_searchLine->setTreeView(m_data);
     m_searchLine->setClickMessage(i18n("Search"));
