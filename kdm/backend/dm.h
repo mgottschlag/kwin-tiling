@@ -270,8 +270,8 @@ struct display {
 	char *remoteHost;           /* for X -query type remote login */
 	/* XDMCP state */
 	unsigned sessionID;         /* ID of active session */
-	ARRAY8 peer;                /* display peer address */
-	ARRAY8 from;                /* XDMCP port of display */
+	ARRAY8 peer;                /* display peer address (sockaddr) */
+	ARRAY8 from;                /* XDMCP peer address (sockaddr) */
 	unsigned displayNumber;     /* numerical part of name */
 	int useChooser;             /* Run the chooser for this display */
 	ARRAY8 clientAddr;          /* for chooser picking */
