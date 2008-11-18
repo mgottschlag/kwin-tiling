@@ -123,6 +123,9 @@
 /* Define to 1 if you have the <termios.h> header file. */
 #cmakedefine HAVE_TERMIOS_H 1
 
+/* Define to 1 if the ck-connector library is found */
+#cmakedefine HAVE_CKCONNECTOR 1
+
 /* $PATH defaults set by KDM */
 #cmakedefine KDM_DEF_USER_PATH "${KDM_DEF_USER_PATH}"
 #cmakedefine KDM_DEF_SYSTEM_PATH "${KDM_DEF_SYSTEM_PATH}"

@@ -60,6 +60,10 @@ target_link_libraries( kdm
 	${SOCKET_LIBRARIES}
 	${RESOLV_LIBRARIES}
 )
+if (CKCONNECTOR_FOUND)
+	include_directories(${CKCONNECTOR_INCLUDE_DIR} ${DBUS_INCLUDE_DIR} ${DBUS_ARCH_INCLUDE_DIR})
+	target_link_libraries( kdm ${CKCONNECTOR_LIBRARIES} ${DBUS_LIBRARIES} )
+endif (CKCONNECTOR_FOUND)
 if(UTIL_LIBRARIES)
 	target_link_libraries( kdm ${UTIL_LIBRARIES} )
 endif(UTIL_LIBRARIES)
