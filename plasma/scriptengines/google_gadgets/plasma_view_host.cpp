@@ -127,7 +127,7 @@ void PlasmaViewHost::SetShowCaptionAlways(bool always) {
   // TODO:
 }
 
-void PlasmaViewHost::SetCursor(int type) {
+void PlasmaViewHost::SetCursor(ggadget::ViewInterface::CursorType type) {
   Qt::CursorShape shape = ggadget::qt::GetQtCursorShape(type);
   // Up to Qt4.4.3, There is a bug in handling cursor when
   // QGraphicsProxyWidget is involved.

@@ -21,6 +21,7 @@
 static const char *kGlobalExtensions[] = {
   "default-framework",
   "libxml2-xml-parser",
+  "dbus-script-class",
   "default-options",
   "qtwebkit-browser-element",
   "qt-system-framework",
@@ -31,6 +32,7 @@ static const char *kGlobalExtensions[] = {
   "linux-system-framework",
   "qt-xml-http-request",
   "google-gadget-manager",
+  "analytics-usage-collector",
   "smjs-script-runtime",
   "qt-script-runtime",
   NULL

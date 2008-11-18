@@ -55,7 +55,7 @@ class PlasmaViewHost : public ViewHostInterface {
   virtual void SetResizable(ViewInterface::ResizableMode mode);
   virtual void SetCaption(const std::string &caption);
   virtual void SetShowCaptionAlways(bool always);
-  virtual void SetCursor(int type);
+  virtual void SetCursor(ggadget::ViewInterface::CursorType cursor);
   virtual void ShowTooltip(const std::string &tooltip);
   virtual void ShowTooltipAtPosition(const std::string &tooltip,
                                      double x, double y);
