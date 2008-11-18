@@ -39,7 +39,7 @@
     </widget>
    </item>
    <item row="0" column="1" >
-    <widget class="QWidget" native="1" name="widgetFore1" >
+    <widget class="QWidget" native="1" name="widgetFore3" >
      <layout class="QHBoxLayout" name="horizontalLayout_2" >
       <item>
        <widget class="QLabel" name="labelFore3" >
@@ -57,7 +57,7 @@
     </widget>
    </item>
    <item row="0" column="2" >
-    <widget class="QWidget" native="1" name="widgetFore2" >
+    <widget class="QWidget" native="1" name="widgetFore4" >
      <layout class="QHBoxLayout" name="horizontalLayout_3" >
       <item>
        <widget class="QLabel" name="labelFore4" >
@@ -75,7 +75,7 @@
     </widget>
    </item>
    <item row="0" column="3" >
-    <widget class="QWidget" native="1" name="widgetFore3" >
+    <widget class="QWidget" native="1" name="widgetFore2" >
      <layout class="QHBoxLayout" name="horizontalLayout_4" >
       <item>
        <widget class="QLabel" name="labelFore2" >
@@ -88,7 +88,7 @@
     </widget>
    </item>
    <item row="0" column="4" >
-    <widget class="QWidget" native="1" name="widgetFore4" >
+    <widget class="QWidget" native="1" name="widgetFore1" >
      <layout class="QHBoxLayout" name="horizontalLayout_5" >
       <item>
        <widget class="QLabel" name="labelFore1" >
@@ -179,7 +179,7 @@
     </widget>
    </item>
    <item row="1" column="1" >
-    <widget class="QWidget" native="1" name="widgetBack1" >
+    <widget class="QWidget" native="1" name="widgetBack3" >
      <layout class="QHBoxLayout" name="horizontalLayout_12" >
       <item>
        <widget class="QLabel" name="labelBack3" >
@@ -197,7 +197,7 @@
     </widget>
    </item>
    <item row="1" column="2" >
-    <widget class="QWidget" native="1" name="widgetBack2" >
+    <widget class="QWidget" native="1" name="widgetBack4" >
      <layout class="QHBoxLayout" name="horizontalLayout_13" >
       <item>
        <widget class="QLabel" name="labelBack4" >
@@ -215,7 +215,7 @@
     </widget>
    </item>
    <item row="1" column="3" >
-    <widget class="QWidget" native="1" name="widgetBack3" >
+    <widget class="QWidget" native="1" name="widgetBack2" >
      <layout class="QHBoxLayout" name="horizontalLayout_14" >
       <item>
        <widget class="QLabel" name="labelBack2" >
@@ -228,7 +228,7 @@
     </widget>
    </item>
    <item row="1" column="4" >
-    <widget class="QWidget" native="1" name="widgetBack4" >
+    <widget class="QWidget" native="1" name="widgetBack1" >
      <layout class="QHBoxLayout" name="horizontalLayout_15" >
       <item>
        <widget class="QLabel" name="labelBack1" >

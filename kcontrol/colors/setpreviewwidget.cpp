@@ -21,7 +21,7 @@
 #include "setpreviewwidget.h"
 
 #include <KGlobalSettings>
-#include <KColorScheme>
+#include <KColorUtils>
 
 void setAutoFill(QWidget* widget)
 {
@@ -106,6 +106,9 @@ void SetPreviewWidget::setPalette(const KSharedConfigPtr &config,
                                   KColorScheme::ColorSet set)
 {
     QPalette palette = KGlobalSettings::createApplicationPalette(config);
+    KColorScheme::adjustBackground(palette, KColorScheme::NormalBackground,
+                                   QPalette::Base, set, config);
+    QFrame::setPalette(palette);
 
 #define SET_ROLE_PALETTE(n, f, b) \
     KColorScheme::adjustForeground(palette, KColorScheme::f, QPalette::Text, set, config); \
@@ -123,7 +126,20 @@ void SetPreviewWidget::setPalette(const KSharedConfigPtr &config,
     SET_ROLE_PALETTE(6, NeutralText,  NeutralBackground);
     SET_ROLE_PALETTE(7, PositiveText, PositiveBackground);
 
-    // TODO decos
+    KColorScheme kcs(QPalette::Active, set, config);
+    QBrush deco;
+
+#define SET_DECO_PALETTE(n, d) \
+    deco = kcs.decoration(KColorScheme::d); \
+    palette.setBrush(QPalette::Text, deco); \
+    labelFore##n->setPalette(palette); \
+    deco = KColorUtils::tint(kcs.background().color(), deco.color()); \
+    palette.setBrush(QPalette::Base, deco); \
+    labelBack##n->setPalette(palette); \
+    widgetBack##n->setPalette(palette);
+
+    SET_DECO_PALETTE(8, HoverColor);
+    SET_DECO_PALETTE(9, FocusColor);
 }
 
 #include "setpreviewwidget.moc"
