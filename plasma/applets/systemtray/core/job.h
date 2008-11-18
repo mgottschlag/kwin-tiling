@@ -41,6 +41,11 @@ public:
     virtual ~Job();
 
     /**
+     * Request and signal destruction of this object
+     */
+    void destroy();
+
+    /**
      * @return the name of the application which started this job.
      */
     QString applicationName() const;

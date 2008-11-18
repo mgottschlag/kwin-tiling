@@ -64,8 +64,13 @@ Job::Job(QObject *parent)
 
 Job::~Job()
 {
-    emit destroyed(this);
     delete d;
+}
+
+void Job::destroy()
+{
+    emit destroyed(this);
+    deleteLater();
 }
 
 QString Job::applicationName() const

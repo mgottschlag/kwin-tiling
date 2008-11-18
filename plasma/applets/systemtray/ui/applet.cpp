@@ -291,8 +291,7 @@ void Applet::addJob(Job *job)
     extenderItem->config().writeEntry("type", "job");
     extenderItem->setWidget(new JobWidget(job, extenderItem));
 
-    connect(extenderItem, SIGNAL(destroyed()),
-            this, SLOT(hidePopupIfEmpty()));
+    connect(extenderItem, SIGNAL(destroyed()), this, SLOT(hidePopupIfEmpty()));
 
     showPopup(5000);
 }
@@ -326,6 +325,7 @@ void Applet::popupEvent(bool visibility)
         } else {
             d->extenderTask->setIcon("arrow-up");
         }
+
         Manager::self()->addTask(d->extenderTask);
     } else {
         delete d->extenderTask;

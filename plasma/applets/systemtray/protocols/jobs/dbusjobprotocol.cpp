@@ -161,7 +161,7 @@ void JobProtocol::dataUpdated(const QString &source, const Plasma::DataEngine::D
 void JobProtocol::removeJob(const QString &source)
 {
     if (d->jobs.contains(source)) {
-        d->jobs.take(source)->deleteLater();
+        d->jobs.take(source)->destroy();
     }
 }
 
