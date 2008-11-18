@@ -170,10 +170,10 @@ public:
         addView(i18n("Favorites"), KIcon("bookmarks"), model, view);
 
         QAction *sortAscendingAction = new QAction(KIcon("view-sort-ascending"), 
-							i18n("Sort Ascending"), q);
+							i18n("Sort Alphabetically (A to Z)"), q);
 
         QAction *sortDescendingAction = new QAction(KIcon("view-sort-descending"), 
-							  i18n("Sort Descending"), q);  
+							  i18n("Sort Alphabetically (Z to A)"), q);  
 
 
         connect(model, SIGNAL(rowsInserted(QModelIndex, int, int)), q, SLOT(focusFavoritesView()));
