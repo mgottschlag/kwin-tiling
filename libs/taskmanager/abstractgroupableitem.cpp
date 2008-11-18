@@ -98,9 +98,9 @@ void AbstractGroupableItem::setParentGroup(const GroupPtr group)
 //Item is member of group
 bool AbstractGroupableItem::isGroupMember(const GroupPtr group) const
 {
-    kDebug();
+    //kDebug();
     if (!group) {
-        kDebug() << "Null Group Pointer";
+        //kDebug() << "Null Group Pointer";
         return false;
     }
 

@@ -68,7 +68,7 @@ void AlphaSortingStrategy::sortItems(ItemList &items)
             }
 
             //sort by programname not windowname
-            kDebug() << "inserting multi item" <<  item->task()->classClass();
+            //kDebug() << "inserting multi item" <<  item->task()->classClass();
             map.insertMulti(item->task()->classClass(), item);
         }
     }

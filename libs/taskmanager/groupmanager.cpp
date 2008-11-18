@@ -143,10 +143,10 @@ void GroupManagerPrivate::reloadTasks()
 
 void GroupManager::add(StartupPtr task)
 {
-    kDebug();
+    //kDebug();
     TaskItem *item;
     if (!d->startupList.contains(task)) {
-        item = new TaskItem(this,task);
+        item = new TaskItem(this, task);
         d->startupList.insert(task, item); 
         d->rootGroup->add(item);
     }
@@ -154,18 +154,18 @@ void GroupManager::add(StartupPtr task)
 
 void GroupManager::remove(StartupPtr task)
 {
-    kDebug() << "startup";
-    AbstractItemPtr item = d->startupList.take(task);
-    if (!item) {
-        kDebug() << "invalid item";
+    //kDebug() << "startup";
+    if (!d->startupList.contains(task)) {
+        kDebug() << "invalid startup task";
         return;
     }
 
+    AbstractItemPtr item = d->startupList.take(task);
     if (item->parentGroup()) {
         item->parentGroup()->remove(item);
     }
-    emit itemRemoved(item);
 
+    emit itemRemoved(item);
 }
 
 bool GroupManager::add(TaskPtr task)
@@ -180,17 +180,17 @@ bool GroupManager::add(TaskPtr task)
     // Go through all filters whether the task should be displayed or not
     bool show = true;
     if (!task->showInTaskbar()) {
-        kDebug() << "Do not show in taskbar";
+        //kDebug() << "Do not show in taskbar";
         show = false;
     }
 
     if (showOnlyCurrentDesktop() && !task->isOnCurrentDesktop()) {
-        kDebug() << "Not on this desktop and showOnlyCurrentDesktop";
+        //kDebug() << "Not on this desktop and showOnlyCurrentDesktop";
         show = false;
     }
 
     if (showOnlyCurrentScreen() && !task->isOnScreen(d->currentScreen)) {
-        kDebug() << "Not on this screen and showOnlyCurrentScreen";
+        //kDebug() << "Not on this screen and showOnlyCurrentScreen";
         show = false;
     }
 
@@ -201,7 +201,7 @@ bool GroupManager::add(TaskPtr task)
     NET::WindowType type = task->info().windowType(NET::NormalMask | NET::DialogMask |
                                                    NET::OverrideMask | NET::UtilityMask);
     if (type == NET::Utility) {
-        kDebug() << "skipping utility window" << task->name();
+        //kDebug() << "skipping utility window" << task->name();
         show = false;
     }
 
@@ -233,7 +233,7 @@ bool GroupManager::add(TaskPtr task)
         while (it.hasNext()) {
             it.next();
             if (it.key()->matchesWindow(task->window())) {
-                kDebug() << "startup task";
+                //kDebug() << "startup task";
                 item = it.value();
                 item->setTaskPointer(task);
                 it.remove();
@@ -242,7 +242,7 @@ bool GroupManager::add(TaskPtr task)
         }
 
         if (!item) {
-            item = new TaskItem(this,task);
+            item = new TaskItem(this, task);
         }
 
         connect(item, SIGNAL(destroyed()), this, SLOT(itemDestroyed()));
@@ -296,7 +296,7 @@ void GroupManagerPrivate::itemDestroyed()
 
 bool GroupManager::manualGroupingRequest(AbstractGroupableItem* item, TaskGroup* groupItem)
 {
-    kDebug();
+    //kDebug();
     if (d->abstractGroupingStrategy) {
         return d->abstractGroupingStrategy->addItemToGroup(item, groupItem);
     //    kDebug() << d->abstractGroupingStrategy->type() << ManualGrouping;
@@ -310,7 +310,7 @@ bool GroupManager::manualGroupingRequest(AbstractGroupableItem* item, TaskGroup*
 
 bool GroupManager::manualGroupingRequest(ItemList items)
 {
-    kDebug();
+    // kDebug();
     if (d->abstractGroupingStrategy) {
      //   kDebug() << d->abstractGroupingStrategy->type() << ManualGrouping;
         if (d->abstractGroupingStrategy->type() == ManualGrouping) {
@@ -323,7 +323,7 @@ bool GroupManager::manualGroupingRequest(ItemList items)
 
 bool GroupManager::manualSortingRequest(AbstractGroupableItem* taskItem, int newIndex)
 {
-    kDebug();
+    //kDebug();
     if (d->abstractSortingStrategy) {
         if (d->abstractSortingStrategy->type() == ManualSorting) {
             return (qobject_cast<ManualSortingStrategy*>(d->abstractSortingStrategy))->moveItem(taskItem, newIndex);
@@ -341,7 +341,7 @@ GroupPtr GroupManager::rootGroup() const
 
 void GroupManagerPrivate::currentDesktopChanged(int newDesktop)
 {
-    kDebug();
+    //kDebug();
     if (!showOnlyCurrentDesktop) {
         return;
     }
@@ -360,7 +360,7 @@ void GroupManagerPrivate::currentDesktopChanged(int newDesktop)
 
 void GroupManagerPrivate::taskChanged(TaskPtr task, ::TaskManager::TaskChanges changes)
 {
-    kDebug();
+    //kDebug();
     bool takeAction = false;
     bool show = true;
 
@@ -487,7 +487,7 @@ void GroupManager::setFullLimit(int limit)
 
 void GroupManagerPrivate::checkIfFull()
 {
-    ////kDebug();
+    //kDebug();
     if (!q->onlyGroupWhenFull()) {
         return;
     }

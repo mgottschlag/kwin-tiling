@@ -65,7 +65,7 @@ TaskGroup::TaskGroup(GroupManager *parent,QString name, QColor color)
     d->groupColor = color;
     d->groupIcon = KIcon("xorg");
     connect(this, SLOT(editRequest()), this, SIGNAL(groupEditRequest()));
-    kDebug() << "Group Created: Name: " << d->groupName << "Color: " << d->groupColor;
+    //kDebug() << "Group Created: Name: " << d->groupName << "Color: " << d->groupColor;
 }
 
 TaskGroup::TaskGroup(GroupManager *parent)
@@ -77,13 +77,13 @@ TaskGroup::TaskGroup(GroupManager *parent)
     d->groupColor = Qt::red;
     d->groupIcon = KIcon("xorg");
     connect(this, SLOT(editRequest()), this, SIGNAL(groupEditRequest()));
-    kDebug() << "Group Created: Name: " << d->groupName << "Color: " << d->groupColor;
+    //kDebug() << "Group Created: Name: " << d->groupName << "Color: " << d->groupColor;
 }
 
 
 TaskGroup::~TaskGroup()
 {
-    kDebug() << name();
+    //kDebug() << name();
     delete d;
 }
 
@@ -129,12 +129,14 @@ void TaskGroup::remove(AbstractItemPtr item)
 {
     Q_ASSERT(item);
 
+    /*
     if (item->isGroupItem()) {
         kDebug() << "Remove group" << (dynamic_cast<TaskGroup*>(item))->name();
     } else if ((dynamic_cast<TaskItem*>(item))->task()) {
         kDebug() << "Remove item" << (dynamic_cast<TaskItem*>(item))->task()->visibleName();
     }
     kDebug() << "from Group: " << name();
+    */
 
    /* kDebug() << "GroupMembers: ";
     foreach (AbstractGroupableItem *item, d->members) {
@@ -228,7 +230,7 @@ bool TaskGroup::hasDirectMember(AbstractItemPtr item) const
 /** true if item is in this or any sub group */
 bool TaskGroup::hasMember(AbstractItemPtr item) const
 {
-    kDebug();
+    //kDebug();
     TaskGroup *group = item->parentGroup();
     while (group) {
         if (group == this) {
@@ -484,7 +486,7 @@ bool TaskGroup::moveItem(int oldIndex, int newIndex)
 
     AbstractItemPtr item = d->members.at(oldIndex);
     d->members.move(oldIndex, newIndex);
-    kDebug() << "new index " << d->members.indexOf(item);
+    //kDebug() << "new index " << d->members.indexOf(item);
     emit itemPositionChanged(item);
     return true;
 }

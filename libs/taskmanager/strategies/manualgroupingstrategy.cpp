@@ -122,7 +122,7 @@ void ManualGroupingStrategy::removeGroup()
 
 void ManualGroupingStrategy::unprotectGroup(TaskGroup *group)
 {
-    kDebug() << group->name() << d->protectedGroups.count(group);
+    //kDebug() << group->name() << d->protectedGroups.count(group);
     d->protectedGroups.removeOne(group);
     if (group->members().isEmpty()) {
         closeGroup(group);//check if group is needed anymore
@@ -131,27 +131,27 @@ void ManualGroupingStrategy::unprotectGroup(TaskGroup *group)
 
 void ManualGroupingStrategy::protectGroup(TaskGroup *group)
 {
-    kDebug() << group->name();
+    //kDebug() << group->name();
     d->protectedGroups.append(group);
 }
 
 //Check if the item was previously manually grouped
 void ManualGroupingStrategy::handleItem(AbstractItemPtr item)
 {
-    kDebug();
+    //kDebug();
     if (d->currentTemplate) { //TODO this won't work over sessions because the task is identified by the pointer (maybe the name without the current status would work), one way would be to store the items per name if the session is closed and load them per name on startup but use the pointer otherwise because of changing names of browsers etc
         TaskGroupTemplate *templateGroup = d->currentTemplate;
-        kDebug() << templateGroup->name();
+        //kDebug() << templateGroup->name();
         if (templateGroup->hasMember(item)) { 
-            kDebug() << "item found in template tree";
+            //kDebug() << "item found in template tree";
             while(!templateGroup->hasDirectMember(item)) {//Create tree of groups if not already existing
-                kDebug() << "Creating group tree";
+                //kDebug() << "Creating group tree";
                 TaskGroupTemplate *oldTemplateGroup = templateGroup;
                 AbstractGroupableItem *templateItem = templateGroup->directMember(item);
                 if (templateItem->isGroupItem()) {
                     templateGroup = dynamic_cast<TaskGroupTemplate*>(templateItem);
                 } else {
-                    kDebug() << "Error no template Found";
+                    //kDebug() << "Error no template Found";
                 }
                 if (templateGroup->group()) {
                     oldTemplateGroup->group()->add(templateGroup->group()); //add group to parent Group
@@ -162,11 +162,11 @@ void ManualGroupingStrategy::handleItem(AbstractItemPtr item)
                 }
             }
 
-            kDebug() << "Item added to group: " << templateGroup->name();
+            //kDebug() << "Item added to group: " << templateGroup->name();
             templateGroup->group()->add(item);
             templateGroup->remove(item);
         } else {
-            kDebug() << "Item not in templates";
+            //kDebug() << "Item not in templates";
             d->groupManager->rootGroup()->add(item);
         }
     } else {
@@ -183,7 +183,7 @@ TaskGroupTemplate *ManualGroupingStrategy::createDuplication(TaskGroup *group)
 
 void ManualGroupingStrategy::desktopChanged(int newDesktop)
 {
-    kDebug() << "old: " << d->oldDesktop << "new: " << newDesktop;
+    //kDebug() << "old: " << d->oldDesktop << "new: " << newDesktop;
     if (d->oldDesktop == newDesktop) {
         return;
     }
@@ -192,11 +192,11 @@ void ManualGroupingStrategy::desktopChanged(int newDesktop)
     if (d->currentTemplate) {
         d->currentTemplate->clear();
     }
-    kDebug();
+    //kDebug();
     TaskGroupTemplate *group = createDuplication(d->groupManager->rootGroup());
     d->templateTrees.insert(d->oldDesktop, group); 
     if (d->templateTrees.contains(newDesktop)) {
-        kDebug() << "Template found";
+        //kDebug() << "Template found";
         d->currentTemplate = d->templateTrees.value(newDesktop);
         connect (d->currentTemplate, SIGNAL(destroyed()), this, SLOT(resetCurrentTemplate()));
     } else {
@@ -209,14 +209,14 @@ void ManualGroupingStrategy::desktopChanged(int newDesktop)
 //This function makes sure that if the rootGroup template already got deleted nobody tries to access it again
 void ManualGroupingStrategy::resetCurrentTemplate()
 {
-    kDebug();
+    //kDebug();
     d->currentTemplate = 0;
 }
 
 //The group was moved to another desktop, we have to move it to the rootTree of newDesk
 void ManualGroupingStrategy::groupChangedDesktop(int newDesktop)
 {
-    kDebug();
+    //kDebug();
     TaskGroup *group = qobject_cast<TaskGroup*>(sender());
     if (!group) {
         return;
@@ -229,10 +229,10 @@ void ManualGroupingStrategy::groupChangedDesktop(int newDesktop)
     TaskGroupTemplate *templateGroup;
 if (newDesktop) {
     if (d->templateTrees.contains(newDesktop)) {
-        kDebug() << "Template found";
+        //kDebug() << "Template found";
         templateGroup = d->templateTrees.value(newDesktop);
     } else {
-        kDebug() << "No Template found";
+        //kDebug() << "No Template found";
         templateGroup = new TaskGroupTemplate(this, 0);
         templateGroup->setGroup(d->groupManager->rootGroup());
         d->templateTrees.insert(newDesktop, templateGroup);
@@ -241,13 +241,13 @@ if (newDesktop) {
 } else {
     for (int i = 1; i <= TaskManager::self()->numberOfDesktops(); i++) {
         if (d->templateTrees.contains(newDesktop)) {
-            kDebug() << "Template found";
+            //kDebug() << "Template found";
             templateGroup = d->templateTrees.value(newDesktop);
             if (templateGroup->hasMember(group)) {
                 continue;
             }
         } else {
-            kDebug() << "No Template found";
+            //kDebug() << "No Template found";
             templateGroup = new TaskGroupTemplate(this, 0);
             templateGroup->setGroup(d->groupManager->rootGroup());
             d->templateTrees.insert(newDesktop, templateGroup);
@@ -260,7 +260,7 @@ if (newDesktop) {
 
 bool ManualGroupingStrategy::groupItems(ItemList items)
 {
-    kDebug();
+    //kDebug();
     TaskGroup *group = createGroup(items);
     connect(group, SIGNAL(movedToDesktop(int)), this, SLOT(groupChangedDesktop(int)));
     setName(nameSuggestions(group).first(), group);
@@ -271,12 +271,12 @@ bool ManualGroupingStrategy::groupItems(ItemList items)
 
 void ManualGroupingStrategy::closeGroup(TaskGroup *group)
 {
-    kDebug();
+    //kDebug();
     if (!d->protectedGroups.contains(group)) {
         AbstractGroupingStrategy::closeGroup(group);
     } else if (group->parentGroup()) {
         group->parentGroup()->remove(group);
-        kDebug() << "Group protected";
+        //kDebug() << "Group protected";
     }
 }
 
@@ -315,7 +315,7 @@ TaskGroupTemplate::TaskGroupTemplate(ManualGroupingStrategy *parent, TaskGroup *
             //We don't use TaskGroup::add because this would inform the tasks about the change of the group
             //and we use the taskgroup just as a temporary container
             if (item->isGroupItem()) {
-                kDebug() << "GroupItem Duplication";
+                //kDebug() << "GroupItem Duplication";
                 TaskGroupTemplate *createdDuplication = new TaskGroupTemplate(parent, dynamic_cast<TaskGroup*>(item));
                 add(createdDuplication);
             } else {
@@ -323,7 +323,7 @@ TaskGroupTemplate::TaskGroupTemplate(ManualGroupingStrategy *parent, TaskGroup *
             }
         }
     }
-    kDebug() << "TemplateGroup Created: Name: " << d->name << "Color: " << d->color;
+    //kDebug() << "TemplateGroup Created: Name: " << d->name << "Color: " << d->color;
 }
 
 TaskGroupTemplate::~TaskGroupTemplate()
@@ -331,7 +331,7 @@ TaskGroupTemplate::~TaskGroupTemplate()
     emit unprotectGroup(group());
     emit destroyed(this);
     //clear();
-    kDebug() << name();
+    //kDebug() << name();
     delete d;
 }
 
@@ -451,7 +451,7 @@ bool TaskGroupTemplate::hasDirectMember(AbstractItemPtr item) const
 /** true if item is in this or any sub group */
 bool TaskGroupTemplate::hasMember(AbstractItemPtr item) const
 {
-    kDebug();
+    //kDebug();
     if (members().contains(item)) {
         return true;
     }
@@ -478,7 +478,7 @@ AbstractItemPtr TaskGroupTemplate::directMember(AbstractItemPtr item) const
         while (iterator != members().constEnd()) {
             if ((*iterator)->isGroupItem()) {
                 if ((dynamic_cast<TaskGroupTemplate*>(*iterator))->hasMember(item)) {
-                    kDebug() << "item found";
+                    //kDebug() << "item found";
                     return (*iterator);
                 }
             } 
@@ -499,7 +499,7 @@ TaskGroupTemplate *TaskGroupTemplate::findParentGroup(AbstractItemPtr item) cons
             if ((*iterator)->isGroupItem()) {
                 TaskGroupTemplate *returnedGroup = (dynamic_cast<TaskGroupTemplate*>(*iterator))->findParentGroup(item);
                 if (returnedGroup) {
-                    kDebug() << "item found";
+                    //kDebug() << "item found";
                     return returnedGroup;
                 }
             }
@@ -516,7 +516,7 @@ void TaskGroupTemplate::itemDestroyed(AbstractGroupableItem *item)
         kDebug() << "Error";
         return;
     }
-    kDebug() << d->group->name(); 
+    //kDebug() << d->group->name(); 
     /**
     * The following code is needed in case one creates a group on desktop 1 with a task which is on multiple * * desktops. If this task gets closed on another desktop as last task in the group the empty group is still * stored in the template and therefore all attributes (name, color, ..) stay reserved
     */

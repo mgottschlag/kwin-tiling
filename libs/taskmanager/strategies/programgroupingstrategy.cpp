@@ -126,20 +126,20 @@ void ProgramGroupingStrategy::handleItem(AbstractItemPtr item)
 
     TaskItem *task = dynamic_cast<TaskItem*>(item);
     if (task && !programGrouping(task, d->groupManager->rootGroup())) {
-        kDebug() << "joined rootGroup ";
+        //kDebug() << "joined rootGroup ";
         d->groupManager->rootGroup()->add(item);
     }
 }
 
 bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* groupItem)
 {
-    kDebug();
+    //kDebug();
     QHash <QString,AbstractItemPtr> itemMap;
 
     foreach (AbstractItemPtr item, groupItem->members()) { //search for an existing group
         if (item->isGroupItem()) { //maybe add the condition that the subgroup was created by programGrouping
             if (programGrouping(taskItem, static_cast<TaskGroup*>(item))) {
-                kDebug() << "joined subGroup";
+                //kDebug() << "joined subGroup";
                 return true;
             }
         } else {
@@ -157,11 +157,11 @@ bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* gro
 
     QString name = taskItem->task()->classClass();
     if (itemMap.count(name) >= groupItem->members().count()) { //join this group
-        kDebug() << "joined this Group";
+        //kDebug() << "joined this Group";
         groupItem->add(taskItem);
         return true;
     } else if (itemMap.count(name) >= 2) { //create new subgroup with at least 2 other task
-        kDebug() << "create Group";
+        //kDebug() << "create Group";
         QIcon icon = taskItem->task()->icon();
         QList <AbstractItemPtr> list(itemMap.values(name));
         TaskGroup* group = createGroup(list);
