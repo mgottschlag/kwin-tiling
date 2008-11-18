@@ -3,6 +3,9 @@ libplasma 3.0 / KDE 4.2
 
 libplasma
 ---------
+* Build
+    * libplasma has moved to kdelibs from kdebase-workspace and as such there is no longer a need to use FindPlasma.cmake. FindKDE4 now provides all the necessary plasma CMake bits needed, and using libplasma does not create a kdebase-workspace dependency for your application anymore.
+
 * Features
     * Symbol Versioning: limit loading of plugins to those that match the libplasma version
     * NEW: ToolTipManager for Plasma style tooltips
@@ -52,6 +55,8 @@ libplasma
       fixes dragging lock
     * Dramatically fewer full paints by properly watching the exposed rect area, which for full screen Containments or large/complex Applets is quite significant in terms of performance
     * Fix on-exit crashes related to focus handling issues in QGraphicsView
+    * Prevention of premature calls to Applet::constraintsEvent
+    * Numerous crash fixes pushed upstream to QGraphicsView as well (focus resetting, scene queries on deletion..)
 
 Developer Documentation
 -----------------------
@@ -70,9 +75,17 @@ Desktop Theme
 * NEW: widgets/frame for theming Plasma::Frame used also in other widgets
 * NEW: widgets/scrollbars to theme Plasma::ScrollBar and views scrollbars in libplasma
 * NEW: widgets/configuration-icons: little icons used for configuration purposes across Plasma
-* NEW: color role for buttons text and background
-* NEW: Plasma::Slider follows theme
-* NEW: Applet handle all svg-themed
+* NEW: widgets/extender-background, widgets/extender-dragger: SVGs for new Extender widget
+* NEW: widgets/tooltip: tooltip SVGa
+* NEW: widgets/calendar
+* NEW: widgets/containment-controls: icons and buttons for sizing panels and other containment tasks
+* NEW: widgets/monitor: monitor for use in displaying mockups of on-screen content
+* NEW: widget/glowbar: a glow for use by offscreen panels to indicate their location
+* NEW: dialogs/kickoff: theming for the kickoff launcher menu
+* color roles for buttons text and background added
+* Plasma::Slider follows theme
+* Applet handle all svg-themed
+* The default Oxygen desktop theme radically improved across the board
 
 Plasma Desktop Shell
 --------------------
