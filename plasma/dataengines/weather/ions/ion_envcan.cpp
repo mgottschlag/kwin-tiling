@@ -1296,7 +1296,7 @@ void EnvCanadaIon::updateWeather(const QString& source)
     } else {
         conditionList["decreasing cloud"] = FewCloudsDay;
         conditionList["mostly cloudy"] = PartlyCloudyDay;
-        conditionList["partly cloidy"] = PartlyCloudyDay;
+        conditionList["partly cloudy"] = PartlyCloudyDay;
         conditionList["fair"] = FewCloudsDay;
     }
 
