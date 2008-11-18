@@ -154,14 +154,15 @@ void LayoutWidget::update()
 int LayoutWidget::size()
 {
     int groupSize = 0;
-    TaskGroupItem *group;
+
     foreach (AbstractTaskItem *item, m_groupItem->memberList()) {
         if (!item->abstractItem()) { //this item is a startup task
             kDebug() << "Error, invalid item in groupMembers";
             continue;
         }
+
         if (item->abstractItem()->isGroupItem()) {
-           group = static_cast<TaskGroupItem*>(item);
+            TaskGroupItem *group = static_cast<TaskGroupItem*>(item);
             if (!group->collapsed()) { 
                 LayoutWidget *layout = dynamic_cast<LayoutWidget*>(group->layoutWidget());
                 if (!layout) {
@@ -174,6 +175,7 @@ int LayoutWidget::size()
         }
         groupSize++;
     }
+
     //kDebug() << "group size" << groupSize;
     return groupSize;
 }

@@ -292,13 +292,9 @@ void Tasks::constraintsEvent(Plasma::Constraints constraints)
 Plasma::FrameSvg* Tasks::itemBackground()
 {
     if (!m_taskItemBackground) {
-        QString tasksThemePath = Plasma::Theme::defaultTheme()->imagePath("widgets/tasks");
-
-        if (!tasksThemePath.isEmpty()) {
-            m_taskItemBackground = new Plasma::FrameSvg(this);
-            m_taskItemBackground->setImagePath(tasksThemePath);
-            m_taskItemBackground->setCacheAllRenderedFrames(true);
-        }
+        m_taskItemBackground = new Plasma::FrameSvg(this);
+        m_taskItemBackground->setImagePath("widgets/tasks");
+        m_taskItemBackground->setCacheAllRenderedFrames(true);
     }
 
     return m_taskItemBackground;

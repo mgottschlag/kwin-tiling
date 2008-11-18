@@ -309,6 +309,10 @@ void AbstractTaskItem::syncActiveRect()
 {
     Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
 
+    if (!itemBackground) {
+        return;
+    }
+
     itemBackground->setElementPrefix("normal");
 
     qreal left, top, right, bottom;
@@ -338,10 +342,13 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     */
     Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
 
+    if (!itemBackground) {
+        return;
+    }
+
     //if the size is changed have to resize all the elements
     if (itemBackground->size() != size().toSize() && itemBackground->size() != m_activeRect.size().toSize()) {
         syncActiveRect();
-        Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
 
         itemBackground->setElementPrefix("focus");
         m_applet->resizeItemBackground(m_activeRect.size().toSize());
@@ -437,15 +444,17 @@ void AbstractTaskItem::drawTask(QPainter *painter, const QStyleOptionGraphicsIte
     if (groupItem) {
         QFont font(KGlobalSettings::smallestReadableFont());
         QFontMetrics fm(font);
-
         QRectF rect(expanderRect(bounds));
-        QSizeF arrowSize(m_applet->itemBackground()->elementSize(expanderElement()));
-        QRectF arrowRect(rect.center()-QPointF(arrowSize.width()/2, arrowSize.height()+fm.xHeight()), arrowSize);
 
-        m_applet->itemBackground()->paint(painter, arrowRect, expanderElement());
+        Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
+
+        if (itemBackground) {
+            QSizeF arrowSize(itemBackground->elementSize(expanderElement()));
+            QRectF arrowRect(rect.center()-QPointF(arrowSize.width()/2, arrowSize.height()+fm.xHeight()), arrowSize);
+            itemBackground->paint(painter, arrowRect, expanderElement());
+        }
 
         painter->setFont(font);
-
         painter->drawText(rect, Qt::AlignCenter, QString::number(groupItem->memberList().count()));
     }
 }
@@ -685,8 +694,10 @@ QRectF AbstractTaskItem::expanderRect(const QRectF &bounds) const
     }
 
     QFontMetrics fm(KGlobalSettings::smallestReadableFont());
+    Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
+
     QSize expanderSize(qMax(fm.width(QString::number(groupItem->memberList().count())),
-                            m_applet->itemBackground()->elementSize(expanderElement()).width()),
+                       itemBackground ?  m_applet->itemBackground()->elementSize(expanderElement()).width() : 0),
                        size().height());
 
     return QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignRight | Qt::AlignVCenter,
@@ -720,7 +731,7 @@ QColor AbstractTaskItem::textColor() const
     Plasma::Theme *theme = Plasma::Theme::defaultTheme();
 
     if ((m_oldBackgroundPrefix == "attention" || m_backgroundPrefix == "attention") &&
-        m_applet->itemBackground()->hasElement("hint-attention-button-color")) {
+        m_applet->itemBackground() && m_applet->itemBackground()->hasElement("hint-attention-button-color")) {
         if (!m_animId && m_backgroundPrefix != "attention") {
             color = theme->color(Plasma::Theme::TextColor);
         } else if (!m_animId) {
