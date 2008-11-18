@@ -1048,6 +1048,7 @@ void EnvCanadaIon::parseShortForecast(WeatherData::ForecastInfo *forecast, QXmlS
                      forecastList["chance of flurries at times heavy"] = ChanceSnowNight;
 		     forecastList["chance of showers or drizzle"] = ChanceShowersNight;
                      forecastList["chance of showers"] = ChanceShowersNight;
+                     forecastList["clearing"] = ClearNight;
                 } else {
 	             forecastList["a few clouds"] = FewCloudsDay;
                      forecastList["cloudy periods"] = PartlyCloudyDay;
@@ -1059,6 +1060,7 @@ void EnvCanadaIon::parseShortForecast(WeatherData::ForecastInfo *forecast, QXmlS
                      forecastList["chance of flurries at times heavy"] = ChanceSnowDay;
 		     forecastList["chance of showers or drizzle"] = ChanceShowersDay;
                      forecastList["chance of showers"] = ChanceShowersDay;
+                     forecastList["clearing"] = ClearDay;
                 }
                     forecast->shortForecast = shortText;
                     forecast->iconName = getWeatherIcon(forecastList, shortText.toLower());
