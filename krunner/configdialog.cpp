@@ -49,21 +49,21 @@ KRunnerConfigDialog::KRunnerConfigDialog(Plasma::RunnerManager *manager, QWidget
     QTabWidget *m_tab = new QTabWidget(this);
     setMainWidget(m_tab);
 
-    QWidget *m_generalSettings = new QWidget(this);
-    QVBoxLayout *genLayout = new QVBoxLayout();
-    QGroupBox *grp = new QGroupBox(i18n("Display"), m_generalSettings);
+    m_sel = new KPluginSelector(m_tab);
+    m_tab->addTab(m_sel, i18n("Plugins"));
 
-    QVBoxLayout *displayLayout = new QVBoxLayout();
-    QHBoxLayout *dispButtonLayout = new QHBoxLayout();
-    QButtonGroup *displayButtons = new QButtonGroup(this);
+    QWidget *m_generalSettings = new QWidget(this);
+    QVBoxLayout *genLayout = new QVBoxLayout(m_generalSettings);
+
 
     m_interfaceType = KRunnerSettings::interface();
+    QRadioButton *commandButton = new QRadioButton(i18n("Command oriented"), m_generalSettings);
+    QRadioButton *taskButton = new QRadioButton(i18n("Task oriented"), m_generalSettings);
 
-    QRadioButton *commandButton = new QRadioButton(i18n("Command oriented"), grp);
-    QRadioButton *taskButton = new QRadioButton(i18n("Task oriented"), grp);
-
+    QButtonGroup *displayButtons = new QButtonGroup(m_generalSettings);
     displayButtons->addButton(commandButton, KRunnerSettings::EnumInterface::CommandOriented);
     displayButtons->addButton(taskButton, KRunnerSettings::EnumInterface::TaskOriented);
+    connect(displayButtons, SIGNAL(buttonClicked(int)), this, SLOT(setInterface(int)));
 
     if (m_interfaceType == KRunnerSettings::EnumInterface::CommandOriented) {
         commandButton->setChecked(true);
@@ -71,26 +71,18 @@ KRunnerConfigDialog::KRunnerConfigDialog(Plasma::RunnerManager *manager, QWidget
         taskButton->setChecked(true);
     }
 
-    connect(displayButtons, SIGNAL(buttonClicked(int)), this, SLOT(setInterface(int)));
 
     QPushButton *previewButton = new QPushButton(i18n("Preview"), m_generalSettings);
-    dispButtonLayout->addWidget(commandButton);
-    dispButtonLayout->addWidget(taskButton);
-    displayLayout->addLayout(dispButtonLayout);
-    displayLayout->addWidget(previewButton);
-    grp->setLayout(displayLayout);
-
-    genLayout->addWidget(grp);
-    genLayout->addStretch();
-    m_generalSettings->setLayout(genLayout);
-    m_tab->addTab(m_generalSettings, i18n("General Settings"));
-
     connect(previewButton, SIGNAL(clicked()), this, SLOT(previewInterface()));
 
-    m_sel = new KPluginSelector(m_tab);
-    m_tab->addTab(m_sel, i18n("Plugins"));
-    setInitialSize(QSize(400, 500));
+    genLayout->addWidget(commandButton);
+    genLayout->addWidget(taskButton);
+    genLayout->addWidget(previewButton);
+    genLayout->addStretch();
 
+    m_tab->addTab(m_generalSettings, i18n("User Interface"));
+
+    setInitialSize(QSize(400, 500));
     setWindowTitle(i18n("KRunner Settings"));
 
     connect(m_sel, SIGNAL(configCommitted(const QByteArray&)), this, SLOT(updateRunner(const QByteArray&)));
