@@ -132,12 +132,20 @@ KRunnerApp::KRunnerApp(Display *display, Qt::HANDLE visual, Qt::HANDLE colormap)
       m_startupId(NULL)
 {
     initialize();
+    connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanUp()));
 }
 
 KRunnerApp::~KRunnerApp()
 {
+}
+
+void KRunnerApp::cleanUp()
+{
+    disconnect(KRunnerSettings::self(), SIGNAL(configChanged()), this, SLOT(reloadConfig()));
     delete m_interface;
+    m_interface = 0;
     delete m_runnerManager;
+    m_runnerManager = 0;
 }
 
 void KRunnerApp::initialize()

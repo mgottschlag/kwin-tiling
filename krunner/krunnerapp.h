@@ -93,6 +93,7 @@ private slots:
      */
     void taskDialogFinished();
     void reloadConfig();
+    void cleanUp();
 
 private:
     KRunnerApp(Display *display, Qt::HANDLE visual = 0, Qt::HANDLE colormap = 0);
