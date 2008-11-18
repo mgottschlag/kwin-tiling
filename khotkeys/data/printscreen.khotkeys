@@ -3,6 +3,7 @@ DataCount=1
 
 [Data_1]
 Comment=This group contains actions that are set up by default.
+Comment[be@latin]=Hety hurt źmiaščaje zmoŭčana ŭklučanyja aperacyi.
 Comment[bg]=Тази група съдържа действия, които са зададени по подразбирани.
 Comment[ca]=Aquest grup conté accions que estan configurades per omissió.
 Comment[da]=Denne gruppe indeholder handlinger som er sat op som standard.
@@ -130,6 +131,7 @@ ConditionsCount=0
 
 [Data_1_1]
 Comment=Launches KSnapShot when PrintScrn is pressed.
+Comment[be@latin]=Uklučaje prahramu „KSnapShot” pa nacisku klavišy „PrintScrn”.
 Comment[bg]=Стартиране на KSnapShot при натискане на клавиша "PrintScrn"
 Comment[bn_IN]=PrintScrn টেপা হলে KSnapShot আরম্ভ করা হবে
 Comment[ca]=Executa el KSnapShot quan es prem ImprPant.

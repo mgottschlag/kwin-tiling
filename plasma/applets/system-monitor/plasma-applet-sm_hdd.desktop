@@ -1,7 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=System Monitor - Hard Disk
+Name[be@latin]=Systemny nazirańnik - ćviordy dysk
 Name[ca]=Controlador del sistema - Disc dur
+Name[de]=Systemmonitor - Festplatte
 Name[el]=Επόπτης συστήματος - σκληρός δίσκος
 Name[gl]=Vixiante do sistema - Disco duro
 Name[gu]=સિસ્ટમ દેખરેખ - હાર્ડ ડિસ્ક
@@ -22,7 +24,9 @@ Name[uk]=Монітор системи — Жорсткий диск
 Name[x-test]=xxSystem Monitor - Hard Diskxx
 Name[zh_TW]=系統監視器─硬碟
 Comment=A hard disk usage monitor
+Comment[be@latin]=Nazirańnik zaniataści ćviordaha dysku
 Comment[ca]=Un controlador d'ús del disc dur
+Comment[de]=Ein Überwachungsmonitor für Festplatten
 Comment[el]=Ένας επόπτης χρήσης του σκληρού δίσκου
 Comment[gl]=Un vixiante do uso do disco duro
 Comment[gu]=હાર્ડ ડિસ્ક વપરાશ દેખરેખ

@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=Now Playing
+Name[be@latin]=Ciapier hraje
 Name[ca]=Ara està en reproducció
+Name[de]=Musiktitel-Anzeige
 Name[el]=Αναπαράγεται τώρα
 Name[gl]=A reproducir
 Name[gu]=અત્યારે વગાડે છે
@@ -25,6 +27,7 @@ Name[x-test]=xxNow Playingxx
 Name[zh_TW]=現正播放
 
 Comment=Lists currently playing music
+Comment[be@latin]=Pakazvaje muzyku, jakuju ciapier hraje systema
 Comment[ca]=Llista la música que s'està reproduint actualment
 Comment[cs]=Vypíše aktuálně přehrávanou hudbu
 Comment[da]=Lister musik som aktuelt afspilles

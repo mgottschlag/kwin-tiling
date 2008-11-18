@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Nepomuk Desktop Search Runner
 Name[ca]=Execució de cerques d'escriptori del Nepomuk
+Name[de]=Nepomuk-Desktopsuche
 Name[el]=Εκτελεστής αναζήτησης επιφάνειας εργασίας Nepomuk
 Name[gu]=નેપોમુક ડેસ્કટોપ શોધ ચલાવનાર
 Name[kk]=Nepomuk іздеу жегкіші
@@ -16,6 +17,7 @@ Name[x-test]=xxNepomuk Desktop Search Runnerxx
 Name[zh_TW]=Nepomuk 桌面搜尋執行器
 Comment=KRunner which performs desktop searches via Nepomuk
 Comment[ca]=El KRunner executa cerques d'escriptori via el Nepomuk
+Comment[de]=Starter, der eine Desktopsuche mit Nepomuk ausführt.
 Comment[el]=KRunner που εκτελεί αναζητήσεις επιφάνειας εργασίας μέσω του Nepomuk
 Comment[gu]=KRunner જે નેપોમુક વડે ડેસ્કટોપ શોધ કરે છે
 Comment[kk]=Nepomuk арқылы іздеуді орындайтын KRunner бағдарламасы

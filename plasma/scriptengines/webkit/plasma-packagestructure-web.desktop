@@ -2,6 +2,7 @@
 Name=Web Widgets
 Name[be@latin]=Sieciŭnyja widžety
 Name[ca]=Estris web
+Name[de]=Web-Miniprogramme
 Name[el]=Συστατικά ιστού
 Name[gl]=Widgets web
 Name[gu]=વેબ વિજેટ્સ
@@ -23,6 +24,7 @@ Name[zh_TW]=網頁元件
 Comment=HTML widget
 Comment[be@latin]=Widžet HTML
 Comment[ca]=Estri HTML
+Comment[de]=HTML-Miniprogramme
 Comment[el]=Συστατικό HTML
 Comment[gl]=Widget HTML
 Comment[gu]=HTML વિજેટ

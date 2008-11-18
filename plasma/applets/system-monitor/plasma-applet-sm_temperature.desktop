@@ -1,7 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=System Monitor - Temperature
+Name[be@latin]=Systemny nazirańnik - temperatura
 Name[ca]=Controlador del sistema - Temperatura
+Name[de]=Systemmonitor - Temperatur
 Name[el]=Επόπτης συστήματος - θερμοκρασία
 Name[gl]=Vixiante do sistema - Temperatura
 Name[gu]=સિસ્ટમ મોનિટર - તાપમાન
@@ -22,7 +24,9 @@ Name[uk]=Монітор системи — Температура
 Name[x-test]=xxSystem Monitor - Temperaturexx
 Name[zh_TW]=系統監視器─溫度
 Comment=A system temperature monitor
+Comment[be@latin]=Nazirańnik za temperaturaju systemy
 Comment[ca]=Un controlador de la temperatura del sistema
+Comment[de]=Ein Überwachungsmonitor für Temperatursensoren
 Comment[el]=Ένας επόπτης θερμοκρασίας του συστήματος
 Comment[gl]=Un vixiante da temperatura do sistema
 Comment[gu]=સિસ્ટમ તાપમાન દેખરેખ

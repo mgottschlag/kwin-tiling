@@ -6,7 +6,7 @@ Comment=Basic Konqueror gestures.
 Comment[af]=Basiese Konqueror Gebare
 Comment[ar]=حركات كونكيورر الأساسية
 Comment[be]=Базавые жэсты Konqueror
-Comment[be@latin]=Базавые жэсты Konqueror
+Comment[be@latin]=Prostyja žesty dla prahramy „Konqueror”.
 Comment[bg]=Основни жестове в Konqueror.
 Comment[ca]=Gestos bàsics del Konqueror.
 Comment[cs]=Základní gesta Konqueroru
@@ -72,7 +72,7 @@ Name=Konqueror Gestures
 Name[af]=Konqueror gebare
 Name[ar]=حركات كونكيورر
 Name[be]=Жэсты Konqueror
-Name[be@latin]=Жэсты Konqueror
+Name[be@latin]=Žesty prahramy „Konqueror”
 Name[bg]=Жестове в Konqueror
 Name[ca]=Gestos de Konqueror
 Name[cs]=Gesta Konqueroru
@@ -255,6 +255,7 @@ WindowTypes=1
 [Data_1_1]
 Comment=Press, move left, release.
 Comment[af]=Kliek, skuif links, los
+Comment[be@latin]=Pryciśni, pasuń uleva j adciśni.
 Comment[bg]=Натискане, движение наляво, пускане.
 Comment[ca]=Premeu, moveu a l'esquerra, deixeu anar.
 Comment[csb]=Wcësni, przësënié w lewò, pùszczë
@@ -902,6 +903,7 @@ Type=GESTURE
 
 [Data_1_13]
 Comment=Press, move up, move right, release.
+Comment[be@latin]=Pryciśni, pasuń uvierch, pasuń uprava j adciśni.
 Comment[bg]=Натискане, движение нагоре, движение надясно, пускане.
 Comment[ca]=Premeu, moveu amunt, moveu a la dreta, deixeu anar.
 Comment[da]=Tryk, bevæg op, bevæg til højre, slip.
@@ -1079,6 +1081,7 @@ Type=GESTURE
 
 [Data_1_14]
 Comment=Press, move up, move left, release.
+Comment[be@latin]=Pryciśni, pasuń uvierch, pasuń uleva j adciśni.
 Comment[bg]=Натискане, движение нагоре, движение наляво, пускане.
 Comment[ca]=Premeu, moveu amunt, moveu a l'esquerra, deixeu anar.
 Comment[da]=Tryk, bevæg op, bevæg til venstre, slip.
@@ -1315,6 +1318,7 @@ Type=GESTURE
 
 [Data_1_2]
 Comment=Press, move down, move up, move down, release.
+Comment[be@latin]=Pryciśni, pasuń uniz, pasuń uvierch, pasuń uniz i adciśni.
 Comment[bg]=Натискане, движение надолу, движение нагоре, движение надолу, пускане.
 Comment[ca]=Premeu, moveu avall, moveu amunt, moveu avall, deixeu anar.
 Comment[da]=Tryk, bevæg ned, bevæg op, bevæg ned, slip.
@@ -1490,6 +1494,7 @@ Type=GESTURE
 
 [Data_1_3]
 Comment=Press, move down, move up, release.
+Comment[be@latin]=Pryciśni, pasuń uniz, pasuń uvierch i adciśni.
 Comment[bg]=Натискане, движение надолу, движение нагоре, пускане.
 Comment[ca]=Premeu, moveu avall, moveu amunt, deixeu anar.
 Comment[da]=Tryk, bevæg ned, bevæg op, slip.
@@ -1668,6 +1673,7 @@ Type=GESTURE
 
 [Data_1_4]
 Comment=Press, move right, release.
+Comment[be@latin]=Pryciśni, pasuń uprava j adciśni.
 Comment[bg]=Натискане, движение надясно, пускане.
 Comment[ca]=Premeu, moveu a la dreta, deixeu anar.
 Comment[da]=Tryk, bevæg til højre, slip.
@@ -2398,6 +2404,7 @@ Type=GESTURE
 
 [Data_1_8]
 Comment=Press, move down, release.
+Comment[be@latin]=Pryciśni, pasuń uniz i adciśni.
 Comment[bg]=Натискане, движение надолу, пускане.
 Comment[ca]=Premeu, moveu avall, deixeu anar.
 Comment[da]=Tryk, bevæg ned, slip.
@@ -2589,6 +2596,7 @@ Type=GESTURE
 
 [Data_1_9]
 Comment=Press, move up, move down, release.
+Comment[be@latin]=Pryciśni, pasuń uvierch, pasuń uniz i adciśni.
 Comment[bg]=Натискане, движение нагоре, движение надолу, пускане.
 Comment[ca]=Premeu, moveu amunt, moveu avall, deixeu anar.
 Comment[da]=Tryk, bevæg op, bevæg ned, slip.

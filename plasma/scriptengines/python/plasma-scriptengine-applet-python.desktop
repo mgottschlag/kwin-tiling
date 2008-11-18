@@ -2,6 +2,7 @@
 Name=Python Widget
 Name[be@latin]=Widžet „Python”
 Name[ca]=Estri en Python
+Name[de]=Python-Miniprogramm
 Name[el]=Συστατικό Python
 Name[gl]=Widget de Python
 Name[gu]=પાયથોન વિજેટ
@@ -23,6 +24,7 @@ Name[zh_TW]=Python 元件
 Comment=Plasma widget support written in Python
 Comment[be@latin]=Widžet systemy „Plasma”, napisany ŭ movie „Python”
 Comment[ca]=Estri nadiu del Plasma escrit en Python
+Comment[de]=Plasma-Miniprogramm-Unterstützung, geschrieben in Python
 Comment[el]=Υποστήριξη συστατικού Plasma γραμμένο σε Python
 Comment[gl]=Widget nativo de Plasma escrito en Pythont
 Comment[gu]=પાયથોનમાં લખાયેલ પ્લાઝમા વિજેટ આધાર

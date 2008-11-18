@@ -15,6 +15,7 @@ Name[x-test]=xxApplication Job Informationxx
 Name[zh_TW]=應用程式工作資訊
 Comment=Kuiserver data for Plasmoids
 Comment[ca]=Dades del «kuiserver» pels Plasmoides
+Comment[de]=Programmoberflächendienst für Plasma-Miniprogramme
 Comment[el]=Δεδομένα Kuiserver για τα πλασμοειδή
 Comment[gu]=પ્લાઝમોઇડ માટે Kuiserver માહિતી
 Comment[kk]=Плазмоидтерге арналған Kuiserver дерегі

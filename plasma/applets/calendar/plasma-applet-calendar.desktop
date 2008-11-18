@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=Calendar
+Name[be@latin]=Kalandar
 Name[ca]=Calendari
+Name[de]=Kalender
 Name[el]=Ημερολόγιο
 Name[gl]=Calendario
 Name[gu]=કેલેન્ડર
@@ -20,7 +22,9 @@ Name[uk]=Календар
 Name[x-test]=xxCalendarxx
 Name[zh_TW]=行事曆
 Comment=View and pick dates from the calendar
+Comment[be@latin]=Prahladaj i vybiraj daty z kalendara
 Comment[ca]=Vegeu i seleccioneu dates del calendari
+Comment[de]=Zeigt einen Kalender an
 Comment[el]=Προβολή και επιλογή ημερομηνιών από το ημερολόγιο
 Comment[gl]=Ve e escolle datas do calendario
 Comment[gu]=કેલેન્ડરમાં તારીખો જુઓ અને પસંદ કરો

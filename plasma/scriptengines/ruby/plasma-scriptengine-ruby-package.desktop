@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=Ruby Package Structure
+Name[be@latin]=Struktura pakunka ŭ movie „Ruby”
 Name[ca]=Estructura de paquets en Ruby
+Name[de]=Ruby-Paketstruktur
 Name[el]=Δομή πακέτου Ruby
 Name[gu]=રૂબી પેકેજ માળખું
 Name[kk]=Ruby дестесінің құрылымы
@@ -16,6 +18,7 @@ Name[x-test]=xxRuby Package Structurexx
 Name[zh_TW]=Ruby 套件結構
 Comment=Format of a Ruby Script Engine Package
 Comment[ca]=Format d'un paquet de motor d'script en Python
+Comment[de]=Das Format eines Ruby-Skripttreiber-Pakets
 Comment[el]=Μορφή ενός πακέτου σεναρίου μηχανής Ruby
 Comment[gu]=રૂબી સ્ક્રિપ્ટ એન્જિન પેકેજનું બંધારણ
 Comment[kk]=Ruby скрипт тетігі дестесінің пішімі

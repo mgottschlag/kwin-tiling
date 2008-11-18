@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=Python data engine
+Name[be@latin]=Systema źviestak u movie „Python”
 Name[ca]=Motor de dades en Python
+Name[de]=Python-Datentreiber
 Name[el]=Μηχανή δεδομένων Python
 Name[gl]=Motor de datos de Python
 Name[gu]=પાયથોન માહિતી એન્જિન
@@ -21,6 +23,7 @@ Name[x-test]=xxPython data enginexx
 Name[zh_TW]=Python 資料引擎
 Comment=Plasma data engine support for Python
 Comment[ca]=Implementació de motor de dades del Plasma per al Python
+Comment[de]=Unterstützung für Plasma-Datentreiber in Python
 Comment[el]=Υποστήριξη μηχανής δεδομένων Plasma για την Python
 Comment[gl]=Motor de datos de Plasma para dar soporte a Python
 Comment[gu]=પાયથોન માટે પ્લાઝમા માહિતી એન્જિન આધાર

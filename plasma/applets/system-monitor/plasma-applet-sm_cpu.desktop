@@ -1,7 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=System Monitor - CPU
+Name[be@latin]=Systemny nazirańnik - CPU
 Name[ca]=Controlador del sistema - CPU
+Name[de]=Systemmonitor - Prozessor
 Name[el]=Επόπτης συστήματος - ΚΜΕ
 Name[gl]=Vixiante do sistema - CPU
 Name[gu]=સિસ્ટમ દેખરેખ - સીપીયુ
@@ -22,7 +24,9 @@ Name[uk]=Монітор системи — ЦП
 Name[x-test]=xxSystem Monitor - CPUxx
 Name[zh_TW]=系統監視器─CPU
 Comment=A CPU usage monitor
+Comment[be@latin]=Nazirańnik zaniataści „CPU”
 Comment[ca]=Un controlador d'ús de la CPU
+Comment[de]=Ein Überwachungsmonitor für Prozessoren
 Comment[el]=Ένας επόπτης χρήσης ΚΜΕ
 Comment[gl]=Un vixiante do utilización da CPU
 Comment[gu]=CPU વપરાશ દેખરેખ
