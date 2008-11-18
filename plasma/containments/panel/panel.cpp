@@ -326,23 +326,21 @@ void Panel::updateBorders(const QRect &geom)
     m_background->getMargins(leftWidth, topHeight, rightWidth, bottomHeight);
 
     //calculation of extra margins has to be done after getMargins
-    if (formFactor() == Vertical) {
-        //hardcoded extra margin for the toolbox right now
-        if (immutability() == Mutable) {
-            bottomHeight += 20;
-        }
-    //Default to horizontal for now
-    } else {
-        //hardcoded extra margin for the toolbox for now
-        if (immutability() == Mutable) {
+    const QGraphicsItem *box = toolBoxItem();
+    if (box && immutability() == Mutable) {
+        QSizeF s = box->boundingRect().size();
+        if (formFactor() == Vertical) {
+            //hardcoded extra margin for the toolbox right now
+            bottomHeight += s.height();;
+            //Default to horizontal for now
+        } else {
             if (QApplication::layoutDirection() == Qt::RightToLeft) {
-                leftWidth += 20;
+                leftWidth += s.width();
             } else {
-                rightWidth += 20;
+                rightWidth += s.width();
             }
         }
     }
-
 
     //invalidate the layout and set again
     if (layout()) {
