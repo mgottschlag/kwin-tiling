@@ -193,7 +193,7 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 	hbLayout = new QHBoxLayout( );
 	hbLayout->setObjectName( "hbLayout" );
 
-	QLabel* label=new QLabel(i18n("Widget Style:"),this);
+	QLabel* label=new QLabel(i18n("Widget style:"),this);
 	label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
 	hbLayout->addWidget( label );
 

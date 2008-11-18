@@ -13,7 +13,7 @@
    <item>
     <widget class="QLabel" name="commandLabel" >
      <property name="text" >
-      <string>Command/URL</string>
+      <string>Command/URL:</string>
      </property>
     </widget>
    </item>

@@ -292,7 +292,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     // Toolbar...
     KActionMenu *settingsMenu=new KActionMenu(KIcon("configure"), i18n("Settings"), this);
     KAction     *changeTextAct=new KAction(KIcon("edit-rename"), i18n("Change Preview Text..."), this),
-                *duplicateFontsAct=new KAction(KIcon("system-search"), i18n("Scan For Duplicate Fonts..."), this);
+                *duplicateFontsAct=new KAction(KIcon("system-search"), i18n("Scan for Duplicate Fonts..."), this);
                 //*validateFontsAct=new KAction(KIcon("checkmark"), i18n("Validate Fonts..."), this);
                 //*downloadFontsAct=new KAction(KIcon("go-down"), i18n("Download Fonts..."), this);
 
@@ -365,7 +365,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
                                                i18n("Install fonts")),
                                       itsFontsWidget);
 
-    itsDeleteFontControl=new CPushButton(KGuiItem(i18n("Delete..."), "edit-delete",
+    itsDeleteFontControl=new CPushButton(KGuiItem(i18n("Delete"), "edit-delete",
                                                   i18n("Delete all selected fonts")),
                                          itsFontsWidget);
 

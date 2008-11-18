@@ -768,11 +768,11 @@ CGroupListView::CGroupListView(QWidget *parent, CGroupList *model)
     setRootIsDecorated(false);
     itsMenu=new QMenu(this);
 
-    itsDeleteAct=itsMenu->addAction(KIcon("list-remove"), i18n("Remove..."),
+    itsDeleteAct=itsMenu->addAction(KIcon("list-remove"), i18n("Remove"),
                                     this, SIGNAL(del()));
-    itsEnableAct=itsMenu->addAction(KIcon("enablefont"), i18n("Enable..."),
+    itsEnableAct=itsMenu->addAction(KIcon("enablefont"), i18n("Enable"),
                                     this, SIGNAL(enable()));
-    itsDisableAct=itsMenu->addAction(KIcon("disablefont"), i18n("Disable..."),
+    itsDisableAct=itsMenu->addAction(KIcon("disablefont"), i18n("Disable"),
                                      this, SIGNAL(disable()));
     itsMenu->addSeparator();
     itsRenameAct=itsMenu->addAction(i18n("Rename..."), this, SLOT(rename()));

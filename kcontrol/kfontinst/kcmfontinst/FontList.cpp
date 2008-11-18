@@ -1622,9 +1622,9 @@ CFontListView::CFontListView(QWidget *parent, CFontList *model)
     itsMgtMenu=new QMenu(this);
     itsMgtMenu->addAction(itsDeleteAct);
     itsMgtMenu->addSeparator();
-    itsEnableAct=itsMgtMenu->addAction(KIcon("enablefont"), i18n("Enable..."),
+    itsEnableAct=itsMgtMenu->addAction(KIcon("enablefont"), i18n("Enable"),
                                        this, SIGNAL(enable()));
-    itsDisableAct=itsMgtMenu->addAction(KIcon("disablefont"), i18n("Disable..."),
+    itsDisableAct=itsMgtMenu->addAction(KIcon("disablefont"), i18n("Disable"),
                                         this, SIGNAL(disable()));
     itsMgtMenu->addSeparator();
     itsMgtMenu->addAction(itsPrintAct);

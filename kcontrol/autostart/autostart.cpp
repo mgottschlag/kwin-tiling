@@ -154,14 +154,14 @@ void Autostart::load()
     widget->listCMD->clear();
 
     m_programItem = new QTreeWidgetItem( widget->listCMD );
-    m_programItem->setText( 0, i18n( "Desktop file" ));
+    m_programItem->setText( 0, i18n( "Desktop File" ));
     m_programItem->setFlags(m_programItem->flags()^Qt::ItemIsSelectable );
 
     QFont boldFont =  m_programItem->font(0);
     boldFont.setBold( true );
     m_programItem->setData ( 0, Qt::FontRole, boldFont );
     m_scriptItem = new QTreeWidgetItem( widget->listCMD );
-    m_scriptItem->setText( 0, i18n( "Script file" ));
+    m_scriptItem->setText( 0, i18n( "Script File" ));
     m_scriptItem->setFlags(m_scriptItem->flags()^Qt::ItemIsSelectable);
     m_scriptItem->setData ( 0,Qt::FontRole, boldFont);
 

@@ -32,46 +32,46 @@ QString RandR::rotationName(int rotation, bool pastTense, bool capitalised)
 			case RR_Rotate_90:
 				return i18n("Left (90 degrees)");
 			case RR_Rotate_180:
-				return i18n("Upside-down (180 degrees)");
+				return i18n("Upside-Down (180 degrees)");
 			case RR_Rotate_270:
 				return i18n("Right (270 degrees)");
 			case RR_Reflect_X:
-				return i18n("Mirror horizontally");
+				return i18n("Mirror Horizontally");
 			case RR_Reflect_Y:
-				return i18n("Mirror vertically");
+				return i18n("Mirror Vertically");
 			default:
-				return i18n("Unknown orientation");
+				return i18n("Unknown Orientation");
 		}
 
 	switch (rotation) {
 		case RR_Rotate_0:
-			return i18n("Not rotated");
+			return i18n("Not Rotated");
 		case RR_Rotate_90:
-			return i18n("Rotated 90 degrees counterclockwise");
+			return i18n("Rotated 90 Degrees Counterclockwise");
 		case RR_Rotate_180:
-			return i18n("Rotated 180 degrees counterclockwise");
+			return i18n("Rotated 180 Degrees Counterclockwise");
 		case RR_Rotate_270:
-			return i18n("Rotated 270 degrees counterclockwise");
+			return i18n("Rotated 270 Degrees Counterclockwise");
 		default:
 			if (rotation & RR_Reflect_X)
 				if (rotation & RR_Reflect_Y)
 					if (capitalised)
-						return i18n("Mirrored horizontally and vertically");
+						return i18n("Mirrored Horizontally And Vertically");
 					else
 						return i18n("mirrored horizontally and vertically");
 				else
 					if (capitalised)
-						return i18n("Mirrored horizontally");
+						return i18n("Mirrored Horizontally");
 					else
 						return i18n("mirrored horizontally");
 			else if (rotation & RR_Reflect_Y)
 				if (capitalised)
-					return i18n("Mirrored vertically");
+					return i18n("Mirrored Vertically");
 				else
 					return i18n("mirrored vertically");
 			else
 				if (capitalised)
-					return i18n("Unknown orientation");
+					return i18n("Unknown Orientation");
 				else
 					return i18n("unknown orientation");
 	}

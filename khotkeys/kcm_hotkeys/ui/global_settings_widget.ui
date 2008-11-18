@@ -33,7 +33,7 @@
         <item row="0" column="0" >
          <widget class="QCheckBox" name="enabled" >
           <property name="text" >
-           <string>Start the khotkeys daemon on logon?</string>
+           <string>Start the khotkeys daemon on logon</string>
           </property>
          </widget>
         </item>

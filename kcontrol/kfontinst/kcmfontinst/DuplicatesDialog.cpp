@@ -552,9 +552,9 @@ CFontFileListView::CFontFileListView(QWidget *parent)
     itsMenu->addAction(KIcon("document-properties"), i18n("Properties"),
                        this, SLOT(properties()));
     itsMenu->addSeparator();
-    itsUnMarkAct=itsMenu->addAction(i18n("Unmark for Deletion..."),
+    itsUnMarkAct=itsMenu->addAction(i18n("Unmark for Deletion"),
                                     this, SLOT(unmark()));
-    itsMarkAct=itsMenu->addAction(KIcon("edit-delete"), i18n("Mark for Deletion..."),
+    itsMarkAct=itsMenu->addAction(KIcon("edit-delete"), i18n("Mark for Deletion"),
                                   this, SLOT(mark()));
 
     connect(this, SIGNAL(itemSelectionChanged()), SLOT(selectionChanged()));

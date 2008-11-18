@@ -426,7 +426,7 @@ void DesktopThemeDetails::save()
     if (newThemeExists) {
         m_themeModel->reload();
         m_theme->setCurrentIndex(m_themeModel->indexOf(theme));
-        KMessageBox::information(this,i18n("To change your desktop theme to \"%1\", open\nDesktop Settings and select \"%2\" from the droplist.",m_theme->currentText(),m_theme->currentText() ), i18n("How to change desktop theme"), "HowToChangeDesktopTheme");
+        KMessageBox::information(this,i18n("To change your desktop theme to \"%1\", open\nDesktop Settings and select \"%2\" from the droplist.",m_theme->currentText(),m_theme->currentText() ), i18n("How to Change Desktop Theme"), "HowToChangeDesktopTheme");
     }
     resetThemeDetails();
 }
@@ -437,15 +437,15 @@ void DesktopThemeDetails::removeTheme()
     QString theme = m_theme->itemData(m_theme->currentIndex(),
                                       ThemeModel::PackageNameRole).toString();
     if (m_themeCustomized) {
-        if(KMessageBox::questionYesNo(this, i18n("Theme items have been changed.  Do you still wish remove the \"%1\" theme?", m_theme->currentText()), i18n("Remove desktop theme")) == KMessageBox::No) {
+        if(KMessageBox::questionYesNo(this, i18n("Theme items have been changed.  Do you still wish remove the \"%1\" theme?", m_theme->currentText()), i18n("Remove Desktop Theme")) == KMessageBox::No) {
             removeTheme = false;
         }
     } else {
         if (theme == "default") {
-            KMessageBox::information(this, i18n("Removal of the default KDE theme is not allowed."), i18n("Remove desktop theme"));
+            KMessageBox::information(this, i18n("Removal of the default KDE theme is not allowed."), i18n("Remove Desktop Theme"));
             removeTheme = false;
         } else {
-            if(KMessageBox::questionYesNo(this, i18n("Are you sure you wish remove the \"%1\" theme?",m_theme->currentText()) , i18n("Remove desktop theme")) == KMessageBox::No) {
+            if(KMessageBox::questionYesNo(this, i18n("Are you sure you wish remove the \"%1\" theme?",m_theme->currentText()) , i18n("Remove Desktop Theme")) == KMessageBox::No) {
                 removeTheme = false;
             }
         }
@@ -463,13 +463,13 @@ void DesktopThemeDetails::removeTheme()
 
 void DesktopThemeDetails::exportTheme()
 {
-    KMessageBox::information(this, i18n("Unfortunately, this feature is not yet implemented."), i18n("Export desktop theme"));
+    KMessageBox::information(this, i18n("Unfortunately, this feature is not yet implemented."), i18n("Export Desktop Theme"));
     return;
 
     /* FIXME: Commented till I can figure out how to use KZip
     if (m_themeCustomized ||
              (m_theme->currentText() == "(Customized)" && m_newThemeName->text() == "")) {
-        KMessageBox::information(this, i18n("Please apply theme item changes (with a new theme name) before attempting to export theme."), i18n("Export desktop theme"));
+        KMessageBox::information(this, i18n("Please apply theme item changes (with a new theme name) before attempting to export theme."), i18n("Export Desktop Theme"));
     } else {
         QString themeStoragePath = m_theme->itemData(m_theme->currentIndex(),
                                       ThemeModel::PackageNameRole).toString();
@@ -519,7 +519,7 @@ void DesktopThemeDetails::loadThemeItems()
         }
         themeItemsFile.close();
     } else {
-        KMessageBox::sorry(this, i18n("Theme items data file could not be found."), i18n("Desktop theme details"));
+        KMessageBox::sorry(this, i18n("Theme items data file could not be found."), i18n("Desktop Theme Details"));
         return;
     }
 
@@ -615,7 +615,7 @@ void DesktopThemeDetails::replacementItemChanged()
 
         if (currentReplacement == i18n("File...")) {
             //Get the filename for the replacement item
-            changedValue = KFileDialog::getOpenFileName(KUrl(), QString(), this, i18n("Select file to use for %1",currentItem));
+            changedValue = KFileDialog::getOpenFileName(KUrl(), QString(), this, i18n("Select File to Use for %1",currentItem));
             if (!changedValue.isEmpty()) {
                 //TODO need a i18n ?
                 currentReplacement = "File:" + changedValue;

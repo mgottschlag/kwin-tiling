@@ -157,7 +157,7 @@
         <item>
          <widget class="QLabel" name="m_newThemeNameLabel" >
           <property name="text" >
-           <string>New Theme Name:</string>
+           <string>New theme name:</string>
           </property>
           <property name="alignment" >
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -247,7 +247,7 @@
          <bool>true</bool>
         </property>
         <property name="text" >
-         <string>Export theme to file...</string>
+         <string>Export Theme to File...</string>
         </property>
        </widget>
       </item>
