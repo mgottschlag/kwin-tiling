@@ -75,52 +75,17 @@ QMap<QString, IonInterface::WindDirections> NOAAIon::setupWindIconMappings(void)
     return windDir;
 }
 
-QMap<QString, IonInterface::ConditionIcons> NOAAIon::setupDayIconMappings(void)
+QMap<QString, IonInterface::ConditionIcons> NOAAIon::setupConditionIconMappings(void)
 {
 
-//    ClearDay, FewCloudsDay, PartlyCloudyDay, Overcast,
-//    Showers, ScatteredShowers, Thunderstorm, Snow,
-//    FewCloudsNight, PartlyCloudyNight, ClearNight,
-//    Mist, NotAvailable
-//
-    QMap<QString, ConditionIcons> dayList;
-    dayList["fair"] = FewCloudsDay;
-    dayList["clear"] = ClearDay;
-    dayList["partly cloudy"] = PartlyCloudyDay;
-    dayList["fair with haze"] = FewCloudsDay;
-    dayList["fair and windy"] = FewCloudsDay;
-    dayList["a few clouds"] = FewCloudsDay;
-    dayList["overcast"] = Overcast;
-    dayList["mostly cloudy"] = Overcast;
-    dayList["light snow fog/mist"] = LightSnow;
-    return dayList;
+    QMap<QString, ConditionIcons> conditionList;
+    return conditionList;
 }
 
-QMap<QString, IonInterface::ConditionIcons> NOAAIon::setupNightIconMappings(void)
+QMap<QString, IonInterface::ConditionIcons> const& NOAAIon::conditionIcons(void)
 {
-    QMap<QString, ConditionIcons> nightList;
-    nightList["clear"] = ClearNight;
-    nightList["partly cloudy"] = PartlyCloudyNight;
-    nightList["fair"] = FewCloudsNight;
-    nightList["fair with haze"] = FewCloudsNight;
-    nightList["fair and windy"] = FewCloudsNight;
-    nightList["a few clouds"] = FewCloudsNight;
-    nightList["mostly cloudy"] = Overcast;
-    nightList["overcast"] = Overcast;
-    nightList["light snow fog/mist"] = LightSnow;
-    return nightList;
-}
-
-QMap<QString, IonInterface::ConditionIcons> const& NOAAIon::dayIcons(void)
-{
-    static QMap<QString, ConditionIcons> const dval = setupDayIconMappings();
-    return dval;
-}
-
-QMap<QString, IonInterface::ConditionIcons> const& NOAAIon::nightIcons(void)
-{
-    static QMap<QString, ConditionIcons> const nval = setupNightIconMappings();
-    return nval;
+    static QMap<QString, ConditionIcons> const condval = setupConditionIconMappings();
+    return condval;
 }
 
 QMap<QString, IonInterface::WindDirections> const& NOAAIon::windIcons(void)
@@ -481,13 +446,20 @@ void NOAAIon::updateWeather(const QString& source)
     setData(source, "Observation Period", observationTime(source));
     setData(source, "Current Conditions", condition(source));
 
-    if (periodHour(source) >= 0 && periodHour(source) < 6) {
-        setData(source, "Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
-    } else if (periodHour(source) >= 18) {
-        setData(source, "Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
+// FIXME: We'll need major fuzzy logic, this isn't pretty: http://www.weather.gov/xml/current_obs/weather.php
+    //QMap<QString, ConditionIcons> conditionList;
+    //conditionList = conditionIcons();
+
+/*
+    if ((periodHour(source) >= 0 && periodHour(source) < 6) || (periodHour(source) >= 18)) {
+        // Night
+        // - Fill in condition fuzzy logic 
     } else {
-        setData(source, "Condition Icon", getWeatherIcon(dayIcons(), condition(source)));
+        // Day
+        // - Fill in condition fuzzy logic
     }
+*/
+    setData(source, "Condition Icon", "weather-none-available");
 
     dataFields = temperature(source);
     setData(source, "Temperature", dataFields["temperature"]);
