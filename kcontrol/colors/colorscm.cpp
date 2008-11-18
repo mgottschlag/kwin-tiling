@@ -698,7 +698,8 @@ void KColorCm::updateColorTable()
     if (currentSet == -1)
     {
         // common colors is selected
-        stackedWidget->setCurrentIndex(0);
+        stackColors->setCurrentIndex(0);
+        stackPreview->setCurrentIndex(0);
 
         KColorButton * button;
         foreach (button, m_commonColorButtons)
@@ -743,7 +744,9 @@ void KColorCm::updateColorTable()
     else
     {
         // a real color set is selected
-        stackedWidget->setCurrentIndex(1);
+        setPreview->setPalette(m_config, (KColorScheme::ColorSet)currentSet);
+        stackColors->setCurrentIndex(1);
+        stackPreview->setCurrentIndex(1);
 
         for (int i = KColorScheme::NormalBackground; i <= KColorScheme::AlternateBackground; ++i)
         {

@@ -1,8 +1,8 @@
 KDE4_NO_ENABLE_FINAL(colors)
 
-set(kcm_colors_PART_SRCS ../krdb/krdb.cpp colorscm.cpp previewwidget.cpp)
+set(kcm_colors_PART_SRCS ../krdb/krdb.cpp colorscm.cpp previewwidget.cpp setpreviewwidget.cpp)
 
-kde4_add_ui_files(kcm_colors_PART_SRCS colorsettings.ui preview.ui)
+kde4_add_ui_files(kcm_colors_PART_SRCS colorsettings.ui preview.ui setpreview.ui)
 
 kde4_add_plugin(kcm_colors ${kcm_colors_PART_SRCS})
 target_link_libraries(kcm_colors ${KDE4_KIO_LIBS} ${KDE4_KNEWSTUFF2_LIBS} ${KDE4_KDEUI_LIBS} ${X11_LIBRARIES})
