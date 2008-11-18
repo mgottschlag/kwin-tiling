@@ -141,6 +141,7 @@ void KColorCm::updatePreviews()
 {
     schemePreview->setPalette(m_config);
     colorPreview->setPalette(m_config);
+    setPreview->setPalette(m_config, (KColorScheme::ColorSet)(colorSet->currentIndex() - 1));
     inactivePreview->setPalette(m_config, QPalette::Inactive);
     disabledPreview->setPalette(m_config, QPalette::Disabled);
 }
