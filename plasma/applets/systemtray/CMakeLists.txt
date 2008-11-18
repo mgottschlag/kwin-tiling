@@ -44,3 +44,4 @@ target_link_libraries(plasma_applet_systemtray ${KDE4_KDEUI_LIBS} ${KDE4_PLASMA_
 
 install(TARGETS plasma_applet_systemtray DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-applet-systemtray.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+install(FILES bar_meter_horizontal.svgz DESTINATION ${DATA_INSTALL_DIR}/desktoptheme/default/systemtray/)

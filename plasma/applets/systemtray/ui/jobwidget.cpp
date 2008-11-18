@@ -41,7 +41,7 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
     Q_ASSERT(m_extenderItem);
 
     setMeterType(Plasma::Meter::BarMeterHorizontal);
-    setSvg("kuiserver/bar_meter_horizontal");
+    setSvg("systemtray/bar_meter_horizontal");
     setMaximum(100);
 
     setMinimumWidth(300);
