@@ -113,8 +113,9 @@ public:
         view->setDropIndicatorShown(true);
         if (name == "Favorites") {
             view->setDragDropMode(QAbstractItemView::DragDrop);
-        } else {
-            view->setDragDropMode(QAbstractItemView::InternalMove);
+        } else if(name == "Applications" || name == "Computer" ||
+		  name == "Recently Used") {
+            view->setDragDropMode(QAbstractItemView::DragOnly);
         }
         view->setModel(model);
         //view->setCurrentIndex(QModelIndex());
@@ -168,9 +169,22 @@ public:
         view->setItemStateProvider(delegate);
         addView(i18n("Favorites"), KIcon("bookmarks"), model, view);
 
-        connect(model, SIGNAL(rowsInserted(QModelIndex, int, int)), q, SLOT(focusFavoritesView()));
+        QAction *sortAscendingAction = new QAction(KIcon("view-sort-ascending"), 
+							i18n("Sort Ascending"), q);
 
-        favoritesView = view;
+        QAction *sortDescendingAction = new QAction(KIcon("view-sort-descending"), 
+							  i18n("Sort Descending"), q);  
+
+
+        connect(model, SIGNAL(rowsInserted(QModelIndex, int, int)), q, SLOT(focusFavoritesView()));
+	connect(sortAscendingAction, SIGNAL(triggered()), model, SLOT(sortFavoritesAscending()));
+	connect(sortDescendingAction, SIGNAL(triggered()), model, SLOT(sortFavoritesDescending()));
+
+        favoritesView = view;        
+	contextMenuFactory->setViewActions(view, QList<QAction*>() 
+						  << sortAscendingAction 
+						  << sortDescendingAction);
+
     }
 
     void setupAllProgramsView() {

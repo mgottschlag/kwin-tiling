@@ -157,22 +157,6 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view, const QPoint &
         }
     }
 
-
-    QAction *sortAscendingAction = new QAction(this);
-    QAction *sortDescendingAction = new QAction(this);
-    if (isFavorite) {
-        QAction *favoritesSeparator = new QAction(this);
-        favoritesSeparator->setSeparator(true);
-        sortAscendingAction->setText(i18n("Sort Ascending"));
-        sortAscendingAction->setIcon(KIcon("view-sort-ascending"));
-
-        sortDescendingAction->setText(i18n("Sort Descending"));
-        sortDescendingAction->setIcon(KIcon("view-sort-descending"));
-
-        actions << favoritesSeparator;
-        actions << sortAscendingAction << sortDescendingAction;
-    }
-
     // advanced item actions
     QAction *advancedSeparator = new QAction(this);
     advancedSeparator->setSeparator(true);
@@ -215,12 +199,6 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view, const QPoint &
         } else {
             FavoritesModel::add(url);
         }
-    } else if (sortAscendingAction && result == sortAscendingAction) {
-        if (isFavorite)
-            FavoritesModel::sortFavorites(Qt::AscendingOrder);
-    } else if (sortDescendingAction && result == sortDescendingAction) {
-        if (isFavorite)
-            FavoritesModel::sortFavorites(Qt::DescendingOrder);
     } else if (ejectAction && result == ejectAction) {
         access->teardown();
     } else if (addToDesktopAction && result == addToDesktopAction) {
@@ -256,8 +234,6 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view, const QPoint &
     delete favoriteAction;
     delete addToDesktopAction;
     delete addToPanelAction;
-    delete sortAscendingAction;
-    delete sortDescendingAction;
     delete viewSeparator;
     delete ejectAction;
 }
