@@ -114,17 +114,17 @@ void AbstractGroupingStrategy::closeGroup(TaskGroup *group)
     d->usedNames.removeAll(group->name());
     d->usedColors.removeAll(group->color());
     //d->usedIcons.removeAll(group->icon());//TODO
-    if (group->parentGroup()) {
-        foreach (AbstractItemPtr item, group->members()) {
-            group->parentGroup()->add(item);
-        }
-        group->parentGroup()->remove(group);
-    } else {
-        foreach (AbstractItemPtr item, group->members()) {
-            d->groupManager->rootGroup()->add(item);
-        }
-        //group->clear();
+
+    TaskGroup *parentGroup = group->parentGroup();
+    if (!parentGroup) {
+        parentGroup = d->groupManager->rootGroup();
     }
+
+    foreach (AbstractItemPtr item, group->members()) {
+        parentGroup->add(item);
+    }
+
+    parentGroup->remove(group);
     group->deleteLater();
 }
 
