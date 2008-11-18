@@ -27,12 +27,15 @@
 
 PanelSvgWidget::PanelSvgWidget(QWidget *parent)
         : QWidget(parent)
+        //, m_parent(parent)
 {
     background = new Plasma::FrameSvg(this);
     background->setImagePath("dialogs/kickoff");
     background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
     background->resizeFrame(size());
     background->setElementPrefix("borderview");
+
+    parent->setCursor(Qt::ArrowCursor);
 
     connect(background, SIGNAL(repaintNeeded()), this, SLOT(update()));
 }
