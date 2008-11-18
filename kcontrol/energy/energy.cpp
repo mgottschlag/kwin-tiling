@@ -199,7 +199,7 @@ KEnergy::KEnergy(QWidget *parent, const QVariantList &args)
     m_pStandbySlider->setLabel(i18n("&Standby after:"));
     m_pStandbySlider->setRange(0, 120, 1);
     m_pStandbySlider->setSuffix(i18n(" min"));
-    m_pStandbySlider->setSpecialValueText(i18n("Disabled"));
+    m_pStandbySlider->setSpecialValueText(i18nc("Disables display entering standby mode after x min", "Disabled"));
     connect(m_pStandbySlider, SIGNAL(valueChanged(int)), SLOT(slotChangeStandby(int)));
     top->addWidget(m_pStandbySlider);
     m_pStandbySlider->setWhatsThis( i18n("Choose the period of inactivity"
@@ -210,7 +210,7 @@ KEnergy::KEnergy(QWidget *parent, const QVariantList &args)
     m_pSuspendSlider->setLabel(i18n("S&uspend after:"));
     m_pSuspendSlider->setRange(0, 120, 1);
     m_pSuspendSlider->setSuffix(i18n(" min"));
-    m_pSuspendSlider->setSpecialValueText(i18n("Disabled"));
+    m_pSuspendSlider->setSpecialValueText(i18nc("Disables display entering suspend mode after x min", "Disabled"));
     connect(m_pSuspendSlider, SIGNAL(valueChanged(int)), SLOT(slotChangeSuspend(int)));
     top->addWidget(m_pSuspendSlider);
     m_pSuspendSlider->setWhatsThis( i18n("Choose the period of inactivity"
@@ -222,7 +222,7 @@ KEnergy::KEnergy(QWidget *parent, const QVariantList &args)
     m_pOffSlider->setLabel(i18n("&Power off after:"));
     m_pOffSlider->setRange(0, 120, 1);
     m_pOffSlider->setSuffix(i18n(" min"));
-    m_pOffSlider->setSpecialValueText(i18n("Disabled"));
+    m_pOffSlider->setSpecialValueText(i18nc("Disables display being turned off after x min", "Disabled"));
     connect(m_pOffSlider, SIGNAL(valueChanged(int)), SLOT(slotChangeOff(int)));
     top->addWidget(m_pOffSlider);
     m_pOffSlider->setWhatsThis( i18n("Choose the period of inactivity"
