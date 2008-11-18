@@ -80,7 +80,7 @@
       <item>
        <widget class="QLabel" name="labelFore2" >
         <property name="text" >
-         <string comment="active (abbreviate)" >active</string>
+         <string>active</string>
         </property>
        </widget>
       </item>
@@ -93,7 +93,7 @@
       <item>
        <widget class="QLabel" name="labelFore1" >
         <property name="text" >
-         <string comment="inactive (abbreviate)" >inactive</string>
+         <string>inactive</string>
         </property>
        </widget>
       </item>
@@ -220,7 +220,7 @@
       <item>
        <widget class="QLabel" name="labelBack2" >
         <property name="text" >
-         <string comment="active (abbreviate)" >active</string>
+         <string>active</string>
         </property>
        </widget>
       </item>
@@ -233,7 +233,7 @@
       <item>
        <widget class="QLabel" name="labelBack1" >
         <property name="text" >
-         <string comment="inactive (abbreviate)" >inactive</string>
+         <string>alternate</string>
         </property>
        </widget>
       </item>
