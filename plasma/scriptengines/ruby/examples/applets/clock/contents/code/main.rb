@@ -28,7 +28,7 @@ require 'timezones_config'
 require 'calendar'
 require 'clockapplet'
 
-module PlasmaAppletRubyClock
+module RubyClock
 
 class Main < ClockApplet
 

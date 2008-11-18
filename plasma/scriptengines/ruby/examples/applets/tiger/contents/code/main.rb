@@ -1,6 +1,6 @@
 require 'plasma_applet'
 
-module Tiger
+module RubyTiger
   class Main < PlasmaScripting::Applet
     def initialize(parent, args = nil)
       super
@@ -9,7 +9,6 @@ module Tiger
     def init
       @svg = Plasma::Svg.new(self)
       @svg.imagePath = 'widgets/tiger'
-#      Qt::Internal::setDebug Qt::QtDebugChannel::QTDB_VIRTUAL
     end
 
     def paintInterface(painter, option, contentsRect)

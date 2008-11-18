@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 require 'plasma_applet'
 
-module PlasmaAppletRubyWebapplet
+module RubyWebapplet
 
 class Main < PlasmaScripting::Applet
 
