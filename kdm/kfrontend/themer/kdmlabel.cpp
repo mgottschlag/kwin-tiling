@@ -233,8 +233,11 @@ KdmLabel::update()
 	}
 }
 
+#undef I18N_NOOP2
+#define I18N_NOOP2(c,t) c, t
+
 static const struct {
-	const char *type, *text;
+	const char *type, *comment, *text;
 } stocks[] = {
 	{ "language",          I18N_NOOP2("@action:button", "Lan_guage") },
 	{ "session",           I18N_NOOP2("@action:button", "Session _Type") },
@@ -245,12 +248,12 @@ static const struct {
 //	{ "suspend",           I18N_NOOP2("@action:button", "_Suspend") },
 	{ "reboot",            I18N_NOOP2("@action:button", "Re_boot") },
 	{ "chooser",           I18N_NOOP2("@action:button", "_Remote login") },
-	{ "caps-lock-warning", I18N_NOOP("Caps Lock is enabled") },
-	{ "timed-label",       I18N_NOOP("User %u will log in in %t") },
-	{ "welcome-label",     I18N_NOOP("Welcome to %h") },	// _greetString
-	{ "domain-label",      I18N_NOOP("_Domain:") },
-	{ "username-label",    I18N_NOOP("_Username:") },
-	{ "password-label",    I18N_NOOP("_Password:") },
+	{ "caps-lock-warning", I18N_NOOP2("", "Caps Lock is enabled") },
+	{ "timed-label",       I18N_NOOP2("", "User %u will log in in %t") },
+	{ "welcome-label",     I18N_NOOP2("", "Welcome to %h") },	// _greetString
+	{ "domain-label",      I18N_NOOP2("", "_Domain:") },
+	{ "username-label",    I18N_NOOP2("", "_Username:") },
+	{ "password-label",    I18N_NOOP2("", "_Password:") },
 	{ "login",             I18N_NOOP2("@action:button", "_Login") }
 };
 
@@ -262,7 +265,7 @@ KdmLabel::lookupStock( const QString &stock )
 
 	for (uint i = 0; i < sizeof(stocks)/sizeof(stocks[0]); i++)
 		if (type == stocks[i].type)
-			return i18n(stocks[i].text);
+			return i18nc(stocks[i].comment, stocks[i].text);
 
 	kWarning() << "Invalid <stock> element '" << stock << "'. Check your theme!";
 	return stock;
