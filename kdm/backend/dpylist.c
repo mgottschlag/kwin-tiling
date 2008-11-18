@@ -282,3 +282,9 @@ newDisplay( const char *name )
 	debug( "created new display %s\n", d->name );
 	return d;
 }
+
+const char *
+displayName( struct display *d )
+{
+	return memcmp( d->name, "localhost:", 10 ) ? d->name : d->name + 9;
+}

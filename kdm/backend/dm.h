@@ -417,6 +417,7 @@ int anyRunningDisplays( void );
 int anyReserveDisplays( void );
 int idleReserveDisplays( void );
 int startReserveDisplay( int lt );
+const char *displayName( struct display * );
 
 /* in reset.c */
 void pseudoReset( void );

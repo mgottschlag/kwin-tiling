@@ -91,9 +91,7 @@ openCtrl( struct display *d )
 	if (!*fifoDir)
 		return;
 	if (d) {
-		cr = &d->ctrl, dname = d->name;
-		if (!memcmp( dname, "localhost:", 10 ))
-			dname += 9;
+		cr = &d->ctrl, dname = displayName( d );
 	} else
 		cr = &ctrl, dname = 0;
 	if (cr->fd < 0) {
@@ -303,14 +301,13 @@ sdCat( char **bp, SdRec *sdr )
 static void
 emitXSessC( struct display *di, struct display *d, void *ctx )
 {
-	char *dname, *bp;
+	const char *dname;
+	char *bp;
 	char cbuf[1024];
 
 	bp = cbuf;
 	*bp++ = '\t';
-	dname = di->name;
-	if (!memcmp( dname, "localhost:", 10 ))
-		dname += 9;
+	dname = displayName( di );
 	strCatL( &bp, dname, sizeof(cbuf)/2 );
 	*bp++ = ',';
 #ifdef HAVE_VTS

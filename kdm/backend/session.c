@@ -806,9 +806,7 @@ baseEnv( char **env, const char *user )
 		env = setEnv( env, "LOGNAME", user );
 	}
 
-	env = setEnv( env, "DISPLAY",
-	              memcmp( td->name, "localhost:", 10 ) ?
-	              td->name : td->name + 9 );
+	env = setEnv( env, "DISPLAY", displayName( td ) );
 
 #ifdef HAVE_VTS
 	/* Support for assistive technologies. */
