@@ -1,3 +1,7 @@
+2008-11-18  Richard Dale  <richard.j.dale@gmail.com>
+* Fix problem with the ruby 'type()' method clashing with the one in
+  Qt::GraphicsItem subclasses reported by David Palacio
+
 2008-11-17  Richard Dale  <richard.j.dale@gmail.com>
 * Fixed missing constructor bug in Qt::GraphicsProxyWidget reported by David
   Palacio. Thanks to David for reporting the bug.

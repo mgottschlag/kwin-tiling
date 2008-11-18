@@ -532,6 +532,10 @@ module Qt
         super
       end
     end
+
+    def type(*args)
+      method_missing(:type, *args)
+    end
   end
 
   class QAbstractGraphicsShapeItem < Qt::Base
@@ -553,6 +557,10 @@ module Qt
       else
         super
       end
+    end
+
+    def type(*args)
+      method_missing(:type, *args)
     end
   end
 
@@ -576,6 +584,10 @@ module Qt
         super
       end
     end
+
+    def type(*args)
+      method_missing(:type, *args)
+    end
   end
 
   class GraphicsItemGroup < Qt::Base
@@ -597,6 +609,10 @@ module Qt
       else
         super
       end
+    end
+
+    def type(*args)
+      method_missing(:type, *args)
     end
   end
 
@@ -620,6 +636,10 @@ module Qt
         super
       end
     end
+
+    def type(*args)
+      method_missing(:type, *args)
+    end
   end
 
   class GraphicsPathItem < Qt::Base
@@ -641,6 +661,10 @@ module Qt
       else
         super
       end
+    end
+
+    def type(*args)
+      method_missing(:type, *args)
     end
   end
 
@@ -664,6 +688,10 @@ module Qt
         super
       end
     end
+
+    def type(*args)
+      method_missing(:type, *args)
+    end
   end
 
   class GraphicsPolygonItem < Qt::Base
@@ -685,6 +713,10 @@ module Qt
       else
         super
       end
+    end
+
+    def type(*args)
+      method_missing(:type, *args)
     end
   end
 
@@ -708,6 +740,10 @@ module Qt
         super
       end
     end
+
+    def type(*args)
+      method_missing(:type, *args)
+    end
   end
 
   class GraphicsSimpleTextItem < Qt::Base
@@ -729,6 +765,10 @@ module Qt
       else
         super
       end
+    end
+
+    def type(*args)
+      method_missing(:type, *args)
     end
   end
 
@@ -752,6 +792,10 @@ module Qt
         super
       end
     end
+
+    def type(*args)
+      method_missing(:type, *args)
+    end
   end
 
   class GraphicsTextItem < Qt::Base
@@ -774,6 +818,10 @@ module Qt
         super
       end
     end
+
+    def type(*args)
+      method_missing(:type, *args)
+    end
   end
 
   class GraphicsWidget < Qt::Base
@@ -795,6 +843,10 @@ module Qt
       else
         super
       end
+    end
+
+    def type(*args)
+      method_missing(:type, *args)
     end
   end
 
