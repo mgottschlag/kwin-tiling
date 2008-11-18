@@ -1,6 +1,10 @@
 2008-11-18  Richard Dale  <richard.j.dale@gmail.com>
 * Fix problem with the ruby 'type()' method clashing with the one in
   Qt::GraphicsItem subclasses reported by David Palacio
+* Added a 'dbpedia-queries' data engine for making SPARQL queries to DBpedia
+  about music albums
+* The sources() and init() methods needn't be implemented by a scripting
+  data engine
 
 2008-11-17  Richard Dale  <richard.j.dale@gmail.com>
 * Fixed missing constructor bug in Qt::GraphicsProxyWidget reported by David

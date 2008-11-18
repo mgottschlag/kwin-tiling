@@ -32,6 +32,9 @@ module PlasmaScripting
       connect(@data_engine_script.dataEngine, SIGNAL("sourceRemoved(QString)"), self, SIGNAL("sourceRemoved(QString)"))
     end
 
+    def init
+    end
+
     def sourceRequestEvent(name)
     end
 
@@ -40,9 +43,9 @@ module PlasmaScripting
 
     def setData(*args)
       if args.length == 2 && !args[1].kind_of?(Qt::Variant)
-        args[1] = Qt::Variant.new(args[1])
+        args[1] = Qt::Variant.fromValue(args[1])
       elsif args.length == 3 && !args[2].kind_of?(Qt::Variant)
-        args[2] = Qt::Variant.new(args[2])
+        args[2] = Qt::Variant.fromValue(args[2])
       end
       @data_engine_script.setData(*args)
     end
@@ -85,6 +88,10 @@ module PlasmaScripting
 
     def removeAllSources
       @data_engine_script.removeAllSources
+    end
+
+    def sources
+      return []
     end
   end
 end
