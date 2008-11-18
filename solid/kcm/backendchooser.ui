@@ -91,9 +91,6 @@
             <property name="toolTip" >
              <string>Prefer the selected backend.</string>
             </property>
-            <property name="text" >
-             <string>move up</string>
-            </property>
             <property name="autoRaise" >
              <bool>true</bool>
             </property>
@@ -114,9 +111,6 @@
             </property>
             <property name="toolTip" >
              <string>No preference for the selected backend.</string>
-            </property>
-            <property name="text" >
-             <string>move down</string>
             </property>
             <property name="autoRaise" >
              <bool>true</bool>
