@@ -1288,13 +1288,8 @@ void EnvCanadaIon::updateWeather(const QString& source)
     QMap<QString, ConditionIcons> conditionList;
     conditionList = conditionIcons();
 
-    if (periodHour(source) >= 0 && periodHour(source) < 6) {
+    if ((periodHour(source) >= 0 && periodHour(source) < 6) || (periodHour(source) >= 18)) {
         conditionList["decreasing cloud"] = FewCloudsNight;
-        conditionList["mostly cloudy"] = PartlyCloudyNight;
-        conditionList["partly cloudy"] = PartlyCloudyNight;
-        conditionList["fair"] = FewCloudsNight;
-    } else if (periodHour(source) >= 18) {
-        conditionList["decreasing cloud"] = ClearNight;
         conditionList["mostly cloudy"] = PartlyCloudyNight;
         conditionList["partly cloudy"] = PartlyCloudyNight;
         conditionList["fair"] = FewCloudsNight;
