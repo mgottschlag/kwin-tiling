@@ -91,7 +91,7 @@ Panel::Panel(QObject *parent, const QVariantList &args)
       m_configureAction(0),
       m_addPanelAction(0),
       m_currentSize(QSize(Kephal::ScreenUtils::screenSize(screen()).width(), 35)),
-      m_lastViewGeom(),
+      m_maskDirty(true),
       m_spacerIndex(-1),
       m_spacer(0)
 {
@@ -374,6 +374,8 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
 {
     kDebug() << "constraints updated with" << constraints << "!!!!!!";
 
+    m_maskDirty = true;
+
     if (constraints & Plasma::FormFactorConstraint) {
         Plasma::FormFactor form = formFactor();
         Qt::Orientation layoutDirection = form == Plasma::Vertical ? Qt::Vertical : Qt::Horizontal;
@@ -517,8 +519,8 @@ void Panel::paintInterface(QPainter *painter,
         viewGeom = containmentOpt->view->geometry();
     }
 
-    if (viewGeom != m_lastViewGeom) {
-        m_lastViewGeom = viewGeom;
+    if (m_maskDirty) {
+        m_maskDirty = false;
         updateBorders(viewGeom);
         if (containmentOpt && containmentOpt->view) {
             containmentOpt->view->setMask(m_background->mask());

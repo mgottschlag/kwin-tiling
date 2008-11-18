@@ -79,7 +79,7 @@ private:
 
     //cached values
     QSize m_currentSize;
-    QRect m_lastViewGeom;
+    bool m_maskDirty;
     int m_spacerIndex;
     Spacer *m_spacer;
 
