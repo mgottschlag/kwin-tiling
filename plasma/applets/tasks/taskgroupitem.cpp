@@ -360,9 +360,10 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
         kDebug() << "invalid Item";
         return;
     }
-    m_groupMembers.append(item);
 
+    m_groupMembers.append(item);
     item->setParentItem(this);
+
     if (collapsed()) {
         item->hide();
     } else if (isSplit()) {
