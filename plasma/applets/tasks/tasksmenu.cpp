@@ -36,11 +36,13 @@
 #include <Plasma/FrameSvg>
 #include <Plasma/Theme>
 
+#include "tasks.h"
+
 namespace TaskManager
 {
 
 
-TasksMenu::TasksMenu(QWidget *parent, TaskGroup *group, GroupManager *groupManager, Plasma::Applet *applet)
+TasksMenu::TasksMenu(QWidget *parent, TaskGroup *group, GroupManager *groupManager, Tasks *applet)
     :  GroupPopupMenu(parent, group, groupManager),
        m_activateTimer(0),
        m_lasttriggeredAction(0),
@@ -50,10 +52,6 @@ TasksMenu::TasksMenu(QWidget *parent, TaskGroup *group, GroupManager *groupManag
 
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("dialogs/background");
-
-    m_itemBackground = new Plasma::FrameSvg(this);
-    m_itemBackground->setImagePath("widgets/tasks");
-    m_itemBackground->setElementPrefix("normal");
 
     //since the thing gets destroyed on close we can set this just one time for now
     const int topHeight = m_background->marginSize(Plasma::TopMargin);
@@ -115,9 +113,10 @@ void TasksMenu::paintEvent(QPaintEvent *event)
         QRect textRect(QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignRight | Qt::AlignVCenter,
                               QSize(actionRect.width()-iconRect.width()-3, actionRect.height()), actionRect));
 
-        if (activeAction() == a) {
-            m_itemBackground->resizeFrame(actionRect.size());
-            m_itemBackground->paintFrame(&painter, actionRect.topLeft());
+        if (activeAction() == a && m_applet->itemBackground()) {
+            Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
+            itemBackground->resizeFrame(actionRect.size());
+            itemBackground->paintFrame(&painter, actionRect.topLeft());
         }
 
         painter.drawPixmap(iconRect, a->icon().pixmap(iconRect.size()));
@@ -155,6 +154,7 @@ void TasksMenu::dragMoveEvent(QDragMoveEvent *event)
 
 void TasksMenu::dragLeaveEvent(QDragLeaveEvent *event)
 {
+    Q_UNUSED(event)
     m_activateTimer->stop();
     m_activateTimer = 0;
 
@@ -163,6 +163,7 @@ void TasksMenu::dragLeaveEvent(QDragLeaveEvent *event)
 
 void TasksMenu::dropEvent(QDropEvent *event)
 {
+    Q_UNUSED(event)
     m_activateTimer->stop();
     m_activateTimer = 0;
 

@@ -31,6 +31,7 @@ namespace Plasma
 }
 
 class QTimer;
+class Tasks;
 
 namespace TaskManager
 {
@@ -43,7 +44,7 @@ class TasksMenu : public GroupPopupMenu
     Q_OBJECT
 
 public:
-    TasksMenu(QWidget *parent, TaskGroup *group, GroupManager *groupManager, Plasma::Applet *applet);
+    TasksMenu(QWidget *parent, TaskGroup *group, GroupManager *groupManager, Tasks *applet);
 
     ~TasksMenu();
 
@@ -62,8 +63,7 @@ private:
     QTimer *m_activateTimer;
     QAction *m_lasttriggeredAction;
     Plasma::FrameSvg *m_background;
-    Plasma::FrameSvg *m_itemBackground;
-    Plasma::Applet *m_applet;
+    Tasks *m_applet;
     QPoint m_lastMousePos;
 };
 }
