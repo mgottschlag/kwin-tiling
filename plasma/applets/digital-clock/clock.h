@@ -55,7 +55,7 @@ class Clock : public ClockApplet
 
     private:
         void updateSize();
-        QRect preparePainter(QPainter *p, const QRect &rect, const QFont &font, const QString &text);
+        QRect preparePainter(QPainter *p, const QRect &rect, const QFont &font, const QString &text, const bool singleline = false);
 
         QFont m_plainClockFont;
         bool m_useCustomColor;

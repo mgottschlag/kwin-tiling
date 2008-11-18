@@ -332,7 +332,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         QString timeString = KGlobal::locale()->formatTime(m_time, m_showSeconds);
         // Choose a relatively big font size to start with
         m_plainClockFont.setPointSizeF(qMax(timeRect.height(), KGlobalSettings::smallestReadableFont().pointSize()));
-        preparePainter(p, timeRect, m_plainClockFont, timeString);
+        preparePainter(p, timeRect, m_plainClockFont, timeString, true);
 
         p->drawText(timeRect,
                     timeString,
@@ -341,7 +341,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     }
 }
 
-QRect Clock::preparePainter(QPainter *p, const QRect &rect, const QFont &font, const QString &text)
+QRect Clock::preparePainter(QPainter *p, const QRect &rect, const QFont &font, const QString &text, const bool singleline)
 {
     QRect tmpRect;
     QFont tmpFont = font;
@@ -351,7 +351,7 @@ QRect Clock::preparePainter(QPainter *p, const QRect &rect, const QFont &font, c
     do {
         p->setFont(tmpFont);
         tmpFont.setPointSize(qMax(KGlobalSettings::smallestReadableFont().pointSize(), tmpFont.pointSize() - 1));
-        int flags = ((formFactor() == Plasma::Horizontal) && (contentsRect().height() < tmpFont.pointSize()*6)) ? Qt::TextSingleLine : Qt::TextWordWrap;
+        int flags = (singleline || (formFactor() == Plasma::Horizontal) && (contentsRect().height() < tmpFont.pointSize()*6)) ? Qt::TextSingleLine : Qt::TextWordWrap;
 
         tmpRect = p->boundingRect(rect, flags, text);
     } while (tmpFont.pointSize() > KGlobalSettings::smallestReadableFont().pointSize() && (tmpRect.width() > rect.width() ||
