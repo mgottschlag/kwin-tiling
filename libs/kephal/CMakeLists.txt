@@ -1,7 +1,4 @@
 PROJECT (kephal)
-find_package(KDE4 REQUIRED)
-include(KDE4Defaults)
-include(MacroLibrary)
 KDE4_NO_ENABLE_FINAL(kephal)
 ADD_SUBDIRECTORY (kded_kephal)
 ADD_SUBDIRECTORY (libkephal)
