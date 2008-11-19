@@ -162,7 +162,7 @@ void DesktopView::adjustSize()
         m_dashboard->setGeometry(geom);
     }
 
-    kDebug() << "Done" << screen();
+    kDebug() << "Done" << screen() << geometry();
 }
 
 bool DesktopView::isDashboardVisible() const
