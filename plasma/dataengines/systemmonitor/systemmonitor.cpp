@@ -25,18 +25,18 @@
 
 #include <Plasma/DataContainer>
 
-#include "sensormanager.h"
+#include <ksgrd/SensorManager.h>
 
 SystemMonitorEngine::SystemMonitorEngine(QObject* parent, const QVariantList& args)
     : Plasma::DataEngine(parent)
 {
     Q_UNUSED(args)
     
-    KSGRD::SensorMgr = new KSGRD::SensorManager();
+    KSGRD::SensorMgr = new KSGRD::SensorManager(this);
     KSGRD::SensorMgr->engage( "localhost", "", "ksysguardd" );
 
     m_waitingFor= 0;
-    KSGRD::SensorMgr->sendRequest( "localhost", "monitors", (KSGRD::SensorClient*)this);
+    KSGRD::SensorMgr->sendRequest( "localhost", "monitors", (KSGRD::SensorClient*)this, -1);
 }
 
 SystemMonitorEngine::~SystemMonitorEngine()
@@ -52,7 +52,7 @@ bool SystemMonitorEngine::sourceRequestEvent(const QString &name)
 }
 bool SystemMonitorEngine::updateSourceEvent(const QString &sensorName)
 {
-    KSGRD::SensorMgr->sendRequest( "localhost", sensorName, (KSGRD::SensorClient*)this);
+    KSGRD::SensorMgr->sendRequest( "localhost", sensorName, (KSGRD::SensorClient*)this, m_sensors.indexOf(sensorName));
     return false;
 }
 
@@ -66,15 +66,15 @@ void SystemMonitorEngine::updateSensors()
     while (it != sources.end()) {
         m_waitingFor++;
         QString sensorName = it.key();
-	KSGRD::SensorMgr->sendRequest( "localhost", sensorName, (KSGRD::SensorClient*)this);
+	KSGRD::SensorMgr->sendRequest( "localhost", sensorName, (KSGRD::SensorClient*)this, -1);
 	++it;
     }
 }
 
-void SystemMonitorEngine::answerReceived( const QString &sensor, const QList<QByteArray>&answer ) {
-    if(sensor=="monitors") {
+void SystemMonitorEngine::answerReceived( int id, const QList<QByteArray>&answer ) {
+    if(id==-1) {
         QStringList sensors;
-	foreach(QByteArray sens, answer) { 
+	foreach(const QByteArray &sens, answer) { 
 		QStringList newSensorInfo = QString::fromUtf8(sens).split('\t');
 		QString newSensor = newSensorInfo[0];
 		sensors.append(newSensor);
@@ -89,7 +89,7 @@ void SystemMonitorEngine::answerReceived( const QString &sensor, const QList<QBy
         reply = QString::fromUtf8(answer[0]);
 
     DataEngine::SourceDict sources = containerDict();
-    DataEngine::SourceDict::const_iterator it = sources.constFind(sensor);
+    DataEngine::SourceDict::const_iterator it = sources.constFind(m_sensors.value(id));
     if (it != sources.constEnd()) {
         it.value()->setData("value", reply);
     }
@@ -97,7 +97,7 @@ void SystemMonitorEngine::answerReceived( const QString &sensor, const QList<QBy
     if(m_waitingFor == 0)
         scheduleSourcesUpdated();
 }
-void SystemMonitorEngine::sensorLost( const QString &) { 
+void SystemMonitorEngine::sensorLost( int ) { 
     m_waitingFor--;
 }
 #include "systemmonitor.moc"

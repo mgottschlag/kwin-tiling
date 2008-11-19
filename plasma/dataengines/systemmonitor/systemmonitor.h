@@ -21,7 +21,7 @@
 
 #include <Plasma/DataEngine>
 
-#include "sensorclient.h"
+#include <ksgrd/SensorClient.h>
 
 #include <QStringList>
 
@@ -43,8 +43,8 @@ class SystemMonitorEngine : public Plasma::DataEngine, public KSGRD::SensorClien
     protected:
         bool sourceRequestEvent(const QString &name);
 	/** inherited from SensorClient */
-        virtual void answerReceived( const QString &sensor, const QList<QByteArray>&answer );
-        virtual void sensorLost( const QString &sensor);
+        virtual void answerReceived( int id, const QList<QByteArray>&answer );
+        virtual void sensorLost( int );
 	virtual bool updateSourceEvent(const QString &sensorName);
 
 
