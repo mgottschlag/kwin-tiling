@@ -35,6 +35,8 @@
 #include <KBookmarkManager>
 #include <Solid/Device>
 #include <Solid/StorageAccess>
+#include <Solid/OpticalDrive>
+#include <Solid/OpticalDisc>
 #include <KUrl>
 
 // Plasma
@@ -200,7 +202,12 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view, const QPoint &
             FavoritesModel::add(url);
         }
     } else if (ejectAction && result == ejectAction) {
-        access->teardown();
+        if (device.is<Solid::OpticalDisc>()) {
+            Solid::OpticalDrive *drive = device.parent().as<Solid::OpticalDrive>();
+            drive->eject();
+        } else {
+            access->teardown();
+        }
     } else if (addToDesktopAction && result == addToDesktopAction) {
         if (d->applet) {
             Plasma::Containment *containment = d->applet->containment();
