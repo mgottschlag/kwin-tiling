@@ -28,6 +28,11 @@ namespace Plasma
     class Containment;
 } // namespace Plasma
 
+namespace Kephal
+{
+    class Screen;
+} // namespace Kephal
+
 class DashboardView;
 
 class DesktopView : public Plasma::View
@@ -52,7 +57,8 @@ public slots:
     void zoomIn(Plasma::ZoomLevel zoomLevel);
     void zoomOut(Plasma::ZoomLevel zoomLevel);
     void toggleDashboard();
-    void screenMoved();
+    void screenResized(Kephal::Screen *);
+    void screenMoved(Kephal::Screen *);
     void adjustSize();
 
     void screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment);
