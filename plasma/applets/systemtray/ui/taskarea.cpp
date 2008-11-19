@@ -23,13 +23,13 @@
 
 #include <QtCore/QSet>
 #include <QtGui/QApplication>
-#include <QtGui/QToolButton>
 #include <QtGui/QGraphicsLinearLayout>
+#include <QtGui/QWidget> // QWIDGETSIZE_MAX
 
 #include <KIcon>
 
 #include <Plasma/Applet>
-#include <Plasma/ToolButton>
+#include <Plasma/IconWidget>
 
 #include "../core/manager.h"
 #include "../core/task.h"
@@ -54,7 +54,7 @@ public:
     }
 
     Plasma::Applet *host;
-    Plasma::ToolButton *unhider;
+    Plasma::IconWidget *unhider;
     QGraphicsLinearLayout *topLayout;
     CompactLayout *taskLayout;
     QSet<QString> hiddenTypes;
@@ -184,10 +184,13 @@ void TaskArea::setOrientation(Qt::Orientation o)
     d->topLayout->setOrientation(o);
 
     if (d->unhider) {
+        d->unhider->setOrientation(o);
         if (d->topLayout->orientation() == Qt::Horizontal) {
-            d->unhider->nativeWidget()->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+            d->unhider->setMaximumSize(26, QWIDGETSIZE_MAX);
+            d->unhider->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
         } else {
-            d->unhider->nativeWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+            d->unhider->setMaximumSize(QWIDGETSIZE_MAX, 26);
+            d->unhider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
         }
     }
 }
@@ -198,14 +201,17 @@ void TaskArea::initUnhideTool()
         return;
     }
 
-    d->unhider = new Plasma::ToolButton(this);
+    d->unhider = new Plasma::IconWidget(this);
     d->unhider->setMinimumSize(22, 22);
+    d->unhider->setDrawBackground(true);
     updateUnhideToolIcon();
 
     if (d->topLayout->orientation() == Qt::Horizontal) {
-        d->unhider->nativeWidget()->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+        d->unhider->setMaximumSize(26, QWIDGETSIZE_MAX);
+        d->unhider->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     } else {
-        d->unhider->nativeWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+        d->unhider->setMaximumSize(QWIDGETSIZE_MAX, 26);
+        d->unhider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     }
 
     d->topLayout->removeItem(d->taskLayout);
@@ -223,10 +229,12 @@ void TaskArea::updateUnhideToolIcon()
         return;
     }
 
-    if (d->showingHidden || QApplication::layoutDirection() == Qt::RightToLeft) {
-        d->unhider->nativeWidget()->setIcon(KIcon("arrow-right"));
+    if (d->topLayout->orientation() == Qt::Vertical) {
+        d->unhider->setSvg("widgets/arrows", "up-arrow");
+    } else if (d->showingHidden || QApplication::layoutDirection() == Qt::RightToLeft) {
+        d->unhider->setSvg("widgets/arrows", "right-arrow");
     } else {
-        d->unhider->nativeWidget()->setIcon(KIcon("arrow-left"));
+        d->unhider->setSvg("widgets/arrows", "left-arrow");
     }
 }
 
