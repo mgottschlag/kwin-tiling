@@ -25,7 +25,7 @@
 
 #include <Plasma/DataContainer>
 
-#include <ksgrd/SensorManager.h>
+#include "../../ksysguard/gui/ksgrd/SensorManager.h"
 
 SystemMonitorEngine::SystemMonitorEngine(QObject* parent, const QVariantList& args)
     : Plasma::DataEngine(parent)
