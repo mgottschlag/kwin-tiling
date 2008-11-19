@@ -35,6 +35,7 @@ Comment[x-test]=xxKRunner which performs desktop searches via Nepomukxx
 Comment[zh_TW]=透過 Nepomuk 執行桌面搜尋的 KRunner 程式。
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
+Icon=nepomuk
 X-KDE-Library=krunner_nepomuksearchrunner
 X-KDE-PluginInfo-Author=Sebastian Trueg
 X-KDE-PluginInfo-Email=trueg@kde.org
