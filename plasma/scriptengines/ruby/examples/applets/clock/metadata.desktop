@@ -1,10 +1,12 @@
 [Desktop Entry]
 Name=Ruby Analog Clock
 Name[ca]=Rellotge analògic en Ruby
+Name[de]=Ruby - Analoge Uhr
 Name[el]=Αναλογικό ρολόι Ruby
 Name[gu]=રૂબી સાદી ઘડિયાળ
 Name[ja]=Ruby アナログ時計
 Name[kk]=Ruby-дегі аналогты сағат
+Name[km]=នាឡិកា​អាណាឡូក​
 Name[nb]=Ruby analog klokke
 Name[nds]=Analoog Klock för Ruby
 Name[nl]=Ruby Analoge klok
@@ -13,6 +15,7 @@ Name[pt_BR]=Relógio Analógico em Ruby
 Name[sv]=Ruby analog klocka
 Name[tr]=Ruby Analog Saat
 Name[uk]=Аналоговий годинник на Ruby
+Name[x-test]=xxRuby Analog Clockxx
 Name[zh_TW]=Ruby 類比時鐘
 Comment=An SVG themable clock
 Comment[af]='n Horlosie met SVG temas

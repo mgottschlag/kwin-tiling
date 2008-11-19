@@ -1,10 +1,12 @@
 [Desktop Entry]
 Name=Ruby Web Browser
 Name[ca]=Navegador web en Ruby
+Name[de]=Ruby - Web-Browser
 Name[el]=Περιηγητής ιστού Ruby
 Name[gu]=રૂબી વેબ બ્રાઉઝર
 Name[ja]=Ruby ウェブブラウザ
 Name[kk]=Ruby-дегі Веб шолғышы
+Name[km]=កម្មវិធី​រុករក​បណ្ដាញ
 Name[nb]=Ruby nettleser
 Name[nds]=Nettkieker för Ruby
 Name[nl]=Ruby Webbrowser
@@ -13,6 +15,7 @@ Name[pt_BR]=Navegador Web em Ruby
 Name[sv]=Ruby webbläsare
 Name[tr]=Ruby Web Tarayıcı
 Name[uk]=Навігатор Тенет на Ruby
+Name[x-test]=xxRuby Web Browserxx
 Name[zh_TW]=Ruby 網頁瀏覽器
 
 Type=Service
