@@ -269,9 +269,6 @@ UrlItemView::UrlItemView(QWidget *parent)
         : QAbstractItemView(parent)
         , d(new Private(this))
 {
-    //setSelectionMode(QAbstractItemView::SingleSelection);
-    //viewport()->setAcceptDrops(true);
-
     d->dragging = false;
     setIconSize(QSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
     setMouseTracking(true);
@@ -525,11 +522,10 @@ void UrlItemView::setItemStateProvider(ItemStateProvider *provider)
 
 void UrlItemView::dragEnterEvent(QDragEnterEvent *event)
 {
-    //QAbstractItemView::dragEnterEvent(event);
-
     if (dragDropMode() != QAbstractItemView::DragDrop) {
         return;
     }
+
     d->dragging = true;
     setDirtyRegion(d->dropRect);
 
@@ -538,8 +534,6 @@ void UrlItemView::dragEnterEvent(QDragEnterEvent *event)
 
 void UrlItemView::dragLeaveEvent(QDragLeaveEvent *event)
 {
-    //QAbstractItemView::dragLeaveEvent(event);
-
     if (dragDropMode() != QAbstractItemView::DragDrop) {
         return;
     }
@@ -572,7 +566,7 @@ void UrlItemView::dragMoveEvent(QDragMoveEvent *event)
             d->dropRect = QRect(rect.left(), rect.top() - gap / 2,
                                 rect.width(), gap);
         } else if (d->insertBelow(rect, pos)) {
-            d->dropRect = QRect(rect.left(), rect.bottom() - gap / 2,
+            d->dropRect = QRect(rect.left(), rect.bottom() + 1 - gap / 2,
                                 rect.width(), gap);
         } else {
             d->dropRect = rect;
@@ -613,7 +607,11 @@ void UrlItemView::startDrag(Qt::DropActions supportedActions)
 
 void UrlItemView::dropEvent(QDropEvent *event)
 {
-    kDebug() << "UrlItemView drop event!";
+    QAbstractItemView::dropEvent(event);
+
+    if (!d->dragging) {
+        return;
+    }
 
     // This special code is necessary in order to be able to
     // inidcate to the model WHERE the item should be dropped,
@@ -633,11 +631,12 @@ void UrlItemView::dropEvent(QDropEvent *event)
         } else if(d->insertAbove(rect, pos) && d->draggedRow < row) {
             row--;
         }
-        model()->dropMimeData(event->mimeData(), Qt::MoveAction, 
-                                                row, 0, parent);
+
+        model()->dropMimeData(event->mimeData(), event->dropAction(), 
+							    row, 0, parent);
+
         d->dragging = false;
-        update();
-        event->setDropAction(Qt::MoveAction);
+
         event->accept();
     }
 }
