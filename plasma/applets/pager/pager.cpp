@@ -269,19 +269,20 @@ void Pager::recalculateGeometry()
         qreal ratio = (qreal)Kephal::ScreenUtils::desktopGeometry().width() / (qreal)Kephal::ScreenUtils::desktopGeometry().height();
 
         if (formFactor() == Plasma::Vertical ) {
-            qreal optimalSize = (geometry().width() - KIconLoader::SizeSmall*ratio * columns + padding*(columns-1))/2;
+            //FIXME: extra 2px margin, as the panel margin calculation, as weird as that
+            qreal optimalSize = (geometry().width() - KIconLoader::SizeSmall*ratio * columns + padding*(columns-1))/2 - 2;
 
             if (optimalSize < leftMargin || optimalSize < rightMargin) {
                 leftMargin = rightMargin = qMax(qreal(1), optimalSize);
-                 m_showOwnBackground = false;
+                m_showOwnBackground = false;
             }
 
         } else if (formFactor() == Plasma::Horizontal ) {
-            qreal optimalSize = (geometry().height() - KIconLoader::SizeSmall*rows + padding*(rows-1))/2;
+            qreal optimalSize = (geometry().height() - KIconLoader::SizeSmall*rows + padding*(rows-1))/2 - 2;
 
             if (optimalSize < topMargin || optimalSize < bottomMargin) {
                 topMargin = bottomMargin =  qMax(qreal(1), optimalSize);
-                 m_showOwnBackground = false;
+                m_showOwnBackground = false;
             }
         } else {
             m_showOwnBackground = true;
