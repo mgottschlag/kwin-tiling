@@ -517,8 +517,10 @@ void Panel::paintInterface(QPainter *painter,
         viewGeom = containmentOpt->view->geometry();
     }
 
-    if (m_maskDirty) {
+    if (m_maskDirty || m_lastViewGeom != viewGeom) {
         m_maskDirty = false;
+        m_lastViewGeom = viewGeom;
+
         updateBorders(viewGeom);
         if (containmentOpt && containmentOpt->view) {
             containmentOpt->view->setMask(m_background->mask());
