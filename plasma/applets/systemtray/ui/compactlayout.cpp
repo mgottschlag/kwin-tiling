@@ -39,7 +39,8 @@ public:
     {
     }
 
-    QHash<QGraphicsLayoutItem*, QRectF> calculateGeometries(Qt::SizeHint which,
+    QHash<QGraphicsLayoutItem*, QRectF> calculateGeometries(const QRectF &rect,
+                                                            Qt::SizeHint which,
                                                             const QSizeF &constraint) const;
     void addPadding(QHash<QGraphicsLayoutItem*, QRectF> &geometries,
                     const QSizeF &constraint);
@@ -78,27 +79,26 @@ void CompactLayout::setSpacing(qreal spacing)
 }
 
 
-void CompactLayout::addItem(QGraphicsLayout *item)
+void CompactLayout::insertItem(int index, QGraphicsLayoutItem *item)
 {
-    item->setParentLayoutItem(this);
-    d->items.append(item);
+    index = qBound(0, index, d->items.count() - 1);
 
+    item->setParentLayoutItem(this);
+
+    QGraphicsWidget *widget = dynamic_cast<QGraphicsWidget *>(item);
+    if (widget) {
+        d->updateParentWidget(widget);
+    }
+
+    d->items.insert(index, item);
     updateGeometry();
     activate();
 }
 
-
-void CompactLayout::addItem(QGraphicsWidget *item)
+void CompactLayout::addItem(QGraphicsLayoutItem *item)
 {
-    item->setParentLayoutItem(this);
-    d->updateParentWidget(item);
-
-    d->items.append(item);
-
-    updateGeometry();
-    activate();
+    insertItem(d->items.count() - 1, item);
 }
-
 
 void CompactLayout::Private::updateParentWidget(QGraphicsWidget *item)
 {
@@ -136,8 +136,9 @@ int CompactLayout::count() const
 
 void CompactLayout::setGeometry(const QRectF &rect)
 {
+    //kDebug() << rect;
     QHash<QGraphicsLayoutItem*, QRectF> geometries;
-    geometries = d->calculateGeometries(Qt::PreferredSize, rect.size());
+    geometries = d->calculateGeometries(rect, Qt::PreferredSize, rect.size());
     d->addPadding(geometries, rect.size());
 
     QHashIterator<QGraphicsLayoutItem*, QRectF> i(geometries);
@@ -184,7 +185,7 @@ QSizeF CompactLayout::sizeHint(Qt::SizeHint which, const QSizeF &constraint) con
     }
 
     QHash<QGraphicsLayoutItem*, QRectF> geometries =
-        d->calculateGeometries(which, d->hackedConstraint(constraint));
+        d->calculateGeometries(geometry(), which, d->hackedConstraint(constraint));
 
     return d->boundingRect(geometries.values()).size();
 }
@@ -206,7 +207,7 @@ QRectF CompactLayout::Private::boundingRect(const QList<QRectF> &rects) const
 }
 
 
-QHash<QGraphicsLayoutItem*, QRectF> CompactLayout::Private::calculateGeometries(Qt::SizeHint which, const QSizeF &constraint) const
+QHash<QGraphicsLayoutItem*, QRectF> CompactLayout::Private::calculateGeometries(const QRectF &geom, Qt::SizeHint which, const QSizeF &constraint) const
 {
     QSizePolicy sizePolicy = q->parentLayoutItem()->sizePolicy();
 
@@ -214,8 +215,8 @@ QHash<QGraphicsLayoutItem*, QRectF> CompactLayout::Private::calculateGeometries(
     QList<qreal> xPositions;
     QList<qreal> yPositions;
 
-    xPositions << 0.0;
-    yPositions << 0.0;
+    xPositions << geom.left();
+    yPositions << geom.top();
 
     foreach (QGraphicsLayoutItem *item, items) {
         QRectF rect;

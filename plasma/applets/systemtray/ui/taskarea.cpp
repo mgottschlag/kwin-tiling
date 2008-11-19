@@ -22,9 +22,16 @@
 #include "taskarea.h"
 
 #include <QtCore/QSet>
+#include <QtGui/QApplication>
+#include <QtGui/QToolButton>
+#include <QtGui/QGraphicsLinearLayout>
 
-#include <plasma/applet.h>
+#include <KIcon>
 
+#include <Plasma/Applet>
+#include <Plasma/ToolButton>
+
+#include "../core/manager.h"
 #include "../core/task.h"
 #include "compactlayout.h"
 
@@ -38,15 +45,21 @@ class TaskArea::Private
 public:
     Private(Plasma::Applet *h)
         : host(h),
-          layout(new CompactLayout())
+          unhider(0),
+          topLayout(new QGraphicsLinearLayout(Qt::Horizontal)),
+          taskLayout(new CompactLayout()),
+          showingHidden(false),
+          hasHiddenTasks(false)
     {
     }
 
-    QGraphicsWidget* findWidget(Task *task);
-
     Plasma::Applet *host;
-    CompactLayout *layout;
+    Plasma::ToolButton *unhider;
+    QGraphicsLinearLayout *topLayout;
+    CompactLayout *taskLayout;
     QSet<QString> hiddenTypes;
+    bool showingHidden;
+    bool hasHiddenTasks;
 };
 
 
@@ -54,7 +67,9 @@ TaskArea::TaskArea(Plasma::Applet *parent)
     : QGraphicsWidget(parent),
       d(new Private(parent))
 {
-    setLayout(d->layout);
+    setLayout(d->topLayout);
+    d->topLayout->addItem(d->taskLayout);
+    d->topLayout->setContentsMargins(0, 0, 0, 0);
 }
 
 
@@ -72,52 +87,174 @@ void TaskArea::setHiddenTypes(const QStringList &hiddenTypes)
 
 bool TaskArea::isHiddenType(const QString &typeId) const
 {
-    return d->hiddenTypes.contains(typeId);
+    return !d->showingHidden && d->hiddenTypes.contains(typeId);
 }
-
 
 void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
 {
+    d->hasHiddenTasks = false;
     foreach (Task *task, tasks) {
+        kDebug() << "checking" << task->name() << d->showingHidden;
         if (isHiddenType(task->typeId())) {
-            QGraphicsWidget *widget = d->findWidget(task);
+            d->hasHiddenTasks = true;
+            QGraphicsWidget *widget = findWidget(task);
             if (widget) {
-                d->layout->removeItem(widget);
+                d->taskLayout->removeItem(widget);
+                d->topLayout->invalidate();
                 delete widget;
             }
         } else {
-            addTask(task);
+            addWidgetForTask(task);
         }
     }
-    emit sizeHintChanged(Qt::PreferredSize);
-}
 
+    checkUnhideTool();
+}
 
 void TaskArea::addTask(Task *task)
 {
-    if (task->isEmbeddable() && !isHiddenType(task->typeId()) && !d->findWidget(task)) {
-        d->layout->addItem(task->widget(d->host));
-        emit sizeHintChanged(Qt::PreferredSize);
+    addWidgetForTask(task);
+    checkUnhideTool();
+}
+
+void TaskArea::addWidgetForTask(SystemTray::Task *task)
+{
+    if (task->isEmbeddable() && !findWidget(task)) {
+        if (isHiddenType(task->typeId())) {
+            d->hasHiddenTasks = true;
+        } else {
+            d->taskLayout->addItem(task->widget(d->host));
+            emit sizeHintChanged(Qt::PreferredSize);
+        }
     }
 }
 
+void TaskArea::checkSizes()
+{
+    d->taskLayout->updateGeometry();
+    d->topLayout->updateGeometry();
+
+    // this bit of braindamage is due to the "quirks" of QGrahics[Linear]Layout
+    QSizeF s = d->taskLayout->effectiveSizeHint(Qt::PreferredSize);
+    if (d->unhider) {
+        if (d->topLayout->orientation() == Qt::Horizontal) {
+            s.setWidth(s.width() + d->unhider->size().width());
+        } else {
+            s.setHeight(s.height() + d->unhider->size().height());
+        }
+    }
+
+    setPreferredSize(s);
+}
 
 void TaskArea::removeTask(Task *task)
 {
     foreach (QGraphicsWidget *widget, task->associatedWidgets()) {
-        if (d->layout->containsItem(widget)) {
-            d->layout->removeItem(widget);
+        if (d->taskLayout->containsItem(widget)) {
+            d->taskLayout->removeItem(widget);
+            d->topLayout->invalidate();
             emit sizeHintChanged(Qt::PreferredSize);
             break;
         }
     }
 }
 
+int TaskArea::easement() const
+{
+    if (d->unhider) {
+        const int cheat = 6;
 
-QGraphicsWidget* TaskArea::Private::findWidget(Task *task)
+        if (d->topLayout->orientation() == Qt::Horizontal) {
+            return d->unhider->size().width() / 2 + cheat;
+        } else {
+            return d->unhider->size().height() / 2 + cheat;
+        }
+    }
+
+    return 0;
+}
+
+bool TaskArea::hasHiddenTasks() const
+{
+    return d->hasHiddenTasks;
+}
+
+void TaskArea::setOrientation(Qt::Orientation o)
+{
+    d->topLayout->setOrientation(o);
+
+    if (d->unhider) {
+        if (d->topLayout->orientation() == Qt::Horizontal) {
+            d->unhider->nativeWidget()->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+        } else {
+            d->unhider->nativeWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+        }
+    }
+}
+
+void TaskArea::initUnhideTool()
+{
+    if (d->unhider) {
+        return;
+    }
+
+    d->unhider = new Plasma::ToolButton(this);
+    d->unhider->setMinimumSize(22, 22);
+    updateUnhideToolIcon();
+
+    if (d->topLayout->orientation() == Qt::Horizontal) {
+        d->unhider->nativeWidget()->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    } else {
+        d->unhider->nativeWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    }
+
+    d->topLayout->removeItem(d->taskLayout);
+    //d->topLayout->insertItem(0, d->unhider);
+    d->topLayout->addItem(d->unhider);
+    d->topLayout->addItem(d->taskLayout);
+    connect(d->unhider, SIGNAL(clicked()), this, SLOT(toggleHiddenItems()));
+
+    emit sizeHintChanged(Qt::PreferredSize);
+}
+
+void TaskArea::updateUnhideToolIcon()
+{
+    if (!d->unhider) {
+        return;
+    }
+
+    if (d->showingHidden || QApplication::layoutDirection() == Qt::RightToLeft) {
+        d->unhider->nativeWidget()->setIcon(KIcon("arrow-right"));
+    } else {
+        d->unhider->nativeWidget()->setIcon(KIcon("arrow-left"));
+    }
+}
+
+void TaskArea::toggleHiddenItems()
+{
+    d->showingHidden = !d->showingHidden;
+    updateUnhideToolIcon();
+    syncTasks(Manager::self()->tasks());
+    emit sizeHintChanged(Qt::PreferredSize);
+}
+
+void TaskArea::checkUnhideTool()
+{
+    if (d->showingHidden || d->hasHiddenTasks) {
+        initUnhideTool();
+    } else {
+        // hide the show tool
+        d->topLayout->removeItem(d->unhider);
+        delete d->unhider;
+        d->unhider = 0;
+        emit sizeHintChanged(Qt::PreferredSize);
+    }
+}
+
+QGraphicsWidget* TaskArea::findWidget(Task *task)
 {
     foreach (QGraphicsWidget *widget, task->associatedWidgets()) {
-        if (layout->containsItem(widget)) {
+        if (d->taskLayout->containsItem(widget)) {
             return widget;
         }
     }

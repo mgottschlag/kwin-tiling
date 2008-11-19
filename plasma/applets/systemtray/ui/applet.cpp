@@ -25,6 +25,7 @@
 #include "notificationwidget.h"
 #include "taskarea.h"
 
+#include <QtGui/QApplication>
 #include <QtGui/QGraphicsLayout>
 #include <QtGui/QIcon>
 #include <QtGui/QListWidget>
@@ -81,7 +82,7 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
 
     setPopupIcon(QIcon());
     setAspectRatioMode(Plasma::KeepAspectRatio);
-
+    setBackgroundHints(NoBackground);
     setHasConfigurationInterface(true);
 }
 
@@ -125,18 +126,21 @@ void Applet::init()
 
 void Applet::constraintsEvent(Plasma::Constraints constraints)
 {
+    setBackgroundHints(NoBackground);
     if (constraints & Plasma::FormFactorConstraint) {
         QSizePolicy policy(QSizePolicy::Minimum, QSizePolicy::Minimum);
         policy.setHeightForWidth(true);
+        bool horizontal = formFactor() != Plasma::Vertical;
 
-        if (formFactor() == Plasma::Horizontal) {
+        if (horizontal) {
             policy.setVerticalPolicy(QSizePolicy::Expanding);
-        } else if (formFactor() == Plasma::Vertical) {
+        } else {
             policy.setHorizontalPolicy(QSizePolicy::Expanding);
         }
 
         setSizePolicy(policy);
         d->taskArea->setSizePolicy(policy);
+        d->taskArea->setOrientation(horizontal ? Qt::Horizontal : Qt::Vertical);
     }
 
     if (constraints & Plasma::SizeConstraint) {
@@ -157,7 +161,7 @@ void Applet::setGeometry(const QRectF &rect)
 
 void Applet::checkSizes()
 {
-    d->taskArea->layout()->updateGeometry();
+    d->taskArea->checkSizes();
 
     qreal leftMargin, topMargin, rightMargin, bottomMargin;
     d->background->getMargins(leftMargin, topMargin, rightMargin, bottomMargin);
@@ -206,10 +210,21 @@ void Applet::Private::setTaskAreaGeometry()
 void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
     Q_UNUSED(option)
-    Q_UNUSED(contentsRect);
+    Q_UNUSED(contentsRect)
 
-    d->background->resizeFrame(size());
-    d->background->paintFrame(painter);
+    QRect r = rect().toRect();
+
+    if (formFactor() == Plasma::Vertical) {
+        r.setY(d->taskArea->easement());
+    } else if (QApplication::layoutDirection() == Qt::RightToLeft) {
+        r.setWidth(r.width() - d->taskArea->easement());
+    } else {
+        r.setX(d->taskArea->easement());
+        kDebug() << "seting easement to" << d->taskArea->easement() << r << size();
+    }
+
+    d->background->resizeFrame(r.size());
+    d->background->paintFrame(painter, r, QRectF(QPointF(0, 0), r.size()));
 }
 
 

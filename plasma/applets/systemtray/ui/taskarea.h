@@ -45,6 +45,10 @@ public:
     void setHiddenTypes(const QStringList &hiddenTypes);
     bool isHiddenType(const QString &typeId) const;
     void syncTasks(const QList<SystemTray::Task*> &tasks);
+    bool hasHiddenTasks() const;
+    int easement() const;
+    void setOrientation(Qt::Orientation);
+    void checkSizes();
 
 public slots:
     void addTask(SystemTray::Task *task);
@@ -53,7 +57,16 @@ public slots:
 signals:
     void sizeHintChanged(Qt::SizeHint which);
 
+private slots:
+    void toggleHiddenItems();
+
 private:
+    void addWidgetForTask(SystemTray::Task *task);
+    QGraphicsWidget* findWidget(Task *task);
+    void updateUnhideToolIcon();
+    void initUnhideTool();
+    void checkUnhideTool();
+
     class Private;
     Private* const d;
 };

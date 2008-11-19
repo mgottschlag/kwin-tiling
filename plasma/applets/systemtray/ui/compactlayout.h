@@ -37,8 +37,8 @@ public:
     qreal spacing() const;
     void setSpacing(qreal spacing);
 
-    void addItem(QGraphicsLayout *item);
-    void addItem(QGraphicsWidget *item);
+    void insertItem(int index, QGraphicsLayoutItem *item);
+    void addItem(QGraphicsLayoutItem *item);
     void removeItem(QGraphicsLayoutItem *item);
     bool containsItem(QGraphicsLayoutItem *item) const;
 
