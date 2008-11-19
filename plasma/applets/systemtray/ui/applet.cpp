@@ -330,7 +330,11 @@ void Applet::hidePopupIfEmpty()
 
 void Applet::popupEvent(bool visibility)
 {
-    if (!extender()->attachedItems().isEmpty()) {
+    kDebug() << visibility << extender()->attachedItems().isEmpty();
+    if (extender()->attachedItems().isEmpty()) {
+        delete d->extenderTask;
+        d->extenderTask = 0;
+    } else {
         if (!d->extenderTask) {
             d->extenderTask = new SystemTray::Extender::Task(this);
         }
@@ -342,10 +346,6 @@ void Applet::popupEvent(bool visibility)
         }
 
         Manager::self()->addTask(d->extenderTask);
-    } else {
-        delete d->extenderTask;
-        //Manager::self()->removeTask(d->extenderTask);
-        d->extenderTask = 0;
     }
 }
 

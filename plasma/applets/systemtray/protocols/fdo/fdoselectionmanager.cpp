@@ -90,7 +90,7 @@ static bool x11EventFilter(void *message, long int *result)
         }
     }
 
-    if (oldEventFilter && oldEventFilter != &x11EventFilter) {
+    if (oldEventFilter && oldEventFilter != x11EventFilter) {
         return oldEventFilter(message, result);
     } else {
         return false;

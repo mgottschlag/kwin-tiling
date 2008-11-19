@@ -48,6 +48,7 @@ public:
           unhider(0),
           topLayout(new QGraphicsLinearLayout(Qt::Horizontal)),
           taskLayout(new CompactLayout()),
+          lastItemCount(0),
           showingHidden(false),
           hasHiddenTasks(false)
     {
@@ -58,8 +59,9 @@ public:
     QGraphicsLinearLayout *topLayout;
     CompactLayout *taskLayout;
     QSet<QString> hiddenTypes;
-    bool showingHidden;
-    bool hasHiddenTasks;
+    int lastItemCount;
+    bool showingHidden : 1;
+    bool hasHiddenTasks : 1;
 };
 
 
@@ -123,7 +125,18 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
         if (isHiddenType(task->typeId())) {
             d->hasHiddenTasks = true;
         } else {
-            d->taskLayout->addItem(task->widget(d->host));
+            switch (task->order()) {
+                case SystemTray::Task::First:
+                    d->taskLayout->insertItem(0, task->widget(d->host));
+                    break;
+                case SystemTray::Task::Normal:
+                    d->taskLayout->insertItem(d->taskLayout->count() - d->lastItemCount, task->widget(d->host));
+                    break;
+                case SystemTray::Task::Last:
+                    ++d->lastItemCount;
+                    d->taskLayout->addItem(task->widget(d->host));
+                    break;
+            }
             emit sizeHintChanged(Qt::PreferredSize);
         }
     }
@@ -151,6 +164,10 @@ void TaskArea::removeTask(Task *task)
 {
     foreach (QGraphicsWidget *widget, task->associatedWidgets()) {
         if (d->taskLayout->containsItem(widget)) {
+            if (task->order() == Task::Last) {
+                --d->lastItemCount;
+            }
+
             d->taskLayout->removeItem(widget);
             d->topLayout->invalidate();
             emit sizeHintChanged(Qt::PreferredSize);

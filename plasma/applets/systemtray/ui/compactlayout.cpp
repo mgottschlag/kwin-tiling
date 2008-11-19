@@ -81,7 +81,7 @@ void CompactLayout::setSpacing(qreal spacing)
 
 void CompactLayout::insertItem(int index, QGraphicsLayoutItem *item)
 {
-    index = qBound(0, index, d->items.count() - 1);
+    index = qBound(0, index, d->items.count());
 
     item->setParentLayoutItem(this);
 
@@ -90,14 +90,19 @@ void CompactLayout::insertItem(int index, QGraphicsLayoutItem *item)
         d->updateParentWidget(widget);
     }
 
-    d->items.insert(index, item);
+    if (index == d->items.count()) {
+        d->items.append(item);
+    } else {
+        d->items.insert(index, item);
+    }
+
     updateGeometry();
     activate();
 }
 
 void CompactLayout::addItem(QGraphicsLayoutItem *item)
 {
-    insertItem(d->items.count() - 1, item);
+    insertItem(d->items.count(), item);
 }
 
 void CompactLayout::Private::updateParentWidget(QGraphicsWidget *item)

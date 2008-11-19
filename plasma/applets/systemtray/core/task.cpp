@@ -32,14 +32,15 @@ class Task::Private
 {
 public:
     QList<QGraphicsWidget*> associatedWidgets;
+    Task::Order order;
 };
 
 
 Task::Task()
     : d(new Private)
 {
+    d->order = Normal;
 }
-
 
 Task::~Task()
 {
@@ -77,6 +78,15 @@ QList<QGraphicsWidget*> Task::associatedWidgets() const
     return d->associatedWidgets;
 }
 
+Task::Order Task::order() const
+{
+    return d->order;
+}
+
+void Task::setOrder(Order order)
+{
+    d->order = order;
+}
 
 }
 

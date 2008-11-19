@@ -53,6 +53,7 @@ public:
 Task::Task(Plasma::PopupApplet *systemTray)
     : d(new Private(systemTray, this))
 {
+    setOrder(Last);
 }
 
 

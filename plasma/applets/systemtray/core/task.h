@@ -47,6 +47,8 @@ class Task : public QObject
     Q_OBJECT
 
 public:
+    enum Order { First, Normal, Last };
+
     virtual ~Task();
 
     /**
@@ -90,6 +92,18 @@ public:
      * in the tray icon itself.
      **/
     virtual QIcon icon() const = 0;
+
+    /**
+     * Returns the order this Task should be placed in: first, normal or last
+     */
+    Order order() const;
+
+    /**
+     * Sets which order this task should be placed in, relative to other Tasks
+     *
+     * @arg order the order to set this Task to
+     */
+    void setOrder(Order order);
 
 signals:
     /**
