@@ -164,10 +164,10 @@ LaunchConfig::load()
   KConfigGroup c = conf.group("FeedbackStyle");
 
   bool busyCursor =
-    c.readEntry("BusyCursor", (Default & BusyCursor));
+    c.readEntry("BusyCursor", (bool)(Default & BusyCursor));
 
   bool taskbarButton =
-    c.readEntry("TaskbarButton", (Default & TaskbarButton));
+    c.readEntry("TaskbarButton", (bool)(Default & TaskbarButton));
 
   cb_taskbarButton->setChecked(taskbarButton);
 
@@ -226,13 +226,13 @@ LaunchConfig::save()
 LaunchConfig::defaults()
 {
   cb_busyCursor->setCurrentIndex(2);
-  cb_taskbarButton->setChecked(Default & TaskbarButton);
+  cb_taskbarButton->setChecked((bool)Default & TaskbarButton);
 
   sb_cursorTimeout->setValue( 30 );
   sb_taskbarTimeout->setValue( 30 );
 
   slotBusyCursor( 2 );
-  slotTaskbarButton( Default & TaskbarButton );
+  slotTaskbarButton( (bool)Default & TaskbarButton );
 
   checkChanged();
 }
@@ -244,10 +244,10 @@ LaunchConfig::checkChanged()
   KConfigGroup  c = conf.group("FeedbackStyle");
 
   bool savedBusyCursor =
-    c.readEntry("BusyCursor", (Default & BusyCursor));
+    c.readEntry("BusyCursor", (bool)(Default & BusyCursor));
 
   bool savedTaskbarButton =
-    c.readEntry("TaskbarButton", (Default & TaskbarButton));
+    c.readEntry("TaskbarButton", (bool)(Default & TaskbarButton));
 
   c = conf.group("BusyCursorSettings");
   unsigned int savedCursorTimeout = c.readEntry( "Timeout", 30 );
