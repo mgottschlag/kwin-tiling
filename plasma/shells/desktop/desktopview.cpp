@@ -107,7 +107,7 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
 
     Kephal::Screens *screens = Kephal::Screens::self();
     connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)), SLOT(adjustSize()));
-    connect(screens, SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)), SLOT(adjustSize()));
+    connect(screens, SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)), SLOT(screenMoved()));
 }
 
 DesktopView::~DesktopView()
@@ -141,6 +141,12 @@ void DesktopView::toggleDashboard()
 
     m_dashboard->toggleVisibility();
     kDebug() << "toggling dashboard for screen" << screen() << m_dashboard->isVisible();
+}
+
+void DesktopView::screenMoved()
+{
+    kDebug() << screen();
+    adjustSize();
 }
 
 void DesktopView::adjustSize()

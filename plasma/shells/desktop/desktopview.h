@@ -52,6 +52,7 @@ public slots:
     void zoomIn(Plasma::ZoomLevel zoomLevel);
     void zoomOut(Plasma::ZoomLevel zoomLevel);
     void toggleDashboard();
+    void screenMoved();
     void adjustSize();
 
     void screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment);

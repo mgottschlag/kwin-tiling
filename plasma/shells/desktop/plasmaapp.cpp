@@ -536,17 +536,18 @@ void PlasmaApp::createView(Plasma::Containment *containment)
         default:
             if (containment->screen() > -1 &&
                 containment->screen() < Kephal::ScreenUtils::numScreens()) {
-                if (viewForScreen(containment->screen(), containment->desktop())) {
+                DesktopView *view = viewForScreen(containment->screen(), containment->desktop());
+                if (view) {
                     kDebug() << "had a view for" << containment->screen() << containment->desktop();
                     // we already have a view for this screen
                     return;
                 }
 
-                kDebug() << "creating a view for" << containment->screen() << containment->desktop()
+                kDebug() << "creating a new view for" << containment->screen() << containment->desktop()
                          << "and we have" << Kephal::ScreenUtils::numScreens() << "screens";
 
                 // we have a new screen. neat.
-                DesktopView *view = new DesktopView(containment, id, 0);
+                view = new DesktopView(containment, id, 0);
                 viewWindow = view->winId();
                 if (m_corona) {
                     connect(m_corona, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
