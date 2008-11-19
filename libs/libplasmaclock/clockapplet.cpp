@@ -314,14 +314,13 @@ void ClockApplet::init()
     d->timezone = cg.readEntry("timezone", d->timezone);
     if (d->timezone == "UTC")  {
         d->prettyTimezone = d->timezone;
+    } else if (!isLocalTimezone()) {
+        QStringList tzParts = d->timezone.split("/");
+        d->prettyTimezone = tzParts.value(1);
     } else {
-        if (!isLocalTimezone()) {
-            QStringList tzParts = d->timezone.split("/");
-            d->prettyTimezone = tzParts.value(1);
-       } else {
-           d->prettyTimezone = localTimezone();
-       }
+        d->prettyTimezone = localTimezone();
     }
+
 
     //avoid duplication
     if (!extender()->item("calendar")) {
@@ -356,10 +355,13 @@ void ClockApplet::setCurrentTimezone(const QString &tz)
     d->timezone = tz;
     if (tz == "UTC") {
         d->prettyTimezone = tz;
-    } else {
+    } else if (!isLocalTimezone()) {
         QStringList tzParts = tz.split("/");
         d->prettyTimezone = tzParts.value(1);
+    } else {
+        d->prettyTimezone = localTimezone();
     }
+
     KConfigGroup cg = config();
     cg.writeEntry("timezone", tz);
     emit configNeedsSaving();
