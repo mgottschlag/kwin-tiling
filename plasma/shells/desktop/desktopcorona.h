@@ -49,9 +49,14 @@ public:
     void loadDefaultLayout();
 
     /**
-     * Ensures we have a desktop containment for every screen
+     * Ensures we have the necessary containments for every screen
      */
     void checkScreens();
+
+    /**
+     * Ensures we have the necessary containments for the given screen screen
+     */
+    void checkScreen(int screen, bool signalWhenExists = false);
 
     virtual int numScreens() const;
     virtual QRect screenGeometry(int id) const;

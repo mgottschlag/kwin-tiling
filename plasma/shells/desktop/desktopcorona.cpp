@@ -54,16 +54,30 @@ void DesktopCorona::checkScreens()
     // quick sanity check to ensure we have containments for each screen
     int numScreens = Kephal::ScreenUtils::numScreens();
     for (int i = 0; i < numScreens; ++i) {
-        if (AppSettings::perVirtualDesktopViews()) {
-            int numDesktops = KWindowSystem::numberOfDesktops();
+        checkScreen(i);
+    }
+}
 
-            for (int j = 0; j < numDesktops; ++j) {
-                if (!containmentForScreen(i, j)) {
-                    addDesktopContainment(i, j);
-                }
+void DesktopCorona::checkScreen(int screen, bool signalWhenExists)
+{
+    if (AppSettings::perVirtualDesktopViews()) {
+        int numDesktops = KWindowSystem::numberOfDesktops();
+
+        for (int j = 0; j < numDesktops; ++j) {
+            Plasma::Containment *c = containmentForScreen(screen, j);
+
+            if (!c) {
+                addDesktopContainment(screen, j);
+            } else if (signalWhenExists) {
+                emit containmentAdded(c);
             }
-        } else if (!containmentForScreen(i)) {
-            addDesktopContainment(i);
+        }
+    } else {
+        Plasma::Containment *c = containmentForScreen(screen);
+        if (!containmentForScreen(screen)) {
+            addDesktopContainment(screen);
+        } else if (signalWhenExists) {
+            emit containmentAdded(c);
         }
     }
 }
@@ -228,25 +242,7 @@ Plasma::Applet *DesktopCorona::loadDefaultApplet(const QString &pluginName, Plas
 void DesktopCorona::screenAdded(Kephal::Screen *s)
 {
     kDebug() << s->id();
-    Plasma::Containment *c = containmentForScreen(s->id());
-    if (c) {
-        // now ensure that if our screen count changed we actually get views
-        // for them, even if the Containment already existed for that screen
-        // so we "lie" and emit a containmentAdded signal for every new screen
-        // regardless of whether it actually already existed, or just got added
-        // and therefore had this signal emitted. plasma can handle such
-        // multiple emissions of the signal, and this is simply the most
-        // straightforward way of accomplishing this
-        kDebug() << "     Notifying of new screen";
-        emit containmentAdded(c);
-    } else {
-        c = addContainment("desktop");
-        c->setScreen(s->id());
-        c->setFormFactor(Plasma::Planar);
-        c->flushPendingConstraintsEvents();
-        c->setActivity(i18n("Desktop"));
-    }
-    kDebug() << "Done";
+    checkScreen(s->id(), true);
 }
 
 #include "desktopcorona.moc"
