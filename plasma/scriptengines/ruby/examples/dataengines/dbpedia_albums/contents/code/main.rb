@@ -92,6 +92,11 @@ class SparqlResultParser
   end
 end
 
+# There is a Soprano::Client::SparqlModel class in Soprano, but it
+# appears to make queries synchronously and so it wouldn't be 
+# suitable for a Plasma data engine like this one. Here we use KIO
+# to retrieve the query results asynchronously.
+#
 class SparqlDataEngine < PlasmaScripting::DataEngine
   slots 'queryData(KIO::Job*, QByteArray)',
         'queryCompleted(KJob*)'
@@ -154,7 +159,17 @@ class SparqlDataEngine < PlasmaScripting::DataEngine
   end
 end
 
-
+# In this query the properties are hard wired. It would be possible to
+# make a query at start up to find all the properties for a given RDF
+# type by retrieving the RDFS:domain properties specified in the 
+# ontology:
+#
+# SELECT DISTINCT ?p WHERE { 
+#     ?p <http://www.w3.org/2000/01/rdf-schema#domain> <http://mywebsite/myontology#MyClass> . 
+# }
+#
+# Then dynamically construct a query like the one below with the properties.
+#
 SPARQL_QUERY = <<-EOS
 PREFIX p: <http://dbpedia.org/property/>  
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -167,7 +182,7 @@ SELECT * WHERE {
    }
 EOS
 
-module DbpediaQueries
+module DbpediaAlbums
   #
   # Customize the use of the SparqlDataEngine by giving it the url of an endpoint,
   # a query to execute, and the name of the most important (or primary) value.
