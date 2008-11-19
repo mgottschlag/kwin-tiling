@@ -81,6 +81,9 @@ class DeviceNotifier : public Plasma::PopupApplet
          */
         QWidget *widget();
 
+    protected:
+        void popupEvent(bool show);
+
     public slots:
         /**
          * @internal Sets the tooltip content properly before showing.

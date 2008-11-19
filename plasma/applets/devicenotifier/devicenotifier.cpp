@@ -135,6 +135,13 @@ void DeviceNotifier::changeNotifierIcon(const QString& name)
     setPopupIcon(m_icon->icon());
 }
 
+void DeviceNotifier::popupEvent(bool show)
+{
+    if (show) {
+        Plasma::ToolTipManager::self()->clearContent(this);
+    }
+}
+
 void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data data)
 {
     if (data.size() > 0) {
