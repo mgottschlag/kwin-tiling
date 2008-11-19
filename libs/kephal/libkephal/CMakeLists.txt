@@ -47,6 +47,7 @@ QT4_ADD_DBUS_INTERFACE(libkephal_SRCS ${CMAKE_CURRENT_BINARY_DIR}/org.kde.Kephal
 
 ADD_LIBRARY (kephal SHARED ${libkephal_SRCS})
 TARGET_LINK_LIBRARIES (kephal ${QT_LIBRARIES})
+set_target_properties(kephal PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
 
 INSTALL (TARGETS kephal ${INSTALL_TARGETS_DEFAULT_ARGS})
 INSTALL (FILES 
@@ -55,5 +56,5 @@ INSTALL (FILES
         ../kephal/kephal.h
         ../kephal/configurations.h
         ../kephal/kephal_export.h
-        DESTINATION include/kephal)
-INSTALL (FILES FindKephal.cmake DESTINATION share/apps/cmake/modules)
+        DESTINATION ${INCLUDE_INSTALL_DIR}/kephal)
+INSTALL (FILES FindKephal.cmake DESTINATION ${DATA_INSTALL_DIR}/cmake/modules)
