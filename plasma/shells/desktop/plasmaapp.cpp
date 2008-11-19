@@ -553,7 +553,6 @@ void PlasmaApp::createView(Plasma::Containment *containment)
                             view, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
                 }
 
-                view->setGeometry(Kephal::ScreenUtils::screenGeometry(containment->screen()));
                 m_desktops.append(view);
                 view->show();
             }
