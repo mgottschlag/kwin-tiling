@@ -67,7 +67,7 @@ class PlasmaViewHost : public ViewHostInterface {
   virtual void BeginMoveDrag(int) {}
 
   virtual void Alert(const ViewInterface *view, const char *message);
-  virtual bool Confirm(const ViewInterface *view, const char *message);
+  virtual ggadget::ViewHostInterface::ConfirmResponse Confirm(const ViewInterface *view, const char *message, bool);
   virtual std::string Prompt(const ViewInterface *view,
                              const char *message,
                              const char *default_value);

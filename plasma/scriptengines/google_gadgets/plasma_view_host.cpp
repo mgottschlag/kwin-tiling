@@ -168,11 +168,14 @@ void PlasmaViewHost::Alert(const ViewInterface *view, const char *message) {
                            view->GetCaption().c_str());
 }
 
-bool PlasmaViewHost::Confirm(const ViewInterface *view, const char *message) {
+ggadget::ViewHostInterface::ConfirmResponse PlasmaViewHost::Confirm(const ViewInterface *view, const char *message, bool) {
   int ret = KMessageBox::questionYesNo(NULL,
                                        message,
                                        view->GetCaption().c_str() );
-  return ret == KMessageBox::Yes;
+  if (ret == KMessageBox::Yes)
+    return CONFIRM_YES;
+  else
+    return CONFIRM_NO;
 }
 
 std::string PlasmaViewHost::Prompt(const ViewInterface *view,
