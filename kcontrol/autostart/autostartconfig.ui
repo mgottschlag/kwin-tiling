@@ -18,11 +18,6 @@
      <property name="rootIsDecorated" >
       <bool>false</bool>
      </property>
-     <column>
-      <property name="text" >
-       <string>1</string>
-      </property>
-     </column>
     </widget>
    </item>
    <item row="0" column="1" >
