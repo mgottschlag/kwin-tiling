@@ -96,7 +96,7 @@ void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
 {
     d->hasHiddenTasks = false;
     foreach (Task *task, tasks) {
-        kDebug() << "checking" << task->name() << d->showingHidden;
+        //kDebug() << "checking" << task->name() << d->showingHidden;
         if (isHiddenType(task->typeId())) {
             d->hasHiddenTasks = true;
             QGraphicsWidget *widget = findWidget(task);
@@ -111,12 +111,14 @@ void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
     }
 
     checkUnhideTool();
+    emit sizeHintChanged(Qt::PreferredSize);
 }
 
 void TaskArea::addTask(Task *task)
 {
     addWidgetForTask(task);
     checkUnhideTool();
+    emit sizeHintChanged(Qt::PreferredSize);
 }
 
 void TaskArea::addWidgetForTask(SystemTray::Task *task)
@@ -137,7 +139,6 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
                     d->taskLayout->addItem(task->widget(d->host));
                     break;
             }
-            emit sizeHintChanged(Qt::PreferredSize);
         }
     }
 }
@@ -272,7 +273,6 @@ void TaskArea::checkUnhideTool()
         d->topLayout->removeItem(d->unhider);
         delete d->unhider;
         d->unhider = 0;
-        emit sizeHintChanged(Qt::PreferredSize);
     }
 }
 
