@@ -1016,7 +1016,9 @@ void KColorCm::load()
     KConfig      cfg("kcmdisplayrc", KConfig::NoGlobals);
     KConfigGroup group(&cfg, "X11");
 
+    applyToAlien->blockSignals(true); // don't emit SIGNAL(toggled(bool)) which would call SLOT(emitChanged())
     applyToAlien->setChecked(group.readEntry("exportKDEColors", true));
+    applyToAlien->blockSignals(false);
 }
 
 void KColorCm::loadInternal(bool loadOptions)
