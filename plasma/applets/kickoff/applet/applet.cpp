@@ -71,6 +71,7 @@ void LauncherApplet::Private::createLauncher()
     }
 
     launcher = new Kickoff::Launcher(q);
+    launcher->setAttribute(Qt::WA_NoSystemBackground);
     launcher->setAutoHide(true);
     QObject::connect(launcher, SIGNAL(aboutToHide()), q, SLOT(hidePopup()));
     //launcher->resize(launcher->sizeHint());
@@ -196,7 +197,6 @@ QList<QAction*> LauncherApplet::contextualActions()
 QWidget *LauncherApplet::widget()
 {
     d->createLauncher();
-    d->launcher->setAttribute(Qt::WA_NoSystemBackground);
     return d->launcher;
 }
 
