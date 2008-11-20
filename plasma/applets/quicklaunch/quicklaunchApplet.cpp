@@ -258,7 +258,7 @@ void QuicklaunchApplet::createConfigurationInterface(KConfigDialog *parent)
     uiConfig.dialogRowCount->hide();
     uiConfig.dialogrowLabel->hide();
     uiConfig.icons->setValue(m_visibleIcons);
-    parent->addPage(widget, parent->windowTitle());
+    parent->addPage(widget, i18n("General"), icon());
 }
 
 void QuicklaunchApplet::configAccepted()

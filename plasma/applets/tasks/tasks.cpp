@@ -372,7 +372,7 @@ void Tasks::createConfigurationInterface(KConfigDialog *parent)
      parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
      connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
      connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-     parent->addPage(widget, parent->windowTitle(), icon());
+     parent->addPage(widget, i18n("General"), icon());
 
     m_ui.showTooltip->setChecked(m_showTooltip);
     m_ui.showOnlyCurrentDesktop->setChecked(m_groupManager->showOnlyCurrentDesktop());
