@@ -20,6 +20,8 @@
 #include "extendertask.h"
 #include <fixx11h.h>
 
+#include <QtGui/QWidget> // QWIDGETSIZE_MAX
+
 #include <plasma/popupapplet.h>
 #include <plasma/widgets/iconwidget.h>
 
@@ -100,8 +102,9 @@ QGraphicsWidget* ExtenderTask::createWidget(Plasma::Applet *host)
 {
     d->iconWidget = new Plasma::IconWidget(host);
     d->iconWidget->setToolTip(i18n("toggle visibility of notifications and jobs"));
-    d->iconWidget->setMinimumSize(22, 22);
     d->iconWidget->setIcon(d->iconName);
+    d->iconWidget->setMinimumSize(22, 22);
+    d->iconWidget->setMaximumSize(26, QWIDGETSIZE_MAX);
     connect(d->iconWidget, SIGNAL(clicked()), d->systemTray, SLOT(togglePopup()));
     return d->iconWidget;
 }

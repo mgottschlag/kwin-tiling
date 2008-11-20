@@ -33,6 +33,8 @@
 #include <KActionSelector>
 #include <KConfigDialog>
 
+#include <Solid/Device>
+
 #include <plasma/extender.h>
 #include <plasma/extenderitem.h>
 #include <plasma/framesvg.h>
@@ -294,8 +296,7 @@ void Applet::addNotification(Notification *notification)
     extenderItem->config().writeEntry("type", "notification");
     extenderItem->setWidget(new NotificationWidget(notification, extenderItem));
 
-    connect(extenderItem, SIGNAL(destroyed()),
-            this, SLOT(hidePopupIfEmpty()));
+    connect(extenderItem, SIGNAL(destroyed()), this, SLOT(hidePopupIfEmpty()));
 
     showPopup();
 }
@@ -320,11 +321,16 @@ void Applet::initExtenderItem(Plasma::ExtenderItem *extenderItem)
     }
 }
 
-
 void Applet::hidePopupIfEmpty()
 {
-    if (extender()->items().isEmpty()) {
+    if (d->extenderTask && extender()->attachedItems().isEmpty()) {
         hidePopup();
+
+        // even though there is code to do this in popupEvent... we may need to delete
+        // here anyways because the popup may already be hidden, resultin gin no
+        // popupEvent
+        delete d->extenderTask;
+        d->extenderTask = 0;
     }
 }
 
@@ -337,12 +343,11 @@ void Applet::popupEvent(bool visibility)
     } else {
         if (!d->extenderTask) {
             d->extenderTask = new SystemTray::ExtenderTask(this);
-        }
-
-        if (visibility) {
-            d->extenderTask->setIcon("arrow-down");
-        } else {
-            d->extenderTask->setIcon("arrow-up");
+            if (Solid::Device::listFromType(Solid::DeviceInterface::Battery).isEmpty()) {
+                d->extenderTask->setIcon("computer");
+            } else {
+                d->extenderTask->setIcon("computer-laptop");
+            }
         }
 
         Manager::self()->addTask(d->extenderTask);
