@@ -62,6 +62,7 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
       m_itemsValidity(0)
 {
     setBackgroundHints(StandardBackground);
+    setAspectRatioMode(IgnoreAspectRatio);
 
     // let's initialize the widget
     (void)widget();
