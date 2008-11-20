@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Calculator
+Name[ar]=آلة حاسبة
 Name[be@latin]=Kalkulatar
 Name[bg]=Калкулатор
 Name[bn_IN]=ক্যালকুলেটর
@@ -55,7 +56,7 @@ Name[x-test]=xxCalculatorxx
 Name[zh_CN]=计算器
 Name[zh_TW]=計算機
 Comment=Calculate expressions
-Comment[ar]=تعابير الحاسبة
+Comment[ar]=حساب التعبيرات
 Comment[be@latin]=Padlik vyrazaŭ.
 Comment[bg]=Калкулатор
 Comment[ca]=Calcula expressions
@@ -86,6 +87,7 @@ Comment[km]=គណនា​កន្សោម​​
 Comment[kn]=ಕ್ರಮೋಕ್ತಿಗಳನ್ನು (ಎಕ್ಸ್ಪ್ರೆಶನ್) ಬಿಡಿಸು
 Comment[ko]=수식 계산기
 Comment[ku]=ravekirinên Hesabkirinê
+Comment[lt]=Skaičiuoti išraiškas
 Comment[lv]=Rēķina izteiksmes
 Comment[ml]=എക്സ്പ്രെഷനുകള്‍ കണക്കുകൂട്ടുക
 Comment[mr]=एक्सप्रेशन्स गणना करा

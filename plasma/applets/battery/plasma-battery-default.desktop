@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Battery Monitor
 Name[af]=Battery-monitor
+Name[ar]=مراقب البطارية
 Name[be]=Назіранне за батарэяй
 Name[be@latin]=Nazirańnik za batarejaj
 Name[bg]=Мониторинг на батерията
@@ -75,6 +76,7 @@ Comment[et]=Aku oleku näitaja
 Comment[gl]=Consulta o estado enerxético da batería
 Comment[gu]=તમારી બેટ્રી માટે પાવર સ્થિતિ જુઓ
 Comment[hsb]=Pohladajće na status akuwa
+Comment[it]=Mostra lo stato energetico della tua batteria
 Comment[kk]=Батареяның қуат деңгейін қарау
 Comment[km]=មើល​ស្ថានភាព​ថាមពល​នៃ​ថ្ម​របស់​អ្នក
 Comment[kn]=ನಿನ್ನ ವಿದ್ಯುತ್ಕೋಶದ (ಬಾಟರಿ) ಸ್ಥಿತಿಯನ್ನು ನೋಡು

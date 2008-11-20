@@ -3,6 +3,7 @@ Type=ServiceType
 X-KDE-ServiceType=WeatherEngine/Ion
 
 Comment=WeatherEngine Ion
+Comment[ar]=محرك الطقس Ion
 Comment[ca]=Motor meteorològic Ion
 Comment[el]=Μηχανή καιρού Ion
 Comment[eo]=WeatherEngine-Ion

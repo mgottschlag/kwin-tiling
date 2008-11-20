@@ -255,6 +255,7 @@ WindowTypes=1
 [Data_1_1]
 Comment=Press, move left, release.
 Comment[af]=Kliek, skuif links, los
+Comment[ar]=اضغ حرك يسار ثم اترك
 Comment[be@latin]=Pryciśni, pasuń uleva j adciśni.
 Comment[bg]=Натискане, движение наляво, пускане.
 Comment[ca]=Premeu, moveu a l'esquerra, deixeu anar.
@@ -390,6 +391,7 @@ Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 [Data_1_10]
 Comment=Opera-style: Press, move up, release.\nNOTE: Conflicts with 'New Tab', and as such is disabled by default.
 Comment[af]=Opera-styl: Kliek, skuif op, los.\nLet wel: konflik met 'Nuwe oortjie', en word daarom by verstek afgeskakel.
+Comment[ar]=نمط أوبرا اضغط حرك للاعلى ثم اترك \nNOTE: فتح لسان جديد غير مفعل افتراضياً
 Comment[bg]=Стил Opera: натискане, движение нагоре, пускане.\nЗАБЕЛЕЖКА:Има конфликт с "Нов подпрозорец" и затова е изключено по подразбиране.
 Comment[ca]=Estil Opera: premeu, moveu amunt,deixeu anar.\nNota: els conflictes amb 'Pestanya nova', i similars s'han deshabilitat per omissió.
 Comment[csb]=Sztél Òperë: wcësni, do górë, pùszczë. \nBôczënk: Zwaga z 'Nowô kôrta', në to je domëszlno wëłączoné
@@ -522,6 +524,7 @@ ConditionsCount=0
 
 [Data_1_10Triggers]
 Comment=Gesture_triggers
+Comment[ar]=اطلق مبادرة
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
 Comment[csb]=Włączanié_gestów
@@ -567,6 +570,7 @@ Type=GESTURE
 
 [Data_1_11]
 Comment=Going up in URL/directory structure.\nMozilla-style: Press, move up, move left, move up, release.
+Comment[ar]=انتقل للرابط السابق. \nMozilla-style: اضغط حرك للاعلى ، حرك لليسار ثم اترك
 Comment[bg]=Едно ниво нагоре в директорията..\nСтил Мозила: натискане, движение нагоре, движение наляво, движение нагоре, пускане.
 Comment[ca]=Anar cap amunt per l'URL/estructura de directoris.\nEstil Mozilla: premeu, moveu amunt, moveu a l'esquerra, moveu amunt, deixeu anar.
 Comment[csb]=Przejsce wëżi w sztrukturze URL/kataloga. \nSztél Mozillë: wcësni, do górë, w lewò, do górë, pùszczë.
@@ -700,6 +704,7 @@ ConditionsCount=0
 
 [Data_1_11Triggers]
 Comment=Gesture_triggers
+Comment[ar]=اطلق مبادرة
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
 Comment[csb]=Włączanié_gestów
@@ -745,6 +750,7 @@ Type=GESTURE
 
 [Data_1_12]
 Comment=Going up in URL/directory structure.\nOpera-style: Press, move up, move left, move up, release.\nNOTE: Conflicts with  "Activate Previous Tab", and as such is disabled by default.
+Comment[ar]=انتقل للرابط السابق. \nOpera-style: اضغط حرك للاعلى ، حرك لليسار ثم اترك \nNOTE: اعداد باستخدام  "فعل اللسان السابق", كأنه غير المفعل افتراضياً
 Comment[bg]=Едно ниво нагоре.\nСтил Opera: натискане, движение нагоре, движение наляво, движение нагоре, пускане.\nЗАБЕЛЕЖКА:Има конфликт с "Активиране на предишен подпрозорец" и затова е изключено по подразбиране.
 Comment[ca]=Anar cap amunt per l'URL/estructura de directoris.\nEstil Opera: premeu, moveu amunt, moveu a l'esquerra, moveu amunt, deixeu anar.\nNota: els conflictes amb 'Pestanya nova', i similars s'han deshabilitat per omissió.
 Comment[da]=Går op i URL/mappe-struktur.\nOpera-agtig: Tryk, bevæg op, bevæg til venstre, bevæg op. slip.\nBemærk: Konflikter med "Aktivér forrige faneblad", og er derfor deaktiveret som standard.
@@ -792,6 +798,7 @@ Comment[zh_CN]=进入到 URL/目录结构中的上一层。\nOpera 风格：按�
 Comment[zh_TW]=往上一層的網址或目錄。\nOpera 風格：按住，往上移，往左移，往上移，再放開。\n注意：會與「跳到前一個分頁」衝突，預設為關閉。
 Enabled=false
 Name=Up #2
+Name[ar]=اعلى #2
 Name[bg]=Нагоре #2
 Name[ca]=Amunt 2
 Name[da]=Op #2
@@ -858,6 +865,7 @@ ConditionsCount=0
 
 [Data_1_12Triggers]
 Comment=Gesture_triggers
+Comment[ar]=اطلق مبادرة
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
 Comment[csb]=Włączanié_gestów
@@ -903,6 +911,7 @@ Type=GESTURE
 
 [Data_1_13]
 Comment=Press, move up, move right, release.
+Comment[ar]=اضغط ، تحرك للاعلى ، تحرك لليمين، افلت
 Comment[be@latin]=Pryciśni, pasuń uvierch, pasuń uprava j adciśni.
 Comment[bg]=Натискане, движение нагоре, движение надясно, пускане.
 Comment[ca]=Premeu, moveu amunt, moveu a la dreta, deixeu anar.
@@ -1036,6 +1045,7 @@ ConditionsCount=0
 
 [Data_1_13Triggers]
 Comment=Gesture_triggers
+Comment[ar]=اطلق مبادرة
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
 Comment[csb]=Włączanié_gestów
@@ -1081,6 +1091,7 @@ Type=GESTURE
 
 [Data_1_14]
 Comment=Press, move up, move left, release.
+Comment[ar]=اضغط ، تحرك للاعلى ، تحرك لليسار ، افلت
 Comment[be@latin]=Pryciśni, pasuń uvierch, pasuń uleva j adciśni.
 Comment[bg]=Натискане, движение нагоре, движение наляво, пускане.
 Comment[ca]=Premeu, moveu amunt, moveu a l'esquerra, deixeu anar.
@@ -1216,6 +1227,7 @@ ConditionsCount=0
 
 [Data_1_14Triggers]
 Comment=Gesture_triggers
+Comment[ar]=اطلق مبادرة
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
 Comment[csb]=Włączanié_gestów
@@ -1273,6 +1285,7 @@ ConditionsCount=0
 
 [Data_1_1Triggers]
 Comment=Gesture_triggers
+Comment[ar]=اطلق مبادرة
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
 Comment[csb]=Włączanié_gestów
@@ -1318,6 +1331,7 @@ Type=GESTURE
 
 [Data_1_2]
 Comment=Press, move down, move up, move down, release.
+Comment[ar]=اضغط ، تحرك للاسفل، تحرك للاعلى ، تحرك للاسفل ، افلت
 Comment[be@latin]=Pryciśni, pasuń uniz, pasuń uvierch, pasuń uniz i adciśni.
 Comment[bg]=Натискане, движение надолу, движение нагоре, движение надолу, пускане.
 Comment[ca]=Premeu, moveu avall, moveu amunt, moveu avall, deixeu anar.
@@ -1372,7 +1386,7 @@ Comment[zh_CN]=按下，向下移动，向上移动，向下移动，释放。
 Comment[zh_TW]=按住，往下移，往上移，往下移，再放開。
 Enabled=true
 Name=Duplicate Tab
-Name[ar]=لسان مكرر
+Name[ar]=كرر اللسان
 Name[be@latin]=Skapijuj kartku
 Name[bg]=Дублиране на подпрозорец
 Name[bn_IN]=ট্যাবের প্রতিলিপি
@@ -1449,6 +1463,7 @@ ConditionsCount=0
 
 [Data_1_2Triggers]
 Comment=Gesture_triggers
+Comment[ar]=اطلق مبادرة
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
 Comment[csb]=Włączanié_gestów
@@ -1494,6 +1509,7 @@ Type=GESTURE
 
 [Data_1_3]
 Comment=Press, move down, move up, release.
+Comment[ar]=اضغط ، تحرك للاسفل، تحرك للاعلى ، افلت
 Comment[be@latin]=Pryciśni, pasuń uniz, pasuń uvierch i adciśni.
 Comment[bg]=Натискане, движение надолу, движение нагоре, пускане.
 Comment[ca]=Premeu, moveu avall, moveu amunt, deixeu anar.
@@ -1549,7 +1565,7 @@ Comment[zh_TW]=按住，往下移，往上移，再放開。
 Enabled=true
 Name=Duplicate Window
 Name[af]=Duplikaatvenster
-Name[ar]=نافذة مكررة
+Name[ar]=كرر النافذة
 Name[be]=Зрабіць копію акна
 Name[be@latin]=Skapijuj akno
 Name[bg]=Дублиране на прозореца
@@ -1628,6 +1644,7 @@ ConditionsCount=0
 
 [Data_1_3Triggers]
 Comment=Gesture_triggers
+Comment[ar]=اطلق مبادرة
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
 Comment[csb]=Włączanié_gestów
@@ -1673,6 +1690,7 @@ Type=GESTURE
 
 [Data_1_4]
 Comment=Press, move right, release.
+Comment[ar]=اضغط ، حرك لليمين.، افلت
 Comment[be@latin]=Pryciśni, pasuń uprava j adciśni.
 Comment[bg]=Натискане, движение надясно, пускане.
 Comment[ca]=Premeu, moveu a la dreta, deixeu anar.
@@ -1728,7 +1746,7 @@ Comment[zh_TW]=按住，往右移，再放開。
 Enabled=true
 Name=Forward
 Name[af]=Vorentoe
-Name[ar]=إلى الأمام
+Name[ar]=تحويل
 Name[be]=Наперад
 Name[be@latin]=Napierad
 Name[bg]=Напред
@@ -1814,6 +1832,7 @@ ConditionsCount=0
 
 [Data_1_4Triggers]
 Comment=Gesture_triggers
+Comment[ar]=اطلق مبادرة
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
 Comment[csb]=Włączanié_gestów
@@ -1859,6 +1878,7 @@ Type=GESTURE
 
 [Data_1_5]
 Comment=Press, move down, move half up, move right, move down, release.\n(Drawing a lowercase 'h'.)
+Comment[ar]=اضغط ، تحرك للاسفل، تحرك لنص اعلى ، تحرك لليمين ، حرك للاسفل ، افلت.\n(رسم a احرف صغيرة'h'.)
 Comment[bg]=Натискане, движение надясно, полудвижение нагоре, движение надясно, движение надолу, пускане.\n(Пише се малка буква "h".)
 Comment[ca]=Premeu, moveu avall, moveu la meitat cap amunt, moveu a la dreta, deixeu anar.\n(Dibuixant una 'h' minúscula)
 Comment[da]=Tryk, bevæg ned, bevæg halvt op, bevæg til højre, bevæg ned, slip.\n(Tegner et lille 'h'.)
@@ -1999,6 +2019,7 @@ ConditionsCount=0
 
 [Data_1_5Triggers]
 Comment=Gesture_triggers
+Comment[ar]=اطلق مبادرة
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
 Comment[csb]=Włączanié_gestów
@@ -2048,6 +2069,7 @@ Type=GESTURE
 
 [Data_1_6]
 Comment=Press, move right, move down, move right, release.\nMozilla-style: Press, move down, move right, release.
+Comment[ar]=اضغط ، تحرك لليمين ، تحرك اسفل ، تحرك لليمين ، حرك للاسفل ، افلت.\nنمط موزيريلا: اضغط, حرك اسفل ، حرك يمين ، افلت
 Comment[bg]=Натискане, движение надолу, движение нагоре, движение надолу, пускане.
 Comment[ca]=Premeu, moveu a la dreta, moveu avall, moveu a la dreta, deixeu anar.\nEstil Mozilla: premeu, moveu avall, moveu a la dreta, deixeu anar.
 Comment[da]=Tryk, bevæg til højre, bevæg ned, bevæg til højre, slip.\nMozilla-agtig: Tryk, bevæg ned, bevæg til højre, slip.
@@ -2179,6 +2201,7 @@ ConditionsCount=0
 
 [Data_1_6Triggers]
 Comment=Gesture_triggers
+Comment[ar]=اطلق مبادرة
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
 Comment[csb]=Włączanié_gestów
@@ -2228,6 +2251,7 @@ Type=GESTURE
 
 [Data_1_7]
 Comment=Press, move up, release.\nConflicts with Opera-style 'Up #2', which is disabled by default.
+Comment[ar]=اضغط ،حرك للاعلى، افلت \nنمط اوبرا اعلى #2', غير المفعل افتراضياً
 Comment[bg]=Натискане, движение нагоре, пускане.\nИма конфликт със стила на Opera "Нагоре 2", който е по подразбиране.
 Comment[ca]=Premeu, moveu amunt, deixeu anar.\nConflictes amb l'estil Opera 'Amunt 2', que està deshabilitat per omissió.
 Comment[da]=Tryk, bevæg op, slip.\nI konflikt med Opera-agtig 'Op #2', som er deaktiveret som standard.
@@ -2359,6 +2383,7 @@ ConditionsCount=0
 
 [Data_1_7Triggers]
 Comment=Gesture_triggers
+Comment[ar]=اطلق مبادرة
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
 Comment[csb]=Włączanié_gestów
@@ -2404,6 +2429,7 @@ Type=GESTURE
 
 [Data_1_8]
 Comment=Press, move down, release.
+Comment[ar]=ضغط انقل أسفل افلت
 Comment[be@latin]=Pryciśni, pasuń uniz i adciśni.
 Comment[bg]=Натискане, движение надолу, пускане.
 Comment[ca]=Premeu, moveu avall, deixeu anar.
@@ -2551,6 +2577,7 @@ ConditionsCount=0
 
 [Data_1_8Triggers]
 Comment=Gesture_triggers
+Comment[ar]=اطلق مبادرة
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
 Comment[csb]=Włączanié_gestów
@@ -2596,6 +2623,7 @@ Type=GESTURE
 
 [Data_1_9]
 Comment=Press, move up, move down, release.
+Comment[ar]=ضغط انقل أعلى انقل أسفل افلت
 Comment[be@latin]=Pryciśni, pasuń uvierch, pasuń uniz i adciśni.
 Comment[bg]=Натискане, движение нагоре, движение надолу, пускане.
 Comment[ca]=Premeu, moveu amunt, moveu avall, deixeu anar.
@@ -2735,6 +2763,7 @@ ConditionsCount=0
 
 [Data_1_9Triggers]
 Comment=Gesture_triggers
+Comment[ar]=اطلق مبادرة
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
 Comment[csb]=Włączanié_gestów

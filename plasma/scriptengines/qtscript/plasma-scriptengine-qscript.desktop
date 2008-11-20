@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=JavaScript Widget
-Name[be@latin]=Widžet JavaScript
+Name[ar]=علامة جافا سكربت
+Name[be@latin]=Widžet „JavaScript”
 Name[bg]=Джаджа JavaScript
 Name[ca]=Estri del JavaScript
 Name[da]=JavaScript-widget
@@ -23,6 +24,7 @@ Name[km]=ធាតុ​ក្រាហ្វិក JavaScript
 Name[kn]=ಜಾವಾ ವಿಧಿಗುಚ್ಛ ನಿಯಂತ್ರಣಾ ಸಂಪರ್ಕತಟ (ವಿಡ್ಗೆಟ್)
 Name[ko]=자바스크립트 위젯
 Name[ku]=Amîra JavaScriptê
+Name[lt]=JavaScript valdiklis
 Name[lv]=JavaScript sīkrīks
 Name[ml]=ജാവാസ്ക്രിപ്റ്റ് വിഡ്ജറ്റ്
 Name[mr]=जावास्क्रिप्ट विजेट
@@ -47,6 +49,7 @@ Name[x-test]=xxJavaScript Widgetxx
 Name[zh_CN]=JavaScript 部件
 Name[zh_TW]=JavaScript 元件
 Comment=Native Plasma widget written in JavaScript
+Comment[ar]=علامات البلازما كتبت بجافا سكربت
 Comment[be@latin]=Widžet systemy „Plasma”, napisany ŭ movie „JavaScript”
 Comment[bg]=Оригинална джаджа за Plasma, написана с JavaScript
 Comment[ca]=Estri nadiu del Plasma escrit en JavaScript

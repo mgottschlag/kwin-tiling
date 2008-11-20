@@ -10,7 +10,6 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=advanced-user-settings
 
 Name=Hardware
-Name[ar]=العتاد
 Name[be]=Прылады
 Name[be@latin]=Aparatura
 Name[bn]=হার্ডওয়্যার
@@ -62,6 +61,7 @@ Comment[et]=Riistvara lõimimise seadistamine Solidiga
 Comment[ga]=Cumraíocht Comhtháite Crua-Earraí le Solid
 Comment[gl]=Configuración da integración do hardware con Solid
 Comment[gu]=સોલિડ સાથે હાર્ડવેર જોડાણ રૂપરેખાંકન
+Comment[it]=Configurazione dell'integrazione hardware con Solid
 Comment[kk]=Solid-тің көмегімен жабдықтарды біріктіруін баптау
 Comment[km]=ការ​កំណត់​រចនាសម្ព័ន្ធ​ការ​រួម​បញ្ចូល​ផ្នែក​រឹង​ជា​មួយ​នឹង Solid​​
 Comment[kn]=ಸಾಲಿಡ್ ನೊಂದಿಗೆ ಯಂತ್ರಾಂಶ ಜೋಡಣೆ ಸಂರಚನೆ

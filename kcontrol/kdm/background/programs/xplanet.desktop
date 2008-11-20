@@ -2,6 +2,7 @@
 Command=xplanet --geometry %xx%y --num_times 1 --output %f.jpg && mv %f.jpg %f
 Comment=XPlanet by Hari Nair
 Comment[af]=XPlaneet deur Hari Nair
+Comment[ar]=الكوكب المجهول اعداد Hari Nair
 Comment[be]=Планета (Hari Nair)
 Comment[be@latin]=XPlanet (aŭtar Hari Nair)
 Comment[bg]=XPlanet

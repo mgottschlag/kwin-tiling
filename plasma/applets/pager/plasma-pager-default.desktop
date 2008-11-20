@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Pager
+Name[ar]=جهاز النداء
 Name[be@latin]=Stały
 Name[bg]=Пейджър
 Name[bn_IN]=পেজার
@@ -61,10 +62,12 @@ Comment[gl]=Troca entre escritorios virtuais
 Comment[gu]=વર્ચ્યુઅલ ડેસ્કટોપ્સની વચ્ચે બદલો
 Comment[he]=החלף בין שולחנות עבודה וירטואלים
 Comment[hsb]=Mjez wirtuelnymi dźěłowymi powjerchami tam a sem skakać
+Comment[it]=Naviga tra i desktop virtuali
 Comment[ja]=仮想デスクトップを切り替えます
 Comment[kk]=Виртуалды үстелдерді ақтару
 Comment[km]=ប្ដូរ​រវាង​ផ្ទៃតុ​និម្មិត
 Comment[kn]=ವಾಸ್ತವಪ್ರಾಯ ಗಣಕತೆರೆಗಳ ನಡುವೆ ಅಂತರಿಸು
+Comment[lt]=Persijungti tarp virtualių darbastalių
 Comment[ml]=വര്‍ച്ചുവല്‍ പണിയിടങ്ങള്‍ തമ്മില്‍ മാറുക
 Comment[nb]=Bytt mellom virtuelle skrivebord
 Comment[nds]=Twischen Schriefdischen wesseln

@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=KRandRTray
+Name[ar]=ضبط شاشة كيدي
 Name[be]=Змена параметраў манітора
 Name[hi]=के-रैँड-आर-ट्रे
 Name[hu]=Képernyőfelbontás
@@ -90,6 +91,7 @@ GenericName[x-test]=xxScreen Resize & Rotatexx
 GenericName[zh_CN]=屏幕大小和旋转
 GenericName[zh_TW]=螢幕調整大小及旋轉
 Comment=A panel applet for resizing and reorientating X screens.
+Comment[ar]=لوحة تحكم لتغيير مقاس ودقة الشاشة
 Comment[be@latin]=Aplet dla paneli, jaki absłuhoŭvaje źmienu pamieraŭ i pavarot ekranaŭ systemy X.
 Comment[bg]=Аплет за преоразмеряване и ориентация на X.
 Comment[ca]=Una miniaplicació del plafó per a redimensionar i reorientar les pantalles d'X.

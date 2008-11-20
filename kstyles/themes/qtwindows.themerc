@@ -1,5 +1,6 @@
 [Misc]
 Name=MS Windows 9x
+Name[ar]=مايكروسوفت وندوز 9x
 Name[eo]=MS Vindozo 9x
 Name[fi]=MS Windows 9X
 Name[gu]=MS વિન્ડોઝ 9x
@@ -11,6 +12,7 @@ Name[sr]=МС Виндоуз 9х
 Name[th]=รูปแบบ MS Windows 9x
 Name[x-test]=xxMS Windows 9xxx
 Comment=Built-in unthemed Windows 9x style
+Comment[ar]=ثيم مدمج نمط مايكروسوفت وندوز 9x
 Comment[be]=Убудаваны стыль Windows 9x
 Comment[be@latin]=Styl systemy „Windows 9x”
 Comment[bg]=Вграден стил  Windows 9x style

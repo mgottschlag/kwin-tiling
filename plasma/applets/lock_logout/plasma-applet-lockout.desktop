@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Lock/Logout
 Name[af]=Sluit/Teken af
+Name[ar]=أقفل /اخرج
 Name[be@latin]=Blok na ekran i vychad z systemy
 Name[bg]=Заключване и изход
 Name[bn_IN]=লক/লগ-আউট করুন
@@ -73,6 +74,7 @@ Comment[et]=Ekraani lukustamine või väljalogimine
 Comment[gl]=Tranca a pantalla ou sai
 Comment[gu]=સ્ક્રિનને તાળું મારો અથવા બહાર નીકળો
 Comment[hsb]=Wobrazowku zamknyć abo so wotzjewić
+Comment[it]=Blocca lo schermo o termina la sessione
 Comment[kk]=Экранды бұғаттау не Шығу
 Comment[km]=ចាក់សោ​អេក្រង់ ឬ​ចេញ
 Comment[kn]=ತೆರೆಯನ್ನು ಬಂಧಿಸು ಅಥವಾ ಹೊರನಡೆ

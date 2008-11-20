@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Task Manager
 Name[af]=Taakbestuurder
+Name[ar]=مدير المهام
 Name[be]=Кіраванне заданнямі
 Name[be@latin]=Kiraŭnik zadańniaŭ
 Name[bg]=Мениджър на задачи
@@ -73,6 +74,7 @@ Comment[gl]=Troca entre programas en execución
 Comment[gu]=ચાલતાં કાર્યક્રમો વચ્ચે ફેરબદલી કરો
 Comment[he]=החלף בן תוכנות רצות
 Comment[hsb]=Šaltuje mjez běžacymi aplikacijemi
+Comment[it]=Naviga tra le applicazioni in esecuzione
 Comment[ja]=実行中のアプリケーションを切り替えます
 Comment[kk]=Жегілген қолданбаларды ақтару
 Comment[km]=ប្ដូរ​រវាង​កម្មវិធី​ដែល​កំពុង​រត់

@@ -1,6 +1,25 @@
 [Desktop Entry]
 Name=DBpedia queries
+Name[be@latin]=Zapyty ŭ „DBpedia”
+Name[el]=Ερωτήματα DBpedia
+Name[it]=Query DBpedia
+Name[kk]=DBpedia сұраныстары
+Name[km]=សំណួរ DBpedia
+Name[pt]=Pesquisas no DBpedia
+Name[pt_BR]=Pesquisas no DBpedia
+Name[sv]=Förfrågningar till DBpedia
+Name[uk]=Запити DBpedia
 Comment=DBpedia data for Plasmoids
+Comment[be@latin]=Źviestki „DBpedia” dla widžetaŭ „Plasma”
+Comment[el]=Δεδομένα DBpedia για πλασμοειδή
+Comment[it]=Dati di DBpedia per i plasmoidi
+Comment[kk]=Плазмоидтерге DBpedia деректері
+Comment[km]=ទិន្នន័យ DBpedia សម្រាប់ Plasmoids
+Comment[pt]=Dados do DBpedia para os Plasmóides
+Comment[pt_BR]=Dados do DBpedia para os Plasmóides
+Comment[sv]=Data från DBpedia för Plasmoider
+Comment[tr]=Plasma programcıkları için DBpedia verileri
+Comment[uk]=Дані DBPedia для Плазмоїдів
 Type=Service
 ServiceTypes=Plasma/DataEngine
 X-Plasma-API=ruby-script

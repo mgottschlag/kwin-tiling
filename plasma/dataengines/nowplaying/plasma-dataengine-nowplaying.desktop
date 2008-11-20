@@ -7,6 +7,7 @@ Name[el]=Αναπαράγεται τώρα
 Name[gl]=A reproducir
 Name[gu]=અત્યારે વગાડે છે
 Name[he]=מנגן כעת
+Name[it]=In riproduzione
 Name[kk]=Қазір ойнауда
 Name[km]=ឥឡូវ​កំពុង​ចាក់
 Name[kn]=ಪ್ರಸ್ತತ ನಿರೂಪಣೆ
@@ -27,6 +28,7 @@ Name[x-test]=xxNow Playingxx
 Name[zh_TW]=現正播放
 
 Comment=Lists currently playing music
+Comment[ar]=قائمة بالمقاطع الموسيقية الحالية
 Comment[be@latin]=Pakazvaje muzyku, jakuju ciapier hraje systema
 Comment[ca]=Llista la música que s'està reproduint actualment
 Comment[cs]=Vypíše aktuálně přehrávanou hudbu

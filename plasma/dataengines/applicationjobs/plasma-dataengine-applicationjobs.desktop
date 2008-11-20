@@ -1,8 +1,10 @@
 [Desktop Entry]
 Name=Application Job Information
+Name[be@latin]=Źviestki pra zadańnie aplikacyi
 Name[ca]=Informació de les tasques de les aplicacions
 Name[el]=Πληροφορίες εργασιών εφαρμογών
 Name[gu]=કાર્યક્રમ કાર્ય માહિતી
+Name[it]=Applicazione informazioni sui processi
 Name[kk]=Қолданба тапсырмасының ақпараты
 Name[km]=ព័ត៌មាន​ការងារ​របស់​កម្មវិធី
 Name[nds]=Programm-Opgaavinformatschoon
@@ -15,10 +17,12 @@ Name[uk]=Відомості про завдання програми
 Name[x-test]=xxApplication Job Informationxx
 Name[zh_TW]=應用程式工作資訊
 Comment=Kuiserver data for Plasmoids
+Comment[be@latin]=Źviestki „Kuiserver” dla widžetaŭ „Plasma”
 Comment[ca]=Dades del «kuiserver» pels Plasmoides
 Comment[de]=Programmoberflächendienst für Plasma-Miniprogramme
 Comment[el]=Δεδομένα Kuiserver για τα πλασμοειδή
 Comment[gu]=પ્લાઝમોઇડ માટે Kuiserver માહિતી
+Comment[it]=Dati Kuiserver per i Plasmoidi
 Comment[kk]=Плазмоидтерге арналған Kuiserver дерегі
 Comment[km]=ទិន្នន័យ Kuiserver សម្រាប់ Plasmoids
 Comment[nds]=KUIServer-Daten för Plasma-Lüttprogrammen
