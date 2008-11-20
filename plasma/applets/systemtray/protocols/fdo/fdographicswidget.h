@@ -45,6 +45,7 @@ signals:
     void clientClosed();
 
 private slots:
+    void setupXEmbedDelegate();
     void handleClientEmbedded();
     void handleClientClosed();
     void handleClientError(QX11EmbedContainer::Error);

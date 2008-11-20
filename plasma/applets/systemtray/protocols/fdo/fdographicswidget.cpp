@@ -24,6 +24,7 @@
 #include "x11embedcontainer.h"
 
 #include <QtCore/QPointer>
+#include <QtCore/QTimer>
 
 #include <QtGui/QApplication>
 #include <QtGui/QGraphicsView>
@@ -94,31 +95,8 @@ void GraphicsWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     }
 
     if (!d->widget) {
-#if QT_VERSION < 0x040401
-        const Qt::ApplicationAttribute attr = (Qt::ApplicationAttribute)4;
-#else
-        const Qt::ApplicationAttribute attr = Qt::AA_DontCreateNativeWidgetSiblings;
-#endif
-        if (!QApplication::testAttribute(attr)) {
-            QApplication::setAttribute(attr);
-        }
-
-        d->widget = new X11EmbedDelegate();
-        d->widget->setMinimumSize(22, 22);
-        d->widget->setMaximumSize(22, 22);
-        d->widget->resize(22, 22);
-
-        connect(d->widget->container(), SIGNAL(clientIsEmbedded()),
-                this, SLOT(handleClientEmbedded()));
-        connect(d->widget->container(), SIGNAL(clientClosed()),
-                this, SLOT(handleClientClosed()));
-        connect(d->widget->container(), SIGNAL(error(QX11EmbedContainer::Error)),
-                this, SLOT(handleClientError(QX11EmbedContainer::Error)));
-
-        d->widget->container()->embedSystemTrayClient(d->winId);
-
+        QTimer::singleShot(0, this, SLOT(setupXEmbedDelegate()));
         return;
-
     } else if (!d->clientEmbedded) {
         return;
     }
@@ -142,6 +120,35 @@ void GraphicsWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     }
 }
 
+void GraphicsWidget::setupXEmbedDelegate()
+{
+    if (d->widget) {
+        return;
+    }
+
+#if QT_VERSION < 0x040401
+    const Qt::ApplicationAttribute attr = (Qt::ApplicationAttribute);
+#else
+    const Qt::ApplicationAttribute attr = Qt::AA_DontCreateNativeWidgetSiblings;
+#endif
+    if (!QApplication::testAttribute(attr)) {
+        QApplication::setAttribute(attr);
+    }
+
+    d->widget = new X11EmbedDelegate();
+    d->widget->setMinimumSize(22, 22);
+    d->widget->setMaximumSize(22, 22);
+    d->widget->resize(22, 22);
+
+    connect(d->widget->container(), SIGNAL(clientIsEmbedded()),
+            this, SLOT(handleClientEmbedded()));
+    connect(d->widget->container(), SIGNAL(clientClosed()),
+            this, SLOT(handleClientClosed()));
+    connect(d->widget->container(), SIGNAL(error(QX11EmbedContainer::Error)),
+            this, SLOT(handleClientError(QX11EmbedContainer::Error)));
+
+    d->widget->container()->embedSystemTrayClient(d->winId);
+}
 
 void GraphicsWidget::updateWidgetBackground()
 {
