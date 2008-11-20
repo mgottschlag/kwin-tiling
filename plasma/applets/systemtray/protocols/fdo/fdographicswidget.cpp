@@ -127,7 +127,7 @@ void GraphicsWidget::setupXEmbedDelegate()
     }
 
 #if QT_VERSION < 0x040401
-    const Qt::ApplicationAttribute attr = (Qt::ApplicationAttribute);
+    const Qt::ApplicationAttribute attr = (Qt::ApplicationAttribute)4;
 #else
     const Qt::ApplicationAttribute attr = Qt::AA_DontCreateNativeWidgetSiblings;
 #endif
