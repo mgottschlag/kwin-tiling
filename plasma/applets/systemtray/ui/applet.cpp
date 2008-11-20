@@ -83,7 +83,7 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
     d->background->setImagePath("widgets/systemtray");
 
     setPopupIcon(QIcon());
-    setAspectRatioMode(Plasma::KeepAspectRatio);
+    setAspectRatioMode(Plasma::IgnoreAspectRatio);
     setBackgroundHints(NoBackground);
     setHasConfigurationInterface(true);
 }
@@ -132,17 +132,17 @@ void Applet::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::FormFactorConstraint) {
         QSizePolicy policy(QSizePolicy::Minimum, QSizePolicy::Minimum);
         policy.setHeightForWidth(true);
-        bool horizontal = formFactor() != Plasma::Vertical;
+        bool vertical = formFactor() == Plasma::Vertical;
 
-        if (horizontal) {
-            policy.setVerticalPolicy(QSizePolicy::Expanding);
-        } else {
+        if (vertical) {
             policy.setHorizontalPolicy(QSizePolicy::Expanding);
+        } else {
+            policy.setVerticalPolicy(QSizePolicy::Expanding);
         }
 
         setSizePolicy(policy);
         d->taskArea->setSizePolicy(policy);
-        d->taskArea->setOrientation(horizontal ? Qt::Horizontal : Qt::Vertical);
+        d->taskArea->setOrientation(vertical ? Qt::Vertical : Qt::Horizontal);
     }
 
     if (constraints & Plasma::SizeConstraint) {
