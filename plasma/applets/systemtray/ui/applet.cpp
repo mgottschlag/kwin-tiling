@@ -69,7 +69,7 @@ public:
     QPointer<KActionSelector> configInterface;
 
     Plasma::FrameSvg *background;
-    SystemTray::Extender::Task *extenderTask;
+    SystemTray::ExtenderTask *extenderTask;
 };
 
 
@@ -336,7 +336,7 @@ void Applet::popupEvent(bool visibility)
         d->extenderTask = 0;
     } else {
         if (!d->extenderTask) {
-            d->extenderTask = new SystemTray::Extender::Task(this);
+            d->extenderTask = new SystemTray::ExtenderTask(this);
         }
 
         if (visibility) {

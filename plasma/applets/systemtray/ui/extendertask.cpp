@@ -27,11 +27,7 @@
 namespace SystemTray
 {
 
-namespace Extender
-{
-
-
-class Task::Private
+class ExtenderTask::Private
 {
 public:
     Private(Plasma::PopupApplet *systemTray, Task *q)
@@ -50,49 +46,49 @@ public:
 };
 
 
-Task::Task(Plasma::PopupApplet *systemTray)
+ExtenderTask::ExtenderTask(Plasma::PopupApplet *systemTray)
     : d(new Private(systemTray, this))
 {
     setOrder(Last);
 }
 
 
-Task::~Task()
+ExtenderTask::~ExtenderTask()
 {
     emit taskDeleted(d->typeId);
     delete d;
 }
 
 
-bool Task::isEmbeddable() const
+bool ExtenderTask::isEmbeddable() const
 {
     return true;
 }
 
-bool Task::isValid() const
+bool ExtenderTask::isValid() const
 {
     return true;
 }
 
-QString Task::name() const
+QString ExtenderTask::name() const
 {
     return i18n("Show or hide notifications and jobs");
 }
 
 
-QString Task::typeId() const
+QString ExtenderTask::typeId() const
 {
     //FIXME: what should we return here?
     return "toggle_extender";
 }
 
 
-QIcon Task::icon() const
+QIcon ExtenderTask::icon() const
 {
     return d->icon;
 }
 
-void Task::setIcon(const QString &icon)
+void ExtenderTask::setIcon(const QString &icon)
 {
     d->iconName = icon;
     if (d->iconWidget) {
@@ -100,7 +96,7 @@ void Task::setIcon(const QString &icon)
     }
 }
 
-QGraphicsWidget* Task::createWidget(Plasma::Applet *host)
+QGraphicsWidget* ExtenderTask::createWidget(Plasma::Applet *host)
 {
     d->iconWidget = new Plasma::IconWidget(host);
     d->iconWidget->setToolTip(i18n("toggle visibility of notifications and jobs"));
@@ -112,7 +108,5 @@ QGraphicsWidget* Task::createWidget(Plasma::Applet *host)
 
 
 }
-}
-
 
 #include "extendertask.moc"

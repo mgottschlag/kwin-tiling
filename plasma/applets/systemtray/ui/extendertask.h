@@ -31,16 +31,13 @@ namespace Plasma
 namespace SystemTray
 {
 
-namespace Extender
-{
-
-class Task : public SystemTray::Task
+class ExtenderTask : public SystemTray::Task
 {
     Q_OBJECT
 
 public:
-    Task(Plasma::PopupApplet *systemTray);
-    virtual ~Task();
+    ExtenderTask(Plasma::PopupApplet *systemTray);
+    virtual ~ExtenderTask();
 
     bool isValid() const;
     virtual bool isEmbeddable() const;
@@ -60,8 +57,6 @@ private:
     Private* const d;
 };
 
-
-}
 }
 
 #endif
