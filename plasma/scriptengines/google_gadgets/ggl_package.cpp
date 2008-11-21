@@ -63,11 +63,11 @@ class GadgetBrowserHost : public ggadget::HostInterface {
         ggadget::BuildFilePath(ggadget::GetHomeDirectory().c_str(),
                                ".google/gadgets-plasma", NULL);
 
-    std::string error;
+    QString error;
     if (!ggadget::qt::InitGGL(NULL, "ggl-plasma", profile_dir.c_str(),
-                              kGlobalExtensions, 0, false, &error)) {
-      kError() << "Failed to init GGL system:"
-               << QString::fromUtf8(error.c_str());
+                              kGlobalExtensions, 0,
+                              ggadget::qt::GGL_INIT_FLAG_COLLECTOR, &error)) {
+      kError() << "Failed to init GGL system:" << error;
       return;
     }
     gadget_manager_ = GetGadgetManager();
@@ -170,10 +170,12 @@ class GadgetBrowserHost : public ggadget::HostInterface {
 
   virtual ViewHostInterface *NewViewHost(Gadget *gadget,
                                          ViewHostInterface::Type type) {
+    Q_UNUSED(gadget);
     return new GadgetBrowserViewHost(package_, type);
   }
 
   virtual void RemoveGadget(Gadget *gadget, bool save_data) {
+    Q_UNUSED(save_data);
     gadget_manager_->RemoveGadgetInstance(gadget->GetInstanceID());
   }
 
@@ -208,6 +210,7 @@ GglPackage::~GglPackage() {
 
 bool GglPackage::installPackage(const QString &archive_path,
                                 const QString &package_root) {
+  Q_UNUSED(package_root);
   ASSERT(!host_);
   host_ = new GadgetBrowserHost(this);
   if (!host_ || !host_->gadget_manager_) {
