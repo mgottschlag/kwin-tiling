@@ -93,7 +93,10 @@ void ActivityBar::init()
         connect(c, SIGNAL(containmentAdded(Plasma::Containment *)), this, SLOT(containmentAdded(Plasma::Containment *)));
     }
 
-    connect(m_tabBar, SIGNAL(currentChanged(int)), this, SLOT(switchContainment(int)));
+    if (m_containments.count() > 1) {
+        connect(m_tabBar, SIGNAL(currentChanged(int)), this, SLOT(switchContainment(int)));
+    }
+
     connect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)), this, SLOT(currentDesktopChanged(int)));
 
     setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
@@ -175,6 +178,10 @@ void ActivityBar::containmentAdded(Plasma::Containment *cont)
         m_tabBar->addTab(cont->activity());
     }
 
+    if (m_containments.count() > 1) {
+        connect(m_tabBar, SIGNAL(currentChanged(int)), this, SLOT(switchContainment(int)));
+    }
+
     connect(cont, SIGNAL(destroyed(QObject *)), this, SLOT(containmentDestroyed(QObject *)));
     connect(cont, SIGNAL(screenChanged(int, int, Plasma::Containment *)), this, SLOT(screenChanged(int, int, Plasma::Containment *)));
     connect(cont, SIGNAL(contextChanged(Plasma::Context *)), this, SLOT(contextChanged(Plasma::Context *)));
@@ -189,12 +196,16 @@ void ActivityBar::containmentDestroyed(QObject *obj)
 
     int index = m_containments.indexOf(containment);
     if (index != -1) {
-        m_containments.removeAt(index);
-        m_tabBar->removeTab(index);
- 
         if (index < m_activeContainment) {
             --m_activeContainment;
         }
+
+        if (m_containments.count() == 1) {
+            disconnect(m_tabBar, SIGNAL(currentChanged(int)), this, SLOT(switchContainment(int)));
+        }
+
+        m_containments.removeAt(index);
+        m_tabBar->removeTab(index);
     }
 
     setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
