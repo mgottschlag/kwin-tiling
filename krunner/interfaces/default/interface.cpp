@@ -446,7 +446,7 @@ void Interface::updateDescriptionLabel(ResultItem *item)
     } else if (item->description().isEmpty()) {
         m_descriptionLabel->setText(item->name());
     } else {
-        m_descriptionLabel->setText(item->name() + ": " + item->description());
+        m_descriptionLabel->setText(i18n("%1: %2",item->name() ,item->description()));
     }
 }
 
