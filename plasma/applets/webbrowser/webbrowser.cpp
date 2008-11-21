@@ -55,11 +55,12 @@
 #include "bookmarkitem.h"
 
 WebBrowser::WebBrowser(QObject *parent, const QVariantList &args)
-        : Plasma::Applet(parent, args),
+        : Plasma::PopupApplet(parent, args),
           m_verticalScrollValue(0),
           m_horizontalScrollValue(0),
           m_bookmarkModel(0),
-          m_autoRefreshTimer(0)
+          m_autoRefreshTimer(0),
+          m_graphicsWidget(0)
 
 {
     setHasConfigurationInterface(true);
@@ -69,10 +70,15 @@ WebBrowser::WebBrowser(QObject *parent, const QVariantList &args)
     if (args.count() > 0) {
         m_url = KUrl(args.value(0).toString());
     }
+    setPopupIcon("konqueror");
 }
 
-void WebBrowser::init()
+QGraphicsWidget *WebBrowser::graphicsWidget()
 {
+    if (m_graphicsWidget) {
+        return m_graphicsWidget;
+    }
+
     KConfigGroup cg = config();
 
 
@@ -98,8 +104,8 @@ void WebBrowser::init()
 
 
     m_browser = new Plasma::WebView(this);
-    //FIXME: sounds wrong, but...
-    m_browser->setPreferredSize(INT_MAX, INT_MAX);
+    m_browser->setPreferredSize(400, 400);
+    m_browser->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
 
     m_layout->addItem(m_browser);
@@ -115,9 +121,8 @@ void WebBrowser::init()
     m_bookmarksView->nativeWidget()->setHeaderHidden(true);
     //m_bookmarksView->nativeWidget()->viewport()->setAutoFillBackground(false);
     m_bookmarksView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    m_bookmarksView->setPreferredSize(INT_MAX, INT_MAX);
     m_bookmarksView->hide();
-    //FIXME: this is probably a Qt bug
+    //FIXME: this is probably a Qt bug, QGraphicslayout always behaves as the hidden element is present, unlike QLayouts
     m_bookmarksView->setMaximumHeight(0);
     m_layout->addItem(m_bookmarksView);
 
@@ -140,8 +145,6 @@ void WebBrowser::init()
     m_progress->setMaximum(100);
     m_statusbarLayout->addItem(m_progress);
     m_stop = addTool("process-stop", m_statusbarLayout);
-
-    setLayout(m_layout);
 
     m_zoom = new Plasma::Slider(this);
     m_zoom->setMaximum(100);
@@ -194,6 +197,10 @@ void WebBrowser::init()
     QStringList list = cg.readEntry("History list", QStringList());
     m_historyCombo->setHistoryItems(list);
 
+    m_graphicsWidget = new QGraphicsWidget(this);
+    m_graphicsWidget->setLayout(m_layout);
+
+    return m_graphicsWidget;
 }
 
 WebBrowser::~WebBrowser()
@@ -336,6 +343,7 @@ void WebBrowser::dataUpdated( const QString &source, const Plasma::DataEngine::D
     if (source == m_historyCombo->currentText()) {
         QPixmap favicon(QPixmap::fromImage(data["Icon"].value<QImage>()));
         m_historyCombo->nativeWidget()->setItemIcon(m_historyCombo->nativeWidget()->currentIndex(), QIcon(favicon));
+        setPopupIcon(QIcon(favicon));
     }
 }
 

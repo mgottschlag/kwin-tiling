@@ -20,7 +20,7 @@
 #ifndef WEBBROWSER_H
 #define WEBBROWSER_H
 
-#include <Plasma/Applet>
+#include <Plasma/PopupApplet>
 #include <Plasma/DataEngine>
 
 #include "ui_webbrowserconfig.h"
@@ -49,14 +49,14 @@ namespace Plasma
     class Slider;
 }
 
-class WebBrowser : public Plasma::Applet
+class WebBrowser : public Plasma::PopupApplet
 {
     Q_OBJECT
 public:
     WebBrowser(QObject *parent, const QVariantList &args);
     ~WebBrowser();
 
-    void init();
+    QGraphicsWidget *graphicsWidget();
 
     //TODO: put in a separate file
     enum BookmarkRoles
@@ -109,6 +109,8 @@ private:
     QTimer *m_autoRefreshTimer;
     bool m_autoRefresh;
     int m_autoRefreshInterval;
+
+    QGraphicsWidget *m_graphicsWidget;
 
     Plasma::HistoryComboBox *m_historyCombo;
     BookmarksDelegate *m_bookmarksDelegate;
