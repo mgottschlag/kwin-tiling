@@ -47,6 +47,7 @@
 #include <kmessagebox.h>
 #include <kdialog.h>
 #include <kconfig.h>
+#include <kcolorscheme.h>
 
 #include "dtime.moc"
 
@@ -370,56 +371,51 @@ void Kclock::paintEvent( QPaintEvent * )
   QPolygon pts;
   QPoint cp = rect().center();
   int d = qMin(width(),height());
-  QColor hands =  palette().color(QPalette::Dark );
-  QColor shadow =  palette().color( QPalette::Text );
-  paint.setPen( shadow );
-  paint.setBrush( shadow );
+
+  KColorScheme colorScheme( QPalette::Normal );
+  QColor hands  = colorScheme.foreground(KColorScheme::NormalText).color();
+
+  paint.setPen( hands );
+  paint.setBrush( hands );
   paint.setViewport(4,4,width(),height());
 
-  for ( int c=0 ; c < 2 ; c++ )
-    {
-      QTransform matrix;
-      matrix.translate( cp.x(), cp.y() );
-      matrix.scale( d/1000.0F, d/1000.0F );
+  QTransform matrix;
+  matrix.translate( cp.x(), cp.y() );
+  matrix.scale( d/1000.0F, d/1000.0F );
 
-      // hour hand
-      float h_angle = 30*(time.hour()%12-3) + time.minute()/2;
-      matrix.rotate( h_angle );
-      paint.setWorldTransform( matrix );
-      pts.setPoints( 4, -20,0, 0,-20, 300,0, 0,20 );
-      paint.drawPolygon( pts );
-      matrix.rotate( -h_angle );
+  // hour hand
+  float h_angle = 30*(time.hour()%12-3) + time.minute()/2;
+  matrix.rotate( h_angle );
+  paint.setWorldTransform( matrix );
+  pts.setPoints( 4, -20,0, 0,-20, 300,0, 0,20 );
+  paint.drawPolygon( pts );
+  matrix.rotate( -h_angle );
 
-      // minute hand
-      float m_angle = (time.minute()-15)*6;
-      matrix.rotate( m_angle );
-      paint.setWorldTransform( matrix );
-      pts.setPoints( 4, -10,0, 0,-10, 400,0, 0,10 );
-      paint.drawPolygon( pts );
-      matrix.rotate( -m_angle );
+  // minute hand
+  float m_angle = (time.minute()-15)*6;
+  matrix.rotate( m_angle );
+  paint.setWorldTransform( matrix );
+  pts.setPoints( 4, -10,0, 0,-10, 400,0, 0,10 );
+  paint.drawPolygon( pts );
+  matrix.rotate( -m_angle );
 
-      // second hand
-      float s_angle = (time.second()-15)*6;
-      matrix.rotate( s_angle );
-      paint.setWorldTransform( matrix );
-      pts.setPoints(4,0,0,0,0,400,0,0,0);
-      paint.drawPolygon( pts );
-      matrix.rotate( -s_angle );
+  // second hand
+  float s_angle = (time.second()-15)*6;
+  matrix.rotate( s_angle );
+  paint.setWorldTransform( matrix );
+  pts.setPoints(4,0,0,0,0,400,0,0,0);
+  paint.drawPolygon( pts );
+  matrix.rotate( -s_angle );
 
-      // clock face
-      for ( int i=0 ; i < 60 ; i++ )
-        {
-          paint.setWorldTransform( matrix );
-          if ( (i % 5) == 0 )
-            paint.drawLine( 450,0, 500,0 ); // draw hour lines
-          else  paint.drawPoint( 480,0 );   // draw second lines
-          matrix.rotate( 6 );
-        }
+  // clock face
+  for ( int i=0 ; i < 60 ; i++ ) {
+    paint.setWorldTransform( matrix );
+    if ( (i % 5) == 0 )
+      paint.drawLine( 450,0, 500,0 ); // draw hour lines
+    else  paint.drawPoint( 480,0 );   // draw second lines
+    matrix.rotate( 6 );
+  }
 
-      paint.setPen( hands );
-      paint.setBrush( hands );
-      paint.setViewport(0,0,width(),height());
-    }
   paint.end();
 }
 
