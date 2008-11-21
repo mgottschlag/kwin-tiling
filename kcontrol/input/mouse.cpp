@@ -554,7 +554,7 @@ void MouseConfig::load()
   themetab->load();
 
   checkAccess();
-  changed();
+  changed(false);
 }
 
 void MouseConfig::save()

@@ -138,6 +138,10 @@ void KeyboardConfig::load()
 
   XGetKeyboardControl(QX11Info::display(), &kbd);
 
+  ui->delay->blockSignals(true);
+  ui->rate->blockSignals(true);
+  ui->click->blockSignals(true);
+
   bool key = config.readEntry("KeyboardRepeating", true);
   keyboardRepeat = (key ? AutoRepeatModeOn : AutoRepeatModeOff);
   ui->delay->setValue(config.readEntry( "RepeatDelay", 660 ));
@@ -148,6 +152,10 @@ void KeyboardConfig::load()
   setClick(kbd.key_click_percent);
   setRepeat(kbd.global_auto_repeat, ui->delay->value(), ui->rate->value());
   setNumLockState( numlockState );
+
+  ui->delay->blockSignals(false);
+  ui->rate->blockSignals(false);
+  ui->click->blockSignals(false);
 }
 
 void KeyboardConfig::save()
