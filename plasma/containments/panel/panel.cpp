@@ -560,6 +560,14 @@ void Panel::setFormFactorFromLocation(Plasma::Location loc) {
 
 void Panel::showDropZone(const QPoint pos)
 {
+    if (!scene()) {
+        return;
+    }
+
+    if (scene()->itemAt(mapToScene(pos)) != this) {
+        return;
+    }
+
     QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout*>(layout());
 
     if (!lay) {
