@@ -20,12 +20,12 @@
 #ifndef CALENDARTEST_H
 #define CALENDARTEST_H
 
-#include <Plasma/Applet>
+#include <Plasma/PopupApplet>
 #include <Plasma/Label>
 
 #include "libplasmaclock/calendar.h"
 
-class CalendarTest : public Plasma::Applet
+class CalendarTest : public Plasma::PopupApplet
 {
     Q_OBJECT
     public:
@@ -33,16 +33,16 @@ class CalendarTest : public Plasma::Applet
         ~CalendarTest();
 
         void init();
-        Qt::Orientations expandingDirections() const;
-        QSizeF contentSizeHint() const;
-        void constraintsEvent(Plasma::Constraints constraints);
 
+        /**
+         * The widget that displays the calendar.
+         */
+        QGraphicsWidget *graphicsWidget();
     protected slots:
         void configAccepted();
 
     private:
-        bool m_sizedirty;
-        Plasma::Calendar *cwdg;
+        Plasma::Calendar *m_calendarDialog;
 };
 
 K_EXPORT_PLASMA_APPLET(calendar, CalendarTest)

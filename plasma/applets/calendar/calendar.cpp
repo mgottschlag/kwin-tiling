@@ -17,18 +17,18 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#include <QGraphicsLinearLayout>
-
 #include <KDebug>
+#include <KIcon>
 
 #include <Plasma/Svg>
 #include <Plasma/Theme>
 
 #include "calendar.h"
 
+
 CalendarTest::CalendarTest(QObject *parent, const QVariantList &args)
-    : Plasma::Applet(parent, args),
-    m_sizedirty(true)
+    : Plasma::PopupApplet(parent, args),
+    m_calendarDialog(0)
 {
     resize(330, 240);
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
@@ -36,12 +36,18 @@ CalendarTest::CalendarTest(QObject *parent, const QVariantList &args)
 
 void CalendarTest::init()
 {
-    cwdg = new Plasma::Calendar(this);
-    cwdg->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    setPopupIcon("view-pim-calendar");
+}
 
-    QGraphicsLinearLayout *m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
-    m_layout->addItem(cwdg);
-    m_layout->setAlignment(cwdg, Qt::AlignHCenter);
+QGraphicsWidget *CalendarTest::graphicsWidget()
+{
+    if (!m_calendarDialog) {
+        m_calendarDialog = new Plasma::Calendar(this);
+        m_calendarDialog->setMinimumSize(330, 240);
+        m_calendarDialog->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    }
+
+    return m_calendarDialog;
 }
 
 CalendarTest::~CalendarTest()
@@ -49,42 +55,9 @@ CalendarTest::~CalendarTest()
 
 }
 
-Qt::Orientations CalendarTest::expandingDirections() const
-{
-    return 0;
-}
-
-QSizeF CalendarTest::contentSizeHint() const
-{
-    QSizeF sizeHint = geometry().size();
-
-    switch (formFactor()) {
-        case Plasma::Vertical:
-            sizeHint.setHeight(sizeHint.width());
-            break;
-
-        case Plasma::Horizontal:
-            sizeHint.setWidth(sizeHint.height() / 4);
-            break;
-
-        default:
-            sizeHint.setWidth(sizeHint.height() / 4);
-            break;
-    }
-
-    return sizeHint;
-}
-
 void CalendarTest::configAccepted()
 {
     update();
-}
-
-void CalendarTest::constraintsEvent(Plasma::Constraints constraints)
-{
-    if (constraints & Plasma::FormFactorConstraint || constraints & Plasma::SizeConstraint) {
-        m_sizedirty = true;
-    }
 }
 
 #include "calendar.moc"
