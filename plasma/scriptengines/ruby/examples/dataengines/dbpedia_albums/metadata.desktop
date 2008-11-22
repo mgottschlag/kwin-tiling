@@ -2,6 +2,7 @@
 Name=DBpedia queries
 Name[be@latin]=Zapyty ŭ „DBpedia”
 Name[el]=Ερωτήματα DBpedia
+Name[gu]=DBpedia પ્રશ્નો
 Name[it]=Query DBpedia
 Name[kk]=DBpedia сұраныстары
 Name[km]=សំណួរ DBpedia
@@ -13,6 +14,7 @@ Name[zh_TW]=DBpedia 查詢
 Comment=DBpedia data for Plasmoids
 Comment[be@latin]=Źviestki „DBpedia” dla widžetaŭ „Plasma”
 Comment[el]=Δεδομένα DBpedia για πλασμοειδή
+Comment[gu]=પ્લાઝમોઇડ માટે DBpedia માહિતી
 Comment[it]=Dati di DBpedia per i plasmoidi
 Comment[kk]=Плазмоидтерге DBpedia деректері
 Comment[km]=ទិន្នន័យ DBpedia សម្រាប់ Plasmoids
