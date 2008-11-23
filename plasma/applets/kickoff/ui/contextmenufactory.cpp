@@ -176,7 +176,11 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view, const QPoint &
     QAction *ejectAction = 0;
     if (device.isValid() && access) {
         ejectAction = new QAction(this);
-        ejectAction->setText(i18n("Eject"));
+        if (device.is<Solid::OpticalDisc>()) {
+            ejectAction->setText(i18n("Eject"));
+        } else {
+            ejectAction->setText(i18n("Safely Remove"));
+        }
         actions << ejectAction;
     }
 
