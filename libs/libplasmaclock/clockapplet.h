@@ -78,6 +78,8 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::PopupApplet
     private:
         class Private;
         Private * const d;
+
+        Q_PRIVATE_SLOT(d, void createCalendar())
 };
 
 #endif

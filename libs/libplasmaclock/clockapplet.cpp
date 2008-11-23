@@ -30,6 +30,7 @@
 #include <QtGui/QGraphicsSceneMouseEvent>
 #include <QtGui/QGraphicsView>
 #include <QtCore/QDate>
+#include <QtCore/QTimer>
 
 #include <KColorScheme>
 #include <KConfigDialog>
@@ -54,10 +55,12 @@
 class ClockApplet::Private
 {
 public:
-    Private()
-        : timezone(ClockApplet::localTimezone())
+    Private(ClockApplet *clockapplet)
+        : q(clockapplet),
+          timezone(ClockApplet::localTimezone())
     {}
 
+    ClockApplet *q;
     Ui::timezonesConfig ui;
     QString timezone;
     QPoint clicked;
@@ -77,11 +80,20 @@ public:
         subText += KGlobal::locale()->formatTime(data["Time"].toTime(), false) + ", ";
         subText += KGlobal::locale()->formatDate(data["Date"].toDate());
     }
+
+    void createCalendar()
+    {
+        if (!q->extender()->item("calendar")) {
+            Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(q->extender());
+            eItem->setName("calendar");
+            q->initExtenderItem(eItem);
+        }
+    }
 };
 
 ClockApplet::ClockApplet(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args),
-      d(new Private)
+      d(new Private(this))
 {
     setPopupIcon(QIcon());
 }
@@ -321,27 +333,29 @@ void ClockApplet::init()
         d->prettyTimezone = localTimezone();
     }
 
-
-    //avoid duplication
-    if (!extender()->item("calendar")) {
-        Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
-        eItem->setName("calendar");
-        initExtenderItem(eItem);
-    }
-
     Plasma::ToolTipManager::self()->registerWidget(this);
+
+    extender();
+    QTimer::singleShot(0, this, SLOT(createCalendar()));
 }
 
 void ClockApplet::popupEvent(bool show)
 {
-    if (show){
-        Plasma::Calendar *calendar = dynamic_cast<Plasma::Calendar *>(extender()->item("calendar")->widget());
-        if (calendar){
-            Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
-            QDate date = data["Date"].toDate();
-            if (date.isValid()) {
-                calendar->setDate(date);
-            }
+    if (!show) {
+        return;
+    }
+
+    Plasma::ExtenderItem *item = extender()->item("calendar");
+    if (!item) {
+        return;
+    }
+
+    Plasma::Calendar *calendar = dynamic_cast<Plasma::Calendar *>(item->widget());
+    if (calendar){
+        Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
+        QDate date = data["Date"].toDate();
+        if (date.isValid()) {
+            calendar->setDate(date);
         }
     }
 }
