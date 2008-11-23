@@ -159,7 +159,7 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
 
         m_uiSlideshow.m_resizeMethod->addItem(i18n("Scaled & Cropped"), Background::ScaleCrop);
         m_uiSlideshow.m_resizeMethod->addItem(i18n("Scaled"), Background::Scale);
-        m_uiSlideshow.m_resizeMethod->addItem(i18n("Maxpect"), Background::Maxpect);
+        m_uiSlideshow.m_resizeMethod->addItem(i18n("Scaled, keep proportions"), Background::Maxpect);
         m_uiSlideshow.m_resizeMethod->addItem(i18n("Centered"), Background::Center);
         m_uiSlideshow.m_resizeMethod->addItem(i18n("Tiled"), Background::Tiled);
         m_uiSlideshow.m_resizeMethod->addItem(i18n("Center Tiled"), Background::CenterTiled);
