@@ -283,7 +283,8 @@ void KDModule::load()
 	sessions->load();
 	convenience->load();
 	propagateUsers();
-	changed(false);
+
+	emit changed(false);
 }
 
 
@@ -297,6 +298,8 @@ void KDModule::save()
 	sessions->save();
 	convenience->save();
 	config->sync();
+
+	emit changed(false);
 }
 
 
