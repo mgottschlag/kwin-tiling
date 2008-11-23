@@ -283,7 +283,7 @@ void KDModule::load()
 	sessions->load();
 	convenience->load();
 	propagateUsers();
-	emit changed(false);
+	changed(false);
 }
 
 
