@@ -9,6 +9,7 @@ Name[it]=Browser web Ruby
 Name[ja]=Ruby ウェブブラウザ
 Name[kk]=Ruby-дегі Веб шолғышы
 Name[km]=កម្មវិធី​រុករក​បណ្ដាញ
+Name[lv]=Ruby tīmekļa pārlūks
 Name[nb]=Ruby nettleser
 Name[nds]=Nettkieker för Ruby
 Name[nl]=Ruby Webbrowser
@@ -18,6 +19,7 @@ Name[sv]=Ruby webbläsare
 Name[tr]=Ruby Web Tarayıcı
 Name[uk]=Навігатор Тенет на Ruby
 Name[x-test]=xxRuby Web Browserxx
+Name[zh_CN]=Ruby 网络浏览器
 Name[zh_TW]=Ruby 網頁瀏覽器
 
 Type=Service

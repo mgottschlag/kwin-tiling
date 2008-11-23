@@ -9,6 +9,7 @@ Name[gu]=પાયથોન પેકેજ માળખું
 Name[it]=Struttura pacchetto di python
 Name[kk]=Python дестесінің құрылымы
 Name[km]=រចនាសម្ព័ន្ធ​កញ្ចប់ Python
+Name[lv]=Python pakotnes struktūra
 Name[ml]=പൈത്തണ്‍ പൊതികെട്ട് ഘടന
 Name[nb]=Python pakkestruktur
 Name[nds]=Python-Paketstruktuur
@@ -19,6 +20,7 @@ Name[sv]=Python paketstruktur
 Name[tr]=Python Paket Yapısı
 Name[uk]=Структура пакунка Python
 Name[x-test]=xxPython Package Structurexx
+Name[zh_CN]=Python 包结构
 Name[zh_TW]=Python 套件結構
 Comment=Format of a Python Script Engine Package
 Comment[ca]=Format d'un paquet de motor d'script en Python
@@ -29,6 +31,7 @@ Comment[gu]=પાયથોન સ્ક્રિપ્ટ એન્જિન �
 Comment[it]=Formato di un pacchetto del motore dati Python
 Comment[kk]=Python скрипт тетігі дестесінің пішімі
 Comment[km]=ទ្រង់ទ្រាយ​របស់​កញ្ចប់​ម៉ាស៊ីន​ទិន្នន័យ​ស្គ្រីប Python
+Comment[lv]=Python Script Engine pakotnes formāts
 Comment[ml]=പൈത്തണ്‍ സ്ക്രിപ്ട് എഞ്ചിന്‍ (യന്ത്രം) പൊതികെട്ടിന്റെ ഘടന
 Comment[nb]=Format for en Python skriptmotor-pakke
 Comment[nds]=Formaat vun en Python-Skriptkarnpaket
@@ -39,6 +42,7 @@ Comment[sv]=Format för ett Python skriptgränssnittpaket
 Comment[tr]=Bir Python Betik Motoru Paketinin Yapısı
 Comment[uk]=Формат пакунка рушія скриптів на Python
 Comment[x-test]=xxFormat of a Python Script Engine Packagexx
+Comment[zh_CN]=Python 脚本格式引擎包
 Comment[zh_TW]=Python 文稿引擎套件的格式
 X-KDE-ServiceTypes=Plasma/PackageStructure
 Type=Service

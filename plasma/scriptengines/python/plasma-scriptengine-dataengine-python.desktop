@@ -10,6 +10,7 @@ Name[it]=Motore per dati Python
 Name[ja]=Python データエンジン
 Name[kk]=Python деректер тетігі
 Name[km]=ម៉ាស៊ីន​ទិន្នន័យ Python
+Name[lv]=Python datu dzinējs
 Name[ml]=പൈത്തണ്‍  ഡേറ്റാ എഞ്ചിന്‍
 Name[nb]=Python datamotor
 Name[nds]=Python-Hanteerkarn
@@ -21,6 +22,7 @@ Name[sv]=Python datagränssnitt
 Name[tr]=Python veri motoru
 Name[uk]=Рушій даних Python
 Name[x-test]=xxPython data enginexx
+Name[zh_CN]=Python 数据引擎
 Name[zh_TW]=Python 資料引擎
 Comment=Plasma data engine support for Python
 Comment[ca]=Implementació de motor de dades del Plasma per al Python
@@ -31,6 +33,7 @@ Comment[gu]=પાયથોન માટે પ્લાઝમા માહિ�
 Comment[it]=Support al motore dati di Plasma per Python
 Comment[kk]=Python деректер тетігінің Plasma қолдауы
 Comment[km]=កា​រគាំទ្រ​ម៉ាស៊ីន​ទិន្នន័យ​ប្លាស្មា​សម្រាប់ Python
+Comment[lv]=Plasma datu dzinēju atbalsts Python
 Comment[ml]=പൈത്തിണിനുള്ള പ്ലാസ്മ വിവര എഞ്ചിന്‍ (യന്ത്രം) തുണ
 Comment[nb]=Plasma datamotor-støtte for Python
 Comment[nds]=Plasma-Hanteerkarnünnerstütten för Python
@@ -41,6 +44,7 @@ Comment[sv]=Plasma datagränssnittstöd för Python
 Comment[tr]=Python için Plasma veri motoru desteği
 Comment[uk]=Підтримка у рушіях даних для Python
 Comment[x-test]=xxPlasma data engine support for Pythonxx
+Comment[zh_CN]=Python 的 Plasma 数据引擎支持
 Comment[zh_TW]=支援 Python 的 Plasma 資料引擎
 
 X-KDE-ServiceTypes=Plasma/ScriptEngine
