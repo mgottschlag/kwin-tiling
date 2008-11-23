@@ -110,18 +110,18 @@ void FullView::resizeEvent(QResizeEvent *event)
         return;
     }
 
-    // The applet always keeps its aspect ratio, so let's respect it.
     qreal newWidth = 0;
     qreal newHeight = 0;
 
     if (m_applet->aspectRatioMode() == Plasma::KeepAspectRatio) {
-        qreal ratio = (qreal)event->oldSize().width() / (qreal)event->oldSize().height();
-        qreal newPossibleWidth = (qreal)size().height() * ratio;
-        if (newPossibleWidth > size().width()) {
+        // The applet always keeps its aspect ratio, so let's respect it.
+        qreal ratio = m_applet->size().width() / m_applet->size().height();
+        qreal widthForCurrentHeight = (qreal)size().height() * ratio;
+        if (widthForCurrentHeight > size().width()) {
             newHeight = size().width() / ratio;
             newWidth = newHeight * ratio;
         } else {
-            newWidth = newPossibleWidth;
+            newWidth = widthForCurrentHeight;
             newHeight = newWidth / ratio;
         }
     } else {
