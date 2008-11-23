@@ -564,7 +564,11 @@ void Panel::showDropZone(const QPoint pos)
         return;
     }
 
-    if (scene()->itemAt(mapToScene(pos)) != this) {
+    // if the drop isn't happening on the outer edges and is instead
+    // actually poised over an applet, ignore it
+    if (((formFactor() == Plasma::Vertical && pos.y() > 1 && pos.y() > size().height() - 2) ||
+         (pos.x() > 1 && pos.x() < size().width() - 2)) &&
+        scene()->itemAt(mapToScene(pos)) != this) {
         return;
     }
 
