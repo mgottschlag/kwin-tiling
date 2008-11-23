@@ -2,6 +2,7 @@
 
 Copyright 1988, 1998  The Open Group
 Copyright 2000-2004 Oswald Buddenhagen <ossi@kde.org>
+Copyright 2008 Juuso Alasuutari <juuso.alasuutari@gmail.com>
 
 Permission to use, copy, modify, distribute, and sell this software and its
 documentation for any purpose is hereby granted without fee, provided that
@@ -303,9 +304,44 @@ fail_delay( int retval ATTR_UNUSED, unsigned usec_delay ATTR_UNUSED,
 {}
 # endif
 
+# ifdef PAM_XDISPLAY
+/* Inspired by Eamon Walsh's patch for gdm. */
+static struct pam_xauth_data *
+getPAMXauthData( const char *xauth_file )
+{
+	FILE *fp;
+	Xauth *auth;
+	struct pam_xauth_data *ret;
+
+	if (!(fp = fopen( xauth_file, "r" )))
+		return NULL;
+
+	auth = XauReadAuth( fp );
+	fclose( fp );
+	if (!auth)
+		return NULL;
+
+	if ((ret = malloc( sizeof(*ret) + auth->name_length + 1 + auth->data_length ))) {
+		ret->name = (char *)ret + sizeof(*ret);
+		ret->namelen = auth->name_length;
+		memcpy( ret->name, auth->name, auth->name_length );
+		ret->name[ret->namelen] = 0;
+		ret->data = ret->name + ret->namelen + 1;
+		ret->datalen = auth->data_length;
+		memcpy( ret->data, auth->data, auth->data_length );
+	}
+
+	XauDisposeAuth( auth );
+	return ret;
+}
+# endif
+
 static int
 doPAMAuth( const char *psrv, struct pam_data *pdata )
 {
+# ifdef PAM_XDISPLAY
+	struct pam_xauth_data *pam_xauth;
+# endif
 	pam_gi_type pitem;
 	struct pam_conv pconv;
 	int pretc;
@@ -334,8 +370,19 @@ doPAMAuth( const char *psrv, struct pam_data *pdata )
 			goto pam_bail;
 	}
 # ifdef __sun__ /* Only Solaris <= 9, but checking it does not seem worth it. */
-	else if (pam_set_item( pamh, PAM_RHOST, 0 ) != PAM_SUCCESS)
+	else if ((pretc = pam_set_item( pamh, PAM_RHOST, 0 )) != PAM_SUCCESS)
 		goto pam_bail;
+# endif
+# ifdef PAM_XDISPLAY
+	if ((pretc = pam_set_item( pamh, PAM_XDISPLAY,
+	                           displayName( td ) )) != PAM_SUCCESS)
+		goto pam_bail;
+	if (td->authFile && (pam_xauth = getPAMXauthData( td->authFile ))) {
+		pretc = pam_set_item( pamh, PAM_XAUTHDATA, pam_xauth );
+		free( pam_xauth );
+		if (pretc != PAM_SUCCESS)
+			goto pam_bail;
+	}
 # endif
 	pam_set_item( pamh, PAM_USER_PROMPT, (void *)"Username:" );
 # ifdef PAM_FAIL_DELAY
