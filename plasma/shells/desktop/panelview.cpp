@@ -253,6 +253,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 PanelView::~PanelView()
 {
     delete m_glowBar;
+    destroyUnhideTrigger();
 #ifdef Q_WS_WIN
     registerAccessBar(winId(), false);
 #endif
