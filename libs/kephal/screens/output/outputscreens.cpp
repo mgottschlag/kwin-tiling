@@ -150,6 +150,20 @@ namespace Kephal {
                 }
             }
         } while (changed);
+        
+        for (int i = 0; i < m_screens.size(); ++i) {
+            if (! m_screens.contains(i)) {
+                int min = -1;
+                for (QMap<int, OutputScreen *>::iterator i = m_screens.begin(); i != m_screens.end(); ++i) {
+                    if ((min == -1) || (i.key() < min)) {
+                        min = i.key();
+                    }
+                }
+                OutputScreen * screen = m_screens.take(min);
+                screen->_setId(i);
+                m_screens.insert(i, screen);
+            }
+        }
     }
     
     void OutputScreens::rebuildScreens() {
