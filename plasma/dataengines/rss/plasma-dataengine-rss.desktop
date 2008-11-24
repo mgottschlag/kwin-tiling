@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=RSS
 Name[ru]=Ленты RSS
+Name[th]=หัวข้อข่าว (RSS)
 Name[x-test]=xxRSSxx
 Comment=RSS News Data Engine
 Comment[be@latin]=Systema navinaŭ z žarołaŭ „RSS”
@@ -25,6 +26,7 @@ Comment[pt_BR]=Motor de Dados de Notícias RSS
 Comment[ro]=Motor de date pentru știri RSS
 Comment[ru]=Поставщик лент RSS
 Comment[sv]=Datagränssnitt för RSS-nyheter
+Comment[th]=กลไกข้อมูล รับหัวข้อข่าว (RSS)
 Comment[tr]=RSS Haber Veri Motoru
 Comment[uk]=Рушій даних новин RSS
 Comment[x-test]=xxRSS News Data Enginexx
