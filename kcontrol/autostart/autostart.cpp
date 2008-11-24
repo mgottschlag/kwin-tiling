@@ -58,7 +58,7 @@ K_PLUGIN_FACTORY(AutostartFactory, registerPlugin<Autostart>();)
     widget = new Ui_AutostartConfig();
     widget->setupUi(this);
     QStringList lstHeader;
-    lstHeader<<i18n( "Name" )<< i18n( "Command" )<< i18n( "Status" )<<i18n( "Run On" );
+    lstHeader<<i18n( "Name" )<< i18n( "Command" )<< i18n( "Status" )<<i18nc("@title:column The name of the column that decides if the program is run on kde startup, on kde shutdown, etc", "Run On" );
     widget->listCMD->setHeaderLabels(lstHeader);
     setButtons(Help);
     connect( widget->btnAddScript, SIGNAL(clicked()), SLOT(slotAddCMD()) );
@@ -108,9 +108,9 @@ void Autostart::slotItemClicked( QTreeWidgetItem *item, int col)
                 grp.writeEntry("Hidden", disable);
             kc.sync();
             if ( disable )
-                item->setText( COL_STATUS, i18n( "Disabled" ) );
+                item->setText( COL_STATUS, i18nc( "The program won't be run", "Disabled" ) );
             else
-                item->setText( COL_STATUS, i18n( "Enabled" ) );
+                item->setText( COL_STATUS, i18nc( "The program will be run", "Enabled" ) );
         }
     }
 }
@@ -122,7 +122,7 @@ void Autostart::addItem( DesktopStartItem*item, const QString& name, const QStri
     item->setText( COL_RUN, run );
     item->setText( COL_COMMAND, command );
     item->setCheckState( COL_STATUS, status ? Qt::Unchecked : Qt::Checked );
-    item->setText( COL_STATUS, status ? i18n( "Disabled" ) : i18n( "Enabled" ));
+    item->setText( COL_STATUS, status ? i18nc( "The program won't be run", "Disabled" ) : i18nc( "The program will be run", "Enabled" ));
 }
 
 void Autostart::addItem(ScriptStartItem *item, const QString& name, const QString& command, ScriptStartItem::ENV type )
