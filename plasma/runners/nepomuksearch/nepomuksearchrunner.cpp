@@ -26,6 +26,7 @@
 #include <KUrl>
 
 #include <Nepomuk/Resource>
+#include <Nepomuk/ResourceManager>
 
 #include <Soprano/Vocabulary/NAO>
 
@@ -59,6 +60,8 @@ Nepomuk::SearchRunner::SearchRunner( QObject* parent, const QString& serviceId )
 
 void Nepomuk::SearchRunner::init()
 {
+    Nepomuk::ResourceManager::instance()->init();
+
     // we are pretty slow at times and use DBus calls
     setSpeed( SlowSpeed );
 
@@ -127,7 +130,7 @@ void Nepomuk::SearchRunner::run( const Plasma::RunnerContext&, const Plasma::Que
     else {
         url = res.resourceUri();
     }
-	
+
     (void)new KRun( url, 0 );
 }
 
