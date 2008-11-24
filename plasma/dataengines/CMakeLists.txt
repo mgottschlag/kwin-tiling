@@ -14,11 +14,11 @@ add_subdirectory(soliddevice)
 
 macro_optional_find_package(KdepimLibs)
 if(KDE4_SYNDICATION_LIBS)
+add_subdirectory(executable)
 add_subdirectory(rss)
 endif(KDE4_SYNDICATION_LIBS)
 
 if(NOT WIN32)
-add_subdirectory(executable)
 add_subdirectory(mouse)
 add_subdirectory(tasks)
 add_subdirectory(systemmonitor)
