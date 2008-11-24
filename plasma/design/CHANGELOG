@@ -120,7 +120,7 @@ Tools
 * plasmapkg
     * now supports listing, updating and removing packages
 * NEW: Destkop Theme Details
-    * Customize and create new desktop themes with kcmshell4 destkopthemedetails 
+    * Customize and create new desktop themes with kcmshell4 destkopthemedetails
 
 Plugins/Addons
 --------------
@@ -177,12 +177,10 @@ Plugins/Addons
             * Comicproviders can be written in any language supported by Kross
             * Comicproviders can be downloaded via "Get Hot New Stuff"
             * New comicproviders can be added on kde-files.org
-        * NEW: Lancelot
-            * Parts applet
-            * Contacts section
-            * Configuration interface
-            * Drag 'n' Drop support
-            * KRunner integration
+        * Lancelot
+            * Full keyboard support
+            * New lists with scrollbars
+            * Themes that match Plasma themes from kdeplasma-addons module
 
     * DataEngines
         * NEW: Web site icons (favicons) engine
