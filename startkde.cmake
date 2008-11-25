@@ -88,8 +88,9 @@ kcmfonts General forceFontDPI 0
 kdeglobals Locale Language '' # trigger requesting languages from KLocale
 EOF
 kstartupconfig4
-if test $? -ne 0; then
-    xmessage -geometry 500x100 "Could not start kstartupconfig4. Check your installation."
+returncode=$?
+if test $returncode -ne 0; then
+    xmessage -geometry 500x100 "kstartupconfig4 does not exist or fails. The error code is $returncode. Check your installation."
     exit 1
 fi
 [ -r $kdehome/share/config/startupconfig ] && . $kdehome/share/config/startupconfig
