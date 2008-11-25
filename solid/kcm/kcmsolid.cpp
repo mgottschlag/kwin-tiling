@@ -47,6 +47,7 @@ KcmSolid::KcmSolid(QWidget *parent, const QVariantList &args)
         ki18n("Copyright 2006 Kevin Ottens"));
     about->addAuthor(ki18n("Kevin Ottens"), KLocalizedString(), "ervin@kde.org");
     setAboutData(about);
+    setButtons(Apply | Default);
 
     setLayout(new QVBoxLayout);
     layout()->setMargin(0);
