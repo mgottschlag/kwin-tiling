@@ -217,7 +217,7 @@ int main(int argc, char **argv)
             }
         }
         if (package.isEmpty()) {
-            KCmdLineArgs::usageError(i18n("One of install, remove, upgrade or list is required."));
+            KCmdLineArgs::usageError(i18nc("No option was given, this is the error message telling the user he needs at least one, do not translate install, remove, upgrade nor list", "One of install, remove, upgrade or list is required."));
         } else {
             runKbuildsycoca();
         }
