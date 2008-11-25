@@ -11,13 +11,6 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" >
    <item>
-    <widget class="KTitleWidget" name="title" >
-     <property name="enabled" >
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QGroupBox" name="commentBox" >
      <property name="title" >
       <string>General</string>
@@ -66,11 +59,6 @@
    <class>KTextEdit</class>
    <extends>QTextEdit</extends>
    <header>ktextedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KTitleWidget</class>
-   <extends>QWidget</extends>
-   <header>ktitlewidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

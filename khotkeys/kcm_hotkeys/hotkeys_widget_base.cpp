@@ -75,7 +75,6 @@ void HotkeysWidgetBase::doCopyFromObject()
         ui.enabled->setEnabled(true);
         ui.enabled_comment->setText( QString() );
         }
-    ui.title->setText( title() + " " + _data->name() );
     ui.comment->setText( _data->comment() );
     }
 
@@ -84,35 +83,6 @@ void HotkeysWidgetBase::doCopyToObject()
     {
     _data->set_enabled( ui.enabled->isChecked() );
     _data->set_comment( ui.comment->toPlainText() );
-    }
-
-
-#if 0
-void HotkeysWidgetBase::mergeLayouts( QGridLayout *to, QGridLayout *from )
-    {
-    int offset = to->rowCount();
-    int count = from->count();
-
-    for (int index=0; index<count; ++index )
-        {
-        int row, column, rowSpan, columnSpan;
-        from->getItemPosition( 0, &row, &column, &rowSpan, &columnSpan );
-        QLayoutItem *item = from->takeAt(0);
-
-        if (item->widget())
-            to->addWidget(item->widget(), row + offset , column, rowSpan, columnSpan );
-        else if (item->layout())
-            to->addLayout(item->layout(), row + offset , column, rowSpan, columnSpan );
-        else
-            to->addItem(item, row + offset , column, rowSpan, columnSpan );
-        }
-    }
-#endif
-
-
-QString HotkeysWidgetBase::title() const
-    {
-    return i18n( "KDE Hotkeys:" );
     }
 
 

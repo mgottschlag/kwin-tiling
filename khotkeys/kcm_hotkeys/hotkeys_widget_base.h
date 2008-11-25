@@ -65,9 +65,6 @@ public:
 
     virtual bool isChanged() const;
 
-    virtual QString title() const;
-
-
 Q_SIGNALS:
 
     void changed(KHotKeys::ActionDataBase*);
