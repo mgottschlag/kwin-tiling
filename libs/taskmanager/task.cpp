@@ -332,7 +332,7 @@ bool Task::isOnTop() const
 bool Task::isModified() const
 {
   static QString modStr = QString::fromUtf8("[") +
-                          i18n("modified") +
+                          i18nc("marks that a task has been modified", "modified") +
                           QString::fromUtf8("]");
   int modStrPos = d->info.visibleName().indexOf(modStr);
 
