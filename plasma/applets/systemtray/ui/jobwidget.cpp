@@ -121,10 +121,6 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
 
 JobWidget::~JobWidget()
 {
-    m_extenderItem->config().writeEntry("labelName0", labelName0);
-    m_extenderItem->config().writeEntry("label0", label0);
-    m_extenderItem->config().writeEntry("labelName1", labelName1);
-    m_extenderItem->config().writeEntry("label1", label1);
 }
 
 void JobWidget::destroy()
@@ -152,6 +148,12 @@ void JobWidget::updateJob()
             labelName1 = m_job->labels().value(1).first;
             label1 = m_job->labels().value(1).second;
         }
+
+        KConfigGroup cg = m_extenderItem->config();
+        cg.writeEntry("labelName0", labelName0);
+        cg.writeEntry("label0", label0);
+        cg.writeEntry("labelName1", labelName1);
+        cg.writeEntry("label1", label1);
     }
 
     updateLabels();
