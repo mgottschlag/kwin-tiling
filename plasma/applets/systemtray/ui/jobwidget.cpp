@@ -37,7 +37,6 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
     m_extenderItem(parent),
     m_job(job)
 {
-    m_extenderItem = parent;
     Q_ASSERT(m_extenderItem);
 
     setMeterType(Plasma::Meter::BarMeterHorizontal);
