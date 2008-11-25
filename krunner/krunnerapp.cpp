@@ -159,7 +159,6 @@ void KRunnerApp::initialize()
     connect(KRunnerSettings::self(), SIGNAL(configChanged()), this, SLOT(reloadConfig()));
 
     m_runnerManager = new Plasma::RunnerManager;
-    m_runnerManager->reloadConfiguration(); // pre-load the runners
 
     switch (KRunnerSettings::interface()) {
         default:
@@ -170,6 +169,9 @@ void KRunnerApp::initialize()
             m_interface = new QsDialog(m_runnerManager);
             break;
     }
+
+    new AppAdaptor(this);
+    QDBusConnection::sessionBus().registerObject( "/App", this );
 
 #ifdef Q_WS_X11
     //FIXME: if argb visuals enabled Qt will always set WM_CLASS as "qt-subapplication" no matter what
@@ -247,8 +249,8 @@ void KRunnerApp::initialize()
 
     m_actionCollection->readSettings();
 
-    new AppAdaptor(this);
-    QDBusConnection::sessionBus().registerObject( "/App", this );
+    m_runnerManager->reloadConfiguration(); // pre-load the runners
+
 } // end void KRunnerApp::initializeBindings
 
 void KRunnerApp::initializeStartupNotification()

@@ -1,6 +1,6 @@
 [Desktop Entry]
 Exec=krunner
-X-DBUS-StartupType=wait
+X-DBUS-StartupType=none
 Name=Command Runner
 Name[ar]=منفذ الأمر
 Name[be@latin]=Vykanańnie zahadaŭ
@@ -63,4 +63,4 @@ Name[zh_TW]=命令執行者
 Type=Service
 X-KDE-StartupNotify=false
 OnlyShowIn=KDE;
-X-KDE-autostart-phase=0
+X-KDE-autostart-phase=2
