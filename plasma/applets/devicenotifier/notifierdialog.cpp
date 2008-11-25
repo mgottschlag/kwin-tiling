@@ -139,7 +139,7 @@ void NotifierDialog::insertDevice(const QString &name)
     //search or create the category for inserted device
     QString udi = item->data(SolidUdiRole).toString();
     if(!udi.isNull()) {
-        Solid::Device *device = new Solid::Device(udi);
+        Solid::Device device(udi);
         QString categoryOfInsertedDevice = getCategoryNameOfDevice(device);
         QStandardItem *currentCategory = searchOrCreateDeviceCategory(categoryOfInsertedDevice);
         if(currentCategory)
@@ -147,6 +147,16 @@ void NotifierDialog::insertDevice(const QString &name)
             currentCategory->insertRow(0,item);
             currentCategory->setChild(0, 1, actionItem);
         }
+        else
+        {
+            delete item;
+            delete actionItem;
+        }
+    }
+    else
+    {
+        delete item;
+        delete actionItem;
     }
 
     m_notifierView->calculateRects();
@@ -360,14 +370,14 @@ void NotifierDialog::slotOnItemClicked(const QModelIndex &index)
     emit itemSelected();
 }
 
-QString NotifierDialog::getCategoryNameOfDevice(Solid::Device * device)
+QString NotifierDialog::getCategoryNameOfDevice(const Solid::Device& device)
 {
     int index = Solid::DeviceInterface::staticMetaObject.indexOfEnumerator("Type");
     QMetaEnum typeEnum = Solid::DeviceInterface::staticMetaObject.enumerator(index);
     for (int i = typeEnum.keyCount() - 1 ; i > 0; i--)
     {
         Solid::DeviceInterface::Type type = (Solid::DeviceInterface::Type)typeEnum.value(i);
-        const Solid::DeviceInterface *interface = device->asDeviceInterface(type);
+        const Solid::DeviceInterface *interface = device.asDeviceInterface(type);
         if (interface)
         {
             return Solid::DeviceInterface::typeToString(type);

@@ -72,6 +72,7 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
 
 DeviceNotifier::~DeviceNotifier()
 {
+    delete m_icon;
     delete m_dialog;
 }
 
@@ -217,12 +218,10 @@ void DeviceNotifier::toolTipAboutToShow()
 {
     Plasma::ToolTipContent toolTip;
     if (!m_lastPlugged.isEmpty()) {
-        Solid::Device *device = new Solid::Device(m_lastPlugged.last());
+        Solid::Device device(m_lastPlugged.last());
 
-        toolTip.setSubText(i18n("Last plugged in device: %1", device->product()));
-        toolTip.setImage(KIcon(device->icon()));
-
-        delete device;
+        toolTip.setSubText(i18n("Last plugged in device: %1", device.product()));
+        toolTip.setImage(KIcon(device.icon()));
     } else {
         toolTip.setSubText(i18n("No devices plugged in"));
         toolTip.setImage(KIcon("device-notifier"));

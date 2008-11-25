@@ -225,7 +225,7 @@ namespace Notifier
           * @internal get The category name of a device plugged
           * @param device the solid device plugged in hardware
           **/
-          QString getCategoryNameOfDevice(Solid::Device * device);
+          QString getCategoryNameOfDevice(const Solid::Device& device);
   };
 
 }
