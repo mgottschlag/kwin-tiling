@@ -46,7 +46,8 @@ public:
     bool isHiddenType(const QString &typeId) const;
     void syncTasks(const QList<SystemTray::Task*> &tasks);
     bool hasHiddenTasks() const;
-    int easement() const;
+    int leftEasement() const;
+    int rightEasement() const;
     void setOrientation(Qt::Orientation);
     void checkSizes();
 

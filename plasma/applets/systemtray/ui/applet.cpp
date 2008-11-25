@@ -217,12 +217,14 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
     QRect r = rect().toRect();
 
     if (formFactor() == Plasma::Vertical) {
-        r.setY(d->taskArea->easement());
+        r.setY(d->taskArea->leftEasement());
+        r.setBottom(r.bottom() - d->taskArea->rightEasement());
     } else if (QApplication::layoutDirection() == Qt::RightToLeft) {
-        r.setWidth(r.width() - d->taskArea->easement());
+        r.setWidth(r.width() - d->taskArea->leftEasement());
+        r.setLeft(d->taskArea->rightEasement());
     } else {
-        r.setX(d->taskArea->easement());
-        kDebug() << "seting easement to" << d->taskArea->easement() << r << size();
+        r.setX(d->taskArea->leftEasement());
+        r.setWidth(r.width() - d->taskArea->rightEasement());
     }
 
     d->background->resizeFrame(r.size());

@@ -103,6 +103,7 @@ void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
             if (widget) {
                 d->taskLayout->removeItem(widget);
                 d->topLayout->invalidate();
+                //TODO: we shouldn't delete these, just don't show them!
                 delete widget;
             }
         } else {
@@ -177,7 +178,7 @@ void TaskArea::removeTask(Task *task)
     }
 }
 
-int TaskArea::easement() const
+int TaskArea::leftEasement() const
 {
     if (d->unhider) {
         const int cheat = 6;
@@ -190,6 +191,11 @@ int TaskArea::easement() const
     }
 
     return 0;
+}
+
+int TaskArea::rightEasement() const
+{
+    return d->lastItemCount > 0 ? d->lastItemCount * 22 - 16 : 0;
 }
 
 bool TaskArea::hasHiddenTasks() const
