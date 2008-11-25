@@ -97,7 +97,7 @@ void LayoutWidget::removeTaskItem(AbstractTaskItem * item)
     }
 
     //kDebug();
-  /*  if (item->abstractItem()->isGroupItem()) { 
+  /*  if (item->abstractItem()->isGroupItem()) {
         TaskGroupItem *groupItem = static_cast<TaskGroupItem*>(item);
         if (groupItem->isSplit()) {
             groupItem->unsplitGroup(); //TODO reasonable?
@@ -163,7 +163,7 @@ int LayoutWidget::size()
 
         if (item->abstractItem()->isGroupItem()) {
             TaskGroupItem *group = static_cast<TaskGroupItem*>(item);
-            if (!group->collapsed()) { 
+            if (!group->collapsed()) {
                 LayoutWidget *layout = dynamic_cast<LayoutWidget*>(group->layoutWidget());
                 if (!layout) {
                     kDebug() << "Error group has no layout";
@@ -284,10 +284,10 @@ void LayoutWidget::layoutItems()
         int row;
         int col;
         if (m_applet->formFactor() == Plasma::Vertical) {
-            row = numberOfItems % columns; 
+            row = numberOfItems % columns;
             col = numberOfItems / columns;
         } else {
-            row = numberOfItems / columns; 
+            row = numberOfItems / columns;
             col = numberOfItems % columns;
         }
 
@@ -305,7 +305,7 @@ void LayoutWidget::layoutItems()
 
         if (item->abstractItem() && item->abstractItem()->isGroupItem()) {
             TaskGroupItem *group = static_cast<TaskGroupItem*>(item);
-            if (!group->collapsed()) { 
+            if (!group->collapsed()) {
                 LayoutWidget *layout = group->layoutWidget();
                 if (!layout) {
                     kDebug() << "group has no valid layout";
@@ -316,7 +316,7 @@ void LayoutWidget::layoutItems()
                 if ((columns-col) < groupRowWidth) {//we need to split the group
                     int splitIndex = columns - col;//number of items in group that are on this row
                     TaskGroupItem *splitChild = group->splitGroup(splitIndex);
-                    m_layout->addItem(item, row, col, 1, splitIndex); //Add the normal item 
+                    m_layout->addItem(item, row, col, 1, splitIndex); //Add the normal item
                     //kDebug() << "add normal item: split index = column span " << splitIndex;
                     if (splitChild) {
                        m_layout->addItem(splitChild, row + 1, 0, 1, groupRowWidth - splitIndex);//also add the second part of the group if there is one
@@ -324,13 +324,13 @@ void LayoutWidget::layoutItems()
                     //kDebug() << "add split item: column span " << groupRowWidth - splitIndex;
                 } else  {
                     group->unsplitGroup();
-                    m_layout->addItem(item, row, col, 1, groupRowWidth); //Add the normal item 
+                    m_layout->addItem(item, row, col, 1, groupRowWidth); //Add the normal item
                     //kDebug() << "add unsplit expanded item over columns " << groupRowWidth;
                 }
                 numberOfItems += groupRowWidth - 1;
             } else {
                 group->unsplitGroup();
-                m_layout->addItem(item, row, col, 1, 1); 
+                m_layout->addItem(item, row, col, 1, 1);
             }
 
         } else {

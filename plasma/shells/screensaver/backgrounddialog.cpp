@@ -114,12 +114,12 @@ void BackgroundDialog::reloadConfig()
             currentMode = currentWallpaper->renderingMode().name();
         }
 
-        KPluginInfo::List plugins = Plasma::Wallpaper::listWallpaperInfo();
+        const KPluginInfo::List plugins = Plasma::Wallpaper::listWallpaperInfo();
         m_wallpaperMode->clear();
         int i = 0;
         m_wallpaperMode->addItem(KIcon(), i18n("No Wallpaper"),
                                  QVariant::fromValue(WallpaperInfo(QString(), QString())));
-        foreach (KPluginInfo info, plugins) {
+        foreach (const KPluginInfo& info, plugins) {
             bool matches = info.pluginName() == currentPlugin;
             const QList<KServiceAction>& modes = info.service()->actions();
             if (modes.count() > 0) {

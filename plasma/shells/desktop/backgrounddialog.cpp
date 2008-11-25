@@ -447,7 +447,7 @@ void BackgroundDialog::reloadConfig()
     KPluginInfo::List plugins = Plasma::Containment::listContainments();
     m_containmentModel->clear();
     int i = 0;
-    foreach (KPluginInfo info, plugins) {
+    foreach (const KPluginInfo& info, plugins) {
         if (!info.service()->property("X-Plasma-ContainmentCategories").toStringList().contains("desktop")) {
             continue;
         }
@@ -484,7 +484,7 @@ void BackgroundDialog::reloadConfig()
         plugins = Plasma::Wallpaper::listWallpaperInfo();
         m_wallpaperMode->clear();
         i = 0;
-        foreach (KPluginInfo info, plugins) {
+        foreach (const KPluginInfo& info, plugins) {
             kDebug() << "doing wallpaper" << info.pluginName();
             bool matches = info.pluginName() == currentPlugin;
             const QList<KServiceAction>& modes = info.service()->actions();
