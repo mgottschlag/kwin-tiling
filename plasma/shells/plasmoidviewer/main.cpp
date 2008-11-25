@@ -58,9 +58,9 @@ int main(int argc, char **argv)
     KCmdLineOptions options;
     options.add("list", ki18n("Displays a list of known applets"));
     options.add("f");
-    options.add("formfactor <name>", ki18n("The formfactor to use (horizontal, vertical, mediacenter or planar)"), "planar");
+    options.add("formfactor <name>", ki18nc("Do not translate horizontal, vertical, mediacenter nor planar", "The formfactor to use (horizontal, vertical, mediacenter or planar)"), "planar");
     options.add("l");
-    options.add("location <name>", ki18n("The location constraint to start the Containment with (floating, desktop, fullscreen, top, bottom, left, right)"), "floating");
+    options.add("location <name>", ki18nc("Do not translate floating, desktop, fullscreen, top, bottom, left nor right", "The location constraint to start the Containment with (floating, desktop, fullscreen, top, bottom, left, right)"), "floating");
     options.add("c");
     options.add("containment <name>", ki18n("Name of the containment plugin"), "null");
     options.add("w");
