@@ -101,6 +101,7 @@ void ExtenderTask::setIcon(const QString &icon)
 QGraphicsWidget* ExtenderTask::createWidget(Plasma::Applet *host)
 {
     d->iconWidget = new Plasma::IconWidget(host);
+    // KDE 4.3 "toggle" -> "Toggle"
     d->iconWidget->setToolTip(i18n("toggle visibility of notifications and jobs"));
     d->iconWidget->setIcon(d->iconName);
     d->iconWidget->setMinimumSize(22, 22);
