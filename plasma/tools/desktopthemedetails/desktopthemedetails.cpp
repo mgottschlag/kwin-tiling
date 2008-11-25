@@ -260,7 +260,7 @@ DesktopThemeDetails::DesktopThemeDetails(QWidget* parent, const QVariantList &ar
 {
     KAboutData *about = new KAboutData("kcm_desktopthemedetails", 0, ki18n("Desktop Theme Details"), "1.0");
     setAboutData(about);
-    setButtons(Apply | Help);
+    setButtons(Apply);
     setWindowIcon(KIcon("preferences-desktop"));
     setupUi(this);
     m_newThemeButton->setIcon(KIcon("get-hot-new-stuff"));
