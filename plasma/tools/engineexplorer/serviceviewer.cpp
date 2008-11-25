@@ -48,8 +48,8 @@ ServiceViewer::ServiceViewer(Plasma::DataEngine *engine, const QString &source, 
     connect(m_operations, SIGNAL(currentIndexChanged(QString)),
             this, SLOT(operationSelected(QString)));
 
-    QString engineName = i18n("Unknown");
-    QString serviceName = i18n("Unknown");
+    QString engineName = i18nc("Plasma engine with unknown name", "Unknown");
+    QString serviceName = i18nc("Plasma service with unknown name", "Unknown");
 
     if (m_engine) {
         engineName = KStringHandler::capwords(m_engine->name());
@@ -62,7 +62,7 @@ ServiceViewer::ServiceViewer(Plasma::DataEngine *engine, const QString &source, 
         connect(m_engine, SIGNAL(destroyed(QObject*)), this, SLOT(engineDestroyed()));
     }
 
-    setWindowTitle(i18n("%1 Service Explorer", serviceName));
+    setWindowTitle(i18nc("%1 is a Plasma service name", "%1 Service Explorer", serviceName));
 
     QString title = i18n("DataEngine: <b>%1</b>; Source: <b>%2</b>; Service <b>%3</b>", engineName, m_source, serviceName);
     m_title->setText(title);
@@ -201,7 +201,7 @@ void ServiceViewer::updateJobCount(int numberOfJobs)
         m_operationCount = 0;
         m_operationStatus->hide();
     } else {
-        m_operationStatus->setText(i18nc("One active operation ...", "%1 operations active ...", m_operationCount));
+        m_operationStatus->setText(i18np("One active operation ...", "%1 operations active ...", m_operationCount));
         m_operationStatus->show();
     }
 }
