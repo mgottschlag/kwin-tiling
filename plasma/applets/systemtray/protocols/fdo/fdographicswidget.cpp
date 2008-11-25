@@ -114,10 +114,6 @@ void GraphicsWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     if (!d->widget->isVisible()) {
         d->widget->show();
     }
-
-    if (parentView->childAt(pos) != d->widget->container()) {
-        d->widget->raise();
-    }
 }
 
 void GraphicsWidget::setupXEmbedDelegate()
