@@ -144,7 +144,7 @@ void ResultItem::Private::appear()
     animation->setScaleAt(1.0, 1.0, 1.0);
     animation->setPosAt(0.5, p + QPointF(mostway, 0));
     animation->setPosAt(1.0, p);
-    QTimeLine * timer = new QTimeLine(100);
+    QTimeLine * timer = new QTimeLine(100, animation);
     animation->setTimeLine(timer);
 
     timer->start();
@@ -159,15 +159,13 @@ void ResultItem::Private::move()
         q->animationComplete();
     }
 
-    QTimeLine *timer = new QTimeLine();
-    timer->setDuration(150);
-    timer->setCurveShape(QTimeLine::EaseOutCurve);
-
     QGraphicsLayoutItem *parent = q->parentLayoutItem();
     QRect contentsRect = parent ? parent->contentsRect().toRect() : q->scene()->sceneRect().toRect();
 
     QGraphicsItemAnimation * animation = new QGraphicsItemAnimation(q);
     animation->setItem(q);
+    QTimeLine *timer = new QTimeLine(150, animation);
+    timer->setCurveShape(QTimeLine::EaseOutCurve);
     animation->setTimeLine(timer);
 
     animation->setPosAt(1.0, pos());
@@ -367,10 +365,8 @@ int ResultItem::rowStride() const
 
 void ResultItem::remove()
 {
-    if (d->animation) {
-        delete d->animation;
-        d->animation = 0;
-    }
+    delete d->animation;
+    d->animation = 0;
 
     QPointF p(d->pos());
     d->needsMoving = false;
@@ -382,7 +378,7 @@ void ResultItem::remove()
     d->animation->setPosAt(0.0, p + QPointF(0.0, 0.0));
     d->animation->setPosAt(0.5, p + QPointF(32.0*0.9, 0.0));
     d->animation->setPosAt(1.0, p + QPointF(32.0, 32.0));
-    QTimeLine * timer = new QTimeLine(150);
+    QTimeLine * timer = new QTimeLine(150, d->animation);
     d->animation->setTimeLine(timer);
     ++Private::s_removingCount;
 
