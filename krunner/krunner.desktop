@@ -63,4 +63,4 @@ Name[zh_TW]=命令執行者
 Type=Service
 X-KDE-StartupNotify=false
 OnlyShowIn=KDE;
-X-KDE-autostart-phase=2
+X-KDE-autostart-phase=1
