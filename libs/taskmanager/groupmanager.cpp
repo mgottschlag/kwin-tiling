@@ -127,14 +127,14 @@ void GroupManagerPrivate::reloadTasks()
     //kDebug() << "number of tasks available " << TaskManager::self()->tasks().size();
 
     QList <TaskPtr> taskList = TaskManager::self()->tasks().values();
-    foreach (TaskPtr task, taskList) { //Add all existing tasks
+    foreach (const TaskPtr& task, taskList) { //Add all existing tasks
         if (!q->add(task)) {
             q->remove(task); //remove what isn't needed anymore
         }
         taskList.removeAll(task);
     }
 
-    foreach (TaskPtr task, taskList) { //Remove the remaining
+    foreach (const TaskPtr& task, taskList) { //Remove the remaining
         q->remove(task);
     }
 

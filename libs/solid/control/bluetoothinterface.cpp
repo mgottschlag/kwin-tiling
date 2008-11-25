@@ -127,7 +127,7 @@ Solid::Control::BluetoothRemoteDeviceList Solid::Control::BluetoothInterface::li
     QStringList ubis = backend->listDevices();
 
     Solid::Control::BluetoothRemoteDeviceList list;
-    foreach (QString ubi,ubis) {
+    foreach (const QString& ubi,ubis) {
         BluetoothRemoteDevice remoteDevice = findBluetoothRemoteDevice(ubi);
         list.append(remoteDevice);
     }

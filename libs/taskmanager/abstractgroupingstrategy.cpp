@@ -98,7 +98,7 @@ TaskGroup* AbstractGroupingStrategy::createGroup(ItemList items)
     TaskGroup *newGroup = new TaskGroup(d->groupManager);
     d->createdGroups.append(newGroup);
     connect(newGroup, SIGNAL(itemRemoved(AbstractItemPtr)), this, SLOT(checkGroup()));
-    foreach (AbstractItemPtr item, items) {
+    foreach (const AbstractItemPtr& item, items) {
         newGroup->add(item);
     }
     oldGroup->add(newGroup);
@@ -120,7 +120,7 @@ void AbstractGroupingStrategy::closeGroup(TaskGroup *group)
         parentGroup = d->groupManager->rootGroup();
     }
 
-    foreach (AbstractItemPtr item, group->members()) {
+    foreach (const AbstractItemPtr& item, group->members()) {
         parentGroup->add(item);
     }
 
@@ -204,7 +204,7 @@ QList<QColor> AbstractGroupingStrategy::colorSuggestions(TaskGroup *)
     colorPool.append(Qt::yellow);
 
     QList<QColor> colorList;
-    foreach (QColor color, colorPool) {
+    foreach (const QColor &color, colorPool) {
         if (!d->usedColors.contains(color)) {
             colorList.append(color);
         }
