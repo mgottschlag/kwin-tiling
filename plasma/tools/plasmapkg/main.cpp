@@ -94,13 +94,13 @@ int main(int argc, char **argv)
                 "plasmoid");
     options.add("s");
     options.add("i");
-    options.add("install <path>", ki18n("Install the package at <path>"));
+    options.add("install <path>", ki18nc("Do not translate <path>", "Install the package at <path>"));
     options.add("u");
-    options.add("upgrade <path>", ki18n("Upgrade the package at <path>"));
+    options.add("upgrade <path>", ki18nc("Do not translate <path>", "Upgrade the package at <path>"));
     options.add("l");
     options.add("list", ki18n("List installed packages"));
     options.add("r");
-    options.add("remove <name>", ki18n("Remove the package named <name>"));
+    options.add("remove <name>", ki18n("Do not translate <name>", "Remove the package named <name>"));
     options.add("p");
     options.add("packageroot <path>", ki18n("Absolute path to the package root. If not supplied, then the standard data directories for this KDE session will be searched instead."));
     KCmdLineArgs::addCmdLineOptions( options );
