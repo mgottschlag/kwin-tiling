@@ -70,6 +70,8 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
     qRegisterMetaType<QPersistentModelIndex>("QPersistentModelIndex");
     connect(this, SIGNAL(appletAdded(Plasma::Applet *, const QPointF &)),
             this, SLOT(onAppletAdded(Plasma::Applet *, const QPointF &)));
+    connect(this, SIGNAL(appletRemoved(Plasma::Applet *)),
+            this, SLOT(onAppletRemoved(Plasma::Applet *)));
 
     m_layout = new DesktopLayout;
     m_layout->setAutoWorkingArea(false);
@@ -236,14 +238,13 @@ void DefaultDesktop::onAppletAdded(Plasma::Applet *applet, const QPointF &pos)
         m_layout->addItem(applet, true, applet->geometry().size());
     }
 
-    connect(applet, SIGNAL(destroyed(QObject *)), this, SLOT(onAppletDestroyed(QObject *)));
     connect(applet, SIGNAL(geometryChanged()), this, SLOT(onAppletGeometryChanged()));
 }
 
-void DefaultDesktop::onAppletDestroyed(QObject *applet)
+void DefaultDesktop::onAppletRemoved(Plasma::Applet *applet)
 {
     for (int i=0; i < m_layout->count(); i++) {
-        if ((Applet *)applet == m_layout->itemAt(i)) {
+        if (applet == m_layout->itemAt(i)) {
             m_layout->removeAt(i);
             return;
         }

@@ -77,7 +77,7 @@ protected Q_SLOTS:
     void addPanel();
 
     void onAppletAdded(Plasma::Applet *, const QPointF &);
-    void onAppletDestroyed(QObject *applet);
+    void onAppletRemoved(Plasma::Applet *);
     void onAppletGeometryChanged();
     void refreshWorkingArea();
 
