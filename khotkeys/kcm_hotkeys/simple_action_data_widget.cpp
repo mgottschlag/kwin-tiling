@@ -35,6 +35,7 @@ SimpleActionDataWidget::SimpleActionDataWidget( QWidget *parent )
     // We add ourself to the layout
     QWidget *widget = new QWidget;
     ui.setupUi(widget);
+    widget->layout()->setContentsMargins(0,0,0,0);
     layout()->addWidget(widget);
     }
 
