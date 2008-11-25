@@ -61,8 +61,12 @@
 Trash::Trash(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_icon(0),
+      m_dirLister(0),
+      emptyTrash(0),
       m_count(0),
-      m_places(0)
+      m_showText(false),
+      m_places(0),
+      m_proxy(0)
 {
     setHasConfigurationInterface(true);
     setAspectRatioMode(Plasma::ConstrainedSquare);
