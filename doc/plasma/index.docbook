@@ -198,7 +198,7 @@ application has the focus, with <keycombo
 action="simul">&Ctrl;<keycap>L</keycap></keycombo>),a small &plasma;
 logo will appear in the bottom right corner (it's commonly named the
 &quot;cashew&quot;). Click on this cashew, and the panel controller opens. The
-panel controller allows you to reposition, re-size and realign the panel. The
+panel controller allows you to reposition, resize and realign the panel. The
 &plasmoids; living in this panel will adjust their size automatically.
 &plasmoids; have basic knowledge about sizing, provided by the containment. They
 are programmed to take advantage of that size, and inform the applet about how
@@ -212,17 +212,29 @@ to the applets, the applets obey.
 <title>Adding Applets</title>
 
 <para>
-Unlock the desktop and you'll be able to add and remove &plasmoids;from panel or
-desktop. You add &plasmoids; by simply dragging them where you want them.
+Unlock the desktop and you'll be able to add and remove &plasmoids; from panel
+or desktop. You add &plasmoids; by simply dragging them where you want them.
 <mousebutton>Right</mousebutton> click on an applet to remove it. The
 <guilabel>Add Applets</guilabel> dialog also allows you to mark certain applets
-as <guilabel>Favorite</guilabel> so you can find them back more easily. The
-<guibutton>Install new widgets</guibutton> button allows you to add widgets
+as <guilabel>Favorite</guilabel> so you can find them back more easily.
+
+<screenshot>
+<screeninfo>Favorite Widgets</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="favorite-widgets.png" format="PNG"/>
+    </imageobject>
+      <textobject>
+      <phrase>Favorite Widgets</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+
+The <guibutton>Install new widgets</guibutton> button allows you to add widgets
 you've previously downloaded. Currently it supports native &plasmagik; packages
 and &Mac; OSX dashboard widgets. Widgets you install this way can then be
 accessed just like regular, preinstalled widgets.
 </para>
-
 </sect1>
 
 <sect1 id="desktop">
@@ -232,12 +244,12 @@ accessed just like regular, preinstalled widgets.
 The desktop is in fact another containment. One that doesn't put size
 constraints on the applets. Applets can be moved and sized freely. On the
 unlocked desktop, &plasmoids; will show a frame when you move the mouse over
-them. This applet handle allows you to move, re-size, relocate and realign the
+them. This applet handle allows you to move, resize, relocate and realign the
 panel. It also allows you to drag Plasmoids on the desktop. The buttons in the
-corner are used to re-size, rotate configure and remove the applet. When
+corner are used to resize, rotate configure and remove the applet. When
 rotated, a &plasmoid; will act magnetic towards 12 o'clock, so it's easy to get
 them back into sensible position. By default, most applets keep their aspect
-ratio when they are being re-sized. If you want to freely re-size an applet,
+ratio when they are being resized. If you want to freely resize an applet,
 hold the &Ctrl; key pressed while resizing.
 </para>
 
@@ -250,8 +262,8 @@ wallpapers and themes through &knewstuff;.
 <para>
 With open applications, it quickly gets hard to see the &plasmoids; on your
 desktop. The <emphasis role="bold">Dashboard</emphasis> gets those &plasmoids;
-in frontof you, much like the <guilabel>Show desktop</guilabel> functionality
-you're used to from traditional desktops.
+in front of you, much like the <guilabel>Show desktop</guilabel> functionality
+you are used to from traditional desktops.
 </para>
 
 </sect1>
