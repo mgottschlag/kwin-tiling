@@ -444,7 +444,6 @@ void QuicklaunchApplet::showAddInterface()
         QWidget *widget = new QWidget;
         addUi.setupUi(widget);
         m_addDialog->setMainWidget(widget);
-        m_addDialog->setButtons( KDialog::Ok | KDialog::Cancel );
         connect(m_addDialog, SIGNAL(okClicked()), this, SLOT(addAccepted()));
     }
     m_addDialog->show();

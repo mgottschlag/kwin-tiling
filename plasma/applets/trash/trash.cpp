@@ -111,7 +111,6 @@ void Trash::createConfigurationInterface(KConfigDialog *parent)
 {
     m_proxy = new KCModuleProxy("kcmtrash");
 
-    parent->setButtons(KDialog::Ok | KDialog::Cancel);
     parent->addPage(m_proxy, i18n("Trash"), icon());
     connect(parent, SIGNAL(okClicked()), this, SLOT(slotApplyConfig()));
 

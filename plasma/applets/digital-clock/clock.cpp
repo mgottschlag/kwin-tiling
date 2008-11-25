@@ -164,7 +164,6 @@ void Clock::createClockConfigurationInterface(KConfigDialog *parent)
     //TODO: Make the size settable
     QWidget *widget = new QWidget();
     ui.setupUi(widget);
-    parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
     parent->addPage(widget, i18n("General"), icon());
 
     ui.showDate->setChecked(m_showDate);

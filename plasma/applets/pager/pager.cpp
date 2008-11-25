@@ -188,7 +188,6 @@ void Pager::createConfigurationInterface(KConfigDialog *parent)
 {
     QWidget *widget = new QWidget();
     ui.setupUi(widget);
-    parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
     parent->addPage(widget, i18n("General"), icon());
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));

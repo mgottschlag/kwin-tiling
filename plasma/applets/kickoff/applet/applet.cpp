@@ -149,7 +149,6 @@ void LauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     layout->addWidget(d->switchOnHoverCheckBox);
     layout->addStretch();
 
-    parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
     parent->addPage(widget, i18n("General"), icon());

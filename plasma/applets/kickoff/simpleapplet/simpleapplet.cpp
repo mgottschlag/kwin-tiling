@@ -321,7 +321,6 @@ void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     d->setCurrentItem(d->viewComboBox, d->viewtype);
     d->setCurrentItem(d->formatComboBox, d->formattype);
 
-    parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
     parent->addPage(p, parent->windowTitle(), icon());

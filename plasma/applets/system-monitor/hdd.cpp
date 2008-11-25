@@ -80,7 +80,6 @@ void Hdd::createConfigurationInterface(KConfigDialog *parent)
     ui.treeView->resizeColumnToContents(0);
     ui.intervalSpinBox->setValue(interval() / 60 / 1000);
 
-    parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
     parent->addPage(widget, i18n("Partitions"), "drive-harddisk");
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
