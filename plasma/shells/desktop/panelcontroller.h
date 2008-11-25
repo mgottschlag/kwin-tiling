@@ -65,7 +65,6 @@ public Q_SLOTS:
 protected:
     void paintEvent(QPaintEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
     void focusOutEvent(QFocusEvent * event);
 
 Q_SIGNALS:
@@ -78,6 +77,8 @@ Q_SIGNALS:
      void panelModeChanged(PanelView::PanelMode mode);
 
 private:
+    void mouseMoveFilter(QMouseEvent *event);
+
     Q_PRIVATE_SLOT(d, void rulersMoved(int offset, int minLength, int minLength))
     Q_PRIVATE_SLOT(d, void alignToggled(bool toggle))
     Q_PRIVATE_SLOT(d, void panelModeChanged(bool toggle))

@@ -793,14 +793,14 @@ bool PanelController::eventFilter(QObject *watched, QEvent *event)
             setCursor(Qt::ArrowCursor);
         } else if (event->type() == QEvent::MouseMove) {
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-            mouseMoveEvent(mouseEvent);
+            mouseMoveFilter(mouseEvent);
         }
     }
 
     return false;
 }
 
-void PanelController::mouseMoveEvent(QMouseEvent *event)
+void PanelController::mouseMoveFilter(QMouseEvent *event)
 {
     if (d->dragging == Private::NoElement || !d->containment) {
         return;
