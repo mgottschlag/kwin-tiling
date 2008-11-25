@@ -2,7 +2,6 @@
 Exec=kcmshell4 desktopthemedetails
 Icon=preferences-desktop
 Type=Service
-X-DocPath=
 
 X-KDE-ServiceTypes=KCModule
 X-KDE-Library=kcm_desktopthemedetails
