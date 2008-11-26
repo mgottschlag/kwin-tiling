@@ -1,7 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Favicons
+Name[be@latin]=Ikony sajtaŭ
 Name[ca]=Favicones
+Name[cs]=Oblíbené Ikony
 Name[de]=Webseiten-Symbole
 Name[el]=Αγαπημένα εικονίδια
 Name[et]=Lemmikikoonid
@@ -27,6 +29,7 @@ Name[x-test]=xxFaviconsxx
 Name[zh_CN]=网站图标
 Name[zh_TW]=網站圖示
 Comment=Data Engine for getting favicons of web sites
+Comment[be@latin]=Systema źviestak dla atrymańnia ikon sajtaŭ
 Comment[ca]=Motor de dades per a obtenir favicones de llocs web
 Comment[de]=Daten-Treiber zum Holen von Webseiten-Symbolen von Webseiten
 Comment[el]=Μηχανή δεδομένων για ανάκτηση αγαπημένων εικονιδίων από ιστοσελίδες
@@ -40,7 +43,7 @@ Comment[km]=ម៉ាស៊ីន​ទិន្នន័យ​សម្រា�
 Comment[lv]=Datu dzinējs tīmekļa vietņu ikonu ielādei
 Comment[ml]=വെബ് സൈറ്റുകളുടെ favicons (പ്രിയപെട്ട ചിഹ്നങ്ങള്‍) ലഭിക്കാനുള്ള ഡേറ്റ എഞ്ചിന്‍ (വിവര യന്ത്രം) 
 Comment[nb]=Datamotor for å hente favorittikoner fra nettsider
-Comment[nds]=Hanteerkarn för Nettsieden-Lüttbiller
+Comment[nds]=Datenkarn för Nettsieden-Lüttbiller
 Comment[nl]=Gegevensengine voor het ophalen van favicons van websites
 Comment[pt]=Um motor de dados para obter os 'favicons' das páginas Web
 Comment[pt_BR]=Um motor de dados para obter os 'favicons' das páginas Web

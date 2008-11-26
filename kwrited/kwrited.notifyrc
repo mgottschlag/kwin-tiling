@@ -3,6 +3,7 @@ IconName=utilities-terminal
 Comment=KDE write daemon
 Comment[be@latin]=Słužba „write” dla „KDE”
 Comment[ca]=Dimoni d'escriptura del KDE
+Comment[cs]=Zapisovací démon KDE
 Comment[de]=Write-Dienst von KDE
 Comment[el]=Δαίμονας write του KDE
 Comment[et]=KDE Write deemon

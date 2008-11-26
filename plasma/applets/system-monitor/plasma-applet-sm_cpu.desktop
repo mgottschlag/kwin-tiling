@@ -33,6 +33,7 @@ Name[zh_TW]=系統監視器─CPU
 Comment=A CPU usage monitor
 Comment[be@latin]=Nazirańnik zaniataści „CPU”
 Comment[ca]=Un controlador d'ús de la CPU
+Comment[cs]=Monitor vytížení CPU
 Comment[de]=Ein Überwachungsmonitor für Prozessoren
 Comment[el]=Ένας επόπτης χρήσης ΚΜΕ
 Comment[et]=Protsessori kasutuse jälgija

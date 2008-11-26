@@ -35,6 +35,7 @@ X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 Icon=user-home
 Comment=Open Devices and Folder Bookmarks
+Comment[be@latin]=Adčyni pryłady j zakładki dla katalohaŭ
 Comment[ca]=Obre els punts dels dispositius i dels preferits
 Comment[de]=Öffnet Lesezeichen für Geräte und Ordner
 Comment[el]=Άνοιγμα σελιδοδεικτών συσκευών και φακέλων

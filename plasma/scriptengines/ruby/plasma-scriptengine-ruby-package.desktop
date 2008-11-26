@@ -2,6 +2,7 @@
 Name=Ruby Package Structure
 Name[be@latin]=Struktura pakunka ŭ movie „Ruby”
 Name[ca]=Estructura de paquets en Ruby
+Name[cs]=Struktura balíčku ruby
 Name[de]=Ruby-Paketstruktur
 Name[el]=Δομή πακέτου Ruby
 Name[et]=Ruby paketi struktuur
@@ -23,6 +24,7 @@ Name[x-test]=xxRuby Package Structurexx
 Name[zh_CN]=Ruby 包结构
 Name[zh_TW]=Ruby 套件結構
 Comment=Format of a Ruby Script Engine Package
+Comment[be@latin]=Farmat pakunka nizkaha roŭniu dla skryptoŭ u movie „Ruby”
 Comment[ca]=Format d'un paquet de motor d'script en Python
 Comment[de]=Das Format eines Ruby-Skripttreiber-Pakets
 Comment[el]=Μορφή ενός πακέτου σεναρίου μηχανής Ruby
