@@ -52,7 +52,7 @@ QString WebshortcutRunner::loadDelimiter()
     // TODO: KDirWatch :)
     KConfig kuriconfig("kuriikwsfilterrc", KConfig::NoGlobals);
     KConfigGroup generalgroup(&kuriconfig, "General");
-    QString delimiter = generalgroup.readPathEntry("KeywordDelimiter", QString(":"));
+    QString delimiter = generalgroup.readEntry("KeywordDelimiter", QString(':'));
     //kDebug() << "keyworddelimiter is: " << delimiter;
     return delimiter;
 }
@@ -92,7 +92,6 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
             return;
         }
 
-        QMutexLocker lock(bigLock());
         KService::Ptr service = offers.at(0);
         m_lastKey = key;
         m_lastFailedKey.clear();
@@ -110,7 +109,6 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
 
     m_match.setText(actionText);
     context.addMatch(term, m_match);
-    return;
 }
 
 QString WebshortcutRunner::searchQuery(const QString &query, const QString &term)
