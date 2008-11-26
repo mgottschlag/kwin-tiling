@@ -51,6 +51,7 @@ Tasks::Tasks(QObject* parent, const QVariantList &arguments)
        m_leftMargin(0),
        m_topMargin(0),
        m_rightMargin(0),
+       m_rootGroupItem(0),
        m_bottomMargin(0),
        m_groupManager(0),
        m_groupModifierKey(Qt::AltModifier)
@@ -342,7 +343,7 @@ KColorScheme *Tasks::colorScheme()
 
 QSizeF Tasks::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
 {
-    if (which == Qt::PreferredSize) {
+    if (m_rootGroupItem && which == Qt::PreferredSize) {
         return m_rootGroupItem->preferredSize();
     } else {
         return Plasma::Applet::sizeHint(which, constraint);
