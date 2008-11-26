@@ -195,7 +195,7 @@ int TaskArea::leftEasement() const
 
 int TaskArea::rightEasement() const
 {
-    return d->lastItemCount > 0 ? d->lastItemCount * 22 - 16 : 0;
+    return d->lastItemCount > 0 ? d->lastItemCount * 24 : 0;
 }
 
 bool TaskArea::hasHiddenTasks() const
@@ -227,7 +227,6 @@ void TaskArea::initUnhideTool()
 
     d->unhider = new Plasma::IconWidget(this);
     d->unhider->setMinimumSize(22, 22);
-    d->unhider->setDrawBackground(true);
     updateUnhideToolIcon();
 
     if (d->topLayout->orientation() == Qt::Horizontal) {
@@ -254,11 +253,11 @@ void TaskArea::updateUnhideToolIcon()
     }
 
     if (d->topLayout->orientation() == Qt::Vertical) {
-        d->unhider->setSvg("widgets/arrows", "up-arrow");
+        d->unhider->setSvg("widgets/systemtray", "expander-up");
     } else if (d->showingHidden || QApplication::layoutDirection() == Qt::RightToLeft) {
-        d->unhider->setSvg("widgets/arrows", "right-arrow");
+        d->unhider->setSvg("widgets/systemtray", "expander-right");
     } else {
-        d->unhider->setSvg("widgets/arrows", "left-arrow");
+        d->unhider->setSvg("widgets/systemtray", "expander-left");
     }
 }
 

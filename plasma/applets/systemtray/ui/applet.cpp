@@ -29,6 +29,7 @@
 #include <QtGui/QGraphicsLayout>
 #include <QtGui/QIcon>
 #include <QtGui/QListWidget>
+#include <QtGui/QPainter>
 
 #include <KActionSelector>
 #include <KConfigDialog>
@@ -81,6 +82,7 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
 {
     d->background = new Plasma::FrameSvg(this);
     d->background->setImagePath("widgets/systemtray");
+    d->background->setCacheAllRenderedFrames(true);
 
     setPopupIcon(QIcon());
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
@@ -214,21 +216,51 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
     Q_UNUSED(option)
     Q_UNUSED(contentsRect)
 
-    QRect r = rect().toRect();
+    QRect normalRect = rect().toRect();
+    QRect lastRect(normalRect);
+    d->background->setElementPrefix("lastelements");
 
     if (formFactor() == Plasma::Vertical) {
-        r.setY(d->taskArea->leftEasement());
-        r.setBottom(r.bottom() - d->taskArea->rightEasement());
+        const int rightEasement = d->taskArea->rightEasement() + d->background->marginSize(Plasma::BottomMargin);
+        normalRect.setY(d->taskArea->leftEasement());
+        normalRect.setBottom(normalRect.bottom() - rightEasement);
+
+        lastRect.setY(normalRect.bottom() + 1);
+        lastRect.setHeight(rightEasement);
     } else if (QApplication::layoutDirection() == Qt::RightToLeft) {
-        r.setWidth(r.width() - d->taskArea->leftEasement());
-        r.setLeft(d->taskArea->rightEasement());
+        const int rightEasement = d->taskArea->rightEasement() + d->background->marginSize(Plasma::LeftMargin);
+        normalRect.setWidth(normalRect.width() - d->taskArea->leftEasement());
+        normalRect.setLeft(rightEasement);
+
+        lastRect.setWidth(rightEasement);
     } else {
-        r.setX(d->taskArea->leftEasement());
-        r.setWidth(r.width() - d->taskArea->rightEasement());
+        const int rightEasement = d->taskArea->rightEasement() + d->background->marginSize(Plasma::RightMargin);
+        normalRect.setX(d->taskArea->leftEasement());
+        normalRect.setWidth(normalRect.width() - rightEasement);
+
+        lastRect.setX(normalRect.right() + 1);
+        lastRect.setWidth(rightEasement);
     }
 
+    QRect r = normalRect.united(lastRect);
+
+    painter->save();
+
+    d->background->setElementPrefix(QString());
     d->background->resizeFrame(r.size());
+    if (d->taskArea->rightEasement() > 0) {
+        painter->setClipRect(normalRect);
+    }
     d->background->paintFrame(painter, r, QRectF(QPointF(0, 0), r.size()));
+
+    if (d->taskArea->rightEasement() > 0) {
+        d->background->setElementPrefix("lastelements");
+        d->background->resizeFrame(r.size());
+        painter->setClipRect(lastRect);
+        d->background->paintFrame(painter, r, QRectF(QPointF(0, 0), r.size()));
+    }
+
+    painter->restore();
 }
 
 
