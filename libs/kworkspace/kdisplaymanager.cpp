@@ -369,7 +369,7 @@ KDisplayManager::sess2Str2( const SessEnt &se, QString &user, QString &loc )
 		user =
 			se.user.isEmpty() ?
 				se.session.isEmpty() ?
-					i18n("Unused") :
+					i18nc("... location (TTY or X display)", "Unused") :
 					se.session == "<remote>" ?
 						i18n("X login on remote host") :
 						i18nc("... host", "X login on %1", se.session ) :
