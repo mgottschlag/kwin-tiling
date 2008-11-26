@@ -780,6 +780,9 @@ bool PanelController::eventFilter(QObject *watched, QEvent *event)
             d->dragging = Private::MoveButtonElement;
         } else if (event->type() == QEvent::MouseButtonRelease) {
             d->dragging = Private::NoElement;
+        } else if (event->type() == QEvent::MouseMove) {
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+            mouseMoveFilter(mouseEvent);
         }
     } else if (watched == d->sizeTool) {
         if (event->type() == QEvent::MouseButtonPress) {
