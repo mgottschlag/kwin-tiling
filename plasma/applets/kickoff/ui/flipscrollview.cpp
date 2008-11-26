@@ -585,11 +585,14 @@ void FlipScrollView::paintItems(QPainter &painter, QPaintEvent *event, QModelInd
             QPainterPath tPath = d->trianglePath();
             if (option.direction == Qt::LeftToRight) {
                 triRect.setLeft(triRect.right() - ItemDelegate::ITEM_RIGHT_MARGIN);
+		painter.translate(triRect.center().x() - 6, triRect.y() + (option.rect.height() / 2));
+
             } else {
-                triRect.setRight(triRect.left() + ItemDelegate::ITEM_RIGHT_MARGIN);
+                triRect.setRight(triRect.left() + ItemDelegate::ITEM_RIGHT_MARGIN);            		
+		painter.translate(triRect.center().x() + 6, triRect.y() + (option.rect.height() / 2));
+
             }
 
-            painter.translate(triRect.center().x() - 6, triRect.y() + (option.rect.height() / 2));
 
             if (option.direction == Qt::LeftToRight) {
                 painter.rotate(180);
