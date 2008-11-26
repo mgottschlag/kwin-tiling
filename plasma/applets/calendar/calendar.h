@@ -28,7 +28,7 @@
 namespace Plasma
 {
     class Svg;
-};
+}
 
 class CalendarTest : public Plasma::PopupApplet
 {
