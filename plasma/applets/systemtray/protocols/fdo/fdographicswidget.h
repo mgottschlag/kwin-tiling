@@ -36,7 +36,7 @@ class GraphicsWidget : public QGraphicsWidget
     Q_OBJECT
 
 public:
-    GraphicsWidget(WId winId);
+    GraphicsWidget(WId winId, QGraphicsWidget *parent = 0);
     ~GraphicsWidget();
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);

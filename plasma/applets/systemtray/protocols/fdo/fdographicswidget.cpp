@@ -56,9 +56,8 @@ public:
     QPointer<X11EmbedDelegate> widget;
 };
 
-
-GraphicsWidget::GraphicsWidget(WId winId)
-    : d(new GraphicsWidget::Private())
+GraphicsWidget::GraphicsWidget(WId winId, QGraphicsWidget *parent)
+    : QGraphicsWidget(parent), d(new GraphicsWidget::Private())
 {
     d->winId = winId;
 

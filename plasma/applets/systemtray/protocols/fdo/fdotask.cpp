@@ -23,7 +23,7 @@
 #include "fdotask.h"
 
 #include <KWindowSystem>
-
+#include <Plasma/Applet>
 
 namespace SystemTray
 {
@@ -96,9 +96,7 @@ QIcon Task::icon() const
 
 QGraphicsWidget* Task::createWidget(Plasma::Applet *applet)
 {
-    Q_UNUSED(applet)
-
-    QGraphicsWidget *widget = new GraphicsWidget(d->winId);
+    QGraphicsWidget *widget = new GraphicsWidget(d->winId, applet);
     connect(widget, SIGNAL(clientClosed()),
             this, SLOT(deleteLater()));
     return widget;
