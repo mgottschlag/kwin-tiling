@@ -578,9 +578,11 @@ void Panel::showDropZone(const QPoint pos)
         return;
     }
 
-    if (m_spacer && pos == QPoint()) {
-        lay->removeItem(m_spacer);
-        m_spacer->hide();
+    if (pos == QPoint()) {
+        if (m_spacer) {
+            lay->removeItem(m_spacer);
+            m_spacer->hide();
+        }
         return;
     }
 
