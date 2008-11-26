@@ -492,6 +492,7 @@ void MouseConfig::setHandedness(int val)
     generalTab->leftHanded->setChecked(true);
     generalTab->mousePix->setPixmap(KStandardDirs::locate("data", "kcminput/pics/mouse_lh.png"));
   }
+  settings->m_handedNeedsApply = true;
 }
 
 void MouseConfig::load()
