@@ -100,7 +100,7 @@ int main(int argc, char **argv)
     options.add("l");
     options.add("list", ki18n("List installed packages"));
     options.add("r");
-    options.add("remove <name>", ki18n("Do not translate <name>", "Remove the package named <name>"));
+    options.add("remove <name>", ki18nc("Do not translate <name>", "Remove the package named <name>"));
     options.add("p");
     options.add("packageroot <path>", ki18n("Absolute path to the package root. If not supplied, then the standard data directories for this KDE session will be searched instead."));
     KCmdLineArgs::addCmdLineOptions( options );
