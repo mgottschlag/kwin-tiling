@@ -25,6 +25,11 @@
 
 #include "libplasmaclock/calendar.h"
 
+namespace Plasma
+{
+    class Svg;
+};
+
 class CalendarTest : public Plasma::PopupApplet
 {
     Q_OBJECT
@@ -33,6 +38,7 @@ class CalendarTest : public Plasma::PopupApplet
         ~CalendarTest();
 
         void init();
+        void constraintsEvent(Plasma::Constraints constraints);
 
         /**
          * The widget that displays the calendar.
@@ -42,7 +48,10 @@ class CalendarTest : public Plasma::PopupApplet
         void configAccepted();
 
     private:
+        void paintIcon();
+
         Plasma::Calendar *m_calendarDialog;
+        Plasma::Svg *m_theme;
 };
 
 K_EXPORT_PLASMA_APPLET(calendar, CalendarTest)

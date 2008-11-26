@@ -17,6 +17,9 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
+#include <QGraphicsLayout>
+#include <QPainter>
+
 #include <KDebug>
 #include <KIcon>
 
@@ -28,7 +31,8 @@
 
 CalendarTest::CalendarTest(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args),
-    m_calendarDialog(0)
+    m_calendarDialog(0),
+    m_theme(0)
 {
     resize(330, 240);
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
@@ -53,6 +57,40 @@ QGraphicsWidget *CalendarTest::graphicsWidget()
 CalendarTest::~CalendarTest()
 {
 
+}
+
+void CalendarTest::constraintsEvent(Plasma::Constraints constraints)
+{
+    if (!m_calendarDialog) {
+        graphicsWidget();
+    }
+
+    if ((constraints|Plasma::FormFactorConstraint || constraints|Plasma::SizeConstraint) && 
+        layout()->itemAt(0) != m_calendarDialog) {
+        paintIcon();
+    }
+}
+
+void CalendarTest::paintIcon()
+{
+    //TODO: connect to a dataengine to repaint this thing on date change
+    const int iconSize = qMin(size().width(), size().height());
+    QPixmap icon(iconSize, iconSize);
+
+    if (!m_theme) {
+        m_theme = new Plasma::Svg(this);
+        m_theme->setImagePath("calendar/mini-calendar");
+        m_theme->setContainsMultipleImages(true);
+    }
+
+    icon.fill(Qt::transparent);
+    QPainter p(&icon);
+
+    m_theme->paint(&p, icon.rect(), "mini-calendar");
+    m_theme->paint(&p, icon.rect(), QString::number(QDate::currentDate().day()));
+    m_theme->resize();
+    p.end();
+    setPopupIcon(icon);
 }
 
 void CalendarTest::configAccepted()
