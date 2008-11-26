@@ -361,6 +361,7 @@ class CFontListView : public QTreeView
     void            dragEnterEvent(QDragEnterEvent *event);
     void            dropEvent(QDropEvent *event);
     void            contextMenuEvent(QContextMenuEvent *ev);
+    virtual bool    viewportEvent(QEvent *event);
 
     private:
 

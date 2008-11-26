@@ -2228,6 +2228,12 @@ void CFontListView::contextMenuEvent(QContextMenuEvent *ev)
     }
 }
 
+bool CFontListView::viewportEvent(QEvent *event)
+{
+    executeDelayedItemsLayout();
+    return QTreeView::viewportEvent(event);
+}
+
 }
 
 #include "FontList.moc"

@@ -959,6 +959,12 @@ void CGroupListView::drawHighlighter(const QModelIndex &idx)
     }
 }
 
+bool CGroupListView::viewportEvent(QEvent *event)
+{
+    executeDelayedItemsLayout();
+    return QTreeView::viewportEvent(event);
+}
+
 }
 
 #include "GroupList.moc"

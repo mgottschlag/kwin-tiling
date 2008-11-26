@@ -224,6 +224,7 @@ class CGroupListView : public QTreeView
     void                  dragLeaveEvent(QDragLeaveEvent *event);
     void                  dropEvent(QDropEvent *event);
     void                  drawHighlighter(const QModelIndex &idx);
+    virtual bool          viewportEvent(QEvent *event);
 
     private:
 
