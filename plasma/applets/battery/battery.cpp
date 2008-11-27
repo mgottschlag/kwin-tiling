@@ -486,9 +486,9 @@ void Battery::updateStatus()
         return;
     }
 
+    QString batteryLabelText = QString("<br />");
     if (m_numOfBattery && m_batteryLabel) {
         QHashIterator<QString, QHash<QString, QVariant > > battery_data(m_batteries_data);
-        QString batteryLabelText = QString("<br />");
         int bnum = 0;
         int hours = m_remainingMSecs/1000/3600;
         int minutes = qRound(m_remainingMSecs/60000);
@@ -523,6 +523,7 @@ void Battery::updateStatus()
                     // less than one hour
                     batteryLabelText.append(i18np("<b>%1 minute</b> remaining<br />", "<b>%1 minutes</b> remaining<br />", minutes));
                 }
+                kDebug() << "hours:" << hours << "minutes:" << minutes;
                 /* might be useful for the tooltip
                 kDebug() << "hours:" << hours << "minutes:" << minutes;
                 QTime t = QTime(hours, minutes);
@@ -535,7 +536,9 @@ void Battery::updateStatus()
                 if (m_extenderApplet) {
                     m_extenderApplet->showBatteryLabel(false);
                 }
-                if (m_numOfBattery == 1) {
+                if (m_numOfBattery == 0) {
+                    //kDebug() << "zero batteries ...";
+                } else if (m_numOfBattery == 1) {
                     if (battery_data.value()["Plugged in"].toBool()) {
                         if (state == "NoCharge") {
                             batteryLabelText.append(i18n("<b>Battery:</b> %1% (fully charged)<br />", battery_data.value()["Percent"].toString()));
@@ -548,6 +551,7 @@ void Battery::updateStatus()
                         batteryLabelText.append(i18nc("Battery is not plugged in", "<b>Battery:</b> not present<br />"));
                     }
                 } else {
+                    //kDebug() << "More batteries ...";
                     if (state == "NoCharge") {
                         batteryLabelText.append(i18n("<b>Battery %1:</b> %2% (fully charged)<br />", bnum, battery_data.value()["Percent"].toString()));
                     } else if (state == "Discharging") {
@@ -564,8 +568,11 @@ void Battery::updateStatus()
         } else {
             batteryLabelText.append(i18n("<b>AC Adapter:</b> Not plugged in"));
         }
-        m_batteryLabel->setText(batteryLabelText);
+    } else {
+        batteryLabelText.append(i18nc("Battery is not plugged in", "<b>Battery:</b> not present<br />"));
     }
+    //kDebug() << batteryLabelText;
+    m_batteryLabel->setText(batteryLabelText);
 
     if (!m_availableProfiles.empty() && m_profileCombo) {
         m_profileCombo->clear();
