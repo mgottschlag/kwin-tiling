@@ -163,11 +163,17 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
     Plasma::FormFactor f = formFactor();
     int insertIndex = -1;
 
-    //Enlarge the panel if possible
+    //Enlarge the panel if possible and needed
+    QSizeF appletHint = applet->preferredSize();
+    QSizeF panelHint = layout()->preferredSize();
     if (f == Plasma::Horizontal) {
-        resize(size().width() + applet->preferredWidth(), size().height());
+        if (panelHint.width() + appletHint.width() > size().width()) {
+            resize(panelHint.width() + appletHint.width(), size().height());
+        }
     } else {
-        resize(size().width(), size().height() + applet->preferredHeight());
+        if (panelHint.height() + appletHint.height() > size().height()) {
+            resize(size().width(), panelHint.height() + appletHint.height());
+        }
     }
     layout()->setMaximumSize(size());
 
