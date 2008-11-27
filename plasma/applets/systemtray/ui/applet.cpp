@@ -85,6 +85,7 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
     d->background->setCacheAllRenderedFrames(true);
 
     setPopupIcon(QIcon());
+    setPassivePopup(true);
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
     setBackgroundHints(NoBackground);
     setHasConfigurationInterface(true);
