@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2007 Robert Knight <robertknight@gmail.com>
+ * Copyright 2007 Robert Knight <robertknight@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -18,7 +18,8 @@
 
 #include "tasksengine.h"
 
-#include <QMetaProperty>
+// own
+#include "tasksource.h"
 
 TasksEngine::TasksEngine(QObject *parent, const QVariantList &args) :
     Plasma::DataEngine(parent, args)
@@ -26,13 +27,43 @@ TasksEngine::TasksEngine(QObject *parent, const QVariantList &args) :
     Q_UNUSED(args);
 }
 
+TasksEngine::~TasksEngine()
+{
+}
+
+Plasma::Service *TasksEngine::serviceForSource(const QString &name)
+{
+    TaskSource *source = dynamic_cast<TaskSource*>(containerForSource(name));
+    // if source does not exist, return null service
+    if (!source) {
+        return Plasma::DataEngine::serviceForSource(name);
+    }
+    // if source represents a startup task, return null service
+    if (!source->isTask()) {
+        return Plasma::DataEngine::serviceForSource(name);
+    }
+    // if source represent a proper task, return task service
+    Plasma::Service *service = source->createService();
+    service->setParent(this);
+    return service;
+}
+
+const QString TasksEngine::getStartupName(StartupPtr startup)
+{
+    return startup->id().id();
+}
+
+const QString TasksEngine::getTaskName(TaskPtr task)
+{
+    return QString::number(task->window());
+}
+
 void TasksEngine::init()
 {
     foreach (const TaskPtr &task, TaskManager::TaskManager::self()->tasks()) {
-        connect(task.constData(), SIGNAL(changed()), this, SLOT(taskChanged()));
-        setDataForTask(task);
+        Q_ASSERT(task);
+        addTask(task);
     }
-
     connect(TaskManager::TaskManager::self(), SIGNAL(startupAdded(StartupPtr)), this, SLOT(startupAdded(StartupPtr)));
     connect(TaskManager::TaskManager::self(), SIGNAL(startupRemoved(StartupPtr)), this, SLOT(startupRemoved(StartupPtr)));
     connect(TaskManager::TaskManager::self(), SIGNAL(taskAdded(TaskPtr)), this, SLOT(taskAdded(TaskPtr)));
@@ -41,73 +72,40 @@ void TasksEngine::init()
 
 void TasksEngine::startupAdded(StartupPtr startup)
 {
-    connect(startup.constData(), SIGNAL(changed()), this, SLOT(startupChanged()));
-    setDataForStartup(startup);
+    Q_ASSERT(startup);
+    addStartup(startup);
 }
 
 void TasksEngine::startupRemoved(StartupPtr startup)
 {
-    removeSource(startup->id().id());
-}
-
-void TasksEngine::startupChanged()
-{
-    TaskManager::Startup *startup = qobject_cast<TaskManager::Startup*>(sender());
-
     Q_ASSERT(startup);
-
-    setDataForStartup(StartupPtr(startup));
+    removeSource(getStartupName(startup));
 }
 
 void TasksEngine::taskAdded(TaskPtr task)
 {
-    connect(task.constData(), SIGNAL(changed()), this, SLOT(taskChanged()));
-    setDataForTask(task);
+    Q_ASSERT(task);
+    addTask(task);
 }
 
 void TasksEngine::taskRemoved(TaskPtr task)
 {
-    removeSource(QString::number(task->window()));
-}
-
-void TasksEngine::taskChanged()
-{
-    TaskManager::Task *task = qobject_cast<TaskManager::Task*>(sender());
-
     Q_ASSERT(task);
-
-    setDataForTask(TaskPtr(task));
+    removeSource(getTaskName(task));
 }
 
-void TasksEngine::setDataForStartup(StartupPtr startup)
+void TasksEngine::addStartup(StartupPtr startup)
 {
-    Q_ASSERT(startup);
-
-    QString name(startup->id().id());
-
-    const QMetaObject *metaObject = startup->metaObject();
-
-    for (int i = 0; i < metaObject->propertyCount(); i++) {
-        QMetaProperty property = metaObject->property(i);
-        setData(name, property.name(), property.read(startup.constData()));
-    }
-    setData(name, "TaskOrStartup", "startup");
+    TaskSource *taskSource = new TaskSource(startup, this);
+    connect(startup.constData(), SIGNAL(changed(::TaskManager::TaskChanges)), taskSource, SLOT(updateStartup(::TaskManager::TaskChanges)));
+    addSource(taskSource);
 }
 
-void TasksEngine::setDataForTask(TaskPtr task)
+void TasksEngine::addTask(TaskPtr task)
 {
-    Q_ASSERT(task);
-
-    QString name = QString::number(task->window());
-
-    const QMetaObject *metaObject = task->metaObject();
-
-    for (int i = 0; i < metaObject->propertyCount(); i++) {
-        QMetaProperty property = metaObject->property(i);
-        setData(name,property.name(),property.read(task.constData()));
-    }
-    setData(name, "WId", static_cast<qulonglong>(task->window()));
-    setData(name, "TaskOrStartup", "task");
+    TaskSource *taskSource = new TaskSource(task, this);
+    connect(task.constData(), SIGNAL(changed(::TaskManager::TaskChanges)), taskSource, SLOT(updateTask(::TaskManager::TaskChanges)));
+    addSource(taskSource);
 }
 
 K_EXPORT_PLASMA_DATAENGINE(tasks, TasksEngine)

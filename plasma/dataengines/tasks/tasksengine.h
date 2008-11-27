@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2007 Robert Knight <robertknight@gmail.com> 
+ * Copyright 2007 Robert Knight <robertknight@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -21,10 +21,10 @@
 
 // plasma
 #include <Plasma/DataEngine>
+#include <Plasma/Service>
 
 // libtaskmanager
 #include <taskmanager/taskmanager.h>
-
 using TaskManager::StartupPtr;
 using TaskManager::TaskPtr;
 
@@ -35,6 +35,12 @@ using TaskManager::TaskPtr;
  * as well as startup tasks (windows that are about to open).
  * Each task and startup is represented by a unique source. Sources are added and removed
  * as windows are opened and closed. You cannot request a customized source.
+ *
+ * A service is also provided for each task. It exposes some operations that can be
+ * performed on the windows (ex: maximize, minimize, activate).
+ *
+ * The data and operations are provided and handled by the taskmanager library.
+ * It should be noted that only a subset of data and operations are exposed.
  */
 class TasksEngine : public Plasma::DataEngine
 {
@@ -43,21 +49,24 @@ class TasksEngine : public Plasma::DataEngine
 
     public:
         TasksEngine(QObject *parent, const QVariantList &args);
+        ~TasksEngine();
+        Plasma::Service *serviceForSource(const QString &name);
 
     protected:
+        static const QString getStartupName(StartupPtr startup);
+        static const QString getTaskName(TaskPtr task);
         virtual void init();
 
     private slots:
-        void startupChanged();
         void startupAdded(StartupPtr startup);
         void startupRemoved(StartupPtr startup);
-        void taskChanged();
         void taskAdded(TaskPtr task);
         void taskRemoved(TaskPtr task);
 
     private:
-        void setDataForStartup(StartupPtr startup);
-        void setDataForTask(TaskPtr task);
+        friend class TaskSource;
+        void addStartup(StartupPtr startup);
+        void addTask(TaskPtr task);
 };
 
 #endif // TASKSENGINE_H
