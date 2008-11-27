@@ -45,7 +45,6 @@ QStandardItem* LeaveModel::createStandardItem(const QString& url)
     //Q_ASSERT(KUrl(url).scheme() == "leave");
     QStandardItem *item = new QStandardItem();
     const QString basename = QFileInfo(url).baseName();
-    kDebug() << "basename is" << basename;
     if (basename == "logoutonly") {
         item->setText(i18n("Logout"));
         item->setIcon(KIcon("system-log-out"));
@@ -98,7 +97,6 @@ LeaveModel::LeaveModel(QObject *parent)
 
 void LeaveModel::updateModel()
 {
-    kDebug() << "updating, go!";
     clear();
 
     // Session Options
