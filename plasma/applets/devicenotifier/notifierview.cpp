@@ -109,10 +109,12 @@ void NotifierView::mousePressEvent(QMouseEvent *event)
 void NotifierView::leaveEvent(QEvent *event)
 {
     Q_UNUSED(event)
-    const QModelIndex oldHoveredIndex = m_hoveredIndex;
-    m_hoveredIndex = QModelIndex();
-    setCurrentIndex(m_hoveredIndex);
-    update(oldHoveredIndex);
+    if (m_hoveredIndex.isValid()) {
+        const QModelIndex oldHoveredIndex = m_hoveredIndex;
+        m_hoveredIndex = QModelIndex();
+        setCurrentIndex(m_hoveredIndex);
+        update(oldHoveredIndex);
+    }
 }
 
 QModelIndex NotifierView::moveCursor(CursorAction cursorAction,Qt::KeyboardModifiers modifiers )

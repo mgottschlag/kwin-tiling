@@ -119,7 +119,7 @@ namespace Notifier
 
   private:
       ///The hovered index
-      QModelIndex m_hoveredIndex;
+      QPersistentModelIndex m_hoveredIndex;
       QHash<QModelIndex,QRect> itemRects;
   };
 

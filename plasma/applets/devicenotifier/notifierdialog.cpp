@@ -57,14 +57,14 @@
 using namespace Notifier;
 using namespace Plasma;
 
-NotifierDialog::NotifierDialog(DeviceNotifier * notifier,QObject *parent) :
-QObject(parent),
-m_hotplugModel(0),
-m_widget(0),
-m_notifierView(0),
-m_label(0),
-m_notifier(notifier),
-m_rootItem(0)
+NotifierDialog::NotifierDialog(DeviceNotifier * notifier,QObject *parent)
+    : QObject(parent),
+      m_hotplugModel(0),
+      m_widget(0),
+      m_notifierView(0),
+      m_label(0),
+      m_notifier(notifier),
+      m_rootItem(0)
 {
     m_hotplugModel = new QStandardItemModel(this);
     buildDialog();
@@ -214,13 +214,15 @@ void NotifierDialog::removeDevice(const QString &name)
     if (!index.isValid()) {
         return;
     }
+
     QStandardItem *device = m_hotplugModel->itemFromIndex(index);
     QStandardItem *category = device->parent();
+
     //removing device
     category->removeRow(device->row());
+
     //remove category if there's no devices into it
-    if(!category->hasChildren())
-    {
+    if (!category->hasChildren()) {
         m_rootItem->removeRow(category->row());
     }
 
