@@ -277,7 +277,10 @@ void UKMETIon::findPlace(const QString& place, const QString& source)
 void UKMETIon::getFiveDayForecast(const QString& source)
 {
     KUrl url;
-    url = d->m_place[source].XMLforecastURL.replace("weather/5day.shtml", "weather/mobile/5day.wml");
+    url = d->m_place[source].XMLforecastURL;
+    QString xmlMap = d->m_place[source].XMLforecastURL;
+    xmlMap.replace("weather/5day.shtml", "weather/mobile/5day.wml");
+    url = xmlMap;
 
     d->m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
     d->m_job->addMetaData("cookies", "none"); // Disable displaying cookies
@@ -834,6 +837,7 @@ void UKMETIon::updateWeather(const QString& source)
     }
 
     setData(weatherSource, "Credit", "Supported by backstage.bbc.co.uk / Data from UK MET Office");
+    setData(weatherSource, "Credit Url", d->m_place[source].XMLforecastURL);
 }
 
 QString UKMETIon::place(const QString& source)
