@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE kcfg SYSTEM "http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+<kcfg>
+    <group name="setMaximized">
+        <entry name="maximized" type="bool" />
+    </group>
+    <group name="setMinimized">
+        <entry name="minimized" type="bool" />
+    </group>
+    <group name="setShaded">
+        <entry name="shaded" type="bool" />
+    </group>
+    <group name="setFullScreen">
+        <entry name="fullScreen" type="bool" />
+    </group>
+    <group name="setAlwaysOnTop">
+        <entry name="alwaysOnTop" type="bool" />
+    </group>
+    <group name="setKeptBelowOthers">
+        <entry name="keptBelowOthers" type="bool" />
+    </group>
+    <group name="toggleMaximized" />
+    <group name="toggleMinimized" />
+    <group name="toggleShaded" />
+    <group name="toggleFullScreen" />
+    <group name="toggleAlwaysOnTop" />
+    <group name="toggleKeptBelowOthers" />
+    <group name="restore" />
+    <group name="raise" />
+    <group name="lower" />
+    <group name="activate" />
+    <group name="activateRaiseOrMaximize" />
+    <group name="toDesktop">
+        <entry name="desktop" type="int" />
+    </group>
+    <group name="toCurrentDesktop" />
+</kcfg>
