@@ -19,37 +19,45 @@
 #ifndef TASKSENGINE_H
 #define TASKSENGINE_H
 
-// Plasma
+// plasma
 #include <Plasma/DataEngine>
+
+// libtaskmanager
 #include <taskmanager/taskmanager.h>
 
 using TaskManager::StartupPtr;
 using TaskManager::TaskPtr;
 
 /**
- * This class evaluates the basic expressions given in the interface.
+ * Tasks Data Engine
+ *
+ * This engine provides information regarding tasks (windows that are currently open)
+ * as well as startup tasks (windows that are about to open).
+ * Each task and startup is represented by a unique source. Sources are added and removed
+ * as windows are opened and closed. You cannot request a customized source.
  */
 class TasksEngine : public Plasma::DataEngine
 {
+
     Q_OBJECT
 
     public:
-        TasksEngine(QObject* parent, const QVariantList& args);
+        TasksEngine(QObject *parent, const QVariantList &args);
 
     protected:
         virtual void init();
 
     private slots:
+        void startupChanged();
+        void startupAdded(StartupPtr startup);
+        void startupRemoved(StartupPtr startup);
         void taskChanged();
         void taskAdded(TaskPtr task);
         void taskRemoved(TaskPtr task);
-        void startupChanged();
-        void startupAdded(StartupPtr task);
-        void startupRemoved(StartupPtr);
 
     private:
+        void setDataForStartup(StartupPtr startup);
         void setDataForTask(TaskPtr task);
-        void setDataForStartup(StartupPtr task);
 };
 
 #endif // TASKSENGINE_H

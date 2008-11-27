@@ -33,7 +33,7 @@ Name[x-test]=xxWindow Informationxx
 Name[zh_CN]=窗口信息
 Name[zh_TW]=視窗資訊
 Type=Service
-Icon=alarmclock
+Icon=user-desktop
 
 X-KDE-ServiceTypes=Plasma/DataEngine
 X-KDE-Library=plasma_engine_tasks
@@ -45,5 +45,5 @@ X-KDE-PluginInfo-Version=0.1
 X-KDE-PluginInfo-Website=http://plasma.kde.org/
 X-KDE-PluginInfo-Category=Windows and Tasks
 X-KDE-PluginInfo-Depends=
-X-KDE-PluginInfo-License=LGPL
+X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=true

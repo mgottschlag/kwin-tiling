@@ -20,30 +20,23 @@
 
 #include <QMetaProperty>
 
-using namespace Plasma;
-
-TasksEngine::TasksEngine(QObject* parent, const QVariantList& args)
-    : Plasma::DataEngine(parent, args)
+TasksEngine::TasksEngine(QObject *parent, const QVariantList &args) :
+    Plasma::DataEngine(parent, args)
 {
     Q_UNUSED(args);
 }
 
 void TasksEngine::init()
 {
-    foreach(const TaskPtr& task, TaskManager::TaskManager::self()->tasks()) {
-        connect(task.constData(), SIGNAL(changed()),
-                this,             SLOT(taskChanged()));
+    foreach (const TaskPtr &task, TaskManager::TaskManager::self()->tasks()) {
+        connect(task.constData(), SIGNAL(changed()), this, SLOT(taskChanged()));
         setDataForTask(task);
     }
 
-    connect(TaskManager::TaskManager::self(), SIGNAL(taskAdded(TaskPtr)),
-            this,                             SLOT(taskAdded(TaskPtr)));
-    connect(TaskManager::TaskManager::self(), SIGNAL(taskRemoved(TaskPtr)),
-            this,                             SLOT(taskRemoved(TaskPtr)));
-    connect(TaskManager::TaskManager::self(), SIGNAL(startupAdded(StartupPtr)),
-            this,                             SLOT(startupAdded(StartupPtr)));
-    connect(TaskManager::TaskManager::self(), SIGNAL(startupRemoved(StartupPtr)),
-            this,                             SLOT(startupRemoved(StartupPtr)));
+    connect(TaskManager::TaskManager::self(), SIGNAL(startupAdded(StartupPtr)), this, SLOT(startupAdded(StartupPtr)));
+    connect(TaskManager::TaskManager::self(), SIGNAL(startupRemoved(StartupPtr)), this, SLOT(startupRemoved(StartupPtr)));
+    connect(TaskManager::TaskManager::self(), SIGNAL(taskAdded(TaskPtr)), this, SLOT(taskAdded(TaskPtr)));
+    connect(TaskManager::TaskManager::self(), SIGNAL(taskRemoved(TaskPtr)), this, SLOT(taskRemoved(TaskPtr)));
 }
 
 void TasksEngine::startupAdded(StartupPtr startup)
@@ -59,33 +52,16 @@ void TasksEngine::startupRemoved(StartupPtr startup)
 
 void TasksEngine::startupChanged()
 {
-    TaskManager::Startup* startup = qobject_cast<TaskManager::Startup*>(sender());
+    TaskManager::Startup *startup = qobject_cast<TaskManager::Startup*>(sender());
 
     Q_ASSERT(startup);
 
     setDataForStartup(StartupPtr(startup));
 }
 
-void TasksEngine::setDataForStartup(StartupPtr startup)
-{
-    Q_ASSERT(startup);
-
-    QString name(startup->id().id());
-
-    const QMetaObject* metaObject = startup->metaObject();
-
-    for (int i = 0; i < metaObject->propertyCount(); i++) {
-        QMetaProperty property = metaObject->property(i);
-
-        setData(name, property.name(), property.read(startup.constData()));
-    }
-    setData(name, "TaskOrStartup", "startup");
-}
-
 void TasksEngine::taskAdded(TaskPtr task)
 {
-    connect(task.constData(), SIGNAL(changed()),
-            this,             SLOT(taskChanged()));
+    connect(task.constData(), SIGNAL(changed()), this, SLOT(taskChanged()));
     setDataForTask(task);
 }
 
@@ -96,11 +72,26 @@ void TasksEngine::taskRemoved(TaskPtr task)
 
 void TasksEngine::taskChanged()
 {
-    TaskManager::Task* task = qobject_cast<TaskManager::Task*>(sender());
+    TaskManager::Task *task = qobject_cast<TaskManager::Task*>(sender());
 
     Q_ASSERT(task);
 
     setDataForTask(TaskPtr(task));
+}
+
+void TasksEngine::setDataForStartup(StartupPtr startup)
+{
+    Q_ASSERT(startup);
+
+    QString name(startup->id().id());
+
+    const QMetaObject *metaObject = startup->metaObject();
+
+    for (int i = 0; i < metaObject->propertyCount(); i++) {
+        QMetaProperty property = metaObject->property(i);
+        setData(name, property.name(), property.read(startup.constData()));
+    }
+    setData(name, "TaskOrStartup", "startup");
 }
 
 void TasksEngine::setDataForTask(TaskPtr task)
@@ -109,11 +100,10 @@ void TasksEngine::setDataForTask(TaskPtr task)
 
     QString name = QString::number(task->window());
 
-    const QMetaObject* metaObject = task->metaObject();
+    const QMetaObject *metaObject = task->metaObject();
 
     for (int i = 0; i < metaObject->propertyCount(); i++) {
         QMetaProperty property = metaObject->property(i);
-
         setData(name,property.name(),property.read(task.constData()));
     }
     setData(name, "WId", static_cast<qulonglong>(task->window()));
@@ -121,6 +111,5 @@ void TasksEngine::setDataForTask(TaskPtr task)
 }
 
 K_EXPORT_PLASMA_DATAENGINE(tasks, TasksEngine)
-
 
 #include "tasksengine.moc"
