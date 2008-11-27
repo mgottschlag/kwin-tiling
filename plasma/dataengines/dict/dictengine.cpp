@@ -40,14 +40,13 @@ DictEngine::~DictEngine()
 
 void DictEngine::setDict(const QString &dict)
 {
-	dictName=dict;
+    dictName = dict;
 }
 
 void DictEngine::setServer(const QString &server)
 {
-    serverName=server;
+    serverName = server;
 }
-
 
 static QString wnToHtml(const QString &word, QByteArray &text)
 {
@@ -68,13 +67,16 @@ static QString wnToHtml(const QString &word, QByteArray &text)
             isFirst = true;
             continue;
         }
+
         if (currentLine.startsWith('.')) {
             def += "</dd>";
             continue;
         }
+
         if (!(currentLine.startsWith("150") || currentLine.startsWith("151")
            || currentLine.startsWith("250") || currentLine.startsWith("552"))) {
             currentLine.replace(linkRx,"<a href=\"\\1\">\\1</a>");
+
             if (isFirst) {
                 def += "<dt><b>" + currentLine + "</b></dt>\n<dd>";
                 isFirst = false;
@@ -90,40 +92,34 @@ static QString wnToHtml(const QString &word, QByteArray &text)
         }
 
     }
+
     def += "</dl>";
     return def;
 }
 
 void DictEngine::getDefinition()
 {
-/*      if(currentWord == QLatin1String("about"))
-      {
-          setData(currentWord, "gcide", "<!--PAGE START--><!--DEFINITION START--><dl><dt><b>Developers</b></dt><!--PAGE START--><dd>KDE4 Dictionary Applet for Plasma was written by <i>Thomas Georgiou</i> and <i>Jeff Cooper</i></dd></dl>");
-            return;
-      }*/// NOT GOOD!!!
+    tcpSocket->waitForReadyRead();
+    tcpSocket->readAll();
+    QByteArray ret;
 
-      tcpSocket->waitForReadyRead();
-      tcpSocket->readAll();
-      QByteArray ret;
+    tcpSocket->write(QByteArray("DEFINE "));
+    tcpSocket->write(dictName.toAscii());
+    tcpSocket->write(QByteArray(" \""));
+    tcpSocket->write(currentWord.toAscii());
+    tcpSocket->write(QByteArray("\"\n"));
+    tcpSocket->flush();
 
-      tcpSocket->write(QByteArray("DEFINE "));
-      tcpSocket->write(dictName.toAscii());
-      tcpSocket->write(QByteArray(" \""));
-      tcpSocket->write(currentWord.toAscii());
-      tcpSocket->write(QByteArray("\"\n"));
-      tcpSocket->flush();
-
-      while (!ret.contains("250") && !ret.contains("552"))
-      {
+    while (!ret.contains("250") && !ret.contains("552")) {
         tcpSocket->waitForReadyRead();
         ret += tcpSocket->readAll();
-      }
+    }
 
-      connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(socketClosed()));
-      tcpSocket->disconnectFromHost();
-//       setData(currentWord, dictName, ret);
-//       qWarning()<<ret;
-      setData(currentWord, "text", wnToHtml(currentWord,ret));
+    connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(socketClosed()));
+    tcpSocket->disconnectFromHost();
+    //       setData(currentWord, dictName, ret);
+    //       qWarning()<<ret;
+    setData(currentWord, "text", wnToHtml(currentWord,ret));
 }
 
 
@@ -140,37 +136,33 @@ void DictEngine::getDicts()
     tcpSocket->flush();
 
     tcpSocket->waitForReadyRead();
-    while (!ret.contains("250"))
-      {
+    while (!ret.contains("250")) {
         tcpSocket->waitForReadyRead();
         ret += tcpSocket->readAll();
-      }
+    }
 
     QList<QByteArray> retLines = ret.split('\n');
-
     QString tmp1, tmp2;
 
-
-    while (!retLines.empty())
-    {
+    while (!retLines.empty()) {
         QString curr = QString(retLines.takeFirst());
-        if (curr.startsWith("554"))
-        {
+
+        if (curr.startsWith("554")) {
             //TODO: What happens if no DB available?
             //TODO: Eventually there will be functionality to change the server...
             break;
         }
-        if (!curr.startsWith('-'))
-        {
+
+        if (!curr.startsWith('-')) {
             curr = curr.trimmed();
-            tmp1=curr.section(' ',0,1);
-            tmp2=curr.section(' ',1);
+            tmp1 = curr.section(' ', 0, 1);
+            tmp2 = curr.section(' ', 1);
   //          theHash.insert(tmp1, tmp2);
-            kDebug() << tmp1 + "  " + tmp2;
-            setData("list-dictionaries",tmp1,tmp2);
+            //kDebug() << tmp1 + "  " + tmp2;
+            setData("list-dictionaries", tmp1, tmp2);
         }
     }
-    connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(socketClosed()));
+
     tcpSocket->disconnectFromHost();
 //    setData("list-dictionaries", "dictionaries", QByteArray(theHash);
 }
@@ -197,8 +189,9 @@ bool DictEngine::sourceRequestEvent(const QString &word)
           setData(currentWord, dictName, QString());
           tcpSocket = new QTcpSocket(this);
           tcpSocket->abort();
-          if (currentWord == "list-dictionaries")
-          {
+          connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(socketClosed()));
+
+          if (currentWord == "list-dictionaries") {
               connect(tcpSocket, SIGNAL(connected()), this, SLOT(getDicts()));
           } else {
               connect(tcpSocket, SIGNAL(connected()), this ,SLOT(getDefinition()));
