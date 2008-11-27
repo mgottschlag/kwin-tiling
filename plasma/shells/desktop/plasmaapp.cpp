@@ -347,7 +347,8 @@ PanelView *PlasmaApp::findPanelForTrigger(WId trigger) const
 
 bool PlasmaApp::x11EventFilter(XEvent *event)
 {
-    if (m_panelHidden && event->xany.send_event != True) {
+    if (m_panelHidden && event->xany.send_event != True &&
+        (event->type == EnterNotify || event->type == MotionNotify)) {
         PanelView *panel = findPanelForTrigger(event->xcrossing.window);
         if (panel) {
             if (event->type == EnterNotify) {
@@ -355,7 +356,6 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
             }
             //FIXME: this if it was possible to avoid the polling
             /*else if (event->type == LeaveNotify) {
-                PanelView *panel = findPanelForTrigger(event->xcrossing.window);
                 panel->unhintHide();
             }*/
             else if (event->type == MotionNotify) {
