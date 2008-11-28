@@ -213,7 +213,6 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     if (panel) {
         connect(panel, SIGNAL(destroyed(QObject*)), this, SLOT(panelDeleted()));
         connect(panel, SIGNAL(toolBoxToggled()), this, SLOT(togglePanelController()));
-
         kDebug() << "Panel geometry is" << panel->geometry();
     }
 
@@ -966,7 +965,6 @@ void PanelView::unhide()
 
     if (m_panelMode == LetWindowsCover) {
         KWindowSystem::raiseWindow(winId());
-        KWindowSystem::forceActiveWindow(winId());
     } else if (PlasmaApp::hasComposite()) {
         if (tl->state() == QTimeLine::NotRunning) {
             tl->start();
