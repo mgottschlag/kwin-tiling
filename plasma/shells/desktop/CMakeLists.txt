@@ -52,14 +52,16 @@ qt4_add_dbus_interface(plasma_SRCS ${ksmserver_xml} ksmserver_interface)
 
 kde4_add_kdeinit_executable(plasma_qgv ${plasma_SRCS})
 
-if(WIN32)
 target_link_libraries(kdeinit_plasma_qgv ${KDE4_PLASMA_LIBS} ${KDE4_KNEWSTUFF2_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS})
-else(WIN32)
-target_link_libraries(kdeinit_plasma_qgv ${KDE4_PLASMA_LIBS} kworkspace ${KDE4_KNEWSTUFF2_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS} ${X11_LIBRARIES})
-endif(WIN32)
-if(X11_Xrender_FOUND)
-  target_link_libraries(kdeinit_plasma_qgv ${X11_Xrender_LIB})
-endif(X11_Xrender_FOUND)
+
+if(UNIX AND Q_WS_X11)
+    target_link_libraries(kdeinit_plasma_qgv kworkspace ${X11_LIBRARIES})
+
+    if(X11_Xrender_FOUND)
+       target_link_libraries(kdeinit_plasma_qgv ${X11_Xrender_LIB})
+    endif(X11_Xrender_FOUND)
+endif(UNIX AND Q_WS_X11)
+
 set_target_properties(kdeinit_plasma_qgv PROPERTIES OUTPUT_NAME kdeinit4_plasma)
 set_target_properties(plasma_qgv PROPERTIES OUTPUT_NAME plasma)
 
