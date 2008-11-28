@@ -19,6 +19,7 @@
 
 
 #include "kephald.h"
+#include "config-kephal.h"
 
 #include <QDebug>
 #include <QDBusConnection>
@@ -28,16 +29,18 @@
 #include <KConfig>
 #include <KConfigGroup>
 
-#ifdef Q_WS_X11
+#ifdef HAS_RANDR_1_2 
 #include "xrandr12/randrdisplay.h"
 #include "xrandr12/randrscreen.h"
 #endif
 
 #include "outputs/desktopwidget/desktopwidgetoutputs.h"
 #include "screens/configuration/configurationscreens.h"
-#ifdef Q_WS_X11
+
+#ifdef HAS_RANDR_1_2
 #include "outputs/xrandr/xrandroutputs.h"
 #endif
+
 #include "dbus/dbusapi_screens.h"
 #include "dbus/dbusapi_outputs.h"
 #include "dbus/dbusapi_configurations.h"
@@ -79,7 +82,7 @@ void KephalD::init() {
     m_noXRandR = general.readEntry("NoXRandR", false);
 
     m_outputs = 0;
-#ifdef Q_WS_X11
+#ifdef HAS_RANDR_1_2
     RandRDisplay * display;
     if (! m_noXRandR) {
         display = new RandRDisplay();
@@ -149,7 +152,7 @@ void KephalD::pollingDeactivated() {
 }
 
 void KephalD::poll() {
-#ifdef Q_WS_X11
+#ifdef HAS_RANDR_1_2
     if (m_outputs) {
         m_outputs->display()->screen(0)->pollState();
     }
@@ -177,12 +180,13 @@ void KephalD::outputConnected(Output * output) {
     activateConfiguration();
 }
 
-#ifdef Q_WS_X11
+#ifdef Q_WS_X11 
 bool X11EventFilter::x11Event(XEvent * e) {
+#ifdef HAS_RANDR_1_2
     if (m_outputs && m_outputs->display()->canHandle(e)) {
         m_outputs->display()->handleEvent(e);
     }
-    
+#endif
     return false;
 }
 #endif

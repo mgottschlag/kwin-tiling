@@ -4,6 +4,8 @@ INCLUDE (${QT_USE_FILE})
 
 INCLUDE_DIRECTORIES (. .. ${CMAKE_CURRENT_SOURCE_DIR}/../kephal/ ${KDE4_INCLUDES} ${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 
+configure_file (config-kephal.h.cmake
+${CMAKE_CURRENT_BINARY_DIR}/config-kephal.h )
 
 SET (kded_kephal_SRCS
         kephald.cpp
@@ -26,7 +28,7 @@ SET (kded_kephal_SRCS
         ../configurations/backendconfigurations.cpp
         ../configurations/xml/xmlconfigurations.cpp)
 
-if(Q_WS_X11)
+if(Q_WS_X11 AND XRANDR_1_2_FOUND)
     SET (kded_kephal_SRCS ${kded_kephal_SRCS}
         ../xrandr12/randr.cpp
         ../xrandr12/randrscreen.cpp
@@ -35,7 +37,7 @@ if(Q_WS_X11)
         ../xrandr12/randrmode.cpp
         ../xrandr12/randrdisplay.cpp
         ../outputs/xrandr/xrandroutputs.cpp)
-endif(Q_WS_X11)
+endif(Q_WS_X11 AND XRANDR_1_2_FOUND)
 
 QT4_GENERATE_DBUS_INTERFACE(dbus/dbusapi_screens.h org.kde.Kephal.Screens.xml)
 QT4_ADD_DBUS_ADAPTOR (kded_kephal_SRCS ${CMAKE_CURRENT_BINARY_DIR}/org.kde.Kephal.Screens.xml
