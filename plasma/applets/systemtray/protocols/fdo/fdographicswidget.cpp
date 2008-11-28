@@ -101,7 +101,7 @@ void GraphicsWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     }
 
     if (d->widget->parentWidget() != parentView) {
-        kDebug() << "embedding into" << parentView->metaObject()->className() << "(" << d->winId << ")";
+        //kDebug() << "embedding into" << parentView->metaObject()->className() << "(" << d->winId << ")";
         d->widget->setParent(parentView);
     }
 
@@ -160,8 +160,7 @@ void GraphicsWidget::updateWidgetBackground()
 
 void GraphicsWidget::handleClientEmbedded()
 {
-    kDebug() << "client embedded (" << d->winId << ")";
-
+    //kDebug() << "client embedded (" << d->winId << ")";
     d->clientEmbedded = true;
     update();
 }
@@ -170,7 +169,7 @@ void GraphicsWidget::handleClientEmbedded()
 void GraphicsWidget::handleClientClosed()
 {
     emit clientClosed();
-    kDebug() << "client closed (" << d->winId << ")";
+    //kDebug() << "client closed (" << d->winId << ")";
 }
 
 
@@ -178,7 +177,7 @@ void GraphicsWidget::handleClientError(QX11EmbedContainer::Error error)
 {
     Q_UNUSED(error);
 
-    kDebug() << "client error (" << d->winId << ")";
+    //kDebug() << "client error (" << d->winId << ")";
     emit clientClosed();
 }
 

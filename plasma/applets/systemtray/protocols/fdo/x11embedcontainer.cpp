@@ -126,9 +126,9 @@ void X11EmbedContainer::embedSystemTrayClient(WId clientId)
         XCompositeRedirectSubwindows(display, winId, CompositeRedirectManual);
         SelectionManager::self()->addDamageWatch(this, clientId);
 
-        kDebug() << "Embedded client uses an ARGB visual -> compositing.";
+        //kDebug() << "Embedded client uses an ARGB visual -> compositing.";
     } else {
-        kDebug() << "Embedded client is not using an ARGB visual.";
+        //kDebug() << "Embedded client is not using an ARGB visual.";
     }
 #endif
 

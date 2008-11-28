@@ -101,7 +101,7 @@ void X11EmbedPainter::updateContainer(X11EmbedContainer *container)
     if (!d->delayedPaintTimer.isActive()) {
         int msecsToNextPaint = MIN_TIME_BETWEEN_PAINTS - d->lastPaintTime.elapsed();
         if (msecsToNextPaint > 0 && msecsToNextPaint < MIN_TIME_BETWEEN_PAINTS) {
-            kDebug() << "Delaying paint by" << msecsToNextPaint << "msecs";
+            //kDebug() << "Delaying paint by" << msecsToNextPaint << "msecs";
             d->delayedPaintTimer.start(msecsToNextPaint);
         } else {
             d->delayedPaintTimer.start(0);
