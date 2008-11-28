@@ -96,6 +96,7 @@ ClockApplet::ClockApplet(QObject *parent, const QVariantList &args)
       d(new Private(this))
 {
     setPopupIcon(QIcon());
+    setPassivePopup(true);
 }
 
 ClockApplet::~ClockApplet()
