@@ -186,15 +186,6 @@ ViewHostInterface *PlasmaHost::NewViewHost(Gadget *,
   }
 }
 
-Gadget *PlasmaHost::LoadGadget(const char *path, const char *options_name,
-                               int instance_id, bool show_debug_console) {
-  Q_UNUSED(path);
-  Q_UNUSED(options_name);
-  Q_UNUSED(instance_id);
-  Q_UNUSED(show_debug_console);
-}
-
-
 void PlasmaHost::RemoveGadget(Gadget *gadget, bool save_data) {
   // Please close me through plasma's button
 }
@@ -218,7 +209,11 @@ bool PlasmaHost::OpenURL(const ggadget::Gadget *gadget, const char *url) {
     return ggadget::qt::OpenURL(gadget, url);
 }
 
-Gadget* PlasmaHost::loadGadget(const char *path, const char *options_name) {
+Gadget* PlasmaHost::LoadGadget(const char *path, const char *options_name,
+                               int instance_id, bool show_debug_console) {
+  Q_UNUSED(instance_id);
+  Q_UNUSED(show_debug_console);
+
   Gadget *gadget = new Gadget(this, path, options_name, 0,
                               d->global_permissions_,
                               Gadget::DEBUG_CONSOLE_DISABLED);
