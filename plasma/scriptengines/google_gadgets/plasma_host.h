@@ -31,6 +31,8 @@ class PlasmaHost : public ggadget::HostInterface {
   virtual ~PlasmaHost();
   virtual ViewHostInterface *NewViewHost(Gadget *gadget,
                                          ViewHostInterface::Type type);
+  virtual Gadget *LoadGadget(const char *path, const char *options_name,
+                             int instance_id, bool show_debug_console);
   virtual void RemoveGadget(Gadget *gadget, bool save_data);
   virtual bool LoadFont(const char *filename);
   virtual void Run() {}

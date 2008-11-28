@@ -173,6 +173,13 @@ class GadgetBrowserHost : public ggadget::HostInterface {
     Q_UNUSED(gadget);
     return new GadgetBrowserViewHost(package_, type);
   }
+  virtual Gadget *LoadGadget(const char *path, const char *options_name,
+                             int instance_id, bool show_debug_console) {
+    Q_UNUSED(path);
+    Q_UNUSED(options_name);
+    Q_UNUSED(instance_id);
+    Q_UNUSED(show_debug_console);
+  }
 
   virtual void RemoveGadget(Gadget *gadget, bool save_data) {
     Q_UNUSED(save_data);
