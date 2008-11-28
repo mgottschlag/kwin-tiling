@@ -261,6 +261,7 @@ void OutputConfig::updatePositionList(void)
 
 void OutputConfig::updateRotationList(void)
 {
+	orientationCombo->clear();
 	int rotations = m_output->rotations();
 	for(int i =0; i < 6; ++i) {
 		int rot = (1 << i);
