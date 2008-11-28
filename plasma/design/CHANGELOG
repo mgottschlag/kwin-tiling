@@ -21,6 +21,7 @@ libplasma
         * Support dropping of arbitrary data if the mimetypes are supported by an applet
         * Activity naming and Context support
         * Toolbox can be positioned in any corner or edge
+        * Toolbox actions are displayed as an always open toolbar when zoomed out for improved usability
     * Corona
         * addOffscreenWidget/removeOffscreenWidget: manage canvas items that should not appear in a primary view (e.g. Extenders)
         * "screen" information querying added to Corona to allow different approaches for viewports; e.g. using KWindowSystem and QDesktopWidget for the Plasma shell, but window coordinates for plasmodviewer or other non-desktop apps.
