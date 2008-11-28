@@ -55,23 +55,22 @@ class Manager::Private
 {
 public:
     Private(Manager *manager)
-        : q(manager)
+        : q(manager), jobProtocolRegistered(false), notificationProtocolRegistered(false)
     {
         registerTaskProtocol(new Plasmoid::TaskProtocol(q));
         registerTaskProtocol(new FDO::TaskProtocol(q));
-        registerNotificationProtocol(new FDO::NotificationProtocol(q));
-        registerNotificationProtocol(new DBus::NotificationProtocol(q));
-        registerJobProtocol(new DBus::JobProtocol(q));
     }
 
     void registerTaskProtocol(TaskProtocol *protocol);
-    void registerNotificationProtocol(NotificationProtocol *protocol);
-    void registerJobProtocol(JobProtocol *protocol);
+    void registerJobProtocol();
+    void registerNotificationProtocol();
 
     Manager *q;
     QList<Task*> tasks;
     QList<Notification*> notifications;
     QList<Job*> jobs;
+    bool jobProtocolRegistered;
+    bool notificationProtocolRegistered;
 };
 
 
@@ -125,14 +124,27 @@ void Manager::removeTask(Task *task)
     emit taskRemoved(task);
 }
 
-
-void Manager::Private::registerNotificationProtocol(NotificationProtocol *protocol)
+void Manager::registerNotificationProtocol()
 {
-    connect(protocol, SIGNAL(notificationCreated(SystemTray::Notification*)),
-            q, SLOT(addNotification(SystemTray::Notification*)));
-    protocol->init();
+    d->registerNotificationProtocol();
 }
 
+void Manager::Private::registerNotificationProtocol()
+{
+    if (!notificationProtocolRegistered) {
+        NotificationProtocol *protocol = new FDO::NotificationProtocol(q);
+        connect(protocol, SIGNAL(notificationCreated(SystemTray::Notification*)),
+                q, SLOT(addNotification(SystemTray::Notification*)));
+        protocol->init();
+
+        protocol = new DBus::NotificationProtocol(q);
+        connect(protocol, SIGNAL(notificationCreated(SystemTray::Notification*)),
+                q, SLOT(addNotification(SystemTray::Notification*)));
+        protocol->init();
+
+        notificationProtocolRegistered = true;
+    }
+}
 
 void Manager::addNotification(Notification* notification)
 {
@@ -157,11 +169,20 @@ QList<Notification*> Manager::notifications() const
     return d->notifications;
 }
 
-void Manager::Private::registerJobProtocol(JobProtocol *protocol)
+void Manager::registerJobProtocol()
 {
-    connect(protocol, SIGNAL(jobCreated(SystemTray::Job*)),
-            q, SLOT(addJob(SystemTray::Job*)));
-    protocol->init();
+    d->registerJobProtocol();
+}
+
+void Manager::Private::registerJobProtocol()
+{
+    if (!jobProtocolRegistered) {
+        JobProtocol *protocol = new DBus::JobProtocol(q);
+        connect(protocol, SIGNAL(jobCreated(SystemTray::Job*)),
+                q, SLOT(addJob(SystemTray::Job*)));
+        protocol->init();
+        jobProtocolRegistered = true;
+    }
 }
 
 void Manager::addJob(Job *job)

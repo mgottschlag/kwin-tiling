@@ -62,6 +62,16 @@ public:
      **/
     QList<Job*> jobs() const;
 
+    /**
+     * Integrates the Job progress info into the applet's notification system
+     **/
+    void registerJobProtocol();
+
+    /**
+     * Iintegrates the notifications into the applet's notification system
+     **/
+    void registerNotificationProtocol();
+
 signals:
     /**
      * Emitted when a new task has been added
