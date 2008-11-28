@@ -154,9 +154,9 @@ namespace Kephal {
         for (int i = 0; i < m_screens.size(); ++i) {
             if (! m_screens.contains(i)) {
                 int min = -1;
-                for (QMap<int, OutputScreen *>::iterator i = m_screens.begin(); i != m_screens.end(); ++i) {
-                    if ((min == -1) || (i.key() < min)) {
-                        min = i.key();
+                for (QMap<int, OutputScreen *>::iterator it = m_screens.begin(); it != m_screens.end(); ++it) {
+                    if ((min == -1) || (it.key() < min)) {
+                        min = it.key();
                     }
                 }
                 OutputScreen * screen = m_screens.take(min);
