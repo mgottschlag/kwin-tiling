@@ -1108,7 +1108,11 @@ namespace Kephal {
             INVALID_CONFIGURATION("layout is empty");
             return false;
         }
-        
+
+        if (! BackendOutputs::self()) {
+            return false;
+        }
+
         QMap<Output *, QRect> layout;
         for (QMap<int, QRect>::const_iterator i = screensLayout.constBegin(); i != screensLayout.constEnd(); ++i) {
             for (QMap<Output *, int>::const_iterator j = outputScreens.constBegin(); j != outputScreens.constEnd(); ++j) {
@@ -1117,7 +1121,7 @@ namespace Kephal {
                 }
             }
         }
-        
+
         qDebug() << "layout:" << layout;
         if (! m_awaitingConfirm) {
             foreach (BackendOutput * o, BackendOutputs::self()->backendOutputs()) {
@@ -1248,6 +1252,10 @@ namespace Kephal {
     }
 
     bool XMLConfigurations::rotate(Output * output, Rotation rotation) {
+        if (! BackendOutputs::self()) {
+            return false;
+        }
+        
         if (! m_activeConfiguration) {
             return false;
         }
@@ -1309,6 +1317,10 @@ namespace Kephal {
     }
 
     bool XMLConfigurations::reflectX(Output * output, bool reflect) {
+        if (! BackendOutputs::self()) {
+            return false;
+        }
+        
         BackendOutput * o = BackendOutputs::self()->backendOutput(output->id());
         if (o) {
             requireConfirm();
@@ -1329,6 +1341,10 @@ namespace Kephal {
     }
 
     bool XMLConfigurations::reflectY(Output * output, bool reflect) {
+        if (! BackendOutputs::self()) {
+            return false;
+        }
+        
         BackendOutput * o = BackendOutputs::self()->backendOutput(output->id());
         if (o) {
             requireConfirm();
@@ -1349,6 +1365,10 @@ namespace Kephal {
     }
 
     bool XMLConfigurations::changeRate(Output * output, float rate) {
+        if (! BackendOutputs::self()) {
+            return false;
+        }
+        
         BackendOutput * o = BackendOutputs::self()->backendOutput(output->id());
         if (o) {
             requireConfirm();
@@ -1409,8 +1429,10 @@ namespace Kephal {
         m_awaitingConfirm = false;
         
         m_activeConfiguration = m_markedConfiguration;
-        foreach (BackendOutput * o, BackendOutputs::self()->backendOutputs()) {
-            o->revert();
+        if (BackendOutputs::self()) {
+            foreach (BackendOutput * o, BackendOutputs::self()->backendOutputs()) {
+                o->revert();
+            }
         }
         loadXml();
         
@@ -1422,6 +1444,10 @@ namespace Kephal {
     }
 
     void XMLConfigurations::requireConfirm() {
+        if (! BackendOutputs::self()) {
+            return;
+        }
+        
         m_confirmLeft = CONFIRMATION_TIME;
         if (! m_awaitingConfirm) {
             m_awaitingConfirm = true;
