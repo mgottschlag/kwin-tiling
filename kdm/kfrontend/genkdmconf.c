@@ -1555,6 +1555,8 @@ upd_servercmd( Entry *ce, Section *cs ATTR_UNUSED )
 		addStr( &sa, "-br" );
 	if (strstr( buf, "\n-novtswitch " ))
 		addStr( &sa, "-novtswitch" );
+	if (strstr( buf, "\n-quiet " ))
+		addStr( &sa, "-quiet" );
 	ce->value = joinArgs( sa );
 	ce->written = True;
 }
