@@ -25,6 +25,8 @@
 #include <KUrl>
 #include <KZip>
 #include <kio/netaccess.h>
+#include <kio/copyjob.h>
+#include <kio/job.h>
 #include <kgenericfactory.h>
 
 #include <Plasma/FrameSvg>
@@ -380,7 +382,7 @@ void DesktopThemeDetails::save()
             }
             QString dest = dirs.locateLocal("data", itemDir, true);
             if (QFile::exists(source)) {
-               KIO::NetAccess::file_copy(KUrl(source), KUrl(dest), this);
+               KIO::file_copy(KUrl(source), KUrl(dest), -1, KIO::HideProgressInfo);
             }
             //Save setting for this theme item
             if (customSettingsFileOpen) {
