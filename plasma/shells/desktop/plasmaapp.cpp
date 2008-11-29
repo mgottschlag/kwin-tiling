@@ -143,6 +143,7 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
       m_panelHidden(0)
 {
     KGlobal::locale()->insertCatalog("libplasma");
+    KGlobal::locale()->insertCatalog("plasma-shells-common");
     KCrash::setFlags(KCrash::AutoRestart);
 
     new PlasmaAppAdaptor(this);
