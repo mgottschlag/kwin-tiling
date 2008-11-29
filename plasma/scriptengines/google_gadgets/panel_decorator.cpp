@@ -159,6 +159,16 @@ void PanelDecorator::OnChildViewChanged() {
 void PanelDecorator::setVertical() {
   SetAllowYMargin(false);
   SetAllowXMargin(true);
+
+  // Gadget on vertical panel is not minimized by default
+  Variant vertical_minimized = GetOption("vertical_minimized");
+  if (vertical_minimized.type() != Variant::TYPE_BOOL ||
+      !VariantValue<bool>()(vertical_minimized)) {
+    SetMinimized(false);
+  } else {
+    SetMinimized(true);
+  }
+
   bool border = !IsMinimized();
   SetResizeBorderVisible(false, false, border, false);
   d->vertical_ = true;
@@ -168,12 +178,13 @@ void PanelDecorator::setHorizontal() {
   SetAllowYMargin(true);
   SetAllowXMargin(false);
 
-  // If gadget is added to horizontal panel for the first time, it should be
-  // set to minimized.
-  Variant first_horizontal = GetOption("first_horizontal");
-  if (first_horizontal.type() != Variant::TYPE_BOOL) {
-    SetOption("first_horizontal", Variant(false));
+  // Gadget on horizontal panel is minimized by default
+  Variant horizontal_minimized = GetOption("horizontal_minimized");
+  if (horizontal_minimized.type() != Variant::TYPE_BOOL ||
+      VariantValue<bool>()(horizontal_minimized)) {
     SetMinimized(true);
+  } else {
+    SetMinimized(false);
   }
 
   bool border = !IsMinimized() || IsMinimizedCaptionVisible();
