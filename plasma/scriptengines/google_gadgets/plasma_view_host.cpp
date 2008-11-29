@@ -110,11 +110,14 @@ void PlasmaViewHost::EnableInputShapeMask(bool enable) {
 }
 
 void PlasmaViewHost::SetResizable(ViewInterface::ResizableMode mode) {
-  if (!d->info->applet) return;
+  if (d->type_ != ViewHostInterface::VIEW_HOST_MAIN || d->is_popout_ ||
+      !d->info->applet)
+      return;
   if (mode == ViewInterface::RESIZABLE_TRUE)
     d->info->applet->setAspectRatioMode(Plasma::IgnoreAspectRatio);
   else
     d->info->applet->setAspectRatioMode(Plasma::KeepAspectRatio);
+  kDebug() << "SetResizable:" << mode << d->info->applet->aspectRatioMode();
 }
 
 void PlasmaViewHost::SetCaption(const std::string &caption) {

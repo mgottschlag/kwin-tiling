@@ -30,7 +30,7 @@ namespace ggadget {
 
 FloatingDecorator::FloatingDecorator(ViewHostInterface *host)
     : MainViewDecoratorBase(host,
-                            "main_view_floating",
+                            "plasma_floating",
                             false,
                             false,
                             true) {

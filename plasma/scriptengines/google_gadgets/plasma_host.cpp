@@ -264,7 +264,7 @@ void PlasmaHost::onConstraintsEvent(Plasma::Constraints constraints) {
         vh = d->newPanelViewHost();
 
       // Send popout event here so elements like browser_element will know
-      // about it.
+      // about it and they will hide themselves.
       SimpleEvent event(Event::EVENT_POPOUT);
       d->info->main_view_host->GetViewDecorator()->OnOtherEvent(event);
 
@@ -274,7 +274,12 @@ void PlasmaHost::onConstraintsEvent(Plasma::Constraints constraints) {
 
       d->info->main_view_host = vh;
       SimpleEvent event1(Event::EVENT_POPIN);
-      d->info->main_view_host->GetViewDecorator()->OnOtherEvent(event1);
+      vh->GetViewDecorator()->OnOtherEvent(event1);
+
+      // Must call it to get the aspectRatioMode of applet right.
+      // Maybe we can do it nicely in GGL.
+      vh->GetViewDecorator()->GetViewHost()->SetResizable(
+              vh->GetViewDecorator()->GetResizable());
 
       vh->ShowView(false, 0, NULL);
     } else if (isVertical(d->info->location) != isVertical(loc)) {
