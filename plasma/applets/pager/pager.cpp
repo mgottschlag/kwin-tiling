@@ -1087,7 +1087,7 @@ void Pager::themeRefresh()
 
 void Pager::updateToolTip()
 {
-    int hoverDesktopNumber;
+    int hoverDesktopNumber = 0;
 
     for (int i = 0; i < m_desktopCount; i++) {
         if (m_rects[i] == m_hoverRect) {
