@@ -376,7 +376,7 @@ QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupForecastIconMappi
     forecastList["wet flurries"] = Flurries;
     forecastList["wet flurries at times heavy"] = Flurries;
     forecastList["wet flurries at times heavy or rain snowers"] = RainSnow;
-    forecastList["wet flurries or rain snowers"] = RainSnow;
+    forecastList["wet flurries or rain showers"] = RainSnow;
     forecastList["wet snow"] = Snow;
     forecastList["wet snow at times heavy"] = Snow;
     forecastList["wet snow at times heavy mixed with rain"] = RainSnow;
