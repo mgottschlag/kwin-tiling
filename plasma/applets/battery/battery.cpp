@@ -491,7 +491,7 @@ void Battery::updateStatus()
         QHashIterator<QString, QHash<QString, QVariant > > battery_data(m_batteries_data);
         int bnum = 0;
         int hours = m_remainingMSecs/1000/3600;
-        int minutes = qRound(m_remainingMSecs/60000);
+        int minutes = qRound(m_remainingMSecs/60000) % 60;
 
         while (battery_data.hasNext()) {
             bnum++;
@@ -503,26 +503,10 @@ void Battery::updateStatus()
                 if (m_extenderApplet) {
                     m_extenderApplet->showBatteryLabel(true);
                 }
-                if (hours == 1 && minutes > 0) {
-                    // less than one hour and one minute
-                    minutes = qRound(m_remainingMSecs/60000) % 60;
-                    batteryLabelText.append(i18np("<b>1 hour 1 minute</b> remaining<br />", "<b>1 hour %1 minutes</b> remaining<br />", minutes));
-                } else if (hours > 1) {
-                    minutes = qRound(m_remainingMSecs/60000) % 60;
-                    // at least two hours
-                    if (minutes > 0) {
-                        if (minutes == 1) {
-                            batteryLabelText.append(i18np("<b>%1 hour %1 minute</b> remaining<br />", "<b>%1 hours %2 minute</b> remaining<br />", hours, minutes));
-                        } else {
-                            batteryLabelText.append(i18np("<b>%1 hour %2 minutes</b> remaining<br />", "<b>%1 hours %2 minutes</b> remaining<br />", hours, minutes));
-                        }
-                    } else {
-                        batteryLabelText.append(i18n("<b>%1 hours</b> remaining<br />", hours));
-                    }
-                } else {
-                    // less than one hour
-                    batteryLabelText.append(i18np("<b>%1 minute</b> remaining<br />", "<b>%1 minutes</b> remaining<br />", minutes));
-                }
+
+                // we don't have too much accuracy so only give hours and minutes
+                int msecs = hours * 1000 * 3600 + minutes * 60000;
+                batteryLabelText.append(i18n("Time remaining: <b>%1</b><br />", KGlobal::locale()->prettyFormatDuration(msecs)));
                 kDebug() << "hours:" << hours << "minutes:" << minutes;
                 /* might be useful for the tooltip
                 kDebug() << "hours:" << hours << "minutes:" << minutes;
