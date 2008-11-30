@@ -35,8 +35,6 @@ class PythonAppletScript(Plasma.AppletScript):
         print("Script Name: " + str(self.applet().name()))
         print("Script Category: " + str(self.applet().category()))
 
-        self.applet().resize(200, 200)
-
         # applet() cannot be relied on to give the right details in the destructor,
         # so the plugin name is stored aside. (n.b module.__name__ cannot be relied
         # on either; it might have been changed in the module itself)
