@@ -49,21 +49,20 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
     Plasma::Theme *theme = Plasma::Theme::defaultTheme();
 
     QColor color = theme->color(Plasma::Theme::TextColor);
-    setLabelColor(0, color);
-    setLabelColor(1, color);
-    setLabelColor(2, color);
-    setLabelColor(3, color);
-
     QFont font = theme->font(Plasma::Theme::DefaultFont);
-    setLabelFont(0, font);
-    setLabelFont(1, font);
-    setLabelFont(2, font);
-    setLabelFont(3, font);
+    for (int i = 0; i < 7; i++) {
+        setLabelColor(i, color);
+        setLabelFont(i, font);
+    }
+
 
     setLabelAlignment(0, Qt::AlignRight);
     setLabelAlignment(1, Qt::AlignLeft);
     setLabelAlignment(2, Qt::AlignRight);
     setLabelAlignment(3, Qt::AlignLeft);
+    setLabelAlignment(4, Qt::AlignRight);
+    setLabelAlignment(5, Qt::AlignLeft);
+    setLabelAlignment(6, Qt::AlignRight);
 
     setValue(0);
 
@@ -147,7 +146,6 @@ void JobWidget::updateJob()
             labelName1 = m_job->labels().value(1).first;
             label1 = m_job->labels().value(1).second;
         }
-
         KConfigGroup cg = m_extenderItem->config();
         cg.writeEntry("labelName0", labelName0);
         cg.writeEntry("label0", label0);
@@ -181,6 +179,10 @@ void JobWidget::updateJob()
     if (item->action("stop")) {
         item->action("stop")->setVisible(m_job->isKillable());
     }
+
+    setLabel(4, m_job->speed());
+    setLabel(5, KGlobal::locale()->formatByteSize(m_job->processedAmounts()["bytes"]));
+    setLabel(6, KGlobal::locale()->formatByteSize(m_job->totalAmounts()["bytes"]));
 
     item->setIcon(m_job->applicationIconName());
 }

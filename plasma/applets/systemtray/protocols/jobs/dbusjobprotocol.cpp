@@ -111,6 +111,7 @@ void JobProtocol::dataUpdated(const QString &source, const Plasma::DataEngine::D
     job->setMessage(data["infoMessage"].toString());
     job->setSuspendable(data["suspendable"].toBool());
     job->setKillable(data["killable"].toBool());
+    job->setSpeed(data["speed"].toString());
 
     if (data["state"].toString() == "running") {
         job->setState(Job::Running);
