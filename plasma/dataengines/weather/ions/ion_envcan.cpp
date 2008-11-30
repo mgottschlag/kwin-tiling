@@ -316,6 +316,7 @@ QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupForecastIconMappi
     forecastList["periods of snow or freezing rain"] = RainSnow;
     forecastList["periods of snow or ice pellets"] = Snow;
     forecastList["periods of snow or rain"] = RainSnow;
+    forecastList["periods of rain or snow"] = RainSnow;
     forecastList["periods of wet snow"] = Snow;
     forecastList["periods of wet snow mixed with rain"] = RainSnow;
     forecastList["periods of wet snow or rain"] = RainSnow;
