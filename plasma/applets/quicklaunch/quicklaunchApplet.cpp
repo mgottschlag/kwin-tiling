@@ -178,8 +178,9 @@ void QuicklaunchApplet::refactorUi()
     kDebug() << m_icons.count() << iconWidth << "pixel icons in" << rowCount
              << "rows, with a max of" << m_visibleIcons << "visible";
     foreach (QuicklaunchIcon *icon, m_icons) {
-        icon->setMinimumSize(minSize);
-        icon->setMaximumSize(maxSize);
+        //icon->setMinimumSize(minSize);
+        //icon->setMaximumSize(maxSize);
+        icon->resize(minSize);
 
         if (count < m_visibleIcons || m_visibleIcons == -1) {
             icon->show();
@@ -196,8 +197,9 @@ void QuicklaunchApplet::refactorUi()
 
     m_layout->removeItem(m_arrow);
     if (count > m_visibleIcons && m_visibleIcons != -1) {
-        m_arrow->setMinimumSize(minSize);
-        m_arrow->setMaximumSize(maxSize);
+        //m_arrow->setMinimumSize(minSize);
+        //m_arrow->setMaximumSize(maxSize);
+        m_arrow->resize(minSize);
         m_layout->addItem(m_arrow);
         m_arrow->show();
     } else {
