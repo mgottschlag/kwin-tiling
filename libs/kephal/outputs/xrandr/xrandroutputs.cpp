@@ -46,7 +46,7 @@ namespace Kephal {
     
     void XRandROutputs::init() {
         RandRScreen * screen = m_display->screen(0);
-        foreach (RandROutput * output, screen->outputs().values()) {
+        foreach (RandROutput * output, screen->outputs()) {
             XRandROutput * o = new XRandROutput(this, output->id());
             m_outputs.insert(o->id(), o);
         }

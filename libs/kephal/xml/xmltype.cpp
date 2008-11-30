@@ -32,12 +32,8 @@ namespace Kephal {
     }
     
     XMLFactory::~XMLFactory() {
-        foreach (XMLNodeHandler * n, m_attributes.values()) {
-            delete n;
-        }
-        foreach (XMLNodeHandler * n, m_elements.values()) {
-            delete n;
-        }
+        qDeleteAll(m_attributes);
+        qDeleteAll(m_elements);
     }
     
     XMLType * XMLRootFactory::load(QString fileName) {
@@ -86,10 +82,10 @@ namespace Kephal {
             return 0;
         }
         
-        foreach (XMLNodeHandler * n, m_attributes.values()) {
+        foreach (XMLNodeHandler * n, m_attributes) {
             n->beginLoad(result);
         }
-        foreach (XMLNodeHandler * n, m_elements.values()) {
+        foreach (XMLNodeHandler * n, m_elements) {
             n->beginLoad(result);
         }
         
