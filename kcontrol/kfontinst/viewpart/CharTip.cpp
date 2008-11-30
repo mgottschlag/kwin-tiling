@@ -245,11 +245,13 @@ void CCharTip::reposition()
     QPoint pos(rect.center());
     QRect  desk(KGlobalSettings::desktopGeometry(rect.center()));
 
-    if (rect.center().x() + width() > desk.right())
+    if ((rect.center().x() + width()) > desk.right())
+    {
         if (pos.x() - width() < 0)
             pos.setX(0);
         else
             pos.setX( pos.x() - width() );
+    }
     // should the tooltip be shown above or below the ivi ?
     if (rect.bottom() + height() > desk.bottom())
         pos.setY( rect.top() - height() );
