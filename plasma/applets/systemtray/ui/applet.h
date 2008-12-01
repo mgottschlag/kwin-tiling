@@ -47,6 +47,8 @@ protected:
     void createConfigurationInterface(KConfigDialog *parent);
     void initExtenderItem(Plasma::ExtenderItem *extenderItem);
 
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) { Q_UNUSED(event); }
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) { Q_UNUSED(event); }
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) { Q_UNUSED(event); }
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) { Q_UNUSED(event); }
 

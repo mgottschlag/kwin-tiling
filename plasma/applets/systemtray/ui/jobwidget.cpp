@@ -16,7 +16,6 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
-    //return KGlobal::locale()->formatByteSize(m_totalAmountSize);
 
 #include "jobwidget.h"
 #include "../core/job.h"
@@ -44,7 +43,6 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
     setMaximum(100);
 
     setMinimumWidth(300);
-    setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
     Plasma::Theme *theme = Plasma::Theme::defaultTheme();
 
@@ -54,7 +52,6 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
         setLabelColor(i, color);
         setLabelFont(i, font);
     }
-
 
     setLabelAlignment(0, Qt::AlignRight);
     setLabelAlignment(1, Qt::AlignLeft);
@@ -67,8 +64,6 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
     setValue(0);
 
     if (m_job) {
-        //connect(d->signalMapper, SIGNAL(mapped(const QString &)),
-                //d->notification, SLOT(triggerAction(const QString &)));
         connect(m_job, SIGNAL(changed()),
                 this, SLOT(updateJob()));
         connect(m_job, SIGNAL(destroyed()),

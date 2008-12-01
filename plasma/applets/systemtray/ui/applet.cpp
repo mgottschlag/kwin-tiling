@@ -121,20 +121,19 @@ void Applet::init()
     d->taskArea->syncTasks(Manager::self()->tasks());
 
     extender()->setEmptyExtenderMessage(i18n("No notifications and no jobs"));
-  
 
     KConfigGroup globalCg = globalConfig();
     bool separateJobDialogs = globalCg.readEntry("SeparateJobDialogs", false);
     if (!separateJobDialogs) {
       SystemTray::Manager::self()->registerJobProtocol();
       connect(SystemTray::Manager::self(), SIGNAL(jobAdded(SystemTray::Job*)),
-	      this, SLOT(addJob(SystemTray::Job*)));
+              this, SLOT(addJob(SystemTray::Job*)));
     }
     bool separateNotifications = globalCg.readEntry("SeparateNotifications", false);
     if (!separateNotifications) {
       SystemTray::Manager::self()->registerNotificationProtocol();
       connect(SystemTray::Manager::self(), SIGNAL(notificationAdded(SystemTray::Notification*)),
-	      this, SLOT(addNotification(SystemTray::Notification*)));
+              this, SLOT(addNotification(SystemTray::Notification*)));
     }
 }
 
