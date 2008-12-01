@@ -959,7 +959,14 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
     for (int i = 0; i < m_windowRects.count(); i++) {
         for (int j = 0; j < m_windowRects[i].count(); j++) {
             QRect rect = m_windowRects[i][j].second;
-            if (!m_rects.isEmpty() && m_rects[m_currentDesktop-1].contains(rect)) {
+            int currentDesktop = qMax(m_currentDesktop, 0);
+
+            //desktops starts from 0 or from 1?
+            if (KWindowSystem::desktopName(0) == QString()) {
+                currentDesktop = qMax(currentDesktop - 1, 0);
+            }
+
+            if (!m_rects.isEmpty() && m_rects[currentDesktop].contains(rect)) {
                 if (m_activeWindows.contains(rect)) {
                     painter->setBrush(activeWindowBrushActiveDesk);
                     painter->setPen(activeWindowPen);
