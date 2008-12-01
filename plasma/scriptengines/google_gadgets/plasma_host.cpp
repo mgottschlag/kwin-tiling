@@ -28,6 +28,7 @@
 #include <ggadget/details_view_decorator.h>
 #include <ggadget/permissions.h>
 #include <ggadget/qt/utilities.h>
+#include <ggadget/qt/qt_view_host.h>
 #include <ggadget/gadget.h>
 
 #include <Plasma/Applet>
@@ -81,8 +82,9 @@ class PlasmaHost::Private {
     ViewInterface *child = info->main_view_host->GetView();
     ASSERT(child);
     if (child) {
-      PlasmaViewHost *vh =
-          new PlasmaViewHost(info, ViewHostInterface::VIEW_HOST_MAIN, true);
+      ggadget::qt::QtViewHost *vh =
+          new ggadget::qt::QtViewHost(
+              ViewHostInterface::VIEW_HOST_MAIN, 1.0, 0, 0, NULL);
       PopOutMainViewDecorator *view_decorator =
           new PopOutMainViewDecorator(vh);
       DecoratedViewHost *dvh = new DecoratedViewHost(view_decorator);
@@ -172,7 +174,7 @@ ViewHostInterface *PlasmaHost::NewViewHost(Gadget *,
     }
     return d->info->main_view_host;
   } else if (type == ViewHostInterface::VIEW_HOST_OPTIONS) {
-    ViewHostInterface* vh =  new PlasmaViewHost(d->info, type);
+    ViewHostInterface* vh =  new QtViewHost(type, 1.0, 0, 0, NULL);
     d->info->options_view_host = vh;
     return vh;
   } else {

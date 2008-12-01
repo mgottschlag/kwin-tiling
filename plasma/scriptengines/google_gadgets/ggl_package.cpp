@@ -43,7 +43,7 @@ K_EXPORT_PLASMA_PACKAGESTRUCTURE(googlegadget, GglPackage)
 class GadgetBrowserViewHost : public qt::QtViewHost {
  public:
   GadgetBrowserViewHost(GglPackage *package, Type type)
-      : QtViewHost(type, 1.0, true, false, true, 0, NULL),
+      : QtViewHost(type, 1.0, FLAG_RECORD_STATES, 0, NULL),
         package_(package) {}
 
   virtual void CloseView() {

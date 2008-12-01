@@ -45,7 +45,8 @@ void PlasmaViewHost::Private::onViewMoved(int x, int y) {
     info->applet->moveBy(x, y);
 }
 
-void PlasmaViewHost::Private::onGeometryChanged(int dleft, int dtop, int dw, int dh) {
+void PlasmaViewHost::Private::onGeometryChanged(int dleft, int dtop,
+                                                int dw, int dh) {
   kDebug() << info->applet->geometry();
   info->applet->moveBy(dleft, dtop);
 }
@@ -71,7 +72,7 @@ void PlasmaViewHost::Destroy() {
 }
 
 void PlasmaViewHost::SetView(ViewInterface *view) {
-  DLOG("SetView: %p, %p", this, view);
+  kDebug() << "PlasmaViewHost::SetView:" << this << "," << view;
   if (d->view_ == view) return;
   d->detach();
   d->view_ = view;
@@ -171,7 +172,8 @@ void PlasmaViewHost::Alert(const ViewInterface *view, const char *message) {
                            view->GetCaption().c_str());
 }
 
-ggadget::ViewHostInterface::ConfirmResponse PlasmaViewHost::Confirm(const ViewInterface *view, const char *message, bool) {
+ViewHostInterface::ConfirmResponse PlasmaViewHost::Confirm(
+    const ViewInterface *view, const char *message, bool) {
   int ret = KMessageBox::questionYesNo(NULL,
                                        message,
                                        view->GetCaption().c_str() );

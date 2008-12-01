@@ -90,10 +90,10 @@ class PanelDecorator::Private {
     if (!owner_->IsMinimizedCaptionVisible()) {
       minimized_width_ = owner_->GetWidth();
       owner_->SetWidth(38);
-      owner_->SetResizeBorderVisible(false, false, false, false);
+      owner_->SetResizeBorderVisible(0);
     } else {
       owner_->SetWidth(minimized_width_);
-      owner_->SetResizeBorderVisible(false, false, false, true);
+      owner_->SetResizeBorderVisible(BORDER_RIGHT);
     }
   }
 
@@ -137,6 +137,10 @@ void PanelDecorator::SetSize(double width, double height) {
   }
 }
 
+void PanelDecorator::SetResizable(ViewInterface::ResizableMode resizable) {
+  View::SetResizable(RESIZABLE_FALSE);
+}
+
 /*void PanelDecorator::GetClientExtents(double *width, double *height) const {
   MainViewDecoratorBase::GetClientExtents(width, height);
   if (IsMinimized()) {
@@ -169,8 +173,7 @@ void PanelDecorator::setVertical() {
     SetMinimized(true);
   }
 
-  bool border = !IsMinimized();
-  SetResizeBorderVisible(false, false, border, false);
+  SetResizeBorderVisible(IsMinimized() ? 0 : BORDER_BOTTOM);
   d->vertical_ = true;
 }
 
@@ -187,8 +190,8 @@ void PanelDecorator::setHorizontal() {
     SetMinimized(false);
   }
 
-  bool border = !IsMinimized() || IsMinimizedCaptionVisible();
-  SetResizeBorderVisible(false, false, false, border);
+  SetResizeBorderVisible((!IsMinimized() || IsMinimizedCaptionVisible()) ?
+                         0 : BORDER_RIGHT);
   d->vertical_ = false;
 }
 

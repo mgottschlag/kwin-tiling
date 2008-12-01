@@ -72,8 +72,7 @@ class PlasmaViewHost::Private : public QObject {
     if (widget_) return true;
 
     if (type_ == ViewHostInterface::VIEW_HOST_OPTIONS) {
-      // Create a Widget (composite, decorated, movable, input_mask)
-      widget_ = new QtViewWidget(view_, false, true, true, false);
+      widget_ = new QtViewWidget(view_, QtViewWidget::FLAG_WM_DECORATED);
       QVBoxLayout *layout = new QVBoxLayout();
       widget_->setFixedSize(D2I(view_->GetWidth()), D2I(view_->GetHeight()));
       layout->addWidget(widget_);
@@ -110,8 +109,7 @@ class PlasmaViewHost::Private : public QObject {
     } else if (type_ == ViewHostInterface::VIEW_HOST_MAIN && !is_popout_) {
       // normal main view
       if (info->widget == NULL) {
-        // Create a Widget (composite, decorated, movable, input_mask)
-        widget_ = new QtViewWidget(view_, false, true, false, false);
+        widget_ = new QtViewWidget(view_, 0);
         embedWidget(info->applet, widget_);
         info->widget = widget_;
       } else {
@@ -135,7 +133,7 @@ class PlasmaViewHost::Private : public QObject {
         view_->SetHeight(info->applet->size().height());
     } else {
       // Popouted main view and details view
-      widget_ = new QtViewWidget(view_, false, false, true, false);
+      widget_ = new QtViewWidget(view_, QtViewWidget::FLAG_MOVABLE);
       parent_widget_ = widget_;
       SetGadgetWindowIcon(widget_, view_->GetGadget());
       if (info->expanded_main_view_host
@@ -214,6 +212,7 @@ class PlasmaViewHost::Private : public QObject {
 
   bool showContextMenu(int button) {
     ASSERT(view_);
+    Q_UNUSED(button);
     context_menu_.clear();
     QtMenu qt_menu(&context_menu_);
     view_->OnAddContextMenuItems(&qt_menu);
