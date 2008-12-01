@@ -99,7 +99,7 @@ void TaskGroup::add(AbstractItemPtr item)
 */
 
     if (d->members.contains(item)) {
-        kDebug() << "already in this group";
+        //kDebug() << "already in this group";
         return;
     }
 
