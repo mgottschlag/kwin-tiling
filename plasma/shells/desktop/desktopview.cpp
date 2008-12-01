@@ -234,7 +234,7 @@ void DesktopView::zoomIn(Plasma::ZoomLevel zoomLevel)
         qreal factor = Plasma::scalingFactor(zoomLevel);
         factor = factor / matrix().m11();
         scale(factor, factor);
-        setSceneRect(QRectF(0, 0, scene()->sceneRect().right(), scene()->sceneRect().bottom()));
+        setSceneRect(QRectF(0, 0, scene()->sceneRect().right(), scene()->sceneRect().bottom() + TOOLBOX_MARGIN));
     } else {
         setDragMode(NoDrag);
     }
@@ -246,7 +246,7 @@ void DesktopView::zoomOut(Plasma::ZoomLevel zoomLevel)
     qreal factor = Plasma::scalingFactor(zoomLevel);
     qreal s = factor / matrix().m11();
     scale(s, s);
-    setSceneRect(QRectF(0, 0, scene()->sceneRect().right(), scene()->sceneRect().bottom()));
+    setSceneRect(QRectF(0, 0, scene()->sceneRect().right(), scene()->sceneRect().bottom() + TOOLBOX_MARGIN));
 
     if (containment()) {
         ensureVisible(containment()->sceneBoundingRect());

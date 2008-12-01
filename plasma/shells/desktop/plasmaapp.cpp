@@ -674,14 +674,18 @@ void PlasmaApp::zoomIn(Plasma::Containment *containment)
     bool zoomIn = true;
     bool zoomOut = true;
     bool addSibling = true;
+    bool lock = false;
+    bool remove = false;
 
     if (m_zoomLevel == Plasma::GroupZoom) {
         m_zoomLevel = Plasma::DesktopZoom;
         containment->closeToolBox();
         addSibling = false;
         zoomIn = false;
+        lock = true;
     } else if (m_zoomLevel == Plasma::OverviewZoom) {
         m_zoomLevel = Plasma::GroupZoom;
+        remove = true;
     }
 
     //make sure everybody can zoom out again
@@ -690,9 +694,16 @@ void PlasmaApp::zoomIn(Plasma::Containment *containment)
             continue;
         }
 
+        if (remove) {
+            remove = c->screen() == -1;
+        }
+
         c->enableAction("zoom in", zoomIn);
         c->enableAction("zoom out", zoomOut);
         c->enableAction("add sibling containment", addSibling);
+        c->enableAction("lock widgets", lock);
+        c->enableAction("remove", remove);
+        c->enableAction("add widgets", true);
     }
 }
 
@@ -701,12 +712,15 @@ void PlasmaApp::zoomOut(Plasma::Containment *)
     bool zoomIn = true;
     bool zoomOut = true;
     bool addSibling = true;
+    bool lock = false;
+    bool addWidgets = true;
 
     if (m_zoomLevel == Plasma::DesktopZoom) {
         m_zoomLevel = Plasma::GroupZoom;
     } else if (m_zoomLevel == Plasma::GroupZoom) {
         m_zoomLevel = Plasma::OverviewZoom;
         zoomOut = false;
+        addWidgets = false;
     }
 
     //make sure everybody can zoom out again
@@ -718,6 +732,9 @@ void PlasmaApp::zoomOut(Plasma::Containment *)
         c->enableAction("zoom in", zoomIn);
         c->enableAction("zoom out", zoomOut);
         c->enableAction("add sibling containment", addSibling);
+        c->enableAction("lock widgets", lock);
+        c->enableAction("remove", c->screen() == -1);
+        c->enableAction("add widgets", addWidgets);
     }
 }
 

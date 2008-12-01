@@ -88,6 +88,10 @@ protected:
 private:
     DashboardView *m_dashboard;
     bool m_dashboardFollowsDesktop;
+
+    //FIXME: duplicated from containment_p.h 
+    //(but with a bigger margin to make room even for very big panels)
+    static const int TOOLBOX_MARGIN = 400;
 };
 
 #endif // multiple inclusion guard
