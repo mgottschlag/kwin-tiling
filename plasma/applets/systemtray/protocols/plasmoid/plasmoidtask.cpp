@@ -28,14 +28,11 @@
 
 namespace SystemTray
 {
-namespace Plasmoid
-{
 
-
-class Task::Private
+class PlasmoidTask::Private
 {
 public:
-    Private(QString name, Task *q)
+    Private(QString name, PlasmoidTask *q)
         : q(q),
           name(name),
           typeId(name),
@@ -48,7 +45,7 @@ public:
 
     void setupApplet();
 
-    Task *q;
+    PlasmoidTask *q;
     QString name;
     QString typeId;
     QIcon icon;
@@ -56,55 +53,55 @@ public:
 };
 
 
-Task::Task(QString appletname)
+PlasmoidTask::PlasmoidTask(QString appletname)
     : d(new Private(appletname, this))
 {
 }
 
 
-Task::~Task()
+PlasmoidTask::~PlasmoidTask()
 {
     emit taskDeleted(d->typeId);
     delete d;
 }
 
 
-bool Task::isEmbeddable() const
+bool PlasmoidTask::isEmbeddable() const
 {
     return d->applet != 0;
 }
 
-bool Task::isValid() const
+bool PlasmoidTask::isValid() const
 {
     return !d->name.isEmpty();
 }
 
-QString Task::name() const
+QString PlasmoidTask::name() const
 {
     return d->name;
 }
 
 
-QString Task::typeId() const
+QString PlasmoidTask::typeId() const
 {
     return d->typeId;
 }
 
 
-QIcon Task::icon() const
+QIcon PlasmoidTask::icon() const
 {
     return d->icon;
 }
 
 
-QGraphicsWidget* Task::createWidget(Plasma::Applet *host)
+QGraphicsWidget* PlasmoidTask::createWidget(Plasma::Applet *host)
 {
     Q_UNUSED(host)
     return static_cast<QGraphicsWidget*>(d->applet);
 }
 
 
-void Task::Private::setupApplet()
+void PlasmoidTask::Private::setupApplet()
 {
     applet = Plasma::Applet::load(name);
 
@@ -127,9 +124,6 @@ void Task::Private::setupApplet()
     kDebug() << applet->name() << " Applet loaded";
 }
 
-
 }
-}
-
 
 #include "plasmoidtask.moc"

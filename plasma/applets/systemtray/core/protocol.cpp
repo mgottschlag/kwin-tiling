@@ -1,5 +1,5 @@
 /***************************************************************************
- *   fdoprotocol.cpp                                                       *
+ *   taskprotocol.cpp                                                      *
  *                                                                         *
  *   Copyright (C) 2008 Jason Stubbs <jasonbstubbs@gmail.com>              *
  *                                                                         *
@@ -19,44 +19,17 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#include "fdonotificationprotocol.h"
-#include "fdoselectionmanager.h"
+#include "protocol.h"
 
 
 namespace SystemTray
 {
-namespace FDO
-{
 
-
-class NotificationProtocol::Private
-{
-public:
-};
-
-
-NotificationProtocol::NotificationProtocol(QObject *parent)
-    : SystemTray::NotificationProtocol(parent),
-      d(new NotificationProtocol::Private)
+Protocol::Protocol(QObject *parent)
+    : QObject(parent)
 {
 }
 
-
-NotificationProtocol::~NotificationProtocol()
-{
-    delete d;
 }
 
-
-void NotificationProtocol::init()
-{
-    connect(SelectionManager::self(), SIGNAL(notificationCreated(SystemTray::Notification*)),
-            this, SIGNAL(notificationCreated(SystemTray::Notification*)));
-}
-
-
-}
-}
-
-
-#include "fdonotificationprotocol.moc"
+#include "protocol.moc"

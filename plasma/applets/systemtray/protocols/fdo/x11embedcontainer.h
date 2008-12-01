@@ -27,8 +27,6 @@
 
 namespace SystemTray
 {
-namespace FDO
-{
 
 class X11EmbedContainer : public QX11EmbedContainer
 {
@@ -53,7 +51,6 @@ private:
     Private* const d;
 };
 
-}
 }
 
 

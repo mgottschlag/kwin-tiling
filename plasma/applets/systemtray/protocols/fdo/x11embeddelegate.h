@@ -26,17 +26,8 @@
 
 namespace SystemTray
 {
-namespace FDO
-{
-    class X11EmbedContainer;
-}
-}
 
-
-namespace SystemTray
-{
-namespace FDO
-{
+class X11EmbedContainer;
 
 class X11EmbedDelegate : public QWidget
 {
@@ -59,9 +50,6 @@ private:
     Private* const d;
 };
 
-
 }
-}
-
 
 #endif

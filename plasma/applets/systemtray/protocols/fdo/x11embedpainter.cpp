@@ -35,9 +35,6 @@
 
 namespace SystemTray
 {
-namespace FDO
-{
-
 
 class X11EmbedPainter::Singleton
 {
@@ -158,8 +155,6 @@ void X11EmbedPainter::performUpdates()
     d->lastPaintTime.start();
 }
 
-
-}
 }
 
 #include "x11embedpainter.moc"

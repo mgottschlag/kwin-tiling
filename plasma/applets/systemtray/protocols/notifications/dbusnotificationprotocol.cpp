@@ -31,78 +31,59 @@
 
 namespace SystemTray
 {
-namespace DBus
-{
-
-
-class NotificationProtocol::Private
-{
-public:
-    Private()
-        : engine(0)
-    {
-    }
-
-    Plasma::DataEngine *engine;
-    QHash<QString, Notification*> notifications;
-};
-
 
 static const char *engineName = "notifications";
 
-
-NotificationProtocol::NotificationProtocol(QObject *parent)
-    : SystemTray::NotificationProtocol(parent),
-      d(new NotificationProtocol::Private)
+DBusNotificationProtocol::DBusNotificationProtocol(QObject *parent)
+    : Protocol(parent),
+      m_engine(0)
 {
 }
 
 
-NotificationProtocol::~NotificationProtocol()
+DBusNotificationProtocol::~DBusNotificationProtocol()
 {
-    if (d->engine) {
+    if (m_engine) {
         Plasma::DataEngineManager::self()->unloadEngine(engineName);
     }
-
-    delete d;
 }
 
 
-void NotificationProtocol::init()
+void DBusNotificationProtocol::init()
 {
-    d->engine = Plasma::DataEngineManager::self()->loadEngine(engineName);
+    m_engine = Plasma::DataEngineManager::self()->loadEngine(engineName);
 
-    if (!d->engine->isValid()) {
-        d->engine = 0;
+    if (!m_engine->isValid()) {
+        m_engine = 0;
         return;
     }
 
-    connect(d->engine, SIGNAL(sourceAdded(const QString&)),
+    connect(m_engine, SIGNAL(sourceAdded(const QString&)),
             this, SLOT(prepareNotification(const QString&)));
-    connect(d->engine, SIGNAL(sourceRemoved(const QString&)),
+    connect(m_engine, SIGNAL(sourceRemoved(const QString&)),
             this, SLOT(removeNotification(const QString&)));
 }
 
 
-void NotificationProtocol::prepareNotification(const QString &source)
+void DBusNotificationProtocol::prepareNotification(const QString &source)
 {
-    d->engine->connectSource(source, this);
+    m_engine->connectSource(source, this);
 }
 
 
-void NotificationProtocol::dataUpdated(const QString &source, const Plasma::DataEngine::Data &data)
+void DBusNotificationProtocol::dataUpdated(const QString &source, const Plasma::DataEngine::Data &data)
 {
-    bool isNew = !d->notifications.contains(source);
+    bool isNew = !m_notifications.contains(source);
 
     if (isNew) {
-        d->notifications[source] = new Notification(source, this);
-        connect(d->notifications[source], SIGNAL(notificationDeleted(const QString&)),
+        m_notifications[source] = new DBusNotification(source, this);
+        connect(m_notifications[source], SIGNAL(notificationDeleted(const QString&)),
                 this, SLOT(removeNotification(const QString&)));
-        connect(d->notifications[source], SIGNAL(actionTriggered(const QString&, const QString&)),
+        connect(m_notifications[source], SIGNAL(actionTriggered(const QString&, const QString&)),
                 this, SLOT(relayAction(const QString&, const QString&)));
     }
 
-    Notification* notification = d->notifications[source];
+    DBusNotification* notification = m_notifications[source];
     notification->setApplicationName(data.value("appName").toString());
     notification->setApplicationIcon(KIcon(data.value("appIcon").toString()));
     notification->setEventId(data.value("eventId").toString());
@@ -137,9 +118,9 @@ void NotificationProtocol::dataUpdated(const QString &source, const Plasma::Data
 }
 
 
-void NotificationProtocol::relayAction(const QString &source, const QString &actionId)
+void DBusNotificationProtocol::relayAction(const QString &source, const QString &actionId)
 {
-    Plasma::Service *service = d->engine->serviceForSource(source);
+    Plasma::Service *service = m_engine->serviceForSource(source);
     KConfigGroup op = service->operationDescription("invokeAction");
 
     if (op.isValid()) {
@@ -151,16 +132,13 @@ void NotificationProtocol::relayAction(const QString &source, const QString &act
 }
 
 
-void NotificationProtocol::removeNotification(const QString &source)
+void DBusNotificationProtocol::removeNotification(const QString &source)
 {
-    if (d->notifications.contains(source)) {
-        d->notifications.take(source)->deleteLater();
+    if (m_notifications.contains(source)) {
+        m_notifications.take(source)->deleteLater();
     }
 }
 
-
 }
-}
-
 
 #include "dbusnotificationprotocol.moc"

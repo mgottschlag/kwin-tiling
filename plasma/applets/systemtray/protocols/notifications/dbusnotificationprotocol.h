@@ -23,23 +23,24 @@
 #ifndef DBUSNOTIFICATIONPROTOCOL_H
 #define DBUSNOTIFICATIONPROTOCOL_H
 
-#include "../../core/notificationprotocol.h"
+#include "../../core/protocol.h"
 
-#include <plasma/dataengine.h>
+#include <QHash>
 
+#include <Plasma/DataEngine>
 
 namespace SystemTray
 {
-namespace DBus
-{
 
-class NotificationProtocol : public SystemTray::NotificationProtocol
+class DBusNotification;
+
+class DBusNotificationProtocol : public Protocol
 {
     Q_OBJECT
 
 public:
-    NotificationProtocol(QObject *parent);
-    ~NotificationProtocol();
+    DBusNotificationProtocol(QObject *parent);
+    ~DBusNotificationProtocol();
     void init();
 
 private slots:
@@ -49,11 +50,10 @@ private slots:
     void relayAction(const QString &source, const QString &actionId);
 
 private:
-    class Private;
-    Private* const d;
+    Plasma::DataEngine *m_engine;
+    QHash<QString, DBusNotification*> m_notifications;
 };
 
-}
 }
 
 

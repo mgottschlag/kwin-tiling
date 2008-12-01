@@ -3,16 +3,13 @@ project(plasma-systemtray)
 set(systemtray_SRCS
 
     core/manager.cpp
-    core/taskprotocol.cpp
+    core/protocol.cpp
     core/task.cpp
-    core/notificationprotocol.cpp
     core/notification.cpp
-    core/jobprotocol.cpp
     core/job.cpp
 
-    protocols/fdo/fdotaskprotocol.cpp
+    protocols/fdo/fdoprotocol.cpp
     protocols/fdo/fdotask.cpp
-    protocols/fdo/fdonotificationprotocol.cpp
     protocols/fdo/fdonotification.cpp
     protocols/fdo/fdographicswidget.cpp
     protocols/fdo/fdoselectionmanager.cpp

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   fdoprotocol.cpp                                                       *
+ *   taskprotocol.h                                                        *
  *                                                                         *
  *   Copyright (C) 2008 Jason Stubbs <jasonbstubbs@gmail.com>              *
  *                                                                         *
@@ -19,45 +19,56 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#include "fdotaskprotocol.h"
+#ifndef SYSTEMTRAYPROTOCOL_H
+#define SYSTEMTRAYPROTOCOL_H
 
-#include "fdoselectionmanager.h"
+#include <QtCore/QObject>
+
+namespace SystemTray
+{
+    class Job;
+    class Notification;
+    class Task;
+}
 
 
 namespace SystemTray
 {
-namespace FDO
-{
 
-
-class TaskProtocol::Private
+/**
+ * @short System tray protocol base class
+ *
+ * To support a new system tray protocol, this class and Task should be
+ * subclassed and the subclass of this class registered with the global
+ * Manager. The Protocol subclass should emit taskCreated() for each new
+ * task created.
+ **/
+class Protocol : public QObject
 {
+    Q_OBJECT
 public:
+    explicit Protocol(QObject *parent);
+
+    virtual void init() = 0;
+
+signals:
+    /**
+     * Signals that a new task has been created
+     **/
+    void taskCreated(SystemTray::Task *task);
+
+    /**
+     * Signals that a new notification has been created
+     **/
+    void jobCreated(SystemTray::Job *job);
+
+    /**
+     * Signals that a new notification has been created
+     **/
+    void notificationCreated(SystemTray::Notification *notification);
 };
 
-
-TaskProtocol::TaskProtocol(QObject *parent)
-    : SystemTray::TaskProtocol(parent),
-      d(new TaskProtocol::Private)
-{
 }
 
 
-TaskProtocol::~TaskProtocol()
-{
-    delete d;
-}
-
-
-void TaskProtocol::init()
-{
-    connect(SelectionManager::self(), SIGNAL(taskCreated(SystemTray::Task*)),
-            this, SIGNAL(taskCreated(SystemTray::Task*)));
-}
-
-
-}
-}
-
-
-#include "fdotaskprotocol.moc"
+#endif

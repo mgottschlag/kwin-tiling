@@ -27,18 +27,16 @@
 
 namespace SystemTray
 {
-namespace DBus
-{
 
-class Notification : public SystemTray::Notification
+class DBusNotification : public Notification
 {
     Q_OBJECT
 
-    friend class NotificationProtocol;
+    friend class DBusNotificationProtocol;
 
 public:
-    Notification(const QString &source, QObject *parent = 0);
-    ~Notification();
+    DBusNotification(const QString &source, QObject *parent = 0);
+    ~DBusNotification();
 
 public slots:
     void triggerAction(const QString &actionId);
@@ -48,11 +46,9 @@ signals:
     void actionTriggered(const QString &source, const QString &actionId);
 
 private:
-    class Private;
-    Private* const d;
+    QString m_source;
 };
 
-}
 }
 
 

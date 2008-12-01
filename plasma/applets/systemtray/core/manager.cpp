@@ -26,15 +26,12 @@
 #include <plasma/applet.h>
 
 #include "notification.h"
-#include "notificationprotocol.h"
+#include "protocol.h"
 #include "task.h"
-#include "taskprotocol.h"
 #include "job.h"
-#include "jobprotocol.h"
 
 #include "../protocols/notifications/dbusnotificationprotocol.h"
-#include "../protocols/fdo/fdonotificationprotocol.h"
-#include "../protocols/fdo/fdotaskprotocol.h"
+#include "../protocols/fdo/fdoprotocol.h"
 #include "../protocols/plasmoid/plasmoidtaskprotocol.h"
 #include "../protocols/jobs/dbusjobprotocol.h"
 
@@ -42,42 +39,28 @@ namespace SystemTray
 {
 
 
-class Manager::Singleton
-{
-public:
-    Manager instance;
-};
-
-K_GLOBAL_STATIC(Manager::Singleton, singleton)
-
-
 class Manager::Private
 {
 public:
     Private(Manager *manager)
-        : q(manager), jobProtocolRegistered(false), notificationProtocolRegistered(false)
+        : q(manager),
+          jobProtocol(0),
+          notificationProtocol(0)
     {
-        registerTaskProtocol(new Plasmoid::TaskProtocol(q));
-        registerTaskProtocol(new FDO::TaskProtocol(q));
+        setupProtocol(new PlasmoidProtocol(q));
+        setupProtocol(new SystemTray::FdoProtocol(q));
     }
 
-    void registerTaskProtocol(TaskProtocol *protocol);
-    void registerJobProtocol();
-    void registerNotificationProtocol();
+    void setupProtocol(Protocol *protocol);
 
     Manager *q;
     QList<Task*> tasks;
     QList<Notification*> notifications;
     QList<Job*> jobs;
-    bool jobProtocolRegistered;
-    bool notificationProtocolRegistered;
+    Protocol *jobProtocol;
+    Protocol *notificationProtocol;
 };
 
-
-Manager* Manager::self()
-{
-    return &singleton->instance;
-}
 
 Manager::Manager()
     : d(new Private(this))
@@ -94,15 +77,6 @@ QList<Task*> Manager::tasks() const
 {
     return d->tasks;
 }
-
-
-void Manager::Private::registerTaskProtocol(TaskProtocol *protocol)
-{
-    connect(protocol, SIGNAL(taskCreated(SystemTray::Task*)),
-            q, SLOT(addTask(SystemTray::Task*)));
-    protocol->init();
-}
-
 
 void Manager::addTask(Task *task)
 {
@@ -126,23 +100,9 @@ void Manager::removeTask(Task *task)
 
 void Manager::registerNotificationProtocol()
 {
-    d->registerNotificationProtocol();
-}
-
-void Manager::Private::registerNotificationProtocol()
-{
-    if (!notificationProtocolRegistered) {
-        NotificationProtocol *protocol = new FDO::NotificationProtocol(q);
-        connect(protocol, SIGNAL(notificationCreated(SystemTray::Notification*)),
-                q, SLOT(addNotification(SystemTray::Notification*)));
-        protocol->init();
-
-        protocol = new DBus::NotificationProtocol(q);
-        connect(protocol, SIGNAL(notificationCreated(SystemTray::Notification*)),
-                q, SLOT(addNotification(SystemTray::Notification*)));
-        protocol->init();
-
-        notificationProtocolRegistered = true;
+    if (!d->notificationProtocol) {
+        d->notificationProtocol = new DBusNotificationProtocol(this);
+        d->setupProtocol(d->notificationProtocol);
     }
 }
 
@@ -171,26 +131,25 @@ QList<Notification*> Manager::notifications() const
 
 void Manager::registerJobProtocol()
 {
-    d->registerJobProtocol();
+    if (!d->jobProtocol) {
+        d->jobProtocol = new DBusJobProtocol(this);
+        d->setupProtocol(d->jobProtocol);
+    }
 }
 
-void Manager::Private::registerJobProtocol()
+void Manager::Private::setupProtocol(Protocol *protocol)
 {
-    if (!jobProtocolRegistered) {
-        JobProtocol *protocol = new DBus::JobProtocol(q);
-        connect(protocol, SIGNAL(jobCreated(SystemTray::Job*)),
-                q, SLOT(addJob(SystemTray::Job*)));
-        protocol->init();
-        jobProtocolRegistered = true;
-    }
+    connect(protocol, SIGNAL(jobCreated(SystemTray::Job*)), q, SLOT(addJob(SystemTray::Job*)));
+    connect(protocol, SIGNAL(taskCreated(SystemTray::Task*)), q, SLOT(addTask(SystemTray::Task*)));
+    connect(protocol, SIGNAL(notificationCreated(SystemTray::Notification*)),
+            q, SLOT(addNotification(SystemTray::Notification*)));
+    protocol->init();
 }
 
 void Manager::addJob(Job *job)
 {
-    connect(job, SIGNAL(destroyed(SystemTray::Job*)),
-            this, SLOT(removeJob(SystemTray::Job*)));
-    connect(job, SIGNAL(changed(SystemTray::Job*)),
-            this, SIGNAL(jobChanged(SystemTray::Job*)));
+    connect(job, SIGNAL(destroyed(SystemTray::Job*)), this, SLOT(removeJob(SystemTray::Job*)));
+    connect(job, SIGNAL(changed(SystemTray::Job*)), this, SIGNAL(jobChanged(SystemTray::Job*)));
 
     d->jobs.append(job);
     emit jobAdded(job);

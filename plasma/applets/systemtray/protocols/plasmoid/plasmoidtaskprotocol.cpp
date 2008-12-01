@@ -25,36 +25,21 @@
 
 #include <KDebug>
 
-#include <QtCore/QHash>
-
-
 namespace SystemTray
 {
-namespace Plasmoid
-{
 
-
-class TaskProtocol::Private
-{
-public:
-    QHash<QString, Task*> tasks;
-};
-
-
-TaskProtocol::TaskProtocol(QObject *parent)
-    : SystemTray::TaskProtocol(parent),
-      d(new TaskProtocol::Private)
+PlasmoidProtocol::PlasmoidProtocol(QObject *parent)
+    : Protocol(parent)
 {
 }
 
 
-TaskProtocol::~TaskProtocol()
+PlasmoidProtocol::~PlasmoidProtocol()
 {
-    delete d;
 }
 
 
-void TaskProtocol::init()
+void PlasmoidProtocol::init()
 {
     // TODO: Load plasmoids from config
     //newTask("battery");
@@ -64,15 +49,15 @@ void TaskProtocol::init()
 }
 
 
-void TaskProtocol::newTask(QString appletName)
+void PlasmoidProtocol::newTask(QString appletName)
 {
-    if (d->tasks.contains(appletName)) {
+    if (m_tasks.contains(appletName)) {
         kDebug() << "Task " << appletName << "is already in here.";
         return;
     }
 
     kDebug() << "Registering task with the manager" << appletName;
-    Task *task = new Task(appletName);
+    PlasmoidTask *task = new PlasmoidTask(appletName);
 
     if (!task->isValid()) {
         // we failed to load our applet *sob*
@@ -80,21 +65,18 @@ void TaskProtocol::newTask(QString appletName)
         return;
     }
 
-    d->tasks[appletName] = task;
+    m_tasks[appletName] = task;
     connect(task, SIGNAL(taskDeleted(QString)), this, SLOT(cleanupTask(QString)));
     emit taskCreated(task);
 }
 
 
-void TaskProtocol::cleanupTask(QString typeId)
+void PlasmoidProtocol::cleanupTask(QString typeId)
 {
     kDebug() << "task with typeId" << typeId << "removed";
-    d->tasks.remove(typeId);
+    m_tasks.remove(typeId);
 }
 
-
 }
-}
-
 
 #include "plasmoidtaskprotocol.moc"

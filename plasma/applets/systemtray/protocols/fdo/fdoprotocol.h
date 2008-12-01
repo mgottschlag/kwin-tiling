@@ -1,5 +1,5 @@
 /***************************************************************************
- *   fdonotificationprotocol.h                                             *
+ *   fdoprotocol.h                                                         *
  *                                                                         *
  *   Copyright (C) 2008 Jason Stubbs <jasonbstubbs@gmail.com>              *
  *                                                                         *
@@ -19,33 +19,25 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef FDONOTIFICATIONPROTOCOL_H
-#define FDONOTIFICATIONPROTOCOL_H
+#ifndef FDOTASKPROTOCOL_H
+#define FDOTASKPROTOCOL_H
 
-#include "../../core/notificationprotocol.h"
+#include "../../core/protocol.h"
 
 
 namespace SystemTray
 {
-namespace FDO
-{
 
-class NotificationProtocol : public SystemTray::NotificationProtocol
+class FdoProtocol : public Protocol
 {
     Q_OBJECT
 
 public:
-    NotificationProtocol(QObject *parent);
-    ~NotificationProtocol();
+    FdoProtocol(QObject *parent);
+    ~FdoProtocol();
     void init();
-
-private:
-    class Private;
-    Private* const d;
 };
 
 }
-}
-
 
 #endif

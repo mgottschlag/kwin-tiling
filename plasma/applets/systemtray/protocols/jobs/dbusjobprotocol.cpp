@@ -29,81 +29,62 @@
 
 namespace SystemTray
 {
-namespace DBus
-{
-
-
-class JobProtocol::Private
-{
-public:
-    Private()
-        : engine(0)
-    {
-    }
-
-    Plasma::DataEngine *engine;
-    QHash<QString, Job*> jobs;
-};
-
 
 static const char *engineName = "applicationjobs";
 
-
-JobProtocol::JobProtocol(QObject *parent)
-    : SystemTray::JobProtocol(parent),
-      d(new JobProtocol::Private)
+DBusJobProtocol::DBusJobProtocol(QObject *parent)
+    : Protocol(parent),
+      m_engine(0)
 {
 }
 
 
-JobProtocol::~JobProtocol()
+DBusJobProtocol::~DBusJobProtocol()
 {
-    if (d->engine) {
+    if (m_engine) {
         Plasma::DataEngineManager::self()->unloadEngine(engineName);
     }
-
-    delete d;
 }
 
 
-void JobProtocol::init()
+void DBusJobProtocol::init()
 {
-    d->engine = Plasma::DataEngineManager::self()->loadEngine(engineName);
+    m_engine = Plasma::DataEngineManager::self()->loadEngine(engineName);
 
-    if (!d->engine->isValid()) {
-        d->engine = 0;
+    if (!m_engine->isValid()) {
+        m_engine = 0;
         return;
     }
 
-    connect(d->engine, SIGNAL(sourceAdded(const QString&)),
+    connect(m_engine, SIGNAL(sourceAdded(const QString&)),
             this, SLOT(prepareJob(const QString&)));
-    connect(d->engine, SIGNAL(sourceRemoved(const QString&)),
+    connect(m_engine, SIGNAL(sourceRemoved(const QString&)),
             this, SLOT(removeJob(const QString&)));
 }
 
-void JobProtocol::prepareJob(const QString &source)
+void DBusJobProtocol::prepareJob(const QString &source)
 {
-    d->engine->connectSource(source, this);
+    m_engine->connectSource(source, this);
 }
 
 
-void JobProtocol::dataUpdated(const QString &source, const Plasma::DataEngine::Data &data)
+void DBusJobProtocol::dataUpdated(const QString &source, const Plasma::DataEngine::Data &data)
 {
-    bool isNew = !d->jobs.contains(source);
+    bool isNew = !m_jobs.contains(source);
 
     if (isNew) {
-        d->jobs[source] = new Job(source, this);
-        connect(d->jobs[source], SIGNAL(jobDeleted(const QString&)),
+        m_jobs[source] = new DBusJob(source, this);
+        connect(m_jobs[source], SIGNAL(jobDeleted(const QString&)),
                 this, SLOT(removeJob(const QString&)));
-        connect(d->jobs[source], SIGNAL(suspend(const QString&)),
+        connect(m_jobs[source], SIGNAL(suspend(const QString&)),
                 this, SLOT(suspend(const QString&)));
-        connect(d->jobs[source], SIGNAL(resume(const QString&)),
+        connect(m_jobs[source], SIGNAL(resume(const QString&)),
                 this, SLOT(resume(const QString&)));
-        connect(d->jobs[source], SIGNAL(stop(const QString&)),
+        connect(m_jobs[source], SIGNAL(stop(const QString&)),
                 this, SLOT(stop(const QString&)));
     }
 
-    Job* job = d->jobs[source];
+    DBusJob* job = m_jobs[source];
     job->setApplicationName(data.value("appName").toString());
     job->setApplicationIconName(data.value("appIconName").toString());
     job->setPercentage(data["percentage"].toUInt());
@@ -159,35 +140,34 @@ void JobProtocol::dataUpdated(const QString &source, const Plasma::DataEngine::D
     }
 }
 
-void JobProtocol::removeJob(const QString &source)
+void DBusJobProtocol::removeJob(const QString &source)
 {
-    if (d->jobs.contains(source)) {
-        d->jobs.take(source)->destroy();
+    if (m_jobs.contains(source)) {
+        m_jobs.take(source)->destroy();
     }
 }
 
-void JobProtocol::suspend(const QString &source)
+void DBusJobProtocol::suspend(const QString &source)
 {
-    Plasma::Service *service = d->engine->serviceForSource(source);
+    Plasma::Service *service = m_engine->serviceForSource(source);
     KConfigGroup op = service->operationDescription("suspend");
     service->startOperationCall(op);
 }
 
-void JobProtocol::resume(const QString &source)
+void DBusJobProtocol::resume(const QString &source)
 {
-    Plasma::Service *service = d->engine->serviceForSource(source);
+    Plasma::Service *service = m_engine->serviceForSource(source);
     KConfigGroup op = service->operationDescription("resume");
     service->startOperationCall(op);
 }
 
-void JobProtocol::stop(const QString &source)
+void DBusJobProtocol::stop(const QString &source)
 {
-    Plasma::Service *service = d->engine->serviceForSource(source);
+    Plasma::Service *service = m_engine->serviceForSource(source);
     KConfigGroup op = service->operationDescription("stop");
     service->startOperationCall(op);
 }
 
-}
 }
 
 #include "dbusjobprotocol.moc"

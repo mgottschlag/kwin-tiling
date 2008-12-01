@@ -1,5 +1,5 @@
 /***************************************************************************
- *   taskprotocol.h                                                        *
+ *   fdoprotocol.cpp                                                       *
  *                                                                         *
  *   Copyright (C) 2008 Jason Stubbs <jasonbstubbs@gmail.com>              *
  *                                                                         *
@@ -19,43 +19,32 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef SYSTEMTRAYTASKPROTOCOL_H
-#define SYSTEMTRAYTASKPROTOCOL_H
+#include "fdoprotocol.h"
 
-#include <QtCore/QObject>
-
-namespace SystemTray
-{
-    class Task;
-}
+#include "fdoselectionmanager.h"
 
 
 namespace SystemTray
 {
 
-/**
- * @short System tray protocol base class
- *
- * To support a new system tray protocol, this class and Task should be
- * subclassed and the subclass of this class registered with the global
- * Manager. The Protocol subclass should emit taskCreated() for each new
- * task created.
- **/
-class TaskProtocol : public QObject
+FdoProtocol::FdoProtocol(QObject *parent)
+    : Protocol(parent)
 {
-    Q_OBJECT
-public:
-    explicit TaskProtocol(QObject *parent = 0);
-    virtual void init() = 0;
+}
 
-signals:
-    /**
-     * Signals that a new task has been created
-     **/
-    void taskCreated(SystemTray::Task *task);
-};
+FdoProtocol::~FdoProtocol()
+{
+}
+
+void FdoProtocol::init()
+{
+    connect(FdoSelectionManager::self(), SIGNAL(taskCreated(SystemTray::Task*)),
+            this, SIGNAL(taskCreated(SystemTray::Task*)));
+    connect(FdoSelectionManager::self(), SIGNAL(notificationCreated(SystemTray::Notification*)),
+            this, SIGNAL(notificationCreated(SystemTray::Notification*)));
+}
 
 }
 
+#include "fdoprotocol.moc"
 
-#endif

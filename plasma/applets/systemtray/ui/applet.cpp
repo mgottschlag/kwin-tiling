@@ -62,6 +62,21 @@ public:
           background(0),
           extenderTask(0)
     {
+        if (!s_manager) {
+            s_manager = new SystemTray::Manager();
+        }
+
+        ++s_managerUsage;
+    }
+
+    ~Private()
+    {
+        --s_managerUsage;
+        if (s_managerUsage < 1) {
+            delete s_manager;
+            s_manager = 0;
+            s_managerUsage = 0;
+        }
     }
 
     void setTaskAreaGeometry();
@@ -73,8 +88,12 @@ public:
 
     Plasma::FrameSvg *background;
     SystemTray::ExtenderTask *extenderTask;
+    static SystemTray::Manager *s_manager;
+    static int s_managerUsage;
 };
 
+Manager *Applet::Private::s_manager = 0;
+int Applet::Private::s_managerUsage = 0;
 
 Applet::Applet(QObject *parent, const QVariantList &arguments)
     : Plasma::PopupApplet(parent, arguments),
@@ -103,11 +122,11 @@ void Applet::init()
 
     d->taskArea = new TaskArea(this);
     d->setTaskAreaGeometry();
-    connect(Manager::self(), SIGNAL(taskAdded(SystemTray::Task*)),
+    connect(Private::s_manager, SIGNAL(taskAdded(SystemTray::Task*)),
             d->taskArea, SLOT(addTask(SystemTray::Task*)));
-    connect(Manager::self(), SIGNAL(taskChanged(SystemTray::Task*)),
+    connect(Private::s_manager, SIGNAL(taskChanged(SystemTray::Task*)),
             d->taskArea, SLOT(addTask(SystemTray::Task*)));
-    connect(Manager::self(), SIGNAL(taskRemoved(SystemTray::Task*)),
+    connect(Private::s_manager, SIGNAL(taskRemoved(SystemTray::Task*)),
             d->taskArea, SLOT(removeTask(SystemTray::Task*)));
 
     d->taskArea->setHiddenTypes(hiddenTypes);
@@ -118,25 +137,23 @@ void Applet::init()
             this, SLOT(checkSizes()));
     checkSizes();
 
-    d->taskArea->syncTasks(Manager::self()->tasks());
+    d->taskArea->syncTasks(Private::s_manager->tasks());
 
     extender()->setEmptyExtenderMessage(i18n("No notifications and no jobs"));
 
     KConfigGroup globalCg = globalConfig();
-    bool separateJobDialogs = globalCg.readEntry("SeparateJobDialogs", false);
-    if (!separateJobDialogs) {
-      SystemTray::Manager::self()->registerJobProtocol();
-      connect(SystemTray::Manager::self(), SIGNAL(jobAdded(SystemTray::Job*)),
-              this, SLOT(addJob(SystemTray::Job*)));
+    if (globalCg.readEntry("ShowJobs", true)) {
+        Private::s_manager->registerJobProtocol();
+        connect(Private::s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
+                this, SLOT(addJob(SystemTray::Job*)));
     }
-    bool separateNotifications = globalCg.readEntry("SeparateNotifications", false);
-    if (!separateNotifications) {
-      SystemTray::Manager::self()->registerNotificationProtocol();
-      connect(SystemTray::Manager::self(), SIGNAL(notificationAdded(SystemTray::Notification*)),
-              this, SLOT(addNotification(SystemTray::Notification*)));
+
+    if (globalCg.readEntry("ShowNotifications", true)) {
+        Private::s_manager->registerNotificationProtocol();
+        connect(Private::s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
+                this, SLOT(addNotification(SystemTray::Notification*)));
     }
 }
-
 
 void Applet::constraintsEvent(Plasma::Constraints constraints)
 {
@@ -160,6 +177,12 @@ void Applet::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::SizeConstraint) {
         checkSizes();
     }
+}
+
+
+SystemTray::Manager *Applet::manager() const
+{
+    return d->s_manager;
 }
 
 
@@ -301,7 +324,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     visibleList->clear();
     hiddenList->clear();
 
-    foreach (Task *task, Manager::self()->tasks()) {
+    foreach (Task *task, Private::s_manager->tasks()) {
         QListWidgetItem *listItem = new QListWidgetItem();
         listItem->setText(task->name());
         listItem->setIcon(task->icon());
@@ -326,7 +349,7 @@ void Applet::configAccepted()
     }
 
     d->taskArea->setHiddenTypes(hiddenTypes);
-    d->taskArea->syncTasks(Manager::self()->tasks());
+    d->taskArea->syncTasks(Private::s_manager->tasks());
 
     KConfigGroup cg = config();
     cg.writeEntry("hidden", hiddenTypes);
@@ -395,7 +418,7 @@ void Applet::popupEvent(bool visibility)
             }
         }
 
-        Manager::self()->addTask(d->extenderTask);
+        Private::s_manager->addTask(d->extenderTask);
     }
 }
 

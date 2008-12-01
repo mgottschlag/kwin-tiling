@@ -27,16 +27,14 @@
 
 namespace SystemTray
 {
-namespace FDO
-{
 
-class Task : public SystemTray::Task
+class FdoTask : public Task
 {
     Q_OBJECT
 
 public:
-    Task(WId winId);
-    virtual ~Task();
+    FdoTask(WId winId);
+    virtual ~FdoTask();
 
     virtual bool isEmbeddable() const;
     virtual QString name() const;
@@ -54,8 +52,6 @@ private:
     Private* const d;
 };
 
-
-}
 }
 
 #endif

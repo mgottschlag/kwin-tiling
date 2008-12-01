@@ -27,11 +27,8 @@
 
 namespace SystemTray
 {
-namespace FDO
-{
 
-
-class Task::Private
+class FdoTask::Private
 {
 public:
     Private(WId winId)
@@ -57,54 +54,51 @@ public:
 };
 
 
-Task::Task(WId winId)
+FdoTask::FdoTask(WId winId)
     : d(new Private(winId))
 {
 }
 
 
-Task::~Task()
+FdoTask::~FdoTask()
 {
     emit taskDeleted(d->winId);
     delete d;
 }
 
 
-bool Task::isEmbeddable() const
+bool FdoTask::isEmbeddable() const
 {
     return associatedWidgets().count() == 0;
 }
 
 
-QString Task::name() const
+QString FdoTask::name() const
 {
     return d->name;
 }
 
 
-QString Task::typeId() const
+QString FdoTask::typeId() const
 {
     return d->typeId;
 }
 
 
-QIcon Task::icon() const
+QIcon FdoTask::icon() const
 {
     return d->icon;
 }
 
 
-QGraphicsWidget* Task::createWidget(Plasma::Applet *applet)
+QGraphicsWidget* FdoTask::createWidget(Plasma::Applet *applet)
 {
-    QGraphicsWidget *widget = new GraphicsWidget(d->winId, applet);
-    connect(widget, SIGNAL(clientClosed()),
-            this, SLOT(deleteLater()));
+    QGraphicsWidget *widget = new FdoGraphicsWidget(d->winId, applet);
+    connect(widget, SIGNAL(clientClosed()), this, SLOT(deleteLater()));
     return widget;
 }
 
 
 }
-}
-
 
 #include "fdotask.moc"

@@ -33,16 +33,14 @@ namespace SystemTray
 
 namespace SystemTray
 {
-namespace FDO
-{
 
-class SelectionManager : public QWidget
+class FdoSelectionManager : public QWidget
 {
     Q_OBJECT
 
 public:
     class Singleton;
-    static SelectionManager* self();
+    static FdoSelectionManager* self();
 
     void addDamageWatch(QWidget *container, WId client);
     void removeDamageWatch(QWidget *container);
@@ -61,15 +59,13 @@ private slots:
     void cleanupNotification(WId winId);
 
 private:
-    SelectionManager();
-    ~SelectionManager();
+    FdoSelectionManager();
+    ~FdoSelectionManager();
 
     class Private;
     Private* const d;
 };
 
 }
-}
-
 
 #endif

@@ -28,16 +28,15 @@
 
 namespace SystemTray
 {
-namespace Plasmoid
-{
 
-class Task : public SystemTray::Task
+
+class PlasmoidTask : public Task
 {
     Q_OBJECT
 
 public:
-    Task(QString appletName);
-    virtual ~Task();
+    PlasmoidTask(QString appletName);
+    virtual ~PlasmoidTask();
 
     bool isValid() const;
     virtual bool isEmbeddable() const;
@@ -56,8 +55,6 @@ private:
     Private* const d;
 };
 
-
-}
 }
 
 #endif

@@ -23,21 +23,22 @@
 #ifndef PLASMOIDTASKPROTOCOL_H
 #define PLASMOIDTASKPROTOCOL_H
 
-#include "../../core/taskprotocol.h"
+#include "../../core/protocol.h"
 
+#include <QHash>
 
 namespace SystemTray
 {
-namespace Plasmoid
-{
 
-class TaskProtocol : public SystemTray::TaskProtocol
+class PlasmoidTask;
+
+class PlasmoidProtocol : public Protocol
 {
     Q_OBJECT
 
 public:
-    TaskProtocol(QObject *parent);
-    ~TaskProtocol();
+    PlasmoidProtocol(QObject * parent);
+    ~PlasmoidProtocol();
 
     void init();
 
@@ -46,11 +47,9 @@ private slots:
     void newTask(QString appletName);
 
 private:
-    class Private;
-    Private* const d;
+    QHash<QString, PlasmoidTask*> m_tasks;
 };
 
-}
 }
 
 

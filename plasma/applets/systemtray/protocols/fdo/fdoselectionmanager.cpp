@@ -59,8 +59,6 @@
 
 namespace SystemTray
 {
-namespace FDO
-{
 
 #if defined(HAVE_XFIXES) && defined(HAVE_XDAMAGE) && defined(HAVE_XCOMPOSITE)
 struct DamageWatch
@@ -99,13 +97,13 @@ static bool x11EventFilter(void *message, long int *result)
 #endif
 
 
-class SelectionManager::Singleton
+class FdoSelectionManager::Singleton
 {
 public:
-    SelectionManager instance;
+    FdoSelectionManager instance;
 };
 
-K_GLOBAL_STATIC(SelectionManager::Singleton, singleton)
+K_GLOBAL_STATIC(FdoSelectionManager::Singleton, singleton)
 
 
 struct MessageRequest
@@ -117,10 +115,10 @@ struct MessageRequest
 };
 
 
-class SelectionManager::Private
+class FdoSelectionManager::Private
 {
 public:
-    Private(SelectionManager *q)
+    Private(FdoSelectionManager *q)
         : q(q), haveComposite(false)
     {
         display = QX11Info::display();
@@ -156,22 +154,22 @@ public:
     Atom visualAtom;
 
     QHash<WId, MessageRequest> messageRequests;
-    QHash<WId, Task*> tasks;
-    QHash<WId, Notification*> notifications;
+    QHash<WId, FdoTask*> tasks;
+    QHash<WId, FdoNotification*> notifications;
 
-    SelectionManager *q;
+    FdoSelectionManager *q;
     bool haveComposite;
 };
 
 
-SelectionManager* SelectionManager::self()
+FdoSelectionManager* FdoSelectionManager::self()
 {
     return &singleton->instance;
 }
 
 
-SelectionManager::SelectionManager()
-    : d(new SelectionManager::Private(this))
+FdoSelectionManager::FdoSelectionManager()
+    : d(new FdoSelectionManager::Private(this))
 {
     // Init the selection later just to ensure that no signals are sent
     // until after construction is done and the creating object has a
@@ -180,7 +178,7 @@ SelectionManager::SelectionManager()
 }
 
 
-SelectionManager::~SelectionManager()
+FdoSelectionManager::~FdoSelectionManager()
 {
 #if defined(HAVE_XFIXES) && defined(HAVE_XDAMAGE) && defined(HAVE_XCOMPOSITE)
     if (d->haveComposite && QCoreApplication::instance()) {
@@ -191,7 +189,7 @@ SelectionManager::~SelectionManager()
 }
 
 
-void SelectionManager::addDamageWatch(QWidget *container, WId client)
+void FdoSelectionManager::addDamageWatch(QWidget *container, WId client)
 {
 #if defined(HAVE_XFIXES) && defined(HAVE_XDAMAGE) && defined(HAVE_XCOMPOSITE)
     DamageWatch *damage = new DamageWatch;
@@ -201,7 +199,7 @@ void SelectionManager::addDamageWatch(QWidget *container, WId client)
 #endif
 }
 
-void SelectionManager::removeDamageWatch(QWidget *container)
+void FdoSelectionManager::removeDamageWatch(QWidget *container)
 {
 #if defined(HAVE_XFIXES) && defined(HAVE_XDAMAGE) && defined(HAVE_XCOMPOSITE)
     for (QMap<WId, DamageWatch*>::Iterator it = damageWatches.begin(); it != damageWatches.end(); ++it)
@@ -218,13 +216,13 @@ void SelectionManager::removeDamageWatch(QWidget *container)
 }
 
 
-bool SelectionManager::haveComposite() const
+bool FdoSelectionManager::haveComposite() const
 {
     return d->haveComposite;
 }
 
 
-bool SelectionManager::x11Event(XEvent *event)
+bool FdoSelectionManager::x11Event(XEvent *event)
 {
     if (event->type == ClientMessage) {
         if (event->xclient.message_type == d->opcodeAtom) {
@@ -249,7 +247,7 @@ bool SelectionManager::x11Event(XEvent *event)
 }
 
 
-void SelectionManager::initSelection()
+void FdoSelectionManager::initSelection()
 {
     XSetSelectionOwner(d->display, d->selectionAtom, winId(), CurrentTime);
 
@@ -299,7 +297,7 @@ void SelectionManager::initSelection()
 }
 
 
-void SelectionManager::Private::handleRequestDock(const XClientMessageEvent &event)
+void FdoSelectionManager::Private::handleRequestDock(const XClientMessageEvent &event)
 {
     const WId winId = (WId)event.data.l[2];
 
@@ -308,7 +306,7 @@ void SelectionManager::Private::handleRequestDock(const XClientMessageEvent &eve
         return;
     }
 
-    Task *task = new Task(winId);
+    FdoTask *task = new FdoTask(winId);
 
     tasks[winId] = task;
     q->connect(task, SIGNAL(taskDeleted(WId)), q, SLOT(cleanupTask(WId)));
@@ -317,13 +315,13 @@ void SelectionManager::Private::handleRequestDock(const XClientMessageEvent &eve
 }
 
 
-void SelectionManager::cleanupTask(WId winId)
+void FdoSelectionManager::cleanupTask(WId winId)
 {
     d->tasks.remove(winId);
 }
 
 
-void SelectionManager::Private::handleBeginMessage(const XClientMessageEvent &event)
+void FdoSelectionManager::Private::handleBeginMessage(const XClientMessageEvent &event)
 {
     const WId winId = event.window;
 
@@ -338,7 +336,7 @@ void SelectionManager::Private::handleBeginMessage(const XClientMessageEvent &ev
 }
 
 
-void SelectionManager::Private::handleMessageData(const XClientMessageEvent &event)
+void FdoSelectionManager::Private::handleMessageData(const XClientMessageEvent &event)
 {
     const WId winId = event.window;
     const char *messageData = event.data.b;
@@ -360,7 +358,7 @@ void SelectionManager::Private::handleMessageData(const XClientMessageEvent &eve
 }
 
 
-void SelectionManager::Private::createNotification(WId winId)
+void FdoSelectionManager::Private::createNotification(WId winId)
 {
     if (!tasks.contains(winId)) {
         kDebug() << "message request from unknown task" << winId;
@@ -373,7 +371,7 @@ void SelectionManager::Private::createNotification(WId winId)
     QString message = QString::fromUtf8(request.message);
     message = QTextDocument(message).toHtml();
 
-    Notification *notification = new Notification(winId, task);
+    FdoNotification *notification = new FdoNotification(winId, task);
     notification->setApplicationName(task->name());
     notification->setApplicationIcon(task->icon());
     notification->setMessage(message);
@@ -384,7 +382,7 @@ void SelectionManager::Private::createNotification(WId winId)
 }
 
 
-void SelectionManager::Private::handleCancelMessage(const XClientMessageEvent &event)
+void FdoSelectionManager::Private::handleCancelMessage(const XClientMessageEvent &event)
 {
     const WId winId = event.window;
     const long messageId = event.data.l[2];
@@ -397,11 +395,9 @@ void SelectionManager::Private::handleCancelMessage(const XClientMessageEvent &e
 }
 
 
-void SelectionManager::cleanupNotification(WId winId)
+void FdoSelectionManager::cleanupNotification(WId winId)
 {
     d->notifications.remove(winId);
 }
 
-
-}
 }

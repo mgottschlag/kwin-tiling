@@ -26,10 +26,11 @@
 
 namespace SystemTray
 {
-    class Applet;
-    class Notification;
-    class Task;
-    class Job;
+
+class Applet;
+class Notification;
+class Task;
+class Job;
 
 /**
  * w
@@ -40,12 +41,8 @@ class Manager : public QObject
     Q_OBJECT
 
 public:
-    class Singleton;
-
-    /**
-     * @return the global Manager instance
-     **/
-    static Manager* self();
+    Manager();
+    ~Manager();
 
     /**
      * @return a list of all known Task instances
@@ -129,9 +126,6 @@ private slots:
     void removeJob(SystemTray::Job *job);
 
 private:
-    Manager();
-    ~Manager();
-
     class Private;
     Private* const d;
 

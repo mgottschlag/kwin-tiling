@@ -29,8 +29,6 @@
 
 namespace SystemTray
 {
-namespace FDO
-{
 
 class X11EmbedPainter : public QObject
 {
@@ -55,7 +53,5 @@ private:
 };
 
 }
-}
-
 
 #endif

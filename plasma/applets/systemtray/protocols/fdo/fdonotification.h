@@ -27,20 +27,16 @@
 
 namespace SystemTray
 {
-namespace FDO
-{
 
-class SelectionManager;
-
-class Notification : public SystemTray::Notification
+class FdoNotification : public Notification
 {
     Q_OBJECT
 
-    friend class SelectionManager;
+    friend class FdoSelectionManager;
 
 public:
-    Notification(WId winId, QObject *parent = 0);
-    ~Notification();
+    FdoNotification(WId winId, QObject *parent = 0);
+    ~FdoNotification();
 
 signals:
     void notificationDeleted(WId winId);
@@ -49,7 +45,6 @@ private:
     WId m_winId;
 };
 
-}
 }
 
 

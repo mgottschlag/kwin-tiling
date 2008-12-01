@@ -24,37 +24,23 @@
 
 namespace SystemTray
 {
-namespace DBus
+
+DBusNotification::DBusNotification(const QString &source, QObject *parent)
+    : Notification(parent),
+      m_source(source)
 {
-
-
-class Notification::Private
-{
-public:
-    QString source;
-};
-
-
-Notification::Notification(const QString &source, QObject *parent)
-    : SystemTray::Notification(parent),
-      d(new Private())
-{
-    d->source = source;
 }
 
 
-Notification::~Notification()
+DBusNotification::~DBusNotification()
 {
-    emit notificationDeleted(d->source);
-    delete d;
+    emit notificationDeleted(m_source);
 }
 
 
-void Notification::triggerAction(const QString &actionId)
+void DBusNotification::triggerAction(const QString &actionId)
 {
-    emit actionTriggered(d->source, actionId);
+    emit actionTriggered(m_source, actionId);
 }
 
-
-}
 }

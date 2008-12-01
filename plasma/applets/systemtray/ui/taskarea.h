@@ -24,14 +24,10 @@
 
 #include <QGraphicsWidget>
 
-namespace Plasma
-{
-    class Applet;
-} // namespace Plasma
-
 namespace SystemTray
 {
 
+class Applet;
 class Task;
 
 class TaskArea : public QGraphicsWidget
@@ -39,7 +35,7 @@ class TaskArea : public QGraphicsWidget
     Q_OBJECT
 
 public:
-    TaskArea(Plasma::Applet *parent);
+    TaskArea(SystemTray::Applet *parent);
     ~TaskArea();
 
     void setHiddenTypes(const QStringList &hiddenTypes);

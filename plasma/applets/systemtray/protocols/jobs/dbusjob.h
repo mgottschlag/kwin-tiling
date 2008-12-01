@@ -25,18 +25,16 @@
 
 namespace SystemTray
 {
-namespace DBus
-{
 
-class Job : public SystemTray::Job
+class DBusJob : public Job
 {
     Q_OBJECT
 
-    friend class JobProtocol;
+    friend class DBusJobProtocol;
 
 public:
-    Job(const QString &source, QObject *parent = 0);
-    ~Job();
+    DBusJob(const QString &source, QObject *parent = 0);
+    ~DBusJob();
 
 public slots:
     void suspend();
@@ -50,11 +48,9 @@ signals:
     void stop(const QString &source);
 
 private:
-    class Private;
-    Private* const d;
+    QString m_source;
 };
 
-}
 }
 
 

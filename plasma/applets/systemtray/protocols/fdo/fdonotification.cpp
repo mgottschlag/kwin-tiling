@@ -24,22 +24,17 @@
 
 namespace SystemTray
 {
-namespace FDO
-{
 
-
-Notification::Notification(WId winId, QObject *parent)
-    : SystemTray::Notification(parent),
+FdoNotification::FdoNotification(WId winId, QObject *parent)
+    : Notification(parent),
       m_winId(winId)
 {
 }
 
 
-Notification::~Notification()
+FdoNotification::~FdoNotification()
 {
     emit notificationDeleted(m_winId);
 }
 
-
-}
 }

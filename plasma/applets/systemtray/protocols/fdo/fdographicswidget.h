@@ -28,16 +28,14 @@
 
 namespace SystemTray
 {
-namespace FDO
-{
 
-class GraphicsWidget : public QGraphicsWidget
+class FdoGraphicsWidget : public QGraphicsWidget
 {
     Q_OBJECT
 
 public:
-    GraphicsWidget(WId winId, QGraphicsWidget *parent = 0);
-    ~GraphicsWidget();
+    FdoGraphicsWidget(WId winId, QGraphicsWidget *parent = 0);
+    ~FdoGraphicsWidget();
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
@@ -56,7 +54,6 @@ private:
     Private* const d;
 };
 
-}
 }
 
 

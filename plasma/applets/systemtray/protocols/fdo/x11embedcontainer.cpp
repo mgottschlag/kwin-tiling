@@ -45,9 +45,6 @@
 
 namespace SystemTray
 {
-namespace FDO
-{
-
 
 class X11EmbedContainer::Private
 {
@@ -88,7 +85,7 @@ X11EmbedContainer::X11EmbedContainer(QWidget *parent)
 
 X11EmbedContainer::~X11EmbedContainer()
 {
-    SelectionManager::self()->removeDamageWatch(this);
+    FdoSelectionManager::self()->removeDamageWatch(this);
     delete d;
 }
 
@@ -116,7 +113,7 @@ void X11EmbedContainer::embedSystemTrayClient(WId clientId)
 #if defined(HAVE_XCOMPOSITE) && defined(HAVE_XFIXES) && defined(HAVE_XDAMAGE)
     XRenderPictFormat *format = XRenderFindVisualFormat(display, d->attr.visual);
     if (format->type == PictTypeDirect && format->direct.alphaMask &&
-        SelectionManager::self()->haveComposite())
+        FdoSelectionManager::self()->haveComposite())
     {
         // Redirect ARGB windows to offscreen storage so we can composite them ourselves
         XRenderPictureAttributes attr;
@@ -124,7 +121,7 @@ void X11EmbedContainer::embedSystemTrayClient(WId clientId)
 
         d->picture = XRenderCreatePicture(display, clientId, format, CPSubwindowMode, &attr);
         XCompositeRedirectSubwindows(display, winId, CompositeRedirectManual);
-        SelectionManager::self()->addDamageWatch(this, clientId);
+        FdoSelectionManager::self()->addDamageWatch(this, clientId);
 
         //kDebug() << "Embedded client uses an ARGB visual -> compositing.";
     } else {
@@ -227,8 +224,6 @@ void X11EmbedContainer::setBackgroundPixmap(QPixmap background)
     XClearArea(display, clientWinId(), 0, 0, 0, 0, True);
 }
 
-
-}
 }
 
 #include "x11embedcontainer.moc"

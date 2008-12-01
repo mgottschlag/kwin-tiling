@@ -34,11 +34,8 @@
 
 namespace SystemTray
 {
-namespace FDO
-{
 
-
-class GraphicsWidget::Private
+class FdoGraphicsWidget::Private
 {
 public:
     Private()
@@ -56,8 +53,9 @@ public:
     QPointer<X11EmbedDelegate> widget;
 };
 
-GraphicsWidget::GraphicsWidget(WId winId, QGraphicsWidget *parent)
-    : QGraphicsWidget(parent), d(new GraphicsWidget::Private())
+FdoGraphicsWidget::FdoGraphicsWidget(WId winId, QGraphicsWidget *parent)
+    : QGraphicsWidget(parent),
+      d(new Private())
 {
     d->winId = winId;
 
@@ -72,13 +70,13 @@ GraphicsWidget::GraphicsWidget(WId winId, QGraphicsWidget *parent)
 }
 
 
-GraphicsWidget::~GraphicsWidget()
+FdoGraphicsWidget::~FdoGraphicsWidget()
 {
     delete d;
 }
 
 
-void GraphicsWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *parentWidget)
+void FdoGraphicsWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *parentWidget)
 {
     QGraphicsWidget::paint(painter, option, parentWidget);
 
@@ -115,7 +113,7 @@ void GraphicsWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     }
 }
 
-void GraphicsWidget::setupXEmbedDelegate()
+void FdoGraphicsWidget::setupXEmbedDelegate()
 {
     if (d->widget) {
         return;
@@ -145,7 +143,7 @@ void GraphicsWidget::setupXEmbedDelegate()
     d->widget->container()->embedSystemTrayClient(d->winId);
 }
 
-void GraphicsWidget::updateWidgetBackground()
+void FdoGraphicsWidget::updateWidgetBackground()
 {
     if (!d->widget) {
         return;
@@ -158,7 +156,7 @@ void GraphicsWidget::updateWidgetBackground()
 }
 
 
-void GraphicsWidget::handleClientEmbedded()
+void FdoGraphicsWidget::handleClientEmbedded()
 {
     //kDebug() << "client embedded (" << d->winId << ")";
     d->clientEmbedded = true;
@@ -166,14 +164,14 @@ void GraphicsWidget::handleClientEmbedded()
 }
 
 
-void GraphicsWidget::handleClientClosed()
+void FdoGraphicsWidget::handleClientClosed()
 {
     emit clientClosed();
     //kDebug() << "client closed (" << d->winId << ")";
 }
 
 
-void GraphicsWidget::handleClientError(QX11EmbedContainer::Error error)
+void FdoGraphicsWidget::handleClientError(QX11EmbedContainer::Error error)
 {
     Q_UNUSED(error);
 
@@ -181,9 +179,6 @@ void GraphicsWidget::handleClientError(QX11EmbedContainer::Error error)
     emit clientClosed();
 }
 
-
 }
-}
-
 
 #include "fdographicswidget.moc"

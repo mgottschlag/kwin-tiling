@@ -27,9 +27,6 @@
 
 namespace SystemTray
 {
-namespace FDO
-{
-
 
 class X11EmbedDelegate::Private
 {
@@ -90,8 +87,6 @@ bool X11EmbedDelegate::eventFilter(QObject *watched, QEvent *event)
     return ret;
 }
 
-
-}
 }
 
 #include "x11embeddelegate.moc"

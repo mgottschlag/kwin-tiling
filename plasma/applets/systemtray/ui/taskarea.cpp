@@ -28,11 +28,12 @@
 
 #include <KIcon>
 
-#include <Plasma/Applet>
 #include <Plasma/IconWidget>
 
 #include "../core/manager.h"
 #include "../core/task.h"
+
+#include "applet.h"
 #include "compactlayout.h"
 
 
@@ -43,7 +44,7 @@ namespace SystemTray
 class TaskArea::Private
 {
 public:
-    Private(Plasma::Applet *h)
+    Private(SystemTray::Applet *h)
         : host(h),
           unhider(0),
           topLayout(new QGraphicsLinearLayout(Qt::Horizontal)),
@@ -54,7 +55,7 @@ public:
     {
     }
 
-    Plasma::Applet *host;
+    SystemTray::Applet *host;
     Plasma::IconWidget *unhider;
     QGraphicsLinearLayout *topLayout;
     CompactLayout *taskLayout;
@@ -65,7 +66,7 @@ public:
 };
 
 
-TaskArea::TaskArea(Plasma::Applet *parent)
+TaskArea::TaskArea(SystemTray::Applet *parent)
     : QGraphicsWidget(parent),
       d(new Private(parent))
 {
@@ -265,7 +266,7 @@ void TaskArea::toggleHiddenItems()
 {
     d->showingHidden = !d->showingHidden;
     updateUnhideToolIcon();
-    syncTasks(Manager::self()->tasks());
+    syncTasks(d->host->manager()->tasks());
     emit sizeHintChanged(Qt::PreferredSize);
 }
 

@@ -20,23 +20,23 @@
 #ifndef DBUSJOBPROTOCOL_H
 #define DBUSJOBPROTOCOL_H
 
-#include "../../core/jobprotocol.h"
+#include "../../core/protocol.h"
 
 #include <plasma/dataengine.h>
 
 
 namespace SystemTray
 {
-namespace DBus
-{
 
-class JobProtocol : public SystemTray::JobProtocol
+class DBusJob;
+
+class DBusJobProtocol : public Protocol
 {
     Q_OBJECT
 
 public:
-    JobProtocol(QObject *parent);
-    ~JobProtocol();
+    DBusJobProtocol(QObject *parent);
+    ~DBusJobProtocol();
     void init();
 
 private slots:
@@ -49,11 +49,10 @@ private slots:
     void stop(const QString &source);
 
 private:
-    class Private;
-    Private* const d;
+    Plasma::DataEngine *m_engine;
+    QHash<QString, DBusJob*> m_jobs;
 };
 
-}
 }
 
 

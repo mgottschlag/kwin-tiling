@@ -27,8 +27,9 @@
 namespace SystemTray
 {
 
-class Notification;
 class Job;
+class Manager;
+class Notification;
 
 class Applet : public Plasma::PopupApplet
 {
@@ -41,6 +42,7 @@ public:
     void init();
     void constraintsEvent(Plasma::Constraints constraints);
     void setGeometry(const QRectF &rect);
+    Manager *manager()const;
 
 protected:
     void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);

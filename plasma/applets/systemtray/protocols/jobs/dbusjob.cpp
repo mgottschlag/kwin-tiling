@@ -24,59 +24,44 @@
 
 namespace SystemTray
 {
-namespace DBus
-{
 
-
-class Job::Private
-{
-public:
-    QString source;
-};
-
-
-Job::Job(const QString &source, QObject *parent)
+DBusJob::DBusJob(const QString &source, QObject *parent)
     : SystemTray::Job(parent),
-      d(new Private())
+      m_source(source)
 {
-    d->source = source;
 }
 
 
-Job::~Job()
+DBusJob::~DBusJob()
 {
-    emit jobDeleted(d->source);
-    delete d;
+    emit jobDeleted(m_source);
 }
 
 
 /**
 void Notification::triggerAction(const QString &actionId)
 {
-    emit actionTriggered(d->source, actionId);
+    emit actionTriggered(m_source, actionId);
 }
 */
 
-void Job::suspend()
+void DBusJob::suspend()
 {
-    emit suspend(d->source);
+    emit suspend(m_source);
     kDebug() << "suspend";
 
 }
 
-void Job::resume()
+void DBusJob::resume()
 {
-    emit resume(d->source);
+    emit resume(m_source);
     kDebug() << "resume";
 }
 
-void Job::stop()
+void DBusJob::stop()
 {
-    emit stop(d->source);
+    emit stop(m_source);
     kDebug() << "cancel";
 }
-//void Notification::
 
-
-}
 }
