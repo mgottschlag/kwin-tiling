@@ -411,7 +411,7 @@ void ItemSpace::ItemGroup::Request::activate (ItemSpace *itemSpace, ItemGroup *g
                     limit = itemSpace->workingGeom.height() - itemSpace->screenSpacing - origGeom.bottom();
                     break;
             }
-            group->m_pushAvailable = qMax(0.0, qMin(group->m_pushAvailable, limit));
+            group->m_pushAvailable = qMax(qreal(0.0), qMin(group->m_pushAvailable, limit));
             if (group->m_pushAvailable == 0) {
                 break;
             }
@@ -434,7 +434,7 @@ void ItemSpace::ItemGroup::Request::activate (ItemSpace *itemSpace, ItemGroup *g
                     limit = -(origGeom.top() - item.preferredGeometry.top());
                     break;
             }
-            limit = qMax(0.0, limit);
+            limit = qMax(qreal(0.0), limit);
             group->m_pushAvailable = qMin(group->m_pushAvailable, limit);
             if (group->m_pushAvailable == 0) {
                 break;
@@ -493,7 +493,7 @@ void ItemSpace::ItemGroup::Request::activate (ItemSpace *itemSpace, ItemGroup *g
 
             // limit our push by how much the obstacle can actually move
             if (testGroup.m_pushAvailable < groupPush) {
-                group->m_pushAvailable = qMax(0.0, group->m_pushAvailable - (groupPush - testGroup.m_pushAvailable));
+                group->m_pushAvailable = qMax(qreal(0.0), group->m_pushAvailable - (groupPush - testGroup.m_pushAvailable));
                 if (group->m_pushAvailable == 0) {
                     break;
                 }
