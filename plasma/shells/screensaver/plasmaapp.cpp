@@ -268,7 +268,7 @@ void PlasmaApp::setActive(bool activate)
         m_view->showView();
         m_view->containment()->openToolBox();
     } else if (m_view->isVisible()) {
-        if (qFuzzyCompare(m_idleOpacity + 1.0, qreal(1.0))) {
+        if (qFuzzyCompare(m_idleOpacity + qreal(1.0), qreal(1.0))) {
             m_view->hideView();
         } else {
             lock();
