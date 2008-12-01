@@ -83,9 +83,21 @@ QSize AbstractTaskItem::basicPreferredSize() const
 {
     QFontMetrics fm(KGlobalSettings::taskbarFont());
     QSize mSize = fm.size(0, "M");
+    int iconsize = KIconLoader::SizeSmall;
+    
     //the 4 should be the default spacing between layout items, is there a way to fetch it without hardcoding?
+    // in small panels, we'll reduce the spacing a bit so it's easier to cramp the text in and still get two rows
+    int topMargin = m_applet->itemTopMargin();
+    int bottomMargin = m_applet->itemBottomMargin();
+    if (m_applet->size().height() < 44) {
+        topMargin = 1; 
+        bottomMargin = 1; 
+    } else if (m_applet->size().height() < 64) {
+        topMargin = qMax(1, topMargin/2); 
+        bottomMargin = qMax(1, bottomMargin/2); 
+    }
     return QSize(mSize.width()*12 + m_applet->itemLeftMargin() + m_applet->itemRightMargin() + KIconLoader::SizeSmall,
-                           KIconLoader::SizeSmall + m_applet->itemTopMargin() + m_applet->itemBottomMargin());
+                           qMax(mSize.height(), iconsize) + topMargin + bottomMargin);
 }
 
 AbstractTaskItem::~AbstractTaskItem()
