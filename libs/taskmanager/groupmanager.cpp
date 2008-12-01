@@ -464,11 +464,16 @@ bool GroupManager::onlyGroupWhenFull() const
 void GroupManager::setOnlyGroupWhenFull(bool state)
 {
     //kDebug() << state;
+    if (d->onlyGroupWhenFull == state) {
+        return;
+    }
+
     d->onlyGroupWhenFull = state;
 
     if (state) {
         connect(d->rootGroup, SIGNAL(itemAdded(AbstractItemPtr)), this, SLOT(checkIfFull()));
         connect(d->rootGroup, SIGNAL(itemRemoved(AbstractItemPtr)), this, SLOT(checkIfFull()));
+        d->checkIfFull();
     } else {
         disconnect(d->rootGroup, SIGNAL(itemAdded(AbstractItemPtr)), this, SLOT(checkIfFull()));
         disconnect(d->rootGroup, SIGNAL(itemRemoved(AbstractItemPtr)), this, SLOT(checkIfFull()));
@@ -479,21 +484,18 @@ void GroupManager::setFullLimit(int limit)
 {
     //kDebug() << limit;
     d->groupIsFullLimit = limit;
-    if (!onlyGroupWhenFull()) {
-        return;
+    if (d->onlyGroupWhenFull) {
+        d->checkIfFull();
     }
-    d->checkIfFull();
 }
 
 void GroupManagerPrivate::checkIfFull()
 {
     //kDebug();
-    if (!q->onlyGroupWhenFull()) {
+    if (!onlyGroupWhenFull || groupingStrategy != GroupManager::ProgramGrouping) {
         return;
     }
-    if (groupingStrategy != GroupManager::ProgramGrouping) {
-        return;
-    }
+
     if (itemList.size() >= groupIsFullLimit) {
         //kDebug() << "group is full, setting program grouping";
         q->setGroupingStrategy(GroupManager::ProgramGrouping);
