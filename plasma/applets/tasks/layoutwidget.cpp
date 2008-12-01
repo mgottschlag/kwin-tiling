@@ -278,6 +278,14 @@ void LayoutWidget::layoutItems()
 
     createLayout(); //its a shame that we have to create a new layout every time but the QGraphicsGridLayout is just to buggy yet
 
+    if (m_applet->formFactor() == Plasma::Vertical) {
+        m_layout->setHorizontalSpacing(0);
+        m_layout->setVerticalSpacing(2);
+    } else {
+        m_layout->setHorizontalSpacing(2);
+        m_layout->setVerticalSpacing(0);
+    }
+
     //go through all items of this layoutwidget and populate the layout with items
     int numberOfItems = 0;
     foreach (AbstractTaskItem *item, m_itemPositions) {
