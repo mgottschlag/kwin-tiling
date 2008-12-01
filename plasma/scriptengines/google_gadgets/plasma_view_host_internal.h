@@ -35,14 +35,11 @@ class PlasmaViewHost::Private : public QObject {
       type_(type),
       info(i),
       is_popout_(popout),
-      onoptionchanged_connection_(NULL),
       gadget_w_(0),
       gadget_h_(0),
       feedback_handler_(NULL) {}
 
   ~Private() {
-    if (onoptionchanged_connection_)
-      onoptionchanged_connection_->Disconnect();
     closeView();
   }
 
@@ -61,7 +58,6 @@ class PlasmaViewHost::Private : public QObject {
   /* Show the view in right place
    *    - floating main view: Shown within the applet
    *    - popouted main view and details view: Shown in QtViewWidget
-   *    - options view: Shown in QDialog
    */
   bool showView(bool modal, int flags, Slot1<bool, int> *feedback_handler) {
     ASSERT(view_);
@@ -71,42 +67,7 @@ class PlasmaViewHost::Private : public QObject {
 
     if (widget_) return true;
 
-    if (type_ == ViewHostInterface::VIEW_HOST_OPTIONS) {
-      widget_ = new QtViewWidget(view_, QtViewWidget::FLAG_WM_DECORATED);
-      QVBoxLayout *layout = new QVBoxLayout();
-      widget_->setFixedSize(D2I(view_->GetWidth()), D2I(view_->GetHeight()));
-      layout->addWidget(widget_);
-
-      QDialog *dialog = new QDialog();
-      parent_widget_ = dialog;
-
-      QDialogButtonBox::StandardButtons what_buttons = 0;
-      if (flags & ViewInterface::OPTIONS_VIEW_FLAG_OK)
-        what_buttons |= QDialogButtonBox::Ok;
-
-      if (flags & ViewInterface::OPTIONS_VIEW_FLAG_CANCEL)
-        what_buttons |= QDialogButtonBox::Cancel;
-
-      if (what_buttons != 0) {
-        QDialogButtonBox *buttons = new QDialogButtonBox(what_buttons);
-
-        if (flags & ViewInterface::OPTIONS_VIEW_FLAG_OK)
-          dialog->connect(buttons, SIGNAL(accepted()),
-                          this, SLOT(onOptionViewOK()));
-        if (flags & ViewInterface::OPTIONS_VIEW_FLAG_CANCEL)
-          dialog->connect(buttons, SIGNAL(rejected()),
-                          this, SLOT(onOptionViewCancel()));
-        layout->addWidget(buttons);
-      }
-
-      dialog->setLayout(layout);
-      dialog->setWindowTitle(caption_);
-      SetGadgetWindowIcon(dialog, view_->GetGadget());
-      if (modal)
-        dialog->exec();
-      else
-        dialog->show();
-    } else if (type_ == ViewHostInterface::VIEW_HOST_MAIN && !is_popout_) {
+    if (type_ == ViewHostInterface::VIEW_HOST_MAIN && !is_popout_) {
       // normal main view
       if (info->widget == NULL) {
         widget_ = new QtViewWidget(view_, 0);
@@ -121,8 +82,6 @@ class PlasmaViewHost::Private : public QObject {
       if (info->applet->location() == Plasma::Floating) {
         connect(widget_, SIGNAL(moved(int, int)),
                 this, SLOT(onViewMoved(int, int)));
-        connect(widget_, SIGNAL(geometryChanged(int, int, int, int)),
-                this, SLOT(onGeometryChanged(int, int, int, int)));
       } else {
         disconnect();
       }
@@ -175,6 +134,9 @@ class PlasmaViewHost::Private : public QObject {
       info->applet->update();
   }
 
+  // This is called when view size has changed, caused by constraintsEvent or
+  // user manually resizes gadget. Applet and widget size will be adjusted
+  // according to view size.
   void adjustAppletSize() {
     if (!info->main_view_host || !info->applet) return;
     ViewInterface *view = info->main_view_host->GetViewDecorator();
@@ -186,20 +148,23 @@ class PlasmaViewHost::Private : public QObject {
     gadget_w_ = w;
     gadget_h_ = h;
     kDebug() << "view size:" << w << " " << h;
-    kDebug() << "applet old size:" << info->applet->size();
 
-    if (widget_) kDebug() << "widget old size:" << widget_->size();
+    kDebug() << "applet old size:" << info->applet->size();
     if (info->applet->location() == Plasma::Floating) {
       info->applet->resize(w, h);
     } else {
-      info->applet->setPreferredSize(w, h);
-    }
-    if (widget_) {
-      widget_->AdjustToViewSize();
-      widget_->resize(w, h);
+      if (isHorizontal(info->applet->location()))
+        info->applet->setMaximumWidth(w);
+      else
+        info->applet->setMaximumHeight(h);
     }
     kDebug() << "applet new size:" << info->applet->size();
-    if (widget_) kDebug() << "widget new size:" << widget_->size();
+
+    if (widget_) {
+      kDebug() << "widget old size:" << widget_->size();
+      widget_->resize(w, h);
+      kDebug() << "widget new size:" << widget_->size();
+    }
   }
 
   void queueResize() {
@@ -230,7 +195,6 @@ class PlasmaViewHost::Private : public QObject {
   ViewHostInterface::Type type_;
   GadgetInfo *info;
   bool is_popout_;
-  Connection *onoptionchanged_connection_;
   double gadget_w_;
   double gadget_h_;
 
@@ -242,20 +206,11 @@ class PlasmaViewHost::Private : public QObject {
     view_ = NULL;
   }
 
-  void handleOptionViewResponse(ViewInterface::OptionsViewFlags flag) {
-    if (feedback_handler_) {
-      (*feedback_handler_)(flag);
-      delete feedback_handler_;
-      feedback_handler_ = NULL;
-    }
-    parent_widget_->hide();
-  }
-
  public slots:
-  void onViewMoved(int x, int y);
-  void onGeometryChanged(int dleft, int dtop, int dw, int dh);
-  void onOptionViewOK();
-  void onOptionViewCancel();
+  void onViewMoved(int x, int y) {
+    if (type_ == ViewHostInterface::VIEW_HOST_MAIN && !is_popout_)
+      info->applet->moveBy(x, y);
+  }
 };
 
 } // namespace ggadget

@@ -112,8 +112,8 @@ class PanelDecorator::Private {
   bool vertical_;
 };
 
-PanelDecorator::PanelDecorator(ViewHostInterface *host, GadgetInfo *info)
-    : DockedMainViewDecorator(host), d(new Private(info)) {
+PanelDecorator::PanelDecorator(PlasmaViewHost *host)
+    : DockedMainViewDecorator(host), d(new Private(host->getInfo())) {
   SetButtonVisible(MainViewDecoratorBase::POP_IN_OUT_BUTTON, false);
   SetButtonVisible(MainViewDecoratorBase::MENU_BUTTON, false);
   SetButtonVisible(MainViewDecoratorBase::CLOSE_BUTTON, false);
@@ -158,6 +158,17 @@ void PanelDecorator::OnChildViewChanged() {
   // We only want to init minimized_width_ the first time
   if (d->minimized_width_ == 0)
     d->loadMinimizedWidth();
+}
+
+bool PanelDecorator::ShowDecoratedView(bool modal, int flags,
+                       Slot1<bool, int> *feedback_handler) {
+  d->info_->applet->setMaximumSize(QSizeF());
+  if (d->vertical_)
+    d->info_->applet->setMaximumHeight(GetHeight());
+  else
+    d->info_->applet->setMaximumWidth(GetWidth());
+  return DockedMainViewDecorator::ShowDecoratedView(
+      modal, flags, feedback_handler);
 }
 
 void PanelDecorator::setVertical() {

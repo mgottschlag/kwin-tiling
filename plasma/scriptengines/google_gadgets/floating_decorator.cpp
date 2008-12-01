@@ -28,12 +28,13 @@
 
 namespace ggadget {
 
-FloatingDecorator::FloatingDecorator(ViewHostInterface *host)
+FloatingDecorator::FloatingDecorator(PlasmaViewHost *host)
     : MainViewDecoratorBase(host,
                             "plasma_floating",
                             false,
                             false,
-                            true) {
+                            true),
+      info(host->getInfo()) {
   SetButtonVisible(MainViewDecoratorBase::POP_IN_OUT_BUTTON, false);
   SetButtonVisible(MainViewDecoratorBase::MENU_BUTTON, false);
   SetButtonVisible(MainViewDecoratorBase::CLOSE_BUTTON, false);
@@ -48,4 +49,9 @@ void FloatingDecorator::OnAddDecoratorMenuItems(MenuInterface *menu) {
   }
 }
 
+bool FloatingDecorator::ShowDecoratedView(bool modal, int flags,
+                                          Slot1<bool, int> *feedback_handler) {
+  info->applet->setMaximumSize(QSizeF());
+  MainViewDecoratorBase::ShowDecoratedView(modal, flags, feedback_handler);
+}
 } // namespace ggadget

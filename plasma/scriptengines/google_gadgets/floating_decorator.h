@@ -18,16 +18,20 @@
 #define GGADGET_FLOATING_DECORATOR_H__
 
 #include <ggadget/main_view_decorator_base.h>
+#include "plasma_view_host.h"
 
 namespace ggadget {
 
 class FloatingDecorator : public MainViewDecoratorBase {
  public:
-  FloatingDecorator(ViewHostInterface *host);
+  FloatingDecorator(PlasmaViewHost *host);
   virtual ~FloatingDecorator();
   virtual void OnAddDecoratorMenuItems(MenuInterface *menu);
+  virtual bool ShowDecoratedView(bool modal, int flags,
+                                 Slot1<bool, int> *feedback_handler);
 
  private:
+  GadgetInfo *info;
   DISALLOW_EVIL_CONSTRUCTORS(FloatingDecorator);
 };
 

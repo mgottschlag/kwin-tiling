@@ -32,6 +32,15 @@ namespace ggadget {
 
 using namespace ggadget::qt;
 
+inline bool isHorizontal(Plasma::Location loc) {
+  return loc == Plasma::TopEdge || loc == Plasma::BottomEdge;
+}
+
+inline bool isVertical(Plasma::Location loc) {
+  return loc == Plasma::LeftEdge || loc == Plasma::RightEdge;
+}
+
+
 class PlasmaViewHost : public ViewHostInterface {
  public:
   PlasmaViewHost(GadgetInfo *info, ViewHostInterface::Type type, bool popout = false);
@@ -72,6 +81,8 @@ class PlasmaViewHost : public ViewHostInterface {
                              const char *message,
                              const char *default_value);
   virtual int GetDebugMode() const;
+
+  GadgetInfo *getInfo();
 
  private:
   class Private;

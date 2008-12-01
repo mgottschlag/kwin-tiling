@@ -39,22 +39,10 @@
 
 namespace ggadget {
 
-static const double kConstraint = 99999;
-
-static inline bool isHorizontal(Plasma::Location loc) {
-  return loc == Plasma::TopEdge || loc == Plasma::BottomEdge;
-}
-
-static inline bool isVertical(Plasma::Location loc) {
-  return loc == Plasma::LeftEdge || loc == Plasma::RightEdge;
-}
-
 class PlasmaHost::Private {
  public:
   Private(GadgetInfo *i)
       : info(i),
-        constraint_w_(kConstraint),
-        constraint_h_(kConstraint),
         gadget_w_(0),
         gadget_h_(0) {
     global_permissions_.SetGranted(Permissions::ALL_ACCESS, true);
@@ -82,9 +70,8 @@ class PlasmaHost::Private {
     ViewInterface *child = info->main_view_host->GetView();
     ASSERT(child);
     if (child) {
-      ggadget::qt::QtViewHost *vh =
-          new ggadget::qt::QtViewHost(
-              ViewHostInterface::VIEW_HOST_MAIN, 1.0, 0, 0, NULL);
+      PlasmaViewHost *vh = new PlasmaViewHost(
+              info, ViewHostInterface::VIEW_HOST_MAIN, true);
       PopOutMainViewDecorator *view_decorator =
           new PopOutMainViewDecorator(vh);
       DecoratedViewHost *dvh = new DecoratedViewHost(view_decorator);
@@ -119,7 +106,7 @@ class PlasmaHost::Private {
   }
 
   DecoratedViewHost *newFloatingViewHost() {
-    ViewHostInterface* vh =  new PlasmaViewHost(
+    PlasmaViewHost* vh =  new PlasmaViewHost(
         info, ViewHostInterface::VIEW_HOST_MAIN);
 
     FloatingDecorator *decorator = new FloatingDecorator(vh);
@@ -134,10 +121,10 @@ class PlasmaHost::Private {
   }
 
   DecoratedViewHost *newPanelViewHost() {
-    ViewHostInterface* vh =  new PlasmaViewHost(
+    PlasmaViewHost* vh =  new PlasmaViewHost(
         info, ViewHostInterface::VIEW_HOST_MAIN);
 
-    PanelDecorator *decorator = new PanelDecorator(vh, info);
+    PanelDecorator *decorator = new PanelDecorator(vh);
     if (isHorizontal(info->applet->location()))
       decorator->setHorizontal();
     else
@@ -152,7 +139,6 @@ class PlasmaHost::Private {
 
   GadgetInfo *info;
   Permissions global_permissions_;
-  double constraint_w_, constraint_h_;
   double gadget_w_, gadget_h_;
 };
 
@@ -301,20 +287,8 @@ void PlasmaHost::onConstraintsEvent(Plasma::Constraints constraints) {
     if (!view) return;
     QSizeF s = d->info->applet->size();
     kDebug() << "size requested:" << s;
-    d->constraint_w_ = s.width();
-    d->constraint_h_ = s.height();
     double w = s.width();
     double h = s.height();
-
-    // if gadget is on panel, we don't occupy the whole available space
-    if (d->info->applet->formFactor() == Plasma::Horizontal
-        && w > view->GetWidth()) {
-      w = view->GetWidth();
-    }
-    if (d->info->applet->formFactor() == Plasma::Vertical
-        && h > view->GetHeight()) {
-      h = view->GetHeight();
-    }
 
     if (view->OnSizing(&w, &h)) {
       kDebug() << "Original view size:" << view->GetWidth()

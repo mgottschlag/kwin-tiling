@@ -40,26 +40,8 @@
 using namespace ggadget::qt;
 namespace ggadget {
 
-void PlasmaViewHost::Private::onViewMoved(int x, int y) {
-  if (type_ == ViewHostInterface::VIEW_HOST_MAIN && !is_popout_)
-    info->applet->moveBy(x, y);
-}
-
-void PlasmaViewHost::Private::onGeometryChanged(int dleft, int dtop,
-                                                int dw, int dh) {
-  kDebug() << info->applet->geometry();
-  info->applet->moveBy(dleft, dtop);
-}
-
-void PlasmaViewHost::Private::onOptionViewOK() {
-  handleOptionViewResponse(ViewInterface::OPTIONS_VIEW_FLAG_OK);
-}
-
-void PlasmaViewHost::Private::onOptionViewCancel() {
-  handleOptionViewResponse(ViewInterface::OPTIONS_VIEW_FLAG_CANCEL);
-}
-
-PlasmaViewHost::PlasmaViewHost(GadgetInfo *info, ViewHostInterface::Type type, bool popout)
+PlasmaViewHost::PlasmaViewHost(GadgetInfo *info, ViewHostInterface::Type type,
+                               bool popout)
   : d(new Private(info, type, popout)) {
 }
 
@@ -201,6 +183,10 @@ ViewInterface *PlasmaViewHost::GetView() const {
 
 int PlasmaViewHost::GetDebugMode() const {
   return d->info->view_debug_mode;
+}
+
+GadgetInfo *PlasmaViewHost::getInfo() {
+  return d->info;
 }
 
 } // namespace ggadget

@@ -18,14 +18,13 @@
 #define GGADGET_PANEL_DECORATOR_H__
 
 #include <ggadget/docked_main_view_decorator.h>
-
-#include "ggl_applet_script.h"
+#include "plasma_view_host.h"
 
 namespace ggadget {
 
 class PanelDecorator : public DockedMainViewDecorator {
  public:
-  PanelDecorator(ViewHostInterface *host, GadgetInfo *info);
+  PanelDecorator(PlasmaViewHost *host);
   virtual ~PanelDecorator();
   virtual void OnAddDecoratorMenuItems(MenuInterface *menu);
   virtual void SetSize(double width, double height);
@@ -36,6 +35,8 @@ class PanelDecorator : public DockedMainViewDecorator {
  protected:
 //  virtual void GetClientExtents(double *width, double *height) const;
   virtual void OnChildViewChanged();
+  virtual bool ShowDecoratedView(bool modal, int flags,
+                                 Slot1<bool, int> *feedback_handler);
 
  private:
   class Private;
