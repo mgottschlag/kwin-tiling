@@ -94,3 +94,4 @@ Comment[zh_CN]=此守护程序可以接受由 wall(1) 或 write(1) 命令发出�
 Comment[zh_TW]=伺服程式接收到從 wall(1) 或 write(1) 送出的新訊息
 Sound=KDE-Sys-App-Message.ogg
 Action=Popup|Sound
+Persistent=true
