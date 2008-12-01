@@ -1,3 +1,9 @@
+2008-12-01  Richard Dale  <richard.j.dale@gmail.com>
+* Added updateAllSources() and removeSource() slots to the 
+  PlasmScripting::DataEngine
+* Add DBus notification to the time data engine example for when the config 
+  changes
+
 2008-11-18  Richard Dale  <richard.j.dale@gmail.com>
 * Fix problem with the ruby 'type()' method clashing with the one in
   Qt::GraphicsItem subclasses reported by David Palacio

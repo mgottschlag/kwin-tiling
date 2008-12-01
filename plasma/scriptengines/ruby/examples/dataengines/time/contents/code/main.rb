@@ -29,14 +29,16 @@ class Main < PlasmaScripting::DataEngine
 
   def initialize(parent, args = nil)
     super(parent)
-  end
-
-  def init
     setMinimumPollingInterval(333)
 
     # To have translated timezone names
     # (effectively a noop if the catalog is already present).
     KDE::Global.locale.insertCatalog("timezones4")
+  end
+
+  def init
+    dbus = Qt::DBusConnection.sessionBus
+    dbus.connect("", "", "org.kde.KTimeZoned", "configChanged", self, SLOT(:updateAllSources))
   end
 
   def sources

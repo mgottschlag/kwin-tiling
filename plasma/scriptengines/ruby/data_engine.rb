@@ -21,6 +21,7 @@ require 'plasma_applet'
 
 module PlasmaScripting
   class DataEngine < Qt::Object
+    slots :updateAllSources, "removeSource(QString)"
     signals "sourceAdded(QString)", "sourceRemoved(QString)"
 
     attr_accessor :data_engine_script
@@ -92,6 +93,14 @@ module PlasmaScripting
 
     def sources
       return []
+    end
+
+    def removeSource(source)
+      @data_engine_script.dataEngine.removeSource(source)
+    end
+
+    def updateAllSources
+      @data_engine_script.dataEngine.updateAllSources
     end
   end
 end
