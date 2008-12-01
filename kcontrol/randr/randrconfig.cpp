@@ -62,6 +62,7 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 	// create the scene
 	m_scene = new QGraphicsScene(m_display->currentScreen()->rect());	
 	screenView->setScene(m_scene);
+	screenView->installEventFilter(this);
 
 	m_layoutManager = new LayoutManager(m_display->currentScreen(), m_scene);
 }
@@ -185,10 +186,14 @@ void RandRConfig::update()
 	emit changed(false);
 }
 
-void RandRConfig::resizeEvent(QResizeEvent *event)
+bool RandRConfig::eventFilter(QObject *obj, QEvent *event)
 {
-    Q_UNUSED(event);
-	slotUpdateView();
+	if ( obj == screenView && event->type() == QEvent::Resize ) {
+		slotUpdateView();
+		return false;
+	} else {
+		return QWidget::eventFilter(obj, event);
+	}
 }
 
 void RandRConfig::slotAdjustOutput(OutputGraphicsItem *o)

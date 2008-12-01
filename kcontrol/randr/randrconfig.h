@@ -62,7 +62,7 @@ signals:
 	void changed(bool change);
 
 protected:
-	virtual void resizeEvent(QResizeEvent *event);
+	virtual bool eventFilter(QObject *obj, QEvent *event);
 	
 private:
 	RandRDisplay *m_display;
