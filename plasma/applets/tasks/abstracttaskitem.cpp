@@ -805,24 +805,10 @@ bool AbstractTaskItem::isGrouped() const
     return m_abstractItem->isGrouped();
 }
 
-
 TaskGroupItem * AbstractTaskItem::parentGroup() const
 {
-    if (!m_abstractItem) {
-        kDebug() << "no task";
-        return 0;
-    }
-    //return dynamic_cast<TaskManager::TaskGroup *>(m_abstractItem->parentGroup());
-    TaskGroupItem * group = m_applet->groupItem(m_abstractItem->parentGroup());
-    /*
-    if (!group) {
-        kDebug() << "null group";
-    }
-    */
-
-    return group;
+    return qobject_cast<TaskGroupItem*>(parentWidget());
 }
-
 
 TaskManager::AbstractItemPtr AbstractTaskItem::abstractItem()
 {
