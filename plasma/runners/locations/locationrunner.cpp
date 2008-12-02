@@ -143,24 +143,24 @@ void LocationsRunner::run(const Plasma::RunnerContext &context, const Plasma::Qu
     //kDebug() << "command: " << context.query();
     //kDebug() << "url: " << location << data;
 
+    KUrl urlToRun(location);
+
     if ((type == Plasma::RunnerContext::NetworkLocation || type == Plasma::RunnerContext::UnknownType) &&
         data.startsWith("http://")) {
         // the text may have changed while we were running, so we have to refresh
         // our content
-        KUrl url(location);
-        processUrl(url, location);
-        KToolInvocation::invokeBrowser(url.url());
-    } else if (type == Plasma::RunnerContext::NetworkLocation) {
-        KToolInvocation::invokeBrowser(location);
-    } else {
+        processUrl(urlToRun, location);
+    } else if (type != Plasma::RunnerContext::NetworkLocation) {
         QString path = QDir::cleanPath(KShell::tildeExpand(location));
 
         if (path[0] != '/') {
             path.prepend('/').prepend(QDir::currentPath());
         }
 
-        new KRun(path, 0);
+        urlToRun = path;
     }
+
+    new KRun(urlToRun, 0);
 }
 
 #include "locationrunner.moc"
