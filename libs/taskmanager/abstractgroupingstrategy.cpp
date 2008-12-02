@@ -125,6 +125,7 @@ void AbstractGroupingStrategy::closeGroup(TaskGroup *group)
     }
 
     parentGroup->remove(group);
+    emit groupRemoved(group);
     group->deleteLater();
 }
 

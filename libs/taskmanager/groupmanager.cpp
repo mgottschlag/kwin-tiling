@@ -600,13 +600,12 @@ void GroupManager::setGroupingStrategy(TaskGroupingStrategy strategy)
 {
     //kDebug() << strategy;
 
-    if (d->abstractGroupingStrategy) {
-        if (d->abstractGroupingStrategy->type() == strategy){
-            return;
-        } else {
-            d->abstractGroupingStrategy->deleteLater();
-        }
+    if (d->abstractGroupingStrategy && d->abstractGroupingStrategy->type() == strategy) {
+        return;
     }
+
+    delete d->abstractGroupingStrategy;
+    d->abstractGroupingStrategy = 0;
 
     switch (strategy) {
         case NoGrouping:
@@ -624,7 +623,14 @@ void GroupManager::setGroupingStrategy(TaskGroupingStrategy strategy)
             kDebug() << "Strategy not implemented";
             d->abstractGroupingStrategy = 0;
     }
+
     d->groupingStrategy = strategy;
+
+    if (d->groupingStrategy) {
+        connect(d->abstractGroupingStrategy, SIGNAL(groupRemoved(TaskGroup*)),
+                this, SIGNAL(groupRemoved(TaskGroup*)));
+    }
+
     d->reloadTasks();
 }
 

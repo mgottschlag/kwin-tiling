@@ -123,6 +123,8 @@ Q_SIGNALS:
     void reload();
     /** Signal that the item is no longer available */
     void itemRemoved(AbstractGroupableItem*);
+    /** Signal that a group was removed */
+    void groupRemoved(TaskGroup*);
 
 public Q_SLOTS:
     /**
