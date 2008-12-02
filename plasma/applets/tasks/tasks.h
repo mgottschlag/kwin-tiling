@@ -61,6 +61,7 @@ using TaskManager::AbstractItemPtr;
 using TaskManager::AbstractGroupableItem;
 using TaskManager::GroupManager;
 using TaskManager::TaskItem;
+using TaskManager::TaskGroup;
 
 /**
  * An applet which provides a visual representation of running
@@ -132,6 +133,7 @@ private slots:
         */
         void reload();
         void itemRemoved(AbstractGroupableItem*);
+        void groupRemoved(TaskGroup *item);
         void changeSizeHint(Qt::SizeHint which);
         void dialogGroupingChanged(int index);
         //startupRemoved(TaskManager::AbstractGroupableItem*);

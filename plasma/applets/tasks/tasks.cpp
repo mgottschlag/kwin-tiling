@@ -90,6 +90,7 @@ void Tasks::init()
    // connect(m_groupManager, SIGNAL(reload()), this, SLOT(reload()));
     connect(this, SIGNAL(settingsChanged()), m_groupManager, SLOT(reconnect()));
     connect(m_groupManager, SIGNAL(itemRemoved(AbstractGroupableItem*)), this, SLOT(itemRemoved(AbstractGroupableItem*)));
+    connect(m_groupManager, SIGNAL(groupRemoved(TaskGroup*)), this, SLOT(groupRemoved(TaskGroup*)));
 
     m_rootGroupItem = new TaskGroupItem(dynamic_cast<QGraphicsWidget*>(this), this, false);
     m_rootGroupItem->expand();
@@ -202,10 +203,10 @@ void Tasks::itemRemoved(TaskManager::AbstractGroupableItem *item)
 {
     //kDebug();
     if (item->isGroupItem()) {
-        removeItem(m_groupTaskItems.value(dynamic_cast<TaskManager::TaskGroup*>(item)));
-    } else {
-        removeItem(m_items.value(item));
+        return;
     }
+
+    removeItem(m_items.value(item));
 }
 
 
@@ -217,24 +218,24 @@ void Tasks::removeItem(AbstractTaskItem *item)
         return;
     }
 
-    if (item->isWindowItem()) {
-        m_items.remove(m_items.key(item));
-        WindowTaskItem *windowItem = dynamic_cast<WindowTaskItem*>(item);
-        if (m_windowTaskItems.values().contains(windowItem)) {
-            m_windowTaskItems.remove(m_windowTaskItems.key(windowItem));
-        } else if (m_startupTaskItems.values().contains(windowItem)) {
-            m_startupTaskItems.remove(m_startupTaskItems.key(windowItem));
-        }
-    } else {
-        //FIXME: this code is NEVER reached! memory leak?!
-        m_groupTaskItems.remove(m_groupTaskItems.key(dynamic_cast<TaskGroupItem*>(item)));
+    m_items.remove(m_items.key(item));
+    WindowTaskItem *windowItem = dynamic_cast<WindowTaskItem*>(item);
+    if (m_windowTaskItems.values().contains(windowItem)) {
+        m_windowTaskItems.remove(m_windowTaskItems.key(windowItem));
+    } else if (m_startupTaskItems.values().contains(windowItem)) {
+        m_startupTaskItems.remove(m_startupTaskItems.key(windowItem));
     }
-
-    item->close();
-    item->deleteLater();
 }
 
+void Tasks::groupRemoved(TaskGroup *item)
+{
+    TaskGroupItem *group = m_groupTaskItems.value(item);
+    kDebug() << "group go bye bye?" << group->text();
+    m_groupTaskItems.remove(item);
 
+    group->close();
+    group->deleteLater();
+}
 
 AbstractTaskItem *Tasks::createAbstractItem(TaskManager::AbstractItemPtr groupableItem)
 {
