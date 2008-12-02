@@ -156,9 +156,9 @@ void DesktopCorona::loadDefaultLayout()
 
         // put a folder view on the first screen
         if (i == topLeftScreen) {
-            QDir desktopFolder(KGlobalSettings::desktopPath());
-            if (desktopFolder.exists()) {
-                //TODO: should we also not show this if the desktop folder is empty?
+            QString desktopPath = KGlobalSettings::desktopPath();
+            QDir desktopFolder(desktopPath);
+            if (desktopPath != QDir::homePath() && desktopFolder.exists()) {
                 Plasma::Applet *folderView =  Plasma::Applet::load("folderview", c->id() + 1);
                 if (folderView) {
                     c->addApplet(folderView, QPointF(KDialog::spacingHint(), KDialog::spacingHint()), true);
