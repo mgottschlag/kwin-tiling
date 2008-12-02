@@ -265,7 +265,7 @@ void TaskGroupItem::reload()
         itemAdded(item);
 
         if (item->isGroupItem()) {
-            TaskGroupItem *groupItem = qobject_cast<TaskGroupItem*>(item);
+            TaskGroupItem *groupItem = m_applet->groupItem(qobject_cast<GroupPtr>(item));
             if (groupItem) {
                 groupItem->reload();
             }
