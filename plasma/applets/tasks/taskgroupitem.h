@@ -23,6 +23,7 @@
 #define TASKGROUPITEM_H
 
 #include "abstracttaskitem.h"
+#include "windowtaskitem.h"
 // Own
 #include <taskmanager/taskmanager.h>
 #include "tasks.h"
@@ -99,6 +100,10 @@ public:
 
     int optimumCapacity();
 
+    WindowTaskItem* windowItem(TaskPtr);
+    TaskGroupItem*  groupItem(GroupPtr);
+    AbstractTaskItem* abstractItem(AbstractItemPtr);
+
 signals:
     /** Emitted when a window is selected for activation, minimization, iconification */
     void groupSelected(TaskGroupItem *);
@@ -152,13 +157,26 @@ private slots:
     void popupMenu();
 
 private:
+    QHash<TaskPtr,WindowTaskItem*> m_windowTaskItems;
+    QHash<GroupPtr,TaskGroupItem*> m_groupTaskItems;
+    QHash<StartupPtr,WindowTaskItem*> m_startupTaskItems;
+    QHash<AbstractItemPtr,AbstractTaskItem*> m_abstractItems;
+
+    AbstractTaskItem* createAbstractItem(AbstractItemPtr groupableItem);
+    TaskGroupItem* createNewGroup(QList <AbstractTaskItem *> members);
+    WindowTaskItem * createWindowTask(TaskManager::TaskItem* task);
+    TaskGroupItem * createTaskGroup(GroupPtr);
+    WindowTaskItem *createStartingTask(TaskManager::TaskItem* task);
+
+    void removeStartingTask(StartupPtr);
+    void removeItem(AbstractTaskItem *item);
+
     void layoutTaskItem(AbstractTaskItem* item, const QPointF &pos);
     void setSplitIndex(int position);
 
     GroupPtr m_group;
     //arbitrarily ordered
     QList<AbstractTaskItem*> m_groupMembers;
-    QHash<AbstractItemPtr,AbstractTaskItem*> m_abstractItems;
 
     LayoutWidget *m_expandedLayout;
     QTimer *m_popupMenuTimer;

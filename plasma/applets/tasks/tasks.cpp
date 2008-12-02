@@ -89,8 +89,8 @@ void Tasks::init()
 
    // connect(m_groupManager, SIGNAL(reload()), this, SLOT(reload()));
     connect(this, SIGNAL(settingsChanged()), m_groupManager, SLOT(reconnect()));
-    connect(m_groupManager, SIGNAL(itemRemoved(AbstractGroupableItem*)), this, SLOT(itemRemoved(AbstractGroupableItem*)));
-    connect(m_groupManager, SIGNAL(groupRemoved(TaskGroup*)), this, SLOT(groupRemoved(TaskGroup*)));
+    //connect(m_groupManager, SIGNAL(itemRemoved(AbstractGroupableItem*)), this, SLOT(itemRemoved(AbstractGroupableItem*)));
+    //connect(m_groupManager, SIGNAL(groupRemoved(TaskGroup*)), this, SLOT(groupRemoved(TaskGroup*)));
 
     m_rootGroupItem = new TaskGroupItem(dynamic_cast<QGraphicsWidget*>(this), this, false);
     m_rootGroupItem->expand();
@@ -153,136 +153,6 @@ Qt::KeyboardModifiers Tasks::groupModifierKey() const
     return m_groupModifierKey;
 }
 
-WindowTaskItem * Tasks::createStartingTask(TaskManager::TaskItem* task)
-{
-    WindowTaskItem* item = new WindowTaskItem(m_rootGroupItem, this, m_showTooltip);
-    item->setStartupTask(task);
-    m_startupTaskItems.insert(task->startup(), item);
-    return item;
-}
-
-void Tasks::removeStartingTask(StartupPtr task)
-{
-    if (m_startupTaskItems.contains(task)) {
-        WindowTaskItem *item = m_startupTaskItems.take(task);
-        item->close();
-        removeItem(item);
-        item->deleteLater();
-    }
-}
-
-WindowTaskItem *Tasks::createWindowTask(TaskManager::TaskItem* taskItem)
-{
-    WindowTaskItem *item = 0;
-    TaskPtr task = taskItem->task();
-
-    if (m_windowTaskItems.contains(task)) {
-        return m_windowTaskItems.value(task);
-    }
-
-    foreach (const StartupPtr &startup, m_startupTaskItems.keys()) {
-        if (startup->matchesWindow(task->window())) {
-            item = dynamic_cast<WindowTaskItem *>(m_startupTaskItems.take(startup));
-            Q_ASSERT(item);
-            item->setWindowTask(taskItem);
-            break;
-        }
-    }
-
-    if (!item) { //Task isnt a startup task
-        item = new WindowTaskItem(m_rootGroupItem, this, m_showTooltip);
-        item->setWindowTask(taskItem);
-    }
-
-    m_windowTaskItems.insert(task, item);
-    return item;
-    //kDebug();
-}
-
-void Tasks::itemRemoved(TaskManager::AbstractGroupableItem *item)
-{
-    //kDebug();
-    if (item->isGroupItem()) {
-        return;
-    }
-
-    removeItem(m_items.value(item));
-}
-
-
-void Tasks::removeItem(AbstractTaskItem *item)
-{
-    //kDebug();
-    if (!item) {
-        //kDebug() << "Not in list or null pointer";
-        return;
-    }
-
-    m_items.remove(m_items.key(item));
-    WindowTaskItem *windowItem = dynamic_cast<WindowTaskItem*>(item);
-    if (m_windowTaskItems.values().contains(windowItem)) {
-        m_windowTaskItems.remove(m_windowTaskItems.key(windowItem));
-    } else if (m_startupTaskItems.values().contains(windowItem)) {
-        m_startupTaskItems.remove(m_startupTaskItems.key(windowItem));
-    }
-}
-
-void Tasks::groupRemoved(TaskGroup *item)
-{
-    TaskGroupItem *group = m_groupTaskItems.value(item);
-    kDebug() << "group go bye bye?" << group->text();
-    m_groupTaskItems.remove(item);
-
-    group->close();
-    group->deleteLater();
-}
-
-AbstractTaskItem *Tasks::createAbstractItem(TaskManager::AbstractItemPtr groupableItem)
-{
-    AbstractTaskItem *item = 0;
-    if (!m_items.contains(groupableItem)) {
-        if (groupableItem->isGroupItem()) {
-            item = dynamic_cast<AbstractTaskItem*>(createTaskGroup(dynamic_cast<GroupPtr>(groupableItem)));
-        } else {
-            TaskManager::TaskItem* task = dynamic_cast<TaskManager::TaskItem*>(groupableItem);
-            if (!task->task()) { //startuptask
-                item = dynamic_cast<AbstractTaskItem*>(createStartingTask(task));
-            } else {
-                item = dynamic_cast<AbstractTaskItem*>(createWindowTask(task));
-            }
-        }
-        m_items.insert(groupableItem,item);
-    } else {
-        item = m_items.value(groupableItem);
-    }
-
-    if (!item) {
-        //kDebug() << "invalid Item";
-        return 0;
-    }
-
-    return item;
-}
-
-TaskGroupItem *Tasks::createTaskGroup(GroupPtr group)
-{
-    if (!group) {
-        //kDebug() << "null group";
-        return 0;
-    }
-    Q_ASSERT(m_rootGroupItem);
-
-    TaskGroupItem *item;
-    //FIXME: these items NEVER get removed from m_groupTaskItems!
-    if (!m_groupTaskItems.contains(group)) {
-        item = new TaskGroupItem(m_rootGroupItem, this, m_showTooltip);
-        item->setGroup(group);
-        m_groupTaskItems.insert(group, item);
-    } else {
-        item = m_groupTaskItems.value(group);
-    }
-    return item;
-}
 
 
 void Tasks::constraintsEvent(Plasma::Constraints constraints)
@@ -543,23 +413,6 @@ void Tasks::themeRefresh()
 }
 
 
-WindowTaskItem* Tasks::windowItem(TaskPtr task)
-{
-    if (m_windowTaskItems.contains(task)) {
-        return m_windowTaskItems.value(task);
-    }
-    //kDebug() << "item not found";
-    return 0;
-}
-
-TaskGroupItem* Tasks::groupItem(GroupPtr group)
-{
-    if (m_groupTaskItems.contains(group)) {
-        return m_groupTaskItems.value(group);
-    }
-    //kDebug() << "item not found";
-    return 0;
-}
 
 TaskGroupItem* Tasks::rootGroupItem()
 {

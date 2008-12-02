@@ -95,13 +95,6 @@ public:
         void resizeItemBackground(const QSizeF &newSize);
 
         TaskGroupItem*  rootGroupItem();
-        WindowTaskItem* windowItem(TaskPtr);
-        TaskGroupItem*  groupItem(GroupPtr);
-
-        AbstractTaskItem* createAbstractItem(AbstractItemPtr groupableItem);
-        TaskGroupItem* createNewGroup(QList <AbstractTaskItem *> members);
-
-        void removeItem(AbstractTaskItem *item);
 
         TaskManager::GroupManager &groupManager() const;
 
@@ -131,11 +124,9 @@ private slots:
         * Somthing has changed in the tree of the GroupingStrategy
         */
         void reload();
-        void itemRemoved(AbstractGroupableItem*);
-        void groupRemoved(TaskGroup *item);
+        //void groupRemoved(TaskGroup *item);
         void changeSizeHint(Qt::SizeHint which);
         void dialogGroupingChanged(int index);
-        //startupRemoved(TaskManager::AbstractGroupableItem*);
 
 private:
         QHash<TaskPtr,WindowTaskItem*> m_windowTaskItems;
@@ -143,10 +134,7 @@ private:
         QHash<StartupPtr,WindowTaskItem*> m_startupTaskItems;
         QHash<AbstractItemPtr,AbstractTaskItem*> m_items;
 
-        WindowTaskItem * createWindowTask(TaskManager::TaskItem* task);
-        TaskGroupItem * createTaskGroup(GroupPtr);
-        WindowTaskItem *createStartingTask(TaskManager::TaskItem* task);
-        void removeStartingTask(StartupPtr);
+        
 
         bool m_showTooltip;
         Plasma::LayoutAnimator *m_animator;

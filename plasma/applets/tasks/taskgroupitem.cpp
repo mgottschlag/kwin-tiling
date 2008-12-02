@@ -267,9 +267,9 @@ void TaskGroupItem::reload()
         itemAdded(item);
 
         if (item->isGroupItem()) {
-            TaskGroupItem *groupItem = m_applet->groupItem(qobject_cast<GroupPtr>(item));
-            if (groupItem) {
-                groupItem->reload();
+            TaskGroupItem *group = groupItem(qobject_cast<GroupPtr>(item));
+            if (group) {
+                group->reload();
             }
         }
     }
@@ -289,7 +289,7 @@ void TaskGroupItem::setGroup(TaskManager::GroupPtr group)
     connect(m_group, SIGNAL(itemRemoved(AbstractItemPtr)), this, SLOT(itemRemoved(AbstractItemPtr)));
     connect(m_group, SIGNAL(itemAdded(AbstractItemPtr)), this, SLOT(itemAdded(AbstractItemPtr)));
 
-    connect(m_group, SIGNAL(destroyed()), this, SLOT(close()));
+    //connect(m_group, SIGNAL(destroyed()), this, SLOT(close()));
 
     connect(m_group, SIGNAL(changed(::TaskManager::TaskChanges)),
             this, SLOT(updateTask(::TaskManager::TaskChanges)));
@@ -351,6 +351,107 @@ QList<AbstractTaskItem*> TaskGroupItem::memberList() const
 }
 
 
+
+
+
+
+
+
+AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractItemPtr groupableItem)
+{
+    AbstractTaskItem *item = 0;
+
+        if (groupableItem->isGroupItem()) {
+            item = dynamic_cast<AbstractTaskItem*>(createTaskGroup(dynamic_cast<GroupPtr>(groupableItem)));
+        } else {
+            TaskManager::TaskItem* task = dynamic_cast<TaskManager::TaskItem*>(groupableItem);
+            if (!task->task()) { //startuptask
+                item = dynamic_cast<AbstractTaskItem*>(createStartingTask(task));
+            } else {
+                item = dynamic_cast<AbstractTaskItem*>(createWindowTask(task));
+            }
+        }
+        m_items.insert(groupableItem,item);
+  
+    if (!item) {
+        //kDebug() << "invalid Item";
+        return 0;
+    }
+
+    return item;
+}
+
+
+
+
+WindowTaskItem * TaskGroupItem::createStartingTask(TaskManager::TaskItem* task)
+{
+    WindowTaskItem* item = new WindowTaskItem(m_applet->rootGroupItem(), m_applet, m_showTooltip);
+    item->setStartupTask(task);
+    m_startupTaskItems.insert(task->startup(), item);
+    return item;
+}
+
+void TaskGroupItem::removeStartingTask(StartupPtr task)
+{
+    if (m_startupTaskItems.contains(task)) {
+        WindowTaskItem *item = m_startupTaskItems.take(task);
+        item->close();
+        removeItem(item);
+        item->deleteLater();
+    }
+}
+
+WindowTaskItem *TaskGroupItem::createWindowTask(TaskManager::TaskItem* taskItem)
+{
+    WindowTaskItem *item = 0;
+    TaskPtr task = taskItem->task();
+
+    if (m_windowTaskItems.contains(task)) {
+        return m_windowTaskItems.value(task);
+    }
+
+    foreach (const StartupPtr &startup, m_startupTaskItems.keys()) {
+        if (startup->matchesWindow(task->window())) {
+            item = dynamic_cast<WindowTaskItem *>(m_startupTaskItems.take(startup));
+            Q_ASSERT(item);
+            item->setWindowTask(taskItem);
+            break;
+        }
+    }
+
+    if (!item) { //Task isnt a startup task
+        item = new WindowTaskItem(m_applet->rootGroupItem(), m_applet, m_showTooltip);
+        item->setWindowTask(taskItem);
+    }
+
+    m_windowTaskItems.insert(task, item);
+    return item;
+    //kDebug();
+}
+
+TaskGroupItem *TaskGroupItem::createTaskGroup(GroupPtr group)
+{
+    if (!group) {
+        //kDebug() << "null group";
+        return 0;
+    }
+    Q_ASSERT(m_applet->rootGroupItem());
+
+    TaskGroupItem *item;
+    //FIXME: these items NEVER get removed from m_groupTaskItems!
+    if (!m_groupTaskItems.contains(group)) {
+        item = new TaskGroupItem(m_applet->rootGroupItem(), m_applet, m_showTooltip);
+        item->setGroup(group);
+        m_groupTaskItems.insert(group, item);
+    } else {
+        item = m_groupTaskItems.value(group);
+    }
+    return item;
+}
+
+
+
 void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
 {
     //kDebug();
@@ -360,7 +461,8 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
     }
 
     //returns the corresponding item or creates a new one
-    AbstractTaskItem *item = m_applet->createAbstractItem(groupableItem);
+    //AbstractTaskItem *item = m_applet->createAbstractItem(groupableItem);
+    AbstractTaskItem *item = createAbstractItem(groupableItem);
 
     if (!item) {
         kDebug() << "invalid Item";
@@ -390,6 +492,9 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
 
     connect(item, SIGNAL(activated(AbstractTaskItem*)),
             this, SLOT(updateActive(AbstractTaskItem*)));
+
+    //connect(item, SIGNAL(destroyed(AbstractTaskItem*)),
+           // this, SLOT(removeItem(AbstractTaskItem*)));
 }
 
 void TaskGroupItem::itemRemoved(TaskManager::AbstractItemPtr groupableItem)
@@ -399,7 +504,7 @@ void TaskGroupItem::itemRemoved(TaskManager::AbstractItemPtr groupableItem)
         kDebug() << "No Applet";
         return;
     }
-    AbstractTaskItem *item = m_abstractItems.value(groupableItem);
+    AbstractTaskItem *item = abstractItem(groupableItem);
 
     if (!item) {
         kDebug() << "Item not found";
@@ -413,6 +518,35 @@ void TaskGroupItem::itemRemoved(TaskManager::AbstractItemPtr groupableItem)
     if (m_expandedLayout) {
         m_expandedLayout->removeTaskItem(item);
     }
+
+    removeItem(m_items.value(groupableItem));
+}
+
+
+void TaskGroupItem::removeItem(AbstractTaskItem *item)
+{
+    //kDebug();
+    if (!m_items.contains(m_items.key(item)) || !item) {
+        //kDebug() << "Not in list or null pointer";
+        return;
+    }
+
+    m_items.remove(m_items.key(item));
+    if (item->isWindowItem()) {
+        WindowTaskItem *windowItem = dynamic_cast<WindowTaskItem*>(item);
+        if (m_windowTaskItems.values().contains(windowItem)) {
+            m_windowTaskItems.remove(m_windowTaskItems.key(windowItem));
+        } else if (m_startupTaskItems.values().contains(windowItem)) {
+            m_startupTaskItems.remove(m_startupTaskItems.key(windowItem));
+        }
+    } else {
+        //FIXME: this code is NEVER reached! memory leak?!
+        m_groupTaskItems.remove(m_groupTaskItems.key(dynamic_cast<TaskGroupItem*>(item)));
+    }
+
+    item->close();
+    removeItem(item);
+    item->deleteLater();
 }
 
 
@@ -559,7 +693,7 @@ AbstractTaskItem *TaskGroupItem::directMember(AbstractTaskItem *item)
     if (!directMember) {
         kDebug() << "Error" << item->abstractItem();
     }
-    return m_abstractItems.value(directMember);
+    return abstractItem(directMember);
 }
 
 void TaskGroupItem::paint(QPainter *painter,
@@ -609,13 +743,13 @@ void  TaskGroupItem::itemPositionChanged(AbstractItemPtr item)
 
     if (item->isGroupItem()) {
         //FIXME: why does this m_applet->abstractItem rather than m_applet->groupItem?
-        TaskGroupItem *groupItem = static_cast<TaskGroupItem*>(m_abstractItems.value(item));
+        TaskGroupItem *groupItem = static_cast<TaskGroupItem*>(abstractItem(item));
         if (groupItem) {
             groupItem->unsplitGroup();
         }
     }
 
-    AbstractTaskItem *taskItem = m_abstractItems.value(item);
+    AbstractTaskItem *taskItem = abstractItem(item);
 
     m_expandedLayout->removeTaskItem(taskItem);
     m_expandedLayout->insert(m_group->members().indexOf(item), taskItem);
@@ -680,7 +814,7 @@ void TaskGroupItem::dropEvent(QGraphicsSceneDragDropEvent *event)
                     return;
                 }
 
-                TaskManager::GroupPtr group = static_cast<TaskManager::GroupPtr>(taskItem->parentGroup()->abstractItem());
+                TaskManager::GroupPtr group = taskItem->parentGroup()->group();
 
                 if ((event->modifiers() == m_applet->groupModifierKey()) &&
                     m_applet->groupManager().groupingStrategy() == TaskManager::GroupManager::ManualGrouping) {
@@ -721,7 +855,7 @@ void TaskGroupItem::dropEvent(QGraphicsSceneDragDropEvent *event)
                             //kDebug() << "Drag within group";
                             layoutTaskItem(taskItem, event->pos());
                         } else { //task item was dragged outside of group -> group move
-                            AbstractTaskItem *directMember = m_abstractItems.value(m_group->directMember(group));
+                            AbstractTaskItem *directMember = abstractItem(m_group->directMember(group));
                             if (directMember) {
                                 layoutTaskItem(directMember, event->pos()); //we need to get the group right under the receiver group
                             } else { //group isn't a member of this Group, this is the case if a task is dragged into a expanded group
@@ -841,6 +975,33 @@ int TaskGroupItem::optimumCapacity()
     }
 
     return 1;
+}
+
+WindowTaskItem* TaskGroupItem::windowItem(TaskPtr task)
+{
+    if (m_windowTaskItems.contains(task)) {
+        return m_windowTaskItems.value(task);
+    }
+    //kDebug() << "item not found";
+    return 0;
+}
+
+TaskGroupItem* TaskGroupItem::groupItem(GroupPtr group)
+{
+    if (m_groupTaskItems.contains(group)) {
+        return m_groupTaskItems.value(group);
+    }
+    //kDebug() << "item not found";
+    return 0;
+}
+
+AbstractTaskItem* TaskGroupItem::abstractItem(AbstractItemPtr item)
+{
+    if (m_items.contains(item)) {
+        return m_items.value(item);
+    }
+    //kDebug() << "item not found";
+    return 0;
 }
 
 #include "taskgroupitem.moc"
