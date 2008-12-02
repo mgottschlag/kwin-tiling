@@ -165,6 +165,8 @@ void Tasks::removeStartingTask(StartupPtr task)
     if (m_startupTaskItems.contains(task)) {
         WindowTaskItem *item = m_startupTaskItems.take(task);
         item->close();
+        removeItem(item);
+        item->deleteLater();
     }
 }
 
@@ -213,6 +215,7 @@ void Tasks::removeItem(AbstractTaskItem *item)
         //kDebug() << "Not in list or null pointer";
         return;
     }
+
     m_items.remove(m_items.key(item));
     if (item->isWindowItem()) {
         WindowTaskItem *windowItem = dynamic_cast<WindowTaskItem*>(item);
@@ -225,7 +228,10 @@ void Tasks::removeItem(AbstractTaskItem *item)
         //FIXME: this code is NEVER reached! memory leak?!
         m_groupTaskItems.remove(m_groupTaskItems.key(dynamic_cast<TaskGroupItem*>(item)));
     }
+
     item->close();
+    removeItem(item);
+    item->deleteLater();
 }
 
 

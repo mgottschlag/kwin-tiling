@@ -178,7 +178,6 @@ void TaskGroupItem::close()
 {
   //  m_applet->removeGroupTask(m_group);
     m_group = 0;
-    finished();
 }
 
 

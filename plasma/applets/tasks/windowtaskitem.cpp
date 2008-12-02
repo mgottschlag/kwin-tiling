@@ -96,7 +96,6 @@ void WindowTaskItem::close()
 {
     //kDebug();
     m_task = 0;
-    finished();
 }
 
 

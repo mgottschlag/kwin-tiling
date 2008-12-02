@@ -769,17 +769,6 @@ QColor AbstractTaskItem::textColor() const
     return color;
 }
 
-
-//inform parent about removal
-void AbstractTaskItem::finished()
-{
-    //kDebug();
-   // if (hasGroup())
-    m_applet->removeItem(this);
-    deleteLater();
-}
-
-
 QString AbstractTaskItem::expanderElement() const
 {
     switch (m_applet->location()) {

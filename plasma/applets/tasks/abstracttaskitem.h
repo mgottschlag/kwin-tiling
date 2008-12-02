@@ -179,7 +179,6 @@ protected:
     AbstractTaskItem * decodeMimedata(const QMimeData *mime);
     virtual void updateTask(::TaskManager::TaskChanges changes) = 0; // pure virtual function
     virtual void updateToolTip() = 0; // pure virtual function
-    void finished();
     QString expanderElement() const;
 
 protected Q_SLOTS:
