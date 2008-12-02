@@ -158,14 +158,13 @@ private:
     GroupPtr m_group;
     //arbitrarily ordered
     QList<AbstractTaskItem*> m_groupMembers;
-    LayoutWidget *m_layoutWidget;
+    LayoutWidget *m_expandedLayout;
     QTimer *m_popupMenuTimer;
     QHash <int, Order> m_taskOrder;
     int m_lastActivated;
     int m_activeTaskIndex;
     int m_maximumRows;
     bool m_forceRows;
-    bool m_isCollapsed;
     int m_splitPosition;
     TaskGroupItem *m_parentSplitGroup;
     TaskGroupItem *m_childSplitGroup;

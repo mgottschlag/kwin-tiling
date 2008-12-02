@@ -59,13 +59,12 @@
 TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet, const bool showTooltip)
     : AbstractTaskItem(parent, applet, showTooltip),
       m_group(0),
-      m_layoutWidget(0),
+      m_expandedLayout(0),
       m_popupMenuTimer(0),
       m_lastActivated(-1),
       m_activeTaskIndex(0),
       m_maximumRows(1),
       m_forceRows(false),
-      m_isCollapsed(true),
       m_splitPosition(0),
       m_parentSplitGroup(0),
       m_childSplitGroup(0)
@@ -76,10 +75,7 @@ TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet, const bool 
 
 bool TaskGroupItem::isSplit()
 {
-    if (m_childSplitGroup) {
-        return true;
-    }
-    return false;
+    return m_childSplitGroup != 0;
 }
 
 void TaskGroupItem::setSplitGroup(TaskGroup *group)
@@ -96,12 +92,14 @@ void TaskGroupItem::setSplitGroup(TaskGroup *group)
 void TaskGroupItem::unsplitGroup()
 {
     //kDebug();
-    if (!isSplit()) {
+    if (!m_childSplitGroup) {
         return;
     }
+
+    Q_ASSERT(m_expandedLayout);
     QList <AbstractTaskItem*> itemList = m_childSplitGroup->memberList();
     foreach (AbstractTaskItem *item, itemList) {
-        m_layoutWidget->addTaskItem(item);
+        m_expandedLayout->addTaskItem(item);
     }
     m_childSplitGroup->deleteLater();
     m_childSplitGroup = 0;
@@ -117,13 +115,14 @@ TaskGroupItem * TaskGroupItem::splitGroup()
 void TaskGroupItem::setSplitIndex(int position)
 {
     //kDebug() << position;
+    Q_ASSERT(m_expandedLayout);
 
     for (int i = position ; i < m_parentSplitGroup->memberList().size() ; i++) {
         //kDebug() << "add item to childSplitGroup" << i;
         if (!m_groupMembers.contains(m_parentSplitGroup->memberList().at(i))) {
             m_groupMembers.insert(i, m_parentSplitGroup->memberList().at(i));
         }
-        m_layoutWidget->addTaskItem(m_parentSplitGroup->memberList().at(i));
+        m_expandedLayout->addTaskItem(m_parentSplitGroup->memberList().at(i));
     }
     m_splitPosition = position;
 }
@@ -132,16 +131,17 @@ void TaskGroupItem::setSplitIndex(int position)
 TaskGroupItem * TaskGroupItem::splitGroup(int newSplitPosition)
 {
     //kDebug() << "split position" << newSplitPosition;
+    Q_ASSERT(m_expandedLayout);
 
     //remove all items which move to the splitgroup
     for (int i = newSplitPosition ; i < m_groupMembers.size() ; i++) {
-        m_layoutWidget->removeTaskItem(m_groupMembers.at(i));
+        m_expandedLayout->removeTaskItem(m_groupMembers.at(i));
         //kDebug() << "remove from parentSplitGroup" << i;
     }
     //add items which arent in the splitgroup anymore and should be displayed again
     if (m_splitPosition) { //if 0 is the init value and shouldn't happen otherwise
         for (int i = m_splitPosition ; i < newSplitPosition ; i++) {
-            m_layoutWidget->addTaskItem(m_groupMembers.at(i));
+            m_expandedLayout->addTaskItem(m_groupMembers.at(i));
             //kDebug() << "add Item to parentSplitGroup" << i;
         }
     }
@@ -323,12 +323,12 @@ void TaskGroupItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
 
     QAction *a;
 
-    if (m_isCollapsed) {
-        a = new QAction(i18n("Expand Group"), this);
-        connect(a, SIGNAL(triggered()), this, SLOT(expand()));
-    } else {
+    if (m_expandedLayout) {
         a = new QAction(i18n("Collapse Group"), this);
         connect(a, SIGNAL(triggered()), this, SLOT(collapse()));
+    } else {
+        a = new QAction(i18n("Expand Group"), this);
+        connect(a, SIGNAL(triggered()), this, SLOT(expand()));
     }
 
     QList <QAction*> actionList;
@@ -375,7 +375,7 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
         //emit changed();
         //m_childSplitGroup->reload();
     } else {
-        m_layoutWidget->addTaskItem(item);
+        m_expandedLayout->addTaskItem(item);
     }
 
     if (item->isActive()) {
@@ -402,10 +402,12 @@ void TaskGroupItem::itemRemoved(TaskManager::AbstractItemPtr groupableItem)
         kDebug() << "Item not found";
         return;
     }
+
     disconnect(item, 0, 0, 0);
     m_groupMembers.removeAll(item);
-    if (!collapsed()) {
-        m_layoutWidget->removeTaskItem(item);
+
+    if (m_expandedLayout) {
+        m_expandedLayout->removeTaskItem(item);
     }
 }
 
@@ -454,7 +456,7 @@ void TaskGroupItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void TaskGroupItem::popupMenu()
 {
-    if (m_isCollapsed) {
+    if (!m_expandedLayout) {
         TaskManager::TasksMenu menu(qobject_cast<QWidget*>(this), m_group,  &m_applet->groupManager(), m_applet);
         menu.adjustSize();
         Q_ASSERT(m_applet->containment());
@@ -474,23 +476,20 @@ void TaskGroupItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void TaskGroupItem::expand()
 {
-    if (!m_isCollapsed) {
+    if (m_expandedLayout) {
         //kDebug() << "already expanded";
         return;
     }
 
     //kDebug();
-    Q_ASSERT(m_group);
-    m_layoutWidget = new LayoutWidget(this, m_applet);
-    m_layoutWidget->setMaximumRows(m_maximumRows);
-    m_layoutWidget->setForceRows(m_forceRows);
-    m_isCollapsed = false;
+    m_expandedLayout = new LayoutWidget(this, m_applet);
+    m_expandedLayout->setMaximumRows(m_maximumRows);
+    m_expandedLayout->setForceRows(m_forceRows);
 
+    //setLayout(m_expandedLayout);
 
-    //setLayout(m_layoutWidget);
-
-    connect(m_applet, SIGNAL(constraintsChanged(Plasma::Constraints)), m_layoutWidget, SLOT(constraintsChanged(Plasma::Constraints)));
-    connect(m_layoutWidget, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updatePreferredSize()));
+    connect(m_applet, SIGNAL(constraintsChanged(Plasma::Constraints)), m_expandedLayout, SLOT(constraintsChanged(Plasma::Constraints)));
+    connect(m_expandedLayout, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updatePreferredSize()));
     updatePreferredSize();
     emit changed();
     //kDebug() << "expanded";
@@ -499,29 +498,29 @@ void TaskGroupItem::expand()
 
 LayoutWidget *TaskGroupItem::layoutWidget()
 {
-    return m_layoutWidget;
+    return m_expandedLayout;
 }
 
 void TaskGroupItem::collapse()
 {
-    if (m_parentSplitGroup) {
-        m_parentSplitGroup->collapse();
-    }
-    if (m_isCollapsed) {
+    if (!m_expandedLayout) {
         //kDebug() << "already collapsed";
         return;
     }
 
+    if (m_parentSplitGroup) {
+        m_parentSplitGroup->collapse();
+    }
+
     //kDebug();
-    m_isCollapsed = true;
     unsplitGroup();
     foreach (AbstractTaskItem *member, m_groupMembers) {
-        m_layoutWidget->removeTaskItem(member);
+        m_expandedLayout->removeTaskItem(member);
     }
     setLayout(0);
     //kDebug();
-    //delete m_layoutWidget;
-    m_layoutWidget = 0;
+    //delete m_expandedLayout;
+    m_expandedLayout = 0;
     updatePreferredSize();
     //kDebug();
     emit changed();
@@ -529,8 +528,7 @@ void TaskGroupItem::collapse()
 
 bool TaskGroupItem::collapsed() const
 {
-    Q_ASSERT(m_group);
-    return m_isCollapsed;
+    return m_expandedLayout == 0;
 }
 
 void TaskGroupItem::updatePreferredSize()
@@ -564,7 +562,7 @@ void TaskGroupItem::paint(QPainter *painter,
                              const QStyleOptionGraphicsItem *option,
                              QWidget *widget)
 {
-    if (m_isCollapsed) {
+    if (!m_expandedLayout) {
         AbstractTaskItem::paint(painter,option,widget);
     }/* else {
         if (m_group) {
@@ -599,11 +597,12 @@ void TaskGroupItem::editGroup()
 void  TaskGroupItem::itemPositionChanged(AbstractItemPtr item)
 {
     //kDebug();
-    if (collapsed()) {
+    if (!m_expandedLayout) {
         return;
     }
+
     Q_ASSERT(item);
-    Q_ASSERT(m_layoutWidget);
+
     if (item->isGroupItem()) {
         //FIXME: why does this m_applet->abstractItem rather than m_applet->groupItem?
         TaskGroupItem *groupItem = static_cast<TaskGroupItem*>(m_applet->abstractItem(item));
@@ -614,15 +613,15 @@ void  TaskGroupItem::itemPositionChanged(AbstractItemPtr item)
 
     AbstractTaskItem *taskItem = m_applet->abstractItem(item);
 
-    m_layoutWidget->removeTaskItem(taskItem);
-    m_layoutWidget->insert(m_group->members().indexOf(item), taskItem);
+    m_expandedLayout->removeTaskItem(taskItem);
+    m_expandedLayout->insert(m_group->members().indexOf(item), taskItem);
 }
 
 
 void TaskGroupItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
     //kDebug()<<"Drag enter";
-    if (event->mimeData()->hasFormat("taskbar/taskItem") && !m_isCollapsed) {
+    if (event->mimeData()->hasFormat("taskbar/taskItem") && !m_expandedLayout) {
         event->acceptProposedAction();
         //kDebug()<<"Drag enter accepted";
     } else {
@@ -737,12 +736,11 @@ void TaskGroupItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 
 void TaskGroupItem::layoutTaskItem(AbstractTaskItem* item, const QPointF &pos)
 {
-    if (collapsed()) {
-    return;
+    if (!m_expandedLayout) {
+        return;
     }
-    Q_ASSERT(m_layoutWidget);
 
-    int insertIndex = m_layoutWidget->insertionIndexAt(pos);
+    int insertIndex = m_expandedLayout->insertionIndexAt(pos);
    // kDebug() << "Item inserting at: " << insertIndex << "of: " << numberOfItems();
     if (insertIndex == -1) {
         m_applet->groupManager().manualSortingRequest(item->abstractItem(), -1);
@@ -759,10 +757,9 @@ void TaskGroupItem::layoutTaskItem(AbstractTaskItem* item, const QPointF &pos)
 
 void TaskGroupItem::updateActive(AbstractTaskItem *task)
 {
-    if (collapsed()) {
-    return;
+    if (!m_expandedLayout) {
+        return;
     }
-    Q_ASSERT(m_layoutWidget);
 
     m_activeTaskIndex = indexOf(task);
 }
@@ -815,8 +812,8 @@ int TaskGroupItem::maxRows()
 void TaskGroupItem::setMaxRows(int rows)
 {
     m_maximumRows = rows;
-    if (m_layoutWidget) {
-        m_layoutWidget->setMaximumRows(m_maximumRows);
+    if (m_expandedLayout) {
+        m_expandedLayout->setMaximumRows(m_maximumRows);
     }
 }
 
@@ -828,14 +825,18 @@ bool TaskGroupItem::forceRows()
 void TaskGroupItem::setForceRows(bool forceRows)
 {
     m_forceRows = forceRows;
-    if (m_layoutWidget) {
-        m_layoutWidget->setForceRows(m_forceRows);
+    if (m_expandedLayout) {
+        m_expandedLayout->setForceRows(m_forceRows);
     }
 }
 
 int TaskGroupItem::optimumCapacity()
 {
-    return layoutWidget()->maximumRows()*layoutWidget()->preferredColumns();
+    if (m_expandedLayout) {
+        return m_expandedLayout->maximumRows() * m_expandedLayout->preferredColumns();
+    }
+
+    return 1;
 }
 
 #include "taskgroupitem.moc"

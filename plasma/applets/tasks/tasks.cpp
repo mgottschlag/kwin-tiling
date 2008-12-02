@@ -92,6 +92,7 @@ void Tasks::init()
     connect(m_groupManager, SIGNAL(itemRemoved(AbstractGroupableItem*)), this, SLOT(itemRemoved(AbstractGroupableItem*)));
 
     m_rootGroupItem = new TaskGroupItem(dynamic_cast<QGraphicsWidget*>(this), this, false);
+    m_rootGroupItem->expand();
     m_rootGroupItem->setGroup(m_groupManager->rootGroup());
 
     /*
@@ -133,7 +134,6 @@ void Tasks::init()
     m_rootGroupItem->setMaxRows( cg.readEntry("maxRows", 2));
     m_rootGroupItem->setForceRows( cg.readEntry("forceRows", false));
 
-    m_rootGroupItem->expand();
     emit settingsChanged();
 }
 
@@ -362,7 +362,7 @@ void Tasks::adjustGroupingStrategy()
     //m_groupManager->setFullLimit(((size().width()*size().height()) / (itemSize.width()*itemSize.height())));  
     //kDebug() << ((size().width()*size().height()) / (itemSize.width()*itemSize.height()));
 
-    m_groupManager->setFullLimit(rootGroupItem()->optimumCapacity());  
+    m_groupManager->setFullLimit(rootGroupItem()->optimumCapacity());
 }
 
 void Tasks::changeSizeHint(Qt::SizeHint which)
