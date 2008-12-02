@@ -201,8 +201,9 @@ WindowTaskItem *Tasks::createWindowTask(TaskManager::TaskItem* taskItem)
 void Tasks::itemRemoved(TaskManager::AbstractGroupableItem *item)
 {
     //kDebug();
-    //FIXME: why only non-group items?
-    if (!item->isGroupItem()) {
+    if (item->isGroupItem()) {
+        removeItem(m_groupTaskItems.value(dynamic_cast<TaskManager::TaskGroup*>(item)));
+    } else {
         removeItem(m_items.value(item));
     }
 }
@@ -211,13 +212,13 @@ void Tasks::itemRemoved(TaskManager::AbstractGroupableItem *item)
 void Tasks::removeItem(AbstractTaskItem *item)
 {
     //kDebug();
-    if (!m_items.contains(m_items.key(item)) || !item) {
+    if (!item) {
         //kDebug() << "Not in list or null pointer";
         return;
     }
 
-    m_items.remove(m_items.key(item));
     if (item->isWindowItem()) {
+        m_items.remove(m_items.key(item));
         WindowTaskItem *windowItem = dynamic_cast<WindowTaskItem*>(item);
         if (m_windowTaskItems.values().contains(windowItem)) {
             m_windowTaskItems.remove(m_windowTaskItems.key(windowItem));
@@ -230,7 +231,6 @@ void Tasks::removeItem(AbstractTaskItem *item)
     }
 
     item->close();
-    removeItem(item);
     item->deleteLater();
 }
 
