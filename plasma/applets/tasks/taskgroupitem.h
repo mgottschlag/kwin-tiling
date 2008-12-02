@@ -158,6 +158,8 @@ private:
     GroupPtr m_group;
     //arbitrarily ordered
     QList<AbstractTaskItem*> m_groupMembers;
+    QHash<AbstractItemPtr,AbstractTaskItem*> m_abstractItems;
+
     LayoutWidget *m_expandedLayout;
     QTimer *m_popupMenuTimer;
     QHash <int, Order> m_taskOrder;

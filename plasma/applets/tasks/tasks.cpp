@@ -561,15 +561,6 @@ TaskGroupItem* Tasks::groupItem(GroupPtr group)
     return 0;
 }
 
-AbstractTaskItem* Tasks::abstractItem(AbstractItemPtr item)
-{
-    if (m_items.contains(item)) {
-        return m_items.value(item);
-    }
-    //kDebug() << "item not found";
-    return 0;
-}
-
 TaskGroupItem* Tasks::rootGroupItem()
 {
     return m_rootGroupItem;

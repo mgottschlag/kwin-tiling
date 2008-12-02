@@ -97,7 +97,6 @@ public:
         TaskGroupItem*  rootGroupItem();
         WindowTaskItem* windowItem(TaskPtr);
         TaskGroupItem*  groupItem(GroupPtr);
-        AbstractTaskItem* abstractItem(AbstractItemPtr);
 
         AbstractTaskItem* createAbstractItem(AbstractItemPtr groupableItem);
         TaskGroupItem* createNewGroup(QList <AbstractTaskItem *> members);

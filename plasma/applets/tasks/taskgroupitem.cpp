@@ -120,6 +120,7 @@ void TaskGroupItem::setSplitIndex(int position)
     for (int i = position ; i < m_parentSplitGroup->memberList().size() ; i++) {
         //kDebug() << "add item to childSplitGroup" << i;
         if (!m_groupMembers.contains(m_parentSplitGroup->memberList().at(i))) {
+            //FIXME: how the other hashes should be adjusted in this case?
             m_groupMembers.insert(i, m_parentSplitGroup->memberList().at(i));
         }
         m_expandedLayout->addTaskItem(m_parentSplitGroup->memberList().at(i));
@@ -130,6 +131,7 @@ void TaskGroupItem::setSplitIndex(int position)
 
 TaskGroupItem * TaskGroupItem::splitGroup(int newSplitPosition)
 {
+    //FIXME: as before, how the other hashes should be adjusted in this case?
     //kDebug() << "split position" << newSplitPosition;
     Q_ASSERT(m_expandedLayout);
 
@@ -366,6 +368,7 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
     }
 
     m_groupMembers.append(item);
+    m_abstractItems[groupableItem] = item;
     item->setParentItem(this);
 
     if (collapsed()) {
@@ -396,7 +399,7 @@ void TaskGroupItem::itemRemoved(TaskManager::AbstractItemPtr groupableItem)
         kDebug() << "No Applet";
         return;
     }
-    AbstractTaskItem *item = m_applet->abstractItem(groupableItem);
+    AbstractTaskItem *item = m_abstractItems.value(groupableItem);
 
     if (!item) {
         kDebug() << "Item not found";
@@ -404,6 +407,7 @@ void TaskGroupItem::itemRemoved(TaskManager::AbstractItemPtr groupableItem)
     }
 
     disconnect(item, 0, 0, 0);
+    m_abstractItems.remove(groupableItem);
     m_groupMembers.removeAll(item);
 
     if (m_expandedLayout) {
@@ -555,7 +559,7 @@ AbstractTaskItem *TaskGroupItem::directMember(AbstractTaskItem *item)
     if (!directMember) {
         kDebug() << "Error" << item->abstractItem();
     }
-    return m_applet->abstractItem(directMember);
+    return m_abstractItems.value(directMember);
 }
 
 void TaskGroupItem::paint(QPainter *painter,
@@ -605,13 +609,13 @@ void  TaskGroupItem::itemPositionChanged(AbstractItemPtr item)
 
     if (item->isGroupItem()) {
         //FIXME: why does this m_applet->abstractItem rather than m_applet->groupItem?
-        TaskGroupItem *groupItem = static_cast<TaskGroupItem*>(m_applet->abstractItem(item));
+        TaskGroupItem *groupItem = static_cast<TaskGroupItem*>(m_abstractItems.value(item));
         if (groupItem) {
             groupItem->unsplitGroup();
         }
     }
 
-    AbstractTaskItem *taskItem = m_applet->abstractItem(item);
+    AbstractTaskItem *taskItem = m_abstractItems.value(item);
 
     m_expandedLayout->removeTaskItem(taskItem);
     m_expandedLayout->insert(m_group->members().indexOf(item), taskItem);
@@ -717,7 +721,7 @@ void TaskGroupItem::dropEvent(QGraphicsSceneDragDropEvent *event)
                             //kDebug() << "Drag within group";
                             layoutTaskItem(taskItem, event->pos());
                         } else { //task item was dragged outside of group -> group move
-                            AbstractTaskItem *directMember = m_applet->abstractItem(m_group->directMember(group));
+                            AbstractTaskItem *directMember = m_abstractItems.value(m_group->directMember(group));
                             if (directMember) {
                                 layoutTaskItem(directMember, event->pos()); //we need to get the group right under the receiver group
                             } else { //group isn't a member of this Group, this is the case if a task is dragged into a expanded group
