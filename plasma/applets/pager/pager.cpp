@@ -966,7 +966,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
                 currentDesktop = qMax(currentDesktop - 1, 0);
             }
 
-            if (!m_rects.isEmpty() && m_rects[currentDesktop].contains(rect)) {
+            if (m_rects.size() > currentDesktop && m_rects[currentDesktop].contains(rect)) {
                 if (m_activeWindows.contains(rect)) {
                     painter->setBrush(activeWindowBrushActiveDesk);
                     painter->setPen(activeWindowPen);
