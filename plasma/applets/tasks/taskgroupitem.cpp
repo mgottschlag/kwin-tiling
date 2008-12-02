@@ -257,16 +257,20 @@ void TaskGroupItem::reload()
     //kDebug();
     m_groupMembers.clear();
 
-    foreach (AbstractItemPtr item,group()->members()) {
+    foreach (AbstractItemPtr item, group()->members()) {
         if (!item) {
             kDebug() << "invalid Item";
             continue;
         }
+
+        itemAdded(item);
+
         if (item->isGroupItem()) {
             TaskGroupItem *groupItem = m_applet->groupItem(qobject_cast<GroupPtr>(item));
-            groupItem->reload();
+            if (groupItem) {
+                groupItem->reload();
+            }
         }
-        itemAdded(item);
     }
 }
 
@@ -380,10 +384,9 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
     } else if (m_group->members().size() == 1) {
         m_activeTaskIndex = 0;
     }
+
     connect(item, SIGNAL(activated(AbstractTaskItem*)),
             this, SLOT(updateActive(AbstractTaskItem*)));
-
-
 }
 
 void TaskGroupItem::itemRemoved(TaskManager::AbstractItemPtr groupableItem)
@@ -602,8 +605,11 @@ void  TaskGroupItem::itemPositionChanged(AbstractItemPtr item)
     Q_ASSERT(item);
     Q_ASSERT(m_layoutWidget);
     if (item->isGroupItem()) {
+        //FIXME: why does this m_applet->abstractItem rather than m_applet->groupItem?
         TaskGroupItem *groupItem = static_cast<TaskGroupItem*>(m_applet->abstractItem(item));
-        groupItem->unsplitGroup();
+        if (groupItem) {
+            groupItem->unsplitGroup();
+        }
     }
 
     AbstractTaskItem *taskItem = m_applet->abstractItem(item);

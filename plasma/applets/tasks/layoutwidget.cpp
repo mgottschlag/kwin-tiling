@@ -313,7 +313,10 @@ void LayoutWidget::layoutItems()
 
         if (item->abstractItem() && item->abstractItem()->isGroupItem()) {
             TaskGroupItem *group = static_cast<TaskGroupItem*>(item);
-            if (!group->collapsed()) {
+            if (group->collapsed()) {
+                group->unsplitGroup();
+                m_layout->addItem(item, row, col, 1, 1);
+            } else {
                 LayoutWidget *layout = group->layoutWidget();
                 if (!layout) {
                     kDebug() << "group has no valid layout";
@@ -335,12 +338,9 @@ void LayoutWidget::layoutItems()
                     m_layout->addItem(item, row, col, 1, groupRowWidth); //Add the normal item
                     //kDebug() << "add unsplit expanded item over columns " << groupRowWidth;
                 }
-                numberOfItems += groupRowWidth - 1;
-            } else {
-                group->unsplitGroup();
-                m_layout->addItem(item, row, col, 1, 1);
-            }
 
+                numberOfItems += groupRowWidth - 1;
+            }
         } else {
             m_layout->addItem(item, row, col, 1, 1);
         }

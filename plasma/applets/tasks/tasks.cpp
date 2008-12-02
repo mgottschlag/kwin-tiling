@@ -83,6 +83,10 @@ void Tasks::init()
         m_groupManager->setScreen(appletContainment->screen());
     }
 
+    //FIXME: the order of creation and setting of items in this method is both fragile (from
+    // personal experience tinking with it) and convoluted. It should be possible to
+    // set up the GroupManager firt, and *then* create the root TaskGroupItem.
+
    // connect(m_groupManager, SIGNAL(reload()), this, SLOT(reload()));
     connect(this, SIGNAL(settingsChanged()), m_groupManager, SLOT(reconnect()));
     connect(m_groupManager, SIGNAL(itemRemoved(AbstractGroupableItem*)), this, SLOT(itemRemoved(AbstractGroupableItem*)));
@@ -156,8 +160,6 @@ WindowTaskItem * Tasks::createStartingTask(TaskManager::TaskItem* task)
     return item;
 }
 
-
-
 void Tasks::removeStartingTask(StartupPtr task)
 {
     if (m_startupTaskItems.contains(task)) {
@@ -197,6 +199,7 @@ WindowTaskItem *Tasks::createWindowTask(TaskManager::TaskItem* taskItem)
 void Tasks::itemRemoved(TaskManager::AbstractGroupableItem *item)
 {
     //kDebug();
+    //FIXME: why only non-group items?
     if (!item->isGroupItem()) {
         removeItem(m_items.value(item));
     }
@@ -219,6 +222,7 @@ void Tasks::removeItem(AbstractTaskItem *item)
             m_startupTaskItems.remove(m_startupTaskItems.key(windowItem));
         }
     } else {
+        //FIXME: this code is NEVER reached! memory leak?!
         m_groupTaskItems.remove(m_groupTaskItems.key(dynamic_cast<TaskGroupItem*>(item)));
     }
     item->close();
@@ -262,6 +266,7 @@ TaskGroupItem *Tasks::createTaskGroup(GroupPtr group)
     Q_ASSERT(m_rootGroupItem);
 
     TaskGroupItem *item;
+    //FIXME: these items NEVER get removed from m_groupTaskItems!
     if (!m_groupTaskItems.contains(group)) {
         item = new TaskGroupItem(m_rootGroupItem, this, m_showTooltip);
         item->setGroup(group);
