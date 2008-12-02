@@ -55,6 +55,7 @@ class Clock : public ClockApplet
 
     private:
         void updateSize();
+        bool showTimezone() const;
         QRect preparePainter(QPainter *p, const QRect &rect, const QFont &font, const QString &text, const bool singleline = false);
 
         QFont m_plainClockFont;

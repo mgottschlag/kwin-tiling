@@ -57,15 +57,18 @@ class ClockApplet::Private
 public:
     Private(ClockApplet *clockapplet)
         : q(clockapplet),
-          timezone(ClockApplet::localTimezone())
+          timezone(ClockApplet::localTimezone()),
+          forceTzDisplay(false)
     {}
 
     ClockApplet *q;
     Ui::timezonesConfig ui;
     QString timezone;
+    QString defaultTimezone;
     QPoint clicked;
     QStringList selectedTimezones;
     QString prettyTimezone;
+    bool forceTzDisplay;
 
     void addTzToTipText(QString &subText, QString tz) 
     {
@@ -224,9 +227,9 @@ void ClockApplet::configAccepted()
 
     if (d->ui.clockDefaultsTo->currentIndex() == 0) {
         //The first position in ui.clockDefaultsTo is "Local"
-        newTimezone = localTimezone();
+        d->defaultTimezone = localTimezone();
     } else {
-        newTimezone = d->ui.clockDefaultsTo->currentText();
+        d->defaultTimezone = d->ui.clockDefaultsTo->currentText();
     }
 
     changeEngineTimezone(currentTimezone(), newTimezone);
@@ -263,6 +266,11 @@ void ClockApplet::changeEngineTimezone(const QString &oldTimezone, const QString
     // reimplemented by subclasses to get the new data
     Q_UNUSED(oldTimezone);
     Q_UNUSED(newTimezone);
+}
+
+bool ClockApplet::shouldDisplayTimezone() const
+{
+    return d->forceTzDisplay;
 }
 
 void ClockApplet::wheelEvent(QGraphicsSceneWheelEvent *event)
@@ -302,6 +310,7 @@ void ClockApplet::wheelEvent(QGraphicsSceneWheelEvent *event)
     changeEngineTimezone(currentTimezone(), newTimezone);
     setCurrentTimezone(newTimezone);
 
+    d->forceTzDisplay = newTimezone != d->defaultTimezone;
     update();
 }
 
@@ -324,7 +333,7 @@ void ClockApplet::init()
 {
     KConfigGroup cg = config();
     d->selectedTimezones = cg.readEntry("timeZones", QStringList());
-    d->timezone = cg.readEntry("timezone", d->timezone);
+    d->defaultTimezone = d->timezone = cg.readEntry("timezone", d->timezone);
     if (d->timezone == "UTC")  {
         d->prettyTimezone = d->timezone;
     } else if (!isLocalTimezone()) {
