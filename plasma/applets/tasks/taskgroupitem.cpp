@@ -265,7 +265,7 @@ void TaskGroupItem::reload()
         itemAdded(item);
 
         if (item->isGroupItem()) {
-            TaskGroupItem *groupItem = m_applet->groupItem(qobject_cast<GroupPtr>(item));
+            TaskGroupItem *groupItem = qobject_cast<TaskGroupItem*>(item);
             if (groupItem) {
                 groupItem->reload();
             }
@@ -315,7 +315,8 @@ void TaskGroupItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
         return;
     }
     Q_ASSERT(m_applet);
-    if (this == m_applet->rootGroupItem()) {
+    //we are the master group item
+    if (m_applet == parentWidget()) {
         e->ignore();
         return;
     }
