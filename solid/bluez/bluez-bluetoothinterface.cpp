@@ -167,8 +167,9 @@ void BluezBluetoothInterface::requestSession()
 
 void BluezBluetoothInterface::setProperty(const QString &property, const QVariant &value)
 {
-    d->iface.call("SetProperty",property,value);
+    d->iface.call("SetProperty",property, qVariantFromValue(QDBusVariant(value)));
 }
+
 
 void BluezBluetoothInterface::startDiscovery()
 {

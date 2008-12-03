@@ -25,10 +25,8 @@
 
 #include <kdemacros.h>
 #include <QtDBus>
-#include <QVariant>
 #include <QDBusVariant>
 #include <QDBusObjectPath>
-#include <QMetaType>
 
 #include <solid/control/ifaces/bluetoothinterface.h>
 
@@ -84,7 +82,7 @@ public Q_SLOTS:
     void releaseSession();
     void removeDevice(const QString &);
     void requestSession();
-    void setProperty(const QString &, const QVariant &);
+    void setProperty(const QString &,const QVariant&);
     void startDiscovery();
     void stopDiscovery();
     void unregisterAgent(const QString &);
@@ -132,6 +130,8 @@ private:
     QString stringReply(const QString &method, const QString &param = "") const;
     bool boolReply(const QString &method, const QString &param = "") const;
     QDBusObjectPath objectReply(const QString &method, const QString &param = "" ) const;
+
+
 };
 
 #endif
