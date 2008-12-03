@@ -21,9 +21,6 @@
 
 #include "kuiserverengine.h"
 
-
-#include <kdebug.h>
-
 #include <plasma/servicejob.h>
 
 class JobAction : public Plasma::ServiceJob
