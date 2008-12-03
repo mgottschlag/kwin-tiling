@@ -14,6 +14,7 @@ X-KDE-System-Settings-Parent-Category=keyboard-and-mouse
 X-KDE-Weight=70
 
 Comment=Joystick settings
+Comment[ar]=إعدادات عصى الألعاب
 Comment[be@latin]=Nałady džojstyka
 Comment[ca]=Arranjament de la palanca de control
 Comment[de]=Joystick-Einstellungen
@@ -24,6 +25,7 @@ Comment[ga]=Socruithe an luamháin stiúrtha
 Comment[gl]=Configuración do Joystick
 Comment[gu]=જોયસ્ટિક ગોઠવણીઓ
 Comment[he]=הגדרות ג'ויסטיק
+Comment[hi]=जॉयस्टिक विन्यास
 Comment[hsb]=Nastajenja za joystick
 Comment[it]=Impostazioni joystick
 Comment[ja]=ジョイスティックの設定

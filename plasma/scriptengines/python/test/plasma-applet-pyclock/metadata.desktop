@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Python Clock
+Name[ar]=ساعة بايثون
 Name[be@latin]=Hadzińnik dla „Python”
 Name[ca]=Rellotge en Python
 Name[de]=Python-Uhr
@@ -10,6 +11,7 @@ Name[et]=Pythoni kell
 Name[gl]=Reloxo en Python
 Name[gu]=પાયથોન ઘડિયાળ
 Name[he]=שעון של פייתון
+Name[hi]=पायथन घड़ी
 Name[it]=Orologio Python
 Name[ja]=Python 時計
 Name[kk]=Python сағаты

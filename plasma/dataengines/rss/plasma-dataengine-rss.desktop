@@ -1,10 +1,13 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=RSS
+Name[ar]=أر أس أس
+Name[hi]=आरएसएस
 Name[ru]=Ленты RSS
 Name[th]=หัวข้อข่าว (RSS)
 Name[x-test]=xxRSSxx
 Comment=RSS News Data Engine
+Comment[ar]=محرك بيانات الخلاصات
 Comment[be@latin]=Systema navinaŭ z žarołaŭ „RSS”
 Comment[ca]=Motor de dades de notícies RSS
 Comment[de]=Datentreiber für RSS-News
@@ -13,6 +16,7 @@ Comment[es]=Motor de RSS
 Comment[et]=RSS-voogude andmete mootor
 Comment[gl]=Motor de dados de novas RSS
 Comment[gu]=RSS સમાચાર માહિતી એન્જિન
+Comment[hi]=आरएसएस समाचार डाटा इंजिन
 Comment[it]=Motore dati notizie RSS
 Comment[ja]=RSS ニュースデータエンジン
 Comment[kk]=RSS жаңалық деректер тетігі

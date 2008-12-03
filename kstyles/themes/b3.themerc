@@ -1,7 +1,8 @@
 [Misc]
 Name=B3/KDE
-Name[ar]=B3/كدي
+Name[ar]=B3/الكيدي
 Name[fr]=B3 / KDE
+Name[hi]=B3/केडीई 
 Name[kn]=ಬಿ೩/ಕೆಡಿಇ
 Name[ne]=बी३/केडीई
 Name[sr]=Б3/КДЕ
@@ -31,6 +32,7 @@ Comment[ga]=B3/Mionathrú ar B2
 Comment[gl]=B3/Modificación de B2
 Comment[gu]=B3/B2 નો ફેરફાર
 Comment[he]=B3/שינוי של B2
+Comment[hi]=B3/ B2 का संशोधन
 Comment[hsb]=B3/modifikacija wot B2
 Comment[hu]=B3: Feljavított B2 stílus
 Comment[is]=B3/Breyting á B2

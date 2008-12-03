@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Application Notifications
+Name[ar]=تنبيهات التطبيقات
 Name[be@latin]=Infarmavańni aplikacyj
 Name[ca]=Notificacions de les aplicacions
 Name[de]=Anwendungs-Benachrichtigungen
@@ -9,6 +10,7 @@ Name[et]=Rakenduste märguanded
 Name[gl]=Notificacións dos programas
 Name[gu]=કાર્યક્રમ નોંધણીઓ
 Name[he]=הודעות מערכת
+Name[hi]=अनुप्रयोग सूचनाएँ
 Name[it]=Applicaizione notifiche
 Name[ja]=アプリケーションの通知
 Name[kk]=Қолданба құлақтандырулары

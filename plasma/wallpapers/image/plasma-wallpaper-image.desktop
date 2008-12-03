@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=Image
+Name[ar]=الصور
 Name[be@latin]=Vyjava
 Name[ca]=Imatge
 Name[cs]=Obrázek
@@ -12,6 +13,7 @@ Name[ga]=Íomhá
 Name[gl]=Imaxe
 Name[gu]=ચિત્ર
 Name[he]=תמונה
+Name[hi]=छवि
 Name[it]=Immagine
 Name[ja]=画像
 Name[kk]=Кескіні
@@ -54,6 +56,7 @@ X-KDE-PluginInfo-EnabledByDefault=true
 
 [Desktop Action SingleImage]
 Name=Image
+Name[ar]=الصور
 Name[be@latin]=Vyjava
 Name[ca]=Imatge
 Name[cs]=Obrázek
@@ -65,6 +68,7 @@ Name[ga]=Íomhá
 Name[gl]=Imaxe
 Name[gu]=ચિત્ર
 Name[he]=תמונה
+Name[hi]=छवि
 Name[it]=Immagine
 Name[ja]=画像
 Name[kk]=Кескіні
@@ -97,6 +101,7 @@ Exec=plasma
 
 [Desktop Action Slideshow]
 Name=Slideshow
+Name[ar]=عرض شرائح
 Name[be@latin]=Słajdy
 Name[ca]=Passi de diapositives
 Name[de]=Diaschau
@@ -107,6 +112,7 @@ Name[ga]=Taispeántas Sleamhnán
 Name[gl]=Presentación
 Name[gu]=સ્લાઇડશો
 Name[he]=מצגת
+Name[hi]=स्लाइड-शो
 Name[it]=Presentazione
 Name[ja]=スライドショー
 Name[kk]=Слайд көрсетілімі

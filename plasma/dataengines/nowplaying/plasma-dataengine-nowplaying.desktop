@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Now Playing
+Name[ar]=المشغلة حاليا
 Name[be@latin]=Ciapier hraje
 Name[ca]=Ara està en reproducció
 Name[cs]=Nyní přehrávám
@@ -10,6 +11,7 @@ Name[et]=Praegu mängitakse
 Name[gl]=A reproducir
 Name[gu]=અત્યારે વગાડે છે
 Name[he]=מנגן כעת
+Name[hi]=अभी बजाया जा रहा है
 Name[it]=In riproduzione
 Name[ja]=今聴いているもの
 Name[kk]=Қазір ойнауда
@@ -35,7 +37,7 @@ Name[zh_CN]=正在收听
 Name[zh_TW]=現正播放
 
 Comment=Lists currently playing music
-Comment[ar]=قائمة بالمقاطع الموسيقية الحالية
+Comment[ar]=قائمة الموسيقى المشغلة الحالية
 Comment[be@latin]=Pakazvaje muzyku, jakuju ciapier hraje systema
 Comment[ca]=Llista la música que s'està reproduint actualment
 Comment[cs]=Vypíše aktuálně přehrávanou hudbu
@@ -51,6 +53,7 @@ Comment[ga]=Taispeáin an ceol á sheinm faoi láthair
 Comment[gl]=Lista a música que está a tocar
 Comment[gu]=વાગતું સંગીત દર્શાવે છે
 Comment[he]=רשימת מוזיקה המנוגנת כעת
+Comment[hi]=मौज़ूदा बज रहे संगीत की सूची
 Comment[hu]=Kiírja az éppen lejátszott zene jellemzőit
 Comment[it]=Mostra la musica attualmente in riproduzione
 Comment[ja]=今聴いているものを表示します

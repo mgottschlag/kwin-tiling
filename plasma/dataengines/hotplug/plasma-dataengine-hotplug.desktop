@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Hotplug Events
+Name[ar]=أحداث التوصيل
 Name[be@latin]=Źjaŭleńnie novych pryładaŭ
 Name[ca]=Esdeveniments de connexió en calent
 Name[de]=Hotplug-Ereignisse
@@ -8,6 +9,7 @@ Name[es]=Eventos en caliente
 Name[et]=Hotplug-sündmused
 Name[gl]=Eventos de Hotplug
 Name[gu]=હોટપ્લગ ઇવેન્ટ્સ
+Name[hi]=हाटप्लग घटनाएँ
 Name[it]=Eventi di collegamento a caldo
 Name[ja]=Hotplug イベント
 Name[kk]=Істеп турғанда қосу оқиғалар

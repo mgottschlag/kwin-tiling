@@ -1,9 +1,11 @@
 [Desktop Entry]
 Name=GoogleGadgets
+Name[ar]=ودجات جوجل
 Name[de]=Google Gadgets (Miniprogramme)
 Name[el]=Συστατικά Google
 Name[es]=GadgetDeGoogle
 Name[gu]=ગુગલગેજેટ્સ
+Name[hi]=गूगल-गजेट
 Name[ja]=Google ガジェット
 Name[km]=ឧបករណ៍​​ហ្គូហ្គល
 Name[kn]=ಗೂಗಲ್ ಯಂತ್ರೋಪಕರಣಗಳು
@@ -20,6 +22,7 @@ Name[x-test]=xxGoogleGadgetsxx
 Name[zh_CN]=Google 小工具
 Name[zh_TW]=Google小工具
 Comment=Google Desktop Gadgets
+Comment[ar]=ودجات سطح المكتب من جوجل
 Comment[be@latin]=Gadžety rabočaha stała „Google”
 Comment[ca]=Google Gadgets d'escriptori
 Comment[de]=Google-Arbeitsflächen-Miniprogramme
@@ -28,6 +31,7 @@ Comment[es]=Gadgets de escritorio de Google
 Comment[et]=Google'i töölauavidinad
 Comment[gl]=Gadgets de Google para o escritorio
 Comment[gu]=ગુગલ ડેસ્કટોપ ગેજેટ્સ
+Comment[hi]=गूगल डेस्कटॉप गज़ेट
 Comment[it]=Gadgets di Google Desktop
 Comment[ja]=Google デスクトップガジェット
 Comment[kk]=Google Үстел аспаптары

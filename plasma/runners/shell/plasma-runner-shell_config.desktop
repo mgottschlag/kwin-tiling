@@ -7,13 +7,16 @@ X-KDE-ParentComponents=shell
 X-KDE-PluginKeyword=kcm_krunner_shell
 
 Name=Shell Runner Config
+Name[ar]=صبط مشغل الشل
 Name[be@latin]=Nałady zahadnaha radka
 Name[ca]=Configuració de l'intèrpret de l'executador
 Name[de]=Einrichtung des Terminal-Starters
 Name[el]=Ρύθμιση εκτελεστή κελύφους
+Name[es]=Configuración de ejecución de línea de comandos
 Name[et]=Shelli käivitaja seadistused
 Name[gl]=Configuración do executor de shell
 Name[gu]=શૅલ ચલાવનારનું રૂપરેખાંકન
+Name[hi]=शैल रनर कॉन्फ़िग
 Name[it]=Configurazione Shell Runner
 Name[ja]=シェル Runner の設定
 Name[kk]=Қоршау-орта жегу баптауы

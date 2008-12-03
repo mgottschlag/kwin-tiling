@@ -391,56 +391,6 @@ Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 [Data_1_10]
 Comment=Opera-style: Press, move up, release.\nNOTE: Conflicts with 'New Tab', and as such is disabled by default.
 Comment[af]=Opera-styl: Kliek, skuif op, los.\nLet wel: konflik met 'Nuwe oortjie', en word daarom by verstek afgeskakel.
-Comment[ar]=نمط أوبرا اضغط حرك للاعلى ثم اترك \nNOTE: فتح لسان جديد غير مفعل افتراضياً
-Comment[bg]=Стил Opera: натискане, движение нагоре, пускане.\nЗАБЕЛЕЖКА:Има конфликт с "Нов подпрозорец" и затова е изключено по подразбиране.
-Comment[ca]=Estil Opera: premeu, moveu amunt,deixeu anar.\nNota: els conflictes amb 'Pestanya nova', i similars s'han deshabilitat per omissió.
-Comment[csb]=Sztél Òperë: wcësni, do górë, pùszczë. \nBôczënk: Zwaga z 'Nowô kôrta', në to je domëszlno wëłączoné
-Comment[da]=Opera-agtig: Tryk, bevæg op, slip.\nBemærk: Konflikter med 'Nyt faneblad' og er derfor deaktiveret som standard.
-Comment[de]=Opera-Stil: Drücken, nach oben, loslassen.\nHinweis: Dies steht in Konflikt mit der Aktion „Neues Unterfenster“ und ist daher in der Voreinstellung nicht aktiviert.
-Comment[el]=Στυλ Opera: Πιέστε, μετακινήστε πάνω, ελευθερώστε.\nΣΗΜΕΙΩΣΗ: Αυτό συγκρούεται με την 'Νέα καρτέλα', και οπότε είναι προκαθορισμένα απενεργοποιημένο.
-Comment[eo]=Opera-stilo: Premu, iru supren, malpremu.\nNOTU: Malakordas kun "Nova langeto", tial estas malebligita defaŭlte.
-Comment[es]=Estilo Opera: Pulse, arriba, suelte.\nATENCIÓN: Choca con 'Nuevo tabulador' y está deshabilitado por defecto.
-Comment[et]=Opera stiilis: vajuta, liiguta üles, vabasta.\nMärkus: konfliktis toiminguga 'Uus kaart' ja seetõttu vaikimisi välja lülitatud.
-Comment[fa]=سبک اَپرا: فشار، حرکت به بالا، رها کردن.\nنکته: ناسازگار با »تب جدید«، و به طور پیش‌فرض غیر فعال.
-Comment[fi]=Opera-tyylinen paina, siirrä ylös ja vapauta.\nHuomaa, että tämä on ristiriidassa "Uusi välilehti" toiminnon kanssa ja sen takia oletuksena pois päältä.
-Comment[fr]=Style Opera : cliquez, déplacement vers le haut, relâchez.\nRemarque : entre en conflit avec « Nouvel onglet » et est donc désactivé par défaut.
-Comment[fy]=Opera-styl: yndrukke, nei omheech, loslitte.\nTink derom: Konflikten mei 'Nije ljepper', en sa binne standert útskeakele.
-Comment[ga]=De chineál Opera: Brúigh, bog suas, scaoil.\nNÓTA: Tagann sé seo salach ar 'Cluaisín Nua' agus dá bhrí sin tá sé díchumasaithe de réir réamhshocraithe.
-Comment[gl]=Estilo do Opera: Premer, subir, soltar.\nNOTA: Entra en conflito con "Nova páxina", e por ende está desactivado por omisión.
-Comment[gu]=ઓપેરા-રીત: દબાવો, ઉપર ખસેડો, છોડો.\nનોંધ: 'નવી ટેબ' સાથે મુશ્કેલી કરે છે, અને જે મૂળભૂત રીતે નિષ્ક્રિય છે.
-Comment[he]=נוסח Opera: לחץ, הזז למעלה, שחרר.\nשים לב: מחווה זו מתנגשת עם "לשונית חדשה" ולכן היא אינה מאופשרת כברירת מחדל.
-Comment[hsb]=Opera-stil: Stłóčić, horje suwać, pušćić.\nKedźbu: Konflikt z  'Nowy tabulator', a tohodla jako standard hasnjene.
-Comment[hu]=Opera-stílusú: lenyomás, fel, elengedés.\nMegjegyzés: ütközik az 'Új lap' paranccsal, ezért alapértelmezésben le van tiltva.
-Comment[it]=Stile Opera: Premi, sposta in su, rilascia.\nNOTA: È in conflitto con "Nuova scheda", e quindi è normalmente disabilitato.
-Comment[ja]=Opera スタイル: マウスの中ボタンを押したまま、マウスを上に動かし、ボタンを放します。\n【注意】 「新規タブ」と競合するため、標準設定では無効になっています。
-Comment[kk]=Opera-стилі: Бас, жоғарға жүгірт, босат.\nЕСКЕРТУ: 'Жаңа қойынды' дегенмен қайшылықта, сондықтан әдетте рұқсат етілмеген.
-Comment[km]=រចនាប័ទ្ម Opera ៖ ចុច​ ផ្លាស់ទី​ឡើង​លើ លែង ។\nចំណាំ ៖ មាន​ការ​ប៉ទង្គិច​ជាមួយ 'ផ្ទាំង​ថ្មី' ហើយ​តាម​លំនាំ​ដើម​មិន​ត្រូវ​បាន​អនុញ្ញាត​ឡើយ ។
-Comment[kn]=ಓಪರಾ-ಶೈಲಿ:ಒತ್ತು, ಮೇಲಕ್ಕೆ ಚಲಿಸು, ಮುಕ್ತಗೊಳಿಸು.\ಸೂಚನೆ: 'ಹೊಸ ಹಾಳೆ' ಯೊಡನೆ ಘರ್ಷಣೆ ಹಾಗೂ ಇತ್ಯಾದಿಗಳನ್ನು ಪೂರ್ವನಿಯೋಜಿತವಾಗಿ ಅಶಕ್ತಗೊಳಿಸಲಾಗಿದೆ.
-Comment[ko]=오페라 스타일: 누르고, 위로 이동하고, 놓기.\n메모: '새 탭'과 충돌하므로 기본적으로 사용하지 않습니다.
-Comment[lv]=Opera stils; nospiest, uz augšu, atlaist.\nPIEZĪME: Konfliktē ar 'Jauna Cilne' un tāpēc noklusēti ir izslēgts.
-Comment[ml]=Opera-style: അമര്‍ത്തുക, മുകളിലേയ്ക്ക്, വിടുക.\nNOTE: Conflicts with 'New Tab', and as such is disabled by default.
-Comment[nb]=Opera-stil: Trykk, flytt oppover, slipp.\nMerk: Slått av som standard pga. konflikt med «Ny fane».
-Comment[nds]=Opera-Stil: Drücken, na baven, looslaten.\nBeacht: Verdreegt sik nich mit "Nieg Paneel" un is dorüm standardwies utmaakt.
-Comment[ne]=ओपेरा-शैली: थिच्नुहोस्, माथि सार्नुहोस्, छोड्नुहोस् ।\nद्रष्टब्य: 'नयाव ट्याब' सँग द्वन्द गर्दछ, र पूर्वनिर्धारितद्वारा अक्षम गरिन्छ ।
-Comment[nl]=Opera-stijl: indrukken, omhoog bewegen, loslaten.\nOpmerking: botst met 'Nieuw tabblad', en is standaard uitgeschakeld.
-Comment[nn]=Opera-stil: Trykk, flytt opp, slepp.\nMERK: Konflikt med «Ny fane», og er derfor slått av som standard.
-Comment[pl]=Styl Opery: naciśnij, do góry, puść.\nUWAGA: Konflikt z 'Nowa karta', więc jest domyślnie wyłączone.
-Comment[pt]=Estilo Opera: Carregar, mover para cima, largar.\nNOTA: Existem conflitos com a 'Nova Página', por isso está desactivado por omissão.
-Comment[pt_BR]=Estilo Opera: Pressionar, mover para cima, largar.\nNOTA: Conflita com 'Nova Aba', e por isso está desativado por padrão.
-Comment[sk]=Štýl-Opery: Stlačte, presuňte sa nahor, pustite.\nPOZNÁMKA: Spôsobuje konflikt s 'Nový panel' a preto je štandardne vypnuté.
-Comment[sl]=V slogu Opere: pritisnite, premaknite gor, spustite.\nOPOMBA: Je v sporu z »Nov zavihek« in je zato privzeto onemogočeno.
-Comment[sr]=У стилу Опере: притисни, горе, отпусти.\nНапомена: У сукобу са „Нови језичак“, па зато подразумевано искључено.
-Comment[sr@latin]=U stilu Opere: pritisni, gore, otpusti.\nNapomena: U sukobu sa „Novi jezičak“, pa zato podrazumevano isključeno.
-Comment[sv]=Enligt Opera: Tryck ner, flytta uppåt, släpp.\nObservera: Ger konflikt med "Ny flik", och är därför normalt inte aktiverad.
-Comment[te]=Opera-శైలి: వత్తుము, పైకికదుపుము, వదులుము.\nగమనిక: 'కొత్త టాబ్' తో విభేదాలు, అది అప్రమేయంగా అచేతనం చేయబడినకారణంగా.
-Comment[th]=รูปแบบโอเปร่า: กด, ลากขึ้น, ปล่อย\nข้อควรทราบ: ขัดแย้งกับ 'แท็บใหม่' โดยปริยายแล้วรูปแบบนี้จะถูกปิดการทำงาน
-Comment[tr]=Opera-biçimi: Bas, yukarı taşı, bırak.\nNOT: 'Yeni Sekme' ile çakışır ve öntanımlı olarak pasifleştirilmiştir.
-Comment[uk]=У стилі Opera: Натиснути, пересунути вгору, відпустити.\nЗАУВАЖЕННЯ: Конфліктує з жестом "Нова вкладка", тому цей жест типово вимкнено.
-Comment[vi]=Kiểu Opera: bấm, chuyên lên, nhả.\nGHI CHÚ : xung đột với hành động « Thẻ mới » thì bị tắt theo mặc định.
-Comment[wa]=Stîle Opera: tchôkîz, montez, rilåtchîz.\nNOTE: Les afrontmints avou « Novele linwete » et ôtes sont prémetous essoctés.
-Comment[x-test]=xxOpera-style: Press, move up, release.\nNOTE: Conflicts with 'New Tab', and as such is disabled by default.xx
-Comment[zh_CN]=Opera 风格：按下，向上移动，释放。\n注意：和“新建标签页”冲突，并且默认是禁用的。
-Comment[zh_TW]=Opera 風格：按下，往上移，再放開。\n注意：會與「新增分頁」衝突，預設為關閉。
 Enabled=false
 Name=Stop Loading
 Name[af]=Staak laaiproses
@@ -572,7 +522,7 @@ Type=GESTURE
 
 [Data_1_11]
 Comment=Going up in URL/directory structure.\nMozilla-style: Press, move up, move left, move up, release.
-Comment[ar]=انتقل للرابط السابق. \nMozilla-style: اضغط حرك للاعلى ، حرك لليسار ثم اترك
+Comment[ar]=انتقل للرابط السابق. \nMozilla-style: اضغط حرك للأعلى ، حرك لليسار ثم اترك
 Comment[bg]=Едно ниво нагоре в директорията..\nСтил Мозила: натискане, движение нагоре, движение наляво, движение нагоре, пускане.
 Comment[ca]=Anar cap amunt per l'URL/estructura de directoris.\nEstil Mozilla: premeu, moveu amunt, moveu a l'esquerra, moveu amunt, deixeu anar.
 Comment[csb]=Przejsce wëżi w sztrukturze URL/kataloga. \nSztél Mozillë: wcësni, do górë, w lewò, do górë, pùszczë.
@@ -753,7 +703,7 @@ Type=GESTURE
 
 [Data_1_12]
 Comment=Going up in URL/directory structure.\nOpera-style: Press, move up, move left, move up, release.\nNOTE: Conflicts with  "Activate Previous Tab", and as such is disabled by default.
-Comment[ar]=انتقل للرابط السابق. \nOpera-style: اضغط حرك للاعلى ، حرك لليسار ثم اترك \nNOTE: اعداد باستخدام  "فعل اللسان السابق", كأنه غير المفعل افتراضياً
+Comment[ar]=انتقل للرابط السابق. \nOpera-style: اضغط حرك للأعلى ، حرك لليسار ثم اترك \nNOTE: إعداد باستخدام  "فعل اللسان السابق", كأنه غير المفعل افتراضياً
 Comment[bg]=Едно ниво нагоре.\nСтил Opera: натискане, движение нагоре, движение наляво, движение нагоре, пускане.\nЗАБЕЛЕЖКА:Има конфликт с "Активиране на предишен подпрозорец" и затова е изключено по подразбиране.
 Comment[ca]=Anar cap amunt per l'URL/estructura de directoris.\nEstil Opera: premeu, moveu amunt, moveu a l'esquerra, moveu amunt, deixeu anar.\nNota: els conflictes amb 'Pestanya nova', i similars s'han deshabilitat per omissió.
 Comment[da]=Går op i URL/mappe-struktur.\nOpera-agtig: Tryk, bevæg op, bevæg til venstre, bevæg op. slip.\nBemærk: Konflikter med "Aktivér forrige faneblad", og er derfor deaktiveret som standard.
@@ -915,7 +865,7 @@ Type=GESTURE
 
 [Data_1_13]
 Comment=Press, move up, move right, release.
-Comment[ar]=اضغط ، تحرك للاعلى ، تحرك لليمين، افلت
+Comment[ar]=اضغط ، تحرك للأعلى ، تحرك لليمين، افلت
 Comment[be@latin]=Pryciśni, pasuń uvierch, pasuń uprava j adciśni.
 Comment[bg]=Натискане, движение нагоре, движение надясно, пускане.
 Comment[ca]=Premeu, moveu amunt, moveu a la dreta, deixeu anar.
@@ -1097,7 +1047,7 @@ Type=GESTURE
 
 [Data_1_14]
 Comment=Press, move up, move left, release.
-Comment[ar]=اضغط ، تحرك للاعلى ، تحرك لليسار ، افلت
+Comment[ar]=اضغط ، تحرك للأعلى ، تحرك لليسار ، افلت
 Comment[be@latin]=Pryciśni, pasuń uvierch, pasuń uleva j adciśni.
 Comment[bg]=Натискане, движение нагоре, движение наляво, пускане.
 Comment[ca]=Premeu, moveu amunt, moveu a l'esquerra, deixeu anar.
@@ -1339,7 +1289,7 @@ Type=GESTURE
 
 [Data_1_2]
 Comment=Press, move down, move up, move down, release.
-Comment[ar]=اضغط ، تحرك للاسفل، تحرك للاعلى ، تحرك للاسفل ، افلت
+Comment[ar]=اضغط ، تحرك للأسفل، تحرك للأعلى ، تحرك للأسفل ، افلت
 Comment[be@latin]=Pryciśni, pasuń uniz, pasuń uvierch, pasuń uniz i adciśni.
 Comment[bg]=Натискане, движение надолу, движение нагоре, движение надолу, пускане.
 Comment[ca]=Premeu, moveu avall, moveu amunt, moveu avall, deixeu anar.
@@ -1519,7 +1469,7 @@ Type=GESTURE
 
 [Data_1_3]
 Comment=Press, move down, move up, release.
-Comment[ar]=اضغط ، تحرك للاسفل، تحرك للاعلى ، افلت
+Comment[ar]=اضغط ، تحرك للأسفل، تحرك للأعلى ، افلت
 Comment[be@latin]=Pryciśni, pasuń uniz, pasuń uvierch i adciśni.
 Comment[bg]=Натискане, движение надолу, движение нагоре, пускане.
 Comment[ca]=Premeu, moveu avall, moveu amunt, deixeu anar.
@@ -1891,7 +1841,7 @@ Type=GESTURE
 
 [Data_1_5]
 Comment=Press, move down, move half up, move right, move down, release.\n(Drawing a lowercase 'h'.)
-Comment[ar]=اضغط ، تحرك للاسفل، تحرك لنص اعلى ، تحرك لليمين ، حرك للاسفل ، افلت.\n(رسم a احرف صغيرة'h'.)
+Comment[ar]=اضغط ، تحرك للأسفل، تحرك لنص أعلى ، تحرك لليمين ، حرك للأسفل ، افلت.\n(رسم a احرف صغيرة'h'.)
 Comment[bg]=Натискане, движение надясно, полудвижение нагоре, движение надясно, движение надолу, пускане.\n(Пише се малка буква "h".)
 Comment[ca]=Premeu, moveu avall, moveu la meitat cap amunt, moveu a la dreta, deixeu anar.\n(Dibuixant una 'h' minúscula)
 Comment[da]=Tryk, bevæg ned, bevæg halvt op, bevæg til højre, bevæg ned, slip.\n(Tegner et lille 'h'.)
@@ -2083,7 +2033,7 @@ Type=GESTURE
 
 [Data_1_6]
 Comment=Press, move right, move down, move right, release.\nMozilla-style: Press, move down, move right, release.
-Comment[ar]=اضغط ، تحرك لليمين ، تحرك اسفل ، تحرك لليمين ، حرك للاسفل ، افلت.\nنمط موزيريلا: اضغط, حرك اسفل ، حرك يمين ، افلت
+Comment[ar]=اضغط ، تحرك لليمين ، تحرك اسفل ، تحرك لليمين ، حرك للأسفل ، افلت.\nنمط موزيريلا: اضغط, حرك اسفل ، حرك يمين ، افلت
 Comment[bg]=Натискане, движение надолу, движение нагоре, движение надолу, пускане.
 Comment[ca]=Premeu, moveu a la dreta, moveu avall, moveu a la dreta, deixeu anar.\nEstil Mozilla: premeu, moveu avall, moveu a la dreta, deixeu anar.
 Comment[da]=Tryk, bevæg til højre, bevæg ned, bevæg til højre, slip.\nMozilla-agtig: Tryk, bevæg ned, bevæg til højre, slip.
@@ -2267,7 +2217,7 @@ Type=GESTURE
 
 [Data_1_7]
 Comment=Press, move up, release.\nConflicts with Opera-style 'Up #2', which is disabled by default.
-Comment[ar]=اضغط ،حرك للاعلى، افلت \nنمط اوبرا اعلى #2', غير المفعل افتراضياً
+Comment[ar]=اضغط ،حرك للأعلى، افلت \nنمط اوبرا أعلى #2', غير المفعل مبدئيا
 Comment[bg]=Натискане, движение нагоре, пускане.\nИма конфликт със стила на Opera "Нагоре 2", който е по подразбиране.
 Comment[ca]=Premeu, moveu amunt, deixeu anar.\nConflictes amb l'estil Opera 'Amunt 2', que està deshabilitat per omissió.
 Comment[da]=Tryk, bevæg op, slip.\nI konflikt med Opera-agtig 'Op #2', som er deaktiveret som standard.

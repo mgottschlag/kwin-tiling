@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Dictionary
+Name[ar]=القاموس
 Name[be@latin]=Słoŭnik
 Name[ca]=Diccionari
 Name[cs]=Slovník
@@ -10,6 +11,7 @@ Name[et]=Sõnaraamat
 Name[gl]=Dicionario
 Name[gu]=ડિક્શનરી
 Name[he]=מילון
+Name[hi]=शब्दकोश
 Name[it]=Dizionario
 Name[ja]=辞書
 Name[kk]=Сөздік
@@ -54,6 +56,7 @@ Comment[ga]=Aimsigh sainmhíniú ar fhocal
 Comment[gl]=Procura o significado de palabras
 Comment[gu]=શબ્દનાં અર્થો શોધો
 Comment[he]=בדיקת משמעות מלה
+Comment[hi]=शब्द का अर्थ देखें
 Comment[hu]=Értelmező szótár
 Comment[is]=Flettu upp merkingu orða
 Comment[it]=Cerca il significato di una parola
