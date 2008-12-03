@@ -100,8 +100,6 @@ public:
 
     int optimumCapacity();
 
-    WindowTaskItem* windowItem(TaskItem*);
-    TaskGroupItem*  groupItem(GroupPtr);
     AbstractTaskItem* abstractItem(AbstractItemPtr);
 
 signals:
@@ -113,7 +111,8 @@ signals:
 
 public slots:
     virtual void activate();
-    /**
+    /**    TaskGroupItem*  groupItem(GroupPtr);
+
     *   Reload all tasks
     */
     void reload();
@@ -157,9 +156,6 @@ private slots:
     void popupMenu();
 
 private:
-
-    //AbstractGroupableItem *itemAt(int index);
-
     QHash<StartupPtr,WindowTaskItem*> m_startupTaskItems;
 
     AbstractTaskItem* createAbstractItem(AbstractItemPtr groupableItem);
@@ -168,7 +164,6 @@ private:
     TaskGroupItem * createTaskGroup(GroupPtr);
     WindowTaskItem *createStartingTask(TaskManager::TaskItem* task);
 
-    void removeStartingTask(StartupPtr);
     void removeItem(AbstractTaskItem *item);
 
     void layoutTaskItem(AbstractTaskItem* item, const QPointF &pos);

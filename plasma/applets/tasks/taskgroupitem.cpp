@@ -1,22 +1,22 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Robert Knight <robertknight@gmail.com>          *
- *   Copyright (C) 2008 by Alexis Ménard <darktears31@gmail.com>           *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                       *
- *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
- ***************************************************************************/
+*   Copyright (C) 2007 by Robert Knight <robertknight@gmail.com>          *
+*   Copyright (C) 2008 by Alexis Ménard <darktears31@gmail.com>           *
+*                                                                         *
+*   This program is free software; you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 2 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+*   This program is distributed in the hope that it will be useful,       *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU General Public License for more details.                          *
+*                                                                         *
+*   You should have received a copy of the GNU General Public License     *
+*   along with this program; if not, write to the                         *
+*   Free Software Foundation, Inc.,                                       *
+*   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
+***************************************************************************/
 
 // Own
 #include "taskgroupitem.h"
@@ -58,16 +58,16 @@
 
 TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet, const bool showTooltip)
     : AbstractTaskItem(parent, applet, showTooltip),
-      m_group(0),
-      m_expandedLayout(0),
-      m_popupMenuTimer(0),
-      m_lastActivated(-1),
-      m_activeTaskIndex(0),
-      m_maximumRows(1),
-      m_forceRows(false),
-      m_splitPosition(0),
-      m_parentSplitGroup(0),
-      m_childSplitGroup(0)
+    m_group(0),
+    m_expandedLayout(0),
+    m_popupMenuTimer(0),
+    m_lastActivated(-1),
+    m_activeTaskIndex(0),
+    m_maximumRows(1),
+    m_forceRows(false),
+    m_splitPosition(0),
+    m_parentSplitGroup(0),
+    m_childSplitGroup(0)
 {
     setAcceptDrops(true);
 }
@@ -120,7 +120,7 @@ void TaskGroupItem::setSplitIndex(int position)
 
     for (int i = position ; i < m_parentSplitGroup->group()->members().size() ; i++) {
         //kDebug() << "add item to childSplitGroup" << i;
-	AbstractGroupableItem *item = m_parentSplitGroup->group()->members().at(i);
+        AbstractGroupableItem *item = m_parentSplitGroup->group()->members().at(i);
         if (!m_groupMembers.contains(item)) {
             //FIXME: how the other hashes should be adjusted in this case?
             m_groupMembers.insert(item, m_parentSplitGroup->abstractItem(item));
@@ -130,11 +130,6 @@ void TaskGroupItem::setSplitIndex(int position)
     m_splitPosition = position;
 }
 
-/*AbstractGroupableItem *TaskGroupItem::itemAt(int index)
-{
-     return group()->members().at(index);
-}
-*/
 TaskGroupItem * TaskGroupItem::splitGroup(int newSplitPosition)
 {
     //FIXME: as before, how the other hashes should be adjusted in this case?
@@ -143,14 +138,14 @@ TaskGroupItem * TaskGroupItem::splitGroup(int newSplitPosition)
 
     //remove all items which move to the splitgroup
     for (int i = newSplitPosition ; i < m_groupMembers.size() ; i++) {
-	AbstractGroupableItem *item = m_parentSplitGroup->group()->members().at(i);
+        AbstractGroupableItem *item = m_parentSplitGroup->group()->members().at(i);
         m_expandedLayout->removeTaskItem(abstractItem(item));
         //kDebug() << "remove from parentSplitGroup" << i;
     }
     //add items which arent in the splitgroup anymore and should be displayed again
     if (m_splitPosition) { //if 0 is the init value and shouldn't happen otherwise
         for (int i = m_splitPosition ; i < newSplitPosition ; i++) {
-	    AbstractGroupableItem *item = m_parentSplitGroup->group()->members().at(i);
+            AbstractGroupableItem *item = m_parentSplitGroup->group()->members().at(i);
             m_expandedLayout->addTaskItem(abstractItem(item));
             //kDebug() << "add Item to parentSplitGroup" << i;
         }
@@ -186,7 +181,7 @@ void TaskGroupItem::activate()
 
 void TaskGroupItem::close()
 {
-  //  m_applet->removeGroupTask(m_group);
+//  m_applet->removeGroupTask(m_group);
     m_group = 0;
 }
 
@@ -235,8 +230,8 @@ void TaskGroupItem::updateTask(::TaskManager::TaskChanges changes)
 
     if (m_showingTooltip &&
         (changes & TaskManager::IconChanged ||
-         changes & TaskManager::NameChanged ||
-         changes & TaskManager::DesktopChanged)) {
+        changes & TaskManager::NameChanged ||
+        changes & TaskManager::DesktopChanged)) {
         updateToolTip();
     }
 
@@ -254,7 +249,7 @@ void TaskGroupItem::updateToolTip()
 
     Plasma::ToolTipContent data(m_group->name(),
                                 i18nc("Which virtual desktop a window is currently on", "On %1",
-                                      KWindowSystem::desktopName(m_group->desktop())));
+                                    KWindowSystem::desktopName(m_group->desktop())));
 //    data.image = m_group->icon().pixmap(QSize::small);
 //    data.windowToPreview = m_task->window();
 
@@ -275,7 +270,7 @@ void TaskGroupItem::reload()
         itemAdded(item);
 
         if (item->isGroupItem()) {
-            TaskGroupItem *group = groupItem(qobject_cast<GroupPtr>(item));
+            TaskGroupItem *group = qobject_cast<TaskGroupItem *>(abstractItem(item));
             if (group) {
                 group->reload();
             }
@@ -360,31 +355,27 @@ QList<AbstractTaskItem*> TaskGroupItem::memberList() const
 
 
 
-
-
-
-
-
 AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractItemPtr groupableItem)
 {
     AbstractTaskItem *item = 0;
 
-        if (groupableItem->isGroupItem()) {
-            item = dynamic_cast<AbstractTaskItem*>(createTaskGroup(dynamic_cast<GroupPtr>(groupableItem)));
+    if (groupableItem->isGroupItem()) {
+        item = dynamic_cast<AbstractTaskItem*>(createTaskGroup(dynamic_cast<GroupPtr>(groupableItem)));
+    } else {
+        TaskManager::TaskItem* task = dynamic_cast<TaskManager::TaskItem*>(groupableItem);
+        if (!task->task()) { //startuptask
+            item = dynamic_cast<AbstractTaskItem*>(createStartingTask(task));
         } else {
-            TaskManager::TaskItem* task = dynamic_cast<TaskManager::TaskItem*>(groupableItem);
-            if (!task->task()) { //startuptask
-                item = dynamic_cast<AbstractTaskItem*>(createStartingTask(task));
-            } else {
-                item = dynamic_cast<AbstractTaskItem*>(createWindowTask(task));
-            }
+            item = dynamic_cast<AbstractTaskItem*>(createWindowTask(task));
         }
-        m_groupMembers.insert(groupableItem,item);
-  
+    }
+
     if (!item) {
         //kDebug() << "invalid Item";
         return 0;
     }
+
+    //m_groupMembers.insert(groupableItem,item);
 
     return item;
 }
@@ -400,15 +391,6 @@ WindowTaskItem * TaskGroupItem::createStartingTask(TaskManager::TaskItem* task)
     return item;
 }
 
-void TaskGroupItem::removeStartingTask(StartupPtr task)
-{
-    if (m_startupTaskItems.contains(task)) {
-        WindowTaskItem *item = m_startupTaskItems.take(task);
-        item->close();
-        removeItem(item);
-        item->deleteLater();
-    }
-}
 
 WindowTaskItem *TaskGroupItem::createWindowTask(TaskManager::TaskItem* taskItem)
 {
@@ -416,7 +398,7 @@ WindowTaskItem *TaskGroupItem::createWindowTask(TaskManager::TaskItem* taskItem)
     TaskPtr task = taskItem->task();
 
     foreach (const StartupPtr &startup, m_startupTaskItems.keys()) {
-        if (startup->matchesWindow(task->window())) {
+        if (startup->matchesWindow(task->window())) { //FIXME there is still a startup task in m_groupMembers since item removed was never called
             item = dynamic_cast<WindowTaskItem *>(m_startupTaskItems.take(startup));
             Q_ASSERT(item);
             item->setWindowTask(taskItem);
@@ -429,7 +411,6 @@ WindowTaskItem *TaskGroupItem::createWindowTask(TaskManager::TaskItem* taskItem)
         item->setWindowTask(taskItem);
     }
 
-    m_groupMembers.insert(taskItem, item);
     return item;
     //kDebug();
 }
@@ -447,7 +428,6 @@ TaskGroupItem *TaskGroupItem::createTaskGroup(GroupPtr group)
     if (!m_groupMembers.contains(group)) {
         item = new TaskGroupItem(m_applet->rootGroupItem(), m_applet, m_showTooltip);
         item->setGroup(group);
-        m_groupMembers.insert(group, item);
     } else {
         item = static_cast<TaskGroupItem*>(m_groupMembers.value(group));
     }
@@ -497,7 +477,7 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
             this, SLOT(updateActive(AbstractTaskItem*)));
 
     //connect(item, SIGNAL(destroyed(AbstractTaskItem*)),
-           // this, SLOT(removeItem(AbstractTaskItem*)));
+        // this, SLOT(removeItem(AbstractTaskItem*)));
 }
 
 void TaskGroupItem::itemRemoved(TaskManager::AbstractItemPtr groupableItem)
@@ -533,23 +513,17 @@ void TaskGroupItem::removeItem(AbstractTaskItem *item)
     }
 
     m_groupMembers.remove(m_groupMembers.key(item));
+
     if (item->isWindowItem()) {
         WindowTaskItem *windowItem = dynamic_cast<WindowTaskItem*>(item);
-        if (m_groupMembers.values().contains(windowItem)) {
-            m_groupMembers.remove(m_groupMembers.key(windowItem));
-        } else if (m_startupTaskItems.values().contains(windowItem)) {
+        if (m_startupTaskItems.values().contains(windowItem)) {
             m_startupTaskItems.remove(m_startupTaskItems.key(windowItem));
         }
-    } else {
-        //FIXME: this code is NEVER reached! memory leak?!
-        m_groupMembers.remove(m_groupMembers.key(item));
     }
 
     item->close();
-    removeItem(item);
     item->deleteLater();
 }
-
 
 
 bool TaskGroupItem::isWindowItem() const
@@ -678,7 +652,7 @@ void TaskGroupItem::updatePreferredSize()
         //kDebug() << "expanded group" << layout()->preferredSize();
     } else {
         //FIXME: copypaste from abstracttaskitem: to be done better with proper sizeHint()
-	setPreferredSize(basicPreferredSize());
+        setPreferredSize(basicPreferredSize());
     }
     //kDebug() << preferredSize();
     emit sizeHintChanged(Qt::PreferredSize);
@@ -698,8 +672,8 @@ AbstractTaskItem *TaskGroupItem::directMember(AbstractTaskItem *item)
 }
 
 void TaskGroupItem::paint(QPainter *painter,
-                             const QStyleOptionGraphicsItem *option,
-                             QWidget *widget)
+                            const QStyleOptionGraphicsItem *option,
+                            QWidget *widget)
 {
     if (!m_expandedLayout) {
         AbstractTaskItem::paint(painter,option,widget);
@@ -724,8 +698,8 @@ void TaskGroupItem::editGroup()
     if (m_applet->groupManager().taskGrouper()->editableGroupProperties() & TaskManager::AbstractGroupingStrategy::Name) {
         bool ok;
         QString text = QInputDialog::getText(qobject_cast<QWidget*>(this), tr("Edit Group"),
-                                             tr("New Group Name: "), QLineEdit::Normal,
-                                             m_group->name(), &ok);
+                                            tr("New Group Name: "), QLineEdit::Normal,
+                                            m_group->name(), &ok);
         if (ok && !text.isEmpty()) {
             m_group->setName(text);
         }
@@ -793,9 +767,9 @@ void TaskGroupItem::dropEvent(QGraphicsSceneDragDropEvent *event)
         }
 
         //grouping stuff
-         //if (m_taskItems.contains(taskItem)) {
-               // Q_ASSERT(m_groupItem);
-               // kDebug()<< "Task has Group";
+        //if (m_taskItems.contains(taskItem)) {
+            // Q_ASSERT(m_groupItem);
+            // kDebug()<< "Task has Group";
 
                 bool noTargetTask = false;
                 AbstractTaskItem *targetTask = 0;
@@ -880,7 +854,7 @@ void TaskGroupItem::layoutTaskItem(AbstractTaskItem* item, const QPointF &pos)
     }
 
     int insertIndex = m_expandedLayout->insertionIndexAt(pos);
-   // kDebug() << "Item inserting at: " << insertIndex << "of: " << numberOfItems();
+// kDebug() << "Item inserting at: " << insertIndex << "of: " << numberOfItems();
     if (insertIndex == -1) {
         m_applet->groupManager().manualSortingRequest(item->abstractItem(), -1);
     } else {
@@ -888,7 +862,7 @@ void TaskGroupItem::layoutTaskItem(AbstractTaskItem* item, const QPointF &pos)
             m_applet->groupManager().manualSortingRequest(item->abstractItem(), insertIndex);
         } else {
             m_applet->groupManager().manualSortingRequest(item->abstractItem(), insertIndex +
-                                                          m_parentSplitGroup->memberList().size());
+                                                        m_parentSplitGroup->memberList().size());
         }
     }
 }
@@ -976,24 +950,6 @@ int TaskGroupItem::optimumCapacity()
     }
 
     return 1;
-}
-
-WindowTaskItem* TaskGroupItem::windowItem(TaskItem *task)
-{
-    if (m_groupMembers.contains(static_cast<AbstractGroupableItem*>(task))) {
-        return static_cast<WindowTaskItem*>(m_groupMembers.value(static_cast<AbstractGroupableItem*>(task)));
-    }
-    //kDebug() << "item not found";
-    return 0;
-}
-
-TaskGroupItem* TaskGroupItem::groupItem(GroupPtr group)
-{
-    if (m_groupMembers.contains(static_cast<AbstractGroupableItem*>(group))) {
-        return static_cast<TaskGroupItem*>(m_groupMembers.value(static_cast<AbstractGroupableItem*>(group)));
-    }
-    //kDebug() << "item not found";
-    return 0;
 }
 
 AbstractTaskItem* TaskGroupItem::abstractItem(AbstractItemPtr item)
