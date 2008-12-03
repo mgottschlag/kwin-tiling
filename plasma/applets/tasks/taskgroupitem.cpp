@@ -136,14 +136,14 @@ TaskGroupItem * TaskGroupItem::splitGroup(int newSplitPosition)
 
     //remove all items which move to the splitgroup
     for (int i = newSplitPosition ; i < m_groupMembers.size() ; i++) {
-        AbstractGroupableItem *item = m_parentSplitGroup->group()->members().at(i);
+        AbstractGroupableItem *item = group()->members().at(i);
         m_expandedLayout->removeTaskItem(abstractItem(item));
         //kDebug() << "remove from parentSplitGroup" << i;
     }
     //add items which arent in the splitgroup anymore and should be displayed again
     if (m_splitPosition) { //if 0 is the init value and shouldn't happen otherwise
         for (int i = m_splitPosition ; i < newSplitPosition ; i++) {
-            AbstractGroupableItem *item = m_parentSplitGroup->group()->members().at(i);
+            AbstractGroupableItem *item = group()->members().at(i);
             m_expandedLayout->addTaskItem(abstractItem(item));
             //kDebug() << "add Item to parentSplitGroup" << i;
         }

@@ -77,7 +77,7 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet, const
     Plasma::ToolTipManager::self()->registerWidget(this);
     setPreferredSize(basicPreferredSize());
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(syncActiveRect()));
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(update()));
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(queueUpdate()));
     connect(applet, SIGNAL(settingsChanged()), this, SLOT(checkSettings()));
 }
 

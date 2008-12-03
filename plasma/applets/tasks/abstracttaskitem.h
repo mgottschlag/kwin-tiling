@@ -138,9 +138,6 @@ protected:
     void dragMoveEvent(QGraphicsSceneDragDropEvent *event);
     void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
 
-    /** Event compression **/
-    void queueUpdate();
-
     // reimplemented
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
@@ -182,6 +179,9 @@ protected:
     QString expanderElement() const;
 
 protected Q_SLOTS:
+    /** Event compression **/
+    void queueUpdate();
+
     void animationUpdate(qreal progress);
     void syncActiveRect();
     void checkSettings();
