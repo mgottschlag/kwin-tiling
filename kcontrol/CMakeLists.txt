@@ -22,6 +22,7 @@ add_subdirectory( energy )
 add_subdirectory( access )
 add_subdirectory( screensaver )
 add_subdirectory( dateandtime )
+add_subdirectory( autostart )
 endif(NOT WIN32)
 
 add_subdirectory( launch )
@@ -38,7 +39,6 @@ endif(X11_Xinerama_FOUND)
 #add_subdirectory( kthememanager )
 
 add_subdirectory( hardware )
-add_subdirectory(autostart)
 
 if(FONTCONFIG_FOUND AND FREETYPE_FOUND AND NOT WIN32)
     add_subdirectory( fonts )
