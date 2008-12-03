@@ -52,29 +52,36 @@ void AlphaSortingStrategy::sortItems(ItemList &items)
     foreach (AbstractGroupableItem *groupable, items) {
         if (groupable->isGroupItem()) {
             TaskGroup *group = qobject_cast<TaskGroup*>(groupable);
-            if (group) {
-                map.insertMulti(group->name(), group);
-            }
-        } else {
-            TaskItem *item = qobject_cast<TaskItem*>(groupable);
-            if (!item)  {
-                kDebug() << "Wrong object type";
+            if (!group) {
                 continue;
             }
 
-            if (!item->task()) {
-                kDebug() << "Null Pointer";
-                continue;
-            }
-
-            //sort by programname not windowname
-            //kDebug() << "inserting multi item" <<  item->task()->classClass();
-            map.insertMulti(item->task()->classClass(), item);
+            map.insertMulti(group->name().toLower(), groupable);
+            continue;
         }
+
+
+        TaskItem *item = qobject_cast<TaskItem*>(groupable);
+        if (!item)  {
+            kDebug() << "Wrong object type";
+            continue;
+        }
+
+        if (!item->task()) {
+            kDebug() << "Null Pointer";
+            continue;
+        }
+
+        //sort by programname not windowname
+        //kDebug() << "inserting multi item" <<  item->task()->classClass();
+        map.insertMulti(item->task()->classClass().toLower(), groupable);
     }
 
     items.clear();
-    items = map.values();
+    QMapIterator<QString, AbstractGroupableItem *> it(map);
+    while (it.hasNext()) {
+        items << it.next().value();
+    }
 }
 
 } //namespace
