@@ -223,8 +223,6 @@ void ClockApplet::configAccepted()
     d->selectedTimezones = d->ui.timeZones->selection();
     cg.writeEntry("timeZones", d->selectedTimezones);
 
-    QString newTimezone;
-
     if (d->ui.clockDefaultsTo->currentIndex() == 0) {
         //The first position in ui.clockDefaultsTo is "Local"
         d->defaultTimezone = localTimezone();
@@ -232,8 +230,8 @@ void ClockApplet::configAccepted()
         d->defaultTimezone = d->ui.clockDefaultsTo->currentText();
     }
 
-    changeEngineTimezone(currentTimezone(), newTimezone);
-    setCurrentTimezone(newTimezone);
+    changeEngineTimezone(currentTimezone(), d->defaultTimezone );
+    setCurrentTimezone(d->defaultTimezone );
 
     clockConfigAccepted();
     constraintsEvent(Plasma::SizeConstraint);
