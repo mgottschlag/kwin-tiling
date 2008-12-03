@@ -75,7 +75,7 @@ bool RssEngine::updateSourceEvent(const QString &name)
     // may and do contain commas see http://www.spiegel.de/schlagzeilen/rss/0,5291,,00.xml
     // I have changed it to something more not url compliant " " three dots
     // Otherwise take a list instead
-    QStringList sources = name.split(" ", QString::SkipEmptyParts);
+    const QStringList sources = name.split(" ", QString::SkipEmptyParts);
 
     foreach (const QString& source, sources) {
         // Let's first see if we've got a recent cached version of
@@ -233,7 +233,7 @@ void RssEngine::updateFeeds(const QString & source, const QString & title)
      * TODO: can this be improved? I'm calling mergeFeeds way too
      * often here...
      */
-    QVariantList list = mergeFeeds(source);
+    const QVariantList list = mergeFeeds(source);
     setData(source, "items", list);
     QStringList sources = source.split(" ", QString::SkipEmptyParts);
     if (sources.size() >  1) {
