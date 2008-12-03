@@ -160,7 +160,7 @@ private:
     QHash<TaskPtr,WindowTaskItem*> m_windowTaskItems;
     QHash<GroupPtr,TaskGroupItem*> m_groupTaskItems;
     QHash<StartupPtr,WindowTaskItem*> m_startupTaskItems;
-    QHash<AbstractItemPtr,AbstractTaskItem*> m_abstractItems;
+    QHash<AbstractItemPtr,AbstractTaskItem*> m_items;
 
     AbstractTaskItem* createAbstractItem(AbstractItemPtr groupableItem);
     TaskGroupItem* createNewGroup(QList <AbstractTaskItem *> members);

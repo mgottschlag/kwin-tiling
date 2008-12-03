@@ -470,7 +470,7 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
     }
 
     m_groupMembers.append(item);
-    m_abstractItems[groupableItem] = item;
+    m_items[groupableItem] = item;
     item->setParentItem(this);
 
     if (collapsed()) {
@@ -512,7 +512,7 @@ void TaskGroupItem::itemRemoved(TaskManager::AbstractItemPtr groupableItem)
     }
 
     disconnect(item, 0, 0, 0);
-    m_abstractItems.remove(groupableItem);
+    m_items.remove(groupableItem);
     m_groupMembers.removeAll(item);
 
     if (m_expandedLayout) {
