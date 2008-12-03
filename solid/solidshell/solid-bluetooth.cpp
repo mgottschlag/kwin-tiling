@@ -414,11 +414,9 @@ bool SolidBluetooth::bluetoothListAdapters()
 {
     Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
 
-    QStringList all = manager.bluetoothInterfaces();
-
-    foreach (QString device, all)
+    foreach (Solid::Control::BluetoothInterface device, manager.bluetoothInterfaces())
     {
-        cout << "UBI = '" << device << "'" << endl;
+        cout << "UBI = '" << device.ubi() << "'" << endl;
     }
     return true;
 }
