@@ -184,6 +184,7 @@ protected:
 protected Q_SLOTS:
     void animationUpdate(qreal progress);
     void syncActiveRect();
+    void checkSettings();
 
 protected:
     // area of item occupied by task's icon

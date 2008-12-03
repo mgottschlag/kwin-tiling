@@ -122,7 +122,6 @@ void TaskGroupItem::setSplitIndex(int position)
         //kDebug() << "add item to childSplitGroup" << i;
         AbstractGroupableItem *item = m_parentSplitGroup->group()->members().at(i);
         if (!m_groupMembers.contains(item)) {
-            //FIXME: how the other hashes should be adjusted in this case?
             m_groupMembers.insert(item, m_parentSplitGroup->abstractItem(item));
         }
         m_expandedLayout->addTaskItem(abstractItem(item));
@@ -132,7 +131,6 @@ void TaskGroupItem::setSplitIndex(int position)
 
 TaskGroupItem * TaskGroupItem::splitGroup(int newSplitPosition)
 {
-    //FIXME: as before, how the other hashes should be adjusted in this case?
     //kDebug() << "split position" << newSplitPosition;
     Q_ASSERT(m_expandedLayout);
 
@@ -424,7 +422,6 @@ TaskGroupItem *TaskGroupItem::createTaskGroup(GroupPtr group)
     Q_ASSERT(m_applet->rootGroupItem());
 
     TaskGroupItem *item;
-    //FIXME: these items NEVER get removed from m_groupTaskItems!
     if (!m_groupMembers.contains(group)) {
         item = new TaskGroupItem(m_applet->rootGroupItem(), m_applet, m_showTooltip);
         item->setGroup(group);
@@ -445,7 +442,6 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
     }
 
     //returns the corresponding item or creates a new one
-    //AbstractTaskItem *item = m_applet->createAbstractItem(groupableItem);
     AbstractTaskItem *item = createAbstractItem(groupableItem);
 
     if (!item) {
@@ -476,8 +472,6 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
     connect(item, SIGNAL(activated(AbstractTaskItem*)),
             this, SLOT(updateActive(AbstractTaskItem*)));
 
-    //connect(item, SIGNAL(destroyed(AbstractTaskItem*)),
-        // this, SLOT(removeItem(AbstractTaskItem*)));
 }
 
 void TaskGroupItem::itemRemoved(TaskManager::AbstractItemPtr groupableItem)

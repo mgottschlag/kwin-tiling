@@ -61,7 +61,6 @@ Tasks::Tasks(QObject* parent, const QVariantList &arguments)
     m_screenTimer.setSingleShot(true);
     m_screenTimer.setInterval(300);
     resize(500, 58);
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeRefresh()));
 
     setAcceptDrops(true);
 
@@ -100,7 +99,6 @@ void Tasks::init()
     }
     */
 
-    m_groupTaskItems.insert(m_rootGroupItem->group(), m_rootGroupItem);
     connect(m_rootGroupItem, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(changeSizeHint(Qt::SizeHint)));
 
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
@@ -377,12 +375,6 @@ void Tasks::configAccepted()
 
     if (m_showTooltip != (m_ui.showTooltip->checkState() == Qt::Checked)) {
         m_showTooltip = !m_showTooltip;
-        foreach (AbstractTaskItem *taskItem, m_windowTaskItems) {
-            WindowTaskItem *windowTaskItem = dynamic_cast<WindowTaskItem *>(taskItem);
-            if (windowTaskItem) {
-                windowTaskItem->setShowTooltip(m_showTooltip);
-            }
-        }
         KConfigGroup cg = config();
         cg.writeEntry("showTooltip", m_showTooltip);
         changed = true;
@@ -395,6 +387,11 @@ void Tasks::configAccepted()
     }
 }
 
+bool Tasks::showTooltip() const
+{
+    return m_showTooltip;
+}
+
 
 
 void Tasks::themeRefresh()
@@ -404,10 +401,6 @@ void Tasks::themeRefresh()
 
     delete m_colorScheme;
     m_colorScheme = 0;
-
-    foreach (WindowTaskItem *taskItem, m_windowTaskItems) {
-        taskItem->update(); //FIXME: do we also have to update the group items? probably yes
-    }
 }
 
 

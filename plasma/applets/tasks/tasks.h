@@ -100,6 +100,8 @@ public:
 
         Qt::KeyboardModifiers groupModifierKey() const;
 
+        bool showTooltip() const;
+
 
 signals:
     /**
@@ -129,13 +131,6 @@ private slots:
         void dialogGroupingChanged(int index);
 
 private:
-        QHash<TaskPtr,WindowTaskItem*> m_windowTaskItems;
-        QHash<GroupPtr,TaskGroupItem*> m_groupTaskItems;
-        QHash<StartupPtr,WindowTaskItem*> m_startupTaskItems;
-        QHash<AbstractItemPtr,AbstractTaskItem*> m_items;
-
-        
-
         bool m_showTooltip;
         Plasma::LayoutAnimator *m_animator;
         QGraphicsLinearLayout *layout;

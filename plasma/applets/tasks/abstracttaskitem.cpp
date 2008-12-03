@@ -77,6 +77,8 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet, const
     Plasma::ToolTipManager::self()->registerWidget(this);
     setPreferredSize(basicPreferredSize());
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(syncActiveRect()));
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(update()));
+    connect(applet, SIGNAL(settingsChanged()), this, SLOT(checkSettings()));
 }
 
 QSize AbstractTaskItem::basicPreferredSize() const
@@ -107,6 +109,13 @@ AbstractTaskItem::~AbstractTaskItem()
     }
 
     Plasma::ToolTipManager::self()->unregisterWidget(this);
+}
+
+void AbstractTaskItem::checkSettings()
+{
+    if (m_showTooltip != m_applet->showTooltip()) {
+        m_showTooltip = !m_showTooltip;
+    }
 }
 
 void AbstractTaskItem::setShowTooltip(const bool showit)
