@@ -100,7 +100,7 @@ public:
 
     int optimumCapacity();
 
-    WindowTaskItem* windowItem(TaskPtr);
+    WindowTaskItem* windowItem(TaskItem*);
     TaskGroupItem*  groupItem(GroupPtr);
     AbstractTaskItem* abstractItem(AbstractItemPtr);
 
@@ -157,10 +157,10 @@ private slots:
     void popupMenu();
 
 private:
-    QHash<TaskPtr,WindowTaskItem*> m_windowTaskItems;
-    QHash<GroupPtr,TaskGroupItem*> m_groupTaskItems;
+
+    //AbstractGroupableItem *itemAt(int index);
+
     QHash<StartupPtr,WindowTaskItem*> m_startupTaskItems;
-    QHash<AbstractItemPtr,AbstractTaskItem*> m_items;
 
     AbstractTaskItem* createAbstractItem(AbstractItemPtr groupableItem);
     TaskGroupItem* createNewGroup(QList <AbstractTaskItem *> members);
@@ -175,8 +175,8 @@ private:
     void setSplitIndex(int position);
 
     GroupPtr m_group;
-    //arbitrarily ordered
-    QList<AbstractTaskItem*> m_groupMembers;
+
+    QHash<AbstractItemPtr,AbstractTaskItem*> m_groupMembers;
 
     LayoutWidget *m_expandedLayout;
     QTimer *m_popupMenuTimer;

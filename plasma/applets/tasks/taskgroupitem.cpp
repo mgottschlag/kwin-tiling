@@ -116,19 +116,25 @@ void TaskGroupItem::setSplitIndex(int position)
 {
     //kDebug() << position;
     Q_ASSERT(m_expandedLayout);
+    Q_ASSERT(m_parentSplitGroup);
 
-    for (int i = position ; i < m_parentSplitGroup->memberList().size() ; i++) {
+    for (int i = position ; i < m_parentSplitGroup->group()->members().size() ; i++) {
         //kDebug() << "add item to childSplitGroup" << i;
-        if (!m_groupMembers.contains(m_parentSplitGroup->memberList().at(i))) {
+	AbstractGroupableItem *item = m_parentSplitGroup->group()->members().at(i);
+        if (!m_groupMembers.contains(item)) {
             //FIXME: how the other hashes should be adjusted in this case?
-            m_groupMembers.insert(i, m_parentSplitGroup->memberList().at(i));
+            m_groupMembers.insert(item, m_parentSplitGroup->abstractItem(item));
         }
-        m_expandedLayout->addTaskItem(m_parentSplitGroup->memberList().at(i));
+        m_expandedLayout->addTaskItem(abstractItem(item));
     }
     m_splitPosition = position;
 }
 
-
+/*AbstractGroupableItem *TaskGroupItem::itemAt(int index)
+{
+     return group()->members().at(index);
+}
+*/
 TaskGroupItem * TaskGroupItem::splitGroup(int newSplitPosition)
 {
     //FIXME: as before, how the other hashes should be adjusted in this case?
@@ -137,13 +143,15 @@ TaskGroupItem * TaskGroupItem::splitGroup(int newSplitPosition)
 
     //remove all items which move to the splitgroup
     for (int i = newSplitPosition ; i < m_groupMembers.size() ; i++) {
-        m_expandedLayout->removeTaskItem(m_groupMembers.at(i));
+	AbstractGroupableItem *item = m_parentSplitGroup->group()->members().at(i);
+        m_expandedLayout->removeTaskItem(abstractItem(item));
         //kDebug() << "remove from parentSplitGroup" << i;
     }
     //add items which arent in the splitgroup anymore and should be displayed again
     if (m_splitPosition) { //if 0 is the init value and shouldn't happen otherwise
         for (int i = m_splitPosition ; i < newSplitPosition ; i++) {
-            m_expandedLayout->addTaskItem(m_groupMembers.at(i));
+	    AbstractGroupableItem *item = m_parentSplitGroup->group()->members().at(i);
+            m_expandedLayout->addTaskItem(abstractItem(item));
             //kDebug() << "add Item to parentSplitGroup" << i;
         }
     }
@@ -347,7 +355,7 @@ void TaskGroupItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
 
 QList<AbstractTaskItem*> TaskGroupItem::memberList() const
 {
-    return m_groupMembers;
+    return m_groupMembers.values();
 }
 
 
@@ -371,7 +379,7 @@ AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractItemPtr
                 item = dynamic_cast<AbstractTaskItem*>(createWindowTask(task));
             }
         }
-        m_items.insert(groupableItem,item);
+        m_groupMembers.insert(groupableItem,item);
   
     if (!item) {
         //kDebug() << "invalid Item";
@@ -407,10 +415,6 @@ WindowTaskItem *TaskGroupItem::createWindowTask(TaskManager::TaskItem* taskItem)
     WindowTaskItem *item = 0;
     TaskPtr task = taskItem->task();
 
-    if (m_windowTaskItems.contains(task)) {
-        return m_windowTaskItems.value(task);
-    }
-
     foreach (const StartupPtr &startup, m_startupTaskItems.keys()) {
         if (startup->matchesWindow(task->window())) {
             item = dynamic_cast<WindowTaskItem *>(m_startupTaskItems.take(startup));
@@ -425,7 +429,7 @@ WindowTaskItem *TaskGroupItem::createWindowTask(TaskManager::TaskItem* taskItem)
         item->setWindowTask(taskItem);
     }
 
-    m_windowTaskItems.insert(task, item);
+    m_groupMembers.insert(taskItem, item);
     return item;
     //kDebug();
 }
@@ -440,12 +444,12 @@ TaskGroupItem *TaskGroupItem::createTaskGroup(GroupPtr group)
 
     TaskGroupItem *item;
     //FIXME: these items NEVER get removed from m_groupTaskItems!
-    if (!m_groupTaskItems.contains(group)) {
+    if (!m_groupMembers.contains(group)) {
         item = new TaskGroupItem(m_applet->rootGroupItem(), m_applet, m_showTooltip);
         item->setGroup(group);
-        m_groupTaskItems.insert(group, item);
+        m_groupMembers.insert(group, item);
     } else {
-        item = m_groupTaskItems.value(group);
+        item = static_cast<TaskGroupItem*>(m_groupMembers.value(group));
     }
     return item;
 }
@@ -469,8 +473,7 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
         return;
     }
 
-    m_groupMembers.append(item);
-    m_items[groupableItem] = item;
+    m_groupMembers[groupableItem] = item;
     item->setParentItem(this);
 
     if (collapsed()) {
@@ -504,7 +507,7 @@ void TaskGroupItem::itemRemoved(TaskManager::AbstractItemPtr groupableItem)
         kDebug() << "No Applet";
         return;
     }
-    AbstractTaskItem *item = abstractItem(groupableItem);
+    AbstractTaskItem *item = m_groupMembers.take(groupableItem);;
 
     if (!item) {
         kDebug() << "Item not found";
@@ -512,36 +515,34 @@ void TaskGroupItem::itemRemoved(TaskManager::AbstractItemPtr groupableItem)
     }
 
     disconnect(item, 0, 0, 0);
-    m_items.remove(groupableItem);
-    m_groupMembers.removeAll(item);
 
     if (m_expandedLayout) {
         m_expandedLayout->removeTaskItem(item);
     }
 
-    removeItem(m_items.value(groupableItem));
+    removeItem(m_groupMembers.value(groupableItem));
 }
 
 
 void TaskGroupItem::removeItem(AbstractTaskItem *item)
 {
     //kDebug();
-    if (!m_items.contains(m_items.key(item)) || !item) {
+    if (!m_groupMembers.contains(m_groupMembers.key(item)) || !item) {
         //kDebug() << "Not in list or null pointer";
         return;
     }
 
-    m_items.remove(m_items.key(item));
+    m_groupMembers.remove(m_groupMembers.key(item));
     if (item->isWindowItem()) {
         WindowTaskItem *windowItem = dynamic_cast<WindowTaskItem*>(item);
-        if (m_windowTaskItems.values().contains(windowItem)) {
-            m_windowTaskItems.remove(m_windowTaskItems.key(windowItem));
+        if (m_groupMembers.values().contains(windowItem)) {
+            m_groupMembers.remove(m_groupMembers.key(windowItem));
         } else if (m_startupTaskItems.values().contains(windowItem)) {
             m_startupTaskItems.remove(m_startupTaskItems.key(windowItem));
         }
     } else {
         //FIXME: this code is NEVER reached! memory leak?!
-        m_groupTaskItems.remove(m_groupTaskItems.key(dynamic_cast<TaskGroupItem*>(item)));
+        m_groupMembers.remove(m_groupMembers.key(item));
     }
 
     item->close();
@@ -935,10 +936,10 @@ void TaskGroupItem::wheelEvent(QGraphicsSceneWheelEvent *event)
     }
 
     //    kDebug() << "Wheel event m_activeTaskIndex: " << m_activeTaskIndex << " of " << numberOfItems();
-    AbstractTaskItem *item = m_groupMembers.at(m_activeTaskIndex);
-
-    if (item) {
-        item->activate();
+    AbstractGroupableItem *item = group()->members().at(m_activeTaskIndex);
+    AbstractTaskItem *taskItem = abstractItem(item);
+    if (taskItem) {
+        taskItem->activate();
     }
 }
 
@@ -977,10 +978,10 @@ int TaskGroupItem::optimumCapacity()
     return 1;
 }
 
-WindowTaskItem* TaskGroupItem::windowItem(TaskPtr task)
+WindowTaskItem* TaskGroupItem::windowItem(TaskItem *task)
 {
-    if (m_windowTaskItems.contains(task)) {
-        return m_windowTaskItems.value(task);
+    if (m_groupMembers.contains(static_cast<AbstractGroupableItem*>(task))) {
+        return static_cast<WindowTaskItem*>(m_groupMembers.value(static_cast<AbstractGroupableItem*>(task)));
     }
     //kDebug() << "item not found";
     return 0;
@@ -988,8 +989,8 @@ WindowTaskItem* TaskGroupItem::windowItem(TaskPtr task)
 
 TaskGroupItem* TaskGroupItem::groupItem(GroupPtr group)
 {
-    if (m_groupTaskItems.contains(group)) {
-        return m_groupTaskItems.value(group);
+    if (m_groupMembers.contains(static_cast<AbstractGroupableItem*>(group))) {
+        return static_cast<TaskGroupItem*>(m_groupMembers.value(static_cast<AbstractGroupableItem*>(group)));
     }
     //kDebug() << "item not found";
     return 0;
@@ -997,8 +998,8 @@ TaskGroupItem* TaskGroupItem::groupItem(GroupPtr group)
 
 AbstractTaskItem* TaskGroupItem::abstractItem(AbstractItemPtr item)
 {
-    if (m_items.contains(item)) {
-        return m_items.value(item);
+    if (m_groupMembers.contains(item)) {
+        return m_groupMembers.value(item);
     }
     //kDebug() << "item not found";
     return 0;
