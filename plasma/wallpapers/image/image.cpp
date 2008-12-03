@@ -235,9 +235,12 @@ void Image::slotAddDir()
     KUrl empty;
     KDirSelectDialog dialog(empty, true, m_widget);
     if (dialog.exec()) {
-        m_uiSlideshow.m_dirlist->addItem(dialog.url().path());
-        updateDirs();
-        startSlideshow();
+        QString urlDir = dialog.url().path();
+        if ( m_uiSlideshow.m_dirlist->findItems ( urlDir, Qt::MatchExactly).isEmpty()) {
+            m_uiSlideshow.m_dirlist->addItem(dialog.url().path());
+            updateDirs();
+            startSlideshow();
+        }
     }
 }
 
@@ -428,7 +431,9 @@ void Image::browse()
     if (wallpaper.isEmpty()) {
         return;
     }
-
+    if( m_model->contains(wallpaper)) {
+        return;
+    }
     // add background to the model
     m_model->addBackground(wallpaper);
 
