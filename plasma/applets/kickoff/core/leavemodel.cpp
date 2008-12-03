@@ -146,17 +146,17 @@ void LeaveModel::updateModel()
         addSystemSession = true;
     }
 
-    if (KWorkSpace::canShutDown(KWorkSpace::ShutdownConfirmDefault, KWorkSpace::ShutdownTypeHalt)) {
-        // Shutdown
-        QStandardItem *shutDownOption = createStandardItem("leave:/shutdown");
-        systemOptions->appendRow(shutDownOption);
-        addSystemSession = true;
-    }
-
     if (KWorkSpace::canShutDown(KWorkSpace::ShutdownConfirmDefault, KWorkSpace::ShutdownTypeReboot)) {
         // Restart
         QStandardItem *restartOption = createStandardItem("leave:/restart");
         systemOptions->appendRow(restartOption);
+        addSystemSession = true;
+    }
+
+    if (KWorkSpace::canShutDown(KWorkSpace::ShutdownConfirmDefault, KWorkSpace::ShutdownTypeHalt)) {
+        // Shutdown
+        QStandardItem *shutDownOption = createStandardItem("leave:/shutdown");
+        systemOptions->appendRow(shutDownOption);
         addSystemSession = true;
     }
 #endif
