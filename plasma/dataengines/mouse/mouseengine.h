@@ -20,10 +20,11 @@
 #define MOUSEENGINE_H
 
 #include <Plasma/DataEngine>
+#include <config-X11.h>
 
-
+#ifdef HAVE_XFIXES
 class CursorNotificationHandler;
-
+#endif
 
 class MouseEngine : public Plasma::DataEngine
 {
@@ -45,7 +46,9 @@ private slots:
 private:
     QPoint lastPosition;
     int timerId;
+#ifdef HAVE_XFIXES
     CursorNotificationHandler *handler;
+#endif
 };
 
 K_EXPORT_PLASMA_DATAENGINE(mouse, MouseEngine)

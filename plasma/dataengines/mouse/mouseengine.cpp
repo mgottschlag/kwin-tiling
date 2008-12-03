@@ -20,15 +20,16 @@
 
 #include <QCursor>
 
-#include <config-X11.h>
-
 #ifdef HAVE_XFIXES
 #  include "cursornotificationhandler.h"
 #endif
 
 
 MouseEngine::MouseEngine(QObject* parent, const QVariantList& args)
-    : Plasma::DataEngine(parent, args), timerId(0), handler(0)
+    : Plasma::DataEngine(parent, args), timerId(0)
+#ifdef HAVE_XFIXES
+, handler(0)
+#endif
 {
     Q_UNUSED(args)
 }
