@@ -34,7 +34,7 @@ void NotificationAction::start()
     }
 
     if (operationName() == "invokeAction") {
-        QStringList dest = destination().split(" ");
+        const QStringList dest = destination().split(" ");
 
         if (dest.count() >  1 && !dest[1].toInt()) {
             setErrorText(i18n("Invalid destination: ", destination()));
