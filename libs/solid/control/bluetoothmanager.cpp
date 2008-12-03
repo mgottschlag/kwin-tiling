@@ -102,7 +102,7 @@ Solid::Control::BluetoothManager::~BluetoothManager()
 
     d->bluetoothInterfaceMap.clear();
 }
-/*
+
 Solid::Control::BluetoothInterfaceList Solid::Control::BluetoothManager::buildDeviceList(const QStringList  & ubiList) const
 {
     BluetoothInterfaceList list;
@@ -120,8 +120,8 @@ Solid::Control::BluetoothInterfaceList Solid::Control::BluetoothManager::buildDe
 
     return list;
 }
-*/
-/*
+
+
 Solid::Control::BluetoothInterfaceList Solid::Control::BluetoothManager::bluetoothInterfaces() const
 {
     Ifaces::BluetoothManager *backend = qobject_cast<Ifaces::BluetoothManager *>(d->managerBackend());
@@ -132,12 +132,12 @@ Solid::Control::BluetoothInterfaceList Solid::Control::BluetoothManager::bluetoo
         return BluetoothInterfaceList();
     }
 }
-*/
+/*
 QStringList Solid::Control::BluetoothManager::bluetoothInterfaces() const
 {
     return_SOLID_CALL(Ifaces::BluetoothManager *, d->managerBackend(), QStringList(), bluetoothInterfaces());
 }
-
+*/
 QString Solid::Control::BluetoothManager::defaultInterface() const
 {
     return_SOLID_CALL(Ifaces::BluetoothManager *, d->managerBackend(), QString(), defaultInterface());

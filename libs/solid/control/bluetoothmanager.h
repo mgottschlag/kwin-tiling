@@ -69,8 +69,8 @@ public:
      *
      * @return the list of bluetooth interfaces available in this system
      */
-    //BluetoothInterfaceList bluetoothInterfaces() const;
-    QStringList bluetoothInterfaces() const;
+    BluetoothInterfaceList bluetoothInterfaces() const;
+    //QStringList bluetoothInterfaces() const;
 
     /**
      * Retrieves the default bluetooth interface Universal Bluetooth Identifiers (UBIs)
@@ -184,7 +184,7 @@ private:
     BluetoothManager();
     ~BluetoothManager();
 
-    //BluetoothInterfaceList buildDeviceList(const QStringList  & ubiList) const;
+    BluetoothInterfaceList buildDeviceList(const QStringList  & ubiList) const;
 
     Q_PRIVATE_SLOT(d, void _k_interfaceAdded(const QString &))
     Q_PRIVATE_SLOT(d, void _k_interfaceRemoved(const QString &))

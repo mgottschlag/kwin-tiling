@@ -118,6 +118,15 @@ QMap<QString, QVariant> Solid::Control::BluetoothInterface::getProperties() cons
     return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), (QMap<QString,QVariant>()), getProperties());
 }
 
+QVariant Solid::Control::BluetoothInterface::getProperty(const QString &key) const
+{
+    QMap<QString, QVariant> props = getProperties();
+    if (props.contains(key))
+        return props[key];
+    else
+        return QVariant();
+}
+
 Solid::Control::BluetoothRemoteDeviceList Solid::Control::BluetoothInterface::listDevices() const
 {
     Ifaces::BluetoothInterface *backend = qobject_cast<Ifaces::BluetoothInterface *>(d->backendObject());
@@ -204,12 +213,20 @@ Solid::Control::BluetoothRemoteDevice * Solid::Control::BluetoothInterface::crea
     return pair.first;
 }
 
-/*
+
 QString Solid::Control::BluetoothInterface::address() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QString(), address());
+    QVariant var = getProperty("Address");
+
+    if (var.isValid())
+        return var.value<QString>();
+    else
+        return QString();
+
+//    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QString(), address());
 }
 
+/*
 QString Solid::Control::BluetoothInterface::version() const
 {
     return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QString(), version());
@@ -229,22 +246,44 @@ QString Solid::Control::BluetoothInterface::company() const
 {
     return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QString(), company());
 }
+*/
 
-Solid::Control::BluetoothInterface::Mode Solid::Control::BluetoothInterface::mode() const
-{
-    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), Solid::Control::BluetoothInterface::Off, mode());
-}
 
 int Solid::Control::BluetoothInterface::discoverableTimeout() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), 0, discoverableTimeout());
+    QVariant var = getProperty("DiscoverableTimeout");
+
+    if (var.isValid())
+        return var.value<int>();
+    else
+        return 0;
+
+//  return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), 0, discoverableTimeout());
 }
 
 bool Solid::Control::BluetoothInterface::isDiscoverable() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), false, isDiscoverable());
+    QVariant var = getProperty("Discoverable");
+
+    if (var.isValid())
+        return var.value<bool>();
+    else
+        return false;
+
+//   return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), false, isDiscoverable());
 }
 
+bool Solid::Control::BluetoothInterface::isDiscovering() const
+{
+    QVariant var = getProperty("Discovering");
+
+    if (var.isValid())
+        return var.value<bool>();
+    else
+        return false;
+}
+
+/*
 Solid::Control::BluetoothRemoteDeviceList Solid::Control::BluetoothInterface::listConnections() const
 {
     BluetoothRemoteDeviceList list;
@@ -281,12 +320,21 @@ QStringList Solid::Control::BluetoothInterface::serviceClasses() const
 {
     return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QStringList(), serviceClasses());
 }
+*/
 
 QString Solid::Control::BluetoothInterface::name() const
 {
-    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QString(), name());
+    QVariant var = getProperty("Name");
+
+    if (var.isValid())
+        return var.value<QString>();
+    else
+        return QString();
+
+//    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QString(), name());
 }
 
+/*
 QString Solid::Control::BluetoothInterface::getRemoteName(const QString &mac)
 {
     return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QString(), getRemoteName(mac));
@@ -330,27 +378,31 @@ QStringList Solid::Control::BluetoothInterface::listRecentRemoteDevices(const QD
 */
 
 /***************************************************************/
-/*
-void Solid::Control::BluetoothInterface::setMode(const Solid::Control::BluetoothInterface::Mode mode)
+
+void Solid::Control::BluetoothInterface::setDiscoverable(bool status)
 {
-    SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), setMode(mode));
+    QVariant var(status);
+    setProperty("Discoverable",var);
 }
 
 void Solid::Control::BluetoothInterface::setDiscoverableTimeout(int timeout)
 {
-    SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), setDiscoverableTimeout(timeout));
+    QVariant var(timeout);
+    setProperty("DiscoverableTimeout",var);
 }
 
+/*
 void Solid::Control::BluetoothInterface::setMinorClass(const QString &minor)
 {
     SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), setMinorClass(minor));
 }
-
+*/
 void Solid::Control::BluetoothInterface::setName(const QString &name)
 {
-    SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), setName(name));
+    QVariant var(name);
+    setProperty("Name",var);
 }
-
+/*
 void Solid::Control::BluetoothInterface::discoverDevices()
 {
     SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), discoverDevices());

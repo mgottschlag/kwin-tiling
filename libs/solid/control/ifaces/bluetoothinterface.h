@@ -344,7 +344,7 @@ public:
 
     virtual void requestSession() = 0;
 
-    virtual void setProperty(const QString &, const QVariant &) = 0;
+    virtual void setProperty(const QString &, QVariant ) = 0;
 
     virtual void startDiscovery() = 0;
 

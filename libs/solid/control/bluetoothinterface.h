@@ -47,6 +47,7 @@ class SOLIDCONTROL_EXPORT BluetoothInterface : public QObject
 {
     Q_OBJECT
 
+
 public:
     /**
      * Describes the operating mode of a bluetooth interface
@@ -56,10 +57,14 @@ public:
      * - Connectable : The interface may only be connected to but not discovered
      */
     //enum Mode { Off, Discoverable, Connectable };
+
+
     /**
      * Constructs an invalid bluetooth interface
      */
     BluetoothInterface();
+
+
 
     /**
      * Constructs a bluetooth interface for a given Unique Bluetooth Identifier (UBI).
@@ -125,7 +130,7 @@ public:
      *
      * @returns MAC address of bluetooth interface
      */
-    //QString address() const;
+    QString address() const;
 
     /**
      * Retrieves the version of the chip of the bluetooth interface/adapter.
@@ -161,26 +166,27 @@ public:
     //QString company() const;
 
     /**
-     * Retrieves the current mode of the bluetooth interface/adapter.
-     *
-     * @returns the current mode of bluetooth interface/adapter
-     */
-    //Mode mode() const;
-
-    /**
      * Retrieves the discoverable timeout of the bluetooth interface/adapter.
      * Discoverable timeout of 0 means never disappear.
      *
      * @returns current discoverable timeout in seconds
      */
-    //int discoverableTimeout() const;
+    int discoverableTimeout() const;
 
     /**
      * Retrieves the current discoverable staut of the bluetooth interface/adapter.
      *
      * @returns current discoverable status of bluetooth interface/adapter
      */
-    //bool isDiscoverable() const;
+    bool isDiscoverable() const;
+
+    /**
+     * Retrieves the current status of a discovering session for the adapter.
+     *
+     * @returns true if a discovering session is running for the adapter
+     */
+    bool isDiscovering() const;
+
 
     /**
      * List all UBIs of connected remote bluetooth devices of this handled bluetooth
@@ -228,7 +234,7 @@ public:
      *
      * @returns name of bluetooth interface/adapter
      */
-    //QString name() const;
+    QString name() const;
 
     /**
      * Returns the name of the remote device, given its mac address (mac).
@@ -301,19 +307,18 @@ public:
 
 public Q_SLOTS:
     /**
-     * Set mode of bluetooth interface/adapter.
-     * Valid modes, see mode()
+     * Set the discoverable state of the interface/adapter.
      *
-     * @param mode the mode of the bluetooth interface/adapter
+     * @param status the discoverable state of the bluetooth interface/adapter
      */
-    //void setMode(const Mode mode);
+    void setDiscoverable(bool status);
 
     /**
      * Set discoverable timeout of bluetooth interface/adapter.
      *
      * @param timeout timeout in seconds
      */
-    //void setDiscoverableTimeout(int timeout);
+    void setDiscoverableTimeout(int timeout);
 
     /**
      * Set minor class of bluetooth interface/adapter.
@@ -327,7 +332,7 @@ public Q_SLOTS:
      *
      * @param name the name of bluetooth interface/adapter
      */
-    //void setName(const QString &name);
+    void setName(const QString &name);
 
     /**
      * Start discovery of remote bluetooth devices with device name resolving.
@@ -391,7 +396,6 @@ public Q_SLOTS:
     void unregisterAgent(const QString &) const;
 
     void cancelDeviceCreation(const QString &) const;
-
 
 
 Q_SIGNALS:
@@ -545,14 +549,19 @@ Q_SIGNALS:
     void propertyChanged(const QString &property, const QVariant &value);
 
 
+
+
 private:
     Q_PRIVATE_SLOT(d, void _k_destroyed(QObject *))
 
+    QVariant getProperty(const QString&) const;
     BluetoothInterfacePrivate * const d;
+
 };
 
 } //Control
 } //Solid
+
 
 #endif
 
