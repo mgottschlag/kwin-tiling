@@ -94,6 +94,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     setAcceptsHoverEvents(true);
     setHasConfigurationInterface(true);
     setPopupIcon(QIcon());
+    setPassivePopup(true);
     resize(128, 128);
     setAspectRatioMode(Plasma::ConstrainedSquare );
     m_textRect = QRectF();
