@@ -334,6 +334,11 @@ Plasma::ZoomLevel PlasmaApp::desktopZoomLevel() const
     return m_zoomLevel;
 }
 
+QList<PanelView*> PlasmaApp::panelViews() const
+{
+    return m_panels;
+}
+
 #ifdef Q_WS_X11
 PanelView *PlasmaApp::findPanelForTrigger(WId trigger) const
 {

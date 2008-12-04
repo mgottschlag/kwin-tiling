@@ -34,6 +34,8 @@
 
 #include <kephal/screens.h>
 
+#include "panelview.h"
+#include "plasmaapp.h"
 #include "plasma-shell-desktop.h"
 
 DesktopCorona::DesktopCorona(QObject *parent)
@@ -105,8 +107,14 @@ QRect DesktopCorona::screenGeometry(int id) const
 
 QRegion DesktopCorona::availableScreenRegion(int id) const
 {
-    // TODO: more precise implementation needed
-    return QRegion(screenGeometry(id));
+    QRegion r(screenGeometry(id));
+    foreach (PanelView *view, PlasmaApp::self()->panelViews()) {
+        if (view->screen() == id && view->panelMode() == PanelView::NormalPanel) {
+            r = r.subtracted(view->geometry());
+        }
+    }
+
+    return r;
 }
 
 void DesktopCorona::loadDefaultLayout()
