@@ -385,7 +385,7 @@ void CalendarTable::resizeEvent(QGraphicsSceneResizeEvent * event)
     Q_UNUSED(event);
 
     QRectF r = contentsRect();
-    int rectSize = int(qMin(r.width() / 8, r.height() / DISPLAYED_WEEKS + 1));
+    int rectSize = int(qMin(r.width() / 8, r.height() / (DISPLAYED_WEEKS + 1)));
 
     //Using integers to help to keep things aligned to the grid
     //kDebug() << r.width() << rectSize;

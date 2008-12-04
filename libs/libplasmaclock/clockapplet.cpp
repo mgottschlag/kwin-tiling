@@ -315,7 +315,7 @@ void ClockApplet::wheelEvent(QGraphicsSceneWheelEvent *event)
 void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
 {
     Plasma::Calendar *calendar = new Plasma::Calendar;
-    calendar->setMinimumSize(QSize(200, 180));
+    calendar->setMinimumSize(QSize(230, 220));
 
     Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
     QDate date = data["Date"].toDate();
