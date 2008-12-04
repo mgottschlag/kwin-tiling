@@ -324,6 +324,8 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         int rowHeight = 20;
         int columnWidth = 120;
 
+        item->showCloseButton();
+
         QGraphicsWidget *controls = new QGraphicsWidget(item);
         //controls->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
         //controls->resize(500, 500);
