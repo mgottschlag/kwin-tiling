@@ -177,54 +177,51 @@ bool GroupManager::add(TaskPtr task)
     kDebug() <<  task->className();
     kDebug() <<  task->classClass();*/
 
-    // Go through all filters whether the task should be displayed or not
-    bool show = true;
-    if (!task->showInTaskbar()) {
-        //kDebug() << "Do not show in taskbar";
-        show = false;
-    }
-
-    if (showOnlyCurrentDesktop() && !task->isOnCurrentDesktop()) {
-        //kDebug() << "Not on this desktop and showOnlyCurrentDesktop";
-        show = false;
-    }
-
-    if (showOnlyCurrentScreen() && !task->isOnScreen(d->currentScreen)) {
-        //kDebug() << "Not on this screen and showOnlyCurrentScreen";
-        show = false;
-    }
-
-    if (showOnlyMinimized() && !task->isMinimized()) {
-        show = false;
-    }
-
-    NET::WindowType type = task->info().windowType(NET::NormalMask | NET::DialogMask |
-                                                   NET::OverrideMask | NET::UtilityMask);
-    if (type == NET::Utility) {
-        //kDebug() << "skipping utility window" << task->name();
-        show = false;
-    }
-
-        //TODO: should we check for transiency? if so the following code can detect it.
-    /*
-        QHash <TaskPtr, TaskItem*>::iterator it = d->itemList.begin();
-
-        while (it != d->itemList.end()) {
-            TaskItem *item = it.value();
-            if (item->task()->hasTransient(task->window())) {
-                kDebug() << "TRANSIENT TRANSIENT TRANSIENT!";
-            }
-            ++it;
+    // Should the Task be displayed ?
+    if (task->demandsAttention()) {
+        // As the Task doesn't demand attention
+        // go through all filters whether the task should be displayed or not
+        if (!task->showInTaskbar()) {
+            //kDebug() << "Do not show in taskbar";
+            return false;
         }
-    */
 
-    if (task->demandsAttention()) { //override all other limitations
-        show = true;
+        if (showOnlyCurrentDesktop() && !task->isOnCurrentDesktop()) {
+            //kDebug() << "Not on this desktop and showOnlyCurrentDesktop";
+            return false;
+        }
+
+        if (showOnlyCurrentScreen() && !task->isOnScreen(d->currentScreen)) {
+            //kDebug() << "Not on this screen and showOnlyCurrentScreen";
+            return false;
+        }
+
+        if (showOnlyMinimized() && !task->isMinimized()) {
+            return false;
+        }
+
+        NET::WindowType type = task->info().windowType(NET::NormalMask | NET::DialogMask |
+                                                    NET::OverrideMask | NET::UtilityMask);
+        if (type == NET::Utility) {
+            //kDebug() << "skipping utility window" << task->name();
+            return false;
+        }
+
+            //TODO: should we check for transiency? if so the following code can detect it.
+        /*
+            QHash <TaskPtr, TaskItem*>::iterator it = d->itemList.begin();
+
+            while (it != d->itemList.end()) {
+                TaskItem *item = it.value();
+                if (item->task()->hasTransient(task->window())) {
+                    kDebug() << "TRANSIENT TRANSIENT TRANSIENT!";
+                    return flase;
+                }
+                ++it;
+            }
+        */
     }
 
-    if (!show) {
-        return false;
-    }
     //Ok the Task should be displayed
     TaskItem *item = 0;
     if (!d->itemList.contains(task)) {
