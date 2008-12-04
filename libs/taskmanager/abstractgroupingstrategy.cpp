@@ -89,7 +89,7 @@ TaskGroup* AbstractGroupingStrategy::createGroup(ItemList items)
 {
     kDebug();
     GroupPtr oldGroup;
-    if (items.first()->isGrouped()) {
+    if (!items.isEmpty() && items.first()->isGrouped()) {
         oldGroup = items.first()->parentGroup();
     } else {
         oldGroup = d->groupManager->rootGroup();
