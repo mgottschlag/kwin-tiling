@@ -120,7 +120,7 @@ void JobWidget::destroy()
 {
     if (!m_extenderItem->isDetached()) {
         m_extenderItem->setAutoExpireDelay(6000);
-        m_extenderItem->setTitle(i18n("(finished) %1", m_job->message()));
+        m_extenderItem->setTitle(i18nc("%1 is the name of the job, can be things like Copying, deleting, moving", "(finished) %1", m_job->message()));
         updateJob();
         setValue(100);
     }
@@ -157,9 +157,9 @@ void JobWidget::updateJob()
         //FIXME: howto i18n this
         item->setTitle(m_job->message());
     } else if (m_job->state() == SystemTray::Job::Suspended) {
-        item->setTitle(i18n("(paused) %1", m_job->message()));
+        item->setTitle(i18nc("%1 is the name of the job, can be things like Copying, deleting, moving", "(paused) %1", m_job->message()));
     } else {
-        item->setTitle(i18n("(finished) %1", m_job->message()));
+        item->setTitle(i18nc("%1 is the name of the job, can be things like Copying, deleting, moving", "(finished) %1", m_job->message()));
     }
 
     //set the correct actions to visible.

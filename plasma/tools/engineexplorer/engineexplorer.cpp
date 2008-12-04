@@ -362,14 +362,14 @@ QString EngineExplorer::convertToString(const QVariant &value) const
 #endif
             if (value.canConvert(QVariant::String)) {
                 if (value.toString().isEmpty()) {
-                    return i18n("<empty>");
+                    return i18nc("The user did a query to a dataengine and it returned empty data", "<empty>");
                 }
                 else {
                     return value.toString();
                 }
             }
 
-            return i18n("<not displayable>");
+            return i18nc("A the dataengine returned something that the humble view on the engineexplorer can't display, like a picture", "<not displayable>");
         }
     }
 }
