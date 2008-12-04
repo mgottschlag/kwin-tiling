@@ -73,7 +73,7 @@ TaskGroup::TaskGroup(GroupManager *parent)
     d(new Private)
 {
     d->groupingStrategy = parent;
-    d->groupName = "default";
+//    d->groupName = "default";
     d->groupColor = Qt::red;
     d->groupIcon = KIcon("xorg");
     connect(this, SLOT(editRequest()), this, SIGNAL(groupEditRequest()));
@@ -101,6 +101,13 @@ void TaskGroup::add(AbstractItemPtr item)
     if (d->members.contains(item)) {
         //kDebug() << "already in this group";
         return;
+    }
+
+    if (d->groupName.isEmpty()) {
+        TaskItem *taskItem = qobject_cast<TaskItem*>(item);
+        if (taskItem) {
+            d->groupName = taskItem->task()->classClass();
+        }
     }
 
     if (item->parentGroup()) {
@@ -173,6 +180,7 @@ void TaskGroup::clear()
         }
         remove(item);
     }
+
     if (!d->members.isEmpty()) {
         kDebug() << "clear doesn't work";
     }
