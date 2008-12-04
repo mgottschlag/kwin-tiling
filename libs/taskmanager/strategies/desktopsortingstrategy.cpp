@@ -45,14 +45,14 @@ DesktopSortingStrategy::DesktopSortingStrategy(QObject *parent)
 void DesktopSortingStrategy::sortItems(ItemList &items)
 {
     kDebug();
-    QMap<int, AbstractGroupableItem*> map;
+    QMap<QString, AbstractGroupableItem*> map;
     foreach (AbstractGroupableItem *item, items) {
         if (!item) {
             kDebug() << "Null Pointer";
             continue;
         }
         kDebug() << item->name() << item->desktop();
-        map.insertMulti(item->desktop(), item);
+        map.insertMulti(QString::number(item->desktop())+item->name(), item);
     }
 
     items.clear();
