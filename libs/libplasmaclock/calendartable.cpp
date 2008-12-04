@@ -37,6 +37,8 @@
 namespace Plasma
 {
 
+static const int DISPLAYED_WEEKS = 6;
+
 class CalendarCellBorder
 {
 public:
@@ -115,7 +117,7 @@ class CalendarTablePrivate
             int x = (hoverPoint.x() - centeringSpace) / (cellW + cellSpace);
             int y = (hoverPoint.y() - headerHeight - headerSpace) / (cellH + cellSpace);
 
-            if (x < 1 || x > 7 || y < 0 || y > 5) {
+            if (x < 1 || x > 7 || y < 0 || y > DISPLAYED_WEEKS) {
                 return QRectF();
             }
 
@@ -327,7 +329,7 @@ void CalendarTable::mousePressEvent(QGraphicsSceneMouseEvent *event)
     event->accept();
 
     if ((event->pos().x() >= cellX(0)) && (event->pos().x() <= cellX(d->calendar->daysInWeek(d->date)) - d->cellSpace) &&
-        (event->pos().y() >= cellY(0)) && (event->pos().y() <= cellY(5) - d->cellSpace)){
+        (event->pos().y() >= cellY(0)) && (event->pos().y() <= cellY(DISPLAYED_WEEKS) - d->cellSpace)){
 
         int week = -1;
         int weekDay = -1;
@@ -338,7 +340,7 @@ void CalendarTable::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 weekDay = i;
         }
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < DISPLAYED_WEEKS; i++) {
             if ((event->pos().y() >= cellY(i)) && (event->pos().y() <= cellY(i + 1) - d->cellSpace))
                 week = i;
         }
@@ -383,7 +385,7 @@ void CalendarTable::resizeEvent(QGraphicsSceneResizeEvent * event)
     Q_UNUSED(event);
 
     QRectF r = contentsRect();
-    int rectSize = int(qMin(r.width() / 8, r.height() / 6));
+    int rectSize = int(qMin(r.width() / 8, r.height() / DISPLAYED_WEEKS + 1));
 
     //Using integers to help to keep things aligned to the grid
     //kDebug() << r.width() << rectSize;
@@ -443,7 +445,7 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
     // Draw weeks numbers column and day header
     QRectF r = boundingRect();
     d->svg->paint(p, QRectF(r.x() + d->centeringSpace, cellY(0), d->cellW,
-                  cellY(5) - cellY(0) - d->cellSpace),  "weeksColumn");
+                  cellY(DISPLAYED_WEEKS) - cellY(0) - d->cellSpace),  "weeksColumn");
     d->svg->paint(p, QRectF(r.x() + d->centeringSpace, r.y(),
                   cellX(daysInWeek) - r.x() - d->cellSpace - d->centeringSpace, d->headerHeight), "weekDayHeader");
 
@@ -452,7 +454,7 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
     QDate currentDate = QDate::currentDate(); //FIXME: calendar timezone
 
     //kDebug() << "exposed: " << option->exposedRect;
-    for (int week = 0; week < 5; week++) {
+    for (int week = 0; week < DISPLAYED_WEEKS; week++) {
         for (int weekDay = 0; weekDay < daysInWeek; weekDay++) {
 
             int x = cellX(weekDay);
