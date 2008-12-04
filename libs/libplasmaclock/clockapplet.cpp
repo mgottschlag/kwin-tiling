@@ -245,7 +245,7 @@ void ClockApplet::updateClockDefaultsTo()
     QString oldSelection = d->ui.clockDefaultsTo->currentText();
     d->ui.clockDefaultsTo->clear();
     d->ui.clockDefaultsTo->addItems(d->ui.timeZones->selection());
-    d->ui.clockDefaultsTo->insertItem(0, "Local");
+    d->ui.clockDefaultsTo->insertItem(0, i18nc("Local time zone","Local"));
     int newPosition = d->ui.clockDefaultsTo->findText(oldSelection);
     if (newPosition >= 0) {
         d->ui.clockDefaultsTo->setCurrentIndex(newPosition);
@@ -411,7 +411,7 @@ bool ClockApplet::isLocalTimezone() const
 
 QString ClockApplet::localTimezone()
 {
-    return "Local";
+    return i18nc("Local time zone","Local");
 }
 
 #include "clockapplet.moc"
