@@ -28,6 +28,8 @@
 
 #include "calendartable.h"
 
+#include <plasma/widgets/lineedit.h>
+
 namespace Plasma
 {
 
@@ -61,6 +63,8 @@ private Q_SLOTS:
     void displayedMonthChanged(int calendarSystemYear, int calendarSystemMonth);
     void prevMonth();
     void nextMonth();
+    void dateUpdated(const QDate &date);
+    void goToToday();
 
 private:
     CalendarPrivate* const d;

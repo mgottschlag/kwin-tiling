@@ -292,7 +292,7 @@ int CalendarTable::cellX(int weekDay)
 
 int CalendarTable::cellY(int week)
 {
-    return (int) boundingRect().y() + (d->cellW + d->cellSpace) * (week) + d->headerHeight + d->headerSpace;
+    return (int) boundingRect().y() + (d->cellH + d->cellSpace) * (week) + d->headerHeight + d->headerSpace;
 }
 
 void CalendarTable::wheelEvent(QGraphicsSceneWheelEvent * event)
@@ -385,18 +385,19 @@ void CalendarTable::resizeEvent(QGraphicsSceneResizeEvent * event)
     Q_UNUSED(event);
 
     QRectF r = contentsRect();
-    int rectSize = int(qMin(r.width() / 8, r.height() / (DISPLAYED_WEEKS + 1)));
+    int rectSizeH = int(r.height() / (DISPLAYED_WEEKS + 1));
+    int rectSizeW = int(r.width() / 8);
 
     //Using integers to help to keep things aligned to the grid
     //kDebug() << r.width() << rectSize;
-    d->cellSpace = qMax(1, qMin(4, rectSize / 20));
+    d->cellSpace = qMax(1, qMin(4, qMin(rectSizeH, rectSizeW) / 20));
     d->headerSpace = d->cellSpace * 2;
     d->weekBarSpace = d->cellSpace * 2 + 1;
-    d->cellH = rectSize - d->cellSpace;
-    d->cellW = rectSize - d->cellSpace;
+    d->cellH = rectSizeH - d->cellSpace;
+    d->cellW = rectSizeW - d->cellSpace;
     d->glowRadius = d->cellW * .1;
     d->headerHeight = (int) (d->cellH / 1.5); 
-    d->centeringSpace = qMax(0, int((r.width() - (rectSize * 8) - (d->cellSpace * 7)) / 2));
+    d->centeringSpace = qMax(0, int((r.width() - (rectSizeW * 8) - (d->cellSpace * 7)) / 2));
 }
 
 void CalendarTable::paintCell(QPainter *p, int cell, int week, int weekDay, CellTypes type, const QDate &cellDate)

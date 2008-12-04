@@ -27,11 +27,15 @@
 #include <QtGui/QGraphicsSceneWheelEvent>
 #include <QtGui/QGraphicsLinearLayout>
 #include <QtGui/QGraphicsProxyWidget>
+#include <QtGui/QToolButton>
 
 //KDECore
 #include <kglobal.h>
 #include <kdebug.h>
+#include <klocale.h>
 
+#include <KLineEdit>
+#include <KIcon>
 //Plasma
 #include <Plasma/Svg>
 #include <Plasma/Theme>
@@ -56,6 +60,8 @@ class CalendarPrivate
         Plasma::Label *spacer1;
         ToolButton *forward;
         Plasma::CalendarTable *calendarTable;
+        Plasma::LineEdit *dateText;
+        ToolButton *jumpToday;
 };
 
 //TODO
@@ -70,6 +76,7 @@ Calendar::Calendar(QGraphicsWidget *parent)
 {
     QGraphicsLinearLayout *m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
     QGraphicsLinearLayout *m_hLayout = new QGraphicsLinearLayout(m_layout);
+    QGraphicsLinearLayout *m_layoutTools = new QGraphicsLinearLayout(m_layout);
 
     d->calendarTable = new Plasma::CalendarTable(this);
     d->calendarTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -118,11 +125,32 @@ Calendar::Calendar(QGraphicsWidget *parent)
     m_layout->addItem(m_hLayout);
 
     m_layout->addItem(d->calendarTable);
+
+    d->dateText = new Plasma::LineEdit(this);
+    d->dateText->nativeWidget()->setReadOnly(true);
+    dateUpdated(d->calendarTable->date());
+    connect(d->calendarTable, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateUpdated(const QDate &)));
+    
+    d->jumpToday = new ToolButton(this);
+    d->jumpToday->nativeWidget()->setIcon(KIcon("go-jump-today"));
+    d->jumpToday->nativeWidget()->setMinimumWidth(25);
+    connect(d->jumpToday, SIGNAL(clicked()), this, SLOT(goToToday()));
+
+    m_layoutTools->addItem(d->jumpToday);
+    m_layoutTools->addStretch();
+    m_layoutTools->addItem(d->dateText);
+    m_layoutTools->addStretch();
+    m_layout->addItem(m_layoutTools);
 }
 
 Calendar::~Calendar()
 {
    delete d;
+}
+
+void Calendar::goToToday()
+{
+    d->calendarTable->setDate(QDate::currentDate());
 }
 
 bool Calendar::setCalendar(KCalendarSystem *calendar)
@@ -149,6 +177,12 @@ void Calendar::displayedMonthChanged(int calendarSystemYear, int calendarSystemM
     #else
         d->year->setText(QString::number(calendarSystemYear));
     #endif
+}
+
+void Calendar::dateUpdated(const QDate &date)
+{
+    QString formatted = KGlobal::locale()->formatDate( date,  KLocale::ShortDate );
+    d->dateText->setText(formatted);
 }
 
 void Calendar::prevMonth()
