@@ -23,13 +23,13 @@
 
 #include <QWidget>
 
-class K3ListView;
-class Q3ListViewItem;
+class QListView;
 class KComboBox;
 class QCheckBox;
 class QGroupBox;
 class QLabel;
 class QRadioButton;
+class CheckableStringListModel;
 
 class KDMConvenienceWidget : public QWidget {
 	Q_OBJECT
@@ -55,18 +55,41 @@ class KDMConvenienceWidget : public QWidget {
 	void slotPresChanged();
 	void slotSetAutoUser( const QString &user );
 	void slotSetPreselUser( const QString &user );
-	void slotUpdateNoPassUser( Q3ListViewItem *item );
 
   private:
 	QGroupBox *alGroup, *puGroup, *npGroup, *btGroup;
 	QCheckBox *cbarlen, *cbjumppw, *autoLockCheck;
 	QRadioButton *npRadio, *ppRadio, *spRadio;
 	KComboBox *userlb, *puserlb;
-	K3ListView *npuserlv;
-	QLabel *u_label, *pu_label, *w_label, *n_label, *pl_label;
+	QListView *npuserlv;
+	QLabel *pu_label;
 	QString autoUser, preselUser;
 	QStringList noPassUsers;
+        CheckableStringListModel* npuModel;
 };
+
+#include <QStringListModel>
+
+class CheckableStringListModel: public QStringListModel
+{
+    Q_OBJECT
+public:
+    CheckableStringListModel(QObject* parent, QStringList& npu)
+        : QStringListModel(parent)
+        , noPassUsers(npu)
+    {
+    }
+    Qt::ItemFlags flags(const QModelIndex& index) const;
+    bool setData (const QModelIndex& index, const QVariant& value, int role=Qt::EditRole);
+    QVariant data(const QModelIndex& index, int role=Qt::EditRole) const;
+
+signals:
+    void changed();
+private:
+//     QList<bool> selectedUsers;
+     QStringList& noPassUsers;
+};
+
 
 #endif
 

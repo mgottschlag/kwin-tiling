@@ -22,7 +22,6 @@
 #include "positioner.h"
 
 #include <KApplication>
-#include <K3URLDrag>
 #include <KDialog>
 #include <KFileDialog>
 #include <KIconLoader>
@@ -219,7 +218,7 @@ bool KDMDialogWidget::eventFilter( QObject *, QEvent *e )
 
 void KDMDialogWidget::iconLoaderDragEnterEvent( QDragEnterEvent *e )
 {
-	e->setAccepted( K3URLDrag::canDecode( e ) );
+	e->setAccepted( KUrl::List::canDecode( e->mimeData() ) );
 }
 
 

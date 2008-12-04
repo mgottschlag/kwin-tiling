@@ -26,6 +26,7 @@ class KBackedComboBox;
 class KFontRequester;
 class KLanguageButton;
 class QCheckBox;
+class QGroupBox;
 
 class KDMGeneralWidget : public QWidget {
 	Q_OBJECT
@@ -51,7 +52,7 @@ class KDMGeneralWidget : public QWidget {
   private:
 	void set_def();
 
-	QCheckBox *useThemeCheck;
+	QGroupBox *useThemeCheck;
 	KBackedComboBox *guicombo;
 	KBackedComboBox *colcombo;
 	KLanguageButton *langcombo;

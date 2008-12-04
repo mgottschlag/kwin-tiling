@@ -63,17 +63,16 @@ K_EXPORT_PLUGIN(KDMFactory( "kdmconfig" ))
 
 KUrl *decodeImgDrop( QDropEvent *e, QWidget *wdg )
 {
-	KUrl::List uris;
-
-	if (K3URLDrag::decode( e, uris ) && (uris.count() > 0)) {
-		KUrl *url = new KUrl( uris.first() );
+        KUrl::List uriList = KUrl::List::fromMimeData( e->mimeData() );
+        if ( !uriList.isEmpty() ) {
+		KUrl *url = new KUrl( uriList.first() );
 
 		KMimeType::Ptr mime = KMimeType::findByUrl( *url );
 		if (mime && KImageIO::isSupported( mime->name(), KImageIO::Reading ))
 			return url;
 
 		QStringList qs = KImageIO::pattern().split( '\n' );
-		qs.erase( qs.begin() );
+		qs.removeFirst();
 
 		QString msg = i18n( "%1 "
 		                    "does not appear to be an image file.\n"

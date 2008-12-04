@@ -20,7 +20,6 @@
 
 #include "kdm-conv.h"
 
-#include <K3ListView>
 #include <KColorScheme>
 #include <KComboBox>
 #include <KDialog>
@@ -36,9 +35,47 @@
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include <Qt3Support/Q3Header>
+#include <QListView>
+#include <QSortFilterProxyModel>
 
 extern KConfig *config;
+
+
+Qt::ItemFlags CheckableStringListModel::flags(const QModelIndex& index) const
+{
+    if (!index.isValid())
+        return Qt::ItemIsEnabled;
+    return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable;
+}
+bool CheckableStringListModel::setData (const QModelIndex& index, const QVariant& value, int role)
+{
+    if (role==Qt::CheckStateRole)
+    {
+        int ind = noPassUsers.indexOf( stringList().at(index.row()) );
+        if (value.toInt()==Qt::Checked)
+        {
+            if (ind < 0) noPassUsers.append( stringList().at(index.row()) );
+        }
+        else
+        {
+            if (ind >= 0) noPassUsers.removeAt( ind );
+        }
+        emit changed();
+        return true;
+    }
+    else
+        return QStringListModel::setData(index,value,role);
+}
+QVariant CheckableStringListModel::data(const QModelIndex& index, int role) const
+{
+    if (!index.isValid())
+        return QVariant();
+
+    if (role==Qt::CheckStateRole)
+        return noPassUsers.contains(stringList().at(index.row()))?Qt::Checked:Qt::Unchecked;
+    return QStringListModel::data(index,role);
+}
+
 
 KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	: QWidget( parent )
@@ -47,7 +84,7 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 
 	QLabel *paranoia = new QLabel(
 		i18n("<big><b><center>Attention<br/>"
-		     "Read help</center></b></big>"), this );
+	            "Read help</center></b></big>"), this );
 	QPalette p;
 	p.setBrush( QPalette::WindowText,
 		KColorScheme( QPalette::Active, KColorScheme::Window )
@@ -63,12 +100,13 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	laygroup2->setSpacing( KDialog::spacingHint() );
 
 	alGroup->setWhatsThis( i18n("Turn on the auto-login feature."
-	                            " This applies only to KDM's graphical login."
-	                            " Think twice before enabling this!") );
+                                   " This applies only to KDM's graphical login."
+                                   " Think twice before enabling this!") );
 	connect( alGroup, SIGNAL(toggled( bool )), SIGNAL(changed()) );
 
 	userlb = new KComboBox( alGroup );
-	u_label = new QLabel( i18n("Use&r:"), alGroup );
+
+	QLabel* u_label = new QLabel( i18n("Use&r:"), alGroup );
 	u_label->setBuddy( userlb );
 	QHBoxLayout *hlpl1 = new QHBoxLayout();
 	laygroup2->addItem( hlpl1 );
@@ -111,7 +149,6 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	laygroup5->setSpacing( KDialog::spacingHint() );
 	laygroup5->addWidget( npRadio );
 	laygroup5->addWidget( ppRadio );
-	laygroup5->addWidget( spRadio );
 
 	puserlb = new KComboBox( true, puGroup );
 
@@ -128,6 +165,7 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	laygroup5->addItem( hlpl );
 	hlpl->setSpacing( KDialog::spacingHint() );
 	hlpl->setMargin( 0 );
+	hlpl->addWidget( spRadio );
 	hlpl->addWidget( pu_label );
 	hlpl->addWidget( puserlb );
 	hlpl->addStretch( 1 );
@@ -154,20 +192,21 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 
 	connect( npGroup, SIGNAL(toggled( bool )), SIGNAL(changed()) );
 
-	pl_label = new QLabel( i18n("No password re&quired for:"),npGroup );
+	QLabel* pl_label = new QLabel( i18n("No password re&quired for:"),npGroup );
 	laygroup3->addWidget( pl_label );
-	npuserlv = new K3ListView( npGroup );
+	npuserlv = new QListView( npGroup );
 	laygroup3->addWidget( npuserlv );
 	pl_label->setBuddy( npuserlv );
-	npuserlv->addColumn( QString() );
-	npuserlv->header()->hide();
-	npuserlv->setResizeMode( Q3ListView::LastColumn );
+	npuModel=new CheckableStringListModel(this,noPassUsers);
+	QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(this);
+	proxyModel->setSourceModel(npuModel);
+	npuserlv->setModel(proxyModel);
+	proxyModel->setDynamicSortFilter(true);
+	connect( npuModel, SIGNAL(changed()), SIGNAL(changed()) );
 	npuserlv->setWhatsThis( i18n(
 		"Check all users you want to allow a password-less login for. "
 		"Entries denoted with '@' are user groups. Checking a group is like "
 		"checking all users in that group.") );
-	connect( npuserlv, SIGNAL(clicked( Q3ListViewItem * )),
-	         SIGNAL(changed()) );
 
 	btGroup = new QGroupBox( i18nc("@title:group", "Miscellaneous"), this );
 	QVBoxLayout *laygroup4 = new QVBoxLayout( btGroup );
@@ -180,8 +219,9 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 		"X server crash; note that this can open a security hole: if you use "
 		"a screen locker than KDE's integrated one, this will make "
 		"circumventing a password-secured screen lock possible.") );
+	//TODO a screen locker _other_ than
 	laygroup4->addWidget( cbarlen );
-	connect( cbarlen, SIGNAL(toggled( bool )), SIGNAL(changed()) );
+	connect( cbarlen, SIGNAL(toggled(bool)), SIGNAL(changed()) );
 
 	QGridLayout *main = new QGridLayout( this );
 	main->setSpacing( 10 );
@@ -195,11 +235,9 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	main->setRowStretch( 3, 1 );
 
 	connect( userlb, SIGNAL(activated( const QString & )),
-	         SLOT(slotSetAutoUser( const QString & )) );
+		SLOT(slotSetAutoUser( const QString & )) );
 	connect( puserlb, SIGNAL(editTextChanged( const QString & )),
-	         SLOT(slotSetPreselUser( const QString & )) );
-	connect( npuserlv, SIGNAL(clicked( Q3ListViewItem * )),
-	         SLOT(slotUpdateNoPassUser( Q3ListViewItem * )) );
+		SLOT(slotSetPreselUser( const QString & )) );
 
 }
 
@@ -223,7 +261,7 @@ void KDMConvenienceWidget::slotPresChanged()
 	bool en = spRadio->isChecked();
 	pu_label->setEnabled( en );
 	if (!alGroup->isEnabled()) // read-only
-	    return;
+	   return;
 	puserlb->setEnabled( en );
 	cbjumppw->setEnabled( !npRadio->isChecked() );
 }
@@ -243,9 +281,9 @@ void KDMConvenienceWidget::save()
 
 	configGrp = config->group( "X-:*-Greeter" );
 	configGrp.writeEntry( "PreselectUser",
-	                      npRadio->isChecked() ? "None" :
-	                      ppRadio->isChecked() ? "Previous" :
-	                      "Default" );
+                             npRadio->isChecked() ? "None" :
+                             ppRadio->isChecked() ? "Previous" :
+                             "Default" );
 	configGrp.writeEntry( "DefaultUser", puserlb->currentText() );
 	configGrp.writeEntry( "FocusPasswd", cbjumppw->isChecked() );
 }
@@ -308,26 +346,11 @@ void KDMConvenienceWidget::slotSetPreselUser( const QString &user )
 	preselUser = user;
 }
 
-void KDMConvenienceWidget::slotUpdateNoPassUser( Q3ListViewItem *item )
-{
-	if (!item)
-		return;
-	Q3CheckListItem *itm = (Q3CheckListItem *)item;
-	int ind = noPassUsers.indexOf( itm->text() );
-	if (itm->isOn()) {
-		if (ind < 0)
-			noPassUsers.append( itm->text() );
-	} else {
-		if (ind >= 0)
-			noPassUsers.removeAt( ind );
-	}
-}
-
 void KDMConvenienceWidget::slotClearUsers()
 {
 	userlb->clear();
 	puserlb->clear();
-	npuserlv->clear();
+	npuModel->setStringList(QStringList());
 	if (!autoUser.isEmpty())
 		userlb->addItem( autoUser );
 	if (!preselUser.isEmpty())
@@ -337,6 +360,7 @@ void KDMConvenienceWidget::slotClearUsers()
 void KDMConvenienceWidget::slotAddUsers( const QMap<QString,int> &users )
 {
 	QMap<QString,int>::const_iterator it;
+	QStringList npusers;
 	for (it = users.begin(); it != users.end(); ++it) {
 		if (it.value() > 0) {
 			if (it.key() != autoUser)
@@ -345,9 +369,9 @@ void KDMConvenienceWidget::slotAddUsers( const QMap<QString,int> &users )
 				puserlb->addItem( it.key() );
 		}
 		if (it.value() != 0)
-			(new Q3CheckListItem( npuserlv, it.key(), Q3CheckListItem::CheckBox ))->
-				setOn( noPassUsers.contains( it.key() ) );
+			npusers<<it.key();
 	}
+	npuModel->setStringList(npusers);
 
 	if (userlb->model())
 		userlb->model()->sort( 0 );
@@ -355,7 +379,6 @@ void KDMConvenienceWidget::slotAddUsers( const QMap<QString,int> &users )
 	if (puserlb->model())
 		puserlb->model()->sort( 0 );
 
-	npuserlv->sort();
 	userlb->setCurrentItem( autoUser );
 	puserlb->setCurrentItem( preselUser );
 }
@@ -363,6 +386,7 @@ void KDMConvenienceWidget::slotAddUsers( const QMap<QString,int> &users )
 void KDMConvenienceWidget::slotDelUsers( const QMap<QString,int> &users )
 {
 	QMap<QString,int>::const_iterator it;
+	QStringList npusers=npuModel->stringList();
 	for (it = users.begin(); it != users.end(); ++it) {
 		if (it.value() > 0) {
 			int idx = userlb->findText( it.key() );
@@ -373,8 +397,9 @@ void KDMConvenienceWidget::slotDelUsers( const QMap<QString,int> &users )
 				puserlb->removeItem( idx );
 		}
 		if (it.value() != 0)
-			delete npuserlv->findItem( it.key(), 0 );
+			npusers.removeAll( it.key() );
 	}
+	npuModel->setStringList(npusers);
 }
 
 #include "kdm-conv.moc"
