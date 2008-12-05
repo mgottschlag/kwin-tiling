@@ -305,7 +305,6 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                 seconds += 1;
             } else {
                 m_secondHandUpdateTimer->stop();
-                seconds -= 1;
             }
         }
     }
