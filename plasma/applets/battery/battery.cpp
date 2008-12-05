@@ -94,7 +94,6 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     setAcceptsHoverEvents(true);
     setHasConfigurationInterface(true);
     setPopupIcon(QIcon());
-    setPassivePopup(true);
     resize(128, 128);
     setAspectRatioMode(Plasma::ConstrainedSquare );
     m_textRect = QRectF();
@@ -324,8 +323,6 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         int rowHeight = 20;
         int columnWidth = 120;
 
-        //item->showCloseButton();
-
         QGraphicsWidget *controls = new QGraphicsWidget(item);
         //controls->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
         //controls->resize(500, 500);
@@ -362,8 +359,9 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
             m_extenderApplet->setBackgroundHints(NoBackground);
             m_extenderApplet->setFlag(QGraphicsItem::ItemIsMovable, false);
             m_extenderApplet->init();
-            m_extenderApplet->showBatteryLabel(false);
+            m_extenderApplet->showBatteryLabel(true);
             m_batteryLayout->addItem(m_extenderApplet, 0, 1, 1, 1, Qt::AlignRight);
+            m_extenderApplet->updateConstraints(Plasma::StartupCompletedConstraint);
         }
 
         m_controlsLayout->addItem(m_batteryLayout, row, 0, 1, 3);
