@@ -177,8 +177,8 @@ bool GroupManager::add(TaskPtr task)
     kDebug() <<  task->className();
     kDebug() <<  task->classClass();*/
 
-    // Should the Task be displayed ?
-    if (task->demandsAttention()) {
+    // Should the Task be displayed ? We always display if attention is demaded
+    if (!task->demandsAttention()) {
         // As the Task doesn't demand attention
         // go through all filters whether the task should be displayed or not
         if (!task->showInTaskbar()) {
@@ -254,6 +254,7 @@ bool GroupManager::add(TaskPtr task)
     } else {
         d->rootGroup->add(item);
     }
+
     return true;
 }
 
