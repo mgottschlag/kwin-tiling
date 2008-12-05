@@ -418,7 +418,9 @@ void CalendarTable::paintCell(QPainter *p, int cell, int week, int weekDay, Cell
     }
     
     p->setPen(numberColor);
-    p->setFont(Theme::defaultTheme()->font(Plasma::Theme::DefaultFont));
+    QFont font = Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
+    font.setBold(true);
+    p->setFont(font);
     p->drawText(cellArea, Qt::AlignCenter, QString::number(cell)); //draw number
     p->setOpacity(1.0);
 }
