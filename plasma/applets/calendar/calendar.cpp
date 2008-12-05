@@ -87,7 +87,12 @@ void CalendarTest::paintIcon()
     QPainter p(&icon);
 
     m_theme->paint(&p, icon.rect(), "mini-calendar");
-    m_theme->paint(&p, icon.rect(), QString::number(QDate::currentDate().day()));
+
+    QFont font = Plasma::Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
+    p.setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::ButtonTextColor));
+    font.setPixelSize(icon.size().height() / 2);
+    p.setFont(font);
+    p.drawText(icon.rect().adjusted(0, icon.size().height()/4, 0, 0), Qt::AlignCenter, QString::number(QDate::currentDate().day()));
     m_theme->resize();
     p.end();
     setPopupIcon(icon);
