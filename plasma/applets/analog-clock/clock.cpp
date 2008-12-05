@@ -203,14 +203,14 @@ void Clock::drawHand(QPainter *p, const QRect &rect, const qreal verticalTransla
     QRectF elementRect;
     QString name = handName + "HandShadow";
     if (m_theme->hasElement(name)) {
-      p->save();
+        p->save();
 
-      elementRect = m_theme->elementRect(name);
-      static const QSizeF offset = QSizeF(1, 3);
-      p->translate(-elementRect.width() / 2 + offset.width(), elementRect.y() - verticalTranslation + offset.height());
-      m_theme->paint(p, QRectF(QPointF(0, 0), elementRect.size()), name);
+        elementRect = m_theme->elementRect(name);
+        static const QSizeF offset = QSizeF(1, 3);
+        p->translate(-elementRect.width() / 2 + offset.width(), elementRect.y() - verticalTranslation + offset.height());
+        m_theme->paint(p, QRectF(QPointF(0, 0), elementRect.size()), name);
 
-      p->restore();
+        p->restore();
     }
 
     name = handName + "Hand";
@@ -231,35 +231,6 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     const qreal minutes = 6.0 * m_time.minute() - 180;
     const qreal hours = 30.0 * m_time.hour() - 180 +
                         ((m_time.minute() / 59.0) * 30.0);
-
-    m_theme->paint(p, rect, "ClockFace");
-
-    // optionally paint the time string
-    if (m_showTimezoneString || shouldDisplayTimezone()) {
-        QString time = prettyTimezone();
-        QFontMetrics fm(QApplication::font());
-        const int margin = 4;
-
-        if (!time.isEmpty()){
-            QRect textRect(rect.width() / 2 - fm.width(time) / 2, rect.width() / 2 - fm.height() * 2,
-                  fm.width(time), fm.height());
-
-            p->setPen(Qt::NoPen);
-            QColor background = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
-            background.setAlphaF(0.5);
-            p->setBrush(background);
-
-            p->setRenderHint(QPainter::Antialiasing, true);
-            p->drawPath(Plasma::PaintUtils::roundedRectangle(textRect.adjusted(-margin, -margin, margin, margin), margin));
-            p->setRenderHint(QPainter::Antialiasing, false);
-
-            p->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
-
-            p->drawText(textRect, Qt::AlignCenter, time);
-        }
-    }
-
-    // make sure we paint the second hand on top of the others
     qreal seconds = 0;
     if (m_showSecondHand) {
         static const double anglePerSec = 6;
@@ -309,11 +280,39 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         }
     }
 
+    m_theme->paint(p, rect, "ClockFace");
+
+    // optionally paint the time string
+    if (m_showTimezoneString || shouldDisplayTimezone()) {
+        QString time = prettyTimezone();
+        QFontMetrics fm(QApplication::font());
+        const int margin = 4;
+
+        if (!time.isEmpty()){
+            QRect textRect(rect.width() / 2 - fm.width(time) / 2, rect.width() / 2 - fm.height() * 2,
+                  fm.width(time), fm.height());
+
+            p->setPen(Qt::NoPen);
+            QColor background = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
+            background.setAlphaF(0.5);
+            p->setBrush(background);
+
+            p->setRenderHint(QPainter::Antialiasing, true);
+            p->drawPath(Plasma::PaintUtils::roundedRectangle(textRect.adjusted(-margin, -margin, margin, margin), margin));
+            p->setRenderHint(QPainter::Antialiasing, false);
+
+            p->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+
+            p->drawText(textRect, Qt::AlignCenter, time);
+        }
+    }
+
+    // make sure we paint the second hand on top of the others
     const qreal verticalTranslation = m_theme->elementRect("ClockFace").center().y();
     drawHand(p, rect, verticalTranslation, hours, "Hour");
     drawHand(p, rect, verticalTranslation, minutes, "Minute");
     if (m_showSecondHand) {
-      drawHand(p, rect, verticalTranslation, seconds, "Second");
+        drawHand(p, rect, verticalTranslation, seconds, "Second");
     }
 
     p->save();

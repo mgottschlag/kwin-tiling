@@ -54,10 +54,9 @@ class Clock : public ClockApplet
         ~Clock();
 
         void init();
-        void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
-        void setPath(const QString&);
         void constraintsEvent(Plasma::Constraints constraints);
         QPainterPath shape() const;
+        void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
 
     public slots:
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
@@ -71,8 +70,8 @@ class Clock : public ClockApplet
         void moveSecondHand();
 
     private:
-        void drawHand(QPainter *p, const QRect &rect, const qreal verticalTranslation, const qreal rotation, const QString &handName);
         void connectToEngine();
+        void drawHand(QPainter *p, const QRect &rect, const qreal verticalTranslation, const qreal rotation, const QString &handName);
 
         bool m_showSecondHand;
         bool m_fancyHands;
