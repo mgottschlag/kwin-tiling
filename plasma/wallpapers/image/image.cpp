@@ -65,9 +65,11 @@ void Image::init(const KConfigGroup &config)
             m_wallpaper = m_wallpaper.left(index);
         }
     }
+
     m_color = config.readEntry("wallpapercolor", QColor(56, 111, 150));
     m_usersWallpapers = config.readEntry("userswallpapers", QStringList());
     m_dirs = config.readEntry("slidepaths", QStringList());
+
     if (m_dirs.isEmpty()) {
         m_dirs << KStandardDirs::installPath("wallpaper");
     }
@@ -199,11 +201,13 @@ void Image::paint(QPainter *painter, const QRectF& exposedRect)
             return;
         }
     }
+
     if (m_pixmap.isNull()) {
         painter->fillRect(exposedRect, QBrush(m_color));
         //kDebug() << "pixmap null";
         return;
     }
+
     painter->save();
 
     if (painter->worldMatrix() == QMatrix()) {

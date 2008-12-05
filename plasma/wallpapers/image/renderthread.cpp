@@ -86,12 +86,15 @@ void RenderThread::run()
     forever {
         {
             QMutexLocker lock(&m_mutex);
+
             while (!m_restart && !m_abort) {
                 m_condition.wait(&m_mutex);
             }
+
             if (m_abort) {
                 return;
             }
+
             m_restart = false;
 
             // load all parameters in nonshared variables
@@ -118,28 +121,24 @@ void RenderThread::run()
         QSize scaledSize;
         QImage img;
 
-        // load nonscalable image
-        if (!scalable) {
-            img = QImage(file);
-        }
-
         // set image size
         QSize imgSize;
         if (scalable) {
             // scalable: image can be of any size
             imgSize = size;
-        }
-        else {
+        } else {
             // otherwise, use the natural size of the loaded image
+            img = QImage(file);
             imgSize = img.size();
+            kDebug() << "loaded with" << imgSize << ratio;
         }
-        imgSize *= ratio;
 
         // if any of them is zero we may run into a div-by-zero below.
-        if (imgSize.width() == 0) {
+        if (imgSize.width() < 1) {
             imgSize.setWidth(1);
         }
-        if (imgSize.height() == 0) {
+
+        if (imgSize.height() < 1) {
             imgSize.setHeight(1);
         }
 
@@ -147,6 +146,7 @@ void RenderThread::run()
         switch (method)
         {
         case Background::Scale:
+            imgSize *= ratio;
             scaledSize = size;
             break;
         case Background::Center:
@@ -155,16 +155,13 @@ void RenderThread::run()
                         (size.height() - scaledSize.height()) / 2);
 
             //If the picture is bigger than the screen, shrink it
-            if( size.width() < imgSize.width() && imgSize.width() > imgSize.height() )
-            {
+            if (size.width() < imgSize.width() && imgSize.width() > imgSize.height()) {
                 int width = size.width();
                 int height = width * scaledSize.height() / imgSize.width();
                 scaledSize = QSize(width, height);
                 pos = QPoint((size.width() - scaledSize.width()) / 2,
                              (size.height() - scaledSize.height()) / 2);
-            }
-            else if( size.height() < imgSize.height() )
-            {
+            } else if (size.height() < imgSize.height()) {
                 int height = size.height();
                 int width = height * imgSize.width() / imgSize.height();
                 scaledSize = QSize(width, height);
@@ -174,6 +171,7 @@ void RenderThread::run()
 
             break;
         case Background::Maxpect: {
+            imgSize *= ratio;
             float xratio = (float) size.width() / imgSize.width();
             float yratio = (float) size.height() / imgSize.height();
             if (xratio > yratio) {
@@ -190,6 +188,7 @@ void RenderThread::run()
             break;
         }
         case Background::ScaleCrop: {
+            imgSize *= ratio;
             float xratio = (float) size.width() / imgSize.width();
             float yratio = (float) size.height() / imgSize.height();
             if (xratio > yratio) {
@@ -221,6 +220,7 @@ void RenderThread::run()
         }
 
         QPainter p(&result);
+        kDebug() << token << scalable << scaledSize << imgSize;
         if (scalable) {
             // tiling is ignored for scalable wallpapers
             KSvgRenderer svg(file);
@@ -228,30 +228,31 @@ void RenderThread::run()
                 continue;
             }
             svg.render(&p);
-        }
-        else {
-            QImage scaled = img.scaled(scaledSize, Qt::IgnoreAspectRatio, mode);
+        } else {
+            if (scaledSize != imgSize) {
+                img = img.scaled(scaledSize, Qt::IgnoreAspectRatio, mode);
+            }
+
             if (m_restart) {
                 continue;
             }
+
             if (tiled) {
                 for (int x = pos.x(); x < size.width(); x += scaledSize.width()) {
                     for (int y = pos.y(); y < size.height(); y += scaledSize.height()) {
-                        p.drawImage(QPoint(x, y), scaled);
+                        p.drawImage(QPoint(x, y), img);
                         if (m_restart) {
                             goto endLoop;
                         }
                     }
                 }
-            }
-            else {
-                p.drawImage(pos, scaled);
+            } else {
+                p.drawImage(pos, img);
             }
         }
 
         // signal we're done
         emit done(token, result);
-
         endLoop: continue;
     }
 }
