@@ -88,14 +88,12 @@ Calendar::Calendar(QGraphicsWidget *parent)
     connect(d->back, SIGNAL(clicked()), this, SLOT(prevMonth()));
     m_hLayout->addItem(d->back);
 
-    d->spacer0 = new Plasma::Label(this);
-    d->spacer0->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-    m_hLayout->addItem(d->spacer0);
+    m_hLayout->addStretch();
 
     d->month = new Plasma::Label(this);
     d->month->setText(d->calendarTable->calendar()->monthName(d->calendarTable->calendar()->month(d->calendarTable->date()), d->calendarTable->calendar()->year(d->calendarTable->date())));
-    d->month->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    d->month->nativeWidget()->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    d->month->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    d->month->nativeWidget()->setAlignment(Qt::AlignCenter);
     m_hLayout->addItem(d->month);
 
     #ifdef COOL_SPINBOX
@@ -112,9 +110,7 @@ Calendar::Calendar(QGraphicsWidget *parent)
         m_hLayout->addItem(d->year);
     #endif
 
-    d->spacer1 = new Plasma::Label(this);
-    d->spacer1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-    m_hLayout->addItem(d->spacer1);
+    m_hLayout->addStretch();
 
     d->forward = new ToolButton(this);
     d->forward->setText(">");
