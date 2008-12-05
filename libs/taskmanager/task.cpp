@@ -238,6 +238,10 @@ void Task::refreshIcon()
         changes |= ActionsChanged;
     }
 
+    if (dirty & NET::WMIcon) {
+        refreshIcon();
+    }
+
     if (changes != TaskUnchanged) {
         emit changed(changes);
     }

@@ -325,13 +325,6 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
         t->updateDemandsAttentionState(w);
     }
 
-    // refresh icon pixmap if necessary
-    if (dirty & NET::WMIcon) {
-        //TODO should we forward on icon changes, too?
-        t->refreshIcon();
-        dirty ^= NET::WMIcon;
-    }
-
     TaskChanges changes = TaskUnchanged;
 
     //kDebug() << "got changes, but will we refresh?" << dirty;
