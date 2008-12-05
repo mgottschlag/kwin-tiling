@@ -75,7 +75,6 @@ protected:
 
     virtual void paintCell(QPainter *p, int cell, int week, int weekDay, CellTypes type, const QDate &cellDate);
     virtual void paintBorder(QPainter *p, int cell, int week, int weekDay, CellTypes type, const QDate &cellDate);
-    virtual QString cellSVGSuffix(int cell, int week, int weekDay, CellTypes type, const QDate &cellDate);
 
 private:
     Q_PRIVATE_SLOT(d, void setupThemedElements())

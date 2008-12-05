@@ -25,7 +25,6 @@
 #include <QtGui/QWidget>
 #include <QtGui/QGraphicsSceneWheelEvent>
 #include <QtGui/QStyleOptionGraphicsItem>
-
 //KDECore
 #include <kglobal.h>
 #include <kdebug.h>
@@ -74,6 +73,8 @@ class CalendarTablePrivate
             QDate currentDate = QDate::currentDate();
             month = calendar->month(currentDate);
             year = calendar->year(currentDate);
+
+            opacity = 0.5; //transparency for the inactive text
 
             setupThemedElements();
             QObject::connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
@@ -187,7 +188,9 @@ class CalendarTablePrivate
         QRectF hoverRect;
         int month;
         int year;
-
+  
+        
+        float opacity;
         int hoverWeek;
         int hoverDay;
         int centeringSpace;
@@ -402,8 +405,22 @@ void CalendarTable::resizeEvent(QGraphicsSceneResizeEvent * event)
 
 void CalendarTable::paintCell(QPainter *p, int cell, int week, int weekDay, CellTypes type, const QDate &cellDate)
 {
-    QString cellSuffix = cellSVGSuffix(cell, week, weekDay, type & NotInCurrentMonth, cellDate);
-    d->svg->paint(p, QRectF(cellX(weekDay), cellY(week), d->cellW, d->cellH), cellSuffix);
+    Q_UNUSED(cellDate);
+
+    QString cellSuffix = type & NotInCurrentMonth ? "inactive" : "active";
+    QRectF cellArea = QRectF(cellX(weekDay), cellY(week), d->cellW, d->cellH);
+
+    d->svg->paint(p, cellArea, cellSuffix); // draw background 
+
+    QColor numberColor = Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    if(type & NotInCurrentMonth) {
+        p->setOpacity(d->opacity);
+    }
+    
+    p->setPen(numberColor);
+    p->setFont(Theme::defaultTheme()->font(Plasma::Theme::DefaultFont));
+    p->drawText(cellArea, Qt::AlignCenter, QString::number(cell)); //draw number
+    p->setOpacity(1.0);
 }
 
 void CalendarTable::paintBorder(QPainter *p, int cell, int week, int weekDay, CellTypes type, const QDate &cellDate)
@@ -428,14 +445,6 @@ void CalendarTable::paintBorder(QPainter *p, int cell, int week, int weekDay, Ce
     d->svg->paint(p, QRectF(cellX(weekDay) - 1, cellY(week) - 1,
                             d->cellW + 1, d->cellH + 2),
                   elementId);
-}
-
-QString CalendarTable::cellSVGSuffix(int cell, int week, int weekDay, CellTypes type, const QDate &cellDate)
-{
-    Q_UNUSED(week);
-    Q_UNUSED(weekDay);
-    Q_UNUSED(cellDate);
-    return QString::number(cell) + (type & NotInCurrentMonth ? "-grayed" : "");
 }
 
 void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -493,7 +502,11 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
 
             if (weekDay == 0) {
                 QRectF cellRect(r.x() + d->centeringSpace, y, d->cellW, d->cellH);
-                d->svg->paint(p, cellRect, "week" + QString::number(d->calendar->weekNumber(cellDate)));
+                p->setPen(Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+                p->setFont(Theme::defaultTheme()->font(Plasma::Theme::DefaultFont));
+                p->setOpacity(d->opacity);
+                p->drawText(cellRect, Qt::AlignCenter, QString::number(d->calendar->weekNumber(cellDate))); //draw number
+                p->setOpacity(1.0);
             }
         }
     } 
