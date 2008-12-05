@@ -151,6 +151,7 @@ Calendar::~Calendar()
 void Calendar::goToToday()
 {
     d->calendarTable->setDate(QDate::currentDate());
+    dateUpdated(QDate::currentDate());
 }
 
 bool Calendar::setCalendar(KCalendarSystem *calendar)
