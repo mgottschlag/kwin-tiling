@@ -177,15 +177,15 @@ bool GroupManager::add(TaskPtr task)
     kDebug() <<  task->className();
     kDebug() <<  task->classClass();*/
 
+    if (!task->showInTaskbar()) {
+        //kDebug() << "Do not show in taskbar";
+        return false;
+    }
+
     // Should the Task be displayed ? We always display if attention is demaded
     if (!task->demandsAttention()) {
         // As the Task doesn't demand attention
         // go through all filters whether the task should be displayed or not
-        if (!task->showInTaskbar()) {
-            //kDebug() << "Do not show in taskbar";
-            return false;
-        }
-
         if (showOnlyCurrentDesktop() && !task->isOnCurrentDesktop()) {
             //kDebug() << "Not on this desktop and showOnlyCurrentDesktop";
             return false;
