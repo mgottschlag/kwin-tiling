@@ -420,8 +420,9 @@ void CalendarTable::paintCell(QPainter *p, int cell, int week, int weekDay, Cell
     p->setPen(numberColor);
     QFont font = Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
     font.setBold(true);
+    font.setPointSize(cellArea.height() * 0.6);
     p->setFont(font);
-    p->drawText(cellArea, Qt::AlignCenter, QString::number(cell)); //draw number
+    p->drawText(cellArea, Qt::AlignCenter, QString::number(cell),&cellArea); //draw number
     p->setOpacity(1.0);
 }
 
@@ -505,7 +506,9 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
             if (weekDay == 0) {
                 QRectF cellRect(r.x() + d->centeringSpace, y, d->cellW, d->cellH);
                 p->setPen(Theme::defaultTheme()->color(Plasma::Theme::TextColor));
-                p->setFont(Theme::defaultTheme()->font(Plasma::Theme::DefaultFont));
+                QFont font = Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
+                font.setPointSize(cellRect.height() * 0.6);
+                p->setFont(font);
                 p->setOpacity(d->opacity);
                 p->drawText(cellRect, Qt::AlignCenter, QString::number(d->calendar->weekNumber(cellDate))); //draw number
                 p->setOpacity(1.0);
@@ -520,6 +523,7 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
         for (int i = 0; i < daysInWeek; i++){
             int weekDay = ((i + weekStartDay - 1) % daysInWeek) + 1;
             QString dayName = d->calendar->weekDayName(weekDay, KCalendarSystem::ShortDayName);
+            p->setFont(Theme::defaultTheme()->font(Plasma::Theme::DefaultFont));
             p->drawText(QRectF(cellX(i), r.y(), d->cellW, d->headerHeight), Qt::AlignCenter, dayName);
         }
     }
