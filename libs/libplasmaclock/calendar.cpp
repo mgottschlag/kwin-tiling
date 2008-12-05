@@ -123,9 +123,10 @@ Calendar::Calendar(QGraphicsWidget *parent)
     m_layout->addItem(d->calendarTable);
 
     d->dateText = new Plasma::LineEdit(this);
-    d->dateText->nativeWidget()->setReadOnly(true);
+    //d->dateText->nativeWidget()->setReadOnly(true);
     dateUpdated(d->calendarTable->date());
     connect(d->calendarTable, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateUpdated(const QDate &)));
+    connect(d->dateText->nativeWidget(), SIGNAL(returnPressed()), this, SLOT(manualDateChange()));
     
     d->jumpToday = new ToolButton(this);
     d->jumpToday->nativeWidget()->setIcon(KIcon("go-jump-today"));
@@ -142,6 +143,15 @@ Calendar::Calendar(QGraphicsWidget *parent)
 Calendar::~Calendar()
 {
    delete d;
+}
+
+void Calendar::manualDateChange()
+{
+    QDate date = KGlobal::locale()->readDate(((QLineEdit*)sender())->text());
+    if(date.isValid()) {
+        d->calendarTable->setDate(date);
+        dateUpdated(date);
+    }
 }
 
 void Calendar::goToToday()
