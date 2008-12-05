@@ -324,7 +324,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         int rowHeight = 20;
         int columnWidth = 120;
 
-        item->showCloseButton();
+        //item->showCloseButton();
 
         QGraphicsWidget *controls = new QGraphicsWidget(item);
         //controls->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
@@ -559,8 +559,9 @@ void Battery::updateStatus()
         batteryLabelText.append(i18nc("Battery is not plugged in", "<b>Battery:</b> not present<br />"));
     }
     //kDebug() << batteryLabelText;
-    m_batteryLabel->setText(batteryLabelText);
-
+    if (m_batteryLabel) {
+        m_batteryLabel->setText(batteryLabelText);
+    }
     if (!m_availableProfiles.empty() && m_profileCombo) {
         m_profileCombo->clear();
         m_profileCombo->addItem(m_currentProfile);
