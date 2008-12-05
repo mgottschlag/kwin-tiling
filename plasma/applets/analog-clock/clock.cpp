@@ -190,18 +190,33 @@ void Clock::moveSecondHand()
     update();
 }
 
-void Clock::drawHand(QPainter *p, qreal rotation, const QString &handName)
+void Clock::drawHand(QPainter *p, const QRect &rect, const qreal verticalTranslation, const qreal rotation, const QString &handName)
 {
+    // this code assumes that the _vertical_ placment of the hands in the svg file is
+    // properly chosen to obtain the desired hand offset with respect to the center
+
     p->save();
-    const QSizeF boundSize = boundingRect().size();
-    const QRectF elementRect = m_theme->elementRect(handName);
-    const QRectF screwRect = m_theme->elementRect("HandCenterScrew");
 
-    p->translate(boundSize.width() / 2, boundSize.height() / 2);
+    p->translate(rect.width() / 2, rect.height() / 2);
     p->rotate(rotation);
-    p->translate(-elementRect.width() / 2, -elementRect.width() / 2 + (elementRect.y() - screwRect.center().y()));
 
-    m_theme->paint(p, QRectF(QPointF(0, 0), elementRect.size()), handName);
+    QRectF elementRect;
+    QString name = handName + "HandShadow";
+    if (m_theme->hasElement(name)) {
+      p->save();
+
+      elementRect = m_theme->elementRect(name);
+      static const QSizeF offset = QSizeF(1, 3);
+      p->translate(-elementRect.width() / 2 + offset.width(), elementRect.y() - verticalTranslation + offset.height());
+      m_theme->paint(p, QRectF(QPointF(0, 0), elementRect.size()), name);
+
+      p->restore();
+    }
+
+    name = handName + "Hand";
+    elementRect = m_theme->elementRect(name);
+    p->translate(-elementRect.width() / 2, elementRect.y() - verticalTranslation);
+    m_theme->paint(p, QRectF(QPointF(0, 0), elementRect.size()), name);
 
     p->restore();
 }
@@ -211,11 +226,6 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     Q_UNUSED(option)
     Q_UNUSED(rect)
 
-    QRectF tempRect(0, 0, 0, 0);
-
-    QSizeF boundSize = geometry().size();
-    QSize elementSize;
-
     p->setRenderHint(QPainter::SmoothPixmapTransform);
 
     const qreal minutes = 6.0 * m_time.minute() - 180;
@@ -224,16 +234,14 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
     m_theme->paint(p, rect, "ClockFace");
 
-
-    //optionally paint the time string
+    // optionally paint the time string
     if (m_showTimezoneString || shouldDisplayTimezone()) {
         QString time = prettyTimezone();
         QFontMetrics fm(QApplication::font());
         const int margin = 4;
 
-
         if (!time.isEmpty()){
-            QRect textRect((rect.width()/2 - fm.width(time) / 2),((rect.height()/2) - fm.height()*2),
+            QRect textRect(rect.width() / 2 - fm.width(time) / 2, rect.width() / 2 - fm.height() * 2,
                   fm.width(time), fm.height());
 
             p->setPen(Qt::NoPen);
@@ -251,8 +259,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         }
     }
 
-
-    //Make sure we paint the second hand on top of the others
+    // make sure we paint the second hand on top of the others
     qreal seconds = 0;
     if (m_showSecondHand) {
         static const double anglePerSec = 6;
@@ -303,30 +310,17 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         }
     }
 
-    if (m_theme->hasElement("HourHandShadow")) {
-        p->translate(1,3);
-
-        drawHand(p, hours, "HourHandShadow");
-        drawHand(p, minutes, "MinuteHandShadow");
-
-        if (m_showSecondHand) {
-            drawHand(p, seconds, "SecondHandShadow");
-        }
-
-        p->translate(-1,-3);
-    }
-    
-    drawHand(p, hours, "HourHand");
-    drawHand(p, minutes, "MinuteHand");
+    const qreal verticalTranslation = m_theme->elementRect("ClockFace").center().y();
+    drawHand(p, rect, verticalTranslation, hours, "Hour");
+    drawHand(p, rect, verticalTranslation, minutes, "Minute");
     if (m_showSecondHand) {
-        drawHand(p, seconds, "SecondHand");
+      drawHand(p, rect, verticalTranslation, seconds, "Second");
     }
 
     p->save();
-    elementSize = m_theme->elementSize("HandCenterScrew");
-    tempRect.setSize(elementSize);
-    p->translate(boundSize.width() / 2 - elementSize.width() / 2, boundSize.height() / 2 - elementSize.height() / 2);
-    m_theme->paint(p, tempRect, "HandCenterScrew");
+    QRectF elementRect = QRectF(QPointF(0, 0), m_theme->elementSize("HandCenterScrew"));
+    p->translate(rect.width() / 2 - elementRect.width() / 2, rect.height() / 2 - elementRect.height() / 2);
+    m_theme->paint(p, elementRect, "HandCenterScrew");
     p->restore();
 
     m_theme->paint(p, rect, "Glass");

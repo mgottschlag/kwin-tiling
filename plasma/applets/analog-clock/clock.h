@@ -71,7 +71,7 @@ class Clock : public ClockApplet
         void moveSecondHand();
 
     private:
-        void drawHand(QPainter *p, qreal rotation, const QString &handName);
+        void drawHand(QPainter *p, const QRect &rect, const qreal verticalTranslation, const qreal rotation, const QString &handName);
         void connectToEngine();
 
         bool m_showSecondHand;
