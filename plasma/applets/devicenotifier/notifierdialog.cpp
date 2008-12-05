@@ -299,7 +299,7 @@ void NotifierDialog::storageTeardownDone(Solid::ErrorType error, QVariant errorD
     else {
         m_notifier->changeNotifierIcon("dialog-ok");
         m_notifier->update();
-        QTimer::singleShot(2000, this, SLOT(resetNotifierIcon()));
+        QTimer::singleShot(5000, this, SLOT(resetNotifierIcon()));
     }
 
     //show the message only one time
