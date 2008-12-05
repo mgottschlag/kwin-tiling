@@ -104,7 +104,7 @@ void KColorCm::populateSchemeList()
     // add current scheme entry
     QIcon icon = createSchemePreviewIcon(KGlobalSettings::createApplicationPalette(m_config),
                                          WindecoColors(m_config));
-    QListWidgetItem *currentitem = new QListWidgetItem(icon, i18n("Current"));
+    QListWidgetItem *currentitem = new QListWidgetItem(icon, i18nc("Current color scheme", "Current"));
     schemeList->addItem(currentitem);
     schemeList->blockSignals(true); // don't emit changed signals
     schemeList->setCurrentItem(currentitem);
@@ -114,7 +114,7 @@ void KColorCm::populateSchemeList()
     m_config->setReadDefaults(true);
     icon = createSchemePreviewIcon(KGlobalSettings::createApplicationPalette(m_config),
                                          WindecoColors(m_config));
-    schemeList->addItem(new QListWidgetItem(icon, i18n("Default")));
+    schemeList->addItem(new QListWidgetItem(icon, i18nc("Default color scheme", "Default")));
     m_config->setReadDefaults(false);
 
     QStringList schemeFiles = KGlobal::dirs()->findAllResources("data", "color-schemes/*.colors", KStandardDirs::NoDuplicates);
@@ -221,7 +221,7 @@ void KColorCm::loadScheme()
     {
         QString name = schemeList->currentItem()->text();
         QString fileBaseName = schemeList->currentItem()->data(Qt::UserRole).toString();
-        if (name == i18n("Default"))
+        if (name == i18nc("Default color scheme", "Default"))
         {
             schemeRemoveButton->setEnabled(false);
 
@@ -232,7 +232,7 @@ void KColorCm::loadScheme()
             // load the default scheme
             emit changed(true);
         }
-        else if (name == i18n("Current"))
+        else if (name == i18nc("Current color scheme", "Current"))
         {
             schemeRemoveButton->setEnabled(false);
             loadInternal(false);
@@ -1092,7 +1092,7 @@ void KColorCm::save()
 void KColorCm::defaults()
 {
     for(int i = 0; i < schemeList->count(); ++i) {
-        if(schemeList->item(i)->text() == i18n("Default")) {
+        if(schemeList->item(i)->text() == i18nc("Default color scheme", "Default")) {
             schemeList->setCurrentItem(schemeList->item(i));
             break;
         }
