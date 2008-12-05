@@ -26,6 +26,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define TASKMANAGER_H
 
 #include <QtCore/QHash>
+#include <QtCore/QSet>
 #include <QtCore/QVector>
 
 #include <KDE/KSharedPtr>
@@ -33,7 +34,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace TaskManager
 {
-typedef QList<WId> WindowList;
+typedef QSet<WId> WindowList;
 
 class Task;
 typedef KSharedPtr<Task> TaskPtr;

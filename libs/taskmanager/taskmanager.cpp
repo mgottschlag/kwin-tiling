@@ -123,7 +123,7 @@ void TaskManager::configure_startup()
     connect( d->startupInfo,
         SIGNAL( gotRemoveStartup( const KStartupInfoId&, const KStartupInfoData& )),
         SLOT( killStartup( const KStartupInfoId& )));
-    c=KConfigGroup(&_c, "TaskbarButtonSettings");
+    c = KConfigGroup(&_c, "TaskbarButtonSettings");
     d->startupInfo->setTimeout( c.readEntry( "Timeout", 30 ));
 }
 
@@ -136,10 +136,8 @@ TaskPtr TaskManager::findTask(WId w)
     TaskDict::iterator it = d->tasksByWId.begin();
     TaskDict::iterator itEnd = d->tasksByWId.end();
 
-    for (; it != itEnd; ++it)
-    {
-        if (it.key() == w || it.value()->hasTransient(w))
-        {
+    for (; it != itEnd; ++it) {
+        if (it.key() == w || it.value()->hasTransient(w)) {
             return it.value();
         }
     }
@@ -203,9 +201,8 @@ void TaskManager::windowAdded(WId w )
     }
 
     // ignore windows that want to be ignored by the taskbar
-    if ((info.state() & NET::SkipTaskbar) != 0)
-    {
-        d->skiptaskbarWindows.push_front( w ); // remember them though
+    if ((info.state() & NET::SkipTaskbar) != 0) {
+        d->skiptaskbarWindows.insert(w); // remember them though
         return;
     }
 
@@ -257,7 +254,7 @@ void TaskManager::windowAdded(WId w )
 
 void TaskManager::windowRemoved(WId w)
 {
-    d->skiptaskbarWindows.removeAll(w);
+    d->skiptaskbarWindows.remove(w);
 
     // find task
     TaskPtr t = findTask(w);
@@ -293,14 +290,14 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
 
         if (info.state() & NET::SkipTaskbar) {
             windowRemoved(w);
-            d->skiptaskbarWindows.push_front(w);
+            d->skiptaskbarWindows.insert(w);
             return;
         } else {
-            d->skiptaskbarWindows.removeAll(w);
+            d->skiptaskbarWindows.remove(w);
             if (info.mappingState() != NET::Withdrawn && !findTask(w)) {
                 // skipTaskBar state was removed and the window is still
                 // mapped, so add this window
-                windowAdded( w );
+                windowAdded(w);
             }
         }
     }
@@ -352,18 +349,17 @@ void TaskManager::updateWindowPixmap(WId w)
     }
 }
 
-void TaskManager::activeWindowChanged(WId w )
+void TaskManager::activeWindowChanged(WId w)
 {
     //kDebug() << "TaskManager::activeWindowChanged";
 
-    TaskPtr t = findTask( w );
+    TaskPtr t = findTask(w);
     if (!t) {
         if (d->active) {
             d->active->setActive(false);
             d->active = 0;
         }
-    }
-    else {
+    } else {
         if (d->active)
             d->active->setActive(false);
 

@@ -182,7 +182,7 @@ void Task::refreshIcon()
     d->pixmap = KWindowSystem::icon(d->win, 16, 16, true);
 
     // try to guess the icon from the classhint
-    if(d->pixmap.isNull())
+    if (d->pixmap.isNull())
     {
         KIconLoader::global()->loadIcon(className().toLower(),
                                                     KIconLoader::Small,
@@ -351,7 +351,7 @@ int Task::desktop() const
 bool Task::demandsAttention() const
 {
     return (d->info.valid() && (d->info.state() & NET::DemandsAttention)) ||
-            d->transientsDemandingAttention.count() > 0;
+            !d->transientsDemandingAttention.isEmpty();
 }
 
 bool Task::isOnScreen( int screen ) const
@@ -376,43 +376,37 @@ QRect Task::geometry() const
 
 void Task::updateDemandsAttentionState( WId w )
 {
-    if (window() != w)
-    {
+    if (window() != w) {
         // 'w' is a transient for this task
         NETWinInfo i( QX11Info::display(), w, QX11Info::appRootWindow(), NET::WMState );
-        if(i.state() & NET::DemandsAttention)
-        {
-            if (!d->transientsDemandingAttention.contains(w))
-            {
-                d->transientsDemandingAttention.append(w);
+        if (i.state() & NET::DemandsAttention) {
+            if (!d->transientsDemandingAttention.contains(w)) {
+                d->transientsDemandingAttention.insert(w);
             }
-        }
-        else
-        {
-            d->transientsDemandingAttention.removeAll( w );
+        } else {
+            d->transientsDemandingAttention.remove(w);
         }
     }
 }
 
 void Task::addTransient( WId w, const NETWinInfo& info )
 {
-    d->transients.append(w);
-    if (info.state() & NET::DemandsAttention)
-    {
-        d->transientsDemandingAttention.append(w);
+    d->transients.insert(w);
+    if (info.state() & NET::DemandsAttention) {
+        d->transientsDemandingAttention.insert(w);
         emit changed(TransientsChanged);
     }
 }
 
 void Task::removeTransient(WId w)
 {
-    d->transients.removeAll(w);
-    d->transientsDemandingAttention.removeAll(w);
+    d->transients.remove(w);
+    d->transientsDemandingAttention.remove(w);
 }
 
 bool Task::hasTransient(WId w) const
 {
-    return d->transients.indexOf(w) != -1;
+    return d->transients.contains(w);
 }
 
 WId Task::window() const
@@ -758,11 +752,13 @@ void Task::activate()
 {
 //    kDebug(1210) << "Task::activate():" << name();
     WId w = d->win;
-    if (d->transientsDemandingAttention.count() > 0)
-    {
-        w = d->transientsDemandingAttention.last();
+    if (!d->transientsDemandingAttention.isEmpty()) {
+        WindowList::const_iterator it = d->transientsDemandingAttention.end();
+        --it;
+        w = *it;
     }
-    KWindowSystem::forceActiveWindow( w );
+
+    KWindowSystem::forceActiveWindow(w);
 }
 
 void Task::activateRaiseOrIconify()
@@ -1055,8 +1051,7 @@ TaskList TaskDrag::decode( const QMimeData* e )
         {
             quint32 id;
             stream >> id;
-            if (TaskPtr task = TaskManager::self()->findTask(id))
-            {
+            if (TaskPtr task = TaskManager::self()->findTask(id)) {
                 tasks.append(task);
             }
         }
