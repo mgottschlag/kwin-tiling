@@ -948,6 +948,8 @@ void Battery::sourceAdded(const QString& source)
     if (source.startsWith("Battery") && source != "Battery") {
         dataEngine("powermanagement")->connectSource(source, this);
         m_numOfBattery++;
+        constraintsEvent(Plasma::SizeConstraint);
+        update();
     }
     if (source == "PowerDevil") {
         dataEngine("powermanagement")->connectSource(source, this);
@@ -958,6 +960,7 @@ void Battery::sourceRemoved(const QString& source)
 {
     if (m_batteries_data.remove(source)) {
         m_numOfBattery--;
+        constraintsEvent(Plasma::SizeConstraint);
         update();
     }
     if (source == "PowerDevil") {
