@@ -537,20 +537,24 @@ void KSMShutdownDlg::paintEvent(QPaintEvent *e)
     p.fillRect(QRect(0, 0, width(), height()), Qt::transparent);
     m_svg->paint(&p, QRect(0, 0, width(), height()), "background");
 
-    //FIXME should crop rather than resize this
     if (m_svg->hasElement("picture")) {
         QRect r = m_svg->elementRect("picture").toRect();
         KSMPushButton* button;
         if (m_btnLogout->isVisible()) {
-	  button = m_btnLogout;
-	} else if (m_btnHalt->isVisible()) {
-	  button = m_btnHalt;
-	} else {
-	  button = m_btnReboot;
-	}      
+          button = m_btnLogout;
+        } else if (m_btnHalt->isVisible()) {
+          button = m_btnHalt;
+        } else {
+          button = m_btnReboot;
+        }
         r.moveTop(button->geometry().top() - 10);
-       	r.setBottom(btnBack->geometry().top());
-        m_svg->paint(&p, r, "picture");
+        r.setBottom(btnBack->geometry().top());
+        QPixmap picture = m_svg->pixmap("picture");
+
+        QRect sourceRect(QPoint(0, 0), r.size());
+        sourceRect.moveCenter(picture.rect().center());
+
+        p.drawPixmap(r, picture, sourceRect);
     }
 }
 
