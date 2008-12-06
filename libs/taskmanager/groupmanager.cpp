@@ -59,7 +59,8 @@ public:
           showOnlyCurrentDesktop(false),
           showOnlyCurrentScreen(false),
           showOnlyMinimized(false),
-          onlyGroupWhenFull(false)
+          onlyGroupWhenFull(false),
+          changingGroupingStragegy(false)
     {
     }
 
@@ -94,6 +95,7 @@ public:
     bool showOnlyCurrentScreen : 1;
     bool showOnlyMinimized : 1;
     bool onlyGroupWhenFull : 1;
+    bool changingGroupingStragegy : 1;
 };
 
 
@@ -261,7 +263,7 @@ bool GroupManager::add(TaskPtr task)
 
 void GroupManager::remove(TaskPtr task)
 {
-    //kDebug() << "remove: " << task->visibleName();
+    kDebug() << "remove: " << task->visibleName();
     if (!d->geometryTasks.isEmpty()) {
         d->geometryTasks.removeAll(task);
     }
@@ -580,6 +582,7 @@ void GroupManager::setSortingStrategy(TaskSortingStrategy sortOrder)
             kDebug() << "Invalid Strategy";
             d->abstractSortingStrategy = 0;
     }
+
     d->sortingStrategy = sortOrder;
     d->reloadTasks();
 }
@@ -596,10 +599,17 @@ AbstractGroupingStrategy* GroupManager::taskGrouper() const
 
 void GroupManager::setGroupingStrategy(TaskGroupingStrategy strategy)
 {
-    //kDebug() << strategy;
-
-    if (d->abstractGroupingStrategy && d->abstractGroupingStrategy->type() == strategy) {
+    if (d->changingGroupingStragegy ||
+        (d->abstractGroupingStrategy && d->abstractGroupingStrategy->type() == strategy)) {
         return;
+    }
+
+    d->changingGroupingStragegy = true;
+
+    //kDebug() << strategy << kBacktrace();
+    if (d->onlyGroupWhenFull) {
+        disconnect(d->rootGroup, SIGNAL(itemAdded(AbstractItemPtr)), this, SLOT(checkIfFull()));
+        disconnect(d->rootGroup, SIGNAL(itemRemoved(AbstractItemPtr)), this, SLOT(checkIfFull()));
     }
 
     delete d->abstractGroupingStrategy;
@@ -630,8 +640,14 @@ void GroupManager::setGroupingStrategy(TaskGroupingStrategy strategy)
     }
 
     d->reloadTasks();
-}
 
+    if (d->onlyGroupWhenFull) {
+        connect(d->rootGroup, SIGNAL(itemAdded(AbstractItemPtr)), this, SLOT(checkIfFull()));
+        connect(d->rootGroup, SIGNAL(itemRemoved(AbstractItemPtr)), this, SLOT(checkIfFull()));
+    }
+
+    d->changingGroupingStragegy = false;
+}
 
 } // TaskManager namespace
 
