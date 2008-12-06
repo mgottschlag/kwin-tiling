@@ -1,7 +1,7 @@
 set (ionlib_SRCS ion.cpp weatherutils.cpp)
 kde4_add_library (weather_ion SHARED ${ionlib_SRCS})
 target_link_libraries (weather_ion ${KDE4_KIO_LIBS} ${KDE4_PLASMA_LIBS})
-target_link_libraries (weather_ion LINK_INTERFACE_LIBRARIES ${KDE4_KIO_LIBS} ${KDE4_PLASMA_LIBS})
+target_link_libraries (weather_ion LINK_INTERFACE_LIBRARIES ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${KDE4_PLASMA_LIBS})
 
 set_target_properties(weather_ion PROPERTIES
    VERSION ${GENERIC_LIB_VERSION}
