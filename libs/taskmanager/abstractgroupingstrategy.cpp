@@ -46,7 +46,6 @@ public:
     GroupManager::TaskGroupingStrategy type;
 };
 
-
 AbstractGroupingStrategy::AbstractGroupingStrategy(GroupManager *groupManager)
     : QObject(groupManager),
       d(new Private)
@@ -57,8 +56,24 @@ AbstractGroupingStrategy::AbstractGroupingStrategy(GroupManager *groupManager)
 AbstractGroupingStrategy::~AbstractGroupingStrategy()
 {
     foreach (TaskGroup *group, d->createdGroups) { //cleanup all created groups
-        closeGroup(group);
+        disconnect(group, 0, this, 0);
+
+        TaskGroup *parentGroup = group->parentGroup();
+        if (!parentGroup) {
+            parentGroup = d->groupManager->rootGroup();
+        }
+
+        foreach (const AbstractItemPtr& item, group->members()) {
+            if (!item->isGroupItem()) {
+                parentGroup->add(item);
+            }
+        }
+
+        parentGroup->remove(group);
+        emit groupRemoved(group);
     }
+
+    qDeleteAll(d->createdGroups);
     delete d;
 }
 
@@ -84,7 +99,6 @@ QList<QAction*> AbstractGroupingStrategy::strategyActions(QObject *parent, Abstr
     return QList<QAction*>();
 }
 
-
 TaskGroup* AbstractGroupingStrategy::createGroup(ItemList items)
 {
     kDebug();
@@ -101,6 +115,7 @@ TaskGroup* AbstractGroupingStrategy::createGroup(ItemList items)
     foreach (const AbstractItemPtr& item, items) {
         newGroup->add(item);
     }
+
     oldGroup->add(newGroup);
     return newGroup;
 }
