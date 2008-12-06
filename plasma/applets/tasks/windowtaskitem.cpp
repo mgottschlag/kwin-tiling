@@ -224,6 +224,7 @@ void WindowTaskItem::gotTaskPointer()
     }
 }
 
+
 void WindowTaskItem::setWindowTask(TaskManager::TaskItem* taskItem)
 {
     if (m_task) {
@@ -242,6 +243,20 @@ void WindowTaskItem::setWindowTask(TaskManager::TaskItem* taskItem)
     publishIconGeometry();
 
     //kDebug() << "Task added, isActive = " << task->isActive();
+}
+
+void WindowTaskItem::setTask(TaskManager::TaskItem* taskItem)
+{
+    if (!taskItem->startup() && !taskItem->task()) {
+        kDebug() << "Error";
+        return;
+    }
+
+    if (!taskItem->task()) {
+        setStartupTask(taskItem);
+    } else {
+        setWindowTask(taskItem);
+    }
 }
 
 

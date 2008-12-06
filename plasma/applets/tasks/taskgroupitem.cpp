@@ -42,7 +42,6 @@
 #include <KIconLoader>
 
 #include <taskmanager/taskactions.h>
-#include <taskmanager/task.h>
 #include <taskmanager/taskmanager.h>
 #include <taskmanager/taskgroup.h>
 #include <taskmanager/abstractgroupingstrategy.h>
@@ -107,6 +106,7 @@ void TaskGroupItem::unsplitGroup()
     reload();
 }
 
+
 TaskGroupItem * TaskGroupItem::splitGroup()
 {
     return m_childSplitGroup;
@@ -134,7 +134,7 @@ TaskGroupItem * TaskGroupItem::splitGroup(int newSplitPosition)
     //kDebug() << "split position" << newSplitPosition;
     Q_ASSERT(m_expandedLayout);
 
-    //remove all items which move to the splitgroup
+    //remove all items which move to the splitgroup from the expandedLayout
     for (int i = newSplitPosition ; i < m_groupMembers.size() ; i++) {
         AbstractGroupableItem *item = group()->members().at(i);
         m_expandedLayout->removeTaskItem(abstractItem(item));
@@ -355,79 +355,28 @@ QList<AbstractTaskItem*> TaskGroupItem::memberList() const
 
 AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractItemPtr groupableItem)
 {
+    kDebug();
     AbstractTaskItem *item = 0;
 
+    if (m_groupMembers.contains(groupableItem)) {
+        return m_groupMembers.value(groupableItem);
+    }
+
     if (groupableItem->isGroupItem()) {
-        item = dynamic_cast<AbstractTaskItem*>(createTaskGroup(dynamic_cast<GroupPtr>(groupableItem)));
-    } else {
-        TaskManager::TaskItem* task = dynamic_cast<TaskManager::TaskItem*>(groupableItem);
-        if (!task->task()) { //startuptask
-            item = dynamic_cast<AbstractTaskItem*>(createStartingTask(task));
-        } else {
-            item = dynamic_cast<AbstractTaskItem*>(createWindowTask(task));
-        }
+        TaskGroupItem *groupItem = new TaskGroupItem(this, m_applet, m_showTooltip);
+        groupItem->setGroup(static_cast<TaskManager::TaskGroup*>(groupableItem));
+        item = groupItem;
+    } else { //it's a window task
+        WindowTaskItem *windowItem = new WindowTaskItem(this, m_applet, m_showTooltip);
+        windowItem->setTask(static_cast<TaskManager::TaskItem*>(groupableItem));
+        item = windowItem;
     }
 
     if (!item) {
-        //kDebug() << "invalid Item";
+        kDebug() << "invalid Item";
         return 0;
     }
 
-    //m_groupMembers.insert(groupableItem,item);
-
-    return item;
-}
-
-
-
-
-WindowTaskItem * TaskGroupItem::createStartingTask(TaskManager::TaskItem* task)
-{
-    WindowTaskItem* item = new WindowTaskItem(m_applet->rootGroupItem(), m_applet, m_showTooltip);
-    item->setStartupTask(task);
-    m_startupTaskItems.insert(task->startup(), item);
-    return item;
-}
-
-
-WindowTaskItem *TaskGroupItem::createWindowTask(TaskManager::TaskItem* taskItem)
-{
-    WindowTaskItem *item = 0;
-    TaskPtr task = taskItem->task();
-
-    foreach (const StartupPtr &startup, m_startupTaskItems.keys()) {
-        if (startup->matchesWindow(task->window())) { //FIXME there is still a startup task in m_groupMembers since item removed was never called
-            item = dynamic_cast<WindowTaskItem *>(m_startupTaskItems.take(startup));
-            Q_ASSERT(item);
-            item->setWindowTask(taskItem);
-            break;
-        }
-    }
-
-    if (!item) { //Task isnt a startup task
-        item = new WindowTaskItem(m_applet->rootGroupItem(), m_applet, m_showTooltip);
-        item->setWindowTask(taskItem);
-    }
-
-    return item;
-    //kDebug();
-}
-
-TaskGroupItem *TaskGroupItem::createTaskGroup(GroupPtr group)
-{
-    if (!group) {
-        //kDebug() << "null group";
-        return 0;
-    }
-    Q_ASSERT(m_applet->rootGroupItem());
-
-    TaskGroupItem *item;
-    if (!m_groupMembers.contains(group)) {
-        item = new TaskGroupItem(m_applet->rootGroupItem(), m_applet, m_showTooltip);
-        item->setGroup(group);
-    } else {
-        item = static_cast<TaskGroupItem*>(m_groupMembers.value(group));
-    }
     return item;
 }
 
@@ -507,13 +456,6 @@ void TaskGroupItem::removeItem(AbstractTaskItem *item)
     }
 
     m_groupMembers.remove(m_groupMembers.key(item));
-
-    if (item->isWindowItem()) {
-        WindowTaskItem *windowItem = dynamic_cast<WindowTaskItem*>(item);
-        if (m_startupTaskItems.values().contains(windowItem)) {
-            m_startupTaskItems.remove(m_startupTaskItems.key(windowItem));
-        }
-    }
 
     item->close();
     item->deleteLater();

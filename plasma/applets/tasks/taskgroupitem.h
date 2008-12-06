@@ -84,7 +84,7 @@ public:
     *drop on split group: //on unsplitGroup the group adds all items from splitgroup / the grouping is done via the taskgroup in lib
     *collapse on split group: because windowTaskItems retrive its parentgroup via tasks
     */
-    /** Splits the group into two items, returns the second, new part (splitgroup)*/
+    /** Returns the second, new part(splitgroup) of the group when called on the normal group*/
     TaskGroupItem * splitGroup();
     /** Splits the group on position and returns the splitgroup*/
     TaskGroupItem * splitGroup(int position);
@@ -156,8 +156,6 @@ private slots:
     void popupMenu();
 
 private:
-    QHash<StartupPtr,WindowTaskItem*> m_startupTaskItems;
-
     AbstractTaskItem* createAbstractItem(AbstractItemPtr groupableItem);
     TaskGroupItem* createNewGroup(QList <AbstractTaskItem *> members);
     WindowTaskItem * createWindowTask(TaskManager::TaskItem* task);

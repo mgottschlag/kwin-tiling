@@ -38,11 +38,8 @@ public:
     /** Constructs a new representation for a window task. */
     WindowTaskItem(QGraphicsWidget *parent, Tasks *applet, const bool showTooltip);
 
-    /** Sets the starting task represented by this item. */
-    void setStartupTask(TaskManager::TaskItem* task);
-
-    /** Sets the window represented by this task. */
-    void setWindowTask(TaskManager::TaskItem* taskItem);
+    /** Sets the window/startup represented by this task. */
+    void setTask(TaskManager::TaskItem* taskItem);
 
     /** Returns the window represented by this task. */
     TaskManager::TaskPtr windowTask() const;
@@ -72,6 +69,12 @@ private slots:
     void gotTaskPointer();
 
 private:
+    /** Sets the starting task represented by this item. */
+    void setStartupTask(TaskManager::TaskItem* task);
+
+    /** Sets the window represented by this task. */
+    void setWindowTask(TaskManager::TaskItem* taskItem);
+
     TaskManager::TaskItem *m_task;
 };
 
