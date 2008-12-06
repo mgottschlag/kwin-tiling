@@ -1046,7 +1046,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
             shadowColor = Qt::white;
         }
 
-        QString desktopText;
+        QString desktopText = QString();
         if (m_displayedText==Number) { // Display number of desktop
             desktopText = QString::number(i+1);
         } else if (m_displayedText==Name) { // Display name of desktop
@@ -1075,10 +1075,12 @@ QRect Pager::fixViewportPosition( const QRect& r )
     QRect desktopGeom = Kephal::ScreenUtils::desktopGeometry();
     int x = r.center().x() % desktopGeom.width();
     int y = r.center().y() % desktopGeom.height();
-    if( x < 0 )
+    if( x < 0 ) {
         x = x + desktopGeom.width();
-    if( y < 0 )
+    }
+    if( y < 0 ) {
         y = y + desktopGeom.height();
+    }
     return QRect( x - r.width() / 2, y - r.height() / 2, r.width(), r.height());
 }
 
@@ -1099,17 +1101,17 @@ void Pager::updateToolTip()
     }
 
     Plasma::ToolTipContent data;
-    QString subtext = "";
+    QString subtext = QString();
     int taskCounter = 0;
     int displayedTaskCounter = 0;
     foreach(KWindowInfo winInfo, m_windowInfo){
-        if (winInfo.isOnDesktop(hoverDesktopNumber) || winInfo.onAllDesktops()){
+        if (winInfo.isOnDesktop(hoverDesktopNumber) || winInfo.onAllDesktops()) {
             bool active = (winInfo.win() == KWindowSystem::activeWindow());
             if ((taskCounter < 4) || active){    
                 QPixmap icon = KWindowSystem::icon(winInfo.win(), 16, 16, true);
-                if (icon.isNull()){
+                if (icon.isNull()) {
                      subtext += "<br />&bull;" + winInfo.visibleName();
-                }else{
+                } else {
                     data.addResource(Plasma::ToolTipContent::ImageResource, QUrl("wicon://" + QString::number(taskCounter)), QVariant(icon));
                     subtext += "<br /><img src=\"wicon://" + QString::number(taskCounter) + "\"/>";
                 }
@@ -1121,18 +1123,18 @@ void Pager::updateToolTip()
         }
     }
 
-    if (taskCounter){
+    if (taskCounter) {
         subtext.prepend(i18np("One window:", "%1 windows:", taskCounter));
     }
 
-    if (taskCounter - displayedTaskCounter > 0){
+    if (taskCounter - displayedTaskCounter > 0) {
         subtext.append("<br>&bull; <i>" + i18np("and 1 other", "and %1 others", taskCounter - displayedTaskCounter) + "</i>");
     }
 
     data.setMainText(KWindowSystem::desktopName(hoverDesktopNumber));
     data.setSubText(subtext);
 
-    Plasma::ToolTipManager::self()->setContent(this, data);   
+    Plasma::ToolTipManager::self()->setContent(this, data);
 }
 
 #include "pager.moc"
