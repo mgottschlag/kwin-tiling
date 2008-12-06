@@ -77,12 +77,14 @@ void AbstractSortingStrategy::handleGroup(TaskGroup *group)
     if (d->managedGroups.contains(group) || !group) {
         return;
     }
+
     d->managedGroups.append(group);
     disconnect(group, 0, this, 0); //To avoid duplicate connections
     connect(group, SIGNAL(itemAdded(AbstractItemPtr)), this, SLOT(handleItem(AbstractItemPtr)));
     connect(group, SIGNAL(destroyed()), this, SLOT(removeGroup())); //FIXME necessary?
     ItemList sortedList = group->members();
     sortItems(sortedList); //the sorting doesn't work with totally unsorted lists, therefore we sort it in the correct order the first time
+
     foreach (AbstractItemPtr item, sortedList) {
         handleItem(item);
     }
@@ -108,6 +110,7 @@ void AbstractSortingStrategy::handleItem(AbstractItemPtr item)
         connect(item, SIGNAL(gotTaskPointer()), this, SLOT(check())); //sort the task as soon its a real one
         return;
     }
+
     check(item);
 }
 
@@ -139,6 +142,7 @@ void AbstractSortingStrategy::check(AbstractItemPtr itemToCheck)
 
     ItemList sortedList = item->parentGroup()->members();
     sortItems(sortedList);
+
     int oldIndex = item->parentGroup()->members().indexOf(item);
     int newIndex = sortedList.indexOf(item);
     if (oldIndex != newIndex) {
@@ -168,9 +172,11 @@ bool AbstractSortingStrategy::moveItem(AbstractItemPtr item, int newIndex)
     if (newIndex > oldIndex) {
         newIndex--; //the index has to be adjusted if we move the item from right to left because the item on the left is removed first
     }
+
     if (oldIndex != newIndex) {
         return item->parentGroup()->moveItem(oldIndex, newIndex);
     }
+
     return -1;
 }
 
