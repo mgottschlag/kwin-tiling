@@ -129,7 +129,7 @@ void ActivityBar::switchContainment(int newActive)
     }
 
     //FIXME: this whole thing sounds like an hack isn't it?
-    if (!m_view) {
+    if (!m_view && m_activeContainment > 0) {
         m_view = qobject_cast<Plasma::View *>(m_containments[m_activeContainment]->view());
     }
 
