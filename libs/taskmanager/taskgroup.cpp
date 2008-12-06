@@ -155,9 +155,10 @@ void TaskGroup::remove(AbstractItemPtr item)
     }*/
 
     if (!d->members.contains(item)) {
-        kDebug() << "couldn't find item";
+        //kDebug() << "couldn't find item";
         return;
     }
+
     disconnect(item, 0, this, 0);
 
     d->members.removeAll(item);
