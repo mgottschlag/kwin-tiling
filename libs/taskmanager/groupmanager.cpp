@@ -51,15 +51,15 @@ public:
           rootGroup(0),
           sortingStrategy(GroupManager::NoSorting),
           groupingStrategy(GroupManager::NoGrouping),
+          lastGroupingStrategy(GroupManager::NoGrouping),
           abstractGroupingStrategy(0),
           abstractSortingStrategy(0),
           currentScreen(-1),
+          groupIsFullLimit(0),
           showOnlyCurrentDesktop(false),
           showOnlyCurrentScreen(false),
           showOnlyMinimized(false),
-          onlyGroupWhenFull(false),
-          groupIsFullLimit(0),
-          lastGroupingStrategy(GroupManager::NoGrouping)
+          onlyGroupWhenFull(false)
     {
     }
 
@@ -83,17 +83,17 @@ public:
     TaskGroup *rootGroup; //the current layout
     GroupManager::TaskSortingStrategy sortingStrategy;
     GroupManager::TaskGroupingStrategy groupingStrategy;
+    GroupManager::TaskGroupingStrategy lastGroupingStrategy;
     AbstractGroupingStrategy *abstractGroupingStrategy;
     AbstractSortingStrategy *abstractSortingStrategy;
     int currentScreen;
     QTimer screenTimer;
     QList<TaskPtr> geometryTasks;
+    int groupIsFullLimit;
     bool showOnlyCurrentDesktop : 1;
     bool showOnlyCurrentScreen : 1;
     bool showOnlyMinimized : 1;
     bool onlyGroupWhenFull : 1;
-    int groupIsFullLimit;
-    GroupManager::TaskGroupingStrategy lastGroupingStrategy;
 };
 
 
@@ -495,10 +495,10 @@ void GroupManagerPrivate::checkIfFull()
     }
 
     if (itemList.size() >= groupIsFullLimit) {
-        //kDebug() << "group is full, setting program grouping";
-        q->setGroupingStrategy(GroupManager::ProgramGrouping);
-    } else {
-        //kDebug() << "group is not full";
+        if (!abstractGroupingStrategy) {
+            q->setGroupingStrategy(GroupManager::ProgramGrouping);
+        }
+    } else if (abstractGroupingStrategy) {
         q->setGroupingStrategy(GroupManager::NoGrouping);
         //let the visualization thing we still use the programGrouping
         groupingStrategy = GroupManager::ProgramGrouping;
