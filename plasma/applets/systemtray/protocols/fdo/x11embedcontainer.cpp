@@ -30,6 +30,7 @@
 #include <QtCore/QTime>
 #include <QtCore/QTimer>
 #include <QtGui/QPainter>
+#include <QtGui/QPaintEngine>
 #include <QtGui/QX11Info>
 
 // Xlib
@@ -191,13 +192,37 @@ void X11EmbedContainer::paintEvent(QPaintEvent *event)
     // Taking a detour via a QPixmap is unfortunately the only way we can get
     // the window contents into Qt's backing store.
     QPixmap pixmap(size());
-    pixmap.fill(Qt::transparent);
+    if (pixmap.paintEngine()->type() != QPaintEngine::X11) {
+#if defined(HAVE_XCOMPOSITE)
+        // If we're using the raster or OpenGL graphics systems, a QPixmap isn't an X pixmap,
+        // so we have to get the window contents into a QImage and then draw that.
+        Display *dpy = x11Info().display();
 
-    XRenderComposite(x11Info().display(), PictOpSrc, d->picture, None, pixmap.x11PictureHandle(),
-                     0, 0, 0, 0, 0, 0, width(), height());
+        // XXX We really should keep a cached copy of the image client side, and only
+        //     update it in response to a damage event.
+        Pixmap pixmap = XCompositeNameWindowPixmap(dpy, clientWinId());
+        XImage *ximage = XGetImage(dpy, pixmap, 0, 0, width(), height(), AllPlanes, ZPixmap);
+        XFreePixmap(dpy, pixmap);
 
-    QPainter p(this);
-    p.drawPixmap(0, 0, pixmap);
+        // This is safe to do since we only composite ARGB32 windows, and PictStandardARGB32
+        // matches QImage::Format_ARGB32_Premultiplied.
+        QImage image((const uchar*)ximage->data, ximage->width, ximage->height, ximage->bytes_per_line,
+                     QImage::Format_ARGB32_Premultiplied);
+
+        QPainter p(this);
+        p.drawImage(0, 0, image);
+
+        XDestroyImage(ximage);
+#endif
+    } else {
+        pixmap.fill(Qt::transparent);
+
+        XRenderComposite(x11Info().display(), PictOpSrc, d->picture, None, pixmap.x11PictureHandle(),
+                         0, 0, 0, 0, 0, 0, width(), height());
+
+        QPainter p(this);
+        p.drawPixmap(0, 0, pixmap);
+    }
 }
 
 
