@@ -74,6 +74,7 @@ void TabBar::setShape(Shape shape)
     // which expands the tabs to the full width of the widget does not pick up
     // the previous width, e.g. if the panel is moved from the bottom to the left
     QTabBar::setShape(shape);
+    resize(sizeHint());
 }
 
 void TabBar::setCurrentIndexWithoutAnimation(int index)
