@@ -47,6 +47,7 @@ public:
             , animLeftToRight(true)
             , itemHeight(-1) {
     }
+
     ~Private() {
         delete flipAnimTimeLine;
     }
@@ -257,6 +258,10 @@ FlipScrollView::FlipScrollView(QWidget *parent)
     setIconSize(QSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
     setMouseTracking(true);
     setAutoScroll(true);
+    QPalette viewPalette(palette());
+    viewPalette.setColor(QPalette::Window, palette().color(QPalette::Active, QPalette::Base));
+    setPalette(viewPalette);
+    setAutoFillBackground(true);
 }
 FlipScrollView::~FlipScrollView()
 {
@@ -607,6 +612,11 @@ void FlipScrollView::paintItems(QPainter &painter, QPaintEvent *event, QModelInd
 
 void FlipScrollView::paintEvent(QPaintEvent * event)
 {
+    QPalette viewPalette(palette());
+    viewPalette.setColor(QPalette::Window, palette().color(QPalette::Active, QPalette::Base));
+    setPalette(viewPalette);
+    setAutoFillBackground(true);
+
     QPainter painter(viewport());
     painter.setRenderHint(QPainter::Antialiasing);
 

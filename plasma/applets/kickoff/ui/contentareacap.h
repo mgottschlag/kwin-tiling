@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Davide Bettio <davide.bettio@kdemail.net>
+    Copyright 2008 Andrew Lake <jamboarder@yahoo.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -16,26 +16,18 @@
     the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
     Boston, MA 02110-1301, USA.
 */
-
-//Qt
 #include <QWidget>
 
-namespace Plasma
-{
-class FrameSvg;
-}
-
-class PanelSvgWidget : public QWidget
+class ContentAreaCap: public QWidget
 {
     Q_OBJECT
 
 public:
-    PanelSvgWidget(QWidget *parent);
+    ContentAreaCap(QWidget *parent, bool flip = false);
 
 protected:
     virtual void paintEvent(QPaintEvent *event);
-    virtual void resizeEvent(QResizeEvent* event);
+    bool flipCap;
 
-private:
-    Plasma::FrameSvg *background;
 };
+

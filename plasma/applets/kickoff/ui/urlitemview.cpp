@@ -272,6 +272,10 @@ UrlItemView::UrlItemView(QWidget *parent)
     d->dragging = false;
     setIconSize(QSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
     setMouseTracking(true);
+    QPalette viewPalette(palette());
+    viewPalette.setColor(QPalette::Window, palette().color(QPalette::Active, QPalette::Base));
+    setPalette(viewPalette);
+    setAutoFillBackground(true);
 }
 
 UrlItemView::~UrlItemView()
@@ -432,6 +436,11 @@ void UrlItemView::paintEvent(QPaintEvent *event)
     if (!model()) {
         return;
     }
+
+    QPalette viewPalette(palette());
+    viewPalette.setColor(QPalette::Window, palette().color(QPalette::Active, QPalette::Base));
+    setPalette(viewPalette);
+    setAutoFillBackground(true);
 
     QPainter painter(viewport());
     painter.setRenderHint(QPainter::Antialiasing);

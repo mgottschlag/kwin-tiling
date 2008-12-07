@@ -314,7 +314,8 @@ void TabBar::paintEvent(QPaintEvent *event)
 
         // draw tab text
         if (i != currentTab || m_animProgress < 0.9) {
-            painter.setPen(QPen(KColorScheme(QPalette::Active).foreground(KColorScheme::InactiveText), 0));
+            //painter.setPen(QPen(KColorScheme(QPalette::Active).foreground(KColorScheme::InactiveText), 0));
+            painter.setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
         } else {
             painter.setPen(QPen(KColorScheme(QPalette::Active).foreground(KColorScheme::NormalText), 0));
         }
