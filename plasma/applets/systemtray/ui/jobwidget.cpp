@@ -38,11 +38,10 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
 {
     Q_ASSERT(m_extenderItem);
 
-    setMeterType(Plasma::Meter::BarMeterHorizontal);
+    setMinimumWidth(350);
     setSvg("systemtray/bar_meter_horizontal");
+    setMeterType(Plasma::Meter::BarMeterHorizontal);
     setMaximum(100);
-
-    setMinimumWidth(300);
 
     Plasma::Theme *theme = Plasma::Theme::defaultTheme();
 
@@ -190,7 +189,10 @@ void JobWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 
 void JobWidget::updateLabels()
 {
-    //TODO: not base this on the size, but on the size of the label in question.
+    if (svg().isEmpty()) {
+        return;
+    }
+
     Plasma::Theme *theme = Plasma::Theme::defaultTheme();
     QFont font = theme->font(Plasma::Theme::DefaultFont);
     QFontMetricsF fm(font);
