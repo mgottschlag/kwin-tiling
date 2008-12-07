@@ -199,10 +199,17 @@ void JobWidget::updateLabels()
     if (!labelName0.isEmpty()) {
         setLabel(0, QString("%1: ").arg(labelName0));
     }
+    if (label0.startsWith("file://")) {
+        label0 = label0.remove(0, 7);
+    }
+
     setLabel(1, fm.elidedText(label0, Qt::ElideMiddle, labelRect(1).width()));
 
     if (!labelName1.isEmpty()) {
         setLabel(2, QString("%1: ").arg(labelName1));
+    }
+    if (label1.startsWith("file://")) {
+        label1 = label1.remove(0, 7);
     }
     setLabel(3, fm.elidedText(label1, Qt::ElideMiddle, labelRect(3).width()));
 }
