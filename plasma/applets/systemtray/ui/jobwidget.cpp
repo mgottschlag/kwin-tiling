@@ -200,7 +200,7 @@ void JobWidget::updateLabels()
         setLabel(0, QString("%1: ").arg(labelName0));
     }
     if (label0.startsWith("file://")) {
-        label0 = label0.remove(0, 7);
+        label0 = KUrl(label0).toLocalFile();
     }
 
     setLabel(1, fm.elidedText(label0, Qt::ElideMiddle, labelRect(1).width()));
@@ -209,7 +209,7 @@ void JobWidget::updateLabels()
         setLabel(2, QString("%1: ").arg(labelName1));
     }
     if (label1.startsWith("file://")) {
-        label1 = label1.remove(0, 7);
+        label1 = KUrl(label1).toLocalFile();
     }
     setLabel(3, fm.elidedText(label1, Qt::ElideMiddle, labelRect(3).width()));
 }
