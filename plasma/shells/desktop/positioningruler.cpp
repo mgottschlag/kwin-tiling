@@ -54,7 +54,8 @@ public:
          rightMinSliderRect(QRect(0,0,0,0)),
          offsetSliderRect(QRect(0,0,0,0)),
          sliderGraphics(0),
-         elementPrefix(QString())
+         elementPrefix(QString()),
+         minimumBound(40)
     {
     }
 
@@ -230,12 +231,12 @@ public:
     }
 
     enum SubElement { NoElement = 0,
-                       LeftMaxSlider,
-                       RightMaxSlider,
-                       LeftMinSlider,
-                       RightMinSlider,
-                       OffsetSlider
-                     };
+                      LeftMaxSlider,
+                      RightMaxSlider,
+                      LeftMinSlider,
+                      RightMinSlider,
+                      OffsetSlider
+                    };
 
     Plasma::Location location;
     Qt::Alignment alignment;
@@ -252,6 +253,8 @@ public:
     QRect offsetSliderRect;
     Plasma::FrameSvg *sliderGraphics;
     QString elementPrefix;
+
+    int minimumBound;
 };
 
 PositioningRuler::PositioningRuler(QWidget* parent)
@@ -387,16 +390,18 @@ void PositioningRuler::setMinLength(int newMin)
     int deltaX;
     int deltaY;
 
+    int min = qMax(d->minimumBound, newMin);
+
     switch (d->location) {
     case Plasma::LeftEdge:
     case Plasma::RightEdge:
         deltaX = 0;
-        deltaY = newMin - d->minLength;
+        deltaY = min - d->minLength;
         break;
     case Plasma::TopEdge:
     case Plasma::BottomEdge:
     default:
-        deltaX = newMin - d->minLength;
+        deltaX = min - d->minLength;
         deltaY = 0;
         break;
     }
@@ -416,9 +421,9 @@ void PositioningRuler::setMinLength(int newMin)
                                         d->leftMinSliderRect.center().y() - deltaY/2));
     }
 
-    d->minLength = newMin;
-    if (d->minLength > d->minLength) {
-        setMaxLength(newMin);
+    d->minLength = min;
+    if (d->minLength > d->maxLength) {
+        setMaxLength(min);
     }
     update();
 }
@@ -634,7 +639,7 @@ void PositioningRuler::mouseMoveEvent(QMouseEvent *event)
 
 
     const bool horizontal = (d->location == Plasma::TopEdge || d->location == Plasma::BottomEdge);
-    const int widthBound = 20;
+    const int widthBound = d->minimumBound;
     const int snapSize = 5;
 
     //Snap
