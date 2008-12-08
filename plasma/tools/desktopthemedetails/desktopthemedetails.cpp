@@ -401,7 +401,7 @@ void DesktopThemeDetails::save()
         QFile desktopFile(dirs.locateLocal("data", "desktoptheme/" + theme +"/metadata.desktop"));
         QString desktopFileData;
         if (isCustomized(theme)) {
-            desktopFileData = "Name=(Customized) \r\n Comment=User customized theme \r\n X-KDE-PluginInfo-Name=" + theme + "\r\n";
+            desktopFileData = "Name=(Customized) \r\nComment=User customized theme \r\nX-KDE-PluginInfo-Name=" + theme + "\r\n";
         } else {
             desktopFileData = "Name=" + m_newThemeName->text() + " \r\n Comment=" + m_newThemeDescription->text() + " \r\n X-KDE-PluginInfo-Author=" + m_newThemeAuthor->text() + " \r\n X-KDE-PluginInfo-Name=" + theme + " \r\n X-KDE-PluginInfo-Version=" + m_newThemeVersion->text();
         }
