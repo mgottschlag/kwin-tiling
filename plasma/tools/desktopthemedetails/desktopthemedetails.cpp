@@ -329,7 +329,7 @@ void DesktopThemeDetails::reloadConfig()
             QStringList settingsPair;
             while (!in.atEnd()) {
                line = in.readLine();
-               settingsPair = line.split("=");
+               settingsPair = line.split('=');
                m_themeReplacements[settingsPair.at(0)] = settingsPair.at(1);
                updateReplaceItemList(settingsPair.at(0));
             }
@@ -510,10 +510,10 @@ void DesktopThemeDetails::loadThemeItems()
         QString itemIcon;
         while (!in.atEnd()) {
            line = in.readLine();
-           itemPair = line.split("=");
+           itemPair = line.split('=');
            item = itemPair.at(0);
-           itemPath = itemPair.at(1).split(",").at(0);
-           itemIcon = itemPair.at(1).split(",").at(1);
+           itemPath = itemPair.at(1).split(',').at(0);
+           itemIcon = itemPair.at(1).split(',').at(1);
            m_themeItems[item] = itemPath;
            m_themeReplacements[item] = "";
            themeItemList.append(item);
