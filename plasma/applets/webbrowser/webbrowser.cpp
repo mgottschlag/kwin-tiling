@@ -181,7 +181,7 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
 
     connect(m_historyCombo, SIGNAL(returnPressed()), this, SLOT(returnPressed()));
     connect(m_historyCombo, SIGNAL(activated(int)), this, SLOT(returnPressed()));
-    connect(m_historyCombo, SIGNAL(textChanged(const QString&)), this, SLOT(comboTextChanged(const QString&)));
+    connect(m_historyCombo, SIGNAL(activated(const QString&)), this, SLOT(comboTextChanged(const QString&)));
     connect(m_browser->page()->mainFrame(), SIGNAL(urlChanged(const QUrl &)), this, SLOT(urlChanged(const QUrl &)));
     connect(m_browser, SIGNAL(loadProgress(int)), this, SLOT(loadProgress(int)));
 
@@ -199,6 +199,10 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
 
     m_graphicsWidget = new QGraphicsWidget(this);
     m_graphicsWidget->setLayout(m_layout);
+    
+    m_back->setEnabled(m_browser->page()->history()->canGoBack());
+    m_forward->setEnabled(m_browser->page()->history()->canGoForward());
+
 
     return m_graphicsWidget;
 }
@@ -263,7 +267,7 @@ void WebBrowser::saveState(KConfigGroup &cg) const
 {
     cg.writeEntry("Url", m_url.prettyUrl());
 
-    QStringList list = m_historyCombo->historyItems();
+    const QStringList list = m_historyCombo->historyItems();
     cg.writeEntry("History list", list);
 
     cg.writeEntry("VerticalScrollValue", m_browser->page()->mainFrame()->scrollBarValue(Qt::Vertical));

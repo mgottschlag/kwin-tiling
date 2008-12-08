@@ -27,13 +27,12 @@
 
 class KHistoryComboBox;
 
-#include "webbrowser_export.h"
 #include <KUrl>
 
 namespace Plasma
 {
 
-class WEBBROWSER_EXPORT HistoryComboBox : public QGraphicsProxyWidget
+class HistoryComboBox : public QGraphicsProxyWidget
 {
     Q_OBJECT
 
