@@ -368,7 +368,8 @@ void QuicklaunchApplet::addProgram(int index, const QString &url)
     if (index < 0 || index > m_icons.size()) {
         index = m_icons.size();
     }
-
+    if( url.isEmpty() )
+        return;
     KUrl appUrl = KUrl(url);
     KIcon icon;
 
