@@ -690,6 +690,7 @@ static bool getFontList(const CDisabledFonts::TFileList &files, QMap<QString, QS
                         break;
                     }
                 if(!modified)
+                {
                     if(beginLen>(*pIt).orig.length())
                     {
                         if((*pBegin).modified.isEmpty())
@@ -697,6 +698,7 @@ static bool getFontList(const CDisabledFonts::TFileList &files, QMap<QString, QS
                     }
                     else
                         setName((*pIt).orig, (*pIt).modified, beginLen, hidden);
+                }
             }
         }
         for(pIt=(*fIt).paths.begin(); pIt!=pEnd; ++pIt)

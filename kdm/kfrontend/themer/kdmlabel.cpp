@@ -266,11 +266,12 @@ KdmLabel::lookupStock( const QString &stock )
 	QString type( stock.toLower() );
 
 	for (uint i = 0; i < sizeof(stocks)/sizeof(stocks[0]); i++)
-		if (type == stocks[i].type)
+		if (type == stocks[i].type) {
 			if (stocks[i].comment)
 				return i18nc(stocks[i].comment, stocks[i].text);
 			else
 				return i18n(stocks[i].text);
+        	}
 
 	kWarning() << "Invalid <stock> element '" << stock << "'. Check your theme!";
 	return stock;

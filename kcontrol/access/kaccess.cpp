@@ -315,16 +315,21 @@ void KAccessApp::initMasks() {
 
    for (int i = 0; strcmp (modifierKeys[i].name, "") != 0; i++) {
       int mask = modifierKeys[i].mask;
-      if (mask == 0)
-         if (modifierKeys[i].keysym != 0)
-            mask = XkbKeysymToModifiers (QX11Info::display(), modifierKeys[i].keysym);
-         else if (!strcmp(modifierKeys[i].name, "Win"))
-            mask = KKeyServer::modXMeta();
-         else
-            mask = XkbKeysymToModifiers (QX11Info::display(), XK_Mode_switch)
-                 | XkbKeysymToModifiers (QX11Info::display(), XK_ISO_Level3_Shift)
-                 | XkbKeysymToModifiers (QX11Info::display(), XK_ISO_Level3_Latch)
-                 | XkbKeysymToModifiers (QX11Info::display(), XK_ISO_Level3_Lock);
+      if (mask == 0) {
+          if (modifierKeys[i].keysym != 0) {
+              mask = XkbKeysymToModifiers (QX11Info::display(), modifierKeys[i].keysym); 
+          } else {
+              if (!strcmp(modifierKeys[i].name, "Win")) {
+                  mask = KKeyServer::modXMeta(); 
+              } else {
+                  mask = XkbKeysymToModifiers (QX11Info::display(), XK_Mode_switch)
+                      | XkbKeysymToModifiers (QX11Info::display(), XK_ISO_Level3_Shift)
+                      | XkbKeysymToModifiers (QX11Info::display(), XK_ISO_Level3_Latch)
+                      | XkbKeysymToModifiers (QX11Info::display(), XK_ISO_Level3_Lock);
+              }
+          }
+      }
+      
 
       int bit = maskToBit (mask);
       if (bit != -1 && keys[bit] == -1)

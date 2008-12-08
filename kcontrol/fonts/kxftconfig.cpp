@@ -685,6 +685,7 @@ void KXftConfig::readContents()
         QDomElement e = n.toElement();
 
         if(!e.isNull())
+        {
             if("dir"==e.tagName())
             {
                 if(m_required&Dirs)
@@ -702,6 +703,7 @@ void KXftConfig::readContents()
                             QDomElement ene=e.firstChild().toElement();
 
                             if(!ene.isNull() && "edit"==ene.tagName())
+                            {
                                 if(!(str=getEntry(ene, "const", 2, "name", "rgba", "mode",
                                                   "assign")).isNull())
                                 {
@@ -726,6 +728,7 @@ void KXftConfig::readContents()
                                     m_antiAliasing.node=n;
                                     m_antiAliasing.set=str.toLower()!="false";
                                 }
+                            }
                         }
                         break;
                     case 3: // CPD: Is target "font" or "pattern" ????
@@ -744,6 +747,7 @@ void KXftConfig::readContents()
                                 QDomElement ene=en.toElement();
 
                                 if(!ene.isNull())
+                                {
                                     if("test"==ene.tagName())
                                     {
                                         // kcmfonts used to write incorrectly more or less instead of
@@ -780,6 +784,7 @@ void KXftConfig::readContents()
                                             "false"==getEntry(ene, "bool", 2, "name", "antialias",
                                                               "mode", "assign"))
                                         foundFalse=true;
+                                }
 
                                 en=en.nextSibling();
                             }
@@ -802,6 +807,7 @@ void KXftConfig::readContents()
                         break;
                 }
             }
+        }
         n=n.nextSibling();
     }
 }

@@ -284,10 +284,12 @@ static bool drawAllGlyphs(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, 
                     if(r.height()>0)
                     {
                         if(used)
+                        {
                             if(used->isEmpty())
                                 *used=r;
                             else
                                 *used=used->united(r);
+                        }
                         if(max>0 && ++drawn>=max)
                             break;
                     }
