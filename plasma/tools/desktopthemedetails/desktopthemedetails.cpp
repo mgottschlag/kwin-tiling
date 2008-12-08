@@ -407,7 +407,7 @@ void DesktopThemeDetails::save()
         }
         if (desktopFile.open(QFile::WriteOnly)) {
             QTextStream out(&desktopFile);
-            out << "[Desktop Entry] \r\n " + desktopFileData +" \r\n";
+            out << "[Desktop Entry] \r\n" + desktopFileData +" \r\n";
             desktopFile.close();
             newThemeExists = true;
         } else {
