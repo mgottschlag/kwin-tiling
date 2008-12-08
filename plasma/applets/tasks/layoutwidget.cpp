@@ -97,12 +97,6 @@ void LayoutWidget::removeTaskItem(AbstractTaskItem * item)
     }
 
     //kDebug();
-  /*  if (item->abstractItem()->isGroupItem()) {
-        TaskGroupItem *groupItem = static_cast<TaskGroupItem*>(item);
-        if (groupItem->isSplit()) {
-            groupItem->unsplitGroup(); //TODO reasonable?
-        }
-    }*/
 
     if (m_groupItem->scene()) {
         //kDebug() << "got scene";

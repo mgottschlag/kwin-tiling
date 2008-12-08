@@ -102,6 +102,8 @@ public:
 
     AbstractTaskItem* abstractItem(AbstractItemPtr);
 
+    void clearGroup();
+
 signals:
     /** Emitted when a window is selected for activation, minimization, iconification */
     void groupSelected(TaskGroupItem *);

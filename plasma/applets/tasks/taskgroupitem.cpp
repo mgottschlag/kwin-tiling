@@ -88,17 +88,12 @@ void TaskGroupItem::setSplitGroup(TaskGroup *group)
     expand();
 }
 
+//FIXME verify if this really works correctly
 void TaskGroupItem::unsplitGroup()
 {
-    //kDebug();
+    kDebug();
     if (!m_childSplitGroup) {
         return;
-    }
-
-    Q_ASSERT(m_expandedLayout);
-    QList <AbstractTaskItem*> itemList = m_childSplitGroup->memberList();
-    foreach (AbstractTaskItem *item, itemList) {
-        m_expandedLayout->addTaskItem(item);
     }
     m_childSplitGroup->deleteLater();
     m_childSplitGroup = 0;
@@ -254,17 +249,19 @@ void TaskGroupItem::updateToolTip()
     Plasma::ToolTipManager::self()->setContent(this, data);
 }
 
+
 void TaskGroupItem::reload()
 {
-    //kDebug();
-    m_groupMembers.clear();
+    kDebug();
+    QList <AbstractItemPtr> itemsToRemove = m_groupMembers.keys();
+
 
     foreach (AbstractItemPtr item, group()->members()) {
         if (!item) {
             kDebug() << "invalid Item";
             continue;
         }
-
+        itemsToRemove.removeAll(item);
         itemAdded(item);
 
         if (item->isGroupItem()) {
@@ -274,13 +271,18 @@ void TaskGroupItem::reload()
             }
         }
     }
+    foreach (AbstractItemPtr item, itemsToRemove) { //remove unused items
+        if (!item) {
+            kDebug() << "invalid Item";
+            continue;
+        }
+        itemRemoved(item);
+    }
 }
 
 void TaskGroupItem::setGroup(TaskManager::GroupPtr group)
 {
     //kDebug();
-    m_groupMembers.clear();
-
     m_group = group;
     m_abstractItem = qobject_cast<AbstractItemPtr>(group);
     if (!m_abstractItem) {
@@ -355,10 +357,11 @@ QList<AbstractTaskItem*> TaskGroupItem::memberList() const
 
 AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractItemPtr groupableItem)
 {
-    kDebug();
+    //kDebug() << "item to create" << groupableItem << endl;
     AbstractTaskItem *item = 0;
 
     if (m_groupMembers.contains(groupableItem)) {
+        //kDebug() << "existing item found";
         return m_groupMembers.value(groupableItem);
     }
 
@@ -442,20 +445,6 @@ void TaskGroupItem::itemRemoved(TaskManager::AbstractItemPtr groupableItem)
     if (m_expandedLayout) {
         m_expandedLayout->removeTaskItem(item);
     }
-
-    removeItem(m_groupMembers.value(groupableItem));
-}
-
-
-void TaskGroupItem::removeItem(AbstractTaskItem *item)
-{
-    //kDebug();
-    if (!m_groupMembers.contains(m_groupMembers.key(item)) || !item) {
-        //kDebug() << "Not in list or null pointer";
-        return;
-    }
-
-    m_groupMembers.remove(m_groupMembers.key(item));
 
     item->close();
     item->deleteLater();
@@ -552,6 +541,7 @@ LayoutWidget *TaskGroupItem::layoutWidget()
 
 void TaskGroupItem::collapse()
 {
+    //kDebug() << (int)this;
     if (!m_expandedLayout) {
         //kDebug() << "already collapsed";
         return;
@@ -653,7 +643,6 @@ void  TaskGroupItem::itemPositionChanged(AbstractItemPtr item)
     Q_ASSERT(item);
 
     if (item->isGroupItem()) {
-        //FIXME: why does this m_applet->abstractItem rather than m_applet->groupItem?
         TaskGroupItem *groupItem = static_cast<TaskGroupItem*>(abstractItem(item));
         if (groupItem) {
             groupItem->unsplitGroup();
