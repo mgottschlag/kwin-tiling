@@ -65,4 +65,8 @@ _kde4workspace_set_lib_vars( NEPOMUKQUERYCLIENT nepomukqueryclient)
 _kde4workspace_set_lib_vars( NEPOMUKQUERY       nepomukquery)
 _kde4workspace_set_lib_vars( KSCREENSAVER       kscreensaver)
 _kde4workspace_set_lib_vars( WEATHERION         weather_ion)
+_kde4workspace_set_lib_vars( KWINEFFECTS        kwineffects)
+_kde4workspace_set_lib_vars( KDECORATIONS       kdecorations)
+_kde4workspace_set_lib_vars( KSGRD              ksgrd)
+_kde4workspace_set_lib_vars( KEPHAL             kephal)
 

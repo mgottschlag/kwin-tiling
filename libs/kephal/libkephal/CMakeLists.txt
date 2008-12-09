@@ -49,7 +49,7 @@ ADD_LIBRARY (kephal SHARED ${libkephal_SRCS})
 TARGET_LINK_LIBRARIES (kephal ${QT_LIBRARIES})
 set_target_properties(kephal PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
 
-INSTALL (TARGETS kephal ${INSTALL_TARGETS_DEFAULT_ARGS})
+INSTALL (TARGETS kephal EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS})
 INSTALL (FILES 
         ../kephal/screens.h
         ../kephal/outputs.h
