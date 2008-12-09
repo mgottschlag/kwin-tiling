@@ -1187,16 +1187,15 @@ void PanelView::createUnhideTrigger()
     attributes.override_redirect = True;
     attributes.event_mask = EnterWindowMask;
 
-    if (fancy) {
-        attributes.event_mask = EnterWindowMask | LeaveWindowMask | PointerMotionMask |
-                                KeyPressMask | KeyPressMask | ButtonPressMask |
-                                ButtonReleaseMask | ButtonMotionMask |
-                                KeymapStateMask | VisibilityChangeMask |
-                                StructureNotifyMask | ResizeRedirectMask |
-                                SubstructureNotifyMask |
-                                SubstructureRedirectMask | FocusChangeMask |
-                                PropertyChangeMask | ColormapChangeMask | OwnerGrabButtonMask;
-    }
+
+    attributes.event_mask = EnterWindowMask | LeaveWindowMask | PointerMotionMask |
+                            KeyPressMask | KeyPressMask | ButtonPressMask |
+                            ButtonReleaseMask | ButtonMotionMask |
+                            KeymapStateMask | VisibilityChangeMask |
+                            StructureNotifyMask | ResizeRedirectMask |
+                            SubstructureNotifyMask |
+                            SubstructureRedirectMask | FocusChangeMask |
+                            PropertyChangeMask | ColormapChangeMask | OwnerGrabButtonMask;
 
     unsigned long valuemask = CWOverrideRedirect | CWEventMask;
     m_unhideTrigger = XCreateWindow(QX11Info::display(), QX11Info::appRootWindow(),
