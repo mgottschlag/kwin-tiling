@@ -909,7 +909,7 @@ QRect PanelView::unhideHintGeometry() const
 void PanelView::hintOrUnhide(const QPoint &point)
 {
 #ifdef Q_WS_X11
-    if (!shouldHintHide()) {
+    if (m_unhideTriggerGeom.height() == 1) {
         unhide();
         return;
     }
@@ -969,6 +969,9 @@ void PanelView::unhide()
         if (tl->state() == QTimeLine::NotRunning) {
             tl->start();
         }
+    } else {
+        //if the hide before  compositing was active now the view is wrong
+        viewport()->move(0,0);
     }
 }
 
@@ -1095,9 +1098,11 @@ void PanelView::animateHide(qreal progress)
         //kDebug() << "**************** hide complete" << triggerPoint << triggerWidth << triggerHeight;
         createUnhideTrigger();
         hide();
-    }/* else if (qFuzzyCompare(qreal(0.0), progress) && tl->direction() == QTimeLine::Backward) {
+    } else if (qFuzzyCompare(qreal(1.0), progress + 1.0) && tl->direction() == QTimeLine::Backward) {
+        //if the show before accel was off now viewport position is wrong, so ensure it's visible
         kDebug() << "show complete";
-    }*/
+        viewport()->move(0,0);
+    }
 }
 
 bool PanelView::shouldHintHide() const
