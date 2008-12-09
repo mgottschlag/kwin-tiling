@@ -41,7 +41,7 @@ target_link_libraries(nepomukqueryclient
   ${SOPRANO_LIBRARIES}
   )
 
-install(TARGETS nepomukqueryclient ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS nepomukqueryclient EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 install(FILES
   nepomukqueryclient_export.h

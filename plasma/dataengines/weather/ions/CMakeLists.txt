@@ -8,7 +8,7 @@ set_target_properties(weather_ion PROPERTIES
    SOVERSION ${GENERIC_LIB_SOVERSION}
 )
 
-install (TARGETS weather_ion ${INSTALL_TARGETS_DEFAULT_ARGS})
+install (TARGETS weather_ion EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 SET (ion_envcan_SRCS ion_envcan.cpp)
 SET (ion_noaa_SRCS ion_noaa.cpp)

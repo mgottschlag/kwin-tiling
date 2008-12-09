@@ -34,7 +34,7 @@ kde4_add_library(solidcontrol SHARED ${solidcontrol_LIB_SRCS})
 target_link_libraries(solidcontrol ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTNETWORK_LIBRARY} solidcontrolifaces )
 
 set_target_properties(solidcontrol PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
-install(TARGETS solidcontrol ${INSTALL_TARGETS_DEFAULT_ARGS} )
+install(TARGETS solidcontrol EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 
 ########### install files ###############

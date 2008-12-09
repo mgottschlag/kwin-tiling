@@ -35,7 +35,7 @@ if (X11_Xcomposite_FOUND)
 endif (X11_Xcomposite_FOUND)
 
 set_target_properties(taskmanager PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
-install(TARGETS taskmanager ${INSTALL_TARGETS_DEFAULT_ARGS} )
+install(TARGETS taskmanager EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 install(FILES
    abstractgroupableitem.h

@@ -152,3 +152,61 @@ endif(NOT WIN32)
 if(BUILDING_WORKSPACE_SEPARATELY)
   macro_display_feature_log()
 endif(BUILDING_WORKSPACE_SEPARATELY)
+
+# make the libraries installed from kdebase/workspace available to other projects
+# by creating and installing a KDE4WorkspaceConfig.cmake file, which will
+# be searched and found by kdelibs/cmake/modules/FindKDE4Workspace.cmake. Alex
+
+# now create the KDE4WorkspaceConfig.cmake file, which will be loaded by 
+# kdelibs/cmake/modules/FindKDE4Workspace.cmake and which has to contain all information
+# about the libraries installed from kdebase/workspace/libs/ anybody would like to have. Alex
+
+# we need the absolute directories where stuff will be installed too
+# but since the variables which contain the destinations can be relative
+# or absolute paths, we need this macro to make them all absoulte, Alex
+macro(MAKE_INSTALL_PATH_ABSOLUTE out in)
+   if (IS_ABSOLUTE "${in}")    # IS_ABSOLUTE is new since cmake 2.4.8
+      set(${out} "${in}")
+   else (IS_ABSOLUTE "${in}")
+      set(${out} "\${KDEPIMLIBS_INSTALL_DIR}/${in}")
+   endif (IS_ABSOLUTE "${in}")
+endmacro(MAKE_INSTALL_PATH_ABSOLUTE out in)
+
+make_install_path_absolute(KDE4WORKSPACE_LIB_DIR     ${LIB_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_LIBEXEC_DIR ${LIBEXEC_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_INCLUDE_DIR ${INCLUDE_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_BIN_DIR     ${BIN_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_SBIN_DIR    ${SBIN_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_DATA_DIR    ${DATA_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_HTML_DIR    ${HTML_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_CONFIG_DIR  ${CONFIG_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_ICON_DIR    ${ICON_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_KCFG_DIR    ${KCFG_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_LOCALE_DIR  ${LOCALE_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_MIME_DIR    ${MIME_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_SOUND_DIR   ${SOUND_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_TEMPLATES_DIR    ${TEMPLATES_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_WALLPAPER_DIR    ${WALLPAPER_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_KCONF_UPDATE_DIR    ${KCONF_UPDATE_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_AUTOSTART_DIR    ${AUTOSTART_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_XDG_APPS_DIR        ${XDG_APPS_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_XDG_DIRECTORY_DIR   ${XDG_DIRECTORY_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_SYSCONF_DIR ${SYSCONF_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_MAN_DIR     ${MAN_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_INFO_DIR    ${INFO_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_DBUS_INTERFACES_DIR ${DBUS_INTERFACES_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_DBUS_SERVICES_DIR   ${DBUS_SERVICES_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_SERVICES_DIR ${SERVICES_INSTALL_DIR})
+make_install_path_absolute(KDE4WORKSPACE_SERVICETYPES_DIR ${SERVICETYPES_INSTALL_DIR})
+
+set(KDE4WORKSPACE_TARGET_PREFIX KDE4Workspace__)
+
+configure_file(KDE4WorkspaceConfig.cmake.in "${CMAKE_CURRENT_BINARY_DIR}/KDE4WorkspaceConfig.cmake" @ONLY)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/KDE4WorkspaceConfig.cmake
+        DESTINATION ${LIB_INSTALL_DIR}/KDE4Workspace/cmake)
+
+install(EXPORT kdeworkspaceLibraryTargets 
+        NAMESPACE ${KDE4WORKSPACE_TARGET_PREFIX}
+        DESTINATION ${LIB_INSTALL_DIR}/KDE4Workspace/cmake
+        FILE KDE4WorkspaceLibraryTargets.cmake )

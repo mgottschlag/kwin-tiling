@@ -20,7 +20,7 @@ kde4_add_library(kworkspace SHARED ${kworkspace_LIB_SRCS})
 target_link_libraries(kworkspace  ${KDE4_KDEUI_LIBS} ${X11_LIBRARIES} )
 
 set_target_properties(kworkspace PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
-install(TARGETS kworkspace ${INSTALL_TARGETS_DEFAULT_ARGS} )
+install(TARGETS kworkspace EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 install( FILES kdisplaymanager.h
                kworkspace.h
