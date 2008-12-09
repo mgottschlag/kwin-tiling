@@ -90,7 +90,6 @@ private:
     QAction *m_lockScreenAction;
     QAction *m_logoutAction;
     QAction *m_separator;
-    QAction *m_separator2;
 
     DesktopLayout *m_layout;
     bool dropping;

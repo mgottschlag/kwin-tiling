@@ -177,9 +177,6 @@ QList<QAction*> DefaultDesktop::contextualActions()
 
         m_separator = new QAction(this);
         m_separator->setSeparator(true);
-
-        m_separator2 = new QAction(this);
-        m_separator2->setSeparator(true);
     }
 
     QList<QAction*> actions;
