@@ -325,6 +325,7 @@ void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
 
     item->setWidget(calendar);
     item->setTitle(i18n("Calendar"));
+    item->setIcon("view-pim-calendar");
 }
 
 void ClockApplet::init()
