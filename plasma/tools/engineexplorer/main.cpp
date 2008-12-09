@@ -44,6 +44,7 @@ int main(int argc, char **argv)
     options.add("x <pixels>", ki18n("The desired x position in pixels"));
     options.add("y <pixels>", ki18n("The desired y position in pixels"));
     options.add("engine <data engine>", ki18n("The data engine to use"));
+    options.add("source <data engine>", ki18n("The source to request"));
     options.add("interval <ms>", ki18n("Update Interval in milliseconds."));
     KCmdLineArgs::addCmdLineOptions(options);
 
@@ -77,6 +78,11 @@ int main(int argc, char **argv)
     QString engine = args->getOption("engine");
     if (!engine.isEmpty()) {
         w->setEngine(engine);
+
+        QString source = args->getOption("source");
+        if (!source.isEmpty()) {
+            w->requestSource(source);
+        }
     }
 
     args->clear();

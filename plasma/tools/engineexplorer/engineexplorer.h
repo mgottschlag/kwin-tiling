@@ -43,6 +43,7 @@ class EngineExplorer : public KDialog, public Ui::EngineExplorer
 
         void setEngine(const QString &engine);
         void setInterval(const int interval);
+        void requestSource(const QString &source);
 
     public slots:
         void dataUpdated(const QString& source, const Plasma::DataEngine::Data& data);

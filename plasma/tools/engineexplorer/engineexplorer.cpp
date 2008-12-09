@@ -224,13 +224,12 @@ void EngineExplorer::removeSource(const QString& source)
 
 void EngineExplorer::requestSource()
 {
-    if (!m_engine) {
-        return;
-    }
+    requestSource(m_sourceRequester->text());
+}
 
-    QString source = m_sourceRequester->text();
-
-    if (source.isEmpty()) {
+void EngineExplorer::requestSource(const QString &source)
+{
+    if (!m_engine || source.isEmpty()) {
         return;
     }
 
