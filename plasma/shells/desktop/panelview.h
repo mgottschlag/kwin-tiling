@@ -164,6 +164,12 @@ public Q_SLOTS:
      */
     void setPanelMode(PanelView::PanelMode mode);
 
+    /**
+     * Call when there has been a change that might require changes to the unhide
+     * trigger, such as compositing changing.
+     */
+    void recreateUnhideTrigger();
+
 protected:
     void updateStruts();
     void moveEvent(QMoveEvent *event);

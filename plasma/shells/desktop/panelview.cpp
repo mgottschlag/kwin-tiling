@@ -909,7 +909,7 @@ QRect PanelView::unhideHintGeometry() const
 void PanelView::hintOrUnhide(const QPoint &point)
 {
 #ifdef Q_WS_X11
-    if (m_unhideTriggerGeom.height() == 1) {
+    if (!shouldHintHide()) {
         unhide();
         return;
     }
@@ -965,7 +965,7 @@ void PanelView::unhide()
 
     if (m_panelMode == LetWindowsCover) {
         KWindowSystem::raiseWindow(winId());
-    } else if (PlasmaApp::hasComposite()) {
+    } else if (shouldHintHide()) {
         if (tl->state() == QTimeLine::NotRunning) {
             tl->start();
         }
@@ -1005,7 +1005,7 @@ void PanelView::leaveEvent(QEvent *event)
             QTimeLine * tl = timeLine();
             tl->setDirection(QTimeLine::Forward);
 
-            if (PlasmaApp::hasComposite()) {
+            if (shouldHintHide()) {
                 if (tl->state() == QTimeLine::NotRunning) {
                     tl->start();
                 }
@@ -1057,7 +1057,7 @@ bool PanelView::event(QEvent *event)
 
 void PanelView::animateHide(qreal progress)
 {
-    if (m_panelMode == AutoHide && PlasmaApp::hasComposite()) {
+    if (m_panelMode == AutoHide && shouldHintHide()) {
         int margin = 0;
         Plasma::Location loc = location();
 
@@ -1108,6 +1108,19 @@ void PanelView::animateHide(qreal progress)
 bool PanelView::shouldHintHide() const
 {
     return PlasmaApp::hasComposite();
+}
+
+void PanelView::recreateUnhideTrigger()
+{
+#ifdef Q_WS_X11
+    if (m_unhideTrigger == None) {
+        return;
+    }
+
+    XDestroyWindow(QX11Info::display(), m_unhideTrigger);
+    m_unhideTrigger = None;
+    createUnhideTrigger();
+#endif
 }
 
 void PanelView::createUnhideTrigger()

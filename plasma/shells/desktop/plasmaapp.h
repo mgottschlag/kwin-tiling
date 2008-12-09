@@ -29,6 +29,8 @@
 
 #include <Plasma/Plasma>
 
+class KSelectionWatcher;
+
 namespace Plasma
 {
     class AppletBrowser;
@@ -110,9 +112,8 @@ private Q_SLOTS:
     void createView(Plasma::Containment *containment);
     void panelRemoved(QObject* panel);
     void configDialogRemoved(QObject* configDialogRemoved);
-
     void screenRemoved(int id);
-
+    void compositingChanged();
     void showAppletBrowser();
     void addContainment(Plasma::Containment *fromContainment = 0);
     void configureContainment(Plasma::Containment*);
@@ -126,6 +127,10 @@ private:
     Plasma::ZoomLevel m_zoomLevel;
     int m_panelHidden;
     bool m_isDesktop;
+
+#ifdef Q_WS_X11
+    KSelectionWatcher *m_compositeWatch;
+#endif
 };
 
 #endif // multiple inclusion guard
