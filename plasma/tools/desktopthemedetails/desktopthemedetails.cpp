@@ -255,6 +255,32 @@ K_PLUGIN_FACTORY(DesktopThemeDetailsFactory, registerPlugin<DesktopThemeDetails>
 K_EXPORT_PLUGIN(DesktopThemeDetailsFactory("desktopthemedetails", "kcm_desktopthemedetails"))
 
 
+
+struct ThemeItemNameType {
+        const char* m_type;
+        const char* m_displayItemName;
+        const char* m_widgetType;
+        const char* m_iconName;
+};
+
+const ThemeItemNameType themeCollectionName[] = {
+    { "Color Scheme", I18N_NOOP2("plasma name", "Color Scheme"),"colors", "preferences-desktop-color"},
+    { "Panel Background", I18N_NOOP2("plasma name", "Panel Background"),"dialogs/kickoff", "plasma"},
+    { "Kickoff", I18N_NOOP2("plasma name", "Kickoff"), "dialogs/kickoff", "kde"},
+    { "Task Items", I18N_NOOP2("plasma name", "Task Items"), "widgets/tasks", "preferences-system-windows"},
+    { "Widget Background", I18N_NOOP2("plasma name", "Widget Background"), "widgets/background", "plasma"},
+    { "Translucent Background", I18N_NOOP2("plasma name", "Translucent Background"), "widgets/translucentbackground", "plasma"},
+    { "Dialog Background", I18N_NOOP2("plasma name", "Dialog Background"), "dialogs/background", "plasma"},
+    { "Analog Clock", I18N_NOOP2("plasma name", "Analog Clock"), "widgets/clock", "chronometer"},
+    { "Notes", I18N_NOOP2("plasma name", "Notes"), "widgets/notes", "view-pim-notes"},
+    { "Tooltip", I18N_NOOP2("plasma name", "Tooltip"), "widgets/tooltip", "plasma"},
+    { "Pager", I18N_NOOP2("plasma name", "Pager"), "widgets/pager", "plasma"},
+    { "Run Command Dialog", I18N_NOOP2("plasma name", "Run Command Dialog"), "dialogs/krunner", "system-run"},
+    { "Shutdown Dialog", I18N_NOOP2("plasma name", "Shutdown Dialog"), "dialogs/shutdowndialog", "system-shutdown"},
+    { 0, 0,0,0 } // end of data
+};
+
+
 DesktopThemeDetails::DesktopThemeDetails(QWidget* parent, const QVariantList &args)
     : KCModule(DesktopThemeDetailsFactory::componentData(), parent, args),
       m_themeModel(0)
@@ -327,11 +353,18 @@ void DesktopThemeDetails::reloadConfig()
             QTextStream in(&customSettingsFile);
             QString line;
             QStringList settingsPair;
+            QMap<QString, QString>lst;
+            //cache it
+            for (int i = 0; themeCollectionName[i].m_type; ++i) {
+                lst.insert(themeCollectionName[i].m_type, i18nc("plasma name", themeCollectionName[i].m_displayItemName));
+            }
+
             while (!in.atEnd()) {
                line = in.readLine();
                settingsPair = line.split('=');
-               m_themeReplacements[settingsPair.at(0)] = settingsPair.at(1);
-               updateReplaceItemList(settingsPair.at(0));
+
+               m_themeReplacements[lst[settingsPair.at(0)]] = settingsPair.at(1);
+               updateReplaceItemList(lst[settingsPair.at(0)]);
             }
             customSettingsFile.close();
         }
@@ -497,33 +530,15 @@ void DesktopThemeDetails::loadThemeItems()
     m_themeReplacements.clear();
     m_themeItemList->clear();
     m_dropListFiles.clear();
-    KStandardDirs dirs;
 
-    // Load theme items from file
-    QFile themeItemsFile(dirs.locate("data", "desktopthemedetails/themeitems"));
-    if (themeItemsFile.open(QFile::ReadOnly)) {
-        QTextStream in(&themeItemsFile);
-        QString line;
-        QStringList itemPair;
-        QString item;
-        QString itemPath;
-        QString itemIcon;
-        while (!in.atEnd()) {
-           line = in.readLine();
-           itemPair = line.split('=');
-           item = itemPair.at(0);
-           itemPath = itemPair.at(1).split(',').at(0);
-           itemIcon = itemPair.at(1).split(',').at(1);
-           m_themeItems[item] = itemPath;
-           m_themeReplacements[item] = "";
-           themeItemList.append(item);
-           themeItemIconList.append(itemIcon);
-        }
-        themeItemsFile.close();
-    } else {
-        KMessageBox::sorry(this, i18n("Theme items data file could not be found."), i18n("Desktop Theme Details"));
-        return;
+
+    for (int i = 0; themeCollectionName[i].m_type; ++i) {
+        m_themeItems[themeCollectionName[i].m_type] = themeCollectionName[i].m_widgetType;
+        themeItemList.append(i18nc("plasma name", themeCollectionName[i].m_displayItemName));
+        m_themeReplacements[i18nc("plasma name", themeCollectionName[i].m_displayItemName)] = "";
+        themeItemIconList.append(themeCollectionName[i].m_iconName);
     }
+
 
     m_themeItemList->setRowCount(themeItemList.size());
     m_themeItemList->setColumnCount(2);

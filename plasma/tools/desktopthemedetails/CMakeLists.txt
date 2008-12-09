@@ -11,4 +11,3 @@ install(TARGETS kcm_desktopthemedetails  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 install( FILES desktopthemedetails.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
-install( FILES themeitems DESTINATION ${DATA_INSTALL_DIR}/desktopthemedetails )
