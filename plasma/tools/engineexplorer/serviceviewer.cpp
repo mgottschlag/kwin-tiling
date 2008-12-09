@@ -54,6 +54,7 @@ ServiceViewer::ServiceViewer(Plasma::DataEngine *engine, const QString &source, 
     if (m_engine) {
         engineName = KStringHandler::capwords(m_engine->name());
         m_service = m_engine->serviceForSource(m_source);
+        Q_ASSERT(m_service);
         serviceName = m_service->name();
         updateOperations();
         connect(m_service, SIGNAL(operationsChanged()), this, SLOT(updateOperations()));

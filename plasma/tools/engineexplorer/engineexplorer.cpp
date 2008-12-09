@@ -38,6 +38,7 @@
 #include <Soprano/Node>
 Q_DECLARE_METATYPE(Soprano::Node)
 #endif // FOUND_SOPRANO
+Q_DECLARE_METATYPE(Plasma::DataEngine::Data)
 
 #include <Plasma/DataEngineManager>
 
@@ -360,7 +361,18 @@ QString EngineExplorer::convertToString(const QVariant &value) const
                 }
             }
 #endif
-            if (value.canConvert(QVariant::String)) {
+            Plasma::DataEngine::Data data = value.value<Plasma::DataEngine::Data>();
+            if (!data.isEmpty()) {
+                QStringList result;
+                QHashIterator<QString, QVariant> it(data);
+
+                while (it.hasNext()) {
+                    it.next();
+                    result << (it.key() + ": " + it.value().toString());
+                }
+
+                return result.join("\n");
+            } else if (value.canConvert(QVariant::String)) {
                 if (value.toString().isEmpty()) {
                     return i18nc("The user did a query to a dataengine and it returned empty data", "<empty>");
                 }
