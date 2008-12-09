@@ -118,8 +118,9 @@ JobWidget::~JobWidget()
 void JobWidget::destroy()
 {
     if (!m_extenderItem->isDetached()) {
-        m_extenderItem->setAutoExpireDelay(6000);
-        m_extenderItem->setTitle(i18nc("%1 is the name of the job, can be things like Copying, deleting, moving", "(finished) %1", m_job->message()));
+        //TODO: make configurable:
+        m_extenderItem->setAutoExpireDelay(15000);
+        //m_extenderItem->setTitle(i18nc("%1 is the name of the job, can be things like Copying, deleting, moving", "(finished) %1", m_job->message()));
         updateJob();
         setValue(100);
     }
@@ -153,12 +154,15 @@ void JobWidget::updateJob()
     if (!m_job->error().isEmpty()) {
         item->setTitle(m_job->error());
     } else if (m_job->state() == SystemTray::Job::Running) {
-        //FIXME: howto i18n this
         item->setTitle(m_job->message());
     } else if (m_job->state() == SystemTray::Job::Suspended) {
-        item->setTitle(i18nc("%1 is the name of the job, can be things like Copying, deleting, moving", "(paused) %1", m_job->message()));
+        item->setTitle(
+            i18nc("%1 is the name of the job, can be things like Copying, deleting, moving",
+                  "(paused) %1", m_job->message()));
     } else {
-        item->setTitle(i18nc("%1 is the name of the job, can be things like Copying, deleting, moving", "(finished) %1", m_job->message()));
+        item->setTitle(
+            i18nc("%1 is the name of the job, can be things like Copying, deleting, moving",
+                  "(finished) %1", m_job->message()));
     }
 
     //set the correct actions to visible.

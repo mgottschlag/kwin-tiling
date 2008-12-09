@@ -37,14 +37,6 @@ DBusJob::~DBusJob()
     emit jobDeleted(m_source);
 }
 
-
-/**
-void Notification::triggerAction(const QString &actionId)
-{
-    emit actionTriggered(m_source, actionId);
-}
-*/
-
 void DBusJob::suspend()
 {
     emit suspend(m_source);
