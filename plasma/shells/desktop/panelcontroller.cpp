@@ -879,39 +879,43 @@ void PanelController::mouseMoveFilter(QMouseEvent *event)
 
     //Resize handle moved
     switch (location()) {
-    case Plasma::LeftEdge:
-        if (mapToGlobal(event->pos()).x() -
-            d->startDragPos.x() - d->minimumHeight >
-            screenGeom.left()) {
-            move(mapToGlobal(event->pos()).x() - d->startDragPos.x(), pos().y());
+    case Plasma::LeftEdge: {
+        int newX = mapToGlobal(event->pos()).x() - d->startDragPos.x();
+        if (newX - d->minimumHeight > screenGeom.left() &&
+            newX - screenGeom.left() <= screenGeom.width()/3) {
+            move(newX, pos().y());
             d->resizeFrameHeight(geometry().left() - screenGeom.left());
         }
         break;
-    case Plasma::RightEdge:
-        if (mapToGlobal(event->pos()).x() -
-            d->startDragPos.x() + width() + d->minimumHeight <
-            screenGeom.right()) {
-            move(mapToGlobal(event->pos()).x() - d->startDragPos.x(), pos().y());
+    }
+    case Plasma::RightEdge: {
+        int newX = mapToGlobal(event->pos()).x() - d->startDragPos.x();
+        if (newX + width() + d->minimumHeight < screenGeom.right() &&
+            newX + width() - screenGeom.left() >= 2*(screenGeom.width()/3)) {
+            move(newX, pos().y());
             d->resizeFrameHeight(screenGeom.right() - geometry().right());
         }
         break;
-    case Plasma::TopEdge:
-        if (mapToGlobal(event->pos()).y() -
-            d->startDragPos.y() - d->minimumHeight >
-            screenGeom.top()) {
-            move(pos().x(), mapToGlobal(event->pos()).y() - d->startDragPos.y());
+    }
+    case Plasma::TopEdge: {
+        int newY = mapToGlobal(event->pos()).y() - d->startDragPos.y();
+        if ( newY - d->minimumHeight > screenGeom.top() &&
+             newY - screenGeom.top()<= screenGeom.height()/3) {
+            move(pos().x(), newY);
             d->resizeFrameHeight(geometry().top() - screenGeom.top());
         }
         break;
+    }
     case Plasma::BottomEdge:
-    default:
-        if (mapToGlobal(event->pos()).y() -
-            d->startDragPos.y() + height() + d->minimumHeight <
-            screenGeom.bottom()) {
-            move(pos().x(), mapToGlobal(event->pos()).y() - d->startDragPos.y());
+    default: {
+        int newY = mapToGlobal(event->pos()).y() - d->startDragPos.y();
+        if ( newY + height() + d->minimumHeight < screenGeom.bottom() &&
+             newY + height() - screenGeom.top() >= 2*(screenGeom.height()/3)) {
+            move(pos().x(), newY);
             d->resizeFrameHeight(screenGeom.bottom() - geometry().bottom());
         }
         break;
+    }
     }
 }
 
