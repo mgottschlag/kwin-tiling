@@ -40,6 +40,7 @@ BookmarksRunner::BookmarksRunner( QObject* parent, const QVariantList &args )
     Q_UNUSED(args)
     setObjectName("Bookmarks");
     m_icon = KIcon("bookmarks");
+    m_bookmarkManager = KBookmarkManager::userBookmarksManager();
 }
 
 BookmarksRunner::~BookmarksRunner()
@@ -53,8 +54,7 @@ void BookmarksRunner::match(Plasma::RunnerContext &context)
         return;
     }
 
-    KBookmarkManager *bookmarkManager = KBookmarkManager::userBookmarksManager();
-    KBookmarkGroup bookmarkGroup = bookmarkManager->root();
+    KBookmarkGroup bookmarkGroup = m_bookmarkManager->root();
 
     QList<Plasma::QueryMatch> matches;
     QStack<KBookmarkGroup> groups;

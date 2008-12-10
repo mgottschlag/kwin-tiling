@@ -29,6 +29,7 @@ class QWidget;
 
 class KBookmark;
 class KBookmarkGroup;
+class KBookmarkManager;
 
 class BookmarksRunner : public Plasma::AbstractRunner
 {
@@ -46,6 +47,7 @@ class BookmarksRunner : public Plasma::AbstractRunner
 
     private:
         KIcon m_icon;
+        KBookmarkManager *m_bookmarkManager;
 };
 
 K_EXPORT_PLASMA_RUNNER(bookmarksrunner, BookmarksRunner)
