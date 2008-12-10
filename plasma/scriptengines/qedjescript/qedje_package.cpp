@@ -64,7 +64,7 @@ bool QEdjePackage::installPackage(const QString &archive_path,
   data.setType("Service");
   data.setPluginName(dir_name);
   data.setImplementationApi("qedjescript");
-  data.setDescription("An Edje Object to be loaded using QEdje");
+  data.setDescription(i18n("An Edje Object to be loaded using QEdje"));
   Plasma::Package::registerPackage(data, QString(""));
 
   return true;
