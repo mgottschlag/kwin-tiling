@@ -99,7 +99,7 @@ void EngineExplorer::setEngine(const QString &engine)
     //find the engine in the combo box
     int index = m_engines->findText(engine);
     if (index != -1) {
-        kDebug() << "Engine found!";
+        kDebug() << QString("Engine %1 found!").arg(engine);
         m_engines->setCurrentIndex(index);
         showEngine(engine);
     }
