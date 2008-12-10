@@ -420,7 +420,7 @@ void DesktopThemeDetails::save()
             //Save setting for this theme item
             if (customSettingsFileOpen) {
                 QTextStream out(&customSettingsFile);
-                if (m_dropListFiles.key(source).startsWith("File:") || m_dropListFiles.key(source).startsWith("(Customized)")) {
+                if (m_dropListFiles.key(source).startsWith("File:") || m_dropListFiles.key(source).startsWith(i18n("(Customized)"))) {
                     out << i.key() + "=" + dest +"\r\n";
                 } else {
                     out << i.key() + "=" + source +"\r\n";
@@ -434,7 +434,8 @@ void DesktopThemeDetails::save()
         QFile desktopFile(dirs.locateLocal("data", "desktoptheme/" + theme +"/metadata.desktop"));
         QString desktopFileData;
         if (isCustomized(theme)) {
-            desktopFileData = "Name=(Customized) \r\nComment=User customized theme \r\nX-KDE-PluginInfo-Name=" + theme + "\r\n";
+
+            desktopFileData = QString("Name=%1 \r\nComment=%2 \r\nX-KDE-PluginInfo-Name=%3\r\n").arg(i18n("(Customized)")).arg(i18n("User customized theme")).arg(theme);
         } else {
             desktopFileData = "Name=" + m_newThemeName->text() + " \r\n Comment=" + m_newThemeDescription->text() + " \r\n X-KDE-PluginInfo-Author=" + m_newThemeAuthor->text() + " \r\n X-KDE-PluginInfo-Name=" + theme + " \r\n X-KDE-PluginInfo-Version=" + m_newThemeVersion->text();
         }
@@ -503,7 +504,7 @@ void DesktopThemeDetails::exportTheme()
 
     /* FIXME: Commented till I can figure out how to use KZip
     if (m_themeCustomized ||
-             (m_theme->currentText() == "(Customized)" && m_newThemeName->text() == "")) {
+             (m_theme->currentText() == i18n("(Customized)") && m_newThemeName->text() == "")) {
         KMessageBox::information(this, i18n("Please apply theme item changes (with a new theme name) before attempting to export theme."), i18n("Export Desktop Theme"));
     } else {
         QString themeStoragePath = m_theme->itemData(m_theme->currentIndex(),
@@ -569,7 +570,7 @@ void DesktopThemeDetails::updateReplaceItemList(const QString& item)
     QString currentReplacement = m_themeReplacements[item];
     QString replacementDropListItem;
     QStringList dropList;
-    if ((currentReplacement.isEmpty() && m_theme->currentText() != "(Customized)")){
+    if ((currentReplacement.isEmpty() && m_theme->currentText() != i18n("(Customized)"))){
         replacementDropListItem = m_theme->currentText() + " " + item;
     }
 
@@ -602,7 +603,7 @@ void DesktopThemeDetails::updateReplaceItemList(const QString& item)
         if (QFile::exists(themeItemFile + ".svgz")) {
             themeItemFile = themeRoot + '/' + m_themeItems[item] + ".svgz";
         }
-        if ((name != "(Customized)") || (name == "(Customized)" && themeItemFile == currentReplacement)) {
+        if ((name != i18n("(Customized)")) || (name == i18n("(Customized)") && themeItemFile == currentReplacement)) {
             QString dropListItem = i18n("%1 %2",name,item);
             if (themeItemFile == currentReplacement) {
                 replacementDropListItem = dropListItem;
@@ -680,7 +681,7 @@ void DesktopThemeDetails::resetThemeDetails()
     } else {
        m_themeInfoVersion->setText("");
     }
-    if (m_theme->currentText() != "(Customized)") {
+    if (m_theme->currentText() != i18n("(Customized)")) {
         loadThemeItems();
     }
     m_newThemeName->clear();
