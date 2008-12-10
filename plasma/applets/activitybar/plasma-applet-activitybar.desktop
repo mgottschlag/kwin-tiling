@@ -2,6 +2,7 @@
 Name=Activity Bar
 Name[ar]=شريط الأنشطة
 Name[be@latin]=Panel zaniatkaŭ
+Name[bg]=Лента за активност
 Name[ca]=Barra d'activitat
 Name[de]=Aktivitäts-Leiste
 Name[el]=Γραμμή δραστηριότητας
@@ -37,6 +38,7 @@ Name[zh_TW]=活動列
 Comment=Tabbar to switch activities
 Comment[ar]=شريط الألسنة لتبديل بين الأنشطة
 Comment[be@latin]=Panel kartak dla roznych zaniatkaŭ
+Comment[bg]=Лента за превключване на активността
 Comment[ca]=Barra de pestanyes per a canviar d'activitats
 Comment[de]=Leiste zum Wechseln von Aktivitäten
 Comment[el]=Γραμμή καρτελών για την εναλλαγή δραστηριότητας

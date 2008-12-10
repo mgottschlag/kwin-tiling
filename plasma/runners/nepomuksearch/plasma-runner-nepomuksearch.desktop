@@ -2,6 +2,7 @@
 Name=Nepomuk Desktop Search Runner
 Name[ar]=مشغل بحث سطح المكتب نبومك
 Name[be@latin]=Modul pošuku ŭ kamputary praz systemu „Nepomuk”
+Name[bg]=Търесне върху работния плот с Nepomuk
 Name[ca]=Execució de cerques d'escriptori del Nepomuk
 Name[csb]=Szëkôrz pùltu Nepomuka
 Name[de]=Nepomuk-Desktopsuche
@@ -33,6 +34,7 @@ Name[zh_TW]=Nepomuk 桌面搜尋執行器
 Comment=KRunner which performs desktop searches via Nepomuk
 Comment[ar]=المشغل الذي يؤدي البحث لسطح المكتب عن طريق نبومك
 Comment[be@latin]=Modul „KRunner”, jaki šukaje ŭ kamputary praz systemu „Nepomuk”
+Comment[bg]=KRunner търси с помощта на Nepomuk
 Comment[ca]=El KRunner executa cerques d'escriptori via el Nepomuk
 Comment[de]=Starter, der eine Desktopsuche mit Nepomuk ausführt.
 Comment[el]=KRunner που εκτελεί αναζητήσεις επιφάνειας εργασίας μέσω του Nepomuk

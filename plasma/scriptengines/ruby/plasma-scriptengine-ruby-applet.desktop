@@ -2,6 +2,7 @@
 Name=Ruby Widget
 Name[ar]=ودجة روبي
 Name[be@latin]=Widžet u movie „Ruby”
+Name[bg]=Джаджа Ruby
 Name[ca]=Estri Ruby
 Name[csb]=Interfejs Ruby
 Name[de]=Ruby-Miniprogramm
@@ -37,6 +38,7 @@ Name[zh_TW]=Ruby 元件
 Comment=Native Plasma widget written in Ruby
 Comment[ar]=وجة بلازما أصلية مكتوبة بروبي
 Comment[be@latin]=Rodny widžet systemy „Plasma”, napisany ŭ movie „Ruby”
+Comment[bg]=Оригинална джаджа за Plasma, написана на Ruby
 Comment[ca]=Estri nadiu del Plasma escrit en Ruby
 Comment[de]=Echtes Plasma-Programm, geschrieben in Ruby
 Comment[el]=Εγγενές συστατικό Plasma γραμμένο σε Ruby

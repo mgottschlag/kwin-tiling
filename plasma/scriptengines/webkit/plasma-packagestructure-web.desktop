@@ -2,6 +2,7 @@
 Name=Web Widgets
 Name[ar]=ودجات الويب 
 Name[be@latin]=Sieciŭnyja widžety
+Name[bg]=Уеб джаджи
 Name[ca]=Estris web
 Name[csb]=Interfejs sécë Web
 Name[de]=Web-Miniprogramme
@@ -35,6 +36,7 @@ Name[zh_TW]=網頁元件
 Comment=HTML widget
 Comment[ar]=ودجة HTML
 Comment[be@latin]=Widžet HTML
+Comment[bg]=HTML джаджи
 Comment[ca]=Estri HTML
 Comment[csb]=Interfejs HTML
 Comment[de]=HTML-Miniprogramme

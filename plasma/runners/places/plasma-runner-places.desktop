@@ -2,6 +2,7 @@
 Name=Places
 Name[ar]=الأماكن
 Name[be@latin]=Miescy
+Name[bg]=Места
 Name[ca]=Llocs
 Name[csb]=Place
 Name[de]=Orte
@@ -42,6 +43,7 @@ Icon=user-home
 Comment=Open Devices and Folder Bookmarks
 Comment[ar]=افتح الأجهزة و مجلد العلامات
 Comment[be@latin]=Adčyni pryłady j zakładki dla katalohaŭ
+Comment[bg]=Отваряне на отметки за устройства и директории
 Comment[ca]=Obre els punts dels dispositius i dels preferits
 Comment[csb]=Òtemkni ùrządzenié ë katalog załóżków
 Comment[de]=Öffnet Lesezeichen für Geräte und Ordner

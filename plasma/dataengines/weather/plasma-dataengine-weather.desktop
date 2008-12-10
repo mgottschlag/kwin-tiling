@@ -2,6 +2,7 @@
 Name=Weather
 Name[ar]=الطقس
 Name[be@latin]=Nadvorje
+Name[bg]=Метеорологично време
 Name[ca]=Meteorologia
 Name[de]=Wetter
 Name[el]=Καιρός
@@ -38,7 +39,7 @@ Name[zh_TW]=天氣
 Comment=Weather data for Plasmoids
 Comment[ar]=محرك بيانات الطقس للبلازمويدات
 Comment[be@latin]=Źviestki pra nadvorje dla widžetaŭ „Plasma”
-Comment[bg]=Време (Plasmoids)
+Comment[bg]=Информация за метеорологичното време (Plasmoids)
 Comment[ca]=Dades meteorològiques pels Plasmoides
 Comment[csb]=Czérownik ùsłëżnotów wiodra dlô plazmoidów
 Comment[da]=Vejrdata til plasmoids

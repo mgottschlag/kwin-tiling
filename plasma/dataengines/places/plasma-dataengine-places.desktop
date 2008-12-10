@@ -2,6 +2,7 @@
 Name=Places
 Name[ar]=الأماكن
 Name[be@latin]=Miescy
+Name[bg]=Места
 Name[ca]=Llocs
 Name[csb]=Place
 Name[de]=Orte
@@ -39,7 +40,7 @@ Name[zh_TW]=地方
 Comment=Places data for Plasmoids
 Comment[ar]=محرك بيانات الأماكن للبلازمويدات
 Comment[be@latin]=Źviestki ź miescaŭ dla widžetaŭ
-Comment[bg]=Места за Plasmoids
+Comment[bg]=Информация за места (Plasmoids)
 Comment[ca]=Dades de llocs pels Plasmoides
 Comment[da]=Steddata til plasmoids
 Comment[de]=„Orte“ für Plasmoide

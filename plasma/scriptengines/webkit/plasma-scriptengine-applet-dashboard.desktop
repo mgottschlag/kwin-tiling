@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Dashboard
 Name[ar]=لوحة الودجات
+Name[bg]=Табло
 Name[ca]=Tauler
 Name[csb]=Panel
 Name[da]=Instrumentbræt
@@ -34,6 +35,7 @@ Name[zh_TW]=儀表板
 Comment=MacOS X dashboard widget
 Comment[ar]=لوحة ودجات MacOS
 Comment[be@latin]=Widžet „Dashboard” systemy „MacOS X”.
+Comment[bg]=Джаджа MacOS X
 Comment[ca]=Estri del tauler del MacOS X
 Comment[da]=MacOS X dashboard-widget
 Comment[de]=MacOS-X-Dashboard-Miniprogramm
@@ -72,6 +74,7 @@ Comment[sr]=Инструмент-табла МекОС‑а X
 Comment[sr@latin]=Instrument-tabla MacOS‑a X
 Comment[sv]=Grafisk komponent för MacOS X instrumentpanel
 Comment[te]=MacOS X డాష్‌బోర్‍డ్ విడ్జట్
+Comment[tg]=Виҷети панели MacOS X
 Comment[th]=วิดเจ็ตของแดชบอร์ด MacOS X
 Comment[tr]=MacOS X kontrol paneli programcığı
 Comment[uk]=Віджет панелі приладів MacOS X
