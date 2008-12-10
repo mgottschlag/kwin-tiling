@@ -118,11 +118,11 @@ void LocationsRunner::match(Plasma::RunnerContext &context)
 
         if (type == Plasma::RunnerContext::UnknownType) {
             match.setId("openunknown");
-            match.setRelevance(0);
+            match.setRelevance(0.5);
             match.setType(Plasma::QueryMatch::PossibleMatch);
         } else {
             match.setId("opennetwork");
-            match.setRelevance(1);
+            match.setRelevance(0.7);
             match.setType(Plasma::QueryMatch::ExactMatch);
         }
 

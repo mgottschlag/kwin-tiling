@@ -84,10 +84,10 @@ void BookmarksRunner::match(Plasma::RunnerContext &context)
             relevance = 1.0;
         } else if (bookmark.text().contains(term, Qt::CaseInsensitive)) {
             type = Plasma::QueryMatch::PossibleMatch;
-            relevance = 0.7;
+            relevance = 0.4;
         } else if (bookmark.url().prettyUrl().contains(term, Qt::CaseInsensitive)) {
             type = Plasma::QueryMatch::PossibleMatch;
-            relevance = 0.6;
+            relevance = 0.2;
         }
 
         if (type != Plasma::QueryMatch::NoMatch) {
@@ -102,7 +102,6 @@ void BookmarksRunner::match(Plasma::RunnerContext &context)
                 match->setIcon(icon);
             }
             */
-
             Plasma::QueryMatch match(this);
             match.setType(type);
             match.setRelevance(relevance);
