@@ -75,7 +75,9 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
     // * a substring of one of the keywords
     // * a substring of the GenericName field
     // * a substring of the Name field
-    query = QString("exist Exec and ('%1' ~subin Keywords or '%1' ~~ GenericName or '%1' ~~ Name)").arg(term);
+    // Note that before asking for the content of e.g. Keywords and GenericName we need to ask if
+    // they exist to prevent a tree evaluation error.
+    query = QString("exist Exec and ( (exist Keywords and '%1' ~subin Keywords) or (exist GenericName and '%1' ~~ GenericName) or (exist Name and '%1' ~~ Name) )").arg(term);
     services = KServiceTypeTrader::self()->query("Application", query);
     services += KServiceTypeTrader::self()->query("KCModule", query);
 
