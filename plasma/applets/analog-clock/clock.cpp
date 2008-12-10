@@ -315,8 +315,15 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
             QFontMetrics fm(QApplication::font());
             const int margin = 4;
 
-            if (!time.isEmpty()){
-                QRect textRect(rect.width() / 2 - fm.width(time) / 2, rect.width() / 2 - fm.height() * 2,
+            if (!time.isEmpty()) {
+                const qreal labelHeight = fm.height() + 2 * margin;
+                // for small clocks, compute a minimum offset
+                qreal labelOffset = m_theme->elementRect("HandCenterScrew").height() / 2 + labelHeight;
+                // for larger clocks, add a relative component to the offset
+                if ((rect.height() / 2) / 3 > labelHeight) {
+                    labelOffset += rect.height() / 2 * 0.05;
+                }
+                QRect textRect(rect.width() / 2 - fm.width(time) / 2, rect.height() / 2 - labelOffset,
                       fm.width(time), fm.height());
 
                 facePainter.setPen(Qt::NoPen);
