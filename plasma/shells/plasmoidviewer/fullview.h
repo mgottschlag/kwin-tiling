@@ -39,9 +39,10 @@ public:
 
     void addApplet(const QString &a, const QString& containment, const QString& wallpaper, const QVariantList &args = QVariantList());
 
-protected slots:
+private slots:
     void sceneRectChanged(const QRectF &rect);
     void resizeEvent(QResizeEvent *event);
+    void appletRemoved();
 
 private:
     Plasma::Corona m_corona;

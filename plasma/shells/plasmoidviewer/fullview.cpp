@@ -84,6 +84,7 @@ void FullView::addApplet(const QString &a, const QString &containment, const QSt
 {
     kDebug() << "adding applet" << a << "in" << containment;
     m_containment = m_corona.addContainment(containment);
+    connect(m_containment, SIGNAL(appletRemoved(Plasma::Applet*)), this, SLOT(appletRemoved()));
 
     if (!wallpaper.isEmpty()) {
         m_containment->setWallpaper(wallpaper);
@@ -99,6 +100,11 @@ void FullView::addApplet(const QString &a, const QString &containment, const QSt
     setSceneRect(m_applet->geometry());
     setWindowTitle(m_applet->name());
     setWindowIcon(SmallIcon(m_applet->icon()));
+}
+
+void FullView::appletRemoved()
+{
+    m_applet = 0;
 }
 
 void FullView::resizeEvent(QResizeEvent *event)
