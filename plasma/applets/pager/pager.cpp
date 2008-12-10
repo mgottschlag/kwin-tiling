@@ -913,25 +913,25 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
 
     // Inactive windows
     QColor drawingColor = plasmaColorTheme->foreground(KColorScheme::InactiveText).color();
-    drawingColor.setAlpha(50);
+    drawingColor.setAlpha(45);
     QBrush windowBrush(drawingColor);
     // Inactive windows Active desktop
-    drawingColor.setAlpha(192);
+    drawingColor.setAlpha(90);
     QBrush windowBrushActiveDesk(drawingColor);
 
     // Inactive window borders
-    drawingColor = plasmaColorTheme->foreground(KColorScheme::NeutralText).color();
-    drawingColor.setAlpha(238);
+    drawingColor = defaultTextColor;
+    drawingColor.setAlpha(130);
     QPen windowPen(drawingColor);
 
     // Active window borders
     QPen activeWindowPen(defaultTextColor);
 
     // Active windows
-    drawingColor.setAlpha(190);
+    drawingColor.setAlpha(130);
     QBrush activeWindowBrush(drawingColor);
     // Active windows Active desktop
-    drawingColor.setAlpha(228);
+    drawingColor.setAlpha(155);
     QBrush activeWindowBrushActiveDesk(drawingColor);
 
     if (m_showOwnBackground && (formFactor() == Plasma::Vertical || formFactor() == Plasma::Horizontal)) {
