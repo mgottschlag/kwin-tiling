@@ -67,6 +67,7 @@ class Clock : public ClockApplet
 
     protected slots:
         void clockConfigAccepted();
+        void repaintNeeded();
         void moveSecondHand();
 
     private:
@@ -79,6 +80,16 @@ class Clock : public ClockApplet
         Plasma::Svg* m_theme;
         QTime m_time;
         QTime m_lastTimeSeen;
+        enum RepaintCache {
+            RepaintNone,
+            RepaintAll,
+            RepaintHands
+        };
+        RepaintCache m_repaintCache;
+        QPixmap m_faceCache;
+        QPixmap m_handsCache;
+        QPixmap m_glassCache;
+        qreal m_verticalTranslation;
         QTimer *m_secondHandUpdateTimer;
         int m_animationStart;
         /// Designer Config file
