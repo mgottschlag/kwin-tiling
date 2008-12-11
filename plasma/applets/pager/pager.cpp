@@ -524,17 +524,15 @@ void Pager::numberOfDesktopsChanged(int num)
     }
 
     m_dirtyDesktop = -1;
-
     m_desktopCount = num;
+
     if (m_rows > m_desktopCount) {
         m_rows = m_desktopCount;
     }
+
     m_rects.clear();
     recalculateGeometry();
-
-    if (!m_timer->isActive()) {
-        m_timer->start(UPDATE_DELAY);
-    }
+    recalculateWindowRects();
 }
 
 void Pager::desktopNamesChanged()
@@ -982,7 +980,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
             if (m_dragId == m_windowRects[i][j].first) {
                 rect.translate((m_dragCurrentPos - m_dragOriginalPos).toPoint());
                 painter->setClipRect(option->exposedRect);
-            } else {
+            } else if (i < m_rects.count()) {
                 painter->setClipRect(m_rects[i].adjusted(1, 1, -1, -1));
             }
             painter->drawRect(rect);
