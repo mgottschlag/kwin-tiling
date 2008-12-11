@@ -56,6 +56,10 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
     setWindowTitle( i18n("Run Command") );
     setWindowIcon(KIcon("system-run"));
 
+    QPalette pal = palette();
+    pal.setColor(backgroundRole(), Qt::transparent);
+    setPalette(pal);
+
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("dialogs/krunner");
     m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
@@ -163,7 +167,13 @@ bool KRunnerDialog::event(QEvent *event)
 void KRunnerDialog::resizeEvent(QResizeEvent *e)
 {
     m_background->resizeFrame(e->size());
+#ifdef Q_WS_X11
+    if (QX11Info::isCompositingManagerRunning()) {
+        setMask(m_background->mask());
+    }
+#else
     setMask(m_background->mask());
+#endif
     KDialog::resizeEvent(e);
 }
 
