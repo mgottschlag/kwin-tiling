@@ -215,7 +215,6 @@ void Clock::drawHand(QPainter *p, const QRect &rect, const qreal verticalTransla
     p->save();
 
     p->translate(rect.width() / 2, rect.height() / 2);
-    p->rotate(rotation);
 
     QRectF elementRect;
     QString name = handName + "HandShadow";
@@ -223,16 +222,22 @@ void Clock::drawHand(QPainter *p, const QRect &rect, const qreal verticalTransla
         p->save();
 
         elementRect = m_theme->elementRect(name);
-        static const QSizeF offset = QSizeF(1, 3);
-        p->translate(-elementRect.width() / 2 + offset.width(), elementRect.y() - verticalTranslation + offset.height());
+        static const QPoint offset = QPoint(2, 3);
+
+        p->translate(offset);
+        p->rotate(rotation);
+        p->translate(-elementRect.width()/2, elementRect.y()-verticalTranslation);
         m_theme->paint(p, QRectF(QPointF(0, 0), elementRect.size()), name);
+
 
         p->restore();
     }
 
     name = handName + "Hand";
     elementRect = m_theme->elementRect(name);
-    p->translate(-elementRect.width() / 2, elementRect.y() - verticalTranslation);
+
+    p->rotate(rotation);
+    p->translate(-elementRect.width()/2, elementRect.y()-verticalTranslation);
     m_theme->paint(p, QRectF(QPointF(0, 0), elementRect.size()), name);
 
     p->restore();
