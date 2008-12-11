@@ -585,6 +585,7 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
     connect(i, SIGNAL(fontSelected(const QFont &)), SLOT(fontSelected()));
 
     QLabel * fontUse = new QLabel(i18nc("Font role", "%1: ", name), this);
+    fontUse->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     fontUse->setWhatsThis( *quickHelpIt++);
 
     fontUseLayout->addWidget(fontUse, count, 0);
@@ -611,6 +612,7 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
    QLabel* label=0L;
 #ifdef HAVE_FONTCONFIG
    label = new QLabel( i18n( "Use a&nti-aliasing:" ), this );
+   label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
    lay->addWidget( label, 0, 0 );
    cbAA = new QComboBox( this );
    cbAA->insertItem( AAEnabled, i18nc( "Use anti-aliasing", "Enabled" )); // change AASetting type if order changes
@@ -626,6 +628,7 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
    connect(cbAA, SIGNAL(activated(int)), SLOT(slotUseAntiAliasing()));
 #endif
    label = new QLabel( i18n( "Force fonts DPI:" ), this );
+   label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
    lay->addWidget( label, 1, 0 );
    comboForceDpi = new QComboBox( this );
    label->setBuddy( comboForceDpi );
