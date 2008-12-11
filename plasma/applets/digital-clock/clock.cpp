@@ -338,9 +338,11 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         m_plainClockFont.setPointSizeF(qMax(timeRect.height(), KGlobalSettings::smallestReadableFont().pointSize()));
         preparePainter(p, timeRect, m_plainClockFont, timeString, true);
 
+        QTextOption textOption(Qt::AlignCenter);
+        textOption.setWrapMode(QTextOption::NoWrap);
         p->drawText(timeRect,
                     timeString,
-                    QTextOption(Qt::AlignCenter)
+                    textOption
                 );
     }
 }
