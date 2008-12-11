@@ -40,7 +40,6 @@
 #include <KLocalizedString>
 #include <KIcon>
 #include <KStandardDirs>
-#include <ktoolinvocation.h>
 #include <kuser.h>
 #include <Plasma/Theme>
 #include <Plasma/Delegate>
@@ -500,7 +499,7 @@ void Launcher::init()
     QToolButton *branding = new BrandingButton(this);
     branding->setAutoRaise(false);
     branding->setToolButtonStyle(Qt::ToolButtonIconOnly);
-    connect(branding, SIGNAL(clicked()), SLOT(openHomepage()));
+    connect(branding, SIGNAL(clicked()), this, SIGNAL(aboutToHide()));
 
     QHBoxLayout *brandingLayout = new QHBoxLayout;
     brandingLayout->setMargin(3);
@@ -727,12 +726,6 @@ void Launcher::showEvent(QShowEvent *e)
     d->searchBar->setFocus();
 
     QWidget::showEvent(e);
-}
-
-void Launcher::openHomepage()
-{
-    emit aboutToHide();
-    KToolInvocation::invokeBrowser("http://www.kde.org/");
 }
 
 void Launcher::resultsAvailable()

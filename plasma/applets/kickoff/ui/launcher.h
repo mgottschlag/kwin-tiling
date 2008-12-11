@@ -85,7 +85,6 @@ private Q_SLOTS:
     void focusSearchView(const QString& query);
     void showViewContextMenu(const QPoint& pos);
     void focusFavoritesView();
-    void openHomepage();
     void resultsAvailable();
 
 private:

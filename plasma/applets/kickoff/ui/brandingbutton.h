@@ -43,8 +43,14 @@ public:
 protected:
     void paintEvent(QPaintEvent *event);
 
+protected Q_SLOTS:
+    void checkBranding();
+    void openHomepage();
+
 private:
     Plasma::Svg *m_svg;
+    QSize m_size;
+    bool m_doingBranding;
 };
 
 

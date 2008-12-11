@@ -21,13 +21,14 @@
 
 #include <QtGui/QPainter>
 
+#include <KConfigGroup>
 #include <KDebug>
+#include <KStandardDirs>
+#include <KToolInvocation>
 
 #include <Plasma/Svg>
-
-
 #include <Plasma/Theme>
-#include <KStandardDirs>
+
 namespace Kickoff
 {
 
@@ -35,9 +36,11 @@ BrandingButton::BrandingButton(QWidget *parent)
         : QToolButton(parent),
         m_svg(new Plasma::Svg(this))
 {
-    //FIXME: we have to change it
-    m_svg->setImagePath("widgets/kickoff-branding");
+    m_svg->setImagePath("widgets/branding");
     m_svg->resize();
+    checkBranding();
+    connect(m_svg, SIGNAL(repaintNeeded()), this, SLOT(checkBranding()));
+    connect(this, SIGNAL(clicked()), SLOT(openHomepage()));
     setCursor(Qt::PointingHandCursor);
 }
 
@@ -48,14 +51,34 @@ QSize BrandingButton::minimumSizeHint() const
 
 QSize BrandingButton::sizeHint() const
 {
-    return m_svg->elementSize("brilliant");
+    return m_size;
+}
+
+void BrandingButton::checkBranding()
+{
+    m_doingBranding = m_svg->isValid() && m_svg->hasElement("brilliant");
+
+    if (!m_doingBranding) {
+        m_size = QSize();
+        return;
+    }
+
+    m_size = m_svg->elementSize("brilliant");
+}
+
+void BrandingButton::openHomepage()
+{
+    //FIXME: 4.3 .. add a brandingConfig to Theme
+    KConfigGroup brandConfig(Plasma::Theme::defaultTheme()->colorScheme(), "Branding");
+    KUrl home("http://www.kde.org");
+    KToolInvocation::invokeBrowser(brandConfig.readEntry("homepage", home).pathOrUrl());
 }
 
 void BrandingButton::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
-    if (!m_svg->isValid()) {
-        kDebug() << "bad branding svg!";
+    if (!m_doingBranding) {
+        //kDebug() << "bad branding svg!";
         return;
     }
 
@@ -76,4 +99,7 @@ void BrandingButton::paintEvent(QPaintEvent *event)
 }
 
 } // namespace KickOff
+
+#include "brandingbutton.moc"
+
 
