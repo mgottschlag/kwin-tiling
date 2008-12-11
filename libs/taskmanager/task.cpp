@@ -27,6 +27,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // Qt
 #include <QMimeData>
+#include <QTime>
 #include <QTimer>
 #include <QApplication>
 #include <QDesktopWidget>
@@ -85,6 +86,8 @@ public:
     QPixmap thumb;
     QPixmap grab;
     QRect iconGeometry;
+
+    QTime lastUpdate;
 
     Pixmap windowPixmap;
 };
@@ -182,19 +185,17 @@ void Task::refreshIcon()
     d->pixmap = KWindowSystem::icon(d->win, 16, 16, true);
 
     // try to guess the icon from the classhint
-    if (d->pixmap.isNull())
-    {
+    if (d->pixmap.isNull()) {
         KIconLoader::global()->loadIcon(className().toLower(),
                                                     KIconLoader::Small,
                                                     KIconLoader::Small,
                                                     KIconLoader::DefaultState,
                                                     QStringList(), 0, true);
-    }
 
-    // load the icon for X applications
-    if (d->pixmap.isNull())
-    {
-        d->pixmap = SmallIcon("xorg");
+        // load the icon for X applications
+        if (d->pixmap.isNull()) {
+            d->pixmap = SmallIcon("xorg");
+        }
     }
 
     d->lastIcon = QPixmap();
@@ -204,9 +205,14 @@ void Task::refreshIcon()
 
 ::TaskManager::TaskChanges Task::refresh(unsigned int dirty)
 {
+    if (!d->lastUpdate.isNull() && d->lastUpdate.elapsed() > 10 && d->lastUpdate.elapsed() < 200) {
+        return TaskUnchanged;
+    }
+
     KWindowInfo info = KWindowSystem::windowInfo(d->win,
-        NET::WMState | NET::XAWMState | NET::WMDesktop | NET::WMVisibleName | NET::WMGeometry | NET::WMWindowType,
-        NET::WM2AllowedActions);
+                                                 NET::WMState | NET::XAWMState | NET::WMDesktop |
+                                                 NET::WMVisibleName | NET::WMGeometry | NET::WMWindowType,
+                                                 NET::WM2AllowedActions);
 
     TaskChanges changes = TaskUnchanged;
 
@@ -246,6 +252,7 @@ void Task::refreshIcon()
         emit changed(changes);
     }
 
+    d->lastUpdate.restart();
     return changes;
 }
 
@@ -280,47 +287,47 @@ QPixmap Task::thumbnail() const
 
 bool Task::isMaximized() const
 {
-    return d->info.valid() && (d->info.state() & NET::Max);
+    return d->info.valid(true) && (d->info.state() & NET::Max);
 }
 
 bool Task::isMinimized() const
 {
-    return d->info.valid() && d->info.isMinimized();
+    return d->info.valid(true) && d->info.isMinimized();
 }
 
 bool Task::isIconified() const
 {
-    return d->info.valid() && d->info.isMinimized();
+    return d->info.valid(true) && d->info.isMinimized();
 }
 
 bool Task::isAlwaysOnTop() const
 {
-    return d->info.valid() && (d->info.state() & NET::StaysOnTop);
+    return d->info.valid(true) && (d->info.state() & NET::StaysOnTop);
 }
 
 bool Task::isKeptBelowOthers() const
 {
-    return d->info.valid() && (d->info.state() & NET::KeepBelow);
+    return d->info.valid(true) && (d->info.state() & NET::KeepBelow);
 }
 
 bool Task::isFullScreen() const
 {
-    return d->info.valid() && (d->info.state() & NET::FullScreen);
+    return d->info.valid(true) && (d->info.state() & NET::FullScreen);
 }
 
 bool Task::isShaded() const
 {
-    return d->info.valid() && (d->info.state() & NET::Shaded);
+    return d->info.valid(true) && (d->info.state() & NET::Shaded);
 }
 
 bool Task::isOnCurrentDesktop() const
 {
-    return d->info.valid() && d->info.isOnCurrentDesktop();
+    return d->info.valid(true) && d->info.isOnCurrentDesktop();
 }
 
 bool Task::isOnAllDesktops() const
 {
-    return d->info.valid() && d->info.onAllDesktops();
+    return d->info.valid(true) && d->info.onAllDesktops();
 }
 
 bool Task::isActive() const
@@ -780,23 +787,22 @@ void Task::activateRaiseOrIconify()
 void Task::toDesktop(int desk)
 {
     NETWinInfo ni(QX11Info::display(), d->win, QX11Info::appRootWindow(), NET::WMDesktop);
-    if (desk == 0)
-    {
-        if (d->info.valid() && d->info.onAllDesktops())
-        {
+    if (desk == 0) {
+        if (isOnAllDesktops()) {
             ni.setDesktop(KWindowSystem::currentDesktop());
             KWindowSystem::forceActiveWindow(d->win);
-        }
-        else
-        {
+        } else {
             ni.setDesktop(NETWinInfo::OnAllDesktops);
         }
 
         return;
     }
+
     ni.setDesktop(desk);
-    if(desk == KWindowSystem::currentDesktop())
+
+    if (desk == KWindowSystem::currentDesktop()) {
         KWindowSystem::forceActiveWindow(d->win);
+    }
 }
 
 void Task::toCurrentDesktop()
