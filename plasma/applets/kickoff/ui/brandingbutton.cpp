@@ -24,7 +24,7 @@
 #include <KConfigGroup>
 #include <KDebug>
 #include <KStandardDirs>
-#include <KToolInvocation>
+#include <KRun>
 
 #include <Plasma/Svg>
 #include <Plasma/Theme>
@@ -71,7 +71,7 @@ void BrandingButton::openHomepage()
     //FIXME: 4.3 .. add a brandingConfig to Theme
     KConfigGroup brandConfig(Plasma::Theme::defaultTheme()->colorScheme(), "Branding");
     KUrl home("http://www.kde.org");
-    KToolInvocation::invokeBrowser(brandConfig.readEntry("homepage", home).pathOrUrl());
+    new KRun(brandConfig.readEntry("homepage", home), topLevelWidget(), false, false);
 }
 
 void BrandingButton::paintEvent(QPaintEvent *event)
