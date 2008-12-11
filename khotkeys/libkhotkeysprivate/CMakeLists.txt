@@ -66,5 +66,5 @@ set(khotkeysprivate_SRCS
 kde4_add_library(khotkeysprivate SHARED ${khotkeysprivate_SRCS})
 target_link_libraries(khotkeysprivate kworkspace ${KDE4_KDE3SUPPORT_LIBS} ${X11_LIBRARIES} ${X11_XTest_LIB})
 set_target_properties(khotkeysprivate PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
-install(TARGETS khotkeysprivate ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS khotkeysprivate ${INSTALL_TARGETS_DEFAULT_ARGS} LIBRARY NAMELINK_SKIP)
 
