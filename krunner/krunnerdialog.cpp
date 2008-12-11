@@ -168,7 +168,7 @@ void KRunnerDialog::resizeEvent(QResizeEvent *e)
 {
     m_background->resizeFrame(e->size());
 #ifdef Q_WS_X11
-    if (QX11Info::isCompositingManagerRunning()) {
+    if (!QX11Info::isCompositingManagerRunning()) {
         setMask(m_background->mask());
     }
 #else
