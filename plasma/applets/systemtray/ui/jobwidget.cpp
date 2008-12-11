@@ -120,7 +120,6 @@ void JobWidget::destroy()
     if (!m_extenderItem->isDetached()) {
         //TODO: make configurable:
         m_extenderItem->setAutoExpireDelay(15000);
-        //m_extenderItem->setTitle(i18nc("%1 is the name of the job, can be things like Copying, deleting, moving", "(finished) %1", m_job->message()));
         updateJob();
         setValue(100);
     }
@@ -163,6 +162,7 @@ void JobWidget::updateJob()
         item->setTitle(
             i18nc("%1 is the name of the job, can be things like Copying, deleting, moving",
                   "(finished) %1", m_job->message()));
+        item->showCloseButton();
     }
 
     //set the correct actions to visible.
@@ -175,7 +175,8 @@ void JobWidget::updateJob()
                                            m_job->state() == SystemTray::Job::Suspended);
     }
     if (item->action("stop")) {
-        item->action("stop")->setVisible(m_job->isKillable());
+        item->action("stop")->setVisible(m_job->isKillable() &&
+                                         m_job->state() != SystemTray::Job::Stopped);
     }
 
     setLabel(4, m_job->speed());
