@@ -32,7 +32,7 @@ uint KuiserverEngine::s_jobId = 0;
 
 JobView::JobView(QObject* parent)
     : QObject(parent),
-      m_state(Running)
+      m_percent(0), m_speed(0), m_state(Running)
 {
     m_objectPath.setPath(QString("/JobViewServer/JobView_%1").arg(++KuiserverEngine::s_jobId));
 
