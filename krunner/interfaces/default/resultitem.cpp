@@ -43,6 +43,7 @@
 #include <Plasma/Plasma>
 #include <Plasma/RunnerManager>
 #include <Plasma/PaintUtils>
+#include <Plasma/FrameSvg>
 
 #define TEXT_AREA_HEIGHT ResultItem::MARGIN + ResultItem::TEXT_MARGIN*2 + ResultItem::Private::s_fontHeight
 //#define NO_GROW_ANIM
@@ -69,6 +70,9 @@ public:
             s_fontHeight = fm.height();
             //kDebug() << "font height is: " << s_fontHeight;
         }
+        frame.setImagePath("widgets/viewitem");
+        frame.setCacheAllRenderedFrames(true);
+        frame.setElementPrefix("normal");
     }
 
     ~Private()
@@ -97,6 +101,7 @@ public:
 
     ResultItem * q;
     Plasma::QueryMatch match;
+    Plasma::FrameSvg frame;
     // static description
     QIcon       icon;
     // dyn params
@@ -407,25 +412,13 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->save();
 
     // Draw background
-    QStyle *s = style();
-    if (s) {
-        //kDebug() << "stylin'";
-        QStyleOptionViewItemV4 o;
-        o.initFrom(scene()->views()[0]->viewport());
-        if (hasFocus()) {
-            o.state |= QStyle::State_Selected;
-        } else {
-            o.backgroundBrush = QColor(61, 61, 61);
-            o.state |= QStyle::State_MouseOver;
-        }
-        o.rect = rect.toRect();
-        o.viewItemPosition = QStyleOptionViewItemV4::OnlyOne;
-        s->drawPrimitive(QStyle::PE_PanelItemViewItem, &o, painter, widget);
+    if (hasFocus()) {
+        d->frame.setElementPrefix("hover");
     } else {
-        //kDebug() << "oldschool";
-        QColor grey(61, 61, 61);
-        painter->fillPath(Plasma::PaintUtils::roundedRectangle(rect, 6), grey);
+        d->frame.setElementPrefix("normal");
     }
+    d->frame.resizeFrame(rect.size());
+    d->frame.paintFrame(painter, rect.topLeft());
 
     painter->restore();
     painter->save();
@@ -561,7 +554,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     QRect textRect(iRect.bottomLeft() + QPoint(0, MARGIN + TEXT_MARGIN), iRect.bottomRight() + QPoint(0, TEXT_AREA_HEIGHT));
 
     //kDebug() << d->highlight;
-    painter->fillPath(Plasma::PaintUtils::roundedRectangle(textRect.adjusted(-1, 2, 1, 0), 3), d->bgBrush);
+    //painter->fillPath(Plasma::PaintUtils::roundedRectangle(textRect.adjusted(-1, 2, 1, 0), 3), d->bgBrush);
 
     //Avoid to cut text both in the left and in the right
     Qt::Alignment textAlign = (option->fontMetrics.width(name()) < textRect.width()) ? Qt::AlignCenter : Qt::AlignLeft;
