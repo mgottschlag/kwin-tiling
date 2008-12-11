@@ -172,12 +172,11 @@ void GroupManager::remove(StartupPtr task)
 
 bool GroupManager::add(TaskPtr task)
 {
-    //kDebug();
-    /*kDebug() << task->visibleName();
-    kDebug() <<  task->visibleNameWithState();
-    kDebug() <<  task->name();
-    kDebug() <<  task->className();
-    kDebug() <<  task->classClass();*/
+    /* kDebug() << task->visibleName()
+             << task->visibleNameWithState()
+             << task->name()
+             << task->className()
+             << task->classClass(); */
 
     if (!task->showInTaskbar()) {
         //kDebug() << "Do not show in taskbar";
@@ -189,7 +188,8 @@ bool GroupManager::add(TaskPtr task)
         // As the Task doesn't demand attention
         // go through all filters whether the task should be displayed or not
         if (showOnlyCurrentDesktop() && !task->isOnCurrentDesktop()) {
-            //kDebug() << "Not on this desktop and showOnlyCurrentDesktop";
+            /* kDebug() << "Not on this desktop and showOnlyCurrentDesktop"
+                     << KWindowSystem::currentDesktop() << task->desktop(); */
             return false;
         }
 
@@ -199,6 +199,7 @@ bool GroupManager::add(TaskPtr task)
         }
 
         if (showOnlyMinimized() && !task->isMinimized()) {
+            //kDebug() << "Not minimized and only showing minimized";
             return false;
         }
 
