@@ -209,12 +209,10 @@ void Clock::moveSecondHand()
 
 void Clock::drawHand(QPainter *p, const QRect &rect, const qreal verticalTranslation, const qreal rotation, const QString &handName)
 {
-    // this code assumes that the _vertical_ placment of the hands in the svg file is
-    // properly chosen to obtain the desired hand offset with respect to the center
-
-    p->save();
-
-    p->translate(rect.width() / 2, rect.height() / 2);
+    // this code assumes the following conventions in the svg file:
+    // - the _vertical_ position of the hands should be set with respect to the center of the face
+    // - the _horizontal_ position of the hands does not matter
+    // - the _shadow_ elements should have the same vertical position as their _hand_ element counterpart
 
     QRectF elementRect;
     QString name = handName + "HandShadow";
@@ -224,18 +222,20 @@ void Clock::drawHand(QPainter *p, const QRect &rect, const qreal verticalTransla
         elementRect = m_theme->elementRect(name);
         static const QPoint offset = QPoint(2, 3);
 
-        p->translate(offset);
+        p->translate(rect.width()/2+offset.x(), rect.height()/2+offset.y());
         p->rotate(rotation);
         p->translate(-elementRect.width()/2, elementRect.y()-verticalTranslation);
         m_theme->paint(p, QRectF(QPointF(0, 0), elementRect.size()), name);
 
-
         p->restore();
     }
+
+    p->save();
 
     name = handName + "Hand";
     elementRect = m_theme->elementRect(name);
 
+    p->translate(rect.width()/2, rect.height()/2);
     p->rotate(rotation);
     p->translate(-elementRect.width()/2, elementRect.y()-verticalTranslation);
     m_theme->paint(p, QRectF(QPointF(0, 0), elementRect.size()), name);
