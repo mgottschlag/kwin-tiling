@@ -24,6 +24,7 @@
 #include <QtGui/QPainter>
 #include <QtGui/QWidget>
 #include <QtGui/QLabel>
+#include <QtGui/QMenu>
 #include <QtGui/QGraphicsSceneWheelEvent>
 #include <QtGui/QGraphicsLinearLayout>
 #include <QtGui/QGraphicsProxyWidget>
@@ -51,7 +52,7 @@ class CalendarPrivate
     public:
         ToolButton *back;
         Plasma::Label *spacer0;
-        Plasma::Label *month;
+        ToolButton *month;
         #ifdef COOL_SPINBOX
             SpinBox *year;
         #else
@@ -90,10 +91,10 @@ Calendar::Calendar(QGraphicsWidget *parent)
 
     m_hLayout->addStretch();
 
-    d->month = new Plasma::Label(this);
+    d->month = new ToolButton(this);
     d->month->setText(d->calendarTable->calendar()->monthName(d->calendarTable->calendar()->month(d->calendarTable->date()), d->calendarTable->calendar()->year(d->calendarTable->date())));
     d->month->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-    d->month->nativeWidget()->setAlignment(Qt::AlignCenter);
+    connect(d->month, SIGNAL(clicked()), this, SLOT(monthsPopup()));
     m_hLayout->addItem(d->month);
 
     #ifdef COOL_SPINBOX
@@ -228,6 +229,38 @@ void Calendar::nextMonth()
     }else{
         month++;
     }
+
+    if (d->calendarTable->calendar()->setYMD(newDate, year, month, d->calendarTable->calendar()->day(tmpDate))){
+        d->calendarTable->setDate(newDate);
+    }else if (d->calendarTable->calendar()->setYMD(newDate, year, month, 1)){
+        d->calendarTable->setDate(newDate);
+    }
+}
+
+void Calendar::monthsPopup()
+{
+    QMenu *monthMenu = new QMenu();
+    
+    for (int i = 1; i <= 12; i++){
+        QAction *tmpAction = new QAction(d->calendarTable->calendar()->monthName(i, 2008), this);
+        tmpAction->setProperty("month", i);
+        connect(tmpAction, SIGNAL(triggered()), this, SLOT(monthTriggered()));
+        monthMenu->addAction(tmpAction);
+    }
+
+    monthMenu->popup(QCursor::pos());
+}
+
+void Calendar::monthTriggered()
+{
+    QAction *action = dynamic_cast<QAction*> (sender());
+    if (!action || action->property("month").type() != QVariant::Int) return;
+    int month = action->property("month").toInt();
+
+    QDate tmpDate = d->calendarTable->date();
+    QDate newDate;
+
+    int year = d->calendarTable->calendar()->year(tmpDate);
 
     if (d->calendarTable->calendar()->setYMD(newDate, year, month, d->calendarTable->calendar()->day(tmpDate))){
         d->calendarTable->setDate(newDate);

@@ -66,6 +66,8 @@ private Q_SLOTS:
     void dateUpdated(const QDate &date);
     void goToToday();
     void manualDateChange();
+    void monthsPopup();
+    void monthTriggered();
 
 private:
     CalendarPrivate* const d;
