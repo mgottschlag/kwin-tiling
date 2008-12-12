@@ -243,10 +243,10 @@ void Calendar::nextMonth()
 
 void Calendar::monthsPopup()
 {
-   delete d->monthMenu;
-   d->monthMenu = new QMenu();
+    delete d->monthMenu;
+    d->monthMenu = new QMenu();
 
-   int year = d->calendarTable->calendar()->year(d->calendarTable->date());
+    int year = d->calendarTable->calendar()->year(d->calendarTable->date());
 
     for (int i = 1; i <= 12; i++){
         QAction *tmpAction = new QAction(d->calendarTable->calendar()->monthName(i, year), d->monthMenu);
