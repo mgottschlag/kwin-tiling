@@ -63,6 +63,7 @@ class CalendarPrivate
         Plasma::CalendarTable *calendarTable;
         Plasma::LineEdit *dateText;
         ToolButton *jumpToday;
+        QMenu *monthMenu;
 };
 
 //TODO
@@ -139,10 +140,13 @@ Calendar::Calendar(QGraphicsWidget *parent)
     m_layoutTools->addItem(d->dateText);
     m_layoutTools->addStretch();
     m_layout->addItem(m_layoutTools);
+
+    d->monthMenu = 0;
 }
 
 Calendar::~Calendar()
 {
+   delete d->monthMenu;
    delete d;
 }
 
@@ -239,16 +243,19 @@ void Calendar::nextMonth()
 
 void Calendar::monthsPopup()
 {
-    QMenu *monthMenu = new QMenu();
-    
+   delete d->monthMenu;
+   d->monthMenu = new QMenu();
+
+   int year = d->calendarTable->calendar()->year(d->calendarTable->date());
+
     for (int i = 1; i <= 12; i++){
-        QAction *tmpAction = new QAction(d->calendarTable->calendar()->monthName(i, 2008), this);
+        QAction *tmpAction = new QAction(d->calendarTable->calendar()->monthName(i, year), d->monthMenu);
         tmpAction->setProperty("month", i);
         connect(tmpAction, SIGNAL(triggered()), this, SLOT(monthTriggered()));
-        monthMenu->addAction(tmpAction);
+        d->monthMenu->addAction(tmpAction);
     }
 
-    monthMenu->popup(QCursor::pos());
+    d->monthMenu->popup(QCursor::pos());
 }
 
 void Calendar::monthTriggered()
