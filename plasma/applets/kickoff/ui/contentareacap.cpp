@@ -27,6 +27,8 @@ ContentAreaCap::ContentAreaCap(QWidget *parent, bool flip)
     setMinimumHeight(3);
     sizePolicy().setVerticalPolicy(QSizePolicy::Fixed);
     flipCap = flip;
+
+    parent->setCursor(Qt::ArrowCursor);
 }
 
 void ContentAreaCap::paintEvent(QPaintEvent *event)

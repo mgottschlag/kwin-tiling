@@ -28,6 +28,7 @@
 #include <QtGui/QPainter>
 #include <QtGui/QPaintEvent>
 #include <QtGui/QScrollBar>
+#include <QtGui/QToolTip>
 
 // KDE
 #include <KDebug>
@@ -507,7 +508,46 @@ void UrlItemView::mouseMoveEvent(QMouseEvent *event)
 
         d->hoveredIndex = itemUnderMouse;
         setCurrentIndex(d->hoveredIndex);
+        setToolTip("");
+    } 
+
+    QModelIndex index = itemUnderMouse;
+    // check to see if the current item has overlapping text
+    const QRect itemRect = visualRect(index);
+    QStyleOptionViewItem option = viewOptions();
+    option.rect = itemRect;
+
+    QRect decorationRect =
+      QStyle::alignedRect(option.direction,
+                          option.decorationPosition == QStyleOptionViewItem::Left ?
+                          Qt::AlignLeft : Qt::AlignRight,
+                          option.decorationSize,
+                          option.rect.adjusted(5, 5, -5, -5));
+    decorationRect.moveTop(option.rect.top() + qMax(0, (option.rect.height() - decorationRect.height())) / 2);
+
+    // look at the fonts here. I borrowed some code from Plasma::Delegate
+    QFont titleFont(option.font);
+    QFont subTitleFont;
+    subTitleFont.setPointSize(qMax(titleFont.pointSize() - 2, 
+			      KGlobalSettings::smallestReadableFont().pointSize()));
+
+    QFontMetrics fm1(titleFont);
+    QFontMetrics fm2(subTitleFont);
+
+    int titleWidth;
+    int subTitleWidth;
+
+    QString titleText = index.data(Qt::DisplayRole).toString();
+    QString subTitleText = index.data(Plasma::Delegate::SubTitleRole).toString();
+    titleWidth = fm1.width(titleText);
+    subTitleWidth = fm2.width(subTitleText);
+    if ((titleWidth + decorationRect.width() + 50) > itemRect.width() ||
+        (subTitleWidth + decorationRect.width() + 50) > itemRect.width()) {
+        setToolTip(titleText + "\n" + subTitleText);
+    } else {
+        setToolTip("");
     }
+
     QAbstractItemView::mouseMoveEvent(event);
 }
 
