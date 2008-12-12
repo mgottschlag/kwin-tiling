@@ -366,11 +366,11 @@ AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractItemPtr
     }
 
     if (groupableItem->isGroupItem()) {
-        TaskGroupItem *groupItem = new TaskGroupItem(this, m_applet, m_showTooltip);
+        TaskGroupItem *groupItem = new TaskGroupItem(this, m_applet, m_applet->showTooltip());
         groupItem->setGroup(static_cast<TaskManager::TaskGroup*>(groupableItem));
         item = groupItem;
     } else { //it's a window task
-        WindowTaskItem *windowItem = new WindowTaskItem(this, m_applet, m_showTooltip);
+        WindowTaskItem *windowItem = new WindowTaskItem(this, m_applet, m_applet->showTooltip());
         windowItem->setTask(static_cast<TaskManager::TaskItem*>(groupableItem));
         item = windowItem;
     }
