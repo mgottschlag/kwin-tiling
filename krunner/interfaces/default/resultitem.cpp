@@ -549,44 +549,56 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     }
     */
 
-
     QRect textRect(iRect.bottomLeft() + QPoint(0, MARGIN + TEXT_MARGIN), iRect.bottomRight() + QPoint(0, TEXT_AREA_HEIGHT));
 
-    //kDebug() << d->highlight;
-    //painter->fillPath(Plasma::PaintUtils::roundedRectangle(textRect.adjusted(-1, 2, 1, 0), 3), d->bgBrush);
+    // Draw the text on a pixmap
+    const QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    const int width = option->fontMetrics.width(name());
+    QPixmap pixmap(textRect.size());
+    pixmap.fill(Qt::transparent);
 
-    //Avoid to cut text both in the left and in the right
-    Qt::Alignment textAlign = (option->fontMetrics.width(name()) < textRect.width()) ? Qt::AlignCenter : Qt::AlignLeft;
-    {
-        const int padding = 2;
-        const int offset = 0;
-
-        textRect.adjust(0, MARGIN, -1, MARGIN);
-
-        QPixmap shadowedText = Plasma::PaintUtils::shadowText(name());
-        QRect pixmapRect(textRect);
-        pixmapRect.moveTopLeft(QPoint(0, 0));
-        if (shadowedText.width() > textRect.width()) {
-            if (d->fadeout.isNull() || d->fadeout.height() != textRect.height()) {
-                QLinearGradient g(0, 0, 20, 0);
-                g.setColorAt(0, layoutDirection() == Qt::LeftToRight ? Qt::white : Qt::transparent);
-                g.setColorAt(1, layoutDirection() == Qt::LeftToRight ? Qt::transparent : Qt::white);
-                d->fadeout = QPixmap(20, textRect.height());
-                d->fadeout.fill(Qt::transparent);
-                QPainter p(&d->fadeout);
-                p.setCompositionMode(QPainter::CompositionMode_Source);
-                p.fillRect(d->fadeout.rect(), g);
-            }
-            const QRect r = QStyle::alignedRect(layoutDirection(), Qt::AlignRight, d->fadeout.size(), pixmapRect);
-            QPainter p(&shadowedText);
-            p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-            p.drawPixmap(r.topLeft(), d->fadeout);
+    QPainter p(&pixmap);
+    p.setPen(textColor);
+    p.drawText(pixmap.rect(), width > pixmap.width() ? Qt::AlignLeft : Qt::AlignCenter, name());
+ 
+    // Fade the pixmap out at the end
+    if (width > pixmap.width()) {
+        if (d->fadeout.isNull() || d->fadeout.height() != pixmap.height()) {
+            QLinearGradient g(0, 0, 20, 0);
+            g.setColorAt(0, layoutDirection() == Qt::LeftToRight ? Qt::white : Qt::transparent);
+            g.setColorAt(1, layoutDirection() == Qt::LeftToRight ? Qt::transparent : Qt::white);
+            d->fadeout = QPixmap(20, textRect.height());
+            d->fadeout.fill(Qt::transparent);
+            QPainter p(&d->fadeout);
+            p.setCompositionMode(QPainter::CompositionMode_Source);
+            p.fillRect(d->fadeout.rect(), g);
         }
+        const QRect r = QStyle::alignedRect(layoutDirection(), Qt::AlignRight, d->fadeout.size(), pixmap.rect());
+        p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+        p.drawPixmap(r.topLeft(), d->fadeout);
+    }
+    p.end();
 
-        painter->drawPixmap(textRect.topLeft() - QPoint(padding + offset, padding + offset),
-                shadowedText, pixmapRect);
+    // Draw a drop shadow if we have a bright text color
+    if (qGray(textColor.rgb()) > 192) {
+        const int blur = 2;
+        const QPoint offset(1, 1);
+
+        QImage shadow(pixmap.size() + QSize(blur * 2, blur * 2), QImage::Format_ARGB32_Premultiplied);
+        p.begin(&shadow);
+        p.setCompositionMode(QPainter::CompositionMode_Source);
+        p.fillRect(shadow.rect(), Qt::transparent);
+        p.drawPixmap(blur, blur, pixmap);
+        p.end();
+
+        Plasma::PaintUtils::shadowBlur(shadow, blur, Qt::black);
+
+        // Draw the shadow
+        painter->drawImage(textRect.topLeft() - QPoint(blur, blur) + offset, shadow);
     }
 
+    // Draw the text
+    painter->drawPixmap(textRect.topLeft(), pixmap);
     painter->setClipping(oldClipping);
 }
 
