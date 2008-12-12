@@ -56,12 +56,15 @@
 
 WebBrowser::WebBrowser(QObject *parent, const QVariantList &args)
         : Plasma::PopupApplet(parent, args),
+          m_browser(0),
           m_verticalScrollValue(0),
           m_horizontalScrollValue(0),
+          m_completion(0),
+          m_bookmarkManager(0),
           m_bookmarkModel(0),
           m_autoRefreshTimer(0),
-          m_graphicsWidget(0)
-
+          m_graphicsWidget(0),
+          m_historyCombo(0)
 {
     setHasConfigurationInterface(true);
 
@@ -209,9 +212,6 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
 
 WebBrowser::~WebBrowser()
 {
-    KConfigGroup cg = config();
-    saveState(cg);
-
     delete m_completion;
     delete m_bookmarkManager;
     delete m_bookmarkModel;
@@ -267,11 +267,15 @@ void WebBrowser::saveState(KConfigGroup &cg) const
 {
     cg.writeEntry("Url", m_url.prettyUrl());
 
-    const QStringList list = m_historyCombo->historyItems();
-    cg.writeEntry("History list", list);
+    if (m_historyCombo) {
+        const QStringList list = m_historyCombo->historyItems();
+        cg.writeEntry("History list", list);
+    }
 
-    cg.writeEntry("VerticalScrollValue", m_browser->page()->mainFrame()->scrollBarValue(Qt::Vertical));
-    cg.writeEntry("HorizontalScrollValue", m_browser->page()->mainFrame()->scrollBarValue(Qt::Horizontal));
+    if (m_browser) {
+        cg.writeEntry("VerticalScrollValue", m_browser->page()->mainFrame()->scrollBarValue(Qt::Vertical));
+        cg.writeEntry("HorizontalScrollValue", m_browser->page()->mainFrame()->scrollBarValue(Qt::Horizontal));
+    }
 }
 
 void WebBrowser::back()
