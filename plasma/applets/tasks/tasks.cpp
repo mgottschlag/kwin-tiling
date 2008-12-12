@@ -89,7 +89,7 @@ void Tasks::init()
    // connect(m_groupManager, SIGNAL(reload()), this, SLOT(reload()));
     connect(this, SIGNAL(settingsChanged()), m_groupManager, SLOT(reconnect()));
 
-    m_rootGroupItem = new TaskGroupItem(dynamic_cast<QGraphicsWidget*>(this), this, false);
+    m_rootGroupItem = new TaskGroupItem(this, this, false);
     m_rootGroupItem->expand();
     m_rootGroupItem->setGroup(m_groupManager->rootGroup());
 

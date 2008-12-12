@@ -113,7 +113,9 @@ AbstractTaskItem::~AbstractTaskItem()
 
 void AbstractTaskItem::checkSettings()
 {
-    if (m_showTooltip != m_applet->showTooltip()) {
+    if (parentWidget() == m_applet) {
+        m_showTooltip = false;
+    } else if (m_showTooltip != m_applet->showTooltip()) {
         m_showTooltip = !m_showTooltip;
     }
 }
