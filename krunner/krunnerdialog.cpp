@@ -62,15 +62,16 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
     setPalette(pal);
 
     m_background = new Plasma::FrameSvg(this);
-    m_background->setImagePath("dialogs/krunner");
-    m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
-
     m_iconSvg = new Plasma::Svg(this);
+
     {
         // lock because setImagePath uses KSycoca
         QMutexLocker lock(Plasma::AbstractRunner::bigLock());
         m_iconSvg->setImagePath("widgets/configuration-icons");
+        m_background->setImagePath("dialogs/krunner");
     }
+
+    m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
     m_iconSvg->setContainsMultipleImages(true);
     m_iconSvg->resize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
 
