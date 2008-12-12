@@ -123,6 +123,14 @@ void Panel::init()
     //setFlag(ItemClipsChildrenToShape, true);
 
     KConfigGroup cg = config("Configuration");
+
+    m_currentSize = cg.readEntry("minimumSize", m_currentSize);
+    if (formFactor() == Plasma::Vertical) {
+        m_currentSize.expandedTo(QSize(0, 35));
+    } else {
+        m_currentSize.expandedTo(QSize(35, 0));
+    }
+
     setMinimumSize(cg.readEntry("minimumSize", m_currentSize));
     setMaximumSize(cg.readEntry("maximumSize", m_currentSize));
     setDrawWallpaper(false);
@@ -209,6 +217,7 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
         lay->insertItem(insertIndex, applet);
     }
 
+    lay->activate();
     connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
 }
 
