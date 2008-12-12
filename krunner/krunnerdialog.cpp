@@ -69,8 +69,8 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
     {
         // lock because setImagePath uses KSycoca
         QMutexLocker lock(Plasma::AbstractRunner::bigLock());
+        m_iconSvg->setImagePath("widgets/configuration-icons");
     }
-    m_iconSvg->setImagePath("widgets/configuration-icons");
     m_iconSvg->setContainsMultipleImages(true);
     m_iconSvg->resize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
 
