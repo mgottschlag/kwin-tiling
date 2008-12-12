@@ -106,6 +106,7 @@ public:
     QIcon       icon;
     // dyn params
     QBrush bgBrush;
+    QPixmap fadeout;
     qreal       tempTransp;
     int highlight;
     int index;
@@ -567,6 +568,23 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         QPixmap shadowedText = Plasma::PaintUtils::shadowText(name());
         QRect pixmapRect(textRect);
         pixmapRect.moveTopLeft(QPoint(0, 0));
+        if (shadowedText.width() > textRect.width()) {
+            if (d->fadeout.isNull() || d->fadeout.height() != textRect.height()) {
+                QLinearGradient g(0, 0, 20, 0);
+                g.setColorAt(0, layoutDirection() == Qt::LeftToRight ? Qt::white : Qt::transparent);
+                g.setColorAt(1, layoutDirection() == Qt::LeftToRight ? Qt::transparent : Qt::white);
+                d->fadeout = QPixmap(20, textRect.height());
+                d->fadeout.fill(Qt::transparent);
+                QPainter p(&d->fadeout);
+                p.setCompositionMode(QPainter::CompositionMode_Source);
+                p.fillRect(d->fadeout.rect(), g);
+            }
+            const QRect r = QStyle::alignedRect(layoutDirection(), Qt::AlignRight, d->fadeout.size(), pixmapRect);
+            QPainter p(&shadowedText);
+            p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+            p.drawPixmap(r.topLeft(), d->fadeout);
+        }
+
         painter->drawPixmap(textRect.topLeft() - QPoint(padding + offset, padding + offset),
                 shadowedText, pixmapRect);
     }
