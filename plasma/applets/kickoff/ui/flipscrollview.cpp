@@ -139,12 +139,13 @@ public:
         QString previousText;
         bool ltr = options.direction == Qt::LeftToRight;
         QString sep = ltr ? " > " : " < "; //TODO: this is very lame; use a graphical arrow instead
+
         if (branchIndex.isValid()) {
             currentText = branchIndex.data(Qt::DisplayRole).value<QString>();
             branchIndex = branchIndex.parent();
 
             while (branchIndex.isValid()) {
-                previousText.append(branchIndex.data(Qt::DisplayRole).value<QString>()).append(sep);
+                previousText.prepend(branchIndex.data(Qt::DisplayRole).value<QString>() + sep);
                 branchIndex = branchIndex.parent();
             }
         }
