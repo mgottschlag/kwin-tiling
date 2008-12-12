@@ -427,10 +427,10 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
             switch (location()) {
             case LeftEdge:
                 //this call will automatically fallback at no prefix if the element isn't available
-                m_background->setElementPrefix("east-mini");
+                m_background->setElementPrefix("west-mini");
                 break;
             case RightEdge:
-                m_background->setElementPrefix("west-mini");
+                m_background->setElementPrefix("east-mini");
                 break;
             case TopEdge:
                 m_background->setElementPrefix("north-mini");
