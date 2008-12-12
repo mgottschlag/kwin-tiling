@@ -34,6 +34,8 @@
 #include <KDE/KDebug>
 #include <KDE/KLineEdit>
 
+#include <Plasma/AbstractRunner>
+#include <Plasma/FrameSvg>
 #include <Plasma/RunnerManager>
 
 #include "resultitem.h"
@@ -41,7 +43,6 @@
 ResultScene::ResultScene(Plasma::RunnerManager *manager, QObject *parent)
     : QGraphicsScene(parent),
       m_runnerManager(manager),
-      m_itemCount(0),
       m_cIndex(0),
       m_rowStride(0),
       m_pageStride(0),
@@ -59,6 +60,16 @@ ResultScene::ResultScene(Plasma::RunnerManager *manager, QObject *parent)
     m_clearTimer.setSingleShot(true);
     connect(&m_clearTimer, SIGNAL(timeout()), this, SLOT(clearMatches()));
 
+    m_frame = new Plasma::FrameSvg(this);
+
+    {
+        // lock because setImagePath uses KSycoca
+        QMutexLocker lock(Plasma::AbstractRunner::bigLock());
+        m_frame->setImagePath("widgets/viewitem");
+    }
+
+    m_frame->setCacheAllRenderedFrames(true);
+    m_frame->setElementPrefix("normal");
     //QColor bg(255, 255, 255, 126);
     //setBackgroundBrush(bg);
 }
@@ -105,7 +116,6 @@ void ResultScene::clearMatches()
 
     m_itemsById.clear();
     m_items.clear();
-    m_itemCount = 0;
     m_pageCount = 0;
     setPage(0);
     emit matchCountChanged(0);
@@ -114,7 +124,7 @@ void ResultScene::clearMatches()
 void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
 {
     // kDebug() << "============================" << endl << "matches retrieved: " << m.count();
-    if (m.count() == 0) {
+    if (m.isEmpty()) {
         //kDebug() << "clearing";
         emit itemHoverEnter(0);
         m_clearTimer.start(200);
@@ -194,7 +204,7 @@ ResultItem* ResultScene::addQueryMatch(const Plasma::QueryMatch &match, bool use
         //kDebug() << "did not find for" << match.id();
         if (useAnyId) {
             //kDebug() << "creating for" << match.id();
-            item = new ResultItem(match, 0);
+            item = new ResultItem(match, 0, m_frame);
             addItem(item);
             item->hide();
             int rowStride = sceneRect().width() / (ResultItem::BOUNDING_WIDTH);

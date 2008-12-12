@@ -35,6 +35,7 @@
 namespace Plasma
 {
     class RunnerManager;
+    class FrameSvg;
 }
 
 class ResultItem;
@@ -94,7 +95,6 @@ class ResultScene : public QGraphicsScene
         int         m_resizeW;
         int         m_resizeH;
 
-        int m_itemCount;
         QList<ResultItem *>  m_items;
         QMultiMap<QString, ResultItem *>  m_itemsById;
 
@@ -103,6 +103,7 @@ class ResultScene : public QGraphicsScene
         int m_pageStride;
         uint m_pageCount;
         uint m_currentPage;
+        Plasma::FrameSvg *m_frame;
 
     private slots:
         void layoutIcons();

@@ -53,9 +53,10 @@ void shadowBlur(QImage &image, int radius, const QColor &color);
 class ResultItem::Private
 {
 public:
-    Private(ResultItem *item)
+    Private(ResultItem *item, Plasma::FrameSvg *f)
         : q(item),
           match(0),
+          frame(f),
           tempTransp(1.0),
           highlight(false),
           index(-1),
@@ -70,9 +71,6 @@ public:
             s_fontHeight = fm.height();
             //kDebug() << "font height is: " << s_fontHeight;
         }
-        frame.setImagePath("widgets/viewitem");
-        frame.setCacheAllRenderedFrames(true);
-        frame.setElementPrefix("normal");
     }
 
     ~Private()
@@ -101,7 +99,7 @@ public:
 
     ResultItem * q;
     Plasma::QueryMatch match;
-    Plasma::FrameSvg frame;
+    Plasma::FrameSvg *frame;
     // static description
     QIcon       icon;
     // dyn params
@@ -187,9 +185,9 @@ void ResultItem::animationComplete()
     resetTransform();
 }
 
-ResultItem::ResultItem(const Plasma::QueryMatch &match, QGraphicsWidget *parent)
+ResultItem::ResultItem(const Plasma::QueryMatch &match, QGraphicsWidget *parent, Plasma::FrameSvg *frame)
     : QGraphicsWidget(parent),
-      d(new Private(this))
+      d(new Private(this, frame))
 {
     setMatch(match);
     d->init();
@@ -414,12 +412,12 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
     // Draw background
     if (hasFocus()) {
-        d->frame.setElementPrefix("hover");
+        d->frame->setElementPrefix("hover");
     } else {
-        d->frame.setElementPrefix("normal");
+        d->frame->setElementPrefix("normal");
     }
-    d->frame.resizeFrame(rect.size());
-    d->frame.paintFrame(painter, rect.topLeft());
+    d->frame->resizeFrame(rect.size());
+    d->frame->paintFrame(painter, rect.topLeft());
 
     painter->restore();
     painter->save();

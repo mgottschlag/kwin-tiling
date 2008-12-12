@@ -36,9 +36,10 @@
 
 #include "kworkspace/kdisplaymanager.h"
 
-#include "plasma/framesvg.h"
-#include "plasma/runnermanager.h"
-#include "plasma/theme.h"
+#include <Plasma/AbstractRunner>
+#include <Plasma/FrameSvg>
+#include <Plasma/RunnerManager>
+#include <Plasma/Theme>
 
 #include "configdialog.h"
 #include "krunnerapp.h"
@@ -65,6 +66,10 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
     m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
 
     m_iconSvg = new Plasma::Svg(this);
+    {
+        // lock because setImagePath uses KSycoca
+        QMutexLocker lock(Plasma::AbstractRunner::bigLock());
+    }
     m_iconSvg->setImagePath("widgets/configuration-icons");
     m_iconSvg->setContainsMultipleImages(true);
     m_iconSvg->resize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);

@@ -31,6 +31,7 @@ class QGraphicsLinearLayout;
 
 namespace Plasma
 {
+    class FrameSvg;
     class RunnerManager;
 } // namespace Plasma
 
@@ -59,7 +60,7 @@ class ResultItem : public QGraphicsWidget
     Q_OBJECT
 
 public:
-    ResultItem(const Plasma::QueryMatch &match, QGraphicsWidget *parent);
+    ResultItem(const Plasma::QueryMatch &match, QGraphicsWidget *parent, Plasma::FrameSvg *frame);
 
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
     void setMatch(const Plasma::QueryMatch &match);
