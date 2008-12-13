@@ -122,15 +122,18 @@ Calendar::Calendar(QGraphicsWidget *parent)
 
     m_layout->addItem(d->calendarTable);
 
-    d->dateText = new Plasma::LineEdit(this);
-    //d->dateText->nativeWidget()->setReadOnly(true);
-    connect(d->calendarTable, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateUpdated(const QDate &)));
-    connect(d->dateText->nativeWidget(), SIGNAL(returnPressed()), this, SLOT(manualDateChange()));
-    
     d->jumpToday = new Plasma::ToolButton(this);
     d->jumpToday->nativeWidget()->setIcon(KIcon("go-jump-today"));
     d->jumpToday->nativeWidget()->setMinimumWidth(25);
     connect(d->jumpToday, SIGNAL(clicked()), this, SLOT(goToToday()));
+    m_layoutTools->addItem(d->jumpToday);
+    m_layoutTools->addStretch();
+
+    d->dateText = new Plasma::LineEdit(this);
+    connect(d->calendarTable, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateUpdated(const QDate &)));
+    connect(d->dateText->nativeWidget(), SIGNAL(returnPressed()), this, SLOT(manualDateChange()));
+    m_layoutTools->addItem(d->dateText);
+    m_layoutTools->addStretch();
 
     d->weekSpinBox = new QSpinBox();
     QGraphicsProxyWidget *spinProxy = new QGraphicsProxyWidget(this);
@@ -139,12 +142,8 @@ Calendar::Calendar(QGraphicsWidget *parent)
     d->weekSpinBox->setMinimum(1);
     d->weekSpinBox->setMaximum(d->calendarTable->calendar()->weeksInYear(d->calendarTable->date()));
     connect(d->weekSpinBox, SIGNAL(valueChanged(int)), this, SLOT(goToWeek(int)));
-
-    m_layoutTools->addItem(d->jumpToday);
-    m_layoutTools->addStretch();
-    m_layoutTools->addItem(d->dateText);
-    m_layoutTools->addStretch();
     m_layoutTools->addItem(spinProxy);
+
     m_layout->addItem(m_layoutTools);
 
     d->monthMenu = 0;
