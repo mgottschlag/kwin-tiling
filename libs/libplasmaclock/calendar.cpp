@@ -178,8 +178,9 @@ bool Calendar::setCalendar(KCalendarSystem *calendar)
 
 bool Calendar::setDate(const QDate &date)
 {
+    bool r = d->calendarTable->setDate(date);
     dateUpdated(date);
-    return d->calendarTable->setDate(date);
+    return r;
 }
 
 const QDate& Calendar::date() const
