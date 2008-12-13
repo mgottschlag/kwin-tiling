@@ -58,7 +58,6 @@ Q_SIGNALS:
     void tableClicked();
 
 private Q_SLOTS:
-    void displayedMonthChanged(int calendarSystemYear, int calendarSystemMonth);
     void prevMonth();
     void nextMonth();
     void dateUpdated(const QDate &date);

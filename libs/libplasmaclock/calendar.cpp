@@ -81,7 +81,6 @@ Calendar::Calendar(QGraphicsWidget *parent)
 
     d->calendarTable = new Plasma::CalendarTable(this);
     d->calendarTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(d->calendarTable, SIGNAL(displayedMonthChanged(int, int)), this, SLOT(displayedMonthChanged(int, int)));
 
     d->back = new Plasma::ToolButton(this);
     d->back->setText("<");
@@ -188,20 +187,15 @@ const QDate& Calendar::date() const
     return d->calendarTable->date();
 }
 
-void Calendar::displayedMonthChanged(int calendarSystemYear, int calendarSystemMonth)
-{
-    d->month->setText(d->calendarTable->calendar()->monthName(calendarSystemMonth, calendarSystemYear));
-    
-    #ifdef COOL_SPINBOX
-        d->year->setValue(calendarSystemYear);
-    #else
-        d->year->setText(QString::number(calendarSystemYear));
-    #endif
-}
-
 void Calendar::dateUpdated(const QDate &date)
 {
     QString formatted = KGlobal::locale()->formatDate( date,  KLocale::ShortDate );
+    d->month->setText(d->calendarTable->calendar()->monthName(date));
+    #ifdef COOL_SPINBOX
+        d->year->setValue(calendarSystemYear);
+    #else
+        d->year->setText(QString::number(d->calendarTable->calendar()->year(date)));
+    #endif
     d->dateText->setText(formatted);
     d->weekSpinBox->setValue(d->calendarTable->calendar()->weekNumber(date));
 }
