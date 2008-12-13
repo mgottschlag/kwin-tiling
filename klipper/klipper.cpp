@@ -809,7 +809,7 @@ void Klipper::checkClipData( bool selectionMode )
     //int lastSerialNo = selectionMode ? m_lastSelection : m_lastClipboard;
     //bool changed = data->serialNumber() != lastSerialNo;
     bool changed = true; // ### FIXME
-    bool clipEmpty = data->formats().isEmpty();
+    bool clipEmpty = data->text().isEmpty() && !data->hasImage();
 
     if ( changed && clipEmpty && m_bNoNullClipboard ) {
         const HistoryItem* top = history()->first();
@@ -882,7 +882,7 @@ void Klipper::checkClipData( bool selectionMode )
     if (changed) {
         applyClipChanges( data );
 #ifdef NOISY_KLIPPER
-        kDebug() << "Synchronize?" << ( bSynchronize ? "yes" : "no" );
+        kDebug() << "Synchronize?" << m_bSynchronize;
 #endif
         if ( m_bSynchronize ) {
             const HistoryItem* topItem = history()->first();
@@ -900,7 +900,7 @@ void Klipper::setClipboard( const HistoryItem& item, int mode )
     Q_ASSERT( ( mode & 1 ) == 0 ); // Warn if trying to pass a boolean as a mode.
 
     if ( mode & Selection ) {
-#ifdef NOSIY_KLIPPER
+#ifdef NOISY_KLIPPER
         kDebug() << "Setting selection to <" << item.text() << ">";
 #endif
         m_clip->setMimeData( item.mimeData(), QClipboard::Selection );
@@ -909,7 +909,7 @@ void Klipper::setClipboard( const HistoryItem& item, int mode )
 #endif
     }
     if ( mode & Clipboard ) {
-#ifdef NOSIY_KLIPPER
+#ifdef NOISY_KLIPPER
         kDebug() << "Setting clipboard to <" << item.text() << ">";
 #endif
         m_clip->setMimeData( item.mimeData(), QClipboard::Clipboard );
