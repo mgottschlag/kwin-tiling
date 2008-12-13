@@ -42,8 +42,7 @@
 #include <Plasma/Svg>
 #include <Plasma/Theme>
 #include <Plasma/Label>
-
-#include <plasma/widgets/toolbutton.h>
+#include <Plasma/ToolButton>
 
 namespace Plasma
 {
@@ -53,14 +52,14 @@ class CalendarPrivate
     public:
         ToolButton *back;
         Plasma::Label *spacer0;
-        ToolButton *month;
+        Plasma::ToolButton *month;
         #ifdef COOL_SPINBOX
             SpinBox *year;
         #else
             Plasma::Label *year;
         #endif
         Plasma::Label *spacer1;
-        ToolButton *forward;
+        Plasma::ToolButton *forward;
         Plasma::CalendarTable *calendarTable;
         Plasma::LineEdit *dateText;
         ToolButton *jumpToday;
@@ -86,7 +85,7 @@ Calendar::Calendar(QGraphicsWidget *parent)
     d->calendarTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(d->calendarTable, SIGNAL(displayedMonthChanged(int, int)), this, SLOT(displayedMonthChanged(int, int)));
 
-    d->back = new ToolButton(this);
+    d->back = new Plasma::ToolButton(this);
     d->back->setText("<");
     d->back->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(d->back, SIGNAL(clicked()), this, SLOT(prevMonth()));
@@ -94,7 +93,7 @@ Calendar::Calendar(QGraphicsWidget *parent)
 
     m_hLayout->addStretch();
 
-    d->month = new ToolButton(this);
+    d->month = new Plasma::ToolButton(this);
     d->month->setText(d->calendarTable->calendar()->monthName(d->calendarTable->calendar()->month(d->calendarTable->date()), d->calendarTable->calendar()->year(d->calendarTable->date())));
     d->month->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     connect(d->month, SIGNAL(clicked()), this, SLOT(monthsPopup()));
@@ -116,7 +115,7 @@ Calendar::Calendar(QGraphicsWidget *parent)
 
     m_hLayout->addStretch();
 
-    d->forward = new ToolButton(this);
+    d->forward = new Plasma::ToolButton(this);
     d->forward->setText(">");
     d->forward->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(d->forward, SIGNAL(clicked()), this, SLOT(nextMonth()));
@@ -131,7 +130,7 @@ Calendar::Calendar(QGraphicsWidget *parent)
     connect(d->calendarTable, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateUpdated(const QDate &)));
     connect(d->dateText->nativeWidget(), SIGNAL(returnPressed()), this, SLOT(manualDateChange()));
     
-    d->jumpToday = new ToolButton(this);
+    d->jumpToday = new Plasma::ToolButton(this);
     d->jumpToday->nativeWidget()->setIcon(KIcon("go-jump-today"));
     d->jumpToday->nativeWidget()->setMinimumWidth(25);
     connect(d->jumpToday, SIGNAL(clicked()), this, SLOT(goToToday()));
