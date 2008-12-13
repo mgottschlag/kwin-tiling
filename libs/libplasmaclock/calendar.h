@@ -24,11 +24,9 @@
 
 #include "plasmaclock_export.h"
 
-#include <kcalendarsystem.h>
-
 #include "calendartable.h"
 
-#include <plasma/widgets/lineedit.h>
+class KCalendarSystem;
 
 namespace Plasma
 {

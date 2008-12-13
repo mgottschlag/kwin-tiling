@@ -21,27 +21,25 @@
 
 //Qt
 #include <QtCore/QDate>
-#include <QtGui/QPainter>
-#include <QtGui/QWidget>
-#include <QtGui/QLabel>
-#include <QtGui/QMenu>
 #include <QtGui/QGraphicsSceneWheelEvent>
 #include <QtGui/QGraphicsLinearLayout>
 #include <QtGui/QGraphicsProxyWidget>
+#include <QtGui/QLabel>
+#include <QtGui/QMenu>
 #include <QtGui/QSpinBox>
 #include <QtGui/QToolButton>
 
 //KDECore
-#include <kglobal.h>
-#include <kdebug.h>
-#include <klocale.h>
-#include <KLineEdit>
+#include <KCalendarSystem>
+#include <KDebug>
+#include <KGlobal>
 #include <KIcon>
+#include <KLineEdit>
+#include <KLocale>
 
 //Plasma
-#include <Plasma/Svg>
-#include <Plasma/Theme>
 #include <Plasma/Label>
+#include <Plasma/LineEdit>
 #include <Plasma/ToolButton>
 
 namespace Plasma
