@@ -24,6 +24,7 @@
 #include "resultscene.h"
 #include <QtCore/QDebug>
 #include <QtGui/QKeyEvent>
+#include <QtCore/QMutexLocker>
 #include <QtGui/QPainter>
 #include <QtCore/QTimeLine>
 #include <QtGui/QGraphicsSceneWheelEvent>
