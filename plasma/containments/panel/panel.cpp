@@ -217,7 +217,6 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
         lay->insertItem(insertIndex, applet);
     }
 
-    lay->activate();
     connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
 }
 
