@@ -53,6 +53,8 @@ private:
 
     static QString m_setxkbmap_exe;
     static QString getSetxkbmapExe();
+    
+    static void executeXmodmap(const QString& configFileName);
 };
 
 #endif

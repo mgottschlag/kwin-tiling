@@ -21,6 +21,8 @@
 
 
 #include <QX11Info>
+#include <QDir>
+#include <QFile>
 
 #include <kdebug.h>
 #include <kstandarddirs.h>
@@ -144,6 +146,21 @@ bool XKBExtension::setXkbOptions(const QStringList& options, bool resetOld)
     return p.execute() == 0;
 }
 
+void XKBExtension::executeXmodmap(const QString& configFileName)
+{
+    if( QFile(configFileName).exists() ) {
+	QString xmodmap_exe = KGlobal::dirs()->findExe("xmodmap");
+	if( ! xmodmap_exe.isEmpty() ) {
+	    KProcess xmodmapProcess;
+	    xmodmapProcess << xmodmap_exe;
+	    xmodmapProcess << configFileName;
+	    kDebug() << "executing" << xmodmapProcess.program().join(" ");
+	    xmodmapProcess.execute();
+	}
+    }
+}
+
+
 QString XKBExtension::getLayoutGroupsCommand(const QString& model, const QStringList& layouts, const QStringList& variants)
 {
     if( layouts.empty() )
@@ -195,7 +212,14 @@ bool XKBExtension::setLayoutGroups(const QString& model, const QStringList& layo
 
     kDebug() << "executing" << p.program().join(" ");
 	
-    return p.execute() == 0;
+    bool setxkbmapOk = (p.execute() == 0);
+
+//    QString configFileName = QDir("/etc/X11/xinit").filePath(".Xmodmap");
+//    executeXmodmap(configFileName);
+    QString configFileName = QDir::home().filePath(".Xmodmap");
+    executeXmodmap(configFileName);
+    
+    return setxkbmapOk;
 }
 
 bool XKBExtension::setGroup(unsigned int group)
