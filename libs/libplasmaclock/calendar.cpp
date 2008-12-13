@@ -163,15 +163,13 @@ void Calendar::manualDateChange()
 {
     QDate date = KGlobal::locale()->readDate(((QLineEdit*)sender())->text());
     if(date.isValid()) {
-        d->calendarTable->setDate(date);
-        dateUpdated(date);
+        setDate(date);
     }
 }
 
 void Calendar::goToToday()
 {
-    d->calendarTable->setDate(QDate::currentDate());
-    dateUpdated(QDate::currentDate());
+    setDate(QDate::currentDate());
 }
 
 bool Calendar::setCalendar(KCalendarSystem *calendar)
@@ -181,6 +179,7 @@ bool Calendar::setCalendar(KCalendarSystem *calendar)
 
 bool Calendar::setDate(const QDate &date)
 {
+    dateUpdated(date);
     return d->calendarTable->setDate(date);
 }
 
@@ -223,9 +222,9 @@ void Calendar::prevMonth()
     }
 
     if (d->calendarTable->calendar()->setYMD(newDate, year, month, d->calendarTable->calendar()->day(tmpDate))){
-        d->calendarTable->setDate(newDate);
+        setDate(newDate);
     }else if (d->calendarTable->calendar()->setYMD(newDate, year, month, 1)){
-        d->calendarTable->setDate(newDate);
+        setDate(newDate);
     }
 }
 
@@ -245,9 +244,9 @@ void Calendar::nextMonth()
     }
 
     if (d->calendarTable->calendar()->setYMD(newDate, year, month, d->calendarTable->calendar()->day(tmpDate))){
-        d->calendarTable->setDate(newDate);
+        setDate(newDate);
     }else if (d->calendarTable->calendar()->setYMD(newDate, year, month, 1)){
-        d->calendarTable->setDate(newDate);
+        setDate(newDate);
     }
 }
 
@@ -280,28 +279,30 @@ void Calendar::monthTriggered()
     int year = d->calendarTable->calendar()->year(tmpDate);
 
     if (d->calendarTable->calendar()->setYMD(newDate, year, month, d->calendarTable->calendar()->day(tmpDate))){
-        d->calendarTable->setDate(newDate);
+        setDate(newDate);
     }else if (d->calendarTable->calendar()->setYMD(newDate, year, month, 1)){
-        d->calendarTable->setDate(newDate);
+        setDate(newDate);
     }
 }
 
 void Calendar::goToWeek(int week)
 {
-    QDate firstDayOfWeek;
-    d->calendarTable->calendar()->setYMD(firstDayOfWeek, d->calendarTable->calendar()->year(d->calendarTable->date()), 1, 1);
-    int weeksInYear = d->calendarTable->calendar()->weeksInYear(d->calendarTable->date());
-    int year = 0;
-    int i;
+    if (d->calendarTable->calendar()->weekNumber(d->calendarTable->date()) != week){
+        QDate firstDayOfWeek;
+        d->calendarTable->calendar()->setYMD(firstDayOfWeek, d->calendarTable->calendar()->year(d->calendarTable->date()), 1, 1);
+        int weeksInYear = d->calendarTable->calendar()->weeksInYear(d->calendarTable->date());
+        int year = 0;
+        int i;
 
-    for (i = 1; i < weeksInYear; i++){
-        if (week == d->calendarTable->calendar()->weekNumber(firstDayOfWeek, &year))
-            break;
+        for (i = 1; i < weeksInYear; i++){
+            if (week == d->calendarTable->calendar()->weekNumber(firstDayOfWeek, &year))
+                break;
 
-        firstDayOfWeek= d->calendarTable->calendar()->addDays(firstDayOfWeek, d->calendarTable->calendar()->daysInWeek(firstDayOfWeek));
+            firstDayOfWeek= d->calendarTable->calendar()->addDays(firstDayOfWeek, d->calendarTable->calendar()->daysInWeek(firstDayOfWeek));
+        }
+
+        setDate(firstDayOfWeek);
     }
-
-    setDate(firstDayOfWeek);
 }
 
 CalendarTable *Calendar::calendarTable() const
