@@ -438,12 +438,12 @@ bool KxkbCore::x11EventFilter ( XEvent * event )
       // group changed
   	  int group = m_extension->getGroup();
 	  if( group != m_currentLayout || m_error ) {
-	        kDebug() << "got event: group chagned to " << group;
+	        kDebug() << "got event: group changed to " << group;
 		updateIndicator(group, 1);
 	  }
     }
     else if( XKBExtension::isLayoutSwitchEvent(event) ) {
-	  kDebug() << "got event: layouts chagned";
+	  kDebug() << "got event: layouts changed";
 	  updateGroupsFromServer();
     }
     else {
@@ -470,6 +470,7 @@ KxkbCore::updateGroupsFromServer()
     const QList<LayoutUnit>& lus = xkbConfig.layouts;
     if( lus.count() > 0 ) {
         if( lus != m_kxkbConfig.m_layouts ) {
+            m_currentLayout = group;
             m_kxkbConfig.setConfiguredLayouts(xkbConfig);
             m_layoutOwnerMap->reset();
             initTray();
