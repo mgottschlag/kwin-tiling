@@ -190,4 +190,3 @@ GadgetInfo *PlasmaViewHost::getInfo() {
 }
 
 } // namespace ggadget
-#include "plasma_view_host_internal.moc"
