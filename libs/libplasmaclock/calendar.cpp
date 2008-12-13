@@ -28,15 +28,16 @@
 #include <QtGui/QGraphicsSceneWheelEvent>
 #include <QtGui/QGraphicsLinearLayout>
 #include <QtGui/QGraphicsProxyWidget>
+#include <QtGui/QSpinBox>
 #include <QtGui/QToolButton>
 
 //KDECore
 #include <kglobal.h>
 #include <kdebug.h>
 #include <klocale.h>
-
 #include <KLineEdit>
 #include <KIcon>
+
 //Plasma
 #include <Plasma/Svg>
 #include <Plasma/Theme>
@@ -64,6 +65,7 @@ class CalendarPrivate
         Plasma::LineEdit *dateText;
         ToolButton *jumpToday;
         QMenu *monthMenu;
+        QSpinBox *weekSpinBox;
 };
 
 //TODO
@@ -126,7 +128,6 @@ Calendar::Calendar(QGraphicsWidget *parent)
 
     d->dateText = new Plasma::LineEdit(this);
     //d->dateText->nativeWidget()->setReadOnly(true);
-    dateUpdated(d->calendarTable->date());
     connect(d->calendarTable, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateUpdated(const QDate &)));
     connect(d->dateText->nativeWidget(), SIGNAL(returnPressed()), this, SLOT(manualDateChange()));
     
@@ -135,13 +136,24 @@ Calendar::Calendar(QGraphicsWidget *parent)
     d->jumpToday->nativeWidget()->setMinimumWidth(25);
     connect(d->jumpToday, SIGNAL(clicked()), this, SLOT(goToToday()));
 
+    d->weekSpinBox = new QSpinBox();
+    QGraphicsProxyWidget *spinProxy = new QGraphicsProxyWidget(this);
+    spinProxy->setWidget(d->weekSpinBox);
+    d->weekSpinBox->setAttribute(Qt::WA_NoSystemBackground);
+    d->weekSpinBox->setMinimum(1);
+    d->weekSpinBox->setMaximum(d->calendarTable->calendar()->weeksInYear(d->calendarTable->date()));
+    connect(d->weekSpinBox, SIGNAL(valueChanged(int)), this, SLOT(goToWeek(int)));
+
     m_layoutTools->addItem(d->jumpToday);
     m_layoutTools->addStretch();
     m_layoutTools->addItem(d->dateText);
     m_layoutTools->addStretch();
+    m_layoutTools->addItem(spinProxy);
     m_layout->addItem(m_layoutTools);
 
     d->monthMenu = 0;
+
+    dateUpdated(d->calendarTable->date());
 }
 
 Calendar::~Calendar()
@@ -195,6 +207,7 @@ void Calendar::dateUpdated(const QDate &date)
 {
     QString formatted = KGlobal::locale()->formatDate( date,  KLocale::ShortDate );
     d->dateText->setText(formatted);
+    d->weekSpinBox->setValue(d->calendarTable->calendar()->weekNumber(date));
 }
 
 void Calendar::prevMonth()
@@ -274,6 +287,24 @@ void Calendar::monthTriggered()
     }else if (d->calendarTable->calendar()->setYMD(newDate, year, month, 1)){
         d->calendarTable->setDate(newDate);
     }
+}
+
+void Calendar::goToWeek(int week)
+{
+    QDate firstDayOfWeek;
+    d->calendarTable->calendar()->setYMD(firstDayOfWeek, d->calendarTable->calendar()->year(d->calendarTable->date()), 1, 1);
+    int weeksInYear = d->calendarTable->calendar()->weeksInYear(d->calendarTable->date());
+    int year = 0;
+    int i;
+
+    for (i = 1; i < weeksInYear; i++){
+        if (week == d->calendarTable->calendar()->weekNumber(firstDayOfWeek, &year))
+            break;
+
+        firstDayOfWeek= d->calendarTable->calendar()->addDays(firstDayOfWeek, d->calendarTable->calendar()->daysInWeek(firstDayOfWeek));
+    }
+
+    setDate(firstDayOfWeek);
 }
 
 CalendarTable *Calendar::calendarTable() const
