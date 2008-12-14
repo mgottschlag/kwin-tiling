@@ -16,8 +16,9 @@ kde4_add_plugin(kcm_keyboard ${kcm_keyboard_PART_SRCS})
 target_link_libraries(kcm_keyboard
     ${KDE4_KIO_LIBS} 
 )
+target_link_libraries(kcm_keyboard ${X11_LIBRARIES})
 if(X11_XTest_FOUND)
-  target_link_libraries(kcm_keyboard ${X11_XTest_LIB} ${X11_LIBRARIES})
+  target_link_libraries(kcm_keyboard ${X11_XTest_LIB})
 endif(X11_XTest_FOUND)
 
 install(TARGETS kcm_keyboard  DESTINATION ${PLUGIN_INSTALL_DIR} )
