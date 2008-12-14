@@ -239,6 +239,21 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
     mLockLbl->setWhatsThis( wltstr );
     mWaitLockEdit->setWhatsThis( wltstr );
 
+    mPlasmaCheckBox = new QCheckBox(i18n("Allow widgets on screen saver"), mSaverGroup);
+    mPlasmaCheckBox->setChecked(mPlasmaEnabled);
+    mPlasmaCheckBox->setWhatsThis(i18n("Add widgets to your screensaver"));
+    connect(mPlasmaCheckBox, SIGNAL(toggled(bool)), this, SLOT(slotEnablePlasma(bool)));
+    groupLayout->addWidget(mPlasmaCheckBox);
+
+    hbox = new QHBoxLayout();
+    groupLayout->addLayout(hbox);
+    hbox->addSpacing(30);
+    mPlasmaSetup = new QPushButton(i18n("Setup..."), mSaverGroup);
+    mPlasmaSetup->setEnabled(mPlasmaEnabled);
+    connect(mPlasmaSetup, SIGNAL(clicked()), this, SLOT(slotPlasmaSetup()));
+    hbox->addWidget(mPlasmaSetup);
+    hbox->addItem(new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum));
+
     // right column
     QBoxLayout* rightColumnLayout = new QVBoxLayout();
     topLayout->addItem( rightColumnLayout );
@@ -265,21 +280,6 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
     advancedLayout->addWidget( advancedBt );
     advancedLayout->addWidget( new QWidget( this ) );
 
-    QGroupBox *plasmaGroup = new QGroupBox(i18n("Desktop Widgets"), this);
-    groupLayout = new QVBoxLayout(plasmaGroup);
-    rightColumnLayout->addWidget(plasmaGroup);
-
-    mPlasmaCheckBox = new QCheckBox(i18n("Allow widgets on screen saver"), plasmaGroup);
-    mPlasmaCheckBox->setChecked(mPlasmaEnabled);
-    mPlasmaCheckBox->setWhatsThis(i18n("Add widgets to your screensaver"));
-    connect(mPlasmaCheckBox, SIGNAL(toggled(bool)), this, SLOT(slotEnablePlasma(bool)));
-    groupLayout->addWidget(mPlasmaCheckBox);
-
-    mPlasmaSetup = new QPushButton(i18n("Setup..."), plasmaGroup);
-    mPlasmaSetup->setEnabled(mPlasmaEnabled);
-    connect(mPlasmaSetup, SIGNAL(clicked()), this, SLOT(slotPlasmaSetup()));
-    groupLayout->addWidget(mPlasmaSetup);
-
     rightColumnLayout->addStretch();
 
     if (mImmutable)
@@ -287,7 +287,6 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
        setButtons(buttons() & ~Default);
        mSettingsGroup->setEnabled(false);
        mSaverGroup->setEnabled(false);
-//       plasmaGroup->setEnabled(false);
     }
 
     // finding the savers can take some time, so defer loading until
