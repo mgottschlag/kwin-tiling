@@ -72,6 +72,9 @@ class Applet(QObject):
     def setHasConfigurationInterface(self,hasInterface):
         Plasma.AppletProtectedThunk.static_public_setHasConfigurationInterface(self.applet,hasInterface)
 
+    def setConfigurationRequired(self, needsConfiguring, reason):
+        Plasma.AppletProtectedThunk.static_public_setConfigurationRequired(self.applet, needsConfiguring, reason)
+
     def shape(self):
         return QGraphicsWidget.shape(self.applet)
 
