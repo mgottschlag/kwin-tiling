@@ -15,12 +15,12 @@ add_subdirectory(weather)
 
 macro_optional_find_package(KdepimLibs)
 if(KDE4_SYNDICATION_LIBS)
-add_subdirectory(rss)
+   add_subdirectory(rss)
 endif(KDE4_SYNDICATION_LIBS)
 
 if(NOT WIN32)
-add_subdirectory(mouse)
-add_subdirectory(systemmonitor)
-add_subdirectory(tasks)
+   add_subdirectory(mouse)
+   add_subdirectory(systemmonitor)
+   add_subdirectory(tasks)
 endif(NOT WIN32)
 
