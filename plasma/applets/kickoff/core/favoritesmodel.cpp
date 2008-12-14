@@ -202,6 +202,16 @@ void FavoritesModel::sortFavorites(Qt::SortOrder order)
     }
 }
 
+void FavoritesModel::sortFavoritesAscending()
+{
+    sortFavorites(Qt::AscendingOrder);
+}
+
+void FavoritesModel::sortFavoritesDescending()
+{
+    sortFavorites(Qt::DescendingOrder);
+}
+
 bool FavoritesModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
                                   int row, int column, const QModelIndex & parent)
 {

@@ -54,6 +54,10 @@ public:
     virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action,
                               int row, int column, const QModelIndex & parent);
 
+public Q_SLOTS:
+    void sortFavoritesAscending();
+    void sortFavoritesDescending();
+
 private:
     class Private;
     Private * const d;
