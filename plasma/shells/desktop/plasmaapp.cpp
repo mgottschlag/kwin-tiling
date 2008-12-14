@@ -263,8 +263,10 @@ void PlasmaApp::cleanup()
         m_corona->saveLayout();
     }
 
+#ifdef Q_WS_X11
     delete m_compositeWatch;
     m_compositeWatch = 0;
+#endif
 
     // save the mapping of Views to Containments at the moment
     // of application exit so we can restore that when we start again.
