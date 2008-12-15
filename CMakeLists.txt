@@ -15,7 +15,6 @@ find_package(QImageBlitz REQUIRED)
 find_package(ZLIB REQUIRED)
 
 if(Q_WS_X11)
-  #X11 foo is optional
   if(NOT X11_XTest_FOUND)
     macro_log_feature(X11_XTest_FOUND "libXtst" "X11 Testing Resource extension library" "http://xorg.freedesktop.org" FALSE "" "useful for automated testing of X clients.")
   endif(NOT X11_XTest_FOUND)
