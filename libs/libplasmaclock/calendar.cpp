@@ -94,11 +94,11 @@ Calendar::Calendar(QGraphicsWidget *parent)
     connect(d->month, SIGNAL(clicked()), this, SLOT(monthsPopup()));
     m_hLayout->addItem(d->month);
 
-        d->year = new Plasma::ToolButton(this);
-        d->year->setText(QString::number(d->calendarTable->calendar()->year(d->calendarTable->date())));
-        d->year->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        connect(d->year, SIGNAL(clicked()), this, SLOT(showYearSpinBox()));
-        m_hLayout->addItem(d->year);
+    d->year = new Plasma::ToolButton(this);
+    d->year->setText(QString::number(d->calendarTable->calendar()->year(d->calendarTable->date())));
+    d->year->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    connect(d->year, SIGNAL(clicked()), this, SLOT(showYearSpinBox()));
+    m_hLayout->addItem(d->year);
 
     d->yearProxy = new QGraphicsProxyWidget(this);
     d->yearSpinBox = new QSpinBox();
