@@ -48,10 +48,6 @@ KDE_EXPORT int kdemain(int argc, char **argv)
 
     KCmdLineArgs::init(argc, argv, &aboutData);
 
-    KCmdLineOptions options;
-    options.add("nodesktop",ki18n("Starts plasma as an ordinary window rather than as the desktop."));
-    KCmdLineArgs::addCmdLineOptions(options);
-
     PlasmaApp *app = PlasmaApp::self();
     QApplication::setWindowIcon(KIcon("plasma"));
     app->disableSessionManagement(); // autostarted
