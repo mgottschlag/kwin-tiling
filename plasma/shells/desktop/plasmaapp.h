@@ -126,7 +126,6 @@ private:
     QHash<Plasma::Containment *, BackgroundDialog *> m_configDialogs;
     Plasma::ZoomLevel m_zoomLevel;
     int m_panelHidden;
-    bool m_isDesktop;
 
 #ifdef Q_WS_X11
     KSelectionWatcher *m_compositeWatch;
