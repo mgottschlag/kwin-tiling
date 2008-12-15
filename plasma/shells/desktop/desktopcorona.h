@@ -64,11 +64,13 @@ public:
 
 protected Q_SLOTS:
     void screenAdded(Kephal::Screen *s);
+    void saveDefaultSetup();
 
 private:
     void init();
     void addDesktopContainment(int screen, int desktop = -1);
     Plasma::Applet *loadDefaultApplet(const QString &pluginName, Plasma::Containment *c);
+    Plasma::Containment *m_panel;
 };
 
 #endif

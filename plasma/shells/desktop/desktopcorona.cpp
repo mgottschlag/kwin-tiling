@@ -22,6 +22,7 @@
 #include <QApplication>
 #include <QDir>
 #include <QGraphicsLayout>
+#include <QTimer>
 
 #include <KDebug>
 #include <KDialog>
@@ -39,7 +40,8 @@
 #include "plasma-shell-desktop.h"
 
 DesktopCorona::DesktopCorona(QObject *parent)
-    : Plasma::Corona(parent)
+    : Plasma::Corona(parent),
+      m_panel(0)
 {
     init();
 }
@@ -141,9 +143,6 @@ void DesktopCorona::loadDefaultLayout()
         }
     }
 
-    // used to force a save into the config file
-    KConfigGroup invalidConfig;
-
     // create a containment for each screen
     for (int i = 0; i < Kephal::ScreenUtils::numScreens(); ++i) {
         // passing in an empty string will get us whatever the default
@@ -160,7 +159,6 @@ void DesktopCorona::loadDefaultLayout()
         c->setFormFactor(Plasma::Planar);
         c->updateConstraints(Plasma::StartupCompletedConstraint);
         c->flushPendingConstraintsEvents();
-        c->save(invalidConfig);
 
         // put a folder view on the first screen
         if (i == topLeftScreen) {
@@ -182,57 +180,61 @@ void DesktopCorona::loadDefaultLayout()
     }
 
     // make a panel at the bottom
-    Plasma::Containment* panel = addContainmentDelayed("panel");
+    m_panel = addContainmentDelayed("panel");
 
-    if (!panel) {
+    if (!m_panel) {
         return;
     }
 
-    panel->init();
-    panel->setScreen(topLeftScreen);
-    panel->setLocation(Plasma::BottomEdge);
-    panel->updateConstraints(Plasma::StartupCompletedConstraint);
-    panel->flushPendingConstraintsEvents();
+    m_panel->init();
+    m_panel->setScreen(topLeftScreen);
+    m_panel->setLocation(Plasma::BottomEdge);
+    m_panel->updateConstraints(Plasma::StartupCompletedConstraint);
+    m_panel->flushPendingConstraintsEvents();
 
     // some default applets to get a usable UI
-    Plasma::Applet *applet = loadDefaultApplet("launcher", panel);
+    Plasma::Applet *applet = loadDefaultApplet("launcher", m_panel);
     if (applet) {
         applet->setGlobalShortcut(KShortcut("Alt+F1"));
     }
 
-    loadDefaultApplet("notifier", panel);
-    loadDefaultApplet("pager", panel);
-    loadDefaultApplet("tasks", panel);
-    loadDefaultApplet("systemtray", panel);
+    loadDefaultApplet("notifier", m_panel);
+    loadDefaultApplet("pager", m_panel);
+    loadDefaultApplet("tasks", m_panel);
+    loadDefaultApplet("systemtray", m_panel);
 
     Plasma::DataEngineManager *engines = Plasma::DataEngineManager::self();
     Plasma::DataEngine *power = engines->loadEngine("powermanagement");
     if (power) {
-        const QStringList &batteries = power->query("Battery")["sources"].toStringList();
+        const QStringList &batteries = power->query("Battry")["sources"].toStringList();
         if (!batteries.isEmpty()) {
-            loadDefaultApplet("battery", panel);
+            loadDefaultApplet("battery", m_panel);
         }
     }
     engines->unloadEngine("powermanagement");
 
-    loadDefaultApplet("digital-clock", panel);
+    loadDefaultApplet("digital-clock", m_panel);
+    emit containmentAdded(m_panel);
 
-    foreach (Plasma::Applet* applet, panel->applets()) {
-        applet->init();
-        applet->flushPendingConstraintsEvents();
-        applet->save(invalidConfig);
+    QTimer::singleShot(1000, this, SLOT(saveDefaultSetup()));
+}
+
+void DesktopCorona::saveDefaultSetup()
+{
+    // a "null" KConfigGroup is used to force a save into the config file
+    KConfigGroup invalidConfig;
+
+    foreach (Plasma::Containment *containment, containments()) {
+        containment->save(invalidConfig);
+
+        foreach (Plasma::Applet* applet, containment->applets()) {
+            applet->init();
+            applet->flushPendingConstraintsEvents();
+            applet->save(invalidConfig);
+        }
     }
-
-    panel->save(invalidConfig);
-    emit containmentAdded(panel);
 
     requestConfigSync();
-    /*
-    foreach (Plasma::Containment *c, containments()) {
-        kDebug() << "letting the world know about" << (QObject*)c;
-        emit containmentAdded(c);
-    }
-    */
 }
 
 Plasma::Applet *DesktopCorona::loadDefaultApplet(const QString &pluginName, Plasma::Containment *c)
