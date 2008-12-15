@@ -70,3 +70,4 @@ Name[x-test]=xxOpen with Dolphinxx
 Name[zh_CN]=用 Dolphin 打开
 Name[zh_TW]=使用 Dolphin 開啟
 Exec=kioclient exec %f
+Icon=system-file-manager
