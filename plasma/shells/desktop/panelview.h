@@ -193,12 +193,12 @@ private:
     void positionSpacer(const QPoint pos);
 
 #ifdef Q_WS_WIN
-    bool registerAccessBar(HWND hwndAccessBar, bool fRegister);
-    void appBarQuerySetPos(uint uEdge, LPRECT lprc, PAPPBARDATA pabd);
-    void appBarCallback(MSG *message, long *result);
-    void appBarPosChanged(PAPPBARDATA pabd);
+    bool registerAccessBar(bool fRegister);
+    void appBarQuerySetPos(LPRECT lprc);
+    void appBarCallback(WPARAM message, LPARAM lParam);
+    void appBarPosChanged();
     bool winEvent(MSG *message, long *result);
-    bool m_barRegistered;
+    APPBARDATA abd;
 #endif
 
 private Q_SLOTS:

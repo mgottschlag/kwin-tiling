@@ -22,97 +22,173 @@
 
 #include <windows.h>
 
-#define APPBAR_CALLBACK         WM_USER + 1010
+#define WM_APPBAR_CALLBACK ( WM_USER + 1010 )
 
-bool PanelView::registerAccessBar(HWND hwndAccessBar, bool fRegister)
+
+bool PanelView::registerAccessBar(bool fRegister)
 {
-    APPBARDATA abd;
+    if(fRegister) {
+        setWindowFlags(Qt::Tool | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+        abd.cbSize = sizeof(APPBARDATA);
+        abd.hWnd = (HWND)winId();
+        abd.uCallbackMessage = WM_APPBAR_CALLBACK;
 
-    // Specify the structure size and handle to the appbar.
-    abd.cbSize = sizeof(APPBARDATA);
-    abd.hWnd = hwndAccessBar;
-
-    if (fRegister) {
-//        LONG_PTR lp = GetWindowLongPtr(hwndAccessBar, GWL_EXSTYLE);
-/* the following line should remove the taskbar entry of the panel
-  * but as this doesn't work correctly (it somehow moves the panel) comment it out */
-//        SetWindowLongPtr(hwndAccessBar, GWL_EXSTYLE, lp | WS_EX_TOOLWINDOW);
-        SetWindowPos(winId(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-
-        // Provide an identifier for notification messages.
-        abd.uCallbackMessage = APPBAR_CALLBACK;
-
-        // Register the appbar.
-        if (!SHAppBarMessage(ABM_NEW, &abd)) {
-            m_barRegistered = false;
+        if(!SHAppBarMessage(ABM_NEW, &abd)) {
+            kWarning() << "SHAppBarMessage( ABM_NEW ) failed";
             return false;
         }
 
-        m_barRegistered = true;
+        switch (location()) {
+            case Plasma::TopEdge:
+                abd.uEdge = ABE_TOP;
+                break;
+
+            case Plasma::BottomEdge:
+                abd.uEdge = ABE_BOTTOM;
+                break;
+
+            case Plasma::LeftEdge:
+                abd.uEdge = ABE_LEFT;
+                break;
+
+            case Plasma::RightEdge:
+                abd.uEdge = ABE_RIGHT;
+                break;
+        }
+        
+        //appBarPosChanged();
+
     } else {
-        // Unregister the appbar.
         SHAppBarMessage(ABM_REMOVE, &abd);
-        m_barRegistered = false;
     }
-
     return true;
-
 }
 
-void PanelView::appBarQuerySetPos(UINT uEdge, LPRECT lprc, PAPPBARDATA pabd)
+bool PanelView::winEvent( MSG* msg, long* result )
 {
+	*result = 0;
+
+	switch( msg->message )
+	{
+    	case WM_APPBAR_CALLBACK:
+    		appBarCallback( msg->wParam, msg->lParam );
+            return true;
+
+    	case WM_ACTIVATE:
+    		SHAppBarMessage( ABM_ACTIVATE, &abd );
+    		break;
+
+    	case WM_WINDOWPOSCHANGED:
+            SHAppBarMessage( ABM_WINDOWPOSCHANGED, &abd );
+    		break;
+
+    	default:
+    		return false;
+	}
+	
+	return false;
 }
 
-void PanelView::appBarCallback(MSG *message, long *result)
+void PanelView::appBarCallback( WPARAM msg, LPARAM lParam )
 {
-    APPBARDATA abd;
-    UINT uState;
-
-    abd.cbSize = sizeof(abd);
-    abd.hWnd = winId();
-
-    switch (message->wParam) {
+    uint uState;
+    switch (msg) {
         case ABN_STATECHANGE:
-            // Check to see if the taskbar's always-on-top state has
-            // changed and, if it has, change the appbar's state
-            // accordingly.
-            uState = SHAppBarMessage(ABM_GETSTATE, &abd);
-            SetWindowPos(winId(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
             break;
 
         case ABN_FULLSCREENAPP:
-            // A full-screen application has started, or the last full-
-            // screen application has closed. Set the appbar's
-            // z-order appropriately.
-            if (result) {
+            uState = SHAppBarMessage(ABM_GETSTATE, &abd);
+            if (lParam) {
+                SetWindowPos(winId(), (ABS_ALWAYSONTOP & uState) ? HWND_TOPMOST : HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+            } else if (uState & ABS_ALWAYSONTOP) {
                 SetWindowPos(winId(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-            } else {
-                uState = SHAppBarMessage(ABM_GETSTATE, &abd);
-
-                if (uState & ABS_ALWAYSONTOP) {
-                    SetWindowPos(winId(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-                }
             }
+            break;
 
         case ABN_POSCHANGED:
-            // The taskbar or another appbar has changed its
-            // size or position.
-//            appBarPosChanged(&abd);
+            appBarPosChanged();
             break;
     }
 }
 
-void PanelView::appBarPosChanged(PAPPBARDATA pabd)
+void PanelView::appBarPosChanged()
 {
+    RECT rc; 
+
+	// Get the area of the entire desktop
+	rc.left = rc.top = 0;
+	rc.right = GetSystemMetrics( SM_CXSCREEN );
+	rc.bottom = GetSystemMetrics( SM_CYSCREEN );
+
+    switch (location()) {
+        case Plasma::TopEdge:
+            abd.uEdge = ABE_TOP;
+            rc.bottom = rc.top + height();
+            break;
+
+        case Plasma::BottomEdge:
+            abd.uEdge = ABE_BOTTOM;
+            rc.top = rc.bottom - height();
+            break;
+
+        case Plasma::LeftEdge:
+            abd.uEdge = ABE_LEFT;
+            rc.right = rc.left + width();
+            break;
+
+        case Plasma::RightEdge:
+            abd.uEdge = ABE_RIGHT;
+            rc.left = rc.right - width();
+            break;
+    }
+    
+    appBarQuerySetPos(&rc);
 }
 
-bool PanelView::winEvent(MSG *message, long *result)
+void PanelView::appBarQuerySetPos(LPRECT lprc)
 {
-    if (message->message == APPBAR_CALLBACK) {
-        appBarCallback(message, result);
-        return true;
+    int iHeight = 0; 
+    int iWidth = 0; 
+
+    abd.rc = *lprc;
+
+    if ((abd.uEdge == ABE_LEFT) || (abd.uEdge == ABE_RIGHT)) {
+        iWidth = abd.rc.right - abd.rc.left;
+        abd.rc.top = y();
+        abd.rc.bottom = y()+height();
+    } else {
+        iHeight = abd.rc.bottom - abd.rc.top; 
+        abd.rc.left = x(); 
+        abd.rc.right = x()+width(); 
     }
 
-    return false;
-}
+    // Query the system for an approved size and position.
+    SHAppBarMessage(ABM_QUERYPOS, &abd);
 
+    // Adjust the rectangle, depending on the edge to which the 
+    // appbar is anchored. 
+    switch (abd.uEdge) {
+        case ABE_LEFT:
+            abd.rc.right = abd.rc.left + iWidth;
+            break;
+
+        case ABE_RIGHT:
+            abd.rc.left = abd.rc.right - iWidth;
+            break;
+
+        case ABE_TOP:
+            abd.rc.bottom = abd.rc.top + iHeight;
+            break;
+
+        case ABE_BOTTOM:
+            abd.rc.top = abd.rc.bottom - iHeight;
+            break;
+    }
+
+    // Pass the final bounding rectangle to the system. 
+    SHAppBarMessage(ABM_SETPOS, &abd);
+    
+    // Move and size the appbar so that it conforms to the 
+    // bounding rectangle passed to the system. 
+    //MoveWindow(winId(), abd.rc.left, abd.rc.top, abd.rc.right - abd.rc.left, abd.rc.bottom - abd.rc.top, true); 
+}

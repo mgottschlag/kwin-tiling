@@ -237,7 +237,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     KWindowSystem::setOnAllDesktops(winId(), true);
 
 #ifdef Q_WS_WIN
-    registerAccessBar(winId(), true);
+    registerAccessBar(true);
 #endif
 
     updateStruts();
@@ -254,7 +254,7 @@ PanelView::~PanelView()
     delete m_glowBar;
     destroyUnhideTrigger();
 #ifdef Q_WS_WIN
-    registerAccessBar(winId(), false);
+    registerAccessBar(false);
 #endif
 }
 
@@ -315,7 +315,9 @@ void PanelView::setLocation(Plasma::Location location)
     c->resize(panelWidth, panelHeight);
     c->setMinimumSize(min);
     c->setMaximumSize(max);
-
+#ifdef Q_WS_WIN
+    appBarPosChanged();
+#endif
     QRect screenRect = Kephal::ScreenUtils::screenGeometry(c->screen());
     pinchContainment(screenRect);
     //updatePanelGeometry();
@@ -870,6 +872,9 @@ void PanelView::resizeEvent(QResizeEvent *event)
     kDebug() << event->oldSize() << event->size();
     QWidget::resizeEvent(event);
     updateStruts();
+#ifdef Q_WS_WIN
+    appBarPosChanged();
+#endif
 }
 
 QTimeLine *PanelView::timeLine()
