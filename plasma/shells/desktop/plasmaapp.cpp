@@ -724,15 +724,11 @@ void PlasmaApp::zoomIn(Plasma::Containment *containment)
             continue;
         }
 
-        if (remove) {
-            remove = c->screen() == -1;
-        }
-
         c->enableAction("zoom in", zoomIn);
         c->enableAction("zoom out", zoomOut);
         c->enableAction("add sibling containment", addSibling);
         c->enableAction("lock widgets", lock);
-        c->enableAction("remove", remove);
+        c->enableAction("remove", remove && (c->screen() == -1));
         c->enableAction("add widgets", true);
     }
 }
