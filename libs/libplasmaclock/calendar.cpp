@@ -51,11 +51,9 @@ class CalendarPrivate
         ToolButton *back;
         Plasma::Label *spacer0;
         Plasma::ToolButton *month;
-        #ifdef COOL_SPINBOX
-            SpinBox *year;
-        #else
-            Plasma::Label *year;
-        #endif
+        QSpinBox *yearSpinBox;
+        QGraphicsProxyWidget *yearProxy;
+        Plasma::ToolButton *year;
         Plasma::Label *spacer1;
         Plasma::ToolButton *forward;
         Plasma::CalendarTable *calendarTable;
@@ -96,19 +94,20 @@ Calendar::Calendar(QGraphicsWidget *parent)
     connect(d->month, SIGNAL(clicked()), this, SLOT(monthsPopup()));
     m_hLayout->addItem(d->month);
 
-    #ifdef COOL_SPINBOX
-        QGraphicsProxyWidget *yearProxy = new QGraphicsProxyWidget(this);
-        d->year = new SpinBox();
-        d->year->setRange(d->calendarTable->calendar()->year(d->calendarTable->calendar()->earliestValidDate()), d->calendarTable->calendar()->year(d->calendarTable->calendar()->latestValidDate()));
-        d->year->setValue(d->calendarTable->calendar()->year(d->calendarTable->date()));
-        yearProxy->setWidget(d->year);
-        m_hLayout->addItem(yearProxy);
-    #else
-        d->year = new Plasma::Label;
+        d->year = new Plasma::ToolButton(this);
         d->year->setText(QString::number(d->calendarTable->calendar()->year(d->calendarTable->date())));
         d->year->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        connect(d->year, SIGNAL(clicked()), this, SLOT(showYearSpinBox()));
         m_hLayout->addItem(d->year);
-    #endif
+
+    d->yearProxy = new QGraphicsProxyWidget(this);
+    d->yearSpinBox = new QSpinBox();
+    d->yearSpinBox->setAttribute(Qt::WA_NoSystemBackground);
+    d->yearSpinBox->setRange(d->calendarTable->calendar()->year(d->calendarTable->calendar()->earliestValidDate()), d->calendarTable->calendar()->year(d->calendarTable->calendar()->latestValidDate()));
+    d->yearSpinBox->setValue(d->calendarTable->calendar()->year(d->calendarTable->date()));
+    d->yearProxy->setWidget(d->yearSpinBox);
+    d->yearProxy->hide();
+    connect(d->yearSpinBox, SIGNAL(editingFinished()), this, SLOT(hideYearSpinBox()));
 
     m_hLayout->addStretch();
 
@@ -191,11 +190,7 @@ void Calendar::dateUpdated(const QDate &date)
 {
     QString formatted = KGlobal::locale()->formatDate( date,  KLocale::ShortDate );
     d->month->setText(d->calendarTable->calendar()->monthName(date));
-    #ifdef COOL_SPINBOX
-        d->year->setValue(calendarSystemYear);
-    #else
-        d->year->setText(QString::number(d->calendarTable->calendar()->year(date)));
-    #endif
+    d->year->setText(QString::number(d->calendarTable->calendar()->year(date)));
     d->dateText->setText(formatted);
     d->weekSpinBox->setValue(d->calendarTable->calendar()->weekNumber(date));
 }
@@ -302,6 +297,28 @@ void Calendar::goToWeek(int week)
 
         setDate(firstDayOfWeek);
     }
+}
+
+void Calendar::showYearSpinBox()
+{
+    d->yearSpinBox->setValue(d->calendarTable->calendar()->year(d->calendarTable->date()));
+    d->yearProxy->setGeometry(d->year->geometry());
+    d->year->hide();
+    d->yearProxy->show();
+    d->yearSpinBox->setFocus(Qt::MouseFocusReason);
+}
+
+void Calendar::hideYearSpinBox()
+{
+    d->yearProxy->hide();
+
+    const KCalendarSystem *calendar = d->calendarTable->calendar();
+    QDate newDate;
+    if (calendar->setYMD(newDate, d->yearSpinBox->value(), calendar->month(d->calendarTable->date()), calendar->day(d->calendarTable->date()))){
+        setDate(newDate);
+    }
+
+    d->year->show();
 }
 
 CalendarTable *Calendar::calendarTable() const

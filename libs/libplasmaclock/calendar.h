@@ -66,6 +66,8 @@ private Q_SLOTS:
     void manualDateChange();
     void monthsPopup();
     void monthTriggered();
+    void showYearSpinBox();
+    void hideYearSpinBox();
 
 private:
     CalendarPrivate* const d;
