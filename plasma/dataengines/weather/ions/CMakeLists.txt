@@ -31,8 +31,11 @@ INSTALL (FILES includes/Ion
                includes/WeatherUtils
          DESTINATION ${INCLUDE_INSTALL_DIR}/KDE/Plasma/Weather COMPONENT Devel)
 
-INSTALL (FILES weather_ion.desktop ion-envcan.desktop ion-noaa.desktop ion-bbcukmet.desktop 
+INSTALL (FILES ion-envcan.desktop ion-noaa.desktop ion-bbcukmet.desktop 
          DESTINATION ${SERVICES_INSTALL_DIR})
+
+INSTALL (FILES weather_ion.desktop
+         DESTINATION ${SERVICETYPES_INSTALL_DIR})
 
 INSTALL (TARGETS ion_envcan ion_noaa ion_bbcukmet 
          DESTINATION ${PLUGIN_INSTALL_DIR})
