@@ -13,13 +13,17 @@
 # use pkg-config to get the directories and then use these values
 # in the FIND_PATH() and FIND_LIBRARY() calls
 if( NOT WIN32 )
-  INCLUDE(FindPkgConfig)
-  PKG_CHECK_MODULES(QEdje qzion>=0.3.0 qedje>=0.3.0)
+  find_package(PkgConfig)
+  pkg_check_modules(PC_QEdje qzion>=0.3.0 qedje>=0.3.0)
 endif( NOT WIN32 )
 
 # use this just to create a nice message at FindPackageHandleStandardArgs
 if (QEdje_FOUND)
-  FIND_LIBRARY(QEdje_LIBRARY NAMES qedje)
+  FIND_LIBRARY(QEdje_LIBRARY NAMES qedje
+    PATHS
+    ${PC_QEdje_LIBDIR}
+    ${PC_QEdje_LIBRARY_DIRS}
+  )
 else (QEdje_FOUND)
   MESSAGE(STATUS "Could not find QZion and/or QEdje. Please download them here (http://dev.openbossa.org/trac/qedje).")
 endif (QEdje_FOUND)
