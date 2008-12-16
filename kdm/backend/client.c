@@ -402,7 +402,7 @@ doPAMAuth( const char *psrv, struct pam_data *pdata )
 		pamh = 0;
 		V_RET;
 	}
-	// normalize name (e.g. ldap removes whitespace)
+	/* normalize name (e.g. ldap removes whitespace) */
 	debug( " asking PAM for user ...\n" );
 	pam_get_item( pamh, PAM_USER, &pitem );
 	reInitErrorLog();
