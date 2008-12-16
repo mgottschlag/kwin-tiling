@@ -32,7 +32,7 @@ else(USE_XKLAVIER STREQUAL ON)
 
 endif(USE_XKLAVIER STREQUAL ON)
 
-# we can build against libxklavier or xkbfile, but libxklavier is preferred
+# we can build against libxklavier+xkbfile or xkbfile alone, but libxklavier+xbfile is preferred
 
 if(NOT HAVE_XKLAVIER)
     # cannot use libxklavier, try xkbfile
@@ -44,18 +44,15 @@ if(NOT HAVE_XKLAVIER)
         SET(XKB_SUPPORT_LIB ${X11_Xkbfile_LIB})
         MESSAGE(STATUS "Using xkbfile to get keyboard layouts for kxkb")
     endif(NOT X11_Xkbfile_FOUND)
-
 endif(NOT HAVE_XKLAVIER)
 
 if(USE_XKLAVIER STREQUAL ON)
-   macro_log_feature(LIBXKLAVIER_FOUND "libxklavier" "A XKB foundation library for keyboard handling software" "http://freedesktop.org/wiki/Software/LibXklavier" FALSE "3.0" "Recommended for kxkb, the KDE keyboard map switching utility.")
-else(USE_XKLAVIER STREQUAL ON)
-  macro_log_feature(X11_Xkbfile_FOUND "xkbfile" "X11 KXB library for keyboard handling software" "http://www.x.org" FALSE "" "Either xkbfile or libxklavier is required to build kxkb, but libxklavier is preferred.")
+  macro_log_feature(LIBXKLAVIER_FOUND "libxklavier" "A XKB foundation library for keyboard handling software" "http://freedesktop.org/wiki/Software/LibXklavier" FALSE "3.0" "Recommended for kxkb, the KDE keyboard map switching utility.")
 endif(USE_XKLAVIER STREQUAL ON)
+macro_log_feature(X11_Xkbfile_FOUND "xkbfile" "X11 KXB library for keyboard handling software" "http://www.x.org" FALSE "" "xkbfile is required to build kxkb.")
 
 
-
-if(X11_Xkbfile_FOUND OR HAVE_XKLAVIER)
+if(X11_Xkbfile_FOUND AND HAVE_XKLAVIER)
 
 #MESSAGE("xkb support libs:: ${XKB_SUPPORT_LIB}")
 
@@ -69,7 +66,6 @@ set(kxkb_COMMON_SRCS
   pixmap.cpp
   ${XKB_SUPPORT_SRC}
 )
-
 
 ########### KCM ###############
 
@@ -161,4 +157,4 @@ endif(FALSE)
 #install(FILES kxkb_part.desktop DESTINATION  ${SERVICES_INSTALL_DIR})
 ##install(FILES kxkb_part.rc DESTINATION  ${DATA_INSTALL_DIR}/kxkb_part)
 
-endif(X11_Xkbfile_FOUND OR HAVE_XKLAVIER)
+endif(X11_Xkbfile_FOUND AND HAVE_XKLAVIER)
