@@ -33,6 +33,7 @@
 Image::Image(QObject *parent, const QVariantList &args)
     : Plasma::Wallpaper(parent, args),
       m_currentSlide(-1),
+      m_model(0),
       m_dialog(0),
       m_rendererToken(-1),
       m_randomize(true)
@@ -299,6 +300,7 @@ void Image::setSingleImage()
     if (img.isEmpty()) {
         img = m_wallpaper;
     }
+
     render(img);
 }
 
@@ -329,7 +331,7 @@ void Image::getNewWallpaper()
     if (engine.init("wallpaper.knsrc")) {
         KNS::Entry::List entries = engine.downloadDialogModal(m_widget);
 
-        if (entries.size() > 0) {
+        if (entries.size() > 0 && m_model) {
             m_model->reload();
         }
     }
@@ -343,13 +345,15 @@ void Image::colorChanged(const QColor& color)
 
 void Image::pictureChanged(int index)
 {
-    if (index == -1) {
+    if (index == -1 || !m_model) {
         return;
     }
+
     Background *b = m_model->package(index);
     if (!b) {
         return;
     }
+
     fillMetaInfo(b);
     m_wallpaper = b->path();
     setSingleImage();
@@ -429,13 +433,16 @@ void Image::showFileDialog()
 
 void Image::browse()
 {
+    Q_ASSERT(m_model);
+
     QString wallpaper = m_dialog->selectedFile();
     disconnect(m_dialog, SIGNAL(okClicked()), this, SLOT(browse()));
 
     if (wallpaper.isEmpty()) {
         return;
     }
-    if( m_model->contains(wallpaper)) {
+
+    if (m_model->contains(wallpaper)) {
         return;
     }
     // add background to the model
@@ -529,7 +536,9 @@ void Image::updateScreenshot(QPersistentModelIndex index)
 
 void Image::removeBackground(const QString &path)
 {
-    m_model->removeBackground(path);
+    if (m_model) {
+        m_model->removeBackground(path);
+    }
 }
 
 #include "image.moc"
