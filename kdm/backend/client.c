@@ -402,14 +402,15 @@ doPAMAuth( const char *psrv, struct pam_data *pdata )
 		pamh = 0;
 		V_RET;
 	}
-	if (!curuser) {
-		debug( " asking PAM for user ...\n" );
-		pam_get_item( pamh, PAM_USER, &pitem );
-		reInitErrorLog();
-		strDup( &curuser, (const char *)pitem );
-		gSendInt( V_PUT_USER );
-		gSendStr( curuser );
-	}
+	// normalize name (e.g. ldap removes whitespace)
+	debug( " asking PAM for user ...\n" );
+	pam_get_item( pamh, PAM_USER, &pitem );
+	reInitErrorLog();
+	if( curuser )
+		free( curuser );
+	strDup( &curuser, (const char *)pitem );
+	gSendInt( V_PUT_USER );
+	gSendStr( curuser );
 	if (pretc != PAM_SUCCESS) {
 		switch (pretc) {
 		case PAM_USER_UNKNOWN:
