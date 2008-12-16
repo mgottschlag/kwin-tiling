@@ -53,5 +53,8 @@ bool FloatingDecorator::ShowDecoratedView(bool modal, int flags,
                                           Slot1<bool, int> *feedback_handler) {
   info->applet->setMaximumSize(QSizeF());
   MainViewDecoratorBase::ShowDecoratedView(modal, flags, feedback_handler);
+  
+  // return something in non-void function
+  return true;
 }
 } // namespace ggadget
