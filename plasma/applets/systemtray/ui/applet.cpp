@@ -102,6 +102,7 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
     d->background = new Plasma::FrameSvg(this);
     d->background->setImagePath("widgets/systemtray");
     d->background->setCacheAllRenderedFrames(true);
+    d->taskArea = new TaskArea(this);
 
     setPopupIcon(QIcon());
     setPassivePopup(true);
@@ -120,7 +121,6 @@ void Applet::init()
     KConfigGroup cg = config();
     QStringList hiddenTypes = cg.readEntry("hidden", QStringList());
 
-    d->taskArea = new TaskArea(this);
     d->setTaskAreaGeometry();
     connect(Private::s_manager, SIGNAL(taskAdded(SystemTray::Task*)),
             d->taskArea, SLOT(addTask(SystemTray::Task*)));
