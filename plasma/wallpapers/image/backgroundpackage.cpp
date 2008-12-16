@@ -352,6 +352,7 @@ void BackgroundFile::updateScreenshot(ThreadWeaver::Job *job)
     resizer->deleteLater();
 }
 
+//TODO: impl
 QString BackgroundFile::author() const
 {
     return QString();
@@ -362,16 +363,19 @@ QString BackgroundFile::title() const
     return QFileInfo(m_file).baseName();
 }
 
+//TODO: impl
 QString BackgroundFile::email() const
 {
     return QString();
 }
 
+//TODO: impl
 QString BackgroundFile::license() const
 {
     return QString();
 }
 
+//TODO: impl
 bool BackgroundFile::isValid() const
 {
     return true;
