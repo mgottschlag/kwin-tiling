@@ -58,7 +58,7 @@ void ActivityBar::init()
         if (!c) {
             kDebug() << "No corona, can't happen";
             setFailedToLaunch(true);
-	    return ;
+            return;
         }
 
         int myScreen = containment()->screen();
@@ -128,9 +128,16 @@ void ActivityBar::switchContainment(int newActive)
         return;
     }
 
+    const int myScreen = containment()?containment()->screen():-1;
+
     //FIXME: this whole thing sounds like an hack isn't it?
-    if (!m_view && m_activeContainment >= 0) {
+    if (!m_view || m_view->screen() != myScreen) {
         m_view = qobject_cast<Plasma::View *>(m_containments[m_activeContainment]->view());
+    }
+
+    if (m_view && m_view->screen() != myScreen) {
+        m_view = 0;
+        return;
     }
 
     if (m_view) {
