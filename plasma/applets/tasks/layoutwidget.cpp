@@ -285,12 +285,23 @@ void LayoutWidget::layoutItems()
     foreach (AbstractTaskItem *item, m_itemPositions) {
         int row;
         int col;
-        if (m_applet->formFactor() == Plasma::Vertical) {
-            row = numberOfItems % columns;
-            col = numberOfItems / columns;
+        if (!m_forceRows) {
+            if (m_applet->formFactor() == Plasma::Vertical) {
+                row = numberOfItems % columns;
+                col = numberOfItems / columns;
+            } else {
+                row = numberOfItems / columns;
+                col = numberOfItems % columns;
+            }
+
         } else {
-            row = numberOfItems / columns;
-            col = numberOfItems % columns;
+            if (m_applet->formFactor() == Plasma::Vertical) {
+                row = numberOfItems / rows;
+                col = numberOfItems % rows;
+            } else {
+                row = numberOfItems % rows;
+                col = numberOfItems / rows;
+            }
         }
 
 

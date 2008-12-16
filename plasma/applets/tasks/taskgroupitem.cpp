@@ -465,17 +465,17 @@ bool TaskGroupItem::isActive() const
 void TaskGroupItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 { //TODO add delay so we can still drag group items
     if (event->buttons() & Qt::LeftButton) {
-    if (m_applet->groupManager().sortingStrategy() == TaskManager::GroupManager::ManualSorting || m_applet->groupManager().groupingStrategy() == TaskManager::GroupManager::ManualGrouping) {
-        if (!m_popupMenuTimer) {
-        m_popupMenuTimer = new QTimer(this);
-        m_popupMenuTimer->setSingleShot(true);
-        m_popupMenuTimer->setInterval(300);
-        connect(m_popupMenuTimer, SIGNAL(timeout()), this, SLOT(popupMenu()));
+        if (m_applet->groupManager().sortingStrategy() == TaskManager::GroupManager::ManualSorting || m_applet->groupManager().groupingStrategy() == TaskManager::GroupManager::ManualGrouping) {
+            if (!m_popupMenuTimer) {
+                m_popupMenuTimer = new QTimer(this);
+                m_popupMenuTimer->setSingleShot(true);
+                m_popupMenuTimer->setInterval(300);
+                connect(m_popupMenuTimer, SIGNAL(timeout()), this, SLOT(popupMenu()));
+            }
+            m_popupMenuTimer->start(300);
+        } else {
+            popupMenu();
         }
-        m_popupMenuTimer->start(300);
-    } else {
-        popupMenu();
-    }
     }
     event->accept();
 
