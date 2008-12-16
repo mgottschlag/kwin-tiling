@@ -62,6 +62,7 @@ class TasksEngine : public Plasma::DataEngine
         void startupRemoved(StartupPtr startup);
         void taskAdded(TaskPtr task);
         void taskRemoved(TaskPtr task);
+        void desktopChanged(int desktop);
 
     private:
         friend class TaskSource;
