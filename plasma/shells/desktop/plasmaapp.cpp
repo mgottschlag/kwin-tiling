@@ -461,10 +461,10 @@ Plasma::Corona* PlasmaApp::corona()
                     view, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
         }
 
+        m_corona = c;
         c->setItemIndexMethod(QGraphicsScene::NoIndex);
         c->initializeLayout();
         c->checkScreens();
-        m_corona = c;
         kDebug() << " ------------------------------------------>" << t.elapsed();
     }
 
@@ -576,6 +576,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
 
                 kDebug() << "creating a new view for" << containment->screen() << containment->desktop()
                          << "and we have" << Kephal::ScreenUtils::numScreens() << "screens";
+
 
                 // we have a new screen. neat.
                 view = new DesktopView(containment, id, 0);
