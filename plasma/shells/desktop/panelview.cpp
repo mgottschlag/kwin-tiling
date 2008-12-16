@@ -409,7 +409,7 @@ void PanelView::updatePanelGeometry()
     case Plasma::TopEdge:
     case Plasma::BottomEdge:
         if (m_alignment != Qt::AlignCenter) {
-            m_offset = qMax(m_offset, screenGeom.left());
+            m_offset = qMax(m_offset, 0);
         }
         //resize the panel if is too large
         if (geom.width() > screenGeom.width()) {
@@ -418,18 +418,18 @@ void PanelView::updatePanelGeometry()
 
         //move the panel left/right if there is not enough room
         if (m_alignment == Qt::AlignLeft) {
-             if (m_offset + screenGeom.left() + geom.width() > screenGeom.right() + 1) {
-                 m_offset = screenGeom.right() - geom.width();
+             if (m_offset + geom.width() > screenGeom.width() + 1) {
+                 m_offset = screenGeom.width() - geom.width();
              }
         } else if (m_alignment == Qt::AlignRight) {
-             if (screenGeom.right() - m_offset - geom.width() < -1 ) {
-                 m_offset = screenGeom.right() - geom.width();
+             if (screenGeom.width() - m_offset - geom.width() < -1 ) {
+                 m_offset = screenGeom.width() - geom.width();
              }
         } else if (m_alignment == Qt::AlignCenter) {
-             if (screenGeom.center().x() + m_offset + geom.width()/2 > screenGeom.right() + 1) {
-                 m_offset = screenGeom.right() - geom.width()/2 - screenGeom.center().x();
-             } else if (screenGeom.center().x() + m_offset - geom.width()/2 < -1) {
-                 m_offset = screenGeom.center().x() - geom.width()/2;
+             if (screenGeom.center().x() - screenGeom.x() + m_offset + geom.width()/2 > screenGeom.width() + 1) {
+                 m_offset = screenGeom.width() - geom.width()/2 - (screenGeom.center().x() - screenGeom.x());
+             } else if (screenGeom.center().x() - screenGeom.x() + m_offset - geom.width()/2 < -1) {
+                 m_offset = (screenGeom.center().x() - screenGeom.x()) - geom.width()/2;
              }
         }
         break;
@@ -437,7 +437,7 @@ void PanelView::updatePanelGeometry()
     case Plasma::LeftEdge:
     case Plasma::RightEdge:
         if (m_alignment != Qt::AlignCenter) {
-            m_offset = qMax(m_offset, screenGeom.top());
+            m_offset = qMax(m_offset, 0);
         }
         //resize the panel if is too tall
         if (geom.height() > screenGeom.height()) {
@@ -447,18 +447,18 @@ void PanelView::updatePanelGeometry()
         //move the panel bottom if there is not enough room
         //FIXME: still using alignleft/alignright is simpler and less error prone, but aligntop/alignbottom is more correct?
         if (m_alignment == Qt::AlignLeft) {
-            if (m_offset + screenGeom.top() + geom.height() > screenGeom.bottom() + 1) {
+            if (m_offset + geom.height() > screenGeom.height() + 1) {
                 m_offset = screenGeom.height() - geom.height();
             }
         } else if (m_alignment == Qt::AlignRight) {
-            if (screenGeom.bottom() - m_offset - geom.height() < -1) {
-                m_offset = screenGeom.bottom() - geom.height();
+            if (screenGeom.height() - m_offset - geom.height() < -1) {
+                m_offset = screenGeom.height() - geom.height();
             }
         } else if (m_alignment == Qt::AlignCenter) {
-            if (screenGeom.center().y() + m_offset + geom.height()/2 > screenGeom.bottom() + 1) {
-                m_offset = screenGeom.bottom() - geom.height()/2 - screenGeom.center().y();
-             } else if (screenGeom.center().y() + m_offset - geom.width()/2 < -1) {
-                m_offset = screenGeom.center().y() - geom.width()/2;
+            if (screenGeom.center().y() - screenGeom.top() + m_offset + geom.height()/2 > screenGeom.height() + 1) {
+                m_offset = screenGeom.height() - geom.height()/2 - (screenGeom.center().y() - screenGeom.top());
+             } else if (screenGeom.center().y() - screenGeom.top() + m_offset - geom.height()/2 < -1) {
+                m_offset = (screenGeom.center().y() - screenGeom.top()) - geom.width()/2;
              }
         }
         break;
@@ -472,7 +472,7 @@ void PanelView::updatePanelGeometry()
     switch (location()) {
     case Plasma::TopEdge:
         if (m_alignment == Qt::AlignLeft) {
-            geom.moveTopLeft(QPoint(m_offset, screenGeom.top()));
+            geom.moveTopLeft(QPoint(m_offset + screenGeom.left(), screenGeom.top()));
         } else if (m_alignment == Qt::AlignRight) {
             geom.moveTopRight(QPoint(screenGeom.right() - m_offset, screenGeom.top()));
         } else if (m_alignment == Qt::AlignCenter) {
@@ -485,7 +485,7 @@ void PanelView::updatePanelGeometry()
 
     case Plasma::LeftEdge:
         if (m_alignment == Qt::AlignLeft) {
-            geom.moveTopLeft(QPoint(screenGeom.left(), m_offset));
+            geom.moveTopLeft(QPoint(screenGeom.left(), m_offset + screenGeom.top()));
         } else if (m_alignment == Qt::AlignRight) {
             geom.moveBottomLeft(QPoint(screenGeom.left(), screenGeom.bottom() - m_offset));
         } else if (m_alignment == Qt::AlignCenter) {
@@ -498,7 +498,7 @@ void PanelView::updatePanelGeometry()
 
     case Plasma::RightEdge:
         if (m_alignment == Qt::AlignLeft) {
-            geom.moveTopRight(QPoint(screenGeom.right(), m_offset));
+            geom.moveTopRight(QPoint(screenGeom.right(), m_offset + screenGeom.top()));
         } else if (m_alignment == Qt::AlignRight) {
             geom.moveBottomRight(QPoint(screenGeom.right(), screenGeom.bottom() - m_offset));
         } else if (m_alignment == Qt::AlignCenter) {
@@ -512,7 +512,7 @@ void PanelView::updatePanelGeometry()
     case Plasma::BottomEdge:
     default:
         if (m_alignment == Qt::AlignLeft) {
-            geom.moveBottomLeft(QPoint(m_offset, screenGeom.bottom()));
+            geom.moveBottomLeft(QPoint(m_offset + screenGeom.left(), screenGeom.bottom()));
         } else if (m_alignment == Qt::AlignRight) {
             geom.moveBottomRight(QPoint(screenGeom.right() - m_offset, screenGeom.bottom()));
         } else if (m_alignment == Qt::AlignCenter) {
