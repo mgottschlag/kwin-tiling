@@ -75,22 +75,11 @@ class CalendarTablePrivate
             year = calendar->year(currentDate);
 
             opacity = 0.5; //transparency for the inactive text
-
-            setupThemedElements();
-            QObject::connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
-                             q, SLOT(setupThemedElements()));
         }
 
         ~CalendarTablePrivate()
         {
             delete svg;
-        }
-
-        void setupThemedElements()
-        {
-            QColor c = Plasma::Theme::defaultTheme()->color(Plasma::Theme::HighlightColor);
-            c.setAlpha(180);
-            highlightBrush = QBrush(c);
         }
 
         int firstMonthDayIndex(int y, int m)
@@ -183,7 +172,6 @@ class CalendarTablePrivate
 
         Plasma::Svg *svg;
         const KCalendarSystem *calendar;
-        QBrush highlightBrush;
         QDate date;
         QRectF hoverRect;
         int month;
@@ -432,7 +420,7 @@ void CalendarTable::paintBorder(QPainter *p, int cell, int week, int weekDay, Ce
     Q_UNUSED(cellDate);
 
     if (type & Hovered) {
-        p->fillRect(QRect(cellX(weekDay), cellY(week), d->cellW, d->cellH), d->highlightBrush);
+        d->svg->paint(p, QRect(cellX(weekDay), cellY(week), d->cellW, d->cellH), "hoverHighlight");
     }
 
     QString elementId;
