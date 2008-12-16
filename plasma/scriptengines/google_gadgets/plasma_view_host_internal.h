@@ -26,6 +26,7 @@
 namespace ggadget{
 
 class PlasmaViewHost::Private : public QObject {
+  Q_OBJECT
  public:
   Private(GadgetInfo *i, Type type, bool popout)
     : view_(NULL),
@@ -78,6 +79,12 @@ class PlasmaViewHost::Private : public QObject {
         adjustAppletSize();
       }
       info->applet->setBackgroundHints(Plasma::Applet::NoBackground);
+      if (info->applet->location() == Plasma::Floating) {
+        connect(widget_, SIGNAL(moved(int, int)),
+                this, SLOT(onViewMoved(int, int)));
+      } else {
+        disconnect();
+      }
 
       if (info->applet->formFactor() == Plasma::Vertical)
         view_->SetWidth(info->applet->size().width());
@@ -197,6 +204,13 @@ class PlasmaViewHost::Private : public QObject {
 
   void detach() {
     view_ = NULL;
+  }
+
+ public slots:
+  void onViewMoved(int x, int y) {
+    if (type_ == ViewHostInterface::VIEW_HOST_MAIN && !is_popout_ &&
+        info->applet->immutability() == Plasma::Mutable)
+      info->applet->moveBy(x, y);
   }
 };
 
