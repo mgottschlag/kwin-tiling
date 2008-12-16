@@ -105,8 +105,8 @@ void TasksEngine::desktopChanged(int desktop)
         bool onCurrent = source->m_task->isOnCurrentDesktop();
         if (source->data()["onCurrentDesktop"].toBool() != onCurrent) {
             source->setData("onCurrentDesktop", onCurrent);
+            source->checkForUpdate();
         }
-        source->checkForUpdate();
     }
 }
 
