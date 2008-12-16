@@ -173,12 +173,14 @@ class GadgetBrowserHost : public ggadget::HostInterface {
     Q_UNUSED(gadget);
     return new GadgetBrowserViewHost(package_, type);
   }
+
   virtual Gadget *LoadGadget(const char *path, const char *options_name,
                              int instance_id, bool show_debug_console) {
     Q_UNUSED(path);
     Q_UNUSED(options_name);
     Q_UNUSED(instance_id);
     Q_UNUSED(show_debug_console);
+    return 0;
   }
 
   virtual void RemoveGadget(Gadget *gadget, bool save_data) {
@@ -187,11 +189,9 @@ class GadgetBrowserHost : public ggadget::HostInterface {
   }
 
   virtual bool LoadFont(const char *filename) {
-    if (QFontDatabase::addApplicationFont(filename) != -1)
-      return true;
-    else
-      return false;
+    return QFontDatabase::addApplicationFont(filename) != -1;
   }
+
   virtual void Run() {}
   virtual void ShowGadgetAboutDialog(Gadget*) { }
   virtual void ShowGadgetDebugConsole(Gadget*) {}
