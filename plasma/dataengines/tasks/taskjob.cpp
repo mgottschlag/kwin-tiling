@@ -122,6 +122,11 @@ void TaskJob::start()
             setResult(true);
             return;
         }
+        else if (operation == "close") {
+            m_source->getTask()->close();
+            setResult(true);
+            return;
+        }
         else if (operation == "toDesktop") {
             m_source->getTask()->toDesktop(parameters().value("desktop").toInt());
             setResult(true);

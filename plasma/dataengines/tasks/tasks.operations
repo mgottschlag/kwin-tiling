@@ -30,6 +30,7 @@
     <group name="lower" />
     <group name="activate" />
     <group name="activateRaiseOrMaximize" />
+    <group name="close" />
     <group name="toDesktop">
         <entry name="desktop" type="int" />
     </group>
