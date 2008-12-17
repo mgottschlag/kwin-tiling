@@ -897,7 +897,7 @@ void Task::publishIconGeometry(QRect rect)
     ni.setIconGeometry(r);
 }
 
-void Task::addMimeData(QMimeData *mimeData)
+void Task::addMimeData(QMimeData *mimeData) const
 {
     Q_ASSERT(mimeData);
 

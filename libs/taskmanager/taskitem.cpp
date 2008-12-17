@@ -299,6 +299,15 @@ bool TaskItem::isActionSupported(NET::Action action) const
     //return (!KWindowSystem::allowedActionsSupported() || d->task->info().isActionSupported(action));
 }
 
+void TaskItem::addMimeData(QMimeData *mimeData) const
+{
+    if (!d->task) {
+        return;
+    }
+
+    d->task->addMimeData(mimeData);
+}
+
 void TaskItem::close()
 {
     if (!d->task) {

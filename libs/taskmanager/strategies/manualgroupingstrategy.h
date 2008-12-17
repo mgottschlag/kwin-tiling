@@ -64,6 +64,8 @@ public:
     TaskGroupTemplate *parentGroup() const;
     void setParentGroup(TaskGroupTemplate *);
 
+    void addMimeData(QMimeData *mimeData) const;
+
 Q_SIGNALS:
     /** Unprotects group so it can get closed
     */

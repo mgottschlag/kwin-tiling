@@ -279,10 +279,24 @@ public:
 
     QPixmap thumbnail(int maxDimension);
 
-    void updateWindowPixmap();
+    /**
+     * Adds the identifying information for this task to mime data for drags, copies, etc
+     */
+    void addMimeData(QMimeData *mimeData) const;
+
+    /**
+     * Returns the mimetype used for Tasks
+     */
+    static QString mimetype();
+
+    /**
+     * Given mime data, will return a WId if it can decode one from the data. Otherwise
+     * returns 0.
+     */
+    static WId idFromMimeData(const QMimeData *mimeData, bool *ok = 0);
 
 public Q_SLOTS:
-    // actions
+    void updateWindowPixmap();
 
     /**
      * Maximise the main window of this task.
@@ -379,22 +393,6 @@ public Q_SLOTS:
      * KWin inconify animation.
      */
     void publishIconGeometry(QRect);
-
-    /**
-     * Adds the identifying information for this task to mime data for drags, copies, etc
-     */
-    void addMimeData(QMimeData *mimeData);
-
-    /**
-     * Returns the mimetype used for Tasks
-     */
-    static QString mimetype();
-
-    /**
-     * Given mime data, will return a WId if it can decode one from the data. Otherwise
-     * returns 0.
-     */
-    static WId idFromMimeData(const QMimeData *mimeData, bool *ok = 0);
 
 Q_SIGNALS:
     /**

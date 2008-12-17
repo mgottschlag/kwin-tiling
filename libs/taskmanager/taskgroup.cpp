@@ -130,8 +130,6 @@ void TaskGroup::add(AbstractItemPtr item)
     emit itemAdded(item);
 }
 
-
-
 void TaskGroup::remove(AbstractItemPtr item)
 {
     Q_ASSERT(item);
@@ -304,6 +302,17 @@ bool TaskGroup::isOnCurrentDesktop() const
     return true;
 }
 
+void TaskGroup::addMimeData(QMimeData *mimeData) const
+{
+    if (!d->members.isEmpty()) {
+        return;
+    }
+
+    //TODO: add ALL the windows as well, so they can be dragged
+    //      as a group!
+    d->members.first()->addMimeData(mimeData);
+}
+
 bool TaskGroup::isOnAllDesktops() const
 {
     foreach (AbstractItemPtr item, d->members) {
@@ -440,7 +449,6 @@ bool TaskGroup::isAlwaysOnTop() const
     }
     return true;
 }
-
 
 bool TaskGroup::isActionSupported(NET::Action action) const
 {

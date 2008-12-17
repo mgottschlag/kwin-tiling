@@ -74,6 +74,7 @@ public:
     bool demandsAttention() const;
     bool isOnAllDesktops() const;
     bool isOnCurrentDesktop() const;
+    void addMimeData(QMimeData *mimeData) const;
 
     /**
      * Sorting strategies may use this to move items around

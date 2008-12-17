@@ -441,6 +441,12 @@ void TaskGroupTemplate::setParentGroup(TaskGroupTemplate *group)
     d->parentGroup = group;
 }
 
+void TaskGroupTemplate::addMimeData(QMimeData *mimeData) const
+{
+    if (d->group) {
+        d->group->addMimeData(mimeData);
+    }
+}
 
 /** only true if item is in this group */
 bool TaskGroupTemplate::hasDirectMember(AbstractItemPtr item) const

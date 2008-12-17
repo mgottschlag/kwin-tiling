@@ -65,6 +65,7 @@ public:
     bool isActive() const;
     bool demandsAttention() const;
     bool isActionSupported(NET::Action) const;
+    void addMimeData(QMimeData *mimeData) const;
 
 public Q_SLOTS:
     void toDesktop(int);

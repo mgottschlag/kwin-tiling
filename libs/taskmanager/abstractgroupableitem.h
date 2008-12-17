@@ -83,7 +83,7 @@ public:
     virtual bool isActionSupported(NET::Action) const = 0;
     virtual bool isActive() const = 0;
     virtual bool demandsAttention() const = 0;
-
+    virtual void addMimeData(QMimeData *) const = 0;
 
 public Q_SLOTS:
     /** Functions that both, Tasks and Groups have */
