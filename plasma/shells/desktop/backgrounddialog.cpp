@@ -397,6 +397,7 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
     connect(this, SIGNAL(finished(int)), this, SLOT(cleanup()));
     connect(this, SIGNAL(okClicked()), this, SLOT(saveConfig()));
     connect(this, SIGNAL(applyClicked()), this, SLOT(saveConfig()));
+    connect(m_containment, SIGNAL(destroyed()), this, SLOT(close()));
 
     m_themeModel = new ThemeModel(this);
     m_theme->setModel(m_themeModel);
