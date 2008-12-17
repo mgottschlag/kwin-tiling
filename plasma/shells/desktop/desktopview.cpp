@@ -203,8 +203,8 @@ void DesktopView::setContainment(Plasma::Containment *containment)
 
     if (oldContainment && zoomLevel == Plasma::DesktopZoom) {
         //make sure actions are up-to-date
-        oldContainment->enableAction("zoom in", true);
-        oldContainment->enableAction("add sibling containment", true);
+        oldContainment->enableAction("zoom in", false);
+        oldContainment->enableAction("add sibling containment", false);
     }
 
     View::setContainment(containment);
