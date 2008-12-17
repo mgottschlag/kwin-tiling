@@ -201,7 +201,7 @@ void DesktopView::setContainment(Plasma::Containment *containment)
         m_dashboard->setContainment(containment);
     }
 
-    if (zoomLevel == Plasma::DesktopZoom) {
+    if (oldContainment && zoomLevel == Plasma::DesktopZoom) {
         //make sure actions are up-to-date
         oldContainment->enableAction("zoom in", true);
         oldContainment->enableAction("add sibling containment", true);
@@ -315,7 +315,7 @@ void DesktopView::drawBackground(QPainter *painter, const QRectF &rect)
 
 void DesktopView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment)
 {
-    kDebug() << "was, is, containment:" << wasScreen << isScreen << (QObject*)containment;
+    kDebug() << "was:" << wasScreen << "is:" << isScreen << "my screen:" << screen() << "containment:" << (QObject*)containment << "myself:" << (QObject*)this;
     if (containment->containmentType() == Plasma::Containment::PanelContainment) {
         // we don't care about panel containments changing screens on us
         return;
