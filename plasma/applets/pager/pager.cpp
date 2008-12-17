@@ -872,16 +872,12 @@ void Pager::dropEvent(QGraphicsSceneDragDropEvent *event)
     bool ok;
     WId id = TaskManager::Task::idFromMimeData(event->mimeData(), &ok);
     if (ok) {
-        int desktop = -1;
         for (int i = 0; i < m_rects.count(); ++i) {
             if (m_rects[i].contains(event->pos().toPoint())) {
-                desktop = i;
+                KWindowSystem::setOnDesktop(id, i + 1);
+                m_dragSwitchDesktop = -1;
                 break;
             }
-        }
-        if (desktop != -1) {
-            KWindowSystem::setOnDesktop(id, desktop + 1);
-            m_dragSwitchDesktop = -1;
         }
     }
 }
