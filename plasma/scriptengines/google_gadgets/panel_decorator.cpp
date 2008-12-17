@@ -37,23 +37,26 @@ class PanelDecorator::Private {
     int priority = MenuInterface::MENU_ITEM_PRI_DECORATOR;
     owner_->AddCollapseExpandMenuItem(menu);
     if (owner_->IsMinimized()) {
-      menu->AddItem("Show Icon",
+      menu->AddItem(i18n("Show Icon").toUtf8().data(),
                     owner_->IsMinimizedIconVisible() ?
                     MenuInterface::MENU_ITEM_FLAG_CHECKED:0,
                     0,
                     NewSlot(this, &Private::showIcon), priority);
-      menu->AddItem("Show Caption",
+      menu->AddItem(i18n("Show Caption").toUtf8().data(),
                     owner_->IsMinimizedCaptionVisible() ?
                     MenuInterface::MENU_ITEM_FLAG_CHECKED:0,
                     0,
                     NewSlot(this, &Private::showCaption), priority);
     }
 
+#ifndef NDEBUG
     menu->AddItem(
         "Debug", 0, 0,
         NewSlot(this, &Private::showDebugInfo), priority);
+#endif
   }
 
+#ifndef NDEBUG
   void showDebugInfo(const char*) {
     QString msg = "Applet size:(%1, %2)\n"
                   "Widget size:(%3, %4)\n"
@@ -72,6 +75,7 @@ class PanelDecorator::Private {
                              .arg(view->GetHeight())
                              .arg(info_->applet->aspectRatioMode()));
   }
+#endif
 
   void showIcon(const char*) {
     bool caption = owner_->IsMinimizedCaptionVisible();
