@@ -886,5 +886,12 @@ AbstractTaskItem* TaskGroupItem::abstractItem(AbstractItemPtr item)
     return 0;
 }
 
+void TaskGroupItem::setAdditionalMimeData(QMimeData* mimeData)
+{
+    if (m_group) {
+        m_group->addMimeData(mimeData);
+    }
+}
+
 #include "taskgroupitem.moc"
 

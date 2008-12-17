@@ -102,6 +102,7 @@ public:
 
     AbstractTaskItem* abstractItem(AbstractItemPtr);
 
+    virtual void setAdditionalMimeData(QMimeData* mimeData);
 
 signals:
     /** Emitted when a window is selected for activation, minimization, iconification */
