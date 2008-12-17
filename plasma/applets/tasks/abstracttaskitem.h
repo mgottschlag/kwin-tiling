@@ -119,6 +119,8 @@ public:
     virtual bool isWindowItem() const = 0;
     virtual bool isActive() const = 0;
 
+    virtual void setAdditionalMimeData(QMimeData* /*mimeData*/){};
+
     void setLayoutWidget(LayoutWidget* widget);
     TaskManager::AbstractItemPtr abstractItem();
 

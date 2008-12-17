@@ -49,7 +49,7 @@ public:
 
     virtual bool isWindowItem() const;
     virtual bool isActive() const;
-
+    virtual void setAdditionalMimeData(QMimeData* mimeData);
 
 signals:
     /** Emitted when a window is selected for activation, minimization, iconification */

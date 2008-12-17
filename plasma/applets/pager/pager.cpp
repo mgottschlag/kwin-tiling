@@ -48,6 +48,8 @@
 
 #include <kephal/screens.h>
 
+#include <taskmanager/task.h>
+
 const int FAST_UPDATE_DELAY = 200;
 const int UPDATE_DELAY = 500;
 const int DRAG_SWITCH_DELAY = 1000;
@@ -828,8 +830,11 @@ void Pager::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 void Pager::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
-    //TODO: we need to accept window id drops eventually
-    event->setAccepted(false);
+    if (event->mimeData()->hasFormat(TaskManager::Task::mimetype())) {
+        event->setAccepted(true);
+        return;
+    }
+    else event->setAccepted(false);
     handleHoverMove(event->pos());
 
     if (m_hoverIndex != -1) {
@@ -860,6 +865,25 @@ void Pager::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
     m_dragSwitchDesktop = -1;
     m_dragSwitchTimer->stop();
     Applet::dragLeaveEvent(event);
+}
+
+void Pager::dropEvent(QGraphicsSceneDragDropEvent *event)
+{
+    bool ok;
+    WId id = TaskManager::Task::idFromMimeData(event->mimeData(), &ok);
+    if (ok) {
+        int desktop = -1;
+        for (int i = 0; i < m_rects.count(); ++i) {
+            if (m_rects[i].contains(event->pos().toPoint())) {
+                desktop = i;
+                break;
+            }
+        }
+        if (desktop != -1) {
+            KWindowSystem::setOnDesktop(id, desktop + 1);
+            m_dragSwitchDesktop = -1;
+        }
+    }
 }
 
 void Pager::animationUpdate(qreal progress, int animId)

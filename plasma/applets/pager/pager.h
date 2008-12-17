@@ -65,6 +65,7 @@ class Pager : public Plasma::Applet
         virtual void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
         virtual void dragMoveEvent(QGraphicsSceneDragDropEvent *event);
         virtual void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
+        virtual void dropEvent(QGraphicsSceneDragDropEvent *event);
         virtual void wheelEvent(QGraphicsSceneWheelEvent *);
 
         void configAccepted();

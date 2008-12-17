@@ -283,6 +283,7 @@ void AbstractTaskItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
     QMimeData* mimeData = new QMimeData();
     mimeData->setData("taskbar/taskItem", data);
+    setAdditionalMimeData(mimeData);
 
     QDrag *drag = new QDrag(event->widget());
     drag->setMimeData(mimeData);

@@ -304,5 +304,10 @@ bool WindowTaskItem::isActive() const
     return m_task->isActive();
 }
 
+void WindowTaskItem::setAdditionalMimeData(QMimeData* mimeData)
+{
+    m_task->task()->addMimeData(mimeData);
+}
+
 #include "windowtaskitem.moc"
 
