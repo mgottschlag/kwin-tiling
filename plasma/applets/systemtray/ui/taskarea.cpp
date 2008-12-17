@@ -227,14 +227,14 @@ void TaskArea::initUnhideTool()
     }
 
     d->unhider = new Plasma::IconWidget(this);
-    d->unhider->setMinimumSize(22, 22);
+    d->unhider->setMinimumSize(16, 16);
     updateUnhideToolIcon();
 
     if (d->topLayout->orientation() == Qt::Horizontal) {
-        d->unhider->setMaximumSize(26, QWIDGETSIZE_MAX);
+        d->unhider->setMaximumSize(22, QWIDGETSIZE_MAX);
         d->unhider->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     } else {
-        d->unhider->setMaximumSize(QWIDGETSIZE_MAX, 26);
+        d->unhider->setMaximumSize(QWIDGETSIZE_MAX, 22);
         d->unhider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     }
 
