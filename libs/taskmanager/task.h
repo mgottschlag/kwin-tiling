@@ -380,6 +380,22 @@ public Q_SLOTS:
      */
     void publishIconGeometry(QRect);
 
+    /**
+     * Adds the identifying information for this task to mime data for drags, copies, etc
+     */
+    void addMimeData(QMimeData *mimeData);
+
+    /**
+     * Returns the mimetype used for Tasks
+     */
+    static QString mimetype();
+
+    /**
+     * Given mime data, will return a WId if it can decode one from the data. Otherwise
+     * returns 0.
+     */
+    static WId idFromMimeData(QMimeData *mimeData, bool *ok = 0);
+
 Q_SIGNALS:
     /**
      * Indicates that this task has changed in some way.
@@ -398,37 +414,6 @@ Q_SIGNALS:
 
 protected:
     void findWindowFrameId();
-
-private:
-    class Private;
-    Private * const d;
-};
-
-
-/**
- * Provids a drag object for tasks across desktops.
- * FIXME: should be folded into the Task class the same way it has been with
- *        AppletInfo and KUrl
- */
-class TASKMANAGER_EXPORT TaskDrag : public QDrag
-{
-public:
-    /**
-     * Constructs a task drag object for a task list.
-     */
-    explicit TaskDrag(const TaskList& tasks, QWidget* source = 0);
-    ~TaskDrag();
-
-    /**
-     * Returns true if the mime source can be decoded to a TaskDrag.
-     */
-    static bool canDecode( const QMimeData* e );
-
-    /**
-     * Decodes the tasks from the mime source and returns them if successful.
-     * Otherwise an empty task list is returned.
-     */
-    static TaskList decode( const QMimeData* e );
 
 private:
     class Private;

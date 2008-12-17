@@ -897,6 +897,52 @@ void Task::publishIconGeometry(QRect rect)
     ni.setIconGeometry(r);
 }
 
+void Task::addMimeData(QMimeData *mimeData)
+{
+    Q_ASSERT(mimeData);
+
+    QByteArray data;
+    data.resize(sizeof(WId));
+    memcpy(data.data(), &d->win, sizeof(WId));
+    mimeData->setData(mimetype(), data);
+}
+
+QString Task::mimetype()
+{
+    return "windowsystem/winid";
+}
+
+WId Task::idFromMimeData(QMimeData *mimeData, bool *ok)
+{
+    Q_ASSERT(mimeData);
+
+    if (!mimeData->hasFormat(mimetype())) {
+        if (ok) {
+            *ok = false;
+        }
+
+        return 0;
+    }
+
+    QByteArray data(mimeData->data(mimetype()));
+    if (data.size() != sizeof(WId)) {
+        if (ok) {
+            *ok = false;
+        }
+
+        return 0;
+    }
+
+    WId id;
+    memcpy(&id, data.data(), sizeof(WId));
+
+    if (ok) {
+        *ok = true;
+    }
+
+    return id;
+}
+
 #ifdef THUMBNAILING_POSSIBLE
 QPixmap Task::thumbnail(int maxDimension)
 {
@@ -1009,61 +1055,6 @@ void Task::updateWindowPixmap()
 
     d->windowPixmap = XCompositeNameWindowPixmap(dpy, d->frameId);
 #endif // THUMBNAILING_POSSIBLE
-}
-
-int TaskManager::currentDesktop() const
-{
-    return KWindowSystem::currentDesktop();
-}
-
-TaskDrag::TaskDrag(const TaskList& tasks, QWidget* source)
-  : QDrag(source),
-    d(0)
-{
-    QByteArray data;
-    QDataStream stream(&data, QIODevice::WriteOnly);
-
-    stream.setVersion(QDataStream::Qt_3_1);
-
-    TaskList::const_iterator itEnd = tasks.constEnd();
-    for (TaskList::const_iterator it = tasks.constBegin(); it != itEnd; ++it)
-    {
-        stream << (quint32)(*it)->window();
-    }
-
-    QMimeData* mimeData = new QMimeData();
-    mimeData->setData("taskbar/task", data);
-    setMimeData(mimeData);
-}
-
-TaskDrag::~TaskDrag()
-{
-}
-
-bool TaskDrag::canDecode(const QMimeData* e)
-{
-    return e->hasFormat("taskbar/task");
-}
-
-TaskList TaskDrag::decode( const QMimeData* e )
-{
-    QByteArray data(e->data("taskbar/task"));
-    TaskList tasks;
-
-    if (data.size())
-    {
-        QDataStream stream(data);
-        while (!stream.atEnd())
-        {
-            quint32 id;
-            stream >> id;
-            if (TaskPtr task = TaskManager::self()->findTask(id)) {
-                tasks.append(task);
-            }
-        }
-    }
-
-    return tasks;
 }
 
 } // TaskManager namespace

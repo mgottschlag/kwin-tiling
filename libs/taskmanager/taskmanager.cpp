@@ -518,6 +518,11 @@ bool TaskManager::isOnScreen(int screen, const WId wid)
     return window.intersects(desktop);
 }
 
+int TaskManager::currentDesktop() const
+{
+    return KWindowSystem::currentDesktop();
+}
+
 } // TaskManager namespace
 
 
