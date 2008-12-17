@@ -104,6 +104,7 @@ void FdoGraphicsWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem 
     }
 
     QPoint pos = parentView->mapFromScene(scenePos());
+    pos += parentView->viewport()->pos();
     if (d->widget->pos() != pos) {
         d->widget->move(pos);
     }
