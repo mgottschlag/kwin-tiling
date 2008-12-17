@@ -170,8 +170,6 @@ void DesktopCorona::loadDefaultLayout()
                     c->addApplet(folderView, QPointF(KDialog::spacingHint(), KDialog::spacingHint()), true);
                     KConfigGroup config = folderView->config();
                     config.writeEntry("url", "desktop:/");
-                    folderView->init();
-                    folderView->flushPendingConstraintsEvents();
                 }
             }
         }
