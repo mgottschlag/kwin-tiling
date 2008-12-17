@@ -57,6 +57,7 @@ libplasma
     * Dramatically fewer full paints by properly watching the exposed rect area, which for full screen Containments or large/complex Applets is quite significant in terms of performance
     * Fix on-exit crashes related to focus handling issues in QGraphicsView
     * Prevention of premature calls to Applet::constraintsEvent
+    * Applets now resize in "real time" without the pixelation
     * Numerous crash fixes pushed upstream to QGraphicsView as well (focus resetting, scene queries on deletion..)
 
 Developer Documentation
