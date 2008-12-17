@@ -200,6 +200,7 @@ void Trash::slotEmpty()
 
     emit releaseVisualFocus();
     const QString text(i18nc("@info", "Do you really want to empty the trash? All items will be deleted."));
+    //FIXME: should use KMessageBox::createKMessageBox so that it doesn't block the whole app!
     const bool del = KMessageBox::warningContinueCancel(&m_menu,
                                                         text,
                                                         QString(),
