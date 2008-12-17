@@ -66,7 +66,8 @@ Trash::Trash(QObject *parent, const QVariantList &args)
       m_count(0),
       m_showText(false),
       m_places(0),
-      m_proxy(0)
+      m_proxy(0),
+      m_emptyProcess(0)
 {
     setHasConfigurationInterface(true);
     setAspectRatioMode(Plasma::ConstrainedSquare);
@@ -191,6 +192,12 @@ void Trash::slotOpen()
 
 void Trash::slotEmpty()
 {
+    if (m_emptyProcess) {
+        //FIXME 4.3: Instead, tell the user the trash is still being empties and just return
+        delete m_emptyProcess;
+        m_emptyProcess = 0;
+    }
+
     emit releaseVisualFocus();
     const QString text(i18nc("@info", "Do you really want to empty the trash? All items will be deleted."));
     const bool del = KMessageBox::warningContinueCancel(&m_menu,
@@ -199,15 +206,26 @@ void Trash::slotEmpty()
                                                         KGuiItem(i18nc("@action:button", "Empty Trash"),
                                                                   KIcon("user-trash"))
                                                         ) == KMessageBox::Continue;
+
     if (del) {
          // We can't use KonqOperations here. To avoid duplicating its code (small, though),
         // we can simply call ktrash.
         //KonqOperations::emptyTrash(&m_menu);
-        KProcess process;
-        process << KStandardDirs::findExe("ktrash") << "--empty";
-        process.execute();
-
+        m_emptyProcess = new KProcess(this);
+        connect(m_emptyProcess, SIGNAL(finished(int,QProcess::ExitStatus)),
+                this, SLOT(emptyFinished(int,QProcess::ExitStatus)));
+        (*m_emptyProcess) << KStandardDirs::findExe("ktrash") << "--empty";
+        m_emptyProcess->start();
     }
+}
+
+void Trash::emptyFinished(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    Q_UNUSED(exitCode)
+    Q_UNUSED(exitStatus)
+    //TODO: check the exit status and let the user know if it fails
+    delete m_emptyProcess;
+    m_emptyProcess = 0;
 }
 
 void Trash::updateIcon()

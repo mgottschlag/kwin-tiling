@@ -30,10 +30,12 @@
 
 #include <Plasma/Applet>
 
-class KCModuleProxy;
-class KPropertiesDialog;
-class KFilePlacesModel;
 class QAction;
+
+class KCModuleProxy;
+class KFilePlacesModel;
+class KProcess;
+class KPropertiesDialog;
 
 namespace Plasma
 {
@@ -67,6 +69,7 @@ class Trash : public Plasma::Applet
         void slotCompleted();
         void slotDeleteItem(const KFileItem &);
         void slotApplyConfig();
+        void emptyFinished(int exitCode, QProcess::ExitStatus exitStatus);
 
     private:
         Plasma::IconWidget* m_icon;
@@ -78,6 +81,7 @@ class Trash : public Plasma::Applet
         bool m_showText;
         KFilePlacesModel *m_places;
         KCModuleProxy *m_proxy;
+        KProcess *m_emptyProcess;
 };
 
 K_EXPORT_PLASMA_APPLET(trash, Trash)
