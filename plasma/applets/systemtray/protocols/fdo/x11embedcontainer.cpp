@@ -113,7 +113,7 @@ void X11EmbedContainer::embedSystemTrayClient(WId clientId)
 
 #if defined(HAVE_XCOMPOSITE) && defined(HAVE_XFIXES) && defined(HAVE_XDAMAGE)
     XRenderPictFormat *format = XRenderFindVisualFormat(display, d->attr.visual);
-    if (format->type == PictTypeDirect && format->direct.alphaMask &&
+    if (format && format->type == PictTypeDirect && format->direct.alphaMask &&
         FdoSelectionManager::self()->haveComposite())
     {
         // Redirect ARGB windows to offscreen storage so we can composite them ourselves
