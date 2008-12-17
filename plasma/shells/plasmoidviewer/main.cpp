@@ -106,28 +106,20 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    QString pluginName;
     if (args->count() == 0) {
         KCmdLineArgs::usageError(i18n("No applet name specified"));
     }
 
     //At this point arg(0) is always set
-    pluginName = args->arg(0);
+    QString pluginName = args->arg(0);
 
-    QString formfactor;
-    if (args->isSet("formfactor")) {
-        kDebug() << "setting FormFactor to" << args->getOption("formfactor");
-        formfactor = args->getOption("formfactor");
-    }
+    QString formfactor = args->getOption("formfactor");
+    kDebug() << "setting FormFactor to" << args->getOption("formfactor");
 
-    QString location;
-    if (args->isSet("location")) {
-        kDebug() << "setting Location to" << args->getOption("location");
-        location = args->getOption("location");
-    }
+    QString location = args->getOption("location");
+    kDebug() << "setting Location to" << args->getOption("location");
 
-    QString containment;
-    containment = args->getOption("containment");
+    QString containment = args->getOption("containment");
     kDebug() << "setting containment to" << containment;
 
     QString wallpaper;

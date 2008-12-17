@@ -73,8 +73,7 @@ FullView::FullView(const QString &ff, const QString &loc, QWidget *parent)
     }
 
     setScene(&m_corona);
-    connect(&m_corona, SIGNAL(sceneRectChanged(QRectF)),
-            this, SLOT(sceneRectChanged(QRectF)));
+    connect(&m_corona, SIGNAL(sceneRectChanged(QRectF)), this, SLOT(sceneRectChanged(QRectF)));
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setAlignment(Qt::AlignLeft | Qt::AlignTop);
@@ -116,6 +115,7 @@ void FullView::resizeEvent(QResizeEvent *event)
         return;
     }
 
+    //kDebug() << size();
     qreal newWidth = 0;
     qreal newHeight = 0;
 
@@ -146,7 +146,9 @@ void FullView::resizeEvent(QResizeEvent *event)
 
 void FullView::sceneRectChanged(const QRectF &rect)
 {
+    Q_UNUSED(rect)
     if (m_applet) {
+        //kDebug() << m_applet->geometry();
         setSceneRect(m_applet->geometry());
     }
 }
