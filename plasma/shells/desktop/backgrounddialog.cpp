@@ -574,7 +574,9 @@ void BackgroundDialog::saveConfig()
 
     // Containment
     if (m_containment->pluginName() != containment) {
+        disconnect(m_containment, SIGNAL(destroyed()), this, SLOT(close()));
         m_containment = m_view->swapContainment(m_containment, containment);
+        connect(m_containment, SIGNAL(destroyed()), this, SLOT(close()));
     }
 
     m_containment->setActivity(m_activityName->text());
