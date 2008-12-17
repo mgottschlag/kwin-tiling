@@ -320,6 +320,7 @@ void PanelView::setLocation(Plasma::Location location)
 #endif
     QRect screenRect = Kephal::ScreenUtils::screenGeometry(c->screen());
     pinchContainment(screenRect);
+    KWindowSystem::setOnAllDesktops(winId(), true);
     //updatePanelGeometry();
     connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
 }
@@ -369,6 +370,7 @@ void PanelView::setPanelMode(PanelView::PanelMode mode)
 
     //kDebug() << "panel state set to" << state << NET::Sticky;
     KWindowSystem::setState(winId(), state);
+    KWindowSystem::setOnAllDesktops(winId(), true);
 
     m_panelMode = mode;
     config().writeEntry("panelMode", (int)mode);
