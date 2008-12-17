@@ -858,7 +858,7 @@ void EnvCanadaIon::parseConditions(WeatherData& data, QXmlStreamReader& xml)
             //}
         }
     }
-    if (data.condition.isEmpty())  {
+    if (data.temperature.isEmpty())  {
         data.temperature = "N/A";
     }
 }
