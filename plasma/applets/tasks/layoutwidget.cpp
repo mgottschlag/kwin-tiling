@@ -116,9 +116,9 @@ bool LayoutWidget::insert(int index, AbstractTaskItem* item)
     }
     int listIndex;
     for (listIndex = 0; listIndex < m_itemPositions.size(); listIndex++) {
-	if (index <= m_groupItem->indexOf(m_itemPositions.at(listIndex))) {
-	    break;
-	}
+        if (index <= m_groupItem->indexOf(m_itemPositions.at(listIndex))) {
+            break;
+        }
     }
 
     m_itemPositions.insert(listIndex, item);
@@ -132,6 +132,7 @@ bool LayoutWidget::remove(AbstractTaskItem* item)
     if (!item) {
         kDebug() << "null Item";
     }
+
     m_itemPositions.removeAll(item);
     layoutItems();
     return true;
@@ -178,11 +179,11 @@ int LayoutWidget::size()
 int LayoutWidget::maximumRows()
 {
     int maxRows;
-    if (!m_itemPositions.size()) {
+    if (m_itemPositions.isEmpty()) {
         return 1;
     }
 
-    if(m_forceRows) {
+    if (m_forceRows) {
         return m_maxRows;
     }
 
@@ -204,9 +205,10 @@ int LayoutWidget::preferredColumns()
     if (m_forceRows) {
         m_rowSize = 1;
     } else {
-        if (!m_itemPositions.size()) {
+        if (m_itemPositions.isEmpty()) {
             return 1;
         }
+
         //TODO basicPreferredSize isn't the optimal source here because  it changes because of margins probably
         QSizeF itemSize = m_itemPositions.first()->basicPreferredSize();
         //kDebug() << itemSize.width() << m_groupItem->geometry().width();
@@ -266,7 +268,7 @@ void LayoutWidget::layoutItems()
     //kDebug() << "column width set to " << columnWidth;
 
     QSizeF maximumCellSize;
-    if (m_itemPositions.count() > 0) {
+    if (!m_itemPositions.isEmpty()) {
         maximumCellSize = m_itemPositions.first()->basicPreferredSize() * 1.8;
     }
 
