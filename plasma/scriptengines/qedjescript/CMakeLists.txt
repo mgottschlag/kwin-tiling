@@ -11,12 +11,12 @@ kde4_add_ui_files(qedjescript_SRCS qedjeConfig.ui)
 # Now make sure all files get to the right place
 kde4_add_plugin(plasma_appletscript_qedje ${qedjescript_SRCS})
 target_link_libraries(plasma_appletscript_qedje
-  plasma ${KDE4_KDEUI_LIBS} ${QEdje_LIBRARIES})
+  plasma ${KDE4_KDEUI_LIBS} ${QEDJE_LIBRARIES})
 
 
 kde4_add_plugin(plasma_package_qedje ${package_SRCS})
 target_link_libraries(plasma_package_qedje
-  plasma ${QEdje_LIBRARIES} ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS})
+  plasma ${QEDJE_LIBRARIES} ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS})
 
 
 install(TARGETS plasma_appletscript_qedje

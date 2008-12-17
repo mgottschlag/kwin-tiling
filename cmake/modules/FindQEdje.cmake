@@ -18,18 +18,24 @@ if( NOT WIN32 )
 endif( NOT WIN32 )
 
 # use this just to create a nice message at FindPackageHandleStandardArgs
-if (QEdje_FOUND)
+if (PC_QEdje_FOUND)
   FIND_LIBRARY(QEdje_LIBRARY NAMES qedje
     PATHS
     ${PC_QEdje_LIBDIR}
     ${PC_QEdje_LIBRARY_DIRS}
   )
-else (QEdje_FOUND)
+  FIND_LIBRARY(QZion_LIBRARY NAMES qzion
+    PATHS
+    ${PC_QEdje_LIBDIR}
+    ${PC_QEdje_LIBRARY_DIRS}
+  )
+  SET(QEDJE_LIBRARIES ${QEdje_LIBRARY} ${QZion_LIBRARY})
+else (PC_QEdje_FOUND)
   MESSAGE(STATUS "Could not find QZion and/or QEdje. Please download them here (http://dev.openbossa.org/trac/qedje).")
-endif (QEdje_FOUND)
+endif (PC_QEdje_FOUND)
 
 INCLUDE(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(QEdje DEFAULT_MSG QEdje_LIBRARY)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(QEdje DEFAULT_MSG QEdje_LIBRARY QZion_LIBRARY)
 
-# show QEdje_LIBRARIES variables only in the advanced view
-MARK_AS_ADVANCED(QEdje_LIBRARY)
+# show QEdje_LIBRARY and QZion_LIBRARY variables only in the advanced view
+MARK_AS_ADVANCED(QEdje_LIBRARY QZion_LIBRARY)
