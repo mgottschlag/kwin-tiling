@@ -229,6 +229,8 @@ QList<QPointF> ItemSpace::positionVertically(
                 break;
             }
 
+            Q_ASSERT( ((align & Qt::AlignTop) && a.bottom() > y) || ((align & Qt::AlignBottom) && a.y() - size.height() < y) );
+
             y = ((align & Qt::AlignTop) ? a.bottom() : a.y() - size.height());
         }
 
@@ -252,6 +254,8 @@ QList<QPointF> ItemSpace::positionVertically(
         if (!a.isValid()) {
             break;
         }
+
+        Q_ASSERT( ((align & Qt::AlignLeft) && a.right() > x) || ((align & Qt::AlignRight) && a.x() - size.width() < x) );
 
         x = ((align & Qt::AlignLeft) ? a.right() : a.x() - size.width());
     }
