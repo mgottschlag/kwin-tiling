@@ -321,10 +321,8 @@ void DesktopView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Contai
         return;
     }
 
-    if (wasScreen == screen()) {
-        if (this->containment() == containment) {
+    if (wasScreen == screen() && this->containment() == containment) {
             setContainment(0);
-        }
     }
 
     if (isScreen == screen()) {
