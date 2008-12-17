@@ -491,17 +491,6 @@ void UrlItemView::paintEvent(QPaintEvent *event)
             }
         }
     }
-
-    Plasma::Delegate *hoveredItemDelegate =
-                    static_cast<Plasma::Delegate*>(itemDelegate(d->hoveredIndex));
-    if (hoveredItemDelegate->showToolTip() == true) {
-        QModelIndex index = d->hoveredIndex;
-        QString titleText = index.data(Qt::DisplayRole).toString();
-        QString subTitleText = index.data(Plasma::Delegate::SubTitleRole).toString();
-        setToolTip(titleText + "\n" + subTitleText);
-    } else {
-        setToolTip("");
-    }
 }
 
 void UrlItemView::resizeEvent(QResizeEvent *)
@@ -519,7 +508,18 @@ void UrlItemView::mouseMoveEvent(QMouseEvent *event)
 
         d->hoveredIndex = itemUnderMouse;
         setCurrentIndex(d->hoveredIndex);
-    } 
+    }
+
+    Plasma::Delegate *hoveredItemDelegate =
+                    static_cast<Plasma::Delegate*>(itemDelegate(d->hoveredIndex));
+    if (hoveredItemDelegate->showToolTip() == true) {
+        QModelIndex index = d->hoveredIndex;
+        QString titleText = index.data(Qt::DisplayRole).toString();
+        QString subTitleText = index.data(Plasma::Delegate::SubTitleRole).toString();
+        setToolTip(titleText + "\n" + subTitleText);
+    } else {
+        setToolTip("");
+    }
 
     QAbstractItemView::mouseMoveEvent(event);
 }
