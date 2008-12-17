@@ -33,7 +33,12 @@ namespace KHotKeys
 // Settings
 
 Settings::Settings()
-    : m_actions( NULL ), gestures_exclude( NULL )
+    : m_actions( NULL ),
+      gestures_disabled(false),
+      gesture_mouse_button(0),
+      gesture_timeout(0),
+      gestures_exclude(NULL),
+      daemon_disabled(false)
     {
     }
 

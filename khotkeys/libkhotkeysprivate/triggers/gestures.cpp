@@ -1,7 +1,7 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 1999-2002 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
@@ -11,7 +11,7 @@
   Copyright (c) 1996,1997,1998,1999  Mark F. Willey, ETLA Technical
   There is a reference application available on the LibStroke Home Page:
   http://www.etla.net/~willey/projects/libstroke/ )
- 
+
 ****************************************************************************/
 
 #define _GESTURES_CPP_
@@ -66,7 +66,6 @@ void Gesture::enable( bool enabled_P )
     if( _enabled == enabled_P )
         return;
     _enabled = enabled_P;
-    assert( button != 0 );
     update_grab();
     }
 
@@ -133,7 +132,7 @@ bool Gesture::x11Event( XEvent* ev_P )
 		{
 			return voice_handler->x11Event( ev_P );
 	}*/
-		
+
     if( ev_P->type == ButtonPress && ev_P->xbutton.button == button )
         {
         kDebug() << "GESTURE: mouse press";
@@ -197,6 +196,7 @@ void Gesture::grab_mouse( bool grab_P )
     {
     if( grab_P )
         {
+        assert( button != 0 );
         KXErrorHandler handler;
         static int mask[] = { 0, Button1MotionMask, Button2MotionMask, Button3MotionMask,
             Button4MotionMask, Button5MotionMask, ButtonMotionMask, ButtonMotionMask,
@@ -204,7 +204,7 @@ void Gesture::grab_mouse( bool grab_P )
 #define XCapL KKeyServer::modXLock()
 #define XNumL KKeyServer::modXNumLock()
 #define XScrL KKeyServer::modXScrollLock()
-        unsigned int mods[ 8 ] = 
+        unsigned int mods[ 8 ] =
             {
             0, XCapL, XNumL, XNumL | XCapL,
             XScrL, XScrL | XCapL,
@@ -247,13 +247,13 @@ void Gesture::set_timeout( int timeout_P )
     {
     timeout = timeout_P;
     }
-    
+
 Stroke::Stroke()
     {
     reset();
     points = new point[ MAX_POINTS ]; // CHECKME
     }
-    
+
 Stroke::~Stroke()
     {
     delete[] points;
@@ -267,7 +267,7 @@ void Stroke::reset()
     max_y = -1;
     point_count = -1;
     }
-        
+
 bool Stroke::record( int x, int y )
     {
     if( point_count >= MAX_POINTS )
@@ -286,7 +286,7 @@ bool Stroke::record( int x, int y )
 	int delx = x - points[ point_count ].x;
 	int dely = y - points[ point_count ].y;
 	if( abs( delx ) > abs( dely )) // step by the greatest delta direction
-	    { 
+	    {
     	    float iy = points[ point_count ].y;
              // go from the last point to the current, whatever direction it may be
     	    for( int ix = points[ point_count ].x;
@@ -360,7 +360,7 @@ bool Stroke::record( int x, int y )
 	}
     return true;
     }
-    
+
 char* Stroke::translate( int min_bin_points_percentage_P, int scale_ratio_P, int min_points_P )
     {
     if( point_count < min_points_P )
