@@ -88,7 +88,7 @@ void Gesture::update_grab()
         {
         kapp->removeX11EventFilter( this ); // avoid being installed twice
         kapp->installX11EventFilter( this );
-        // CHECKME at se grabuje jen kdyz je alespon jedno gesto?
+        // CHECKME grab only when there's at least one gesture?
         grab_mouse( true );
         }
     else
