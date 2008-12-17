@@ -394,7 +394,7 @@ public Q_SLOTS:
      * Given mime data, will return a WId if it can decode one from the data. Otherwise
      * returns 0.
      */
-    static WId idFromMimeData(QMimeData *mimeData, bool *ok = 0);
+    static WId idFromMimeData(const QMimeData *mimeData, bool *ok = 0);
 
 Q_SIGNALS:
     /**

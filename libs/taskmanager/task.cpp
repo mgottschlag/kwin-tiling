@@ -912,7 +912,7 @@ QString Task::mimetype()
     return "windowsystem/winid";
 }
 
-WId Task::idFromMimeData(QMimeData *mimeData, bool *ok)
+WId Task::idFromMimeData(const QMimeData *mimeData, bool *ok)
 {
     Q_ASSERT(mimeData);
 
