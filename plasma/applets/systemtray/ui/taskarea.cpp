@@ -221,6 +221,7 @@ void TaskArea::setOrientation(Qt::Orientation o)
             d->unhider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
         }
     }
+    updateUnhideToolIcon();
 }
 
 void TaskArea::initUnhideTool()
