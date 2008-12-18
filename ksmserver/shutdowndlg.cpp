@@ -339,7 +339,8 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     m_btnLogout(0),
     m_btnHalt(0),
     m_btnReboot(0),
-    m_automaticallyDoSeconds(30)
+    m_automaticallyDoSeconds(30),
+    m_pictureWidth(0)
     // this is a WType_Popup on purpose. Do not change that! Not
     // having a popup here has severe side effects.
 {
@@ -361,8 +362,6 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     m_svg->setImagePath("dialogs/shutdowndialog");
     connect( m_svg, SIGNAL(repaintNeeded()), this, SLOT(update()) );
     setModal( true );
-    resize(400, 120);
-    KDialog::centerOnScreen(this);
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
 
@@ -374,10 +373,6 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     m_automaticallyDoLabel = new QLabel(this);
     mainLayout->addWidget(m_automaticallyDoLabel, 0, Qt::AlignRight);
 
-    if (m_svg->hasElement("picture")) {
-        buttonMainLayout->addSpacing(m_svg->elementRect("picture").toRect().right() + 12);
-    }
-    buttonMainLayout->addStretch();
     buttonMainLayout->addLayout(buttonLayout);
 
     QHBoxLayout *bottomLayout = new QHBoxLayout();
@@ -387,8 +382,6 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     QColor fntColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     QPalette palette;
     palette.setColor(QPalette::WindowText, fntColor);
-
-    buttonLayout->addSpacing(10);
 
     m_btnLogout = new KSMPushButton( i18n("&Logout"), this );
     m_btnLogout->setPixmap(KIconLoader::global()->loadIcon("system-log-out", KIconLoader::NoGroup, 32));
@@ -460,36 +453,29 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     if ( sdtype == KWorkSpace::ShutdownTypeLogout ) {
         m_btnReboot->setHidden(true);
         m_btnHalt->setHidden(true);
-	buttonLayout->addSpacing(70);
     }
     else if ( sdtype == KWorkSpace::ShutdownTypeHalt ) {
         m_btnReboot->setHidden(true);
         m_btnLogout->setHidden(true);
-	buttonLayout->addSpacing(70);
     }
     else if ( sdtype == KWorkSpace::ShutdownTypeReboot ) {
         m_btnHalt->setHidden(true);
         m_btnLogout->setHidden(true);
-	buttonLayout->addSpacing(70);
     }
 
     btnBack = new KSMPushButton(i18n("&Cancel"), this, true);
     btnBack->setPixmap(KIconLoader::global()->loadIcon( "dialog-cancel", KIconLoader::NoGroup, 16));
 
-    //m_automaticallyDoLabel = new QLabel(this);
     m_automaticallyDoLabel->setPalette(palette);
     fnt.setPixelSize(11);
     m_automaticallyDoLabel->setFont(fnt);
-    //m_automaticallyDoLabel->setWordWrap(true);
     automaticallyDoTimeout();
 
     QTimer *automaticallyDoTimer = new QTimer(this);
     connect(automaticallyDoTimer, SIGNAL(timeout()), this, SLOT(automaticallyDoTimeout()));
     automaticallyDoTimer->start(1000);
 
-    //bottomLayout->addWidget(m_automaticallyDoLabel, 1, Qt::AlignBottom);
     bottomLayout->addStretch();
-    //buttonLayout->addWidget(m_automaticallyDoLabel);
     bottomLayout->addWidget(btnBack);
     connect(btnBack, SIGNAL(clicked()), SLOT(reject()));
 
@@ -497,7 +483,27 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     mainLayout->addSpacing(9);
     mainLayout->addLayout(bottomLayout);
 
-    setLayout( mainLayout );
+    setLayout(mainLayout);
+    adjustSize();
+    if (m_svg->hasElement("picture")) {
+        if (height() > width()) {
+            m_pictureWidth = width();
+        } else {
+            m_svg->isValid();
+            m_svg->resize();
+            QRect pictRect = m_svg->elementRect("picture").toRect();
+            m_pictureWidth = pictRect.width() * (buttonMainLayout->sizeHint().height() / qreal(pictRect.height()));
+            //kDebug() << "blurk!" << buttonMainLayout->sizeHint().height() << pictRect;
+        }
+
+        //kDebug() << width() << m_pictureWidth;
+        const int extraspace = (height() - m_pictureWidth - bottomLayout->sizeHint().height());
+        buttonMainLayout->insertSpacing(0, m_pictureWidth + extraspace);
+        resize(width() + m_pictureWidth, height());
+        //kDebug() << width();
+    }
+
+    KDialog::centerOnScreen(this);
 }
 
 void KSMShutdownDlg::automaticallyDoTimeout()
@@ -535,10 +541,11 @@ void KSMShutdownDlg::paintEvent(QPaintEvent *e)
     p.setClipRect(e->rect());
 
     p.fillRect(QRect(0, 0, width(), height()), Qt::transparent);
+    m_svg->resize(size());
     m_svg->paint(&p, QRect(0, 0, width(), height()), "background");
 
     if (m_svg->hasElement("picture")) {
-        QRect r = m_svg->elementRect("picture").toRect();
+        QRect r;// = m_svg->elementRect("picture").toRect();
         KSMPushButton* button;
         if (m_btnLogout->isVisible()) {
           button = m_btnLogout;
@@ -547,14 +554,28 @@ void KSMShutdownDlg::paintEvent(QPaintEvent *e)
         } else {
           button = m_btnReboot;
         }
+
         r.moveTop(button->geometry().top() - 10);
+        r.moveLeft(r.top());
         r.setBottom(btnBack->geometry().top());
+        r.setWidth(m_pictureWidth);
+
+        m_svg->resize();
         QPixmap picture = m_svg->pixmap("picture");
 
-        QRect sourceRect(QPoint(0, 0), r.size());
-        sourceRect.moveCenter(picture.rect().center());
+        //kDebug() << 1 << r << picture.size();
+        if (r.width() < picture.width()) {
+            picture = picture.scaledToWidth(r.width(), Qt::SmoothTransformation);
+        }
 
-        p.drawPixmap(r, picture, sourceRect);
+        if (r.height() < picture.height()) {
+            picture = picture.scaledToHeight(r.height(), Qt::SmoothTransformation);
+        }
+
+        //kDebug() << 2 << r << picture.size();
+        QRect dest = picture.rect();
+        dest.moveCenter(r.center());
+        p.drawPixmap(dest, picture, picture.rect());
     }
 }
 
