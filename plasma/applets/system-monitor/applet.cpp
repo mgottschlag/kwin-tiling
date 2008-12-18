@@ -109,7 +109,9 @@ void Applet::constraintsEvent(Plasma::Constraints constraints)
         }
         if (m_keepRatio.count() > 0) {
             foreach (QGraphicsWidget* item, m_keepRatio) {
-                QSizeF size = item->size();
+                QSizeF size = QSizeF(qMin(item->size().width(), contentsRect().size().width()),
+                                     qMin(item->size().height(), contentsRect().size().height()));
+
                 if (size == QSizeF(0, 0)) {
                     continue;
                 }
