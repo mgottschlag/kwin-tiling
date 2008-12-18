@@ -24,9 +24,6 @@
 #include <QMultiMap>
 #include <QTimer>
 
-// pulls in definition for Window
-#include <KSelectionWatcher>
-
 // local includes
 #include "krunnerdialog.h"
 
