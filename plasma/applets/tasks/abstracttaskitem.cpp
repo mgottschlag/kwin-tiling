@@ -282,7 +282,6 @@ void AbstractTaskItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     memcpy(data.data(), &selfPtr, sizeof(AbstractTaskItem*));
 
     QMimeData* mimeData = new QMimeData();
-    mimeData->setData("taskbar/taskItem", data);
     setAdditionalMimeData(mimeData);
 
     QDrag *drag = new QDrag(event->widget());
@@ -621,15 +620,9 @@ void AbstractTaskItem::animationUpdate(qreal progress)
     update();
 }
 
-
-
-
-
-
 void AbstractTaskItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
-
-    if (event->mimeData()->hasFormat("taskbar/taskItem")) {
+    if (event->mimeData()->hasFormat(TaskManager::Task::mimetype())) {
         event->ignore(); //ignore it so the taskbar gets the event
         return;
     }
@@ -644,9 +637,6 @@ void AbstractTaskItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
     }
     m_activateTimer->start();
 }
-
-
-
 
 void AbstractTaskItem::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 {
@@ -669,28 +659,11 @@ void AbstractTaskItem::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
     }
 }
 
-AbstractTaskItem * AbstractTaskItem::decodeMimedata(const QMimeData *mime)
-{
-    // Although we use the a baseclass pointer, all virtual functions are called
-    // in the derived class version, but really only the virtual ones!
-    AbstractTaskItem *taskItem = 0;
-    if (mime->hasFormat("taskbar/taskItem")) { //make modifier configurable
-        QByteArray data(mime->data("taskbar/taskItem"));
-
-        if (data.size() == sizeof(AbstractTaskItem*)) {
-            memcpy(&taskItem, data.data(), sizeof(AbstractTaskItem*));
-        }
-    }
-
-    return taskItem;
-}
-
 void AbstractTaskItem::setGeometry(const QRectF& geometry)
 {
     QGraphicsWidget::setGeometry(geometry);
     publishIconGeometry();
 }
-
 
 QRectF AbstractTaskItem::iconRect(const QRectF &b) const
 {

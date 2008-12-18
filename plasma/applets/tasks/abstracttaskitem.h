@@ -175,7 +175,6 @@ protected:
     */
     void drawTextLayout(QPainter *painter, const QTextLayout &layout, const QRect &rect) const;
 
-    AbstractTaskItem * decodeMimedata(const QMimeData *mime);
     virtual void updateTask(::TaskManager::TaskChanges changes) = 0; // pure virtual function
     virtual void updateToolTip() = 0; // pure virtual function
     QString expanderElement() const;

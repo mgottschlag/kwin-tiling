@@ -124,6 +124,7 @@ public slots:
     void updatePreferredSize();
 
 protected:
+    AbstractTaskItem *taskItemForWId(WId id);
     virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
     virtual void paint(QPainter *painter,const QStyleOptionGraphicsItem *option,QWidget *widget);
 
@@ -171,7 +172,7 @@ private:
 
     GroupPtr m_group;
 
-    QHash<AbstractItemPtr,AbstractTaskItem*> m_groupMembers;
+    QHash<AbstractItemPtr, AbstractTaskItem*> m_groupMembers;
 
     LayoutWidget *m_expandedLayout;
     QTimer *m_popupMenuTimer;

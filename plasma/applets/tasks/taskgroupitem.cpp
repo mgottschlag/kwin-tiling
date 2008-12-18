@@ -57,16 +57,16 @@
 
 TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet, const bool showTooltip)
     : AbstractTaskItem(parent, applet, showTooltip),
-    m_group(0),
-    m_expandedLayout(0),
-    m_popupMenuTimer(0),
-    m_lastActivated(-1),
-    m_activeTaskIndex(0),
-    m_maximumRows(1),
-    m_forceRows(false),
-    m_splitPosition(0),
-    m_parentSplitGroup(0),
-    m_childSplitGroup(0)
+      m_group(0),
+      m_expandedLayout(0),
+      m_popupMenuTimer(0),
+      m_lastActivated(-1),
+      m_activeTaskIndex(0),
+      m_maximumRows(1),
+      m_forceRows(false),
+      m_splitPosition(0),
+      m_parentSplitGroup(0),
+      m_childSplitGroup(0)
 {
     setAcceptDrops(true);
 }
@@ -255,7 +255,6 @@ void TaskGroupItem::reload()
     kDebug();
     QList <AbstractItemPtr> itemsToRemove = m_groupMembers.keys();
 
-
     foreach (AbstractItemPtr item, group()->members()) {
         if (!item) {
             kDebug() << "invalid Item";
@@ -347,13 +346,10 @@ void TaskGroupItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
     menu.exec(m_applet->containment()->corona()->popupPosition(this, menu.size()));
 }
 
-
 QList<AbstractTaskItem*> TaskGroupItem::memberList() const
 {
     return m_groupMembers.values();
 }
-
-
 
 AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractItemPtr groupableItem)
 {
@@ -659,7 +655,7 @@ void  TaskGroupItem::itemPositionChanged(AbstractItemPtr item)
 void TaskGroupItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
     //kDebug()<<"Drag enter";
-    if (event->mimeData()->hasFormat("taskbar/taskItem") && !m_expandedLayout) {
+    if (event->mimeData()->hasFormat(TaskManager::Task::mimetype()) && !m_expandedLayout) {
         event->acceptProposedAction();
         //kDebug()<<"Drag enter accepted";
     } else {
@@ -674,20 +670,48 @@ void TaskGroupItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
     }
 }
 
+AbstractTaskItem *TaskGroupItem::taskItemForWId(WId id)
+{
+    QHashIterator<AbstractItemPtr, AbstractTaskItem*> it(m_groupMembers);
+
+    while (it.hasNext()) {
+        it.next();
+        AbstractTaskItem *item = it.value();
+        TaskGroupItem *group = qobject_cast<TaskGroupItem*>(item);
+
+        if (group) {
+            item = group->taskItemForWId(id);
+            if (item) {
+                return item;
+            }
+        } else {
+            TaskManager::TaskItem *task = qobject_cast<TaskManager::TaskItem*>(it.key());
+            if (task && task->task() && task->task()->window() == id) {
+                return item;
+            }
+        }
+    }
+
+    return 0;
+}
 
 void TaskGroupItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
     //kDebug() << "LayoutWidget dropEvent";
-    if (event->mimeData()->hasFormat("taskbar/taskItem")) {
-        AbstractTaskItem *taskItem = 0;
-        QByteArray data(event->mimeData()->data("taskbar/taskItem"));
+    if (event->mimeData()->hasFormat(TaskManager::Task::mimetype())) {
+        bool ok;
+        WId id = TaskManager::Task::idFromMimeData(event->mimeData(), &ok);
 
-        if (data.size() == sizeof(AbstractTaskItem*)) {
-            memcpy(&taskItem, data.data(), sizeof(AbstractTaskItem*));
+        if (!ok) {
+            event->ignore();
+            return;
         }
+
+        AbstractTaskItem *taskItem = m_applet->rootGroupItem()->taskItemForWId(id);
 
         if (!taskItem) {
             kDebug() << "Invalid TaskItem";
+            event->ignore();
             return;
         }
 
@@ -787,7 +811,7 @@ void TaskGroupItem::layoutTaskItem(AbstractTaskItem* item, const QPointF &pos)
             m_applet->groupManager().manualSortingRequest(item->abstractItem(), insertIndex);
         } else {
             m_applet->groupManager().manualSortingRequest(item->abstractItem(), insertIndex +
-                                                        m_parentSplitGroup->memberList().size());
+                                                          m_parentSplitGroup->m_groupMembers.size());
         }
     }
 }
