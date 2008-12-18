@@ -29,7 +29,6 @@ Hdd::Hdd(QObject *parent, const QVariantList &args)
     : SM::Applet(parent, args)
 {
     setHasConfigurationInterface(true);
-    resize(215 + 20 + 23, 99 + 20 + 25);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 }
 
