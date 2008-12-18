@@ -166,12 +166,12 @@ void QuicklaunchApplet::refactorUi()
     if (formFactor() == Plasma::Vertical) {
         rowCount = qMin(m_rowCount, int(size().width()) / (s_defaultIconSize + s_defaultSpacing));
         // prevent possible division by zero if size().width() is 0
-        rowCount = (rowCount == 0) ? 1 : rowCount;
+        rowCount = qMax(1, rowCount );
         iconWidth = size().width() / rowCount;
     } else {
         rowCount = qMin(m_rowCount, int(size().height()) / (s_defaultIconSize + s_defaultSpacing));
         // prevent possible division by zero if size().height() is 0
-        rowCount = (rowCount == 0) ? 1 : rowCount;
+        rowCount = qMax(1, rowCount );
         iconWidth = qMax(s_defaultIconSize, int(size().height()) / rowCount);
     }
 
