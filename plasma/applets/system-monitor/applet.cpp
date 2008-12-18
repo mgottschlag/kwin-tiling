@@ -184,6 +184,7 @@ void Applet::connectToEngine()
         mainLayout()->addStretch();
     }
     checkGeometry();
+    mainLayout()->activate();
     constraintsEvent(Plasma::SizeConstraint);
     setDetail(m_detail);
 }
@@ -235,7 +236,7 @@ void Applet::checkGeometry()
     setMinimumSize(m_min);
     setPreferredSize(m_pref);
     setMaximumSize(m_max);
-    kDebug() << m_min << m_pref << m_max << metaObject()->className();
+    //kDebug() << m_min << m_pref << m_max << metaObject()->className();
     emit geometryChecked();
 }
 
