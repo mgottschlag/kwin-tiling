@@ -45,6 +45,7 @@ public:
     virtual QString typeId() const;
     virtual QIcon icon() const;
     void setIcon(const QString &icon);
+    bool isHideable() const;
 
 signals:
     void taskDeleted(QString typeId);

@@ -78,6 +78,11 @@ QList<QGraphicsWidget*> Task::associatedWidgets() const
     return d->associatedWidgets;
 }
 
+bool Task::isHideable() const
+{
+    return true;
+}
+
 Task::Order Task::order() const
 {
     return d->order;

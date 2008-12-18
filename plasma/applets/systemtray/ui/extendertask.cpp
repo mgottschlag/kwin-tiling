@@ -72,6 +72,11 @@ bool ExtenderTask::isValid() const
     return true;
 }
 
+bool ExtenderTask::isHideable() const
+{
+    return false;
+}
+
 QString ExtenderTask::name() const
 {
     return i18n("Show or hide notifications and jobs");

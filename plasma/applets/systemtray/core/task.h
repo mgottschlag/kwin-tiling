@@ -94,6 +94,11 @@ public:
     virtual QIcon icon() const = 0;
 
     /**
+     * Returns whether the task is currently hideable by the user or not
+     */
+    virtual bool isHideable() const;
+
+    /**
      * Returns the order this Task should be placed in: first, normal or last
      */
     Order order() const;

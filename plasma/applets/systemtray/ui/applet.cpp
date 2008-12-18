@@ -325,6 +325,10 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     hiddenList->clear();
 
     foreach (Task *task, Private::s_manager->tasks()) {
+        if (!task->isHideable()) {
+            continue;
+        }
+
         QListWidgetItem *listItem = new QListWidgetItem();
         listItem->setText(task->name());
         listItem->setIcon(task->icon());
