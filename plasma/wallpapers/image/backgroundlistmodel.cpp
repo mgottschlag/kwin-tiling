@@ -152,20 +152,21 @@ QList<Background *> BackgroundListModel::findAllBackgrounds(const BackgroundCont
     QList<Background *> res;
 
     // get all packages in this directory
+    //kDebug() << "getting packages";
     QStringList packages = Plasma::Package::listInstalled(path);
     QSet<QString> validPackages;
     foreach (const QString &packagePath, packages) {
-        //kDebug() << packagePath;
         std::auto_ptr<Background> pkg(new BackgroundPackage(path + packagePath, ratio));
         if (pkg->isValid() &&
             (!container || !container->contains(pkg->path()))) {
             res.append(pkg.release());
-            //kDebug() << "adding valid package:" << packagePath;
+            //kDebug() << "    adding valid package:" << packagePath;
             validPackages << packagePath;
         }
     }
 
     // search normal wallpapers
+    //kDebug() << "listing normal files";
     QDir dir(path);
     QStringList filters;
     filters << "*.png" << "*.jpeg" << "*.jpg" << "*.svg" << "*.svgz";
@@ -174,19 +175,26 @@ QList<Background *> BackgroundListModel::findAllBackgrounds(const BackgroundCont
     QFileInfoList files = dir.entryInfoList();
     foreach (const QFileInfo &wp, files) {
         if (!container || !container->contains(wp.filePath())) {
+            //kDebug() << "     adding image file" << wp.filePath();
             res.append(new BackgroundFile(wp.filePath(), ratio));
         }
     }
 
     // now recurse the dirs, skipping ones we found packages in
+    //kDebug() << "recursing dirs";
     dir.setFilter(QDir::AllDirs | QDir::Readable);
     files = dir.entryInfoList();
+    //TODO: we should show a KProgressDialog here as this can take a while if someone
+    //      indexes, say, their entire home directory!
     foreach (const QFileInfo &wp, files) {
         QString name = wp.fileName();
         if (name != "." && name != ".." && !validPackages.contains(wp.fileName())) {
+            //kDebug() << "    " << name << wp.filePath();
             res += findAllBackgrounds(container, wp.filePath(), ratio);
         }
     }
+
+    //kDebug() << "completed.";
     return res;
 }
 
