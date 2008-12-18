@@ -702,9 +702,10 @@ void PlasmaApp::zoom(Plasma::Containment *containment, Plasma::ZoomDirection dir
 
 void PlasmaApp::zoomIn(Plasma::Containment *containment)
 {
+    bool isMutable = m_corona->immutability() == Plasma::Mutable;
     bool zoomIn = true;
     bool zoomOut = true;
-    bool addSibling = true;
+    bool addSibling = isMutable;
     bool lock = false;
     bool remove = false;
 
@@ -716,7 +717,7 @@ void PlasmaApp::zoomIn(Plasma::Containment *containment)
         lock = true;
     } else if (m_zoomLevel == Plasma::OverviewZoom) {
         m_zoomLevel = Plasma::GroupZoom;
-        remove = true;
+        remove = isMutable && true;
     }
 
     //make sure everybody can zoom out again
@@ -730,17 +731,18 @@ void PlasmaApp::zoomIn(Plasma::Containment *containment)
         c->enableAction("add sibling containment", addSibling);
         c->enableAction("lock widgets", lock);
         c->enableAction("remove", remove && (c->screen() == -1));
-        c->enableAction("add widgets", true);
+        c->enableAction("add widgets", isMutable);
     }
 }
 
 void PlasmaApp::zoomOut(Plasma::Containment *)
 {
+    bool isMutable = m_corona->immutability() == Plasma::Mutable;
     bool zoomIn = true;
     bool zoomOut = true;
-    bool addSibling = true;
+    bool addSibling = isMutable && true;
     bool lock = false;
-    bool addWidgets = true;
+    bool addWidgets = isMutable && true;
 
     if (m_zoomLevel == Plasma::DesktopZoom) {
         m_zoomLevel = Plasma::GroupZoom;
@@ -760,7 +762,7 @@ void PlasmaApp::zoomOut(Plasma::Containment *)
         c->enableAction("zoom out", zoomOut);
         c->enableAction("add sibling containment", addSibling);
         c->enableAction("lock widgets", lock);
-        c->enableAction("remove", c->screen() == -1);
+        c->enableAction("remove", isMutable && c->screen() == -1);
         c->enableAction("add widgets", addWidgets);
     }
 }
