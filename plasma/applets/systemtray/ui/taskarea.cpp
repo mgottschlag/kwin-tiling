@@ -257,9 +257,11 @@ void TaskArea::updateUnhideToolIcon()
         return;
     }
 
-    if (d->topLayout->orientation() == Qt::Vertical) {
+    if (!d->showingHidden && d->topLayout->orientation() == Qt::Vertical) {
         d->unhider->setSvg("widgets/systemtray", "expander-up");
-    } else if (d->showingHidden || QApplication::layoutDirection() == Qt::RightToLeft) {
+    } else if(d->showingHidden && d->topLayout->orientation() == Qt::Vertical){
+        d->unhider->setSvg("widgets/systemtray", "expander-down");
+    }else if (d->showingHidden || QApplication::layoutDirection() == Qt::RightToLeft) {
         d->unhider->setSvg("widgets/systemtray", "expander-right");
     } else {
         d->unhider->setSvg("widgets/systemtray", "expander-left");
