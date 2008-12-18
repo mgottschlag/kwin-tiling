@@ -133,6 +133,7 @@ private:
     KSMPushButton *m_btnReboot;
     KSMPushButton *btnBack;
     int m_automaticallyDoSeconds;
+    int m_pictureWidth;
 
 private Q_SLOTS:
     void automaticallyDoTimeout();
