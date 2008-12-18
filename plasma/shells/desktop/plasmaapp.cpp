@@ -51,7 +51,6 @@
 #include <KCrash>
 #include <KDebug>
 #include <KCmdLineArgs>
-#include <KSelectionWatcher>
 #include <KWindowSystem>
 
 #include <ksmserver_interface.h>
@@ -225,16 +224,6 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
 
     connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanup()));
     QTimer::singleShot(0, this, SLOT(setupDesktop()));
-
-#ifdef Q_WS_X11
-    Display *dpy = QX11Info::display();
-    int screen = DefaultScreen(dpy);
-    char net_wm_cm_name[100];
-    sprintf(net_wm_cm_name, "_NET_WM_CM_S%d", screen);
-    m_compositeWatch = new KSelectionWatcher(net_wm_cm_name, -1, this);
-    connect(m_compositeWatch, SIGNAL(newOwner(Window)), this, SLOT(compositingChanged()));
-    connect(m_compositeWatch, SIGNAL(lostOwner()), this, SLOT(compositingChanged()));
-#endif
 }
 
 PlasmaApp::~PlasmaApp()
@@ -245,7 +234,9 @@ PlasmaApp::~PlasmaApp()
 void PlasmaApp::setupDesktop()
 {
     // intialize the default theme and set the font
-    Plasma::Theme::defaultTheme()->setFont(AppSettings::desktopFont());
+    Plasma::Theme *theme = Plasma::Theme::defaultTheme();
+    theme->setFont(AppSettings::desktopFont());
+    connect(theme, SIGNAL(themeChanged()), this, SLOT(compositingChanged()));
 
     // this line initializes the corona.
     corona();
@@ -262,11 +253,6 @@ void PlasmaApp::cleanup()
     if (m_corona) {
         m_corona->saveLayout();
     }
-
-#ifdef Q_WS_X11
-    delete m_compositeWatch;
-    m_compositeWatch = 0;
-#endif
 
     // save the mapping of Views to Containments at the moment
     // of application exit so we can restore that when we start again.

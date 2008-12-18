@@ -29,8 +29,6 @@
 
 #include <Plasma/Plasma>
 
-class KSelectionWatcher;
-
 namespace Plasma
 {
     class AppletBrowser;
@@ -126,10 +124,6 @@ private:
     QHash<Plasma::Containment *, BackgroundDialog *> m_configDialogs;
     Plasma::ZoomLevel m_zoomLevel;
     int m_panelHidden;
-
-#ifdef Q_WS_X11
-    KSelectionWatcher *m_compositeWatch;
-#endif
 };
 
 #endif // multiple inclusion guard
