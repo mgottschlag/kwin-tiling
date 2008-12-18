@@ -103,13 +103,16 @@ void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
             QGraphicsWidget *widget = findWidget(task);
             if (widget) {
                 d->taskLayout->removeItem(widget);
-                d->topLayout->invalidate();
                 //TODO: we shouldn't delete these, just don't show them!
                 delete widget;
             }
         } else {
             addWidgetForTask(task);
         }
+    }
+
+    if (d->hasHiddenTasks) {
+        d->topLayout->invalidate();
     }
 
     checkUnhideTool();
@@ -277,7 +280,7 @@ void TaskArea::checkUnhideTool()
     } else {
         // hide the show tool
         d->topLayout->removeItem(d->unhider);
-        delete d->unhider;
+        d->unhider->deleteLater();
         d->unhider = 0;
     }
 }
