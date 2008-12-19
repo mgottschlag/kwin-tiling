@@ -88,6 +88,8 @@ KxkbCore::KxkbCore(int mode):
 	m_status = -2;
         return;
     }
+    
+    X11Helper::registerForNewDeviceEvent(QX11Info::display());
 
     m_layoutOwnerMap = new LayoutMap(m_kxkbConfig);
 }
@@ -447,8 +449,14 @@ bool KxkbCore::x11EventFilter ( XEvent * event )
 	  updateGroupsFromServer();
     }
     else {
-//	kDebug() << "other xkb event: ";// + ((XkbEvent*)event)->any.xkb_type;
+//	    kDebug() << "other xkb event: ";// + ((XkbEvent*)event)->any.xkb_type;
     }
+  }
+  else {
+    if( X11Helper::isNewDeviceEvent(event) ) {
+        initLayoutGroups();
+    }
+//  else  kDebug() << "other x11 event, type" << event->type;
   }
   return false;
 }

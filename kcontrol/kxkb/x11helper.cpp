@@ -36,6 +36,10 @@
 #undef explicit
 #include <X11/extensions/XKBrules.h>
 
+#ifdef HAVE_XINPUT
+#include <X11/extensions/XInput.h>
+#endif
+
 #include "kxkbconfig.h"
 
 #include "x11helper.h"
@@ -364,6 +368,68 @@ X11Helper::getGroupNames(Display* dpy)
 }
 
 #endif  /* HAVE_XKLAVIER*/
+
+#ifdef HAVE_XINPUT
+
+int X11Helper::m_xinputEventType = -1;
+
+extern "C" {
+    extern int _XiGetDevicePresenceNotifyEvent(Display *);
+}
+
+int
+X11Helper::isNewDeviceEvent(XEvent* event)
+{
+    if( m_xinputEventType != -1 && event->type == m_xinputEventType ) {
+	XDevicePresenceNotifyEvent *xdpne = (XDevicePresenceNotifyEvent*) event;
+	if( xdpne->devchange == DeviceEnabled ) {
+	    bool keyboard_device = false;
+	    int ndevices;
+            XDeviceInfo	*devices = XListInputDevices(xdpne->display, &ndevices);
+            if( devices != NULL ) {
+                kDebug() << "New device id:" << xdpne->deviceid;
+                for(int i=0; i<ndevices; i++) {
+                    kDebug() << "id:" << devices[i].id << "name:" << devices[i].name << "used as:" << devices[i].use;
+                    if( devices[i].id == xdpne->deviceid 
+                            && (devices[i].use == IsXKeyboard || devices[i].use == IsXExtensionKeyboard) ) {
+                        keyboard_device = true;
+                        break;
+                    }
+                }
+                XFreeDeviceList(devices);
+            }
+            return keyboard_device;
+        }
+    }
+    return false;
+}
+
+int
+X11Helper::registerForNewDeviceEvent(Display* display)
+{
+    int xitype;
+    XEventClass xiclass;
+    
+    DevicePresence(display, xitype, xiclass);
+    XSelectExtensionEvent(display, QX11Info::appRootWindow(), &xiclass, 1);
+    kDebug() << "Registered for new device events from XInput, class" << xitype;
+    m_xinputEventType = xitype;
+    return xitype;
+}
+#else
+int
+X11Helper::isNewDeviceEvent(XEvent* event)
+{
+    return false;
+}
+int
+X11Helper::registerForNewDeviceEvent(Display* display)
+{
+    kWarn() << "Kxkb is compiled without XInput, xkb configuration will be reset when new keyboard device is plugged in!";
+    return -1;
+}
+#endif
+
 
 const QString X11Helper::X11_WIN_CLASS_ROOT = "<root>";
 const QString X11Helper::X11_WIN_CLASS_UNKNOWN = "<unknown>";

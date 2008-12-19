@@ -64,17 +64,20 @@ public:
 
 	static QString getWindowClass(Window winId, Display* dpy);
 
+#ifdef HAVE_XINPUT
+        static int registerForNewDeviceEvent(Display* dpy);
+        static int isNewDeviceEvent(XEvent* event);
+        static int m_xinputEventType;
+#endif
+
 #ifndef HAVE_XKLAVIER
-	/**
-	 * Tries to find X11 xkb config dir
-	 */
 	static const QString findX11Dir();
 	static const QString findXkbRulesFile(const QString &x11Dir, Display* dpy);
 	static QList<XkbVariant>* getVariants(const QString& layout, const QString& x11Dir);
 	static RulesInfo* loadRules(const QString& rulesFile, bool layoutsOnly=false);
         static XkbConfig getGroupNames(Display* dpy);
-private:
 
+private:
 	static XkbOptionGroup createMissingGroup(const QString& groupName);
 	static bool isGroupExclusive(const QString& groupName);
 #endif /* HAVE_XKLAVIER */

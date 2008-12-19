@@ -100,7 +100,7 @@ private:
     KActionCollection *actionCollection;
     
     QWidget* m_dummyWidget;
-    
+
     void updateIndicator(int layout, int res);
     void initTray();
     void initKDEShortcut();
