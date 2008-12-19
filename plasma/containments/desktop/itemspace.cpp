@@ -184,7 +184,7 @@ QList<QPointF> ItemSpace::positionVertically(
     // start either on the left or the right, and advance inside
     qreal x = ((align & Qt::AlignLeft) ? 0 : workingGeom.width()-size.width());
     // try different x coordinates
-    while (1) {
+    for (int i = 0; i < 100; ++i) {
         // stop testing if we're limited by the working area and positions at the next x would reach outside
         bool outOfX = ((align & Qt::AlignLeft) ? (x + size.width() > workingGeom.width()) : (x < 0));
         if (outOfX && limitedSpace) {
