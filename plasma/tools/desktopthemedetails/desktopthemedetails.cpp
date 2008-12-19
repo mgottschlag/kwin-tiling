@@ -341,7 +341,8 @@ void DesktopThemeDetails::reloadConfig()
 {
     // Theme
     //QString theme = Plasma::Theme::defaultTheme()->themeName();
-    QString theme = "default";
+    KConfigGroup cfg = KConfigGroup(KSharedConfig::openConfig("plasmarc"), "Theme");
+    QString theme = cfg.readEntry("name", "default");
     m_theme->setCurrentIndex(m_themeModel->indexOf(theme));
 
     //Customized theme settings
