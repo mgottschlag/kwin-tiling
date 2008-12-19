@@ -575,6 +575,7 @@ void KSMShutdownDlg::paintEvent(QPaintEvent *e)
         //kDebug() << 2 << r << picture.size();
         QRect dest = picture.rect();
         dest.moveCenter(r.center());
+        p.setCompositionMode( QPainter::CompositionMode_SourceOver );
         p.drawPixmap(dest, picture, picture.rect());
     }
 }
