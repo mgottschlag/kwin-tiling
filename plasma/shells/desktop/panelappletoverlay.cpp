@@ -194,12 +194,22 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
         if (view != m_applet->view()) {
 
             Plasma::Containment *c = view->containment();
+
             c->addApplet(m_applet, pos);
+            syncOrientation();
+            syncGeometry();
 
             if (m_spacer) {
                 m_layout->removeItem(m_spacer);
                 m_spacer->deleteLater();
                 m_spacer = 0;
+            }
+
+            QGraphicsLinearLayout *newLayout = dynamic_cast<QGraphicsLinearLayout *>(c->layout());
+            if (newLayout && (c->formFactor() == Plasma::Vertical || c->formFactor() == Plasma::Horizontal)) {
+                m_layout->removeItem(m_applet);
+                m_layout = newLayout;
+                setParent(view);
             }
         }
     }
