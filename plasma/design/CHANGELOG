@@ -39,6 +39,7 @@ libplasma
         * Associate widgets with operations
     * Theme
         * Support compressed SVGs (*.svgz)
+        * Supports a pixmap cache and a SVG element rects cache for faster startup
     * Widgets
         * NEW: Plasma::Slider based on QSlider
         * NEW: Plasma::TabBar based on QTabBar, usable as both a standalone tabbar or as a tabwidget
@@ -170,6 +171,7 @@ Plugins/Addons
             * Remembers icon positions.
             * No longer blocks the GUI when loading large folders.
             * Shows a busy animation while loading folders / laying out icons.
+            * Works in panels looking like a popup menu
         * Default desktop containment
             * Wheel mouse == switch desktop
             * Creation of widgets on desktop containments puts them in empty areas, avoiding overlap
@@ -183,6 +185,10 @@ Plugins/Addons
             * Full keyboard support
             * New lists with scrollbars
             * Themes that match Plasma themes from kdeplasma-addons module
+        * Twitter
+            * When it is in the panel it is a popup, showing the avatar of the last person who sent a message and the numer of unread tweets as icon
+        * Trashcan
+            * Lets you configure system wide trash behaviour like size limits
 
     * DataEngines
         * NEW: Web site icons (favicons) engine
