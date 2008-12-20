@@ -478,21 +478,22 @@ KxkbCore::updateGroupsFromServer()
     const QList<LayoutUnit>& lus = xkbConfig.layouts;
     if( lus.count() > 0 ) {
         if( lus != m_kxkbConfig.m_layouts ) {
+            if( group >= m_kxkbConfig.m_layouts.count() )
+                group = 0;
             m_currentLayout = group;
             m_kxkbConfig.setConfiguredLayouts(xkbConfig);
             m_layoutOwnerMap->reset();
             initTray();
         }
         else {
-            kDebug() << "no change in layouts";
+            kDebug() << " no change in layouts";
         }
-
         updateIndicator(group, 1);
     }
     else {
-        kWarning() << "failed to get layouts from server";
+        kWarning() << " failed to get layouts from server";
         if( m_currentLayout != group && group < m_kxkbConfig.m_layouts.count() ) {
-	    kDebug() << "...tryin to set at least group" << group;
+	    kDebug() << " ...tryin to set at least group" << group;
 	    updateIndicator(group, 1);
         }
     }
