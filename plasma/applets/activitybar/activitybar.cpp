@@ -128,12 +128,19 @@ void ActivityBar::switchContainment(int newActive)
         return;
     }
 
+    Plasma::Corona *c = containment()->corona();
+    if (!c) {
+        return;
+    }
 
     const int myScreen = containment()->screen();
 
     //FIXME: this whole thing sounds like an hack isn't it?
-    if ((m_activeContainment < m_containments.count()) && !m_view || m_view->screen() != myScreen) {
-        m_view = qobject_cast<Plasma::View *>(m_containments[m_activeContainment]->view());
+    if (!m_view || m_view->screen() != myScreen) {
+        Plasma::Containment *cont = c->containmentForScreen(containment()->screen(), containment()->desktop() - 1);
+        if (cont) {
+            m_view = qobject_cast<Plasma::View *>(cont->view());
+        }
     }
 
     if (m_view && m_view->screen() != myScreen) {
