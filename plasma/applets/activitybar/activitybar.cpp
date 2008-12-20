@@ -124,14 +124,15 @@ void ActivityBar::constraintsEvent(Plasma::Constraints constraints)
 
 void ActivityBar::switchContainment(int newActive)
 {
-    if (newActive == m_activeContainment) {
+    if (newActive == m_activeContainment || !containment()) {
         return;
     }
 
-    const int myScreen = containment()?containment()->screen():-1;
+
+    const int myScreen = containment()->screen();
 
     //FIXME: this whole thing sounds like an hack isn't it?
-    if (!m_view || m_view->screen() != myScreen) {
+    if ((m_activeContainment < m_containments.count()) && !m_view || m_view->screen() != myScreen) {
         m_view = qobject_cast<Plasma::View *>(m_containments[m_activeContainment]->view());
     }
 
