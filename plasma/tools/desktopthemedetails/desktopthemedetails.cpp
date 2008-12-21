@@ -511,7 +511,7 @@ void DesktopThemeDetails::exportTheme()
                                       ThemeModel::PackageNameRole).toString();
         KStandardDirs dirs;
         QString themePath = dirs.locate("data", "desktoptheme/" + themeStoragePath);
-        QString expFileName = KFileDialog::getSaveFileName(KUrl(), "*.zip", this, "Export theme to file");
+        QString expFileName = KFileDialog::getSaveFileName(KUrl(), "*.zip", this, i18n("Export theme to file"));
         if (!expFileName.endsWith(".zip")) expFileName = expFileName + ".zip";
         if (!expFileName.isEmpty()) {
             KZip expFile(expFileName);
