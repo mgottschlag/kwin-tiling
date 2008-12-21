@@ -799,7 +799,7 @@ void runSplash( const char* them, bool t, int p )
     if( getenv( "KDEHOME" ) && getenv( "KDEHOME" )[ 0 ] )
         snprintf( kdehome, 1024, "%s", getenv( "KDEHOME" ));
     else
-        snprintf( kdehome, 1024, "%s/.kde", getenv( "HOME" ) ? getenv( "HOME" ) : "" );
+        snprintf( kdehome, 1024, "%s/"KDE_DEFAULT_HOME, getenv( "HOME" ) ? getenv( "HOME" ) : "" );
 
     // fetch the name of the theme which is also used as directory name.
     snprintf( theme_name, 1024, "%s", them );
