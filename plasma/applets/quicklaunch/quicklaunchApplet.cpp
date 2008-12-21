@@ -190,6 +190,8 @@ void QuicklaunchApplet::refactorUi()
             icon->show();
             m_innerLayout->addItem(icon);
         } else if (m_dialogLayout) {
+            icon->setMinimumSize(minSize);
+            icon->setMaximumSize(maxSize);
             icon->show();
             m_dialogLayout->addItem(icon);
         } else {

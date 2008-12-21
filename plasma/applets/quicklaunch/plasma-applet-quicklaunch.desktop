@@ -69,7 +69,7 @@ Comment[x-test]=xxLaunch your favourite Applicationsxx
 Comment[zh_CN]=启动您最常用的程序
 Comment[zh_TW]=啟動您最常用的應用程式
 
-Icon=kget
+Icon=fork
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
 
