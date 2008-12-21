@@ -13,7 +13,7 @@ kde4_add_plugin(plasma_containment_desktop ${desktop_SRCS})
 if(WIN32)
 target_link_libraries(plasma_containment_desktop ${KDE4_PLASMA_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS})
 else(WIN32)
-target_link_libraries(plasma_containment_desktop ${KDE4_PLASMA_LIBS} kworkspace ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS})
+target_link_libraries(plasma_containment_desktop ${KDE4_PLASMA_LIBS} kworkspace ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS} )
 endif(WIN32)
 
 install(TARGETS plasma_containment_desktop DESTINATION ${PLUGIN_INSTALL_DIR})

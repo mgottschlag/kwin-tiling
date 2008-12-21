@@ -260,17 +260,37 @@ void Panel::updateSize()
 void Panel::addPanel()
 {
     if (corona()) {
-        // make a panel at the top
         Containment* panel = corona()->addContainment("panel");
         panel->showConfigurationInterface();
 
         panel->setScreen(screen());
-        panel->setLocation(Plasma::TopEdge);
+
+        QList<Plasma::Location> freeEdges = corona()->freeEdges(screen());
+        kDebug() << freeEdges;
+        Plasma::Location destination;
+        if (freeEdges.contains(Plasma::TopEdge)) {
+            destination = Plasma::TopEdge;
+        } else if (freeEdges.contains(Plasma::BottomEdge)) {
+            destination = Plasma::BottomEdge;
+        } else if (freeEdges.contains(Plasma::LeftEdge)) {
+            destination = Plasma::LeftEdge;
+        } else if (freeEdges.contains(Plasma::RightEdge)) {
+            destination = Plasma::RightEdge;
+        } else destination = Plasma::TopEdge;
+
+        panel->setLocation(destination);
 
         // trigger an instant layout so we immediately have a proper geometry
         // rather than waiting around for the event loop
         panel->updateConstraints(Plasma::StartupCompletedConstraint);
         panel->flushPendingConstraintsEvents();
+
+        if (destination == Plasma::LeftEdge ||
+            destination == Plasma::RightEdge) {
+            panel->setMinimumSize(10, 35);
+            panel->setMaximumSize(35,Kephal::ScreenUtils::screenSize(screen()).height());
+            panel->resize(QSize(35, Kephal::ScreenUtils::screenSize(screen()).height()));
+        }
     }
 }
 
