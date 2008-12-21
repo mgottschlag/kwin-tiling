@@ -342,6 +342,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
                 facePainter.setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
 
+                facePainter.setFont(Plasma::Theme::defaultTheme()->font(Plasma::Theme::DefaultFont));
                 facePainter.drawText(textRect, Qt::AlignCenter, time);
             }
         }
