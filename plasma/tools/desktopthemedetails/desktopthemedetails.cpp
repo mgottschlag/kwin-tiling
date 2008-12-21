@@ -363,7 +363,6 @@ void DesktopThemeDetails::reloadConfig()
             while (!in.atEnd()) {
                line = in.readLine();
                settingsPair = line.split('=');
-
                m_themeReplacements[lst[settingsPair.at(0)]] = settingsPair.at(1);
                updateReplaceItemList(lst[settingsPair.at(0)]);
             }
@@ -395,7 +394,7 @@ void DesktopThemeDetails::save()
         if (theme == oldTheme) {
             theme = theme + '1';
         }
-        KIO::NetAccess::del(KUrl(dirs.locateLocal("data", "desktoptheme/" + theme +"/", false)), this);
+        KIO::NetAccess::del(KUrl(dirs.locateLocal("data", "desktoptheme/" + theme +'/', false)), this);
 
         //Prepare settings file for customized theme
         if (isCustomized(theme)) {
