@@ -305,8 +305,6 @@ DesktopThemeDetails::DesktopThemeDetails(QWidget* parent, const QVariantList &ar
     connect(m_enableAdvanced, SIGNAL(toggled(bool)), this, SLOT(toggleAdvancedVisible()));
     connect(m_removeThemeButton, SIGNAL(clicked()), this, SLOT(removeTheme()));
     connect(m_exportThemeButton, SIGNAL(clicked()), this, SLOT(exportTheme()));
-    //Reenabled when function is implemented
-    m_exportThemeButton->setEnabled(false);
     resetThemeDetails();
     m_themeCustomized = false;
 
@@ -499,27 +497,36 @@ void DesktopThemeDetails::removeTheme()
 
 void DesktopThemeDetails::exportTheme()
 {
-    KMessageBox::information(this, i18n("Unfortunately, this feature is not yet implemented."), i18n("Export Desktop Theme"));
-    return;
-
-    /* FIXME: Commented till I can figure out how to use KZip
     if (m_themeCustomized ||
-             (m_theme->currentText() == i18n("(Customized)") && m_newThemeName->text() == "")) {
+        (m_theme->currentText() == i18n("(Customized)") && m_newThemeName->text() == "")) {
         KMessageBox::information(this, i18n("Please apply theme item changes (with a new theme name) before attempting to export theme."), i18n("Export Desktop Theme"));
     } else {
         QString themeStoragePath = m_theme->itemData(m_theme->currentIndex(),
-                                      ThemeModel::PackageNameRole).toString();
+                                                     ThemeModel::PackageNameRole).toString();
         KStandardDirs dirs;
-        QString themePath = dirs.locate("data", "desktoptheme/" + themeStoragePath);
-        QString expFileName = KFileDialog::getSaveFileName(KUrl(), "*.zip", this, i18n("Export theme to file"));
-        if (!expFileName.endsWith(".zip")) expFileName = expFileName + ".zip";
-        if (!expFileName.isEmpty()) {
-            KZip expFile(expFileName);
-            expFile.open(QIODevice::WriteOnly);
-            expFile.addLocalDirectory(themePath, themeStoragePath);
-            expFile.close();
+        kDebug()<<" themeStoragePath "<<themeStoragePath;
+
+        if ( themeStoragePath == "default")
+        {
+            KConfigGroup cfg = KConfigGroup(KSharedConfig::openConfig("plasmarc"), "Theme");
+            themeStoragePath = cfg.readEntry("name", "default");
         }
-    } */
+
+        QString themePath = dirs.findResource("data", "desktoptheme/" + themeStoragePath + "/metadata.desktop");
+        if (!themePath.isEmpty())
+        {
+            QString expFileName = KFileDialog::getSaveFileName(KUrl(), "*.zip", this, i18n("Export theme to file"));
+            if (!expFileName.endsWith(".zip"))
+                expFileName = expFileName + ".zip";
+            if (!expFileName.isEmpty()) {
+                KUrl path(themePath);
+                KZip expFile(expFileName);
+                expFile.open(QIODevice::WriteOnly);
+                expFile.addLocalDirectory(path.directory (), themeStoragePath);
+                expFile.close();
+            }
+        }
+    }
 
 }
 
