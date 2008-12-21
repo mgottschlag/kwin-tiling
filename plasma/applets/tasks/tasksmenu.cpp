@@ -105,17 +105,24 @@ void TasksMenu::paintEvent(QPaintEvent *event)
 
     painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
 
+    qreal left = 0, right = 0, top = 0, bottom = 0;
+    Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
 
     foreach (QAction *a, actions()) {
         QRect actionRect(actionGeometry(a));
+
+        if (left == 0) {
+            itemBackground->resizeFrame(actionRect.size());
+            itemBackground->getMargins(left, top, right, bottom);
+        }
+
         QRect iconRect(QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignLeft | Qt::AlignVCenter,
-                              QSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall), actionRect));
+                              QSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall),
+                              actionRect.adjusted(left, 0, -right, 0)));
         QRect textRect(QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignRight | Qt::AlignVCenter,
-                              QSize(actionRect.width()-iconRect.width()-3, actionRect.height()), actionRect));
+                              QSize(actionRect.width() - iconRect.left() - 3, actionRect.height()), actionRect));
 
         if (activeAction() == a && m_applet->itemBackground()) {
-            Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
-            itemBackground->resizeFrame(actionRect.size());
             itemBackground->paintFrame(&painter, actionRect.topLeft());
         }
 
