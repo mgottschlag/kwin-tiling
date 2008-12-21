@@ -193,6 +193,8 @@ QString BackgroundPackage::findBackground(const QSize &size,
         return QString();
     }
 
+    //kDebug() << "wanted" << size;
+
     // choose the nearest resolution
     float best = FLT_MAX;
     QString bestImage;
@@ -226,7 +228,8 @@ float BackgroundPackage::distance(const QSize& size,
     float delta = size.width() * size.height() -
                   desired.width() * desired.height();
     // scale down to about 1.0
-    delta /= 1000000.0;
+    delta /= ((desired.width() * desired.height())+(size.width() * size.height()))/2;
+
 
     switch (method) {
     case Scale: {
@@ -234,8 +237,8 @@ float BackgroundPackage::distance(const QSize& size,
         // then in areas. Prefer scaling down.
         float deltaRatio = 1.0;
         if (size.height() > 0 && desired.height() > 0) {
-            deltaRatio = size.width() / size.height() -
-                         desired.width() / desired.height();
+            deltaRatio = float(size.width()) / float(size.height()) -
+                         float(desired.width()) / float(desired.height());
         }
         return fabs(deltaRatio) * 3.0 + (delta >= 0.0 ? delta : -delta + 5.0);
     }
