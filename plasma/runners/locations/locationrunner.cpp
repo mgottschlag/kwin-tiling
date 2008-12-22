@@ -95,7 +95,7 @@ void LocationsRunner::match(Plasma::RunnerContext &context)
         context.addMatch(term, match);
     } else if (type == Plasma::RunnerContext::NetworkLocation ||
                (type == Plasma::RunnerContext::UnknownType &&
-                term.contains(QRegExp("^[a-zA-Z0-9]+\\.")))) {
+                term.contains(QRegExp("^[a-zA-Z0-9\\-\\.]+\\.[a-zA-Z]{2,6}")))) {
         KUrl url(term);
         processUrl(url, term);
         QMutexLocker lock(bigLock());
