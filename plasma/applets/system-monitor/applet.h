@@ -92,6 +92,7 @@ class SM_EXPORT Applet : public Plasma::Applet
         void setMinimumWidth(qreal minimumWidth) { m_minimumWidth = minimumWidth; };
 
         virtual bool addMeter(const QString&) { return false; };
+        virtual void setNoAvailableSources(bool available) { return; };
         virtual void deleteMeters(QGraphicsLinearLayout* layout = 0);
         virtual void setDetail(Detail detail);
         //QSizeF sizeHint(Qt::SizeHint which, const QSizeF& constraint = QSizeF()) const;

@@ -22,6 +22,7 @@
 #include <Plasma/Meter>
 #include <Plasma/Containment>
 #include <Plasma/Theme>
+#include <Plasma/IconWidget>
 #include <KConfigDialog>
 #include <QGraphicsLinearLayout>
 #include <QTimer>
@@ -191,6 +192,12 @@ bool Temperature::addMeter(const QString& source)
     //setPreferredItemHeight(layout->preferredSize().height());
     setPreferredItemHeight(80);
     return true;
+}
+
+void Temperature::setNoAvailableSources(bool available)
+{
+    KIcon temperatureIcon(icon());
+    mainLayout()->addItem(new Plasma::IconWidget(temperatureIcon, "", this));
 }
 
 void Temperature::dataUpdated(const QString& source,

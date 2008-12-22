@@ -177,6 +177,9 @@ void Applet::connectToEngine()
         m_header->setText(m_title);
         mainLayout()->addItem(m_header);
     }
+    if (m_items.count() == 0){
+        setNoAvailableSources(true);
+    }
     foreach (const QString &item, m_items) {
         if (addMeter(item)) {
             connectSource(item);
