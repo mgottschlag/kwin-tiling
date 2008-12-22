@@ -32,6 +32,7 @@ namespace Plasma {
     class Meter;
     class SignalPlotter;
     class Frame;
+    class IconWidget;
 }
 
 namespace SM {
@@ -92,7 +93,7 @@ class SM_EXPORT Applet : public Plasma::Applet
         void setMinimumWidth(qreal minimumWidth) { m_minimumWidth = minimumWidth; };
 
         virtual bool addMeter(const QString&) { return false; };
-        virtual void setNoAvailableSources(bool available) { return; };
+        void displayNoAvailableSources();
         virtual void deleteMeters(QGraphicsLinearLayout* layout = 0);
         virtual void setDetail(Detail detail);
         //QSizeF sizeHint(Qt::SizeHint which, const QSizeF& constraint = QSizeF()) const;
@@ -111,6 +112,7 @@ class SM_EXPORT Applet : public Plasma::Applet
         QHash<QString, Plasma::Meter*> m_meters;
         QHash<QString, Plasma::SignalPlotter*> m_plotters;
         Qt::Orientation m_orientation;
+        Plasma::IconWidget *m_noSourcesIcon;
         Mode m_mode;
         Detail m_detail;
         qreal m_minimumWidth;

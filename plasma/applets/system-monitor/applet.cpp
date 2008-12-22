@@ -20,6 +20,8 @@
 #include <Plasma/DataEngine>
 #include <Plasma/Containment>
 #include <Plasma/Frame>
+#include <Plasma/IconWidget>
+#include <KIcon>
 #include <KDebug>
 #include <QGraphicsLinearLayout>
 
@@ -36,6 +38,7 @@ Applet::Applet(QObject *parent, const QVariantList &args)
      m_engine(0),
      m_ratioOrientation(Qt::Vertical),
      m_orientation(Qt::Vertical),
+     m_noSourcesIcon(0),
      m_mode(Desktop),
      m_detail(Low),
      m_minimumWidth(DEFAULT_MINIMUM_WIDTH),
@@ -178,7 +181,8 @@ void Applet::connectToEngine()
         mainLayout()->addItem(m_header);
     }
     if (m_items.count() == 0){
-        setNoAvailableSources(true);
+        displayNoAvailableSources();
+        return;
     }
     foreach (const QString &item, m_items) {
         if (addMeter(item)) {
@@ -285,6 +289,14 @@ void Applet::deleteMeters(QGraphicsLinearLayout* layout)
         delete item;
     }
 }
+
+void Applet::displayNoAvailableSources()
+{
+    KIcon appletIcon(icon());
+    m_noSourcesIcon = new Plasma::IconWidget(appletIcon, "", this);
+    mainLayout()->addItem(m_noSourcesIcon);
+}
+
 /*
 QSizeF Applet::sizeHint(Qt::SizeHint which, const QSizeF& constraint) const
 {

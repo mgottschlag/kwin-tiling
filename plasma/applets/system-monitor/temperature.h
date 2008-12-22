@@ -55,7 +55,6 @@ class Temperature : public SM::Applet
 
         QString title(const QString& source);
         bool addMeter(const QString& source);
-        void setNoAvailableSources(bool available);
         bool isValidDevice(const QString& uuid, Plasma::DataEngine::Data* data);
 };
 
