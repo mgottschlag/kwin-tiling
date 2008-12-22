@@ -1,5 +1,12 @@
 project(KDEBASE_WORKSPACE)
 
+# Used e.g. in KDE4WorkspaceConfig.cmake, Alex
+set(KDE4WORKSPACE_VERSION_MAJOR 4)
+set(KDE4WORKSPACE_VERSION_MINOR 2)
+set(KDE4WORKSPACE_VERSION_PATCH 0)
+set(KDE4WORKSPACE_VERSION ${KDE4WORKSPACE_VERSION_MAJOR}.${KDE4WORKSPACE_VERSION_MINOR}.${KDE4WORKSPACE_VERSION_PATCH} )
+
+
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH} )
 
@@ -174,7 +181,7 @@ macro(MAKE_INSTALL_PATH_ABSOLUTE out in)
    if (IS_ABSOLUTE "${in}")    # IS_ABSOLUTE is new since cmake 2.4.8
       set(${out} "${in}")
    else (IS_ABSOLUTE "${in}")
-      set(${out} "\${KDEPIMLIBS_INSTALL_DIR}/${in}")
+      set(${out} "\${KDE4WORKSPACE_INSTALL_DIR}/${in}")
    endif (IS_ABSOLUTE "${in}")
 endmacro(MAKE_INSTALL_PATH_ABSOLUTE out in)
 
@@ -209,10 +216,24 @@ set(KDE4WORKSPACE_TARGET_PREFIX KDE4Workspace__)
 
 configure_file(KDE4WorkspaceConfig.cmake.in "${CMAKE_CURRENT_BINARY_DIR}/KDE4WorkspaceConfig.cmake" @ONLY)
 
+# this file will be installed too and will be used by cmake when searching for the Config.cmake file to check the version of kdepimlibs, Alex
+macro_write_basic_cmake_version_file(${CMAKE_CURRENT_BINARY_DIR}/KDE4WorkspaceConfigVersion.cmake 
+                                     ${KDE4WORKSPACE_VERSION_MAJOR} ${KDE4WORKSPACE_VERSION_MINOR} ${KDE4WORKSPACE_VERSION_PATCH})
+
+set(_KDE4WorkspaceConfig_INSTALL_DIR ${LIB_INSTALL_DIR}/KDE4Workspace-${KDE4WORKSPACE_VERSION}/cmake)
+# places where find_package() looks for FooConfig.cmake files:
+# CMake >= 2.6.0 looks in lib/Foo*/cmake/, CMake >= 2.6.3 also looks in
+# lib/cmake/Foo*/, which packagers prefer. So they can set the KDE4_USE_COMMON_CMAKE_PACKAGE_CONFIG_DIR
+# option to have kdepimlibs install its Config file there. Alex
+if(KDE4_USE_COMMON_CMAKE_PACKAGE_CONFIG_DIR)
+   set(_KDE4WorkspaceConfig_INSTALL_DIR ${LIB_INSTALL_DIR}/cmake/KDE4Workspace-${KDE4WORKSPACE_VERSION} )
+endif(KDE4_USE_COMMON_CMAKE_PACKAGE_CONFIG_DIR)
+
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/KDE4WorkspaceConfig.cmake
-        DESTINATION ${LIB_INSTALL_DIR}/KDE4Workspace/cmake)
+              ${CMAKE_CURRENT_BINARY_DIR}/KDE4WorkspaceConfigVersion.cmake
+        DESTINATION ${_KDE4WorkspaceConfig_INSTALL_DIR})
 
 install(EXPORT kdeworkspaceLibraryTargets 
         NAMESPACE ${KDE4WORKSPACE_TARGET_PREFIX}
-        DESTINATION ${LIB_INSTALL_DIR}/KDE4Workspace/cmake
+        DESTINATION ${_KDE4WorkspaceConfig_INSTALL_DIR}
         FILE KDE4WorkspaceLibraryTargets.cmake )
