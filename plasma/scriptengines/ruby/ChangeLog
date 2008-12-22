@@ -1,3 +1,7 @@
+2008-12-22  Richard Dale  <richard.j.dale@gmail.com>
+* Changed the tiger applet example to find its tiger.svg resource from within
+  the plasmoid package. Thanks to Rany Keddo for helping to get it working.
+
 2008-12-01  Richard Dale  <richard.j.dale@gmail.com>
 * Added updateAllSources() and removeSource() slots to the 
   PlasmScripting::DataEngine

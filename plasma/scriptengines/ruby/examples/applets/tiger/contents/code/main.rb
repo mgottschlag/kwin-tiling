@@ -8,7 +8,7 @@ module RubyTiger
 
     def init
       @svg = Plasma::Svg.new(self)
-      @svg.imagePath = 'widgets/tiger'
+      @svg.imagePath = package.filePath("images", "tiger.svg")
     end
 
     def paintInterface(painter, option, contentsRect)
