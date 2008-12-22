@@ -122,4 +122,14 @@ void TaskSource::updateTask(::TaskManager::TaskChanges taskChanges)
     checkForUpdate();
 }
 
+void TaskSource::updateDesktop(int desktop)
+{
+    Q_UNUSED(desktop);
+    bool onCurrentDesktop = m_task->isOnCurrentDesktop();
+    if (data()["onCurrentDesktop"].toBool() != onCurrentDesktop) {
+        setData("onCurrentDesktop", onCurrentDesktop);
+        checkForUpdate();
+    }
+}
+
 #include "tasksource.moc"

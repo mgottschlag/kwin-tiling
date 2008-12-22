@@ -52,6 +52,7 @@ class TaskSource : public Plasma::DataContainer
     private slots:
         void updateStartup(::TaskManager::TaskChanges startupChanges);
         void updateTask(::TaskManager::TaskChanges taskChanges);
+        void updateDesktop(int desktop);
 
     private:
         friend class TasksEngine;

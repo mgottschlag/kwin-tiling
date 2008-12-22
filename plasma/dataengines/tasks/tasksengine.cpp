@@ -68,7 +68,6 @@ void TasksEngine::init()
     connect(TaskManager::TaskManager::self(), SIGNAL(startupRemoved(StartupPtr)), this, SLOT(startupRemoved(StartupPtr)));
     connect(TaskManager::TaskManager::self(), SIGNAL(taskAdded(TaskPtr)), this, SLOT(taskAdded(TaskPtr)));
     connect(TaskManager::TaskManager::self(), SIGNAL(taskRemoved(TaskPtr)), this, SLOT(taskRemoved(TaskPtr)));
-    connect(TaskManager::TaskManager::self(), SIGNAL(desktopChanged(int)), this, SLOT(desktopChanged(int)));
 }
 
 void TasksEngine::startupAdded(StartupPtr startup)
@@ -95,21 +94,6 @@ void TasksEngine::taskRemoved(TaskPtr task)
     removeSource(getTaskName(task));
 }
 
-void TasksEngine::desktopChanged(int desktop)
-{
-    Q_UNUSED(desktop);
-    QHashIterator <QString, Plasma::DataContainer*> it(containerDict());
-
-    while (it.hasNext()) {
-        TaskSource *source =  static_cast<TaskSource*>(it.next().value());
-        bool onCurrent = source->m_task->isOnCurrentDesktop();
-        if (source->data()["onCurrentDesktop"].toBool() != onCurrent) {
-            source->setData("onCurrentDesktop", onCurrent);
-            source->checkForUpdate();
-        }
-    }
-}
-
 void TasksEngine::addStartup(StartupPtr startup)
 {
     TaskSource *taskSource = new TaskSource(startup, this);
@@ -121,6 +105,7 @@ void TasksEngine::addTask(TaskPtr task)
 {
     TaskSource *taskSource = new TaskSource(task, this);
     connect(task.constData(), SIGNAL(changed(::TaskManager::TaskChanges)), taskSource, SLOT(updateTask(::TaskManager::TaskChanges)));
+    connect(TaskManager::TaskManager::self(), SIGNAL(desktopChanged(int)), taskSource, SLOT(updateDesktop(int)));
     addSource(taskSource);
 }
 
