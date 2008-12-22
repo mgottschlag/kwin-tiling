@@ -283,9 +283,9 @@ QHash<QGraphicsLayoutItem*, QRectF> CompactLayout::Private::calculateGeometries(
             } else if (xDelta >= 0 && yDelta < 0) {
                 direction = Qt::Vertical;
             // Then extend based on expanding policy
-            } else if (sizePolicy.horizontalPolicy() == QSizePolicy::Expanding) {
+            } else if (sizePolicy.horizontalPolicy() != QSizePolicy::Expanding) {
                 direction = Qt::Horizontal;
-            } else if (sizePolicy.verticalPolicy() == QSizePolicy::Expanding) {
+            } else if (sizePolicy.verticalPolicy() != QSizePolicy::Expanding) {
                 direction = Qt::Vertical;
             // Otherwise try to keep the shape of a square
             } else if (yPositions.last() >= xPositions.last()) {

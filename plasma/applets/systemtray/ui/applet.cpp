@@ -159,11 +159,11 @@ void Applet::constraintsEvent(Plasma::Constraints constraints)
 {
     setBackgroundHints(NoBackground);
     if (constraints & Plasma::FormFactorConstraint) {
-        QSizePolicy policy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+        QSizePolicy policy(QSizePolicy::Preferred, QSizePolicy::Preferred);
         policy.setHeightForWidth(true);
         bool vertical = formFactor() == Plasma::Vertical;
 
-        if (vertical) {
+        if (!vertical) {
             policy.setVerticalPolicy(QSizePolicy::Expanding);
         } else {
             policy.setHorizontalPolicy(QSizePolicy::Expanding);
