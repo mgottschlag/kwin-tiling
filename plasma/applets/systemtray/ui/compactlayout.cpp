@@ -24,7 +24,7 @@
 #include <QtCore/QHash>
 
 #include <QtGui/QGraphicsWidget>
-
+#include <kdebug.h>
 
 namespace SystemTray
 {
@@ -214,7 +214,15 @@ QRectF CompactLayout::Private::boundingRect(const QList<QRectF> &rects) const
 
 QHash<QGraphicsLayoutItem*, QRectF> CompactLayout::Private::calculateGeometries(const QRectF &geom, Qt::SizeHint which, const QSizeF &constraint) const
 {
-    QSizePolicy sizePolicy = q->parentLayoutItem()->sizePolicy();
+    QSizePolicy sizePolicy;
+    //FIXME: not really pretty: try to fetch it from the grandparent (assumption on how taskarea is done) otherwise from the parent
+    if (q->parentLayoutItem()->parentLayoutItem()) {
+        sizePolicy = q->parentLayoutItem()->parentLayoutItem()->sizePolicy();
+    } else if (q->parentLayoutItem()) {
+        sizePolicy = q->parentLayoutItem()->sizePolicy();
+    } else {
+        sizePolicy = q->sizePolicy();
+    }
 
     QHash<QGraphicsLayoutItem*, QRectF> geometries;
     QList<qreal> xPositions;
@@ -261,21 +269,30 @@ QHash<QGraphicsLayoutItem*, QRectF> CompactLayout::Private::calculateGeometries(
         // be extended.
         Qt::Orientation direction;
 
-        // Extend based on constraints
-        if (yPositions.last() + rect.height() > constraint.height()) {
-            direction = Qt::Horizontal;
-        } else if (xPositions.last() + rect.width() > constraint.width()) {
-            direction = Qt::Vertical;
-        // Then extend based on expanding policy
-        } else if (sizePolicy.horizontalPolicy() & QSizePolicy::ExpandFlag) {
-            direction = Qt::Horizontal;
-        } else if (sizePolicy.verticalPolicy() & QSizePolicy::ExpandFlag) {
-            direction = Qt::Vertical;
-        // Otherwise try to keep the shape of a square
-        } else if (yPositions.last() >= xPositions.last()) {
-            direction = Qt::Horizontal;
-        } else {
-            direction = Qt::Vertical;
+        {
+            const int yDelta = yPositions.last() + rect.height() - constraint.height();
+            const int xDelta = xPositions.last() + rect.width() - constraint.width();
+            //a layout without elements will have height==0 when vertical width == 0 when horizontal
+            if (int(constraint.height()) == 0 && constraint.width() > 0) {
+                direction = Qt::Vertical;
+            } else if (int(constraint.width()) == 0 && constraint.height() > 0) {
+                direction = Qt::Horizontal;
+            // Extend based on constraints
+            } else if (yDelta > 0 && xDelta < 0) {
+                direction = Qt::Horizontal;
+            } else if (xDelta >= 0 && yDelta < 0) {
+                direction = Qt::Vertical;
+            // Then extend based on expanding policy
+            } else if (sizePolicy.horizontalPolicy() == QSizePolicy::Expanding) {
+                direction = Qt::Horizontal;
+            } else if (sizePolicy.verticalPolicy() == QSizePolicy::Expanding) {
+                direction = Qt::Vertical;
+            // Otherwise try to keep the shape of a square
+            } else if (yPositions.last() >= xPositions.last()) {
+                direction = Qt::Horizontal;
+            } else {
+                direction = Qt::Vertical;
+            }
         }
 
         if (direction == Qt::Horizontal) {

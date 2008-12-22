@@ -164,9 +164,9 @@ void Applet::constraintsEvent(Plasma::Constraints constraints)
         bool vertical = formFactor() == Plasma::Vertical;
 
         if (vertical) {
-            policy.setHorizontalPolicy(QSizePolicy::Expanding);
-        } else {
             policy.setVerticalPolicy(QSizePolicy::Expanding);
+        } else {
+            policy.setHorizontalPolicy(QSizePolicy::Expanding);
         }
 
         setSizePolicy(policy);
