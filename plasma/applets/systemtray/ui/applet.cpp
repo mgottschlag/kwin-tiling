@@ -315,7 +315,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
         connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 
-        parent->setMainWidget(d->configInterface);
+        parent->addPage(d->configInterface, i18n("Auto Hide"));
     }
 
     QListWidget *visibleList = d->configInterface->availableListWidget();
