@@ -368,12 +368,7 @@ void LayoutWidget::updatePreferredSize()
     if (m_layout->count() > 0) {
         AbstractTaskItem *item = dynamic_cast<AbstractTaskItem *>(m_layout->itemAt(0));
         Q_ASSERT(item);
-        if (m_applet->formFactor() == Plasma::Vertical) {
-            m_layout->setPreferredSize(item->basicPreferredSize().width()*m_layout->rowCount(), item->basicPreferredSize().height()*m_layout->columnCount());
-        } else {
-            m_layout->setPreferredSize(item->basicPreferredSize().width()*m_layout->columnCount(), item->basicPreferredSize().height()*m_layout->rowCount());
-            //kDebug() << "horizontal size set";
-        }
+        m_layout->setPreferredSize(item->basicPreferredSize().width()*m_layout->columnCount(), item->basicPreferredSize().height()*m_layout->rowCount());
     //Empty taskbar, arbitrary small value
     } else {
         kDebug() << "Empty layout!!!!!!!!!!!!!!!!!!";
