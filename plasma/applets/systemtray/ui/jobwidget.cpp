@@ -24,43 +24,59 @@
 
 #include <QFont>
 #include <QAction>
+#include <QGraphicsGridLayout>
 
 #include <plasma/widgets/meter.h>
 #include <Plasma/DataEngine>
 #include <Plasma/Service>
 #include <Plasma/ExtenderItem>
 #include <Plasma/Theme>
+#include <Plasma/Label>
+#include <Plasma/Meter>
 
 JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
-    : Plasma::Meter(parent),
+    : QGraphicsWidget(parent),
     m_extenderItem(parent),
     m_job(job)
 {
     Q_ASSERT(m_extenderItem);
 
+    m_meter = new Plasma::Meter(this);
+    m_meter->setSvg("widgets/bar_meter_horizontal");
+    m_meter->setMeterType(Plasma::Meter::BarMeterHorizontal);
+    m_meter->setMaximumHeight(16);
+    m_meter->setMaximum(100);
+    m_meter->setValue(0);
+
+    m_fromNameLabel = new Plasma::Label(this);
+    m_fromLabel = new Plasma::Label(this);
+    m_toNameLabel = new Plasma::Label(this);
+    m_toLabel = new Plasma::Label(this);
+    m_speedLabel = new Plasma::Label(this);
+    m_processedLabel = new Plasma::Label(this);
+    m_totalBytesLabel = new Plasma::Label(this);
+
+    m_fromNameLabel->setAlignment(Qt::AlignRight);
+    m_fromLabel->setAlignment(Qt::AlignLeft);
+    m_toNameLabel->setAlignment(Qt::AlignRight);
+    m_toLabel->setAlignment(Qt::AlignLeft);
+    m_speedLabel->setAlignment(Qt::AlignRight);
+    m_processedLabel->setAlignment(Qt::AlignLeft);
+    m_totalBytesLabel->setAlignment(Qt::AlignRight);
+
+    QGraphicsGridLayout *layout = new QGraphicsGridLayout(this);
+    layout->addItem(m_fromNameLabel, 0, 0);
+    layout->addItem(m_fromLabel, 0, 1, 1, 2);
+    layout->addItem(m_toNameLabel, 1, 0);
+    layout->addItem(m_toLabel, 1, 1, 1, 2);
+
+    layout->addItem(m_speedLabel, 2, 0);
+    layout->addItem(m_processedLabel, 2, 1);
+    layout->addItem(m_totalBytesLabel, 2, 3);
+
+    layout->addItem(m_meter, 3, 1, 1, 3);
+
     setMinimumWidth(350);
-    setSvg("systemtray/bar_meter_horizontal");
-    setMeterType(Plasma::Meter::BarMeterHorizontal);
-    setMaximum(100);
-
-    Plasma::Theme *theme = Plasma::Theme::defaultTheme();
-
-    QColor color = theme->color(Plasma::Theme::TextColor);
-    QFont font = theme->font(Plasma::Theme::DefaultFont);
-    for (int i = 0; i < 7; i++) {
-        setLabelColor(i, color);
-        setLabelFont(i, font);
-    }
-
-    setLabelAlignment(0, Qt::AlignRight);
-    setLabelAlignment(1, Qt::AlignLeft);
-    setLabelAlignment(2, Qt::AlignRight);
-    setLabelAlignment(3, Qt::AlignLeft);
-    setLabelAlignment(4, Qt::AlignRight);
-    setLabelAlignment(5, Qt::AlignLeft);
-    setLabelAlignment(6, Qt::AlignRight);
-
-    setValue(0);
 
     if (m_job) {
         connect(m_job, SIGNAL(changed()),
@@ -121,13 +137,13 @@ void JobWidget::destroy()
         //TODO: make configurable:
         m_extenderItem->setAutoExpireDelay(15000);
         updateJob();
-        setValue(100);
+        m_meter->setValue(100);
     }
 }
 
 void JobWidget::updateJob()
 {
-    setValue(m_job->percentage());
+    m_meter->setValue(m_job->percentage());
 
     Plasma::ExtenderItem *item = m_extenderItem;
 
@@ -179,44 +195,40 @@ void JobWidget::updateJob()
                                          m_job->state() != SystemTray::Job::Stopped);
     }
 
-    setLabel(4, m_job->speed());
-    setLabel(5, KGlobal::locale()->formatByteSize(m_job->processedAmounts()["bytes"]));
-    setLabel(6, KGlobal::locale()->formatByteSize(m_job->totalAmounts()["bytes"]));
+    m_speedLabel->setText(m_job->speed());
+    m_processedLabel->setText(KGlobal::locale()->formatByteSize(m_job->processedAmounts()["bytes"]));
+    m_totalBytesLabel->setText(KGlobal::locale()->formatByteSize(m_job->totalAmounts()["bytes"]));
 
     item->setIcon(m_job->applicationIconName());
 }
 
 void JobWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
-    Meter::resizeEvent(event);
+    Q_UNUSED(event)
     updateLabels();
 }
 
 void JobWidget::updateLabels()
 {
-    if (svg().isEmpty()) {
-        return;
-    }
-
     Plasma::Theme *theme = Plasma::Theme::defaultTheme();
     QFont font = theme->font(Plasma::Theme::DefaultFont);
     QFontMetricsF fm(font);
     if (!labelName0.isEmpty()) {
-        setLabel(0, QString("%1: ").arg(labelName0));
+        m_fromNameLabel->setText(QString("%1: ").arg(labelName0));
     }
     if (label0.startsWith("file://")) {
         label0 = KUrl(label0).toLocalFile();
     }
 
-    setLabel(1, fm.elidedText(label0, Qt::ElideMiddle, labelRect(1).width()));
+    m_fromLabel->setText(fm.elidedText(label0, Qt::ElideMiddle, m_fromLabel->size().width()));
 
     if (!labelName1.isEmpty()) {
-        setLabel(2, QString("%1: ").arg(labelName1));
+        m_toNameLabel->setText(QString("%1: ").arg(labelName1));
     }
     if (label1.startsWith("file://")) {
         label1 = KUrl(label1).toLocalFile();
     }
-    setLabel(3, fm.elidedText(label1, Qt::ElideMiddle, labelRect(3).width()));
+    m_toLabel->setText(fm.elidedText(label1, Qt::ElideMiddle, m_toLabel->size().width()));
 }
 
 #include "jobwidget.moc"

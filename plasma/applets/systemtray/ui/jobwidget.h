@@ -24,14 +24,17 @@
 
 #include <KJob>
 
+#include <QGraphicsWidget>
+
 #include <Plasma/Service>
 #include <Plasma/ExtenderItem>
 #include <plasma/dataengine.h>
-#include <plasma/widgets/meter.h>
 
 namespace Plasma
 {
     class ExtenderItem;
+    class Label;
+    class Meter;
 } // namespace Plasma
 
 namespace SystemTray
@@ -39,7 +42,7 @@ namespace SystemTray
     class Job;
 }
 
-class JobWidget : public Plasma::Meter
+class JobWidget : public QGraphicsWidget
 {
     Q_OBJECT
 
@@ -59,6 +62,15 @@ class JobWidget : public Plasma::Meter
 
         Plasma::ExtenderItem *m_extenderItem;
         SystemTray::Job *m_job;
+
+        Plasma::Meter *m_meter;
+        Plasma::Label *m_fromNameLabel;
+        Plasma::Label *m_fromLabel;
+        Plasma::Label *m_toNameLabel;
+        Plasma::Label *m_toLabel;
+        Plasma::Label *m_speedLabel;
+        Plasma::Label *m_processedLabel;
+        Plasma::Label *m_totalBytesLabel;
 
         QString labelName0;
         QString labelName1;

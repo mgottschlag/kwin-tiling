@@ -43,4 +43,3 @@ endif(HAVE_XCOMPOSITE AND HAVE_XFIXES AND HAVE_XDAMAGE)
 
 install(TARGETS plasma_applet_systemtray DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-applet-systemtray.desktop DESTINATION ${SERVICES_INSTALL_DIR})
-install(FILES bar_meter_horizontal.svgz DESTINATION ${DATA_INSTALL_DIR}/desktoptheme/default/systemtray/)
