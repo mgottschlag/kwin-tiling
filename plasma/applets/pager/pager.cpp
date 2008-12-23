@@ -1071,9 +1071,28 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
         }
 
         if (!desktopText.isEmpty()) {
-            QPixmap result = Plasma::PaintUtils::shadowText(desktopText, defaultTextColor, shadowColor, QPoint(1,2), 2);
+            int radius = 2;
+            QPixmap result = Plasma::PaintUtils::shadowText(desktopText,
+                                                            KGlobalSettings::smallestReadableFont(),
+                                                            defaultTextColor,
+                                                            shadowColor, QPoint(0, 0), radius);
+            QRectF target = m_rects[i];
             //take also shadow position and radius into account
-            painter->drawPixmap(m_rects[i].center() - result.rect().center() + QPoint(0, 1), result);
+            //kDebug() << target << result.height();
+            if (target.height() >= result.height() - radius * 2) {
+                QPointF paintPoint = target.center() - (result.rect().center() + QPoint(radius, radius)); 
+
+                if (paintPoint.x() + radius < target.x() + 1) {
+                    paintPoint.setX(target.x() + 1 - radius);
+                }
+
+                if (paintPoint.y() + radius < target.y() + 1) {
+                    paintPoint.setY(target.y() + 1 - radius);
+                }
+
+                target.moveTopLeft(QPointF(0, 0));
+                painter->drawPixmap(paintPoint, result, target);
+            }
         }
     }
 }
