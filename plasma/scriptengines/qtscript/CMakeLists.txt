@@ -15,9 +15,9 @@ kde4_add_plugin(plasma_scriptengine_qscript
 target_link_libraries(plasma_scriptengine_qscript
                        ${KDE4_KDECORE_LIBS}
                        plasma
-                       ${QT_QTXML_LIBRARY}
                        ${QT_QTSCRIPT_LIBRARY}
                        ${QT_QTUITOOLS_LIBRARY}
+                       ${QT_QTXML_LIBRARY}
                        )
 
 install(TARGETS plasma_scriptengine_qscript
@@ -35,9 +35,9 @@ kde4_add_plugin(plasma_runner_scriptengine_qscript
 target_link_libraries(plasma_runner_scriptengine_qscript
                        ${KDE4_KDECORE_LIBS}
                        plasma
-                       ${QT_QTXML_LIBRARY}
                        ${QT_QTSCRIPT_LIBRARY}
                        ${QT_QTUITOOLS_LIBRARY}
+                       ${QT_QTXML_LIBRARY}
                        )
 
 install(TARGETS plasma_runner_scriptengine_qscript
