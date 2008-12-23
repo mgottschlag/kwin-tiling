@@ -52,6 +52,7 @@ SystemMonitor::~SystemMonitor()
     }
     KConfigGroup cg = config();
     cg.writeEntry("applets", appletNames);
+
 }
 
 void SystemMonitor::init()
@@ -84,6 +85,7 @@ void SystemMonitor::init()
     m_widget->setLayout(m_layout);
     checkGeometry();
 
+    m_widget->setMinimumSize(QSize(234 + 20 + 23, 32 + 20 + 25));
     setPopupIcon("utilities-system-monitor");
 }
 
@@ -101,6 +103,7 @@ void SystemMonitor::toggled(bool toggled)
 
 void SystemMonitor::addApplet(const QString &name)
 {
+    kDebug() << "";
     if (name.isEmpty()) {
         return;
     }
@@ -137,7 +140,7 @@ void SystemMonitor::removeApplet(const QString &name)
 void SystemMonitor::checkGeometry(qreal height)
 {
     QSizeF margins = size() - contentsRect().size();
-    qreal minHeight = m_buttons->minimumHeight();
+    qreal minHeight = 32 + 20 + 25; // m_buttons->minimumHeight();
     //kDebug() << minHeight;
 
     foreach (SM::Applet *applet, m_applets) {
