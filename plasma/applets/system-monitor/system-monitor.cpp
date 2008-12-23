@@ -22,6 +22,8 @@
 #include <QTimer>
 #include <QGraphicsLinearLayout>
 #include <KPushButton>
+#include <Plasma/Containment>
+#include <Plasma/Corona>
 
 #define APPLETS 5
 static const char *sm_applets[][2] = {
@@ -87,6 +89,10 @@ void SystemMonitor::init()
 
 void SystemMonitor::toggled(bool toggled)
 {
+    if(containment()->corona()->immutability() != Plasma::Mutable) {
+        return; //don't change the layout when we are locked down
+    }
+
     removeApplet(sender()->objectName());
     if (toggled) {
         addApplet(sender()->objectName());
