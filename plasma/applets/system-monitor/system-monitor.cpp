@@ -91,10 +91,6 @@ void SystemMonitor::init()
 
 void SystemMonitor::toggled(bool toggled)
 {
-    if(containment()->corona()->immutability() != Plasma::Mutable) {
-        return; //don't change the layout when we are locked down
-    }
-
     removeApplet(sender()->objectName());
     if (toggled) {
         addApplet(sender()->objectName());
