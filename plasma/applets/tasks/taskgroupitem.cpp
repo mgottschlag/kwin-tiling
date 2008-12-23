@@ -526,6 +526,7 @@ void TaskGroupItem::expand()
     connect(m_expandedLayout, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updatePreferredSize()));
     updatePreferredSize();
     emit changed();
+    checkSettings();
     //kDebug() << "expanded";
 
 }
@@ -559,6 +560,7 @@ void TaskGroupItem::collapse()
     updatePreferredSize();
     //kDebug();
     emit changed();
+    checkSettings();
 }
 
 bool TaskGroupItem::collapsed() const

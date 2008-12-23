@@ -113,7 +113,9 @@ AbstractTaskItem::~AbstractTaskItem()
 
 void AbstractTaskItem::checkSettings()
 {
-    if (parentWidget() == m_applet) {
+    TaskGroupItem *group = qobject_cast<TaskGroupItem *>(this);
+
+    if (group && !group->collapsed()) {
         m_showTooltip = false;
     } else if (m_showTooltip != m_applet->showTooltip()) {
         m_showTooltip = !m_showTooltip;
