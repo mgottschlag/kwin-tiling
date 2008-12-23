@@ -1122,8 +1122,12 @@ void Pager::updateToolTip()
     QString subtext = QString();
     int taskCounter = 0;
     int displayedTaskCounter = 0;
+
+    QList<WId> windows;
+
     foreach(KWindowInfo winInfo, m_windowInfo){
-        if (winInfo.isOnDesktop(hoverDesktopNumber) || winInfo.onAllDesktops()) {
+        if ((winInfo.isOnDesktop(hoverDesktopNumber) || winInfo.onAllDesktops() )
+                                                    && !windows.contains(winInfo.win())) {
             bool active = (winInfo.win() == KWindowSystem::activeWindow());
             if ((taskCounter < 4) || active){    
                 QPixmap icon = KWindowSystem::icon(winInfo.win(), 16, 16, true);
@@ -1136,6 +1140,7 @@ void Pager::updateToolTip()
                 subtext += (active ? "<u>" : "") + winInfo.visibleName() + (active ? "</u>" : "");
 
                 displayedTaskCounter++; 
+                windows.append(winInfo.win());
             }
             taskCounter++;
         }
