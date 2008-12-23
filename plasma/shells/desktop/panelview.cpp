@@ -48,7 +48,7 @@ class GlowBar : public QWidget
 public:
     GlowBar(Plasma::Direction direction, const QRect &triggerZone)
         : QWidget(0),
-          m_strength(0),
+          m_strength(0.3),
           m_svg(new Plasma::Svg(this)),
           m_direction(direction)
     {
@@ -150,23 +150,26 @@ public:
     {
         QPoint localPoint = mapFromGlobal(point);
 
+        qreal newStrength;
         switch (m_direction) {
         case Plasma::Up: // when the panel is at the bottom.
-            m_strength = 1 - qreal(-localPoint.y())/m_triggerDistance;
+            newStrength = 1 - qreal(-localPoint.y())/m_triggerDistance;
             break;
         case Plasma::Right:
-            m_strength = 1 - qreal(localPoint.x())/m_triggerDistance;
+            newStrength = 1 - qreal(localPoint.x())/m_triggerDistance;
             break;
         case Plasma::Left: // when the panel is right-aligned
-            m_strength = 1 - qreal(-localPoint.x())/m_triggerDistance;
+            newStrength = 1 - qreal(-localPoint.x())/m_triggerDistance;
             break;
         case Plasma::Down:
         default:
-            m_strength = 1- qreal(localPoint.y())/m_triggerDistance;
+            newStrength = 1- qreal(localPoint.y())/m_triggerDistance;
             break;
         }
-        if (m_strength >= 0 && m_strength <= 1)
+        if (qAbs(newStrength - m_strength) > 0.01 && newStrength >= 0 && newStrength <= 1) {
+            m_strength = newStrength;
             update();
+        }
     }
 
 
@@ -949,7 +952,8 @@ void PanelView::hintOrUnhide(const QPoint &point)
 void PanelView::unhintHide()
 {
     //kDebug() << "hide the glow";
-    delete m_mousePollTimer;
+    m_mousePollTimer->stop();
+    m_mousePollTimer->deleteLater();
     m_mousePollTimer = 0;
     delete m_glowBar;
     m_glowBar = 0;
