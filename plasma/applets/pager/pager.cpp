@@ -270,19 +270,18 @@ void Pager::recalculateGeometry()
         qreal ratio = (qreal)Kephal::ScreenUtils::desktopGeometry().width() / (qreal)Kephal::ScreenUtils::desktopGeometry().height();
 
         if (formFactor() == Plasma::Vertical ) {
-            //FIXME: extra 2px margin, as the panel margin calculation, as weird as that
-            qreal optimalSize = (geometry().width() - KIconLoader::SizeSmall*ratio * columns + padding*(columns-1))/2 - 2;
+            qreal optimalSize = (geometry().width() - KIconLoader::SizeSmall*ratio * columns + padding*(columns-1)) / 2;
 
             if (optimalSize < leftMargin || optimalSize < rightMargin) {
-                leftMargin = rightMargin = qMax(qreal(1), optimalSize);
+                leftMargin = rightMargin = qMax(qreal(0), optimalSize);
                 m_showOwnBackground = false;
             }
 
         } else if (formFactor() == Plasma::Horizontal ) {
-            qreal optimalSize = (geometry().height() - KIconLoader::SizeSmall*rows + padding*(rows-1))/2 - 2;
+            qreal optimalSize = (geometry().height() - KIconLoader::SizeSmall*rows + padding*(rows-1)) / 2;
 
             if (optimalSize < topMargin || optimalSize < bottomMargin) {
-                topMargin = bottomMargin =  qMax(qreal(1), optimalSize);
+                topMargin = bottomMargin =  qMax(qreal(0), optimalSize);
                 m_showOwnBackground = false;
             }
         } else {
@@ -321,8 +320,8 @@ void Pager::recalculateGeometry()
     m_rects.clear();
     m_animations.clear();
     QRectF itemRect;
-    itemRect.setWidth(floor(itemWidth - 1));
-    itemRect.setHeight(floor(itemHeight - 1));
+    itemRect.setWidth(floor(itemWidth));
+    itemRect.setHeight(floor(itemHeight));
     for (int i = 0; i < m_desktopCount; i++) {
         itemRect.moveLeft(leftMargin + floor(i % columns  * (itemWidth + padding)));
         itemRect.moveTop(topMargin + floor(i / columns * (itemHeight + padding)));
