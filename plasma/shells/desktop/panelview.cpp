@@ -151,21 +151,22 @@ public:
         QPoint localPoint = mapFromGlobal(point);
 
         switch (m_direction) {
-        case Plasma::Up:
-            m_strength = qreal(localPoint.y())/m_triggerDistance;
+        case Plasma::Up: // when the panel is at the bottom.
+            m_strength = 1 - qreal(-localPoint.y())/m_triggerDistance;
             break;
         case Plasma::Right:
             m_strength = 1 - qreal(localPoint.x())/m_triggerDistance;
             break;
-        case Plasma::Left:
-            m_strength = qreal(localPoint.x())/m_triggerDistance;
+        case Plasma::Left: // when the panel is right-aligned
+            m_strength = 1 - qreal(-localPoint.x())/m_triggerDistance;
             break;
         case Plasma::Down:
         default:
             m_strength = 1- qreal(localPoint.y())/m_triggerDistance;
             break;
         }
-        update();
+        if (m_strength >= 0 && m_strength <= 1)
+            update();
     }
 
 
