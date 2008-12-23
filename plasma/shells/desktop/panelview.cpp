@@ -952,9 +952,11 @@ void PanelView::hintOrUnhide(const QPoint &point)
 void PanelView::unhintHide()
 {
     //kDebug() << "hide the glow";
-    m_mousePollTimer->stop();
-    m_mousePollTimer->deleteLater();
-    m_mousePollTimer = 0;
+    if (m_mousePollTimer) {
+        m_mousePollTimer->stop();
+        m_mousePollTimer->deleteLater();
+        m_mousePollTimer = 0;
+    }
     delete m_glowBar;
     m_glowBar = 0;
 }
