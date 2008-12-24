@@ -94,7 +94,6 @@ class Battery : public Plasma::PopupApplet
         bool m_isEmbedded;
         Battery *m_extenderApplet;
         bool m_extenderVisible;
-        QString m_svgFile;
 
         QGraphicsGridLayout *m_controlsLayout;
         QGraphicsGridLayout *m_batteryLayout;

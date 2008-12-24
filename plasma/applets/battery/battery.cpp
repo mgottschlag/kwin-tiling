@@ -65,7 +65,6 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args),
       m_isEmbedded(false),
       m_extenderVisible(false),
-      m_svgFile(0),
       m_controlsLayout(0),
       m_batteryLayout(0),
       m_statusLabel(0),
@@ -99,6 +98,9 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     m_textRect = QRectF();
     m_remainingMSecs = 0;
     m_extenderApplet = 0;
+    m_theme = new Plasma::Svg(this);
+    m_theme->setImagePath("widgets/battery-oxygen");
+    m_theme->setContainsMultipleImages(false);
 }
 
 void Battery::init()
@@ -107,12 +109,7 @@ void Battery::init()
     m_showBatteryString = cg.readEntry("showBatteryString", false);
     m_showMultipleBatteries = cg.readEntry("showMultipleBatteries", !m_isEmbedded);
 
-    m_svgFile = QString();
-
     showBattery(false);;
-    m_theme = new Plasma::Svg(this);
-    m_theme->setImagePath("widgets/battery-oxygen");
-    m_theme->setContainsMultipleImages(false);
     m_theme->resize(contentsRect().size());
     if (m_acadapter_plugged) {
         showAcAdapter(true);
