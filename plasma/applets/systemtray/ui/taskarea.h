@@ -39,7 +39,7 @@ public:
     ~TaskArea();
 
     void setHiddenTypes(const QStringList &hiddenTypes);
-    bool isHiddenType(const QString &typeId) const;
+    bool isHiddenType(const QString &typeId, bool always = true) const;
     void syncTasks(const QList<SystemTray::Task*> &tasks);
     bool hasHiddenTasks() const;
     int leftEasement() const;

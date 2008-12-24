@@ -88,10 +88,15 @@ void TaskArea::setHiddenTypes(const QStringList &hiddenTypes)
 }
 
 
-bool TaskArea::isHiddenType(const QString &typeId) const
+bool TaskArea::isHiddenType(const QString &typeId, bool always) const
 {
-    return !d->showingHidden && d->hiddenTypes.contains(typeId);
+    if(always) {
+        return !d->showingHidden && d->hiddenTypes.contains(typeId);
+    } else {
+        return d->hiddenTypes.contains(typeId);
+    }
 }
+
 
 void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
 {
