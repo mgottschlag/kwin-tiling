@@ -204,7 +204,7 @@ void DesktopCorona::loadDefaultLayout()
     Plasma::DataEngineManager *engines = Plasma::DataEngineManager::self();
     Plasma::DataEngine *power = engines->loadEngine("powermanagement");
     if (power) {
-        const QStringList &batteries = power->query("Battry")["sources"].toStringList();
+        const QStringList &batteries = power->query("Battery")["sources"].toStringList();
         if (!batteries.isEmpty()) {
             loadDefaultApplet("battery", m_panel);
         }
