@@ -230,7 +230,8 @@ void ClockApplet::configAccepted()
         d->defaultTimezone = d->ui.clockDefaultsTo->currentText();
     }
 
-    changeEngineTimezone(currentTimezone(), d->defaultTimezone );
+    cg.writeEntry("defaultTimezone", d->defaultTimezone);
+    changeEngineTimezone(currentTimezone(), d->defaultTimezone);
     setCurrentTimezone(d->defaultTimezone );
 
     clockConfigAccepted();
@@ -332,7 +333,9 @@ void ClockApplet::init()
 {
     KConfigGroup cg = config();
     d->selectedTimezones = cg.readEntry("timeZones", QStringList());
-    d->defaultTimezone = d->timezone = cg.readEntry("timezone", d->timezone);
+    d->timezone = cg.readEntry("timezone", d->timezone);
+    d->defaultTimezone = cg.readEntry("defaultTimezone", d->timezone);
+
     if (d->timezone == "UTC")  {
         d->prettyTimezone = d->timezone;
     } else if (!isLocalTimezone()) {
