@@ -54,6 +54,7 @@ float convert(float value, int srcUnit, int destUnit)
         };
 
     case WeatherUtils::Kilometers:
+    case WeatherUtils::KilometersAnHour:
         switch (destUnit) {
         case WeatherUtils::Miles:
             return (0.621371192 * value);
@@ -78,6 +79,7 @@ float convert(float value, int srcUnit, int destUnit)
         };
 
     case WeatherUtils::Miles:
+    case WeatherUtils::MilesAnHour:
         switch (destUnit) {
         case WeatherUtils::Kilometers:
             return (1.609344 * value);
