@@ -185,10 +185,6 @@ bool PlasmaHost::LoadFont(const char *filename) {
     return false;
 }
 
-void PlasmaHost::ShowGadgetAboutDialog(Gadget *gadget) {
-  qt::ShowGadgetAboutDialog(gadget);
-}
-
 int PlasmaHost::GetDefaultFontSize() {
   return kDefaultFontSize;
 }

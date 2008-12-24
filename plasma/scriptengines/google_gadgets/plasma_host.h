@@ -36,7 +36,6 @@ class PlasmaHost : public ggadget::HostInterface {
   virtual void RemoveGadget(Gadget *gadget, bool save_data);
   virtual bool LoadFont(const char *filename);
   virtual void Run() {}
-  virtual void ShowGadgetAboutDialog(Gadget *gadget);
   virtual void ShowGadgetDebugConsole(Gadget *) {}
   virtual int GetDefaultFontSize();
   virtual bool OpenURL(const Gadget *gadget, const char *url);
