@@ -3,6 +3,7 @@ Type=XSession
 Exec=starte16
 TryExec=starte16
 Name=Enlightenment DR16
+Name[bn]=এনলাইটেনমেন্ট DR16
 Name[fy]=Enlightenment  DR16
 Name[gu]=એન્લાઇટમેન્ટ DR16
 Name[hi]=एनलाइटनमेंट डीआर16
