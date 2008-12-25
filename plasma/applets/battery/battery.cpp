@@ -109,7 +109,7 @@ void Battery::init()
     m_showBatteryString = cg.readEntry("showBatteryString", false);
     m_showMultipleBatteries = cg.readEntry("showMultipleBatteries", !m_isEmbedded);
 
-    showBattery(false);;
+    showBattery(false);
     m_theme->resize(contentsRect().size());
     if (m_acadapter_plugged) {
         showAcAdapter(true);
@@ -150,6 +150,12 @@ void Battery::init()
 void Battery::constraintsEvent(Plasma::Constraints constraints)
 {
     //kDebug() << "ConstraintsEvent, Dude." << contentsRect();
+    if (!m_showMultipleBatteries || m_numOfBattery < 2) {
+        setAspectRatioMode(Plasma::Square);
+    } else {
+        setAspectRatioMode(Plasma::KeepAspectRatio);
+    }
+
     if (constraints & (Plasma::FormFactorConstraint | Plasma::SizeConstraint)) {
         if (formFactor() == Plasma::Vertical) {
             if (!m_showMultipleBatteries) {
@@ -171,17 +177,11 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
             setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
             setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
         }
-    }
-    if (!m_showMultipleBatteries || m_numOfBattery < 2) {
-        setAspectRatioMode(Plasma::Square);
-    } else {
-        setAspectRatioMode(Plasma::KeepAspectRatio);
-    }
 
-    if (constraints & (Plasma::SizeConstraint | Plasma::FormFactorConstraint) && m_theme) {
         m_theme->resize(contentsRect().size().toSize());
         m_font.setPointSize(qMax(KGlobalSettings::smallestReadableFont().pointSize(),
                                  qRound(contentsRect().height() / 10)));
+        update();
     }
 }
 
@@ -783,6 +783,7 @@ void Battery::paintBattery(QPainter *p, const QRect &contentsRect, const int bat
     if (m_theme->hasElement("Battery")) {
         m_theme->paint(p, scaleRectF(m_batteryAlpha, contentsRect), "Battery");
     }
+
     QString fill_element = QString();
     if (plugState) {
         if (batteryPercent > 95) {
