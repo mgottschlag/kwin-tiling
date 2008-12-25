@@ -417,6 +417,7 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
             if (linearLay) {
                 linearLay->setOrientation(layoutDirection);
             }
+            linearLay->setMaximumSize(size());
         } else {
             QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(this);
             lay->setOrientation(layoutDirection);
@@ -429,6 +430,8 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
             foreach (Applet *applet, applets()) {
                 lay->addItem(applet);
             }
+
+            lay->setMaximumSize(size());
         }
     }
 
