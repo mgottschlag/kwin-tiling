@@ -61,6 +61,7 @@ public:
     virtual void close();
 
     QList <AbstractTaskItem*> memberList() const;
+    AbstractTaskItem * activeSubTask();
 
     virtual bool isWindowItem() const;
     virtual bool isActive() const;
@@ -169,6 +170,9 @@ private:
 
     void layoutTaskItem(AbstractTaskItem* item, const QPointF &pos);
     void setSplitIndex(int position);
+
+    int totalSubTasks();
+    AbstractTaskItem * selectSubTask(int index);
 
     GroupPtr m_group;
 

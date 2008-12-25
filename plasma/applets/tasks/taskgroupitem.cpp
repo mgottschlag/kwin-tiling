@@ -412,7 +412,7 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
 
     if (item->isActive()) {
         //kDebug() << "item is Active" ;
-        m_activeTaskIndex = m_group->members().indexOf(groupableItem);
+        m_activeTaskIndex = indexOf(item);
     } else if (m_group->members().size() == 1) {
         m_activeTaskIndex = 0;
     }
@@ -835,34 +835,120 @@ int TaskGroupItem::indexOf (AbstractTaskItem *task)
         return -1;
     }
 
-    return m_group->members().indexOf(task->abstractItem());
+    int index = 0;
+
+    foreach(AbstractGroupableItem *item, group()->members()) {
+        AbstractTaskItem *taskItem = abstractItem(item);
+        if (taskItem) {
+            if(task == taskItem) {
+                TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(taskItem);
+                if (groupItem) {
+                    return index + groupItem->indexOf(groupItem->activeSubTask());
+                }
+                
+                return index;
+            }
+
+            TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(taskItem);
+            if (groupItem) {
+                int subIndex = groupItem->indexOf(task);
+                if(subIndex == -1) {
+                    index += groupItem->memberList().count();
+                } else {
+                    return index+subIndex;
+                }
+            } else {
+                index++;
+            }
+        }
+    }
+    return -1;
+}
+
+AbstractTaskItem * TaskGroupItem::activeSubTask()
+{
+    foreach(AbstractGroupableItem *item, group()->members()) {
+        AbstractTaskItem *taskItem = abstractItem(item);
+        if (taskItem) {
+            if(taskItem->isActive()) {
+                TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(taskItem);
+                if (groupItem) {
+                    return groupItem->activeSubTask();
+                }
+                return taskItem;
+            }
+        }
+    }
+    return NULL;
+}
+
+int TaskGroupItem::totalSubTasks()
+{
+    int count = 0;
+
+    foreach(AbstractGroupableItem *item, group()->members()) {
+        AbstractTaskItem *taskItem = abstractItem(item);
+        if (taskItem) {
+            TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(taskItem);
+            if (groupItem) {
+                count += groupItem->memberList().count();
+            } else {
+                count++;
+            }
+        }
+    }
+    return count;
 }
 
 
+AbstractTaskItem * TaskGroupItem::selectSubTask(int index)
+{
+    foreach(AbstractGroupableItem *item, group()->members()) {
+        AbstractTaskItem *taskItem = abstractItem(item);
+        if (taskItem) {
+            TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(taskItem);
+            if (groupItem) {
+                if(index < groupItem->memberList().count()) {
+                   return groupItem->abstractItem(groupItem->group()->members().at(index));
+                } else {
+                   index -= groupItem->memberList().count();
+                }
+            } else {
+                if(index == 0) {
+                    return taskItem;
+                } else {
+                    index--;
+                }
+            }
+        }
+    }
+    return NULL;
+}
+
 void TaskGroupItem::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
+    int subTasks = totalSubTasks();
     //zero or one tasks don't cycle
-    if (m_groupMembers.size() < 1) {
+    if (subTasks < 1) {
         return;
     }
 
     //mouse wheel down
     if (event->delta() < 0) {
         m_activeTaskIndex++;
-        if (m_activeTaskIndex >= m_groupMembers.size()) {
+        if (m_activeTaskIndex >= subTasks) {
             m_activeTaskIndex = 0;
         }
         //mouse wheel up
     } else {
         m_activeTaskIndex--;
         if (m_activeTaskIndex < 0) {
-            m_activeTaskIndex = m_groupMembers.size() - 1; //last item is a spacer
+            m_activeTaskIndex = subTasks - 1; //last item is a spacer
         }
     }
 
-    //    kDebug() << "Wheel event m_activeTaskIndex: " << m_activeTaskIndex << " of " << numberOfItems();
-    AbstractGroupableItem *item = group()->members().at(m_activeTaskIndex);
-    AbstractTaskItem *taskItem = abstractItem(item);
+    //kDebug() << "Wheel event m_activeTaskIndex: " << m_activeTaskIndex << " of " << subTasks;
+    AbstractTaskItem *taskItem = selectSubTask(m_activeTaskIndex);
     if (taskItem) {
         taskItem->activate();
     }
