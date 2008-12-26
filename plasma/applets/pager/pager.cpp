@@ -1144,8 +1144,7 @@ void Pager::updateToolTip()
     QList<WId> windows;
 
     foreach(KWindowInfo winInfo, m_windowInfo){
-        if ((winInfo.isOnDesktop(hoverDesktopNumber) || winInfo.onAllDesktops() )
-                                                    && !windows.contains(winInfo.win())) {
+        if (winInfo.isOnDesktop(hoverDesktopNumber) && !windows.contains(winInfo.win())) {
             bool active = (winInfo.win() == KWindowSystem::activeWindow());
             if ((taskCounter < 4) || active){    
                 QPixmap icon = KWindowSystem::icon(winInfo.win(), 16, 16, true);
