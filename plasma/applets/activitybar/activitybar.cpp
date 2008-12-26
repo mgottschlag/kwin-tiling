@@ -79,7 +79,7 @@ void ActivityBar::init()
 
             if (cont->screen() != -1 &&
                 cont->screen() == myScreen &&
-                (cont->desktop() == -1 || cont->desktop() == KWindowSystem::currentDesktop()-1)) {
+                (cont->desktop() == 0 || cont->desktop() == KWindowSystem::currentDesktop()-1)) {
                 m_view = qobject_cast<Plasma::View *>(cont->view());
                 m_activeContainment = m_containments.count() - 1;
                 m_tabBar->setCurrentIndex(m_activeContainment);
@@ -238,7 +238,7 @@ void ActivityBar::screenChanged(int wasScreen, int isScreen, Plasma::Containment
     if (index != -1 &&
         index != m_activeContainment &&
         containment()->screen() == isScreen &&
-        (cont->desktop() == -1 || cont->desktop() == KWindowSystem::currentDesktop()-1)) {
+        (cont->desktop() == 0 || cont->desktop() == KWindowSystem::currentDesktop()-1)) {
         m_activeContainment = index;
         m_tabBar->setCurrentIndex(index);
         m_view = qobject_cast<Plasma::View *>(cont->view());
