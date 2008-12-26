@@ -67,9 +67,6 @@ class TASKMANAGER_EXPORT Task : public QObject, public KShared
     Q_PROPERTY( bool modified READ isModified )
     Q_PROPERTY( bool demandsAttention READ demandsAttention )
     Q_PROPERTY( int desktop READ desktop )
-    Q_PROPERTY( double thumbnailSize READ thumbnailSize WRITE setThumbnailSize )
-    Q_PROPERTY( bool hasThumbnail READ hasThumbnail )
-    Q_PROPERTY( QPixmap thumbnail READ thumbnail )
 
 public:
     Task(WId win, QObject *parent, const char *name = 0);
@@ -249,34 +246,6 @@ public:
     //* @internal
     void setActive(bool a);
 
-    // For thumbnails
-
-    /**
-     * Returns the current thumbnail size.
-     */
-    double thumbnailSize() const;
-
-    /**
-     * Sets the size for the window thumbnail. For example a size of
-     * 0.2 indicates the thumbnail will be 20% of the original window
-     * size.
-     */
-    void setThumbnailSize( double size );
-
-    /**
-     * Returns true if this task has a thumbnail. Note that this method
-     * can only ever return true after a call to updateThumbnail().
-     */
-    bool hasThumbnail() const;
-
-    /**
-     * Returns the thumbnail for this task (or a null image if there is
-     * none).
-     */
-    QPixmap thumbnail() const;
-
-    QPixmap thumbnail(int maxDimension);
-
     /**
      * Adds the identifying information for this task to mime data for drags, copies, etc
      */
@@ -294,8 +263,6 @@ public:
     static WId idFromMimeData(const QMimeData *mimeData, bool *ok = 0);
 
 public Q_SLOTS:
-    void updateWindowPixmap();
-
     /**
      * Maximise the main window of this task.
      */

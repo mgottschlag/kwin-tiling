@@ -98,7 +98,7 @@ TaskManager::TaskManager()
     // set active window
     WId win = KWindowSystem::activeWindow();
     activeWindowChanged(win);
-    configure_startup();
+    configureStartup();
 }
 
 TaskManager::~TaskManager()
@@ -107,12 +107,14 @@ TaskManager::~TaskManager()
     delete d;
 }
 
-void TaskManager::configure_startup()
+void TaskManager::configureStartup()
 {
-    KConfig _c( "klaunchrc" );
+    KConfig _c("klaunchrc");
     KConfigGroup c(&_c, "FeedbackStyle");
-    if (!c.readEntry("TaskbarButton", true))
+    if (!c.readEntry("TaskbarButton", true)) {
         return;
+    }
+
     d->startupInfo = new KStartupInfo( KStartupInfo::CleanOnCantDetect, this );
     connect( d->startupInfo,
         SIGNAL( gotNewStartup( const KStartupInfoId&, const KStartupInfoData& )),
@@ -123,8 +125,9 @@ void TaskManager::configure_startup()
     connect( d->startupInfo,
         SIGNAL( gotRemoveStartup( const KStartupInfoId&, const KStartupInfoData& )),
         SLOT( killStartup( const KStartupInfoId& )));
+
     c = KConfigGroup(&_c, "TaskbarButtonSettings");
-    d->startupInfo->setTimeout( c.readEntry( "Timeout", 30 ));
+    d->startupInfo->setTimeout(c.readEntry( "Timeout", 30 ));
 }
 
 TaskPtr TaskManager::findTask(WId w)
@@ -327,20 +330,6 @@ void TaskManager::taskChanged(::TaskManager::TaskChanges changes)
     }
 
     emit (d->tasksByWId[t->info().win()], changes);
-}
-
-void TaskManager::updateWindowPixmap(WId w)
-{
-    if (!KWindowSystem::compositingActive())
-    {
-        return;
-    }
-
-    TaskPtr task = findTask(w);
-    if (task)
-    {
-        task->updateWindowPixmap();
-    }
 }
 
 void TaskManager::activeWindowChanged(WId w)

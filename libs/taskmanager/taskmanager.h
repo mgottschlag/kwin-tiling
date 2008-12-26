@@ -199,8 +199,7 @@ protected Q_SLOTS:
     void taskChanged(::TaskManager::TaskChanges changes);
 
 protected:
-    void configure_startup();
-    void updateWindowPixmap(WId);
+    void configureStartup();
 
 private:
     class Private;

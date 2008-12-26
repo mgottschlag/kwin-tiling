@@ -42,7 +42,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <KLocale>
 
 #include "taskmanager.h"
-#include "taskmanager_p.h"
 
 namespace TaskManager
 {
@@ -63,9 +62,6 @@ public:
        lastHeight(0),
        lastResize(false),
        lastIcon(),
-       thumbSize(0.2),
-       thumb(),
-       grab(),
        cachedChanges(0),
        cachedChangesTimerId(0)
     {
@@ -85,29 +81,24 @@ public:
     QPixmap lastIcon;
     QIcon icon;
 
-    double thumbSize;
-    QPixmap thumb;
-    QPixmap grab;
     QRect iconGeometry;
 
     QTime lastUpdate;
     unsigned int cachedChanges;
     int cachedChangesTimerId;
-    Pixmap windowPixmap;
 };
 
 Task::Task(WId w, QObject *parent, const char *name)
   : QObject(parent),
     d(new Private(w))
 {
-    setObjectName( name );
+    setObjectName(name);
 
     // try to load icon via net_wm
     d->pixmap = KWindowSystem::icon(d->win, 16, 16, true);
 
     // try to guess the icon from the classhint
-    if (d->pixmap.isNull())
-    {
+    if (d->pixmap.isNull()) {
         KIconLoader::global()->loadIcon(className().toLower(),
                                                     KIconLoader::Small,
                                                     KIconLoader::Small,
@@ -116,71 +107,14 @@ Task::Task(WId w, QObject *parent, const char *name)
     }
 
     // load the icon for X applications
-    if (d->pixmap.isNull())
-    {
+    if (d->pixmap.isNull()) {
         d->pixmap = SmallIcon("xorg");
     }
-
-#ifdef THUMBNAILING_POSSIBLE
-    d->windowPixmap = 0;
-    findWindowFrameId();
-
-    if (KWindowSystem::compositingActive())
-    {
-        updateWindowPixmap();
-    }
-#endif // THUMBNAILING_POSSIBLE
 }
 
 Task::~Task()
 {
-#ifdef THUMBNAILING_POSSIBLE
-    //be sure we have something to delete
-    if (d->windowPixmap && QX11Info::display())
-    {
-        XFreePixmap(QX11Info::display(), d->windowPixmap);
-    }
-#endif // THUMBNAILING_POSSIBLE
     delete d;
-}
-
-// Task::findWindowFrameId()
-// Code was copied from Kompose.
-// Copyright (C) 2004 Hans Oischinger
-// Permission granted on 2005-04-27.
-void Task::findWindowFrameId()
-{
-#ifdef THUMBNAILING_POSSIBLE
-    Window targetWin, parent, root;
-    Window *children;
-    uint nchildren;
-
-    targetWin = d->win;
-    for (;;)
-    {
-        if (!XQueryTree(QX11Info::display(), targetWin, &root,
-                        &parent, &children, &nchildren))
-        {
-            break;
-        }
-
-        if (children)
-        {
-            XFree(children); // it's a list, that's deallocated!
-        }
-
-        if (!parent || parent == root)
-        {
-            break;
-        }
-        else
-        {
-            targetWin = parent;
-        }
-    }
-
-    d->frameId = targetWin;
-#endif // THUMBNAILING_POSSIBLE
 }
 
 void Task::timerEvent(QTimerEvent *)
@@ -283,24 +217,6 @@ void Task::setActive(bool a)
     } else {
       emit deactivated();
     }
-}
-
-double Task::thumbnailSize() const { return d->thumbSize; }
-
-
-void Task::setThumbnailSize( double size )
-{
-    d->thumbSize = size;
-}
-
-bool Task::hasThumbnail() const
-{
-    return !d->thumb.isNull();
-}
-
-QPixmap Task::thumbnail() const
-{
-    return d->thumb;
 }
 
 bool Task::isMaximized() const
@@ -953,120 +869,6 @@ WId Task::idFromMimeData(const QMimeData *mimeData, bool *ok)
     }
 
     return id;
-}
-
-#ifdef THUMBNAILING_POSSIBLE
-QPixmap Task::thumbnail(int maxDimension)
-{
-    if (!KWindowSystem::compositingActive() || !d->windowPixmap)
-    {
-        return QPixmap();
-    }
-
-    Display *dpy = QX11Info::display();
-
-    XWindowAttributes winAttr;
-    XGetWindowAttributes(dpy, d->frameId, &winAttr);
-    XRenderPictFormat *format = XRenderFindVisualFormat(dpy, winAttr.visual);
-
-    XRenderPictureAttributes picAttr;
-    ::memset(&picAttr, 0, sizeof(picAttr));
-    picAttr.subwindow_mode = IncludeInferiors; // Don't clip child widgets
-
-    Picture picture = XRenderCreatePicture(dpy, d->windowPixmap, format,
-                                           CPSubwindowMode, &picAttr);
-
-    // Get shaped windows handled correctly.
-    XserverRegion region = XFixesCreateRegionFromWindow(dpy, d->frameId,
-                                                        WindowRegionBounding);
-    XFixesSetPictureClipRegion(dpy, picture, 0, 0, region);
-    XFixesDestroyRegion(dpy, region);
-
-    double factor;
-    if (winAttr.width > winAttr.height)
-    {
-        factor = (double)maxDimension / (double)winAttr.width;
-    }
-    else
-    {
-        factor = (double)maxDimension / (double)winAttr.height;
-    }
-    int thumbnailWidth = (int)(winAttr.width * factor);
-    int thumbnailHeight = (int)(winAttr.height * factor);
-
-    QPixmap thumbnail(thumbnailWidth, thumbnailHeight);
-    thumbnail.fill(QApplication::palette().color(QPalette::Active,QPalette::Background));
-
-#if 0 // QImage::smoothScale() scaling
-    QPixmap full(winAttr.width, winAttr.height);
-    full.fill(QApplication::palette().active().background());
-
-    bool hasAlpha = format->type == PictTypeDirect && format->direct.alphaMask;
-
-    XRenderComposite(dpy,
-                     hasAlpha ? PictOpOver : PictOpSrc,
-                     picture, // src
-                     None, // mask
-                     full.x11RenderHandle(), // dst
-                     0, 0, // src offset
-                     0, 0, // mask offset
-                     0, 0, // dst offset
-                     winAttr.width, winAttr.height);
-
-    KPixmapIO io;
-    QImage image = io.toImage(full);
-    thumbnail = io.convertToPixmap(image.smoothScale(thumbnailWidth,
-                                                     thumbnailHeight));
-#else // XRENDER scaling
-    // Scaling matrix
-    XTransform transformation = {{
-        { XDoubleToFixed(1), XDoubleToFixed(0), XDoubleToFixed(     0) },
-        { XDoubleToFixed(0), XDoubleToFixed(1), XDoubleToFixed(     0) },
-        { XDoubleToFixed(0), XDoubleToFixed(0), XDoubleToFixed(factor) }
-    }};
-
-    XRenderSetPictureTransform(dpy, picture, &transformation);
-    XRenderSetPictureFilter(dpy, picture, FilterBest, 0, 0);
-
-    XRenderComposite(QX11Info::display(),
-                     PictOpOver, // we're filtering, alpha values are probable
-                     picture, // src
-                     None, // mask
-                     thumbnail.x11PictureHandle(), // dst
-                     0, 0, // src offset
-                     0, 0, // mask offset
-                     0, 0, // dst offset
-                     thumbnailWidth, thumbnailHeight);
-#endif
-    XRenderFreePicture(dpy, picture);
-
-    return thumbnail;
-}
-#else // THUMBNAILING_POSSIBLE
-QPixmap Task::thumbnail(int /* maxDimension */)
-{
-    return QPixmap();
-}
-#endif // THUMBNAILING_POSSIBLE
-
-void Task::updateWindowPixmap()
-{
-#ifdef THUMBNAILING_POSSIBLE
-    if (!KWindowSystem::compositingActive() || !isOnCurrentDesktop() ||
-        isMinimized())
-    {
-        return;
-    }
-
-    Display *dpy = QX11Info::display();
-
-    if (d->windowPixmap)
-    {
-        XFreePixmap(dpy, d->windowPixmap);
-    }
-
-    d->windowPixmap = XCompositeNameWindowPixmap(dpy, d->frameId);
-#endif // THUMBNAILING_POSSIBLE
 }
 
 } // TaskManager namespace
