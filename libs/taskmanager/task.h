@@ -412,6 +412,7 @@ Q_SIGNALS:
 
 protected:
     void findWindowFrameId();
+    void timerEvent(QTimerEvent *event);
 
 private:
     class Private;

@@ -224,6 +224,9 @@ void TaskManager::windowAdded(WId w )
     TaskPtr t(new Task(w, 0));
     d->tasksByWId[w] = t;
 
+    connect(t.data(), SIGNAL(changed(::TaskManager::TaskChanges)),
+            this, SLOT(taskChanged(::TaskManager::TaskChanges)));
+
     if (d->startupInfo) {
         KStartupInfoId startupInfoId;
         // checkStartup modifies startupInfoId
@@ -290,7 +293,7 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
     }
 
     // check if any state we are interested in is marked dirty
-    if (!(dirty & (NET::WMVisibleName |NET::WMName |
+    if (!(dirty & (NET::WMVisibleName | NET::WMName |
                    NET::WMState | NET::WMIcon |
                    NET::XAWMState | NET::WMDesktop) ||
           (d->trackGeometry && dirty & NET::WMGeometry))) {
@@ -316,10 +319,17 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
         // only refresh this stuff if we have other changes besides icons
         changes = t->refresh(dirty);
     }
+}
 
-    if (changes != TaskUnchanged) {
-        emit windowChanged(t, changes);
+void TaskManager::taskChanged(::TaskManager::TaskChanges changes)
+{
+    Task *t = qobject_cast<Task*>(sender());
+
+    if (!t || changes == TaskUnchanged || !d->tasksByWId.contains(t->info().win())) {
+        return;
     }
+
+    emit (d->tasksByWId[t->info().win()], changes);
 }
 
 void TaskManager::updateWindowPixmap(WId w)

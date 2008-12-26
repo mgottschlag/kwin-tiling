@@ -195,6 +195,9 @@ protected Q_SLOTS:
     //* @internal
     void gotStartupChange( const KStartupInfoId&, const KStartupInfoData& );
 
+    //* @internal
+    void taskChanged(::TaskManager::TaskChanges changes);
+
 protected:
     void configure_startup();
     void updateWindowPixmap(WId);

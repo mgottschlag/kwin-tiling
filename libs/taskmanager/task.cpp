@@ -65,7 +65,9 @@ public:
        lastIcon(),
        thumbSize(0.2),
        thumb(),
-       grab()
+       grab(),
+       cachedChanges(0),
+       cachedChangesTimerId(0)
     {
     }
 
@@ -89,7 +91,8 @@ public:
     QRect iconGeometry;
 
     QTime lastUpdate;
-
+    unsigned int cachedChanges;
+    int cachedChangesTimerId;
     Pixmap windowPixmap;
 };
 
@@ -180,6 +183,17 @@ void Task::findWindowFrameId()
 #endif // THUMBNAILING_POSSIBLE
 }
 
+void Task::timerEvent(QTimerEvent *)
+{
+    if (d->cachedChanges) {
+        d->lastUpdate = QTime();
+        refresh(d->cachedChanges);
+        d->cachedChanges = 0;
+    }
+
+    d->cachedChangesTimerId = 0;
+}
+
 void Task::refreshIcon()
 {
     // try to load icon via net_wm
@@ -206,12 +220,19 @@ void Task::refreshIcon()
 
 ::TaskManager::TaskChanges Task::refresh(unsigned int dirty)
 {
-    if (!d->lastUpdate.isNull() && d->lastUpdate.elapsed() > 10 && d->lastUpdate.elapsed() < 200) {
+    if (!d->lastUpdate.isNull() && d->lastUpdate.elapsed() < 200) {
+        d->cachedChanges |= dirty;
+
+        if (!d->cachedChangesTimerId) {
+            d->cachedChangesTimerId = startTimer(200 - d->lastUpdate.elapsed());
+        }
+
+        d->lastUpdate.restart();
         return TaskUnchanged;
     }
 
+    d->lastUpdate.restart();
     KWindowInfo info = KWindowSystem::windowInfo(d->win, windowInfoFlags);
-
     TaskChanges changes = TaskUnchanged;
 
     if (d->info.visibleName() != info.visibleName() ||
@@ -250,7 +271,6 @@ void Task::refreshIcon()
         emit changed(changes);
     }
 
-    d->lastUpdate.restart();
     return changes;
 }
 
