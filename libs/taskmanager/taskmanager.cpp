@@ -347,6 +347,14 @@ void TaskManager::activeWindowChanged(WId w)
         }
         //kDebug() << "no active window";
     } else {
+        if (t->info().windowType(NET::UtilityMask) == NET::Utility) {
+            // we don't want to mark utility windows as active since task managers
+            // actually care about the main window and skip utility windows; utility
+            // windows are hidden when their associated window loses focus anyways
+            // see http://bugs.kde.org/show_bug.cgi?id=178509
+            return;
+        }
+
         if (d->active) {
             d->active->setActive(false);
         }
@@ -449,31 +457,23 @@ int TaskManager::numberOfDesktops() const
 
 bool TaskManager::isOnTop(const Task* task)
 {
-    if (!task)
-    {
+    if (!task) {
         return false;
     }
 
     QList<WId> list = KWindowSystem::stackingOrder();
     QList<WId>::const_iterator begin(list.constBegin());
     QList<WId>::const_iterator it = list.constBegin() + (list.size() - 1);
-    do
-    {
-        TaskDict::iterator taskItEnd = d->tasksByWId.end();
-        for (TaskDict::iterator taskIt = d->tasksByWId.begin();
-             taskIt != taskItEnd; ++taskIt)
-        {
+    do {
+        TaskDict::const_iterator taskItEnd = d->tasksByWId.constEnd();
+        for (TaskDict::const_iterator taskIt = d->tasksByWId.constBegin(); taskIt != taskItEnd; ++taskIt) {
             TaskPtr t = taskIt.value();
-            if ((*it) == t->window())
-            {
-                if (t == task)
-                {
+            if ((*it) == t->window()) {
+                if (t == task) {
                     return true;
                 }
 
-                if (!t->isIconified() &&
-                    (t->isAlwaysOnTop() == task->isAlwaysOnTop()))
-                {
+                if (!t->isIconified() && (t->isAlwaysOnTop() == task->isAlwaysOnTop())) {
                     return false;
                 }
 

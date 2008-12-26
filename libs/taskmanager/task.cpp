@@ -49,7 +49,7 @@ namespace TaskManager
 
 static const int windowInfoFlags = NET::WMState | NET::XAWMState | NET::WMDesktop |
                                    NET::WMVisibleName | NET::WMGeometry | NET::WMWindowType |
-                                   NET::WM2AllowedActions | NET::WM2GroupLeader;
+                                   NET::WM2AllowedActions;
 
 class Task::Private
 {
@@ -766,10 +766,10 @@ void Task::activate()
 
 void Task::activateRaiseOrIconify()
 {
-    kDebug() << isActive() << isIconified() << isOnTop();
+    //kDebug() << isActive() << isIconified() << isOnTop();
     if (!isActive() || isIconified()) {
         activate();
-    } else if (!isOnTop()) {
+    } else if (!isActive() && !isOnTop()) {
        raise();
     } else {
        setIconified(true);
