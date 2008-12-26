@@ -56,11 +56,14 @@ class Clock : public ClockApplet
     private:
         void updateSize();
         bool showTimezone() const;
-        QRect preparePainter(QPainter *p, const QRect &rect, const QFont &font, const QString &text, const bool singleline = false);
+        QRect preparePainter(QPainter *p, const QRect &rect, const QFont &font, const QString &text, bool singleline = false);
+        QRectF normalLayout (int subtitleWidth, int subtitleHeight, const QRect &contentsRect);
+        QRectF sideBySideLayout (int subtitleWidth, int subtitleHeight, const QRect &contentsRect);
 
         QFont m_plainClockFont;
         bool m_useCustomColor;
         QColor m_plainClockColor;
+        QRect m_timeRect;
         QRect m_dateRect;
 
         bool m_showDate;
@@ -68,6 +71,7 @@ class Clock : public ClockApplet
         bool m_showDay;
         bool m_showSeconds;
         bool m_showTimezone;
+        bool m_dateTimezoneBesides;
 
         int updateInterval() const;
         Plasma::IntervalAlignment intervalAlignment() const;

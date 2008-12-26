@@ -56,6 +56,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_showDay(false),
       m_showSeconds(false),
       m_showTimezone(false),
+      m_dateTimezoneBesides(false),
       m_dateString(0),
       m_layout(0)
 {
@@ -108,37 +109,64 @@ void Clock::constraintsEvent(Plasma::Constraints constraints)
     }
 }
 
-void Clock::updateSize() {
+void Clock::updateSize()
+{
+    Plasma::FormFactor f = formFactor();
+
+    if (f != Plasma::Vertical && f != Plasma::Horizontal) {
+        QFontMetricsF metrics(KGlobalSettings::smallestReadableFont());
+        // calculates based on size of "23:59"!
+        QString timeString = KGlobal::locale()->formatTime(QTime(23, 59), m_showSeconds);
+        setMinimumSize(metrics.size(Qt::TextSingleLine, timeString));
+    }
+
+    // more magic numbers
     int aspect = 2;
     if (m_showSeconds) {
         aspect = 3;
     }
 
-    if (formFactor() == Plasma::Horizontal) {
-        // We have a fixed height, set some sensible width
-        if (m_showDate || showTimezone()) {
-            QFontMetricsF metrics(KGlobalSettings::smallestReadableFont());
-            int w;
-            if (contentsRect().height() < KGlobalSettings::smallestReadableFont().pointSize()*6) {
-                w = (int)metrics.size(Qt::TextSingleLine, m_dateString).width();
-            } else {
-                w = (int)metrics.size(Qt::TextWordWrap, m_dateString).width();
-            }
-            setMinimumWidth(qMax(w, (int)(contentsRect().height() * aspect)));
+    int w, h;
+    if (m_showDate || showTimezone()) {
+        QFont f(KGlobalSettings::smallestReadableFont());
+        QFontMetrics metrics(f);
+        // if there's enough vertical space, wrap the words
+        if (contentsRect().height() < f.pointSize() * 6) {
+            QSize s = metrics.size(Qt::TextSingleLine, m_dateString);
+            w = s.width() + metrics.width(" ");
+            h = s.height();
+            //kDebug(96669) << "uS: singleline" << w;
         } else {
-            setMinimumWidth((int)(contentsRect().height() * aspect));
+            QSize s = metrics.size(Qt::TextWordWrap, m_dateString);
+            w = s.width();
+            h = s.height();
+            //kDebug(96669) << "uS: wordwrap" << w;
         }
+
+        if (!m_dateTimezoneBesides) {
+            w = qMax(w, (int)(contentsRect().height() * aspect));
+            h = h+(int)(contentsRect().width() / aspect);
+        } else {
+            w = w+(int)(contentsRect().height() * aspect);
+            h = qMax(h, (int)(contentsRect().width() / aspect));
+        }
+    } else {
+        w = (int)(contentsRect().height() * aspect);
+        h = (int)(contentsRect().width() / aspect);
+    }
+
+    if (f == Plasma::Horizontal) {
+        // We have a fixed height, set some sensible width
+        setMinimumWidth(w);
         setMinimumHeight(0);
         //kDebug() << "DR" << m_dateRect.width() << "CR" << contentsRect().height() * aspect;
-    } else if (formFactor() == Plasma::Vertical) {
-        // We have a fixed width, set some sensible height
-        setMinimumHeight((int)contentsRect().width() / aspect);
-        setMinimumWidth(0);
+        // kDebug(96669) << contentsRect();
     } else {
-        QFontMetricsF metrics(KGlobalSettings::smallestReadableFont());
-        QString timeString = KGlobal::locale()->formatTime(QTime(23, 59), m_showSeconds);
-        setMinimumSize(metrics.size(Qt::TextSingleLine, timeString));
+        // We have a fixed width, set some sensible height
+        setMinimumHeight(h);
+        setMinimumWidth(0);
     }
+    // kDebug(96669) << "minZize: " << minimumSize();
 }
 
 bool Clock::showTimezone() const
@@ -236,118 +264,196 @@ void Clock::changeEngineTimezone(const QString &oldTimezone, const QString &newT
     dataEngine("time")->connectSource(newTimezone, this, updateInterval(), intervalAlignment());
 }
 
+QRectF Clock::normalLayout(int subtitleWidth, int subtitleHeight, const QRect &contentsRect)
+{
+    Q_UNUSED(subtitleWidth);
+
+    QRectF myRect = QRectF(contentsRect.left(),
+                    contentsRect.bottom()-subtitleHeight,
+                    contentsRect.width(),
+                    contentsRect.bottom());
+
+    //p->fillRect(myRect, QBrush(QColor("green")));
+
+    // Now find out how much space is left for painting the time
+    m_timeRect = QRect(contentsRect.left(),
+                       contentsRect.top(),
+                       contentsRect.width(),
+                       contentsRect.height()-subtitleHeight);
+
+    return myRect;
+}
+
+QRectF Clock::sideBySideLayout(int subtitleWidth, int subtitleHeight, const QRect &contentsRect)
+{
+    QRectF myRect = QRectF(contentsRect.right()-subtitleWidth,
+                           (contentsRect.bottom()-subtitleHeight)/2,
+                           subtitleWidth,
+                           subtitleHeight);
+    // kDebug(96669) << "myRect: " << myRect;
+    // p->fillRect(myRect, QBrush(QColor("grey")));
+
+    // Now find out how much space is left for painting the time
+    m_timeRect = QRect(contentsRect.left(),
+                       contentsRect.top(),
+                       contentsRect.right()-subtitleWidth,
+                       contentsRect.bottom());
+
+    return myRect;
+}
+
 void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
     Q_UNUSED(option);
 
-    if (m_time.isValid() && m_date.isValid()) {
-        p->setPen(QPen(m_plainClockColor));
-        p->setRenderHint(QPainter::SmoothPixmapTransform);
-        p->setRenderHint(QPainter::Antialiasing);
-
-        /* ... helps debugging contentsRect and sizing ...
-        QColor c = QColor(Qt::green);
-        c.setAlphaF(.5);
-        p->setBrush(c);
-        p->drawRect(contentsRect);
-        */
-        QRect timeRect;
-
-        // Paint the date, conditionally, and let us know afterwards how much
-        // space is left for painting the time on top of it.
-        if (m_showDate || showTimezone()) {
-            QString dateString;
-            if (m_showDate) {
-                KLocale tmpLocale(*KGlobal::locale());
-                tmpLocale.setDateFormat("%e"); // day number of the month
-                QString day = tmpLocale.formatDate(m_date);
-                tmpLocale.setDateFormat("%b"); // short form of the month
-                QString month = tmpLocale.formatDate(m_date);
-
-                if (m_showYear) {
-                    tmpLocale.setDateFormat("%Y"); // whole year
-                    QString year = tmpLocale.formatDate(m_date);
-                    dateString = i18nc("@label Short date: "
-                                       "%1 day in the month, %2 short month name, %3 year",
-                                       "%1 %2 %3", day, month, year);
-                } else {
-                    dateString = i18nc("@label Short date: "
-                                       "%1 day in the month, %2 short month name",
-                                       "%1 %2", day, month);
-                }
-
-                if (m_showDay) {
-                    tmpLocale.setDateFormat("%a"); // short weekday
-                    QString weekday = tmpLocale.formatDate(m_date);
-                    dateString = i18nc("@label Day of the week with date: "
-                                       "%1 short day name, %2 short date",
-                                       "%1, %2", weekday, dateString);
-                }
-
-                if (showTimezone()) {
-                    QString currentTimezone = prettyTimezone();
-                    dateString = i18nc("@label Date with currentTimezone: "
-                                       "%1 day of the week with date, %2 currentTimezone",
-                                       "%1 %2", dateString, currentTimezone);
-                }
-            } else if (showTimezone()) {
-                dateString = prettyTimezone();
-            }
-            if (m_dateString != dateString) {
-                // If this string has changed (for example due to changes in the config
-                // we have to reset the sizing of the applet
-                m_dateString = dateString;
-                updateSize();
-            }
-            // Check sizes
-            QFont f = KGlobalSettings::smallestReadableFont();
-            f.setPointSizeF(qMax(contentsRect.height()/10, f.pointSize()));
-
-            m_dateRect = preparePainter(p, contentsRect, f, dateString);
-            int subtitleHeight = m_dateRect.height();
-
-            QRectF myRect = QRectF(contentsRect.left(),
-                                contentsRect.bottom()-subtitleHeight,
-                                contentsRect.width(),
-                                contentsRect.bottom());
-
-            //p->fillRect(myRect, QBrush(QColor("green")));
-            // When we're relatively low, force everything into a single line
-            if (formFactor() == Plasma::Horizontal && (contentsRect.height() < f.pointSize()*6)) {
-                p->drawText(myRect,
-                        Qt::TextSingleLine | Qt::AlignHCenter,
-                        dateString.trimmed());
-            } else {
-                p->drawText(myRect,
-                        Qt::TextWordWrap | Qt::AlignHCenter,
-                        dateString.trimmed());
-            }
-
-            // Now find out how much space is left for painting the time
-            timeRect = QRect(   contentsRect.left(),
-                                contentsRect.top(),
-                                contentsRect.width(),
-                                (contentsRect.height()-subtitleHeight+4));
-        } else {
-            timeRect = contentsRect;
-        }
-        //p->fillRect(timeRect, QBrush(QColor("red")));
-
-        QString timeString = KGlobal::locale()->formatTime(m_time, m_showSeconds);
-        // Choose a relatively big font size to start with
-        m_plainClockFont.setPointSizeF(qMax(timeRect.height(), KGlobalSettings::smallestReadableFont().pointSize()));
-        preparePainter(p, timeRect, m_plainClockFont, timeString, true);
-
-        QTextOption textOption(Qt::AlignCenter);
-        textOption.setWrapMode(QTextOption::NoWrap);
-        p->drawText(timeRect,
-                    timeString,
-                    textOption
-                );
+    if (!m_time.isValid() || !m_date.isValid()) {
+        return;
     }
+
+    p->setPen(QPen(m_plainClockColor));
+    p->setRenderHint(QPainter::SmoothPixmapTransform);
+    p->setRenderHint(QPainter::Antialiasing);
+
+    /* ... helps debugging contentsRect and sizing ... 
+       QColor c = QColor(Qt::blue);
+       c.setAlphaF(.5);
+       p->setBrush(c);
+       p->drawRect(contentsRect);
+     */
+
+    // Paint the date, conditionally, and let us know afterwards how much
+    // space is left for painting the time on top of it.
+    QRectF dateRect;
+    QString timeString = KGlobal::locale()->formatTime(m_time, m_showSeconds);
+    QFont smallFont = KGlobalSettings::smallestReadableFont();
+
+    if (m_showDate || showTimezone()) {
+        QString dateString;
+        if (m_showDate) {
+            KLocale tmpLocale(*KGlobal::locale());
+            tmpLocale.setDateFormat("%e"); // day number of the month
+            QString day = tmpLocale.formatDate(m_date);
+            tmpLocale.setDateFormat("%b"); // short form of the month
+            QString month = tmpLocale.formatDate(m_date);
+
+            if (m_showYear) {
+                tmpLocale.setDateFormat("%Y"); // whole year
+                QString year = tmpLocale.formatDate(m_date);
+                dateString = i18nc("@label Short date: "
+                        "%1 day in the month, %2 short month name, %3 year",
+                        "%1 %2 %3", day, month, year);
+            } else {
+                dateString = i18nc("@label Short date: "
+                        "%1 day in the month, %2 short month name",
+                        "%1 %2", day, month);
+            }
+
+            if (m_showDay) {
+                tmpLocale.setDateFormat("%a"); // short weekday
+                QString weekday = tmpLocale.formatDate(m_date);
+                dateString = i18nc("@label Day of the week with date: "
+                        "%1 short day name, %2 short date",
+                        "%1, %2", weekday, dateString);
+            }
+
+            if (showTimezone()) {
+                QString currentTimezone = prettyTimezone();
+                dateString = i18nc("@label Date with currentTimezone: "
+                        "%1 day of the week with date, %2 currentTimezone",
+                        "%1 %2", dateString, currentTimezone);
+            }
+        } else if (showTimezone()) {
+            dateString = prettyTimezone();
+        }
+
+        dateString = dateString.trimmed();
+
+        if (m_dateString != dateString) {
+            // If this string has changed (for example due to changes in the config
+            // we have to reset the sizing of the applet
+            m_dateString = dateString;
+            updateSize();
+        }
+
+        // Check sizes
+        // magic 10 is for very big spaces,
+        // where there's enough space to grow without harming time space
+        smallFont.setPointSizeF(qMax(contentsRect.height()/10, smallFont.pointSize()));
+        // kDebug(96669) << "=========";
+        // kDebug(96669) << "contentsRect: " << contentsRect;
+
+        m_dateRect = preparePainter(p, contentsRect, smallFont, dateString);
+        // kDebug(96669) << "m_dateRect: " << m_dateRect;
+
+        int subtitleHeight = m_dateRect.height();
+        int subtitleWidth = m_dateRect.width();
+        // kDebug(96669) << "subtitleWitdh: " << subtitleWitdh;
+        // kDebug(96669) << "subtitleHeight: " << subtitleHeight;
+
+        QFontMetricsF metrics(smallFont);
+        if (m_dateTimezoneBesides) {
+            dateRect = sideBySideLayout(subtitleWidth, subtitleHeight, contentsRect);
+
+            // kDebug(96669) << contentsRect.height()-(subtitleHeight) << metrics.lineSpacing();
+            if (contentsRect.height() - (subtitleHeight) >= metrics.lineSpacing() || formFactor() != Plasma::Horizontal) {
+                // to small to display the time on top of the date/timezone
+                // put them side by side
+                // kDebug(96669) << "switching to normal";
+                m_dateTimezoneBesides = false;
+                dateRect = normalLayout(subtitleWidth, subtitleHeight, contentsRect);
+            }
+        } else {
+            dateRect = normalLayout(subtitleWidth, subtitleHeight, contentsRect);
+
+            // kDebug(96669) << contentsRect.height()-(subtitleHeight) << metrics.lineSpacing();
+            if (contentsRect.height() - (subtitleHeight) < metrics.lineSpacing() && formFactor() == Plasma::Horizontal) {
+                // to small to display the time on top of the date/timezone
+                // put them side by side
+                // kDebug(96669) << "switching to s-b-s";
+                m_dateTimezoneBesides = true;
+                dateRect = sideBySideLayout(subtitleWidth, subtitleHeight, contentsRect);
+            }
+        }
+    } else {
+        m_timeRect = contentsRect;
+    }
+    // kDebug(96669) << "timeRect: " << m_timeRect;
+    // p->fillRect(timeRect, QBrush(QColor("red")));
+
+    // kDebug(96669) << m_time;
+    // Choose a relatively big font size to start with
+    m_plainClockFont.setPointSizeF(qMax(m_timeRect.height(), KGlobalSettings::smallestReadableFont().pointSize()));
+    preparePainter(p, m_timeRect, m_plainClockFont, timeString, true);
+
+    if (!m_dateString.isEmpty()) {
+        if (m_dateTimezoneBesides) {
+            QFontMetrics fm(m_plainClockFont);
+            //kDebug() << dateRect << m_timeRect << fm.boundingRect(m_timeRect, Qt::AlignCenter, timeString);
+            QRect br = fm.boundingRect(m_timeRect, Qt::AlignCenter, timeString);
+
+            QFontMetrics smallfm(smallFont);
+            dateRect.moveLeft(br.right() + qMin(0, br.left()) + smallfm.width(" "));
+        }
+
+        // When we're relatively low, force everything into a single line
+        QFont f = p->font();
+        p->setFont(smallFont);
+
+        if (formFactor() == Plasma::Horizontal && (contentsRect.height() < smallFont.pointSize()*6)) {
+            p->drawText(dateRect, Qt::TextSingleLine | Qt::AlignHCenter, m_dateString);
+        } else {
+            p->drawText(dateRect, Qt::TextWordWrap | Qt::AlignHCenter, m_dateString);
+        }
+
+        p->setFont(f);
+    }
+
+    QTextOption textOption(Qt::AlignCenter);
+    textOption.setWrapMode(QTextOption::NoWrap);
+    p->drawText(m_timeRect, timeString, textOption);
 }
 
-QRect Clock::preparePainter(QPainter *p, const QRect &rect, const QFont &font, const QString &text, const bool singleline)
+QRect Clock::preparePainter(QPainter *p, const QRect &rect, const QFont &font, const QString &text, bool singleline)
 {
     QRect tmpRect;
     QFont tmpFont = font;
@@ -362,8 +468,8 @@ QRect Clock::preparePainter(QPainter *p, const QRect &rect, const QFont &font, c
                     Qt::TextSingleLine : Qt::TextWordWrap;
 
         tmpRect = p->boundingRect(rect, flags, text);
-    } while (tmpFont.pointSize() > KGlobalSettings::smallestReadableFont().pointSize() && (tmpRect.width() > rect.width() ||
-            tmpRect.height() > rect.height()));
+    } while (tmpFont.pointSize() > KGlobalSettings::smallestReadableFont().pointSize() &&
+             (tmpRect.width() > rect.width() || tmpRect.height() > rect.height()));
 
     return tmpRect;
 }
