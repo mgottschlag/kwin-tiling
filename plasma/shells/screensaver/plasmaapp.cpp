@@ -53,11 +53,13 @@
 
 #include <Plasma/Containment>
 #include <Plasma/Theme>
+#include <Plasma/Dialog>
 
 #include "appadaptor.h"
 #include "savercorona.h"
 #include "saverview.h"
 #include "backgrounddialog.h"
+
 
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrender.h>
@@ -411,8 +413,16 @@ bool PlasmaApp::eventFilter(QObject *obj, QEvent *event)
                     //we force-disable window management and frames to cut off access to wm-y stuff
                     //and to make it easy to check the tag (frames are a pain)
                     kDebug() << "!!!!!!!setting flags on!!!!!" << widget;
-                    m_dialogs.append(widget);
-                    connect(widget, SIGNAL(destroyed(QObject*)), SLOT(dialogDestroyed(QObject*)));
+                    if (qobject_cast<Plasma::Dialog*>(widget)) {
+                        //this is a terrible horrible hack that breaks extenders but it mostly works
+                        //weird thing is, it sometimes makes the calendar popup too small.
+                        newFlags = Qt::Popup;
+                    } else {
+                        //plasmadialogs can't handle direct input
+                        //but configdialogs need it
+                        m_dialogs.append(widget);
+                        connect(widget, SIGNAL(destroyed(QObject*)), SLOT(dialogDestroyed(QObject*)));
+                    }
                     widget->setWindowFlags(newFlags);
                     widget->show(); //setting the flags hid it :(
                     //qApp->setActiveWindow(widget); //gives kbd but not mouse events
