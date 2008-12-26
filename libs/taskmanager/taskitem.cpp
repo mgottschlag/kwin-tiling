@@ -88,17 +88,21 @@ void TaskItem::setTaskPointer(TaskPtr task)
 
 TaskPtr TaskItem::task() const
 {
+    /*
     if (d->task.isNull()) {
         kDebug() << "pointer is Null";
     }
+    */
     return d->task;
 }
 
 StartupPtr TaskItem::startup() const
 {
+    /*
     if (d->startupTask.isNull()) {
         kDebug() << "pointer is Null";
     }
+    */
     return d->startupTask;
 }
 
