@@ -18,7 +18,6 @@ set(taskmanager_LIB_SRCS
    taskgroup.cpp
    taskitem.cpp
    taskmanager.cpp
-   taskrmbmenu.cpp
    )
 
 kde4_add_library(taskmanager SHARED ${taskmanager_LIB_SRCS})
