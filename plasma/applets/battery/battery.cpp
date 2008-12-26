@@ -295,7 +295,9 @@ void Battery::brightnessChanged(const int brightness)
 
 void Battery::updateSlider(const float brightness)
 {
-    m_brightnessSlider->setValue((int) brightness);
+    if (m_brightnessSlider->value() != (int)brightness) {
+        m_brightnessSlider->setValue((int) brightness);
+    }
 }
 
 void Battery::setFullBrightness()
