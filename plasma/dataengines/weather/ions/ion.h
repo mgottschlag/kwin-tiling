@@ -83,7 +83,7 @@ public:
      * @param condition the current condition being reported.
      * @return icon name
      */
-    QString getWeatherIcon(const QMap<QString, ConditionIcons> &ConditionList, const QString& condition);
+    QString getWeatherIcon(const QMap<QString, ConditionIcons> &conditionList, const QString& condition);
 
     /**
      * Returns wind icon element to display in applet.
