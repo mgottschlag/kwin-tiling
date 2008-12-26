@@ -512,7 +512,9 @@ void Launcher::init()
 
     layout->addWidget(d->footer);
     layout->addWidget(d->searchBar);
+    layout->addWidget(d->contentAreaHeader);
     layout->addWidget(d->contentArea);
+    layout->addWidget(d->contentAreaFooter);
     layout->addWidget(d->contentSwitcher);
 
     setLayout(layout);
