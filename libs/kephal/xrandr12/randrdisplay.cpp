@@ -159,9 +159,9 @@ void RandRDisplay::handleEvent(XEvent *e)
 		XRRNotifyEvent *event = (XRRNotifyEvent*)e;
 		for (int i=0; i < m_screens.count(); ++i) {
 			RandRScreen *screen = m_screens.at(i);
-			// FIXME: check which screen should receive the event
-			//        this needs a dual-head setup
-			screen->handleRandREvent(event);
+			if ( screen->rootWindow() == event->window ) {
+				screen->handleRandREvent(event);
+			}
 		}
 	}
 }
