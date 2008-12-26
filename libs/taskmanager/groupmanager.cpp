@@ -264,14 +264,16 @@ bool GroupManager::add(TaskPtr task)
 
 void GroupManager::remove(TaskPtr task)
 {
-    kDebug() << "remove: " << task->visibleName();
+    //kDebug() << "remove: " << task->visibleName();
     if (!d->geometryTasks.isEmpty()) {
         d->geometryTasks.removeAll(task);
     }
 
     TaskItem *item = d->itemList.value(task);
     if (!item) {
-        kDebug() << "invalid item";
+        // this can happen if the window hasn't been caught previously, 
+        // of it its an ignored type such as a NET::Utility type window
+        //kDebug() << "invalid item";
         return;
     }
 
