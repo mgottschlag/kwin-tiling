@@ -147,7 +147,7 @@ ResizeActionImpl::ResizeActionImpl(QObject *parent, TaskItem* item)
 
 MoveActionImpl::MoveActionImpl(QObject *parent, TaskItem* item)
     : QAction(parent)
-{   
+{
     TaskPtr task = item->task();
     connect(this, SIGNAL(triggered()), task.data(), SLOT(move()));
     setText(i18n("&Move"));
@@ -348,7 +348,7 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QL
 }
 
 BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, QList <QAction*> visualizationActions)
-    :QMenu(parent)
+    : QMenu(parent)
 {
     Q_ASSERT(group);
     Q_ASSERT(strategy);
@@ -390,7 +390,6 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, 
 
     addSeparator();
     addAction(new CloseActionImpl(this, group));
-
 }
 
 GroupPopupMenu::GroupPopupMenu(QWidget *parent, TaskGroup *group, GroupManager *groupManager)

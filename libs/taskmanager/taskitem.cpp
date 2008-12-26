@@ -291,16 +291,7 @@ bool TaskItem::isAlwaysOnTop() const
 
 bool TaskItem::isActionSupported(NET::Action action) const
 {
-    if (!d->task) {
-        return false;
-    }
-
-    if (KWindowSystem::allowedActionsSupported()) {
-       return (d->task->info().actionSupported(action));
-    }
-
-    return false;
-    //return (!KWindowSystem::allowedActionsSupported() || d->task->info().isActionSupported(action));
+    return d->task && d->task->info().actionSupported(action);
 }
 
 void TaskItem::addMimeData(QMimeData *mimeData) const
