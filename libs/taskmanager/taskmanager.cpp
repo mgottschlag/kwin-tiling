@@ -23,7 +23,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // Own
 #include "taskmanager.h"
-#include "taskmanager_p.h"
 
 // KDE
 #include <KConfig>
@@ -312,12 +311,10 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
         t->updateDemandsAttentionState(w);
     }
 
-    TaskChanges changes = TaskUnchanged;
-
     //kDebug() << "got changes, but will we refresh?" << dirty;
     if (dirty) {
         // only refresh this stuff if we have other changes besides icons
-        changes = t->refresh(dirty);
+        t->refresh(dirty);
     }
 }
 

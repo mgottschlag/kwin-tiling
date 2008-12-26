@@ -239,8 +239,6 @@ public:
     //* @internal
     ::TaskManager::TaskChanges refresh(unsigned int dirty);
     //* @internal
-    void refreshIcon();
-    //* @internal
     void addTransient( WId w, const NETWinInfo& info );
     //* @internal
     void removeTransient( WId w );
@@ -413,6 +411,8 @@ Q_SIGNALS:
 protected:
     void findWindowFrameId();
     void timerEvent(QTimerEvent *event);
+    //* @internal */
+    void refreshIcon();
 
 private:
     class Private;
