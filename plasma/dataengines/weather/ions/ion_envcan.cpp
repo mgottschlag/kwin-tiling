@@ -385,7 +385,7 @@ QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupForecastIconMappi
     forecastList["windy"] = NotAvailable;
     
     forecastList["chance of drizzle mixed with freezing drizzle"] = LightRain;
-    forecastList["Chance of flurries mixed with ice pellets"] = Flurries;
+    forecastList["chance of flurries mixed with ice pellets"] = Flurries;
     forecastList["chance of flurries or ice pellets"] = Flurries;
     forecastList["chance of flurries or rain showers"] = RainSnow;
     forecastList["chance of flurries or thundershowers"] = RainSnow;
