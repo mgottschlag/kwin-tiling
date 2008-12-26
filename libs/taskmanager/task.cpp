@@ -497,8 +497,6 @@ QIcon Task::icon()
     return d->icon;
 }
 
-
-
 WindowList Task::transients() const
 {
     return d->transients;
@@ -770,16 +768,12 @@ void Task::activate()
 
 void Task::activateRaiseOrIconify()
 {
-    if (!isActive() || isIconified())
-    {
+    kDebug() << isActive() << isIconified() << isOnTop();
+    if (!isActive() || isIconified()) {
         activate();
-    }
-    else if (!isOnTop())
-    {
+    } else if (!isOnTop()) {
        raise();
-    }
-    else
-    {
+    } else {
        setIconified(true);
     }
 }

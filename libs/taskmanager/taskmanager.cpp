@@ -28,6 +28,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // KDE
 #include <KConfig>
 #include <KConfigGroup>
+#include <KDebug>
 #include <KGlobal>
 #include <KLocale>
 
@@ -129,12 +130,8 @@ void TaskManager::configure_startup()
 
 TaskPtr TaskManager::findTask(WId w)
 {
-    // TODO: might be able to be made more efficient if
-    // we check to see if w is a transient first?
-    // profiling would say whether this is worth the effort
-
-    TaskDict::iterator it = d->tasksByWId.begin();
-    TaskDict::iterator itEnd = d->tasksByWId.end();
+    TaskDict::const_iterator it = d->tasksByWId.constBegin();
+    TaskDict::const_iterator itEnd = d->tasksByWId.constEnd();
 
     for (; it != itEnd; ++it) {
         if (it.key() == w || it.value()->hasTransient(w)) {
@@ -185,18 +182,13 @@ void TaskManager::windowAdded(WId w )
                     NET::WMWindowType | NET::WMPid | NET::WMState);
 
     // ignore NET::Tool and other special window types
-    NET::WindowType wType =
-        info.windowType( NET::NormalMask | NET::DesktopMask | NET::DockMask |
-                         NET::ToolbarMask | NET::MenuMask | NET::DialogMask |
-                         NET::OverrideMask | NET::TopMenuMask |
-                         NET::UtilityMask | NET::SplashMask );
+    NET::WindowType wType = info.windowType(NET::NormalMask | NET::DesktopMask | NET::DockMask |
+                                            NET::ToolbarMask | NET::MenuMask | NET::DialogMask |
+                                            NET::OverrideMask | NET::TopMenuMask |
+                                            NET::UtilityMask | NET::SplashMask);
 
-    if (wType != NET::Normal &&
-        wType != NET::Override &&
-        wType != NET::Unknown &&
-        wType != NET::Dialog &&
-        wType != NET::Utility)
-    {
+    if (wType != NET::Normal && wType != NET::Override && wType != NET::Unknown &&
+        wType != NET::Dialog && wType != NET::Utility) {
         return;
     }
 
@@ -207,24 +199,20 @@ void TaskManager::windowAdded(WId w )
     }
 
     Window transient_for_tmp;
-    if (XGetTransientForHint( QX11Info::display(), (Window) w, &transient_for_tmp ))
-    {
-        WId transient_for = (WId) transient_for_tmp;
+    if (XGetTransientForHint(QX11Info::display(), (Window)w, &transient_for_tmp)) {
+        WId transient_for = (WId)transient_for_tmp;
 
         // check if it's transient for a skiptaskbar window
-        if( d->skiptaskbarWindows.contains( transient_for ))
+        if (d->skiptaskbarWindows.contains( transient_for )) {
             return;
+        }
 
         // lets see if this is a transient for an existing task
-        if( transient_for != QX11Info::appRootWindow()
-            && transient_for != 0
-            && wType != NET::Utility )
-        {
+        if (transient_for != QX11Info::appRootWindow() &&
+            transient_for != 0 && wType != NET::Utility) {
             TaskPtr t = findTask(transient_for);
-            if (t)
-            {
-                if (t->window() != w)
-                {
+            if (t) {
+                if (t->window() != w) {
                     t->addTransient(w, info);
                     // kDebug() << "TM: Transient " << w << " added for Task: " << t->window();
                 }
@@ -233,7 +221,7 @@ void TaskManager::windowAdded(WId w )
         }
     }
 
-    TaskPtr t( new Task( w, 0 ) );
+    TaskPtr t(new Task(w, 0));
     d->tasksByWId[w] = t;
 
     if (d->startupInfo) {
@@ -248,7 +236,6 @@ void TaskManager::windowAdded(WId w )
     }
 
     // kDebug() << "TM: Task added for WId: " << w;
-
     emit taskAdded(t);
 }
 
@@ -351,20 +338,22 @@ void TaskManager::updateWindowPixmap(WId w)
 
 void TaskManager::activeWindowChanged(WId w)
 {
-    //kDebug() << "TaskManager::activeWindowChanged";
-
+    //kDebug() << "TaskManager::activeWindowChanged" << w;
     TaskPtr t = findTask(w);
     if (!t) {
         if (d->active) {
             d->active->setActive(false);
             d->active = 0;
         }
+        //kDebug() << "no active window";
     } else {
-        if (d->active)
+        if (d->active) {
             d->active->setActive(false);
+        }
 
         d->active = t;
         d->active->setActive(true);
+        //kDebug() << "active window is" << t->name();
     }
 }
 
