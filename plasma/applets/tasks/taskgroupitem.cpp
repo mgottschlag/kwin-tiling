@@ -828,10 +828,10 @@ void TaskGroupItem::updateActive(AbstractTaskItem *task)
     m_activeTaskIndex = indexOf(task);
 }
 
-int TaskGroupItem::indexOf (AbstractTaskItem *task)
+int TaskGroupItem::indexOf(AbstractTaskItem *task)
 {
     if (!m_group || !task) {
-        kDebug() << "Error";
+        //kDebug() << "Error";
         return -1;
     }
 
@@ -840,12 +840,12 @@ int TaskGroupItem::indexOf (AbstractTaskItem *task)
     foreach(AbstractGroupableItem *item, group()->members()) {
         AbstractTaskItem *taskItem = abstractItem(item);
         if (taskItem) {
-            if(task == taskItem) {
+            if (task == taskItem) {
                 TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(taskItem);
                 if (groupItem) {
                     return index + groupItem->indexOf(groupItem->activeSubTask());
                 }
-                
+
                 return index;
             }
 
