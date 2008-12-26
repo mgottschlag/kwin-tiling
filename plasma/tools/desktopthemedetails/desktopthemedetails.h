@@ -57,6 +57,7 @@ private:
     QHash<QString, QString> m_themeReplacements;
     QHash<QString, QString> m_dropListFiles;
     bool m_themeCustomized;
+    QString m_baseTheme;
 };
 
 #endif // DESKTOPTHEMEDETAILS_H

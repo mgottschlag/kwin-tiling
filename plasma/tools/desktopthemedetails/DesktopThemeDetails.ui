@@ -152,7 +152,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0" >
+      <item row="1" column="0">
        <layout class="QHBoxLayout" name="hlayout1" >
         <item>
          <widget class="QLabel" name="m_newThemeNameLabel" >
@@ -231,25 +231,29 @@
         </item>
        </layout>
       </item>
-      <item row="0" column="1" >
-       <widget class="QPushButton" name="m_removeThemeButton" >
-        <property name="enabled" >
-         <bool>true</bool>
-        </property>
-        <property name="text" >
-         <string>Remove Theme</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1" >
-       <widget class="QPushButton" name="m_exportThemeButton" >
-        <property name="enabled" >
-         <bool>true</bool>
-        </property>
-        <property name="text" >
-         <string>Export Theme to File...</string>
-        </property>
-       </widget>
+      <item row="3" column="0">
+       <layout class="QHBoxLayout" name="hlayout1" >
+        <item>
+         <widget class="QPushButton" name="m_removeThemeButton" >
+          <property name="enabled" >
+           <bool>true</bool>
+          </property>
+          <property name="text" >
+           <string>Remove Theme</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="m_exportThemeButton" >
+          <property name="enabled" >
+           <bool>true</bool>
+          </property>
+          <property name="text" >
+           <string>Export Theme to File...</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
