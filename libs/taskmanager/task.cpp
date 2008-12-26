@@ -47,6 +47,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 namespace TaskManager
 {
 
+static const int windowInfoFlags = NET::WMState | NET::XAWMState | NET::WMDesktop |
+                                   NET::WMVisibleName | NET::WMGeometry | NET::WMWindowType |
+                                   NET::WM2AllowedActions | NET::WM2GroupLeader;
+
 class Task::Private
 {
 public:
@@ -54,10 +58,7 @@ public:
      : active(false),
        win(w),
        frameId(w),
-       info(KWindowSystem::windowInfo(w,
-            NET::WMState | NET::XAWMState | NET::WMDesktop |
-            NET::WMVisibleName | NET::WMGeometry | NET::WMWindowType,
-            NET::WM2AllowedActions)),
+       info(KWindowSystem::windowInfo(w, windowInfoFlags)),
        lastWidth(0),
        lastHeight(0),
        lastResize(false),
@@ -209,10 +210,7 @@ void Task::refreshIcon()
         return TaskUnchanged;
     }
 
-    KWindowInfo info = KWindowSystem::windowInfo(d->win,
-                                                 NET::WMState | NET::XAWMState | NET::WMDesktop |
-                                                 NET::WMVisibleName | NET::WMGeometry | NET::WMWindowType,
-                                                 NET::WM2AllowedActions);
+    KWindowInfo info = KWindowSystem::windowInfo(d->win, windowInfoFlags);
 
     TaskChanges changes = TaskUnchanged;
 
