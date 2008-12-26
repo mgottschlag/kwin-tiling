@@ -90,7 +90,10 @@ int main(int argc, char **argv)
     options.add("global", ki18n("For install or remove, operates on packages installed for all users."));
     options.add("t");
     options.add("type <type>",
-                ki18n("The type of package, e.g. theme, wallpaper, plasmoid, dataengine, runner, etc."),
+                ki18nc("theme, wallpaper, etc. are keywords, but they may be translated, as both versions "
+                       "are recognized by the application "
+                       "(if translated, should be same as messages with 'package type' context below)",
+                       "The type of package, e.g. theme, wallpaper, plasmoid, dataengine, runner, etc."),
                 "plasmoid");
     options.add("s");
     options.add("i");
@@ -114,19 +117,19 @@ int main(int argc, char **argv)
     QString pluginType;
     Plasma::PackageStructure *installer = 0;
 
-    if (type == i18n("plasmoid") || type == "plasmoid") {
+    if (type == i18nc("package type", "plasmoid") || type == "plasmoid") {
         packageRoot = "plasma/plasmoids/";
         servicePrefix = "plasma-applet-";
         pluginType = "Applet";
-    } else if (type == i18n("theme") || type == "theme") {
+    } else if (type == i18nc("package type", "theme") || type == "theme") {
         packageRoot = "desktoptheme/";
-    } else if (type == i18n("wallpaper") || type == "wallpaper") {
+    } else if (type == i18nc("package type", "wallpaper") || type == "wallpaper") {
         packageRoot = "wallpapers/";
-    } else if (type == i18n("dataengine") || type == "dataengine") {
+    } else if (type == i18nc("package type", "dataengine") || type == "dataengine") {
         packageRoot = "plasma/dataengines/";
         servicePrefix = "plasma-dataengine-";
         pluginType = "DataEngine";
-    } else if (type == i18n("runner") || type == "runner") {
+    } else if (type == i18nc("package type", "runner") || type == "runner") {
         packageRoot = "plasma/runners/";
         servicePrefix = "plasma-runner-";
         pluginType = "Runner";
