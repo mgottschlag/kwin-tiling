@@ -40,8 +40,7 @@
 #include "plasma-shell-desktop.h"
 
 DesktopCorona::DesktopCorona(QObject *parent)
-    : Plasma::Corona(parent),
-      m_panel(0)
+    : Plasma::Corona(parent)
 {
     init();
 }
@@ -178,41 +177,41 @@ void DesktopCorona::loadDefaultLayout()
     }
 
     // make a panel at the bottom
-    m_panel = addContainmentDelayed("panel");
+    Plasma::Containment *panel = addContainmentDelayed("panel");
 
-    if (!m_panel) {
+    if (!panel) {
         return;
     }
 
-    m_panel->init();
-    m_panel->setScreen(topLeftScreen);
-    m_panel->setLocation(Plasma::BottomEdge);
-    m_panel->updateConstraints(Plasma::StartupCompletedConstraint);
-    m_panel->flushPendingConstraintsEvents();
+    panel->init();
+    panel->setScreen(topLeftScreen);
+    panel->setLocation(Plasma::BottomEdge);
+    panel->updateConstraints(Plasma::StartupCompletedConstraint);
+    panel->flushPendingConstraintsEvents();
 
     // some default applets to get a usable UI
-    Plasma::Applet *applet = loadDefaultApplet("launcher", m_panel);
+    Plasma::Applet *applet = loadDefaultApplet("launcher", panel);
     if (applet) {
         applet->setGlobalShortcut(KShortcut("Alt+F1"));
     }
 
-    loadDefaultApplet("notifier", m_panel);
-    loadDefaultApplet("pager", m_panel);
-    loadDefaultApplet("tasks", m_panel);
-    loadDefaultApplet("systemtray", m_panel);
+    loadDefaultApplet("notifier", panel);
+    loadDefaultApplet("pager", panel);
+    loadDefaultApplet("tasks", panel);
+    loadDefaultApplet("systemtray", panel);
 
     Plasma::DataEngineManager *engines = Plasma::DataEngineManager::self();
     Plasma::DataEngine *power = engines->loadEngine("powermanagement");
     if (power) {
         const QStringList &batteries = power->query("Battery")["sources"].toStringList();
         if (!batteries.isEmpty()) {
-            loadDefaultApplet("battery", m_panel);
+            loadDefaultApplet("battery", panel);
         }
     }
     engines->unloadEngine("powermanagement");
 
-    loadDefaultApplet("digital-clock", m_panel);
-    emit containmentAdded(m_panel);
+    loadDefaultApplet("digital-clock", panel);
+    emit containmentAdded(panel);
 
     QTimer::singleShot(1000, this, SLOT(saveDefaultSetup()));
 }
