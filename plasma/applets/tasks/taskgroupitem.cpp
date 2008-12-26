@@ -91,7 +91,7 @@ void TaskGroupItem::setSplitGroup(TaskGroup *group)
 //FIXME verify if this really works correctly
 void TaskGroupItem::unsplitGroup()
 {
-    kDebug();
+    //kDebug();
     if (!m_childSplitGroup) {
         return;
     }
