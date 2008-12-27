@@ -947,8 +947,6 @@ bool LockProcess::startPlasma()
     if (mPlasmaDBus->isValid()) {
         kDebug() << "weird, plasma-overlay is already running";
         mPlasmaDBus->call(QDBus::NoBlock, "setActive", mSetupMode);
-        // aseigo: put a dbus call here to the "setup" mode method
-        //         that method should also take care of initial visibility
         return true;
     }
 
@@ -1056,14 +1054,14 @@ void LockProcess::newService(QString name, QString oldOwner, QString newOwner)
 
     if (!mDialogs.isEmpty()) {
         //whoops, activation probably failed earlier
-        mPlasmaDBus->call(QDBus::NoBlock, "activate");
+        mPlasmaDBus->call(QDBus::NoBlock, "setActive", true);
     }
 }
 
 void LockProcess::deactivatePlasma()
 {
     if (isPlasmaValid()) {
-        mPlasmaDBus->call(QDBus::NoBlock, "deactivate");
+        mPlasmaDBus->call(QDBus::NoBlock, "setActive", false);
     }
     if (!mLocked && mLockGrace >=0) {
         QTimer::singleShot(mLockGrace, this, SLOT(startLock())); //this is only ok because any activity will quit
@@ -1130,7 +1128,7 @@ bool LockProcess::checkPass()
     killTimer(mAutoLogoutTimerId);
 
     if (isPlasmaValid()) {
-        mPlasmaDBus->call(QDBus::NoBlock, "activate");
+        mPlasmaDBus->call(QDBus::NoBlock, "setActive", true);
     }
 
     PasswordDlg passDlg( this, &greetPlugin);
@@ -1140,7 +1138,7 @@ bool LockProcess::checkPass()
         if (ret == QDialog::Rejected) {
             mSuppressUnlock.start(mSuppressUnlockTimeout);
         } else if (ret == TIMEOUT_CODE) {
-            mPlasmaDBus->call(QDBus::NoBlock, "deactivate");
+            mPlasmaDBus->call(QDBus::NoBlock, "setActive", false);
         }
     }
 
@@ -1158,6 +1156,12 @@ bool LockProcess::checkPass()
 
 bool LockProcess::checkPass(const QString &reason)
 {
+    if (! mLocked) {
+        //we were never locked... how can we unlock?!
+        //if anyone finds a use case for checking the password while unlocked, they'll have to load
+        //the greetplugin n'stuff
+        return false;
+    }
     PasswordDlg passDlg(this, &greetPlugin, reason);
     int ret = execDialog( &passDlg );
     kDebug() << ret;
