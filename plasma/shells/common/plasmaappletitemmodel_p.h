@@ -50,6 +50,8 @@ public:
     QString pluginName() const;
     virtual QString description() const;
     virtual int running() const;
+    virtual bool used() const;
+    virtual void setUsed(bool used);
     virtual void setFavorite(bool favorite);
     //set how many instances of this applet are running
     virtual void setRunning(int count);

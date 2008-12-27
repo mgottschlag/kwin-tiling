@@ -60,6 +60,11 @@ int PlasmaAppletItem::running() const
     return data().toMap()["runningCount"].toInt();
 }
 
+bool PlasmaAppletItem::used() const
+{
+    return data().toMap()["used"].toBool();
+}
+
 void PlasmaAppletItem::setFavorite(bool favorite)
 {
     QMap<QString, QVariant> attrs = data().toMap();
@@ -75,6 +80,13 @@ void PlasmaAppletItem::setRunning(int count)
     QMap<QString, QVariant> attrs = data().toMap();
     attrs.insert("running", count > 0); //bool for the filter
     attrs.insert("runningCount", count);
+    setData(QVariant(attrs));
+}
+
+void PlasmaAppletItem::setUsed(bool used)
+{
+    QMap<QString, QVariant> attrs = data().toMap();
+    attrs.insert("used", used);
     setData(QVariant(attrs));
 }
 
@@ -149,10 +161,22 @@ void PlasmaAppletItemModel::setRunningApplets(const QHash<QString, int> &apps)
     for (int r=0; r<rowCount(); ++r) {
         QStandardItem *i = item(r);
         PlasmaAppletItem *p = dynamic_cast<PlasmaAppletItem *>(i);
+
         if (p) {
-            p->setRunning(apps.value(p->name()));
+            const bool running = apps.value(p->name());
+            const bool used = m_used.contains(p->pluginName());
+
+            p->setRunning(running);
+            //mark just used applets that arent't running
+            p->setUsed(!running && used);
+
+            if (running && !used) {
+                m_used.append(p->pluginName());
+            }
         }
     }
+
+    m_configGroup.writeEntry("used", m_used.join(","));
 }
 
 void PlasmaAppletItemModel::setRunningApplets(const QString &name, int count)
@@ -161,9 +185,18 @@ void PlasmaAppletItemModel::setRunningApplets(const QString &name, int count)
         QStandardItem *i = item(r);
         PlasmaAppletItem *p = dynamic_cast<PlasmaAppletItem *>(i);
         if (p && p->name() == name) {
+            const bool used = m_used.contains(p->pluginName());
+
             p->setRunning(count);
+            p->setUsed(used && count == 0);
+
+            if (count > 0 && !used) {
+                m_used.append(p->pluginName());
+            }
         }
     }
+
+    m_configGroup.writeEntry("used", m_used.join(","));
 }
 
 QStringList PlasmaAppletItemModel::mimeTypes() const
