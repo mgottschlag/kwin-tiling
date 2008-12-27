@@ -438,6 +438,7 @@ void DesktopThemeDetails::save()
     if (newThemeExists) {
         m_themeModel->reload();
         m_theme->setCurrentIndex(m_themeModel->indexOf(theme));
+        //FIXME: should say "Appearance Settings" instead of "Desktop Settings"
         KMessageBox::information(this,i18n("To change your desktop theme to \"%1\", open\nDesktop Settings and select \"%2\" from the droplist.",m_theme->currentText(),m_theme->currentText() ), i18n("How to Change Desktop Theme"), "HowToChangeDesktopTheme");
     }
     resetThemeDetails();
