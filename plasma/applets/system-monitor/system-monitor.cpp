@@ -50,9 +50,9 @@ SystemMonitor::~SystemMonitor()
         appletNames << applet->objectName();
         applet->destroy();
     }
+
     KConfigGroup cg = config();
     cg.writeEntry("applets", appletNames);
-
 }
 
 void SystemMonitor::init()
@@ -107,6 +107,7 @@ void SystemMonitor::addApplet(const QString &name)
     if (applet) {
         m_applets.append(applet);
         connect(applet, SIGNAL(geometryChecked()), this, SLOT(checkGeometry()));
+        connect(applet, SIGNAL(destroyed(QObject*)), this, SLOT(appletRemoved(QObject*)));
         applet->setFlag(QGraphicsItem::ItemIsMovable, false);
         applet->init();
         applet->setBackgroundHints(Plasma::Applet::NoBackground);
@@ -119,21 +120,27 @@ void SystemMonitor::addApplet(const QString &name)
 
 void SystemMonitor::removeApplet(const QString &name)
 {
-    qreal height = 0;
     foreach (SM::Applet *applet, m_applets) {
         if (applet->objectName() == name) {
-            height -= applet->size().height();
-            m_layout->removeItem(applet);
-            m_applets.removeAll(applet);
             applet->destroy();
         }
     }
-    if (height != 0) {
-        checkGeometry(height);
+}
+
+void SystemMonitor::appletRemoved(QObject *object)
+{
+    SM::Applet *applet = static_cast<SM::Applet*>(object);
+
+    foreach (SM::Applet *a, m_applets) {
+        if (a == applet) {
+            m_layout->removeItem(applet);
+            m_applets.removeAll(applet);
+            checkGeometry();
+        }
     }
 }
 
-void SystemMonitor::checkGeometry(qreal height)
+void SystemMonitor::checkGeometry()
 {
     QSizeF margins = size() - contentsRect().size();
     qreal minHeight = 32 + 20 + 25; // m_buttons->minimumHeight();
@@ -146,11 +153,12 @@ void SystemMonitor::checkGeometry(qreal height)
     }
     m_widget->setMinimumSize(DEFAULT_MINIMUM_WIDTH, minHeight);
 
-    QSizeF s(m_widget->size().width(), qMax(m_widget->size().height() + height, minHeight));
+    QSizeF s(m_widget->size().width(), minHeight);
     if (m_applets.count() == 0) {
         // I want to be sure...
         s.setHeight(minHeight);
     }
+
     if (formFactor() != Plasma::Horizontal && formFactor() != Plasma::Vertical) {
         setMinimumSize(m_widget->minimumSize() + margins);
     }
