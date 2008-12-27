@@ -92,6 +92,20 @@ public:
             q->initExtenderItem(eItem);
         }
     }
+
+    void setPrettyTimezone()
+    {
+        if (timezone == "UTC")  {
+            prettyTimezone = timezone;
+        } else if (!q->isLocalTimezone()) {
+            QStringList tzParts = timezone.split("/");
+            prettyTimezone = tzParts.value(1);
+        } else {
+            prettyTimezone = localTimezone();
+        }
+
+        prettyTimezone = prettyTimezone.replace('_', ' ');
+    }
 };
 
 ClockApplet::ClockApplet(QObject *parent, const QVariantList &args)
@@ -336,16 +350,7 @@ void ClockApplet::init()
     d->timezone = cg.readEntry("timezone", d->timezone);
     d->defaultTimezone = cg.readEntry("defaultTimezone", d->timezone);
 
-    if (d->timezone == "UTC")  {
-        d->prettyTimezone = d->timezone;
-    } else if (!isLocalTimezone()) {
-        QStringList tzParts = d->timezone.split("/");
-        d->prettyTimezone = tzParts.value(1);
-    } else {
-        d->prettyTimezone = localTimezone();
-    }
-
-    d->prettyTimezone = d->prettyTimezone.replace('_', ' ');
+    d->setPrettyTimezone();
     Plasma::ToolTipManager::self()->registerWidget(this);
 
     extender();
@@ -380,16 +385,8 @@ void ClockApplet::setCurrentTimezone(const QString &tz)
     }
 
     d->timezone = tz;
-    if (tz == "UTC") {
-        d->prettyTimezone = tz;
-    } else if (!isLocalTimezone()) {
-        QStringList tzParts = tz.split("/");
-        d->prettyTimezone = tzParts.value(1);
-    } else {
-        d->prettyTimezone = localTimezone();
-    }
+    d->setPrettyTimezone();
 
-    d->prettyTimezone = d->prettyTimezone.replace('_', ' ');
     KConfigGroup cg = config();
     cg.writeEntry("timezone", tz);
     emit configNeedsSaving();
