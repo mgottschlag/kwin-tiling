@@ -171,6 +171,9 @@ void DesktopLayout::setVisibilityTolerance(qreal part)
 
 void DesktopLayout::setWorkingArea(QRectF area)
 {
+    // itemSpace positions are relative to working area start,
+    // adjust them to correspond to the same on-screen positions
+    itemSpace.offsetPositions(workingStart - area.topLeft());
     itemSpace.setWorkingArea(area.size());
     workingStart = area.topLeft();
     invalidate();
