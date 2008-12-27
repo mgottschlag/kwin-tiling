@@ -29,6 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // Qt
 #include <QColor>
+#include <QMimeData>
 
 // KDE
 #include <KDebug>
@@ -47,6 +48,8 @@ public:
     Private()
     {
     }
+
+    QList<WId> winIds() const;
 
     ItemList members;
     QString groupName;
@@ -302,15 +305,48 @@ bool TaskGroup::isOnCurrentDesktop() const
     return true;
 }
 
+QList<WId> TaskGroup::Private::winIds() const
+{
+    QList<WId> ids;
+
+    foreach (AbstractGroupableItem *groupable, members) {
+        if (groupable->isGroupItem()) {
+            TaskGroup *group = dynamic_cast<TaskGroup*>(groupable);
+            if (group) {
+                ids << group->d->winIds();
+            }
+        } else {
+            TaskItem * item = dynamic_cast<TaskItem*>(groupable);
+            if (item) {
+                ids << item->task()->info().win();
+            }
+        }
+    }
+
+    return ids;
+}
+
 void TaskGroup::addMimeData(QMimeData *mimeData) const
 {
-    if (!d->members.isEmpty()) {
+    kDebug() << d->members.count();
+    if (d->members.isEmpty()) {
         return;
     }
 
-    //TODO: add ALL the windows as well, so they can be dragged
-    //      as a group!
-    d->members.first()->addMimeData(mimeData);
+    QByteArray data;
+    QList<WId> ids = d->winIds();
+    int count = ids.count();
+    data.resize(sizeof(int) + sizeof(WId) * count);
+    memcpy(data.data(), &count, sizeof(int));
+    int i = 0;
+    foreach (WId id, ids) {
+        kDebug() << "adding" << id;
+        memcpy(data.data() + sizeof(int) + sizeof(WId) * i, &id, sizeof(WId));
+        ++i;
+    }
+
+    kDebug() << "done:" << data.size() << count;
+    mimeData->setData(Task::groupMimetype(), data);
 }
 
 bool TaskGroup::isOnAllDesktops() const

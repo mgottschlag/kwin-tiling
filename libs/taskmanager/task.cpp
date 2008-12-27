@@ -842,24 +842,78 @@ QString Task::mimetype()
     return "windowsystem/winid";
 }
 
+QString Task::groupMimetype()
+{
+    return "windowsystem/multiple-winids";
+}
+
+QList<WId> Task::idsFromMimeData(const QMimeData *mimeData, bool *ok)
+{
+    Q_ASSERT(mimeData);
+    QList<WId> ids;
+
+    if (ok) {
+        *ok = false;
+    }
+
+    if (!mimeData->hasFormat(groupMimetype())) {
+        // try to grab a singular id if it exists
+        //kDebug() << "not group type";
+        bool singularOk;
+        WId id = idFromMimeData(mimeData, &singularOk);
+
+        if (ok) {
+            *ok = singularOk;
+        }
+
+        if (singularOk) {
+            //kDebug() << "and singular failed, too";
+            ids << id;
+        }
+
+        return ids;
+    }
+
+    QByteArray data(mimeData->data(groupMimetype()));
+    if ((unsigned int)data.size() < sizeof(int) + sizeof(WId)) {
+        //kDebug() << "wrong size" << data.size() << sizeof(int) + sizeof(WId);
+        return ids;
+    }
+
+    int count = 0;
+    memcpy(&count, data.data(), sizeof(int));
+    if (count < 1 || (unsigned int)data.size() < sizeof(int) + sizeof(WId) * count) {
+        //kDebug() << "wrong size, 2" << data.size() << count << sizeof(int) + sizeof(WId) * count;
+        return ids;
+    }
+
+    WId id;
+    for (int i = 0; i < count; ++i) {
+        memcpy(&id, data.data() + sizeof(int) + sizeof(WId) * i, sizeof(WId));
+        ids << id;
+    }
+
+    if (ok) {
+        *ok = true;
+    }
+
+    return ids;
+}
+
 WId Task::idFromMimeData(const QMimeData *mimeData, bool *ok)
 {
     Q_ASSERT(mimeData);
 
-    if (!mimeData->hasFormat(mimetype())) {
-        if (ok) {
-            *ok = false;
-        }
+    if (ok) {
+        *ok = false;
+    }
 
+    if (!mimeData->hasFormat(mimetype())) {
         return 0;
     }
 
     QByteArray data(mimeData->data(mimetype()));
     if (data.size() != sizeof(WId)) {
-        if (ok) {
-            *ok = false;
-        }
-
         return 0;
     }
 

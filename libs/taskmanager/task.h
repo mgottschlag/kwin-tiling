@@ -252,15 +252,26 @@ public:
     void addMimeData(QMimeData *mimeData) const;
 
     /**
-     * Returns the mimetype used for Tasks
+     * Returns the mimetype used for a Task
      */
     static QString mimetype();
+
+    /**
+     * Returns the mimetype used for multiple Tasks
+     */
+    static QString groupMimetype();
 
     /**
      * Given mime data, will return a WId if it can decode one from the data. Otherwise
      * returns 0.
      */
     static WId idFromMimeData(const QMimeData *mimeData, bool *ok = 0);
+
+    /**
+     * Given mime data, will return a QList<WId> if it can decode WIds from the data. Otherwise
+     * returns an empty list.
+     */
+    static QList<WId> idsFromMimeData(const QMimeData *mimeData, bool *ok = 0);
 
 public Q_SLOTS:
     /**
