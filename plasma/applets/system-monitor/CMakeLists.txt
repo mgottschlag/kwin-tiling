@@ -8,7 +8,10 @@ set(lib_SRCS
     applet.cpp
 )
 kde4_add_library(plasma_applet-system-monitor SHARED ${lib_SRCS})
+
 target_link_libraries(plasma_applet-system-monitor ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS})
+
+set_target_properties(plasma_applet-system-monitor PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
 
 # HDD Monitor
 
