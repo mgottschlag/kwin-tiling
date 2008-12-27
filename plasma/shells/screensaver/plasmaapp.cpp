@@ -205,6 +205,8 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
 
     connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(adjustSize(int)));
     connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanup()));
+
+    setup(KCmdLineArgs::parsedArgs()->isSet("setup"));
 }
 
 PlasmaApp::~PlasmaApp()
@@ -278,6 +280,10 @@ void PlasmaApp::setActive(bool activate)
             m_view->containment()->closeToolBox();
         }
     } else {
+        if (m_idleOpacity > 0) {
+            m_view->setWindowOpacity(m_idleOpacity);
+            m_view->showView();
+        }
         lock();
     }
 }
@@ -296,8 +302,8 @@ void PlasmaApp::adjustSize(int screen)
 Plasma::Corona* PlasmaApp::corona()
 {
     if (!m_corona) {
-        SaverCorona *c = new SaverCorona(this);
-        connect(c, SIGNAL(containmentAdded(Plasma::Containment*)),
+        m_corona = new SaverCorona(this);
+        connect(m_corona, SIGNAL(containmentAdded(Plasma::Containment*)),
                 this, SLOT(createView(Plasma::Containment*)));
         //kDebug() << "connected to containmentAdded";
         /*
@@ -306,20 +312,11 @@ Plasma::Corona* PlasmaApp::corona()
                             view, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
         }*/
 
-        c->setItemIndexMethod(QGraphicsScene::NoIndex);
-        c->initializeLayout();
+        m_corona->setItemIndexMethod(QGraphicsScene::NoIndex);
+        m_corona->initializeLayout();
 
-        //aseigo: put this "setup" code in a method that can be called later.
-        if (KCmdLineArgs::parsedArgs()->isSet("setup")) {
-            if (c->immutability() == Plasma::UserImmutable) {
-                c->setImmutability(Plasma::Mutable);
-            }
-        } else if (c->immutability() == Plasma::Mutable) {
-            c->setImmutability(Plasma::UserImmutable);
-        }
         //kDebug() << "layout should exist";
         //c->checkScreens();
-        m_corona = c;
     }
 
     return m_corona;
@@ -369,9 +366,23 @@ void PlasmaApp::createView(Plasma::Containment *containment)
 
     connect(m_view, SIGNAL(hidden()), SLOT(lock()));
     connect(m_view, SIGNAL(hidden()), SIGNAL(hidden()));
-    //aseigo: put this "setup" code ito a setup method
-    if (KCmdLineArgs::parsedArgs()->isSet("setup")) {
+
+    kDebug() << "view created";
+}
+
+void PlasmaApp::setup(bool setupMode)
+{
+    kDebug() << setupMode;
+    if (! m_view) {
+        kDebug() << "too soon!!";
+        return;
+    }
+
+    if (setupMode) {
         m_view->enableSetupMode();
+        if (m_corona->immutability() == Plasma::UserImmutable) {
+            m_corona->setImmutability(Plasma::Mutable);
+        }
         setActive(true);
     } else {
         kDebug() << "checking lockprocess is still around";
@@ -379,10 +390,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
                 "org.kde.krunner_lock.LockProcess", QDBusConnection::sessionBus(), this);
         if (lockprocess.isValid()) {
             kDebug() << "success!";
-            if (m_idleOpacity > 0) {
-                m_view->setWindowOpacity(m_idleOpacity);
-                m_view->showView();
-            }
+            setActive(false);
         } else {
             kDebug() << "bailing out";
             qApp->quit(); //this failed once. why?

@@ -946,7 +946,7 @@ bool LockProcess::startPlasma()
 
     if (mPlasmaDBus->isValid()) {
         kDebug() << "weird, plasma-overlay is already running";
-        mPlasmaDBus->call(QDBus::NoBlock, "setActive", mSetupMode);
+        mPlasmaDBus->call(QDBus::NoBlock, "setup", mSetupMode);
         return true;
     }
 

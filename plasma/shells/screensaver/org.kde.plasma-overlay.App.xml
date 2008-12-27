@@ -8,6 +8,9 @@
     </method>
     <method name="lock">
     </method>
+    <method name="setup">
+      <arg name="setupMode" type="b" direction="in"/>
+    </method>
     <method name="quit">
     </method>
   </interface>

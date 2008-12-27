@@ -61,7 +61,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     // DBUS interface.
-    //if you change stuff, remember to regenerate
+    //if you change stuff, remember to regenerate ^^^
     /**
      * tell plasma to go into active mode, ready for interaction
      */
@@ -72,7 +72,17 @@ public Q_SLOTS:
      */
     void lock();
 
-    //not really slots, but we want them in dbus
+    //not really slots, but we want them in dbus:
+
+    /**
+     * get plasma all set up and ready
+     * this makes sure things like opacity, visibility and locked-ness are set right
+     * normally this is called only by plasmaapp itself when it finishes initialization, but it's
+     * possible that it might need to be run again by lockprocess
+     *
+     * @param setupMode whether we're starting in setup mode
+     */
+    void setup(bool setupMode);
 
     /**
      * quit the application
