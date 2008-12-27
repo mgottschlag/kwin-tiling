@@ -126,6 +126,7 @@ void Task::timerEvent(QTimerEvent *)
         d->cachedChanges = 0;
     }
 
+    killTimer(d->cachedChangesTimerId);
     d->cachedChangesTimerId = 0;
 }
 
