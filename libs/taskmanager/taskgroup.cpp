@@ -261,6 +261,7 @@ AbstractItemPtr TaskGroup::directMember(AbstractItemPtr item) const
         }
         tempItem = tempItem->parentGroup();
     }
+
     kDebug() << "item not found";
     return AbstractItemPtr();
 }
@@ -328,7 +329,7 @@ QList<WId> TaskGroup::Private::winIds() const
 
 void TaskGroup::addMimeData(QMimeData *mimeData) const
 {
-    kDebug() << d->members.count();
+    //kDebug() << d->members.count();
     if (d->members.isEmpty()) {
         return;
     }
@@ -340,12 +341,12 @@ void TaskGroup::addMimeData(QMimeData *mimeData) const
     memcpy(data.data(), &count, sizeof(int));
     int i = 0;
     foreach (WId id, ids) {
-        kDebug() << "adding" << id;
+        //kDebug() << "adding" << id;
         memcpy(data.data() + sizeof(int) + sizeof(WId) * i, &id, sizeof(WId));
         ++i;
     }
 
-    kDebug() << "done:" << data.size() << count;
+    //kDebug() << "done:" << data.size() << count;
     mimeData->setData(Task::groupMimetype(), data);
 }
 
