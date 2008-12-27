@@ -185,7 +185,7 @@ QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupConditionIconMapp
     conditionList["snow grains"] = Flurries;
     conditionList["squalls"] = Snow;
     conditionList["thunderstorm with hail"] = Thunderstorm;
-    conditionList["thuderstorm with rain"] = Thunderstorm;
+    conditionList["thunderstorm with rain"] = Thunderstorm;
     conditionList["thunderstorm with sand or dust storm"] = Thunderstorm;
     conditionList["thunderstorm without precipitation"] = Thunderstorm;
     conditionList["tornado"] = NotAvailable;
