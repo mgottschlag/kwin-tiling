@@ -401,7 +401,7 @@ void CalendarTable::paintCell(QPainter *p, int cell, int week, int weekDay, Cell
     d->svg->paint(p, cellArea, cellSuffix); // draw background 
 
     QColor numberColor = Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-    if(type & NotInCurrentMonth) {
+    if (type & NotInCurrentMonth) {
         p->setOpacity(d->opacity);
     }
     

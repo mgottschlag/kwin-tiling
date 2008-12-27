@@ -345,6 +345,7 @@ void ClockApplet::init()
         d->prettyTimezone = localTimezone();
     }
 
+    d->prettyTimezone = d->prettyTimezone.replace('_', ' ');
     Plasma::ToolTipManager::self()->registerWidget(this);
 
     extender();
@@ -388,6 +389,7 @@ void ClockApplet::setCurrentTimezone(const QString &tz)
         d->prettyTimezone = localTimezone();
     }
 
+    d->prettyTimezone = d->prettyTimezone.replace('_', ' ');
     KConfigGroup cg = config();
     cg.writeEntry("timezone", tz);
     emit configNeedsSaving();
@@ -400,7 +402,7 @@ QString ClockApplet::currentTimezone() const
 
 QString ClockApplet::prettyTimezone() const
 {
-    return d->prettyTimezone.replace("_", " ");
+    return d->prettyTimezone;
 }
 
 QStringList ClockApplet::getSelectedTimezones() const
