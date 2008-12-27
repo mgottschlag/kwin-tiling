@@ -77,7 +77,7 @@ namespace Kephal {
             
         m_valid = true;
         
-        QStringList names = m_interface->configurations();
+        const QStringList names = m_interface->configurations();
         foreach (const QString& name, names) {
             m_configs.insert(name, new DBusConfiguration(this, name));
         }
@@ -108,7 +108,7 @@ namespace Kephal {
     }
     
     QList<Configuration *> DBusConfigurations::alternateConfigurations() {
-        QStringList names = m_interface->alternateConfigurations();
+        const QStringList names = m_interface->alternateConfigurations();
         QList<Configuration *> result;
         foreach (const QString& name, names) {
             if (m_configs.contains(name)) {

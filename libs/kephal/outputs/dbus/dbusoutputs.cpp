@@ -45,7 +45,7 @@ namespace Kephal {
             
         m_valid = true;
         
-        QStringList ids = m_interface->outputIds();
+        const QStringList ids = m_interface->outputIds();
         foreach (const QString& id, ids) {
             QPoint pos = m_interface->position(id);
             QSize size = m_interface->size(id);

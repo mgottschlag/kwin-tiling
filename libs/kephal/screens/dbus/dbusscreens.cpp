@@ -59,7 +59,7 @@ namespace Kephal {
                     false);
             m_screens.append(screen);
             
-            QStringList outputIds = m_interface->outputs(id);
+            const QStringList outputIds = m_interface->outputs(id);
             foreach (const QString& outputId, outputIds) {
                 Output * output = Outputs::self()->output(outputId);
                 if (output) {
@@ -104,7 +104,7 @@ namespace Kephal {
                 false);
         m_screens.append(screen);
 
-        QStringList outputIds = m_interface->outputs(id);
+        const QStringList outputIds = m_interface->outputs(id);
         foreach (const QString& outputId, outputIds) {
             Output * output = Outputs::self()->output(outputId);
             if (output) {
