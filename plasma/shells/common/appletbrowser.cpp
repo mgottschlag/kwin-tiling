@@ -111,9 +111,12 @@ void AppletBrowserWidgetPrivate::initFilters()
         QString icon    = configGroup.readEntry("recommended." + id + ".icon");
         QString plugins = configGroup.readEntry("recommended." + id + ".plugins");
 
-        appletList->addEmblem(i18n("Recommended by %1", caption), KIcon(icon),
+        appletList->addEmblem(i18nc("%1 is the entity (person, staff, organization...) which recommends the widget",
+                                    "Recommended by %1", caption),
+                              KIcon(icon),
                               KCategorizedItemsViewModels::Filter("recommended." + id, true));
-        filterModel.addFilter(i18n("Recommended by %1", caption),
+        filterModel.addFilter(i18nc("%1 is the entity (person, staff, organization...) which recommends the widget",
+                                    "Recommended by %1", caption),
                               KCategorizedItemsViewModels::Filter("recommended." + id, true),
                               KIcon(icon));
     }
@@ -429,7 +432,9 @@ void AppletBrowserPrivate::populateWidgetsMenu()
         //kDebug() << service->property("X-Plasma-ProvidesWidgetBrowser");
         if (service->property("X-Plasma-ProvidesWidgetBrowser").toBool()) {
             QAction *action = new QAction(KIcon("applications-internet"),
-                                          i18n("Download New %1", service->name()), q);
+                                          i18nc("%1 is a type of widgets, as defined by "
+                                                "e.g. some plasma-packagestructure-*.desktop files",
+                                                "Download New %1", service->name()), q);
             QObject::connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
             mapper->setMapping(action, service->property("X-KDE-PluginInfo-Name").toString());
             widgetsMenu->addAction(action);

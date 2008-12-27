@@ -26,7 +26,8 @@ void JobAction::start()
     kDebug() << "Trying to perform the action" << operationName();
 
     if (!m_jobView) {
-        setErrorText(i18n("The JobView for %1 can't be found", destination()));
+        setErrorText(i18nc("%1 is the subject (can be anything) upon which the job is performed",
+                           "The JobView for %1 can't be found", destination()));
         setError(-1);
         emitResult();
         return;
