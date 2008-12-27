@@ -400,7 +400,7 @@ QString ClockApplet::currentTimezone() const
 
 QString ClockApplet::prettyTimezone() const
 {
-    return d->prettyTimezone;
+    return d->prettyTimezone.replace("_", " ");
 }
 
 QStringList ClockApplet::getSelectedTimezones() const
