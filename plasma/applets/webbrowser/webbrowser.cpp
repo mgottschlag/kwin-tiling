@@ -67,6 +67,7 @@ WebBrowser::WebBrowser(QObject *parent, const QVariantList &args)
           m_historyCombo(0)
 {
     setHasConfigurationInterface(true);
+    setAspectRatioMode(Plasma::IgnoreAspectRatio);
 
     m_layout = 0;
     resize(500,500);
@@ -202,7 +203,7 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
 
     m_graphicsWidget = new QGraphicsWidget(this);
     m_graphicsWidget->setLayout(m_layout);
-    
+
     m_back->setEnabled(m_browser->page()->history()->canGoBack());
     m_forward->setEnabled(m_browser->page()->history()->canGoForward());
 
