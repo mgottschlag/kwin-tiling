@@ -187,7 +187,7 @@ void KCategorizedItemsViewDelegate::paintColMain(
     foreach (emblem, m_parent->m_emblems) {
         if (item->passesFiltering(emblem.first)) {
             emblem.second.paint(&p,
-                    emblemLeft, top + UNIVERSAL_PADDING,
+                    emblemLeft, top + UNIVERSAL_PADDING + (FAV_ICON_SIZE - EMBLEM_ICON_SIZE)/2,
                     EMBLEM_ICON_SIZE, EMBLEM_ICON_SIZE, Qt::AlignCenter, iconMode);
             if (leftToRight) {
                 emblemLeft -= UNIVERSAL_PADDING + EMBLEM_ICON_SIZE;
