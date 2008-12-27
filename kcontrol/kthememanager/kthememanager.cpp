@@ -352,7 +352,7 @@ void kthememanager::slotCreateTheme()
             m_theme->addPreview();
 
             if ( !result.isEmpty() )
-                KMessageBox::information( this, i18n( "Your theme has been successfully created in %1.", result ),
+                KMessageBox::information( this, i18nc( "%1 is theme archive name", "Your theme has been successfully created in %1.", result ),
                                           i18n( "Theme Created" ), "theme_created_ok" );
             else
                 KMessageBox::error( this, i18n( "An error occurred while creating your theme." ),

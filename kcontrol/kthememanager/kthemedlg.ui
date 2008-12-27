@@ -60,7 +60,7 @@
         <string>Get new themes...</string>
        </property>
        <property name="url" >
-        <string>http://themes.kde.org</string>
+        <string comment="KDE::DoNotExtract">http://themes.kde.org</string>
        </property>
        <property name="tipText" >
         <string>Go to the KDE themes website</string>
