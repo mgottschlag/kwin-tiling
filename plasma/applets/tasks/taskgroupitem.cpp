@@ -657,7 +657,9 @@ void  TaskGroupItem::itemPositionChanged(AbstractItemPtr item)
 void TaskGroupItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
     //kDebug()<<"Drag enter";
-    if (event->mimeData()->hasFormat(TaskManager::Task::mimetype()) && !m_expandedLayout) {
+    if (!m_expandedLayout &&
+        (event->mimeData()->hasFormat(TaskManager::Task::mimetype()) ||
+         event->mimeData()->hasFormat(TaskManager::Task::groupMimetype()))) {
         event->acceptProposedAction();
         //kDebug()<<"Drag enter accepted";
     } else {
@@ -700,102 +702,96 @@ AbstractTaskItem *TaskGroupItem::taskItemForWId(WId id)
 void TaskGroupItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
     //kDebug() << "LayoutWidget dropEvent";
-    if (event->mimeData()->hasFormat(TaskManager::Task::mimetype())) {
+    if (event->mimeData()->hasFormat(TaskManager::Task::mimetype()) ||
+        event->mimeData()->hasFormat(TaskManager::Task::groupMimetype())) {
         bool ok;
-        WId id = TaskManager::Task::idFromMimeData(event->mimeData(), &ok);
+        QList<WId> ids = TaskManager::Task::idsFromMimeData(event->mimeData(), &ok);
 
         if (!ok) {
+            //kDebug() << "FAIL!";
             event->ignore();
             return;
         }
 
-        AbstractTaskItem *taskItem = m_applet->rootGroupItem()->taskItemForWId(id);
+        AbstractTaskItem *targetTask = dynamic_cast<AbstractTaskItem *>(scene()->itemAt(mapToScene(event->pos())));
+        //  kDebug() << "Pos: " << event->pos() << mapToScene(event->pos()) << "item" << scene()->itemAt(mapToScene(event->pos())) << "target Task " << dynamic_cast<QGraphicsItem *>(targetTask);
 
-        if (!taskItem) {
-            kDebug() << "Invalid TaskItem";
-            event->ignore();
-            return;
+        //kDebug() << "got" << ids.count() << "windows";
+        foreach (WId id, ids) {
+            handleDroppedId(id, targetTask, event);
         }
 
-        //grouping stuff
-        //if (m_taskItems.contains(taskItem)) {
-            // Q_ASSERT(m_groupItem);
-            // kDebug()<< "Task has Group";
-
-                bool noTargetTask = false;
-                AbstractTaskItem *targetTask = 0;
-
-                targetTask = dynamic_cast<AbstractTaskItem *>(scene()->itemAt(mapToScene(event->pos())));
-
-                //  kDebug() << "Pos: " << event->pos() << mapToScene(event->pos()) << "item" << scene()->itemAt(mapToScene(event->pos())) << "target Task " << dynamic_cast<QGraphicsItem *>(targetTask);
-
-                // kDebug() << "first item: " << dynamic_cast<QGraphicsItem*>(m_taskItems.first()) << "layout widget" << dynamic_cast<QGraphicsItem*>(this);
-
-                if (!targetTask) {
-                    //kDebug() << "no targetTask";
-                    noTargetTask = true;
-                }
-                if (!taskItem->parentGroup()) {
-                    //kDebug() << "group invalid";
-                    return;
-                }
-
-                TaskManager::GroupPtr group = taskItem->parentGroup()->group();
-
-                if ((event->modifiers() == m_applet->groupModifierKey()) &&
-                    m_applet->groupManager().groupingStrategy() == TaskManager::GroupManager::ManualGrouping) {
-                    //kDebug() << "groupModifiaction";
-
-                    if (!noTargetTask) {
-                        if (targetTask->isWindowItem() && (group == m_group)) { //Both Items in same group
-                            //Group Items together
-                            int targetIndex = m_group->members().indexOf(targetTask->abstractItem());
-                            int sourceIndex = m_group->members().indexOf(taskItem->abstractItem());
-                            TaskManager::ItemList members;
-                            members.append(targetTask->abstractItem());
-                            members.append(taskItem->abstractItem());
-                            if (!m_applet->groupManager().manualGroupingRequest(members)) {
-                                //kDebug() << "Couldn't create Group";
-                                return;
-                            }
-                            if (sourceIndex < targetIndex) {
-                                targetIndex--; //fix because the taskItem is removed so the index of the group should be targetIndex - 1
-                            }
-                            m_applet->groupManager().manualSortingRequest(taskItem->abstractItem()->parentGroup(), targetIndex);//move group to appropriate index if possible
-                            event->acceptProposedAction(); // We do not care about the type of action
-                            //kDebug() << "Group Created";
-                            return;
-                        } else if (!targetTask->isWindowItem()) { //Drop on collapsed group item
-                            //kDebug() << "Add item to Group";
-                            m_applet->groupManager().manualGroupingRequest(taskItem->abstractItem(), dynamic_cast<TaskManager::GroupPtr>(targetTask->abstractItem()));
-                            event->acceptProposedAction(); // We do not care about the type of action
-                            return;
-                        }
-                    }
-                    //add item to this group
-                    m_applet->groupManager().manualGroupingRequest(taskItem->abstractItem(), m_group);
-
-                } else { //Move action
-                    if((m_applet->groupManager().sortingStrategy() == TaskManager::GroupManager::ManualSorting)){
-                        if (group == m_group) { //same group
-                            //kDebug() << "Drag within group";
-                            layoutTaskItem(taskItem, event->pos());
-                        } else { //task item was dragged outside of group -> group move
-                            AbstractTaskItem *directMember = abstractItem(m_group->directMember(group));
-                            if (directMember) {
-                                layoutTaskItem(directMember, event->pos()); //we need to get the group right under the receiver group
-                            } else { //group isn't a member of this Group, this is the case if a task is dragged into a expanded group
-                                event->ignore();
-                                return;
-                            }
-                        }
-                    }//group Sorting
-                }//Move action
-        event->acceptProposedAction(); // We do not care about the type of action
+        //kDebug() << "LayoutWidget dropEvent done";
+        event->acceptProposedAction();
     } else {
         event->ignore();
     }
-    //kDebug() << "LayoutWidget dropEvent done";
+}
+
+void TaskGroupItem::handleDroppedId(WId id, AbstractTaskItem *targetTask, QGraphicsSceneDragDropEvent *event)
+{
+    AbstractTaskItem *taskItem = m_applet->rootGroupItem()->taskItemForWId(id);
+
+    if (!taskItem) {
+        //kDebug() << "Invalid TaskItem";
+        return;
+    }
+
+    if (!taskItem->parentGroup()) {
+        //kDebug() << "group invalid";
+        return;
+    }
+
+    TaskManager::GroupPtr group = taskItem->parentGroup()->group();
+
+    //kDebug() << id << taskItem->text() << (QObject*)targetTask;
+
+    // kDebug() << "first item: " << dynamic_cast<QGraphicsItem*>(m_taskItems.first()) << "layout widget" << dynamic_cast<QGraphicsItem*>(this);
+
+    if ((event->modifiers() == m_applet->groupModifierKey()) &&
+        m_applet->groupManager().groupingStrategy() == TaskManager::GroupManager::ManualGrouping) {
+        //kDebug() << "groupModifiaction";
+
+        if (!targetTask) {
+            //add item to this group
+            m_applet->groupManager().manualGroupingRequest(taskItem->abstractItem(), m_group);
+        } else if (targetTask->isWindowItem() && (group == m_group)) { //Both Items in same group
+            //Group Items together
+            int targetIndex = m_group->members().indexOf(targetTask->abstractItem());
+            int sourceIndex = m_group->members().indexOf(taskItem->abstractItem());
+            TaskManager::ItemList members;
+            members.append(targetTask->abstractItem());
+            members.append(taskItem->abstractItem());
+
+            if (m_applet->groupManager().manualGroupingRequest(members)) {
+                if (sourceIndex < targetIndex) {
+                    //fix because the taskItem is removed so the index of the group should be targetIndex - 1
+                    targetIndex--;
+                }
+
+                //move group to appropriate index if possible
+                m_applet->groupManager().manualSortingRequest(taskItem->abstractItem()->parentGroup(), targetIndex);
+                //kDebug() << "Group Created";
+            } else {
+                //kDebug() << "Couldn't create Group";
+            }
+        } else if (!targetTask->isWindowItem()) {
+            //Drop on collapsed group item
+            //kDebug() << "Add item to Group";
+            m_applet->groupManager().manualGroupingRequest(taskItem->abstractItem(), dynamic_cast<TaskManager::GroupPtr>(targetTask->abstractItem()));
+        }
+    } else if (m_applet->groupManager().sortingStrategy() == TaskManager::GroupManager::ManualSorting) {
+        //Move action 
+        if (group == m_group) { //same group
+            //kDebug() << "Drag within group";
+            layoutTaskItem(taskItem, event->pos());
+        } else { //task item was dragged outside of group -> group move
+            AbstractTaskItem *directMember = abstractItem(m_group->directMember(group));
+            if (directMember) {
+                layoutTaskItem(directMember, event->pos()); //we need to get the group right under the receiver group
+            }
+        }
+    }
 }
 
 void TaskGroupItem::layoutTaskItem(AbstractTaskItem* item, const QPointF &pos)
@@ -805,7 +801,7 @@ void TaskGroupItem::layoutTaskItem(AbstractTaskItem* item, const QPointF &pos)
     }
 
     int insertIndex = m_expandedLayout->insertionIndexAt(pos);
-// kDebug() << "Item inserting at: " << insertIndex << "of: " << numberOfItems();
+    // kDebug() << "Item inserting at: " << insertIndex << "of: " << numberOfItems();
     if (insertIndex == -1) {
         m_applet->groupManager().manualSortingRequest(item->abstractItem(), -1);
     } else {
@@ -813,7 +809,7 @@ void TaskGroupItem::layoutTaskItem(AbstractTaskItem* item, const QPointF &pos)
             m_applet->groupManager().manualSortingRequest(item->abstractItem(), insertIndex);
         } else {
             m_applet->groupManager().manualSortingRequest(item->abstractItem(), insertIndex +
-                                                          m_parentSplitGroup->m_groupMembers.size());
+                    m_parentSplitGroup->m_groupMembers.size());
         }
     }
 }
@@ -908,17 +904,15 @@ AbstractTaskItem * TaskGroupItem::selectSubTask(int index)
         if (taskItem) {
             TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(taskItem);
             if (groupItem) {
-                if(index < groupItem->memberList().count()) {
+                if (index < groupItem->memberList().count()) {
                    return groupItem->abstractItem(groupItem->group()->members().at(index));
                 } else {
                    index -= groupItem->memberList().count();
                 }
+            } else if (index == 0) {
+                return taskItem;
             } else {
-                if(index == 0) {
-                    return taskItem;
-                } else {
-                    index--;
-                }
+                --index;
             }
         }
     }
