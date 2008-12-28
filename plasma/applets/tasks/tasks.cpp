@@ -33,7 +33,6 @@
 #include <KWindowSystem>
 
 // Qt
-#include <QGraphicsSceneWheelEvent>
 #include <QTimeLine>
 #include <QGraphicsScene>
 #include <QGraphicsLinearLayout>

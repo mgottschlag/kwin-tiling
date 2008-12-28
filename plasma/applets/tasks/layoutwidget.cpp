@@ -6,7 +6,6 @@
 #include <taskmanager/groupmanager.h>
 
 // Qt
-#include <QGraphicsSceneWheelEvent>
 #include <QList>
 #include <QGraphicsScene>
 #include <QGraphicsGridLayout>
