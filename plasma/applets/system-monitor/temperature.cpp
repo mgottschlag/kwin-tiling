@@ -172,7 +172,7 @@ bool Temperature::addMeter(const QString& source)
 
     if (mode() != SM::Applet::Panel && m_showPlotters) {
         Plasma::SignalPlotter *plotter = new Plasma::SignalPlotter(this);
-        plotter->addPlot(Qt::white);
+        plotter->addPlot(theme->color(Plasma::Theme::TextColor));
         plotter->setUseAutoRange(true);
         plotter->setThinFrame(false);
         plotter->setShowLabels(false);
@@ -203,6 +203,10 @@ void Temperature::themeChanged()
         font.setPointSize(7);
         w->setLabelFont(0, font);
         w->setLabelFont(1, font);
+    }
+    foreach (Plasma::SignalPlotter *plotter, plotters().values()) {
+        plotter->removePlot(0);
+        plotter->addPlot(theme->color(Plasma::Theme::TextColor));
     }
 }
 

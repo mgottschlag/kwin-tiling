@@ -29,6 +29,7 @@ SM::Cpu::Cpu(QObject *parent, const QVariantList &args)
     setHasConfigurationInterface(true);
     resize(234 + 20 + 23, 135 + 20 + 25);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
 }
 
 SM::Cpu::~Cpu()
@@ -102,6 +103,18 @@ bool SM::Cpu::addMeter(const QString& source)
     mainLayout()->addItem(plotter);
     setPreferredItemHeight(80);
     return true;
+}
+
+void SM::Cpu::themeChanged()
+{
+    Plasma::Theme* theme = Plasma::Theme::defaultTheme();
+    foreach (Plasma::SignalPlotter *plotter, plotters().values()) {
+        plotter->removePlot(0);
+        plotter->addPlot(theme->color(Plasma::Theme::TextColor));
+        plotter->setFontColor(theme->color(Plasma::Theme::HighlightColor));
+        plotter->setHorizontalLinesColor(theme->color(Plasma::Theme::HighlightColor));
+        plotter->setVerticalLinesColor(theme->color(Plasma::Theme::HighlightColor));
+    }
 }
 
 void SM::Cpu::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)

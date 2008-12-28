@@ -29,6 +29,7 @@ SM::Net::Net(QObject *parent, const QVariantList &args)
     setHasConfigurationInterface(true);
     resize(234 + 20 + 23, 135 + 20 + 25);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
 }
 
 SM::Net::~Net()
@@ -108,6 +109,22 @@ bool SM::Net::addMeter(const QString& source)
     connectSource("network/interfaces/" + interface + "/receiver/data");
     setPreferredItemHeight(80);
     return true;
+}
+
+void SM::Net::themeChanged()
+{
+    Plasma::Theme* theme = Plasma::Theme::defaultTheme();
+    QColor color = theme->color(Plasma::Theme::TextColor);
+    foreach (Plasma::SignalPlotter *plotter, plotters().values()) {
+        plotter->removePlot(1);
+        plotter->removePlot(0);
+        plotter->addPlot(QColor(((color.red() - 128) * 0.65) + 128,
+                                ((color.green() - 128) * 0.65) + 128, 0, color.alpha()));
+        plotter->addPlot(QColor(((color.red() - 128) * 0.90) + 128, 0, 0, color.alpha()));
+        plotter->setFontColor(theme->color(Plasma::Theme::HighlightColor));
+        plotter->setHorizontalLinesColor(theme->color(Plasma::Theme::HighlightColor));
+        plotter->setVerticalLinesColor(theme->color(Plasma::Theme::HighlightColor));
+    }
 }
 
 void SM::Net::dataUpdated(const QString& source,

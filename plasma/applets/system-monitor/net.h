@@ -54,6 +54,7 @@ class Net : public Applet
 
     private slots:
         void parseSources();
+        void themeChanged();
 };
 }
 
