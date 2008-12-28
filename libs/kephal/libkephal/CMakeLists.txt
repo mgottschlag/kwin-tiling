@@ -1,6 +1,3 @@
-SET (QT_USE_QTDBUS 1)
-
-INCLUDE (${QT_USE_FILE})
 INCLUDE_DIRECTORIES (. .. ${CMAKE_CURRENT_SOURCE_DIR}/../kephal/ ${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 
 # register a factory method with Screens::self(), Outputs::self and Configurations::self()
@@ -46,8 +43,9 @@ QT4_GENERATE_DBUS_INTERFACE(../kded_kephal/dbus/dbusapi_configurations.h org.kde
 QT4_ADD_DBUS_INTERFACE(libkephal_SRCS ${CMAKE_CURRENT_BINARY_DIR}/org.kde.Kephal.Configurations.xml configurations_interface)
 
 ADD_LIBRARY (kephal SHARED ${libkephal_SRCS})
-TARGET_LINK_LIBRARIES (kephal ${QT_LIBRARIES})
-set_target_properties(kephal PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+TARGET_LINK_LIBRARIES (kephal ${QT_QTDBUS_LIBRARY} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
+set_target_properties(kephal PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION}
+        INSTALL_RPATH_USE_LINK_PATH true)
 
 INSTALL (TARGETS kephal EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS})
 INSTALL (FILES 

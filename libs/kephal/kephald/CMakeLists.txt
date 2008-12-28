@@ -1,7 +1,5 @@
 PROJECT (kephald)
-SET (QT_USE_QTDBUS 1)
 
-INCLUDE (${QT_USE_FILE})
 INCLUDE_DIRECTORIES (. .. ../kded_kephal ${CMAKE_CURRENT_SOURCE_DIR}/../kephal/ ${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 
 ADD_DEFINITIONS (-DNO_KDE)
@@ -65,7 +63,8 @@ QT4_ADD_DBUS_ADAPTOR (kephald_SRCS ${CMAKE_CURRENT_BINARY_DIR}/org.kde.Kephal.Ou
 QT4_GENERATE_DBUS_INTERFACE(../kded_kephal/dbus/dbusapi_configurations.h org.kde.Kephal.Configurations.xml)
 QT4_ADD_DBUS_ADAPTOR (kephald_SRCS ${CMAKE_CURRENT_BINARY_DIR}/org.kde.Kephal.Configurations.xml
         ../kded_kephal/dbus/dbusapi_configurations.h DBusAPIConfigurations)
+        
 ADD_EXECUTABLE (kephald ${kephald_SRCS})
-TARGET_LINK_LIBRARIES (kephald ${QT_LIBRARIES})
+TARGET_LINK_LIBRARIES (kephald ${QT_QTCORE_LIBRARY} ${QT_QTDBUS_LIBRARY})
 
 INSTALL (TARGETS kephald ${INSTALL_TARGETS_DEFAULT_ARGS})
