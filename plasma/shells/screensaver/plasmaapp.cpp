@@ -228,7 +228,7 @@ void PlasmaApp::cleanup()
 
 void PlasmaApp::setActiveOpacity(qreal opacity)
 {
-    if (opacity == m_activeOpacity) {
+    if (qFuzzyCompare(opacity, m_activeOpacity)) {
         return;
     }
     m_activeOpacity = opacity;
@@ -242,7 +242,7 @@ void PlasmaApp::setActiveOpacity(qreal opacity)
 
 void PlasmaApp::setIdleOpacity(qreal opacity)
 {
-    if (opacity == m_idleOpacity) {
+    if (qFuzzyCompare(opacity, m_idleOpacity)) {
         return;
     }
     m_idleOpacity = opacity;
@@ -273,6 +273,7 @@ void PlasmaApp::setActive(bool activate)
         m_view->containment()->openToolBox();
     } else if (m_view->isVisible()) {
         if (qFuzzyCompare(m_idleOpacity + qreal(1.0), qreal(1.0))) {
+            //opacity is 0
             m_view->hideView();
         } else {
             lock();
