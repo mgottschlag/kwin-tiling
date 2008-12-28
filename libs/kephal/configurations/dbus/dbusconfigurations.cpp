@@ -82,8 +82,6 @@ namespace Kephal {
             m_configs.insert(name, new DBusConfiguration(this, name));
         }
         
-        //statusChangedSlot();
-        connect(m_interface, SIGNAL(statusChanged()), this, SLOT(statusChangedSlot()));
         connect(m_interface, SIGNAL(configurationActivated(QString)), this, SLOT(configurationActivatedSlot(QString)));
         connect(m_interface, SIGNAL(confirmed()), this, SIGNAL(confirmed()));
         connect(m_interface, SIGNAL(reverted()), this, SIGNAL(reverted()));
