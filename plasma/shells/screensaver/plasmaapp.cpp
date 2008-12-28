@@ -71,6 +71,7 @@ const unsigned char VIEW = 2;
 Display* dpy = 0;
 Colormap colormap = 0;
 Visual *visual = 0;
+bool composite = false;
 
 void checkComposite()
 {
@@ -104,6 +105,8 @@ void checkComposite()
         }
 	XFree(xvi);
     }
+
+    composite = KWindowSystem::compositingActive() && colormap;
 
     kDebug() << (colormap ? "Plasma has an argb visual" : "Plasma lacks an argb visual") << visual << colormap;
     kDebug() << ((KWindowSystem::compositingActive() && colormap) ? "Plasma can use COMPOSITE for effects"
@@ -195,6 +198,10 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     Plasma::Theme::defaultTheme()->setFont(cg.readEntry("desktopFont", font()));
     m_activeOpacity = cg.readEntry("activeOpacity", 1.0);
     m_idleOpacity = cg.readEntry("idleOpacity", 1.0);
+
+    if (cg.readEntry("forceNoComposite", false)) {
+        composite = false;
+    }
 
     //we have to keep an eye on created windows
     tag = XInternAtom(QX11Info::display(), "_KDE_SCREENSAVER_OVERRIDE", False);
@@ -325,7 +332,7 @@ Plasma::Corona* PlasmaApp::corona()
 
 bool PlasmaApp::hasComposite()
 {
-    return colormap && KWindowSystem::compositingActive();
+    return composite;
 }
 
 //I think we need this for when the corona loads the default setup
