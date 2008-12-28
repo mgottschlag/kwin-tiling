@@ -99,6 +99,7 @@ private Q_SLOTS:
     void showDialogs();
     void configureContainment(Plasma::Containment*);
     void configDialogRemoved(QObject* dialog);
+    void syncConfig();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);

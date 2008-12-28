@@ -243,7 +243,8 @@ void PlasmaApp::setActiveOpacity(qreal opacity)
         m_view->setWindowOpacity(opacity);
     }
     KConfigGroup cg(KGlobal::config(), "General");
-    cg.writeEntry("activeOpacity", opacity); //TODO trigger a save
+    cg.writeEntry("activeOpacity", opacity);
+    m_corona->requestConfigSync();
 }
 
 void PlasmaApp::setIdleOpacity(qreal opacity)
@@ -253,7 +254,8 @@ void PlasmaApp::setIdleOpacity(qreal opacity)
     }
     m_idleOpacity = opacity;
     KConfigGroup cg(KGlobal::config(), "General");
-    cg.writeEntry("idleOpacity", opacity); //TODO trigger a save
+    cg.writeEntry("idleOpacity", opacity);
+    m_corona->requestConfigSync();
 }
 
 qreal PlasmaApp::activeOpacity() const
@@ -306,12 +308,18 @@ void PlasmaApp::adjustSize(int screen)
     m_view->setGeometry(geom);
 }
 
+void PlasmaApp::syncConfig()
+{
+    KGlobal::config()->sync();
+}
+
 Plasma::Corona* PlasmaApp::corona()
 {
     if (!m_corona) {
         m_corona = new SaverCorona(this);
         connect(m_corona, SIGNAL(containmentAdded(Plasma::Containment*)),
                 this, SLOT(createView(Plasma::Containment*)));
+        connect(m_corona, SIGNAL(configSynced()), SLOT(syncConfig()));
         //kDebug() << "connected to containmentAdded";
         /*
         foreach (DesktopView *view, m_desktops) {
