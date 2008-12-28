@@ -26,6 +26,7 @@
 #include <Plasma/View>
 //#include <Plasma/Corona>
 
+#include "plasmaapp.h"
 #include "wallpaperpreview.h"
 
 typedef QPair<QString, QString> WallpaperInfo;
@@ -94,10 +95,14 @@ void BackgroundDialog::cleanup()
 
 void BackgroundDialog::reloadConfig()
 {
+    //transparency
+    m_activeSlider->setValue(PlasmaApp::self()->activeOpacity() * 10);
+    m_idleSlider->setValue(PlasmaApp::self()->idleOpacity() * 10);
+
+    // Wallpaper
     disconnect(m_wallpaperMode, SIGNAL(currentIndexChanged(int)), this, SLOT(changeBackgroundMode(int)));
     int wallpaperIndex = 0;
 
-    // Wallpaper
     bool doWallpaper = m_containment->drawWallpaper();
     m_wallpaperLabel->setVisible(doWallpaper);
     m_wallpaperTypeLabel->setVisible(doWallpaper);
@@ -202,10 +207,14 @@ KConfigGroup BackgroundDialog::wallpaperConfig(const QString &plugin)
 
 void BackgroundDialog::saveConfig()
 {
+    //transparency
+    PlasmaApp::self()->setActiveOpacity(m_activeSlider->value() / 10.0);
+    PlasmaApp::self()->setIdleOpacity(m_idleSlider->value() / 10.0);
+
+    // Wallpaper
     QString wallpaperPlugin = m_wallpaperMode->itemData(m_wallpaperMode->currentIndex()).value<WallpaperInfo>().first;
     QString wallpaperMode = m_wallpaperMode->itemData(m_wallpaperMode->currentIndex()).value<WallpaperInfo>().second;
 
-    // Wallpaper
     Plasma::Wallpaper *currentWallpaper = m_containment->wallpaper();
     if (currentWallpaper) {
         KConfigGroup cfg = wallpaperConfig(currentWallpaper->pluginName());
