@@ -510,30 +510,6 @@ void PlasmaApp::configDialogRemoved(QObject* dialog)
     m_configDialog = 0;
 }
 
-/*
-void PlasmaApp::createConfigurationInterface(KConfigDialog *parent)
-{
-    //FIXME put this stuff into BackgroundDialog
-    QWidget *widget = new QWidget();
-    ui.setupUi(widget);
-    parent->setWindowTitle(i18nc("@title:window", "Settings"));
-    parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
-    parent->addPage(widget, parent->windowTitle());
-    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
-    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-    ui.activeSlider->setValue(m_activeOpacity * 10);
-    ui.idleSlider->setValue(m_idleOpacity * 10);
-    //TODO tell non-composite users they won't get anything other than 0 or 100%
-    //and generally prettify the UI
-}
-
-void PlasmaApp::configAccepted()
-{
-    setActiveOpacity(ui.activeSlider->value() / 10.0);
-    setIdleOpacity(ui.idleSlider->value() / 10.0);
-}
-*/
-
 void PlasmaApp::lock()
 {
     if (corona() && corona()->immutability() == Plasma::Mutable) {
