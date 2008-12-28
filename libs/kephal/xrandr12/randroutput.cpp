@@ -253,6 +253,7 @@ SizeList RandROutput::sizes() const
 
 QRect RandROutput::rect() const
 {
+        Q_ASSERT(m_crtc);
 	if (!m_crtc->isValid())
 		return QRect(0, 0, 0, 0);
 
