@@ -41,7 +41,10 @@ class HWInfo : public SM::Applet
 
     public slots:
         void dataUpdated(const QString &name,
-                     const Plasma::DataEngine::Data &data);
+                         const Plasma::DataEngine::Data &data);
+
+    private slots:
+        void updateHtml();
 
     private:
         void connectToEngine();

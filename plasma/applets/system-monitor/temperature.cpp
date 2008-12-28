@@ -33,6 +33,7 @@ Temperature::Temperature(QObject *parent, const QVariantList &args)
     setHasConfigurationInterface(true);
     resize(215 + 20 + 23, 109 + 20 + 25);
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
 }
 
 Temperature::~Temperature()
@@ -191,6 +192,18 @@ bool Temperature::addMeter(const QString& source)
     //setPreferredItemHeight(layout->preferredSize().height());
     setPreferredItemHeight(80);
     return true;
+}
+
+void Temperature::themeChanged()
+{
+    Plasma::Theme* theme = Plasma::Theme::defaultTheme();
+    foreach (Plasma::Meter *w, meters().values()) {
+        w->setLabelColor(0, theme->color(Plasma::Theme::TextColor));
+        QFont font = theme->font(Plasma::Theme::DefaultFont);
+        font.setPointSize(7);
+        w->setLabelFont(0, font);
+        w->setLabelFont(1, font);
+    }
 }
 
 void Temperature::dataUpdated(const QString& source,

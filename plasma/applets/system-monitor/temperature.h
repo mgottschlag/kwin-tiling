@@ -47,6 +47,7 @@ class Temperature : public SM::Applet
     private slots:
         void configAccepted();
         void parseSources();
+        void themeChanged();
 
     private:
         bool m_showPlotters;

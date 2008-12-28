@@ -47,6 +47,7 @@ class Hdd : public SM::Applet
 
     private slots:
         void configAccepted();
+        void themeChanged();
 
     private:
         Ui::config ui;

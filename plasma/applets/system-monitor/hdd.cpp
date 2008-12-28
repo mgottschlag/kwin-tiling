@@ -30,6 +30,7 @@ Hdd::Hdd(QObject *parent, const QVariantList &args)
 {
     setHasConfigurationInterface(true);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
 }
 
 Hdd::~Hdd()
@@ -185,7 +186,7 @@ bool Hdd::addMeter(const QString& source)
                       (text.blue() + background.blue()) / 2,
                       (text.alpha() + background.alpha()) / 2);
     w->setLabel(0, title(source, data));
-    w->setLabelColor(0, theme->color(Plasma::Theme::TextColor));
+    w->setLabelColor(0, text);
     w->setLabelColor(1, darkerText);
     w->setLabelColor(2, darkerText);
     QFont font = theme->font(Plasma::Theme::DefaultFont);
@@ -213,6 +214,28 @@ bool Hdd::addMeter(const QString& source)
         connectSource(disk);
     }
     return true;
+}
+
+void Hdd::themeChanged()
+{
+    Plasma::Theme* theme = Plasma::Theme::defaultTheme();
+    foreach (Plasma::Meter *w, meters().values()) {
+        QColor text = theme->color(Plasma::Theme::TextColor);
+        QColor background = theme->color(Plasma::Theme::BackgroundColor);
+        QColor darkerText((text.red() + background.red()) / 2,
+                          (text.green() + background.green()) / 2,
+                          (text.blue() + background.blue()) / 2,
+                          (text.alpha() + background.alpha()) / 2);
+        w->setLabelColor(0, text);
+        w->setLabelColor(1, darkerText);
+        w->setLabelColor(2, darkerText);
+        QFont font = theme->font(Plasma::Theme::DefaultFont);
+        font.setPointSize(9);
+        w->setLabelFont(0, font);
+        font.setPointSizeF(7.5);
+        w->setLabelFont(1, font);
+        w->setLabelFont(2, font);
+    }
 }
 
 void Hdd::deleteMeters(QGraphicsLinearLayout* layout)

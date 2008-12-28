@@ -44,6 +44,7 @@ HWInfo::HWInfo(QObject *parent, const QVariantList &args)
     setHasConfigurationInterface(false);
     resize(234 + 20 + 23, 135 + 20 + 25);
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateHtml()));
 }
 
 HWInfo::~HWInfo()
@@ -106,21 +107,25 @@ void HWInfo::connectToEngine()
 }
 
 void HWInfo::dataUpdated(const QString& source,
-                     const Plasma::DataEngine::Data &data)
+                         const Plasma::DataEngine::Data &data)
 {
-    if (m_audios.contains(source) && !m_audioNames.contains(data["Name"].toString()) && 
+    if (m_audios.contains(source) && !m_audioNames.contains(data["Name"].toString()) &&
         !data["Name"].toString().isEmpty()) {
         m_audioNames.append(data["Name"].toString());
-    } else if (m_networks.contains(source) && !m_networkNames.contains(data["Product"].toString()) && 
+    } else if (m_networks.contains(source) && !m_networkNames.contains(data["Product"].toString()) &&
                !data["Product"].toString().isEmpty()) {
         m_networkNames.append(data["Product"].toString());
-    } else if (m_cpus.contains(source) && !m_cpuNames.contains(data["Product"].toString()) && 
+    } else if (m_cpus.contains(source) && !m_cpuNames.contains(data["Product"].toString()) &&
                !data["Product"].toString().isEmpty()) {
         m_cpuNames.append(data["Product"].toString().trimmed());
     } else if (source.indexOf("VGA") > -1) {
         m_gpu = data["stdout"].toString().trimmed();
     }
+    updateHtml();
+}
 
+void HWInfo::updateHtml()
+{
     QString html;
     foreach(const QString& cpu, m_cpuNames) {
         html += QString(INFO_ROW).arg(i18n("CPU")).arg(cpu);
