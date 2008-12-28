@@ -99,6 +99,9 @@ void BackgroundDialog::reloadConfig()
     m_activeSlider->setValue(PlasmaApp::self()->activeOpacity() * 10);
     m_idleSlider->setValue(PlasmaApp::self()->idleOpacity() * 10);
 
+    label->setVisible(PlasmaApp::hasComposite());
+    m_activeSlider->setVisible(PlasmaApp::hasComposite());
+
     // Wallpaper
     disconnect(m_wallpaperMode, SIGNAL(currentIndexChanged(int)), this, SLOT(changeBackgroundMode(int)));
     int wallpaperIndex = 0;
