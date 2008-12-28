@@ -218,9 +218,6 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
 
 PlasmaApp::~PlasmaApp()
 {
-    //TODO: This manual sync() should not be necessary. Remove it when
-    // KConfig was fixed
-    KGlobal::config()->sync();
 }
 
 void PlasmaApp::cleanup()
@@ -231,6 +228,8 @@ void PlasmaApp::cleanup()
 
     delete m_view;
     delete m_corona;
+
+    KGlobal::config()->sync();
 }
 
 void PlasmaApp::setActiveOpacity(qreal opacity)
