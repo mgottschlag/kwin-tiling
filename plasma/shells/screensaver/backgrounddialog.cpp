@@ -103,11 +103,13 @@ void BackgroundDialog::reloadConfig()
     disconnect(m_wallpaperMode, SIGNAL(currentIndexChanged(int)), this, SLOT(changeBackgroundMode(int)));
     int wallpaperIndex = 0;
 
-    bool doWallpaper = m_containment->drawWallpaper();
+    bool doWallpaper = m_containment->drawWallpaper() && ! PlasmaApp::hasComposite();
     m_wallpaperLabel->setVisible(doWallpaper);
     m_wallpaperTypeLabel->setVisible(doWallpaper);
     m_wallpaperMode->setVisible(doWallpaper);
     m_wallpaperConfig->setVisible(doWallpaper);
+    m_monitor->setVisible(doWallpaper);
+    m_preview->setVisible(doWallpaper);
     if (doWallpaper) {
         // Load wallpaper plugins
         QString currentPlugin;
