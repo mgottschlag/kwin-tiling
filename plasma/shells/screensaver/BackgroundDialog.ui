@@ -64,7 +64,7 @@
       </widget>
      </item>
      <item row="1" column="2" >
-      <widget class="QSlider" name="activeSlider" >
+      <widget class="QSlider" name="m_activeSlider" >
        <property name="minimum" >
         <number>1</number>
        </property>
@@ -90,7 +90,7 @@
       </widget>
      </item>
      <item row="2" column="2" >
-      <widget class="QSlider" name="idleSlider" >
+      <widget class="QSlider" name="m_idleSlider" >
        <property name="maximum" >
         <number>10</number>
        </property>
