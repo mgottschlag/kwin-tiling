@@ -624,7 +624,8 @@ void AbstractTaskItem::animationUpdate(qreal progress)
 
 void AbstractTaskItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
-    if (event->mimeData()->hasFormat(TaskManager::Task::mimetype())) {
+    if (event->mimeData()->hasFormat(TaskManager::Task::mimetype()) ||
+        event->mimeData()->hasFormat(TaskManager::Task::groupMimetype())) {
         event->ignore(); //ignore it so the taskbar gets the event
         return;
     }
