@@ -54,13 +54,7 @@ SaverView::SaverView(Plasma::Containment *containment, QWidget *parent)
     //QDesktopWidget *desktop = QApplication::desktop();
     //setGeometry(desktop->screenGeometry(containment->screen()));
 
-    //TODO the ctmt should only offer wallpaper to the user if there's no composite
-    //and we'll be waiting on pluggable backgrounds even for that.
     setWallpaperEnabled(!PlasmaApp::hasComposite());
-
-    //TODO 'always show widgets' option will change this.
-    //also, need a way to be sure the screensaver's shown if we're going byebye
-    //connect(scene(), SIGNAL(releaseVisualFocus()), SLOT(hideView()));
 
     installEventFilter(this);
 }
@@ -89,12 +83,10 @@ void SaverView::disableSetupMode()
 void SaverView::drawBackground(QPainter * painter, const QRectF & rect)
 {
     if (PlasmaApp::hasComposite()) {
-        setWallpaperEnabled(false);
         painter->setCompositionMode(QPainter::CompositionMode_Source);
         painter->fillRect(rect, QColor(0, 0, 0, 0));
         //FIXME kwin's shadow effect is getting drawn behind me. do not want.
     } else {
-        setWallpaperEnabled(true);
         Plasma::View::drawBackground(painter, rect);
     }
 }
