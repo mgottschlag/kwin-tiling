@@ -30,6 +30,8 @@
 #include <KStandardDirs>
 #include <KRun>
 
+#include <solid/control/powermanager.h>
+
 PowerDevilRunner::PowerDevilRunner( QObject *parent, const QVariantList &args )
         : Plasma::AbstractRunner( parent ),
         m_dbus( QDBusConnection::sessionBus() )
@@ -175,7 +177,28 @@ void PowerDevilRunner::match( Plasma::RunnerContext &context )
                     }
                     Plasma::QueryMatch match( this );
                     match.setType( Plasma::QueryMatch::ExactMatch );
-                    match.setIcon( KIcon( "preferences-system-power-management" ) );
+
+                    switch (m_governorData[ent]) {
+                        case (int) Solid::Control::PowerManager::Performance:
+                            match.setIcon( KIcon( "preferences-system-performance" ) );
+                            break;
+                        case (int) Solid::Control::PowerManager::OnDemand:
+                            match.setIcon( KIcon( "system-switch-user" ) );
+                            break;
+                        case (int) Solid::Control::PowerManager::Conservative:
+                            match.setIcon( KIcon( "user-invisible" ) );
+                            break;
+                        case (int) Solid::Control::PowerManager::Powersave:
+                            match.setIcon( KIcon( "preferences-system-power-management" ) );
+                            break;
+                        case (int) Solid::Control::PowerManager::Userspace:
+                            match.setIcon( KIcon( "kuser" ) );
+                            break;
+                        default:
+                            match.setIcon( KIcon( "preferences-system-power-management" ) );
+                            break;
+                    }
+
                     match.setText( i18n( "Set CPU Governor to '%1'", ent ) );
                     match.setData( m_governorData[ent] );
                     match.setRelevance( 1 );
@@ -236,7 +259,7 @@ void PowerDevilRunner::match( Plasma::RunnerContext &context )
 
                     Plasma::QueryMatch match3( this );
                     match3.setType( Plasma::QueryMatch::ExactMatch );
-                    match3.setIcon( KIcon( "preferences-system-power-management" ) );
+                    match3.setIcon( KIcon( "video-display" ) );
                     match3.setText( i18n( "Turn off screen" ) );
                     match3.setRelevance( 1 );
                     match3.setId( "TurnOffScreen" );
@@ -246,7 +269,20 @@ void PowerDevilRunner::match( Plasma::RunnerContext &context )
                 foreach( const QString &ent, m_suspendMethods ) {
                     Plasma::QueryMatch match( this );
                     match.setType( Plasma::QueryMatch::ExactMatch );
-                    match.setIcon( KIcon( "preferences-system-power-management" ) );
+
+                    switch (m_suspendData[ent]) {
+                        case 1:
+                        case 2:
+                            match.setIcon( KIcon( "system-suspend" ) );
+                            break;
+                        case 4:
+                            match.setIcon( KIcon( "system-suspend-hibernate" ) );
+                            break;
+                        default:
+                            match.setIcon( KIcon( "preferences-system-power-management" ) );
+                            break;
+                    }
+
                     match.setText( ent );
                     match.setData( m_suspendData[ent] );
                     match.setRelevance( 1 );
