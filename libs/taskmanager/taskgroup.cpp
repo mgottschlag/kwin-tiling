@@ -59,7 +59,7 @@ public:
     GroupManager *groupingStrategy;
 };
 
-TaskGroup::TaskGroup(GroupManager *parent,QString name, QColor color)
+TaskGroup::TaskGroup(GroupManager *parent,const QString &name, const QColor &color)
 :   AbstractGroupableItem(parent),
     d(new Private)
 {

@@ -35,7 +35,7 @@ class TASKMANAGER_EXPORT TaskGroup : public AbstractGroupableItem
 {
     Q_OBJECT
 public:
-    TaskGroup(GroupManager *parent, QString name, QColor color);
+    TaskGroup(GroupManager *parent, const QString& name, const QColor& color);
     TaskGroup(GroupManager *parent);
     ~TaskGroup();
 
