@@ -414,6 +414,7 @@ public:
     LeaveModel *leaveModel;
     SearchBar *searchBar;
     QWidget *footer;
+    QLabel *userinfo;
     ContentAreaCap *contentAreaHeader;
     QStackedWidget *contentArea;
     ContentAreaCap *contentAreaFooter;
@@ -489,12 +490,8 @@ void Launcher::init()
     } else {
         labelText = i18nc("full name, login name, hostname", "<b>%1 (%2)</b> on <b>%3</b>", fullName, user.loginName(), hostname);
     }
-    QLabel *userinfo = new QLabel(labelText);
-    QColor color = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-    QPalette p = userinfo->palette();
-    p.setColor(QPalette::Normal, QPalette::WindowText, color);
-    p.setColor(QPalette::Inactive, QPalette::WindowText, color);
-    userinfo->setPalette(p);
+
+    d->userinfo = new QLabel(labelText);
 
     QToolButton *branding = new BrandingButton(this);
     branding->setAutoRaise(false);
@@ -504,7 +501,7 @@ void Launcher::init()
     QHBoxLayout *brandingLayout = new QHBoxLayout;
     brandingLayout->setMargin(3);
     brandingLayout->addSpacing(ItemDelegate::ITEM_LEFT_MARGIN - 3);
-    brandingLayout->addWidget(userinfo);
+    brandingLayout->addWidget(d->userinfo);
     brandingLayout->addStretch(2);
     brandingLayout->addWidget(branding);
     brandingLayout->addSpacing(rightHeaderMargin);
@@ -520,6 +517,19 @@ void Launcher::init()
     setLayout(layout);
     //setBackgroundRole(QPalette::AlternateBase);
     //setAutoFillBackground(true);
+
+    updateThemedPalette();
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
+            this, SLOT(updateThemedPalette()));
+}
+
+void Launcher::updateThemedPalette()
+{
+    QColor color = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    QPalette p = d->userinfo->palette();
+    p.setColor(QPalette::Normal, QPalette::WindowText, color);
+    p.setColor(QPalette::Inactive, QPalette::WindowText, color);
+    d->userinfo->setPalette(p);
 }
 
 QSize Launcher::minimumSizeHint() const

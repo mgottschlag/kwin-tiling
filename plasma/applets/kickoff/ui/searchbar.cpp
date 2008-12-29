@@ -49,6 +49,7 @@ public:
     Private() : editWidget(0), timer(0) {}
 
     KLineEdit *editWidget;
+    QLabel *searchLabel;
     QTimer *timer;
 };
 
@@ -68,13 +69,7 @@ SearchBar::SearchBar(QWidget *parent)
     layout->setMargin(3);
     layout->setSpacing(0); // we do the spacing manually to line up with the views below
 
-    QLabel *searchLabel = new QLabel(i18n("Search:"), this);
-    QColor color = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-    QPalette p = searchLabel->palette();
-    p.setColor(QPalette::Normal, QPalette::WindowText, color);
-    p.setColor(QPalette::Inactive, QPalette::WindowText, color);
-    searchLabel->setPalette(p);
-
+    d->searchLabel = new QLabel(i18n("Search:"), this);
     QLabel *searchIcon = new QLabel(this);
 
     QFileInfo fi(QDir(QDir::homePath()), ".face.icon");
@@ -93,12 +88,25 @@ SearchBar::SearchBar(QWidget *parent)
     layout->addSpacing(2);
     layout->addWidget(searchIcon);
     layout->addSpacing(5);
-    layout->addWidget(searchLabel);
+    layout->addWidget(d->searchLabel);
     layout->addSpacing(5);
     layout->addWidget(d->editWidget);
     setLayout(layout);
 
     setFocusProxy(d->editWidget);
+
+    updateThemedPalette();
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
+            this, SLOT(updateThemedPalette()));
+}
+
+void SearchBar::updateThemedPalette()
+{
+    QColor color = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    QPalette p = d->searchLabel->palette();
+    p.setColor(QPalette::Normal, QPalette::WindowText, color);
+    p.setColor(QPalette::Inactive, QPalette::WindowText, color);
+    d->searchLabel->setPalette(p);
 }
 
 void SearchBar::updateTimerExpired()

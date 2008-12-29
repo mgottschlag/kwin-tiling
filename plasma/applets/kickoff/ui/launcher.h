@@ -86,6 +86,7 @@ private Q_SLOTS:
     void showViewContextMenu(const QPoint& pos);
     void focusFavoritesView();
     void resultsAvailable();
+    void updateThemedPalette();
 
 private:
     void init();

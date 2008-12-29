@@ -45,6 +45,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void updateTimerExpired();
+    void updateThemedPalette();
 
 private:
     class Private;
