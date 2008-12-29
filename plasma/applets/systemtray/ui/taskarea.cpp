@@ -51,7 +51,8 @@ public:
           taskLayout(new CompactLayout()),
           lastItemCount(0),
           showingHidden(false),
-          hasHiddenTasks(false)
+          hasHiddenTasks(false),
+          hasTasksThatCanHide(false)
     {
     }
 
@@ -63,6 +64,7 @@ public:
     int lastItemCount;
     bool showingHidden : 1;
     bool hasHiddenTasks : 1;
+    bool hasTasksThatCanHide : 1;
 };
 
 
@@ -100,23 +102,16 @@ bool TaskArea::isHiddenType(const QString &typeId, bool always) const
 
 void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
 {
+    d->hasTasksThatCanHide = false;
     d->hasHiddenTasks = false;
     foreach (Task *task, tasks) {
         //kDebug() << "checking" << task->name() << d->showingHidden;
-        if (isHiddenType(task->typeId())) {
-            d->hasHiddenTasks = true;
-            QGraphicsWidget *widget = findWidget(task);
-            if (widget) {
-                kDebug() << "just hiding the widget";
-                widget->hide();
-            }
-        } else {
-            addWidgetForTask(task);
-        }
+        addWidgetForTask(task);
     }
 
     if (d->hasHiddenTasks) {
         d->topLayout->invalidate();
+        d->topLayout->activate();
     }
 
     checkUnhideTool();
@@ -138,26 +133,30 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
         return;
     }
 
+    d->hasTasksThatCanHide = d->hasTasksThatCanHide || isHiddenType(task->typeId(), false);
+
     if (isHiddenType(task->typeId())) {
         //kDebug() << "is a hidden type";
         d->hasHiddenTasks = true;
-    } else {
         if (widget) {
-            //kDebug() << "widget already exists!";
-            widget->show();
-        } else {
-            switch (task->order()) {
-                case SystemTray::Task::First:
-                    d->taskLayout->insertItem(0, task->widget(d->host));
-                    break;
-                case SystemTray::Task::Normal:
-                    d->taskLayout->insertItem(d->taskLayout->count() - d->lastItemCount, task->widget(d->host));
-                    break;
-                case SystemTray::Task::Last:
-                    ++d->lastItemCount;
-                    d->taskLayout->addItem(task->widget(d->host));
-                    break;
-            }
+            //kDebug() << "just hiding the widget";
+            widget->hide();
+        }
+    } else if (widget) {
+        //kDebug() << "widget already exists!";
+        widget->show();
+    } else {
+        switch (task->order()) {
+            case SystemTray::Task::First:
+                d->taskLayout->insertItem(0, task->widget(d->host));
+                break;
+            case SystemTray::Task::Normal:
+                d->taskLayout->insertItem(d->taskLayout->count() - d->lastItemCount, task->widget(d->host));
+                break;
+            case SystemTray::Task::Last:
+                ++d->lastItemCount;
+                d->taskLayout->addItem(task->widget(d->host));
+                break;
         }
     }
 }
@@ -292,7 +291,7 @@ void TaskArea::toggleHiddenItems()
 
 void TaskArea::checkUnhideTool()
 {
-    if (d->showingHidden || d->hasHiddenTasks) {
+    if (d->hasTasksThatCanHide) {
         initUnhideTool();
     } else {
         // hide the show tool
