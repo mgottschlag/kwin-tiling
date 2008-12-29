@@ -34,6 +34,7 @@
 #include <Plasma/Containment>
 #include <Plasma/Corona>
 #include <Plasma/Plasma>
+#include <Plasma/PopupApplet>
 #include <Plasma/Svg>
 #include <Plasma/Theme>
 
@@ -338,6 +339,11 @@ Plasma::Location PanelView::location() const
 void PanelView::setPanelMode(PanelView::PanelMode mode)
 {
     unsigned long state = NET::Sticky;
+
+    delete m_mousePollTimer;
+    m_mousePollTimer = 0;
+    delete m_glowBar;
+    m_glowBar = 0;
 
     KWindowSystem::setType(winId(), NET::Dock);
     if (mode == LetWindowsCover) {
@@ -877,6 +883,14 @@ QTimeLine *PanelView::timeLine()
     return m_timeLine;
 }
 
+void PanelView::hideMousePoll()
+{
+    QPoint mousePos = QCursor::pos();
+    if (!geometry().contains(mousePos) && !hasPopup()) {
+        startAutoHide();
+    }
+}
+
 void PanelView::unhideHintMousePoll()
 {
 #ifdef Q_WS_X11
@@ -915,8 +929,12 @@ void PanelView::hintOrUnhide(const QPoint &point)
             m_glowBar = new GlowBar(direction, m_triggerZone);
             m_glowBar->show();
             XMoveResizeWindow(QX11Info::display(), m_unhideTrigger, m_triggerZone.x(), m_triggerZone.y(), m_triggerZone.width(), m_triggerZone.height());
+
             //FIXME: This is ugly as hell but well, yeah
-            m_mousePollTimer = new QTimer(this);
+            if (!m_mousePollTimer) {
+                m_mousePollTimer = new QTimer(this);
+            }
+
             connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(unhideHintMousePoll()));
             m_mousePollTimer->start(200);
         }
@@ -936,11 +954,28 @@ void PanelView::unhintHide()
     //kDebug() << "hide the glow";
     if (m_mousePollTimer) {
         m_mousePollTimer->stop();
-        m_mousePollTimer->deleteLater();
-        m_mousePollTimer = 0;
+        disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(unhideHintMousePoll()));
     }
+
     delete m_glowBar;
     m_glowBar = 0;
+}
+
+bool PanelView::hasPopup()
+{
+    if (QApplication::activePopupWidget()) {
+        return true;
+    }
+
+    if (containment()) {
+        foreach (Plasma::Applet *applet, containment()->applets()) {
+            if (applet->isPopupShowing()) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 void PanelView::unhide()
@@ -977,43 +1012,47 @@ void PanelView::unhide()
     }
 }
 
+void PanelView::startAutoHide()
+{
+    // with composite, we can quite do some nice animations with transparent
+    // backgrounds; without it we can't so we just show/hide
+    if (m_mousePollTimer) {
+        m_mousePollTimer->stop();
+        disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
+    }
+
+    QTimeLine * tl = timeLine();
+    tl->setDirection(QTimeLine::Forward);
+
+    if (shouldHintHide()) {
+        if (tl->state() == QTimeLine::NotRunning) {
+            tl->start();
+        }
+    } else {
+        animateHide(1.0);
+    }
+}
+
 void PanelView::leaveEvent(QEvent *event)
 {
-    if (m_panelMode == AutoHide && !m_editting) {
-        // try not to hide if we have an associated popup or window about
-        bool havePopup = QApplication::activePopupWidget() != 0;
-
-        if (!havePopup) {
-            QWidget *popup = QApplication::activeWindow();
-
-            if (popup &&
-                (popup->window()->parentWidget() == this ||
-                 popup->parentWidget() == this ||
-                 (popup->parentWidget() && popup->parentWidget()->window() == this))) {
-                    kDebug() << "got a popup!" << popup
-                             << popup->window() << popup->window()->parentWidget() << popup->parentWidget() << this;
-
-                    havePopup = true;
-            } /* else {
-                kDebug() << "no popup?!";
-            } */
+    if (m_panelMode == LetWindowsCover) {
+        if (m_triggerEntered) {
+            m_triggerEntered = false;
         } else {
-            kDebug() << "gota a popup widget";
+            createUnhideTrigger();
         }
-
-        if (!havePopup) {
-            // with composite, we can quite do some nice animations with transparent
-            // backgrounds; without it we can't so we just show/hide
-            QTimeLine * tl = timeLine();
-            tl->setDirection(QTimeLine::Forward);
-
-            if (shouldHintHide()) {
-                if (tl->state() == QTimeLine::NotRunning) {
-                    tl->start();
-                }
-            } else {
-                animateHide(1.0);
+    } else if (m_panelMode == AutoHide && !m_editting) {
+        // try not to hide if we have an associated popup or window about
+        if (hasPopup()) {
+            // don't hide yet, but start polling to see when we should
+            if (!m_mousePollTimer) {
+                m_mousePollTimer = new QTimer(this);
             }
+
+            connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
+            m_mousePollTimer->start(200);
+        } else {
+            startAutoHide();
         }
     }
 
@@ -1053,12 +1092,6 @@ bool PanelView::event(QEvent *event)
         QPainter p(this);
         p.setCompositionMode(QPainter::CompositionMode_Source);
         p.fillRect(rect(), Qt::transparent);
-    } else if (m_panelMode == LetWindowsCover && event->type() == QEvent::Leave) {
-        if (m_triggerEntered) {
-            m_triggerEntered = false;
-        } else {
-            createUnhideTrigger();
-        }
     }
 
     return Plasma::View::event(event);

@@ -191,6 +191,8 @@ private:
     bool isHorizontal() const;
     QTimeLine *timeLine();
     void positionSpacer(const QPoint pos);
+    void startAutoHide();
+    bool hasPopup();
 
 #ifdef Q_WS_WIN
     bool registerAccessBar(bool fRegister);
@@ -206,6 +208,7 @@ private Q_SLOTS:
     void edittingComplete();
     void animateHide(qreal);
     void panelDeleted();
+    void hideMousePoll();
     void unhideHintMousePoll();
 
     /**
