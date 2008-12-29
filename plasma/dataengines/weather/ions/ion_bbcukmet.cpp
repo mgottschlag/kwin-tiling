@@ -678,11 +678,10 @@ bool UKMETIon::readFiveDayForecastXMLData(const QString& source, QXmlStreamReade
 void UKMETIon::parseFiveDayForecast(const QString& source, QXmlStreamReader& xml)
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == "wml");
-
+    bool validNumber = false;
     int currentParagraph = 0;
     bool skipPlace = false;
     int dataItem = 0;
-    int numberValue = 0;
 
     enum DataItem {
         Day,
@@ -712,7 +711,7 @@ void UKMETIon::parseFiveDayForecast(const QString& source, QXmlStreamReader& xml
                     skipPlace = true;
                 } else {
                     if (numParser.indexIn(dataText) != -1 && numParser.capturedTexts().count() >= 3) {
-                        numberValue = numParser.capturedTexts()[2].toInt();
+                        validNumber = true;
                     }
                     switch (dataItem) {
                     case Day:
@@ -725,19 +724,22 @@ void UKMETIon::parseFiveDayForecast(const QString& source, QXmlStreamReader& xml
                         dataItem++;
                         break;
                     case MaxTemp:
-                        forecast->tempHigh = numberValue;
+                        forecast->tempHigh = numParser.capturedTexts()[0].remove("Max").toInt();
                         dataItem++;
+                        validNumber = false;
                         break;
                     case MinTemp:
-                        forecast->tempLow = numberValue;
+                        forecast->tempLow = numParser.capturedTexts()[0].remove("Min").toInt();
                         dataItem++;
+                        validNumber = false;
                         break;
                     case WindSpeed:
-                        forecast->windSpeed = numberValue;
+                        forecast->windSpeed = numParser.capturedTexts()[0].remove("Wind").toInt();
                         forecast->windDirection = dataText.split("(")[1].split(")")[0];
                         dataItem = 0;
                         d->m_weatherData[source].forecasts.append(forecast);
                         forecast = new WeatherData::ForecastInfo;
+                        validNumber = false;
                         break;
                     };
                 }
