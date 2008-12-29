@@ -42,6 +42,10 @@ public:
 signals:
     void clientClosed();
 
+protected:
+    void showEvent(QShowEvent *event);
+    void hideEvent(QHideEvent *event);
+
 private slots:
     void setupXEmbedDelegate();
     void handleClientEmbedded();

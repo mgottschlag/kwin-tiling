@@ -90,7 +90,7 @@ void TaskArea::setHiddenTypes(const QStringList &hiddenTypes)
 
 bool TaskArea::isHiddenType(const QString &typeId, bool always) const
 {
-    if(always) {
+    if (always) {
         return !d->showingHidden && d->hiddenTypes.contains(typeId);
     } else {
         return d->hiddenTypes.contains(typeId);
@@ -107,9 +107,8 @@ void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
             d->hasHiddenTasks = true;
             QGraphicsWidget *widget = findWidget(task);
             if (widget) {
-                d->taskLayout->removeItem(widget);
-                //TODO: we shouldn't delete these, just don't show them!
-                delete widget;
+                kDebug() << "just hiding the widget";
+                widget->hide();
             }
         } else {
             addWidgetForTask(task);
@@ -133,9 +132,19 @@ void TaskArea::addTask(Task *task)
 
 void TaskArea::addWidgetForTask(SystemTray::Task *task)
 {
-    if (task->isEmbeddable() && !findWidget(task)) {
-        if (isHiddenType(task->typeId())) {
-            d->hasHiddenTasks = true;
+    QGraphicsWidget *widget = findWidget(task);
+    if (!task->isEmbeddable() && !widget) {
+        //kDebug() << "task is not embeddable, so FAIL" << task->name();
+        return;
+    }
+
+    if (isHiddenType(task->typeId())) {
+        //kDebug() << "is a hidden type";
+        d->hasHiddenTasks = true;
+    } else {
+        if (widget) {
+            //kDebug() << "widget already exists!";
+            widget->show();
         } else {
             switch (task->order()) {
                 case SystemTray::Task::First:

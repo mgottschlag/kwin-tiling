@@ -114,6 +114,20 @@ void FdoGraphicsWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem 
     }
 }
 
+void FdoGraphicsWidget::hideEvent(QHideEvent *event)
+{
+    if (d->widget) {
+        d->widget->hide();
+    }
+}
+
+void FdoGraphicsWidget::showEvent(QShowEvent *event)
+{
+    if (d->widget) {
+        d->widget->show();
+    }
+}
+
 void FdoGraphicsWidget::setupXEmbedDelegate()
 {
     if (d->widget) {
