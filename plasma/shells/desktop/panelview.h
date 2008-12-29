@@ -202,7 +202,6 @@ private:
 #endif
 
 private Q_SLOTS:
-    void checkForActivation();
     void togglePanelController();
     void edittingComplete();
     void animateHide(qreal);
@@ -241,6 +240,7 @@ private:
 
     bool m_editting : 1;
     bool m_firstPaint : 1;
+    bool m_triggerEntered : 1;
 };
 
 #endif

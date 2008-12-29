@@ -195,7 +195,8 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
       m_panelMode(NormalPanel),
       m_lastHorizontal(true),
       m_editting(false),
-      m_firstPaint(true)
+      m_firstPaint(true),
+      m_triggerEntered(false)
 {
     Q_ASSERT(qobject_cast<Plasma::Corona*>(panel->scene()));
     KConfigGroup viewConfig = config();
@@ -334,32 +335,13 @@ Plasma::Location PanelView::location() const
     return containment()->location();
 }
 
-void PanelView::checkForActivation()
-{
-    /*kDebug() << "stacking order changed!"
-             << KWindowSystem::self()->stackingOrder().first()
-             << KWindowSystem::self()->stackingOrder().last()
-             << winId();*/
-
-    if (KWindowSystem::self()->stackingOrder().last() == winId()) {
-        destroyUnhideTrigger();
-    } else {
-        createUnhideTrigger();
-    }
-}
-
 void PanelView::setPanelMode(PanelView::PanelMode mode)
 {
     unsigned long state = NET::Sticky;
 
-    disconnect(KWindowSystem::self(), SIGNAL(stackingOrderChanged()),
-               this, SLOT(checkForActivation()));
-
     KWindowSystem::setType(winId(), NET::Dock);
     if (mode == LetWindowsCover) {
         createUnhideTrigger();
-        connect(KWindowSystem::self(), SIGNAL(stackingOrderChanged()),
-                this, SLOT(checkForActivation()));
         KWindowSystem::clearState(winId(), NET::StaysOnTop | NET::KeepAbove);
         state |= NET::KeepBelow;
     } else {
@@ -875,7 +857,7 @@ void PanelView::moveEvent(QMoveEvent *event)
 
 void PanelView::resizeEvent(QResizeEvent *event)
 {
-    kDebug() << event->oldSize() << event->size();
+    //kDebug() << event->oldSize() << event->size();
     QWidget::resizeEvent(event);
     updateStruts();
 #ifdef Q_WS_WIN
@@ -972,12 +954,18 @@ void PanelView::unhide()
     QTimeLine * tl = timeLine();
     tl->setDirection(QTimeLine::Backward);
 
-    show();
+    if (m_panelMode == AutoHide) {
+        // LetWindowsCover panels are alwys shown, so don't bother and prevent
+        // some unsightly flickers
+        show();
+    }
+
     KWindowSystem::setOnAllDesktops(winId(), true);
     unsigned long state = NET::Sticky;
     KWindowSystem::setState(winId(), state);
 
     if (m_panelMode == LetWindowsCover) {
+        m_triggerEntered = true;
         KWindowSystem::raiseWindow(winId());
     } else if (shouldHintHide()) {
         if (tl->state() == QTimeLine::NotRunning) {
@@ -1065,7 +1053,14 @@ bool PanelView::event(QEvent *event)
         QPainter p(this);
         p.setCompositionMode(QPainter::CompositionMode_Source);
         p.fillRect(rect(), Qt::transparent);
+    } else if (m_panelMode == LetWindowsCover && event->type() == QEvent::Leave) {
+        if (m_triggerEntered) {
+            m_triggerEntered = false;
+        } else {
+            createUnhideTrigger();
+        }
     }
+
     return Plasma::View::event(event);
 }
 
@@ -1114,14 +1109,14 @@ void PanelView::animateHide(qreal progress)
         hide();
     } else if (qFuzzyCompare(qreal(1.0), progress + 1.0) && tl->direction() == QTimeLine::Backward) {
         //if the show before accel was off now viewport position is wrong, so ensure it's visible
-        kDebug() << "show complete";
+        //kDebug() << "show complete";
         viewport()->move(0,0);
     }
 }
 
 bool PanelView::shouldHintHide() const
 {
-    return PlasmaApp::hasComposite();
+    return m_panelMode == AutoHide && PlasmaApp::hasComposite();
 }
 
 void PanelView::recreateUnhideTrigger()
