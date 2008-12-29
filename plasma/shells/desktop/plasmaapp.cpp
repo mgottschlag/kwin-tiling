@@ -233,6 +233,19 @@ PlasmaApp::~PlasmaApp()
 
 void PlasmaApp::setupDesktop()
 {
+#ifdef Q_WS_X11
+    Atom atoms[5];
+    const char *atomNames[] = {"XdndAware", "XdndEnter", "XdndFinished", "XdndPosition", "XdndStatus"};
+    XInternAtoms(QX11Info::display(), const_cast<char **>(atomNames), 5, False, atoms);
+    m_XdndAwareAtom = atoms[0];
+    m_XdndEnterAtom = atoms[1];
+    m_XdndFinishedAtom = atoms[2];
+    m_XdndPositionAtom = atoms[3];
+    m_XdndStatusAtom = atoms[4];
+    const int xdndversion = 5;
+    m_XdndVersionAtom = (Atom)xdndversion;
+#endif
+
     // intialize the default theme and set the font
     Plasma::Theme *theme = Plasma::Theme::defaultTheme();
     theme->setFont(AppSettings::desktopFont());
@@ -364,18 +377,69 @@ PanelView *PlasmaApp::findPanelForTrigger(WId trigger) const
 
 bool PlasmaApp::x11EventFilter(XEvent *event)
 {
-    if (m_panelHidden && event->xany.send_event != True &&
-        (event->type == EnterNotify || event->type == MotionNotify)) {
-        PanelView *panel = findPanelForTrigger(event->xcrossing.window);
-        if (panel) {
-            if (event->type == EnterNotify) {
-                panel->hintOrUnhide(QPoint());
+    if (m_panelHidden &&
+        (event->type == ClientMessage ||
+         (event->xany.send_event != True && (event->type == EnterNotify ||
+                                             event->type == MotionNotify)))) {
+
+        /*
+        if (event->type == ClientMessage) {
+            kDebug() << "client message with" << event->xclient.message_type << m_XdndEnterAtom << event->xcrossing.window;
+        }
+        */
+
+        bool dndEnter = false;
+        bool dndPosition = false;
+        if (event->type == ClientMessage) {
+            dndEnter = event->xclient.message_type == m_XdndEnterAtom;
+            if (!dndEnter) {
+                dndPosition = event->xclient.message_type == m_XdndPositionAtom;
+                if (!dndPosition) {
+                    //kDebug() << "FAIL!";
+                    return KUniqueApplication::x11EventFilter(event);
+                }
+            } else {
+                //kDebug() << "on enter" << event->xclient.data.l[0];
             }
+        }
+
+        PanelView *panel = findPanelForTrigger(event->xcrossing.window);
+        //kDebug() << "panel?" << panel;
+        if (panel) {
+            if (dndEnter || dndPosition) {
+                QPoint p;
+
+                const unsigned long *l = (const unsigned long *)event->xclient.data.l;
+                if (dndPosition) {
+                    p = QPoint((l[2] & 0xffff0000) >> 16, l[2] & 0x0000ffff);
+                }
+
+                XClientMessageEvent response;
+                response.type = ClientMessage;
+                response.window = l[0];
+                response.format = 32;
+                response.data.l[0] = panel->winId(); //event->xcrossing.window;
+
+                if (panel->hintOrUnhide(p, true)) {
+                    response.message_type = m_XdndFinishedAtom;
+                    response.data.l[1] = 0; // flags
+                    response.data.l[2] = XNone;
+                } else {
+                    response.message_type = m_XdndStatusAtom;
+                    response.data.l[1] = 0; // flags
+                    response.data.l[2] = 0; // x, y
+                    response.data.l[3] = 0; // w, h
+                    response.data.l[4] = 0; // action
+                }
+
+                XSendEvent(QX11Info::display(), l[0], False, NoEventMask, (XEvent*)&response);
+            } else if (event->type == EnterNotify) {
+                panel->hintOrUnhide(QPoint());
             //FIXME: this if it was possible to avoid the polling
-            /*else if (event->type == LeaveNotify) {
+            /*} else if (event->type == LeaveNotify) {
                 panel->unhintHide();
-            }*/
-            else if (event->type == MotionNotify) {
+            */
+            } else if (event->type == MotionNotify) {
                 XMotionEvent *motion = (XMotionEvent*)event;
                 //kDebug() << "motion" << motion->x << motion->y << panel->location();
                 panel->hintOrUnhide(QPoint(motion->x_root, motion->y_root));

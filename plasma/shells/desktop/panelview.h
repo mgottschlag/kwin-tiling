@@ -111,7 +111,7 @@ public:
     /**
      * Show a visual hint or perhaps even unhide, based on the position of the event
      */
-    void hintOrUnhide(const QPoint &point);
+    bool hintOrUnhide(const QPoint &point, bool dueToDnd = false);
 
     /**
      * Returns the geometry of the current unhide hint window
@@ -123,12 +123,12 @@ public:
      */
     void unhintHide();
 
+public Q_SLOTS:
     /**
      * unhides the panel if it is hidden
      */
-    void unhide();
+    void unhide(bool destroyTrigger);
 
-public Q_SLOTS:
     /**
      * Pinches the min/max sizes of the containment to the current screen resolution
      */

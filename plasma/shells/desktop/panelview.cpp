@@ -25,6 +25,7 @@
 #include <QTimeLine>
 #include <QTimer>
 #ifdef Q_WS_X11
+#include <X11/Xatom.h>
 #include <QX11Info>
 #endif
 
@@ -914,39 +915,37 @@ QRect PanelView::unhideHintGeometry() const
 #endif
 }
 
-void PanelView::hintOrUnhide(const QPoint &point)
+bool PanelView::hintOrUnhide(const QPoint &point, bool dueToDnd)
 {
 #ifdef Q_WS_X11
     if (!shouldHintHide()) {
-        unhide();
-        return;
+        unhide(!dueToDnd);
+        return true;
     }
 
     //kDebug() << point << m_triggerZone;
-    if (point == QPoint()) {
+//    if (point == QPoint()) {
         //kDebug() << "enter, we should start glowing!";
-        if (!m_glowBar) {
-            Plasma::Direction direction = Plasma::locationToDirection(location());
-            m_glowBar = new GlowBar(direction, m_triggerZone);
-            m_glowBar->show();
-            XMoveResizeWindow(QX11Info::display(), m_unhideTrigger, m_triggerZone.x(), m_triggerZone.y(), m_triggerZone.width(), m_triggerZone.height());
-
-            //FIXME: This is ugly as hell but well, yeah
-            if (!m_mousePollTimer) {
-                m_mousePollTimer = new QTimer(this);
-            }
-
-            connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(unhideHintMousePoll()));
-            m_mousePollTimer->start(200);
-        }
-    } else if (m_triggerZone.contains(point)) {
+    if (m_triggerZone.contains(point)) {
         //kDebug() << "unhide!" << point;
-        unhide();
-    } else {
-        //this if we could avoid the polling
-        //m_glowBar->updateStrength(point);
-        //kDebug() << "keep glowing";
+        unhide(!dueToDnd);
+        return true;
+    } else if (!m_glowBar) {
+        Plasma::Direction direction = Plasma::locationToDirection(location());
+        m_glowBar = new GlowBar(direction, m_triggerZone);
+        m_glowBar->show();
+        XMoveResizeWindow(QX11Info::display(), m_unhideTrigger, m_triggerZone.x(), m_triggerZone.y(), m_triggerZone.width(), m_triggerZone.height());
+
+        //FIXME: This is ugly as hell but well, yeah
+        if (!m_mousePollTimer) {
+            m_mousePollTimer = new QTimer(this);
+        }
+
+        connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(unhideHintMousePoll()));
+        m_mousePollTimer->start(200);
     }
+
+    return false;
 #endif
 }
 
@@ -979,11 +978,21 @@ bool PanelView::hasPopup()
     return false;
 }
 
-void PanelView::unhide()
+void PanelView::unhide(bool destroyTrigger)
 {
     //kDebug();
     unhintHide();
-    destroyUnhideTrigger();
+    if (destroyTrigger) {
+        destroyUnhideTrigger();
+    } else {
+        if (!m_mousePollTimer) {
+            m_mousePollTimer = new QTimer(this);
+        }
+
+        disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
+        connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
+        m_mousePollTimer->start(200);
+    }
 
     // with composite, we can quite do some nice animations with transparent
     // backgrounds; without it we can't so we just show/hide
@@ -1022,7 +1031,7 @@ void PanelView::startAutoHide()
         disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
     }
 
-    QTimeLine * tl = timeLine();
+    QTimeLine *tl = timeLine();
     tl->setDirection(QTimeLine::Forward);
 
     if (shouldHintHide()) {
@@ -1050,6 +1059,7 @@ void PanelView::leaveEvent(QEvent *event)
                 m_mousePollTimer = new QTimer(this);
             }
 
+            disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
             connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
             m_mousePollTimer->start(200);
         } else {
@@ -1245,6 +1255,9 @@ void PanelView::createUnhideTrigger()
                                     triggerPoint.x(), triggerPoint.y(), triggerWidth, triggerHeight,
                                     0, CopyFromParent, InputOnly, CopyFromParent,
                                     valuemask, &attributes);
+
+    XChangeProperty(QX11Info::display(), m_unhideTrigger, PlasmaApp::self()->m_XdndAwareAtom,
+                    XA_WINDOW, 32, PropModeReplace, (unsigned char *)&PlasmaApp::self()->m_XdndVersionAtom, 1);
     XMapWindow(QX11Info::display(), m_unhideTrigger);
     m_unhideTriggerGeom = QRect(triggerPoint, QSize(triggerWidth, triggerHeight));
     m_triggerZone = QRect(actualTriggerPoint, QSize(actualWidth, actualHeight));

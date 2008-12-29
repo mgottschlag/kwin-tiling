@@ -79,6 +79,15 @@ public:
      */
     QList<PanelView*> panelViews() const;
 
+#ifdef Q_WS_X11
+    Atom m_XdndAwareAtom;
+    Atom m_XdndEnterAtom;
+    Atom m_XdndFinishedAtom;
+    Atom m_XdndPositionAtom;
+    Atom m_XdndStatusAtom;
+    Atom m_XdndVersionAtom;
+#endif
+
 public Q_SLOTS:
     // DBUS interface. if you change these methods, you MUST run:
     // qdbuscpp2xml plasmaapp.h -o dbus/org.kde.plasma.App.xml
