@@ -555,6 +555,7 @@ void PanelView::pinchContainmentToCurrentScreen()
 {
     QRect screenRect = Kephal::ScreenUtils::screenGeometry(containment()->screen());
     pinchContainment(screenRect);
+    recreateUnhideTrigger();
 }
 
 void PanelView::pinchContainment(const QRect &screenGeom)
