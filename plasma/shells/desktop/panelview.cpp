@@ -918,6 +918,10 @@ QRect PanelView::unhideHintGeometry() const
 bool PanelView::hintOrUnhide(const QPoint &point, bool dueToDnd)
 {
 #ifdef Q_WS_X11
+    if (isVisible()) {
+        return false;
+    }
+
     if (!shouldHintHide()) {
         unhide(!dueToDnd);
         return true;
@@ -1000,7 +1004,7 @@ void PanelView::unhide(bool destroyTrigger)
     tl->setDirection(QTimeLine::Backward);
 
     if (m_panelMode == AutoHide) {
-        // LetWindowsCover panels are alwys shown, so don't bother and prevent
+        // LetWindowsCover panels are always shown, so don't bother and prevent
         // some unsightly flickers
         show();
     }
