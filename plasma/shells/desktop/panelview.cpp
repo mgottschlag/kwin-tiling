@@ -1002,6 +1002,7 @@ void PanelView::unhide(bool destroyTrigger)
     // backgrounds; without it we can't so we just show/hide
     QTimeLine * tl = timeLine();
     tl->setDirection(QTimeLine::Backward);
+    tl->setDuration(100);
 
     if (m_panelMode == AutoHide) {
         // LetWindowsCover panels are always shown, so don't bother and prevent
@@ -1037,6 +1038,7 @@ void PanelView::startAutoHide()
 
     QTimeLine *tl = timeLine();
     tl->setDirection(QTimeLine::Forward);
+    tl->setDuration(200);
 
     if (shouldHintHide()) {
         if (tl->state() == QTimeLine::NotRunning) {
