@@ -23,7 +23,7 @@
 #include <Plasma/PopupApplet>
 #include <Plasma/Label>
 
-#include "libplasmaclock/calendar.h"
+#include "plasmaclock/calendar.h"
 
 namespace Plasma
 {

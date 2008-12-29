@@ -35,7 +35,7 @@
 #include <Plasma/Containment>
 #include <Plasma/DataEngine>
 
-#include <libplasmaclock/clockapplet.h>
+#include <plasmaclock/clockapplet.h>
 #include "ui_clockConfig.h"
 
 class QTimer;
