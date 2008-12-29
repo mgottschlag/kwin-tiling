@@ -277,10 +277,10 @@ QHash<QGraphicsLayoutItem*, QRectF> CompactLayout::Private::calculateGeometries(
                 direction = Qt::Vertical;
             } else if (int(constraint.width()) == 0 && constraint.height() > 0) {
                 direction = Qt::Horizontal;
-            // Extend based on constraints
-            } else if (yDelta > 0 && xDelta < 0) {
+            // Extend based on constraints and prevent expanding if possible
+            } else if ((sizePolicy.verticalPolicy() != QSizePolicy::Expanding) && xDelta < 0) {
                 direction = Qt::Horizontal;
-            } else if (xDelta >= 0 && yDelta < 0) {
+            } else if ((sizePolicy.horizontalPolicy() != QSizePolicy::Expanding) && yDelta < 0) {
                 direction = Qt::Vertical;
             // Then extend based on expanding policy
             } else if (sizePolicy.horizontalPolicy() != QSizePolicy::Expanding) {
