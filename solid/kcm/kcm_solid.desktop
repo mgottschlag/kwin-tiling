@@ -38,6 +38,7 @@ Name[ko]=하드웨어
 Name[lt]=Aparatinė įranga
 Name[lv]=Aparatūra
 Name[ml]=ഹാര്‍ഡ്വെയര്‍
+Name[mr]=हार्डवेअर
 Name[nb]=Maskinvare
 Name[ne]=हार्डवेयर
 Name[nn]=Maskinvare
@@ -85,6 +86,7 @@ Comment[kn]=ಸಾಲಿಡ್ ನೊಂದಿಗೆ ಯಂತ್ರಾಂಶ �
 Comment[ko]=Solid를 통한 하드웨어 통합 설정
 Comment[lv]=Aparatūras integrācijas konfigurācija ar Solid
 Comment[ml]=ഹാര്‍ഡുവെയര്‍ ഏകീകരണത്തിനുള്ള ക്രമീകരണം സോളിഡുമായി
+Comment[mr]= हार्डवेअर अंतर्भूतीय संयोजना
 Comment[nb]=Maskinvare-integrasjon, oppsett med Solid
 Comment[nds]=Instellen för't Inbinnen vun Hardware mit Solid
 Comment[nl]=Hardware-integratie instellen met Solid

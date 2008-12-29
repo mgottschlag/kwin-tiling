@@ -52,6 +52,7 @@ Name[ar]=وصلت رسالة جديدة
 Name[be@latin]=Atrymanaje novaje paviedamleńnie
 Name[bg]=Получено е ново съобщение
 Name[ca]=S'ha rebut un missatge nou
+Name[cs]=Obdržena nová zpráva
 Name[da]=Ny besked modtaget
 Name[de]=Eine Nachricht wurde empfangen
 Name[el]=Λήφθηκε νέο μήνυμα
@@ -71,6 +72,7 @@ Name[km]=បាន​ទទួល​សារ​ថ្មី
 Name[ko]=새 메시지가 도착했습니다
 Name[lv]=Saņemts jauns ziņojums
 Name[ml]=പുതിയ സന്ദേശം ലഭിച്ചു
+Name[mr]=नविन संदेश प्राप्त झाले
 Name[nb]=Ny melding mottatt
 Name[nds]=Nieg Naricht kregen
 Name[nl]=Nieuwe boodschap ontvangen
@@ -109,6 +111,7 @@ Comment[km]=ដេមិន​បាន​ទទួល​សារ​ថ្ម�
 Comment[ko]=데몬이 wall(1)이나 write(1)로 보낸 메시지를 받았습니다
 Comment[lv]=Dēmons saņēma jaunu ziņojumu, kas nosūtīts ar wall(1) vai write(1)
 Comment[ml]=wall(1) അല്ലെങ്കില്‍ write(1) എന്നിവയിലേതെങ്കിലുമുപയോഗിച്ചു് അയച്ച സന്തേശം നിരന്തരപ്രവൃത്തിയ്ക്കു് ലഭിച്ചിരിയ്ക്കുന്നു
+Comment[mr]=डिमनने wall(1) किंवा write(1) सह पाठविलेले नविन संदेश प्राप्त केले
 Comment[nb]=Nisssen mottok en ny melding sendt med wall(1) eller write(1)
 Comment[nds]=De Dämoon hett en nieg Narichten kregen, tostüert mit write(1) oder wall(1)
 Comment[nl]=De daemon ontving een nieuwe boodschap verzonden met wall(1) of write(1)

@@ -7,6 +7,7 @@ Name[bg]=Изпълнение на команди
 Name[bn]=কমান্ড চালাও
 Name[bn_IN]=কমান্ড সঞ্চালনা
 Name[ca]=Execució d'ordres
+Name[cs]=Spustit příkazy
 Name[csb]=Zrëszanié pòlétów
 Name[da]=Kør kommandoer
 Name[de]=Befehle ausführen
@@ -29,6 +30,7 @@ Name[ko]=명령 실행
 Name[lt]=Vykdyti komandas
 Name[lv]=Palaist komandas
 Name[ml]=ആജ്ഞകള്‍ പ്രവര്‍ത്തിക്കുക
+Name[mr]=आदेश चालवा
 Name[nb]=Kjør kommandoer
 Name[nds]=Befehlen utföhren
 Name[nl]=Commando's uitvoeren
@@ -71,6 +73,7 @@ Comment[km]=រត់​ម៉ាស៊ីន​ទិន្នន័យ​ដ�
 Comment[ko]=명령 실행 데이터 엔진
 Comment[lv]=Izpildfailu palaišanas datu dzinējs
 Comment[ml]=പ്രവര്‍ത്തിക്കാന്‍ കഴിയുന്ന ഡേറ്റാ എഞ്ചിന്‍ പ്രവര്‍ത്തിക്കുക
+Comment[mr]=कार्यान्वीतजोगी Data Engine चालवा
 Comment[nb]=Datamotor for kjørbare filer/programmer
 Comment[nds]=Programmoproop-Datenkarn
 Comment[nl]=Uitvoerbare gegevensengine starten
