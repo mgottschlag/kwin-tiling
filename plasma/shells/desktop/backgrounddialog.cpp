@@ -470,7 +470,9 @@ void BackgroundDialog::reloadConfig()
     bool doWallpaper = m_containment->drawWallpaper();
     m_wallpaperLabel->setVisible(doWallpaper);
     m_wallpaperGroup->setVisible(doWallpaper);
-    kDebug() << "do wallpapers?!" << doWallpaper;
+    m_monitor->setVisible(doWallpaper);
+    m_preview->setVisible(doWallpaper);
+    //kDebug() << "do wallpapers?!" << doWallpaper;
     if (doWallpaper) {
         // Load wallpaper plugins
         QString currentPlugin;
