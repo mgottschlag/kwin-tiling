@@ -32,6 +32,8 @@
 #include <Plasma/Svg>
 #include <Plasma/UiLoader>
 
+#include "appletinterface.h"
+
 using namespace Plasma;
 
 #include "bind_dataengine.h"
@@ -39,9 +41,12 @@ using namespace Plasma;
 Q_DECLARE_METATYPE(QPainter*)
 Q_DECLARE_METATYPE(QStyleOptionGraphicsItem*)
 Q_DECLARE_METATYPE(QScriptApplet*)
+Q_DECLARE_METATYPE(AppletInterface*)
 Q_DECLARE_METATYPE(Applet*)
 Q_DECLARE_METATYPE(QGraphicsWidget*)
 Q_DECLARE_METATYPE(QGraphicsLayout*)
+
+Q_SCRIPT_DECLARE_QMETAOBJECT(AppletInterface, QScriptApplet*)
 
 QScriptValue constructPainterClass(QScriptEngine *engine);
 QScriptValue constructGraphicsItemClass(QScriptEngine *engine);
@@ -259,11 +264,29 @@ void QScriptApplet::setupObjects()
 {
     QScriptValue global = m_engine->globalObject();
 
-    // Expose an applet
-    m_self = m_engine->newQObject(applet());
+    // Expose applet interface
+    AppletInterface *interface = new AppletInterface(this);
+    m_self = m_engine->newQObject(interface);
     m_self.setScope(global);
-
     global.setProperty("applet", m_self);
+
+    //manually create enum values. ugh
+    QMetaObject meta = AppletInterface::staticMetaObject;
+    for (int i=0; i < meta.enumeratorCount(); ++i) {
+        QMetaEnum e = meta.enumerator(i);
+        kDebug() << e.name();
+        for (int i=0; i < e.keyCount(); ++i) {
+            kDebug() << e.key(i) << e.value(i);
+            global.setProperty(e.key(i), QScriptValue(m_engine, e.value(i)));
+        }
+    }
+
+//    global.setProperty("Planar", QScriptValue(m_engine, Plasma::Planar));
+//    m_metaObject = m_engine->newQMetaObject(&AppletInterface::staticMetaObject);
+//    m_metaObject.setScope(global);
+//    global.setProperty("meta", m_metaObject);
+
+
     // Add a global loadui method for ui files
     QScriptValue fun = m_engine->newFunction(QScriptApplet::loadui);
     global.setProperty("loadui", fun);
@@ -481,6 +504,8 @@ QScriptValue QScriptApplet::createPrototype(QScriptEngine *engine, const QString
     // Hook for adding extra properties/methods
     return proto;
 }
+
+K_EXPORT_PLASMA_APPLETSCRIPTENGINE(qscriptapplet, QScriptApplet)
 
 #include "qscript.moc"
 

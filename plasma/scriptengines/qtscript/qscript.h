@@ -69,8 +69,6 @@ private:
     QScriptValue m_self;
 };
 
-K_EXPORT_PLASMA_APPLETSCRIPTENGINE(qscriptapplet, QScriptApplet)
-
 
 #endif // SCRIPT_H
 
