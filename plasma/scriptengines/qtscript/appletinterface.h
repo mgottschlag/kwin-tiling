@@ -24,6 +24,8 @@
 
 class KConfigGroup;
 class QScriptApplet;
+class QSizeF;
+
 namespace Plasma {
 class DataEngine;
 }
@@ -109,6 +111,10 @@ enum AspectRatioMode {
     Q_INVOKABLE void setBusy(bool busy);
 
     Q_INVOKABLE void setConfigurationRequired(bool needsConfiguring, const QString &reason = QString());
+
+    Q_INVOKABLE void setHasConfigurationInterface(bool hasConfigInterface);
+
+    Q_INVOKABLE QSizeF size() const;
 
     //TODO actions
 

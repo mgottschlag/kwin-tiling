@@ -30,6 +30,7 @@
 
 #include <Plasma/Applet>
 #include <Plasma/Svg>
+#include <Plasma/FrameSvg>
 #include <Plasma/UiLoader>
 
 #include "appletinterface.h"
@@ -305,6 +306,7 @@ void QScriptApplet::setupObjects()
 
     // Add constructors
     global.setProperty("PlasmaSvg", m_engine->newFunction(QScriptApplet::newPlasmaSvg));
+    global.setProperty("PlasmaFrameSvg", m_engine->newFunction(QScriptApplet::newPlasmaFrameSvg));
 
     // Add stuff from 4.4
     global.setProperty("QPainter", constructPainterClass(m_engine));
@@ -390,6 +392,24 @@ QScriptValue QScriptApplet::newPlasmaSvg(QScriptContext *context, QScriptEngine 
     Svg *svg = new Svg(parent);
     svg->setImagePath(filename);
     return engine->newQObject(svg);
+}
+
+QScriptValue QScriptApplet::newPlasmaFrameSvg(QScriptContext *context, QScriptEngine *engine)
+{
+    if (context->argumentCount() == 0) {
+        return context->throwError(i18n("Constructor takes at least 1 argument"));
+    }
+
+    QString filename = context->argument(0).toString();
+    QObject *parent = 0;
+
+    if (context->argumentCount() == 2) {
+        parent = qscriptvalue_cast<QObject *>(context->argument(1));
+    }
+
+    FrameSvg *frameSvg = new FrameSvg(parent);
+    frameSvg->setImagePath(filename);
+    return engine->newQObject(frameSvg);
 }
 
 void QScriptApplet::installWidgets(QScriptEngine *engine)

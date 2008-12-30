@@ -55,6 +55,7 @@ private:
     //static QScriptValue dataEngine(QScriptContext *context, QScriptEngine *engine);
     static QScriptValue loadui(QScriptContext *context, QScriptEngine *engine);
     static QScriptValue newPlasmaSvg(QScriptContext *context, QScriptEngine *engine);
+    static QScriptValue newPlasmaFrameSvg(QScriptContext *context, QScriptEngine *engine);
 
     static QScriptValue update(QScriptContext *context, QScriptEngine *engine);
 

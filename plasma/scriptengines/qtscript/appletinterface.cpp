@@ -98,6 +98,16 @@ void AppletInterface::setConfigurationRequired(bool needsConfiguring, const QStr
     applet->setConfigurationRequired(needsConfiguring, reason);
 }
 
+void AppletInterface::setHasConfigurationInterface(bool hasConfigInterface)
+{
+    applet->setHasConfigurationInterface(hasConfigInterface);
+}
+
+QSizeF AppletInterface::size() const
+{
+    return applet->size();
+}
+
     //TODO actions
 
 void AppletInterface::resize(qreal w, qreal h)
