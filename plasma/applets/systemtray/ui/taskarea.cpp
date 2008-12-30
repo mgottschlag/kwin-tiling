@@ -210,7 +210,7 @@ int TaskArea::leftEasement() const
 
 int TaskArea::rightEasement() const
 {
-    return d->lastItemCount > 0 ? d->lastItemCount * 24 : 0;
+    return d->lastItemCount * 24;
 }
 
 bool TaskArea::hasHiddenTasks() const

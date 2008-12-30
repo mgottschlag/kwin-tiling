@@ -210,8 +210,15 @@ void Applet::checkSizes()
     setPreferredSize(preferredSize);
 
     QSizeF actualSize = size();
-    if (formFactor() == Plasma::Planar && (actualSize.width() < preferredSize.width() ||
-                                           actualSize.height() < preferredSize.height())) {
+    Plasma::FormFactor f = formFactor();
+
+    if (f == Plasma::Horizontal) {
+        setMinimumSize(preferredSize.width(), 0);
+    } else if (f == Plasma::Vertical) {
+        setMinimumSize(0, preferredSize.height());
+    } else if (actualSize.width() < preferredSize.width() ||
+               actualSize.height() < preferredSize.height()) {
+        setMinimumSize(22, 22);
 
         QSizeF constraint;
         if (actualSize.width() > actualSize.height()) {
