@@ -292,14 +292,9 @@ void QScriptApplet::setupObjects()
     QScriptValue fun = m_engine->newFunction(QScriptApplet::loadui);
     global.setProperty("loadui", fun);
 
-    fun = m_engine->newFunction(QScriptApplet::update);
-    global.setProperty("update", fun);
-
     fun = m_engine->newFunction(QScriptApplet::print);
     global.setProperty("print", fun);
 
-    fun = m_engine->newFunction(QScriptApplet::setLayout);
-    global.setProperty("setLayout", fun);
 
     // Work around bug in 4.3.0
     qMetaTypeId<QVariant>();
@@ -465,54 +460,6 @@ QScriptValue QScriptApplet::print(QScriptContext *context, QScriptEngine *engine
     }
 
     kDebug() << context->argument(0).toString();
-    return engine->undefinedValue();
-}
-
-QScriptValue QScriptApplet::update(QScriptContext *context, QScriptEngine *engine)
-{
-    QScriptValue appletValue = engine->globalObject().property("applet");
-    //kDebug() << "appletValue is " << appletValue.toString();
-
-    QObject *appletObject = appletValue.toQObject();
-    if (!appletObject) {
-        return context->throwError(i18n("Could not extract the AppletObject"));
-    }
-
-    Applet *applet = qobject_cast<Applet*>(appletObject);
-    if (!applet) {
-        return context->throwError(i18n("Could not extract the Applet"));
-    }
-
-    applet->update();
-    return engine->undefinedValue();
-}
-
-QScriptValue QScriptApplet::setLayout(QScriptContext *context, QScriptEngine *engine)
-{
-    if (context->argumentCount() != 1) {
-        return context->throwError("setLayout one argument");
-    }
-
-    // Get the applet
-    QScriptValue appletValue = engine->globalObject().property("applet");
-    QObject *appletObject = appletValue.toQObject();
-    if (!appletObject) {
-        return context->throwError("Could not extract the AppletObject");
-    }
-
-    Applet *applet = qobject_cast<Applet*>(appletObject);
-    if (!applet) {
-        return context->throwError("Could not extract the Applet");
-    }
-
-    // Get the layout
-    QGraphicsLayout *layout = qscriptvalue_cast<QGraphicsLayout*>(context->argument(0));
-    if (!layout) {
-        return context->throwError("Could not extract the QGraphicsLayout");
-    }
-
-    applet->setLayout(layout);
-
     return engine->undefinedValue();
 }
 

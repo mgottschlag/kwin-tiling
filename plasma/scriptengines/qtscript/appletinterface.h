@@ -25,6 +25,7 @@
 class KConfigGroup;
 class QScriptApplet;
 class QSizeF;
+class QGraphicsLayout;
 
 namespace Plasma {
 class DataEngine;
@@ -123,6 +124,12 @@ enum AspectRatioMode {
     Q_INVOKABLE void setMinimumSize(qreal w, qreal h);
 
     Q_INVOKABLE void setPreferredSize(qreal w, qreal h);
+
+    Q_INVOKABLE void update();
+
+    Q_INVOKABLE void setLayout(QGraphicsLayout *layout);
+
+    Q_INVOKABLE QGraphicsLayout *layout() const;
 
     //TODO setLayout? layout()?
 

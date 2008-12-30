@@ -103,9 +103,24 @@ void AppletInterface::setHasConfigurationInterface(bool hasConfigInterface)
     applet->setHasConfigurationInterface(hasConfigInterface);
 }
 
+void AppletInterface::update()
+{
+    applet->applet()->update();
+}
+
+void AppletInterface::setLayout(QGraphicsLayout *layout)
+{
+    applet->applet()->setLayout(layout);
+}
+
+QGraphicsLayout *AppletInterface::layout() const
+{
+    return applet->applet()->layout();
+}
+
 QSizeF AppletInterface::size() const
 {
-    return applet->size();
+    return applet->applet()->size();
 }
 
     //TODO actions

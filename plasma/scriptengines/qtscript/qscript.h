@@ -57,13 +57,10 @@ private:
     static QScriptValue newPlasmaSvg(QScriptContext *context, QScriptEngine *engine);
     static QScriptValue newPlasmaFrameSvg(QScriptContext *context, QScriptEngine *engine);
 
-    static QScriptValue update(QScriptContext *context, QScriptEngine *engine);
-
     void installWidgets( QScriptEngine *engine );
     static QScriptValue createWidget(QScriptContext *context, QScriptEngine *engine);
     static QScriptValue print(QScriptContext *context, QScriptEngine *engine);
     static QScriptValue createPrototype( QScriptEngine *engine, const QString &name );
-    static QScriptValue setLayout(QScriptContext *context, QScriptEngine *engine);
 
 private:
     QScriptEngine *m_engine;
