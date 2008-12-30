@@ -318,7 +318,8 @@ void QScriptApplet::setupObjects()
     fun = m_engine->newFunction(QScriptApplet::dataEngine);
     m_self.setProperty("dataEngine", fun);
 #endif
-    
+
+    global.setProperty("dataEngine", m_engine->newFunction(QScriptApplet::dataEngine));
     qScriptRegisterMapMetaType<DataEngine::Dict>(m_engine);
 //    qScriptRegisterMapMetaType<DataEngine::Data>(m_engine);
     qScriptRegisterMetaType<DataEngine::Data>(m_engine, qScriptValueFromData, 0, QScriptValue());
@@ -351,6 +352,30 @@ QScriptValue QScriptApplet::dataEngine(QScriptContext *context, QScriptEngine *e
     return engine->newQObject(data);
 }
 #endif
+
+QScriptValue QScriptApplet::dataEngine(QScriptContext *context, QScriptEngine *engine)
+{
+    if (context->argumentCount() != 1)
+        return context->throwError("dataEngine takes one argument");
+
+    QString dataEngine = context->argument(0).toString();
+
+    QScriptValue appletValue = engine->globalObject().property("applet");
+    //kDebug() << "appletValue is " << appletValue.toString();
+
+    QObject *appletObject = appletValue.toQObject();
+    if (!appletObject) {
+        return context->throwError(i18n("Could not extract the AppletObject"));
+    }
+
+    AppletInterface *interface = qobject_cast<AppletInterface*>(appletObject);
+    if (!interface) {
+        return context->throwError(i18n("Could not extract the Applet"));
+    }
+
+    DataEngine *data = interface->dataEngine(dataEngine);
+    return engine->newQObject(data);
+}
 
 QScriptValue QScriptApplet::loadui(QScriptContext *context, QScriptEngine *engine)
 {

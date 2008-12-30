@@ -91,7 +91,7 @@ enum AspectRatioMode {
     Q_INVOKABLE KConfigGroup config();
 
     //FIXME bindings
-    Q_INVOKABLE Plasma::DataEngine *dataEngine(const QString &name);
+    Plasma::DataEngine *dataEngine(const QString &name);
 
     Q_INVOKABLE FormFactor formFactor();
 
