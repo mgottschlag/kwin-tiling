@@ -30,6 +30,8 @@ AppletInterface::AppletInterface(QScriptApplet *parent)
     :QObject(parent),
     applet(parent)
 {
+    connect(this, SIGNAL(releaseVisualFocus()), applet->applet(), SIGNAL(releaseVisualFocus()));
+    connect(this, SIGNAL(configNeedsSaving()), applet->applet(), SIGNAL(configNeedsSaving()));
 }
 
 AppletInterface::~AppletInterface()
@@ -71,9 +73,46 @@ void AppletInterface::setAspectRatioMode(AppletInterface::AspectRatioMode mode)
     applet->applet()->setAspectRatioMode(static_cast<Plasma::AspectRatioMode>(mode));
 }
 
+bool AppletInterface::shouldConserveResources()
+{
+    return applet->applet()->shouldConserveResources();
+}
+
 void AppletInterface::setFailedToLaunch(bool failed, const QString &reason)
 {
     applet->setFailedToLaunch(failed, reason);
+}
+
+bool AppletInterface::isBusy()
+{
+    return applet->applet()->isBusy();
+}
+
+void AppletInterface::setBusy(bool busy)
+{
+    applet->applet()->setBusy(busy);
+}
+
+void AppletInterface::setConfigurationRequired(bool needsConfiguring, const QString &reason)
+{
+    applet->setConfigurationRequired(needsConfiguring, reason);
+}
+
+    //TODO actions
+
+void AppletInterface::resize(qreal w, qreal h)
+{
+    applet->applet()->resize(w,h);
+}
+
+void AppletInterface::setMinimumSize(qreal w, qreal h)
+{
+    applet->applet()->setMinimumSize(w,h);
+}
+
+void AppletInterface::setPreferredSize(qreal w, qreal h)
+{
+    applet->applet()->setPreferredSize(w,h);
 }
 
 

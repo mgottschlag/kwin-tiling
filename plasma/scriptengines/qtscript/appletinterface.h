@@ -100,9 +100,30 @@ enum AspectRatioMode {
 
     Q_INVOKABLE void setAspectRatioMode(AspectRatioMode mode);
 
+    Q_INVOKABLE bool shouldConserveResources();
 
     Q_INVOKABLE void setFailedToLaunch(bool failed, const QString &reason = QString());
 
+    Q_INVOKABLE bool isBusy();
+
+    Q_INVOKABLE void setBusy(bool busy);
+
+    Q_INVOKABLE void setConfigurationRequired(bool needsConfiguring, const QString &reason = QString());
+
+    //TODO actions
+
+    Q_INVOKABLE void resize(qreal w, qreal h);
+
+    Q_INVOKABLE void setMinimumSize(qreal w, qreal h);
+
+    Q_INVOKABLE void setPreferredSize(qreal w, qreal h);
+
+    //TODO setLayout? layout()?
+
+Q_SIGNALS:
+    void releaseVisualFocus();
+
+    void configNeedsSaving();
 
 private:
     QScriptApplet *applet;
