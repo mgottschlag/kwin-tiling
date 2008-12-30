@@ -99,10 +99,8 @@ void ActivityBar::init()
 
     connect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)), this, SLOT(currentDesktopChanged(int)));
 
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
-    setMinimumSize(m_tabBar->nativeWidget()->minimumSizeHint() + (size() - contentsRect().size()));
-    //it seems setMinimumSize doesn't resize, weird...
-    resize(qMax(size().width(), minimumSize().width()), qMax(size().height(), minimumSize().height()));
     emit sizeHintChanged(Qt::PreferredSize);
 }
 
@@ -111,10 +109,8 @@ void ActivityBar::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::FormFactorConstraint) {
         if (formFactor() == Plasma::Vertical) {
             m_tabBar->nativeWidget()->setShape(QTabBar::RoundedWest);
-            setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
         } else {
             m_tabBar->nativeWidget()->setShape(QTabBar::RoundedNorth);
-            setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
         }
 
         setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
