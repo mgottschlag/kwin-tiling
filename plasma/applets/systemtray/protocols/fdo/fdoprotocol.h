@@ -28,6 +28,8 @@
 namespace SystemTray
 {
 
+class FdoSelectionManager;
+
 class FdoProtocol : public Protocol
 {
     Q_OBJECT
@@ -36,6 +38,9 @@ public:
     FdoProtocol(QObject *parent);
     ~FdoProtocol();
     void init();
+
+private:
+    FdoSelectionManager *m_selectionManager;
 };
 
 }

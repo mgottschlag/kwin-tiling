@@ -86,7 +86,7 @@ X11EmbedContainer::X11EmbedContainer(QWidget *parent)
 
 X11EmbedContainer::~X11EmbedContainer()
 {
-    FdoSelectionManager::self()->removeDamageWatch(this);
+    FdoSelectionManager::manager()->removeDamageWatch(this);
     delete d;
 }
 
@@ -114,7 +114,7 @@ void X11EmbedContainer::embedSystemTrayClient(WId clientId)
 #if defined(HAVE_XCOMPOSITE) && defined(HAVE_XFIXES) && defined(HAVE_XDAMAGE)
     XRenderPictFormat *format = XRenderFindVisualFormat(display, d->attr.visual);
     if (format && format->type == PictTypeDirect && format->direct.alphaMask &&
-        FdoSelectionManager::self()->haveComposite())
+        FdoSelectionManager::manager()->haveComposite())
     {
         // Redirect ARGB windows to offscreen storage so we can composite them ourselves
         XRenderPictureAttributes attr;
@@ -122,7 +122,7 @@ void X11EmbedContainer::embedSystemTrayClient(WId clientId)
 
         d->picture = XRenderCreatePicture(display, clientId, format, CPSubwindowMode, &attr);
         XCompositeRedirectSubwindows(display, winId, CompositeRedirectManual);
-        FdoSelectionManager::self()->addDamageWatch(this, clientId);
+        FdoSelectionManager::manager()->addDamageWatch(this, clientId);
 
         //kDebug() << "Embedded client uses an ARGB visual -> compositing.";
     } else {
@@ -185,7 +185,7 @@ void X11EmbedContainer::paintEvent(QPaintEvent *event)
     }
 
     if (!d->picture) {
-        X11EmbedPainter::self()->updateContainer(this);
+        FdoSelectionManager::painter()->updateContainer(this);
         return;
     }
 

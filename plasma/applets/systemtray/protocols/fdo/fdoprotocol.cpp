@@ -28,19 +28,22 @@ namespace SystemTray
 {
 
 FdoProtocol::FdoProtocol(QObject *parent)
-    : Protocol(parent)
+    : Protocol(parent),
+      m_selectionManager(0)
 {
 }
 
 FdoProtocol::~FdoProtocol()
 {
+    delete m_selectionManager;
 }
 
 void FdoProtocol::init()
 {
-    connect(FdoSelectionManager::self(), SIGNAL(taskCreated(SystemTray::Task*)),
+    m_selectionManager = new FdoSelectionManager;
+    connect(m_selectionManager, SIGNAL(taskCreated(SystemTray::Task*)),
             this, SIGNAL(taskCreated(SystemTray::Task*)));
-    connect(FdoSelectionManager::self(), SIGNAL(notificationCreated(SystemTray::Notification*)),
+    connect(m_selectionManager, SIGNAL(notificationCreated(SystemTray::Notification*)),
             this, SIGNAL(notificationCreated(SystemTray::Notification*)));
 }
 

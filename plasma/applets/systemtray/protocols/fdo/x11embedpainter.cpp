@@ -36,21 +36,6 @@
 namespace SystemTray
 {
 
-class X11EmbedPainter::Singleton
-{
-public:
-    X11EmbedPainter instance;
-};
-
-K_GLOBAL_STATIC(X11EmbedPainter::Singleton, singleton)
-
-
-X11EmbedPainter* X11EmbedPainter::self()
-{
-    return &singleton->instance;
-}
-
-
 class X11EmbedPainter::Private
 {
 public:

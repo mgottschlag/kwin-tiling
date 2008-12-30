@@ -35,9 +35,6 @@ class X11EmbedPainter : public QObject
     Q_OBJECT
 
 public:
-    class Singleton;
-    static X11EmbedPainter* self();
-
     X11EmbedPainter();
     ~X11EmbedPainter();
 

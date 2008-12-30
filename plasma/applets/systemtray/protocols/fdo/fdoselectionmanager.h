@@ -26,21 +26,21 @@
 
 namespace SystemTray
 {
-    class Notification;
-    class Task;
-}
 
-
-namespace SystemTray
-{
+class Notification;
+class Task;
+class X11EmbedPainter;
 
 class FdoSelectionManager : public QWidget
 {
     Q_OBJECT
 
 public:
-    class Singleton;
-    static FdoSelectionManager* self();
+    static FdoSelectionManager *manager();
+    static X11EmbedPainter *painter();
+
+    FdoSelectionManager();
+    ~FdoSelectionManager();
 
     void addDamageWatch(QWidget *container, WId client);
     void removeDamageWatch(QWidget *container);
@@ -59,9 +59,6 @@ private slots:
     void cleanupNotification(WId winId);
 
 private:
-    FdoSelectionManager();
-    ~FdoSelectionManager();
-
     class Private;
     Private* const d;
 };

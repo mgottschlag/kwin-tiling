@@ -22,6 +22,7 @@
 #include "fdonotification.h"
 #include "fdoselectionmanager.h"
 #include "fdotask.h"
+#include "x11embedpainter.h"
 
 #include <KDebug>
 
@@ -67,7 +68,9 @@ struct DamageWatch
     Damage damage;
 };
 
-static int damageEventBase;
+static int damageEventBase = 0;
+static FdoSelectionManager *s_manager = 0;
+static X11EmbedPainter *s_painter = 0;
 static QMap<WId, DamageWatch*> damageWatches;
 static QCoreApplication::EventFilter oldEventFilter;
 
@@ -95,15 +98,6 @@ static bool x11EventFilter(void *message, long int *result)
     }
 }
 #endif
-
-
-class FdoSelectionManager::Singleton
-{
-public:
-    FdoSelectionManager instance;
-};
-
-K_GLOBAL_STATIC(FdoSelectionManager::Singleton, singleton)
 
 
 struct MessageRequest
@@ -161,13 +155,6 @@ public:
     bool haveComposite;
 };
 
-
-FdoSelectionManager* FdoSelectionManager::self()
-{
-    return &singleton->instance;
-}
-
-
 FdoSelectionManager::FdoSelectionManager()
     : d(new FdoSelectionManager::Private(this))
 {
@@ -185,9 +172,25 @@ FdoSelectionManager::~FdoSelectionManager()
         QCoreApplication::instance()->setEventFilter(oldEventFilter);
     }
 #endif
+
+    if (s_manager == this) {
+        s_manager = 0;
+        delete s_painter;
+        s_painter = 0;
+    }
+
     delete d;
 }
 
+FdoSelectionManager *FdoSelectionManager::manager()
+{
+    return s_manager;
+}
+
+X11EmbedPainter *FdoSelectionManager::painter()
+{
+    return s_painter;
+}
 
 void FdoSelectionManager::addDamageWatch(QWidget *container, WId client)
 {
@@ -279,6 +282,11 @@ void FdoSelectionManager::initSelection()
 
     XChangeProperty(d->display, winId(), d->visualAtom, XA_VISUALID, 32,
                     PropModeReplace, (const unsigned char*)&visual, 1);
+
+    if (!s_painter) {
+        s_painter = new X11EmbedPainter;
+    }
+    s_manager = this;
 
     WId root = QX11Info::appRootWindow();
     XClientMessageEvent xev;
