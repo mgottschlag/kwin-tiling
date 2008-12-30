@@ -81,6 +81,7 @@ Comment[zh_TW]=Plasmoids 的 DBpedia 資料
 Type=Service
 ServiceTypes=Plasma/DataEngine
 X-Plasma-API=ruby-script
+X-Plasma-MainScript=code/main.rb
 
 X-KDE-PluginInfo-Author=Richard Dale
 X-KDE-PluginInfo-Email=richard.j.dale@gmail.com

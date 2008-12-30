@@ -104,6 +104,7 @@ Icon=chronometer
 Type=Service
 ServiceTypes=Plasma/Applet
 X-Plasma-API=ruby-script
+X-Plasma-MainScript=code/main.rb
 
 X-KDE-PluginInfo-Author=Richard Dale
 X-KDE-PluginInfo-Email=richard.j.dale@gmail.com
