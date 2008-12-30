@@ -164,6 +164,11 @@ void CompactLayout::Private::addPadding(QHash<QGraphicsLayoutItem*, QRectF> &geo
 
     if (xAdjustment || yAdjustment) {
         foreach (QGraphicsLayoutItem *item, items) {
+            QGraphicsWidget *widget = dynamic_cast<QGraphicsWidget *>(item);
+            if (widget && !widget->isVisible()) {
+                continue;
+            }
+
             geometries[item].moveLeft(geometries[item].left() + xAdjustment);
             geometries[item].moveTop(geometries[item].top() + yAdjustment);
         }
@@ -232,6 +237,11 @@ QHash<QGraphicsLayoutItem*, QRectF> CompactLayout::Private::calculateGeometries(
     yPositions << geom.top();
 
     foreach (QGraphicsLayoutItem *item, items) {
+        QGraphicsWidget *widget = dynamic_cast<QGraphicsWidget *>(item);
+        if (widget && !widget->isVisible()) {
+            continue;
+        }
+
         QRectF rect;
         rect.setSize(item->effectiveSizeHint(which));
 

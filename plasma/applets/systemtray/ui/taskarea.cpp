@@ -89,7 +89,6 @@ void TaskArea::setHiddenTypes(const QStringList &hiddenTypes)
     d->hiddenTypes = QSet<QString>::fromList(hiddenTypes);
 }
 
-
 bool TaskArea::isHiddenType(const QString &typeId, bool always) const
 {
     if (always) {
@@ -99,22 +98,17 @@ bool TaskArea::isHiddenType(const QString &typeId, bool always) const
     }
 }
 
-
 void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
 {
     d->hasTasksThatCanHide = false;
     d->hasHiddenTasks = false;
     foreach (Task *task, tasks) {
-        //kDebug() << "checking" << task->name() << d->showingHidden;
+        kDebug() << "checking" << task->name() << d->showingHidden;
         addWidgetForTask(task);
     }
 
-    if (d->hasHiddenTasks) {
-        d->topLayout->invalidate();
-        d->topLayout->activate();
-    }
-
     checkUnhideTool();
+    d->topLayout->invalidate();
     emit sizeHintChanged(Qt::PreferredSize);
 }
 
@@ -129,34 +123,38 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
 {
     QGraphicsWidget *widget = findWidget(task);
     if (!task->isEmbeddable() && !widget) {
-        //kDebug() << "task is not embeddable, so FAIL" << task->name();
+        kDebug() << "task is not embeddable, so FAIL" << task->name();
         return;
     }
 
     d->hasTasksThatCanHide = d->hasTasksThatCanHide || isHiddenType(task->typeId(), false);
 
     if (isHiddenType(task->typeId())) {
-        //kDebug() << "is a hidden type";
+        kDebug() << "is a hidden type";
         d->hasHiddenTasks = true;
         if (widget) {
-            //kDebug() << "just hiding the widget";
+            kDebug() << "just hiding the widget";
             widget->hide();
         }
-    } else if (widget) {
-        //kDebug() << "widget already exists!";
+    } else  if (widget) {
+        kDebug() << "widget already exists!";
         widget->show();
     } else {
-        switch (task->order()) {
-            case SystemTray::Task::First:
-                d->taskLayout->insertItem(0, task->widget(d->host));
-                break;
-            case SystemTray::Task::Normal:
-                d->taskLayout->insertItem(d->taskLayout->count() - d->lastItemCount, task->widget(d->host));
-                break;
-            case SystemTray::Task::Last:
-                ++d->lastItemCount;
-                d->taskLayout->addItem(task->widget(d->host));
-                break;
+        widget = task->widget(d->host);
+
+        if (widget) {
+            switch (task->order()) {
+                case SystemTray::Task::First:
+                    d->taskLayout->insertItem(0, widget);
+                    break;
+                case SystemTray::Task::Normal:
+                    d->taskLayout->insertItem(d->taskLayout->count() - d->lastItemCount, widget);
+                    break;
+                case SystemTray::Task::Last:
+                    ++d->lastItemCount;
+                    d->taskLayout->addItem(widget);
+                    break;
+            }
         }
     }
 }
