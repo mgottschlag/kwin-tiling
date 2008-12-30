@@ -125,6 +125,7 @@ void Battery::init()
 
     readColors();
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(readColors()));
+    connect(KGlobalSettings::self(), SIGNAL(kdisplayPaletteChanged()), SLOT(readColors()));
 
     const QStringList& battery_sources = dataEngine("powermanagement")->query("Battery")["sources"].toStringList();
 
