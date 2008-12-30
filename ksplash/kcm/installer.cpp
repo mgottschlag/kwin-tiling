@@ -116,6 +116,7 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
 
   QVBoxLayout* leftbox = new QVBoxLayout(  );
   hbox->addItem( leftbox );
+  leftbox->setSpacing( KDialog::spacingHint() );
   hbox->setStretchFactor( leftbox, 1 );
 
   mThemesList = new ThemeListBox(this);
@@ -152,6 +153,7 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
 
   QVBoxLayout* rightbox = new QVBoxLayout(  );
   hbox->addItem( rightbox );
+  rightbox->setSpacing( KDialog::spacingHint() );
   hbox->setStretchFactor( rightbox, 3 );
 
   QScrollArea* scrollarea = new QScrollArea(this);

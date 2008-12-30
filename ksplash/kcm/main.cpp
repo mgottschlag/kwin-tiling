@@ -62,7 +62,6 @@ KSplashThemeMgr::KSplashThemeMgr( QWidget *parent, const QVariantList &args)
 #else
   QHBoxLayout *box = new QHBoxLayout(this);
   box->setMargin(0);
-  box->setSpacing(0);
   box->addWidget(mInstaller);
 #endif
   connect( mInstaller, SIGNAL(changed(bool)), SIGNAL(changed(bool)) );
