@@ -17,10 +17,10 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
+#include <QTimer>
 #include "dbusjob.h"
 
 #include <KDebug>
-
 
 namespace SystemTray
 {
@@ -29,8 +29,9 @@ DBusJob::DBusJob(const QString &source, QObject *parent)
     : SystemTray::Job(parent),
       m_source(source)
 {
+    //delay a little the job to avoid the user to be distracted with short ones
+    QTimer::singleShot(3000, this, SLOT(show()));
 }
-
 
 DBusJob::~DBusJob()
 {
@@ -54,6 +55,13 @@ void DBusJob::stop()
 {
     emit stop(m_source);
     kDebug() << "cancel";
+}
+
+void DBusJob::show()
+{
+    if (state() == Job::Running) {
+        emit ready(this);
+    }
 }
 
 }

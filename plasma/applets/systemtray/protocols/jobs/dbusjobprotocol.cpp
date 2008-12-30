@@ -20,6 +20,7 @@
 #include "dbusjob.h"
 #include "dbusjobprotocol.h"
 
+
 #include <KConfigGroup>
 #include <KIcon>
 
@@ -82,9 +83,12 @@ void DBusJobProtocol::dataUpdated(const QString &source, const Plasma::DataEngin
                 this, SLOT(resume(const QString&)));
         connect(m_jobs[source], SIGNAL(stop(const QString&)),
                 this, SLOT(stop(const QString&)));
+        connect(m_jobs[source], SIGNAL(ready(SystemTray::Job*)),
+                this, SIGNAL(jobCreated(SystemTray::Job*)));
     }
 
     DBusJob* job = m_jobs[source];
+
     job->setApplicationName(data.value("appName").toString());
     job->setApplicationIconName(data.value("appIconName").toString());
     job->setPercentage(data["percentage"].toUInt());
@@ -133,9 +137,7 @@ void DBusJobProtocol::dataUpdated(const QString &source, const Plasma::DataEngin
     }
     job->setProcessedAmounts(processedAmounts);
 
-    if (isNew) {
-        emit jobCreated(job);
-    } else {
+    if (!isNew) {
         emit job->changed(job);
     }
 }
