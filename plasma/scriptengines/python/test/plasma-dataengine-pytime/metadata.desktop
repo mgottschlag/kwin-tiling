@@ -91,6 +91,7 @@ Type=Service
 Icon=preferences-system-time
 ServiceTypes=Plasma/DataEngine
 X-Plasma-API=python
+X-Plasma-MainScript=code/main.py
 
 X-KDE-PluginInfo-Author=Simon Edwards
 X-KDE-PluginInfo-Email=simon@simonzone.com

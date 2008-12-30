@@ -5,13 +5,10 @@ INCLUDE(PythonMacros)
 # install the library, .desktop, and plasma.py
 PYTHON_INSTALL(pyappletscript.py ${DATA_INSTALL_DIR}/plasma_scriptengine_python)
 PYTHON_INSTALL(plasma_importer.py ${DATA_INSTALL_DIR}/plasma_scriptengine_python)
-PYTHON_INSTALL(package_pythoid.py ${DATA_INSTALL_DIR}/plasma_scriptengine_python)
 PYTHON_INSTALL(pydataengine.py ${DATA_INSTALL_DIR}/plasma_scriptengine_python)
 PYTHON_INSTALL(plasmascript.py ${PYTHON_SITE_PACKAGES_DIR}/PyKDE4)
 
 install(FILES plasma-scriptengine-applet-python.desktop
-        DESTINATION ${SERVICES_INSTALL_DIR})
-install(FILES plasma-packagestructure-python.desktop
         DESTINATION ${SERVICES_INSTALL_DIR})
 install(FILES plasma-scriptengine-dataengine-python.desktop
         DESTINATION ${SERVICES_INSTALL_DIR})
