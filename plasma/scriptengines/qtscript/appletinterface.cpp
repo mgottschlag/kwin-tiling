@@ -140,5 +140,9 @@ void AppletInterface::setPreferredSize(qreal w, qreal h)
     applet->applet()->setPreferredSize(w,h);
 }
 
+void AppletInterface::dataUpdated(QString source, Plasma::DataEngine::Data data)
+{
+    applet->dataUpdated(source, data);
+}
 
 #include "appletinterface.moc"

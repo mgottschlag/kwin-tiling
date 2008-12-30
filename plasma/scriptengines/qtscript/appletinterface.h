@@ -21,15 +21,13 @@
 #define APPLETINTERFACE_H
 
 #include <QObject>
+#include <Plasma/DataEngine>
 
 class KConfigGroup;
 class QScriptApplet;
 class QSizeF;
 class QGraphicsLayout;
 
-namespace Plasma {
-class DataEngine;
-}
 
 class AppletInterface : public QObject
 {
@@ -138,6 +136,8 @@ Q_SIGNALS:
 
     void configNeedsSaving();
 
+public Q_SLOTS:
+    void dataUpdated(QString source, Plasma::DataEngine::Data data);
 private:
     QScriptApplet *applet;
 };
