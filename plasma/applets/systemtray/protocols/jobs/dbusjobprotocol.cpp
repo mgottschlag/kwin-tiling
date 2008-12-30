@@ -71,23 +71,22 @@ void DBusJobProtocol::prepareJob(const QString &source)
 
 void DBusJobProtocol::dataUpdated(const QString &source, const Plasma::DataEngine::Data &data)
 {
-    bool isNew = !m_jobs.contains(source);
+    DBusJob *job = m_jobs.value(source, 0);
 
-    if (isNew) {
-        m_jobs[source] = new DBusJob(source, this);
-        connect(m_jobs[source], SIGNAL(jobDeleted(const QString&)),
+    if (!job) {
+        job = new DBusJob(source, this);
+        m_jobs.insert(source, job);
+        connect(job, SIGNAL(jobDeleted(const QString&)),
                 this, SLOT(removeJob(const QString&)));
-        connect(m_jobs[source], SIGNAL(suspend(const QString&)),
+        connect(job, SIGNAL(suspend(const QString&)),
                 this, SLOT(suspend(const QString&)));
-        connect(m_jobs[source], SIGNAL(resume(const QString&)),
+        connect(job, SIGNAL(resume(const QString&)),
                 this, SLOT(resume(const QString&)));
-        connect(m_jobs[source], SIGNAL(stop(const QString&)),
+        connect(job, SIGNAL(stop(const QString&)),
                 this, SLOT(stop(const QString&)));
-        connect(m_jobs[source], SIGNAL(ready(SystemTray::Job*)),
+        connect(job, SIGNAL(ready(SystemTray::Job*)),
                 this, SIGNAL(jobCreated(SystemTray::Job*)));
     }
-
-    DBusJob* job = m_jobs[source];
 
     job->setApplicationName(data.value("appName").toString());
     job->setApplicationIconName(data.value("appIconName").toString());
@@ -135,18 +134,14 @@ void DBusJobProtocol::dataUpdated(const QString &source, const Plasma::DataEngin
         processedAmounts[unit] = amount;
         i++;
     }
-    job->setProcessedAmounts(processedAmounts);
 
-    if (!isNew) {
-        emit job->changed(job);
-    }
+    job->setProcessedAmounts(processedAmounts);
 }
 
 void DBusJobProtocol::removeJob(const QString &source)
 {
     if (m_jobs.contains(source)) {
         m_jobs[source]->setState(Job::Stopped);
-        emit m_jobs[source]->changed(m_jobs[source]);
         m_jobs.take(source)->destroy();
     }
 }

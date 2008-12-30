@@ -46,13 +46,9 @@ signals:
     void suspend(const QString &source);
     void resume(const QString &source);
     void stop(const QString &source);
-    void ready(SystemTray::Job*);
 
 private:
     QString m_source;
-
-private slots:
-    void show();
 };
 
 }

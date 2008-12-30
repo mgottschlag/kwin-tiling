@@ -79,9 +79,9 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
     setMinimumWidth(350);
 
     if (m_job) {
-        connect(m_job, SIGNAL(changed()),
+        connect(m_job, SIGNAL(changed(SystemTray::Job*)),
                 this, SLOT(updateJob()));
-        connect(m_job, SIGNAL(destroyed()),
+        connect(m_job, SIGNAL(destroyed(SystemTray::Job*)),
                 this, SLOT(destroy()));
 
         //the suspend action

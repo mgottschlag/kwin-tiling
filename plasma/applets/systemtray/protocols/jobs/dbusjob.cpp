@@ -29,8 +29,6 @@ DBusJob::DBusJob(const QString &source, QObject *parent)
     : SystemTray::Job(parent),
       m_source(source)
 {
-    //delay a little the job to avoid the user to be distracted with short ones
-    QTimer::singleShot(3000, this, SLOT(show()));
 }
 
 DBusJob::~DBusJob()
@@ -42,7 +40,6 @@ void DBusJob::suspend()
 {
     emit suspend(m_source);
     kDebug() << "suspend";
-
 }
 
 void DBusJob::resume()
@@ -55,13 +52,6 @@ void DBusJob::stop()
 {
     emit stop(m_source);
     kDebug() << "cancel";
-}
-
-void DBusJob::show()
-{
-    if (state() == Job::Running) {
-        emit ready(this);
-    }
 }
 
 }

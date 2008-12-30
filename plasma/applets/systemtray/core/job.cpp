@@ -31,9 +31,11 @@ class Job::Private
 {
 public:
     Private() :
+        percentage(0),
+        timerId(0),
         killable(false),
         suspendable(false),
-        percentage(0)
+        shown(false)
     {
     }
 
@@ -49,17 +51,20 @@ public:
     QList<QPair<QString, QString> > labels;
 
     State state;
-
-    bool killable;
-    bool suspendable;
-
     uint percentage;
+    int timerId;
+
+    bool killable : 1;
+    bool suspendable : 1;
+    bool shown : 1;
 };
 
 Job::Job(QObject *parent)
     : QObject(parent),
       d(new Private)
 {
+    //delay a little the job to avoid the user to be distracted with short ones
+    QTimer::singleShot(1500, this, SLOT(show()));
 }
 
 Job::~Job()
@@ -80,7 +85,10 @@ QString Job::applicationName() const
 
 void Job::setApplicationName(const QString &applicationName)
 {
-    d->applicationName = applicationName;
+    if (d->applicationName != applicationName) {
+        d->applicationName = applicationName;
+        scheduleChangedSignal();
+    }
 }
 
 QString Job::applicationIconName() const
@@ -90,7 +98,10 @@ QString Job::applicationIconName() const
 
 void Job::setApplicationIconName(const QString &applicationIcon)
 {
-    d->applicationIconName = applicationIcon;
+    if (d->applicationIconName != applicationIcon) {
+        d->applicationIconName = applicationIcon;
+        scheduleChangedSignal();
+    }
 }
 
 QString Job::message() const
@@ -100,7 +111,10 @@ QString Job::message() const
 
 void Job::setMessage(const QString &message)
 {
-    d->message = message;
+    if (d->message != message) {
+        d->message = message;
+        scheduleChangedSignal();
+    }
 }
 
 QString Job::error() const
@@ -110,7 +124,10 @@ QString Job::error() const
 
 void Job::setError(const QString &error)
 {
-    d->error = error;
+    if (d->error != error) {
+        d->error = error;
+        scheduleChangedSignal();
+    }
 }
 
 QString Job::speed() const
@@ -120,7 +137,10 @@ QString Job::speed() const
 
 void Job::setSpeed(const QString &speed)
 {
-    d->speed = speed;
+    if (d->speed != speed) {
+        d->speed = speed;
+        scheduleChangedSignal();
+    }
 }
 
 QMap<QString, qlonglong> Job::totalAmounts() const
@@ -130,7 +150,10 @@ QMap<QString, qlonglong> Job::totalAmounts() const
 
 void Job::setTotalAmounts(QMap<QString, qlonglong> amounts)
 {
-    d->totalAmounts = amounts;
+    if (d->totalAmounts != amounts) {
+        d->totalAmounts = amounts;
+        scheduleChangedSignal();
+    }
 }
 
 QMap<QString, qlonglong> Job::processedAmounts() const
@@ -141,6 +164,7 @@ QMap<QString, qlonglong> Job::processedAmounts() const
 void Job::setProcessedAmounts(QMap<QString, qlonglong> amounts)
 {
     d->processedAmounts = amounts;
+    scheduleChangedSignal();
 }
 
 Job::State Job::state() const
@@ -150,7 +174,10 @@ Job::State Job::state() const
 
 void Job::setState(State state)
 {
-    d->state = state;
+    if (d->state != state) {
+        d->state = state;
+        scheduleChangedSignal();
+    }
 }
 
 QList<QPair<QString, QString> > Job::labels() const
@@ -161,6 +188,7 @@ QList<QPair<QString, QString> > Job::labels() const
 void Job::setLabels(QList<QPair<QString, QString> > labels)
 {
     d->labels = labels;
+    scheduleChangedSignal();
 }
 
 uint Job::percentage() const
@@ -170,7 +198,10 @@ uint Job::percentage() const
 
 void Job::setPercentage(uint percentage)
 {
-    d->percentage = percentage;
+    if (d->percentage != percentage) {
+        d->percentage = percentage;
+        scheduleChangedSignal();
+    }
 }
 
 bool Job::isSuspendable() const
@@ -180,7 +211,10 @@ bool Job::isSuspendable() const
 
 void Job::setSuspendable(bool suspendable)
 {
-    d->suspendable = suspendable;
+    if (d->suspendable != suspendable) {
+        d->suspendable = suspendable;
+        scheduleChangedSignal();
+    }
 }
 
 bool Job::isKillable() const
@@ -190,7 +224,10 @@ bool Job::isKillable() const
 
 void Job::setKillable(bool killable)
 {
-    d->killable = killable;
+    if (d->killable != killable) {
+        d->killable = killable;
+        scheduleChangedSignal();
+    }
 }
 
 void Job::suspend()
@@ -206,6 +243,28 @@ void Job::resume()
 void Job::stop()
 {
     kWarning() << "Stop is not implemented in this job provider.";
+}
+
+void Job::show()
+{
+    if (state() == Job::Running) {
+        d->shown = true;
+        emit ready(this);
+    }
+}
+
+void Job::scheduleChangedSignal()
+{
+    if (d->shown && !d->timerId) {
+        d->timerId = startTimer(0);
+    }
+}
+
+void Job::timerEvent(QTimerEvent *)
+{
+    killTimer(d->timerId);
+    d->timerId = 0;
+    emit changed(this);
 }
 
 }

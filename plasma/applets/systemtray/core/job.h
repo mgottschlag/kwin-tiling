@@ -110,12 +110,20 @@ public slots:
     virtual void stop();
 
 signals:
-    void changed(SystemTray::Job *job = 0);
+    /**
+     * Emitted when the job is ready to be shown
+     */
+    void ready(SystemTray::Job *job);
+
+    /**
+     * Emitted when the job changes
+     */
+    void changed(SystemTray::Job *job);
 
     /**
      * Emitted when the job is about to be destroyed
      **/
-    void destroyed(SystemTray::Job *job = 0);
+    void destroyed(SystemTray::Job *job);
 
 protected:
     void setApplicationName(const QString &applicationName);
@@ -130,8 +138,14 @@ protected:
     void setKillable(bool killable);
     void setPercentage(uint percentage);
     void setLabels(QList<QPair<QString, QString> > labels);
+    void timerEvent(QTimerEvent *);
+
+private slots:
+    void show();
 
 private:
+    void scheduleChangedSignal();
+
     class Private;
     Private* const d;
 };
