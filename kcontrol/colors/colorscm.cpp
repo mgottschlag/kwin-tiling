@@ -432,7 +432,7 @@ void KColorCm::variesClicked()
 
 QPixmap KColorCm::createSchemePreviewIcon(const KSharedConfigPtr &config)
 {
-    const WindecoColors &wm = WindecoColors(config);
+    const WindecoColors wm(config);
     const uchar bits1[] = { 0xff, 0xff, 0xff, 0x2c, 0x16, 0x0b };
     const uchar bits2[] = { 0x68, 0x34, 0x1a, 0xff, 0xff, 0xff };
     const QSize bitsSize(24,2);
