@@ -1,6 +1,9 @@
 # Project's name
 project(plasma-qedje-script)
 
+
+include_directories(${PC_QEdje_INCLUDE_DIRS})
+
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 
 # We add our source code here

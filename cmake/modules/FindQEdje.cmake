@@ -14,7 +14,7 @@
 # in the FIND_PATH() and FIND_LIBRARY() calls
 if( NOT WIN32 )
   find_package(PkgConfig)
-  pkg_check_modules(PC_QEdje qzion>=0.3.0 qedje>=0.3.0)
+  pkg_check_modules(PC_QEdje eet qzion>=0.3.0 qedje>=0.3.0)
 endif( NOT WIN32 )
 
 # use this just to create a nice message at FindPackageHandleStandardArgs
