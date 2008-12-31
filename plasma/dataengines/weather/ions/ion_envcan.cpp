@@ -262,6 +262,7 @@ QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupForecastIconMappi
     forecastList["near blizzard"] = Snow;
     forecastList["overcast"] = Overcast;
     forecastList["increasing cloudiness"] = Overcast;
+    forecastList["increasing clouds"] = Overcast;
     forecastList["periods of drizzle"] = LightRain;
     forecastList["periods of drizzle mixed with freezing drizzle"] = FreezingDrizzle;
     forecastList["periods of drizzle mixed with rain"] = LightRain;
