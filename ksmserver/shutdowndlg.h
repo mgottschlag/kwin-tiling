@@ -38,6 +38,7 @@ class LogoutEffect;
 namespace Plasma
 {
     class Svg;
+    class FrameSvg;
 }
 
 // The (singleton) widget that makes the desktop gray.
@@ -126,7 +127,7 @@ private:
     QString m_bootOption;
     QStringList rebootOptions;
     QPixmap m_renderedSvg;
-    Plasma::Svg* m_svg;
+    Plasma::FrameSvg* m_svg;
     QLabel *m_automaticallyDoLabel;
     KSMPushButton *m_btnLogout;
     KSMPushButton *m_btnHalt;

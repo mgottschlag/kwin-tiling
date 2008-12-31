@@ -24,7 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************/
 
 #include "shutdowndlg.h"
-#include "plasma/svg.h"
+#include "plasma/framesvg.h"
 #include "plasma/theme.h"
 
 #include <QBitmap>
@@ -358,7 +358,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         (unsigned char *)"logoutdialog", strlen( "logoutdialog" ));
 
 //#endif
-    m_svg = new Plasma::Svg(this);
+    m_svg = new Plasma::FrameSvg(this);
     m_svg->setImagePath("dialogs/shutdowndialog");
     connect( m_svg, SIGNAL(repaintNeeded()), this, SLOT(update()) );
     setModal( true );
@@ -541,8 +541,16 @@ void KSMShutdownDlg::paintEvent(QPaintEvent *e)
     p.setClipRect(e->rect());
 
     p.fillRect(QRect(0, 0, width(), height()), Qt::transparent);
+
+    if (m_svg->hasElement("center")) {
+        m_svg->resize();
+        m_svg->resizeFrame(size());
+        m_svg->paintFrame(&p);
+    } else {
+        m_svg->paint(&p, QRect(0, 0, width(), height()), "background");
+    }
+
     m_svg->resize(size());
-    m_svg->paint(&p, QRect(0, 0, width(), height()), "background");
 
     if (m_svg->hasElement("picture")) {
         QRect r;// = m_svg->elementRect("picture").toRect();
