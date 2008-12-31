@@ -125,7 +125,7 @@ private:
     };
 
     /** create a preview of a color scheme */
-    static QPixmap createSchemePreviewIcon(const QPalette &pal, const WindecoColors &wm);
+    static QPixmap createSchemePreviewIcon(const KSharedConfigPtr &config);
 
     /** load from global */
     void loadInternal(bool loadOptions);

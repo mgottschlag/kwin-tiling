@@ -102,8 +102,7 @@ void KColorCm::populateSchemeList()
     // clear the list in case this is being called from reset button click
     schemeList->clear();
     // add current scheme entry
-    QIcon icon = createSchemePreviewIcon(KGlobalSettings::createApplicationPalette(m_config),
-                                         WindecoColors(m_config));
+    QIcon icon = createSchemePreviewIcon(m_config);
     QListWidgetItem *currentitem = new QListWidgetItem(icon, i18nc("Current color scheme", "Current"));
     schemeList->addItem(currentitem);
     schemeList->blockSignals(true); // don't emit changed signals
@@ -112,8 +111,7 @@ void KColorCm::populateSchemeList()
 
     // add default entry
     m_config->setReadDefaults(true);
-    icon = createSchemePreviewIcon(KGlobalSettings::createApplicationPalette(m_config),
-                                         WindecoColors(m_config));
+    icon = createSchemePreviewIcon(m_config);
     schemeList->addItem(new QListWidgetItem(icon, i18nc("Default color scheme", "Default")));
     m_config->setReadDefaults(false);
 
@@ -126,8 +124,7 @@ void KColorCm::populateSchemeList()
 
         // add the entry
         KSharedConfigPtr config = KSharedConfig::openConfig(filename);
-        icon = createSchemePreviewIcon(KGlobalSettings::createApplicationPalette(config),
-                                             WindecoColors(config));
+        icon = createSchemePreviewIcon(config);
         KConfigGroup group(config, "General");
         QString name = group.readEntry("Name", info.baseName());
         QListWidgetItem * newItem = new QListWidgetItem(icon, name);
@@ -377,8 +374,7 @@ void KColorCm::saveScheme(const QString &name)
         m_config->sync();
 
         QList<QListWidgetItem*> foundItems = schemeList->findItems(name, Qt::MatchExactly);
-        QIcon icon = createSchemePreviewIcon(KGlobalSettings::createApplicationPalette(m_config),
-                                             WindecoColors(m_config));
+        QIcon icon = createSchemePreviewIcon(m_config);
         if (foundItems.size() < 1)
         {
             // add it to the list since it's not in there already
@@ -434,8 +430,9 @@ void KColorCm::variesClicked()
     }
 }
 
-QPixmap KColorCm::createSchemePreviewIcon(const QPalette &pal, const WindecoColors &wm)
+QPixmap KColorCm::createSchemePreviewIcon(const KSharedConfigPtr &config)
 {
+    const WindecoColors &wm = WindecoColors(config);
     const uchar bits1[] = { 0xff, 0xff, 0xff, 0x2c, 0x16, 0x0b };
     const uchar bits2[] = { 0x68, 0x34, 0x1a, 0xff, 0xff, 0xff };
     const QSize bitsSize(24,2);
@@ -447,20 +444,24 @@ QPixmap KColorCm::createSchemePreviewIcon(const QPalette &pal, const WindecoColo
 
     QPainter p(&pixmap);
 
-    p.fillRect( 1,  1, 7, 7, pal.brush(QPalette::Window));
-    p.fillRect( 2,  2, 5, 2, QBrush(pal.color(QPalette::WindowText), b1));
+    KColorScheme windowScheme(QPalette::Active, KColorScheme::Window, config);
+    p.fillRect( 1,  1, 7, 7, windowScheme.background());
+    p.fillRect( 2,  2, 5, 2, QBrush(windowScheme.foreground().color(), b1));
 
-    p.fillRect( 8,  1, 7, 7, pal.brush(QPalette::Button));
-    p.fillRect( 9,  2, 5, 2, QBrush(pal.color(QPalette::ButtonText), b1));
+    KColorScheme buttonScheme(QPalette::Active, KColorScheme::Button, config);
+    p.fillRect( 8,  1, 7, 7, buttonScheme.background());
+    p.fillRect( 9,  2, 5, 2, QBrush(buttonScheme.foreground().color(), b1));
 
     p.fillRect(15,  1, 7, 7, wm.color(WindecoColors::ActiveBackground));
     p.fillRect(16,  2, 5, 2, QBrush(wm.color(WindecoColors::ActiveForeground), b1));
 
-    p.fillRect( 1,  8, 7, 7, pal.brush(QPalette::Base));
-    p.fillRect( 2, 12, 5, 2, QBrush(pal.color(QPalette::Text), b2));
+    KColorScheme viewScheme(QPalette::Active, KColorScheme::View, config);
+    p.fillRect( 1,  8, 7, 7, viewScheme.background());
+    p.fillRect( 2, 12, 5, 2, QBrush(viewScheme.foreground().color(), b2));
 
-    p.fillRect( 8,  8, 7, 7, pal.brush(QPalette::Highlight));
-    p.fillRect( 9, 12, 5, 2, QBrush(pal.color(QPalette::HighlightedText), b2));
+    KColorScheme selectionScheme(QPalette::Active, KColorScheme::Selection, config);
+    p.fillRect( 8,  8, 7, 7, selectionScheme.background());
+    p.fillRect( 9, 12, 5, 2, QBrush(selectionScheme.foreground().color(), b2));
 
     p.fillRect(15,  8, 7, 7, wm.color(WindecoColors::InactiveBackground));
     p.fillRect(16, 12, 5, 2, QBrush(wm.color(WindecoColors::InactiveForeground), b2));
