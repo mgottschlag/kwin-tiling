@@ -353,7 +353,7 @@ void UKMETIon::parseSearchLocations(const QString& source, QXmlStreamReader& xml
                 if (xml.attributes().value("href").toString().contains("5day.wml")) {
 
                     // Split URL to determine station ID number
-                    tokens = xml.attributes().value("href").toString().split("=");
+                    tokens = xml.attributes().value("href").toString().split('=');
                     if (xml.attributes().value("href").toString().contains("world")) {
                         url = "http://feeds.bbc.co.uk/weather/feeds/obs/world/" + tokens[1] + ".xml";
                         flag = 0;
@@ -412,7 +412,7 @@ void UKMETIon::setup_slotRedirected(KIO::Job *job, const KUrl &url)
     QString place;
     QString tmp;
     bool flag = false;
-    QStringList tokens = url.url().split("=");
+    QStringList tokens = url.url().split('=');
     if (url.url().contains("xhtml")) { // We don't care about the first redirection (there is two)
         if (url.url().contains("world")) {
             obsUrl = "http://feeds.bbc.co.uk/weather/feeds/obs/world/" + tokens[2] + ".xml";
@@ -421,7 +421,7 @@ void UKMETIon::setup_slotRedirected(KIO::Job *job, const KUrl &url)
             obsUrl = "http://feeds.bbc.co.uk/weather/feeds/obs/id/" + tokens[2] + ".xml";
             flag = true;
         }
-        place = d->m_jobList[job].split("|")[2]; // Contains the source name (place in this case)
+        place = d->m_jobList[job].split('|')[2]; // Contains the source name (place in this case)
         tmp = QString("bbcukmet|%1").arg(place);
         place[0] = place[0].toUpper();
 
@@ -588,7 +588,7 @@ void UKMETIon::parseWeatherObservation(const QString& source, WeatherData& data,
                 QString conditionString = xml.readElementText();
 
                 // Get the observation time.
-                QStringList conditionData = conditionString.split(":");
+                QStringList conditionData = conditionString.split(':');
 
                 data.obsTime = conditionData[0];
                 // Friday at 0200 GMT
@@ -596,25 +596,25 @@ void UKMETIon::parseWeatherObservation(const QString& source, WeatherData& data,
                 data.iconPeriodHour = d->m_dateFormat.toString("HH").toInt();
                 //data.iconPeriodAP = d->m_dateFormat.toString("ap");
 
-                data.condition = conditionData[1].split(".")[0].trimmed();
+                data.condition = conditionData[1].split('.')[0].trimmed();
 
             } else if (xml.name() == "link") {
                 d->m_place[source].XMLforecastURL = xml.readElementText();
             } else if (xml.name() == "description") {
                 QString observeString = xml.readElementText();
-                QStringList observeData = observeString.split(":");
+                QStringList observeData = observeString.split(':');
 
                 data.temperature_C = observeData[1].split(QChar(176))[0].trimmed();
-                data.temperature_F = observeData[1].split("(")[1].split(QChar(176))[0];
+                data.temperature_F = observeData[1].split('(')[1].split(QChar(176))[0];
 
-                data.windDirection = observeData[2].split(",")[0].trimmed();
-                data.windSpeed_miles = observeData[3].split(",")[0].split(" ")[1];
+                data.windDirection = observeData[2].split(',')[0].trimmed();
+                data.windSpeed_miles = observeData[3].split(',')[0].split(' ')[1];
 
-                data.humidity = observeData[4].split(",")[0].split(" ")[1];
+                data.humidity = observeData[4].split(',')[0].split(' ')[1];
 
-                data.pressure = observeData[5].split(",")[0].split(" ")[1].split("mB")[0];
+                data.pressure = observeData[5].split(',')[0].split(' ')[1].split("mB")[0];
 
-                data.pressureTendency = observeData[5].split(",")[1].trimmed();
+                data.pressureTendency = observeData[5].split(',')[1].trimmed();
 
                 data.visibilityStr = observeData[6].trimmed();
 
@@ -735,7 +735,7 @@ void UKMETIon::parseFiveDayForecast(const QString& source, QXmlStreamReader& xml
                         break;
                     case WindSpeed:
                         forecast->windSpeed = numParser.capturedTexts()[0].remove("Wind").toInt();
-                        forecast->windDirection = dataText.split("(")[1].split(")")[0];
+                        forecast->windDirection = dataText.split('(')[1].split(')')[0];
                         dataItem = 0;
                         d->m_weatherData[source].forecasts.append(forecast);
                         forecast = new WeatherData::ForecastInfo;
@@ -765,10 +765,10 @@ void UKMETIon::validate(const QString& source)
         QString placeList;
         foreach(const QString &place, d->m_locations) {
             if (beginflag) {
-                placeList.append(QString("%1|extra|%2").arg(place.split("|")[1]).arg(d->m_place[place].XMLurl));
+                placeList.append(QString("%1|extra|%2").arg(place.split('|')[1]).arg(d->m_place[place].XMLurl));
                 beginflag = false;
             } else {
-                placeList.append(QString("|place|%1|extra|%2").arg(place.split("|")[1]).arg(d->m_place[place].XMLurl));
+                placeList.append(QString("|place|%1|extra|%2").arg(place.split('|')[1]).arg(d->m_place[place].XMLurl));
             }
         }
         if (d->m_locations.count() > 1) {

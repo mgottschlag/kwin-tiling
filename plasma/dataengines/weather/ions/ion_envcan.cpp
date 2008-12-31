@@ -455,7 +455,7 @@ QStringList EnvCanadaIon::validate(const QString& source) const
     QHash<QString, QString>::const_iterator it = d->m_locations.constBegin();
     while (it != d->m_locations.constEnd()) {
         if (it.value().toLower().contains(source.toLower())) {
-            placeList.append(QString("place|%1").arg(it.value().split("|")[1]));
+            placeList.append(QString("place|%1").arg(it.value().split('|')[1]));
         }
         ++it;
     }
@@ -525,7 +525,7 @@ void EnvCanadaIon::getXMLData(const QString& source)
 
     // Demunge source name for key only.
     QString dataKey = source;
-    dataKey.replace("|weather", "");
+    dataKey.remove("|weather");
     url = "http://dd.weatheroffice.ec.gc.ca/EC_sites/xml/" + d->m_place[dataKey].territoryName + "/" + d->m_place[dataKey].cityCode + "_e.xml";
     //url="file:///home/spstarr/Desktop/s0000649_e.xml";
 
@@ -665,7 +665,7 @@ bool EnvCanadaIon::readXMLData(const QString& source, QXmlStreamReader& xml)
     data.recordLow = 0.0;
 
     QString dataKey = source;
-    dataKey.replace("|weather", "");
+    dataKey.remove("|weather");
     data.shortTerritoryName = d->m_place[dataKey].territoryName;
     while (!xml.atEnd()) {
         xml.readNext();

@@ -120,7 +120,7 @@ QStringList NOAAIon::validate(const QString& source) const
     QHash<QString, QString>::const_iterator it = d->m_locations.constBegin();
     while (it != d->m_locations.constEnd()) {
         if (it.value().toLower().contains(source.toLower())) {
-            placeList.append(QString("place|%1").arg(it.value().split("|")[1]));
+            placeList.append(QString("place|%1").arg(it.value().split('|')[1]));
         }
         ++it;
     }
@@ -190,7 +190,7 @@ void NOAAIon::getXMLData(const QString& source)
     KUrl url;
 
     QString dataKey = source;
-    dataKey.replace("|weather", "");
+    dataKey.remove("|weather");
     url = d->m_place[dataKey].XMLurl;
 
     kDebug() << "URL Location: " << url.url();
@@ -345,7 +345,7 @@ WeatherData NOAAIon::parseWeatherSite(WeatherData& data, QXmlStreamReader& xml)
                 data.stationID = xml.readElementText();
             } else if (xml.name() == "observation_time") {
                 data.observationTime = xml.readElementText();
-                QStringList tmpDateStr = data.observationTime.split(" ");
+                QStringList tmpDateStr = data.observationTime.split(' ');
                 data.observationTime = QString("%1 %2").arg(tmpDateStr[5]).arg(tmpDateStr[6]);
                 d->m_dateFormat = QDateTime::fromString(data.observationTime, "h:mm ap");
                 data.iconPeriodHour = d->m_dateFormat.toString("HH");
