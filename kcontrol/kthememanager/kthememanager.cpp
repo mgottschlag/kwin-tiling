@@ -113,7 +113,6 @@ kthememanager::kthememanager( QWidget *parent, const QVariantList & )
     m_origTheme->setName( ORIGINAL_THEME );
     m_origTheme->createYourself();
 
-    load();
     queryLNFModules();
     updateButton();
 }
