@@ -490,16 +490,16 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
             m_pictureWidth = width();
         } else {
             m_svg->isValid();
-            m_svg->resize();
             QRect pictRect = m_svg->elementRect("picture").toRect();
-            m_pictureWidth = pictRect.width() * (buttonMainLayout->sizeHint().height() / qreal(pictRect.height()));
+            m_pictureWidth = mainLayout->sizeHint().height() * (pictRect.width() / pictRect.height());
             //kDebug() << "blurk!" << buttonMainLayout->sizeHint().height() << pictRect;
         }
 
         //kDebug() << width() << m_pictureWidth;
-        const int extraspace = (height() - m_pictureWidth - bottomLayout->sizeHint().height());
-        buttonMainLayout->insertSpacing(0, m_pictureWidth + extraspace);
-        resize(width() + m_pictureWidth, height());
+        //FIXME: this spaces will be taken from framesvg borders
+        const int extraSpace = 18;
+        buttonMainLayout->insertSpacing(0, m_pictureWidth + extraSpace);
+        //resize(width() + m_pictureWidth, height());
         //kDebug() << width();
     }
 
@@ -543,33 +543,19 @@ void KSMShutdownDlg::paintEvent(QPaintEvent *e)
     p.fillRect(QRect(0, 0, width(), height()), Qt::transparent);
 
     if (m_svg->hasElement("center")) {
-        m_svg->resize();
         m_svg->resizeFrame(size());
         m_svg->paintFrame(&p);
     } else {
         m_svg->paint(&p, QRect(0, 0, width(), height()), "background");
     }
 
-    m_svg->resize(size());
-
     if (m_svg->hasElement("picture")) {
-        QRect r;// = m_svg->elementRect("picture").toRect();
-        KSMPushButton* button;
-        if (m_btnLogout->isVisible()) {
-          button = m_btnLogout;
-        } else if (m_btnHalt->isVisible()) {
-          button = m_btnHalt;
-        } else {
-          button = m_btnReboot;
-        }
-
-        r.moveTop(button->geometry().top() - 10);
-        r.moveLeft(r.top());
-        r.setBottom(btnBack->geometry().top());
+        QRect r = layout()->geometry();
         r.setWidth(m_pictureWidth);
 
-        m_svg->resize();
+        m_svg->resize(m_svg->elementRect("picture").size());
         QPixmap picture = m_svg->pixmap("picture");
+        m_svg->resize();
 
         //kDebug() << 1 << r << picture.size();
         if (r.width() < picture.width()) {
@@ -578,6 +564,14 @@ void KSMShutdownDlg::paintEvent(QPaintEvent *e)
 
         if (r.height() < picture.height()) {
             picture = picture.scaledToHeight(r.height(), Qt::SmoothTransformation);
+        }
+
+
+        int left = (r.height() - picture.height())/2;
+        if (QApplication::isLeftToRight()) {
+            r.moveLeft(left);
+        } else {
+            r.moveRight(layout()->geometry().width() - left);
         }
 
         //kDebug() << 2 << r << picture.size();
