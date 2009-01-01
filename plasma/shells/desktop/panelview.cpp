@@ -89,7 +89,7 @@ public:
         const QSize glowRadius = m_svg->elementSize("hint-glow-radius");
         QPoint pixmapPosition(0, 0);
 
-        m_buffer.fill(QColor(0, 0, 0, 255*m_strength));
+        m_buffer.fill(QColor(0, 0, 0, int(qreal(255)*m_strength)));
         QPainter p(&m_buffer);
         p.setCompositionMode(QPainter::CompositionMode_SourceIn);
 
@@ -629,7 +629,7 @@ void PanelView::pinchContainment(const QRect &screenGeom)
             if (min.width() > sw) {
                 c->setMinimumSize(sw, min.height());
             } else {
-                m_offset = sw - min.width();
+                m_offset = sw - int(min.width());
             }
         }
 
@@ -638,7 +638,7 @@ void PanelView::pinchContainment(const QRect &screenGeom)
             if (max.width() > sw) {
                 c->setMaximumSize(sw, max.height());
             } else {
-                m_offset = sw - max.width();
+                m_offset = sw - int(max.width());
             }
         }
     } else {
@@ -647,7 +647,7 @@ void PanelView::pinchContainment(const QRect &screenGeom)
             if (min.height() > sh) {
                 c->setMinimumSize(min.width(), sh);
             } else {
-                m_offset = sh - min.height();
+                m_offset = sh - int(min.height());
             }
         }
 
@@ -656,7 +656,7 @@ void PanelView::pinchContainment(const QRect &screenGeom)
             if (max.height() > sh) {
                 c->setMaximumSize(max.width(), sh);
             } else {
-                m_offset = sh - max.height();
+                m_offset = sh - int(max.height());
             }
         }
     }
@@ -1121,9 +1121,9 @@ void PanelView::animateHide(qreal progress)
         Plasma::Location loc = location();
 
         if (loc == Plasma::TopEdge || loc == Plasma::BottomEdge) {
-            margin = progress * height();
+            margin = int(progress * height());
         } else {
-            margin = progress * width();
+            margin = int(progress * width());
         }
 
         int xtrans = 0;
@@ -1157,7 +1157,7 @@ void PanelView::animateHide(qreal progress)
         //kDebug() << "**************** hide complete" << triggerPoint << triggerWidth << triggerHeight;
         createUnhideTrigger();
         hide();
-    } else if (qFuzzyCompare(qreal(1.0), progress + 1.0) && tl->direction() == QTimeLine::Backward) {
+    } else if (qFuzzyCompare(qreal(1.0), qreal(progress + 1.0)) && tl->direction() == QTimeLine::Backward) {
         //if the show before accel was off now viewport position is wrong, so ensure it's visible
         //kDebug() << "show complete";
         viewport()->move(0,0);
