@@ -19,23 +19,41 @@ endif( NOT WIN32 )
 
 # use this just to create a nice message at FindPackageHandleStandardArgs
 if (PC_QEdje_FOUND)
-  FIND_LIBRARY(QEdje_LIBRARY NAMES qedje
+  FIND_PATH(QEDJE_QEdje_INCLUDE_DIR qedje.h
+    HINTS
+    ${PC_QEdje_INCLUDE_DIRS}
+  )
+  FIND_PATH(QEDJE_QZion_INCLUDE_DIR qzion.h
+    HINTS
+    ${PC_QEdje_INCLUDE_DIRS}
+  )
+  FIND_PATH(QEDJE_Eet_INCLUDE_DIR Eet.h
+    HINTS
+    ${PC_QEdje_INCLUDE_DIRS}
+  )
+
+  FIND_LIBRARY(QEDJE_QEdje_LIBRARY NAMES qedje
     PATHS
-    ${PC_QEdje_LIBDIR}
     ${PC_QEdje_LIBRARY_DIRS}
   )
-  FIND_LIBRARY(QZion_LIBRARY NAMES qzion
+  FIND_LIBRARY(QEDJE_QZion_LIBRARY NAMES qzion
     PATHS
-    ${PC_QEdje_LIBDIR}
     ${PC_QEdje_LIBRARY_DIRS}
   )
-  SET(QEDJE_LIBRARIES ${QEdje_LIBRARY} ${QZion_LIBRARY})
+  FIND_LIBRARY(QEDJE_Eet_LIBRARY NAMES eet
+    PATHS
+    ${PC_QEdje_LIBRARY_DIRS}
+  )
+
+  SET(QEDJE_LIBRARIES ${QEDJE_QEdje_LIBRARY} ${QEDJE_QZion_LIBRARY} ${QEDJE_Eet_LIBRARY} CACHE INTERNAL "All libraries needed for QEdje")
+  SET(QEDJE_INCLUDE_DIRS  ${QEDJE_QEdje_INCLUDE_DIR} ${QEDJE_QZion_INCLUDE_DIR} ${QEDJE_Eet_INCLUDE_DIR} CACHE INTERNAL "All include directories needed for QEdje")
+
 else (PC_QEdje_FOUND)
-  MESSAGE(STATUS "Could not find QZion and/or QEdje. Please download them here (http://dev.openbossa.org/trac/qedje).")
+  MESSAGE(STATUS "Could not find QZion and/or QEdje and/or eet. Please download them here (http://dev.openbossa.org/trac/qedje).")
 endif (PC_QEdje_FOUND)
 
 INCLUDE(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(QEdje DEFAULT_MSG QEdje_LIBRARY QZion_LIBRARY)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(QEdje DEFAULT_MSG QEDJE_LIBRARIES QEDJE_INCLUDE_DIRS)
 
 # show QEdje_LIBRARY and QZion_LIBRARY variables only in the advanced view
-MARK_AS_ADVANCED(QEdje_LIBRARY QZion_LIBRARY)
+MARK_AS_ADVANCED(QEDJE_QEdje_LIBRARY QEDJE_QZion_LIBRARY QEDJE_Eet_LIBRARY QEDJE_QEdje_INCLUDE_DIR QEDJE_QZion_INCLUDE_DIR QEDJE_Eet_INCLUDE_DIR)
