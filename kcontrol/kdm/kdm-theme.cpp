@@ -84,7 +84,6 @@ KDMThemeWidget::KDMThemeWidget( QWidget *parent )
 
 	preview = new QLabel( this );
 	//preview->setFixedSize( QSize( 200, 150 ) );
-	preview->setScaledContents( true );
 	preview->setWhatsThis( i18n("This is a screen shot of what KDM will look like.") );
 	preview->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Expanding);
 
