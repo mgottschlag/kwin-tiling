@@ -63,6 +63,9 @@ class PyClockApplet(plasmascript.Applet):
         self.time = QTime()
 
         self.theme = Plasma.Svg(self)
+        #print("svg: "+str(self.package().filePath("images", "clock.svgz")))
+        #self.theme.setImagePath(self.package().filePath("images", "clock.svgz"))
+
         self.theme.setImagePath("widgets/clock")    # FIXME pull this out of this applet itself.
         self.theme.setContainsMultipleImages(False)
         self.theme.resize(self.size())
@@ -157,8 +160,6 @@ class PyClockApplet(plasmascript.Applet):
 
             self.connect(self.dialog, SIGNAL("applyClicked()"), self, SLOT("configAccepted()"))
             self.connect(self.dialog, SIGNAL("okClicked()"), self, SLOT("configAccepted()"))
-            #self.connect(self.dialog, SIGNAL("applyClicked()"), self.configAccepted)
-            #self.connect(self.dialog, SIGNAL("okClicked()"), self.configAccepted)
 
         self.ui.showTimeStringCheckBox.setChecked(self.showTimeString)
         self.ui.showSecondHandCheckBox.setChecked(self.showSecondHand)
@@ -203,15 +204,13 @@ class PyClockApplet(plasmascript.Applet):
         else:
             self.timeEngine.connectSource(newTimezone, self, 6000, Plasma.AlignToMinute)
 
-    def drawHand(self, painter, rotation, handName):
+    def drawHand(self, painter, rotation, handName, rect):
         painter.save()
-        boundSize = self.boundingRect().size()
         elementRect = self.theme.elementRect(handName)
 
-        painter.translate(boundSize.width() / 2, boundSize.height() / 2)
+        painter.translate(rect.width() / 2, rect.height() / 2)
         painter.rotate(rotation)
-        painter.translate(-elementRect.width() / 2,
-            -(self.theme.elementRect("clockFace").center().y() - elementRect.top()))
+        painter.translate(-elementRect.width() / 2, 0)
         self.theme.paint(painter, QRectF(QPointF(0.0, 0.0), elementRect.size()), handName)
 
         painter.restore()
@@ -259,18 +258,18 @@ class PyClockApplet(plasmascript.Applet):
 
         if self.theme.hasElement("HourHandShadow"):
             painter.translate(1,3)
-            self.drawHand(painter, hours, "HourHandShadow")
-            self.drawHand(painter, minutes, "MinuteHandShadow")
+            self.drawHand(painter, hours, "HourHandShadow",rect)
+            self.drawHand(painter, minutes, "MinuteHandShadow",rect)
 
             if self.showSecondHand:
-                self.drawHand(painter, seconds, "SecondHandShadow")
+                self.drawHand(painter, seconds, "SecondHandShadow",rect)
 
             painter.translate(-1,-3)
         
-        self.drawHand(painter, hours, "HourHand")
-        self.drawHand(painter, minutes, "MinuteHand")
+        self.drawHand(painter, hours, "HourHand",rect)
+        self.drawHand(painter, minutes, "MinuteHand",rect)
         if self.showSecondHand:
-            self.drawHand(painter, seconds, "SecondHand")
+            self.drawHand(painter, seconds, "SecondHand",rect)
 
         painter.save()
         self.theme.resize(boundSize)
