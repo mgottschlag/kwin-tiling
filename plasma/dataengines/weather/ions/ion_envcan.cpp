@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007-2008 by Shawn Starr <shawn.starr@rogers.com>       *
+ *   Copyright (C) 2007-2009 by Shawn Starr <shawn.starr@rogers.com>       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -275,6 +275,7 @@ QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupForecastIconMappi
     forecastList["periods of freezing rain mixed with ice pellets"] = FreezingRain;
     forecastList["periods of freezing rain mixed with rain"] = FreezingRain;
     forecastList["periods of freezing rain mixed with snow"] = FreezingRain;
+    forecastList["periods of freezing rain mixed with freezing drizzle"] = FreezingRain;
     forecastList["periods of freezing rain or ice pellets"] = FreezingRain;
     forecastList["periods of freezing rain or rain"] = FreezingRain;
     forecastList["periods of freezing rain or snow"] = FreezingRain;
