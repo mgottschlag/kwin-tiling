@@ -30,6 +30,7 @@ namespace SystemTray
 class Notification;
 class Task;
 class X11EmbedPainter;
+class FdoSelectionManagerPrivate;
 
 class FdoSelectionManager : public QWidget
 {
@@ -59,8 +60,8 @@ private slots:
     void cleanupNotification(WId winId);
 
 private:
-    class Private;
-    Private* const d;
+    friend class FdoSelectionManagerPrivate;
+    FdoSelectionManagerPrivate* const d;
 };
 
 }

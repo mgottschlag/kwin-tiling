@@ -110,10 +110,10 @@ struct MessageRequest
 };
 
 
-class FdoSelectionManager::Private
+class FdoSelectionManagerPrivate
 {
 public:
-    Private(FdoSelectionManager *q)
+    FdoSelectionManagerPrivate(FdoSelectionManager *q)
         : q(q), haveComposite(false)
     {
         display = QX11Info::display();
@@ -157,7 +157,7 @@ public:
 };
 
 FdoSelectionManager::FdoSelectionManager()
-    : d(new FdoSelectionManager::Private(this))
+    : d(new FdoSelectionManagerPrivate(this))
 {
     // Init the selection later just to ensure that no signals are sent
     // until after construction is done and the creating object has a
@@ -306,7 +306,7 @@ void FdoSelectionManager::initSelection()
 }
 
 
-void FdoSelectionManager::Private::handleRequestDock(const XClientMessageEvent &event)
+void FdoSelectionManagerPrivate::handleRequestDock(const XClientMessageEvent &event)
 {
     const WId winId = (WId)event.data.l[2];
 
@@ -330,7 +330,7 @@ void FdoSelectionManager::cleanupTask(WId winId)
 }
 
 
-void FdoSelectionManager::Private::handleBeginMessage(const XClientMessageEvent &event)
+void FdoSelectionManagerPrivate::handleBeginMessage(const XClientMessageEvent &event)
 {
     const WId winId = event.window;
 
@@ -345,7 +345,7 @@ void FdoSelectionManager::Private::handleBeginMessage(const XClientMessageEvent 
 }
 
 
-void FdoSelectionManager::Private::handleMessageData(const XClientMessageEvent &event)
+void FdoSelectionManagerPrivate::handleMessageData(const XClientMessageEvent &event)
 {
     const WId winId = event.window;
     const char *messageData = event.data.b;
@@ -367,7 +367,7 @@ void FdoSelectionManager::Private::handleMessageData(const XClientMessageEvent &
 }
 
 
-void FdoSelectionManager::Private::createNotification(WId winId)
+void FdoSelectionManagerPrivate::createNotification(WId winId)
 {
     if (!tasks.contains(winId)) {
         kDebug() << "message request from unknown task" << winId;
@@ -391,7 +391,7 @@ void FdoSelectionManager::Private::createNotification(WId winId)
 }
 
 
-void FdoSelectionManager::Private::handleCancelMessage(const XClientMessageEvent &event)
+void FdoSelectionManagerPrivate::handleCancelMessage(const XClientMessageEvent &event)
 {
     const WId winId = event.window;
     const long messageId = event.data.l[2];

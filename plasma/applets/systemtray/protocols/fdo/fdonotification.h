@@ -33,6 +33,7 @@ class FdoNotification : public Notification
     Q_OBJECT
 
     friend class FdoSelectionManager;
+    friend class FdoSelectionManagerPrivate;
 
 public:
     FdoNotification(WId winId, QObject *parent = 0);
