@@ -61,6 +61,9 @@
 namespace SystemTray
 {
 
+static FdoSelectionManager *s_manager = 0;
+static X11EmbedPainter *s_painter = 0;
+
 #if defined(HAVE_XFIXES) && defined(HAVE_XDAMAGE) && defined(HAVE_XCOMPOSITE)
 struct DamageWatch
 {
@@ -69,8 +72,6 @@ struct DamageWatch
 };
 
 static int damageEventBase = 0;
-static FdoSelectionManager *s_manager = 0;
-static X11EmbedPainter *s_painter = 0;
 static QMap<WId, DamageWatch*> damageWatches;
 static QCoreApplication::EventFilter oldEventFilter;
 
