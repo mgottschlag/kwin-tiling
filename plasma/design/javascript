@@ -1,0 +1,109 @@
+Writing Plasmoids With JavaScript
+=================================
+
+The Plasmoid Package
+===================
+
+Structure
+---------
+http://techbase.kde.org/Projects/Plasma/Package
+
+Installing and Replacing
+------------------------
+plasmapkg
+
+The plasmoid Object
+===================
+Plasma::DataEngine *dataEngine(const QString &name);
+FormFactor formFactor();
+Location location();
+QString currentActivity();
+AspectRatioMode aspectRatioMode();
+void setAspectRatioMode(AspectRatioMode mode);
+bool shouldConserveResources();
+bool isBusy();
+
+setFailedToLaunch(bool failed, const QString &reason = QString());
+setBusy(bool busy);
+resize(qreal w, qreal h);
+setMinimumSize(qreal w, qreal h);
+setPreferredSize(qreal w, qreal h);
+update();
+setLayout(QGraphicsLayout *layout);
+QGraphicsLayout *layout() const;
+
+User Interface Elements
+=======================
+
+Types of Widgets
+----------------
+BusyWidget
+CheckBox
+ComboBox
+FlashingLabel
+Frame
+GroupBox
+IconWidget
+Label
+LineEdit
+Meter
+PushButton
+RadioButton
+ScrollBar
+SignalPlotter
+Slider
+SvgWidget
+TabBar
+TextEdit
+ToolButton
+TreeView
+WebView
+
+Layouts
+-------
+GridLayout
+LinearLayout
+
+Creating Items By Hand
+----------------------
+
+createWidget
+createLayout
+
+Creating Items From UI Files
+----------------------------
+
+Painting
+========
+
+SVG Images
+---------
+PlasmaSvg
+PlasmaFrameSvg
+
+Painting on the Canvas
+----------------------
+QPainter
+QFont
+QRectF
+QSizeF
+QPoint
+
+Accessing Sources of Data
+=========================
+dataEngine(string name)
+dataUpdated
+
+Configuration
+=============
+Qt UI file
+KConfigXt XML
+configAccepted()
+
+Other Functions and Classes
+===========================
+print(string)
+QGraphicsItem
+createPrototype(
+QTimer
+
