@@ -269,7 +269,7 @@ void QScriptApplet::setupObjects()
     AppletInterface *interface = new AppletInterface(this);
     m_self = m_engine->newQObject(interface);
     m_self.setScope(global);
-    global.setProperty("applet", m_self);
+    global.setProperty("plasmoid", m_self);
 
     //manually create enum values. ugh
     QMetaObject meta = AppletInterface::staticMetaObject;
@@ -355,12 +355,13 @@ QScriptValue QScriptApplet::dataEngine(QScriptContext *context, QScriptEngine *e
 
 QScriptValue QScriptApplet::dataEngine(QScriptContext *context, QScriptEngine *engine)
 {
-    if (context->argumentCount() != 1)
+    if (context->argumentCount() != 1) {
         return context->throwError("dataEngine takes one argument");
+    }
 
     QString dataEngine = context->argument(0).toString();
 
-    QScriptValue appletValue = engine->globalObject().property("applet");
+    QScriptValue appletValue = engine->globalObject().property("plasmoid");
     //kDebug() << "appletValue is " << appletValue.toString();
 
     QObject *appletObject = appletValue.toQObject();
