@@ -269,7 +269,7 @@ QRectF Clock::normalLayout(int subtitleWidth, int subtitleHeight, const QRect &c
     Q_UNUSED(subtitleWidth);
 
     QRectF myRect = QRectF(contentsRect.left(),
-                    contentsRect.bottom()-subtitleHeight,
+                    contentsRect.bottom() - subtitleHeight,
                     contentsRect.width(),
                     contentsRect.bottom());
 
@@ -279,7 +279,7 @@ QRectF Clock::normalLayout(int subtitleWidth, int subtitleHeight, const QRect &c
     m_timeRect = QRect(contentsRect.left(),
                        contentsRect.top(),
                        contentsRect.width(),
-                       contentsRect.height()-subtitleHeight);
+                       contentsRect.height() - subtitleHeight);
 
     return myRect;
 }
@@ -296,7 +296,7 @@ QRectF Clock::sideBySideLayout(int subtitleWidth, int subtitleHeight, const QRec
     // Now find out how much space is left for painting the time
     m_timeRect = QRect(contentsRect.left(),
                        contentsRect.top(),
-                       contentsRect.right()-subtitleWidth,
+                       contentsRect.right() - subtitleWidth,
                        contentsRect.bottom());
 
     return myRect;
@@ -390,28 +390,29 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         // kDebug(96669) << "subtitleWitdh: " << subtitleWitdh;
         // kDebug(96669) << "subtitleHeight: " << subtitleHeight;
 
-        QFontMetricsF metrics(smallFont);
         if (m_dateTimezoneBesides) {
-            dateRect = sideBySideLayout(subtitleWidth, subtitleHeight, contentsRect);
-
-            //kDebug(96669) << contentsRect.height()-(subtitleHeight);
-            if (contentsRect.height() - (subtitleHeight) >= 2 || formFactor() != Plasma::Horizontal) {
+            //kDebug(96669) << contentsRect.height() << subtitleHeight << metrics.height();
+            if (contentsRect.height() - subtitleHeight >= smallFont.pointSize() || formFactor() != Plasma::Horizontal) {
                 // to small to display the time on top of the date/timezone
                 // put them side by side
                 // kDebug(96669) << "switching to normal";
                 m_dateTimezoneBesides = false;
                 dateRect = normalLayout(subtitleWidth, subtitleHeight, contentsRect);
+            } else {
+                dateRect = sideBySideLayout(subtitleWidth, subtitleHeight, contentsRect);
             }
         } else {
-            dateRect = normalLayout(subtitleWidth, subtitleHeight, contentsRect);
-
-            //kDebug(96669) << contentsRect.height()-(subtitleHeight);
-            if (contentsRect.height() - (subtitleHeight) < 2 && formFactor() == Plasma::Horizontal) {
+            /* kDebug(96669) << "checking timezone placement"
+                          << contentsRect.height() << dateRect.height() << subtitleHeight <<
+                          metrics.lineSpacing();*/
+            if (contentsRect.height() - subtitleHeight < smallFont.pointSize() && formFactor() == Plasma::Horizontal) {
                 // to small to display the time on top of the date/timezone
                 // put them side by side
                 // kDebug(96669) << "switching to s-b-s";
                 m_dateTimezoneBesides = true;
                 dateRect = sideBySideLayout(subtitleWidth, subtitleHeight, contentsRect);
+            } else {
+                dateRect = normalLayout(subtitleWidth, subtitleHeight, contentsRect);
             }
         }
     } else {
@@ -448,7 +449,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         p->setFont(f);
     }
 
-    QTextOption textOption(Qt::AlignCenter);
+    QTextOption textOption(m_dateTimezoneBesides ? Qt::AlignCenter | Qt::AlignVCenter : Qt::AlignCenter);
     textOption.setWrapMode(QTextOption::NoWrap);
     p->drawText(m_timeRect, timeString, textOption);
 }
@@ -457,20 +458,27 @@ QRect Clock::preparePainter(QPainter *p, const QRect &rect, const QFont &font, c
 {
     QRect tmpRect;
     QFont tmpFont = font;
+    bool first = true;
 
     // Starting with the given font, decrease its size until it'll fit in the
     // given rect allowing wrapping where possible
     do {
-        p->setFont(tmpFont);
-        tmpFont.setPointSize(qMax(KGlobalSettings::smallestReadableFont().pointSize(), tmpFont.pointSize() - 1));
+        if (first) {
+            first = false;
+        } else  {
+            tmpFont.setPointSize(qMax(KGlobalSettings::smallestReadableFont().pointSize(), tmpFont.pointSize() - 1));
+        }
+
+        QFontMetrics fm(tmpFont);
         int flags = (singleline || ((formFactor() == Plasma::Horizontal) &&
                                     (contentsRect().height() < tmpFont.pointSize()*6))) ?
                     Qt::TextSingleLine : Qt::TextWordWrap;
 
-        tmpRect = p->boundingRect(rect, flags, text);
+        tmpRect = fm.boundingRect(rect, flags, text);
     } while (tmpFont.pointSize() > KGlobalSettings::smallestReadableFont().pointSize() &&
              (tmpRect.width() > rect.width() || tmpRect.height() > rect.height()));
 
+    p->setFont(tmpFont);
     return tmpRect;
 }
 
