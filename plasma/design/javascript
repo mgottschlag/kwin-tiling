@@ -34,11 +34,15 @@ QGraphicsLayout *layout() const;
 
 Getting Notified of Changes
 ===========================
-networkAvailableChanged
-conserveResourcesChanged
-plasmoid.onFormFactorChanged
-plasmoid.onLocationChanged
-plasmoid.onContextChanged
+Events:
+plasmoid.formFactorChanged
+plasmoid.locationChanged
+plasmoid.contextChanged
+
+Possibilities for 4.3
+---------------------
+networkAvailableChanged(bool)
+conserveResourcesChanged(bool)
 
 User Interface Elements
 =======================
@@ -101,14 +105,6 @@ Accessing Sources of Data
 =========================
 dataEngine(string name)
 dataUpdated
-
-Getting Notified of Changes
-===========================
-networkAvailableChanged
-conserveResourcesChanged
-formFactorChanged
-locationChanged
-currentActivityChanged
 
 Configuration
 =============
