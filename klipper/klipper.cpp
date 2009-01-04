@@ -809,11 +809,7 @@ void Klipper::checkClipData( bool selectionMode )
     //int lastSerialNo = selectionMode ? m_lastSelection : m_lastClipboard;
     //bool changed = data->serialNumber() != lastSerialNo;
     bool changed = true; // ### FIXME
-    bool clipEmpty = true;
-    foreach ( const QString &format, data->formats() ) {
-      if( !data->data(format).isEmpty() && format != "TIMESTAMP" && format != "TARGETS" )
-         clipEmpty = false;
-    }
+    bool clipEmpty = data->formats().isEmpty();
 
     if ( changed && clipEmpty && m_bNoNullClipboard ) {
         const HistoryItem* top = history()->first();
