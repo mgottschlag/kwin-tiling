@@ -155,6 +155,43 @@
       <item row="1" column="0">
        <layout class="QHBoxLayout" name="hlayout1" >
         <item>
+         <widget class="QPushButton" name="m_removeThemeButton" >
+          <property name="enabled" >
+           <bool>true</bool>
+          </property>
+          <property name="text" >
+           <string>Remove Theme</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="m_exportThemeButton" >
+          <property name="enabled" >
+           <bool>true</bool>
+          </property>
+          <property name="text" >
+           <string>Export Theme to File...</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="2" column="0">
+       <widget class="Line" name="m_advancedLine" >
+        <property name="frameShape" >
+         <enum>QFrame::HLine</enum>
+        </property>
+        <property name="frameShadow" >
+         <enum>QFrame::Sunken</enum>
+        </property>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <layout class="QHBoxLayout" name="hlayout1" >
+        <item>
          <widget class="QLabel" name="m_newThemeNameLabel" >
           <property name="text" >
            <string>New theme name:</string>
@@ -204,7 +241,7 @@
         </item>
        </layout>
       </item>
-      <item row="2" column="0" >
+      <item row="4" column="0" >
        <layout class="QHBoxLayout" name="hlayout1" >
         <item>
          <widget class="QLabel" name="m_newThemeDescriptionLabel" >
@@ -226,30 +263,6 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="3" column="0">
-       <layout class="QHBoxLayout" name="hlayout1" >
-        <item>
-         <widget class="QPushButton" name="m_removeThemeButton" >
-          <property name="enabled" >
-           <bool>true</bool>
-          </property>
-          <property name="text" >
-           <string>Remove Theme</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="m_exportThemeButton" >
-          <property name="enabled" >
-           <bool>true</bool>
-          </property>
-          <property name="text" >
-           <string>Export Theme to File...</string>
           </property>
          </widget>
         </item>

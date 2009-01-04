@@ -721,6 +721,7 @@ void DesktopThemeDetails::toggleAdvancedVisible()
     m_newThemeDescription->setVisible(m_enableAdvanced->isChecked());
     m_exportThemeButton->setVisible(m_enableAdvanced->isChecked());
     m_removeThemeButton->setVisible(m_enableAdvanced->isChecked());
+    m_advancedLine->setVisible(m_enableAdvanced->isChecked());
 }
 
 bool DesktopThemeDetails::isCustomized(const QString& theme) {
