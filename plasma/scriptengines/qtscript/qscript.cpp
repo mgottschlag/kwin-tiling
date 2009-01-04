@@ -263,15 +263,15 @@ void QScriptApplet::constraintsEvent(Plasma::Constraints constraints)
     QString functionName;
 
     if (constraints & Plasma::FormFactorConstraint) {
-        callFunction("onFormFactorChanged");
+        callFunction("formFactorChanged");
     }
 
     if (constraints & Plasma::LocationConstraint) {
-        callFunction("onLocationChanged");
+        callFunction("locationChanged");
     }
 
     if (constraints & Plasma::ContextConstraint) {
-        callFunction("onContextChanged");
+        callFunction("contextChanged");
     }
 }
 
