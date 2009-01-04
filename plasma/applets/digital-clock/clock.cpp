@@ -392,7 +392,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
         if (m_dateTimezoneBesides) {
             //kDebug(96669) << contentsRect.height() << subtitleHeight << metrics.height();
-            if (contentsRect.height() - subtitleHeight >= smallFont.pointSize() || formFactor() != Plasma::Horizontal) {
+            if (contentsRect.height() - subtitleHeight >= smallFont.pixelSize() || formFactor() != Plasma::Horizontal) {
                 // to small to display the time on top of the date/timezone
                 // put them side by side
                 // kDebug(96669) << "switching to normal";
@@ -405,7 +405,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
             /* kDebug(96669) << "checking timezone placement"
                           << contentsRect.height() << dateRect.height() << subtitleHeight <<
                           metrics.lineSpacing();*/
-            if (contentsRect.height() - subtitleHeight < smallFont.pointSize() && formFactor() == Plasma::Horizontal) {
+            if (contentsRect.height() - subtitleHeight < smallFont.pixelSize() && formFactor() == Plasma::Horizontal) {
                 // to small to display the time on top of the date/timezone
                 // put them side by side
                 // kDebug(96669) << "switching to s-b-s";
