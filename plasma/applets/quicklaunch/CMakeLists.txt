@@ -1,10 +1,14 @@
 project(quicklaunch-applet)
-FIND_PACKAGE(KDE4 REQUIRED)
-FIND_PACKAGE(Plasma REQUIRED)
-INCLUDE_DIRECTORIES(
-  ${CMAKE_CURRENT_BINARY_DIR}
-  ${KDE4_INCLUDES} 
-)
+
+# building separately or as part of kdebase ?
+if(NOT KDE4_FOUND)
+   find_package(KDE4 REQUIRED)
+
+   include_directories(
+   ${CMAKE_CURRENT_BINARY_DIR}
+   ${KDE4_INCLUDES} 
+   )
+endif(NOT KDE4_FOUND)
 
 set(plasma_applet_quicklaunch_SRCS
   quicklaunchApplet.cpp
