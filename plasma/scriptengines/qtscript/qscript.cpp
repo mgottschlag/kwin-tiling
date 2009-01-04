@@ -270,8 +270,8 @@ void QScriptApplet::constraintsEvent(Plasma::Constraints constraints)
         callFunction("onLocationChanged");
     }
 
-    if (constraints & Plasma::LocationConstraint) {
-        callFunction("onActivityChanged");
+    if (constraints & Plasma::ContextConstraint) {
+        callFunction("onContextChanged");
     }
 }
 
