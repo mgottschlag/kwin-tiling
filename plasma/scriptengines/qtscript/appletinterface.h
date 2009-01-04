@@ -118,8 +118,6 @@ enum AspectRatioMode {
 
     Q_INVOKABLE void setConfigurationRequired(bool needsConfiguring, const QString &reason = QString());
 
-    Q_INVOKABLE void setHasConfigurationInterface(bool hasConfigInterface);
-
     Q_INVOKABLE QSizeF size() const;
 
     Q_INVOKABLE void setAction(const QString &name, const QString &text,

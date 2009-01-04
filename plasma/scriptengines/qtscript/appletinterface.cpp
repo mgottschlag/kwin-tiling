@@ -104,11 +104,6 @@ void AppletInterface::setConfigurationRequired(bool needsConfiguring, const QStr
     m_appletScriptEngine->setConfigurationRequired(needsConfiguring, reason);
 }
 
-void AppletInterface::setHasConfigurationInterface(bool hasConfigInterface)
-{
-    m_appletScriptEngine->setHasConfigurationInterface(hasConfigInterface);
-}
-
 void AppletInterface::update()
 {
     applet()->update();
