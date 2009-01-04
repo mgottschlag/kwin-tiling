@@ -193,12 +193,27 @@ void QScriptApplet::dataUpdated(const QString &name, const DataEngine::Data &dat
     }
 }
 
+void QScriptApplet::executeAction(const QString &name)
+{
+    QScriptValue fun = m_self.property("action_" + name);
+    if (fun.isFunction()) {
+        QScriptContext *ctx = m_engine->pushContext();
+        ctx->setActivationObject(m_self);
+        fun.call(m_self);
+        m_engine->popContext();
+
+        if (m_engine->hasUncaughtException()) {
+            reportError();
+        }
+    }
+}
+
 void QScriptApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
     Q_UNUSED(option)
     Q_UNUSED(contentsRect)
 
-    kDebug() << "paintInterface() (c++)";
+    //kDebug() << "paintInterface() (c++)";
     QScriptValue fun = m_self.property("paintInterface");
     if (!fun.isFunction()) {
         kDebug() << "Script: paintInterface is not a function, " << fun.toString();
@@ -219,6 +234,11 @@ void QScriptApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *
     if (m_engine->hasUncaughtException()) {
         reportError();
     }
+}
+
+QList<QAction*> QScriptApplet::contextualActions()
+{
+    return m_interface->contextualActions();
 }
 
 bool QScriptApplet::init()
@@ -267,8 +287,8 @@ void QScriptApplet::setupObjects()
     QScriptValue global = m_engine->globalObject();
 
     // Expose applet interface
-    AppletInterface *interface = new AppletInterface(this);
-    m_self = m_engine->newQObject(interface);
+    m_interface = new AppletInterface(this);
+    m_self = m_engine->newQObject(m_interface);
     m_self.setScope(global);
     global.setProperty("plasmoid", m_self);
 

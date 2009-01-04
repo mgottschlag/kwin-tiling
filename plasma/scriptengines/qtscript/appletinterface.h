@@ -23,11 +23,18 @@
 #include <QObject>
 #include <Plasma/DataEngine>
 
-class KConfigGroup;
-class QScriptApplet;
-class QSizeF;
+class QAction;
 class QGraphicsLayout;
+class QScriptApplet;
+class QSignalMapper;
+class QSizeF;
 
+class KConfigGroup;
+
+namespace Plasma
+{
+    class Applet;
+} // namespace Plasa
 
 class AppletInterface : public QObject
 {
@@ -115,7 +122,10 @@ enum AspectRatioMode {
 
     Q_INVOKABLE QSizeF size() const;
 
-    //TODO actions
+    Q_INVOKABLE void setAction(const QString &name, const QString &text,
+                               const QString &icon = QString(), const QString &shortcut = QString());
+
+    Q_INVOKABLE void removeAction(const QString &name);
 
     Q_INVOKABLE void resize(qreal w, qreal h);
 
@@ -132,6 +142,7 @@ enum AspectRatioMode {
     //TODO setLayout? layout()?
 
     const Plasma::Package *package() const;
+    QList<QAction*> contextualActions() const;
 
 Q_SIGNALS:
     void releaseVisualFocus();
@@ -140,8 +151,12 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void dataUpdated(QString source, Plasma::DataEngine::Data data);
+
 private:
-    QScriptApplet *applet;
+    Plasma::Applet *applet() const;
+    QScriptApplet *m_appletScriptEngine;
+    QSet<QString> m_actions;
+    QSignalMapper *m_actionSignals;
 };
 
 #endif

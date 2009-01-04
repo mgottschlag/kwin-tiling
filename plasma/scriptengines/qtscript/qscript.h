@@ -27,6 +27,8 @@
 class QScriptEngine;
 class QScriptContext;
 
+class AppletInterface;
+
 class QScriptApplet : public Plasma::AppletScript
 {
     Q_OBJECT
@@ -39,6 +41,7 @@ public:
     void reportError();
 
     void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
+    QList<QAction*> contextualActions();
 
     Q_INVOKABLE QString findDataResource( const QString &filename );
     Q_INVOKABLE void debug( const QString &msg );
@@ -47,6 +50,7 @@ public slots:
     void dataUpdated( const QString &name, const Plasma::DataEngine::Data &data );
     void showConfigurationInterface();
     void configAccepted();
+    void executeAction(const QString &name);
 
 private:
     void importExtensions();
@@ -66,6 +70,7 @@ private:
 private:
     QScriptEngine *m_engine;
     QScriptValue m_self;
+    AppletInterface *m_interface;
     friend class AppletInterface;
 };
 
