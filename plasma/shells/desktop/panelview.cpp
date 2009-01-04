@@ -556,7 +556,6 @@ void PanelView::pinchContainmentToCurrentScreen()
 {
     QRect screenRect = Kephal::ScreenUtils::screenGeometry(containment()->screen());
     pinchContainment(screenRect);
-    recreateUnhideTrigger();
 }
 
 void PanelView::pinchContainment(const QRect &screenGeom)
@@ -861,12 +860,14 @@ void PanelView::moveEvent(QMoveEvent *event)
     //kDebug();
     QWidget::moveEvent(event);
     updateStruts();
+    recreateUnhideTrigger();
 }
 
 void PanelView::resizeEvent(QResizeEvent *event)
 {
     //kDebug() << event->oldSize() << event->size();
     QWidget::resizeEvent(event);
+    recreateUnhideTrigger();
     updateStruts();
 #ifdef Q_WS_WIN
     appBarPosChanged();
@@ -918,11 +919,12 @@ QRect PanelView::unhideHintGeometry() const
 bool PanelView::hintOrUnhide(const QPoint &point, bool dueToDnd)
 {
 #ifdef Q_WS_X11
-    if (isVisible()) {
+    if (m_panelMode != LetWindowsCover && isVisible()) {
         return false;
     }
 
     if (!shouldHintHide()) {
+        //kDebug() << "should not hint hide";
         unhide(!dueToDnd);
         return true;
     }
@@ -984,7 +986,7 @@ bool PanelView::hasPopup()
 
 void PanelView::unhide(bool destroyTrigger)
 {
-    //kDebug();
+    //kDebug() << destroyTrigger;
     unhintHide();
     if (destroyTrigger) {
         destroyUnhideTrigger();
@@ -1017,6 +1019,7 @@ void PanelView::unhide(bool destroyTrigger)
     if (m_panelMode == LetWindowsCover) {
         m_triggerEntered = true;
         KWindowSystem::raiseWindow(winId());
+        QTimer::singleShot(0, this, SLOT(resetTriggerEnteredSuppression()));
     } else if (shouldHintHide()) {
         if (tl->state() == QTimeLine::NotRunning) {
             tl->start();
@@ -1025,6 +1028,11 @@ void PanelView::unhide(bool destroyTrigger)
         //if the hide before  compositing was active now the view is wrong
         viewport()->move(0,0);
     }
+}
+
+void PanelView::resetTriggerEnteredSuppression()
+{
+    m_triggerEntered = false;
 }
 
 void PanelView::startAutoHide()
@@ -1053,6 +1061,7 @@ void PanelView::leaveEvent(QEvent *event)
 {
     if (m_panelMode == LetWindowsCover) {
         if (m_triggerEntered) {
+            //kDebug() << "not creating!";
             m_triggerEntered = false;
         } else {
             createUnhideTrigger();
@@ -1185,6 +1194,7 @@ void PanelView::recreateUnhideTrigger()
 void PanelView::createUnhideTrigger()
 {
 #ifdef Q_WS_X11
+    //kDebug() << m_unhideTrigger << None;
     if (m_unhideTrigger != None) {
         return;
     }
@@ -1267,8 +1277,6 @@ void PanelView::createUnhideTrigger()
     XMapWindow(QX11Info::display(), m_unhideTrigger);
     m_unhideTriggerGeom = QRect(triggerPoint, QSize(triggerWidth, triggerHeight));
     m_triggerZone = QRect(actualTriggerPoint, QSize(actualWidth, actualHeight));
-//    KWindowSystem::setState(m_unhideTrigger, NET::StaysOnTop);
-
 #endif
     //kDebug() << m_unhideTrigger;
     PlasmaApp::self()->panelHidden(true);
@@ -1281,6 +1289,7 @@ void PanelView::destroyUnhideTrigger()
         return;
     }
 
+    //kDebug();
     XDestroyWindow(QX11Info::display(), m_unhideTrigger);
     m_unhideTrigger = None;
     m_triggerZone = m_unhideTriggerGeom = QRect();

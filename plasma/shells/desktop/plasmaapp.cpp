@@ -404,7 +404,7 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
         }
 
         PanelView *panel = findPanelForTrigger(event->xcrossing.window);
-        //kDebug() << "panel?" << panel;
+        //kDebug() << "panel?" << panel << ((dndEnter || dndPosition) ? "Drag and drop op" : "Mouse move op");
         if (panel) {
             if (dndEnter || dndPosition) {
                 QPoint p;
@@ -435,6 +435,7 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
                 XSendEvent(QX11Info::display(), l[0], False, NoEventMask, (XEvent*)&response);
             } else if (event->type == EnterNotify) {
                 panel->hintOrUnhide(QPoint());
+                //kDebug() << "entry";
             //FIXME: this if it was possible to avoid the polling
             /*} else if (event->type == LeaveNotify) {
                 panel->unhintHide();

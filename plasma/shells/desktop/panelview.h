@@ -210,6 +210,7 @@ private Q_SLOTS:
     void panelDeleted();
     void hideMousePoll();
     void unhideHintMousePoll();
+    void resetTriggerEnteredSuppression();
 
     /**
      * Updates the panel's position according to the screen and containment
