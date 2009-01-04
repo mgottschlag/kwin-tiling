@@ -44,7 +44,7 @@ class Applet(QObject):
             return getattr(self.applet, key)
         else:
             raise AttributeError(key)
-    
+
     def _enableForwardToApplet(self):
         self._forward_to_applet = True
     def _disableForwardToApplet(self):
@@ -107,4 +107,4 @@ class DataEngine(QObject):
         return False
 
     def serviceForSource(self,source):
-        return None
+        return Plasma.DataEngineScript.serviceForSource(self.data_engine_script,source)

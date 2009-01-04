@@ -26,27 +26,27 @@ class PythonAppletScript(Plasma.AppletScript):
 
     def __init__(self, parent):
         Plasma.AppletScript.__init__(self,parent)
-        print("PythonAppletScript()")
+        #print("PythonAppletScript()")
         if PythonAppletScript.importer is None:
              PythonAppletScript.importer = plasma_importer.PlasmaImporter()
         self.initialized = False
 
     def init(self):
-        print("Script Name: " + str(self.applet().name()))
-        print("Script Category: " + str(self.applet().category()))
+        #print("Script Name: " + str(self.applet().name()))
+        #print("Script Category: " + str(self.applet().category()))
 
         # applet() cannot be relied on to give the right details in the destructor,
         # so the plugin name is stored aside. (n.b module.__name__ cannot be relied
         # on either; it might have been changed in the module itself)
         self.m_moduleName = str(self.applet().pluginName())
-        print("pluginname: " + str(self.applet().pluginName()))
+        #print("pluginname: " + str(self.applet().pluginName()))
         
         self.plugin_name = str(self.applet().pluginName()).replace('-','_')
 
         PythonAppletScript.importer.register_top_level(self.plugin_name, str(self.applet().package().path()))
 
-        print("mainScript: " + str(self.mainScript()))
-        print("package path: " + str(self.applet().package().path()))
+        #print("mainScript: " + str(self.mainScript()))
+        #print("package path: " + str(self.applet().package().path()))
 
         # import the code at the file name reported by mainScript()
         self.module = __import__(self.plugin_name+'.main')
@@ -59,7 +59,7 @@ class PythonAppletScript(Plasma.AppletScript):
         return True
 
     def __dtor__(self):
-        print("~PythonAppletScript()")
+        #print("~PythonAppletScript()")
         PythonAppletScript.importer.unregister_top_level(self.plugin_name)
         self.pyapplet = None
 
@@ -71,7 +71,7 @@ class PythonAppletScript(Plasma.AppletScript):
     def showConfigurationInterface(self):
         if not self.initialized:
             return
-        print("Script: showConfigurationInterface")
+        #print("Script: showConfigurationInterface")
         self.pyapplet.showConfigurationInterface()
 
     def paintInterface(self, painter, option, contentsRect):
@@ -83,7 +83,7 @@ class PythonAppletScript(Plasma.AppletScript):
         if not self.initialized:
             return
 
-        print("pythonapplet contextualActions()")
+        #print("pythonapplet contextualActions()")
         return self.pyapplet.contextualActions()
 
     def shape(self):

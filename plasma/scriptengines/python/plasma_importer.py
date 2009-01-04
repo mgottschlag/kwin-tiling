@@ -27,11 +27,11 @@ class PlasmaImporter(object):
         self.toplevelcount = {}
         sys.path.append('<plasma>')
         sys.path_hooks.append(self.hook)
-        print("PlasmaImporter.__init__: sys.path:" + repr(sys.path))
+        #print("PlasmaImporter.__init__: sys.path:" + repr(sys.path))
 
     def hook(self,path):
       if path=='<plasma>':
-          print("plasma_thingy:"+ path)
+          #print("plasma_thingy:"+ path)
           return self
       else:
           raise ImportError()
@@ -49,20 +49,16 @@ class PlasmaImporter(object):
         if value==0:
             del self.toplevelcount[name]
             del self.toplevel[name]
-            print("name: "+name)
-            print(repr(sys.modules.keys()))
             for key in list(sys.modules.keys()):
-                print(key)
                 if key==name or key.startswith(name+"."):
                     del sys.modules[key]
-            print(repr(sys.modules.keys()))
 
     def find_module(self,fullname, path=None):
-        print('find_module(%s,%s)' % (fullname,path) )
+        #print('find_module(%s,%s)' % (fullname,path) )
 
         location = self.find_pymod(fullname)
         if location is not None:
-            print("Found in " + location[0])
+            #print("Found in " + location[0])
             return self
         else:
             return None
@@ -95,10 +91,10 @@ class PlasmaImporter(object):
         return open(location).read()
 
     def load_module(self, fullname):
-        print('load_module fullname: '+fullname)
+        #print('load_module fullname: '+fullname)
 
         location,ispkg = self.find_pymod(fullname)
-        print("Location:"+location)
+        #print("Location:"+location)
         if ispkg:   # Package dir.
             initlocation = os.path.join(location,'__init__.py')
             code = None
