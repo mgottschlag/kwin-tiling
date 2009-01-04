@@ -486,21 +486,28 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     setLayout(mainLayout);
     adjustSize();
     if (m_svg->hasElement("picture")) {
-        if (height() > width()) {
+        QRect pictRect = m_svg->elementRect("picture").toRect();
+
+        if (pictRect.height() < 1 || pictRect.width() < 1) {
+            m_pictureWidth = 0;
+        } else if (height() > width()) {
             m_pictureWidth = width();
         } else {
             m_svg->isValid();
-            QRect pictRect = m_svg->elementRect("picture").toRect();
             m_pictureWidth = mainLayout->sizeHint().height() * (pictRect.width() / pictRect.height());
             //kDebug() << "blurk!" << buttonMainLayout->sizeHint().height() << pictRect;
         }
 
         //kDebug() << width() << m_pictureWidth;
         //FIXME: this spaces will be taken from framesvg borders
-        const int extraSpace = 18;
-        buttonMainLayout->insertSpacing(0, m_pictureWidth + extraSpace);
+        if (m_pictureWidth > 0) {
+            const int extraSpace = 18;
+            buttonMainLayout->insertSpacing(0, m_pictureWidth + extraSpace);
+        }
         //resize(width() + m_pictureWidth, height());
         //kDebug() << width();
+    } else {
+        m_pictureWidth = 0;
     }
 
     KDialog::centerOnScreen(this);
@@ -549,7 +556,7 @@ void KSMShutdownDlg::paintEvent(QPaintEvent *e)
         m_svg->paint(&p, QRect(0, 0, width(), height()), "background");
     }
 
-    if (m_svg->hasElement("picture")) {
+    if (m_pictureWidth > 0) { // implies hasElement("picture")
         QRect r = layout()->geometry();
         r.setWidth(m_pictureWidth);
 
