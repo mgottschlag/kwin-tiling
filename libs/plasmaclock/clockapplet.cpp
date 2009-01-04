@@ -39,6 +39,7 @@
 #include <KDebug>
 #include <KDialog>
 #include <KGlobalSettings>
+#include <KTimeZone>
 
 #include <Plasma/Containment>
 #include <Plasma/Corona>
@@ -199,7 +200,7 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
     }
 
     updateClockDefaultsTo();
-    int defaultSelection = d->ui.clockDefaultsTo->findText(currentTimezone());
+    int defaultSelection = d->ui.clockDefaultsTo->findData(currentTimezone());
     if (defaultSelection >= 0) {
         d->ui.clockDefaultsTo->setCurrentIndex(defaultSelection);
     }
@@ -241,7 +242,7 @@ void ClockApplet::configAccepted()
         //The first position in ui.clockDefaultsTo is "Local"
         d->defaultTimezone = localTimezone();
     } else {
-        d->defaultTimezone = d->ui.clockDefaultsTo->currentText();
+        d->defaultTimezone = d->ui.clockDefaultsTo->itemData(d->ui.clockDefaultsTo->currentIndex()).toString();
     }
 
     cg.writeEntry("defaultTimezone", d->defaultTimezone);
@@ -259,7 +260,8 @@ void ClockApplet::updateClockDefaultsTo()
 {
     QString oldSelection = d->ui.clockDefaultsTo->currentText();
     d->ui.clockDefaultsTo->clear();
-    d->ui.clockDefaultsTo->addItems(d->ui.timeZones->selection());
+    foreach(const QString &tz, d->ui.timeZones->selection())
+        d->ui.clockDefaultsTo->addItem(KTimeZoneWidget::displayName(KTimeZone(tz)), tz);
     d->ui.clockDefaultsTo->insertItem(0, i18nc("Local time zone","Local"));
     int newPosition = d->ui.clockDefaultsTo->findText(oldSelection);
     if (newPosition >= 0) {
