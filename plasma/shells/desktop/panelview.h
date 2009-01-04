@@ -59,7 +59,7 @@ class PanelView : public Plasma::View
     Q_OBJECT
 public:
 
-    enum PanelMode {
+    enum VisibilityMode {
         NormalPanel = 0,
         AutoHide,
         LetWindowsCover
@@ -80,7 +80,7 @@ public:
     /**
      * @return panel behaviour
      */
-    PanelMode panelMode() const;
+    VisibilityMode visibilityMode() const;
 
     /**
      * @return the Corona (scene) associated with this panel.
@@ -162,7 +162,7 @@ public Q_SLOTS:
      * Sets the panel behaviour
      * @param mode
      */
-    void setPanelMode(PanelView::PanelMode mode);
+    void setVisibilityMode(PanelView::VisibilityMode mode);
 
     /**
      * Call when there has been a change that might require changes to the unhide
@@ -238,7 +238,7 @@ private:
 
     QSizeF m_lastMin;
     QSizeF m_lastMax;
-    PanelMode m_panelMode;
+    VisibilityMode m_visibilityMode;
     int m_lastSeenSize;
     bool m_lastHorizontal : 1;
 

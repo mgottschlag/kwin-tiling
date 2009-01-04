@@ -194,7 +194,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 #ifdef Q_WS_X11
       m_unhideTrigger(None),
 #endif
-      m_panelMode(NormalPanel),
+      m_visibilityMode(NormalPanel),
       m_lastHorizontal(true),
       m_editting(false),
       m_firstPaint(true),
@@ -205,7 +205,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 
     m_offset = viewConfig.readEntry("Offset", 0);
     m_alignment = alignmentFilter((Qt::Alignment)viewConfig.readEntry("Alignment", (int)Qt::AlignLeft));
-    setPanelMode((PanelMode)viewConfig.readEntry("panelMode", (int)m_panelMode));
+    setVisibilityMode((VisibilityMode)viewConfig.readEntry("panelVisibility", (int)m_visibilityMode));
 
     // pinchContainment calls updatePanelGeometry for us
     QRect screenRect = Kephal::ScreenUtils::screenGeometry(containment()->screen());
@@ -337,7 +337,7 @@ Plasma::Location PanelView::location() const
     return containment()->location();
 }
 
-void PanelView::setPanelMode(PanelView::PanelMode mode)
+void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
 {
     unsigned long state = NET::Sticky;
 
@@ -365,13 +365,13 @@ void PanelView::setPanelMode(PanelView::PanelMode mode)
     KWindowSystem::setState(winId(), state);
     KWindowSystem::setOnAllDesktops(winId(), true);
 
-    m_panelMode = mode;
-    config().writeEntry("panelMode", (int)mode);
+    m_visibilityMode = mode;
+    config().writeEntry("panelVisibility", (int)mode);
 }
 
-PanelView::PanelMode PanelView::panelMode() const
+PanelView::VisibilityMode PanelView::visibilityMode() const
 {
-    return m_panelMode;
+    return m_visibilityMode;
 }
 
 Plasma::Corona *PanelView::corona() const
@@ -723,13 +723,13 @@ void PanelView::togglePanelController()
         m_panelController->setLocation(containment()->location());
         m_panelController->setAlignment(m_alignment);
         m_panelController->setOffset(m_offset);
-        m_panelController->setPanelMode(m_panelMode);
+        m_panelController->setVisibilityMode(m_visibilityMode);
 
         connect(m_panelController, SIGNAL(destroyed(QObject*)), this, SLOT(edittingComplete()));
         connect(m_panelController, SIGNAL(offsetChanged(int)), this, SLOT(setOffset(int)));
         connect(m_panelController, SIGNAL(alignmentChanged(Qt::Alignment)), this, SLOT(setAlignment(Qt::Alignment)));
         connect(m_panelController, SIGNAL(locationChanged(Plasma::Location)), this, SLOT(setLocation(Plasma::Location)));
-        connect(m_panelController, SIGNAL(panelModeChanged(PanelView::PanelMode)), this, SLOT(setPanelMode(PanelView::PanelMode)));
+        connect(m_panelController, SIGNAL(panelVisibilityModeChanged(PanelView::VisibilityMode)), this, SLOT(setVisibilityMode(PanelView::VisibilityMode)));
 
         if (dynamic_cast<QGraphicsLinearLayout*>(containment()->layout())) {
             // we only support mouse over drags for panels with linear layouts
@@ -796,7 +796,7 @@ void PanelView::updateStruts()
 {
     NETExtendedStrut strut;
 
-    if (m_panelMode == NormalPanel) {
+    if (m_visibilityMode == NormalPanel) {
         QRect thisScreen = Kephal::ScreenUtils::screenGeometry(containment()->screen());
         QRect wholeScreen = Kephal::ScreenUtils::desktopGeometry();
 
@@ -919,7 +919,7 @@ QRect PanelView::unhideHintGeometry() const
 bool PanelView::hintOrUnhide(const QPoint &point, bool dueToDnd)
 {
 #ifdef Q_WS_X11
-    if (m_panelMode != LetWindowsCover && isVisible()) {
+    if (m_visibilityMode != LetWindowsCover && isVisible()) {
         return false;
     }
 
@@ -1006,7 +1006,7 @@ void PanelView::unhide(bool destroyTrigger)
     tl->setDirection(QTimeLine::Backward);
     tl->setDuration(100);
 
-    if (m_panelMode == AutoHide) {
+    if (m_visibilityMode == AutoHide) {
         // LetWindowsCover panels are always shown, so don't bother and prevent
         // some unsightly flickers
         show();
@@ -1016,7 +1016,7 @@ void PanelView::unhide(bool destroyTrigger)
     unsigned long state = NET::Sticky;
     KWindowSystem::setState(winId(), state);
 
-    if (m_panelMode == LetWindowsCover) {
+    if (m_visibilityMode == LetWindowsCover) {
         m_triggerEntered = true;
         KWindowSystem::raiseWindow(winId());
         QTimer::singleShot(0, this, SLOT(resetTriggerEnteredSuppression()));
@@ -1059,14 +1059,14 @@ void PanelView::startAutoHide()
 
 void PanelView::leaveEvent(QEvent *event)
 {
-    if (m_panelMode == LetWindowsCover) {
+    if (m_visibilityMode == LetWindowsCover) {
         if (m_triggerEntered) {
             //kDebug() << "not creating!";
             m_triggerEntered = false;
         } else {
             createUnhideTrigger();
         }
-    } else if (m_panelMode == AutoHide && !m_editting) {
+    } else if (m_visibilityMode == AutoHide && !m_editting) {
         // try not to hide if we have an associated popup or window about
         if (hasPopup()) {
             // don't hide yet, but start polling to see when we should
@@ -1100,7 +1100,7 @@ void PanelView::paintEvent(QPaintEvent *event)
     Plasma::View::paintEvent(event);
     if (m_firstPaint) {
         // set up our auothide system after we paint it visibly to the user
-        if (m_panelMode == AutoHide) {
+        if (m_visibilityMode == AutoHide) {
             QTimeLine * tl = timeLine();
             tl->setDirection(QTimeLine::Forward);
             if (tl->state() == QTimeLine::NotRunning) {
@@ -1125,7 +1125,7 @@ bool PanelView::event(QEvent *event)
 
 void PanelView::animateHide(qreal progress)
 {
-    if (m_panelMode == AutoHide && shouldHintHide()) {
+    if (m_visibilityMode == AutoHide && shouldHintHide()) {
         int margin = 0;
         Plasma::Location loc = location();
 
@@ -1175,7 +1175,7 @@ void PanelView::animateHide(qreal progress)
 
 bool PanelView::shouldHintHide() const
 {
-    return m_panelMode == AutoHide && PlasmaApp::hasComposite();
+    return m_visibilityMode == AutoHide && PlasmaApp::hasComposite();
 }
 
 void PanelView::recreateUnhideTrigger()

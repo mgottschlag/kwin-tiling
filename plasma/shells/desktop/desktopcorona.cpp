@@ -110,7 +110,7 @@ QRegion DesktopCorona::availableScreenRegion(int id) const
 {
     QRegion r(screenGeometry(id));
     foreach (PanelView *view, PlasmaApp::self()->panelViews()) {
-        if (view->screen() == id && view->panelMode() == PanelView::NormalPanel) {
+        if (view->screen() == id && view->visibilityMode() == PanelView::NormalPanel) {
             r = r.subtracted(view->geometry());
         }
     }

@@ -56,8 +56,8 @@ public:
     void setAlignment(const Qt::Alignment &newAlignment);
     Qt::Alignment alignment() const;
 
-    void setPanelMode(PanelView::PanelMode);
-    PanelView::PanelMode panelMode() const;
+    void setVisibilityMode(PanelView::VisibilityMode);
+    PanelView::VisibilityMode panelVisibilityMode() const;
 
 public Q_SLOTS:
     void themeChanged();
@@ -74,14 +74,14 @@ Q_SIGNALS:
      void offsetChanged(int offset);
      void alignmentChanged(Qt::Alignment);
      void locationChanged(Plasma::Location);
-     void panelModeChanged(PanelView::PanelMode mode);
+     void panelVisibilityModeChanged(PanelView::VisibilityMode mode);
 
 private:
     void mouseMoveFilter(QMouseEvent *event);
 
     Q_PRIVATE_SLOT(d, void rulersMoved(int offset, int minLength, int minLength))
     Q_PRIVATE_SLOT(d, void alignToggled(bool toggle))
-    Q_PRIVATE_SLOT(d, void panelModeChanged(bool toggle))
+    Q_PRIVATE_SLOT(d, void panelVisibilityModeChanged(bool toggle))
     Q_PRIVATE_SLOT(d, void settingsPopup())
     Q_PRIVATE_SLOT(d, void maximizePanel())
 

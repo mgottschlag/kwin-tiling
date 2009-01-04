@@ -195,18 +195,18 @@ public:
         ruler->setOffset(0);
     }
 
-    void panelModeChanged(bool toggle)
+    void panelVisibilityModeChanged(bool toggle)
     {
         if (!toggle) {
             return;
         }
 
         if (q->sender() == normalPanelTool) {
-            emit q->panelModeChanged(PanelView::NormalPanel);
+            emit q->panelVisibilityModeChanged(PanelView::NormalPanel);
         } else if (q->sender() == autoHideTool) {
-            emit q->panelModeChanged(PanelView::AutoHide);
+            emit q->panelVisibilityModeChanged(PanelView::AutoHide);
         } else if (q->sender() == underWindowsTool) {
-            emit q->panelModeChanged(PanelView::LetWindowsCover);
+            emit q->panelVisibilityModeChanged(PanelView::LetWindowsCover);
         }
     }
 
@@ -417,17 +417,17 @@ PanelController::PanelController(QWidget* parent)
     d->normalPanelTool = d->addTool("checkmark", i18n("Always visible"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
     d->normalPanelTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     modeLayout->addWidget(d->normalPanelTool);
-    connect(d->normalPanelTool, SIGNAL(toggled(bool)), this, SLOT(panelModeChanged(bool)));
+    connect(d->normalPanelTool, SIGNAL(toggled(bool)), this, SLOT(panelVisibilityModeChanged(bool)));
 
     d->autoHideTool = d->addTool("video-display", i18n("Auto hide"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
     d->autoHideTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     modeLayout->addWidget(d->autoHideTool);
-    connect(d->autoHideTool, SIGNAL(toggled(bool)), this, SLOT(panelModeChanged(bool)));
+    connect(d->autoHideTool, SIGNAL(toggled(bool)), this, SLOT(panelVisibilityModeChanged(bool)));
 
     d->underWindowsTool = d->addTool("view-fullscreen", i18n("Windows can cover"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
     d->underWindowsTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     modeLayout->addWidget(d->underWindowsTool);
-    connect(d->underWindowsTool, SIGNAL(toggled(bool)), this, SLOT(panelModeChanged(bool)));
+    connect(d->underWindowsTool, SIGNAL(toggled(bool)), this, SLOT(panelVisibilityModeChanged(bool)));
 
     d->layout->addStretch();
     d->moveTool = d->addTool(QString(), i18n("Screen Edge"), this);
@@ -702,7 +702,7 @@ Qt::Alignment PanelController::alignment() const
     return d->ruler->alignment();
 }
 
-void PanelController::setPanelMode(PanelView::PanelMode mode)
+void PanelController::setVisibilityMode(PanelView::VisibilityMode mode)
 {
     switch (mode) {
     case PanelView::AutoHide:
@@ -718,9 +718,7 @@ void PanelController::setPanelMode(PanelView::PanelMode mode)
     }
 }
 
-
-
-PanelView::PanelMode PanelController::panelMode() const
+PanelView::VisibilityMode PanelController::panelVisibilityMode() const
 {
     if (d->underWindowsTool->isChecked()) {
         return PanelView::LetWindowsCover;
