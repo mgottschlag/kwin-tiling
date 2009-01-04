@@ -36,9 +36,9 @@ Getting Notified of Changes
 ===========================
 networkAvailableChanged
 conserveResourcesChanged
-formFactorChanged
-locationChanged
-currentActivityChanged
+plasmoid.onFormFactorChanged
+plasmoid.onLocationChanged
+plasmoid.onContextChanged
 
 User Interface Elements
 =======================
