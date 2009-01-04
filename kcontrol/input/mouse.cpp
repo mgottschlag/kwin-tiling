@@ -555,7 +555,8 @@ void MouseConfig::load()
   themetab->load();
 
   checkAccess();
-  changed(false);
+
+  emit changed(false);
 }
 
 void MouseConfig::save()
@@ -601,8 +602,7 @@ void MouseConfig::save()
   // restart kaccess
   KToolInvocation::startServiceByDesktopName("kaccess");
 
-  KCModule::changed(false);
-
+  emit changed(false);
 }
 
 void MouseConfig::defaults()
