@@ -41,39 +41,41 @@
 extern KConfig *config;
 
 
-Qt::ItemFlags CheckableStringListModel::flags(const QModelIndex& index) const
+Qt::ItemFlags CheckableStringListModel::flags( const QModelIndex &index ) const
 {
-    if (!index.isValid())
-        return Qt::ItemIsEnabled;
-    return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable;
+	if (!index.isValid())
+		return Qt::ItemIsEnabled;
+	return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable;
 }
-bool CheckableStringListModel::setData (const QModelIndex& index, const QVariant& value, int role)
-{
-    if (role==Qt::CheckStateRole)
-    {
-        int ind = noPassUsers.indexOf( stringList().at(index.row()) );
-        if (value.toInt()==Qt::Checked)
-        {
-            if (ind < 0) noPassUsers.append( stringList().at(index.row()) );
-        }
-        else
-        {
-            if (ind >= 0) noPassUsers.removeAt( ind );
-        }
-        emit changed();
-        return true;
-    }
-    else
-        return QStringListModel::setData(index,value,role);
-}
-QVariant CheckableStringListModel::data(const QModelIndex& index, int role) const
-{
-    if (!index.isValid())
-        return QVariant();
 
-    if (role==Qt::CheckStateRole)
-        return noPassUsers.contains(stringList().at(index.row()))?Qt::Checked:Qt::Unchecked;
-    return QStringListModel::data(index,role);
+bool CheckableStringListModel::setData(
+    const QModelIndex &index, const QVariant &value, int role )
+{
+	if (role == Qt::CheckStateRole) {
+		int ind = noPassUsers.indexOf( stringList().at( index.row() ) );
+		if (value.toInt() == Qt::Checked) {
+			if (ind < 0)
+				noPassUsers.append( stringList().at( index.row() ) );
+		} else {
+			if (ind >= 0)
+				noPassUsers.removeAt( ind );
+		}
+		emit changed();
+		return true;
+	} else {
+		return QStringListModel::setData( index, value, role );
+	}
+}
+
+QVariant CheckableStringListModel::data( const QModelIndex &index, int role ) const
+{
+	if (!index.isValid())
+		return QVariant();
+
+	if (role == Qt::CheckStateRole)
+		return noPassUsers.contains( stringList().at( index.row() ) ) ?
+			Qt::Checked : Qt::Unchecked;
+	return QStringListModel::data( index, role );
 }
 
 
@@ -100,8 +102,8 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	laygroup2->setSpacing( KDialog::spacingHint() );
 
 	alGroup->setWhatsThis( i18n("Turn on the auto-login feature."
-                                   " This applies only to KDM's graphical login."
-                                   " Think twice before enabling this!") );
+	                            " This applies only to KDM's graphical login."
+	                            " Think twice before enabling this!") );
 	connect( alGroup, SIGNAL(toggled( bool )), SIGNAL(changed()) );
 
 	userlb = new KComboBox( alGroup );
@@ -192,16 +194,16 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 
 	connect( npGroup, SIGNAL(toggled( bool )), SIGNAL(changed()) );
 
-	QLabel* pl_label = new QLabel( i18n("No password re&quired for:"),npGroup );
+	QLabel *pl_label = new QLabel( i18n("No password re&quired for:"), npGroup );
 	laygroup3->addWidget( pl_label );
 	npuserlv = new QListView( npGroup );
 	laygroup3->addWidget( npuserlv );
 	pl_label->setBuddy( npuserlv );
-	npuModel=new CheckableStringListModel(this,noPassUsers);
-	QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(this);
-	proxyModel->setSourceModel(npuModel);
-	npuserlv->setModel(proxyModel);
-	proxyModel->setDynamicSortFilter(true);
+	npuModel = new CheckableStringListModel( this, noPassUsers );
+	QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel( this );
+	proxyModel->setSourceModel( npuModel );
+	npuserlv->setModel( proxyModel );
+	proxyModel->setDynamicSortFilter( true );
 	connect( npuModel, SIGNAL(changed()), SIGNAL(changed()) );
 	npuserlv->setWhatsThis( i18n(
 		"Check all users you want to allow a password-less login for. "
@@ -221,7 +223,7 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 		"circumventing a password-secured screen lock possible.") );
 	//TODO a screen locker _other_ than
 	laygroup4->addWidget( cbarlen );
-	connect( cbarlen, SIGNAL(toggled(bool)), SIGNAL(changed()) );
+	connect( cbarlen, SIGNAL(toggled( bool )), SIGNAL(changed()) );
 
 	QGridLayout *main = new QGridLayout( this );
 	main->setSpacing( 10 );
@@ -235,9 +237,9 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	main->setRowStretch( 3, 1 );
 
 	connect( userlb, SIGNAL(activated( const QString & )),
-		SLOT(slotSetAutoUser( const QString & )) );
+	         SLOT(slotSetAutoUser( const QString & )) );
 	connect( puserlb, SIGNAL(editTextChanged( const QString & )),
-		SLOT(slotSetPreselUser( const QString & )) );
+	         SLOT(slotSetPreselUser( const QString & )) );
 
 }
 
@@ -281,9 +283,9 @@ void KDMConvenienceWidget::save()
 
 	configGrp = config->group( "X-:*-Greeter" );
 	configGrp.writeEntry( "PreselectUser",
-                             npRadio->isChecked() ? "None" :
-                             ppRadio->isChecked() ? "Previous" :
-                             "Default" );
+	                      npRadio->isChecked() ? "None" :
+	                      ppRadio->isChecked() ? "Previous" :
+	                      "Default" );
 	configGrp.writeEntry( "DefaultUser", puserlb->currentText() );
 	configGrp.writeEntry( "FocusPasswd", cbjumppw->isChecked() );
 }
@@ -350,7 +352,7 @@ void KDMConvenienceWidget::slotClearUsers()
 {
 	userlb->clear();
 	puserlb->clear();
-	npuModel->setStringList(QStringList());
+	npuModel->setStringList( QStringList() );
 	if (!autoUser.isEmpty())
 		userlb->addItem( autoUser );
 	if (!preselUser.isEmpty())
@@ -371,7 +373,7 @@ void KDMConvenienceWidget::slotAddUsers( const QMap<QString,int> &users )
 		if (it.value() != 0)
 			npusers<<it.key();
 	}
-	npuModel->setStringList(npusers);
+	npuModel->setStringList( npusers );
 
 	if (userlb->model())
 		userlb->model()->sort( 0 );
@@ -399,7 +401,7 @@ void KDMConvenienceWidget::slotDelUsers( const QMap<QString,int> &users )
 		if (it.value() != 0)
 			npusers.removeAll( it.key() );
 	}
-	npuModel->setStringList(npusers);
+	npuModel->setStringList( npusers );
 }
 
 #include "kdm-conv.moc"

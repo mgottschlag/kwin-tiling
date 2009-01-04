@@ -66,7 +66,7 @@ KDMThemeWidget::KDMThemeWidget( QWidget *parent )
 	: QWidget( parent )
 {
 	QGridLayout *ml = new QGridLayout( this );
-	ml->setSizeConstraint(QLayout::SetMinAndMaxSize);
+	ml->setSizeConstraint( QLayout::SetMinAndMaxSize );
 	ml->setSpacing( KDialog::spacingHint() );
 	ml->setMargin( KDialog::marginHint() );
 

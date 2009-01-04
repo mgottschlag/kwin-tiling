@@ -48,22 +48,22 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 
 	QGroupBox* box = new QGroupBox( i18nc("@title:group 'man locale' ...", "Locale"), this );
 	ml->addWidget( box );
-        QFormLayout* fl = new QFormLayout( box );
-        fl->setSpacing( KDialog::spacingHint() );
-        fl->setMargin( KDialog::marginHint() );
+	QFormLayout *fl = new QFormLayout( box );
+	fl->setSpacing( KDialog::spacingHint() );
+	fl->setMargin( KDialog::marginHint() );
 
 	// The Language group box
 	langcombo = new KLanguageButton( box );
 	langcombo->showLanguageCodes( true );
 	langcombo->loadAllLanguages();
-	connect( langcombo, SIGNAL(activated(QString)), SIGNAL(changed()) );
-	fl->addRow(i18n("&Language:"), langcombo);
+	connect( langcombo, SIGNAL(activated( QString )), SIGNAL(changed()) );
+	fl->addRow( i18n("&Language:"), langcombo );
 	wtstr = i18n(
 		"Here you can choose the language used by KDM. This setting does not "
 		"affect a user's personal settings; that will take effect after login.");
 	langcombo->setWhatsThis( wtstr );
 
-	QBoxLayout *mlml = new QHBoxLayout( );
+	QBoxLayout *mlml = new QHBoxLayout();
 	ml->setSpacing( KDialog::spacingHint() );
 	ml->setMargin( 0 );
 	ml->addItem( mlml );
@@ -72,9 +72,9 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	mlml->addWidget( box );
 	box->setWhatsThis( i18n(
 		"Enable this if you would like to use a themed Login Manager.") );
-        box->setCheckable( true );
-        useThemeCheck=box;
-        connect( useThemeCheck, SIGNAL(toggled(bool)), SLOT(slotUseThemeChanged()) );
+	box->setCheckable( true );
+	useThemeCheck = box;
+	connect( useThemeCheck, SIGNAL(toggled( bool )), SLOT(slotUseThemeChanged()) );
 
 	fl = new QFormLayout( box );
 	fl->setSpacing( KDialog::spacingHint() );
@@ -86,7 +86,7 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	guicombo->model()->sort( 0 );
 
 	connect( guicombo, SIGNAL(activated( int )), SIGNAL(changed()) );
-	fl->addRow(i18n("GUI s&tyle:"), guicombo);
+	fl->addRow( i18n("GUI s&tyle:"), guicombo );
 	wtstr = i18n(
 		"You can choose a basic GUI style here that will be used by KDM only.");
 	guicombo->setWhatsThis( wtstr );
@@ -96,7 +96,7 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	loadColorSchemes( colcombo );
 	colcombo->model()->sort( 0 );
 	connect( colcombo, SIGNAL(activated( int )), SIGNAL(changed()) );
-	fl->addRow(i18n("Color sche&me:"), colcombo );
+	fl->addRow( i18n("Color sche&me:"), colcombo );
 	wtstr = i18n(
 		"You can choose a basic Color Scheme here that will be used by KDM only.");
 	colcombo->setWhatsThis( wtstr );
@@ -112,19 +112,19 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 		"This changes the font which is used for all the text in the login manager "
 		"except for the greeting and failure messages.") );
 	connect( stdFontChooser, SIGNAL(fontSelected( const QFont& )), SIGNAL(changed()) );
-	fl->addRow(i18nc("... font", "&General:"), stdFontChooser);
+	fl->addRow( i18nc("... font", "&General:"), stdFontChooser );
 
 	failFontChooser = new KFontRequester( box );
 	failFontChooser->setWhatsThis( i18n(
 		"This changes the font which is used for failure messages in the login manager.") );
 	connect( failFontChooser, SIGNAL(fontSelected( const QFont& )), SIGNAL(changed()) );
-	fl->addRow( i18nc("font for ...", "&Failure:"), failFontChooser);
+	fl->addRow( i18nc("font for ...", "&Failure:"), failFontChooser );
 
 	greetingFontChooser = new KFontRequester( box );
 	greetingFontChooser->setWhatsThis( i18n(
 		"This changes the font which is used for the login manager's greeting.") );
 	connect( greetingFontChooser, SIGNAL(fontSelected( const QFont& )), SIGNAL(changed()) );
-	fl->addRow( i18nc("font for ...", "Gree&ting:"), greetingFontChooser);
+	fl->addRow( i18nc("font for ...", "Gree&ting:"), greetingFontChooser );
 
 	aacb = new QCheckBox( i18n("Use anti-aliasing for fonts"), box );
 	aacb->setWhatsThis( i18n(
@@ -220,7 +220,7 @@ void KDMGeneralWidget::load()
 	KConfigGroup configGrp = config->group( "X-*-Greeter" );
 
 	useThemeCheck->setChecked( configGrp.readEntry( "UseTheme", false ) );
-        slotUseThemeChanged();//why it isn't autocalled?
+	slotUseThemeChanged(); // XXX why isn't it autocalled?
 
 	// Check the GUI type
 	guicombo->setCurrentId( configGrp.readEntry( "GUIStyle" ) );

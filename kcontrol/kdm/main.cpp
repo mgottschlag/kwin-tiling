@@ -63,8 +63,8 @@ K_EXPORT_PLUGIN(KDMFactory( "kdmconfig" ))
 
 KUrl *decodeImgDrop( QDropEvent *e, QWidget *wdg )
 {
-        KUrl::List uriList = KUrl::List::fromMimeData( e->mimeData() );
-        if ( !uriList.isEmpty() ) {
+	KUrl::List uriList = KUrl::List::fromMimeData( e->mimeData() );
+	if (!uriList.isEmpty()) {
 		KUrl *url = new KUrl( uriList.first() );
 
 		KMimeType::Ptr mime = KMimeType::findByUrl( *url );
@@ -283,7 +283,7 @@ void KDModule::load()
 	convenience->load();
 	propagateUsers();
 
-	emit changed(false);
+	emit changed( false );
 }
 
 
@@ -298,7 +298,7 @@ void KDModule::save()
 	convenience->save();
 	config->sync();
 
-	emit changed(false);
+	emit changed( false );
 }
 
 

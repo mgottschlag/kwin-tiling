@@ -21,6 +21,7 @@
 #ifndef __KDMCONV_H__
 #define __KDMCONV_H__
 
+#include <QStringListModel>
 #include <QWidget>
 
 class QListView;
@@ -65,29 +66,26 @@ class KDMConvenienceWidget : public QWidget {
 	QLabel *pu_label;
 	QString autoUser, preselUser;
 	QStringList noPassUsers;
-        CheckableStringListModel* npuModel;
+	CheckableStringListModel *npuModel;
 };
 
-#include <QStringListModel>
+class CheckableStringListModel : public QStringListModel {
+	Q_OBJECT
 
-class CheckableStringListModel: public QStringListModel
-{
-    Q_OBJECT
-public:
-    CheckableStringListModel(QObject* parent, QStringList& npu)
-        : QStringListModel(parent)
-        , noPassUsers(npu)
-    {
-    }
-    Qt::ItemFlags flags(const QModelIndex& index) const;
-    bool setData (const QModelIndex& index, const QVariant& value, int role=Qt::EditRole);
-    QVariant data(const QModelIndex& index, int role=Qt::EditRole) const;
+  public:
+	CheckableStringListModel( QObject *parent, QStringList &npu )
+		: QStringListModel( parent ), noPassUsers( npu )
+		{}
+	Qt::ItemFlags flags( const QModelIndex &index ) const;
+	bool setData( const QModelIndex &index, const QVariant &value, int role = Qt::EditRole );
+	QVariant data( const QModelIndex &index, int role = Qt::EditRole ) const;
 
-signals:
-    void changed();
-private:
-//     QList<bool> selectedUsers;
-     QStringList& noPassUsers;
+  signals:
+	void changed();
+
+  private:
+// 	QList<bool> selectedUsers;
+	QStringList &noPassUsers;
 };
 
 
