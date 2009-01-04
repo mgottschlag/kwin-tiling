@@ -118,6 +118,11 @@ QGraphicsLayout *AppletInterface::layout() const
     return applet->applet()->layout();
 }
 
+const Plasma::Package *AppletInterface::package() const
+{
+    return applet->package();
+}
+
 QSizeF AppletInterface::size() const
 {
     return applet->applet()->size();

@@ -52,6 +52,7 @@ private:
     void importExtensions();
     void setupObjects();
 
+    static QString findSvg(QScriptEngine *engine, const QString &file);
     static QScriptValue dataEngine(QScriptContext *context, QScriptEngine *engine);
     static QScriptValue loadui(QScriptContext *context, QScriptEngine *engine);
     static QScriptValue newPlasmaSvg(QScriptContext *context, QScriptEngine *engine);
@@ -65,6 +66,7 @@ private:
 private:
     QScriptEngine *m_engine;
     QScriptValue m_self;
+    friend class AppletInterface;
 };
 
 

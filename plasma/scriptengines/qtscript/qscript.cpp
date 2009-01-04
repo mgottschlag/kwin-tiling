@@ -31,6 +31,7 @@
 #include <Plasma/Applet>
 #include <Plasma/Svg>
 #include <Plasma/FrameSvg>
+#include <Plasma/Package>
 #include <Plasma/UiLoader>
 
 #include "appletinterface.h"
@@ -197,10 +198,10 @@ void QScriptApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *
     Q_UNUSED(option)
     Q_UNUSED(contentsRect)
 
-//    kDebug() << "paintInterface() (c++)";
+    kDebug() << "paintInterface() (c++)";
     QScriptValue fun = m_self.property("paintInterface");
     if (!fun.isFunction()) {
-        //kDebug() << "Script: paintInterface is not a function, " << fun.toString();
+        kDebug() << "Script: paintInterface is not a function, " << fun.toString();
         AppletScript::paintInterface(p, option, contentsRect);
         return;
     }
@@ -397,6 +398,33 @@ QScriptValue QScriptApplet::loadui(QScriptContext *context, QScriptEngine *engin
     return engine->newQObject(w);
 }
 
+QString QScriptApplet::findSvg(QScriptEngine *engine, const QString &file)
+{
+    QScriptValue appletValue = engine->globalObject().property("plasmoid");
+    //kDebug() << "appletValue is " << appletValue.toString();
+
+    QObject *appletObject = appletValue.toQObject();
+    if (!appletObject) {
+        return file;
+    }
+
+    AppletInterface *interface = qobject_cast<AppletInterface*>(appletObject);
+    if (!interface) {
+        return file;
+    }
+
+    QString path = interface->package()->filePath("images", file + ".svg");
+    if (path.isEmpty()) {
+        path = interface->package()->filePath("images", file + ".svgz");
+
+        if (path.isEmpty()) {
+            return file;
+        }
+    }
+
+    return path;
+}
+
 QScriptValue QScriptApplet::newPlasmaSvg(QScriptContext *context, QScriptEngine *engine)
 {
     if (context->argumentCount() == 0) {
@@ -411,7 +439,7 @@ QScriptValue QScriptApplet::newPlasmaSvg(QScriptContext *context, QScriptEngine 
     }
 
     Svg *svg = new Svg(parent);
-    svg->setImagePath(filename);
+    svg->setImagePath(findSvg(engine, filename));
     return engine->newQObject(svg);
 }
 
@@ -429,7 +457,7 @@ QScriptValue QScriptApplet::newPlasmaFrameSvg(QScriptContext *context, QScriptEn
     }
 
     FrameSvg *frameSvg = new FrameSvg(parent);
-    frameSvg->setImagePath(filename);
+    frameSvg->setImagePath(findSvg(engine, filename));
     return engine->newQObject(frameSvg);
 }
 

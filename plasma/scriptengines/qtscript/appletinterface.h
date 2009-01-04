@@ -131,6 +131,8 @@ enum AspectRatioMode {
 
     //TODO setLayout? layout()?
 
+    const Plasma::Package *package() const;
+
 Q_SIGNALS:
     void releaseVisualFocus();
 
