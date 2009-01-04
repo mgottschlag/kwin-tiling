@@ -5,18 +5,6 @@ install_pam_service(KDM)
 
 include(ConfigureChecks.cmake)
 
-macro_optional_find_package(CkConnector)
-if(CKCONNECTOR_FOUND)
-  # when building with libck-connector, we also need the low-level D-Bus API
-  find_package(DBus REQUIRED)
-endif(CKCONNECTOR_FOUND)
-
-macro_log_feature(CKCONNECTOR_FOUND "ck-connector" "The ConsoleKit connector library" "http://freedesktop.org/wiki/Software/ConsoleKit" FALSE "" "Provides ConsoleKit integration in KDM")
-
-macro_bool_to_01(CKCONNECTOR_FOUND HAVE_CKCONNECTOR)
-
-configure_file(config-kdm.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kdm.h)
-
 install( FILES README DESTINATION ${DATA_INSTALL_DIR}/doc/kdm )
 
 set(confproc ${CMAKE_CURRENT_SOURCE_DIR}/confproc.pl)

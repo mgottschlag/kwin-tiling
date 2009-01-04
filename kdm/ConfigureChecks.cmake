@@ -1,3 +1,12 @@
+macro_optional_find_package(CkConnector)
+macro_bool_to_01(CKCONNECTOR_FOUND HAVE_CKCONNECTOR)
+if(CKCONNECTOR_FOUND)
+  # when building with libck-connector, we also need the low-level D-Bus API
+  find_package(DBus REQUIRED)
+endif(CKCONNECTOR_FOUND)
+
+macro_log_feature(CKCONNECTOR_FOUND "ck-connector" "The ConsoleKit connector library" "http://freedesktop.org/wiki/Software/ConsoleKit" FALSE "" "Provides ConsoleKit integration in KDM")
+
 include(CheckCSourceRuns)
 include(CheckStructMember)
 
@@ -211,3 +220,5 @@ if (NOT LIBEXEC_INSTALL_DIR STREQUAL "${BIN_INSTALL_DIR}")
         STRING(SUBSTRING "${LIBEXEC_INSTALL_DIR}" ${ipsl} ${klxsfxl} KDM_LIBEXEC_SUFFIX)
     endif (NOT inip)
 endif (NOT LIBEXEC_INSTALL_DIR STREQUAL "${BIN_INSTALL_DIR}")
+
+configure_file(config-kdm.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kdm.h)
