@@ -200,10 +200,11 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
     }
 
     updateClockDefaultsTo();
-    int defaultSelection = d->ui.clockDefaultsTo->findData(currentTimezone());
-    if (defaultSelection >= 0) {
-        d->ui.clockDefaultsTo->setCurrentIndex(defaultSelection);
+    int defaultSelection = d->ui.clockDefaultsTo->findData(d->defaultTimezone);
+    if (defaultSelection < 0) {
+        defaultSelection = 0; //local
     }
+    d->ui.clockDefaultsTo->setCurrentIndex(defaultSelection);
 
     parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
@@ -247,7 +248,7 @@ void ClockApplet::configAccepted()
 
     cg.writeEntry("defaultTimezone", d->defaultTimezone);
     changeEngineTimezone(currentTimezone(), d->defaultTimezone);
-    setCurrentTimezone(d->defaultTimezone );
+    setCurrentTimezone(d->defaultTimezone);
 
     clockConfigAccepted();
     constraintsEvent(Plasma::SizeConstraint);
@@ -325,7 +326,6 @@ void ClockApplet::wheelEvent(QGraphicsSceneWheelEvent *event)
     changeEngineTimezone(currentTimezone(), newTimezone);
     setCurrentTimezone(newTimezone);
 
-    d->forceTzDisplay = newTimezone != d->defaultTimezone;
     update();
 }
 
@@ -351,6 +351,7 @@ void ClockApplet::init()
     d->selectedTimezones = cg.readEntry("timeZones", QStringList());
     d->timezone = cg.readEntry("timezone", d->timezone);
     d->defaultTimezone = cg.readEntry("defaultTimezone", d->timezone);
+    d->forceTzDisplay = d->timezone != d->defaultTimezone;
 
     d->setPrettyTimezone();
     Plasma::ToolTipManager::self()->registerWidget(this);
@@ -387,6 +388,7 @@ void ClockApplet::setCurrentTimezone(const QString &tz)
     }
 
     d->timezone = tz;
+    d->forceTzDisplay = tz != d->defaultTimezone;
     d->setPrettyTimezone();
 
     KConfigGroup cg = config();
