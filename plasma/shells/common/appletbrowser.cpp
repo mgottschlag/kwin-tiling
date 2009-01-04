@@ -347,8 +347,9 @@ void AppletBrowserWidget::infoAboutApplet(const QString &name)
 
             aboutData.addAuthor(ki18n(info.author().toUtf8()), ki18n(QByteArray()), info.email().toLatin1());
 
-            KAboutApplicationDialog aboutDialog(&aboutData, this);
-            aboutDialog.exec();
+            //TODO should recycle this dialog if it is called up twice
+            KAboutApplicationDialog *aboutDialog = new KAboutApplicationDialog(&aboutData, this);
+            aboutDialog->show();
             break;
         }
     }
