@@ -158,7 +158,7 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
     m_zoom->hide();
     m_zoom->setMaximumWidth(0);
     m_statusbarLayout->addItem(m_zoom);
-    connect(m_zoom, SIGNAL(sliderMoved(int)), this, SLOT(zoom(int)));
+    connect(m_zoom, SIGNAL(valueChanged(int)), this, SLOT(zoom(int)));
 
     if (!m_url.isValid()) {
         m_url = KUrl(cg.readEntry("Url", "http://www.kde.org"));
