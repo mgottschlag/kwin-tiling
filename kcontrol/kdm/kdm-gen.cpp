@@ -68,17 +68,18 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	ml->setMargin( 0 );
 	ml->addItem( mlml );
 
-	box = new QGroupBox( i18n("&Use themed greeter"), this );
+	box = new QGroupBox( i18nc("@title:group", "Appearance"), this );
 	mlml->addWidget( box );
-	box->setWhatsThis( i18n(
-		"Enable this if you would like to use a themed Login Manager.") );
-	box->setCheckable( true );
-	useThemeCheck = box;
-	connect( useThemeCheck, SIGNAL(toggled( bool )), SLOT(slotUseThemeChanged()) );
 
 	fl = new QFormLayout( box );
 	fl->setSpacing( KDialog::spacingHint() );
 	fl->setMargin( KDialog::marginHint() );
+
+	useThemeCheck = new QCheckBox( i18n("&Use themed greeter"), box );
+	connect( useThemeCheck, SIGNAL(toggled( bool )), SLOT(slotUseThemeChanged()) );
+	useThemeCheck->setWhatsThis( i18n(
+		"Enable this if you would like to use a themed Login Manager.") );
+	fl->addRow( useThemeCheck );
 
 	guicombo = new KBackedComboBox( box );
 	guicombo->insertItem( "", i18n("<placeholder>default</placeholder>") );
@@ -131,7 +132,7 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 		"If you check this box and your X-Server has the Xft extension, "
 		"fonts will be antialiased (smoothed) in the login dialog.") );
 	connect( aacb, SIGNAL(toggled( bool )), SIGNAL(changed()) );
-	fl->addWidget( aacb );
+	fl->addRow( aacb );
 
 	ml->addStretch( 1 );
 }
@@ -220,7 +221,6 @@ void KDMGeneralWidget::load()
 	KConfigGroup configGrp = config->group( "X-*-Greeter" );
 
 	useThemeCheck->setChecked( configGrp.readEntry( "UseTheme", false ) );
-	slotUseThemeChanged(); // XXX why isn't it autocalled?
 
 	// Check the GUI type
 	guicombo->setCurrentId( configGrp.readEntry( "GUIStyle" ) );
