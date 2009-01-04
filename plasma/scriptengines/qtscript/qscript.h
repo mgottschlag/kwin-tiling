@@ -42,6 +42,7 @@ public:
 
     void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
     QList<QAction*> contextualActions();
+    void constraintsEvent(Plasma::Constraints constraints);
 
     Q_INVOKABLE QString findDataResource( const QString &filename );
     Q_INVOKABLE void debug( const QString &msg );
@@ -55,6 +56,7 @@ public slots:
 private:
     void importExtensions();
     void setupObjects();
+    void callFunction(const QString &functionName, const QScriptValueList &args = QScriptValueList());
 
     static QString findSvg(QScriptEngine *engine, const QString &file);
     static QScriptValue dataEngine(QScriptContext *context, QScriptEngine *engine);

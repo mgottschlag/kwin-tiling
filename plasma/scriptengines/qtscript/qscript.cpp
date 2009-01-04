@@ -195,6 +195,8 @@ void QScriptApplet::dataUpdated(const QString &name, const DataEngine::Data &dat
 
 void QScriptApplet::executeAction(const QString &name)
 {
+    callFunction("action_" + name);
+    /*
     QScriptValue fun = m_self.property("action_" + name);
     if (fun.isFunction()) {
         QScriptContext *ctx = m_engine->pushContext();
@@ -205,7 +207,7 @@ void QScriptApplet::executeAction(const QString &name)
         if (m_engine->hasUncaughtException()) {
             reportError();
         }
-    }
+    }*/
 }
 
 void QScriptApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
@@ -239,6 +241,38 @@ void QScriptApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *
 QList<QAction*> QScriptApplet::contextualActions()
 {
     return m_interface->contextualActions();
+}
+
+void QScriptApplet::callFunction(const QString &functionName, const QScriptValueList &args)
+{
+    QScriptValue fun = m_self.property(functionName);
+    if (fun.isFunction()) {
+        QScriptContext *ctx = m_engine->pushContext();
+        ctx->setActivationObject(m_self);
+        fun.call(m_self, args);
+        m_engine->popContext();
+
+        if (m_engine->hasUncaughtException()) {
+            reportError();
+        }
+    }
+}
+
+void QScriptApplet::constraintsEvent(Plasma::Constraints constraints)
+{
+    QString functionName;
+
+    if (constraints & Plasma::FormFactorConstraint) {
+        callFunction("onFormFactorChanged");
+    }
+
+    if (constraints & Plasma::LocationConstraint) {
+        callFunction("onLocationChanged");
+    }
+
+    if (constraints & Plasma::LocationConstraint) {
+        callFunction("onActivityChanged");
+    }
 }
 
 bool QScriptApplet::init()
