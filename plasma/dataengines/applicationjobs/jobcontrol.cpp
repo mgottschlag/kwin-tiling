@@ -24,7 +24,7 @@ JobControl::JobControl(QObject* parent, JobView *jobView)
     : Plasma::Service(parent),
       m_jobView(jobView)
 {
-    setName("kuiserver");
+    setName("applicationjobs");
     setDestination(jobView->sourceName());
 }
 
