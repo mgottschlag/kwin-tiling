@@ -32,6 +32,14 @@ update();
 setLayout(QGraphicsLayout *layout);
 QGraphicsLayout *layout() const;
 
+Getting Notified of Changes
+===========================
+networkAvailableChanged
+conserveResourcesChanged
+formFactorChanged
+locationChanged
+currentActivityChanged
+
 User Interface Elements
 =======================
 
@@ -66,7 +74,6 @@ LinearLayout
 
 Creating Items By Hand
 ----------------------
-
 createWidget
 createLayout
 
@@ -83,6 +90,7 @@ PlasmaFrameSvg
 
 Painting on the Canvas
 ----------------------
+plasmoid.paintInterface = function(painter)
 QPainter
 QFont
 QRectF
@@ -93,6 +101,14 @@ Accessing Sources of Data
 =========================
 dataEngine(string name)
 dataUpdated
+
+Getting Notified of Changes
+===========================
+networkAvailableChanged
+conserveResourcesChanged
+formFactorChanged
+locationChanged
+currentActivityChanged
 
 Configuration
 =============
@@ -106,4 +122,5 @@ print(string)
 QGraphicsItem
 createPrototype(
 QTimer
-
+plasmoid.setAspectRatioMode
+plasmoid.setBusy
