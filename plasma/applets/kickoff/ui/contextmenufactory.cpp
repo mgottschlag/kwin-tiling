@@ -121,12 +121,13 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view, const QPoint &
     if (isFavorite) {
         favoriteAction->setText(i18n("Remove From Favorites"));
         favoriteAction->setIcon(KIcon("list-remove"));
-    } else {
+        actions << favoriteAction;
+    //exclude stuff in the leave tab
+    } else if (KUrl(url).protocol() != "leave") {
         favoriteAction->setText(i18n("Add to Favorites"));
         favoriteAction->setIcon(KIcon("bookmark-new"));
+        actions << favoriteAction;
     }
-
-    actions << favoriteAction;
 
 
     // add to desktop
@@ -182,6 +183,11 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view, const QPoint &
             ejectAction->setText(i18n("Safely Remove"));
         }
         actions << ejectAction;
+    }
+
+    //return if we added just a separator so far
+    if (actions.count() < 2) {
+        return;
     }
 
     // add view specific actions
