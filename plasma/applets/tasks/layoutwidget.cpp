@@ -444,7 +444,11 @@ int LayoutWidget::insertionIndexAt(const QPointF &pos)
 
     //kDebug() << row << col;
 
-    insertIndex = row *numberOfColumns() + col;
+    if (!m_forceRows) {
+        insertIndex = row * numberOfColumns() + col;
+    } else {
+        insertIndex = col * numberOfRows() + row;
+    }
 
     if (insertIndex > m_layout->count()) {
         insertIndex--;
