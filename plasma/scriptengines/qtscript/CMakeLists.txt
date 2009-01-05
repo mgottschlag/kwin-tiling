@@ -1,4 +1,4 @@
-set(qscript_engine_SRCS
+set(simple_javascript_engine_SRCS
     qscript.cpp
     appletinterface.cpp
     qtgui/font.cpp
@@ -10,10 +10,10 @@ set(qscript_engine_SRCS
     qtgui/timer.cpp
 )
 
-kde4_add_plugin(plasma_scriptengine_qscript
-	        ${qscript_engine_SRCS})
+kde4_add_plugin(plasma_appletscript_simple_javascript
+	        ${simple_javascript_engine_SRCS})
 
-target_link_libraries(plasma_scriptengine_qscript
+target_link_libraries(plasma_appletscript_simple_javascript
                        ${KDE4_KDECORE_LIBS}
                        ${KDE4_PLASMA_LIBS}
                        ${QT_QTSCRIPT_LIBRARY}
@@ -21,19 +21,16 @@ target_link_libraries(plasma_scriptengine_qscript
                        ${QT_QTXML_LIBRARY}
                        )
 
-install(TARGETS plasma_scriptengine_qscript
-        DESTINATION ${PLUGIN_INSTALL_DIR})
-install(FILES plasma-scriptengine-qscript.desktop
-        DESTINATION ${SERVICES_INSTALL_DIR} )
+install(TARGETS plasma_appletscript_simple_javascript DESTINATION ${PLUGIN_INSTALL_DIR})
+install(FILES plasma-scriptengine-applet-simple-javascript.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
 
-set(qscript_runner_engine_SRCS
+set(javascript_runner_engine_SRCS
     runnerscriptqscript.cpp
 )
 
-kde4_add_plugin(plasma_runner_scriptengine_qscript
-	        ${qscript_runner_engine_SRCS})
+kde4_add_plugin(plasma_runnerscript_javascript ${javascript_runner_engine_SRCS})
 
-target_link_libraries(plasma_runner_scriptengine_qscript
+target_link_libraries(plasma_runnerscript_javascript
                        ${KDE4_KDECORE_LIBS}
                        ${KDE4_PLASMA_LIBS}
                        ${QT_QTSCRIPT_LIBRARY}
@@ -41,7 +38,5 @@ target_link_libraries(plasma_runner_scriptengine_qscript
                        ${QT_QTXML_LIBRARY}
                        )
 
-install(TARGETS plasma_runner_scriptengine_qscript
-        DESTINATION ${PLUGIN_INSTALL_DIR})
-install(FILES plasma-scriptengine-qscriptrunner.desktop
-        DESTINATION ${SERVICES_INSTALL_DIR} )
+install(TARGETS plasma_runnerscript_javascript DESTINATION ${PLUGIN_INSTALL_DIR})
+install(FILES plasma-scriptengine-runner-javascript.desktop DESTINATION ${SERVICES_INSTALL_DIR})

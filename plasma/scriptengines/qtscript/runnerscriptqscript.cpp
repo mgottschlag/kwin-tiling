@@ -33,23 +33,23 @@ Q_DECLARE_METATYPE(Plasma::RunnerContext*)
 Q_DECLARE_METATYPE(ConstRunnerContextStar)
 Q_DECLARE_METATYPE(ConstSearchMatchStar)
 
-RunnerScriptQScript::RunnerScriptQScript(QObject *parent, const QVariantList &args)
+JavaScriptRunner::JavaScriptRunner(QObject *parent, const QVariantList &args)
     : RunnerScript(parent)
 {
     m_engine = new QScriptEngine( this );
     importExtensions();
 }
 
-RunnerScriptQScript::~RunnerScriptQScript()
+JavaScriptRunner::~JavaScriptRunner()
 {
 }
 
-Plasma::AbstractRunner* RunnerScriptQScript::runner() const
+Plasma::AbstractRunner* JavaScriptRunner::runner() const
 {
     return RunnerScript::runner();
 }
 
-bool RunnerScriptQScript::init()
+bool JavaScriptRunner::init()
 {
     setupObjects();
 
@@ -71,7 +71,7 @@ bool RunnerScriptQScript::init()
     return true;
 }
 
-void RunnerScriptQScript::match(Plasma::RunnerContext *search)
+void JavaScriptRunner::match(Plasma::RunnerContext *search)
 {
     QScriptValue fun = m_self.property( "match" );
     if ( !fun.isFunction() ) {
@@ -92,7 +92,7 @@ void RunnerScriptQScript::match(Plasma::RunnerContext *search)
     }
 }
 
-void RunnerScriptQScript::exec(const Plasma::RunnerContext *search, const Plasma::QueryMatch *action)
+void JavaScriptRunner::exec(const Plasma::RunnerContext *search, const Plasma::QueryMatch *action)
 {
     QScriptValue fun = m_self.property( "exec" );
     if ( !fun.isFunction() ) {
@@ -114,7 +114,7 @@ void RunnerScriptQScript::exec(const Plasma::RunnerContext *search, const Plasma
     }
 }
 
-void RunnerScriptQScript::setupObjects()
+void JavaScriptRunner::setupObjects()
 {
     QScriptValue global = m_engine->globalObject();
 
@@ -125,12 +125,12 @@ void RunnerScriptQScript::setupObjects()
     global.setProperty("runner", m_self);
 }
 
-void RunnerScriptQScript::importExtensions()
+void JavaScriptRunner::importExtensions()
 {
     QStringList extensions;
-    extensions << "qt.core" << "qt.gui" << "qt.svg" << "qt.xml" << "org.kde.plasma";
-    for (int i = 0; i < extensions.size(); ++i) {
-        QString ext = extensions.at(i);
+    //extensions << "qt.core" << "qt.gui" << "qt.svg" << "qt.xml" << "org.kde.plasma";
+    extensions << "qt.core" << "qt.gui" << "qt.xml";
+    foreach (const QString &ext, extensions) {
         kDebug() << "importing " << ext << "...";
         QScriptValue ret = m_engine->importExtension(ext);
         if (ret.isError())
@@ -139,7 +139,7 @@ void RunnerScriptQScript::importExtensions()
     kDebug() << "done importing extensions.";
 }
 
-void RunnerScriptQScript::reportError()
+void JavaScriptRunner::reportError()
 {
     kDebug() << "Error: " << m_engine->uncaughtException().toString()
 	     << " at line " << m_engine->uncaughtExceptionLineNumber() << endl;

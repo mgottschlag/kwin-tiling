@@ -42,13 +42,13 @@ using namespace Plasma;
 
 Q_DECLARE_METATYPE(QPainter*)
 Q_DECLARE_METATYPE(QStyleOptionGraphicsItem*)
-Q_DECLARE_METATYPE(QScriptApplet*)
+Q_DECLARE_METATYPE(SimpleJavaScriptApplet*)
 Q_DECLARE_METATYPE(AppletInterface*)
 Q_DECLARE_METATYPE(Applet*)
 Q_DECLARE_METATYPE(QGraphicsWidget*)
 Q_DECLARE_METATYPE(QGraphicsLayout*)
 
-Q_SCRIPT_DECLARE_QMETAOBJECT(AppletInterface, QScriptApplet*)
+Q_SCRIPT_DECLARE_QMETAOBJECT(AppletInterface, SimpleJavaScriptApplet*)
 
 QScriptValue constructPainterClass(QScriptEngine *engine);
 QScriptValue constructGraphicsItemClass(QScriptEngine *engine);
@@ -111,7 +111,7 @@ QScriptValue qScriptValueFromData(QScriptEngine *engine, const DataEngine::Data 
 }
 
 
-QScriptApplet::QScriptApplet(QObject *parent, const QVariantList &args)
+SimpleJavaScriptApplet::SimpleJavaScriptApplet(QObject *parent, const QVariantList &args)
     : Plasma::AppletScript(parent)
 {
     kDebug() << "Script applet launched, args" << args;
@@ -120,18 +120,18 @@ QScriptApplet::QScriptApplet(QObject *parent, const QVariantList &args)
     importExtensions();
 }
 
-QScriptApplet::~QScriptApplet()
+SimpleJavaScriptApplet::~SimpleJavaScriptApplet()
 {
 }
 
-void QScriptApplet::reportError()
+void SimpleJavaScriptApplet::reportError()
 {
     kDebug() << "Error: " << m_engine->uncaughtException().toString()
              << " at line " << m_engine->uncaughtExceptionLineNumber() << endl;
     kDebug() << m_engine->uncaughtExceptionBacktrace();
 }
 
-void QScriptApplet::showConfigurationInterface()
+void SimpleJavaScriptApplet::showConfigurationInterface()
 {
     kDebug() << "Script: showConfigurationInterface";
 
@@ -154,7 +154,7 @@ void QScriptApplet::showConfigurationInterface()
     }
 }
 
-void QScriptApplet::configAccepted()
+void SimpleJavaScriptApplet::configAccepted()
 {
     QScriptValue fun = m_self.property("configAccepted");
     if (!fun.isFunction()) {
@@ -172,7 +172,7 @@ void QScriptApplet::configAccepted()
     }
 }
 
-void QScriptApplet::dataUpdated(const QString &name, const DataEngine::Data &data)
+void SimpleJavaScriptApplet::dataUpdated(const QString &name, const DataEngine::Data &data)
 {
     QScriptValue fun = m_self.property("dataUpdated");
     if (!fun.isFunction()) {
@@ -193,7 +193,7 @@ void QScriptApplet::dataUpdated(const QString &name, const DataEngine::Data &dat
     }
 }
 
-void QScriptApplet::executeAction(const QString &name)
+void SimpleJavaScriptApplet::executeAction(const QString &name)
 {
     callFunction("action_" + name);
     /*
@@ -210,7 +210,7 @@ void QScriptApplet::executeAction(const QString &name)
     }*/
 }
 
-void QScriptApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
+void SimpleJavaScriptApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
     Q_UNUSED(option)
     Q_UNUSED(contentsRect)
@@ -238,12 +238,12 @@ void QScriptApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *
     }
 }
 
-QList<QAction*> QScriptApplet::contextualActions()
+QList<QAction*> SimpleJavaScriptApplet::contextualActions()
 {
     return m_interface->contextualActions();
 }
 
-void QScriptApplet::callFunction(const QString &functionName, const QScriptValueList &args)
+void SimpleJavaScriptApplet::callFunction(const QString &functionName, const QScriptValueList &args)
 {
     QScriptValue fun = m_self.property(functionName);
     if (fun.isFunction()) {
@@ -258,7 +258,7 @@ void QScriptApplet::callFunction(const QString &functionName, const QScriptValue
     }
 }
 
-void QScriptApplet::constraintsEvent(Plasma::Constraints constraints)
+void SimpleJavaScriptApplet::constraintsEvent(Plasma::Constraints constraints)
 {
     QString functionName;
 
@@ -275,7 +275,7 @@ void QScriptApplet::constraintsEvent(Plasma::Constraints constraints)
     }
 }
 
-bool QScriptApplet::init()
+bool SimpleJavaScriptApplet::init()
 {
     setupObjects();
 
@@ -301,12 +301,13 @@ bool QScriptApplet::init()
     return true;
 }
 
-void QScriptApplet::importExtensions()
+void SimpleJavaScriptApplet::importExtensions()
 {
+    return; // no extension, so do bother wasting cycles
     QStringList extensions;
-    extensions << "qt.core" << "qt.gui" << "qt.svg" << "qt.xml" << "qt.plasma";
-    for (int i = 0; i < extensions.size(); ++i) {
-        QString ext = extensions.at(i);
+    //extensions << "qt.core" << "qt.gui" << "qt.svg" << "qt.xml" << "qt.plasma";
+    //extensions << "qt.core" << "qt.gui" << "qt.xml";
+    foreach (const QString &ext, extensions) {
         kDebug() << "importing " << ext << "...";
         QScriptValue ret = m_engine->importExtension(ext);
         if (ret.isError()) {
@@ -316,7 +317,7 @@ void QScriptApplet::importExtensions()
     kDebug() << "done importing extensions.";
 }
 
-void QScriptApplet::setupObjects()
+void SimpleJavaScriptApplet::setupObjects()
 {
     QScriptValue global = m_engine->globalObject();
 
@@ -344,10 +345,10 @@ void QScriptApplet::setupObjects()
 
 
     // Add a global loadui method for ui files
-    QScriptValue fun = m_engine->newFunction(QScriptApplet::loadui);
+    QScriptValue fun = m_engine->newFunction(SimpleJavaScriptApplet::loadui);
     global.setProperty("loadui", fun);
 
-    fun = m_engine->newFunction(QScriptApplet::print);
+    fun = m_engine->newFunction(SimpleJavaScriptApplet::print);
     global.setProperty("print", fun);
 
 
@@ -355,8 +356,8 @@ void QScriptApplet::setupObjects()
     qMetaTypeId<QVariant>();
 
     // Add constructors
-    global.setProperty("PlasmaSvg", m_engine->newFunction(QScriptApplet::newPlasmaSvg));
-    global.setProperty("PlasmaFrameSvg", m_engine->newFunction(QScriptApplet::newPlasmaFrameSvg));
+    global.setProperty("PlasmaSvg", m_engine->newFunction(SimpleJavaScriptApplet::newPlasmaSvg));
+    global.setProperty("PlasmaFrameSvg", m_engine->newFunction(SimpleJavaScriptApplet::newPlasmaFrameSvg));
 
     // Add stuff from 4.4
     global.setProperty("QPainter", constructPainterClass(m_engine));
@@ -370,11 +371,11 @@ void QScriptApplet::setupObjects()
     // Bindings for data engine
     m_engine->setDefaultPrototype(qMetaTypeId<DataEngine*>(), m_engine->newQObject(new DataEngine()));
 #if 0
-    fun = m_engine->newFunction(QScriptApplet::dataEngine);
+    fun = m_engine->newFunction(SimpleJavaScriptApplet::dataEngine);
     m_self.setProperty("dataEngine", fun);
 #endif
 
-    global.setProperty("dataEngine", m_engine->newFunction(QScriptApplet::dataEngine));
+    global.setProperty("dataEngine", m_engine->newFunction(SimpleJavaScriptApplet::dataEngine));
     qScriptRegisterMapMetaType<DataEngine::Dict>(m_engine);
 //    qScriptRegisterMapMetaType<DataEngine::Data>(m_engine);
     qScriptRegisterMetaType<DataEngine::Data>(m_engine, qScriptValueFromData, 0, QScriptValue());
@@ -382,19 +383,19 @@ void QScriptApplet::setupObjects()
     installWidgets(m_engine);
 }
 
-QString QScriptApplet::findDataResource(const QString &filename)
+QString SimpleJavaScriptApplet::findDataResource(const QString &filename)
 {
     QString path("plasma-script/%1");
     return KGlobal::dirs()->findResource("data", path.arg(filename));
 }
 
-void QScriptApplet::debug(const QString &msg)
+void SimpleJavaScriptApplet::debug(const QString &msg)
 {
     kDebug() << msg;
 }
 
 #if 0
-QScriptValue QScriptApplet::dataEngine(QScriptContext *context, QScriptEngine *engine)
+QScriptValue SimpleJavaScriptApplet::dataEngine(QScriptContext *context, QScriptEngine *engine)
 {
     if (context->argumentCount() != 1)
         return context->throwError("dataEngine takes one argument");
@@ -408,7 +409,7 @@ QScriptValue QScriptApplet::dataEngine(QScriptContext *context, QScriptEngine *e
 }
 #endif
 
-QScriptValue QScriptApplet::dataEngine(QScriptContext *context, QScriptEngine *engine)
+QScriptValue SimpleJavaScriptApplet::dataEngine(QScriptContext *context, QScriptEngine *engine)
 {
     if (context->argumentCount() != 1) {
         return context->throwError("dataEngine takes one argument");
@@ -433,7 +434,7 @@ QScriptValue QScriptApplet::dataEngine(QScriptContext *context, QScriptEngine *e
     return engine->newQObject(data);
 }
 
-QScriptValue QScriptApplet::loadui(QScriptContext *context, QScriptEngine *engine)
+QScriptValue SimpleJavaScriptApplet::loadui(QScriptContext *context, QScriptEngine *engine)
 {
     if (context->argumentCount() != 1) {
         return context->throwError("loadui takes one argument");
@@ -452,7 +453,7 @@ QScriptValue QScriptApplet::loadui(QScriptContext *context, QScriptEngine *engin
     return engine->newQObject(w);
 }
 
-QString QScriptApplet::findSvg(QScriptEngine *engine, const QString &file)
+QString SimpleJavaScriptApplet::findSvg(QScriptEngine *engine, const QString &file)
 {
     QScriptValue appletValue = engine->globalObject().property("plasmoid");
     //kDebug() << "appletValue is " << appletValue.toString();
@@ -479,7 +480,7 @@ QString QScriptApplet::findSvg(QScriptEngine *engine, const QString &file)
     return path;
 }
 
-QScriptValue QScriptApplet::newPlasmaSvg(QScriptContext *context, QScriptEngine *engine)
+QScriptValue SimpleJavaScriptApplet::newPlasmaSvg(QScriptContext *context, QScriptEngine *engine)
 {
     if (context->argumentCount() == 0) {
         return context->throwError(i18n("Constructor takes at least 1 argument"));
@@ -497,7 +498,7 @@ QScriptValue QScriptApplet::newPlasmaSvg(QScriptContext *context, QScriptEngine 
     return engine->newQObject(svg);
 }
 
-QScriptValue QScriptApplet::newPlasmaFrameSvg(QScriptContext *context, QScriptEngine *engine)
+QScriptValue SimpleJavaScriptApplet::newPlasmaFrameSvg(QScriptContext *context, QScriptEngine *engine)
 {
     if (context->argumentCount() == 0) {
         return context->throwError(i18n("Constructor takes at least 1 argument"));
@@ -515,7 +516,7 @@ QScriptValue QScriptApplet::newPlasmaFrameSvg(QScriptContext *context, QScriptEn
     return engine->newQObject(frameSvg);
 }
 
-void QScriptApplet::installWidgets(QScriptEngine *engine)
+void SimpleJavaScriptApplet::installWidgets(QScriptEngine *engine)
 {
     QScriptValue globalObject = engine->globalObject();
     UiLoader loader;
@@ -532,7 +533,7 @@ void QScriptApplet::installWidgets(QScriptEngine *engine)
     }
 }
 
-QScriptValue QScriptApplet::createWidget(QScriptContext *context, QScriptEngine *engine)
+QScriptValue SimpleJavaScriptApplet::createWidget(QScriptContext *context, QScriptEngine *engine)
 {
     if (context->argumentCount() > 1) {
         return context->throwError("Create widget takes one argument");
@@ -561,7 +562,7 @@ QScriptValue QScriptApplet::createWidget(QScriptContext *context, QScriptEngine 
     return fun;
 }
 
-QScriptValue QScriptApplet::print(QScriptContext *context, QScriptEngine *engine)
+QScriptValue SimpleJavaScriptApplet::print(QScriptContext *context, QScriptEngine *engine)
 {
     if (context->argumentCount() != 1) {
         return context->throwError(i18n("print takes one argument"));
@@ -571,7 +572,7 @@ QScriptValue QScriptApplet::print(QScriptContext *context, QScriptEngine *engine
     return engine->undefinedValue();
 }
 
-QScriptValue QScriptApplet::createPrototype(QScriptEngine *engine, const QString &name)
+QScriptValue SimpleJavaScriptApplet::createPrototype(QScriptEngine *engine, const QString &name)
 {
     Q_UNUSED(name)
     QScriptValue proto = engine->newObject();
@@ -580,7 +581,7 @@ QScriptValue QScriptApplet::createPrototype(QScriptEngine *engine, const QString
     return proto;
 }
 
-K_EXPORT_PLASMA_APPLETSCRIPTENGINE(qscriptapplet, QScriptApplet)
+K_EXPORT_PLASMA_APPLETSCRIPTENGINE(qscriptapplet, SimpleJavaScriptApplet)
 
 #include "qscript.moc"
 

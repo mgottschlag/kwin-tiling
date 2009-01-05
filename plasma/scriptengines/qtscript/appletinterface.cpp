@@ -31,7 +31,7 @@
 
 #include "qscript.h"
 
-AppletInterface::AppletInterface(QScriptApplet *parent)
+AppletInterface::AppletInterface(SimpleJavaScriptApplet *parent)
     : QObject(parent),
       m_appletScriptEngine(parent),
       m_actionSignals(0)

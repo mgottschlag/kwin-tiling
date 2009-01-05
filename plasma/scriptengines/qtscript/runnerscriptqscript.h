@@ -28,13 +28,13 @@
 class QScriptEngine;
 class QScriptContext;
 
-class RunnerScriptQScript : public Plasma::RunnerScript
+class JavaScriptRunner : public Plasma::RunnerScript
 {
     Q_OBJECT
 
 public:
-    RunnerScriptQScript(QObject *parent, const QVariantList &args);
-    ~RunnerScriptQScript();
+    JavaScriptRunner(QObject *parent, const QVariantList &args);
+    ~JavaScriptRunner();
 
     bool init();
 
@@ -57,6 +57,6 @@ private:
     QScriptValue m_self;
 };
 
-K_EXPORT_PLASMA_RUNNERSCRIPTENGINE(qscriptrunner, RunnerScriptQScript)
+K_EXPORT_PLASMA_RUNNERSCRIPTENGINE(qscriptrunner, JavaScriptRunner)
 
 #endif // RUNNERSCRIPTQSCRIPT_H

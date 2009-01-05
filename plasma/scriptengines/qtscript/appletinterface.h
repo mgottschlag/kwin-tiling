@@ -25,7 +25,7 @@
 
 class QAction;
 class QGraphicsLayout;
-class QScriptApplet;
+class SimpleJavaScriptApplet;
 class QSignalMapper;
 class QSizeF;
 
@@ -43,7 +43,7 @@ class AppletInterface : public QObject
     Q_ENUMS(Location)
     Q_ENUMS(AspectRatioMode)
 public:
-    AppletInterface(QScriptApplet *parent);
+    AppletInterface(SimpleJavaScriptApplet *parent);
     ~AppletInterface();
 
 //------------------------------------------------------------------
@@ -152,7 +152,7 @@ public Q_SLOTS:
 
 private:
     Plasma::Applet *applet() const;
-    QScriptApplet *m_appletScriptEngine;
+    SimpleJavaScriptApplet *m_appletScriptEngine;
     QSet<QString> m_actions;
     QSignalMapper *m_actionSignals;
 };

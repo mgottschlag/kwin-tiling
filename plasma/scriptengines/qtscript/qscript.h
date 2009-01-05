@@ -29,13 +29,13 @@ class QScriptContext;
 
 class AppletInterface;
 
-class QScriptApplet : public Plasma::AppletScript
+class SimpleJavaScriptApplet : public Plasma::AppletScript
 {
     Q_OBJECT
 
 public:
-    QScriptApplet( QObject *parent, const QVariantList &args );
-    ~QScriptApplet();
+    SimpleJavaScriptApplet( QObject *parent, const QVariantList &args );
+    ~SimpleJavaScriptApplet();
     bool init();
 
     void reportError();
