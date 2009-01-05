@@ -55,6 +55,7 @@ void BackgroundListModel::reload(const QStringList& selected)
 
     // add new files to dirwatch
     foreach (Background *b, tmp) {
+        //TODO: packages need to be added to the dir watch as well
         if (!m_dirwatch.contains(b->path())) {
             m_dirwatch.addFile(b->path());
         }
@@ -153,7 +154,7 @@ QList<Background *> BackgroundListModel::findAllBackgrounds(const BackgroundCont
 
     // get all packages in this directory
     //kDebug() << "getting packages";
-    QStringList packages = Plasma::Package::listInstalled(path);
+    QStringList packages = Plasma::Package::listInstalledPaths(path);
     QSet<QString> validPackages;
     foreach (const QString &packagePath, packages) {
         std::auto_ptr<Background> pkg(new BackgroundPackage(path + packagePath, ratio));
