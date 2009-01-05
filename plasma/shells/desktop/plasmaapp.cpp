@@ -434,7 +434,7 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
 
                 XSendEvent(QX11Info::display(), l[0], False, NoEventMask, (XEvent*)&response);
             } else if (event->type == EnterNotify) {
-                panel->hintOrUnhide(QPoint());
+                panel->hintOrUnhide(QPoint(-1, -1));
                 //kDebug() << "entry";
             //FIXME: this if it was possible to avoid the polling
             /*} else if (event->type == LeaveNotify) {
