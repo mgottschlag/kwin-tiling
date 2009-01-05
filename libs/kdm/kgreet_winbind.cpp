@@ -252,10 +252,14 @@ QString // virtual
 KWinbindGreeter::getEntity() const
 {
 	QString dom, usr;
-	if (fixedUser.isEmpty())
-		dom = domainCombo->currentText(), usr = loginEdit->text();
-	else
-		dom = fixedDomain, usr = fixedUser;
+	if (fixedUser.isEmpty()) {
+		dom = domainCombo->currentText();
+		usr = loginEdit->text().trimmed();
+		loginEdit->setText( usr );
+	} else {
+		dom = fixedDomain;
+		usr = fixedUser;
+	}
 	return dom == "<local>" ? usr : dom + separator + usr;
 }
 

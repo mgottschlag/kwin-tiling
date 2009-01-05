@@ -304,6 +304,7 @@ KGenericGreeter::clear()
 void
 KGenericGreeter::slotLoginLostFocus()
 {
+	m_lineEdit->setText( m_lineEdit->text().trimmed() );
 	if (curUser != m_lineEdit->text()) {
 		curUser = m_lineEdit->text();
 		handler->gplugSetUser( curUser );

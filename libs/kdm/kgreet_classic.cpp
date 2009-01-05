@@ -432,6 +432,7 @@ KClassicGreeter::slotLoginLostFocus()
 {
 	if (!running)
 		return;
+	loginEdit->setText( loginEdit->text().trimmed() );
 	if (exp > 0) {
 		if (curUser == loginEdit->text())
 			return;
