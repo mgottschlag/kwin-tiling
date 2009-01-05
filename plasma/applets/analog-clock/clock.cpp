@@ -199,6 +199,7 @@ void Clock::changeEngineTimezone(const QString &oldTimezone, const QString &newT
 void Clock::repaintNeeded()
 {
     m_repaintCache = RepaintAll;
+    update();
 }
 
 void Clock::moveSecondHand()
