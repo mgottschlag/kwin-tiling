@@ -80,7 +80,7 @@ static QList<QString> getKeysSortedByVaue(const QHash<QString, QString>& map)
     int i=0;
     QString fmt("%1%2");
     foreach (const QString& str, map.keys())
-        reverseMap.insert(fmt.arg(map[str], i++), str);
+        reverseMap.insert(fmt.arg(map[str], QString::number(i++)), str);
 
     QList<QString> values = reverseMap.keys();
     qSort(values.begin(), values.end(), localeAwareLessThan);
