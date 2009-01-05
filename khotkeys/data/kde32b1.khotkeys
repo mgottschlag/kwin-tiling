@@ -1070,6 +1070,7 @@ Name[nb]=Utfør DBus-kallet 'kdesktop KDesktopIface popupExecuteCommand()'
 Name[nds]=D-Bus-Oproop "kdesktop KDesktopIface popupExecuteCommand()" utföhren
 Name[nl]=DBUS-aanroep uitvoeren: 'kdesktop KDesktopIface popupExecuteCommand()'
 Name[nn]=Utfør D-Bus-kallet «kdesktop KDesktopIface popupExecuteCommand()»
+Name[pa]=D-Bus ਕਾਲ 'kdesktop KDesktopIface popupExecuteCommand()' ਕਰੋ
 Name[pl]=Wykonaj wywołanie D-Bus "kdesktop KDesktopIface popupExecuteCommand()"
 Name[pt]=Efectuar a chamada de D-Bus 'kdesktop KDesktopIface popupExecuteCommand()'
 Name[pt_BR]=Executar a chamada D-Bus 'kdesktop KDesktopIface popupExecuteCommand()'
