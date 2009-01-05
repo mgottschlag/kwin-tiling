@@ -168,7 +168,15 @@ void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
 	}
 
 	RandRMode mode = m_screen->mode(m_currentMode);
-	if (mode.size() != m_currentRect.size())
+	QSize newSize = mode.size();
+
+	if (m_currentRotation == RandR::Rotate90 || m_currentRotation == RandR::Rotate270)
+	{
+		// in rotated modes leaving the screen on its "side" exchange width<->height
+		newSize = QSize(newSize.height(), newSize.width());
+	}
+
+	if (newSize != m_currentRect.size())
 	{
 		qDebug() << "   Changed size: " << mode.size();
 		changed |= RandR::ChangeRect;
