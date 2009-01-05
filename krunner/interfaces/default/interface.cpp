@@ -119,6 +119,13 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     KLineEdit *lineEdit = new KLineEdit(m_searchTerm);
     QAction *focusEdit = new QAction(this);
     focusEdit->setShortcut(Qt::Key_F6);
+    
+    // in therory, the widget should detect the direction from the content
+    // but this is not available in Qt4.4/KDE 4.2, so the best default for this widget
+    // is LTR: as it's more or less a "command line interface"
+    // FIXME remove this code when KLineEdit has automatic direction detection of the "paragraph"
+    m_searchTerm->setLayoutDirection( Qt::LeftToRight );
+    
     connect(focusEdit, SIGNAL(triggered(bool)), lineEdit, SLOT(setFocus()));
     addAction(focusEdit);
 
