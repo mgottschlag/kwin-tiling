@@ -57,6 +57,7 @@ QuicklaunchApplet::QuicklaunchApplet(QObject *parent, const QVariantList &args)
 {
     setHasConfigurationInterface(true);
     setAcceptDrops(true);
+    setAspectRatioMode(Plasma::IgnoreAspectRatio);
 
     // set our default size here
     resize((m_visibleIcons / m_rowCount) * s_defaultIconSize +
