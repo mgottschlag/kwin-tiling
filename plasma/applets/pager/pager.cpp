@@ -253,7 +253,7 @@ void Pager::recalculateGeometry()
     int rows = m_rows;
 
     //inverse rows and columns in vertical panel
-    if(formFactor() == Plasma::Vertical) {
+    if (formFactor() == Plasma::Vertical) {
         rows = columns;
         columns = m_rows;
     }
@@ -269,7 +269,7 @@ void Pager::recalculateGeometry()
 
         qreal ratio = (qreal)Kephal::ScreenUtils::desktopGeometry().width() / (qreal)Kephal::ScreenUtils::desktopGeometry().height();
 
-        if (formFactor() == Plasma::Vertical ) {
+        if (formFactor() == Plasma::Vertical) {
             qreal optimalSize = (geometry().width() - KIconLoader::SizeSmall*ratio * columns + padding*(columns-1)) / 2;
 
             if (optimalSize < leftMargin || optimalSize < rightMargin) {
@@ -277,7 +277,7 @@ void Pager::recalculateGeometry()
                 m_showOwnBackground = false;
             }
 
-        } else if (formFactor() == Plasma::Horizontal ) {
+        } else if (formFactor() == Plasma::Horizontal) {
             qreal optimalSize = (geometry().height() - KIconLoader::SizeSmall*rows + padding*(rows-1)) / 2;
 
             if (optimalSize < topMargin || optimalSize < bottomMargin) {
@@ -1064,10 +1064,10 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
         }
 
         QString desktopText = QString();
-        if (m_displayedText==Number) { // Display number of desktop
-            desktopText = QString::number(i+1);
-        } else if (m_displayedText==Name) { // Display name of desktop
-            desktopText = KWindowSystem::desktopName(i+1);
+        if (m_displayedText == Number) { // Display number of desktop
+            desktopText = QString::number(i + 1);
+        } else if (m_displayedText == Name) { // Display name of desktop
+            desktopText = KWindowSystem::desktopName(i + 1);
         }
 
         if (!desktopText.isEmpty()) {
