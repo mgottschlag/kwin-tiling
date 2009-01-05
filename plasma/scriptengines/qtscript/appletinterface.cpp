@@ -29,7 +29,7 @@
 #include <Plasma/Context>
 #include <Plasma/DataEngine>
 
-#include "qscript.h"
+#include "simplejavascriptapplet.h"
 
 AppletInterface::AppletInterface(SimpleJavaScriptApplet *parent)
     : QObject(parent),

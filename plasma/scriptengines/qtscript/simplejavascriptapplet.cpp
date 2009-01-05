@@ -16,7 +16,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "qscript.h"
+#include "simplejavascriptapplet.h"
 
 #include <QScriptEngine>
 #include <QFile>
@@ -583,6 +583,6 @@ QScriptValue SimpleJavaScriptApplet::createPrototype(QScriptEngine *engine, cons
 
 K_EXPORT_PLASMA_APPLETSCRIPTENGINE(qscriptapplet, SimpleJavaScriptApplet)
 
-#include "qscript.moc"
+#include "simplejavascriptapplet.moc"
 
 

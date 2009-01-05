@@ -1,5 +1,5 @@
 set(simple_javascript_engine_SRCS
-    qscript.cpp
+    simplejavascriptapplet.cpp
     appletinterface.cpp
     qtgui/font.cpp
     qtgui/graphicsitem.cpp
@@ -25,7 +25,7 @@ install(TARGETS plasma_appletscript_simple_javascript DESTINATION ${PLUGIN_INSTA
 install(FILES plasma-scriptengine-applet-simple-javascript.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
 
 set(javascript_runner_engine_SRCS
-    runnerscriptqscript.cpp
+    javascriptrunner.cpp
 )
 
 kde4_add_plugin(plasma_runnerscript_javascript ${javascript_runner_engine_SRCS})

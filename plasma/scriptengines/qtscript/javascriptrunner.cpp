@@ -16,7 +16,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "runnerscriptqscript.h"
+#include "javascriptrunner.h"
 
 #include <QScriptEngine>
 #include <QFile>
@@ -146,4 +146,4 @@ void JavaScriptRunner::reportError()
     kDebug() << m_engine->uncaughtExceptionBacktrace();
 }
 
-#include "runnerscriptqscript.moc"
+#include "javascriptrunner.moc"
