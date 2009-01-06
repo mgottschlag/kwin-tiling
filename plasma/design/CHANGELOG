@@ -68,6 +68,7 @@ Developer Documentation
     * NEW: tooltips
     * NEW: wallpaper
     * NEW: widgets
+    * NEW: javascript
 
 * Tutorials
     * NEW: Extenders http://techbase.kde.org/Development/Tutorials/Plasma/UsingExtenders
@@ -221,6 +222,12 @@ Plugins/Addons
         * NEW: Python Plasmoids
         * NEW: Ruby Plasmoids
         * MacOS Dashboard widgets: improved JS API compliance
+        * JavaScript:
+            * DataEngines
+            * Services
+            * layouts
+            * configuration data
+            * much more featureful plasmoid object replaces applet object
 
     * Wallpapers
         * NEW: Image, Slideshow and Color plugins, based on previous code
