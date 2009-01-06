@@ -108,6 +108,7 @@ void TasksMenu::paintEvent(QPaintEvent *event)
     qreal left = 0, right = 0, top = 0, bottom = 0;
     bool first = true;
     Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
+    itemBackground->setElementPrefix("normal");
 
     foreach (QAction *a, actions()) {
         QRect actionRect(actionGeometry(a));
