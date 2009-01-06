@@ -128,7 +128,7 @@ QObject *NMNetworkManager::createNetworkInterface(const QString &uni)
             break;
             */
         default:
-            kDebug() << "Can't create object of type " << deviceType;
+            kDebug(1441) << "Can't create object of type " << deviceType;
             break;
     }
 
@@ -169,7 +169,7 @@ void NMNetworkManager::activateConnection(const QString & interfaceUni, const QS
     // TODO store error code
     QDBusObjectPath connPath(connectionPath);
     QDBusObjectPath interfacePath(interfaceUni);
-    kDebug() << "Activating connection " << connPath.path() << " on service " << serviceName << " on interface " << interfacePath.path();
+    kDebug(1441) << "Activating connection" << connPath.path() << "on service" << serviceName << "on interface" << interfacePath.path() << "with extra" << extra_connection_parameter;
     d->iface.ActivateConnection(serviceName, connPath, interfacePath, QDBusObjectPath(extra_connection_parameter));
 }
 
@@ -252,11 +252,10 @@ void NMNetworkManager::propertiesChanged(const QVariantMap &properties)
 
 Solid::Networking::Status NMNetworkManager::convertNMState(uint state)
 {
-    Solid::Networking::Status status;
+    Solid::Networking::Status status = Solid::Networking::Unknown;
     switch (state) {
         case NM_STATE_UNKNOWN:
         case NM_STATE_ASLEEP:
-            status = Solid::Networking::Unknown;
             break;
         case NM_STATE_CONNECTING:
             status = Solid::Networking::Connecting;
