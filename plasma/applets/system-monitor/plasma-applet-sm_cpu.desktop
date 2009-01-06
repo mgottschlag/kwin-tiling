@@ -30,6 +30,7 @@ Name[km]=កម្មវិធី​ត្រួត​​ពិនិត្យ�
 Name[ko]=시스템 모니터 - CPU
 Name[lt]=Sistemos stebėtojas – CPU
 Name[lv]=Sistēmas monitors - CPU
+Name[mk]=Системски монитор - Процесор
 Name[ml]=സിസ്റ്റം നിരീക്ഷകന്‍ - CPU
 Name[mr]=प्रणाली नियंत्रण - CPU
 Name[nb]=Systemovervåker ‒ CPU
@@ -79,6 +80,7 @@ Comment[km]=កម្មវិធី​ត្រួតពិនិត្យ​�
 Comment[ko]=CPU 사용량 모니터
 Comment[lt]=CPU apkrovos stebėtojas
 Comment[lv]=Procesora noslogojuma novērotājs
+Comment[mk]=Монитор на користењето на процесорот
 Comment[ml]=CPU ഉപയോഗം നിരീക്ഷകന്‍
 Comment[mr]=CPU वापरणी करीता नियंत्रक
 Comment[nb]=En overvåker for CPU-bruk
