@@ -218,11 +218,13 @@ static void applyQtSettings( KConfigGroup kglobals, QSettings& settings )
     settings.setValue("/qt/KDE/kdeAddedLibraryPaths", kdeAdded);
     settings.setValue(libPathKey, libraryPath.join(QLatin1String(":")));
 
+#if (QT_VERSION < QT_VERSION_CHECK(4, 5, 0))    //Qt 4.5 will read kde config files if running on kde
   /* export widget style */
   kglobals.changeGroup("General");
   QString style = kglobals.readEntry("widgetStyle", KStyle::defaultStyle());
   if (!style.isEmpty())
     settings.setValue("/qt/style", style);
+#endif
 
   /* export font settings */
   settings.setValue("/qt/font", KGlobalSettings::generalFont().toString());
