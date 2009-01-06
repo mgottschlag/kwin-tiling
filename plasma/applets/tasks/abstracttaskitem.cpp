@@ -697,7 +697,7 @@ QRectF AbstractTaskItem::expanderRect(const QRectF &bounds) const
     Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
 
     QSize expanderSize(qMax(fm.width(QString::number(groupItem->memberList().count())),
-                       itemBackground ?  m_applet->itemBackground()->elementSize(expanderElement()).width() : 0),
+                       itemBackground ?  itemBackground->elementSize(expanderElement()).width() : 0),
                        size().height());
 
     return QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignRight | Qt::AlignVCenter,
