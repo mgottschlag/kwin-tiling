@@ -54,6 +54,7 @@ public:
     /**
      * Constructor for the ion
      * @param parent The parent object.
+     * @Param args The argument list.
      */
     explicit IonInterface(QObject *parent = 0, const QVariantList &args = QVariantList());
     /**
