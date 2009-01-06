@@ -183,6 +183,11 @@ bool GroupManager::add(TaskPtr task)
         return false;
     }
 
+    if (showOnlyCurrentScreen() && !task->isOnScreen(d->currentScreen)) {
+        //kDebug() << "Not on this screen and showOnlyCurrentScreen";
+        return false;
+    }
+
     // Should the Task be displayed ? We always display if attention is demaded
     if (!task->demandsAttention()) {
         // As the Task doesn't demand attention
@@ -190,11 +195,6 @@ bool GroupManager::add(TaskPtr task)
         if (showOnlyCurrentDesktop() && !task->isOnCurrentDesktop()) {
             /* kDebug() << "Not on this desktop and showOnlyCurrentDesktop"
                      << KWindowSystem::currentDesktop() << task->desktop(); */
-            return false;
-        }
-
-        if (showOnlyCurrentScreen() && !task->isOnScreen(d->currentScreen)) {
-            //kDebug() << "Not on this screen and showOnlyCurrentScreen";
             return false;
         }
 
