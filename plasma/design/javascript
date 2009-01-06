@@ -110,7 +110,12 @@ Configuration
 Declaring Config Values
 -----------------------
 KConfigXt XML -> main.xml
+
+Accessing Configuration Data
+----------------------------
 activeConfig
+readConfig(string)
+WriteConfig(string, var)
 
 User Customization
 ------------------
