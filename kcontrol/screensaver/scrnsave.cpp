@@ -637,12 +637,10 @@ void KScreenSaver::slotEnable(bool e)
 
 void KScreenSaver::slotEnablePlasma(bool enable)
 {
-    //FIXME temporary warning, kill it asap
-    if (enable && KMessageBox::warningContinueCancel(this, "Security not yet implemented. Use at your own risk.") != KMessageBox::Continue) {
-        mPlasmaCheckBox->setChecked(false);
-        return;
-    }
     mPlasmaEnabled = enable;
+    //FIXME even though the button's enabled, plasma isn't until the user hits apply
+    //so the button will just show the screensaver, no plasma.
+    //what should I do about this?
     mPlasmaSetup->setEnabled(mPlasmaEnabled);
     mChanged = true;
     emit changed(true);
