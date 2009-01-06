@@ -14,7 +14,6 @@ plasmapkg
 
 The plasmoid Object
 ===================
-Plasma::DataEngine *dataEngine(const QString &name);
 FormFactor formFactor();
 Location location();
 QString currentActivity();
@@ -104,12 +103,18 @@ QPoint
 Accessing Sources of Data
 =========================
 dataEngine(string name)
-dataUpdated
+dataUpdate
 
 Configuration
 =============
+Declaring Config Values
+-----------------------
+KConfigXt XML -> main.xml
+activeConfig
+
+User Customization
+------------------
 Qt UI file
-KConfigXt XML
 configAccepted()
 
 Other Functions and Classes
