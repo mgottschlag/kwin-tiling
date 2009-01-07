@@ -19,7 +19,7 @@
  *
  */
 
-
+#include <fixx11h.h>
 #include <QLabel>
 #include <QLayout>
 #include <QPixmap>
