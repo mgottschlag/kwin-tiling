@@ -329,7 +329,7 @@ void TaskManager::taskChanged(::TaskManager::TaskChanges changes)
         return;
     }
 
-    emit (d->tasksByWId[t->info().win()], changes);
+    emit windowChanged(d->tasksByWId[t->info().win()], changes);
 }
 
 void TaskManager::activeWindowChanged(WId w)
