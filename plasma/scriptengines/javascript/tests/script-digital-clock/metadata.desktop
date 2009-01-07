@@ -1,16 +1,22 @@
 [Desktop Entry]
 Name=script-digital-clock
+Name[is]=Stafræn klukkuskrifta
+Name[km]=នាឡិកា​ឌីជីថលស្គ្រីប
 Name[mk]=Едноставен дигитален часовник
 Name[nds]=Skript-Digitaalklock
 Name[sv]=Skript med digitalklocka
 Name[zh_TW]=文稿數位時鐘
 Comment=Javascript digital clock
-Comment[ca]=Rellotge digital en javascript
+Comment[ca]=Rellotge digital en Javascript
 Comment[da]=Digitalt ur i Javascript
+Comment[el]=Ψηφιακό ρολόι Javascript
 Comment[et]=Javascripti digikell
 Comment[gl]=Reloxo dixital escrito en JavaScript
+Comment[is]=JavaScript stafræn klukka
+Comment[km]=នាឡិកា​ឌីជីថល Javascript
 Comment[ko]=자바스크립트 디지털 시계
 Comment[nds]=JavaScript-Digitaalklock
+Comment[pa]=ਜਾਵਾ-ਸਕ੍ਰਿਪਟ ਡਿਜਟੈੱਲ ਕਲਾਕ
 Comment[pt]=Relógio digital em JavaScript
 Comment[pt_BR]=Relógio digital em JavaScript
 Comment[sv]=Javascript-digitalklocka

@@ -1,6 +1,15 @@
 [Desktop Entry]
 Name=javascript-config-test
+Name[is]=JavaScript stillingaprófun
+Name[nds]=JavaScript-Instellen-Test
 Comment=Javascript config object test widget
+Comment[ca]=Eina de proves de configuració d'objectes de Javascript
+Comment[el]=Γραφικό συστατικό ελέγχου αντικειμένου ρυθμίσεων Javascript
+Comment[is]=Javascript græja til stillingaprófana
+Comment[nds]=JavaScript-Instellenobjekt-Testelement
+Comment[pt]=Elemento de teste de objectos de configuração em JavaScript
+Comment[pt_BR]=Elemento de teste de objectos de configuração em JavaScript
+Comment[uk]=Віджет перевірки налаштувань об’єктів Javascript
 Icon=configure
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet

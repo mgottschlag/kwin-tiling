@@ -1,6 +1,15 @@
 [Desktop Entry]
 Name=script-nowplaying
+Name[is]=spilanúna-skrifta
+Name[nds]=Warrt-jüst-afspeelt-Skript
 Comment=Javascript version current track playing
+Comment[ca]=Versió en Javascript de la peça actual en reproducció
+Comment[el]=Τρέχον κομμάτι αναπαραγωγής σε έκδοση Javascript
+Comment[is]=Javascript útgáfa núverandi spilunar
+Comment[nds]=JavaScript-Verschoon vun Opstunns afspeelt Stück
+Comment[pt]=Versão em JavaScript do 'Agora a tocar'
+Comment[pt_BR]=Versão em JavaScript do 'Agora a tocar'
+Comment[uk]=Javascript-версія показу назви композиції, що відтворюється
 Icon=configure
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
