@@ -422,11 +422,7 @@ void Applet::popupEvent(bool visibility)
     } else {
         if (!d->extenderTask) {
             d->extenderTask = new SystemTray::ExtenderTask(this);
-            if (Solid::Device::listFromType(Solid::DeviceInterface::Battery).isEmpty()) {
-                d->extenderTask->setIcon("computer");
-            } else {
-                d->extenderTask->setIcon("computer-laptop");
-            }
+            d->extenderTask->setIcon("help-about");
         }
 
         Private::s_manager->addTask(d->extenderTask);
