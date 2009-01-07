@@ -1,3 +1,40 @@
+libplasma 3.1 / KDE 4.3
+=======================
+libplasma
+---------
+
+Developer Documentation
+-----------------------
+
+Desktop Theme
+-------------
+
+Plasma Desktop Shell
+--------------------
+
+
+Other Shells
+------------
+* NEW: plasma-mid, a shell for mobile internet devices
+
+
+Tools
+-----
+
+
+Plugins/Addons
+--------------
+
+
+KRunner
+-------
+
+
+Platforms
+---------
+
+
+
 libplasma 3.0 / KDE 4.2
 =======================
 
@@ -108,7 +145,6 @@ Plasma Desktop Shell
 
 Other Shells
 ------------
-* NEW: plasma-mid, a shell for mobile internet devices
 * plasmoidviewer new command line options:
     * --list lists known applets
     * --formfactor (-f)
