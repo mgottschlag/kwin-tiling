@@ -77,18 +77,18 @@ class CFontPreview : public QWidget
 
     private:
 
-    QPixmap                                itsPixmap;
-    KUrl                                   itsCurrentUrl;
-    int                                    itsCurrentFace,
-                                           itsLastWidth,
-                                           itsLastHeight,
-                                           itsStyleInfo;
-    QString                                itsFontName;
-    QList<CFcEngine::TRange>               itsRange;
-    QList<CFcEngine::TChar>                itsChars;
-    QList<CFcEngine::TChar>::ConstIterator itsLastChar;
-    CCharTip                               *itsTip;
-    CFcEngine                              *itsEngine;
+    QPixmap                  itsPixmap;
+    KUrl                     itsCurrentUrl;
+    int                      itsCurrentFace,
+                             itsLastWidth,
+                             itsLastHeight,
+                             itsStyleInfo;
+    QString                  itsFontName;
+    QList<CFcEngine::TRange> itsRange;
+    QList<CFcEngine::TChar>  itsChars;
+    CFcEngine::TChar         itsLastChar;
+    CCharTip                 *itsTip;
+    CFcEngine                *itsEngine;
 
     friend class CCharTip;
 };

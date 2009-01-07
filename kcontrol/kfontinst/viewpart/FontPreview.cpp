@@ -44,7 +44,6 @@ CFontPreview::CFontPreview(QWidget *parent)
               itsLastWidth(0),
               itsLastHeight(0),
               itsStyleInfo(KFI_NO_STYLE_INFO),
-              itsLastChar(itsChars.end()),
               itsTip(NULL)
 {
     itsEngine=new CFcEngine;
@@ -80,6 +79,7 @@ void CFontPreview::showFont()
                        itsCurrentFace, false, itsRange, &itsChars, itsFontName,
                        itsStyleInfo))
     {
+        itsLastChar=CFcEngine::TChar();
         setMouseTracking(itsChars.count()>0);
         update();
         emit status(true);
@@ -89,11 +89,11 @@ void CFontPreview::showFont()
         QPixmap nullPix;
 
         itsPixmap=nullPix;
+        itsLastChar=CFcEngine::TChar();
         setMouseTracking(false);
         update();
         emit status(false);
     }
-    itsLastChar=itsChars.constEnd();
 }
 
 void CFontPreview::zoomIn()
@@ -132,19 +132,22 @@ void CFontPreview::paintEvent(QPaintEvent *)
 
 void CFontPreview::mouseMoveEvent(QMouseEvent *event)
 {
-    QList<CFcEngine::TChar>::ConstIterator end(itsChars.end());
+    if(itsChars.size())
+    {
+        QList<CFcEngine::TChar>::ConstIterator end(itsChars.end());
 
-    if(itsLastChar==end || !(*itsLastChar).contains(event->pos()))
-        for(QList<CFcEngine::TChar>::ConstIterator it(itsChars.begin()); it!=end; ++it)
-            if((*it).contains(event->pos()))
-            {
-                if(!itsTip)
-                    itsTip=new CCharTip(this);
+        if(itsLastChar.isNull() || !itsLastChar.contains(event->pos()))
+            for(QList<CFcEngine::TChar>::ConstIterator it(itsChars.begin()); it!=end; ++it)
+                if((*it).contains(event->pos()))
+                {
+                    if(!itsTip)
+                        itsTip=new CCharTip(this);
 
-                itsTip->setItem(*it);
-                itsLastChar=it;
-                break;
-            }
+                    itsTip->setItem(*it);
+                    itsLastChar=*it;
+                    break;
+                }
+    }
 }
 
 void CFontPreview::wheelEvent(QWheelEvent *e)
