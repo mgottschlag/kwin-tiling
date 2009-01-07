@@ -97,4 +97,3 @@ void ScriptStartItem::changeStartup(ScriptStartItem::ENV type )
     }
 }
 
-#include "autostartitem.moc"
