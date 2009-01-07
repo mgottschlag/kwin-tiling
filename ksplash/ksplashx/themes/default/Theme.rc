@@ -3,7 +3,7 @@ Name = KDE 4.2 Splash Screen
 Description = Oxygen Splash Screen
 Version = 1.1
 Author = Nuno Pinheiro <nuno@oxygen-icons.org> & Riccardo Iaconelli <riccardo@kde.org>
-Homepage = http://www.ruphy.org
+Homepage = http://www.kde.org
 
 # Theme behaviour settings.
 Engine = KSplashX
