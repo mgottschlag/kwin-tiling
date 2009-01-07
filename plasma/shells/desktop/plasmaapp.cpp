@@ -716,9 +716,13 @@ void PlasmaApp::addContainment(Plasma::Containment *fromContainment)
         foreach (DesktopView *view, m_desktops) {
             if (view->containment() == c){
                 view->setContainment(c);
-                break;
+                return;
             }
         }
+
+        // if we reach here, the containment isn't going to be taken over by the view,
+        // so we're going to resize it ourselves!
+        c->resize(fromContainment->size());
     }
 }
 
