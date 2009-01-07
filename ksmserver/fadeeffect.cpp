@@ -41,7 +41,7 @@
 #  if defined(__MMX__)
 #    define HAVE_MMX
 #  endif
-#  if defined(__SSE2__)
+#  if defined(__SSE2__) && __GNUC__ > 3
 #    define HAVE_SSE2
 #  endif
 #endif
