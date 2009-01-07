@@ -74,7 +74,6 @@
 #endif
 
 #define PASSDLG_HIDE_TIMEOUT 10000
-const int TIMEOUT_CODE = 2;
 
 //===========================================================================
 //
@@ -162,7 +161,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, const
     connect(qApp, SIGNAL(activity()), SLOT(slotActivity()) );
 
     greet->start();
-    
+
     capsLocked();
 }
 
@@ -489,7 +488,7 @@ void PasswordDlg::slotOK()
 void PasswordDlg::setVisible( bool visible )
 {
     QDialog::setVisible( visible );
-  
+
     if ( visible )
         QApplication::flush();
 }

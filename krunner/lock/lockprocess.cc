@@ -121,7 +121,6 @@ int XSelectInput( Display* dpy, Window w, long e )
 }
 #endif
 
-const int TIMEOUT_CODE = 2; //from PasswordDlg
 
 //===========================================================================
 //
@@ -1358,7 +1357,7 @@ bool LockProcess::x11Event(XEvent *event)
 
         case ConfigureNotify: // from SubstructureNotifyMask on the root window
             if(event->xconfigure.event == QX11Info::appRootWindow()) {
-                //kDebug() << "ConfigureNotify:"; 
+                //kDebug() << "ConfigureNotify:";
                 //the stacking order changed, so let's change the stacking order!
                 stayOnTop();
             }

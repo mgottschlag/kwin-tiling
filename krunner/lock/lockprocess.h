@@ -34,6 +34,9 @@ struct GreeterPluginHandle {
     KGreeterPluginInfo *info;
 };
 
+const int TIMEOUT_CODE = 2; //from PasswordDlg
+
+
 //===========================================================================
 //
 // Screen saver handling process.  Handles screensaver window,
