@@ -330,11 +330,12 @@ void CFontLister::removeItems(KFileItemList &items)
 {
     emit deleteItems(items);
 }
-
+#ifndef KDE_USE_FINAL
 inline bool isSysFolder(const QString &sect)
 {
     return i18n(KFI_KIO_FONTS_SYS)==sect || KFI_KIO_FONTS_SYS==sect;
 }
+#endif
 
 inline bool isUserFolder(const QString &sect)
 {
