@@ -63,6 +63,9 @@ CompactLayout::CompactLayout(QGraphicsLayoutItem *parent)
 
 CompactLayout::~CompactLayout()
 {
+    foreach (QGraphicsLayoutItem* item, d->items) {
+          removeItem(item);
+    }
     delete d;
 }
 
@@ -121,7 +124,7 @@ void CompactLayout::Private::updateParentWidget(QGraphicsWidget *item)
 void CompactLayout::removeItem(QGraphicsLayoutItem *item)
 {
     d->items.removeAll(item);
-
+    item->setParentLayoutItem(0);
     updateGeometry();
     activate();
 }
@@ -184,7 +187,11 @@ QGraphicsLayoutItem* CompactLayout::itemAt(int index) const
 
 void CompactLayout::removeAt(int index)
 {
-    d->items.removeAt(index);
+    QGraphicsLayoutItem* item = itemAt(index);
+    if (item) {
+        item->setParentLayoutItem(0);
+        d->items.removeAt(index);
+    }
 }
 
 
