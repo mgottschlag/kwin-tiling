@@ -42,7 +42,9 @@
 
 #include <Plasma/RunnerManager>
 
+#ifdef Q_WS_X11
 #include "processui/ksysguardprocesslist.h"
+#endif
 
 #include "appadaptor.h"
 #include "kworkspace.h"
