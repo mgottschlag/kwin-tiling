@@ -952,6 +952,8 @@ bool PanelView::hintOrUnhide(const QPoint &point, bool dueToDnd)
     }
 
     return false;
+#else
+    return false;
 #endif
 }
 
