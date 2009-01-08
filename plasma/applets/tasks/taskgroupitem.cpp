@@ -402,6 +402,8 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
 
     if (collapsed()) {
         item->hide();
+        QRect rect = iconGeometry();
+        item->publishIconGeometry(rect);
     } else if (isSplit()) {
         splitGroup(m_splitPosition);
         //emit changed();
@@ -1007,6 +1009,11 @@ void TaskGroupItem::publishIconGeometry() const
     }
 
     QRect rect = iconGeometry();
+    publishIconGeometry(rect);
+}
+
+void TaskGroupItem::publishIconGeometry(const QRect &rect) const
+{
     foreach (AbstractTaskItem *item, m_groupMembers) {
         WindowTaskItem *windowItem = qobject_cast<WindowTaskItem *>(item);
         if (windowItem) {
@@ -1016,7 +1023,7 @@ void TaskGroupItem::publishIconGeometry() const
 
         TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(item);
         if (groupItem) {
-            groupItem->publishIconGeometry();
+            groupItem->publishIconGeometry(rect);
         }
     }
 }

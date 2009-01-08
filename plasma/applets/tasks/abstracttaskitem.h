@@ -106,6 +106,7 @@ public:
 
     /** Tells the window manager the minimized task's geometry. */
     virtual void publishIconGeometry() const;
+    virtual void publishIconGeometry(const QRect &rect) const;
     QRect iconGeometry() const; // helper for above
 
     /** Overridden from LayoutItem */

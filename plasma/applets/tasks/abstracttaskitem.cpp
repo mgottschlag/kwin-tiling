@@ -700,6 +700,10 @@ void AbstractTaskItem::publishIconGeometry() const
 {
 }
 
+void AbstractTaskItem::publishIconGeometry(const QRect &rect) const
+{
+}
+
 void AbstractTaskItem::setGeometry(const QRectF& geometry)
 {
     QGraphicsWidget::setGeometry(geometry);
