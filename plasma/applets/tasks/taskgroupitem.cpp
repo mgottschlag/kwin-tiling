@@ -833,7 +833,7 @@ int TaskGroupItem::indexOf(AbstractTaskItem *task)
 
     int index = 0;
 
-    foreach(AbstractGroupableItem *item, group()->members()) {
+    foreach (AbstractGroupableItem *item, group()->members()) {
         AbstractTaskItem *taskItem = abstractItem(item);
         if (taskItem) {
             if (task == taskItem) {
@@ -996,6 +996,28 @@ void TaskGroupItem::setAdditionalMimeData(QMimeData* mimeData)
 {
     if (m_group) {
         m_group->addMimeData(mimeData);
+    }
+}
+
+void TaskGroupItem::publishIconGeometry() const
+{
+    // only do this if we are a collapsed group, with a GroupPtr and members
+    if (m_expandedLayout || !m_group || m_groupMembers.isEmpty()) {
+        return;
+    }
+
+    QRect rect = iconGeometry();
+    foreach (AbstractTaskItem *item, m_groupMembers) {
+        WindowTaskItem *windowItem = qobject_cast<WindowTaskItem *>(item);
+        if (windowItem) {
+            windowItem->publishIconGeometry(rect);
+            continue;
+        }
+
+        TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(item);
+        if (groupItem) {
+            groupItem->publishIconGeometry();
+        }
     }
 }
 

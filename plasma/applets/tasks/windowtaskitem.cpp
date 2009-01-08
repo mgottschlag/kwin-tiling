@@ -98,29 +98,18 @@ void WindowTaskItem::close()
     m_task = 0;
 }
 
-
-void WindowTaskItem::publishIconGeometry()
+void WindowTaskItem::publishIconGeometry() const
 {
-    if (!scene()) {
+    if (!m_task) {
         return;
     }
 
-    QGraphicsView *parentView = 0L;
-    // The following was taken from Plasma::Applet, it doesn't make sense to make the item an applet, and this was the easiest way around it.
-    foreach (QGraphicsView *view, scene()->views()) {
-        if (view->sceneRect().intersects(sceneBoundingRect()) ||
-            view->sceneRect().contains(scenePos())) {
-            parentView = view;
-        }
-    }
-    if (!parentView || !m_task) {
-        return;
-    }
-    if( !boundingRect().isValid() )
-        return;
+    QRect rect = iconGeometry();
+    m_task->task()->publishIconGeometry(rect);
+}
 
-    QRect rect = parentView->mapFromScene(mapToScene(boundingRect())).boundingRect().adjusted(0, 0, 1, 1);
-    rect.moveTopLeft(parentView->mapToGlobal(rect.topLeft()));
+void WindowTaskItem::publishIconGeometry(const QRect &rect) const
+{
     if (m_task) {
         m_task->task()->publishIconGeometry(rect);
     }

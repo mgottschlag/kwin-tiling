@@ -45,7 +45,11 @@ public:
     TaskManager::TaskPtr windowTask() const;
 
     /** Tells the window manager the minimized task's geometry. */
-    void publishIconGeometry();
+    void publishIconGeometry() const;
+
+    // used by the group; for efficiency this avoids multiple calls to
+    // AbstractTaskItem::iconScreenGeometry
+    void publishIconGeometry(const QRect &rect) const; 
 
     virtual bool isWindowItem() const;
     virtual bool isActive() const;
