@@ -361,6 +361,11 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
         destroyUnhideTrigger();
     }
 
+    if (mode != AutoHide) {
+        updatePanelGeometry();
+        show();
+    }
+
     //kDebug() << "panel state set to" << state << NET::Sticky;
     KWindowSystem::setState(winId(), state);
     KWindowSystem::setOnAllDesktops(winId(), true);
@@ -971,7 +976,7 @@ void PanelView::unhintHide()
 
 bool PanelView::hasPopup()
 {
-    if (QApplication::activePopupWidget()) {
+    if (QApplication::activePopupWidget() || m_panelController) {
         return true;
     }
 
