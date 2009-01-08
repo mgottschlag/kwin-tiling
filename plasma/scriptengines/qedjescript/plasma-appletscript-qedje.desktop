@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=QEdje
 Name[hi]=क्यूईडीजेई
+Name[sr]=КуЕдје
 Name[x-test]=xxQEdjexx
 Comment=QEdje Gadgets
 Comment[ar]=ودجات QEdje
@@ -34,6 +35,8 @@ Comment[pa]=QEdje ਗੈਜ਼ਿੱਟ
 Comment[pt]=Itens do QEdje
 Comment[pt_BR]=Gadgets do QEdje
 Comment[sl]=Gradniki QEdje
+Comment[sr]=Куедје справице
+Comment[sr@latin]=Qedje spravice
 Comment[sv]=QEdje-grejer
 Comment[tg]=Механизмҳои QEdje
 Comment[th]=เครื่องมือ QEdje
