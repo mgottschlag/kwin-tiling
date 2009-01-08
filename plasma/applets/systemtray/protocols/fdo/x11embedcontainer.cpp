@@ -64,9 +64,6 @@ public:
         }
     }
 
-    void updateClientBackground();
-    void sendExposeToClient();
-
     X11EmbedContainer *q;
 
     XWindowAttributes attr;
@@ -224,7 +221,6 @@ void X11EmbedContainer::paintEvent(QPaintEvent *event)
         p.drawPixmap(0, 0, pixmap);
     }
 }
-
 
 void X11EmbedContainer::setBackgroundPixmap(QPixmap background)
 {

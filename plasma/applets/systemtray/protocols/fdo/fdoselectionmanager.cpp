@@ -267,20 +267,24 @@ void FdoSelectionManager::initSelection()
     int nvi;
     VisualID visual = XVisualIDFromVisual((Visual*)QX11Info::appVisual());
     XVisualInfo templ;
-    templ.screen  = DefaultScreen(d->display);
-    templ.depth   = 32;
-    templ.c_class = TrueColor;
-    XVisualInfo *xvi = XGetVisualInfo(d->display, VisualScreenMask | VisualDepthMask | VisualClassMask,
-                                      &templ, &nvi);
-    for (int i = 0; i < nvi; i++) {
-        XRenderPictFormat *format = XRenderFindVisualFormat(d->display, xvi[i].visual);
-        if (format->type == PictTypeDirect && format->direct.alphaMask) {
-            visual = xvi[i].visualid;
-            break;
+    templ.visualid = visual;
+    XVisualInfo *xvi = XGetVisualInfo(d->display, VisualIDMask, &templ, &nvi);
+    if (xvi) {
+        templ.screen  = xvi[0].screen;
+        templ.depth   = xvi[0].depth;
+        templ.c_class = xvi[0].c_class;
+        XFree(xvi);
+        xvi = XGetVisualInfo(d->display, VisualScreenMask | VisualDepthMask | VisualClassMask,
+                             &templ, &nvi);
+        for (int i = 0; i < nvi; i++) {
+            XRenderPictFormat *format = XRenderFindVisualFormat(d->display, xvi[i].visual);
+            if (format->type == PictTypeDirect && format->direct.alphaMask) {
+                visual = xvi[i].visualid;
+                break;
+            }
         }
+        XFree(xvi);
     }
-    XFree(xvi);
-
     XChangeProperty(d->display, winId(), d->visualAtom, XA_VISUALID, 32,
                     PropModeReplace, (const unsigned char*)&visual, 1);
 
