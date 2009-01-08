@@ -69,23 +69,30 @@ class AppNode
 {
 public:
     AppNode()
-            : isDir(false), parent(0), fetched(false) {
+        : parent(0),
+          fetched(false),
+          isDir(false),
+          subTitleMandatory(false)
+    {
     }
-    ~AppNode() {
+
+    ~AppNode()
+    {
         qDeleteAll(children);
     }
+
+    QList<AppNode*> children;
 
     QIcon icon;
     QString genericName;
     QString appName;
     QString relPath;
     QString desktopEntry;
-    bool isDir;
 
     AppNode *parent;
     bool fetched;
-
-    QList<AppNode*> children;
+    bool isDir;
+    bool subTitleMandatory;
 };
 
 class ApplicationModelPrivate
@@ -93,19 +100,19 @@ class ApplicationModelPrivate
 public:
     ApplicationModelPrivate(ApplicationModel *qq)
             : q(qq),
-            root(new AppNode()),
-            duplicatePolicy(ApplicationModel::ShowDuplicatesPolicy),
-            systemApplicationPolicy(ApplicationModel::ShowSystemOnlyPolicy),
-            sortOrder(Qt::AscendingOrder),
-            sortColumn(Qt::DisplayRole) {
+              root(new AppNode()),
+              duplicatePolicy(ApplicationModel::ShowDuplicatesPolicy),
+              systemApplicationPolicy(ApplicationModel::ShowSystemOnlyPolicy),
+              primaryNamePolicy(ApplicationModel::GenericNamePrimary)
+    {
         systemApplications = Kickoff::systemApplicationList();
     }
 
-    ~ApplicationModelPrivate() {
+    ~ApplicationModelPrivate()
+    {
         delete root;
     }
 
-    static bool AppNodeLessThan(AppNode *n1, AppNode *n2);
     void fillNode(const QString &relPath, AppNode *node);
     static QHash<QString, QString> iconNameMap();
 
@@ -113,34 +120,30 @@ public:
     AppNode *root;
     ApplicationModel::DuplicatePolicy duplicatePolicy;
     ApplicationModel::SystemApplicationPolicy systemApplicationPolicy;
-    Qt::SortOrder sortOrder;
-    int sortColumn;
+    ApplicationModel::PrimaryNamePolicy primaryNamePolicy;
     QStringList systemApplications;
 };
-
-bool ApplicationModelPrivate::AppNodeLessThan(AppNode *n1, AppNode *n2)
-{
-    if (n1->isDir != n2->isDir) {
-        return n1->isDir;
-    }
-
-    const QString s1 = n1->genericName.isEmpty() ? n1->appName : n1->genericName;
-    const QString s2 = n2->genericName.isEmpty() ? n2->appName : n2->genericName;
-
-    return s1.compare(s2, Qt::CaseInsensitive) < 0;
-}
 
 void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
 {
     KServiceGroup::Ptr root = KServiceGroup::group(_relPath);
-    if (!root || !root->isValid()) return;
 
-    const KServiceGroup::List list = root->entries();
+    if (!root || !root->isValid()) {
+        return;
+    }
+
+    const KServiceGroup::List list = root->entries(true /* sorted */,
+                                                   true /* exclude no display entries */,
+                                                   false /* allow separators */,
+                                                   primaryNamePolicy == ApplicationModel::GenericNamePrimary /* sort by generic name */);
 
     // application name <-> service map for detecting duplicate entries
     QHash<QString, KService::Ptr> existingServices;
-    for (KServiceGroup::List::ConstIterator it = list.constBegin();
-            it != list.constEnd(); ++it) {
+
+    // generic name <-> node mapping to determinate duplicate generic names
+    QHash<QString,QList<AppNode*> > genericNames;
+
+    for (KServiceGroup::List::ConstIterator it = list.constBegin(); it != list.constEnd(); ++it) {
         QString icon;
         QString appName;
         QString genericName;
@@ -148,11 +151,13 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
         QString desktopEntry;
         bool isDir = false;
         const KSycocaEntry::Ptr p = (*it);
+
         if (p->isType(KST_KService)) {
             const KService::Ptr service = KService::Ptr::staticCast(p);
 
-            if (service->noDisplay())
+            if (service->noDisplay()) {
                 continue;
+            }
 
             icon = service->icon();
             appName = service->name();
@@ -201,6 +206,8 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
             relPath = serviceGroup->relPath();
             appName = serviceGroup->comment();
             isDir = true;
+        } else if (p->isType(KST_KServiceSeparator)) {
+            // TODO: implement seaparators
         } else {
             kWarning(250) << "KServiceGroup: Unexpected object in list!";
             continue;
@@ -215,9 +222,27 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
         newnode->isDir = isDir;
         newnode->parent = node;
         node->children.append(newnode);
+
+        if (p->isType(KST_KService)) {
+            const QString s = genericName.toLower();
+            if (genericNames.contains(s)) {
+                genericNames[s].append(newnode);
+            } else {
+                genericNames[s] = QList<AppNode*>() << newnode;
+            }
+        }
     }
 
-    qStableSort(node->children.begin(), node->children.end(), ApplicationModelPrivate::AppNodeLessThan);
+    // set the subTitleMandatory field for nodes that do not provide a unique generic
+    // name what may help us on display to show in such cases also the subtitle to
+    // provide a hint to the user what the duplicate entries are about.
+    foreach (QList<AppNode*> list, genericNames.values()) {
+        if (list.count() >= 2) {
+            foreach (AppNode* n, list) {
+                n->subTitleMandatory = true;
+            }
+        }
+    }
 }
 
 ApplicationModel::ApplicationModel(QObject *parent)
@@ -226,7 +251,7 @@ ApplicationModel::ApplicationModel(QObject *parent)
     QDBusConnection dbus = QDBusConnection::sessionBus();
     (void)new KickoffAdaptor(this);
     QDBusConnection::sessionBus().registerObject("/kickoff", this);
-    dbus.connect(QString(), "/kickoff", "org.kde.plasma", "reloadMenu", this, SLOT(slotReloadMenu()));
+    dbus.connect(QString(), "/kickoff", "org.kde.plasma", "reloadMenu", this, SLOT(reloadMenu()));
     connect(KSycoca::self(), SIGNAL(databaseChanged()), this, SLOT(checkSycocaChange()));
     d->fillNode(QString(), d->root);
 }
@@ -273,6 +298,10 @@ QVariant ApplicationModel::data(const QModelIndex &index, int role) const
         break;
     case Kickoff::UrlRole:
         return node->desktopEntry;
+        break;
+    case Kickoff::SubTitleMandatoryRole:
+        return node->subTitleMandatory;
+        break;
     case Qt::DecorationRole:
         return node->icon;
         break;
@@ -284,12 +313,14 @@ QVariant ApplicationModel::data(const QModelIndex &index, int role) const
 
 void ApplicationModel::fetchMore(const QModelIndex &parent)
 {
-    if (!parent.isValid())
+    if (!parent.isValid()) {
         return;
+    }
 
     AppNode *node = static_cast<AppNode*>(parent.internalPointer());
-    if (!node->isDir)
+    if (!node->isDir) {
         return;
+    }
 
     emit layoutAboutToBeChanged();
     d->fillNode(node->relPath, node);
@@ -299,8 +330,9 @@ void ApplicationModel::fetchMore(const QModelIndex &parent)
 
 bool ApplicationModel::hasChildren(const QModelIndex &parent) const
 {
-    if (!parent.isValid())
+    if (!parent.isValid()) {
         return true;
+    }
 
     AppNode *node = static_cast<AppNode*>(parent.internalPointer());
     return node->isDir;
@@ -308,8 +340,9 @@ bool ApplicationModel::hasChildren(const QModelIndex &parent) const
 
 QVariant ApplicationModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (orientation != Qt::Horizontal || section != 0)
+    if (orientation != Qt::Horizontal || section != 0) {
         return QVariant();
+    }
 
     switch (role) {
     case Qt::DisplayRole:
@@ -337,25 +370,27 @@ QModelIndex ApplicationModel::index(int row, int column, const QModelIndex &pare
 
 QModelIndex ApplicationModel::parent(const QModelIndex &index) const
 {
-    if (!index.isValid())
+    if (!index.isValid()) {
         return QModelIndex();
+    }
 
     AppNode *node = static_cast<AppNode*>(index.internalPointer());
     if (node->parent->parent) {
         int id = node->parent->parent->children.indexOf(node->parent);
 
-        if (id >= 0 && id < node->parent->parent->children.count())
+        if (id >= 0 && id < node->parent->parent->children.count()) {
             return createIndex(id, 0, node->parent);
-        else
-            return QModelIndex();
-    } else
-        return QModelIndex();
+        }
+    }
+
+    return QModelIndex();
 }
 
 int ApplicationModel::rowCount(const QModelIndex &parent) const
 {
-    if (!parent.isValid())
+    if (!parent.isValid()) {
         return d->root->children.count();
+    }
 
     AppNode *node = static_cast<AppNode*>(parent.internalPointer());
     return node->children.count();
@@ -363,23 +398,34 @@ int ApplicationModel::rowCount(const QModelIndex &parent) const
 
 void ApplicationModel::setDuplicatePolicy(DuplicatePolicy policy)
 {
-    delete d->root;
-    d->duplicatePolicy = policy;
-    d->root = new AppNode();
-    d->fillNode(QString(), d->root);
-    reset();
+    if (d->duplicatePolicy != policy) {
+        d->duplicatePolicy = policy;
+        reloadMenu();
+    }
 }
 
 void ApplicationModel::setSystemApplicationPolicy(SystemApplicationPolicy policy)
 {
-    delete d->root;
-    d->systemApplicationPolicy = policy;
-    d->root = new AppNode();
-    d->fillNode(QString(), d->root);
-    reset();
+    if (d->systemApplicationPolicy != policy) {
+        d->systemApplicationPolicy = policy;
+        reloadMenu();
+    }
 }
 
-void ApplicationModel::slotReloadMenu()
+void ApplicationModel::setPrimaryNamePolicy(PrimaryNamePolicy policy)
+{
+    if (policy != d->primaryNamePolicy) {
+        d->primaryNamePolicy = policy;
+        reloadMenu();
+    }
+}
+
+ApplicationModel::PrimaryNamePolicy ApplicationModel::primaryNamePolicy() const
+{
+    return d->primaryNamePolicy;
+}
+
+void ApplicationModel::reloadMenu()
 {
     delete d->root;
     d->root = new AppNode();
@@ -390,7 +436,7 @@ void ApplicationModel::slotReloadMenu()
 void ApplicationModel::checkSycocaChange()
 {
     if (KSycoca::self()->isChanged("services")) {
-        slotReloadMenu();
+        reloadMenu();
     }
 }
 

@@ -74,6 +74,10 @@ public:
         ShowSystemOnlyPolicy
     };
 
+    enum PrimaryNamePolicy {
+        AppNamePrimary,
+        GenericNamePrimary
+    };
 
     /**
      * Sets the policy for handling duplicate applications.
@@ -91,6 +95,8 @@ public:
     /** See setSystemApplicationPolicy() */
     SystemApplicationPolicy systemApplicationPolicy() const;
 
+    void setPrimaryNamePolicy(PrimaryNamePolicy policy);
+    PrimaryNamePolicy primaryNamePolicy() const;
 
     // reimplemented from QAbstractItemModel
     virtual bool canFetchMore(const QModelIndex &parent) const;
@@ -104,7 +110,7 @@ public:
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
 public slots:
-    void slotReloadMenu();
+    void reloadMenu();
     void checkSycocaChange();
 
 private:
