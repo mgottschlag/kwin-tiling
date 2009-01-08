@@ -327,10 +327,7 @@ bool LockProcess::defaultSave()
 
 bool LockProcess::startSetup()
 {
-    if (!mPlasmaEnabled) {
-        return defaultSave();
-    }
-
+    mPlasmaEnabled = true; //force it on in case the user didn't click apply yet
     mLocked = false;
     mSetupMode = true;
     return startSaver();
