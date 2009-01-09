@@ -20,6 +20,8 @@
 #include "nepomuksearchrunner.h"
 #include "queryserviceclient.h"
 #include "result.h"
+#include "query.h"
+#include "queryparser.h"
 
 #include <Nepomuk/Resource>
 #include <Nepomuk/Types/Class>
@@ -32,11 +34,15 @@
 
 #include <Plasma/QueryMatch>
 #include <Plasma/RunnerContext>
+#include <Plasma/AbstractRunner>
 
 #include <QtCore/QTimer>
+#include <QtCore/QMutex>
 
 
 Q_DECLARE_METATYPE(Nepomuk::Resource)
+
+static const int s_maxResults = 10;
 
 Nepomuk::QueryClientWrapper::QueryClientWrapper( SearchRunner* runner, Plasma::RunnerContext* context )
     : QObject(),
@@ -62,7 +68,9 @@ void Nepomuk::QueryClientWrapper::runQuery()
     // add a timeout in case something goes wrong (no user wants to wait more than 30 seconds)
     QTimer::singleShot( 30000, m_queryServiceClient, SLOT(close()) );
 
-    m_queryServiceClient->blockingQuery( m_runnerContext->query() );
+    Search::Query q = Search::QueryParser::parseQuery( m_runnerContext->query() );
+    q.setLimit( s_maxResults );
+    m_queryServiceClient->blockingQuery( q );
 
     kDebug() << m_runnerContext->query() << "done";
 }
@@ -77,6 +85,8 @@ void Nepomuk::QueryClientWrapper::slotNewEntries( const QList<Nepomuk::Search::R
 
         Nepomuk::Resource res( result.resourceUri() );
 
+        // we need to protect KMimeType which is not thread-safe, Nepomuk::Resource::genericIcon() also uses it
+        Plasma::AbstractRunner::bigLock()->lock();
         QString type;
         if( res.hasType( Soprano::Vocabulary::Xesam::File() ) ||
             res.resourceUri().scheme() == "file" ) {
@@ -92,6 +102,7 @@ void Nepomuk::QueryClientWrapper::slotNewEntries( const QList<Nepomuk::Search::R
                               type ) );
         QString s = res.genericIcon();
         match.setIcon( KIcon( s.isEmpty() ? QString("nepomuk") : s ) );
+        Plasma::AbstractRunner::bigLock()->unlock();
 
         match.setData( qVariantFromValue( res ) );
 
