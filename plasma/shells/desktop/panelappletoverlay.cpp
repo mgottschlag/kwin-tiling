@@ -96,7 +96,10 @@ PanelAppletOverlay::PanelAppletOverlay(Plasma::Applet *applet, QWidget *parent)
 PanelAppletOverlay::~PanelAppletOverlay()
 {
     if (m_spacer) {
-        m_layout->removeItem(m_spacer);
+        if (m_layout) {
+            m_layout->removeItem(m_spacer);
+        }
+
         m_spacer->deleteLater();
         m_spacer = 0;
     }
@@ -179,12 +182,16 @@ void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
 
 void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
 {
+    if (!m_layout) {
+        return;
+    }
 
     Plasma::FormFactor f = m_applet->formFactor();
 
     if ( ((f != Plasma::Horizontal && f != Plasma::Vertical) && rect().intersects(m_applet->rect().toRect())) ||
           ((f == Plasma::Horizontal || f == Plasma::Vertical) && !rect().contains(event->globalPos())) ) {
         Plasma::View *view = Plasma::View::topLevelViewAt(event->globalPos());
+        kDebug() << "checking view" << view << m_applet->view();
 
         if (!view) {
             return;
@@ -192,10 +199,8 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
 
         QPointF pos = view->mapFromGlobal(event->globalPos());
         if (view != m_applet->view()) {
-
             Plasma::Containment *c = view->containment();
 
-            c->addApplet(m_applet, pos);
             syncOrientation();
             syncGeometry();
 
@@ -205,23 +210,19 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
                 m_spacer = 0;
             }
 
-            QGraphicsLinearLayout *newLayout = dynamic_cast<QGraphicsLinearLayout *>(c->layout());
-            if (newLayout && (c->formFactor() == Plasma::Vertical || c->formFactor() == Plasma::Horizontal)) {
-                m_layout->removeItem(m_applet);
-                m_layout = newLayout;
-                setParent(view);
-            }
+            QPointF pos = m_applet->view()->mapFromGlobal(event->globalPos());
+            QRectF g = m_applet->geometry();
+            pos += QPoint(m_offset, m_offset);
+            g.moveTo(pos);
+            m_applet->setGeometry(g);
+            m_layout->removeItem(m_spacer);
+            m_spacer->deleteLater();
+            m_layout = 0;
+            m_spacer = 0;
+            c->addApplet(m_applet, pos, false);
+            releaseMouse();
+            return;
         }
-    }
-
-    if (m_applet->formFactor() != Plasma::Horizontal && m_applet->formFactor() != Plasma::Vertical){
-        QPointF pos = m_applet->view()->mapFromGlobal(event->globalPos());
-        QRectF g = m_applet->geometry();
-        pos += QPoint(m_offset, m_offset);
-        g.moveTo(pos);
-        m_applet->setGeometry(g);
-        releaseMouse();
-        return;
     }
 
     if (!m_spacer) {
@@ -352,6 +353,10 @@ void PanelAppletOverlay::delaySyncGeometry()
 
 void PanelAppletOverlay::syncGeometry()
 {
+    if (!m_layout) {
+        return;
+    }
+
     //kDebug();
     setGeometry(m_applet->geometry().toRect());
 
