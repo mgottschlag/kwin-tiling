@@ -49,6 +49,7 @@ public:
           unhider(0),
           topLayout(new QGraphicsLinearLayout(Qt::Horizontal)),
           taskLayout(new CompactLayout()),
+          lastItemMargin(0),
           lastItemCount(0),
           showingHidden(false),
           hasHiddenTasks(false),
@@ -60,6 +61,9 @@ public:
     Plasma::IconWidget *unhider;
     QGraphicsLinearLayout *topLayout;
     CompactLayout *taskLayout;
+    //This item gives a bit of extra margin that separes the last items and the "normal" ones
+    QGraphicsWidget *lastItemMargin;
+
     QSet<QString> hiddenTypes;
     int lastItemCount;
     bool showingHidden : 1;
@@ -151,6 +155,19 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
                     d->taskLayout->insertItem(d->taskLayout->count() - d->lastItemCount, widget);
                     break;
                 case SystemTray::Task::Last:
+                    /*on the first added "last" task add also a little separator: the size depends from the applet margins,
+                    in order to make the background of the last items look "balanced"*/
+                    if (d->lastItemCount == 0) {
+                        QGraphicsWidget *applet = dynamic_cast<QGraphicsWidget *>(parentItem());
+
+                        if (applet) {
+                          qreal left, top, right, bottom;
+                          applet->getContentsMargins(&left, &top, &right, &bottom);
+                          d->lastItemMargin = new QGraphicsWidget();
+
+                          d->lastItemMargin->setMinimumSize(right, bottom);
+                        }
+                    }
                     ++d->lastItemCount;
                     d->taskLayout->addItem(widget);
                     break;
@@ -183,6 +200,12 @@ void TaskArea::removeTask(Task *task)
         if (d->taskLayout->containsItem(widget)) {
             if (task->order() == Task::Last) {
                 --d->lastItemCount;
+                //we have removed the last item, remove also the spacer
+                if (d->lastItemCount == 0 && d->lastItemMargin) {
+                    d->taskLayout->removeItem(d->lastItemMargin);
+                    d->lastItemMargin->deleteLater();
+                    d->lastItemMargin = 0;
+                }
             }
 
             d->taskLayout->removeItem(widget);
@@ -210,7 +233,11 @@ int TaskArea::leftEasement() const
 
 int TaskArea::rightEasement() const
 {
-    return d->lastItemCount * 24;
+    int extraMargin = 0;
+    if (d->lastItemMargin) {
+        extraMargin = qMin(d->lastItemMargin->size().width(), d->lastItemMargin->size().height());
+    }
+    return d->lastItemCount * 24 + int(qreal(extraMargin)/2.0);
 }
 
 bool TaskArea::hasHiddenTasks() const
