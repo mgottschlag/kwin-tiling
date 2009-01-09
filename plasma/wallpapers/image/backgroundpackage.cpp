@@ -363,7 +363,7 @@ QString BackgroundFile::author() const
 
 QString BackgroundFile::title() const
 {
-    return QFileInfo(m_file).baseName();
+    return QFileInfo(m_file).completeBaseName();
 }
 
 //TODO: impl
