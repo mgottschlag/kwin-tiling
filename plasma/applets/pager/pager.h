@@ -89,7 +89,6 @@ class Pager : public Plasma::Applet
         KColorScheme *colorScheme();
         QRect fixViewportPosition( const QRect& r );
         void createConfigurationInterface(KConfigDialog *parent);
-        bool posOnDesktopRect(const QRectF& r, const QPointF& pos);
         void handleHoverMove(const QPointF& pos);
         void handleHoverLeave();
         void updateToolTip();

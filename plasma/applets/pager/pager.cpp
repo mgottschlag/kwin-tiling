@@ -214,32 +214,6 @@ void Pager::createConfigurationInterface(KConfigDialog *parent)
     ui.spinRows->setMaximum(m_desktopCount);
 }
 
-bool Pager::posOnDesktopRect(const QRectF& r, const QPointF& pos)
-{
-    qreal leftMargin;
-    qreal topMargin;
-    qreal rightMargin;
-    qreal bottomMargin;
-
-    m_background->setElementPrefix(QString());
-    m_background->getMargins(leftMargin, topMargin, rightMargin, bottomMargin);
-
-    if (r.left() > leftMargin) {
-        leftMargin = 0;
-    }
-    if (r.top() > topMargin) {
-        leftMargin = 0;
-    }
-    if (geometry().width() - r.right() < rightMargin) {
-        leftMargin = 0;
-    }
-    if (geometry().bottom() - r.bottom() < bottomMargin) {
-        leftMargin = 0;
-    }
-
-    return r.adjusted(-leftMargin, -topMargin, rightMargin, bottomMargin).contains(pos);
-}
-
 void Pager::recalculateGeometry()
 {
     if (!m_rects.isEmpty() && geometry().size() == m_size) {
@@ -258,10 +232,10 @@ void Pager::recalculateGeometry()
         columns = m_rows;
     }
 
-    qreal leftMargin;
-    qreal topMargin;
-    qreal rightMargin;
-    qreal bottomMargin;
+    qreal leftMargin = 0;
+    qreal topMargin = 0;
+    qreal rightMargin = 0;
+    qreal bottomMargin = 0;
 
     if (formFactor() == Plasma::Vertical || formFactor() == Plasma::Horizontal) {
         m_background->setElementPrefix(QString());
@@ -276,7 +250,6 @@ void Pager::recalculateGeometry()
                 leftMargin = rightMargin = qMax(qreal(0), optimalSize);
                 m_showOwnBackground = false;
             }
-
         } else if (formFactor() == Plasma::Horizontal) {
             qreal optimalSize = (geometry().height() - KIconLoader::SizeSmall*rows + padding*(rows-1)) / 2;
 
@@ -295,12 +268,12 @@ void Pager::recalculateGeometry()
     qreal itemWidth;
 
     if (formFactor() == Plasma::Vertical) {
-        itemWidth = (geometry().width() - leftMargin - rightMargin - padding * (columns - 1)) / columns;
+        itemWidth = (contentsRect().width() - padding * (columns - 1)) / columns;
         m_widthScaleFactor = itemWidth / Kephal::ScreenUtils::desktopGeometry().width();
         itemHeight = Kephal::ScreenUtils::desktopGeometry().height() * m_widthScaleFactor;
         m_heightScaleFactor = m_widthScaleFactor;
     } else {
-        itemHeight = (geometry().height() - topMargin -  bottomMargin - padding * (rows - 1)) / rows;
+        itemHeight = (contentsRect().height() - padding * (rows - 1)) / rows;
         m_heightScaleFactor = itemHeight / Kephal::ScreenUtils::desktopGeometry().height();
         itemWidth = Kephal::ScreenUtils::desktopGeometry().width() * m_heightScaleFactor;
         if (m_displayedText == Name) {
@@ -319,9 +292,7 @@ void Pager::recalculateGeometry()
 
     m_rects.clear();
     m_animations.clear();
-    QRectF itemRect;
-    itemRect.setWidth(floor(itemWidth));
-    itemRect.setHeight(floor(itemHeight));
+    QRectF itemRect(QPoint(leftMargin, topMargin) , QSize(floor(itemWidth), floor(itemHeight)));
     for (int i = 0; i < m_desktopCount; i++) {
         itemRect.moveLeft(leftMargin + floor(i % columns  * (itemWidth + padding)));
         itemRect.moveTop(topMargin + floor(i / columns * (itemHeight + padding)));
@@ -338,10 +309,12 @@ void Pager::recalculateGeometry()
         m_background->setElementPrefix("normal");
         m_background->resizeFrame(itemRect.size());
     }
+
     if (m_background->hasElementPrefix("active")) {
         m_background->setElementPrefix("active");
         m_background->resizeFrame(itemRect.size());
     }
+
     if (m_background->hasElementPrefix("hover")) {
         m_background->setElementPrefix("hover");
         m_background->resizeFrame(itemRect.size());
@@ -603,7 +576,7 @@ void Pager::mousePressEvent(QGraphicsSceneMouseEvent *event)
     if (event->buttons() != Qt::RightButton)
     {
         for (int i = 0; i < m_rects.count(); ++i) {
-            if (posOnDesktopRect(m_rects[i], event->pos())) {
+            if (m_rects[i].contains(event->pos())) {
                 m_dragStartDesktop = m_dragHighlightedDesktop = i;
                 m_dragOriginalPos = m_dragCurrentPos = event->pos();
                 if (m_dragOriginal.isEmpty()) {
@@ -645,18 +618,16 @@ void Pager::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if (m_dragId > 0) {
         m_dragCurrentPos = event->pos();
         m_dragHighlightedDesktop = -1;
-        for (int i = 0; i < m_rects.count(); ++i) {
-            if (m_rects[i].contains(event->pos().toPoint())) {
-                m_dragHighlightedDesktop = i;
-                break;
-            }
-        }
         m_hoverRect = QRectF();
+        int i = 0;
         foreach (const QRectF &rect, m_rects) {
             if (rect.contains(event->pos())) {
+                m_dragHighlightedDesktop = i;
                 m_hoverRect = rect;
                 break;
             }
+
+            ++i;
         }
         update();
         event->accept();
@@ -715,7 +686,8 @@ void Pager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             }
         }
         m_timer->start();
-    } else if (m_dragStartDesktop != -1 && posOnDesktopRect(m_rects[m_dragStartDesktop], event->pos()) &&
+    } else if (m_dragStartDesktop != -1 && m_dragStartDesktop < m_rects.size() &&
+               m_rects[m_dragStartDesktop].contains(event->pos()) &&
                m_currentDesktop != m_dragStartDesktop + 1) {
         // only change the desktop if the user presses and releases the mouse on the same desktop
         KWindowSystem::setCurrentDesktop(m_dragStartDesktop + 1);
@@ -736,7 +708,7 @@ void Pager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 // This method provides the common implementation for hoverMoveEvent and dragMoveEvent.
 void Pager::handleHoverMove(const QPointF& pos)
 {
-    bool changedHover = !posOnDesktopRect(m_hoverRect, pos);
+    bool changedHover = !m_hoverRect.contains(pos);
     Plasma::Animator *anim = Plasma::Animator::self();
 
     if (changedHover && m_hoverIndex > -1) {
@@ -754,7 +726,7 @@ void Pager::handleHoverMove(const QPointF& pos)
 
     int i = 0;
     foreach (const QRectF &rect, m_rects) {
-        if (posOnDesktopRect(rect, pos)) {
+        if (rect.contains(pos)) {
             if (m_hoverRect != rect) {
                 m_hoverRect = rect;
                 m_hoverIndex = i;
@@ -769,7 +741,7 @@ void Pager::handleHoverMove(const QPointF& pos)
             }
             return;
         }
-        i++;
+        ++i;
     }
     m_hoverIndex = -1;
     m_hoverRect = QRectF();
