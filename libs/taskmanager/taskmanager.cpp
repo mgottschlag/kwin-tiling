@@ -24,6 +24,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // Own
 #include "taskmanager.h"
 
+// Qt
+#include <QApplication>
+#include <QDesktopWidget>
+#include <QUuid>
+
 // KDE
 #include <KConfig>
 #include <KConfigGroup>
@@ -34,8 +39,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifdef Q_WS_X11
 #include <QX11Info>
 #endif
-#include <QApplication>
-#include <QDesktopWidget>
 
 namespace TaskManager
 {
@@ -58,8 +61,7 @@ class TaskManager::Private
 public:
     Private()
         : active(0),
-          startupInfo(0),
-          trackGeometry(false)
+          startupInfo(0)
     {
     }
 
@@ -68,7 +70,7 @@ public:
     TaskDict tasksByWId;
     StartupList startups;
     WindowList skiptaskbarWindows;
-    bool trackGeometry;
+    QSet<QUuid> trackGeometryTokens;
 };
 
 TaskManager::TaskManager()
@@ -298,7 +300,7 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
     if (!(dirty & (NET::WMVisibleName | NET::WMName |
                    NET::WMState | NET::WMIcon |
                    NET::XAWMState | NET::WMDesktop) ||
-          (d->trackGeometry && dirty & NET::WMGeometry))) {
+          (trackGeometry() && dirty & NET::WMGeometry))) {
         return;
     }
 
@@ -401,8 +403,7 @@ void TaskManager::killStartup( const KStartupInfoId& id )
         }
     }
 
-    if (!s)
-    {
+    if (!s) {
         return;
     }
 
@@ -451,7 +452,7 @@ int TaskManager::numberOfDesktops() const
     return KWindowSystem::numberOfDesktops();
 }
 
-bool TaskManager::isOnTop(const Task* task)
+bool TaskManager::isOnTop(const Task* task) const
 {
     if (!task) {
         return false;
@@ -481,15 +482,25 @@ bool TaskManager::isOnTop(const Task* task)
     return false;
 }
 
-void TaskManager::trackGeometry(bool state)
+void TaskManager::setTrackGeometry(bool track, const QUuid &token)
 {
-    d->trackGeometry = state;
+    if (track) {
+        if (!d->trackGeometryTokens.contains(token)) {
+            d->trackGeometryTokens.insert(token);
+        }
+    } else {
+        d->trackGeometryTokens.remove(token);
+    }
+}
+
+bool TaskManager::trackGeometry() const
+{
+    return !d->trackGeometryTokens.isEmpty();
 }
 
 bool TaskManager::isOnScreen(int screen, const WId wid)
 {
-    if (screen == -1)
-    {
+    if (screen == -1) {
         return true;
     }
 

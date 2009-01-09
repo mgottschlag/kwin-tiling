@@ -32,6 +32,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <KDE/KSharedPtr>
 #include <KDE/KWindowSystem>
 
+class QUuid;
+
 namespace TaskManager
 {
 typedef QSet<WId> WindowList;
@@ -126,19 +128,24 @@ public:
     /**
      * Returns true if the specified task is on top.
      */
-    bool isOnTop(const Task*);
+    bool isOnTop(const Task*) const;
 
     /**
      * Tells the task manager whether or not we care about geometry
      * updates. This generates a lot of activity so should only be used
      * when necessary.
      */
-    void trackGeometry(bool);
+    void setTrackGeometry(bool track, const QUuid &token);
+
+    /**
+     * @return true if geometry tracking is on
+     */
+    bool trackGeometry() const;
 
     /**
     * Returns whether the Window with WId wid is on the screen screen
     */
-    static bool isOnScreen( int screen, const WId wid );
+    static bool isOnScreen(int screen, const WId wid);
 
 Q_SIGNALS:
     /**
