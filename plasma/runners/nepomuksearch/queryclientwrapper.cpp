@@ -76,12 +76,24 @@ void Nepomuk::QueryClientWrapper::runQuery()
 }
 
 
+namespace {
+qreal normalizeScore( double score ) {
+    // no search result is ever a perfect match, NEVER. And mostly, when typing a URL
+    // the users wants to open that url instead of using the search result. Thus, all
+    // search results need to have a lower score than URLs which can drop to 0.5
+    // And in the end, for 10 results, the score is not that important at the moment.
+    // This can be improved in the future.
+    // We go the easy way here and simply cut the score at 0.4
+    return qMin( 0.4, score );
+}
+}
+
 void Nepomuk::QueryClientWrapper::slotNewEntries( const QList<Nepomuk::Search::Result>& results )
 {
     foreach( const Search::Result& result, results ) {
         Plasma::QueryMatch match( m_runner );
         match.setType( Plasma::QueryMatch::PossibleMatch );
-        match.setRelevance( result.score() );
+        match.setRelevance( normalizeScore( result.score() ) );
 
         Nepomuk::Resource res( result.resourceUri() );
 
