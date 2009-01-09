@@ -2,6 +2,7 @@
 Name=script-nowplaying
 Name[is]=spilanúna-skrifta
 Name[nds]=Warrt-jüst-afspeelt-Skript
+Name[nl]=script-nu-aan-het-spelen
 Name[sv]=script-spelar-nu
 Name[tr]=betik-şimdi dinlenen parça
 Comment=Javascript version current track playing
@@ -11,6 +12,7 @@ Comment[el]=Τρέχον κομμάτι αναπαραγωγής σε έκδοσ
 Comment[is]=Javascript útgáfa núverandi spilunar
 Comment[km]=ការ​ចាក់​បទ​បច្ចុប្បន្ន​កំណែ​ Javascript
 Comment[nds]=JavaScript-Verschoon vun Opstunns afspeelt Stück
+Comment[nl]=Javascript-versie van momenteel spelende track
 Comment[pt]=Versão em JavaScript do 'Agora a tocar'
 Comment[pt_BR]=Versão em JavaScript do 'Agora a tocar'
 Comment[sv]=Javascript-version av nuvarande spår som spelas
