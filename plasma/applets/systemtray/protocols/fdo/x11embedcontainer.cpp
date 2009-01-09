@@ -203,7 +203,9 @@ void X11EmbedContainer::paintEvent(QPaintEvent *event)
         Pixmap pixmap = XCompositeNameWindowPixmap(dpy, clientWinId());
         XImage *ximage = XGetImage(dpy, pixmap, 0, 0, width(), height(), AllPlanes, ZPixmap);
         XFreePixmap(dpy, pixmap);
-
+        // We actually check if we get the image from X11 since clientWinId can be any arbiter window (with crazy XWindowAttribute and the pixmap associated is bad)
+        if (!ximage)
+            return;
         // This is safe to do since we only composite ARGB32 windows, and PictStandardARGB32
         // matches QImage::Format_ARGB32_Premultiplied.
         QImage image((const uchar*)ximage->data, ximage->width, ximage->height, ximage->bytes_per_line,
