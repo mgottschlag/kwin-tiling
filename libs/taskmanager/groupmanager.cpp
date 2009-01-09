@@ -26,7 +26,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QList>
 #include <KDebug>
 #include <QTimer>
-
+#include <QUuid>
 
 #include "abstractsortingstrategy.h"
 #include "startup.h"
@@ -96,6 +96,7 @@ public:
     bool showOnlyMinimized : 1;
     bool onlyGroupWhenFull : 1;
     bool changingGroupingStragegy : 1;
+    QUuid configToken;
 };
 
 
@@ -118,6 +119,7 @@ GroupManager::GroupManager(QObject *parent)
 
 GroupManager::~GroupManager()
 {
+    TaskManager::TaskManager::self()->setTrackGeometry(false, d->configToken);
     delete d->abstractSortingStrategy;
     delete d->abstractGroupingStrategy;
     delete d->rootGroup;
@@ -380,7 +382,6 @@ void GroupManagerPrivate::taskChanged(TaskPtr task, ::TaskManager::TaskChanges c
     }
 
     if (changes & ::TaskManager::GeometryChanged) {
-        //kDebug() << "geomtery Changed";
         if (!geometryTasks.contains(task)) {
             geometryTasks.append(task);
         }
@@ -420,12 +421,13 @@ void GroupManagerPrivate::checkScreenChange()
 {
     //kDebug();
     foreach (const TaskPtr &task, geometryTasks) {
-        if (task->isOnScreen(currentScreen) || task->demandsAttention()) {
+        if (task->isOnScreen(currentScreen)) {
             q->add(task);
         } else {
             q->remove(task);
         }
     }
+
     geometryTasks.clear();
 }
 
@@ -449,7 +451,7 @@ void GroupManager::reconnect()
                 this, SLOT(taskChanged(TaskPtr,::TaskManager::TaskChanges)));
     }
 
-    TaskManager::TaskManager::self()->trackGeometry(d->showOnlyCurrentScreen);
+    TaskManager::TaskManager::self()->setTrackGeometry(d->showOnlyCurrentScreen, d->configToken);
 
     if (!d->showOnlyCurrentScreen) {
         d->geometryTasks.clear();
