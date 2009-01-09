@@ -27,7 +27,10 @@ Tools
 
 Plugins/Addons
 --------------
-
+* Features
+     * Plasmoids and Containments
+         * Twitter
+             * Added support for other Twitter API based services like identi.ca (that is based on laconi.ca).
 
 KRunner
 -------
