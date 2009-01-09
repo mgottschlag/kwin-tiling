@@ -956,8 +956,8 @@ bool PanelView::hintOrUnhide(const QPoint &point, bool dueToDnd)
         m_mousePollTimer->start(200);
     }
 
-    return false;
 #endif
+    return false;
 }
 
 void PanelView::unhintHide()
