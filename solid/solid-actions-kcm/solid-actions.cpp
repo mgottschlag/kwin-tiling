@@ -166,15 +166,13 @@ void SolidActions::editAction()
     editUi->LeActionFriendlyName->setText(selectedItem->name);
     editUi->LeActionCommand->setPath(selectedItem->exec);
     editUi->LeSolidPredicate->setText(selectedItem->predicate);
-    editDialog->setCaption("Editing action " +  selectedItem->name);
+    editDialog->setCaption(i18n("Editing action %1", selectedItem->name));
     // Display us!
     editDialog->show();
 }
 
 void SolidActions::deleteAction()
 {
-    KUrl desktopPath(QString(""));
-
     QListWidgetItem * item = selectedWidget();
     SolidActionItem * action = selectedAction();
     if(action->isUserSupplied())
@@ -258,22 +256,20 @@ void SolidActions::toggleEditDelete(bool toggle)
 { 
     mainUi->PbEditAction->setEnabled(toggle);
     mainUi->PbDeleteAction->setEnabled(toggle);
-    mainUi->PbDefaultAction->setEnabled(toggle);
 
     if(mainUi->LwActions->selectedItems().count() == 0)
     { 
-      mainUi->PbDeleteAction->setText("No Action Selected");
-      mainUi->PbDefaultAction->setText("No Action Selected");
+      mainUi->PbDeleteAction->setText(i18n("No Action Selected"));
       return;
     }
    
     KUrl writeDesktopFile(selectedAction()->writeDesktopPath); 
     if( selectedAction()->isUserSupplied() )
-    { mainUi->PbDeleteAction->setText("Delete Action"); }
+    { mainUi->PbDeleteAction->setText(i18n("Delete Action")); }
     else if( KIO::NetAccess::exists(writeDesktopFile, true, this) )
-    { mainUi->PbDeleteAction->setText("Revert Modifications"); }
+    { mainUi->PbDeleteAction->setText(i18n("Revert Modifications")); }
     else
-    { mainUi->PbDeleteAction->setText("Cannot be deleted"); 
+    { mainUi->PbDeleteAction->setText(i18n("Cannot be deleted")); 
       mainUi->PbDeleteAction->setEnabled(false);
     }
 }
