@@ -9,9 +9,6 @@
     <height>56</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>Form</string>
-  </property>
   <widget class="QLabel" name="LblActionName" >
    <property name="geometry" >
     <rect>
