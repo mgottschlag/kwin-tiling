@@ -72,6 +72,42 @@ void KephalApp::query() {
             cout << "    Output: " << output->id() << "\n";
         }
     }
+    
+    cout << "\nOutputs:\n";
+    foreach (Output * output, Outputs::self()->outputs()) {
+        cout << "  Output " << output->id() << ":\n";
+        cout << "    Connected: " << output->isConnected() << "\n";
+        
+        if (! output->isConnected()) continue;
+        
+        cout << "    Activated: " << output->isActivated() << "\n";
+        cout << "    Size: " << output->size().width() << "x" << output->size().height() << "\n";
+        cout << "    Position: (" << output->position().x() << "," << output->position().y() << ")\n";
+        cout << "    Vendor: " << output->vendor() << "\n";
+        cout << "    PreferredSize: " << output->preferredSize().width() << "x" << output->preferredSize().height() << "\n";
+        cout << "    Rotation: " << output->rotation() << "\n";
+        cout << "    ReflectX: " << output->reflectX() << "\n";
+        cout << "    ReflectY: " << output->reflectY() << "\n";
+        cout << "    Rate: " << output->rate() << "\n";
+        cout << "    Screen: " << (output->screen() ? output->screen()->id() : -1) << "\n";
+
+        cout << "\n    Available sizes: ";
+        foreach (QSize size, output->availableSizes()) {
+            cout << size.width() << "x" << size.height() << ", ";
+        }
+
+        cout << "\n    Available positions: ";
+        foreach (QPoint pos, output->availablePositions()) {
+            cout << "(" << pos.x() << "," << pos.y() << "), ";
+        }
+
+        cout << "\n    Available rates: ";
+        foreach (float rate, output->availableRates()) {
+            cout << rate << ", ";
+        }
+        
+        cout << "\n";
+    }
 }
 
 
