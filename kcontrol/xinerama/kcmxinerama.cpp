@@ -81,22 +81,30 @@ KCMXinerama::KCMXinerama(QWidget *parent, const QVariantList &)
 		xw = new XineramaWidget(this);
 		grid->addWidget(xw, 0, 0);
 
-		xw->headTable->setNumRows(_displays);
+		xw->headTable->setRowCount(_displays);
 
 		for (int i = 0; i < _displays; i++) {
 			QString l = i18n("Display %1", i+1);
 			QRect geom = QApplication::desktop()->screenGeometry(i);
 			xw->_unmanagedDisplay->addItem(l);
 			dpyList.append(l);
-			xw->headTable->setText(i, 0, QString::number(geom.x()));
-			xw->headTable->setText(i, 1, QString::number(geom.y()));
-			xw->headTable->setText(i, 2, QString::number(geom.width()));
-			xw->headTable->setText(i, 3, QString::number(geom.height()));
+			QTableWidgetItem *item = new QTableWidgetItem(QString::number(geom.x()));
+			item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+			xw->headTable->setItem(i, 0, item);
+			item = new QTableWidgetItem(QString::number(geom.y()));
+			item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+			xw->headTable->setItem(i, 1, item);
+			item = new QTableWidgetItem(QString::number(geom.width()));
+			item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+			xw->headTable->setItem(i, 2, item);
+			item = new QTableWidgetItem(QString::number(geom.height()));
+			item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+			xw->headTable->setItem(i, 3, item);
 		}
 
 		xw->_unmanagedDisplay->addItem(i18n("Display Containing the Pointer"));
 
-		xw->headTable->setRowLabels(dpyList);
+		xw->headTable->setVerticalHeaderLabels(dpyList);
 
 		connect(xw->_unmanagedDisplay, SIGNAL(activated(int)),
 			this, SLOT(windowIndicator(int)));

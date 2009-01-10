@@ -1,7 +1,5 @@
 include_directories( ${X11_Xinerama_INCLUDE_PATH}   )
 
-add_definitions (-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
-
 ########### next target ###############
 set(kcm_xinerama_kwin_SRCS)
 
@@ -21,7 +19,7 @@ kde4_add_ui_files(kcm_xinerama_PART_SRCS xineramawidget.ui )
 kde4_add_plugin(kcm_xinerama ${kcm_xinerama_PART_SRCS})
 
 
-target_link_libraries(kcm_xinerama  ${KDE4_KDEUI_LIBS} ${QT_QT3SUPPORT_LIBRARY} ${X11_Xinerama_LIB})
+target_link_libraries(kcm_xinerama  ${KDE4_KDEUI_LIBS} ${X11_Xinerama_LIB})
 
 install(TARGETS kcm_xinerama  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
