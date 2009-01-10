@@ -65,6 +65,6 @@ QT4_ADD_DBUS_ADAPTOR (kephald_SRCS ${CMAKE_CURRENT_BINARY_DIR}/org.kde.Kephal.Co
         ../kded_kephal/dbus/dbusapi_configurations.h DBusAPIConfigurations)
         
 ADD_EXECUTABLE (kephald ${kephald_SRCS})
-TARGET_LINK_LIBRARIES (kephald ${QT_QTCORE_LIBRARY} ${QT_QTDBUS_LIBRARY})
+TARGET_LINK_LIBRARIES (kephald ${QT_QTCORE_LIBRARY} ${QT_QTDBUS_LIBRARY} ${QT_QTGUI_LIBRARY})
 
 INSTALL (TARGETS kephald ${INSTALL_TARGETS_DEFAULT_ARGS})
