@@ -473,14 +473,18 @@ void AbstractTaskItem::drawTask(QPainter *painter, const QStyleOptionGraphicsIte
 
         Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
 
-        if (itemBackground) {
+        if (itemBackground && itemBackground->hasElement(expanderElement())) {
             QSizeF arrowSize(itemBackground->elementSize(expanderElement()));
-            QRectF arrowRect(rect.center()-QPointF(arrowSize.width()/2, arrowSize.height()+fm.xHeight()), arrowSize);
+            QRectF arrowRect(rect.center()-QPointF(arrowSize.width()/2, arrowSize.height()+fm.xHeight()/2), arrowSize);
             itemBackground->paint(painter, arrowRect, expanderElement());
-        }
 
-        painter->setFont(font);
-        painter->drawText(rect, Qt::AlignCenter, QString::number(groupItem->memberList().count()));
+            painter->setFont(font);
+            rect.setTop(arrowRect.bottom());
+            painter->drawText(rect, Qt::AlignHCenter|Qt::AlignTop, QString::number(groupItem->memberList().count()));
+        } else {
+            painter->setFont(font);
+            painter->drawText(rect, Qt::AlignCenter, QString::number(groupItem->memberList().count()));
+        }
     }
 }
 
@@ -559,8 +563,9 @@ void AbstractTaskItem::drawTextLayout(QPainter *painter, const QTextLayout &layo
 
     QFontMetrics fm(layout.font());
     int textHeight = layout.lineCount() * fm.lineSpacing();
+
     QPointF position = textHeight < rect.height() ?
-            QPointF(0, (rect.height() - textHeight) / 2) : QPointF(0, 0);
+            QPointF(0, (rect.height() - textHeight) / 2 + (fm.tightBoundingRect("M").height() - fm.xHeight())) : QPointF(0, 0);
     QList<QRect> fadeRects;
     int fadeWidth = 30;
 
