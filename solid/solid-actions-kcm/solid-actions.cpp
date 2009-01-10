@@ -57,7 +57,6 @@ SolidActions::SolidActions( QWidget* parent, const QVariantList& )
 
     connect(mainUi->PbEditAction, SIGNAL(clicked()), this, SLOT(editAction()));
     connect(mainUi->PbDeleteAction, SIGNAL(clicked()), this, SLOT(deleteAction()));
-    connect(mainUi->PbDefaultAction, SIGNAL(clicked()), this, SLOT(setActionPreferred()));
     connect(mainUi->LwActions, SIGNAL(itemSelectionChanged()), this, SLOT(enableEditDelete()));
     connect(mainUi->CbDeviceType, SIGNAL(currentIndexChanged(int)), this, SLOT(fillActionsList()));
 
@@ -186,19 +185,6 @@ void SolidActions::deleteAction()
     fillActionsList();
 }
 
-void SolidActions::setActionPreferred()
-{
-    bool preferAction = true;
-
-    SolidActionItem * actionItem = selectedAction();
-    if(actionItem->preferred)
-    { preferAction = false; }
-    foreach(SolidActionItem * deSelect, actionsDb.values())
-    { deSelect->setPreferredAction(false); }
-    actionItem->setPreferredAction(preferAction);
-    fillActionsList();
-}
-
 QListWidgetItem * SolidActions::selectedWidget()
 { 
     foreach(QListWidgetItem* candidate, actionsDb.keys() )
@@ -221,7 +207,6 @@ void SolidActions::fillActionsList()
 {
     QStringList allPossibleActions;
     QStringList validActions;
-    QString preferredText;
 
     clearActions();
     // Prepare to search for possible actions
@@ -244,11 +229,8 @@ void SolidActions::fillActionsList()
        QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(filePath, true);
        foreach(const KServiceAction &deviceAction, services)
        {  
-          preferredText=QString();
           SolidActionItem * actionItem = new SolidActionItem(filePath, deviceAction.name(), this);
-          if( actionItem->preferred )
-          { preferredText=" (Preferred)"; }
-          QListWidgetItem * actionListItem = new QListWidgetItem(*actionItem->icon, actionItem->name + preferredText, 0, QListWidgetItem::Type);
+          QListWidgetItem * actionListItem = new QListWidgetItem(*actionItem->icon, actionItem->name, 0, QListWidgetItem::Type);
           mainUi->LwActions->insertItem(mainUi->LwActions->count(), actionListItem);        
           actionsDb.insert(actionListItem, actionItem);
        }
@@ -294,10 +276,6 @@ void SolidActions::toggleEditDelete(bool toggle)
     { mainUi->PbDeleteAction->setText("Cannot be deleted"); 
       mainUi->PbDeleteAction->setEnabled(false);
     }
-    if( selectedAction()->preferred )
-    { mainUi->PbDefaultAction->setText("Unprefer action"); }
-    else
-    { mainUi->PbDefaultAction->setText("Set Preferred Action"); }
 }
 
 void SolidActions::enableEditDelete()

@@ -42,7 +42,6 @@ public:
      void setPredicate(QString textOfPredicate);
      bool isUserSupplied();
      QString readKey(QString keyGroup, QString keyName);
-     void setPreferredAction(bool preferred);
      KDesktopFile * desktopWrite();
 
      QString desktopFilePath;
@@ -53,7 +52,6 @@ public:
      QString name;
      QString predicate;
      QString actionName;
-     bool preferred;
 
 private:
      KDesktopFile * desktopFile;

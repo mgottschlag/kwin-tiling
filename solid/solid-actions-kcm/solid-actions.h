@@ -45,7 +45,6 @@ public slots:
     void addAction();
     void editAction();
     void deleteAction();
-    void setActionPreferred();
     QListWidgetItem * selectedWidget();
     SolidActionItem * selectedAction();
     void fillActionsList();

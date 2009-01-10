@@ -45,7 +45,6 @@ SolidActionItem::SolidActionItem(QString pathToDesktop, QString action, QObject 
     name = readKey(actionName, "Name");
     exec = readKey(actionName, "Exec");
     predicate = readKey("DesktopEntryGroup", "X-KDE-Solid-Predicate");
-    preferred = desktopWrite()->desktopGroup().hasKey("X-KDE-Solid-Action-Prefer");
 }
 
 SolidActionItem::~SolidActionItem()
@@ -107,14 +106,6 @@ QString SolidActionItem::readKey(QString keyGroup, QString keyName)
       readGroup = readFile->actionGroup(keyGroup); 
     }
     return readGroup.readEntry(keyName);
-}
-
-void SolidActionItem::setPreferredAction(bool preferred)
-{
-    if(preferred)
-    { desktopWrite()->desktopGroup().writeEntry("X-KDE-Solid-Action-Prefer", actionName, KConfigGroup::Normal); }
-    else
-    { desktopWrite()->desktopGroup().deleteEntry("X-KDE-Solid-Action-Prefer", KConfigGroup::Normal); }
 }
 
 KDesktopFile * SolidActionItem::desktopWrite()
