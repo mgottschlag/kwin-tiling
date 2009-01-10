@@ -34,7 +34,6 @@ CalendarTest::CalendarTest(QObject *parent, const QVariantList &args)
     m_calendarDialog(0),
     m_theme(0)
 {
-    resize(330, 240);
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
 }
 
@@ -47,8 +46,8 @@ QGraphicsWidget *CalendarTest::graphicsWidget()
 {
     if (!m_calendarDialog) {
         m_calendarDialog = new Plasma::Calendar(this);
-        m_calendarDialog->setMinimumSize(330, 240);
-        m_calendarDialog->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        //m_calendarDialog->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        m_calendarDialog->setPreferredSize(220, 250);
     }
 
     return m_calendarDialog;
@@ -75,6 +74,11 @@ void CalendarTest::paintIcon()
 {
     //TODO: connect to a dataengine to repaint this thing on date change
     const int iconSize = qMin(size().width(), size().height());
+
+    if (iconSize <= 0) {
+        return;
+    }
+
     QPixmap icon(iconSize, iconSize);
 
     if (!m_theme) {
