@@ -1,2 +1,2 @@
 #! /usr/bin/env bash
-$XGETTEXT *.cpp -o $podir/kcm_solid_actions.pot
+$XGETTEXT *.cpp *.ui -o $podir/kcm_solid_actions.pot
