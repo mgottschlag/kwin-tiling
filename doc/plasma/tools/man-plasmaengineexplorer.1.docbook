@@ -112,7 +112,7 @@ url="help:/plasma">help:/plasma</ulink>
 
 <refsect1>
 <title>Examples</title>
-<para>Load the time data engine showing the local time and updating every
+<para>Load the time data engine, showing the local time and updating every
 second:</para>
 <screen><userinput><command>plasmaengineexplorer</command> <option>--engine time</option> <option>--source Local</option> <option>--interval 1000</option></userinput></screen>
 
