@@ -46,7 +46,6 @@ QGraphicsWidget *CalendarTest::graphicsWidget()
 {
     if (!m_calendarDialog) {
         m_calendarDialog = new Plasma::Calendar(this);
-        //m_calendarDialog->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         m_calendarDialog->setPreferredSize(220, 250);
     }
 
