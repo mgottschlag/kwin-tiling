@@ -36,6 +36,7 @@
 #include <KIcon>
 #include <KLineEdit>
 #include <KLocale>
+#include <KIntSpinBox>
 
 //Plasma
 #include <Plasma/Label>
@@ -104,7 +105,7 @@ Calendar::Calendar(QGraphicsWidget *parent)
     d->yearSpinBox->setRange(d->calendarTable->calendar()->year(d->calendarTable->calendar()->earliestValidDate()), d->calendarTable->calendar()->year(d->calendarTable->calendar()->latestValidDate()));
     d->yearSpinBox->setValue(d->calendarTable->calendar()->year(d->calendarTable->date()));
     d->yearSpinBox->hide();
-    connect(d->yearSpinBox, SIGNAL(editingFinished()), this, SLOT(hideYearSpinBox()));
+    connect(d->yearSpinBox->nativeWidget(), SIGNAL(editingFinished()), this, SLOT(hideYearSpinBox()));
 
     m_hLayout->addStretch();
 
@@ -299,7 +300,7 @@ void Calendar::showYearSpinBox()
     d->yearSpinBox->setGeometry(d->year->geometry());
     d->year->hide();
     d->yearSpinBox->show();
-    d->yearSpinBox->setFocus(Qt::MouseFocusReason);
+    d->yearSpinBox->nativeWidget()->setFocus(Qt::MouseFocusReason);
 }
 
 void Calendar::hideYearSpinBox()
