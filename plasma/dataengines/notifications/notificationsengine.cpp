@@ -24,7 +24,7 @@
 #include <Plasma/Service>
 
 NotificationsEngine::NotificationsEngine( QObject* parent, const QVariantList& args )
-    : Plasma::DataEngine( parent, args ), m_nextId( 1 ), m_sigMapper(0)
+    : Plasma::DataEngine( parent, args ), m_nextId( 1 )
 {
     VisualNotificationsAdaptor* adaptor = new VisualNotificationsAdaptor(this);
     connect(this, SIGNAL(NotificationClosed(uint, uint)),
@@ -76,33 +76,6 @@ uint NotificationsEngine::Notify(const QString &app_name, uint replaces_id, cons
         notificationData.insert("expireTimeout", timeout );
 
         setData(QString("notification %1").arg(id), notificationData );
-
-        // setup timer if needed
-        if (timeout != 0){
-            // lazy create mapper
-            if (!m_sigMapper){
-                m_sigMapper = new QSignalMapper(this);
-                connect(m_sigMapper, SIGNAL(mapped(int)), SLOT(onNotificationTimedOut(int)));
-            }
-
-            // we have a bunch of per-notification timers and map each of them
-            // to a notification id.
-            QTimer* timer = new QTimer(this);
-            timer->setSingleShot(true);
-            timer->setInterval(timeout);
-            connect(timer, SIGNAL(timeout()), m_sigMapper, SLOT(map()));
-
-            m_sigMapper->setMapping(timer, static_cast<int>(id));
-
-            if (m_timers.contains(id)) {
-                kDebug() << "aleady have a timer for this notifiation? that's odd!";
-                QTimer *timer = m_timers.value(id);
-                delete timer;
-            }
-
-            m_timers[id] = timer;
-            timer->start();
-        }
     } else {
         id = replaces_id;
         // TODO: update existing source
@@ -121,19 +94,6 @@ void NotificationsEngine::CloseNotification(uint id)
 Plasma::Service* NotificationsEngine::serviceForSource(const QString& source)
 {
     return new NotificationService(this, source);
-}
-
-void NotificationsEngine::onNotificationTimedOut(int timedoutId)
-{
-    uint id = static_cast<uint>(timedoutId);
-    // don't forget to destroy timer
-    if (m_timers.contains(id)) {
-        QTimer *timer = m_timers.value(id);
-        m_timers.remove(id);
-        timer->deleteLater();
-    }
-
-    CloseNotification(id);
 }
 
 K_EXPORT_PLASMA_DATAENGINE(notifications, NotificationsEngine)
