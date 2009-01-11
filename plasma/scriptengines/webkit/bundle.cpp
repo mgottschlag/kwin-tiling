@@ -144,11 +144,13 @@ QByteArray Bundle::data() const
 
 bool Bundle::open()
 {
-    if (m_data.isEmpty())
-        return false;
-
-    if (!m_tempDir)
+    if (!m_tempDir) {
         initTempDir();
+    }
+
+    if (m_data.isEmpty()) {
+        return false;
+    }
 
     QBuffer buffer(&m_data);
     KZip zip(&buffer);
