@@ -41,12 +41,13 @@
 #include <windows.h>
 #endif // Q_OS_WIN
 
-#define MINSIZE 48
+static const int MINBUTTONSIZE = 8;
+static const int MARGINSIZE = 2;
 
 LockOut::LockOut(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args)
 {
-    resize(MINSIZE*2,MINSIZE*4);
+    resize(MINBUTTONSIZE, MINBUTTONSIZE * 2 + MARGINSIZE);
 }
 
 void LockOut::init()
@@ -76,7 +77,7 @@ void LockOut::checkLayout()
 
     switch (formFactor()) {
         case Plasma::Vertical:
-            if (geometry().width() >= MINSIZE) {
+            if (geometry().width() >= MINBUTTONSIZE * 2 + MARGINSIZE) {
                 direction = Qt::Horizontal;
                 ratioToKeep = 2;
             } else {
@@ -85,7 +86,7 @@ void LockOut::checkLayout()
             }
             break;
         case Plasma::Horizontal:
-            if (geometry().height() >= MINSIZE) {
+            if (geometry().height() >= MINBUTTONSIZE * 2 + MARGINSIZE) {
                 direction = Qt::Vertical;
                 ratioToKeep = 0.5;
             } else {
@@ -96,6 +97,13 @@ void LockOut::checkLayout()
         default:
             direction = Qt::Vertical;
     }
+
+    if (direction == Qt::Horizontal) {
+        setMinimumSize(MINBUTTONSIZE * 2 + MARGINSIZE, MINBUTTONSIZE);
+    } else {
+        setMinimumSize(MINBUTTONSIZE, MINBUTTONSIZE * 2 + MARGINSIZE);
+    }
+
     if (direction != m_layout->orientation()) {
         m_layout->setOrientation(direction);
     }
