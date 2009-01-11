@@ -54,9 +54,6 @@ signals:
     void NotificationClosed( uint id, uint reason );
     void ActionInvoked( uint id, const QString& actionKey );
 
-private slots:
-    void onNotificationTimedOut(int id);
-
 private:
     /**
      * Holds the id that will be assigned to the next notification source
@@ -64,18 +61,7 @@ private:
      */
     uint m_nextId;
 
-    /**
-     * Used to map timers' signals to notification id's
-     */
-    QSignalMapper* m_sigMapper;
-
-    /**
-     * Timers for timing out notifications
-     */
-    QHash<uint, QTimer*> m_timers;
-
     friend class NotificationAction;
-
 };
 
 #endif
