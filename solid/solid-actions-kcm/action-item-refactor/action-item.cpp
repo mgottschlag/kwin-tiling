@@ -32,21 +32,16 @@ ActionItem::ActionItem(QString pathToDesktop, QString action, QObject *parent)
     Q_UNUSED(parent);
 
     desktopMasterPath = pathToDesktop;
-    desktopWritePath = KDesktopFile::locateLocal(desktopMasterPath);
     actionName = action;
     // Create the desktop file
     desktopFileMaster = new KDesktopFile(desktopMasterPath);
+    desktopWritePath = desktopFileMaster->locateLocal(desktopMasterPath);
     desktopFileWrite = new KDesktopFile(desktopWritePath);
-    // We need to copy the config groups in first
-    KConfigGroup writeDesktopGroup = desktopFileWrite->desktopGroup();
-    KConfigGroup writeActionGroup = desktopFileWrite->actionGroup(actionName);
-    KConfigGroup masterDesktopGroup = desktopFileMaster->desktopGroup();
-    KConfigGroup masterActionGroup = desktopFileMaster->actionGroup(actionName);
     // Now we can fill the action groups list
-    actionGroups.insert(ActionItem::GroupDesktop, &writeDesktopGroup);
-    actionGroups.insert(ActionItem::GroupAction, &writeActionGroup);
-    actionGroups.insert(ActionItem::GroupDesktop, &masterDesktopGroup);
-    actionGroups.insert(ActionItem::GroupAction, &masterActionGroup);
+    actionGroups.insert(ActionItem::GroupDesktop, desktopFileWrite->desktopGroup());
+    actionGroups.insert(ActionItem::GroupAction, desktopFileWrite->actionGroup(actionName));
+    actionGroups.insert(ActionItem::GroupDesktop, desktopFileMaster->desktopGroup());
+    actionGroups.insert(ActionItem::GroupAction, desktopFileMaster->actionGroup(actionName));
 }
 
 ActionItem::~ActionItem()
@@ -116,22 +111,21 @@ KConfigGroup * ActionItem::configItem(DesktopAction actionType, GroupType keyGro
 
     if(actionType == ActionItem::DesktopRead)
     {
-      foreach( KConfigGroup * possibleGroup, actionGroups.values(keyGroup) )
-      { if( possibleGroup ) { kDebug() << "possibleGroup is valid"; }
-        if( possibleGroup->hasKey(keyName) )
-        { foundGroup = possibleGroup;
+      foreach( KConfigGroup possibleGroup, actionGroups.values(keyGroup) )
+      { if(possibleGroup.isValid()) { kDebug() << "possibleGroup valid"; }
+        if( possibleGroup.hasKey(keyName) )
+        { foundGroup = &possibleGroup;
           break;
         }
       }
-      return foundGroup;
     }
     else if(actionType == ActionItem::DesktopWrite)
     {
       if(isUserSupplied())
       { countAccess = 1; }
-      return actionGroups.values(keyGroup).at(countAccess);
+      foundGroup = &(actionGroups.values(keyGroup)[countAccess]);
     }
-    return 0;
+    return foundGroup;
 }
 
 #include "action-item.moc"

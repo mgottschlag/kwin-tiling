@@ -61,7 +61,7 @@ private:
 
      KDesktopFile * desktopFileMaster;
      KDesktopFile * desktopFileWrite;
-     QMap<GroupType, KConfigGroup*> actionGroups;
+     QMap<GroupType, KConfigGroup> actionGroups;
 
 };
 
