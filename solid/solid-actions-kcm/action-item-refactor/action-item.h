@@ -17,43 +17,51 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA          *
  ***************************************************************************/
 
-#ifndef _SOLID_ACTION_ITEM_H_
-#define _SOLID_ACTION_ITEM_H_
+#ifndef _ACTION_ITEM_H_
+#define _ACTION_ITEM_H_
 
 #include <QObject>
+#include <QMap>
 
 class QString;
+
 class KDesktopFile;
-class KServiceAction;
-class KUrl;
 class KConfigGroup;
 
-class SolidActionItem: public QObject
+class ActionItem: public QObject
 {
      Q_OBJECT
 
 public:
-     SolidActionItem(QString pathToDesktop, QString action, QObject *parent = 0);
-     ~SolidActionItem();
+     ActionItem(QString pathToDesktop, QString action, QObject *parent = 0);
+     ~ActionItem();
+
+     enum GroupType { GroupDesktop = 0, GroupAction = 1 };
+
+     bool isUserSupplied();
+     QString readKey(GroupType keyGroup, QString keyName);
+     void setKey(GroupType keyGroup, QString keyName, QString keyContents);
+     bool hasKey(GroupType keyGroup, QString keyName);
+
+     QString icon();
+     QString exec();
+     QString name();
      void setIcon(QString nameOfIcon);
      void setName(QString nameOfAction);
      void setExec(QString execUrl);
-     void setPredicate(QString textOfPredicate);
-     bool isUserSupplied();
-     QString readKey(QString keyGroup, QString keyName);
-     KDesktopFile * desktopWrite();
 
-     QString desktopFilePath;
-     QString writeDesktopPath;
-     QString icon;
-     QString exec;
-     QString name;
-     QString predicate;
+     QString desktopMasterPath;
+     QString desktopWritePath;
      QString actionName;
 
 private:
-     KDesktopFile * desktopFile;
-     KDesktopFile * writeDesktop;
+     enum DesktopAction { DesktopRead = 0, DesktopWrite = 1 };
+
+     KConfigGroup * configItem(DesktopAction actionType, GroupType keyGroup, QString keyName = QString()); 
+
+     KDesktopFile * desktopFileMaster;
+     KDesktopFile * desktopFileWrite;
+     QMap<GroupType, KConfigGroup*> actionGroups;
 
 };
 

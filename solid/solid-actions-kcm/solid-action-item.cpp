@@ -27,7 +27,6 @@
 #include <KDebug>
 #include <KDesktopFile>
 #include <KConfigGroup>
-#include <KIcon>
     
 SolidActionItem::SolidActionItem(QString pathToDesktop, QString action, QObject *parent)
 {
@@ -40,8 +39,7 @@ SolidActionItem::SolidActionItem(QString pathToDesktop, QString action, QObject 
     writeDesktopPath = desktopFile->locateLocal(desktopFilePath);
     writeDesktop = new KDesktopFile(writeDesktopPath);
     // Set other variables
-    iconName = readKey(actionName, "Icon");
-    icon = new KIcon(iconName);
+    icon = readKey(actionName, "Icon");
     name = readKey(actionName, "Name");
     exec = readKey(actionName, "Exec");
     predicate = readKey("DesktopEntryGroup", "X-KDE-Solid-Predicate");
@@ -49,17 +47,14 @@ SolidActionItem::SolidActionItem(QString pathToDesktop, QString action, QObject 
 
 SolidActionItem::~SolidActionItem()
 { 
-    delete icon;
     delete writeDesktop;
     delete desktopFile;
 }
 
-void SolidActionItem::setIconName(QString nameOfIcon)
+void SolidActionItem::setIcon(QString nameOfIcon)
 { 
-    iconName=nameOfIcon;
-    desktopWrite()->actionGroup(actionName).writeEntry("Icon", iconName, KConfigGroup::Normal);
-    delete icon;
-    icon = new KIcon(nameOfIcon);
+    icon=nameOfIcon;
+    desktopWrite()->actionGroup(actionName).writeEntry("Icon", icon, KConfigGroup::Normal);
 }
 
 void SolidActionItem::setName(QString nameOfAction)
@@ -99,7 +94,7 @@ QString SolidActionItem::readKey(QString keyGroup, QString keyName)
     }
     else
     { 
-      if(writeDesktop->hasActionGroup(keyGroup) && writeDesktop->actionGroup(keyGroup).hasKey(keyName))
+      if(writeDesktop->hasActionGroup(keyGroup) && writeDesktop->actionGroup(actionName).hasKey(keyName))
       { readFile = writeDesktop; }
       else
       { readFile = desktopFile; }

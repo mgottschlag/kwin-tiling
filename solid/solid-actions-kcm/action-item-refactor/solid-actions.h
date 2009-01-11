@@ -17,44 +17,51 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA          *
  ***************************************************************************/
 
-#ifndef _SOLID_ACTION_ITEM_H_
-#define _SOLID_ACTION_ITEM_H_
+#ifndef _SOLID_ACTIONS_H_
+#define _SOLID_ACTIONS_H_
 
-#include <QObject>
+#include <KCModule>
 
-class QString;
-class KDesktopFile;
-class KServiceAction;
-class KUrl;
-class KConfigGroup;
+#include "ui_solid-actions-config.h"
+#include "ui_solid-actions-edit.h"
+#include "ui_solid-actions-add.h"
 
-class SolidActionItem: public QObject
+class ActionItem;
+
+class SolidActions: public KCModule
 {
-     Q_OBJECT
+    Q_OBJECT
 
 public:
-     SolidActionItem(QString pathToDesktop, QString action, QObject *parent = 0);
-     ~SolidActionItem();
-     void setIcon(QString nameOfIcon);
-     void setName(QString nameOfAction);
-     void setExec(QString execUrl);
-     void setPredicate(QString textOfPredicate);
-     bool isUserSupplied();
-     QString readKey(QString keyGroup, QString keyName);
-     KDesktopFile * desktopWrite();
+    SolidActions( QWidget* parent, const QVariantList&  );
+    ~SolidActions();
+    void load();
+    void save();
+    void defaults();
 
-     QString desktopFilePath;
-     QString writeDesktopPath;
-     QString icon;
-     QString exec;
-     QString name;
-     QString predicate;
-     QString actionName;
+protected:
+
+public slots:
+    void addAction();
+    void editAction();
+    void deleteAction();
+    QListWidgetItem * selectedWidget();
+    ActionItem * selectedAction();
+    void fillActionsList();
+    void acceptActionChanges();
+    void toggleEditDelete(bool toggle);
+    void enableEditDelete();
 
 private:
-     KDesktopFile * desktopFile;
-     KDesktopFile * writeDesktop;
-
+    Ui_SolidActionsConfig *mainUi;
+    Ui_SolidActionEdit *editUi;
+    Ui_SolidActionAdd *addUi;
+    KDialog *editDialog;
+    QWidget *editWidget;
+    KDialog *addDialog;
+    QWidget *addWidget;
+    QMap<QListWidgetItem*, ActionItem*> actionsDb;
+    void clearActions();
 };
 
 #endif
