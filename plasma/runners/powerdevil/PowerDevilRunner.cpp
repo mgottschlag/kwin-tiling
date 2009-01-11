@@ -46,6 +46,7 @@ PowerDevilRunner::PowerDevilRunner( QObject *parent, const QVariantList &args )
      */
 
     m_words << i18nc( "Note this is a KRunner keyword", "power profile" ) <<
+    i18nc( "Note this is a KRunner keyword", "cpu policy" ) <<
     i18nc( "Note this is a KRunner keyword", "power governor" ) <<
     i18nc( "Note this is a KRunner keyword", "power scheme" ) <<
     i18nc( "Note this is a KRunner keyword", "screen brightness" ) <<
@@ -168,7 +169,8 @@ void PowerDevilRunner::match( Plasma::RunnerContext &context )
                     match.setId( "ProfileChange" );
                     context.addMatch( term, match );
                 }
-            } else if ( word == i18nc( "Note this is a KRunner keyword", "power governor" ) ) {
+            } else if ( word == i18nc( "Note this is a KRunner keyword", "cpu policy" ) ||
+                        word == i18nc( "Note this is a KRunner keyword", "power governor" ) ) {
                 foreach( const QString &ent, m_supportedGovernors ) {
                     if ( term.split( ' ' ).count() == 3 ) {
                         if ( !ent.startsWith( term.split( ' ' ).at( 2 ) ) ) {
@@ -199,7 +201,7 @@ void PowerDevilRunner::match( Plasma::RunnerContext &context )
                             break;
                     }
 
-                    match.setText( i18n( "Set CPU Governor to '%1'", ent ) );
+                    match.setText( i18n( "Set CPU frequency scaling policy to '%1'", ent ) );
                     match.setData( m_governorData[ent] );
                     match.setRelevance( 1 );
                     match.setId( "GovernorChange" );
