@@ -26,7 +26,7 @@
 #include "ui_solid-actions-edit.h"
 #include "ui_solid-actions-add.h"
 
-class SolidActionItem;
+class ActionItem;
 
 class SolidActions: public KCModule
 {
@@ -46,7 +46,7 @@ public slots:
     void editAction();
     void deleteAction();
     QListWidgetItem * selectedWidget();
-    SolidActionItem * selectedAction();
+    ActionItem * selectedAction();
     void fillActionsList();
     void acceptActionChanges();
     void toggleEditDelete(bool toggle);
@@ -60,7 +60,7 @@ private:
     QWidget *editWidget;
     KDialog *addDialog;
     QWidget *addWidget;
-    QMap<QListWidgetItem*, SolidActionItem*> actionsDb;
+    QMap<QListWidgetItem*, ActionItem*> actionsDb;
     void clearActions();
 };
 

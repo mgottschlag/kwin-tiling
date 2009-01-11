@@ -9,7 +9,7 @@ INCLUDE_DIRECTORIES (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
 ########### next target ###############
 
 SET(kcm_solid_actions_srcs
-    solid-action-item.cpp
+    action-item.cpp
     solid-actions.cpp )
 
 KDE4_ADD_UI_FILES(kcm_solid_actions_srcs solid-actions-config.ui solid-actions-edit.ui solid-actions-add.ui )

@@ -18,7 +18,7 @@
  ***************************************************************************/
 
 #include "solid-actions.h"
-#include "solid-action-item.h"
+#include "action-item.h"
 
 #include <KGenericFactory>
 #include <KStandardDirs>
@@ -147,9 +147,9 @@ void SolidActions::addAction()
     newDesktop.sync();
     // Prepare to open the editDialog
     fillActionsList();
-    foreach( SolidActionItem * newItem, actionsDb.values() )
+    foreach( ActionItem * newItem, actionsDb.values() )
     { 
-      if( newItem->desktopFilePath == filePath )
+      if( newItem->desktopMasterPath == filePath )
       { newAction = actionsDb.key(newItem);
         break;
       }
@@ -160,13 +160,13 @@ void SolidActions::addAction()
 
 void SolidActions::editAction()
 { 
-    SolidActionItem * selectedItem = selectedAction();
+    ActionItem * selectedItem = selectedAction();
     // Set all the text appropriately
-    editUi->IbActionIcon->setIcon(selectedItem->icon);
-    editUi->LeActionFriendlyName->setText(selectedItem->name);
-    editUi->LeActionCommand->setPath(selectedItem->exec);
-    editUi->LeSolidPredicate->setText(selectedItem->predicate);
-    editDialog->setCaption(i18n("Editing action %1", selectedItem->name));
+    editUi->IbActionIcon->setIcon(selectedItem->icon());
+    editUi->LeActionFriendlyName->setText(selectedItem->name());
+    editUi->LeActionCommand->setPath(selectedItem->exec());
+    editUi->LeSolidPredicate->setText(selectedItem->readKey(ActionItem::GroupDesktop, "X-KDE-Solid-Predicate", ""));
+    editDialog->setCaption(i18n("Editing action %1", selectedItem->name()));
     // Display us!
     editDialog->show();
 }
@@ -174,12 +174,12 @@ void SolidActions::editAction()
 void SolidActions::deleteAction()
 {
     QListWidgetItem * item = selectedWidget();
-    SolidActionItem * action = selectedAction();
+    ActionItem * action = selectedAction();
     if(action->isUserSupplied())
-    { KIO::NetAccess::del(KUrl(action->desktopFilePath), this); }
+    { KIO::NetAccess::del(KUrl(action->desktopMasterPath), this); }
     mainUi->LwActions->removeItemWidget(item);
     actionsDb.remove(item);
-    KIO::NetAccess::del(KUrl(action->writeDesktopPath), this);
+    KIO::NetAccess::del(KUrl(action->desktopWritePath), this);
     fillActionsList();
 }
 
@@ -193,11 +193,11 @@ QListWidgetItem * SolidActions::selectedWidget()
     return 0;
 }
 
-SolidActionItem * SolidActions::selectedAction()
+ActionItem * SolidActions::selectedAction()
 {
     QListWidgetItem *action = selectedWidget();
     // Retrieve the Solid Action Item from the db
-    SolidActionItem * actionItem = actionsDb.value(action);
+    ActionItem * actionItem = actionsDb.value(action);
     return actionItem;
 }
 
@@ -227,8 +227,8 @@ void SolidActions::fillActionsList()
        QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(filePath, true);
        foreach(const KServiceAction &deviceAction, services)
        {  
-          SolidActionItem * actionItem = new SolidActionItem(filePath, deviceAction.name(), this);
-          QListWidgetItem * actionListItem = new QListWidgetItem(KIcon(actionItem->icon), actionItem->name, 0, QListWidgetItem::Type);
+          ActionItem * actionItem = new ActionItem(filePath, deviceAction.name(), this);
+          QListWidgetItem * actionListItem = new QListWidgetItem(KIcon(actionItem->icon()), actionItem->name(), 0, QListWidgetItem::Type);
           mainUi->LwActions->insertItem(mainUi->LwActions->count(), actionListItem);        
           actionsDb.insert(actionListItem, actionItem);
        }
@@ -238,16 +238,16 @@ void SolidActions::fillActionsList()
 
 void SolidActions::acceptActionChanges()
 {  
-    SolidActionItem *selectedItem = selectedAction();
+    ActionItem *selectedItem = selectedAction();
     // apply the changes 
-    if( editUi->IbActionIcon->icon() != selectedItem->icon )
+    if( editUi->IbActionIcon->icon() != selectedItem->icon() )
     { selectedItem->setIcon(editUi->IbActionIcon->icon()); }
-    if( editUi->LeActionFriendlyName->text() != selectedItem->name )
+    if( editUi->LeActionFriendlyName->text() != selectedItem->name() )
     { selectedItem->setName(editUi->LeActionFriendlyName->text()); }
-    if( editUi->LeActionCommand->text() != selectedItem->exec )
+    if( editUi->LeActionCommand->text() != selectedItem->exec() )
     { selectedItem->setExec(editUi->LeActionCommand->text()); }
-    if( editUi->LeSolidPredicate->text() != selectedItem->predicate )
-    { selectedItem->setPredicate(editUi->LeSolidPredicate->text()); }
+    if( editUi->LeSolidPredicate->text() != selectedItem->readKey(ActionItem::GroupDesktop, "X-KDE-Solid-Predicate", "") )
+    { selectedItem->setKey(ActionItem::GroupDesktop, "X-KDE-Solid-Predicate", editUi->LeSolidPredicate->text()); }
     // Re-read the actions list to complete changes
     fillActionsList();
 }
@@ -263,7 +263,7 @@ void SolidActions::toggleEditDelete(bool toggle)
       return;
     }
    
-    KUrl writeDesktopFile(selectedAction()->writeDesktopPath); 
+    KUrl writeDesktopFile(selectedAction()->desktopWritePath); 
     if( selectedAction()->isUserSupplied() )
     { mainUi->PbDeleteAction->setText(i18n("Delete Action")); }
     else if( KIO::NetAccess::exists(writeDesktopFile, true, this) )
@@ -280,7 +280,7 @@ void SolidActions::enableEditDelete()
 
 void SolidActions::clearActions()
 { 
-    foreach( SolidActionItem * deleteAction, actionsDb.values() )
+    foreach( ActionItem * deleteAction, actionsDb.values() )
     { delete deleteAction; }
     mainUi->LwActions->clear();
     actionsDb.clear();

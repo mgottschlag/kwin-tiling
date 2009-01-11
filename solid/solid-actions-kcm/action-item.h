@@ -17,51 +17,52 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA          *
  ***************************************************************************/
 
-#ifndef _SOLID_ACTIONS_H_
-#define _SOLID_ACTIONS_H_
+#ifndef _ACTION_ITEM_H_
+#define _ACTION_ITEM_H_
 
-#include <KCModule>
+#include <QObject>
+#include <QMap>
 
-#include "ui_solid-actions-config.h"
-#include "ui_solid-actions-edit.h"
-#include "ui_solid-actions-add.h"
+class QString;
 
-class ActionItem;
+class KDesktopFile;
+class KConfigGroup;
 
-class SolidActions: public KCModule
+class ActionItem: public QObject
 {
-    Q_OBJECT
+     Q_OBJECT
 
 public:
-    SolidActions( QWidget* parent, const QVariantList&  );
-    ~SolidActions();
-    void load();
-    void save();
-    void defaults();
+     ActionItem(QString pathToDesktop, QString action, QObject *parent = 0);
+     ~ActionItem();
 
-protected:
+     enum GroupType { GroupDesktop = 0, GroupAction = 1 };
 
-public slots:
-    void addAction();
-    void editAction();
-    void deleteAction();
-    QListWidgetItem * selectedWidget();
-    ActionItem * selectedAction();
-    void fillActionsList();
-    void acceptActionChanges();
-    void toggleEditDelete(bool toggle);
-    void enableEditDelete();
+     bool isUserSupplied();
+     QString readKey(GroupType keyGroup, QString keyName, QString defaultValue);
+     void setKey(GroupType keyGroup, QString keyName, QString keyContents);
+     bool hasKey(GroupType keyGroup, QString keyName);
+
+     QString icon();
+     QString exec();
+     QString name();
+     void setIcon(QString nameOfIcon);
+     void setName(QString nameOfAction);
+     void setExec(QString execUrl);
+
+     QString desktopMasterPath;
+     QString desktopWritePath;
+     QString actionName;
 
 private:
-    Ui_SolidActionsConfig *mainUi;
-    Ui_SolidActionEdit *editUi;
-    Ui_SolidActionAdd *addUi;
-    KDialog *editDialog;
-    QWidget *editWidget;
-    KDialog *addDialog;
-    QWidget *addWidget;
-    QMap<QListWidgetItem*, ActionItem*> actionsDb;
-    void clearActions();
+     enum DesktopAction { DesktopRead = 0, DesktopWrite = 1 };
+
+     KConfigGroup configItem(DesktopAction actionType, GroupType keyGroup, QString keyName = QString()); 
+
+     KDesktopFile * desktopFileMaster;
+     KDesktopFile * desktopFileWrite;
+     QMultiMap<GroupType, KConfigGroup> actionGroups;
+
 };
 
 #endif

@@ -38,10 +38,10 @@ ActionItem::ActionItem(QString pathToDesktop, QString action, QObject *parent)
     desktopWritePath = desktopFileMaster->locateLocal(desktopMasterPath);
     desktopFileWrite = new KDesktopFile(desktopWritePath);
     // Now we can fill the action groups list
-    actionGroups.insert(ActionItem::GroupDesktop, desktopFileWrite->desktopGroup());
-    actionGroups.insert(ActionItem::GroupAction, desktopFileWrite->actionGroup(actionName));
-    actionGroups.insert(ActionItem::GroupDesktop, desktopFileMaster->desktopGroup());
-    actionGroups.insert(ActionItem::GroupAction, desktopFileMaster->actionGroup(actionName));
+    actionGroups.insertMulti(ActionItem::GroupDesktop, desktopFileMaster->desktopGroup());
+    actionGroups.insertMulti(ActionItem::GroupAction, desktopFileMaster->actionGroup(actionName));
+    actionGroups.insertMulti(ActionItem::GroupDesktop, desktopFileWrite->desktopGroup());
+    actionGroups.insertMulti(ActionItem::GroupAction, desktopFileWrite->actionGroup(actionName));
 }
 
 ActionItem::~ActionItem()
@@ -57,34 +57,34 @@ bool ActionItem::isUserSupplied()
     return hasKey(ActionItem::GroupDesktop, "X-KDE-Solid-Action-Custom");
 }
 
-QString ActionItem::readKey(GroupType keyGroup, QString keyName)
+QString ActionItem::readKey(GroupType keyGroup, QString keyName, QString defaultValue)
 {
-    return configItem(ActionItem::DesktopRead, keyGroup, keyName)->readEntry(keyName);
+    return configItem(ActionItem::DesktopRead, keyGroup, keyName).readEntry(keyName, defaultValue);
 }
 
 void ActionItem::setKey(GroupType keyGroup, QString keyName, QString keyContents)
 {
-    configItem(ActionItem::DesktopWrite, keyGroup)->writeEntry(keyName, keyContents);
+    configItem(ActionItem::DesktopWrite, keyGroup).writeEntry(keyName, keyContents);
 }
 
 bool ActionItem::hasKey(GroupType keyGroup, QString keyName)
 {
-    return configItem(ActionItem::DesktopRead, keyGroup, keyName)->hasKey(keyName);
+    return configItem(ActionItem::DesktopRead, keyGroup, keyName).hasKey(keyName);
 }
 
 QString ActionItem::icon()
 {
-    return readKey(ActionItem::GroupAction, "Icon");
+    return readKey(ActionItem::GroupAction, "Icon", "");
 }
 
 QString ActionItem::exec()
 {
-    return readKey(ActionItem::GroupAction, "Exec");
+    return readKey(ActionItem::GroupAction, "Exec", "");
 }
 
 QString ActionItem::name()
 {
-    return readKey(ActionItem::GroupAction, "Name");
+    return readKey(ActionItem::GroupAction, "Name", "");
 }
 
 void ActionItem::setIcon(QString nameOfIcon)
@@ -104,17 +104,16 @@ void ActionItem::setExec(QString execUrl)
 
 /// Private functions below
 
-KConfigGroup * ActionItem::configItem(DesktopAction actionType, GroupType keyGroup, QString keyName)
+KConfigGroup ActionItem::configItem(DesktopAction actionType, GroupType keyGroup, QString keyName)
 {
     int countAccess = 0;
-    KConfigGroup * foundGroup = 0;
 
     if(actionType == ActionItem::DesktopRead)
     {
       foreach( KConfigGroup possibleGroup, actionGroups.values(keyGroup) )
-      { if(possibleGroup.isValid()) { kDebug() << "possibleGroup valid"; }
+      {
         if( possibleGroup.hasKey(keyName) )
-        { foundGroup = &possibleGroup;
+        { return possibleGroup;
           break;
         }
       }
@@ -123,9 +122,9 @@ KConfigGroup * ActionItem::configItem(DesktopAction actionType, GroupType keyGro
     {
       if(isUserSupplied())
       { countAccess = 1; }
-      foundGroup = &(actionGroups.values(keyGroup)[countAccess]);
+      return actionGroups.values(keyGroup)[countAccess];
     }
-    return foundGroup;
+    return actionGroups.values(keyGroup)[0]; // Implement a backstop so a valid value is always returned
 }
 
 #include "action-item.moc"
