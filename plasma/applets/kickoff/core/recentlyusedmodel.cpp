@@ -120,7 +120,7 @@ RecentlyUsedModel::RecentlyUsedModel(QObject *parent)
     QDBusConnection dbus = QDBusConnection::sessionBus();
     (void)new RecentAdaptor(this);
     QDBusConnection::sessionBus().registerObject("/kickoff/RecentAppDoc", this);
-    dbus.connect(QString(), "/kickoff/RecentAppDoc", "org.kde.plasma", "cleanRecentDocumentsAndDocuments", this, SLOT(clearRecentDocumentsAndApplications()));
+    dbus.connect(QString(), "/kickoff/RecentAppDoc", "org.kde.plasma", "cleanRecentDocumentsAndApplications", this, SLOT(clearRecentDocumentsAndApplications()));
 
     d->loadRecentApplications();
     d->loadRecentDocuments();
