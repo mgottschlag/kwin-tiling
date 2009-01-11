@@ -46,7 +46,6 @@ Image::Image(QObject *parent, const QVariantList &args)
 Image::~Image()
 {
     qDeleteAll(m_slideshowBackgrounds);
-    delete m_dialog;
 }
 
 void Image::init(const KConfigGroup &config)
