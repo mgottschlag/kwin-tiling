@@ -25,20 +25,20 @@
 class RandRMode
 {
 public:
-	RandRMode(XRRModeInfo *info = 0);
-	~RandRMode();
+    RandRMode(XRRModeInfo *info = 0);
+    ~RandRMode();
 
-	RRMode id() const;
-	QString name() const;
-	bool isValid() const;
-	QSize size() const;
-	float refreshRate() const;
+    RRMode id() const;
+    QString name() const;
+    bool isValid() const;
+    QSize size() const;
+    float refreshRate() const;
 private:
-	bool m_valid;
-	QString m_name;
-	QSize m_size;
-	float m_rate;
-	RRMode m_id;
+    bool m_valid;
+    QString m_name;
+    QSize m_size;
+    float m_rate;
+    RRMode m_id;
 };
 
 

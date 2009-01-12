@@ -31,66 +31,66 @@
 /** Class representing a CRT controller. */
 class RandRCrtc : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	RandRCrtc(RandRScreen *parent, RRCrtc id);
-	~RandRCrtc();
+    RandRCrtc(RandRScreen *parent, RRCrtc id);
+    ~RandRCrtc();
 
-	RRCrtc id() const;
-	int rotations() const;
-	int rotation() const;
+    RRCrtc id() const;
+    int rotations() const;
+    int rotation() const;
 
-	void loadSettings(bool notify = false);
-	void handleEvent(XRRCrtcChangeNotifyEvent *event);
+    void loadSettings(bool notify = false);
+    void handleEvent(XRRCrtcChangeNotifyEvent *event);
 
-	bool isValid(void) const;
-	RandRMode mode() const;
-	QRect rect() const;
-	float refreshRate() const;
+    bool isValid(void) const;
+    RandRMode mode() const;
+    QRect rect() const;
+    float refreshRate() const;
 
-	bool proposeSize(const QSize &s);
-	bool proposePosition(const QPoint &p);
-	bool proposeRotation(int rotation);
-	bool proposeRefreshRate(float rate);
-	
-	// applying stuff
-	bool applyProposed();
-	void proposeOriginal();
-	void setOriginal(); 
-	bool proposedChanged();
+    bool proposeSize(const QSize &s);
+    bool proposePosition(const QPoint &p);
+    bool proposeRotation(int rotation);
+    bool proposeRefreshRate(float rate);
+    
+    // applying stuff
+    bool applyProposed();
+    void proposeOriginal();
+    void setOriginal(); 
+    bool proposedChanged();
 
-	bool addOutput(RROutput output, const QSize &size = QSize());
-	bool removeOutput(RROutput output);
-	OutputList connectedOutputs() const;
+    bool addOutput(RROutput output, const QSize &size = QSize());
+    bool removeOutput(RROutput output);
+    OutputList connectedOutputs() const;
 
-	ModeList modes() const;
+    ModeList modes() const;
 
 signals:
-	void crtcChanged(RRCrtc c, int changes);
+    void crtcChanged(RRCrtc c, int changes);
 
 private:
-	RRCrtc m_id;
-	RRMode m_currentMode;
-	
-	QRect m_currentRect;
-	float m_currentRate;
-	int m_currentRotation;
+    RRCrtc m_id;
+    RRMode m_currentMode;
+    
+    QRect m_currentRect;
+    float m_currentRate;
+    int m_currentRotation;
 
 
-	QRect m_originalRect;
-	float m_originalRate;
-	int m_originalRotation;
+    QRect m_originalRect;
+    float m_originalRate;
+    int m_originalRotation;
 
-	QRect m_proposedRect;
-	float m_proposedRate;
-	int m_proposedRotation;
-	
-	OutputList m_connectedOutputs;
-	OutputList m_possibleOutputs;
-	int m_rotations;
+    QRect m_proposedRect;
+    float m_proposedRate;
+    int m_proposedRotation;
+    
+    OutputList m_connectedOutputs;
+    OutputList m_possibleOutputs;
+    int m_rotations;
 
-	RandRScreen *m_screen;
+    RandRScreen *m_screen;
 };
 
 #endif

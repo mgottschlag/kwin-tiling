@@ -20,62 +20,62 @@
 
 
 RandRMode::RandRMode(XRRModeInfo *info)
-	: m_size(0, 0)
+    : m_size(0, 0)
 {
-	m_valid = false;
-	m_rate = 0;
-	m_id = 0;
-	m_name = "Invalid mode";
-	
-	if (info)
-		m_valid = true;
-	else
-		return;
+    m_valid = false;
+    m_rate = 0;
+    m_id = 0;
+    m_name = "Invalid mode";
+    
+    if (info)
+        m_valid = true;
+    else
+        return;
 
-	m_name = info->name;
-	m_id = info->id;
+    m_name = info->name;
+    m_id = info->id;
 
-	m_size.setWidth(info->width);
-	m_size.setHeight(info->height);
-	
-	// calculate the refresh rate
-	if (info->hTotal && info->vTotal)
-		m_rate = ((float) info->dotClock / ((float) info->hTotal * (float) info->vTotal));
-	else
-		m_rate = 0;
+    m_size.setWidth(info->width);
+    m_size.setHeight(info->height);
+    
+    // calculate the refresh rate
+    if (info->hTotal && info->vTotal)
+        m_rate = ((float) info->dotClock / ((float) info->hTotal * (float) info->vTotal));
+    else
+        m_rate = 0;
 
 }
 
 RandRMode::~RandRMode()
 {
-	// nothing to do for now
+    // nothing to do for now
 }
 
 RRMode RandRMode::id() const
 {
-	if (!m_valid)
-		return None;
+    if (!m_valid)
+        return None;
 
-	return m_id;
+    return m_id;
 }
 
 QString RandRMode::name() const
 {
-	return m_name;
+    return m_name;
 }
 
 QSize RandRMode::size() const
 {
-	return m_size;
+    return m_size;
 }
 
 float RandRMode::refreshRate() const
 {
-	return m_rate;
+    return m_rate;
 }
 
 bool RandRMode::isValid() const
 {
-	return m_valid;
+    return m_valid;
 }
 
