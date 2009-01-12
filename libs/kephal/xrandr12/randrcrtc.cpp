@@ -144,12 +144,17 @@ void RandRCrtc::loadSettings(bool notify)
 
 void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
 {
-	qDebug() << "[CRTC] Event...";
-	int changed = 0;
+	qDebug() << "[CRTC" << m_id << "] Event...";
+    qDebug() << "       mode: " << event->mode << "(current " << m_currentMode << ")";
+    qDebug() << "       pos: (" << event->x << "," << event->y << ")";
+    qDebug() << "       size: " << event->width << "x" << event->height;
+    qDebug() << "       rotation: " << event->rotation;
+
+    int changed = 0;
 
 	if (event->mode != m_currentMode)
 	{
-		qDebug() << "   Changed mode";
+		qDebug() << "   Changed mode - old " << m_currentMode << " - new " << event->mode;
 		changed |= RandR::ChangeMode;
 		m_currentMode = event->mode;
 	}

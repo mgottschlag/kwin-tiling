@@ -172,12 +172,12 @@ void KephalD::activateConfiguration() {
 
 void KephalD::outputDisconnected(Output * output) {
     Q_UNUSED(output)
-    activateConfiguration();
+//     activateConfiguration();
 }
 
 void KephalD::outputConnected(Output * output) {
     Q_UNUSED(output)
-    activateConfiguration();
+//     activateConfiguration();
 }
 
 #ifdef Q_WS_X11 

@@ -126,9 +126,9 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 {
 	int changed = 0;
 
-	qDebug() << "[OUTPUT] Got event for " << m_name;
-	qDebug() << "       crtc: " << event->crtc;
-	qDebug() << "       mode: " << event->mode;
+	qDebug() << "[OUTPUT" << m_id << "] Got event for " << m_name;
+	qDebug() << "       crtc: " << event->crtc << "(current " << m_crtc->id() << ")";
+	qDebug() << "       mode: " << event->mode << "(current " << mode().id() << ")";
 	qDebug() << "       rotation: " << event->rotation;
 	qDebug() << "       connection: " << event->connection;
 
@@ -145,7 +145,7 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 		if (currentCrtc != None)
 			m_crtc->loadSettings(true);
 			//m_screen->crtc(m_currentCrtc)->loadSettings(true);
-		m_crtc = m_screen->crtc(event->crtc);
+		setCrtc(m_screen->crtc(event->crtc));
 		if (currentCrtc != None)
 			m_crtc->loadSettings(true);
 	}
@@ -161,7 +161,7 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 		changed |= RandR::ChangeConnection;
 		m_connected = (event->connection == RR_Connected);
 		if (!m_connected && currentCrtc != None)
-			m_crtc = None;
+			m_crtc = m_screen->crtc(None);
 	}
 
 	if(changed)
@@ -253,6 +253,7 @@ SizeList RandROutput::sizes() const
 
 QRect RandROutput::rect() const
 {
+    if (!m_crtc) qDebug() << "No Crtc for output" << m_id;
         Q_ASSERT(m_crtc);
 	if (!m_crtc->isValid())
 		return QRect(0, 0, 0, 0);
@@ -304,7 +305,7 @@ bool RandROutput::isConnected() const
 
 bool RandROutput::isActive() const
 {
-	return (m_connected && m_crtc->id() != None);
+	return (m_connected && mode().isValid() && m_crtc->id() != None);
 }
 
 void RandROutput::proposeOriginal()
@@ -407,7 +408,7 @@ bool RandROutput::setCrtc(RandRCrtc *crtc, bool applyNow)
 		           this, SLOT(slotCrtcChanged(RRCrtc, int)));
 				 
 		m_crtc->removeOutput(m_id);
-		m_crtc->applyProposed();
+// 		m_crtc->applyProposed();
 	}
 	m_crtc = crtc;
 	if (!m_crtc->isValid())

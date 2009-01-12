@@ -60,8 +60,10 @@ namespace Kephal {
             void deactivate();
             //void _activate();
             RROutput _id();
-            void _changed();
 
+        public Q_SLOTS:
+            void outputChanged(RROutput id, int changes);
+            
         Q_SIGNALS:
             void outputConnected(Kephal::Output * o);
             void outputDisconnected(Kephal::Output * o);
@@ -103,9 +105,6 @@ namespace Kephal {
             RandROutput * output(RROutput rrId);
             using Outputs::output;
             RandRDisplay * display();
-            
-        public Q_SLOTS:
-            void outputChanged(RROutput id, int changes);
             
         private:
             void init();

@@ -53,6 +53,9 @@ namespace Kephal {
         protected:
             virtual void prepareScreens(QMap<int, OutputScreen *> & screens);
             void rebuildScreens();
+            void triggerRebuildScreens(); // Triggers a rebuild aftera short delay; requests are coalesced.
+            
+            void timerEvent(QTimerEvent *event);
             
         private Q_SLOTS:
             void outputActivated(Kephal::Output * o);
@@ -66,6 +69,9 @@ namespace Kephal {
             int findId();
             
             QMap<int, OutputScreen *> m_screens;
+            
+            int m_rebuildTimerId;
+            int m_rebuildDelay;
     };
     
 }

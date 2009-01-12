@@ -172,11 +172,11 @@ void KephalD::activateConfiguration() {
 }
 
 void KephalD::outputDisconnected(Output * output) {
-    activateConfiguration();
+//     activateConfiguration();
 }
 
 void KephalD::outputConnected(Output * output) {
-    activateConfiguration();
+//     activateConfiguration();
 }
 
 
