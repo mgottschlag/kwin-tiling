@@ -94,5 +94,4 @@ X-KDE-Library=krubypluginfactory
 X-KDE-PluginKeyword=plasma_scriptengine_ruby/data_engine.rb
 X-EngineName=ruby-dataengine-script
 X-Plasma-API=ruby-script
-X-Plasma-PackageFormat=Ruboid
 X-Plasma-ComponentTypes=DataEngine
