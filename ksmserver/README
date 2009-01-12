@@ -72,7 +72,7 @@ always loaded by kded, even outside of KDE session. It should used only
 by kded modules which must be always running. Kded phase 1 modules are
 loaded right after kded startup, but only during KDE startup, i.e. it is
 for modules that are always needed by the KDE session. Phase 2 modules
-will be loaded later. [More informations about kded modules could be 
+will be loaded later. [More information about kded modules could be
 found in kdelibs/kded/HOWTO]
 
 Startkde also launches kcminit, which performs initialization done by kcontrol
