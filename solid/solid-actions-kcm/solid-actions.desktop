@@ -10,7 +10,18 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=advanced-user-settings
 
 Name=Device Actions
+Name[km]=សកម្មភាព​ឧបករណ៍
+Name[nds]=Reedschap-Akschonen
+Name[pt]=Acções dos Dispositivos
+Name[pt_BR]=Acções dos Dispositivos
+Name[tr]=Aygıt Eylemleri
+Name[uk]=Дії з пристроями
 
 Comment=A configuration tool for managing the actions available to the user when new devices to the computer
+Comment[km]=ឧបករណ៍​កំណត់​​រចនាសម្ព័ន្ធ​សម្រាប់​គ្រប់គ្រង​សកម្មភាព​ដែល​អ្នក​ប្រើ​អាច​ប្រើបាន នៅពេល​ឧបករណ៍​ថ្មី​ទៅ​កុំព្យូទ័រ
+Comment[nds]=En Instellwarktüüch för de Akschonen, de för Brukers praatstaht, wenn nieg Reedschappen den Reekner tokoppelt warrt.
+Comment[pt]=Uma ferramenta de configuração para gerir as acções disponíveis ao utilizador quando forem ligados dispositivos novos ao computador
+Comment[pt_BR]=Uma ferramenta de configuração para gerir as acções disponíveis ao utilizador quando forem ligados dispositivos novos ao computador
+Comment[uk]=Інструмент налаштування для керування діями, доступними користувачеві, після з’єднання пристроїв з комп’ютером
 
 X-KDE-Keywords=Solid Devices Actions
