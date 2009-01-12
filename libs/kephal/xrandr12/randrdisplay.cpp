@@ -147,6 +147,7 @@ void RandRDisplay::handleEvent(XEvent *e)
 {
 	if (e->type == m_eventBase + RRScreenChangeNotify) {
 			XRRScreenChangeNotifyEvent *event = (XRRScreenChangeNotifyEvent*)(e);
+            qDebug() << "RandRDisplay::handleEvent - RRScreenChangeNotify win: " << event->window << " root: " << event->root;
 			for (int i=0; i < m_screens.count(); ++i) {
 				RandRScreen *screen = m_screens.at(i);
 				if (screen->rootWindow() == event->root)
@@ -157,13 +158,18 @@ void RandRDisplay::handleEvent(XEvent *e)
 	else if (e->type == m_eventBase + RRNotify) {
 		//forward the event to the right screen
 		XRRNotifyEvent *event = (XRRNotifyEvent*)e;
+        qDebug() << "RandRDisplay::handleEvent - RRNotify win: " << event->window;
 		for (int i=0; i < m_screens.count(); ++i) {
 			RandRScreen *screen = m_screens.at(i);
-			if ( screen->rootWindow() == event->window ) {
+            // TODO: removed the window check because randr seems to pass an incorrect window
+			// if ( screen->rootWindow() == event->window ) {
 				screen->handleRandREvent(event);
-			}
+			// }
 		}
 	}
+    else {
+        qDebug() << "RandRDisplay::handleEvent - Other";            
+    }
 }
 
 int RandRDisplay::numScreens() const

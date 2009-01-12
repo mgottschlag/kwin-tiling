@@ -45,9 +45,11 @@ namespace Kephal {
     }
     
     void XRandROutputs::init() {
+        qDebug() << "XRandROutputs::init";
         RandRScreen * screen = m_display->screen(0);
         foreach (RandROutput * output, screen->outputs()) {
             XRandROutput * o = new XRandROutput(this, output->id());
+            qDebug() << "  added output " << output->id();
             m_outputs.insert(o->id(), o);
         }
     }
@@ -59,20 +61,6 @@ namespace Kephal {
     RandRDisplay * XRandROutputs::display() {
         return m_display;
     }
-    
-    void XRandROutputs::outputChanged(RROutput id, int changes)
-    {
-        Q_UNUSED(changes)
-        qDebug() << "output changed:" << id;
-        
-        foreach (XRandROutput * output, m_outputs) {
-            if (output->_id() == id) {
-                output->_changed();
-            }
-        }
-    }
-    
-    
     
     XRandROutput::XRandROutput(XRandROutputs * parent, RROutput rrId)
             : BackendOutput(parent)
@@ -94,7 +82,7 @@ namespace Kephal {
         connect(this, SIGNAL(outputRotated(Kephal::Output *, Kephal::Rotation, Kephal::Rotation)), parent, SIGNAL(outputRotated(Kephal::Output *, Kephal::Rotation, Kephal::Rotation)));
         connect(this, SIGNAL(outputReflected(Kephal::Output *, bool, bool, bool, bool)), parent, SIGNAL(outputReflected(Kephal::Output *, bool, bool, bool, bool)));
         
-        connect(output(), SIGNAL(outputChanged(RROutput, int)), parent, SLOT(outputChanged(RROutput, int)));
+        connect(output(), SIGNAL(outputChanged(RROutput, int)), this, SLOT(outputChanged(RROutput, int)));
         //connect(this, SLOT(_activate()), output(), SLOT(slotEnable()));
         //connect(this, SLOT(_deactivate()), output(), SLOT(slotDisable()));
     }
@@ -155,8 +143,9 @@ namespace Kephal {
         XFree(data);
     }
     
-    void XRandROutput::_changed() {
-        qDebug() << "XRandROutput::_changed()" << isConnected() << isActivated() << geom();
+    void XRandROutput::outputChanged(RROutput id, int changes) {
+        Q_ASSERT(id == m_rrId);
+        qDebug() << "XRandROutput::outputChanged" << isConnected() << isActivated() << geom();
         if (isConnected() != m_previousConnected) {
             if (isConnected()) {
                 saveAsPrevious();

@@ -83,7 +83,11 @@ public:
 
 	QRect rect() const;
         
-        void pollState();
+    void pollState();
+
+protected:
+	bool loadModes();
+	void reloadResources();
 
 public slots:
 	void slotOutputChanged(RROutput id, int changes);

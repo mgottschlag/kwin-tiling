@@ -26,7 +26,9 @@
 namespace Kephal {
 
     OutputScreens::OutputScreens(QObject * parent)
-        : Screens(parent)
+        : Screens(parent),
+        m_rebuildTimerId(0),
+        m_rebuildDelay(0)
     {
         init();
     }
@@ -59,30 +61,30 @@ namespace Kephal {
     
     void OutputScreens::outputActivated(Kephal::Output * o) {
         Q_UNUSED(o)
-        
-        rebuildScreens();
+        qDebug() << "OutputScreens::outputActivated";
+        triggerRebuildScreens();
     }
 
     void OutputScreens::outputDeactivated(Kephal::Output * o) {
         Q_UNUSED(o)
-        
-        rebuildScreens();
+        qDebug() << "OutputScreens::outputDeactivated";
+        triggerRebuildScreens();
     }
 
     void OutputScreens::outputMoved(Kephal::Output * o, QPoint oldPosition, QPoint newPosition) {
         Q_UNUSED(o)
         Q_UNUSED(oldPosition)
         Q_UNUSED(newPosition)
-        
-        rebuildScreens();
+        qDebug() << "OutputScreens::outputMoved";
+        triggerRebuildScreens();
     }
 
     void OutputScreens::outputResized(Kephal::Output * o, QSize oldSize, QSize newSize) {
         Q_UNUSED(o)
         Q_UNUSED(oldSize)
         Q_UNUSED(newSize)
-        
-        rebuildScreens();
+        qDebug() << "OutputScreens::outputResized";
+        triggerRebuildScreens();
     }
     
     void OutputScreens::buildScreens() {
@@ -166,8 +168,28 @@ namespace Kephal {
         }
     }
     
+    void OutputScreens::triggerRebuildScreens() {
+        qDebug() << "OutputScreens::triggerRebuildScreens()";
+        m_rebuildDelay = 5;
+        if (! m_rebuildTimerId)
+            m_rebuildTimerId = startTimer(40);
+    }
+    
+    void OutputScreens::timerEvent(QTimerEvent *event) {
+        Q_UNUSED(event)
+        if (m_rebuildDelay == 0) {
+            killTimer(m_rebuildTimerId);
+            m_rebuildTimerId = 0;
+            rebuildScreens();
+        }
+        
+        m_rebuildDelay--;
+    }
+    
+
+    
     void OutputScreens::rebuildScreens() {
-        //qDebug() << "OutputScreens::rebuildScreens()";
+        qDebug() << "OutputScreens::rebuildScreens()";
         
         QMap<int, QRect> geoms;
         for (QMap<int, OutputScreen *>::const_iterator i = m_screens.constBegin(); i != m_screens.constEnd(); ++i) {
@@ -181,12 +203,15 @@ namespace Kephal {
         for (QMap<int, OutputScreen *>::const_iterator i = m_screens.constBegin(); i != m_screens.constEnd(); ++i) {
             if (! geoms.contains(i.key())) {
                 emit screenAdded(i.value());
+                qDebug() << "rebuild: emitted screenAdded " << i.key();
             } else if (geoms[i.key()] != i.value()->geom()) {
                 if (geoms[i.key()].topLeft() != i.value()->geom().topLeft()) {
                     emit screenMoved(i.value(), geoms[i.key()].topLeft(), i.value()->geom().topLeft());
+                    qDebug() << "rebuild: emitted screenMoved " << i.key() << " - old " << geoms[i.key()] << " - new " << i.value()->geom();
                 }
                 if (geoms[i.key()].size() != i.value()->geom().size()) {
                     emit screenResized(i.value(), geoms[i.key()].size(), i.value()->geom().size());
+                    qDebug() << "rebuild: emitted screenResized " << i.key() << " - old " << geoms[i.key()] << " - new " << i.value()->geom();
                 }
             }
         }
@@ -194,6 +219,7 @@ namespace Kephal {
         for (QMap<int, QRect>::const_iterator i = geoms.constBegin(); i != geoms.constEnd(); ++i) {
             if (! m_screens.contains(i.key())) {
                 emit screenRemoved(i.key());
+                qDebug() << "rebuild: emitted screenRemoved " << i.key();
             }
         }
     }

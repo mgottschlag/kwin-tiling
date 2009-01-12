@@ -72,6 +72,15 @@ void RandRScreen::pollState()
     XRRFreeScreenResources(XRRGetScreenResources(QX11Info::display(), rootWindow()));
 }
 
+void RandRScreen::reloadResources()
+{
+	if (m_resources)
+		XRRFreeScreenResources(m_resources);
+
+	m_resources = XRRGetScreenResources(QX11Info::display(), rootWindow());
+	Q_ASSERT(m_resources);
+}
+
 void RandRScreen::loadSettings(bool notify)
 {
 	bool changed = false;
@@ -91,23 +100,12 @@ void RandRScreen::loadSettings(bool notify)
 		changed = true;
 	}
 
-	if (m_resources)
-		XRRFreeScreenResources(m_resources);
-
-	m_resources = XRRGetScreenResources(QX11Info::display(), rootWindow());
-	Q_ASSERT(m_resources);
+	reloadResources();
 
 	RandR::timestamp = m_resources->timestamp;
 
 	// get all modes
-	for (int i = 0; i < m_resources->nmode; ++i)
-	{
-		if (!m_modes.contains(m_resources->modes[i].id))
-		{
-			m_modes[m_resources->modes[i].id] = RandRMode(&m_resources->modes[i]);
-			changed = true;
-		}
-	}
+    changed |= loadModes();
 
 	//get all crtcs
 	RandRCrtc *c_none = new RandRCrtc(this, None);
@@ -115,14 +113,16 @@ void RandRScreen::loadSettings(bool notify)
 	
 	for (int i = 0; i < m_resources->ncrtc; ++i)
 	{
-		if (m_crtcs.contains(m_resources->crtcs[i]))
-			m_crtcs[m_resources->crtcs[i]]->loadSettings(notify);
+        RRCrtc crtc = m_resources->crtcs[i];
+		if (m_crtcs.contains(crtc))
+			m_crtcs[crtc]->loadSettings(notify);
 		else
 		{
-			RandRCrtc *c = new RandRCrtc(this, m_resources->crtcs[i]);
-                        c->loadSettings(notify);
+            qDebug() << "RandRScreen::loadSettings - adding crtc: " << crtc;
+			RandRCrtc *c = new RandRCrtc(this, crtc);
+            c->loadSettings(notify);
 			connect(c, SIGNAL(crtcChanged(RRCrtc, int)), this, SIGNAL(configChanged()));
-			m_crtcs[m_resources->crtcs[i]] = c;
+			m_crtcs[crtc] = c;
 			changed = true;
 		}
 	}
@@ -130,14 +130,16 @@ void RandRScreen::loadSettings(bool notify)
 	//get all outputs
 	for (int i = 0; i < m_resources->noutput; ++i)
 	{
-		if (m_outputs.contains(m_resources->outputs[i]))
+        RROutput output = m_resources->outputs[i];
+		if (m_outputs.contains(output))
 			;//m_outputs[m_resources->outputs[i]]->loadSettings(notify);
 		else
 		{
-			RandROutput *o = new RandROutput(this, m_resources->outputs[i]);
+            qDebug() << "RandRScreen::loadSettings - adding output: " << output;
+			RandROutput *o = new RandROutput(this, output);
 			connect(o, SIGNAL(outputChanged(RROutput, int)), this,
 				      SLOT(slotOutputChanged(RROutput, int)));
-			m_outputs[m_resources->outputs[i]] = o;
+			m_outputs[output] = o;
 			if (o->isConnected())
 				m_connectedCount++;
 			if (o->isActive())
@@ -152,10 +154,38 @@ void RandRScreen::loadSettings(bool notify)
 
 }
 
+bool RandRScreen::loadModes()
+{
+    bool changed = false;
+    for (int i = 0; i < m_resources->nmode; ++i)
+    {
+        XRRModeInfo mode = m_resources->modes[i];
+        if (!m_modes.contains(mode.id))
+        {
+            qDebug() << "RandRScreen::loadSettings - adding mode: " << mode.id << mode.width << "x" << mode.height;
+            m_modes[mode.id] = RandRMode(&mode);
+            changed = true;
+        }
+    }
+    
+    return changed;
+}
+
 void RandRScreen::handleEvent(XRRScreenChangeNotifyEvent* event)
 {
+    qDebug() << "RandRScreen::handleEvent";
+    
 	m_rect.setWidth(event->width);
 	m_rect.setHeight(event->height);
+    
+	reloadResources();
+    loadModes();
+	qDebug() << "Reloaded modes";
+    
+//     foreach(RandROutput *output, m_outputs) {
+//         output->loadSettings(false);
+//     }
+
 
 	emit configChanged();
 }
@@ -171,6 +201,7 @@ void RandRScreen::handleRandREvent(XRRNotifyEvent* event)
 	// forward events to crtcs and outputs
 	switch (event->subtype) {
 		case RRNotify_CrtcChange:
+            qDebug() << "RandRScreen::handleRandREvent - CrtcChange";
 			crtcEvent = (XRRCrtcChangeNotifyEvent*)event;
 			c = crtc(crtcEvent->crtc);
 			Q_ASSERT(c);
@@ -178,6 +209,7 @@ void RandRScreen::handleRandREvent(XRRNotifyEvent* event)
 			return;
 
 		case RRNotify_OutputChange:
+            qDebug() << "RandRScreen::handleRandREvent - OutputChange";
 			outputEvent = (XRROutputChangeNotifyEvent*)event;
 			o = output(outputEvent->output);
 			Q_ASSERT(o);
@@ -185,11 +217,15 @@ void RandRScreen::handleRandREvent(XRRNotifyEvent* event)
 			return;
 
 		case RRNotify_OutputProperty:
+            qDebug() << "RandRScreen::handleRandREvent - OutputProperty";
 			propertyEvent = (XRROutputPropertyNotifyEvent*)event;
 			o = output(propertyEvent->output);
 			Q_ASSERT(o);
 			o->handlePropertyEvent(propertyEvent);
 			return;
+            
+        default:
+            qDebug() << "RandRScreen::handleRandREvent - Other";
 	}	
 }
 

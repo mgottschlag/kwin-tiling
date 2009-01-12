@@ -23,6 +23,7 @@
 #include "kephal/configurations.h"
 #include "configurations/backendconfigurations.h"
 
+#include "QDebug"
 
 namespace Kephal {
 
@@ -34,7 +35,8 @@ namespace Kephal {
     
     void ConfigurationScreens::configurationActivated(Configuration * configuration) {
         Q_UNUSED(configuration)
-        rebuildScreens();
+        qDebug() << "ConfigurationScreens::configurationActivated";
+        triggerRebuildScreens();
     }
     
     void ConfigurationScreens::prepareScreens(QMap<int, OutputScreen *> & screens) {
