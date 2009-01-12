@@ -34,82 +34,82 @@ class QSize;
 
 class RandRScreen : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	RandRScreen(int screenIndex);
-	~RandRScreen();
+    RandRScreen(int screenIndex);
+    ~RandRScreen();
 
-	int index() const;
+    int index() const;
 
-	XRRScreenResources* resources() const;
-	Window rootWindow() const;
+    XRRScreenResources* resources() const;
+    Window rootWindow() const;
 
-	QSize minSize() const;
-	QSize maxSize() const;
+    QSize minSize() const;
+    QSize maxSize() const;
 
-	void loadSettings(bool notify = false);
+    void loadSettings(bool notify = false);
 
-	void handleEvent(XRRScreenChangeNotifyEvent* event);
-	void handleRandREvent(XRRNotifyEvent* event);
+    void handleEvent(XRRScreenChangeNotifyEvent* event);
+    void handleRandREvent(XRRNotifyEvent* event);
 
-	CrtcMap  crtcs() const;
-	RandRCrtc *crtc(RRCrtc id) const;
-	
-	OutputMap outputs() const;
-	RandROutput *output(RROutput id) const;
+    CrtcMap  crtcs() const;
+    RandRCrtc *crtc(RRCrtc id) const;
+    
+    OutputMap outputs() const;
+    RandROutput *output(RROutput id) const;
 
-	ModeMap modes() const;
-	RandRMode mode(RRMode id) const;
+    ModeMap modes() const;
+    RandRMode mode(RRMode id) const;
 
-	bool adjustSize(const QRect &minimumSize = QRect(0,0,0,0));
-	bool setSize(const QSize &s);
+    bool adjustSize(const QRect &minimumSize = QRect(0,0,0,0));
+    bool setSize(const QSize &s);
 
-	/**
-	 * Return the number of connected outputs
-	 */
-	int connectedCount() const;
+    /**
+     * Return the number of connected outputs
+     */
+    int connectedCount() const;
 
-	/**
-	 * Return the number of active outputs
-	 */
-	int activeCount() const;
+    /**
+     * Return the number of active outputs
+     */
+    int activeCount() const;
 
-	bool outputsUnified() const;
-	void setOutputsUnified(bool unified);
+    bool outputsUnified() const;
+    void setOutputsUnified(bool unified);
 
-	int unifiedRotations() const;
-	SizeList unifiedSizes() const;
+    int unifiedRotations() const;
+    SizeList unifiedSizes() const;
 
-	QRect rect() const;
+    QRect rect() const;
         
     void pollState();
 
 protected:
-	bool loadModes();
-	void reloadResources();
+    bool loadModes();
+    void reloadResources();
 
 public slots:
-	void slotOutputChanged(RROutput id, int changes);
+    void slotOutputChanged(RROutput id, int changes);
 
 signals:
-	void configChanged();
+    void configChanged();
 
 private:
-	int m_index;
-	QSize m_minSize;
-	QSize m_maxSize;
-	QRect m_rect;
+    int m_index;
+    QSize m_minSize;
+    QSize m_maxSize;
+    QRect m_rect;
 
-	int m_connectedCount;
-	int m_activeCount;
+    int m_connectedCount;
+    int m_activeCount;
 
-	XRRScreenResources* m_resources;
+    XRRScreenResources* m_resources;
 
-	CrtcMap m_crtcs;
-	OutputMap m_outputs;
-	ModeMap m_modes;
-		
+    CrtcMap m_crtcs;
+    OutputMap m_outputs;
+    ModeMap m_modes;
+        
 };
 
 #endif

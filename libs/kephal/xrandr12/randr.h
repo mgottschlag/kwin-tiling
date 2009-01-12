@@ -62,34 +62,34 @@ typedef QList<QSize> SizeList;
 class RandR
 {
 public:
-	//static bool has_1_2;
-	static Time timestamp;
-	
-	static const int OrientationCount = 6;
-	static const int RotationCount    = 4;
-	
-	enum Orientations {
-		Rotate0        = RR_Rotate_0,
-		Rotate90       = RR_Rotate_90,
-		Rotate180      = RR_Rotate_180,
-		Rotate270      = RR_Rotate_270,
-		RotateMask     = (RR_Rotate_0 | RR_Rotate_90 | RR_Rotate_180 | RR_Rotate_270),
-		ReflectX       = RR_Reflect_X,
-		ReflectY       = RR_Reflect_Y,
-		ReflectMask    = (RR_Reflect_X | RR_Reflect_Y),
-		OrientationMask = (RotateMask | ReflectMask)
-	};
-	
-	enum Changes 
-	{
-		ChangeCrtc       = 0x01,
-		ChangeOutputs    = 0x02,
-		ChangeMode       = 0x04,
-		ChangeRotation   = 0x08,
-		ChangeConnection = 0x10,
-		ChangeRect       = 0x20,
-		ChangeRate       = 0x40
-	};
+    //static bool has_1_2;
+    static Time timestamp;
+    
+    static const int OrientationCount = 6;
+    static const int RotationCount    = 4;
+    
+    enum Orientations {
+        Rotate0        = RR_Rotate_0,
+        Rotate90       = RR_Rotate_90,
+        Rotate180      = RR_Rotate_180,
+        Rotate270      = RR_Rotate_270,
+        RotateMask     = (RR_Rotate_0 | RR_Rotate_90 | RR_Rotate_180 | RR_Rotate_270),
+        ReflectX       = RR_Reflect_X,
+        ReflectY       = RR_Reflect_Y,
+        ReflectMask    = (RR_Reflect_X | RR_Reflect_Y),
+        OrientationMask = (RotateMask | ReflectMask)
+    };
+    
+    enum Changes 
+    {
+        ChangeCrtc       = 0x01,
+        ChangeOutputs    = 0x02,
+        ChangeMode       = 0x04,
+        ChangeRotation   = 0x08,
+        ChangeConnection = 0x10,
+        ChangeRect       = 0x20,
+        ChangeRate       = 0x40
+    };
 
 };
 
