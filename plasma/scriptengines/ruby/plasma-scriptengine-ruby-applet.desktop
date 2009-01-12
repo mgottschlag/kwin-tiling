@@ -97,7 +97,5 @@ Type=Service
 Icon=text-x-script
 X-KDE-Library=krubypluginfactory
 X-KDE-PluginKeyword=plasma_scriptengine_ruby/applet.rb
-X-EngineName=ruby-applet-script
 X-Plasma-API=ruby-script
-X-Plasma-PackageFormat=Ruboid
 X-Plasma-ComponentTypes=Applet
