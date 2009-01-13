@@ -130,6 +130,7 @@ Calendar::Calendar(QGraphicsWidget *parent)
 
     d->dateText = new Plasma::LineEdit(this);
     connect(d->calendarTable, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateUpdated(const QDate &)));
+    connect(d->calendarTable, SIGNAL(displayedMonthChanged(int, int)), this, SLOT(goToMonth(int, int)));
     connect(d->dateText->nativeWidget(), SIGNAL(returnPressed()), this, SLOT(manualDateChange()));
     m_layoutTools->addItem(d->dateText);
     m_layoutTools->addStretch();
@@ -297,6 +298,11 @@ void Calendar::goToWeek(int week)
 
         setDate(firstDayOfWeek);
     }
+}
+
+void Calendar::goToMonth(int year, int month)
+{
+    setDate(QDate(year, month, 1));
 }
 
 void Calendar::showYearSpinBox()
