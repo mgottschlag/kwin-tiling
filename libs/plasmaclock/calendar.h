@@ -63,6 +63,7 @@ private Q_SLOTS:
     void dateUpdated(const QDate &date);
     void goToToday();
     void goToWeek(int week);
+    void goToMonth(int year, int month);
     void manualDateChange();
     void monthsPopup();
     void monthTriggered();
