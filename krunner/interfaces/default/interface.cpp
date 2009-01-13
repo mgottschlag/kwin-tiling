@@ -22,6 +22,7 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QClipboard>
 #include <QDesktopWidget>
 #include <QGraphicsView>
 #include <QHBoxLayout>
@@ -409,6 +410,7 @@ void Interface::run(ResultItem *item)
         if (!info.isEmpty()) {
             m_searchTerm->setItemText(0, info);
             m_searchTerm->setCurrentIndex(0);
+            QApplication::clipboard()->setText(info);
         }
         return;
     }
