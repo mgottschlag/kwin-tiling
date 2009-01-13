@@ -442,8 +442,10 @@ void Image::browse()
     }
 
     if (m_model->contains(wallpaper)) {
+        m_uiImage.m_view->setCurrentIndex(m_model->indexOf(wallpaper));
         return;
     }
+
     // add background to the model
     m_model->addBackground(wallpaper);
 
