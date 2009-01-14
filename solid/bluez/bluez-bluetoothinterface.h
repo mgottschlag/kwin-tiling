@@ -27,6 +27,7 @@
 #include <QtDBus>
 #include <QDBusVariant>
 #include <QDBusObjectPath>
+#include <QString>
 
 #include <solid/control/ifaces/bluetoothinterface.h>
 
@@ -67,8 +68,9 @@ public:
 
 */    
     QObject *createBluetoothRemoteDevice(const QString &);
-
-    QString createDevice(const QString &) const;
+    QObject *createBluetoothInputDevice(const QString &);
+    //QString createDevice(const QString &) const;
+    void createDevice(const QString &) const;
     QString createPairedDevice(const QString &,const QString &,const QString &) const;
     QString findDevice(const QString &) const;
     QMap< QString, QVariant > getProperties() const;

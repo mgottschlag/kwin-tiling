@@ -42,6 +42,7 @@ BluezBluetoothRemoteDevice::BluezBluetoothRemoteDevice(const QString &objectPath
 	m_adapter = m_objectPath.left(objectPath.size() - 18);
 	m_address = m_objectPath.right(17);
 
+        kdDebug() << "Connecting to ObjectPath: " << objectPath;
 
 	device = new QDBusInterface("org.bluez", objectPath,
 				    "org.bluez.Device", QDBusConnection::systemBus());
@@ -79,7 +80,7 @@ QMap<QString,QVariant> BluezBluetoothRemoteDevice::getProperties() const
 
 void BluezBluetoothRemoteDevice::setProperty(const QString &name, const QVariant &value)
 {
-    device->call("SetProperty",name,value);
+    device->call("SetProperty",name,qVariantFromValue(QDBusVariant(value)));
 }
 
 void BluezBluetoothRemoteDevice::discoverServices(const QString& pattern) const
