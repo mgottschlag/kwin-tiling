@@ -62,7 +62,6 @@ public:
     Kickoff::Launcher *launcher;
 
     QCheckBox *switchOnHoverCheckBox;
-    QSpinBox *recentApplicationsSpinBox;
     KIntNumInput *visibleCountEdit;
     QList<QAction*> actions;
     QAction* switcher;
@@ -153,15 +152,6 @@ void LauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     d->switchOnHoverCheckBox = new QCheckBox(i18n("Switch tabs on hover"), widget);
     widgetLayout->addWidget(d->switchOnHoverCheckBox);
 
-    QHBoxLayout *recentLayout = new QHBoxLayout(widget);
-    QLabel *recentLabel = new QLabel(i18n("Recent Applications:"), widget);
-    recentLayout->addWidget(recentLabel);
-    d->recentApplicationsSpinBox = new QSpinBox(widget);
-    d->recentApplicationsSpinBox->setMaximum(10);
-    d->recentApplicationsSpinBox->setMinimum(0);
-    recentLayout->addWidget(d->recentApplicationsSpinBox);
-    widgetLayout->addLayout(recentLayout);
-
     widgetLayout->addStretch();
 
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
@@ -170,7 +160,6 @@ void LauncherApplet::createConfigurationInterface(KConfigDialog *parent)
 
     d->createLauncher();
     d->switchOnHoverCheckBox->setChecked(d->launcher->switchTabsOnHover());
-    d->recentApplicationsSpinBox->setValue(Kickoff::RecentApplications::self()->maximum());
 }
 
 void LauncherApplet::popupEvent(bool show)
@@ -202,8 +191,6 @@ void LauncherApplet::configAccepted()
 
     d->createLauncher();
     d->launcher->setSwitchTabsOnHover(switchTabsOnHover);
-    
-    Kickoff::RecentApplications::self()->setMaximum(d->recentApplicationsSpinBox->value());
 }
 
 QList<QAction*> LauncherApplet::contextualActions()
