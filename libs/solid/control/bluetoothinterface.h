@@ -28,7 +28,9 @@
 #include <QtCore/QMap>
 
 #include "bluetoothremotedevice.h"
+#include "bluetoothinputdevice.h"
 #include "ifaces/bluetoothremotedevice.h"
+#include "ifaces/bluetoothinputdevice.h"
 
 
 
@@ -37,7 +39,7 @@ namespace Solid
 namespace Control
 {
 class BluetoothRemoteDevice;
-typedef QList<BluetoothRemoteDevice> BluetoothRemoteDeviceList;
+typedef QList<BluetoothRemoteDevice*> BluetoothRemoteDeviceList;
 class BluetoothInterfacePrivate;
 
 /**
@@ -115,7 +117,8 @@ public:
      * @param ubi the identifier of the bluetooth device to instantiate
      * @returns a bluetooth object, if a bluetooth device having the given UBI, for this interface exists, 0 otherwise
      */
-    Solid::Control::BluetoothRemoteDevice* createBluetoothRemoteDevice(const QString &address);
+    //Solid::Control::BluetoothRemoteDevice* createBluetoothRemoteDevice(const QString &address);
+    void createBluetoothRemoteDevice(const QString &address);
 
     /**
      * Finds a BluetoothRemoteDevice object given its UBI.
@@ -123,7 +126,13 @@ public:
      * @param ubi the identifier of the bluetooth remote device to find from this bluetooth interface
      * @returns a valid BluetoothRemoteDevice object if a remote device having the given UBI for this interface exists, an invalid BluetoothRemoteDevice object otherwise.
      */
-    Solid::Control::BluetoothRemoteDevice findBluetoothRemoteDevice(const QString &address) const;
+    const QString getBluetoothRemoteDeviceUBI(const QString &address) const;
+
+    Solid::Control::BluetoothRemoteDevice findBluetoothRemoteDeviceAddr(const QString &addr) const;
+
+    Solid::Control::BluetoothRemoteDevice* findBluetoothRemoteDeviceUBI(const QString &ubi) const;
+
+    Solid::Control::BluetoothInputDevice* findBluetoothInputDeviceUBI(const QString &ubi) const;
 
     /**
      * Retrieves the MAC address of the bluetooth interface/adapter.
@@ -296,7 +305,7 @@ public:
 //    bool isTrusted(const QString &);
 
 
-    QString createPairedDevice(const QString &, const QString &, const QString &) const;
+    void createPairedDevice(const QString &, const QString &, const QString &) const;
 
     QMap< QString, QVariant > getProperties() const;
 
@@ -556,6 +565,9 @@ private:
 
     QVariant getProperty(const QString&) const;
     BluetoothInterfacePrivate * const d;
+
+private slots:
+    void slotDeviceCreated(const QString& ubi);
 
 };
 

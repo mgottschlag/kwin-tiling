@@ -82,9 +82,44 @@ public:
     bool operator==(const BluetoothRemoteDevice  & other) const;
 
     /**
-     * The UBI of the remote de device.
+     * The UBI of the remote device.
      */
     QString ubi() const;
+
+    /**
+     * The address of the remote device.
+     */
+    QString address();
+
+    /**
+     * The name of the remote device.
+     */
+    QString name();
+
+    /**
+     * The icon of the remote device.
+     */
+    QString icon();
+
+    /**
+     * The Trust state of the remote device.
+     */
+    bool isTrusted();
+
+    /**
+     * Set the Trust state of the remote device.
+     */
+    void setTrusted(bool);
+
+    /**
+     * Returns the service uuids of the remote device.
+     */
+    QStringList uuids();
+
+    /**
+     * The Connection state of the remote device.
+     */
+    bool isConnected();
 
     /**
      * Retrieve all properties from the remote device.
@@ -157,6 +192,9 @@ protected:
 
 private:
     Q_PRIVATE_SLOT(d_func(), void _k_destroyed(QObject *))
+
+
+    QVariant getProperty(const QString &key);
 };
 
 } //Control

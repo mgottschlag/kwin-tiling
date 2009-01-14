@@ -88,6 +88,15 @@ QMap<QString,QVariant> Solid::Control::BluetoothRemoteDevice::getProperties()
     return_SOLID_CALL(Ifaces::BluetoothRemoteDevice *, d->backendObject(), (QMap< QString,QVariant >()), getProperties());
 }
 
+QVariant Solid::Control::BluetoothRemoteDevice::getProperty(const QString &key)
+{
+    QMap<QString, QVariant> props = getProperties();
+    if (props.contains(key))
+        return props[key];
+    else
+        return QVariant();
+}
+
 QStringList Solid::Control::BluetoothRemoteDevice::listNodes()
 {
     Q_D(const BluetoothRemoteDevice);
@@ -113,14 +122,65 @@ void Solid::Control::BluetoothRemoteDevice::disconnect()
 }
 
 
-
-/*
-QString Solid::Control::BluetoothRemoteDevice::address() const
+QString Solid::Control::BluetoothRemoteDevice::address()
 {
-    Q_D(const BluetoothRemoteDevice);
-    return_SOLID_CALL(Ifaces::BluetoothRemoteDevice *, d->backendObject(), QString(), address());
+    QVariant var = getProperty("Address");
+
+    if (var.isValid())
+        return var.value<QString>();
+    else
+        return QString();
+
+//    Q_D(const BluetoothRemoteDevice);
+//    return_SOLID_CALL(Ifaces::BluetoothRemoteDevice *, d->backendObject(), QString(), address());
 }
 
+bool Solid::Control::BluetoothRemoteDevice::isTrusted()
+{
+     QVariant var = getProperty("Trusted");
+
+    if (var.isValid())
+        return var.value<bool>();
+    else
+        return false;
+}
+
+void Solid::Control::BluetoothRemoteDevice::setTrusted(bool trust)
+{
+    setProperty("Trusted",QVariant(trust));
+}
+
+QString Solid::Control::BluetoothRemoteDevice::icon()
+{
+     QVariant var = getProperty("Icon");
+
+    if (var.isValid())
+        return var.value<QString>();
+    else
+        return "";
+}
+
+QStringList Solid::Control::BluetoothRemoteDevice::uuids()
+{
+     QVariant var = getProperty("UUIDs");
+
+    if (var.isValid())
+        return var.value<QStringList>();
+    else
+        return QStringList();
+}
+
+bool Solid::Control::BluetoothRemoteDevice::isConnected()
+{
+     QVariant var = getProperty("Connected");
+
+    if (var.isValid())
+        return var.value<bool>();
+    else
+        return false;
+}
+
+/*
 bool Solid::Control::BluetoothRemoteDevice::isConnected() const
 {
     Q_D(const BluetoothRemoteDevice);
@@ -168,12 +228,21 @@ QStringList Solid::Control::BluetoothRemoteDevice::serviceClasses() const
     Q_D(const BluetoothRemoteDevice);
     return_SOLID_CALL(Ifaces::BluetoothRemoteDevice *, d->backendObject(), QStringList(), serviceClasses());
 }
-QString Solid::Control::BluetoothRemoteDevice::name() const
+*/
+
+QString Solid::Control::BluetoothRemoteDevice::name()
 {
-    Q_D(const BluetoothRemoteDevice);
-    return_SOLID_CALL(Ifaces::BluetoothRemoteDevice *, d->backendObject(), QString(), name());
+    QVariant var = getProperty("Name");
+
+    if (var.isValid())
+        return var.value<QString>();
+    else
+        return QString();
+
+//    return_SOLID_CALL(Ifaces::BluetoothRemoteDevice *, d->backendObject(), QString(), name());
 }
 
+/*
 QString Solid::Control::BluetoothRemoteDevice::alias() const
 {
     Q_D(const BluetoothRemoteDevice);

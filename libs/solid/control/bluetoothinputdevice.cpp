@@ -91,8 +91,8 @@ void Solid::Control::BluetoothInputDevicePrivate::setBackendObject(QObject *obje
     FrontendObjectPrivate::setBackendObject(object);
 
     if (object) {
-        QObject::connect(object, SIGNAL(propertyChanged(QString,QVariant)),
-                         parent(), SIGNAL(propertyChanged(QString,QVariant)));
+        QObject::connect(object, SIGNAL(propertyChanged(const QString&,const QVariant&)),
+                         parent(), SIGNAL(propertyChanged(const QString,const QVariant&)));
     }
 }
 

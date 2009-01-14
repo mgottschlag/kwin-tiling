@@ -248,7 +248,8 @@ public:
 
     virtual QString findDevice(const QString &) const = 0;
 
-    virtual QString createDevice(const QString &) const = 0;
+    //virtual QString createDevice(const QString &) const = 0;
+    virtual void createDevice(const QString &) const = 0;
 
 
 
@@ -320,7 +321,9 @@ public:
      * @param ubi the identifier of the bluetooth remote device instantiated
      * @returns a new BluetoothRemoteDevice object if there's a device having the given UBI, 0 otherwise
      */
-    virtual QObject *createBluetoothRemoteDevice(const QString &address) = 0;
+    virtual QObject *createBluetoothRemoteDevice(const QString &ubi) = 0;
+
+    virtual QObject *createBluetoothInputDevice(const QString &ubi) = 0;
 
     /**
      * Marks the device as trusted.
