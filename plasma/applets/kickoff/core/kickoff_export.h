@@ -1,5 +1,5 @@
-/*
-    Copyright 2007 Robert Knight <robertknight@gmail.com>
+/*  This file is part of the KDE project
+    Copyright (C) 2009 Sebastian Sauer <mail@dipe.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -17,43 +17,24 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef ITEMHANDLERS_H
-#define ITEMHANDLERS_H
+#ifndef KICKOFF_EXPORT_H
+#define KICKOFF_EXPORT_H
 
-#include <QtCore/QObject>
+/* needed for KDE_EXPORT and KDE_IMPORT macros */
+#include <kdemacros.h>
 
-#include "core/kickoff_export.h"
-#include "core/urlitemlauncher.h"
+#ifndef KICKOFF_EXPORT
+# if defined(MAKE_LIBKICKOFF_LIB)
+   /* We are building this library */ 
+#  define KICKOFF_EXPORT KDE_EXPORT
+# else
+   /* We are using this library */ 
+#  define KICKOFF_EXPORT KDE_IMPORT
+# endif
+#endif
 
-namespace Kickoff
-{
+# ifndef KICKOFF_EXPORT_DEPRECATED
+#  define KICKOFF_EXPORT_DEPRECATED KDE_DEPRECATED KICKOFF_EXPORT
+# endif
 
-class KICKOFF_EXPORT ServiceItemHandler : public UrlItemHandler
-{
-public:
-    virtual bool openUrl(const KUrl& url);
-};
-class KICKOFF_EXPORT LeaveItemHandler : public QObject, public UrlItemHandler
-{
-    Q_OBJECT
-public:
-    virtual bool openUrl(const KUrl& url);
-
-private Q_SLOTS:
-    void runCommand();
-    void logout();
-    void lock();
-    void switchUser();
-    void saveSession();
-    void standby();
-    void suspendRAM();
-    void suspendDisk();
-
-private:
-    QString m_logoutAction;
-};
-
-}
-
-#endif // ITEMHANDLERS_H
-
+#endif

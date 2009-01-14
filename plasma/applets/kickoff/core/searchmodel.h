@@ -20,7 +20,7 @@
 #ifndef SEARCHMODEL_H
 #define SEARCHMODEL_H
 
-// Qt
+#include "core/kickoff_export.h"
 #include "core/kickoffmodel.h"
 
 namespace Kickoff
@@ -35,7 +35,7 @@ public:
 };
 typedef QList<SearchResult> ResultList;
 
-class SearchModel : public KickoffModel
+class KICKOFF_EXPORT SearchModel : public KickoffModel
 {
     Q_OBJECT
 

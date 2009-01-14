@@ -42,9 +42,12 @@ using namespace Kickoff;
 class RecentlyUsedModel::Private
 {
 public:
-    Private(RecentlyUsedModel *parent)
+    Private(RecentlyUsedModel *parent, RecentType recenttype)
             : q(parent)
-            , recentDocumentItem(0) {
+            , recenttype(recenttype)
+            , recentDocumentItem(0)
+            , recentAppItem(0)
+    {
     }
     void removeExistingItem(const QString& path) {
         if (!itemsByPath.contains(path)) {
@@ -107,42 +110,48 @@ public:
     }
 
     RecentlyUsedModel * const q;
+    RecentType recenttype;
     QStandardItem *recentDocumentItem;
     QStandardItem *recentAppItem;
 
     QHash<QString, QStandardItem*> itemsByPath;
 };
 
-RecentlyUsedModel::RecentlyUsedModel(QObject *parent)
+RecentlyUsedModel::RecentlyUsedModel(QObject *parent, RecentType recenttype)
         : KickoffModel(parent)
-        , d(new Private(this))
+        , d(new Private(this, recenttype))
 {
     QDBusConnection dbus = QDBusConnection::sessionBus();
     (void)new RecentAdaptor(this);
     QDBusConnection::sessionBus().registerObject("/kickoff/RecentAppDoc", this);
-    dbus.connect(QString(), "/kickoff/RecentAppDoc", "org.kde.plasma", "cleanRecentDocumentsAndDocuments", this, SLOT(clearRecentDocumentsAndApplications()));
+    dbus.connect(QString(), "/kickoff/RecentAppDoc", "org.kde.plasma", "clearRecentDocumentsAndApplications", this, SLOT(clearRecentDocumentsAndApplications()));
 
-    d->loadRecentApplications();
-    d->loadRecentDocuments();
+    if(recenttype != DocumentsOnly) {
+        d->loadRecentApplications();
 
-    // listen for changes to the list of recent documents
-    KDirWatch *recentDocWatch = new KDirWatch(this);
-    recentDocWatch->addDir(KRecentDocument::recentDocumentDirectory(), KDirWatch::WatchFiles);
-    connect(recentDocWatch, SIGNAL(created(QString)), this, SLOT(recentDocumentAdded(QString)));
-    connect(recentDocWatch, SIGNAL(deleted(QString)), this, SLOT(recentDocumentRemoved(QString)));
+        // listen for changes to the list of recent applications
+        connect(RecentApplications::self(), SIGNAL(applicationAdded(KService::Ptr, int)),
+                this, SLOT(recentApplicationAdded(KService::Ptr, int)));
+        connect(RecentApplications::self(), SIGNAL(applicationRemoved(KService::Ptr)),
+                this, SLOT(recentApplicationRemoved(KService::Ptr)));
+        connect(RecentApplications::self(), SIGNAL(cleared()),
+                this, SLOT(recentApplicationsCleared()));
+    }
+    if(recenttype != ApplicationsOnly) {
+        d->loadRecentDocuments();
 
-    // listen for changes to the list of recent applications
-    connect(RecentApplications::self(), SIGNAL(applicationAdded(KService::Ptr, int)),
-            this, SLOT(recentApplicationAdded(KService::Ptr, int)));
-    connect(RecentApplications::self(), SIGNAL(applicationRemoved(KService::Ptr)),
-            this, SLOT(recentApplicationRemoved(KService::Ptr)));
-    connect(RecentApplications::self(), SIGNAL(cleared()),
-            this, SLOT(recentApplicationsCleared()));
+        // listen for changes to the list of recent documents
+        KDirWatch *recentDocWatch = new KDirWatch(this);
+        recentDocWatch->addDir(KRecentDocument::recentDocumentDirectory(), KDirWatch::WatchFiles);
+        connect(recentDocWatch, SIGNAL(created(QString)), this, SLOT(recentDocumentAdded(QString)));
+        connect(recentDocWatch, SIGNAL(deleted(QString)), this, SLOT(recentDocumentRemoved(QString)));
+    }
 }
 RecentlyUsedModel::~RecentlyUsedModel()
 {
     delete d;
 }
+
 void RecentlyUsedModel::recentDocumentAdded(const QString& path)
 {
     kDebug() << "Recent document added" << path;

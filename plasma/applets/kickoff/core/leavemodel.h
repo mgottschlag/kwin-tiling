@@ -20,13 +20,14 @@
 #ifndef LEAVEMODEL_H
 #define LEAVEMODEL_H
 
-// Qt
+#include "core/kickoff_export.h"
+
 #include <QStandardItemModel>
 
 namespace Kickoff
 {
 
-class LeaveModel : public QStandardItemModel
+class KICKOFF_EXPORT LeaveModel : public QStandardItemModel
 {
     Q_OBJECT
 

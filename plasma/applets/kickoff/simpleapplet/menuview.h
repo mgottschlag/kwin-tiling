@@ -22,7 +22,7 @@
 #define MENUVIEW_H
 
 // Qt
-#include <QModelIndex>
+#include <QtCore/QModelIndex>
 
 // KDE
 #include <KMenu>
@@ -136,8 +136,8 @@ public Q_SLOTS:
     void actionTriggered(QAction* action);
 
 private Q_SLOTS:
-    // new items are about to be inserted into the model
-    void rowsAboutToBeInserted(const QModelIndex& parent, int start, int end);
+    // new items have been inserted into the model
+    void rowsInserted(const QModelIndex& parent, int start, int end);
     // existing items are about to be removed from the model
     void rowsAboutToBeRemoved(const QModelIndex& parent, int start, int end);
     // data within an item of the model change

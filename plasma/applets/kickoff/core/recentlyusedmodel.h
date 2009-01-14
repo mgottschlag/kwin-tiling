@@ -21,6 +21,7 @@
 #define RECENTLYUSEDMODEL_H
 
 // Qt
+#include "core/kickoff_export.h"
 #include "core/kickoffmodel.h"
 
 // KDE
@@ -33,13 +34,21 @@ namespace Kickoff
  * Model for the Recently Used view which provides a tree of recently used
  * applications and documents.
  */
-class RecentlyUsedModel : public KickoffModel
+class KICKOFF_EXPORT RecentlyUsedModel : public KickoffModel
 {
     Q_OBJECT
 
 public:
+
+    /** Defines what the model should display. */
+    enum RecentType {
+        DocumentsAndApplications, ///< display recently used documents and applications.
+        DocumentsOnly, ///< documents only. recently used applications will not be displayed.
+        ApplicationsOnly ///< applications only, recently used documents will not be displayed.
+    };
+
     /** Construct a new RecentlyUsedModel with the specified parent. */
-    RecentlyUsedModel(QObject *parent = 0);
+    explicit RecentlyUsedModel(QObject *parent = 0, RecentType recenttype = DocumentsAndApplications);
     virtual ~RecentlyUsedModel();
 
 public Q_SLOTS:

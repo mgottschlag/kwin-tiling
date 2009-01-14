@@ -21,8 +21,8 @@
 #include "core/recentapplications.h"
 
 // Qt
-#include <QHash>
-#include <QLinkedList>
+#include <QtCore/QHash>
+#include <QtCore/QLinkedList>
 
 // KDE
 #include <KConfigGroup>
@@ -75,10 +75,7 @@ public:
         }
 
         recentGroup.writeEntry("Applications", recentApplications);
-
-        if (maxServices != DEFAULT_MAX_SERVICES) {
-            recentGroup.writeEntry("MaxApplications", maxServices);
-        }
+        recentGroup.writeEntry("MaxApplications", maxServices);
     }
     void addEntry(const QString& id, ServiceInfo& info) {
         // if this service is already in the list then remove the existing
@@ -135,6 +132,7 @@ RecentApplications *RecentApplications::self()
 RecentApplications::RecentApplications()
 {
 }
+
 QList<KService::Ptr> RecentApplications::recentApplications() const
 {
     QList<Private::ServiceInfo> services = privateSelf->serviceInfo.values();
@@ -160,8 +158,14 @@ QDateTime RecentApplications::lastStartedTime(KService::Ptr service) const
 }
 void RecentApplications::setMaximum(int maximum)
 {
-    Q_ASSERT(maximum > 0);
+    Q_ASSERT(maximum >= 0);
     privateSelf->maxServices = maximum;
+    while (privateSelf->serviceQueue.count() > privateSelf->maxServices) {
+        QString removeId = privateSelf->serviceQueue.takeFirst();
+        kDebug() << "More than max services added.  Removing" << removeId << "from queue.";
+        privateSelf->serviceInfo.remove(removeId);
+        emit applicationRemoved(KService::serviceByStorageId(removeId));
+    }
 }
 int RecentApplications::maximum() const
 {

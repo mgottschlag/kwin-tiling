@@ -129,9 +129,20 @@ bool LeaveItemHandler::openUrl(const KUrl& url)
         // decouple dbus call, otherwise we'll run into a dead-lock
         QTimer::singleShot(0, this, SLOT(suspendDisk()));
         return true;
+    } else if (m_logoutAction == "run") {
+        // decouple dbus call, otherwise we'll run into a dead-lock
+        QTimer::singleShot(0, this, SLOT(runCommand()));
+        return true;
     }
 
     return false;
+}
+
+void LeaveItemHandler::runCommand()
+{
+    QString interface("org.kde.krunner");
+    org::kde::krunner::App krunner(interface, "/App", QDBusConnection::sessionBus());
+    krunner.display();
 }
 
 void LeaveItemHandler::logout()

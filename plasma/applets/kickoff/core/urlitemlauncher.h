@@ -21,6 +21,8 @@
 #ifndef URLITEMLAUNCHER_H
 #define URLITEMLAUNCHER_H
 
+#include "core/kickoff_export.h"
+
 #include <QObject>
 #include <solid/storageaccess.h>
 
@@ -51,7 +53,7 @@ public:
  * to handle URLs with particular protocols or extensions differently.  Handlers can be
  * registered using the static addGlobalHandler() method.
  */
-class UrlItemLauncher : public QObject
+class KICKOFF_EXPORT UrlItemLauncher : public QObject
 {
     Q_OBJECT
 

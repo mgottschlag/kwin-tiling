@@ -20,7 +20,7 @@
 #ifndef FAVORITESMODEL_H
 #define FAVORITESMODEL_H
 
-
+#include "core/kickoff_export.h"
 #include "core/kickoffmodel.h"
 
 namespace Kickoff
@@ -33,7 +33,7 @@ namespace Kickoff
  *
  * The information persists between sessions.
  */
-class FavoritesModel : public KickoffModel
+class KICKOFF_EXPORT FavoritesModel : public KickoffModel
 {
     Q_OBJECT
 

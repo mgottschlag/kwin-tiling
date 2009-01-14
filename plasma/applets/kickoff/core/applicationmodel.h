@@ -21,6 +21,7 @@
 #ifndef APPLICATIONMODEL_H
 #define APPLICATIONMODEL_H
 
+#include "core/kickoff_export.h"
 #include "core/kickoffabstractmodel.h"
 
 namespace Kickoff
@@ -32,7 +33,7 @@ class ApplicationModelPrivate;
  * ApplicationModel provides a tree model containing all of the user's installed graphical programs.
  * The applications are arranged into categories, based on the information in their .desktop files.
  */
-class ApplicationModel : public KickoffAbstractModel
+class KICKOFF_EXPORT ApplicationModel : public KickoffAbstractModel
 {
     Q_OBJECT
 

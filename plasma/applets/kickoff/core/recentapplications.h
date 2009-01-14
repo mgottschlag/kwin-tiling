@@ -20,6 +20,8 @@
 #ifndef RECENTAPPLICATIONS_H
 #define RECENTAPPLICATIONS_H
 
+#include "core/kickoff_export.h"
+
 // Qt
 #include <QtCore/QObject>
 #include <QDateTime>
@@ -36,7 +38,7 @@ namespace Kickoff
  *
  * RecentApplications information persists between sessions.
  */
-class RecentApplications : public QObject
+class KICKOFF_EXPORT RecentApplications : public QObject
 {
     Q_OBJECT
 public:

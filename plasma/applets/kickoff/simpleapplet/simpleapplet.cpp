@@ -23,14 +23,16 @@
 #include "simpleapplet/menuview.h"
 
 // Qt
-#include <QLabel>
-#include <QComboBox>
-#include <QGridLayout>
-#include <QGraphicsView>
-#include <QMetaObject>
-#include <QMetaEnum>
-#include <QPointer>
-#include <QGraphicsLinearLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QComboBox>
+#include <QtGui/QSpinBox>
+#include <QtGui/QGridLayout>
+#include <QtGui/QGraphicsView>
+#include <QtCore/QMetaObject>
+#include <QtCore/QMetaEnum>
+#include <QtCore/QPointer>
+#include <QtGui/QGraphicsLinearLayout>
+#include <QtGui/QSpacerItem>
 
 // KDE
 #include <KIcon>
@@ -44,6 +46,7 @@
 // Plasma
 #include <Plasma/IconWidget>
 #include <Plasma/Containment>
+#include <Plasma/ToolTipManager>
 
 // Local
 #include "core/itemhandlers.h"
@@ -52,6 +55,7 @@
 #include "core/favoritesmodel.h"
 #include "core/systemmodel.h"
 #include "core/recentlyusedmodel.h"
+#include "core/recentapplications.h"
 #include "core/leavemodel.h"
 #include "core/urlitemlauncher.h"
 
@@ -87,6 +91,7 @@ public:
 
     QComboBox *viewComboBox;
     QComboBox *formatComboBox;
+    QSpinBox *recentApplicationsSpinBox;
 
     QList<QAction*> actions;
     QAction* switcher;
@@ -183,6 +188,7 @@ public:
         }
         return QString();
     }
+    
 
 };
 
@@ -288,12 +294,12 @@ void MenuLauncherApplet::startMenuEditor()
 
 void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
 {
-    QWidget *p = new QWidget;
+    QWidget *p = new QWidget(parent);
     QGridLayout *l = new QGridLayout(p);
     p->setLayout(l);
 
     QLabel *viewLabel = new QLabel(i18nc("@label:listbox Which category of items to view in a KMenu-like menu", "View:"), p);
-    l->addWidget(viewLabel, 0, 0);
+    l->addWidget(viewLabel, 0, 0, Qt::AlignRight);
     d->viewComboBox = new QComboBox(p);
     viewLabel->setBuddy(d->viewComboBox);
     d->addItem(d->viewComboBox, i18nc("@item:inlistbox View:", "Standard"), MenuLauncherApplet::Combined, "start-here-kde");
@@ -306,7 +312,7 @@ void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     l->addWidget(d->viewComboBox, 0, 1);
 
     QLabel *formatLabel = new QLabel(i18nc("@label:listbox How to present applications in a KMenu-like menu", "Format:"), p);
-    l->addWidget(formatLabel, 1, 0);
+    l->addWidget(formatLabel, 1, 0, Qt::AlignRight);
     d->formatComboBox = new QComboBox(p);
     formatLabel->setBuddy(d->formatComboBox);
     d->addItem(d->formatComboBox, i18nc("@item:inlistbox Format:", "Name Only"), MenuLauncherApplet::Name);
@@ -316,6 +322,16 @@ void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     d->addItem(d->formatComboBox, i18nc("@item:inlistbox Format:", "Name - Description"), MenuLauncherApplet::NameDashDescription);
     l->addWidget(d->formatComboBox, 1, 1);
 
+    QLabel *recentLabel = new QLabel(i18n("Recent Applications:"), p);
+    l->addWidget(recentLabel, 2, 0, Qt::AlignRight);
+    d->recentApplicationsSpinBox = new QSpinBox(p);
+    d->recentApplicationsSpinBox->setMaximum(10);
+    d->recentApplicationsSpinBox->setMinimum(0);
+    d->recentApplicationsSpinBox->setValue(Kickoff::RecentApplications::self()->maximum());
+    recentLabel->setBuddy(d->recentApplicationsSpinBox);
+    l->addWidget(d->recentApplicationsSpinBox, 2, 1);
+
+    l->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), 3, 0, 1, 2);
     l->setColumnStretch(1, 1);
 
     d->setCurrentItem(d->viewComboBox, d->viewtype);
@@ -323,7 +339,7 @@ void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
 
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-    parent->addPage(p, parent->windowTitle(), icon());
+    parent->addPage(p, i18n("General"), icon());
 }
 
 void MenuLauncherApplet::configAccepted()
@@ -352,6 +368,8 @@ void MenuLauncherApplet::configAccepted()
         cg.writeEntry("format", QByteArray(e.valueToKey(d->formattype)));
     }
 
+    Kickoff::RecentApplications::self()->setMaximum(d->recentApplicationsSpinBox->value());
+
     if (needssaving) {
         emit configNeedsSaving();
 
@@ -377,6 +395,13 @@ void MenuLauncherApplet::toggleMenu()
 
         switch (d->viewtype) {
         case Combined: {
+            if (Kickoff::RecentApplications::self()->recentApplications().size() > 0) {
+                d->menuview->addTitle(i18n("Recently Used Applications"));
+                Kickoff::MenuView *recentlyview = d->createMenuView(new Kickoff::RecentlyUsedModel(d->menuview, Kickoff::RecentlyUsedModel::ApplicationsOnly));
+                d->addMenu(recentlyview, true);
+            }
+
+            d->menuview->addTitle(i18n("All Applications"));
             Kickoff::ApplicationModel *appModel = new Kickoff::ApplicationModel(d->menuview);
             appModel->setDuplicatePolicy(Kickoff::ApplicationModel::ShowLatestOnlyPolicy);
             appModel->setSystemApplicationPolicy(Kickoff::ApplicationModel::ShowApplicationAndSystemPolicy);
@@ -387,10 +412,13 @@ void MenuLauncherApplet::toggleMenu()
             Kickoff::MenuView *favview = d->createMenuView(new Kickoff::FavoritesModel(d->menuview));
             d->addMenu(favview, false);
 
+            d->menuview->addTitle(i18n("Actions"));
+            QAction *runaction = d->menuview->addAction(KIcon("system-run"), i18n("Run Command..."));
+            runaction->setData(KUrl("leave:/run"));
             d->menuview->addSeparator();
             QAction *switchaction = d->menuview->addAction(KIcon("system-switch-user"), i18n("Switch User"));
             switchaction->setData(KUrl("leave:/switch"));
-            QAction *lockaction = d->menuview->addAction(KIcon("system-lock-screen"), i18n("Lock"));
+            QAction *lockaction = d->menuview->addAction(KIcon("system-lock-screen"), i18n("Lock Screen"));
             lockaction->setData(KUrl("leave:/lock"));
             QAction *logoutaction = d->menuview->addAction(KIcon("system-shutdown"), i18n("Leave..."));
             logoutaction->setData(KUrl("leave:/logout"));
@@ -463,5 +491,6 @@ QList<QAction*> MenuLauncherApplet::contextualActions()
 {
     return d->actions;
 }
+
 
 #include "simpleapplet.moc"

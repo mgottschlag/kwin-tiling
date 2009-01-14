@@ -26,7 +26,7 @@
 #include <QtCore/QStack>
 #include <QtGui/QApplication>
 #include <QtGui/QMouseEvent>
-#include <QPersistentModelIndex>
+#include <QtCore/QPersistentModelIndex>
 
 // KDE
 #include <KDebug>
@@ -234,7 +234,7 @@ void MenuView::setModel(QAbstractItemModel *model)
     clear();
     if (d->model) {
         d->buildBranch(this, QModelIndex());
-        connect(d->model, SIGNAL(rowsAboutToBeInserted(QModelIndex, int, int)), this, SLOT(rowsAboutToBeInserted(QModelIndex, int, int)));
+        connect(d->model, SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(rowsInserted(QModelIndex, int, int)));
         connect(d->model, SIGNAL(rowsAboutToBeRemoved(QModelIndex, int, int)), this, SLOT(rowsAboutToBeRemoved(QModelIndex, int, int)));
         connect(d->model, SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SLOT(dataChanged(QModelIndex, QModelIndex)));
         connect(d->model, SIGNAL(modelReset()), this, SLOT(modelReset()));
@@ -263,7 +263,6 @@ QModelIndex MenuView::indexForAction(QAction *action) const
 QAction *MenuView::actionForIndex(const QModelIndex& index) const
 {
     Q_ASSERT(d->model);
-
     if (!index.isValid()) {
         return this->menuAction();
     }
@@ -281,7 +280,7 @@ bool MenuView::isValidIndex(const QModelIndex& index) const
     return v.isValid() && v.value<QAction*>();
 }
 
-void MenuView::rowsAboutToBeInserted(const QModelIndex& parent, int start, int end)
+void MenuView::rowsInserted(const QModelIndex& parent, int start, int end)
 {
     if (!isValidIndex(parent)) {
         // can happen if the models data is incomplete yet
@@ -316,7 +315,7 @@ void MenuView::rowsAboutToBeRemoved(const QModelIndex& parent, int start, int en
         // can happen if the models data is incomplete yet
         return;
     }
-
+    
     Q_ASSERT(d->model);
 
     QAction *menuAction = actionForIndex(parent);
