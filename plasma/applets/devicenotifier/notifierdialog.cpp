@@ -355,7 +355,7 @@ void NotifierDialog::slotOnItemClicked(const QModelIndex &index)
             drive->eject();
         } else if (device.is<Solid::StorageVolume>()) {
             Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
-             if (access->isAccessible()) {
+             if (access && access->isAccessible()) {
                 connect(access, SIGNAL(teardownDone(Solid::ErrorType, QVariant, const QString &)),this, SLOT(storageTeardownDone(Solid::ErrorType, QVariant)));
                 access->teardown();
              }
