@@ -25,10 +25,7 @@
 #include <QtGui/QApplication>
 #include <QtGui/QGraphicsView>
 #include <QtGui/QCheckBox>
-#include <QtGui/QSpinBox>
-#include <QtGui/QFormLayout>
 #include <QtGui/QVBoxLayout>
-#include <QtGui/QGroupBox>
 #include <QtGui/QLabel>
 #include <QtGui/QGraphicsLinearLayout>
 
@@ -36,7 +33,6 @@
 #include <KIcon>
 #include <KDebug>
 #include <KConfigDialog>
-#include <KNumInput>
 #include <KProcess>
 
 // Plasma
@@ -62,7 +58,6 @@ public:
     Kickoff::Launcher *launcher;
 
     QCheckBox *switchOnHoverCheckBox;
-    KIntNumInput *visibleCountEdit;
     QList<QAction*> actions;
     QAction* switcher;
     LauncherApplet *q;
