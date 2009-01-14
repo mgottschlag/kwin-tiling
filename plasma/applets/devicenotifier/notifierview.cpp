@@ -99,7 +99,9 @@ void NotifierView::mouseMoveEvent(QMouseEvent *event)
 
 void NotifierView::mousePressEvent(QMouseEvent *event)
 {
-    if (event->button() != Qt::LeftButton) {
+    const QModelIndex itemUnderMouse = indexAt(event->pos());
+    //don't pass click for header
+    if (event->button() != Qt::LeftButton || model()->hasChildren(itemUnderMouse)) {
         return;
     }
 
