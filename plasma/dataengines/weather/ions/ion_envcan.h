@@ -226,6 +226,6 @@ private:
     Private *const d;
 };
 
-K_EXPORT_PLASMA_ION(envcan, EnvCanadaIon)
+K_EXPORT_PLASMA_DATAENGINE(envcan, EnvCanadaIon)
 
 #endif

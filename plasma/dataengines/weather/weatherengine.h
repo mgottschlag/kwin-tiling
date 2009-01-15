@@ -47,28 +47,21 @@ public:
     // Destructor
     ~WeatherEngine();
 
-    /**
-     * Get an a IonInterface instance.
-     * @arg name ion (plugin) name.
-     * @return IonInterface an instance of a loaded plugin.
-     */
-    IonInterface* Ion(const QString& name) const;
+    // initialization
+    void init();
+
     /**
      * Load a plugin
      * @arg pluginName Name of the plugin
      * @return IonInterface returns an instance of the loaded plugin
      */
-    IonInterface* loadIon(const QString& pluginName);
+    DataEngine* loadIon(const QString& pluginName);
+
     /**
      * Unload a plugin.
      * @arg name Name of the plugin.
      */
     void unloadIon(const QString& name);
-    /**
-     * Get a list of known plugins found.
-     * @returns a list of plugin offers found.
-     */
-    KService::List knownIons();
 
 protected:
     /**

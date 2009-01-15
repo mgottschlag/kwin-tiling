@@ -131,7 +131,5 @@ private:
     Private* const d;
 };
 
-#define K_EXPORT_PLASMA_ION(name, classname) \
-    K_PLUGIN_FACTORY(factory, registerPlugin<classname>();) \
-    K_EXPORT_PLUGIN(factory("ion_" #name))
 #endif
+

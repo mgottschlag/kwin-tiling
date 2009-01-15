@@ -132,6 +132,6 @@ private:
     Private *const d;
 };
 
-K_EXPORT_PLASMA_ION(noaa, NOAAIon)
+K_EXPORT_PLASMA_DATAENGINE(noaa, NOAAIon)
 
 #endif

@@ -34,9 +34,6 @@ INSTALL (FILES includes/Ion
 INSTALL (FILES ion-envcan.desktop ion-noaa.desktop ion-bbcukmet.desktop 
          DESTINATION ${SERVICES_INSTALL_DIR})
 
-INSTALL (FILES weather_ion.desktop
-         DESTINATION ${SERVICETYPES_INSTALL_DIR})
-
 INSTALL (TARGETS ion_envcan ion_noaa ion_bbcukmet 
          DESTINATION ${PLUGIN_INSTALL_DIR})
 

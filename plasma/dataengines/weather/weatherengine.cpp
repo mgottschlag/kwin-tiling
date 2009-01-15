@@ -21,16 +21,14 @@
 #include <KServiceTypeTrader>
 #include <KDateTime>
 #include <KLocale>
+
+#include <Plasma/DataEngineManager>
+
 #include "ions/ion.h"
 
 class WeatherEngine::Private
 {
 public:
-    Private() {}
-    ~Private() {
-        qDeleteAll(m_ions);
-    }
-
     /**
      * Get instance of a loaded ion.
      * @returns a IonInterface instance of a loaded plugin.
@@ -43,13 +41,7 @@ public:
         }
 
         QString ionName = name.left(offset);
-
-
-        if (m_ions.contains(ionName)) {
-            return m_ions[ionName];
-        }
-
-        return NULL;
+        return qobject_cast<IonInterface *>(Plasma::DataEngineManager::self()->engine(ionName));
     }
 
     /**
@@ -65,67 +57,31 @@ public:
         return QString(source.left(offset));
     }
 
-    KService::List m_ionServices;
-    IonInterface::IonDict m_ions;
     KDateTime m_localTime;
+    QStringList m_ions;
 };
-
-/**
- * Returns an instance of an ion plugin loaded.
- */
-IonInterface* WeatherEngine::Ion(const QString& name) const
-{
-    IonInterface::IonDict::const_iterator it = d->m_ions.constFind(name);
-    if (it != d->m_ions.constEnd()) {
-        return *it;
-    }
-
-    return NULL;
-}
 
 /**
  * Loads an ion plugin given a plugin name found via KService.
  */
-IonInterface* WeatherEngine::loadIon(const QString& plugName)
+Plasma::DataEngine *WeatherEngine::loadIon(const QString& plugName)
 {
-    IonInterface *ion = 0;
-    KService::Ptr foundPlugin;
+    KPluginInfo foundPlugin;
 
-    foreach(const KService::Ptr &service, d->m_ionServices) {
-        if (service->property("X-IonName").toString() == plugName) {
-            foundPlugin = service;
+    foreach (const KPluginInfo &info, Plasma::DataEngineManager::listEngineInfo("weatherengine")) {
+        if (info.pluginName() == plugName) {
+            foundPlugin = info;
             break;
         }
     }
 
-    // Check if the plugin is already loaded if so, return the plugin thats already loaded.
-    IonInterface::IonDict::const_iterator it = d->m_ions.constFind(plugName);
-
-    if (it != d->m_ions.constEnd()) {
-        ion = *it;
-        ion->ref();
-        return ion;
-    }
-
-    QString error;
-
-    // Do we have a valid plugin?
-    if (!foundPlugin) {
+    if (!foundPlugin.isValid()) {
         return NULL;
     }
 
     // Load the Ion plugin, store it into a QMap to handle multiple ions.
-    ion = foundPlugin->createInstance<IonInterface>(0, QVariantList(), &error);
+    Plasma::DataEngine *ion = Plasma::DataEngineManager::self()->loadEngine(foundPlugin.pluginName());
     ion->setObjectName(plugName);
-    if (!ion) {
-        kDebug() << "weatherengine: Couldn't load ion \"" << plugName << "\"!" << error;
-        return NULL;
-    }
-
-    // Increment counter of ion.
-    ion->init();
-    ion->ref();
-
     connect(ion, SIGNAL(sourceAdded(QString)), this, SLOT(newIonSource(QString)));
 
     /* Set system related properties for the ion
@@ -135,11 +91,7 @@ IonInterface* WeatherEngine::loadIon(const QString& plugName)
 
     ion->setProperty("timezone", d->m_localTime.isUtc());
     ion->setProperty("unit", KGlobal::locale()->measureSystem());
-
-    // Assign the instantiated ion the key of the name of the ion.
-    if (!d->m_ions.contains(plugName)) {
-        d->m_ions[plugName] = ion;
-    }
+    d->m_ions << plugName;
 
     return ion;
 }
@@ -149,36 +101,17 @@ IonInterface* WeatherEngine::loadIon(const QString& plugName)
  */
 void WeatherEngine::unloadIon(const QString &name)
 {
-    IonInterface *ion = Ion(name);
-
-    if (ion) {
-        ion->deref();
-        kDebug() << "Unloading Plugin: " << name;
-        if (!ion->isUsed()) {
-            kDebug() << "It's not used anymore, delete it!";
-            d->m_ions.remove(name);
-            delete ion;
-        }
-    }
+    Plasma::DataEngineManager::self()->unloadEngine(name);
+    d->m_ions.removeOne(name);
 }
 
-/**
- * Return a list of Ion plugins found.
- */
-KService::List WeatherEngine::knownIons()
+void WeatherEngine::init()
 {
-    KService::List offers = KServiceTypeTrader::self()->query("WeatherEngine/Ion");
-
-    if (offers.isEmpty()) {
-        kDebug() << "weatherengine: No plugins to load!";
-        return KService::List();
+    // Get the list of available plugins but don't load them
+    foreach(const KPluginInfo &info, Plasma::DataEngineManager::listEngineInfo("weatherengine")) {
+        setData("ions", info.pluginName(),
+                QString("%1|%2").arg(info.property("Name").toString()).arg(info.pluginName()));
     }
-
-    foreach(const KService::Ptr &service, offers) {
-        setData("ions", service->property("X-IonName").toString(), QString("%1|%2").arg(service->property("Name").toString()).arg(service->property("X-IonName").toString()));
-    }
-
-    return offers;
 }
 
 /**
@@ -230,9 +163,6 @@ WeatherEngine::WeatherEngine(QObject *parent, const QVariantList& args)
     // Set any local properties for Ion to use
     d->m_localTime = KDateTime::currentDateTime(KDateTime::LocalZone);
 
-    // Get the list of available plugins but don't load them
-    d->m_ionServices = knownIons();
-
     // Globally notify all plugins to remove their sources (and unload plugin)
     connect(this, SIGNAL(sourceRemoved(QString)), this, SLOT(removeIonSource(QString)));
 }
@@ -241,6 +171,10 @@ WeatherEngine::WeatherEngine(QObject *parent, const QVariantList& args)
 WeatherEngine::~WeatherEngine()
 {
     // Cleanup all private data.
+    foreach (const QString &ion, d->m_ions) {
+        Plasma::DataEngineManager::self()->unloadEngine(ion);
+    }
+
     delete d;
 }
 
@@ -250,7 +184,7 @@ WeatherEngine::~WeatherEngine()
 bool WeatherEngine::sourceRequestEvent(const QString &source)
 {
     kDebug() << "sourceRequestEvent()" << source;
-    IonInterface *ion = d->ionForSource(source);
+    Plasma::DataEngine *ion = d->ionForSource(source);
 
     if (!ion) {
         kDebug() << "sourceRequestEvent(): No Ion Found, load it up!";
