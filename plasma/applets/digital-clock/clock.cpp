@@ -378,7 +378,8 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         // Check sizes
         // magic 10 is for very big spaces,
         // where there's enough space to grow without harming time space
-        smallFont.setPointSizeF(qMax(contentsRect.height()/10, smallFont.pointSize()));
+        QFontMetrics fm(smallFont);
+        smallFont.setPixelSize(qMax(contentsRect.height()/10, fm.ascent()));
         // kDebug(96669) << "=========";
         // kDebug(96669) << "contentsRect: " << contentsRect;
 
@@ -391,7 +392,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         // kDebug(96669) << "subtitleHeight: " << subtitleHeight;
 
         if (m_dateTimezoneBesides) {
-            //kDebug(96669) << contentsRect.height() << subtitleHeight << metrics.height();
+            //kDebug(96669) << contentsRect.height() << subtitleHeight << smallFont.pixelSize();
             if (contentsRect.height() - subtitleHeight >= smallFont.pixelSize() || formFactor() != Plasma::Horizontal) {
                 // to small to display the time on top of the date/timezone
                 // put them side by side
@@ -403,8 +404,8 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
             }
         } else {
             /* kDebug(96669) << "checking timezone placement"
-                          << contentsRect.height() << dateRect.height() << subtitleHeight <<
-                          metrics.lineSpacing();*/
+                          << contentsRect.height() << dateRect.height() << subtitleHeight
+                          << smallFont.pixelSize() << smallFont.pointSize();*/
             if (contentsRect.height() - subtitleHeight < smallFont.pixelSize() && formFactor() == Plasma::Horizontal) {
                 // to small to display the time on top of the date/timezone
                 // put them side by side
