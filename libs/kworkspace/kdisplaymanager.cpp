@@ -201,7 +201,7 @@ KDisplayManager::shutdown( KWorkSpace::ShutdownType shutdownType,
               KWorkSpace::ShutdownMode shutdownMode, /* NOT Default */
               const QString &bootOption )
 {
-	if (shutdownType == KWorkSpace::ShutdownTypeNone)
+	if (shutdownType == KWorkSpace::ShutdownTypeNone || shutdownType == KWorkSpace::ShutdownTypeLogout)
 		return;
 
 	bool cap_ask;
