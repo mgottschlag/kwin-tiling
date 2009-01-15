@@ -67,6 +67,7 @@ FdoGraphicsWidget::FdoGraphicsWidget(WId winId, QGraphicsWidget *parent)
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
             this, SLOT(updateWidgetBackground()));
+    QTimer::singleShot(0, this, SLOT(setupXEmbedDelegate()));
 }
 
 
