@@ -463,7 +463,8 @@ bool TaskGroupItem::isActive() const
 void TaskGroupItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 { //TODO add delay so we can still drag group items
     if (event->buttons() & Qt::LeftButton) {
-        if (m_applet->groupManager().sortingStrategy() == TaskManager::GroupManager::ManualSorting || m_applet->groupManager().groupingStrategy() == TaskManager::GroupManager::ManualGrouping) {
+        if (m_applet->groupManager().sortingStrategy() == TaskManager::GroupManager::ManualSorting ||
+            m_applet->groupManager().groupingStrategy() == TaskManager::GroupManager::ManualGrouping) {
             if (!m_popupMenuTimer) {
                 m_popupMenuTimer = new QTimer(this);
                 m_popupMenuTimer->setSingleShot(true);
@@ -475,8 +476,8 @@ void TaskGroupItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             popupMenu();
         }
     }
-    event->accept();
 
+    event->accept();
 }
 
 void TaskGroupItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -484,9 +485,15 @@ void TaskGroupItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     if (event->button() == Qt::MidButton) {
         expand();
     }
+
     if (m_popupMenuTimer) {
+        if (m_popupMenuTimer->isActive()) {
+            // clicked, released, didn't move -> show the popup!
+            popupMenu();
+        }
         m_popupMenuTimer->stop();
     }
+
     AbstractTaskItem::mouseReleaseEvent(event);
 }
 
@@ -503,6 +510,10 @@ void TaskGroupItem::popupMenu()
 
 void TaskGroupItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
+    if (QPoint(event->screenPos() - event->buttonDownScreenPos(Qt::LeftButton)).manhattanLength() < QApplication::startDragDistance()) {
+        return;
+    } //Wait a bit before starting drag
+
     //kDebug();
     if (m_popupMenuTimer) {
         m_popupMenuTimer->stop();
