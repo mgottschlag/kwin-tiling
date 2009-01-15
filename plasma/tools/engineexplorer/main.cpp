@@ -45,7 +45,9 @@ int main(int argc, char **argv)
     options.add("y <pixels>", ki18n("The desired y position in pixels"));
     options.add("engine <data engine>", ki18n("The data engine to use"));
     options.add("source <data engine>", ki18n("The source to request"));
-    options.add("interval <ms>", ki18n("Update Interval in milliseconds."));
+    options.add("interval <ms>", ki18n("Update interval in milliseconds"));
+    options.add("app <application>", ki18n("Only show engines associated with the parent application; "
+                                           "maps to the X-KDE-ParentApp entry in the DataEngine's .desktop file."));
     KCmdLineArgs::addCmdLineOptions(options);
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
@@ -83,6 +85,10 @@ int main(int argc, char **argv)
         if (!source.isEmpty()) {
             w->requestSource(source);
         }
+    }
+
+    if (args->isSet("app")) {
+        w->setApp(args->getOption("app"));
     }
 
     args->clear();

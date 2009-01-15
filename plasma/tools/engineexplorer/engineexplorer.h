@@ -41,6 +41,7 @@ class EngineExplorer : public KDialog, public Ui::EngineExplorer
         explicit EngineExplorer(QWidget *parent = 0);
         ~EngineExplorer();
 
+        void setApp(const QString &app);
         void setEngine(const QString &engine);
         void setInterval(const int interval);
         void requestSource(const QString &source);
@@ -63,6 +64,7 @@ class EngineExplorer : public KDialog, public Ui::EngineExplorer
 
         Plasma::DataEngineManager* m_engineManager;
         QStandardItemModel* m_dataModel;
+        QString m_app;
         QString m_engineName;
         Plasma::DataEngine* m_engine;
         int m_sourceCount;

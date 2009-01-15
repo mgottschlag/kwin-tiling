@@ -94,6 +94,15 @@ EngineExplorer::~EngineExplorer()
 {
 }
 
+void EngineExplorer::setApp(const QString &app)
+{
+    m_app = app;
+
+    if (m_engines->count() > 0) {
+        listEngines();
+    }
+}
+
 void EngineExplorer::setEngine(const QString &engine)
 {
     //find the engine in the combo box
@@ -130,7 +139,7 @@ void EngineExplorer::dataUpdated(const QString& source, const Plasma::DataEngine
 void EngineExplorer::listEngines()
 {
     m_engines->clear();
-    QStringList engines = m_engineManager->listAllEngines();
+    QStringList engines = m_engineManager->listAllEngines(m_app);
     qSort(engines);
     m_engines->addItems(engines);
     m_engines->setCurrentIndex(-1);
