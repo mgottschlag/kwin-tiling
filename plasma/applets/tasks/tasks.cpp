@@ -118,15 +118,16 @@ void Tasks::init()
 
     KConfigGroup cg = config();
 
-    m_groupManager->setShowOnlyCurrentDesktop( cg.readEntry("showOnlyCurrentDesktop", false));
-    m_groupManager->setShowOnlyCurrentScreen( cg.readEntry("showOnlyCurrentScreen", false));
-    m_groupManager->setShowOnlyMinimized( cg.readEntry("showOnlyMinimized", false));
+    m_groupManager->setShowOnlyCurrentDesktop(cg.readEntry("showOnlyCurrentDesktop", false));
+    m_groupManager->setShowOnlyCurrentScreen(cg.readEntry("showOnlyCurrentScreen", false));
+    m_groupManager->setShowOnlyMinimized(cg.readEntry("showOnlyMinimized", false));
     m_groupManager->setOnlyGroupWhenFull(cg.readEntry("groupWhenFull", true));
     m_showTooltip = cg.readEntry("showTooltip", true);
 
     m_groupManager->setGroupingStrategy( static_cast<TaskManager::GroupManager::TaskGroupingStrategy>(cg.readEntry("groupingStrategy", static_cast<int>(TaskManager::GroupManager::ProgramGrouping))));
 
     m_groupManager->setSortingStrategy( static_cast<TaskManager::GroupManager::TaskSortingStrategy>(cg.readEntry("sortingStrategy", static_cast<int>(TaskManager::GroupManager::AlphaSorting))));
+
     m_rootGroupItem->setMaxRows( cg.readEntry("maxRows", 2));
     m_rootGroupItem->setForceRows( cg.readEntry("forceRows", false));
 

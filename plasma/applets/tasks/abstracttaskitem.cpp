@@ -667,6 +667,48 @@ void AbstractTaskItem::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
     }
 }
 
+QRect AbstractTaskItem::iconGeometry() const
+{
+    if (!scene() || !boundingRect().isValid()) {
+        return QRect();
+    }
+
+    QGraphicsView *parentView = 0;
+    QGraphicsView *possibleParentView = 0;
+    // The following was taken from Plasma::Applet, it doesn't make sense to make the item an applet, and this was the easiest way around it.
+    foreach (QGraphicsView *view, scene()->views()) {
+        if (view->sceneRect().intersects(sceneBoundingRect()) ||
+            view->sceneRect().contains(scenePos())) {
+            if (view->isActiveWindow()) {
+                parentView = view;
+                break;
+            } else {
+                possibleParentView = view;
+            }
+        }
+    }
+
+    if (!parentView) {
+        parentView = possibleParentView;
+
+        if (!parentView) {
+            return QRect();
+        }
+    }
+
+    QRect rect = parentView->mapFromScene(mapToScene(boundingRect())).boundingRect().adjusted(0, 0, 1, 1);
+    rect.moveTopLeft(parentView->mapToGlobal(rect.topLeft()));
+    return rect;
+}
+
+void AbstractTaskItem::publishIconGeometry() const
+{
+}
+
+void AbstractTaskItem::publishIconGeometry(const QRect &rect) const
+{
+}
+
 void AbstractTaskItem::setGeometry(const QRectF& geometry)
 {
     QGraphicsWidget::setGeometry(geometry);
