@@ -176,8 +176,7 @@ class CalendarTablePrivate
         QRectF hoverRect;
         int month;
         int year;
-  
-        
+
         float opacity;
         int hoverWeek;
         int hoverDay;
@@ -404,13 +403,13 @@ void CalendarTable::paintCell(QPainter *p, int cell, int week, int weekDay, Cell
     if (type & NotInCurrentMonth) {
         p->setOpacity(d->opacity);
     }
-    
+
     p->setPen(numberColor);
     QFont font = Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
     font.setBold(true);
-    font.setPointSize(cellArea.height() * 0.6);
+    font.setPixelSize(cellArea.height() * 0.7);
     p->setFont(font);
-    p->drawText(cellArea, Qt::AlignCenter, QString::number(cell),&cellArea); //draw number
+    p->drawText(cellArea, Qt::AlignCenter, QString::number(cell), &cellArea); //draw number
     p->setOpacity(1.0);
 }
 
@@ -457,7 +456,6 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
     //kDebug() << "exposed: " << option->exposedRect;
     for (int week = 0; week < DISPLAYED_WEEKS; week++) {
         for (int weekDay = 0; weekDay < daysInWeek; weekDay++) {
-
             int x = cellX(weekDay);
             int y = cellY(week);
 
@@ -495,7 +493,7 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
                 QRectF cellRect(r.x() + d->centeringSpace, y, d->cellW, d->cellH);
                 p->setPen(Theme::defaultTheme()->color(Plasma::Theme::TextColor));
                 QFont font = Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
-                font.setPointSize(cellRect.height() * 0.6);
+                font.setPixelSize(cellRect.height() * 0.7);
                 p->setFont(font);
                 p->setOpacity(d->opacity);
                 p->drawText(cellRect, Qt::AlignCenter, QString::number(d->calendar->weekNumber(cellDate))); //draw number
@@ -511,8 +509,11 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
         for (int i = 0; i < daysInWeek; i++){
             int weekDay = ((i + weekStartDay - 1) % daysInWeek) + 1;
             QString dayName = d->calendar->weekDayName(weekDay, KCalendarSystem::ShortDayName);
-            p->setFont(Theme::defaultTheme()->font(Plasma::Theme::DefaultFont));
-            p->drawText(QRectF(cellX(i), r.y(), d->cellW, d->headerHeight), Qt::AlignCenter, dayName);
+            QFont font = Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
+            font.setPixelSize(d->headerHeight * 0.9);
+            p->setFont(font);
+            p->drawText(QRectF(cellX(i), r.y(), d->cellW, d->headerHeight),
+                        Qt::AlignCenter | Qt::AlignVCenter, dayName);
         }
     }
 
