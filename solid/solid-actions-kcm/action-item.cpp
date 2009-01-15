@@ -26,7 +26,7 @@
 #include <KDebug>
 #include <KDesktopFile>
 #include <KConfigGroup>
-    
+
 ActionItem::ActionItem(QString pathToDesktop, QString action, QObject *parent)
 {
     Q_UNUSED(parent);
@@ -45,7 +45,7 @@ ActionItem::ActionItem(QString pathToDesktop, QString action, QObject *parent)
 }
 
 ActionItem::~ActionItem()
-{ 
+{
     delete desktopFileWrite;
     delete desktopFileMaster;
 }
@@ -108,21 +108,18 @@ KConfigGroup ActionItem::configItem(DesktopAction actionType, GroupType keyGroup
 {
     int countAccess = 0;
 
-    if(actionType == ActionItem::DesktopRead)
-    {
-      foreach( KConfigGroup possibleGroup, actionGroups.values(keyGroup) )
-      {
-        if( possibleGroup.hasKey(keyName) )
-        { return possibleGroup;
-          break;
+    if (actionType == ActionItem::DesktopRead) {
+        foreach(KConfigGroup possibleGroup, actionGroups.values(keyGroup)) {
+            if (possibleGroup.hasKey(keyName)) {
+                return possibleGroup;
+                break;
+            }
         }
-      }
-    }
-    else if(actionType == ActionItem::DesktopWrite)
-    {
-      if(isUserSupplied())
-      { countAccess = 1; }
-      return actionGroups.values(keyGroup)[countAccess];
+    } else if (actionType == ActionItem::DesktopWrite) {
+        if (isUserSupplied()) {
+            countAccess = 1;
+        }
+        return actionGroups.values(keyGroup)[countAccess];
     }
     return actionGroups.values(keyGroup)[0]; // Implement a backstop so a valid value is always returned
 }

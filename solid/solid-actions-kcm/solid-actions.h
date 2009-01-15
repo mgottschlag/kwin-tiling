@@ -23,7 +23,7 @@
 #include <KCModule>
 
 #include "ui_solid-actions-config.h"
-#include "ui_solid-actions-edit.h"
+#include "solid-actions-edit.h"
 #include "ui_solid-actions-add.h"
 
 class ActionItem;
@@ -33,15 +33,13 @@ class SolidActions: public KCModule
     Q_OBJECT
 
 public:
-    SolidActions( QWidget* parent, const QVariantList&  );
+    SolidActions(QWidget* parent, const QVariantList&);
     ~SolidActions();
     void load();
     void save();
     void defaults();
 
-protected:
-
-public slots:
+private slots:
     void addAction();
     void editAction();
     void deleteAction();
@@ -54,14 +52,13 @@ public slots:
 
 private:
     Ui_SolidActionsConfig *mainUi;
-    Ui_SolidActionEdit *editUi;
+    SolidActionsEdit *editUi;
     Ui_SolidActionAdd *addUi;
-    KDialog *editDialog;
-    QWidget *editWidget;
     KDialog *addDialog;
     QWidget *addWidget;
     QMap<QListWidgetItem*, ActionItem*> actionsDb;
     void clearActions();
+
 };
 
 #endif

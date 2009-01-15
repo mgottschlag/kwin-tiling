@@ -5,11 +5,11 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>481</width>
-    <height>198</height>
+    <width>487</width>
+    <height>409</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gridLayout" >
+  <layout class="QGridLayout" name="gridLayout_2" >
    <item row="0" column="0" >
     <layout class="QGridLayout" name="GlActionIconName" >
      <item row="0" column="0" >
@@ -60,8 +60,8 @@
     </layout>
    </item>
    <item row="2" column="0" >
-    <layout class="QGridLayout" name="GlSolidPredicate" >
-     <item row="0" column="0" >
+    <layout class="QGridLayout" name="gridLayout" >
+     <item row="0" column="0" colspan="3" >
       <widget class="QLabel" name="TlSolidPredicate" >
        <property name="minimumSize" >
         <size>
@@ -70,12 +70,39 @@
         </size>
        </property>
        <property name="text" >
-        <string>Predicate:</string>
+        <string>Devices must match the following parameters for this action:</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="1" >
-      <widget class="KLineEdit" name="LeSolidPredicate" />
+     <item row="1" column="0" colspan="3" >
+      <widget class="QTreeWidget" name="TwSolidRequirements" >
+       <column>
+        <property name="text" >
+         <string>1</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+     <item row="2" column="0" >
+      <widget class="KPushButton" name="PbAddRequirement" >
+       <property name="text" >
+        <string>Add Requirement</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" >
+      <widget class="KPushButton" name="PbEditRequirement" >
+       <property name="text" >
+        <string>Edit Requirement</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2" >
+      <widget class="KPushButton" name="PbRemoveRequirement" >
+       <property name="text" >
+        <string>Remove Requirement</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -91,6 +118,11 @@
    <class>KLineEdit</class>
    <extends>QLineEdit</extends>
    <header>klineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KPushButton</class>
+   <extends>QPushButton</extends>
+   <header>kpushbutton.h</header>
   </customwidget>
   <customwidget>
    <class>KUrlRequester</class>

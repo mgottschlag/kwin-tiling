@@ -30,38 +30,38 @@ class KConfigGroup;
 
 class ActionItem: public QObject
 {
-     Q_OBJECT
+    Q_OBJECT
 
 public:
-     ActionItem(QString pathToDesktop, QString action, QObject *parent = 0);
-     ~ActionItem();
+    ActionItem(QString pathToDesktop, QString action, QObject *parent = 0);
+    ~ActionItem();
 
-     enum GroupType { GroupDesktop = 0, GroupAction = 1 };
+    enum GroupType { GroupDesktop = 0, GroupAction = 1 };
 
-     bool isUserSupplied();
-     QString readKey(GroupType keyGroup, QString keyName, QString defaultValue);
-     void setKey(GroupType keyGroup, QString keyName, QString keyContents);
-     bool hasKey(GroupType keyGroup, QString keyName);
+    bool isUserSupplied();
+    QString readKey(GroupType keyGroup, QString keyName, QString defaultValue);
+    void setKey(GroupType keyGroup, QString keyName, QString keyContents);
+    bool hasKey(GroupType keyGroup, QString keyName);
 
-     QString icon();
-     QString exec();
-     QString name();
-     void setIcon(QString nameOfIcon);
-     void setName(QString nameOfAction);
-     void setExec(QString execUrl);
+    QString icon();
+    QString exec();
+    QString name();
+    void setIcon(QString nameOfIcon);
+    void setName(QString nameOfAction);
+    void setExec(QString execUrl);
 
-     QString desktopMasterPath;
-     QString desktopWritePath;
-     QString actionName;
+    QString desktopMasterPath;
+    QString desktopWritePath;
+    QString actionName;
 
 private:
-     enum DesktopAction { DesktopRead = 0, DesktopWrite = 1 };
+    enum DesktopAction { DesktopRead = 0, DesktopWrite = 1 };
 
-     KConfigGroup configItem(DesktopAction actionType, GroupType keyGroup, QString keyName = QString()); 
+    KConfigGroup configItem(DesktopAction actionType, GroupType keyGroup, QString keyName = QString());
 
-     KDesktopFile * desktopFileMaster;
-     KDesktopFile * desktopFileWrite;
-     QMultiMap<GroupType, KConfigGroup> actionGroups;
+    KDesktopFile * desktopFileMaster;
+    KDesktopFile * desktopFileWrite;
+    QMultiMap<GroupType, KConfigGroup> actionGroups;
 
 };
 
