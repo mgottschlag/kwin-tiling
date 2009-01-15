@@ -214,7 +214,7 @@ void sanity_check( int argc, char* argv[], KAboutData* aboutDataPtr )
     }
     if (msg.isEmpty())
     {
-        path += ".ICE-unix";
+        path += "/.ICE-unix";
         if (access(path.data(), W_OK) && (errno != ENOENT))
             msg = "No write access to '%1'.";
         else if (access(path.data(), R_OK) && (errno != ENOENT))
