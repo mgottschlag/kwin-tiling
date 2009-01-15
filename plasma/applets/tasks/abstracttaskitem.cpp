@@ -272,7 +272,7 @@ void AbstractTaskItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     //kDebug();
     if (QPoint(event->screenPos() - event->buttonDownScreenPos(Qt::LeftButton)).manhattanLength() < QApplication::startDragDistance()) {
         return;
-     } //Wait a bit before starting drag
+    } //Wait a bit before starting drag
 
   /*  if((m_applet->taskSortOrder() != Tasks::NoSorting) && (m_applet->taskSortOrder() != Tasks::GroupSorting)){ //FIXME check somhow if drag is allowed
         return;
