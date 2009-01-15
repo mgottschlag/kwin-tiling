@@ -95,7 +95,7 @@ Solid::Control::BluetoothManager::~BluetoothManager()
     typedef QPair<BluetoothInterface *, Ifaces::BluetoothInterface *> BluetoothInterfaceIfacePair;
 
     // Delete all the devices, they are now outdated
-    foreach (const BluetoothInterfaceIfacePair &pair, d->bluetoothInterfaceMap) {
+    foreach (const BluetoothInterfaceIfacePair &pair, d->bluetoothInterfaceMap.values()) {
         delete pair.first;
         delete pair.second;
     }
