@@ -216,7 +216,6 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     m_lastMin = containment()->minimumSize();
     m_lastMax = containment()->maximumSize();
 
-
     if (panel) {
         connect(panel, SIGNAL(destroyed(QObject*)), this, SLOT(panelDeleted()));
         connect(panel, SIGNAL(toolBoxToggled()), this, SLOT(togglePanelController()));
@@ -224,7 +223,6 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     }
 
     connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
-
 
     // Graphics view setup
     setFrameStyle(QFrame::NoFrame);
@@ -607,7 +605,8 @@ void PanelView::pinchContainment(const QRect &screenGeom)
             c->setMaximumSize(thisSize.readEntry("max", max));
             m_offset = thisSize.readEntry("offset", 0);
         } else if (m_lastSeenSize < (horizontal ? sw : sh) &&
-                   c->geometry().width() == m_lastSeenSize) {
+                   (horizontal ? c->geometry().width() :
+                                 c->geometry().height()) >= m_lastSeenSize) {
             // we are moving from a smaller space where we are 100% to a larger one
             if (horizontal) {
                 c->setMaximumSize(sw, max.height());
