@@ -3,7 +3,7 @@
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -44,7 +44,7 @@ SolidActionsEdit::SolidActionsEdit(QWidget *parent) : KDialog(parent)
     QWidget *editWidget = new QWidget(this);
     setMainWidget(editWidget);
     ui.setupUi(editWidget);
-    setInitialSize(QSize(250, 400)); // Set a decent inital size
+    setInitialSize(QSize(250, 400)); // Set a decent initial size
     ui.TwSolidRequirements->setHeaderLabel(""); // We don't need a header label
 
     // Instantiate the predicate edit dialog
@@ -148,7 +148,7 @@ void SolidActionsEdit::predicateItem(QString predicate, QTreeWidgetItem *parent)
     QTreeWidgetItem * writeItem;
     QString unParsed = predicate;
     QStringList typeList;
-    // The predicate could have multiple types in it seperate them if they exist
+    // The predicate could have multiple types in it separate them if they exist
     if (unParsed.contains("OR")) { // Could be any contained be true
         unParsed.replace("OR", "$"); // Replace with unified symbol for easier splitting later
         newItem->setText(4, "OR"); // Store the type away in the container for later use
@@ -164,7 +164,7 @@ void SolidActionsEdit::predicateItem(QString predicate, QTreeWidgetItem *parent)
         while (unParsed.count("$") > 0) {
             QString typeContent = unParsed.mid(unParsed.lastIndexOf("$") - 1); // Read all text from the end to the first split
             unParsed.remove(typeContent); // Remove that text
-            typeList.prepend(typeContent.remove("$")); // Add it on to the beginning so that the reversal is reversed
+            typeList.prepend(typeContent.remove('$')); // Add it on to the beginning so that the reversal is reversed
         }
         if (!unParsed.isEmpty()) {
             typeList.prepend(unParsed); // Add any remaining condition to the beginning as well ( covers last condition )
@@ -176,7 +176,7 @@ void SolidActionsEdit::predicateItem(QString predicate, QTreeWidgetItem *parent)
     }
     unParsed = unParsed.trimmed(); // Sterilise whitespace for later
     // Parse the list of conditions here
-    foreach(const QString type, typeList) {
+    foreach(const QString &type, typeList) {
         QString typeFull = type.trimmed(); // Clean off whitespace first
         if (typeList.count() == 1) { // If the list of conditions only contains one, write into the parent
             writeItem = newItem;
@@ -217,11 +217,11 @@ QString SolidActionsEdit::predicateRetrieve(QTreeWidgetItem *parent)
         if (item->childCount() > 0) { // If the child count of this child isn't zero then we need to get their text
             returnText = returnText + predicateRetrieve(item);
         } else {
-            QString appendText = item->text(1) + " " + item->text(2) + " " + item->text(3); // Read in + format data
+            QString appendText = item->text(1) + ' ' + item->text(2) + ' ' + item->text(3); // Read in + format data
             returnText.append(appendText.trimmed()); // Append the formatted data
         }
         if (childrenList.last() != item) { // If we don't have the last then we need to add the comparer
-            returnText.append(" " + parent->text(4) + " ");
+            returnText.append(' ' + parent->text(4) + ' ');
         }
     }
     if (returnText.at(0) == '[') { // If the first letter is a bracket, there is no seperating space
@@ -229,7 +229,7 @@ QString SolidActionsEdit::predicateRetrieve(QTreeWidgetItem *parent)
     } else { // If there isn't a bracket, there is a seperating space
         bracketSpacer = " ";
     }
-    return QString("[" + bracketSpacer + returnText + bracketSpacer + "]"); // Add on brackets with spacer
+    return QString('[' + bracketSpacer + returnText + bracketSpacer + ']'); // Add on brackets with spacer
 }
 
 void SolidActionsEdit::addRequirement()

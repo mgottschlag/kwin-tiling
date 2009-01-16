@@ -3,7 +3,7 @@
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -103,11 +103,11 @@ void SolidActions::addAction()
     QString enteredName = addUi->LeActionName->text();
     // Lets get a desktop file
     QString internalName = enteredName; // copy the name the user entered -> we will be making mods
-    internalName.replace(" ", "-", Qt::CaseSensitive); // replace spaces with dashes
+    internalName.replace(QChar(' '), QChar('-'), Qt::CaseSensitive); // replace spaces with dashes
     QString filePath = KStandardDirs::locateLocal("data", 0); // Get the location on disk for "data"
     filePath = filePath + "solid/actions/" + internalName + ".desktop"; // Create a file path for new action
     KDesktopFile newDesktop(filePath); // Create the desktop file
-    // Fill in an inital template
+    // Fill in an initial template
     newDesktop.actionGroup("open").writeEntry("Icon", "unknown"); // Create a action -> fill XDG required items
     newDesktop.actionGroup("open").writeEntry("Exec", ""); // ditto
     newDesktop.actionGroup("open").writeEntry("Name", enteredName); // ditto
