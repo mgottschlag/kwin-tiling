@@ -536,7 +536,6 @@ void Solid::Control::BluetoothInterfacePrivate::setBackendObject(QObject *object
 */
         QObject::connect(object, SIGNAL(deviceCreated(const QString &)),
                                  parent(), SIGNAL(deviceCreated(const QString &)));
-
         QObject::connect(object, SIGNAL(deviceDisappeared(const QString &)),
                                  parent(), SIGNAL(deviceDisappeared(const QString &)));
         QObject::connect(object, SIGNAL(deviceFound(const QString &, const QMap<QString,QVariant> &)),

@@ -188,6 +188,7 @@ private:
 
     Q_PRIVATE_SLOT(d, void _k_interfaceAdded(const QString &))
     Q_PRIVATE_SLOT(d, void _k_interfaceRemoved(const QString &))
+    Q_PRIVATE_SLOT(d, void _k_defaultInterfaceChanged(const QString &))
     Q_PRIVATE_SLOT(d, void _k_interfaceDestroyed(QObject *))
 /*
     Q_PRIVATE_SLOT(d, void _k_inputDeviceCreated(const QString &))

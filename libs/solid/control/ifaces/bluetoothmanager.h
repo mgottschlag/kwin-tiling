@@ -89,6 +89,13 @@ public:
      virtual QObject *createInterface(const QString &ubi) = 0;
 
     /**
+     * Removes a BluetoothInterface object from this backend given its UBI.
+     *
+     * @param ubi the identifier of the bluetooth interface instantiated
+     */
+     virtual void removeInterface(const QString &ubi) = 0;
+
+    /**
      * Retrieves the list of Universal Bluetooth Identifiers (UBIs) of bluetooth input devices
      * which are configured in the system. Configured means also not connected devices.
      *

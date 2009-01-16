@@ -58,6 +58,7 @@ public:
 
     void _k_interfaceAdded(const QString &ubi);
     void _k_interfaceRemoved(const QString &ubi);
+    void _k_defaultInterfaceChanged(const QString &ubi);
     void _k_interfaceDestroyed(QObject *object);
 /*
     void _k_inputDeviceCreated(const QString &ubi);
@@ -109,6 +110,8 @@ Solid::Control::BluetoothInterfaceList Solid::Control::BluetoothManager::buildDe
     Ifaces::BluetoothManager *backend = qobject_cast<Ifaces::BluetoothManager *>(d->managerBackend());
 
     if (backend == 0) return list;
+
+    kDebug() << "UBI List " << ubiList;
 
     foreach (const QString &ubi, ubiList) {
         QPair<BluetoothInterface *, Ifaces::BluetoothInterface *> pair = d->findRegisteredBluetoothInterface(ubi);
@@ -239,7 +242,9 @@ void Solid::Control::BluetoothManager::removeInputDevice(const QString &ubi)
 */
 void Solid::Control::BluetoothManagerPrivate::_k_interfaceAdded(const QString &ubi)
 {
-    QPair<BluetoothInterface *, Ifaces::BluetoothInterface *> pair = bluetoothInterfaceMap.take(ubi);
+    kDebug() << "Size of InterfaceList " << bluetoothInterfaceMap.size();
+    QPair<BluetoothInterface *, Ifaces::BluetoothInterface *> pair = findRegisteredBluetoothInterface(ubi);
+/*    QPair<BluetoothInterface *, Ifaces::BluetoothInterface *> pair = bluetoothInterfaceMap.take(ubi);
 
     if (pair.first != 0) {
         // Oops, I'm not sure it should happen...
@@ -247,7 +252,7 @@ void Solid::Control::BluetoothManagerPrivate::_k_interfaceAdded(const QString &u
 
         delete pair.first;
         delete pair.second;
-    }
+    }*/
 
     emit q->interfaceAdded(ubi);
 }
@@ -261,11 +266,19 @@ void Solid::Control::BluetoothManagerPrivate::_k_interfaceRemoved(const QString 
         delete pair.second;
     }
 
+    Ifaces::BluetoothManager *backend = qobject_cast<Ifaces::BluetoothManager *>(managerBackend());
+    backend->removeInterface(ubi);
     emit q->interfaceRemoved(ubi);
+}
+
+void Solid::Control::BluetoothManagerPrivate::_k_defaultInterfaceChanged(const QString &ubi)
+{
+    emit q->defaultInterfaceChanged(ubi);
 }
 
 void Solid::Control::BluetoothManagerPrivate::_k_interfaceDestroyed(QObject *object)
 {
+    kDebug() << "Interface detroyed";
     Ifaces::BluetoothInterface *device = qobject_cast<Ifaces::BluetoothInterface *>(object);
 
     if (device != 0) {
@@ -323,6 +336,9 @@ void Solid::Control::BluetoothManagerPrivate::connectBackend(QObject *newBackend
                      q, SLOT(_k_interfaceAdded(const QString &)));
     QObject::connect(newBackend, SIGNAL(interfaceRemoved(const QString &)),
                      q, SLOT(_k_interfaceRemoved(const QString &)));
+    QObject::connect(newBackend, SIGNAL(defaultInterfaceChanged(const QString &)),
+                     q, SLOT(_k_defaultInterfaceChanged(const QString &)));
+
 /*
     QObject::connect(newBackend, SIGNAL(inputDeviceCreated(const QString &)),
                      q, SLOT(_k_inputDeviceCreated(const QString &)));
@@ -334,17 +350,22 @@ void Solid::Control::BluetoothManagerPrivate::connectBackend(QObject *newBackend
 
 QPair<Solid::Control::BluetoothInterface *, Solid::Control::Ifaces::BluetoothInterface *> Solid::Control::BluetoothManagerPrivate::findRegisteredBluetoothInterface(const QString &ubi) const
 {
+
+    kDebug() << "findRegisteredBluetoothInterface " << ubi;
     if (bluetoothInterfaceMap.contains(ubi)) {
         return bluetoothInterfaceMap[ubi];
     } else {
+        kDebug() << "Creating New Interface " << ubi;
         Ifaces::BluetoothManager *backend = qobject_cast<Ifaces::BluetoothManager *>(managerBackend());
         Ifaces::BluetoothInterface *iface = 0;
 
         if (backend != 0) {
+            kDebug() << "Calling Backend to Creating New Interface " << ubi;
             iface = qobject_cast<Ifaces::BluetoothInterface *>(backend->createInterface(ubi));
         }
 
         if (iface != 0) {
+            kDebug() << "BackendIface created ";
             BluetoothInterface *device = new BluetoothInterface(iface);
             QPair<BluetoothInterface *, Ifaces::BluetoothInterface *> pair(device, iface);
             QObject::connect(iface, SIGNAL(destroyed(QObject *)),
