@@ -42,7 +42,7 @@ public:
     Private() : defaultMaxServices(DEFAULT_MAX_SERVICES) {
         KConfigGroup recentGroup = componentData().config()->group("RecentlyUsed");
         QList<QString> recentApplications = recentGroup.readEntry("Applications", QList<QString>());
-        defaultMaxServices = maxServices = recentGroup.readEntry("MaxApplications", defaultMaxServices);
+        defaultMaxServices = maxServices = qMax(0, recentGroup.readEntry("MaxApplications", defaultMaxServices));
 
         // TESTING
         //      the actual last date/time is not currently recorded, instead we just use
