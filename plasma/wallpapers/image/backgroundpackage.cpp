@@ -54,9 +54,9 @@ private:
 };
 
 ResizeThread::ResizeThread(const QString &path, float ratio, QObject *parent)
-: ThreadWeaver::Job(parent)
-, m_path(path)
-, m_ratio(ratio)
+    : ThreadWeaver::Job(parent),
+      m_path(path),
+      m_ratio(ratio)
 {
 }
 
@@ -149,7 +149,7 @@ private:
 };
 
 BackgroundPackageStructure::BackgroundPackageStructure(QObject *parent)
-: PackageStructure(parent, "Background")
+    : PackageStructure(parent, "Background")
 {
     QStringList mimetypes;
     mimetypes << "image/svg" << "image/png" << "image/jpeg" << "image/jpg";
@@ -157,14 +157,15 @@ BackgroundPackageStructure::BackgroundPackageStructure(QObject *parent)
 
     addDirectoryDefinition("images", "images", i18n("Images"));
     addFileDefinition("screenshot", "screenshot.png", i18n("Screenshot"));
+    setAllowExternalPaths(true);
 }
 
 
 
 BackgroundPackage::BackgroundPackage(const QString &path, float ratio)
-: Package(path, KSharedPtr<Plasma::PackageStructure>(new BackgroundPackageStructure(this)))
-, m_path(path)
-, m_ratio(ratio)
+    : Package(path, KSharedPtr<Plasma::PackageStructure>(new BackgroundPackageStructure(this))),
+      m_path(path),
+      m_ratio(ratio)
 {
 }
 
