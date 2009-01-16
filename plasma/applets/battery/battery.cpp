@@ -71,6 +71,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_batteryLabel(0),
       m_profileLabel(0),
       m_profileCombo(0),
+      m_brightnessSlider(0),
       m_theme(0),
       m_availableProfiles(QStringList()),
       m_currentProfile(0),
@@ -578,6 +579,11 @@ void Battery::updateStatus()
             m_profileCombo->show();
             m_profileLabel->show();
         }
+    }
+
+    if (m_brightnessSlider) {
+        m_brightnessSlider->setValue(Solid::Control::PowerManager::brightness());
+        kDebug() << "Updating brightness:" << Solid::Control::PowerManager::brightness();
     }
     //kDebug() << "SIZE LABEL" << m_batteryLabel->size() << m_batteryLabel->preferredSize() << m_batteryLabel->preferredSize();
     m_controlsLayout->setColumnMinimumWidth(1,280);
