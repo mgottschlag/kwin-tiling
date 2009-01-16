@@ -43,35 +43,11 @@ public:
     BluezBluetoothInterface(const QString  & objectPath);
     virtual ~BluezBluetoothInterface();
     QString ubi() const;
-/*
-    QString address() const;
-    QString version() const;
-    QString revision() const;
-    QString manufacturer() const;
-    QString company() const;
-    Solid::Control::BluetoothInterface::Mode mode() const;
-    int discoverableTimeout() const;
-    bool isDiscoverable() const;
-    QStringList listConnections() const;
-    QString majorClass() const;
-    QStringList listAvailableMinorClasses() const;
-    QString minorClass() const;
-    QStringList serviceClasses() const;
-    QString name() const;
-    QStringList listBondings() const;
-    bool isPeriodicDiscoveryActive() const;
-    bool isPeriodicDiscoveryNameResolvingActive() const;
-    QStringList listRemoteDevices() const;
-    QStringList listRecentRemoteDevices(const QDateTime &) const;
-    QString getRemoteName(const QString &);
-    bool isTrusted(const QString &);
-
-*/    
+    
     QObject *createBluetoothRemoteDevice(const QString &);
     QObject *createBluetoothInputDevice(const QString &);
-    //QString createDevice(const QString &) const;
     void createDevice(const QString &) const;
-    QString createPairedDevice(const QString &,const QString &,const QString &) const;
+    void createPairedDevice(const QString &,const QString &,const QString &) const;
     QString findDevice(const QString &) const;
     QMap< QString, QVariant > getProperties() const;
     QStringList listDevices() const;
@@ -89,36 +65,6 @@ public Q_SLOTS:
     void stopDiscovery();
     void unregisterAgent(const QString &);
 
-/*
-    void setMode(const Solid::Control::BluetoothInterface::Mode);
-    void setDiscoverableTimeout(int);
-    void setMinorClass(const QString &);
-    void setName(const QString &);
-    void discoverDevices();
-    void discoverDevicesWithoutNameResolving();
-    void cancelDiscovery();
-    void startPeriodicDiscovery();
-    void stopPeriodicDiscovery();
-    void setPeriodicDiscoveryNameResolving(bool);
-    void setTrusted(const QString &);
-    void removeTrust(const QString &);
-
-    void slotModeChanged(const Solid::Control::BluetoothInterface::Mode mode);
-    void slotDiscoverableTimeoutChanged(int timeout);
-    void slotMinorClassChanged(const QString &minor);
-    void slotNameChanged(const QString &name);
-    void slotDiscoveryStarted();
-    void slotDiscoveryCompleted();
-    void slotRemoteDeviceFound(const QString &ubi, uint deviceClass, short rssi);
-    void slotRemoteDeviceDisappeared(const QString &ubi);
-    void slotRemoteNameUpdated(const QString &, const QString &);
-    void slotRemoteDeviceConnected(const QString&);
-    void slotRemoteDeviceDisconnected(const QString&);
-    void slotTrustAdded(const QString&);
-    void slotTrustRemoved(const QString&);
-    void slotBondingCreated(const QString&);
-    void slotBondingRemoved(const QString&);
-*/    
     void slotDeviceCreated(const QDBusObjectPath &);
     void slotDeviceDisappeared(const QString &);
     void slotDeviceFound(const QString &, const QMap< QString, QVariant > &);
