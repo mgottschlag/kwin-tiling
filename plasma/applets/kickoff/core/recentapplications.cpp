@@ -93,7 +93,7 @@ public:
         // remove the least recently used service
         while (serviceQueue.count() > maxServices) {
             QString removeId = serviceQueue.takeFirst();
-            kDebug() << "Removing" << removeId << "from queue.";
+            kDebug() << "More than the maximal " << maxServices << " services added.  Removing" << removeId << "from queue.";
             serviceInfo.remove(removeId);
             emit instance.applicationRemoved(KService::serviceByStorageId(removeId));
         }
