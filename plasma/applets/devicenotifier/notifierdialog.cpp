@@ -362,12 +362,12 @@ void NotifierDialog::slotOnItemClicked(const QModelIndex &index)
         }
     //open  (index.data(ScopeRole).toInt() == OpenAction)
     } else {
-        QStringList desktop_files = m_hotplugModel->data(index, PredicateFilesRole).toStringList();
+        QStringList desktopFiles = m_hotplugModel->data(index, PredicateFilesRole).toStringList();
 
         kDebug() << "DeviceNotifier:: call Solid Ui Server with params :" << udi \
-                << "," << desktop_files;
+                << "," << desktopFiles;
         QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.SolidUiServer");
-        QDBusReply<void> reply = soliduiserver.call("showActionsDialog", udi, desktop_files);
+        QDBusReply<void> reply = soliduiserver.call("showActionsDialog", udi, desktopFiles);
     }
     emit itemSelected();
 }
