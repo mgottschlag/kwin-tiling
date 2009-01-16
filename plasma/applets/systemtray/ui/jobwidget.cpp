@@ -66,9 +66,9 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
 
     QGraphicsGridLayout *layout = new QGraphicsGridLayout(this);
     layout->addItem(m_fromNameLabel, 0, 0);
-    layout->addItem(m_fromLabel, 0, 1, 1, 2);
+    layout->addItem(m_fromLabel, 0, 1, 1, 3);
     layout->addItem(m_toNameLabel, 1, 0);
-    layout->addItem(m_toLabel, 1, 1, 1, 2);
+    layout->addItem(m_toLabel, 1, 1, 1, 3);
 
     layout->addItem(m_speedLabel, 2, 0);
     layout->addItem(m_processedLabel, 2, 1);
