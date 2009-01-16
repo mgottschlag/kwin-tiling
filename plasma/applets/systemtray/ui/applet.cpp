@@ -113,6 +113,12 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
 
 Applet::~Applet()
 {
+    //destroy any item in the systray, since it doesn't make sense for not detached notifications
+    //and jobs to stay around after a plasma reboot
+    foreach (Plasma::ExtenderItem *item, extender()->attachedItems()) {
+        item->destroy();
+    }
+
     delete d;
 }
 
