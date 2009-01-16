@@ -401,8 +401,8 @@ void PlasmaApp::setup(bool setupMode)
         setActive(true);
     } else {
         kDebug() << "checking lockprocess is still around";
-        QDBusInterface lockprocess("org.kde.krunner_lock", "/LockProcess",
-                "org.kde.krunner_lock.LockProcess", QDBusConnection::sessionBus(), this);
+        QDBusInterface lockprocess("org.kde.screenlocker", "/LockProcess",
+                "org.kde.screenlocker.LockProcess", QDBusConnection::sessionBus(), this);
         if (lockprocess.isValid()) {
             kDebug() << "success!";
             setActive(false);

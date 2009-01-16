@@ -133,8 +133,8 @@ void SaverDesktop::toggleLock()
     if (!corona()) {
         return; //I'm lazy, I know this'll never happen
     }
-    QDBusInterface lockprocess("org.kde.krunner_lock", "/LockProcess",
-            "org.kde.krunner_lock.LockProcess", QDBusConnection::sessionBus(), this);
+    QDBusInterface lockprocess("org.kde.screenlocker", "/LockProcess",
+            "org.kde.screenlocker.LockProcess", QDBusConnection::sessionBus(), this);
     if (corona()->immutability() == Mutable) {
         corona()->setImmutability(UserImmutable);
         lockprocess.call(QDBus::NoBlock, "startLock");
@@ -175,8 +175,8 @@ void SaverDesktop::dbusError(QDBusError error)
 
 void SaverDesktop::unlockDesktop()
 {
-    QDBusInterface lockprocess("org.kde.krunner_lock", "/LockProcess",
-            "org.kde.krunner_lock.LockProcess", QDBusConnection::sessionBus(), this);
+    QDBusInterface lockprocess("org.kde.screenlocker", "/LockProcess",
+            "org.kde.screenlocker.LockProcess", QDBusConnection::sessionBus(), this);
     bool sent = (lockprocess.isValid() &&
             lockprocess.callWithCallback("quit", QList<QVariant>(), this, SLOT(unlock(QDBusMessage)), SLOT(dbusError(QDBusError))));
     //the unlock slot above is a dummy that should never be called.

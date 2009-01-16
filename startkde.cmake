@@ -378,7 +378,7 @@ fi
 # If the session should be locked from the start (locked autologin),
 # lock now and do the rest of the KDE startup underneath the locker.
 if test -n "$dl"; then
-  kwrapper4 krunner_lock --forcelock &
+  kwrapper4 kscreenlocker --forcelock &
   # Give it some time for starting up. This is somewhat unclean; some
   # notification would be better.
   sleep 1

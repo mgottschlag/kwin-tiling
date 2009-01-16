@@ -58,7 +58,8 @@ bool MyApp::x11EventFilter( XEvent *ev )
 
 int main( int argc, char **argv )
 {
-    KCmdLineArgs::init( argc, argv, "krunner_lock", "krunner", ki18n("KRunner Locker"), "2.0" , ki18n("Session Locker for KRunner"));
+    KCmdLineArgs::init(argc, argv, "kscreenlocker", "krunner", ki18n("KDE Screen Locker"),
+                       "2.0" , ki18n("Session Locker for KDE Workspace"));
 
     KCmdLineOptions options;
     options.add("forcelock", ki18n("Force session locking"));

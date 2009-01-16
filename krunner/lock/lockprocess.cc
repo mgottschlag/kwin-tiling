@@ -9,7 +9,7 @@
 
 //krunner keeps running and checks user inactivity
 //when it should show screensaver (and maybe lock the session),
-//it starts krunner_lock, who does all the locking and who
+//it starts kscreenlocker, who does all the locking and who
 //actually starts the screensaver
 
 //It's done this way to prevent screen unlocking when krunner
@@ -147,7 +147,7 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     setupSignals();
 
     new LockProcessAdaptor(this);
-    QDBusConnection::sessionBus().registerService("org.kde.krunner_lock");
+    QDBusConnection::sessionBus().registerService("org.kde.screenlocker");
     QDBusConnection::sessionBus().registerObject("/LockProcess", this);
 
     kapp->installX11EventFilter(this);
@@ -1550,7 +1550,7 @@ void LockProcess::checkDPMSActive()
 #if defined(HAVE_XF86MISC) && defined(HAVE_XF86MISCSETGRABKEYSSTATE)
 // see http://cvsweb.xfree86.org/cvsweb/xc/programs/Xserver/hw/xfree86/common/xf86Events.c#rev3.113
 // This allows enabling the "Allow{Deactivate/Closedown}Grabs" options in XF86Config,
-// and krunner_lock will still lock the session.
+// and kscreenlocker will still lock the session.
 static enum { Unknown, Yes, No } can_do_xf86_lock = Unknown;
 void LockProcess::lockXF86()
 {

@@ -238,10 +238,10 @@ bool SaverEngine::startLockProcess( LockType lock_type )
 
     kDebug() << "SaverEngine: starting saver";
 
-    QString path = KStandardDirs::findExe( "krunner_lock" );
+    QString path = KStandardDirs::findExe( "kscreenlocker" );
     if( path.isEmpty())
     {
-        kDebug() << "Can't find krunner_lock!";
+        kDebug() << "Can't find kscreenlocker!";
         return false;
     }
     mLockProcess.clearProgram();
@@ -265,7 +265,7 @@ bool SaverEngine::startLockProcess( LockType lock_type )
     mLockProcess.start();
     if (mLockProcess.waitForStarted() == false )
     {
-        kDebug() << "Failed to start krunner_lock!";
+        kDebug() << "Failed to start kscreenlocker!";
         m_actived_time = -1;
         return false;
     }
@@ -278,7 +278,7 @@ bool SaverEngine::startLockProcess( LockType lock_type )
     emit ActiveChanged(true); // DBus signal
     mState = Preparing;
 
-    // It takes a while for krunner_lock to start and lock the screen.
+    // It takes a while for kscreenlocker to start and lock the screen.
     // Therefore delay the DBus call until it tells krunner that the locking is in effect.
     // This is done only for --forcelock .
     if (lock_type == ForceLock && calledFromDBus()) {

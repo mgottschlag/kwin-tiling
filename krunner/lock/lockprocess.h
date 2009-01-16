@@ -46,7 +46,7 @@ class LockProcess
     : public QWidget
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.kde.krunner_lock.LockProcess")
+    Q_CLASSINFO("D-Bus Interface", "org.kde.screenlocker.LockProcess")
 public:
     explicit LockProcess(bool child_saver = false, bool useBlankOnly = false);
     ~LockProcess();
