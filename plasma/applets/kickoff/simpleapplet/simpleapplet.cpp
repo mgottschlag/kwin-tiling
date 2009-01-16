@@ -88,6 +88,7 @@ public:
 
     MenuLauncherApplet::ViewType viewtype;
     MenuLauncherApplet::FormatType formattype;
+    int maxRecentApps;
 
     QComboBox *viewComboBox;
     QComboBox *formatComboBox;
@@ -110,6 +111,13 @@ public:
         delete bookmarkmenu;
         delete bookmarkowner;
         delete menuview;
+    }
+
+    void setMaxRecentApps(int num) {
+        maxRecentApps = qMax(0, num);
+        if (maxRecentApps > Kickoff::RecentApplications::self()->maximum()) {
+            Kickoff::RecentApplications::self()->setMaximum(maxRecentApps);
+        }
     }
 
     void addItem(QComboBox* combo, const QString& caption, int index, const QString& icon = QString()) {
@@ -227,16 +235,15 @@ void MenuLauncherApplet::init()
 
     KConfigGroup cg = config();
 
-    {
-        QMetaEnum e = metaObject()->enumerator(metaObject()->indexOfEnumerator("ViewType"));
-        QByteArray ba = cg.readEntry("view", QByteArray(e.valueToKey(d->viewtype)));
-        d->viewtype = (MenuLauncherApplet::ViewType) e.keyToValue(ba);
-    }
-    {
-        QMetaEnum e = metaObject()->enumerator(metaObject()->indexOfEnumerator("FormatType"));
-        QByteArray ba = cg.readEntry("format", QByteArray(e.valueToKey(d->formattype)));
-        d->formattype = (MenuLauncherApplet::FormatType) e.keyToValue(ba);
-    }
+    QMetaEnum vte = metaObject()->enumerator(metaObject()->indexOfEnumerator("ViewType"));
+    QByteArray vtb = cg.readEntry("view", QByteArray(vte.valueToKey(d->viewtype)));
+    d->viewtype = (MenuLauncherApplet::ViewType) vte.keyToValue(vtb);
+
+    QMetaEnum fte = metaObject()->enumerator(metaObject()->indexOfEnumerator("FormatType"));
+    QByteArray ftb = cg.readEntry("format", QByteArray(fte.valueToKey(d->formattype)));
+    d->formattype = (MenuLauncherApplet::FormatType) fte.keyToValue(ftb);
+
+    d->setMaxRecentApps(cg.readEntry("maxRecentApps", qMin(5, Kickoff::RecentApplications::self()->maximum())));
 
     d->icon->setIcon(KIcon(d->viewIcon()));
     //d->icon->setIcon(KIcon(cg.readEntry("icon","start-here-kde")));
@@ -327,7 +334,7 @@ void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     d->recentApplicationsSpinBox = new QSpinBox(p);
     d->recentApplicationsSpinBox->setMaximum(10);
     d->recentApplicationsSpinBox->setMinimum(0);
-    d->recentApplicationsSpinBox->setValue(Kickoff::RecentApplications::self()->maximum());
+    d->recentApplicationsSpinBox->setValue(d->maxRecentApps);
     recentLabel->setBuddy(d->recentApplicationsSpinBox);
     l->addWidget(d->recentApplicationsSpinBox, 2, 1);
 
@@ -347,7 +354,7 @@ void MenuLauncherApplet::configAccepted()
     bool needssaving = false;
     KConfigGroup cg = config();
 
-    int vt = d->viewComboBox->itemData(d->viewComboBox->currentIndex()).toInt();
+    const int vt = d->viewComboBox->itemData(d->viewComboBox->currentIndex()).toInt();
     if (vt != d->viewtype) {
         d->viewtype = (MenuLauncherApplet::ViewType) vt;
         needssaving = true;
@@ -359,7 +366,7 @@ void MenuLauncherApplet::configAccepted()
         d->icon->update();
     }
 
-    int ft = d->formatComboBox->itemData(d->formatComboBox->currentIndex()).toInt();
+    const int ft = d->formatComboBox->itemData(d->formatComboBox->currentIndex()).toInt();
     if (ft != d->formattype) {
         d->formattype = (MenuLauncherApplet::FormatType) ft;
         needssaving = true;
@@ -368,7 +375,12 @@ void MenuLauncherApplet::configAccepted()
         cg.writeEntry("format", QByteArray(e.valueToKey(d->formattype)));
     }
 
-    Kickoff::RecentApplications::self()->setMaximum(d->recentApplicationsSpinBox->value());
+    const int maxRecentApps = d->recentApplicationsSpinBox->value();
+    if (maxRecentApps != d->maxRecentApps) {
+        needssaving = true;
+        d->setMaxRecentApps(maxRecentApps);
+        cg.writeEntry("maxRecentApps", maxRecentApps);
+    }
 
     if (needssaving) {
         emit configNeedsSaving();
@@ -395,9 +407,11 @@ void MenuLauncherApplet::toggleMenu()
 
         switch (d->viewtype) {
         case Combined: {
-            if (Kickoff::RecentApplications::self()->recentApplications().size() > 0) {
+//if (Kickoff::RecentApplications::self()->recentApplications().size() > 0) {
+            if (d->maxRecentApps > 0) {
                 d->menuview->addTitle(i18n("Recently Used Applications"));
-                Kickoff::MenuView *recentlyview = d->createMenuView(new Kickoff::RecentlyUsedModel(d->menuview, Kickoff::RecentlyUsedModel::ApplicationsOnly));
+                Kickoff::RecentlyUsedModel* recentlymodel = new Kickoff::RecentlyUsedModel(d->menuview, Kickoff::RecentlyUsedModel::ApplicationsOnly, d->maxRecentApps);
+                Kickoff::MenuView *recentlyview = d->createMenuView(recentlymodel);
                 d->addMenu(recentlyview, true);
             }
 

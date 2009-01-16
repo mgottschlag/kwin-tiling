@@ -61,6 +61,9 @@ public:
     void setMaximum(int max);
     /** Returns the maximum number of recently used applications that are remembered. */
     int maximum() const;
+    /** Returns the default maximum number of recently used applications that are remembered as defined
+    either in the configfile as "MaxApplications" or via the DEFAULT_MAX_SERVICES macro. */
+    int defaultMaximum() const;
 
 public Q_SLOTS:
     /**

@@ -39,11 +39,10 @@ class RecentApplications::Private
 public:
     class ServiceInfo;
 
-    Private()
-            : maxServices(DEFAULT_MAX_SERVICES) {
+    Private() : defaultMaxServices(DEFAULT_MAX_SERVICES) {
         KConfigGroup recentGroup = componentData().config()->group("RecentlyUsed");
         QList<QString> recentApplications = recentGroup.readEntry("Applications", QList<QString>());
-        maxServices = recentGroup.readEntry("MaxApplications", maxServices);
+        defaultMaxServices = maxServices = recentGroup.readEntry("MaxApplications", defaultMaxServices);
 
         // TESTING
         //      the actual last date/time is not currently recorded, instead we just use
@@ -75,7 +74,6 @@ public:
         }
 
         recentGroup.writeEntry("Applications", recentApplications);
-        recentGroup.writeEntry("MaxApplications", maxServices);
     }
     void addEntry(const QString& id, ServiceInfo& info) {
         // if this service is already in the list then remove the existing
@@ -88,12 +86,14 @@ public:
         serviceQueue.append(id);
         info.queueIter = --serviceQueue.end();
         serviceInfo.insert(id, info);
+    }
 
+    void removeExpiredEntries() {
         // if more than the maximum number of services have been added
         // remove the least recently used service
-        if (serviceQueue.count() > maxServices) {
+        while (serviceQueue.count() > maxServices) {
             QString removeId = serviceQueue.takeFirst();
-            kDebug() << "More than max services added.  Removing" << removeId << "from queue.";
+            kDebug() << "Removing" << removeId << "from queue.";
             serviceInfo.remove(removeId);
             emit instance.applicationRemoved(KService::serviceByStorageId(removeId));
         }
@@ -115,7 +115,7 @@ public:
     };
 
     static const int DEFAULT_MAX_SERVICES = 5;
-    int maxServices;
+    int defaultMaxServices, maxServices;
     // queue to keep track of the order in which services have been used
     // (most recently used at the back)
     QLinkedList<QString> serviceQueue;
@@ -160,16 +160,15 @@ void RecentApplications::setMaximum(int maximum)
 {
     Q_ASSERT(maximum >= 0);
     privateSelf->maxServices = maximum;
-    while (privateSelf->serviceQueue.count() > privateSelf->maxServices) {
-        QString removeId = privateSelf->serviceQueue.takeFirst();
-        kDebug() << "More than max services added.  Removing" << removeId << "from queue.";
-        privateSelf->serviceInfo.remove(removeId);
-        emit applicationRemoved(KService::serviceByStorageId(removeId));
-    }
+    privateSelf->removeExpiredEntries();
 }
 int RecentApplications::maximum() const
 {
     return privateSelf->maxServices;
+}
+int RecentApplications::defaultMaximum() const
+{
+    return privateSelf->defaultMaxServices;
 }
 void RecentApplications::add(KService::Ptr service)
 {
@@ -181,8 +180,9 @@ void RecentApplications::add(KService::Ptr service)
     privateSelf->addEntry(info.storageId, info);
 
     kDebug() << "Recent app added" << info.storageId << info.startCount;
-
     emit applicationAdded(service, info.startCount);
+
+    privateSelf->removeExpiredEntries();
 }
 void RecentApplications::clear()
 {

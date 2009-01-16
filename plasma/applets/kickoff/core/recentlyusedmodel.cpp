@@ -42,9 +42,10 @@ using namespace Kickoff;
 class RecentlyUsedModel::Private
 {
 public:
-    Private(RecentlyUsedModel *parent, RecentType recenttype)
+    Private(RecentlyUsedModel *parent, RecentType recenttype, int maxRecentApps)
             : q(parent)
             , recenttype(recenttype)
+            , maxRecentApps(maxRecentApps >= 0 ? maxRecentApps : Kickoff::RecentApplications::self()->defaultMaximum())
             , recentDocumentItem(0)
             , recentAppItem(0)
     {
@@ -71,6 +72,10 @@ public:
             recentAppItem->appendRow(appItem);
         } else {
             recentAppItem->insertRow(0, appItem);
+        }
+
+        while (recentAppItem->rowCount() > maxRecentApps) {
+            recentAppItem->removeRow(recentAppItem->rowCount() - 1);
         }
     }
     void addRecentDocument(const QString& desktopPath, bool append) {
@@ -103,23 +108,24 @@ public:
     void loadRecentApplications() {
         recentAppItem = new QStandardItem(i18n("Applications"));
         QList<KService::Ptr> services = RecentApplications::self()->recentApplications();
-        foreach(const KService::Ptr& service, services) {
-            addRecentApplication(service, true);
+        for(int i = 0; i < maxRecentApps && i < services.count(); ++i) {
+            addRecentApplication(services[i], true);
         }
         q->appendRow(recentAppItem);
     }
 
     RecentlyUsedModel * const q;
     RecentType recenttype;
+    int maxRecentApps;
+
     QStandardItem *recentDocumentItem;
     QStandardItem *recentAppItem;
-
     QHash<QString, QStandardItem*> itemsByPath;
 };
 
-RecentlyUsedModel::RecentlyUsedModel(QObject *parent, RecentType recenttype)
+RecentlyUsedModel::RecentlyUsedModel(QObject *parent, RecentType recenttype, int maxRecentApps)
         : KickoffModel(parent)
-        , d(new Private(this, recenttype))
+        , d(new Private(this, recenttype, maxRecentApps))
 {
     QDBusConnection dbus = QDBusConnection::sessionBus();
     (void)new RecentAdaptor(this);

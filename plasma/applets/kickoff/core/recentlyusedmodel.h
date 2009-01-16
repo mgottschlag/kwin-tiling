@@ -48,7 +48,7 @@ public:
     };
 
     /** Construct a new RecentlyUsedModel with the specified parent. */
-    explicit RecentlyUsedModel(QObject *parent = 0, RecentType recenttype = DocumentsAndApplications);
+    explicit RecentlyUsedModel(QObject *parent = 0, RecentType recenttype = DocumentsAndApplications, int maxRecentApps = -1);
     virtual ~RecentlyUsedModel();
 
 public Q_SLOTS:
