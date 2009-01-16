@@ -240,7 +240,7 @@ public:
      */
 
 
-    virtual QString createPairedDevice(const QString &, const QString &, const QString &) const = 0;
+    virtual void createPairedDevice(const QString &, const QString &, const QString &) const = 0;
 
     virtual QMap< QString, QVariant > getProperties() const = 0;
 
