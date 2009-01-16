@@ -43,6 +43,7 @@ public:
     virtual ~BluezBluetoothManager();
     QStringList bluetoothInterfaces() const;
     QObject * createInterface(const QString &);
+    void removeInterface(const QString& ubi);
 //  QStringList bluetoothInputDevices() const;
     QString defaultInterface() const;
     QString findInterface(const QString &) const;

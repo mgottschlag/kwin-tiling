@@ -104,6 +104,7 @@ QStringList BluezBluetoothManager::bluetoothInterfaces() const
 
 QString BluezBluetoothManager::defaultInterface() const
 {
+    kDebug() << "Calling Backend Default Interface";
     QDBusReply< QDBusObjectPath > path = d->manager.call("DefaultAdapter");
     if (!path.isValid())
         return QString();
@@ -130,6 +131,16 @@ QObject * BluezBluetoothManager::createInterface(const QString  & ubi)
         d->interfaces.insert(ubi, bluetoothInterface);
     }
     return bluetoothInterface;
+}
+
+void BluezBluetoothManager::removeInterface(const QString& ubi)
+{
+
+    if (d->interfaces.contains(ubi)) {
+        kDebug() << "Removing Interface" << ubi;
+        BluezBluetoothInterface * bluetoothInterface = d->interfaces.take(ubi);
+        bluetoothInterface = 0;
+    }
 }
 
 /*
