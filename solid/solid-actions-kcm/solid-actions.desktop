@@ -10,6 +10,7 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=advanced-user-settings
 
 Name=Device Actions
+Name[el]=Ενέργειες συσκευής
 Name[et]=Seadmete toimingud
 Name[fr]=Actions de périphérique
 Name[gl]=Accións do dispositivo
@@ -22,6 +23,7 @@ Name[tr]=Aygıt Eylemleri
 Name[uk]=Дії з пристроями
 
 Comment=A configuration tool for managing the actions available to the user when new devices to the computer
+Comment[el]=Ένα εργαλείο διαχείρισης των διαθέσιμων ενεργειών στο χρήστη κατά τον εντοπισμό νέων συσκευών στον υπολογιστή.
 Comment[et]=Tööriist toimingute seadistamiseks, mida kasutaja saab pruukida uute seadmete ühendamisel arvutiga
 Comment[fr]=Un outil de configuration pour la gestion des actions à disposition de l'utilisateur lorsque de nouveaux périphériques sont ajoutés à l'ordinateur
 Comment[gl]=Un útil de configuración para xestionar as accións dispoñíbeis para o usuario cando se engaden dispositivos  ao ordenador
