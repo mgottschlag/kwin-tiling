@@ -157,6 +157,7 @@ void QsMatchView::reset()
 {
     clear(true);
 
+    d->m_stack->setCurrentIndex(0);
     d->m_arrowButton->hide();
     d->m_listVisible = true;
     d->m_hasFocus = false;
