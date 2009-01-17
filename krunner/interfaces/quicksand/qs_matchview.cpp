@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2007-2008 Ryan P. Bitanga <ryan.bitanga@gmail.com>
+ *   Copyright (C) 2007-2009 Ryan P. Bitanga <ryan.bitanga@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -74,6 +74,7 @@ class QsMatchView::Private
         bool m_hasFocus;
         bool m_itemsRemoved;
         bool m_listVisible;
+        bool m_selectionMade;
 };
 
 QsMatchView::QsMatchView(QWidget *parent)
@@ -85,6 +86,7 @@ QsMatchView::QsMatchView(QWidget *parent)
     d->m_hasFocus = false;
     d->m_itemsRemoved = false;
     d->m_listVisible = true;
+    d->m_selectionMade = false; //Prevent completion box from popping up once a user chooses a match
     //FIXME: don't hardcode black
     setStyleSheet("QListWidget {color: black} QLineEdit {color: black}");
 
@@ -160,6 +162,7 @@ void QsMatchView::reset()
     d->m_stack->setCurrentIndex(0);
     d->m_arrowButton->hide();
     d->m_listVisible = true;
+    d->m_selectionMade = false;
     d->m_hasFocus = false;
     d->m_searchTerm = QString();
     d->m_compBox->clear();
@@ -173,21 +176,28 @@ void QsMatchView::reset()
     setDescriptionText(i18n("Type to search."));
 }
 
-void QsMatchView::setItems(const QList<MatchItem*> &items, bool popup)
+void QsMatchView::setItems(const QList<MatchItem*> &items, bool popup, bool append)
 {
-
-    clear(true);
-
-    d->m_compBox->clear();
-
-    d->m_currentItem = -1;
-    d->m_items = items;
-
     int spacing = MatchItem::ITEM_SIZE/2;
 
     int pos = spacing;
 
-    foreach(MatchItem *item, d->m_items) {
+    if (!append) {
+        clear(true);
+        d->m_compBox->clear();
+
+        d->m_currentItem = -1;
+        d->m_items = items;
+    } else {
+        // FIXME: This completely disregards item ranking
+        // Maybe should we just sort then scroll to previously selected item
+        if (!d->m_items.isEmpty()) {
+            pos += d->m_items.last()->pos().x();
+        }
+        d->m_items << items;
+    }
+
+    foreach(MatchItem *item, items) {
         if (item) {
             item->setPos(pos, SMALL_ICON_PADDING);
             item->scale(0.5, 0.5);
@@ -205,7 +215,14 @@ void QsMatchView::setItems(const QList<MatchItem*> &items, bool popup)
     }
     d->m_itemsRemoved = false;
     setItemCount(d->m_items.size());
+
+    if (d->m_selectionMade) {
+        //kDebug() << "A user selection was already made" << endl;
+        return;
+    }
+
     scrollToItem(0);
+
     //Ensure popup is shown if desired
     if (popup) {
         if (items.size()) {
@@ -311,11 +328,6 @@ void QsMatchView::toggleView()
 void QsMatchView::showLoading()
 {
     clear(true);
-//     QPointF pos[8];
-//     for (int i = 0; i < 8; ++i) {
-//         pos[i] = QPointF(std::sin((i * 6.28) / 8.0) * 25,
-//                          std::cos((i * 6.28) / 8.0) * 25);
-//     }
 
     d->m_descText = new QGraphicsTextItem(i18n("Loading..."), d->m_descRect);
     d->m_descText->setDefaultTextColor(QColor(Qt::white));
@@ -324,14 +336,6 @@ void QsMatchView::showLoading()
     //Center text
     d->m_descText->setPos(-(d->m_descText->boundingRect().width()/2), (HEIGHT - fm.height())/2);
     d->m_scene->addItem(d->m_descText);
-
-//     for (int i = 0; i < 8; ++i) {
-//         QGraphicsEllipseItem *item = new QGraphicsEllipseItem(0, 30, 6, 6);
-//         item->setPos(pos[i]);
-//         QBrush b(QColor(0, 0, 0, 255*i/8));
-//         item->setBrush(b);
-//         d->m_scene->addItem(item);
-//     }
 }
 
 void QsMatchView::showList()
@@ -578,6 +582,7 @@ void QsMatchView::keyPressEvent(QKeyEvent *e)
         QWidget::keyPressEvent(e);
         return;
     }
+
     switch (e->key()) {
         case Qt::Key_Period:
             //Switch to line edit
@@ -611,6 +616,7 @@ void QsMatchView::keyPressEvent(QKeyEvent *e)
                        &&  d->m_currentItem < d->m_items.size()) {
                     emit itemActivated(d->m_items[d->m_currentItem]);
             }
+            d->m_selectionMade = true;
             showSelected();
             return;
         default:
@@ -625,6 +631,7 @@ void QsMatchView::keyPressEvent(QKeyEvent *e)
             } else {
                 d->m_searchTerm += c;
             }
+            d->m_selectionMade = false;
         }
     }
     d->m_lineEdit->setText(d->m_searchTerm);
