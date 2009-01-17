@@ -566,7 +566,7 @@ private:
     QVariant getProperty(const QString&) const;
     BluetoothInterfacePrivate * const d;
 
-private slots:
+private Q_SLOTS:
     void slotDeviceCreated(const QString& ubi);
 
 };
