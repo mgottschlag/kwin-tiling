@@ -263,7 +263,11 @@ void QsMatchView::setDescriptionText(const QString &text, const QColor &color)
     d->m_descRect->setBrush(b);
     d->m_descRect->setPen(p);
 
-    d->m_descText = new QGraphicsTextItem(text, d->m_descRect);
+    QFontMetrics fm(font());
+
+    // Show ellipsis in the middle to distinguish between strings with identical
+    // beginnings e.g. paths
+    d->m_descText = new QGraphicsTextItem(fm.elidedText(text, Qt::ElideMiddle, WIDTH), d->m_descRect);
     //Center text
     d->m_descText->setPos(-(d->m_descText->boundingRect().width()/2), 60);
 
