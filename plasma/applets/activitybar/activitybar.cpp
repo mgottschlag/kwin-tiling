@@ -36,7 +36,7 @@ ActivityBar::ActivityBar(QObject *parent, const QVariantList &args)
 {
     resize(200, 60);
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
-    setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
+    setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding));
 }
 
 
@@ -106,15 +106,18 @@ void ActivityBar::init()
 
 void ActivityBar::constraintsEvent(Plasma::Constraints constraints)
 {
-    if (constraints & Plasma::FormFactorConstraint) {
+    if (constraints & Plasma::FormFactorConstraint ) {
         if (formFactor() == Plasma::Vertical) {
             m_tabBar->nativeWidget()->setShape(QTabBar::RoundedWest);
         } else {
             m_tabBar->nativeWidget()->setShape(QTabBar::RoundedNorth);
         }
-
         setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
         emit sizeHintChanged(Qt::PreferredSize);
+    }
+    if (constraints & Plasma::SizeConstraint) {
+        setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
+        setMinimumSize(m_tabBar->nativeWidget()->minimumSize());
     }
 }
 
