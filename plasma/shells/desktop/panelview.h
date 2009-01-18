@@ -204,6 +204,7 @@ private:
 #endif
 
 private Q_SLOTS:
+    void init();
     void togglePanelController();
     void edittingComplete();
     void animateHide(qreal);
@@ -241,6 +242,7 @@ private:
     VisibilityMode m_visibilityMode;
     int m_lastSeenSize;
     bool m_lastHorizontal : 1;
+    bool m_init : 1;
 
     bool m_editting : 1;
     bool m_firstPaint : 1;
