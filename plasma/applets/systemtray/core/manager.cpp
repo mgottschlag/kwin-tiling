@@ -52,7 +52,6 @@ public:
     }
 
     void setupProtocol(Protocol *protocol);
-    void unsetProtocol(Protocol *protocol);
 
     Manager *q;
     QList<Task*> tasks;
@@ -110,9 +109,8 @@ void Manager::registerNotificationProtocol()
 void Manager::unregisterNotificationProtocol()
 {
     if (d->notificationProtocol) {
-	d->unsetProtocol(d->notificationProtocol);
         delete d->notificationProtocol;
-	d->notificationProtocol = 0;
+        d->notificationProtocol = 0;
     }
 }
 
@@ -126,7 +124,6 @@ void Manager::addNotification(Notification* notification)
     d->notifications.append(notification);
     emit notificationAdded(notification);
 }
-
 
 void Manager::removeNotification(Notification *notification)
 {
@@ -150,7 +147,6 @@ void Manager::registerJobProtocol()
 void Manager::unregisterJobProtocol()
 {
     if (d->jobProtocol) {
-        d->unsetProtocol(d->jobProtocol);
         delete d->jobProtocol;
 	d->jobProtocol = 0;
     }
@@ -161,15 +157,6 @@ void Manager::Private::setupProtocol(Protocol *protocol)
     connect(protocol, SIGNAL(jobCreated(SystemTray::Job*)), q, SLOT(addJob(SystemTray::Job*)));
     connect(protocol, SIGNAL(taskCreated(SystemTray::Task*)), q, SLOT(addTask(SystemTray::Task*)));
     connect(protocol, SIGNAL(notificationCreated(SystemTray::Notification*)),
-            q, SLOT(addNotification(SystemTray::Notification*)));
-    protocol->init();
-}
-
-void Manager::Private::unsetProtocol(Protocol *protocol)
-{
-    disconnect(protocol, SIGNAL(jobCreated(SystemTray::Job*)), q, SLOT(addJob(SystemTray::Job*)));
-    disconnect(protocol, SIGNAL(taskCreated(SystemTray::Task*)), q, SLOT(addTask(SystemTray::Task*)));
-    disconnect(protocol, SIGNAL(notificationCreated(SystemTray::Notification*)),
             q, SLOT(addNotification(SystemTray::Notification*)));
     protocol->init();
 }
