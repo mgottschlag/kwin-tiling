@@ -86,7 +86,7 @@ namespace Kephal {
         
         QDesktopWidget * desktop = QApplication::desktop();
         for(int i = m_outputs.size() - 1; i >= desktop->numScreens(); i--) {
-            SimpleOutput * output = m_outputs.last();
+            SimpleOutput * output = m_outputs.at(i);
             if (output->isConnected()) {
                 qDebug() << "disconnecting output" << i;
                 output->_setConnected(false);
