@@ -69,6 +69,16 @@ public:
      **/
     void registerNotificationProtocol();
 
+      /**
+     * Removes the Job progress info from the applet's notification system
+     **/
+    void unregisterJobProtocol();
+
+    /**
+     * Removes the notifications from the applet's notification system
+     **/
+    void unregisterNotificationProtocol();
+
 signals:
     /**
      * Emitted when a new task has been added

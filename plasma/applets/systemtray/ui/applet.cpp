@@ -27,8 +27,11 @@
 
 #include <QtGui/QApplication>
 #include <QtGui/QGraphicsLayout>
+#include <QtGui/QVBoxLayout>
 #include <QtGui/QIcon>
+#include <QtGui/QLabel>
 #include <QtGui/QListWidget>
+#include <QtGui/QCheckBox>
 #include <QtGui/QPainter>
 
 #include <KActionSelector>
@@ -59,6 +62,7 @@ public:
         : q(q),
           taskArea(0),
           configInterface(0),
+	  notificationInterface(0),
           background(0),
           extenderTask(0)
     {
@@ -85,6 +89,9 @@ public:
 
     TaskArea *taskArea;
     QPointer<KActionSelector> configInterface;
+    QPointer<QWidget> notificationInterface;
+    QCheckBox *showNotifications;
+    QCheckBox *showJobs;
 
     Plasma::FrameSvg *background;
     SystemTray::ExtenderTask *extenderTask;
@@ -325,10 +332,29 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         d->configInterface->setSelectedLabel(i18n("Hidden icons:"));
         d->configInterface->setShowUpDownButtons(false);
 
+	KConfigGroup globalCg = globalConfig();
+        d->notificationInterface = new QWidget();
+
+	QLabel *description = new QLabel(i18n("Select the types of application feedback that should "
+					"be integrated with the system tray:"), d->notificationInterface);
+	description->setWordWrap(true);
+	d->showJobs = new QCheckBox(i18n("Show Jobs"), d->notificationInterface);
+	d->showJobs->setChecked(globalCg.readEntry("ShowJobs", true));
+	d->showNotifications = new QCheckBox(i18n("Show Notifications"), d->notificationInterface);
+	d->showNotifications->setChecked(globalCg.readEntry("ShowNotifications", true));
+
+	QVBoxLayout *layout = new QVBoxLayout;
+	layout->addWidget(description);
+	layout->addWidget(d->showJobs);
+	layout->addWidget(d->showNotifications);
+	layout->addStretch();
+	d->notificationInterface->setLayout(layout);
+
         connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
         connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 
         parent->addPage(d->configInterface, i18n("Auto Hide"));
+	parent->addPage(d->notificationInterface, i18n("Notifications"));
     }
 
     QListWidget *visibleList = d->configInterface->availableListWidget();
@@ -371,6 +397,30 @@ void Applet::configAccepted()
     KConfigGroup cg = config();
     cg.writeEntry("hidden", hiddenTypes);
    
+    KConfigGroup globalCg = globalConfig();
+    globalCg.writeEntry("ShowJobs", d->showJobs->isChecked());
+    globalCg.writeEntry("ShowNotifications", d->showNotifications->isChecked());
+
+    if (d->showJobs->isChecked()) {
+        Private::s_manager->registerJobProtocol();
+        connect(Private::s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
+                this, SLOT(addJob(SystemTray::Job*)));
+    } else {
+	Private::s_manager->unregisterJobProtocol();
+        disconnect(Private::s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
+                this, SLOT(addJob(SystemTray::Job*)));
+    }
+
+    if (d->showNotifications->isChecked()) {
+        Private::s_manager->registerNotificationProtocol();
+        connect(Private::s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
+                this, SLOT(addNotification(SystemTray::Notification*)));
+    } else {
+	Private::s_manager->unregisterNotificationProtocol();
+        disconnect(Private::s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
+                this, SLOT(addNotification(SystemTray::Notification*)));
+    }
+
     emit configNeedsSaving();
 }
 
