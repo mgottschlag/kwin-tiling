@@ -55,6 +55,7 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::PopupApplet
         bool shouldDisplayTimezone() const;
 
         static QString localTimezone();
+        static QString localTimezoneUntranslated();
 
     public Q_SLOTS:
         void toolTipAboutToShow();

@@ -58,7 +58,7 @@ class ClockApplet::Private
 public:
     Private(ClockApplet *clockapplet)
         : q(clockapplet),
-          timezone(ClockApplet::localTimezone()),
+          timezone(ClockApplet::localTimezoneUntranslated()),
           forceTzDisplay(false)
     {}
 
@@ -242,7 +242,7 @@ void ClockApplet::configAccepted()
 
     if (d->ui.clockDefaultsTo->currentIndex() == 0) {
         //The first position in ui.clockDefaultsTo is "Local"
-        d->defaultTimezone = localTimezone();
+        d->defaultTimezone = localTimezoneUntranslated();
     } else {
         d->defaultTimezone = d->ui.clockDefaultsTo->itemData(d->ui.clockDefaultsTo->currentIndex()).toString();
     }
@@ -310,14 +310,14 @@ void ClockApplet::wheelEvent(QGraphicsSceneWheelEvent *event)
         if (event->delta() > 0) {
             int previous = current - 1;
             if (previous < 0) {
-                newTimezone = localTimezone();
+                newTimezone = localTimezoneUntranslated();
             } else {
                 newTimezone = d->selectedTimezones.at(previous);
             }
         } else {
             int next = current + 1;
             if (next > d->selectedTimezones.count() - 1) {
-                newTimezone = localTimezone();
+                newTimezone = localTimezoneUntranslated();
             } else {
                 newTimezone = d->selectedTimezones.at(next);
             }
@@ -388,7 +388,13 @@ void ClockApplet::setCurrentTimezone(const QString &tz)
         return;
     }
 
-    d->timezone = tz;
+    if (tz == localTimezone()) {
+        // catch peple accidentally passing in the translation of "Local"
+        d->timezone = localTimezoneUntranslated();
+    } else {
+        d->timezone = tz;
+    }
+
     d->forceTzDisplay = tz != d->defaultTimezone;
     d->setPrettyTimezone();
 
@@ -414,12 +420,17 @@ QStringList ClockApplet::getSelectedTimezones() const
 
 bool ClockApplet::isLocalTimezone() const
 {
-    return d->timezone == localTimezone();
+    return d->timezone == localTimezoneUntranslated();
 }
 
 QString ClockApplet::localTimezone()
 {
-    return i18nc("Local time zone","Local");
+    return i18nc("Local time zone", "Local");
+}
+
+QString ClockApplet::localTimezoneUntranslated()
+{
+    return "Local";
 }
 
 #include "clockapplet.moc"
