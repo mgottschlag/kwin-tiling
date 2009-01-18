@@ -232,8 +232,19 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     KConfigGroup sizes = KConfigGroup(&viewConfig, "Sizes");
     QRect screenRect = Kephal::ScreenUtils::screenGeometry(containment()->screen());
     m_lastSeenSize = sizes.readEntry("lastsize", m_lastHorizontal ? screenRect.width() : screenRect.height());
+    m_alignment = alignmentFilter((Qt::Alignment)viewConfig.readEntry("Alignment", (int)Qt::AlignLeft));
     m_offset = viewConfig.readEntry("Offset", 0);
     m_lastHorizontal = isHorizontal();
+
+    KWindowSystem::setType(winId(), NET::Dock);
+
+    // pinchContainment calls updatePanelGeometry for us
+    pinchContainment(screenRect);
+    m_lastMin = containment()->minimumSize();
+    m_lastMax = containment()->maximumSize();
+
+    // KWin setup
+    KWindowSystem::setOnAllDesktops(winId(), true);
 
     QTimer::singleShot(0, this, SLOT(init()));
 }
@@ -241,17 +252,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 void PanelView::init()
 {
     KConfigGroup viewConfig = config();
-    m_alignment = alignmentFilter((Qt::Alignment)viewConfig.readEntry("Alignment", (int)Qt::AlignLeft));
     setVisibilityMode((VisibilityMode)viewConfig.readEntry("panelVisibility", (int)m_visibilityMode));
-
-    // pinchContainment calls updatePanelGeometry for us
-    QRect screenRect = Kephal::ScreenUtils::screenGeometry(containment()->screen());
-    pinchContainment(screenRect);
-    m_lastMin = containment()->minimumSize();
-    m_lastMax = containment()->maximumSize();
-
-    // KWin setup
-    KWindowSystem::setOnAllDesktops(winId(), true);
 
     m_init = true;
     updateStruts();
@@ -353,7 +354,6 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
     delete m_glowBar;
     m_glowBar = 0;
 
-    KWindowSystem::setType(winId(), NET::Dock);
     if (mode == LetWindowsCover) {
         createUnhideTrigger();
         KWindowSystem::clearState(winId(), NET::StaysOnTop | NET::KeepAbove);
