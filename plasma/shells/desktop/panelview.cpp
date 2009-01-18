@@ -249,6 +249,15 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     QTimer::singleShot(0, this, SLOT(init()));
 }
 
+PanelView::~PanelView()
+{
+    delete m_glowBar;
+    destroyUnhideTrigger();
+#ifdef Q_WS_WIN
+    registerAccessBar(false);
+#endif
+}
+
 void PanelView::init()
 {
     KConfigGroup viewConfig = config();
@@ -262,15 +271,6 @@ void PanelView::init()
             this, SLOT(pinchContainmentToCurrentScreen()));
     connect(screens, SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)),
             this, SLOT(updatePanelGeometry()));
-}
-
-PanelView::~PanelView()
-{
-    delete m_glowBar;
-    destroyUnhideTrigger();
-#ifdef Q_WS_WIN
-    registerAccessBar(false);
-#endif
 }
 
 void PanelView::setLocation(Plasma::Location location)
