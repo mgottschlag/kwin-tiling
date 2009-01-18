@@ -192,12 +192,10 @@ void Applet::constraintsEvent(Plasma::Constraints constraints)
     }
 }
 
-
 SystemTray::Manager *Applet::manager() const
 {
     return d->s_manager;
 }
-
 
 void Applet::setGeometry(const QRectF &rect)
 {
@@ -207,7 +205,6 @@ void Applet::setGeometry(const QRectF &rect)
         d->setTaskAreaGeometry();
     }
 }
-
 
 void Applet::checkSizes()
 {
@@ -262,7 +259,6 @@ void Applet::Private::setTaskAreaGeometry()
 
     taskArea->setGeometry(taskAreaRect);
 }
-
 
 void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
@@ -396,29 +392,29 @@ void Applet::configAccepted()
 
     KConfigGroup cg = config();
     cg.writeEntry("hidden", hiddenTypes);
-   
+
     KConfigGroup globalCg = globalConfig();
     globalCg.writeEntry("ShowJobs", d->showJobs->isChecked());
     globalCg.writeEntry("ShowNotifications", d->showNotifications->isChecked());
 
+    disconnect(Private::s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
+               this, SLOT(addJob(SystemTray::Job*)));
     if (d->showJobs->isChecked()) {
         Private::s_manager->registerJobProtocol();
         connect(Private::s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
                 this, SLOT(addJob(SystemTray::Job*)));
     } else {
 	Private::s_manager->unregisterJobProtocol();
-        disconnect(Private::s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
-                this, SLOT(addJob(SystemTray::Job*)));
     }
 
+    disconnect(Private::s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
+               this, SLOT(addNotification(SystemTray::Notification*)));
     if (d->showNotifications->isChecked()) {
         Private::s_manager->registerNotificationProtocol();
         connect(Private::s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
                 this, SLOT(addNotification(SystemTray::Notification*)));
     } else {
 	Private::s_manager->unregisterNotificationProtocol();
-        disconnect(Private::s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
-                this, SLOT(addNotification(SystemTray::Notification*)));
     }
 
     emit configNeedsSaving();
