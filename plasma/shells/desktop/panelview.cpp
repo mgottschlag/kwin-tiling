@@ -196,26 +196,12 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 #endif
       m_visibilityMode(NormalPanel),
       m_lastHorizontal(true),
+      m_init(false),
       m_editting(false),
       m_firstPaint(true),
       m_triggerEntered(false)
 {
     Q_ASSERT(qobject_cast<Plasma::Corona*>(panel->scene()));
-    KConfigGroup viewConfig = config();
-
-    m_offset = viewConfig.readEntry("Offset", 0);
-    m_alignment = alignmentFilter((Qt::Alignment)viewConfig.readEntry("Alignment", (int)Qt::AlignLeft));
-    setVisibilityMode((VisibilityMode)viewConfig.readEntry("panelVisibility", (int)m_visibilityMode));
-
-    // pinchContainment calls updatePanelGeometry for us
-    QRect screenRect = Kephal::ScreenUtils::screenGeometry(containment()->screen());
-    m_lastHorizontal = isHorizontal();
-    KConfigGroup sizes = KConfigGroup(&viewConfig, "Sizes");
-    m_lastSeenSize = sizes.readEntry("lastsize", m_lastHorizontal ? screenRect.width() : screenRect.height());
-    pinchContainment(screenRect);
-    m_lastMin = containment()->minimumSize();
-    m_lastMax = containment()->maximumSize();
-
     if (panel) {
         connect(panel, SIGNAL(destroyed(QObject*)), this, SLOT(panelDeleted()));
         connect(panel, SIGNAL(toolBoxToggled()), this, SLOT(togglePanelController()));
@@ -238,20 +224,29 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     pal.setBrush(backgroundRole(), Qt::transparent);
     setPalette(pal);
 
-    // KWin setup
-    KWindowSystem::setOnAllDesktops(winId(), true);
-
 #ifdef Q_WS_WIN
     registerAccessBar(true);
 #endif
 
-    updateStruts();
+    KConfigGroup viewConfig = config();
+    KConfigGroup sizes = KConfigGroup(&viewConfig, "Sizes");
+    QRect screenRect = Kephal::ScreenUtils::screenGeometry(containment()->screen());
+    m_lastSeenSize = sizes.readEntry("lastsize", m_lastHorizontal ? screenRect.width() : screenRect.height());
+    m_alignment = alignmentFilter((Qt::Alignment)viewConfig.readEntry("Alignment", (int)Qt::AlignLeft));
+    m_offset = viewConfig.readEntry("Offset", 0);
+    m_lastHorizontal = isHorizontal();
 
-    Kephal::Screens *screens = Kephal::Screens::self();
-    connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)),
-            this, SLOT(pinchContainmentToCurrentScreen()));
-    connect(screens, SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)),
-            this, SLOT(updatePanelGeometry()));
+    KWindowSystem::setType(winId(), NET::Dock);
+
+    // pinchContainment calls updatePanelGeometry for us
+    pinchContainment(screenRect);
+    m_lastMin = containment()->minimumSize();
+    m_lastMax = containment()->maximumSize();
+
+    // KWin setup
+    KWindowSystem::setOnAllDesktops(winId(), true);
+
+    QTimer::singleShot(0, this, SLOT(init()));
 }
 
 PanelView::~PanelView()
@@ -261,6 +256,21 @@ PanelView::~PanelView()
 #ifdef Q_WS_WIN
     registerAccessBar(false);
 #endif
+}
+
+void PanelView::init()
+{
+    KConfigGroup viewConfig = config();
+    setVisibilityMode((VisibilityMode)viewConfig.readEntry("panelVisibility", (int)m_visibilityMode));
+
+    m_init = true;
+    updateStruts();
+
+    Kephal::Screens *screens = Kephal::Screens::self();
+    connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)),
+            this, SLOT(pinchContainmentToCurrentScreen()));
+    connect(screens, SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)),
+            this, SLOT(updatePanelGeometry()));
 }
 
 void PanelView::setLocation(Plasma::Location location)
@@ -344,7 +354,6 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
     delete m_glowBar;
     m_glowBar = 0;
 
-    KWindowSystem::setType(winId(), NET::Dock);
     if (mode == LetWindowsCover) {
         createUnhideTrigger();
         KWindowSystem::clearState(winId(), NET::StaysOnTop | NET::KeepAbove);
@@ -798,6 +807,10 @@ Qt::Alignment PanelView::alignmentFilter(Qt::Alignment align) const
 
 void PanelView::updateStruts()
 {
+    if (!m_init) {
+        return;
+    }
+
     NETExtendedStrut strut;
 
     if (m_visibilityMode == NormalPanel) {
@@ -955,8 +968,10 @@ bool PanelView::hintOrUnhide(const QPoint &point, bool dueToDnd)
         m_mousePollTimer->start(200);
     }
 
-#endif
     return false;
+#else
+    return false;
+#endif
 }
 
 void PanelView::unhintHide()
