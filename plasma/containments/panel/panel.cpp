@@ -549,7 +549,7 @@ void Panel::paintInterface(QPainter *painter,
     const Containment::StyleOption *containmentOpt = qstyleoption_cast<const Containment::StyleOption *>(option);
 
     QRect viewGeom;
-    if (containmentOpt) {
+    if (containmentOpt && containmentOpt->view) {
         viewGeom = containmentOpt->view->geometry();
     }
 
