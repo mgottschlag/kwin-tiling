@@ -42,6 +42,6 @@ private slots:
     void setupComplete(QModelIndex, bool);
 };
 
-K_EXPORT_PLASMA_RUNNER(bookmarksrunner, PlacesRunner)
+K_EXPORT_PLASMA_RUNNER(placesrunner, PlacesRunner)
 
 #endif
