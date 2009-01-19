@@ -35,7 +35,6 @@
 SessionRunner::SessionRunner(QObject *parent, const QVariantList &args)
     : Plasma::AbstractRunner(parent, args)
 {
-    KGlobal::locale()->insertCatalog("krunner_sessions");
     Q_UNUSED(args)
 
     setObjectName("Sessions");

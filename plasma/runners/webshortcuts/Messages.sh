@@ -1,2 +1,2 @@
 #! /usr/bin/env bash
-$XGETTEXT *.cpp -o $podir/krunner_webshortcutsrunner.pot
+$XGETTEXT *.cpp -o $podir/plasma_runner_webshortcuts.pot

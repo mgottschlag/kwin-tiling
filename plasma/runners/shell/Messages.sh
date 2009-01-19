@@ -1,2 +1,2 @@
 #! /usr/bin/env bash
-$XGETTEXT *.cpp -o $podir/krunner_shellrunner.pot
+$XGETTEXT *.cpp -o $podir/plasma_runner_shell.pot
