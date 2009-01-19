@@ -17,7 +17,8 @@ class BackgroundDelegate : public QAbstractItemDelegate
 public:
     enum {
         AuthorRole = Qt::UserRole,
-        ScreenshotRole
+        ScreenshotRole,
+        ResolutionRole
     };
 
     BackgroundDelegate(QObject *listener,

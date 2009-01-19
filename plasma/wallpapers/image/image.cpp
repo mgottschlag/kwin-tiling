@@ -79,6 +79,10 @@ void Image::init(const KConfigGroup &config)
     } else {
         startSlideshow();
     }
+
+    if(m_model) {
+        m_model->setResizeMethod(m_resizeMethod);
+    }
 }
 
 void Image::save(KConfigGroup &config)
@@ -99,6 +103,8 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         m_uiImage.setupUi(m_widget);
 
         m_model = new BackgroundListModel(m_ratio, this);
+        m_model->setResizeMethod(m_resizeMethod);
+        m_model->setWallpaperSize(m_size);
         m_uiImage.m_view->setModel(m_model);
         m_uiImage.m_view->setItemDelegate(new BackgroundDelegate(m_uiImage.m_view->view(),
                                                                  m_ratio, this));
@@ -187,6 +193,10 @@ void Image::calculateGeometry()
     m_renderer.setSize(m_size);
     m_ratio = boundingRect().width() / boundingRect().height();
     m_renderer.setRatio(m_ratio);
+
+    if(m_model) {
+        m_model->setWallpaperSize(m_size);
+    }
 }
 
 void Image::paint(QPainter *painter, const QRectF& exposedRect)
@@ -369,6 +379,8 @@ void Image::positioningChanged(int index)
                 (Background::ResizeMethod)m_uiSlideshow.m_resizeMethod->itemData(index).value<int>();
         startSlideshow();
     }
+
+    m_model->setResizeMethod(m_resizeMethod);
 }
 
 void Image::fillMetaInfo(Background *b)

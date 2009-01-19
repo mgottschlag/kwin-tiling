@@ -31,6 +31,7 @@
 #include <Plasma/PackageStructure>
 #include <Plasma/PackageMetadata>
 #include <ThreadWeaver/Weaver>
+#include <kfilemetainfo.h>
 
 using namespace Plasma;
 
@@ -83,8 +84,7 @@ QImage ResizeThread::result() const
 {
     if (isFinished()) {
         return m_result;
-    }
-    else {
+    } else {
         return QImage();
     }
 }
@@ -108,15 +108,13 @@ QImage Background::createScreenshot(const QString &path, float ratio)
         QPainter p(&img);
         renderer.render(&p);
         return img;
-    }
-    else {
+    } else {
         QImage img(path);
         if (!img.isNull()) {
             return img.scaled(int(SCREENSHOT_HEIGHT * ratio),
                             SCREENSHOT_HEIGHT,
                             Qt::KeepAspectRatio);
-        }
-        else {
+        } else {
             return defaultScreenshot();
         }
     }
@@ -180,8 +178,7 @@ QSize BackgroundPackage::resSize(const QString &str) const
     if (index != -1) {
         return QSize(str.left(index).toInt(),
                      str.mid(index + 1).toInt());
-    }
-    else {
+    } else {
         return QSize();
     }
 }
@@ -301,6 +298,38 @@ QString BackgroundPackage::license() const
     return metadata().license();
 }
 
+QSize BackgroundPackage::bestSize(const QSize &resolution,
+                              ResizeMethod method) const
+{
+    QStringList images = entryList("images");
+    if (images.empty()) {
+        return QSize();
+    }
+
+    // choose the nearest resolution
+    float best = FLT_MAX;
+    QSize bestSize = QSize();
+    foreach (const QString &entry, images) {
+        QSize candidate = resSize(QFileInfo(entry).baseName());
+        if (candidate == QSize()) {
+            continue;
+        }
+
+        double dist = distance(candidate, resolution, method);
+
+        if (dist < best || !bestSize.isValid()) {
+            best = dist;
+            bestSize = candidate;
+
+            if (dist == 0) {
+                break;
+            }
+        }
+    }
+
+    return bestSize;
+}
+
 bool BackgroundPackage::isValid() const
 {
     return Package::isValid();
@@ -377,6 +406,23 @@ QString BackgroundFile::email() const
 QString BackgroundFile::license() const
 {
     return QString();
+}
+
+QSize BackgroundFile::bestSize(const QSize &resolution,
+                          ResizeMethod method) const
+{
+    if(!m_sizeCache.isValid()) {
+        KFileMetaInfo info(m_file, QString(), KFileMetaInfo::TechnicalInfo);
+        m_sizeCache = QSize(info.item("http://freedesktop.org/standards/xesam/1.0/core#width").value().toInt(),
+                      info.item("http://freedesktop.org/standards/xesam/1.0/core#height").value().toInt());
+
+        //backup solution if strigi does not work
+        if(m_sizeCache.width() == 0 || m_sizeCache.height() == 0) {
+            kDebug() << "fall back to QImage, check your strigi";
+            m_sizeCache = QImage(m_file).size();
+        }
+    }
+    return m_sizeCache;
 }
 
 //TODO: impl

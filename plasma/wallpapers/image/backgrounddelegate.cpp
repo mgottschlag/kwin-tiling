@@ -28,6 +28,7 @@ void BackgroundDelegate::paint(QPainter *painter,
 {
     QString title = index.model()->data(index, Qt::DisplayRole).toString();
     QString author = index.model()->data(index, AuthorRole).toString();
+    QString resolution = index.model()->data(index, ResolutionRole).toString();
     QPixmap pix = index.model()->data(index, ScreenshotRole).value<QPixmap>();
 
     // draw selection outline
@@ -67,14 +68,24 @@ void BackgroundDelegate::paint(QPainter *painter,
                               "by %1", author);
         text += '\n' + authorCaption;
     }
+
     QRect boundingRect = painter->boundingRect(
         textRect, Qt::AlignVCenter | Qt::TextWordWrap, text);
     painter->drawText(boundingRect, Qt::TextWordWrap, title);
+    QRect titleRect = painter->boundingRect(boundingRect, Qt::TextWordWrap, title);
+    QPoint lastText(titleRect.bottomLeft());
+
     if (!author.isEmpty()) {
-        QRect titleRect = painter->boundingRect(boundingRect, Qt::TextWordWrap, title);
-        QRect authorRect(titleRect.bottomLeft(), textRect.size());
+        QRect authorRect(lastText, textRect.size());
         painter->setFont(KGlobalSettings::smallestReadableFont());
         painter->drawText(authorRect, Qt::TextWordWrap, authorCaption);
+        lastText = painter->boundingRect(authorRect, Qt::TextWordWrap, authorCaption).bottomLeft();
+    }
+
+    if (!resolution.isEmpty()) {
+        QRect resolutionRect(lastText, textRect.size());
+        painter->setFont(KGlobalSettings::smallestReadableFont());
+        painter->drawText(resolutionRect, Qt::TextWordWrap, resolution);
     }
 
     painter->restore();

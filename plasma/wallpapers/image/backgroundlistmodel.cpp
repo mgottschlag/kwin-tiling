@@ -21,6 +21,8 @@
 BackgroundListModel::BackgroundListModel(float ratio, QObject *listener)
 : m_listener(listener)
 , m_ratio(ratio)
+, m_size(0,0)
+, m_resizeMethod(Background::Scale)
 {
     connect(&m_dirwatch, SIGNAL(deleted(QString)), listener, SLOT(removeBackground(QString)));
 }
@@ -136,6 +138,13 @@ QVariant BackgroundListModel::data(const QModelIndex &index, int role) const
     }
     case BackgroundDelegate::AuthorRole:
         return b->author();
+    case BackgroundDelegate::ResolutionRole:{
+        QSize size = b->bestSize(m_size, m_resizeMethod);
+        if (size.isValid()) {
+            return QString("%1x%2").arg(size.width()).arg(size.height());
+        }
+        return QString();
+    }
     default:
         return QVariant();
     }
@@ -199,4 +208,13 @@ QList<Background *> BackgroundListModel::findAllBackgrounds(const BackgroundCont
     return res;
 }
 
+void BackgroundListModel::setWallpaperSize(QSize size)
+{
+    m_size = size;
+}
+
+void BackgroundListModel::setResizeMethod(Background::ResizeMethod resizeMethod)
+{
+    m_resizeMethod = resizeMethod;
+}
 

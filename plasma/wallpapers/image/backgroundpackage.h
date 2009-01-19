@@ -65,6 +65,8 @@ public:
     virtual QString author() const = 0;
     virtual QString email() const = 0;
     virtual QString license() const = 0;
+    virtual QSize bestSize(const QSize &resolution,
+                            ResizeMethod method) const = 0;
 
     virtual bool isValid() const = 0;
 
@@ -91,6 +93,8 @@ public:
     virtual QString title() const;
     virtual QString email() const;
     virtual QString license() const;
+    virtual QSize bestSize(const QSize &resolution,
+                            ResizeMethod method) const;
     virtual bool isValid() const;
 private:
     QString resString(const QSize &size) const;
@@ -122,10 +126,13 @@ public:
     virtual QString title() const;
     virtual QString email() const;
     virtual QString license() const;
+    virtual QSize bestSize(const QSize &resolution,
+                          ResizeMethod method) const;
     virtual bool isValid() const;
 private:
     QString m_file;
     float m_ratio;
+    mutable QSize m_sizeCache;
 
     mutable bool m_resizer_started;
     mutable QPixmap m_screenshot;

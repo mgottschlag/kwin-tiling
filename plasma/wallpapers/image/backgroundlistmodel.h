@@ -10,6 +10,8 @@
 #ifndef BACKGROUNDLISTMODEL_H
 #define BACKGROUNDLISTMODEL_H
 
+#include "backgroundpackage.h"
+
 #include <QAbstractListModel>
 #include <KDirWatch>
 
@@ -42,11 +44,17 @@ public:
     static QList<Background *> findAllBackgrounds(const BackgroundContainer *container,
                                                     const QString &path, float ratio);
 
+    void setWallpaperSize(QSize size);
+    void setResizeMethod(Background::ResizeMethod resizeMethod);
+
 private:
     QObject *m_listener;
     QList<Background*> m_packages;
     float m_ratio;
     KDirWatch m_dirwatch;
+
+    QSize m_size;
+    Background::ResizeMethod m_resizeMethod;
 };
 
 #endif // BACKGROUNDLISTMODEL_H
