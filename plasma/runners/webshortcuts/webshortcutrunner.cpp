@@ -35,7 +35,6 @@ WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
     : Plasma::AbstractRunner(parent, args),
       m_match(this)
 {
-    KGlobal::locale()->insertCatalog("krunner_webshortcutsrunner");
     Q_UNUSED(args);
     setObjectName("Web Shortcut");
     // query ktrader for all available searchproviders and preload the default icon

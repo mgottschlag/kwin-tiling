@@ -33,7 +33,6 @@ RecentDocuments::RecentDocuments(QObject *parent, const QVariantList& args)
     : Plasma::AbstractRunner(parent, args)
 {
     Q_UNUSED(args);
-    KGlobal::locale()->insertCatalog("krunner_recentdocuments");
     setObjectName("Recent Documents");
     m_icon = KIcon("document-open-recent");
     loadRecentDocuments();

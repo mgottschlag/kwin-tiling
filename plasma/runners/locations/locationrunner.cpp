@@ -38,7 +38,6 @@
 LocationsRunner::LocationsRunner(QObject *parent, const QVariantList& args)
     : Plasma::AbstractRunner(parent, args)
 {
-    KGlobal::locale()->insertCatalog("krunner_locationsrunner");
     Q_UNUSED(args);
     // set the name shown after the result in krunner window
     setObjectName("Locations");
