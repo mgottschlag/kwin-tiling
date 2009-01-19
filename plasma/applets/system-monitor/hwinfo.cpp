@@ -41,7 +41,6 @@ td { vertical-align: top; font-size:7pt; font-weight:normal; font-style:normal; 
 HWInfo::HWInfo(QObject *parent, const QVariantList &args)
     : SM::Applet(parent, args), m_info(0), m_icon(0)
 {
-    setHasConfigurationInterface(false);
     resize(234 + 20 + 23, 135 + 20 + 25);
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateHtml()));
