@@ -363,6 +363,7 @@ main( int argc ATTR_UNUSED, char **argv )
 
 	if (themer) {
 		QPixmap pm( dw->size() );
+		pm.fill(Qt::black);
 		for (int i = 0; i < dw->numScreens(); i++)
 			themer->paintBackground( &pm, dw->screenGeometry( i ), i == _greeterScreen );
 		QPalette palette;
