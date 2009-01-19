@@ -18,7 +18,6 @@
  */
 
 #include "result.h"
-#include "qurlhash.h"
 
 #include <QtCore/QSharedData>
 #include <QtCore/QHash>
