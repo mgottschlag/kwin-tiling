@@ -202,7 +202,9 @@ void QsMatchView::setItems(const QList<MatchItem*> &items, bool popup, bool appe
             item->setPos(pos, SMALL_ICON_PADDING);
             item->scale(0.5, 0.5);
             pos += spacing;
-            d->m_scene->addItem(item);
+            if (d->m_listVisible) {
+                d->m_scene->addItem(item);
+            }
             QString description;
             if (item->description().isEmpty()) {
                 description = item->name();
