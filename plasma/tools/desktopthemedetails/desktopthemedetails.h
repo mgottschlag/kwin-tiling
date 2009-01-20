@@ -15,7 +15,6 @@
 #include "ui_DesktopThemeDetails.h"
 
 class ThemeModel;
-class QStandardItemModel;
 
 class DesktopThemeDetails : public KCModule, public Ui::DesktopThemeItems
 {
@@ -46,7 +45,6 @@ private slots:
 
 private:
     ThemeModel* m_themeModel;
-    QStandardItemModel* m_containmentModel;
     QHash<QString, QString> m_themeItems;
     QHash<QString, QString> m_themeReplacements;
     QHash<QString, QString> m_dropListFiles;
