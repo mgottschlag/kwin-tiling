@@ -14,10 +14,6 @@
 #include <kcmodule.h>
 #include "ui_DesktopThemeDetails.h"
 
-namespace Plasma {
-    class Containment;
-    class View;
-}
 class ThemeModel;
 class QStandardItemModel;
 
@@ -51,8 +47,6 @@ private slots:
 private:
     ThemeModel* m_themeModel;
     QStandardItemModel* m_containmentModel;
-    Plasma::View* m_view;
-    Plasma::Containment* m_containment;
     QHash<QString, QString> m_themeItems;
     QHash<QString, QString> m_themeReplacements;
     QHash<QString, QString> m_dropListFiles;
