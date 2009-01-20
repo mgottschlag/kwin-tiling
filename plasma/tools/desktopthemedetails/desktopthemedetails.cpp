@@ -522,8 +522,8 @@ void DesktopThemeDetails::loadThemeItems()
 
     for (int i = 0; themeCollectionName[i].m_type; ++i) {
         m_themeItems[themeCollectionName[i].m_type] = themeCollectionName[i].m_widgetType;
-        themeItemList.append(i18nc("plasma name", themeCollectionName[i].m_displayItemName));
-        m_themeReplacements[i18nc("plasma name", themeCollectionName[i].m_displayItemName)] = "";
+        themeItemList.append(themeCollectionName[i].m_displayItemName);
+        m_themeReplacements[themeCollectionName[i].m_displayItemName] = "";
         themeItemIconList.append(themeCollectionName[i].m_iconName);
     }
 
@@ -683,7 +683,7 @@ void DesktopThemeDetails::resetThemeDetails()
             QMap<QString, QString>lst;
             //cache it
             for (int i = 0; themeCollectionName[i].m_type; ++i) {
-                lst.insert(themeCollectionName[i].m_type, i18nc("plasma name", themeCollectionName[i].m_displayItemName));
+                lst.insert(themeCollectionName[i].m_type, themeCollectionName[i].m_displayItemName);
             }
 
             while (!in.atEnd()) {
