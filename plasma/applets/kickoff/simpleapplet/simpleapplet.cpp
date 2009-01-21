@@ -424,7 +424,7 @@ void MenuLauncherApplet::toggleMenu()
         connect(d->menuview, SIGNAL(triggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
         connect(d->menuview, SIGNAL(aboutToHide()), d->icon, SLOT(setUnpressed()));
         connect(d->menuview, SIGNAL(aboutToHide()), d->menuview, SLOT(deleteLater()));
-d->viewtype = Settings;
+
         switch (d->viewtype) {
         case Combined: {
             if (d->maxRecentApps > 0) {
