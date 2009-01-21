@@ -63,6 +63,7 @@ Comment[sv]=En skriptanpassning
 Comment[te]=స్క్రిప్ట్ ఎడాప్టర్
 Comment[tr]=Bir Betik Uyarlayıcısı
 Comment[uk]=Пристосування скриптів
+Comment[zh_CN]=脚本适配器
 Comment[zh_TW]=文稿適配器
 Type=Service
 ServiceTypes=Plasma/Applet
