@@ -46,7 +46,7 @@ include_directories( ${STRIGI_INCLUDE_DIR} )
 
 kde4_add_library(libkickoff SHARED ${libkickoff_SRCS})
 target_link_libraries(libkickoff ${KDE4_PLASMA_LIBS} solidcontrol ${Kickoff_LIBS})
-install(TARGETS libkickoff DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS libkickoff ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 #######################################################################################
 # Kickoff Plasma Applet
