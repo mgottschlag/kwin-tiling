@@ -525,7 +525,7 @@ void MenuLauncherApplet::toggleMenu()
                 if(menucategory.isEmpty()) continue; //skip the category
                 KMenu* menu = menus[menucategory];
                 if(! subcategory.isNull())
-                    menu->addTitle(subcategory->name());
+                    menu->addTitle(subcategory->name().replace('&',"&&"));
                 foreach(KService::Ptr entry, modules[category]) {
                     KCModuleInfo module(entry->entryPath());
                     QAction* a = menu->addAction(KIcon(module.icon()), module.moduleName().replace('&',"&&"));
