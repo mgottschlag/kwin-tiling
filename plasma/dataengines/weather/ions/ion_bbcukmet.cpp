@@ -838,7 +838,7 @@ void UKMETIon::updateWeather(const QString& source)
         i++;
     }
 
-    setData(weatherSource, "Credit", "Supported by backstage.bbc.co.uk / Data from UK MET Office");
+    setData(weatherSource, "Credit", i18n("Supported by backstage.bbc.co.uk / Data from UK MET Office"));
     setData(weatherSource, "Credit Url", d->m_place[source].XMLforecastURL);
 }
 
