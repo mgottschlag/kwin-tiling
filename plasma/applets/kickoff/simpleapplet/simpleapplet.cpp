@@ -319,7 +319,7 @@ void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     d->addItem(d->viewComboBox, i18nc("@item:inlistbox View:", "Applications"), MenuLauncherApplet::Applications, "applications-other");
     d->addItem(d->viewComboBox, i18nc("@item:inlistbox View:", "Computer"), MenuLauncherApplet::Computer, "computer");
     d->addItem(d->viewComboBox, i18nc("@item:inlistbox View:", "Recently Used"), MenuLauncherApplet::RecentlyUsed, "document-open-recent");
-    d->addItem(d->viewComboBox, i18nc("@item:inlistbox View:", "Settings"), MenuLauncherApplet::Settings, "preferences-system");
+    d->addItem(d->viewComboBox, i18nc("@item:inlistbox View:", "System Settings"), MenuLauncherApplet::Settings, "preferences-system");
     d->addItem(d->viewComboBox, i18nc("@item:inlistbox View:", "Leave"), MenuLauncherApplet::Leave, "application-exit");
     l->addWidget(d->viewComboBox, 0, 1);
 
