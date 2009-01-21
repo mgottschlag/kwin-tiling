@@ -559,8 +559,8 @@ void UKMETIon::parseWeatherChannel(const QString& source, WeatherData& data, QXm
             if (xml.name() == "title") {
                 data.stationName = xml.readElementText().split("Observations for")[1].trimmed();
 
-                data.stationName.replace("United Kingdom", "UK");
-                data.stationName.replace("United States of America", "USA");
+                data.stationName.replace("United Kingdom", i18n("UK"));
+                data.stationName.replace("United States of America", i18n("USA"));
 
             } else if (xml.name() == "item") {
                 parseWeatherObservation(source, data, xml);
@@ -934,30 +934,30 @@ QVector<QString> UKMETIon::forecasts(const QString& source)
     for (int i = 0; i < d->m_weatherData[source].forecasts.size(); ++i) {
 
         if (d->m_weatherData[source].forecasts[i]->period.contains("Saturday")) {
-            d->m_weatherData[source].forecasts[i]->period.replace("Saturday", "Sat");
+            d->m_weatherData[source].forecasts[i]->period.replace("Saturday", i18n("Sat"));
         }
 
         if (d->m_weatherData[source].forecasts[i]->period.contains("Sunday")) {
-            d->m_weatherData[source].forecasts[i]->period.replace("Sunday", "Sun");
+            d->m_weatherData[source].forecasts[i]->period.replace("Sunday", i18n("Sun"));
         }
 
         if (d->m_weatherData[source].forecasts[i]->period.contains("Monday")) {
-            d->m_weatherData[source].forecasts[i]->period.replace("Monday", "Mon");
+            d->m_weatherData[source].forecasts[i]->period.replace("Monday", i18n("Mon"));
         }
 
         if (d->m_weatherData[source].forecasts[i]->period.contains("Tuesday")) {
-            d->m_weatherData[source].forecasts[i]->period.replace("Tuesday", "Tue");
+            d->m_weatherData[source].forecasts[i]->period.replace("Tuesday", i18n("Tue"));
         }
 
         if (d->m_weatherData[source].forecasts[i]->period.contains("Wednesday")) {
-            d->m_weatherData[source].forecasts[i]->period.replace("Wednesday", "Wed");
+            d->m_weatherData[source].forecasts[i]->period.replace("Wednesday", i18n("Wed"));
         }
 
         if (d->m_weatherData[source].forecasts[i]->period.contains("Thursday")) {
-            d->m_weatherData[source].forecasts[i]->period.replace("Thursday", "Thu");
+            d->m_weatherData[source].forecasts[i]->period.replace("Thursday", i18n("Thu"));
         }
         if (d->m_weatherData[source].forecasts[i]->period.contains("Friday")) {
-            d->m_weatherData[source].forecasts[i]->period.replace("Friday", "Fri");
+            d->m_weatherData[source].forecasts[i]->period.replace("Friday", i18n("Fri"));
         }
 
         forecastData.append(QString("%1|%2|%3|%4|%5|%6") \
