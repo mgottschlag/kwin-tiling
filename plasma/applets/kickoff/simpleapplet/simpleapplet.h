@@ -47,6 +47,7 @@ public:
         Computer, ///< Computer Menu
         RecentlyUsed, ///< Recently Used Menu
         Bookmarks, ///< Bookmarks Menu
+        Settings, ///< Settings Menu
         Leave ///< Leave Menu
     };
 

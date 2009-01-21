@@ -42,6 +42,9 @@
 #include <KActionCollection>
 #include <KBookmarkMenu>
 #include <KRun>
+#include <KServiceTypeTrader>
+#include <KCModuleInfo>
+#include <KCMultiDialog>
 
 // Plasma
 #include <Plasma/IconWidget>
@@ -191,12 +194,13 @@ public:
             return "computer";
         case RecentlyUsed:
             return "document-open-recent";
+        case Settings:
+            return "preferences-system";
         case Leave:
             return "application-exit";
         }
         return QString();
     }
-    
 
 };
 
@@ -315,6 +319,7 @@ void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     d->addItem(d->viewComboBox, i18nc("@item:inlistbox View:", "Applications"), MenuLauncherApplet::Applications, "applications-other");
     d->addItem(d->viewComboBox, i18nc("@item:inlistbox View:", "Computer"), MenuLauncherApplet::Computer, "computer");
     d->addItem(d->viewComboBox, i18nc("@item:inlistbox View:", "Recently Used"), MenuLauncherApplet::RecentlyUsed, "document-open-recent");
+    d->addItem(d->viewComboBox, i18nc("@item:inlistbox View:", "Settings"), MenuLauncherApplet::Settings, "preferences-system");
     d->addItem(d->viewComboBox, i18nc("@item:inlistbox View:", "Leave"), MenuLauncherApplet::Leave, "application-exit");
     l->addWidget(d->viewComboBox, 0, 1);
 
@@ -329,7 +334,7 @@ void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     d->addItem(d->formatComboBox, i18nc("@item:inlistbox Format:", "Name - Description"), MenuLauncherApplet::NameDashDescription);
     l->addWidget(d->formatComboBox, 1, 1);
 
-    QLabel *recentLabel = new QLabel(i18n("Recent Applications:"), p);
+    QLabel *recentLabel = new QLabel(i18n("Recently Used Applications:"), p);
     l->addWidget(recentLabel, 2, 0, Qt::AlignRight);
     d->recentApplicationsSpinBox = new QSpinBox(p);
     d->recentApplicationsSpinBox->setMaximum(10);
@@ -397,6 +402,21 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
     }
 }
 
+inline int weightOfService( const KService::Ptr service )
+{
+    QVariant tmp = service->property("X-KDE-Weight", QVariant::Int);
+    return (tmp.isValid() ? tmp.toInt() : 100);
+}
+inline bool sortServiceItemsByWeight(const KService::Ptr left, const KService::Ptr right)
+{
+    return weightOfService(left) < weightOfService(right);
+}
+KService::List sortServices(KService::List list)
+{
+    qSort(list.begin(), list.end(), sortServiceItemsByWeight);
+    return list;
+}
+
 void MenuLauncherApplet::toggleMenu()
 {
     if (!d->menuview) {
@@ -404,10 +424,9 @@ void MenuLauncherApplet::toggleMenu()
         connect(d->menuview, SIGNAL(triggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
         connect(d->menuview, SIGNAL(aboutToHide()), d->icon, SLOT(setUnpressed()));
         connect(d->menuview, SIGNAL(aboutToHide()), d->menuview, SLOT(deleteLater()));
-
+d->viewtype = Settings;
         switch (d->viewtype) {
         case Combined: {
-//if (Kickoff::RecentApplications::self()->recentApplications().size() > 0) {
             if (d->maxRecentApps > 0) {
                 d->menuview->addTitle(i18n("Recently Used Applications"));
                 Kickoff::RecentlyUsedModel* recentlymodel = new Kickoff::RecentlyUsedModel(d->menuview, Kickoff::RecentlyUsedModel::ApplicationsOnly, d->maxRecentApps);
@@ -470,6 +489,51 @@ void MenuLauncherApplet::toggleMenu()
             d->bookmarkmenu = new KBookmarkMenu(mgr, d->bookmarkowner, d->menuview, d->collection);
         }
         break;
+        case Settings: {
+            QMap<QString, KMenu*> menus;
+            foreach(KService::Ptr rootentry, sortServices(KServiceTypeTrader::self()->query("SystemSettingsCategory", "(not exist [X-KDE-System-Settings-Parent-Category]) or [X-KDE-System-Settings-Parent-Category]==''"))) {
+                d->menuview->addTitle(rootentry->name().replace('&',"&&"));
+                const QString rootcategory = rootentry->property("X-KDE-System-Settings-Category").toString();
+                foreach(KService::Ptr entry, sortServices(KServiceTypeTrader::self()->query("SystemSettingsCategory", QString("[X-KDE-System-Settings-Parent-Category]=='%1'").arg(rootcategory)))) {
+                    KMenu* menu = new KMenu(entry->name().replace('&',"&&"), d->menuview);
+                    menu->setIcon(KIcon(entry->icon()));
+                    d->menuview->addMenu(menu);
+                    const QString category = entry->property("X-KDE-System-Settings-Category").toString();
+                    menus[category] = menu;
+                }
+            }
+            QMap<QString, QList<KService::Ptr> > modules;
+            foreach(KService::Ptr entry, sortServices(KServiceTypeTrader::self()->query("KCModule"))) {
+                const QString category = entry->property("X-KDE-System-Settings-Parent-Category").toString();
+                if(! category.isEmpty() && ! entry->noDisplay())
+                    modules[category] << entry;
+            }
+            foreach(const QString& category, modules.keys()) {
+                QString menucategory = category;
+                KService::Ptr subcategory = KService::Ptr();
+                while(! menucategory.isEmpty() && ! menus.contains(menucategory)) {
+                    KService::List services = KServiceTypeTrader::self()->query("SystemSettingsCategory", QString("[X-KDE-System-Settings-Category]=='%1'").arg(menucategory));
+                    Q_ASSERT(services.count() > 0); //if that happens then we miss the desktop-file defining the category
+                    Q_ASSERT(services.count() < 2); //if that happens then we have more then one desktop-file defining the same category
+                    if(services.count() < 1) {
+                        menucategory.clear();
+                    } else {
+                        subcategory = services[0];
+                        menucategory = subcategory->property("X-KDE-System-Settings-Parent-Category").toString();
+                    }
+                }
+                if(menucategory.isEmpty()) continue; //skip the category
+                KMenu* menu = menus[menucategory];
+                if(! subcategory.isNull())
+                    menu->addTitle(subcategory->name());
+                foreach(KService::Ptr entry, modules[category]) {
+                    KCModuleInfo module(entry->entryPath());
+                    QAction* a = menu->addAction(KIcon(module.icon()), module.moduleName().replace('&',"&&"));
+                    a->setData(KUrl("kcm:/" + entry->entryPath()));
+                }
+            }
+        }
+        break;
         case Leave: {
             Kickoff::MenuView *leaveview = d->createMenuView(new Kickoff::LeaveModel(d->menuview));
             d->addMenu(leaveview, true);
@@ -491,6 +555,13 @@ void MenuLauncherApplet::actionTriggered(QAction *action)
             d->launcher = new Kickoff::UrlItemLauncher(d->menuview);
         }
         d->launcher->openUrl(url.url());
+        return;
+    }
+    if (url.scheme() == "kcm") {
+        KCMultiDialog *dialog = new KCMultiDialog();
+        dialog->addModule(url.fileName());
+        dialog->show();
+        connect(dialog, SIGNAL(finished(int)), dialog, SLOT(delayedDestruct()));
         return;
     }
     for (QWidget* w = action->parentWidget(); w; w = w->parentWidget()) {
