@@ -604,6 +604,8 @@ void KSMShutdownDlg::resizeEvent(QResizeEvent *e)
         m_svg->paint(&p, QRect(0, 0, width(), height()), "background");
         setMask(mask);
     }
+
+    KDialog::centerOnScreen(this);
 }
 
 void KSMShutdownDlg::slotLogout()
