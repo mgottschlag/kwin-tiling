@@ -29,6 +29,7 @@
 #include <KUrl>
 #include <kdesktopfileactions.h>
 #include <KIO/NetAccess>
+#include <KMessageBox>
 
 #include <QComboBox>
 #include <QPushButton>
@@ -51,7 +52,7 @@ SolidActions::SolidActions(QWidget* parent, const QVariantList&)
     setButtons(KCModule::NoAdditionalButton);
 
     // Prepare main display dialog
-    mainUi = new Ui_SolidActionsConfig();
+    mainUi = new Ui::SolidActions();
     mainUi->setupUi(this);
     mainUi->LwActions->setSelectionMode(QAbstractItemView::SingleSelection); // Only a single item should be selectable
 
@@ -60,14 +61,14 @@ SolidActions::SolidActions(QWidget* parent, const QVariantList&)
     connect(mainUi->LwActions, SIGNAL(itemSelectionChanged()), this, SLOT(enableEditDelete()));
 
     // Prepare + connect up with Edit dialog
-    editUi = new SolidActionsEdit(this);
+    editUi = new SolidActionEdit(this);
     connect(editUi, SIGNAL(okClicked()), this, SLOT(acceptActionChanges()));
 
     // Prepare + connect up add action dialog
     addDialog = new KDialog(this);
     addWidget = new QWidget(addDialog);
     addDialog->setMainWidget(addWidget);
-    addUi = new Ui_SolidActionAdd();
+    addUi = new Ui::SolidActionAdd();
     addUi->setupUi(addWidget);
     addDialog->setInitialSize(QSize(300, 100)); // Set a sensible default size
     connect(addDialog, SIGNAL(okClicked()), this, SLOT(addAction()));
@@ -101,21 +102,17 @@ void SolidActions::addAction()
     QListWidgetItem * newAction = 0;
 
     QString enteredName = addUi->LeActionName->text();
+    KDesktopFile templateDesktop(KStandardDirs::locate("data", "kcmsolidactions/solid-action-template.desktop")); // Lets get the template
     // Lets get a desktop file
     QString internalName = enteredName; // copy the name the user entered -> we will be making mods
     internalName.replace(QChar(' '), QChar('-'), Qt::CaseSensitive); // replace spaces with dashes
     QString filePath = KStandardDirs::locateLocal("data", 0); // Get the location on disk for "data"
     filePath = filePath + "solid/actions/" + internalName + ".desktop"; // Create a file path for new action
-    KDesktopFile newDesktop(filePath); // Create the desktop file
     // Fill in an initial template
-    newDesktop.actionGroup("open").writeEntry("Icon", "unknown"); // Create a action -> fill XDG required items
-    newDesktop.actionGroup("open").writeEntry("Exec", ""); // ditto
-    newDesktop.actionGroup("open").writeEntry("Name", enteredName); // ditto
-    newDesktop.desktopGroup().writeEntry("Actions", "open;"); // Make sure the new action can be found
-    newDesktop.desktopGroup().writeEntry("Type", "Service"); // The desktop file contains a service
-    newDesktop.desktopGroup().writeEntry("X-KDE-Solid-Action-Custom", "true"); // This is user created
+    KDesktopFile *newDesktop = templateDesktop.copyTo(filePath);
+    newDesktop->actionGroup("open").writeEntry("Name", enteredName); // ditto
     // Write the file contents
-    newDesktop.sync();
+    delete newDesktop;
     // Prepare to open the editDialog
     fillActionsList();
     foreach(ActionItem * newItem, actionsDb.values()) { // Lets find our new action
@@ -135,10 +132,11 @@ void SolidActions::editAction()
     editUi->ui.IbActionIcon->setIcon(selectedItem->icon());
     editUi->ui.LeActionFriendlyName->setText(selectedItem->name());
     editUi->ui.LeActionCommand->setPath(selectedItem->exec());
-    editUi->fillPredicateTree(selectedItem->readKey(ActionItem::GroupDesktop, "X-KDE-Solid-Predicate", ""));
     editUi->setCaption(i18n("Editing action %1", selectedItem->name())); // Set a friendly i18n caption
     // Display us!
-    editUi->show();
+    editUi->show(); // We need to show it now so that the predicate error handler works
+    // Import the device conditions
+    editUi->fillPredicateTree(selectedItem->readKey(ActionItem::GroupDesktop, "X-KDE-Solid-Predicate", ""));
 }
 
 void SolidActions::deleteAction()
@@ -158,7 +156,7 @@ QListWidgetItem * SolidActions::selectedWidget()
             return candidate; // We have found the selected item
         }
     }
-    return 0; // Return null -> couldn't be found ( which can't happen normally )
+    return 0; // Return null -> couldn't be found
 }
 
 ActionItem * SolidActions::selectedAction()
@@ -177,11 +175,9 @@ void SolidActions::fillActionsList()
     allPossibleActions = KGlobal::dirs()->findAllResources("data", "solid/actions/");
     // Get service objects for those actions and add them to the display
     foreach(const QString &desktop, allPossibleActions) {
-        KUrl desktopFile(desktop); // create a desktop item for the solid action file
-        QString filePath = KStandardDirs::locate("data", "solid/actions/" + desktopFile.fileName()); // Get its on disk location
-        QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(filePath, true); // Get the list of contained services
+        QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(desktop, true); // Get the list of contained services
         foreach(const KServiceAction &deviceAction, services) { // We want every single action
-            ActionItem * actionItem = new ActionItem(filePath, deviceAction.name(), this); // Create an action
+            ActionItem * actionItem = new ActionItem(desktop, deviceAction.name(), this); // Create an action
             QListWidgetItem * actionListItem = new QListWidgetItem(KIcon(actionItem->icon()), actionItem->name(), 0, QListWidgetItem::Type);
             mainUi->LwActions->insertItem(mainUi->LwActions->count(), actionListItem); // Add it to the list
             actionsDb.insert(actionListItem, actionItem);  // add action to action db
@@ -193,19 +189,29 @@ void SolidActions::fillActionsList()
 void SolidActions::acceptActionChanges()
 {
     ActionItem *selectedItem = selectedAction();
+    QString iconName = editUi->ui.IbActionIcon->icon();
+    QString actionName = editUi->ui.LeActionFriendlyName->text();
+    QString command = editUi->ui.LeActionCommand->text();
+    QString predicate = editUi->predicate(); // retrieve the predicate
+    QString blank = QString("");
+    // We need to ensure that they are all valid before applying
+    if (iconName == blank || actionName == blank || command == blank || !Solid::Predicate::fromString(predicate).isValid()) {
+        editUi->show();
+        KMessageBox::error(this, i18n("It appears that the action name, command, icon or condition are not valid\nTherefore changes will not be applied"), i18n("Invalid action"));
+        return;
+    }
     // apply the changes
-    if (editUi->ui.IbActionIcon->icon() != selectedItem->icon()) { // Has the icon changed?
+    if (iconName != selectedItem->icon()) {  // Has the icon changed?
         selectedItem->setIcon(editUi->ui.IbActionIcon->icon()); // Write the change
     }
-    if (editUi->ui.LeActionFriendlyName->text() != selectedItem->name()) { // Has the friendly name changed?
+    if (actionName != selectedItem->name()) {  // Has the friendly name changed?
         selectedItem->setName(editUi->ui.LeActionFriendlyName->text()); // Write the change
     }
-    if (editUi->ui.LeActionCommand->text() != selectedItem->exec()) { // Has the command changed?
+    if (command != selectedItem->exec()) {  // Has the command changed?
         selectedItem->setExec(editUi->ui.LeActionCommand->text()); // Write the change
     }
-    QString newPredicate = editUi->predicate(); // retrieve the predicate
-    if (newPredicate != selectedItem->readKey(ActionItem::GroupDesktop, "X-KDE-Solid-Predicate", "")) { // Has it changed?
-        selectedItem->setKey(ActionItem::GroupDesktop, "X-KDE-Solid-Predicate", newPredicate); // Write the change
+    if (predicate != selectedItem->readKey(ActionItem::GroupDesktop, "X-KDE-Solid-Predicate", "")) {  // Has it changed?
+        selectedItem->setKey(ActionItem::GroupDesktop, "X-KDE-Solid-Predicate", predicate); // Write the change
     }
     // Re-read the actions list to ensure changes are reflected
     fillActionsList();

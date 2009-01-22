@@ -17,47 +17,42 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA          *
  ***************************************************************************/
 
-#ifndef SOLID_ACTIONS_H
-#define SOLID_ACTIONS_H
+#ifndef SOLID_ACTION_EDIT_H
+#define SOLID_ACTION_EDIT_H
 
-#include <KCModule>
+#include <KDialog>
 
-#include "ui_solid-actions.h"
-#include "solid-action-edit.h"
-#include "ui_solid-action-add.h"
+#include "ui_solid-action-edit.h"
 
-class ActionItem;
+class SolidActionEditPredicate;
 
-class SolidActions: public KCModule
+class SolidActionEdit : public KDialog
 {
     Q_OBJECT
-
 public:
-    SolidActions(QWidget* parent, const QVariantList&);
-    ~SolidActions();
-    void load();
-    void save();
-    void defaults();
+    SolidActionEdit(QWidget *parent = 0);
+    ~SolidActionEdit();
 
-private slots:
-    void addAction();
-    void editAction();
-    void deleteAction();
-    QListWidgetItem * selectedWidget();
-    ActionItem * selectedAction();
-    void fillActionsList();
-    void acceptActionChanges();
-    void toggleEditDelete(bool toggle);
-    void enableEditDelete();
+    void fillPredicateTree(QString predicateText);
+    QString predicate();
+    Ui::SolidActionEdit ui;
 
 private:
-    Ui_SolidActions *mainUi;
-    SolidActionEdit *editUi;
-    Ui::SolidActionAdd *addUi;
-    KDialog *addDialog;
-    QWidget *addWidget;
-    QMap<QListWidgetItem*, ActionItem*> actionsDb;
-    void clearActions();
+    void setPredicateContainer(QString predicate, QTreeWidgetItem *parent);
+    void setPredicateMultiItem(QString predicate, QTreeWidgetItem *parent);
+    void setPredicateItem(QString predicate, QTreeWidgetItem *parent);
+    void setPrettyNames(QTreeWidgetItem *parent);
+    QString readPredicate(QTreeWidgetItem *parent);
+    SolidActionEditPredicate *predicateUi;
+    KDialog * predicateDialog;
+
+private slots:
+    void updateButtonUsage();
+    void addRequirement();
+    void editRequirement();
+    void cancelEditRequirement();
+    void deleteRequirement();
+    void updateRequirement();
 
 };
 

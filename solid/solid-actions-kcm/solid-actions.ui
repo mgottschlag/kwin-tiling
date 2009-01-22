@@ -1,5 +1,5 @@
 <ui version="4.0" >
- <class>SolidActionsConfig</class>
+ <class>SolidActions</class>
  <widget class="QWidget" name="SolidActionsConfig" >
   <property name="geometry" >
    <rect>

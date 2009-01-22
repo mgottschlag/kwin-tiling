@@ -17,40 +17,30 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA          *
  ***************************************************************************/
 
-#ifndef SOLID_ACTIONS_EDIT_H
-#define SOLID_ACTIONS_EDIT_H
+#ifndef SOLID_ACTION_EDIT_PREDICATE_H
+#define SOLID_ACTION_EDIT_PREDICATE_H
 
 #include <KDialog>
 
-#include "ui_solid-actions-edit.h"
-#include "ui_solid-actions-edit-predicate.h"
+#include "ui_solid-action-edit-predicate.h"
 
-class SolidActionsEdit : public KDialog
+class QTreeWidgetItem;
+
+class SolidActionEditPredicate : public KDialog
 {
     Q_OBJECT
 public:
-    SolidActionsEdit(QWidget *parent = 0);
-    ~SolidActionsEdit();
+    SolidActionEditPredicate(QWidget *parent = 0);
+    ~SolidActionEditPredicate();
+    void prepareShow(QTreeWidgetItem *editItem);
+    void finishShow(QTreeWidgetItem * updating);
 
-    void fillPredicateTree(QString predicateText);
-    QString predicate();
-    Ui::SolidActionEdit ui;
+public slots:
+    void updateInterface();
 
 private:
-    void predicateContainer(QString predicate, QTreeWidgetItem *parent);
-    void predicateItem(QString predicate, QTreeWidgetItem *parent);
-    QString predicateRetrieve(QTreeWidgetItem *parent);
-    Ui::SolidActionEditPredicate predicateUi;
-    KDialog * predicateDialog;
 
-private slots:
-    void updateButtonUsage();
-    void addRequirement();
-    void editRequirement();
-    void cancelEditRequirement();
-    void deleteRequirement();
-    void editPredicateTypeToggle();
-    void updateRequirement();
+    Ui::SolidActionEditPredicate ui;
 
 };
 

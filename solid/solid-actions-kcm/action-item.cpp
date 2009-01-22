@@ -54,7 +54,7 @@ ActionItem::~ActionItem()
 
 bool ActionItem::isUserSupplied()
 {
-    return hasKey(ActionItem::GroupDesktop, "X-KDE-Solid-Action-Custom");
+    return hasKey(ActionItem::GroupDesktop, "X-KDE-Action-Custom");
 }
 
 QString ActionItem::readKey(GroupType keyGroup, QString keyName, QString defaultValue)
