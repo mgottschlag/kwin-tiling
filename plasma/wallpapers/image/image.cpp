@@ -182,6 +182,7 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
 
         m_uiSlideshow.m_color->setColor(m_color);
         connect(m_uiSlideshow.m_color, SIGNAL(changed(const QColor&)), this, SLOT(colorChanged(const QColor&)));
+        connect(m_uiSlideshow.m_newStuff, SIGNAL(clicked()), this, SLOT(getNewWallpaper()));
     }
 
     return m_widget;
