@@ -84,6 +84,8 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
     setLayout(m_layout);
 
     resize(800, 600);
+
+    setHasConfigurationInterface(true);
     //kDebug() << "!!! loading desktop";
 }
 
