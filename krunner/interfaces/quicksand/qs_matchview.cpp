@@ -363,7 +363,9 @@ void QsMatchView::showList()
 void QsMatchView::showSelected()
 {
     if (!d->m_items.size()) {
-        reset();
+        if (d->m_searchTerm.isEmpty()) {
+            reset();
+        }
         return;
     }
 
