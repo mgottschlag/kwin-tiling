@@ -164,6 +164,7 @@ void Tasks::constraintsEvent(Plasma::Constraints constraints)
         adjustGroupingStrategy();
     }
 
+    setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
     emit constraintsChanged(constraints);
 }
 
@@ -231,7 +232,7 @@ void Tasks::adjustGroupingStrategy()
 {
     //FIXME: should use AbstractTaskItem::basicPreferredSize() but it seems to cause crashes
     //QSize itemSize = QSize(300, 30);
-    //m_groupManager->setFullLimit(((size().width()*size().height()) / (itemSize.width()*itemSize.height())));  
+    //m_groupManager->setFullLimit(((size().width()*size().height()) / (itemSize.width()*itemSize.height())));
     //kDebug() << ((size().width()*size().height()) / (itemSize.width()*itemSize.height()));
 
     m_groupManager->setFullLimit(rootGroupItem()->optimumCapacity());
