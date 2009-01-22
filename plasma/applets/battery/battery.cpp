@@ -108,6 +108,7 @@ void Battery::init()
 {
     KConfigGroup cg = config();
     m_showBatteryString = cg.readEntry("showBatteryString", false);
+    m_showRemainingTime = cg.readEntry("showRemainingTime", false);
     m_showMultipleBatteries = cg.readEntry("showMultipleBatteries", !m_isEmbedded);
 
     showBattery(false);
@@ -157,22 +158,26 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
     } else {
         setAspectRatioMode(Plasma::KeepAspectRatio);
     }
+    int minWidth;
+    int minHeight;
 
     if (constraints & (Plasma::FormFactorConstraint | Plasma::SizeConstraint)) {
         if (formFactor() == Plasma::Vertical) {
             if (!m_showMultipleBatteries) {
-                setMinimumHeight(qMax(m_textRect.height(), size().width()));
+                minHeight = qMax(m_textRect.height(), size().width());
             } else {
-                setMinimumHeight(qMax(m_textRect.height(), size().width()*m_numOfBattery));
+                minHeight = qMax(m_textRect.height(), size().width()*m_numOfBattery);
             }
             setMinimumWidth(0);
+            setMinimumHeight(minHeight);
             //kDebug() << "Vertical FormFactor";
         } else if (formFactor() == Plasma::Horizontal) {
             if (!m_showMultipleBatteries) {
-                setMinimumWidth(qMax(m_textRect.width(), size().height()));
+                minWidth = qMax(m_textRect.width(), size().height());
             } else {
-                setMinimumWidth(qMax(m_textRect.width(), size().height()*m_numOfBattery));
+                minWidth = qMax(m_textRect.width(), size().height()*m_numOfBattery);
             }
+            setMinimumWidth(minWidth);
             setMinimumHeight(0);
             //kDebug() << "Horizontal FormFactor" << m_textRect.width() << contentsRect().height();
         } else {
@@ -218,12 +223,27 @@ void Battery::createConfigurationInterface(KConfigDialog *parent)
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
     ui.showBatteryStringCheckBox->setChecked(m_showBatteryString ? Qt::Checked : Qt::Unchecked);
+    if (m_showRemainingTime) {
+        ui.showTimeRadioButton->setChecked(Qt::Checked);
+    } else {
+        ui.showPercentageRadioButton->setChecked(Qt::Checked);
+    }
     ui.showMultipleBatteriesCheckBox->setChecked(m_showMultipleBatteries ? Qt::Checked : Qt::Unchecked);
 }
 
 void Battery::configAccepted()
 {
     KConfigGroup cg = config();
+
+    if (m_showRemainingTime != ui.showTimeRadioButton->isChecked()) {
+        // kDebug() << "config changed";
+        m_showRemainingTime = !m_showRemainingTime;
+        cg.writeEntry("showRemainingTime", m_showRemainingTime);
+        // kDebug() << m_showRemainingTime;
+        if (m_showBatteryString && m_showBatteryString == ui.showBatteryStringCheckBox->isChecked()) {
+            showLabel(m_showBatteryString);
+        }
+    }
 
     if (m_showBatteryString != ui.showBatteryStringCheckBox->isChecked()) {
         m_showBatteryString = !m_showBatteryString;
@@ -492,13 +512,13 @@ void Battery::updateStatus()
     if (m_numOfBattery && m_batteryLabel) {
         QHashIterator<QString, QHash<QString, QVariant > > battery_data(m_batteries_data);
         int bnum = 0;
-        int hours = m_remainingMSecs/1000/3600;
-        int minutes = qRound(m_remainingMSecs/60000) % 60;
 
         while (battery_data.hasNext()) {
             bnum++;
             battery_data.next();
             QString state = battery_data.value()["State"].toString();
+            m_remainingMSecs = battery_data.value()["Remaining msec"].toInt();
+            kDebug() << "time left:" << m_remainingMSecs;
             if (state == "Discharging" && m_remainingMSecs > 0) {
 
                 // FIXME: Somehow, m_extenderApplet is null here, so the label never becomes visible
@@ -507,17 +527,7 @@ void Battery::updateStatus()
                 }
 
                 // we don't have too much accuracy so only give hours and minutes
-                int msecs = hours * 1000 * 3600 + minutes * 60000;
-                batteryLabelText.append(i18n("Time remaining: <b>%1</b><br />", KGlobal::locale()->prettyFormatDuration(msecs)));
-                kDebug() << "hours:" << hours << "minutes:" << minutes;
-                /* might be useful for the tooltip
-                kDebug() << "hours:" << hours << "minutes:" << minutes;
-                QTime t = QTime(hours, minutes);
-                kDebug() << t;
-                KLocale tmpLocale(*KGlobal::locale());
-                tmpLocale.setTimeFormat("%k:h %Mm remaining");
-                kDebug() << tmpLocale.formatTime(t, false, true); // minutes, hours as duration
-                */
+                batteryLabelText.append(i18n("Time remaining: <b>%1</b><br />", KGlobal::locale()->prettyFormatDuration(m_remainingMSecs)));
             } else {
                 if (m_extenderApplet) {
                     m_extenderApplet->showBatteryLabel(false);
@@ -871,8 +881,20 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
                 // Show the charge percentage with a box on top of the battery
                 QString batteryLabel;
                 if (battery_data.value()["Plugged in"].toBool()) {
-                    batteryLabel = battery_data.value()["Percent"].toString();
-                    batteryLabel.append("%");
+                    // kDebug() << m_showRemainingTime;
+                    if (!m_showRemainingTime || m_remainingMSecs==0) {
+                        batteryLabel = battery_data.value()["Percent"].toString();
+                        batteryLabel.append("%");
+                    } else {
+                        m_remainingMSecs = battery_data.value()["Remaining msec"].toInt();
+                        int hours = m_remainingMSecs/1000/3600;
+                        int minutes = qRound(m_remainingMSecs/60000) % 60;
+                        QTime t = QTime(hours, minutes);
+                        KLocale tmpLocale(*KGlobal::locale());
+                        tmpLocale.setTimeFormat("%k:%M");
+                        batteryLabel = tmpLocale.formatTime(t, false, true); // minutes, hours as duration
+                    }
+                    // kDebug() << batteryLabel;
                     paintLabel(p, corect, batteryLabel);
                 }
             }

@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>363</width>
-    <height>80</height>
+    <height>270</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -22,9 +22,68 @@
       <string/>
      </property>
      <property name="text" >
-      <string>Show the percentage of &amp;charge on the battery</string>
+      <string>Show charge &amp;information</string>
      </property>
     </widget>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="gridLayout" >
+     <item row="0" column="1" >
+      <widget class="QRadioButton" name="showPercentageRadioButton" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
+       <property name="text" >
+        <string>Show &amp;percentage</string>
+       </property>
+       <property name="checked" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0" >
+      <spacer name="horizontalSpacer" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="0" >
+      <spacer name="horizontalSpacer_2" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="1" >
+      <widget class="QRadioButton" name="showTimeRadioButton" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
+       <property name="text" >
+        <string>Show remaining &amp;time</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QCheckBox" name="showMultipleBatteriesCheckBox" >
@@ -52,5 +111,38 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>showBatteryStringCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>showPercentageRadioButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>181</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>195</x>
+     <y>52</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>showBatteryStringCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>showTimeRadioButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>181</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>195</x>
+     <y>83</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

@@ -120,6 +120,8 @@ class Battery : public Plasma::PopupApplet
         bool m_showMultipleBatteries;
         /* Should the battery charge information be shown on top? */
         bool m_showBatteryString;
+        /* Should that info be percentage (false) or time (true)? */
+        bool m_showRemainingTime;
         QSizeF m_size;
         int m_pixelSize;
         Plasma::Svg* m_theme;
