@@ -118,7 +118,6 @@ private Q_SLOTS:
     void appletBrowserDestroyed();
     void createView(Plasma::Containment *containment);
     void panelRemoved(QObject* panel);
-    void configDialogRemoved(QObject* configDialogRemoved);
     void screenRemoved(int id);
     void compositingChanged();
     void showAppletBrowser();
@@ -130,7 +129,6 @@ private:
     QList<PanelView*> m_panels;
     Plasma::AppletBrowser *m_appletBrowser;
     QList<DesktopView*> m_desktops;
-    QHash<Plasma::Containment *, BackgroundDialog *> m_configDialogs;
     Plasma::ZoomLevel m_zoomLevel;
     int m_panelHidden;
 };

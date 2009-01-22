@@ -11,7 +11,7 @@
 #ifndef BACKGROUNDDIALOG_H
 #define BACKGROUNDDIALOG_H
 
-#include <KDialog>
+#include <KConfigDialog>
 #include "ui_BackgroundDialog.h"
 
 namespace Plasma {
@@ -23,12 +23,13 @@ class ThemeModel;
 class WallpaperPreview;
 class QStandardItemModel;
 
-class BackgroundDialog : public KDialog, public Ui::BackgroundDialog
+class BackgroundDialog : public KConfigDialog, public Ui::BackgroundDialog
 {
     Q_OBJECT
 public:
     BackgroundDialog(const QSize &res, Plasma::Containment *containment,
-                     Plasma::View *view, QWidget *parent = 0);
+                     Plasma::View *view, QWidget* parent, const QString &id,
+                     KConfigSkeleton *s);
     ~BackgroundDialog();
 
     void reloadConfig();

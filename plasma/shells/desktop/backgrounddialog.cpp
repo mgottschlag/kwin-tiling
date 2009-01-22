@@ -351,8 +351,9 @@ QSize AppletDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelI
     return QSize(200, calcItemHeight(option));
 }
 
-BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Plasma::View* view, QWidget* parent)
-    : KDialog(parent),
+BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Plasma::View* view,
+                                   QWidget* parent, const QString &id, KConfigSkeleton *s)
+    : KConfigDialog(parent, id, s),
       m_themeModel(0),
       m_containmentModel(0),
       m_wallpaper(0),
@@ -408,7 +409,12 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
     m_containmentComboBox->setModel(m_containmentModel);
     m_containmentComboBox->setItemDelegate(new AppletDelegate());
 
-    setMainWidget(main);
+    addPage(main, i18n("Appearance"), "preferences-desktop-wallpaper");
+
+    if (m_containment->hasConfigurationInterface()) {
+        m_containment->createConfigurationInterface(this);
+    }
+
     reloadConfig();
     adjustSize();
 }

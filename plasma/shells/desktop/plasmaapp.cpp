@@ -292,10 +292,6 @@ void PlasmaApp::cleanup()
     m_panels.clear();
     qDeleteAll(panels);
 
-    QHash<Plasma::Containment *, BackgroundDialog *> dialogs = m_configDialogs;
-    m_configDialogs.clear();
-    qDeleteAll(dialogs);
-
     delete m_corona;
 
     //TODO: This manual sync() should not be necessary. Remove it when
@@ -674,10 +670,11 @@ void PlasmaApp::containmentAdded(Plasma::Containment *containment)
 
 void PlasmaApp::configureContainment(Plasma::Containment *containment)
 {
-    BackgroundDialog *configDialog = 0;
+    const QString id = "plasma_containment_settings_" + QString::number(containment->id());
+    BackgroundDialog *configDialog = qobject_cast<BackgroundDialog*>(KConfigDialog::exists(id));
+    kDebug() << configDialog;
 
-    if (m_configDialogs.contains(containment)) {
-        configDialog = m_configDialogs.value(containment);
+    if (configDialog) {
         configDialog->reloadConfig();
     } else {
         const QSize resolution = QApplication::desktop()->screenGeometry(containment->screen()).size();
@@ -696,10 +693,11 @@ void PlasmaApp::configureContainment(Plasma::Containment *containment)
 
         }
 
-        configDialog = new BackgroundDialog(resolution, containment, view);
+        KConfigSkeleton *nullManager = new KConfigSkeleton(0);
+        configDialog = new BackgroundDialog(resolution, containment, view, 0, id, nullManager);
         configDialog->setAttribute(Qt::WA_DeleteOnClose);
-        connect(configDialog, SIGNAL(destroyed(QObject*)),
-                this, SLOT(configDialogRemoved(QObject*)));
+
+        connect(configDialog, SIGNAL(destroyed(QObject*)), nullManager, SLOT(deleteLater()));
     }
 
     configDialog->show();
@@ -825,17 +823,6 @@ void PlasmaApp::zoomOut(Plasma::Containment *)
 void PlasmaApp::panelRemoved(QObject* panel)
 {
     m_panels.removeAll((PanelView*)panel);
-}
-
-void PlasmaApp::configDialogRemoved(QObject* dialog)
-{
-    QMutableHashIterator<Plasma::Containment *, BackgroundDialog *> it(m_configDialogs);
-    while (it.hasNext()) {
-        it.next();
-        if (it.value() == (BackgroundDialog*)dialog) {
-           it.remove();
-        }
-    }
 }
 
 #include "plasmaapp.moc"
