@@ -586,6 +586,15 @@ void PlasmaApp::notifyStartup(bool completed)
     }
 }
 
+bool PlasmaApp::isPanelContainment(Plasma::Containment *containment)
+{
+    Plasma::Containment::Type t = containment->containmentType();
+
+    return t == Plasma::Containment::PanelContainment ||
+           t == Plasma::Containment::CustomPanelContainment;
+
+}
+
 void PlasmaApp::createView(Plasma::Containment *containment)
 {
     kDebug() << "Containment name:" << containment->name()
@@ -602,41 +611,34 @@ void PlasmaApp::createView(Plasma::Containment *containment)
 
     WId viewWindow = 0;
 
-    switch (containment->containmentType()) {
-        case Plasma::Containment::PanelContainment: {
-            PanelView *panelView = new PanelView(containment, id);
-            viewWindow = panelView->winId();
-            connect(panelView, SIGNAL(destroyed(QObject*)), this, SLOT(panelRemoved(QObject*)));
-            m_panels << panelView;
-            panelView->show();
-            break;
+    if (isPanelContainment(containment)) {
+        PanelView *panelView = new PanelView(containment, id);
+        viewWindow = panelView->winId();
+        connect(panelView, SIGNAL(destroyed(QObject*)), this, SLOT(panelRemoved(QObject*)));
+        m_panels << panelView;
+        panelView->show();
+    } else if (containment->screen() > -1 &&
+               containment->screen() < Kephal::ScreenUtils::numScreens()) {
+        DesktopView *view = viewForScreen(containment->screen(), containment->desktop());
+        if (view) {
+            kDebug() << "had a view for" << containment->screen() << containment->desktop();
+            // we already have a view for this screen
+            return;
         }
-        default:
-            if (containment->screen() > -1 &&
-                containment->screen() < Kephal::ScreenUtils::numScreens()) {
-                DesktopView *view = viewForScreen(containment->screen(), containment->desktop());
-                if (view) {
-                    kDebug() << "had a view for" << containment->screen() << containment->desktop();
-                    // we already have a view for this screen
-                    return;
-                }
 
-                kDebug() << "creating a new view for" << containment->screen() << containment->desktop()
-                         << "and we have" << Kephal::ScreenUtils::numScreens() << "screens";
+        kDebug() << "creating a new view for" << containment->screen() << containment->desktop()
+            << "and we have" << Kephal::ScreenUtils::numScreens() << "screens";
 
+        // we have a new screen. neat.
+        view = new DesktopView(containment, id, 0);
+        viewWindow = view->winId();
+        if (m_corona) {
+            connect(m_corona, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
+                    view, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
+        }
 
-                // we have a new screen. neat.
-                view = new DesktopView(containment, id, 0);
-                viewWindow = view->winId();
-                if (m_corona) {
-                    connect(m_corona, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
-                            view, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
-                }
-
-                m_desktops.append(view);
-                view->show();
-            }
-            break;
+        m_desktops.append(view);
+        view->show();
     }
 
 #ifdef Q_WS_X11
@@ -662,7 +664,7 @@ void PlasmaApp::containmentAdded(Plasma::Containment *containment)
     connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
             this, SLOT(configureContainment(Plasma::Containment*)));
 
-    if (containment->containmentType() != Plasma::Containment::PanelContainment) {
+    if (!isPanelContainment(containment)) {
         connect(containment, SIGNAL(addSiblingContainment(Plasma::Containment *)),
                 this, SLOT(addContainment(Plasma::Containment *)));
     }
@@ -775,7 +777,7 @@ void PlasmaApp::zoomIn(Plasma::Containment *containment)
 
     //make sure everybody can zoom out again
     foreach (Plasma::Containment *c, m_corona->containments()) {
-        if (c->containmentType() == Plasma::Containment::PanelContainment) {
+        if (isPanelContainment(c)) {
             continue;
         }
 
@@ -807,7 +809,7 @@ void PlasmaApp::zoomOut(Plasma::Containment *)
 
     //make sure everybody can zoom out again
     foreach (Plasma::Containment *c, m_corona->containments()) {
-        if (c->containmentType() == Plasma::Containment::PanelContainment) {
+        if (isPanelContainment(c)) {
             continue;
         }
 

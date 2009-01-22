@@ -79,6 +79,8 @@ public:
      */
     QList<PanelView*> panelViews() const;
 
+    static bool isPanelContainment(Plasma::Containment *containment);
+
 #ifdef Q_WS_X11
     Atom m_XdndAwareAtom;
     Atom m_XdndEnterAtom;

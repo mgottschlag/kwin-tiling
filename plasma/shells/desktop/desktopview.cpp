@@ -222,7 +222,7 @@ void DesktopView::zoomIn(Plasma::ZoomLevel zoomLevel)
             if (corona) {
                 QList<Plasma::Containment*> containments = corona->containments();
                 foreach (Plasma::Containment *c, containments) {
-                    if (c == containment() || c->containmentType() == Plasma::Containment::PanelContainment) {
+                    if (c == containment() || PlasmaApp::isPanelContainment(c)) {
                         continue;
                     }
                     disconnect(c, 0, this, 0);
@@ -316,7 +316,7 @@ void DesktopView::drawBackground(QPainter *painter, const QRectF &rect)
 void DesktopView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment)
 {
     kDebug() << "was:" << wasScreen << "is:" << isScreen << "my screen:" << screen() << "containment:" << (QObject*)containment << "myself:" << (QObject*)this;
-    if (containment->containmentType() == Plasma::Containment::PanelContainment) {
+    if (PlasmaApp::isPanelContainment(containment)) {
         // we don't care about panel containments changing screens on us
         return;
     }
@@ -337,10 +337,11 @@ void DesktopView::nextContainment()
     int i = (start + 1) % containments.size();
     //FIXME this is a *horrible* way of choosing a "next" containment.
     while (i != start) {
-        if (containments.at(i)->containmentType() != Plasma::Containment::PanelContainment &&
+        if (!PlasmaApp::isPanelContainment(containments.at(i)) &&
             containments.at(i)->screen() == -1) {
             break;
         }
+
         i = (i + 1) % containments.size();
     }
 
@@ -357,12 +358,14 @@ void DesktopView::previousContainment()
     if (i < 0) {
         i += containments.size();
     }
+
     //FIXME this is a *horrible* way of choosing a "previous" containment.
     while (i != start) {
-        if (containments.at(i)->containmentType() != Plasma::Containment::PanelContainment &&
+        if (!PlasmaApp::isPanelContainment(containments.at(i)) &&
             containments.at(i)->screen() == -1) {
             break;
         }
+
         if (--i < 0) {
             i += containments.size();
         }
