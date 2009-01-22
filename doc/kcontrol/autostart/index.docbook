@@ -4,7 +4,7 @@
   <!ENTITY % addindex "IGNORE">
   <!ENTITY % English "INCLUDE">
 ]>
-<article>
+<article lang="&language;">
 <articleinfo>
 <authorgroup>
 <author>&Anne-Marie.Mahfouf;</author>
@@ -158,3 +158,4 @@ End:
 vim:tabstop=2:shiftwidth=2:expandtab
 kate: space-indent on; indent-width 2; tab-width 2; indent-mode none;
 -->
+
