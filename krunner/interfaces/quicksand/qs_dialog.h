@@ -58,6 +58,8 @@ class QsDialog : public KRunnerDialog
         void loadActions(MatchItem *item);
         void setAction(MatchItem *item);
     private:
+        bool m_newQuery;
+        QMultiMap<QString, Plasma::QueryMatch> m_matches;
         QuickSand::QsMatchView *m_matchView;
         QuickSand::QsMatchView *m_actionView;
         QuickSand::QueryMatchItem *m_currentMatch;

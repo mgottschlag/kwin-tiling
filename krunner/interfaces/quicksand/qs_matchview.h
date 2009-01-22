@@ -65,8 +65,9 @@ namespace QuickSand {
              * Sets the list of items to be displayed on screen
              * @param items The list of items to display
              * @param popup Display the popup completion box
+             * @param append Append items to the current list instead of replacing it
              */
-            void setItems(const QList<MatchItem*> &items, bool popup = true);
+            void setItems(const QList<MatchItem*> &items, bool popup = true, bool append = false);
 
             /**
              * Sets the item count text on the upper right hand corner

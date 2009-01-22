@@ -1,6 +1,6 @@
 /*
  *   Copyright (C) 2006 by Aaron Seigo <aseigo@kde.org>
- *   Copyright (C) 2007-2008 Ryan P. Bitanga <ryan.bitanga@gmail.com>
+ *   Copyright (C) 2007-2009 Ryan P. Bitanga <ryan.bitanga@gmail.com>
  *   Copyright (C) 2008 by Davide Bettio <davide.bettio@kdemail.net>
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -108,6 +108,8 @@ QsDialog::QsDialog(Plasma::RunnerManager *runnerManager, QWidget *parent)
     connect(m_actionView, SIGNAL(itemActivated(MatchItem*)), this, SLOT(run(MatchItem*)));
 
     m_matchView->setFocus();
+
+    m_newQuery = true;
 }
 
 QsDialog::~QsDialog()
@@ -145,6 +147,7 @@ void QsDialog::launchQuery(const QString &query)
         m_matchView->showLoading();
     }
     m_runnerManager->launchQuery(query);
+    m_newQuery = true;
 }
 
 void QsDialog::run(MatchItem *item)
@@ -184,7 +187,28 @@ void QsDialog::loadActions(MatchItem *item)
 void QsDialog::setMatches(const QList<Plasma::QueryMatch> &matches)
 {
     QList<MatchItem*> items;
+    QMultiMap<QString, Plasma::QueryMatch> temp;
+    QMultiMap<QString, Plasma::QueryMatch>::iterator end = m_matches.end();
     foreach (Plasma::QueryMatch match, matches) {
+        temp.insert(match.id(), match);
+        // Do not create new MatchItems for existing matches when the query hasn't changed
+        if (!m_newQuery && m_matches.find(match.id()) != end) {
+            // kDebug() << "A match with id " << match.id() << " already exists." << endl;
+            QList<Plasma::QueryMatch> duplicates = m_matches.values(match.id());
+            bool exists = false;
+            foreach (Plasma::QueryMatch m, duplicates) {
+                // FIXME: Matching the displayed text isn't always reliable
+                // maybe adding an operator== to QueryMatch would help
+                if (m.text() == match.text()) {
+                    exists = true;
+                    break;
+                }
+            }
+
+            if (exists) {
+                continue;
+            }
+        }
         MatchItem *m = new QuickSand::QueryMatchItem(match);
         switch(match.type())
         {
@@ -201,7 +225,11 @@ void QsDialog::setMatches(const QList<Plasma::QueryMatch> &matches)
         }
         items.append(m);
     }
-    m_matchView->setItems(items);
+    // kDebug() << "Add " << items.size() << " matches. Append?" << !m_newQuery << endl;
+    m_matchView->setItems(items, true, !m_newQuery);
+    m_matches = temp;
+    // If new matches are obtained for the same query, append them to the list
+    m_newQuery = false;
 }
 
 void QsDialog::setAction(MatchItem *item)
