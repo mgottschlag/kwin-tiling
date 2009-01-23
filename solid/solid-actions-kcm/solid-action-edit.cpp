@@ -54,7 +54,7 @@ SolidActionEdit::SolidActionEdit(QWidget *parent) : KDialog(parent)
     predicateUi = new SolidActionEditPredicate(this);
 
     // Connect up with everything needed -> slot names explain
-    connect(ui.TwSolidRequirements, SIGNAL(itemSelectionChanged()), this, SLOT(updateButtonUsage()));
+    connect(ui.TwSolidRequirements, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)), this, SLOT(updateButtonUsage()));
     connect(ui.PbAddRequirement, SIGNAL(clicked()), this, SLOT(addRequirement()));
     connect(ui.PbEditRequirement, SIGNAL(clicked()), this, SLOT(editRequirement()));
     connect(ui.PbRemoveRequirement, SIGNAL(clicked()), this, SLOT(deleteRequirement()));
@@ -80,6 +80,7 @@ void SolidActionEdit::fillPredicateTree(QString predicateText)
     masterRoot->setText(5, "0"); // The Master Root must be a container
     setPredicateContainer(predicateText, masterRoot); // Import the data
     setPrettyNames(ui.TwSolidRequirements->invisibleRootItem()); // refresh the display
+    ui.TwSolidRequirements->expandAll(); // We want the predicate to be easily accessible
 }
 
 void SolidActionEdit::setPredicateContainer(QString predicate, QTreeWidgetItem *parent)
@@ -174,7 +175,7 @@ void SolidActionEdit::setPredicateMultiItem(QString predicate, QTreeWidgetItem *
         typeList << unParsed;
     }
     foreach(const QString &type, typeList) {
-        if (typeList.count() == 1) { // If the list of conditions only contains one, write into the parent
+        if (typeList.count() == 1 && parent->childCount() == 0) { // If the list of conditions only contains one, write into the parent
             writeItem = parent;
         } else { // Otherwise create a new item under the parent
             writeItem = new QTreeWidgetItem(parent);
@@ -306,6 +307,7 @@ void SolidActionEdit::updateRequirement()
 {
     predicateUi->finishShow(ui.TwSolidRequirements->currentItem()); // ensure the changes are written
     setPrettyNames(ui.TwSolidRequirements->invisibleRootItem()); // refresh the display
+    updateButtonUsage();
 }
 
 #include "solid-action-edit.moc"
