@@ -368,7 +368,10 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
         destroyUnhideTrigger();
     }
 
-    if (mode != AutoHide) {
+    if (mode == AutoHide) {
+        connect(containment(), SIGNAL(activate()), this, SLOT(unhide()));
+    } else {
+        disconnect(containment(), SIGNAL(activate()), this, SLOT(unhide()));
         updatePanelGeometry();
         show();
     }
@@ -1047,6 +1050,11 @@ void PanelView::unhide(bool destroyTrigger)
         //if the hide before  compositing was active now the view is wrong
         viewport()->move(0,0);
     }
+}
+
+void PanelView::unhide()
+{
+    unhide(true);
 }
 
 void PanelView::resetTriggerEnteredSuppression()

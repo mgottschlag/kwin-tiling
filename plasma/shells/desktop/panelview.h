@@ -130,6 +130,12 @@ public Q_SLOTS:
     void unhide(bool destroyTrigger);
 
     /**
+     * unhides the panel if it is hidden, always destroys the unhide trigger
+     * this is an overloaded function provided for convenience
+     */
+    void unhide();
+
+    /**
      * Pinches the min/max sizes of the containment to the current screen resolution
      */
     void pinchContainmentToCurrentScreen();
