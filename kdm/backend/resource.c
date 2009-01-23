@@ -289,7 +289,7 @@ applyResource( int id, void **src, void **dst )
 {
 	switch (id & C_TYPE_MASK) {
 	case C_TYPE_INT:
-		*(int *)dst = *(int *)src;
+		*(int *)dst = (int)((unsigned long)*src);
 		break;
 	case C_TYPE_STR:
 	case C_TYPE_ARGV:
