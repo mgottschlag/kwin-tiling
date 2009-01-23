@@ -44,9 +44,9 @@ endif(HAVE_STRIGIDBUS)
 
 include_directories( ${STRIGI_INCLUDE_DIR} )
 
-kde4_add_library(libkickoff SHARED ${libkickoff_SRCS})
-target_link_libraries(libkickoff ${KDE4_PLASMA_LIBS} solidcontrol ${Kickoff_LIBS})
-install(TARGETS libkickoff ${INSTALL_TARGETS_DEFAULT_ARGS})
+kde4_add_library(kickoff SHARED ${libkickoff_SRCS})
+target_link_libraries(kickoff ${KDE4_PLASMA_LIBS} solidcontrol ${Kickoff_LIBS})
+install(TARGETS kickoff ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 #######################################################################################
 # Kickoff Plasma Applet
@@ -64,7 +64,7 @@ set(Applet_SRCS
     applet/applet.cpp
 )
 kde4_add_plugin(plasma_applet_launcher ${Applet_SRCS})
-target_link_libraries(plasma_applet_launcher ${KDE4_PLASMA_LIBS} solidcontrol ${Kickoff_LIBS} libkickoff)
+target_link_libraries(plasma_applet_launcher ${KDE4_PLASMA_LIBS} solidcontrol ${Kickoff_LIBS} kickoff)
 install(TARGETS plasma_applet_launcher DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES applet/plasma-applet-launcher.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 
@@ -73,7 +73,7 @@ install(FILES applet/plasma-applet-launcher.desktop DESTINATION ${SERVICES_INSTA
 
 set(SimpleApplet_SRCS simpleapplet/menuview.cpp simpleapplet/simpleapplet.cpp)
 kde4_add_plugin(plasma_applet_simplelauncher ${SimpleApplet_SRCS})
-target_link_libraries(plasma_applet_simplelauncher ${KDE4_KUTILS_LIBS} ${KDE4_PLASMA_LIBS} solidcontrol ${Kickoff_LIBS} libkickoff)
+target_link_libraries(plasma_applet_simplelauncher ${KDE4_KUTILS_LIBS} ${KDE4_PLASMA_LIBS} solidcontrol ${Kickoff_LIBS} kickoff)
 install(TARGETS plasma_applet_simplelauncher DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES simpleapplet/plasma-applet-simplelauncher.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 
