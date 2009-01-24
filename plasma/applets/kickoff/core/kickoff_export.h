@@ -24,7 +24,7 @@
 #include <kdemacros.h>
 
 #ifndef KICKOFF_EXPORT
-# if defined(MAKE_LIBKICKOFF_LIB)
+# if defined(MAKE_KICKOFF_LIB)
    /* We are building this library */ 
 #  define KICKOFF_EXPORT KDE_EXPORT
 # else
