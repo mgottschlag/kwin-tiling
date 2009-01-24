@@ -56,7 +56,7 @@ public:
         }
 
         QStandardItem *existingItem = itemsByPath[path];
-        //kDebug() << "Removing existing item" << existingItem;
+        kDebug() << "Removing existing item" << existingItem;
         Q_ASSERT(existingItem->parent());
         existingItem->parent()->removeRow(existingItem->row());
         itemsByPath.remove(path);
@@ -75,7 +75,13 @@ public:
         }
 
         while (recentAppItem->rowCount() > maxRecentApps) {
-            recentAppItem->removeRow(recentAppItem->rowCount() - 1);
+            QList<QStandardItem*> row = recentAppItem->takeRow(recentAppItem->rowCount() - 1);
+
+            //don't leave pending stuff in itemsByPath
+            if (row.count() > 0) {
+                itemsByPath.remove(row.first()->data(UrlRole).toString());
+            }
+            qDeleteAll(row.begin(), row.end());
         }
     }
     void addRecentDocument(const QString& desktopPath, bool append) {
@@ -200,6 +206,7 @@ void RecentlyUsedModel::recentApplicationsCleared()
 
     d->recentAppItem->removeRows(0, d->recentAppItem->rowCount());
 }
+
 void RecentlyUsedModel::clearRecentApplications()
 {
     RecentApplications::self()->clear();
