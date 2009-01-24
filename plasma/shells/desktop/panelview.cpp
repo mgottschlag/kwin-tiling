@@ -366,12 +366,12 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
     if (mode == NormalPanel) {
         // we need to kill the input window if it exists!
         destroyUnhideTrigger();
+        disconnect(containment(), SIGNAL(activate()), this, SLOT(unhide()));
+    } else {
+        connect(containment(), SIGNAL(activate()), this, SLOT(unhide()));
     }
 
-    if (mode == AutoHide) {
-        connect(containment(), SIGNAL(activate()), this, SLOT(unhide()));
-    } else {
-        disconnect(containment(), SIGNAL(activate()), this, SLOT(unhide()));
+    if (mode != AutoHide) {
         updatePanelGeometry();
         show();
     }
