@@ -172,9 +172,10 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
                     continue;
                 } else {
                     // find and remove the existing entry with the same name
-                    for (int i = 0 ; i < node->children.count() ; i++) {
-                        if (node->children[i]->appName == appName) {
-                            delete node->children.takeAt(i);
+                    for (QList<AppNode*>::iterator i = node->children.begin(); i != node->children.end(); ++i) {
+                        if ((*i)->appName == appName) {
+                            delete *i;
+                            node->children.erase(i);
                         }
                     }
                 }
