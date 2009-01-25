@@ -31,6 +31,7 @@ class Job::Private
 {
 public:
     Private() :
+        state(Running),
         percentage(0),
         timerId(0),
         killable(false),
