@@ -181,6 +181,11 @@ void AbstractTaskItem::setTaskFlags(const TaskFlags flags)
 
 void AbstractTaskItem::fadeBackground(const QString &newBackground, int duration, bool fadeIn)
 {
+    TaskGroupItem *group = qobject_cast<TaskGroupItem*>(this);
+    if (group && !group->collapsed()) {
+        return;
+    }
+
     m_oldBackgroundPrefix = m_backgroundPrefix;
     m_backgroundPrefix = newBackground;
 
