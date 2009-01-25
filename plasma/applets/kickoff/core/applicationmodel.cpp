@@ -225,11 +225,9 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
 
         if (p->isType(KST_KService)) {
             const QString s = genericName.toLower();
-            if (genericNames.contains(s)) {
-                genericNames[s].append(newnode);
-            } else {
-                genericNames[s] = QList<AppNode*>() << newnode;
-            }
+            QList<AppNode*> list = genericNames.contains(s) ? genericNames[s] : QList<AppNode*>();
+            list.append(newnode);
+            genericNames[s] = list;
         }
     }
 
