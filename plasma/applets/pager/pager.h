@@ -146,6 +146,7 @@ class Pager : public Plasma::Applet
         // desktop switching on drop event
         int m_dragSwitchDesktop;
         QTimer* m_dragSwitchTimer;
+        bool m_ignoreNextSizeConstraint;
 
         static const int s_FadeInDuration = 50;
         static const int s_FadeOutDuration = 100;

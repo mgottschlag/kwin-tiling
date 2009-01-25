@@ -67,7 +67,8 @@ Pager::Pager(QObject *parent, const QVariantList &args)
       m_dirtyDesktop(-1),
       m_dragStartDesktop(-1),
       m_dragHighlightedDesktop(-1),
-      m_dragSwitchDesktop(-1)
+      m_dragSwitchDesktop(-1),
+      m_ignoreNextSizeConstraint(false)
 {
     setAcceptsHoverEvents(true);
     setAcceptDrops(true);
@@ -141,13 +142,19 @@ Pager::~Pager()
 void Pager::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::SizeConstraint) {
-        recalculateGeometry();
-        recalculateWindowRects();
-        if (m_background->hasElementPrefix(QString())) {
-            m_background->setElementPrefix(QString());
-            m_background->resizeFrame(size());
+        if (m_ignoreNextSizeConstraint) {
+            kDebug() << "ignoring size constraint";
+            m_ignoreNextSizeConstraint = false;
+        } else {
+            recalculateGeometry();
+            recalculateWindowRects();
+            if (m_background->hasElementPrefix(QString())) {
+                m_background->setElementPrefix(QString());
+                m_background->resizeFrame(size());
+            }
         }
     }
+
     if (constraints & Plasma::FormFactorConstraint) {
         if (formFactor() == Plasma::Horizontal) {
             setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
@@ -325,7 +332,7 @@ void Pager::recalculateGeometry()
 
     //kDebug() << "new size set" << m_size << m_rows << m_columns << columns << itemWidth;
 
-    resize(m_size);
+    //resize(m_size);
     setPreferredSize(m_size);
     if (m_desktopLayoutOwner && columns != m_columns) {
         // must own manager selection before setting global desktop layout
@@ -334,6 +341,8 @@ void Pager::recalculateGeometry()
         NETRootInfo i( QX11Info::display(), 0 );
         i.setDesktopLayout( orient, columns, rows, NET::DesktopLayoutCornerTopLeft );
     }
+
+    m_ignoreNextSizeConstraint = true;
 }
 
 void Pager::recalculateWindowRects()
@@ -343,10 +352,14 @@ void Pager::recalculateWindowRects()
     for (int i = 0; i < m_desktopCount; i++) {
         m_windowRects.append(QList<QPair<WId, QRect> >());
     }
+
     m_activeWindows.clear();
     m_windowInfo.clear();
-    foreach(WId window, windows) {
-        KWindowInfo info = KWindowSystem::windowInfo(window, NET::WMGeometry | NET::WMFrameExtents | NET::WMWindowType | NET::WMDesktop | NET::WMState | NET::XAWMState | NET::WMVisibleName);
+
+    foreach (WId window, windows) {
+        KWindowInfo info = KWindowSystem::windowInfo(window, NET::WMGeometry | NET::WMFrameExtents |
+                                                             NET::WMWindowType | NET::WMDesktop |
+                                                             NET::WMState | NET::XAWMState | NET::WMVisibleName);
         NET::WindowType type = info.windowType(NET::NormalMask | NET::DialogMask | NET::OverrideMask |
                                                NET::UtilityMask | NET::DesktopMask | NET::DockMask |
                                                NET::TopMenuMask | NET::SplashMask | NET::ToolbarMask |
@@ -395,13 +408,12 @@ void Pager::configAccepted()
 
     DisplayedText displayedText;
 
-    if (ui.desktopNumberRadioButton->isChecked()){
+    if (ui.desktopNumberRadioButton->isChecked()) {
         displayedText = Number;
 
-    }else if (ui.desktopNameRadioButton->isChecked()){
+    } else if (ui.desktopNameRadioButton->isChecked()) {
         displayedText = Name;
-
-    }else{
+    } else {
         displayedText = None;
     }
 
