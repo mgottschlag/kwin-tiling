@@ -175,7 +175,14 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
                     for (int i = node->children.count() - 1; i >= 0; --i) {
                         if (node->children[i]->appName == appName) {
                             AppNode* n = node->children.takeAt(i);
-                            genericNames.remove(n->genericName.toLower());
+                            const QString s = n->genericName.toLower();
+                            if(genericNames.contains(s)) {
+                                QList<AppNode*> l = genericNames[s];
+                                for(int j = l.count() - 1; j >= 0; --j)
+                                    if(l[j] == n)
+                                        l.takeAt(j);
+                                genericNames[s] = l;
+                            }
                             delete n;
                         }
                     }
