@@ -36,9 +36,9 @@ int kdemain(int argc, char **argv)
 KDE_EXPORT int kdemain(int argc, char **argv)
 #endif
 {
-    KAboutData aboutData("plasma", 0, ki18n("Plasma Workspace"),
+    KAboutData aboutData("plasma-desktop", 0, ki18n("Plasma Workspace"),
                          version, ki18n(description), KAboutData::License_GPL,
-                         ki18n("Copyright 2006-2007, The KDE Team"));
+                         ki18n("Copyright 2006-2009, The KDE Team"));
     aboutData.addAuthor(ki18n("Aaron J. Seigo"),
                         ki18n("Author and maintainer"),
                         "aseigo@kde.org");
