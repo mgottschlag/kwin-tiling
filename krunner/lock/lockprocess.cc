@@ -1104,7 +1104,6 @@ void LockProcess::resume( bool force )
         return; // no resuming with dialog visible or when not visible
     if( mSuspended && mHackProc.state() == QProcess::Running )
     {
-        XForceScreenSaver(QX11Info::display(), ScreenSaverReset );
         QPainter p( this );
         p.drawPixmap( 0, 0, mSavedScreen );
         p.end();
