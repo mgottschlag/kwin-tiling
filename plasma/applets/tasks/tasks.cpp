@@ -392,7 +392,10 @@ bool Tasks::showTooltip() const
     return m_showTooltip;
 }
 
-
+void Tasks::needsVisualFocus()
+{
+    emit activate();
+}
 
 void Tasks::themeRefresh()
 {

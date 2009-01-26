@@ -152,6 +152,7 @@ void AbstractTaskItem::setTaskFlags(const TaskFlags flags)
     if (((m_flags & TaskWantsAttention) != 0) != ((flags & TaskWantsAttention) != 0)) {
         //kDebug() << "task attention state changed" << m_attentionTimerId;
         if (flags & TaskWantsAttention) {
+            m_applet->needsVisualFocus();
             // start attention getting
             if (!m_attentionTimerId) {
                 m_attentionTimerId = startTimer(500);

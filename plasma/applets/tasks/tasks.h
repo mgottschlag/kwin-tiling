@@ -102,6 +102,8 @@ public:
 
         bool showTooltip() const;
 
+        void needsVisualFocus();
+
 
 signals:
     /**
