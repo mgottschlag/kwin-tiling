@@ -34,6 +34,8 @@ Plugins/Addons
      * Plasmoids and Containments
          * Twitter
              * Added support for other Twitter API based services like identi.ca (that is based on laconi.ca).
+         * File Watcher
+             * Added support for filtering (both regular expressions and exact matches are supported).
 
 KRunner
 -------
