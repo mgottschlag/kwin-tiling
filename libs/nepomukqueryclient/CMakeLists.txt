@@ -46,5 +46,5 @@ install(TARGETS nepomukqueryclient EXPORT kdeworkspaceLibraryTargets ${INSTALL_T
 install(FILES
   nepomukqueryclient_export.h
   queryserviceclient.h
-  DESTINATION ${INCLUDE_INSTALL_DIR}/nepomuk
+  DESTINATION ${INCLUDE_INSTALL_DIR}/nepomuk COMPONENT Devel
 )

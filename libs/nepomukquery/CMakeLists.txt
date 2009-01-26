@@ -37,5 +37,5 @@ install(FILES
   result.h
   term.h
   query.h
-  DESTINATION ${INCLUDE_INSTALL_DIR}/nepomuk
+  DESTINATION ${INCLUDE_INSTALL_DIR}/nepomuk COMPONENT Devel
 )
