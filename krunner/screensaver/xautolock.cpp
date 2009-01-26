@@ -253,10 +253,15 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
     }
 #endif
 
-#ifdef HAVE_XSCREENSAVER
-    if (mMitInfo && mMitInfo->state == ScreenSaverDisabled)
-        activate = false;
-#endif
+    // Do not check whether internal X screensaver is enabled or disabled, since we
+    // have disabled it ourselves. Some apps might try to disable it too to prevent
+    // screensavers, but then our logic breaks[*]. Those apps need to disable DPMS anyway,
+    // or they will still have problems, so the DPMS code above should be enough.
+    // Besides, I doubt other screensaver implementations check this either.
+    // [*] We can't run with X screensaver enabled, since then sooner or later
+    // the internal screensaver will activate instead of our screensaver and we cannot
+    // prevent its activation by resetting the idle counter since that would also
+    // reset DPMS saving.
 
     if(mActive && activate)
         emit timeout();
