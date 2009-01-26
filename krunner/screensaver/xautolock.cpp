@@ -228,7 +228,9 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
 #ifdef HAVE_DPMS
     BOOL on;
     CARD16 state;
+    CARD16 timeout1, timeout2, timeout3;
     DPMSInfo( QX11Info::display(), &state, &on );
+    DPMSGetTimeouts( QX11Info::display(), &timeout1, &timeout2, &timeout3 );
 
     // kDebug() << "DPMSInfo " << state << on;
     // If DPMS is active, it makes XScreenSaverQueryInfo() report idle time
@@ -237,7 +239,10 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
     // this could prevent locking from working.
     if(state == DPMSModeStandby || state == DPMSModeSuspend || state == DPMSModeOff)
         activate = true;
-    if(!on && mDPMS) {
+    // If we are DPMS-dependent and either DPMS is turned off completely or all
+    // three DPMS modes are turned off, don't activate (apps use this to turn off
+    // screensavers).
+    if(mDPMS && (!on || (timeout1 == 0 && timeout2 == 0 && timeout3 == 0 ))) {
         activate = false;
         resetTrigger();
     }
