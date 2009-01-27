@@ -96,6 +96,7 @@ void SolidActionEditPredicate::prepareShow(QTreeWidgetItem *editItem)
             ui.CbRestrictionDeviceType->setCurrentIndex(deviceTypes.keys().indexOf(deviceRequirement.at(0))); // Import <DeviceType>
             updateValuesList(); // The action list should be refreshed now so it is ready for setting
             QStringList deviceReqList = deviceValuesTypeMap.values(deviceRequirement.at(0));
+            qSort(deviceReqList.begin(), deviceReqList.end());
             ui.CbRestrictionDeviceValue->setCurrentIndex(deviceReqList.indexOf(deviceRequirement.at(1))); // Import <Value>
             // If the comparer is "equals" then we should set it as so
             if (editItem->text(2) == "==") {
