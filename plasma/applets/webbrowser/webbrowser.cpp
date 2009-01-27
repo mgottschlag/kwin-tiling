@@ -214,7 +214,6 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
 WebBrowser::~WebBrowser()
 {
     delete m_completion;
-    delete m_bookmarkManager;
     delete m_bookmarkModel;
 }
 
