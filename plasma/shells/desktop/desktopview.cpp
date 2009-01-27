@@ -19,7 +19,7 @@
 
 #include "desktopview.h"
 
-#include <QAction>
+#include <KAction>
 #include <QFile>
 #include <QWheelEvent>
 #include <QCoreApplication>
@@ -80,12 +80,12 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
         containment->enableAction("add sibling containment", false);
     }
     //FIXME should we have next/prev or up/down/left/right or what?
-    QAction *action = new QAction(i18n("Next Activity"), this);
+    KAction *action = new KAction(i18n("Next Activity"), this);
     action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     action->setShortcut(QKeySequence(Qt::ALT + Qt::Key_D, Qt::Key_Right));
     connect(action, SIGNAL(triggered()), this, SLOT(nextContainment()));
     addAction(action);
-    action = new QAction(i18n("Previous Activity"), this);
+    action = new KAction(i18n("Previous Activity"), this);
     action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     action->setShortcut(QKeySequence(Qt::ALT + Qt::Key_D, Qt::Key_Left));
     connect(action, SIGNAL(triggered()), this, SLOT(previousContainment()));
