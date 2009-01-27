@@ -1,0 +1,10 @@
+[Desktop Entry]
+Actions=driveType;
+Type=Service
+Name=Storage drive
+X-KDE-Solid-Actions-Type=StorageDrive
+
+[Desktop Action driveType]
+Icon=unknown
+Name=Drive Type
+Exec=

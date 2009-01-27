@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>501</width>
-    <height>260</height>
+    <width>521</width>
+    <height>315</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_4" >
@@ -122,7 +122,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_2" >
       <item row="0" column="0" >
-       <layout class="QGridLayout" name="GlRestrictionType_2" >
+       <layout class="QGridLayout" name="GlRestrictionType" >
         <item row="0" column="0" >
          <widget class="QLabel" name="LblRestrictionType" >
           <property name="sizePolicy" >
@@ -171,9 +171,9 @@
        </layout>
       </item>
       <item row="1" column="0" >
-       <layout class="QGridLayout" name="GlRestrictionValue" >
+       <layout class="QGridLayout" name="GlRestrictionDeviceType" >
         <item row="0" column="0" >
-         <widget class="QLabel" name="LblRestrictionValue" >
+         <widget class="QLabel" name="LblRestrictionDeviceType" >
           <property name="sizePolicy" >
            <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
             <horstretch>0</horstretch>
@@ -193,16 +193,23 @@
            </size>
           </property>
           <property name="text" >
-           <string>Value Name:</string>
+           <string>Device Type:</string>
           </property>
          </widget>
         </item>
         <item row="0" column="1" >
-         <widget class="KLineEdit" name="LeRestrictionValue" />
+         <widget class="KComboBox" name="CbRestrictionDeviceType" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
-      <item row="2" column="0" >
+      <item row="3" column="0" >
        <layout class="QGridLayout" name="GlRestrictionRequirement" >
         <item row="0" column="0" >
          <widget class="KComboBox" name="CbRestrictionRequirement" >
@@ -238,6 +245,45 @@
         </item>
         <item row="0" column="1" >
          <widget class="KLineEdit" name="LeRestrictionRequirement" />
+        </item>
+       </layout>
+      </item>
+      <item row="2" column="0" >
+       <layout class="QGridLayout" name="GlRestrictionDeviceValue" >
+        <item row="0" column="0" >
+         <widget class="QLabel" name="LblRestrictionDeviceValue" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize" >
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize" >
+           <size>
+            <width>150</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text" >
+           <string>Value Name:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <widget class="KComboBox" name="CbRestrictionDeviceValue" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>

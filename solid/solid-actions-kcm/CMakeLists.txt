@@ -29,3 +29,15 @@ TARGET_LINK_LIBRARIES(kcm_solid_actions ${KDE4_KIO_LIBS} ${KDE4_SOLID_LIBS} )
 INSTALL( TARGETS kcm_solid_actions DESTINATION ${PLUGIN_INSTALL_DIR} )
 INSTALL( FILES solid-actions.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
 INSTALL( FILES solid-action-template.desktop DESTINATION ${DATA_INSTALL_DIR}/kcmsolidactions )
+INSTALL( FILES solid-device-block.desktop
+               solid-device-camera.desktop
+               solid-device-dvbinterface.desktop
+               solid-device-networkinterface.desktop 
+               solid-device-opticaldisc.desktop 
+               solid-device-opticaldrive.desktop 
+               solid-device-portablemediaplayer.desktop 
+               solid-device-serialinterface.desktop 
+               solid-device-storageaccess.desktop 
+               solid-device-storagedrive.desktop 
+               solid-device-storagevolume.desktop 
+               DESTINATION ${DATA_INSTALL_DIR}/solid/devices )

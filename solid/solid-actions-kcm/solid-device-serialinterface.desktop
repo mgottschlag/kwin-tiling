@@ -1,0 +1,5 @@
+[Desktop Entry]
+Actions=
+Type=Service
+Name=Serial Interface
+X-KDE-Solid-Actions-Type=SerialInterface

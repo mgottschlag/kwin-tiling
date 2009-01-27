@@ -1,0 +1,10 @@
+[Desktop Entry]
+Actions=availableContent;
+Type=Service
+Name=Optical Disc
+X-KDE-Solid-Actions-Type=OpticalDisc
+
+[Desktop Action availableContent]
+Icon=unknown
+Name=Available Content on disc
+Exec=

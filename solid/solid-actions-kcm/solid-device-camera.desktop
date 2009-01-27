@@ -1,0 +1,10 @@
+[Desktop Entry]
+Actions=supportedDrivers;
+Type=Service
+Name=Camera
+X-KDE-Solid-Actions-Type=Camera
+
+[Desktop Action supportedDrivers]
+Icon=unknown
+Name=Supported Drivers
+Exec=
