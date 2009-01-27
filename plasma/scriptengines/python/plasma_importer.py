@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Copyright 2008 Simon Edwards <simon@simonzone.com>
 #
@@ -25,13 +26,12 @@ class PlasmaImporter(object):
     def __init__(self):
         self.toplevel = {}
         self.toplevelcount = {}
-        sys.path.append('<plasma>')
+        self.marker = '<plasma>' + str(id(self))
+        sys.path.append(self.marker)
         sys.path_hooks.append(self.hook)
-        #print("PlasmaImporter.__init__: sys.path:" + repr(sys.path))
 
     def hook(self,path):
-      if path=='<plasma>':
-          #print("plasma_thingy:"+ path)
+      if path==self.marker:
           return self
       else:
           raise ImportError()
@@ -54,11 +54,8 @@ class PlasmaImporter(object):
                     del sys.modules[key]
 
     def find_module(self,fullname, path=None):
-        #print('find_module(%s,%s)' % (fullname,path) )
-
         location = self.find_pymod(fullname)
         if location is not None:
-            #print("Found in " + location[0])
             return self
         else:
             return None
@@ -91,27 +88,21 @@ class PlasmaImporter(object):
         return open(location).read()
 
     def load_module(self, fullname):
-        #print('load_module fullname: '+fullname)
-
         location,ispkg = self.find_pymod(fullname)
-        #print("Location:"+location)
         if ispkg:   # Package dir.
             initlocation = os.path.join(location,'__init__.py')
             code = None
             if os.path.isfile(initlocation):
-                #code = self._get_code(initlocation)
                 code = open(initlocation)
         else:
-            #code = self._get_code(location)
             code = open(location)
 
         mod = sys.modules.setdefault(fullname, imp.new_module(fullname))
         mod.__file__ = location #"<%s>" % self.__class__.__name__
         mod.__loader__ = self
         if ispkg:
-            mod.__path__ = ["<plasma>"]
+            mod.__path__ = [self.marker]
         if code is not None:
-            #print("code is:"+code)
             try:
                 exec code in mod.__dict__
             finally:
