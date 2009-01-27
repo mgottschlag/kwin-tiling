@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Copyright 2008 Simon Edwards <simon@simonzone.com>
 #
@@ -22,27 +23,23 @@ from PyKDE4.plasma import Plasma
 import plasma_importer
 
 class PythonDataEngineScript(Plasma.DataEngineScript):
+    importer = None
+
     def __init__(self, parent):
         Plasma.DataEngineScript.__init__(self,parent)
-        self.importer = plasma_importer.PlasmaImporter()
+        if PythonDataEngineScript.importer is None:
+            PythonDataEngineScript.importer = plasma_importer.PlasmaImporter()
         self.initialized = False
 
     def init(self):
-        print("Script Name: " + self.dataEngine().name())
-
         self.m_moduleName = str(self.dataEngine().pluginName())
-        print("pluginname: " + str(self.dataEngine().pluginName()))
         self.plugin_name = str(self.dataEngine().pluginName()).replace('-','_')
 
-        self.importer.register_top_level(self.plugin_name, str(self.dataEngine().package().path()))
-
-        print("mainscript: " + str(self.dataEngine().package().filePath("mainscript")))
-        print("package path: " + str(self.dataEngine().package().path()))
+        PythonDataEngineScript.importer.register_top_level(self.plugin_name, str(self.dataEngine().package().path()))
 
         # import the code at the file name reported by mainScript()
         self.module = __import__(self.plugin_name+'.main')
         self.pydataengine = self.module.main.CreateDataEngine(None)
-        #self.pydataengine.setDataEngine(self.dataEngine())
         self.pydataengine.setDataEngineScript(self)
         self.pydataengine.init()
 
@@ -50,7 +47,6 @@ class PythonDataEngineScript(Plasma.DataEngineScript):
         return True
 
     def __dtor__(self):
-        print("~PythonDataEngineScript()")
         PythonAppletScript.importer.unregister_top_level(self.plugin_name)
         self.pydataengine = None
 
