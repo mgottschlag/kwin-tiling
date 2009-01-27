@@ -123,3 +123,5 @@ void SolidActionEditPredicate::updateInterface()
     ui.CbRestrictionRequirement->setShown(currentRestrictType);
     ui.LeRestrictionRequirement->setShown(currentRestrictType);
 }
+
+#include "solid-action-edit-predicate.moc"
