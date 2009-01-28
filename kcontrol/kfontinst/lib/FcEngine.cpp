@@ -1112,7 +1112,7 @@ XftFont * CFcEngine::queryFont()
 
     XftFont *f=getFont(constQuerySize);
 
-    if(!isCorrect(f, true))
+    if(f && !isCorrect(f, true))
     {
         XftFontClose(QX11Info::display(), f);
         f=NULL;
