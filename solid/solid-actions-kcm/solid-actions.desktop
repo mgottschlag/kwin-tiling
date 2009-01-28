@@ -25,6 +25,8 @@ Name[tr]=Aygıt Eylemleri
 Name[uk]=Дії з пристроями
 
 Comment=A configuration tool for managing the actions available to the user when connecting new devices to the computer
+Comment[et]=Tööriist toimingute seadistamiseks, mida kasutaja saab pruukida uute seadmete ühendamisel arvutiga
+Comment[fr]=Un outil de configuration pour la gestion des actions à disposition de l'utilisateur lorsque de nouveaux périphériques sont connectés à l'ordinateur
 Comment[gl]=Un útil de configuración para xestionar as accións dispoñíbeis para o usuario cando se conectan dispositivos ao ordenador
 Comment[km]=ឧបករណ៍​កំណត់​រចនាសម្ព័ន្ធ​សម្រាប់​គ្រប់គ្រង​សកម្មភាព​ដែល​អ្នក​ប្រើអាច​ប្រើបាន នៅពេល​តភ្ជាប់​ឧបករណ៍​ថ្មី​ទៅ​កាន់កុំព្យូទ័រ
 Comment[nds]=En Instellwarktüüch för de Akschonen, de för Brukers praatstaht, wenn nieg Reedschappen den Reekner tokoppelt warrt
