@@ -190,61 +190,61 @@ void KRunnerApp::initialize()
     KAction* a = 0;
 
     if ( KAuthorized::authorizeKAction( "run_command" ) ) {
-        a = m_actionCollection->addAction( I18N_NOOP("Run Command") );
-        a->setText( i18n( I18N_NOOP( "Run Command" ) ) );
+        a = m_actionCollection->addAction( "Run Command" );
+        a->setText( i18n( "Run Command" ) );
         a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::Key_F2));
         connect( a, SIGNAL(triggered(bool)), SLOT(display()) );
 
-        a = m_actionCollection->addAction( I18N_NOOP("Run Command on clipboard contents") );
-        a->setText( i18n( I18N_NOOP( "Run Command on clipboard contents" ) ) );
+        a = m_actionCollection->addAction( "Run Command on clipboard contents" );
+        a->setText( i18n( "Run Command on clipboard contents" ) );
         a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::SHIFT+Qt::Key_F2));
         connect( a, SIGNAL(triggered(bool)), SLOT(displayWithClipboardContents()) );
     }
 
-    a = m_actionCollection->addAction( I18N_NOOP( "Show System Activity" ) );
-    a->setText( i18n( I18N_NOOP( "Show System Activity" ) ) );
+    a = m_actionCollection->addAction( "Show System Activity" );
+    a->setText( i18n( "Show System Activity" ) );
     a->setGlobalShortcut( KShortcut( Qt::CTRL+Qt::Key_Escape ) );
     connect( a, SIGNAL(triggered(bool)), SLOT(showTaskManager()) );
 
 /*
  * TODO: doesn't this belong in the window manager?
-    a = m_actionCollection->addAction( I18N_NOOP( "Show Window List") );
-    a->setText( i18n( I18N_NOOP( "Show Window List") ) );
+    a = m_actionCollection->addAction( "Show Window List" );
+    a->setText( i18n( "Show Window List" ) );
     a->setGlobalShortcut( KShortcut( Qt::ALT+Qt::Key_F5 ) );
     connect( a, SIGNAL(triggered(bool)), SLOT(slotShowWindowList()) );
 */
-    a = m_actionCollection->addAction( I18N_NOOP("Switch User") );
-    a->setText( i18n( I18N_NOOP("Switch User") ) );
+    a = m_actionCollection->addAction( "Switch User" );
+    a->setText( i18n("Switch User") );
     a->setGlobalShortcut( KShortcut( Qt::ALT+Qt::CTRL+Qt::Key_Insert ) );
     connect(a, SIGNAL(triggered(bool)), SLOT(switchUser()));
 
 #ifdef Q_WS_X11
     if ( KAuthorized::authorizeKAction( "lock_screen" ) ) {
-        a = m_actionCollection->addAction( I18N_NOOP( "Lock Session" ) );
-        a->setText( i18n( I18N_NOOP( "Lock Session" ) ) );
+        a = m_actionCollection->addAction( "Lock Session" );
+        a->setText( i18n( "Lock Session" ) );
         a->setGlobalShortcut( KShortcut( Qt::ALT+Qt::CTRL+Qt::Key_L ) );
         connect( a, SIGNAL(triggered(bool)), &m_saver, SLOT(Lock()) );
     }
 #endif
 
     if ( KAuthorized::authorizeKAction( "logout" ) ) {
-        a = m_actionCollection->addAction( I18N_NOOP("Log Out") );
-        a->setText( i18n(I18N_NOOP("Log Out")) );
+        a = m_actionCollection->addAction( "Log Out" );
+        a->setText( i18n("Log Out") );
         a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_Delete));
         connect(a, SIGNAL(triggered(bool)), SLOT(logout()));
 
-        a = m_actionCollection->addAction( I18N_NOOP("Log Out Without Confirmation") );
-        a->setText( i18n(I18N_NOOP("Log Out Without Confirmation")) );
+        a = m_actionCollection->addAction( "Log Out Without Confirmation" );
+        a->setText( i18n("Log Out Without Confirmation") );
         a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::SHIFT+Qt::Key_Delete));
         connect(a, SIGNAL(triggered(bool)), SLOT(logoutWithoutConfirmation()));
 
-        a = m_actionCollection->addAction( I18N_NOOP("Halt Without Confirmation") );
-        a->setText( i18n(I18N_NOOP("Halt Without Confirmation")) );
+        a = m_actionCollection->addAction( "Halt Without Confirmation" );
+        a->setText( i18n("Halt Without Confirmation") );
         a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::SHIFT+Qt::Key_PageDown));
         connect(a, SIGNAL(triggered(bool)), SLOT(haltWithoutConfirmation()));
 
-        a = m_actionCollection->addAction( I18N_NOOP("Reboot Without Confirmation") );
-        a->setText( i18n(I18N_NOOP("Reboot Without Confirmation")) );
+        a = m_actionCollection->addAction( "Reboot Without Confirmation" );
+        a->setText( i18n("Reboot Without Confirmation") );
         a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::SHIFT+Qt::Key_PageUp));
         connect(a, SIGNAL(triggered(bool)), SLOT(rebootWithoutConfirmation()));
     }
