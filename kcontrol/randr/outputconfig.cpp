@@ -124,9 +124,8 @@ void OutputConfig::outputChanged(RROutput output, int changes)
 	if(changes & RandR::ChangeRect) {
 		QRect r = m_output->rect();
 		kDebug() << "Output rect changed:" << r;
-		//m_item->setRect(0, 0, r.width(), r.height());
 		m_item->setRect(r);
-		//m_item->setPos
+		emit updateView();
 	}
 	
 	if(changes & RandR::ChangeRotation) {
@@ -152,6 +151,11 @@ void OutputConfig::outputChanged(RROutput output, int changes)
 		//QSize modeSize = m_output->screen()->mode(m_output->mode()).size();
 		QSize modeSize = m_output->mode().size();
 		updateRateList(sizeCombo->findData(modeSize));
+        
+		//Update the text inside the OutputGraphicsItem
+		m_item->updateText();
+		m_item->setRect(m_output->rect());
+		emit updateView();
 	}
 }
 
