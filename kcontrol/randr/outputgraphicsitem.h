@@ -44,6 +44,8 @@ public:
 	void setBottom(OutputGraphicsItem *output);
 
 	bool isConnected();
+    
+	void updateText();
 
 protected:
 	void disconnect();
