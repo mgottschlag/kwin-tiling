@@ -44,7 +44,8 @@ DashboardView::DashboardView(Plasma::Containment *containment, QWidget *parent)
       m_appletBrowser(0),
       m_suppressShow(false),
       m_zoomIn(false),
-      m_zoomOut(false)
+      m_zoomOut(false),
+      m_init(false)
 {
     //setContextMenuPolicy(Qt::NoContextMenu);
     setWindowFlags(Qt::FramelessWindowHint);
@@ -246,14 +247,17 @@ void DashboardView::toggleVisibility()
 
 void DashboardView::setContainment(Plasma::Containment *newContainment)
 {
-    if (!newContainment || newContainment == containment()) {
+    if (!newContainment || (m_init && newContainment == containment())) {
         return;
     }
+
+    m_init = true;
 
     Plasma::Containment *oldContainment = containment();
     if (oldContainment) {
         oldContainment->removeToolBoxAction(m_hideAction);
     }
+
     newContainment->addToolBoxAction(m_hideAction);
 
     if (isVisible()) {

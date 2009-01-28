@@ -70,9 +70,10 @@ private:
     Plasma::AppletBrowser *m_appletBrowser;
     QPoint m_appletBrowserDragStart;
     QAction *m_hideAction;
-    bool m_suppressShow;
-    bool m_zoomIn;
-    bool m_zoomOut;
+    bool m_suppressShow : 1;
+    bool m_zoomIn : 1;
+    bool m_zoomOut : 1;
+    bool m_init : 1;
 };
 
 #endif // multiple inclusion guard
