@@ -345,6 +345,10 @@ KScreenSaver::~KScreenSaver()
     {
         if (mPreviewProc->isRunning())
         {
+            //Avoid triggering slotPreviewExited on close
+            disconnect(mPreviewProc, SIGNAL(processExited(K3Process *)),
+              this, SLOT(slotPreviewExited(K3Process *)));
+
             mPreviewProc->kill( );
             mPreviewProc->wait( );
         }
