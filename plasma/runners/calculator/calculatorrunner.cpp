@@ -33,7 +33,7 @@ CalculatorRunner::CalculatorRunner( QObject* parent, const QVariantList &args )
     Q_UNUSED(args)
 
     setObjectName("Calculator");
-    setIgnoredTypes(Plasma::RunnerContext::Directory | Plasma::RunnerContext::File | 
+    setIgnoredTypes(Plasma::RunnerContext::Directory | Plasma::RunnerContext::File |
                          Plasma::RunnerContext::NetworkLocation | Plasma::RunnerContext::Executable |
                          Plasma::RunnerContext::ShellCommand);
 }
@@ -53,7 +53,7 @@ void CalculatorRunner::powSubstitutions(QString& cmd)
      }
 
     // the below code is scary mainly because we have to honor priority
-   // honor decimal numbers and parenthesis. 
+   // honor decimal numbers and parenthesis.
     if (cmd.contains('^')){
         int where = cmd.indexOf('^');
         cmd = cmd.replace('^', ',');
@@ -62,7 +62,7 @@ void CalculatorRunner::powSubstitutions(QString& cmd)
         int count = 0;
 
         QChar decimalSymbol = KGlobal::locale()->decimalSymbol().at(0);
-        //avoid out of range on weird commands 
+        //avoid out of range on weird commands
         preIndex = qMax(0, preIndex);
         postIndex = qMin(postIndex, cmd.length()-1);
 
@@ -89,7 +89,7 @@ void CalculatorRunner::powSubstitutions(QString& cmd)
 
        //go forwards looking for the end of the number or expression
         count = 0;
-        while (postIndex != cmd.size() - 1) { 
+        while (postIndex != cmd.size() - 1) {
             QChar current=cmd.at(postIndex);
             QChar next=cmd.at(postIndex + 1);
             if (current == '(') {
@@ -109,11 +109,11 @@ void CalculatorRunner::powSubstitutions(QString& cmd)
         }
 
         preIndex = qMax(0, preIndex);
-        postIndex = qMin(postIndex, cmd.length()); 
+        postIndex = qMin(postIndex, cmd.length());
 
         cmd.insert(preIndex,"pow(");
         // +1 +4 == next position to the last number after we add 4 new characters pow(
-        cmd.insert(postIndex + 1 + 4, ')'); 
+        cmd.insert(postIndex + 1 + 4, ')');
         //kDebug() << "from" << preIndex << " to " << postIndex << " got: " << cmd;
     }
 }
@@ -139,7 +139,7 @@ void CalculatorRunner::hexSubstitutions(QString& cmd)
             }
             cmd = cmd.replace("0x" + hex,QString::number(hex.toInt(&ok,16))); //replace hex with decimal
         }
-    } 
+    }
 
 }
 
@@ -173,6 +173,15 @@ void CalculatorRunner::match(Plasma::RunnerContext &context)
     cmd = cmd.trimmed().replace(" ", "");
 
     if (cmd.length() < 4) {
+        return;
+    }
+    if (cmd.toLower() == "universe" || cmd.toLower() == "life") {
+        Plasma::QueryMatch match(this);
+        match.setType(Plasma::QueryMatch::InformationalMatch);
+        match.setIcon(KIcon("accessories-calculator"));
+        match.setText("= 42");
+        match.setId(QString());
+        context.addMatch(term, match);
         return;
     }
 
