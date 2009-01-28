@@ -397,6 +397,11 @@ Plasma::Corona *PanelView::corona() const
 void PanelView::updatePanelGeometry()
 {
     Plasma::Containment *c = containment();
+
+    if (!c) {
+        return;
+    }
+
     kDebug() << "New panel geometry is" << c->geometry();
 
     QSize size = c->size().toSize();
@@ -810,7 +815,7 @@ Qt::Alignment PanelView::alignmentFilter(Qt::Alignment align) const
 
 void PanelView::updateStruts()
 {
-    if (!m_init) {
+    if (!m_init || !containment()) {
         return;
     }
 
