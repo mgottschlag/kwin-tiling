@@ -53,7 +53,8 @@
 DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *parent)
     : Plasma::View(containment, id, parent),
       m_dashboard(0),
-      m_dashboardFollowsDesktop(true)
+      m_dashboardFollowsDesktop(true),
+      m_init(false)
 {
     setFocusPolicy(Qt::NoFocus);
 #ifdef Q_WS_WIN
@@ -137,12 +138,13 @@ void DesktopView::toggleDashboard()
                 }
             }
         }
+
         m_dashboard = new DashboardView(dc, 0);
         m_dashboard->addActions(actions());
     }
 
     m_dashboard->toggleVisibility();
-    kDebug() << "toggling dashboard for screen" << screen() << m_dashboard->isVisible();
+    //kDebug() << "toggling dashboard for screen" << screen() << m_dashboard->isVisible();
 }
 
 void DesktopView::screenResized(Kephal::Screen *s)
@@ -185,10 +187,11 @@ bool DesktopView::isDashboardVisible() const
 void DesktopView::setContainment(Plasma::Containment *containment)
 {
     Plasma::Containment *oldContainment = this->containment();
-    if (containment == oldContainment) {
+    if (m_init && containment == oldContainment) {
         return;
     }
 
+    m_init = true;
     Plasma::ZoomLevel zoomLevel = PlasmaApp::self()->desktopZoomLevel();
     if (zoomLevel == Plasma::DesktopZoom && containment) {
         //make sure actions are up-to-date
@@ -201,12 +204,16 @@ void DesktopView::setContainment(Plasma::Containment *containment)
         m_dashboard->setContainment(containment);
     }
 
-    if (oldContainment && zoomLevel == Plasma::DesktopZoom) {
-        //make sure actions are up-to-date
-        oldContainment->enableAction("zoom in", false);
-        oldContainment->enableAction("add sibling containment", false);
+    if (oldContainment) {
+        disconnect(oldContainment, SIGNAL(toolBoxToggled()), PlasmaApp::self(), SLOT(toggleDashboard()));
+        if (zoomLevel == Plasma::DesktopZoom) {
+            //make sure actions are up-to-date
+            oldContainment->enableAction("zoom in", false);
+            oldContainment->enableAction("add sibling containment", false);
+        }
     }
 
+    connect(containment, SIGNAL(toolBoxToggled()), PlasmaApp::self(), SLOT(toggleDashboard()));
     View::setContainment(containment);
 }
 
@@ -322,7 +329,7 @@ void DesktopView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Contai
     }
 
     if (wasScreen == screen() && this->containment() == containment) {
-            setContainment(0);
+        setContainment(0);
     }
 
     if (isScreen == screen()) {
