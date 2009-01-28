@@ -27,16 +27,17 @@
 
 RandROutput::RandROutput(RandRScreen *parent, RROutput id)
 : QObject(parent)
-{    
+{
     m_screen = parent;
     Q_ASSERT(m_screen);
 
     m_id = id;
     m_crtc = 0;
     m_rotations = 0;
-    
+    m_connected = false;
+
     queryOutputInfo();
-    
+
     m_proposedRotation = m_originalRotation;
     m_proposedRate = m_originalRate;
     m_proposedRect = m_originalRect;
