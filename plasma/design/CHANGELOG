@@ -14,6 +14,7 @@ Desktop Theme
 * Features
     *FrameSvg
        *NEW: overlays for a filigrane effect, can be either random positioned, fixed, scaled or tiled
+    *Desktop and panel toolboxes are now svg themed
 
 Plasma Desktop Shell
 --------------------
