@@ -321,8 +321,10 @@ void TaskArea::checkUnhideTool()
     } else {
         // hide the show tool
         d->topLayout->removeItem(d->unhider);
-        d->unhider->deleteLater();
-        d->unhider = 0;
+        if (d->unhider) {
+            d->unhider->deleteLater();
+            d->unhider = 0;
+        }
     }
 }
 
