@@ -110,7 +110,7 @@ Nepomuk::Search::Term& Nepomuk::Search::Term::operator=( const Soprano::LiteralV
     d->value = literal;
     d->type = LiteralTerm;
     d->subTerms.clear();
-    d->field = QString();
+    d->field.clear();
     return *this;
 }
 
@@ -223,7 +223,7 @@ void Nepomuk::Search::Term::setSubTerms( const QList<Term>& terms )
 void Nepomuk::Search::Term::setProperty( const QUrl& p )
 {
     d->property = p;
-    d->field = QString();
+    d->field.clear();
 }
 
 

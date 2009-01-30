@@ -143,11 +143,11 @@ Nepomuk::Search::QueryParser::QueryParser()
     : d( new Private() )
 {
     QString andListStr = i18nc( "Boolean AND keyword in desktop search strings. You can add several variants separated by spaces, e.g. retain the English one alongside the translation; keywords are not case sensitive. Make sure there is no conflict with the OR keyword.", "and" );
-    foreach ( const QString &andKeyword, andListStr.split( " ", QString::SkipEmptyParts ) ) {
+    foreach ( const QString &andKeyword, andListStr.split( ' ', QString::SkipEmptyParts ) ) {
         d->andKeywords.insert( andKeyword.toLower() );
     }
     QString orListStr = i18nc( "Boolean OR keyword in desktop search strings. You can add several variants separated by spaces, e.g. retain the English one alongside the translation; keywords are not case sensitive. Make sure there is no conflict with the AND keyword.", "or" );
-    foreach ( const QString &orKeyword, orListStr.split( " ", QString::SkipEmptyParts ) ) {
+    foreach ( const QString &orKeyword, orListStr.split( ' ', QString::SkipEmptyParts ) ) {
         d->orKeywords.insert( orKeyword.toLower() );
     }
 }
