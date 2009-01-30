@@ -4,7 +4,10 @@ Type=Service
 X-KDE-ServiceTypes=KCModule
 Exec=kcmshell4 xinerama
 X-DocPath=kcontrol/multiplemonitors.html
-Hidden[$e]=$(if test_kcm_xinerama; then echo "false"; else echo "true"; fi)
+# This is still awfully broken, first of all Hidden= here doesn't work
+# for some reason and second this is statically done at kbuildsycoca time.
+# X-KDE-Test-Module (KCModuleLoader::testModule() in KDE3) needs to be brought back.
+#Hidden[$e]=$(if test_kcm_xinerama; then echo "false"; else echo "true"; fi)
 
 X-KDE-ParentApp=kcontrol
 X-KDE-Library=kcm_xinerama
