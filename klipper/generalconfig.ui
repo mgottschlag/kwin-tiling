@@ -1,0 +1,147 @@
+<ui version="4.0" >
+ <class>GeneralWidget</class>
+ <widget class="QWidget" name="GeneralWidget" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>463</width>
+    <height>417</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string/>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
+    <widget class="QCheckBox" name="kcfg_PopupAtMousePosition" >
+     <property name="text" >
+      <string>Popup menu at mouse-cursor position</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="kcfg_KeepClipboardContents" >
+     <property name="text" >
+      <string>Save clipboard contents on exit</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="kcfg_StripWhiteSpace" >
+     <property name="text" >
+      <string>Remove whitespace when executing actions</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="kcfg_ReplayActionInHistory" >
+     <property name="text" >
+      <string>Replay actions on an item selected from history</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="kcfg_PreventEmptyClipboard" >
+     <property name="text" >
+      <string>Prevent empty clipboard</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="kcfg_IgnoreSelection" >
+     <property name="text" >
+      <string>Ignore selection</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="kcfg_IgnoreImages" >
+     <property name="text" >
+      <string>Ignore images</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="KButtonGroup" name="kcfg_Synchronize" >
+     <property name="title" >
+      <string>Clipboard/Selection Behavior</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3" >
+      <item>
+       <widget class="QRadioButton" name="rbSynchronize" >
+        <property name="text" >
+         <string>Synchronize contents of the clipboard and the selection</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="rbSeparate" >
+        <property name="text" >
+         <string>Separate clipboard and selection</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label" >
+     <property name="text" >
+      <string>Timeout for action popups:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QSpinBox" name="kcfg_TimeoutForActionPopups" >
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="suffix" >
+      <string> sec</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_2" >
+     <property name="text" >
+      <string>Clipboard history size:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QSpinBox" name="kcfg_MaxClipItems" >
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="suffix" >
+      <string> entries</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KButtonGroup</class>
+   <extends>QGroupBox</extends>
+   <header>kbuttongroup.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

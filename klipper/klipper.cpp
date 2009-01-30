@@ -4,6 +4,7 @@
    Copyright (C) by Andrew Stanley-Jones
    Copyright (C) 2000 by Carsten Pfeiffer <pfeiffer@kde.org>
    Copyright (C) 2004  Esben Mose Hansen <kde@mosehansen.dk>
+   Copyright (C) 2008 by Dmitry Suzdalev <dimsuz@gmail.com>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -39,6 +40,7 @@
 
 #include "configdialog.h"
 #include "klipper.h"
+#include "klippersettings.h"
 #include "urlgrabber.h"
 #include "version.h"
 #include "clipboardpoll.h"
@@ -134,9 +136,9 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     //QString defaultGroup( "default" );
     m_collection = new KActionCollection( this );
     m_toggleURLGrabAction = new KToggleAction( this );
-    m_collection->addAction( "toggleUrlGrabAction", m_toggleURLGrabAction );
+    m_collection->addAction( "clipboard_action", m_toggleURLGrabAction );
     m_toggleURLGrabAction->setEnabled( true );
-    m_toggleURLGrabAction->setText(i18n("Enable &Actions"));
+    m_toggleURLGrabAction->setText(i18n("Enable Clipboard &Actions"));
     //m_toggleURLGrabAction->setGroup( defaultGroup );
     m_clearHistoryAction = m_collection->addAction( "clearHistoryAction" );
     m_clearHistoryAction->setIcon( KIcon("edit-clear-history") );
@@ -154,16 +156,28 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     m_quitAction->setText( i18n("&Quit") );
     connect(m_quitAction, SIGNAL(triggered(bool) ), SLOT( slotQuit() ));
     //quitAction->setGroup( "exit" );
-    m_myURLGrabber = 0L;
-    KConfig *kc = m_config.data();
-    readConfiguration( kc );
-    setURLGrabberEnabled( m_bURLGrabber );
+
+    /*
+     * Create URL grabber
+     */
+    m_myURLGrabber = new URLGrabber();
+    connect( m_myURLGrabber, SIGNAL( sigPopup( QMenu * )),
+            SLOT( showPopupMenu( QMenu * )) );
+    connect( m_myURLGrabber, SIGNAL( sigDisablePopup() ),
+            SLOT( disableURLGrabber() ) );
+
+    /*
+     * Load configuration settings
+     */
+    loadSettings();
 
     m_hideTimer = new QTime();
     m_showTimer = new QTime();
 
+    // TODO: IIUC readProperties exists only as a wrapper around loadHistory. In case loadHistory fails,
+    // it tries to load some old format history. So: check how "old" this old-loading method is.
+    // if it's too old, drop it and just use load history
     readProperties(m_config.data());
-    connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), SLOT(slotSettingsChanged(int)));
 
     m_poll = new ClipboardPoll;
     connect( m_poll, SIGNAL( clipboardChanged( bool ) ),
@@ -179,12 +193,8 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     qobject_cast<KAction*>(a)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_R));
     connect(a, SIGNAL(triggered()), SLOT(slotRepeatAction()));
 
-    a = m_collection->addAction("clipboard_action");
-    a->setText(i18n("Enable/Disable Clipboard Actions"));
-    qobject_cast<KAction*>(a)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_X));
-    connect(a, SIGNAL(triggered()), SLOT(toggleURLGrabber()));
-
-    m_toggleURLGrabAction->setShortcut(qobject_cast<KAction*>(m_collection->action("clipboard_action"))->globalShortcut());
+    m_toggleURLGrabAction->setText(i18n("Enable Clipboard Actions"));
+    m_toggleURLGrabAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_X));
 
     connect( m_toggleURLGrabAction, SIGNAL( toggled( bool )),
              this, SLOT( setURLGrabberEnabled( bool )));
@@ -262,6 +272,39 @@ void Klipper::slotStartHideTimer()
 void Klipper::slotStartShowTimer()
 {
     m_showTimer->start();
+}
+
+void Klipper::loadSettings()
+{
+    m_bPopupAtMouse = KlipperSettings::popupAtMousePosition();
+    m_bKeepContents = KlipperSettings::keepClipboardContents();
+    m_bReplayActionInHistory = KlipperSettings::replayActionInHistory();
+    m_bNoNullClipboard = KlipperSettings::preventEmptyClipboard();
+    m_bIgnoreSelection = KlipperSettings::ignoreSelection();
+    m_bIgnoreImages = KlipperSettings::ignoreImages();
+    m_bSynchronize = KlipperSettings::synchronize();
+    // NOTE: not used atm - kregexpeditor is not ported to kde4
+    m_bUseGUIRegExpEditor = KlipperSettings::useGUIRegExpEditor();
+
+    // NOTE (during kconfigxt porting): this option is somehow lost,
+    // no setting for it exists in gui. Or is it a hidden feature?
+    // find it and resolve it. keeping it for now.
+    m_bSelectionTextOnly = KlipperSettings::selectionTextOnly();
+
+    m_bURLGrabber = KlipperSettings::uRLGrabberEnabled();
+    // this will cause it to loadSettings too
+    setURLGrabberEnabled(m_bURLGrabber);
+
+    history()->setMaxSize( KlipperSettings::maxClipItems() );
+}
+
+void Klipper::saveSettings() const
+{
+    m_myURLGrabber->saveSettings();
+    KlipperSettings::self()->setVersion(klipper_version);
+    KlipperSettings::self()->writeConfig();
+
+    // other settings should be saved automatically by KConfigDialog
 }
 
 void Klipper::showPopupMenu( QMenu *menu )
@@ -426,57 +469,13 @@ void Klipper::readProperties(KConfig *kc)
 
 }
 
-
-void Klipper::readConfiguration( KConfig *_kc )
-{
-    KConfigGroup kc( _kc, "General");
-    m_bPopupAtMouse = kc.readEntry("PopupAtMousePosition", false);
-    m_bKeepContents = kc.readEntry("KeepClipboardContents", true);
-    m_bURLGrabber = kc.readEntry("URLGrabberEnabled", false);
-    m_bReplayActionInHistory = kc.readEntry("ReplayActionInHistory", false);
-    m_bNoNullClipboard = kc.readEntry("NoEmptyClipboard", true);
-    m_bUseGUIRegExpEditor = kc.readEntry("UseGUIRegExpEditor", true);
-    history()->max_size( kc.readEntry("MaxClipItems", 7) );
-    m_bIgnoreSelection = kc.readEntry("IgnoreSelection", false);
-    m_bSynchronize = kc.readEntry("Synchronize", false);
-    m_bSelectionTextOnly = kc.readEntry("SelectionTextOnly",true);
-    m_bIgnoreImages = kc.readEntry("IgnoreImages", true);
-}
-
-void Klipper::writeConfiguration( KConfig *_kc )
-{
-    KConfigGroup kc( _kc, "General");
-    kc.writeEntry("PopupAtMousePosition", m_bPopupAtMouse);
-    kc.writeEntry("KeepClipboardContents", m_bKeepContents);
-    kc.writeEntry("ReplayActionInHistory", m_bReplayActionInHistory);
-    kc.writeEntry("NoEmptyClipboard", m_bNoNullClipboard);
-    kc.writeEntry("UseGUIRegExpEditor", m_bUseGUIRegExpEditor);
-    kc.writeEntry("MaxClipItems", history()->max_size() );
-    kc.writeEntry("IgnoreSelection", m_bIgnoreSelection);
-    kc.writeEntry("Synchronize", m_bSynchronize );
-    kc.writeEntry("SelectionTextOnly", m_bSelectionTextOnly);
-    kc.writeEntry("IgnoreImages", m_bIgnoreImages);
-    kc.writeEntry("Version", klipper_version );
-
-    if ( m_myURLGrabber )
-        m_myURLGrabber->writeConfiguration( _kc );
-
-    kc.sync();
-}
-
 // save session on shutdown. Don't simply use the c'tor, as that may not be called.
 void Klipper::saveSession()
 {
     if ( m_bKeepContents ) { // save the clipboard eventually
         saveHistory();
     }
-}
-
-void Klipper::slotSettingsChanged( int category )
-{
-    if ( category == (int) KGlobalSettings::SETTINGS_SHORTCUTS ) {
-        m_toggleURLGrabAction->setShortcut(qobject_cast<KAction*>(m_collection->action("clipboard_action"))->globalShortcut());
-    }
+    saveSettings();
 }
 
 void Klipper::disableURLGrabber()
@@ -490,53 +489,14 @@ void Klipper::disableURLGrabber()
 
 void Klipper::slotConfigure()
 {
-    bool haveURLGrabber = m_bURLGrabber;
-    if ( !m_myURLGrabber ) { // temporary, for the config-dialog
-        setURLGrabberEnabled( true );
-        readConfiguration( m_config.data() );
+    if (KConfigDialog::showDialog("preferences")) {
+        return;
     }
-    KConfigSkeleton *skeleton = new KConfigSkeleton();
-    ConfigDialog *dlg = new ConfigDialog( 0, skeleton, m_myURLGrabber->actionList(), m_collection, isApplet() );
-    dlg->setKeepContents( m_bKeepContents );
-    dlg->setPopupAtMousePos( m_bPopupAtMouse );
-    dlg->setStripWhiteSpace( m_myURLGrabber->trimmed() );
-    dlg->setReplayActionInHistory( m_bReplayActionInHistory );
-    dlg->setNoNullClipboard( m_bNoNullClipboard );
-    dlg->setUseGUIRegExpEditor( m_bUseGUIRegExpEditor );
-    dlg->setPopupTimeout( m_myURLGrabber->popupTimeout() );
-    dlg->setMaxItems( history()->max_size() );
-    dlg->setIgnoreSelection( m_bIgnoreSelection );
-    dlg->setIgnoreImages( m_bIgnoreImages );
-    dlg->setSynchronize( m_bSynchronize );
-    dlg->setNoActionsFor( m_myURLGrabber->avoidWindows() );
 
-    if ( dlg->exec() == QDialog::Accepted ) {
-        m_bKeepContents = dlg->keepContents();
-        m_bPopupAtMouse = dlg->popupAtMousePos();
-        m_bReplayActionInHistory = dlg->replayActionInHistory();
-        m_bNoNullClipboard = dlg->noNullClipboard();
-        m_bIgnoreSelection = dlg->ignoreSelection();
-        m_bIgnoreImages = dlg->ignoreImages();
-        m_bSynchronize = dlg->synchronize();
-        m_bUseGUIRegExpEditor = dlg->useGUIRegExpEditor();
-        dlg->commitShortcuts();
+    ConfigDialog *dlg = new ConfigDialog( 0, KlipperSettings::self(), this, m_collection, isApplet() );
+    connect(dlg, SIGNAL(settingsChanged(const QString&)), SLOT(loadSettings()));
 
-        m_toggleURLGrabAction->setShortcut(qobject_cast<KAction*>(m_collection->action("clipboard_action"))->globalShortcut());
-
-        m_myURLGrabber->setActionList( dlg->actionList() );
-        m_myURLGrabber->setPopupTimeout( dlg->popupTimeout() );
-        m_myURLGrabber->setStripWhiteSpace( dlg->trimmed() );
-        m_myURLGrabber->setAvoidWindows( dlg->noActionsFor() );
-
-        history()->max_size( dlg->maxItems() );
-
-        writeConfiguration( m_config.data() );
-
-    }
-    setURLGrabberEnabled( haveURLGrabber );
-
-    delete skeleton;
-    delete dlg;
+    dlg->show();
 }
 
 void Klipper::slotQuit()
@@ -575,14 +535,6 @@ void Klipper::slotPopupMenu() {
 
 void Klipper::slotRepeatAction()
 {
-    if ( !m_myURLGrabber ) {
-        m_myURLGrabber = new URLGrabber( m_config );
-        connect( m_myURLGrabber, SIGNAL( sigPopup( QMenu * )),
-                 SLOT( showPopupMenu( QMenu * )) );
-        connect( m_myURLGrabber, SIGNAL( sigDisablePopup() ),
-                 this, SLOT( disableURLGrabber() ) );
-    }
-
     const HistoryStringItem* top = dynamic_cast<const HistoryStringItem*>( history()->first() );
     if ( top ) {
         m_myURLGrabber->invokeAction( top->text() );
@@ -593,33 +545,17 @@ void Klipper::setURLGrabberEnabled( bool enable )
 {
     if (enable != m_bURLGrabber) {
       m_bURLGrabber = enable;
-      KConfigGroup kc(m_config.data(), "General");
-      kc.writeEntry("URLGrabberEnabled", m_bURLGrabber);
       m_lastURLGrabberTextSelection = QString();
       m_lastURLGrabberTextClipboard = QString();
+      KlipperSettings::setURLGrabberEnabled(enable);
     }
 
     m_toggleURLGrabAction->setChecked( enable );
 
-    if ( !m_bURLGrabber ) {
-        delete m_myURLGrabber;
-        m_myURLGrabber = 0L;
-    }
+    // make it update its settings
+    m_myURLGrabber->loadSettings();
 
-    else {
-        if ( !m_myURLGrabber ) {
-            m_myURLGrabber = new URLGrabber( m_config );
-            connect( m_myURLGrabber, SIGNAL( sigPopup( QMenu * )),
-                     SLOT( showPopupMenu( QMenu * )) );
-            connect( m_myURLGrabber, SIGNAL( sigDisablePopup() ),
-                     this, SLOT( disableURLGrabber() ) );
-        }
-    }
-}
-
-void Klipper::toggleURLGrabber()
-{
-    setURLGrabberEnabled( !m_bURLGrabber );
+    //m_toggleURLGrabAction->setShortcut(qobject_cast<KAction*>(m_collection->action("clipboard_action"))->globalShortcut());
 }
 
 void Klipper::slotHistoryTopChanged() {
@@ -856,7 +792,7 @@ void Klipper::checkClipData( bool selectionMode )
         ? m_lastURLGrabberTextSelection : m_lastURLGrabberTextClipboard;
     if( data->hasText() )
     {
-        if ( m_bURLGrabber && m_myURLGrabber )
+        if ( m_bURLGrabber )
         {
             QString text = data->text();
 

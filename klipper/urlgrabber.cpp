@@ -36,25 +36,18 @@
 #include <kmacroexpander.h>
 #include <kglobal.h>
 
+#include "klippersettings.h"
 #include "urlgrabber.h"
 
 // TODO:
 // - script-interface?
 
-URLGrabber::URLGrabber(const KSharedConfigPtr &config)
- : m_config( config )
+URLGrabber::URLGrabber()
 {
-    if(!m_config) {
-        m_config = KGlobal::config();
-    }
     m_myCurrentAction = 0L;
     m_myMenu = 0L;
     m_myPopupKillTimeout = 8;
     m_trimmed = true;
-
-    m_myActions = new ActionList();
-
-    readConfiguration( m_config.data() );
 
     m_myPopupKillTimer = new QTimer( this );
     m_myPopupKillTimer->setSingleShot( true );
@@ -83,11 +76,9 @@ URLGrabber::URLGrabber(const KSharedConfigPtr &config)
 
 URLGrabber::~URLGrabber()
 {
+    qDeleteAll(m_myActions);
+    m_myActions.clear();
     delete m_myMenu;
-    ActionListIterator it( *m_myActions );
-    while (it.hasNext())
-        delete it.next();
-    delete m_myActions;
 }
 
 //
@@ -105,12 +96,10 @@ void URLGrabber::invokeAction( const QString& clip )
 }
 
 
-void URLGrabber::setActionList( ActionList *list )
+void URLGrabber::setActionList( const ActionList& list )
 {
-    ActionListIterator it( *m_myActions );
-    while (it.hasNext())
-        delete it.next();
-    delete m_myActions;
+    qDeleteAll(m_myActions);
+    m_myActions.clear();
     m_myActions = list;
 }
 
@@ -118,11 +107,8 @@ void URLGrabber::setActionList( ActionList *list )
 const ActionList& URLGrabber::matchingActions( const QString& clipData )
 {
     m_myMatches.clear();
-    ClipAction *action = 0L;
 
-    ActionListIterator it( *m_myActions );
-    while (it.hasNext()) {
-        action = it.next();
+    foreach (ClipAction* action, m_myActions) {
         if ( action->matches( clipData ) )
             m_myMatches.append( action );
     }
@@ -138,13 +124,12 @@ bool URLGrabber::checkNewData( const QString& clipData )
     if ( m_trimmed )
         m_myClipData = m_myClipData.trimmed();
 
-    if ( m_myActions->isEmpty() )
+    if ( m_myActions.isEmpty() )
         return false;
 
     actionMenu( true ); // also creates m_myMatches
 
-    return ( !m_myMatches.isEmpty() &&
-             (!m_config->group("General").readEntry("Put Matching URLs in history", true))); //XXX i am not sure this entry exists anymore
+    return !m_myMatches.isEmpty();
 }
 
 
@@ -153,11 +138,10 @@ void URLGrabber::actionMenu( bool wm_class_check )
     if ( m_myClipData.isEmpty() )
         return;
 
-    ActionListIterator it( matchingActions( m_myClipData ) );
-    ClipAction *action = 0L;
+    ActionList matchingActionsList = matchingActions( m_myClipData );
     ClipCommand *command = 0L;
 
-    if (it.hasNext()) {
+    if (!matchingActionsList.isEmpty()) {
         // don't react on konqi's/netscape's urls...
         if ( wm_class_check && isAvoidedWindow() )
             return;
@@ -171,14 +155,13 @@ void URLGrabber::actionMenu( bool wm_class_check )
 
         connect(m_myMenu, SIGNAL(triggered(QAction*)), SLOT(slotItemSelected(QAction*)));
 
-        while (it.hasNext()) {
-            action = it.next();
-            QListIterator<ClipCommand*> it2( action->commands() );
-            if ( it2.hasNext() )
+        foreach (ClipAction* action, matchingActionsList) {
+            QListIterator<ClipCommand*> it( action->commands() );
+            if ( it.hasNext() )
                 m_myMenu->addTitle(KIcon( "klipper" ),
-                                 i18n("%1 - Actions For: %2", action->description(), KStringHandler::csqueeze(m_myClipData, 45)));
-            while (it2.hasNext()) {
-                command = it2.next();
+                        i18n("%1 - Actions For: %2", action->description(), KStringHandler::csqueeze(m_myClipData, 45)));
+            while (it.hasNext()) {
+                command = it.next();
                 item = command->description;
                 if ( item.isEmpty() )
                     item = command->command;
@@ -305,44 +288,38 @@ void URLGrabber::editData()
 }
 
 
-void URLGrabber::readConfiguration( KConfig *kc )
+void URLGrabber::loadSettings()
 {
-    ActionListIterator it( *m_myActions );
-    while (it.hasNext())
-        delete it.next();
-    m_myActions->clear();
-    KConfigGroup cg(kc, "General");
+    m_trimmed = KlipperSettings::stripWhiteSpace();
+    m_myAvoidWindows = KlipperSettings::noActionsForWM_CLASS();
+    m_myPopupKillTimeout = KlipperSettings::timeoutForActionPopups();
+
+    qDeleteAll(m_myActions);
+    m_myActions.clear();
+
+    KConfigGroup cg(KGlobal::config(), "General");
     int num = cg.readEntry("Number of Actions", 0);
-    m_myAvoidWindows = cg.readEntry("No Actions for WM_CLASS",QStringList());
-    m_myPopupKillTimeout = cg.readEntry( "Timeout for Action popups (seconds)", 8 );
-    m_trimmed = cg.readEntry("Strip Whitespace before exec", true);
     QString group;
     for ( int i = 0; i < num; i++ ) {
         group = QString("Action_%1").arg( i );
-        m_myActions->append( new ClipAction( kc, group ) );
+        m_myActions.append( new ClipAction( KGlobal::config(), group ) );
     }
 }
 
-
-void URLGrabber::writeConfiguration( KConfig *kc )
+void URLGrabber::saveSettings() const
 {
-    KConfigGroup cg(kc, "General");
-    cg.writeEntry( "Number of Actions", m_myActions->count() );
-    cg.writeEntry( "Timeout for Action popups (seconds)", m_myPopupKillTimeout);
-    cg.writeEntry( "No Actions for WM_CLASS", m_myAvoidWindows );
-    cg.writeEntry( "Strip Whitespace before exec", m_trimmed );
-
-    ActionListIterator it( *m_myActions );
-    ClipAction *action;
+    KConfigGroup cg(KGlobal::config(), "General");
+    cg.writeEntry( "Number of Actions", m_myActions.count() );
 
     int i = 0;
     QString group;
-    while (it.hasNext()) {
-        action = it.next();
+    foreach (ClipAction* action, m_myActions) {
         group = QString("Action_%1").arg( i );
-        action->save( kc, group );
+        action->save( KGlobal::config(), group );
         ++i;
     }
+
+    KlipperSettings::setNoActionsForWM_CLASS(m_myAvoidWindows);
 }
 
 // find out whether the active window's WM_CLASS is in our avoid-list
@@ -455,7 +432,7 @@ ClipAction::ClipAction( const ClipAction& action )
 }
 
 
-ClipAction::ClipAction( KConfig *kc, const QString& group )
+ClipAction::ClipAction( KSharedConfigPtr kc, const QString& group )
     : m_myRegExp( kc->group(group).readEntry("Regexp") ),
       m_myDescription (kc->group(group).readEntry("Description") )
 {
@@ -495,7 +472,7 @@ void ClipAction::addCommand( const QString& command,
 
 
 // precondition: we're in the correct action's group of the KConfig object
-void ClipAction::save( KConfig *kc, const QString& group ) const
+void ClipAction::save( KSharedConfigPtr kc, const QString& group ) const
 {
     KConfigGroup cg(kc, group);
     cg.writeEntry( "Description", description() );

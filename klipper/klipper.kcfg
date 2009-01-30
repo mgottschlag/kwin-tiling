@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+  <kcfgfile name="klipperrc"/>
+  <group name="General">
+    <entry name="Version" type="String">
+      <label>Klipper version</label>
+    </entry>
+    <entry name="PopupAtMousePosition" type="Bool">
+      <label>Popup at mouse position</label>
+      <default>false</default>
+    </entry>
+    <entry name="KeepClipboardContents" type="Bool">
+      <label>Keep clipboard contents</label>
+      <default>true</default>
+    </entry>
+    <entry name="StripWhiteSpace" type="Bool">
+      <label>Strip whitespace when executing an action</label>
+      <default>true</default>
+      <whatsthis>Sometimes, the selected text has some whitespace at the end, which, if loaded as URL in a browser would cause an error. Enabling this option removes any whitespace at the beginning or end of the selected string (the original clipboard contents will not be modified).</whatsthis>
+    </entry>
+    <entry name="ReplayActionInHistory" type="Bool">
+      <label>Replay action in history</label>
+      <default>false</default>
+    </entry>
+    <entry name="PreventEmptyClipboard" type="Bool">
+      <label>Prevent empty clipboard</label>
+      <default>true</default>
+      <whatsthis>Selecting this option has the effect, that the clipboard can never be emptied. E.g. when an application exits, the clipboard would usually be emptied.</whatsthis>
+    </entry>
+    <entry name="IgnoreSelection" type="Bool">
+      <label>Ignore selection</label>
+      <default>false</default>
+      <whatsthis>This option prevents the selection being recorded in the clipboard history. Only explicit clipboard changes are recorded.</whatsthis>
+    </entry>
+    <entry name="IgnoreImages" type="Bool">
+      <label>Ignore images</label>
+      <default>true</default>
+    </entry>
+    <entry name="Synchronize" type="Int">
+      <label>Synchronize clipboard and selection</label>
+      <default>1</default>
+    </entry>
+    <entry name="SelectionTextOnly" type="Bool">
+      <label>Selection text only</label>
+      <default>true</default>
+      <whatsthis><qt>There are two different clipboard buffers available:<br /><br /><b>Clipboard</b> is filled by selecting something and pressing Ctrl+C, or by clicking "Copy" in a toolbar or menubar.<br /><br /><b>Selection</b> is available immediately after selecting some text. The only way to access the selection is to press the middle mouse button.<br /><br />You can configure the relationship between Clipboard and Selection.</qt></whatsthis>
+    </entry>
+    <entry name="UseGUIRegExpEditor" type="Bool">
+      <label>Use graphical regexp editor</label>
+      <default>true</default>
+    </entry>
+    <entry name="URLGrabberEnabled" type="Bool">
+        <label>URL grabber enabled</label>
+        <default>false</default>
+    </entry>
+    <entry name="NoActionsForWM_CLASS" type="StringList">
+        <label>No actions for WM_CLASS</label>
+    </entry>
+    <entry name="TimeoutForActionPopups" type="Int">
+        <label>Timeout for action popups (seconds)</label>
+        <default>8</default>
+        <min>0</min>
+        <max>200</max>
+        <tooltip>A value of 0 disables the timeout</tooltip>
+    </entry>
+    <entry name="MaxClipItems" type="Int">
+        <label>Clipboard history size</label>
+        <default>7</default>
+        <min>2</min>
+        <max>2048</max>
+    </entry>
+    <entry key="ActionListChanged" name="ActionList" type="Int">
+        <label>Dummy entry for indicating changes in a actions tree widget</label>
+        <default>-1</default>
+    </entry>
+  </group>
+</kcfg>

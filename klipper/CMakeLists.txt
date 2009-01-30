@@ -12,9 +12,14 @@ set(libklipper_common_SRCS
     popupproxy.cpp
     historyimageitem.cpp
     historyurlitem.cpp
+    actionstreewidget.cpp
 )
 
+kde4_add_ui_files(libklipper_common_SRCS generalconfig.ui actionsconfig.ui)
+kde4_add_kcfg_files(libklipper_common_SRCS klippersettings.kcfgc)
+
 set(klipper_KDEINIT_SRCS ${libklipper_common_SRCS} main.cpp tray.cpp)
+
 
 kde4_add_kdeinit_executable(klipper ${klipper_KDEINIT_SRCS})
 
@@ -29,3 +34,7 @@ install(TARGETS klipper         ${INSTALL_TARGETS_DEFAULT_ARGS})
 install(FILES klipper.desktop DESTINATION ${XDG_APPS_INSTALL_DIR})
 install(FILES klipper.desktop DESTINATION ${AUTOSTART_INSTALL_DIR})
 install(FILES klipperrc.desktop DESTINATION ${CONFIG_INSTALL_DIR} RENAME klipperrc)
+
+if(NOT WIN32)
+  install( FILES klipper-kconfigxt.upd DESTINATION  ${KCONF_UPDATE_INSTALL_DIR} )
+endif(NOT WIN32)

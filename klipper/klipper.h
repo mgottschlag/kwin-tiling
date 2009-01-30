@@ -2,6 +2,7 @@
 /* This file is part of the KDE project
    Copyright (C) by Andrew Stanley-Jones
    Copyright (C) 2004  Esben Mose Hansen <kde@mosehansen.dk>
+   Copyright (C) 2008 by Dmitry Suzdalev <dimsuz@gmail.com>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -27,6 +28,8 @@
 
 #include <KApplication>
 #include <KIcon>
+
+#include "urlgrabber.h"
 
 class QClipboard;
 class KToggleAction;
@@ -65,14 +68,17 @@ public:
      */
     History* history() { return m_history; }
 
+    URLGrabber* urlGrabber() const { return m_myURLGrabber; }
+
     static void updateTimestamp();
     static void createAboutData();
     static void destroyAboutData();
     static KAboutData* aboutData();
 
+    void saveSettings() const;
+
 public Q_SLOTS:
     void saveSession();
-    void slotSettingsChanged( int category );
     void slotHistoryTopChanged();
     void slotConfigure();
 
@@ -86,7 +92,6 @@ protected:
     enum SelectionMode { Clipboard = 2, Selection = 4 };
 
     void readProperties(KConfig *);
-    void readConfiguration(KConfig *);
 
     /**
      * Loads history from disk.
@@ -98,7 +103,6 @@ protected:
      */
     void saveHistory();
 
-    void writeConfiguration(KConfig *);
     /**
      * @returns the contents of the selection or, if empty, the contents of
      * the clipboard.
@@ -134,7 +138,6 @@ protected Q_SLOTS:
     void showPopupMenu( QMenu * );
     void slotRepeatAction();
     void setURLGrabberEnabled( bool );
-    void toggleURLGrabber();
     void disableURLGrabber();
 
 private Q_SLOTS:
@@ -154,6 +157,8 @@ private Q_SLOTS:
 
     void slotClearOverflow();
     void slotCheckPending();
+
+    void loadSettings();
 
 private:
 

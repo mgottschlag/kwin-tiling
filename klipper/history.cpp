@@ -71,7 +71,7 @@ void History::forceInsert( const HistoryItem* item ) {
 }
 
 void History::trim() {
-    int i = itemList.count() - max_size();
+    int i = itemList.count() - maxSize();
     if ( i <= 0 )
         return;
 
@@ -115,7 +115,7 @@ void History::slotMoveToTop(QAction *action) {
     emit topChanged();
 }
 
-void History::max_size( unsigned max_size ) {
+void History::setMaxSize( unsigned max_size ) {
     m_max_size = max_size;
     trim();
 

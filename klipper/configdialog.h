@@ -1,6 +1,7 @@
 // -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
    Copyright (C) 2000 by Carsten Pfeiffer <pfeiffer@kde.org>
+   Copyright (C) 2008 by Dmitry Suzdalev <dimsuz@gmail.com>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -20,44 +21,60 @@
 #ifndef CONFIGDIALOG_H
 #define CONFIGDIALOG_H
 
-#include <QCheckBox>
-#include <QRadioButton>
-#include <QTreeWidget>
-
-#include <keditlistbox.h>
-#include <knuminput.h>
 #include <KConfigDialog>
 
 #include "urlgrabber.h"
 
+#include "ui_generalconfig.h"
+#include "ui_actionsconfig.h"
+
 class KConfigSkeleton;
 class KShortcutsEditor;
 class QPushButton;
-class QDialog;
-class ConfigDialog;
+class Klipper;
+class KEditListBox;
+class KActionCollection;
 
 class GeneralWidget : public QWidget
 {
     Q_OBJECT
-
-    friend class ConfigDialog;
-
 public:
-    GeneralWidget( QWidget *parent );
-    ~GeneralWidget();
+    GeneralWidget(QWidget* parent);
 
-private Q_SLOTS:
-    void historySizeChanged( int value );
-    void slotClipConfigChanged();
+private slots:
+    void onSyncronizeToggled(bool);
 
 private:
-    QCheckBox *cbMousePos, *cbSaveContents, *cbReplayAIH, *cbNoNull;
-    QCheckBox *cbIgnoreSelection, *cbStripWhitespace, *cbIgnoreImages;
-    QRadioButton *cbSynchronize, *cbImplicitSelection, *cbSeparate;
-    KIntNumInput *popupTimeout, *maxItems;
-
+    Ui::GeneralWidget m_ui;
 };
 
+class ActionsWidget : public QWidget
+{
+    Q_OBJECT
+public:
+    ActionsWidget(QWidget* parent);
+
+    void setActionList(const ActionList&);
+    void setExcludedWMClasses(const QStringList&);
+
+    ActionList actionList() const;
+    QStringList excludedWMClasses() const;
+
+    void resetModifiedState();
+
+private slots:
+    void onSelectionChanged();
+    void onContextMenu(const QPoint&);
+    void onItemChanged(QTreeWidgetItem*,int);
+    void onAddAction();
+    void onDeleteAction();
+    void onAdvanced();
+
+private:
+    Ui::ActionsWidget m_ui;
+
+    QStringList m_exclWMClasses;
+};
 
 // only for use inside ActionWidget
 class AdvancedWidget : public QWidget
@@ -69,46 +86,10 @@ public:
     ~AdvancedWidget();
 
     void setWMClasses( const QStringList& items );
-    QStringList wmClasses() const { return editListBox->items(); }
+    QStringList wmClasses() const;
 
 private:
     KEditListBox *editListBox;
-};
-
-class ActionWidget : public QWidget
-{
-    Q_OBJECT
-
-    friend class ConfigDialog;
-
-public:
-    ActionWidget( const ActionList *list, QWidget *parent );
-    ~ActionWidget();
-
-    /**
-     * Creates a list of actions from the listView and returns a pointer to
-     * the list.
-     * Make sure to free that pointer when you don't need it anymore.
-     */
-    ActionList * actionList();
-
-    void setWMClasses( const QStringList& items ) { m_wmClasses = items; }
-    QStringList wmClasses() const                 { return m_wmClasses; }
-
-private Q_SLOTS:
-    void slotAddAction();
-    void slotDeleteAction();
-    void slotItemChanged(QTreeWidgetItem *item, int column);
-    void slotAdvanced();
-    void slotContextMenu(const QPoint& pos);
-    void selectionChanged();
-
-private:
-    QTreeWidget *treeWidget;
-    QStringList m_wmClasses;
-    AdvancedWidget *advancedWidget;
-    QPushButton *delActionButton;
-    QCheckBox *cbUseGUIRegExpEditor;
 };
 
 class ConfigDialog : public KConfigDialog
@@ -116,104 +97,22 @@ class ConfigDialog : public KConfigDialog
     Q_OBJECT
 
 public:
-    ConfigDialog( QWidget *parent, KConfigSkeleton *config, const ActionList *list, KActionCollection *collection, bool isApplet );
+    ConfigDialog( QWidget *parent, KConfigSkeleton *config, const Klipper* klipper, KActionCollection *collection, bool isApplet );
     ~ConfigDialog();
 
-    ActionList * actionList() const { return m_actionWidget->actionList(); }
-
-    bool keepContents()    const {
-	return m_generalWidget->cbSaveContents->isChecked();
-    }
-    bool popupAtMousePos() const {
-	return m_generalWidget->cbMousePos->isChecked();
-    }
-    bool trimmed() const {
-        return m_generalWidget->cbStripWhitespace->isChecked();
-    }
-    bool replayActionInHistory() const {
-	return m_generalWidget->cbReplayAIH->isChecked();
-    }
-    bool noNullClipboard() const {
-        return m_generalWidget->cbNoNull->isChecked();
-    }
-
-    int popupTimeout() const {
-	return m_generalWidget->popupTimeout->value();
-    }
-    int maxItems() const {
-	return m_generalWidget->maxItems->value();
-    }
-    bool ignoreSelection() const
-    {
-        return m_generalWidget->cbIgnoreSelection->isChecked();
-    }
-    bool ignoreImages() const
-    {
-        return m_generalWidget->cbIgnoreImages->isChecked();
-    }
-    QStringList noActionsFor() const {
-	return m_actionWidget->wmClasses();
-    }
-    bool useGUIRegExpEditor() const
-    {
-      return m_actionWidget->cbUseGUIRegExpEditor->isChecked();
-    }
-
-    bool synchronize() const {
-        return m_generalWidget->cbSynchronize->isChecked();
-    }
-    bool implicitSelection() const {
-        return m_generalWidget->cbImplicitSelection->isChecked();
-    }
-
-    void setKeepContents( bool enable ) {
-	m_generalWidget->cbSaveContents->setChecked( enable );
-    }
-    void setPopupAtMousePos( bool enable ) {
-	m_generalWidget->cbMousePos->setChecked( enable );
-    }
-    void setStripWhiteSpace( bool enable ) {
-        m_generalWidget->cbStripWhitespace->setChecked( enable );
-    }
-    void setReplayActionInHistory( bool enable ) {
-	m_generalWidget->cbReplayAIH->setChecked( enable );
-    }
-    void setNoNullClipboard( bool enable ) {
-        m_generalWidget->cbNoNull->setChecked( enable );
-    }
-    void setPopupTimeout( int timeout ) {
-	m_generalWidget->popupTimeout->setValue( timeout );
-    }
-    void setMaxItems( int items ) {
-	m_generalWidget->maxItems->setValue( items );
-    }
-    void setIgnoreSelection( bool ignore ) {
-        m_generalWidget->cbIgnoreSelection->setChecked( ignore );
-    }
-    void setIgnoreImages( bool ignore ) {
-        m_generalWidget->cbIgnoreImages->setChecked( ignore );
-    }
-    void setSynchronize( bool synchronize ) {
-        m_generalWidget->cbSynchronize->setChecked( synchronize );
-    }
-    void setNoActionsFor( const QStringList& items ) {
-	m_actionWidget->setWMClasses( items );
-    }
-    void setUseGUIRegExpEditor( bool enabled )
-    {
-	// the checkbox is only hidden explicitly when there's no
-	// regexp editor component available.
-	if ( !m_actionWidget->cbUseGUIRegExpEditor->isHidden() )
-            m_actionWidget->cbUseGUIRegExpEditor->setChecked( enabled );
-    }
-
-    void commitShortcuts();
+private:
+    // reimp
+    void updateWidgets();
+    // reimp
+    void updateSettings();
+    // reimp
+    void updateWidgetsDefault();
 
 private:
-    GeneralWidget *m_generalWidget;
-    ActionWidget *m_actionWidget;
+    ActionsWidget *m_actionsPage;
     KShortcutsEditor *m_shortcutsWidget;
 
+    const Klipper* m_klipper;
 };
 
 #endif // CONFIGDIALOG_H

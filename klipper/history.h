@@ -90,12 +90,12 @@ public:
     /**
      * Set maximum history size
      */
-    void max_size( unsigned max_size );
+    void setMaxSize( unsigned max_size );
 
     /**
      * Get the maximum history size
      */
-    unsigned max_size() const { return m_max_size; }
+    unsigned maxSize() const { return m_max_size; }
 
     /**
      * returns true if the user has selected the top item

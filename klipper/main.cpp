@@ -25,6 +25,7 @@
 #include <kcmdlineargs.h>
 #include <kaboutdata.h>
 #include <kuniqueapplication.h>
+#include <KConfigDialogManager>
 
 #include "tray.h"
 #include "version.h"
@@ -43,6 +44,9 @@ extern "C" int KDE_EXPORT kdemain(int argc, char *argv[])
   KUniqueApplication app;
   app.disableSessionManagement();
   app.setQuitOnLastWindowClosed( false );
+
+  // make KConfigDialog "know" when our actions page is changed
+  KConfigDialogManager::changedMap()->insert("ActionsTreeWidget", SIGNAL(changed()));
 
   KlipperTray klipper;
   int ret = app.exec();

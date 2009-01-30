@@ -23,8 +23,6 @@
 #include <QHash>
 #include <QRegExp>
 
-#include <kconfig.h>
-
 class QTimer;
 
 class KConfig;
@@ -33,14 +31,13 @@ class KMenu;
 class ClipAction;
 struct ClipCommand;
 typedef QList<ClipAction*> ActionList;
-typedef QListIterator<ClipAction*> ActionListIterator;
 
 class URLGrabber : public QObject
 {
   Q_OBJECT
 
 public:
-  URLGrabber(const KSharedConfigPtr &config);
+  URLGrabber();
   ~URLGrabber();
 
   /**
@@ -52,16 +49,17 @@ public:
   bool checkNewData( const QString& clipData );
   void invokeAction( const QString& clip = QString() );
 
-  const ActionList * actionList() const { return m_myActions; }
-  void setActionList( ActionList * );
-  void readConfiguration( KConfig * );
-  void writeConfiguration( KConfig * );
+  ActionList actionList() const { return m_myActions; }
+  void setActionList( const ActionList& );
+
+  void loadSettings();
+  void saveSettings() const;
 
   int popupTimeout() const { return m_myPopupKillTimeout; }
   void setPopupTimeout( int timeout ) { m_myPopupKillTimeout = timeout; }
 
-  const QStringList& avoidWindows() const { return m_myAvoidWindows; }
-  void setAvoidWindows( const QStringList& list ) { m_myAvoidWindows = list; }
+  QStringList excludedWMClasses() const { return m_myAvoidWindows; }
+  void setExcludedWMClasses( const QStringList& list ) { m_myAvoidWindows = list; }
 
   bool trimmed() const { return m_trimmed; }
   void setStripWhiteSpace( bool enable ) { m_trimmed = enable; }
@@ -72,7 +70,7 @@ private:
   bool isAvoidedWindow() const;
   void actionMenu( bool wm_class_check );
 
-  ActionList *m_myActions;
+  ActionList m_myActions;
   ActionList m_myMatches;
   QStringList m_myAvoidWindows;
   QString m_myClipData;
@@ -82,7 +80,6 @@ private:
   QTimer *m_myPopupKillTimer;
   int m_myPopupKillTimeout;
   bool m_trimmed;
-  KSharedConfigPtr m_config;
 
 private Q_SLOTS:
   void slotActionMenu() { actionMenu( true ); }
@@ -118,7 +115,7 @@ class ClipAction
 public:
   ClipAction( const QString& regExp, const QString& description );
   ClipAction( const ClipAction& );
-  ClipAction( KConfig *kc, const QString& );
+  ClipAction( KSharedConfigPtr kc, const QString& );
   ~ClipAction();
 
   void  setRegExp( const QString& r) 	      { m_myRegExp = QRegExp( r ); }
@@ -142,7 +139,7 @@ public:
   /**
    * Saves this action to a a given KConfig object
    */
-  void save( KConfig *, const QString& ) const;
+  void save( KSharedConfigPtr, const QString& ) const;
 
 
 private:
