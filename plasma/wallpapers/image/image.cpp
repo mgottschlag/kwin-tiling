@@ -430,7 +430,7 @@ bool Image::setMetadata(QLabel *label, const QString &text)
 void Image::showFileDialog()
 {
     if (!m_dialog) {
-        m_dialog = new KFileDialog(KUrl(), "*.png *.jpeg *.jpg *.svg *.svgz", m_widget);
+        m_dialog = new KFileDialog(KUrl(), "*.png *.jpeg *.jpg *.xcf *.svg *.svgz", m_widget);
         m_dialog->setOperationMode(KFileDialog::Opening);
         m_dialog->setInlinePreviewShown(true);
         m_dialog->setCaption(i18n("Select Wallpaper Image File"));
