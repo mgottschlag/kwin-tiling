@@ -5,5 +5,9 @@ Actions=open;
 
 [Desktop Action open]
 Name=Open with the file manager
+Name[ga]=Oscail le bainisteoir na gcomhad
+Name[gl]=Abrir co xestor de ficheiros
+Name[tr]=Dosya yöneticisi ile aç
+Name[uk]=Відкрити за допомогою менеджера файлів
 Exec=kioclient exec %f
 Icon=system-file-manager
