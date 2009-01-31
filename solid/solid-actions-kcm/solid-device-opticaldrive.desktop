@@ -2,4 +2,5 @@
 Actions=
 Type=Service
 Name=Optical Drive
+Name[sv]=Optisk enhet
 X-KDE-Solid-Actions-Type=OpticalDrive

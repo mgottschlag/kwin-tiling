@@ -2,4 +2,5 @@
 Actions=
 Type=Service
 Name=Portable Media Player
+Name[sv]=Portabel mediaspelare
 X-KDE-Solid-Actions-Type=PortableMediaPlayer

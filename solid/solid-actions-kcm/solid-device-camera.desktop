@@ -2,9 +2,11 @@
 Actions=supportedDrivers;
 Type=Service
 Name=Camera
+Name[sv]=Kamera
 X-KDE-Solid-Actions-Type=Camera
 
 [Desktop Action supportedDrivers]
 Icon=unknown
 Name=Supported Drivers
+Name[sv]=Drivrutiner som stöds
 Exec=

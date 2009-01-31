@@ -1,15 +1,18 @@
 [Desktop Action ignored]
 Icon=unknown
 Name=Ignored
+Name[sv]=Ignorerad
 Exec=
 
 [Desktop Action usage]
 Icon=unknown
 Name=Usage
+Name[sv]=Användning
 Exec=
 
 [Desktop Entry]
 Actions=ignored;usage;
 Type=Service
 Name=Storage Volume
+Name[sv]=Lagringsvolym
 X-KDE-Solid-Actions-Type=StorageVolume

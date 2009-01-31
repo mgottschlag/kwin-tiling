@@ -2,4 +2,5 @@
 Actions=
 Type=Service
 Name=Block Device
+Name[sv]=Blockenhet
 X-KDE-Solid-Actions-Type=Block

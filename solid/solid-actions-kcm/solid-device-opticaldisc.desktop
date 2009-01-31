@@ -2,9 +2,11 @@
 Actions=availableContent;
 Type=Service
 Name=Optical Disc
+Name[sv]=Optisk skiva
 X-KDE-Solid-Actions-Type=OpticalDisc
 
 [Desktop Action availableContent]
 Icon=unknown
 Name=Available Content on disc
+Name[sv]=Tillgängligt innehåll på skivan
 Exec=

@@ -2,4 +2,5 @@
 Actions=
 Type=Service
 Name=Serial Interface
+Name[sv]=Seriegränssnitt
 X-KDE-Solid-Actions-Type=SerialInterface

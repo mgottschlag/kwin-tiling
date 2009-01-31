@@ -2,9 +2,11 @@
 Actions=driveType;
 Type=Service
 Name=Storage drive
+Name[sv]=Lagringsenhet
 X-KDE-Solid-Actions-Type=StorageDrive
 
 [Desktop Action driveType]
 Icon=unknown
 Name=Drive Type
+Name[sv]=Enhetstyp
 Exec=
