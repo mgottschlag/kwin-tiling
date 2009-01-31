@@ -215,12 +215,11 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     kDebug() << "Setting the pixmap cache size to" << cacheSize << "kilobytes";
     QPixmapCache::setCacheLimit(cacheSize);
 
-    //TODO: Make the shortcut configurable
-    KAction *showAction = new KAction( this );
-    showAction->setText( i18n( "Show Dashboard" ) );
-    showAction->setObjectName( "Show Dashboard" ); // NO I18N
-    showAction->setGlobalShortcut( KShortcut( Qt::CTRL + Qt::Key_F12 ) );
-    connect( showAction, SIGNAL( triggered() ), this, SLOT( toggleDashboard() ) );
+    KAction *showAction = new KAction(this);
+    showAction->setText(i18n("Show Dashboard"));
+    showAction->setObjectName("Show Dashboard"); // NO I18N
+    showAction->setGlobalShortcut(KShortcut(Qt::CTRL + Qt::Key_F12));
+    connect(showAction, SIGNAL(triggered()), this, SLOT(toggleDashboard()));
 
     connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanup()));
     QTimer::singleShot(0, this, SLOT(setupDesktop()));
@@ -302,6 +301,24 @@ void PlasmaApp::cleanup()
 void PlasmaApp::syncConfig()
 {
     KGlobal::config()->sync();
+}
+
+void PlasmaApp::toggleDashboardIfWindows()
+{
+    const int desktop = KWindowSystem::currentDesktop();
+
+    foreach (WId id, KWindowSystem::stackingOrder()) {
+        const KWindowInfo info = KWindowSystem::windowInfo(id, NET::WMDesktop | NET::WMState |
+                                                               NET::XAWMState | NET::WMWindowType |
+                                                               NET::WMVisibleName);
+        NET::WindowType type = info.windowType(NET::Normal | NET::Dialog);
+        if ((type == NET::Normal || type == NET::Dialog) &&
+            info.isOnDesktop(desktop) && !(info.state() & NET::Hidden) /*!info.isMinimized()*/) {
+            kDebug() << info.visibleName() << info.state() << info.windowType(NET::Normal | NET::Dialog);
+            toggleDashboard();
+            return;
+        }
+    }
 }
 
 void PlasmaApp::toggleDashboard()

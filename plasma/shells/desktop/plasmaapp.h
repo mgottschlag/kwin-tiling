@@ -94,6 +94,7 @@ public Q_SLOTS:
     // DBUS interface. if you change these methods, you MUST run:
     // qdbuscpp2xml plasmaapp.h -o dbus/org.kde.plasma.App.xml
     void toggleDashboard();
+    void toggleDashboardIfWindows();
 
     /**
      * Request a zoom based on the containment

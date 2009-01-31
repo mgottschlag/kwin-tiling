@@ -208,7 +208,8 @@ void DesktopView::setContainment(Plasma::Containment *containment)
     }
 
     if (oldContainment) {
-        disconnect(oldContainment, SIGNAL(toolBoxToggled()), PlasmaApp::self(), SLOT(toggleDashboard()));
+        disconnect(oldContainment, SIGNAL(toolBoxToggled()),
+                   PlasmaApp::self(), SLOT(toggleDashboardIfWindows()));
         if (zoomLevel == Plasma::DesktopZoom) {
             //make sure actions are up-to-date
             oldContainment->enableAction("zoom in", false);
@@ -216,7 +217,7 @@ void DesktopView::setContainment(Plasma::Containment *containment)
         }
     }
 
-    connect(containment, SIGNAL(toolBoxToggled()), PlasmaApp::self(), SLOT(toggleDashboard()));
+    connect(containment, SIGNAL(toolBoxToggled()), PlasmaApp::self(), SLOT(toggleDashboardIfWindows()));
     View::setContainment(containment);
 }
 
