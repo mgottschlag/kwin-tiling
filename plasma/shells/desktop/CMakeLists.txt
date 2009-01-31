@@ -66,6 +66,6 @@ target_link_libraries(kdeinit_plasma-desktop kephal)
 
 install(TARGETS kdeinit_plasma-desktop DESTINATION ${LIB_INSTALL_DIR})
 install(TARGETS plasma-desktop ${INSTALL_TARGETS_DEFAULT_ARGS})
-install(FILES plasma-desktop.desktop DESTINATION ${AUTOSTART_INSTALL_DIR})
+install(FILES plasma.desktop plasma-desktop.desktop DESTINATION ${AUTOSTART_INSTALL_DIR})
 install(FILES kcfg/plasma-shell-desktop.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
 install(FILES plasma-themes.knsrc DESTINATION  ${CONFIG_INSTALL_DIR})
