@@ -104,6 +104,9 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
     QBrush b(tile);
     setBackgroundBrush(tile);
 
+    // since Plasma::View has a delayed init we need to
+    // put a delay also for this call in order to be sure
+    // to have correct information set (e.g. screen())
     QTimer::singleShot(0, this, SLOT(adjustSize()));
 
     Kephal::Screens *screens = Kephal::Screens::self();
