@@ -104,7 +104,7 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
     QBrush b(tile);
     setBackgroundBrush(tile);
 
-    adjustSize();
+    QTimer::singleShot(0, this, SLOT(adjustSize()));
 
     Kephal::Screens *screens = Kephal::Screens::self();
     connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)),
