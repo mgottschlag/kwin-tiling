@@ -62,7 +62,8 @@ public:
     {
         NoGrouping = 0,
         ManualGrouping = 1, //Allow manual grouping
-        ProgramGrouping = 2 //Group automatically  same programs
+        ProgramGrouping = 2, //Group automatically  same programs
+        KustodianGrouping = 3 //Group always same programs and and even groups of 0 active
     };
 
     TaskGroupingStrategy groupingStrategy() const;
