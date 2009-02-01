@@ -2,5 +2,8 @@
 Actions=
 Type=Service
 Name=Optical Drive
+Name[pt]=Unidade Óptica
+Name[pt_BR]=Unidade Óptica
 Name[sv]=Optisk enhet
+Name[uk]=Пристрій читання оптичних дисків
 X-KDE-Solid-Actions-Type=OpticalDrive

@@ -2,5 +2,8 @@
 Actions=
 Type=Service
 Name=Access to storage devices
+Name[pt]=Acesso aos dispositivos de armazenamento
+Name[pt_BR]=Acesso aos dispositivos de armazenamento
 Name[sv]=Åtkomst till lagringsenheter
+Name[uk]=Доступ до пристроїв зберігання даних
 X-KDE-Solid-Actions-Type=StorageAccess
