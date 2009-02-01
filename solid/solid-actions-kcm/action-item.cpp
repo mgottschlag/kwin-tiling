@@ -38,10 +38,14 @@ ActionItem::ActionItem(QString pathToDesktop, QString action, QObject *parent)
     desktopWritePath = desktopFileMaster->locateLocal(desktopMasterPath);
     desktopFileWrite = new KDesktopFile(desktopWritePath);
     // Now we can fill the action groups list
-    actionGroups.insertMulti(ActionItem::GroupDesktop, desktopFileMaster->desktopGroup());
-    actionGroups.insertMulti(ActionItem::GroupAction, desktopFileMaster->actionGroup(actionName));
-    actionGroups.insertMulti(ActionItem::GroupDesktop, desktopFileWrite->desktopGroup());
-    actionGroups.insertMulti(ActionItem::GroupAction, desktopFileWrite->actionGroup(actionName));
+    configGroups.append(desktopFileMaster->desktopGroup());
+    actionGroups.insertMulti(ActionItem::GroupDesktop, &configGroups.last());
+    configGroups.append(desktopFileMaster->actionGroup(actionName));
+    actionGroups.insertMulti(ActionItem::GroupAction, &configGroups.last());
+    configGroups.append(desktopFileWrite->desktopGroup());
+    actionGroups.insertMulti(ActionItem::GroupDesktop, &configGroups.last());
+    configGroups.append(desktopFileWrite->actionGroup(actionName));
+    actionGroups.insertMulti(ActionItem::GroupAction, &configGroups.last());
 }
 
 ActionItem::~ActionItem()
@@ -59,17 +63,17 @@ bool ActionItem::isUserSupplied()
 
 QString ActionItem::readKey(GroupType keyGroup, QString keyName, QString defaultValue)
 {
-    return configItem(ActionItem::DesktopRead, keyGroup, keyName).readEntry(keyName, defaultValue);
+    return configItem(ActionItem::DesktopRead, keyGroup, keyName)->readEntry(keyName, defaultValue);
 }
 
 void ActionItem::setKey(GroupType keyGroup, QString keyName, QString keyContents)
 {
-    configItem(ActionItem::DesktopWrite, keyGroup).writeEntry(keyName, keyContents);
+    configItem(ActionItem::DesktopWrite, keyGroup)->writeEntry(keyName, keyContents);
 }
 
 bool ActionItem::hasKey(GroupType keyGroup, QString keyName)
 {
-    return configItem(ActionItem::DesktopRead, keyGroup, keyName).hasKey(keyName);
+    return configItem(ActionItem::DesktopRead, keyGroup, keyName)->hasKey(keyName);
 }
 
 QString ActionItem::icon()
@@ -104,13 +108,13 @@ void ActionItem::setExec(QString execUrl)
 
 /// Private functions below
 
-KConfigGroup ActionItem::configItem(DesktopAction actionType, GroupType keyGroup, QString keyName)
+KConfigGroup * ActionItem::configItem(DesktopAction actionType, GroupType keyGroup, QString keyName)
 {
     int countAccess = 0;
 
     if (actionType == ActionItem::DesktopRead) {
-        foreach(KConfigGroup possibleGroup, actionGroups.values(keyGroup)) {
-            if (possibleGroup.hasKey(keyName)) {
+        foreach(KConfigGroup * possibleGroup, actionGroups.values(keyGroup)) {
+            if (possibleGroup->hasKey(keyName)) {
                 return possibleGroup;
                 break;
             }

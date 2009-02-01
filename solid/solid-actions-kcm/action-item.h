@@ -57,11 +57,12 @@ public:
 private:
     enum DesktopAction { DesktopRead = 0, DesktopWrite = 1 };
 
-    KConfigGroup configItem(DesktopAction actionType, GroupType keyGroup, QString keyName = QString());
+    KConfigGroup * configItem(DesktopAction actionType, GroupType keyGroup, QString keyName = QString());
 
     KDesktopFile * desktopFileMaster;
     KDesktopFile * desktopFileWrite;
-    QMultiMap<GroupType, KConfigGroup> actionGroups;
+    QMultiMap<GroupType, KConfigGroup*> actionGroups;
+    QList<KConfigGroup> configGroups;
 
 };
 
