@@ -584,6 +584,7 @@ void KAccessApp::createDialogContents() {
       dialog->setButtons( KDialog::Yes | KDialog::No );
       dialog->setButtonGuiItem( KDialog::Yes, KStandardGuiItem::yes() );
       dialog->setButtonGuiItem( KDialog::No, KStandardGuiItem::no() );
+      dialog->setDefaultButton( KDialog::No );
       dialog->setEscapeButton( KDialog::Close );
       dialog->setObjectName( "AccessXWarning" );
       dialog->setModal( true );
