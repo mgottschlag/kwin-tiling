@@ -62,8 +62,8 @@ class ResultScene : public QGraphicsScene
         void previousPage();
         void setPage(uint index);
         void setQueryMatches(const QList<Plasma::QueryMatch> &matches);
-        void launchQuery(const QString &term);
-        void launchQuery(const QString &term, const QString &runner);
+        bool launchQuery(const QString &term);
+        bool launchQuery(const QString &term, const QString &runner);
         void clearQuery();
 
     signals:

@@ -424,7 +424,9 @@ void Interface::run(ResultItem *item)
 
 void Interface::runDefaultResultItem()
 {
+    kDebug() << "magic stuff2";
     if (m_queryRunning) {
+        kDebug() << "magic stuff";
         m_delayedRun = true;
     } else {
         run(m_resultsScene->defaultResultItem());
@@ -439,8 +441,7 @@ void Interface::queryTextEdited(const QString &query)
         resetInterface();
         m_queryRunning = false;
     } else {
-        m_resultsScene->launchQuery(query);
-        m_queryRunning = true;
+        m_queryRunning = m_resultsScene->launchQuery(query);
     }
 }
 
