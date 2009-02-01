@@ -424,9 +424,7 @@ void Interface::run(ResultItem *item)
 
 void Interface::runDefaultResultItem()
 {
-    kDebug() << "magic stuff2";
     if (m_queryRunning) {
-        kDebug() << "magic stuff";
         m_delayedRun = true;
     } else {
         run(m_resultsScene->defaultResultItem());
