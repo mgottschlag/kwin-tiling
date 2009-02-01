@@ -45,7 +45,7 @@ class Temperature : public SM::Applet
         void createConfigurationInterface(KConfigDialog *parent);
 
     private slots:
-        void updateLabel();
+        void updateSuffix();
         void configAccepted();
         void parseSources();
         void themeChanged();
