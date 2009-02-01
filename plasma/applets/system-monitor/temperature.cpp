@@ -97,11 +97,18 @@ void Temperature::createConfigurationInterface(KConfigDialog *parent)
 
     ui.showPlotters->setChecked(m_showPlotters);
     ui.intervalSpinBox->setValue(interval() / 1000);
+    emit updateLabel();
 
     parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
     parent->addPage(widget, i18n("Temperature"), "cpu");
+    connect(ui.intervalSpinBox, SIGNAL(valueChanged(int)), this, SLOT(updateLabel()));
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+}
+
+void Temperature::updateLabel()
+{
+    ui.intervalSpinBox->setSuffix(i18np(" second", " seconds", ui.intervalSpinBox->value()));
 }
 
 void Temperature::configAccepted()
