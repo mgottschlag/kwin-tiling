@@ -321,14 +321,18 @@ void ResultScene::slotArrowResultItemReleased()
 
 }
 
-void ResultScene::launchQuery(const QString &term)
+bool ResultScene::launchQuery(const QString &term)
 {
+    bool temp = !(term.isEmpty() || m_runnerManager->query() == term);
     m_runnerManager->launchQuery(term);
+    return temp;
 }
 
-void ResultScene::launchQuery(const QString &term, const QString &runner)
+bool ResultScene::launchQuery(const QString &term, const QString &runner)
 {
+    bool temp = !(term.isEmpty() || m_runnerManager->query() == term);
     m_runnerManager->launchQuery(term, runner);
+    return temp;
 }
 
 void ResultScene::clearQuery()
