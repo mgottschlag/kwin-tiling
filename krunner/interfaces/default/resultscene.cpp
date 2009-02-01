@@ -321,14 +321,14 @@ void ResultScene::slotArrowResultItemReleased()
 
 }
 
-void ResultScene::launchQuery(const QString &term)
+bool ResultScene::launchQuery(const QString &term)
 {
-    m_runnerManager->launchQuery(term);
+    return m_runnerManager->launchQuery(term);
 }
 
-void ResultScene::launchQuery(const QString &term, const QString &runner)
+bool ResultScene::launchQuery(const QString &term, const QString &runner)
 {
-    m_runnerManager->launchQuery(term, runner);
+    return m_runnerManager->launchQuery(term, runner);
 }
 
 void ResultScene::clearQuery()
