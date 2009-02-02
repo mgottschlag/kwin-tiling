@@ -93,5 +93,11 @@ void GestureTrigger::handle_gesture( const QString &gesture_P, WId window_P )
     }
 
 
+void GestureTrigger::setGestureCode(const QString &code)
+    {
+    _gesturecode = code;
+    }
+
+
 } // namespace KHotKeys
 

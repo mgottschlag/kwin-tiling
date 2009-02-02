@@ -227,13 +227,17 @@ class KDE_EXPORT GestureTrigger
     Q_OBJECT
     typedef Trigger base;
     public:
-        GestureTrigger( ActionData* data_P, const QString& gesture_P );
+        GestureTrigger( ActionData* data_P, const QString& gesture_P = QString());
         GestureTrigger( KConfigGroup& cfg_P, ActionData* data_P );
         virtual ~GestureTrigger();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual Trigger* copy( ActionData* data_P ) const;
         virtual const QString description() const;
         const QString& gestureCode() const;
+
+        //! Set the gesture code
+        void setGestureCode(const QString &);
+
         virtual void activate( bool activate_P );
 
         virtual TriggerType type() const { return GestureTriggerType; }
