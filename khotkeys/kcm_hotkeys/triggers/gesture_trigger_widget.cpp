@@ -46,6 +46,7 @@ void GestureTriggerWidget::doCopyFromObject()
 void GestureTriggerWidget::doCopyToObject()
     {
     Q_ASSERT(trigger());
+    trigger()->setGestureCode(ui.gesture->gestureCode());
     return;
     }
 
