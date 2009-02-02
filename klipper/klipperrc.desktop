@@ -1,3 +1,6 @@
+[General]
+Number of Actions=7
+
 [Action_0]
 Description=Jpeg-Image
 Description[af]=Jpeg Beeld
@@ -2062,10 +2065,3 @@ Description[xh]=Thumela &Ifayile
 Description[zh_CN]=发送文件(&F)
 Description[zh_TW]=送出檔案(&F)
 Enabled=true
-
-[General]
-KeepClipboardContents=true
-No Actions for WM_CLASS=Navigator,navigator:browser,konqueror,keditbookmarks,mozilla-bin,Mozilla,Opera main window,opera,gnumeric,Gnumeric,Galeon,kcontrol,ksirc,MozillaFirebird-bin,firefox-bin,Firefox-bin,klipper,Gecko,gecko
-Number of Actions=7
-PopupAtMousePosition=false
-URLGrabberEnabled=false
