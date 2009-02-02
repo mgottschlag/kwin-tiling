@@ -121,11 +121,11 @@ bool WindowTriggerWidget::isChanged() const
     Q_ASSERT(trigger());
 
     if(     window_trigger_ui.window_appears->isChecked()
-                != trigger()->triggers_on(KHotKeys::WindowTrigger::WINDOW_DEACTIVATES)
+                != trigger()->triggers_on(KHotKeys::WindowTrigger::WINDOW_APPEARS)
         ||  window_trigger_ui.window_disappears->isChecked()
-                != trigger()->triggers_on(KHotKeys::WindowTrigger::WINDOW_DEACTIVATES)
+                != trigger()->triggers_on(KHotKeys::WindowTrigger::WINDOW_DISAPPEARS)
         ||  window_trigger_ui.window_gets_focus->isChecked()
-                != trigger()->triggers_on(KHotKeys::WindowTrigger::WINDOW_DEACTIVATES)
+                != trigger()->triggers_on(KHotKeys::WindowTrigger::WINDOW_ACTIVATES)
         ||  window_trigger_ui.window_lost_focus->isChecked()
                 != trigger()->triggers_on(KHotKeys::WindowTrigger::WINDOW_DEACTIVATES))
         return true;
