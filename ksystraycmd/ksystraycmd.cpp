@@ -29,12 +29,15 @@ KSysTrayCmd::KSysTrayCmd()
     isVisible(true), lazyStart( false ), noquit( false ), quitOnHide( false ), onTop(false), ownIcon(false),
     win(0), client(0), top(0), left(0)
 {
+  menu = new KMenu();
+  setContextMenu(menu);
   connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(mousePressEvent(QSystemTrayIcon::ActivationReason)));
   refresh();
 }
 
 KSysTrayCmd::~KSysTrayCmd()
 {
+    delete menu;
     delete client;
 }
 
@@ -203,7 +206,7 @@ void KSysTrayCmd::quitClient()
     // We didn't give command, so we didn't open an application.
     // That's why  when the application is closed we aren't informed.
     // So we quit now.
- 
+
     if ( command.isEmpty() ) {
       qApp->quit();
     }
@@ -223,7 +226,7 @@ void KSysTrayCmd::quit()
 
 void KSysTrayCmd::execContextMenu( const QPoint &pos )
 {
-    KMenu *menu = new KMenu();
+    menu->clear();
     menu->addTitle( icon(), i18n( "KSysTrayCmd" ) );
     QAction * hideShowId = menu->addAction( isVisible ? i18n( "&Hide" ) : i18n( "&Restore" ) );
     QAction * undockId = menu->addAction( KIcon("dialog-close"), i18n( "&Undock" ) );
@@ -251,8 +254,6 @@ void KSysTrayCmd::execContextMenu( const QPoint &pos )
       else
         toggleWindow();
     }
-
-    delete menu;
 }
 
 void KSysTrayCmd::checkExistingWindows()

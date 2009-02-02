@@ -6,6 +6,7 @@
 #include <KSystemTrayIcon>
 
 class K3ShellProcess;
+class KMenu;
 
 /**
  * Provides a system tray icon for a normal window.
@@ -70,6 +71,7 @@ private:
   bool quitOnHide;
   bool onTop; ///< tells if window must stay on top or not
   bool ownIcon; ///< tells if the ksystraycmd icon must be used in systray
+  KMenu * menu;
 
   WId win;
   K3ShellProcess *client;
