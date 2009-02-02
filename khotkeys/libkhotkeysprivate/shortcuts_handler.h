@@ -98,7 +98,7 @@ public:
      *
      * \warning Does nothing, returns false
      */
-    bool send_macro_key( const QString& key, Window window_P );
+    bool send_macro_key( const QKeySequence &key, Window window_P );
 
 private:
 

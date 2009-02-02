@@ -21,7 +21,9 @@
 
 #include "input.h"
 #include "shortcuts_handler.h"
+#include "windows_handler.h"
 #include "khotkeysglobal.h"
+
 
 #include <X11/X.h>
 // #include <X11/Xutil.h>
@@ -30,6 +32,7 @@
 
 #include <KDE/KAction>
 #include <KDE/KDebug>
+#include <kkeyserver.h>
 
 namespace KHotKeys {
 
@@ -124,28 +127,21 @@ static bool xtest()
     }
 #endif
 
-bool ShortcutsHandler::send_macro_key( const QString& key, Window window_P )
+bool ShortcutsHandler::send_macro_key( const QKeySequence &key, Window window_P )
     {
-    kError() << "ShortcutsHandler::send_macro_key not implemented!!!";
-    Q_UNUSED( key );
-    Q_UNUSED( window_P );
-    return false;
+    kDebug() << key << key.count() << window_P;
 
-#if 0
-    int keysym;
-    uint x_mod;
-#if 0
-// TODO fix this, make sure it works even with stuff like "dead_acute"
-        QKeySequence ks( key );
-        if( key == "Enter" && ks.isEmpty() )
-            key = "Return"; // CHECKE hack
-	keyboard_handler->send_macro_key( ks.isEmpty() ? 0 : ks[0], w );
+    if (key.isEmpty())
+        return false;
 
-    bool ok = KKeyServer::keyQtToSymX(keycode, keysym) && KKeyServer::keyQtToModX(keycode, x_mod);
-#endif
-    KeyCode x_keycode = XKeysymToKeycode( QX11Info::display(), keysym );
+    unsigned int keysym = key[0];
+    int x_keycode;
+    KKeyServer::keyQtToCodeX(keysym, &x_keycode);
     if( x_keycode == NoSymbol )
-	return false;
+        return false;
+
+    unsigned int x_mod;
+    KKeyServer::keyQtToModX(keysym, &x_mod );
 #ifdef HAVE_XTEST
     if( xtest() && window_P == None )
         {
@@ -159,43 +155,43 @@ bool ShortcutsHandler::send_macro_key( const QString& key, Window window_P )
         window_P = windows_handler->active_window();
     if( window_P == None ) // CHECKME tohle cele je ponekud ...
         window_P = InputFocus;
-    XKeyEvent ev;
+    XEvent ev;
     ev.type = KeyPress;
-    ev.display = QX11Info::display();
-    ev.window = window_P;
-    ev.root = QX11Info::appRootWindow();   // I don't know whether these have to be set
-    ev.subwindow = None;       // to these values, but it seems to work, hmm
-    ev.time = CurrentTime;
-    ev.x = 0;
-    ev.y = 0;
-    ev.x_root = 0;
-    ev.y_root = 0;
-    ev.keycode = x_keycode;
-    ev.state = x_mod;
-    ev.same_screen = True;
-    bool ret = XSendEvent( QX11Info::display(), window_P, True, KeyPressMask, ( XEvent* )&ev );
+    ev.xkey.display = QX11Info::display();
+    ev.xkey.window = window_P;
+    ev.xkey.root = QX11Info::appRootWindow();   // I don't know whether these have to be set
+    ev.xkey.subwindow = None;       // to these values, but it seems to work, hmm
+    ev.xkey.time = CurrentTime;
+    ev.xkey.x = 0;
+    ev.xkey.y = 0;
+    ev.xkey.x_root = 0;
+    ev.xkey.y_root = 0;
+    ev.xkey.keycode = x_keycode;
+    ev.xkey.state = x_mod;
+    ev.xkey.same_screen = True;
+    bool ret = XSendEvent( QX11Info::display(), window_P, True, KeyPressMask, &ev );
 #if 1
     ev.type = KeyRelease;  // is this actually really needed ??
-    ev.display = QX11Info::display();
-    ev.window = window_P;
-    ev.root = QX11Info::appRootWindow();
-    ev.subwindow = None;
-    ev.time = CurrentTime;
-    ev.x = 0;
-    ev.y = 0;
-    ev.x_root = 0;
-    ev.y_root = 0;
-    ev.state = x_mod;
-    ev.keycode = x_keycode;
-    ev.same_screen = True;
-    ret = ret && XSendEvent( QX11Info::display(), window_P, True, KeyReleaseMask, ( XEvent* )&ev );
+    ev.xkey.display = QX11Info::display();
+    ev.xkey.window = window_P;
+    ev.xkey.root = QX11Info::appRootWindow();
+    ev.xkey.subwindow = None;
+    ev.xkey.time = CurrentTime;
+    ev.xkey.x = 0;
+    ev.xkey.y = 0;
+    ev.xkey.x_root = 0;
+    ev.xkey.y_root = 0;
+    ev.xkey.state = x_mod;
+    ev.xkey.keycode = x_keycode;
+    ev.xkey.same_screen = True;
+    ret = ret && XSendEvent( QX11Info::display(), window_P, True, KeyReleaseMask, &ev );
 #endif
     // Qt's autorepeat compression is broken and can create "aab" from "aba"
     // XSync() should create delay longer than Qt's max autorepeat interval
     XSync( QX11Info::display(), False );
     return ret;
-#endif
     }
+
 
 bool Mouse::send_mouse_button( int button_P, bool release_P )
     {
