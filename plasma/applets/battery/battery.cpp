@@ -968,8 +968,8 @@ void Battery::disconnectSources()
     dataEngine("powermanagement")->disconnectSource("AC Adapter", this);
     dataEngine("powermanagement")->disconnectSource("PowerDevil", this);
 
-    disconnect(SLOT(sourceAdded(QString)));
-    disconnect(SLOT(sourceRemoved(QString)));
+    disconnect(this, SLOT(sourceAdded(QString)));
+    disconnect(this, SLOT(sourceRemoved(QString)));
 }
 
 void Battery::sourceAdded(const QString& source)
