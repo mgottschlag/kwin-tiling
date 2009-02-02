@@ -54,6 +54,7 @@ class Cpu : public Applet
     private slots:
         void parseSources();
         void themeChanged();
+	void updateSpinBoxSuffix();
 };
 }
 

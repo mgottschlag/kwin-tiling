@@ -48,6 +48,7 @@ class Hdd : public SM::Applet
     private slots:
         void configAccepted();
         void themeChanged();
+	void updateSpinBoxSuffix();
 
     private:
         Ui::config ui;
