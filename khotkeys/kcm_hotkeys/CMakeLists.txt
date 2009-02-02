@@ -11,9 +11,14 @@ set(
     hotkeys_proxy_model.cpp
     hotkeys_tree_view.cpp
 
+    # HELPER WIDGETS
+    helper_widgets/window_selector.cpp
+    helper_widgets/window_definition_widget.cpp
+
     # TRIGGER WIDGETS
     triggers/trigger_widget_base.cpp
     triggers/shortcut_trigger_widget.cpp
+    triggers/window_trigger_widget.cpp
 
     # ACTION WIDGETS
     actions/action_widget_base.cpp
@@ -30,6 +35,7 @@ set(
 
 kde4_add_ui_files(
     kcm_hotkeys_PART_SRCS
+    helper_widgets/window_definition_widget.ui
     ui/global_settings_widget.ui
     ui/command_url_action_widget.ui
     ui/dbus_action_widget.ui
@@ -37,6 +43,7 @@ kde4_add_ui_files(
     ui/simple_action_data_widget.ui
     ui/shortcut_trigger_widget.ui
     ui/menuentry_action_widget.ui
+    ui/window_trigger_widget.ui
     )
 
 qt4_add_dbus_interface(
@@ -56,6 +63,7 @@ target_link_libraries(
     ${KDE4_KIO_LIBS}
     ${QT_QTGUI_LIBRARY}
     ${QT_QT3SUPPORT_LIBRARY}
+    ${X11_X11_LIB}
     )
 
 install(

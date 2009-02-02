@@ -31,7 +31,7 @@
 #include "voicesignature.h"
 
 #include "input.h"
-#include "windows.h"
+#include "windows_handler.h"
 
 
 class KConfig;
@@ -119,12 +119,12 @@ class KDE_EXPORT ShortcutTrigger
 
     typedef Trigger base;
     public:
-        ShortcutTrigger( 
+        ShortcutTrigger(
             ActionData* data_P,
             const KShortcut& shortcut_P,
             const QUuid &uuid = QUuid::createUuid() );
 
-        ShortcutTrigger( 
+        ShortcutTrigger(
             KConfigGroup& cfg_P,
             ActionData* data_P );
 
@@ -160,33 +160,50 @@ class KDE_EXPORT ShortcutTrigger
         QUuid _uuid;
     };
 
-class KDE_EXPORT WindowTrigger
-    : public QObject, public Trigger
+
+class KDE_EXPORT WindowTrigger : public QObject, public Trigger
     {
     Q_OBJECT
+
+    Q_FLAGS(WindowEvents)
+
     typedef Trigger base;
+
     public:
+
         enum window_action_t
             {
-            WINDOW_APPEARS         = ( 1 << 0 ),
-            WINDOW_DISAPPEARS      = ( 1 << 1 ),
-            WINDOW_ACTIVATES       = ( 1 << 2 ),
-            WINDOW_DEACTIVATES     = ( 1 << 3 )
+            NONE                   = 0,
+            WINDOW_APPEARS         = ( 1 << 0 ),        //!< The window is opened
+            WINDOW_DISAPPEARS      = ( 1 << 1 ),        //!< The window is closed
+            WINDOW_ACTIVATES       = ( 1 << 2 ),        //!< The window gets the focus
+            WINDOW_DEACTIVATES     = ( 1 << 3 )         //!< The window loses the focus
             };
-        WindowTrigger( ActionData* data_P, Windowdef_list* windows_P, int window_actions_P );
+
+        Q_DECLARE_FLAGS(WindowEvents, window_action_t)
+
+        WindowTrigger(
+                ActionData* data_P,
+                Windowdef_list* windowslist = NULL,
+                WindowEvents window_actions = 0 );
+
         WindowTrigger( KConfigGroup& cfg_P, ActionData* data_P );
+
+        void setOnWindowEvents(WindowEvents events);
+
         virtual ~WindowTrigger();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual WindowTrigger* copy( ActionData* data_P ) const;
         virtual const QString description() const;
         const Windowdef_list* windows() const;
+        Windowdef_list* windows();
         bool triggers_on( window_action_t w_action_P ) const;
         virtual void activate( bool activate_P );
 
         virtual TriggerType type() const { return WindowTriggerType; }
     protected: // CHECKME neco private ?
         Windowdef_list* _windows;
-        int window_actions;
+        WindowEvents window_actions;
         void init();
         typedef QMap< WId, bool > Windows_map;
         Windows_map existing_windows;
@@ -199,6 +216,8 @@ class KDE_EXPORT WindowTrigger
     protected:
         bool active;
     };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(WindowTrigger::WindowEvents)
 
 class KDE_EXPORT GestureTrigger
     : public QObject, public Trigger
@@ -240,7 +259,7 @@ class KDE_EXPORT Voice_trigger
         const QString& voicecode() const;
         virtual void activate( bool activate_P );
         VoiceSignature voicesignature( int ech ) const;
-        
+
         virtual TriggerType type() const { return SoundTrigger; }
     public slots:
         void handle_Voice(  );
@@ -264,7 +283,8 @@ VoiceSignature Voice_trigger::voicesignature(int ech) const
     {
     return _voicesignature[ech-1];
     }
-#endif 
+#endif
 } // namespace KHotKeys
+
 
 #endif

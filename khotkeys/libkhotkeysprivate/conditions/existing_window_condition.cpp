@@ -19,6 +19,8 @@
 
 #include "conditions.h"
 
+#include "windows_helper/window_selection_list.h"
+
 #include <KDE/KConfigGroup>
 #include <KDE/KDebug>
 

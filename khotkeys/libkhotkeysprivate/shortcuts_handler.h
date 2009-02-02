@@ -23,6 +23,7 @@
 #include <KDE/KActionCollection>
 
 #include <X11/X.h>
+#include <fixx11h.h>
 
 
 class KAction;

@@ -16,18 +16,20 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
-#ifndef SHORTCUT_TRIGGER_WIDGET_H
-#define SHORTCUT_TRIGGER_WIDGET_H
+#ifndef WINDOW_TRIGGER_WIDGET_H
+#define WINDOW_TRIGGER_WIDGET_H
 
 #include "trigger_widget_base.h"
-#include "ui_shortcut_trigger_widget.h"
+
+#include "ui_window_trigger_widget.h"
 
 class QKeySequence;
+class WindowDefinitionWidget;
 
 /**
  * @author Michael Jansen <kde@michael-jansen.biz>
  */
-class ShortcutTriggerWidget : public TriggerWidgetBase
+class WindowTriggerWidget : public TriggerWidgetBase
     {
     Q_OBJECT
 
@@ -38,33 +40,33 @@ public:
     /**
      * Default constructor
      */
-    ShortcutTriggerWidget( KHotKeys::ShortcutTrigger *trigger, QWidget *parent = 0 );
+    WindowTriggerWidget( KHotKeys::WindowTrigger *trigger, QWidget *parent = 0 );
 
     /**
      * Destructor
      */
-    virtual ~ShortcutTriggerWidget();
+    virtual ~WindowTriggerWidget();
 
-    KHotKeys::ShortcutTrigger *trigger();
-    const KHotKeys::ShortcutTrigger *trigger() const;
+    KHotKeys::WindowTrigger *trigger();
+    const KHotKeys::WindowTrigger *trigger() const;
 
 
     virtual bool isChanged() const;
 
 private Q_SLOTS:
 
-    //! Invoked if the global shortcut is changed for the corresponding
-    //  shortcut trigger
-    void _k_globalShortcutChanged(const QKeySequence &);
+    void slotWindowSelectionChanged(bool) const;
 
 private:
 
     virtual void doCopyFromObject();
     virtual void doCopyToObject();
 
+    Ui::WindowTriggerWidget window_trigger_ui;
 
-    Ui::ShortcutTriggerWidget shortcut_trigger_ui;
+    WindowDefinitionWidget *_windowdef_widget;
 
 };
 
-#endif /* #ifndef SHORTCUT_TRIGGER_WIDGET_H */
+#endif /* #ifndef WINDOW_TRIGGER_WIDGET_H */
+

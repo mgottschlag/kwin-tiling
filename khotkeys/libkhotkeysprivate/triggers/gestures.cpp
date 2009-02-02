@@ -14,26 +14,30 @@
 
 ****************************************************************************/
 
-#define _GESTURES_CPP_
-
 #include "gestures.h"
 
+#if 0
 #include <stdlib.h>
+#endif
 #include <math.h>
-#include <assert.h>
 
-#include <X11/Xlib.h>
+#include "khotkeysglobal.h"
+
 
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kxerrorhandler.h>
 #include <kkeyserver.h>
-
 #include "input.h"
-#include "windows.h"
-#include <QX11Info>
+#include "windows_handler.h"
 
-#include "voices.h"
+#include "windows_helper/window_selection_list.h"
+
+//#include <QX11Info>
+//#include <X11/Xlib.h>
+//#include <fixx11h.h>
+
+// #include "voices.h"
 
 namespace KHotKeys
 {
@@ -196,7 +200,7 @@ void Gesture::grab_mouse( bool grab_P )
     {
     if( grab_P )
         {
-        assert( button != 0 );
+        Q_ASSERT( button != 0 );
         KXErrorHandler handler;
         static int mask[] = { 0, Button1MotionMask, Button2MotionMask, Button3MotionMask,
             Button4MotionMask, Button5MotionMask, ButtonMotionMask, ButtonMotionMask,

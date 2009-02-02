@@ -22,6 +22,7 @@
 
 #include <KDE/KAuthorized>
 #include <KDE/KConfigGroup>
+#include <KDE/KDebug>
 #include <KDE/KRun>
 #include <KDE/KService>
 #include <KDE/KUriFilter>
@@ -71,6 +72,7 @@ const QString CommandUrlAction::description() const
 
 void CommandUrlAction::execute()
     {
+    kDebug();
     if( command_url().isEmpty())
         return;
     KUriFilterData uri;

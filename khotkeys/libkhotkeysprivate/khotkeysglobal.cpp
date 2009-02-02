@@ -17,7 +17,7 @@
 #include <klibloader.h>
 
 #include "input.h"
-#include "windows.h"
+#include "windows_handler.h"
 #include "triggers/triggers.h"
 #include "triggers/gestures.h"
 #include "voices.h"
@@ -30,7 +30,7 @@ namespace KHotKeys
 {
 
 QPointer<ShortcutsHandler> keyboard_handler = NULL;
-QPointer<Windows> windows_handler = NULL;
+QPointer<WindowsHandler> windows_handler = NULL;
 
 static bool _khotkeys_active = false;
 
@@ -44,7 +44,7 @@ void init_global_data( bool active_P, QObject* owner_P )
         }
     if (!windows_handler)
         {
-        windows_handler = new Windows( active_P, owner_P );
+        windows_handler = new WindowsHandler( active_P, owner_P );
         }
     if (!gesture_handler)
         {

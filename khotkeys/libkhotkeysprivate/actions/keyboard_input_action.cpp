@@ -20,16 +20,18 @@
 #include "actions.h"
 
 #include "input.h"
+#include "windows_handler.h"
+#include "shortcuts_handler.h"
+#include "windows_helper/window_selection_list.h"
+
 #include <KDE/KConfigGroup>
 
-#include "windows.h"
-
-#include "shortcuts_handler.h"
-
-#include <X11/X.h>
+// #include <X11/X.h>
 #include <X11/Xlib.h>
-#include <QX11Info>
+#include <QtGui/QX11Info>
 
+/*
+*/
 
 namespace KHotKeys {
 

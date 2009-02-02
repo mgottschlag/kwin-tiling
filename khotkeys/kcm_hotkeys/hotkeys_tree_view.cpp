@@ -96,6 +96,19 @@ void HotkeysTreeViewContextMenu::createTriggerMenus(
             mapper, SIGNAL(mapped(int)),
             this, SLOT(newGlobalShortcutActionAction(int)) );
         }
+
+    if (triggerTypes & KHotKeys::Trigger::WindowTriggerType)
+        {
+        QSignalMapper *mapper = new QSignalMapper(this);
+
+        QMenu *menu = new QMenu( i18n("New Window Action") );
+        populateTriggerMenu(menu, mapper, actionTypes);
+        addMenu(menu);
+
+        connect(
+            mapper, SIGNAL(mapped(int)),
+            this, SLOT(newWindowTriggerActionAction(int)) );
+        }
     }
 
 
@@ -144,6 +157,51 @@ void HotkeysTreeViewContextMenu::newGlobalShortcutActionAction( int actionType )
     KHotKeys::SimpleActionData *data =
         new KHotKeys::SimpleActionData( 0, i18n("New Group"), i18n("Comment"));
     data->set_trigger( new KHotKeys::ShortcutTrigger( data, KShortcut() ) );
+
+    switch (actionType)
+        {
+        case KHotKeys::Action::MenuEntryActionType:
+            data->set_action( new KHotKeys::MenuEntryAction( data ));
+            break;
+
+        case KHotKeys::Action::CommandUrlActionType:
+            data->set_action( new KHotKeys::CommandUrlAction( data ));
+            break;
+
+        case KHotKeys::Action::DBusActionType:
+            data->set_action( new KHotKeys::DBusAction( data ));
+            break;
+
+        default:
+            Q_ASSERT(false);
+            return;
+        }
+
+    QModelIndex newAct = _view->model()->insertActionData(data, parent);
+    _view->setCurrentIndex(newAct);
+    _view->edit(newAct);
+    _view->resizeColumnToContents(0);
+    }
+
+
+void HotkeysTreeViewContextMenu::newWindowTriggerActionAction( int actionType )
+    {
+    QModelIndex parent;      // == root element
+    if (!_index.isValid()
+        || _view->model()->data( _index.sibling( _index.row(), KHotkeysModel::IsGroupColumn)).toBool())
+        {
+        // if the index is invalid (root index) or represents an group use it.
+        parent = _index;
+        }
+    else
+        {
+        // It is an action. Take the parent.
+        parent = _index.parent();
+        }
+
+    KHotKeys::SimpleActionData *data =
+        new KHotKeys::SimpleActionData( 0, i18n("New Group"), i18n("Comment"));
+    data->set_trigger( new KHotKeys::WindowTrigger(data) );
 
     switch (actionType)
         {

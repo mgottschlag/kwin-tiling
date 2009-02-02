@@ -1,0 +1,259 @@
+<ui version="4.0" >
+ <class>WindowDefinitionWidget</class>
+ <widget class="QWidget" name="WindowDefinitionWidget" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>371</width>
+    <height>387</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="_2" >
+   <property name="spacing" >
+    <number>0</number>
+   </property>
+   <property name="margin" >
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2" >
+     <property name="title" >
+      <string>Window Data</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2" >
+      <item>
+       <layout class="QGridLayout" name="gridLayout" >
+        <item row="0" column="0" >
+         <widget class="QLabel" name="comment_label" >
+          <property name="text" >
+           <string>Comment</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" >
+         <widget class="QLabel" name="window_title_label" >
+          <property name="text" >
+           <string>Window Title</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2" >
+         <widget class="QComboBox" name="window_title_combo" >
+          <item>
+           <property name="text" >
+            <string>Is Not Important</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Contains</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Is</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Matches Regular Expression</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Does Not Contain</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Is Not</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Does Not Match Regular Expression</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="3" column="0" >
+         <widget class="QLabel" name="window_class_label" >
+          <property name="text" >
+           <string>Window Class</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2" >
+         <widget class="QComboBox" name="window_class_combo" >
+          <item>
+           <property name="text" >
+            <string>Is Not Important</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Contains</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Is</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Matches Regular Expression</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Does Not Contain</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Is Not</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Does Not Match Regular Expression</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="5" column="0" >
+         <widget class="QLabel" name="window_role_label" >
+          <property name="text" >
+           <string>Window Role</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="2" >
+         <widget class="QComboBox" name="window_role_combo" >
+          <item>
+           <property name="text" >
+            <string>Is Not Important</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Contains</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Is</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Matches Regular Expression</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Does Not Contain</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Is Not</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Does Not Match Regular Expression</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="2" column="2" >
+         <widget class="KLineEdit" name="window_title" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="2" >
+         <widget class="KLineEdit" name="window_class" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="2" >
+         <widget class="KLineEdit" name="window_role" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2" >
+         <widget class="KLineEdit" name="comment" />
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QPushButton" name="autodetect" >
+        <property name="text" >
+         <string>&amp;Autodetect</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox" >
+     <property name="title" >
+      <string>Window Types</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2" >
+      <item row="0" column="0" >
+       <widget class="QRadioButton" name="type_normal" >
+        <property name="text" >
+         <string>Normal</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="QRadioButton" name="type_desktop" >
+        <property name="text" >
+         <string>Desktop</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QRadioButton" name="type_dialog" >
+        <property name="text" >
+         <string>Dialog</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="QRadioButton" name="type_dock" >
+        <property name="text" >
+         <string>Dock</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>klineedit.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

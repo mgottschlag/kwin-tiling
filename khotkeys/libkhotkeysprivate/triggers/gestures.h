@@ -11,21 +11,18 @@
 #ifndef _GESTURES_H_
 #define _GESTURES_H_
 
-#include <QWidget>
-#include <QTimer>
-#include <QMap>
+#include <QtCore/QTimer>
+#include <QtCore/QMap>
 #include <QtCore/QPointer>
+#include <QtGui/QWidget>
+#include <QtGui/qwindowdefs.h>
 
+#include "windows_handler.h"
 
-#include <X11/Xlib.h>
-#include <fixx11h.h>
-
-#include "windows.h"
-
-namespace KHotKeys
-{
+namespace KHotKeys {
 
 class Gesture;
+
 KDE_EXPORT extern QPointer<Gesture> gesture_handler;
 
 class KDE_EXPORT Stroke
@@ -115,10 +112,6 @@ class DeleteObject
         QWidget* widget;
     };
 
-
-//***************************************************************************
-// Inline
-//***************************************************************************
 
 } // namespace KHotKeys
 

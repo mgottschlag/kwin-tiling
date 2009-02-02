@@ -1,5 +1,6 @@
-/*
-   Copyright (C) 2008 Michael Jansen <kde@michael-jansen.biz>
+#ifndef WINDOW_DEFINITION_H
+#define WINDOW_DEFINITION_H
+/* Copyright (C) 2008 Michael Jansen <kde@michael-jansen.biz>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -16,55 +17,63 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
-#ifndef SHORTCUT_TRIGGER_WIDGET_H
-#define SHORTCUT_TRIGGER_WIDGET_H
 
-#include "trigger_widget_base.h"
-#include "ui_shortcut_trigger_widget.h"
+#include "hotkeys_widget_iface.h"
 
-class QKeySequence;
+#include "qwindowdefs.h"
+#include <QtGui/QWidget>
+
+
+namespace Ui {
+    class WindowDefinitionWidget;
+}
+
+namespace KHotKeys {
+    class Windowdef_simple;
+}
+
 
 /**
  * @author Michael Jansen <kde@michael-jansen.biz>
  */
-class ShortcutTriggerWidget : public TriggerWidgetBase
+class WindowDefinitionWidget : public HotkeysWidgetIFace
     {
     Q_OBJECT
-
-    typedef TriggerWidgetBase Base;
 
 public:
 
     /**
      * Default constructor
      */
-    ShortcutTriggerWidget( KHotKeys::ShortcutTrigger *trigger, QWidget *parent = 0 );
+    WindowDefinitionWidget(KHotKeys::Windowdef_simple *windowdef, QWidget *parent = NULL);
 
     /**
      * Destructor
      */
-    virtual ~ShortcutTriggerWidget();
+    virtual ~WindowDefinitionWidget();
 
-    KHotKeys::ShortcutTrigger *trigger();
-    const KHotKeys::ShortcutTrigger *trigger() const;
+    bool isChanged() const;
 
+protected:
 
-    virtual bool isChanged() const;
+    void doCopyFromObject();
+    void doCopyToObject();
 
 private Q_SLOTS:
 
-    //! Invoked if the global shortcut is changed for the corresponding
-    //  shortcut trigger
-    void _k_globalShortcutChanged(const QKeySequence &);
+    void slotWindowClassChanged(int);
+    void slotWindowRoleChanged(int);
+    void slotWindowTitleChanged(int);
+
+    void slotAutoDetect();
+    void slotWindowSelected(WId);
 
 private:
 
-    virtual void doCopyFromObject();
-    virtual void doCopyToObject();
+    Ui::WindowDefinitionWidget *ui;
 
-
-    Ui::ShortcutTriggerWidget shortcut_trigger_ui;
-
+    KHotKeys::Windowdef_simple *_windowdef;
 };
 
-#endif /* #ifndef SHORTCUT_TRIGGER_WIDGET_H */
+
+#endif /* #ifndef WINDOW_DEFINITION_H */

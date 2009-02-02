@@ -30,9 +30,9 @@
 ShortcutTriggerWidget::ShortcutTriggerWidget( KHotKeys::ShortcutTrigger *trigger, QWidget *parent )
     : TriggerWidgetBase(trigger, parent)
     {
-    shortcut_action_ui.setupUi(this);
+    shortcut_trigger_ui.setupUi(this);
 
-    shortcut_action_ui.shortcut->setCheckForConflictsAgainst(
+    shortcut_trigger_ui.shortcut->setCheckForConflictsAgainst(
         // Don't know why that is necessary but it doesn't compile
         // without.
         KKeySequenceWidget::ShortcutTypes(
@@ -40,9 +40,9 @@ ShortcutTriggerWidget::ShortcutTriggerWidget( KHotKeys::ShortcutTrigger *trigger
                 | KKeySequenceWidget::StandardShortcuts ));
 
     connect(
-        shortcut_action_ui.shortcut, SIGNAL(keySequenceChanged(QKeySequence)),
+        shortcut_trigger_ui.shortcut, SIGNAL(keySequenceChanged(QKeySequence)),
         _changedSignals, SLOT(map()) );
-    _changedSignals->setMapping(shortcut_action_ui.shortcut, "shortcut" );
+    _changedSignals->setMapping(shortcut_trigger_ui.shortcut, "shortcut" );
 
     // If the global shortcuts is changed outside of the dialog just copy the
     // new key sequencence. It doesn't matter if the user changed the sequence
@@ -50,8 +50,6 @@ ShortcutTriggerWidget::ShortcutTriggerWidget( KHotKeys::ShortcutTrigger *trigger
     connect(
         trigger, SIGNAL(globalShortcutChanged(const QKeySequence&)),
         this, SLOT(_k_globalShortcutChanged(const QKeySequence&)) );
-
-    copyFromObject();
     }
 
 
@@ -75,27 +73,27 @@ const KHotKeys::ShortcutTrigger *ShortcutTriggerWidget::trigger() const
 void ShortcutTriggerWidget::doCopyFromObject()
     {
     Q_ASSERT(trigger());
-    shortcut_action_ui.shortcut->setKeySequence( trigger()->shortcut().primary() );
+    shortcut_trigger_ui.shortcut->setKeySequence( trigger()->shortcut().primary() );
     }
 
 
 void ShortcutTriggerWidget::doCopyToObject()
     {
     Q_ASSERT(trigger());
-    trigger()->set_key_sequence( shortcut_action_ui.shortcut->keySequence());
+    trigger()->set_key_sequence( shortcut_trigger_ui.shortcut->keySequence());
     }
 
 
 bool ShortcutTriggerWidget::isChanged() const
     {
     Q_ASSERT(trigger());
-    return trigger()->shortcut().primary() != shortcut_action_ui.shortcut->keySequence();
+    return trigger()->shortcut().primary() != shortcut_trigger_ui.shortcut->keySequence();
     }
 
 
 void ShortcutTriggerWidget::_k_globalShortcutChanged(const QKeySequence &seq)
     {
-    shortcut_action_ui.shortcut->setKeySequence(seq);
+    shortcut_trigger_ui.shortcut->setKeySequence(seq);
     }
 
 

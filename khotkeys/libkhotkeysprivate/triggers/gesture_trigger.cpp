@@ -20,7 +20,7 @@
 #include "triggers/triggers.h"
 #include "action_data/action_data.h"
 #include "triggers/gestures.h"
-#include "windows.h"
+#include "windows_handler.h"
 
 #include <KDE/KConfigGroup>
 #include <KDE/KDebug>

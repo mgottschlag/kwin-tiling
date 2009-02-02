@@ -47,6 +47,11 @@ set(khotkeysprivate_SRCS
     # triggers/voice_trigger.cpp
     triggers/window_trigger.cpp
 
+    # WINDOWS_HELPER
+    windows_helper/window_selection_rules.cpp
+    windows_helper/window_selection_list.cpp
+    windows_helper/window_selection_interface.cpp
+
     # DAEMON
     daemon/daemon.h
     daemon/daemon.cpp
@@ -55,12 +60,12 @@ set(khotkeysprivate_SRCS
     khotkeysglobal.cpp
     settings.cpp
     shortcuts_handler.cpp
+    windows_handler.cpp
     # search for FIXME: SOUND
     # sound.cpp
     # soundrecorder.cpp
     # voices.cpp
     # voicesignature.cpp
-    windows.cpp
 )
 
 kde4_add_library(khotkeysprivate SHARED ${khotkeysprivate_SRCS})

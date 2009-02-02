@@ -17,7 +17,8 @@
 */
 
 #include "actions.h"
-#include "windows.h"
+#include "windows_handler.h"
+#include "windows_helper/window_selection_list.h"
 
 #include <KDE/KConfigGroup>
 

@@ -23,11 +23,11 @@ class QObject;
 namespace KHotKeys
 {
 
-class Windows;
+class WindowsHandler;
 class ShortcutsHandler;
 
 extern QPointer<ShortcutsHandler> keyboard_handler;
-extern QPointer<Windows> windows_handler;
+extern QPointer<WindowsHandler> windows_handler;
 
 // CHECKME hmms :(
 KDE_EXPORT bool khotkeys_active();

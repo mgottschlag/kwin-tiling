@@ -23,6 +23,7 @@
 #include "actions/dbus_action_widget.h"
 #include "actions/menuentry_action_widget.h"
 #include "triggers/shortcut_trigger_widget.h"
+#include "triggers/window_trigger_widget.h"
 
 #include <KDE/KDebug>
 
@@ -103,6 +104,10 @@ void SimpleActionDataWidget::setActionData( KHotKeys::SimpleActionData* pData )
                 currentTrigger = new ShortcutTriggerWidget( static_cast<KHotKeys::ShortcutTrigger*>(trg) );
                 break;
 
+            case KHotKeys::Trigger::WindowTriggerType:
+                currentTrigger = new WindowTriggerWidget( static_cast<KHotKeys::WindowTrigger*>(trg) );
+                break;
+
             default:
                 kDebug() << "Unknown trigger type";
             };
@@ -111,6 +116,7 @@ void SimpleActionDataWidget::setActionData( KHotKeys::SimpleActionData* pData )
     Q_ASSERT( ui.triggerBox->layout() );
     if (currentTrigger )
         {
+        kDebug() << "Connecting";
         connect(
             currentTrigger, SIGNAL(changed(bool)),
             this, SLOT(slotChanged() ));

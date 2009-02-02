@@ -16,6 +16,11 @@
 #include "action_data/menuentry_shortcut_action_data.h"
 #include "action_data/command_url_shortcut_action_data.h"
 
+#include "triggers/triggers.h"
+#include "conditions/conditions.h"
+
+#include "windows_helper/window_selection_list.h"
+
 #include <kconfig.h>
 #include <kconfiggroup.h>
 #include <kdebug.h>
@@ -23,9 +28,6 @@
 #include <klocale.h>
 #include <kglobal.h>
 #include <kmessagebox.h>
-
-#include "triggers/triggers.h"
-#include "conditions/conditions.h"
 
 namespace KHotKeys
 {

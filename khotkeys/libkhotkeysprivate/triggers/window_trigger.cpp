@@ -19,7 +19,8 @@
 
 #include "triggers/triggers.h"
 #include "action_data/action_data.h"
-#include "windows.h"
+#include "windows_handler.h"
+#include "windows_helper/window_selection_list.h"
 
 #include <KDE/KConfigGroup>
 #include <KDE/KDebug>
@@ -28,22 +29,33 @@
 
 namespace KHotKeys {
 
-WindowTrigger::WindowTrigger( ActionData* data_P, Windowdef_list* windows_P,
-     int window_actions_P )
-    : Trigger( data_P ), _windows( windows_P ), window_actions( window_actions_P ),
-      last_active_window( None ), active( false )
+WindowTrigger::WindowTrigger(
+        ActionData* data_P,
+        Windowdef_list* windows_P,
+        WindowEvents window_actions_P)
+    :   Trigger( data_P ),
+        _windows( windows_P ),
+        window_actions( window_actions_P ),
+        last_active_window( None ),
+        active( true )
     {
     init();
+    if (!_windows)
+        {
+        _windows = new Windowdef_list( "Windowdef_list comment");
+        }
     }
 
 
-WindowTrigger::WindowTrigger( KConfigGroup& cfg_P, ActionData* data_P )
-    : Trigger( cfg_P, data_P ), active( false )
+WindowTrigger::WindowTrigger(
+        KConfigGroup& cfg_P,
+        ActionData* data_P)
+    :   Trigger( cfg_P, data_P ),
+        active( true )
     {
-//    kDebug() << "WindowTrigger";
     KConfigGroup windowsConfig( cfg_P.config(), cfg_P.name() + "Windows" );
     _windows = new Windowdef_list( windowsConfig );
-    window_actions = cfg_P.readEntry( "WindowActions",0 );
+    window_actions = WindowEvents(cfg_P.readEntry( "WindowActions", 0 ));
     init();
     }
 
@@ -54,6 +66,7 @@ WindowTrigger::~WindowTrigger()
     disconnect( windows_handler, NULL, this, NULL );
     delete _windows;
     }
+
 
 void WindowTrigger::init()
     {
@@ -70,6 +83,7 @@ void WindowTrigger::init()
 
 void WindowTrigger::activate( bool activate_P )
     {
+    kDebug() << activate_P;
     active = activate_P && khotkeys_active();
     }
 
@@ -79,6 +93,7 @@ void WindowTrigger::active_window_changed( WId window_P )
     bool was_match = false;
     if( existing_windows.contains( last_active_window ))
         was_match = existing_windows[ last_active_window ];
+    kDebug() << window_actions << ( window_actions & WINDOW_DEACTIVATES );
     if( active && was_match && ( window_actions & WINDOW_DEACTIVATES ))
         {
         windows_handler->set_action_window( window_P );
@@ -88,8 +103,12 @@ void WindowTrigger::active_window_changed( WId window_P )
     existing_windows[ window_P ] = matches;*/
     bool matches = existing_windows.contains( window_P )
         ? existing_windows[ window_P ] : false;
+    kDebug() << "Active: " << active;
+    kDebug() << "matches: "  << matches;
+    kDebug() << window_actions << bool( window_actions & WINDOW_ACTIVATES );
     if( active && matches && ( window_actions & WINDOW_ACTIVATES ))
         {
+        kDebug() << "Executing data";
         windows_handler->set_action_window( window_P );
         data->execute();
         }
@@ -102,8 +121,11 @@ void WindowTrigger::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     KConfigGroup windowsConfig( cfg_P.config(), cfg_P.name() + "Windows" );
-    windows()->cfg_write( windowsConfig );
-    cfg_P.writeEntry( "WindowActions", window_actions );
+    if (windows())
+        {
+        windows()->cfg_write( windowsConfig );
+        }
+    cfg_P.writeEntry( "WindowActions", static_cast<int>(window_actions));
     cfg_P.writeEntry( "Type", "WINDOW" ); // overwrites value set in base::cfg_write()
     }
 
@@ -111,6 +133,12 @@ void WindowTrigger::cfg_write( KConfigGroup& cfg_P ) const
 const QString WindowTrigger::description() const
     {
     return i18n( "Window trigger: " ) + windows()->comment();
+    }
+
+
+void WindowTrigger::setOnWindowEvents(WindowEvents events)
+    {
+    window_actions = events;
     }
 
 
@@ -182,6 +210,12 @@ void WindowTrigger::window_changed( WId window_P, unsigned int dirty_P )
 
 
 const Windowdef_list* WindowTrigger::windows() const
+    {
+    return _windows;
+    }
+
+
+Windowdef_list* WindowTrigger::windows()
     {
     return _windows;
     }
