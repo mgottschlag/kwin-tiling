@@ -1,7 +1,6 @@
-#ifndef SHORTCUT_TRIGGER_WIDGET_H
-#define SHORTCUT_TRIGGER_WIDGET_H
-/*
-   Copyright (C) 2008 Michael Jansen <kde@michael-jansen.biz>
+#ifndef EDIT_GESTURE_DIALOG_H
+#define EDIT_GESTURE_DIALOG_H
+/* Copyright (C) 2009 Michael Jansen <kde@michael-jansen.biz>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -19,52 +18,41 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include "trigger_widget_base.h"
-#include "ui_shortcut_trigger_widget.h"
+#include "helper_widgets/gesture_recorder.h"
 
-class QKeySequence;
+#include <KDE/KDialog>
 
 /**
  * @author Michael Jansen <kde@michael-jansen.biz>
  */
-class ShortcutTriggerWidget : public TriggerWidgetBase
+class EditGestureDialog : public KDialog
     {
     Q_OBJECT
-
-    typedef TriggerWidgetBase Base;
 
 public:
 
     /**
      * Default constructor
      */
-    ShortcutTriggerWidget(KHotKeys::ShortcutTrigger *trigger, QWidget *parent = NULL);
+    EditGestureDialog(const QString &gestureCode, QWidget *parent=NULL);
 
     /**
      * Destructor
      */
-    virtual ~ShortcutTriggerWidget();
+    virtual ~EditGestureDialog();
 
-    KHotKeys::ShortcutTrigger *trigger();
-    const KHotKeys::ShortcutTrigger *trigger() const;
-
-
-    virtual bool isChanged() const;
+    QString gestureCode() const;
 
 private Q_SLOTS:
 
-    //! Invoked if the global shortcut is changed for the corresponding
-    //  shortcut trigger
-    void _k_globalShortcutChanged(const QKeySequence &);
+    void recorded(const QString &);
 
 private:
 
-    virtual void doCopyFromObject();
-    virtual void doCopyToObject();
-
-
-    Ui::ShortcutTriggerWidget shortcut_trigger_ui;
+    GestureRecorder _recorder;
+    QString _code;
 
 };
 
-#endif /* #ifndef SHORTCUT_TRIGGER_WIDGET_H */
+
+#endif /* #ifndef EDIT_GESTURE_DIALOG_H */

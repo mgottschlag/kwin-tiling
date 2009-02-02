@@ -233,7 +233,7 @@ class KDE_EXPORT GestureTrigger
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual Trigger* copy( ActionData* data_P ) const;
         virtual const QString description() const;
-        const QString& gesturecode() const;
+        const QString& gestureCode() const;
         virtual void activate( bool activate_P );
 
         virtual TriggerType type() const { return GestureTriggerType; }

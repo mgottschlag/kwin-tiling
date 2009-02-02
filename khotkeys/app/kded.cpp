@@ -68,6 +68,7 @@ void KHotKeysModule::reread_configuration()
     _settings.read_settings( false );
     KHotKeys::gesture_handler->set_mouse_button( _settings.gestureMouseButton() );
     KHotKeys::gesture_handler->set_timeout( _settings.gestureTimeOut() );
+    kDebug() << _settings.areGesturesDisabled();
     KHotKeys::gesture_handler->enable( !_settings.areGesturesDisabled() );
     KHotKeys::gesture_handler->set_exclude( _settings.gesturesExclude() );
     // FIXME: SOUND

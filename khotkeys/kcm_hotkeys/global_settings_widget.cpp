@@ -19,6 +19,8 @@
 
 #include "global_settings_widget.h"
 
+#include "settings.h"
+
 #include <KDebug>
 #include <KDesktopFile>
 #include <KGlobal>
@@ -59,6 +61,9 @@ void GlobalSettingsWidget::doCopyFromObject()
         KConfigGroup file(_config, "Desktop Entry");
         ui.enabled->setChecked(file.readEntry("X-KDE-Kded-autoload", false));
         }
+
+    KHotKeys::Settings settings;
+    ui.gestures_enabled->setChecked(settings.areGesturesDisabled());
     }
 
 

@@ -1,0 +1,50 @@
+<ui version="4.0" >
+ <class>GestureWidget</class>
+ <widget class="QWidget" name="GestureWidget" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
+    <widget class="KLineEdit" name="data" />
+   </item>
+   <item>
+    <widget class="GestureDrawer" native="1" name="gesture" />
+   </item>
+   <item>
+    <widget class="QPushButton" name="edit_button" >
+     <property name="text" >
+      <string>Edit</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>klineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GestureDrawer</class>
+   <extends>QWidget</extends>
+   <header>helper_widgets/gesture_drawer.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>data</tabstop>
+  <tabstop>edit_button</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

@@ -44,13 +44,14 @@ namespace KHotKeys
 
 QPointer<Gesture> gesture_handler = NULL;
 
-Gesture::Gesture( bool /*enabled_P*/, QObject* parent_P )
+Gesture::Gesture( bool enabled_P, QObject* parent_P )
         : QWidget(NULL)
         , _enabled( false )
         , recording( false )
         , button( 0 )
         , exclude( NULL )
     {
+    kDebug() << enabled_P;
     (void) new DeleteObject( this, parent_P );
     nostroke_timer.setSingleShot( true );
     connect( &nostroke_timer, SIGNAL( timeout()), SLOT( stroke_timeout()));
@@ -67,6 +68,7 @@ Gesture::~Gesture()
 
 void Gesture::enable( bool enabled_P )
     {
+    kDebug() << enabled_P;
     if( _enabled == enabled_P )
         return;
     _enabled = enabled_P;
@@ -87,6 +89,10 @@ void Gesture::set_exclude( Windowdef_list* windows_P )
 
 void Gesture::update_grab()
     {
+    kDebug() << "Enabled:" << _enabled;
+    kDebug() << "Handler:" << handlers.count();
+    kDebug() << "Exclude:" << exclude << " Match? " << (exclude && exclude->match( Window_data( windows_handler->active_window())));
+
     if( _enabled && handlers.count() > 0
         && ( exclude == NULL || !exclude->match( Window_data( windows_handler->active_window()))))
         {
@@ -198,8 +204,11 @@ void Gesture::mouse_replay( bool release_P )
 
 void Gesture::grab_mouse( bool grab_P )
     {
+    kDebug() << grab_P;
+
     if( grab_P )
         {
+        kDebug() << "gesture grab";
         Q_ASSERT( button != 0 );
         KXErrorHandler handler;
         static int mask[] = { 0, Button1MotionMask, Button2MotionMask, Button3MotionMask,

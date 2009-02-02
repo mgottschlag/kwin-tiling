@@ -128,7 +128,6 @@ class KHotkeysModel : public QAbstractItemModel
 
   private:
 
-
     KHotKeys::Settings _settings;
     KHotKeys::ActionDataGroup *_actions;
 };

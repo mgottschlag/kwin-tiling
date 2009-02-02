@@ -1,7 +1,6 @@
-#ifndef SHORTCUT_TRIGGER_WIDGET_H
-#define SHORTCUT_TRIGGER_WIDGET_H
-/*
-   Copyright (C) 2008 Michael Jansen <kde@michael-jansen.biz>
+#ifndef GESTURE_WIDGET_H
+#define GESTURE_WIDGET_H
+/* Copyright (C) 2009 Michael Jansen <kde@michael-jansen.biz>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -19,52 +18,45 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include "trigger_widget_base.h"
-#include "ui_shortcut_trigger_widget.h"
+#include "ui_gesture_widget.h"
 
-class QKeySequence;
+#include <QtGui/QWidget>
 
 /**
  * @author Michael Jansen <kde@michael-jansen.biz>
  */
-class ShortcutTriggerWidget : public TriggerWidgetBase
+class GestureWidget : public QWidget
     {
     Q_OBJECT
-
-    typedef TriggerWidgetBase Base;
 
 public:
 
     /**
      * Default constructor
      */
-    ShortcutTriggerWidget(KHotKeys::ShortcutTrigger *trigger, QWidget *parent = NULL);
+    GestureWidget(QWidget *parent = NULL);
 
     /**
      * Destructor
      */
-    virtual ~ShortcutTriggerWidget();
+    virtual ~GestureWidget();
 
-    KHotKeys::ShortcutTrigger *trigger();
-    const KHotKeys::ShortcutTrigger *trigger() const;
+    void setGestureCode(const QString &code);
+    QString gestureCode() const;
 
+public Q_SLOTS:
 
-    virtual bool isChanged() const;
+    void edit();
 
-private Q_SLOTS:
+Q_SIGNALS:
 
-    //! Invoked if the global shortcut is changed for the corresponding
-    //  shortcut trigger
-    void _k_globalShortcutChanged(const QKeySequence &);
+    void changed();
 
 private:
 
-    virtual void doCopyFromObject();
-    virtual void doCopyToObject();
-
-
-    Ui::ShortcutTriggerWidget shortcut_trigger_ui;
+    Ui::GestureWidget ui;
 
 };
 
-#endif /* #ifndef SHORTCUT_TRIGGER_WIDGET_H */
+
+#endif /* #ifndef GESTURE_WIDGET_H */

@@ -288,7 +288,7 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
         }
     int version = mainGroup.readEntry( "Version", -1234576 );
     switch( version )
-        {
+    {
         case 1:
             read_settings_v1( cfg_P );
           break;
@@ -307,7 +307,7 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
         return true; // don't read global settings
     daemon_disabled = mainGroup.readEntry( "Disabled", false);
     KConfigGroup gesturesConfig( &cfg_P, "Gestures" );
-    gestures_disabled = gesturesConfig.readEntry( "Disabled", true);
+    gestures_disabled = gesturesConfig.readEntry( "Disabled", false);
     gesture_mouse_button = gesturesConfig.readEntry( "MouseButton", 2 );
     gesture_mouse_button = qBound( 2, gesture_mouse_button, 9 );
     gesture_timeout = gesturesConfig.readEntry( "Timeout", 300 );

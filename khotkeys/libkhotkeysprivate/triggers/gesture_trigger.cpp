@@ -59,7 +59,7 @@ void GestureTrigger::activate( bool activate_P )
 void GestureTrigger::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
-    cfg_P.writeEntry( "Gesture", gesturecode());
+    cfg_P.writeEntry( "Gesture", gestureCode());
     cfg_P.writeEntry( "Type", "GESTURE" ); // overwrites value set in base::cfg_write()
     }
 
@@ -67,17 +67,17 @@ void GestureTrigger::cfg_write( KConfigGroup& cfg_P ) const
 Trigger* GestureTrigger::copy( ActionData* data_P ) const
     {
     kDebug() << "GestureTrigger::copy()";
-    return new GestureTrigger( data_P ? data_P : data, gesturecode());
+    return new GestureTrigger( data_P ? data_P : data, gestureCode());
     }
 
 
 const QString GestureTrigger::description() const
     {
-    return i18n( "Gesture trigger: " ) + gesturecode();
+    return i18n( "Gesture trigger: " ) + gestureCode();
     }
 
 
-const QString& GestureTrigger::gesturecode() const
+const QString& GestureTrigger::gestureCode() const
     {
     return _gesturecode;
     }
@@ -85,7 +85,7 @@ const QString& GestureTrigger::gesturecode() const
 
 void GestureTrigger::handle_gesture( const QString &gesture_P, WId window_P )
     {
-    if( gesturecode() == gesture_P )
+    if( gestureCode() == gesture_P )
         {
         windows_handler->set_action_window( window_P );
         data->execute();

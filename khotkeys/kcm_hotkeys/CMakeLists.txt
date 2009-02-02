@@ -15,11 +15,16 @@ set(
     helper_widgets/window_selector.cpp
     helper_widgets/window_definition_widget.cpp
     helper_widgets/window_definition_list_widget.cpp
+    helper_widgets/gesture_drawer.cpp
+    helper_widgets/gesture_recorder.cpp
+    helper_widgets/gesture_widget.cpp
+    helper_widgets/edit_gesture_dialog.cpp
 
     # TRIGGER WIDGETS
     triggers/trigger_widget_base.cpp
     triggers/shortcut_trigger_widget.cpp
     triggers/window_trigger_widget.cpp
+    triggers/gesture_trigger_widget.cpp
 
     # ACTION WIDGETS
     actions/action_widget_base.cpp
@@ -47,10 +52,12 @@ kde4_add_ui_files(
     # HELPER WIDGETS
     helper_widgets/window_definition_list_widget.ui
     helper_widgets/window_definition_widget.ui
+    helper_widgets/gesture_widget.ui
 
     # TRIGGER WIDGETS
     triggers/window_trigger_widget.ui
     triggers/shortcut_trigger_widget.ui
+    triggers/gesture_trigger_widget.ui
 
     # ACTION WIDGETS
     actions/command_url_action_widget.ui
