@@ -29,7 +29,7 @@ class KDE_EXPORT Windowdef_list : public QList< Windowdef* >
     Q_DISABLE_COPY( Windowdef_list )
 
     public:
-        Windowdef_list( const QString& comment = QString() );
+        Windowdef_list( const QString& comment = "" );
         Windowdef_list( KConfigGroup& cfg_P/*, ActionDataBase* data_P*/ );
 
         ~Windowdef_list();

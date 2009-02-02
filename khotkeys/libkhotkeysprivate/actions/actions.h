@@ -233,25 +233,48 @@ class KDE_EXPORT KeyboardInputAction
     {
     typedef Action base;
     public:
+
+        /**
+         * Where should we send the data too
+         */
+        enum DestinationWindow
+            {
+            ActiveWindow,
+            SpecificWindow,
+            ActionWindow
+            };
+
         KeyboardInputAction( ActionData* data_P, const QString& input_P,
-            const Windowdef_list* dest_window_P, bool active_window_P );
+            Windowdef_list* dest_window_P, bool active_window_P );
         KeyboardInputAction( KConfigGroup& cfg_P, ActionData* data_P );
         virtual ~KeyboardInputAction();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual void execute();
+
+
         const QString& input() const;
+        void setInput(const QString &input);
+
         // send to specific window: dest_window != NULL
         // send to active window: dest_window == NULL && activeWindow() == true
         // send to action window: dest_window == NULL && activeWindow() == false
+        //
+
+        DestinationWindow destination() const;
+        void setDestination(const DestinationWindow &dest);
+
         const Windowdef_list* dest_window() const;
+        Windowdef_list* dest_window();
         bool activeWindow() const;
         virtual const QString description() const;
         virtual Action* copy( ActionData* data_P ) const;
         virtual ActionType type() { return KeyboardInputActionType; }
     private:
         QString _input;
-        const Windowdef_list* _dest_window;
-        bool _active_window;
+        Windowdef_list* _dest_window;
+
+        //! Which window should get the input
+        DestinationWindow _destination;
     };
 
 class KDE_EXPORT ActivateWindowAction

@@ -26,6 +26,7 @@ set(
     actions/command_url_action_widget.cpp
     actions/dbus_action_widget.cpp
     actions/menuentry_action_widget.cpp
+    actions/keyboard_input_action_widget.cpp
 
     # CONDITION WiDGETS
     conditions/conditions_widget.cpp
@@ -55,6 +56,7 @@ kde4_add_ui_files(
     actions/command_url_action_widget.ui
     actions/dbus_action_widget.ui
     actions/menuentry_action_widget.ui
+    actions/keyboard_input_action_widget.ui
 
     # CONDITION WiDGETS
     conditions/conditions_widget.ui

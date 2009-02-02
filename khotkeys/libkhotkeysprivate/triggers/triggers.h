@@ -158,6 +158,8 @@ class KDE_EXPORT ShortcutTrigger
 
         //! A persistent identifier for this shortcut
         QUuid _uuid;
+
+        bool _conditions_met;
     };
 
 

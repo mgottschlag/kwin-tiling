@@ -64,7 +64,6 @@ BuildTree::BuildTree( QTreeWidget *tree )
 
 void BuildTree::visitCondition(KHotKeys::Condition *cond)
     {
-        kDebug();
     QTreeWidgetItem *item = new QTreeWidgetItem(_stack.top());
     item->setText(0, cond->description());
     _items.insert(item, cond);
@@ -214,9 +213,8 @@ bool ConditionsWidget::hasChanges() const
 
 void ConditionsWidget::setConditionsList( KHotKeys::Condition_list *list)
     {
-    if (!list) list = new KHotKeys::Condition_list( "Condition list", NULL);
+    Q_ASSERT(list);
     _conditions_list = list;
-
     copyFromObject();
     }
 
@@ -337,7 +335,6 @@ void ConditionsWidget::slotNew(QAction* action)
                     QTreeWidgetItem *item = new QTreeWidgetItem(citem);
                     item->setText(0, cond->description());
                     _items.insert(item, cond);
-                    kDebug() << parent->count();
                     }
                     break;
 
@@ -366,7 +363,6 @@ void ConditionsWidget::slotNew(QAction* action)
                     QTreeWidgetItem *item = new QTreeWidgetItem(citem);
                     item->setText(0, cond->description());
                     _items.insert(item, cond);
-                    kDebug() << parent->count();
                     }
                     break;
 

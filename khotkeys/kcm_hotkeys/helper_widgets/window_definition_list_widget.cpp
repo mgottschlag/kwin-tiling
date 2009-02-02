@@ -22,14 +22,41 @@
 
 #include "kdebug.h"
 
-
-WindowDefinitionListWidget::WindowDefinitionListWidget(KHotKeys::Windowdef_list *windowdef, QWidget *parent)
+WindowDefinitionListWidget::WindowDefinitionListWidget(QWidget *parent)
     :   HotkeysWidgetIFace(parent)
-        ,_windowdefs(windowdef)
-        ,_working(windowdef->copy())
+        ,_windowdefs(NULL)
+        ,_working(NULL)
         ,_changed(false)
     {
     ui.setupUi(this);
+
+    connect(
+            ui.edit_button, SIGNAL(clicked(bool)),
+            SLOT(slotEdit(bool)));
+
+    connect(
+            ui.delete_button, SIGNAL(clicked(bool)),
+            SLOT(slotDelete(bool)));
+
+    connect(
+            ui.duplicate_button, SIGNAL(clicked(bool)),
+            SLOT(slotDuplicate(bool)));
+
+    connect(
+            ui.new_button, SIGNAL(clicked(bool)),
+            SLOT(slotNew(bool)));
+    }
+
+
+WindowDefinitionListWidget::WindowDefinitionListWidget(KHotKeys::Windowdef_list *windowdef, QWidget *parent)
+    :   HotkeysWidgetIFace(parent)
+        ,_windowdefs(NULL)
+        ,_working(NULL)
+        ,_changed(false)
+    {
+    ui.setupUi(this);
+
+    setWindowDefinitions(windowdef);
 
     connect(
             ui.edit_button, SIGNAL(clicked(bool)),
@@ -224,6 +251,15 @@ void WindowDefinitionListWidget::slotNew(bool)
             Q_ASSERT(false);
             delete sim;
         }
+    }
+
+
+void WindowDefinitionListWidget::setWindowDefinitions(KHotKeys::Windowdef_list *list)
+    {
+    Q_ASSERT(list);
+    _windowdefs = list;
+    if (_working) delete _working;
+    _working = list->copy();
     }
 
 #include "moc_window_definition_list_widget.cpp"

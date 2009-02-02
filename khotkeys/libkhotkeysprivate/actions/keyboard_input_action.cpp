@@ -25,6 +25,7 @@
 #include "windows_helper/window_selection_list.h"
 
 #include <KDE/KConfigGroup>
+#include <KDE/KDebug>
 
 // #include <X11/X.h>
 #include <X11/Xlib.h>
@@ -35,28 +36,75 @@
 
 namespace KHotKeys {
 
-KeyboardInputAction::KeyboardInputAction( ActionData* data_P, const QString& input_P,
-    const Windowdef_list* dest_window_P, bool active_window_P )
-    : Action( data_P ), _input( input_P ), _dest_window( dest_window_P ), _active_window( active_window_P )
+KeyboardInputAction::KeyboardInputAction(
+        ActionData* data_P,
+        const QString& input_P,
+        Windowdef_list* dest_window_P,
+        bool active_window_P)
+    :   Action( data_P ),
+        _input( input_P ),
+        _dest_window( dest_window_P )
     {
+    if (dest_window_P) _destination = SpecificWindow;
+    else if (active_window_P) _destination = ActiveWindow;
+    else _destination = ActionWindow;
+
+    if (!_dest_window) _dest_window = new Windowdef_list;
     }
 
 
-KeyboardInputAction::KeyboardInputAction( KConfigGroup& cfg_P, ActionData* data_P )
-    : Action( cfg_P, data_P )
+KeyboardInputAction::KeyboardInputAction(
+        KConfigGroup& cfg_P,
+        ActionData* data_P)
+    :   Action( cfg_P, data_P ),
+        _dest_window(NULL)
     {
     _input = cfg_P.readEntry( "Input" );
-    if( cfg_P.readEntry( "IsDestinationWindow" , false))
+    
+    // Try the new format with DestinationWindow
+    int destination = cfg_P.readEntry( "DestinationWindow", -1);
+
+    switch (destination)
         {
-        KConfigGroup windowGroup( cfg_P.config(), cfg_P.name() + "DestinationWindow" );
-        _dest_window = new Windowdef_list( windowGroup );
-        _active_window = false; // ignored with _dest_window set anyway
+        case SpecificWindow:
+            {
+            KConfigGroup windowGroup( cfg_P.config(), cfg_P.name() + "DestinationWindow" );
+            _dest_window = new Windowdef_list( windowGroup );
+            _destination = SpecificWindow;
+            }
+            break;
+
+        case ActionWindow:
+            _destination = ActionWindow;
+            break;
+
+        case ActiveWindow:
+            _destination = ActiveWindow;
+            break;
+
+        case -1:
+            {
+            // Old format
+            if(cfg_P.readEntry( "IsDestinationWindow" , false))
+                {
+                KConfigGroup windowGroup( cfg_P.config(), cfg_P.name() + "DestinationWindow" );
+                _dest_window = new Windowdef_list( windowGroup );
+                _destination = SpecificWindow;
+                }
+            else
+                {
+                if (cfg_P.readEntry( "ActiveWindow" , false)) _destination = ActiveWindow;
+                else _destination = ActionWindow;
+                }
+            }
+            break;
+
+        default:
+            Q_ASSERT(false);
+            _destination = ActionWindow;
         }
-    else
-        {
-        _dest_window = NULL;
-        _active_window = cfg_P.readEntry( "ActiveWindow" , false);
-        }
+
+    if (!_dest_window) _dest_window = new Windowdef_list;
     }
 
 
@@ -72,15 +120,33 @@ const QString& KeyboardInputAction::input() const
     }
 
 
+void KeyboardInputAction::setDestination(const DestinationWindow & dest)
+    {
+    _destination = dest;
+    }
+
+
+void KeyboardInputAction::setInput(const QString &input)
+    {
+    _input = input;
+    }
+
+
 const Windowdef_list* KeyboardInputAction::dest_window() const
     {
     return _dest_window;
     }
 
 
-bool KeyboardInputAction::activeWindow() const
+Windowdef_list* KeyboardInputAction::dest_window()
     {
-    return _active_window;
+    return _dest_window;
+    }
+
+
+KeyboardInputAction::DestinationWindow KeyboardInputAction::destination() const
+    {
+    return _destination;
     }
 
 
@@ -89,36 +155,49 @@ void KeyboardInputAction::cfg_write( KConfigGroup& cfg_P ) const
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "KEYBOARD_INPUT" ); // overwrites value set in base::cfg_write()
     cfg_P.writeEntry( "Input", input());
-    if( dest_window() != NULL )
+
+    cfg_P.writeEntry( "DestinationWindow", int(_destination) );
+
+    if( _destination == SpecificWindow && dest_window() != NULL )
         {
-        cfg_P.writeEntry( "IsDestinationWindow", true );
         KConfigGroup windowGroup( cfg_P.config(), cfg_P.name() + "DestinationWindow" );
         dest_window()->cfg_write( windowGroup );
         }
-    else
-        cfg_P.writeEntry( "IsDestinationWindow", false );
-    cfg_P.writeEntry( "ActiveWindow", _active_window );
     }
 
 
 void KeyboardInputAction::execute()
     {
+    kDebug();
+
     if( input().isEmpty())
+        {
+        kDebug() << "Input is empty";
         return;
+        }
+
     Window w = InputFocus;
-    if( dest_window() != NULL )
+    switch (_destination)
         {
-        w = windows_handler->find_window( dest_window());
-        if( w == None )
-            w = InputFocus;
-        }
-    else
-        {
-        if( !_active_window )
+        case SpecificWindow:
+            Q_ASSERT(dest_window());
+            w = windows_handler->find_window(dest_window());
+            if (w == None) w = InputFocus;
+            break;
+
+        case ActionWindow:
             w = windows_handler->action_window();
-        if( w == None )
-            w = InputFocus;
+            if (w == None) w = InputFocus;
+            break;
+
+        case ActiveWindow:
+            // Nothing to do because w is InputFocus already
+            break;
+
+        default:
+            Q_ASSERT(false);
         }
+
     int last_index = -1, start = 0;
     while(( last_index = input().indexOf( ':', last_index + 1 )) != -1 ) // find next ';'
         {
@@ -144,8 +223,11 @@ const QString KeyboardInputAction::description() const
 
 Action* KeyboardInputAction::copy( ActionData* data_P ) const
     {
-    return new KeyboardInputAction( data_P, input(),
-        dest_window() ? dest_window()->copy() : NULL, _active_window );
+    return new KeyboardInputAction(
+            data_P,
+            input(),
+            dest_window() ? dest_window()->copy() : NULL,
+            _destination == ActiveWindow);
     }
 
 } // namespace KHotKeys

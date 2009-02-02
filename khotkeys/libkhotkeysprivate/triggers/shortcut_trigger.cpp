@@ -33,7 +33,7 @@ ShortcutTrigger::ShortcutTrigger(
         ActionData* data_P,
         const KShortcut& shortcut,
         const QUuid &uuid )
-    : Trigger( data_P ), _uuid(uuid)
+    : Trigger( data_P ), _uuid(uuid), _conditions_met(false)
     {
     QString name;
     if (data_P)
@@ -58,15 +58,16 @@ ShortcutTrigger::ShortcutTrigger(
 ShortcutTrigger::ShortcutTrigger(
         KConfigGroup& cfg_P
        ,ActionData* data_P )
-    : Trigger( cfg_P, data_P )
-     ,_uuid( cfg_P.readEntry( "Uuid", QUuid::createUuid().toString()))
+    :   Trigger( cfg_P, data_P ),
+        _uuid( cfg_P.readEntry( "Uuid", QUuid::createUuid().toString())),
+        _conditions_met(true)
     {
     QString shortcutString = cfg_P.readEntry( "Key" );
 
     // TODO: Check if this is still necessary
     shortcutString.replace("Win+", "Meta+"); // Qt4 doesn't parse Win+, avoid a shortcut without modifier
 
-    KAction *act = keyboard_handler->addAction( 
+    KAction *act = keyboard_handler->addAction(
         _uuid,
         data_P->name(),
         KShortcut(shortcutString));
@@ -104,11 +105,11 @@ void ShortcutTrigger::activate( bool activate_P )
     kDebug() << activate_P << " and " << khotkeys_active();
     if( activate_P && khotkeys_active())
         {
-        kDebug() << "TODO implement activate";
+        _conditions_met = true;
         }
     else
         {
-        kDebug() << "TODO implement activate";
+        _conditions_met = false;
         }
     }
 
@@ -131,9 +132,7 @@ ShortcutTrigger* ShortcutTrigger::copy( ActionData* data_P ) const
 
 const QString ShortcutTrigger::description() const
     {
-    // CHECKME vice mods
     return i18n( "Shortcut trigger: " ) + shortcut().toString();
-    // CHECKME i18n pro toString() ?
     }
 
 
@@ -167,8 +166,11 @@ KShortcut ShortcutTrigger::shortcut() const
 void ShortcutTrigger::trigger()
     {
     kDebug() << data->name() << " was triggered";
-    windows_handler->set_action_window( 0 ); // use active window
-    data->execute();
+    if (_conditions_met)
+        {
+        windows_handler->set_action_window( 0 ); // use active window
+        data->execute();
+        }
     }
 
 

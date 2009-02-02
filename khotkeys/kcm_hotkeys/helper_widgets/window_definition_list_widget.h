@@ -40,12 +40,16 @@ public:
      */
     WindowDefinitionListWidget(
             KHotKeys::Windowdef_list *windowdef_list,
-            QWidget *parent);
+            QWidget *parent = NULL);
+
+    WindowDefinitionListWidget(QWidget *parent);
 
     /**
      * Destructor
      */
     virtual ~WindowDefinitionListWidget();
+
+    void setWindowDefinitions(KHotKeys::Windowdef_list *windowdef_list);
 
     bool isChanged() const;
 

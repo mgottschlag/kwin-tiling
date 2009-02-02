@@ -77,7 +77,7 @@ void Windowdef_list::cfg_write( KConfigGroup& cfg_P ) const
 
 Windowdef_list* Windowdef_list::copy() const
     {
-    Windowdef_list* ret = new Windowdef_list( comment());
+    Windowdef_list* ret = new Windowdef_list(comment());
     for( ConstIterator it(constBegin());
          it!= constEnd();
          ++it)

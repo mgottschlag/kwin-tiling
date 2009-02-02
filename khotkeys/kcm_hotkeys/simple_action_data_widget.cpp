@@ -22,6 +22,7 @@
 #include "actions/command_url_action_widget.h"
 #include "actions/dbus_action_widget.h"
 #include "actions/menuentry_action_widget.h"
+#include "actions/keyboard_input_action_widget.h"
 #include "triggers/shortcut_trigger_widget.h"
 #include "triggers/window_trigger_widget.h"
 
@@ -123,7 +124,7 @@ void SimpleActionDataWidget::setActionData( KHotKeys::SimpleActionData* pData )
         ui.triggerBox->layout()->addWidget(currentTrigger);
         }
 
-    // Now go and work on the trigger
+    // Now go and work on the action
     delete currentAction; currentAction = NULL;
 
     if ( KHotKeys::Action *act = data()->action() )
@@ -140,6 +141,10 @@ void SimpleActionDataWidget::setActionData( KHotKeys::SimpleActionData* pData )
 
             case KHotKeys::Action::CommandUrlActionType:
                 currentAction = new CommandUrlActionWidget( static_cast<KHotKeys::CommandUrlAction*>(act) );
+                break;
+
+            case KHotKeys::Action::KeyboardInputActionType:
+                currentAction = new KeyboardInputActionWidget( static_cast<KHotKeys::KeyboardInputAction*>(act) );
                 break;
 
             default:

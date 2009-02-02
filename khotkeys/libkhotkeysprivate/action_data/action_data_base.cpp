@@ -39,10 +39,16 @@ ActionDataBase::ActionDataBase(
               ,_comment(comment_P)
               ,_enabled(enabled_P)
     {
-    if( parent())
-        parent()->add_child( this );
-    if( _conditions != 0 )
+    if (parent()) parent()->add_child( this );
+
+    if (!_conditions)
+        {
+        _conditions = new Condition_list(QString(), this);
+        }
+    else
+        {
         _conditions->set_data( this );
+        }
     }
 
 
@@ -62,9 +68,12 @@ ActionDataBase::ActionDataBase(
         {
         _conditions = new Condition_list( conditionsConfig, this );
         }
+    else
+        {
+        _conditions = new Condition_list(QString(), this);
+        }
 
-    if (parent())
-        parent()->add_child( this );
+    if (parent()) parent()->add_child( this );
     }
 
 
@@ -92,11 +101,15 @@ void ActionDataBase::cfg_write( KConfigGroup& cfg_P ) const
     cfg_P.writeEntry( "Comment", comment());
     cfg_P.writeEntry( "Enabled", enabled( true ));
 
-    if ( conditions() != 0 )
+    if (conditions())
         {
         kDebug() << "writing conditions";
         KConfigGroup conditionsConfig( cfg_P.config(), cfg_P.name() + "Conditions" );
         conditions()->cfg_write( conditionsConfig );
+        }
+    else
+        {
+        kDebug() << "No conditions";
         }
     }
 
@@ -146,10 +159,14 @@ ActionDataBase* ActionDataBase::create_cfg_read( KConfigGroup& cfg_P, ActionData
         }
     if( type == "GENERIC_ACTION_DATA" )
         return new Generic_action_data( cfg_P, parent_P );
+#if 0
+    // TODO: Remove KEYBOARD_INPUT_GESTURE_ACTION_DATA
     else if( type == "KEYBOARD_INPUT_GESTURE_ACTION_DATA" )
         return new Keyboard_input_gesture_action_data( cfg_P, parent_P );
+#endif
     else if( type == "SIMPLE_ACTION_DATA"
           || type == "DCOP_SHORTCUT_ACTION_DATA" || type == "DBUS_SHORTCUT_ACTION_DATA"
+          || type == "KEYBOARD_INPUT_GESTURE_ACTION_DATA"
           || type == "MENUENTRY_SHORTCUT_ACTION_DATA"
           || type == "COMMAND_URL_SHORTCUT_ACTION_DATA"
           || type == "KEYBOARD_INPUT_SHORTCUT_ACTION_DATA"
