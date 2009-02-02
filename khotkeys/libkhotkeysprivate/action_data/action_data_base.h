@@ -89,15 +89,6 @@ class KDE_EXPORT ActionDataBase
         ActionDataGroup* parent() const;
 
         /**
-         * Put this action into the group \a new_parent_P. If the action
-         * currently belongs to a group, remove it first. If \a new_parent_P
-         * is 0 the action will be removed from its group.
-         *
-         * \param new_parent_P New group or 0.
-         */
-        void reparent( ActionDataGroup* new_parent_P );
-
-        /**
          * \todo document this method
          */
         virtual void update_triggers() = 0;
@@ -148,6 +139,8 @@ class KDE_EXPORT ActionDataBase
         void set_conditions(Condition_list* conditions_P);
 
     private:
+
+        friend class ActionDataGroup;
 
         //! The parent or NULL
         ActionDataGroup* _parent;

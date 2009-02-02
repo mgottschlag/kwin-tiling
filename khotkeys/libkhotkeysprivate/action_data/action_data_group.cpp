@@ -88,7 +88,7 @@ Trigger::TriggerTypes ActionDataGroup::allowedTriggerTypes() const
 
 bool ActionDataGroup::is_system_group() const
     {
-    return _system_group != SYSTEM_NONE;
+    return _system_group != SYSTEM_NONE and _system_group != SYSTEM_ROOT;
     }
 
 
@@ -102,7 +102,33 @@ void ActionDataGroup::add_child(ActionDataBase* child_P)
     {
     // Just make sure we don't get the same child twice
     Q_ASSERT(!_list.contains(child_P));
+    if (_list.contains(child_P)) return;
+
+    if (child_P->parent())
+        {
+        child_P->parent()->remove_child( child_P );
+        }
+
+    child_P->_parent = this;
+
     _list.append( child_P );
+    }
+
+
+void ActionDataGroup::add_child(ActionDataBase* child_P, int position)
+    {
+    // Just make sure we don't get the same child twice
+    Q_ASSERT(!_list.contains(child_P));
+    if (_list.contains(child_P)) return;
+
+    if (child_P->parent())
+        {
+        child_P->parent()->remove_child( child_P );
+        }
+
+    child_P->_parent = this;
+
+    _list.insert( position, child_P );
     }
 
 
@@ -123,6 +149,7 @@ const QList<ActionDataBase*> ActionDataGroup::children() const
 
 void ActionDataGroup::remove_child( ActionDataBase* child_P )
     {
+    child_P->_parent = NULL;
     _list.removeAll( child_P ); // is not auto-delete
     }
 

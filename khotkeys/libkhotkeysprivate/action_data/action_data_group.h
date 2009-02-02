@@ -104,15 +104,16 @@ class KDE_EXPORT ActionDataGroup
         // CHECKME : Why this?
         using ActionDataBase::set_conditions; // make public
 
-    protected:
-
-        friend class ActionDataBase;
+        //! Add a child to this collection
+        void add_child( ActionDataBase* child_P, int position );
 
         //! Add a child to this collection
         void add_child( ActionDataBase* child_P );
 
         //! Remove a child from this collection
         void remove_child( ActionDataBase* child_P );
+
+    protected:
 
         //! The children
         QList< ActionDataBase* > _list;

@@ -112,7 +112,7 @@ QModelIndex KHotkeysModel::insertActionData(  KHotKeys::ActionDataBase *data, co
 
     beginInsertRows( parent, list->size(), list->size() );
 
-    data->reparent(list);
+    list->add_child(data);
 
     endInsertRows();
     return index( list->size()-1, NameColumn, parent );
@@ -217,10 +217,7 @@ bool KHotkeysModel::dropMimeData(
         ,int column
         ,const QModelIndex &parent)
     {
-    kDebug()
-        << parent.data(Qt::DisplayRole) << ","
-        << row << ","
-        << column;
+    Q_UNUSED(column);
 
     // We only support move actions and our own mime type
     if ( (action!=Qt::CopyAction)
@@ -244,16 +241,23 @@ bool KHotkeysModel::dropMimeData(
     // No pointers, nothing to do
     if (ptrs.empty()) return false;
 
-    // Get the group we have to drop into
+    // Get the group we have to drop into. If the drop target is no group get
+    // it's parent and drop behind it
+    kDebug() << row;
+    int position = row;
     QModelIndex dropIndex = parent;
     KHotKeys::ActionDataGroup *dropToGroup = indexToActionDataGroup(dropIndex);
     if (!dropToGroup)
         {
         dropIndex = parent.parent();
         dropToGroup = indexToActionDataGroup(dropIndex);
+        position = dropToGroup->children().indexOf(indexToActionDataBase(parent));
         }
 
-    kDebug() << "dropping to " << dropToGroup->name();
+    if (position==-1)
+        {
+        position = dropToGroup->size();
+        }
 
     // Do the moves
     Q_FOREACH(quintptr ptr, ptrs)
@@ -262,7 +266,7 @@ bool KHotkeysModel::dropMimeData(
                 reinterpret_cast<void*>(ptr),
                 _actions);
 
-        if (element) moveElement(element, dropToGroup);
+        if (element) moveElement(element, dropToGroup, position);
         }
 
     return true;
@@ -296,24 +300,38 @@ Qt::ItemFlags KHotkeysModel::flags( const QModelIndex &index ) const
     {
     Qt::ItemFlags flags = QAbstractItemModel::flags(index);
 
+    Q_ASSERT(!(flags & Qt::ItemIsDropEnabled));
+    Q_ASSERT(!(flags & Qt::ItemIsDragEnabled));
+
     if (!index.isValid())
         {
             return flags | Qt::ItemIsDropEnabled;
+        }
+
+    KHotKeys::ActionDataBase  *element = indexToActionDataBase(index);
+    KHotKeys::ActionDataGroup *actionGroup = indexToActionDataGroup(index);
+    if (!actionGroup) actionGroup = element->parent();
+
+    Q_ASSERT(element);
+    Q_ASSERT(actionGroup);
+
+    // We do not allow dragging for system groups and their elements
+    // We do not allow dropping into systemgroups
+    if (!actionGroup->is_system_group())
+        {
+        flags |= Qt::ItemIsDragEnabled;
+        flags |= Qt::ItemIsDropEnabled;
         }
 
     switch (index.column())
         {
         case 1:
             return flags
-                | Qt::ItemIsUserCheckable
-                | Qt::ItemIsDragEnabled
-                | Qt::ItemIsDropEnabled;
+                | Qt::ItemIsUserCheckable;
 
         default:
             return flags
-                | Qt::ItemIsEditable
-                | Qt::ItemIsDragEnabled
-                | Qt::ItemIsDropEnabled;
+                | Qt::ItemIsEditable;
         }
     }
 
@@ -418,7 +436,7 @@ QStringList KHotkeysModel::mimeTypes() const
 
 
 bool KHotkeysModel::moveElement(
-        KHotKeys::ActionDataBase *element
+        KHotKeys::ActionDataBase   *element
         ,KHotKeys::ActionDataGroup *newGroup
         ,int position)
     {
@@ -447,28 +465,22 @@ bool KHotkeysModel::moveElement(
     // We do not allow moving from our systemgroup
     if (oldParent->is_system_group()) return false;
 
-    // Remove it from it's current place
-    kDebug() << "Removing from";
-    kDebug() << KHotkeysModel::data(createIndex(0, 0, oldParent), Qt::DisplayRole);
-    kDebug() << "item " << oldParent->children().indexOf(element);
-    kDebug() << "from " << oldParent->children().size();
-    beginRemoveRows(
-            createIndex(0, 0, oldParent),
-            oldParent->children().indexOf(element),
-            oldParent->children().indexOf(element));
-    element->reparent(0);
-    endRemoveRows();
+    // Adjust position if oldParent and newGroup are identical
+    if (oldParent == newGroup)
+        {
+        if (oldParent->children().indexOf(element) < position)
+            {
+            --position;
+            }
+        }
 
-    // Add to the new
-    kDebug() << "Adding to";
-    kDebug() << KHotkeysModel::data(createIndex(0, 0, newGroup), Qt::DisplayRole);
-    kDebug() << "from " << newGroup->children().size();
-    beginInsertRows(
-            createIndex(0, 0, newGroup),
-            newGroup->children().size(),
-            newGroup->children().size());
-    element->reparent(newGroup);
-    endInsertRows();
+    emit layoutAboutToBeChanged();
+
+    // Remove it from it's current place
+    oldParent->remove_child(element);
+    newGroup->add_child(element, position);
+
+    emit layoutChanged();
 
     return true;
     }

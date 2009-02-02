@@ -192,19 +192,6 @@ void ActionDataBase::set_name( const QString& name_P )
     }
 
 
-void ActionDataBase::reparent( ActionDataGroup* new_parent_P )
-    {
-    if( parent() == new_parent_P)
-        return;
-
-    if( parent())
-        parent()->remove_child( this );
-    _parent = new_parent_P;
-    if( parent())
-        parent()->add_child( this );
-    }
-
-
 void ActionDataBase::set_conditions( Condition_list* conditions_P )
     {
     Q_ASSERT( _conditions == 0 );
