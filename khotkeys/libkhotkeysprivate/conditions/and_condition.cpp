@@ -31,11 +31,13 @@ And_condition::And_condition( KConfigGroup& cfg_P, Condition_list_base* parent_P
 
 bool And_condition::match() const
     {
-    for( Iterator it( *this );
-         it;
-         ++it )
-        if( !it.current()->match()) // AND
+    for (ConstIterator it=begin(); it!=end(); ++it)
+        {
+        if (!(*it)->match())
+            {
             return false;
+            }
+        }
     return true; // all true (or empty)
     }
 
@@ -48,10 +50,10 @@ void And_condition::cfg_write( KConfigGroup& cfg_P ) const
 And_condition* And_condition::copy( Condition_list_base* parent_P ) const
     {
     And_condition* ret = new And_condition( parent_P );
-    for( Iterator it( *this );
-         it;
-         ++it )
-        ret->append( (*it)->copy( ret ));
+    for (ConstIterator it=begin(); it!=end(); ++it)
+        {
+        ret->append( (*it)->copy(ret));
+        }
     return ret;
     }
 

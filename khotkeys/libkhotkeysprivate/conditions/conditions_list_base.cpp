@@ -40,8 +40,8 @@ Condition_list_base::~Condition_list_base()
     {
     while( !isEmpty())
         {
-        Condition* c = getFirst();
-        remove( c );
+        Condition* c = first();
+        removeAll( c );
         delete c;
         }
     }
@@ -49,12 +49,12 @@ Condition_list_base::~Condition_list_base()
 void Condition_list_base::cfg_write( KConfigGroup& cfg_P ) const
     {
     int i = 0;
-    for( Iterator it( *this );
-         it;
+    for( ConstIterator it(begin());
+         it != end();
          ++it, ++i )
         {
         KConfigGroup conditionConfig( cfg_P.config(), cfg_P.name() + QString::number( i ) );
-        it.current()->cfg_write( conditionConfig );
+        (*it)->cfg_write( conditionConfig );
         }
     cfg_P.writeEntry( "ConditionsCount", i );
     }

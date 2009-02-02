@@ -58,7 +58,7 @@ Condition* Condition::create_cfg_read( KConfigGroup& cfg_P, Condition_list_base*
 Condition::~Condition()
     {
     if( _parent )
-        _parent->remove( this );
+        _parent->removeAll( this );
     }
 
 

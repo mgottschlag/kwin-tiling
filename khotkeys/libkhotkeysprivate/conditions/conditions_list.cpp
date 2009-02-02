@@ -39,10 +39,10 @@ void Condition_list::cfg_write( KConfigGroup& cfg_P ) const
 Condition_list* Condition_list::copy( ActionDataBase* data_P ) const
     {
     Condition_list* ret = new Condition_list( comment(), data_P );
-    for( Iterator it( *this );
-         it;
+    for( ConstIterator it(begin());
+         it != end();
          ++it )
-        ret->append( it.current()->copy( ret ));
+        ret->append( (*it)->copy( ret ));
     return ret;
     }
 
@@ -51,10 +51,10 @@ bool Condition_list::match() const
     {
     if( count() == 0 ) // no conditions to match => ok
         return true;
-    for( Iterator it( *this );
-         it;
+    for( ConstIterator it(begin());
+         it != end();
          ++it )
-        if( it.current()->match()) // OR
+        if( (*it)->match()) // OR
             return true;
     return false;
     }

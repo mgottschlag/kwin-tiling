@@ -13,12 +13,9 @@
 
 #include "action_data/action_data_group.h"
 
-#include "windows.h"
+#include "windows_handler.h"
 
-// Needed for None below
-#include <X11/Xlib.h>
-#include <fixx11h.h>
-
+#include <QtCore/QList>
 #include <QtCore/QObject>
 
 class KConfig;
@@ -50,19 +47,22 @@ class KDE_EXPORT Condition
         Condition_list_base* const _parent;
     };
 
-class KDE_EXPORT Condition_list_base
-    : public Condition, public Q3PtrList< Condition > // inheritance ?
+class KDE_EXPORT Condition_list_base : public Condition, public QList < Condition* >
     {
     typedef Condition base;
     public:
         Condition_list_base( Condition_list_base* parent_P );
-        Condition_list_base( const Q3PtrList< Condition >& children_P,
+
+        Condition_list_base(
+                const QList< Condition* >& children_P,
             Condition_list_base* parent_P );
+
         Condition_list_base( KConfigGroup& cfg_P, Condition_list_base* parent_P );
         virtual ~Condition_list_base();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual bool accepts_children() const;
-        typedef Q3PtrListIterator< Condition > Iterator;
+        typedef QList< Condition* >::iterator Iterator;
+        typedef QList< Condition* >::const_iterator ConstIterator;
     };
 
 class KDE_EXPORT Condition_list
@@ -195,14 +195,16 @@ Condition_list_base* Condition::parent()
 
 inline
 Condition_list_base::Condition_list_base( Condition_list_base* parent_P )
-    : Condition( parent_P ), Q3PtrList< Condition >()
+    : Condition( parent_P ), QList< Condition* >()
     {
     }
 
 inline
-Condition_list_base::Condition_list_base( const Q3PtrList< Condition >& children_P,
-    Condition_list_base* parent_P )
-    : Condition( parent_P ), Q3PtrList< Condition >( children_P )
+Condition_list_base::Condition_list_base(
+        const QList< Condition* >& children_P,
+        Condition_list_base* parent_P )
+    : Condition( parent_P ),
+      QList< Condition* >( children_P )
     {
     }
 
@@ -265,7 +267,7 @@ Not_condition::Not_condition( Condition_list_base* parent_P )
 inline
 const Condition* Not_condition::condition() const
     {
-    return getFirst();
+    return first();
     }
 
 // And_condition

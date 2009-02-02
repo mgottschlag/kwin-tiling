@@ -33,10 +33,10 @@ bool Or_condition::match() const
     {
     if( count() == 0 ) // empty => ok
         return true;
-    for( Iterator it( *this );
-         it;
+    for( ConstIterator it(begin());
+         it != end();
          ++it )
-        if( it.current()->match()) // OR
+        if( (*it)->match()) // OR
             return true;
     return false;
     }
@@ -50,8 +50,8 @@ void Or_condition::cfg_write( KConfigGroup& cfg_P ) const
 Or_condition* Or_condition::copy( Condition_list_base* parent_P ) const
     {
     Or_condition* ret = new Or_condition( parent_P );
-    for( Iterator it( *this );
-         it;
+    for( ConstIterator it(begin());
+         it != end();
          ++it )
         ret->append( (*it)->copy( ret ));
     return ret;
