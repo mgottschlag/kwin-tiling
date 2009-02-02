@@ -37,7 +37,7 @@ class KDE_EXPORT Windowdef_list : public QList< Windowdef* >
         void cfg_write( KConfigGroup& cfg_P ) const;
         bool match( const Window_data& window_P ) const;
         Windowdef_list* copy( /*ActionDataBase* data_P*/ ) const;
-        typedef QList< Windowdef* >::iterator Iterator;
+        // typedef QList< Windowdef* >::iterator Iterator;
         const QString& comment() const;
     private:
         QString _comment;

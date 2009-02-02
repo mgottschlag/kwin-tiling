@@ -24,7 +24,7 @@
 #include "ui_window_trigger_widget.h"
 
 class QKeySequence;
-class WindowDefinitionWidget;
+class WindowDefinitionListWidget;
 
 /**
  * @author Michael Jansen <kde@michael-jansen.biz>
@@ -64,7 +64,7 @@ private:
 
     Ui::WindowTriggerWidget window_trigger_ui;
 
-    WindowDefinitionWidget *_windowdef_widget;
+    WindowDefinitionListWidget *_windowdef_widget;
 
 };
 

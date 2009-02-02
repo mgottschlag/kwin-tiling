@@ -70,7 +70,7 @@ void Windowdef_simple::cfg_write( KConfigGroup& cfg_P ) const
     }
 
 
-Windowdef* Windowdef_simple::copy() const
+Windowdef_simple* Windowdef_simple::copy() const
     {
     return new Windowdef_simple( comment(), title(), title_match_type(), wclass(),
         wclass_match_type(), role(), role_match_type(), window_types());

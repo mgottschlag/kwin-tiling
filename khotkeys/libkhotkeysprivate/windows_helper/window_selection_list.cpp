@@ -19,6 +19,7 @@
 #include "windows_helper/window_selection_list.h"
 
 #include <KConfig>
+#include <KDebug>
 
 
 namespace KHotKeys {
@@ -76,10 +77,13 @@ void Windowdef_list::cfg_write( KConfigGroup& cfg_P ) const
 Windowdef_list* Windowdef_list::copy() const
     {
     Windowdef_list* ret = new Windowdef_list( comment());
-    for( ConstIterator it(begin());
-         it!= end();
+    for( ConstIterator it(constBegin());
+         it!= constEnd();
          ++it)
+        {
+        kDebug() << "Duplicating " << (*it)->comment();
         ret->append( (*it)->copy());
+        }
     return ret;
     }
 

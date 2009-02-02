@@ -61,8 +61,8 @@ class KDE_EXPORT Windowdef_simple : public Windowdef
          * Constructor
          */
         Windowdef_simple(
-                const QString& comment_P,
-                const QString& title_P,
+                const QString& comment_P = QString(),
+                const QString& title_P = QString(),
                 substr_type_t _title_type_P = NOT_IMPORTANT,
                 const QString& wclass_P = QString(),
                 substr_type_t wclass_type_P = NOT_IMPORTANT,
@@ -139,7 +139,7 @@ class KDE_EXPORT Windowdef_simple : public Windowdef
         /**
          * Create a copy
          */
-        virtual Windowdef* copy( /*ActionDataBase* data_P*/ ) const;
+        virtual Windowdef_simple* copy( /*ActionDataBase* data_P*/ ) const;
 
         /**
          * The description of this rule.

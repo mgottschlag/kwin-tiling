@@ -14,6 +14,7 @@ set(
     # HELPER WIDGETS
     helper_widgets/window_selector.cpp
     helper_widgets/window_definition_widget.cpp
+    helper_widgets/window_definition_list_widget.cpp
 
     # TRIGGER WIDGETS
     triggers/trigger_widget_base.cpp
@@ -35,15 +36,16 @@ set(
 
 kde4_add_ui_files(
     kcm_hotkeys_PART_SRCS
+    helper_widgets/window_definition_list_widget.ui
     helper_widgets/window_definition_widget.ui
+    triggers/window_trigger_widget.ui
+    triggers/shortcut_trigger_widget.ui
     ui/global_settings_widget.ui
     ui/command_url_action_widget.ui
     ui/dbus_action_widget.ui
     ui/hotkeys_widget_base.ui
     ui/simple_action_data_widget.ui
-    ui/shortcut_trigger_widget.ui
     ui/menuentry_action_widget.ui
-    ui/window_trigger_widget.ui
     )
 
 qt4_add_dbus_interface(

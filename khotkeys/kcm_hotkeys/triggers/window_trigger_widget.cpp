@@ -18,7 +18,7 @@
 */
 
 #include "window_trigger_widget.h"
-#include "helper_widgets/window_definition_widget.h"
+#include "helper_widgets/window_definition_list_widget.h"
 #include "windows_helper/window_selection_list.h"
 #include "windows_helper/window_selection_rules.h"
 
@@ -38,11 +38,8 @@ WindowTriggerWidget::WindowTriggerWidget( KHotKeys::WindowTrigger *trigger, QWid
         trigger->windows()->insert(0, new KHotKeys::Windowdef_simple("", ""));
         }
 
-    KHotKeys::Windowdef *windowdef = trigger->windows()->at(0);
-    KHotKeys::Windowdef_simple *windowdef_simple = dynamic_cast<KHotKeys::Windowdef_simple*>(windowdef);
-    Q_ASSERT(windowdef_simple);
     QHBoxLayout *layout = new QHBoxLayout();
-    _windowdef_widget = new WindowDefinitionWidget(windowdef_simple, window_trigger_ui.window_group);
+    _windowdef_widget = new WindowDefinitionListWidget(trigger->windows(), window_trigger_ui.window_group);
     layout->addWidget(_windowdef_widget);
     window_trigger_ui.window_group->setLayout(layout);
 
@@ -111,7 +108,7 @@ void WindowTriggerWidget::doCopyToObject()
         events |= KHotKeys::WindowTrigger::WINDOW_ACTIVATES;
     if (window_trigger_ui.window_lost_focus->isChecked())
         events |= KHotKeys::WindowTrigger::WINDOW_DEACTIVATES;
-    kDebug() << events;
+
     trigger()->setOnWindowEvents(events);
     }
 

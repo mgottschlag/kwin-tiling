@@ -22,6 +22,7 @@
 
 #include "qwindowdefs.h"
 #include <QtGui/QWidget>
+#include <KDE/KDialog>
 
 
 namespace Ui {
@@ -74,6 +75,40 @@ private:
 
     KHotKeys::Windowdef_simple *_windowdef;
 };
+
+
+class WindowDefinitionDialog : public KDialog
+    {
+    Q_OBJECT
+
+public:
+
+    WindowDefinitionDialog( KHotKeys::Windowdef_simple *windowdef, QWidget *parent=NULL)
+        :   KDialog(parent)
+            ,def(NULL)
+        {
+        def = new WindowDefinitionWidget(windowdef, this);
+        setMainWidget(def);
+        def->copyFromObject();
+        }
+
+
+    ~WindowDefinitionDialog()
+        {
+        def = NULL;
+        }
+
+
+    virtual void accept()
+        {
+        def->copyToObject();
+        KDialog::accept();
+        }
+
+private:
+
+    WindowDefinitionWidget *def;
+    };
 
 
 #endif /* #ifndef WINDOW_DEFINITION_H */
