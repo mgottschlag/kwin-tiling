@@ -47,8 +47,6 @@ public:
           jobProtocol(0),
           notificationProtocol(0)
     {
-        setupProtocol(new PlasmoidProtocol(q));
-        setupProtocol(new SystemTray::FdoProtocol(q));
     }
 
     void setupProtocol(Protocol *protocol);
@@ -65,6 +63,8 @@ public:
 Manager::Manager()
     : d(new Private(this))
 {
+    d->setupProtocol(new PlasmoidProtocol(this));
+    d->setupProtocol(new SystemTray::FdoProtocol(this));
 }
 
 Manager::~Manager()
