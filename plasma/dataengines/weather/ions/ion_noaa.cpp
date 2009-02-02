@@ -629,7 +629,7 @@ QMap<QString, QString> NOAAIon::wind(const QString& source)
         windInfo.insert("windUnit", QString::number(WeatherUtils::NoUnit));
     } else {
         windInfo.insert("windSpeed", QString::number(d->m_weatherData[source].windSpeed.toFloat(), 'f', 1));
-        windInfo.insert("windUnit", QString::number(WeatherUtils::MilesAnHour));
+        windInfo.insert("windUnit", QString::number(WeatherUtils::MilesPerHour));
     }
 
     // May not always have gusty winds
@@ -638,7 +638,7 @@ QMap<QString, QString> NOAAIon::wind(const QString& source)
         windInfo.insert("windGustUnit", QString::number(WeatherUtils::NoUnit));
     } else {
         windInfo.insert("windGust", QString::number(d->m_weatherData[source].windGust.toFloat(), 'f', 1));
-        windInfo.insert("windGustUnit", QString::number(WeatherUtils::MilesAnHour));
+        windInfo.insert("windGustUnit", QString::number(WeatherUtils::MilesPerHour));
     }
 
     if (d->m_weatherData[source].windDirection.isEmpty()) {

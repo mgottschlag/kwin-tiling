@@ -893,7 +893,7 @@ QMap<QString, QString> UKMETIon::wind(const QString& source)
         windInfo.insert("windUnit", QString::number(WeatherUtils::NoUnit));
     } else {
         windInfo.insert("windSpeed", QString(d->m_weatherData[source].windSpeed_miles));
-        windInfo.insert("windUnit", QString::number(WeatherUtils::MilesAnHour));
+        windInfo.insert("windUnit", QString::number(WeatherUtils::MilesPerHour));
     }
     windInfo.insert("windDirection", d->m_weatherData[source].windDirection);
     return windInfo;

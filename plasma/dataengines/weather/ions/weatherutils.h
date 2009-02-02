@@ -25,23 +25,68 @@
 
 #include "ion_export.h"
 
+/**
+ * The WeatherUtils namespace contains helper functions for weather applets and ions.
+ * It includes functions for converting temperatures, speeds, distances and pressures between different units and also allows one to convert degrees to a cardinal.
+ *
+ * For an example an ion developer is required to specify the formats used by their datasource. For this the developer has to use enums provided for different kinds of units.
+ *
+ * For applet developers this namespace offers both the enums and functions to convert the data to the format user requests. To achieve this functions convertTemperature(), convertSpeed(), convertDistance() and convertPressure() can be used. For example converting from m/s to kmh can be done like this:
+ * float speedInKmh = WeatherUtils::convertSpeed( speedInMeters, WeatherUtils::MetersPerSecond, KilometersPerHour );
+*/
 namespace WeatherUtils
 {
 
-// Enumerations for unit types
-enum Unit { NoUnit = 0, Celsius, Fahrenheit, Kelvin, KilometersAnHour, MetersPerSecond, MilesAnHour, Kilopascals,
-            InchesHG, Millibars, Hectopascals, Centimeters, Millimeters, Inches,
-            Knots, Beaufort, Kilometers, Miles
-          };
+enum TemperatureUnit { NoUnit = 0, Celsius, Fahrenheit, Kelvin };
+enum SpeedUnit { KilometersPerHour = 100, MetersPerSecond, MilesPerHour, Knots, Beaufort };
+enum DistanceUnit { Centimeters = 200, Millimeters, Inches, Kilometers, Miles };
+enum PressureUnit { Kilopascals = 300, InchesHG, Millibars, Hectopascals }; // FIXME deprecate millibars?
 
-// Convert Units
+enum Errors { InvalidConversion = -100, NoSuchUnit = -110 };
+
+/**
+ * Convert between temperature units. See WeatherUtils::TemperatureUnit for available units.
+ * @param value value to convert
+ * @param srcUnit the source unit
+ * @param destUnit the destination unit
+ * @return converted value or WeatherUtils::InvalidConversion when trying to convert between invalid units
+*/
+ION_EXPORT float convertTemperature(float value, int srcUnit, int destUnit);
+
+/**
+ * Convert between pressure units. See WeatherUtils::PressureUnit for available units.
+ * @param value value to convert
+ * @param srcUnit the source unit
+ * @param destUnit the destination unit
+ * @return converted value or WeatherUtils::InvalidConversion when trying to convert between invalid units
+*/
+ION_EXPORT float convertPressure(float value, int srcUnit, int destUnit);
+
+/**
+ * Convert between distance units. See WeatherUtils::DistanceUnit for available units.
+ * @param value value to convert
+ * @param srcUnit the source unit
+ * @param destUnit the destination unit
+ * @return converted value or WeatherUtils::InvalidConversion when trying to convert between invalid units
+*/
+ION_EXPORT float convertDistance(float value, int srcUnit, int destUnit);
+
+/**
+ * Convert between speed units. See WeatherUtils::SpeedUnit for available units.
+ * @param value value to convert
+ * @param srcUnit the source unit
+ * @param destUnit the destination unit
+ * @return converted value or WeatherUtils::InvalidConversion when trying to convert between invalid units
+*/
+ION_EXPORT float convertSpeed(float value, int srcUnit, int destUnit);
 
 /**
  * Convert from unit to another. See WeatherUtils::Unit for available units.
  * @param value float to convert
  * @param srcUnit from which unit to convert
  * @param destUnit to which unit to convert
- * @return converted value
+ * @return converted value or WeatherUtils::NoSuchUnit when trying to convert from an unknown unit
+ * @deprecated Use convertTemperature(), convertDistance(), convertPressure() or convertSpeed() instead.
 */
 ION_EXPORT float convert(float value, int srcUnit, int destUnit);
 

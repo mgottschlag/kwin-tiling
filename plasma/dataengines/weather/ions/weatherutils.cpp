@@ -1,6 +1,6 @@
 /*****************************************************************************
  * Copyright (C) 2007-2008 by Shawn Starr <shawn.starr@rogers.com>           *
- * Copyright (C) 2008 by Teemu Rytilahti <tpr@d5k.net>                       *
+ * Copyright (C) 2008-2009 by Teemu Rytilahti <tpr@d5k.net>                  *
  *                                                                           *
  * This library is free software; you can redistribute it and/or             *
  * modify it under the terms of the GNU Library General Public               *
@@ -21,139 +21,216 @@
 #include "weatherutils.h"
 #include <math.h>
 #include <KLocalizedString>
+#include <KDebug>
 
 namespace WeatherUtils
 {
 
+float convertTemperature(float value, int srcUnit, int destUnit)
+{
+    if(srcUnit == destUnit)
+        return value;
+
+    switch(srcUnit) {
+        case WeatherUtils::Celsius:
+            switch (destUnit) {
+            case WeatherUtils::Fahrenheit:
+                return (value * 9 / 5 + 32);
+            case WeatherUtils::Kelvin:
+                return (value + 273.15);
+            };
+
+        case WeatherUtils::Fahrenheit:
+            switch (destUnit) {
+            case WeatherUtils::Celsius:
+                return (value - 32) * 5 / 9;
+            case WeatherUtils::Kelvin:
+                return (5 / 9 * (value - 32) + 273.15);
+            };
+
+        case WeatherUtils::Kelvin:
+            switch (destUnit) {
+            case WeatherUtils::Celsius:
+                return (value - 273.15);
+            case WeatherUtils::Fahrenheit:
+                return ((value - 273.15) * 1.8) + 32;
+            };
+    }
+
+    kWarning() << "Your application is trying to use convertTemperature() with an invalid srcUnit or destUnit";
+    return InvalidConversion;
+}
+
+float convertDistance(float value, int srcUnit, int destUnit)
+{
+    if(srcUnit == destUnit)
+        return value;
+
+    switch(srcUnit) {
+        case WeatherUtils::Centimeters:
+            switch (destUnit) {
+            case WeatherUtils::Millimeters:
+                return (value / 0.1);
+            case WeatherUtils::Inches:
+                return (value * 0.393700787);
+            };
+
+        case WeatherUtils::Millimeters:
+            switch (destUnit) {
+            case WeatherUtils::Centimeters:
+                return (value * 0.1);
+            case WeatherUtils::Inches:
+                return (value * 0.0393700787);
+            };
+
+        case WeatherUtils::Inches:
+            switch (destUnit) {
+            case WeatherUtils::Centimeters:
+                return (value * 2.54);
+            case WeatherUtils::Millimeters:
+                return (value * 25.4);
+            };
+    }
+
+    kWarning() << "Your application is trying to use convertDistance() with an invalid srcUnit or destUnit";
+    return InvalidConversion;
+}
+
+float convertSpeed(float value, int srcUnit, int destUnit)
+{
+    if(srcUnit == destUnit)
+        return value;
+
+    switch(srcUnit) {
+        case WeatherUtils::KilometersPerHour:
+            switch (destUnit) {
+            case WeatherUtils::MilesPerHour:
+                return (0.621371192 * value);
+            case WeatherUtils::MetersPerSecond:
+                return (value * 0.277778);
+            case WeatherUtils::Knots:
+                return (value * 0.539956803);
+            case WeatherUtils::Beaufort:
+                return kilometersToBeaufort(value);
+            case WeatherUtils::KilometersPerHour:
+                return value;
+            };
+
+        case WeatherUtils::MetersPerSecond:
+            switch (destUnit) {
+            case WeatherUtils::MilesPerHour:
+                return (value * 2.23693629);
+            case WeatherUtils::KilometersPerHour:
+                return (value * 3.6);
+            case WeatherUtils::Knots:
+                return (value * 1.943845);
+            case WeatherUtils::Beaufort:
+                return metersPerSecondToBeaufort(value);
+            };
+
+        case WeatherUtils::MilesPerHour:
+            switch (destUnit) {
+            case WeatherUtils::KilometersPerHour:
+                return (1.609344 * value);
+            case WeatherUtils::MetersPerSecond:
+                return (value * 0.44704);
+            case WeatherUtils::Knots:
+                return (value * 0.868976242);
+            case WeatherUtils::Beaufort:
+                return milesToBeaufort(value);
+            };
+
+        case WeatherUtils::Knots:
+            switch (destUnit) {
+            case WeatherUtils::Kilometers:
+                return floor(value * 1.852 + 0.5);
+            case WeatherUtils::Miles:
+                return (value * 1.507794);
+            case WeatherUtils::MetersPerSecond:
+                return (value * 1.9438);
+            case WeatherUtils::Beaufort:
+                return knotsToBeaufort(value);
+            };
+    }
+
+    kWarning() << "Your application is trying to use convertSpeed() with an invalid srcUnit or destUnit";
+    return InvalidConversion;
+}
+
+float convertPressure(float value, int srcUnit, int destUnit)
+{
+    if(srcUnit == destUnit)
+        return value;
+
+    switch(srcUnit) {
+        case WeatherUtils::Kilopascals:
+            switch (destUnit) {
+            case WeatherUtils::InchesHG:
+                return ((0.02952997 * value) * 10);
+            case WeatherUtils::Millibars:
+            case WeatherUtils::Hectopascals:
+                return (value / 0.10);
+            };
+
+        case WeatherUtils::InchesHG:
+            switch (destUnit) {
+            case WeatherUtils::Kilopascals:
+                return (value * 3.386389);
+            case WeatherUtils::Millibars:
+            case WeatherUtils::Hectopascals:
+                return (value * 33.8637526);
+            };
+
+        case WeatherUtils::Millibars:
+        case WeatherUtils::Hectopascals:
+            switch (destUnit) {
+            case WeatherUtils::Kilopascals:
+                return (value * 0.10);
+            case WeatherUtils::InchesHG:
+                return (value * 0.0295333727);
+            case WeatherUtils::Millibars:
+            case WeatherUtils::Hectopascals:
+                return value;
+            };
+    }
+
+    kWarning() << "Your application is trying to use convertPressure() with an invalid srcUnit or destUnit";
+    return InvalidConversion;
+}
 
 float convert(float value, int srcUnit, int destUnit)
 {
+    if(srcUnit == destUnit)
+        return value;
+
     switch (srcUnit) {
     case WeatherUtils::Celsius:
-        switch (destUnit) {
-        case WeatherUtils::Fahrenheit:
-            return (value * 9 / 5 + 32);
-        case WeatherUtils::Kelvin:
-            return (value + 273.15);
-        };
-
     case WeatherUtils::Fahrenheit:
-        switch (destUnit) {
-        case WeatherUtils::Celsius:
-            return (value - 32) * 5 / 9;
-        case WeatherUtils::Kelvin:
-            return (5 / 9 * (value - 32) + 273.15);
-        };
-
     case WeatherUtils::Kelvin:
-        switch (destUnit) {
-        case WeatherUtils::Celsius:
-            return (value - 273.15);
-        case WeatherUtils::Fahrenheit:
-            return ((value - 273.15) * 1.8) + 32;
-        };
+        return convertTemperature(value, srcUnit, destUnit);
 
-    case WeatherUtils::Kilometers:
-    case WeatherUtils::KilometersAnHour:
-        switch (destUnit) {
-        case WeatherUtils::Miles:
-            return (0.621371192 * value);
-        case WeatherUtils::MetersPerSecond:
-            return (value * 0.277778);
-        case WeatherUtils::Knots:
-            return (value * 0.539956803);
-        case WeatherUtils::Beaufort:
-            return kilometersToBeaufort(value);
-        };
-
+    case WeatherUtils::KilometersPerHour:
     case WeatherUtils::MetersPerSecond:
-        switch (destUnit) {
-        case WeatherUtils::Miles:
-            return (value * 2.23693629);
-        case WeatherUtils::Kilometers:
-            return (value * 3.6);
-        case WeatherUtils::Knots:
-            return (value * 1.943845);
-        case WeatherUtils::Beaufort:
-            return metersPerSecondToBeaufort(value);
-        };
-
-    case WeatherUtils::Miles:
-    case WeatherUtils::MilesAnHour:
-        switch (destUnit) {
-        case WeatherUtils::Kilometers:
-            return (1.609344 * value);
-        case WeatherUtils::MetersPerSecond:
-            return (value * 0.44704);
-        case WeatherUtils::Knots:
-            return (value * 0.868976242);
-        case WeatherUtils::Beaufort:
-            return milesToBeaufort(value);
-        };
+    case WeatherUtils::MilesPerHour:
+    case WeatherUtils::Knots:
+        return convertSpeed(value, srcUnit, destUnit);
 
     case WeatherUtils::Kilopascals:
-        switch (destUnit) {
-        case WeatherUtils::InchesHG:
-            return ((0.02952997 * value) * 10);
-        case WeatherUtils::Millibars:
-        case WeatherUtils::Hectopascals:
-            return (value / 0.10);
-        };
-
     case WeatherUtils::InchesHG:
-        switch (destUnit) {
-        case WeatherUtils::Kilopascals:
-            return (value * 3.386389);
-        case WeatherUtils::Millibars:
-        case WeatherUtils::Hectopascals:
-            return (value * 33.8637526);
-        };
-
     case WeatherUtils::Millibars:
-        switch (destUnit) {
-        case WeatherUtils::Kilopascals:
-            return (value * 0.10);
-        case WeatherUtils::InchesHG:
-            return (value * 0.0295333727);
-        };
+        return convertPressure(value, srcUnit, destUnit);
 
+    case WeatherUtils::Kilometers:
+    case WeatherUtils::Miles:
     case WeatherUtils::Centimeters:
-        switch (destUnit) {
-        case WeatherUtils::Millimeters:
-            return (value / 0.1);
-        case WeatherUtils::Inches:
-            return (value * 0.393700787);
-        };
-
     case WeatherUtils::Millimeters:
-        switch (destUnit) {
-        case WeatherUtils::Centimeters:
-            return (value * 0.1);
-        case WeatherUtils::Inches:
-            return (value * 0.0393700787);
-        };
-
     case WeatherUtils::Inches:
-        switch (destUnit) {
-        case WeatherUtils::Centimeters:
-            return (value * 2.54);
-        case WeatherUtils::Millimeters:
-            return (value * 25.4);
-        };
+        return convertDistance(value, srcUnit, destUnit);
 
-    case WeatherUtils::Knots:
-        switch (destUnit) {
-        case WeatherUtils::Kilometers:
-            return floor(value * 1.852 + 0.5);
-        case WeatherUtils::Miles:
-            return (value * 1.507794);
-        case WeatherUtils::MetersPerSecond:
-            return (value * 1.9438);
-        case WeatherUtils::Beaufort:
-            return knotsToBeaufort(value);
-        };
     };
-    return 0;
+
+    kWarning() << "Your application is using WeatherUtils::update() with an unknown srcUnit, please check your code..";
+    return NoSuchUnit;
 }
 
 QString getUnitString(int unit, bool plain)
@@ -177,17 +254,11 @@ QString getUnitString(int unit, bool plain)
         else
             return i18nc("Kelvin, temperature unit", "K");
 
-    case WeatherUtils::KilometersAnHour:
+    case WeatherUtils::KilometersPerHour:
         if (plain)
             return QString("kmh");
         else
             return i18nc("kilometers per hour, windspeed unit", "km/h");
-
-    case WeatherUtils::Kilometers:
-        if (plain)
-            return QString("km");
-        else
-            return i18nc("kilometers, distance unit", "km");
 
     case WeatherUtils::MetersPerSecond:
         if (plain)
@@ -195,17 +266,53 @@ QString getUnitString(int unit, bool plain)
         else
             return i18nc("meters per second, windspeed unit", "m/s");
 
-    case WeatherUtils::MilesAnHour:
+    case WeatherUtils::MilesPerHour:
         if (plain)
             return QString("mph");
         else
             return i18nc("miles per hour, windspeed unit", "mph");
+
+    case WeatherUtils::Knots:
+        if (plain)
+            return QString("kt");
+        else
+            return i18nc("knots, wind speed unit", "kt");
+
+    case WeatherUtils::Beaufort:
+        if (plain)
+            return QString("bft");
+        else
+            return i18nc("beaufort, wind speed unit", "Bft");
+
+    case WeatherUtils::Kilometers:
+        if (plain)
+            return QString("km");
+        else
+            return i18nc("kilometers, distance unit", "km");
 
     case WeatherUtils::Miles:
         if (plain)
             return QString("mi");
         else
             return i18nc("miles, distance unit", "mi");
+
+    case WeatherUtils::Centimeters:
+        if (plain)
+            return QString("cm");
+        else
+            return i18nc("centimeters, length unit", "cm");
+
+    case WeatherUtils::Millimeters:
+        if (plain)
+            return QString("mm");
+        else
+            return i18nc("millimeters, length unit", "mm");
+
+    case WeatherUtils::Inches:
+        if (plain)
+            return QString("in");
+        else
+            return i18nc("inches, length unit", "in");
 
     case WeatherUtils::Kilopascals:
         if (plain)
@@ -231,37 +338,8 @@ QString getUnitString(int unit, bool plain)
         else
             return i18nc("hectopascals, airpressure unit", "hPa");
 
-    case WeatherUtils::Centimeters:
-        if (plain)
-            return QString("cm");
-        else
-            return i18nc("centimeters, length unit", "cm");
-
-    case WeatherUtils::Millimeters:
-        if (plain)
-            return QString("mm");
-        else
-            return i18nc("millimeters, length unit", "mm");
-
-    case WeatherUtils::Inches:
-        if (plain)
-            return QString("in");
-        else
-            return i18nc("inches, length unit", "in");
-
-    case WeatherUtils::Knots:
-        if (plain)
-            return QString("kt");
-        else
-            return i18nc("knots, wind speed unit", "kt");
-
-    case WeatherUtils::Beaufort:
-        if (plain)
-            return QString("bft");
-        else
-            return i18nc("beaufort, wind speed unit", "Bft");
-
     default:
+        kWarning() << "Invalid unit id, will return an empty string...";
         return QString();
     }
 }
