@@ -83,4 +83,39 @@ private:
 };
 
 
+class WindowDefinitionListDialog : public KDialog
+    {
+    Q_OBJECT
+
+public:
+
+    WindowDefinitionListDialog(
+            KHotKeys::Windowdef_list *list,
+            QWidget *parent=NULL)
+        :   KDialog(parent)
+            ,def(NULL)
+        {
+        def = new WindowDefinitionListWidget(list, this);
+        setMainWidget(def);
+        def->copyFromObject();
+        }
+
+
+    ~WindowDefinitionListDialog()
+        {
+        def = NULL;
+        }
+
+
+    virtual void accept()
+        {
+        def->copyToObject();
+        KDialog::accept();
+        }
+
+private:
+
+    WindowDefinitionListWidget *def;
+    };
+
 #endif /* #ifndef WINDOW_DEFINITION_LIST_WIDGET_H */

@@ -17,11 +17,31 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include "conditions.h"
+#include "conditions/conditions_list_base.h"
+#include "conditions/conditions_visitor.h"
 
+#include <KDE/KConfig>
 #include <KDE/KConfigGroup>
+#include <KDE/KDebug>
 
 namespace KHotKeys {
+
+
+Condition_list_base::Condition_list_base( Condition_list_base* parent_P )
+    :   Condition( parent_P ), 
+        QList< Condition* >()
+    {
+    }
+
+
+Condition_list_base::Condition_list_base(
+        const QList< Condition* >& children_P,
+        Condition_list_base* parent_P)
+    : Condition( parent_P ),
+      QList< Condition* >( children_P )
+    {
+    }
+
 
 Condition_list_base::Condition_list_base( KConfigGroup& cfg_P, Condition_list_base* parent_P )
     : Condition( parent_P )
@@ -36,19 +56,61 @@ Condition_list_base::Condition_list_base( KConfigGroup& cfg_P, Condition_list_ba
         }
     }
 
+
 Condition_list_base::~Condition_list_base()
     {
+    qDeleteAll(*this);
+#if 0
     while( !isEmpty())
         {
         Condition* c = first();
         removeAll( c );
         delete c;
         }
+#endif
     }
+
+
+bool Condition_list_base::accepts_children() const
+    {
+    return true;
+    }
+
+
+void Condition_list_base::append(Condition *cond)
+    {
+    if (cond->parent() == this)
+        {
+        return;
+        }
+
+    cond->reparent(this);
+    QList<Condition*>::append(cond);
+    }
+
+
+Condition_list_base::Iterator Condition_list_base::begin()
+    {
+    return QList<Condition*>::begin();
+    }
+
+
+Condition_list_base::ConstIterator Condition_list_base::begin() const
+    {
+    return QList<Condition*>::begin();
+    }
+
+
+void Condition_list_base::clear()
+    {
+    return QList<Condition*>::clear();
+    }
+
 
 void Condition_list_base::cfg_write( KConfigGroup& cfg_P ) const
     {
     int i = 0;
+    kDebug() << description() << " with " << count() << " children";;
     for( ConstIterator it(begin());
          it != end();
          ++it, ++i )
@@ -59,9 +121,46 @@ void Condition_list_base::cfg_write( KConfigGroup& cfg_P ) const
     cfg_P.writeEntry( "ConditionsCount", i );
     }
 
-bool Condition_list_base::accepts_children() const
+
+int Condition_list_base::count() const
     {
-    return true;
+    return QList<Condition*>::count();
+    }
+
+
+Condition* Condition_list_base::first()
+    {
+    return QList<Condition*>::first();
+    }
+
+
+Condition const* Condition_list_base::first() const
+    {
+    return QList<Condition*>::first();
+    }
+
+
+Condition_list_base::Iterator Condition_list_base::end()
+    {
+    return QList<Condition*>::end();
+    }
+
+
+Condition_list_base::ConstIterator Condition_list_base::end() const
+    {
+    return QList<Condition*>::end();
+    }
+
+
+int Condition_list_base::removeAll(Condition *const &cond)
+    {
+    return QList<Condition*>::removeAll(cond);
+    }
+
+
+void Condition_list_base::visit( ConditionsVisitor *visitor )
+    {
+    visitor->visitConditionsListBase(this);
     }
 
 

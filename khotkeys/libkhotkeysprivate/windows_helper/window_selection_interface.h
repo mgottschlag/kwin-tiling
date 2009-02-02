@@ -18,12 +18,13 @@
 */
 
 
-#include <netwm_def.h>
 #include <QtCore/QString>
-#include <QtGui/qwindowdefs.h>
 
 #include "KConfigGroup"
 
+#include <QtGui/qwindowdefs.h>
+
+#include <netwm_def.h>
 
 namespace KHotKeys {
 

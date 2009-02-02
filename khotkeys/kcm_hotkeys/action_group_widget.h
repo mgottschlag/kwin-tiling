@@ -22,6 +22,10 @@
 
 #include "hotkeys_widget_base.h"
 
+
+class ConditionsWidget;
+
+
 /**
  * @author Michael Jansen <kde@michael-jansen.biz>
  */
@@ -56,12 +60,18 @@ public:
         return static_cast<const KHotKeys::ActionDataBase*>( _data );
         }
 
+    //! Are there uncommited changes?
+    bool isChanged() const;
+
     void setActionData( KHotKeys::ActionDataGroup *group );
 
 private:
 
     void doCopyFromObject();
     void doCopyToObject();
+
+    //! Widget to change the conditions
+    ConditionsWidget *_conditions;
 
 };
 

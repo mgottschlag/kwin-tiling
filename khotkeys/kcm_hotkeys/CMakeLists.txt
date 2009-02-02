@@ -27,6 +27,10 @@ set(
     actions/dbus_action_widget.cpp
     actions/menuentry_action_widget.cpp
 
+    # CONDITION WiDGETS
+    conditions/conditions_widget.cpp
+    conditions/condition_type_menu.cpp
+
     # ACTION_DATA WIDGETS
     hotkeys_widget_iface.cpp
     hotkeys_widget_base.cpp
@@ -51,6 +55,9 @@ kde4_add_ui_files(
     actions/command_url_action_widget.ui
     actions/dbus_action_widget.ui
     actions/menuentry_action_widget.ui
+
+    # CONDITION WiDGETS
+    conditions/conditions_widget.ui
 
     # ACTION_DATA WIDGETS
     hotkeys_widget_base.ui

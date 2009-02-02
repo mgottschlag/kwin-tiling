@@ -17,6 +17,7 @@
 
 #include "triggers/triggers.h"
 #include "conditions/conditions.h"
+#include "conditions/conditions_list.h"
 
 
 #include <kconfiggroup.h>
@@ -59,7 +60,6 @@ ActionDataBase::ActionDataBase(
     // Load the conditions if they exist
     if ( conditionsConfig.exists() )
         {
-        kDebug() << "Reading conditions";
         _conditions = new Condition_list( conditionsConfig, this );
         }
 
@@ -84,6 +84,7 @@ bool ActionDataBase::cfg_is_enabled( KConfigGroup& cfg_P )
 
 void ActionDataBase::cfg_write( KConfigGroup& cfg_P ) const
     {
+    kDebug() << name();
     kDebug() << cfg_P.keyList();
 
     cfg_P.writeEntry( "Type", "ERROR" ); // derived classes should call with their type
@@ -107,6 +108,12 @@ QString ActionDataBase::comment() const
 
 
 const Condition_list* ActionDataBase::conditions() const
+    {
+    return _conditions;
+    }
+
+
+Condition_list* ActionDataBase::conditions()
     {
     return _conditions;
     }

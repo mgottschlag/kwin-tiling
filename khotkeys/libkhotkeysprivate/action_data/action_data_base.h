@@ -76,6 +76,7 @@ class KDE_EXPORT ActionDataBase
          * conditions.
          */
         const Condition_list* conditions() const;
+        Condition_list* conditions();
 
         /**
          * Prepare this action for complete removal.

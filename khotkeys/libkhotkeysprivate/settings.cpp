@@ -18,6 +18,7 @@
 
 #include "triggers/triggers.h"
 #include "conditions/conditions.h"
+#include "conditions/conditions_list.h"
 
 #include "windows_helper/window_selection_list.h"
 

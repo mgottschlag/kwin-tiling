@@ -36,6 +36,7 @@ set(khotkeysprivate_SRCS
     conditions/existing_window_condition.cpp
     conditions/not_condition.cpp
     conditions/or_condition.cpp
+    conditions/conditions_visitor.cpp
 
     # TRIGGERS
     triggers/gestures.cpp

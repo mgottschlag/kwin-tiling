@@ -25,14 +25,13 @@ namespace KHotKeys {
 
 Not_condition::Not_condition( KConfigGroup& cfg_P, Condition_list_base* parent_P )
     : Condition_list_base( cfg_P, parent_P )
-    {
-    // CHECKME kontrola poctu ?
-    }
+    {}
 
-bool Not_condition::match() const
-    {
-    return condition() ? !condition()->match() : false;
-    }
+
+Not_condition::Not_condition( Condition_list_base* parent_P )
+    : Condition_list_base( parent_P )
+    {}
+
 
 void Not_condition::cfg_write( KConfigGroup& cfg_P ) const
     {
@@ -40,22 +39,40 @@ void Not_condition::cfg_write( KConfigGroup& cfg_P ) const
     cfg_P.writeEntry( "Type", "NOT" ); // overwrites value set in base::cfg_write()
     }
 
-Not_condition* Not_condition::copy( Condition_list_base* parent_P ) const
+
+const Condition* Not_condition::condition() const
     {
-    Not_condition* ret = new Not_condition( parent_P );
+    return first();
+    }
+
+
+Not_condition* Not_condition::copy() const
+    {
+    Not_condition* ret = new Not_condition();
     if( condition())
-        ret->append( condition()->copy( ret ));
+        {
+        ret->append(condition()->copy());
+        }
+
     return ret;
     }
+
 
 const QString Not_condition::description() const
     {
     return i18nc( "Not_condition", "Not" );
     }
 
+
 bool Not_condition::accepts_children() const
     {
     return count() == 0;
+    }
+
+
+bool Not_condition::match() const
+    {
+    return condition() ? !condition()->match() : false;
     }
 
 } // namespace KHotKeys

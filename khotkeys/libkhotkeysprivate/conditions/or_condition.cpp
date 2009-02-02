@@ -25,9 +25,13 @@ namespace KHotKeys {
 
 Or_condition::Or_condition( KConfigGroup& cfg_P, Condition_list_base* parent_P )
     : Condition_list_base( cfg_P, parent_P )
-    {
-    // CHECKME kontrola poctu ?
-    }
+    {}
+
+
+Or_condition::Or_condition( Condition_list_base* parent_P )
+    : Condition_list_base( parent_P )
+    {}
+
 
 bool Or_condition::match() const
     {
@@ -41,26 +45,29 @@ bool Or_condition::match() const
     return false;
     }
 
+
 void Or_condition::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "OR" ); // overwrites value set in base::cfg_write()
     }
 
-Or_condition* Or_condition::copy( Condition_list_base* parent_P ) const
+
+Or_condition* Or_condition::copy() const
     {
-    Or_condition* ret = new Or_condition( parent_P );
+    Or_condition* ret = new Or_condition();
     for( ConstIterator it(begin());
          it != end();
          ++it )
-        ret->append( (*it)->copy( ret ));
+        ret->append( (*it)->copy());
     return ret;
     }
+
 
 const QString Or_condition::description() const
     {
     return i18nc( "Or_condition", "Or" );
     }
 
-} // namespace KHotKeys
 
+} // namespace KHotKeys

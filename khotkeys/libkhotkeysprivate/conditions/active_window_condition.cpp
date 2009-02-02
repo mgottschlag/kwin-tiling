@@ -17,10 +17,13 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include "conditions.h"
+#include "conditions/active_window_condition.h"
 
 #include "windows_helper/window_selection_list.h"
+#include "windows_handler.h"
+#include "khotkeysglobal.h"
 
+#include <KDE/KConfig>
 #include <KDE/KConfigGroup>
 #include <KDE/KDebug>
 
@@ -35,23 +38,28 @@ Active_window_condition::Active_window_condition( KConfigGroup& cfg_P, Condition
     set_match();
     }
 
-void Active_window_condition::init()
+
+Active_window_condition::Active_window_condition( Windowdef_list* window_P,
+    Condition_list_base* parent_P )
+    : Condition( parent_P ), _window( window_P )
     {
-    connect( windows_handler, SIGNAL( active_window_changed( WId )),
-        this, SLOT( active_window_changed( WId )));
+    init();
+    set_match();
     }
 
-bool Active_window_condition::match() const
+
+Active_window_condition::~Active_window_condition()
     {
-    return is_match;
+    disconnect( windows_handler, NULL, this, NULL );
+    delete _window;
     }
 
-void Active_window_condition::set_match()
+
+void Active_window_condition::active_window_changed( WId )
     {
-    is_match = window()->match( Window_data( windows_handler->active_window()));
-    kDebug() << "Active_window_condition::set_match :" << is_match;
-    updated();
+    set_match();
     }
+
 
 void Active_window_condition::cfg_write( KConfigGroup& cfg_P ) const
     {
@@ -61,26 +69,52 @@ void Active_window_condition::cfg_write( KConfigGroup& cfg_P ) const
     cfg_P.writeEntry( "Type", "ACTIVE_WINDOW" ); // overwrites value set in base::cfg_write()
     }
 
-Active_window_condition* Active_window_condition::copy( Condition_list_base* parent_P ) const
+
+Active_window_condition* Active_window_condition::copy() const
     {
-    return new Active_window_condition( window()->copy(), parent_P );
+    kDebug();
+    return new Active_window_condition(window()->copy());
     }
+
 
 const QString Active_window_condition::description() const
     {
     return i18n( "Active window: " ) + window()->comment();
     }
 
-void Active_window_condition::active_window_changed( WId )
+
+void Active_window_condition::init()
     {
-    set_match();
+    connect( windows_handler, SIGNAL( active_window_changed( WId )),
+        this, SLOT( active_window_changed( WId )));
     }
 
-Active_window_condition::~Active_window_condition()
+
+bool Active_window_condition::match() const
     {
-    disconnect( windows_handler, NULL, this, NULL );
-    delete _window;
+    return is_match;
     }
+
+
+void Active_window_condition::set_match()
+    {
+    is_match = window()->match( Window_data( windows_handler->active_window()));
+    kDebug() << "Active_window_condition::set_match :" << is_match;
+    updated();
+    }
+
+
+const Windowdef_list* Active_window_condition::window() const
+    {
+    return _window;
+    }
+
+
+Windowdef_list* Active_window_condition::window()
+    {
+    return _window;
+    }
+
 
 } // namespace KHotKeys
 

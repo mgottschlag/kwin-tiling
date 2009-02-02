@@ -11,6 +11,7 @@
 #include "keyboard_input_gesture_action_data.h"
 #include "actions/actions.h"
 #include "conditions/conditions.h"
+#include "conditions/conditions_list.h"
 
 #include <kconfiggroup.h>
 

@@ -17,10 +17,14 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include "conditions/conditions.h"
+#include "conditions/conditions_list.h"
+#include "conditions/conditions_visitor.h"
+
 #include "action_data/action_data.h"
+#include "khotkeysglobal.h"
 
 #include <KDE/KConfigGroup>
+#include <KDE/KDebug>
 
 namespace KHotKeys {
 
@@ -30,20 +34,44 @@ Condition_list::Condition_list( KConfigGroup& cfg_P, ActionDataBase* data_P )
     _comment = cfg_P.readEntry( "Comment" );
     }
 
+
+Condition_list::Condition_list( const QString& comment_P, ActionDataBase* data_P )
+    : Condition_list_base( NULL ), _comment( comment_P ), data( data_P )
+    {
+    }
+
+
 void Condition_list::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Comment", comment());
     }
 
-Condition_list* Condition_list::copy( ActionDataBase* data_P ) const
+
+const QString& Condition_list::comment() const
     {
-    Condition_list* ret = new Condition_list( comment(), data_P );
-    for( ConstIterator it(begin());
-         it != end();
-         ++it )
-        ret->append( (*it)->copy( ret ));
+    return _comment;
+    }
+
+
+Condition_list* Condition_list::copy() const
+    {
+    kDebug() << count();
+
+    Condition_list* ret = new Condition_list(comment());
+    for( ConstIterator it = begin();
+            it != end();
+            ++it )
+        {
+        ret->append((*it)->copy());
+        }
     return ret;
+    }
+
+
+const QString Condition_list::description() const
+    {
+    return QString();
     }
 
 
@@ -59,6 +87,14 @@ bool Condition_list::match() const
     return false;
     }
 
+
+void Condition_list::set_data( ActionDataBase* data_P )
+    {
+    Q_ASSERT( data == NULL || data == data_P );
+    data = data_P;
+    }
+
+
 void Condition_list::updated() const
     {
     if( !khotkeys_active())
@@ -67,24 +103,12 @@ void Condition_list::updated() const
 //    base::updated(); no need to, doesn't have parent
     }
 
-// CHECKME tohle je drobet hack, jeste to zvazit
-void Condition_list::set_data( ActionDataBase* data_P )
+
+void Condition_list::visit( ConditionsVisitor *visitor )
     {
-    Q_ASSERT( data == NULL || data == data_P );
-    data = data_P;
+    visitor->visitConditionsList(this);
     }
 
-const QString Condition_list::description() const
-    {
-    Q_ASSERT( false );
-    return QString();
-    }
-
-Condition_list* Condition_list::copy( Condition_list_base* ) const
-    {
-    Q_ASSERT( false );
-    return NULL;
-    }
 
 } // namespace KHotKeys
 

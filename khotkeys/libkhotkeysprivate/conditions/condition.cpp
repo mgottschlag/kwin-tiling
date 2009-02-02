@@ -17,26 +17,42 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include "conditions.h"
+#include "conditions/conditions.h"
+
+#include "conditions/active_window_condition.h"
+#include "conditions/existing_window_condition.h"
+#include "conditions/conditions_visitor.h"
 
 #include <KDE/KConfigGroup>
 #include <KDE/KDebug>
 
 namespace KHotKeys {
 
-Condition::Condition( Condition_list_base* parent_P )
-    : _parent( parent_P )
+Condition::Condition( Condition_list_base* parent )
+    : _parent(NULL)
     {
-    if( _parent )
-        _parent->append( this );
+    if( parent ) parent->append( this );
     }
 
-Condition::Condition( KConfigGroup&, Condition_list_base* parent_P )
-    : _parent( parent_P )
+
+Condition::Condition( KConfigGroup&, Condition_list_base* parent )
+    : _parent(NULL)
     {
-    if( _parent )
-        _parent->append( this );
+    if( parent ) parent->append( this );
     }
+
+
+Condition::~Condition()
+    {
+    if( _parent ) _parent->removeAll( this );
+    }
+
+
+void Condition::cfg_write( KConfigGroup& cfg_P ) const
+    {
+    cfg_P.writeEntry( "Type", "ERROR" );
+    }
+
 
 Condition* Condition::create_cfg_read( KConfigGroup& cfg_P, Condition_list_base* parent_P )
     {
@@ -55,24 +71,41 @@ Condition* Condition::create_cfg_read( KConfigGroup& cfg_P, Condition_list_base*
     return NULL;
     }
 
-Condition::~Condition()
+
+const Condition_list_base* Condition::parent() const
     {
-    if( _parent )
-        _parent->removeAll( this );
+    return _parent;
     }
 
 
-void Condition::cfg_write( KConfigGroup& cfg_P ) const
+Condition_list_base* Condition::parent()
     {
-    cfg_P.writeEntry( "Type", "ERROR" );
+    return _parent;
     }
+
+
+void Condition::reparent(Condition_list_base *parent)
+    {
+    if (_parent == parent) return;
+
+    if (_parent) _parent->removeAll(this);
+    _parent = parent;
+    if (_parent) _parent->append(this);
+    }
+
 
 void Condition::updated() const
     {
-    if( !khotkeys_active())
-        return;
+    if( !khotkeys_active()) return;
+
     Q_ASSERT( _parent != NULL );
     _parent->updated();
+    }
+
+
+void Condition::visit( ConditionsVisitor *visitor )
+    {
+    visitor->visitCondition( this );
     }
 
 

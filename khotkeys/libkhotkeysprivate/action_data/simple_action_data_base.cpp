@@ -20,6 +20,7 @@
 #include "simple_action_data.h"
 
 #include "conditions/conditions.h"
+#include "conditions/conditions_list.h"
 
 #include <KDE/KConfigGroup>
 
