@@ -176,7 +176,7 @@ void SM::Net::createConfigurationInterface(KConfigDialog *parent)
 
 void SM::Net::updateSpinBoxSuffix()                                                       
 {
-    ui.intervalSpinBox->setSuffix(i18np(" second", " seconds", ui.intervalSpinBox->value()));
+    ui.intervalSpinBox->setSuffix(QString(" ") + i18np("second", "seconds", ui.intervalSpinBox->value()));
 }
 
 void SM::Net::configAccepted()

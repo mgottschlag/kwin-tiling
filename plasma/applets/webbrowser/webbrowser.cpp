@@ -484,7 +484,7 @@ void WebBrowser::createConfigurationInterface(KConfigDialog *parent)
 
 void WebBrowser::updateSpinBoxSuffix()
 {
-    ui.autoRefreshInterval->setSuffix(i18np(" minute", " minutes", m_autoRefreshInterval));
+    ui.autoRefreshInterval->setSuffix(QString(" ") + i18np("minute", "minutes", m_autoRefreshInterval));
 }
 
 void WebBrowser::configAccepted()

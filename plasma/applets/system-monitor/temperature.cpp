@@ -108,7 +108,7 @@ void Temperature::createConfigurationInterface(KConfigDialog *parent)
 
 void Temperature::updateSpinBoxSuffix()
 {
-    ui.intervalSpinBox->setSuffix(i18np(" second", " seconds", ui.intervalSpinBox->value()));
+    ui.intervalSpinBox->setSuffix(QString(" ") + i18np("second", "seconds", ui.intervalSpinBox->value()));
 }
 
 void Temperature::configAccepted()

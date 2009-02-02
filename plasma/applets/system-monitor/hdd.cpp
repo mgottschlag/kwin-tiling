@@ -89,7 +89,7 @@ void Hdd::createConfigurationInterface(KConfigDialog *parent)
 
 void Hdd::updateSpinBoxSuffix()
 {
-    ui.intervalSpinBox->setSuffix(i18np(" minute", " minutes", ui.intervalSpinBox->value()));
+    ui.intervalSpinBox->setSuffix(QString(" ") + i18np("minute", "minutes", ui.intervalSpinBox->value()));
 }
 
 void Hdd::configAccepted()
