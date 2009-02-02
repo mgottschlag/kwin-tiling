@@ -62,8 +62,8 @@ class KCMHotkeysPrivate
         // Treeview displaying the shortcuts
         QTreeView *treeView;
 
-        /** The model holding the shortcut settings. Beware! There a proxy
-         * between us and that model */
+        /** The model holding the shortcut settings. Beware! There is a proxy
+         * model between us and that model */
         KHotkeysModel *model;
 
         //! Our host
