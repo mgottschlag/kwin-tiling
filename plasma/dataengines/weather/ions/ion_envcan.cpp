@@ -23,13 +23,6 @@
 
 class EnvCanadaIon::Private : public QObject
 {
-public:
-    Private() {
-        m_url = 0;
-    }
-    ~Private() {
-        delete m_url;
-    }
 
 private:
     struct XMLMapInfo {
@@ -43,9 +36,6 @@ public:
     // Key dicts
     QHash<QString, EnvCanadaIon::Private::XMLMapInfo> m_place;
     QHash<QString, QString> m_locations;
-    QString m_code;
-    QString m_territory;
-    QString m_cityName;
 
     // Weather information
     QHash<QString, WeatherData> m_weatherData;
@@ -54,7 +44,6 @@ public:
     QMap<KJob *, QXmlStreamReader*> m_jobXml;
     QMap<KJob *, QString> m_jobList;
     QXmlStreamReader m_xmlSetup;
-    KUrl *m_url;
     KIO::TransferJob *m_job;
 
     QDateTime m_dateFormat;
@@ -509,9 +498,7 @@ bool EnvCanadaIon::updateIonSource(const QString& source)
 // Parses city list and gets the correct city based on ID number
 void EnvCanadaIon::getXMLSetup()
 {
-    d->m_url = new KUrl("http://dd.weatheroffice.ec.gc.ca/EC_sites/xml/siteList.xml");
-
-    KIO::TransferJob *job = KIO::get(d->m_url->url(), KIO::NoReload, KIO::HideProgressInfo);
+    KIO::TransferJob *job = KIO::get(KUrl("http://dd.weatheroffice.ec.gc.ca/EC_sites/xml/siteList.xml"), KIO::NoReload, KIO::HideProgressInfo);
 
     if (job) {
         connect(job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
@@ -591,6 +578,10 @@ void EnvCanadaIon::setup_slotJobFinished(KJob *job)
 bool EnvCanadaIon::readXMLSetup()
 {
     QString tmp;
+    QString territory;
+    QString code;
+    QString cityName;
+
     while (!d->m_xmlSetup.atEnd()) {
         d->m_xmlSetup.readNext();
 
@@ -598,21 +589,21 @@ bool EnvCanadaIon::readXMLSetup()
 
             // XML ID code to match filename
             if (d->m_xmlSetup.name() == "site") {
-                d->m_code = d->m_xmlSetup.attributes().value("code").toString();
+                code = d->m_xmlSetup.attributes().value("code").toString();
             }
 
             if (d->m_xmlSetup.name() == "nameEn") {
-                d->m_cityName = d->m_xmlSetup.readElementText(); // Name of cities
+                cityName = d->m_xmlSetup.readElementText(); // Name of cities
             }
 
             if (d->m_xmlSetup.name() == "provinceCode") {
-                d->m_territory = d->m_xmlSetup.readElementText(); // Provinces/Territory list
-                tmp = "envcan|" + d->m_cityName + ", " + d->m_territory; // Build the key name.
+                territory = d->m_xmlSetup.readElementText(); // Provinces/Territory list
+                tmp = "envcan|" + cityName + ", " + territory; // Build the key name.
 
                 // Set the mappings
-                d->m_place[tmp].cityCode = d->m_code;
-                d->m_place[tmp].territoryName = d->m_territory;
-                d->m_place[tmp].cityName = d->m_cityName;
+                d->m_place[tmp].cityCode = code;
+                d->m_place[tmp].territoryName = territory;
+                d->m_place[tmp].cityName = cityName;
 
                 // Set the string list, we will use for the applet to display the available cities.
                 d->m_locations[tmp] = tmp;

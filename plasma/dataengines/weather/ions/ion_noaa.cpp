@@ -23,14 +23,6 @@
 
 class NOAAIon::Private : public QObject
 {
-public:
-    Private() {
-        m_url = 0;
-    }
-    ~Private() {
-        delete m_url;
-    }
-
 private:
     struct XMLMapInfo {
         QString stateName;
@@ -54,7 +46,6 @@ public:
     QMap<KJob *, QXmlStreamReader*> m_jobXml;
     QMap<KJob *, QString> m_jobList;
     QXmlStreamReader m_xmlSetup;
-    KUrl *m_url;
     KIO::TransferJob *m_job;
 
     QDateTime m_dateFormat;
@@ -148,7 +139,7 @@ bool NOAAIon::updateIonSource(const QString& source)
         return true;
     }
     
-    if (sourceAction[1] == QString("validate")) {
+    if (sourceAction[1] == "validate") {
         kDebug() << "Initiate Validating of place: " << sourceAction[2];
         QStringList result = validate(QString("%1|%2").arg(sourceAction[0]).arg(sourceAction[2]));
 
@@ -163,7 +154,7 @@ bool NOAAIon::updateIonSource(const QString& source)
             return true;
         }
 
-    } else if (sourceAction[1] == QString("weather")) {
+    } else if (sourceAction[1] == "weather") {
         getXMLData(source);
         return true;
     }
@@ -173,9 +164,7 @@ bool NOAAIon::updateIonSource(const QString& source)
 // Parses city list and gets the correct city based on ID number
 void NOAAIon::getXMLSetup()
 {
-    d->m_url = new KUrl("http://www.weather.gov/data/current_obs/index.xml");
-
-    KIO::TransferJob *job = KIO::get(d->m_url->url(), KIO::NoReload, KIO::HideProgressInfo);
+    KIO::TransferJob *job = KIO::get(KUrl("http://www.weather.gov/data/current_obs/index.xml"), KIO::NoReload, KIO::HideProgressInfo);
 
     if (job) {
         connect(job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
