@@ -86,7 +86,6 @@ class Battery : public Plasma::PopupApplet
 
     private:
         void connectSources();
-        void disconnectSources();
         void initBatteryExtender(Plasma::ExtenderItem *item);
         void updateStatus();
 

@@ -258,10 +258,6 @@ void Battery::configAccepted()
         emit sizeHintChanged(Qt::PreferredSize);
     }
 
-    //reconnect sources
-    disconnectSources();
-    connectSources();
-
     emit configNeedsSaving();
 }
 
@@ -955,21 +951,6 @@ void Battery::connectSources()
             this,                          SLOT(sourceAdded(QString)));
     connect(dataEngine("powermanagement"), SIGNAL(sourceRemoved(QString)),
             this,                          SLOT(sourceRemoved(QString)));
-}
-
-void Battery::disconnectSources()
-{
-    const QStringList& battery_sources = dataEngine("powermanagement")->query("Battery")["sources"].toStringList();
-
-    foreach (const QString &battery_source ,battery_sources) {
-        dataEngine("powermanagement")->disconnectSource(battery_source, this);
-    }
-
-    dataEngine("powermanagement")->disconnectSource("AC Adapter", this);
-    dataEngine("powermanagement")->disconnectSource("PowerDevil", this);
-
-    disconnect(this, SLOT(sourceAdded(QString)));
-    disconnect(this, SLOT(sourceRemoved(QString)));
 }
 
 void Battery::sourceAdded(const QString& source)
