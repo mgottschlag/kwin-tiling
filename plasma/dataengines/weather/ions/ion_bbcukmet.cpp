@@ -36,7 +36,6 @@ public:
     // Key dicts
     QHash<QString, UKMETIon::Private::XMLMapInfo> m_place;
     QVector<QString> m_locations;
-    QStringList m_matchLocations;
 
     // Weather information
     QHash<QString, WeatherData> m_weatherData;
@@ -207,12 +206,18 @@ bool UKMETIon::updateIonSource(const QString& source)
 
     QStringList sourceAction = source.split('|');
 
-    if (sourceAction[1] == QString("validate")) {
+    // Guard: if the size of array is not 3 then we have bad data, return an error
+    if (sourceAction.size() < 3) {
+        setData(source, "validate", QString("bbcukmet|timeout"));
+        return true;
+    }
+
+    if (sourceAction[1] == "validate") {
         // Look for places to match
         findPlace(sourceAction[2], source);
         return true;
 
-    } else if (sourceAction[1] == QString("weather")) {
+    } else if (sourceAction[1] == "weather") {
         if (sourceAction.count() >= 3) {
             d->m_place[QString("bbcukmet|%1").arg(sourceAction[2])].XMLurl = sourceAction[3];
             getXMLData(QString("%1|%2").arg(sourceAction[0]).arg(sourceAction[2]));

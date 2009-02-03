@@ -474,7 +474,7 @@ bool EnvCanadaIon::updateIonSource(const QString& source)
         return true;
     }
 
-    if (sourceAction[1] == QString("validate")) {
+    if (sourceAction[1] == "validate") {
         QStringList result = validate(QString("%1|%2").arg(sourceAction[0]).arg(sourceAction[2]));
 
         if (result.size() == 1) {
@@ -488,7 +488,7 @@ bool EnvCanadaIon::updateIonSource(const QString& source)
             return true;
         }
 
-    } else if (sourceAction[1] == QString("weather")) {
+    } else if (sourceAction[1] == "weather") {
         getXMLData(source);
         return true;
     }
@@ -1465,7 +1465,7 @@ QString EnvCanadaIon::station(const QString& source)
         return d->m_weatherData[source].stationID.toUpper();
     }
 
-    return QString("N/A");
+    return "N/A";
 }
 
 QString EnvCanadaIon::observationTime(const QString& source)
@@ -1501,7 +1501,7 @@ QString EnvCanadaIon::dewpoint(const QString& source)
     if (!d->m_weatherData[source].dewpoint.isEmpty()) {
         return QString::number(d->m_weatherData[source].dewpoint.toFloat(), 'f', 1);
     }
-    return QString("N/A");
+    return "N/A";
 }
 
 QString EnvCanadaIon::humidity(const QString& source)
@@ -1509,7 +1509,7 @@ QString EnvCanadaIon::humidity(const QString& source)
     if (!d->m_weatherData[source].humidity.isEmpty()) {
         return QString("%1%").arg(d->m_weatherData[source].humidity);
     }
-    return QString("N/A");
+    return "N/A";
 }
 
 QMap<QString, QString> EnvCanadaIon::visibility(const QString& source)
