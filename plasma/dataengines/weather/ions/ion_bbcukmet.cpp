@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007-2008 by Shawn Starr <shawn.starr@rogers.com>       *
+ *   Copyright (C) 2007-2009 by Shawn Starr <shawn.starr@rogers.com>       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -23,14 +23,6 @@
 
 class UKMETIon::Private : public QObject
 {
-public:
-    Private() {
-        m_url = 0;
-    }
-    ~Private() {
-        delete m_url;
-    }
-
 private:
     struct XMLMapInfo {
         QString place;
@@ -46,7 +38,6 @@ public:
     QVector<QString> m_locations;
     QStringList m_matchLocations;
 
-public:
     // Weather information
     QHash<QString, WeatherData> m_weatherData;
 
@@ -60,7 +51,6 @@ public:
     QMap<KJob *, QXmlStreamReader *> m_forecastJobXml;
     QMap<KJob *, QString> m_forecastJobList;
 
-    KUrl *m_url;
     KIO::TransferJob *m_job;
 
     QDateTime m_dateFormat;
