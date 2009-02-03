@@ -89,7 +89,7 @@ protected Q_SLOTS:
     void loadProgress(int progress);
     void bookmarksModelInit();
     void configAccepted();
-    void updateSpinBoxSuffix();
+    void updateSpinBoxSuffix(int interval);
 
 private:
     void fillGroup(BookmarkItem *parentItem, const KBookmarkGroup &group);

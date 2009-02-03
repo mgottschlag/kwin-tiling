@@ -166,17 +166,17 @@ void SM::Net::createConfigurationInterface(KConfigDialog *parent)
    ui.treeView->setModel(&m_model);
    ui.treeView->resizeColumnToContents(0);
    ui.intervalSpinBox->setValue(interval() / 1000);
-   emit updateSpinBoxSuffix();
+   emit updateSpinBoxSuffix(interval() / 1000);
 
    parent->addPage(widget, i18n("Interfaces"), "network-workgroup");
-   connect(ui.intervalSpinBox, SIGNAL(valueChanged(int)), this, SLOT(updateSpinBoxSuffix()));
+   connect(ui.intervalSpinBox, SIGNAL(valueChanged(int)), this, SLOT(updateSpinBoxSuffix(int)));
    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 }
 
-void SM::Net::updateSpinBoxSuffix()                                                       
+void SM::Net::updateSpinBoxSuffix(int interval)                                                       
 {
-    ui.intervalSpinBox->setSuffix(QString(" ") + i18np("second", "seconds", ui.intervalSpinBox->value()));
+    ui.intervalSpinBox->setSuffix(QString(" ") + i18np("second", "seconds", interval));
 }
 
 void SM::Net::configAccepted()

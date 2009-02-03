@@ -150,17 +150,17 @@ void SM::Cpu::createConfigurationInterface(KConfigDialog *parent)
    ui.treeView->setModel(&m_model);
    ui.treeView->resizeColumnToContents(0);
    ui.intervalSpinBox->setValue(interval() / 1000);
-   emit updateSpinBoxSuffix();
+   emit updateSpinBoxSuffix(interval() / 1000);
 
    parent->addPage(widget, i18n("CPUs"), "cpu");
-   connect(ui.intervalSpinBox, SIGNAL(valueChanged(int)), this, SLOT(updateSpinBoxSuffix()));
+   connect(ui.intervalSpinBox, SIGNAL(valueChanged(int)), this, SLOT(updateSpinBoxSuffix(int)));
    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 }
 
-void SM::Cpu::updateSpinBoxSuffix()
+void SM::Cpu::updateSpinBoxSuffix(int interval)
 {
-    ui.intervalSpinBox->setSuffix(QString(" ") + i18np("second", "seconds", ui.intervalSpinBox->value()));
+    ui.intervalSpinBox->setSuffix(QString(" ") + i18np("second", "seconds", interval));
 }
 
 void SM::Cpu::configAccepted()

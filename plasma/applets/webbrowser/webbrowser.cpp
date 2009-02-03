@@ -475,16 +475,16 @@ void WebBrowser::createConfigurationInterface(KConfigDialog *parent)
     parent->addPage(widget, i18n("General"), icon());
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-    connect(ui.autoRefreshInterval, SIGNAL(valueChanged(int)), this, SLOT(updateSpinBoxSuffix()));
+    connect(ui.autoRefreshInterval, SIGNAL(valueChanged(int)), this, SLOT(updateSpinBoxSuffix(int)));
 
     ui.autoRefresh->setChecked(m_autoRefresh);
     ui.autoRefreshInterval->setValue(m_autoRefreshInterval);
-    emit updateSpinBoxSuffix();
+    emit updateSpinBoxSuffix(m_autoRefreshInterval);
 }
 
-void WebBrowser::updateSpinBoxSuffix()
+void WebBrowser::updateSpinBoxSuffix(int interval)
 {
-    ui.autoRefreshInterval->setSuffix(QString(" ") + i18np("minute", "minutes", m_autoRefreshInterval));
+    ui.autoRefreshInterval->setSuffix(QString(" ") + i18np("minute", "minutes", interval));
 }
 
 void WebBrowser::configAccepted()
