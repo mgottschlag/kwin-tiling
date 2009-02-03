@@ -1,6 +1,7 @@
 [Desktop Action ignored]
 Icon=unknown
 Name=Ignored
+Name[et]=Eiratakse
 Name[pt]=Ignorada
 Name[pt_BR]=Ignorada
 Name[sv]=Ignorerad
@@ -10,6 +11,8 @@ Exec=
 [Desktop Action usage]
 Icon=unknown
 Name=Usage
+Name[et]=Kasutamine
+Name[ga]=Úsáid
 Name[pt]=Uso
 Name[pt_BR]=Uso
 Name[sv]=Användning
@@ -20,6 +23,7 @@ Exec=
 Actions=ignored;usage;
 Type=Service
 Name=Storage Volume
+Name[et]=Salvesti
 Name[pt]=Volume de Armazenamento
 Name[pt_BR]=Volume de Armazenamento
 Name[sv]=Lagringsvolym

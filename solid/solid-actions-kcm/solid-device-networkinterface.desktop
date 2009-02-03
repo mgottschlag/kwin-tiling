@@ -2,6 +2,8 @@
 Actions=
 Type=Service
 Name=Network Interface
+Name[et]=Võrguliides
+Name[ga]=Ceangal Líonra
 Name[pt]=Interface de Rede
 Name[pt_BR]=Interface de Rede
 Name[sv]=Nätverksgränssnitt

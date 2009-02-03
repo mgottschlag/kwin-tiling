@@ -2,6 +2,8 @@
 Actions=
 Type=Service
 Name=Serial Interface
+Name[et]=Jadaliides
+Name[ga]=Comhéadan Srathach
 Name[pt]=Interface Série
 Name[pt_BR]=Interface Série
 Name[sv]=Seriegränssnitt

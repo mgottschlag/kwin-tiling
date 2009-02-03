@@ -2,6 +2,8 @@
 Actions=
 Type=Service
 Name=Block Device
+Name[et]=Plokkseade
+Name[ga]=Gléas Bloic
 Name[pt]=Dispositivo em Bloco
 Name[pt_BR]=Dispositivo em Bloco
 Name[sv]=Blockenhet

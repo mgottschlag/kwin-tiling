@@ -2,6 +2,7 @@
 Actions=
 Type=Service
 Name=Access to storage devices
+Name[et]=Salvestite kasutamine
 Name[pt]=Acesso aos dispositivos de armazenamento
 Name[pt_BR]=Acesso aos dispositivos de armazenamento
 Name[sv]=Åtkomst till lagringsenheter

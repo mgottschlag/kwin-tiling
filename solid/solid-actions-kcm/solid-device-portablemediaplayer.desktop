@@ -2,6 +2,7 @@
 Actions=
 Type=Service
 Name=Portable Media Player
+Name[et]=Kaasaskantav meediamängija
 Name[pt]=Leitor Multimédia Portátil
 Name[pt_BR]=Leitor Multimédia Portátil
 Name[sv]=Portabel mediaspelare
