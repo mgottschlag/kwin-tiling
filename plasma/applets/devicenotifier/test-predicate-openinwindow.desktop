@@ -5,6 +5,7 @@ Actions=open;
 
 [Desktop Action open]
 Name=Open with the file manager
+Name[et]=Avamine vaikimisi failihalduriga
 Name[eu]=Ireki fitxategi kudeatzailearekin
 Name[ga]=Oscail le bainisteoir na gcomhad
 Name[gl]=Abrir co xestor de ficheiros
