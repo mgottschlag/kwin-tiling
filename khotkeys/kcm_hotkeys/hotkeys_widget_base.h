@@ -84,6 +84,8 @@ Q_SIGNALS:
 
 protected:
 
+    void extend(QWidget*, const QString &);
+
     virtual void doCopyFromObject();
     virtual void doCopyToObject();
 

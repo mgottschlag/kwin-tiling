@@ -39,7 +39,8 @@ SimpleActionDataWidget::SimpleActionDataWidget( QWidget *parent )
     QWidget *widget = new QWidget;
     ui.setupUi(widget);
     widget->layout()->setContentsMargins(0,0,0,0);
-    layout()->addWidget(widget);
+
+    extend(widget, i18n("Action"));
     }
 
 

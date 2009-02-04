@@ -53,6 +53,12 @@ void HotkeysWidgetBase::apply()
     }
 
 
+void HotkeysWidgetBase::extend(QWidget *w, const QString &label)
+    {
+    ui.tabs->addTab(w, label);
+    }
+
+
 bool HotkeysWidgetBase::isChanged() const
     {
     return _data->comment() != ui.comment->toPlainText()
