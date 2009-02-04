@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>371</width>
-    <height>387</height>
+    <height>404</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -25,6 +25,9 @@
       <string>Window Data</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2" >
+      <property name="margin" >
+       <number>0</number>
+      </property>
       <item>
        <layout class="QGridLayout" name="gridLayout" >
         <item row="0" column="0" >
@@ -214,6 +217,9 @@
       <string>Window Types</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2" >
+      <property name="margin" >
+       <number>0</number>
+      </property>
       <item row="0" column="0" >
        <widget class="QRadioButton" name="type_normal" >
         <property name="text" >
