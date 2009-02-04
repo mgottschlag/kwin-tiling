@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (C) 2007-2008 by Shawn Starr <shawn.starr@rogers.com>           *
+ * Copyright (C) 2007-2009 by Shawn Starr <shawn.starr@rogers.com>           *
  * Copyright (C) 2008-2009 by Teemu Rytilahti <tpr@d5k.net>                  *
  *                                                                           *
  * This library is free software; you can redistribute it and/or             *
@@ -236,6 +236,12 @@ float convert(float value, int srcUnit, int destUnit)
 QString getUnitString(int unit, bool plain)
 {
     switch (unit) {
+    case WeatherUtils::DegreeUnit:
+        if (plain)
+            return QString();
+        else
+            return i18nc("Degree, unit symbol", "⁰");
+
     case WeatherUtils::Celsius:
         if (plain)
             return QString("C");

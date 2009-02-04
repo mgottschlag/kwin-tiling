@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (C) 2007-2008 by Shawn Starr <shawn.starr@rogers.com>           *
+ * Copyright (C) 2007-2009 by Shawn Starr <shawn.starr@rogers.com>           *
  * Copyright (C) 2008 by Teemu Rytilahti <tpr@d5k.net>                       *
  *                                                                           *
  * This library is free software; you can redistribute it and/or             *
@@ -37,7 +37,7 @@
 namespace WeatherUtils
 {
 
-enum TemperatureUnit { NoUnit = 0, Celsius, Fahrenheit, Kelvin };
+enum TemperatureUnit { NoUnit = 0, DegreeUnit, Celsius, Fahrenheit, Kelvin };
 enum SpeedUnit { KilometersPerHour = 100, MetersPerSecond, MilesPerHour, Knots, Beaufort };
 enum DistanceUnit { Centimeters = 200, Millimeters, Inches, Kilometers, Miles };
 enum PressureUnit { Kilopascals = 300, InchesHG, Millibars, Hectopascals }; // FIXME deprecate millibars?
