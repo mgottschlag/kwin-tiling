@@ -13,10 +13,12 @@
 #include <QGraphicsWidget>
 #include <QGraphicsProxyWidget>
 #include <QWaitCondition>
+#include <QTimer>
 
 #include <KDebug>
 
 #include <Plasma/Animator>
+#include <Plasma/Containment>
 
 #include "desktoplayout.h"
 
@@ -46,6 +48,7 @@ void DesktopLayout::addItem(QGraphicsLayoutItem *item, bool pushBack, const QRec
     DesktopLayoutItem desktopItem;
     desktopItem.item = item;
     desktopItem.temporaryGeometry = QRectF(0, 0, -1, -1);
+    desktopItem.hasHandle = false;
 
     itemSpace.addItem(spaceItem);
     items.insert(key, desktopItem);
@@ -272,6 +275,10 @@ void DesktopLayout::setGeometry(const QRectF &rect)
             ItemSpace::ItemSpaceItem &spaceItem = group.m_groupItems[itemId];
             DesktopLayoutItem &desktopItem = items[spaceItem.user.toInt()];
 
+            if (desktopItem.hasHandle) {
+                continue;
+            }
+
             //  Temporarily place the item if it could not be pushed inside the working area.
             //  Put it back if it fits again.
             if (itemSpace.positionVisibility(spaceItem.lastGeometry) < visibilityTolerance) {
@@ -336,6 +343,17 @@ void DesktopLayout::itemGeometryChanged(QGraphicsLayoutItem *layoutItem)
     itemSpace.locateItemByUser(itemKey, &group, &item);
     ItemSpace::ItemSpaceItem &spaceItem = itemSpace.m_groups[group].m_groupItems[item];
 
+    // HACK: if the applet is in the applet handle, do nothing, but use a timer as it may go away very soon
+    QGraphicsItem *gItem = dynamic_cast<QGraphicsItem *>(layoutItem);
+    if (gItem) {
+        Plasma::Containment *cont = dynamic_cast<Plasma::Containment *>(gItem->parentItem());
+        if (!cont) {
+            items[itemKey].hasHandle = true;
+            QTimer::singleShot(0, this, SLOT(onTimer()));
+            return;
+        }
+    }
+
     QRectF currentRelative = layoutItem->geometry().translated(-workingStart);
     if (spaceItem.lastGeometry != currentRelative) {
         spaceItem.lastGeometry = currentRelative;
@@ -343,6 +361,41 @@ void DesktopLayout::itemGeometryChanged(QGraphicsLayoutItem *layoutItem)
 
         itemSpace.updateItem(group, item);
         invalidate();
+    }
+}
+
+void DesktopLayout::onTimer ()
+{
+    int itemKey = -1;
+    QMapIterator<int, DesktopLayoutItem> i(items);
+    while (i.hasNext()) {
+        i.next();
+        int itemKey = i.key();
+
+        if (!items[itemKey].hasHandle) {
+            continue;
+        }
+
+        QGraphicsLayoutItem *layoutItem = items[itemKey].item;
+        int group, item;
+        itemSpace.locateItemByUser(itemKey, &group, &item);
+        ItemSpace::ItemSpaceItem &spaceItem = itemSpace.m_groups[group].m_groupItems[item];
+        
+        QGraphicsItem *gItem;
+        if ((gItem = dynamic_cast<QGraphicsItem *>(layoutItem)) &&
+            dynamic_cast<Plasma::Containment *>(gItem->parentItem())) {
+
+            items[itemKey].hasHandle = false;
+
+            QRectF currentRelative = layoutItem->geometry().translated(-workingStart);
+            if (spaceItem.lastGeometry != currentRelative) {
+                spaceItem.lastGeometry = currentRelative;
+                spaceItem.preferredGeometry = currentRelative;
+
+                itemSpace.updateItem(group, item);
+                invalidate();
+            }
+        }
     }
 }
 

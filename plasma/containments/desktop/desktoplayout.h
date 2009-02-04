@@ -119,6 +119,7 @@ public:
 
 private slots:
     void movementFinished(QGraphicsItem*);
+    void onTimer();
 
 private:
 
@@ -127,6 +128,7 @@ private:
       public:
         QGraphicsLayoutItem *item;
         QRectF temporaryGeometry;
+        bool hasHandle;
     };
 
     int newItemKey();
