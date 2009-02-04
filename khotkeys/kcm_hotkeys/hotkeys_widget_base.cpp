@@ -28,7 +28,6 @@ HotkeysWidgetBase::HotkeysWidgetBase( QWidget *parent )
     : HotkeysWidgetIFace(parent)
     {
     ui.setupUi( this );
-    layout()->setContentsMargins(0,0,0,0);
 
     connect(
         ui.comment, SIGNAL(textChanged()),

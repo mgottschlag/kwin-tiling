@@ -34,14 +34,7 @@ SimpleActionDataWidget::SimpleActionDataWidget( QWidget *parent )
         : HotkeysWidgetBase( parent )
          ,currentTrigger(NULL)
          ,currentAction(NULL)
-    {
-    // We add ourself to the layout
-    QWidget *widget = new QWidget;
-    ui.setupUi(widget);
-    widget->layout()->setContentsMargins(0,0,0,0);
-
-    extend(widget, i18n("Action"));
-    }
+    {}
 
 
 SimpleActionDataWidget::~SimpleActionDataWidget()
@@ -120,14 +113,12 @@ void SimpleActionDataWidget::setActionData( KHotKeys::SimpleActionData* pData )
             };
         }
 
-    Q_ASSERT( ui.triggerBox->layout() );
     if (currentTrigger )
         {
-        kDebug() << "Connecting";
         connect(
             currentTrigger, SIGNAL(changed(bool)),
             this, SLOT(slotChanged() ));
-        ui.triggerBox->layout()->addWidget(currentTrigger);
+        extend(currentTrigger, i18n("Trigger"));
         }
 
     // Now go and work on the action
@@ -158,13 +149,12 @@ void SimpleActionDataWidget::setActionData( KHotKeys::SimpleActionData* pData )
             };
         }
 
-    Q_ASSERT( ui.actionBox->layout() );
     if (currentAction )
         {
         connect(
             currentAction, SIGNAL(changed(bool)),
             this, SLOT(slotChanged() ));
-        ui.actionBox->layout()->addWidget(currentAction);
+        extend(currentAction, i18n("Action"));
         }
 
     Base::copyFromObject();

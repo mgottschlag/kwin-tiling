@@ -19,7 +19,6 @@
 #ifndef ACTIONGROUPWIDGET_H
 #define ACTIONGROUPWIDGET_H
 
-
 #include "hotkeys_widget_base.h"
 
 

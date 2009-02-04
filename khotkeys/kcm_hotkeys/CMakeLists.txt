@@ -70,9 +70,6 @@ kde4_add_ui_files(
 
     # ACTION_DATA WIDGETS
     hotkeys_widget_base.ui
-    simple_action_data_widget.ui
-
-
     )
 
 qt4_add_dbus_interface(

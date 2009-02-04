@@ -21,7 +21,6 @@
 
 #include "hotkeys_widget_base.h"
 
-#include "ui_simple_action_data_widget.h"
 #include "action_data/simple_action_data.h"
 
 #include <QtGui/QWidget>
@@ -74,8 +73,6 @@ protected:
     virtual void doCopyToObject();
 
 private:
-
-    Ui::SimpleActionDataWidget ui;
 
     HotkeysWidgetIFace *currentTrigger;
     HotkeysWidgetIFace *currentAction;

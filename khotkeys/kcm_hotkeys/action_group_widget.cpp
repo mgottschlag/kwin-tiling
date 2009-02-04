@@ -27,8 +27,7 @@ ActionGroupWidget::ActionGroupWidget( QWidget *parent )
     :   HotkeysWidgetBase(parent)
         ,_conditions(new ConditionsWidget)
     {
-    layout()->addWidget(_conditions);
-
+    extend(_conditions, i18n("Conditions"));
     connect(_conditions, SIGNAL(changed(bool)),
             SLOT(slotChanged()));
     }
