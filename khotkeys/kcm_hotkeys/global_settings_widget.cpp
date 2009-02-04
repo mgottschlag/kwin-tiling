@@ -31,7 +31,6 @@ GlobalSettingsWidget::GlobalSettingsWidget( QWidget *parent )
     : HotkeysWidgetIFace( parent )
     {
     ui.setupUi(this);
-    layout()->setContentsMargins(0,0,0,0);
 
     QString path = KGlobal::dirs()->findResource( "services", "kded/khotkeys.desktop");
     if ( KDesktopFile::isDesktopFile(path) )
