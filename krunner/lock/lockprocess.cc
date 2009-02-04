@@ -466,7 +466,7 @@ void LockProcess::createSaverWindow()
 // this code is (partially) duplicated in kdebase/workspace/kcontrol/screensaver
     if( mOpenGLVisual )
     {
-        static int attribs[][ 15 ] =
+        static const int attribs[][ 15 ] =
         {
         #define R GLX_RED_SIZE
         #define G GLX_GREEN_SIZE
@@ -491,7 +491,7 @@ void LockProcess::createSaverWindow()
              i < sizeof( attribs ) / sizeof( attribs[ 0 ] );
              ++i )
         {
-            if( XVisualInfo* info = glXChooseVisual( x11Info().display(), x11Info().screen(), attribs[ i ] ))
+            if( XVisualInfo* info = glXChooseVisual( x11Info().display(), x11Info().screen(), const_cast<int*>(attribs[ i ]) ))
             {
                 visual = info->visual;
                 depth = info->depth;

@@ -20,7 +20,7 @@ KSWidget::KSWidget( QWidget* parent, Qt::WindowFlags wf )
     int flags = parentWidget() ? 0 : CWOverrideRedirect;
     if( true /*mOpenGLVisual*/ )
     {
-        static int attribs[][ 15 ] =
+        static const int attribs[][ 15 ] =
         {
         #define R GLX_RED_SIZE
         #define G GLX_GREEN_SIZE
@@ -45,7 +45,7 @@ KSWidget::KSWidget( QWidget* parent, Qt::WindowFlags wf )
              i < sizeof( attribs ) / sizeof( attribs[ 0 ] );
              ++i )
         {
-            if( XVisualInfo* info = glXChooseVisual( x11Info().display(), x11Info().screen(), attribs[ i ] ))
+            if( XVisualInfo* info = glXChooseVisual( x11Info().display(), x11Info().screen(), const_cast<int*>(attribs[ i ]) ))
             {
                 visual = info->visual;
                 depth = info->depth;
