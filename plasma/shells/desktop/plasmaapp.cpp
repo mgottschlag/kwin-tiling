@@ -234,7 +234,7 @@ void PlasmaApp::setupDesktop()
 {
 #ifdef Q_WS_X11
     Atom atoms[5];
-    const char *atomNames[] = {"XdndAware", "XdndEnter", "XdndFinished", "XdndPosition", "XdndStatus"};
+    const char * const atomNames[] = {"XdndAware", "XdndEnter", "XdndFinished", "XdndPosition", "XdndStatus"};
     XInternAtoms(QX11Info::display(), const_cast<char **>(atomNames), 5, False, atoms);
     m_XdndAwareAtom = atoms[0];
     m_XdndEnterAtom = atoms[1];

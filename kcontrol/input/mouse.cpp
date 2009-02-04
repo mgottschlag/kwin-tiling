@@ -374,11 +374,12 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
   // It only works if libusb is available.
 #ifdef HAVE_LIBUSB
 
+  static const
   struct device_table {
       int idVendor;
       int idProduct;
-      QString Model;
-      QString Name;
+      const char* Model;
+      const char* Name;
       int flags;
   } device_table[] = {
       { VENDOR_LOGITECH, 0xC00E, "M-BJ58", "Wheel Mouse Optical", HAS_RES },
@@ -398,7 +399,7 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
       { VENDOR_LOGITECH, 0xC50B, "967300-0403", "Cordless MX Duo Receiver", HAS_SS|HAS_CSR },
       { VENDOR_LOGITECH, 0xC50E, "M-RAG97", "MX1000 Laser Mouse", HAS_SS | HAS_CSR },
       { VENDOR_LOGITECH, 0xC702, "C-UF15", "Receiver for Cordless Presenter", HAS_CSR },
-      { 0, 0, QString(), QString(), 0 }
+      { 0, 0, 0, 0, 0 }
   };
 
   usb_init();
@@ -414,7 +415,7 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
 	      if ( (device_table[n].idVendor == dev->descriptor.idVendor) &&
 		   (device_table[n].idProduct == dev->descriptor.idProduct) ) {
 		  // OK, we have a device that appears to be one of the ones we support
-		  LogitechMouse *mouse = new LogitechMouse( dev, device_table[n].flags, this, device_table[n].Name.toLatin1() );
+		  LogitechMouse *mouse = new LogitechMouse( dev, device_table[n].flags, this, device_table[n].Name );
 		  settings->logitechMouseList.append(mouse);
 		  tabwidget->addTab( (QWidget*)mouse, device_table[n].Name );
 	      }

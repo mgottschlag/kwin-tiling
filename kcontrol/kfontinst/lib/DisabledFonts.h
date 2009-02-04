@@ -140,7 +140,7 @@ class KFONTINST_EXPORT CDisabledFonts
     TFontList itsFonts;
     int       itsMods;
 
-    static LangWritingSystemMap theirLanguageForWritingSystem[];
+    static const LangWritingSystemMap theirLanguageForWritingSystem[];
 };
 
 inline KDE_EXPORT uint qHash(const CDisabledFonts::TFont &key)

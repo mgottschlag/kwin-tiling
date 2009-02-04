@@ -191,6 +191,7 @@ static bool changeStatus(const CDisabledFonts::TFileList &files, bool enable)
     return true;
 }
 
+const
 CDisabledFonts::LangWritingSystemMap CDisabledFonts::theirLanguageForWritingSystem[]=
 {
     { QFontDatabase::Latin, (const FcChar8 *)"en" },

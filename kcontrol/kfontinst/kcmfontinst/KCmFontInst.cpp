@@ -80,7 +80,7 @@ K_EXPORT_PLUGIN(FontInstallFactory("fontinst"))
 namespace KFI
 {
 
-static int constModeList[]=
+static const int constModeList[]=
     {CGroupListItem::ALL, CGroupListItem::PERSONAL, CGroupListItem::SYSTEM, -1};
 
 inline CGroupListItem::EType modeToGrp(int mode)

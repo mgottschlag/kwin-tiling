@@ -59,7 +59,7 @@
 #undef Unsorted
 #undef None
 
-static const char *aa_rgb_xpm[]={
+static const char * const aa_rgb_xpm[]={
 "12 12 3 1",
 "a c #0000ff",
 "# c #00ff00",
@@ -76,7 +76,7 @@ static const char *aa_rgb_xpm[]={
 "....####aaaa",
 "....####aaaa",
 "....####aaaa"};
-static const char *aa_bgr_xpm[]={
+static const char * const aa_bgr_xpm[]={
 "12 12 3 1",
 ". c #0000ff",
 "# c #00ff00",
@@ -93,7 +93,7 @@ static const char *aa_bgr_xpm[]={
 "....####aaaa",
 "....####aaaa",
 "....####aaaa"};
-static const char *aa_vrgb_xpm[]={
+static const char * const aa_vrgb_xpm[]={
 "12 12 3 1",
 "a c #0000ff",
 "# c #00ff00",
@@ -110,7 +110,7 @@ static const char *aa_vrgb_xpm[]={
 "aaaaaaaaaaaa",
 "aaaaaaaaaaaa",
 "aaaaaaaaaaaa"};
-static const char *aa_vbgr_xpm[]={
+static const char * const aa_vbgr_xpm[]={
 "12 12 3 1",
 ". c #0000ff",
 "# c #00ff00",
@@ -128,7 +128,7 @@ static const char *aa_vbgr_xpm[]={
 "aaaaaaaaaaaa",
 "aaaaaaaaaaaa"};
 
-static const char** aaPixmaps[]={ aa_rgb_xpm, aa_bgr_xpm, aa_vrgb_xpm, aa_vbgr_xpm };
+static const char* const * const aaPixmaps[]={ aa_rgb_xpm, aa_bgr_xpm, aa_vrgb_xpm, aa_vbgr_xpm };
 
 /**** DLL Interface ****/
 K_PLUGIN_FACTORY(FontFactory, registerPlugin<KFonts>(); )

@@ -48,7 +48,7 @@
 #ifndef HAVE_XKLAVIER
 
 // Compiler will size array automatically.
-static const char* X11DirList[] =
+static const char* const X11DirList[] =
     {
         XLIBDIR,
         "/etc/X11/",
@@ -67,7 +67,7 @@ static const char* X11DirList[] =
     };
 
 // Compiler will size array automatically.
-static const char* rulesFileList[] =
+static const char* const rulesFileList[] =
     {
 	"xkb/rules/base",
 	"xkb/rules/xorg",

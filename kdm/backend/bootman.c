@@ -232,7 +232,7 @@ commitLilo( void )
 	runAndWait( (char **)args, environ );
 }
 
-static struct {
+static const struct {
 	int (*get)( char ***, int *, int * );
 	int (*set)( const char *, SdRec * );
 	void (*commit)( void );

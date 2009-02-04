@@ -9,7 +9,7 @@
 #include <QtCore/QtGlobal>
 #include <KDE/KLocalizedString>
 
-static const char *constUnicodeScriptList[] =
+static const char * const constUnicodeScriptList[] =
 {
     I18N_NOOP("Arabic"),
     I18N_NOOP("Armenian"),

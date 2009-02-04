@@ -163,7 +163,7 @@ inline bool isAllFolder(const QString &sect)
 }
 
 #ifdef KFI_KIO_ALL_URLS_HAVE_NAME
-static const char *constExtensions[]=
+static const char * const constExtensions[]=
             {".ttf", KFI_FONTS_PACKAGE, ".otf", ".pfa", ".pfb", ".ttc",
              ".pcf", ".pcf.gz", ".bdf", ".bdf.gz", NULL };
 
