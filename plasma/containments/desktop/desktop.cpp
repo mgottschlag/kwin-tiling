@@ -97,6 +97,11 @@ void DefaultDesktop::constraintsEvent(Plasma::Constraints constraints)
         m_addPanelAction->setVisible(!locked);
     }
 
+    if (constraints & Plasma::SizeConstraint) {
+        refreshWorkingArea();
+    }
+
+    //FIXME: are refres on working are change and refresh on resize mutually exclusive?
     if (constraints & Plasma::StartupCompletedConstraint) {
         connect(corona(), SIGNAL(availableScreenRegionChanged()),
                 this, SLOT(refreshWorkingArea()));
