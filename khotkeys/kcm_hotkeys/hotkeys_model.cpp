@@ -30,6 +30,7 @@
 #include <KDE/KLocale>
 #include <KDE/KIcon>
 
+
 static KHotKeys::ActionDataBase *findElement(
         void *ptr
         ,KHotKeys::ActionDataGroup *root)

@@ -80,6 +80,42 @@ HotkeysTreeViewContextMenu::HotkeysTreeViewContextMenu( const QModelIndex &index
 HotkeysTreeViewContextMenu::~HotkeysTreeViewContextMenu()
     {}
 
+
+KHotKeys::Action *
+HotkeysTreeViewContextMenu::createActionFromType(
+        int actionType,
+        KHotKeys::SimpleActionData* data
+        ) const
+    {
+    KHotKeys::Action *action = NULL;
+    switch (actionType)
+        {
+        case KHotKeys::Action::CommandUrlActionType:
+            action = new KHotKeys::CommandUrlAction( data );
+            break;
+
+        case KHotKeys::Action::DBusActionType:
+            action = new KHotKeys::DBusAction( data );
+            break;
+
+        case KHotKeys::Action::KeyboardInputActionType:
+            action = new KHotKeys::KeyboardInputAction( data );
+            break;
+
+        case KHotKeys::Action::MenuEntryActionType:
+            action = new KHotKeys::MenuEntryAction( data );
+            break;
+
+        default:
+            Q_ASSERT(false);
+            return NULL;
+        }
+
+    data->set_action(action);
+    return action;
+    }
+
+
 void HotkeysTreeViewContextMenu::createTriggerMenus(
         KHotKeys::Trigger::TriggerTypes triggerTypes,
         KHotKeys::Action::ActionTypes actionTypes)
@@ -150,6 +186,13 @@ void HotkeysTreeViewContextMenu::populateTriggerMenu(
             menu->addAction( i18n("K-Menu Entry"), mapper, SLOT(map()) ),
             KHotKeys::Action::MenuEntryActionType );
         }
+
+    if (types & KHotKeys::Action::KeyboardInputActionType)
+        {
+        mapper->setMapping(
+            menu->addAction( i18n("Send Keyboard Input"), mapper, SLOT(map()) ),
+            KHotKeys::Action::KeyboardInputActionType );
+        }
     }
 
 
@@ -172,24 +215,7 @@ void HotkeysTreeViewContextMenu::newGlobalShortcutActionAction( int actionType )
         new KHotKeys::SimpleActionData( 0, i18n("New Group"), i18n("Comment"));
     data->set_trigger( new KHotKeys::ShortcutTrigger( data, KShortcut() ) );
 
-    switch (actionType)
-        {
-        case KHotKeys::Action::MenuEntryActionType:
-            data->set_action( new KHotKeys::MenuEntryAction( data ));
-            break;
-
-        case KHotKeys::Action::CommandUrlActionType:
-            data->set_action( new KHotKeys::CommandUrlAction( data ));
-            break;
-
-        case KHotKeys::Action::DBusActionType:
-            data->set_action( new KHotKeys::DBusAction( data ));
-            break;
-
-        default:
-            Q_ASSERT(false);
-            return;
-        }
+    createActionFromType(actionType, data);
 
     QModelIndex newAct = _view->model()->insertActionData(data, parent);
     _view->setCurrentIndex(newAct);
@@ -217,24 +243,7 @@ void HotkeysTreeViewContextMenu::newMouseGestureTriggerActionAction( int actionT
         new KHotKeys::SimpleActionData( 0, i18n("New Action"), i18n("Comment"));
     data->set_trigger( new KHotKeys::GestureTrigger(data) );
 
-    switch (actionType)
-        {
-        case KHotKeys::Action::MenuEntryActionType:
-            data->set_action( new KHotKeys::MenuEntryAction( data ));
-            break;
-
-        case KHotKeys::Action::CommandUrlActionType:
-            data->set_action( new KHotKeys::CommandUrlAction( data ));
-            break;
-
-        case KHotKeys::Action::DBusActionType:
-            data->set_action( new KHotKeys::DBusAction( data ));
-            break;
-
-        default:
-            Q_ASSERT(false);
-            return;
-        }
+    createActionFromType(actionType, data);
 
     QModelIndex newAct = _view->model()->insertActionData(data, parent);
     _view->setCurrentIndex(newAct);
@@ -262,24 +271,7 @@ void HotkeysTreeViewContextMenu::newWindowTriggerActionAction( int actionType )
         new KHotKeys::SimpleActionData( 0, i18n("New Group"), i18n("Comment"));
     data->set_trigger( new KHotKeys::WindowTrigger(data) );
 
-    switch (actionType)
-        {
-        case KHotKeys::Action::MenuEntryActionType:
-            data->set_action( new KHotKeys::MenuEntryAction( data ));
-            break;
-
-        case KHotKeys::Action::CommandUrlActionType:
-            data->set_action( new KHotKeys::CommandUrlAction( data ));
-            break;
-
-        case KHotKeys::Action::DBusActionType:
-            data->set_action( new KHotKeys::DBusAction( data ));
-            break;
-
-        default:
-            Q_ASSERT(false);
-            return;
-        }
+    createActionFromType(actionType, data);
 
     QModelIndex newAct = _view->model()->insertActionData(data, parent);
     _view->setCurrentIndex(newAct);

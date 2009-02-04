@@ -97,6 +97,10 @@ private Q_SLOTS:
 
 private:
 
+    KHotKeys::Action* createActionFromType(
+            int type,
+            KHotKeys::SimpleActionData *data) const;
+
     QModelIndex _index;
     HotkeysTreeView *_view;
     };

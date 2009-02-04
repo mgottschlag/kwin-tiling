@@ -244,9 +244,16 @@ class KDE_EXPORT KeyboardInputAction
             ActionWindow
             };
 
-        KeyboardInputAction( ActionData* data_P, const QString& input_P,
-            Windowdef_list* dest_window_P, bool active_window_P );
-        KeyboardInputAction( KConfigGroup& cfg_P, ActionData* data_P );
+        KeyboardInputAction(
+                ActionData* data_P,
+                const QString& input_P = QString(),
+                Windowdef_list* dest_window_P = NULL,
+                bool active_window_P = true);
+
+        KeyboardInputAction(
+                KConfigGroup& cfg_P,
+                ActionData* data_P);
+
         virtual ~KeyboardInputAction();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual void execute();
