@@ -489,6 +489,60 @@ module Plasma
     end
   end
 
+  class ToolTipManager < Qt::Base
+    def setContent(widget, data)
+      if widget.kind_of?(PlasmaScripting::Applet)
+        super(widget.applet_script.applet, data)
+      else
+        super
+      end
+    end
+
+    def clearContent(widget)
+      if widget.kind_of?(PlasmaScripting::Applet)
+        super(widget.applet_script.applet)
+      else
+        super
+      end
+    end
+
+    def show(widget)
+      if widget.kind_of?(PlasmaScripting::Applet)
+        super(widget.applet_script.applet)
+      else
+        super
+      end
+    end
+
+    def visible?(widget)
+      return isVisible(widget)
+    end
+
+    def isVisible(widget)
+      if widget.kind_of?(PlasmaScripting::Applet)
+        super(widget.applet_script.applet)
+      else
+        super
+      end
+    end
+
+    def registerWidget(widget)
+      if widget.kind_of?(PlasmaScripting::Applet)
+        super(widget.applet_script.applet)
+      else
+        super
+      end
+    end
+
+    def unregisterWidget(widget)
+      if widget.kind_of?(PlasmaScripting::Applet)
+        super(widget.applet_script.applet)
+      else
+        super
+      end
+    end
+  end
+
   class TreeView < Qt::Base
     def initialize(parent = nil)
       if parent.kind_of?(PlasmaScripting::Applet)
