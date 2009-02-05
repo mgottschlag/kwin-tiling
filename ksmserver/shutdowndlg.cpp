@@ -443,7 +443,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
                 QAction* action = new QAction(label, rebootActionGroup);
                 action->setData(index);
                 if (index == cur) {
-                    action->setText( label + i18nc("current option in boot loader", " (current)") );
+                    action->setText( label + i18nc("default option in boot loader", " (default)") );
                 }
             }
             rebootMenu->addActions(rebootActionGroup->actions());
