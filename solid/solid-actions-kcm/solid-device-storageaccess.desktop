@@ -7,4 +7,5 @@ Name[pt]=Acesso aos dispositivos de armazenamento
 Name[pt_BR]=Acesso aos dispositivos de armazenamento
 Name[sv]=Åtkomst till lagringsenheter
 Name[uk]=Доступ до пристроїв зберігання даних
+Name[x-test]=xxAccess to storage devicesxx
 X-KDE-Solid-Actions-Type=StorageAccess

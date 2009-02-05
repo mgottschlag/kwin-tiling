@@ -6,6 +6,7 @@ Name[pt]=Ignorada
 Name[pt_BR]=Ignorada
 Name[sv]=Ignorerad
 Name[uk]=Ігнорується
+Name[x-test]=xxIgnoredxx
 Exec=
 
 [Desktop Action usage]
@@ -17,6 +18,7 @@ Name[pt]=Uso
 Name[pt_BR]=Uso
 Name[sv]=Användning
 Name[uk]=Використання
+Name[x-test]=xxUsagexx
 Exec=
 
 [Desktop Entry]
@@ -28,4 +30,5 @@ Name[pt]=Volume de Armazenamento
 Name[pt_BR]=Volume de Armazenamento
 Name[sv]=Lagringsvolym
 Name[uk]=Том зберігання даних
+Name[x-test]=xxStorage Volumexx
 X-KDE-Solid-Actions-Type=StorageVolume
