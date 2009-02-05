@@ -111,6 +111,7 @@ void GlobalShortcutsModule::load()
     }
 
     // Undo all changes not yet applied
+    editor->undo();
     editor->clear();
 
     QDBusReply< QList<QDBusObjectPath> > componentsRc = kdedglobalaccel.allComponents();

@@ -58,7 +58,8 @@ public:
     void addCollection(KActionCollection *, const QString &id, const QString &name);
 
     /**
-     * Clear all collections were currently hosting.
+     * Clear all collections were currently hosting. Current changes are not
+     * undone? Do that before calling this method.
      */
     void clear();
 
