@@ -2,20 +2,6 @@
  <author>Michael Jansen</author>
  <class>SelectSchemeDialog</class>
  <widget class="KDialog" name="SelectSchemeDialog" >
-  <property name="geometry" >
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>696</width>
-    <height>153</height>
-   </rect>
-  </property>
-  <property name="maximumSize" >
-   <size>
-    <width>16777215</width>
-    <height>153</height>
-   </size>
-  </property>
   <property name="windowTitle" >
    <string>Select Shortcut Scheme</string>
   </property>
@@ -25,16 +11,13 @@
   <widget class="QWidget" name="" >
    <property name="geometry" >
     <rect>
-     <x>31</x>
-     <y>11</y>
-     <width>651</width>
+     <x>32</x>
+     <y>12</y>
+     <width>671</width>
      <height>71</height>
     </rect>
    </property>
-   <layout class="QGridLayout" name="_2" >
-    <property name="spacing" >
-     <number>6</number>
-    </property>
+   <layout class="QGridLayout" name="gridLayout" >
     <item row="0" column="0" >
      <widget class="QLabel" name="label" >
       <property name="baseSize" >
@@ -127,7 +110,6 @@
      </widget>
     </item>
    </layout>
-   <zorder>ktitlewidget</zorder>
   </widget>
  </widget>
  <customwidgets>
