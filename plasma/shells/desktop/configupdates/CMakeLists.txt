@@ -11,3 +11,4 @@ target_link_libraries(plasma-to-plasma-desktop ${KDE4_KIO_LIBS})
 install(TARGETS plasma-to-plasma-desktop DESTINATION ${LIB_INSTALL_DIR}/kconf_update_bin/)
 
 install(FILES plasmarc-to-plasmadesktoprc.upd DESTINATION ${KCONF_UPDATE_INSTALL_DIR})
+install(FILES plasma-to-plasmadesktop-shortcuts.upd DESTINATION ${KCONF_UPDATE_INSTALL_DIR})
