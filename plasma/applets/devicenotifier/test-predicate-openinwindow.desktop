@@ -5,6 +5,8 @@ Actions=open;
 
 [Desktop Action open]
 Name=Open with the file manager
+Name[ca]=Obre amb el gestor de fitxers
+Name[ca@valencia]=Obre amb el gestor de fitxers
 Name[et]=Avamine vaikimisi failihalduriga
 Name[eu]=Ireki fitxategi kudeatzailearekin
 Name[ga]=Oscail le bainisteoir na gcomhad
