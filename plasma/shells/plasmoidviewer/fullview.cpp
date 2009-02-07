@@ -79,9 +79,10 @@ FullView::FullView(const QString &ff, const QString &loc, QWidget *parent)
     setAlignment(Qt::AlignLeft | Qt::AlignTop);
 }
 
-void FullView::addApplet(const QString &a, const QString &containment, const QString& wallpaper, const QVariantList &args)
+void FullView::addApplet(const QString &name, const QString &containment,
+                         const QString& wallpaper, const QVariantList &args)
 {
-    kDebug() << "adding applet" << a << "in" << containment;
+    kDebug() << "adding applet" << name << "in" << containment;
     m_containment = m_corona.addContainment(containment);
     connect(m_containment, SIGNAL(appletRemoved(Plasma::Applet*)), this, SLOT(appletRemoved()));
 
@@ -93,7 +94,7 @@ void FullView::addApplet(const QString &a, const QString &containment, const QSt
     m_containment->setLocation(m_location);
     setScene(m_containment->scene());
 
-    m_applet = m_containment->addApplet(a, args, QRectF(0, 0, -1, -1));
+    m_applet = m_containment->addApplet(name, args, QRectF(0, 0, -1, -1));
     m_applet->setFlag(QGraphicsItem::ItemIsMovable, false);
 
     setSceneRect(m_applet->geometry());
