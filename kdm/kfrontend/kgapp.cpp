@@ -70,7 +70,7 @@ sigAlarm( int )
 
 }
 
-GreeterApp::GreeterApp( int argc, char **argv ) :
+GreeterApp::GreeterApp( int &argc, char **argv ) :
 	inherited( argc, argv ),
 	regrabPtr( false ), regrabKbd( false ),
 	dragWidget( 0 )
@@ -296,13 +296,14 @@ main( int argc ATTR_UNUSED, char **argv )
 	}
 
 	static char *fakeArgv[] = { (char *)"kdmgreet", 0 };
+	static int fakeArgc = as(fakeArgv) - 1;
 
 	KCrash::setFlags( KCrash::KeepFDs | KCrash::SaferDialog | KCrash::AlwaysDirectly );
 	KCrash::setApplicationName( QLatin1String( fakeArgv[0] ) );
 	KCrash::setCrashHandler( KCrash::defaultCrashHandler );
 	XSetIOErrorHandler( xIOErr );
 	KComponentData inst( fakeArgv[0] );
-	GreeterApp app( as(fakeArgv) - 1, fakeArgv );
+	GreeterApp app( fakeArgc, fakeArgv );
 	foreach (const QString &dir, KGlobal::dirs()->resourceDirs( "qtplugins" ))
 		app.addLibraryPath( dir );
 	initQAppConfig();
