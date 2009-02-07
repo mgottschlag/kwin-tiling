@@ -5,7 +5,7 @@
 of KDE.</para>
 
 <para>PolicyKit allows easy and secure password management, it can be used by
-applications to ask their users for a password. Each appliction defines a set
+applications to ask their users for a password. Each application defines a set
 of actions that can be executed by their program.
 The application will call PolicyKit to see if the user can perform a given
 action, if not, the application can issue the auth dialog where the user
@@ -13,7 +13,7 @@ can enter his/her password, root password, the password of a given group
 of users or even swipe the finger.</para>
 
 <para>&policykit-kde; consists of two applications:
-The Authorization agent that receives resquests for authentication, and shows
+The Authorization agent that receives requests for authentication, and shows
 a dialog asking for a password.
 The Authorization manager that is used to manage the authorizations, it is
 mainly used by system administrators that may want to change the default behavior
