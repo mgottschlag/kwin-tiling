@@ -97,7 +97,7 @@ void Temperature::createConfigurationInterface(KConfigDialog *parent)
 
     ui.showPlotters->setChecked(m_showPlotters);
     ui.intervalSpinBox->setValue(interval() / 1000);
-    emit updateSpinBoxSuffix(interval() / 1000);
+    updateSpinBoxSuffix(interval() / 1000);
 
     parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
     parent->addPage(widget, i18n("Temperature"), "cpu");

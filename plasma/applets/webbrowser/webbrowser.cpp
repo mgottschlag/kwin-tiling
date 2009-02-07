@@ -479,7 +479,7 @@ void WebBrowser::createConfigurationInterface(KConfigDialog *parent)
 
     ui.autoRefresh->setChecked(m_autoRefresh);
     ui.autoRefreshInterval->setValue(m_autoRefreshInterval);
-    emit updateSpinBoxSuffix(m_autoRefreshInterval);
+    updateSpinBoxSuffix(m_autoRefreshInterval);
 }
 
 void WebBrowser::updateSpinBoxSuffix(int interval)
