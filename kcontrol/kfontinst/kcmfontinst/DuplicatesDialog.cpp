@@ -502,7 +502,7 @@ void CFontFileList::fileDuplicates(const QString &folder, const QSet<TFile> &fil
         // Check if this file is already know about - this will do a case-sensitive comparison
         if(!files.contains(TFile(fileInfo.fileName())))
         {
-            // OK, not found - this means its a duplicate, but different case. So, find the
+            // OK, not found - this means it is a duplicate, but different case. So, find the
             // FontMap iterator, and update its list of files.
             QSet<TFile>::ConstIterator entry=files.find(TFile(fileInfo.fileName(), true));
 
@@ -626,7 +626,7 @@ void CFontFileListView::openViewer()
     QSet<QString>            files;
 
     foreach(item, items)
-        if(item->parent()) // Then its a file, not font name :-)
+        if(item->parent()) // Then it is a file, not font name :-)
             files.insert(item->text(0));
 
     if(files.count() &&

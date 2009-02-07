@@ -36,7 +36,7 @@ Q_OBJECT
 Q_INTERFACES(Solid::Control::Ifaces::AccessPoint)
 public:
     /**
-     * Constructs a network and looks up its properties over DBus.
+     * Constructs a network and looks up its properties over D-Bus.
      * @param net contains the IP details of the network.
      */
     NMAccessPoint(const QString  & networkPath);

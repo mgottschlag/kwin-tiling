@@ -111,7 +111,7 @@ void KGlobalShortcutsEditor::activateComponent(const QString &component)
 {
     QHash<QString, componentData>::Iterator iter = d->components.find(component);
     if (iter == d->components.end()) {
-        // Unknown component. Its a bad bad world
+        // Unknown component. It is a bad bad world
         kWarning() << "The component " << component << " is unknown";
         Q_ASSERT(iter != d->components.end());
         return;

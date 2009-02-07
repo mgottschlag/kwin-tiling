@@ -107,7 +107,7 @@ void AbstractSortingStrategy::handleItem(AbstractItemPtr item)
     if (item->isGroupItem()) {
         handleGroup(qobject_cast<TaskGroup*>(item));
     } else if (!(qobject_cast<TaskItem*>(item))->task()) { //ignore startup tasks
-        connect(item, SIGNAL(gotTaskPointer()), this, SLOT(check())); //sort the task as soon its a real one
+        connect(item, SIGNAL(gotTaskPointer()), this, SLOT(check())); //sort the task as soon as it is a real one
         return;
     }
 

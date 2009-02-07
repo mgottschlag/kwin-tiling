@@ -139,7 +139,7 @@ InputStream * FontThroughAnalyzer::connectInputStream(InputStream *in)
 
     if(fontsProt)
     {
-        // OK, its a fonts:/ url - are we passed any data in the query?
+        // OK, it is a fonts:/ url - are we passed any data in the query?
         QString path=url.queryItem(KFI_FILE_QUERY),
                 name=url.queryItem(KFI_NAME_QUERY),
                 mime=url.queryItem(KFI_MIME_QUERY);
@@ -214,7 +214,7 @@ InputStream * FontThroughAnalyzer::connectInputStream(InputStream *in)
                 }
             }
         }
-        else // Its a disabled font, so read file...
+        else // It is a disabled font, so read file...
         {
             CFontEngine fe;
             QByteArray  data;

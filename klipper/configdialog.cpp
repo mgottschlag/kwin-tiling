@@ -96,7 +96,7 @@ void ActionsWidget::setActionList(const ActionList& list)
     }
 
     // after all actions loaded, reset modified state of tree widget.
-    // Needed because tree widget reacts on item changed events to tell if its changed
+    // Needed because tree widget reacts on item changed events to tell if it is changed
     // this will ensure that apply button state will be correctly changed
     m_ui.kcfg_ActionList->resetModifiedState();
 }

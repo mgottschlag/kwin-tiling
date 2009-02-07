@@ -114,7 +114,7 @@ void MenuView::updateAction(QAction *action, const QModelIndex& index)
 
     QString text = index.data(Qt::DisplayRole).value<QString>().replace("&", "&&"); // describing text, e.g. "Spreadsheet" or "Rekall" (right, sometimes the text is also used for the generic app-name)
     QString name = index.data(Kickoff::SubTitleRole).value<QString>().replace("&", "&&"); // the generic name, e.g. "kspread" or "OpenOffice.org Spreadsheet" or just "" (right, it's a mess too)
-    if (action->menu() != 0) { // if its an item with sub-menuitems, we probably like to thread them another way...
+    if (action->menu() != 0) { // if it is an item with sub-menuitems, we probably like to thread them another way...
         action->setText(text);
     } else {
         switch (d->formattype) {

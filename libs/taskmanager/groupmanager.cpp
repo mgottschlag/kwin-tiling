@@ -275,7 +275,7 @@ void GroupManager::remove(TaskPtr task)
     TaskItem *item = d->itemList.value(task);
     if (!item) {
         // this can happen if the window hasn't been caught previously, 
-        // of it its an ignored type such as a NET::Utility type window
+        // of it it is an ignored type such as a NET::Utility type window
         //kDebug() << "invalid item";
         return;
     }

@@ -358,7 +358,7 @@ void MImageScale::mimageSampleRGBA(MImageScaleInfo *isi, unsigned int *dest,
     }
 }
 
-/* FIXME: NEED to optimise ScaleAARGBA - currently its "ok" but needs work*/
+/* FIXME: NEED to optimise ScaleAARGBA - currently it is "ok" but needs work*/
 
 /* scale by area sampling */
 void MImageScale::mimageScaleAARGBA(MImageScaleInfo *isi, unsigned int *dest,

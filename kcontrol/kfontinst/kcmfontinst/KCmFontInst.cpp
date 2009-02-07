@@ -609,7 +609,7 @@ void CKCmFontInst::addFonts()
                     {
                         QString file(url.path());
 
-                        if(Misc::isPackage(file)) // If its a package we need to unzip 1st...
+                        if(Misc::isPackage(file)) // If it is a package we need to unzip 1st...
                         {
                             KZip zip(url.path());
 

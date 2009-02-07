@@ -1078,7 +1078,7 @@ bool CKioFonts::createStatEntry(KIO::UDSEntry &entry, const KUrl &url, EFolder f
         ok=createStatEntryReal(entry, url, folder) && getSize(entry)>0;
     }
 
-    // Perhaps its not a valid font? Try to stat on location+name
+    // Perhaps it is not a valid font? Try to stat on location+name
     if(!ok)
     {
         KFI_DBUG << "could not find";
@@ -1122,7 +1122,7 @@ bool CKioFonts::createStatEntryReal(KIO::UDSEntry &entry, const KUrl &url, EFold
 
     if(it!=itsFolders[folder].fontMap.end())
     {
-        KFI_DBUG << "its a normal font";
+        KFI_DBUG << "it is a normal font";
         return createFontUDSEntry(entry, it.key(), it.value().files, it.value().styleVal,
                                   it.value().writingSystems, FOLDER_SYS==folder);
     }
@@ -1135,7 +1135,7 @@ bool CKioFonts::createStatEntryReal(KIO::UDSEntry &entry, const KUrl &url, EFold
 
     if(dIt!=itsFolders[folder].disabled->items().end())
     {
-        KFI_DBUG << "its a disabled font";
+        KFI_DBUG << "it is a disabled font";
         return createFontUDSEntry(entry, (*dIt).getName(), (*dIt).files, (*dIt).styleInfo,
                                   (*dIt).writingSystems, FOLDER_SYS==folder, true);
     }
@@ -1172,7 +1172,7 @@ void CKioFonts::get(const KUrl &url)
             if(it==end)
             {
                 //
-                // OK, its a disabled font - if possible try to return the location of the font file
+                // OK, it is a disabled font - if possible try to return the location of the font file
                 // itself.
                 QString                             name(Misc::getFile(removeMultipleExtension(url)));
                 CDisabledFonts::TFontList::Iterator dIt(itsFolders[folder].disabled
@@ -2450,7 +2450,7 @@ bool CKioFonts::getRootPasswd(const KUrl &url, bool askPasswd)
 
     KFI_DBUG << "askPasswd:" << askPasswd << " itsPid:" << itsPid;
 
-    // If we have a pid, check that its still alive!
+    // If we have a pid, check that it is still alive!
     if(0!=itsPid && 0!=kill(itsPid, 0))
         itsPid=getpid();
 
@@ -2469,7 +2469,7 @@ bool CKioFonts::getRootPasswd(const KUrl &url, bool askPasswd)
         return true;
     }
 
-    // If pids do not match, its possible (probable!) that the calling app has already
+    // If pids do not match, it is possible (probable!) that the calling app has already
     // authenticated, if so ObtainAuthorization returns false on sucessive attempts!
     return itsPid!=getpid();
 #else
@@ -3517,7 +3517,7 @@ void CKioFonts::createAfm(const QString &file, bool nrs)
 #endif
 
     bool type1=isAType1(file),
-         pfm=!type1 && isAPfm(file);  // No point checking if is pfm if its a type1
+         pfm=!type1 && isAPfm(file);  // No point checking if is pfm if it is a type1
 
     if(type1 || pfm)
     {

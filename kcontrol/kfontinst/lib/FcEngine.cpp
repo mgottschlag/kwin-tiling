@@ -551,7 +551,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
 
         //
         // We allow kio_thumbnail to cache our thumbs. Normal is 128x128, and large is 256x256
-        // ...if kio_thumbnail asks us for a bigger size, then its probably the file info dialog, in
+        // ...if kio_thumbnail asks us for a bigger size, then it is probably the file info dialog, in
         // which case treat it as a normal preview...
         if(thumb && (h>256 || w!=h))
             thumb=false;
@@ -952,7 +952,7 @@ bool CFcEngine::parseUrl(const KUrl &url, int faceNo)
     }
     else if(url.isLocalFile() || url.protocol().isEmpty())
     {
-        // Now lets see if its from the thumbnail job! if so, then file should contain either:
+        // Now lets see if it is from the thumbnail job! if so, then file should contain either:
         //    a. fonts:/ Url
         //    b. FontName followed by style info
         QFile file(url.path());
@@ -1120,7 +1120,7 @@ XftFont * CFcEngine::queryFont()
 
     if(itsInstalled && !f)
     {
-        // Perhaps its a newly installed font? If so try re-initialising fontconfig...
+        // Perhaps it is a newly installed font? If so try re-initialising fontconfig...
         theirFcDirty=true;
         reinit();
 

@@ -232,7 +232,7 @@ void CFontViewPart::timeout()
 
         if(name.isEmpty() && path.isEmpty())
         {
-            // OK, no useable info in the query - stat fonts:/ to get the required info...
+            // OK, no usable info in the query - stat fonts:/ to get the required info...
             KIO::UDSEntry udsEntry;
 
             if(KIO::NetAccess::stat(url(), udsEntry, NULL))
@@ -245,7 +245,7 @@ void CFontViewPart::timeout()
         }
         else if(!path.isEmpty())
         {
-            // Its a disabled font, so we can get the file name and index from the query...
+            // It is a disabled font, so we can get the file name and index from the query...
             fileUrl=KUrl::fromPath(path);
             name=url().fileName();
         }
