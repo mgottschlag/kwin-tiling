@@ -67,6 +67,24 @@ SaverEngine::SaverEngine()
                 SIGNAL(serviceOwnerChanged(QString,QString,QString)),
             SLOT(serviceOwnerChanged(QString,QString,QString)));
 
+    // Also receive updates triggered through the DBus (from powerdevil) see Bug #177123
+    QStringList modules;
+    QDBusInterface kdedInterface("org.kde.kded", "/kded", "org.kde.kded");
+    QDBusReply<QStringList> reply = kdedInterface.call("loadedModules");
+
+    if (!reply.isValid()) {
+        return;
+    }
+
+    modules = reply.value();
+
+    if (modules.contains("powerdevil")) {
+      if (!QDBusConnection::sessionBus().connect("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil",
+                          "DPMSconfigUpdated", this, SLOT(configure()))) {
+            kDebug() << "error!";
+        }
+    }
+
     // I make it a really random number to avoid
     // some assumptions in clients, but just increase
     // while gnome-ss creates a random number every time
