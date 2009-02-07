@@ -294,6 +294,7 @@ Battery::~Battery()
 
 void Battery::suspend()
 {
+    hidePopup();
     QDBusConnection dbus( QDBusConnection::sessionBus() );
     QDBusInterface iface( "org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus );
     iface.call( "suspend", Solid::Control::PowerManager::ToRam );
@@ -301,6 +302,7 @@ void Battery::suspend()
 
 void Battery::hibernate()
 {
+    hidePopup();
     QDBusConnection dbus( QDBusConnection::sessionBus() );
     QDBusInterface iface( "org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus );
     iface.call( "suspend", Solid::Control::PowerManager::ToDisk );
