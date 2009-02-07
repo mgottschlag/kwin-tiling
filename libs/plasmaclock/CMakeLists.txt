@@ -1,5 +1,4 @@
 set(plasmaclock_LIB_SRCS
-    clocknumber.cpp
     clockapplet.cpp
     calendar.cpp
     calendartable.cpp
@@ -15,6 +14,6 @@ set_target_properties(plasmaclock PROPERTIES VERSION ${GENERIC_LIB_VERSION}
 SOVERSION ${GENERIC_LIB_SOVERSION} )
 
 #clockapplet.h
-install(FILES clocknumber.h clockapplet.h calendar.h calendartable.h plasmaclock_export.h
+install(FILES clockapplet.h calendar.h calendartable.h plasmaclock_export.h
 ${CMAKE_CURRENT_BINARY_DIR}/ui_calendar.h DESTINATION ${INCLUDE_INSTALL_DIR}/plasmaclock COMPONENT Devel)
 install(TARGETS plasmaclock EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS} )
