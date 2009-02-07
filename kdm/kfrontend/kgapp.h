@@ -35,7 +35,7 @@ class GreeterApp : public QApplication {
 	typedef QApplication inherited;
 
   public:
-	GreeterApp(int argc, char **argv);
+	GreeterApp(int &argc, char **argv);
 	virtual bool x11EventFilter( XEvent * );
 
   protected:
