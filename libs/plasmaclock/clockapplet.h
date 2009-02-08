@@ -76,12 +76,14 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::PopupApplet
         void setCurrentTimezone(const QString &tz);
         void configAccepted();
         void updateClockDefaultsTo();
+        void dateChanged(const QDate &);
 
     private:
         class Private;
         Private * const d;
 
         Q_PRIVATE_SLOT(d, void createCalendar())
+        Q_PRIVATE_SLOT(d, void createToday())
 };
 
 #endif

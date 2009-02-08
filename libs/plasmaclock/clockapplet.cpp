@@ -48,6 +48,7 @@
 #include <Plasma/Extender>
 #include <Plasma/ExtenderItem>
 #include <Plasma/Theme>
+#include <Plasma/Label>
 
 #include "calendar.h"
 
@@ -70,6 +71,7 @@ public:
     QStringList selectedTimezones;
     QString prettyTimezone;
     bool forceTzDisplay;
+    Plasma::Label *label;
 
     void addTzToTipText(QString &subText, QString tz) 
     {
@@ -94,6 +96,22 @@ public:
         }
     }
 
+    void createToday()
+    {
+        if (!q->extender()->item("today")) {
+            Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(q->extender());
+            eItem->setName("today");
+            q->initExtenderItem(eItem);
+        }
+    }
+
+    void createDateExtender(QDate date)
+    {
+        Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(q->extender());
+        eItem->setName("dateExtender-" + date.toString(Qt::ISODate));
+        q->initExtenderItem(eItem);
+    }
+
     void setPrettyTimezone()
     {
         if (timezone == "UTC")  {
@@ -113,6 +131,7 @@ ClockApplet::ClockApplet(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args),
       d(new Private(this))
 {
+    d->label = 0;
     setPopupIcon(QIcon());
     setPassivePopup(true);
 }
@@ -332,8 +351,10 @@ void ClockApplet::wheelEvent(QGraphicsSceneWheelEvent *event)
 
 void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
 {
+    if (item->name() == "calendar"){
     Plasma::Calendar *calendar = new Plasma::Calendar;
     calendar->setMinimumSize(QSize(230, 220));
+    connect(calendar, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateChanged(const QDate &)));
 
     Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
     QDate date = data["Date"].toDate();
@@ -344,6 +365,21 @@ void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
     item->setWidget(calendar);
     item->setTitle(i18n("Calendar"));
     item->setIcon("view-pim-calendar");
+
+    }else if (item->name() == "today"){
+        item->setTitle(i18n("Today"));
+        item->setIcon("view-pim-calendar");
+        d->label = new Plasma::Label();
+        item->setWidget(d->label);
+
+    }else if (item->name().startsWith("dateExtender-")){
+        item->setTitle(item->name());
+        Plasma::Label *lblTmp = new Plasma::Label();
+        QDate date = QDate::fromString(item->name().remove(0, 13), Qt::ISODate);
+        QString tmpStr = "description:" + date.toString(Qt::ISODate);
+        lblTmp->setText(dataEngine("calendar")->query(tmpStr).value(tmpStr).toString());
+        item->setWidget(lblTmp);
+    }
 }
 
 void ClockApplet::init()
@@ -359,6 +395,7 @@ void ClockApplet::init()
 
     extender();
     QTimer::singleShot(0, this, SLOT(createCalendar()));
+    QTimer::singleShot(0, this, SLOT(createToday()));
 }
 
 void ClockApplet::popupEvent(bool show)
@@ -431,6 +468,15 @@ QString ClockApplet::localTimezone()
 QString ClockApplet::localTimezoneUntranslated()
 {
     return "Local";
+}
+
+void ClockApplet::dateChanged(const QDate &date)
+{
+    d->createDateExtender(date);
+    if (d->label){
+        QString tmpStr = "description:" + date.toString(Qt::ISODate);
+        d->label->setText(dataEngine("calendar")->query(tmpStr).value(tmpStr).toString());
+    }
 }
 
 #include "clockapplet.moc"
