@@ -33,6 +33,7 @@ namespace Plasma
 
 class CalendarTable;
 class CalendarPrivate;
+class DataEngine;
 
 class PLASMACLOCK_EXPORT Calendar : public QGraphicsWidget
 {
@@ -51,6 +52,9 @@ public:
     bool setCalendar(KCalendarSystem *calendar = 0);
 
     CalendarTable *calendarTable() const;
+
+    void setDateProperty(QDate date); //HACK
+    void setDataEngine(Plasma::DataEngine *dataEngine);
 
 Q_SIGNALS:
     void dateChanged(const QDate &cur, const QDate &old);

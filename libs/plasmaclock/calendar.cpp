@@ -43,6 +43,7 @@
 #include <Plasma/LineEdit>
 #include <Plasma/SpinBox>
 #include <Plasma/ToolButton>
+#include <Plasma/DataEngine>
 
 namespace Plasma
 {
@@ -62,6 +63,8 @@ class CalendarPrivate
         ToolButton *jumpToday;
         QMenu *monthMenu;
         Plasma::SpinBox *weekSpinBox;
+
+        Plasma::DataEngine *dataEngine;
 };
 
 //TODO
@@ -74,6 +77,8 @@ Calendar::Calendar(const QDate &, QGraphicsWidget *parent)
 Calendar::Calendar(QGraphicsWidget *parent)
     : QGraphicsWidget(parent), d(new CalendarPrivate())
 {
+    d->dataEngine = 0;
+
     QGraphicsLinearLayout *m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
     QGraphicsLinearLayout *m_hLayout = new QGraphicsLinearLayout(m_layout);
     QGraphicsLinearLayout *m_layoutTools = new QGraphicsLinearLayout(m_layout);
@@ -189,6 +194,8 @@ void Calendar::dateUpdated(const QDate &date)
     d->year->setText(QString::number(d->calendarTable->calendar()->year(date)));
     d->dateText->setText(formatted);
     d->weekSpinBox->setValue(d->calendarTable->calendar()->weekNumber(date));
+
+    emit dateChanged(date);
 }
 
 void Calendar::prevMonth()
@@ -326,6 +333,19 @@ CalendarTable *Calendar::calendarTable() const
 {
     return d->calendarTable;
 }
+
+
+//HACK
+void Calendar::setDateProperty(QDate date)
+{
+    d->calendarTable->setDateProperty(date);
+}
+
+void Calendar::setDataEngine(Plasma::DataEngine *dataEngine)
+{
+    d->dataEngine = dataEngine;
+}
+
 }
 
 #include "calendar.moc"
