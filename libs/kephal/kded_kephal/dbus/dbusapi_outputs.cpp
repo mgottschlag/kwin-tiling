@@ -127,7 +127,7 @@ int DBusAPIOutputs::numAvailableRates(QString id)
     return 0;
 }
 
-qreal DBusAPIOutputs::availableRate(QString id, int i)
+double DBusAPIOutputs::availableRate(QString id, int i)
 {
     if (! m_rates.contains(id)) {
         numAvailableRates(id);
@@ -146,7 +146,7 @@ int DBusAPIOutputs::rotation(QString id) {
     return RotateNormal;
 }
 
-qreal DBusAPIOutputs::rate(QString id) {
+double DBusAPIOutputs::rate(QString id) {
     Output * output = Outputs::self()->output(id);
     if (output && output->isActivated()) {
         return output->rate();

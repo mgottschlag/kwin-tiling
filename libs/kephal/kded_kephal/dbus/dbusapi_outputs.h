@@ -52,11 +52,11 @@ class DBusAPIOutputs : public QObject
         bool isConnected(QString id);
         bool isActivated(QString id);
         int rotation(QString id);
-        qreal rate(QString id);
+        double rate(QString id);
         bool reflectX(QString id);
         bool reflectY(QString id);
         int numAvailableRates(QString id);
-        qreal availableRate(QString id, int index);
+        double availableRate(QString id, int index);
         
     Q_SIGNALS:
         void outputConnected(QString id);
