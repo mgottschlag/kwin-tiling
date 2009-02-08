@@ -40,7 +40,8 @@ public:
                     Today = 1,
                     Selected = 2,
                     Hovered = 4,
-                    NotInCurrentMonth = 8 };
+                    Holiday = 8,
+                    NotInCurrentMonth = 16 };
     Q_DECLARE_FLAGS(CellTypes, CellType)
 
     explicit CalendarTable(QGraphicsWidget *parent = 0);
@@ -53,6 +54,8 @@ public:
     const QDate& date() const;
 
     bool setCalendar(KCalendarSystem *calendar = 0);
+
+    void setDateProperty(QDate date); //HACK
 
 Q_SIGNALS:
     void dateChanged(const QDate &cur, const QDate &old);

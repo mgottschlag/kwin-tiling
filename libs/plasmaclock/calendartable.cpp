@@ -188,6 +188,7 @@ class CalendarTablePrivate
         int headerSpace;
         int weekBarSpace;
         int glowRadius;
+        QList<QDate> dates;
 };
 
 CalendarTable::CalendarTable(const QDate &date, QGraphicsWidget *parent)
@@ -428,6 +429,8 @@ void CalendarTable::paintBorder(QPainter *p, int cell, int week, int weekDay, Ce
         elementId = "today";
     } else if (type & Selected) {
         elementId = "selected";
+    } else if (type & Holiday) {
+        elementId = "red";
     } else {
         return;
     }
@@ -476,6 +479,10 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
 
             if (cellDate == d->date) {
                 type |= Selected;
+            }
+
+            if (d->dates.indexOf(cellDate) >= 0){
+                type |= Holiday;
             }
 
             if (type != CalendarTable::NoType && type != CalendarTable::NotInCurrentMonth) {
@@ -537,6 +544,12 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
     p->drawRect(option->exposedRect.adjusted(1, 1, -2, -2));
     p->restore();
     */
+}
+
+//HACK
+void CalendarTable::setDateProperty(QDate date)
+{
+    d->dates << date;
 }
 
 } //namespace Plasma
