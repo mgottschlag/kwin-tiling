@@ -354,6 +354,7 @@ void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
     if (item->name() == "calendar"){
     Plasma::Calendar *calendar = new Plasma::Calendar;
     calendar->setMinimumSize(QSize(230, 220));
+    calendar->setDataEngine(dataEngine("calendar"));
     connect(calendar, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateChanged(const QDate &)));
 
     Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
@@ -472,11 +473,13 @@ QString ClockApplet::localTimezoneUntranslated()
 
 void ClockApplet::dateChanged(const QDate &date)
 {
+#if DATE_EXTENDER
     d->createDateExtender(date);
     if (d->label){
         QString tmpStr = "description:it:" + date.toString(Qt::ISODate);
         d->label->setText(dataEngine("calendar")->query(tmpStr).value(tmpStr).toString());
     }
+#endif
 }
 
 #include "clockapplet.moc"
