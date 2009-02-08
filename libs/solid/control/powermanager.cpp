@@ -23,8 +23,9 @@
 #include "soliddefs_p.h"
 #include "managerbase_p.h"
 #include "ifaces/powermanager.h"
-
+#include <kdebug.h>
 #include <kglobal.h>
+#include <QX11Info>
 
 K_GLOBAL_STATIC(Solid::Control::PowerManagerPrivate, globalPowerManager)
 
@@ -147,6 +148,8 @@ Solid::Control::PowerManager::BrightnessControlsList Solid::Control::PowerManage
                       Solid::Control::PowerManager::BrightnessControlsList(), brightnessControlsAvailable());
 }
 
+extern float xrandr_brightlight(Display *dpy, long new_value = -1);
+
 bool Solid::Control::PowerManager::setBrightness(float brightness, const QString &device)
 {
     if(device.isEmpty())
@@ -154,7 +157,7 @@ bool Solid::Control::PowerManager::setBrightness(float brightness, const QString
         Solid::Control::PowerManager::BrightnessControlsList controls = brightnessControlsAvailable();
         if(controls.size() == 0)
         {
-            return false;
+            return ( xrandr_brightlight( QX11Info::display(), brightness ) >= 0 );
         }
         else
         {
@@ -180,7 +183,7 @@ float Solid::Control::PowerManager::brightness(const QString &device)
         Solid::Control::PowerManager::BrightnessControlsList controls = brightnessControlsAvailable();
         if(controls.size() == 0)
         {
-            return false;
+            return xrandr_brightlight( QX11Info::display() );
         }
         else
         {
