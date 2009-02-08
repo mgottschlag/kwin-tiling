@@ -53,7 +53,9 @@ QuicklaunchApplet::QuicklaunchApplet(QObject *parent, const QVariantList &args)
     m_addDialog(0),
     m_rightClickedIcon(0),
     m_addAction(0),
-    m_removeAction(0)
+    m_removeAction(0),
+    m_layout(0),
+    m_innerLayout(0)
 {
     setHasConfigurationInterface(true);
     setAcceptDrops(true);
@@ -136,10 +138,19 @@ QSizeF QuicklaunchApplet::sizeHint(Qt::SizeHint which, const QSizeF & constraint
 {
     if (which == Qt::PreferredSize) {
         QSizeF sizeHint = size();
+        if (!m_innerLayout) {
+            return sizeHint;
+        }
         if (m_icons.size() > m_visibleIcons) {
-            sizeHint.setWidth(sizeHint.height() / m_innerLayout->rowCount() * m_innerLayout->columnCount() + size().height());
+            qreal factor = m_innerLayout->rowCount() * m_innerLayout->columnCount() + size().height();
+            if (factor) {
+                sizeHint.setWidth(sizeHint.height() / factor);
+            }
         } else {
-            sizeHint.setWidth(sizeHint.height() / m_innerLayout->rowCount() * m_innerLayout->columnCount());
+            qreal factor = m_innerLayout->rowCount() * m_innerLayout->columnCount();
+            if (factor) {
+                sizeHint.setWidth(sizeHint.height() / factor);
+            }
         }
         return sizeHint;
     }
@@ -251,7 +262,7 @@ void QuicklaunchApplet::showDialog()
             m_dialog->move(containment()->corona()->popupPosition(m_arrow, m_dialog->size()));
         }
         KWindowSystem::setState(m_dialog->winId(), NET::SkipTaskbar);
-        //QPoint(popupPosition(m_dialog->sizeHint()).x() + (m_visibleIcons) * size().height() / m_rowCount, 
+        //QPoint(popupPosition(m_dialog->sizeHint()).x() + (m_visibleIcons) * size().height() / m_rowCount,
         //               popupPosition(m_dialog->sizeHint()).y()));
         m_dialog->show();
     }
