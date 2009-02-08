@@ -114,7 +114,7 @@ public:
     QGraphicsItemAnimation *animation;
     bool isFavorite : 1;
     bool needsMoving : 1;
-    bool dying;
+    bool dying : 1;
 };
 
 int ResultItem::Private::s_removingCount = 0;
