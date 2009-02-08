@@ -300,7 +300,6 @@ void PowerDevilRunner::run( const Plasma::RunnerContext &context, const Plasma::
 
     QDBusInterface iface( "org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", m_dbus );
     if ( match.id() == "PowerDevil_ProfileChange" ) {
-        iface.call( "refreshStatus" );
         iface.call( "setProfile", match.data().toString() );
     } else if ( match.id() == "PowerDevil_GovernorChange" ) {
         iface.call( "setGovernor", match.data().toInt() );
