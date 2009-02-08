@@ -614,7 +614,6 @@ void Battery::setProfile(const QString &profile)
         kDebug() << "Changing power profile to " << profile;
         QDBusConnection dbus( QDBusConnection::sessionBus() );
         QDBusInterface iface( "org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus );
-        iface.call( "refreshStatus" );
         iface.call( "setProfile", profile );
     }
 }
