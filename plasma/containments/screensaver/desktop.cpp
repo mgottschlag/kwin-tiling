@@ -81,6 +81,7 @@ void SaverDesktop::init()
     QAction *a = action("configure");
     if (a) {
         a->setText(i18n("Settings"));
+        removeToolBoxAction(a);
         addToolBoxAction(a);
     }
 
