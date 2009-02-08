@@ -82,6 +82,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 void KSMServer::logout( int confirm, int sdtype, int sdmode )
 {
+    emit loggingOut( confirm, sdtype, sdmode );
+
     shutdown( (KWorkSpace::ShutdownConfirm)confirm,
             (KWorkSpace::ShutdownType)sdtype,
             (KWorkSpace::ShutdownMode)sdmode );
