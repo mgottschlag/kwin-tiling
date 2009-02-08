@@ -376,7 +376,7 @@ void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
         item->setTitle(item->name());
         Plasma::Label *lblTmp = new Plasma::Label();
         QDate date = QDate::fromString(item->name().remove(0, 13), Qt::ISODate);
-        QString tmpStr = "description:" + date.toString(Qt::ISODate);
+        QString tmpStr = "description:it:" + date.toString(Qt::ISODate);
         lblTmp->setText(dataEngine("calendar")->query(tmpStr).value(tmpStr).toString());
         item->setWidget(lblTmp);
     }
@@ -474,7 +474,7 @@ void ClockApplet::dateChanged(const QDate &date)
 {
     d->createDateExtender(date);
     if (d->label){
-        QString tmpStr = "description:" + date.toString(Qt::ISODate);
+        QString tmpStr = "description:it:" + date.toString(Qt::ISODate);
         d->label->setText(dataEngine("calendar")->query(tmpStr).value(tmpStr).toString());
     }
 }
