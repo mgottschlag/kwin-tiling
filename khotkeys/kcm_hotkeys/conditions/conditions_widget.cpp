@@ -83,7 +83,7 @@ void BuildTree::visitConditionsList(KHotKeys::Condition_list *list)
     _items.insert(item, list);
     _stack.push(item);
 
-    for(KHotKeys::Condition_list_base::ConstIterator it = list->begin();
+    for(KHotKeys::Condition_list_base::Iterator it = list->begin();
             it != list->end();
             ++it)
         {
@@ -104,7 +104,7 @@ void BuildTree::visitConditionsListBase(KHotKeys::Condition_list_base *list)
     _items.insert(item, list);
     _stack.push(item);
 
-    for(KHotKeys::Condition_list_base::ConstIterator it = list->begin();
+    for(KHotKeys::Condition_list_base::Iterator it = list->begin();
             it != list->end();
             ++it)
         {
@@ -180,7 +180,7 @@ void ConditionsWidget::copyToObject()
     qDeleteAll(*_conditions_list);
     _conditions_list->clear();
 
-    for (KHotKeys::Condition_list::ConstIterator it = _working->begin();
+    for (KHotKeys::Condition_list::Iterator it = _working->begin();
             it != _working->end();
             ++it)
         {
