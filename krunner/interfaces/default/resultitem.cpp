@@ -63,7 +63,8 @@ public:
           rowStride(6),
           highlightTimerId(0),
           animation(0),
-          needsMoving(false)
+          needsMoving(false),
+          dying(false)
     {
         if (s_fontHeight < 1) {
             //FIXME: reset when the application font changes
@@ -113,6 +114,7 @@ public:
     QGraphicsItemAnimation *animation;
     bool isFavorite : 1;
     bool needsMoving : 1;
+    bool dying;
 };
 
 int ResultItem::Private::s_removingCount = 0;
@@ -180,9 +182,11 @@ void ResultItem::Private::move()
 //void ResultItem::Private::animationComplete()
 void ResultItem::animationComplete()
 {
-    delete d->animation;
-    d->animation = 0;
-    resetTransform();
+    if(!d->dying) {
+        delete d->animation;
+        d->animation = 0;
+        resetTransform();
+    }
 }
 
 ResultItem::ResultItem(const Plasma::QueryMatch &match, QGraphicsWidget *parent, Plasma::FrameSvg *frame)
@@ -387,6 +391,7 @@ void ResultItem::remove()
     ++Private::s_removingCount;
 
     connect(timer, SIGNAL(finished()), this, SLOT(deleteLater()));
+    d->dying = true;
     timer->start();
 }
 
