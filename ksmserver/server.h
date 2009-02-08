@@ -193,6 +193,10 @@ private:
     void saveCurrentSessionAs( const QString & );
     QStringList sessionList();
     void wmChanged();
+
+ Q_SIGNALS:
+    void loggingOut( int, int, int );
+
  private:
     QList<KSMListener*> listener;
     QList<KSMClient*> clients;
