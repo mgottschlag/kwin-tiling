@@ -41,7 +41,8 @@ SaverView::SaverView(Plasma::Containment *containment, QWidget *parent)
     : Plasma::View(containment, parent),
       m_appletBrowser(0),
       m_suppressShow(false),
-      m_setupMode(false)
+      m_setupMode(false),
+      m_init(false)
 {
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint |
             Qt::X11BypassWindowManagerHint);
@@ -243,9 +244,10 @@ void SaverView::showView()
 
 void SaverView::setContainment(Plasma::Containment *newContainment)
 {
-    if (newContainment == containment()) {
+    if (m_init && newContainment == containment()) {
         return;
     }
+    m_init=true;
 
     if (isVisible()) {
         disconnect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));

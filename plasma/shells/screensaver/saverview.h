@@ -75,6 +75,7 @@ private:
     QPoint m_appletBrowserDragStart;
     bool m_suppressShow : 1;
     bool m_setupMode : 1;
+    bool m_init : 1;
 };
 
 #endif // multiple inclusion guard
