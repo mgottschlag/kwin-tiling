@@ -20,19 +20,39 @@
 #include "halsuspendjob.h"
 
 #include <QtDBus/QDBusMessage>
+#include <QtDBus/QDBusReply>
 #include <QTimer>
 
-HalSuspendJob::HalSuspendJob(QDBusInterface &powermanagement,
+HalSuspendJob::HalSuspendJob(QDBusInterface &powermanagement, QDBusInterface &computer,
                               Solid::Control::PowerManager::SuspendMethod method,
                               Solid::Control::PowerManager::SuspendMethods supported)
-    : KJob(), m_halPowerManagement(powermanagement)
+    : KJob(), m_halPowerManagement(powermanagement), m_halComputer(computer)
 {
     if (supported  & method)
     {
+        QDBusReply<bool> reply;
+
         switch(method)
         {
         case Solid::Control::PowerManager::ToRam:
-            m_dbusMethod = "Suspend";
+            reply = m_halComputer.call("GetPropertyBoolean", "power_management.can_suspend_hybrid");
+
+            if (reply.isValid())
+            {
+                bool can_hybrid = reply;
+                if (can_hybrid)
+                {
+                    m_dbusMethod = "SuspendHybrid";
+                }
+                else
+                {
+                    m_dbusMethod = "Suspend";
+                }
+            }
+            else
+            {
+                m_dbusMethod = "Suspend";
+            }
             m_dbusParam = 0;
             break;
         case Solid::Control::PowerManager::ToDisk:

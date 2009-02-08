@@ -30,8 +30,9 @@ class HalSuspendJob : public KJob
 {
     Q_OBJECT
 public:
-    HalSuspendJob(QDBusInterface &powermanagement, Solid::Control::PowerManager::SuspendMethod method,
-                   Solid::Control::PowerManager::SuspendMethods supported);
+    HalSuspendJob(QDBusInterface &powermanagement, QDBusInterface &computer,
+                  Solid::Control::PowerManager::SuspendMethod method,
+                  Solid::Control::PowerManager::SuspendMethods supported);
     virtual ~HalSuspendJob();
 
     void start();
@@ -43,6 +44,7 @@ private Q_SLOTS:
 
 private:
     QDBusInterface &m_halPowerManagement;
+    QDBusInterface &m_halComputer;
     QString m_dbusMethod;
     int m_dbusParam;
 };

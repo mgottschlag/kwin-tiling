@@ -222,7 +222,7 @@ Solid::Control::PowerManager::SuspendMethods HalPower::supportedSuspendMethods()
 
 KJob *HalPower::suspend(Solid::Control::PowerManager::SuspendMethod method) const
 {
-    return new HalSuspendJob(m_halPowerManagement,
+    return new HalSuspendJob(m_halPowerManagement, m_halComputer,
                              method, supportedSuspendMethods());
 }
 
