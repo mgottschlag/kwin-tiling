@@ -109,10 +109,10 @@ bool DBusAPIConfigurations::rotate(QString output, int rotation) {
     return false;
 }
 
-bool DBusAPIConfigurations::changeRate(QString output, qreal rate) {
+bool DBusAPIConfigurations::changeRate(QString output, double rate) {
     Output * o = Outputs::self()->output(output);
     if (o) {
-        return Configurations::self()->changeRate(o, rate);
+        return Configurations::self()->changeRate(o, static_cast<float>(rate));
     }
     return false;
 }

@@ -51,7 +51,7 @@ class DBusAPIConfigurations : public QObject
         bool move(QString output, QPoint position);
         bool resize(QString output, QSize size);
         bool rotate(QString output, int rotation);
-        bool changeRate(QString output, qreal rate);
+        bool changeRate(QString output, double rate);
         bool reflectX(QString output, bool reflect);
         bool reflectY(QString output, bool reflect);
         int screen(QString output);
