@@ -1,0 +1,16 @@
+[Desktop Entry]
+Name=Calendar
+Comment=Calendar data engine
+X-KDE-ServiceTypes=Plasma/DataEngine
+Type=Service
+Icon=calendar
+X-KDE-Library=plasma_engine_calendar
+
+X-KDE-PluginInfo-Author=Davide Bettio
+X-KDE-PluginInfo-Email=davide.bettio@kdemail.net
+X-KDE-PluginInfo-Name=calendar
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Depends=
+
