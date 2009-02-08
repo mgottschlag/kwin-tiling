@@ -13,7 +13,7 @@ kde4_add_executable(solid-powermanagement ${solid-powermanagement_SRCS})
 
 target_link_libraries(solid-network ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} solidcontrol)
 target_link_libraries(solid-bluetooth ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} solidcontrol)
-target_link_libraries(solid-powermanagement ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} solidcontrol)
+target_link_libraries(solid-powermanagement ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTGUI_LIBRARY} solidcontrol)
 
 install(TARGETS solid-network ${INSTALL_TARGETS_DEFAULT_ARGS})
 install(TARGETS solid-bluetooth ${INSTALL_TARGETS_DEFAULT_ARGS})

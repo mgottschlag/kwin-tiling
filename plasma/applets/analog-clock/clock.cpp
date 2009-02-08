@@ -92,9 +92,9 @@ void Clock::connectToEngine()
 {
     Plasma::DataEngine* timeEngine = dataEngine("time");
     if (m_showSecondHand) {
-        timeEngine->connectSource(currentTimezone(), this, 500);
+        timeEngine->connectSource(currentTimezone(), this, 50);
     } else {
-        timeEngine->connectSource(currentTimezone(), this, 6000, Plasma::AlignToMinute);
+        timeEngine->connectSource(currentTimezone(), this, 60);
     }
 }
 
@@ -130,6 +130,8 @@ void Clock::dataUpdated(const QString& source, const Plasma::DataEngine::Data &d
 {
     Q_UNUSED(source);
     m_time = data["Time"].toTime();
+
+    kDebug() << m_time;
 
     if (m_time.minute() == m_lastTimeSeen.minute() &&
         m_time.second() == m_lastTimeSeen.second()) {

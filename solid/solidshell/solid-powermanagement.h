@@ -20,7 +20,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include <QCoreApplication>
+#include <QApplication>
 #include <QEventLoop>
 
 #include <solid/storageaccess.h>
@@ -34,11 +34,11 @@ namespace Control {
 }
 }
 
-class SolidPowermanagement : public QCoreApplication
+class SolidPowermanagement : public QApplication
 {
     Q_OBJECT
 public:
-    SolidPowermanagement(int &argc, char **argv) : QCoreApplication(argc, argv), m_error(0) {}
+    SolidPowermanagement(int &argc, char **argv) : QApplication(argc, argv), m_error(0) {}
 
     static bool doIt();
 
