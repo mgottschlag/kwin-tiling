@@ -79,7 +79,7 @@
         <string>Here you can choose what should happen by default when you log out. This only has meaning, if you logged in through KDM.</string>
        </property>
        <property name="title" >
-        <string>Default Shutdown Option</string>
+        <string>Default Leave Option</string>
        </property>
        <layout class="QVBoxLayout" >
         <item>
