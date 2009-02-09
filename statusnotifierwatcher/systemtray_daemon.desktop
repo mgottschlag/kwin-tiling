@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Service
+Name=KDED Systemtray daemon
+X-KDE-ServiceTypes=KDEDModule
+X-KDE-Library=systemtraydaemon
+X-KDE-DBus-ModuleName=systemtraydaemon
+X-KDE-Kded-autoload=true
+X-KDE-Kded-load-on-demand=true
