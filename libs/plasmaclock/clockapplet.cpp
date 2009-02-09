@@ -1,6 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2007-2008 by Riccardo Iaconelli <riccardo@kde.org>      *
  *   Copyright (C) 2007-2008 by Sebastian Kuegler <sebas@kde.org>          *
+ *   Copyright (C) 2008-2009 by Davide Bettio <davide.bettio@kdemail.net>  *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -98,10 +99,18 @@ public:
 
     void createToday()
     {
-        if (!q->extender()->item("today")) {
+        QString tmpStr = "isHoliday:it:" + QDate::currentDate().toString(Qt::ISODate);
+        bool isHoliday = q->dataEngine("calendar")->query(tmpStr).value(tmpStr).toBool();
+
+        Plasma::ExtenderItem *todayExtender = q->extender()->item("today");
+
+        if (!todayExtender && isHoliday) {
             Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(q->extender());
             eItem->setName("today");
             q->initExtenderItem(eItem);
+
+        }else if (todayExtender && !isHoliday){
+            todayExtender->destroy();
         }
     }
 
@@ -110,6 +119,17 @@ public:
         Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(q->extender());
         eItem->setName("dateExtender-" + date.toString(Qt::ISODate));
         q->initExtenderItem(eItem);
+    }
+
+    void destroyDateExtenders()
+    {
+        QList<Plasma::ExtenderItem *> extenders = q->extender()->items();
+        for (int i = 0; i < extenders.size(); i++){
+            Plasma::ExtenderItem *eItem = extenders.at(i);
+            if (eItem->name().startsWith("dateExtender-") && !eItem->isDetached()){
+                eItem->destroy();
+            }
+        }
     }
 
     void setPrettyTimezone()
@@ -418,6 +438,8 @@ void ClockApplet::popupEvent(bool show)
             calendar->setDate(date);
         }
     }
+
+    d->destroyDateExtenders();
 }
 
 void ClockApplet::setCurrentTimezone(const QString &tz)
@@ -473,13 +495,12 @@ QString ClockApplet::localTimezoneUntranslated()
 
 void ClockApplet::dateChanged(const QDate &date)
 {
-#if DATE_EXTENDER
-    d->createDateExtender(date);
-    if (d->label){
-        QString tmpStr = "description:it:" + date.toString(Qt::ISODate);
-        d->label->setText(dataEngine("calendar")->query(tmpStr).value(tmpStr).toString());
+    d->destroyDateExtenders();
+
+    QString tmpStr = "isHoliday:it:" + date.toString(Qt::ISODate);
+    if (dataEngine("calendar")->query(tmpStr).value(tmpStr).toBool()){
+        d->createDateExtender(date);
     }
-#endif
 }
 
 #include "clockapplet.moc"
