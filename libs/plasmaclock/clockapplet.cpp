@@ -372,20 +372,20 @@ void ClockApplet::wheelEvent(QGraphicsSceneWheelEvent *event)
 void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
 {
     if (item->name() == "calendar"){
-    Plasma::Calendar *calendar = new Plasma::Calendar;
-    calendar->setMinimumSize(QSize(230, 220));
-    calendar->setDataEngine(dataEngine("calendar"));
-    connect(calendar, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateChanged(const QDate &)));
+        Plasma::Calendar *calendar = new Plasma::Calendar;
+        calendar->setMinimumSize(QSize(230, 220));
+        calendar->setDataEngine(dataEngine("calendar"));
+        connect(calendar, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateChanged(const QDate &)));
 
-    Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
-    QDate date = data["Date"].toDate();
-    if (date.isValid()) {
-        calendar->setDate(date);
-    }
+        Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
+        QDate date = data["Date"].toDate();
+        if (date.isValid()) {
+            calendar->setDate(date);
+        }
 
-    item->setWidget(calendar);
-    item->setTitle(i18n("Calendar"));
-    item->setIcon("view-pim-calendar");
+        item->setWidget(calendar);
+        item->setTitle(i18n("Calendar"));
+        item->setIcon("view-pim-calendar");
 
     }else if (item->name() == "today"){
         item->setTitle(i18n("Today"));
