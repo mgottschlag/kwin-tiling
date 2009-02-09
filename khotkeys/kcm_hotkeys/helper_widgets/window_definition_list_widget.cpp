@@ -84,6 +84,8 @@ WindowDefinitionListWidget::~WindowDefinitionListWidget()
 
 void WindowDefinitionListWidget::doCopyFromObject()
     {
+    ui.comment->setText(_working->comment());
+
     for ( KHotKeys::Windowdef_list::ConstIterator it(_working->constBegin());
             it != _working->constEnd();
             ++it)
@@ -97,17 +99,19 @@ void WindowDefinitionListWidget::doCopyFromObject()
 
 void WindowDefinitionListWidget::doCopyToObject()
     {
-    emitChanged(false);
-
     // Delete the old content
     qDeleteAll(*_windowdefs);
     _windowdefs->clear();
+
+    _windowdefs->set_comment(ui.comment->text());
 
     // Move the new content, i'm pretty sure i do it inefficiently
     while (!_working->isEmpty())
         {
         _windowdefs->append(_working->takeFirst());
         }
+
+    emitChanged(false);
     }
 
 

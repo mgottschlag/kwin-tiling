@@ -100,4 +100,12 @@ bool Windowdef_list::match( const Window_data& window_P ) const
             return true;
     return false;
     }
+
+
+void Windowdef_list::set_comment(const QString &comment)
+    {
+    _comment = comment;
+    }
+
+
 } // namespace KHotKeys
