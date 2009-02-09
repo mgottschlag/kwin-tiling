@@ -52,6 +52,7 @@
 #include <Plasma/Label>
 
 #include "calendar.h"
+#include "dateextenderwidget.h"
 
 #include "ui_timezonesConfig.h"
 
@@ -397,15 +398,13 @@ void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
         item->setWidget(d->label);
 
     }else if (item->name().startsWith("dateExtender-")){
-        item->setTitle(item->name());
         item->setIcon("view-pim-calendar");
+        item->showCloseButton();
 
-        Plasma::Label *lblTmp = new Plasma::Label();
         QDate date = QDate::fromString(item->name().remove(0, 13), Qt::ISODate);
-        QString tmpStr = "description:it:" + date.toString(Qt::ISODate);
-        lblTmp->setText(dataEngine("calendar")->query(tmpStr).value(tmpStr).toString());
 
-        item->setWidget(lblTmp);
+        item->setTitle(date.toString());
+        item->setWidget(new DateExtenderWidget(date, dataEngine("calendar")));
     }
 }
 

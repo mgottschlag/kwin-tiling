@@ -2,6 +2,7 @@ set(plasmaclock_LIB_SRCS
     clockapplet.cpp
     calendar.cpp
     calendartable.cpp
+    dateextenderwidget.cpp
 )
 
 kde4_add_ui_files(plasmaclock_LIB_SRCS calendar.ui timezonesConfig.ui)
