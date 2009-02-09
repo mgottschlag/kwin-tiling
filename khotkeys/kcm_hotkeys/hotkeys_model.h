@@ -41,7 +41,7 @@ class KHotkeysModel : public QAbstractItemModel
 
     enum Column {
         NameColumn = 0,
-        EnabledColumn,
+        UnusedColumn,                  //!< Currently unused, was EnabledColumn
         IsGroupColumn,
         TypeColumn };
 

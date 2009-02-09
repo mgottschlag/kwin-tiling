@@ -59,7 +59,6 @@ static KHotKeys::ActionDataBase *findElement(
     }
 
 
-
 KHotkeysModel::KHotkeysModel( QObject *parent )
     : QAbstractItemModel(parent)
      ,_settings()
@@ -122,7 +121,7 @@ QModelIndex KHotkeysModel::insertActionData(  KHotKeys::ActionDataBase *data, co
 
 int KHotkeysModel::columnCount( const QModelIndex & ) const
     {
-    return 2;
+    return 1;
     }
 
 
@@ -138,43 +137,19 @@ QVariant KHotkeysModel::data( const QModelIndex &index, int role ) const
     KHotKeys::ActionDataBase *action = indexToActionDataBase(index);
     Q_ASSERT(action);
 
-    // Handle CheckStateRole
-    if (role==Qt::CheckStateRole)
-        {
-        switch(index.column())
-            {
-            case 1:
-                // If the parent is enabled we display the state of the object.
-                // If the parent is disabled this object is disabled too.
-                if (action->parent() && !action->parent()->enabled())
-                    {
-                    return Qt::Unchecked;
-                    }
-                return action->enabled()
-                    ? Qt::Checked
-                    : Qt::Unchecked;
-
-            default:
-                return QVariant();
-            }
-        }
-
     // Display and Tooltip. Tooltip displays the complete name. That's nice if
     // there is not enough space
     if (role==Qt::DisplayRole || role==Qt::ToolTipRole)
         {
         switch (index.column())
             {
-            case 0:
+            case NameColumn:
                 return action->name();
 
-            case 1:
-                return QVariant();
-
-            case 2:
+            case IsGroupColumn:
                 return indexToActionDataGroup(index)!=0;
 
-            case 3:
+            case TypeColumn:
                 {
                 const std::type_info &ti = typeid(*action);
                 if (ti==typeid(KHotKeys::SimpleActionData))
@@ -195,7 +170,7 @@ QVariant KHotkeysModel::data( const QModelIndex &index, int role ) const
         {
         switch (index.column())
             {
-            case 0:
+            case NameColumn:
                 return dynamic_cast<KHotKeys::ActionDataGroup*>(action)
                     ? KIcon("folder")
                     : QVariant();
@@ -326,10 +301,6 @@ Qt::ItemFlags KHotkeysModel::flags( const QModelIndex &index ) const
 
     switch (index.column())
         {
-        case 1:
-            return flags
-                | Qt::ItemIsUserCheckable;
-
         default:
             return flags
                 | Qt::ItemIsEditable;
@@ -347,14 +318,8 @@ QVariant KHotkeysModel::headerData( int section, Qt::Orientation, int role ) con
 
     switch (section)
         {
-        case 0:
+        case NameColumn:
             return QVariant(i18n("Name"));
-
-        case 1:
-            return QVariant(i18n("Enabled"));
-
-        case 2:
-            return QVariant(i18n("Type"));
 
         default:
             return QVariant();
@@ -415,7 +380,7 @@ QMimeData *KHotkeysModel::mimeData(const QModelIndexList &indexes) const
 
     Q_FOREACH (QModelIndex index, indexes)
         {
-        if (index.isValid() and index.column() == 0)
+        if (index.isValid() and index.column() == NameColumn)
             {
             KHotKeys::ActionDataBase *element = indexToActionDataBase(index);
             // We use the pointer as id.
