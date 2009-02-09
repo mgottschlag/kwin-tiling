@@ -13,6 +13,17 @@
 
 #include "itemspace.h"
 
+// Contrary to QRectF::intersects(), this function requires the
+// rectangles to truly intersect, not just touch on one side
+bool __intersects (const QRectF &a, const QRectF &b)
+{
+    if (!(a.bottom() > b.top())) return false;
+    if (!(a.top() < b.bottom())) return false;
+    if (!(a.right() > b.left())) return false;
+    if (!(a.left() < b.right())) return false;
+    return true;
+}
+
 ItemSpace::ItemSpace()
   : spaceAlignment(Qt::AlignTop|Qt::AlignLeft),
     workingGeom(QSizeF()),
@@ -253,8 +264,6 @@ QList<QPointF> ItemSpace::positionVertically(
                 break;
             }
 
-            Q_ASSERT( ((align & Qt::AlignTop) && a.bottom() > y) || ((align & Qt::AlignBottom) && a.y() - size.height() < y) );
-
             y = ((align & Qt::AlignTop) ? a.bottom() : a.y() - size.height());
         }
 
@@ -279,8 +288,6 @@ QList<QPointF> ItemSpace::positionVertically(
             break;
         }
 
-        Q_ASSERT( ((align & Qt::AlignLeft) && a.right() > x) || ((align & Qt::AlignRight) && a.x() - size.width() < x) );
-
         x = ((align & Qt::AlignLeft) ? a.right() : a.x() - size.width());
     }
 
@@ -302,7 +309,7 @@ QRectF ItemSpace::itemInRegionStartingFirstVert(const QRectF &region) const
               continue;
             }
             qreal cl = item.lastGeometry.y();
-            if (item.lastGeometry.intersects(region) && cl < l) {
+            if (__intersects(item.lastGeometry, region) && cl < l) {
                 ret = item.lastGeometry;
                 l = cl;
             }
@@ -326,7 +333,7 @@ QRectF ItemSpace::itemInRegionEndingLastVert(const QRectF &region) const
               continue;
             }
             qreal cl = item.lastGeometry.y() + item.lastGeometry.height();
-            if (item.lastGeometry.intersects(region) && cl > l) {
+            if (__intersects(item.lastGeometry, region) && cl > l) {
                 ret = item.lastGeometry;
                 l = cl;
             }
@@ -350,7 +357,7 @@ QRectF ItemSpace::itemInRegionEndingFirstHoriz(const QRectF &region) const
               continue;
             }
             qreal cl = item.lastGeometry.x() + item.lastGeometry.width();
-            if (item.lastGeometry.intersects(region) && cl < l) {
+            if (__intersects(item.lastGeometry, region) && cl < l) {
                 ret = item.lastGeometry;
                 l = cl;
             }
@@ -374,7 +381,7 @@ QRectF ItemSpace::itemInRegionStartingLastHoriz(const QRectF &region) const
               continue;
             }
             qreal cl = item.lastGeometry.x();
-            if (item.lastGeometry.intersects(region) && cl > l) {
+            if (__intersects(item.lastGeometry, region) && cl > l) {
                 ret = item.lastGeometry;
                 l = cl;
             }
