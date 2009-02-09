@@ -180,6 +180,13 @@ QVariant KHotkeysModel::data( const QModelIndex &index, int role ) const
             }
         }
 
+    if (role==Qt::FontRole)
+        {
+        QFont d;
+        d.setStrikeOut(!action->enabled());
+        return d;
+        }
+
 
     // For everything else
     return QVariant();
