@@ -372,6 +372,9 @@ void ClockApplet::wheelEvent(QGraphicsSceneWheelEvent *event)
 void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
 {
     if (item->name() == "calendar"){
+        item->setTitle(i18n("Calendar"));
+        item->setIcon("view-pim-calendar");
+
         Plasma::Calendar *calendar = new Plasma::Calendar;
         calendar->setMinimumSize(QSize(230, 220));
         calendar->setDataEngine(dataEngine("calendar"));
@@ -384,21 +387,24 @@ void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
         }
 
         item->setWidget(calendar);
-        item->setTitle(i18n("Calendar"));
-        item->setIcon("view-pim-calendar");
 
     }else if (item->name() == "today"){
         item->setTitle(i18n("Today"));
         item->setIcon("view-pim-calendar");
+
         d->label = new Plasma::Label();
+
         item->setWidget(d->label);
 
     }else if (item->name().startsWith("dateExtender-")){
         item->setTitle(item->name());
+        item->setIcon("view-pim-calendar");
+
         Plasma::Label *lblTmp = new Plasma::Label();
         QDate date = QDate::fromString(item->name().remove(0, 13), Qt::ISODate);
         QString tmpStr = "description:it:" + date.toString(Qt::ISODate);
         lblTmp->setText(dataEngine("calendar")->query(tmpStr).value(tmpStr).toString());
+
         item->setWidget(lblTmp);
     }
 }
