@@ -22,6 +22,15 @@
 
 #include <Plasma/Applet>
 
+namespace Plasma
+{
+    class IconWidget;
+}
+
+#ifndef Q_OS_WIN
+#include "ui_lockoutConfig.h"
+#endif
+
 class QGraphicsLinearLayout;
 
 class LockOut : public Plasma::Applet
@@ -38,9 +47,23 @@ class LockOut : public Plasma::Applet
         void clickLogout();
         void clickLock();
 
+    protected Q_SLOTS:
+        void configAccepted();
+
+    protected:
+        void createConfigurationInterface(KConfigDialog *parent);
+
     private:
+#ifndef Q_OS_WIN
+        Ui::lockoutConfig ui;
+        bool m_showLockButton;
+        bool m_showLogoutButton;
+#endif
+        Plasma::IconWidget *m_iconLock;
+        Plasma::IconWidget *m_iconLogout;
         QGraphicsLinearLayout *m_layout;
         void checkLayout();
+        void showButtons();
 };
 
 K_EXPORT_PLASMA_APPLET(lockout, LockOut)

@@ -31,6 +31,8 @@
 // KDE
 #include <KIcon>
 #ifndef Q_OS_WIN
+#include <KConfigDialog>
+#include <KSharedConfig>
 #include <kworkspace/kworkspace.h>
 #include <screensaver_interface.h>
 #endif
@@ -47,6 +49,9 @@ static const int MARGINSIZE = 2;
 LockOut::LockOut(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args)
 {
+#ifndef Q_OS_WIN
+    setHasConfigurationInterface(true);
+#endif
     resize(MINBUTTONSIZE, MINBUTTONSIZE * 2 + MARGINSIZE);
 }
 
@@ -56,14 +61,19 @@ void LockOut::init()
     m_layout->setContentsMargins(0,0,0,0);
     m_layout->setSpacing(0);
 
-    Plasma::IconWidget *icon_lock = new Plasma::IconWidget(KIcon("system-lock-screen"), "", this);
-    m_layout->addItem(icon_lock);
-    connect(icon_lock, SIGNAL(clicked()), this, SLOT(clickLock()));
 #ifndef Q_OS_WIN
-    Plasma::IconWidget *icon_logout = new Plasma::IconWidget(KIcon("system-shutdown"), "", this);
-    m_layout->addItem(icon_logout);
-    connect(icon_logout, SIGNAL(clicked()), this, SLOT(clickLogout()));
+    KConfigGroup cg = config();
+    m_showLockButton = cg.readEntry("showLockButton", true);
+    m_showLogoutButton = cg.readEntry("showLogoutButton", true);
 #endif
+
+    m_iconLock = new Plasma::IconWidget(KIcon("system-lock-screen"), "", this);
+    connect(m_iconLock, SIGNAL(clicked()), this, SLOT(clickLock()));
+
+    m_iconLogout = new Plasma::IconWidget(KIcon("system-shutdown"), "", this);
+    connect(m_iconLogout, SIGNAL(clicked()), this, SLOT(clickLogout()));
+
+    showButtons();
 }
 
 LockOut::~LockOut()
@@ -97,6 +107,12 @@ void LockOut::checkLayout()
         default:
             direction = Qt::Vertical;
     }
+
+#ifndef Q_OS_WIN
+    if (!m_showLockButton || !m_showLogoutButton) {
+        ratioToKeep = 1;
+    }
+#endif
 
     if (direction == Qt::Horizontal) {
         setMinimumSize(MINBUTTONSIZE * 2 + MARGINSIZE, MINBUTTONSIZE);
@@ -155,5 +171,75 @@ void LockOut::clickLogout()
 #endif
 }
 
+void LockOut::configAccepted()
+{
+#ifdef Q_OS_WIN
+    return;
+#endif
+
+    bool changed = false;
+    KConfigGroup cg = config();
+
+    if (m_showLockButton != ui.checkBox_lock->isChecked()) {
+        m_showLockButton = !m_showLockButton;
+        cg.writeEntry("showLockButton", m_showLockButton);
+        changed = true;
+    }
+
+    if (m_showLogoutButton != ui.checkBox_logout->isChecked()) {
+        m_showLogoutButton = !m_showLogoutButton;
+        cg.writeEntry("showLogoutButton", m_showLogoutButton);
+        changed = true;
+    }
+
+    if (changed) {
+        showButtons();
+        emit configNeedsSaving();
+    }
+}
+
+void LockOut::createConfigurationInterface(KConfigDialog *parent)
+{
+#ifdef Q_OS_WIN
+    return;
+#endif
+
+    QWidget *widget = new QWidget(parent);
+    ui.setupUi(widget);
+    parent->addPage(widget, i18n("General"), Applet::icon());
+    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
+    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+
+    ui.checkBox_lock->setChecked(m_showLockButton);
+    ui.checkBox_logout->setChecked(m_showLogoutButton);
+}
+
+void LockOut::showButtons()
+{
+#ifdef Q_OS_WIN
+    m_layout->addItem(m_iconLock);
+#else
+    //make sure we don't add a button twice in the layout
+    //definitely not the best workaround...
+    m_layout->removeItem(m_iconLock);
+    m_layout->removeItem(m_iconLogout);
+
+    if (m_showLockButton) {
+	m_iconLock->setVisible(true);
+        m_layout->addItem(m_iconLock);
+    } else {
+	m_iconLock->setVisible(false);
+    }
+
+    if (m_showLogoutButton) {
+	m_iconLogout->setVisible(true);
+        m_layout->addItem(m_iconLogout);
+    } else {
+	m_iconLogout->setVisible(false);
+    }
+
+    setConfigurationRequired(!m_showLockButton && !m_showLogoutButton);
+#endif // !Q_OS_WIN
+}
 
 #include "lockout.moc"
