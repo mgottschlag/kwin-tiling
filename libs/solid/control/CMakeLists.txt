@@ -10,7 +10,6 @@ set(solidcontrol_LIB_SRCS
    frontendobject.cpp
    managerbase.cpp
    powermanager.cpp
-   powermanager_randr.cpp
    networking.cpp
    networkmanager.cpp
    networkinterface.cpp
@@ -27,6 +26,11 @@ set(solidcontrol_LIB_SRCS
    bluetoothinputdevice.cpp
    bluetoothsecurity.cpp
 )
+
+# FIXME: this should be XRANDR_FOUND instead
+if(NOT WIN32)
+set(solidcontrol_LIB_SRCS ${solidcontrol_LIB_SRCS} powermanager_randr.cpp)
+endif(NOT WIN32)
 
 qt4_add_dbus_interface(solidcontrol_LIB_SRCS org.kde.Solid.Networking.xml org_kde_solid_networking)
 

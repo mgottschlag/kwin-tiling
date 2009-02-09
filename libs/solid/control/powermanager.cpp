@@ -157,7 +157,11 @@ bool Solid::Control::PowerManager::setBrightness(float brightness, const QString
         Solid::Control::PowerManager::BrightnessControlsList controls = brightnessControlsAvailable();
         if(controls.size() == 0)
         {
+#ifdef Q_WS_WIN
+            return false;
+#else
             return ( xrandr_brightlight( QX11Info::display(), brightness ) >= 0 );
+#endif
         }
         else
         {
@@ -183,7 +187,11 @@ float Solid::Control::PowerManager::brightness(const QString &device)
         Solid::Control::PowerManager::BrightnessControlsList controls = brightnessControlsAvailable();
         if(controls.size() == 0)
         {
+#ifdef Q_WS_WIN
+            return false;
+#else
             return xrandr_brightlight( QX11Info::display() );
+#endif
         }
         else
         {
