@@ -76,8 +76,6 @@ void BuildTree::visitConditionsList(KHotKeys::Condition_list *list)
 
     QTreeWidgetItem *parent = _stack.top();
 
-    kDebug() << list->count();
-
     QTreeWidgetItem *item = new QTreeWidgetItem(parent);
     item->setText(0, i18nc("Add a new condition", "And"));
     _items.insert(item, list);
@@ -87,7 +85,6 @@ void BuildTree::visitConditionsList(KHotKeys::Condition_list *list)
             it != list->end();
             ++it)
         {
-        kDebug();
         (*it)->visit(this);
         }
 
@@ -222,13 +219,17 @@ void ConditionsWidget::setConditionsList( KHotKeys::Condition_list *list)
 void ConditionsWidget::slotDelete()
     {
     QTreeWidgetItem *citem = ui.tree->currentItem();
+
+    // If no item is selected just return
     if (!citem) return;
 
-    // TODO: prevent deleting the top level list
     // TODO: Ask for confirmation before deleting
 
     // Get the currently select condition
     KHotKeys::Condition *cond = _items.value(citem);
+
+    // Do not allow deleting the root item
+    if (cond==_working) return;
 
     delete cond;
     delete citem;
@@ -240,7 +241,8 @@ void ConditionsWidget::slotEdit()
     {
     // Get the currently select condition
     QTreeWidgetItem *citem = ui.tree->currentItem();
-    Q_ASSERT(citem);
+
+    // If no item is selected just return
     if (!citem) return;
 
     KHotKeys::Condition *cond = _items.value(citem);
@@ -303,11 +305,21 @@ void ConditionsWidget::slotEdit()
 void ConditionsWidget::slotNew(QAction* action)
     {
     QTreeWidgetItem *citem = ui.tree->currentItem();
-    Q_ASSERT(citem);
-    if (!citem) return;
 
-    // Get the currently select condition
-    KHotKeys::Condition *cond = _items.value(citem);
+    KHotKeys::Condition *cond;
+    if (!citem)
+        {
+        // If no item is selected create the new condition as a top level
+        // condition
+        cond = _working;
+        citem = ui.tree->invisibleRootItem()->child(0);
+        Q_ASSERT(citem);
+        }
+    else
+        {
+        // Get the currently select condition
+        cond = _items.value(citem);
+        }
 
     // get the nearest list
     KHotKeys::Condition_list_base *parent = dynamic_cast<KHotKeys::Condition_list_base*>(cond);
