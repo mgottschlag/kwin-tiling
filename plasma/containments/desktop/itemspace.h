@@ -42,8 +42,6 @@ class ItemSpace
 
     void setWorkingArea(QSizeF area);
 
-    void activate();
-
     /**
      * Returns the visibility of an item at a given position.
      * This is the part of the item inside the working area.
@@ -53,7 +51,7 @@ class ItemSpace
     class ItemSpaceItem
     {
       public:
-        QRectF preferredGeometry;
+        QPointF preferredPosition;
         QRectF lastGeometry;
         bool pushBack : 1;
         bool animateMovement : 1;
@@ -74,11 +72,6 @@ class ItemSpace
         PushOverBorder = 2
     };
     Q_DECLARE_FLAGS(PushPower, PushPowerFlag)
-
-    /**
-     * Offset the positions of all items.
-     **/
-    void offsetPositions(const QPointF &offset);
 
     /**
      * Push an item group. Requires no initialization.
@@ -110,12 +103,27 @@ class ItemSpace
     void removeItem(int groupIndex, int itemInGroup);
 
     /**
-     * Updates groups to reflect the item's geometry. 
+     * Move the item to a new position.
      *
      * @param groupIndex the index of the item's group
      * @param itemInGroup the index of the item in its group
+     * @param newGeom the new geometry of the item
      **/
-    void updateItem(int groupIndex, int itemInGroup);
+    void moveItem(int groupIndex, int itemInGroup, QRectF newGeom);
+
+    /**
+     * Resize an item. The item's alignment corner will be the center of resizing.
+     *
+     * @param groupId the index of the group
+     * @param direction in which direction pushing will be done
+     * @param newSize the item's new size
+     **/
+    void resizeItem(int groupId, int itemInGroup, QSizeF newSize);
+
+    /**
+     * Offset the positions of all items.
+     **/
+    void offsetPositions(const QPointF &offset);
 
     /**
      * Find an item by its number as if we iterated over
@@ -127,18 +135,6 @@ class ItemSpace
      * Find an item by its 'user' parameter.
      **/
     bool locateItemByUser(QVariant user, int *groupIndex, int *itemInGroup) const;
-
-    /**
-     * Prepare for pushing.
-     * After that, move requests can be posted to item groups
-     * with ItemGroup::addRequest and the move can be performed
-     * with ItemGroup::applyResults.
-     *
-     * @param direction in which direction pushing will be done
-     * @param power how 'powerful' the push is; what types of obstacles
-     *              can be pushed or ignored
-     **/
-    void preparePush(Direction direction, PushPower power);
 
     /**
      * Finds an empty place for an item.
@@ -282,6 +278,31 @@ class ItemSpace
     qreal shiftingSpacing;
 
   private:
+
+    void linkItem(ItemSpaceItem newItem);
+    void unlinkItem(int removeGroup, int removeItemInGroup);
+
+    /**
+     * Prepare for pushing.
+     * After that, move requests can be posted to item groups
+     * with ItemGroup::addRequest and the move can be performed
+     * with ItemGroup::applyResults.
+     *
+     * @param direction in which direction pushing will be done
+     * @param power how 'powerful' the push is; what types of obstacles
+     *              can be pushed or ignored
+     **/
+    void preparePush(Direction direction, PushPower power);
+
+    /**
+     * Look for items overlapping with working area borders and move them inside as much as possible.
+     **/
+    void checkBorders();
+
+    /**
+     * Look for items not in their preferred positions and move them back as much as possible.
+     **/
+    void checkPreferredPositions();
 
     QRectF itemInRegionStartingFirstVert(const QRectF &region) const;
     QRectF itemInRegionEndingLastVert(const QRectF &region) const;

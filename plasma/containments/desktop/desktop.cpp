@@ -68,20 +68,14 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
 {
     qRegisterMetaType<QImage>("QImage");
     qRegisterMetaType<QPersistentModelIndex>("QPersistentModelIndex");
-    connect(this, SIGNAL(appletAdded(Plasma::Applet *, const QPointF &)),
-            this, SLOT(onAppletAdded(Plasma::Applet *, const QPointF &)));
-    connect(this, SIGNAL(appletRemoved(Plasma::Applet *)),
-            this, SLOT(onAppletRemoved(Plasma::Applet *)));
 
     m_layout = new DesktopLayout;
-    m_layout->setAutoWorkingArea(false);
     m_layout->setAlignment(Qt::AlignTop|Qt::AlignLeft);
     m_layout->setPlacementSpacing(20);
     m_layout->setScreenSpacing(5);
     m_layout->setShiftingSpacing(0);
     m_layout->setTemporaryPlacement(true);
     m_layout->setVisibilityTolerance(0.5);
-    setLayout(m_layout);
 
     resize(800, 600);
 
@@ -106,6 +100,19 @@ void DefaultDesktop::constraintsEvent(Plasma::Constraints constraints)
         connect(corona(), SIGNAL(availableScreenRegionChanged()),
                 this, SLOT(refreshWorkingArea()));
         refreshWorkingArea();
+
+        connect(this, SIGNAL(appletAdded(Plasma::Applet *, const QPointF &)),
+                this, SLOT(onAppletAdded(Plasma::Applet *, const QPointF &)));
+        connect(this, SIGNAL(appletRemoved(Plasma::Applet *)),
+                this, SLOT(onAppletRemoved(Plasma::Applet *)));
+
+        foreach (Applet *applet, applets()) {
+            m_layout->addItem(applet, true, false);
+            connect(applet, SIGNAL(appletTransformedByUser()), this, SLOT(onAppletTransformedByUser()));
+            connect(applet, SIGNAL(appletTransformedItself()), this, SLOT(onAppletTransformedItself()));
+        }
+
+        m_layout->adjustPhysicalPositions();
     }
 }
 
@@ -251,19 +258,16 @@ void DefaultDesktop::onAppletAdded(Plasma::Applet *applet, const QPointF &pos)
 {
     if (dropping || pos != QPointF(-1,-1) || applet->geometry().topLeft() != QPointF(0,0)) {
         // add item to the layout using the current position
-        m_layout->addItem(applet, true, applet->geometry());
+        m_layout->addItem(applet, true, false);
     } else {
-        /*
-            There seems to be no uniform way to get the applet's preferred size.
-            Regular applets properly set their current size when created, but report useless size hints.
-            Proxy widget applets don't set their size properly, but report valid size hints. However, they
-            will obtain proper size if we just re-set the geometry to the current value.
-        */
-        applet->setGeometry(applet->geometry());
-        m_layout->addItem(applet, true, applet->geometry().size());
+        // auto-position
+        m_layout->addItem(applet, true, true);
     }
 
-    connect(applet, SIGNAL(geometryChanged()), this, SLOT(onAppletGeometryChanged()));
+    m_layout->adjustPhysicalPositions();
+
+    connect(applet, SIGNAL(appletTransformedByUser()), this, SLOT(onAppletTransformedByUser()));
+    connect(applet, SIGNAL(appletTransformedItself()), this, SLOT(onAppletTransformedItself()));
 }
 
 void DefaultDesktop::onAppletRemoved(Plasma::Applet *applet)
@@ -271,14 +275,22 @@ void DefaultDesktop::onAppletRemoved(Plasma::Applet *applet)
     for (int i=0; i < m_layout->count(); i++) {
         if (applet == m_layout->itemAt(i)) {
             m_layout->removeAt(i);
+            m_layout->adjustPhysicalPositions();
             return;
         }
     }
 }
 
-void DefaultDesktop::onAppletGeometryChanged()
+void DefaultDesktop::onAppletTransformedByUser()
 {
-    m_layout->itemGeometryChanged((Applet *)sender());
+    m_layout->itemTransformed((Applet *)sender(), DesktopLayout::ItemTransformUser);
+    m_layout->adjustPhysicalPositions();
+}
+
+void DefaultDesktop::onAppletTransformedItself()
+{
+    m_layout->itemTransformed((Applet *)sender(), DesktopLayout::ItemTransformSelf);
+    m_layout->adjustPhysicalPositions();
 }
 
 void DefaultDesktop::refreshWorkingArea()
@@ -305,6 +317,7 @@ void DefaultDesktop::refreshWorkingArea()
     if (workingGeom != QRectF()) {
         //kDebug() << "!!!!!!!!!!!!! workingGeom is" << workingGeom;
         m_layout->setWorkingArea(workingGeom);
+        m_layout->adjustPhysicalPositions();
     }
 }
 

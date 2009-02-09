@@ -33,10 +33,19 @@ void ItemSpace::setWorkingArea(QSizeF area)
             offsetPositions(QPointF(area.width()-workingGeom.width(), area.height()-workingGeom.height()));
         }
     }
+    QSizeF old = workingGeom;
     workingGeom = area;
+
+    if (area.width() < old.width() || area.height() < old.height()) {
+        checkBorders();
+    }
+
+    if (area.width() > old.width() || area.height() > old.height()) {
+        checkPreferredPositions();
+    }
 }
 
-void ItemSpace::activate()
+void ItemSpace::checkBorders()
 {
     for (int groupId = 0; groupId < m_groups.size(); groupId++) {
         ItemGroup &group = m_groups[groupId];
@@ -96,6 +105,20 @@ void ItemSpace::activate()
                 }
                 performPush(groupId, DirUp, push, power);
             }
+        }
+    }
+}
+
+void ItemSpace::checkPreferredPositions()
+{
+    for (int groupId = 0; groupId < m_groups.size(); groupId++) {
+        ItemGroup &group = m_groups[groupId];
+
+        for (int itemId = 0; itemId < group.m_groupItems.size(); itemId++) {
+            ItemSpaceItem &item = group.m_groupItems[itemId];
+
+            qreal push;
+            PushPower power;
 
             /*
               Push items back towards their perferred positions.
@@ -103,15 +126,16 @@ void ItemSpace::activate()
               cannot push items away from their preferred positions.
             */
             if (item.pushBack) {
+                QRectF preferredGeometry = QRectF(item.preferredPosition, item.lastGeometry.size());
                 // left/right
-                push = item.preferredGeometry.left() - item.lastGeometry.left();
+                push = preferredGeometry.left() - item.lastGeometry.left();
                 if (push > 0) {
                     performPush(groupId, DirRight, push, NoPower);
                 } else if (push < 0) {
                     performPush(groupId, DirLeft, -push, NoPower);
                 }
                 // up/down
-                push = item.preferredGeometry.top() - item.lastGeometry.top();
+                push = preferredGeometry.top() - item.lastGeometry.top();
                 if (push > 0) {
                     performPush(groupId, DirDown, push, NoPower);
                 } else if (push < 0) {
@@ -139,7 +163,7 @@ void ItemSpace::offsetPositions(const QPointF &offset)
         for (int itemId = 0; itemId < group.m_groupItems.size(); itemId++) {
             ItemSpaceItem &item = group.m_groupItems[itemId];
 
-            item.preferredGeometry.adjust(offset.x(), offset.y(), offset.x(), offset.y());
+            item.preferredPosition += offset;
             item.lastGeometry.adjust(offset.x(), offset.y(), offset.x(), offset.y());
         }
     }
@@ -423,19 +447,20 @@ void ItemSpace::ItemGroup::Request::activate (ItemSpace *itemSpace, ItemGroup *g
 
         // limit push to not push the item away from its preferred position
         if (!(itemSpace->m_power & PushAwayFromPreferred) && item.pushBack) {
+            QRectF preferredGeometry = QRectF(item.preferredPosition, item.lastGeometry.size());
             qreal limit;
             switch (itemSpace->m_direction) {
                 case DirLeft:
-                    limit = origGeom.left() - item.preferredGeometry.left();
+                    limit = origGeom.left() - preferredGeometry.left();
                     break;
                 case DirRight:
-                    limit = -(origGeom.left() - item.preferredGeometry.left());
+                    limit = -(origGeom.left() - preferredGeometry.left());
                     break;
                 case DirUp:
-                    limit = origGeom.top() - item.preferredGeometry.top();
+                    limit = origGeom.top() - preferredGeometry.top();
                     break;
                 case DirDown:
-                    limit = -(origGeom.top() - item.preferredGeometry.top());
+                    limit = -(origGeom.top() - preferredGeometry.top());
                     break;
             }
             limit = qMax(qreal(0.0), limit);
@@ -592,7 +617,7 @@ bool ItemSpace::ItemGroup::groupIsAbove(ItemSpace *itemSpace, QList<int> &visite
 }
 
 // TODO: optimize
-void ItemSpace::addItem(ItemSpaceItem newItem)
+void ItemSpace::linkItem(ItemSpaceItem newItem)
 {
     QList<ItemSpaceItem> newGroupItems;
     QRectF newItemGeom = newItem.lastGeometry.adjusted(-shiftingSpacing, -shiftingSpacing,
@@ -628,7 +653,7 @@ void ItemSpace::addItem(ItemSpaceItem newItem)
 }
 
 // TODO: optimize
-void ItemSpace::removeItem(int removeGroup, int removeItemInGroup)
+void ItemSpace::unlinkItem(int removeGroup, int removeItemInGroup)
 {
     // remove items from group
     m_groups[removeGroup].m_groupItems.removeAt(removeItemInGroup);
@@ -638,16 +663,197 @@ void ItemSpace::removeItem(int removeGroup, int removeItemInGroup)
     m_groups.removeAt(removeGroup);
     // re-add other group items
     foreach (const ItemSpaceItem &item, otherGroupItems) {
-        addItem(item);
+        linkItem(item);
     }
 }
 
-// TODO: optimize
-void ItemSpace::updateItem(int group, int itemInGroup)
+void ItemSpace::addItem(ItemSpaceItem newItem)
 {
-    ItemSpaceItem copy = m_groups[group].m_groupItems[itemInGroup];
-    removeItem(group, itemInGroup);
-    addItem(copy);
+    linkItem(newItem);
+    checkBorders();
+}
+
+void ItemSpace::removeItem(int removeGroup, int removeItemInGroup)
+{
+    unlinkItem(removeGroup, removeItemInGroup);
+    checkPreferredPositions();
+}
+
+// TODO: optimize
+void ItemSpace::moveItem(int groupIndex, int itemInGroup, QRectF newGeom)
+{
+    ItemSpaceItem copy = m_groups[groupIndex].m_groupItems[itemInGroup];
+
+    unlinkItem(groupIndex, itemInGroup);
+
+    copy.preferredPosition = newGeom.topLeft();
+    copy.lastGeometry = newGeom;
+    linkItem(copy);
+
+    checkBorders();
+    checkPreferredPositions();
+}
+
+void ItemSpace::resizeItem(int resizeGroupId, int resizeItemInGroup, QSizeF newSize)
+{
+    ItemSpaceItem &resizeItem = m_groups[resizeGroupId].m_groupItems[resizeItemInGroup];
+    QRectF oldGeom = resizeItem.lastGeometry;
+
+    // the alignment corner on the applet is the center of resizing, meaning that it won't move
+    // calculate new geometry
+    QPointF newPos;
+    if ((spaceAlignment & Qt::AlignLeft)) {
+        newPos.rx() = oldGeom.left();
+    } else {
+        newPos.rx() = oldGeom.right() - newSize.width();
+    }
+    if ((spaceAlignment & Qt::AlignTop)) {
+        newPos.ry() = oldGeom.top();
+    } else {
+        newPos.ry() = oldGeom.bottom() - newSize.height();
+    }
+
+    QRectF newGeom = QRectF(newPos, newSize);
+
+    kDebug() << "Resizing" << oldGeom << "to" << newGeom;
+
+    for (int groupId = 0; groupId < m_groups.size(); groupId++) {
+        ItemGroup &group = m_groups[groupId];
+
+        for (int itemId = 0; itemId < group.m_groupItems.size(); itemId++) {
+            ItemSpaceItem &item = group.m_groupItems[itemId];
+
+            if (groupId == resizeGroupId) {
+                // Items in our group
+                // We must make sure to preserve the group, so that when a reverse resize is done,
+                // all items are in the original state.
+
+                // TODO: Implement pushing group items. To do that, we have to seperate this item
+                // from other group items.
+                // Currently, group items are not moved. Shrinking may leave group items physically
+                // disconnected from this item.f
+            } else {
+                // Check if the item is in the way.
+                if (!newGeom.intersects(item.lastGeometry)) continue;
+
+                // Calculate on which edges we collide with this item, how much
+                // it would have to be pushed, and on what part of the way we collide.
+
+                bool collidedRight = false;
+                bool collidedLeft = false;
+                bool collidedBottom = false;
+                bool collidedTop = false;
+
+                qreal pushRight = 0;
+                qreal pushLeft = 0;
+                qreal pushTop = 0;
+                qreal pushBottom = 0;
+
+                qreal collisionTimeRight = 0;
+                qreal collisionTimeLeft = 0;
+                qreal collisionTimeBottom = 0;
+                qreal collisionTimeTop = 0;
+
+                if (newGeom.right() > oldGeom.right() && item.lastGeometry.left() >= oldGeom.right() && item.lastGeometry.left() < newGeom.right()) {
+                    collidedRight = true;
+                    pushRight = newGeom.right() - item.lastGeometry.left();
+                    collisionTimeRight = (item.lastGeometry.left() - oldGeom.right()) / (newGeom.right() - oldGeom.right());
+                }
+                else if (newGeom.left() < oldGeom.left() && item.lastGeometry.right() <= oldGeom.left() && item.lastGeometry.right() < newGeom.left()) {
+                    collidedLeft = true;
+                    pushLeft = item.lastGeometry.right() - newGeom.left();
+                    collisionTimeLeft = (oldGeom.left() - item.lastGeometry.right()) / (newGeom.left() - newGeom.left());
+                }
+
+                if (newGeom.bottom() > oldGeom.bottom() && item.lastGeometry.top() >= oldGeom.bottom() && item.lastGeometry.top() < newGeom.bottom()) {
+                    collidedBottom = true;
+                    pushBottom = newGeom.bottom() - item.lastGeometry.top();
+                    collisionTimeBottom = (item.lastGeometry.top() - oldGeom.bottom()) / (newGeom.bottom() - oldGeom.bottom());
+                }
+                else if (newGeom.top() < oldGeom.top() && item.lastGeometry.bottom() <= oldGeom.top() && item.lastGeometry.bottom() < newGeom.top()) {
+                    collidedTop = true;
+                    pushTop = item.lastGeometry.bottom() - newGeom.top();
+                    collisionTimeTop = (oldGeom.top() - item.lastGeometry.bottom()) / (newGeom.top() - newGeom.top());
+                }
+
+                // Determine what direction to push the offending item.
+                // If we would collide with it in two edges, use the
+                // one where we would collide first.
+
+                Direction direction = 0;
+
+                if (collidedRight) {
+                    if (collidedTop && collisionTimeTop < collisionTimeRight) {
+                        direction = DirUp;
+                    }
+                    else if (collidedBottom && collisionTimeBottom < collisionTimeRight) {
+                        direction = DirDown;
+                    }
+                    else {
+                        direction = DirRight;
+                    }
+                }
+                else if (collidedLeft) {
+                    if (collidedTop && collisionTimeTop < collisionTimeLeft) {
+                        direction = DirUp;
+                    }
+                    else if (collidedBottom && collisionTimeBottom < collisionTimeLeft) {
+                        direction = DirDown;
+                    }
+                    else {
+                        direction = DirLeft;
+                    }
+                }
+                else if (collidedBottom) {
+                    direction = DirDown;
+                }
+                else if (collidedTop) {
+                    direction = DirUp;
+                }
+
+                // finally push the item
+
+                if (direction) {
+                    PushPower power = PushAwayFromPreferred;
+                    qreal push;
+
+                    switch (direction) {
+                    case DirRight:
+                        push = pushRight;
+                        if ((spaceAlignment & Qt::AlignLeft)) {
+                            power |= PushOverBorder;
+                        }
+                        break;
+                    case DirLeft:
+                        push = pushLeft;
+                        if ((spaceAlignment & Qt::AlignRight)) {
+                            power |= PushOverBorder;
+                        }
+                        break;
+                    case DirDown:
+                        push = pushBottom;
+                        if ((spaceAlignment & Qt::AlignTop)) {
+                            power |= PushOverBorder;
+                        }
+                        break;
+                    case DirUp:
+                        push = pushTop;
+                        if ((spaceAlignment & Qt::AlignBottom)) {
+                            power |= PushOverBorder;
+                        }
+                        break;
+                    }
+
+                    performPush(groupId, direction, push, power);
+                }
+            }
+        }
+    }
+
+    resizeItem.lastGeometry = newGeom;
+
+    checkBorders();
+    checkPreferredPositions();
 }
 
 bool ItemSpace::locateItemByPosition(int pos, int *groupIndex, int *itemInGroup) const
