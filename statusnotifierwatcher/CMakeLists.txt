@@ -2,6 +2,8 @@ project(systemtraydaemon)
 
 set(kded_systemtraydaemon_SRCS systemtraydaemon.cpp )
 
+QT4_ADD_DBUS_ADAPTOR(kded_systemtraydaemon_SRCS     org.kde.SystemTrayDaemon.xml
+                     systemtraydaemon.h SystemTrayDaemon)
 
 kde4_add_plugin(kded_systemtraydaemon ${kded_systemtraydaemon_SRCS})
 
