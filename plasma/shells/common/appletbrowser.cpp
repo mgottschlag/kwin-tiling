@@ -327,6 +327,27 @@ void AppletBrowserWidget::destroyApplets(const QString &name)
     d->itemModel.setRunningApplets(name, 0);
 }
 
+/* This is just a wrapper around KAboutApplicationDialog that deletes
+the KAboutData object that it is associated with, when it is deleted.
+This is required to free memory correctly when KAboutApplicationDialog
+is called with a temporary KAboutData that is allocated on the heap.
+(see the code below, in AppletBrowserWidget::infoAboutApplet())
+*/
+class KAboutApplicationDialog2 : public KAboutApplicationDialog
+{
+public:
+    KAboutApplicationDialog2(KAboutData *ab, QWidget *parent = 0)
+    : KAboutApplicationDialog(ab, parent), m_ab(ab) {}
+
+    ~KAboutApplicationDialog2()
+    {
+        delete m_ab;
+    }
+
+private:
+    KAboutData *m_ab;
+};
+
 void AppletBrowserWidget::infoAboutApplet(const QString &name)
 {
     if (!d->containment) {
@@ -336,19 +357,19 @@ void AppletBrowserWidget::infoAboutApplet(const QString &name)
     KPluginInfo::List applets = Plasma::Applet::listAppletInfo();
     foreach (const KPluginInfo &info, applets) {
         if (info.name() == name) {
-            KAboutData aboutData = KAboutData(info.name().toUtf8(),
+            KAboutData *aboutData = new KAboutData(info.name().toUtf8(),
                                               info.name().toUtf8(),
                                               ki18n(info.name().toUtf8()),
                                               info.version().toUtf8(), ki18n(info.comment().toUtf8()),
                                               info.fullLicense().key(), ki18n(QByteArray()), ki18n(QByteArray()), info.website().toLatin1(),
                                               info.email().toLatin1());
 
-            aboutData.setProgramIconName(info.icon());
+            aboutData->setProgramIconName(info.icon());
 
-            aboutData.addAuthor(ki18n(info.author().toUtf8()), ki18n(QByteArray()), info.email().toLatin1());
+            aboutData->addAuthor(ki18n(info.author().toUtf8()), ki18n(QByteArray()), info.email().toLatin1());
 
             //TODO should recycle this dialog if it is called up twice
-            KAboutApplicationDialog *aboutDialog = new KAboutApplicationDialog(&aboutData, this);
+            KAboutApplicationDialog *aboutDialog = new KAboutApplicationDialog2(aboutData, this);
             aboutDialog->show();
             break;
         }
