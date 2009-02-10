@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright 2008 by Marco Martin <notmart@gmail.com>                    *
+ *   Copyright 2009 by Marco Martin <notmart@gmail.com>                    *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -23,6 +23,7 @@
 
 #include <kglobal.h>
 #include <kaboutdata.h>
+#include <kdebug.h>
 
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
@@ -47,6 +48,10 @@ SystemTrayDaemon::SystemTrayDaemon(QObject *parent, const QList<QVariant>&)
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.registerService("org.kde.SystemTrayDaemon");
     dbus.registerObject("/SystemTrayWatcher", this);
+    m_dbusInterface = dbus.interface();
+
+    connect(m_dbusInterface, SIGNAL(serviceOwnerChanged(QString,QString,QString)),
+           this, SLOT(serviceChange(QString,QString,QString)));
 }
 
 SystemTrayDaemon::~SystemTrayDaemon()
@@ -55,13 +60,22 @@ SystemTrayDaemon::~SystemTrayDaemon()
 
 void SystemTrayDaemon::registerService(const QString &service)
 {
-    m_registeredServices.append(service);
-    emit serviceRegistered(service);
+    if (m_dbusInterface->isServiceRegistered(service).value()) {
+        m_registeredServices.append(service);
+        emit serviceRegistered(service);
+    }
 }
 
 QStringList SystemTrayDaemon::registeredServices() const
 {
     return m_registeredServices;
+}
+
+void SystemTrayDaemon::serviceChange(const QString& name,
+                                const QString& oldOwner,
+                                const QString& newOwner)
+{
+    kDebug()<<name<<oldOwner<<newOwner;
 }
 
 #include "systemtraydaemon.moc"

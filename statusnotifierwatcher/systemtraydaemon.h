@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright 2008 by Marco Martin <notmart@gmail.com>                    *
+ *   Copyright 2009 by Marco Martin <notmart@gmail.com>                    *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -25,6 +25,8 @@
 #include <QObject>
 #include <QStringList>
 
+class QDBusConnectionInterface;
+
 class SystemTrayDaemon : public KDEDModule
 {
 Q_OBJECT
@@ -37,10 +39,16 @@ public Q_SLOTS:
 
     QStringList registeredServices() const;
 
+protected Q_SLOTS:
+    void serviceChange(const QString& name,
+                       const QString& oldOwner,
+                       const QString& newOwner);
+
 Q_SIGNALS:
     void serviceRegistered(const QString &service);
 
 private:
+    QDBusConnectionInterface *m_dbusInterface;
     QStringList m_registeredServices;
 };
 #endif
