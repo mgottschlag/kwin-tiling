@@ -26,12 +26,12 @@
 <sect1 id="kcm_powerdevilconfig">
 <title><guilabel>PowerDevil, a Power Management Daemon</guilabel></title>
 
-<para>This module is a configuration tool for managing Power Management in &kde;. It is a configurator for the PowerDevil daemon, that you can start or stop from the Services module. </para>
+<para>This module is a configuration tool for managing Power Management in &kde;. It is a configurator for the PowerDevil daemon, that you can start or stop from the <guilabel>Service Manager</guilabel> module. </para>
 
 <para>Through this module, you can define your computer's behavior in various situations, allowing you to save as much energy as possible.
 </para>
 
-<para>Powerdevil works with Solid only and it's integrated in your desktop. You won't even notice it is running, apart from notifications. Moreover, Powerdevil checks your system capabilities first, so you'll see only options available for your system in this module. You can also have a better glance at them through the "Capabilities" page.
+<para>Powerdevil works with Solid only and it's integrated in your desktop. You won't even notice it is running, apart from notifications. Moreover, Powerdevil checks your system capabilities first, so you'll see only options available for your system in this module. You can also have a better glance at them through the <guilabel>Capabilities</guilabel> page.
 </para>
 
 <note><para>Note that PowerDevil does not poll your system. This means that it will not waste energy while trying to save it, as some other power managers do.</para></note>
@@ -54,7 +54,7 @@ When this box is checked, every time the PC gets suspended, the screen will be l
 <varlistentry><term><guilabel>Let PowerDevil manage screen powersaving</guilabel></term>
 <listitem>
 <para>
-If checked, PowerDevil will handle Screen powersaving through DPMS. If you want to have different timeouts for your screen powersaving features when your profile changes, you probably want to have this enabled. Otherwise, you can have constants timeouts in the "Display" module
+If checked, PowerDevil will handle Screen powersaving through DPMS. If you want to have different timeouts for your screen powersaving features when your profile changes, you probably want to have this enabled. Otherwise, you can have constants timeouts in the <guilabel>Display</guilabel> module
 </para>
 </listitem>
 </varlistentry>
@@ -152,7 +152,7 @@ There are a lot of options you can configure for each profile, splitted in 3 mai
 <varlistentry><term><guibutton>Disable KWin compositing, if active</guibutton></term>
 <listitem>
 <para>
-KWin compositing will be disabled, if active. It will be re-enabled when a profile that does not have this option gets loaded
+&kwin; compositing will be disabled, if active. It will be re-enabled when a profile that does not have this option gets loaded
 </para>
 </listitem>
 </varlistentry>
@@ -209,7 +209,7 @@ Sets the screen's brightness
 Here you can define power saving for your monitor. This section needs DPMS support available, you can check if your system supports them in the Capabilities page
 </para>
 <para>
-The checkbox defines if DPMS support should be enabled or disabled. If you choose to activate it, set the timeouts in the spin boxes below. You can also prevent the monitor entering a certain status by unchecking the corresponding box.
+The check box defines if DPMS support should be enabled or disabled. If you choose to activate it, set the timeouts in the spin boxes below. You can also prevent the monitor entering a certain status by unchecking the corresponding box.
 </para>
 </listitem>
 </varlistentry>
@@ -224,7 +224,7 @@ Here you can define preferences for CPU management and system settings
 <varlistentry><term><guilabel>Turn off the following CPU(s)</guilabel></term>
 <listitem>
 <para>
-You'll see a list of available CPUs here. If one of these checkboxes is enabled, it means that that CPU supports being turned off. Check the CPUs you don't want to be enabled.
+You'll see a list of available CPUs here. If one of these check boxes is enabled, it means that that CPU supports being turned off. Check the CPUs you don't want to be enabled.
 </para>
 </listitem>
 </varlistentry>
@@ -265,46 +265,46 @@ PowerDevil is usually able to solve the issue by itself. In most cases what you 
 <sect1 id="powerdevilrunner">
 <title>PowerDevil Runner</title>
 
-<para>PowerDevil can be manually controlled through KRunner (ALT+F2). This makes changing profile, brightness, governor and more much easier and faster. The runner has various keywords you can enter to access its functions
+<para>PowerDevil can be manually controlled through &krunner; (<keycombo action="simul">&Alt;<keycap>F2</keycap></keycombo>). This makes changing profile, brightness, governor and more much easier and faster. The runner has various keywords you can enter to access its functions
 </para>
 <sect2 id="runnerwords">
 <title>Runner Keywords</title>
 <para>
-Here comes a list of keywords you can enter in KRunner to perform PowerDevil related actions.
+Here comes a list of keywords you can enter in &krunner; to perform PowerDevil related actions.
 </para>
 <variablelist>
 <varlistentry><term><guibutton>Power Profile</guibutton></term>
 <listitem>
 <para>
-You can manually choose a profile using this keyword. All available profiles will be shown in form of KRunner matches.
+You can manually choose a profile using this keyword. All available profiles will be shown in form of &krunner; matches.
 </para>
 </listitem>
 </varlistentry>
 <varlistentry><term><guibutton>Power Governor</guibutton></term>
 <listitem>
 <para>
-This keyword lets you manually set the CPU frequency governor. Available governors will be shown as KRunner matches.
+This keyword lets you manually set the CPU frequency governor. Available governors will be shown as &krunner; matches.
 </para>
 </listitem>
 </varlistentry>
 <varlistentry><term><guibutton>Power Scheme</guibutton></term>
 <listitem>
 <para>
-Lets you manually set the system powersaving scheme. Available schemes will be shown as KRunner matches.
+Lets you manually set the system powersaving scheme. Available schemes will be shown as &krunner; matches.
 </para>
 </listitem>
 </varlistentry>
 <varlistentry><term><guibutton>Screen Brightness</guibutton></term>
 <listitem>
 <para>
-You can control screen brightness through this keyword. In this form, some KRunner matches that let you do some common actions will be shown. If you enter a value after the keyword (eg.: "screen brightness 50"), the brightness will be set to that value.
+You can control screen brightness through this keyword. In this form, some &krunner; matches that let you do some common actions will be shown. If you enter a value after the keyword (&eg;: <userinput>Screen Brightness 50</userinput>), the brightness will be set to that value.
 </para>
 </listitem>
 </varlistentry>
 <varlistentry><term><guibutton>Suspend</guibutton></term>
 <listitem>
 <para>
-You can suspend your pc through this keyword. Available suspend methods will be shown as KRunner matches.
+You can suspend your pc through this keyword. Available suspend methods will be shown as &krunner; matches.
 </para>
 </listitem>
 </varlistentry>
