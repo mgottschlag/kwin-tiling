@@ -180,6 +180,19 @@ QVariant KHotkeysModel::data( const QModelIndex &index, int role ) const
             }
         }
 
+    //Providing the current action name on edit
+    if (role==Qt::EditRole)
+        {
+        switch (index.column())
+            {
+            case NameColumn:
+                return action->name();
+                
+            default:
+                return QVariant();
+            }
+        }
+
     if (role==Qt::FontRole)
         {
         QFont d;
