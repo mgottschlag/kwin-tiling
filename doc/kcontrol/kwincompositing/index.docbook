@@ -47,7 +47,7 @@ visual effects of this panel are disabled.  To edit any of these effects, simply
 place a mark in this checkbox.</para>
 
 <para>Below that checkbox there are some common settings for the desktop effects like 
-improved window mangement, shadows, various animations, effects for desktop and 
+improved window management, shadows, various animations, effects for desktop and 
 window switching and the animation speed.</para>
 <!-- outdated needs a rewrite
 <variablelist>
@@ -166,7 +166,7 @@ If <guilabel>Icon Only</guilabel> is selected, then there is no text on the tool
 <title><guilabel>Advanced</guilabel> tab</title>
 
 <para>On this tab you can select a <guilabel>Compositing type</guilabel> (<guilabel>OpenGL</guilabel> or <guilabel>XRender</guilabel>) 
-and set some options for the selected typ.
+and set some options for the selected type.
 </para>
 </sect3>
 
