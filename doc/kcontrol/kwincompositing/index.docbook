@@ -14,7 +14,7 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2008-09-30</date>
+<date>2009-02-10</date>
 <releaseinfo>&kde; 4.2</releaseinfo>
 
 <keywordset>
@@ -34,8 +34,9 @@
 for &kde;.</para>
 
 
-<para>This panel is divided into two tabs:  <guilabel>General</guilabel> 
-and <guilabel>All Effects</guilabel>.</para>
+<para>This panel is divided into four tabs:  <guilabel>General</guilabel>, 
+<guilabel>Screen Edges</guilabel>, <guilabel>All Effects</guilabel> and
+<guilabel>Advanced</guilabel>.</para>
 
 <sect3 id="desktop-effects-general">
 <title><guilabel>General</guilabel> tab</title>
@@ -45,7 +46,9 @@ desktop effects</guilabel>.  If there is no mark in front of this checkbox, then
 visual effects of this panel are disabled.  To edit any of these effects, simply 
 place a mark in this checkbox.</para>
 
-<para>Below that checkbox, are the following choices: </para>
+<para>Below that checkbox there are some common settings for the desktop effects like 
+improved window mangement, shadows, various animations, effects for desktop and 
+window switching and the animation speed.</para>
 <!-- outdated needs a rewrite
 <variablelist>
 <varlistentry>
@@ -94,6 +97,26 @@ transparency in menus.  A preview is visible on the right side of this section.<
 -->
 </sect3>
 
+<sect3 id="desktop-screen-edges">
+<title><guilabel>Screen Edges</guilabel> tab</title>
+
+<para>Active screen edges allow you to activate effects by pushing your mouse 
+cursor against the edge of the screen. Here you can configure which effect 
+will get activated on each edge and corner of the screen.
+</para>
+
+<para>Click with any mouse button onto a square and select an effect 
+in the context menu. Edges with a green square have already an attached effect, 
+a red colored square indicates that no effect is selected for this edge.</para>
+
+<para>If you are looking for the setting to enable switching of desktops by 
+pushing your mouse cursor against the edge of the screen you can find it in 
+the settings module <ulink url="help:/kcontrol/windowbehaviour/index.html#action-advanced">
+<guilabel>Window Behavior</guilabel></ulink> on the <guilabel>Advanced</guilabel> 
+tab in the section <guilabel>Active Desktop Borders</guilabel>.
+</para>
+</sect3>
+
 <sect3 id="desktop-alleffects">
 <title><guilabel>All Effects</guilabel> tab</title>
 
@@ -138,6 +161,15 @@ If <guilabel>Icon Only</guilabel> is selected, then there is no text on the tool
 </variablelist>
 -->
 </sect3>
+
+<sect3 id="desktop-advanced">
+<title><guilabel>Advanced</guilabel> tab</title>
+
+<para>On this tab you can select a <guilabel>Compositing type</guilabel> (<guilabel>OpenGL</guilabel> or <guilabel>XRender</guilabel>) 
+and set some options for the selected typ.
+</para>
+</sect3>
+
 
 </sect2>
 
