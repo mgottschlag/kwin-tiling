@@ -20,7 +20,6 @@
 
 // local
 #include "kcm_hotkeys.h"
-#include "kcm_gestures.h"
 
 // libkhotkeys
 #include "daemon/daemon.h"
@@ -32,7 +31,6 @@
 K_PLUGIN_FACTORY_DEFINITION(
     KCMModuleFactory,
     registerPlugin<KCMHotkeys>("khotkeys");
-    // registerPlugin<KCMGestures>("gestures");
     )
 K_EXPORT_PLUGIN(KCMModuleFactory("kcm_khotkeys"))
 

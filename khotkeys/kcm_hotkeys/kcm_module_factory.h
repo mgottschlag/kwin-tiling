@@ -21,7 +21,6 @@
 #include <KDE/KPluginFactory>
 
 #include "kcm_hotkeys.h"
-#include "kcm_gestures.h"
 
 K_PLUGIN_FACTORY_DECLARATION(KCMModuleFactory)
 
