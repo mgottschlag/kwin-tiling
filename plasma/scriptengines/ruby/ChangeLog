@@ -1,3 +1,8 @@
+2009-02-10  Richard Dale  <richard.j.dale@gmail.com>
+* For the methods that need to be special cased to work with 
+  PlasmaScripting::Applet type arguments, add lower case/underscore versions
+  of the methods
+
 2009-02-05  Richard Dale  <richard.j.dale@gmail.com>
 * Added various special casing to the Plasma::ToolTipManager class so you can
   pass a PlasmaScripting::Applet to the methods. Thanks to Mathieu Jobin for

@@ -498,12 +498,20 @@ module Plasma
       end
     end
 
+    def set_content(widget, data)
+      setContent(widget, data)
+    end
+
     def clearContent(widget)
       if widget.kind_of?(PlasmaScripting::Applet)
         super(widget.applet_script.applet)
       else
         super
       end
+    end
+
+    def clear_content(widget)
+      clearContent(widget)
     end
 
     def show(widget)
@@ -534,12 +542,20 @@ module Plasma
       end
     end
 
+    def register_widget(widget)
+      registerWidget(widget)
+    end
+
     def unregisterWidget(widget)
       if widget.kind_of?(PlasmaScripting::Applet)
         super(widget.applet_script.applet)
       else
         super
       end
+    end
+
+    def unregister_widget(widget)
+      unregisterWidget(widget)
     end
   end
 
@@ -575,6 +591,10 @@ module Qt
       end
     end
 
+    def parent_item=(item)
+      setParentItem(item)
+    end
+
     def parentItem=(item)
       setParentItem(item)
     end
@@ -599,6 +619,10 @@ module Qt
       else
         super
       end
+    end
+
+    def parent_item=(item)
+      setParentItem(item)
     end
 
     def parentItem=(item)
@@ -627,6 +651,10 @@ module Qt
       end
     end
 
+    def parent_item=(item)
+      setParentItem(item)
+    end
+
     def parentItem=(item)
       setParentItem(item)
     end
@@ -651,6 +679,10 @@ module Qt
       else
         super
       end
+    end
+
+    def parent_item=(item)
+      setParentItem(item)
     end
 
     def parentItem=(item)
@@ -679,6 +711,10 @@ module Qt
       end
     end
 
+    def parent_item=(item)
+      setParentItem(item)
+    end
+
     def parentItem=(item)
       setParentItem(item)
     end
@@ -703,6 +739,10 @@ module Qt
       else
         super
       end
+    end
+
+    def parent_item=(item)
+      setParentItem(item)
     end
 
     def parentItem=(item)
@@ -731,6 +771,10 @@ module Qt
       end
     end
 
+    def parent_item=(item)
+      setParentItem(item)
+    end
+
     def parentItem=(item)
       setParentItem(item)
     end
@@ -755,6 +799,10 @@ module Qt
       else
         super
       end
+    end
+
+    def parent_item=(item)
+      setParentItem(item)
     end
 
     def parentItem=(item)
@@ -783,6 +831,10 @@ module Qt
       end
     end
 
+    def parent_item=(item)
+      setParentItem(item)
+    end
+
     def parentItem=(item)
       setParentItem(item)
     end
@@ -807,6 +859,10 @@ module Qt
       else
         super
       end
+    end
+
+    def parent_item=(item)
+      setParentItem(item)
     end
 
     def parentItem=(item)
@@ -835,6 +891,10 @@ module Qt
       end
     end
 
+    def parent_item=(item)
+      setParentItem(item)
+    end
+
     def parentItem=(item)
       setParentItem(item)
     end
@@ -859,6 +919,10 @@ module Qt
       else
         super
       end
+    end
+
+    def parent_item=(item)
+      setParentItem(item)
     end
 
     def parentItem=(item)
@@ -887,6 +951,10 @@ module Qt
       end
     end
 
+    def parent_item=(item)
+      setParentItem(item)
+    end
+
     def parentItem=(item)
       setParentItem(item)
     end
@@ -913,6 +981,10 @@ module Qt
       end
     end
 
+    def add_item(*args)
+      addItem(*args)
+    end
+
     def addItem(*args)
       sargs = []
       for i in 0...args.length do
@@ -931,6 +1003,10 @@ module Qt
       else
         super
       end
+    end
+
+    def set_alignment(item, alignment)
+      setAlignment(item, alignment)
     end
 
     def setAlignment(item, alignment)
@@ -955,6 +1031,10 @@ module Qt
       super(*sargs)
     end
 
+    def add_item(*args)
+      addItem(*args)
+    end
+
     def addItem(*args)
       sargs = []
       for i in 0...args.length do
@@ -975,12 +1055,20 @@ module Qt
       end
     end
 
+    def insert_item(index, item)
+      insertItem(index, item)
+    end
+
     def insertItem(index, item)
       if item.kind_of?(PlasmaScripting::Applet)
         super(index, item.applet_script.applet)
       else
         super
       end
+    end
+
+    def set_alignment(item, alignment)
+      setAlignment(item, alignment)
     end
 
     def setAlignment(item, alignment)
@@ -991,12 +1079,20 @@ module Qt
       end
     end
 
+    def set_stretch_factor(item, stretch)
+      setStretchFactor(item, stretch)
+    end
+
     def setStretchFactor(item, stretch)
       if item.kind_of?(PlasmaScripting::Applet)
         super(item.applet_script.applet, stretch)
       else
         super
       end
+    end
+
+    def stretch_factor(item)
+      stretchFactor(item)
     end
 
     def stretchFactor(item)
