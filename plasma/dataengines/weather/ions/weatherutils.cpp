@@ -67,6 +67,19 @@ float convertDistance(float value, int srcUnit, int destUnit)
         return value;
 
     switch(srcUnit) {
+
+        case WeatherUtils::Kilometers:
+            switch (destUnit) {
+            case WeatherUtils::Miles:
+                return (value * 0.621371192);
+            };
+
+        case WeatherUtils::Miles:
+            switch (destUnit) {
+            case WeatherUtils::Kilometers:
+                return (value * 1.609344);
+            };
+
         case WeatherUtils::Centimeters:
             switch (destUnit) {
             case WeatherUtils::Millimeters:
@@ -142,9 +155,9 @@ float convertSpeed(float value, int srcUnit, int destUnit)
 
         case WeatherUtils::Knots:
             switch (destUnit) {
-            case WeatherUtils::Kilometers:
+            case WeatherUtils::KilometersPerHour:
                 return floor(value * 1.852 + 0.5);
-            case WeatherUtils::Miles:
+            case WeatherUtils::MilesPerHour:
                 return (value * 1.507794);
             case WeatherUtils::MetersPerSecond:
                 return (value * 1.9438);
