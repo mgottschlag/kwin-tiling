@@ -19,6 +19,7 @@
 
 
 #include "kcm_hotkeys.h"
+#include "ui_kcm_hotkeys.h"
 #include "kcm_module_factory.h"
 
 #include <typeinfo>
@@ -38,11 +39,6 @@
 #include "hotkeys_tree_view.h"
 #include "khotkeysglobal.h"
 
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QSplitter>
-#include <QtGui/QStackedWidget>
-#include <QtGui/QWidget>
-
 #include <QtDBus/QtDBus>
 
 #include <KDE/KAboutData>
@@ -53,14 +49,11 @@
 
 
 
-class KCMHotkeysPrivate
+class KCMHotkeysPrivate : public Ui::KCMHotkeysWidget
     {
     public:
 
         KCMHotkeysPrivate( KCMHotkeys *host );
-
-        // Treeview displaying the shortcuts
-        QTreeView *treeView;
 
         /** The model holding the shortcut settings. Beware! There is a proxy
          * model between us and that model */
@@ -69,19 +62,8 @@ class KCMHotkeysPrivate
         //! Our host
         KCMHotkeys *q;
 
-        //! Container for all editing widgets
-        QStackedWidget *stack;
-
-        //! Widget to edit an action group
-        ActionGroupWidget *action_group;
-
         //! The currently shown dialog
         HotkeysWidgetIFace *current;
-
-        //! GlobalSettingsWidget
-        GlobalSettingsWidget *global_settings;
-
-        SimpleActionDataWidget *simple_action;
 
         /**
          * Show the widget. If the current widget has changes allow
@@ -255,43 +237,17 @@ void KCMHotkeys::save()
 
 
 KCMHotkeysPrivate::KCMHotkeysPrivate( KCMHotkeys *host )
-    : treeView( new HotkeysTreeView )
+    : Ui::KCMHotkeysWidget()
      ,model(new KHotkeysModel)
      ,q(host)
-     ,stack(0)
-     ,action_group(0)
      ,current(0)
-     ,simple_action(0)
     {
-    // The widget for groups
-    action_group = new ActionGroupWidget(q);
-
-    // The widget for simple hotkeys (one trigger - one action)
-    simple_action = new SimpleActionDataWidget(q);
-
-    // The widget for the global settings
-    global_settings = new GlobalSettingsWidget(q);
-
-    // Setup the stack
-    stack = new QStackedWidget;
-    stack->addWidget( global_settings );
-    stack->addWidget( action_group );
-    stack->addWidget( simple_action );
-
-    // A splitter for the treeview and the stack
-    QSplitter *splitter = new QSplitter;
-    splitter->addWidget( treeView );
-    splitter->addWidget( stack );
-
-    // The global layout
-    QHBoxLayout *layout = new QHBoxLayout;
-    layout->addWidget( splitter );
-    q->setLayout( layout );
+    setupUi(q);
 
     // Initialize the global part of the khotkeys lib ( handler ... )
     KHotKeys::init_global_data(false, q);
 
-    treeView->setModel(model);
+    tree_view->setModel(model);
 
     current=global_settings;
     global_settings->copyFromObject();
@@ -301,10 +257,10 @@ KCMHotkeysPrivate::KCMHotkeysPrivate( KCMHotkeys *host )
 void KCMHotkeysPrivate::load()
     {
     // disconnect the signals
-    if (treeView->selectionModel())
+    if (tree_view->selectionModel())
         {
         QObject::disconnect(
-            treeView->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)),
+            tree_view->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)),
             q, SLOT(currentChanged(QModelIndex,QModelIndex)) );
         }
 
@@ -322,7 +278,7 @@ void KCMHotkeysPrivate::load()
 
     // reconnect the signals
     QObject::connect(
-        treeView->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)),
+        tree_view->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)),
         q, SLOT(currentChanged(QModelIndex,QModelIndex)) );
 
     // Start khotkeys

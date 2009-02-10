@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>KCMHotkeysWidget</class>
+ <widget class="QWidget" name="KCMHotkeysWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>631</width>
+    <height>435</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QWidget" name="">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="HotkeysTreeView" name="tree_view"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="menu_button">
+         <property name="text">
+          <string>Menu</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QStackedWidget" name="stack">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>3</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <widget class="GlobalSettingsWidget" name="global_settings"/>
+      <widget class="SimpleActionDataWidget" name="simple_action"/>
+      <widget class="ActionGroupWidget" name="action_group"/>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>HotkeysTreeView</class>
+   <extends>QTreeView</extends>
+   <header>hotkeys_tree_view.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ActionGroupWidget</class>
+   <extends>QWidget</extends>
+   <header>action_group_widget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SimpleActionDataWidget</class>
+   <extends>QWidget</extends>
+   <header>simple_action_data_widget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GlobalSettingsWidget</class>
+   <extends>QWidget</extends>
+   <header>global_settings_widget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

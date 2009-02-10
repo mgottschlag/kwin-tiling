@@ -39,7 +39,7 @@ public:
     /**
      * Default constructor
      */
-    GlobalSettingsWidget( QWidget *parent );
+    GlobalSettingsWidget(QWidget *parent = NULL);
 
     /**
      * Destructor

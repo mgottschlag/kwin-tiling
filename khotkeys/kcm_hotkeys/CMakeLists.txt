@@ -47,6 +47,7 @@ kde4_add_ui_files(
     kcm_hotkeys_PART_SRCS
 
     global_settings_widget.ui
+    kcm_hotkeys.ui
 
     # HELPER WIDGETS
     helper_widgets/window_definition_list_widget.ui

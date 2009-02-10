@@ -97,14 +97,17 @@ void SimpleActionDataWidget::setActionData( KHotKeys::SimpleActionData* pData )
         switch ( trg->type() )
             {
             case KHotKeys::Trigger::ShortcutTriggerType:
+                kDebug() << "1";
                 currentTrigger = new ShortcutTriggerWidget( static_cast<KHotKeys::ShortcutTrigger*>(trg) );
                 break;
 
             case KHotKeys::Trigger::WindowTriggerType:
+                kDebug() << "2";
                 currentTrigger = new WindowTriggerWidget( static_cast<KHotKeys::WindowTrigger*>(trg) );
                 break;
 
             case KHotKeys::Trigger::GestureTriggerType:
+                kDebug() << "3";
                 currentTrigger = new GestureTriggerWidget( static_cast<KHotKeys::GestureTrigger*>(trg) );
                 break;
 
