@@ -220,7 +220,7 @@ void HotkeysTreeViewContextMenu::newGlobalShortcutActionAction( int actionType )
     QModelIndex newAct = _view->model()->insertActionData(data, parent);
     _view->setCurrentIndex(newAct);
     _view->edit(newAct);
-    _view->resizeColumnToContents(0);
+    _view->resizeColumnToContents(KHotkeysModel::NameColumn);
     }
 
 
@@ -248,7 +248,7 @@ void HotkeysTreeViewContextMenu::newMouseGestureTriggerActionAction( int actionT
     QModelIndex newAct = _view->model()->insertActionData(data, parent);
     _view->setCurrentIndex(newAct);
     _view->edit(newAct);
-    _view->resizeColumnToContents(0);
+    _view->resizeColumnToContents(KHotkeysModel::NameColumn);
     }
 
 
@@ -276,7 +276,7 @@ void HotkeysTreeViewContextMenu::newWindowTriggerActionAction( int actionType )
     QModelIndex newAct = _view->model()->insertActionData(data, parent);
     _view->setCurrentIndex(newAct);
     _view->edit(newAct);
-    _view->resizeColumnToContents(0);
+    _view->resizeColumnToContents(KHotkeysModel::NameColumn);
     }
 
 
@@ -298,7 +298,7 @@ void HotkeysTreeViewContextMenu::newGroupAction()
     QModelIndex newGroup = _view->model()->addGroup(parent);
     _view->setCurrentIndex(newGroup);
     _view->edit(newGroup);
-    _view->resizeColumnToContents(0);
+    _view->resizeColumnToContents(KHotkeysModel::NameColumn);
     }
 
 
@@ -343,8 +343,7 @@ HotkeysTreeView::contextMenuEvent( QContextMenuEvent *event )
 void
 HotkeysTreeView::modelReset()
     {
-    kDebug();
-    resizeColumnToContents(0);
+    resizeColumnToContents(KHotkeysModel::NameColumn);
     }
 
 
@@ -373,6 +372,9 @@ HotkeysTreeView::setModel( QAbstractItemModel *model )
     connect(
         model, SIGNAL(modelReset()),
         this, SLOT(modelReset()));
+
+    resizeColumnToContents(KHotkeysModel::EnabledColumn);
+    resizeColumnToContents(KHotkeysModel::NameColumn);
     }
 
 #include "moc_hotkeys_tree_view.cpp"

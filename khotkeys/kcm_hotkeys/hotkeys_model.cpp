@@ -143,7 +143,7 @@ QVariant KHotkeysModel::data( const QModelIndex &index, int role ) const
         {
         switch(index.column())
             {
-            case 1:
+            case EnabledColumn:
                 // If the parent is enabled we display the state of the object.
                 // If the parent is disabled this object is disabled too.
                 if (action->parent() && !action->parent()->enabled())
@@ -161,20 +161,20 @@ QVariant KHotkeysModel::data( const QModelIndex &index, int role ) const
 
     // Display and Tooltip. Tooltip displays the complete name. That's nice if
     // there is not enough space
-    if (role==Qt::DisplayRole || role==Qt::ToolTipRole)
+    else if (role==Qt::DisplayRole || role==Qt::ToolTipRole)
         {
         switch (index.column())
             {
-            case 0:
+            case NameColumn:
                 return action->name();
 
-            case 1:
+            case EnabledColumn:
                 return QVariant();
 
-            case 2:
+            case IsGroupColumn:
                 return indexToActionDataGroup(index)!=0;
 
-            case 3:
+            case TypeColumn:
                 {
                 const std::type_info &ti = typeid(*action);
                 if (ti==typeid(KHotKeys::SimpleActionData))
@@ -191,10 +191,12 @@ QVariant KHotkeysModel::data( const QModelIndex &index, int role ) const
         }
 
     // Decoration role
-    if (role==Qt::DecorationRole)
+    else if (role==Qt::DecorationRole)
         {
         switch (index.column())
             {
+            // The 0 is correct here. We want to decorate that column
+            // regardless of the content it has
             case 0:
                 return dynamic_cast<KHotKeys::ActionDataGroup*>(action)
                     ? KIcon("folder")
@@ -206,25 +208,17 @@ QVariant KHotkeysModel::data( const QModelIndex &index, int role ) const
         }
 
     //Providing the current action name on edit
-    if (role==Qt::EditRole)
+    else if (role==Qt::EditRole)
         {
         switch (index.column())
             {
             case NameColumn:
                 return action->name();
-                
+
             default:
                 return QVariant();
             }
         }
-
-    if (role==Qt::FontRole)
-        {
-        QFont d;
-        d.setStrikeOut(!action->enabled());
-        return d;
-        }
-
 
     // For everything else
     return QVariant();
@@ -367,13 +361,14 @@ QVariant KHotkeysModel::headerData( int section, Qt::Orientation, int role ) con
 
     switch (section)
         {
-        case 0:
+        case NameColumn:
             return QVariant(i18n("Name"));
 
-        case 1:
+        case EnabledColumn:
+            return QVariant();
             return QVariant(i18n("Enabled"));
 
-        case 2:
+        case IsGroupColumn:
             return QVariant(i18n("Type"));
 
         default:
@@ -584,7 +579,7 @@ void KHotkeysModel::save()
 bool KHotkeysModel::setData( const QModelIndex &index, const QVariant &value, int role )
     {
 
-    if ( !index.isValid() || role != Qt::EditRole )
+    if ( !index.isValid() )
         {
         return false;
         }
@@ -592,17 +587,43 @@ bool KHotkeysModel::setData( const QModelIndex &index, const QVariant &value, in
     KHotKeys::ActionDataBase *action = indexToActionDataBase(index);
     Q_ASSERT( action );
 
-    switch ( index.column() )
+    // Handle CheckStateRole
+    if ( role == Qt::CheckStateRole )
         {
-        case NameColumn:
+        switch(index.column())
             {
-            action->set_name( value.toString() );
-            }
-            break;
+            case EnabledColumn:
+                // If the parent is enabled we display the state of the object.
+                // If the parent is disabled this object is disabled too.
+                if (action->parent() && !action->parent()->enabled())
+                    {
+                    // TODO: Either show a message box or enhance the gui to
+                    // show this item cannot be enabled
+                    return false;
+                    }
+                action->set_enabled( value.toInt() == Qt::Checked );
+                break;
 
-        default:
-            return false;
+            default:
+                return false;
+            }
         }
+    else if ( role == Qt::EditRole )
+        {
+        switch ( index.column() )
+            {
+            case NameColumn:
+                {
+                action->set_name( value.toString() );
+                }
+                break;
+
+            default:
+                return false;
+            }
+        }
+    else
+        return false;
 
     emit dataChanged( index, index );
     return true;
