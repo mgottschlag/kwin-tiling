@@ -40,14 +40,12 @@ public Q_SLOTS:
     QStringList registeredServices() const;
 
 protected Q_SLOTS:
-    void serviceChange(const QString& name,
-                       const QString& oldOwner,
-                       const QString& newOwner);
+    void unregisterService(const QString& name);
 
 Q_SIGNALS:
     void serviceRegistered(const QString &service);
     //TODO: decide if this makes sense, the systray itself could notice the vanishing of items, but looks complete putting it here
-    void serviceUnRegistered(const QString &service);
+    void serviceUnregistered(const QString &service);
 
 private:
     QDBusConnectionInterface *m_dbusInterface;

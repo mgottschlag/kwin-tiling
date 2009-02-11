@@ -16,7 +16,7 @@
         <arg type="s"/>
     </signal>
 
-    <signal name="serviceUnRegistered">
+    <signal name="serviceUnregistered">
         <arg type="s"/>
     </signal>
   </interface>
