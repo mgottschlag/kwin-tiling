@@ -1,6 +1,12 @@
 [Desktop Entry]
 Type=Service
 Name=KDED Systemtray daemon
+Name[fr]=Démon boîte à miniature KDED
+Name[ga]=Deamhan thráidire an chórais KDED
+Name[pt]=Servidor da bandeja do KDED
+Name[pt_BR]=Servidor da bandeja do KDED
+Name[sv]=KDED-demon för systembricka
+Name[uk]=Фонова служба системного лотка KDED
 X-KDE-ServiceTypes=KDEDModule
 X-KDE-Library=systemtraydaemon
 X-KDE-DBus-ModuleName=systemtraydaemon

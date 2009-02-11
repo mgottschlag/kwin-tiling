@@ -3,6 +3,7 @@ Actions=
 Type=Service
 Name=Optical Drive
 Name[et]=Optiline seade
+Name[fr]=Lecteur optique
 Name[pt]=Unidade Óptica
 Name[pt_BR]=Unidade Óptica
 Name[sv]=Optisk enhet
