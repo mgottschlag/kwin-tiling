@@ -470,11 +470,11 @@ bool EnvCanadaIon::updateIonSource(const QString& source)
 
     // Guard: if the size of array is not 2 then we have bad data, return an error
     if (sourceAction.size() < 2) {
-        setData(source, "validate", QString("envcan|timeout"));
+        setData(source, "validate", "envcan|malformed");
         return true;
     }
 
-    if (sourceAction[1] == "validate") {
+    if (sourceAction[1] == "validate" && sourceAction.size() > 2) {
         QStringList result = validate(QString("%1|%2").arg(sourceAction[0]).arg(sourceAction[2]));
 
         if (result.size() == 1) {
@@ -488,8 +488,11 @@ bool EnvCanadaIon::updateIonSource(const QString& source)
             return true;
         }
 
-    } else if (sourceAction[1] == "weather") {
+    } else if (sourceAction[1] == "weather" && sourceAction.size() > 2) {
         getXMLData(source);
+        return true;
+    } else {
+        setData(source, "validate", "envcan|malformed");
         return true;
     }
     return false;
@@ -519,7 +522,7 @@ void EnvCanadaIon::getXMLData(const QString& source)
     //url="file:///home/spstarr/Desktop/s0000649_e.xml";
 
     if (d->m_place[dataKey].territoryName.isEmpty() && d->m_place[dataKey].cityCode.isEmpty()) {
-        setData(source, "validate", QString("envcan|timeout"));
+        setData(source, "validate", QString("envcan|malformed"));
         return;
     }
 

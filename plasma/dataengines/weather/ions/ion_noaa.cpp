@@ -135,11 +135,11 @@ bool NOAAIon::updateIonSource(const QString& source)
 
     // Guard: if the size of array is not 2 then we have bad data, return an error
     if (sourceAction.size() < 2) {
-        setData(source, "validate", QString("noaa|timeout"));
+        setData(source, "validate", "noaa|malformed");
         return true;
     }
     
-    if (sourceAction[1] == "validate") {
+    if (sourceAction[1] == "validate" && sourceAction.size() > 2) {
         kDebug() << "Initiate Validating of place: " << sourceAction[2];
         QStringList result = validate(QString("%1|%2").arg(sourceAction[0]).arg(sourceAction[2]));
 
@@ -154,10 +154,14 @@ bool NOAAIon::updateIonSource(const QString& source)
             return true;
         }
 
-    } else if (sourceAction[1] == "weather") {
+    } else if (sourceAction[1] == "weather" && sourceAction.size() > 2) {
         getXMLData(source);
         return true;
+    } else {
+        setData(source, "validate", "noaa|malformed");
+        return true;
     }
+
     return false;
 }
 
@@ -187,7 +191,7 @@ void NOAAIon::getXMLData(const QString& source)
     // If this is empty we have no valid data, send out an error and abort.
     //
     if (url.url().isEmpty()) { 
-        setData(source, "validate", QString("noaa|timeout"));
+        setData(source, "validate", QString("noaa|malformed"));
         return;
     }
 

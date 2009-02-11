@@ -208,24 +208,32 @@ bool UKMETIon::updateIonSource(const QString& source)
 
     // Guard: if the size of array is not 3 then we have bad data, return an error
     if (sourceAction.size() < 3) {
-        setData(source, "validate", QString("bbcukmet|timeout"));
+        setData(source, "validate", "bbcukmet|malformed");
         return true;
     }
 
-    if (sourceAction[1] == "validate") {
+    if (sourceAction[1] == "validate" && sourceAction.size() >= 3) {
         // Look for places to match
         findPlace(sourceAction[2], source);
         return true;
 
-    } else if (sourceAction[1] == "weather") {
+    } else if (sourceAction[1] == "weather" && sourceAction.size() >= 3) {
         if (sourceAction.count() >= 3) {
+            if (sourceAction[2].isEmpty()) {
+                setData(source, "validate", "bbcukmet|malformed");
+                return true;
+            }
             d->m_place[QString("bbcukmet|%1").arg(sourceAction[2])].XMLurl = sourceAction[3];
             getXMLData(QString("%1|%2").arg(sourceAction[0]).arg(sourceAction[2]));
             return true;
         } else {
             return false;
         }
+    } else {
+      setData(source, "validate", "bbcukmet|malformed");
+      return true;
     }
+
     return false;
 }
 
