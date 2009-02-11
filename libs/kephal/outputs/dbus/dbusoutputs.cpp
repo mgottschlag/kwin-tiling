@@ -34,7 +34,7 @@ namespace Kephal {
     {
         m_interface = new org::kde::Kephal::Outputs(
             "org.kde.Kephal",
-            "/Outputs",
+            "/modules/kephal/Outputs",
             QDBusConnection::sessionBus(),
             this);
             

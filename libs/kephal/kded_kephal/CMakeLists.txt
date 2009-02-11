@@ -50,5 +50,5 @@ TARGET_LINK_LIBRARIES (kded_kephal ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} ${QT_
 
 INSTALL (TARGETS kded_kephal DESTINATION ${PLUGIN_INSTALL_DIR})
 INSTALL (FILES
-        kded_kephal.desktop
+        kephal.desktop
     DESTINATION ${SERVICES_INSTALL_DIR}/kded)

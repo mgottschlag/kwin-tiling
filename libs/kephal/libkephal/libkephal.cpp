@@ -45,7 +45,7 @@ using namespace Kephal;
  */
 void libkephal_factory() {
     //qDebug() << "trying to access kephald...";
-    QDBusInterface interface("org.kde.kded", "/modules/kded_kephal");
+    QDBusInterface interface("org.kde.kded", "/modules/kephal");
     
     DBusConfigurations * configurations = new DBusConfigurations(qApp);
     DBusOutputs * outputs = new DBusOutputs(qApp);

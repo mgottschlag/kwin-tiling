@@ -66,7 +66,7 @@ namespace Kephal {
     {
         m_interface = new org::kde::Kephal::Configurations(
             "org.kde.Kephal",
-            "/Configurations",
+            "/modules/kephal/Configurations",
             QDBusConnection::sessionBus(),
             this);
             

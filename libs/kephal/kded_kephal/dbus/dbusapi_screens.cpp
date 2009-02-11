@@ -36,7 +36,7 @@ DBusAPIScreens::DBusAPIScreens(QObject * parent)
     QDBusConnection dbus = QDBusConnection::sessionBus();
     
     bool result;
-    result = dbus.registerObject("/Screens", this);
+    result = dbus.registerObject("/modules/kephal/Screens", this);
     qDebug() << "screens registered on the bus:" << result;
     
     connect(Screens::self(), SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)), this, SLOT(screenResized(Kephal::Screen *, QSize, QSize)));

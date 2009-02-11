@@ -34,7 +34,7 @@ DBusAPIOutputs::DBusAPIOutputs(QObject * parent)
     QDBusConnection dbus = QDBusConnection::sessionBus();
     
     bool result;
-    result = dbus.registerObject("/Outputs", this);
+    result = dbus.registerObject("/modules/kephal/Outputs", this);
     qDebug() << "outputs registered on the bus:" << result;
     
     connect(Outputs::self(), SIGNAL(outputConnected(Kephal::Output *)), this, SLOT(outputConnectedSlot(Kephal::Output *)));

@@ -34,7 +34,7 @@ namespace Kephal {
     {
         m_interface = new org::kde::Kephal::Screens(
             "org.kde.Kephal",
-            "/Screens",
+            "/modules/kephal/Screens",
             QDBusConnection::sessionBus(),
             this);
             
