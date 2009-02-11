@@ -4,6 +4,7 @@ Exec=fvwm
 TryExec=fvwm
 Name=FVWM
 Name[hi]=एफ़वीडबल्यूएम
+Name[hne]=एफवीडबल्यूएम
 Name[mai]=एफवीडबल्यूएम
 Name[ml]=എഫ്‌വിഡബ്ലിയുഎം
 Name[sr]=ФВВМ
@@ -35,6 +36,7 @@ Comment[gl]=Un xestor de fiestras potente acorde coa ICCCM con múltiplos escrit
 Comment[gu]=શક્તિશાળી ICCCM-અનુરૂપ અનેક વર્ચ્યુઅલ ડેસ્કટોપ ધરાવતું વિન્ડો વ્યવસ્થાપક
 Comment[he]=מנהל חלונות רב עוצמה עם תאימות ל־ICCCM ותמיכה בשולחנות עבודה וירטואליים מרובים
 Comment[hi]=शक्तिशाली आईसीसीसीएम-कम्पलाएंट अनेक आभासी डेस्कटॉप विंडो प्रबंधक
+Comment[hne]=सक्तिसाली आईसीसीसीएम-कम्पलाएंट बहुत अकन आभासी डेस्कटाप विंडो प्रबंधक
 Comment[hr]=Comment=Moćni, ICCCM kompatibilan, upravitelj prozora s više virtualnih radnih površina
 Comment[hsb]=Mócny woknowy rjadowar za wjele wirtuelnych dźěłowych powjerchow, ma so po ICCCM-standardźe
 Comment[hu]=Egy sokoldalú, ICCCM-kompatibilis ablakkezelő, virtuális munkaasztal-kezeléssel

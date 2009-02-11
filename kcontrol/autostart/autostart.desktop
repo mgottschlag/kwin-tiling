@@ -35,6 +35,7 @@ Name[gl]=Inicio automático
 Name[gu]=આપમેળેશરૂ
 Name[he]=הפעלה אוטומטית
 Name[hi]=स्वतःप्रारंभ
+Name[hne]=खुद से चालू
 Name[hr]=Automatsko pokretanje
 Name[hsb]=Awtostart
 Name[hu]=Automatikus indítás
@@ -98,6 +99,7 @@ Comment[fy]=In konfiguraasjeark foar it behearen fan programma's dy't mei KDE st
 Comment[gl]=Unha ferramenta de configuración para xestionar cales programas se inician xunto con KDE.
 Comment[gu]=KDE શરૂ થાય ત્યારે કયા કાર્યક્રમો શરૂ કરવા તેનું રૂપરેખાંકન સાધન
 Comment[he]=כלי לניהול אילו תוכניות מופעלות ביחד עם KDE.
+Comment[hne]=केडीई के साथ चालू होवइया प्रोग्राम ल कानफिगर करे बर औजार
 Comment[hsb]=Připrawjadło za rjadowanje, kotre programy so awtomatisce z KDE wuwjedu.
 Comment[hu]=Beállítóeszköz a KDE-vel együtt elinduló programokhoz
 Comment[is]=Stjórntæki til að stilla hvaða forrit eigi að ræsast upp með KDE.
@@ -108,6 +110,7 @@ Comment[km]=ឧបករណ៍​​កំណត់​រចនា​សម្�
 Comment[kn]=ಕೆಡಿಇ ಯೊಡನೆ ಯಾವ ಕ್ರಮವಿಧಿಗಳು ಪ್ರಾರಂಭವಾಗಬೇಕೆಂಬುದನ್ನು ಸಂರಚಿಸಲು ಒಂದು ಸಲಕರಣೆ
 Comment[ko]=KDE를 시작할 때 실행될 프로그램 설정 도구입니다.
 Comment[ku]=Amûreke veavakirinê ji bo rêveberiya bernameyên destpêkê bi KDE'yê re
+Comment[lt]=Konfigūravimo įrankis programų, paleidžiamų kartu su KDE, tvarkymui.
 Comment[lv]=Rīks automātiski palaižamo programmu konfigurēšanai.
 Comment[mk]=Алатка за конфигурирање со која се одредува кои програми ќе стартуваат заедно со стартувањето на KDE.
 Comment[ml]=കെഡിഇ ആരംഭിക്കുമ്പോള്‍ തുടങ്ങേണ്ട പ്രോഗ്രാമുകള്‍ കൈകാര്യം ചെയ്യുന്നതിനുള്ള ക്രമീകരണ ഉപകരണം.

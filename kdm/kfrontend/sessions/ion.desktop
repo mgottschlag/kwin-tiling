@@ -7,6 +7,7 @@ Name[bn]=আয়ন (Ion)
 Name[eo]=Iono
 Name[gu]=આયોન
 Name[hi]=आयन
+Name[hne]=आयन
 Name[kn]=ಅಯಾನ್
 Name[mai]=आयन
 Name[ml]=അയണ്‍
@@ -42,6 +43,7 @@ Comment[gl]=Un xestor de fiestras manexábel co teclado, con fiestras en mosaico
 Comment[gu]=PWM પર આધારિત કી-બોર્ડ મિત્રતા ધરાવતું ત્રાંસી વિન્ડોવાળું વિન્ડો વ્યવસ્થાપક
 Comment[he]=מנהל חלונות ידידותי למשתמשי מקלדת עם חלונות פרושים, מבוסס על PWM
 Comment[hi]=पीडबल्यूएम आधारित चटाई विंडो युक्त विंडो प्रबंधक जो कुंजीपट फ्रेडली है
+Comment[hne]=पीडबल्यूएम आधार से चटाई विंडो सहित विंडो प्रबंधक जऊन हर कुंजीपट फ्रेंडली हे
 Comment[hr]=Comment=Upravitelj prozora s popločenim prozorima, namijenjen tipkovnici i zasnovan na PWM-u
 Comment[hsb]=Na tastaturu wusměrjeny woknowy rjadowar z kachlicojtymi woknami, bazowacy na PWM
 Comment[hu]=Egy billentyűzetről könnyen kezelhető ablakkezelő, mozaikszerű ablakelrendezéssel, a PWM alapján
