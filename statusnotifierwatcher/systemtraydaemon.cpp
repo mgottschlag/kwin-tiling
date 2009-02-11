@@ -43,7 +43,7 @@ K_EXPORT_PLUGIN(SystemTrayDaemonFactory(aboutData()))
 SystemTrayDaemon::SystemTrayDaemon(QObject *parent, const QList<QVariant>&)
       : KDEDModule(parent)
 {
-    //setModuleName("systemtraydaemon");
+    setModuleName("systemtraydaemon");
     new SystemtrayDaemonAdaptor(this);
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.registerService("org.kde.SystemTrayDaemon");
@@ -60,7 +60,9 @@ SystemTrayDaemon::~SystemTrayDaemon()
 
 void SystemTrayDaemon::registerService(const QString &service)
 {
-    if (m_dbusInterface->isServiceRegistered(service).value()) {
+    if (m_dbusInterface->isServiceRegistered(service).value() &&
+        !m_registeredServices.contains(service)) {
+        //TODO: add a check if the service has registered a SystemTray object?
         m_registeredServices.append(service);
         emit serviceRegistered(service);
     }
@@ -75,7 +77,12 @@ void SystemTrayDaemon::serviceChange(const QString& name,
                                 const QString& oldOwner,
                                 const QString& newOwner)
 {
-    kDebug()<<name<<oldOwner<<newOwner;
+    kDebug()<<"Service "<<name<<"status change, old owner:"<<oldOwner<<"new:"<<newOwner;
+
+    if (newOwner.isEmpty() && m_registeredServices.contains(name)) {
+        m_registeredServices.removeAll(name);
+        emit serviceUnRegistered(name);
+    }
 }
 
 #include "systemtraydaemon.moc"

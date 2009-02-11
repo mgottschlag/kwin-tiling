@@ -15,5 +15,9 @@
     <signal name="serviceRegistered">
         <arg type="s"/>
     </signal>
+
+    <signal name="serviceUnRegistered">
+        <arg type="s"/>
+    </signal>
   </interface>
 </node>

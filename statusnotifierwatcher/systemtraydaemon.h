@@ -46,6 +46,8 @@ protected Q_SLOTS:
 
 Q_SIGNALS:
     void serviceRegistered(const QString &service);
+    //TODO: decide if this makes sense, the systray itself could notice the vanishing of items, but looks complete putting it here
+    void serviceUnRegistered(const QString &service);
 
 private:
     QDBusConnectionInterface *m_dbusInterface;
