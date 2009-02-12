@@ -231,11 +231,13 @@ void Calendar::prevMonth()
         setDate(newDate);
     }
 
-    for (int i = -10; i < 40; i++){
-        QDate tmpDate = newDate.addDays(i);
-        QString tmpStr = "isHoliday:it:" + tmpDate.toString(Qt::ISODate);
-        if (d->dataEngine->query(tmpStr).value(tmpStr).toBool()){
-            setDateProperty(tmpDate);
+    if (d->dataEngine){
+        for (int i = -10; i < 40; i++){
+            QDate tmpDate = newDate.addDays(i);
+            QString tmpStr = "isHoliday:it:" + tmpDate.toString(Qt::ISODate);
+            if (d->dataEngine->query(tmpStr).value(tmpStr).toBool()){
+                setDateProperty(tmpDate);
+            }
         }
     }
 }
@@ -263,11 +265,13 @@ void Calendar::nextMonth()
         setDate(newDate);
     }
 
-    for (int i = -10; i < 40; i++){
-        QDate tmpDate = newDate.addDays(i);
-        QString tmpStr = "isHoliday:it:" + tmpDate.toString(Qt::ISODate);
-        if (d->dataEngine->query(tmpStr).value(tmpStr).toBool()){
-            setDateProperty(tmpDate);
+    if (d->dataEngine){
+        for (int i = -10; i < 40; i++){
+            QDate tmpDate = newDate.addDays(i);
+            QString tmpStr = "isHoliday:it:" + tmpDate.toString(Qt::ISODate);
+            if (d->dataEngine->query(tmpStr).value(tmpStr).toBool()){
+                setDateProperty(tmpDate);
+            }
         }
     }
 }
