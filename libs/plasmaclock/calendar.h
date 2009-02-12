@@ -54,7 +54,6 @@ public:
 
     CalendarTable *calendarTable() const;
 
-    void setDateProperty(QDate date); //HACK
     void setDataEngine(Plasma::DataEngine *dataEngine);
 
 Q_SIGNALS:
@@ -76,6 +75,7 @@ private Q_SLOTS:
     void hideYearSpinBox();
 
 private:
+    void setDateProperty(QDate date); //HACK
     void init(CalendarTable *calendarTable);
     CalendarPrivate* const d;
 };
