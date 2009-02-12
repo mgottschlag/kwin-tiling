@@ -219,7 +219,7 @@ QList<QPointF> ItemSpace::positionVertically(
     // start either on the left or the right, and advance inside
     qreal x = ((align & Qt::AlignLeft) ? 0 : workingGeom.width()-size.width());
     // try different x coordinates
-    for (int i = 0; i < 100; ++i) {
+    while (1) {
         // stop testing if we're limited by the working area and positions at the next x would reach outside
         bool outOfX = ((align & Qt::AlignLeft) ? (x + size.width() > workingGeom.width()) : (x < 0));
         if (outOfX && limitedSpace) {
@@ -264,7 +264,18 @@ QList<QPointF> ItemSpace::positionVertically(
                 break;
             }
 
-            y = ((align & Qt::AlignTop) ? a.bottom() : a.y() - size.height());
+            // The new coordinate should theoretically always be greater (or lesser with right
+            // alignment) for the algorithm to terminate. Unfortunatly, probably due to some
+            // compiler/Qt but, this is not always the case. Therefore we have safeguards here.
+            qreal newY;
+            if ((align & Qt::AlignTop)) {
+                newY = a.bottom();
+                if (!(newY > y)) return possiblePositions;
+            } else {
+                newY = a.y() - size.height();
+                if (!(newY < y)) return possiblePositions;
+            }
+            y = newY;
         }
 
         // Find next possible x coordinate
@@ -288,7 +299,16 @@ QList<QPointF> ItemSpace::positionVertically(
             break;
         }
 
-        x = ((align & Qt::AlignLeft) ? a.right() : a.x() - size.width());
+        // Safeguards to assure termination, see above.
+        qreal newX;
+        if ((align & Qt::AlignLeft)) {
+            newX = a.right();
+            if (!(newX > x)) return possiblePositions;
+        } else {
+            newX = a.x() - size.width();
+            if (!(newX < x)) return possiblePositions;
+        }
+        x = newX;
     }
 
     return possiblePositions;
