@@ -42,6 +42,7 @@ class PLASMACLOCK_EXPORT Calendar : public QGraphicsWidget
 public:
     explicit Calendar(QGraphicsWidget *parent = 0);
     Calendar(const QDate &, QGraphicsWidget *parent = 0);
+    Calendar(CalendarTable *calendarTable, QGraphicsWidget *parent = 0);
     ~Calendar();
 
     const KCalendarSystem *calendar () const;
@@ -75,6 +76,7 @@ private Q_SLOTS:
     void hideYearSpinBox();
 
 private:
+    void init(CalendarTable *calendarTable);
     CalendarPrivate* const d;
 };
 

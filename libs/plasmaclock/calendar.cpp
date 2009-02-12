@@ -67,15 +67,31 @@ class CalendarPrivate
         Plasma::DataEngine *dataEngine;
 };
 
-//TODO
-Calendar::Calendar(const QDate &, QGraphicsWidget *parent)
+Calendar::Calendar(const QDate &date, QGraphicsWidget *parent)
     : QGraphicsWidget(parent), d(new CalendarPrivate())
 {
-
+    init(new CalendarTable(date));
 }
 
 Calendar::Calendar(QGraphicsWidget *parent)
     : QGraphicsWidget(parent), d(new CalendarPrivate())
+{
+    init(new CalendarTable());
+}
+
+Calendar::Calendar(CalendarTable *calendarTable, QGraphicsWidget *parent)
+    : QGraphicsWidget(parent), d(new CalendarPrivate())
+{
+    init(calendarTable);
+}
+
+Calendar::~Calendar()
+{
+   delete d->monthMenu;
+   delete d;
+}
+
+void Calendar::init(CalendarTable *calendarTable)
 {
     d->dataEngine = 0;
 
@@ -83,7 +99,7 @@ Calendar::Calendar(QGraphicsWidget *parent)
     QGraphicsLinearLayout *m_hLayout = new QGraphicsLinearLayout(m_layout);
     QGraphicsLinearLayout *m_layoutTools = new QGraphicsLinearLayout(m_layout);
 
-    d->calendarTable = new Plasma::CalendarTable(this);
+    d->calendarTable = calendarTable;
     d->calendarTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     d->back = new Plasma::ToolButton(this);
@@ -149,12 +165,6 @@ Calendar::Calendar(QGraphicsWidget *parent)
     d->monthMenu = 0;
 
     dateUpdated(d->calendarTable->date());
-}
-
-Calendar::~Calendar()
-{
-   delete d->monthMenu;
-   delete d;
 }
 
 void Calendar::manualDateChange()
