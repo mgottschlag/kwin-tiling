@@ -21,6 +21,7 @@
 
 // Plasma
 #include <Plasma/IconWidget>
+#include <Plasma/ToolTipManager>
 
 // Qt
 #include <QtGui/QWidget> // QWIDGETSIZE_MAX
@@ -67,11 +68,16 @@ void LockOut::init()
     m_showLogoutButton = cg.readEntry("showLogoutButton", true);
 #endif
 
+    //Tooltip strings maybe should be different (eg. "Leave..."->"Logout")?
     m_iconLock = new Plasma::IconWidget(KIcon("system-lock-screen"), "", this);
     connect(m_iconLock, SIGNAL(clicked()), this, SLOT(clickLock()));
+    Plasma::ToolTipContent lockToolTip(i18n("Lock"),i18n("Lock the screen"),m_iconLock->icon());
+    Plasma::ToolTipManager::self()->setContent(m_iconLock, lockToolTip);
 
     m_iconLogout = new Plasma::IconWidget(KIcon("system-shutdown"), "", this);
     connect(m_iconLogout, SIGNAL(clicked()), this, SLOT(clickLogout()));
+    Plasma::ToolTipContent logoutToolTip(i18n("Leave..."),i18n("Logout, turn off or restart the computer"),m_iconLogout->icon());
+    Plasma::ToolTipManager::self()->setContent(m_iconLogout, logoutToolTip);
 
     showButtons();
 }
@@ -239,6 +245,7 @@ void LockOut::showButtons()
     }
 
     setConfigurationRequired(!m_showLockButton && !m_showLogoutButton);
+    checkLayout();
 #endif // !Q_OS_WIN
 }
 
