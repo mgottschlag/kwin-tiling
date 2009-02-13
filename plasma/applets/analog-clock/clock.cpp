@@ -366,6 +366,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         m_handsCache.fill(Qt::transparent);
 
         QPainter handsPainter(&m_handsCache);
+        handsPainter.drawPixmap(rect, m_faceCache, rect);
         handsPainter.setRenderHint(QPainter::SmoothPixmapTransform);
 
         drawHand(&handsPainter, rect, m_verticalTranslation, hours, "Hour");
@@ -377,7 +378,6 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
     // paint caches and second hand
     p->setRenderHint(QPainter::SmoothPixmapTransform);
-    p->drawPixmap(rect, m_faceCache, rect);
     p->drawPixmap(rect, m_handsCache, rect);
     if (m_showSecondHand) {
         drawHand(p, rect, m_verticalTranslation, seconds, "Second");
