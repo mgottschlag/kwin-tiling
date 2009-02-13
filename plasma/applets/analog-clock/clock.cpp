@@ -55,6 +55,9 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_showSecondHand(false),
       m_showTimezoneString(false),
       m_repaintCache(RepaintAll),
+      m_faceCache(QPixmap()),
+      m_handsCache(QPixmap()),
+      m_glassCache(QPixmap()),
       m_secondHandUpdateTimer(0)
 {
     KGlobal::locale()->insertCatalog("libplasmaclock");
@@ -107,6 +110,11 @@ void Clock::constraintsEvent(Plasma::Constraints constraints)
     }
 
     if (constraints & Plasma::SizeConstraint) {
+        QSize pixmapSize = size().toSize();
+        m_faceCache = QPixmap(pixmapSize);
+        m_handsCache = QPixmap(pixmapSize);
+        m_glassCache = QPixmap(pixmapSize);
+
         m_theme->resize(size());
     }
 
@@ -303,8 +311,6 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
     // paint face and glass cache
     if (m_repaintCache == RepaintAll) {
-        m_faceCache = QPixmap(rect.size());
-        m_glassCache = QPixmap(rect.size());
         m_faceCache.fill(Qt::transparent);
         m_glassCache.fill(Qt::transparent);
 
@@ -362,7 +368,6 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
     // paint hour and minute hands cache
     if (m_repaintCache == RepaintHands || m_repaintCache == RepaintAll) {
-        m_handsCache = QPixmap(rect.size());
         m_handsCache.fill(Qt::transparent);
 
         QPainter handsPainter(&m_handsCache);
