@@ -1,4 +1,5 @@
 add_subdirectory(applicationjobs)
+add_subdirectory(calendar)
 add_subdirectory(dict)
 add_subdirectory(executable)
 add_subdirectory(favicons)
