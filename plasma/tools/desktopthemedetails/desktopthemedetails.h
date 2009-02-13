@@ -32,12 +32,14 @@ public slots:
     void save();
     void removeTheme();
     void exportTheme();
+    void newThemeInfoChanged();
 
 private:
-    void updateReplaceItemList(const QString& item);
+    void updateReplaceItemList(const int& item);
     void loadThemeItems();
+    QString displayedItemText(int item);
     bool isCustomized(const QString& theme);
-    void clearCustomized();
+    void clearCustomized(const QString& themeRoot);
 
 private slots:
     void getNewThemes();
@@ -45,9 +47,15 @@ private slots:
 
 private:
     ThemeModel* m_themeModel;
-    QHash<QString, QString> m_themeItems;
-    QHash<QString, QString> m_themeReplacements;
-    QHash<QString, QString> m_dropListFiles;
+
+    QHash<QString, int> m_items; // theme items
+    QHash<int, QString> m_itemPaths; // theme item paths
+    QHash<int, QString> m_itemIcons; //theme item icons
+    QHash<QString, int> m_themes; // installed themes
+    QHash<int, QString> m_themeRoots; // installed themes root paths
+    QHash<int, int> m_itemThemeReplacements; // source theme for item replacements 
+    QHash<int, QString>m_itemFileReplacements; //non-theme source files for item replacements   
+
     bool m_themeCustomized;
     QString m_baseTheme;
 };

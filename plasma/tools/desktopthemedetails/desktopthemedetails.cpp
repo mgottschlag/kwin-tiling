@@ -96,7 +96,6 @@ void ThemeModel::reload()
     QStringList themes = dirs.findAllResources("data", "desktoptheme/*/metadata.desktop",
                                                KStandardDirs::NoDuplicates);
     foreach (const QString &theme, themes) {
-        kDebug() << theme;
         int themeSepIndex = theme.lastIndexOf('/', -1);
         QString themeRoot = theme.left(themeSepIndex);
         int themeNameSepIndex = themeRoot.lastIndexOf('/', -1);
@@ -260,7 +259,7 @@ K_EXPORT_PLUGIN(DesktopThemeDetailsFactory("desktopthemedetails", "kcm_desktopth
 struct ThemeItemNameType {
         const char* m_type;
         const char* m_displayItemName;
-        const char* m_widgetType;
+        const char* m_themeItemPath;
         const char* m_iconName;
 };
 
@@ -302,14 +301,18 @@ DesktopThemeDetails::DesktopThemeDetails(QWidget* parent, const QVariantList &ar
     m_theme->setItemDelegate(new ThemeDelegate(m_theme->view()));
     m_theme->view()->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 
+    reloadConfig();
+
     connect(m_theme, SIGNAL(currentIndexChanged(int)), this, SLOT(resetThemeDetails()));
     connect(m_enableAdvanced, SIGNAL(toggled(bool)), this, SLOT(toggleAdvancedVisible()));
     connect(m_removeThemeButton, SIGNAL(clicked()), this, SLOT(removeTheme()));
     connect(m_exportThemeButton, SIGNAL(clicked()), this, SLOT(exportTheme()));
-    resetThemeDetails();
-    m_themeCustomized = false;
+
+    connect(m_newThemeName, SIGNAL(editingFinished()), this, SLOT(newThemeInfoChanged()));
+
     m_baseTheme = "default";
-    reloadConfig();
+    m_themeCustomized = false;
+    resetThemeDetails();
     adjustSize();
 }
 
@@ -347,99 +350,121 @@ void DesktopThemeDetails::reloadConfig()
 
 void DesktopThemeDetails::save()
 {
-    QString theme;
+    QString themeRoot;
+    KStandardDirs dirs;
     if (m_newThemeName->text().isEmpty()) {
-        theme = ".customized";
+        themeRoot = ".customized";
+        //Toggle customized theme directory name to ensure theme reload
+        if (QDir(dirs.locateLocal("data", "desktoptheme/" + themeRoot + '/', false)).exists()) {
+            themeRoot = themeRoot + '1';
+        }
     } else {
-        theme = m_newThemeName->text().replace(' ',"_").remove(QRegExp("[^A-Za-z0-9_]"));
+        themeRoot = m_newThemeName->text().replace(' ',"_").remove(QRegExp("[^A-Za-z0-9_]"));
     }
 
-    //Customized Theme
-    bool newThemeExists = false;
-    KStandardDirs dirs;
+    //Save theme items
     QFile customSettingsFile;
     bool customSettingsFileOpen = false;
+
     if (m_themeCustomized || !m_newThemeName->text().isEmpty()) {
-        //Toggle theme directory name to ensure theme reload
-        if (QDir(dirs.locateLocal("data", "desktoptheme/" + theme + '/', false)).exists()) {
-            theme = theme + '1';
-        }
-        clearCustomized();
+        
+        clearCustomized(themeRoot);
 
         //Copy all files from the base theme
-        QString baseSource = dirs.locate("data", "desktoptheme/" + m_baseTheme + '/');
-        KIO::CopyJob *copyBaseTheme = KIO::copyAs(KUrl(baseSource), KUrl(dirs.locateLocal("data", "desktoptheme/" + theme, true)), KIO::HideProgressInfo);
+        QString baseSource = dirs.locate("data", "desktoptheme/" + m_baseTheme + "/metadata.desktop");
+        baseSource = baseSource.left(baseSource.lastIndexOf('/', -1));
+        KIO::CopyJob *copyBaseTheme = KIO::copyAs(KUrl(baseSource), KUrl(dirs.locateLocal("data", "desktoptheme/" + themeRoot, true)), KIO::HideProgressInfo);
         KIO::NetAccess::synchronousRun(copyBaseTheme, this);
 
         //Prepare settings file for customized theme
-        if (isCustomized(theme)) {
-            customSettingsFile.setFileName(dirs.locateLocal("data", "desktoptheme/" + theme + "/settings"));
+        if (isCustomized(themeRoot)) {
+            customSettingsFile.setFileName(dirs.locateLocal("data", "desktoptheme/" + themeRoot + "/settings"));
             customSettingsFileOpen = customSettingsFile.open(QFile::WriteOnly);
             if (customSettingsFileOpen) {
                 QTextStream out(&customSettingsFile);
                 out << "baseTheme=" + m_baseTheme + "\r\n";;
             }
         }
+        QString settingsSource;
 
-
-        //Copy each theme file to new theme folder
-        QHashIterator<QString, QString> i(m_themeReplacements);
+        //Copy each item theme file to new theme folder
+        QHashIterator<int, int> i(m_itemThemeReplacements);
         while (i.hasNext()) {
             i.next();
-            QString source = i.value();
-            QString itemDir = "desktoptheme/" + theme + '/' + m_themeItems[i.key()];
-            if (source.right(4).toLower() == ".svg") {
-                itemDir.append(".svg");
-            } else if (source.right(5).toLower() == ".svgz") {
-                itemDir.append(".svgz");
+            //Get root directory where item should reside (relative to theme root)
+            QString itemRoot = "";
+            if (m_itemPaths[i.key()].lastIndexOf('/', -1) != -1) {
+                itemRoot= m_itemPaths[i.key()].left(m_itemPaths[i.key()].lastIndexOf('/', -1));
             }
-            QString dest = dirs.locateLocal("data", itemDir, true);
-            if (QFile::exists(source)) {
-               QFile::remove(dirs.locateLocal("data", "desktoptheme/" + theme + '/' + m_themeItems[i.key()] + ".svg"));
-               QFile::remove(dirs.locateLocal("data", "desktoptheme/" + theme + '/' + m_themeItems[i.key()] + ".svgz"));
-               KIO::file_copy(KUrl(source), KUrl(dest), -1, KIO::HideProgressInfo);
-            }
-            //Save setting for this theme item
-            if (customSettingsFileOpen) {
-                QTextStream out(&customSettingsFile);
-                if (m_dropListFiles.key(source).startsWith("File:") || m_dropListFiles.key(source).startsWith(i18n("(Customized)"))) {
-                    out << i.key() + "=" + dest +"\r\n";
-                } else {
-                    out << i.key() + "=" + source +"\r\n";
-                }
+            //Setup source and destination
+            QString source;
+            QString dest;
+            if (i.value() != -1) {
+                //Source is a theme
+                source = "desktoptheme/" + m_themeRoots[i.value()] + '/' + m_itemPaths[i.key()] + '*';
+                dest = "desktoptheme/" + themeRoot + '/' + itemRoot + '/';
+                settingsSource = m_themeRoots[i.value()];
+            } else {
+               //Source is a file
+                source = m_itemFileReplacements[i.key()];
+                dest = "desktoptheme/" + themeRoot + '/' + itemRoot + '/';
+                settingsSource = m_itemFileReplacements[i.key()];
             }
 
+
+            //Delete item files at destination before copying (possibly there from base theme copy)
+            QStringList deleteFiles = dirs.findAllResources("data", "desktoptheme/" + themeRoot + '/' + m_itemPaths[i.key()] + '*',
+                                            KStandardDirs::NoDuplicates);
+            for (int j = 0; j < deleteFiles.size(); ++j) {
+                KIO::DeleteJob *dj = KIO::del(KUrl(deleteFiles.at(j)), KIO::HideProgressInfo);
+                KIO::NetAccess::synchronousRun(dj, this);
+            }
+            
+            //Copy item(s)
+            dest = dirs.locateLocal("data", dest, true);
+            QStringList copyFiles;
+            if (i.value() != -1) {
+                copyFiles = dirs.findAllResources("data", source, KStandardDirs::NoDuplicates); //copy from theme
+            } else {
+                copyFiles << source; //copy from file
+            }
+            for (int j = 0; j < copyFiles.size(); ++j) {
+                KIO::CopyJob *cj = KIO::copy(KUrl(copyFiles.at(j)), KUrl(dest), KIO::HideProgressInfo);
+                KIO::NetAccess::synchronousRun(cj, this);
+            }
+            
+            //Record settings file
+            if (customSettingsFileOpen) {
+                QTextStream out(&customSettingsFile);
+                out << m_items.key(i.key()) + "=" + settingsSource +"\r\n";
+            }
         }
         if (customSettingsFileOpen) customSettingsFile.close();
 
         // Create new theme FDO desktop file
-        QFile::remove(dirs.locateLocal("data", "desktoptheme/" + theme + "/metadata.desktop", false));
-        QFile desktopFile(dirs.locateLocal("data", "desktoptheme/" + theme +"/metadata.desktop"));
-        QString desktopFileData;
-        if (isCustomized(theme)) {
-            desktopFileData = QString("Name=%1 \r\nComment=%2 \r\nX-KDE-PluginInfo-Name=%3\r\n").arg(i18n("(Customized)")).arg(i18n("User customized theme")).arg(theme);
+        QFile::remove(dirs.locateLocal("data", "desktoptheme/" + themeRoot + "/metadata.desktop", false));
+        KDesktopFile df(dirs.locateLocal("data", "desktoptheme/" + themeRoot + "/metadata.desktop"));
+        KConfigGroup cg = df.desktopGroup();
+        if (isCustomized(themeRoot)) {
+            cg.writeEntry("Name",i18n("(Customized)"));
+            cg.writeEntry("Comment", i18n("User customized theme"));
+            cg.writeEntry("X-KDE-PluginInfo-Name", themeRoot);
         } else {
-            desktopFileData = "Name=" + m_newThemeName->text() + " \r\n Comment=" + m_newThemeDescription->text() + " \r\n X-KDE-PluginInfo-Author=" + m_newThemeAuthor->text() + " \r\n X-KDE-PluginInfo-Name=" + theme + " \r\n X-KDE-PluginInfo-Version=" + m_newThemeVersion->text();
+            cg.writeEntry("Name", m_newThemeName->text());
+            cg.writeEntry("Comment", m_newThemeDescription->text());
+            cg.writeEntry("X-KDE-PluginInfo-Author", m_newThemeAuthor->text());
+            cg.writeEntry("X-KDE-PluginInfo-Version", m_newThemeVersion->text());
         }
-        if (desktopFile.open(QFile::WriteOnly)) {
-            QTextStream out(&desktopFile);
-            out << "[Desktop Entry] \r\n" + desktopFileData +" \r\n";
-            desktopFile.close();
-            newThemeExists = true;
-        } else {
-            KMessageBox::error(this, i18n("Unable to save theme."), i18n("Desktop Theme Details"));
-        }
+        cg.sync();
+
         m_themeCustomized = false;
     }
 
-    // Plasma Theme
-    //Plasma::Theme::defaultTheme()->setThemeName(theme);
-
-    if (newThemeExists) {
-        m_themeModel->reload();
-        m_theme->setCurrentIndex(m_themeModel->indexOf(theme));
+    m_themeModel->reload();
+    if (m_themeModel->indexOf(themeRoot) != -1) {
+        m_theme->setCurrentIndex(m_themeModel->indexOf(themeRoot));
         //FIXME: should say "Appearance Settings" instead of "Desktop Settings"
-        KMessageBox::information(this,i18n("To change your desktop theme to \"%1\", open\nDesktop Settings and select \"%2\" from the droplist.",m_theme->currentText(),m_theme->currentText() ), i18n("How to Change Desktop Theme"), "HowToChangeDesktopTheme");
+        KMessageBox::information(this,i18n("To change your desktop theme to \"%1\", open\n the desktop Appearance Settings and select \"%2\" from the droplist.",m_theme->currentText(),m_theme->currentText() ), i18n("How to Change Desktop Theme"), "HowToChangeDesktopTheme");
     }
     resetThemeDetails();
 }
@@ -477,24 +502,17 @@ void DesktopThemeDetails::removeTheme()
 
 void DesktopThemeDetails::exportTheme()
 {
+    QString theme = m_theme->itemData(m_theme->currentIndex(),
+                                      ThemeModel::PackageNameRole).toString();
     if (m_themeCustomized ||
-        (m_theme->currentText() == i18n("(Customized)") && m_newThemeName->text() == "")) {
+        (isCustomized(theme) && m_newThemeName->text() == "")) {
         KMessageBox::information(this, i18n("Please apply theme item changes (with a new theme name) before attempting to export theme."), i18n("Export Desktop Theme"));
     } else {
-        QString themeStoragePath = m_theme->itemData(m_theme->currentIndex(),
-                                                     ThemeModel::PackageNameRole).toString();
+        QString themeStoragePath = theme;
+
         KStandardDirs dirs;
-        kDebug()<<" themeStoragePath "<<themeStoragePath;
-
-        if ( themeStoragePath == "default")
-        {
-            KConfigGroup cfg = KConfigGroup(KSharedConfig::openConfig("plasmarc"), "Theme");
-            themeStoragePath = cfg.readEntry("name", "default");
-        }
-
         QString themePath = dirs.findResource("data", "desktoptheme/" + themeStoragePath + "/metadata.desktop");
-        if (!themePath.isEmpty())
-        {
+        if (!themePath.isEmpty()){
             QString expFileName = KFileDialog::getSaveFileName(KUrl(), "*.zip", this, i18n("Export theme to file"));
             if (!expFileName.endsWith(".zip"))
                 expFileName = expFileName + ".zip";
@@ -512,36 +530,95 @@ void DesktopThemeDetails::exportTheme()
 
 void DesktopThemeDetails::loadThemeItems()
 {
-    QStringList themeItemList;
-    QStringList themeItemIconList;
-    m_themeItems.clear();
-    m_themeReplacements.clear();
-    m_themeItemList->clear();
-    m_dropListFiles.clear();
-
-
+    // Set up items, item paths and  icons
+    m_items.clear(); // clear theme items
+    m_itemPaths.clear(); // clear theme item paths
+    m_itemIcons.clear();
     for (int i = 0; themeCollectionName[i].m_type; ++i) {
-        m_themeItems[themeCollectionName[i].m_type] = themeCollectionName[i].m_widgetType;
-        themeItemList.append(themeCollectionName[i].m_displayItemName);
-        m_themeReplacements[themeCollectionName[i].m_displayItemName] = "";
-        themeItemIconList.append(themeCollectionName[i].m_iconName);
+        m_items[themeCollectionName[i].m_type] = i;
+        m_itemPaths[i] = themeCollectionName[i].m_themeItemPath;
+        m_itemIcons[i] = themeCollectionName[i].m_iconName;
     }
 
+    // Get installed themes
+    m_themes.clear(); // clear installed theme list
+    m_themeRoots.clear(); // clear installed theme root paths
+    KStandardDirs dirs;
+    QStringList themes = dirs.findAllResources("data", "desktoptheme/*/metadata.desktop",
+                                               KStandardDirs::NoDuplicates);
+    themes.sort();
+    int j=0;
+    for (int i = 0; i < themes.size(); ++i) {
+        QString theme = themes.at(i);
+        int themeSepIndex = theme.lastIndexOf('/', -1);
+        QString themeRoot = theme.left(themeSepIndex);
+        int themeNameSepIndex = themeRoot.lastIndexOf('/', -1);
+        QString packageName = themeRoot.right(themeRoot.length() - themeNameSepIndex - 1);
+        KDesktopFile df(theme);
+        QString name = df.readName();
+        if (name.isEmpty()) {
+            name = packageName;
+        }
+        
+        if (!isCustomized(packageName) && (m_themeRoots.key(packageName, -1) == -1)) {
+            m_themes[name] = j;
+            m_themeRoots[j] = packageName;
+            ++j;
+        }
+    }
 
-    m_themeItemList->setRowCount(themeItemList.size());
+    // Set up default item replacements
+    m_itemThemeReplacements.clear();
+    m_itemFileReplacements.clear();
+    QString currentTheme = m_theme->itemData(m_theme->currentIndex(),
+                                      ThemeModel::PackageNameRole).toString();
+    if (!isCustomized(currentTheme)) {
+        // Set default replacements to current theme
+        QHashIterator<QString, int> i(m_items);
+        while (i.hasNext()) {
+            i.next();
+            m_itemThemeReplacements[i.value()] = m_themeRoots.key(currentTheme); 
+        }
+        m_baseTheme = currentTheme;
+    } else {
+        // Set default replacements to customized theme settings
+        QFile customSettingsFile(dirs.locateLocal("data", "desktoptheme/" + currentTheme +"/settings"));
+        if (customSettingsFile.open(QFile::ReadOnly)) {
+            QTextStream in(&customSettingsFile);
+            QString line;
+            QStringList settingsPair;
+            while (!in.atEnd()) {
+                line = in.readLine();
+                settingsPair = line.split('=');
+                if (settingsPair.at(0) == "baseTheme") {
+                    m_baseTheme = settingsPair.at(1);
+                } else {
+                    if (m_themeRoots.key(settingsPair.at(1), -1) != -1) { // theme for current item exists
+                        m_itemThemeReplacements[m_items[settingsPair.at(0)]] = m_themeRoots.key(settingsPair.at(1));
+                    } else if (QFile::exists(settingsPair.at(1))) {
+                        m_itemThemeReplacements[m_items[settingsPair.at(0)]] = -1;
+                        m_itemFileReplacements[m_items[settingsPair.at(0)]] = settingsPair.at(1);
+                    }
+                }
+            }
+            customSettingsFile.close();
+        }
+    }
+
+    // Build displayed list of theme items
+    m_themeItemList->setRowCount(m_items.size());
     m_themeItemList->setColumnCount(2);
     m_themeItemList->setHorizontalHeaderLabels(QStringList()<< i18n("Theme Item")<<i18n("Source"));
-    QString item;
-    QStringListIterator i(themeItemList);
-    int row = 0;
+    QString displayedItem;
+    QHashIterator<QString, int> i(m_items);
     while (i.hasNext()) {
-        item = i.next();
-        m_themeItemList->setItem(row, 0, new QTableWidgetItem(item));
-        m_themeItemList->item(row,0)->setIcon(KIcon(themeItemIconList.at(row)));
-        m_themeItemList->setCellWidget(row, 1, new QComboBox());
-        updateReplaceItemList(item);
+        i.next();
+        displayedItem = displayedItemText(i.value());
+        m_themeItemList->setItem(i.value(), 0, new QTableWidgetItem(displayedItem));
+        m_themeItemList->item(i.value(),0)->setIcon(KIcon(m_itemIcons[i.value()]));
+        m_themeItemList->setCellWidget(i.value(), 1, new QComboBox());
+        updateReplaceItemList(i.value());
         m_themeItemList->resizeColumnToContents(1);
-        row++;
     }
     m_themeItemList->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_themeItemList->verticalHeader()->hide();
@@ -552,105 +629,85 @@ void DesktopThemeDetails::loadThemeItems()
     m_themeItemList->setCurrentCell(0, 1);
 }
 
-void DesktopThemeDetails::updateReplaceItemList(const QString& item)
+void DesktopThemeDetails::updateReplaceItemList(const int& item)
 {
-    QString currentReplacement = m_themeReplacements[item];
-    QString replacementDropListItem;
-    QStringList dropList;
-    if ((currentReplacement.isEmpty() && m_theme->currentText() != i18n("(Customized)"))){
-        replacementDropListItem = m_theme->currentText() + " " + item;
-    }
+    QString currentTheme = m_theme->itemData(m_theme->currentIndex(),
+                                      ThemeModel::PackageNameRole).toString();
 
     // Repopulate combobox droplist
-    int itemRow = m_themeItemList->row(m_themeItemList->findItems(item, Qt::MatchExactly).at(0));
-    QComboBox *currentComboBox = static_cast<QComboBox*>(m_themeItemList->cellWidget(itemRow,1));
-    disconnect(currentComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(replacementItemChanged()));
-    currentComboBox->clear();
-    KStandardDirs dirs;
-    QStringList themes = dirs.findAllResources("data", "desktoptheme/*/metadata.desktop",
-                                               KStandardDirs::NoDuplicates);
-    themes.sort();
-    foreach (const QString &theme, themes) {
-        int themeSepIndex = theme.lastIndexOf('/', -1);
-        QString themeRoot = theme.left(themeSepIndex);
-        int themeNameSepIndex = themeRoot.lastIndexOf('/', -1);
-        QString packageName = themeRoot.right(themeRoot.length() - themeNameSepIndex - 1);
-
-        KDesktopFile df(theme);
-        QString name = df.readName();
-        if (name.isEmpty()) {
-            name = packageName;
-        }
-
-        QString themeItemFile = themeRoot + '/' + m_themeItems[item];
-        //Get correct extension for svg files
-        if (QFile::exists(themeItemFile + ".svg")) {
-            themeItemFile = themeRoot + '/' + m_themeItems[item] + ".svg";
-        }
-        if (QFile::exists(themeItemFile + ".svgz")) {
-            themeItemFile = themeRoot + '/' + m_themeItems[item] + ".svgz";
-        }
-        if ((name != i18n("(Customized)")) || (name == i18n("(Customized)") && themeItemFile == currentReplacement)) {
-            QString dropListItem = i18n("%1 %2",name,item);
-            if (themeItemFile == currentReplacement) {
-                replacementDropListItem = dropListItem;
-            }
-            dropList << dropListItem;
-            m_dropListFiles[dropListItem] = themeItemFile;
-        }
+    QComboBox *itemComboBox = static_cast<QComboBox*>(m_themeItemList->cellWidget(item,1));
+    disconnect(itemComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(replacementItemChanged()));
+    itemComboBox->clear();
+    for (int i = 0; i < m_themes.size(); ++i) {
+       QString displayedDropListItem = i18n("%1 %2", m_themes.key(i), displayedItemText(item));
+       itemComboBox->addItem(displayedDropListItem);
     }
-    if (currentReplacement.isEmpty()) m_themeReplacements[item] = m_dropListFiles[replacementDropListItem];
-    currentComboBox->addItems(dropList << i18n("File..."));
-    currentComboBox->setCurrentIndex(currentComboBox->findText(replacementDropListItem));
-    connect(currentComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(replacementItemChanged()));
+    itemComboBox->addItem(i18n("File..."));
+
+    // Set combobox value to current replacement
+    if (m_itemThemeReplacements[item] != -1) {
+        itemComboBox->setCurrentIndex(m_itemThemeReplacements[item]);
+    } else {
+        itemComboBox->addItem(m_itemFileReplacements[item]);
+        itemComboBox->setCurrentIndex(itemComboBox->findText(m_itemFileReplacements[item]));
+    }
+    connect(itemComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(replacementItemChanged()));
 }
 
 void DesktopThemeDetails::replacementItemChanged()
 {
-    //Check all items to see if theme has been customized
-    m_themeCustomized=false;
-    int i;
-    for (i = 0; i < m_themeItemList->rowCount(); i++) {
-        QComboBox *currentComboBox = static_cast<QComboBox*>(m_themeItemList->cellWidget(i, 1));
-        QString currentReplacement = currentComboBox->currentText();
-
-        QString currentItem = m_themeItemList->item(i, 0)->text();
-        QString originalValue = m_dropListFiles.key(m_themeReplacements[currentItem]);
-        QString changedValue;
-
-        if (currentReplacement == i18n("File...")) {
-            //Get the filename for the replacement item
-            changedValue = KFileDialog::getOpenFileName(KUrl(), QString(), this, i18n("Select File to Use for %1",currentItem));
-            if (!changedValue.isEmpty()) {
-                //TODO need a i18n ?
-                currentReplacement = "File:" + changedValue;
-                m_dropListFiles[currentReplacement]=changedValue;
-                int index = currentComboBox->findText("File:",Qt::MatchStartsWith);
-                if (index != -1) currentComboBox->removeItem(index);
-                currentComboBox->addItem(currentReplacement);
+    //Check items to see if theme has been customized
+    m_themeCustomized = true;
+    QHashIterator<QString, int> i(m_items);
+    while (i.hasNext()) {
+        i.next();
+        QComboBox *itemComboBox = static_cast<QComboBox*>(m_themeItemList->cellWidget(i.value(), 1));
+        int replacement = itemComboBox->currentIndex();
+        if (replacement <= (m_themes.size() - 1)) {
+            // Item replacement source is a theme
+            m_itemThemeReplacements[i.value()] = itemComboBox->currentIndex();
+        } else if (replacement > (m_themes.size() - 1)) {
+            // Item replacement source is a file
+            if (itemComboBox->currentText() == i18n("File...")) {
+                //Get the filename for the replacement item
+                QString fileReplacement = KFileDialog::getOpenFileName(KUrl(), QString(), this, i18n("Select File to Use for %1",i.key()));  
+                if (!fileReplacement.isEmpty()) {
+                    m_itemFileReplacements[i.value()] = fileReplacement;
+                    int index = itemComboBox->findText(fileReplacement);
+                    if (index == -1) itemComboBox->addItem(fileReplacement);
+                    disconnect(itemComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(replacementItemChanged()));
+                    itemComboBox->setCurrentIndex(itemComboBox->findText(fileReplacement));
+                    connect(itemComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(replacementItemChanged()));
+                    m_itemThemeReplacements[i.value()] = -1; //source is not a theme
+                    m_itemFileReplacements[i.value()] = itemComboBox->currentText();
+                } else {
+                    // Reset combobox to previous value if no file is selected
+                    if (m_itemThemeReplacements[i.value()] != -1) {
+                        itemComboBox->setCurrentIndex(m_itemThemeReplacements[i.value()]);
+                    } else {
+                        itemComboBox->setCurrentIndex(itemComboBox->findText(m_itemFileReplacements[i.value()]));
+                    }
+                    m_themeCustomized = false;
+                }
             } else {
-                currentReplacement = originalValue;
+                m_itemThemeReplacements[i.value()] = -1; //source is not a theme
+                m_itemFileReplacements[i.value()] = itemComboBox->currentText();
             }
-            disconnect(currentComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(replacementItemChanged()));
-            int index = currentComboBox->findText(currentReplacement);
-            if (index != -1) currentComboBox->setCurrentIndex(index);
-            connect(currentComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(replacementItemChanged()));
-        } else {
-            //Get the filename for the drop list replacement item
-            changedValue = m_dropListFiles[currentReplacement];
-        }
-
-        kDebug() << changedValue;
-        if (changedValue != originalValue) {
-            m_themeCustomized = true;
-            m_themeReplacements[currentItem] = changedValue;
         }
     }
+
     if (m_themeCustomized) emit changed();
+}
+
+void DesktopThemeDetails::newThemeInfoChanged()
+{
+    emit changed();
 }
 
 void DesktopThemeDetails::resetThemeDetails()
 {
+    QString theme = m_theme->itemData(m_theme->currentIndex(),
+                                      ThemeModel::PackageNameRole).toString();
     m_themeInfoName->setText(m_theme->currentText());
     m_themeInfoDescription->setText(m_theme->itemData(m_theme->currentIndex(),
                                 ThemeModel::PackageDescriptionRole).toString());
@@ -668,37 +725,8 @@ void DesktopThemeDetails::resetThemeDetails()
     } else {
        m_themeInfoVersion->setText("");
     }
-    KStandardDirs dirs;
-    QString theme = m_theme->itemData(m_theme->currentIndex(),
-                                      ThemeModel::PackageNameRole).toString();
-    m_baseTheme = theme;
-    loadThemeItems();
-    // Load customized theme settings
-    if (isCustomized(theme)) {
-        QFile customSettingsFile(dirs.locateLocal("data", "desktoptheme/" + theme +"/settings"));
-        if (customSettingsFile.open(QFile::ReadOnly)) {
-            QTextStream in(&customSettingsFile);
-            QString line;
-            QStringList settingsPair;
-            QMap<QString, QString>lst;
-            //cache it
-            for (int i = 0; themeCollectionName[i].m_type; ++i) {
-                lst.insert(themeCollectionName[i].m_type, themeCollectionName[i].m_displayItemName);
-            }
 
-            while (!in.atEnd()) {
-                line = in.readLine();
-                settingsPair = line.split('=');
-                if (settingsPair.at(0) == "baseTheme") {
-                    m_baseTheme = settingsPair.at(1);
-                } else {
-                    m_themeReplacements[lst[settingsPair.at(0)]] = settingsPair.at(1);
-                    updateReplaceItemList(lst[settingsPair.at(0)]);
-                }
-            }
-            customSettingsFile.close();
-        }
-    }
+    loadThemeItems();
 
     m_newThemeName->clear();
     m_newThemeAuthor->clear();
@@ -732,16 +760,35 @@ bool DesktopThemeDetails::isCustomized(const QString& theme) {
     }
 }
 
-void DesktopThemeDetails::clearCustomized() {
+void DesktopThemeDetails::clearCustomized(const QString& themeRoot) {
     KStandardDirs dirs;
-    if (QDir(dirs.locateLocal("data", "desktoptheme/.customized", false)).exists()) {
-        KIO::DeleteJob *clearCustom = KIO::del(KUrl(dirs.locateLocal("data", "desktoptheme/.customized", false)), KIO::HideProgressInfo);
-        KIO::NetAccess::synchronousRun(clearCustom, this);
+    
+    if ((isCustomized(themeRoot))) {
+        // Remove both possible unnamed customized directories
+        if (QDir(dirs.locateLocal("data", "desktoptheme/.customized", false)).exists()) {
+            KIO::DeleteJob *clearCustom = KIO::del(KUrl(dirs.locateLocal("data", "desktoptheme/.customized", false)), KIO::HideProgressInfo);
+            KIO::NetAccess::synchronousRun(clearCustom, this);
+        }
+        if (QDir(dirs.locateLocal("data", "desktoptheme/.customized1", false)).exists()) {
+            KIO::DeleteJob *clearCustom1 = KIO::del(KUrl(dirs.locateLocal("data", "desktoptheme/.customized1", false)), KIO::HideProgressInfo);
+            KIO::NetAccess::synchronousRun(clearCustom1, this);
+        }
+    } else {
+        if (QDir(dirs.locateLocal("data", "desktoptheme/" + themeRoot, false)).exists()) {
+            KIO::DeleteJob *clearCustom = KIO::del(KUrl(dirs.locateLocal("data", "desktoptheme/" + themeRoot, false)), KIO::HideProgressInfo);
+            KIO::NetAccess::synchronousRun(clearCustom, this);
+        }
+    }   
+}
+
+QString DesktopThemeDetails::displayedItemText(int item) {
+    QString displayedText = m_items.key(item);  
+    for (int i = 0; themeCollectionName[i].m_type; ++i) {
+        if (themeCollectionName[i].m_type == m_items.key(item)) {
+            displayedText = i18nc("plasma name", themeCollectionName[i].m_displayItemName);
+        }
     }
-    if (QDir(dirs.locateLocal("data", "desktoptheme/.customized1", false)).exists()) {
-        KIO::DeleteJob *clearCustom1 = KIO::del(KUrl(dirs.locateLocal("data", "desktoptheme/.customized1", false)), KIO::HideProgressInfo);
-        KIO::NetAccess::synchronousRun(clearCustom1, this);
-    }
+    return displayedText;
 }
 
 
