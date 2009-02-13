@@ -19,5 +19,5 @@ target_link_libraries(
 )
 
 install(TARGETS plasma_engine_calendar DESTINATION ${PLUGIN_INSTALL_DIR})
-install(FILES plasma-engine-calendar.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+install(FILES plasma-dataengine-calendar.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 
