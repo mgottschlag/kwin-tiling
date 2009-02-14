@@ -1,105 +1,126 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>SolidActionEdit</class>
- <widget class="QWidget" name="SolidActionEdit" >
-  <property name="geometry" >
+ <widget class="QWidget" name="SolidActionEdit">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>487</width>
+    <width>569</width>
     <height>409</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2" >
-   <item row="0" column="0" >
-    <layout class="QGridLayout" name="GlActionIconName" >
-     <item row="0" column="0" >
-      <widget class="KIconButton" name="IbActionIcon" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="GlActionIconName">
+     <item row="0" column="0">
+      <widget class="KIconButton" name="IbActionIcon">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="minimumSize" >
+       <property name="minimumSize">
         <size>
          <width>80</width>
          <height>80</height>
         </size>
        </property>
-       <property name="maximumSize" >
+       <property name="maximumSize">
         <size>
          <width>75</width>
          <height>75</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>Action icon, click to change it</string>
+       </property>
       </widget>
      </item>
-     <item row="0" column="1" >
-      <widget class="KLineEdit" name="LeActionFriendlyName" />
+     <item row="0" column="1">
+      <widget class="KLineEdit" name="LeActionFriendlyName">
+       <property name="toolTip">
+        <string>Action name</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
-   <item row="1" column="0" >
-    <layout class="QGridLayout" name="GlActionCommand" >
-     <item row="0" column="0" >
-      <widget class="QLabel" name="TlActionCommand" >
-       <property name="minimumSize" >
+   <item row="1" column="0">
+    <layout class="QGridLayout" name="GlActionCommand">
+     <item row="0" column="0">
+      <widget class="QLabel" name="TlActionCommand">
+       <property name="minimumSize">
         <size>
          <width>80</width>
          <height>0</height>
         </size>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>Command: </string>
        </property>
       </widget>
      </item>
-     <item row="0" column="1" >
-      <widget class="KUrlRequester" name="LeActionCommand" />
+     <item row="0" column="1">
+      <widget class="KUrlRequester" name="LeActionCommand">
+       <property name="toolTip">
+        <string>Command that will trigger the action</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
-   <item row="2" column="0" >
-    <layout class="QGridLayout" name="gridLayout" >
-     <item row="0" column="0" colspan="3" >
-      <widget class="QLabel" name="TlSolidPredicate" >
-       <property name="minimumSize" >
+   <item row="2" column="0">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0" colspan="3">
+      <widget class="QLabel" name="TlSolidPredicate">
+       <property name="minimumSize">
         <size>
          <width>80</width>
          <height>0</height>
         </size>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>Devices must match the following parameters for this action:</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="0" colspan="3" >
-      <widget class="QTreeWidget" name="TwSolidRequirements" >
+     <item row="1" column="0" colspan="3">
+      <widget class="QTreeWidget" name="TwSolidRequirements">
        <column>
-        <property name="text" >
+        <property name="text">
          <string>1</string>
         </property>
        </column>
       </widget>
      </item>
-     <item row="2" column="0" >
-      <widget class="KPushButton" name="PbAddRequirement" >
-       <property name="text" >
+     <item row="2" column="0">
+      <widget class="KPushButton" name="PbAddRequirement">
+       <property name="toolTip">
+        <string>Add a new requirement</string>
+       </property>
+       <property name="text">
         <string>Add Requirement</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1" >
-      <widget class="KPushButton" name="PbEditRequirement" >
-       <property name="text" >
+     <item row="2" column="1">
+      <widget class="KPushButton" name="PbEditRequirement">
+       <property name="toolTip">
+        <string>Edit current requirement</string>
+       </property>
+       <property name="text">
         <string>Edit Requirement</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="2" >
-      <widget class="KPushButton" name="PbRemoveRequirement" >
-       <property name="text" >
+     <item row="2" column="2">
+      <widget class="KPushButton" name="PbRemoveRequirement">
+       <property name="toolTip">
+        <string>Remove current requirement</string>
+       </property>
+       <property name="text">
         <string>Remove Requirement</string>
        </property>
       </widget>
