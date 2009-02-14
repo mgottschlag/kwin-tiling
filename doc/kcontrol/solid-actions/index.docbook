@@ -1,0 +1,173 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % English "INCLUDE">
+]>
+<article lang="&language;">
+<articleinfo>
+<authorgroup>
+<author>&Anne-Marie.Mahfouf;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2009-02-14</date>
+<releaseinfo>&kde; 4.2.1</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>System Settings</keyword>
+<keyword>Solid</keyword>
+<keyword>actions</keyword>
+<keyword>devices</keyword>
+<keyword>hardware</keyword>
+</keywordset>
+</articleinfo>
+
+<sect1 id="kcm_solid_actions">
+<title><guilabel>Actions for new devices</guilabel></title>
+<sect2 id="icons-intro">
+<title>Introduction</title>
+
+<para>This module allows you to set up the actions you want to associate when
+you plug new devices.</para>
+<para>
+<screenshot>
+<screeninfo>Screenshot of the Device Actions Manager</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="main.png" format="PNG"/>
+    </imageobject>
+     <textobject>
+      <phrase>Screenshot of the Device Actions Manager</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para>
+
+<para>You will see listed all of the possible actions that are available when
+devices are plugged in.
+Please note that they will only be available under certain conditions.</para>
+
+<itemizedlist>
+<listitem><para><guibutton>Add Action</guibutton>
+   This will ask you to supply a name for your new action, then will open that
+action for editing.
+   If you do not supply all the required details in that dialog, then your
+action will be deleted.
+</para></listitem>
+<listitem><para>
+<guibutton>Edit Action</guibutton>
+   This will allow you to change the Name, Icon, command to execute 
+   and the conditions the action must match to be shown. 
+</para></listitem>
+<listitem><para>
+<guibutton>Revert Modifications / Cannot be deleted / Delete Action</guibutton>
+   This will do different actions, depending on if it was supplied with your
+system or created by you.
+   You can only revert changes to system wide actions, if there are no actions
+then it cannot be deleted.
+   User created actions are completely deleted, including all changes.
+</para></listitem>
+</itemizedlist>
+
+</sect2>
+
+<sect2 id="add-action">
+<title>Add Action</title>
+
+<para>
+The <guibutton>Add Action</guibutton> button brings you a dialog to enter the
+new action name.
+</para>
+<para>
+<screenshot>
+<screeninfo>Screenshot of the Add Action dialog</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="add-action.png" format="PNG"/>
+    </imageobject>
+     <textobject>
+      <phrase>Screenshot of the Add Action dialog</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para>
+</sect2>
+
+<sect2 id="edit-action">
+<title>Edit Action</title>
+
+<para>This dialog allows you to change the settings of the action you
+selected.</para>
+<para>
+<screenshot>
+<screeninfo>Screenshot of the Edit Action dialog</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="add-action.png" format="PNG"/>
+    </imageobject>
+     <textobject>
+      <phrase>Screenshot of the Edit Action dialog</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para>
+<para>
+This includes the icon, the actionname, the action command and teh various
+requirements.
+You can change the icon by clicking on it. The requirements are displayed in a
+tree, the top item having to be true in order for the action to be shown. Each
+item can be either a "Container" or a "Requirement", which is selected when 
+that item was added. Only Containers can have items below them. </para>
+
+<para>Containers can be one of two types, which will determine how they match
+their conditions. Either all or only one of the conditions
+must match.</para>
+
+<para>Requirements can also be different types. If the device matches them, they
+are true, otherwise they are false.</para>
+<variablelist>
+<varlistentry><term><guibutton>Add Requirement</guibutton></term>
+<listitem>
+<para>This is only available for containers and allows you to select its type,
+and provide some initial details for the requirement.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><guibutton>Edit Requirement</guibutton></term>
+<listitem>
+<para>
+This can only be performed when a valid item is selected. It allows you to edit
+the various details of that particular item type.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guibutton>Delete Requirement</guibutton></term>
+<listitem>
+<para>
+This is available for all items, except the root item. If a container contains
+any requirements, they will also be deleted.                
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+
+</sect2>
+
+</sect1>
+</article>
+
+<!--
+Local Variables:
+mode: xml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
+End:
+
+vim:tabstop=2:shiftwidth=2:expandtab
+kate: space-indent on; indent-width 2; tab-width 2; indent-mode none;
+-->
