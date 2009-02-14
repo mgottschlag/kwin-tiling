@@ -1,37 +1,35 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>SolidActionAdd</class>
- <widget class="QWidget" name="SolidActionAdd" >
-  <property name="geometry" >
+ <widget class="QWidget" name="SolidActionAdd">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>318</width>
-    <height>56</height>
+    <width>289</width>
+    <height>40</height>
    </rect>
   </property>
-  <widget class="QLabel" name="LblActionName" >
-   <property name="geometry" >
-    <rect>
-     <x>5</x>
-     <y>12</y>
-     <width>89</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>Action Name:</string>
-   </property>
-  </widget>
-  <widget class="KLineEdit" name="LeActionName" >
-   <property name="geometry" >
-    <rect>
-     <x>98</x>
-     <y>12</y>
-     <width>215</width>
-     <height>32</height>
-    </rect>
-   </property>
-  </widget>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="0">
+      <widget class="QLabel" name="LblActionName">
+       <property name="text">
+        <string>Action Name:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="KLineEdit" name="LeActionName">
+       <property name="toolTip">
+        <string>Enter the name for your new action</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
  </widget>
  <customwidgets>
   <customwidget>

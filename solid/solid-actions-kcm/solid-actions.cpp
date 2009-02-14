@@ -49,7 +49,7 @@ SolidActions::SolidActions(QWidget* parent, const QVariantList&)
                                        ki18n("(c) 2009 Solid Device Actions team"));
     about->addAuthor(ki18n("Ben Cooksley"), ki18n("Maintainer"), "ben@eclipse.endoftheinternet.org");
     setAboutData(about);
-    setButtons(KCModule::NoAdditionalButton);
+    //setButtons(KCModule::NoAdditionalButton);
 
     // Prepare main display dialog
     mainUi = new Ui::SolidActions();

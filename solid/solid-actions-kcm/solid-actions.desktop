@@ -3,6 +3,7 @@ Exec=kcmshell4 solid-actions
 Icon=system-run
 Type=Service
 X-KDE-ServiceTypes=KCModule
+X-DocPath=kcontrol/solid-actions/index.html
 
 X-KDE-Library=kcm_solid_actions
 X-KDE-ParentApp=kcontrol
