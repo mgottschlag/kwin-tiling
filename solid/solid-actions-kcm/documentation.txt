@@ -1,0 +1,64 @@
+Documentation for Solid Actions:
+
+Main Screen:
+
+Here you will see listed all of the possible actions on your computer, 
+that are available when devices are plugged in.
+Please note that they will only be available under certain conditions.
+
+-> New Action
+   This will ask you to supply a name for your new action, then will open that action for editing.
+   If you do not supply all the required details in that dialog, then your action will be deleted.
+
+-> Edit Action
+   This will allow you to change the Name, Icon, command to execute 
+   and the conditions the action must match to be shown. 
+
+-> Revert Modifications / Cannot be deleted / Delete Action
+   This will do different actions, depending on if it was supplied with your system or created by you.
+   You can only revert changes to system wide actions, if there are no actions then it cannot be deleted.
+   User created actions are completely deleted, including all changes.
+
+==========
+
+Edit Action:
+
+This screen allows you to change the settings of the action you selected. This includes Icon, Name, Command and requirements
+You can change the icon by clicking on it. The requirements are displayed in a tree, the top item having to be true 
+in order for the action to be shown. Each item can be either a "Container" or a "Requirement", which is selected when 
+that item was added. Only Containers can have items below them. 
+
+Containers can be one of two types, which will determine how they match their conditions. Either all or only one of the conditions
+must match.
+
+Requirements can also be different types. If the device matches them, they are true, otherwise they are false.
+
+Add Requirement -> This is only available for containers, and allows you to select its type, and provide some initial
+                   details for the requirement
+
+Edit Requirement -> This can only be performed when a valid item is selected. It allows you to edit the various details
+                    of that particular item type
+
+Delete Requirement -> This is available for all items, except the root item. If a container contains any requirements,
+                      they will also be deleted
+
+==========
+
+Edit Requirement:
+
+This dialog allows you to change the various details about a container and will display different information,
+Depending on what type of item it is.
+
+Container Type -> You can only change one setting, the logic match. This is either "All must match" or "Any can match"
+                  This will be used when determining if the container is true.
+
+Item type -> This has many settings, with addtional ones available for some sub-types
+    -> Restriction type: Only two settings are available: "Is value type" and "Compare value to"
+                         Is value type checks to ensure the device is of the selected device type
+                         Compare value to compares a value of the device with what you specify
+    -> Device Type: You can select the device type here. This is used for limiting the selection of values for comparing
+                    values, and direct matches for is device type.
+    -> Value Name: This is only visible for "Compare value to". It allows you to select a device value to check
+    -> Equals / Doesn't Equal: This determines what kind of match we are looking for when comparing the value. The
+                               text to check is specified beside it
+
