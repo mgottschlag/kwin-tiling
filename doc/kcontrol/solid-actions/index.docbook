@@ -7,6 +7,7 @@
 <article lang="&language;">
 <articleinfo>
 <authorgroup>
+<author><firstname>Ben</firstname><surname>Cooksley</surname></author>
 <author>&Anne-Marie.Mahfouf;</author>
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
@@ -93,6 +94,11 @@ new action name.
   </mediaobject>
 </screenshot>
 </para>
+<para>
+The action name should correctly describe the action. After entering a name and
+clicking <guibutton>OK</guibutton>, the Edit Action dialog will show to allow
+you to set up the action properties.
+</para>
 </sect2>
 
 <sect2 id="edit-action">
@@ -153,9 +159,71 @@ any requirements, they will also be deleted.
 </varlistentry>
 </variablelist>
 
-
 </sect2>
+<sect2 id="edit-requirement">
+<title>Edit Requirement</title>
 
+<para>This dialog allows you to change the various details about a container and
+will display different information,
+depending on what type of item it is.</para>
+<variablelist>
+<varlistentry><term><guibutton>Container Type</guibutton></term>
+<listitem>
+<para>
+You can only change one setting, the logic match. This is either "All must
+match" or "Any can match". This will be used when determining if the container
+is true.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guibutton>Item type</guibutton></term>
+<listitem>
+<para>
+This has many settings, with additional ones available for some
+sub-types.</para>
+<para>
+<variablelist>
+<varlistentry><term><guilabel>Restriction type</guilabel></term>
+<listitem>
+<para>
+Only two settings are available: "Is value type" and
+"Compare value to". "Is value type" checks to ensure the device is of the
+selected device type. "Compare value to" compares a value of the device with
+what you specify.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guilabel>Device Type</guilabel></term>
+<listitem>
+<para>You can select the device type here. This is used for
+limiting the selection of values for comparing values, and direct matches for is
+device type.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guilabel>Value Name</guilabel></term>
+<listitem>
+<para>
+This is only visible for "Compare value to". It allows you to
+select a device value to check.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guilabel>Equals/Doesn't Equal</guilabel></term>
+<listitem>
+<para>
+This determines what kind of match we are looking
+for when comparing the value. The text to check is specified beside it.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
 </sect1>
 </article>
 
