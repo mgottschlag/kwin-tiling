@@ -54,7 +54,7 @@ bool SystemMonitorEngine::sourceRequestEvent(const QString &name)
 bool SystemMonitorEngine::updateSourceEvent(const QString &sensorName)
 {
     KSGRD::SensorMgr->sendRequest( "localhost", sensorName, (KSGRD::SensorClient*)this, m_sensors.indexOf(sensorName));
-    KSGRD::SensorMgr->sendRequest( "localhost", QString("%1?").arg(sensorName), (KSGRD::SensorClient*)this, -m_sensors.indexOf(sensorName)-1);
+    KSGRD::SensorMgr->sendRequest( "localhost", QString("%1?").arg(sensorName), (KSGRD::SensorClient*)this, -(m_sensors.indexOf(sensorName)+2));
     return false;
 }
 
@@ -81,23 +81,26 @@ void SystemMonitorEngine::answerReceived( int id, const QList<QByteArray>&answer
         QString max = newSensorInfo[2];
         QString unit = newSensorInfo[3];
         DataEngine::SourceDict sources = containerDict();
-        DataEngine::SourceDict::const_iterator it = sources.constFind(m_sensors.value(-id-1));
+        DataEngine::SourceDict::const_iterator it = sources.constFind(m_sensors.value(-id-2));
         if (it != sources.constEnd()) {
             it.value()->setData("name", sensorName);
             it.value()->setData("min", min);
             it.value()->setData("max", max);
             it.value()->setData("units", unit);
+            scheduleSourcesUpdated();
         }
         return;
     }
     if(id==-1) {
         QStringList sensors;
-        foreach(const QByteArray &sens, answer) { 
+        foreach(const QByteArray &sens, answer) {
             QStringList newSensorInfo = QString::fromUtf8(sens).split('\t');
             QString newSensor = newSensorInfo[0];
             sensors.append(newSensor);
             setData(newSensor, "value", QVariant());
             setData(newSensor, "type", newSensorInfo[1]);
+            
+            KSGRD::SensorMgr->sendRequest( "localhost", QString("%1?").arg(newSensor), (KSGRD::SensorClient*)this, -(sensors.indexOf(newSensor)+2));
         }
         m_sensors = sensors;
         return;
