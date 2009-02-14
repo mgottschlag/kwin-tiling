@@ -21,6 +21,7 @@
 #include <KCmdLineArgs>
 #include <kdebug.h>
 #include <KLocale>
+#include <KGlobal>
 
 #include "krunnerapp.h"
 #ifdef Q_WS_X11
@@ -53,6 +54,7 @@ KDE_EXPORT int kdemain(int argc, char* argv[])
     }
 
     KRunnerApp *app = KRunnerApp::self();
+    KGlobal::locale()->insertCatalog("processui");
     app->disableSessionManagement(); // autostarted
     int rc = app->exec();
     delete app;
