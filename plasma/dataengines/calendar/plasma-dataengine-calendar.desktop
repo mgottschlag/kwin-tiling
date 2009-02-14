@@ -60,6 +60,7 @@ Name[x-test]=xxCalendarxx
 Name[zh_CN]=日历
 Name[zh_TW]=行事曆
 Comment=Calendar data engine
+Comment[el]=Μηχανή δεδομένων ημερολογίου
 Comment[et]=Kalendri andmete mootor
 Comment[ga]=Inneall sonraí féilire
 Comment[nds]=Kalenner-Datenkarn
