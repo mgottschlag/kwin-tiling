@@ -2,23 +2,9 @@
 Actions=availableContent;
 Type=Service
 Name=Optical Disc
-Name[et]=Optiline ketas
-Name[fr]=Disque optique
-Name[pt]=Disco Óptico
-Name[pt_BR]=Disco ótico
-Name[sv]=Optisk skiva
-Name[uk]=Оптичний диск
-Name[x-test]=xxOptical Discxx
 X-KDE-Solid-Actions-Type=OpticalDisc
 
 [Desktop Action availableContent]
 Icon=unknown
 Name=Available Content on disc
-Name[et]=Saadaolev ketta sisu
-Name[fr]=Contenu disponible sur le disque
-Name[pt]=Conteúdo disponível no disco
-Name[pt_BR]=Conteúdo disponível no disco
-Name[sv]=Tillgängligt innehåll på skivan
-Name[uk]=Доступний вміст диска
-Name[x-test]=xxAvailable Content on discxx
 Exec=

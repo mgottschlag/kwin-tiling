@@ -2,23 +2,9 @@
 Actions=driveType;
 Type=Service
 Name=Storage drive
-Name[et]=Salvestiseade
-Name[fr]=Périphérique de stockage
-Name[pt]=Unidade de armazenamento
-Name[pt_BR]=Unidade de armazenamento
-Name[sv]=Lagringsenhet
-Name[uk]=Пристрій зберігання даних
-Name[x-test]=xxStorage drivexx
 X-KDE-Solid-Actions-Type=StorageDrive
 
 [Desktop Action driveType]
 Icon=unknown
 Name=Drive Type
-Name[et]=Seadme tüüp
-Name[fr]=Type de périphérique
-Name[pt]=Tipo de Unidade
-Name[pt_BR]=Tipo de Unidade
-Name[sv]=Enhetstyp
-Name[uk]=Тип пристрою
-Name[x-test]=xxDrive Typexx
 Exec=

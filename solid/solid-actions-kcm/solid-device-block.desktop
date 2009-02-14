@@ -2,12 +2,4 @@
 Actions=
 Type=Service
 Name=Block Device
-Name[et]=Plokkseade
-Name[fr]=Périphérique type bloque
-Name[ga]=Gléas Bloic
-Name[pt]=Dispositivo em Bloco
-Name[pt_BR]=Dispositivo em Bloco
-Name[sv]=Blockenhet
-Name[uk]=Блоковий пристрій
-Name[x-test]=xxBlock Devicexx
 X-KDE-Solid-Actions-Type=Block

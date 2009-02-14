@@ -1,37 +1,15 @@
 [Desktop Action ignored]
 Icon=unknown
 Name=Ignored
-Name[et]=Eiratakse
-Name[fr]=Ignoré
-Name[pt]=Ignorada
-Name[pt_BR]=Ignorado
-Name[sv]=Ignorerad
-Name[uk]=Ігнорується
-Name[x-test]=xxIgnoredxx
 Exec=
 
 [Desktop Action usage]
 Icon=unknown
 Name=Usage
-Name[et]=Kasutamine
-Name[fr]=Utilisation
-Name[ga]=Úsáid
-Name[pt]=Uso
-Name[pt_BR]=Uso
-Name[sv]=Användning
-Name[uk]=Використання
-Name[x-test]=xxUsagexx
 Exec=
 
 [Desktop Entry]
 Actions=ignored;usage;
 Type=Service
 Name=Storage Volume
-Name[et]=Salvesti
-Name[fr]=Volume de stockage
-Name[pt]=Volume de Armazenamento
-Name[pt_BR]=Volume de Armazenamento
-Name[sv]=Lagringsvolym
-Name[uk]=Том зберігання даних
-Name[x-test]=xxStorage Volumexx
 X-KDE-Solid-Actions-Type=StorageVolume

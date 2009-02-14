@@ -2,12 +2,4 @@
 Actions=
 Type=Service
 Name=Serial Interface
-Name[et]=Jadaliides
-Name[fr]=Interfaces série
-Name[ga]=Comhéadan Srathach
-Name[pt]=Interface Série
-Name[pt_BR]=Interface serial
-Name[sv]=Seriegränssnitt
-Name[uk]=Послідовний інтерфейс
-Name[x-test]=xxSerial Interfacexx
 X-KDE-Solid-Actions-Type=SerialInterface

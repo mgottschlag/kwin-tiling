@@ -2,12 +2,4 @@
 Actions=
 Type=Service
 Name=Network Interface
-Name[et]=Võrguliides
-Name[fr]=Interface réseau
-Name[ga]=Comhéadan Líonra
-Name[pt]=Interface de Rede
-Name[pt_BR]=Interface de rede
-Name[sv]=Nätverksgränssnitt
-Name[uk]=Мережевий інтерфейс
-Name[x-test]=xxNetwork Interfacexx
 X-KDE-Solid-Actions-Type=Digitally Broadcast Video device
