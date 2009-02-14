@@ -1,2 +1,6 @@
 [KDE Action Restrictions][$i]
 PlasmaAllowConfigureWhenLocked=false
+
+[General]
+ExcludeCategories=Windows and Tasks,Application Launchers
+
