@@ -89,6 +89,8 @@ namespace Kephal {
             SimpleOutput * output = m_outputs.at(i);
             if (output->isConnected()) {
                 qDebug() << "disconnecting output" << i;
+                output->_setActivated(false);
+                emit outputDeactivated(output);
                 output->_setConnected(false);
                 emit outputDisconnected(output);
             }
@@ -113,6 +115,7 @@ namespace Kephal {
                 output->_setSize(geom.size());
                 
                 emit outputConnected(output);
+                emit outputActivated(output);
             }
             if (output->position() != geom.topLeft()) {
                 QPoint oldPos = output->position();
