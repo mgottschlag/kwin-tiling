@@ -50,8 +50,8 @@ SystemTrayDaemon::SystemTrayDaemon(QObject *parent, const QList<QVariant>&)
     dbus.registerObject("/SystemTrayWatcher", this);
     m_dbusInterface = dbus.interface();
 
-    connect(m_dbusInterface, SIGNAL(serviceUnregitered(QString)),
-            this, SLOT(unregisterService(QString)));
+    connect(m_dbusInterface, SIGNAL(serviceUnregistered(const QString&)),
+            this, SLOT(unregisterService(const QString&)));
 }
 
 SystemTrayDaemon::~SystemTrayDaemon()
