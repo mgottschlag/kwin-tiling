@@ -40,7 +40,9 @@ public Q_SLOTS:
     QStringList registeredServices() const;
 
 protected Q_SLOTS:
-    void unregisterService(const QString& name);
+    void serviceChange(const QString& name,
+                       const QString& oldOwner,
+                       const QString& newOwner);
 
 Q_SIGNALS:
     void serviceRegistered(const QString &service);

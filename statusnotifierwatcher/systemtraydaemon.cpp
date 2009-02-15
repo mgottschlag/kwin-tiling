@@ -50,8 +50,8 @@ SystemTrayDaemon::SystemTrayDaemon(QObject *parent, const QList<QVariant>&)
     dbus.registerObject("/SystemTrayWatcher", this);
     m_dbusInterface = dbus.interface();
 
-    connect(m_dbusInterface, SIGNAL(serviceUnregistered(const QString&)),
-            this, SLOT(unregisterService(const QString&)));
+    connect(m_dbusInterface, SIGNAL(serviceOwnerChanged(QString,QString,QString)),
+           this, SLOT(serviceChange(QString,QString,QString)));
 }
 
 SystemTrayDaemon::~SystemTrayDaemon()
@@ -62,6 +62,7 @@ void SystemTrayDaemon::registerService(const QString &service)
 {
     if (m_dbusInterface->isServiceRegistered(service).value() &&
         !m_registeredServices.contains(service)) {
+        kDebug()<<"Registering"<<service<<"to system tray";
         //TODO: add a check if the service has registered a SystemTray object?
         m_registeredServices.append(service);
         emit serviceRegistered(service);
@@ -73,9 +74,14 @@ QStringList SystemTrayDaemon::registeredServices() const
     return m_registeredServices;
 }
 
-void SystemTrayDaemon::unregisterService(const QString& name)
+
+void SystemTrayDaemon::serviceChange(const QString& name,
+                                const QString& oldOwner,
+                                const QString& newOwner)
 {
-    if (m_registeredServices.contains(name)) {
+    kDebug()<<"Service "<<name<<"status change, old owner:"<<oldOwner<<"new:"<<newOwner;
+
+    if (newOwner.isEmpty() && m_registeredServices.contains(name)) {
         m_registeredServices.removeAll(name);
         emit serviceUnregistered(name);
     }
