@@ -55,7 +55,10 @@ SystemTrayDaemon::SystemTrayDaemon(QObject *parent, const QList<QVariant>&)
 }
 
 SystemTrayDaemon::~SystemTrayDaemon()
-{}
+{
+    QDBusConnection dbus = QDBusConnection::sessionBus();
+    dbus.unregisterService("org.kde.SystemTrayDaemon");
+}
 
 
 void SystemTrayDaemon::registerService(const QString &service)

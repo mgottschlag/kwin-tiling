@@ -7,6 +7,7 @@ Name[pt]=Servidor da bandeja do KDED
 Name[pt_BR]=Servidor da bandeja do KDED
 Name[sv]=KDED-demon för systembricka
 Name[uk]=Фонова служба системного лотка KDED
+Comment=Keep track of applications that want to use the D-Bus based system tray
 X-KDE-ServiceTypes=KDEDModule
 X-KDE-Library=systemtraydaemon
 X-KDE-DBus-ModuleName=systemtraydaemon
