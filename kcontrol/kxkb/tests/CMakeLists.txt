@@ -29,7 +29,7 @@ link_directories(lib)
 # 
 # kde4_add_kdeinit_executable(kxkb_aplt ${kxkb_aplt_KDEINIT_SRCS})
 # 
-# target_link_libraries(kdeinit_kxkb_aplt ${KDE4_KDE3SUPPORT_LIBS} ${XKBSUPPORT_LIB})
+# target_link_libraries(kdeinit_kxkb_aplt ${XKBSUPPORT_LIB})
 # install(TARGETS kdeinit_kxkb_aplt ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 #target_link_libraries( kxkb_aplt kdeinit_kxkb_aplt )
@@ -44,7 +44,7 @@ link_directories(lib)
 # kde4_add_plugin(kxkb_panelapplet ${kxkb_panelapplet_PART_SRCS})
 # 
 # 
-# target_link_libraries(kxkb_panelapplet ${KDE4_KDE3SUPPORT_LIBS} kworkspace kickermain  )
+# target_link_libraries(kxkb_panelapplet kworkspace kickermain  )
 # 
 # install(TARGETS kxkb_panelapplet  DESTINATION ${PLUGIN_INSTALL_DIR} )
 # 
