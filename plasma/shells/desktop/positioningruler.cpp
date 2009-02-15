@@ -84,7 +84,9 @@ public:
 
             if (alignment == Qt::AlignCenter) {
                 int newLeft = offsetSliderRect.center().x() + (offsetSliderRect.center().x() - newPos.x());
-                newLeft = qBound(0, newLeft, availableLength);
+                if (newLeft < 0 || newLeft > availableLength) {
+                    return false;
+                }
 
                 symmetricSliderRect.moveCenter(QPoint(newLeft, symmetricSliderRect.center().y()));
             }
