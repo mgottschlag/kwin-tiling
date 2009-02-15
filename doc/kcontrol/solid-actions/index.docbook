@@ -66,8 +66,8 @@ action will be deleted.
 <guibutton>Revert Modifications / Cannot be deleted / Delete Action</guibutton>
    This will do different actions, depending on if it was supplied with your
 system or created by you.
-   You can only revert changes to system wide actions, if there are no actions
-then it cannot be deleted.
+   You can only revert changes to system wide actions, if there are no changes
+then these actions cannot be deleted.
    User created actions are completely deleted, including all changes.
 </para></listitem>
 </itemizedlist>
@@ -120,7 +120,7 @@ selected.</para>
 </screenshot>
 </para>
 <para>
-This includes the icon, the actionname, the action command and teh various
+This includes the icon, the action name, the action command and the various
 requirements.
 You can change the icon by clicking on it. The requirements are displayed in a
 tree, the top item having to be true in order for the action to be shown. Each
@@ -128,7 +128,7 @@ item can be either a "Container" or a "Requirement", which is selected when
 that item was added. Only Containers can have items below them. </para>
 
 <para>Containers can be one of two types, which will determine how they match
-their conditions. Either all or only one of the conditions
+their conditions. Either all or at least one of the conditions
 must match.</para>
 
 <para>Requirements can also be different types. If the device matches them, they
@@ -136,8 +136,8 @@ are true, otherwise they are false.</para>
 <variablelist>
 <varlistentry><term><guibutton>Add Requirement</guibutton></term>
 <listitem>
-<para>This is only available for containers and allows you to select its type,
-and provide some initial details for the requirement.</para>
+<para>This is only available for containers and allows you to select type of the requirement,
+and provide some of its initial details.</para>
 </listitem>
 </varlistentry>
 
@@ -196,8 +196,8 @@ what you specify.
 <varlistentry><term><guilabel>Device Type</guilabel></term>
 <listitem>
 <para>You can select the device type here. This is used for
-limiting the selection of values for comparing values, and direct matches for is
-device type.
+limiting the selection of values for comparing values, and direct matches for the
+device type selected.
 </para>
 </listitem>
 </varlistentry>
