@@ -22,18 +22,15 @@
    Boston, MA 02110-1301, USA.
  */
 
-#include <k3urldrag.h>
-
 #include "bgmonitor.h"
-//Added by qt3to4:
-#include <QDragEnterEvent>
-#include <QDropEvent>
-#include <QApplication>
-#include <QDesktopWidget>
-#include <QPixmap>
+
 #include <klocale.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>
+#include <kurl.h>
+
+#include <QApplication>
+#include <QDesktopWidget>
 #include <QPainter>
 
 // Constants used (should they be placed somewhere?)
@@ -202,11 +199,11 @@ BGMonitor::BGMonitor(QWidget *parent, const char *name)
 
 void BGMonitor::dropEvent(QDropEvent *e)
 {
-    if (!K3URLDrag::canDecode(e))
+    if (!KUrl::List::canDecode(e->mimeData()))
         return;
 
-    KUrl::List uris;
-    if (K3URLDrag::decode(e, uris) && (uris.count() > 0)) {
+    const KUrl::List uris(KUrl::List::fromMimeData(e->mimeData()));
+    if (uris.count() > 0) {
         // TODO: Download remote file
         if (uris.first().isLocalFile())
            emit imageDropped(uris.first().path());
@@ -215,7 +212,7 @@ void BGMonitor::dropEvent(QDropEvent *e)
 
 void BGMonitor::dragEnterEvent(QDragEnterEvent *e)
 {
-    if (K3URLDrag::canDecode(e))
+    if (KUrl::List::canDecode(e->mimeData()))
         e->accept(rect());
     else
         e->ignore(rect());

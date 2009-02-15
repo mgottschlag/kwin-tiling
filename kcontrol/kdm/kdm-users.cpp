@@ -19,8 +19,7 @@
 
 #include "kdm-users.h"
 
-#include <K3ListView>
-#include <K3URLDrag>
+#include <KUrl>
 #include <KComboBox>
 #include <KGlobal>
 #include <KIconDialog>
@@ -48,6 +47,7 @@
 #include <QRadioButton>
 #include <QStackedWidget>
 #include <QStyle>
+#include <QTreeWidget>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -166,27 +166,27 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 	wstack = new QStackedWidget( this );
 	s_label = new QLabel( i18n("S&elect users and groups:"), this );
 	s_label->setBuddy( wstack );
-	optinlv = new K3ListView( this );
-	optinlv->addColumn( i18n("Selected Users") );
-	optinlv->setResizeMode( Q3ListView::LastColumn );
+	optinlv = new QTreeWidget( this );
+	optinlv->setRootIsDecorated( false );
+	optinlv->setHeaderLabel( i18n("Selected Users") );
 	optinlv->setWhatsThis( i18n(
 		"KDM will show all checked users. Entries denoted with '@' are user groups. "
 		"Checking a group is like checking all users in that group.") );
 	wstack->addWidget( optinlv );
-	connect( optinlv, SIGNAL(clicked( Q3ListViewItem * )),
-	         SLOT(slotUpdateOptIn( Q3ListViewItem * )) );
-	connect( optinlv, SIGNAL(clicked( Q3ListViewItem * )),
+	connect( optinlv, SIGNAL(itemClicked( QTreeWidgetItem *, int )),
+	         SLOT(slotUpdateOptIn( QTreeWidgetItem * )) );
+	connect( optinlv, SIGNAL(itemClicked( QTreeWidgetItem *, int )),
 	         SIGNAL(changed()) );
-	optoutlv = new K3ListView( this );
-	optoutlv->addColumn( i18n("Excluded Users") );
-	optoutlv->setResizeMode( Q3ListView::LastColumn );
+	optoutlv = new QTreeWidget( this );
+	optoutlv->setRootIsDecorated( false );
+	optoutlv->setHeaderLabel( i18n("Excluded Users") );
 	optoutlv->setWhatsThis( i18n(
 		"KDM will show all non-checked non-system users. Entries denoted with '@' "
 		"are user groups. Checking a group is like checking all users in that group.") );
 	wstack->addWidget( optoutlv );
-	connect( optoutlv, SIGNAL(clicked( Q3ListViewItem * )),
-	         SLOT(slotUpdateOptOut( Q3ListViewItem * )) );
-	connect( optoutlv, SIGNAL(clicked( Q3ListViewItem * )),
+	connect( optoutlv, SIGNAL(itemClicked( QTreeWidgetItem *, int )),
+	         SLOT(slotUpdateOptOut( QTreeWidgetItem * )) );
+	connect( optoutlv, SIGNAL(itemClicked( QTreeWidgetItem *, int )),
 	         SIGNAL(changed()) );
 
 	faceGroup = new QGroupBox( i18nc(
@@ -382,7 +382,7 @@ bool KDMUsersWidget::eventFilter( QObject *, QEvent *e )
 {
 	if (e->type() == QEvent::DragEnter) {
 		QDragEnterEvent *ee = (QDragEnterEvent *)e;
-		ee->setAccepted( K3URLDrag::canDecode( ee ) );
+		ee->setAccepted( KUrl::List::canDecode( ee->mimeData() ) );
 		return true;
 	}
 
@@ -431,27 +431,26 @@ void KDMUsersWidget::save()
 }
 
 
-void KDMUsersWidget::updateOptList( Q3ListViewItem *item, QStringList &list )
+void KDMUsersWidget::updateOptList( QTreeWidgetItem *item, QStringList &list )
 {
 	if (!item)
 		return;
-	Q3CheckListItem *itm = (Q3CheckListItem *)item;
-	int ind = list.indexOf( itm->text() );
-	if (itm->isOn()) {
+	int ind = list.indexOf( item->text(0) );
+	if (item->checkState(0) == Qt::Checked) {
 		if (ind < 0)
-			list.append( itm->text() );
+			list.append( item->text(0) );
 	} else {
 		if (ind >= 0)
 			list.removeAt( ind );
 	}
 }
 
-void KDMUsersWidget::slotUpdateOptIn( Q3ListViewItem *item )
+void KDMUsersWidget::slotUpdateOptIn( QTreeWidgetItem *item )
 {
 	updateOptList( item, selectedUsers );
 }
 
-void KDMUsersWidget::slotUpdateOptOut( Q3ListViewItem *item )
+void KDMUsersWidget::slotUpdateOptOut( QTreeWidgetItem *item )
 {
 	updateOptList( item, hiddenUsers );
 }
@@ -469,15 +468,15 @@ void KDMUsersWidget::slotAddUsers( const QMap<QString,int> &users )
 	QMap<QString,int>::const_iterator it;
 	for (it = users.begin(); it != users.end(); ++it) {
 		const QString *name = &it.key();
-		(new Q3CheckListItem( optinlv, *name, Q3CheckListItem::CheckBox ))->
-			setOn( selectedUsers.contains( *name ) );
-		(new Q3CheckListItem( optoutlv, *name, Q3CheckListItem::CheckBox ))->
-			setOn( hiddenUsers.contains( *name ) );
+		(new QTreeWidgetItem( optinlv, QStringList() << *name ))->
+			setCheckState( 0, selectedUsers.contains( *name ) ? Qt::Checked : Qt::Unchecked );
+		(new QTreeWidgetItem( optoutlv, QStringList() << *name ))->
+			setCheckState( 0, hiddenUsers.contains( *name ) ? Qt::Checked : Qt::Unchecked );
 		if ((*name)[0] != '@')
 			usercombo->addItem( *name );
 	}
-	optinlv->sort();
-	optoutlv->sort();
+	optinlv->sortItems(0, Qt::AscendingOrder);
+	optoutlv->sortItems(0, Qt::AscendingOrder);
 	usercombo->model()->sort( 0 );
 	slotUserSelected();
 }
@@ -490,8 +489,8 @@ void KDMUsersWidget::slotDelUsers( const QMap<QString,int> &users )
 		int idx = usercombo->findText( *name );
 		if (idx != -1)
 			usercombo->removeItem( idx );
-		delete optinlv->findItem( *name, 0 );
-		delete optoutlv->findItem( *name, 0 );
+		qDeleteAll( optinlv->findItems( *name, 0, Qt::MatchExactly | Qt::MatchCaseSensitive ) );
+		qDeleteAll( optoutlv->findItems( *name, 0, Qt::MatchExactly | Qt::MatchCaseSensitive ) );
 	}
 }
 

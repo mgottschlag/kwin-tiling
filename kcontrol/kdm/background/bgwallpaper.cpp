@@ -26,15 +26,12 @@
 #include <QEvent>
 #include <QPushButton>
 #include <QSpinBox>
-//Added by qt3to4:
-#include <QDragEnterEvent>
-#include <QDropEvent>
 
 #include <kfiledialog.h>
 #include <kimageio.h>
 #include <klocale.h>
 #include <kstandarddirs.h>
-#include <k3urldrag.h>
+#include <kurl.h>
 
 #include "bgsettings.h"
 #include "bgwallpaper.h"
@@ -62,15 +59,14 @@ BGMultiWallpaperList::BGMultiWallpaperList(QWidget *parent, const char *name)
 
 void BGMultiWallpaperList::dragEnterEvent(QDragEnterEvent *ev)
 {
-   ev->setAccepted(K3URLDrag::canDecode(ev));
+   ev->setAccepted(KUrl::List::canDecode(ev->mimeData()));
 }
 
 
 void BGMultiWallpaperList::dropEvent(QDropEvent *ev)
 {
    QStringList files;
-   KUrl::List urls;
-   K3URLDrag::decode(ev, urls);
+   const KUrl::List urls(KUrl::List::fromMimeData(ev->mimeData()));
    for(KUrl::List::ConstIterator it = urls.constBegin();
        it != urls.constEnd(); ++it)
    {

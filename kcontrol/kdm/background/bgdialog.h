@@ -17,10 +17,10 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef _BGDIALOG_H_
-#define _BGDIALOG_H_
+#ifndef BGDIALOG_H
+#define BGDIALOG_H
 
-#include <Qt3Support/Q3PtrVector>
+#include <QtCore/QVector>
 #include <QMap>
 
 #include "ui_bgdialog_ui.h"
@@ -96,7 +96,7 @@ protected:
    unsigned m_numScreens;
    int m_screen;
    int m_eScreen;
-   Q3PtrVector<KBackgroundRenderer> m_renderer; // m_renderer[screen]
+   QVector<KBackgroundRenderer*> m_renderer; // m_renderer[screen]
    QMap<QString,int> m_wallpaper;
    QStringList m_patterns;
    int m_slideShowRandom; // Remembers last Slide Show setting

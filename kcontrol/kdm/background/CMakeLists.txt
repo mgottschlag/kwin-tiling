@@ -5,10 +5,8 @@ add_subdirectory( programs )
 
 include_directories( ${QIMAGEBLITZ_INCLUDES} )
 
-add_definitions (-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
-
 ########### next target ###############
-kde4_add_ui3_files(kcmbackgroundlib_SRCS
+kde4_add_ui_files(kcmbackgroundlib_SRCS
     bgdialog_ui.ui
     bgwallpaper_ui.ui
     bgadvanced_ui.ui

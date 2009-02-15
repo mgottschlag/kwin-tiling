@@ -33,7 +33,6 @@
 #include "kdm-conv.h"
 #include "kdm-theme.h"
 
-#include <k3urldrag.h>
 #include <kaboutdata.h>
 #include <kimageio.h>
 #include <klocale.h>

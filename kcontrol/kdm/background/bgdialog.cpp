@@ -150,9 +150,6 @@ BGDialog::BGDialog(QWidget* parent, const KSharedConfigPtr &_config)
    // renderers
    if (m_numScreens > 1)
    {
-      m_renderer.resize(m_numScreens+2);
-      m_renderer.setAutoDelete(true);
-
       // Setup the merged-screen renderer
       KBackgroundRenderer * r = new KBackgroundRenderer(0, false, _config);
       m_renderer.insert( 0, r );
@@ -173,9 +170,6 @@ BGDialog::BGDialog(QWidget* parent, const KSharedConfigPtr &_config)
    }
    else
    {
-      m_renderer.resize(1);
-      m_renderer.setAutoDelete(true);
-
       // set up the common desktop renderer
       KBackgroundRenderer * r = new KBackgroundRenderer(0, false, _config);
       m_renderer.insert(0, r);
@@ -210,6 +204,7 @@ BGDialog::BGDialog(QWidget* parent, const KSharedConfigPtr &_config)
 BGDialog::~BGDialog()
 {
    delete m_pGlobals;
+   qDeleteAll(m_renderer);
 }
 
 KBackgroundRenderer * BGDialog::eRenderer()
@@ -257,7 +252,7 @@ void BGDialog::load()
    m_pGlobals->readSettings();
    getEScreen();
 
-   for (unsigned screen = 0; screen < m_renderer.size(); ++screen)
+   for (int screen = 0; screen < m_renderer.size(); ++screen)
    {
       unsigned eScreen = screen>1 ? screen-2 : 0;
       m_renderer[screen]->load( eScreen, (screen>0), true );
@@ -289,7 +284,7 @@ void BGDialog::save()
    // depending on which are the real settings
    // they both share Screen[0] in the config file
 
-      for (unsigned screen = 0; screen < m_renderer.size(); ++screen)
+      for (int screen = 0; screen < m_renderer.size(); ++screen)
       {
          if (screen == 1 && !m_pGlobals->commonScreenBackground())
             continue;
@@ -616,7 +611,7 @@ void BGDialog::slotWallpaperSelection()
       setWallpaper(dlg.selectedFile());
 
       int optionID = m_buttonGroupBackground->id(m_radioPicture);
-      m_buttonGroupBackground->setButton( optionID );
+      m_buttonGroupBackground->setSelected( optionID );
       slotWallpaperTypeChanged( optionID );
 
       emit changed(true);
@@ -653,7 +648,7 @@ void BGDialog::updateUI()
             m_comboWallpaperPos->setEnabled(false);
             m_lblWallpaperPos->setEnabled(false);
          }
-         m_buttonGroupBackground->setButton(
+         m_buttonGroupBackground->setSelected(
             m_buttonGroupBackground->id(m_radioNoPicture) );
       }
 
@@ -668,7 +663,7 @@ void BGDialog::updateUI()
             m_lblWallpaperPos->setEnabled(true);
          }
          setWallpaper(r->wallpaper());
-         m_buttonGroupBackground->setButton(
+         m_buttonGroupBackground->setSelected(
             m_buttonGroupBackground->id(m_radioPicture) );
       }
    }
@@ -683,7 +678,7 @@ void BGDialog::updateUI()
          m_comboWallpaperPos->setEnabled(true);
          m_lblWallpaperPos->setEnabled(true);
       }
-      m_buttonGroupBackground->setButton(
+      m_buttonGroupBackground->setSelected(
          m_buttonGroupBackground->id(m_radioSlideShow) );
    }
 
@@ -792,7 +787,7 @@ void BGDialog::slotImageDropped(const QString &uri)
    setWallpaper(uri);
 
    int optionID = m_buttonGroupBackground->id(m_radioPicture);
-   m_buttonGroupBackground->setButton( optionID );
+   m_buttonGroupBackground->setSelected( optionID );
    slotWallpaperTypeChanged( optionID );
 }
 
@@ -1044,7 +1039,7 @@ void BGDialog::slotSelectScreen(int screen)
       emit changed(true);
    else
    {
-      for (unsigned i = 0; i < m_renderer.size(); ++i)
+      for (int i = 0; i < m_renderer.size(); ++i)
       {
          if ( m_renderer[i]->isActive() )
             m_renderer[i]->stop();
@@ -1162,7 +1157,7 @@ void BGDialog::slotBlendReverse(bool b)
 
 void BGDialog::desktopResized()
 {
-   for (unsigned j = 0; j < m_renderer.size(); ++j )
+   for (int j = 0; j < m_renderer.size(); ++j )
    {
       KBackgroundRenderer * r = m_renderer[j];
       if( r->isActive())

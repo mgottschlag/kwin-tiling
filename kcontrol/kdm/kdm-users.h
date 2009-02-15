@@ -17,13 +17,13 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef __KDMUSERS_H__
-#define __KDMUSERS_H__
+#ifndef KDMUSERS_H
+#define KDMUSERS_H
 
 #include <QWidget>
 
-class K3ListView;
-class Q3ListViewItem;
+class QTreeWidget;
+class QTreeWidgetItem;
 class KComboBox;
 class QCheckBox;
 class QGroupBox;
@@ -58,15 +58,15 @@ class KDMUsersWidget : public QWidget {
   private Q_SLOTS:
 	void slotMinMaxChanged();
 	void slotShowOpts();
-	void slotUpdateOptIn( Q3ListViewItem *item );
-	void slotUpdateOptOut( Q3ListViewItem *item );
+	void slotUpdateOptIn( QTreeWidgetItem *item );
+	void slotUpdateOptOut( QTreeWidgetItem *item );
 	void slotUserSelected();
 	void slotUnsetUserPix();
 	void slotFaceOpts();
 	void slotUserButtonClicked();
 
   private:
-	void updateOptList( Q3ListViewItem *item, QStringList &list );
+	void updateOptList( QTreeWidgetItem *item, QStringList &list );
 	void userButtonDropEvent( QDropEvent *e );
 	void changeUserPix( const QString & );
 
@@ -78,7 +78,7 @@ class KDMUsersWidget : public QWidget {
 
 	QLabel *s_label; // middle
 	QStackedWidget *wstack;
-	K3ListView *optoutlv, *optinlv;
+	QTreeWidget *optoutlv, *optinlv;
 
 	QGroupBox *faceGroup; // right
 	QRadioButton *rbadmonly, *rbprefadm, *rbprefusr, *rbusronly;
