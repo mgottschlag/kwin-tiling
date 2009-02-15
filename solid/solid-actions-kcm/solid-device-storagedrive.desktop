@@ -2,9 +2,15 @@
 Actions=driveType;
 Type=Service
 Name=Storage drive
+Name[ja]=ストレージドライブ
+Name[sv]=Lagringsenhet
+Name[uk]=Пристрій зберігання даних
 X-KDE-Solid-Actions-Type=StorageDrive
 
 [Desktop Action driveType]
 Icon=unknown
 Name=Drive Type
+Name[ja]=ドライブのタイプ
+Name[sv]=Enhetstyp
+Name[uk]=Тип пристрою
 Exec=

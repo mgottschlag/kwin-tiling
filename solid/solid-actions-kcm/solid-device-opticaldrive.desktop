@@ -2,4 +2,7 @@
 Actions=
 Type=Service
 Name=Optical Drive
+Name[ja]=光学ドライブ
+Name[sv]=Optisk enhet
+Name[uk]=Пристрій читання оптичних дисків
 X-KDE-Solid-Actions-Type=OpticalDrive

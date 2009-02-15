@@ -2,4 +2,8 @@
 Actions=
 Type=Service
 Name=Network Interface
+Name[ga]=Comhéadan Líonra
+Name[ja]=ネットワークインターフェース
+Name[sv]=Nätverksgränssnitt
+Name[uk]=Мережний інтерфейс
 X-KDE-Solid-Actions-Type=NetworkInterface

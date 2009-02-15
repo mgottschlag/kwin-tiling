@@ -1,15 +1,22 @@
 [Desktop Action ignored]
 Icon=unknown
 Name=Ignored
+Name[sv]=Ignorerad
+Name[uk]=Ігнорується
 Exec=
 
 [Desktop Action usage]
 Icon=unknown
 Name=Usage
+Name[sv]=Användning
+Name[uk]=Використання
 Exec=
 
 [Desktop Entry]
 Actions=ignored;usage;
 Type=Service
 Name=Storage Volume
+Name[ja]=ストレージボリューム
+Name[sv]=Lagringsvolym
+Name[uk]=Том зберігання даних
 X-KDE-Solid-Actions-Type=StorageVolume

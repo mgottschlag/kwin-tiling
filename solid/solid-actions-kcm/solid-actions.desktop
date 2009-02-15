@@ -11,7 +11,13 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=advanced-user-settings
 
 Name=Device Actions
+Name[ja]=デバイスに対するアクション
+Name[sv]=Enhetsåtgärder
+Name[uk]=Дії з пристроями
 
 Comment=A configuration tool for managing the actions available to the user when connecting new devices to the computer
+Comment[ja]=コンピュータに新しいデバイスを接続したときにユーザが選択できるアクションを管理する設定ツール
+Comment[sv]=Ett inställningsverktyg för att hantera tillgängliga åtgärder för användare när nya enheter ansluts till datorn
+Comment[uk]=Інструмент налаштування для керування діями, доступними користувачеві після з’єднання пристроїв з комп’ютером
 
 X-KDE-Keywords=Solid Devices Actions

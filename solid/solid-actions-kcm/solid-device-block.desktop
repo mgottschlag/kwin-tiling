@@ -2,4 +2,7 @@
 Actions=
 Type=Service
 Name=Block Device
+Name[ja]=ブロックデバイス
+Name[sv]=Blockenhet
+Name[uk]=Блоковий пристрій
 X-KDE-Solid-Actions-Type=Block
