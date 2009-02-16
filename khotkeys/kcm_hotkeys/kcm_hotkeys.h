@@ -79,6 +79,11 @@ public Q_SLOTS:
      */
     void currentChanged( const QModelIndex &current, const QModelIndex &previous );
 
+    /**
+     * Show global settings dialog
+     */
+    void showGlobalSettings();
+
 private:
 
     Q_PRIVATE_SLOT(d, void slotHotkeyChanged(KHotKeys::ActionDataBase*))

@@ -127,8 +127,13 @@ KCMHotkeys::KCMHotkeys( QWidget *parent, const QVariantList & /* args */ )
     connect(
         d->action_group, SIGNAL(changed(KHotKeys::ActionDataBase*)),
         this, SLOT(slotHotkeyChanged(KHotKeys::ActionDataBase*)));
+
     // Show the context menu
     d->menu_button->setMenu(new HotkeysTreeViewContextMenu(d->tree_view));
+
+    // Switch to the global settings dialog
+    connect(d->settings_button, SIGNAL(clicked(bool)),
+            SLOT(showGlobalSettings()));
     }
 
 
@@ -158,10 +163,7 @@ void KCMHotkeys::currentChanged( const QModelIndex &pCurrent, const QModelIndex 
 
     if (!current.isValid())
         {
-        d->current = d->global_settings;
-        d->global_settings->copyFromObject();
-        d->stack->setCurrentWidget( d->global_settings );
-        return;
+        return showGlobalSettings();
         }
 
     // Now go on and activate the new item;
@@ -220,6 +222,14 @@ void KCMHotkeys::defaults()
 void KCMHotkeys::load()
     {
     d->load();
+    }
+
+
+void KCMHotkeys::showGlobalSettings()
+    {
+    d->current = d->global_settings;
+    d->global_settings->copyFromObject();
+    d->stack->setCurrentWidget( d->global_settings );
     }
 
 
