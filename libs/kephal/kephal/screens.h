@@ -203,6 +203,9 @@ namespace Kephal {
             
             /** Returns the id of the primary screen */
             static int primaryScreenId();
+            
+        private:
+            static int distance(const QRect & r, const QPoint & p);
     };
     
 }

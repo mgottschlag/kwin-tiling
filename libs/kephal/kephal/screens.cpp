@@ -115,12 +115,39 @@ namespace Kephal {
         return QApplication::desktop()->geometry();
     }
     
+    int ScreenUtils::distance(const QRect & r, const QPoint & p) {
+        if (! r.isValid()) {
+            return p.manhattanLength();
+        } else if (r.contains(p)) {
+            return 0;
+        } else if (p.x() >= r.left() && p.x() <= r.right()) {
+            return p.y() < r.top() ? (r.top() - p.y()) : (p.y() - r.bottom());
+        } else if (p.y() >= r.top() && p.y() <= r.bottom()) {
+            return p.x() < r.left() ? (r.left() - p.x()) : (p.x() - r.right());
+        } else if (p.x() < r.left()) {
+            return ((p.y() < r.top() ? r.topLeft() : r.bottomLeft()) - p).manhattanLength();
+        } else {
+            return ((p.y() < r.top() ? r.topRight() : r.bottomRight()) - p).manhattanLength();
+        }
+    }
+    
     int ScreenUtils::screenId(QPoint p) {
-        // TODO: Needs clean up
-        for(int i = 0; i < numScreens(); i++)
-            if(screenGeometry(i).contains(p))
-                return i;
-        return -1;
+        if (numScreens() == 0) {
+            return 0;
+        }
+        
+        int minDist = distance(screenGeometry(0), p);
+        int minScreen = 0;
+        
+        for(int i = 1; i < numScreens() && minDist > 0; i++) {
+            int dist = distance(screenGeometry(i), p);
+            if (dist < minDist) {
+                minDist = dist;
+                minScreen = i;
+            }
+        }
+        
+        return minScreen;
     }
     
     int ScreenUtils::primaryScreenId() {
