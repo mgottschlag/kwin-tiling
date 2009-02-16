@@ -14,13 +14,16 @@
 #include "itemspace.h"
 
 // Contrary to QRectF::intersects(), this function requires the
-// rectangles to truly intersect, not just touch on one side
+// rectangles to truly intersect, not just touch on one side.
+// Further, we require a minimal overlap distance to prevent
+// an infinite loop in the positioning algorithm due to some
+// precision and optimization problems.
 bool __intersects (const QRectF &a, const QRectF &b)
 {
-    if (!(a.bottom() > b.top())) return false;
-    if (!(a.top() < b.bottom())) return false;
-    if (!(a.right() > b.left())) return false;
-    if (!(a.left() < b.right())) return false;
+    if (!(a.bottom() - 0.001 > b.top())) return false;
+    if (!(a.top() + 0.001 < b.bottom())) return false;
+    if (!(a.right() - 0.001 > b.left())) return false;
+    if (!(a.left() + 0.001 < b.right())) return false;
     return true;
 }
 
@@ -264,18 +267,11 @@ QList<QPointF> ItemSpace::positionVertically(
                 break;
             }
 
-            // The new coordinate should theoretically always be greater (or lesser with right
-            // alignment) for the algorithm to terminate. Unfortunatly, probably due to some
-            // compiler/Qt but, this is not always the case. Therefore we have safeguards here.
-            qreal newY;
             if ((align & Qt::AlignTop)) {
-                newY = a.bottom();
-                if (!(newY > y)) return possiblePositions;
+                y = a.bottom();
             } else {
-                newY = a.y() - size.height();
-                if (!(newY < y)) return possiblePositions;
+                y = a.y() - size.height();
             }
-            y = newY;
         }
 
         // Find next possible x coordinate
@@ -299,16 +295,11 @@ QList<QPointF> ItemSpace::positionVertically(
             break;
         }
 
-        // Safeguards to assure termination, see above.
-        qreal newX;
         if ((align & Qt::AlignLeft)) {
-            newX = a.right();
-            if (!(newX > x)) return possiblePositions;
+            x = a.right();
         } else {
-            newX = a.x() - size.width();
-            if (!(newX < x)) return possiblePositions;
+            x = a.x() - size.width();
         }
-        x = newX;
     }
 
     return possiblePositions;
