@@ -33,7 +33,7 @@ ShortcutTrigger::ShortcutTrigger(
         ActionData* data_P,
         const KShortcut& shortcut,
         const QUuid &uuid )
-    : Trigger( data_P ), _uuid(uuid), _conditions_met(false)
+    : Trigger( data_P ), _uuid(uuid), _conditions_met(true)
     {
     QString name;
     if (data_P)
