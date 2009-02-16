@@ -19,8 +19,8 @@
 #include "globalshortcuts.h"
 #include "kglobalshortcutseditor.h"
 #include "select_scheme_dialog.h"
-#include "kdedglobalaccel_interface.h"
-#include "kdedglobalaccel_component_interface.h"
+#include "kglobalaccel_interface.h"
+#include "kglobalaccel_component_interface.h"
 #include <kdebug.h>
 
 #include <QCoreApplication>
@@ -83,20 +83,20 @@ GlobalShortcutsModule::~GlobalShortcutsModule()
 
 void GlobalShortcutsModule::load()
 {
-    // Connect to kdedglobalaccel. If that fails there is no need to continue.
+    // Connect to kglobalaccel. If that fails there is no need to continue.
     qRegisterMetaType<QList<int> >();
     qDBusRegisterMetaType<QList<int> >();
     qDBusRegisterMetaType<QList<KGlobalShortcutInfo> >();
     qDBusRegisterMetaType<KGlobalShortcutInfo>();
     QDBusConnection bus = QDBusConnection::sessionBus();
-    org::kde::KdedGlobalAccel kdedglobalaccel(
-            "org.kde.kded",
-            "/modules/kdedglobalaccel",
+    org::kde::KGlobalAccel kglobalaccel(
+            "org.kde.kglobalaccel",
+            "/kglobalaccel",
             bus);
 
-    if (!kdedglobalaccel.isValid()) {
+    if (!kglobalaccel.isValid()) {
         QString errorString;
-        QDBusError error = kdedglobalaccel.lastError();
+        QDBusError error = kglobalaccel.lastError();
         // The global shortcuts DBus service manages all global shortcuts and we
         // can't do anything useful without it.
         if (error.isValid()) {
@@ -114,10 +114,22 @@ void GlobalShortcutsModule::load()
     editor->undo();
     editor->clear();
 
-    QDBusReply< QList<QDBusObjectPath> > componentsRc = kdedglobalaccel.allComponents();
+    QDBusReply< QList<QDBusObjectPath> > componentsRc = kglobalaccel.allComponents();
     if (!componentsRc.isValid())
         {
-        kDebug() << "allComponents() failed!";
+        // Sometimes error pop up only after the first real call.
+        QString errorString;
+        QDBusError error = componentsRc.error();
+        // The global shortcuts DBus service manages all global shortcuts and we
+        // can't do anything useful without it.
+        if (error.isValid()) {
+            errorString = i18n("Message: %1\nError: %2", error.message(), error.name());
+        }
+
+        KMessageBox::sorry(
+            this,
+            i18n("Failed to contact the KDE global shortcuts daemon\n")
+                + errorString );
         return;
         }
     QList<QDBusObjectPath> components = componentsRc;
@@ -125,8 +137,8 @@ void GlobalShortcutsModule::load()
     Q_FOREACH(QDBusObjectPath componentPath, components) {
 
         // Get the component
-        org::kde::kdedglobalaccel::Component component(
-                "org.kde.kded",
+        org::kde::kglobalaccel::Component component(
+                "org.kde.kglobalaccel",
                 componentPath.path(),
                 bus);
         if (!component.isValid()) {
@@ -139,6 +151,7 @@ void GlobalShortcutsModule::load()
         if (!shortcutContextsRc.isValid()) {
             kDebug() << "Failed to get contexts for component "
                      << componentPath.path() <<"! Skipping!";
+            kDebug() << shortcutContextsRc.error();
             continue;
         }
         QStringList shortcutContexts = shortcutContextsRc;
@@ -165,7 +178,7 @@ void GlobalShortcutsModule::load()
             // It's safe now
             const QString componentUnique = shortcuts[0].componentUniqueName();
             QString componentContextId = componentUnique;
-            // kdedglobalaccel knows that '|' is our separator between
+            // kglobalaccel knows that '|' is our separator between
             // component and context
             if (shortcutContext != "default") {
                 componentContextId += QString("|") + shortcutContext;

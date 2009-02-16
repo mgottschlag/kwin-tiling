@@ -4,8 +4,8 @@ set(kcm_keys_PART_SRCS
   kglobalshortcutseditor.cpp
   globalshortcuts.cpp
   select_scheme_dialog.cpp
-  kdedglobalaccel_interface.cpp
-  kdedglobalaccel_component_interface.cpp
+  kglobalaccel_interface.cpp
+  kglobalaccel_component_interface.cpp
   )
 
 kde4_add_ui_files( kcm_keys_PART_SRCS 
