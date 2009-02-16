@@ -220,6 +220,22 @@ QVariant KHotkeysModel::data( const QModelIndex &index, int role ) const
             }
         }
 
+    else if (role==Qt::ForegroundRole)
+        {
+        QPalette pal;
+        switch (index.column())
+            {
+            case NameColumn:
+                if (!action->enabled())
+                    {
+                    return pal.color(QPalette::Disabled, QPalette::Foreground);
+                    }
+
+            default:
+                return QVariant();
+            }
+        }
+
     // For everything else
     return QVariant();
     }
@@ -258,7 +274,6 @@ bool KHotkeysModel::dropMimeData(
 
     // Get the group we have to drop into. If the drop target is no group get
     // it's parent and drop behind it
-    kDebug() << row;
     int position = row;
     QModelIndex dropIndex = parent;
     KHotKeys::ActionDataGroup *dropToGroup = indexToActionDataGroup(dropIndex);
@@ -338,6 +353,7 @@ Qt::ItemFlags KHotkeysModel::flags( const QModelIndex &index ) const
         flags |= Qt::ItemIsDropEnabled;
         }
 
+    // Show a checkbox in column 1 whatever is shown there.
     switch (index.column())
         {
         case 1:
@@ -593,6 +609,7 @@ bool KHotkeysModel::setData( const QModelIndex &index, const QVariant &value, in
         switch(index.column())
             {
             case EnabledColumn:
+                {
                 // If the parent is enabled we display the state of the object.
                 // If the parent is disabled this object is disabled too.
                 if (action->parent() && !action->parent()->enabled())
@@ -602,6 +619,16 @@ bool KHotkeysModel::setData( const QModelIndex &index, const QVariant &value, in
                     return false;
                     }
                 action->set_enabled( value.toInt() == Qt::Checked );
+                // If this is a group we have to inform the view that all our
+                // childs have changed. They are all disabled now
+                KHotKeys::ActionDataGroup *actionGroup = indexToActionDataGroup(index);
+                if (actionGroup && actionGroup->size())
+                    {
+                    Q_EMIT dataChanged(
+                            createIndex(0, 0, actionGroup),
+                            createIndex(actionGroup->size(), columnCount(index), actionGroup));
+                    }
+                }
                 break;
 
             default:
