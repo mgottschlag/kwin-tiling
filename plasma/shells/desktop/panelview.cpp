@@ -54,6 +54,7 @@ public:
           m_svg(new Plasma::Svg(this)),
           m_direction(direction)
     {
+        setAttribute(Qt::WA_TranslucentBackground);
         KWindowSystem::setOnAllDesktops(winId(), true);
         unsigned long state = NET::Sticky | NET::StaysOnTop | NET::KeepAbove;
         KWindowSystem::setState(winId(), state);

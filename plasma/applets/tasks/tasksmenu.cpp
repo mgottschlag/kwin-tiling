@@ -49,6 +49,7 @@ TasksMenu::TasksMenu(QWidget *parent, TaskGroup *group, GroupManager *groupManag
        m_applet(applet)
 {
     setAttribute(Qt::WA_NoSystemBackground);
+    setAttribute(Qt::WA_TranslucentBackground);
 
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("dialogs/background");

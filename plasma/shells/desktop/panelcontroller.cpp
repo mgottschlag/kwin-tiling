@@ -340,6 +340,7 @@ PanelController::PanelController(QWidget* parent)
 {
     Q_UNUSED(parent)
 
+    setAttribute(Qt::WA_TranslucentBackground);
     QPalette pal = palette();
     pal.setBrush(backgroundRole(), Qt::transparent);
     setPalette(pal);

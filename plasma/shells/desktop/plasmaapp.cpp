@@ -71,72 +71,20 @@
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrender.h>
-
-Display* dpy = 0;
-Colormap colormap = 0;
-Visual *visual = 0;
 #endif
-
-void checkComposite()
-{
-#ifdef Q_WS_X11
-    dpy = XOpenDisplay(0); // open default display
-    if (!dpy) {
-        kError() << "Cannot connect to the X server" << endl;
-        return;
-    }
-    if( qgetenv( "KDE_SKIP_ARGB_VISUALS" ) == "1" )
-        return;
-
-    int screen = DefaultScreen(dpy);
-    int eventBase, errorBase;
-
-    if (XRenderQueryExtension(dpy, &eventBase, &errorBase)) {
-        int nvi;
-        XVisualInfo templ;
-        templ.screen  = screen;
-        templ.depth   = 32;
-        templ.c_class = TrueColor;
-        XVisualInfo *xvi = XGetVisualInfo(dpy,
-                                          VisualScreenMask | VisualDepthMask | VisualClassMask,
-                                          &templ, &nvi);
-        for (int i = 0; i < nvi; ++i) {
-            XRenderPictFormat *format = XRenderFindVisualFormat(dpy, xvi[i].visual);
-            if (format->type == PictTypeDirect && format->direct.alphaMask) {
-                visual = xvi[i].visual;
-                colormap = XCreateColormap(dpy, RootWindow(dpy, screen), visual, AllocNone);
-                break;
-            }
-        }
-        XFree(xvi);
-    }
-
-    kDebug() << (colormap ? "Plasma has an argb visual" : "Plasma lacks an argb visual") << visual << colormap;
-    kDebug() << ((KWindowSystem::compositingActive() && colormap) ? "Plasma can use COMPOSITE for effects"
-                                                                    : "Plasma is COMPOSITE-less") << "on" << dpy;
-#endif
-}
 
 PlasmaApp* PlasmaApp::self()
 {
     if (!kapp) {
-        checkComposite();
-#ifdef Q_WS_X11
-        return new PlasmaApp(dpy, visual ? Qt::HANDLE(visual) : 0, colormap ? Qt::HANDLE(colormap) : 0);
-#else
-        return new PlasmaApp(0, 0, 0);
-#endif
+        return new PlasmaApp();
     }
 
     return qobject_cast<PlasmaApp*>(kapp);
 }
 
-PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
-#ifdef Q_WS_X11
-    : KUniqueApplication(display, visual, colormap),
-#else
+PlasmaApp::PlasmaApp()
     : KUniqueApplication(),
-#endif
+
       m_corona(0),
       m_appletBrowser(0),
       m_zoomLevel(Plasma::DesktopZoom),
@@ -585,7 +533,7 @@ bool PlasmaApp::hasComposite()
 {
 //    return true;
 #ifdef Q_WS_X11
-    return colormap && KWindowSystem::compositingActive();
+    return KWindowSystem::compositingActive();
 #else
     return false;
 #endif

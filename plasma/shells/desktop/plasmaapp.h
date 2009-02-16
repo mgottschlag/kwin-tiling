@@ -108,7 +108,7 @@ protected:
 #endif
 
 private:
-    PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap);
+    PlasmaApp();
     DesktopView* viewForScreen(int screen, int desktop) const;
     void zoomIn(Plasma::Containment *containment);
     void zoomOut(Plasma::Containment *containment);
