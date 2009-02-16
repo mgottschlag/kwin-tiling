@@ -392,7 +392,7 @@ Description[zh_TW]=使用 &Konqueror 開啟
 Enabled=true
 
 [Action_1/Command_2]
-Commandline=ps x |grep -q '[m]ozilla' && mozilla -remote openURL(%s, new-window) || mozilla %s
+Commandline=ps x |grep -q '[m]ozilla' && "mozilla -remote openURL(%s, new-window)" || mozilla %s
 Icon=mozilla
 Description=Open with &Mozilla
 Description[af]=Maak oop met Mozilla
@@ -560,7 +560,7 @@ Description[zh_TW]=送出 &URL
 Enabled=true
 
 [Action_1/Command_4]
-Commandline=ps x |grep -q '[f]irefox' && firefox -remote openURL(%s, new-window) || firefox %s
+Commandline=ps x |grep -q '[f]irefox' && "firefox -remote openURL(%s, new-window)" || firefox "%s"
 Icon=firefox
 Description=Open with &Firefox
 Description[af]=Maak oop met Firefox
