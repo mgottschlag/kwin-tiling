@@ -70,41 +70,4 @@ private Q_SLOTS:
 };
 
 
-class HotkeysTreeViewContextMenu : public QMenu
-    {
-    Q_OBJECT
-
-public:
-
-    HotkeysTreeViewContextMenu( const QModelIndex &index, HotkeysTreeView *parent = 0 );
-    virtual ~HotkeysTreeViewContextMenu();
-
-    //! Create a submenu per allowed trigger type
-    void createTriggerMenus(
-        KHotKeys::Trigger::TriggerTypes triggerTypes,
-        KHotKeys::Action::ActionTypes actionTypes);
-
-    //! Populate a trigger menu
-    void populateTriggerMenu(QMenu *menu, QSignalMapper *mapper, KHotKeys::Action::ActionTypes types);
-
-private Q_SLOTS:
-
-    void deleteAction();
-    void newGlobalShortcutActionAction(int);
-    void newWindowTriggerActionAction(int);
-    void newMouseGestureTriggerActionAction(int);
-    void newGroupAction();
-
-private:
-
-    KHotKeys::Action* createActionFromType(
-            int type,
-            KHotKeys::SimpleActionData *data) const;
-
-    QModelIndex _index;
-    HotkeysTreeView *_view;
-    };
-
-
-
 #endif /* #ifndef HOTKEYS_TREE_VIEW_H */

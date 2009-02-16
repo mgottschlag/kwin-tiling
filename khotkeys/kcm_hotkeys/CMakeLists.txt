@@ -9,6 +9,7 @@ set(
     hotkeys_model.cpp
     hotkeys_proxy_model.cpp
     hotkeys_tree_view.cpp
+    hotkeys_context_menu.cpp
 
     # HELPER WIDGETS
     helper_widgets/window_selector.cpp

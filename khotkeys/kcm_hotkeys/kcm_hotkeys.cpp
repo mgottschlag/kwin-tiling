@@ -19,6 +19,7 @@
 
 
 #include "kcm_hotkeys.h"
+#include "hotkeys_context_menu.h"
 #include "ui_kcm_hotkeys.h"
 #include "kcm_module_factory.h"
 
@@ -126,6 +127,8 @@ KCMHotkeys::KCMHotkeys( QWidget *parent, const QVariantList & /* args */ )
     connect(
         d->action_group, SIGNAL(changed(KHotKeys::ActionDataBase*)),
         this, SLOT(slotHotkeyChanged(KHotKeys::ActionDataBase*)));
+    // Show the context menu
+    d->menu_button->setMenu(new HotkeysTreeViewContextMenu(d->tree_view));
     }
 
 
