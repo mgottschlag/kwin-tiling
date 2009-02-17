@@ -2,7 +2,7 @@
 Icon=unknown
 Name=Ignored
 Name[pt]=Ignorada
-Name[pt_BR]=Ignorada
+Name[pt_BR]=Ignorado
 Name[sv]=Ignorerad
 Name[uk]=Ігнорується
 Exec=
@@ -11,7 +11,7 @@ Exec=
 Icon=unknown
 Name=Usage
 Name[pt]=Utilização
-Name[pt_BR]=Utilização
+Name[pt_BR]=Uso
 Name[sv]=Användning
 Name[uk]=Використання
 Exec=
