@@ -1,0 +1,23 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kde.SystemtrayDaemon">
+
+    <method name="registerService">
+       <arg name="service" type="s" direction="in"/>
+    </method>
+
+    <method name="registeredServices">
+        <arg type="as" direction="out"/>
+        <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QStringList"/>
+    </method>
+
+
+    <signal name="serviceRegistered">
+        <arg type="s"/>
+    </signal>
+
+    <signal name="serviceUnregistered">
+        <arg type="s"/>
+    </signal>
+  </interface>
+</node>

@@ -1,0 +1,19 @@
+[Desktop Entry]
+Type=Service
+Name=KDED Systemtray daemon
+Name[fr]=Démon boîte à miniature KDED
+Name[ga]=Deamhan thráidire an chórais KDED
+Name[pt]=Servidor da bandeja do KDED
+Name[pt_BR]=Servidor da bandeja do KDED
+Name[sv]=KDED-demon för systembricka
+Name[uk]=Фонова служба системного лотка KDED
+Comment=Keep track of applications that want to use the D-Bus based system tray
+Comment[pt]=Mantém o registo das aplicações que querem usar a bandeja do sistema baseada no D-Bus
+Comment[pt_BR]=Mantém o registo das aplicações que querem usar a bandeja do sistema baseada no D-Bus
+Comment[sv]=Håll reda på program som vill använda den D-Bus baserade systembrickan
+Comment[uk]=Стежте за програмами, які використовують заснований на D-Bus системний лоток
+X-KDE-ServiceTypes=KDEDModule
+X-KDE-Library=systemtraydaemon
+X-KDE-DBus-ModuleName=systemtraydaemon
+X-KDE-Kded-autoload=true
+X-KDE-Kded-load-on-demand=true
