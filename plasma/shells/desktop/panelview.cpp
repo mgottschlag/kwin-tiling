@@ -826,6 +826,36 @@ void PanelView::updateStruts()
         QRect thisScreen = Kephal::ScreenUtils::screenGeometry(containment()->screen());
         QRect wholeScreen = Kephal::ScreenUtils::desktopGeometry();
 
+        //Extended struts against a screen edge near to another screen are really harmful, so windows maximized under the panel is a lesser pain
+        //TODO: force "windows can cover" in those cases?
+        foreach (Kephal::Screen *screen, Kephal::Screens::self()->screens()) {
+            QRect otherScreen = screen->geom();
+            switch (location())
+            {
+            case Plasma::TopEdge:
+                if (otherScreen.bottom() <= thisScreen.top()) {
+                    return;
+                }
+                break;
+            case Plasma::BottomEdge:
+                if (otherScreen.top() >= thisScreen.bottom()) {
+                    return;
+                }
+                break;
+            case Plasma::RightEdge:
+                if (otherScreen.left() >= thisScreen.right()) {
+                    return;
+                }
+                break;
+            case Plasma::LeftEdge:
+                if (otherScreen.right() <= thisScreen.left()) {
+                    return;
+                }
+                break;
+            default:
+                return;
+            }
+        }
         // extended struts are to the combined screen geoms, not the single screen
         int leftOffset = wholeScreen.x() - thisScreen.x();
         int rightOffset = wholeScreen.right() - thisScreen.right();
