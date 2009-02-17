@@ -275,7 +275,7 @@ void Pager::recalculateGeometry()
     qreal itemWidth;
 
     if (formFactor() == Plasma::Vertical) {
-        if (location() == Plasma::Desktop)
+        if (location() == Plasma::Floating)
             itemWidth = (contentsRect().width() - padding * (columns - 1)) / columns;
         else
             itemWidth = (contentsRect().width() - leftMargin - rightMargin - padding * (columns - 1)) / columns;
@@ -283,7 +283,7 @@ void Pager::recalculateGeometry()
         itemHeight = Kephal::ScreenUtils::desktopGeometry().height() * m_widthScaleFactor;
         m_heightScaleFactor = m_widthScaleFactor;
     } else {
-        if (location() == Plasma::Desktop)
+        if (location() == Plasma::Floating)
             itemHeight = (contentsRect().height() - padding * (rows - 1)) / rows;
         else
             itemHeight = (contentsRect().height() - topMargin - bottomMargin - padding * (rows - 1)) / rows;
