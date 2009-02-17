@@ -26,6 +26,9 @@ set(systemtray_SRCS
     protocols/jobs/dbusjobprotocol.cpp
     protocols/jobs/dbusjob.cpp
 
+    protocols/dbussystemtray/dbussystemtraytask.cpp
+    protocols/dbussystemtray/dbussystemtrayprotocol.cpp
+
     ui/applet.cpp
     ui/compactlayout.cpp
     ui/extendertask.cpp
@@ -33,6 +36,11 @@ set(systemtray_SRCS
     ui/notificationwidget.cpp
     ui/jobwidget.cpp
     )
+
+add_subdirectory(systemtraydaemon)
+
+set(systemtraydaemon_xml systemtraydaemon/org.kde.SystemTrayDaemon.xml)
+QT4_ADD_DBUS_INTERFACE(systemtray_SRCS ${systemtraydaemon_xml} systemtraydaemon_interface)
 
 kde4_add_plugin(plasma_applet_systemtray ${systemtray_SRCS})
 include_directories(${CMAKE_SOURCE_DIR})

@@ -34,6 +34,7 @@
 #include "../protocols/fdo/fdoprotocol.h"
 #include "../protocols/plasmoid/plasmoidtaskprotocol.h"
 #include "../protocols/jobs/dbusjobprotocol.h"
+#include "../protocols/dbussystemtray/dbussystemtrayprotocol.h"
 
 namespace SystemTray
 {
@@ -65,6 +66,7 @@ Manager::Manager()
 {
     d->setupProtocol(new PlasmoidProtocol(this));
     d->setupProtocol(new SystemTray::FdoProtocol(this));
+    d->setupProtocol(new SystemTray::DBusSystemTrayProtocol(this));
 }
 
 Manager::~Manager()
