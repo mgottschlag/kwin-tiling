@@ -834,21 +834,25 @@ void PanelView::updateStruts()
             {
             case Plasma::TopEdge:
                 if (otherScreen.bottom() <= thisScreen.top()) {
+                    KWindowSystem::setExtendedStrut(winId(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
                     return;
                 }
                 break;
             case Plasma::BottomEdge:
                 if (otherScreen.top() >= thisScreen.bottom()) {
+                    KWindowSystem::setExtendedStrut(winId(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
                     return;
                 }
                 break;
             case Plasma::RightEdge:
                 if (otherScreen.left() >= thisScreen.right()) {
+                    KWindowSystem::setExtendedStrut(winId(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
                     return;
                 }
                 break;
             case Plasma::LeftEdge:
                 if (otherScreen.right() <= thisScreen.left()) {
+                    KWindowSystem::setExtendedStrut(winId(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
                     return;
                 }
                 break;
