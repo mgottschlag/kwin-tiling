@@ -4,10 +4,12 @@ Type=Service
 Name=Camera
 Name[ga]=Ceamara
 Name[ja]=カメラ
+Name[nds]=Kamera
 Name[pt]=Câmara Fotográfica
 Name[pt_BR]=Câmara Fotográfica
 Name[sv]=Kamera
 Name[uk]=Фотоапарат
+Name[zh_TW]=相機
 X-KDE-Solid-Actions-Type=Camera
 
 [Desktop Action supportedDrivers]
@@ -15,8 +17,10 @@ Icon=unknown
 Name=Supported Drivers
 Name[ga]=Tiománaithe a dTacaítear Leo
 Name[ja]=サポートされているドライバ
+Name[nds]=Ünnerstütt Drievers
 Name[pt]=Controladores Suportados
 Name[pt_BR]=Drivers suportados
 Name[sv]=Drivrutiner som stöds
 Name[uk]=Підтримувані драйвери
+Name[zh_TW]=支援的驅動程式
 Exec=

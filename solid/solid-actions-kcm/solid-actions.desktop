@@ -12,16 +12,20 @@ X-KDE-System-Settings-Parent-Category=advanced-user-settings
 
 Name=Device Actions
 Name[ja]=デバイスに対するアクション
+Name[nds]=Reedschap-Akschonen
 Name[pt]=Acções do Dispositivo
 Name[pt_BR]=Ações de dispositivos
 Name[sv]=Enhetsåtgärder
 Name[uk]=Дії з пристроями
+Name[zh_TW]=裝置動作
 
 Comment=A configuration tool for managing the actions available to the user when connecting new devices to the computer
 Comment[ja]=コンピュータに新しいデバイスを接続したときにユーザが選択できるアクションを管理する設定ツール
+Comment[nds]=En Instellwarktüüch för de Akschonen, de för Brukers praatstaht, wenn nieg Reedschappen den Reekner tokoppelt warrt
 Comment[pt]=Uma ferramenta de configuração para gerir as acções disponíveis para o utilizador, ao ligar dispositivos novos ao computador
 Comment[pt_BR]=Uma ferramenta de configuração para gerir as acções disponíveis para o utilizador, ao ligar dispositivos novos ao computador
 Comment[sv]=Ett inställningsverktyg för att hantera tillgängliga åtgärder för användare när nya enheter ansluts till datorn
 Comment[uk]=Інструмент налаштування для керування діями, доступними користувачеві після з’єднання пристроїв з комп’ютером
+Comment[zh_TW]=管理新增裝置到電腦時要做些什麼動作的設定工具
 
 X-KDE-Keywords=Solid Devices Actions
