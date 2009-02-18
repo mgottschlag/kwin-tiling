@@ -126,6 +126,9 @@ public slots:
     void collapse();
     void updatePreferredSize();
 
+private Q_SLOTS:
+    void constraintsChanged(Plasma::Constraints);
+
 protected:
     AbstractTaskItem *taskItemForWId(WId id);
     virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);

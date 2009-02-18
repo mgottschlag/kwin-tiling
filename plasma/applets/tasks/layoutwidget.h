@@ -43,9 +43,9 @@ using TaskManager::GroupManager;
 /**
  * A Layout for the expanded group
  */
-class LayoutWidget : public QObject
+class LayoutWidget : public QGraphicsGridLayout
 {
-    Q_OBJECT
+    //Q_OBJECT
 
 public:
     LayoutWidget(TaskGroupItem * parent, Tasks *applet);
@@ -76,26 +76,16 @@ public:
     /** Returns the preferred number of columns calculated on base of AbstractGroupableItem::basicPreferredSize()*/
     int preferredColumns();
 
-public Q_SLOTS:
-    void update();
+	/** Populates the actual QGraphicsGridLayout with items*/
+    void layoutItems();
 
-private Q_SLOTS:
-    void constraintsChanged(Plasma::Constraints);
-
-Q_SIGNALS:
-    void sizeHintChanged(Qt::SizeHint);
 
 private:
-    void init();
-
     //void calculatePreferredRowSize();
     bool remove(AbstractTaskItem* item);
 
     void adjustStretch();
     void updatePreferredSize();
-
-    /** Populates the actual QGraphicsGridLayout with items*/
-    void layoutItems();
 
     bool m_hasSpacer;
     QGraphicsWidget *m_spacer;
@@ -113,9 +103,6 @@ private:
     bool m_forceRows;
 
     Tasks *m_applet;
-    /** Creates and initialises a new QGraphicsGridLayout*/
-    void createLayout();
-    QGraphicsGridLayout *m_layout;
 };
 
 #endif

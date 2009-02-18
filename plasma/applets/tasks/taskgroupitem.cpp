@@ -533,15 +533,24 @@ void TaskGroupItem::expand()
     m_expandedLayout->setMaximumRows(m_maximumRows);
     m_expandedLayout->setForceRows(m_forceRows);
 
-    //setLayout(m_expandedLayout);
+    setLayout(m_expandedLayout);
 
-    connect(m_applet, SIGNAL(constraintsChanged(Plasma::Constraints)), m_expandedLayout, SLOT(constraintsChanged(Plasma::Constraints)));
-    connect(m_expandedLayout, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updatePreferredSize()));
+    connect(m_applet, SIGNAL(constraintsChanged(Plasma::Constraints)), this, SLOT(constraintsChanged(Plasma::Constraints)));
+    //connect(m_expandedLayout, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updatePreferredSize()));
     updatePreferredSize();
     emit changed();
     checkSettings();
     //kDebug() << "expanded";
 
+}
+
+void TaskGroupItem::constraintsChanged(Plasma::Constraints constraints)
+{
+    //kDebug();
+
+    if (constraints & Plasma::SizeConstraint && layoutWidget()) {
+        layoutWidget()->layoutItems();
+    }
 }
 
 LayoutWidget *TaskGroupItem::layoutWidget()
