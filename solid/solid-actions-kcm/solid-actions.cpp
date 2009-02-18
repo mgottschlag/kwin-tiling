@@ -75,6 +75,7 @@ SolidActions::SolidActions(QWidget* parent, const QVariantList&)
     connect(addDialog, SIGNAL(okClicked()), this, SLOT(addAction()));
     connect(mainUi->PbAddAction, SIGNAL(clicked()), addDialog, SLOT(show()));
     slotTextChanged( addUi->LeActionName->text() );
+    addUi->LeActionName->setFocus();
 }
 
 
