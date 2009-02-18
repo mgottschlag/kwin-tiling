@@ -253,19 +253,19 @@ QString getUnitString(int unit, bool plain)
         if (plain)
             return QString();
         else
-            return i18nc("Degree, unit symbol", "⁰");
+            return i18nc("Degree, unit symbol", "°");
 
     case WeatherUtils::Celsius:
         if (plain)
             return QString("C");
         else
-            return i18nc("Celsius, temperature unit", "⁰C");
+            return i18nc("Celsius, temperature unit", "°C");
 
     case WeatherUtils::Fahrenheit:
         if (plain)
             return QString("F");
         else
-            return i18nc("Fahrenheit, temperature unit", "⁰F");
+            return i18nc("Fahrenheit, temperature unit", "°F");
 
     case WeatherUtils::Kelvin:
         if (plain)
