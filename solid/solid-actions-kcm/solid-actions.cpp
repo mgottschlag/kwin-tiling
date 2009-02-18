@@ -128,6 +128,13 @@ void SolidActions::addAction()
 void SolidActions::editAction()
 {
     ActionItem * selectedItem = selectedAction();
+    // We need to ensure we have a valid predicate first -> stop crashes on invalid ones
+    QString actionPredicate = selectedItem->readKey(ActionItem::GroupDesktop, "X-KDE-Solid-Predicate", "");
+    if( !Solid::Predicate::fromString(actionPredicate).isValid() ) {
+        // Predicate isn't valid. do not continue
+        KMessageBox::error(this, i18n("It appears that the device conditions for this action are not valid. \nIf you previously used this utility to make changes, please revert them and file a bug"), i18n("Error parsing device conditions"));
+        return;
+    }
     // Set all the text appropriately
     editUi->ui.IbActionIcon->setIcon(selectedItem->icon());
     editUi->ui.LeActionFriendlyName->setText(selectedItem->name());
