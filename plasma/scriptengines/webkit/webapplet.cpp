@@ -62,8 +62,8 @@ public:
         page->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOff);
 
         QPalette palette = page->palette();
-        palette.setBrush(QPalette::Background, QBrush(Qt::transparent));
-        page->setPalette(palette);
+        palette.setColor(QPalette::Base, Qt::transparent);
+        page->page()->setPalette(palette);
     }
 
     Plasma::WebView *page;
