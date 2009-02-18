@@ -438,7 +438,7 @@ void WebBrowser::bookmarkClicked(const QModelIndex &index)
 
 void WebBrowser::zoom(int value)
 {
-    m_browser->mainFrame()->setTextSizeMultiplier((qreal)0.2 + ((qreal)value/(qreal)50));
+    m_browser->mainFrame()->setZoomFactor((qreal)0.2 + ((qreal)value/(qreal)50));
 }
 
 void WebBrowser::loadProgress(int progress)
