@@ -18,14 +18,14 @@
      <item row="0" column="0" >
       <widget class="KPushButton" name="PbAddAction" >
        <property name="text" >
-        <string>Add Action</string>
+        <string>Add Action...</string>
        </property>
       </widget>
      </item>
      <item row="0" column="1" >
       <widget class="KPushButton" name="PbEditAction" >
        <property name="text" >
-        <string>Edit Action</string>
+        <string>Edit Action...</string>
        </property>
       </widget>
      </item>
