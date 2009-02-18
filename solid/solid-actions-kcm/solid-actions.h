@@ -49,7 +49,7 @@ private slots:
     void acceptActionChanges();
     void toggleEditDelete(bool toggle);
     void enableEditDelete();
-
+    void slotTextChanged( const QString& );
 private:
     Ui_SolidActions *mainUi;
     SolidActionEdit *editUi;

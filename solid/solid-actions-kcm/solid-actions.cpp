@@ -71,9 +71,10 @@ SolidActions::SolidActions(QWidget* parent, const QVariantList&)
     addUi = new Ui::SolidActionAdd();
     addUi->setupUi(addWidget);
     addDialog->setInitialSize(QSize(300, 100)); // Set a sensible default size
+    connect(addUi->LeActionName, SIGNAL(textChanged( const QString& ) ), this, SLOT( slotTextChanged( const QString& ) ) );
     connect(addDialog, SIGNAL(okClicked()), this, SLOT(addAction()));
     connect(mainUi->PbAddAction, SIGNAL(clicked()), addDialog, SLOT(show()));
-
+    slotTextChanged( addUi->LeActionName->text() );
 }
 
 
@@ -82,6 +83,11 @@ SolidActions::~SolidActions()
     clearActions();
     delete mainUi;
     delete editUi;
+}
+
+void SolidActions::slotTextChanged( const QString & text )
+{
+    addDialog->enableButtonOk( !text.isEmpty() );
 }
 
 void SolidActions::load()
