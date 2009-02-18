@@ -1,5 +1,6 @@
 include_directories(
         ${CMAKE_SOURCE_DIR}/calendar
+        ${KDEPIMLIBS_INCLUDE_DIR}
         ${Boost_INCLUDE_DIR}
 )
 
