@@ -57,7 +57,12 @@ static void processUrl(KUrl &url, const QString &term)
         if (idx != -1) {
             url.setPath(term.mid(idx));
         }
-        url.setProtocol("http");
+        if (term.startsWith("ftp")) {
+            url.setProtocol("ftp");
+        }
+        else {
+            url.setProtocol("http");
+        }
     }
 }
 
@@ -108,7 +113,7 @@ void LocationsRunner::match(Plasma::RunnerContext &context)
         match.setData(url.url());
 
         if (KProtocolInfo::isHelperProtocol(url.protocol())) {
-            //kDebug() << "helper protocol" << url.protocol() <<"call external application" ; 
+            //kDebug() << "helper protocol" << url.protocol() <<"call external application" ;
             match.setText(i18n("Launch with %1", KProtocolInfo::exec(url.protocol())));
         } else {
             //kDebug() << "protocol managed by browser" << url.protocol();
@@ -145,7 +150,7 @@ void LocationsRunner::run(const Plasma::RunnerContext &context, const Plasma::Qu
     KUrl urlToRun(location);
 
     if ((type == Plasma::RunnerContext::NetworkLocation || type == Plasma::RunnerContext::UnknownType) &&
-        data.startsWith("http://")) {
+        (data.startsWith("http://") || data.startsWith("ftp://"))) {
         // the text may have changed while we were running, so we have to refresh
         // our content
         processUrl(urlToRun, location);
