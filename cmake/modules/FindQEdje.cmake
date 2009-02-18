@@ -14,7 +14,7 @@
 # in the FIND_PATH() and FIND_LIBRARY() calls
 if( NOT WIN32 )
   find_package(PkgConfig)
-  pkg_check_modules(PC_QEdje eet qzion>=0.3.0 qedje>=0.3.0)
+  pkg_check_modules(PC_QEdje eet qzion>=0.4.0 qedje>=0.4.0)
 endif( NOT WIN32 )
 
 # use this just to create a nice message at FindPackageHandleStandardArgs
@@ -49,7 +49,7 @@ if (PC_QEdje_FOUND)
   SET(QEDJE_INCLUDE_DIRS  ${QEDJE_QEdje_INCLUDE_DIR} ${QEDJE_QZion_INCLUDE_DIR} ${QEDJE_Eet_INCLUDE_DIR} CACHE INTERNAL "All include directories needed for QEdje")
 
 else (PC_QEdje_FOUND)
-  MESSAGE(STATUS "Could not find QZion and/or QEdje and/or eet. Please download them here (http://dev.openbossa.org/trac/qedje).")
+  MESSAGE(STATUS "Could not find QZion and/or QEdje and/or eet. Please download them here (http://code.openbossa.org/projects/qedje/pages/Home).")
 endif (PC_QEdje_FOUND)
 
 INCLUDE(FindPackageHandleStandardArgs)
