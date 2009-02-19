@@ -1,3 +1,5 @@
+find_package(Boost REQUIRED)
+
 include_directories(
         ${CMAKE_SOURCE_DIR}/calendar
         ${KDEPIMLIBS_INCLUDE_DIR}
