@@ -156,8 +156,8 @@ void GlobalShortcutsModule::load()
         }
         QStringList shortcutContexts = shortcutContextsRc;
 
-        // We add shortcut all shortcut context to the editor. Thias way the
-        // user keep full control of it's shortcuts.
+        // We add shortcut all shortcut context to the editor. This way the
+        // user keeps full control of it's shortcuts.
         Q_FOREACH (QString shortcutContext, shortcutContexts) {
 
             QDBusReply< QList<KGlobalShortcutInfo> > shortcutsRc =
