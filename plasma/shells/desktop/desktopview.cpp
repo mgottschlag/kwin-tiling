@@ -56,6 +56,7 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
       m_dashboardFollowsDesktop(true),
       m_init(false)
 {
+    setAttribute(Qt::WA_TranslucentBackground, false);
     setFocusPolicy(Qt::NoFocus);
 #ifdef Q_WS_WIN
     setWindowFlags(Qt::FramelessWindowHint);
