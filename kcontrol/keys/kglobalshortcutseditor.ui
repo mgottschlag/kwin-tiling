@@ -1,31 +1,39 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>KGlobalShortcutsEditor</class>
- <widget class="QWidget" name="KGlobalShortcutsEditor" >
-  <property name="geometry" >
+ <widget class="QWidget" name="KGlobalShortcutsEditor">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>756</width>
+    <width>612</width>
     <height>516</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout" >
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="label" >
-       <property name="text" >
+      <widget class="QLabel" name="label">
+       <property name="text">
         <string>KDE component:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="KComboBox" name="components" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+      <widget class="KComboBox" name="components">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="clean_component">
+       <property name="text">
+        <string>Clean</string>
        </property>
       </widget>
      </item>
@@ -40,6 +48,10 @@
    <header>kcombobox.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>components</tabstop>
+  <tabstop>clean_component</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

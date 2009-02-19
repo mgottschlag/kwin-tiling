@@ -17,6 +17,9 @@
  */
 #include "kglobalshortcutseditor.h"
 
+
+#include <KDE/KMessageBox>
+
 #include <QStackedWidget>
 #include <QHash>
 
@@ -26,14 +29,16 @@
 #include "kdebug.h"
 #include <kglobalaccel.h>
 
-//### copied over from kdedglobalaccel.cpp (figure out a header file to put it in!)
-enum actionIdFields
-{
-    ComponentUnique = 0,
-    ActionUnique = 1,
-    ComponentFriendly = 2,
-    ActionFriendly = 3
-};
+#include "globalshortcuts.h"
+#include "kglobalaccel_interface.h"
+#include "kglobalaccel_component_interface.h"
+
+#include <QDBusConnection>
+#include <QDBusError>
+#include <QDBusInterface>
+#include <QDBusReply>
+#include <QDBusMetaType>
+
 
 /*
  * README
@@ -63,17 +68,32 @@ class KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate
 public:
 
     KGlobalShortcutsEditorPrivate(KGlobalShortcutsEditor *q)
-     : q(q),
-       stack(0)
+        :   q(q),
+            stack(0),
+            bus(QDBusConnection::sessionBus())
     {}
 
+    //! Setup the gui
     void initGUI();
+
+    //! Delete the currently selected component
+    void cleanComponent();
+
+    //! Load the component at @a componentPath
+    bool loadComponent(const QDBusObjectPath &componentPath);
+
+    //! Return the componentPath for component
+    QDBusObjectPath componentPath(const QString &componentUnique);
+
+    //! Remove the component
+    void removeComponent(const QString &componentUnique);
 
     KGlobalShortcutsEditor *q;
     Ui::KGlobalShortcutsEditor ui;
     QStackedWidget *stack;
     KShortcutsEditor::ActionTypes actionTypes;
     QHash<QString, componentData> components;
+    QDBusConnection bus;
 };
 
 
@@ -83,15 +103,20 @@ void KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::initGUI()
     // Create a stacked widget.
     stack = new QStackedWidget(q);
     q->layout()->addWidget(stack);
+
     // Connect our components
     connect(ui.components, SIGNAL(activated(const QString&)),
             q, SLOT(activateComponent(const QString&)));
+
+    // The delete components button
+    connect(ui.clean_component, SIGNAL(clicked()),
+            q, SLOT(cleanComponent()));
 }
 
 
 KGlobalShortcutsEditor::KGlobalShortcutsEditor(QWidget *parent, KShortcutsEditor::ActionTypes actionTypes)
- : QWidget(parent),
-   d(new KGlobalShortcutsEditorPrivate(this))
+    :   QWidget(parent),
+        d(new KGlobalShortcutsEditorPrivate(this))
 {
     d->actionTypes = actionTypes;
     // Setup the ui
@@ -111,13 +136,17 @@ void KGlobalShortcutsEditor::activateComponent(const QString &component)
 {
     QHash<QString, componentData>::Iterator iter = d->components.find(component);
     if (iter == d->components.end()) {
-        // Unknown component. It is a bad bad world
-        kWarning() << "The component " << component << " is unknown";
-        Q_ASSERT(iter != d->components.end());
+        kDebug() << "The component" << component << "is unknown";
+        Q_ASSERT(iter == d->components.end());
         return;
     } else {
-        // Known component. Get it.
-        d->stack->setCurrentWidget((*iter).editor);
+        int index = d->ui.components->findText(component);
+        Q_ASSERT(index != -1);
+        if (index > -1) {
+            // Known component. Get it.
+            d->ui.components->setCurrentIndex(index);
+            d->stack->setCurrentWidget((*iter).editor);
+        }
     }
 }
 
@@ -135,13 +164,14 @@ void KGlobalShortcutsEditor::addCollection(
         editor = new KShortcutsEditor(this, d->actionTypes);
         d->stack->addWidget(editor);
         // Add to the component combobox
-        d->ui.components->addItem(friendlyName);
+        d->ui.components->insertItem(0, friendlyName);
         // Add to our component registry
         componentData cd;
         cd.editor = editor;
         cd.uniqueName = id;
         d->components.insert(friendlyName, cd);
         connect(editor, SIGNAL(keyChange()), this, SLOT(_k_key_changed()));
+        d->ui.components->model()->sort(0);
     } else {
         // Known component.
         editor = (*iter).editor;
@@ -177,6 +207,64 @@ void KGlobalShortcutsEditor::clear()
     d->ui.components->clear();
 }
 
+
+void KGlobalShortcutsEditor::load()
+{
+    // Connect to kglobalaccel. If that fails there is no need to continue.
+    qRegisterMetaType<QList<int> >();
+    qDBusRegisterMetaType<QList<int> >();
+    qDBusRegisterMetaType<QList<KGlobalShortcutInfo> >();
+    qDBusRegisterMetaType<KGlobalShortcutInfo>();
+
+    org::kde::KGlobalAccel kglobalaccel(
+            "org.kde.kglobalaccel",
+            "/kglobalaccel",
+            d->bus);
+
+    if (!kglobalaccel.isValid()) {
+        QString errorString;
+        QDBusError error = kglobalaccel.lastError();
+        // The global shortcuts DBus service manages all global shortcuts and we
+        // can't do anything useful without it.
+        if (error.isValid()) {
+            errorString = i18n("Message: %1\nError: %2", error.message(), error.name());
+        }
+
+        KMessageBox::sorry(
+            this,
+            i18n("Failed to contact the KDE global shortcuts daemon\n")
+                + errorString );
+        return;
+    }
+
+    // Undo all changes not yet applied
+    undo();
+    clear();
+
+    QDBusReply< QList<QDBusObjectPath> > componentsRc = kglobalaccel.allComponents();
+    if (!componentsRc.isValid())
+        {
+        // Sometimes error pop up only after the first real call.
+        QString errorString;
+        QDBusError error = componentsRc.error();
+        // The global shortcuts DBus service manages all global shortcuts and we
+        // can't do anything useful without it.
+        if (error.isValid()) {
+            errorString = i18n("Message: %1\nError: %2", error.message(), error.name());
+        }
+
+        KMessageBox::sorry(
+            this,
+            i18n("Failed to contact the KDE global shortcuts daemon\n")
+                + errorString );
+        return;
+        }
+    QList<QDBusObjectPath> components = componentsRc;
+
+    Q_FOREACH(QDBusObjectPath componentPath, components) {
+        d->loadComponent(componentPath);
+    } // Q_FOREACH(component)
+}
 
 
 void KGlobalShortcutsEditor::save()
@@ -231,5 +319,164 @@ void KGlobalShortcutsEditor::_k_key_changed()
 {
     emit changed(isModified());
 }
+
+
+QDBusObjectPath KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::componentPath(const QString &componentUnique)
+{
+    return QDBusObjectPath(QLatin1String("/component/") + componentUnique);
+}
+
+
+void KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::cleanComponent()
+{
+    QString name = ui.components->currentText();
+    QString componentUnique = components.value(name).uniqueName;
+
+    switch (KMessageBox::questionYesNo(
+            q,
+            i18n("This will remove all currently not active global shortcuts for %1 from this list. %1 is removed too if no shortcut is left.\n"
+                    "All global shortcuts will reregister themselves whenever they are activated the next time!", componentUnique),
+            i18n("Clean component"))) {
+
+        case KMessageBox::Yes:
+            if (KGlobalAccel::cleanComponent(componentUnique)) {
+                // Remove the component from the gui
+                removeComponent(componentUnique);
+
+                // Load it again
+                if (loadComponent(componentPath(componentUnique))) {
+                    // Active it
+                    q->activateComponent(name);
+                }
+            }
+            break;
+
+        default:
+            return;
+    }
+}
+
+
+bool KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::loadComponent(const QDBusObjectPath &componentPath)
+{
+    // Get the component
+    org::kde::kglobalaccel::Component component(
+            "org.kde.kglobalaccel",
+            componentPath.path(),
+            bus);
+    if (!component.isValid()) {
+        kDebug() << "Component " << componentPath.path() << "not valid! Skipping!";
+        return false;
+    }
+
+    // Get the shortcut contexts.
+    QDBusReply<QStringList> shortcutContextsRc = component.getShortcutContexts();
+    if (!shortcutContextsRc.isValid()) {
+        kDebug() << "Failed to get contexts for component "
+                 << componentPath.path() <<"! Skipping!";
+        kDebug() << shortcutContextsRc.error();
+        return false;
+    }
+    QStringList shortcutContexts = shortcutContextsRc;
+
+    // We add the shortcuts for all shortcut contexts to the editor. This
+    // way the user keeps full control of it's shortcuts.
+    Q_FOREACH (QString shortcutContext, shortcutContexts) {
+
+        QDBusReply< QList<KGlobalShortcutInfo> > shortcutsRc =
+            component.allShortcutInfos(shortcutContext);
+        if (!shortcutsRc.isValid())
+            {
+            kDebug() << "allShortcutInfos() failed for " << componentPath.path() << shortcutContext;
+            continue;
+            }
+        QList<KGlobalShortcutInfo> shortcuts = shortcutsRc;
+        // Shouldn't happen. But you never know
+        if (shortcuts.isEmpty()) {
+            kDebug() << "Got shortcut context" << shortcutContext << "without shortcuts for"
+                << componentPath.path();
+            continue;
+        }
+
+        // It's safe now
+        const QString componentUnique = shortcuts[0].componentUniqueName();
+        QString componentContextId = componentUnique;
+        // kglobalaccel knows that '|' is our separator between
+        // component and context
+        if (shortcutContext != "default") {
+            componentContextId += QString("|") + shortcutContext;
+        }
+
+        // Create a action collection for our current component:context
+        KActionCollection* col = new KActionCollection(
+                q,
+                KComponentData(componentContextId.toAscii()));
+
+        // Now add the shortcuts.
+        foreach (const KGlobalShortcutInfo &shortcut, shortcuts) {
+
+            const QString &objectName = shortcut.uniqueName();
+            KAction *action = col->addAction(objectName);
+            action->setProperty("isConfigurationAction", QVariant(true)); // see KAction::~KAction
+            action->setText(shortcut.friendlyName());
+
+            // Always call this to enable global shortcuts for the action. The editor widget
+            // checks it.
+            // Also actually loads the shortcut using the KAction::Autoloading mechanism.
+            // Avoid setting the default shortcut; it would just be written to the global
+            // configuration so we would not get the real one below.
+            action->setGlobalShortcut(KShortcut(), KAction::ActiveShortcut);
+
+            // The default shortcut will never be loaded because it's pointless in a real
+            // application. There are no scarce resources [i.e. physical keys] to manage
+            // so applications can set them at will and there's no autoloading.
+            QList<QKeySequence> sc = shortcut.defaultKeys();
+            if (sc.count()>0) {
+                action->setGlobalShortcut(KShortcut(sc[0]), KAction::DefaultShortcut);
+            }
+        } // Q_FOREACH(shortcut)
+
+        QString componentFriendlyName = shortcuts[0].componentFriendlyName();
+
+        if (shortcuts[0].contextUniqueName() != "default")
+            {
+            componentFriendlyName +=
+                QString('[') + shortcuts[0].contextFriendlyName() + QString(']');
+            }
+
+        q->addCollection(col, componentContextId, componentFriendlyName);
+
+    } // Q_FOREACH(context)
+
+    return true;
+}
+
+
+void KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::removeComponent(
+        const QString &componentUnique )
+    {
+    // TODO: Remove contexts too.
+
+    Q_FOREACH (const QString &text, components.keys())
+        {
+        if (components.value(text).uniqueName == componentUnique)
+            {
+            // Remove from QComboBox
+            int index = ui.components->findText(text);
+            Q_ASSERT(index != -1);
+            ui.components->removeItem(index);
+
+            // Remove from QStackedWidget
+            stack->removeWidget(components.value(text).editor);
+
+            // Delete the editor
+            delete components.value(text).editor; components[text].editor = 0;
+
+            // Remove the componentData
+            components.remove(text);
+            }
+        }
+    }
+
 
 #include "kglobalshortcutseditor.moc"

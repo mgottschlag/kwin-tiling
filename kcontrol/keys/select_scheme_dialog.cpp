@@ -30,7 +30,7 @@ SelectSchemeDialog::SelectSchemeDialog(QWidget *parent)
     m_schemes = KGlobal::dirs()->findAllResources("data", "kcmkeys/*.kksrc");
 
     ui->setupUi(this);
-    setMainWidget(ui->widget);
+    setMainWidget(ui->layoutWidget);
 
     foreach (const QString &res, m_schemes) {
         KConfig config(res, KConfig::SimpleConfig);

@@ -106,6 +106,10 @@ public Q_SLOTS:
      */
     void activateComponent(const QString &component);
 
+    /**
+     * Load/Reload the global shortcuts
+     */
+    void load();
 
     /**
      * Make the changes persistent.
@@ -129,7 +133,10 @@ private:
     friend class KGlobalShortcutsEditorPrivate;
     class KGlobalShortcutsEditorPrivate;
     KGlobalShortcutsEditorPrivate *const d;
+
     Q_DISABLE_COPY(KGlobalShortcutsEditor)
+
+    Q_PRIVATE_SLOT(d, void cleanComponent())
 }; // class KGlobalShortcutsEditor
 
 #endif // KGLOBALSHORTCUTSEDITOR_H
