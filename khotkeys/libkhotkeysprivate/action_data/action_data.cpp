@@ -169,14 +169,20 @@ void ActionData::set_actions( ActionList* actions_P )
 
 void ActionData::update_triggers()
     {
-    bool activate = conditions_match() && enabled( false );
-    kDebug() << "### Update triggers: " << name() << ":" << activate;
+    bool activate = false;
+
+    // Activate the triggers if the actions is enabled and the conditions
+    // match.
+    if (enabled(false) && conditions_match())
+        {
+        activate = true;
+        }
+
     for( Trigger_list::Iterator it = _triggers->begin();
          it != _triggers->end();
          ++it )
         {
-//        kDebug() << "Going over the triggers";
-        (*it)->activate( activate );
+        (*it)->activate(activate);
         }
     }
 
