@@ -19,6 +19,7 @@
 
 #include "global_settings_widget.h"
 
+#include "hotkeys_model.h"
 #include "settings.h"
 
 #include <KDebug>
@@ -28,7 +29,8 @@
 
 
 GlobalSettingsWidget::GlobalSettingsWidget( QWidget *parent )
-    : HotkeysWidgetIFace( parent )
+    :   HotkeysWidgetIFace( parent )
+        ,_model(NULL)
     {
     ui.setupUi(this);
 
@@ -45,6 +47,11 @@ GlobalSettingsWidget::GlobalSettingsWidget( QWidget *parent )
             ui.enabled, SIGNAL(stateChanged(int)),
             _changedSignals, SLOT(map()) );
     _changedSignals->setMapping(ui.enabled, "enabled" );
+
+    connect(
+            ui.gestures_enabled, SIGNAL(stateChanged(int)),
+            _changedSignals, SLOT(map()) );
+    _changedSignals->setMapping(ui.gestures_enabled, "gestures_enabled" );
     }
 
 
@@ -55,14 +62,21 @@ GlobalSettingsWidget::~GlobalSettingsWidget()
 
 void GlobalSettingsWidget::doCopyFromObject()
     {
-    if ( _config )
+    if (_config)
         {
         KConfigGroup file(_config, "Desktop Entry");
         ui.enabled->setChecked(file.readEntry("X-KDE-Kded-autoload", false));
         }
 
-    KHotKeys::Settings settings;
-    ui.gestures_enabled->setChecked(settings.areGesturesDisabled());
+    ui.gestures_group->setVisible(_model);
+    if (_model)
+        {
+        KHotKeys::Settings *settings = _model->settings();
+        Q_ASSERT(settings);
+        kDebug() << settings->areGesturesDisabled();
+        ui.gestures_enabled->setChecked(!settings->areGesturesDisabled());
+        }
+
     }
 
 
@@ -75,6 +89,15 @@ void GlobalSettingsWidget::doCopyToObject()
         file.writeEntry("X-KDE-Kded-autoload", ui.enabled->checkState()==Qt::Checked);
         _config->sync();
         }
+
+    if (_model)
+        {
+        KHotKeys::Settings *settings = _model->settings();
+        Q_ASSERT(settings);
+        ui.gestures_enabled->isChecked()
+            ? settings->enableGestures()
+            : settings->disableGestures();
+        }
     }
 
 
@@ -85,17 +108,29 @@ bool GlobalSettingsWidget::isChanged() const
         KConfigGroup file(_config, "Desktop Entry");
         bool enabled = file.readEntry("X-KDE-Kded-autoload", false);
 
-        if ( enabled && ( ui.enabled->checkState() != Qt::Checked ) )
-            {
-            return true;
-            }
-
-        if ( !enabled && ( ui.enabled->checkState() != Qt::Unchecked ) )
+        if (enabled!=ui.enabled->isChecked())
             {
             return true;
             }
         }
+
+    if (_model)
+        {
+        KHotKeys::Settings *settings = _model->settings();
+        Q_ASSERT(settings);
+        if ((!settings->areGesturesDisabled()) != ui.gestures_enabled->isChecked())
+            {
+            return true;
+            }
+        }
+
     return false;
+    }
+
+
+void GlobalSettingsWidget::setModel(KHotkeysModel *model)
+    {
+    _model = model;
     }
 
 

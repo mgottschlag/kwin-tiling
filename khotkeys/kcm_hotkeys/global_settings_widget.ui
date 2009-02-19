@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>GlobalSettingsWidget</class>
- <widget class="QWidget" name="GlobalSettingsWidget" >
-  <property name="geometry" >
+ <widget class="QWidget" name="GlobalSettingsWidget">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,34 +10,34 @@
     <height>729</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2" >
-   <property name="margin" >
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="margin">
     <number>0</number>
    </property>
    <item>
-    <widget class="QGroupBox" name="groupBox" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+    <widget class="QGroupBox" name="global_group">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="maximumSize" >
+     <property name="maximumSize">
       <size>
        <width>16777215</width>
        <height>100</height>
       </size>
      </property>
-     <property name="title" >
+     <property name="title">
       <string>KHotKeys Daemon</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout" >
-      <property name="margin" >
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="margin">
        <number>0</number>
       </property>
       <item>
-       <widget class="QCheckBox" name="enabled" >
-        <property name="text" >
+       <widget class="QCheckBox" name="enabled">
+        <property name="text">
          <string>Start the khotkeys daemon on logon</string>
         </property>
        </widget>
@@ -45,17 +46,17 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_2" >
-     <property name="title" >
+    <widget class="QGroupBox" name="gestures_group">
+     <property name="title">
       <string>Gestures</string>
      </property>
-     <layout class="QFormLayout" name="formLayout" >
-      <property name="margin" >
+     <layout class="QFormLayout" name="formLayout">
+      <property name="margin">
        <number>0</number>
       </property>
-      <item row="0" column="0" >
-       <widget class="QCheckBox" name="gestures_enabled" >
-        <property name="text" >
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="gestures_enabled">
+        <property name="text">
          <string>Enable Gestures</string>
         </property>
        </widget>

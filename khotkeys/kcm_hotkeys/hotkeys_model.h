@@ -67,14 +67,18 @@ class KHotkeysModel : public QAbstractItemModel
     int columnCount( const QModelIndex &index ) const;
     QVariant headerData( int section, Qt::Orientation, int role = Qt::DisplayRole ) const;
     QVariant data( const QModelIndex &index, int role = Qt::DisplayRole ) const;
+    bool setData( const QModelIndex &index, const QVariant &value, int role );
+    Qt::ItemFlags flags( const QModelIndex &index ) const;
     //@}
 
     bool removeRows( int row, int count, const QModelIndex &parent );
     QModelIndex addGroup( const QModelIndex &parent );
     QModelIndex insertActionData( KHotKeys::ActionDataBase *data, const QModelIndex &parent );
-    bool setData( const QModelIndex &index, const QVariant &value, int role );
 
-    Qt::ItemFlags flags( const QModelIndex &index ) const;
+    /**
+     * Return the settings we handle
+     */
+    KHotKeys::Settings *settings();
 
     /**
      * Support dropping

@@ -26,6 +26,8 @@
 #include <KSharedConfig>
 
 
+class KHotkeysModel;
+
 
 /**
  * @author Michael Jansen <kde@michael-jansen.biz>
@@ -46,6 +48,11 @@ public:
      */
     ~GlobalSettingsWidget();
 
+    /**
+     * Set the model we configure
+     */
+    void setModel(KHotkeysModel *);
+
 private Q_SLOTS:
 
     bool isChanged() const;
@@ -58,7 +65,7 @@ protected:
 private:
 
     KSharedConfigPtr _config;
-
+    KHotkeysModel *_model;
     Ui::GlobalSettingsWidget ui;
 
 };

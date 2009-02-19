@@ -656,4 +656,11 @@ bool KHotkeysModel::setData( const QModelIndex &index, const QVariant &value, in
     return true;
     }
 
+
+KHotKeys::Settings *KHotkeysModel::settings()
+    {
+    return &_settings;
+    }
+
+
 #include "moc_hotkeys_model.cpp"

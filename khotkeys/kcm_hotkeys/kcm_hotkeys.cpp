@@ -222,6 +222,7 @@ void KCMHotkeys::defaults()
 void KCMHotkeys::load()
     {
     d->load();
+    showGlobalSettings();
     }
 
 
@@ -261,9 +262,7 @@ KCMHotkeysPrivate::KCMHotkeysPrivate( KCMHotkeys *host )
     KHotKeys::init_global_data(false, q);
 
     tree_view->setModel(model);
-
-    current=global_settings;
-    global_settings->copyFromObject();
+    global_settings->setModel(model);
     }
 
 
