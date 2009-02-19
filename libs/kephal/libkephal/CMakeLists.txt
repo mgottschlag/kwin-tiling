@@ -54,5 +54,5 @@ INSTALL (FILES
         ../kephal/kephal.h
         ../kephal/configurations.h
         ../kephal/kephal_export.h
-        DESTINATION ${INCLUDE_INSTALL_DIR}/kephal)
+        DESTINATION ${INCLUDE_INSTALL_DIR}/kephal COMPONENT Devel)
 INSTALL (FILES FindKephal.cmake DESTINATION ${DATA_INSTALL_DIR}/cmake/modules)
