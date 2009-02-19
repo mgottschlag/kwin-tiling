@@ -1335,6 +1335,7 @@ void CKioFonts::get(const KUrl &url)
 
 void CKioFonts::put(const KUrl &u, int mode, KIO::JobFlags flags)
 {
+    Q_UNUSED(mode)
     KFI_DBUG << u.path() << " query:" << u.query();
 
     if(Misc::isHidden(u))
@@ -1370,7 +1371,7 @@ void CKioFonts::put(const KUrl &u, int mode, KIO::JobFlags flags)
 
     if(nrs && !getRootPasswd(u)) // Need to check can get root passwd before start download...
     {
-        error(KIO::ERR_ACCESS_DENIED, KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS);
+        error(KIO::ERR_ACCESS_DENIED, QString::fromLatin1(KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS));
         return;
     }
 
@@ -1419,7 +1420,7 @@ void CKioFonts::put(const KUrl &u, int mode, KIO::JobFlags flags)
             }
             else
             {
-                error(KIO::ERR_ACCESS_DENIED, KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS);
+                error(KIO::ERR_ACCESS_DENIED, QString::fromLatin1(KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS));
                 return;
             }
         }
@@ -1773,7 +1774,7 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, KIO::JobFlags fla
                     }
                     else
                     {
-                        error(KIO::ERR_ACCESS_DENIED, KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS);
+                        error(KIO::ERR_ACCESS_DENIED, src.url());
                         return;
                     }
                 }
@@ -1965,7 +1966,7 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, KIO::JobFlags flags)
                     }
                     else
                         if(nrs)
-                            error(KIO::ERR_ACCESS_DENIED, KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS);
+                            error(KIO::ERR_ACCESS_DENIED, QString::fromLatin1(KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS));
                         else
                             error(KIO::ERR_DOES_NOT_EXIST, urlString(src));
                 }
@@ -2036,7 +2037,7 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, KIO::JobFlags flags)
                     }
                     else
                         if(nrs)
-                            error(KIO::ERR_ACCESS_DENIED, KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS);
+                            error(KIO::ERR_ACCESS_DENIED, QString::fromLatin1(KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS));
                         else
                             error(KIO::ERR_DOES_NOT_EXIST, urlString(src));
                     return;
@@ -2136,7 +2137,7 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, KIO::JobFlags flags)
                     }
                     else
                     {
-                        error(KIO::ERR_ACCESS_DENIED, KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS);
+                        error(KIO::ERR_ACCESS_DENIED, QString::fromLatin1(KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS));
                         return;
                     }
                 }
@@ -2178,7 +2179,7 @@ void CKioFonts::del(const KUrl &url, bool)
                     itsFolders[FOLDER_SYS].disabled->refresh();
                 else
                 {
-                    error(KIO::ERR_ACCESS_DENIED, KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS);
+                    error(KIO::ERR_ACCESS_DENIED, QString::fromLatin1(KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS));
                     return;
                 }
             }
@@ -2209,7 +2210,7 @@ void CKioFonts::del(const KUrl &url, bool)
                     modified(timeout, FOLDER_SYS, clearList, modifiedDirs);
                 else
                 {
-                    error(KIO::ERR_ACCESS_DENIED, KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS);
+                    error(KIO::ERR_ACCESS_DENIED, QString::fromLatin1(KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS));
                     return;
                 }
             }
@@ -3232,11 +3233,12 @@ bool CKioFonts::getSourceFiles(const KUrl &src, CDisabledFonts::TFileList &files
             getFontFiles(*entries, files, removeSymLinks);
     }
     else
-        if(src.isLocalFile())
+        if(src.isLocalFile()) {
             if(FILE_UNKNOWN!=checkFile(src.path(), src))
                 files.append(CDisabledFonts::TFile(src.path()));
             else
                 return false;  // error logged in checkFile...
+        }
 
     if(files.count())
     {
