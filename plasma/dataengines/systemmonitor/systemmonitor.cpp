@@ -31,21 +31,23 @@ SystemMonitorEngine::SystemMonitorEngine(QObject* parent, const QVariantList& ar
     : Plasma::DataEngine(parent)
 {
     Q_UNUSED(args)
-    
+
     KSGRD::SensorMgr = new KSGRD::SensorManager(this);
-    KSGRD::SensorMgr->engage( "localhost", "", "ksysguardd" );
+    KSGRD::SensorMgr->engage("localhost", "", "ksysguardd");
 
     m_waitingFor= 0;
-    KSGRD::SensorMgr->sendRequest( "localhost", "monitors", (KSGRD::SensorClient*)this, -1);
+    KSGRD::SensorMgr->sendRequest("localhost", "monitors", (KSGRD::SensorClient*)this, -1);
 }
 
 SystemMonitorEngine::~SystemMonitorEngine()
 {
 }
 
-QStringList SystemMonitorEngine::sources() const { 
+QStringList SystemMonitorEngine::sources() const
+{
     return m_sensors; 
 }
+
 bool SystemMonitorEngine::sourceRequestEvent(const QString &name)
 {
     Q_UNUSED(name);
@@ -62,9 +64,12 @@ void SystemMonitorEngine::updateSensors()
 {
     DataEngine::SourceDict sources = containerDict();
     DataEngine::SourceDict::iterator it = sources.begin();
-    if(m_waitingFor != 0)
+    if (m_waitingFor != 0) {
         scheduleSourcesUpdated();
+    }
+
     m_waitingFor = 0;
+
     while (it != sources.end()) {
         m_waitingFor++;
         QString sensorName = it.key();
@@ -73,8 +78,9 @@ void SystemMonitorEngine::updateSensors()
     }
 }
 
-void SystemMonitorEngine::answerReceived( int id, const QList<QByteArray>&answer ) {
-    if (id<-1) {
+void SystemMonitorEngine::answerReceived(int id, const QList<QByteArray> &answer)
+{
+    if (id < -1) {
         QStringList newSensorInfo = QString::fromUtf8(answer[0]).split('\t');
         QString sensorName = newSensorInfo[0];
         QString min = newSensorInfo[1];
@@ -82,6 +88,7 @@ void SystemMonitorEngine::answerReceived( int id, const QList<QByteArray>&answer
         QString unit = newSensorInfo[3];
         DataEngine::SourceDict sources = containerDict();
         DataEngine::SourceDict::const_iterator it = sources.constFind(m_sensors.value(-id-2));
+
         if (it != sources.constEnd()) {
             it.value()->setData("name", sensorName);
             it.value()->setData("min", min);
@@ -89,26 +96,32 @@ void SystemMonitorEngine::answerReceived( int id, const QList<QByteArray>&answer
             it.value()->setData("units", unit);
             scheduleSourcesUpdated();
         }
+
         return;
     }
-    if(id==-1) {
+
+    if (id == -1) {
         QStringList sensors;
-        foreach(const QByteArray &sens, answer) {
+
+        foreach (const QByteArray &sens, answer) {
             QStringList newSensorInfo = QString::fromUtf8(sens).split('\t');
             QString newSensor = newSensorInfo[0];
             sensors.append(newSensor);
             setData(newSensor, "value", QVariant());
             setData(newSensor, "type", newSensorInfo[1]);
-            
+
             KSGRD::SensorMgr->sendRequest( "localhost", QString("%1?").arg(newSensor), (KSGRD::SensorClient*)this, -(sensors.indexOf(newSensor)+2));
         }
+
         m_sensors = sensors;
         return;
     }
+
     m_waitingFor--;
     QString reply;
-    if(!answer.isEmpty())
+    if (!answer.isEmpty()) {
         reply = QString::fromUtf8(answer[0]);
+    }
 
     DataEngine::SourceDict sources = containerDict();
     DataEngine::SourceDict::const_iterator it = sources.constFind(m_sensors.value(id));
@@ -116,10 +129,13 @@ void SystemMonitorEngine::answerReceived( int id, const QList<QByteArray>&answer
         it.value()->setData("value", reply);
     }
 
-    if(m_waitingFor == 0)
+    if (m_waitingFor == 0) {
         scheduleSourcesUpdated();
+    }
 }
-void SystemMonitorEngine::sensorLost( int ) { 
+
+void SystemMonitorEngine::sensorLost( int )
+{
     m_waitingFor--;
 }
 #include "systemmonitor.moc"
