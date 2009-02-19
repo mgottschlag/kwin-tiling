@@ -2,6 +2,7 @@
 Actions=
 Type=Service
 Name=Block Device
+Name[fr]=Périphérique bloc
 Name[ja]=ブロックデバイス
 Name[nds]=Blockreedschap
 Name[pt]=Dispositivo em Bloco

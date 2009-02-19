@@ -1,6 +1,7 @@
 [Desktop Action ignored]
 Icon=unknown
 Name=Ignored
+Name[fr]=Ignoré
 Name[nds]=Övergahn
 Name[pt]=Ignorada
 Name[pt_BR]=Ignorado
@@ -12,6 +13,7 @@ Exec=
 [Desktop Action usage]
 Icon=unknown
 Name=Usage
+Name[fr]=Utilisation
 Name[nds]=Bruuk
 Name[pt]=Utilização
 Name[pt_BR]=Uso
@@ -24,6 +26,7 @@ Exec=
 Actions=ignored;usage;
 Type=Service
 Name=Storage Volume
+Name[fr]=Volume de stockage
 Name[ja]=ストレージボリューム
 Name[nds]=Spiekermedium
 Name[pt]=Volume de Armazenamento

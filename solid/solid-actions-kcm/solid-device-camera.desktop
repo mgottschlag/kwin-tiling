@@ -2,6 +2,7 @@
 Actions=supportedDrivers;
 Type=Service
 Name=Camera
+Name[fr]=Appareil photo
 Name[ga]=Ceamara
 Name[ja]=カメラ
 Name[nds]=Kamera
@@ -15,6 +16,7 @@ X-KDE-Solid-Actions-Type=Camera
 [Desktop Action supportedDrivers]
 Icon=unknown
 Name=Supported Drivers
+Name[fr]=Pilotes pris en charge
 Name[ga]=Tiománaithe a dTacaítear Leo
 Name[ja]=サポートされているドライバ
 Name[nds]=Ünnerstütt Drievers

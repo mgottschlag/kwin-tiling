@@ -2,6 +2,7 @@
 Actions=
 Type=Service
 Name=Network Interface
+Name[fr]=Interface réseau
 Name[ga]=Comhéadan Líonra
 Name[ja]=ネットワークインターフェース
 Name[nds]=Nettwark-Koppelsteed

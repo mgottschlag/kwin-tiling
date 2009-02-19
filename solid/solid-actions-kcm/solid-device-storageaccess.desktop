@@ -2,6 +2,7 @@
 Actions=
 Type=Service
 Name=Access to storage devices
+Name[fr]=Accès à des périphériques de stockage
 Name[ja]=ストレージデバイスへのアクセス
 Name[nds]=Togriep op Spiekerreedschappen
 Name[pt]=Acesso aos dispositivos de armazenamento

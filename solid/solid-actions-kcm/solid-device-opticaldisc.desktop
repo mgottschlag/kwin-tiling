@@ -2,6 +2,7 @@
 Actions=availableContent;
 Type=Service
 Name=Optical Disc
+Name[fr]=Disque optique
 Name[ja]=光学ディスク
 Name[nds]=Optsch Schiev
 Name[pt]=Disco Óptico
@@ -14,6 +15,7 @@ X-KDE-Solid-Actions-Type=OpticalDisc
 [Desktop Action availableContent]
 Icon=unknown
 Name=Available Content on disc
+Name[fr]=Contenu disponible sur le disque
 Name[ja]=ディスク上の利用可能なコンテンツ
 Name[nds]=Verföögbor Inholt op de Schiev
 Name[pt]=Conteúdo disponível no disco

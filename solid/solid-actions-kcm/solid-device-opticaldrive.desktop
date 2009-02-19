@@ -2,6 +2,7 @@
 Actions=
 Type=Service
 Name=Optical Drive
+Name[fr]=Périphérique optique
 Name[ja]=光学ドライブ
 Name[nds]=Optsch Loopwark
 Name[pt]=Disco Óptico

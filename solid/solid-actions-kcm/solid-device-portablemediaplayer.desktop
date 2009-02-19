@@ -2,6 +2,7 @@
 Actions=
 Type=Service
 Name=Portable Media Player
+Name[fr]=Lecteur de média portable
 Name[ja]=ポータブルメディアプレーヤー
 Name[nds]=Mobil-Medienafspeler
 Name[pt]=Leitor Multimédia Portátil
