@@ -29,7 +29,7 @@
       </size>
      </property>
      <property name="title">
-      <string>KHotKeys Daemon</string>
+      <string>Input Actions Daemon</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="margin">
@@ -38,7 +38,7 @@
       <item>
        <widget class="QCheckBox" name="enabled">
         <property name="text">
-         <string>Start the khotkeys daemon on logon</string>
+         <string>Start the Input Actions daemon on logon</string>
         </property>
        </widget>
       </item>
