@@ -103,6 +103,13 @@ class Pager : public Plasma::Applet
             None
         };
 
+        enum CurrentDesktopSelected
+        {
+            DoNothing,
+            ShowDesktop,
+            ShowDashboard
+        };
+
         struct AnimInfo
         {
             int animId;
@@ -112,12 +119,14 @@ class Pager : public Plasma::Applet
         };
 
         DisplayedText m_displayedText;
+        CurrentDesktopSelected m_currentDesktopSelected;
         bool m_showWindowIcons;
         bool m_showOwnBackground;
         int m_rows;
         int m_columns;
         int m_desktopCount;
         int m_currentDesktop;
+        bool m_desktopDown;
         qreal m_widthScaleFactor;
         qreal m_heightScaleFactor;
         QSizeF m_size;

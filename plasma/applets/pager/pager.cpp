@@ -28,6 +28,7 @@
 #include <QGraphicsSceneHoverEvent>
 #include <QTimer>
 #include <QX11Info>
+#include <QDBusInterface>
 
 #include <KDialog>
 #include <KColorScheme>
@@ -57,10 +58,12 @@ const int DRAG_SWITCH_DELAY = 1000;
 Pager::Pager(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_displayedText(None),
+      m_currentDesktopSelected(DoNothing),
       m_showWindowIcons(false),
       m_showOwnBackground(false),
       m_rows(2),
       m_columns(0),
+      m_desktopDown(false),
       m_hoverIndex(-1),
       m_colorScheme(0),
       m_dragId(0),
@@ -92,6 +95,7 @@ void Pager::init()
     m_displayedText = (DisplayedText)cg.readEntry("displayedText", (int)m_displayedText);
     m_showWindowIcons = cg.readEntry("showWindowIcons", m_showWindowIcons);
     m_rows = globalConfig().readEntry("rows", m_rows);
+    m_currentDesktopSelected = (CurrentDesktopSelected)cg.readEntry("currentDesktopSelected", (int)m_currentDesktopSelected);
 
     if (m_rows < 1) {
         m_rows = 1;
@@ -219,6 +223,20 @@ void Pager::createConfigurationInterface(KConfigDialog *parent)
     ui.showWindowIconsCheckBox->setChecked(m_showWindowIcons);
     ui.spinRows->setValue(m_rows);
     ui.spinRows->setMaximum(m_desktopCount);
+
+    switch (m_currentDesktopSelected){
+        case DoNothing:
+            ui.doNothingRadioButton->setChecked(true);
+            break;
+
+        case ShowDesktop:
+            ui.showDesktopRadioButton->setChecked(true);
+            break;
+
+        case ShowDashboard:
+            ui.showDashboardRadioButton->setChecked(true);
+            break;
+    }
 }
 
 void Pager::recalculateGeometry()
@@ -435,6 +453,22 @@ void Pager::configAccepted()
         changed = true;
     }
 
+    CurrentDesktopSelected currentDesktopSelected;
+
+    if (ui.doNothingRadioButton->isChecked()) {
+        currentDesktopSelected = DoNothing;
+    } else if (ui.showDesktopRadioButton->isChecked()) {
+        currentDesktopSelected = ShowDesktop;
+    } else {
+        currentDesktopSelected = ShowDashboard;
+    }
+
+    if ((int)m_currentDesktopSelected != (int)currentDesktopSelected) {
+        m_currentDesktopSelected = currentDesktopSelected;
+        cg.writeEntry("currentDesktopSelected", (int)m_currentDesktopSelected);
+        changed = true;
+    }
+
     // we need to keep all pager applets consistent since this affects
     // the layout of the desktops as used by the window manager,
     // so we store the row count in the applet global configuration
@@ -467,6 +501,7 @@ void Pager::currentDesktopChanged(int desktop)
 
     m_currentDesktop = desktop;
     m_dirtyDesktop = -1;
+    m_desktopDown = false;
 
     if (!m_timer->isActive()) {
         m_timer->start(FAST_UPDATE_DELAY);
@@ -710,6 +745,20 @@ void Pager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         // only change the desktop if the user presses and releases the mouse on the same desktop
         KWindowSystem::setCurrentDesktop(m_dragStartDesktop + 1);
         m_currentDesktop = m_dragStartDesktop + 1;
+    } else if (m_dragStartDesktop != -1 && m_dragStartDesktop < m_rects.size() &&
+               m_rects[m_dragStartDesktop].contains(event->pos()) &&
+               m_currentDesktop == m_dragStartDesktop + 1) {
+        // toogle the desktop or the dashboard
+        // if the user presses and releases the mouse on the current desktop, default option is do nothing
+        if (m_currentDesktopSelected == ShowDesktop) {
+
+            NETRootInfo info(QX11Info::display(), 0);
+            m_desktopDown = !m_desktopDown;
+            info.setShowingDesktop(m_desktopDown);
+        } else if (m_currentDesktopSelected == ShowDashboard) {
+            QDBusInterface plasmaApp("org.kde.plasma-desktop", "/App");
+            plasmaApp.call("toggleDashboard");
+        }
     }
 
     m_dragId = 0;
