@@ -90,7 +90,7 @@ bool SM::Net::addMeter(const QString& source)
     plotter->setUseAutoRange(true);
     plotter->setThinFrame(false);
     plotter->setShowLabels(false);
-    plotter->setShowTopBar(false);
+    plotter->setShowTopBar(true);
     plotter->setShowVerticalLines(false);
     plotter->setShowHorizontalLines(false);
     plotter->setStackPlots(true);
