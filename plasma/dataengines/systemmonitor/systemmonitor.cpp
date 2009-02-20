@@ -81,13 +81,26 @@ void SystemMonitorEngine::updateSensors()
 void SystemMonitorEngine::answerReceived(int id, const QList<QByteArray> &answer)
 {
     if (id < -1) {
+        if (answer.isEmpty() || m_sensors.count() <= (-id - 2)) {
+            kDebug() << "sensor info answer was empty, (" << answer.isEmpty() << ") or sensors too small ("
+                     << m_sensors.count() << ") for index" << (-id - 2);
+            return;
+        }
+
         QStringList newSensorInfo = QString::fromUtf8(answer[0]).split('\t');
+
+        if (newSensorInfo.count() < 4) {
+            kDebug() << "bad sensor info, only" << newSensorInfo.count()
+                     << "entries, and we were expecting 4";
+            return;
+        }
+
         QString sensorName = newSensorInfo[0];
         QString min = newSensorInfo[1];
         QString max = newSensorInfo[2];
         QString unit = newSensorInfo[3];
         DataEngine::SourceDict sources = containerDict();
-        DataEngine::SourceDict::const_iterator it = sources.constFind(m_sensors.value(-id-2));
+        DataEngine::SourceDict::const_iterator it = sources.constFind(m_sensors.value(-id - 2));
 
         if (it != sources.constEnd()) {
             it.value()->setData("name", sensorName);
