@@ -5,6 +5,7 @@ libplasma
 * Features
     * Widgets
         * NEW: SpinBox
+        * NEW: VideoWidget
 
 Developer Documentation
 -----------------------
@@ -37,6 +38,8 @@ Plugins/Addons
              * Added support for other Twitter API based services like identi.ca (that is based on laconi.ca).
          * File Watcher
              * Added support for filtering (both regular expressions and exact matches are supported).
+         * Web browser
+             * real page zoom instead of just font scaling
 
 KRunner
 -------
