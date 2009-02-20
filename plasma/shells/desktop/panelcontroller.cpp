@@ -207,6 +207,8 @@ public:
             emit q->panelVisibilityModeChanged(PanelView::AutoHide);
         } else if (q->sender() == underWindowsTool) {
             emit q->panelVisibilityModeChanged(PanelView::LetWindowsCover);
+        } else if (q->sender() == overWindowsTool) {
+            emit q->panelVisibilityModeChanged(PanelView::WindowsGoBelow);
         }
     }
 
@@ -322,6 +324,7 @@ public:
     ToolButton *normalPanelTool;
     ToolButton *autoHideTool;
     ToolButton *underWindowsTool;
+    ToolButton *overWindowsTool;
     ToolButton *expandTool;
 
     //Widgets for actions
@@ -429,6 +432,11 @@ PanelController::PanelController(QWidget* parent)
     d->underWindowsTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     modeLayout->addWidget(d->underWindowsTool);
     connect(d->underWindowsTool, SIGNAL(toggled(bool)), this, SLOT(panelVisibilityModeChanged(bool)));
+
+    d->overWindowsTool = d->addTool("view-restore", i18n("Windows go below"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
+    d->overWindowsTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    modeLayout->addWidget(d->overWindowsTool);
+    connect(d->overWindowsTool, SIGNAL(toggled(bool)), this, SLOT(panelVisibilityModeChanged(bool)));
 
     d->layout->addStretch();
     d->moveTool = d->addTool(QString(), i18n("Screen Edge"), this);
@@ -712,6 +720,9 @@ void PanelController::setVisibilityMode(PanelView::VisibilityMode mode)
     case PanelView::LetWindowsCover:
         d->underWindowsTool->setChecked(true);
         break;
+    case PanelView::WindowsGoBelow:
+        d->overWindowsTool->setChecked(true);
+        break;
     case PanelView::NormalPanel:
     default:
         d->normalPanelTool->setChecked(true);
@@ -723,6 +734,8 @@ PanelView::VisibilityMode PanelController::panelVisibilityMode() const
 {
     if (d->underWindowsTool->isChecked()) {
         return PanelView::LetWindowsCover;
+    } else if (d->overWindowsTool->isChecked()) {
+        return PanelView::WindowsGoBelow;
     } else if (d->autoHideTool->isChecked()) {
         return PanelView::AutoHide;
     } else {

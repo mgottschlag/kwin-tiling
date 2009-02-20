@@ -62,7 +62,8 @@ public:
     enum VisibilityMode {
         NormalPanel = 0,
         AutoHide,
-        LetWindowsCover
+        LetWindowsCover,
+        WindowsGoBelow
     };
 
    /**

@@ -364,7 +364,7 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
         state |= NET::StaysOnTop;
     }
 
-    if (mode == NormalPanel) {
+    if (mode == NormalPanel || mode == WindowsGoBelow) {
         // we need to kill the input window if it exists!
         destroyUnhideTrigger();
         disconnect(containment(), SIGNAL(activate()), this, SLOT(unhide()));
