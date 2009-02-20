@@ -21,6 +21,8 @@
 #include "player.h"
 
 #include <QObject>
+#include <QPixmap>
+#include <QString>
 
 class OrgKdeJukPlayerInterface;
 
@@ -58,10 +60,14 @@ public:
     bool canSetVolume() { return true; }
     void setVolume(qreal volume);
 
+    QPixmap artwork();
+
     bool canSeek() { return state() != Stopped; }
     void seek(int time);
 
 private:
+    QPixmap m_artwork;
+    QString m_lastPath;
     typedef OrgKdeJukPlayerInterface JukPlayer;
     JukPlayer* jukPlayer;
 };

@@ -199,6 +199,38 @@ void Juk::setVolume(qreal volume) {
     }
 }
 
+QPixmap Juk::artwork()
+{
+    if(!jukPlayer->isValid())
+        return QPixmap();
+
+    QString playingPath = jukPlayer->trackProperty("Path");
+
+    // Caching is employed since some players have to make temp files for
+    // their cover art.  If we were to grab a cover once per second that
+    // could be disastrous.
+    if(playingPath == m_lastPath)
+        return m_artwork;
+
+    m_lastPath = playingPath;
+    if(playingPath.isEmpty()) {
+        m_artwork = QPixmap();
+        return m_artwork;
+    }
+
+    // JuK only supports this method starting from KDE 4.3
+    QDBusInterface collectionIface("org.kde.juk", "/Collection", "org.kde.juk.collection");
+    QDBusReply<QString> reply = collectionIface.call("trackCover", playingPath);
+
+    if(reply.isValid() && !reply.value().isEmpty()) {
+        m_artwork = QPixmap(reply.value());
+        return m_artwork;
+    }
+
+    m_artwork = QPixmap();
+    return m_artwork;
+}
+
 void Juk::seek(int time)
 {
     if (jukPlayer->isValid()) {
