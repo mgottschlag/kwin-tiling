@@ -63,78 +63,6 @@ K_PLUGIN_FACTORY(KeyboardLayoutFactory,
         )
 K_EXPORT_PLUGIN(KeyboardLayoutFactory("kxkb"))
 
-
-static
-bool localeAwareLessThan(const QString &s1, const QString &s2)
-{
-    return QString::localeAwareCompare(s1, s2) < 0;
-}
-
-// sort by locale-aware value string
-static QList<QString> getKeysSortedByVaue(const QHash<QString, QString>& map)
-{
-    QList<QString> outList;
-
-    QMap<QString, QString> reverseMap;
-    // we have to add nums as translations can be dups and them reverse map will miss items
-    int i=0;
-    QString fmt("%1%2");
-    foreach (const QString& str, map.keys())
-        reverseMap.insert(fmt.arg(map[str], QString::number(i++)), str);
-
-    QList<QString> values = reverseMap.keys();
-    qSort(values.begin(), values.end(), localeAwareLessThan);
-
-    foreach (const QString& value, values)
-        outList << reverseMap[value];
-/*
-    int diff = map.keys().count() - reverseMap.keys().count();
-    if( diff > 0 ) {
-        kDebug() << "original keys" << map.keys().count() << "reverse map" << reverseMap.keys().count() 
-            << "- translation encoding must have been messed up - padding layouts...";
-        for(int i=0; i<diff; i++)
-            reverseMap.insert(QString("%1%2").arg("nocrash", i), "nocrash");
-    }
-*/
-    return outList;
-}
-
-enum {
-    LAYOUT_COLUMN_FLAG = 0,
-    LAYOUT_COLUMN_NAME = 1,
-    LAYOUT_COLUMN_MAP = 2,
-    LAYOUT_COLUMN_VARIANT = 3,
-    LAYOUT_COLUMN_DISPLAY_NAME = 4,
-    SRC_LAYOUT_COLUMN_COUNT = 3,
-    DST_LAYOUT_COLUMN_COUNT = 5
-};
-
-enum { TAB_LAYOUTS=0, TAB_OPTIONS=1, TAB_XKB=2 };
-enum { BTN_XKB_ENABLE=0, BTN_XKB_INDICATOR=1, BTN_XKB_DISABLE=2 };
-
-
-class SrcLayoutModel: public QAbstractTableModel {
-public:
-    SrcLayoutModel(XkbRules* rules, QObject *parent)
-    : QAbstractTableModel(parent)
-    { setRules(rules); }
-//    bool hasChildren ( const QModelIndex & parent = QModelIndex() ) const { return false; }
-    int columnCount(const QModelIndex& parent) const { return !parent.isValid() ? SRC_LAYOUT_COLUMN_COUNT : 0; }
-    int rowCount(const QModelIndex&) const { return m_rules->layouts().keys().count(); }
-    QVariant data(const QModelIndex& index, int role) const;
-    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
-
-    void setRules(XkbRules* rules) { 
-        m_rules = rules; 
-        m_layoutKeys = getKeysSortedByVaue( m_rules->layouts() );
-    }
-    QString getLayoutAt(int row) { return m_layoutKeys[row]; }
-
-private:
-    XkbRules* m_rules;
-    QStringList m_layoutKeys;
-};
-
 QVariant SrcLayoutModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != Qt::DisplayRole)
@@ -147,8 +75,7 @@ QVariant SrcLayoutModel::headerData(int section, Qt::Orientation orientation, in
     return QVariant();
 }
 
-QVariant
-SrcLayoutModel::data(const QModelIndex& index, int role) const
+QVariant SrcLayoutModel::data(const QModelIndex& index, int role) const
 { 
     if (!index.isValid())
     return QVariant();
@@ -175,25 +102,33 @@ SrcLayoutModel::data(const QModelIndex& index, int role) const
     return QVariant();
 }
 
-class DstLayoutModel: public QAbstractTableModel {
-public:
-    DstLayoutModel(XkbRules* rules, KxkbConfig* kxkbConfig, QObject *parent)
-    : QAbstractTableModel(parent),
-    m_kxkbConfig(kxkbConfig)
-    { setRules(rules); }
-    int columnCount(const QModelIndex& parent) const { return !parent.isValid() ? DST_LAYOUT_COLUMN_COUNT : 0; }
-    int rowCount(const QModelIndex&) const { return m_kxkbConfig->m_layouts.count(); }
-    QVariant data(const QModelIndex& index, int role) const;
-    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+Qt::ItemFlags SrcLayoutModel::flags(const QModelIndex &index) const                                                                        
+{                                                                                                                                          
+    Qt::ItemFlags defaultFlags = QAbstractTableModel::flags(index);                                                                        
+    return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | defaultFlags;                                                                   
+}                                                                                                                                          
+                                                                                                                                           
+QMimeData* SrcLayoutModel::mimeData(const QModelIndexList &indexes) const                                                                  
+{                                                                                                                                          
+    QMimeData *mimeData = QAbstractTableModel::mimeData(indexes);                                                                          
+    mimeData->setText(indexes.first().data().toString());
+    return mimeData;                                                                                                                       
+}      
 
-    void setRules(XkbRules* rules) { m_rules = rules; }
-    void reset() { QAbstractTableModel::reset(); }
-    void emitDataChange(int row, int col) { emit dataChanged(createIndex(row,col),createIndex(row,col)); }
-
-private:
-    XkbRules* m_rules;
-    KxkbConfig* m_kxkbConfig;
-};
+bool SrcLayoutModel::dropMimeData(const QMimeData *data,                                                                                   
+     Qt::DropAction action, int row, int column, const QModelIndex &parent)                                                                
+{                                                                                                                                          
+    Q_UNUSED(data);
+    Q_UNUSED(row);                                                                                                                         
+    Q_UNUSED(column);                                                                                                                      
+    Q_UNUSED(parent);                                                                                                                      
+                                                                                                                                           
+    if (action == Qt::IgnoreAction)                                                                                                        
+        return false;                                                                                                                      
+                                                                                                                                           
+    emit layoutRemoved();                                                                                                                  
+    return true;                                                                                                                           
+}       
 
 QVariant DstLayoutModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
@@ -207,8 +142,7 @@ QVariant DstLayoutModel::headerData(int section, Qt::Orientation orientation, in
     return QVariant();
 }
 
-QVariant
-DstLayoutModel::data(const QModelIndex& index, int role) const
+QVariant DstLayoutModel::data(const QModelIndex& index, int role) const
 { 
     if (!index.isValid())
         return QVariant();
@@ -238,6 +172,28 @@ DstLayoutModel::data(const QModelIndex& index, int role) const
     return QVariant();
 }
 
+bool DstLayoutModel::dropMimeData(const QMimeData *data,                                                                                   
+     Qt::DropAction action, int row, int column, const QModelIndex &parent)                                                                
+{                                                                                                                                          
+    Q_UNUSED(data);
+    Q_UNUSED(row);                                                                                                                         
+    Q_UNUSED(column);                                                                                                                      
+    Q_UNUSED(parent);                                                                                                                      
+                                                                                                                                           
+    if (action == Qt::IgnoreAction)                                                                                                        
+        return false;                                                                                                                      
+                                                                                                                                           
+    emit layoutAdded();                                                                                                                  
+    return true;                                                                                                                           
+}                                                                                                                                          
+                                                                                                                                           
+Qt::ItemFlags DstLayoutModel::flags(const QModelIndex &index) const                                                                        
+{                                                                                                                                          
+    Qt::ItemFlags defaultFlags = QAbstractTableModel::flags(index);                                                                        
+                                                                                                                                           
+    if (m_kxkbConfig->m_layouts.count() >= GROUP_LIMIT)                                                                                    
+        return Qt::ItemIsDragEnabled | defaultFlags;                                                                                            
+    return Qt::ItemIsDropEnabled | Qt::ItemIsDragEnabled | defaultFlags;                                                                    } 
 
 class XkbOptionsModel: public QAbstractItemModel {
 public:
@@ -392,6 +348,8 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
 //(QTableView)    widget->srcTableView->setShowGrid(false);
 //(QTableView)    widget->srcTableView->resizeRowsToContents();
     widget->srcTableView->setRootIsDecorated(false);
+    widget->srcTableView->setDragDropMode(QAbstractItemView::DragDrop);
+    widget->srcTableView->setDropIndicatorShown(false);
 
     m_dstModel = new DstLayoutModel(m_rules, &m_kxkbConfig, NULL);
     widget->dstTableView->setModel(m_dstModel);
@@ -399,6 +357,8 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
     widget->dstTableView->setColumnWidth(LAYOUT_COLUMN_MAP, 30);
 //(QTableView)    widget->dstTableView->verticalHeader()->hide();
     widget->dstTableView->setRootIsDecorated(false);
+    widget->dstTableView->setDragDropMode(QAbstractItemView::DragDrop);
+    widget->dstTableView->setDropIndicatorShown(false);
 
     m_xkbOptModel = new XkbOptionsModel(m_rules, &m_kxkbConfig, NULL);
     widget->xkbOptionsTreeView->setModel(m_xkbOptModel);
@@ -420,6 +380,9 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
 
     connect( widget->srcTableView, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(add()));
     connect( widget->dstTableView, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(remove()));
+    connect( m_dstModel, SIGNAL(layoutAdded()), this, SLOT(add()));
+    connect( m_srcModel, SIGNAL(layoutRemoved()), this, SLOT(remove()));
+    
     connect( widget->btnAdd, SIGNAL(clicked()), this, SLOT(add()));
     connect( widget->btnRemove, SIGNAL(clicked()), this, SLOT(remove()));
 
@@ -723,6 +686,12 @@ void LayoutConfig::add()
     QHash<QString, QString> layouts = m_rules->layouts();
     QString layout = m_srcModel->getLayoutAt(selected[0].row());
 //    kDebug() << "selected to add" << layout;
+
+    //First check for duplicates
+    //Second make sure it's not dropped from itself.
+    if (m_kxkbConfig.m_layouts.contains(layout) || widget->dstTableView->hasFocus())
+        return;
+
     LayoutUnit lu(layout, "");
     m_kxkbConfig.m_layouts << lu;
 
