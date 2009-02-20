@@ -194,12 +194,14 @@ class CalendarTablePrivate
 CalendarTable::CalendarTable(const QDate &date, QGraphicsWidget *parent)
     : QGraphicsWidget(parent), d(new CalendarTablePrivate(this, date))
 {
+    setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 }
 
 CalendarTable::CalendarTable(QGraphicsWidget *parent)
     : QGraphicsWidget(parent), d(new CalendarTablePrivate(this))
 {
     setAcceptHoverEvents(true);
+    setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 }
 
 CalendarTable::~CalendarTable()

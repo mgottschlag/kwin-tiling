@@ -71,12 +71,14 @@ Calendar::Calendar(const QDate &date, QGraphicsWidget *parent)
     : QGraphicsWidget(parent), d(new CalendarPrivate())
 {
     init(new CalendarTable(date));
+    setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 }
 
 Calendar::Calendar(QGraphicsWidget *parent)
     : QGraphicsWidget(parent), d(new CalendarPrivate())
 {
     init(new CalendarTable());
+    setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 }
 
 Calendar::Calendar(CalendarTable *calendarTable, QGraphicsWidget *parent)
