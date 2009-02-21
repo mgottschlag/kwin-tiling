@@ -111,7 +111,6 @@ private Q_SLOTS:
     void configAccepted();
     void toggleMenu(bool pressed);
     void toggleMenu();
-    void aboutToHideMenu();
     void actionTriggered(QAction *action);
 
 private:

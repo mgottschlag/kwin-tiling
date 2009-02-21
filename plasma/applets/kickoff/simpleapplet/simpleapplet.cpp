@@ -422,7 +422,8 @@ void MenuLauncherApplet::toggleMenu()
     if (!d->menuview) {
         d->menuview = new Kickoff::MenuView();
         connect(d->menuview, SIGNAL(triggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
-        connect(d->menuview, SIGNAL(aboutToHide()), this, SLOT(aboutToHideMenu()));
+        connect(d->menuview, SIGNAL(aboutToHide()), d->icon, SLOT(setUnpressed()));
+        connect(d->menuview, SIGNAL(afterBeingHidden()), d->menuview, SLOT(deleteLater()));
 
         switch (d->viewtype) {
         case Combined: {
@@ -544,19 +545,6 @@ void MenuLauncherApplet::toggleMenu()
     d->menuview->setAttribute(Qt::WA_DeleteOnClose);
     d->menuview->popup(popupPosition(d->menuview->sizeHint()));
     d->icon->setPressed();
-}
-
-void MenuLauncherApplet::aboutToHideMenu()
-{
-    d->icon->setUnpressed();
-    if(d->menuview) {
-        //sebsauer, 2009-01-21; another dirty hack; delay destruction else it crashes in the KIconLoader
-        //dtor for whatever reason (rather hard to reproduce). Solution for this and the other hacks
-        //would be to finally get right of the way we build the menu by providing a model that does
-        //handle merging of the other models und updating the menus if content changes.
-        QTimer::singleShot(100, d->menuview, SLOT(delayedDestruct()));
-        d->menuview = 0;
-    }
 }
 
 void MenuLauncherApplet::actionTriggered(QAction *action)

@@ -132,8 +132,17 @@ protected:
     virtual bool eventFilter(QObject * watched, QEvent *event);
 
 public Q_SLOTS:
-    // an item in the menu got triggered
+    /**
+     * An item in the menu got triggered.
+     */
     void actionTriggered(QAction* action);
+
+Q_SIGNALS:
+    /**
+     * Compared to the aboutToShow() this signal will be emitted after the menu
+     * got hidden.
+     */
+    void afterBeingHidden();
 
 private Q_SLOTS:
     // new items have been inserted into the model

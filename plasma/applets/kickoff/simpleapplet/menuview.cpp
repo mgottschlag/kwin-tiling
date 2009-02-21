@@ -171,7 +171,8 @@ void MenuView::updateAction(QAction *action, const QModelIndex& index)
 
 bool MenuView::eventFilter(QObject *watched, QEvent *event)
 {
-    if (event->type() == QEvent::MouseMove) {
+    switch(event->type()) {
+    case QEvent::MouseMove: {
         QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
         QMenu *watchedMenu = qobject_cast<QMenu*>(watched);
         const int mousePressDistance = !d->mousePressPos.isNull() ? (mouseEvent->pos() - d->mousePressPos).manhattanLength() : 0;
@@ -209,17 +210,24 @@ bool MenuView::eventFilter(QObject *watched, QEvent *event)
 
             return true;
         }
-    } else if (event->type() == QEvent::MouseButtonPress) {
+    } break;
+    case QEvent::MouseButtonPress: {
         QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
         QMenu *watchedMenu = qobject_cast<QMenu*>(watched);
         if (watchedMenu) {
             d->mousePressPos = mouseEvent->pos();
         }
-    } else if (event->type() == QEvent::MouseButtonRelease) {
+    } break;
+    case QEvent::MouseButtonRelease: {
         QMenu *watchedMenu = qobject_cast<QMenu*>(watched);
         if (watchedMenu) {
             d->mousePressPos = QPoint();
         }
+    } break;
+    case QEvent::Hide: {
+        emit afterBeingHidden();
+    } break;
+    default: break;
     }
 
     return KMenu::eventFilter(watched, event);
@@ -256,7 +264,6 @@ QModelIndex MenuView::indexForAction(QAction *action) const
     Q_ASSERT(d->model);
     Q_ASSERT(action != 0);
     QPersistentModelIndex index = action->data().value<QPersistentModelIndex>();
-    Q_ASSERT(index.isValid());
     return index;
 }
 
@@ -385,8 +392,9 @@ void MenuView::actionTriggered(QAction *action)
 {
     Q_ASSERT(d->model);
     QModelIndex index = indexForAction(action);
-    Q_ASSERT(index.isValid());
-    d->launcher->openItem(index);
+    if(index.isValid()) {
+        d->launcher->openItem(index);
+    }
 }
 
 #include "menuview.moc"
