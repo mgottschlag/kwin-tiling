@@ -301,11 +301,11 @@ void PowerDevilRunner::run( const Plasma::RunnerContext &context, const Plasma::
     Q_UNUSED( context )
 
     QDBusInterface iface( "org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", m_dbus );
-    if ( match.id() == "PowerDevil_ProfileChange" ) {
+    if ( match.id().startsWith("PowerDevil_ProfileChange" )) {
         iface.call( "setProfile", match.data().toString() );
-    } else if ( match.id() == "PowerDevil_GovernorChange" ) {
+    } else if ( match.id().startsWith("PowerDevil_GovernorChange")) {
         iface.call( "setGovernor", match.data().toInt() );
-    } else if ( match.id() == "PowerDevil_SchemeChange" ) {
+    } else if ( match.id().startsWith("PowerDevil_SchemeChange" )) { 
         iface.call( "setPowersavingScheme", match.data().toString() );
     } else if ( match.id() == "PowerDevil_BrightnessChange" ) {
         iface.call( "setBrightness", match.data().toInt() );
@@ -315,7 +315,7 @@ void PowerDevilRunner::run( const Plasma::RunnerContext &context, const Plasma::
         iface.call( "setBrightness", -2 );
     } else if ( match.id() == "PowerDevil_TurnOffScreen" ) {
         iface.call( "turnOffScreen" );
-    } else if ( match.id() == "PowerDevil_Suspend" ) {
+    } else if ( match.id().startsWith( "PowerDevil_Suspend" )) {
         iface.call( "suspend", match.data().toInt() );
     }
 }
