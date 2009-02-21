@@ -189,6 +189,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
       m_panelController(0),
       m_glowBar(0),
       m_mousePollTimer(0),
+      m_strutsTimer(0),
       m_timeLine(0),
       m_spacer(0),
       m_spacerIndex(-1),
@@ -248,6 +249,10 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     KWindowSystem::setOnAllDesktops(winId(), true);
 
     QTimer::singleShot(0, this, SLOT(init()));
+
+    m_strutsTimer = new QTimer(this);
+    m_strutsTimer->setSingleShot(true);
+    connect(m_strutsTimer,SIGNAL(timeout()),this,SLOT(updateStruts()));
 }
 
 PanelView::~PanelView()
@@ -544,7 +549,8 @@ void PanelView::updatePanelGeometry()
     if (geom == geometry()) {
         // our geometry is the same, but the panel moved around
         // so make sure our struts are still valid
-        updateStruts();
+        m_strutsTimer->stop();
+        m_strutsTimer->start(STRUTSTIMERDELAY);
     } else {
         setGeometry(geom);
     }
@@ -913,13 +919,26 @@ void PanelView::updateStruts()
                                              strut.bottom_width,
                                              strut.bottom_start,
                                              strut.bottom_end);
+  if (m_panelController) {
+        m_panelController->setLocation(containment()->location());
+
+        if (m_panelController->isVisible()) {
+            m_panelController->resize(m_panelController->sizeHint());
+            m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
+        }
+
+        foreach (PanelAppletOverlay *o, m_moveOverlays) {
+            o->syncOrientation();
+        }
+    }
 }
 
 void PanelView::moveEvent(QMoveEvent *event)
 {
     //kDebug();
     QWidget::moveEvent(event);
-    updateStruts();
+    m_strutsTimer->stop();
+    m_strutsTimer->start(STRUTSTIMERDELAY);
     recreateUnhideTrigger();
 }
 
@@ -928,7 +947,8 @@ void PanelView::resizeEvent(QResizeEvent *event)
     //kDebug() << event->oldSize() << event->size();
     QWidget::resizeEvent(event);
     recreateUnhideTrigger();
-    updateStruts();
+    m_strutsTimer->stop();
+    m_strutsTimer->start(STRUTSTIMERDELAY);
 #ifdef Q_WS_WIN
     appBarPosChanged();
 #endif
