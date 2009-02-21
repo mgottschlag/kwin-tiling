@@ -39,7 +39,9 @@ Plugins/Addons
          * File Watcher
              * Added support for filtering (both regular expressions and exact matches are supported).
          * Web browser
-             * real page zoom instead of just font scaling
+             * real page zoom instead of just font scaling.
+         *Pager
+             * User can choose to do nothing, toogle the desktop or the dashboard when he click on the current desktop.
 
 KRunner
 -------
