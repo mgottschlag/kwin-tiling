@@ -1,5 +1,6 @@
 /*
  *   Copyright 2007 Alex Merry <alex.merry@kdemail.net>
+ *   Copyright 2009 Michael Pyne <mpyne@purinchu.net>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
