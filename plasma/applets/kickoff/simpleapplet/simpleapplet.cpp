@@ -168,6 +168,9 @@ public:
                 action->setVisible(action->menu() || ! view->indexForAction(action).data(Kickoff::UrlRole).isNull());
                 menuview->addAction(action);
             }
+            if (! action->menu()) {
+                view->removeAction(action);
+            }
         }
 
         // if the model asks us for a reset we can't do much except to invalidate our
