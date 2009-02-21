@@ -2,11 +2,12 @@
 Actions=
 Type=Service
 Name=Block Device
+Name[es]=Bloquear dispositivo
 Name[fr]=Périphérique bloc
 Name[ja]=ブロックデバイス
 Name[nds]=Blockreedschap
 Name[pt]=Dispositivo em Bloco
-Name[pt_BR]=Dispositivo em Bloco
+Name[pt_BR]=Dispositivo em bloco
 Name[sv]=Blockenhet
 Name[uk]=Блоковий пристрій
 Name[zh_TW]=區塊裝置

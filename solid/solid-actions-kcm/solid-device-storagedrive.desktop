@@ -2,6 +2,7 @@
 Actions=driveType;
 Type=Service
 Name=Storage drive
+Name[es]=Unidad de almacenamiento
 Name[fr]=Périphérique de stockage
 Name[ja]=ストレージドライブ
 Name[nds]=Spiekerloopwark
@@ -15,11 +16,12 @@ X-KDE-Solid-Actions-Type=StorageDrive
 [Desktop Action driveType]
 Icon=unknown
 Name=Drive Type
+Name[es]=Tipo de unidad
 Name[fr]=Type de lecteur
 Name[ja]=ドライブのタイプ
 Name[nds]=Loopwark-Typ
 Name[pt]=Tipo de Unidade
-Name[pt_BR]=Tipo de Unidade
+Name[pt_BR]=Tipo de unidade
 Name[sv]=Enhetstyp
 Name[uk]=Тип пристрою
 Name[zh_TW]=磁碟型態

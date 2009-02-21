@@ -2,6 +2,7 @@
 Actions=
 Type=Service
 Name=Serial Interface
+Name[es]=Interfaz serial
 Name[fr]=Interface série
 Name[ja]=シリアルインターフェース
 Name[nds]=Seriell Koppelsteed
