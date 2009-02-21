@@ -31,9 +31,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="clean_component">
+      <widget class="QPushButton" name="menu_button">
        <property name="text">
-        <string>Clean</string>
+        <string>File</string>
        </property>
       </widget>
      </item>
@@ -50,7 +50,7 @@
  </customwidgets>
  <tabstops>
   <tabstop>components</tabstop>
-  <tabstop>clean_component</tabstop>
+  <tabstop>menu_button</tabstop>
  </tabstops>
  <resources/>
  <connections/>

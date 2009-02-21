@@ -17,21 +17,22 @@
  */
 #include "kglobalshortcutseditor.h"
 
-
-#include <KDE/KMessageBox>
-
-#include <QStackedWidget>
-#include <QHash>
-
 #include "ui_kglobalshortcutseditor.h"
-#include "kactioncollection.h"
-#include "kshortcut.h"
-#include "kdebug.h"
-#include <kglobalaccel.h>
-
+#include "select_scheme_dialog.h"
 #include "globalshortcuts.h"
 #include "kglobalaccel_interface.h"
 #include "kglobalaccel_component_interface.h"
+
+#include <KDE/KActionCollection>
+#include <KDE/KDebug>
+#include <KDE/KFileDialog>
+#include <KDE/KGlobalAccel>
+#include <KDE/KMessageBox>
+#include <KDE/KShortcut>
+
+#include <QtGui/QStackedWidget>
+#include <QtGui/QMenu>
+#include <QtCore/QHash>
 
 #include <QDBusConnection>
 #include <QDBusError>
@@ -108,9 +109,13 @@ void KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::initGUI()
     connect(ui.components, SIGNAL(activated(const QString&)),
             q, SLOT(activateComponent(const QString&)));
 
-    // The delete components button
-    connect(ui.clean_component, SIGNAL(clicked()),
-            q, SLOT(cleanComponent()));
+    // Build the menu
+    QMenu *menu = new QMenu(q);
+    menu->addAction( i18n("Import Scheme ..."), q, SLOT(importScheme()));
+    menu->addAction( i18n("Export Scheme ..."), q, SLOT(exportScheme()));
+    menu->addAction( i18n("Revise Component"), q, SLOT(cleanComponent()));
+
+    ui.menu_button->setMenu(menu);
 }
 
 
@@ -205,6 +210,49 @@ void KGlobalShortcutsEditor::clear()
     }
     d->components.clear();
     d->ui.components->clear();
+}
+
+
+void KGlobalShortcutsEditor::exportScheme()
+{
+    KUrl url = KFileDialog::getSaveFileName(KUrl(), "*.kksrc", this);
+    if (!url.isEmpty()) {
+        KConfig config(url.path());
+        config.deleteGroup("Shortcuts");
+        config.deleteGroup("Global Shortcuts");
+        exportConfiguration(&config);
+    }
+}
+
+
+void KGlobalShortcutsEditor::importScheme()
+{
+    // Check for unsaved modifications
+    if (isModified()) {
+        int choice = KMessageBox::warningContinueCancel(
+                         this,
+                         i18n("Your current changes will be lost if you load another scheme before saving this one"),
+                         i18n("Load Shortcurt Scheme"),
+                         KGuiItem(i18n("Load")));
+        if (choice != KMessageBox::Continue) {
+            return;
+        }
+    }
+
+    SelectSchemeDialog dialog(this);
+    if (dialog.exec() != KDialog::Accepted) {
+        return;
+    }
+
+    KUrl url = dialog.selectedScheme();
+    if (!url.isLocalFile()) {
+        KMessageBox::sorry(this, i18n("This file (%1) does not exist. You can only select local files.",
+                           url.url()));
+        return;
+    }
+    kDebug() << url.path();
+    KConfig config(url.path());
+    importConfiguration(&config);
 }
 
 

@@ -37,9 +37,6 @@ public:
     virtual void load();
     virtual void defaults();
 
-public slots:
-    virtual void importScheme();
-    virtual void exportScheme();
 private:
     KGlobalShortcutsEditor *editor;
 };

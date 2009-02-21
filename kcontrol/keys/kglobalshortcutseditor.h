@@ -124,6 +124,8 @@ public Q_SLOTS:
      */
     void allDefault();
 
+    virtual void importScheme();
+    virtual void exportScheme();
 
 private Q_SLOTS:
     void _k_key_changed();
