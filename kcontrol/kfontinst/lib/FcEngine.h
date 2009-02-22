@@ -39,7 +39,6 @@
 //Enable the following to use locale aware family name - if font supports this.
 //#define KFI_USE_TRANSLATED_FAMILY_NAME
 
-class QPixmap;
 class KConfig;
 
 typedef struct _XftFont  XftFont;
@@ -53,6 +52,8 @@ class KDE_EXPORT CFcEngine
 {
     public:
 
+    struct Xft;
+    
     struct TRange
     {
         TRange(quint32 f=0, quint32 t=0) : from(f), to(t) { }
@@ -78,11 +79,12 @@ class KDE_EXPORT CFcEngine
     void                  readConfig(KConfig &cfg);
     void                  writeConfig(KConfig &cfg);
     static void           setDirty() { theirFcDirty=true; }
-    bool                  drawPreview(const QString &item, QPixmap &pix, const QColor &col, int h,
+    QImage                drawPreview(const QString &item, const QColor &txt, const QColor &bgnd, int h,
                                       quint32 style=KFI_NO_STYLE_INFO, int face=0);
-    bool                  draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bool thumb,
+    QImage                draw(const KUrl &url, int w, int h, const QColor &txt, const QColor &bgnd, int faceNo, bool thumb,
                                const QList<TRange> &range=QList<TRange>(), QList<TChar> *chars=NULL,
                                const QString &name=QString(), quint32 style=KFI_NO_STYLE_INFO);
+
     int                   getNumIndexes() { return itsIndexCount; } // Only valid after draw has been called!
     const QString &       getName(const KUrl &url, int faceNo=0);
     bool                  getInfo(const KUrl &url, int faceNo, Misc::TFont &info);
@@ -95,16 +97,13 @@ class KDE_EXPORT CFcEngine
     int                   alphaSize() const { return itsSizes[itsAlphaSizeIndex]; }
     quint32               styleVal() { return FC::createStyleVal(itsWeight, itsWidth, itsSlant); }
 
-    const QString &       getPreviewString()                  { return itsPreviewString; }
+    const QString &       getPreviewString(){ return itsPreviewString; }
     static QString        getDefaultPreviewString();
     void                  setPreviewString(const QString &str)
                             { itsPreviewString=str.isEmpty() ? getDefaultPreviewString() : str; }
     static QString        getUppercaseLetters();
     static QString        getLowercaseLetters();
     static QString        getPunctuation();
-
-    static void           setTextCol(const QColor &col) { theirTextCol=col; }
-    static const QColor & textCol()                     { return theirTextCol; }
 
     static const int      constScalableSizes[];
     static const int      constDefaultAlphaSize;
@@ -117,10 +116,10 @@ class KDE_EXPORT CFcEngine
     XftFont *             getFont(int size);
     bool                  isCorrect(XftFont *f, bool checkFamily);
     void                  getSizes();
-    void                  drawLine(QPixmap &pix, int x, int y, int w, int h);
-    void                  drawName(QPixmap &pix, XftDraw *xftDraw, XftColor *xftCol, int x, int &y, int w, int h);
+    void                  drawName(int x, int &y, int h);
     void                  addFontFile(const QString &file);
     void                  reinit();
+    Xft *                 xft();
 
     private:
 
@@ -140,7 +139,7 @@ class KDE_EXPORT CFcEngine
     QStringList   itsAddedFiles;
     QString       itsPreviewString;
     static bool   theirFcDirty;
-    static QColor theirTextCol;
+    Xft           *itsXft;
 };
 
 }

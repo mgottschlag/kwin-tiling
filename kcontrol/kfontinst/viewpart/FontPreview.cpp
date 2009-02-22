@@ -73,11 +73,15 @@ void CFontPreview::showFont()
 {
     itsLastWidth=width()+constStepSize;
     itsLastHeight=height()+constStepSize;
+    itsImage=QImage();
 
-    if(!itsCurrentUrl.isEmpty() &&
-       itsEngine->draw(itsCurrentUrl, itsLastWidth, itsLastHeight, itsPixmap,
-                       itsCurrentFace, false, itsRange, &itsChars, itsFontName,
-                       itsStyleInfo))
+    if(!itsCurrentUrl.isEmpty())
+        itsImage=itsEngine->draw(itsCurrentUrl, itsLastWidth, itsLastHeight,
+                                 palette().text().color(), palette().base().color(),
+                                 itsCurrentFace, false, itsRange, &itsChars, itsFontName,
+                                 itsStyleInfo);
+    
+    if(!itsImage.isNull())
     {
         itsLastChar=CFcEngine::TChar();
         setMouseTracking(itsChars.count()>0);
@@ -86,9 +90,6 @@ void CFontPreview::showFont()
     }
     else
     {
-        QPixmap nullPix;
-
-        itsPixmap=nullPix;
         itsLastChar=CFcEngine::TChar();
         setMouseTracking(false);
         update();
@@ -119,14 +120,14 @@ void CFontPreview::paintEvent(QPaintEvent *)
     QPainter paint(this);
 
     paint.fillRect(rect(), palette().base());
-    if(!itsPixmap.isNull())
+    if(!itsImage.isNull())
     {
 
         if(abs(width()-itsLastWidth)>constStepSize || abs(height()-itsLastHeight)>constStepSize)
             showFont();
         else
-            paint.drawPixmap(QPoint(constBorder, constBorder), itsPixmap,
-                             QRect(0, 0, width()-(constBorder*2), height()-(constBorder*2)));
+            paint.drawImage(QPoint(constBorder, constBorder), itsImage,
+                            QRect(0, 0, width()-(constBorder*2), height()-(constBorder*2)));
     }
 }
 

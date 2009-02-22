@@ -196,8 +196,8 @@ class CPreviewCache
 #endif
 
     static QString thumbKey(const QString &family, quint32 style, int height, const QColor &col);
-    QPixmap * getPixmap(const QString &family, const QString &name, const QString &fileName,
-                        int height, quint32 stlye, bool selected, bool force=false);
+    QImage getImage(const QString &family, const QString &name, const QString &fileName,
+                    int height, quint32 stlye, bool selected, bool force=false);
 #ifdef KFI_SAVE_PIXMAPS
     void clearOld();
 #endif
@@ -205,10 +205,10 @@ class CPreviewCache
 
     private:
 
-    CFcEngine              *itsFcEngine;
-    QMap<QString, QPixmap> itsMap;
+    CFcEngine             *itsFcEngine;
+    QMap<QString, QImage> itsMap;
 #ifdef KFI_SAVE_PIXMAPS
-    QString                itsPath;
+    QString               itsPath;
 #endif
 };
 
@@ -295,30 +295,34 @@ QString CPreviewCache::thumbKey(const QString &name, quint32 style, int height, 
                              col.red(), col.green(), col.blue());
 }
 
-QPixmap * CPreviewCache::getPixmap(const QString &family, const QString &name, const QString &fileName,
-                                   int height, quint32 style, bool selected, bool force)
+QImage CPreviewCache::getImage(const QString &family, const QString &name, const QString &fileName,
+                               int height, quint32 style, bool selected, bool force)
 {
 #ifdef KFI_SAVE_PIXMAPS
     static const char *constFileType="PNG";
 #endif
 
-    QColor  col(QApplication::palette().color(selected ? QPalette::HighlightedText : QPalette::Text));
+    QColor  col(QApplication::palette().color(selected ? QPalette::HighlightedText : QPalette::Text)),
+            bgnd(Qt::black);
     QString thumbName(thumbKey(family, style, height, col));
 
     if(!force && !itsMap[thumbName].isNull())
-        return &(itsMap[thumbName]);
+        return itsMap[thumbName];
 
 #ifdef KFI_SAVE_PIXMAPS
     QString thumbFile(itsPath+thumbName);
 
     if(!force && itsMap[thumbName].load(thumbFile, constFileType))
-        return &(itsMap[thumbName]);
+        return itsMap[thumbName];
 #endif
 
-    itsMap[thumbName]=QPixmap();
+    itsMap[thumbName]=QImage();
 
-    if(itsFcEngine->drawPreview(fileName.isEmpty() ? name : fileName, itsMap[thumbName], col,
-                                height, style))  // CPD:TODO face???
+    bgnd.setAlpha(0);
+    itsMap[thumbName]=itsFcEngine->drawPreview(fileName.isEmpty() ? name : fileName, col, bgnd,
+                                               height, style);  // CPD:TODO face???
+
+    if(!itsMap[thumbName].isNull())
     {
 #ifdef KFI_SAVE_PIXMAPS
         QFile pngFile(thumbFile);
@@ -326,22 +330,17 @@ QPixmap * CPreviewCache::getPixmap(const QString &family, const QString &name, c
         if(pngFile.open(QIODevice::WriteOnly))
         {
 #endif
-            QImage thumb=itsMap[thumbName].toImage();
-
 #ifdef KFI_SAVE_PIXMAPS
-            thumb.save(&pngFile, constFileType);
+            itsMap[thumbName].save(&pngFile, constFileType);
             pngFile.close();
 #endif
-            itsMap[thumbName]=QPixmap::fromImage(thumb);
-            return &(itsMap[thumbName]);
+            return itsMap[thumbName];
 #ifdef KFI_SAVE_PIXMAPS
         }
 #endif
     }
-    else
-        itsMap[thumbName]=QPixmap(1, 1);
 
-    return NULL;
+    return QImage();
 }
 
 #ifdef KFI_SAVE_PIXMAPS
@@ -411,7 +410,7 @@ CFontItem::CFontItem(CFontModelItem *p, const KFileItem &item, const QString &st
 {
     const KIO::UDSEntry &udsEntry(item.entry());
 
-    itsPixmap[0]=itsPixmap[1]=0L;
+    clearImage();
     setUrl(item.url());
     itsName=udsEntry.stringValue(KIO::UDSEntry::UDS_NAME);
     itsFileName=udsEntry.stringValue((uint)UDS_EXTRA_FILE_NAME);
@@ -468,19 +467,19 @@ void CFontItem::setUrl(const KUrl &url)
     }
 }
 
-const QPixmap * CFontItem::pixmap(bool selected, bool force)
+const QImage & CFontItem::image(bool selected, bool force)
 {
     int idx(selected ? 1 : 0);
 
     if(parent() &&
-       (!itsPixmap[idx] || itsPixmap[idx]->isNull() || force ||
-        itsPixmap[idx]->height()!=CFontList::previewSize()))
-        itsPixmap[idx]=theCache->getPixmap(family(), name(), isEnabled()
+       (itsImage[idx].isNull() || force ||
+        itsImage[idx].height()!=CFontList::previewSize()))
+        itsImage[idx]=theCache->getImage(family(), name(), isEnabled()
                                                             ? QString()
                                                             : itsFileName,
-                                      CFontList::previewSize(), itsStyleInfo, selected, force);
+                                         CFontList::previewSize(), itsStyleInfo, selected, force);
 
-    return itsPixmap[idx];
+    return itsImage[idx];
 }
 
 CFamilyItem::CFamilyItem(CFontList &p, const QString &n)
@@ -862,7 +861,7 @@ void CFontList::forceNewPreviews()
                                           fend((*it)->fonts().end());
 
         for(; fit!=fend; ++fit)
-            (*fit)->clearPixmap();
+            (*fit)->clearImage();
     }
 
     theCache->empty();
@@ -1552,14 +1551,14 @@ class CFontListViewDelegate : public QStyledItemDelegate
 
             if(fam->regularFont())
             {
-                const QPixmap *pix=fam->regularFont()->pixmap(option.state&QStyle::State_Selected);
+                const QImage &img=fam->regularFont()->image(option.state&QStyle::State_Selected);
 
-                if(pix)
+                if(!img.isNull())
                     if(Qt::RightToLeft==QApplication::layoutDirection())
-                        painter->drawPixmap(option.rect.x()-(pix->width()-option.rect.width()),
-                                            option.rect.y(), *pix);
+                        painter->drawImage(option.rect.x()-(img.width()-option.rect.width()),
+                                           option.rect.y(), img);
                     else
-                        painter->drawPixmap(option.rect.x(), option.rect.y(), *pix);
+                        painter->drawImage(option.rect.x(), option.rect.y(), img);
             }
         }
     }

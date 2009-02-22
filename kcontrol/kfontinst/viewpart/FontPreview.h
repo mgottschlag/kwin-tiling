@@ -24,7 +24,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtGui/QPixmap>
+#include <QtGui/QImage>
 #include <QtCore/QSize>
 #include <QtGui/QWidget>
 #include <QtGui/QColor>
@@ -77,7 +77,7 @@ class CFontPreview : public QWidget
 
     private:
 
-    QPixmap                  itsPixmap;
+    QImage                   itsImage;
     KUrl                     itsCurrentUrl;
     int                      itsCurrentFace,
                              itsLastWidth,

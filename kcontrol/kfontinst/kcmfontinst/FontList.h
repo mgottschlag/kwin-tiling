@@ -36,6 +36,7 @@
 #include <QtCore/QVariant>
 #include <QtGui/QSortFilterProxyModel>
 #include <QtGui/QFontDatabase>
+#include <QtGui/QImage>
 #include "Misc.h"
 #include "FontLister.h"
 #include "JobRunner.h"
@@ -47,7 +48,6 @@ class KConfigGroup;
 class KFileItem;
 class KFileItemList;
 class QMenu;
-class QPixmap;
 class QMimeData;
 class QTimer;
 
@@ -238,8 +238,8 @@ class CFontItem : public CFontModelItem
     quint32                           styleInfo() const        { return itsStyleInfo; }
     int                               index() const            { return itsIndex; }
     const QString &                   family() const           { return (static_cast<CFamilyItem *>(parent()))->name(); }
-    const QPixmap *                   pixmap(bool selected, bool force=false);
-    void                              clearPixmap()            { itsPixmap[0]=itsPixmap[1]=NULL; }
+    const QImage &                    image(bool selected, bool force=false);
+    void                              clearImage()             { itsImage[0]=itsImage[1]=QImage(); }
     int                               rowNumber() const        { return (static_cast<CFamilyItem *>(parent()))->row(this); }
     const CDisabledFonts::TFileList & files() const            { return itsFiles; }
     KIO::filesize_t                   size() const             { return itsSize; }
@@ -253,7 +253,7 @@ class CFontItem : public CFontModelItem
                               itsStyle,
                               itsMimeType;
     int                       itsIndex;
-    QPixmap                   *itsPixmap[2];
+    QImage                    itsImage[2];
     quint32                   itsStyleInfo;
     bool                      itsBitmap,
                               itsEnabled;

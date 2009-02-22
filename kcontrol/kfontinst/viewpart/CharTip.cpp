@@ -209,14 +209,19 @@ void CCharTip::showTip()
     details+="</table>";
     itsLabel->setText(details);
 
-    QPixmap pix((int)(itsItem.width()*2.5), (int)(itsItem.height()*2.5));
     QList<CFcEngine::TRange> range;
     range.append(CFcEngine::TRange(itsItem.ucs4, 0));
 
-    if(itsParent->engine()->draw(itsParent->itsCurrentUrl, pix.width(), pix.height(), pix,
-                                 itsParent->itsCurrentFace-1, false, range,
-                                 NULL, itsParent->itsFontName, itsParent->itsStyleInfo))
-        itsPixmapLabel->setPixmap(pix);
+    QColor bgnd(Qt::white);
+    bgnd.setAlpha(0);
+
+    QImage img=itsParent->engine()->draw(itsParent->itsCurrentUrl, (int)(itsItem.width()*2.5), 
+                                         (int)(itsItem.height()*2.5),
+                                         palette().text().color(), bgnd,
+                                         itsParent->itsCurrentFace-1, false, range,
+                                         NULL, itsParent->itsFontName, itsParent->itsStyleInfo);
+    if(!img.isNull())
+        itsPixmapLabel->setPixmap(QPixmap::fromImage(img));
     else
         itsPixmapLabel->setPixmap(QPixmap());
     itsTimer->disconnect(this);

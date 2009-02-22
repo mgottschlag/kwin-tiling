@@ -285,7 +285,6 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     previewFrameLayout->addWidget(itsPreview);
 
     itsPreview->engine()->readConfig(itsConfig);
-    CFcEngine::setTextCol(QApplication::palette().color(QPalette::Active, QPalette::Text));
     connect(itsPreview, SIGNAL(doZoomIn()), SLOT(zoomIn()));
     connect(itsPreview, SIGNAL(doZoomOut()), SLOT(zoomOut()));
 

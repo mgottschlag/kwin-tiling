@@ -52,8 +52,6 @@ bool      CFcEngine::theirFcDirty(true);
 const int CFcEngine::constScalableSizes[]={8, 10, 12, 24, 36, 48, 64, 72, 96, 0 };
 const int CFcEngine::constDefaultAlphaSize=24;
 
-QColor CFcEngine::theirTextCol(Qt::black);
-
 static int fcToQtWeight(int weight)
 {
     switch(weight)
@@ -138,7 +136,161 @@ inline bool equalSlant(int a, int b)
     return a==b || FC::slant(a)==FC::slant(b);
 }
 
-static bool drawChar32Centre(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, quint32 ch, int w, int h)
+static void closeFont(XftFont *&font)
+{
+    if(font)
+        XftFontClose(QX11Info::display(), font);
+    font=0L;
+}
+
+class CFcEngine::Xft
+{
+    public:
+
+    struct Pix
+    {
+        Pix() : currentW(0), currentH(0), allocatedW(0), allocatedH(0) { }
+
+        static int getSize(int s)
+        {
+            static const int constBlockSize=64;
+
+            return ((s/constBlockSize)+(s%constBlockSize ? 1 : 0))*constBlockSize;
+        }
+
+        bool allocate(int w, int h)
+        {
+            int requiredW=getSize(w),
+                requiredH=getSize(h);
+
+            currentW=w;
+            currentH=h;
+            if(requiredW!=allocatedW || requiredH!=allocatedH)
+            {
+                free();
+
+                if(w && h)
+                {
+                    allocatedW=requiredW;
+                    allocatedH=requiredH;
+                    x11=XCreatePixmap(QX11Info::display(), RootWindow(QX11Info::display(), 0), allocatedW, allocatedH,
+                                      DefaultDepth(QX11Info::display(), 0));
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        void free()
+        {
+            if(allocatedW && allocatedH)
+            {
+                XFreePixmap(QX11Info::display(), x11);
+                allocatedW=allocatedH=0;
+            }
+        }
+        
+        int    currentW,
+               currentH,
+               allocatedW,
+               allocatedH;
+        Pixmap x11;
+    };
+    
+    Xft();
+    ~Xft();
+
+    bool init(const QColor &txt, const QColor &bgnd, int w, int h);
+    void freeColors();
+    bool drawChar32Centre(XftFont *xftFont, quint32 ch, int w, int h) const;
+    bool drawChar32(XftFont *xftFont, quint32 ch,int &x, int &y, int w, int h,
+                    int fontHeight, QRect &r) const;
+    bool drawString(XftFont *xftFont, const QString &text, int x, int &y, int h) const;
+    void drawString(const QString &text, int x, int &y, int h) const;
+    bool drawGlyph(XftFont *xftFont, FT_UInt i, int &x, int &y, int w, int h,
+                   int fontHeight,bool oneLine, QRect &r) const;
+    bool drawAllGlyphs(XftFont *xftFont, int fontHeight, int &x, int &y, int w, int h,
+                       bool oneLine=false, int max=-1, QRect *used=0L) const;
+    QImage toImage(int w=0, int h=0) const;
+
+    private:
+
+    XftDraw  *itsDraw;
+    XftColor itsTxtColor,
+             itsBgndColor;
+    Pix      itsPix;
+};
+
+CFcEngine::Xft::Xft()
+{
+    itsDraw=0L;
+    itsTxtColor.color.alpha=0x0000;
+}
+
+CFcEngine::Xft::~Xft()
+{
+    freeColors();
+    if(itsDraw)
+    {
+        XftDrawDestroy(itsDraw);
+        itsDraw=0L;
+    }
+}
+
+bool CFcEngine::Xft::init(const QColor &txt, const QColor &bnd, int w, int h)
+{
+    if(itsDraw &&
+       (txt.red()<<8 != itsTxtColor.color.red ||
+        txt.green()<<8 != itsTxtColor.color.green ||
+        txt.blue()<<8 != itsTxtColor.color.blue ||
+        bnd.red()<<8 != itsBgndColor.color.red ||
+        bnd.green()<<8 != itsBgndColor.color.green ||
+        bnd.blue()<<8 != itsBgndColor.color.blue))
+        freeColors();
+
+    if(0x0000==itsTxtColor.color.alpha)
+    {
+        XRenderColor xrenderCol;
+        Visual       *visual=DefaultVisual(QX11Info::display(), 0);
+        Colormap     colorMap=DefaultColormap(QX11Info::display(), 0);
+
+        xrenderCol.red=bnd.red()<<8;
+        xrenderCol.green=bnd.green()<<8;
+        xrenderCol.blue=bnd.green()<<8;
+        xrenderCol.alpha=0xFFFF;
+
+        XftColorAllocValue(QX11Info::display(), visual, colorMap, &xrenderCol, &itsBgndColor);
+        xrenderCol.red=txt.red()<<8;
+        xrenderCol.green=txt.green()<<8;
+        xrenderCol.blue=txt.green()<<8;
+        xrenderCol.alpha=0xFFFF;
+        XftColorAllocValue(QX11Info::display(), visual, colorMap, &xrenderCol, &itsTxtColor);
+    }
+
+    if(itsPix.allocate(w, h) && itsDraw)
+        XftDrawChange(itsDraw, itsPix.x11);
+
+    if(!itsDraw)
+        itsDraw=XftDrawCreate(QX11Info::display(), itsPix.x11, DefaultVisual(QX11Info::display(), 0),
+                              DefaultColormap(QX11Info::display(), 0));
+
+    if(itsDraw)
+        XftDrawRect(itsDraw, &itsBgndColor, 0, 0, w, h);
+
+    return itsDraw;
+}
+
+void CFcEngine::Xft::freeColors()
+{
+    XftColorFree(QX11Info::display(), DefaultVisual(QX11Info::display(), 0),
+                 DefaultColormap(QX11Info::display(), 0), &itsTxtColor);
+    XftColorFree(QX11Info::display(), DefaultVisual(QX11Info::display(), 0),
+                 DefaultColormap(QX11Info::display(), 0), &itsBgndColor);
+    itsTxtColor.color.alpha=0x0000;
+}
+
+bool CFcEngine::Xft::drawChar32Centre(XftFont *xftFont, quint32 ch, int w, int h) const
 {
     if(XftCharExists(QX11Info::display(), xftFont, ch))
     {
@@ -149,7 +301,7 @@ static bool drawChar32Centre(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCo
         int rx(((w-extents.width)/2)+extents.x),
             ry(((h-extents.height)/2)+(extents.y));
 
-        XftDrawString32(xftDraw, xftCol, xftFont, rx, ry, &ch, 1);
+        XftDrawString32(itsDraw, &itsTxtColor, xftFont, rx, ry, &ch, 1);
         return true;
     }
 
@@ -158,8 +310,8 @@ static bool drawChar32Centre(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCo
 
 static const int constBorder=2;
 
-static bool drawChar32(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, quint32 ch,
-                       int &x, int &y, int w, int h, int fontHeight, QRect &r)
+bool CFcEngine::Xft::drawChar32(XftFont *xftFont, quint32 ch, int &x, int &y, int w, int h,
+                                int fontHeight, QRect &r) const
 {
     r=QRect();
     if(XftCharExists(QX11Info::display(), xftFont, ch))
@@ -183,7 +335,7 @@ static bool drawChar32(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, qui
         {
             r=QRect(x-extents.x, y-extents.y, extents.width+constBorder, extents.height);
 
-            XftDrawString32(xftDraw, xftCol, xftFont, x, y, &ch, 1);
+            XftDrawString32(itsDraw, &itsTxtColor, xftFont, x, y, &ch, 1);
             x+=extents.xOff+constBorder;
             return true;
         }
@@ -193,15 +345,14 @@ static bool drawChar32(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, qui
     return true;
 }
 
-static bool drawString(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, const QString &text,
-                       int x, int &y, int h)
+bool CFcEngine::Xft::drawString(XftFont *xftFont, const QString &text, int x, int &y, int h) const
 {
     XGlyphInfo     extents;
     const FcChar16 *str=(FcChar16 *)(text.utf16());
 
     XftTextExtents16(QX11Info::display(), xftFont, str, text.length(), &extents);
     if(y+extents.height<h)
-        XftDrawString16(xftDraw, xftCol, xftFont, x, y+extents.y, str, text.length());
+        XftDrawString16(itsDraw, &itsTxtColor, xftFont, x, y+extents.y, str, text.length());
     if(extents.height>0)
     {
         y+=extents.height;
@@ -210,9 +361,7 @@ static bool drawString(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, con
     return false;
 }
 
-static void drawString(XftDraw *xftDraw, XftColor *xftCol, const QString &text,
-                       int x, int &y, int h)
-
+void CFcEngine::Xft::drawString(const QString &text, int x, int &y, int h) const
 {
     QFont   qt(KGlobalSettings::generalFont());
     XftFont *xftFont=XftFontOpen(QX11Info::display(), 0,
@@ -224,14 +373,13 @@ static void drawString(XftDraw *xftDraw, XftColor *xftCol, const QString &text,
 
     if(xftFont)
     {
-        drawString(xftDraw, xftFont, xftCol, text, x, y, h);
-        XftFontClose(QX11Info::display(), xftFont);
+        drawString(xftFont, text, x, y, h);
+        closeFont(xftFont);
     }
 }
 
-static bool drawGlyph(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, FT_UInt i,
-                      int &x, int &y, int w, int h, int fontHeight, bool oneLine,
-                      QRect &r)
+bool CFcEngine::Xft::drawGlyph(XftFont *xftFont, FT_UInt i, int &x, int &y, int w, int h, int fontHeight,
+                               bool oneLine, QRect &r) const
 {
     XGlyphInfo extents;
 
@@ -248,7 +396,7 @@ static bool drawGlyph(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, FT_U
 
     if(y<h)
     {
-        XftDrawGlyphs(xftDraw, xftCol, xftFont, x, y, &i, 1);
+        XftDrawGlyphs(itsDraw, &itsTxtColor, xftFont, x, y, &i, 1);
         x+=extents.width+2;
         r=QRect(x-extents.x, y-extents.y, extents.width+constBorder, extents.height);
 
@@ -257,9 +405,8 @@ static bool drawGlyph(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, FT_U
     return false;
 }
 
-static bool drawAllGlyphs(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, int fontHeight,
-                          int &x, int &y, int w, int h, bool oneLine=false, int max=-1,
-                          QRect *used=NULL)
+bool CFcEngine::Xft::drawAllGlyphs(XftFont *xftFont, int fontHeight, int &x, int &y, int w, int h,
+                                   bool oneLine, int max, QRect *used) const
 {
     bool rv(false);
 
@@ -279,7 +426,7 @@ static bool drawAllGlyphs(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, 
             rv=true;
             y+=fontHeight;
             for(int i=1; i<face->num_glyphs && y<h; ++i)
-                if(drawGlyph(xftDraw, xftFont, xftCol, i, x, y, w, h, fontHeight, oneLine, r))
+                if(drawGlyph(xftFont, i, x, y, w, h, fontHeight, oneLine, r))
                 {
                     if(r.height()>0)
                     {
@@ -304,6 +451,35 @@ static bool drawAllGlyphs(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, 
     }
 
     return rv;
+}
+
+QImage CFcEngine::Xft::toImage(int w, int h) const
+{
+    int imgW=w ? w : itsPix.currentW,
+        imgH=h ? h : itsPix.currentH;
+
+    if(!XftDrawPicture(itsDraw))
+        return QImage();
+
+    XImage *xi = XGetImage(QX11Info::display(), itsPix.x11, 0, 0, imgW, imgH, AllPlanes, ZPixmap);
+
+    if (!xi)
+        return QImage();
+
+    QImage image(imgW, imgH, QImage::Format_RGB32);
+    bool   xOk=32==xi->bits_per_pixel;
+
+    if(xOk)
+        memcpy(image.bits(), xi->data, xi->bytes_per_line*xi->height);
+
+    if (xi->data)
+    {
+        free(xi->data);
+        xi->data = 0;
+    }
+    XDestroyImage(xi);
+
+    return xOk ? image : QImage();
 }
 
 inline int point2Pixel(int point)
@@ -334,11 +510,27 @@ static QString usableStr(XftFont *font, QString &str)
     return newStr;
 }
 
+static void setTransparentBackground(QImage &img, const QColor &col)
+{
+    // Convert background to transparent, and text to correct colour...
+    img=img.convertToFormat(QImage::Format_ARGB32);
+    for(int x=0; x<img.width(); ++x)
+        for(int y=0; y<img.height(); ++y)
+        {
+            int v(qRed(img.pixel(x, y)));
+            img.setPixel(x, y, qRgba(qMin(col.red()+v, 255),
+                                     qMin(col.green()+v, 255),
+                                     qMin(col.blue()+v, 255),
+                                     255-v));
+        }
+}
+
 CFcEngine::CFcEngine(bool init)
          : itsIndex(-1),
            itsIndexCount(1),
            itsAlphaSizeIndex(-1),
-           itsPreviewString(getDefaultPreviewString())
+           itsPreviewString(getDefaultPreviewString()),
+           itsXft(0L)
 {
     if(init)
         reinit();
@@ -368,9 +560,9 @@ const QString & CFcEngine::getName(const KUrl &url, int faceNo)
     return itsDescriptiveName;
 }
 
-bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, const QColor &col, int h, quint32 style, int face)
+QImage CFcEngine::drawPreview(const QString &item, const QColor &txt, const QColor &bgnd, int h, quint32 style, int face)
 {
-    bool rv=false;
+    QImage img;
 
     if(!item.isEmpty())
     {
@@ -396,145 +588,104 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, const QColor &col
         {
             itsLastUrl=KUrl();
             getSizes();
+        }
 
-            if(itsSizes.size())
+        if(itsSizes.size())
+        {
+            //
+            // Calculate size of text...
+            int  fSize=((int)(h*0.75))-2,
+                 origHeight(0);
+            bool needAlpha(bgnd.alpha()<255);
+
+            if(!itsScalable) // Then need to get nearest size...
             {
-                //
-                // Calculate size of text...
-                int  fSize=((int)(h*0.75))-2;
-                bool needResize(false);
+                int bSize=0;
 
-                QColor bgndCol(Qt::white);
-                bgndCol.setAlphaF(0.0);
-
-                if(!itsScalable) // Then need to get nearest size...
+                for(int s=0; s<itsSizes.size(); ++s)
+                    if (itsSizes[s]<=fSize || 0==bSize)
+                        bSize=itsSizes[s];
+                fSize=bSize;
+                if(bSize>h)
                 {
-                    int bSize=0;
+                    origHeight=h;
+                    h=bSize+8;
+                }
+            }
 
-                    for(int s=0; s<itsSizes.size(); ++s)
-                        if (itsSizes[s]<=fSize || 0==bSize)
-                            bSize=itsSizes[s];
-                    fSize=bSize;
+            if(xft()->init(needAlpha ? Qt::black : txt, needAlpha ? Qt::white : bgnd, constInitialWidth, h))
+            {
+                XftFont *xftFont=getFont(fSize);
+                QString text(itsPreviewString);
 
-                    if(bSize>h)
+                if(xftFont)
+                {
+                    bool rv=false;
+                    int  usedWidth=0;
+
+                    if(hasStr(xftFont, text) || hasStr(xftFont, text=text.toUpper()) ||
+                       hasStr(xftFont, text=text.toLower()))
                     {
-                        pix=QPixmap(constInitialWidth, bSize+8);
-                        pix.fill(bgndCol);
-                        needResize=true;
+                        XGlyphInfo     extents;
+                        const FcChar16 *str=(FcChar16 *)(text.utf16());
+
+                        XftTextExtents16(QX11Info::display(), xftFont, str, text.length(),
+                                         &extents);
+
+                        int y=(h-extents.height)/2;
+
+                        rv=xft()->drawString(xftFont, text, constOffset, y, h);
+                        usedWidth=extents.width;
                     }
-                }
-
-                if(!needResize)
-                {
-                    pix=QPixmap(constInitialWidth, h);
-                    pix.fill(bgndCol);
-                }
-
-                const QX11Info &x11Info(pix.x11Info());
-                XRenderColor   xrenderCol;
-                XftColor       xftCol;
-
-                xrenderCol.red=col.red()<<8;
-                xrenderCol.green=col.green()<<8;
-                xrenderCol.blue=col.blue()<<8;
-                xrenderCol.alpha=0xffff;
-
-                XftColorAllocValue(QX11Info::display(), DefaultVisual(QX11Info::display(),
-                                   x11Info.screen()),
-                                   DefaultColormap(QX11Info::display(), x11Info.screen()),
-                                   &xrenderCol, &xftCol);
-
-                XftDraw *xftDraw=XftDrawCreateAlpha(QX11Info::display(), (Pixmap)(pix.handle()), 32);
-
-                if(xftDraw)
-                {
-                    XftFont *xftFont=NULL;
-                    QString text(itsPreviewString);
-
-                    //
-                    // Calculate size of text...
-                    int fSize=((int)(h*0.75))-2;
-
-                    if(!itsScalable) // Then need to get nearest size...
+                    else
                     {
-                        int bSize=0;
+                        int   x=constOffset,
+                              y=constOffset;
+                        QRect used;
 
-                        for(int s=0; s<itsSizes.size(); ++s)
-                            if (itsSizes[s]<=fSize || 0==bSize)
-                                bSize=itsSizes[s];
-                        fSize=bSize;
+                        rv=xft()->drawAllGlyphs(xftFont, fSize, x, y, constInitialWidth, h, true, text.length()+1, &used);
+                        if(rv)
+                            usedWidth=used.width();
                     }
 
-                    xftFont=getFont(fSize);
-
-                    if(xftFont)
+                    if(rv)
                     {
-                        if(hasStr(xftFont, text) || hasStr(xftFont, text=text.toUpper()) ||
-                           hasStr(xftFont, text=text.toLower()))
+                        img=xft()->toImage();
+                        if(!img.isNull())
                         {
-                            XGlyphInfo     extents;
-                            const FcChar16 *str=(FcChar16 *)(text.utf16());
-
-                            XftTextExtents16(QX11Info::display(), xftFont, str, text.length(),
-                                             &extents);
-
-                            int y=((h-extents.y)/2)+extents.y;
-                            XftDrawString16(xftDraw, &xftCol, xftFont, constOffset, y, str,
-                                            text.length());
-                            if(needResize)
-                                pix=pix.scaledToHeight(h);
-                            pix = pix.copy(0, 0, extents.width+(2*constOffset)<constInitialWidth
-                                                    ? extents.width+(2*constOffset)
-                                                    : constInitialWidth,
-                                           h);
-                            rv=true;
-                        }
-                        else
-                        {
-                            FT_Face face=XftLockFace(xftFont);
-
-                            if(face)
+                            if(origHeight)
                             {
-                                int x=constOffset,
-                                    y=constOffset+fSize;
-
-                                for(FT_UInt i=1; i<(unsigned int)face->num_glyphs &&
-                                                 i<(unsigned int)text.length()+1; ++i)
-                                {
-                                    XGlyphInfo extents;
-
-                                    XftGlyphExtents(QX11Info::display(), xftFont, &i, 1,
-                                                    &extents);
-
-                                    if(x+extents.width+2>constInitialWidth)  // Only want 1 line
-                                        break;
-
-                                    XftDrawGlyphs(xftDraw, &xftCol, xftFont, x, y, &i, 1);
-                                    x+=extents.width+2;
-                                }
-                                if(needResize)
-                                    pix=pix.scaledToHeight(h);
-                                pix = pix.copy(0, 0, x+constOffset<constInitialWidth
-                                                        ? x+constOffset
-                                                        : constInitialWidth,
-                                               h);
-                                XftUnlockFace(xftFont);
-                                rv=true;
+                                int width=(int)((usedWidth*(double)(((double)h)/((double)origHeight)))+0.5);
+                                img=img.scaledToHeight(origHeight, Qt::SmoothTransformation)
+                                       .copy(0, 0, width+(2*constOffset)<constInitialWidth
+                                                    ? width+(2*constOffset)
+                                                    : constInitialWidth,
+                                             origHeight);
                             }
+                            else
+                                img=img.copy(0, 0, usedWidth+(2*constOffset)<constInitialWidth
+                                                    ? usedWidth+(2*constOffset)
+                                                    : constInitialWidth,
+                                             h);
+
+                            if(needAlpha)
+                                setTransparentBackground(img, txt);
                         }
                     }
+                    closeFont(xftFont);
                 }
             }
         }
     }
 
-    return rv;
+    return img;
 }
 
-bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bool thumb,
-                     const QList<TRange> &range, QList<TChar> *chars, const QString &name, quint32 style)
+QImage CFcEngine::draw(const KUrl &url, int w, int h, const QColor &txt, const QColor &bgnd, int faceNo,
+                       bool thumb, const QList<TRange> &range, QList<TChar> *chars, const QString &name, quint32 style)
 {
-    bool rv=false;
+    QImage img;
+    bool   rv=false;
 
     if(chars)
         chars->clear();
@@ -560,33 +711,18 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
 
         getSizes();
 
-        pix=thumb && itsScalable ? QPixmap(w*4, h*2) : QPixmap(w, h);
-
-        QColor bgndCol(Qt::white);
-
-        bgndCol.setAlphaF(0.0);
-        pix.fill(bgndCol);
-
         if(itsSizes.size())
         {
-            const QX11Info &x11Info(pix.x11Info());
-            XRenderColor   xrenderCol;
-            XftColor       xftCol;
+            int  imgWidth(thumb && itsScalable ? w*4 : w),
+                 imgHeight(thumb && itsScalable ? h*4 : h);
+            bool needAlpha(bgnd.alpha()<255);
 
-            xrenderCol.red=theirTextCol.red()<<8;
-            xrenderCol.green=theirTextCol.green()<<8;
-            xrenderCol.blue=theirTextCol.blue()<<8;
-            xrenderCol.alpha=0xffff;
-            XftColorAllocValue(QX11Info::display(), DefaultVisual(QX11Info::display(),
-                               x11Info.screen()),
-                               DefaultColormap(QX11Info::display(), x11Info.screen()),
-                               &xrenderCol, &xftCol);
-
-            XftDraw *xftDraw=XftDrawCreateAlpha(QX11Info::display(), (Pixmap)(pix.handle()), 32);
-
-            if(xftDraw)
+            if(xft()->init(needAlpha ? Qt::black : txt, needAlpha ? Qt::white : bgnd, imgWidth, imgHeight))
             {
                 XftFont *xftFont=NULL;
+                int     line1Pos(0),
+                        line2Pos(0);
+                QRect   used(0, 0, 0, 0);
 
                 if(thumb)
                 {
@@ -614,7 +750,6 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                     if(xftFont)
                     {
                         QString valid(usableStr(xftFont, text));
-                        QRect   used(0, 0, 0, 0);
 
                         y=fSize;
                         rv=true;
@@ -641,15 +776,15 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                         if(itsScalable
                             ? valid.length()!=text.length()
                             : valid.length()<(text.length()/2))
-                            drawAllGlyphs(xftDraw, xftFont, &xftCol, fSize, x, y, pix.width(), pix.height(), true,
-                                          itsScalable ? 4 : -1, itsScalable ? &used : NULL);
+                            xft()->drawAllGlyphs(xftFont, fSize, x, y, imgWidth, imgHeight, true,
+                                                 itsScalable ? 4 : -1, itsScalable ? &used : NULL);
                         else
                         {
                             QVector<uint> ucs4(valid.toUcs4());
                             QRect         r;
 
                             for(int ch=0; ch<ucs4.size(); ++ch) // Display char by char so wraps...
-                                if(drawChar32(xftDraw, xftFont, &xftCol, ucs4[ch], x, y, pix.width(), pix.height(), fSize, r))
+                                if(xft()->drawChar32(xftFont, ucs4[ch], x, y, imgWidth, imgHeight, fSize, r))
                                 {
                                     if(used.isEmpty())
                                         used=r;
@@ -660,8 +795,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                                     break;
                         }
 
-                        if(itsScalable && !used.isEmpty() && used.width()<pix.width() && used.height()<pix.height())
-                            pix=pix.copy(used);
+                        closeFont(xftFont);
                     }
                 }
                 else if(0==range.count())
@@ -670,7 +804,10 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                             uppercase(getUppercaseLetters()),
                             punctuation(getPunctuation());
 
-                    drawName(pix, xftDraw, &xftCol, x, y, w, h);
+                    drawName(x, y, h);
+                    y+=4;
+                    line1Pos=y;
+                    y+=8;
 
                     xftFont=getFont(alphaSize());
                     if(xftFont)
@@ -687,14 +824,13 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                             bool    punc(validPunc.length()>=(punctuation.length()/2));
 
                             if(lc)
-                                drawString(xftDraw, xftFont, &xftCol, lowercase, x, y, h);
+                                xft()->drawString(xftFont, lowercase, x, y, h);
                             if(uc)
-                                drawString(xftDraw, xftFont, &xftCol, uppercase, x, y, h);
+                                xft()->drawString(xftFont, uppercase, x, y, h);
                             if(punc)
-                                drawString(xftDraw, xftFont, &xftCol, validPunc, x, y, h);
-                            XftFontClose(QX11Info::display(), xftFont);
+                                xft()->drawString(xftFont, validPunc, x, y, h);
                             if(lc || uc || punc)
-                                drawLine(pix, 0, y+2, w-1, 1);
+                                line2Pos=y+2;
                             y+=8;
                         }
 
@@ -708,6 +844,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                                 previewString=previewString.toLower();
                         }
 
+                        closeFont(xftFont);
                         for(int s=0; s<itsSizes.size(); ++s)
                             if((xftFont=getFont(itsSizes[s])))
                             {
@@ -715,11 +852,11 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
 
                                 rv=true;
                                 if(drawGlyphs)
-                                    drawAllGlyphs(xftDraw, xftFont, &xftCol, fontHeight, x, y, w, h,
-                                                  itsSizes.count()>1);
+                                    xft()->drawAllGlyphs(xftFont, fontHeight, x, y, w, h,
+                                                         itsSizes.count()>1);
                                 else
-                                    drawString(xftDraw, xftFont, &xftCol, previewString, x, y, h);
-                                XftFontClose(QX11Info::display(), xftFont);
+                                    xft()->drawString(xftFont, previewString, x, y, h);
+                                closeFont(xftFont);
                             }
                     }
                 }
@@ -727,23 +864,24 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                 {
                     if(range.first().null())
                     {
-                        drawName(pix, xftDraw, &xftCol, x, y, w, h);
+                        drawName(x, y, h);
 
                         if((xftFont=getFont(alphaSize())))
                         {
                             int fontHeight=xftFont->ascent+xftFont->descent;
 
                             y-=8;
-                            drawAllGlyphs(xftDraw, xftFont, &xftCol, fontHeight, x, y, w, h, 0);
+                            xft()->drawAllGlyphs(xftFont, fontHeight, x, y, w, h, 0);
                             rv=true;
-                            XftFontClose(QX11Info::display(), xftFont);
+                            closeFont(xftFont);
                         }
                     }
                     else if((xftFont=getFont(alphaSize()*2)))
                     {
                         QRect r;
-                        rv=drawChar32Centre(xftDraw, xftFont, &xftCol, (*(range.begin())).from,
-                                            pix.width(), pix.height());
+                        rv=xft()->drawChar32Centre(xftFont, (*(range.begin())).from,
+                                                   imgWidth, imgHeight);
+                        closeFont(xftFont);
                     }
                 }
                 else
@@ -754,7 +892,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                     if((xftFont=getFont(alphaSize())))
                     {
                         rv=true;
-                        drawName(pix, xftDraw, &xftCol, x, y, w, h);
+                        drawName(x, y, h);
                         y+=alphaSize();
 
                         bool  stop=false;
@@ -764,7 +902,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                         for(it=range.begin(); it!=end && !stop; ++it)
                             for(quint32 c=(*it).from; c<=(*it).to && !stop; ++c)
                             {
-                                if(drawChar32(xftDraw, xftFont, &xftCol, c, x, y, w, h, fontHeight, r))
+                                if(xft()->drawChar32(xftFont, c, x, y, w, h, fontHeight, r))
                                 {
                                     if(chars && !r.isEmpty())
                                         chars->append(TChar(r, c));
@@ -776,17 +914,38 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                         if(x==xOrig && y==yOrig)
                         {
                             // No characters found within the selected range...
-                            drawString(xftDraw, &xftCol, i18n("No characters found."), x, y, h);
+                            xft()->drawString(i18n("No characters found."), x, y, h);
+                            rv=true;
                         }
+                        closeFont(xftFont);
                     }
                 }
 
-                XftDrawDestroy(xftDraw);
+                if(rv)
+                {
+                    img=xft()->toImage();
+                    if(!img.isNull() && line1Pos)
+                    {
+                        QPainter p(&img);
+
+                        p.setPen(txt);
+                        p.drawLine(0, line1Pos, w-1, line1Pos);
+                        if(line2Pos)
+                            p.drawLine(0, line2Pos, w-1, line2Pos);
+                    }
+                    if(!img.isNull())
+                    {
+                        if(itsScalable && !used.isEmpty() && used.width()<imgWidth && used.height()<imgHeight)
+                            img=img.copy(used);
+                        if(needAlpha)
+                            setTransparentBackground(img, txt);
+                    }
+                }
             }
         }
     }
 
-    return rv;
+    return img;
 }
 
 QString CFcEngine::getDefaultPreviewString()
@@ -1113,10 +1272,7 @@ XftFont * CFcEngine::queryFont()
     XftFont *f=getFont(constQuerySize);
 
     if(f && !isCorrect(f, true))
-    {
-        XftFontClose(QX11Info::display(), f);
-        f=NULL;
-    }
+        closeFont(f);
 
     if(itsInstalled && !f)
     {
@@ -1129,10 +1285,7 @@ XftFont * CFcEngine::queryFont()
         // This time don't bother checking family - we've re-inited fc anyway, so things should be
         // up to date... And for "Symbol" Fc returns "Standard Symbols L", so wont match anyway!
         if(f && !isCorrect(f, false))
-        {
-            XftFontClose(QX11Info::display(), f);
-            f=NULL;
-        }
+            closeFont(f);
     }
 #ifdef KFI_FC_DEBUG
     kDebug() << "ret" << (int)f;
@@ -1367,7 +1520,7 @@ void CFcEngine::getSizes()
             }
         }
 
-        XftFontClose(QX11Info::display(), f);
+        closeFont(f);
     }
 
     if(itsScalable)
@@ -1389,15 +1542,7 @@ void CFcEngine::getSizes()
 #endif
 }
 
-void CFcEngine::drawLine(QPixmap &pix, int x, int y, int w, int h)
-{
-    QPainter painter(&pix);
-    painter.setPen(theirTextCol);
-    painter.drawLine(x, y, x+w-1, y+h-1);
-    painter.end();
-}
-
-void CFcEngine::drawName(QPixmap &pix, XftDraw *xftDraw, XftColor *xftCol, int x, int &y, int w, int h)
+void CFcEngine::drawName(int x, int &y, int h)
 {
     QString title(itsDescriptiveName.isEmpty()
                     ? i18n("ERROR: Could not determine font's name.")
@@ -1406,11 +1551,7 @@ void CFcEngine::drawName(QPixmap &pix, XftDraw *xftDraw, XftColor *xftCol, int x
     if(1==itsSizes.size())
         title=i18np("%2 [1 pixel]", "%2 [%1 pixels]", itsSizes[0], title);
 
-    drawString(xftDraw, xftCol, title, x, y, h);
-
-    y+=4;
-    drawLine(pix, x, y, w-1, 1);
-    y+=8;
+    xft()->drawString(title, x, y, h);
 }
 
 void CFcEngine::addFontFile(const QString &file)
@@ -1431,6 +1572,13 @@ void CFcEngine::reinit()
         FcInitReinitialize();
         theirFcDirty=false;
     }
+}
+
+CFcEngine::Xft * CFcEngine::xft()
+{
+    if(!itsXft)
+        itsXft=new Xft;
+    return itsXft;
 }
 
 }

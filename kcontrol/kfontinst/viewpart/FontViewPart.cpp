@@ -126,7 +126,6 @@ CFontViewPart::CFontViewPart(QWidget *parentWidget, QObject *parent, const QList
     itsFaceWidget->hide();
 
     itsPreview->engine()->readConfig(*itsConfig);
-    CFcEngine::setTextCol(QApplication::palette().color(QPalette::Active, QPalette::Text));
     connect(itsPreview, SIGNAL(doZoomIn()), SLOT(zoomIn()));
     connect(itsPreview, SIGNAL(doZoomOut()), SLOT(zoomOut()));
 

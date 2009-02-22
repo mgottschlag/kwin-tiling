@@ -58,11 +58,8 @@ CFontThumbnail::CFontThumbnail()
 
 bool CFontThumbnail::create(const QString &path, int width, int height, QImage &img)
 {
-    QPixmap  pix;
     QString  realPath(path);
     KTempDir *tempDir = 0;
-
-    CFcEngine::setTextCol(QApplication::palette().color(QPalette::Text));
 
     KFI_DBUG << "Create font thumbnail for:" << path << endl;
 
@@ -113,15 +110,12 @@ bool CFontThumbnail::create(const QString &path, int width, int height, QImage &
         }
     }
 
-    if(itsEngine.draw(KUrl(realPath), width, height, pix, 0, true))
-    {
-        img=pix.toImage().convertToFormat(QImage::Format_ARGB32);
-        delete tempDir;
-        return true;
-    }
+    QColor bgnd(Qt::black);
 
+    bgnd.setAlpha(0);
+    img=itsEngine.draw(KUrl(realPath), width, height, QApplication::palette().text().color(), bgnd, 0, true);
     delete tempDir;
-    return false;
+    return !img.isNull();
 }
 
 ThumbCreator::Flags CFontThumbnail::flags() const
