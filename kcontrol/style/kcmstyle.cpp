@@ -252,7 +252,7 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 	comboToolbarIcons->addItem( i18n("Text Alongside Icons") );
 	comboToolbarIcons->addItem( i18n("Text Under Icons") );
 	comboToolbarIcons->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum );
-	page2Layout->addRow(i18nc("@label:listbox","Text pos&ition:"), comboToolbarIcons);
+	page2Layout->addRow(i18nc("@label:listbox","Text pos&ition of toolbar elements:"), comboToolbarIcons);
 
 	cbIconsOnButtons = new QCheckBox( i18nc("@option:check","Sho&w icons on buttons"), page2 );
  	page2Layout->addRow(cbIconsOnButtons);
@@ -715,8 +715,7 @@ void KCMStyle::addWhatsThis()
 	stylePreview->setWhatsThis( i18n("This area shows a preview of the currently selected style "
 							"without having to apply it to the whole desktop.") );
 	// Page2
-	page2->setWhatsThis( i18n("This page allows you to enable various widget style effects. "
-							"For best performance, it is advisable to disable all effects.") );
+	page2->setWhatsThis( i18n("This page allows you to choose details about the widget style options") );
 	comboToolbarIcons->setWhatsThis( i18n( "<p><b>Icons only:</b> Shows only icons on toolbar buttons. "
 							"Best option for low resolutions.</p>"
 							"<p><b>Text only: </b>Shows only text on toolbar buttons.</p>"
