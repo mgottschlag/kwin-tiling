@@ -28,7 +28,7 @@
 #include <cmath>
 
 Temperature::Temperature(QObject *parent, const QVariantList &args)
-    : SM::Applet(parent, args), m_showPlotters(false), m_tempModel(0)
+    : SM::Applet(parent, args), m_tempModel(0), m_showPlotters(false)
 {
     setHasConfigurationInterface(true);
     resize(215 + 20 + 23, 109 + 20 + 25);
@@ -44,10 +44,14 @@ void Temperature::init()
 {
     KConfigGroup cg = persistentConfig();
     setEngine(dataEngine("systemmonitor"));
-    m_showPlotters = cg.readEntry("showPlotters", true);
     setInterval(cg.readEntry("interval", 2) * 1000);
-
     setTitle(i18n("Temperature"));
+
+    Plasma::Theme* theme = Plasma::Theme::defaultTheme();
+    m_showPlotters = cg.readEntry("showPlotters", true);
+    m_showBackground = cg.readEntry("showBackground", true);
+    m_graphColor = cg.readEntry("graphColor", QColor(theme->color(Plasma::Theme::TextColor)));
+
     if (engine()->sources().count() == 0) {
         connect(engine(), SIGNAL(sourceAdded(QString)), this, SLOT(initLater(const QString)));
     } else {
@@ -95,13 +99,19 @@ void Temperature::createConfigurationInterface(KConfigDialog *parent)
     ui.treeView->setModel(&m_tempModel);
     ui.treeView->resizeColumnToContents(0);
 
-    ui.showPlotters->setChecked(m_showPlotters);
     ui.intervalSpinBox->setValue(interval() / 1000);
     updateSpinBoxSuffix(interval() / 1000);
-
     parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
-    parent->addPage(widget, i18n("Temperature"), "cpu");
     connect(ui.intervalSpinBox, SIGNAL(valueChanged(int)), this, SLOT(updateSpinBoxSuffix(int)));
+    parent->addPage(widget, i18n("Temperature"), "cpu");
+
+    widget = new QWidget();
+    uiAdv.setupUi(widget);
+    uiAdv.showPlotters->setChecked(m_showPlotters);
+    uiAdv.showBackgroundCheckBox->setChecked(m_showBackground);
+    uiAdv.graphColorCombo->setColor(m_graphColor);
+    parent->addPage(widget, i18n("Advanced"), "preferences-other");
+
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 }
@@ -128,13 +138,14 @@ void Temperature::configAccepted()
         }
     }
     cg.writeEntry("temps", items());
-
-    m_showPlotters = ui.showPlotters->isChecked();
-    cg.writeEntry("showPlotters", m_showPlotters);
     uint interval = ui.intervalSpinBox->value();
     cg.writeEntry("interval", interval);
     interval *= 1000;
     setInterval(interval);
+
+    cg.writeEntry("showPlotters", m_showPlotters = uiAdv.showPlotters->isChecked());
+    cg.writeEntry("showBackground", m_showBackground = uiAdv.showBackgroundCheckBox->isChecked());
+    cg.writeEntry("graphColor", m_graphColor = uiAdv.graphColorCombo->color());
 
     emit configNeedsSaving();
     connectToEngine();
@@ -179,14 +190,19 @@ bool Temperature::addMeter(const QString& source)
 
     if (mode() != SM::Applet::Panel && m_showPlotters) {
         Plasma::SignalPlotter *plotter = new Plasma::SignalPlotter(this);
-        plotter->addPlot(theme->color(Plasma::Theme::TextColor));
+        plotter->addPlot(m_graphColor);
         plotter->setUseAutoRange(true);
         plotter->setThinFrame(false);
         plotter->setShowLabels(false);
         plotter->setShowTopBar(false);
         plotter->setShowVerticalLines(false);
         plotter->setShowHorizontalLines(false);
-        plotter->setSvgBackground("widgets/plot-background");
+        if (m_showBackground) {
+            plotter->setSvgBackground("widgets/plot-background");
+        } else {
+            plotter->setSvgBackground(QString());
+            plotter->setBackgroundColor(Qt::transparent);
+        }
         layout->addItem(plotter);
         appendPlotter(source, plotter);
         setRatioOrientation(Qt::Horizontal);
@@ -196,7 +212,6 @@ bool Temperature::addMeter(const QString& source)
     mainLayout()->addItem(layout);
 
     dataUpdated(source, data);
-    //setPreferredItemHeight(layout->preferredSize().height());
     setPreferredItemHeight(80);
     return true;
 }
@@ -210,10 +225,6 @@ void Temperature::themeChanged()
         font.setPointSize(7);
         w->setLabelFont(0, font);
         w->setLabelFont(1, font);
-    }
-    foreach (Plasma::SignalPlotter *plotter, plotters().values()) {
-        plotter->removePlot(0);
-        plotter->addPlot(theme->color(Plasma::Theme::TextColor));
     }
 }
 
