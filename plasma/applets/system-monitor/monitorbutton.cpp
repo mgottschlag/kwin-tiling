@@ -81,6 +81,7 @@ void MonitorButton::highlight()
 
 void MonitorButton::hoverEnterEvent(QGraphicsSceneHoverEvent * event)
 {
+    Q_UNUSED(event)
     if (nativeWidget()->isChecked()) {
         return;
     }
@@ -91,6 +92,7 @@ void MonitorButton::hoverEnterEvent(QGraphicsSceneHoverEvent * event)
 
 void MonitorButton::hoverLeaveEvent(QGraphicsSceneHoverEvent * event)
 {
+    Q_UNUSED(event)
     if (nativeWidget()->isChecked()) {
         return;
     }
