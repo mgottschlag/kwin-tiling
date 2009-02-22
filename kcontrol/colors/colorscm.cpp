@@ -352,14 +352,23 @@ void KColorCm::saveScheme(const QString &name)
     int permissions = file.permissions();
     bool canWrite = (permissions & QFile::WriteUser);
     // or if we can overwrite it if it exists
-    if (path.isEmpty() || !file.exists() ||
-        (canWrite && KMessageBox::questionYesNo(this,
-        i18n("A color scheme with that name already exists.\nDo you want to overwrite it?"),
-        i18n("Save Color Scheme"),
-        KStandardGuiItem::overwrite(),
-        KStandardGuiItem::cancel())
-        == KMessageBox::Yes))
+    if (path.isEmpty() || !file.exists() || canWrite)
     {
+        if(canWrite){
+            int ret = KMessageBox::questionYesNo(this,
+                i18n("A color scheme with that name already exists.\nDo you want to overwrite it?"),
+                i18n("Save Color Scheme"),
+                KStandardGuiItem::overwrite(),
+                KStandardGuiItem::cancel());
+            //on don't overwrite, select the already existing name.
+            if(ret == KMessageBox::No){
+                QList<QListWidgetItem*> foundItems = schemeList->findItems(name, Qt::MatchExactly);
+                if (foundItems.size() == 1)
+                    schemeList->setCurrentRow(schemeList->row(foundItems[0]));
+                return;
+            }
+        }
+        
         // go ahead and save it
         QString newpath = KGlobal::dirs()->saveLocation("data", "color-schemes/");
         newpath += filename + ".colors";
@@ -394,7 +403,7 @@ void KColorCm::saveScheme(const QString &name)
 
         // set m_config back to the system one
         m_config = temp;
-        emit changed(false);
+        emit changed(true);
     }
     else if (!canWrite && file.exists())
     {
@@ -1110,6 +1119,8 @@ void KColorCm::emitChanged()
 // inactive effects slots
 void KColorCm::on_inactiveIntensityBox_currentIndexChanged(int index)
 {
+    Q_UNUSED( index );
+    
     updateFromEffectsPage();
     inactivePreview->setPalette(m_config, QPalette::Inactive);
 
@@ -1118,6 +1129,8 @@ void KColorCm::on_inactiveIntensityBox_currentIndexChanged(int index)
 
 void KColorCm::on_inactiveIntensitySlider_valueChanged(int value)
 {
+    Q_UNUSED( value );
+    
     updateFromEffectsPage();
     inactivePreview->setPalette(m_config, QPalette::Inactive);
 
@@ -1126,6 +1139,8 @@ void KColorCm::on_inactiveIntensitySlider_valueChanged(int value)
 
 void KColorCm::on_inactiveColorBox_currentIndexChanged(int index)
 {
+    Q_UNUSED( index );
+    
     updateFromEffectsPage();
     inactivePreview->setPalette(m_config, QPalette::Inactive);
 
@@ -1134,6 +1149,8 @@ void KColorCm::on_inactiveColorBox_currentIndexChanged(int index)
 
 void KColorCm::on_inactiveColorSlider_valueChanged(int value)
 {
+    Q_UNUSED( value );
+    
     updateFromEffectsPage();
     inactivePreview->setPalette(m_config, QPalette::Inactive);
 
@@ -1142,6 +1159,8 @@ void KColorCm::on_inactiveColorSlider_valueChanged(int value)
 
 void KColorCm::on_inactiveColorButton_changed(const QColor& color)
 {
+    Q_UNUSED( color );
+    
     updateFromEffectsPage();
     inactivePreview->setPalette(m_config, QPalette::Inactive);
 
@@ -1150,6 +1169,8 @@ void KColorCm::on_inactiveColorButton_changed(const QColor& color)
 
 void KColorCm::on_inactiveContrastBox_currentIndexChanged(int index)
 {
+    Q_UNUSED( index );
+    
     updateFromEffectsPage();
     inactivePreview->setPalette(m_config, QPalette::Inactive);
 
@@ -1158,6 +1179,8 @@ void KColorCm::on_inactiveContrastBox_currentIndexChanged(int index)
 
 void KColorCm::on_inactiveContrastSlider_valueChanged(int value)
 {
+    Q_UNUSED( value );
+    
     updateFromEffectsPage();
     inactivePreview->setPalette(m_config, QPalette::Inactive);
 
@@ -1167,6 +1190,8 @@ void KColorCm::on_inactiveContrastSlider_valueChanged(int value)
 // disabled effects slots
 void KColorCm::on_disabledIntensityBox_currentIndexChanged(int index)
 {
+    Q_UNUSED( index );
+    
     updateFromEffectsPage();
     disabledPreview->setPalette(m_config, QPalette::Disabled);
 
@@ -1175,6 +1200,8 @@ void KColorCm::on_disabledIntensityBox_currentIndexChanged(int index)
 
 void KColorCm::on_disabledIntensitySlider_valueChanged(int value)
 {
+    Q_UNUSED( value );
+    
     updateFromEffectsPage();
     disabledPreview->setPalette(m_config, QPalette::Disabled);
 
@@ -1183,6 +1210,8 @@ void KColorCm::on_disabledIntensitySlider_valueChanged(int value)
 
 void KColorCm::on_disabledColorBox_currentIndexChanged(int index)
 {
+    Q_UNUSED( index );
+    
     updateFromEffectsPage();
     disabledPreview->setPalette(m_config, QPalette::Disabled);
 
@@ -1191,6 +1220,8 @@ void KColorCm::on_disabledColorBox_currentIndexChanged(int index)
 
 void KColorCm::on_disabledColorSlider_valueChanged(int value)
 {
+    Q_UNUSED( value );
+    
     updateFromEffectsPage();
     disabledPreview->setPalette(m_config, QPalette::Disabled);
 
@@ -1199,6 +1230,8 @@ void KColorCm::on_disabledColorSlider_valueChanged(int value)
 
 void KColorCm::on_disabledColorButton_changed(const QColor& color)
 {
+    Q_UNUSED( color );
+    
     updateFromEffectsPage();
     disabledPreview->setPalette(m_config, QPalette::Disabled);
 
@@ -1207,6 +1240,8 @@ void KColorCm::on_disabledColorButton_changed(const QColor& color)
 
 void KColorCm::on_disabledContrastBox_currentIndexChanged(int index)
 {
+    Q_UNUSED( index );
+    
     updateFromEffectsPage();
     disabledPreview->setPalette(m_config, QPalette::Disabled);
 
@@ -1215,6 +1250,8 @@ void KColorCm::on_disabledContrastBox_currentIndexChanged(int index)
 
 void KColorCm::on_disabledContrastSlider_valueChanged(int value)
 {
+    Q_UNUSED( value );
+    
     updateFromEffectsPage();
     disabledPreview->setPalette(m_config, QPalette::Disabled);
 
