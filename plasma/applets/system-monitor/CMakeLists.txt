@@ -36,7 +36,7 @@ target_link_libraries(plasma_applet_sm_temperature ${KDE4_PLASMA_LIBS} ${KDE4_KD
 set(net_SRCS
     net.cpp
 )
-kde4_add_ui_files(net_SRCS net-config.ui)
+kde4_add_ui_files(net_SRCS net-config.ui net-config-adv.ui)
 kde4_add_plugin(plasma_applet_sm_net ${net_SRCS})
 target_link_libraries(plasma_applet_sm_net ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS} plasma_applet-system-monitor)
 

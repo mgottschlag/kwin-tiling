@@ -42,6 +42,12 @@ void SM::Net::init()
     setEngine(dataEngine("systemmonitor"));
     setInterval(cg.readEntry("interval", 2) * 1000);
     setTitle(i18n("Network"));
+    
+    m_showTopBar = cg.readEntry("showTopBar", true);
+    m_showBackground = cg.readEntry("showBackground", true);
+    m_inColor = cg.readEntry("inColor", QColor("#d2d200"));
+    m_outColor = cg.readEntry("outColor", QColor("#f20000"));
+    
     if (engine()->sources().count() == 0) {
         connect(engine(), SIGNAL(sourceAdded(QString)), this, SLOT(initLater(const QString)));
     } else {
@@ -83,14 +89,12 @@ bool SM::Net::addMeter(const QString& source)
     QString interface = l[2];
     Plasma::Theme* theme = Plasma::Theme::defaultTheme();
     Plasma::SignalPlotter *plotter = new Plasma::SignalPlotter(this);
-    QColor color = theme->color(Plasma::Theme::TextColor);
-    plotter->addPlot(QColor(((color.red() - 128) * 0.65) + 128,
-                            ((color.green() - 128) * 0.65) + 128, 0, color.alpha()));
-    plotter->addPlot(QColor(((color.red() - 128) * 0.90) + 128, 0, 0, color.alpha()));
+    plotter->addPlot(m_inColor);
+    plotter->addPlot(m_outColor);
     plotter->setUseAutoRange(true);
     plotter->setThinFrame(false);
     plotter->setShowLabels(false);
-    plotter->setShowTopBar(true);
+    plotter->setShowTopBar(m_showTopBar);
     plotter->setShowVerticalLines(false);
     plotter->setShowHorizontalLines(false);
     plotter->setStackPlots(true);
@@ -101,7 +105,12 @@ bool SM::Net::addMeter(const QString& source)
     plotter->setHorizontalLinesColor(theme->color(Plasma::Theme::HighlightColor));
     plotter->setVerticalLinesColor(theme->color(Plasma::Theme::HighlightColor));
     plotter->setHorizontalLinesCount(4);
-    //plotter->setSvgBackground("widgets/plot-background");
+    if (m_showBackground) {
+        plotter->setSvgBackground("widgets/plot-background");
+    } else {
+        plotter->setSvgBackground(QString());
+        plotter->setBackgroundColor(Qt::transparent);
+    }
     plotter->setTitle(interface);
     plotter->setUnit("KiB/s");
     appendPlotter(interface, plotter);
@@ -114,13 +123,7 @@ bool SM::Net::addMeter(const QString& source)
 void SM::Net::themeChanged()
 {
     Plasma::Theme* theme = Plasma::Theme::defaultTheme();
-    QColor color = theme->color(Plasma::Theme::TextColor);
     foreach (Plasma::SignalPlotter *plotter, plotters().values()) {
-        plotter->removePlot(1);
-        plotter->removePlot(0);
-        plotter->addPlot(QColor(((color.red() - 128) * 0.65) + 128,
-                                ((color.green() - 128) * 0.65) + 128, 0, color.alpha()));
-        plotter->addPlot(QColor(((color.red() - 128) * 0.90) + 128, 0, 0, color.alpha()));
         plotter->setFontColor(theme->color(Plasma::Theme::HighlightColor));
         plotter->setHorizontalLinesColor(theme->color(Plasma::Theme::HighlightColor));
         plotter->setVerticalLinesColor(theme->color(Plasma::Theme::HighlightColor));
@@ -145,14 +148,13 @@ void SM::Net::dataUpdated(const QString& source,
 
 void SM::Net::createConfigurationInterface(KConfigDialog *parent)
 {
-   QWidget *widget = new QWidget();
-   ui.setupUi(widget);
-   m_model.clear();
-   m_model.setHorizontalHeaderLabels(QStringList() << i18n("Network interface"));
-   QStandardItem *parentItem = m_model.invisibleRootItem();
+    QWidget *widget = new QWidget();
+    ui.setupUi(widget);
+    m_model.clear();
+    m_model.setHorizontalHeaderLabels(QStringList() << i18n("Network interface"));
+    QStandardItem *parentItem = m_model.invisibleRootItem();
 
-
-   foreach (const QString& interface, m_interfaces) {
+    foreach (const QString& interface, m_interfaces) {
         QString ifname = interface.split('/')[2];
         QStandardItem *item1 = new QStandardItem(ifname);
         item1->setEditable(false);
@@ -162,16 +164,24 @@ void SM::Net::createConfigurationInterface(KConfigDialog *parent)
             item1->setCheckState(Qt::Checked);
         }
         parentItem->appendRow(QList<QStandardItem *>() << item1);
-   }
-   ui.treeView->setModel(&m_model);
-   ui.treeView->resizeColumnToContents(0);
-   ui.intervalSpinBox->setValue(interval() / 1000);
-   updateSpinBoxSuffix(interval() / 1000);
+    }
+    ui.treeView->setModel(&m_model);
+    ui.treeView->resizeColumnToContents(0);
+    ui.intervalSpinBox->setValue(interval() / 1000);
+    updateSpinBoxSuffix(interval() / 1000);
+    connect(ui.intervalSpinBox, SIGNAL(valueChanged(int)), this, SLOT(updateSpinBoxSuffix(int)));
+    parent->addPage(widget, i18n("Interfaces"), "network-workgroup");
 
-   parent->addPage(widget, i18n("Interfaces"), "network-workgroup");
-   connect(ui.intervalSpinBox, SIGNAL(valueChanged(int)), this, SLOT(updateSpinBoxSuffix(int)));
-   connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
-   connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+    widget = new QWidget();
+    uiAdv.setupUi(widget);
+    uiAdv.showTopBarCheckBox->setChecked(m_showTopBar);
+    uiAdv.showBackgroundCheckBox->setChecked(m_showBackground);
+    uiAdv.inColorCombo->setColor(m_inColor);
+    uiAdv.outColorCombo->setColor(m_outColor);
+    parent->addPage(widget, i18n("Advanced"), "preferences-other");
+
+    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
+    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 }
 
 void SM::Net::updateSpinBoxSuffix(int interval)                                                       
@@ -199,6 +209,12 @@ void SM::Net::configAccepted()
     cg.writeEntry("interval", interval);
     interval *= 1000;
     setInterval(interval);
+    
+    cg.writeEntry("showTopBar", m_showTopBar = uiAdv.showTopBarCheckBox->isChecked());
+    cg.writeEntry("showBackground", m_showBackground = uiAdv.showBackgroundCheckBox->isChecked());
+    cg.writeEntry("inColor", m_inColor = uiAdv.inColorCombo->color());
+    cg.writeEntry("outColor", m_outColor = uiAdv.outColorCombo->color());
+
     emit configNeedsSaving();
     connectToEngine();
 }
