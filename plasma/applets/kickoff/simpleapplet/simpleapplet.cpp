@@ -456,6 +456,13 @@ void MenuLauncherApplet::toggleMenu()
             d->menuview->addSeparator();
             QAction *switchaction = d->menuview->addAction(KIcon("system-switch-user"), i18n("Switch User"));
             switchaction->setData(KUrl("leave:/switch"));
+
+            KConfigGroup c(KSharedConfig::openConfig("ksmserverrc", KConfig::NoGlobals), "General");
+            if (c.readEntry("loginMode") == "restoreSavedSession") {
+                QAction *saveaction = d->menuview->addAction(KIcon("document-save"), i18n("Save Session"));
+                saveaction->setData(KUrl("leave:/savesession"));
+            }
+
             QAction *lockaction = d->menuview->addAction(KIcon("system-lock-screen"), i18n("Lock Screen"));
             lockaction->setData(KUrl("leave:/lock"));
             QAction *logoutaction = d->menuview->addAction(KIcon("system-shutdown"), i18n("Leave..."));
