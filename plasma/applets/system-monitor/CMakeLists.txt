@@ -45,7 +45,7 @@ target_link_libraries(plasma_applet_sm_net ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS
 set(cpu_SRCS
     cpu.cpp
 )
-kde4_add_ui_files(cpu_SRCS cpu-config.ui)
+kde4_add_ui_files(cpu_SRCS cpu-config.ui cpu-config-adv.ui)
 kde4_add_plugin(plasma_applet_sm_cpu ${cpu_SRCS})
 target_link_libraries(plasma_applet_sm_cpu ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS} plasma_applet-system-monitor)
 

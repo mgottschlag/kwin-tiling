@@ -48,15 +48,15 @@ class Net : public Applet
         void initLater(const QString &name);
 
     private:
-       Ui::config ui;
-       Ui::configAdv uiAdv;
-       QStandardItemModel m_model;
-       QStringList m_interfaces;
-       QMap<QString, QList<double> > m_data;
-       bool m_showTopBar;
-       bool m_showBackground;
-       QColor m_inColor;
-       QColor m_outColor;
+        Ui::config ui;
+        Ui::configAdv uiAdv;
+        QStandardItemModel m_model;
+        QStringList m_interfaces;
+        QMap<QString, QList<double> > m_data;
+        bool m_showTopBar;
+        bool m_showBackground;
+        QColor m_inColor;
+        QColor m_outColor;
 
     private slots:
         void parseSources();

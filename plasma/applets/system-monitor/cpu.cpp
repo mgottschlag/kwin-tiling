@@ -42,6 +42,12 @@ void SM::Cpu::init()
     setEngine(dataEngine("systemmonitor"));
     setInterval(cg.readEntry("interval", 2) * 1000);
     setTitle(i18n("CPU"));
+
+    Plasma::Theme* theme = Plasma::Theme::defaultTheme();
+    m_showTopBar = cg.readEntry("showTopBar", true);
+    m_showBackground = cg.readEntry("showBackground", true);
+    m_graphColor = cg.readEntry("graphColor", QColor(theme->color(Plasma::Theme::TextColor)));
+
     if (engine()->sources().count() == 0) {
         connect(engine(), SIGNAL(sourceAdded(QString)), this, SLOT(initLater(const QString)));
     } else {
@@ -81,12 +87,12 @@ bool SM::Cpu::addMeter(const QString& source)
     QString cpu = l[2];
     Plasma::Theme* theme = Plasma::Theme::defaultTheme();
     Plasma::SignalPlotter *plotter = new Plasma::SignalPlotter(this);
-    plotter->addPlot(theme->color(Plasma::Theme::TextColor));
+    plotter->addPlot(m_graphColor);
     plotter->setUseAutoRange(false);
     plotter->setVerticalRange(0.0, 100.0);
     plotter->setThinFrame(false);
     plotter->setShowLabels(false);
-    plotter->setShowTopBar(false);
+    plotter->setShowTopBar(m_showTopBar);
     plotter->setShowVerticalLines(false);
     plotter->setShowHorizontalLines(false);
     plotter->setFontColor(theme->color(Plasma::Theme::HighlightColor));
@@ -96,7 +102,12 @@ bool SM::Cpu::addMeter(const QString& source)
     plotter->setHorizontalLinesColor(theme->color(Plasma::Theme::HighlightColor));
     plotter->setVerticalLinesColor(theme->color(Plasma::Theme::HighlightColor));
     plotter->setHorizontalLinesCount(4);
-    //plotter->setSvgBackground("widgets/plot-background");
+    if (m_showBackground) {
+        plotter->setSvgBackground("widgets/plot-background");
+    } else {
+        plotter->setSvgBackground(QString());
+        plotter->setBackgroundColor(Qt::transparent);
+    }
     plotter->setTitle(cpu);
     plotter->setUnit("%");
     appendPlotter(source, plotter);
@@ -109,8 +120,6 @@ void SM::Cpu::themeChanged()
 {
     Plasma::Theme* theme = Plasma::Theme::defaultTheme();
     foreach (Plasma::SignalPlotter *plotter, plotters().values()) {
-        plotter->removePlot(0);
-        plotter->addPlot(theme->color(Plasma::Theme::TextColor));
         plotter->setFontColor(theme->color(Plasma::Theme::HighlightColor));
         plotter->setHorizontalLinesColor(theme->color(Plasma::Theme::HighlightColor));
         plotter->setVerticalLinesColor(theme->color(Plasma::Theme::HighlightColor));
@@ -127,35 +136,41 @@ void SM::Cpu::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
 
 void SM::Cpu::createConfigurationInterface(KConfigDialog *parent)
 {
-   QWidget *widget = new QWidget();
-   ui.setupUi(widget);
-   m_model.clear();
-   m_model.setHorizontalHeaderLabels(QStringList() << i18n("CPU"));
-   QStandardItem *parentItem = m_model.invisibleRootItem();
-   QRegExp rx("cpu/(\\w+)/TotalLoad");
+    QWidget *widget = new QWidget();
+    ui.setupUi(widget);
+    m_model.clear();
+    m_model.setHorizontalHeaderLabels(QStringList() << i18n("CPU"));
+    QStandardItem *parentItem = m_model.invisibleRootItem();
+    QRegExp rx("cpu/(\\w+)/TotalLoad");
 
+    foreach (const QString& cpu, m_cpus) {
+        if (rx.indexIn(cpu) != -1) {
+            QStandardItem *item1 = new QStandardItem(rx.cap(1));
+            item1->setEditable(false);
+            item1->setCheckable(true);
+            item1->setData(cpu);
+            if (items().contains(cpu)) {
+                item1->setCheckState(Qt::Checked);
+            }
+            parentItem->appendRow(QList<QStandardItem *>() << item1);
+        }
+    }
+    ui.treeView->setModel(&m_model);
+    ui.treeView->resizeColumnToContents(0);
+    ui.intervalSpinBox->setValue(interval() / 1000);
+    updateSpinBoxSuffix(interval() / 1000);
+    connect(ui.intervalSpinBox, SIGNAL(valueChanged(int)), this, SLOT(updateSpinBoxSuffix(int)));
+    parent->addPage(widget, i18n("CPUs"), "cpu");
 
-   foreach (const QString& cpu, m_cpus) {
-      if (rx.indexIn(cpu) != -1) {
-         QStandardItem *item1 = new QStandardItem(rx.cap(1));
-         item1->setEditable(false);
-         item1->setCheckable(true);
-         item1->setData(cpu);
-         if (items().contains(cpu)) {
-            item1->setCheckState(Qt::Checked);
-         }
-         parentItem->appendRow(QList<QStandardItem *>() << item1);
-      }
-   }
-   ui.treeView->setModel(&m_model);
-   ui.treeView->resizeColumnToContents(0);
-   ui.intervalSpinBox->setValue(interval() / 1000);
-   updateSpinBoxSuffix(interval() / 1000);
+    widget = new QWidget();
+    uiAdv.setupUi(widget);
+    uiAdv.showTopBarCheckBox->setChecked(m_showTopBar);
+    uiAdv.showBackgroundCheckBox->setChecked(m_showBackground);
+    uiAdv.graphColorCombo->setColor(m_graphColor);
+    parent->addPage(widget, i18n("Advanced"), "preferences-other");
 
-   parent->addPage(widget, i18n("CPUs"), "cpu");
-   connect(ui.intervalSpinBox, SIGNAL(valueChanged(int)), this, SLOT(updateSpinBoxSuffix(int)));
-   connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
-   connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
+    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 }
 
 void SM::Cpu::updateSpinBoxSuffix(int interval)
@@ -184,6 +199,10 @@ void SM::Cpu::configAccepted()
     interval *= 1000;
     setInterval(interval);
 
+    cg.writeEntry("showTopBar", m_showTopBar = uiAdv.showTopBarCheckBox->isChecked());
+    cg.writeEntry("showBackground", m_showBackground = uiAdv.showBackgroundCheckBox->isChecked());
+    cg.writeEntry("graphColor", m_graphColor = uiAdv.graphColorCombo->color());
+    
     emit configNeedsSaving();
     connectToEngine();
 }
