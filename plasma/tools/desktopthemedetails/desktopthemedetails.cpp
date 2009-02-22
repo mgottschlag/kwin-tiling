@@ -472,6 +472,8 @@ void DesktopThemeDetails::save()
 void DesktopThemeDetails::removeTheme()
 {
     bool removeTheme = true;
+    KConfigGroup cfg = KConfigGroup(KSharedConfig::openConfig("plasmarc"), "Theme");
+    QString activeTheme = cfg.readEntry("name", "default");
     QString theme = m_theme->itemData(m_theme->currentIndex(),
                                       ThemeModel::PackageNameRole).toString();
     if (m_themeCustomized) {
@@ -480,7 +482,10 @@ void DesktopThemeDetails::removeTheme()
         }
     } else {
         if (theme == "default") {
-            KMessageBox::information(this, i18n("Removal of the default KDE theme is not allowed."), i18n("Remove Desktop Theme"));
+            KMessageBox::information(this, i18n("Removal of the default desktop theme is not allowed."), i18n("Remove Desktop Theme"));
+            removeTheme = false;
+        } else if (theme == activeTheme) {
+            KMessageBox::information(this, i18n("Removal of the active desktop theme is not allowed."), i18n("Remove Desktop Theme"));
             removeTheme = false;
         } else {
             if(KMessageBox::questionYesNo(this, i18n("Are you sure you wish remove the \"%1\" theme?", m_theme->currentText()), i18n("Remove Desktop Theme")) == KMessageBox::No) {
