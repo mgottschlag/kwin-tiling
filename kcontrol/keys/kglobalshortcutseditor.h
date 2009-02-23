@@ -138,7 +138,7 @@ private:
 
     Q_DISABLE_COPY(KGlobalShortcutsEditor)
 
-    Q_PRIVATE_SLOT(d, void cleanComponent())
+    Q_PRIVATE_SLOT(d, void removeComponent())
 }; // class KGlobalShortcutsEditor
 
 #endif // KGLOBALSHORTCUTSEDITOR_H

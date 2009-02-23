@@ -78,7 +78,7 @@ public:
     void initGUI();
 
     //! Delete the currently selected component
-    void cleanComponent();
+    void removeComponent();
 
     //! Load the component at @a componentPath
     bool loadComponent(const QDBusObjectPath &componentPath);
@@ -111,9 +111,9 @@ void KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::initGUI()
 
     // Build the menu
     QMenu *menu = new QMenu(q);
-    menu->addAction( i18n("Import Scheme ..."), q, SLOT(importScheme()));
-    menu->addAction( i18n("Export Scheme ..."), q, SLOT(exportScheme()));
-    menu->addAction( i18n("Revise Component"), q, SLOT(cleanComponent()));
+    menu->addAction( i18n("Import Scheme..."), q, SLOT(importScheme()));
+    menu->addAction( i18n("Export Scheme..."), q, SLOT(exportScheme()));
+    menu->addAction( i18n("Remove Component"), q, SLOT(removeComponent()));
 
     ui.menu_button->setMenu(menu);
 }
@@ -375,32 +375,41 @@ QDBusObjectPath KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::component
 }
 
 
-void KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::cleanComponent()
+void KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::removeComponent()
 {
     QString name = ui.components->currentText();
     QString componentUnique = components.value(name).uniqueName;
 
-    switch (KMessageBox::questionYesNo(
-            q,
-            i18n("This will remove all currently not active global shortcuts for %1 from this list. %1 is removed too if no shortcut is left.\n"
-                    "All global shortcuts will reregister themselves whenever they are activated the next time!", componentUnique),
-            i18n("Clean component"))) {
-
-        case KMessageBox::Yes:
-            if (KGlobalAccel::cleanComponent(componentUnique)) {
-                // Remove the component from the gui
-                removeComponent(componentUnique);
-
-                // Load it again
-                if (loadComponent(componentPath(componentUnique))) {
-                    // Active it
-                    q->activateComponent(name);
-                }
-            }
-            break;
-
-        default:
+    // The confirmation text is different when the component is active
+    if (KGlobalAccel::isComponentActive(componentUnique)) {
+        if (KMessageBox::questionYesNo(
+                    q,
+                    i18n("Component '%1' is currently active. Only global shortcuts currently not active will be removed from the list.\n"
+                         "All global shortcuts will reregister themselves with their default when they are started the next time!", componentUnique),
+                    i18n("Remove component")) != KMessageBox::Yes) {
             return;
+        }
+    } else {
+        if (KMessageBox::questionYesNo(
+                    q,
+                    i18n("Are you sure you want to remove the registered shortcuts for component '%1'?."
+                         "The component and shortcuts will reregister themselves with their default setting"
+                         " when they are started the next time.",
+                          componentUnique),
+                    i18n("Remove component")) != KMessageBox::Yes) {
+            return;
+        }
+    }
+
+    if (KGlobalAccel::cleanComponent(componentUnique)) {
+        // Remove the component from the gui
+        removeComponent(componentUnique);
+
+        // Load it again
+        if (loadComponent(componentPath(componentUnique))) {
+            // Active it
+            q->activateComponent(name);
+        }
     }
 }
 
