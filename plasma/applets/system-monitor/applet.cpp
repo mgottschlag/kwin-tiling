@@ -27,8 +27,6 @@
 
 namespace SM {
 
-QHash< QString, QList<uint> > Applet::s_configIds;
-
 Applet::Applet(QObject *parent, const QVariantList &args)
    : Plasma::Applet(parent, args),
      m_interval(10000),
@@ -42,8 +40,7 @@ Applet::Applet(QObject *parent, const QVariantList &args)
      m_mode(Desktop),
      m_detail(Low),
      m_minimumWidth(DEFAULT_MINIMUM_WIDTH),
-     m_mainLayout(0),
-     m_configId(0)
+     m_mainLayout(0)
 {
     if (args.count() > 0) {
         if (args[0].toString() == "SM") {
@@ -51,23 +48,11 @@ Applet::Applet(QObject *parent, const QVariantList &args)
         }
     }
     QString name = pluginName();
-
-    while (s_configIds[name].contains(m_configId)) {
-        ++m_configId;
-    }
-    s_configIds[name] << m_configId;
 }
 
 Applet::~Applet()
 {
-    s_configIds[pluginName()].removeAll(m_configId);
     deleteMeters();
-}
-
-KConfigGroup Applet::persistentConfig() const
-{
-    KConfigGroup cg = globalConfig();
-    return KConfigGroup(cg.config(), QString("General_%1").arg(m_configId));
 }
 
 void Applet::constraintsEvent(Plasma::Constraints constraints)

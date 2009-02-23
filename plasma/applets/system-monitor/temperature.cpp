@@ -42,7 +42,7 @@ Temperature::~Temperature()
 
 void Temperature::init()
 {
-    KConfigGroup cg = persistentConfig();
+    KConfigGroup cg = config();
     setEngine(dataEngine("systemmonitor"));
     setInterval(cg.readEntry("interval", 2) * 1000);
     setTitle(i18n("Temperature"));
@@ -61,7 +61,7 @@ void Temperature::init()
 
 void Temperature::parseSources()
 {
-    KConfigGroup cg = persistentConfig();
+    KConfigGroup cg = config();
     setItems(cg.readEntry("temps", engine()->sources().filter(QRegExp(".*temp.*", Qt::CaseInsensitive))));
     connectToEngine();
 }
@@ -123,15 +123,16 @@ void Temperature::updateSpinBoxSuffix(int interval)
 
 void Temperature::configAccepted()
 {
-    KConfigGroup cg = persistentConfig();
+    KConfigGroup cg = config();
+    KConfigGroup cgGlobal = globalConfig();
     QStandardItem *parentItem = m_tempModel.invisibleRootItem();
 
     clearItems();
     for (int i = 0; i < parentItem->rowCount(); ++i) {
         QStandardItem *item = parentItem->child(i, 0);
         if (item) {
-            cg.writeEntry(item->text(),
-                        parentItem->child(i, 1)->text());
+            cgGlobal.writeEntry(item->text(),
+                                parentItem->child(i, 1)->text());
             if (item->checkState() == Qt::Checked) {
                 appendItem(item->text());
             }
@@ -153,7 +154,7 @@ void Temperature::configAccepted()
 
 QString Temperature::title(const QString& source)
 {
-    KConfigGroup cg = persistentConfig();
+    KConfigGroup cg = globalConfig();
     return cg.readEntry(source, source.mid(source.lastIndexOf('/') + 1));
 }
 

@@ -60,7 +60,6 @@ class SM_EXPORT Applet : public Plasma::Applet
         void checkGeometry();
         QGraphicsLinearLayout* mainLayout();
         void setTitle(const QString& title, bool spacer = false);
-        KConfigGroup persistentConfig() const;
         uint interval() { return m_interval; };
         void setInterval(uint interval) { m_interval = interval; };
         qreal preferredItemHeight() { return m_preferredItemHeight; };
@@ -96,7 +95,6 @@ class SM_EXPORT Applet : public Plasma::Applet
         void displayNoAvailableSources();
         virtual void deleteMeters(QGraphicsLinearLayout* layout = 0);
         virtual void setDetail(Detail detail);
-        //QSizeF sizeHint(Qt::SizeHint which, const QSizeF& constraint = QSizeF()) const;
 
     private:
         uint m_interval;
@@ -121,9 +119,6 @@ class SM_EXPORT Applet : public Plasma::Applet
         QSizeF m_max;
 
         QGraphicsLinearLayout *m_mainLayout;
-
-        static QHash< QString, QList<uint> > s_configIds;
-        uint m_configId;
 };
 
 }

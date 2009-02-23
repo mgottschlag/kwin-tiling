@@ -39,7 +39,7 @@ Hdd::~Hdd()
 
 void Hdd::init()
 {
-    KConfigGroup cg = persistentConfig();
+    KConfigGroup cg = config();
     QString predicateString("IS StorageVolume");
     setEngine(dataEngine("soliddevice"));
     setItems(cg.readEntry("uuids",
@@ -94,15 +94,16 @@ void Hdd::updateSpinBoxSuffix(int interval)
 
 void Hdd::configAccepted()
 {
-    KConfigGroup cg = persistentConfig();
+    KConfigGroup cg = config();
+    KConfigGroup cgGlobal = globalConfig();
     QStandardItem *parentItem = m_hddModel.invisibleRootItem();
 
     clearItems();
     for (int i = 0; i < parentItem->rowCount(); ++i) {
         QStandardItem *item = parentItem->child(i, 0);
         if (item) {
-            cg.writeEntry(item->data().toString(),
-                          parentItem->child(i, 1)->text());
+            cgGlobal.writeEntry(item->data().toString(),
+                                parentItem->child(i, 1)->text());
             if (item->checkState() == Qt::Checked) {
                 appendItem(item->data().toString());
             }
@@ -121,7 +122,7 @@ void Hdd::configAccepted()
 
 QString Hdd::title(const QString& uuid, const Plasma::DataEngine::Data &data)
 {
-    KConfigGroup cg = persistentConfig();
+    KConfigGroup cg = globalConfig();
     QString label = cg.readEntry(uuid, "");
 
     if (label.isEmpty()) {
