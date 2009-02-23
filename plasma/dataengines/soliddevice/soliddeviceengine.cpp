@@ -517,7 +517,7 @@ qlonglong SolidDeviceEngine::freeDiskSpace(const QString &mountPoint)
     if (statvfs(path,&fs_obj) < 0) {
         return -1;
     } else {
-        return (qlonglong)fs_obj.f_bfree*(qlonglong)fs_obj.f_frsize;
+        return (qlonglong)fs_obj.f_bavail*(qlonglong)fs_obj.f_frsize;
     }
 #elif defined(HAVE_STATFS) && !defined(USE_SOLARIS)
     struct statfs fs_obj;
