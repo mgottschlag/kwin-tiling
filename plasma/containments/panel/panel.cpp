@@ -223,6 +223,10 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 void Panel::appletRemoved(Plasma::Applet* applet)
 {
     QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout*>(layout());
+    if (!lay) {
+        return;
+    }
+
     lay->removeItem(applet);
 
     //shrink the panel if possible
@@ -505,6 +509,10 @@ void Panel::saveState(KConfigGroup &config) const
 
 void Panel::themeUpdated()
 {
+    if (!layout()) {
+        return;
+    }
+
     //if the theme is changed all the calculations needs to be done again
     //and resize based on the change in the theme bordersize
 
