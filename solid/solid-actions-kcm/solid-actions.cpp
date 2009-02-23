@@ -52,9 +52,11 @@ SolidActions::SolidActions(QWidget* parent, const QVariantList&)
     setButtons(KCModule::Help);
 
     // Prepare main display dialog
-    mainUi = new Ui::SolidActions();
+    mainUi = new Ui::SolidActionsConfig();
     mainUi->setupUi(this);
     mainUi->LwActions->setSelectionMode(QAbstractItemView::SingleSelection); // Only a single item should be selectable
+    mainUi->PbAddAction->setGuiItem(KStandardGuiItem::add());
+    mainUi->PbEditAction->setIcon(KIcon("document-edit"));
 
     connect(mainUi->PbEditAction, SIGNAL(clicked()), this, SLOT(editAction()));
     connect(mainUi->PbDeleteAction, SIGNAL(clicked()), this, SLOT(deleteAction()));
@@ -235,11 +237,12 @@ void SolidActions::toggleEditDelete(bool toggle)
 
     KUrl writeDesktopFile(selectedAction()->desktopWritePath); // Get the write desktop file
     if (selectedAction()->isUserSupplied()) { // Is the action user supplied?
-        mainUi->PbDeleteAction->setText(i18n("Delete Action")); // We can directly delete it then
+        mainUi->PbDeleteAction->setGuiItem(KStandardGuiItem::remove()); // We can directly delete it then
     } else if (KIO::NetAccess::exists(writeDesktopFile, true, this)) { // Does the write file exist?
-        mainUi->PbDeleteAction->setText(i18n("Revert Modifications")); // Otherwise we can only revert
+        mainUi->PbDeleteAction->setGuiItem(KStandardGuiItem::discard()); // Otherwise we can only revert
     } else {
         mainUi->PbDeleteAction->setText(i18n("Cannot be deleted")); // We cannot do anything then
+        mainUi->PbDeleteAction->setIcon(KIcon());
         mainUi->PbDeleteAction->setEnabled(false); // So disable the ability to delete
     }
 }

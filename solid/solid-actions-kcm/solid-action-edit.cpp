@@ -49,6 +49,9 @@ SolidActionEdit::SolidActionEdit(QWidget *parent) : KDialog(parent)
     ui.setupUi(editWidget);
     setInitialSize(QSize(600, 400)); // Set a decent initial size
     ui.TwSolidRequirements->setHeaderLabel(""); // We don't need a header label
+    ui.PbAddRequirement->setGuiItem(KStandardGuiItem::add());
+    ui.PbEditRequirement->setIcon(KIcon("document-edit"));
+    ui.PbRemoveRequirement->setGuiItem(KStandardGuiItem::remove());
 
     // Instantiate the predicate edit dialog
     predicateUi = new SolidActionEditPredicate(this);

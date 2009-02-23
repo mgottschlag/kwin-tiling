@@ -65,7 +65,12 @@
      <item row="0" column="1">
       <widget class="KUrlRequester" name="LeActionCommand">
        <property name="toolTip">
-        <string>Command that will trigger the action</string>
+        <string>Command that will trigger the action
+This can include any or all of the following case insensitive expands:
+
+%f: The mountpoint for the device - Storage Access devices only
+%d: Path to the device node - Block devices only
+%i: The devices identifier</string>
        </property>
       </widget>
      </item>
@@ -101,7 +106,7 @@
         <string>Add a new requirement</string>
        </property>
        <property name="text">
-        <string>Add Requirement</string>
+        <string>Add</string>
        </property>
       </widget>
      </item>
@@ -111,7 +116,7 @@
         <string>Edit current requirement</string>
        </property>
        <property name="text">
-        <string>Edit Requirement</string>
+        <string>Edit</string>
        </property>
       </widget>
      </item>
@@ -121,7 +126,7 @@
         <string>Remove current requirement</string>
        </property>
        <property name="text">
-        <string>Remove Requirement</string>
+        <string>Remove</string>
        </property>
       </widget>
      </item>
