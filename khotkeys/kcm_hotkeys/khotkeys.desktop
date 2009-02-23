@@ -87,10 +87,12 @@ Name[zh_TW]=輸入動作
 
 Comment=Configure Input Actions settings
 Comment[ga]=Cumraigh socruithe na nGníomhartha Ionchurtha
+Comment[gl]=Configura as opcións de entrada
 Comment[pt]=Configurar as opções das Acções de Entrada
 Comment[pt_BR]=Configurar as opções das ações de entrada
 Comment[sv]=Anpassa inställningar av inmatningsåtgärder
 Comment[uk]=Налаштування параметрів дій з вводу
+Comment[zh_TW]=設定輸入動作
 Categories=Qt;KDE;X-KDE-settings-accessibility;
 
 X-KDE-Keywords=global,keyboard shortcuts,hot keys,hotkeys,KHotKeys,input actions,mouse gestures,actions,triggers,launch
