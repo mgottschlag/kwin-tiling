@@ -1,5 +1,4 @@
 add_subdirectory(applicationjobs)
-add_subdirectory(calendar)
 add_subdirectory(dict)
 add_subdirectory(executable)
 add_subdirectory(favicons)
@@ -15,6 +14,11 @@ add_subdirectory(time)
 add_subdirectory(weather)
 
 macro_optional_find_package(KdepimLibs)
+
+if(KDE4_KHOLIDAYS_LIBS AND KDE4_AKONADI_LIBS)
+   add_subdirectory(calendar)
+endif(KDE4_KHOLIDAYS_LIBS AND KDE4_AKONADI_LIBS)
+
 if(KDE4_SYNDICATION_LIBS)
    add_subdirectory(rss)
 endif(KDE4_SYNDICATION_LIBS)
