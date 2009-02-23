@@ -30,29 +30,13 @@
 
 SolidActionEditPredicate::SolidActionEditPredicate(QWidget *parent) : KDialog(parent)
 {
-    QStringList allPossibleDevices;
-
     QWidget *predicateWidget = new QWidget(this);
     setMainWidget(predicateWidget);
     ui.setupUi(predicateWidget);
     setInitialSize(QSize(150, 100)); // Set a decent size
     setCaption(i18n("Editing requirement"));
 
-    // Fill the lists of possible device types / device values
-    allPossibleDevices = KGlobal::dirs()->findAllResources("data", "solid/devices/");
-    // Get service objects for those actions and add them to the display
-    foreach(const QString &desktop, allPossibleDevices) {
-        KDesktopFile deviceFile(desktop);
-        KConfigGroup deviceType = deviceFile.desktopGroup(); // Retrieve the configuration group where the user friendly name is
-        deviceTypes.insert(deviceType.readEntry("X-KDE-Solid-Actions-Type"), deviceType.readEntry("Name")); // Lets read the user friendly name
-        QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(desktop, true); // Get the list of contained services
-        foreach(const KServiceAction &deviceValue, services) { // We want every single action
-            deviceValuesTypeMap.insert(deviceType.readEntry("X-KDE-Solid-Actions-Type"), deviceValue.name()); // Add to the type - actions map
-            QString typeName = deviceType.readEntry("X-KDE-Solid-Actions-Type") + QChar('.') + deviceValue.name(); // prepare the full internal name
-            deviceValues.insert(typeName, deviceValue.text()); // Add to the full internal name - user friendly name map
-        }
-    }
-    ui.CbRestrictionDeviceType->addItems(deviceTypes.values()); // Add the device types to the list
+    ui.CbRestrictionDeviceType->addItems(deviceData.types.values()); // Add the device types to the list
 
     connect(ui.CbRequirementType, SIGNAL(currentIndexChanged(int)), this, SLOT(updateInterface()));
     connect(ui.CbRestrictionType, SIGNAL(currentIndexChanged(int)), this, SLOT(updateInterface()));
@@ -86,16 +70,16 @@ void SolidActionEditPredicate::prepareShow(QTreeWidgetItem *editItem)
     else if (ui.CbRequirementType->currentIndex() == 1) { // There are two types of requirement, they require different import methods: "IS <DeviceType>"
         if (editItem->text(1) == "IS") {
             ui.CbRestrictionType->setCurrentIndex(0); // Set the type appropriately
-            ui.CbRestrictionDeviceType->setCurrentIndex(deviceTypes.keys().indexOf(editItem->text(2))); // Import <DeviceType>
+            ui.CbRestrictionDeviceType->setCurrentIndex(deviceData.types.keys().indexOf(editItem->text(2))); // Import <DeviceType>
         }
         // Second type of requirement "<DeviceType>.<DeviceVariable> <equals/doesn't equal> <compare data>
         else {
             ui.CbRestrictionType->setCurrentIndex(1); // Set the type appropriately
             ui.LeRestrictionRequirement->setText(editItem->text(3)); // Set the requirement value match
             QStringList deviceRequirement = editItem->text(1).split(QChar('.')); // Split the value from device type
-            ui.CbRestrictionDeviceType->setCurrentIndex(deviceTypes.keys().indexOf(deviceRequirement.at(0))); // Import <DeviceType>
+            ui.CbRestrictionDeviceType->setCurrentIndex(deviceData.types.keys().indexOf(deviceRequirement.at(0))); // Import <DeviceType>
             updateValuesList(); // The action list should be refreshed now so it is ready for setting
-            QStringList deviceReqList = deviceValuesTypeMap.values(deviceRequirement.at(0));
+            QStringList deviceReqList = deviceData.valueList(deviceRequirement.at(0)).keys();
             qSort(deviceReqList.begin(), deviceReqList.end());
             ui.CbRestrictionDeviceValue->setCurrentIndex(deviceReqList.indexOf(deviceRequirement.at(1))); // Import <Value>
             // If the comparer is "equals" then we should set it as so
@@ -128,12 +112,12 @@ void SolidActionEditPredicate::finishShow(QTreeWidgetItem *updating)
     }
     if (ui.CbRestrictionType->currentIndex() == 0) { // The condition sub-type could be "Device is of type"
         updating->setText(1, "IS"); // Set it to be so
-        updating->setText(2, deviceTypes.key(ui.CbRestrictionDeviceType->currentText())); // and import the device type
+        updating->setText(2, deviceData.types.key(ui.CbRestrictionDeviceType->currentText())); // and import the device type
     } else { // otherwise the container sub-type must be device.value <logic> match
-        QString deviceInternalName = deviceTypes.key(ui.CbRestrictionDeviceType->currentText());
-        foreach(const QString &deviceName, deviceValuesTypeMap.values(deviceInternalName)) {
-            QString fullInternalName = deviceInternalName + QChar('.') + deviceName; // Prepare the full internal name
-            if (deviceValues.value(fullInternalName) == ui.CbRestrictionDeviceValue->currentText()) { // Does the value name match the selected
+        QString internalName = deviceData.types.key(ui.CbRestrictionDeviceType->currentText());
+        foreach(const QString &deviceName, deviceData.valueList(internalName).keys()) {
+            QString fullInternalName = internalName + QChar('.') + deviceName; // Prepare the full internal name
+            if (fullInternalName == ui.CbRestrictionDeviceValue->currentText()) { // Does the value name match the selected
                 updating->setText(1, fullInternalName);
             } // Set the value name
         }
@@ -167,11 +151,8 @@ void SolidActionEditPredicate::updateValuesList()
 {   // We need to refill the list of available values
     QStringList deviceValuesList;
     ui.CbRestrictionDeviceValue->clear(); // No need to keep previous values
-    QString deviceInternalName = deviceTypes.key(ui.CbRestrictionDeviceType->currentText()); // Retrieve the device internal name
-    foreach( const QString &deviceName, deviceValuesTypeMap.values(deviceInternalName)) { // Get all values for this device name
-        QString fullInternalName = deviceInternalName + QChar('.') + deviceName; // Create the full internal name
-        deviceValuesList << deviceValues.value(fullInternalName); // Add the user friendly name to the list of values
-    }
+    QString deviceInternalName = deviceData.types.key(ui.CbRestrictionDeviceType->currentText()); // Retrieve the device internal name
+    deviceValuesList = deviceData.valueList(deviceInternalName).values(); // Add the user friendly name to the list of values
     qSort(deviceValuesList.begin(), deviceValuesList.end()); // Sort it so the correct one is selected later
     ui.CbRestrictionDeviceValue->addItems(deviceValuesList); // Add the items to the combobox
 }

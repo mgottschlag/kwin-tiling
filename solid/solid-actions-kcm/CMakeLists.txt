@@ -10,6 +10,7 @@ INCLUDE_DIRECTORIES (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
 
 SET(kcm_solid_actions_srcs
     action-item.cpp
+    solid-action-data.cpp
     solid-action-edit-predicate.cpp
     solid-action-edit.cpp
     solid-actions.cpp )

@@ -24,6 +24,7 @@
 
 #include <KDialog>
 
+#include "solid-action-data.h"
 #include "ui_solid-action-edit-predicate.h"
 
 class QTreeWidgetItem;
@@ -43,9 +44,7 @@ public slots:
     void updateValuesList();
 
 private:
-    QMap<QString, QString> deviceTypes;
-    QMultiMap<QString, QString> deviceValues;
-    QMultiMap<QString, QString> deviceValuesTypeMap;
+    SolidActionData deviceData;
     Ui::SolidActionEditPredicate ui;
 
 };
