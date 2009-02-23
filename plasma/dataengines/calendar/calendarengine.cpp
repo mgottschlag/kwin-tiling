@@ -22,7 +22,7 @@
 
 #include <QDate>
 
-#include <kholidays/holidays.h>
+#include <KHolidays/Holidays>
 
 CalendarEngine::CalendarEngine(QObject* parent, const QVariantList& args)
     : Plasma::DataEngine(parent)
