@@ -25,6 +25,7 @@
 namespace SM {
     class Applet;
 }
+class MonitorButton;
 
 class QGraphicsLinearLayout;
 
@@ -38,6 +39,7 @@ class SystemMonitor : public Plasma::PopupApplet
         void init();
         virtual QList<QAction*> contextualActions();
         virtual QGraphicsWidget *graphicsWidget();
+        virtual void constraintsEvent(Plasma::Constraints constraints);
 
     public slots:
         void checkGeometry();
@@ -53,7 +55,8 @@ class SystemMonitor : public Plasma::PopupApplet
     private:
         QGraphicsLinearLayout *m_layout;
         QGraphicsLinearLayout *m_buttons;
-        QList<SM::Applet *> m_applets;
+        QList<SM::Applet*> m_applets;
+        QList<MonitorButton*> m_monitorButtons;
         QGraphicsWidget *m_widget;
 };
 

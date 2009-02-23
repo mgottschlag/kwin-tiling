@@ -77,6 +77,7 @@ void SystemMonitor::init()
         }
         connect(button->nativeWidget(), SIGNAL(toggled(bool)), this, SLOT(toggled(bool)));
         m_buttons->addItem(button);
+        m_monitorButtons << button;
     }
     m_layout->addItem(m_buttons);
     foreach (const QString& applet, appletNames) {
@@ -99,7 +100,6 @@ void SystemMonitor::toggled(bool toggled)
 
 void SystemMonitor::addApplet(const QString &name)
 {
-    kDebug() << "";
     if (name.isEmpty()) {
         return;
     }
@@ -114,7 +114,6 @@ void SystemMonitor::addApplet(const QString &name)
         applet->setParentItem(m_widget);
         applet->setObjectName(name);
         m_layout->addItem(applet);
-        //checkGeometry(applet->preferredSize().height());
     }
 }
 
@@ -188,6 +187,16 @@ QList<QAction*> SystemMonitor::contextualActions()
 QGraphicsWidget *SystemMonitor::graphicsWidget()
 {
     return m_widget;
+}
+
+void SystemMonitor::constraintsEvent(Plasma::Constraints constraints)
+{
+    if (constraints & Plasma::ImmutableConstraint) {
+        foreach (MonitorButton* button, m_monitorButtons) {
+            button->setEnabled(immutability() == Plasma::Mutable);
+        }
+    }
+    PopupApplet::constraintsEvent(constraints);
 }
 
 #include "system-monitor.moc"
