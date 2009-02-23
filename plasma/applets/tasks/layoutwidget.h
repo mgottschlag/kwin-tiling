@@ -76,9 +76,11 @@ public:
     /** Returns the preferred number of columns calculated on base of AbstractGroupableItem::basicPreferredSize()*/
     int preferredColumns();
 
-	/** Populates the actual QGraphicsGridLayout with items*/
+    /** Populates the actual QGraphicsGridLayout with items*/
     void layoutItems();
 
+    /** Set the layout Orientation, normally set to formFactor of applet*/
+    void setOrientation(Plasma::FormFactor orientation);
 
 private:
     //void calculatePreferredRowSize();
@@ -103,6 +105,9 @@ private:
     bool m_forceRows;
 
     Tasks *m_applet;
+
+    Qt::Orientation m_layoutOrientation;
+
 };
 
 #endif

@@ -532,6 +532,7 @@ void TaskGroupItem::expand()
     m_expandedLayout = new LayoutWidget(this, m_applet);
     m_expandedLayout->setMaximumRows(m_maximumRows);
     m_expandedLayout->setForceRows(m_forceRows);
+    m_expandedLayout->setOrientation(m_applet->formFactor());
 
     setLayout(m_expandedLayout);
 
