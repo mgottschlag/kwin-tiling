@@ -27,6 +27,7 @@
 #include <QtGui/QWidget> // QWIDGETSIZE_MAX
 
 #include <KIcon>
+#include <KIconLoader>
 
 #include <Plasma/IconWidget>
 
@@ -252,10 +253,12 @@ void TaskArea::setOrientation(Qt::Orientation o)
     if (d->unhider) {
         d->unhider->setOrientation(o);
         if (d->topLayout->orientation() == Qt::Horizontal) {
-            d->unhider->setMaximumSize(26, QWIDGETSIZE_MAX);
+            d->unhider->setMaximumSize(KIconLoader::SizeSmallMedium, QWIDGETSIZE_MAX);
+            d->unhider->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmall);
             d->unhider->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
         } else {
-            d->unhider->setMaximumSize(QWIDGETSIZE_MAX, 26);
+            d->unhider->setMaximumSize(QWIDGETSIZE_MAX, KIconLoader::SizeSmallMedium);
+            d->unhider->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmall);
             d->unhider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
         }
     }
@@ -269,14 +272,15 @@ void TaskArea::initUnhideTool()
     }
 
     d->unhider = new Plasma::IconWidget(this);
-    d->unhider->setMinimumSize(16, 16);
     updateUnhideToolIcon();
 
     if (d->topLayout->orientation() == Qt::Horizontal) {
-        d->unhider->setMaximumSize(22, QWIDGETSIZE_MAX);
+        d->unhider->setMaximumSize(KIconLoader::SizeSmallMedium, QWIDGETSIZE_MAX);
+        d->unhider->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmall);
         d->unhider->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     } else {
-        d->unhider->setMaximumSize(QWIDGETSIZE_MAX, 22);
+        d->unhider->setMaximumSize(QWIDGETSIZE_MAX, KIconLoader::SizeSmallMedium);
+        d->unhider->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmall);
         d->unhider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     }
 
