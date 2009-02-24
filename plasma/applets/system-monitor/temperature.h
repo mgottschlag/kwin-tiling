@@ -57,9 +57,11 @@ class Temperature : public SM::Applet
         QStandardItemModel m_tempModel;
         bool m_showPlotters;
         bool m_showBackground;
+        bool m_showTopBar;
         QColor m_graphColor;
+        QHash<QString, QString> m_html;
 
-        QString title(const QString& source);
+        QString temperatureTitle(const QString& source);
         bool addMeter(const QString& source);
         bool isValidDevice(const QString& uuid, Plasma::DataEngine::Data* data);
 };

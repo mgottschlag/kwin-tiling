@@ -19,6 +19,13 @@
     </widget>
    </item>
    <item>
+    <widget class="QCheckBox" name="showTopBarCheckBox">
+     <property name="text">
+      <string>Show Interface Name Above The Graph</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QCheckBox" name="showBackgroundCheckBox">
      <property name="text">
       <string>Show Plotter Background</string>
