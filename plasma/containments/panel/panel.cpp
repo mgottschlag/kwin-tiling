@@ -407,21 +407,18 @@ void Panel::updateBorders(const QRect &geom)
 
 void Panel::constraintsEvent(Plasma::Constraints constraints)
 {
-    kDebug() << "constraints updated with" << constraints << "!!!!!!";
+    //kDebug() << "constraints updated with" << constraints << "!!!!!!";
 
     m_maskDirty = true;
 
     if (constraints & Plasma::FormFactorConstraint) {
         Plasma::FormFactor form = formFactor();
         Qt::Orientation layoutDirection = form == Plasma::Vertical ? Qt::Vertical : Qt::Horizontal;
-        // create our layout!
+        // create or set up our layout!
         if (layout()) {
-            QGraphicsLayout *lay = layout();
-            QGraphicsLinearLayout * linearLay = dynamic_cast<QGraphicsLinearLayout *>(lay);
-            if (linearLay) {
-                linearLay->setOrientation(layoutDirection);
-            }
+            QGraphicsLinearLayout * linearLay = static_cast<QGraphicsLinearLayout *>(layout());
             linearLay->setMaximumSize(size());
+            linearLay->setOrientation(layoutDirection);
         } else {
             QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(this);
             lay->setOrientation(layoutDirection);
@@ -430,12 +427,12 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
             lay->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
             setLayout(lay);
             updateBorders(geometry().toRect());
+            lay->setMaximumSize(size());
 
             foreach (Applet *applet, applets()) {
                 lay->addItem(applet);
             }
 
-            lay->setMaximumSize(size());
         }
     }
 
@@ -443,10 +440,10 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::LocationConstraint || constraints & Plasma::SizeConstraint) {
         m_currentSize = geometry().size().toSize();
         QRectF screenRect = screen() >= 0 ? Kephal::ScreenUtils::screenGeometry(screen()) :
-            geometry();
+                                            geometry();
 
         if ((formFactor() == Horizontal && m_currentSize.width() >= screenRect.width()) ||
-                (formFactor() == Vertical && m_currentSize.height() >= screenRect.height())) {
+            (formFactor() == Vertical && m_currentSize.height() >= screenRect.height())) {
             m_background->setElementPrefix(location());
         } else {
             switch (location()) {
@@ -468,17 +465,17 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
         }
 
         m_background->resizeFrame(m_currentSize);
-    }
 
-    //FIXME: this seems the only way to correctly resize the layout the first time when the
-    // saved panel size is less than the default is to setting a maximum size.
-    // this shouldn't happen. maybe even a qgraphicslayout bug?
-    if (layout() && (constraints & Plasma::SizeConstraint)) {
-        layout()->setMaximumSize(size());
-    }
+        //FIXME: this seems the only way to correctly resize the layout the first time when the
+        // saved panel size is less than the default is to setting a maximum size.
+        // this shouldn't happen. maybe even a qgraphicslayout bug?
+        if (layout() && (constraints & Plasma::SizeConstraint)) {
+            layout()->setMaximumSize(size());
+        }
 
-    if (constraints & Plasma::LocationConstraint) {
-        setFormFactorFromLocation(location());
+        if (constraints & Plasma::LocationConstraint) {
+            setFormFactorFromLocation(location());
+        }
     }
 
     if (constraints & Plasma::ImmutableConstraint) {
@@ -494,10 +491,7 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
             m_configureAction->setVisible(unlocked);
         }
 
-        QGraphicsView *panelView = view();
-        if (panelView) {
-            updateBorders(panelView->geometry());
-        }
+        updateBorders(geometry().toRect());
     }
 }
 
@@ -551,7 +545,6 @@ void Panel::paintInterface(QPainter *painter,
     Q_UNUSED(contentsRect)
     //FIXME: this background drawing is bad and ugly =)
     // draw the background untransformed (saves lots of per-pixel-math)
-    painter->save();
     painter->resetTransform();
 
     const Containment::StyleOption *containmentOpt = qstyleoption_cast<const Containment::StyleOption *>(option);
@@ -576,9 +569,6 @@ void Panel::paintInterface(QPainter *painter,
     painter->setRenderHint(QPainter::Antialiasing);
 
     m_background->paintFrame(painter, option->exposedRect);
-
-    // restore transformation and composition mode
-    painter->restore();
 }
 
 void Panel::setFormFactorFromLocation(Plasma::Location loc) {
