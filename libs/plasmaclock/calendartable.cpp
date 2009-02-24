@@ -306,7 +306,7 @@ void CalendarTable::wheelEvent(QGraphicsSceneWheelEvent * event)
         if (d->month == 1) {
             d->month = 12;
             d->year--;
-            emit displayedYearChanged(d->year, d->month); 
+            emit displayedYearChanged(d->year, d->month);
         } else {
             d->month--;
         }
@@ -389,7 +389,7 @@ void CalendarTable::resizeEvent(QGraphicsSceneResizeEvent * event)
     d->cellH = rectSizeH - d->cellSpace;
     d->cellW = rectSizeW - d->cellSpace;
     d->glowRadius = d->cellW * .1;
-    d->headerHeight = (int) (d->cellH / 1.5); 
+    d->headerHeight = (int) (d->cellH / 1.5);
     d->centeringSpace = qMax(0, int((r.width() - (rectSizeW * 8) - (d->cellSpace * 7)) / 2));
 }
 
@@ -400,7 +400,7 @@ void CalendarTable::paintCell(QPainter *p, int cell, int week, int weekDay, Cell
     QString cellSuffix = type & NotInCurrentMonth ? "inactive" : "active";
     QRectF cellArea = QRectF(cellX(weekDay), cellY(week), d->cellW, d->cellH);
 
-    d->svg->paint(p, cellArea, cellSuffix); // draw background 
+    d->svg->paint(p, cellArea, cellSuffix); // draw background
 
     QColor numberColor = Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     if (type & NotInCurrentMonth) {
@@ -505,11 +505,18 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
                 font.setPixelSize(cellRect.height() * 0.7);
                 p->setFont(font);
                 p->setOpacity(d->opacity);
-                p->drawText(cellRect, Qt::AlignCenter, QString::number(d->calendar->weekNumber(cellDate))); //draw number
+                QString weekString = QString::number(d->calendar->weekNumber(cellDate));
+                if (cellDate.dayOfWeek() != Qt::Monday) {
+                    weekString += "/";
+                    QDate date(cellDate);
+                    date = date.addDays(8 - cellDate.dayOfWeek());
+                    weekString += QString::number(d->calendar->weekNumber(date));
+                }
+                p->drawText(cellRect, Qt::AlignCenter, weekString); //draw number
                 p->setOpacity(1.0);
             }
         }
-    } 
+    }
 
     // Draw days
     if (option->exposedRect.intersects(QRect(r.x(), r.y(), r.width(), d->headerHeight))) {
