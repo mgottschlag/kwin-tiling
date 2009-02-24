@@ -3,6 +3,7 @@ Actions=
 Type=Service
 Name=Optical Drive
 Name[es]=Unidad óptica
+Name[et]=Optiline seade
 Name[fr]=Périphérique optique
 Name[ja]=光学ドライブ
 Name[nds]=Optsch Loopwark

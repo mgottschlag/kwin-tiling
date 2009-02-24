@@ -3,6 +3,7 @@ Actions=
 Type=Service
 Name=Block Device
 Name[es]=Bloquear dispositivo
+Name[et]=Plokkseade
 Name[fr]=Périphérique bloc
 Name[ja]=ブロックデバイス
 Name[nds]=Blockreedschap

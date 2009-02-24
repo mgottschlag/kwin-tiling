@@ -3,6 +3,7 @@ Actions=
 Type=Service
 Name=Access to storage devices
 Name[es]=Acceso a dispositivos de almacenamiento 
+Name[et]=Ligipääs salvestusseadmetele
 Name[fr]=Accès à des périphériques de stockage
 Name[ja]=ストレージデバイスへのアクセス
 Name[nds]=Togriep op Spiekerreedschappen

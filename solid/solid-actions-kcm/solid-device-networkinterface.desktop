@@ -3,6 +3,7 @@ Actions=
 Type=Service
 Name=Network Interface
 Name[es]=Interfaz de red
+Name[et]=Võrguliides
 Name[fr]=Interface réseau
 Name[ga]=Comhéadan Líonra
 Name[ja]=ネットワークインターフェース
