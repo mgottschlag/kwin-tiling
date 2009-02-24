@@ -20,6 +20,7 @@
 #include "solid-action-data.h"
 
 #include <QList>
+#include <QMetaProperty>
 
 #include <KGlobal>
 #include <kdesktopfileactions.h>
@@ -34,15 +35,25 @@ SolidActionData::SolidActionData()
     // Fill the lists of possible device types / device values
     allPossibleDevices = KGlobal::dirs()->findAllResources("data", "solid/devices/");
 
-    /// WARNING: We need to introspect first!
-
+    QList<Solid::DeviceInterface*> interfaceList = fillInterfaceList();
+    foreach( Solid::DeviceInterface * interface, interfaceList ) {
+        const QMetaObject * interfaceObj = interface->metaObject();
+        QString ifaceName = interfaceObj->className();
+        types.insert(ifaceName, generateUserString(ifaceName));
+        QMap<QString,QString> deviceValues;
+        for( int doneProps = 0; interfaceObj->propertyCount() > doneProps; doneProps = doneProps + 1 ) {
+            QMetaProperty ifaceProp = interfaceObj->property(doneProps);
+            deviceValues.insert(ifaceProp.name(), generateUserString(ifaceProp.name()));
+        }
+        values.insert(ifaceName, deviceValues);
+    }
     // List all the known device actions, then add their name and all values to the appropriate lists
     foreach(const QString &desktop, allPossibleDevices) {
         KDesktopFile deviceFile(desktop);
         KConfigGroup deviceType = deviceFile.desktopGroup(); // Retrieve the configuration group where the user friendly name is
         types.insert(deviceType.readEntry("X-KDE-Solid-Actions-Type"), deviceType.readEntry("Name")); // Lets read the user friendly name
         QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(desktop, true); // Get the list of contained services
-        QMap<QString,QString> deviceValues;
+        QMap<QString,QString> deviceValues = values.value(deviceType.readEntry("X-KDE-Solid-Actions-Type"));
         foreach(const KServiceAction &deviceValue, services) { // We want every single action
             deviceValues.insert(deviceValue.name(), deviceValue.text()); // Add to the type - actions map
         }
@@ -63,4 +74,10 @@ QString SolidActionData::generateUserString(QString className)
         finalString += stringPiece + QChar(' ');
     }
     return finalString.trimmed();
+}
+
+QList<Solid::DeviceInterface*> SolidActionData::fillInterfaceList()
+{
+    QList<Solid::DeviceInterface*> interfaces;
+    return interfaces;
 }

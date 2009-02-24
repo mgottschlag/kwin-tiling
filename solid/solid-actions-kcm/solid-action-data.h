@@ -24,6 +24,8 @@
 #include <QMap>
 #include <QString>
 
+#include <Solid/DeviceInterface>
+
 class SolidActionData : public QObject
 {
     Q_OBJECT
@@ -35,6 +37,7 @@ public:
 
 private:
     QString generateUserString(QString className);
+    QList<Solid::DeviceInterface*> fillInterfaceList();
     QMap<QString, QMap<QString,QString> > values;
 };
 
