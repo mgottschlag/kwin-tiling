@@ -19,6 +19,7 @@
 #include "net.h"
 #include <Plasma/SignalPlotter>
 #include <Plasma/Theme>
+#include <Plasma/ToolTipManager>
 #include <KConfigDialog>
 #include <QTimer>
 #include <QGraphicsLinearLayout>
@@ -140,7 +141,19 @@ void SM::Net::dataUpdated(const QString& source,
        Plasma::SignalPlotter *plotter = plotters()[interface];
         if (plotter) {
             plotter->addSample(m_data[interface]);
-            //plotter->addSample(QList<double>() << 50 << 25);
+            if (mode() == SM::Applet::Panel) {
+                m_html[source] = QString("<tr><td>%1</td><td>in %2</td><td>out %3</td></tr>")
+                        .arg(plotter->title())
+                        .arg(m_data[interface][0])
+                        .arg(m_data[interface][1]);
+                QString html = "<table>";
+                foreach (const QString& s, m_html.keys()) {
+                    html += m_html[s];
+                }
+                html += "</table>";
+                Plasma::ToolTipContent data(title(), html);
+                Plasma::ToolTipManager::self()->setContent(this, data);
+            }
         }
         m_data[interface].clear();
     }

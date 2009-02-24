@@ -57,6 +57,7 @@ class Net : public Applet
         bool m_showBackground;
         QColor m_inColor;
         QColor m_outColor;
+        QHash<QString, QString> m_html;
 
     private slots:
         void parseSources();

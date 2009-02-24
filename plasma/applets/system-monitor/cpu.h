@@ -55,6 +55,7 @@ class Cpu : public Applet
         bool m_showTopBar;
         bool m_showBackground;
         QColor m_graphColor;
+        QHash<QString, QString> m_html;
 
     private slots:
         void parseSources();

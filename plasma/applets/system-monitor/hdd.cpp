@@ -21,6 +21,7 @@
 #include <Plasma/Meter>
 #include <Plasma/Containment>
 #include <Plasma/Theme>
+#include <Plasma/ToolTipManager>
 #include <KConfigDialog>
 #include <QFileInfo>
 #include <QGraphicsLinearLayout>
@@ -72,7 +73,7 @@ void Hdd::createConfigurationInterface(KConfigDialog *parent)
         if (items().contains(uuid)) {
             item1->setCheckState(Qt::Checked);
         }
-        QStandardItem *item2 = new QStandardItem(title(uuid, data));
+        QStandardItem *item2 = new QStandardItem(hddTitle(uuid, data));
         item2->setEditable(true);
         parentItem->appendRow(QList<QStandardItem *>() << item1 << item2);
     }
@@ -120,7 +121,7 @@ void Hdd::configAccepted()
     connectToEngine();
 }
 
-QString Hdd::title(const QString& uuid, const Plasma::DataEngine::Data &data)
+QString Hdd::hddTitle(const QString& uuid, const Plasma::DataEngine::Data &data)
 {
     KConfigGroup cg = globalConfig();
     QString label = cg.readEntry(uuid, "");
@@ -193,7 +194,7 @@ bool Hdd::addMeter(const QString& source)
                       (text.green() + background.green()) / 2,
                       (text.blue() + background.blue()) / 2,
                       (text.alpha() + background.alpha()) / 2);
-    w->setLabel(0, title(source, data));
+    w->setLabel(0, hddTitle(source, data));
     w->setLabelColor(0, text);
     w->setLabelColor(1, darkerText);
     w->setLabelColor(2, darkerText);
@@ -292,14 +293,13 @@ void Hdd::dataUpdated(const QString& source,
         if (!w) {
             return;
         }
-        qulonglong size = qulonglong(data["Size"].toULongLong() /
-                          (1024 * 1024));
+        qulonglong size = qulonglong(data["Size"].toULongLong());
         qlonglong availBytes = 0;
         QVariant freeSpace = data["Free Space"];
         if (freeSpace.isValid()) {
             if (freeSpace.canConvert(QVariant::LongLong)) {
                 availBytes = qlonglong(freeSpace.toLongLong());
-                w->setValue(size - availBytes / (1024 * 1024));
+                w->setValue((size / (1024 * 1024)) - (availBytes / (1024 * 1024)));
             }
         }
         else {
@@ -312,6 +312,18 @@ void Hdd::dataUpdated(const QString& source,
                 overlays << "emblem-mounted";
             }
             m_icons[source]->setOverlays(overlays);
+        } else {
+            m_html[source] = QString("<tr><td>%1</td><td>%2</td><td>/</td><td>%3</td></tr>")
+                    .arg(w->label(0))
+                    .arg(KGlobal::locale()->formatByteSize(availBytes))
+                    .arg(KGlobal::locale()->formatByteSize(size));
+            QString html = "<table>";
+            foreach (const QString& s, m_html.keys()) {
+                html += m_html[s];
+            }
+            html += "</table>";
+            Plasma::ToolTipContent data(title(), html);
+            Plasma::ToolTipManager::self()->setContent(this, data);
         }
     }
 }

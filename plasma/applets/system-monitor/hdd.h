@@ -48,15 +48,16 @@ class Hdd : public SM::Applet
     private slots:
         void configAccepted();
         void themeChanged();
-	void updateSpinBoxSuffix(int interval);
+        void updateSpinBoxSuffix(int interval);
 
     private:
         Ui::config ui;
         QStandardItemModel m_hddModel;
         QHash<const QString, MonitorIcon *> m_icons;
         QHash<QString, QList<Plasma::Meter *> > m_diskMap;
+        QHash<QString, QString> m_html;
 
-        QString title(const QString& uuid, const Plasma::DataEngine::Data &data);
+        QString hddTitle(const QString& uuid, const Plasma::DataEngine::Data &data);
         bool addMeter(const QString& source);
         void deleteMeters(QGraphicsLinearLayout* layout = 0);
         bool isValidDevice(const QString& uuid, Plasma::DataEngine::Data* data);
