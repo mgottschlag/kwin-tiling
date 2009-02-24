@@ -610,16 +610,20 @@ void AbstractTaskItem::drawTextLayout(QPainter *painter, const QTextLayout &layo
 
 
     QColor shadowColor;
-    if (textColor().value() < 128) {
-        shadowColor = Qt::white;
-    } else {
+    if (qGray(textColor().rgb()) > 192) {
         shadowColor = Qt::black;
+    } else {
+        shadowColor = Qt::white;
     }
 
     QImage shadow = pixmap.toImage();
     Plasma::PaintUtils::shadowBlur(shadow, 2, shadowColor);
 
-    painter->drawImage(rect.topLeft() + QPoint(1,2), shadow);
+    if (shadowColor == Qt::white) {
+        painter->drawImage(rect.topLeft(), shadow);
+    } else {
+        painter->drawImage(rect.topLeft() + QPoint(1,2), shadow);
+    }
     painter->drawPixmap(rect.topLeft(), pixmap);
 }
 
