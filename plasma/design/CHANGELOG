@@ -6,6 +6,8 @@ libplasma
     * Widgets
         * NEW: SpinBox
         * NEW: VideoWidget
+    * Theme
+        * Themes can now set UseNativeWidgetStyle=ture in the [Settings] group of the metadata.desktop file and Plasma will default to native (QStyle) painting for all widgets
 
 Developer Documentation
 -----------------------
