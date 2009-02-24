@@ -392,7 +392,7 @@ void KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::removeComponent()
     } else {
         if (KMessageBox::questionYesNo(
                     q,
-                    i18n("Are you sure you want to remove the registered shortcuts for component '%1'?."
+                    i18n("Are you sure you want to remove the registered shortcuts for component '%1'? "
                          "The component and shortcuts will reregister themselves with their default setting"
                          " when they are started the next time.",
                           componentUnique),
