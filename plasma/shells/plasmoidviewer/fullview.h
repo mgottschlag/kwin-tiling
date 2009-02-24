@@ -43,6 +43,7 @@ public:
 private slots:
     void sceneRectChanged(const QRectF &rect);
     void resizeEvent(QResizeEvent *event);
+    void closeEvent(QCloseEvent *event);
     void appletRemoved();
 
 private:

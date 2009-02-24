@@ -27,12 +27,15 @@
 
 #include "fullview.h"
 
-#include <Plasma/Containment>
-#include <Plasma/Wallpaper>
-#include <KStandardDirs>
-#include <KIconLoader>
+#include <QApplication>
 #include <QIcon>
 #include <QResizeEvent>
+
+#include <KIconLoader>
+#include <KStandardDirs>
+
+#include <Plasma/Containment>
+#include <Plasma/Wallpaper>
 
 using namespace Plasma;
 
@@ -143,6 +146,12 @@ void FullView::resizeEvent(QResizeEvent *event)
     if (newSize.isValid()) {
         m_applet->resize(QSizeF(newWidth, newHeight));
     }
+}
+
+void FullView::closeEvent(QCloseEvent *event)
+{
+    Q_UNUSED(event)
+    qApp->quit();
 }
 
 void FullView::sceneRectChanged(const QRectF &rect)
