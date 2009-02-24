@@ -292,6 +292,11 @@ void AbstractTaskItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     QMimeData* mimeData = new QMimeData();
     setAdditionalMimeData(mimeData);
 
+    if (mimeData->formats().isEmpty()) {
+        delete mimeData;
+        return;
+    }
+
     QDrag *drag = new QDrag(event->widget());
     drag->setMimeData(mimeData);
     drag->setPixmap(m_icon.pixmap(20));

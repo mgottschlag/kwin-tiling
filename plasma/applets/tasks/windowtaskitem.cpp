@@ -248,10 +248,9 @@ void WindowTaskItem::setTask(TaskManager::TaskItem* taskItem)
     }
 }
 
-
 TaskManager::TaskPtr WindowTaskItem::windowTask() const
 {
-    return m_task->task();
+    return m_task ? m_task->task() : TaskManager::TaskPtr();
 }
 
 void WindowTaskItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
@@ -277,8 +276,6 @@ void WindowTaskItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
     delete a;
 }
 
-
-
 bool WindowTaskItem::isWindowItem() const
 {
     return true;
@@ -290,12 +287,15 @@ bool WindowTaskItem::isActive() const
         //kDebug() << "no task set";
         return false;
     }
+
     return m_task->isActive();
 }
 
 void WindowTaskItem::setAdditionalMimeData(QMimeData* mimeData)
 {
-    m_task->addMimeData(mimeData);
+    if (m_task) {
+        m_task->addMimeData(mimeData);
+    }
 }
 
 #include "windowtaskitem.moc"
