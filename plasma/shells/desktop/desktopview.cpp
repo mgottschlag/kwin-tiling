@@ -282,7 +282,7 @@ void DesktopView::wheelEvent(QWheelEvent* event)
         return;
     }
 
-    QGraphicsView::wheelEvent(event);
+    Plasma::View::wheelEvent(event);
 }
 
 // This function is reimplemented from QGraphicsView to work around the problem
