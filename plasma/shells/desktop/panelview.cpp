@@ -933,10 +933,21 @@ void PanelView::updateStruts()
     }
 }
 
+/*
+// handy for debugging :)
+void PanelView::enterEvent(QEvent *event)
+{
+    if (containment()) {
+        kDebug() << sceneRect() << containment()->geometry();
+    }
+    Plasma::View::enterEvent(event);
+}
+*/
+
 void PanelView::moveEvent(QMoveEvent *event)
 {
     //kDebug();
-    QWidget::moveEvent(event);
+    Plasma::View::moveEvent(event);
     m_strutsTimer->stop();
     m_strutsTimer->start(STRUTSTIMERDELAY);
     recreateUnhideTrigger();
@@ -945,7 +956,7 @@ void PanelView::moveEvent(QMoveEvent *event)
 void PanelView::resizeEvent(QResizeEvent *event)
 {
     //kDebug() << event->oldSize() << event->size();
-    QWidget::resizeEvent(event);
+    Plasma::View::resizeEvent(event);
     recreateUnhideTrigger();
     m_strutsTimer->stop();
     m_strutsTimer->start(STRUTSTIMERDELAY);
