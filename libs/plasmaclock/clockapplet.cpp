@@ -40,6 +40,7 @@
 #include <KDebug>
 #include <KDialog>
 #include <KGlobalSettings>
+#include <KLocale>
 #include <KTimeZone>
 
 #include <Plasma/Containment>
@@ -55,6 +56,7 @@
 #include "dateextenderwidget.h"
 
 #include "ui_timezonesConfig.h"
+#include "ui_calendarConfig.h"
 
 class ClockApplet::Private
 {
@@ -67,6 +69,7 @@ public:
 
     ClockApplet *q;
     Ui::timezonesConfig ui;
+    Ui::calendarConfig calendarUi;
     QString timezone;
     QString defaultTimezone;
     QPoint clicked;
@@ -74,6 +77,7 @@ public:
     QString prettyTimezone;
     bool forceTzDisplay;
     Plasma::Label *label;
+    QString holidaysRegion;
 
     void addTzToTipText(QString &subText, QString tz) 
     {
@@ -247,6 +251,14 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
     }
     d->ui.clockDefaultsTo->setCurrentIndex(defaultSelection);
 
+
+    QWidget *calendarWidget = new QWidget();
+    d->calendarUi.setupUi(calendarWidget);
+
+    parent->addPage(calendarWidget, i18n("Calendar"), Applet::icon());
+    
+    d->calendarUi.regionComboBox->addItem(d->holidaysRegion); //TODO
+
     parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
@@ -290,6 +302,9 @@ void ClockApplet::configAccepted()
     cg.writeEntry("defaultTimezone", d->defaultTimezone);
     changeEngineTimezone(currentTimezone(), d->defaultTimezone);
     setCurrentTimezone(d->defaultTimezone);
+
+    d->holidaysRegion = d->calendarUi.regionComboBox->currentText();
+    cg.writeEntry("holidaysRegion", d->holidaysRegion);
 
     clockConfigAccepted();
     constraintsEvent(Plasma::SizeConstraint);
@@ -417,6 +432,9 @@ void ClockApplet::init()
     d->forceTzDisplay = d->timezone != d->defaultTimezone;
 
     d->setPrettyTimezone();
+
+    d->holidaysRegion = KGlobal::locale()->country();
+
     Plasma::ToolTipManager::self()->registerWidget(this);
 
     extender();
@@ -502,7 +520,7 @@ void ClockApplet::dateChanged(const QDate &date)
 {
     d->destroyDateExtenders();
 
-    QString tmpStr = "isHoliday:it:" + date.toString(Qt::ISODate);
+    QString tmpStr = "isHoliday:" + d->holidaysRegion + ":" + date.toString(Qt::ISODate);
     if (dataEngine("calendar")->query(tmpStr).value(tmpStr).toBool()){
         d->createDateExtender(date);
     }
