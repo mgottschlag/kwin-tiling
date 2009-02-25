@@ -40,7 +40,13 @@ bool CalendarEngine::sourceRequestEvent(const QString &name)
     QStringList tokens = name.split(":");
 
     if (tokens.count() < 3) {
-        return false;
+        if (name == "holidaysRegions"){
+            setData(name, KHolidays::HolidayRegion::locations());
+            return true;
+
+        }else{
+            return false;
+        }
     }
 
     kDebug() << tokens[0] << "\n";
