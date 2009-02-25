@@ -20,8 +20,6 @@
 
 #include <QAction>
 #include <QStringList>
-#include <QDBusInterface>
-#include <QDBusReply>
 
 #include <KDebug>
 #include <KRun>
@@ -99,7 +97,10 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
         QString query = service->property("Query").toString();
         m_match.setData(query);
 
-        m_match.setIcon(iconForUrl(query));
+        if(service->icon().isEmpty())
+            m_match.setIcon(iconForUrl(query));
+        else
+            m_match.setIcon(KIcon(service->icon()));
     }
 
     QString actionText = i18n("Search %1 for %2", m_lastServiceName,
@@ -126,18 +127,10 @@ QString WebshortcutRunner::searchQuery(const QString &query, const QString &term
 
 KIcon WebshortcutRunner::iconForUrl(const KUrl &url)
 {
-    // query the favicons module
-    QDBusInterface favicon("org.kde.kded", "/modules/favicons", "org.kde.FavIcon");
-    QDBusReply<QString> reply = favicon.call("iconForUrl", url.url());
-
-    if (!reply.isValid()) {
-        return m_icon;
-    }
-
     // locate the favicon
-    QString iconFile = KGlobal::dirs()->locateLocal("cache", reply.value() + ".png");
+    QString iconFile = KMimeType::favIconForUrl(url);
 
-    if (iconFile.isNull()) {
+    if (iconFile.isEmpty()) {
         return m_icon;
     }
 
