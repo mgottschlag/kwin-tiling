@@ -27,26 +27,43 @@
 #include <KStandardDirs>
 #include <KDesktopFile>
 #include <KConfigGroup>
+#include <KDebug>
+
+#include <Solid/AcAdapter>
+#include <Solid/AudioInterface>
+#include <Solid/Battery>
+#include <Solid/Block>
+#include <Solid/Button>
+#include <Solid/Camera>
+#include <Solid/DvbInterface>
+#include <Solid/GenericInterface>
+#include <Solid/NetworkInterface>
+#include <Solid/PortableMediaPlayer>
+#include <Solid/Processor>
+#include <Solid/StorageAccess>
+#include <Solid/StorageDrive>
+#include <Solid/OpticalDrive>
+#include <Solid/StorageVolume>
+#include <Solid/OpticalDisc>
 
 SolidActionData::SolidActionData()
 {
     QStringList allPossibleDevices;
 
-    // Fill the lists of possible device types / device values
-    allPossibleDevices = KGlobal::dirs()->findAllResources("data", "solid/devices/");
-
-    QList<Solid::DeviceInterface*> interfaceList = fillInterfaceList();
-    foreach( Solid::DeviceInterface * interface, interfaceList ) {
-        const QMetaObject * interfaceObj = interface->metaObject();
-        QString ifaceName = interfaceObj->className();
+    QList<QMetaObject> interfaceList = fillInterfaceList();
+    foreach( QMetaObject interface, interfaceList ) {
+        QString ifaceName = interface.className();
         types.insert(ifaceName, generateUserString(ifaceName));
         QMap<QString,QString> deviceValues;
-        for( int doneProps = 0; interfaceObj->propertyCount() > doneProps; doneProps = doneProps + 1 ) {
-            QMetaProperty ifaceProp = interfaceObj->property(doneProps);
+        for( int doneProps = 0; interface.propertyCount() > doneProps; doneProps = doneProps + 1 ) {
+            QMetaProperty ifaceProp = interface.property(doneProps);
             deviceValues.insert(ifaceProp.name(), generateUserString(ifaceProp.name()));
         }
         values.insert(ifaceName, deviceValues);
     }
+
+    // Fill the lists of possible device types / device values
+    allPossibleDevices = KGlobal::dirs()->findAllResources("data", "solid/devices/");
     // List all the known device actions, then add their name and all values to the appropriate lists
     foreach(const QString &desktop, allPossibleDevices) {
         KDesktopFile deviceFile(desktop);
@@ -68,16 +85,39 @@ QMap<QString, QString> SolidActionData::valueList(QString deviceType)
 
 QString SolidActionData::generateUserString(QString className)
 {
-    QStringList splitString = className.split( QRegExp("(A-Z)"), QString::SkipEmptyParts );
+    QString cleanClass = className.remove(0, className.lastIndexOf(':') + 1);
+    QRegExp camelCase("([A-Z])");
+    QStringList splitString = cleanClass.split( camelCase );
     QString finalString;
-    foreach( QString stringPiece, splitString ) {
-        finalString += stringPiece + QChar(' ');
+    for( int strPos = 0; splitString.count() > strPos; strPos = strPos + 1 ) {
+        finalString += splitString.at(strPos) + QString(" ");
+        finalString += cleanClass.at(cleanClass.indexOf(camelCase, finalString.count()-finalString.count(" ")));
     }
+    finalString.chop(1);
+    kWarning() << "Created " + finalString.trimmed();
     return finalString.trimmed();
 }
 
-QList<Solid::DeviceInterface*> SolidActionData::fillInterfaceList()
+QList<QMetaObject> SolidActionData::fillInterfaceList()
 {
-    QList<Solid::DeviceInterface*> interfaces;
+    QList<QMetaObject> interfaces;
+    interfaces.append( Solid::AcAdapter::staticMetaObject );
+    interfaces.append( Solid::AudioInterface::staticMetaObject );
+    interfaces.append( Solid::Battery::staticMetaObject );
+    interfaces.append( Solid::Block::staticMetaObject );
+    interfaces.append( Solid::Button::staticMetaObject );
+    interfaces.append( Solid::Camera::staticMetaObject );
+    interfaces.append( Solid::DvbInterface::staticMetaObject );
+    interfaces.append( Solid::GenericInterface::staticMetaObject );
+    interfaces.append( Solid::NetworkInterface::staticMetaObject );
+    interfaces.append( Solid::PortableMediaPlayer::staticMetaObject );
+    interfaces.append( Solid::Processor::staticMetaObject );
+    //interfaces.append( Solid::SerialInterface::staticMetaObject ); // The header does not exist?
+    interfaces.append( Solid::StorageAccess::staticMetaObject );
+    interfaces.append( Solid::StorageDrive::staticMetaObject );
+    interfaces.append( Solid::OpticalDrive::staticMetaObject );
+    interfaces.append( Solid::StorageVolume::staticMetaObject );
+    interfaces.append( Solid::OpticalDisc::staticMetaObject );
+    //interfaces.append( Solid::Video::staticMetaObject ); // The header does not exist?
     return interfaces;
 }

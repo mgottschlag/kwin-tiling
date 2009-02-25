@@ -37,7 +37,7 @@ public:
 
 private:
     QString generateUserString(QString className);
-    QList<Solid::DeviceInterface*> fillInterfaceList();
+    QList<QMetaObject> fillInterfaceList();
     QMap<QString, QMap<QString,QString> > values;
 };
 
