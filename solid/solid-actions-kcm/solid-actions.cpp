@@ -78,6 +78,8 @@ SolidActions::SolidActions(QWidget* parent, const QVariantList&)
     connect(mainUi->PbAddAction, SIGNAL(clicked()), addDialog, SLOT(show()));
     slotTextChanged( addUi->LeActionName->text() );
     addUi->LeActionName->setFocus();
+    connect( mainUi->LwActions, SIGNAL(doubleClicked(QListWidgetItem *,const QPoint &)), this, SLOT( editAction() ) );
+
 }
 
 
@@ -137,6 +139,8 @@ void SolidActions::addAction()
 void SolidActions::editAction()
 {
     ActionItem * selectedItem = selectedAction();
+    if ( !selectedItem )
+        return;
     // Set all the text appropriately
     editUi->ui.IbActionIcon->setIcon(selectedItem->icon());
     editUi->ui.LeActionFriendlyName->setText(selectedItem->name());
