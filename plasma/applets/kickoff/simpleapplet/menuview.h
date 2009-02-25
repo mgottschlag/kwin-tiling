@@ -1,6 +1,6 @@
 /*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
-    Copyright 2008 Sebastian Sauer <mail@dipe.org>
+    Copyright 2008-2009 Sebastian Sauer <mail@dipe.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -145,13 +145,13 @@ Q_SIGNALS:
     void afterBeingHidden();
 
 private Q_SLOTS:
-    // new items have been inserted into the model
+    /// new items have been inserted into the model
     void rowsInserted(const QModelIndex& parent, int start, int end);
-    // existing items are about to be removed from the model
+    /// existing items are about to be removed from the model
     void rowsAboutToBeRemoved(const QModelIndex& parent, int start, int end);
-    // data within an item of the model change
+    /// data within an item of the model change
     void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
-    // the model did reset itself and all items are invalid
+    /// the model did reset itself and all items are invalid
     void modelReset();
 
 private:

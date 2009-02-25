@@ -1,6 +1,6 @@
 /*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
-    Copyright 2008 Sebastian Sauer <mail@dipe.org>
+    Copyright 2008-2009 Sebastian Sauer <mail@dipe.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -99,6 +99,9 @@ public Q_SLOTS:
      */
     void switchMenuStyle();
 
+    /**
+     * Start the menu editor by launching kmenuedit.
+     */
     void startMenuEditor();
 
 protected:
@@ -108,9 +111,11 @@ protected:
     void createConfigurationInterface(KConfigDialog *parent);
 
 private Q_SLOTS:
+	/// Configuration-dialog accepted.
     void configAccepted();
-    void toggleMenu(bool pressed);
-    void toggleMenu();
+    /// The menu got toggled or activated.
+    void toggleMenu(bool pressed = true);
+    /// An action within the menu got triggered.
     void actionTriggered(QAction *action);
 
 private:
