@@ -70,6 +70,7 @@ Comment[be@latin]=Naziraje za stanoviščam sietkavych interfejsaŭ, infarmuje a
 Comment[bg]=Проверява състоянието на мрежата и изпраща уведомление на програмите в мрежата
 Comment[ca]=Fa un seguiment de l'estat de les interfícies de xarxa i proporciona notificació a les aplicacions usant la xarxa.
 Comment[ca@valencia]=Fa un seguiment de l'estat de les interfícies de xarxa i proporciona notificació a les aplicacions usant la xarxa.
+Comment[cs]=Sleduje stav síťových rozhraní a poskytuje informace aplikacím, které síť používají.
 Comment[da]=Overvåger status af netværksgrænseflader og giver besked til programmer som bruger netværket
 Comment[de]=Überprüft den Status von Netzwerkschnittstellen und benachrichtigt Programme, die das Netzwerk verwenden
 Comment[el]=Παρακολουθεί την κατάσταση των διασυνδέσεων δικτύου και προσφέρει ειδοποιήσεις σε εφαρμογές που χρησιμοποιούν το δίκτυο.
