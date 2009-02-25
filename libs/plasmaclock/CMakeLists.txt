@@ -5,7 +5,7 @@ set(plasmaclock_LIB_SRCS
     dateextenderwidget.cpp
 )
 
-kde4_add_ui_files(plasmaclock_LIB_SRCS calendar.ui timezonesConfig.ui)
+kde4_add_ui_files(plasmaclock_LIB_SRCS timezonesConfig.ui)
 
 kde4_add_library(plasmaclock SHARED ${plasmaclock_LIB_SRCS})
 
