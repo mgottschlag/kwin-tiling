@@ -251,14 +251,22 @@ void Temperature::dataUpdated(const QString& source,
     Plasma::Meter *w = meters().value(source);
     Plasma::SignalPlotter *plotter = plotters().value(source);
     QString temp;
-    qreal celsius = ((qreal)data["value"].toDouble());
+    qreal value = (qreal)data["value"].toDouble();
 
-    if (KGlobal::locale()->measureSystem() == KLocale::Metric) {
-        temp = i18n("%1 °C", celsius);
-    } else {
-        temp = i18n("%1 °F", (celsius * 1.8) + 32);
+    if (data["units"].toString() == "F" &&
+        KGlobal::locale()->measureSystem() == KLocale::Metric) {
+        value = (value - 32) * (5.0 / 9.0);
+    } else if (data["units"].toString() == "C" &&
+        KGlobal::locale()->measureSystem() != KLocale::Metric) {
+        value = (value * (5.0 / 9.0)) + 32;
     }
     
+    if (KGlobal::locale()->measureSystem() == KLocale::Metric) {
+        temp = i18n("%1 °C", value);
+    } else {
+        temp = i18n("%1 °F", value);
+    }
+
     if (w) {
         w->setValue(data["value"].toDouble());
         if (mode() != SM::Applet::Panel) {
