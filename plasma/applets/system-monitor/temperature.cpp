@@ -201,13 +201,14 @@ bool Temperature::addMeter(const QString& source)
     if (m_showPlotters) {
         Plasma::SignalPlotter *plotter = new Plasma::SignalPlotter(this);
         plotter->addPlot(m_graphColor);
-        plotter->setUseAutoRange(true);
         plotter->setThinFrame(false);
         plotter->setShowLabels(false);
         plotter->setShowTopBar(m_showTopBar);
         plotter->setShowVerticalLines(false);
         plotter->setShowHorizontalLines(false);
         plotter->setTitle(title);
+        plotter->setUseAutoRange(false);
+        plotter->setVerticalRange(0.0, 110.0);
         plotter->setFontColor(theme->color(Plasma::Theme::HighlightColor));
         QFont font = theme->font(Plasma::Theme::DefaultFont);
         font.setPointSize(8);
