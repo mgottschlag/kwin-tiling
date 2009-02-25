@@ -20,7 +20,6 @@
 #ifndef SOLID_ACTION_EDIT_PREDICATE_H
 #define SOLID_ACTION_EDIT_PREDICATE_H
 
-#include <QMultiMap>
 
 #include <KDialog>
 
@@ -28,7 +27,6 @@
 #include "ui_solid-action-edit-predicate.h"
 
 class QTreeWidgetItem;
-class QStringList;
 
 class SolidActionEditPredicate : public KDialog
 {

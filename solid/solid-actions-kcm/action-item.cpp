@@ -20,7 +20,6 @@
 #include "action-item.h"
 
 #include <QString>
-#include <QMap>
 
 #include <kdesktopfileactions.h>
 #include <KDebug>

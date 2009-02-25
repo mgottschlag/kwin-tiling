@@ -21,9 +21,6 @@
 
 #include <QTreeWidgetItem>
 
-#include <KStandardDirs>
-#include <KDesktopFile>
-#include <KConfigGroup>
 #include <kserviceaction.h>
 #include <kdesktopfileactions.h>
 #include <KDebug>
