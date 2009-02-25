@@ -544,7 +544,9 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
         }
         break;
         case Leave: {
-            d->addModel(new Kickoff::LeaveModel(d->menuview), true);
+            Kickoff::LeaveModel *leavemodel = new Kickoff::LeaveModel(d->menuview);
+            leavemodel->updateModel();
+            d->addModel(leavemodel, true);
         }
         break;
         }
