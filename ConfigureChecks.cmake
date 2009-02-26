@@ -85,3 +85,12 @@ check_function_exists(getpeereid  HAVE_GETPEEREID) # kdesu
 
 pkg_check_modules (XRANDR_1_2   xrandr>=1.2)
 macro_bool_to_01(XRANDR_1_2_FOUND HAS_RANDR_1_2)
+
+# For startkde
+string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_TOLOWER)
+if(CMAKE_BUILD_TYPE_TOLOWER MATCHES release OR CMAKE_BUILD_TYPE_TOLOWER MATCHES relwithdebinfo)
+   set(MALLOC_CHECK 1)
+else()
+   set(MALLOC_CHECK 2)
+endif()
+

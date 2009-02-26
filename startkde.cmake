@@ -31,7 +31,7 @@ fi
 unset DYLD_FORCE_FLAT_NAMESPACE
 
 # Enable lightweight memory corruption checker
-MALLOC_CHECK_=2 
+MALLOC_CHECK_=@MALLOC_CHECK@
 export MALLOC_CHECK_
 
 # in case we have been started with full pathname spec without being in PATH
