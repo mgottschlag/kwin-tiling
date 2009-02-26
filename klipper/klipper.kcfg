@@ -74,7 +74,7 @@
         <max>2048</max>
     </entry>
     <entry key="ActionListChanged" name="ActionList" type="Int">
-        <label>Dummy entry for indicating changes in a actions tree widget</label>
+        <label>Dummy entry for indicating changes in an action's tree widget</label>
         <default>-1</default>
     </entry>
   </group>
