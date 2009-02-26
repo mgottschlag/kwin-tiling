@@ -638,7 +638,12 @@ void QsMatchView::keyPressEvent(QKeyEvent *e)
             d->m_selectionMade = false;
         }
     }
-    d->m_lineEdit->setText(d->m_searchTerm);
+    // If line edit has focus, not all keypresses make it to
+    // the parent widget, hence the internal search term is
+    // out of date
+    if (!d->m_lineEdit->hasFocus()) {
+        d->m_lineEdit->setText(d->m_searchTerm);
+    }
     QWidget::keyPressEvent(e);
 }
 
