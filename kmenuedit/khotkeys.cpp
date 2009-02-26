@@ -52,7 +52,7 @@ bool KHotKeys::init()
             }
         KMessageBox::error(
             NULL,
-            "<qt>" + i18n("Unable to contact khotkeys. Your changes are saved but i failed to activate them") + "</qt>" );
+            "<qt>" + i18n("Unable to contact khotkeys. Your changes are saved, but they could not be activated.") + "</qt>" );
         }
 
     khotkeys_present = khotkeysInterface->isValid();
