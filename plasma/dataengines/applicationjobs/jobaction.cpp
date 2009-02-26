@@ -27,7 +27,7 @@ void JobAction::start()
 
     if (!m_jobView) {
         setErrorText(i18nc("%1 is the subject (can be anything) upon which the job is performed",
-                           "The JobView for %1 can't be found", destination()));
+                           "The JobView for %1 cannot be found", destination()));
         setError(-1);
         emitResult();
         return;
