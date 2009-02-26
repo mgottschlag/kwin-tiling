@@ -112,6 +112,8 @@ QMimeData* SrcLayoutModel::mimeData(const QModelIndexList &indexes) const
 {                                                                                                                                          
     QMimeData *mimeData = QAbstractTableModel::mimeData(indexes);                                                                          
     mimeData->setText(indexes.first().data().toString());
+    mimeData->setData("text/x-kxkb-srcLayout", indexes.first().data().toString().toAscii());
+ 
     return mimeData;                                                                                                                       
 }      
 
@@ -125,8 +127,9 @@ bool SrcLayoutModel::dropMimeData(const QMimeData *data,
                                                                                                                                            
     if (action == Qt::IgnoreAction)                                                                                                        
         return false;                                                                                                                      
-                                                                                                                                           
-    emit layoutRemoved();                                                                                                                  
+    
+    if (data->hasFormat("text/x-kxkb-dstLayout"))
+      emit layoutRemoved();                                                                                                                  
     return true;                                                                                                                           
 }       
 
@@ -171,6 +174,15 @@ QVariant DstLayoutModel::data(const QModelIndex& index, int role) const
     }
     return QVariant();
 }
+                                                                                           
+QMimeData* DstLayoutModel::mimeData(const QModelIndexList &indexes) const                                                                  
+{                                                                                                                                          
+    QMimeData *mimeData = QAbstractTableModel::mimeData(indexes);                                                                          
+    mimeData->setText(indexes.first().data().toString());
+    mimeData->setData("text/x-kxkb-dstLayout", indexes.first().data().toString().toAscii());
+ 
+    return mimeData;                                                                                                                       
+}      
 
 bool DstLayoutModel::dropMimeData(const QMimeData *data,                                                                                   
      Qt::DropAction action, int row, int column, const QModelIndex &parent)                                                                
@@ -182,8 +194,10 @@ bool DstLayoutModel::dropMimeData(const QMimeData *data,
                                                                                                                                            
     if (action == Qt::IgnoreAction)                                                                                                        
         return false;                                                                                                                      
-                                                                                                                                           
-    emit layoutAdded();                                                                                                                  
+    
+    if (data->hasFormat("text/x-kxkb-srcLayout"))
+      emit layoutAdded();                                                                                         
+    
     return true;                                                                                                                           
 }                                                                                                                                          
                                                                                                                                            
@@ -688,9 +702,8 @@ void LayoutConfig::add()
     QString layout = m_srcModel->getLayoutAt(selected[0].row());
 //    kDebug() << "selected to add" << layout;
 
-    //First check for duplicates
-    //Second make sure it's not dropped from itself.
-    if (m_kxkbConfig.m_layouts.contains(layout) || widget->dstTableView->hasFocus())
+    //Check for duplicates
+    if (m_kxkbConfig.m_layouts.contains(layout))
         return;
 
     LayoutUnit lu(layout, "");
@@ -713,7 +726,7 @@ void LayoutConfig::updateAddButton()
 }
 
 void LayoutConfig::remove()
-{
+{   
     QItemSelectionModel* selectionModel = widget->dstTableView->selectionModel();
     if( selectionModel == NULL || !selectionModel->hasSelection() )
         return;

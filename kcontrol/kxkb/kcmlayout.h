@@ -193,6 +193,7 @@ public:
     void emitDataChange(int row, int col) { emit dataChanged(createIndex(row,col),createIndex(row,col)); }
     bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);                       
     Qt::ItemFlags flags(const QModelIndex &index) const;
+    QMimeData* mimeData(const QModelIndexList &indexes) const;
 
 private:
     XkbRules* m_rules;
