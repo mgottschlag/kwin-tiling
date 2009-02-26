@@ -199,11 +199,11 @@ int main(int argc, char **argv)
       cout << "  solid-powermanagement query (suspend|scheme|cpufreq)" << endl;
       cout << i18n("             # List a particular set of information regarding power management.\n"
                     "             # - If the 'suspend' option is specified, give the list of suspend\n"
-                    "             # method supported by the system\n"
+                    "             # methods supported by the system\n"
                     "             # - If the 'scheme' option is specified, give the list of\n"
-                    "             # supported power management schemes by this system\n"
+                    "             # power management schemes supported by this system\n"
                     "             # - If the 'cpufreq' option is specified, give the list of\n"
-                    "             # supported CPU frequency policy\n") << endl;
+                    "             # supported CPU frequency policies\n") << endl;
 
       cout << "  solid-powermanagement set (scheme|cpufreq) 'value'" << endl;
       cout << i18n("             # Set power management options of the system.\n"
@@ -360,7 +360,7 @@ bool SolidPowermanagement::powerSuspend(const QString &strMethod)
 
     if (job==0)
     {
-        cerr << i18n("Error: unsupported operation!") << endl;
+        cerr << i18n("Error: unsupported operation.") << endl;
         return false;
     }
 

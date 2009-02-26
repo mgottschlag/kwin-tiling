@@ -612,7 +612,7 @@ bool SolidBluetooth::bluetoothInputSetup(const QString &deviceUbi)
 
     if (job==0)
     {
-        cerr << i18n("Error: unsupported operation!") << endl;
+        cerr << i18n("Error: unsupported operation.") << endl;
         return false;
     }
 
