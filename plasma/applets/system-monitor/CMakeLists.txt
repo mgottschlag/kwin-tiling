@@ -59,12 +59,12 @@ target_link_libraries(plasma_applet_sm_hwinfo ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_L
 
 # Ram Monitor
 
-#set(ram_SRCS
-#    ram.cpp
-#)
-#kde4_add_ui_files(ram_SRCS ram-config.ui)
-#kde4_add_plugin(plasma_applet_sm_ram ${ram_SRCS})
-#target_link_libraries(plasma_applet_sm_ram ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS} plasma_applet-system-monitor)
+set(ram_SRCS
+    ram.cpp
+)
+kde4_add_ui_files(ram_SRCS ram-config.ui ram-config-adv.ui)
+kde4_add_plugin(plasma_applet_sm_ram ${ram_SRCS})
+target_link_libraries(plasma_applet_sm_ram ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS} plasma_applet-system-monitor)
 
 # Main applet
 
@@ -85,7 +85,7 @@ install(TARGETS
     plasma_applet_sm_hwinfo
     plasma_applet_sm_net
     plasma_applet_sm_cpu
-    #plasma_applet_sm_ram
+    plasma_applet_sm_ram
     plasma_applet_system-monitor
     DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES
@@ -94,7 +94,7 @@ install(FILES
     plasma-applet-sm_hwinfo.desktop
     plasma-applet-sm_net.desktop
     plasma-applet-sm_cpu.desktop
-    #plasma-applet-sm_ram.desktop
+    plasma-applet-sm_ram.desktop
     plasma-applet-system-monitor.desktop
     DESTINATION ${SERVICES_INSTALL_DIR})
 install(FILES

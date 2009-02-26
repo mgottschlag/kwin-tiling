@@ -25,10 +25,10 @@
 #include <Plasma/Containment>
 #include <Plasma/Corona>
 
-#define APPLETS 5
+#define APPLETS 6
 static const char *sm_applets[][2] = {
     { "media-flash", "sm_temperature" },
-    //{ "media-flash", "sm_ram" },
+    { "media-flash-memory-stick", "sm_ram" },
     { "cpu", "sm_cpu" },
     { "hwinfo", "sm_hwinfo" },
     { "network-workgroup", "sm_net" },
