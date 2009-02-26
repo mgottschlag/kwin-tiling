@@ -1,9 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=System Monitor - RAM
-Name[x-test]=xxSystem Monitor - RAMxx
 Comment=A RAM usage monitor
-Comment[x-test]=xxA RAM usage monitorxx
 Type=Service
 Icon=media-flash-memory-stick
 ServiceTypes=Plasma/Applet
