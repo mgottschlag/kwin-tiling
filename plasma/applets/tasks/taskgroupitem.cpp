@@ -552,6 +552,10 @@ void TaskGroupItem::constraintsChanged(Plasma::Constraints constraints)
     if (constraints & Plasma::SizeConstraint && layoutWidget()) {
         layoutWidget()->layoutItems();
     }
+
+    if (constraints & Plasma::FormFactorConstraint && layoutWidget()) {
+        layoutWidget()->setOrientation(m_applet->formFactor());
+    }
 }
 
 LayoutWidget *TaskGroupItem::layoutWidget()
