@@ -357,7 +357,7 @@ void LayoutWidget::updatePreferredSize()
         }
     }
     //kDebug() << "preferred size: " << m_layout->preferredSize();
-   // emit sizeHintChanged(Qt::PreferredSize);
+    m_groupItem->updatePreferredSize();
 }
 
 void LayoutWidget::setMaximumRows(int rows)
