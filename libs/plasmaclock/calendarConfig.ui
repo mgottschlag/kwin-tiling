@@ -6,41 +6,31 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>263</width>
-    <height>101</height>
+    <width>221</width>
+    <height>63</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>4</x>
-     <y>4</y>
-     <width>213</width>
-     <height>18</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Ceci n'est pas un calendarConfig</string>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="regionComboBox">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>30</y>
-     <width>171</width>
-     <height>26</height>
-    </rect>
-   </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <property name="text">
-     <string>Fix the build</string>
-    </property>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Ceci n'est pas un calendarConfig</string>
+     </property>
+    </widget>
    </item>
-  </widget>
+   <item>
+    <widget class="QComboBox" name="regionComboBox">
+     <item>
+      <property name="text">
+       <string>Fix the build</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>
