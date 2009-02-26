@@ -108,5 +108,4 @@ X-KDE-Library=kpythonpluginfactory
 X-KDE-PluginKeyword=plasma_scriptengine_python/pydataengine.py
 X-EngineName=pythondataengine
 X-Plasma-API=python
-X-Plasma-PackageFormat=Pythoid
 X-Plasma-ComponentTypes=DataEngine
