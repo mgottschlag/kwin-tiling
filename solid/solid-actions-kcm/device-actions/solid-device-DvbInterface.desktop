@@ -1,0 +1,18 @@
+[Desktop Action device]
+Name=Device
+
+[Desktop Action deviceAdapter]
+Name=Device Adapter
+
+[Desktop Action deviceIndex]
+Name=Device Index
+
+[Desktop Action deviceType]
+Name=Device Type
+
+[Desktop Action objectName]
+Name=Object Name
+
+[Desktop Entry]
+Name=Dvb Interface
+X-KDE-Solid-Actions-Type=DvbInterface

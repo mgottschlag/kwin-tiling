@@ -1,0 +1,15 @@
+[Desktop Action hasState]
+Name=Has State
+
+[Desktop Action objectName]
+Name=Object Name
+
+[Desktop Action stateValue]
+Name=State Value
+
+[Desktop Action type]
+Name=Type
+
+[Desktop Entry]
+Name=Button
+X-KDE-Solid-Actions-Type=Button

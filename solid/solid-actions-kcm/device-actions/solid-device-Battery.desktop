@@ -1,0 +1,21 @@
+[Desktop Action chargePercent]
+Name=Charge Percent
+
+[Desktop Action chargeState]
+Name=Charge State
+
+[Desktop Action objectName]
+Name=Object Name
+
+[Desktop Action plugged]
+Name=Plugged
+
+[Desktop Action rechargeable]
+Name=Rechargeable
+
+[Desktop Action type]
+Name=Type
+
+[Desktop Entry]
+Name=Battery
+X-KDE-Solid-Actions-Type=Battery

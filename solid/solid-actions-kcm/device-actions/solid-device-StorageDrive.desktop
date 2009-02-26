@@ -1,0 +1,18 @@
+[Desktop Action bus]
+Name=Bus
+
+[Desktop Action driveType]
+Name=Drive Type
+
+[Desktop Action hotpluggable]
+Name=Hotpluggable
+
+[Desktop Action objectName]
+Name=Object Name
+
+[Desktop Action removable]
+Name=Removable
+
+[Desktop Entry]
+Name=Storage Drive
+X-KDE-Solid-Actions-Type=StorageDrive

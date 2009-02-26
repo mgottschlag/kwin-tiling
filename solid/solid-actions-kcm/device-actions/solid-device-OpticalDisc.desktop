@@ -1,0 +1,42 @@
+[Desktop Action appendable]
+Name=Appendable
+
+[Desktop Action availableContent]
+Name=Available Content
+
+[Desktop Action blank]
+Name=Blank
+
+[Desktop Action capacity]
+Name=Capacity
+
+[Desktop Action discType]
+Name=Disc Type
+
+[Desktop Action fsType]
+Name=Fs Type
+
+[Desktop Action ignored]
+Name=Ignored
+
+[Desktop Action label]
+Name=Label
+
+[Desktop Action objectName]
+Name=Object Name
+
+[Desktop Action rewritable]
+Name=Rewritable
+
+[Desktop Action size]
+Name=Size
+
+[Desktop Action usage]
+Name=Usage
+
+[Desktop Action uuid]
+Name=Uuid
+
+[Desktop Entry]
+Name=Optical Disc
+X-KDE-Solid-Actions-Type=OpticalDisc

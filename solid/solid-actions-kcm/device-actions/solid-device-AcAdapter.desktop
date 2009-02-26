@@ -1,0 +1,9 @@
+[Desktop Action objectName]
+Name=Object Name
+
+[Desktop Action plugged]
+Name=Plugged
+
+[Desktop Entry]
+Name=Ac Adapter
+X-KDE-Solid-Actions-Type=AcAdapter

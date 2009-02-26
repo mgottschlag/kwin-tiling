@@ -1,0 +1,18 @@
+[Desktop Action hwAddress]
+Name=Hw Address
+
+[Desktop Action ifaceName]
+Name=Iface Name
+
+[Desktop Action macAddress]
+Name=Mac Address
+
+[Desktop Action objectName]
+Name=Object Name
+
+[Desktop Action wireless]
+Name=Wireless
+
+[Desktop Entry]
+Name=Network Interface
+X-KDE-Solid-Actions-Type=NetworkInterface

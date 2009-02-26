@@ -1,0 +1,24 @@
+[Desktop Action fsType]
+Name=Fs Type
+
+[Desktop Action ignored]
+Name=Ignored
+
+[Desktop Action label]
+Name=Label
+
+[Desktop Action objectName]
+Name=Object Name
+
+[Desktop Action size]
+Name=Size
+
+[Desktop Action usage]
+Name=Usage
+
+[Desktop Action uuid]
+Name=Uuid
+
+[Desktop Entry]
+Name=Storage Volume
+X-KDE-Solid-Actions-Type=StorageVolume

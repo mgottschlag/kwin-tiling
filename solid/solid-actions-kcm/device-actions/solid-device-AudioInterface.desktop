@@ -1,0 +1,21 @@
+[Desktop Action deviceType]
+Name=Device Type
+
+[Desktop Action driver]
+Name=Driver
+
+[Desktop Action driverHandle]
+Name=Driver Handle
+
+[Desktop Action name]
+Name=Name
+
+[Desktop Action objectName]
+Name=Object Name
+
+[Desktop Action soundcardType]
+Name=Soundcard Type
+
+[Desktop Entry]
+Name=Audio Interface
+X-KDE-Solid-Actions-Type=AudioInterface

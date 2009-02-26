@@ -1,0 +1,12 @@
+[Desktop Action objectName]
+Name=Object Name
+
+[Desktop Action supportedDrivers]
+Name=Supported Drivers
+
+[Desktop Action supportedProtocols]
+Name=Supported Protocols
+
+[Desktop Entry]
+Name=Camera
+X-KDE-Solid-Actions-Type=Camera

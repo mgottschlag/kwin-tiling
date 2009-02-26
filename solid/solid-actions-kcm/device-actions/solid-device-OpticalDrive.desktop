@@ -1,0 +1,30 @@
+[Desktop Action bus]
+Name=Bus
+
+[Desktop Action driveType]
+Name=Drive Type
+
+[Desktop Action hotpluggable]
+Name=Hotpluggable
+
+[Desktop Action objectName]
+Name=Object Name
+
+[Desktop Action readSpeed]
+Name=Read Speed
+
+[Desktop Action removable]
+Name=Removable
+
+[Desktop Action supportedMedia]
+Name=Supported Media
+
+[Desktop Action writeSpeed]
+Name=Write Speed
+
+[Desktop Action writeSpeeds]
+Name=Write Speeds
+
+[Desktop Entry]
+Name=Optical Drive
+X-KDE-Solid-Actions-Type=OpticalDrive

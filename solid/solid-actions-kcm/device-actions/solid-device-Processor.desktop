@@ -1,0 +1,18 @@
+[Desktop Action canChangeFrequency]
+Name=Can Change Frequency
+
+[Desktop Action instructionSets]
+Name=Instruction Sets
+
+[Desktop Action maxSpeed]
+Name=Max Speed
+
+[Desktop Action number]
+Name=Number
+
+[Desktop Action objectName]
+Name=Object Name
+
+[Desktop Entry]
+Name=Processor
+X-KDE-Solid-Actions-Type=Processor

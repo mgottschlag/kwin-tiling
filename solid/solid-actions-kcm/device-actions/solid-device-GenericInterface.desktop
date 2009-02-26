@@ -1,0 +1,6 @@
+[Desktop Action objectName]
+Name=Object Name
+
+[Desktop Entry]
+Name=Generic Interface
+X-KDE-Solid-Actions-Type=GenericInterface

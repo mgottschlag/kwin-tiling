@@ -1,0 +1,12 @@
+[Desktop Action accessible]
+Name=Accessible
+
+[Desktop Action filePath]
+Name=File Path
+
+[Desktop Action objectName]
+Name=Object Name
+
+[Desktop Entry]
+Name=Storage Access
+X-KDE-Solid-Actions-Type=StorageAccess

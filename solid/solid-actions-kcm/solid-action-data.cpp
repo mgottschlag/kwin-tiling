@@ -54,6 +54,7 @@ SolidActionData::SolidActionData()
     QList<QMetaObject> interfaceList = fillInterfaceList();
     foreach( QMetaObject interface, interfaceList ) {
         QString ifaceName = interface.className();
+        ifaceName.remove(0, ifaceName.lastIndexOf(':') + 1);
         types.insert(ifaceName, generateUserString(ifaceName));
         QMap<QString,QString> deviceValues;
         for( int doneProps = 0; interface.propertyCount() > doneProps; doneProps = doneProps + 1 ) {
@@ -92,7 +93,6 @@ QString SolidActionData::generateUserString(QString className)
     finalString = className.remove(0, className.lastIndexOf(':') + 1); // Remove any Class information
     finalString = finalString.replace( camelCase, " \\1" ); // Use Camel Casing to add spaces
     finalString = KStringHandler::capwords( finalString ); // Captialise everything
-    kWarning() << "Created " + finalString.trimmed();
     return finalString.trimmed();
 }
 

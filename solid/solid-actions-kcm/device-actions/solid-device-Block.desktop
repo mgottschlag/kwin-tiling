@@ -1,0 +1,15 @@
+[Desktop Action device]
+Name=Device
+
+[Desktop Action major]
+Name=Major
+
+[Desktop Action minor]
+Name=Minor
+
+[Desktop Action objectName]
+Name=Object Name
+
+[Desktop Entry]
+Name=Block
+X-KDE-Solid-Actions-Type=Block
