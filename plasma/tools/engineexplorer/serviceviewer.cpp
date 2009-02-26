@@ -173,7 +173,7 @@ void ServiceViewer::operationResult(Plasma::ServiceJob *job)
     } else {
         QString result = job->result().toString();
         if (result.isEmpty()) {
-            result = i18n("No response from job!");
+            result = i18n("No response from job.");
         }
 
         KMessageBox::information(this,
