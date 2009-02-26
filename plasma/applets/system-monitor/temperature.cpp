@@ -64,7 +64,9 @@ void Temperature::init()
 void Temperature::parseSources()
 {
     KConfigGroup cg = config();
-    setItems(cg.readEntry("temps", engine()->sources().filter(QRegExp(".*temp.*", Qt::CaseInsensitive))));
+    QStringList temperatures = engine()->sources()
+            .filter(QRegExp(".*temp.*", Qt::CaseInsensitive)).mid(0, 5);
+    setItems(cg.readEntry("temps", temperatures));
     connectToEngine();
 }
 
