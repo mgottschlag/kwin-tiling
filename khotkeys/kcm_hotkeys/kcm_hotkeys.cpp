@@ -305,7 +305,7 @@ bool KCMHotkeysPrivate::maybeShowWidget()
         {
         int choice = KMessageBox::warningContinueCancel(
              q,
-             i18n("The current action has unsaved changes. If you continue those changes will be lost!"),
+             i18n("The current action has unsaved changes. If you continue these changes will be lost."),
              i18n("Save changes") );
         if (choice != KMessageBox::Continue)
             {
@@ -353,7 +353,7 @@ void KCMHotkeysPrivate::save()
             }
         KMessageBox::error(
             q,
-            "<qt>" + i18n("Unable to contact khotkeys. Your changes are saved but i failed to activate them") + "</qt>" );
+            "<qt>" + i18n("Unable to contact khotkeys. Your changes are saved, but they could not be activated.") + "</qt>" );
         return;
         }
 
