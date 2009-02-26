@@ -34,7 +34,7 @@ class DateExtenderWidget : public QGraphicsWidget
     Q_OBJECT
 
 public:
-    DateExtenderWidget(QDate date, Plasma::DataEngine *engine, QGraphicsWidget *parent = 0);
+    DateExtenderWidget(QDate date, Plasma::DataEngine *engine, QString region, QGraphicsWidget *parent = 0);
     ~DateExtenderWidget();
 
 };

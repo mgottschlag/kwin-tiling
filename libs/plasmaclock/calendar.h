@@ -56,6 +56,8 @@ public:
 
     void setDataEngine(Plasma::DataEngine *dataEngine);
 
+    void setQueryString(QString queryString); //HACK
+
 Q_SIGNALS:
     void dateChanged(const QDate &cur, const QDate &old);
     void dateChanged(const QDate &date);

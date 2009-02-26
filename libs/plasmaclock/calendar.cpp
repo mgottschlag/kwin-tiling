@@ -65,6 +65,7 @@ class CalendarPrivate
         Plasma::SpinBox *weekSpinBox;
 
         Plasma::DataEngine *dataEngine;
+        QString queryString;
 };
 
 Calendar::Calendar(const QDate &date, QGraphicsWidget *parent)
@@ -96,6 +97,7 @@ Calendar::~Calendar()
 void Calendar::init(CalendarTable *calendarTable)
 {
     d->dataEngine = 0;
+    d->queryString = "";
 
     QGraphicsLinearLayout *m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
     QGraphicsLinearLayout *m_hLayout = new QGraphicsLinearLayout(m_layout);
@@ -236,7 +238,7 @@ void Calendar::prevMonth()
     if (d->dataEngine){
         for (int i = -10; i < 40; i++){
             QDate tmpDate = newDate.addDays(i);
-            QString tmpStr = "isHoliday:it:" + tmpDate.toString(Qt::ISODate);
+            QString tmpStr = d->queryString + tmpDate.toString(Qt::ISODate);
             if (d->dataEngine->query(tmpStr).value(tmpStr).toBool()){
                 setDateProperty(tmpDate);
             }
@@ -270,7 +272,7 @@ void Calendar::nextMonth()
     if (d->dataEngine){
         for (int i = -10; i < 40; i++){
             QDate tmpDate = newDate.addDays(i);
-            QString tmpStr = "isHoliday:it:" + tmpDate.toString(Qt::ISODate);
+            QString tmpStr = d->queryString + tmpDate.toString(Qt::ISODate);
             if (d->dataEngine->query(tmpStr).value(tmpStr).toBool()){
                 setDateProperty(tmpDate);
             }
@@ -376,6 +378,11 @@ void Calendar::setDateProperty(QDate date)
 void Calendar::setDataEngine(Plasma::DataEngine *dataEngine)
 {
     d->dataEngine = dataEngine;
+}
+
+void Calendar::setQueryString(QString queryString)
+{
+    d->queryString = queryString;
 }
 
 }
