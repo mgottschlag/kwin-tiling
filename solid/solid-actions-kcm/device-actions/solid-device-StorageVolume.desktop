@@ -3,6 +3,15 @@ Name=Fs Type
 
 [Desktop Action ignored]
 Name=Ignored
+Name[es]=Ignorado
+Name[et]=Eiratav
+Name[fr]=Ignoré
+Name[nds]=Övergahn
+Name[pt]=Ignorada
+Name[pt_BR]=Ignorado
+Name[sv]=Ignorerad
+Name[uk]=Ігнорується
+Name[zh_TW]=忽略
 
 [Desktop Action label]
 Name=Label
@@ -15,10 +24,29 @@ Name=Size
 
 [Desktop Action usage]
 Name=Usage
+Name[es]=Uso
+Name[et]=Kasutamine
+Name[fr]=Utilisation
+Name[nds]=Bruuk
+Name[pt]=Utilização
+Name[pt_BR]=Uso
+Name[sv]=Användning
+Name[uk]=Використання
+Name[zh_TW]=使用量
 
 [Desktop Action uuid]
 Name=Uuid
 
 [Desktop Entry]
 Name=Storage Volume
+Name[es]=Volúmen de almacenamiento
+Name[et]=Salvesti
+Name[fr]=Volume de stockage
+Name[ja]=ストレージボリューム
+Name[nds]=Spiekermedium
+Name[pt]=Volume de Armazenamento
+Name[pt_BR]=Volume de armazenamento
+Name[sv]=Lagringsvolym
+Name[uk]=Том зберігання даних
+Name[zh_TW]=儲存容量
 X-KDE-Solid-Actions-Type=StorageVolume

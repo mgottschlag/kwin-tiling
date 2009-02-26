@@ -3,10 +3,32 @@ Name=Object Name
 
 [Desktop Action supportedDrivers]
 Name=Supported Drivers
+Name[es]=Controladores soportados
+Name[et]=Toetatud draiverd
+Name[fr]=Pilotes pris en charge
+Name[ga]=Tiománaithe a dTacaítear Leo
+Name[ja]=サポートされているドライバ
+Name[nds]=Ünnerstütt Drievers
+Name[pt]=Controladores Suportados
+Name[pt_BR]=Drivers suportados
+Name[sv]=Drivrutiner som stöds
+Name[uk]=Підтримувані драйвери
+Name[zh_TW]=支援的驅動程式
 
 [Desktop Action supportedProtocols]
 Name=Supported Protocols
 
 [Desktop Entry]
 Name=Camera
+Name[es]=Cámara
+Name[et]=Kaamera
+Name[fr]=Appareil photo
+Name[ga]=Ceamara
+Name[ja]=カメラ
+Name[nds]=Kamera
+Name[pt]=Câmara Fotográfica
+Name[pt_BR]=Câmera
+Name[sv]=Kamera
+Name[uk]=Фотоапарат
+Name[zh_TW]=相機
 X-KDE-Solid-Actions-Type=Camera

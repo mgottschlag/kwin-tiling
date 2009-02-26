@@ -3,6 +3,16 @@ Name=Bus
 
 [Desktop Action driveType]
 Name=Drive Type
+Name[es]=Tipo de unidad
+Name[et]=Seadme tüüp
+Name[fr]=Type de lecteur
+Name[ja]=ドライブのタイプ
+Name[nds]=Loopwark-Typ
+Name[pt]=Tipo de Unidade
+Name[pt_BR]=Tipo de unidade
+Name[sv]=Enhetstyp
+Name[uk]=Тип пристрою
+Name[zh_TW]=磁碟型態
 
 [Desktop Action hotpluggable]
 Name=Hotpluggable

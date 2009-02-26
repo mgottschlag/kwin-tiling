@@ -3,10 +3,31 @@ Name=Object Name
 
 [Desktop Action supportedDrivers]
 Name=Supported Drivers
+Name[es]=Controladores soportados
+Name[et]=Toetatud draiverd
+Name[fr]=Pilotes pris en charge
+Name[ga]=Tiománaithe a dTacaítear Leo
+Name[ja]=サポートされているドライバ
+Name[nds]=Ünnerstütt Drievers
+Name[pt]=Controladores Suportados
+Name[pt_BR]=Drivers suportados
+Name[sv]=Drivrutiner som stöds
+Name[uk]=Підтримувані драйвери
+Name[zh_TW]=支援的驅動程式
 
 [Desktop Action supportedProtocols]
 Name=Supported Protocols
 
 [Desktop Entry]
 Name=Portable Media Player
+Name[es]=Reproductor multimedia portátil
+Name[et]=Kaasaskantav meediamängija
+Name[fr]=Lecteur de média portable
+Name[ja]=ポータブルメディアプレーヤー
+Name[nds]=Mobil-Medienafspeler
+Name[pt]=Leitor Multimédia Portátil
+Name[pt_BR]=Reprodutor de mídia portátil
+Name[sv]=Portabel mediaspelare
+Name[uk]=Портативний медіапрогравач
+Name[zh_TW]=可攜式媒體播放器
 X-KDE-Solid-Actions-Type=PortableMediaPlayer

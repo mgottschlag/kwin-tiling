@@ -18,6 +18,15 @@ Name=Fs Type
 
 [Desktop Action ignored]
 Name=Ignored
+Name[es]=Ignorado
+Name[et]=Eiratav
+Name[fr]=Ignoré
+Name[nds]=Övergahn
+Name[pt]=Ignorada
+Name[pt_BR]=Ignorado
+Name[sv]=Ignorerad
+Name[uk]=Ігнорується
+Name[zh_TW]=忽略
 
 [Desktop Action label]
 Name=Label
@@ -33,10 +42,29 @@ Name=Size
 
 [Desktop Action usage]
 Name=Usage
+Name[es]=Uso
+Name[et]=Kasutamine
+Name[fr]=Utilisation
+Name[nds]=Bruuk
+Name[pt]=Utilização
+Name[pt_BR]=Uso
+Name[sv]=Användning
+Name[uk]=Використання
+Name[zh_TW]=使用量
 
 [Desktop Action uuid]
 Name=Uuid
 
 [Desktop Entry]
 Name=Optical Disc
+Name[es]=Disco óptico
+Name[et]=Optiline plaat
+Name[fr]=Disque optique
+Name[ja]=光学ディスク
+Name[nds]=Optsch Schiev
+Name[pt]=Disco Óptico
+Name[pt_BR]=Disco óptico
+Name[sv]=Optisk skiva
+Name[uk]=Оптичний диск
+Name[zh_TW]=光碟
 X-KDE-Solid-Actions-Type=OpticalDisc
