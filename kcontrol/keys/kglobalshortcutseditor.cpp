@@ -232,7 +232,7 @@ void KGlobalShortcutsEditor::importScheme()
         int choice = KMessageBox::warningContinueCancel(
                          this,
                          i18n("Your current changes will be lost if you load another scheme before saving this one"),
-                         i18n("Load Shortcurt Scheme"),
+                         i18n("Load Shortcut Scheme"),
                          KGuiItem(i18n("Load")));
         if (choice != KMessageBox::Continue) {
             return;
@@ -385,7 +385,7 @@ void KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::removeComponent()
         if (KMessageBox::questionYesNo(
                     q,
                     i18n("Component '%1' is currently active. Only global shortcuts currently not active will be removed from the list.\n"
-                         "All global shortcuts will reregister themselves with their default when they are started the next time!", componentUnique),
+                         "All global shortcuts will reregister themselves with their defaults when they are next started.", componentUnique),
                     i18n("Remove component")) != KMessageBox::Yes) {
             return;
         }
@@ -393,8 +393,8 @@ void KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::removeComponent()
         if (KMessageBox::questionYesNo(
                     q,
                     i18n("Are you sure you want to remove the registered shortcuts for component '%1'? "
-                         "The component and shortcuts will reregister themselves with their default setting"
-                         " when they are started the next time.",
+                         "The component and shortcuts will reregister themselves with their default settings"
+                         " when they are next started.",
                           componentUnique),
                     i18n("Remove component")) != KMessageBox::Yes) {
             return;
