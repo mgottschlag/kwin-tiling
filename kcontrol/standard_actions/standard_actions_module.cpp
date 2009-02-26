@@ -133,7 +133,7 @@ void StandardActionsModule::save()
 
     QString title = i18n("Standard Actions successfully saved");
     QString message = i18n(
-        "The changes have been saved. Please consider:"
+        "The changes have been saved. Please note that:"
         "<ul><li>Applications need to be restarted to see the changes.</li>"
         "    <li>This change could introduce shortcut conflicts in some applications.</li>"
         "</ul>" );
