@@ -25,6 +25,7 @@
 #include <KGlobal>
 #include <kdesktopfileactions.h>
 #include <KStandardDirs>
+#include <KStringHandler>
 #include <KDesktopFile>
 #include <KConfigGroup>
 #include <KDebug>
@@ -85,15 +86,12 @@ QMap<QString, QString> SolidActionData::valueList(QString deviceType)
 
 QString SolidActionData::generateUserString(QString className)
 {
-    QString cleanClass = className.remove(0, className.lastIndexOf(':') + 1);
-    QRegExp camelCase("([A-Z])");
-    QStringList splitString = cleanClass.split( camelCase );
     QString finalString;
-    for( int strPos = 0; splitString.count() > strPos; strPos = strPos + 1 ) {
-        finalString += splitString.at(strPos) + QString(" ");
-        finalString += cleanClass.at(cleanClass.indexOf(camelCase, finalString.count()-finalString.count(" ")));
-    }
-    finalString.chop(1);
+    QRegExp camelCase("([A-Z])"); // Create the split regexp
+
+    finalString = className.remove(0, className.lastIndexOf(':') + 1); // Remove any Class information
+    finalString = finalString.replace( camelCase, " \\1" ); // Use Camel Casing to add spaces
+    finalString = KStringHandler::capwords( finalString ); // Captialise everything
     kWarning() << "Created " + finalString.trimmed();
     return finalString.trimmed();
 }
