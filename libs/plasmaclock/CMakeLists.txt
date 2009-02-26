@@ -16,5 +16,5 @@ SOVERSION ${GENERIC_LIB_SOVERSION} )
 
 #clockapplet.h
 install(FILES clockapplet.h calendar.h calendartable.h plasmaclock_export.h
-${CMAKE_CURRENT_BINARY_DIR}/ui_calendar.h DESTINATION ${INCLUDE_INSTALL_DIR}/plasmaclock COMPONENT Devel)
+${CMAKE_CURRENT_BINARY_DIR}/ui_calendarConfig.h DESTINATION ${INCLUDE_INSTALL_DIR}/plasmaclock COMPONENT Devel)
 install(TARGETS plasmaclock EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS} )
