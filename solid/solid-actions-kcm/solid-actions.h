@@ -50,7 +50,7 @@ private slots:
     void toggleEditDelete(bool toggle);
     void enableEditDelete();
     void slotTextChanged( const QString& );
-
+    void slotShowAddDialog();
 private:
     Ui::SolidActionsConfig *mainUi;
     SolidActionEdit *editUi;
