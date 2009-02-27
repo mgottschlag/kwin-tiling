@@ -114,12 +114,12 @@ QList<QMetaObject> SolidActionData::fillInterfaceList()
     interfaces.append( Solid::NetworkInterface::staticMetaObject );
     interfaces.append( Solid::PortableMediaPlayer::staticMetaObject );
     interfaces.append( Solid::Processor::staticMetaObject );
-    interfaces.append( Solid::SerialInterface::staticMetaObject ); // The header does not exist?
+    interfaces.append( Solid::SerialInterface::staticMetaObject ); 
     interfaces.append( Solid::StorageAccess::staticMetaObject );
     interfaces.append( Solid::StorageDrive::staticMetaObject );
     interfaces.append( Solid::OpticalDrive::staticMetaObject );
     interfaces.append( Solid::StorageVolume::staticMetaObject );
     interfaces.append( Solid::OpticalDisc::staticMetaObject );
-    interfaces.append( Solid::Video::staticMetaObject ); // The header does not exist?
+    interfaces.append( Solid::Video::staticMetaObject );
     return interfaces;
 }
