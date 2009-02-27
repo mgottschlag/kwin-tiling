@@ -1,7 +1,13 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=System Monitor - RAM
+Name[ga]=Monatóir an Chórais - RAM
+Name[uk]=Монітор системи — Пам’ять
+Name[zh_TW]=系統監視器─記憶體
 Comment=A RAM usage monitor
+Comment[ga]=Monatóir úsáid RAM
+Comment[uk]=Монітор використання пам’яті
+Comment[zh_TW]=記憶體使用量監視器
 Type=Service
 Icon=media-flash-memory-stick
 ServiceTypes=Plasma/Applet
