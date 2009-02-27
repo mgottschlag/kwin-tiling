@@ -1,0 +1,9 @@
+[Desktop Action objectName]
+Name=Object Name
+
+[Desktop Action supportedDrivers]
+Name=Supported Drivers
+
+[Desktop Entry]
+Name=Video
+X-KDE-Solid-Actions-Type=Video

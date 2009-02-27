@@ -1,0 +1,15 @@
+[Desktop Action driverHandle]
+Name=Driver Handle
+
+[Desktop Action objectName]
+Name=Object Name
+
+[Desktop Action port]
+Name=Port
+
+[Desktop Action serialType]
+Name=Serial Type
+
+[Desktop Entry]
+Name=Serial Interface
+X-KDE-Solid-Actions-Type=SerialInterface
