@@ -1,15 +1,31 @@
 [Desktop Action hasState]
 Name=Has State
+Name[fr]=A un état
+Name[uk]=Має стан
+Name[zh_TW]=有狀態
 
 [Desktop Action objectName]
 Name=Object Name
+Name[fr]=Nom de l'objet
+Name[uk]=Назва об'єкта
+Name[zh_TW]=物件名稱
 
 [Desktop Action stateValue]
 Name=State Value
+Name[fr]=Valeur de l'état
+Name[uk]=Значення стану
+Name[zh_TW]=狀態值
 
 [Desktop Action type]
 Name=Type
+Name[ga]=Cineál
+Name[uk]=Тип
+Name[zh_TW]=類型
 
 [Desktop Entry]
 Name=Button
+Name[fr]=Bouton
+Name[ga]=Cnaipe
+Name[uk]=Кнопка
+Name[zh_TW]=按鍵
 X-KDE-Solid-Actions-Type=Button

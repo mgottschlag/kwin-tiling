@@ -1,17 +1,34 @@
 [Desktop Action hwAddress]
 Name=Hw Address
+Name[fr]=Adresse Hw
+Name[uk]=Апар. адреса
+Name[zh_TW]=硬體位址
 
 [Desktop Action ifaceName]
 Name=Iface Name
+Name[fr]=Nom de l'Iface
+Name[uk]=Назва Iface
+Name[zh_TW]=介面名稱
 
 [Desktop Action macAddress]
 Name=Mac Address
+Name[fr]=Adresse MAC
+Name[ga]=Seoladh MAC
+Name[uk]=Mac-адреса
+Name[zh_TW]=Mac 位址
 
 [Desktop Action objectName]
 Name=Object Name
+Name[fr]=Nom de l'objet
+Name[uk]=Назва об'єкта
+Name[zh_TW]=物件名稱
 
 [Desktop Action wireless]
 Name=Wireless
+Name[fr]=Sans fil
+Name[ga]=Gan Sreang
+Name[uk]=Бездротовий
+Name[zh_TW]=無線
 
 [Desktop Entry]
 Name=Network Interface

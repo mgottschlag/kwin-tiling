@@ -1,5 +1,7 @@
 [Desktop Action bus]
 Name=Bus
+Name[uk]=Шина
+Name[zh_TW]=匯流排
 
 [Desktop Action driveType]
 Name=Drive Type
@@ -16,24 +18,46 @@ Name[zh_TW]=磁碟型態
 
 [Desktop Action hotpluggable]
 Name=Hotpluggable
+Name[fr]=Hotplug possible
+Name[uk]=«Гаряче» з’єднання
+Name[zh_TW]=可熱插拔
 
 [Desktop Action objectName]
 Name=Object Name
+Name[fr]=Nom de l'objet
+Name[uk]=Назва об'єкта
+Name[zh_TW]=物件名稱
 
 [Desktop Action readSpeed]
 Name=Read Speed
+Name[fr]=Vitesse de lecture
+Name[uk]=Швидкість читання
+Name[zh_TW]=讀取速度
 
 [Desktop Action removable]
 Name=Removable
+Name[fr]=Débranchable
+Name[uk]=Змінний
+Name[zh_TW]=可移除
 
 [Desktop Action supportedMedia]
 Name=Supported Media
+Name[fr]=Média pris en charge
+Name[ga]=Meáin a dTacaítear Leo
+Name[uk]=Підтримувані носії
+Name[zh_TW]=支援的媒體
 
 [Desktop Action writeSpeed]
 Name=Write Speed
+Name[fr]=Vitesse d'écriture
+Name[uk]=Швидкість запису
+Name[zh_TW]=寫入速度
 
 [Desktop Action writeSpeeds]
 Name=Write Speeds
+Name[fr]=Vitesses d'écriture
+Name[uk]=Швидкості запису
+Name[zh_TW]=寫入速度
 
 [Desktop Entry]
 Name=Optical Drive

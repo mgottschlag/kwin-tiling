@@ -1,5 +1,8 @@
 [Desktop Action objectName]
 Name=Object Name
+Name[fr]=Nom de l'objet
+Name[uk]=Назва об'єкта
+Name[zh_TW]=物件名稱
 
 [Desktop Action supportedDrivers]
 Name=Supported Drivers
@@ -17,6 +20,10 @@ Name[zh_TW]=支援的驅動程式
 
 [Desktop Action supportedProtocols]
 Name=Supported Protocols
+Name[fr]=Protocoles pris en charge
+Name[ga]=Prótacail a dTacaítear Leo
+Name[uk]=Підтримувані протоколи
+Name[zh_TW]=支援的協定
 
 [Desktop Entry]
 Name=Portable Media Player

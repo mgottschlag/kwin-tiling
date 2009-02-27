@@ -1,5 +1,8 @@
 [Desktop Action fsType]
 Name=Fs Type
+Name[fr]=Type de FS
+Name[uk]=Тип ФС
+Name[zh_TW]=檔案系統型態
 
 [Desktop Action ignored]
 Name=Ignored
@@ -15,12 +18,21 @@ Name[zh_TW]=忽略
 
 [Desktop Action label]
 Name=Label
+Name[uk]=Мітка
+Name[zh_TW]=標籤
 
 [Desktop Action objectName]
 Name=Object Name
+Name[fr]=Nom de l'objet
+Name[uk]=Назва об'єкта
+Name[zh_TW]=物件名稱
 
 [Desktop Action size]
 Name=Size
+Name[fr]=Taille
+Name[ga]=Méid
+Name[uk]=Розмір
+Name[zh_TW]=大小
 
 [Desktop Action usage]
 Name=Usage
@@ -36,6 +48,7 @@ Name[zh_TW]=使用量
 
 [Desktop Action uuid]
 Name=Uuid
+Name[zh_TW]=UUID
 
 [Desktop Entry]
 Name=Storage Volume

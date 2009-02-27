@@ -1,15 +1,32 @@
 [Desktop Action device]
 Name=Device
+Name[fr]=Périphérique
+Name[ga]=Gléas
+Name[uk]=Пристрій
+Name[zh_TW]=裝置
 
 [Desktop Action major]
 Name=Major
+Name[fr]=Majeur
+Name[uk]=Головний
+Name[zh_TW]=主要
 
 [Desktop Action minor]
 Name=Minor
+Name[fr]=Mineur
+Name[uk]=Додатковий
+Name[zh_TW]=次要
 
 [Desktop Action objectName]
 Name=Object Name
+Name[fr]=Nom de l'objet
+Name[uk]=Назва об'єкта
+Name[zh_TW]=物件名稱
 
 [Desktop Entry]
 Name=Block
+Name[fr]=Bloc
+Name[ga]=Bloc
+Name[uk]=Блок
+Name[zh_TW]=區塊
 X-KDE-Solid-Actions-Type=Block

@@ -1,21 +1,42 @@
 [Desktop Action chargePercent]
 Name=Charge Percent
+Name[fr]=Pourcentage de charge
+Name[uk]=Рівень заряду
+Name[zh_TW]=充電百分比
 
 [Desktop Action chargeState]
 Name=Charge State
+Name[fr]=État de la charge
+Name[uk]=Стан зарядженості
+Name[zh_TW]=充電狀態
 
 [Desktop Action objectName]
 Name=Object Name
+Name[fr]=Nom de l'objet
+Name[uk]=Назва об'єкта
+Name[zh_TW]=物件名稱
 
 [Desktop Action plugged]
 Name=Plugged
+Name[fr]=Branché
+Name[uk]=З’єднано
+Name[zh_TW]=已插入
 
 [Desktop Action rechargeable]
 Name=Rechargeable
+Name[uk]=Перезарядка
+Name[zh_TW]=可重新充電
 
 [Desktop Action type]
 Name=Type
+Name[ga]=Cineál
+Name[uk]=Тип
+Name[zh_TW]=類型
 
 [Desktop Entry]
 Name=Battery
+Name[fr]=Batterie
+Name[ga]=Cadhnra
+Name[uk]=Акумулятор
+Name[zh_TW]=電池
 X-KDE-Solid-Actions-Type=Battery

@@ -1,9 +1,18 @@
 [Desktop Action objectName]
 Name=Object Name
+Name[fr]=Nom de l'objet
+Name[uk]=Назва об'єкта
+Name[zh_TW]=物件名稱
 
 [Desktop Action plugged]
 Name=Plugged
+Name[fr]=Branché
+Name[uk]=З’єднано
+Name[zh_TW]=已插入
 
 [Desktop Entry]
 Name=Ac Adapter
+Name[fr]=Adaptateur secteur
+Name[uk]=Блок живлення
+Name[zh_TW]=AC 電源
 X-KDE-Solid-Actions-Type=AcAdapter

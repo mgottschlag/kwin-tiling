@@ -1,21 +1,45 @@
 [Desktop Action deviceType]
 Name=Device Type
+Name[fr]=Type de périphérique
+Name[uk]=Тип пристрою
+Name[zh_TW]=裝置類型
 
 [Desktop Action driver]
 Name=Driver
+Name[fr]=Pilote
+Name[ga]=Tiománaí
+Name[uk]=Драйвер
+Name[zh_TW]=驅動程式
 
 [Desktop Action driverHandle]
 Name=Driver Handle
+Name[fr]=Prise en charge pilote
+Name[uk]=Обробка драйвером
+Name[zh_TW]=驅動程式處理
 
 [Desktop Action name]
 Name=Name
+Name[fr]=Nom
+Name[ga]=Ainm
+Name[uk]=Назва
+Name[zh_TW]=名稱
 
 [Desktop Action objectName]
 Name=Object Name
+Name[fr]=Nom de l'objet
+Name[uk]=Назва об'єкта
+Name[zh_TW]=物件名稱
 
 [Desktop Action soundcardType]
 Name=Soundcard Type
+Name[fr]=Type de carte son
+Name[uk]=Тип звукової картки
+Name[zh_TW]=音效卡類型
 
 [Desktop Entry]
 Name=Audio Interface
+Name[fr]=Interface audio
+Name[ga]=Comhéadan Fuaime
+Name[uk]=Звуковий інтерфейс
+Name[zh_TW]=音效介面
 X-KDE-Solid-Actions-Type=AudioInterface

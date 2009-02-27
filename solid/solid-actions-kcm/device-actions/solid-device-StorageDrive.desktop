@@ -1,5 +1,7 @@
 [Desktop Action bus]
 Name=Bus
+Name[uk]=Шина
+Name[zh_TW]=匯流排
 
 [Desktop Action driveType]
 Name=Drive Type
@@ -16,13 +18,25 @@ Name[zh_TW]=磁碟型態
 
 [Desktop Action hotpluggable]
 Name=Hotpluggable
+Name[fr]=Hotplug possible
+Name[uk]=«Гаряче» з’єднання
+Name[zh_TW]=可熱插拔
 
 [Desktop Action objectName]
 Name=Object Name
+Name[fr]=Nom de l'objet
+Name[uk]=Назва об'єкта
+Name[zh_TW]=物件名稱
 
 [Desktop Action removable]
 Name=Removable
+Name[fr]=Débranchable
+Name[uk]=Змінний
+Name[zh_TW]=可移除
 
 [Desktop Entry]
 Name=Storage Drive
+Name[fr]=Périphérique de stockage
+Name[uk]=Пристрій зберігання даних
+Name[zh_TW]=儲存裝置
 X-KDE-Solid-Actions-Type=StorageDrive

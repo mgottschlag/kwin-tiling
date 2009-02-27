@@ -1,12 +1,23 @@
 [Desktop Action accessible]
 Name=Accessible
+Name[uk]=Доступний
+Name[zh_TW]=可存取
 
 [Desktop Action filePath]
 Name=File Path
+Name[fr]=Emplacement du fichier
+Name[uk]=Шлях до файлів
+Name[zh_TW]=檔案路徑
 
 [Desktop Action objectName]
 Name=Object Name
+Name[fr]=Nom de l'objet
+Name[uk]=Назва об'єкта
+Name[zh_TW]=物件名稱
 
 [Desktop Entry]
 Name=Storage Access
+Name[fr]=Accès au stockage
+Name[uk]=Доступ до даних
+Name[zh_TW]=儲存裝置存取
 X-KDE-Solid-Actions-Type=StorageAccess

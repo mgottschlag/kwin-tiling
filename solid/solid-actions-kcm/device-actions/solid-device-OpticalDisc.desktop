@@ -1,20 +1,38 @@
 [Desktop Action appendable]
 Name=Appendable
+Name[fr]=Concaténable
+Name[uk]=Додавання
+Name[zh_TW]=可附加
 
 [Desktop Action availableContent]
 Name=Available Content
+Name[fr]=Contenu disponible
+Name[uk]=Доступний вміст
+Name[zh_TW]=可用的內容
 
 [Desktop Action blank]
 Name=Blank
+Name[fr]=Vierge
+Name[uk]=Порожньо
+Name[zh_TW]=空白
 
 [Desktop Action capacity]
 Name=Capacity
+Name[fr]=Capacité
+Name[uk]=Місткість
+Name[zh_TW]=空間
 
 [Desktop Action discType]
 Name=Disc Type
+Name[fr]=Type de disque
+Name[uk]=Тип диска
+Name[zh_TW]=磁碟型態
 
 [Desktop Action fsType]
 Name=Fs Type
+Name[fr]=Type de FS
+Name[uk]=Тип ФС
+Name[zh_TW]=檔案系統型態
 
 [Desktop Action ignored]
 Name=Ignored
@@ -30,15 +48,27 @@ Name[zh_TW]=忽略
 
 [Desktop Action label]
 Name=Label
+Name[uk]=Мітка
+Name[zh_TW]=標籤
 
 [Desktop Action objectName]
 Name=Object Name
+Name[fr]=Nom de l'objet
+Name[uk]=Назва об'єкта
+Name[zh_TW]=物件名稱
 
 [Desktop Action rewritable]
 Name=Rewritable
+Name[fr]=Réinscriptible
+Name[uk]=Перезапис
+Name[zh_TW]=可覆寫
 
 [Desktop Action size]
 Name=Size
+Name[fr]=Taille
+Name[ga]=Méid
+Name[uk]=Розмір
+Name[zh_TW]=大小
 
 [Desktop Action usage]
 Name=Usage
@@ -54,6 +84,7 @@ Name[zh_TW]=使用量
 
 [Desktop Action uuid]
 Name=Uuid
+Name[zh_TW]=UUID
 
 [Desktop Entry]
 Name=Optical Disc
