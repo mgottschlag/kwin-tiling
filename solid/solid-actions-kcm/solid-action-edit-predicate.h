@@ -42,7 +42,7 @@ public slots:
     void updateValuesList();
 
 private:
-    SolidActionData deviceData;
+    SolidActionData * deviceData;
     Ui::SolidActionEditPredicate ui;
 
 };

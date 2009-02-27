@@ -47,7 +47,7 @@
 #include <Solid/StorageVolume>
 #include <Solid/OpticalDisc>
 
-SolidActionData::SolidActionData()
+SolidActionData::SolidActionData(bool includeFiles)
 {
     QStringList allPossibleDevices;
 
@@ -64,19 +64,21 @@ SolidActionData::SolidActionData()
         values.insert(ifaceName, deviceValues);
     }
 
-    // Fill the lists of possible device types / device values
-    allPossibleDevices = KGlobal::dirs()->findAllResources("data", "solid/devices/");
-    // List all the known device actions, then add their name and all values to the appropriate lists
-    foreach(const QString &desktop, allPossibleDevices) {
-        KDesktopFile deviceFile(desktop);
-        KConfigGroup deviceType = deviceFile.desktopGroup(); // Retrieve the configuration group where the user friendly name is
-        types.insert(deviceType.readEntry("X-KDE-Solid-Actions-Type"), deviceType.readEntry("Name")); // Lets read the user friendly name
-        QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(desktop, true); // Get the list of contained services
-        QMap<QString,QString> deviceValues = values.value(deviceType.readEntry("X-KDE-Solid-Actions-Type"));
-        foreach(const KServiceAction &deviceValue, services) { // We want every single action
-            deviceValues.insert(deviceValue.name(), deviceValue.text()); // Add to the type - actions map
-        }
+    if( includeFiles ) {
+        // Fill the lists of possible device types / device values
+        allPossibleDevices = KGlobal::dirs()->findAllResources("data", "solid/devices/");
+        // List all the known device actions, then add their name and all values to the appropriate lists
+        foreach(const QString &desktop, allPossibleDevices) {
+            KDesktopFile deviceFile(desktop);
+            KConfigGroup deviceType = deviceFile.desktopGroup(); // Retrieve the configuration group where the user friendly name is
+            types.insert(deviceType.readEntry("X-KDE-Solid-Actions-Type"), deviceType.readEntry("Name")); // Lets read the user friendly name
+            QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(desktop, true); // Get the list of contained services
+            QMap<QString,QString> deviceValues = values.value(deviceType.readEntry("X-KDE-Solid-Actions-Type"));
+            foreach(const KServiceAction &deviceValue, services) { // We want every single action
+                deviceValues.insert(deviceValue.name(), deviceValue.text()); // Add to the type - actions map
+            }
         values.insert(deviceType.readEntry("X-KDE-Solid-Actions-Type"), deviceValues);
+        }
     }
 }
 

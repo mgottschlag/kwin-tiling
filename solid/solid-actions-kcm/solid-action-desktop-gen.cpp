@@ -39,17 +39,21 @@ int main( int argc, char *argv[] )
     KCmdLineArgs::init(argc, argv, &aboutData);
 
     KApplication application(false);
-    SolidActionData availActions;
+    SolidActionData availActions(false);
     foreach( QString typeInternal, availActions.types.keys() ) {
         KDesktopFile typeFile( "solid-device-" + typeInternal + ".desktop" );
         KConfigGroup tConfig = typeFile.desktopGroup();
-        tConfig.writeEntry( "X-KDE-Solid-Actions-Type", typeInternal );
-        tConfig.writeEntry( "Name", availActions.types.value(typeInternal) );
+        if( !tConfig.hasKey("X-KDE-Solid-Actions-Type") || !tConfig.hasKey("Name") ) {
+            tConfig.writeEntry( "X-KDE-Solid-Actions-Type", typeInternal );
+            tConfig.writeEntry( "Name", availActions.types.value(typeInternal) );
+        }
         QStringList typeValues = availActions.valueList(typeInternal).keys();
         kWarning() << "Desktop file created: " + typeFile.fileName();
         foreach( QString tValue, typeValues ) {
             KConfigGroup vConfig = typeFile.actionGroup(tValue);
-            vConfig.writeEntry( "Name", availActions.valueList(typeInternal).value(tValue) );
+            if( !vConfig.hasKey("Name") ) {
+                vConfig.writeEntry( "Name", availActions.valueList(typeInternal).value(tValue) );
+            }
             vConfig.sync();
         }
         tConfig.sync();

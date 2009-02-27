@@ -31,7 +31,7 @@ class SolidActionData : public QObject
     Q_OBJECT
 
 public:
-    SolidActionData();
+    SolidActionData(bool includeFiles);
     QMap<QString, QString> valueList(QString deviceType);
     QMap<QString, QString> types;
 
