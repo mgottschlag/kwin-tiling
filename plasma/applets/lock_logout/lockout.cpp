@@ -44,7 +44,7 @@
 #include <windows.h>
 #endif // Q_OS_WIN
 
-static const int MINBUTTONSIZE = 8;
+static const int MINBUTTONSIZE = 80;
 static const int MARGINSIZE = 2;
 
 LockOut::LockOut(QObject *parent, const QVariantList &args)
