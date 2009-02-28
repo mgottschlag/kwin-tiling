@@ -198,13 +198,27 @@ void KGlobalShortcutsEditor::addCollection(
 }
 
 
-void KGlobalShortcutsEditor::allDefault()
+void KGlobalShortcutsEditor::defaults(ComponentScope scope)
 {
-    // The editors are responsible for the reset
-    kDebug() << "Reset";
-    foreach (const componentData &cd, d->components) {
-        cd.editor->allDefault();
-    }
+    switch (scope)
+        {
+        case AllComponents:
+            foreach (const componentData &cd, d->components) {
+                // The editors are responsible for the reset
+                cd.editor->allDefault();
+            }
+            break;
+
+        case CurrentComponent: {
+            QString name = d->ui.components->currentText();
+            // The editors are responsible for the reset
+            d->components.value(name).editor->allDefault();
+            }
+            break;
+
+        default:
+            Q_ASSERT(false);
+        };
 }
 
 

@@ -87,6 +87,12 @@ public:
      */
     bool isModified() const;
 
+    enum ComponentScope
+        {
+        AllComponents,
+        CurrentComponent
+        };
+
 Q_SIGNALS:
 
     /**
@@ -120,9 +126,9 @@ public Q_SLOTS:
     void save();
 
     /**
-     * Reset all \a components to default values.
+     * Set shortcuts to their default value;
      */
-    void allDefault();
+    void defaults(ComponentScope scope);
 
     virtual void importScheme();
     virtual void exportScheme();

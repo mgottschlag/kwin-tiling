@@ -21,7 +21,10 @@
 
 #include "kglobalshortcutseditor.h"
 
+#include <KDE/KLocale>
+#include <KDE/KMessageBox>
 #include <KDE/KPluginFactory>
+
 
 #include <QtGui/QLayout>
 
@@ -59,7 +62,24 @@ void GlobalShortcutsModule::load()
 
 void GlobalShortcutsModule::defaults()
 {
-    editor->allDefault();
+    switch (KMessageBox::questionYesNoCancel(
+                    this,
+                    i18n("You are about to reset all shortcuts to their default value!"),
+                    i18n("Reset to defaults"),
+                    KGuiItem(i18n("Current Component")),
+                    KGuiItem(i18n("All Components"))))
+        {
+        case KMessageBox::Yes:
+            editor->defaults(KGlobalShortcutsEditor::CurrentComponent);
+            break;
+
+        case KMessageBox::No:
+            editor->defaults(KGlobalShortcutsEditor::AllComponents);
+            break;
+
+        default:
+            return;
+        }
 }
 
 
