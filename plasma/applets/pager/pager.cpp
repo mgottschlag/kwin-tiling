@@ -1118,8 +1118,13 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
             QRectF target = m_rects[i];
             //take also shadow position and radius into account
             //kDebug() << target << result.height();
-            if (target.height() >= result.height() - radius * 2) {
-                QPointF paintPoint = target.center() - (result.rect().center() + QPoint(radius, radius)); 
+
+            // for the default size of the panel we can allow this "one pixel"
+            // offset on the bottom. the applet is so small that you almost
+            // can't see the offset and this brings back the labels for the
+            // panel's default size.
+            if (target.height() + 1 >= result.height() - radius * 2) {
+                QPointF paintPoint = target.center() - (result.rect().center() + QPoint(radius, radius));
 
                 if (paintPoint.x() + radius < target.x() + 1) {
                     paintPoint.setX(target.x() + 1 - radius);
