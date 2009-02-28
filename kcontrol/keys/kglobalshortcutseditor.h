@@ -73,13 +73,13 @@ public:
     /**
      * Load the shortcuts from the configuration.
      */
-    void importConfiguration(KConfig *config);
+    void importConfiguration(KConfigBase *config);
 
 
     /**
      * Save the shortcuts to the configuration.
      */
-    void exportConfiguration(KConfig *config) const;
+    void exportConfiguration(QStringList componentsFriendly, KConfig *config) const;
 
 
     /**

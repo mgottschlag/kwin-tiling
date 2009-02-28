@@ -18,6 +18,7 @@
 #include "kglobalshortcutseditor.h"
 
 #include "ui_kglobalshortcutseditor.h"
+#include "export_scheme_dialog.h"
 #include "select_scheme_dialog.h"
 #include "globalshortcuts.h"
 #include "kglobalaccel_interface.h"
@@ -29,6 +30,7 @@
 #include <KDE/KGlobalAccel>
 #include <KDE/KMessageBox>
 #include <KDE/KShortcut>
+#include <KDE/KStringHandler>
 
 #include <QtGui/QStackedWidget>
 #include <QtGui/QMenu>
@@ -168,15 +170,19 @@ void KGlobalShortcutsEditor::addCollection(
         // Unknown component. Create an editor.
         editor = new KShortcutsEditor(this, d->actionTypes);
         d->stack->addWidget(editor);
+
         // Add to the component combobox
-        d->ui.components->insertItem(0, friendlyName);
+        d->ui.components->addItem(friendlyName);
+        // TODO: compare case insensitive and natural and ...
+        d->ui.components->model()->sort(0);
+
         // Add to our component registry
         componentData cd;
         cd.editor = editor;
         cd.uniqueName = id;
         d->components.insert(friendlyName, cd);
+
         connect(editor, SIGNAL(keyChange()), this, SLOT(_k_key_changed()));
-        d->ui.components->model()->sort(0);
     } else {
         // Known component.
         editor = (*iter).editor;
@@ -213,14 +219,31 @@ void KGlobalShortcutsEditor::clear()
 }
 
 
+static bool compare(const QString &a, const QString &b)
+    {
+    return a.toLower().localeAwareCompare(b.toLower()) < 0;
+    }
+
+
 void KGlobalShortcutsEditor::exportScheme()
 {
+    QStringList keys = d->components.keys();
+    qSort(keys.begin(), keys.end(), compare);
+    ExportSchemeDialog dia(keys);
+
+    if (dia.exec() != KMessageBox::Ok) {
+        return;
+    }
+
     KUrl url = KFileDialog::getSaveFileName(KUrl(), "*.kksrc", this);
     if (!url.isEmpty()) {
-        KConfig config(url.path());
-        config.deleteGroup("Shortcuts");
-        config.deleteGroup("Global Shortcuts");
-        exportConfiguration(&config);
+        KConfig config(url.path(), KConfig::SimpleConfig);
+        // TODO: Bug ossi to provide a method for this
+        Q_FOREACH(const QString &group, config.groupList())
+            {
+            config.deleteGroup(group);
+            }
+        exportConfiguration(dia.selectedComponents(), &config);
     }
 }
 
@@ -250,7 +273,6 @@ void KGlobalShortcutsEditor::importScheme()
                            url.url()));
         return;
     }
-    kDebug() << url.path();
     KConfig config(url.path());
     importConfiguration(&config);
 }
@@ -325,21 +347,34 @@ void KGlobalShortcutsEditor::save()
 }
 
 
-void KGlobalShortcutsEditor::importConfiguration(KConfig *config)
+void KGlobalShortcutsEditor::importConfiguration(KConfigBase *config)
 {
-    // The editors are responsible for the writing of the scheme
-    foreach (const componentData &cd, d->components) {
-        cd.editor->importConfiguration(config);
+    // We only import shortcuts for currently registered components.
+    Q_FOREACH (const componentData &cd, d->components) {
+        KConfigGroup group(config, cd.uniqueName);
+        cd.editor->importConfiguration(&group);
     }
 }
 
-void KGlobalShortcutsEditor::exportConfiguration(KConfig *config) const
-{
-    // The editors are responsible for the writing of the scheme
-    foreach (const componentData &cd, d->components) {
-        cd.editor->exportConfiguration(config);
+void KGlobalShortcutsEditor::exportConfiguration(QStringList components, KConfig *config) const
+    {
+    Q_FOREACH (const QString &componentFriendly, components)
+        {
+        kDebug() << componentFriendly;
+        QHash<QString, componentData>::Iterator iter = d->components.find(componentFriendly);
+        if (iter == d->components.end())
+            {
+            kDebug() << "The component" << componentFriendly << "is unknown";
+            Q_ASSERT(iter == d->components.end());
+            continue;
+            }
+        else
+            {
+            KConfigGroup group(config, (*iter).uniqueName);
+            (*iter).editor->exportConfiguration(&group);
+            }
+        }
     }
-}
 
 
 void KGlobalShortcutsEditor::undo()
