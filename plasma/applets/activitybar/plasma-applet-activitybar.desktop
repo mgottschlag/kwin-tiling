@@ -57,6 +57,9 @@ Name[x-test]=xxActivity Barxx
 Name[zh_CN]=活动栏
 Name[zh_TW]=活動列
 Comment=Tab bar to switch activities
+Comment[nds]=Paneelbalken, mit den sik Aktiviteten wesseln laat
+Comment[uk]=Панель з вкладками для перемикання дій
+Comment[zh_TW]=切換活動的分頁列
 Type=Service
 Icon=tab-new
 
