@@ -230,12 +230,6 @@ void Interface::resizeEvent(QResizeEvent *event)
     gr.setColorAt(.35, theme->color(Plasma::Theme::TextColor));
     gr.setColorAt(.65, theme->color(Plasma::Theme::TextColor));
     gr.setColorAt(1, Qt::transparent);
-
-    QLinearGradient gr2(0, 0, gradientWidth, 0);
-    gr2.setColorAt(0, Qt::transparent);
-    gr2.setColorAt(.35, theme->color(Plasma::Theme::BackgroundColor));
-    gr2.setColorAt(.65, theme->color(Plasma::Theme::BackgroundColor));
-    gr2.setColorAt(1, Qt::transparent);
     {
         QPalette p = palette();
         p.setBrush(QPalette::Background, gr);
