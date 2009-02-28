@@ -313,7 +313,14 @@ public:
         delete layout;
         layout = new QHBoxLayout();
         layout->addWidget(contentSwitcher);
-        layout->addWidget(contentArea);
+
+        QBoxLayout * contentLayout = new QVBoxLayout();
+        contentLayout->addWidget(contentAreaHeader);
+        contentLayout->addWidget(contentArea);
+        contentLayout->addWidget(contentAreaFooter);
+
+        layout->addItem(contentLayout);
+
         QBoxLayout * layout2 = new QVBoxLayout();
         if (tabOrder == NormalTabOrder) {
             layout2->addLayout(layout);
@@ -337,7 +344,14 @@ public:
         QLayout * layout = q->layout();
         delete layout;
         layout = new QHBoxLayout();
-        layout->addWidget(contentArea);
+
+        QBoxLayout * contentLayout = new QVBoxLayout();
+        contentLayout->addWidget(contentAreaHeader);
+        contentLayout->addWidget(contentArea);
+        contentLayout->addWidget(contentAreaFooter);
+
+        layout->addItem(contentLayout);
+
         layout->addWidget(contentSwitcher);
         QBoxLayout * layout2 = new QVBoxLayout();
         if (tabOrder == NormalTabOrder) {
