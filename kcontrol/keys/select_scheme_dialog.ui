@@ -116,6 +116,12 @@
         <height>50</height>
        </size>
       </property>
+      <property name="filter">
+       <string notr="true">*.kksrc</string>
+      </property>
+      <property name="clickMessage">
+       <string>Select Shortcut Scheme</string>
+      </property>
      </widget>
     </item>
    </layout>
