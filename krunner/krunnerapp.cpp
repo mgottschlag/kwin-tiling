@@ -372,7 +372,7 @@ int KRunnerApp::newInstance()
 bool KRunnerApp::hasCompositeManager() const
 {
 #ifdef Q_WS_X11
-    KWindowSystem::compositingActive();
+    return KWindowSystem::compositingActive();
 #else
     return false;
 #endif
