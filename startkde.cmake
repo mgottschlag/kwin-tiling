@@ -324,9 +324,9 @@ fi
 if qdbus >/dev/null 2>/dev/null; then
     : # ok
 else
-    echo 'startkde: Could not start D-Bus. Check your installation.'  1>&2
+    echo 'startkde: Could not start D-Bus. Can you call qdbus?'  1>&2
     test -n "$ksplash_pid" && kill "$ksplash_pid" 2>/dev/null
-    xmessage -geometry 500x100 "Could not start D-Bus. Check your installation."
+    xmessage -geometry 500x100 "Could not start D-Bus. Can you call qdbus?"
     exit 1
 fi
 
