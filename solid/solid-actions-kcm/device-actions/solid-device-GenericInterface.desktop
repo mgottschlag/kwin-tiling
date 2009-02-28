@@ -1,6 +1,9 @@
 [Desktop Action objectName]
 Name=Object Name
 Name[fr]=Nom de l'objet
+Name[pt]=Nome do Objecto
+Name[pt_BR]=Nome do objeto
+Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
 Name[zh_TW]=物件名稱
 
@@ -8,6 +11,9 @@ Name[zh_TW]=物件名稱
 Name=Generic Interface
 Name[fr]=Interface générique
 Name[ga]=Comhéadan Ginearálta
+Name[pt]=Interface Genérica
+Name[pt_BR]=Interface genérica
+Name[sv]=Generellt gränssnitt
 Name[uk]=Загальний інтерфейс
 Name[zh_TW]=一般介面
 X-KDE-Solid-Actions-Type=GenericInterface

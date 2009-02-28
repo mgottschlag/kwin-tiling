@@ -2,30 +2,45 @@
 Name=Device
 Name[fr]=Périphérique
 Name[ga]=Gléas
+Name[pt]=Dispositivo
+Name[pt_BR]=Dispositivo
+Name[sv]=Enhet
 Name[uk]=Пристрій
 Name[zh_TW]=裝置
 
 [Desktop Action deviceAdapter]
 Name=Device Adapter
 Name[fr]=Adaptateur de périphérique
+Name[pt]=Adaptador do Dispositivo
+Name[pt_BR]=Adaptador de dispositivo
+Name[sv]=Enhetsadapter
 Name[uk]=Адаптер пристрою
 Name[zh_TW]=裝置接合器
 
 [Desktop Action deviceIndex]
 Name=Device Index
 Name[fr]=Index de périphérique
+Name[pt]=Índice do Dispositivo
+Name[pt_BR]=Índice do dispositivo
+Name[sv]=Enhetsindex
 Name[uk]=Індекс пристрою
 Name[zh_TW]=裝置索引
 
 [Desktop Action deviceType]
 Name=Device Type
 Name[fr]=Type de périphérique
+Name[pt]=Tipo de Dispositivo
+Name[pt_BR]=Tipo de dispositivo
+Name[sv]=Enhetstyp
 Name[uk]=Тип пристрою
 Name[zh_TW]=裝置類型
 
 [Desktop Action objectName]
 Name=Object Name
 Name[fr]=Nom de l'objet
+Name[pt]=Nome do Objecto
+Name[pt_BR]=Nome do objeto
+Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
 Name[zh_TW]=物件名稱
 
@@ -33,6 +48,9 @@ Name[zh_TW]=物件名稱
 Name=Dvb Interface
 Name[fr]=Interface Dvb
 Name[ga]=Comhéadan Dvb
+Name[pt]=Interface DVB
+Name[pt_BR]=Interface DVB
+Name[sv]=Dvb-gränssnitt
 Name[uk]=Інтерфейс DVB
 Name[zh_TW]=DVB 介面
 X-KDE-Solid-Actions-Type=DvbInterface

@@ -1,6 +1,9 @@
 [Desktop Action deviceType]
 Name=Device Type
 Name[fr]=Type de périphérique
+Name[pt]=Tipo de Dispositivo
+Name[pt_BR]=Tipo de dispositivo
+Name[sv]=Enhetstyp
 Name[uk]=Тип пристрою
 Name[zh_TW]=裝置類型
 
@@ -8,12 +11,17 @@ Name[zh_TW]=裝置類型
 Name=Driver
 Name[fr]=Pilote
 Name[ga]=Tiománaí
+Name[pt]=Controlador
+Name[sv]=Drivrutin
 Name[uk]=Драйвер
 Name[zh_TW]=驅動程式
 
 [Desktop Action driverHandle]
 Name=Driver Handle
 Name[fr]=Prise en charge pilote
+Name[pt]=Descritor do Controlador
+Name[pt_BR]=Manipulador de driver
+Name[sv]=Drivrutinreferens
 Name[uk]=Обробка драйвером
 Name[zh_TW]=驅動程式處理
 
@@ -21,18 +29,27 @@ Name[zh_TW]=驅動程式處理
 Name=Name
 Name[fr]=Nom
 Name[ga]=Ainm
+Name[pt]=Nome
+Name[pt_BR]=Nome
+Name[sv]=Namn
 Name[uk]=Назва
 Name[zh_TW]=名稱
 
 [Desktop Action objectName]
 Name=Object Name
 Name[fr]=Nom de l'objet
+Name[pt]=Nome do Objecto
+Name[pt_BR]=Nome do objeto
+Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
 Name[zh_TW]=物件名稱
 
 [Desktop Action soundcardType]
 Name=Soundcard Type
 Name[fr]=Type de carte son
+Name[pt]=Tipo de Placa de Som
+Name[pt_BR]=Tipo de placa de som
+Name[sv]=Typ av ljudkort
 Name[uk]=Тип звукової картки
 Name[zh_TW]=音效卡類型
 
@@ -40,6 +57,9 @@ Name[zh_TW]=音效卡類型
 Name=Audio Interface
 Name[fr]=Interface audio
 Name[ga]=Comhéadan Fuaime
+Name[pt]=Interface de Áudio
+Name[pt_BR]=Interface de áudio
+Name[sv]=Ljudgränssnitt
 Name[uk]=Звуковий інтерфейс
 Name[zh_TW]=音效介面
 X-KDE-Solid-Actions-Type=AudioInterface

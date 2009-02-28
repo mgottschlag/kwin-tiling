@@ -1,5 +1,8 @@
 [Desktop Action bus]
 Name=Bus
+Name[pt]=Barramento
+Name[pt_BR]=Barramento
+Name[sv]=Buss
 Name[uk]=Шина
 Name[zh_TW]=匯流排
 
@@ -19,24 +22,36 @@ Name[zh_TW]=磁碟型態
 [Desktop Action hotpluggable]
 Name=Hotpluggable
 Name[fr]=Hotplug possible
+Name[pt]=Ligação em Funcionamento
+Name[pt_BR]=Conectável
+Name[sv]=Inkopplingsbar
 Name[uk]=«Гаряче» з’єднання
 Name[zh_TW]=可熱插拔
 
 [Desktop Action objectName]
 Name=Object Name
 Name[fr]=Nom de l'objet
+Name[pt]=Nome do Objecto
+Name[pt_BR]=Nome do objeto
+Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
 Name[zh_TW]=物件名稱
 
 [Desktop Action removable]
 Name=Removable
 Name[fr]=Débranchable
+Name[pt]=Removível
+Name[pt_BR]=Removível
+Name[sv]=Flyttbar
 Name[uk]=Змінний
 Name[zh_TW]=可移除
 
 [Desktop Entry]
 Name=Storage Drive
 Name[fr]=Périphérique de stockage
+Name[pt]=Unidade de Armazenamento
+Name[pt_BR]=Unidade de armazenamento
+Name[sv]=Lagringsenhet
 Name[uk]=Пристрій зберігання даних
 Name[zh_TW]=儲存裝置
 X-KDE-Solid-Actions-Type=StorageDrive

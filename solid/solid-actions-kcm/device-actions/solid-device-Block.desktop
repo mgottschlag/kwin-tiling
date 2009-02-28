@@ -2,24 +2,36 @@
 Name=Device
 Name[fr]=Périphérique
 Name[ga]=Gléas
+Name[pt]=Dispositivo
+Name[pt_BR]=Dispositivo
+Name[sv]=Enhet
 Name[uk]=Пристрій
 Name[zh_TW]=裝置
 
 [Desktop Action major]
 Name=Major
 Name[fr]=Majeur
+Name[pt]=Maior
+Name[pt_BR]=Maior
+Name[sv]=Huvudnummer
 Name[uk]=Головний
 Name[zh_TW]=主要
 
 [Desktop Action minor]
 Name=Minor
 Name[fr]=Mineur
+Name[pt]=Menor
+Name[pt_BR]=Menor
+Name[sv]=Delnummer
 Name[uk]=Додатковий
 Name[zh_TW]=次要
 
 [Desktop Action objectName]
 Name=Object Name
 Name[fr]=Nom de l'objet
+Name[pt]=Nome do Objecto
+Name[pt_BR]=Nome do objeto
+Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
 Name[zh_TW]=物件名稱
 
@@ -27,6 +39,8 @@ Name[zh_TW]=物件名稱
 Name=Block
 Name[fr]=Bloc
 Name[ga]=Bloc
+Name[pt]=Bloco
+Name[pt_BR]=Bloco
 Name[uk]=Блок
 Name[zh_TW]=區塊
 X-KDE-Solid-Actions-Type=Block

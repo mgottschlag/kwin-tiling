@@ -1,6 +1,9 @@
 [Desktop Action fsType]
 Name=Fs Type
 Name[fr]=Type de FS
+Name[pt]=Tipo de SF
+Name[pt_BR]=Tipo de sistema de arquivos
+Name[sv]=Filsystemtyp
 Name[uk]=Тип ФС
 Name[zh_TW]=檔案系統型態
 
@@ -18,12 +21,18 @@ Name[zh_TW]=忽略
 
 [Desktop Action label]
 Name=Label
+Name[pt]=Legenda
+Name[pt_BR]=Rótulo
+Name[sv]=Etikett
 Name[uk]=Мітка
 Name[zh_TW]=標籤
 
 [Desktop Action objectName]
 Name=Object Name
 Name[fr]=Nom de l'objet
+Name[pt]=Nome do Objecto
+Name[pt_BR]=Nome do objeto
+Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
 Name[zh_TW]=物件名稱
 
@@ -31,6 +40,9 @@ Name[zh_TW]=物件名稱
 Name=Size
 Name[fr]=Taille
 Name[ga]=Méid
+Name[pt]=Tamanho
+Name[pt_BR]=Tamanho
+Name[sv]=Storlek
 Name[uk]=Розмір
 Name[zh_TW]=大小
 
@@ -48,6 +60,8 @@ Name[zh_TW]=使用量
 
 [Desktop Action uuid]
 Name=Uuid
+Name[pt]=UUID
+Name[pt_BR]=UUID
 Name[zh_TW]=UUID
 
 [Desktop Entry]

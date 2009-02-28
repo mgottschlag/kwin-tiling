@@ -1,6 +1,9 @@
 [Desktop Action objectName]
 Name=Object Name
 Name[fr]=Nom de l'objet
+Name[pt]=Nome do Objecto
+Name[pt_BR]=Nome do objeto
+Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
 Name[zh_TW]=物件名稱
 
@@ -22,6 +25,9 @@ Name[zh_TW]=支援的驅動程式
 Name=Supported Protocols
 Name[fr]=Protocoles pris en charge
 Name[ga]=Prótacail a dTacaítear Leo
+Name[pt]=Protocolos Suportados
+Name[pt_BR]=Protocolos suportados
+Name[sv]=Protokoll som stöds
 Name[uk]=Підтримувані протоколи
 Name[zh_TW]=支援的協定
 

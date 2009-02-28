@@ -1,36 +1,53 @@
 [Desktop Action canChangeFrequency]
 Name=Can Change Frequency
 Name[fr]=Peut modifier la fréquence
+Name[pt]=Frequência Variável
+Name[pt_BR]=Pode alterar frequentemente
+Name[sv]=Kan ändra frekvens
 Name[uk]=Може змінювати частоту
 Name[zh_TW]=可變更頻率
 
 [Desktop Action instructionSets]
 Name=Instruction Sets
 Name[fr]=Ensembles d'instructions
+Name[pt]=Conjuntos de Instruções
+Name[pt_BR]=Conjuntos de instruções
+Name[sv]=Instruktionsuppsättningar
 Name[uk]=Набори команд
 Name[zh_TW]=指令集
 
 [Desktop Action maxSpeed]
 Name=Max Speed
 Name[fr]=Vitesse maximale
+Name[pt]=Velocidade Máx
+Name[pt_BR]=Velocidade máxima
+Name[sv]=Maximal hastighet
 Name[uk]=Макс. швидкість
 Name[zh_TW]=最大速率
 
 [Desktop Action number]
 Name=Number
 Name[fr]=Nombre
+Name[pt]=Número
+Name[pt_BR]=Número
+Name[sv]=Antal
 Name[uk]=Кількість
 Name[zh_TW]=編號
 
 [Desktop Action objectName]
 Name=Object Name
 Name[fr]=Nom de l'objet
+Name[pt]=Nome do Objecto
+Name[pt_BR]=Nome do objeto
+Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
 Name[zh_TW]=物件名稱
 
 [Desktop Entry]
 Name=Processor
 Name[fr]=Processeur
+Name[pt]=Processador
+Name[pt_BR]=Processador
 Name[uk]=Процесор
 Name[zh_TW]=處理器
 X-KDE-Solid-Actions-Type=Processor

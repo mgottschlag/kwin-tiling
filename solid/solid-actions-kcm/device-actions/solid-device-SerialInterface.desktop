@@ -1,22 +1,35 @@
 [Desktop Action driverHandle]
 Name=Driver Handle
 Name[fr]=Prise en charge pilote
+Name[pt]=Descritor do Controlador
+Name[pt_BR]=Manipulador de driver
+Name[sv]=Drivrutinreferens
 Name[uk]=Обробка драйвером
 Name[zh_TW]=驅動程式處理
 
 [Desktop Action objectName]
 Name=Object Name
 Name[fr]=Nom de l'objet
+Name[pt]=Nome do Objecto
+Name[pt_BR]=Nome do objeto
+Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
 Name[zh_TW]=物件名稱
 
 [Desktop Action port]
 Name=Port
+Name[uk]=Порт
+Name[zh_TW]=連接埠
 
 [Desktop Action serialType]
 Name=Serial Type
+Name[uk]=Послідовний тип
+Name[zh_TW]=序列型態
 
 [Desktop Entry]
 Name=Serial Interface
 Name[ja]=シリアルインターフェース
+Name[nds]=Seriell Koppelsteed
+Name[uk]=Послідовний інтерфейс
+Name[zh_TW]=序列介面
 X-KDE-Solid-Actions-Type=SerialInterface

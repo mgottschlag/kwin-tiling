@@ -1,12 +1,18 @@
 [Desktop Action hwAddress]
 Name=Hw Address
 Name[fr]=Adresse Hw
+Name[pt]=Endereço HW
+Name[pt_BR]=Endereço de hardware
+Name[sv]=Hårdvaruadress
 Name[uk]=Апар. адреса
 Name[zh_TW]=硬體位址
 
 [Desktop Action ifaceName]
 Name=Iface Name
 Name[fr]=Nom de l'Iface
+Name[pt]=Nome da Interface
+Name[pt_BR]=Nome da interface
+Name[sv]=Gränssnittsnamn
 Name[uk]=Назва Iface
 Name[zh_TW]=介面名稱
 
@@ -14,12 +20,18 @@ Name[zh_TW]=介面名稱
 Name=Mac Address
 Name[fr]=Adresse MAC
 Name[ga]=Seoladh MAC
+Name[pt]=Endereço MAC
+Name[pt_BR]=Endereço MAC
+Name[sv]=MAC-adress
 Name[uk]=Mac-адреса
 Name[zh_TW]=Mac 位址
 
 [Desktop Action objectName]
 Name=Object Name
 Name[fr]=Nom de l'objet
+Name[pt]=Nome do Objecto
+Name[pt_BR]=Nome do objeto
+Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
 Name[zh_TW]=物件名稱
 
@@ -27,6 +39,9 @@ Name[zh_TW]=物件名稱
 Name=Wireless
 Name[fr]=Sans fil
 Name[ga]=Gan Sreang
+Name[pt]=Sem-Fios
+Name[pt_BR]=Sem fio
+Name[sv]=Trådlöst
 Name[uk]=Бездротовий
 Name[zh_TW]=無線
 

@@ -1,36 +1,54 @@
 [Desktop Action appendable]
 Name=Appendable
 Name[fr]=Concaténable
+Name[pt]=Adicionável
+Name[pt_BR]=Anexável
+Name[sv]=Tilläggbar
 Name[uk]=Додавання
 Name[zh_TW]=可附加
 
 [Desktop Action availableContent]
 Name=Available Content
 Name[fr]=Contenu disponible
+Name[pt]=Conteúdo Disponível
+Name[pt_BR]=Conteúdo disponível
+Name[sv]=Innehåll tillgängligt
 Name[uk]=Доступний вміст
 Name[zh_TW]=可用的內容
 
 [Desktop Action blank]
 Name=Blank
 Name[fr]=Vierge
+Name[pt]=Vazio
+Name[pt_BR]=Vazio
+Name[sv]=Tom
 Name[uk]=Порожньо
 Name[zh_TW]=空白
 
 [Desktop Action capacity]
 Name=Capacity
 Name[fr]=Capacité
+Name[pt]=Capacidade
+Name[pt_BR]=Capacidade
+Name[sv]=Kapacitet
 Name[uk]=Місткість
 Name[zh_TW]=空間
 
 [Desktop Action discType]
 Name=Disc Type
 Name[fr]=Type de disque
+Name[pt]=Tipo de Disco
+Name[pt_BR]=Tipo de disco
+Name[sv]=Skivtyp
 Name[uk]=Тип диска
 Name[zh_TW]=磁碟型態
 
 [Desktop Action fsType]
 Name=Fs Type
 Name[fr]=Type de FS
+Name[pt]=Tipo de SF
+Name[pt_BR]=Tipo de sistema de arquivos
+Name[sv]=Filsystemtyp
 Name[uk]=Тип ФС
 Name[zh_TW]=檔案系統型態
 
@@ -48,18 +66,27 @@ Name[zh_TW]=忽略
 
 [Desktop Action label]
 Name=Label
+Name[pt]=Legenda
+Name[pt_BR]=Rótulo
+Name[sv]=Etikett
 Name[uk]=Мітка
 Name[zh_TW]=標籤
 
 [Desktop Action objectName]
 Name=Object Name
 Name[fr]=Nom de l'objet
+Name[pt]=Nome do Objecto
+Name[pt_BR]=Nome do objeto
+Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
 Name[zh_TW]=物件名稱
 
 [Desktop Action rewritable]
 Name=Rewritable
 Name[fr]=Réinscriptible
+Name[pt]=Regravável
+Name[pt_BR]=Regravável:
+Name[sv]=Skrivbar
 Name[uk]=Перезапис
 Name[zh_TW]=可覆寫
 
@@ -67,6 +94,9 @@ Name[zh_TW]=可覆寫
 Name=Size
 Name[fr]=Taille
 Name[ga]=Méid
+Name[pt]=Tamanho
+Name[pt_BR]=Tamanho
+Name[sv]=Storlek
 Name[uk]=Розмір
 Name[zh_TW]=大小
 
@@ -84,6 +114,8 @@ Name[zh_TW]=使用量
 
 [Desktop Action uuid]
 Name=Uuid
+Name[pt]=UUID
+Name[pt_BR]=UUID
 Name[zh_TW]=UUID
 
 [Desktop Entry]
