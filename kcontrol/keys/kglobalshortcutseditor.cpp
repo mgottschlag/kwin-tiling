@@ -273,7 +273,7 @@ void KGlobalShortcutsEditor::importScheme()
                            url.url()));
         return;
     }
-    KConfig config(url.path());
+    KConfig config(url.path(), KConfig::SimpleConfig);
     importConfiguration(&config);
 }
 
@@ -349,10 +349,27 @@ void KGlobalShortcutsEditor::save()
 
 void KGlobalShortcutsEditor::importConfiguration(KConfigBase *config)
 {
-    // We only import shortcuts for currently registered components.
+    kDebug() << config->groupList();
+
+    // In a first step clean out the current configurations. We do this
+    // because we want to minimize the chance of conflicts.
     Q_FOREACH (const componentData &cd, d->components) {
         KConfigGroup group(config, cd.uniqueName);
-        cd.editor->importConfiguration(&group);
+        kDebug() << cd.uniqueName << group.name();
+        if (group.exists()) {
+            kDebug() << "Removing" << cd.uniqueName;
+            cd.editor->clearConfiguration();
+        }
+    }
+
+    // Now import the new configurations.
+    Q_FOREACH (const componentData &cd, d->components) {
+        KConfigGroup group(config, cd.uniqueName);
+        kDebug();
+        if (group.exists()) {
+            kDebug() << "Importing" << cd.uniqueName;
+            cd.editor->importConfiguration(&group);
+        }
     }
 }
 
@@ -360,11 +377,9 @@ void KGlobalShortcutsEditor::exportConfiguration(QStringList components, KConfig
     {
     Q_FOREACH (const QString &componentFriendly, components)
         {
-        kDebug() << componentFriendly;
         QHash<QString, componentData>::Iterator iter = d->components.find(componentFriendly);
         if (iter == d->components.end())
             {
-            kDebug() << "The component" << componentFriendly << "is unknown";
             Q_ASSERT(iter == d->components.end());
             continue;
             }
