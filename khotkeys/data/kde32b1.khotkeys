@@ -2413,7 +2413,7 @@ Comment[zh_TW]=簡易動作
 TriggersCount=1
 
 [Data_1_8Triggers0]
-Key=Win+E
+Key=Meta+E
 Type=SHORTCUT
 
 [Gestures]
