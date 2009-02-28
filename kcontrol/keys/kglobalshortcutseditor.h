@@ -113,6 +113,11 @@ public Q_SLOTS:
     void activateComponent(const QString &component);
 
     /**
+     * Set all shortcuts to none.
+     */
+    void clearConfiguration();
+
+    /**
      * Load/Reload the global shortcuts
      */
     void load();

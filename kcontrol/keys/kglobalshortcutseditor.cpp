@@ -115,6 +115,7 @@ void KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::initGUI()
     QMenu *menu = new QMenu(q);
     menu->addAction( i18n("Import Scheme..."), q, SLOT(importScheme()));
     menu->addAction( i18n("Export Scheme..."), q, SLOT(exportScheme()));
+    menu->addAction( i18n("Set All Shortcuts to None"), q, SLOT(clearConfiguration()));
     menu->addAction( i18n("Remove Component"), q, SLOT(removeComponent()));
 
     ui.menu_button->setMenu(menu);
@@ -195,6 +196,13 @@ void KGlobalShortcutsEditor::addCollection(
         d->ui.components->setCurrentIndex(0);
         activateComponent(d->ui.components->itemText(0));
     }
+}
+
+
+void KGlobalShortcutsEditor::clearConfiguration()
+{
+    QString name = d->ui.components->currentText();
+    d->components.value(name).editor->clearConfiguration();
 }
 
 
