@@ -53,6 +53,7 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
       m_runnerManager(runnerManager),
       m_configDialog(0)
 {
+    setAttribute(Qt::WA_TranslucentBackground);
     setButtons(0);
     setWindowTitle( i18n("Run Command") );
     setWindowIcon(KIcon("system-run"));

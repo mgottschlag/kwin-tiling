@@ -58,77 +58,21 @@
 
 #ifdef Q_WS_X11
 #include <X11/extensions/Xrender.h>
-
-Display* dpy = 0;
-Colormap colormap = 0;
-Visual *visual = 0;
 #endif
 
-void checkComposite()
-{
-#ifdef Q_WS_X11
-    // thanks to zack rusin and frederik for pointing me in the right direction
-    // for the following bits of X11 code
-    dpy = XOpenDisplay(0); // open default display
-    if (!dpy)
-    {
-        kError() << "Cannot connect to the X server";
-        return;
-    }
-    if( qgetenv( "KDE_SKIP_ARGB_VISUALS" ) == "1" )
-        return;
 
-    int screen = DefaultScreen(dpy);
-    int eventBase, errorBase;
-
-    if (XRenderQueryExtension(dpy, &eventBase, &errorBase))
-    {
-        int nvi;
-        XVisualInfo templ;
-        templ.screen  = screen;
-        templ.depth   = 32;
-        templ.c_class = TrueColor;
-        XVisualInfo *xvi = XGetVisualInfo(dpy, VisualScreenMask |
-                                                VisualDepthMask |
-                                                VisualClassMask,
-                                            &templ, &nvi);
-        for (int i = 0; i < nvi; ++i)
-        {
-            XRenderPictFormat *format = XRenderFindVisualFormat(dpy,
-                                                                xvi[i].visual);
-            if (format->type == PictTypeDirect && format->direct.alphaMask)
-            {
-                visual = xvi[i].visual;
-                colormap = XCreateColormap(dpy, RootWindow(dpy, screen),
-                                            visual, AllocNone);
-                break;
-            }
-        }
-
-    }
-#endif
-}
 
 KRunnerApp* KRunnerApp::self()
 {
     if (!kapp) {
-        checkComposite();
-#ifdef Q_WS_X11
-        return new KRunnerApp(dpy, visual ? Qt::HANDLE(visual) : 0, colormap ? Qt::HANDLE(colormap) : 0);
-#else
-        return new KRunnerApp(0, 0, 0);
-#endif
+        return new KRunnerApp();
     }
 
     return qobject_cast<KRunnerApp*>(kapp);
 }
 
-KRunnerApp::KRunnerApp(Display *display, Qt::HANDLE visual, Qt::HANDLE colormap)
-#ifdef Q_WS_X11
-    : KUniqueApplication(display, visual, colormap),
-#else
+KRunnerApp::KRunnerApp()
     : KUniqueApplication(),
-#endif
       m_interface(0),
       m_tasks(0),
       m_startupId(NULL)
@@ -428,7 +372,7 @@ int KRunnerApp::newInstance()
 bool KRunnerApp::hasCompositeManager() const
 {
 #ifdef Q_WS_X11
-    return colormap && KWindowSystem::compositingActive();
+    KWindowSystem::compositingActive();
 #else
     return false;
 #endif
