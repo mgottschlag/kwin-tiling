@@ -350,9 +350,11 @@ void NotifierDialog::slotOnItemClicked(const QModelIndex &index)
 
         if (device.is<Solid::OpticalDisc>()) {
             Solid::OpticalDrive *drive = device.parent().as<Solid::OpticalDrive>();
-            connect(drive, SIGNAL(ejectDone(Solid::ErrorType, QVariant, const QString &)),
-                    this, SLOT(storageEjectDone(Solid::ErrorType, QVariant)));
-            drive->eject();
+            if (drive!=0) {
+                connect(drive, SIGNAL(ejectDone(Solid::ErrorType, QVariant, const QString &)),
+                        this, SLOT(storageEjectDone(Solid::ErrorType, QVariant)));
+                drive->eject();
+            }
         } else if (device.is<Solid::StorageVolume>()) {
             Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
              if (access && access->isAccessible()) {
