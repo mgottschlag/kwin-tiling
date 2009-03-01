@@ -60,7 +60,10 @@ protected:
     virtual void doCopyFromObject();
     virtual void doCopyToObject();
 
+    QString storage_id;
+
     Ui::MenuentryActionWidget ui;
+
 
 };
 

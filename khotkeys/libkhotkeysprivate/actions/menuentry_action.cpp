@@ -18,9 +18,11 @@
 */
 
 #include "actions.h"
+#include "action_data/action_data.h"
 
 #include <KDE/KConfigGroup>
 #include <KDE/KDebug>
+#include <KDE/KMessageBox>
 #include <KDE/KUrl>
 #include <KDE/KRun>
 
@@ -57,19 +59,37 @@ KService::Ptr MenuEntryAction::service() const
 
 void MenuEntryAction::set_service( KService::Ptr service )
     {
-    if (!service) return;
     _service = service;
-    set_command_url(service->storageId());
+    if (service)
+        {
+        set_command_url(service->storageId());
+        }
+    else
+        {
+        set_command_url(QString());
+        }
     }
 
 
 void MenuEntryAction::execute()
     {
-    (void) service();
-    if (!_service)
+    if (!service())
+        {
+        KMessageBox::sorry(
+                NULL,
+                i18n("No service configured!"),
+                i18n("Input Action : %1", data->comment()));
         return;
-    kDebug() << "Starting service " << _service->desktopEntryName();
-    KRun::run( *_service, KUrl::List(), 0 );
+        }
+
+    if (!KRun::run( *service(), KUrl::List(), 0 ))
+        {
+        KMessageBox::sorry(
+                NULL,
+                i18n("Failed to start service '%1'!", service()->name()),
+                i18n("Input Action : %1", data->comment()));
+        return;
+        }
     timeout.setSingleShot( true );
     timeout.start( 1000 ); // 1sec timeout
     }
@@ -83,8 +103,7 @@ Action* MenuEntryAction::copy( ActionData* data_P ) const
 
 const QString MenuEntryAction::description() const
     {
-    (void) service();
-    return i18n( "Menu entry: " ) + (_service ? _service->comment() : QString());
+    return i18n( "Menu entry: " ) + (service() ? service()->comment() : QString());
     }
 
 

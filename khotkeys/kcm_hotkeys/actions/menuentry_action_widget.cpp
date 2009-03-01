@@ -26,6 +26,7 @@
 
 MenuentryActionWidget::MenuentryActionWidget( KHotKeys::MenuEntryAction *action, QWidget *parent )
         : ActionWidgetBase(action, parent )
+          ,storage_id()
     {
     ui.setupUi(this);
 
@@ -66,10 +67,12 @@ void MenuentryActionWidget::doCopyFromObject()
     if (service)
         {
         ui.application->setText( service->name() );
+        storage_id = service->storageId();
         }
     else
         {
-        ui.application->setText("");
+        ui.application->setText(QString());
+        storage_id = QString();
         }
     }
 
@@ -77,8 +80,8 @@ void MenuentryActionWidget::doCopyFromObject()
 void MenuentryActionWidget::doCopyToObject()
     {
     Q_ASSERT(action());
-
-    action()->set_service( KService::serviceByName( ui.application->text() ));
+    kDebug() << KService::serviceByName(ui.application->text());
+    action()->set_service( KService::serviceByStorageId(storage_id));
     }
 
 
@@ -113,6 +116,7 @@ void MenuentryActionWidget::selectApplicationClicked()
     if (service)
         {
         ui.application->setText( service->name() );
+        storage_id = service->storageId();
         }
     }
 
