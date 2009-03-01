@@ -355,9 +355,8 @@ void Interface::resetInterface()
     m_resultsView->hide();
     m_dividerLine->hide();
     setMinimumSize(QSize(MIN_WIDTH, 0));
-    adjustSize();
     //kDebug() << size() << minimumSizeHint();
-    resize(minimumSizeHint());
+    resize(qMax(minimumSizeHint().width(), MIN_WIDTH), minimumSizeHint().height()+1);
 }
 
 void Interface::setStaticQueryMode(bool staticQuery)
