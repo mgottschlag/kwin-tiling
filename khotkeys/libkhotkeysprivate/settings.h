@@ -148,10 +148,18 @@ public:
 protected:
 
     /**
-     * Read settings from \a cfg_P. \a include_disabled_P controls whether
-     * disabled actions should be discarded.
+     * Read settings from \a cfg_P.
+     *
+     * @param root the group to import to
+     * @param config config object to read from
+     * @param include_disabled should we read disabled actions?
+     * @param disable_actions disable the imported actions?
      */
-    bool read_settings(ActionDataGroup *root, KConfigBase const &config, bool include_disabled);
+    bool read_settings(
+            ActionDataGroup *root,
+            KConfigBase const &config,
+            bool include_disabled,
+            bool disable_actions = false);
 
     /**
      * Read settings in the v1 legacy format from \a cfg_P .
@@ -161,7 +169,11 @@ protected:
     /**
      * Read settings in the v2 format from \a cfg_P .
      */
-    void read_settings_v2(ActionDataGroup *root, KConfigBase const& cfg, bool include_disabled);
+    void read_settings_v2(
+            ActionDataGroup *root,
+            KConfigBase const& cfg,
+            bool include_disabled,
+            bool disable_actions = false);
 
     /**
      * Write \a parent_P recursively to \a cfg_P
@@ -179,7 +191,8 @@ protected:
     void read_actions_recursively_v2(
         KConfigGroup& cfg_P,
         ActionDataGroup* parent_P,
-        bool include_disabled_P );
+        bool include_disabled_P,
+        bool disable_actions = false);
 
     /**
      * Initialize the settings

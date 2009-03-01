@@ -353,7 +353,7 @@ bool Settings::reread_settings(bool include_disabled)
     }
 
 
-bool Settings::read_settings(ActionDataGroup *root, KConfigBase const &config, bool include_disabled)
+bool Settings::read_settings(ActionDataGroup *root, KConfigBase const &config, bool include_disabled, bool disable)
     {
     // If the config group we should read from is empty, return.
     if(config.groupList().count() == 0 )
@@ -373,7 +373,7 @@ bool Settings::read_settings(ActionDataGroup *root, KConfigBase const &config, b
 
         case 2:
             kDebug() << "Version 2 File!";
-            read_settings_v2(root, config, include_disabled);
+            read_settings_v2(root, config, include_disabled, disable);
             break;
 
         case -1234576: // no config file
@@ -449,17 +449,22 @@ int Settings::write_actions_recursively_v2(KConfigGroup& cfg_P, ActionDataGroup*
     }
 
 
-void Settings::read_settings_v2(ActionDataGroup *root, KConfigBase const& config, bool include_disabled)
+void Settings::read_settings_v2(
+        ActionDataGroup *root,
+        KConfigBase const& config,
+        bool include_disabled,
+        bool disable_actions)
     {
     KConfigGroup dataGroup(&config, "Data");
-    read_actions_recursively_v2(dataGroup, root, include_disabled);
+    read_actions_recursively_v2(dataGroup, root, include_disabled, disable_actions);
     }
 
 
 void Settings::read_actions_recursively_v2(
         KConfigGroup& cfg_P,
         ActionDataGroup* parent_P,
-        bool include_disabled_P )
+        bool include_disabled_P,
+        bool disable_actions)
     {
     QString save_cfg_group = cfg_P.name();
     int cnt = cfg_P.readEntry( "DataCount",0 );
@@ -471,6 +476,10 @@ void Settings::read_actions_recursively_v2(
         if( include_disabled_P || ActionDataBase::cfg_is_enabled( itConfig ))
             {
             ActionDataBase* new_action = ActionDataBase::create_cfg_read( itConfig, parent_P );
+            if (disable_actions)
+                {
+                new_action->set_enabled(false);
+                }
             ActionDataGroup* grp = dynamic_cast< ActionDataGroup* >( new_action );
             if( grp != NULL )
                 read_actions_recursively_v2( itConfig, grp, include_disabled_P );
