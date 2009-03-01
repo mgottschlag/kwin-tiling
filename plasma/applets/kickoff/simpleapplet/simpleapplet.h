@@ -34,22 +34,30 @@ class MenuLauncherApplet : public Plasma::Applet
 {
     Q_OBJECT
     Q_ENUMS(ViewType)
+    Q_FLAGS(ViewTypes)
     Q_ENUMS(FormatType)
 public:
 
     /**
-    * The menu we like to display.
+    * The content we like to display within the menu.
     */
     enum ViewType {
-        Combined = 0, ///< Standard Menu
-        Favorites, ///< Favorites Menu
+        RecentlyUsedApplications, ///< Recently Used Applications Menu
+        RecentlyUsedDocuments, ///< Recently Used Documents Menu
         Applications, ///< Applications Menu
+        Favorites, ///< Favorites Menu
         Computer, ///< Computer Menu
         RecentlyUsed, ///< Recently Used Menu
         Bookmarks, ///< Bookmarks Menu
         Settings, ///< Settings Menu
+        RunCommand, ///< Run Command Action
+        SwitchUser, ///< Switch User Action
+        SaveSession, ///< Save Session Action (only enabled if restoreSavedSession is enabled)
+        LockScreen, ///< Lock Screen Action
+        Logout, ///< Logout Action
         Leave ///< Leave Menu
     };
+    Q_DECLARE_FLAGS(ViewTypes, ViewType)
 
     /**
     * How the text of the menuitems got formatted.
@@ -122,6 +130,8 @@ private:
     class Private;
     Private * const d;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(MenuLauncherApplet::ViewTypes)
 
 K_EXPORT_PLASMA_APPLET(menulauncher, MenuLauncherApplet)
 

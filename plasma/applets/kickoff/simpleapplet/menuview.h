@@ -59,9 +59,7 @@ public:
     virtual ~MenuView();
 
     /** Sets the model displayed by this menu. */
-    void setModel(QAbstractItemModel *model);
-    /** Returns the model displayed by this menu. */
-    QAbstractItemModel *model() const;
+    void addModel(QAbstractItemModel *model, bool mergeFirstLevel);
 
     /** Returns the UrlItemLauncher used to handle launching of urls. */
     UrlItemLauncher *launcher() const;
@@ -126,7 +124,7 @@ protected:
      * The default implementation sets the action's text to the index's Qt::DisplayRole data
      * and the action's icon to the index's Qt::DecorationRole data.
      */
-    virtual void updateAction(QAction *action, const QModelIndex& index);
+    virtual void updateAction(QAbstractItemModel *model, QAction *action, const QModelIndex& index);
 
     // reimplemented
     virtual bool eventFilter(QObject * watched, QEvent *event);
