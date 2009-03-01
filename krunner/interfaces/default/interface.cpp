@@ -54,7 +54,7 @@
 #include "interfaces/default/resultscene.h"
 #include "interfaces/default/resultitem.h"
 
-static const int MIN_WIDTH = 400;
+static const int MIN_WIDTH = 420;
 
 Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     : KRunnerDialog(runnerManager, parent),
