@@ -50,14 +50,88 @@
      <property name="title">
       <string>Gestures</string>
      </property>
-     <layout class="QFormLayout" name="formLayout">
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
       <property name="margin">
        <number>0</number>
       </property>
       <item row="0" column="0">
-       <widget class="QCheckBox" name="gestures_enabled">
+       <widget class="QLabel" name="gestures_timeout_label">
         <property name="text">
-         <string>Enable Gestures</string>
+         <string>Timeout</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>gestures_timeout</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QSpinBox" name="gestures_timeout">
+        <property name="suffix">
+         <string>ms</string>
+        </property>
+        <property name="minimum">
+         <number>100</number>
+        </property>
+        <property name="maximum">
+         <number>1000</number>
+        </property>
+        <property name="value">
+         <number>300</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <spacer name="gestures_spacer_1">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="gestures_button_label">
+        <property name="text">
+         <string>Mouse Button</string>
+        </property>
+        <property name="buddy">
+         <cstring>gestures_button</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <spacer name="gestures_spacer2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="1">
+       <widget class="QSpinBox" name="gestures_button">
+        <property name="minimum">
+         <number>2</number>
+        </property>
+        <property name="maximum">
+         <number>10</number>
+        </property>
+        <property name="value">
+         <number>2</number>
         </property>
        </widget>
       </item>
@@ -66,6 +140,12 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>enabled</tabstop>
+  <tabstop>gestures_group</tabstop>
+  <tabstop>gestures_timeout</tabstop>
+  <tabstop>gestures_button</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

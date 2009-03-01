@@ -49,9 +49,19 @@ GlobalSettingsWidget::GlobalSettingsWidget( QWidget *parent )
     _changedSignals->setMapping(ui.enabled, "enabled" );
 
     connect(
-            ui.gestures_enabled, SIGNAL(stateChanged(int)),
+            ui.gestures_group, SIGNAL(clicked(bool)),
             _changedSignals, SLOT(map()) );
-    _changedSignals->setMapping(ui.gestures_enabled, "gestures_enabled" );
+    _changedSignals->setMapping(ui.gestures_group, "gestures_enabled" );
+
+    connect(
+            ui.gestures_timeout, SIGNAL(valueChanged(int)),
+            _changedSignals, SLOT(map()) );
+    _changedSignals->setMapping(ui.gestures_timeout, "gestures_timeout" );
+
+    connect(
+            ui.gestures_button, SIGNAL(valueChanged(int)),
+            _changedSignals, SLOT(map()) );
+    _changedSignals->setMapping(ui.gestures_button, "gestures_button" );
     }
 
 
@@ -73,8 +83,9 @@ void GlobalSettingsWidget::doCopyFromObject()
         {
         KHotKeys::Settings *settings = _model->settings();
         Q_ASSERT(settings);
-        kDebug() << settings->areGesturesDisabled();
-        ui.gestures_enabled->setChecked(!settings->areGesturesDisabled());
+        ui.gestures_group->setChecked(!settings->areGesturesDisabled());
+        ui.gestures_button->setValue(settings->gestureMouseButton());
+        ui.gestures_timeout->setValue(settings->gestureTimeOut());
         }
 
     }
@@ -82,7 +93,6 @@ void GlobalSettingsWidget::doCopyFromObject()
 
 void GlobalSettingsWidget::doCopyToObject()
     {
-    kDebug();
     if (_config)
         {
         KConfigGroup file(_config, "Desktop Entry");
@@ -94,9 +104,11 @@ void GlobalSettingsWidget::doCopyToObject()
         {
         KHotKeys::Settings *settings = _model->settings();
         Q_ASSERT(settings);
-        ui.gestures_enabled->isChecked()
+        ui.gestures_group->isChecked()
             ? settings->enableGestures()
             : settings->disableGestures();
+        settings->setGestureMouseButton(ui.gestures_button->value());
+        settings->setGestureTimeOut(ui.gestures_timeout->value());
         }
     }
 
@@ -118,7 +130,9 @@ bool GlobalSettingsWidget::isChanged() const
         {
         KHotKeys::Settings *settings = _model->settings();
         Q_ASSERT(settings);
-        if ((!settings->areGesturesDisabled()) != ui.gestures_enabled->isChecked())
+        if ((!settings->areGesturesDisabled()) != ui.gestures_group->isChecked()
+                || settings->gestureMouseButton() != ui.gestures_button->value()
+                || settings->gestureTimeOut() != ui.gestures_timeout->value())
             {
             return true;
             }
