@@ -166,8 +166,6 @@ class KDE_EXPORT CommandUrlAction
 
         virtual ActionType type() { return CommandUrlActionType; }
         virtual Action* copy( ActionData* data_P ) const;
-    protected:
-        QTimer timeout;
     private:
         QString _command_url;
     };

@@ -90,8 +90,6 @@ void MenuEntryAction::execute()
                 i18n("Input Action : %1", data->comment()));
         return;
         }
-    timeout.setSingleShot( true );
-    timeout.start( 1000 ); // 1sec timeout
     }
 
 

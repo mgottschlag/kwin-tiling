@@ -132,9 +132,6 @@ void CommandUrlAction::execute()
         default: // error
           return;
         }
-    timeout.setSingleShot( true );
-    timeout.start( 1000 ); // 1sec timeout
-
     }
 
 
