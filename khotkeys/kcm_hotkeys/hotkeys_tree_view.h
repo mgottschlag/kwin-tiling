@@ -51,7 +51,6 @@ public:
      */
     virtual ~HotkeysTreeView();
 
-
     /**
      * The user requested a context menu
      */

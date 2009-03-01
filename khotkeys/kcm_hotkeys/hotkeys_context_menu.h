@@ -58,6 +58,10 @@ private Q_SLOTS:
     void slotAboutToShow();
     void slotAboutToShowForCurrent();
     void deleteAction();
+
+    void exportAction();
+    void importAction();
+
     void newGlobalShortcutActionAction(int);
     void newWindowTriggerActionAction(int);
     void newMouseGestureTriggerActionAction(int);

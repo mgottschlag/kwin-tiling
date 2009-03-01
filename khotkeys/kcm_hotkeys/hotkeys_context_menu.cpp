@@ -26,8 +26,10 @@
 #include "action_data/action_data_group.h"
 #include "action_data/simple_action_data.h"
 
-#include "KDE/KLocale"
-#include "KDE/KDebug"
+#include <KDE/KDebug>
+#include <KDE/KFileDialog>
+#include <KDE/KLocale>
+#include <KDE/KUrl>
 
 #include <QtCore/QSignalMapper>
 #include <QtGui/QContextMenuEvent>
@@ -130,9 +132,6 @@ void HotkeysTreeViewContextMenu::slotAboutToShow()
         // It is not allowed to delete a system group
         if (!(isGroup && group->is_system_group()))
             {
-            // Global actions
-            addSeparator();
-
             // Item related actions
             addAction( i18n("Delete"), this, SLOT(deleteAction()) );
             }
@@ -142,6 +141,11 @@ void HotkeysTreeViewContextMenu::slotAboutToShow()
         createTriggerMenus(KHotKeys::Trigger::AllTypes, KHotKeys::Action::AllTypes);
         addAction( i18n("New Group") , this, SLOT(newGroupAction()) );
         }
+
+    addSeparator();
+
+    addAction( i18n("Export"), this, SLOT(exportAction()) );
+    addAction( i18n("Import"), this, SLOT(importAction()) );
     }
 
 
@@ -149,13 +153,15 @@ void HotkeysTreeViewContextMenu::createTriggerMenus(
         KHotKeys::Trigger::TriggerTypes triggerTypes,
         KHotKeys::Action::ActionTypes actionTypes)
     {
+    QMenu *newMenu = new QMenu(i18n("New"));
+
     if (triggerTypes & KHotKeys::Trigger::ShortcutTriggerType)
         {
         QSignalMapper *mapper = new QSignalMapper(this);
 
-        QMenu *menu = new QMenu( i18n("New Global Shortcut") );
+        QMenu *menu = new QMenu( i18n("Global Shortcut") );
         populateTriggerMenu(menu, mapper, actionTypes);
-        addMenu(menu);
+        newMenu->addMenu(menu);
 
         connect(
             mapper, SIGNAL(mapped(int)),
@@ -166,9 +172,9 @@ void HotkeysTreeViewContextMenu::createTriggerMenus(
         {
         QSignalMapper *mapper = new QSignalMapper(this);
 
-        QMenu *menu = new QMenu( i18n("New Window Action") );
+        QMenu *menu = new QMenu( i18n("Window Action") );
         populateTriggerMenu(menu, mapper, actionTypes);
-        addMenu(menu);
+        newMenu->addMenu(menu);
 
         connect(
             mapper, SIGNAL(mapped(int)),
@@ -179,13 +185,37 @@ void HotkeysTreeViewContextMenu::createTriggerMenus(
         {
         QSignalMapper *mapper = new QSignalMapper(this);
 
-        QMenu *menu = new QMenu( i18n("New Mouse Gesture Action") );
+        QMenu *menu = new QMenu( i18n("Mouse Gesture Action") );
         populateTriggerMenu(menu, mapper, actionTypes);
-        addMenu(menu);
+        newMenu->addMenu(menu);
 
         connect(
             mapper, SIGNAL(mapped(int)),
             this, SLOT(newMouseGestureTriggerActionAction(int)) );
+        }
+
+    addMenu(newMenu);
+    }
+
+
+void HotkeysTreeViewContextMenu::importAction()
+    {
+    KUrl url = KFileDialog::getOpenFileName(KUrl(), "*.khotkeys", this);
+    if (!url.isEmpty())
+        {
+        KConfig config(url.path(), KConfig::SimpleConfig);
+        _view->model()->importInputActions(_index, config);
+        }
+    }
+
+
+void HotkeysTreeViewContextMenu::exportAction()
+    {
+    KUrl url = KFileDialog::getSaveFileName(KUrl(), "*.khotkeys", this);
+    if (!url.isEmpty())
+        {
+        KConfig config(url.path(), KConfig::SimpleConfig);
+        _view->model()->exportInputActions(_index, config);
         }
     }
 

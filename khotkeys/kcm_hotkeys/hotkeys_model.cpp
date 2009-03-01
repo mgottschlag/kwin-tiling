@@ -326,6 +326,12 @@ void KHotkeysModel::emitChanged(KHotKeys::ActionDataBase *item)
     }
 
 
+void KHotkeysModel::exportInputActions(const QModelIndex &index, KConfigBase &config)
+    {
+    settings()->exportTo(indexToActionDataBase(index), config);
+    }
+
+
 Qt::ItemFlags KHotkeysModel::flags( const QModelIndex &index ) const
     {
     Qt::ItemFlags flags = QAbstractItemModel::flags(index);
@@ -393,6 +399,25 @@ QVariant KHotkeysModel::headerData( int section, Qt::Orientation, int role ) con
     }
 
 
+void KHotkeysModel::importInputActions(const QModelIndex &index, KConfigBase const &config)
+    {
+    KHotKeys::ActionDataGroup *group = indexToActionDataGroup(index);
+    QModelIndex groupIndex = index;
+    if (!group)
+        {
+        group = indexToActionDataBase(index)->parent();
+        groupIndex = index.parent();
+        }
+
+    if (settings()->importFrom(group, config, true))
+        {
+        kDebug();
+        reset();
+        save();
+        }
+    }
+
+
 QModelIndex KHotkeysModel::index( int row, int column, const QModelIndex &parent ) const
     {
     KHotKeys::ActionDataGroup *actionGroup = indexToActionDataGroup(parent);
@@ -431,7 +456,7 @@ KHotKeys::ActionDataGroup *KHotkeysModel::indexToActionDataGroup( const QModelIn
 
 void KHotkeysModel::load()
     {
-    _settings.read_settings(true);
+    _settings.reread_settings(true);
     _actions = _settings.actions();
     reset();
     }

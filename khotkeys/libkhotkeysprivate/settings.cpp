@@ -33,6 +33,8 @@
 namespace KHotKeys
 {
 
+const int Settings::CurrentFileVersion = 2;
+
 // Settings
 
 Settings::Settings()
@@ -85,6 +87,40 @@ void Settings::enableDaemon()
 void Settings::enableGestures()
     {
     gestures_disabled = false;
+    }
+
+
+void Settings::exportTo(ActionDataBase *element, KConfigBase &config)
+    {
+    if (!element)
+        {
+        Q_ASSERT(element);
+        return;
+        }
+
+    // Clean the file
+    QStringList groups = config.groupList();
+    Q_FOREACH (QString name, config.groupList())
+        {
+        config.deleteGroup(name);
+        }
+
+    KConfigGroup mainGroup(&config, "Main");
+    mainGroup.writeEntry("Version", CurrentFileVersion);
+
+    // The root group contains nothing but the datacount!
+    KConfigGroup dataGroup(&config,  "Data");
+    dataGroup.writeEntry("DataCount", 1);
+
+    // The group for the element to export
+    KConfigGroup data1Group(&config,  "Data_1");
+    element->cfg_write(data1Group);
+
+    ActionDataGroup *group = dynamic_cast<ActionDataGroup*>(element);
+    if (group)
+        {
+        write_actions_recursively_v2(data1Group, group, true);
+        }
     }
 
 
@@ -164,15 +200,51 @@ KShortcut Settings::voiceShortcut() const
     }
 
 
-bool Settings::read_settings( bool include_disabled_P )
+bool Settings::import( KConfig& config, bool ask )
     {
-    KConfig cfg( KHOTKEYS_CONFIG_FILE );
-    return read_settings( cfg, include_disabled_P, ImportNone );
+    return importFrom(m_actions, config, ask);
     }
 
-bool Settings::import( KConfig& cfg_P, bool ask_P )
+
+bool Settings::importFrom(ActionDataGroup *element, KConfigBase const &config, bool ask)
     {
-    return read_settings( cfg_P, true, ask_P ? ImportAsk : ImportSilent );
+    KConfigGroup mainGroup(&config, "Main");
+
+    // List of already imported configuration files
+    already_imported = mainGroup.readEntry( "AlreadyImported",QStringList() );
+
+    // A file can have a import id.
+    QString import_id = mainGroup.readEntry( "ImportId" );
+    if( !import_id.isEmpty())
+        {
+        // File has a id. Check for a previous import.
+        if( already_imported.contains( import_id ))
+            {
+            // Ask the user?
+            if( !ask || KMessageBox::warningContinueCancel(
+                            NULL,
+                            i18n( "This \"actions\" file has already been imported before. "
+                                  "Are you sure you want to import it again?" )) != KMessageBox::Continue )
+                {
+                return true; // import "successful"
+                }
+            }
+        else
+            {
+            already_imported.append( import_id );
+            }
+        }
+    else
+        {
+        // File has no import id
+        if( ask && KMessageBox::warningContinueCancel( NULL,
+                i18n( "This \"actions\" file has no ImportId field and therefore it cannot be determined "
+                      "whether or not it has been imported already. Are you sure you want to import it?" ))
+                == KMessageBox::Cancel )
+            return true;
+        }
+
+    return read_settings(element, config, true);
     }
 
 
@@ -227,107 +299,36 @@ ActionDataGroup *Settings::get_system_group(ActionDataGroup::system_group_t grou
     }
 
 
-bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportType import_P )
+bool Settings::reread_settings(bool include_disabled)
     {
-    if (import_P == ImportNone)
-        {
-        // Rereading settings. First delete what we have
-        setActions(NULL);
+    KConfig config( KHOTKEYS_CONFIG_FILE );
 
-        // Initialize m_actions
-        m_actions = new ActionDataGroup(
-                NULL,
-                "should never see",
-                "should never see",
-                NULL,
-                ActionDataGroup::SYSTEM_ROOT,
-                true );
-        }
+    // Rereading settings. First delete what we have
+    setActions(NULL);
 
-    // If the config group we should read from is empty, return.
-    if( cfg_P.groupList().count() == 0 ) {
-        kDebug() << "Empty group! Returning";
-        return false;
-    }
+    // Initialize m_actions
+    m_actions = new ActionDataGroup(
+            NULL,
+            "should never see",
+            "should never see",
+            NULL,
+            ActionDataGroup::SYSTEM_ROOT,
+            true );
 
     // If we read the main settings and there is no main. Initialize the file
     // and return
-    KConfigGroup mainGroup( &cfg_P, "Main" ); // main group
-    if (import_P == ImportNone)
+    KConfigGroup mainGroup( &config, "Main" ); // main group
+    if (!mainGroup.exists())
         {
-        if (!cfg_P.groupList().contains("Main"))
-            {
-            initialize();
-            return false;
-            }
-
-        }
-    else
-        {
-        // List of already imported configuration files
-        already_imported = mainGroup.readEntry( "AlreadyImported",QStringList() );
-
-        // A file can have a import id.
-        QString import_id = mainGroup.readEntry( "ImportId" );
-        if( !import_id.isEmpty())
-            {
-            // File has a id. Check for a previous import.
-            if( already_imported.contains( import_id ))
-                {
-                if( import_P == ImportSilent
-                    || KMessageBox::warningContinueCancel( NULL,
-                        i18n( "This \"actions\" file has already been imported before. "
-                              "Are you sure you want to import it again?" )) != KMessageBox::Continue )
-                    return true; // import "successful"
-                }
-            else
-                {
-                already_imported.append( import_id );
-                }
-            }
-        else
-            {
-            // File has no import id
-            if( import_P != ImportSilent
-                && KMessageBox::warningContinueCancel( NULL,
-                    i18n( "This \"actions\" file has no ImportId field and therefore it cannot be determined "
-                          "whether or not it has been imported already. Are you sure you want to import it?" ))
-                    == KMessageBox::Cancel )
-                return true;
-            }
+        initialize();
+        return false;
         }
 
-    // Now import.
-    int version = mainGroup.readEntry( "Version", -1234576 );
-    switch( version )
-    {
-        case 1:
-            kDebug() << "Version 1 File!";
-            read_settings_v1( cfg_P );
-            break;
-
-        case 2:
-            kDebug() << "Version 2 File!";
-            read_settings_v2( cfg_P, include_disabled_P );
-            break;
-
-        case -1234576: // no config file
-            kWarning() << "No configuration file!";
-            if( import_P ) // if importing, this is an error
-                return false;
-            break;
-
-        default:
-            kWarning() << "Unknown cfg. file version\n";
-            return false;
-
-        }
-
-    if( import_P != ImportNone )
-        return true; // don't read global settings
-
+    // ### Read the global configurations
     daemon_disabled = mainGroup.readEntry( "Disabled", false);
-    KConfigGroup gesturesConfig( &cfg_P, "Gestures" );
+
+    // ### Gestures
+    KConfigGroup gesturesConfig( &config, "Gestures" );
     gestures_disabled = gesturesConfig.readEntry( "Disabled", false);
     gesture_mouse_button = gesturesConfig.readEntry( "MouseButton", 2 );
     gesture_mouse_button = qBound( 2, gesture_mouse_button, 9 );
@@ -337,16 +338,56 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
     // everyone else too.
     if (gesture_timeout < 100) gesture_timeout = 300;
 
-    KConfigGroup gesturesExcludeConfig( &cfg_P, "GesturesExclude" );
+    KConfigGroup gesturesExcludeConfig( &config, "GesturesExclude" );
     delete gestures_exclude;
     gestures_exclude = new Windowdef_list( gesturesExcludeConfig );
-    KConfigGroup voiceConfig( &cfg_P, "Voice" );
+
+    // ### Voice
+    KConfigGroup voiceConfig( &config, "Voice" );
     voice_shortcut=KShortcut( voiceConfig.readEntry("Shortcut" , "")  );
 
+    bool rc = read_settings(m_actions, config, include_disabled);
     // Ensure the system groups exist
     initialize();
+    return rc;
+    }
+
+
+bool Settings::read_settings(ActionDataGroup *root, KConfigBase const &config, bool include_disabled)
+    {
+    // If the config group we should read from is empty, return.
+    if(config.groupList().count() == 0 )
+        {
+        kDebug() << "Empty group! Returning";
+        return false;
+        }
+
+    KConfigGroup mainGroup( &config, "Main" ); // main group
+    int version = mainGroup.readEntry( "Version", -1234576 );
+    switch (version)
+        {
+        case 1:
+            kDebug() << "Version 1 File!";
+            read_settings_v1(root, config);
+            break;
+
+        case 2:
+            kDebug() << "Version 2 File!";
+            read_settings_v2(root, config, include_disabled);
+            break;
+
+        case -1234576: // no config file
+            kWarning() << "No configuration file!";
+            return false;
+
+        default:
+            kWarning() << "Unknown cfg. file version\n";
+            return false;
+        }
+
     return true;
     }
+
 
 void Settings::write_settings()
     {
@@ -384,7 +425,7 @@ void Settings::write_settings()
 
 // return value means the number of enabled actions written in the cfg file
 // i.e. 'Autostart' for value > 0 should be on
-int Settings::write_actions_recursively_v2( KConfigGroup& cfg_P, ActionDataGroup* parent_P, bool enabled_P )
+int Settings::write_actions_recursively_v2(KConfigGroup& cfg_P, ActionDataGroup* parent_P, bool enabled_P)
     {
     int enabled_cnt = 0;
     QString save_cfg_group = cfg_P.name();
@@ -408,10 +449,10 @@ int Settings::write_actions_recursively_v2( KConfigGroup& cfg_P, ActionDataGroup
     }
 
 
-void Settings::read_settings_v2( KConfig& cfg_P, bool include_disabled_P  )
+void Settings::read_settings_v2(ActionDataGroup *root, KConfigBase const& config, bool include_disabled)
     {
-    KConfigGroup dataGroup( &cfg_P, "Data" );
-    read_actions_recursively_v2( dataGroup, m_actions, include_disabled_P );
+    KConfigGroup dataGroup(&config, "Data");
+    read_actions_recursively_v2(dataGroup, root, include_disabled);
     }
 
 
@@ -438,12 +479,12 @@ void Settings::read_actions_recursively_v2(
     }
 
 // backward compatibility
-void Settings::read_settings_v1( KConfig& cfg_P )
+void Settings::read_settings_v1(ActionDataGroup *root, KConfigBase const& config)
     {
-    KConfigGroup mainGroup( &cfg_P, "Main" );
+    KConfigGroup mainGroup( &config, "Main" );
     int sections = mainGroup.readEntry( "Num_Sections", 0 );
     ActionDataGroup* menuentries = NULL;
-    Q_FOREACH(ActionDataBase *child, m_actions->children())
+    Q_FOREACH(ActionDataBase *child, root->children())
         {
         ActionDataGroup* tmp = dynamic_cast< ActionDataGroup* >(child);
         if( tmp == NULL )
@@ -459,9 +500,9 @@ void Settings::read_settings_v1( KConfig& cfg_P )
          ++sect )
         {
         QString group = QString( "Section%1" ).arg( sect );
-        if( !cfg_P.hasGroup( group ))
+        if( !config.hasGroup( group ))
             continue;
-        KConfigGroup sectionConfig( &cfg_P, group );
+        KConfigGroup sectionConfig( &config, group );
         QString name = sectionConfig.readEntry( "Name" );
         if( name.isNull() )
             continue;
@@ -477,7 +518,7 @@ void Settings::read_settings_v1( KConfig& cfg_P )
             {
             if( menuentries == NULL )
                 {
-                menuentries = new ActionDataGroup( m_actions,
+                menuentries = new ActionDataGroup( root,
                     i18n( MENU_EDITOR_ENTRIES_GROUP_NAME ),
                     i18n( "These entries were created using Menu Editor." ), NULL,
                     ActionDataGroup::SYSTEM_MENUENTRIES, true );
@@ -488,7 +529,7 @@ void Settings::read_settings_v1( KConfig& cfg_P )
             }
         else
             {
-            ( void ) new CommandUrlShortcutActionData( m_actions, name, "",
+            ( void ) new CommandUrlShortcutActionData( root, name, "",
                 KShortcut( shortcut ), run );
             }
         }

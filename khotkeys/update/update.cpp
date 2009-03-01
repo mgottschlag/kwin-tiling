@@ -60,7 +60,8 @@ int main( int argc, char* argv[] )
 
     init_global_data( false, &app );
     Settings settings;
-    settings.read_settings( true );
+    // Do not include disabled gestures.
+    settings.reread_settings(false);
     KConfig cfg(  file );
     if( !settings.import( cfg, false ))
         {

@@ -44,6 +44,8 @@ class KDE_EXPORT Settings
 
 public:
 
+    static const int CurrentFileVersion;
+
     Settings();
     ~Settings();
 
@@ -57,7 +59,7 @@ public:
      *
      * \param include_disabled_P Load disabled shortcuts?
      */
-    bool read_settings( bool include_disabled_P );
+    bool reread_settings(bool include_disabled = true);
 
     /**
      * Write the settings.
@@ -65,9 +67,16 @@ public:
     void write_settings();
 
     /**
+     * Export settings to @a config
+     */
+    void exportTo(ActionDataBase *what, KConfigBase &config);
+
+    /**
      * Import settings from \a cfg_P.
      */
     bool import( KConfig& cfg_P, bool ask_P );
+
+    bool importFrom(ActionDataGroup *parent, KConfigBase const &config, bool ask=false);
 
     /**
      * Get all actions
@@ -142,20 +151,22 @@ protected:
      * Read settings from \a cfg_P. \a include_disabled_P controls whether
      * disabled actions should be discarded.
      */
-    bool read_settings( KConfig& cfg_P, bool include_disabled_P, ImportType import_P );
+    bool read_settings(ActionDataGroup *root, KConfigBase const &config, bool include_disabled);
 
     /**
      * Read settings in the v1 legacy format from \a cfg_P .
      */
-    void read_settings_v1( KConfig& cfg_P );
+    void read_settings_v1(ActionDataGroup *root, KConfigBase const& cfg);
 
     /**
      * Read settings in the v2 format from \a cfg_P .
      */
-    void read_settings_v2( KConfig& cfg_P, bool include_disabled_P );
+    void read_settings_v2(ActionDataGroup *root, KConfigBase const& cfg, bool include_disabled);
 
     /**
      * Write \a parent_P recursively to \a cfg_P
+     *
+     * The return value specifies the number of active input actions written.
      */
     int write_actions_recursively_v2(
         KConfigGroup& cfg_P,

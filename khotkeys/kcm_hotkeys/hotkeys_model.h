@@ -58,7 +58,7 @@ class KHotkeysModel : public QAbstractItemModel
     virtual ~KHotkeysModel();
 
     /**
-     * Standard methods required by Qt model/view framework
+     * \group Qt Model/View Framework methods
      */
     //@{
     QModelIndex index( int, int, const QModelIndex &parent = QModelIndex() ) const;
@@ -71,18 +71,10 @@ class KHotkeysModel : public QAbstractItemModel
     Qt::ItemFlags flags( const QModelIndex &index ) const;
     //@}
 
-    bool removeRows( int row, int count, const QModelIndex &parent );
-    QModelIndex addGroup( const QModelIndex &parent );
-    QModelIndex insertActionData( KHotKeys::ActionDataBase *data, const QModelIndex &parent );
-
     /**
-     * Return the settings we handle
+     * \group Drag and Drop Support
      */
-    KHotKeys::Settings *settings();
-
-    /**
-     * Support dropping
-     */
+    //@{
     bool dropMimeData(
             const QMimeData *data
             ,Qt::DropAction action
@@ -91,6 +83,24 @@ class KHotkeysModel : public QAbstractItemModel
             ,const QModelIndex &parent);
     QMimeData *mimeData(const QModelIndexList &indexes) const;
     QStringList mimeTypes() const;
+    //@}
+
+    /**
+     * Add a group as child of @a parent.
+     *
+     * @return the index for the new group
+     */
+    QModelIndex addGroup( const QModelIndex &parent );
+
+    /**
+     * Export the input actions into @a config.
+     */
+    void exportInputActions(const QModelIndex &index, KConfigBase &config);
+
+    /**
+     *Import the input actions from @a config.
+     */
+    void importInputActions(const QModelIndex &index, KConfigBase const &config);
 
     /**
      * Get the KHotKeys::ActionDataBase behind the index.
@@ -106,11 +116,16 @@ class KHotkeysModel : public QAbstractItemModel
     KHotKeys::ActionDataGroup *indexToActionDataGroup( const QModelIndex &index ) const;
 
     /**
+     * Insert @a data as a child of @a parent.
+     */
+    QModelIndex insertActionData( KHotKeys::ActionDataBase *data, const QModelIndex &parent );
+
+    /**
      * Load the settings from the file
      */
     void load();
 
-    /** 
+    /**
      * Move @p element to @p newGroup at @position.
      *
      * @param element  move this element
@@ -123,10 +138,21 @@ class KHotkeysModel : public QAbstractItemModel
             KHotKeys::ActionDataBase *element
             ,KHotKeys::ActionDataGroup *newGroup
             ,int position = -1);
+
+    /**
+     * Remove @a count rows starting with @a row under @a parent.
+     */
+    bool removeRows( int row, int count, const QModelIndex &parent );
+
     /**
      * Save the settings to the file
      */
     void save();
+
+    /**
+     * Return the settings we handle
+     */
+    KHotKeys::Settings *settings();
 
     void emitChanged( KHotKeys::ActionDataBase *item );
 
@@ -134,6 +160,7 @@ class KHotkeysModel : public QAbstractItemModel
 
     KHotKeys::Settings _settings;
     KHotKeys::ActionDataGroup *_actions;
+
 };
 
 #endif /* #ifndef KHOTKEYSMODEL_HPP */

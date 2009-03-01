@@ -65,7 +65,7 @@ void KHotKeysModule::reread_configuration()
     KHotKeys::khotkeys_set_active( false );
 
     // Load the settings
-    _settings.read_settings( false );
+    _settings.reread_settings(false);
     KHotKeys::gesture_handler->set_mouse_button( _settings.gestureMouseButton() );
     KHotKeys::gesture_handler->set_timeout( _settings.gestureTimeOut() );
     kDebug() << _settings.areGesturesDisabled();
