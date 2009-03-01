@@ -381,7 +381,9 @@ void Image::positioningChanged(int index)
         startSlideshow();
     }
 
-    m_model->setResizeMethod(m_resizeMethod);
+    if (m_model) {
+        m_model->setResizeMethod(m_resizeMethod);
+    }
 }
 
 void Image::fillMetaInfo(Background *b)
