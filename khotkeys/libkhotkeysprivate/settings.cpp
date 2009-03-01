@@ -229,20 +229,24 @@ ActionDataGroup *Settings::get_system_group(ActionDataGroup::system_group_t grou
 
 bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportType import_P )
     {
-    // Reread settings. First delete what we have
-    setActions(NULL);
+    if (import_P == ImportNone)
+        {
+        // Rereading settings. First delete what we have
+        setActions(NULL);
 
-    // Initialize m_actions
-    m_actions = new ActionDataGroup(
-            NULL,
-            "should never see",
-            "should never see",
-            NULL,
-            ActionDataGroup::SYSTEM_ROOT,
-            true );
+        // Initialize m_actions
+        m_actions = new ActionDataGroup(
+                NULL,
+                "should never see",
+                "should never see",
+                NULL,
+                ActionDataGroup::SYSTEM_ROOT,
+                true );
+        }
 
     // If the config group we should read from is empty, return.
     if( cfg_P.groupList().count() == 0 ) {
+        kDebug() << "Empty group! Returning";
         return false;
     }
 
@@ -257,14 +261,17 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
             return false;
             }
 
-        // List of already imported configuration files
-        already_imported = mainGroup.readEntry( "AlreadyImported",QStringList() );
         }
     else
         {
+        // List of already imported configuration files
+        already_imported = mainGroup.readEntry( "AlreadyImported",QStringList() );
+
+        // A file can have a import id.
         QString import_id = mainGroup.readEntry( "ImportId" );
         if( !import_id.isEmpty())
             {
+            // File has a id. Check for a previous import.
             if( already_imported.contains( import_id ))
                 {
                 if( import_P == ImportSilent
@@ -274,10 +281,13 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
                     return true; // import "successful"
                 }
             else
+                {
                 already_imported.append( import_id );
+                }
             }
         else
             {
+            // File has no import id
             if( import_P != ImportSilent
                 && KMessageBox::warningContinueCancel( NULL,
                     i18n( "This \"actions\" file has no ImportId field and therefore it cannot be determined "
@@ -286,25 +296,36 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
                 return true;
             }
         }
+
+    // Now import.
     int version = mainGroup.readEntry( "Version", -1234576 );
     switch( version )
     {
         case 1:
+            kDebug() << "Version 1 File!";
             read_settings_v1( cfg_P );
-          break;
+            break;
+
         case 2:
+            kDebug() << "Version 2 File!";
             read_settings_v2( cfg_P, include_disabled_P );
-          break;
-        default:
-            kWarning() << "Unknown cfg. file version\n";
-          return false;
+            break;
+
         case -1234576: // no config file
+            kWarning() << "No configuration file!";
             if( import_P ) // if importing, this is an error
                 return false;
-          break;
+            break;
+
+        default:
+            kWarning() << "Unknown cfg. file version\n";
+            return false;
+
         }
+
     if( import_P != ImportNone )
         return true; // don't read global settings
+
     daemon_disabled = mainGroup.readEntry( "Disabled", false);
     KConfigGroup gesturesConfig( &cfg_P, "Gestures" );
     gestures_disabled = gesturesConfig.readEntry( "Disabled", false);
@@ -381,14 +402,18 @@ int Settings::write_actions_recursively_v2( KConfigGroup& cfg_P, ActionDataGroup
     return enabled_cnt;
     }
 
+
 void Settings::read_settings_v2( KConfig& cfg_P, bool include_disabled_P  )
     {
     KConfigGroup dataGroup( &cfg_P, "Data" );
     read_actions_recursively_v2( dataGroup, m_actions, include_disabled_P );
     }
 
-void Settings::read_actions_recursively_v2( KConfigGroup& cfg_P, ActionDataGroup* parent_P,
-    bool include_disabled_P )
+
+void Settings::read_actions_recursively_v2(
+        KConfigGroup& cfg_P,
+        ActionDataGroup* parent_P,
+        bool include_disabled_P )
     {
     QString save_cfg_group = cfg_P.name();
     int cnt = cfg_P.readEntry( "DataCount",0 );
