@@ -263,6 +263,9 @@ void KGlobalShortcutsEditor::exportScheme()
         // TODO: Bug ossi to provide a method for this
         Q_FOREACH(const QString &group, config.groupList())
             {
+            // do not overwrite the Settings group. That makes it possible to
+            // update the standard scheme kksrc file with the editor.
+            if (group == "Settings") continue;
             config.deleteGroup(group);
             }
         exportConfiguration(dia.selectedComponents(), &config);
