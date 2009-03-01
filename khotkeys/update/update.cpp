@@ -10,17 +10,19 @@
 
 #define _UPDATE_CPP_
 
-#include <config-workspace.h>
-
-#include <kapplication.h>
-#include <kcmdlineargs.h>
-#include <kstandarddirs.h>
-#include <kconfig.h>
-#include <kdebug.h>
-#include <QtDBus/QtDBus>
+// #include <config-workspace.h>
 
 #include "khotkeysiface.h"
 #include "kglobalaccel.h"
+
+#include <KDE/KAboutData>
+#include <KDE/KApplication>
+#include <KDE/KCmdLineArgs>
+#include <KDE/KConfig>
+#include <KDE/KStandardDirs>
+#include <KDE/KDebug>
+
+#include <QtDBus/QtDBus>
 
 #include <settings.h>
 
@@ -28,14 +30,25 @@ using namespace KHotKeys;
 
 int main( int argc, char* argv[] )
     {
-    KCmdLineArgs::init( argc, argv, "khotkeys", 0, ki18n("KHotKeys Update"), "1.0" ,
-	ki18n("KHotKeys update utility"));
+    KAboutData aboutdata(
+            "khotkeys_update",
+            0,
+            ki18n("KHotKeys Update Helper"),
+            "4.2",
+            ki18n("KHotKeys Update Helper"),
+            KAboutData::License_GPL,
+            ki18n("(C) 2003-2009 Lubos Lunak"));
+    aboutdata.addAuthor(ki18n("Michael Jansen"),ki18n("Maintainer"),"kde@michael-jansen.biz");
+
+    KCmdLineArgs::init( argc, argv, &aboutdata);
 
     KCmdLineOptions options;
     options.add("id <id>", ki18n("Id of the script to add to %1").subs(KHOTKEYS_CONFIG_FILE));
     KCmdLineArgs::addCmdLineOptions( options );
-    KApplication app( true ); // X11 connection is necessary for KKey* stuff :-/
+
+    KApplication app;
     KCmdLineArgs* args = KCmdLineArgs::parsedArgs();
+
     QString id = args->getOption( "id" );
     QString file = KStandardDirs::locate( "data", "khotkeys/" + id + ".khotkeys" );
     if( file.isEmpty())
@@ -43,7 +56,8 @@ int main( int argc, char* argv[] )
         kWarning() << "File " << id << " not found!" ;
         return 1;
         }
-    KGlobalAccel::self()->overrideMainComponentData(KComponentData("khotkeys"));
+    //  KGlobalAccel::self()->overrideMainComponentData(KComponentData("khotkeys"));
+
     init_global_data( false, &app );
     Settings settings;
     settings.read_settings( true );
@@ -59,7 +73,6 @@ int main( int argc, char* argv[] )
         {
         org::kde::khotkeys iface("org.kde.kded", "/modules/khotkeys", bus);
         iface.reread_configuration();
-        kDebug() << "telling khotkeys daemon to reread configuration";
         }
     return 0;
     }
