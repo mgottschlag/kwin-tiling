@@ -23,6 +23,8 @@ Name[zh_TW]=支援的驅動程式
 
 [Desktop Entry]
 Name=Video
+Name[pt]=Vídeo
+Name[pt_BR]=Vídeo
 Name[uk]=Відео
 Name[zh_TW]=影像
 X-KDE-Solid-Actions-Type=Video

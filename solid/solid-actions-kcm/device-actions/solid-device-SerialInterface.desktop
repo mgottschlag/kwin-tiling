@@ -18,18 +18,27 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action port]
 Name=Port
+Name[pt]=Porta
+Name[pt_BR]=Porta
 Name[uk]=Порт
 Name[zh_TW]=連接埠
 
 [Desktop Action serialType]
 Name=Serial Type
+Name[pt]=Tipo Série
+Name[pt_BR]=Tipo serial
+Name[sv]=Serietyp
 Name[uk]=Послідовний тип
 Name[zh_TW]=序列型態
 
 [Desktop Entry]
 Name=Serial Interface
+Name[ga]=Comhéadan Srathach
 Name[ja]=シリアルインターフェース
 Name[nds]=Seriell Koppelsteed
+Name[pt]=Interface Série
+Name[pt_BR]=Interface serial
+Name[sv]=Seriegränssnitt
 Name[uk]=Послідовний інтерфейс
 Name[zh_TW]=序列介面
 X-KDE-Solid-Actions-Type=SerialInterface
