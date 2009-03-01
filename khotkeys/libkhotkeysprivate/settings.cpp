@@ -332,6 +332,11 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
     gesture_mouse_button = gesturesConfig.readEntry( "MouseButton", 2 );
     gesture_mouse_button = qBound( 2, gesture_mouse_button, 9 );
     gesture_timeout = gesturesConfig.readEntry( "Timeout", 300 );
+
+    // Somhow gesture_timeout found it's way into my config file. Fix it for
+    // everyone else too.
+    if (gesture_timeout < 100) gesture_timeout = 300;
+
     KConfigGroup gesturesExcludeConfig( &cfg_P, "GesturesExclude" );
     delete gestures_exclude;
     gestures_exclude = new Windowdef_list( gesturesExcludeConfig );
