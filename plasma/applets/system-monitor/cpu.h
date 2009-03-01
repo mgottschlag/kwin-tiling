@@ -19,8 +19,8 @@
 #ifndef CPU_HEADER
 #define CPU_HEADER
 
-#include "ui_cpu-config.h"
-#include "ui_cpu-config-adv.h"
+#include <ui_cpu-config.h>
+#include <ui_cpu-config-adv.h>
 #include "applet.h"
 #include <Plasma/DataEngine>
 #include <QStandardItemModel>

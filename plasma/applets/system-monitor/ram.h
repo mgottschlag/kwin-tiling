@@ -16,11 +16,11 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef CPU_HEADER
-#define CPU_HEADER
+#ifndef RAM_HEADER
+#define RAM_HEADER
 
-#include "ui_ram-config.h"
-#include "ui_cpu-config-adv.h"
+#include <ui_ram-config.h>
+#include <ui_cpu-config-adv.h>
 #include "applet.h"
 #include <Plasma/DataEngine>
 #include <QStandardItemModel>

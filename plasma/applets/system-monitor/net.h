@@ -19,8 +19,8 @@
 #ifndef NET_HEADER
 #define NET_HEADER
 
-#include "ui_net-config.h"
-#include "ui_net-config-adv.h"
+#include <ui_net-config.h>
+#include <ui_net-config-adv.h>
 #include "applet.h"
 #include <Plasma/DataEngine>
 #include <QStandardItemModel>

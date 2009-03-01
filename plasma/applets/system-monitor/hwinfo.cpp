@@ -94,7 +94,8 @@ void HWInfo::connectToEngine()
     }
     // TODO: get this from soliddevice
     Plasma::DataEngine* engine = dataEngine("executable");
-    QString path = QString::fromLocal8Bit(getenv("PATH")) + QString::fromLatin1(":/usr/sbin:/sbin/");
+    QString path = QString::fromLocal8Bit(qgetenv("PATH"))
+                 + QString::fromLatin1(":/usr/sbin:/sbin/");
     QString exe = KStandardDirs::findExe( "lspci", path );
     if (exe.isEmpty())
        kError()  << "lspci not found in " << path << endl;
