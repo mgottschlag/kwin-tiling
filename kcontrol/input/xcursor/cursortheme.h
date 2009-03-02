@@ -62,8 +62,8 @@ class CursorTheme
         const QString sample() const       { return m_sample; }
         const QString name() const         { return m_name; }
         const QString path() const         { return m_path; }
-        const bool isWritable() const      { return m_writable; }
-        const bool isHidden() const        { return m_hidden; }
+        bool isWritable() const            { return m_writable; }
+        bool isHidden() const              { return m_hidden; }
         QPixmap icon() const;
 
         /// Hash value for the internal name
