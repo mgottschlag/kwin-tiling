@@ -44,6 +44,8 @@ static const int s_defaultSpacing = 2;
 
 QuicklaunchApplet::QuicklaunchApplet(QObject *parent, const QVariantList &args)
   : Plasma::Applet(parent, args),
+    m_layout(0),
+    m_innerLayout(0),
     m_visibleIcons(6),
     m_rowCount(2),
     m_dialogRowCount(2),
@@ -53,9 +55,7 @@ QuicklaunchApplet::QuicklaunchApplet(QObject *parent, const QVariantList &args)
     m_addDialog(0),
     m_rightClickedIcon(0),
     m_addAction(0),
-    m_removeAction(0),
-    m_layout(0),
-    m_innerLayout(0)
+    m_removeAction(0)
 {
     setHasConfigurationInterface(true);
     setAcceptDrops(true);
