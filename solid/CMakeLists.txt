@@ -5,6 +5,7 @@ macro_optional_find_package(BlueZ)
 macro_log_feature(BLUEZ_FOUND "BlueZ" "BlueZ is the Linux Bluetooth protocol stack" "http://www.bluez.org" FALSE "" "For Bluetooth support in KDE")
 
 add_subdirectory(kcm)
+add_subdirectory(solid-actions-kcm)
 
 IF("${CMAKE_SYSTEM}" MATCHES "Linux")
   add_subdirectory(hal)
