@@ -42,7 +42,7 @@ BluezBluetoothRemoteDevice::BluezBluetoothRemoteDevice(const QString &objectPath
 	m_adapter = m_objectPath.left(objectPath.size() - 18);
 	m_address = m_objectPath.right(17);
 
-        kdDebug() << "Connecting to ObjectPath: " << objectPath;
+        kDebug() << "Connecting to ObjectPath: " << objectPath;
 
 	device = new QDBusInterface("org.bluez", objectPath,
 				    "org.bluez.Device", QDBusConnection::systemBus());
