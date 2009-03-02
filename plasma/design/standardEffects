@@ -14,7 +14,7 @@ Parameters:
 
 Spin
 ----
-Creates the illusion of spinning an item to show it's back.
+Creates the illusion of spinning an item to show its back.
 
 Parameters:
     * Source QGraphicsItem
