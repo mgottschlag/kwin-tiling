@@ -114,6 +114,7 @@ KCMXinerama::KCMXinerama(QWidget *parent, const QVariantList &)
 		connect(xw, SIGNAL(configChanged()), this, SLOT(changed()));
 	} else { // no Xinerama
 		QLabel *ql = new QLabel(i18n("<qt><p>This module is only for configuring systems with a single desktop spread across multiple monitors. You do not appear to have this configuration.</p></qt>"), this);
+		ql->setWordWrap(true);
 		grid->addWidget(ql, 0, 0);
 	}
 
