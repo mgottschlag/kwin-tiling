@@ -22,6 +22,7 @@
 
 #include <KDebug>
 #include <KIcon>
+#include <KSystemTimeZones>
 
 #include <Plasma/Svg>
 #include <Plasma/Theme>
@@ -32,14 +33,18 @@
 CalendarTest::CalendarTest(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args),
     m_calendarDialog(0),
-    m_theme(0)
+    m_theme(0),
+    m_date(0),
+    m_updateTimerId(0)
 {
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
+    setCacheMode(DeviceCoordinateCache);
 }
 
 void CalendarTest::init()
 {
     setPopupIcon("view-pim-calendar");
+    updateDate();
 }
 
 QGraphicsWidget *CalendarTest::graphicsWidget()
@@ -71,7 +76,6 @@ void CalendarTest::constraintsEvent(Plasma::Constraints constraints)
 
 void CalendarTest::paintIcon()
 {
-    //TODO: connect to a dataengine to repaint this thing on date change
     const int iconSize = qMin(size().width(), size().height());
 
     if (iconSize <= 0) {
@@ -95,7 +99,7 @@ void CalendarTest::paintIcon()
     p.setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::ButtonTextColor));
     font.setPixelSize(icon.size().height() / 2);
     p.setFont(font);
-    p.drawText(icon.rect().adjusted(0, icon.size().height()/4, 0, 0), Qt::AlignCenter, QString::number(QDate::currentDate().day()));
+    p.drawText(icon.rect().adjusted(0, icon.size().height()/4, 0, 0), Qt::AlignCenter, QString::number(m_date));
     m_theme->resize();
     p.end();
     setPopupIcon(icon);
@@ -104,6 +108,25 @@ void CalendarTest::paintIcon()
 void CalendarTest::configAccepted()
 {
     update();
+}
+
+void CalendarTest::updateDate()
+{
+    QDateTime d = QDateTime::currentDateTime();
+    m_date = d.date().day();
+    int updateIn = (24 * 60 * 60) - (d.toTime_t() + KSystemTimeZones::local().currentOffset()) % (24 * 60 * 60);
+    m_updateTimerId = startTimer(updateIn * 1000);
+    constraintsEvent(Plasma::FormFactorConstraint);
+}
+
+void CalendarTest::timerEvent(QTimerEvent *event)
+{
+    if (event->timerId() != m_updateTimerId) {
+        return;
+    }
+
+    killTimer(m_updateTimerId);
+    updateDate();
 }
 
 #include "calendar.moc"

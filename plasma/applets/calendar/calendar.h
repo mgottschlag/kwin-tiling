@@ -44,6 +44,11 @@ class CalendarTest : public Plasma::PopupApplet
          * The widget that displays the calendar.
          */
         QGraphicsWidget *graphicsWidget();
+
+    protected:
+        void updateDate();
+        void timerEvent(QTimerEvent *event);
+
     protected slots:
         void configAccepted();
 
@@ -52,6 +57,8 @@ class CalendarTest : public Plasma::PopupApplet
 
         Plasma::Calendar *m_calendarDialog;
         Plasma::Svg *m_theme;
+        int m_date;
+        int m_updateTimerId;
 };
 
 K_EXPORT_PLASMA_APPLET(calendar, CalendarTest)
