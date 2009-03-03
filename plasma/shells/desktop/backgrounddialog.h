@@ -22,6 +22,7 @@ namespace Plasma {
 class ThemeModel;
 class WallpaperPreview;
 class QStandardItemModel;
+class ScreenPreviewWidget;
 
 class BackgroundDialog : public KConfigDialog, public Ui::BackgroundDialog
 {
@@ -51,7 +52,7 @@ private:
     Plasma::Wallpaper* m_wallpaper;
     Plasma::View* m_view;
     Plasma::Containment* m_containment;
-    WallpaperPreview* m_preview;
+    ScreenPreviewWidget* m_preview;
 };
 
 #endif // BACKGROUNDDIALOG_H

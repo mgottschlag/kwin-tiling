@@ -28,7 +28,7 @@
 #include <Plasma/View>
 #include <Plasma/Corona>
 
-#include "wallpaperpreview.h"
+#include "../../../libs/screenpreviewwidget/screenpreviewwidget.h"
 
 typedef QPair<QString, QString> WallpaperInfo;
 Q_DECLARE_METATYPE(WallpaperInfo)
@@ -369,29 +369,19 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
     QWidget * main = new QWidget(this);
     setupUi(main);
 
-    // Size of monitor image: 200x186
-    // Geometry of "display" part of monitor image: (23,14)-[151x115]
-    qreal previewRatio = (qreal)res.height() / (qreal)res.width();
+
+    qreal previewRatio = (qreal)res.width() / (qreal)res.height();
     QSize monitorSize(200, int(200 * previewRatio));
 
-    Plasma::FrameSvg *svg = new Plasma::FrameSvg(this);
-    svg->setImagePath("widgets/monitor");
-    svg->resizeFrame(monitorSize);
-    QPixmap monitorPix(monitorSize + QSize(0, svg->elementSize("base").height() - svg->marginSize(Plasma::BottomMargin)));
-    monitorPix.fill(Qt::transparent);
 
-    QPainter painter(&monitorPix);
-    QPoint standPosition(monitorSize.width()/2 - svg->elementSize("base").width()/2, svg->contentsRect().bottom());
-    svg->paint(&painter, QRect(standPosition, svg->elementSize("base")), "base");
-    svg->paintFrame(&painter);
-    painter.end();
-
-    m_monitor->setPixmap(monitorPix);
+    m_monitor->setFixedSize(200,400);
+    m_monitor->setText(QString());
     m_monitor->setWhatsThis(i18n(
         "This picture of a monitor contains a preview of "
         "what the current settings will look like on your desktop."));
-    m_preview = new WallpaperPreview(m_monitor);
-    m_preview->setGeometry(svg->contentsRect().toRect());
+    m_preview = new ScreenPreviewWidget(m_monitor);
+    m_preview->setRatio(previewRatio);
+    m_preview->resize(200,200);
 
     connect(m_newThemeButton, SIGNAL(clicked()), this, SLOT(getNewThemes()));
 
@@ -543,7 +533,7 @@ void BackgroundDialog::changeBackgroundMode(int mode)
 
     if (!m_wallpaper) {
         m_wallpaper = Plasma::Wallpaper::load(wallpaperInfo.first);
-        m_preview->setWallpaper(m_wallpaper);
+        m_preview->setPreview(m_wallpaper);
     }
 
     if (m_wallpaper) {
