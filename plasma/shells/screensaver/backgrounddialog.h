@@ -19,7 +19,9 @@ namespace Plasma {
     class Containment;
     class View;
 }
+
 class WallpaperPreview;
+class ScreenPreviewWidget;
 
 class BackgroundDialog : public KDialog, public Ui::BackgroundDialog
 {
@@ -45,7 +47,7 @@ private:
     Plasma::Wallpaper* m_wallpaper;
     Plasma::View* m_view;
     Plasma::Containment* m_containment;
-    WallpaperPreview* m_preview;
+    ScreenPreviewWidget* m_preview;
 };
 
 #endif // BACKGROUNDDIALOG_H

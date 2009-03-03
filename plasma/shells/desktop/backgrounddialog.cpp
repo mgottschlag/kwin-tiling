@@ -374,7 +374,7 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
     QSize monitorSize(200, int(200 * previewRatio));
 
 
-    m_monitor->setFixedSize(200,400);
+    m_monitor->setFixedSize(200,200);
     m_monitor->setText(QString());
     m_monitor->setWhatsThis(i18n(
         "This picture of a monitor contains a preview of "
