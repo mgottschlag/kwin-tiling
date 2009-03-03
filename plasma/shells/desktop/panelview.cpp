@@ -204,6 +204,11 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
       m_triggerEntered(false)
 {
     Q_ASSERT(qobject_cast<Plasma::Corona*>(panel->scene()));
+
+    m_strutsTimer = new QTimer(this);
+    m_strutsTimer->setSingleShot(true);
+    connect(m_strutsTimer, SIGNAL(timeout()), this, SLOT(updateStruts()));
+
     if (panel) {
         connect(panel, SIGNAL(destroyed(QObject*)), this, SLOT(panelDeleted()));
         connect(panel, SIGNAL(toolBoxToggled()), this, SLOT(togglePanelController()));
@@ -249,10 +254,6 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     KWindowSystem::setOnAllDesktops(winId(), true);
 
     QTimer::singleShot(0, this, SLOT(init()));
-
-    m_strutsTimer = new QTimer(this);
-    m_strutsTimer->setSingleShot(true);
-    connect(m_strutsTimer,SIGNAL(timeout()),this,SLOT(updateStruts()));
 }
 
 PanelView::~PanelView()
