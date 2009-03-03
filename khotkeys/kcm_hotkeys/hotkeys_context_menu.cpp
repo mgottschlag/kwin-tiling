@@ -368,7 +368,9 @@ void HotkeysTreeViewContextMenu::deleteAction()
         Q_ASSERT( _index.isValid() );
         return;
         }
-    Q_ASSERT( _view->model()->removeRow(_index.row(), _index.parent()) );
+
+    bool deletionSuccess = _view->model()->removeRow(_index.row(), _index.parent());
+    Q_ASSERT(deletionSuccess == true);
 
     _view->setCurrentIndex(QModelIndex());
     }
