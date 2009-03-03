@@ -30,12 +30,12 @@ namespace Plasma
     class Svg;
 }
 
-class CalendarTest : public Plasma::PopupApplet
+class CalendarApplet : public Plasma::PopupApplet
 {
     Q_OBJECT
     public:
-        CalendarTest(QObject *parent, const QVariantList &args);
-        ~CalendarTest();
+        CalendarApplet(QObject *parent, const QVariantList &args);
+        ~CalendarApplet();
 
         void init();
         void constraintsEvent(Plasma::Constraints constraints);
@@ -61,6 +61,6 @@ class CalendarTest : public Plasma::PopupApplet
         int m_updateTimerId;
 };
 
-K_EXPORT_PLASMA_APPLET(calendar, CalendarTest)
+K_EXPORT_PLASMA_APPLET(calendar, CalendarApplet)
 
 #endif

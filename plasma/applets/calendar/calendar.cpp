@@ -30,7 +30,7 @@
 #include "calendar.h"
 
 
-CalendarTest::CalendarTest(QObject *parent, const QVariantList &args)
+CalendarApplet::CalendarApplet(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args),
     m_calendarDialog(0),
     m_theme(0),
@@ -41,13 +41,13 @@ CalendarTest::CalendarTest(QObject *parent, const QVariantList &args)
     setCacheMode(DeviceCoordinateCache);
 }
 
-void CalendarTest::init()
+void CalendarApplet::init()
 {
     setPopupIcon("view-pim-calendar");
     updateDate();
 }
 
-QGraphicsWidget *CalendarTest::graphicsWidget()
+QGraphicsWidget *CalendarApplet::graphicsWidget()
 {
     if (!m_calendarDialog) {
         m_calendarDialog = new Plasma::Calendar(this);
@@ -57,12 +57,12 @@ QGraphicsWidget *CalendarTest::graphicsWidget()
     return m_calendarDialog;
 }
 
-CalendarTest::~CalendarTest()
+CalendarApplet::~CalendarApplet()
 {
 
 }
 
-void CalendarTest::constraintsEvent(Plasma::Constraints constraints)
+void CalendarApplet::constraintsEvent(Plasma::Constraints constraints)
 {
     if (!m_calendarDialog) {
         graphicsWidget();
@@ -74,7 +74,7 @@ void CalendarTest::constraintsEvent(Plasma::Constraints constraints)
     }
 }
 
-void CalendarTest::paintIcon()
+void CalendarApplet::paintIcon()
 {
     const int iconSize = qMin(size().width(), size().height());
 
@@ -105,12 +105,12 @@ void CalendarTest::paintIcon()
     setPopupIcon(icon);
 }
 
-void CalendarTest::configAccepted()
+void CalendarApplet::configAccepted()
 {
     update();
 }
 
-void CalendarTest::updateDate()
+void CalendarApplet::updateDate()
 {
     QDateTime d = QDateTime::currentDateTime();
     m_date = d.date().day();
@@ -119,7 +119,7 @@ void CalendarTest::updateDate()
     constraintsEvent(Plasma::FormFactorConstraint);
 }
 
-void CalendarTest::timerEvent(QTimerEvent *event)
+void CalendarApplet::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() != m_updateTimerId) {
         return;
