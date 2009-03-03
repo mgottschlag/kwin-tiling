@@ -36,6 +36,9 @@
 #include "core/models.h"
 #include "core/urlitemlauncher.h"
 
+// DBus
+#include "krunner_interface.h"
+
 using namespace Kickoff;
 
 class HandlerInfo
@@ -50,6 +53,13 @@ class GenericItemHandler : public UrlItemHandler
 {
 public:
     virtual bool openUrl(const KUrl& url) {
+        if (url.protocol() == "run") {
+            QString interface("org.kde.krunner");
+            org::kde::krunner::App krunner(interface, "/App", QDBusConnection::sessionBus());
+            krunner.display();
+            return true;
+        }
+
         new KRun(url, 0);
         return true;
     }
