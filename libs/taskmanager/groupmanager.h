@@ -129,15 +129,6 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     /**
-    * Slots for newly added tasks from TaskManager
-    */
-    bool add(TaskPtr);
-    void remove(TaskPtr);
-
-    void add(StartupPtr);
-    void remove(StartupPtr);
-
-    /**
     *   listen to the relevant signals of taskmanager
     */
     void reconnect();
@@ -148,9 +139,14 @@ private:
     Q_PRIVATE_SLOT(d, void checkScreenChange())
     Q_PRIVATE_SLOT(d, void itemDestroyed())
     Q_PRIVATE_SLOT(d, void checkIfFull())
+    Q_PRIVATE_SLOT(d, bool addTask(TaskPtr))
+    Q_PRIVATE_SLOT(d, void removeTask(TaskPtr))
+    Q_PRIVATE_SLOT(d, void addStartup(StartupPtr))
+    Q_PRIVATE_SLOT(d, void removeStartup(StartupPtr))
 
     friend class GroupManagerPrivate;
     GroupManagerPrivate * const d;
 };
+
 }
 #endif

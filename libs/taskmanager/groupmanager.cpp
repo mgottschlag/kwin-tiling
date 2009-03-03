@@ -79,6 +79,11 @@ public:
     void itemDestroyed();
     void checkIfFull();
 
+    bool addTask(TaskPtr);
+    void removeTask(TaskPtr);
+    void addStartup(StartupPtr);
+    void removeStartup(StartupPtr);
+
     GroupManager *q;
     QHash<TaskPtr, TaskItem*> itemList; //holds all tasks of the Taskmanager
     QHash<StartupPtr, TaskItem*> startupList;
@@ -107,10 +112,10 @@ GroupManager::GroupManager(QObject *parent)
     : QObject(parent),
       d(new GroupManagerPrivate(this))
 {
-    connect(TaskManager::self(), SIGNAL(taskAdded(TaskPtr)), this, SLOT(add(TaskPtr)));
-    connect(TaskManager::self(), SIGNAL(taskRemoved(TaskPtr)), this, SLOT(remove(TaskPtr)));
-    connect(TaskManager::self(), SIGNAL(startupAdded(StartupPtr)), this, SLOT(add(StartupPtr)));
-    connect(TaskManager::self(), SIGNAL(startupRemoved(StartupPtr)), this, SLOT(remove(StartupPtr)));
+    connect(TaskManager::self(), SIGNAL(taskAdded(TaskPtr)), this, SLOT(addTask(TaskPtr)));
+    connect(TaskManager::self(), SIGNAL(taskRemoved(TaskPtr)), this, SLOT(removeTask(TaskPtr)));
+    connect(TaskManager::self(), SIGNAL(startupAdded(StartupPtr)), this, SLOT(addStartup(StartupPtr)));
+    connect(TaskManager::self(), SIGNAL(startupRemoved(StartupPtr)), this, SLOT(removeStartup(StartupPtr)));
     d->rootGroup = new TaskGroup(this, "RootGroup", Qt::transparent);
     //reloadTasks();
     d->screenTimer.setSingleShot(true);
@@ -133,47 +138,47 @@ void GroupManagerPrivate::reloadTasks()
 
     QList <TaskPtr> taskList = TaskManager::self()->tasks().values();
     foreach (const TaskPtr& task, taskList) { //Add all existing tasks
-        if (!q->add(task)) {
-            q->remove(task); //remove what isn't needed anymore
+        if (!addTask(task)) {
+            removeTask(task); //remove what isn't needed anymore
         }
         taskList.removeAll(task);
     }
 
     foreach (const TaskPtr& task, taskList) { //Remove the remaining
-        q->remove(task);
+        removeTask(task);
     }
 
     emit q->reload();
 }
 
-void GroupManager::add(StartupPtr task)
+void GroupManagerPrivate::addStartup(StartupPtr task)
 {
     //kDebug();
     TaskItem *item;
-    if (!d->startupList.contains(task)) {
-        item = new TaskItem(this, task);
-        d->startupList.insert(task, item); 
-        d->rootGroup->add(item);
+    if (!startupList.contains(task)) {
+        item = new TaskItem(q, task);
+        startupList.insert(task, item); 
+        rootGroup->add(item);
     }
 }
 
-void GroupManager::remove(StartupPtr task)
+void GroupManagerPrivate::removeStartup(StartupPtr task)
 {
     //kDebug() << "startup";
-    if (!d->startupList.contains(task)) {
+    if (!startupList.contains(task)) {
         kDebug() << "invalid startup task";
         return;
     }
 
-    AbstractItemPtr item = d->startupList.take(task);
+    AbstractItemPtr item = startupList.take(task);
     if (item->parentGroup()) {
         item->parentGroup()->remove(item);
     }
 
-    emit itemRemoved(item);
+    emit q->itemRemoved(item);
 }
 
-bool GroupManager::add(TaskPtr task)
+bool GroupManagerPrivate::addTask(TaskPtr task)
 {
     /* kDebug() << task->visibleName()
              << task->visibleNameWithState()
@@ -186,7 +191,7 @@ bool GroupManager::add(TaskPtr task)
         return false;
     }
 
-    if (showOnlyCurrentScreen() && !task->isOnScreen(d->currentScreen)) {
+    if (showOnlyCurrentScreen && !task->isOnScreen(currentScreen)) {
         //kDebug() << "Not on this screen and showOnlyCurrentScreen";
         return false;
     }
@@ -195,13 +200,13 @@ bool GroupManager::add(TaskPtr task)
     if (!task->demandsAttention()) {
         // As the Task doesn't demand attention
         // go through all filters whether the task should be displayed or not
-        if (showOnlyCurrentDesktop() && !task->isOnCurrentDesktop()) {
+        if (showOnlyCurrentDesktop && !task->isOnCurrentDesktop()) {
             /* kDebug() << "Not on this desktop and showOnlyCurrentDesktop"
                      << KWindowSystem::currentDesktop() << task->desktop(); */
             return false;
         }
 
-        if (showOnlyMinimized() && !task->isMinimized()) {
+        if (showOnlyMinimized && !task->isMinimized()) {
             //kDebug() << "Not minimized and only showing minimized";
             return false;
         }
@@ -230,9 +235,9 @@ bool GroupManager::add(TaskPtr task)
 
     //Ok the Task should be displayed
     TaskItem *item = 0;
-    if (!d->itemList.contains(task)) {
+    if (!itemList.contains(task)) {
         //Lookout for existing startuptask of this task
-        QMutableHashIterator<StartupPtr, TaskItem*> it(d->startupList);
+        QMutableHashIterator<StartupPtr, TaskItem*> it(startupList);
         while (it.hasNext()) {
             it.next();
             if (it.key()->matchesWindow(task->window())) {
@@ -245,34 +250,34 @@ bool GroupManager::add(TaskPtr task)
         }
 
         if (!item) {
-            item = new TaskItem(this, task);
+            item = new TaskItem(q, task);
         }
 
-        connect(item, SIGNAL(destroyed()), this, SLOT(itemDestroyed()));
-        d->itemList.insert(task, item); 
+        QObject::connect(item, SIGNAL(destroyed()), q, SLOT(itemDestroyed()));
+        itemList.insert(task, item); 
     } else {
-        item = d->itemList.value(task); //we add it again so the group is evaluated again
+        item = itemList.value(task); //we add it again so the group is evaluated again
     }
 
     //Find a fitting group for the task with GroupingStrategies
-    if (d->abstractGroupingStrategy && !task->demandsAttention()) { //do not group attetion tasks
-        d->abstractGroupingStrategy->handleItem(item);
+    if (abstractGroupingStrategy && !task->demandsAttention()) { //do not group attetion tasks
+        abstractGroupingStrategy->handleItem(item);
     } else {
-        d->rootGroup->add(item);
+        rootGroup->add(item);
     }
 
     return true;
 }
 
 
-void GroupManager::remove(TaskPtr task)
+void GroupManagerPrivate::removeTask(TaskPtr task)
 {
     //kDebug() << "remove: " << task->visibleName();
-    if (!d->geometryTasks.isEmpty()) {
-        d->geometryTasks.removeAll(task);
+    if (!geometryTasks.isEmpty()) {
+        geometryTasks.removeAll(task);
     }
 
-    TaskItem *item = d->itemList.value(task);
+    TaskItem *item = itemList.value(task);
     if (!item) {
         // this can happen if the window hasn't been caught previously, 
         // of it it is an ignored type such as a NET::Utility type window
@@ -284,7 +289,7 @@ void GroupManager::remove(TaskPtr task)
         item->parentGroup()->remove(item);
     }
 
-    emit itemRemoved(item);
+    emit q->itemRemoved(item);
     //the item must exist as long as the TaskPtr does because of activate calls so don't delete the item here, it will delete itself. We keep it in the itemlist because it may return
 }
 
@@ -404,10 +409,10 @@ void GroupManagerPrivate::taskChanged(TaskPtr task, ::TaskManager::TaskChanges c
 
     if (show) {
         //kDebug() << "add(task);";
-        q->add(task);
+        addTask(task);
     } else {
         //kDebug() << "remove(task);";
-        q->remove(task);
+        removeTask(task);
     }
 }
 
@@ -423,9 +428,9 @@ void GroupManagerPrivate::checkScreenChange()
     //kDebug();
     foreach (const TaskPtr &task, geometryTasks) {
         if (task->isOnScreen(currentScreen)) {
-            q->add(task);
+            addTask(task);
         } else {
-            q->remove(task);
+            removeTask(task);
         }
     }
 
