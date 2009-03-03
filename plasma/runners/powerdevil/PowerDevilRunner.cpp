@@ -151,7 +151,11 @@ void PowerDevilRunner::match( Plasma::RunnerContext &context )
 {
     QString term = context.query();
 
-    foreach( const QString &word, m_words ) {
+    foreach ( const QString &word, m_words ) {
+        if (!context.isValid()) {
+            return;
+        }
+
         if ( term.startsWith( word, Qt::CaseInsensitive ) ) {
             if ( word == i18nc( "Note this is a KRunner keyword", "power profile" ) ) {
                 foreach( const QString &profile, m_availableProfiles ) {

@@ -71,6 +71,10 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
         }
     }
 
+    if (!context.isValid()) {
+        return;
+    }
+
     // Search for applications which are executable and the term case-insensitive matches any of
     // * a substring of one of the keywords
     // * a substring of the GenericName field
@@ -83,6 +87,10 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
 
     //kDebug() << "got " << services.count() << " services from " << query;
     foreach (const KService::Ptr &service, services) {
+        if (!context.isValid()) {
+            return;
+        }
+
         if (service->noDisplay()) {
             continue;
         }

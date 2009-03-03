@@ -67,6 +67,10 @@ void RecentDocuments::match(Plasma::RunnerContext &context)
     }
 
     foreach (const QString &document, m_recentdocuments) {
+        if (!context.isValid()) {
+            return;
+        }
+
         if (document.contains(term, Qt::CaseInsensitive)) {
             KConfig _config( document, KConfig::SimpleConfig );
             KConfigGroup config(&_config, "Desktop Entry" );

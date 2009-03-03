@@ -67,8 +67,6 @@ void Nepomuk::SearchRunner::init()
 
     // we are way less important than others, mostly because we are slow
     setPriority( LowPriority );
-
-    m_matchCnt = 0;
 }
 
 
@@ -89,29 +87,18 @@ void Nepomuk::SearchRunner::match( Plasma::RunnerContext& context )
     // in way too many queries for the rather sluggy Nepomuk query service
     // Thus, we use a little timeout to make sure we do not query too often
 
-    // we remember the match count when starting to wait, so we do not start the query
-    // in case another call deprecated us (KRunner will simply rerun this method in another
-    // thread when the user input changes)
-    int c = ++m_matchCnt;
+    m_waiter.wait(&m_mutex, s_userActionTimeout);
+    m_mutex.unlock();
 
-    kDebug() << &context << "waiting for match cnt" << c;
-
-    m_waiter.wait( &m_mutex, s_userActionTimeout );
-    if( c != m_matchCnt ) {
-        kDebug() << &context << "deprecated match cnt" << c;
+    if (!context.isValid()) {
+        kDebug() << "deprecated search";
         // we are no longer the latest call
-        m_mutex.unlock();
         return;
     }
 
-    kDebug() << &context << "running match cnt" << c;
-
-    m_mutex.unlock();
-
     // no queries on very short strings
-    if( Search::QueryServiceClient::serviceAvailable() &&
-        context.query().count() >= 3 ) {
-        QueryClientWrapper queryWrapper( this, &context );
+    if (Search::QueryServiceClient::serviceAvailable() && context.query().count() >= 3) {
+        QueryClientWrapper queryWrapper(this, &context);
         queryWrapper.runQuery();
         m_waiter.wakeAll();
     }

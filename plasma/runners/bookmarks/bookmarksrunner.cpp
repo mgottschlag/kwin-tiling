@@ -61,6 +61,10 @@ void BookmarksRunner::match(Plasma::RunnerContext &context)
 
     KBookmark bookmark = bookmarkGroup.first();
     while (!bookmark.isNull()) {
+        if (!context.isValid()) {
+            return;
+        }
+
         if (bookmark.isGroup()) { // descend
             //kDebug () << "descending into" << bookmark.text();
             groups.push(bookmarkGroup);
@@ -68,6 +72,10 @@ void BookmarksRunner::match(Plasma::RunnerContext &context)
             bookmark = bookmarkGroup.first();
 
             while (bookmark.isNull() && !groups.isEmpty()) {
+                if (!context.isValid()) {
+                    return;
+                }
+
                 bookmark = bookmarkGroup;
                 bookmarkGroup = groups.pop();
                 bookmark = bookmarkGroup.next(bookmark);
@@ -113,6 +121,10 @@ void BookmarksRunner::match(Plasma::RunnerContext &context)
 
         bookmark = bookmarkGroup.next(bookmark);
         while (bookmark.isNull() && !groups.isEmpty()) {
+            if (!context.isValid()) {
+                return;
+            }
+
             bookmark = bookmarkGroup;
             bookmarkGroup = groups.pop();
             //kDebug() << "ascending from" << bookmark.text() << "to" << bookmarkGroup.text();

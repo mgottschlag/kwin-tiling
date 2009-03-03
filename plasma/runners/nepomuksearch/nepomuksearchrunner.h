@@ -48,8 +48,6 @@ namespace Nepomuk {
 
         QMutex m_mutex;
         QWaitCondition m_waiter;
-
-        int m_matchCnt;
     };
 }
 

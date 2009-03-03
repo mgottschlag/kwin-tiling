@@ -41,10 +41,11 @@ void PlacesRunner::match(Plasma::RunnerContext &context)
     const QString term = context.query();
     QList<Plasma::QueryMatch> matches;
 
-    if (term.length() < 3)
+    if (term.length() < 3) {
         return;
+    }
 
-    for (int i = 0; i <= m_filePlaces->rowCount();i++) {
+    for (int i = 0; i <= m_filePlaces->rowCount(); i++) {
         QModelIndex current_index = m_filePlaces->index(i, 0);
         Plasma::QueryMatch::Type type = Plasma::QueryMatch::NoMatch;
         qreal relevance = 0;
@@ -73,6 +74,7 @@ void PlacesRunner::match(Plasma::RunnerContext &context)
             matches << match;
         }
     }
+
     context.addMatches(term, matches);
 }
 

@@ -84,6 +84,10 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
     if (key != m_lastKey) {
         KService::List offers = serviceQuery("SearchProvider", QString("'%1' in Keys").arg(key));
 
+        if (!context.isValid()) {
+            return;
+        }
+
         if (offers.isEmpty()) {
             m_lastFailedKey = key;
             return;
