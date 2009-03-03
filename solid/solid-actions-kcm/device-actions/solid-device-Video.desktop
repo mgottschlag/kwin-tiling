@@ -1,30 +1,9 @@
 [Desktop Action objectName]
 Name=Object Name
-Name[fr]=Nom de l'objet
-Name[pt]=Nome do Objecto
-Name[pt_BR]=Nome do objeto
-Name[sv]=Objektnamn
-Name[uk]=Назва об'єкта
-Name[zh_TW]=物件名稱
 
 [Desktop Action supportedDrivers]
 Name=Supported Drivers
-Name[es]=Controladores soportados
-Name[et]=Toetatud draiverd
-Name[fr]=Pilotes pris en charge
-Name[ga]=Tiománaithe a dTacaítear Leo
-Name[ja]=サポートされているドライバ
-Name[nds]=Ünnerstütt Drievers
-Name[pt]=Controladores Suportados
-Name[pt_BR]=Drivers suportados
-Name[sv]=Drivrutiner som stöds
-Name[uk]=Підтримувані драйвери
-Name[zh_TW]=支援的驅動程式
 
 [Desktop Entry]
 Name=Video
-Name[pt]=Vídeo
-Name[pt_BR]=Vídeo
-Name[uk]=Відео
-Name[zh_TW]=影像
 X-KDE-Solid-Actions-Type=Video

@@ -1,53 +1,96 @@
 [Desktop Action canChangeFrequency]
 Name=Can Change Frequency
-Name[fr]=Peut modifier la fréquence
-Name[pt]=Frequência Variável
-Name[pt_BR]=Pode alterar frequentemente
-Name[sv]=Kan ändra frekvens
-Name[uk]=Може змінювати частоту
-Name[zh_TW]=可變更頻率
 
 [Desktop Action instructionSets]
 Name=Instruction Sets
-Name[fr]=Ensembles d'instructions
-Name[pt]=Conjuntos de Instruções
-Name[pt_BR]=Conjuntos de instruções
-Name[sv]=Instruktionsuppsättningar
-Name[uk]=Набори команд
-Name[zh_TW]=指令集
 
 [Desktop Action maxSpeed]
 Name=Max Speed
-Name[fr]=Vitesse maximale
-Name[pt]=Velocidade Máx
-Name[pt_BR]=Velocidade máxima
-Name[sv]=Maximal hastighet
-Name[uk]=Макс. швидкість
-Name[zh_TW]=最大速率
 
 [Desktop Action number]
 Name=Number
-Name[fr]=Nombre
-Name[pt]=Número
-Name[pt_BR]=Número
-Name[sv]=Antal
-Name[uk]=Кількість
-Name[zh_TW]=編號
 
 [Desktop Action objectName]
 Name=Object Name
-Name[fr]=Nom de l'objet
-Name[pt]=Nome do Objecto
-Name[pt_BR]=Nome do objeto
-Name[sv]=Objektnamn
-Name[uk]=Назва об'єкта
-Name[zh_TW]=物件名稱
 
 [Desktop Entry]
 Name=Processor
+Name[af]=Verwerker
+Name[ar]=المعالج
+Name[as]=সংসাধক
+Name[be]=Працэсар
+Name[be@latin]=Pracesar
+Name[bg]=Процесор
+Name[bn]=প্রসেসর
+Name[bn_IN]=প্রসেসর
+Name[br]=Kewerier
+Name[ca]=Processador
+Name[ca@valencia]=Processador
+Name[cs]=Procesor
+Name[csb]=Procesora
+Name[cy]=Prosesydd
+Name[de]=Prozessor
+Name[el]=Επεξεργαστής
+Name[eo]=Procesoro
+Name[es]=Procesador
+Name[et]=Protsessor
+Name[eu]=Prozesagailua
+Name[fa]=پردازنده
+Name[fi]=Prosessori
 Name[fr]=Processeur
+Name[fy]=Ferwurkingsienheid
+Name[ga]=Próiseálaí
+Name[gl]=Procesador
+Name[gu]=પ્રોસેસર
+Name[he]=מעבד
+Name[hi]=प्रोसेसर
+Name[hr]=Procesor
+Name[hsb]=procesor
+Name[hu]=Processzor
+Name[is]=Örgjörvi
+Name[it]=Processore
+Name[ja]=プロセッサ
+Name[ka]=პროცესორი
+Name[kk]=Процессор
+Name[km]=ប្រព័ន្ធ​​ដំណើរការ
+Name[kn]=ಸಂಸ್ಕಾರಕ
+Name[ko]=프로세서
+Name[ku]=Kiryarkar
+Name[lt]=Procesorius
+Name[lv]=Procesors
+Name[mai]=प्रोसेसर
+Name[mk]=Процесор
+Name[ml]=പ്രൊസസ്സര്‍
+Name[mr]=प्रोसेसर
+Name[ms]=Pemproses
+Name[nb]=Prosessor
+Name[nds]=Perzesser
+Name[ne]=प्रोसेसर
+Name[nn]=Prosessor
+Name[or]=ସଞ୍ଚାଳକ
+Name[pa]=ਪਰੋਸੈਸਰ
+Name[pl]=Procesor
 Name[pt]=Processador
 Name[pt_BR]=Processador
+Name[ro]=Procesor
+Name[ru]=Процессор
+Name[se]=Doaimmár
+Name[sk]=Procesor
+Name[sl]=Procesor
+Name[sr]=Процесор
+Name[sr@latin]=Procesor
+Name[ta]=ஆக்கி
+Name[te]=ప్రాసెసర్
+Name[tg]=Амалкард
+Name[th]=ตัวประมวลผล
+Name[tr]=İşlemci
 Name[uk]=Процесор
+Name[uz]=Protsessor
+Name[uz@cyrillic]=Процессор
+Name[vi]=Bộ xử lý
+Name[wa]=Processeu
+Name[x-test]=xxProcessorxx
+Name[xh]=Umqhubekekisi phambili
+Name[zh_CN]=处理器
 Name[zh_TW]=處理器
 X-KDE-Solid-Actions-Type=Processor

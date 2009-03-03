@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=System Monitor - RAM
+Name[et]=Süsteemi jälgija - RAM
 Name[ga]=Monatóir an Chórais - RAM
 Name[nds]=Systeemkieker - RAM
 Name[pt]=Monitor do Sistema - RAM
@@ -10,6 +11,7 @@ Name[sv]=Systemövervakare - Minne
 Name[uk]=Монітор системи — Пам’ять
 Name[zh_TW]=系統監視器─記憶體
 Comment=A RAM usage monitor
+Comment[et]=RAM-i kasutuse jälgija
 Comment[ga]=Monatóir úsáid RAM
 Comment[nds]=En Kieker för den RAM-Bruuk
 Comment[pt]=Um monitor da utilização da RAM
