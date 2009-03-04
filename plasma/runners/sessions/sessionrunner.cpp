@@ -62,7 +62,7 @@ void SessionRunner::matchCommands(QList<Plasma::QueryMatch> &matches, const QStr
                  term.compare(i18nc("restart computer command", "reboot"), Qt::CaseInsensitive) == 0) {
           Plasma::QueryMatch match(this);
           match.setText(i18n("Restart the computer"));
-          match.setIcon(KIcon("system-restart"));
+          match.setIcon(KIcon("system-reboot"));
           match.setData(RestartAction);
           match.setType(Plasma::QueryMatch::ExactMatch);
           match.setRelevance(0.9);

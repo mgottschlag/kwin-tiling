@@ -484,7 +484,7 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 	buttonlay->addSpacing( KDialog::spacingHint() );
 
 	KDMDelayedPushButton *btnReboot = new
-	KDMDelayedPushButton( KGuiItem( i18n("&Restart Computer"), "system-restart" ), this );
+	KDMDelayedPushButton( KGuiItem( i18n("&Restart Computer"), "system-reboot" ), this );
 	buttonlay->addWidget( btnReboot );
 	connect( btnReboot, SIGNAL(clicked()), SLOT(slotReboot()) );
 

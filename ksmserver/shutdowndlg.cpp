@@ -420,7 +420,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
         // Reboot
         m_btnReboot = new KSMPushButton( i18n("&Restart Computer"), this );
-        m_btnReboot->setPixmap(KIconLoader::global()->loadIcon("system-restart", KIconLoader::NoGroup, 32));
+        m_btnReboot->setPixmap(KIconLoader::global()->loadIcon("system-reboot", KIconLoader::NoGroup, 32));
         connect(m_btnReboot, SIGNAL(clicked()), SLOT(slotReboot()));
         buttonLayout->addWidget(m_btnReboot, Qt::AlignTop | Qt::AlignRight);
         if ( sdtype == KWorkSpace::ShutdownTypeReboot )

@@ -63,7 +63,7 @@ QStandardItem* LeaveModel::createStandardItem(const QString& url)
         item->setData(i18n("Turn off computer"), Kickoff::SubTitleRole);
     } else if (basename == "restart") {
         item->setText(i18nc("Restart computer", "Restart"));
-        item->setIcon(KIcon("system-restart"));
+        item->setIcon(KIcon("system-reboot"));
         item->setData(i18n("Restart computer"), Kickoff::SubTitleRole);
     } else if (basename == "savesession") {
         item->setText(i18n("Save Session"));
