@@ -72,7 +72,7 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
     m_layout = new DesktopLayout;
     m_layout->setAlignment(Qt::AlignTop|Qt::AlignLeft);
     m_layout->setPlacementSpacing(20);
-    m_layout->setScreenSpacing(5);
+    m_layout->setScreenSpacing(0);
     m_layout->setShiftingSpacing(0);
     m_layout->setTemporaryPlacement(true);
     m_layout->setVisibilityTolerance(0.5);
