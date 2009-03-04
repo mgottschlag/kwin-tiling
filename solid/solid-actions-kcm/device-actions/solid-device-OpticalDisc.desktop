@@ -1,42 +1,136 @@
 [Desktop Action appendable]
 Name=Appendable
+Name[et]=Lisatav
+Name[ga]=In-iarcheangailte
+Name[nds]=Nich afslaten
+Name[nl]=Uitbreidbaar
+Name[pt_BR]=Anexável
+Name[uk]=Додавання
+Name[zh_TW]=可附加
 
 [Desktop Action availableContent]
 Name=Available Content
+Name[et]=Sisuga
+Name[ga]=Ábhar Le Fáil
+Name[nds]=Verföögbor Inholt
+Name[nl]=Beschikbare inhoud
+Name[pt_BR]=Conteúdo disponível
+Name[uk]=Доступний вміст
+Name[zh_TW]=可用的內容
 
 [Desktop Action blank]
 Name=Blank
+Name[et]=Tühi
+Name[ga]=Folamh
+Name[nds]=Leddig
+Name[nl]=Leeg
+Name[pt_BR]=Vazio
+Name[uk]=Порожньо
+Name[zh_TW]=空白
 
 [Desktop Action capacity]
 Name=Capacity
+Name[et]=Mahtuvus
+Name[ga]=Toilleadh
+Name[nds]=Grött
+Name[nl]=Capaciteit
+Name[pt_BR]=Capacidade
+Name[uk]=Місткість
+Name[zh_TW]=空間
 
 [Desktop Action discType]
 Name=Disc Type
+Name[et]=Plaadi tüüp
+Name[ga]=Cineál an Diosca
+Name[nds]=Schiev-Typ
+Name[nl]=Schijftype
+Name[pt_BR]=Tipo de disco
+Name[uk]=Тип диска
+Name[zh_TW]=磁碟型態
 
 [Desktop Action fsType]
 Name=Fs Type
+Name[et]=Failisüsteemi tüüp
+Name[ga]=Cineál an Chórais Comhad
+Name[nds]=Dateisysteem-Typ
+Name[nl]=FS-type
+Name[pt_BR]=Tipo de sistema de arquivos
+Name[uk]=Тип ФС
+Name[zh_TW]=檔案系統型態
 
 [Desktop Action ignored]
 Name=Ignored
+Name[et]=Eiratav
+Name[ga]=Neamhaird Déanta De
+Name[nds]=Övergahn
+Name[nl]=Genegeerd
+Name[pt_BR]=Ignorado
+Name[uk]=Ігнорується
+Name[zh_TW]=忽略
 
 [Desktop Action label]
 Name=Label
+Name[et]=Pealdis
+Name[ga]=Lipéad
+Name[nds]=Beteker
+Name[pt_BR]=Rótulo
+Name[uk]=Мітка
+Name[zh_TW]=標籤
 
 [Desktop Action objectName]
 Name=Object Name
+Name[et]=Objekti nimi
+Name[ga]=Ainm Réada
+Name[nds]=Objektnaam
+Name[nl]=Objectnaam
+Name[pt_BR]=Nome do objeto
+Name[uk]=Назва об'єкта
+Name[zh_TW]=物件名稱
 
 [Desktop Action rewritable]
 Name=Rewritable
+Name[et]=Korduvkirjutatav
+Name[ga]=In-Athscríofa
+Name[nds]=Wedderschriefbor
+Name[nl]=Herschrijfbaar
+Name[pt_BR]=Regravável
+Name[uk]=Перезапис
+Name[zh_TW]=可覆寫
 
 [Desktop Action size]
 Name=Size
+Name[et]=Suurus
+Name[ga]=Méid
+Name[nds]=Grött
+Name[nl]=Grootte
+Name[pt_BR]=Tamanho
+Name[uk]=Розмір
+Name[zh_TW]=大小
 
 [Desktop Action usage]
 Name=Usage
+Name[et]=Kasutus
+Name[ga]=Úsáid
+Name[nds]=Bruuk
+Name[nl]=Gebruik
+Name[pt_BR]=Uso
+Name[uk]=Використання
+Name[zh_TW]=使用量
 
 [Desktop Action uuid]
 Name=Uuid
+Name[nds]=UUID
+Name[nl]=UUID
+Name[pt_BR]=UUID
+Name[zh_TW]=UUID
 
 [Desktop Entry]
 Name=Optical Disc
+Name[et]=Optiline plaat
+Name[ga]=Diosca Optúil
+Name[nds]=Optsch Schiev
+Name[nl]=Optische schijf
+Name[pt_BR]=Disco ótico
+Name[uk]=Оптичний диск
+Name[zh_TW]=光碟
 X-KDE-Solid-Actions-Type=OpticalDisc

@@ -1,12 +1,39 @@
 [Desktop Action objectName]
 Name=Object Name
+Name[et]=Objekti nimi
+Name[ga]=Ainm Réada
+Name[nds]=Objektnaam
+Name[nl]=Objectnaam
+Name[pt_BR]=Nome do objeto
+Name[uk]=Назва об'єкта
+Name[zh_TW]=物件名稱
 
 [Desktop Action supportedDrivers]
 Name=Supported Drivers
+Name[et]=Toetatud draiverid
+Name[ga]=Tiománaithe a dTacaítear Leo
+Name[nds]=Ünnerstütt Drievers
+Name[nl]=Ondersteunde stuurprogramma's
+Name[pt_BR]=Drivers suportados
+Name[uk]=Підтримувані драйвери
+Name[zh_TW]=支援的驅動程式
 
 [Desktop Action supportedProtocols]
 Name=Supported Protocols
+Name[et]=Toetatud protokollid
+Name[ga]=Prótacail a dTacaítear Leo
+Name[nds]=Ünnerstütt Protokollen
+Name[nl]=Ondersteunde protocollen
+Name[pt_BR]=Protocolos suportados
+Name[uk]=Підтримувані протоколи
+Name[zh_TW]=支援的協定
 
 [Desktop Entry]
 Name=Camera
+Name[et]=Kaamera
+Name[ga]=Ceamara
+Name[nds]=Kamera
+Name[pt_BR]=Câmera
+Name[uk]=Фотоапарат
+Name[zh_TW]=相機
 X-KDE-Solid-Actions-Type=Camera

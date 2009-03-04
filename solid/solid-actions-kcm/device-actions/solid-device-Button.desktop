@@ -1,14 +1,39 @@
 [Desktop Action hasState]
 Name=Has State
+Name[et]=Olekuga
+Name[ga]=Staid Aige
+Name[nds]=Hett en Status
+Name[nl]=Heeft status
+Name[uk]=Має стан
+Name[zh_TW]=有狀態
 
 [Desktop Action objectName]
 Name=Object Name
+Name[et]=Objekti nimi
+Name[ga]=Ainm Réada
+Name[nds]=Objektnaam
+Name[nl]=Objectnaam
+Name[pt_BR]=Nome do objeto
+Name[uk]=Назва об'єкта
+Name[zh_TW]=物件名稱
 
 [Desktop Action stateValue]
 Name=State Value
+Name[et]=Oleku väärtus
+Name[ga]=Luach na Staide
+Name[nds]=Statusweert
+Name[nl]=Waarde van status
+Name[uk]=Значення стану
+Name[zh_TW]=狀態值
 
 [Desktop Action type]
 Name=Type
+Name[et]=Tüüp
+Name[ga]=Cineál
+Name[nds]=Typ
+Name[pt_BR]=Tipo
+Name[uk]=Тип
+Name[zh_TW]=類型
 
 [Desktop Entry]
 Name=Button
@@ -21,7 +46,12 @@ Name[fy]=Knop
 Name[ga]=Cnaipe
 Name[hr]=Gumb
 Name[kn]=ಗುಂಡಿ
+Name[nds]=Knoop
 Name[ne]=बटन
+Name[nl]=Knop
+Name[pt_BR]=Botão
 Name[sl]=Gumb
+Name[uk]=Кнопка
 Name[vi]=Nút
+Name[zh_TW]=按鍵
 X-KDE-Solid-Actions-Type=Button

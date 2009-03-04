@@ -1,15 +1,48 @@
 [Desktop Action device]
 Name=Device
+Name[et]=Seade
+Name[ga]=Gléas
+Name[nds]=Reedschap
+Name[nl]=Apparaat
+Name[pt_BR]=Dispositivo
+Name[uk]=Пристрій
+Name[zh_TW]=裝置
 
 [Desktop Action major]
 Name=Major
+Name[et]=Põhiversioon
+Name[ga]=Príomh
+Name[nds]=Grötter
+Name[pt_BR]=Maior
+Name[uk]=Головний
+Name[zh_TW]=主要
 
 [Desktop Action minor]
 Name=Minor
+Name[et]=Alamversioon
+Name[ga]=Mion
+Name[nds]=Lütter
+Name[pt_BR]=Menor
+Name[uk]=Додатковий
+Name[zh_TW]=次要
 
 [Desktop Action objectName]
 Name=Object Name
+Name[et]=Objekti nimi
+Name[ga]=Ainm Réada
+Name[nds]=Objektnaam
+Name[nl]=Objectnaam
+Name[pt_BR]=Nome do objeto
+Name[uk]=Назва об'єкта
+Name[zh_TW]=物件名稱
 
 [Desktop Entry]
 Name=Block
+Name[et]=Plokk
+Name[ga]=Bloc
+Name[nds]=Blockeren
+Name[nl]=Blok
+Name[pt_BR]=Bloco
+Name[uk]=Блоковий
+Name[zh_TW]=區塊
 X-KDE-Solid-Actions-Type=Block

@@ -1,21 +1,69 @@
 [Desktop Action chargePercent]
 Name=Charge Percent
+Name[et]=Täituvuse protsent
+Name[ga]=Céatadán Luchtaithe
+Name[nds]=Oplaadperzent
+Name[nl]=Ladingspercentage
+Name[pt_BR]=Porcentagem de carga
+Name[uk]=Рівень заряду
+Name[zh_TW]=充電百分比
 
 [Desktop Action chargeState]
 Name=Charge State
+Name[et]=Täituvuse olek
+Name[ga]=Staid Luchtaithe
+Name[nds]=Oplaadtostand
+Name[nl]=Ladingsstatus
+Name[pt_BR]=Estado da carga
+Name[uk]=Стан зарядженості
+Name[zh_TW]=充電狀態
 
 [Desktop Action objectName]
 Name=Object Name
+Name[et]=Objekti nimi
+Name[ga]=Ainm Réada
+Name[nds]=Objektnaam
+Name[nl]=Objectnaam
+Name[pt_BR]=Nome do objeto
+Name[uk]=Назва об'єкта
+Name[zh_TW]=物件名稱
 
 [Desktop Action plugged]
 Name=Plugged
+Name[et]=Ühendatud
+Name[ga]=Plugáilte
+Name[nds]=Tokoppelt
+Name[nl]=Ingeplugd
+Name[pt_BR]=Conectado
+Name[uk]=З’єднано
+Name[zh_TW]=已插入
 
 [Desktop Action rechargeable]
 Name=Rechargeable
+Name[et]=Laaditav
+Name[ga]=In-Athluchtaithe
+Name[nds]=Wedderlaadbor
+Name[nl]=Herlaadbaar
+Name[pt_BR]=Recarregável
+Name[uk]=Перезарядка
+Name[zh_TW]=可重新充電
 
 [Desktop Action type]
 Name=Type
+Name[et]=Tüüp
+Name[ga]=Cineál
+Name[nds]=Typ
+Name[pt_BR]=Tipo
+Name[uk]=Тип
+Name[zh_TW]=類型
 
 [Desktop Entry]
 Name=Battery
+Name[et]=Aku
+Name[ga]=Cadhnra
+Name[nds]=Batterie
+Name[nl]=Batterij
+Name[pt_BR]=Bateria
+Name[uk]=Акумулятор
+Name[zh_TW]=電池
 X-KDE-Solid-Actions-Type=Battery

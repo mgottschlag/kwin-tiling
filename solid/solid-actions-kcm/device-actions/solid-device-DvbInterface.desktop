@@ -1,18 +1,60 @@
 [Desktop Action device]
 Name=Device
+Name[et]=Seade
+Name[ga]=Gléas
+Name[nds]=Reedschap
+Name[nl]=Apparaat
+Name[pt_BR]=Dispositivo
+Name[uk]=Пристрій
+Name[zh_TW]=裝置
 
 [Desktop Action deviceAdapter]
 Name=Device Adapter
+Name[et]=Seadme adapter
+Name[ga]=Cuibheoir Gléis
+Name[nds]=Reedschap
+Name[nl]=Apparaatadapter
+Name[pt_BR]=Adaptador de dispositivo
+Name[uk]=Адаптер пристрою
+Name[zh_TW]=裝置接合器
 
 [Desktop Action deviceIndex]
 Name=Device Index
+Name[et]=Seadme indeks
+Name[ga]=Innéacs Gléis
+Name[nds]=Reedschap-Index
+Name[nl]=Apparaatindex
+Name[pt_BR]=Índice do dispositivo
+Name[uk]=Індекс пристрою
+Name[zh_TW]=裝置索引
 
 [Desktop Action deviceType]
 Name=Device Type
+Name[et]=Seadme tüüp
+Name[ga]=Cineál Gléis
+Name[nds]=Reedschaptyp
+Name[nl]=Apparaattype
+Name[pt_BR]=Tipo de dispositivo
+Name[uk]=Тип пристрою
+Name[zh_TW]=裝置類型
 
 [Desktop Action objectName]
 Name=Object Name
+Name[et]=Objekti nimi
+Name[ga]=Ainm Réada
+Name[nds]=Objektnaam
+Name[nl]=Objectnaam
+Name[pt_BR]=Nome do objeto
+Name[uk]=Назва об'єкта
+Name[zh_TW]=物件名稱
 
 [Desktop Entry]
 Name=Dvb Interface
+Name[et]=DVB liides
+Name[ga]=Comhéadan Dvb
+Name[nds]=DVB-Koppelsteed
+Name[nl]=Dvb-interface
+Name[pt_BR]=Interface DVB
+Name[uk]=Інтерфейс DVB
+Name[zh_TW]=DVB 介面
 X-KDE-Solid-Actions-Type=DvbInterface

@@ -1,30 +1,94 @@
 [Desktop Action bus]
 Name=Bus
+Name[et]=Siin
+Name[pt_BR]=Barramento
+Name[uk]=Шина
+Name[zh_TW]=匯流排
 
 [Desktop Action driveType]
 Name=Drive Type
+Name[et]=Seadme tüüp
+Name[ga]=Cineál an Tiomántáin
+Name[nds]=Loopwark-Typ
+Name[nl]=Apparaattype
+Name[uk]=Тип пристрою
+Name[zh_TW]=磁碟型態
 
 [Desktop Action hotpluggable]
 Name=Hotpluggable
+Name[et]=Töö ajal ühendatav
+Name[ga]=Inphlugáilte
+Name[nds]=Jümmers tokoppelbor
+Name[nl]=Hotplugbaar
+Name[uk]=«Гаряче» з’єднання
+Name[zh_TW]=可熱插拔
 
 [Desktop Action objectName]
 Name=Object Name
+Name[et]=Objekti nimi
+Name[ga]=Ainm Réada
+Name[nds]=Objektnaam
+Name[nl]=Objectnaam
+Name[pt_BR]=Nome do objeto
+Name[uk]=Назва об'єкта
+Name[zh_TW]=物件名稱
 
 [Desktop Action readSpeed]
 Name=Read Speed
+Name[et]=Lugemiskiirus
+Name[ga]=Luas Léite
+Name[nds]=Leesgauigkeit
+Name[nl]=Leessnelheid
+Name[pt_BR]=Velocidade de leitura
+Name[uk]=Швидкість читання
+Name[zh_TW]=讀取速度
 
 [Desktop Action removable]
 Name=Removable
+Name[et]=Eemaldatav
+Name[ga]=Inbhainte
+Name[nds]=Tuuschbor
+Name[nl]=Verwijderbaar
+Name[pt_BR]=Removível
+Name[uk]=Змінний пристрій
+Name[zh_TW]=可移除
 
 [Desktop Action supportedMedia]
 Name=Supported Media
+Name[et]=Toetatud meedia
+Name[ga]=Meáin a dTacaítear Leo
+Name[nds]=Ünnerstütt Schieven
+Name[nl]=Ondersteunde media
+Name[pt_BR]=Mídia suportada
+Name[uk]=Підтримувані носії
+Name[zh_TW]=支援的媒體
 
 [Desktop Action writeSpeed]
 Name=Write Speed
+Name[et]=Kirjutamiskiirus
+Name[ga]=Luas Scríofa
+Name[nds]=Schrief-Gauigkeit
+Name[nl]=Schrijfsnelheid
+Name[pt_BR]=Velocidade de gravação
+Name[uk]=Швидкість запису
+Name[zh_TW]=寫入速度
 
 [Desktop Action writeSpeeds]
 Name=Write Speeds
+Name[et]=Kirjutamiskiirus
+Name[ga]=Luasanna Scríofa
+Name[nds]=Schrief-Gauigkeiten
+Name[nl]=Schrijfsnelheden
+Name[uk]=Швидкості запису
+Name[zh_TW]=寫入速度
 
 [Desktop Entry]
 Name=Optical Drive
+Name[et]=Optiline seade
+Name[ga]=Tiomántán Optúil
+Name[nds]=Optsch Loopwark
+Name[nl]=Optische apparaat
+Name[pt_BR]=Drive ótico
+Name[uk]=Пристрій читання оптичних дисків
+Name[zh_TW]=光碟機
 X-KDE-Solid-Actions-Type=OpticalDrive

@@ -1,15 +1,46 @@
 [Desktop Action driverHandle]
 Name=Driver Handle
+Name[et]=Draiveri pide
+Name[ga]=Hanla an Tiománaí
+Name[nds]=Drievergreep
+Name[nl]=Stuurprogrammahandvat
+Name[uk]=Обробка драйвером
+Name[zh_TW]=驅動程式處理
 
 [Desktop Action objectName]
 Name=Object Name
+Name[et]=Objekti nimi
+Name[ga]=Ainm Réada
+Name[nds]=Objektnaam
+Name[nl]=Objectnaam
+Name[pt_BR]=Nome do objeto
+Name[uk]=Назва об'єкта
+Name[zh_TW]=物件名稱
 
 [Desktop Action port]
 Name=Port
+Name[nl]=Poort
+Name[pt_BR]=Porta
+Name[uk]=Порт
+Name[zh_TW]=連接埠
 
 [Desktop Action serialType]
 Name=Serial Type
+Name[et]=Jadaliidese tüüp
+Name[ga]=Cineál Srathach
+Name[nds]=Reegtyp
+Name[nl]=Serieeltype
+Name[pt_BR]=Tipo serial
+Name[uk]=Послідовний тип
+Name[zh_TW]=序列類型
 
 [Desktop Entry]
 Name=Serial Interface
+Name[et]=Jadaliides
+Name[ga]=Comhéadan Srathach
+Name[nds]=Seriell Koppelsteed
+Name[nl]=Serieel interface
+Name[pt_BR]=Interface serial
+Name[uk]=Послідовний інтерфейс
+Name[zh_TW]=序列介面
 X-KDE-Solid-Actions-Type=SerialInterface
