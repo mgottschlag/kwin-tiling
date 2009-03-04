@@ -29,7 +29,7 @@
 #include "plasma/wallpaper.h"
 
 
-class ScreenPreviewWidgetPrivate : public QWidget
+class ScreenPreviewWidgetPrivate
 {
 public:
     ScreenPreviewWidgetPrivate(ScreenPreviewWidget *screen)
@@ -45,12 +45,33 @@ public:
         q->update(rect.toRect().translated(q->previewRect().topLeft()));
     }
 
+    void updateScreenGraphics()
+    {
+        QRect bounds(QPoint(0,0), QSize(q->size().width(), q->height() - screenGraphics->elementSize("base").height() + screenGraphics->marginSize(Plasma::BottomMargin)));
+
+        QSize monitorSize(q->size().width(), q->size().width()/ratio);
+
+        monitorSize.scale(bounds.size(), Qt::KeepAspectRatio);
+
+        screenGraphics->resizeFrame(monitorRect.size());
+
+        previewRect = screenGraphics->contentsRect().toRect();
+        previewRect.moveCenter(bounds.center());
+        monitorRect = QRect(QPoint(0,0), monitorSize);
+        monitorRect.moveCenter(bounds.center());
+
+        if (wallpaper) {
+            wallpaper->setBoundingRect(QRect(QPoint(0,0), previewRect.size()));
+        }
+    }
+
     ScreenPreviewWidget *q;
     Plasma::Wallpaper* wallpaper;
     Plasma::FrameSvg *screenGraphics;
     QPixmap preview;
-    QSize monitorSize;
+    QRect monitorRect;
     qreal ratio;
+    QRect previewRect;
 };
 
 ScreenPreviewWidget::ScreenPreviewWidget(QWidget *parent)
@@ -89,6 +110,7 @@ void ScreenPreviewWidget::setPreview(Plasma::Wallpaper* wallpaper)
 void ScreenPreviewWidget::setRatio(const qreal ratio)
 {
     d->ratio = ratio;
+    d->updateScreenGraphics();
 }
 
 qreal ScreenPreviewWidget::ratio() const
@@ -98,29 +120,23 @@ qreal ScreenPreviewWidget::ratio() const
 
 QRect ScreenPreviewWidget::previewRect() const
 {
-    return d->screenGraphics->contentsRect().toRect();
+    return d->previewRect;
 }
 
 void ScreenPreviewWidget::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
 
-    d->monitorSize = QSize(size().width(), size().width()/d->ratio);
-
-    d->screenGraphics->resizeFrame(d->monitorSize);
-
-    if (d->wallpaper) {
-        d->wallpaper->setBoundingRect(QRect(QPoint(0,0), previewRect().size()));
-    }
+    d->updateScreenGraphics();
 }
 
 void ScreenPreviewWidget::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
-    QPoint standPosition(d->monitorSize.width()/2 - d->screenGraphics->elementSize("base").width()/2, d->screenGraphics->contentsRect().bottom());
+    QPoint standPosition(d->monitorRect.center().x() - d->screenGraphics->elementSize("base").width()/2, d->screenGraphics->contentsRect().bottom());
 
     d->screenGraphics->paint(&painter, QRect(standPosition, d->screenGraphics->elementSize("base")), "base");
-    d->screenGraphics->paintFrame(&painter);
+    d->screenGraphics->paintFrame(&painter, d->monitorRect.topLeft());
 
     painter.save();
     if (d->wallpaper) {
@@ -129,11 +145,24 @@ void ScreenPreviewWidget::paintEvent(QPaintEvent *event)
         d->wallpaper->paint(&painter, event->rect().translated(-previewRect().topLeft()));
     } else if (!d->preview.isNull()) {
         painter.setRenderHint(QPainter::SmoothPixmapTransform);
-        painter.drawPixmap(d->screenGraphics->contentsRect(), d->preview, d->preview.rect());
+        painter.drawPixmap(d->previewRect, d->preview, d->preview.rect());
     }
     painter.restore();
 
-    d->screenGraphics->paint(&painter, d->screenGraphics->contentsRect(), "glass");
+    d->screenGraphics->paint(&painter, d->previewRect, "glass");
+}
+
+void ScreenPreviewWidget::dropEvent(QDropEvent *e)
+{
+    if (!KUrl::List::canDecode(e->mimeData()))
+        return;
+
+    const KUrl::List uris(KUrl::List::fromMimeData(e->mimeData()));
+    if (uris.count() > 0) {
+        // TODO: Download remote file
+        if (uris.first().isLocalFile())
+           emit imageDropped(uris.first().path());
+    }
 }
 
 #include "screenpreviewwidget.moc"

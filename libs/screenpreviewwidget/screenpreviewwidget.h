@@ -51,8 +51,12 @@ public:
     QRect previewRect() const;
 
 protected:
-    void resizeEvent(QResizeEvent *e);
+    void resizeEvent(QResizeEvent *event);
     void paintEvent(QPaintEvent *event);
+    virtual void dropEvent(QDropEvent *event);
+
+Q_SIGNALS:
+    void imageDropped(const QString &);
 
 private:
     ScreenPreviewWidgetPrivate *const d;
