@@ -114,13 +114,13 @@ KConfigXt XML -> main.xml
 Accessing Configuration Data
 ----------------------------
 activeConfig
-readConfig(string)
+plasmoid.readConfig(string)
 WriteConfig(string, var)
 
 User Customization
 ------------------
 Qt UI file
-configAccepted()
+configChanged()
 
 Other Functions and Classes
 ===========================
