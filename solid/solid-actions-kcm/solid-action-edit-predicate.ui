@@ -238,7 +238,7 @@
           </item>
           <item>
            <property name="text" >
-            <string>Doesn't Equal</string>
+            <string>Does Not Equal</string>
            </property>
           </item>
          </widget>

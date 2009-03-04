@@ -215,7 +215,7 @@ void SolidActions::acceptActionChanges()
     // We need to ensure that they are all valid before applying
     if (iconName.isEmpty() || actionName.isEmpty() || command.isEmpty() || !Solid::Predicate::fromString(predicate).isValid()) {
         editUi->show();
-        KMessageBox::error(this, i18n("It appears that the action name, command, icon or condition are not valid\nTherefore changes will not be applied"), i18n("Invalid action"));
+        KMessageBox::error(this, i18n("It appears that the action name, command, icon or condition are not valid.\nTherefore, changes will not be applied."), i18n("Invalid action"));
         return;
     }
     // apply the changes

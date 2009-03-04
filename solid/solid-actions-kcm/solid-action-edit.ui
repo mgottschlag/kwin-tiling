@@ -70,7 +70,7 @@ This can include any or all of the following case insensitive expands:
 
 %f: The mountpoint for the device - Storage Access devices only
 %d: Path to the device node - Block devices only
-%i: The devices identifier</string>
+%i: The identifier of the device</string>
        </property>
       </widget>
      </item>
