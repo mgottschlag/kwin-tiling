@@ -102,7 +102,7 @@ void LocationsRunner::match(Plasma::RunnerContext &context)
                 term.contains(QRegExp("^[a-zA-Z0-9\\-\\.]+\\.[a-zA-Z]{2,6}")))) {
         KUrl url(term);
         processUrl(url, term);
-        QMutexLocker lock(bigLock());
+
         if (!KProtocolInfo::isKnownProtocol(url.protocol())) {
             return;
         }

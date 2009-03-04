@@ -97,8 +97,6 @@ void Nepomuk::QueryClientWrapper::slotNewEntries( const QList<Nepomuk::Search::R
 
         Nepomuk::Resource res( result.resourceUri() );
 
-        // we need to protect KMimeType which is not thread-safe, Nepomuk::Resource::genericIcon() also uses it
-        Plasma::AbstractRunner::bigLock()->lock();
         QString type;
         if( res.hasType( Soprano::Vocabulary::Xesam::File() ) ||
             res.resourceUri().scheme() == "file" ) {
@@ -114,7 +112,6 @@ void Nepomuk::QueryClientWrapper::slotNewEntries( const QList<Nepomuk::Search::R
                               type ) );
         QString s = res.genericIcon();
         match.setIcon( KIcon( s.isEmpty() ? QString("nepomuk") : s ) );
-        Plasma::AbstractRunner::bigLock()->unlock();
 
         match.setData( qVariantFromValue( res ) );
 

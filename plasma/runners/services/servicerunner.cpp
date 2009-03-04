@@ -47,7 +47,6 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
         return;
     }
 
-    QMutexLocker lock(bigLock());
     // Search for applications which are executable and case-insensitively match the search term
     // See http://techbase.kde.org/Development/Tutorials/Services/Traders#The_KTrader_Query_Language
     // if the following is unclear to you.
@@ -158,7 +157,6 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
 void ServiceRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match)
 {
     Q_UNUSED(context);
-    QMutexLocker lock(bigLock());
     KService::Ptr service = KService::serviceByStorageId(match.data().toString());
     if (service) {
         KRun::run(*service, KUrl::List(), 0);
