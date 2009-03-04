@@ -64,7 +64,7 @@ void GlobalShortcutsModule::defaults()
 {
     switch (KMessageBox::questionYesNoCancel(
                     this,
-                    i18n("You are about to reset all shortcuts to their default value!"),
+                    i18n("You are about to reset all shortcuts to their default values."),
                     i18n("Reset to defaults"),
                     KGuiItem(i18n("Current Component")),
                     KGuiItem(i18n("All Components"))))
