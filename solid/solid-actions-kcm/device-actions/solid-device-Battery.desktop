@@ -5,6 +5,8 @@ Name[ga]=Céatadán Luchtaithe
 Name[nds]=Oplaadperzent
 Name[nl]=Ladingspercentage
 Name[pt_BR]=Porcentagem de carga
+Name[ro]=Procentaj încărcare
+Name[sv]=Laddningsprocent
 Name[uk]=Рівень заряду
 Name[zh_TW]=充電百分比
 
@@ -15,6 +17,8 @@ Name[ga]=Staid Luchtaithe
 Name[nds]=Oplaadtostand
 Name[nl]=Ladingsstatus
 Name[pt_BR]=Estado da carga
+Name[ro]=Starea încărcării
+Name[sv]=Laddningstillstånd
 Name[uk]=Стан зарядженості
 Name[zh_TW]=充電狀態
 
@@ -25,6 +29,8 @@ Name[ga]=Ainm Réada
 Name[nds]=Objektnaam
 Name[nl]=Objectnaam
 Name[pt_BR]=Nome do objeto
+Name[ro]=Denumire obiect
+Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
 Name[zh_TW]=物件名稱
 
@@ -35,6 +41,8 @@ Name[ga]=Plugáilte
 Name[nds]=Tokoppelt
 Name[nl]=Ingeplugd
 Name[pt_BR]=Conectado
+Name[ro]=Atașat
+Name[sv]=Anslutet
 Name[uk]=З’єднано
 Name[zh_TW]=已插入
 
@@ -45,6 +53,8 @@ Name[ga]=In-Athluchtaithe
 Name[nds]=Wedderlaadbor
 Name[nl]=Herlaadbaar
 Name[pt_BR]=Recarregável
+Name[ro]=Reîncărcabil
+Name[sv]=Uppladdningsbart
 Name[uk]=Перезарядка
 Name[zh_TW]=可重新充電
 
@@ -54,6 +64,8 @@ Name[et]=Tüüp
 Name[ga]=Cineál
 Name[nds]=Typ
 Name[pt_BR]=Tipo
+Name[ro]=Tip
+Name[sv]=Typ
 Name[uk]=Тип
 Name[zh_TW]=類型
 
@@ -64,6 +76,8 @@ Name[ga]=Cadhnra
 Name[nds]=Batterie
 Name[nl]=Batterij
 Name[pt_BR]=Bateria
+Name[ro]=Acumulator
+Name[sv]=Batteri
 Name[uk]=Акумулятор
 Name[zh_TW]=電池
 X-KDE-Solid-Actions-Type=Battery

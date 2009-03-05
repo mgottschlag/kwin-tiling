@@ -5,6 +5,8 @@ Name[ga]=Seoladh Crua-Earraí
 Name[nds]=Hardware-Adress
 Name[nl]=HW-adres
 Name[pt_BR]=Endereço de hardware
+Name[ro]=Adresă fizică
+Name[sv]=Hårdvaruadress
 Name[uk]=Апар. адреса
 Name[zh_TW]=硬體位址
 
@@ -14,6 +16,8 @@ Name[et]=Liidese nimi
 Name[ga]=Ainm an Chomhéadain
 Name[nds]=Koppelsteed-Naam
 Name[nl]=Interfacenaam
+Name[ro]=Denumire interfață
+Name[sv]=Gränssnittsnamn
 Name[uk]=Назва Iface
 Name[zh_TW]=介面名稱
 
@@ -24,6 +28,8 @@ Name[ga]=Seoladh MAC
 Name[nds]=Mac-Adress
 Name[nl]=MAC-adres
 Name[pt_BR]=Endereço MAC
+Name[ro]=Adresă MAC
+Name[sv]=MAC-adress
 Name[uk]=Mac-адреса
 Name[zh_TW]=Mac 位址
 
@@ -34,6 +40,8 @@ Name[ga]=Ainm Réada
 Name[nds]=Objektnaam
 Name[nl]=Objectnaam
 Name[pt_BR]=Nome do objeto
+Name[ro]=Denumire obiect
+Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
 Name[zh_TW]=物件名稱
 
@@ -44,6 +52,8 @@ Name[ga]=Gan Sreang
 Name[nds]=Funk
 Name[nl]=Draadloos
 Name[pt_BR]=Sem fio
+Name[ro]=Fără fir
+Name[sv]=Trådlöst
 Name[uk]=Бездротове
 Name[zh_TW]=無線
 
@@ -54,6 +64,8 @@ Name[ga]=Comhéadan Líonra
 Name[nds]=Nettwark-Koppelsteed
 Name[nl]=Netwerkinterface
 Name[pt_BR]=Interface de rede
+Name[ro]=Interfață de rețea
+Name[sv]=Nätverksgränssnitt
 Name[uk]=Мережний інтерфейс
 Name[zh_TW]=網路介面
 X-KDE-Solid-Actions-Type=NetworkInterface

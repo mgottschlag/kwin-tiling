@@ -5,6 +5,8 @@ Name[ga]=Gléas
 Name[nds]=Reedschap
 Name[nl]=Apparaat
 Name[pt_BR]=Dispositivo
+Name[ro]=Dispozitiv
+Name[sv]=Enhet
 Name[uk]=Пристрій
 Name[zh_TW]=裝置
 
@@ -15,6 +17,8 @@ Name[ga]=Cuibheoir Gléis
 Name[nds]=Reedschap
 Name[nl]=Apparaatadapter
 Name[pt_BR]=Adaptador de dispositivo
+Name[ro]=Adaptor dispozitiv
+Name[sv]=Enhetsadapter
 Name[uk]=Адаптер пристрою
 Name[zh_TW]=裝置接合器
 
@@ -25,6 +29,8 @@ Name[ga]=Innéacs Gléis
 Name[nds]=Reedschap-Index
 Name[nl]=Apparaatindex
 Name[pt_BR]=Índice do dispositivo
+Name[ro]=Index dispozitiv
+Name[sv]=Enhetsindex
 Name[uk]=Індекс пристрою
 Name[zh_TW]=裝置索引
 
@@ -35,6 +41,8 @@ Name[ga]=Cineál Gléis
 Name[nds]=Reedschaptyp
 Name[nl]=Apparaattype
 Name[pt_BR]=Tipo de dispositivo
+Name[ro]=Tip dispozitiv
+Name[sv]=Enhetstyp
 Name[uk]=Тип пристрою
 Name[zh_TW]=裝置類型
 
@@ -45,6 +53,8 @@ Name[ga]=Ainm Réada
 Name[nds]=Objektnaam
 Name[nl]=Objectnaam
 Name[pt_BR]=Nome do objeto
+Name[ro]=Denumire obiect
+Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
 Name[zh_TW]=物件名稱
 
@@ -55,6 +65,8 @@ Name[ga]=Comhéadan Dvb
 Name[nds]=DVB-Koppelsteed
 Name[nl]=Dvb-interface
 Name[pt_BR]=Interface DVB
+Name[ro]=Interfață Dvb
+Name[sv]=Dvb-gränssnitt
 Name[uk]=Інтерфейс DVB
 Name[zh_TW]=DVB 介面
 X-KDE-Solid-Actions-Type=DvbInterface

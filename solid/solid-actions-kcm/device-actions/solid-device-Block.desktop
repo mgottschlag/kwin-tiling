@@ -5,6 +5,8 @@ Name[ga]=Gléas
 Name[nds]=Reedschap
 Name[nl]=Apparaat
 Name[pt_BR]=Dispositivo
+Name[ro]=Dispozitiv
+Name[sv]=Enhet
 Name[uk]=Пристрій
 Name[zh_TW]=裝置
 
@@ -14,6 +16,7 @@ Name[et]=Põhiversioon
 Name[ga]=Príomh
 Name[nds]=Grötter
 Name[pt_BR]=Maior
+Name[sv]=Huvudnummer
 Name[uk]=Головний
 Name[zh_TW]=主要
 
@@ -23,6 +26,7 @@ Name[et]=Alamversioon
 Name[ga]=Mion
 Name[nds]=Lütter
 Name[pt_BR]=Menor
+Name[sv]=Delnummer
 Name[uk]=Додатковий
 Name[zh_TW]=次要
 
@@ -33,6 +37,8 @@ Name[ga]=Ainm Réada
 Name[nds]=Objektnaam
 Name[nl]=Objectnaam
 Name[pt_BR]=Nome do objeto
+Name[ro]=Denumire obiect
+Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
 Name[zh_TW]=物件名稱
 
@@ -43,6 +49,7 @@ Name[ga]=Bloc
 Name[nds]=Blockeren
 Name[nl]=Blok
 Name[pt_BR]=Bloco
+Name[ro]=Bloc
 Name[uk]=Блоковий
 Name[zh_TW]=區塊
 X-KDE-Solid-Actions-Type=Block

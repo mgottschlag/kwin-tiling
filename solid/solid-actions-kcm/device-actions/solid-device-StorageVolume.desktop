@@ -5,6 +5,8 @@ Name[ga]=Cineál an Chórais Comhad
 Name[nds]=Dateisysteem-Typ
 Name[nl]=FS-type
 Name[pt_BR]=Tipo de sistema de arquivos
+Name[ro]=Tipul SF
+Name[sv]=Filsystemtyp
 Name[uk]=Тип ФС
 Name[zh_TW]=檔案系統型態
 
@@ -15,6 +17,8 @@ Name[ga]=Neamhaird Déanta De
 Name[nds]=Övergahn
 Name[nl]=Genegeerd
 Name[pt_BR]=Ignorado
+Name[ro]=Ignorat
+Name[sv]=Ignorerad
 Name[uk]=Ігнорується
 Name[zh_TW]=忽略
 
@@ -24,6 +28,8 @@ Name[et]=Pealdis
 Name[ga]=Lipéad
 Name[nds]=Beteker
 Name[pt_BR]=Rótulo
+Name[ro]=Etichetă
+Name[sv]=Etikett
 Name[uk]=Мітка
 Name[zh_TW]=標籤
 
@@ -34,6 +40,8 @@ Name[ga]=Ainm Réada
 Name[nds]=Objektnaam
 Name[nl]=Objectnaam
 Name[pt_BR]=Nome do objeto
+Name[ro]=Denumire obiect
+Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
 Name[zh_TW]=物件名稱
 
@@ -44,6 +52,8 @@ Name[ga]=Méid
 Name[nds]=Grött
 Name[nl]=Grootte
 Name[pt_BR]=Tamanho
+Name[ro]=Dimensiune
+Name[sv]=Storlek
 Name[uk]=Розмір
 Name[zh_TW]=大小
 
@@ -54,6 +64,8 @@ Name[ga]=Úsáid
 Name[nds]=Bruuk
 Name[nl]=Gebruik
 Name[pt_BR]=Uso
+Name[ro]=Utilizare
+Name[sv]=Användning
 Name[uk]=Використання
 Name[zh_TW]=使用量
 
@@ -70,6 +82,8 @@ Name[et]=Salvesti
 Name[ga]=Imleabhar Stórais
 Name[nds]=Spiekermedium
 Name[nl]=Opslagvolume
+Name[ro]=Volum de stocare
+Name[sv]=Lagringsvolym
 Name[uk]=Том зберігання даних
 Name[zh_TW]=儲存容量
 X-KDE-Solid-Actions-Type=StorageVolume

@@ -4,6 +4,8 @@ Name[et]=Muudetava sagedusega
 Name[ga]=Is Féidir Minicíocht a Athrú
 Name[nds]=Kann Frequenz wesseln
 Name[nl]=Kan de frequentie wijzigen
+Name[ro]=Poate schimba frecvența
+Name[sv]=Kan ändra frekvens
 Name[uk]=Може змінювати частоту
 Name[zh_TW]=可變更頻率
 
@@ -13,6 +15,8 @@ Name[et]=Käsustikud
 Name[ga]=Tacair Treoracha
 Name[nds]=Anwiesen-Setten
 Name[nl]=Instructieset
+Name[ro]=Seturi de instrucțiuni
+Name[sv]=Instruktionsuppsättningar
 Name[uk]=Набори команд
 Name[zh_TW]=指令集
 
@@ -23,6 +27,8 @@ Name[ga]=Uasluas
 Name[nds]=Hööchst Gauigkeit
 Name[nl]=Maximale snelheid
 Name[pt_BR]=Velocidade máxima
+Name[ro]=Viteză maximă
+Name[sv]=Maximal hastighet
 Name[uk]=Макс. швидкість
 Name[zh_TW]=最大速率
 
@@ -33,6 +39,8 @@ Name[ga]=Uimhir
 Name[nds]=Nummer
 Name[nl]=Nummer
 Name[pt_BR]=Número
+Name[ro]=Număr
+Name[sv]=Antal
 Name[uk]=Номер
 Name[zh_TW]=數字
 
@@ -43,6 +51,8 @@ Name[ga]=Ainm Réada
 Name[nds]=Objektnaam
 Name[nl]=Objectnaam
 Name[pt_BR]=Nome do objeto
+Name[ro]=Denumire obiect
+Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
 Name[zh_TW]=物件名稱
 

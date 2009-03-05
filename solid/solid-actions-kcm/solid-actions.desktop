@@ -16,6 +16,8 @@ Name[ga]=Gníomhartha Gléis
 Name[nds]=Reedschap-Akschonen
 Name[nl]=Apparaatacties
 Name[pt_BR]=Ações do dispositivo
+Name[ro]=Acțiuni dispozitiv
+Name[sv]=Enhetsåtgärder
 Name[uk]=Дії з пристроями
 Name[zh_TW]=裝置動作
 
@@ -24,6 +26,8 @@ Comment[et]=Seadistamistööriist toimingute haldamiseks, mida kasutaja saab tar
 Comment[ga]=Uirlis chumraíochta lenar féidir na gníomhartha atá ar fáil don úsáideoir a bhainistiú agus gléasanna nua á gceangal leis an ríomhaire
 Comment[nds]=En Instellwarktüüch för de Akschonen, de för Brukers praatstaht, wenn nieg Reedschappen den Reekner tokoppelt warrt
 Comment[nl]=Een configuratiehulpmiddel voor het beheren van acties die beschikbaar zijn voor de gebruiker bij het verbinden van nieuwe apparaten aan de computer
+Comment[ro]=Unealtă de configurare pentru gestiunea acțiunilor disponibile utilizatorului la conectarea noilor dispozitive la calculator
+Comment[sv]=Ett inställningsverktyg för att hantera tillgängliga åtgärder för användare när nya enheter ansluts till datorn
 Comment[uk]=Інструмент налаштування для керування діями, доступними користувачеві після з’єднання пристроїв з комп’ютером
 Comment[zh_TW]=管理新增裝置到電腦時要做些什麼動作的設定工具
 

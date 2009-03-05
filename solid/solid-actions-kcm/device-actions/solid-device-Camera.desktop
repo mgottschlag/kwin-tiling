@@ -5,6 +5,8 @@ Name[ga]=Ainm Réada
 Name[nds]=Objektnaam
 Name[nl]=Objectnaam
 Name[pt_BR]=Nome do objeto
+Name[ro]=Denumire obiect
+Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
 Name[zh_TW]=物件名稱
 
@@ -15,6 +17,8 @@ Name[ga]=Tiománaithe a dTacaítear Leo
 Name[nds]=Ünnerstütt Drievers
 Name[nl]=Ondersteunde stuurprogramma's
 Name[pt_BR]=Drivers suportados
+Name[ro]=Drivere susținute
+Name[sv]=Drivrutiner som stöds
 Name[uk]=Підтримувані драйвери
 Name[zh_TW]=支援的驅動程式
 
@@ -25,6 +29,8 @@ Name[ga]=Prótacail a dTacaítear Leo
 Name[nds]=Ünnerstütt Protokollen
 Name[nl]=Ondersteunde protocollen
 Name[pt_BR]=Protocolos suportados
+Name[ro]=Protocoale susținute
+Name[sv]=Protokoll som stöds
 Name[uk]=Підтримувані протоколи
 Name[zh_TW]=支援的協定
 
@@ -34,6 +40,8 @@ Name[et]=Kaamera
 Name[ga]=Ceamara
 Name[nds]=Kamera
 Name[pt_BR]=Câmera
+Name[ro]=Aparat foto
+Name[sv]=Kamera
 Name[uk]=Фотоапарат
 Name[zh_TW]=相機
 X-KDE-Solid-Actions-Type=Camera
