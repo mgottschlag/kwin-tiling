@@ -83,12 +83,10 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
     }
     //FIXME should we have next/prev or up/down/left/right or what?
     KAction *action = new KAction(i18n("Next Activity"), this);
-    action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     action->setShortcut(QKeySequence(Qt::ALT + Qt::Key_D, Qt::Key_Right));
     connect(action, SIGNAL(triggered()), this, SLOT(nextContainment()));
     addAction(action);
     action = new KAction(i18n("Previous Activity"), this);
-    action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     action->setShortcut(QKeySequence(Qt::ALT + Qt::Key_D, Qt::Key_Left));
     connect(action, SIGNAL(triggered()), this, SLOT(previousContainment()));
     addAction(action);
