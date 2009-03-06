@@ -52,36 +52,27 @@ uint NotificationsEngine::Notify(const QString &app_name, uint replaces_id, cons
                                  const QStringList &actions, const QVariantMap &hints, int timeout)
 {
     uint id = 0;
-    if (replaces_id == 0) {
-        // new notification
+    id = replaces_id || m_nextId++;
 
-        id = m_nextId++;
+    // TODO implement hints support
+    Q_UNUSED(hints)
 
-        // TODO implement hints support
-        Q_UNUSED(hints)
-
-        QString appname_str = app_name;
-        if (appname_str.isEmpty()) {
-            appname_str = i18n("unknown app");
-        }
-
-        Plasma::DataEngine::Data notificationData;
-        notificationData.insert("id", QString::number(id ));
-        notificationData.insert("appName", appname_str );
-        notificationData.insert("appIcon", app_icon );
-        notificationData.insert("eventId", event_id );
-        notificationData.insert("summary", summary );
-        notificationData.insert("body", body );
-        notificationData.insert("actions", actions );
-        notificationData.insert("expireTimeout", timeout );
-
-        setData(QString("notification %1").arg(id), notificationData );
-    } else {
-        id = replaces_id;
-        // TODO: update existing source
-        kDebug() << "notice: updating notifications isn't implemented yet";
+    QString appname_str = app_name;
+    if (appname_str.isEmpty()) {
+        appname_str = i18n("Unknown Application");
     }
 
+    Plasma::DataEngine::Data notificationData;
+    notificationData.insert("id", QString::number(id ));
+    notificationData.insert("appName", appname_str);
+    notificationData.insert("appIcon", app_icon);
+    notificationData.insert("eventId", event_id);
+    notificationData.insert("summary", summary);
+    notificationData.insert("body", body);
+    notificationData.insert("actions", actions);
+    notificationData.insert("expireTimeout", timeout);
+
+    setData(QString("notification %1").arg(id), notificationData );
     return id;
 }
 
