@@ -269,10 +269,10 @@ void FdoSelectionManager::initSelection()
     XVisualInfo templ;
     templ.visualid = visual;
     XVisualInfo *xvi = XGetVisualInfo(d->display, VisualIDMask, &templ, &nvi);
-    if (xvi) {
+    if (xvi && xvi[0].depth > 16) {
         templ.screen  = xvi[0].screen;
-        templ.depth   = xvi[0].depth;
-        templ.c_class = xvi[0].c_class;
+        templ.depth   = 32;
+        templ.c_class = TrueColor;
         XFree(xvi);
         xvi = XGetVisualInfo(d->display, VisualScreenMask | VisualDepthMask | VisualClassMask,
                              &templ, &nvi);
