@@ -57,6 +57,9 @@ public slots:
     void dbusError(QDBusError error);
     void unlockDesktop();
 
+private slots:
+    void newApplet(Plasma::Applet *applet, const QPointF &pos);
+
 private:
     QAction *m_lockDesktopAction;
     QAction *m_appletBrowserAction;

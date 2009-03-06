@@ -38,6 +38,8 @@ SaverDesktop::SaverDesktop(QObject *parent, const QVariantList &args)
       m_lockDesktopAction(0),
       m_appletBrowserAction(0)
 {
+        setContainmentType(CustomContainment);
+        connect(this, SIGNAL(appletAdded(Plasma::Applet *, const QPointF &)), SLOT(newApplet(Plasma::Applet *, const QPointF &)));
 }
 
 SaverDesktop::~SaverDesktop()
@@ -49,46 +51,40 @@ void SaverDesktop::init()
     Containment::init();
 
     bool unlocked = immutability() == Mutable;
+
+    //remove the desktop actions
+    QAction *unwanted = action("zoom in");
+    delete unwanted;
+    unwanted = action("zoom out");
+    delete unwanted;
+    unwanted = action("add sibling containment");
+    delete unwanted;
+
+    //the most important action ;)
+    QAction *leave = new QAction(unlocked ? i18n("Quit") : i18n("Unlock and Quit"), this);
+    leave->setIcon(KIcon("system-lock-screen"));
+    leave->setShortcut(QKeySequence("esc"));
+    connect(leave, SIGNAL(triggered(bool)), this, SLOT(unlockDesktop()));
+    addAction("unlock desktop", leave);
+    addToolBoxAction(leave);
+
     //re-wire the lock action so we can check for a password
     QAction *lock = action("lock widgets");
     if (lock) {
         lock->disconnect(this);
         connect(lock, SIGNAL(triggered(bool)), this, SLOT(toggleLock()));
         lock->setText(unlocked ? i18n("Lock") : i18n("Unlock"));
+        addToolBoxAction(lock);
     }
-
-    //remove the desktop actions
-    //FIXME do we really need to removeToolBoxAction?
-    QAction *unwanted = action("zoom in");
-    removeToolBoxAction(unwanted);
-    delete unwanted;
-    unwanted = action("zoom out");
-    removeToolBoxAction(unwanted);
-    delete unwanted;
-    unwanted = action("add sibling containment");
-    removeToolBoxAction(unwanted);
-    delete unwanted;
-
-    lock = new QAction(unlocked ? i18n("Quit") : i18n("Unlock and Quit"), this);
-    lock->setIcon(KIcon("system-lock-screen"));
-    //TODO kbd shortcut
-    lock->setShortcutContext(Qt::WidgetShortcut);
-    lock->setShortcut(QKeySequence("esc"));
-    connect(lock, SIGNAL(triggered(bool)), this, SLOT(unlockDesktop()));
-    addAction("unlock desktop", lock);
-    addToolBoxAction(lock);
 
     QAction *a = action("configure");
     if (a) {
         a->setText(i18n("Settings"));
-        removeToolBoxAction(a);
         addToolBoxAction(a);
     }
 
-    //rearrange the toolboxtools
     a = action("add widgets");
     if (a) {
-        removeToolBoxAction(a);
         addToolBoxAction(a);
     }
 }
@@ -187,6 +183,13 @@ void SaverDesktop::unlockDesktop()
         kDebug() << "bailing out!";
         qApp->quit();
     }
+}
+
+
+void SaverDesktop::newApplet(Plasma::Applet *applet, const QPointF &pos)
+{
+    Q_UNUSED(pos);
+    applet->installSceneEventFilter(this);
 }
 
 K_EXPORT_PLASMA_APPLET(saverdesktop, SaverDesktop)
