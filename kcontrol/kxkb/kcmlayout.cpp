@@ -702,10 +702,6 @@ void LayoutConfig::add()
     QString layout = m_srcModel->getLayoutAt(selected[0].row());
 //    kDebug() << "selected to add" << layout;
 
-    //Check for duplicates
-    if (m_kxkbConfig.m_layouts.contains(layout))
-        return;
-
     LayoutUnit lu(layout, "");
     m_kxkbConfig.m_layouts << lu;
 
