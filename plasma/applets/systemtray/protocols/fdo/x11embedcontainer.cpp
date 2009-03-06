@@ -236,8 +236,119 @@ void X11EmbedContainer::setBackgroundPixmap(QPixmap background)
     XRenderPictFormat *format = XRenderFindVisualFormat(display, d->attr.visual);
     Picture picture = XRenderCreatePicture(display, bg, format, 0, 0);
 
-    XRenderComposite(display, PictOpSrc, background.x11PictureHandle(),
-                     None, picture, 0, 0, 0, 0, 0, 0, width(), height());
+    if (background.paintEngine()->type() != QPaintEngine::X11) {
+        // With the raster graphics system this call just returns
+        // the backing image, so the image data isn't copied.
+        QImage image = background.toImage();
+
+        XRenderPictFormat *format = 0;
+        int depth = 0;
+        int bpp = 0;
+
+        if (image.format() == QImage::Format_ARGB32_Premultiplied) {
+            format = XRenderFindStandardFormat(display, PictStandardARGB32);
+            depth = 32;
+            bpp = 32;
+        } else if (image.format() == QImage::Format_RGB32) {
+            format = XRenderFindStandardFormat(display, PictStandardRGB24);
+            depth = 24;
+            bpp = 32;
+        } else if (image.format() == QImage::Format_RGB16) {
+            bpp = 16;
+            depth = 16;
+
+            // Try to find a picture format that matches the image format.
+            // The Render spec doesn't require the X server to support 16bpp formats,
+            // so this call can fail.
+            XRenderPictFormat templ;
+            templ.type             = PictTypeDirect;
+            templ.direct.alpha     = 0;
+            templ.direct.alphaMask = 0;
+            templ.depth            = 16;
+            templ.direct.red       = 11;
+            templ.direct.redMask   = 0x1f;
+            templ.direct.green     = 5;
+            templ.direct.greenMask = 0x3f;
+            templ.direct.blue      = 0;
+            templ.direct.blueMask  = 0x1f;
+            format = XRenderFindFormat(display, PictFormatType | PictFormatDepth | PictFormatAlpha |
+                                       PictFormatAlphaMask | PictFormatRed | PictFormatRedMask |
+                                       PictFormatGreen | PictFormatGreenMask | PictFormatBlue |
+                                       PictFormatBlueMask, &templ, 0);
+        }
+
+        if (format == 0)
+        {
+            // Convert the image to a standard format.
+            if (image.hasAlphaChannel()) {
+                image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+                format = XRenderFindStandardFormat(display, PictStandardARGB32);
+                depth = 32;
+            } else { 
+                image = image.convertToFormat(QImage::Format_RGB32);
+                format = XRenderFindStandardFormat(display, PictStandardRGB24);
+                depth = 24;
+            }
+            bpp = 32;
+        }
+
+        if (image.format() == QImage::Format_RGB32) {
+            // Make sure the would be alpha bits are set to 1.
+            quint32 * const pixels = (quint32*)(const_cast<const QImage*>(&image)->bits());
+            for (int i = 0; i < image.width() * image.height(); i++) {
+                pixels[i] |= 0xff000000;
+            }
+        }
+
+        Q_ASSERT(format != 0);
+
+        // Get the image data into a pixmap
+        XImage ximage;
+        ximage.width            = image.width(); 
+        ximage.height           = image.height();
+        ximage.xoffset          = 0; 
+        ximage.format           = ZPixmap;
+        // This is a hack to prevent the image data from detaching
+        ximage.data             = (char*) const_cast<const QImage*>(&image)->bits();
+#if Q_BYTE_ORDER == Q_BIG_ENDIAN
+        ximage.byte_order       = MSBFirst;
+#else
+        ximage.byte_order       = LSBFirst;
+#endif
+        ximage.bitmap_unit      = bpp;
+        ximage.bitmap_bit_order = ximage.byte_order;
+        ximage.bitmap_pad       = bpp;
+        ximage.depth            = depth;
+        ximage.bytes_per_line   = image.bytesPerLine();
+        ximage.bits_per_pixel   = bpp;
+        if (depth > 16) {
+            ximage.red_mask     = 0x00ff0000;
+            ximage.green_mask   = 0x0000ff00;
+            ximage.blue_mask    = 0x000000ff;
+        } else {
+            // r5g6b5
+            ximage.red_mask     = 0xf800;
+            ximage.green_mask   = 0x07e0;
+            ximage.blue_mask    = 0x001f;
+        }
+        ximage.obdata           = 0;
+        if (XInitImage(&ximage) == 0)
+            return;
+
+        Pixmap pm = XCreatePixmap(display, clientWinId(), width(), height(), ximage.depth);
+        GC gc = XCreateGC(display, pm, 0, 0);
+        XPutImage(display, pm, gc, &ximage, 0, 0, 0, 0, width(), height());
+        XFreeGC(display, gc);
+
+        Picture pict = XRenderCreatePicture(display, pm, format, 0, 0);
+        XRenderComposite(display, PictOpSrc, pict, None, picture,
+                         0, 0, 0, 0, 0, 0, width(), height());
+        XRenderFreePicture(display, pict);
+        XFreePixmap(display, pm);
+    } else {
+        XRenderComposite(display, PictOpSrc, background.x11PictureHandle(),
+                         None, picture, 0, 0, 0, 0, 0, 0, width(), height());
+    }
 
     XSetWindowBackgroundPixmap(display, clientWinId(), bg);
 
