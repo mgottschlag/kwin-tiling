@@ -50,6 +50,9 @@ Plugins/Addons
              * real page zoom instead of just font scaling.
          *Pager
              * User can choose to do nothing, toogle the desktop or the dashboard when he click on the current desktop.
+         * Comics
+             * Added optional Nepomuk support when manually saving a comic strip.
+             * Added per comic setting to store the current position.
 
 KRunner
 -------
