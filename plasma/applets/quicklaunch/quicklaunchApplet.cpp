@@ -141,16 +141,11 @@ QSizeF QuicklaunchApplet::sizeHint(Qt::SizeHint which, const QSizeF & constraint
         if (!m_innerLayout) {
             return sizeHint;
         }
+        qreal newWidth = m_innerLayout->columnCount() * sizeHint.height() / qMax(1, m_innerLayout->rowCount());
         if (m_icons.size() > m_visibleIcons) {
-            qreal factor = m_innerLayout->rowCount() * m_innerLayout->columnCount() + size().height();
-            if (factor) {
-                sizeHint.setWidth(sizeHint.height() / factor);
-            }
+            sizeHint.setWidth(newWidth + sizeHint.height());
         } else {
-            qreal factor = m_innerLayout->rowCount() * m_innerLayout->columnCount();
-            if (factor) {
-                sizeHint.setWidth(sizeHint.height() / factor);
-            }
+            sizeHint.setWidth(newWidth);
         }
         return sizeHint;
     }
