@@ -34,7 +34,6 @@ class MenuLauncherApplet : public Plasma::Applet
 {
     Q_OBJECT
     Q_ENUMS(ViewType)
-    Q_FLAGS(ViewTypes)
     Q_ENUMS(FormatType)
 public:
 
@@ -54,10 +53,14 @@ public:
         SwitchUser, ///< Switch User Action
         SaveSession, ///< Save Session Action (only enabled if restoreSavedSession is enabled)
         LockScreen, ///< Lock Screen Action
+        Standby, ///< Standby Action
+        SuspendDisk, ///< Suspend to Disk Action
+        SuspendRAM, ///< Suspend to RAM Action
+        Restart, ///< Restart Action
+        Shutdown, ///< Shutdown Action
         Logout, ///< Logout Action
         Leave ///< Leave Menu
     };
-    Q_DECLARE_FLAGS(ViewTypes, ViewType)
 
     /**
     * How the text of the menuitems got formatted.
@@ -130,8 +133,6 @@ private:
     class Private;
     Private * const d;
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(MenuLauncherApplet::ViewTypes)
 
 K_EXPORT_PLASMA_APPLET(menulauncher, MenuLauncherApplet)
 

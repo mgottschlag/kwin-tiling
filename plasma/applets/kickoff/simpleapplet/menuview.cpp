@@ -23,10 +23,11 @@
 
 // Qt
 #include <QtCore/QAbstractItemModel>
+#include <QtCore/QPersistentModelIndex>
 #include <QtCore/QStack>
 #include <QtGui/QApplication>
 #include <QtGui/QMouseEvent>
-#include <QtCore/QPersistentModelIndex>
+#include <QtGui/QStandardItem>
 
 // KDE
 #include <KDebug>
@@ -49,6 +50,7 @@ public:
     enum { ActionRole = Qt::UserRole + 52 };
 
     Private(MenuView *q) : q(q), column(0), launcher(new UrlItemLauncher(q)), formattype(MenuView::DescriptionName) {}
+    ~Private() { qDeleteAll(items); }
 
     QAction *createActionForIndex(QAbstractItemModel *model, const QModelIndex& index, QMenu *parent) {
         Q_ASSERT(index.isValid());
@@ -68,8 +70,9 @@ public:
         return action;
     }
 
-    void buildBranch(QMenu *menu, QAbstractItemModel *model, const QModelIndex& parent) {
-        int rowCount = model->rowCount(parent);
+    void buildBranch(KMenu *menu, QAbstractItemModel *model, const QModelIndex& parent) {
+        const int rowCount = model->rowCount(parent);
+        //if (rowCount > 0 && menu->actions().count() > 0) menu->addSeparator();
         for (int i = 0; i < rowCount; i++) {
             QAction *action = createActionForIndex(model, model->index(i, column, parent), menu);
             menu->addAction(action);
@@ -81,12 +84,18 @@ public:
     UrlItemLauncher *launcher;
     MenuView::FormatType formattype;
     QPoint mousePressPos;
+    QList<QStandardItem*> items;
 };
 
-MenuView::MenuView(QWidget *parent)
+MenuView::MenuView(QWidget *parent, const QString &title, const QIcon &icon)
     : KMenu(parent)
     , d(new Private(this))
 {
+    if (! title.isNull())
+        setTitle(title);
+    if (! icon.isNull())
+        setIcon(icon);
+
     installEventFilter(this);
 }
 
@@ -109,20 +118,11 @@ void MenuView::updateAction(QAbstractItemModel *model, QAction *action, const QM
     } else {
         switch (d->formattype) {
         case Name: {
-            if (name.isEmpty()) {
-                action->setText(text);
-            } else {
-                action->setText(name);
-            }
-        }
-        break;
+            action->setText(name.isEmpty() ? text : name);
+        } break;
         case Description: {
-            if (name.contains(text, Qt::CaseInsensitive)) {
-                text = name;
-            }
-            action->setText(text);
-        }
-        break;
+            action->setText(name.contains(text, Qt::CaseInsensitive) ? name : text);
+        } break;
         case NameDescription: // fall through
         case NameDashDescription: // fall through
         case DescriptionName: {
@@ -143,8 +143,7 @@ void MenuView::updateAction(QAbstractItemModel *model, QAction *action, const QM
             } else { // if there is no name, let's just use the describing text
                 action->setText(text);
             }
-        }
-        break;
+        } break;
         }
     }
 
@@ -223,13 +222,17 @@ bool MenuView::eventFilter(QObject *watched, QEvent *event)
     return KMenu::eventFilter(watched, event);
 }
 
-void MenuView::addModel(QAbstractItemModel *model, bool mergeFirstLevel)
+void MenuView::addModel(QAbstractItemModel *model, MenuView::ModelOptions options)
 {
-    if(mergeFirstLevel) {
+    if(options & MergeFirstLevel) {
         const int count = model->rowCount();
         for(int row = 0; row < count; ++row) {
             QModelIndex index = model->index(row, 0, QModelIndex());
             Q_ASSERT(index.isValid());
+
+            const QString title = index.data(Qt::DisplayRole).value<QString>();
+            if (count > 1 && ! title.isEmpty())
+                addTitle(title);
             
             model->blockSignals(true);
             model->setData(index, qVariantFromValue(this->menuAction()), Private::ActionRole);
@@ -245,6 +248,16 @@ void MenuView::addModel(QAbstractItemModel *model, bool mergeFirstLevel)
     connect(model, SIGNAL(rowsAboutToBeRemoved(QModelIndex, int, int)), this, SLOT(rowsAboutToBeRemoved(QModelIndex, int, int)));
     connect(model, SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SLOT(dataChanged(QModelIndex, QModelIndex)));
     connect(model, SIGNAL(modelReset()), this, SLOT(modelReset()));
+}
+
+void MenuView::addItem(QStandardItem *item)
+{
+    QAction *action = new QAction(item->icon(), item->text(), this);
+    KUrl url(item->data(Kickoff::UrlRole).toString());
+    Q_ASSERT(url.isValid());
+    action->setData(url);
+    addAction(action);
+    d->items << item;
 }
 
 UrlItemLauncher *MenuView::launcher() const
@@ -341,6 +354,9 @@ void MenuView::rowsInserted(const QModelIndex& parent, int start, int end)
     }
     */
 #else
+    Q_UNUSED(parent);
+    Q_UNUSED(start);
+    Q_UNUSED(end);
     modelReset();
 #endif
 }
@@ -380,6 +396,9 @@ void MenuView::rowsAboutToBeRemoved(const QModelIndex& parent, int start, int en
     }
     */
 #else
+    Q_UNUSED(parent);
+    Q_UNUSED(start);
+    Q_UNUSED(end);
     modelReset();
 #endif
 }
@@ -408,6 +427,8 @@ void MenuView::dataChanged(const QModelIndex& topLeft, const QModelIndex& bottom
         updateAction(model, actions[row], model->index(row, d->column, topLeft.parent()));
     }
 #else
+    Q_UNUSED(topLeft);
+    Q_UNUSED(bottomRight);
     modelReset();
 #endif
 }
@@ -441,9 +462,16 @@ void MenuView::setFormatType(MenuView::FormatType formattype)
 
 void MenuView::actionTriggered(QAction *action)
 {
-    QModelIndex index = indexForAction(action);
-    Q_ASSERT(index.isValid());
-    d->launcher->openItem(index);
+    KUrl url = action->data().value<KUrl>();
+    if (url.isValid()) {
+        d->launcher->openUrl(url.url());
+    } else {
+        QModelIndex index = indexForAction(action);
+        if(index.isValid())
+            d->launcher->openItem(index);
+        else
+            kWarning()<<"Invalid action objectName="<<action->objectName()<<"text="<<action->text()<<"parent="<<(action->parent()?action->parent()->metaObject()->className():"NULL");
+    }
 }
 
 #include "menuview.moc"

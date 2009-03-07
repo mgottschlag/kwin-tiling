@@ -49,6 +49,8 @@
 #include <KCModuleInfo>
 #include <KToolInvocation>
 #include <KIconButton>
+#include <kworkspace/kworkspace.h>
+#include <solid/control/powermanager.h>
 
 // Plasma
 #include <Plasma/IconWidget>
@@ -96,7 +98,7 @@ public:
     BookmarkOwner* bookmarkowner;
     KBookmarkMenu* bookmarkmenu;
 
-    QStringList viewtypes;
+    QStringList viewtypes;//QList<MenuLauncherApplet::ViewType>
     MenuLauncherApplet::FormatType formattype;
     int maxRecentApps;
 
@@ -156,10 +158,15 @@ public:
             case RecentlyUsedApplications: return i18n("Recently Used Applications");
             case RecentlyUsedDocuments:    return i18n("Recently Used Documents");
             case Settings:                 return i18n("System Settings");
-            case RunCommand:               return i18n("Run Command");
+            case RunCommand:               return i18n("Run Command...");
             case SwitchUser:               return i18n("Switch User");
             case SaveSession:              return i18n("Save Session");
-            case LockScreen:               return i18n("Lock Screen");
+            case LockScreen:               return i18n("Lock the screen");
+            case Standby:                  return i18nc("Puts the system on standby", "Standby");
+            case SuspendDisk:              return i18n("Suspend to Disk");
+            case SuspendRAM:               return i18n("Suspend to RAM");
+            case Restart:                  return i18nc("Restart computer", "Restart");
+            case Shutdown:                 return i18n("Shutdown");
             case Logout:                   return i18n("Logout");
             case Leave:                    return i18n("Leave");
         }
@@ -180,25 +187,44 @@ public:
             case SwitchUser:               return "system-switch-user";
             case SaveSession:              return "document-save";
             case LockScreen:               return "system-lock-screen";
+            case Standby:                  return "system-suspend";
+            case SuspendDisk:              return "system-suspend-hibernate";
+            case SuspendRAM:               return "system-suspend-hibernate";
+            case Restart:                  return "system-restart";
+            case Shutdown:                 return "system-shutdown";
             case Logout:                   return "system-log-out";
             case Leave:                    return "system-shutdown";
         }
         return QString();
     }
 
-    /*
-    MenuLauncherApplet::ViewTypes viewTypes(const QByteArray& types) const {
+    MenuLauncherApplet::ViewType viewType(const QByteArray& type) const {
         QMetaEnum e = q->metaObject()->enumerator(q->metaObject()->indexOfEnumerator("ViewType"));
-        return (MenuLauncherApplet::ViewTypes) e.keyToValue(types);
+        return (MenuLauncherApplet::ViewType) e.keyToValue(type);
     }
-    QByteArray viewTypes(MenuLauncherApplet::ViewTypes types) const {
+
+    /*
+    QByteArray viewType(MenuLauncherApplet::ViewType type) const {
         QMetaEnum e = q->metaObject()->enumerator(q->metaObject()->indexOfEnumerator("ViewType"));
-        return e.valueToKeys(types);
+        return e.valueToKey(types);
+    }
+    QList<MenuLauncherApplet::ViewType> viewTypes(const QStringList &types) const {
+        QList<MenuLauncherApplet::ViewType> l;
+        foreach(QString t, types) l << viewType(t.toUtf());
+        return l;
+    }
+    QStringList viewTypes(const QList<MenuLauncherApplet::ViewType> &types) const {
+        QStringList l;
+        foreach(MenuLauncherApplet::ViewType t, types) l << viewType(t);
+        return l;
     }
     */
 
     void updateTooltip() {
-        Plasma::ToolTipContent data(i18n("Classic Application Launcher"), i18n("Traditional menu based application launcher"), icon->icon());
+        QStringList names;
+        foreach(QString vtname, viewtypes)
+            names << viewText(viewType(vtname.toUtf8()));
+        Plasma::ToolTipContent data(i18n("Application Launcher Menu"), names.join(", "), icon->icon());
         Plasma::ToolTipManager::self()->setContent(q, data);
     }
 };
@@ -220,7 +246,7 @@ MenuLauncherApplet::MenuLauncherApplet(QObject *parent, const QVariantList &args
     connect(d->icon, SIGNAL(pressed(bool)), this, SLOT(toggleMenu(bool)));
     connect(this, SIGNAL(activate()), this, SLOT(toggleMenu()));
 
-    d->viewtypes << "RecentlyUsedApplications" << "Applications" << "Favorites" << "RunCommand" << "SwitchUser" << "SaveSession" << "LockScreen" << "Logout";
+    d->viewtypes << "RecentlyUsedApplications" << "Applications" << "Favorites" << "RunCommand" << "Leave";
     d->formattype = NameDescription;
 
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
@@ -242,12 +268,10 @@ void MenuLauncherApplet::init()
     QStringList viewtypes = cg.readEntry("views", QStringList());
     if(viewtypes.isEmpty()) { // backward-compatibility to <KDE4.3
         QByteArray oldview = cg.readEntry("view", QByteArray());
-        if(oldview == "Combined") {
-            d->viewtypes = QStringList() << "Applications" << "Favorites" << "RunCommand" << "SwitchUser" << "SaveSession" << "LockScreen" << "Logout";
-        } else if(! oldview.isEmpty()) {
+        if (!oldview.isEmpty() && oldview != "Combined") {
             d->viewtypes = QStringList() << oldview;
-            iconname = d->viewIcon( (MenuLauncherApplet::ViewType) metaObject()->enumerator(metaObject()->indexOfEnumerator("ViewType")).keyToValue(oldview) );
-        }
+            iconname = d->viewIcon(d->viewType(oldview));
+        } // else we use the default d->viewtypes
     } else {
         d->viewtypes = viewtypes;
     }
@@ -319,10 +343,11 @@ void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     d->view = new QListWidget(viewpage);
     d->view->resize(300,500);
     l->addWidget(d->view);
-    foreach(ViewType vt, QList<ViewType>()<<RecentlyUsedApplications<<RecentlyUsedDocuments<<Applications<<Favorites<<Bookmarks<<Computer<<RecentlyUsed<<Settings<<RunCommand<<SwitchUser<<SaveSession<<LockScreen<<Logout<<Leave) {
-        QMetaEnum e = metaObject()->enumerator(metaObject()->indexOfEnumerator("ViewType"));
-        QByteArray vtname = e.valueToKey(vt);
 
+    QMetaEnum vte = metaObject()->enumerator(metaObject()->indexOfEnumerator("ViewType"));
+    for(int i = 0; i < vte.keyCount(); ++i) {
+        ViewType vt = (ViewType) vte.value(i);
+        const QByteArray vtname = vte.key(i);
         QListWidgetItem *item = new QListWidgetItem(KIcon(d->viewIcon(vt)), d->viewText(vt), d->view);
         item->setCheckState(d->viewtypes.contains(vtname) ? Qt::Checked : Qt::Unchecked);
         item->setData(Qt::UserRole, vtname);
@@ -387,6 +412,7 @@ void MenuLauncherApplet::configAccepted()
         d->viewtypes = viewtypes;
         d->updateTooltip();
         cg.writeEntry("views", d->viewtypes);
+        cg.deleteEntry("view"); // "view" was from <KDE4.3, we are using "views" now
     }
 
     const QString iconname = d->iconButton->icon();
@@ -437,16 +463,23 @@ KService::List sortServices(KService::List list)
 
 void MenuLauncherApplet::toggleMenu(bool pressed)
 {
-    if (! pressed) {
+    if (!pressed || d->viewtypes.count()<=0) {
+        if (d->menuview)
+            d->menuview->deleteLater();
         return;
     }
+
+    d->icon->setPressed();
+
     if (!d->menuview) {
         d->menuview = new Kickoff::MenuView();
+        d->menuview->setAttribute(Qt::WA_DeleteOnClose);
         d->menuview->setFormatType( (Kickoff::MenuView::FormatType) d->formattype );
         connect(d->menuview, SIGNAL(triggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
         connect(d->menuview, SIGNAL(aboutToHide()), d->icon, SLOT(setUnpressed()));
         //connect(d->menuview, SIGNAL(afterBeingHidden()), d->menuview, SLOT(deleteLater()));
 
+        Kickoff::MenuView::ModelOptions options = d->viewtypes.count() < 2 ? Kickoff::MenuView::MergeFirstLevel : Kickoff::MenuView::None;
         foreach(QString vtname, d->viewtypes) {
             if(vtname == "Applications") {
                 if(d->menuview->actions().count() > 0)
@@ -456,27 +489,27 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
                 if (d->formattype == Name || d->formattype == NameDescription || d->formattype == NameDashDescription)
                     appModel->setPrimaryNamePolicy(Kickoff::ApplicationModel::AppNamePrimary);
                 appModel->setSystemApplicationPolicy(Kickoff::ApplicationModel::ShowApplicationAndSystemPolicy);
-                d->menuview->addModel(appModel, false);
+                d->menuview->addModel(appModel);
             } else if(vtname == "Favorites") {
                 if(d->menuview->actions().count() > 0)
                     d->menuview->addSeparator();
-                d->menuview->addModel(new Kickoff::FavoritesModel(d->menuview), d->viewtypes.count() < 2);
+                d->menuview->addModel(new Kickoff::FavoritesModel(d->menuview), options);
             } else if(vtname == "Computer") {
-                d->menuview->addModel(new Kickoff::SystemModel(d->menuview), d->viewtypes.count() < 2);
+                d->menuview->addModel(new Kickoff::SystemModel(d->menuview), options);
             } else if(vtname == "RecentlyUsed") {
-                d->menuview->addModel(new Kickoff::RecentlyUsedModel(d->menuview), d->viewtypes.count() < 2);
+                d->menuview->addModel(new Kickoff::RecentlyUsedModel(d->menuview), options);
             } else if(vtname == "RecentlyUsedApplications") {
                 if(d->menuview->actions().count() > 0)
                     d->menuview->addSeparator();
                 if (d->maxRecentApps > 0)
-                    d->menuview->addModel(new Kickoff::RecentlyUsedModel(d->menuview, Kickoff::RecentlyUsedModel::ApplicationsOnly, d->maxRecentApps), true);
+                    d->menuview->addModel(new Kickoff::RecentlyUsedModel(d->menuview, Kickoff::RecentlyUsedModel::ApplicationsOnly, d->maxRecentApps), Kickoff::MenuView::MergeFirstLevel);
             } else if(vtname == "RecentlyUsedDocuments") {
                 if(d->menuview->actions().count() > 0)
                     d->menuview->addSeparator();
-                d->menuview->addModel(new Kickoff::RecentlyUsedModel(d->menuview, Kickoff::RecentlyUsedModel::DocumentsOnly), true);
+                d->menuview->addModel(new Kickoff::RecentlyUsedModel(d->menuview, Kickoff::RecentlyUsedModel::DocumentsOnly), Kickoff::MenuView::MergeFirstLevel);
             } else if(vtname == "Bookmarks") {
                 KMenu* menu = d->menuview;
-                if(d->viewtypes.count() >= 2) {
+                if(d->viewtypes.count() > 1) {
                     menu = new KMenu(d->viewText(Bookmarks), d->menuview);
                     menu->setIcon(KIcon(d->viewIcon(Bookmarks)));
                     d->menuview->addMenu(menu);
@@ -490,7 +523,7 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
                 d->bookmarkmenu = new KBookmarkMenu(mgr, d->bookmarkowner, menu, d->bookmarkcollection);
             } else if(vtname == "Settings") {
                 KMenu* parentmenu = d->menuview;
-                if(d->viewtypes.count() >= 2) {
+                if(d->viewtypes.count() > 1) {
                     parentmenu = new KMenu(d->viewText(Settings), d->menuview);
                     parentmenu->setIcon(KIcon(d->viewIcon(Settings)));
                     d->menuview->addMenu(parentmenu);
@@ -533,8 +566,7 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
                         m->addTitle(subcategory->name().replace('&',"&&"));
                     foreach(KService::Ptr entry, modules[category]) {
                         KCModuleInfo module(entry->entryPath());
-                        QAction* a = m->addAction(KIcon(module.icon()), module.moduleName().replace('&',"&&"));
-                        a->setData(KUrl("kcm:/" + entry->entryPath()));
+                        m->addAction(KIcon(module.icon()), module.moduleName().replace('&',"&&"))->setData(KUrl("kcm:/" + entry->entryPath()));
                     }
                 }
             } else if(vtname == "RunCommand") {
@@ -543,27 +575,48 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
                 d->menuview->addAction(KIcon(d->viewIcon(SwitchUser)), d->viewText(SwitchUser))->setData(KUrl("leave:/switch"));
             } else if(vtname == "SaveSession") {
                 KConfigGroup c(KSharedConfig::openConfig("ksmserverrc", KConfig::NoGlobals), "General");
-                if (c.readEntry("loginMode") == "restoreSavedSession") {
+                if (c.readEntry("loginMode") == "restoreSavedSession")
                     d->menuview->addAction(KIcon(d->viewIcon(SaveSession)), d->viewText(SaveSession))->setData(KUrl("leave:/savesession"));
-                }
             } else if(vtname == "LockScreen") {
                 d->menuview->addAction(KIcon(d->viewIcon(LockScreen)), d->viewText(LockScreen))->setData(KUrl("leave:/lock"));
             } else if(vtname == "Logout") {
                 d->menuview->addAction(KIcon(d->viewIcon(Logout)), d->viewText(Logout))->setData(KUrl("leave:/logout"));
             } else if(vtname == "Leave") {
-                if(d->menuview->actions().count() > 0)
-                    d->menuview->addSeparator();
-                Kickoff::LeaveModel *leavemodel = new Kickoff::LeaveModel(d->menuview);
+                Kickoff::MenuView* parentmenu = d->menuview;
+                if(d->viewtypes.count() > 1) {
+                    parentmenu = new Kickoff::MenuView(d->menuview, d->viewText(Leave), KIcon(d->viewIcon(Leave)));
+                    parentmenu->setFormatType(Kickoff::MenuView::Description);
+                    d->menuview->addMenu(parentmenu);
+                }
+                Kickoff::LeaveModel *leavemodel = new Kickoff::LeaveModel(parentmenu);
                 leavemodel->updateModel();
-                d->menuview->addModel(leavemodel, true);
+                parentmenu->addModel(leavemodel, Kickoff::MenuView::MergeFirstLevel);
+            } else {
+#ifndef Q_WS_WIN
+                Solid::Control::PowerManager::SuspendMethods spdMethods = Solid::Control::PowerManager::supportedSuspendMethods();
+                if(vtname == "Standby") {
+                    if (spdMethods & Solid::Control::PowerManager::Standby)
+                        d->menuview->addAction(KIcon(d->viewIcon(Standby)), d->viewText(Standby))->setData(KUrl("leave:/standby"));
+                } else if(vtname == "SuspendDisk") {
+                    if (spdMethods & Solid::Control::PowerManager::ToDisk)
+                        d->menuview->addAction(KIcon(d->viewIcon(SuspendDisk)), d->viewText(SuspendDisk))->setData(KUrl("leave:/suspenddisk"));
+                } else if(vtname == "SuspendRAM") {
+                    if (spdMethods & Solid::Control::PowerManager::ToRam)
+                        d->menuview->addAction(KIcon(d->viewIcon(SuspendRAM)), d->viewText(SuspendRAM))->setData(KUrl("leave:/suspendram"));
+                } else if(vtname == "Restart") {
+                    if (KWorkSpace::canShutDown(KWorkSpace::ShutdownConfirmDefault, KWorkSpace::ShutdownTypeReboot))
+                        d->menuview->addAction(KIcon(d->viewIcon(Restart)), d->viewText(Restart))->setData(KUrl("leave:/restart"));
+                } else if(vtname == "Shutdown") {
+                    if (KWorkSpace::canShutDown(KWorkSpace::ShutdownConfirmDefault, KWorkSpace::ShutdownTypeHalt))
+                        d->menuview->addAction(KIcon(d->viewIcon(Shutdown)), d->viewText(Shutdown))->setData(KUrl("leave:/shutdown"));
+                }
+#endif
             }
         }
     }
 
-	Plasma::ToolTipManager::self()->hide(this);
-    d->menuview->setAttribute(Qt::WA_DeleteOnClose);
+    Plasma::ToolTipManager::self()->hide(this);
     d->menuview->popup(popupPosition(d->menuview->sizeHint()));
-    d->icon->setPressed();
 }
 
 void MenuLauncherApplet::actionTriggered(QAction *action)

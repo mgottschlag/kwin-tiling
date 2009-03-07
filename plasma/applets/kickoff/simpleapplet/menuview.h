@@ -28,6 +28,7 @@
 #include <KMenu>
 
 class QAbstractItemModel;
+class QStandardItem;
 
 namespace Kickoff
 {
@@ -54,12 +55,21 @@ class MenuView : public KMenu
 public:
 
     /** Constructs a new menu with the specified @p parent */
-    MenuView(QWidget *parent = 0);
+    MenuView(QWidget *parent = 0, const QString &title = QString(), const QIcon &icon = QIcon());
     /** Destructor */
     virtual ~MenuView();
 
-    /** Sets the model displayed by this menu. */
-    void addModel(QAbstractItemModel *model, bool mergeFirstLevel);
+    /// Options for a model.
+    enum ModelOptions {
+        None, ///< no options.
+        MergeFirstLevel ///< merge the first both levels of items within the model into one hirachy in the menuview.
+    };
+
+    /** Adds a model to display within this menu. */
+    void addModel(QAbstractItemModel *model, ModelOptions options = None);
+
+    /** Adds a QStandardItem to display within this menu. This menu will take over the ownership of the item. */
+    void addItem(QStandardItem *item);
 
     /** Returns the UrlItemLauncher used to handle launching of urls. */
     UrlItemLauncher *launcher() const;
