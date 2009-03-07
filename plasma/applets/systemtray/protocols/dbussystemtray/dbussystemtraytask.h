@@ -66,11 +66,12 @@ protected:
     bool eventFilter(QObject *watched, QEvent *event);
 
 private:
-    DBusSystemTrayTaskPrivate *d;
+    DBusSystemTrayTaskPrivate *const d;
 
-    /*Q_PRIVATE_SLOT(d, void askContextMenu());
-    Q_PRIVATE_SLOT(d, void syncIcon());
-    Q_PRIVATE_SLOT(d, void syncTooltip());*/
+    Q_PRIVATE_SLOT(d, void askContextMenu())
+    Q_PRIVATE_SLOT(d, void syncIcon())
+    Q_PRIVATE_SLOT(d, void syncTooltip())
+    Q_PRIVATE_SLOT(d, void syncStatus(int status))
 };
 
 }

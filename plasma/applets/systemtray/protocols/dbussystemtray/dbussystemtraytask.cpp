@@ -203,3 +203,5 @@ void DBusSystemTrayTaskPrivate::syncStatus(int newStatus)
 }
 
 }
+
+#include "dbussystemtraytask.moc"
