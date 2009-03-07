@@ -41,9 +41,8 @@ namespace SystemTray
 class DBusSystemTrayTaskPrivate
 {
 public:
-    DBusSystemTrayTaskPrivate(QString service, DBusSystemTrayTask *q)
-        : q(q),
-          service(service)
+    DBusSystemTrayTaskPrivate(DBusSystemTrayTask *q)
+        : q(q)
     {
     }
 
@@ -55,11 +54,14 @@ public:
     void askContextMenu();
     void syncIcon();
     void syncTooltip();
+    void syncStatus(int status);
 
 
     DBusSystemTrayTask *q;
-    QString service;
     QString name;
+    QString title;
+    DBusSystemTrayTask::Status status;
+    DBusSystemTrayTask::Category category;
     QIcon icon;
     Plasma::IconWidget *iconWidget;
     Plasma::ToolTipContent tooltipData;
@@ -69,7 +71,7 @@ public:
 
 DBusSystemTrayTask::DBusSystemTrayTask(const QString &service)
     : Task(),
-      d(new DBusSystemTrayTaskPrivate(service, this))
+      d(new DBusSystemTrayTaskPrivate(this))
 {
     d->name = service;
     d->iconWidget = new Plasma::IconWidget();
@@ -80,11 +82,15 @@ DBusSystemTrayTask::DBusSystemTrayTask(const QString &service)
 
     d->systemTrayIcon = new org::kde::SystemTray(service, "/SystemTray",
                                                  QDBusConnection::sessionBus());
+    d->title = d->systemTrayIcon->title().value();
+    d->category = (Category)d->systemTrayIcon->category().value();
     d->syncIcon();
     d->syncTooltip();
+    d->syncStatus(d->systemTrayIcon->status().value());
 
     connect(d->systemTrayIcon, SIGNAL(newIcon()), this, SLOT(syncIcon()));
     connect(d->systemTrayIcon, SIGNAL(newTooltip()), this, SLOT(syncTooltip()));
+    connect(d->systemTrayIcon, SIGNAL(newStatus(int)), this, SLOT(syncStatus(int)));
 
     connect(d->iconWidget, SIGNAL(clicked()), d->systemTrayIcon, SLOT(activate()));
     d->iconWidget->installEventFilter(this);
@@ -186,5 +192,14 @@ void DBusSystemTrayTaskPrivate::syncTooltip()
     Plasma::ToolTipManager::self()->setContent(iconWidget, tooltipData);
 }
 
+void DBusSystemTrayTaskPrivate::syncStatus(int newStatus)
+{
+    status = (DBusSystemTrayTask::Status)newStatus;
+    if (status == DBusSystemTrayTask::NeedsAttention) {
+        q->setOrder(Task::Last);
+    } else {
+        q->setOrder(Task::Normal);
+    }
+}
 
 }
