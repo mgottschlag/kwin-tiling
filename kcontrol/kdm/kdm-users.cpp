@@ -54,6 +54,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <limits.h>
 #include <unistd.h>
 #include <pwd.h>
 
@@ -108,7 +109,7 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 		"Note that users with the UID 0 (typically root) are not affected by "
 		"this and must be explicitly excluded in \"Inverse selection\" mode.") );
 	QSizePolicy sp_ign_fix( QSizePolicy::Ignored, QSizePolicy::Fixed );
-	QValidator *valid = new QIntValidator( 0, 999999, minGroup );
+	QValidator *valid = new QIntValidator( 0, INT_MAX, minGroup );
 	QLabel *minlab = new QLabel( i18nc("UIDs", "Below:"), minGroup );
 	leminuid = new KLineEdit( minGroup );
 	minlab->setBuddy( leminuid );
