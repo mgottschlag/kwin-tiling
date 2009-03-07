@@ -1,0 +1,78 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kde.SystemTray">
+
+    <!-- those will be pretty enums, over dbus opaque ugly integers :/-->
+    <method name="category">
+      <arg type="i" direction="out"/>
+    </method>
+
+    <method name="title">
+      <arg type="s" direction="out"/>
+    </method>
+
+    <method name="status">
+      <arg type="i" direction="out"/>
+    </method>
+
+
+    <!-- main icon -->
+    <!-- names are preferred over pixmaps -->
+    <method name="iconName">
+      <arg type="s" direction="out"/>
+    </method>
+
+    <!--hmm is the right way to pass pixmaps?-->
+    <method name="iconPixmap">
+      <arg type="ay" direction="out"/>
+      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QImage"/>
+    </method>
+
+
+    <!-- tooltip stuff -->
+    <method name="tooltipIconName">
+      <arg type="s" direction="out"/>
+    </method>
+
+    <method name="tooltipIconPixmap">
+      <arg type="ay" direction="out"/>
+      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QImage"/>
+    </method>
+
+    <method name="tooltipTitle">
+      <arg type="s" direction="out"/>
+    </method>
+
+    <method name="tooltipSubTitle">
+      <arg type="s" direction="out"/>
+    </method>
+
+
+    <!-- interaction: the systemtray wants the application to do something -->
+    <method name="contextMenu">
+        <!-- we're passing the coordinates of the icon, so the app knows where to put the popup window -->
+        <arg name="x" type="i" direction="in"/>
+        <arg name="y" type="i" direction="in"/>
+    </method>
+
+    <method name="activate">
+    </method>
+
+    <!-- this probably is too much...-->
+    <method name="wheel">
+      <arg name="delta" type="i" direction="in"/>
+    </method>
+
+    <!-- Signals: the client wants to change something in the status-->
+    <signal name="newIcon">
+    </signal>
+
+    <signal name="newTooltip">
+    </signal>
+
+    <signal name="newStatus">
+      <arg name="status" type="i"/>
+    </signal>
+
+  </interface>
+</node>

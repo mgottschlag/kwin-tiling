@@ -24,6 +24,7 @@
 
 #include "../../core/task.h"
 
+#include "systemtray_interface.h"
 
 namespace SystemTray
 {
@@ -47,8 +48,15 @@ public:
     virtual QString typeId() const;
     virtual QIcon icon() const;
 
+protected:
+    bool eventFilter(QObject *watched, QEvent *event);
+
 private:
     DBusSystemTrayTaskPrivate *d;
+
+    /*Q_PRIVATE_SLOT(d, void askContextMenu());
+    Q_PRIVATE_SLOT(d, void syncIcon());
+    Q_PRIVATE_SLOT(d, void syncTooltip());*/
 };
 
 }

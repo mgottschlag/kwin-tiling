@@ -22,11 +22,18 @@
 #include "dbussystemtraytask.h"
 
 #include <QGraphicsWidget>
+#include <QGraphicsSceneContextMenuEvent>
+#include <QIcon>
 
 #include <KIcon>
 #include <KIconLoader>
 
+#include <plasma/plasma.h>
+#include <Plasma/Corona>
+#include <Plasma/View>
 #include <Plasma/IconWidget>
+#include <Plasma/ToolTipContent>
+#include <Plasma/ToolTipManager>
 
 namespace SystemTray
 {
@@ -45,12 +52,18 @@ public:
         delete iconWidget;
     }
 
+    void askContextMenu();
+    void syncIcon();
+    void syncTooltip();
+
 
     DBusSystemTrayTask *q;
     QString service;
     QString name;
     QIcon icon;
     Plasma::IconWidget *iconWidget;
+    Plasma::ToolTipContent tooltipData;
+    org::kde::SystemTray *systemTrayIcon;
 };
 
 
@@ -60,11 +73,21 @@ DBusSystemTrayTask::DBusSystemTrayTask(const QString &service)
 {
     d->name = service;
     d->iconWidget = new Plasma::IconWidget();
-    d->icon = KIcon("applications-engineering");
-    d->iconWidget->setIcon(d->icon);
+
     d->iconWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     d->iconWidget->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
     d->iconWidget->setPreferredSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
+
+    d->systemTrayIcon = new org::kde::SystemTray(service, "/SystemTray",
+                                                 QDBusConnection::sessionBus());
+    d->syncIcon();
+    d->syncTooltip();
+
+    connect(d->systemTrayIcon, SIGNAL(newIcon()), this, SLOT(syncIcon()));
+    connect(d->systemTrayIcon, SIGNAL(newTooltip()), this, SLOT(syncTooltip()));
+
+    connect(d->iconWidget, SIGNAL(clicked()), d->systemTrayIcon, SLOT(activate()));
+    d->iconWidget->installEventFilter(this);
 }
 
 
@@ -106,5 +129,62 @@ QIcon DBusSystemTrayTask::icon() const
 {
     return d->icon;
 }
+
+
+bool DBusSystemTrayTask::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == d->iconWidget && event->type() == QEvent::GraphicsSceneContextMenu) {
+        d->askContextMenu();
+        return true;
+    }
+    return false;
+}
+
+//DBusSystemTrayTaskPrivate
+
+void DBusSystemTrayTaskPrivate::askContextMenu()
+{
+    QPoint popupPos(0,0);
+
+    QGraphicsView *view = Plasma::viewFor(iconWidget);
+    if (view) {
+        popupPos = view->mapToGlobal(view->mapFromScene(iconWidget->scenePos()));
+    }
+
+    systemTrayIcon->contextMenu(popupPos.x(), popupPos.y());
+}
+
+void DBusSystemTrayTaskPrivate::syncIcon()
+{
+    if (!systemTrayIcon->iconName().value().isNull()) {
+        icon = KIcon(systemTrayIcon->iconName());
+    } else {
+        QImage iconImage; iconImage.loadFromData(systemTrayIcon->iconPixmap().value());
+        icon = QPixmap::fromImage(iconImage);
+    }
+    iconWidget->setIcon(icon);
+}
+
+void DBusSystemTrayTaskPrivate::syncTooltip()
+{
+    if (systemTrayIcon->tooltipTitle().value().isEmpty()) {
+        Plasma::ToolTipManager::self()->clearContent(iconWidget);
+        return;
+    }
+
+    QIcon tooltipIcon;
+    if (!systemTrayIcon->iconName().value().isNull()) {
+        tooltipIcon = KIcon(systemTrayIcon->iconName());
+    } else {
+        QImage iconImage; iconImage.loadFromData(systemTrayIcon->iconPixmap().value());
+        tooltipIcon = QPixmap::fromImage(iconImage);
+    }
+
+    tooltipData.setMainText(systemTrayIcon->tooltipTitle().value());
+    tooltipData.setSubText(systemTrayIcon->tooltipSubTitle().value());
+    tooltipData.setImage(tooltipIcon);
+    Plasma::ToolTipManager::self()->setContent(iconWidget, tooltipData);
+}
+
 
 }

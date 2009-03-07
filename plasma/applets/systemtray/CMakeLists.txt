@@ -42,6 +42,9 @@ add_subdirectory(systemtraydaemon)
 set(systemtraydaemon_xml systemtraydaemon/org.kde.SystemTrayDaemon.xml)
 QT4_ADD_DBUS_INTERFACE(systemtray_SRCS ${systemtraydaemon_xml} systemtraydaemon_interface)
 
+set(systemtray_xml protocols/dbussystemtray/org.kde.SystemTray.xml)
+QT4_ADD_DBUS_INTERFACE(systemtray_SRCS ${systemtray_xml} systemtray_interface)
+
 kde4_add_plugin(plasma_applet_systemtray ${systemtray_SRCS})
 include_directories(${CMAKE_SOURCE_DIR})
 target_link_libraries(plasma_applet_systemtray ${KDE4_KDEUI_LIBS} ${KDE4_PLASMA_LIBS} ${X11_LIBRARIES} ${X11_Xrender_LIB} ${KDE4_SOLID_LIBS})
