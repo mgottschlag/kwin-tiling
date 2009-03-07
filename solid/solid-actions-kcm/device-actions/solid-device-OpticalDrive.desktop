@@ -1,6 +1,7 @@
 [Desktop Action bus]
 Name=Bus
 Name[et]=Siin
+Name[pt]=Barramento
 Name[pt_BR]=Barramento
 Name[ro]=Magistrală
 Name[sv]=Buss
@@ -26,6 +27,8 @@ Name[et]=Töö ajal ühendatav
 Name[ga]=Inphlugáilte
 Name[nds]=Jümmers tokoppelbor
 Name[nl]=Hotplugbaar
+Name[pt]=Conectável em Funcionamento
+Name[pt_BR]=Conectável em Funcionamento
 Name[sv]=Inkopplingsbar
 Name[uk]=«Гаряче» з’єднання
 Name[zh_TW]=可熱插拔
@@ -49,6 +52,7 @@ Name[et]=Lugemiskiirus
 Name[ga]=Luas Léite
 Name[nds]=Leesgauigkeit
 Name[nl]=Leessnelheid
+Name[pt]=Velocidade de Leitura
 Name[pt_BR]=Velocidade de leitura
 Name[ro]=Viteză de citire
 Name[sv]=Läshastighet
