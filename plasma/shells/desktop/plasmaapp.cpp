@@ -431,19 +431,16 @@ void PlasmaApp::screenRemoved(int id)
         }
     }
 
-    /*
-    TODO: remove panels when screen goes away.
-          first, however, we need to be able to reserve and restore the panelsettings
-          even when the view itself goes away
-    QMutableListIterator<PanelView*> it(m_panels);
-    while (it.hasNext()) {
-        PanelView *panel = it.next();
-        if (panel->screen() == i) {
+    QMutableListIterator<PanelView*> pIt(m_panels);
+    while (pIt.hasNext()) {
+        PanelView *panel = pIt.next();
+        if (panel->screen() == id) {
+            kDebug() << "removing a panel for screen" << id;
+            panel->setContainment(0);
+            pIt.remove();
             delete panel;
-            it.remove();
         }
     }
-    */
 }
 
 DesktopView* PlasmaApp::viewForScreen(int screen, int desktop) const
@@ -577,11 +574,13 @@ void PlasmaApp::createView(Plasma::Containment *containment)
     WId viewWindow = 0;
 
     if (isPanelContainment(containment)) {
-        PanelView *panelView = new PanelView(containment, id);
-        viewWindow = panelView->winId();
-        connect(panelView, SIGNAL(destroyed(QObject*)), this, SLOT(panelRemoved(QObject*)));
-        m_panels << panelView;
-        panelView->show();
+        if (containment->screen() < Kephal::ScreenUtils::numScreens()) {
+            PanelView *panelView = new PanelView(containment, id);
+            viewWindow = panelView->winId();
+            connect(panelView, SIGNAL(destroyed(QObject*)), this, SLOT(panelRemoved(QObject*)));
+            m_panels << panelView;
+            panelView->show();
+        }
     } else if (containment->screen() > -1 &&
                containment->screen() < Kephal::ScreenUtils::numScreens()) {
         DesktopView *view = viewForScreen(containment->screen(), containment->desktop());
@@ -621,6 +620,15 @@ void PlasmaApp::createView(Plasma::Containment *containment)
 
 void PlasmaApp::containmentAdded(Plasma::Containment *containment)
 {
+    if (isPanelContainment(containment)) {
+        foreach (PanelView * panel, m_panels) {
+            if (panel->containment() == containment) {
+                kDebug() << "not creating second PanelView with existing Containment!!";
+                return;
+            }
+        }
+    }
+
     createView(containment);
     disconnect(containment, 0, this, 0);
     connect(containment, SIGNAL(zoomRequested(Plasma::Containment*,Plasma::ZoomDirection)),

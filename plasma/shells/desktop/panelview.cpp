@@ -278,6 +278,10 @@ void PanelView::init()
             this, SLOT(pinchContainmentToCurrentScreen()));
     connect(screens, SIGNAL(screenMoved(Kephal::Screen *, QPoint, QPoint)),
             this, SLOT(updatePanelGeometry()));
+    connect(screens, SIGNAL(screenAdded(Kephal::Screen *)),
+            this, SLOT(updateStruts()));
+    connect(screens, SIGNAL(screenRemoved(int)),
+            this, SLOT(updateStruts()));
 }
 
 void PanelView::setLocation(Plasma::Location location)
@@ -430,9 +434,6 @@ void PanelView::updatePanelGeometry()
     switch (location()) {
     case Plasma::TopEdge:
     case Plasma::BottomEdge:
-        if (m_alignment != Qt::AlignCenter) {
-            m_offset = qMax(m_offset, 0);
-        }
         //resize the panel if is too large
         if (geom.width() > screenGeom.width()) {
             geom.setWidth(screenGeom.width());
@@ -458,9 +459,6 @@ void PanelView::updatePanelGeometry()
 
     case Plasma::LeftEdge:
     case Plasma::RightEdge:
-        if (m_alignment != Qt::AlignCenter) {
-            m_offset = qMax(m_offset, 0);
-        }
         //resize the panel if is too tall
         if (geom.height() > screenGeom.height()) {
             geom.setHeight(screenGeom.height());
@@ -661,6 +659,12 @@ void PanelView::pinchContainment(const QRect &screenGeom)
             }
         }
 
+        // if the maximum-size is 0, set it to 100%
+        if (max.width() <= 0) {
+            c->setMaximumSize(sw, max.height());
+            max = c->maximumSize();
+        }
+
         if (m_offset + max.width() > sw) {
             //kDebug() << "max size is too wide!";
             if (max.width() > sw) {
@@ -679,6 +683,12 @@ void PanelView::pinchContainment(const QRect &screenGeom)
             }
         }
 
+        // if the maximum-size is 0, set it to 100%
+        if (max.height() <= 0) {
+            c->setMaximumSize(max.width(), sh);
+            max = c->maximumSize();
+        }
+
         if (m_offset + max.height() > sh) {
             //kDebug() << "max size is too tall!";
             if (max.height() > sh) {
@@ -687,6 +697,12 @@ void PanelView::pinchContainment(const QRect &screenGeom)
                 m_offset = sh - int(max.height());
             }
         }
+    }
+
+    // resize to max if for some reason the size is empty
+    // otherwise its not possible to interact with the panel at all
+    if (c->size().isEmpty()) {
+        c->resize(max);
     }
 
     if (m_lastHorizontal != horizontal ||

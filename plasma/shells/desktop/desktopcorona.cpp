@@ -83,6 +83,20 @@ void DesktopCorona::checkScreen(int screen, bool signalWhenExists)
             emit containmentAdded(c);
         }
     }
+
+    if (signalWhenExists) {
+        foreach (Plasma::Containment * c, containments()) {
+            if (c->screen() != screen) {
+                continue;
+            }
+
+            Plasma::Containment::Type t = c->containmentType();
+            if (t == Plasma::Containment::PanelContainment ||
+                    t == Plasma::Containment::CustomPanelContainment) {
+                emit containmentAdded(c);
+            }
+        }
+    }
 }
 
 void DesktopCorona::addDesktopContainment(int screen, int desktop)
