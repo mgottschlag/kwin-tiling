@@ -47,6 +47,9 @@ class Cpu : public Applet
         void initLater(const QString &name);
         void configAccepted();
 
+    protected:
+        QString cpuTitle(const QString &name);
+
     private:
         Ui::config ui;
         Ui::configAdv uiAdv;

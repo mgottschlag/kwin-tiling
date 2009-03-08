@@ -79,13 +79,21 @@ void SM::Cpu::initLater(const QString &name)
     }
 }
 
+QString SM::Cpu::cpuTitle(const QString &name)
+{
+    if (name == "system") {
+        return i18n("total");
+    }
+    return name;
+}
+
 bool SM::Cpu::addMeter(const QString& source)
 {
     QStringList l = source.split('/');
     if (l.count() < 3) {
         return false;
     }
-    QString cpu = l[2];
+    QString cpu = l[1];
     Plasma::Theme* theme = Plasma::Theme::defaultTheme();
     Plasma::SignalPlotter *plotter = new Plasma::SignalPlotter(this);
     plotter->addPlot(m_graphColor);
@@ -109,7 +117,7 @@ bool SM::Cpu::addMeter(const QString& source)
         plotter->setSvgBackground(QString());
         plotter->setBackgroundColor(Qt::transparent);
     }
-    plotter->setTitle(cpu);
+    plotter->setTitle(cpuTitle(cpu));
     plotter->setUnit("%");
     appendPlotter(source, plotter);
     mainLayout()->addItem(plotter);
@@ -158,7 +166,7 @@ void SM::Cpu::createConfigurationInterface(KConfigDialog *parent)
 
     foreach (const QString& cpu, m_cpus) {
         if (rx.indexIn(cpu) != -1) {
-            QStandardItem *item1 = new QStandardItem(rx.cap(1));
+            QStandardItem *item1 = new QStandardItem(cpuTitle(rx.cap(1)));
             item1->setEditable(false);
             item1->setCheckable(true);
             item1->setData(cpu);
