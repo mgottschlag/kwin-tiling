@@ -1,6 +1,7 @@
 [Misc]
 Name=BeOS
 Name[hi]=बीई-ओएस
+Name[hne]=बीई-ओएस
 Name[kn]=ಬಿಇಓಎಸ್
 Name[mai]=बीई-ओएस
 Name[ml]=ബിഇഒഎസ്
@@ -34,6 +35,7 @@ Comment[gl]=Estilo similar a BeOS sen tema
 Comment[gu]=થીમ વગરનાં BeOS-જેવી શૈલી
 Comment[he]=חסר ערכת־נושא בסגנון BeOS
 Comment[hi]=प्रसंग-बगैर बीई-ओएस जैसी शैली
+Comment[hne]=बीईओएस जइसन के अनथीम्ड सैली
 Comment[hr]=Stil bez teme, nalikuje na BeOS
 Comment[hsb]=Stil, podobny na BeOS
 Comment[hu]=BeOS-szerű stílus
