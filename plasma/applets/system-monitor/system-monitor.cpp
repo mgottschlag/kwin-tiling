@@ -142,15 +142,15 @@ void SystemMonitor::appletRemoved(QObject *object)
 void SystemMonitor::checkGeometry()
 {
     QSizeF margins = size() - contentsRect().size();
-    qreal minHeight = 32 + 20 + 25; // m_buttons->minimumHeight();
+    qreal minHeight = m_buttons->minimumHeight();
     //kDebug() << minHeight;
 
     foreach (SM::Applet *applet, m_applets) {
         //kDebug() << applet->minSize() << applet->minimumSize()
         //         << applet->metaObject()->className() << applet->size() - applet->contentsRect().size();
-        minHeight += applet->minSize().height() + m_layout->spacing();
+        minHeight += applet->preferredSize().height() + m_layout->spacing();
     }
-    m_widget->setMinimumSize(DEFAULT_MINIMUM_WIDTH, minHeight);
+    m_widget->setMinimumSize(PREFERRED, minHeight);
 
     QSizeF s(m_widget->size().width(), minHeight);
     if (m_applets.count() == 0) {

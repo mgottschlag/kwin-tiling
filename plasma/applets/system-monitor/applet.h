@@ -23,7 +23,8 @@
 
 #include "sm_export.h"
 
-#define DEFAULT_MINIMUM_WIDTH 200
+#define MINIMUM 24
+#define PREFERRED 200
 
 class Header;
 class QGraphicsLinearLayout;
@@ -99,6 +100,7 @@ class SM_EXPORT Applet : public Plasma::Applet
     private:
         uint m_interval;
         qreal m_preferredItemHeight;
+        qreal m_minimumWidth;
         QString m_title;
         bool m_titleSpacer;
         Plasma::Frame* m_header;
@@ -113,7 +115,6 @@ class SM_EXPORT Applet : public Plasma::Applet
         Plasma::IconWidget *m_noSourcesIcon;
         Mode m_mode;
         Detail m_detail;
-        qreal m_minimumWidth;
         QSizeF m_min;
         QSizeF m_pref;
         QSizeF m_max;
