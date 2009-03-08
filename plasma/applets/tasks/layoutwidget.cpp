@@ -240,10 +240,15 @@ void LayoutWidget::layoutItems()
 
     //kDebug() << "Laying out with" << columns << rows;
     //kDebug() << "geometry" << m_groupItem->geometry();
-    int rowHeight = qMax(1, int(m_groupItem->geometry().height() / rows));
+    //int rowHeight = qMax(1, int(m_groupItem->geometry().height() / rows));
     //kDebug() << "rowHeight" << rowHeight;
-    int columnWidth = qMax(1, int(m_groupItem->geometry().size().width() / columns));
+    //int columnWidth = qMax(1, int(m_groupItem->geometry().size().width() / columns));
     //kDebug() << "column width set to " << columnWidth;
+
+    //clearLayout
+    while(count()) {
+        removeAt(0);
+    }
 
     QSizeF maximumCellSize;
     if (!m_itemPositions.isEmpty()) {
