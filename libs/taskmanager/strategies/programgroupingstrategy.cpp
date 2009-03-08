@@ -117,9 +117,11 @@ void ProgramGroupingStrategy::toggleGrouping()
 void ProgramGroupingStrategy::handleItem(AbstractItemPtr item)
 {
     if (item->isGroupItem()) {
+        //kDebug() << "item is groupitem";
         d->groupManager->rootGroup()->add(item);
         return;
     } else if (d->blackList.contains((qobject_cast<TaskItem*>(item))->task()->classClass())) {
+        //kDebug() << "item is in blacklist";
         d->groupManager->rootGroup()->add(item);
         return;
     }
@@ -156,7 +158,7 @@ bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* gro
     }
 
     QString name = taskItem->task()->classClass();
-    if (itemMap.count(name) >= groupItem->members().count()) { //join this group
+    if (itemMap.count(name) >= groupItem->members().count() && !groupItem->isRootGroup()) { //join this group if this is not the rootGroup, otherwise tasks may not be grouped if there arent tasks of any other type, typically on startup
         //kDebug() << "joined this Group";
         groupItem->add(taskItem);
         return true;
