@@ -1,128 +1,138 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>pagerConfig</class>
- <widget class="QWidget" name="pagerConfig" >
-  <property name="geometry" >
+ <widget class="QWidget" name="pagerConfig">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>271</width>
-    <height>186</height>
+    <width>342</width>
+    <height>276</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Configure Pager</string>
   </property>
-  <property name="accessibleName" >
+  <property name="accessibleName">
    <string>Configure Pager</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2" >
-   <property name="margin" >
+  <layout class="QGridLayout" name="gridLayout_2">
+   <property name="margin">
     <number>0</number>
    </property>
-   <property name="spacing" >
+   <property name="spacing">
     <number>0</number>
    </property>
-   <item row="0" column="0" >
-    <widget class="QGroupBox" name="appearenceGroupBox" >
-     <property name="title" >
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="appearenceGroupBox">
+     <property name="title">
       <string/>
      </property>
-     <property name="flat" >
+     <property name="flat">
       <bool>true</bool>
      </property>
-     <property name="checkable" >
+     <property name="checkable">
       <bool>false</bool>
      </property>
-     <layout class="QGridLayout" name="gridLayout" >
-      <property name="margin" >
+     <layout class="QGridLayout" name="gridLayout">
+      <property name="margin">
        <number>0</number>
       </property>
-      <item row="0" column="0" >
-       <widget class="QLabel" name="displayLabel" >
-        <property name="text" >
+      <item row="0" column="0">
+       <widget class="QLabel" name="displayLabel">
+        <property name="text">
          <string>Display text:</string>
         </property>
-        <property name="alignment" >
+        <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
-      <item row="0" column="1" colspan="2" >
-       <widget class="QRadioButton" name="desktopNumberRadioButton" >
-        <property name="text" >
+      <item row="0" column="1" colspan="2">
+       <widget class="QRadioButton" name="desktopNumberRadioButton">
+        <property name="text">
          <string>Desktop number</string>
         </property>
+        <attribute name="buttonGroup">
+         <string>buttonGroupText</string>
+        </attribute>
        </widget>
       </item>
-      <item row="1" column="1" colspan="2" >
-       <widget class="QRadioButton" name="desktopNameRadioButton" >
-        <property name="text" >
+      <item row="1" column="1" colspan="2">
+       <widget class="QRadioButton" name="desktopNameRadioButton">
+        <property name="text">
          <string>Desktop name</string>
         </property>
+        <attribute name="buttonGroup">
+         <string>buttonGroupText</string>
+        </attribute>
        </widget>
       </item>
-      <item row="2" column="1" colspan="2" >
-       <widget class="QRadioButton" name="displayNoneRadioButton" >
-        <property name="text" >
+      <item row="2" column="1" colspan="2">
+       <widget class="QRadioButton" name="displayNoneRadioButton">
+        <property name="text">
          <string>No text</string>
         </property>
+        <attribute name="buttonGroup">
+         <string>buttonGroupText</string>
+        </attribute>
        </widget>
       </item>
-      <item row="3" column="0" >
-       <widget class="QLabel" name="label" >
-        <property name="text" >
+      <item row="3" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
          <string>Display icons:</string>
         </property>
-        <property name="alignment" >
+        <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>showWindowIconsCheckBox</cstring>
         </property>
        </widget>
       </item>
-      <item row="3" column="1" colspan="2" >
-       <widget class="QCheckBox" name="showWindowIconsCheckBox" >
-        <property name="text" >
+      <item row="3" column="1" colspan="2">
+       <widget class="QCheckBox" name="showWindowIconsCheckBox">
+        <property name="text">
          <string/>
         </property>
        </widget>
       </item>
-      <item row="4" column="0" >
-       <widget class="QLabel" name="labelRows" >
-        <property name="text" >
+      <item row="4" column="0">
+       <widget class="QLabel" name="labelRows">
+        <property name="text">
          <string>Number of rows:</string>
         </property>
-        <property name="alignment" >
+        <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>spinRows</cstring>
         </property>
        </widget>
       </item>
-      <item row="4" column="1" >
-       <widget class="QSpinBox" name="spinRows" >
-        <property name="toolTip" >
+      <item row="4" column="1">
+       <widget class="QSpinBox" name="spinRows">
+        <property name="toolTip">
          <string>Change the number of rows</string>
         </property>
-        <property name="whatsThis" >
+        <property name="whatsThis">
          <string>Change the number of rows</string>
         </property>
-        <property name="minimum" >
+        <property name="minimum">
          <number>1</number>
         </property>
-        <property name="maximum" >
+        <property name="maximum">
          <number>20</number>
         </property>
        </widget>
       </item>
-      <item row="4" column="2" >
-       <spacer name="horizontalSpacer_3" >
-        <property name="orientation" >
+      <item row="4" column="2">
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
-        <property name="sizeHint" stdset="0" >
+        <property name="sizeHint" stdset="0">
          <size>
           <width>64</width>
           <height>20</height>
@@ -130,49 +140,58 @@
         </property>
        </spacer>
       </item>
-      <item row="5" column="0" >
-       <widget class="QLabel" name="currentLabel" >
-        <property name="text" >
+      <item row="5" column="0">
+       <widget class="QLabel" name="currentLabel">
+        <property name="text">
          <string>Selecting current desktop:</string>
         </property>
-        <property name="alignment" >
+        <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
-        <property name="buddy" >
+        <property name="buddy">
          <cstring>spinRows</cstring>
         </property>
        </widget>
       </item>
-     <item row="5" column="1" colspan="2" >
-       <widget class="QRadioButton" name="doNothingRadioButton" >
-        <property name="text" >
-         <string>Do nothing</string>
+      <item row="5" column="1" colspan="2">
+       <widget class="QRadioButton" name="doNothingRadioButton">
+        <property name="text">
+         <string>Does nothing</string>
         </property>
+        <attribute name="buttonGroup">
+         <string>buttonGroupAction</string>
+        </attribute>
        </widget>
       </item>
-      <item row="6" column="1" colspan="2" >
-       <widget class="QRadioButton" name="showDesktopRadioButton" >
-        <property name="text" >
-         <string>Shows desktops</string>
+      <item row="6" column="1" colspan="2">
+       <widget class="QRadioButton" name="showDesktopRadioButton">
+        <property name="text">
+         <string>Shows desktop</string>
         </property>
+        <attribute name="buttonGroup">
+         <string>buttonGroupAction</string>
+        </attribute>
        </widget>
       </item>
-      <item row="7" column="1" colspan="2" >
-       <widget class="QRadioButton" name="showDashboardRadioButton" >
-        <property name="text" >
-         <string>Show the dashboard</string>
+      <item row="7" column="1" colspan="2">
+       <widget class="QRadioButton" name="showDashboardRadioButton">
+        <property name="text">
+         <string>Shows the dashboard</string>
         </property>
+        <attribute name="buttonGroup">
+         <string>buttonGroupAction</string>
+        </attribute>
        </widget>
       </item>
      </layout>
     </widget>
    </item>
-   <item row="0" column="1" >
-    <spacer name="horizontalSpacer" >
-     <property name="orientation" >
+   <item row="0" column="1">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>4</width>
        <height>20</height>
@@ -180,15 +199,15 @@
      </property>
     </spacer>
    </item>
-   <item row="1" column="0" >
-    <spacer name="verticalSpacer" >
-     <property name="orientation" >
+   <item row="1" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeType" >
+     <property name="sizeType">
       <enum>QSizePolicy::Fixed</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
        <height>15</height>
@@ -196,21 +215,21 @@
      </property>
     </spacer>
    </item>
-   <item row="2" column="0" colspan="2" >
-    <layout class="QHBoxLayout" name="horizontalLayout" >
+   <item row="2" column="0" colspan="2">
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="configureDesktopsButton" >
-       <property name="text" >
+      <widget class="QPushButton" name="configureDesktopsButton">
+       <property name="text">
         <string>Configure Desktops...</string>
        </property>
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer_2" >
-       <property name="orientation" >
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>333</width>
          <height>20</height>
@@ -220,12 +239,12 @@
      </item>
     </layout>
    </item>
-   <item row="3" column="0" >
-    <spacer name="verticalSpacer_4" >
-     <property name="orientation" >
+   <item row="3" column="0">
+    <spacer name="verticalSpacer_4">
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
        <height>47</height>
@@ -245,4 +264,8 @@
  </tabstops>
  <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="buttonGroupText"/>
+  <buttongroup name="buttonGroupAction"/>
+ </buttongroups>
 </ui>
