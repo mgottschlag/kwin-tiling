@@ -3,6 +3,7 @@ PlasmaAllowConfigureWhenLocked=false
 
 [Constraints]
 FileDialog=false
+KRun=false
 
 [General]
 ExcludeCategories=Windows and Tasks,Application Launchers
