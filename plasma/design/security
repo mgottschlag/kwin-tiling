@@ -1,5 +1,10 @@
+Security
+========
 
-three types of security:
+overview
+--------
+
+plasma will have three types of security:
 -co-operative
 -trust-based
 -enforced
