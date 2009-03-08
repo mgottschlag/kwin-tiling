@@ -40,6 +40,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QX11Info>
 #endif
 
+#include <kephal/screens.h>
+
 namespace TaskManager
 {
 
@@ -509,7 +511,7 @@ bool TaskManager::isOnScreen(int screen, const WId wid)
     // for window decos that fudge a bit and claim to extend beyond the
     // edge of the screen, we just contract a bit.
     QRect window = wi.frameGeometry();
-    QRect desktop = QApplication::desktop()->screenGeometry(screen);
+    QRect desktop = Kephal::ScreenUtils::screenGeometry(screen);
     desktop.adjust(5, 5, -5, -5);
     return window.intersects(desktop);
 }
