@@ -35,10 +35,13 @@ using TaskManager::GroupPtr;
 using TaskManager::TaskItem;
 using TaskManager::AbstractGroupableItem;
 
-
 class LayoutWidget;
 class SplitGroupItem;
 class QGraphicsLinearLayout;
+namespace Plasma
+{
+    class Dialog;
+}
 typedef QMap<int, AbstractTaskItem*> Order;
 
 /**
@@ -128,6 +131,7 @@ public slots:
 
 private Q_SLOTS:
     void constraintsChanged(Plasma::Constraints);
+    void clearPopupLostFocus();
 
 protected:
     AbstractTaskItem *taskItemForWId(WId id);
@@ -136,6 +140,8 @@ protected:
 
     virtual void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
     virtual void dropEvent(QGraphicsSceneDragDropEvent *event);
+    bool eventFilter(QObject *watched, QEvent *event);
+
     void handleDroppedId(WId id, AbstractTaskItem *targetTask, QGraphicsSceneDragDropEvent *event);
 
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -194,6 +200,15 @@ private:
     int m_splitPosition;
     TaskGroupItem *m_parentSplitGroup;
     TaskGroupItem *m_childSplitGroup;
+
+    QGraphicsWidget *m_offscreenWidget;
+    QGraphicsLinearLayout *m_offscreenLayout;
+    bool m_collapsed;
+    QGraphicsLinearLayout *m_mainLayout;
+    QGraphicsLinearLayout *m_dialogLayout;
+    Plasma::Dialog *m_popupDialog;
+    bool m_popupLostFocus;
+    void hidePopup();
 };
 
 #endif

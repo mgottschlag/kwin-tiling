@@ -19,7 +19,7 @@
 
 //GroupItem Constructor
 LayoutWidget::LayoutWidget(TaskGroupItem *parent, Tasks *applet)
-    : QGraphicsGridLayout(parent),
+    : QGraphicsGridLayout(0),
       m_hasSpacer(false),
       m_spacer(0),
       m_groupItem(parent),
@@ -45,12 +45,17 @@ LayoutWidget::~LayoutWidget()
 
 void LayoutWidget::setOrientation(Plasma::FormFactor orientation)
 {
+    Qt::Orientation oldOrientation = m_layoutOrientation;
+
     if (orientation == Plasma::Vertical) {
         m_layoutOrientation = Qt::Vertical;
     } else {
         m_layoutOrientation = Qt::Horizontal;
     }
-    layoutItems();
+
+    if (m_layoutOrientation != oldOrientation) {
+        layoutItems();
+    }
 }
 
 
@@ -255,7 +260,6 @@ void LayoutWidget::layoutItems()
         maximumCellSize = m_itemPositions.first()->basicPreferredSize() * 1.8;
     }
 
-    //createLayout(); //its a shame that we have to create a new layout every time but the QGraphicsGridLayout is just to buggy yet
 
     if (m_layoutOrientation == Qt::Vertical) {
         setHorizontalSpacing(0);
@@ -289,7 +293,7 @@ void LayoutWidget::layoutItems()
             }
         }
 
-		//not good if we don't recreate the layout every time
+        //not good if we don't recreate the layout every time
         //m_layout->setColumnPreferredWidth(col, columnWidth);//Somehow this line is absolutely crucial
         //m_layout->setRowPreferredHeight(row, rowHeight);//Somehow this line is absolutely crucial
 
@@ -367,7 +371,10 @@ void LayoutWidget::updatePreferredSize()
 
 void LayoutWidget::setMaximumRows(int rows)
 {
-    m_maxRows = rows;
+    if (rows != m_maxRows) {
+        m_maxRows = rows;
+        layoutItems();
+    }
 }
 
 void LayoutWidget::setForceRows(bool forceRows)

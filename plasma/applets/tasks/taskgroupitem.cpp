@@ -51,6 +51,7 @@
 #include <Plasma/ToolTipManager>
 #include <Plasma/Corona>
 #include <Plasma/Containment>
+#include <Plasma/Dialog>
 
 #include "tasks.h"
 #include "layoutwidget.h"
@@ -66,7 +67,13 @@ TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet, const bool 
       m_forceRows(false),
       m_splitPosition(0),
       m_parentSplitGroup(0),
-      m_childSplitGroup(0)
+      m_childSplitGroup(0),
+      m_offscreenWidget(0),
+      m_collapsed(true),
+      m_mainLayout(0),
+      m_offscreenLayout(0),
+      m_popupDialog(0),
+      m_popupLostFocus(false)
 {
     setAcceptDrops(true);
 }
@@ -174,7 +181,13 @@ void TaskGroupItem::activate()
 
 void TaskGroupItem::close()
 {
-//  m_applet->removeGroupTask(m_group);
+    //kDebug();
+    //close the popup if the group is removed
+    if (m_popupDialog) {
+        m_popupDialog->hide();
+        m_popupDialog->deleteLater();
+        m_popupDialog = 0;
+    }
     m_group = 0;
 }
 
@@ -327,7 +340,7 @@ void TaskGroupItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
 
     QAction *a;
 
-    if (m_expandedLayout) {
+    if (!collapsed()) {
         a = new QAction(i18n("Collapse Group"), this);
         connect(a, SIGNAL(triggered()), this, SLOT(collapse()));
     } else {
@@ -400,16 +413,16 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
     m_groupMembers[groupableItem] = item;
     item->setParentItem(this);
 
-    if (collapsed()) {
-        item->hide();
-        QRect rect = iconGeometry();
-        item->publishIconGeometry(rect);
-    } else if (isSplit()) {
+    if (isSplit()) {
         splitGroup(m_splitPosition);
         //emit changed();
         //m_childSplitGroup->reload();
-    } else {
+    } else if (m_expandedLayout) { //add to layout either for popup or expanded group
         m_expandedLayout->addTaskItem(item);
+    } else { //collapsed and no layout so far
+        item->hide();
+        QRect rect = iconGeometry();
+        item->publishIconGeometry(rect);
     }
 
     if (item->isActive()) {
@@ -437,6 +450,7 @@ void TaskGroupItem::itemRemoved(TaskManager::AbstractItemPtr groupableItem)
         kDebug() << "Item not found";
         return;
     }
+    //kDebug() << item->text();
 
     disconnect(item, 0, 0, 0);
 
@@ -462,7 +476,7 @@ bool TaskGroupItem::isActive() const
 
 void TaskGroupItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 { //TODO add delay so we can still drag group items
-    if (event->buttons() & Qt::LeftButton) {
+    if ((event->buttons() & Qt::LeftButton) && !m_popupLostFocus) {
         if (m_applet->groupManager().sortingStrategy() == TaskManager::GroupManager::ManualSorting ||
             m_applet->groupManager().groupingStrategy() == TaskManager::GroupManager::ManualGrouping) {
             if (!m_popupMenuTimer) {
@@ -499,13 +513,68 @@ void TaskGroupItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void TaskGroupItem::popupMenu()
 {
-    if (!m_expandedLayout) {
-        TaskManager::TasksMenu menu(qobject_cast<QWidget*>(this), m_group,  &m_applet->groupManager(), m_applet);
-        menu.adjustSize();
-        Q_ASSERT(m_applet->containment());
-        Q_ASSERT(m_applet->containment()->corona());
-        menu.exec(m_applet->containment()->corona()->popupPosition(this, menu.size()));
+    //kDebug();
+    if (!collapsed()) {
+        return;
     }
+
+    if (!m_offscreenWidget) {
+        m_offscreenWidget = new QGraphicsWidget(this);
+        m_offscreenLayout = new QGraphicsLinearLayout(m_offscreenWidget);
+        m_offscreenLayout->setContentsMargins(0,0,0,0); //default are 4 on each side
+        m_offscreenLayout->addItem(layoutWidget());
+        m_offscreenWidget->setLayout(m_offscreenLayout);
+        m_applet->containment()->corona()->addOffscreenWidget(m_offscreenWidget);
+    }
+
+    if (!m_popupDialog) {
+        // Initialize popup dialog
+        m_popupDialog = new Plasma::Dialog();
+        KWindowSystem::setState(m_popupDialog->winId(), NET::SkipTaskbar| NET::SkipPager);
+        m_popupDialog->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+        //TODO in the future it may be possible to use the Qt::Popup flag instead of the eventFilter, but for now the focus works better with the eventFilter
+        m_popupDialog->installEventFilter(this);
+        m_popupDialog->setGraphicsWidget(m_offscreenWidget);
+    }
+
+
+    if (m_popupDialog->isVisible()) {
+        m_popupDialog->hide();
+    } else {
+        m_expandedLayout->setOrientation(Plasma::Vertical);
+        m_expandedLayout->setMaximumRows(1);
+        m_offscreenWidget->resize(m_expandedLayout->preferredSize().toSize());
+        if(m_applet->containment() && m_applet->containment()->corona()) {
+            m_popupDialog->move(m_applet->containment()->corona()->popupPosition(this, m_popupDialog->size()));
+        }
+        KWindowSystem::setState(m_popupDialog->winId(), NET::SkipTaskbar| NET::SkipPager);
+        m_popupDialog->show();
+        //kDebug() << m_popupDialog->size() << m_expandedLayout->size();
+    }
+    m_popupDialog->clearFocus();
+}
+
+void TaskGroupItem::hidePopup()
+{
+    if (m_popupLostFocus) {
+        m_popupDialog->hide();
+    }
+}
+
+bool TaskGroupItem::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == m_popupDialog && event->type() == QEvent::WindowDeactivate) {
+        Q_ASSERT(m_popupDialog);
+        m_popupLostFocus = true; //avoid opening it again when clicking on the group
+        m_popupDialog->hide();
+        QTimer::singleShot(100, this, SLOT(clearPopupLostFocus()));
+    }
+    return QGraphicsWidget::eventFilter(watched, event);
+}
+
+void TaskGroupItem::clearPopupLostFocus()
+{
+    m_popupLostFocus = false;
 }
 
 void TaskGroupItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -516,6 +585,7 @@ void TaskGroupItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
     //kDebug();
     if (m_popupMenuTimer) {
+        //kDebug() << "popupTimer stop";
         m_popupMenuTimer->stop();
     } //Wait a bit before starting drag
     AbstractTaskItem::mouseMoveEvent(event);
@@ -523,26 +593,35 @@ void TaskGroupItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void TaskGroupItem::expand()
 {
-    if (m_expandedLayout) {
+    if (!collapsed()) {
         //kDebug() << "already expanded";
         return;
     }
 
-    //kDebug();
-    m_expandedLayout = new LayoutWidget(this, m_applet);
-    m_expandedLayout->setMaximumRows(m_maximumRows);
-    m_expandedLayout->setForceRows(m_forceRows);
-    m_expandedLayout->setOrientation(m_applet->formFactor());
+    if (m_offscreenLayout) { //only !offscreenWidgets should create an offscreen widget
+        m_offscreenLayout->removeItem(layoutWidget());
+    }
 
-    setLayout(m_expandedLayout);
+
+    if (!m_mainLayout) { //this layout is needed since we can't take a layout directly from a widget without destroying it
+        m_mainLayout = new QGraphicsLinearLayout(this);
+        m_mainLayout->setContentsMargins(0,0,0,0); //default are 4 on each side
+        setLayout(m_mainLayout);
+    }
+
+    //set it back from the popup settings (always vertical and 1 row)
+    layoutWidget()->setOrientation(m_applet->formFactor());
+    layoutWidget()->setMaximumRows(m_maximumRows);
+
+    m_mainLayout->addItem(layoutWidget());
 
     connect(m_applet, SIGNAL(constraintsChanged(Plasma::Constraints)), this, SLOT(constraintsChanged(Plasma::Constraints)));
     //connect(m_expandedLayout, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updatePreferredSize()));
+    m_collapsed = false;
     updatePreferredSize();
     emit changed();
     checkSettings();
     //kDebug() << "expanded";
-
 }
 
 void TaskGroupItem::constraintsChanged(Plasma::Constraints constraints)
@@ -560,13 +639,19 @@ void TaskGroupItem::constraintsChanged(Plasma::Constraints constraints)
 
 LayoutWidget *TaskGroupItem::layoutWidget()
 {
+	if (!m_expandedLayout) {
+		m_expandedLayout = new LayoutWidget(this, m_applet);
+		m_expandedLayout->setMaximumRows(m_maximumRows);
+		m_expandedLayout->setForceRows(m_forceRows);
+		m_expandedLayout->setOrientation(m_applet->formFactor());
+	}
     return m_expandedLayout;
 }
 
 void TaskGroupItem::collapse()
 {
     //kDebug() << (int)this;
-    if (!m_expandedLayout) {
+    if (collapsed()) {
         //kDebug() << "already collapsed";
         return;
     }
@@ -577,13 +662,15 @@ void TaskGroupItem::collapse()
 
     //kDebug();
     unsplitGroup();
-    foreach (AbstractTaskItem *member, m_groupMembers) {
-        m_expandedLayout->removeTaskItem(member);
-    }
-    setLayout(0);
+
+	m_mainLayout->removeItem(layoutWidget());
+	if (m_offscreenLayout) {
+		m_offscreenLayout->addItem(layoutWidget());
+	}
+
     //kDebug();
     //delete m_expandedLayout;
-    m_expandedLayout = 0;
+	m_collapsed = true;
     updatePreferredSize();
     //kDebug();
     emit changed();
@@ -592,12 +679,12 @@ void TaskGroupItem::collapse()
 
 bool TaskGroupItem::collapsed() const
 {
-    return m_expandedLayout == 0;
+    return m_collapsed;
 }
 
 void TaskGroupItem::updatePreferredSize()
 {
-    if (layout()) {
+    if (!collapsed()) {
         setPreferredSize(layout()->preferredSize());
         layout()->invalidate();
         //kDebug() << "expanded group" << layout()->preferredSize();
@@ -626,7 +713,7 @@ void TaskGroupItem::paint(QPainter *painter,
                             const QStyleOptionGraphicsItem *option,
                             QWidget *widget)
 {
-    if (!m_expandedLayout) {
+    if (collapsed()) {
         AbstractTaskItem::paint(painter,option,widget);
     }/* else {
         if (m_group) {
@@ -684,7 +771,7 @@ void  TaskGroupItem::itemPositionChanged(AbstractItemPtr item)
 void TaskGroupItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
     //kDebug()<<"Drag enter";
-    if (!m_expandedLayout &&
+    if (collapsed() &&
         (event->mimeData()->hasFormat(TaskManager::Task::mimetype()) ||
          event->mimeData()->hasFormat(TaskManager::Task::groupMimetype()))) {
         event->acceptProposedAction();
@@ -1029,7 +1116,7 @@ void TaskGroupItem::setAdditionalMimeData(QMimeData* mimeData)
 void TaskGroupItem::publishIconGeometry() const
 {
     // only do this if we are a collapsed group, with a GroupPtr and members
-    if (m_expandedLayout || !m_group || m_groupMembers.isEmpty()) {
+    if (!collapsed() || !m_group || m_groupMembers.isEmpty()) {
         return;
     }
 
