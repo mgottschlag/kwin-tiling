@@ -53,12 +53,14 @@ public:
 
         monitorSize.scale(bounds.size(), Qt::KeepAspectRatio);
 
+        monitorRect = QRect(QPoint(0,0), monitorSize);
+        monitorRect.moveCenter(bounds.center());
+
         screenGraphics->resizeFrame(monitorRect.size());
 
         previewRect = screenGraphics->contentsRect().toRect();
         previewRect.moveCenter(bounds.center());
-        monitorRect = QRect(QPoint(0,0), monitorSize);
-        monitorRect.moveCenter(bounds.center());
+
 
         if (wallpaper) {
             wallpaper->setBoundingRect(QRect(QPoint(0,0), previewRect.size()));
@@ -80,6 +82,7 @@ ScreenPreviewWidget::ScreenPreviewWidget(QWidget *parent)
 {
     d->screenGraphics = new Plasma::FrameSvg(this);
     d->screenGraphics->setImagePath("widgets/monitor");
+    d->updateScreenGraphics();
 }
 
 ScreenPreviewWidget::~ScreenPreviewWidget()
@@ -133,7 +136,7 @@ void ScreenPreviewWidget::resizeEvent(QResizeEvent *e)
 void ScreenPreviewWidget::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
-    QPoint standPosition(d->monitorRect.center().x() - d->screenGraphics->elementSize("base").width()/2, d->screenGraphics->contentsRect().bottom());
+    QPoint standPosition(d->monitorRect.center().x() - d->screenGraphics->elementSize("base").width()/2, d->previewRect.bottom());
 
     d->screenGraphics->paint(&painter, QRect(standPosition, d->screenGraphics->elementSize("base")), "base");
     d->screenGraphics->paintFrame(&painter, d->monitorRect.topLeft());
