@@ -71,7 +71,7 @@ void SaverDesktop::init()
     //re-wire the lock action so we can check for a password
     QAction *lock = action("lock widgets");
     if (lock) {
-        lock->disconnect(this);
+        lock->disconnect(SIGNAL(triggered(bool)));
         connect(lock, SIGNAL(triggered(bool)), this, SLOT(toggleLock()));
         lock->setText(unlocked ? i18n("Lock") : i18n("Unlock"));
         addToolBoxAction(lock);
