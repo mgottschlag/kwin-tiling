@@ -137,7 +137,7 @@ protected:
     virtual void updateAction(QAbstractItemModel *model, QAction *action, const QModelIndex& index);
 
     // reimplemented
-    virtual bool eventFilter(QObject * watched, QEvent *event);
+    virtual bool eventFilter(QObject *watched, QEvent *event);
 
 public Q_SLOTS:
     /**

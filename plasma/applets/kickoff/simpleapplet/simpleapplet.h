@@ -45,9 +45,9 @@ public:
         RecentlyUsedDocuments, ///< Recently Used Documents Menu
         Applications, ///< Applications Menu
         Favorites, ///< Favorites Menu
+        Bookmarks, ///< Bookmarks Menu
         Computer, ///< Computer Menu
         RecentlyUsed, ///< Recently Used Menu
-        Bookmarks, ///< Bookmarks Menu
         Settings, ///< Settings Menu
         RunCommand, ///< Run Command Action
         SwitchUser, ///< Switch User Action

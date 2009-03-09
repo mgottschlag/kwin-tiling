@@ -148,6 +148,16 @@ public:
             combo->setCurrentIndex(0);
     }
 
+    void addModel(QAbstractItemModel *model, ViewType viewtype, Kickoff::MenuView::ModelOptions options = Kickoff::MenuView::MergeFirstLevel, int formattype = -1) {
+        Kickoff::MenuView* m = menuview;
+        if(viewtypes.count() > 1) {
+            m = new Kickoff::MenuView(menuview, viewText(viewtype), KIcon(viewIcon(viewtype)));
+            m->setFormatType(formattype >= 0 ? (Kickoff::MenuView::FormatType)formattype : menuview->formatType());
+            menuview->addMenu(m);
+        }
+        m->addModel(model, options);
+    }
+
     QString viewText(MenuLauncherApplet::ViewType vt) const {
         switch (vt) {
             case Favorites:                return i18n("Favorites");
@@ -479,34 +489,30 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
         connect(d->menuview, SIGNAL(aboutToHide()), d->icon, SLOT(setUnpressed()));
         //connect(d->menuview, SIGNAL(afterBeingHidden()), d->menuview, SLOT(deleteLater()));
 
-        Kickoff::MenuView::ModelOptions options = d->viewtypes.count() < 2 ? Kickoff::MenuView::MergeFirstLevel : Kickoff::MenuView::None;
+        //Kickoff::MenuView::ModelOptions options = d->viewtypes.count() < 2 ? Kickoff::MenuView::MergeFirstLevel : Kickoff::MenuView::None;
         foreach(QString vtname, d->viewtypes) {
             if(vtname == "Applications") {
-                if(d->menuview->actions().count() > 0)
-                    d->menuview->addSeparator();
                 Kickoff::ApplicationModel *appModel = new Kickoff::ApplicationModel(d->menuview);
                 appModel->setDuplicatePolicy(Kickoff::ApplicationModel::ShowLatestOnlyPolicy);
                 if (d->formattype == Name || d->formattype == NameDescription || d->formattype == NameDashDescription)
                     appModel->setPrimaryNamePolicy(Kickoff::ApplicationModel::AppNamePrimary);
                 appModel->setSystemApplicationPolicy(Kickoff::ApplicationModel::ShowApplicationAndSystemPolicy);
                 d->menuview->addModel(appModel);
+                d->menuview->addSeparator();
             } else if(vtname == "Favorites") {
-                if(d->menuview->actions().count() > 0)
-                    d->menuview->addSeparator();
-                d->menuview->addModel(new Kickoff::FavoritesModel(d->menuview), options);
+                d->addModel(new Kickoff::FavoritesModel(d->menuview), Favorites);
             } else if(vtname == "Computer") {
-                d->menuview->addModel(new Kickoff::SystemModel(d->menuview), options);
+                d->addModel(new Kickoff::SystemModel(d->menuview), Computer);
             } else if(vtname == "RecentlyUsed") {
-                d->menuview->addModel(new Kickoff::RecentlyUsedModel(d->menuview), options);
+                d->addModel(new Kickoff::RecentlyUsedModel(d->menuview), RecentlyUsed);
             } else if(vtname == "RecentlyUsedApplications") {
-                if(d->menuview->actions().count() > 0)
-                    d->menuview->addSeparator();
-                if (d->maxRecentApps > 0)
+                if (d->maxRecentApps > 0) {
                     d->menuview->addModel(new Kickoff::RecentlyUsedModel(d->menuview, Kickoff::RecentlyUsedModel::ApplicationsOnly, d->maxRecentApps), Kickoff::MenuView::MergeFirstLevel);
-            } else if(vtname == "RecentlyUsedDocuments") {
-                if(d->menuview->actions().count() > 0)
                     d->menuview->addSeparator();
+                }
+            } else if(vtname == "RecentlyUsedDocuments") {
                 d->menuview->addModel(new Kickoff::RecentlyUsedModel(d->menuview, Kickoff::RecentlyUsedModel::DocumentsOnly), Kickoff::MenuView::MergeFirstLevel);
+                d->menuview->addSeparator();
             } else if(vtname == "Bookmarks") {
                 KMenu* menu = d->menuview;
                 if(d->viewtypes.count() > 1) {
@@ -582,15 +588,9 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
             } else if(vtname == "Logout") {
                 d->menuview->addAction(KIcon(d->viewIcon(Logout)), d->viewText(Logout))->setData(KUrl("leave:/logout"));
             } else if(vtname == "Leave") {
-                Kickoff::MenuView* parentmenu = d->menuview;
-                if(d->viewtypes.count() > 1) {
-                    parentmenu = new Kickoff::MenuView(d->menuview, d->viewText(Leave), KIcon(d->viewIcon(Leave)));
-                    parentmenu->setFormatType(Kickoff::MenuView::Description);
-                    d->menuview->addMenu(parentmenu);
-                }
-                Kickoff::LeaveModel *leavemodel = new Kickoff::LeaveModel(parentmenu);
+                Kickoff::LeaveModel *leavemodel = new Kickoff::LeaveModel(d->menuview);
                 leavemodel->updateModel();
-                parentmenu->addModel(leavemodel, Kickoff::MenuView::MergeFirstLevel);
+                d->addModel(leavemodel, Leave, Kickoff::MenuView::MergeFirstLevel, Kickoff::MenuView::Description);
             } else {
 #ifndef Q_WS_WIN
                 Solid::Control::PowerManager::SuspendMethods spdMethods = Solid::Control::PowerManager::supportedSuspendMethods();
@@ -644,6 +644,5 @@ QList<QAction*> MenuLauncherApplet::contextualActions()
 {
     return d->actions;
 }
-
 
 #include "simpleapplet.moc"
