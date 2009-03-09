@@ -542,6 +542,7 @@ void FlipScrollView::leaveEvent(QEvent *event)
 {
     d->hoveredIndex = QModelIndex();
     setCurrentIndex(QModelIndex());
+    d->backArrowHover = false;
 }
 
 void FlipScrollView::paintItems(QPainter &painter, QPaintEvent *event, QModelIndex &root)
