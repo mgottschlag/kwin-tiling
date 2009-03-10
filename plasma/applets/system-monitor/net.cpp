@@ -26,11 +26,14 @@
 
 SM::Net::Net(QObject *parent, const QVariantList &args)
     : SM::Applet(parent, args)
+    , m_rx("network/interfaces/(\\w+)/transmitter/data")
 {
     setHasConfigurationInterface(true);
     resize(234 + 20 + 23, 135 + 20 + 25);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeChanged()));
+    m_sourceTimer.setSingleShot(true);
+    connect(&m_sourceTimer, SIGNAL(timeout()), this, SLOT(sourcesAdded()));
 }
 
 SM::Net::~Net()
@@ -49,36 +52,39 @@ void SM::Net::init()
     m_inColor = cg.readEntry("inColor", QColor("#d2d200"));
     m_outColor = cg.readEntry("outColor", QColor("#f20000"));
     
-    if (engine()->sources().count() == 0) {
-        connect(engine(), SIGNAL(sourceAdded(QString)), this, SLOT(initLater(const QString)));
-    } else {
-        parseSources();
+    connect(engine(), SIGNAL(sourceAdded(const QString&)),
+            this, SLOT(sourceAdded(const QString&)));
+    connect(engine(), SIGNAL(sourceRemoved(const QString&)),
+            this, SLOT(sourceRemoved(const QString&)));
+    if (engine()->sources().count() > 0) {
+        sourcesAdded();
     }
 }
 
-void SM::Net::parseSources()
+void SM::Net::sourceAdded(const QString& name)
 {
-    QRegExp rx("network/interfaces/(\\w+)/transmitter/data");
-
-    foreach (const QString& s, engine()->sources()) {
-        if (rx.indexIn(s) != -1) {
-            //kDebug() << rx.cap(1);
-            if (rx.cap(1) != "lo") {
-                m_interfaces << s;
+    if (m_rx.indexIn(name) != -1) {
+        //kDebug() << m_rx.cap(1);
+        if (m_rx.cap(1) != "lo") {
+            m_interfaces << name;
+            if (!m_sourceTimer.isActive()) {
+                m_sourceTimer.start(0);
             }
         }
     }
+}
+
+void SM::Net::sourcesAdded()
+{
+    //kDebug() << m_interfaces;
     KConfigGroup cg = config();
     setItems(cg.readEntry("interfaces", m_interfaces));
     connectToEngine();
 }
 
-void SM::Net::initLater(const QString &name)
+void SM::Net::sourceRemoved(const QString& name)
 {
-    // How we know all (network) sources are ready???
-    if (name == "ps") {
-        QTimer::singleShot(0, this, SLOT(parseSources()));
-    }
+    m_interfaces.removeAll(name);
 }
 
 bool SM::Net::addMeter(const QString& source)

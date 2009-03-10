@@ -24,6 +24,8 @@
 #include "applet.h"
 #include <Plasma/DataEngine>
 #include <QStandardItemModel>
+#include <QTimer>
+#include <QRegExp>
 
 class QStandardItemModel;
 
@@ -45,7 +47,9 @@ class Net : public Applet
         void configAccepted();
         void dataUpdated(const QString &name,
                          const Plasma::DataEngine::Data &data);
-        void initLater(const QString &name);
+        void sourceAdded(const QString &name);
+        void sourcesAdded();
+        void sourceRemoved(const QString &name);
 
     private:
         Ui::config ui;
@@ -58,9 +62,10 @@ class Net : public Applet
         QColor m_inColor;
         QColor m_outColor;
         QHash<QString, QString> m_html;
+        QTimer m_sourceTimer;
+        QRegExp m_rx;
 
     private slots:
-        void parseSources();
         void themeChanged();
         void updateSpinBoxSuffix(int interval);
 };
