@@ -43,6 +43,7 @@ protected Q_SLOTS:
 private:
     /** Sorts list of items according to strategy*/
     void sortItems(ItemList&);
+    static bool lessThan(const AbstractItemPtr &left, const AbstractItemPtr &right);
 };
 
 

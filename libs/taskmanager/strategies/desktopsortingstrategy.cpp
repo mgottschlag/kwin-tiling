@@ -44,28 +44,20 @@ DesktopSortingStrategy::DesktopSortingStrategy(QObject *parent)
 
 void DesktopSortingStrategy::sortItems(ItemList &items)
 {
-    kDebug();
-    QMap<QString, AbstractGroupableItem*> map;
-    foreach (AbstractGroupableItem *item, items) {
-        if (!item) {
-            kDebug() << "Null Pointer";
-            continue;
-        }
-        kDebug() << item->name() << item->desktop();
-        map.insertMulti(QString::number(item->desktop())+item->name(), item);
+    qStableSort(items.begin(), items.end(), DesktopSortingStrategy::lessThan);
+}
+
+bool DesktopSortingStrategy::lessThan(const AbstractItemPtr &left, const AbstractItemPtr &right)
+{
+    if (left->desktop() == right->desktop()) {
+        return left->name().toLower() < right->name().toLower();
     }
 
-    items.clear();
-    items = map.values();
-    kDebug();
-    foreach (AbstractGroupableItem *item, items) {
-        kDebug() << item->name() << item->desktop();
-    }
+    return left->desktop() < right->desktop();
 }
 
 void DesktopSortingStrategy::handleItem(AbstractItemPtr item)
 {
-    kDebug();
     disconnect(item, 0, this, 0); //To avoid duplicate connections
     connect(item, SIGNAL(changed(::TaskManager::TaskChanges)), this, SLOT(check()));
     AbstractSortingStrategy::handleItem(item);
