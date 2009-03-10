@@ -208,7 +208,6 @@ static void
 fLog( struct display *d, int fd, const char *sts, const char *msg, ... )
 {
 	char *fmsg, *otxt;
-	const char *what;
 	int olen;
 	va_list va;
 
@@ -217,19 +216,15 @@ fLog( struct display *d, int fd, const char *sts, const char *msg, ... )
 	va_end( va );
 	if (!fmsg)
 		return;
-	if (fd >= 0) {
-		olen = ASPrintf( &otxt, "%s\t%\\s\n", sts, fmsg );
-		if (otxt) {
-			writer( fd, otxt, olen );
-			free( otxt );
-		}
-		what = "socket";
-	} else
-		what = "FiFo";
+	olen = ASPrintf( &otxt, "%s\t%\\s\n", sts, fmsg );
+	if (otxt) {
+		writer( fd, otxt, olen );
+		free( otxt );
+	}
 	if (d)
-		debug( "control %s for %s: %s - %s", what, d->name, sts, fmsg );
+		debug( "control socket for %s: %s - %s", d->name, sts, fmsg );
 	else
-		debug( "global control %s: %s - %s", what, sts, fmsg );
+		debug( "global control socket: %s - %s", sts, fmsg );
 	free( fmsg );
 }
 
@@ -822,7 +817,7 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 }
 
 static int
-handleChan( struct display *d, struct bsock *cs, int fd, fd_set *reads )
+handleChan( struct display *d, struct bsock *cs, fd_set *reads )
 {
 	char *bufp, *nbuf, *obuf, *eol;
 	int len, bl, llen;
@@ -854,15 +849,12 @@ handleChan( struct display *d, struct bsock *cs, int fd, fd_set *reads )
 				nbuf = 0;
 			cs->buffer = nbuf;
 			cs->buflen = bl;
-			processCtrl( bufp, llen - 1, fd, d );
+			processCtrl( bufp, llen - 1, cs->fd, d );
 			if (obuf)
 				free( obuf );
 			return 1;
 		} else if (!len) {
-			if (fd >= 0)
-				cs->buflen = -bl;
-			else
-				fLog( d, -1, "bad", "unterminated command" );
+			cs->buflen = -bl;
 		}
 	}
 	return 0;
@@ -878,7 +870,7 @@ handleCtrl( fd_set *reads, struct display *d )
 		acceptSock( cr );
 	else {
 		for (csp = &cr->css; (cs = *csp); ) {
-			switch (handleChan( d, &cs->sock, cs->sock.fd, reads )) {
+			switch (handleChan( d, &cs->sock, reads )) {
 			case -1:
 				*csp = cs->next;
 				nukeSock( cs );
