@@ -57,6 +57,7 @@
 
 #include <Plasma/Containment>
 #include <Plasma/Theme>
+#include <Plasma/Dialog>
 
 #include "appletbrowser.h"
 #include "appadaptor.h"
@@ -65,6 +66,7 @@
 #include "desktopview.h"
 #include "panelview.h"
 #include "plasma-shell-desktop.h"
+#include "toolbutton.h"
 
 #include <kephal/screens.h>
 
@@ -738,11 +740,11 @@ void PlasmaApp::zoomIn(Plasma::Containment *containment)
     bool remove = false;
 
     if (m_zoomLevel == Plasma::GroupZoom) {
+        setControllerVisible(false);
         m_zoomLevel = Plasma::DesktopZoom;
         containment->closeToolBox();
         addSibling = false;
         zoomIn = false;
-        lock = true;
     } else if (m_zoomLevel == Plasma::OverviewZoom) {
         m_zoomLevel = Plasma::GroupZoom;
         remove = isMutable && true;
@@ -754,10 +756,15 @@ void PlasmaApp::zoomIn(Plasma::Containment *containment)
             continue;
         }
 
+        if (m_zoomLevel == Plasma::DesktopZoom) {
+            foreach (QAction *action, m_corona->actions()) {
+                c->addToolBoxAction(action);
+            }
+        }
+
         c->enableAction("zoom in", zoomIn);
         c->enableAction("zoom out", zoomOut);
         c->enableAction("add sibling containment", addSibling);
-        c->enableAction("lock widgets", lock);
         c->enableAction("remove", remove && (c->screen() == -1));
         c->enableAction("add widgets", isMutable);
     }
@@ -769,10 +776,10 @@ void PlasmaApp::zoomOut(Plasma::Containment *)
     bool zoomIn = true;
     bool zoomOut = true;
     bool addSibling = isMutable && true;
-    bool lock = false;
     bool addWidgets = isMutable && true;
 
     if (m_zoomLevel == Plasma::DesktopZoom) {
+        setControllerVisible(true);
         m_zoomLevel = Plasma::GroupZoom;
     } else if (m_zoomLevel == Plasma::GroupZoom) {
         m_zoomLevel = Plasma::OverviewZoom;
@@ -786,12 +793,37 @@ void PlasmaApp::zoomOut(Plasma::Containment *)
             continue;
         }
 
+        if (m_zoomLevel == Plasma::GroupZoom) {
+            foreach (QAction *action, m_corona->actions()) {
+                c->removeToolBoxAction(action);
+            }
+        }
+
         c->enableAction("zoom in", zoomIn);
         c->enableAction("zoom out", zoomOut);
         c->enableAction("add sibling containment", addSibling);
-        c->enableAction("lock widgets", lock);
         c->enableAction("remove", isMutable && c->screen() == -1);
         c->enableAction("add widgets", addWidgets);
+    }
+}
+
+void PlasmaApp::setControllerVisible(bool show)
+{
+    if (show && !m_controllerDialog) {
+        m_controllerDialog = new Plasma::Dialog;
+        QVBoxLayout *layout = new QVBoxLayout(m_controllerDialog);
+
+        foreach (QAction *action, m_corona->actions()) {
+            ToolButton *actionButton = new ToolButton(m_controllerDialog);
+            actionButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+            actionButton->setDefaultAction(action);
+            layout->addWidget(actionButton);
+        }
+
+        m_controllerDialog->show();
+    } else if (!show) {
+        delete m_controllerDialog;
+        m_controllerDialog = 0;
     }
 }
 

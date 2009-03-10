@@ -34,6 +34,7 @@ namespace Plasma
     class AppletBrowser;
     class Containment;
     class Corona;
+    class Dialog;
 } // namespace Plasma
 
 namespace Kephal {
@@ -106,6 +107,7 @@ protected:
     PanelView *findPanelForTrigger(WId trigger) const;
     bool x11EventFilter(XEvent *event);
 #endif
+    void setControllerVisible(bool show);
 
 private:
     PlasmaApp();
@@ -131,6 +133,7 @@ private:
     DesktopCorona *m_corona;
     QList<PanelView*> m_panels;
     Plasma::AppletBrowser *m_appletBrowser;
+    Plasma::Dialog *m_controllerDialog;
     QList<DesktopView*> m_desktops;
     Plasma::ZoomLevel m_zoomLevel;
     int m_panelHidden;
