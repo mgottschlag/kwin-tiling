@@ -45,6 +45,7 @@ from the copyright holder.
 # include <rpc/rpc.h>
 # include <rpc/key_prot.h>
 extern int key_setnet( struct key_netstarg *arg );
+# include <X11/Xlib.h>
 #endif
 #ifdef K5AUTH
 # include <krb5/krb5.h>
