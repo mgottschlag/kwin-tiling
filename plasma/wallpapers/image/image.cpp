@@ -25,6 +25,7 @@
 #include <KStandardDirs>
 
 #include <Plasma/Theme>
+#include <Plasma/Animator>
 #include "backgroundlistmodel.h"
 #include "backgrounddelegate.h"
 #include "ksmserver_interface.h"
@@ -232,6 +233,12 @@ void Image::paint(QPainter *painter, const QRectF& exposedRect)
     // for pixmaps we draw only the exposed part (untransformed since the
     // bitmapBackground already has the size of the viewport)
     painter->drawPixmap(exposedRect, m_pixmap, exposedRect);
+
+    if (!m_oldFadedPixmap.isNull()) {
+        // Put old faded image on top.
+        painter->setCompositionMode(QPainter::CompositionMode_SourceAtop);
+        painter->drawPixmap(exposedRect, m_oldFadedPixmap, exposedRect);
+    }
 
     // restore transformation and composition mode
     painter->restore();
@@ -527,9 +534,20 @@ void Image::render(const QString& image)
 
 void Image::updateBackground(int token, const QImage &img)
 {
+
     if (m_rendererToken == token) {
+
+        m_oldPixmap = m_pixmap;
+        if (m_oldPixmap.isNull()) {
+            m_oldPixmap = QPixmap(img.size());
+            m_oldPixmap.fill(m_color);
+        }
+        m_oldFadedPixmap = m_oldPixmap;
+
         m_pixmap = QPixmap::fromImage(img);
-        emit update(boundingRect());
+
+        Plasma::Animator::self()->customAnimation(254, 1500, Plasma::Animator::LinearCurve, this, "updateFadedImage");
+        
         suspendStartup(false);
     }
 }
@@ -555,6 +573,33 @@ void Image::removeBackground(const QString &path)
     if (m_model) {
         m_model->removeBackground(path);
     }
+}
+
+void Image::updateFadedImage(qreal frame)
+{
+
+    //If we are done, delete the pixmaps and don't draw.
+    if (frame == 1) {
+        m_oldFadedPixmap = QPixmap();
+        m_oldPixmap = QPixmap();
+        emit update(boundingRect());
+        return;
+    }
+   
+    //Create the faded image.
+    m_oldFadedPixmap.fill(Qt::transparent);
+
+    QPainter p;
+    p.begin(&m_oldFadedPixmap);
+    p.drawPixmap(0, 0, m_oldPixmap);
+
+    p.setCompositionMode(QPainter::CompositionMode_DestinationIn);  
+    p.fillRect(m_oldFadedPixmap.rect(), QColor(0, 0, 0, 254 * (1-frame)));//255*((150 - frame)/150)));
+
+    p.end();
+
+    emit update(boundingRect());
+
 }
 
 #include "image.moc"

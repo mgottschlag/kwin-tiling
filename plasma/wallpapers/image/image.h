@@ -49,6 +49,7 @@ class Image : public Plasma::Wallpaper
         void showFileDialog();
         void updateScreenshot(QPersistentModelIndex index);
         void removeBackground(const QString &path);
+        void updateFadedImage(qreal frame);
 
     protected:
         void init(const KConfigGroup &config);
@@ -76,6 +77,8 @@ class Image : public Plasma::Wallpaper
         QList<Background *> m_slideshowBackgrounds;
         QTimer m_timer;
         QPixmap m_pixmap;
+        QPixmap m_oldPixmap;
+        QPixmap m_oldFadedPixmap;
         int m_currentSlide;
         qreal m_ratio;
         BackgroundListModel *m_model;
