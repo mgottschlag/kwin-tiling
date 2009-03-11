@@ -203,8 +203,7 @@ You can also remove programs from this list clicking on the &lt;b>Remove&lt;/b> 
  </widget>
  <layoutdefault spacing="3" margin="6" />
  <layoutfunction spacing="KDialog::spacingHint" margin="KDialog::marginHint" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
- <tabstops>
+  <tabstops>
   <tabstop>m_cbProgram</tabstop>
   <tabstop>m_listPrograms</tabstop>
   <tabstop>m_buttonAdd</tabstop>

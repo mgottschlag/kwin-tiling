@@ -128,8 +128,7 @@
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
- <tabstops>
+  <tabstops>
   <tabstop>leName</tabstop>
   <tabstop>leAuthor</tabstop>
   <tabstop>leEmail</tabstop>
