@@ -215,7 +215,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
         kDebug() << "Panel geometry is" << panel->geometry();
     }
 
-    connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
+    connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(pinchContainmentToCurrentScreen()));
 
     // Graphics view setup
     setFrameStyle(QFrame::NoFrame);
@@ -332,7 +332,7 @@ void PanelView::setLocation(Plasma::Location location)
     }
 
     //kDebug() << "!!!!!!!!!!!!!!!!!! about to set to" << location << panelHeight << formFactor;
-    disconnect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
+    disconnect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(pinchContainmentToCurrentScreen()));
     c->setFormFactor(formFactor);
     c->setLocation(location);
 
@@ -348,7 +348,7 @@ void PanelView::setLocation(Plasma::Location location)
     pinchContainment(screenRect);
     KWindowSystem::setOnAllDesktops(winId(), true);
     //updatePanelGeometry();
-    connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
+    connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(pinchContainmentToCurrentScreen()));
 }
 
 Plasma::Location PanelView::location() const
@@ -1182,19 +1182,16 @@ void PanelView::leaveEvent(QEvent *event)
             createUnhideTrigger();
         }
     } else if (m_visibilityMode == AutoHide && !m_editting) {
-        // try not to hide if we have an associated popup or window about
-        if (hasPopup()) {
-            // don't hide yet, but start polling to see when we should
-            if (!m_mousePollTimer) {
-                m_mousePollTimer = new QTimer(this);
-            }
-
-            disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
-            connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
-            m_mousePollTimer->start(200);
-        } else {
-            startAutoHide();
+        // even if we dont have a popup, we'll start a timer, so
+        // that the panel stays if the mouse only leaves for a
+        // few ms
+        if (!m_mousePollTimer) {
+            m_mousePollTimer = new QTimer(this);
         }
+
+        disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
+        connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
+        m_mousePollTimer->start(200);
     }
 
     Plasma::View::leaveEvent(event);
