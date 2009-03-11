@@ -126,8 +126,9 @@ private Q_SLOTS:
     void screenRemoved(int id);
     void compositingChanged();
     void showAppletBrowser();
-    void addContainment(Plasma::Containment *fromContainment = 0);
+    void addContainment();
     void configureContainment(Plasma::Containment*);
+    void updateActions(Plasma::ImmutabilityType immutability);
 
 private:
     DesktopCorona *m_corona;

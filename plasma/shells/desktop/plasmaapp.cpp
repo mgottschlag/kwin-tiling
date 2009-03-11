@@ -466,11 +466,23 @@ Plasma::Corona* PlasmaApp::corona()
         connect(c, SIGNAL(containmentAdded(Plasma::Containment*)),
                 this, SLOT(containmentAdded(Plasma::Containment*)));
         connect(c, SIGNAL(configSynced()), this, SLOT(syncConfig()));
+        connect(c, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)),
+                this, SLOT(updateActions(Plasma::ImmutabilityType)));
 
         foreach (DesktopView *view, m_desktops) {
             connect(c, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
                     view, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
         }
+
+        //actions!
+        KAction *activityAction = new KAction(i18n("Add Activity"), this);
+        activityAction->setIcon(KIcon("list-add"));
+        activityAction->setVisible(false);
+        activityAction->setEnabled(false);
+        connect(activityAction, SIGNAL(triggered()), this, SLOT(addContainment()));
+        activityAction->setShortcut(QKeySequence("alt+d,alt+a"));
+        activityAction->setShortcutContext(Qt::ApplicationShortcut);
+        c->addAction("add sibling containment", activityAction);
 
         m_corona = c;
         c->setItemIndexMethod(QGraphicsScene::NoIndex);
@@ -639,9 +651,11 @@ void PlasmaApp::containmentAdded(Plasma::Containment *containment)
     connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
             this, SLOT(configureContainment(Plasma::Containment*)));
 
-    if (!isPanelContainment(containment)) {
-        connect(containment, SIGNAL(addSiblingContainment(Plasma::Containment *)),
-                this, SLOT(addContainment(Plasma::Containment *)));
+    if (containment->containmentType() == Plasma::Containment::DesktopContainment
+            && m_zoomLevel == Plasma::DesktopZoom) {
+        foreach (QAction *action, m_corona->actions()) {
+            containment->addToolBoxAction(action);
+        }
     }
 }
 
@@ -682,14 +696,22 @@ void PlasmaApp::configureContainment(Plasma::Containment *containment)
     KWindowSystem::activateWindow(configDialog->winId());
 }
 
-void PlasmaApp::addContainment(Plasma::Containment *fromContainment)
+void PlasmaApp::addContainment()
 {
+    //try to find the "active" containment to get a plugin name
+    int currentScreen = Kephal::ScreenUtils::screenId(QCursor::pos());
+    int currentDesktop = -1;
+    if (AppSettings::perVirtualDesktopViews()) {
+        currentDesktop = KWindowSystem::currentDesktop();
+    }
+    Plasma::Containment *fromContainment=m_corona->containmentForScreen(currentScreen, currentDesktop);
+
     QString plugin = fromContainment ? fromContainment->pluginName() : QString();
     Plasma::Containment *c = m_corona->addContainment(plugin);
 
     if (c && fromContainment) {
         foreach (DesktopView *view, m_desktops) {
-            if (view->containment() == c){
+            if (view->containment() == fromContainment){
                 view->setContainment(c);
                 return;
             }
@@ -736,7 +758,6 @@ void PlasmaApp::zoomIn(Plasma::Containment *containment)
     bool zoomIn = true;
     bool zoomOut = true;
     bool addSibling = isMutable;
-    bool lock = false;
     bool remove = false;
 
     if (m_zoomLevel == Plasma::GroupZoom) {
@@ -764,10 +785,10 @@ void PlasmaApp::zoomIn(Plasma::Containment *containment)
 
         c->enableAction("zoom in", zoomIn);
         c->enableAction("zoom out", zoomOut);
-        c->enableAction("add sibling containment", addSibling);
         c->enableAction("remove", remove && (c->screen() == -1));
         c->enableAction("add widgets", isMutable);
     }
+    m_corona->enableAction("add sibling containment", addSibling);
 }
 
 void PlasmaApp::zoomOut(Plasma::Containment *)
@@ -775,7 +796,7 @@ void PlasmaApp::zoomOut(Plasma::Containment *)
     bool isMutable = m_corona->immutability() == Plasma::Mutable;
     bool zoomIn = true;
     bool zoomOut = true;
-    bool addSibling = isMutable && true;
+    bool addSibling = isMutable && true; //FIXME wtf?
     bool addWidgets = isMutable && true;
 
     if (m_zoomLevel == Plasma::DesktopZoom) {
@@ -801,10 +822,10 @@ void PlasmaApp::zoomOut(Plasma::Containment *)
 
         c->enableAction("zoom in", zoomIn);
         c->enableAction("zoom out", zoomOut);
-        c->enableAction("add sibling containment", addSibling);
         c->enableAction("remove", isMutable && c->screen() == -1);
         c->enableAction("add widgets", addWidgets);
     }
+    m_corona->enableAction("add sibling containment", addSibling);
 }
 
 void PlasmaApp::setControllerVisible(bool show)
@@ -831,5 +852,13 @@ void PlasmaApp::panelRemoved(QObject* panel)
 {
     m_panels.removeAll((PanelView*)panel);
 }
+
+void PlasmaApp::updateActions(Plasma::ImmutabilityType immutability)
+{
+    bool enable = immutability == Plasma::Mutable && m_zoomLevel != Plasma::DesktopZoom;
+    kDebug() << enable;
+    m_corona->enableAction("add sibling containment", enable);
+}
+
 
 #include "plasmaapp.moc"
