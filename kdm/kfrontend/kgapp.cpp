@@ -387,7 +387,7 @@ main( int argc ATTR_UNUSED, char **argv )
 			int how = gRecvInt(), uid = gRecvInt();
 			QString os = qString( gRecvStr() );
 			gSet( 0 );
-			KDMSlimShutdown::externShutdown( how, os, uid );
+			KDMSlimShutdown::externShutdown( how, os, uid, true );
 			gSendInt( G_Ready );
 			break;
 		}

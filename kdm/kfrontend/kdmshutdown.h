@@ -154,7 +154,7 @@ class KDMSlimShutdown : public FDialog {
 
   public:
 	KDMSlimShutdown( QWidget *_parent = 0 );
-	static void externShutdown( int type, const QString &os, int uid );
+	static void externShutdown( int type, const QString &os, int uid, bool ask );
 
   private Q_SLOTS:
 	void slotHalt();

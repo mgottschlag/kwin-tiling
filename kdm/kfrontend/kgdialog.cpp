@@ -199,7 +199,7 @@ KGDialog::slotShutdown()
 		else
 			KDMSlimShutdown( this ).exec();
 	} else
-		KDMSlimShutdown::externShutdown( action->data().toInt(), 0, -1 );
+		KDMSlimShutdown::externShutdown( action->data().toInt(), 0, -1, false );
 	if (verify)
 		verify->resume();
 }

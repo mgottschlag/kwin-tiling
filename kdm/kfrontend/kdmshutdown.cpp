@@ -568,14 +568,19 @@ KDMSlimShutdown::checkShutdown( int type, const QString &os )
 }
 
 void
-KDMSlimShutdown::externShutdown( int type, const QString &os, int uid )
+KDMSlimShutdown::externShutdown( int type, const QString &os, int uid, bool ask )
 {
 	QList<DpySpec> sess = fetchSessions( lstRemote | lstTTY );
-	int ret = KDMConfShutdown( uid, sess, type, os ).exec();
-	if (ret == Schedule)
-		KDMShutdown( uid ).exec();
-	else if (ret)
-		doShutdown( type, os );
+	if (ask || !sess.isEmpty() || (uid && _allowShutdown == SHUT_ROOT)) {
+		int ret = KDMConfShutdown( uid, sess, type, os ).exec();
+		if (ret == Schedule) {
+			KDMShutdown( uid ).exec();
+			return;
+		} else if (!ret) {
+			return;
+		}
+	}
+	doShutdown( type, os );
 }
 
 
