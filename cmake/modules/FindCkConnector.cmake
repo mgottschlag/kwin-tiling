@@ -25,7 +25,7 @@ else (CKCONNECTOR_INCLUDE_DIR AND CKCONNECTOR_LIBRARIES)
     IF (PKG_CONFIG_FOUND)
       # use pkg-config to get the directories and then use these values
       # in the FIND_PATH() and FIND_LIBRARY() calls
-      pkg_check_modules(_CKCONNECTOR_PC ck-connector)
+      pkg_check_modules(_CKCONNECTOR_PC QUIET ck-connector)
     ENDIF (PKG_CONFIG_FOUND)
   ENDIF (NOT WIN32)
 

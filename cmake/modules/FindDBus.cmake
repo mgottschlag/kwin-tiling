@@ -25,7 +25,7 @@ else (DBUS_INCLUDE_DIR AND DBUS_ARCH_INCLUDE_DIR AND DBUS_LIBRARIES)
     IF (PKG_CONFIG_FOUND)
       # use pkg-config to get the directories and then use these values
       # in the FIND_PATH() and FIND_LIBRARY() calls
-      pkg_check_modules(_DBUS_PC dbus-1)
+      pkg_check_modules(_DBUS_PC QUIET dbus-1)
     ENDIF (PKG_CONFIG_FOUND)
   ENDIF (NOT WIN32)
 
