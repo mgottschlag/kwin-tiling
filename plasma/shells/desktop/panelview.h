@@ -187,8 +187,6 @@ protected:
     void drawBackground(QPainter * painter, const QRectF & rect);
     void paintEvent(QPaintEvent *event);
     bool event(QEvent *event);
-    void dragEnterEvent(QDragEnterEvent *event);
-    void dragMoveEvent(QDragMoveEvent *event);
     void dragLeaveEvent(QDragLeaveEvent *event);
     void dropEvent(QDropEvent *event);
     //void enterEvent(QEvent *event);

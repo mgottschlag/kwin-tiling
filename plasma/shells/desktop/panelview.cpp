@@ -1474,31 +1474,6 @@ void PanelView::positionSpacer(const QPoint pos)
     }
 }
 
-void PanelView::dragEnterEvent(QDragEnterEvent *event)
-{
-    Plasma::Containment *c = containment();
-    if (c && c->immutability() == Plasma::Mutable &&
-        (event->mimeData()->hasFormat(static_cast<Plasma::Corona*>(scene())->appletMimeType()) ||
-         KUrl::List::canDecode(event->mimeData()))) {
-        containment()->showDropZone(event->pos());
-    }
-
-    //the containment will do the last decision whether accept it or not
-    Plasma::View::dragEnterEvent(event);
-}
-
-void PanelView::dragMoveEvent(QDragMoveEvent *event)
-{
-    Plasma::Containment *c = containment();
-    if (c && c->immutability() == Plasma::Mutable &&
-        (event->mimeData()->hasFormat(static_cast<Plasma::Corona*>(scene())->appletMimeType()) ||
-         KUrl::List::canDecode(event->mimeData()))) {
-        containment()->showDropZone(event->pos());
-    }
-
-    Plasma::View::dragMoveEvent(event);
-}
-
 void PanelView::dragLeaveEvent(QDragLeaveEvent *event)
 {
     if (containment()) {
