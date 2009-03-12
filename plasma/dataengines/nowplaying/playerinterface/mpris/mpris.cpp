@@ -97,9 +97,15 @@ void Mpris::setup() {
         connect(m_player, SIGNAL(StatusChange(MprisDBusStatus)),
                 this,   SLOT(stateChanged(MprisDBusStatus)));
 
-        capsChanged(m_player->GetCaps());
-        trackChanged(m_player->GetMetadata());
-        stateChanged(m_player->GetStatus());
+        QDBusReply<int> caps = m_player->GetCaps();
+        if (caps.isValid())
+            capsChanged(caps);
+        QDBusReply<QVariantMap> metadata = m_player->GetMetadata();
+        if (metadata.isValid())
+            trackChanged(metadata);
+        QDBusReply<MprisDBusStatus> status = m_player->GetStatus();
+        if (status.isValid())
+            stateChanged(status);
     }
 }
 
@@ -193,7 +199,9 @@ int Mpris::length()
 int Mpris::position()
 {
     if (m_player->isValid()) {
-        return m_player->PositionGet() / 1000;
+        QDBusReply<int> positionMs = m_player->PositionGet();
+        if (positionMs.isValid())
+            return positionMs / 1000;
     }
     return 0;
 }
@@ -201,7 +209,9 @@ int Mpris::position()
 float Mpris::volume()
 {
     if (m_player->isValid()) {
-        return ((float)m_player->VolumeGet()) / 100;
+        QDBusReply<int> volumePercent = m_player->VolumeGet();
+        if (volumePercent.isValid())
+            return ((float)volumePercent) / 100;
     }
     return 0;
 }
