@@ -95,7 +95,7 @@ public:
 
     void createCalendar()
     {
-        if (!q->extender()->item("calendar")) {
+        if (!q->extender()->hasItem("calendar")) {
             Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(q->extender());
             eItem->setName("calendar");
             q->initExtenderItem(eItem);
@@ -447,7 +447,7 @@ void ClockApplet::init()
     Plasma::ToolTipManager::self()->registerWidget(this);
 
     extender();
-    QTimer::singleShot(0, this, SLOT(createCalendar()));
+    d->createCalendar();
     QTimer::singleShot(0, this, SLOT(createToday()));
 }
 
