@@ -62,6 +62,8 @@
 #include <KPluginLoader>
 #include <KMessageBox>
 
+#include <kworkspace/screenpreviewwidget.h>
+
 template class QList<SaverConfig*>;
 
 const uint widgetEventMask =                 // X event mask
@@ -259,12 +261,14 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
     topLayout->addItem( rightColumnLayout );
     rightColumnLayout->setSpacing( KDialog::spacingHint() );
 
-    mMonitorLabel = new QLabel( this );
-    mMonitorLabel->setAlignment( Qt::AlignCenter );
-    mMonitorLabel->setPixmap( QPixmap(KStandardDirs::locate("data",
-                         "kcontrol/pics/monitor.png")));
-    rightColumnLayout->addWidget(mMonitorLabel, 0);
-    mMonitorLabel->setWhatsThis( i18n("A preview of the selected screen saver.") );
+    mMonitorPreview = new ScreenPreviewWidget(this);
+    mMonitorPreview->setFixedSize(200,220);
+    QDesktopWidget *desktop = QApplication::desktop();
+    QRect avail = desktop->availableGeometry(desktop->screenNumber(this));
+    mMonitorPreview->setRatio((qreal)avail.width()/(qreal)avail.height());
+
+    rightColumnLayout->addWidget(mMonitorPreview, 0);
+    mMonitorPreview->setWhatsThis( i18n("A preview of the selected screen saver.") );
 
     QBoxLayout* advancedLayout = new QHBoxLayout();
     rightColumnLayout->addItem( advancedLayout );
@@ -317,8 +321,7 @@ void KScreenSaver::resizeEvent( QResizeEvent * )
 
   if (mMonitor)
     {
-      mMonitor->setGeometry( (mMonitorLabel->width()-200)/2+23,
-                 (mMonitorLabel->height()-186)/2+14, 151, 115 );
+      mMonitor->setGeometry( mMonitorPreview->previewRect() );
     }
 }
 
@@ -601,12 +604,11 @@ void KScreenSaver::slotPreviewExited(K3Process *)
     // problem).
     delete mMonitor;
 
-    mMonitor = new KSSMonitor(mMonitorLabel);
+    mMonitor = new KSSMonitor(mMonitorPreview);
     QPalette palette;
     palette.setColor(mMonitor->backgroundRole(), Qt::black);
     mMonitor->setPalette(palette);
-    mMonitor->setGeometry((mMonitorLabel->width()-200)/2+23,
-                          (mMonitorLabel->height()-186)/2+14, 151, 115);
+    mMonitor->setGeometry(mMonitorPreview->previewRect());
     mMonitor->show();
     // So that hacks can XSelectInput ButtonPressMask
     XSelectInput(QX11Info::display(), mMonitor->winId(), widgetEventMask );

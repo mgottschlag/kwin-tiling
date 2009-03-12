@@ -62,6 +62,8 @@
 #include "bgadvanced.h"
 #include "bgdialog.h"
 
+#include "kworkspace/screenpreviewwidget.h"
+
 #define NR_PREDEF_PATTERNS 6
 
 BGDialog::BGDialog(QWidget* parent, const KSharedConfigPtr &_config)
@@ -747,7 +749,7 @@ void BGDialog::updateUI()
        for (unsigned j = 0; j < m_numScreens; ++j)
        {
           m_renderer[j+2]->stop();
-          m_renderer[j+2]->setPreview( m_pMonitorArrangement->monitor(j)->size() );
+          m_renderer[j+2]->setPreview( m_pMonitorArrangement->monitor(j)->previewRect().size() );
           m_renderer[j+2]->start(true);
        }
     }
@@ -774,11 +776,11 @@ void BGDialog::slotPreviewDone(int screen_done)
    else if ( m_eScreen == 1 )
    {
       for (unsigned i = 0; i < m_pMonitorArrangement->numMonitors(); ++i)
-         m_pMonitorArrangement->monitor(i)->setPixmap(pm);
+         m_pMonitorArrangement->monitor(i)->setPreview(pm);
    }
    else
    {
-      m_pMonitorArrangement->monitor(screen_done)->setPixmap(pm);
+      m_pMonitorArrangement->monitor(screen_done)->setPreview(pm);
    }
 }
 

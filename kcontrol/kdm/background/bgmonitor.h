@@ -34,6 +34,7 @@
 class BGMonitor;
 class BGMonitorLabel;
 class QPixmap;
+class ScreenPreviewWidget;
 
   /**
  * This class arranges and resizes a set of monitor images according to the
@@ -54,7 +55,7 @@ public:
     QSize maxPreviewSize() const { return m_maxPreviewSize; }
     unsigned numMonitors() const { return m_pBGMonitor.size(); }
 
-    BGMonitor * monitor( unsigned screen ) const;
+    ScreenPreviewWidget * monitor( unsigned screen ) const;
     void updateArrangement();
 
 signals:
@@ -66,47 +67,9 @@ protected:
     QSize expandToPreview( const QSize &s ) const;
     QPoint expandToPreview( const QPoint &p ) const;
 
-    QVector<BGMonitorLabel*> m_pBGMonitor;
+    QVector<ScreenPreviewWidget*> m_pBGMonitor;
     QSize m_combinedPreviewSize;
     QSize m_maxPreviewSize;
-};
-
-/**
- * Contains a BGMonitor.
- */
-class BGMonitorLabel : public QLabel
-{
-public:
-    explicit BGMonitorLabel(QWidget *parent, const char *name=0L);
-
-    BGMonitor * monitor() const { return m_pBGMonitor; }
-    void updateMonitorGeometry();
-
-    void setPreviewPosition( const QRect &r ) { m_previewPosition = r; }
-    QRect previewPosition() const { return m_previewPosition; }
-
-protected:
-    virtual void resizeEvent( QResizeEvent * );
-    BGMonitor * m_pBGMonitor;
-    QRect m_previewPosition;
-};
-
-/**
- * This class handles drops on the preview monitor.
- */
-class BGMonitor : public QLabel
-{
-    Q_OBJECT
-public:
-
-    explicit BGMonitor(QWidget *parent, const char *name=0L);
-
-Q_SIGNALS:
-    void imageDropped(const QString &);
-
-protected:
-    virtual void dropEvent(QDropEvent *);
-    virtual void dragEnterEvent(QDragEnterEvent *);
 };
 
 

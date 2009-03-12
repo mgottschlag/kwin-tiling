@@ -26,6 +26,8 @@
 #include <QLabel>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QDesktopWidget>
+#include <QApplication>
 
 #define TOTAL_WIDTH 200
 #define TOTAL_HEIGHT 186
@@ -65,12 +67,13 @@ step( int &p, int d )
 }
 
 Positioner::Positioner( QWidget *parent )
-	: QWidget( parent )
+	: ScreenPreviewWidget( parent )
 	, m_readOnly( false )
 	, m_x( 50 )
 	, m_y( 50 )
 {
-	m_monitor = QImage( KStandardDirs::locate( "data", "kcontrol/pics/monitor.png" ) );
+	QDesktopWidget *desktop = QApplication::desktop();
+	setRatio((qreal)desktop->width()/(qreal)desktop->height());
 	m_anchor = QPixmap( KStandardDirs::locate( "data", "kcontrol/pics/anchor.png" ) );
 	setFocusPolicy( Qt::StrongFocus );
 	const int fw = MARGIN * 2;
@@ -140,19 +143,17 @@ Positioner::updateHandle()
 }
 
 void
-Positioner::resizeEvent( QResizeEvent * )
+Positioner::resizeEvent(QResizeEvent *event)
 {
+	ScreenPreviewWidget::resizeEvent(event);
 	const int fw = MARGIN * 2;
 	QSize rs( TOTAL_WIDTH, TOTAL_HEIGHT );
 	rs.scale( size() - QSize( fw, fw ), Qt::KeepAspectRatio );
-	m_scaledMonitor = QPixmap::fromImage(
-		m_monitor.scaled( rs, Qt::KeepAspectRatio, Qt::SmoothTransformation ) );
+
 	m_frame->setGeometry( 0, 0, rs.width() + fw, rs.height() + fw );
-	m_screen->setGeometry(
-		MARGIN + ACTIVE_X * m_scaledMonitor.width() / TOTAL_WIDTH,
-		MARGIN + ACTIVE_Y * m_scaledMonitor.height() / TOTAL_HEIGHT,
-		ACTIVE_WIDTH * m_scaledMonitor.width() / TOTAL_WIDTH,
-		ACTIVE_HEIGHT * m_scaledMonitor.height() / TOTAL_HEIGHT );
+	m_frame->resize(size());
+	m_screen->setGeometry(previewRect());
+
 	updateHandle();
 }
 
@@ -166,13 +167,6 @@ void
 Positioner::focusOutEvent( QFocusEvent * )
 {
 	m_frame->setFrameStyle( QFrame::NoFrame );
-}
-
-void
-Positioner::paintEvent( QPaintEvent * )
-{
-	QPainter p( this );
-	p.drawPixmap( MARGIN, MARGIN, m_scaledMonitor );
 }
 
 void

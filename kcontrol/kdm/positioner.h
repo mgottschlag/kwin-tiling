@@ -20,14 +20,12 @@
 #ifndef POSITIONER_H
 #define POSITIONER_H
 
-#include <QImage>
-#include <QPixmap>
-#include <QWidget>
+#include "kworkspace/screenpreviewwidget.h"
 
 class QFrame;
 class QLabel;
 
-class Positioner : public QWidget {
+class Positioner : public ScreenPreviewWidget {
 	Q_OBJECT
 
   public:
@@ -42,7 +40,6 @@ class Positioner : public QWidget {
 
   protected:
 	virtual void resizeEvent( QResizeEvent *event );
-	virtual void paintEvent( QPaintEvent *event );
 	virtual void mousePressEvent( QMouseEvent *event );
 	virtual void mouseMoveEvent( QMouseEvent *event );
 	virtual void focusInEvent( QFocusEvent *event );
@@ -60,8 +57,6 @@ class Positioner : public QWidget {
 	QWidget *m_screen;
 	QFrame *m_dlg;
 	QLabel *m_ptr;
-	QImage m_monitor;
-	QPixmap m_scaledMonitor;
 	QPixmap m_anchor;
 
 };

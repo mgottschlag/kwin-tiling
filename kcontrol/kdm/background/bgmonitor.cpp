@@ -33,6 +33,8 @@
 #include <QDesktopWidget>
 #include <QPainter>
 
+#include "kworkspace/screenpreviewwidget.h"
+
 // Constants used (should they be placed somewhere?)
 // Size of monitor image: 200x186
 // Geometry of "display" part of monitor image: (23,14)-[151x115]
@@ -45,21 +47,22 @@ BGMonitorArrangement::BGMonitorArrangement(QWidget *parent)
 
     for (int screen = 0; screen < QApplication::desktop()->numScreens(); ++screen)
     {
-        BGMonitorLabel * label = new BGMonitorLabel(this);
-        m_pBGMonitor[screen] = label;
+        ScreenPreviewWidget *previewWidget = new ScreenPreviewWidget(this);
+        m_pBGMonitor[screen] = previewWidget;
+        previewWidget->setWhatsThis( i18n("This picture of a monitor contains a preview of what the current settings will look like on your desktop.") );
 
-        connect( label->monitor(), SIGNAL(imageDropped(const QString &)), this, SIGNAL(imageDropped(const QString &)) );
+        connect( previewWidget, SIGNAL(imageDropped(const QString &)), this, SIGNAL(imageDropped(const QString &)) );
     }
 
-    parent->setFixedSize(200, 186);
-    setFixedSize(200, 186);
+    parent->setFixedSize(200, 200);
+    setFixedSize(200, 200);
     updateArrangement();
 }
 
 
-BGMonitor * BGMonitorArrangement::monitor( unsigned screen ) const
+ScreenPreviewWidget * BGMonitorArrangement::monitor( unsigned screen ) const
 {
-    return m_pBGMonitor[screen]->monitor();
+    return m_pBGMonitor[screen];
 }
 
 
@@ -124,9 +127,9 @@ void BGMonitorArrangement::updateArrangement()
             m_maxPreviewSize = previewSize;
         }
 
-        m_pBGMonitor[screen]->setPreviewPosition( QRect( topLeft, previewSize ) );
+
         m_pBGMonitor[screen]->setGeometry( QRect( expandedTopLeft, expandedPreviewSize ) );
-        m_pBGMonitor[screen]->updateMonitorGeometry();
+        m_pBGMonitor[screen]->setRatio((qreal)previewSize.width() / (qreal)previewSize.height());
     }
 }
 
@@ -142,81 +145,10 @@ void BGMonitorArrangement::setPixmap( const QPixmap & pm )
 {
     for (int screen = 0; screen < m_pBGMonitor.size(); ++screen)
     {
-        QRect position = m_pBGMonitor[screen]->previewPosition();
-
-        QPixmap monitorPixmap( position.size());
-	QPainter p(&monitorPixmap);
-	p.drawPixmap(0, 0, pm, position.x(), position.y(), position.width(), position.height() );
-        m_pBGMonitor[screen]->monitor()->setPixmap(monitorPixmap);
+        m_pBGMonitor[screen]->setPreview(pm);
     }
 }
 //END class BGMonitorArrangement
 
-
-
-//BEGIN class BGMonitorLabel
-BGMonitorLabel::BGMonitorLabel(QWidget *parent, const char *name)
-    : QLabel(parent)
-{
-    setObjectName( name );
-    setAlignment(Qt::AlignCenter);
-    setScaledContents(true);
-    setPixmap( QPixmap( KStandardDirs::locate("data",  "kcontrol/pics/monitor.png") ) );
-    m_pBGMonitor = new BGMonitor(this);
-    setWhatsThis( i18n("This picture of a monitor contains a preview of what the current settings will look like on your desktop.") );
-}
-
-
-void BGMonitorLabel::updateMonitorGeometry()
-{
-    double scaleX = double(width()) / double(sizeHint().width());
-    double scaleY = double(height()) / double(sizeHint().height());
-
-    kDebug() << " Setting geometry to " << QRect( int(23*scaleX), int(14*scaleY), int(151*scaleX), int(115*scaleY) );
-    m_pBGMonitor->setGeometry( int(23*scaleX), int(14*scaleY), int(151*scaleX), int(115*scaleY) );
-}
-
-
-void BGMonitorLabel::resizeEvent( QResizeEvent * e )
-{
-    QWidget::resizeEvent(e);
-    updateMonitorGeometry();
-}
-//END class BGMonitorLabel
-
-
-
-//BEGIN class BGMonitor
-BGMonitor::BGMonitor(QWidget *parent, const char *name)
-    : QLabel(parent)
-{
-    setObjectName( name );
-    setAlignment(Qt::AlignCenter);
-    setScaledContents(true);
-    setAcceptDrops(true);
-}
-
-
-void BGMonitor::dropEvent(QDropEvent *e)
-{
-    if (!KUrl::List::canDecode(e->mimeData()))
-        return;
-
-    const KUrl::List uris(KUrl::List::fromMimeData(e->mimeData()));
-    if (uris.count() > 0) {
-        // TODO: Download remote file
-        if (uris.first().isLocalFile())
-           emit imageDropped(uris.first().path());
-    }
-}
-
-void BGMonitor::dragEnterEvent(QDragEnterEvent *e)
-{
-    if (KUrl::List::canDecode(e->mimeData()))
-        e->accept(rect());
-    else
-        e->ignore(rect());
-}
-//END class BGMonitor
 
 #include "bgmonitor.moc"

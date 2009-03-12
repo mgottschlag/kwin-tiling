@@ -31,6 +31,7 @@ class Q3ListView;
 class Q3ListViewItem;
 class QPushButton;
 class K3Process;
+class ScreenPreviewWidget;
 
 //===========================================================================
 class KScreenSaver : public KCModule
@@ -91,7 +92,7 @@ protected:
     QCheckBox   *mStarsCheckBox;
     QCheckBox   *mEnabledCheckBox;
     QCheckBox   *mPlasmaCheckBox;
-    QLabel      *mMonitorLabel;
+    ScreenPreviewWidget *mMonitorPreview;
     QLabel      *mActivateLbl;
     QLabel      *mLockLbl;
     KService::List mSaverServices;
