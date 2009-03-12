@@ -191,7 +191,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
 
     m_layout->addWidget(m_resultsView);
 
-    connect(m_searchTerm, SIGNAL(editTextChanged(QString)), this, SLOT(queryTextEdited(QString)));
+    connect(lineEdit, SIGNAL(userTextChanged(QString)), this, SLOT(queryTextEdited(QString)));
     connect(m_searchTerm, SIGNAL(returnPressed()), this, SLOT(runDefaultResultItem()));
 
     themeUpdated();
