@@ -27,6 +27,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <KDebug>
 #include <KLocale>
+#include <KConfig>
+#include <KConfigGroup>
 
 #include "abstractgroupingstrategy.h"
 #include "groupmanager.h"
@@ -54,10 +56,19 @@ ProgramGroupingStrategy::ProgramGroupingStrategy(GroupManager *groupManager)
 {
     d->groupManager = groupManager;
     setType(GroupManager::ProgramGrouping);
+
+    KConfig groupBlacklist( "taskbargroupblacklistrc", KConfig::NoGlobals );
+    KConfigGroup blackGroup( &groupBlacklist, "Blacklist" );
+    d->blackList = blackGroup.readEntry( "Applications", QStringList() );
 }
 
 ProgramGroupingStrategy::~ProgramGroupingStrategy()
 {
+    KConfig groupBlacklist( "taskbargroupblacklistrc", KConfig::NoGlobals );
+    KConfigGroup blackGroup( &groupBlacklist, "Blacklist" );
+    blackGroup.writeEntry( "Applications", d->blackList );
+    blackGroup.config()->sync();
+    
     delete d;
 }
 
