@@ -29,7 +29,7 @@
 #include "plasmaapp.h"
 #include "wallpaperpreview.h"
 
-#include "../../../libs/screenpreviewwidget/screenpreviewwidget.h"
+#include "../../../libs/kworkspace/screenpreviewwidget.h"
 
 typedef QPair<QString, QString> WallpaperInfo;
 Q_DECLARE_METATYPE(WallpaperInfo)
