@@ -28,7 +28,7 @@
 #include <Plasma/View>
 #include <Plasma/Corona>
 
-#include "screenpreviewwidget/screenpreviewwidget.h"
+#include "kworkspace/screenpreviewwidget.h"
 
 typedef QPair<QString, QString> WallpaperInfo;
 Q_DECLARE_METATYPE(WallpaperInfo)

@@ -3,6 +3,7 @@
 set(kworkspace_LIB_SRCS kdisplaymanager.cpp
                         kworkspace.cpp
                         kwindowlistmenu.cpp
+                        screenpreviewwidget.cpp
    )
 
 set(ksmserver_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerInterface.xml)
@@ -17,7 +18,7 @@ qt4_add_dbus_interface( kworkspace_LIB_SRCS ${kwin_xml} kwin_interface )
 
 kde4_add_library(kworkspace SHARED ${kworkspace_LIB_SRCS})
 
-target_link_libraries(kworkspace  ${KDE4_KDEUI_LIBS} ${X11_LIBRARIES} )
+target_link_libraries(kworkspace  ${KDE4_KDEUI_LIBS} ${X11_LIBRARIES} ${KDE4_PLASMA_LIBS} )
 
 set_target_properties(kworkspace PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
 install(TARGETS kworkspace EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS} )
