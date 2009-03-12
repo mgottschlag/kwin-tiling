@@ -50,6 +50,7 @@ class SystemMonitorEngine : public Plasma::DataEngine, public KSGRD::SensorClien
 
     protected slots:
         void updateSensors();
+        void updateMonitorsList();
 
     private:
         QStringList m_sensors;

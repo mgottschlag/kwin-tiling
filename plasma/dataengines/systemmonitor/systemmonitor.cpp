@@ -36,11 +36,17 @@ SystemMonitorEngine::SystemMonitorEngine(QObject* parent, const QVariantList& ar
     KSGRD::SensorMgr->engage("localhost", "", "ksysguardd");
 
     m_waitingFor= 0;
-    KSGRD::SensorMgr->sendRequest("localhost", "monitors", (KSGRD::SensorClient*)this, -1);
+    connect(KSGRD::SensorMgr, SIGNAL(update()), this, SLOT(updateMonitorsList()));
+    updateMonitorsList();
 }
 
 SystemMonitorEngine::~SystemMonitorEngine()
 {
+}
+
+void SystemMonitorEngine::updateMonitorsList()
+{
+    KSGRD::SensorMgr->sendRequest("localhost", "monitors", (KSGRD::SensorClient*)this, -1);
 }
 
 QStringList SystemMonitorEngine::sources() const
@@ -53,6 +59,7 @@ bool SystemMonitorEngine::sourceRequestEvent(const QString &name)
     Q_UNUSED(name);
     return false;
 }
+
 bool SystemMonitorEngine::updateSourceEvent(const QString &sensorName)
 {
     KSGRD::SensorMgr->sendRequest( "localhost", sensorName, (KSGRD::SensorClient*)this, m_sensors.indexOf(sensorName));
@@ -125,7 +132,11 @@ void SystemMonitorEngine::answerReceived(int id, const QList<QByteArray> &answer
 
             KSGRD::SensorMgr->sendRequest( "localhost", QString("%1?").arg(newSensor), (KSGRD::SensorClient*)this, -(sensors.indexOf(newSensor)+2));
         }
-
+        foreach(const QString& sensor, m_sensors) {
+            if (!sensors.contains(sensor)) {
+                removeSource(sensor);
+            }
+        }
         m_sensors = sensors;
         return;
     }
@@ -151,5 +162,6 @@ void SystemMonitorEngine::sensorLost( int )
 {
     m_waitingFor--;
 }
+
 #include "systemmonitor.moc"
 
