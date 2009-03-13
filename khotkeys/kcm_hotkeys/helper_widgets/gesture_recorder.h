@@ -18,6 +18,14 @@
 
 class QMouseEvent;
 
+/**
+ * This widget tracks mouse movements when the left mouse button has been
+ * pressed while the cursor was over the widget.
+ * The events are sent to a Stroke. When the mouse button is released the Stroke
+ * is instructed to process the data; the processed data will then be emitted in
+ * a "recorded" signal.
+ */
+
 class GestureRecorder : public QFrame
     {
     Q_OBJECT
@@ -35,7 +43,7 @@ class GestureRecorder : public QFrame
 
     Q_SIGNALS:
 
-        void recorded(const QString &data);
+        void recorded(const KHotKeys::StrokePoints &data);
 
     private:
         bool _mouseButtonDown;

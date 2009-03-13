@@ -19,11 +19,17 @@
 */
 
 #include "helper_widgets/gesture_recorder.h"
+#include "triggers/gestures.h"
+
 
 #include <KDE/KDialog>
 
 /**
  * @author Michael Jansen <kde@michael-jansen.biz>
+ */
+/**
+ * This dialog is what pops up after clicking the edit button. It contains
+ * a GestureRecorder to enable the input of a new gesture.
  */
 class EditGestureDialog : public KDialog
     {
@@ -34,25 +40,25 @@ public:
     /**
      * Default constructor
      */
-    EditGestureDialog(const QString &gestureCode, QWidget *parent=NULL);
+    EditGestureDialog(const KHotKeys::StrokePoints &pointData, QWidget *parent=NULL);
 
     /**
      * Destructor
      */
     virtual ~EditGestureDialog();
 
-    QString gestureCode() const;
+    KHotKeys::StrokePoints pointData() const;
 
 private Q_SLOTS:
 
-    void recorded(const QString &);
+    void recorded(const KHotKeys::StrokePoints &data);
 
 private:
 
     GestureRecorder _recorder;
-    QString _code;
+    KHotKeys::StrokePoints _pointData;
 
-};
+    };
 
 
 #endif /* #ifndef EDIT_GESTURE_DIALOG_H */

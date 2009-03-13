@@ -18,7 +18,7 @@
 #include "gesture_drawer.h"
 
 GestureDrawer::GestureDrawer(QWidget *parent, const char *name)
-  : QFrame(parent), _data(QString())
+  : QFrame(parent), _data(KHotKeys::StrokePoints())
     {
     setObjectName(name);
     QPalette p;
@@ -34,138 +34,62 @@ GestureDrawer::~GestureDrawer()
     }
 
 
-QString GestureDrawer::code() const
+KHotKeys::StrokePoints GestureDrawer::pointData() const
     {
     return _data;
     }
 
 
-void GestureDrawer::setCode(const QString &data)
+void GestureDrawer::setPointData(const KHotKeys::StrokePoints &data)
     {
     _data = data;
 
     repaint();
     }
 
-
 void GestureDrawer::paintEvent(QPaintEvent *ev)
     {
-  // Iterate through the data points and draw a line to each of them
-    quint32 startCell = 0;
-    quint32 endCell = 0;
-    QPoint startPoint;
-    QPoint endPoint;
+    const int n = _data.size();
+
+    if( n < 2 )
+        {
+        QFrame::paintEvent(ev);
+        return;
+        }
+
+    const int border=6;
+
+    const int l = width() < height() ? width() : height();
+    const int x_offset = border + ( width()-l )/2;
+    const int y_offset = border + ( height()-l )/2;
+
 
     QPainter p(this);
+    p.setRenderHint(QPainter::Antialiasing);
+    QPen pen;
+    pen.setWidth(4);
+    pen.setCapStyle(Qt::RoundCap);
 
-    if (_data.length() > 0)
+    // starting point
+    double x = x_offset + _data[0].x * (l - 2*border);
+    double y = y_offset + _data[0].y * (l - 2*border);
+
+    for(int i=0; i<n-1; i++)
         {
-        startCell = QString(_data[0]).toUInt();
+
+        double nextx = x_offset + _data[i+1].x * (l - 2*border);
+        double nexty = y_offset + _data[i+1].y * (l - 2*border);
+
+        pen.setBrush(QColor(0,(1-_data[i].s)*255,_data[i].s*255));
+        p.setPen(pen);
+        p.drawLine(x, y, nextx, nexty);
+
+        x=nextx;
+        y=nexty;
         }
 
-    for (Q_INT32 index = 1; index < _data.length(); ++index)
-        {
-        endCell = QString(_data[index]).toUInt();
-
-        startPoint = lookupCellCoords(startCell);
-        endPoint = lookupCellCoords(endCell);
-
-        if (index == 1)
-            {
-      // Draw something to show the starting point
-            p.drawRect(startPoint.x()-2, startPoint.y()-2, 4, 4);
-            p.fillRect(startPoint.x()-2, startPoint.y()-2, 4, 4,
-                       QBrush(Qt::black));
-            }
-
-        p.drawLine(startPoint, endPoint);
-        drawArrowHead(startPoint, endPoint, p);
-
-        startCell = endCell;
-        }
-
-    p.end();
 
     QFrame::paintEvent(ev);
-    }
-
-QPoint GestureDrawer::lookupCellCoords(quint32 cell)
-    {
-  // First divide the widget into thirds, horizontally and vertically
-    quint32 w = width();
-    quint32 h = height();
-
-    quint32 wThird = w / 3;
-    quint32 hThird = h / 3;
-
-    switch(cell)
-        {
-        case 1:
-            return QPoint(wThird/2, 2*hThird+hThird/2);
-
-        case 2:
-            return QPoint(wThird+wThird/2, 2*hThird+hThird/2);
-
-        case 3:
-            return QPoint(2*wThird+wThird/2, 2*hThird+hThird/2);
-
-        case 4:
-            return QPoint(wThird/2, hThird+hThird/2);
-
-        case 5:
-            return QPoint(wThird+wThird/2, hThird+hThird/2);
-
-        case 6:
-            return QPoint(2*wThird+wThird/2, hThird+hThird/2);
-
-        case 7:
-            return QPoint(wThird/2, hThird/2);
-
-        case 8:
-            return QPoint(wThird+wThird/2, hThird/2);
-
-        case 9:
-            return QPoint(2*wThird+wThird/2, hThird/2);
-        }
-
-    return QPoint(0, 0);
-    }
-
-void GestureDrawer::drawArrowHead(QPoint &start, QPoint &end,
-                                  QPainter &p)
-    {
-    int deltaX = end.x() - start.x();
-    int deltaY = end.y() - start.y();
-
-    if (deltaY == 0)
-        {
-    // horizontal line
-        int offset = 0;
-        if (deltaX > 0)
-          offset = -3;
-        else
-          offset = 3;
-
-        p.drawLine(QPoint(end.x()+offset, end.y()+2), end);
-        p.drawLine(QPoint(end.x()+offset, end.y()-2), end);
-        }
-    else if (deltaX == 0)
-        {
-    // vertical line
-        int offset = 0;
-        if (deltaY > 0)
-          offset = -3;
-        else
-          offset = +3;
-
-        p.drawLine(QPoint(end.x()+2, end.y()+offset), end);
-        p.drawLine(QPoint(end.x()-2, end.y()+offset), end);
-        }
-    else
-        {
-        // diagonal - The math would be pretty complex, so don't do anything
-        }
-
     }
 
 #include "moc_gesture_drawer.cpp"

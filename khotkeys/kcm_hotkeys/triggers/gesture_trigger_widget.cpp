@@ -25,8 +25,13 @@ GestureTriggerWidget::GestureTriggerWidget(KHotKeys::GestureTrigger *trigger, QW
     ui.setupUi(this);
 
     connect(ui.gesture, SIGNAL(changed()),
+            this, SLOT(slotGestureHasChanged()) );
+
+    connect(ui.gesture, SIGNAL(changed()),
             _changedSignals, SLOT(map()) );
     _changedSignals->setMapping(ui.gesture, "gesture" );
+
+    hasChanged = false;
     }
 
 
@@ -38,7 +43,8 @@ GestureTriggerWidget::~GestureTriggerWidget()
 void GestureTriggerWidget::doCopyFromObject()
     {
     Q_ASSERT(trigger());
-    ui.gesture->setGestureCode(trigger()->gestureCode());
+    ui.gesture->setPointData(trigger()->pointData(), false);
+    hasChanged = false;
     return;
     }
 
@@ -46,7 +52,8 @@ void GestureTriggerWidget::doCopyFromObject()
 void GestureTriggerWidget::doCopyToObject()
     {
     Q_ASSERT(trigger());
-    trigger()->setGestureCode(ui.gesture->gestureCode());
+    hasChanged = false;
+    trigger()->setPointData(ui.gesture->pointData());
     return;
     }
 
@@ -54,9 +61,13 @@ void GestureTriggerWidget::doCopyToObject()
 bool GestureTriggerWidget::isChanged() const
     {
     Q_ASSERT(trigger());
-    return ui.gesture->gestureCode() != trigger()->gestureCode();
+    return hasChanged;
     }
 
+void GestureTriggerWidget::slotGestureHasChanged()
+    {
+    hasChanged = true;
+    }
 
 KHotKeys::GestureTrigger *GestureTriggerWidget::trigger()
     {

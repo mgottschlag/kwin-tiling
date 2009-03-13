@@ -6,12 +6,6 @@
 
  Distributed under the terms of the GNU General Public License version 2.
 
- Based on LibStroke :
-  ( libstroke - an X11 stroke interface library
-  Copyright (c) 1996,1997,1998,1999  Mark F. Willey, ETLA Technical
-  There is a reference application available on the LibStroke Home Page:
-  http://www.etla.net/~willey/projects/libstroke/ )
-
 ****************************************************************************/
 
 #include "gestures.h"
@@ -118,7 +112,7 @@ void Gesture::register_handler( QObject* receiver_P, const char* slot_P )
     if( handlers.contains( receiver_P ))
         return;
     handlers[ receiver_P ] = true;
-    connect( this, SIGNAL( handle_gesture( const QString&, WId )),
+    connect( this, SIGNAL( handle_gesture( const StrokePoints&, WId )),
         receiver_P, slot_P );
     if( handlers.count() == 1 )
         update_grab();
@@ -129,7 +123,8 @@ void Gesture::unregister_handler( QObject* receiver_P, const char* slot_P )
     if( !handlers.contains( receiver_P ))
         return;
     handlers.remove( receiver_P );
-    disconnect( this, SIGNAL( handle_gesture( const QString&, WId )),
+
+    disconnect( this, SIGNAL( handle_gesture( const StrokePoints&, WId )),
         receiver_P, slot_P );
     if( handlers.count() == 0 )
         update_grab();
@@ -137,11 +132,11 @@ void Gesture::unregister_handler( QObject* receiver_P, const char* slot_P )
 
 bool Gesture::x11Event( XEvent* ev_P )
     {
-/*		kDebug() << "   ( type = " << ev_P->type << " )" << KeyRelease << " " << KeyPress ;
-		if( ev_P->type == XKeyPress || ev_P->type == XKeyRelease )
-		{
-			return voice_handler->x11Event( ev_P );
-	}*/
+/*      kDebug() << "   ( type = " << ev_P->type << " )" << KeyRelease << " " << KeyPress ;
+        if( ev_P->type == XKeyPress || ev_P->type == XKeyRelease )
+        {
+            return voice_handler->x11Event( ev_P );
+    }*/
 
     if( ev_P->type == ButtonPress && ev_P->xbutton.button == button )
         {
@@ -154,14 +149,15 @@ bool Gesture::x11Event( XEvent* ev_P )
         start_y = ev_P->xbutton.y_root;
         return true;
         }
+    // if stroke is finished... postprocess the data and send a signal
     else if( ev_P->type == ButtonRelease && ev_P->xbutton.button == button
         && recording )
         {
         recording = false;
         nostroke_timer.stop();
         stroke.record( ev_P->xbutton.x, ev_P->xbutton.y );
-        QString gesture( stroke.translate());
-        if( gesture.isEmpty())
+        StrokePoints gesture( stroke.processData() );
+        if( gesture.isEmpty() )
             {
             kDebug() << "GESTURE: replay";
             XAllowEvents( QX11Info::display(), AsyncPointer, CurrentTime );
@@ -169,7 +165,7 @@ bool Gesture::x11Event( XEvent* ev_P )
             mouse_replay( true );
             return true;
             }
-        kDebug() << "GESTURE: got: " << gesture;
+
         emit handle_gesture( gesture, windows_handler->window_at_position( start_x, start_y ));
         return true;
         }
@@ -177,13 +173,16 @@ bool Gesture::x11Event( XEvent* ev_P )
         { // ignore small initial movement
         if( nostroke_timer.isActive()
             && abs( start_x - ev_P->xmotion.x_root ) < 10
-            && abs( start_y - ev_P->xmotion.y_root ) < 10 )
+            && abs( start_y - ev_P->xmotion.y_root ) < 10
+        )
             return true;
         nostroke_timer.stop();
+
         stroke.record( ev_P->xmotion.x, ev_P->xmotion.y );
         }
     return false;
     }
+
 
 void Gesture::stroke_timeout()
     {
@@ -261,6 +260,11 @@ void Gesture::set_timeout( int timeout_P )
     timeout = timeout_P;
     }
 
+
+
+// Definitions for Gesture end here, Definitions for Stroke following.
+
+
 Stroke::Stroke()
     {
     reset();
@@ -281,181 +285,98 @@ void Stroke::reset()
     point_count = -1;
     }
 
+
 bool Stroke::record( int x, int y )
     {
-    if( point_count >= MAX_POINTS )
-	return false;
     if( point_count == -1 )
-	{
-	++point_count;
-	points[ point_count ].x = x;
-	points[ point_count ].y = y;
-	min_x = max_x = x;
-	min_y = max_y = y;
-	}
+        {
+        ++point_count;
+        points[ point_count ].x = x;
+        points[ point_count ].y = y;
+
+        // start metrics
+        min_x = max_x = x;
+        min_y = max_y = y;
+        }
     else
-	{
-      // interpolate between last and current point
-	int delx = x - points[ point_count ].x;
-	int dely = y - points[ point_count ].y;
-	if( abs( delx ) > abs( dely )) // step by the greatest delta direction
-	    {
-    	    float iy = points[ point_count ].y;
-             // go from the last point to the current, whatever direction it may be
-    	    for( int ix = points[ point_count ].x;
-		 ( delx > 0 ) ? ( ix < x ) : ( ix > x );
-		 ( delx > 0 ) ? ++ix : --ix )
-		{
-		// step the other axis by the correct increment
-		if( dely < 0 )
-		    iy -= fabs( dely / ( float ) delx );
-		else
-		    iy += fabs( dely / ( float ) delx );
-		// add the interpolated point
-		++point_count;
-		if( point_count >= MAX_POINTS )
-		    return false;
-		points[ point_count ].x = ix;
-		points[ point_count ].y = ( int )iy;
-		}
-	    // add the last point
-	    ++point_count;
-	    if( point_count >= MAX_POINTS )
-		return false;
-	    points[ point_count ].x = x;
-	    points[ point_count ].y = y;
-	    // update metrics, it's ok to do it only for the last point
-            if( x < min_x )
-		min_x = x;
-    	    if( x > max_x )
-		max_x = x;
-    	    if( y < min_y )
-		min_y = y;
-    	    if( y > max_y )
-		max_y = y;
-    	    }
-	else
-	    { // same thing, but for dely larger than delx case...
-    	    float ix = points[ point_count ].x;
-             // go from the last point to the current, whatever direction it may be
-    	    for( int iy = points[ point_count ].y;
-		 ( dely > 0 ) ? ( iy < y ) : ( iy > y );
-		 ( dely > 0 ) ? ++iy : --iy )
-		{
-		// step the other axis by the correct increment
-		if( delx < 0 )
-		    ix -= fabs( delx / ( float ) dely );
-		else
-		    ix += fabs( delx / ( float ) dely );
-		// add the interpolated point
-		++point_count;
-		if( point_count >= MAX_POINTS )
-		    return false;
-		points[ point_count ].x = ( int )ix;
-		points[ point_count ].y = iy;
-		}
-	    // add the last point
-	    ++point_count;
-	    if( point_count >= MAX_POINTS )
-		return false;
-	    points[ point_count ].x = x;
-	    points[ point_count ].y = y;
-	    // update metrics, ts's ok to do it only for the last point
-            if( x < min_x )
-		min_x = x;
-    	    if( x > max_x )
-		max_x = x;
-    	    if( y < min_y )
-		min_y = y;
-    	    if( y > max_y )
-		max_y = y;
-    	    }
-	}
+        {
+        ++point_count;
+        if( point_count >= MAX_POINTS )
+            return false;
+        points[ point_count ].x = x;
+        points[ point_count ].y = y;
+
+        // update metrics
+        if( x < min_x )
+            min_x = x;
+        if( x > max_x )
+            max_x = x;
+        if( y < min_y )
+            min_y = y;
+        if( y > max_y )
+            max_y = y;
+
+        }
     return true;
     }
 
-char* Stroke::translate( int min_bin_points_percentage_P, int scale_ratio_P, int min_points_P )
+
+// Compute some additional data from the raw point coordinates and store
+// it all in a new data structure to be passed on and saved.
+
+StrokePoints Stroke::processData()
     {
-    if( point_count < min_points_P )
-	return NULL;
-    // determine size of grid
-    delta_x = max_x - min_x;
-    delta_y = max_y - min_y;
-    if( delta_x > scale_ratio_P * delta_y )
-	{
-	int avg_y = ( max_y + min_y ) / 2;
-	min_y = avg_y - delta_x / 2;
-	max_y = avg_y + delta_x / 2;
-        delta_y = max_y - min_y;
-	}
-    else if( delta_y > scale_ratio_P * delta_x )
-	{
-	int avg_x = ( max_x + min_x ) / 2;
-	min_x = avg_x - delta_y / 2;
-	max_x = avg_x + delta_y / 2;
-        delta_x = max_x - min_x;
-	}
-    // calculate bin boundary positions
-    bound_x_1 = min_x + delta_x / 3;
-    bound_x_2 = min_x + 2 * delta_x / 3;
-    bound_y_1 = min_y + delta_y / 3;
-    bound_y_2 = min_y + 2 * delta_y / 3;
+    if(point_count < 2 )
+        return StrokePoints(); // empty vector
 
-    int sequence_count = 0;
-    // points-->sequence translation scratch variables
-    int prev_bin = 0;
-    int current_bin = 0;
-    int bin_count = 0;
-// build string by placing points in bins, collapsing bins and discarding
-// those with too few points...
-    for( int pos = 0;
-	 pos <= point_count;
-	 ++pos )
-	{
-        // figure out which bin the point falls in
-	current_bin = bin( points[ pos ].x, points[ pos ].y );
-        // if this is the first point, consider it the previous bin, too.
-	if( prev_bin == 0 )
-	    prev_bin = current_bin;
-        if( prev_bin == current_bin )
-    	    bin_count++;
-	else
-	    {  // we are moving to a new bin -- consider adding to the sequence
-	                                        // CHECKME tohle taky konfigurovatelne ?
-	    if( bin_count >= ( min_bin_points_percentage_P * point_count / 100 )
-		|| sequence_count == 0 )
-		{
-		if( sequence_count >= MAX_SEQUENCE )
-		    return NULL;
-	        ret_val[ sequence_count++ ] = prev_bin + '0';
-		}
-	    // restart counting points in the new bin
-	    bin_count=0;
-	    prev_bin = current_bin;
-	    }
-	}
+    int n = point_count-1;
 
-    // add the last run of points to the sequence
-    if( sequence_count >= MAX_SEQUENCE - 1 )
-        return NULL;
-    ret_val[ sequence_count++ ] = current_bin + '0';
-    ret_val[ sequence_count ] = 0; // endmark
-    return ret_val;
-    }
+    StrokePoints results(n);
 
-/* figure out which bin the point falls in */
-int Stroke::bin( int x, int y )
-    {
-    int bin_num = 1;
-    if( x > bound_x_1 )
-        ++bin_num;
-    if( x > bound_x_2 )
-        ++bin_num;
-    if( y < bound_y_1 )
-        bin_num += 3;
-    if( y < bound_y_2 )
-        bin_num += 3;
-    return bin_num;
+    // calculate s, where s is the length of a stroke up to the current point
+    // (first loop) divided by the total stroke length (second loop)
+    qreal strokelength = 0.0;
+    results[0].s = 0.0;
+
+    for (int i = 0; i < n-1; i++)
+        {
+        strokelength += hypot(points[i+1].x - points[i].x, points[i+1].y - points[i].y);
+        results[i+1].s = strokelength;
+        }
+
+    for (int i = 0; i < n; i++)
+        results[i].s /= strokelength;
+
+
+    // check which axis is longer...
+    int scaleX = max_x - min_x;
+    int scaleY = max_y - min_y;
+    qreal scale = (scaleX > scaleY) ? scaleX : scaleY;
+
+    // ...and scale the stroke coordinates to a new size depending on this axis
+    // (saving into the new data structure for higher precision)
+    for (int i = 0; i < n; i++)
+        {
+        results[i].x = (points[i].x-(min_x+max_x)/2.0)/scale + 0.5;
+        results[i].y = (points[i].y-(min_y+max_y)/2.0)/scale + 0.5;
+        }
+
+
+    // calculate values of delta_s and angle for the points	by simple comparison
+    // with the respective successor.
+    // delta_s is the distance to the successor in the same units as s.
+    // angle is the angle to the successor in units of pi.
+    for (int i = 0; i < n-1; i++)
+        {
+        results[i].delta_s = results[i+1].s - results[i].s;
+        results[i].angle = atan2(results[i+1].y - results[i].y, results[i+1].x - results[i].x)/M_PI;
+        }
+
+    // last point of result would need special logic, so we simply discard it -
+    // there's enough points anyway
+    results.pop_back();
+
+    return results;
     }
 
 } // namespace KHotKeys

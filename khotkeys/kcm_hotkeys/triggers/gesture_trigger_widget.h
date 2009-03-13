@@ -18,7 +18,6 @@
    Boston, MA 02110-1301, USA.
 */
 
-
 #include "trigger_widget_base.h"
 #include "ui_gesture_trigger_widget.h"
 
@@ -26,6 +25,11 @@
 /**
  * @author Michael Jansen <kde@michael-jansen.biz>
  */
+/**
+ * This widget links the GestureTrigger and the GestureWidget by copying the
+ * point data from one to the other as needed.
+ */
+
 class GestureTriggerWidget : public TriggerWidgetBase
     {
     Q_OBJECT
@@ -55,7 +59,13 @@ private:
     virtual void doCopyToObject();
 
     Ui::GestureTriggerWidget ui;
-};
+
+    bool hasChanged;
+
+private Q_SLOTS:
+
+    void slotGestureHasChanged();
+    };
 
 
 #endif /* #ifndef GESTURE_TRIGGER_WIDGET_H */

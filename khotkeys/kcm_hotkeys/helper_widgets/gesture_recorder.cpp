@@ -53,7 +53,8 @@ void GestureRecorder::mouseReleaseEvent(QMouseEvent *ev)
         {
         QPoint pos = ev->pos();
         stroke.record(pos.x(), pos.y());
-        QString data( stroke.translate());
+        KHotKeys::StrokePoints data( stroke.processData() );
+
         if( !data.isEmpty())
             emit recorded(data);
         }

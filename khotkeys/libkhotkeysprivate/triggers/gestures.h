@@ -1,11 +1,11 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 1999-2002 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #ifndef _GESTURES_H_
@@ -25,42 +25,68 @@ class Gesture;
 
 KDE_EXPORT extern QPointer<Gesture> gesture_handler;
 
+/**
+ * A PointQuintet represents a point in the gesture,
+ * saving not only coordinates but also the relation to the successor.
+ * The coordinates x and y are mainly used for drawing the stroke,
+ * the rest is used by the gesture matching algoritm.
+ */
+
+class PointQuintet
+    {
+    public:
+        // at which percentage of the stroke length does the point occur?
+        // 100%=1
+        qreal s;
+        // relative distance to the successor (s+delta_s is s of the next point)
+        qreal delta_s;
+        // angle to successor in units of pi
+        qreal angle;
+        // coordinates scaled to a square box. each goes from 0 to 1
+        qreal x, y;
+    };
+
+typedef QVector<PointQuintet> StrokePoints;
+
+/**
+ * The Stroke saves the raw data of the mouse movement. It gets sent the coordinates and
+ * records them while preparing for processing them. The method processData()
+ * returns the processed version of this raw data.
+ */
+
 class KDE_EXPORT Stroke
     {
     public:
-    // maximum number of numbers in stroke
-        enum { MAX_SEQUENCE = 25 };
-    // largest number of points allowed to be sampled
+        // largest number of points allowed to be sampled
         enum { MAX_POINTS = 5000 };
-    // default percentage of sample points in a bin from all points to be valid
-        enum { MIN_BIN_POINTS_PERCENTAGE = 5 };
-    // default threshold of size of smaller axis needed for it to define its own bin size
-        enum { SCALE_RATIO = 4 };
-    // default number of sample points required to have a valid stroke
-        enum { MIN_POINTS = 10 };
-	Stroke();
-	~Stroke();
-	bool record( int x, int y );
-	char* translate( int min_bin_points_percentage_P = MIN_BIN_POINTS_PERCENTAGE,
-            int scale_ratio_P = SCALE_RATIO, int min_points_P = MIN_POINTS ); // CHECKME returns ret_val ( see below )
-	void reset();
+
+        Stroke();
+        ~Stroke();
+        bool record( int x, int y );
+
+        StrokePoints processData();
+        void reset();
+
     protected:
-	int bin( int x, int y );
-	// metrics for input stroke
-	int min_x, min_y;
-	int max_x, max_y;
-	int point_count;
-	int delta_x, delta_y;
-	int bound_x_1, bound_x_2;
-	int bound_y_1, bound_y_2;
-	struct point
-	    {
-	    int x;
-	    int y;
-	    };
-	point* points;
-	char ret_val[ MAX_SEQUENCE ];
+        // metrics for input stroke
+        int min_x, min_y;
+        int max_x, max_y;
+        int point_count;
+
+        struct point
+            {
+            int x;
+            int y;
+            };
+
+        point* points;
     };
+
+/**
+ * The Gesture class manages the mouse grabbing and sends its data to a Stroke.
+ * Then it emits the Stroke's processed data so that instances of GestureTrigger
+ * can handle it.
+ */
 
 class KDE_EXPORT Gesture
     : public QWidget // not QObject because of x11EventFilter()
@@ -76,12 +102,12 @@ class KDE_EXPORT Gesture
         void register_handler( QObject* receiver_P, const char* slot_P );
         void unregister_handler( QObject* receiver_P, const char* slot_P );
     protected:
-	virtual bool x11Event( XEvent* ev_P );
+        virtual bool x11Event( XEvent* ev_P );
     private Q_SLOTS:
         void stroke_timeout();
         void active_window_changed( WId window_P );
     Q_SIGNALS:
-        void handle_gesture( const QString &gesture, WId window );
+        void handle_gesture( const StrokePoints &gesture, WId window );
     private:
         void update_grab();
         void grab_mouse( bool grab_P );

@@ -18,12 +18,16 @@
    Boston, MA 02110-1301, USA.
 */
 
+
 #include "ui_gesture_widget.h"
 
 #include <QtGui/QWidget>
 
 /**
  * @author Michael Jansen <kde@michael-jansen.biz>
+ */
+/**
+ * This widget contains the GestureDrawer and the edit button.
  */
 class GestureWidget : public QWidget
     {
@@ -41,8 +45,8 @@ public:
      */
     virtual ~GestureWidget();
 
-    void setGestureCode(const QString &code);
-    QString gestureCode() const;
+    void setPointData(const KHotKeys::StrokePoints &data, bool emitSignal);
+    KHotKeys::StrokePoints pointData() const;
 
 public Q_SLOTS:
 
@@ -56,7 +60,7 @@ private:
 
     Ui::GestureWidget ui;
 
-};
+    };
 
 
 #endif /* #ifndef GESTURE_WIDGET_H */

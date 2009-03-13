@@ -37,36 +37,35 @@ GestureWidget::~GestureWidget()
 
 void GestureWidget::edit()
     {
-    EditGestureDialog dia(ui.gesture->code());
+    EditGestureDialog dia(ui.gesture->pointData());
     switch (dia.exec())
         {
-        case QDialog::Accepted:
-            setGestureCode(dia.gestureCode());
+        case KDialog::Accepted:
+            setPointData(dia.pointData(), true);
             break;
 
         case KDialog::Rejected:
             break;
 
-        default: 
+        default:
             Q_ASSERT(false);
         }
     }
 
 
-QString GestureWidget::gestureCode() const
+
+
+KHotKeys::StrokePoints GestureWidget::pointData() const
     {
-    return ui.gesture->code();
+    return ui.gesture->pointData();
     }
 
 
-void GestureWidget::setGestureCode(const QString &code)
+void GestureWidget::setPointData(const KHotKeys::StrokePoints &data , bool emitSignal)
     {
-    if (ui.gesture->code() != code)
-        {
-        ui.data->setText(code);
-        ui.gesture->setCode(code);
+    ui.gesture->setPointData(data);
+    if(emitSignal)
         emit changed();
-        }
     }
 
 #include "moc_gesture_widget.cpp"

@@ -12,12 +12,20 @@
 #ifndef GESTURE_DRAWER_H
 #define GESTURE_DRAWER_H
 
+#include "triggers/gestures.h"
+
 #include <QtGui/QFrame>
 
 #include <QEvent>
 #include <QPoint>
 #include <QWidget>
 #include <QSize>
+
+
+/**
+ * This widget provides the service of drawing the processed point data of the
+ * gesture.
+ */
 
 class GestureDrawer : public QFrame
     {
@@ -28,8 +36,9 @@ class GestureDrawer : public QFrame
         GestureDrawer(QWidget *parent, const char *name = 0);
         ~GestureDrawer();
 
-        void setCode(const QString &data);
-        QString code() const;
+        void setPointData(const KHotKeys::StrokePoints &data);
+        KHotKeys::StrokePoints pointData() const;
+
 
         virtual QSize sizeHint() const { return QSize(30, 30); }
 
@@ -37,12 +46,7 @@ class GestureDrawer : public QFrame
         void paintEvent(QPaintEvent *ev);
 
     private:
-        QPoint lookupCellCoords(quint32 cell);
-        void drawArrowHead(QPoint &start, QPoint &end,
-                           QPainter &p);
-
-
-        QString _data;
+        KHotKeys::StrokePoints _data;
     };
 
 #endif

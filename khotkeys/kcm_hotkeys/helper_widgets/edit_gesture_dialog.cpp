@@ -24,12 +24,11 @@
 #include <QtGui/QLayout>
 
 
-EditGestureDialog::EditGestureDialog(const QString &code, QWidget *parent)
+EditGestureDialog::EditGestureDialog(const KHotKeys::StrokePoints &pointData, QWidget *parent)
     :   KDialog(parent)
         ,_recorder(this)
-        ,_code()
+        ,_pointData(pointData)
     {
-    //_recorder.setGestureCode(code);
     setCaption(i18n("Edit Gesture"));
     setButtons(KDialog::Ok | KDialog::Cancel);
 
@@ -50,8 +49,8 @@ EditGestureDialog::EditGestureDialog(const QString &code, QWidget *parent)
 
     setMainWidget(w);
 
-    connect(&_recorder, SIGNAL(recorded(QString)),
-            SLOT(recorded(QString)));
+    connect(&_recorder, SIGNAL(recorded(KHotKeys::StrokePoints)),
+            SLOT(recorded(KHotKeys::StrokePoints)));
     }
 
 
@@ -59,15 +58,15 @@ EditGestureDialog::~EditGestureDialog()
     {}
 
 
-QString EditGestureDialog::gestureCode() const
+KHotKeys::StrokePoints EditGestureDialog::pointData() const
     {
-    return _code;
+    return _pointData;
     }
 
 
-void EditGestureDialog::recorded(const QString &code)
+void EditGestureDialog::recorded(const KHotKeys::StrokePoints &data)
     {
-    _code = code;
+    _pointData=data;
     accept();
     }
 

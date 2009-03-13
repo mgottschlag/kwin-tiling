@@ -32,7 +32,7 @@
 
 #include "input.h"
 #include "windows_handler.h"
-
+#include "triggers/gestures.h"
 
 class KConfig;
 class QKeySequence;
@@ -221,30 +221,41 @@ class KDE_EXPORT WindowTrigger : public QObject, public Trigger
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(WindowTrigger::WindowEvents)
 
+/**
+ * This class handles the storage of gesture data; it also matches gestures
+ * and links the gesture to an action.
+ * One object equals one configured gesture.
+ */
+
 class KDE_EXPORT GestureTrigger
     : public QObject, public Trigger
     {
     Q_OBJECT
     typedef Trigger base;
     public:
-        GestureTrigger( ActionData* data_P, const QString& gesture_P = QString());
+        GestureTrigger( ActionData* data_P, const StrokePoints& pointdata_P = StrokePoints() );
         GestureTrigger( KConfigGroup& cfg_P, ActionData* data_P );
         virtual ~GestureTrigger();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual Trigger* copy( ActionData* data_P ) const;
         virtual const QString description() const;
-        const QString& gestureCode() const;
+        const StrokePoints& pointData() const;
 
-        //! Set the gesture code
-        void setGestureCode(const QString &);
+        //! Set the point data of the gesture
+        void setPointData(const StrokePoints &data);
 
         virtual void activate( bool activate_P );
 
         virtual TriggerType type() const { return GestureTriggerType; }
     protected Q_SLOTS:
-        void handle_gesture( const QString& gesture_P, WId window_P );
+        void handle_gesture( const StrokePoints& gesture_P, WId window_P );
     private:
-        QString _gesturecode;
+        void importKde3Gesture(KConfigGroup& cfg_P);
+
+        qreal comparePointData(const StrokePoints &a, const StrokePoints &b) const;
+        inline qreal angleSquareDifference(qreal alpha, qreal beta) const;
+
+        StrokePoints _pointdata;
     };
 
 
