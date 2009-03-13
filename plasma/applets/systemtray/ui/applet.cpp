@@ -328,29 +328,30 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         d->configInterface->setSelectedLabel(i18n("Hidden icons:"));
         d->configInterface->setShowUpDownButtons(false);
 
-	KConfigGroup globalCg = globalConfig();
+        KConfigGroup globalCg = globalConfig();
         d->notificationInterface = new QWidget();
 
-	QLabel *description = new QLabel(i18n("Select the types of application feedback that should "
-					"be integrated with the system tray:"), d->notificationInterface);
-	description->setWordWrap(true);
-	d->showJobs = new QCheckBox(i18n("Show Jobs"), d->notificationInterface);
-	d->showJobs->setChecked(globalCg.readEntry("ShowJobs", true));
-	d->showNotifications = new QCheckBox(i18n("Show Notifications"), d->notificationInterface);
-	d->showNotifications->setChecked(globalCg.readEntry("ShowNotifications", true));
+        QLabel *description = new QLabel(i18n("Select the types of application feedback that should "
+                                              "be integrated with the system tray:"), d->notificationInterface);
+        description->setWordWrap(true);
+        d->showJobs = new QCheckBox(i18n("Jobs, such as file transfers"), d->notificationInterface);
+        d->showJobs->setChecked(globalCg.readEntry("ShowJobs", true));
+        d->showNotifications = new QCheckBox(i18n("Notifications, such as chat requests"), d->notificationInterface);
+        d->showNotifications->setChecked(globalCg.readEntry("ShowNotifications", true));
 
-	QVBoxLayout *layout = new QVBoxLayout;
-	layout->addWidget(description);
-	layout->addWidget(d->showJobs);
-	layout->addWidget(d->showNotifications);
-	layout->addStretch();
-	d->notificationInterface->setLayout(layout);
+        QVBoxLayout *layout = new QVBoxLayout;
+        layout->addWidget(description);
+        layout->addWidget(d->showJobs);
+        layout->addWidget(d->showNotifications);
+        layout->addStretch();
+        d->notificationInterface->setLayout(layout);
 
         connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
         connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 
-        parent->addPage(d->configInterface, i18n("Auto Hide"));
-	parent->addPage(d->notificationInterface, i18n("Notifications"));
+        parent->addPage(d->configInterface, i18n("Auto Hide"), icon());
+        parent->addPage(d->notificationInterface, i18n("Notifications"),
+                        "preferences-desktop-notification");
     }
 
     QListWidget *visibleList = d->configInterface->availableListWidget();
