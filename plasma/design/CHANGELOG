@@ -30,6 +30,7 @@ Plasma Desktop Shell
 --------------------
 * Features
     * Desktop Toolbox: it's smaller and shows the activity name if any is set
+    * ZUI: the global actions such as add activity and lock desktop are on a global toolbox when the desktop is zoomed out.
 
 Other Shells
 ------------
