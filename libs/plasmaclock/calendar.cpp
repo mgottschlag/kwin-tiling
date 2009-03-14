@@ -207,7 +207,11 @@ void Calendar::dateUpdated(const QDate &date)
     d->month->setText(d->calendarTable->calendar()->monthName(date));
     d->year->setText(QString::number(d->calendarTable->calendar()->year(date)));
     d->dateText->setText(formatted);
+
+    // Block the signals to prevent changing the date again
+    d->weekSpinBox->blockSignals(true);
     d->weekSpinBox->setValue(d->calendarTable->calendar()->weekNumber(date));
+    d->weekSpinBox->blockSignals(false);
 
     emit dateChanged(date);
 }

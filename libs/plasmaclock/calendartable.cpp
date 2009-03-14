@@ -225,7 +225,6 @@ bool CalendarTable::setDate(const QDate &date)
     int oldYear = d->year;
     int oldMonth = d->month;
     QDate oldDate = d->date;
-    d->date = date;
     d->year = d->calendar->year(date);
     d->month = d->calendar->month(date);
     bool fullUpdate = false;
@@ -239,6 +238,9 @@ bool CalendarTable::setDate(const QDate &date)
         emit displayedMonthChanged(d->year, d->month);
         fullUpdate = true;
     }
+
+    // now change the date
+    d->date = date;
 
     d->updateHoveredPainting(this, QPointF());
 
