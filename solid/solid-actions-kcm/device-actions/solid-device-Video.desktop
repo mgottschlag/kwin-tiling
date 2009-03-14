@@ -2,6 +2,7 @@
 Name=Object Name
 Name[et]=Objekti nimi
 Name[ga]=Ainm Réada
+Name[ja]=オブジェクト名
 Name[nds]=Objektnaam
 Name[nl]=Objectnaam
 Name[pt]=Nome do Objecto
@@ -15,6 +16,7 @@ Name[zh_TW]=物件名稱
 Name=Supported Drivers
 Name[et]=Toetatud draiverid
 Name[ga]=Tiománaithe a dTacaítear Leo
+Name[ja]=サポートされているドライバ
 Name[nds]=Ünnerstütt Drievers
 Name[nl]=Ondersteunde stuurprogramma's
 Name[pt]=Controladores Suportados
@@ -27,6 +29,7 @@ Name[zh_TW]=支援的驅動程式
 [Desktop Entry]
 Name=Video
 Name[ga]=Fís
+Name[ja]=映像
 Name[pt]=Vídeo
 Name[pt_BR]=Vídeo
 Name[uk]=Відео

@@ -2,6 +2,7 @@
 Name=Object Name
 Name[et]=Objekti nimi
 Name[ga]=Ainm Réada
+Name[ja]=オブジェクト名
 Name[nds]=Objektnaam
 Name[nl]=Objectnaam
 Name[pt]=Nome do Objecto
@@ -15,6 +16,7 @@ Name[zh_TW]=物件名稱
 Name=Generic Interface
 Name[et]=Üldliides
 Name[ga]=Comhéadan Ginearálta
+Name[ja]=一般インターフェース
 Name[nds]=Allmeen Koppelsteed
 Name[nl]=Algemeen interface
 Name[pt]=Interface Genérica
