@@ -113,6 +113,7 @@ QAction *MenuView::createLeafAction(const QModelIndex &index, QObject *parent)
 
 void MenuView::updateAction(QAbstractItemModel *model, QAction *action, const QModelIndex& index)
 {
+    bool isSeparator = index.data(Kickoff::SeparatorRole).value<bool>();
     QString text = index.data(Qt::DisplayRole).value<QString>().replace("&", "&&"); // describing text, e.g. "Spreadsheet" or "Rekall" (right, sometimes the text is also used for the generic app-name)
     QString name = index.data(Kickoff::SubTitleRole).value<QString>().replace("&", "&&"); // the generic name, e.g. "kspread" or "OpenOffice.org Spreadsheet" or just "" (right, it's a mess too)
     if (action->menu() != 0) { // if it is an item with sub-menuitems, we probably like to thread them another way...
@@ -149,6 +150,7 @@ void MenuView::updateAction(QAbstractItemModel *model, QAction *action, const QM
         }
     }
 
+    action->setSeparator(isSeparator);
     action->setIcon(index.data(Qt::DecorationRole).value<QIcon>());
 
     // we map modelindex and action together

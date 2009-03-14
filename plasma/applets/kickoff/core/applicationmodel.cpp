@@ -72,6 +72,7 @@ public:
         : parent(0),
           fetched(false),
           isDir(false),
+          isSeparator(false),
           subTitleMandatory(false)
     {
     }
@@ -92,18 +93,20 @@ public:
     AppNode *parent;
     bool fetched;
     bool isDir;
+    bool isSeparator;
     bool subTitleMandatory;
 };
 
 class ApplicationModelPrivate
 {
 public:
-    ApplicationModelPrivate(ApplicationModel *qq)
+    ApplicationModelPrivate(ApplicationModel *qq, bool _allowSeparators)
             : q(qq),
               root(new AppNode()),
               duplicatePolicy(ApplicationModel::ShowDuplicatesPolicy),
               systemApplicationPolicy(ApplicationModel::ShowSystemOnlyPolicy),
-              primaryNamePolicy(ApplicationModel::GenericNamePrimary)
+              primaryNamePolicy(ApplicationModel::GenericNamePrimary),
+              allowSeparators(_allowSeparators)
     {
         systemApplications = Kickoff::systemApplicationList();
     }
@@ -121,6 +124,7 @@ public:
     ApplicationModel::DuplicatePolicy duplicatePolicy;
     ApplicationModel::SystemApplicationPolicy systemApplicationPolicy;
     ApplicationModel::PrimaryNamePolicy primaryNamePolicy;
+    bool allowSeparators;
     QStringList systemApplications;
 };
 
@@ -134,7 +138,7 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
 
     const KServiceGroup::List list = root->entries(true /* sorted */,
                                                    true /* exclude no display entries */,
-                                                   false /* allow separators */,
+                                                   allowSeparators /* allow separators */,
                                                    primaryNamePolicy == ApplicationModel::GenericNamePrimary /* sort by generic name */);
 
     // application name <-> service map for detecting duplicate entries
@@ -150,6 +154,7 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
         QString relPath = _relPath;
         QString desktopEntry;
         bool isDir = false;
+        bool isSeparator = false;
         const KSycocaEntry::Ptr p = (*it);
 
         if (p->isType(KST_KService)) {
@@ -216,7 +221,7 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
             appName = serviceGroup->comment();
             isDir = true;
         } else if (p->isType(KST_KServiceSeparator)) {
-            // TODO: implement seaparators
+            isSeparator = true;
         } else {
             kWarning(250) << "KServiceGroup: Unexpected object in list!";
             continue;
@@ -229,6 +234,7 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
         newnode->relPath = relPath;
         newnode->desktopEntry = desktopEntry;
         newnode->isDir = isDir;
+        newnode->isSeparator = isSeparator;
         newnode->parent = node;
         node->children.append(newnode);
 
@@ -252,8 +258,8 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
     }
 }
 
-ApplicationModel::ApplicationModel(QObject *parent)
-        : KickoffAbstractModel(parent), d(new ApplicationModelPrivate(this))
+ApplicationModel::ApplicationModel(QObject *parent, bool allowSeparators)
+        : KickoffAbstractModel(parent), d(new ApplicationModelPrivate(this, allowSeparators))
 {
     QDBusConnection dbus = QDBusConnection::sessionBus();
     (void)new KickoffAdaptor(this);
@@ -308,6 +314,9 @@ QVariant ApplicationModel::data(const QModelIndex &index, int role) const
         break;
     case Kickoff::SubTitleMandatoryRole:
         return node->subTitleMandatory;
+        break;
+    case Kickoff::SeparatorRole:
+        return node->isSeparator;
         break;
     case Qt::DecorationRole:
         return node->icon;

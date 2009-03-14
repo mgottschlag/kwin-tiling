@@ -69,7 +69,9 @@ enum DataRole {
     /** The amount of free space (in Kilobytes) for items which represent storage. */
     DiskFreeSpaceRole = Qt::UserRole + 5,
     SubTitleMandatoryRole = Qt::UserRole + 6,
-    LastDataRole = SubTitleMandatoryRole
+    /** Is item a separator. **/
+    SeparatorRole = Qt::UserRole + 7,
+    LastDataRole = SeparatorRole
 };
 
 /**

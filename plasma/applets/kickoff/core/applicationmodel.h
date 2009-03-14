@@ -38,7 +38,7 @@ class KICKOFF_EXPORT ApplicationModel : public KickoffAbstractModel
     Q_OBJECT
 
 public:
-    ApplicationModel(QObject *parent = 0);
+    ApplicationModel(QObject *parent = 0, bool allowSeparators = false);
     virtual ~ApplicationModel();
 
     /**

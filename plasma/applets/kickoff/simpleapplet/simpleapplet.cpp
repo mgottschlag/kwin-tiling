@@ -492,7 +492,7 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
         //Kickoff::MenuView::ModelOptions options = d->viewtypes.count() < 2 ? Kickoff::MenuView::MergeFirstLevel : Kickoff::MenuView::None;
         foreach(QString vtname, d->viewtypes) {
             if(vtname == "Applications") {
-                Kickoff::ApplicationModel *appModel = new Kickoff::ApplicationModel(d->menuview);
+                Kickoff::ApplicationModel *appModel = new Kickoff::ApplicationModel(d->menuview, true /*allow separators*/);
                 appModel->setDuplicatePolicy(Kickoff::ApplicationModel::ShowLatestOnlyPolicy);
                 if (d->formattype == Name || d->formattype == NameDescription || d->formattype == NameDashDescription)
                     appModel->setPrimaryNamePolicy(Kickoff::ApplicationModel::AppNamePrimary);
