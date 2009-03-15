@@ -46,6 +46,7 @@
 #include <QPixmapCache>
 #include <QTimer>
 #include <QtDBus/QtDBus>
+#include <QCheckBox>
 
 #include <KAction>
 #include <KCrash>
@@ -702,7 +703,7 @@ void PlasmaApp::addContainment()
     int currentScreen = Kephal::ScreenUtils::screenId(QCursor::pos());
     int currentDesktop = -1;
     if (AppSettings::perVirtualDesktopViews()) {
-        currentDesktop = KWindowSystem::currentDesktop();
+        currentDesktop = KWindowSystem::currentDesktop()-1;
     }
     Plasma::Containment *fromContainment=m_corona->containmentForScreen(currentScreen, currentDesktop);
 
@@ -734,7 +735,7 @@ void PlasmaApp::zoom(Plasma::Containment *containment, Plasma::ZoomDirection dir
         if (m_zoomLevel == Plasma::DesktopZoom) {
             int currentDesktop = -1;
             if (AppSettings::perVirtualDesktopViews()) {
-                currentDesktop = KWindowSystem::currentDesktop();
+                currentDesktop = KWindowSystem::currentDesktop()-1;
             }
 
             DesktopView *view = viewForScreen(desktop()->screenNumber(QCursor::pos()), currentDesktop);
@@ -841,10 +842,35 @@ void PlasmaApp::setControllerVisible(bool show)
             layout->addWidget(actionButton);
         }
 
+        QCheckBox *perVirtualDesktopViews = new QCheckBox(m_controllerDialog);
+        layout->addWidget(perVirtualDesktopViews);
+        perVirtualDesktopViews->setChecked(AppSettings::perVirtualDesktopViews());
+        perVirtualDesktopViews->setText(i18n("Different activity for each desktop"));
+        connect(perVirtualDesktopViews, SIGNAL(stateChanged(int)), this, SLOT(setPerVirtualDesktopViews(int)));
+
         m_controllerDialog->show();
     } else if (!show) {
         delete m_controllerDialog;
         m_controllerDialog = 0;
+    }
+}
+
+void PlasmaApp::setPerVirtualDesktopViews(int toggle)
+{
+    AppSettings::setPerVirtualDesktopViews(toggle == Qt::Checked);
+    AppSettings::self()->writeConfig();
+
+    //FIXME: now destroying the old views and recreating them is really a bit brutal, it has to be done in a gentler way by creating only the new views and deleting the old ones
+    foreach (DesktopView *view, m_desktops) {
+        view->containment()->setScreen(-1, -1);
+        delete view;
+    }
+    m_desktops.clear();
+
+    m_corona->checkScreens();
+
+    foreach (DesktopView *view, m_desktops) {
+        view->zoomOut(m_zoomLevel);
     }
 }
 

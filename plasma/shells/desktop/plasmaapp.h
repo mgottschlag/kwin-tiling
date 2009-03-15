@@ -129,6 +129,7 @@ private Q_SLOTS:
     void addContainment();
     void configureContainment(Plasma::Containment*);
     void updateActions(Plasma::ImmutabilityType immutability);
+    void setPerVirtualDesktopViews(int toggle);
 
 private:
     DesktopCorona *m_corona;

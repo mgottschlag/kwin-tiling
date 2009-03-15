@@ -323,20 +323,24 @@ void DesktopView::drawBackground(QPainter *painter, const QRectF &rect)
     }
 }
 
-void DesktopView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment)
+void DesktopView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* newContainment)
 {
-    kDebug() << "was:" << wasScreen << "is:" << isScreen << "my screen:" << screen() << "containment:" << (QObject*)containment << "myself:" << (QObject*)this;
-    if (PlasmaApp::isPanelContainment(containment)) {
+    kDebug() << "was:" << wasScreen << "is:" << isScreen << "my screen:" << screen() << "containment:" << (QObject*)newContainment << "myself:" << (QObject*)this;
+    if (PlasmaApp::isPanelContainment(newContainment)) {
         // we don't care about panel containments changing screens on us
         return;
     }
 
-    if (wasScreen == screen() && this->containment() == containment) {
+    if (AppSettings::perVirtualDesktopViews() && containment() && newContainment->desktop() != containment()->desktop()) {
+        return;
+    }
+
+    if (wasScreen == screen() && this->containment() == newContainment) {
         setContainment(0);
     }
 
     if (isScreen == screen()) {
-        setContainment(containment);
+        setContainment(newContainment);
     }
 }
 
