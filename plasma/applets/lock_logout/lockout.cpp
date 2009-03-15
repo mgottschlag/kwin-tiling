@@ -179,10 +179,7 @@ void LockOut::clickLogout()
 
 void LockOut::configAccepted()
 {
-#ifdef Q_OS_WIN
-    return;
-#endif
-
+#ifndef Q_OS_WIN
     bool changed = false;
     KConfigGroup cg = config();
 
@@ -202,14 +199,12 @@ void LockOut::configAccepted()
         showButtons();
         emit configNeedsSaving();
     }
+#endif
 }
 
 void LockOut::createConfigurationInterface(KConfigDialog *parent)
 {
-#ifdef Q_OS_WIN
-    return;
-#endif
-
+#ifndef Q_OS_WIN
     QWidget *widget = new QWidget(parent);
     ui.setupUi(widget);
     parent->addPage(widget, i18n("General"), Applet::icon());
@@ -218,6 +213,7 @@ void LockOut::createConfigurationInterface(KConfigDialog *parent)
 
     ui.checkBox_lock->setChecked(m_showLockButton);
     ui.checkBox_logout->setChecked(m_showLogoutButton);
+#endif
 }
 
 void LockOut::showButtons()
