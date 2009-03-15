@@ -76,7 +76,6 @@ public:
 
     /** Maximum number of Rows the group will have */
     int maxRows();
-    //TODO remove and calculate reasonable value in the layout itself
     void setMaxRows(int);
 
     void setForceRows(bool);
@@ -104,7 +103,7 @@ public:
 
     int optimumCapacity();
 
-    AbstractTaskItem* abstractItem(AbstractItemPtr);
+    AbstractTaskItem* abstractTaskItem(AbstractItemPtr);
 
     void setAdditionalMimeData(QMimeData* mimeData);
     void publishIconGeometry() const;
