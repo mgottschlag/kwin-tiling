@@ -42,7 +42,7 @@ add_subdirectory(systemtraydaemon)
 set(systemtraydaemon_xml systemtraydaemon/org.kde.SystemTrayDaemon.xml)
 QT4_ADD_DBUS_INTERFACE(systemtray_SRCS ${systemtraydaemon_xml} systemtraydaemon_interface)
 
-set(systemtray_xml protocols/dbussystemtray/org.kde.SystemTray.xml)
+set(systemtray_xml systemtraydaemon/org.kde.SystemTray.xml)
 QT4_ADD_DBUS_INTERFACE(systemtray_SRCS ${systemtray_xml} systemtray_interface)
 
 kde4_add_plugin(plasma_applet_systemtray ${systemtray_SRCS})

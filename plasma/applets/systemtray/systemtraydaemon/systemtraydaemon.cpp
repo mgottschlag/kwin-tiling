@@ -28,6 +28,7 @@
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
 #include "systemtraydaemonadaptor.h"
+#include "../systemtray_interface.h"
 
 
 static inline KAboutData aboutData()
@@ -66,9 +67,14 @@ void SystemTrayDaemon::registerService(const QString &service)
     if (m_dbusInterface->isServiceRegistered(service).value() &&
         !m_registeredServices.contains(service)) {
         kDebug()<<"Registering"<<service<<"to system tray";
-        //TODO: add a check if the service has registered a SystemTray object?
-        m_registeredServices.append(service);
-        emit serviceRegistered(service);
+
+        //check if the service has registered a SystemTray object
+        org::kde::SystemTray trayclient(service, "/SystemTray",
+                                        QDBusConnection::sessionBus());
+        if (trayclient.isValid()) {
+            m_registeredServices.append(service);
+            emit serviceRegistered(service);
+        }
     }
 }
 
@@ -82,7 +88,7 @@ void SystemTrayDaemon::serviceChange(const QString& name,
                                 const QString& oldOwner,
                                 const QString& newOwner)
 {
-    kDebug()<<"Service "<<name<<"status change, old owner:"<<oldOwner<<"new:"<<newOwner;
+    //kDebug()<<"Service "<<name<<"status change, old owner:"<<oldOwner<<"new:"<<newOwner;
 
     if (newOwner.isEmpty() && m_registeredServices.contains(name)) {
         m_registeredServices.removeAll(name);
