@@ -254,7 +254,7 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
         QString params;
         foreach (const KUrl &url, urls) {
             if (url.isLocalFile()) {
-                params += ' ' + KShell::quoteArg(url.path());
+                params += ' ' + KShell::quoteArg(url.toLocalFile());
             } else {
                 params += ' ' + KShell::quoteArg(url.prettyUrl());
             }

@@ -3234,8 +3234,8 @@ bool CKioFonts::getSourceFiles(const KUrl &src, CDisabledFonts::TFileList &files
     }
     else
         if(src.isLocalFile()) {
-            if(FILE_UNKNOWN!=checkFile(src.path(), src))
-                files.append(CDisabledFonts::TFile(src.path()));
+            if(FILE_UNKNOWN!=checkFile(src.toLocalFile(), src))
+                files.append(CDisabledFonts::TFile(src.toLocalFile()));
             else
                 return false;  // error logged in checkFile...
         }

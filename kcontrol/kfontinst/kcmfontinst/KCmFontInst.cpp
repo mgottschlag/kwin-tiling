@@ -606,7 +606,7 @@ void CKCmFontInst::addFonts()
 
                     if(url.isLocalFile())
                     {
-                        QString file(url.path());
+                        QString file(url.toLocalFile());
 
                         if(Misc::isPackage(file)) // If it is a package we need to unzip 1st...
                         {

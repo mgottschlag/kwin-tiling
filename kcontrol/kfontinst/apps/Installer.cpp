@@ -74,7 +74,7 @@ int CInstaller::install(const QSet<KUrl> &urls)
 
         if(local.isLocalFile())
         {
-            QString localFile(local.path());
+            QString localFile(local.toLocalFile());
 
             if(Misc::isPackage(localFile))
             {

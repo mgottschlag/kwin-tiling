@@ -90,7 +90,7 @@ void CommandUrlAction::execute()
     uri.setData( cmd );
     KUriFilter::self()->filterUri( uri );
     if( uri.uri().isLocalFile() && !uri.uri().hasRef() )
-        cmd = uri.uri().path();
+        cmd = uri.uri().toLocalFile();
     else
         cmd = uri.uri().url();
     switch( uri.uriType())

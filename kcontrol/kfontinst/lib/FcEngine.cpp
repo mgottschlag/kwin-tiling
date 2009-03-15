@@ -1114,7 +1114,7 @@ bool CFcEngine::parseUrl(const KUrl &url, int faceNo)
         // Now lets see if it is from the thumbnail job! if so, then file should contain either:
         //    a. fonts:/ Url
         //    b. FontName followed by style info
-        QFile file(url.path());
+        QFile file(url.toLocalFile());
         bool  isThumbnailUrl=false;
 
         if(file.size()<2048 && file.open(QIODevice::ReadOnly)) // Data should be less than 2k, and fonts usually above!

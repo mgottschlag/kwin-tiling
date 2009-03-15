@@ -72,7 +72,7 @@ void BGMultiWallpaperList::dropEvent(QDropEvent *ev)
    {
       // TODO: Download remote files
       if ((*it).isLocalFile())
-          files.append((*it).path());
+          files.append((*it).toLocalFile());
    }
    addItems(files);
 }

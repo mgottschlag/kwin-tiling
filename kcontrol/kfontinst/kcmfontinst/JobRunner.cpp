@@ -260,7 +260,7 @@ void CJobRunner::getAssociatedUrls(const KUrl &url, KUrl::List &list, bool afmAn
 
             statUrl.setPath(Misc::changeExt(url.path(), afm[e]));
 
-            if(localFile ? Misc::fExists(statUrl.path()) : KIO::NetAccess::stat(statUrl, uds, widget))
+            if(localFile ? Misc::fExists(statUrl.toLocalFile()) : KIO::NetAccess::stat(statUrl, uds, widget))
             {
                 list.append(statUrl);
                 gotAfm=true;

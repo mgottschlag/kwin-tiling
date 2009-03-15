@@ -87,7 +87,7 @@ QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString)
             item->setData(urlString, Kickoff::UrlRole);
         }
 
-        QString subTitle = desktopUrl.isLocalFile() ? desktopUrl.path() : desktopUrl.prettyUrl();
+        QString subTitle = desktopUrl.isLocalFile() ? desktopUrl.toLocalFile() : desktopUrl.prettyUrl();
         item->setData(subTitle, Kickoff::SubTitleRole);
 
         setSpecialUrlProperties(desktopUrl, item);
@@ -95,7 +95,7 @@ QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString)
         item = LeaveModel::createStandardItem(urlString);
     } else {
         item = new QStandardItem;
-        const QString subTitle = url.isLocalFile() ? url.path() : url.prettyUrl();
+        const QString subTitle = url.isLocalFile() ? url.toLocalFile() : url.prettyUrl();
         QString basename = QFileInfo(urlString).completeBaseName();
         if (basename.isNull())
             basename = subTitle;

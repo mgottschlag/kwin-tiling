@@ -224,8 +224,8 @@ void KDMThemeWidget::installNewTheme()
 		return;
 
 #if 0
-	if (themeURL.isLocalFile() && QDir( themeURL.path() ).exists()) {
-		insertTheme( themeURL.path() );
+	if (themeURL.isLocalFile() && QDir( themeURL.toLocalFile() ).exists()) {
+		insertTheme( themeURL.toLocalFile() );
 		emit changed();
 		return;
 	}
