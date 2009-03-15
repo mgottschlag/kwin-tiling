@@ -435,6 +435,11 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
     connect(item, SIGNAL(activated(AbstractTaskItem*)),
             this, SLOT(updateActive(AbstractTaskItem*)));
 
+    TaskGroupItem *group = qobject_cast<TaskGroupItem*>(item);
+    if (group) {
+        connect(item, SIGNAL(changed()),
+            this, SLOT(relayoutItems()));
+    }
 }
 
 void TaskGroupItem::itemRemoved(TaskManager::AbstractItemPtr groupableItem)
@@ -598,7 +603,7 @@ void TaskGroupItem::expand()
         return;
     }
 
-    if (m_offscreenLayout) { //only !offscreenWidgets should create an offscreen widget
+    if (m_offscreenLayout) {
         m_offscreenLayout->removeItem(layoutWidget());
     }
 
@@ -634,6 +639,13 @@ void TaskGroupItem::constraintsChanged(Plasma::Constraints constraints)
 
     if (constraints & Plasma::FormFactorConstraint && layoutWidget()) {
         layoutWidget()->setOrientation(m_applet->formFactor());
+    }
+}
+
+void TaskGroupItem::relayoutItems()
+{
+    if (m_expandedLayout) {
+        m_expandedLayout->layoutItems();
     }
 }
 

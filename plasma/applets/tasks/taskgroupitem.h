@@ -113,15 +113,12 @@ signals:
     /** Emitted when a window is selected for activation, minimization, iconification */
     void groupSelected(TaskGroupItem *);
     void sizeHintChanged(Qt::SizeHint);
-    /** informs the LayoutWidget about changes */
+    /** informs the parent group about changes */
     void changed();
 
 public slots:
     virtual void activate();
-    /**    TaskGroupItem*  groupItem(GroupPtr);
-
-    *   Reload all tasks
-    */
+    /** Reload all tasks */
     void reload();
 
     void expand();
@@ -169,6 +166,8 @@ private slots:
     void itemPositionChanged(AbstractItemPtr);
 
     void popupMenu();
+    /** force a relayout of all items */
+    void relayoutItems();
 
 private:
     AbstractTaskItem* createAbstractItem(AbstractItemPtr groupableItem);
