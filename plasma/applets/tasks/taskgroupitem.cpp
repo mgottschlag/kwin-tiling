@@ -639,12 +639,12 @@ void TaskGroupItem::constraintsChanged(Plasma::Constraints constraints)
 
 LayoutWidget *TaskGroupItem::layoutWidget()
 {
-	if (!m_expandedLayout) {
-		m_expandedLayout = new LayoutWidget(this, m_applet);
-		m_expandedLayout->setMaximumRows(m_maximumRows);
-		m_expandedLayout->setForceRows(m_forceRows);
-		m_expandedLayout->setOrientation(m_applet->formFactor());
-	}
+    if (!m_expandedLayout) {
+        m_expandedLayout = new LayoutWidget(this, m_applet);
+        m_expandedLayout->setMaximumRows(m_maximumRows);
+        m_expandedLayout->setForceRows(m_forceRows);
+        m_expandedLayout->setOrientation(m_applet->formFactor());
+    }
     return m_expandedLayout;
 }
 
@@ -663,14 +663,18 @@ void TaskGroupItem::collapse()
     //kDebug();
     unsplitGroup();
 
-	m_mainLayout->removeItem(layoutWidget());
-	if (m_offscreenLayout) {
-		m_offscreenLayout->addItem(layoutWidget());
-	}
+    m_mainLayout->removeItem(layoutWidget());
+    if (m_offscreenLayout) {
+        m_offscreenLayout->addItem(layoutWidget());
+    } else {
+        foreach (AbstractTaskItem *member, m_groupMembers) {
+            scene()->removeItem(member);
+        }
+    }
 
     //kDebug();
     //delete m_expandedLayout;
-	m_collapsed = true;
+    m_collapsed = true;
     updatePreferredSize();
     //kDebug();
     emit changed();
