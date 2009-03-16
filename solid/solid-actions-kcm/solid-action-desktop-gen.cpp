@@ -43,11 +43,13 @@ int main( int argc, char *argv[] )
     foreach( QString typeInternal, availActions.types.keys() ) {
         KDesktopFile typeFile( "solid-device-" + typeInternal + ".desktop" );
         KConfigGroup tConfig = typeFile.desktopGroup();
-        if( !tConfig.hasKey("X-KDE-Solid-Actions-Type") || !tConfig.hasKey("Name") ) {
+        if( !tConfig.hasKey("X-KDE-Solid-Actions-Type") || !tConfig.hasKey("Name") || !tConfig.hasKey("Type") ) {
             tConfig.writeEntry( "X-KDE-Solid-Actions-Type", typeInternal );
             tConfig.writeEntry( "Name", availActions.types.value(typeInternal) );
+            tConfig.writeEntry( "Type", "Solid-Device-Type" );
         }
         QStringList typeValues = availActions.valueList(typeInternal).keys();
+        tConfig.writeEntry( "Actions", typeValues.join(";") );
         kWarning() << "Desktop file created: " + typeFile.fileName();
         foreach( QString tValue, typeValues ) {
             KConfigGroup vConfig = typeFile.actionGroup(tValue);

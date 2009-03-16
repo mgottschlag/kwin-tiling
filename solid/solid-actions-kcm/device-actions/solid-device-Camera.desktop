@@ -41,6 +41,7 @@ Name[uk]=Підтримувані протоколи
 Name[zh_TW]=支援的協定
 
 [Desktop Entry]
+Actions=objectName;supportedDrivers;supportedProtocols
 Name=Camera
 Name[et]=Kaamera
 Name[ga]=Ceamara
@@ -52,4 +53,5 @@ Name[ro]=Aparat foto
 Name[sv]=Kamera
 Name[uk]=Фотоапарат
 Name[zh_TW]=相機
+Type=Solid-Device-Type
 X-KDE-Solid-Actions-Type=Camera

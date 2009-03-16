@@ -173,6 +173,7 @@ Name[pt_BR]=UUID
 Name[zh_TW]=UUID
 
 [Desktop Entry]
+Actions=appendable;availableContent;blank;capacity;discType;fsType;ignored;label;objectName;rewritable;size;usage;uuid
 Name=Optical Disc
 Name[et]=Optiline plaat
 Name[ga]=Diosca Optúil
@@ -185,4 +186,5 @@ Name[ro]=Disc optic
 Name[sv]=Optisk skiva
 Name[uk]=Оптичний диск
 Name[zh_TW]=光碟
+Type=Solid-Device-Type
 X-KDE-Solid-Actions-Type=OpticalDisc

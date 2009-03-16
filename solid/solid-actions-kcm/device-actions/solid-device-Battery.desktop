@@ -82,6 +82,7 @@ Name[uk]=Тип
 Name[zh_TW]=類型
 
 [Desktop Entry]
+Actions=chargePercent;chargeState;objectName;plugged;rechargeable;type
 Name=Battery
 Name[et]=Aku
 Name[ga]=Cadhnra
@@ -94,4 +95,5 @@ Name[ro]=Acumulator
 Name[sv]=Batteri
 Name[uk]=Акумулятор
 Name[zh_TW]=電池
+Type=Solid-Device-Type
 X-KDE-Solid-Actions-Type=Battery

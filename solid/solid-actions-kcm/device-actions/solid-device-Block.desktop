@@ -51,6 +51,7 @@ Name[uk]=Назва об'єкта
 Name[zh_TW]=物件名稱
 
 [Desktop Entry]
+Actions=device;major;minor;objectName
 Name=Block
 Name[et]=Plokk
 Name[ga]=Bloc
@@ -62,4 +63,5 @@ Name[pt_BR]=Bloco
 Name[ro]=Bloc
 Name[uk]=Блоковий
 Name[zh_TW]=區塊
+Type=Solid-Device-Type
 X-KDE-Solid-Actions-Type=Block

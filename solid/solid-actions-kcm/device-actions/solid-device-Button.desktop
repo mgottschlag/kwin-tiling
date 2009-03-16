@@ -54,9 +54,10 @@ Name[uk]=Тип
 Name[zh_TW]=類型
 
 [Desktop Entry]
+Actions=hasState;objectName;stateValue;type
 Name=Button
-Name[be]=Кнопка
 Name[be@latin]=Кнопка
+Name[be]=Кнопка
 Name[de]=Knopf
 Name[et]=Nupp
 Name[fa]=بوتان
@@ -76,4 +77,5 @@ Name[sv]=Knapp
 Name[uk]=Кнопка
 Name[vi]=Nút
 Name[zh_TW]=按鍵
+Type=Solid-Device-Type
 X-KDE-Solid-Actions-Type=Button

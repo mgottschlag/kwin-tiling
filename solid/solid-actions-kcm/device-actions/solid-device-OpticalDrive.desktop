@@ -121,6 +121,7 @@ Name[uk]=Швидкості запису
 Name[zh_TW]=寫入速度
 
 [Desktop Entry]
+Actions=bus;driveType;hotpluggable;objectName;readSpeed;removable;supportedMedia;writeSpeed;writeSpeeds
 Name=Optical Drive
 Name[et]=Optiline seade
 Name[ga]=Tiomántán Optúil
@@ -133,4 +134,5 @@ Name[ro]=Unitate optică
 Name[sv]=Optisk enhet
 Name[uk]=Пристрій читання оптичних дисків
 Name[zh_TW]=光碟機
+Type=Solid-Device-Type
 X-KDE-Solid-Actions-Type=OpticalDrive

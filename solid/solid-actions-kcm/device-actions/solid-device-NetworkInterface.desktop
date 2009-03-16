@@ -69,6 +69,7 @@ Name[uk]=Бездротове
 Name[zh_TW]=無線
 
 [Desktop Entry]
+Actions=hwAddress;ifaceName;macAddress;objectName;wireless
 Name=Network Interface
 Name[et]=Võrguliides
 Name[ga]=Comhéadan Líonra
@@ -81,4 +82,5 @@ Name[ro]=Interfață de rețea
 Name[sv]=Nätverksgränssnitt
 Name[uk]=Мережний інтерфейс
 Name[zh_TW]=網路介面
+Type=Solid-Device-Type
 X-KDE-Solid-Actions-Type=NetworkInterface

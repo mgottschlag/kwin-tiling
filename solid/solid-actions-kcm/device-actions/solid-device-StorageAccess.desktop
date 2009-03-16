@@ -41,6 +41,7 @@ Name[uk]=Назва об'єкта
 Name[zh_TW]=物件名稱
 
 [Desktop Entry]
+Actions=accessible;filePath;objectName
 Name=Storage Access
 Name[et]=Salvesti juurdepääs
 Name[ga]=Rochtain Stórais
@@ -53,4 +54,5 @@ Name[ro]=Acces la stocare
 Name[sv]=Lagringsåtkomst
 Name[uk]=Доступ до даних
 Name[zh_TW]=儲存裝置存取
+Type=Solid-Device-Type
 X-KDE-Solid-Actions-Type=StorageAccess

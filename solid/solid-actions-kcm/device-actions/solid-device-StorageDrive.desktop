@@ -65,6 +65,7 @@ Name[uk]=Змінний пристрій
 Name[zh_TW]=可移除
 
 [Desktop Entry]
+Actions=bus;driveType;hotpluggable;objectName;removable
 Name=Storage Drive
 Name[et]=Salvestusseade
 Name[ga]=Tiomántán Stórais
@@ -77,4 +78,5 @@ Name[ro]=Unitate de stocare
 Name[sv]=Lagringsenhet
 Name[uk]=Пристрій зберігання даних
 Name[zh_TW]=儲存裝置
+Type=Solid-Device-Type
 X-KDE-Solid-Actions-Type=StorageDrive

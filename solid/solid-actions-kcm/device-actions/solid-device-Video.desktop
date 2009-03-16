@@ -27,6 +27,7 @@ Name[uk]=Підтримувані драйвери
 Name[zh_TW]=支援的驅動程式
 
 [Desktop Entry]
+Actions=objectName;supportedDrivers
 Name=Video
 Name[ga]=Fís
 Name[ja]=映像
@@ -34,4 +35,5 @@ Name[pt]=Vídeo
 Name[pt_BR]=Vídeo
 Name[uk]=Відео
 Name[zh_TW]=影像
+Type=Solid-Device-Type
 X-KDE-Solid-Actions-Type=Video

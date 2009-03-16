@@ -79,6 +79,7 @@ Name[uk]=Тип звукової картки
 Name[zh_TW]=音效卡類型
 
 [Desktop Entry]
+Actions=deviceType;driver;driverHandle;name;objectName;soundcardType
 Name=Audio Interface
 Name[et]=Heliliides
 Name[ga]=Comhéadan Fuaime
@@ -91,4 +92,5 @@ Name[ro]=Interfață de rețea
 Name[sv]=Ljudgränssnitt
 Name[uk]=Звуковий інтерфейс
 Name[zh_TW]=音效介面
+Type=Solid-Device-Type
 X-KDE-Solid-Actions-Type=AudioInterface

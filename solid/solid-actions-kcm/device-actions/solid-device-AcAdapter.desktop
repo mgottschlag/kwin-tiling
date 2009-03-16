@@ -27,6 +27,7 @@ Name[uk]=З’єднано
 Name[zh_TW]=已插入
 
 [Desktop Entry]
+Actions=objectName;plugged
 Name=Ac Adapter
 Name[et]=AC adapter
 Name[ga]=Cuibheoir SA
@@ -39,4 +40,5 @@ Name[ro]=Adaptor AC
 Name[sv]=Nätadapter
 Name[uk]=Блок живлення
 Name[zh_TW]=AC 電源
+Type=Solid-Device-Type
 X-KDE-Solid-Actions-Type=AcAdapter

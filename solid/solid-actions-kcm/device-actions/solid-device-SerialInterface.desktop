@@ -48,6 +48,7 @@ Name[uk]=Послідовний тип
 Name[zh_TW]=序列類型
 
 [Desktop Entry]
+Actions=driverHandle;objectName;port;serialType
 Name=Serial Interface
 Name[et]=Jadaliides
 Name[ga]=Comhéadan Srathach
@@ -60,4 +61,5 @@ Name[ro]=Interfață serială
 Name[sv]=Seriegränssnitt
 Name[uk]=Послідовний інтерфейс
 Name[zh_TW]=序列介面
+Type=Solid-Device-Type
 X-KDE-Solid-Actions-Type=SerialInterface

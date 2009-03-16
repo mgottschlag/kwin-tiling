@@ -41,6 +41,7 @@ Name[uk]=Підтримувані протоколи
 Name[zh_TW]=支援的協定
 
 [Desktop Entry]
+Actions=objectName;supportedDrivers;supportedProtocols
 Name=Portable Media Player
 Name[et]=Kaasaskantav meediamängija
 Name[ga]=Seinnteoir Iniompair Meán
@@ -53,4 +54,5 @@ Name[ro]=Lector multimedia portabil
 Name[sv]=Portabel mediaspelare
 Name[uk]=Портативний медіапрогравач
 Name[zh_TW]=可攜式媒體播放器
+Type=Solid-Device-Type
 X-KDE-Solid-Actions-Type=PortableMediaPlayer

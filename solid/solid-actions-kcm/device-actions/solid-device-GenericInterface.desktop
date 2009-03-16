@@ -13,6 +13,7 @@ Name[uk]=Назва об'єкта
 Name[zh_TW]=物件名稱
 
 [Desktop Entry]
+Actions=objectName
 Name=Generic Interface
 Name[et]=Üldliides
 Name[ga]=Comhéadan Ginearálta
@@ -25,4 +26,5 @@ Name[ro]=Interfață generică
 Name[sv]=Generellt gränssnitt
 Name[uk]=Загальний інтерфейс
 Name[zh_TW]=一般介面
+Type=Solid-Device-Type
 X-KDE-Solid-Actions-Type=GenericInterface
