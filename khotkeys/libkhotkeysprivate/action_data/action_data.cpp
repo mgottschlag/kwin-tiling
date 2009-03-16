@@ -180,8 +180,9 @@ void ActionData::set_actions( ActionList* actions_P )
 
 void ActionData::update_triggers()
     {
-    bool activate = false;
+    if (!_triggers) return;
 
+    bool activate = false;
     // Activate the triggers if the actions is enabled and the conditions
     // match.
     if (enabled(false) && conditions_match())
