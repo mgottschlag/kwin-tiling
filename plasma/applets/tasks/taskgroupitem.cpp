@@ -22,7 +22,6 @@
 #include "taskgroupitem.h"
 #include "layoutwidget.h"
 #include "windowtaskitem.h"
-#include "tasksmenu.h"
 
 // Qt
 #include <QGraphicsSceneContextMenuEvent>
