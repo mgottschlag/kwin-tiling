@@ -28,6 +28,9 @@ ActionData::ActionData( KConfigGroup& cfg_P, ActionDataGroup* parent_P )
     _triggers = new Trigger_list( triggersGroup, this );
     KConfigGroup actionsGroup( cfg_P.config(), cfg_P.name() + "Actions" );
     _actions = new ActionList( actionsGroup, this );
+
+    // Now activate the triggers if necessary
+    update_triggers();
     }
 
 
@@ -40,12 +43,20 @@ ActionData::~ActionData()
     }
 
 
-ActionData::ActionData( ActionDataGroup* parent_P, const QString& name_P,
-    const QString& comment_P, Trigger_list* triggers_P, Condition_list* conditions_P,
-    ActionList* actions_P, bool enabled_P )
-    : ActionDataBase( parent_P, name_P, comment_P, conditions_P, enabled_P ),
-    _triggers( triggers_P ), _actions( actions_P )
+ActionData::ActionData(
+        ActionDataGroup* parent_P,
+        const QString& name_P,
+        const QString& comment_P,
+        Trigger_list* triggers_P,
+        Condition_list* conditions_P,
+        ActionList* actions_P,
+        bool enabled_P)
+    :   ActionDataBase( parent_P, name_P, comment_P, conditions_P, enabled_P ),
+        _triggers( triggers_P ),
+        _actions( actions_P )
     {
+    // Now activate the triggers if necessary
+    update_triggers();
     }
 
 
