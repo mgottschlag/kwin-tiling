@@ -54,7 +54,7 @@ SolidActionData::SolidActionData(bool includeFiles)
     QStringList allPossibleDevices;
 
     QList<QMetaObject> interfaceList = fillInterfaceList();
-    foreach( QMetaObject interface, interfaceList ) {
+    foreach( const QMetaObject &interface, interfaceList ) {
         QString ifaceName = interface.className();
         ifaceName.remove(0, ifaceName.lastIndexOf(':') + 1);
         types.insert(ifaceName, generateUserString(ifaceName));

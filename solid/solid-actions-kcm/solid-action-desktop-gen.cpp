@@ -40,7 +40,7 @@ int main( int argc, char *argv[] )
 
     KApplication application(false);
     SolidActionData availActions(false);
-    foreach( QString typeInternal, availActions.types.keys() ) {
+    foreach( const QString &typeInternal, availActions.types.keys() ) {
         KDesktopFile typeFile( "solid-device-" + typeInternal + ".desktop" );
         KConfigGroup tConfig = typeFile.desktopGroup();
         if( !tConfig.hasKey("X-KDE-Solid-Actions-Type") || !tConfig.hasKey("Name") || !tConfig.hasKey("Type") ) {
@@ -51,7 +51,7 @@ int main( int argc, char *argv[] )
         QStringList typeValues = availActions.valueList(typeInternal).keys();
         tConfig.writeEntry( "Actions", typeValues.join(";") );
         kWarning() << "Desktop file created: " + typeFile.fileName();
-        foreach( QString tValue, typeValues ) {
+        foreach( const QString &tValue, typeValues ) {
             KConfigGroup vConfig = typeFile.actionGroup(tValue);
             if( !vConfig.hasKey("Name") ) {
                 vConfig.writeEntry( "Name", availActions.valueList(typeInternal).value(tValue) );
