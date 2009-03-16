@@ -84,6 +84,10 @@ WindowDefinitionListWidget::~WindowDefinitionListWidget()
 
 void WindowDefinitionListWidget::doCopyFromObject()
     {
+    // We are asked to copy again from object. Recreate our working copy
+    if (_working) delete _working;
+    _working = _windowdefs->copy();
+
     ui.comment->setText(_working->comment());
 
     for ( KHotKeys::Windowdef_list::ConstIterator it(_working->constBegin());
@@ -262,8 +266,6 @@ void WindowDefinitionListWidget::setWindowDefinitions(KHotKeys::Windowdef_list *
     {
     Q_ASSERT(list);
     _windowdefs = list;
-    if (_working) delete _working;
-    _working = list->copy();
     }
 
 #include "moc_window_definition_list_widget.cpp"
