@@ -102,8 +102,7 @@ void ShortcutTrigger::aboutToBeErased()
 
 void ShortcutTrigger::activate( bool activate_P )
     {
-    kDebug() << activate_P << " and " << khotkeys_active();
-    if( activate_P && khotkeys_active())
+    if(activate_P)
         {
         _conditions_met = true;
         }
@@ -166,7 +165,7 @@ KShortcut ShortcutTrigger::shortcut() const
 void ShortcutTrigger::trigger()
     {
     kDebug() << data->name() << " was triggered";
-    if (_conditions_met)
+    if (_conditions_met && khotkeys_active())
         {
         windows_handler->set_action_window( 0 ); // use active window
         data->execute();
