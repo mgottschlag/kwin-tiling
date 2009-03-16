@@ -114,6 +114,8 @@ void WindowDefinitionListWidget::doCopyToObject()
         _windowdefs->append(_working->at(i)->copy());
         }
 
+    // Reset our _changed state
+    _changed = false;
     emitChanged(false);
     }
 
@@ -123,7 +125,9 @@ void WindowDefinitionListWidget::emitChanged( bool chgd )
     if (_changed == chgd)
         return;
 
-    // Once changed always changed
+    // emitChanged will never reset _changed to false because we have
+    // currently no way to compare the contents of _working and _windowdefs.
+    // That's why we say once changed -> always changed.
     _changed = chgd || _changed;
 
     emit changed(_changed);
