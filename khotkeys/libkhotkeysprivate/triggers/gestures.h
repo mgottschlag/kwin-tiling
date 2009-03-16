@@ -22,6 +22,7 @@
 namespace KHotKeys {
 
 class Gesture;
+class ActionData;
 
 KDE_EXPORT extern QPointer<Gesture> gesture_handler;
 
@@ -106,8 +107,9 @@ class KDE_EXPORT Gesture
     private Q_SLOTS:
         void stroke_timeout();
         void active_window_changed( WId window_P );
+        void handleScore( ActionData* const data, const qreal score );
     Q_SIGNALS:
-        void handle_gesture( const StrokePoints &gesture, WId window );
+        void handle_gesture( const StrokePoints &gesture );
     private:
         void update_grab();
         void grab_mouse( bool grab_P );
@@ -119,7 +121,12 @@ class KDE_EXPORT Gesture
         bool recording;
         unsigned int button;
         int timeout;
-        WId gesture_window;
+
+        // two variables to help determine which action belongs to
+        // the best-fitting gesture.
+        qreal maxScore;
+        ActionData* bestFit;
+
         Windowdef_list* exclude;
         QMap< QObject*, bool > handlers; // bool is just a dummy
     };

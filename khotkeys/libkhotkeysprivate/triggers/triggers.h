@@ -261,7 +261,9 @@ class KDE_EXPORT GestureTrigger
 
         virtual TriggerType type() const { return GestureTriggerType; }
     protected Q_SLOTS:
-        void handle_gesture( const StrokePoints& gesture_P, WId window_P );
+        void handle_gesture( const StrokePoints& gesture_P );
+    Q_SIGNALS:
+        void gotScore( ActionData* const data, const qreal score );
     private:
         void importKde3Gesture(KConfigGroup& cfg_P);
 

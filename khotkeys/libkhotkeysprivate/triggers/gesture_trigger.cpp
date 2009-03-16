@@ -86,16 +86,16 @@ GestureTrigger::GestureTrigger( KConfigGroup& cfg_P, ActionData* data_P )
 
 GestureTrigger::~GestureTrigger()
     {
-    gesture_handler->unregister_handler( this, SLOT( handle_gesture( const StrokePoints&, WId )));
+    gesture_handler->unregister_handler( this, SLOT( handle_gesture( const StrokePoints& )));
     }
 
 
 void GestureTrigger::activate( bool activate_P )
     {
     if( activate_P )
-        gesture_handler->register_handler( this, SLOT( handle_gesture( const StrokePoints&, WId )));
+        gesture_handler->register_handler( this, SLOT( handle_gesture( const StrokePoints& )));
     else
-        gesture_handler->unregister_handler( this, SLOT( handle_gesture( const StrokePoints&, WId )));
+        gesture_handler->unregister_handler( this, SLOT( handle_gesture( const StrokePoints& )));
     }
 
 
@@ -142,20 +142,19 @@ const StrokePoints& GestureTrigger::pointData() const
     return _pointdata;
     }
 
-void GestureTrigger::setPointData(const StrokePoints &data)
+void GestureTrigger::setPointData( const StrokePoints &data )
     {
     _pointdata = data;
     }
 
-void GestureTrigger::handle_gesture( const StrokePoints &pointdata_P, WId window_P )
+void GestureTrigger::handle_gesture( const StrokePoints &pointdata_P )
     {
     qreal score;
     score = comparePointData(pointdata_P, _pointdata);
 
     if( score > 0.7 )
         {
-        windows_handler->set_action_window( window_P );
-        data->execute();
+        emit gotScore(data, score);
         }
     }
 

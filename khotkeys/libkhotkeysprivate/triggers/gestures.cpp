@@ -24,6 +24,7 @@
 #include <kkeyserver.h>
 #include "input.h"
 #include "windows_handler.h"
+#include "action_data/action_data.h"
 
 #include "windows_helper/window_selection_list.h"
 
@@ -107,13 +108,31 @@ void Gesture::active_window_changed( WId )
     update_grab();
     }
 
+void Gesture::handleScore( ActionData* const data, const qreal score )
+    {
+    if(score > maxScore)
+        {
+        maxScore = score;
+        bestFit = data;
+        }
+    }
+
 void Gesture::register_handler( QObject* receiver_P, const char* slot_P )
     {
     if( handlers.contains( receiver_P ))
         return;
     handlers[ receiver_P ] = true;
-    connect( this, SIGNAL( handle_gesture( const StrokePoints&, WId )),
-        receiver_P, slot_P );
+    // connect directly because we want to be sure that all triggers submitted
+    // their scores back to this object before executing the best match we
+    // could find.
+    connect( this, SIGNAL( handle_gesture( const StrokePoints& )),
+            receiver_P, slot_P,
+            Qt::DirectConnection
+            );
+    connect( receiver_P, SIGNAL( gotScore( ActionData* const,  const qreal ) ),
+             this, SLOT( handleScore( ActionData* const, const qreal ) ),
+            Qt::DirectConnection
+            );
     if( handlers.count() == 1 )
         update_grab();
     }
@@ -124,8 +143,12 @@ void Gesture::unregister_handler( QObject* receiver_P, const char* slot_P )
         return;
     handlers.remove( receiver_P );
 
-    disconnect( this, SIGNAL( handle_gesture( const StrokePoints&, WId )),
-        receiver_P, slot_P );
+    disconnect( this, SIGNAL( handle_gesture( const StrokePoints& )),
+            receiver_P, slot_P
+            );
+    disconnect( receiver_P, SIGNAL( gotScore( ActionData* const, const qreal ) ),
+                this, SLOT( handleScore( ActionData* const, const qreal ) )
+            );
     if( handlers.count() == 0 )
         update_grab();
     }
@@ -149,7 +172,8 @@ bool Gesture::x11Event( XEvent* ev_P )
         start_y = ev_P->xbutton.y_root;
         return true;
         }
-    // if stroke is finished... postprocess the data and send a signal
+    // if stroke is finished... postprocess the data and send a signal.
+    // then wait for incoming matching scores and execute the best fit.
     else if( ev_P->type == ButtonRelease && ev_P->xbutton.button == button
         && recording )
         {
@@ -166,7 +190,24 @@ bool Gesture::x11Event( XEvent* ev_P )
             return true;
             }
 
-        emit handle_gesture( gesture, windows_handler->window_at_position( start_x, start_y ));
+        // prepare for the incoming scores from different triggers
+        maxScore = 0.0;
+        bestFit = NULL;
+
+        emit handle_gesture( gesture );
+        // the signal is emitted directly, so we get all trigger scores before
+        // the next lines are executed. bestFit should now contain
+        // a pointer to the ActionData with the best-matching gesture.
+
+        if( bestFit != NULL )
+            {
+            // set up the windows_handler
+            WId window = windows_handler->window_at_position( start_x, start_y );
+            windows_handler->set_action_window( window );
+            // then execute the action associated with the best match.
+            bestFit->execute();
+            }
+
         return true;
         }
     else if( ev_P->type == MotionNotify && recording )
