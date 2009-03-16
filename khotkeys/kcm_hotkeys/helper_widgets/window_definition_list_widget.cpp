@@ -177,7 +177,7 @@ void WindowDefinitionListWidget::slotDuplicate(bool)
     Q_ASSERT(orig);
 
     // Create a copy
-    KHotKeys::Windowdef_simple *sim = orig->copy();;
+    KHotKeys::Windowdef_simple *sim = orig->copy();
     Q_ASSERT(sim);
 
     WindowDefinitionDialog dialog(sim, this);
