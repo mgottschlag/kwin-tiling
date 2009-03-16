@@ -92,6 +92,11 @@ void WindowTrigger::activate( bool activate_P )
 
 void WindowTrigger::active_window_changed( WId window_P )
     {
+    if (!existing_windows.contains(window_P))
+        {
+        existing_windows[window_P] = windows()->match( Window_data( window_P ));
+        }
+
     if (!active || !khotkeys_active())
         {
         // We still keep track of the last active window so we have valid data
@@ -99,9 +104,6 @@ void WindowTrigger::active_window_changed( WId window_P )
         last_active_window = window_P;
         return;
         }
-
-    // We have to know the last active window
-    Q_ASSERT(last_active_window == None || existing_windows.contains(last_active_window));
 
     // Check if the last active window was a match for us
     bool was_match = existing_windows.contains(last_active_window)
@@ -113,15 +115,6 @@ void WindowTrigger::active_window_changed( WId window_P )
         windows_handler->set_action_window( window_P );
         data->execute();
         }
-
-    // Now check the current window. This could be an unknown window (started
-    // before our daemon)
-    if (!existing_windows.contains(window_P))
-        {
-        existing_windows[window_P] = windows()->match( Window_data( window_P ));
-        }
-
-    kDebug() << window_actions << bool( window_actions & WINDOW_ACTIVATES );
 
     if (existing_windows[window_P] && ( window_actions & WINDOW_ACTIVATES))
         {
