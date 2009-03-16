@@ -109,10 +109,9 @@ void WindowDefinitionListWidget::doCopyToObject()
 
     _windowdefs->set_comment(ui.comment->text());
 
-    // Move the new content, i'm pretty sure i do it inefficiently
-    while (!_working->isEmpty())
+    for (int i=0; i<_working->size(); ++i)
         {
-        _windowdefs->append(_working->takeFirst());
+        _windowdefs->append(_working->at(i)->copy());
         }
 
     emitChanged(false);
