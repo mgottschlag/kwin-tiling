@@ -36,14 +36,17 @@ WindowTrigger::WindowTrigger(
     :   Trigger( data_P ),
         _windows( windows_P ),
         window_actions( window_actions_P ),
+        existing_windows(),
         last_active_window( None ),
         active( true )
     {
-    init();
     if (!_windows)
         {
         _windows = new Windowdef_list( "Windowdef_list comment");
         }
+
+    Q_ASSERT(_windows->isEmpty());
+    init();
     }
 
 
@@ -83,36 +86,50 @@ void WindowTrigger::init()
 
 void WindowTrigger::activate( bool activate_P )
     {
-    kDebug() << activate_P;
-    active = activate_P && khotkeys_active();
+    active = activate_P;
     }
 
 
 void WindowTrigger::active_window_changed( WId window_P )
     {
-    bool was_match = false;
-    if( existing_windows.contains( last_active_window ))
-        was_match = existing_windows[ last_active_window ];
-    kDebug() << window_actions << ( window_actions & WINDOW_DEACTIVATES );
-    if( active && was_match && ( window_actions & WINDOW_DEACTIVATES ))
+    if (!active || !khotkeys_active())
+        {
+        // We still keep track of the last active window so we have valid data
+        // if khotkeys is switched on again.
+        last_active_window = window_P;
+        return;
+        }
+
+    // We have to know the last active window
+    Q_ASSERT(last_active_window == None || existing_windows.contains(last_active_window));
+
+    // Check if the last active window was a match for us
+    bool was_match = existing_windows.contains(last_active_window)
+        ? existing_windows[last_active_window]
+        : false;
+
+    if (was_match && (window_actions & WINDOW_DEACTIVATES))
         {
         windows_handler->set_action_window( window_P );
         data->execute();
         }
-/*    bool matches = windows()->match( Window_data( window_P ));
-    existing_windows[ window_P ] = matches;*/
-    bool matches = existing_windows.contains( window_P )
-        ? existing_windows[ window_P ] : false;
-    kDebug() << "Active: " << active;
-    kDebug() << "matches: "  << matches;
+
+    // Now check the current window. This could be an unknown window (started
+    // before our daemon)
+    if (!existing_windows.contains(window_P))
+        {
+        existing_windows[window_P] = windows()->match( Window_data( window_P ));
+        }
+
     kDebug() << window_actions << bool( window_actions & WINDOW_ACTIVATES );
-    if( active && matches && ( window_actions & WINDOW_ACTIVATES ))
+
+    if (existing_windows[window_P] && ( window_actions & WINDOW_ACTIVATES))
         {
         kDebug() << "Executing data";
         windows_handler->set_action_window( window_P );
         data->execute();
         }
-    kDebug() << "WindowTrigger::a_w_changed() : " << was_match << "|" << matches;
+
     last_active_window = window_P;
     }
 
@@ -150,12 +167,17 @@ bool WindowTrigger::triggers_on( window_action_t w_action_P ) const
 
 void WindowTrigger::window_added( WId window_P )
     {
-    bool matches = windows()->match( Window_data( window_P ));
-    existing_windows[ window_P ] = matches;
-    kDebug() << "WindowTrigger::w_added() : " << matches;
-    if( active && matches && ( window_actions & WINDOW_APPEARS ))
+    // Always keep track of windows,
+    existing_windows[window_P] = windows()->match( Window_data( window_P ));
+
+    if (!active || !khotkeys_active())
         {
-        windows_handler->set_action_window( window_P );
+        return;
+        }
+
+    if (existing_windows[window_P] && (window_actions & WINDOW_APPEARS))
+        {
+        windows_handler->set_action_window(window_P);
         data->execute();
         }
     }
@@ -163,49 +185,59 @@ void WindowTrigger::window_added( WId window_P )
 
 void WindowTrigger::window_removed( WId window_P )
     {
-    if( existing_windows.contains( window_P ))
+    // Always keep track of windows,
+    bool matches = false;
+    if (existing_windows.contains(window_P))
         {
-        bool matches = existing_windows[ window_P ];
-        kDebug() << "WindowTrigger::w_removed() : " << matches;
-        if( active && matches && ( window_actions & WINDOW_DISAPPEARS ))
-            {
-            windows_handler->set_action_window( window_P );
-            data->execute();
-            }
+        matches = existing_windows[window_P];
         existing_windows.remove( window_P );
-        // CHECKME jenze co kdyz se window_removed zavola pred active_window_changed ?
         }
-    else
-        kDebug() << "WindowTrigger::w_removed()";
+
+    if (!active || !khotkeys_active())
+        {
+        return;
+        }
+
+    if (matches && (window_actions & WINDOW_DISAPPEARS))
+        {
+        windows_handler->set_action_window( window_P );
+        data->execute();
+        }
     }
 
 
 void WindowTrigger::window_changed( WId window_P, unsigned int dirty_P )
-    { // CHECKME snad nebude mit vliv, kdyz budu kaslat na properties_P a zkratka
-      // kontrolovat kazdou zmenu
-      // CHECKME kdyz se zmeni okno z match na non-match, asi to nebrat jako DISAPPEAR
-    if( ! ( dirty_P & ( NET::WMName | NET::WMWindowType )))
+    {
+    if (! (dirty_P & (NET::WMName | NET::WMWindowType)))
         return;
-    kDebug() << "WindowTrigger::w_changed()";
+
+    // Check if the old state was a match
     bool was_match = false;
-    if( existing_windows.contains( window_P ))
-        was_match = existing_windows[ window_P ];
+    if (existing_windows.contains(window_P))
+        was_match = existing_windows[window_P];
+
+    // Check if the new state is a match
     bool matches = windows()->match( Window_data( window_P ));
-    existing_windows[ window_P ] = matches;
-    if( active && matches && !was_match )
+    existing_windows[window_P] = matches;
+
+    if (!active || !khotkeys_active())
         {
-        if( window_actions & WINDOW_APPEARS )
+        return;
+        }
+
+    if (matches && !was_match)
+        {
+        if (window_actions & WINDOW_APPEARS)
             {
             windows_handler->set_action_window( window_P );
             data->execute();
             }
-        else if( window_actions & WINDOW_ACTIVATES && window_P == windows_handler->active_window())
+        else if (window_actions & WINDOW_ACTIVATES && window_P == windows_handler->active_window())
             {
             windows_handler->set_action_window( window_P );
             data->execute();
             }
         }
-    kDebug() << "WindowTrigger::w_changed() : " << was_match << "|" << matches;
     }
 
 

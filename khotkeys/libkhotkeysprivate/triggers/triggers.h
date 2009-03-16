@@ -203,19 +203,32 @@ class KDE_EXPORT WindowTrigger : public QObject, public Trigger
         virtual void activate( bool activate_P );
 
         virtual TriggerType type() const { return WindowTriggerType; }
-    protected: // CHECKME neco private ?
-        Windowdef_list* _windows;
-        WindowEvents window_actions;
-        void init();
-        typedef QMap< WId, bool > Windows_map;
-        Windows_map existing_windows;
-        WId last_active_window;
+
+
     protected Q_SLOTS:
         void window_added( WId window_P );
         void window_removed( WId window_P );
         void active_window_changed( WId window_P );
         void window_changed( WId window_P, unsigned int dirty_P );
-    protected:
+
+    private:
+
+        //! Useful code for all constructors
+        void init();
+
+        Windowdef_list* _windows;
+
+        WindowEvents window_actions;
+
+        typedef QMap< WId, bool > Windows_map;
+
+        //! Internal cache. Remembers if a window is a match or not,
+        Windows_map existing_windows;
+
+        //! The last active window
+        WId last_active_window;
+
+        //! Is the trigger active?
         bool active;
     };
 
