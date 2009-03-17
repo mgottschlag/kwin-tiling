@@ -58,6 +58,12 @@ public:
      */
     void checkScreen(int screen, bool signalWhenExists = false);
 
+    /**
+     * @return an old containment that wasn't already associated with
+     *         a screen, if found
+     */
+    Plasma::Containment *findFreeContainment() const;
+
     virtual int numScreens() const;
     virtual QRect screenGeometry(int id) const;
     virtual QRegion availableScreenRegion(int id) const;

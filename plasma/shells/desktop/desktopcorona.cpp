@@ -99,10 +99,28 @@ void DesktopCorona::checkScreen(int screen, bool signalWhenExists)
     }
 }
 
+Plasma::Containment *DesktopCorona::findFreeContainment() const
+{
+    foreach (Plasma::Containment *cont, containments()) {
+        if ((cont->type() == Plasma::Containment::DesktopContainment ||
+            cont->type() >= Plasma::Containment::CustomContainment) &&
+            cont->screen() == -1) {
+            return cont;
+        }
+    }
+
+    return 0;
+}
+
 void DesktopCorona::addDesktopContainment(int screen, int desktop)
 {
     kDebug() << screen << desktop;
-    Plasma::Containment* c = addContainment("desktop");
+
+    Plasma::Containment* c = findFreeContainment();
+    if (!c) {
+        c = addContainment("desktop");
+    }
+
     c->setScreen(screen, desktop);
     c->setFormFactor(Plasma::Planar);
     c->flushPendingConstraintsEvents();
