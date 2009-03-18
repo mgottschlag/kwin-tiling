@@ -20,16 +20,11 @@
 #include "desktop.h"
 
 #include <QAction>
-#include <QApplication>
-#include <QDBusConnection>
-#include <QDBusInterface>
-#include <QDBusMessage>
 
 #include <KDebug>
-#include <KIcon>
 
-#include "plasma/corona.h"
-#include "plasma/theme.h"
+#include <Plasma/Corona>
+#include <Plasma/Theme>
 
 using namespace Plasma;
 
@@ -50,8 +45,6 @@ void SaverDesktop::init()
 {
     Containment::init();
 
-    bool unlocked = immutability() == Mutable;
-
     //remove the desktop actions
     QAction *unwanted = action("zoom in");
     delete unwanted;
@@ -60,20 +53,13 @@ void SaverDesktop::init()
     unwanted = action("add sibling containment");
     delete unwanted;
 
-    //the most important action ;)
-    QAction *leave = new QAction(unlocked ? i18n("Quit") : i18n("Unlock and Quit"), this);
-    leave->setIcon(KIcon("system-lock-screen"));
-    leave->setShortcut(QKeySequence("esc"));
-    connect(leave, SIGNAL(triggered(bool)), this, SLOT(unlockDesktop()));
-    addAction("unlock desktop", leave);
-    addToolBoxAction(leave);
+    QAction *leave = corona()->action("unlock desktop");
+    if (leave) {
+        addToolBoxAction(leave);
+    }
 
-    //re-wire the lock action so we can check for a password
     QAction *lock = action("lock widgets");
     if (lock) {
-        lock->disconnect(SIGNAL(triggered(bool)));
-        connect(lock, SIGNAL(triggered(bool)), this, SLOT(toggleLock()));
-        lock->setText(unlocked ? i18n("Lock") : i18n("Unlock"));
         addToolBoxAction(lock);
     }
 
@@ -89,21 +75,6 @@ void SaverDesktop::init()
     }
 }
 
-void SaverDesktop::constraintsEvent(Plasma::Constraints constraints)
-{
-    if (constraints & Plasma::ImmutableConstraint) {
-        bool unlocked = immutability() == Mutable;
-        QAction *a = action("lock widgets");
-        if (a) {
-            a->setText(unlocked ? i18n("Lock") : i18n("Unlock"));
-        }
-        a = action("unlock desktop");
-        if (a) {
-            a->setText(unlocked ? i18n("Quit") : i18n("Unlock and Quit"));
-        }
-    }
-}
-
 QList<QAction*> SaverDesktop::contextualActions()
 {
     if (!m_appletBrowserAction) {
@@ -111,7 +82,7 @@ QList<QAction*> SaverDesktop::contextualActions()
         m_lockDesktopAction = action("lock widgets");
     }
     QAction *config = action("configure");
-    QAction *quit = action("unlock desktop");
+    QAction *quit = corona()->action("unlock desktop");
 
     QList<QAction*> actions;
     actions.append(m_appletBrowserAction);
@@ -123,68 +94,6 @@ QList<QAction*> SaverDesktop::contextualActions()
 
     return actions;
 }
-
-void SaverDesktop::toggleLock()
-{
-    //requre a password to unlock
-    if (!corona()) {
-        return; //I'm lazy, I know this'll never happen
-    }
-    QDBusInterface lockprocess("org.kde.screenlocker", "/LockProcess",
-            "org.kde.screenlocker.LockProcess", QDBusConnection::sessionBus(), this);
-    if (corona()->immutability() == Mutable) {
-        corona()->setImmutability(UserImmutable);
-        lockprocess.call(QDBus::NoBlock, "startLock");
-        kDebug() << "blaaaaaaaaaaaaaaaaa!!!!";
-        emit locked();
-    } else if (corona()->immutability() == UserImmutable) {
-        QList<QVariant> args;
-        args << i18n("Unlock Plasma Widgets");
-        bool sent = lockprocess.callWithCallback("checkPass", args, this, SLOT(unlock(QDBusMessage)), SLOT(dbusError(QDBusError)));
-        kDebug() << sent;
-    }
-}
-
-void SaverDesktop::unlock(QDBusMessage reply)
-{
-    //assuming everything went as expected
-    if (reply.arguments().isEmpty()) {
-        kDebug() << "quit succeeded, I guess";
-        return;
-    }
-    bool success = reply.arguments().first().toBool();
-    kDebug() << success;
-    if (success) {
-        corona()->setImmutability(Mutable);
-        emit unlocked(); //FIXME bad code
-    }
-}
-
-void SaverDesktop::dbusError(QDBusError error)
-{
-    //Q_UNUSED(error)
-    kDebug() << error.errorString(error.type());
-    kDebug() << "bailing out";
-    //ok, now i care. if it was the quit call and it failed, we shouldn't leave the user stuck in
-    //plasma-overlay forever.
-    qApp->quit();
-}
-
-void SaverDesktop::unlockDesktop()
-{
-    QDBusInterface lockprocess("org.kde.screenlocker", "/LockProcess",
-            "org.kde.screenlocker.LockProcess", QDBusConnection::sessionBus(), this);
-    bool sent = (lockprocess.isValid() &&
-            lockprocess.callWithCallback("quit", QList<QVariant>(), this, SLOT(unlock(QDBusMessage)), SLOT(dbusError(QDBusError))));
-    //the unlock slot above is a dummy that should never be called.
-    //somehow I need a valid reply slot or the error slot is never ever used.
-    if (!sent) {
-        //ah crud.
-        kDebug() << "bailing out!";
-        qApp->quit();
-    }
-}
-
 
 void SaverDesktop::newApplet(Plasma::Applet *applet, const QPointF &pos)
 {

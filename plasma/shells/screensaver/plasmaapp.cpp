@@ -330,6 +330,9 @@ Plasma::Corona* PlasmaApp::corona()
         m_corona->setItemIndexMethod(QGraphicsScene::NoIndex);
         m_corona->initializeLayout();
 
+        //we want this *after* init so that we ignore any lock/unlock spasms that might happen then
+        connect(m_corona, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)), this, SLOT(immutabilityChanged(Plasma::ImmutabilityType)));
+
         //kDebug() << "layout should exist";
         //c->checkScreens();
     }
@@ -373,11 +376,14 @@ void PlasmaApp::createView(Plasma::Containment *containment)
     //unsigned char data = VIEW;
     //XChangeProperty(QX11Info::display(), m_view->effectiveWinId(), tag, tag, 8, PropModeReplace, &data, 1);
 
-    connect(containment, SIGNAL(locked()), SLOT(hideDialogs()));
-    connect(containment, SIGNAL(locked()), m_view, SLOT(disableSetupMode()));
-    connect(containment, SIGNAL(unlocked()), SLOT(showDialogs()));
     connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
             this, SLOT(configureContainment(Plasma::Containment*)));
+
+    QAction *leave = corona()->action("unlock desktop");
+    if (leave) {
+        //a hack to make sure the keyboard shortcut works
+        containment->addAction("unlock desktop", leave);
+    }
 
     connect(m_view, SIGNAL(hidden()), SLOT(lock()));
     connect(m_view, SIGNAL(hidden()), SIGNAL(hidden()));
@@ -521,16 +527,13 @@ void PlasmaApp::configureContainment(Plasma::Containment *containment)
 
 void PlasmaApp::configDialogRemoved(QObject* dialog)
 {
+    Q_UNUSED(dialog)
     m_configDialog = 0;
 }
 
 void PlasmaApp::lock()
 {
     if (corona() && corona()->immutability() == Plasma::Mutable) {
-        hideDialogs();
-        if (m_view) {
-            m_view->disableSetupMode();
-        }
         corona()->setImmutability(Plasma::UserImmutable);
     }
 }
@@ -538,6 +541,18 @@ void PlasmaApp::lock()
 void PlasmaApp::quit()
 {
     qApp->quit();
+}
+
+void PlasmaApp::immutabilityChanged(Plasma::ImmutabilityType immutability)
+{
+    if (immutability == Plasma::Mutable) {
+        showDialogs();
+    } else {
+        hideDialogs();
+        if (m_view) {
+            m_view->disableSetupMode();
+        }
+    }
 }
 
 #include "plasmaapp.moc"

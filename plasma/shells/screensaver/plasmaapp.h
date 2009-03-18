@@ -25,6 +25,8 @@
 
 #include <KUniqueApplication>
 
+#include <plasma/plasma.h>
+
 namespace Plasma
 {
     class Containment;
@@ -100,6 +102,7 @@ private Q_SLOTS:
     void configureContainment(Plasma::Containment*);
     void configDialogRemoved(QObject* dialog);
     void syncConfig();
+    void immutabilityChanged(Plasma::ImmutabilityType immutability);
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);

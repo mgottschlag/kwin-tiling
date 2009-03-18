@@ -26,8 +26,6 @@
 #include <plasma/containment.h>
 
 class QAction;
-class QDBusMessage;
-class QDBusError;
 
 /**
  * SaverDesktop
@@ -44,18 +42,7 @@ public:
     ~SaverDesktop();
     void init();
 
-    void constraintsEvent(Plasma::Constraints constraints);
     QList<QAction*> contextualActions();
-
-signals:
-    void locked();
-    void unlocked();
-
-public slots:
-    void toggleLock();
-    void unlock(QDBusMessage reply);
-    void dbusError(QDBusError error);
-    void unlockDesktop();
 
 private slots:
     void newApplet(Plasma::Applet *applet, const QPointF &pos);

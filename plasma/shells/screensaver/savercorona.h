@@ -1,5 +1,6 @@
 /*
  *   Copyright 2008 Aaron Seigo <aseigo@kde.org>
+ *   Copyright 2008 by Chani Armitage <chanika@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
@@ -24,8 +25,11 @@
 
 #include <Plasma/Corona>
 
+class QDBusMessage;
+class QDBusError;
+
 /**
- * @short A Corona with desktop-y considerations
+ * @short A Corona for the screensaver
  */
 class SaverCorona : public Plasma::Corona
 {
@@ -42,7 +46,12 @@ public:
     virtual int numScreens() const;
     virtual QRect screenGeometry(int id) const;
 
-protected Q_SLOTS:
+private Q_SLOTS:
+    void updateActions(Plasma::ImmutabilityType immutability);
+    void toggleLock();
+    void unlock(QDBusMessage reply);
+    void dbusError(QDBusError error);
+    void unlockDesktop();
 
 private:
     void init();
