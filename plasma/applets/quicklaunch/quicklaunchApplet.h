@@ -23,7 +23,6 @@
 #include <plasma/applet.h>
 #include <plasma/widgets/iconwidget.h>
 #include <QGraphicsLinearLayout>
-#include <QGraphicsGridLayout>
 #include <QGraphicsLayoutItem>
 #include <QList>
 #include <KIcon>
@@ -33,50 +32,12 @@
 #include "ui_quicklaunchAdd.h"
 
 #include "quicklaunchIcon.h"
+#include "QuicklaunchLayout.h"
 
 namespace Plasma
 {
     class Dialog;
 }
-
-class QuicklaunchLayout : public QGraphicsGridLayout
-{
-    public:
-        QuicklaunchLayout(QGraphicsLayoutItem *parent, int rowCount)
-         : QGraphicsGridLayout(parent), m_rowCount(rowCount)
-        {}
-        void setRowCount(int rowCount) { m_rowCount = rowCount; }
-        void addItem(Plasma::IconWidget *icon) {
-            //kDebug() << "Row count is" << rowCount() << "Wanted row count is" << m_rowCount;
-            //int row = m_rowCount == rowCount() || rowCount() == -1 ? 0 : rowCount();
-            //int column = m_rowCount == rowCount()  || columnCount() == 0 ? columnCount() : columnCount() - 1;
-            //kDebug() << "Adding icon to row = " << row << ", column = " << column;
-            int row = 0;
-            int column = 0;
-            while (itemAt(row, column))
-            {
-                kDebug() << "Row is" << row << "column is" << column;
-                if (row < m_rowCount - 1) {
-                    row++;
-                }
-                else {
-                    kDebug() << "column++";
-                    row = 0;
-                    column++;
-                }
-            }
-            QGraphicsGridLayout::addItem(icon, row, column);
-        }
-        QSizeF sizeHint(Qt::SizeHint which, const QSizeF & constraint = QSizeF()) const
-        {
-            if (which == Qt::PreferredSize) {
-                return QSizeF(columnCount() * geometry().height() / m_rowCount, QGraphicsGridLayout::sizeHint(which, constraint).height());
-            }
-            return QGraphicsGridLayout::sizeHint(which, constraint);
-        }
-    private:
-        int m_rowCount;
-};
 
 class QuicklaunchApplet : public Plasma::Applet
 {

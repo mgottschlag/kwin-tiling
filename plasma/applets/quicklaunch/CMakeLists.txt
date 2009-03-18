@@ -13,6 +13,7 @@ endif(NOT KDE4_FOUND)
 set(plasma_applet_quicklaunch_SRCS
   quicklaunchApplet.cpp
   quicklaunchIcon.cpp
+  QuicklaunchLayout.cpp
 )
 
 kde4_add_ui_files(plasma_applet_quicklaunch_SRCS quicklaunchConfig.ui)

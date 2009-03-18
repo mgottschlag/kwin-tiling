@@ -101,7 +101,7 @@ void QuicklaunchApplet::init()
     setLayout(m_layout);
 
     // Initialize inner layout
-    m_innerLayout = new QuicklaunchLayout(0, m_rowCount);
+    m_innerLayout = new QuicklaunchLayout(m_rowCount, this, 0);
     m_innerLayout->setContentsMargins(0, 0, 0, 0);
     m_innerLayout->setSpacing(0);
     m_layout->addItem(m_innerLayout);
@@ -241,7 +241,7 @@ void QuicklaunchApplet::showDialog()
         m_dialog->setAcceptDrops(true);
         //m_dialog->installEventFilter(this);
         m_dialog->setContextMenuPolicy(Qt::ActionsContextMenu);
-        m_dialogLayout = new QuicklaunchLayout(m_dialogWidget, m_dialogRowCount);
+        m_dialogLayout = new QuicklaunchLayout(m_dialogRowCount, m_dialogWidget, m_dialogWidget);
         m_dialogWidget->setLayout(m_dialogLayout);
         refactorUi();
         m_dialog->setGraphicsWidget(m_dialogWidget);
