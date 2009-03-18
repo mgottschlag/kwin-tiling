@@ -11,6 +11,7 @@ Name[pt_BR]=Tem o Estado
 Name[ro]=Are stare
 Name[sv]=Har tillstånd
 Name[uk]=Має стан
+Name[x-test]=xxHas Statexx
 Name[zh_TW]=有狀態
 
 [Desktop Action objectName]
@@ -26,6 +27,7 @@ Name[pt_BR]=Nome do objeto
 Name[ro]=Denumire obiect
 Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
+Name[x-test]=xxObject Namexx
 Name[zh_TW]=物件名稱
 
 [Desktop Action stateValue]
@@ -41,6 +43,7 @@ Name[pt_BR]=Valor do Estado
 Name[ro]=Valoarea stării
 Name[sv]=Tillståndsvärde
 Name[uk]=Значення стану
+Name[x-test]=xxState Valuexx
 Name[zh_TW]=狀態值
 
 [Desktop Action type]
@@ -54,6 +57,7 @@ Name[pt_BR]=Tipo
 Name[ro]=Tip
 Name[sv]=Typ
 Name[uk]=Тип
+Name[x-test]=xxTypexx
 Name[zh_TW]=類型
 
 [Desktop Entry]
@@ -80,6 +84,7 @@ Name[sl]=Gumb
 Name[sv]=Knapp
 Name[uk]=Кнопка
 Name[vi]=Nút
+Name[x-test]=xxButtonxx
 Name[zh_TW]=按鍵
 Type=Solid-Device-Type
 X-KDE-Solid-Actions-Type=Button

@@ -69,6 +69,7 @@ Comment[pt_BR]=Barra de abas para alternar atividades
 Comment[ro]=Bară cu file pentru comutarea activităților
 Comment[sv]=Flikrad för att byta aktiviteter
 Comment[uk]=Панель з вкладками для перемикання дій
+Comment[x-test]=xxTab bar to switch activitiesxx
 Comment[zh_TW]=切換活動的分頁列
 Type=Service
 Icon=tab-new

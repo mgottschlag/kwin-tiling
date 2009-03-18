@@ -11,6 +11,7 @@ Name[pt_BR]=Dispositivo
 Name[ro]=Dispozitiv
 Name[sv]=Enhet
 Name[uk]=Пристрій
+Name[x-test]=xxDevicexx
 Name[zh_TW]=裝置
 
 [Desktop Action deviceAdapter]
@@ -26,6 +27,7 @@ Name[pt_BR]=Adaptador de dispositivo
 Name[ro]=Adaptor dispozitiv
 Name[sv]=Enhetsadapter
 Name[uk]=Адаптер пристрою
+Name[x-test]=xxDevice Adapterxx
 Name[zh_TW]=裝置接合器
 
 [Desktop Action deviceIndex]
@@ -41,6 +43,7 @@ Name[pt_BR]=Índice do dispositivo
 Name[ro]=Index dispozitiv
 Name[sv]=Enhetsindex
 Name[uk]=Індекс пристрою
+Name[x-test]=xxDevice Indexxx
 Name[zh_TW]=裝置索引
 
 [Desktop Action deviceType]
@@ -56,6 +59,7 @@ Name[pt_BR]=Tipo de dispositivo
 Name[ro]=Tip dispozitiv
 Name[sv]=Enhetstyp
 Name[uk]=Тип пристрою
+Name[x-test]=xxDevice Typexx
 Name[zh_TW]=裝置類型
 
 [Desktop Action objectName]
@@ -71,6 +75,7 @@ Name[pt_BR]=Nome do objeto
 Name[ro]=Denumire obiect
 Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
+Name[x-test]=xxObject Namexx
 Name[zh_TW]=物件名稱
 
 [Desktop Entry]
@@ -87,6 +92,7 @@ Name[pt_BR]=Interface DVB
 Name[ro]=Interfață Dvb
 Name[sv]=Dvb-gränssnitt
 Name[uk]=Інтерфейс DVB
+Name[x-test]=xxDvb Interfacexx
 Name[zh_TW]=DVB 介面
 Type=Solid-Device-Type
 X-KDE-Solid-Actions-Type=DvbInterface

@@ -11,6 +11,7 @@ Name[pt_BR]=Nome do objeto
 Name[ro]=Denumire obiect
 Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
+Name[x-test]=xxObject Namexx
 Name[zh_TW]=物件名稱
 
 [Desktop Action supportedDrivers]
@@ -26,6 +27,7 @@ Name[pt_BR]=Drivers suportados
 Name[ro]=Drivere susținute
 Name[sv]=Drivrutiner som stöds
 Name[uk]=Підтримувані драйвери
+Name[x-test]=xxSupported Driversxx
 Name[zh_TW]=支援的驅動程式
 
 [Desktop Action supportedProtocols]
@@ -41,6 +43,7 @@ Name[pt_BR]=Protocolos suportados
 Name[ro]=Protocoale susținute
 Name[sv]=Protokoll som stöds
 Name[uk]=Підтримувані протоколи
+Name[x-test]=xxSupported Protocolsxx
 Name[zh_TW]=支援的協定
 
 [Desktop Entry]
@@ -56,6 +59,7 @@ Name[pt_BR]=Câmera
 Name[ro]=Aparat foto
 Name[sv]=Kamera
 Name[uk]=Фотоапарат
+Name[x-test]=xxCameraxx
 Name[zh_TW]=相機
 Type=Solid-Device-Type
 X-KDE-Solid-Actions-Type=Camera

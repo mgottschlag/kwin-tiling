@@ -11,6 +11,7 @@ Name[pt_BR]=Nome do objeto
 Name[ro]=Denumire obiect
 Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
+Name[x-test]=xxObject Namexx
 Name[zh_TW]=物件名稱
 
 [Desktop Action plugged]
@@ -26,6 +27,7 @@ Name[pt_BR]=Conectado
 Name[ro]=Atașat
 Name[sv]=Anslutet
 Name[uk]=З’єднано
+Name[x-test]=xxPluggedxx
 Name[zh_TW]=已插入
 
 [Desktop Entry]
@@ -42,6 +44,7 @@ Name[pt_BR]=Adaptador de CA
 Name[ro]=Adaptor AC
 Name[sv]=Nätadapter
 Name[uk]=Блок живлення
+Name[x-test]=xxAc Adapterxx
 Name[zh_TW]=AC 電源
 Type=Solid-Device-Type
 X-KDE-Solid-Actions-Type=AcAdapter

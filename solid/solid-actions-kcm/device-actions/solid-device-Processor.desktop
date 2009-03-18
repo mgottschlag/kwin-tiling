@@ -11,6 +11,7 @@ Name[pt_BR]=Pode alterar a frequência
 Name[ro]=Poate schimba frecvența
 Name[sv]=Kan ändra frekvens
 Name[uk]=Може змінювати частоту
+Name[x-test]=xxCan Change Frequencyxx
 Name[zh_TW]=可變更頻率
 
 [Desktop Action instructionSets]
@@ -25,6 +26,7 @@ Name[pt_BR]=Conjuntos de instruções
 Name[ro]=Seturi de instrucțiuni
 Name[sv]=Instruktionsuppsättningar
 Name[uk]=Набори команд
+Name[x-test]=xxInstruction Setsxx
 Name[zh_TW]=指令集
 
 [Desktop Action maxSpeed]
@@ -40,6 +42,7 @@ Name[pt_BR]=Velocidade máxima
 Name[ro]=Viteză maximă
 Name[sv]=Maximal hastighet
 Name[uk]=Макс. швидкість
+Name[x-test]=xxMax Speedxx
 Name[zh_TW]=最大速率
 
 [Desktop Action number]
@@ -55,6 +58,7 @@ Name[pt_BR]=Número
 Name[ro]=Număr
 Name[sv]=Antal
 Name[uk]=Номер
+Name[x-test]=xxNumberxx
 Name[zh_TW]=數字
 
 [Desktop Action objectName]
@@ -70,6 +74,7 @@ Name[pt_BR]=Nome do objeto
 Name[ro]=Denumire obiect
 Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
+Name[x-test]=xxObject Namexx
 Name[zh_TW]=物件名稱
 
 [Desktop Entry]

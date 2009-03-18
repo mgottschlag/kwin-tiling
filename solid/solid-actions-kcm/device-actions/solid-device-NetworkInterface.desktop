@@ -11,6 +11,7 @@ Name[pt_BR]=Endereço de hardware
 Name[ro]=Adresă fizică
 Name[sv]=Hårdvaruadress
 Name[uk]=Апар. адреса
+Name[x-test]=xxHw Addressxx
 Name[zh_TW]=硬體位址
 
 [Desktop Action ifaceName]
@@ -26,6 +27,7 @@ Name[pt_BR]=Nome da Interface
 Name[ro]=Denumire interfață
 Name[sv]=Gränssnittsnamn
 Name[uk]=Назва Iface
+Name[x-test]=xxIface Namexx
 Name[zh_TW]=介面名稱
 
 [Desktop Action macAddress]
@@ -41,6 +43,7 @@ Name[pt_BR]=Endereço MAC
 Name[ro]=Adresă MAC
 Name[sv]=MAC-adress
 Name[uk]=Mac-адреса
+Name[x-test]=xxMac Addressxx
 Name[zh_TW]=Mac 位址
 
 [Desktop Action objectName]
@@ -56,6 +59,7 @@ Name[pt_BR]=Nome do objeto
 Name[ro]=Denumire obiect
 Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
+Name[x-test]=xxObject Namexx
 Name[zh_TW]=物件名稱
 
 [Desktop Action wireless]
@@ -71,6 +75,7 @@ Name[pt_BR]=Sem fio
 Name[ro]=Fără fir
 Name[sv]=Trådlöst
 Name[uk]=Бездротове
+Name[x-test]=xxWirelessxx
 Name[zh_TW]=無線
 
 [Desktop Entry]
@@ -87,6 +92,7 @@ Name[pt_BR]=Interface de rede
 Name[ro]=Interfață de rețea
 Name[sv]=Nätverksgränssnitt
 Name[uk]=Мережний інтерфейс
+Name[x-test]=xxNetwork Interfacexx
 Name[zh_TW]=網路介面
 Type=Solid-Device-Type
 X-KDE-Solid-Actions-Type=NetworkInterface

@@ -11,6 +11,7 @@ Name[pt_BR]=Porcentagem de carga
 Name[ro]=Procentaj încărcare
 Name[sv]=Laddningsprocent
 Name[uk]=Рівень заряду
+Name[x-test]=xxCharge Percentxx
 Name[zh_TW]=充電百分比
 
 [Desktop Action chargeState]
@@ -26,6 +27,7 @@ Name[pt_BR]=Estado da carga
 Name[ro]=Starea încărcării
 Name[sv]=Laddningstillstånd
 Name[uk]=Стан зарядженості
+Name[x-test]=xxCharge Statexx
 Name[zh_TW]=充電狀態
 
 [Desktop Action objectName]
@@ -41,6 +43,7 @@ Name[pt_BR]=Nome do objeto
 Name[ro]=Denumire obiect
 Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
+Name[x-test]=xxObject Namexx
 Name[zh_TW]=物件名稱
 
 [Desktop Action plugged]
@@ -56,6 +59,7 @@ Name[pt_BR]=Conectado
 Name[ro]=Atașat
 Name[sv]=Anslutet
 Name[uk]=З’єднано
+Name[x-test]=xxPluggedxx
 Name[zh_TW]=已插入
 
 [Desktop Action rechargeable]
@@ -71,6 +75,7 @@ Name[pt_BR]=Recarregável
 Name[ro]=Reîncărcabil
 Name[sv]=Uppladdningsbart
 Name[uk]=Перезарядка
+Name[x-test]=xxRechargeablexx
 Name[zh_TW]=可重新充電
 
 [Desktop Action type]
@@ -84,6 +89,7 @@ Name[pt_BR]=Tipo
 Name[ro]=Tip
 Name[sv]=Typ
 Name[uk]=Тип
+Name[x-test]=xxTypexx
 Name[zh_TW]=類型
 
 [Desktop Entry]
@@ -100,6 +106,7 @@ Name[pt_BR]=Bateria
 Name[ro]=Acumulator
 Name[sv]=Batteri
 Name[uk]=Акумулятор
+Name[x-test]=xxBatteryxx
 Name[zh_TW]=電池
 Type=Solid-Device-Type
 X-KDE-Solid-Actions-Type=Battery

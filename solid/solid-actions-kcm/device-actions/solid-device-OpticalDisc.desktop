@@ -11,6 +11,7 @@ Name[pt_BR]=Anexável
 Name[ro]=Completabil
 Name[sv]=Tilläggbar
 Name[uk]=Додавання
+Name[x-test]=xxAppendablexx
 Name[zh_TW]=可附加
 
 [Desktop Action availableContent]
@@ -26,6 +27,7 @@ Name[pt_BR]=Conteúdo disponível
 Name[ro]=Conținut disponibil
 Name[sv]=Tillgängligt innehåll
 Name[uk]=Доступний вміст
+Name[x-test]=xxAvailable Contentxx
 Name[zh_TW]=可用的內容
 
 [Desktop Action blank]
@@ -41,6 +43,7 @@ Name[pt_BR]=Vazio
 Name[ro]=Gol
 Name[sv]=Tom
 Name[uk]=Порожньо
+Name[x-test]=xxBlankxx
 Name[zh_TW]=空白
 
 [Desktop Action capacity]
@@ -56,6 +59,7 @@ Name[pt_BR]=Capacidade
 Name[ro]=Capacitate
 Name[sv]=Kapacitet
 Name[uk]=Місткість
+Name[x-test]=xxCapacityxx
 Name[zh_TW]=空間
 
 [Desktop Action discType]
@@ -71,6 +75,7 @@ Name[pt_BR]=Tipo de disco
 Name[ro]=Tipul discului
 Name[sv]=Skivtyp
 Name[uk]=Тип диска
+Name[x-test]=xxDisc Typexx
 Name[zh_TW]=磁碟型態
 
 [Desktop Action fsType]
@@ -85,6 +90,7 @@ Name[pt_BR]=Tipo de sistema de arquivos
 Name[ro]=Tipul SF
 Name[sv]=Filsystemtyp
 Name[uk]=Тип ФС
+Name[x-test]=xxFs Typexx
 Name[zh_TW]=檔案系統型態
 
 [Desktop Action ignored]
@@ -99,6 +105,7 @@ Name[pt_BR]=Ignorado
 Name[ro]=Ignorat
 Name[sv]=Ignorerad
 Name[uk]=Ігнорується
+Name[x-test]=xxIgnoredxx
 Name[zh_TW]=忽略
 
 [Desktop Action label]
@@ -113,6 +120,7 @@ Name[pt_BR]=Rótulo
 Name[ro]=Etichetă
 Name[sv]=Etikett
 Name[uk]=Мітка
+Name[x-test]=xxLabelxx
 Name[zh_TW]=標籤
 
 [Desktop Action objectName]
@@ -128,6 +136,7 @@ Name[pt_BR]=Nome do objeto
 Name[ro]=Denumire obiect
 Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
+Name[x-test]=xxObject Namexx
 Name[zh_TW]=物件名稱
 
 [Desktop Action rewritable]
@@ -143,6 +152,7 @@ Name[pt_BR]=Regravável
 Name[ro]=Reinscriptibil
 Name[sv]=Skrivbar
 Name[uk]=Перезапис
+Name[x-test]=xxRewritablexx
 Name[zh_TW]=可覆寫
 
 [Desktop Action size]
@@ -158,6 +168,7 @@ Name[pt_BR]=Tamanho
 Name[ro]=Dimensiune
 Name[sv]=Storlek
 Name[uk]=Розмір
+Name[x-test]=xxSizexx
 Name[zh_TW]=大小
 
 [Desktop Action usage]
@@ -173,6 +184,7 @@ Name[pt_BR]=Uso
 Name[ro]=Utilizare
 Name[sv]=Användning
 Name[uk]=Використання
+Name[x-test]=xxUsagexx
 Name[zh_TW]=使用量
 
 [Desktop Action uuid]
@@ -182,6 +194,7 @@ Name[nds]=UUID
 Name[nl]=UUID
 Name[pt]=UUID
 Name[pt_BR]=UUID
+Name[x-test]=xxUuidxx
 Name[zh_TW]=UUID
 
 [Desktop Entry]
@@ -198,6 +211,7 @@ Name[pt_BR]=Disco ótico
 Name[ro]=Disc optic
 Name[sv]=Optisk skiva
 Name[uk]=Оптичний диск
+Name[x-test]=xxOptical Discxx
 Name[zh_TW]=光碟
 Type=Solid-Device-Type
 X-KDE-Solid-Actions-Type=OpticalDisc

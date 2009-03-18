@@ -22,6 +22,7 @@ Name[pt_BR]=Ações do dispositivo
 Name[ro]=Acțiuni dispozitiv
 Name[sv]=Enhetsåtgärder
 Name[uk]=Дії з пристроями
+Name[x-test]=xxDevice Actionsxx
 Name[zh_TW]=裝置動作
 
 Comment=A configuration tool for managing the actions available to the user when connecting new devices to the computer
@@ -36,6 +37,7 @@ Comment[pt_BR]=Uma ferramenta de configuração para gerenciar as ações dispon
 Comment[ro]=Unealtă de configurare pentru gestiunea acțiunilor disponibile utilizatorului la conectarea noilor dispozitive la calculator
 Comment[sv]=Ett inställningsverktyg för att hantera tillgängliga åtgärder för användare när nya enheter ansluts till datorn
 Comment[uk]=Інструмент налаштування для керування діями, доступними користувачеві після з’єднання пристроїв з комп’ютером
+Comment[x-test]=xxA configuration tool for managing the actions available to the user when connecting new devices to the computerxx
 Comment[zh_TW]=管理新增裝置到電腦時要做些什麼動作的設定工具
 
 X-KDE-Keywords=Solid Devices Actions

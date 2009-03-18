@@ -11,6 +11,7 @@ Name[pt_BR]=Nome do objeto
 Name[ro]=Denumire obiect
 Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
+Name[x-test]=xxObject Namexx
 Name[zh_TW]=物件名稱
 
 [Desktop Entry]
@@ -27,6 +28,7 @@ Name[pt_BR]=Interface genérica
 Name[ro]=Interfață generică
 Name[sv]=Generellt gränssnitt
 Name[uk]=Загальний інтерфейс
+Name[x-test]=xxGeneric Interfacexx
 Name[zh_TW]=一般介面
 Type=Solid-Device-Type
 X-KDE-Solid-Actions-Type=GenericInterface
