@@ -250,7 +250,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
     hbox = new QHBoxLayout();
     groupLayout->addLayout(hbox);
     hbox->addSpacing(30);
-    mPlasmaSetup = new QPushButton(i18n("Setup..."), mSaverGroup);
+    mPlasmaSetup = new QPushButton(i18n("Configure Widgets..."), mSaverGroup);
     mPlasmaSetup->setEnabled(mPlasmaEnabled);
     connect(mPlasmaSetup, SIGNAL(clicked()), this, SLOT(slotPlasmaSetup()));
     hbox->addWidget(mPlasmaSetup);
