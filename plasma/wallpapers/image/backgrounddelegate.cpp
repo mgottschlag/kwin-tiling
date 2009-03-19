@@ -55,11 +55,11 @@ void BackgroundDelegate::paint(QPainter *painter,
     QFont font = painter->font();
     font.setWeight(QFont::Bold);
     painter->setFont(font);
-    int x = option.rect.left() + MARGIN * 5 + maxwidth;
+    int x = option.rect.left() + MARGIN * 2 + maxwidth;
 
     QRect textRect(x,
                    option.rect.top() + MARGIN,
-                   option.rect.width() - x - MARGIN * 2,
+                   option.rect.width() - x - MARGIN,
                    maxheight);
     QString text = title;
     QString authorCaption;
@@ -70,30 +70,42 @@ void BackgroundDelegate::paint(QPainter *painter,
     }
 
     QRect boundingRect = painter->boundingRect(
-        textRect, Qt::AlignVCenter | Qt::TextWordWrap, text);
+        textRect, Qt::AlignVCenter | Qt::TextWordWrap, text) & option.rect;
     painter->drawText(boundingRect, Qt::TextWordWrap, title);
     QRect titleRect = painter->boundingRect(boundingRect, Qt::TextWordWrap, title);
     QPoint lastText(titleRect.bottomLeft());
 
     if (!author.isEmpty()) {
-        QRect authorRect(lastText, textRect.size());
-        painter->setFont(KGlobalSettings::smallestReadableFont());
-        painter->drawText(authorRect, Qt::TextWordWrap, authorCaption);
-        lastText = painter->boundingRect(authorRect, Qt::TextWordWrap, authorCaption).bottomLeft();
+        QRect authorRect = QRect(lastText, textRect.size()) & option.rect;
+
+        if (!authorRect.isEmpty()) {
+            painter->setFont(KGlobalSettings::smallestReadableFont());
+            painter->drawText(authorRect, Qt::TextWordWrap, authorCaption);
+            lastText = painter->boundingRect(authorRect, Qt::TextWordWrap, authorCaption).bottomLeft();
+        }
     }
 
     if (!resolution.isEmpty()) {
-        QRect resolutionRect(lastText, textRect.size());
-        painter->setFont(KGlobalSettings::smallestReadableFont());
-        painter->drawText(resolutionRect, Qt::TextWordWrap, resolution);
+        QRect resolutionRect = QRect(lastText, textRect.size()) & option.rect;
+
+        if (!resolutionRect.isEmpty()) {
+            painter->setFont(KGlobalSettings::smallestReadableFont());
+            painter->drawText(resolutionRect, Qt::TextWordWrap, resolution);
+        }
     }
 
     painter->restore();
 }
 
-QSize BackgroundDelegate::sizeHint(const QStyleOptionViewItem &,
-                                   const QModelIndex &) const
+QSize BackgroundDelegate::sizeHint(const QStyleOptionViewItem &option,
+                                   const QModelIndex &index) const
 {
-    return QSize(100, Background::SCREENSHOT_HEIGHT + MARGIN * 2);
+    const QString title = index.model()->data(index, Qt::DisplayRole).toString();
+    const int maxwidth = int(Background::SCREENSHOT_HEIGHT * m_ratio);
+    QFont font = option.font;
+    font.setWeight(QFont::Bold);
+    QFontMetrics fm(font);
+    //kDebug() << QSize(maxwidth + qBound(100, fm.width(title), 500), Background::SCREENSHOT_HEIGHT + MARGIN * 2);
+    return QSize(maxwidth + qBound(100, fm.width(title), 500), Background::SCREENSHOT_HEIGHT + MARGIN * 2);
 }
 

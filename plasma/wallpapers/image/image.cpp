@@ -106,11 +106,11 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         m_model = new BackgroundListModel(m_ratio, this);
         m_model->setResizeMethod(m_resizeMethod);
         m_model->setWallpaperSize(m_size);
+        m_model->reload(m_usersWallpapers);
         m_uiImage.m_view->setModel(m_model);
         m_uiImage.m_view->setItemDelegate(new BackgroundDelegate(m_uiImage.m_view->view(),
                                                                  m_ratio, this));
         m_uiImage.m_view->view()->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-        m_model->reload(m_usersWallpapers);
         int index = m_model->indexOf(m_wallpaper);
         if (index != -1) {
             m_uiImage.m_view->setCurrentIndex(index);
