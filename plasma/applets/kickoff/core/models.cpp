@@ -65,13 +65,13 @@ QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString)
         //
         // first look in the KDE service database to see if this file is a service,
         // otherwise represent it as a generic .desktop file
-        KService::Ptr service = KService::serviceByDesktopPath(url.path());
+        KService::Ptr service = KService::serviceByDesktopPath(url.toLocalFile());
         if (service) {
             return createItemForService(service);
         }
 
         item = new QStandardItem;
-        KDesktopFile desktopFile(url.path());
+        KDesktopFile desktopFile(url.toLocalFile());
         item->setText(QFileInfo(urlString.mid(0, urlString.lastIndexOf('.'))).completeBaseName());
         item->setIcon(KIcon(desktopFile.readIcon()));
 
