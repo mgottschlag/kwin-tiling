@@ -258,6 +258,24 @@ void TaskGroupItem::updateToolTip()
 //    data.image = m_group->icon().pixmap(QSize::small);
 //    data.windowToPreview = m_task->window();
 
+    int i = 0;
+    QList<WId> windows;
+
+    foreach (AbstractGroupableItem *item, m_group->members()) {
+        if (++i > 4) {
+            break;
+        }
+
+        TaskManager::TaskItem *taskItem = qobject_cast<TaskManager::TaskItem *>(item);
+
+        if (taskItem) {
+            windows.append(taskItem->task()->window());
+        }
+    }
+
+    data.setWindowsToPreview(windows);
+
+
     Plasma::ToolTipManager::self()->setContent(this, data);
 }
 
