@@ -393,6 +393,7 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
 
     m_visibilityMode = mode;
     config().writeEntry("panelVisibility", (int)mode);
+    configNeedsSaving();
 }
 
 PanelView::VisibilityMode PanelView::visibilityMode() const
@@ -608,6 +609,7 @@ void PanelView::pinchContainment(const QRect &screenGeom)
         lastSize.writeEntry("offset", m_offset);
         lastSize.writeEntry("min", m_lastMin);
         lastSize.writeEntry("max", m_lastMax);
+        configNeedsSaving();
 
         QString last = (horizontal ? "Horizontal" : "Vertical") +
                        QString::number(horizontal ? sw : sh);
@@ -710,6 +712,7 @@ void PanelView::pinchContainment(const QRect &screenGeom)
         m_lastHorizontal = horizontal;
         m_lastSeenSize = (horizontal ? sw : sh);
         sizes.writeEntry("lastsize", m_lastSeenSize);
+        configNeedsSaving();
     }
 
     updatePanelGeometry();
@@ -733,6 +736,7 @@ void PanelView::setOffset(int newOffset)
     //TODO: do we ever need to worry about pinching here, or
     //      do we just assume that the offset is always < screenSize - containmentSize?
     updatePanelGeometry();
+    configNeedsSaving();
 }
 
 int PanelView::offset() const
@@ -745,6 +749,7 @@ void PanelView::setAlignment(Qt::Alignment align)
     m_alignment = alignmentFilter(align);
     KConfigGroup viewConfig = config();
     viewConfig.writeEntry("Alignment", (int)m_alignment);
+    configNeedsSaving();
 }
 
 Qt::Alignment PanelView::alignment() const
@@ -821,10 +826,6 @@ void PanelView::edittingComplete()
     containment()->closeToolBox();
     updateStruts();
     m_firstPaint = true; // triggers autohide
-
-    // not overly efficient since we may not have changed any settings,
-    // but ensures that if we have, a config sync will occur
-    PlasmaApp::self()->corona()->requestConfigSync();
 }
 
 Qt::Alignment PanelView::alignmentFilter(Qt::Alignment align) const
