@@ -1,3 +1,22 @@
+[Desktop Entry]
+Actions=driverHandle;objectName;port;serialType;
+Name=Serial Interface
+Name[et]=Jadaliides
+Name[ga]=Comhéadan Srathach
+Name[ja]=シリアルインターフェース
+Name[nb]=Serielt grensesnitt 
+Name[nds]=Seriell Koppelsteed
+Name[nl]=Serieel interface
+Name[pt]=Interface Série
+Name[pt_BR]=Interface serial
+Name[ro]=Interfață serială
+Name[sv]=Seriegränssnitt
+Name[uk]=Послідовний інтерфейс
+Name[x-test]=xxSerial Interfacexx
+Name[zh_TW]=序列介面
+Type=Service
+X-KDE-Solid-Actions-Type=SerialInterface
+
 [Desktop Action driverHandle]
 Name=Driver Handle
 Name[et]=Draiveri pide
@@ -53,22 +72,3 @@ Name[sv]=Serietyp
 Name[uk]=Послідовний тип
 Name[x-test]=xxSerial Typexx
 Name[zh_TW]=序列類型
-
-[Desktop Entry]
-Actions=driverHandle;objectName;port;serialType
-Name=Serial Interface
-Name[et]=Jadaliides
-Name[ga]=Comhéadan Srathach
-Name[ja]=シリアルインターフェース
-Name[nb]=Serielt grensesnitt 
-Name[nds]=Seriell Koppelsteed
-Name[nl]=Serieel interface
-Name[pt]=Interface Série
-Name[pt_BR]=Interface serial
-Name[ro]=Interfață serială
-Name[sv]=Seriegränssnitt
-Name[uk]=Послідовний інтерфейс
-Name[x-test]=xxSerial Interfacexx
-Name[zh_TW]=序列介面
-Type=Solid-Device-Type
-X-KDE-Solid-Actions-Type=SerialInterface

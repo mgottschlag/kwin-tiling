@@ -1,3 +1,21 @@
+[Desktop Entry]
+Actions=objectName;supportedDrivers;supportedProtocols;
+Name=Camera
+Name[et]=Kaamera
+Name[ga]=Ceamara
+Name[ja]=カメラ
+Name[nb]=Kamera
+Name[nds]=Kamera
+Name[pt]=Câmara
+Name[pt_BR]=Câmera
+Name[ro]=Aparat foto
+Name[sv]=Kamera
+Name[uk]=Фотоапарат
+Name[x-test]=xxCameraxx
+Name[zh_TW]=相機
+Type=Service
+X-KDE-Solid-Actions-Type=Camera
+
 [Desktop Action objectName]
 Name=Object Name
 Name[et]=Objekti nimi
@@ -46,20 +64,3 @@ Name[uk]=Підтримувані протоколи
 Name[x-test]=xxSupported Protocolsxx
 Name[zh_TW]=支援的協定
 
-[Desktop Entry]
-Actions=objectName;supportedDrivers;supportedProtocols
-Name=Camera
-Name[et]=Kaamera
-Name[ga]=Ceamara
-Name[ja]=カメラ
-Name[nb]=Kamera
-Name[nds]=Kamera
-Name[pt]=Câmara
-Name[pt_BR]=Câmera
-Name[ro]=Aparat foto
-Name[sv]=Kamera
-Name[uk]=Фотоапарат
-Name[x-test]=xxCameraxx
-Name[zh_TW]=相機
-Type=Solid-Device-Type
-X-KDE-Solid-Actions-Type=Camera

@@ -1,3 +1,16 @@
+[Desktop Entry]
+Actions=objectName;supportedDrivers;
+Name=Video
+Name[ga]=Fís
+Name[ja]=映像
+Name[pt]=Vídeo
+Name[pt_BR]=Vídeo
+Name[uk]=Відео
+Name[x-test]=xxVideoxx
+Name[zh_TW]=影像
+Type=Service
+X-KDE-Solid-Actions-Type=Video
+
 [Desktop Action objectName]
 Name=Object Name
 Name[et]=Objekti nimi
@@ -29,16 +42,3 @@ Name[sv]=Drivrutiner som stöds
 Name[uk]=Підтримувані драйвери
 Name[x-test]=xxSupported Driversxx
 Name[zh_TW]=支援的驅動程式
-
-[Desktop Entry]
-Actions=objectName;supportedDrivers
-Name=Video
-Name[ga]=Fís
-Name[ja]=映像
-Name[pt]=Vídeo
-Name[pt_BR]=Vídeo
-Name[uk]=Відео
-Name[x-test]=xxVideoxx
-Name[zh_TW]=影像
-Type=Solid-Device-Type
-X-KDE-Solid-Actions-Type=Video

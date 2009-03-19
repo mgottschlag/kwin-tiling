@@ -1,3 +1,22 @@
+[Desktop Entry]
+Actions=bus;driveType;hotpluggable;objectName;removable;
+Name=Storage Drive
+Name[et]=Salvestusseade
+Name[ga]=Tiomántán Stórais
+Name[ja]=ストレージドライブ
+Name[nb]=Lagerdrev
+Name[nds]=Spiekerloopwark
+Name[nl]=Opslagapparaat
+Name[pt]=Unidade de Armazenamento
+Name[pt_BR]=Unidade de armazenamento
+Name[ro]=Unitate de stocare
+Name[sv]=Lagringsenhet
+Name[uk]=Пристрій зберігання даних
+Name[x-test]=xxStorage Drivexx
+Name[zh_TW]=儲存裝置
+Type=Service
+X-KDE-Solid-Actions-Type=StorageDrive
+
 [Desktop Action bus]
 Name=Bus
 Name[et]=Siin
@@ -73,22 +92,3 @@ Name[sv]=Flyttbar
 Name[uk]=Змінний пристрій
 Name[x-test]=xxRemovablexx
 Name[zh_TW]=可移除
-
-[Desktop Entry]
-Actions=bus;driveType;hotpluggable;objectName;removable
-Name=Storage Drive
-Name[et]=Salvestusseade
-Name[ga]=Tiomántán Stórais
-Name[ja]=ストレージドライブ
-Name[nb]=Lagerdrev
-Name[nds]=Spiekerloopwark
-Name[nl]=Opslagapparaat
-Name[pt]=Unidade de Armazenamento
-Name[pt_BR]=Unidade de armazenamento
-Name[ro]=Unitate de stocare
-Name[sv]=Lagringsenhet
-Name[uk]=Пристрій зберігання даних
-Name[x-test]=xxStorage Drivexx
-Name[zh_TW]=儲存裝置
-Type=Solid-Device-Type
-X-KDE-Solid-Actions-Type=StorageDrive

@@ -1,3 +1,22 @@
+[Desktop Entry]
+Actions=objectName;
+Name=Generic Interface
+Name[et]=Üldliides
+Name[ga]=Comhéadan Ginearálta
+Name[ja]=一般インターフェース
+Name[nb]=Generisk grensesnitt
+Name[nds]=Allmeen Koppelsteed
+Name[nl]=Algemeen interface
+Name[pt]=Interface Genérica
+Name[pt_BR]=Interface genérica
+Name[ro]=Interfață generică
+Name[sv]=Generellt gränssnitt
+Name[uk]=Загальний інтерфейс
+Name[x-test]=xxGeneric Interfacexx
+Name[zh_TW]=一般介面
+Type=Service
+X-KDE-Solid-Actions-Type=GenericInterface
+
 [Desktop Action objectName]
 Name=Object Name
 Name[et]=Objekti nimi
@@ -13,22 +32,3 @@ Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
 Name[x-test]=xxObject Namexx
 Name[zh_TW]=物件名稱
-
-[Desktop Entry]
-Actions=objectName
-Name=Generic Interface
-Name[et]=Üldliides
-Name[ga]=Comhéadan Ginearálta
-Name[ja]=一般インターフェース
-Name[nb]=Generisk grensesnitt
-Name[nds]=Allmeen Koppelsteed
-Name[nl]=Algemeen interface
-Name[pt]=Interface Genérica
-Name[pt_BR]=Interface genérica
-Name[ro]=Interfață generică
-Name[sv]=Generellt gränssnitt
-Name[uk]=Загальний інтерфейс
-Name[x-test]=xxGeneric Interfacexx
-Name[zh_TW]=一般介面
-Type=Solid-Device-Type
-X-KDE-Solid-Actions-Type=GenericInterface

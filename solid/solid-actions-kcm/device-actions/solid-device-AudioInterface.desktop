@@ -1,3 +1,21 @@
+[Desktop Entry]
+Name=Audio Interface
+Name[et]=Heliliides
+Name[ga]=Comhéadan Fuaime
+Name[ja]=音声インターフェース
+Name[nb]=Lydgrensesnitt
+Name[nds]=Klang-Koppelsteed
+Name[nl]=Audio-interface
+Name[pt]=Interface de Áudio
+Name[pt_BR]=Interface de áudio
+Name[ro]=Interfață de rețea
+Name[sv]=Ljudgränssnitt
+Name[uk]=Звуковий інтерфейс
+Name[x-test]=xxAudio Interfacexx
+Name[zh_TW]=音效介面
+Type=Service
+X-KDE-Solid-Actions-Type=AudioInterface
+
 [Desktop Action deviceType]
 Name=Device Type
 Name[et]=Seadme tüüp
@@ -88,22 +106,3 @@ Name[sv]=Typ av ljudkort
 Name[uk]=Тип звукової картки
 Name[x-test]=xxSoundcard Typexx
 Name[zh_TW]=音效卡類型
-
-[Desktop Entry]
-Actions=deviceType;driver;driverHandle;name;objectName;soundcardType
-Name=Audio Interface
-Name[et]=Heliliides
-Name[ga]=Comhéadan Fuaime
-Name[ja]=音声インターフェース
-Name[nb]=Lydgrensesnitt
-Name[nds]=Klang-Koppelsteed
-Name[nl]=Audio-interface
-Name[pt]=Interface de Áudio
-Name[pt_BR]=Interface de áudio
-Name[ro]=Interfață de rețea
-Name[sv]=Ljudgränssnitt
-Name[uk]=Звуковий інтерфейс
-Name[x-test]=xxAudio Interfacexx
-Name[zh_TW]=音效介面
-Type=Solid-Device-Type
-X-KDE-Solid-Actions-Type=AudioInterface

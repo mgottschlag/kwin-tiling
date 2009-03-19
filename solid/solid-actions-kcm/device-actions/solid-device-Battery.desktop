@@ -1,3 +1,22 @@
+[Desktop Entry]
+Actions=chargePercent;chargeState;objectName;plugged;rechargeable;type;
+Name=Battery
+Name[et]=Aku
+Name[ga]=Cadhnra
+Name[ja]=バッテリ
+Name[nb]=Batteri
+Name[nds]=Batterie
+Name[nl]=Batterij
+Name[pt]=Bateria
+Name[pt_BR]=Bateria
+Name[ro]=Acumulator
+Name[sv]=Batteri
+Name[uk]=Акумулятор
+Name[x-test]=xxBatteryxx
+Name[zh_TW]=電池
+Type=Service
+X-KDE-Solid-Actions-Type=Battery
+
 [Desktop Action chargePercent]
 Name=Charge Percent
 Name[et]=Täituvuse protsent
@@ -91,22 +110,3 @@ Name[sv]=Typ
 Name[uk]=Тип
 Name[x-test]=xxTypexx
 Name[zh_TW]=類型
-
-[Desktop Entry]
-Actions=chargePercent;chargeState;objectName;plugged;rechargeable;type
-Name=Battery
-Name[et]=Aku
-Name[ga]=Cadhnra
-Name[ja]=バッテリ
-Name[nb]=Batteri
-Name[nds]=Batterie
-Name[nl]=Batterij
-Name[pt]=Bateria
-Name[pt_BR]=Bateria
-Name[ro]=Acumulator
-Name[sv]=Batteri
-Name[uk]=Акумулятор
-Name[x-test]=xxBatteryxx
-Name[zh_TW]=電池
-Type=Solid-Device-Type
-X-KDE-Solid-Actions-Type=Battery

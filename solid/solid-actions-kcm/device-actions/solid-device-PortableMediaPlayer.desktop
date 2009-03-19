@@ -1,3 +1,22 @@
+[Desktop Entry]
+Actions=objectName;supportedDrivers;supportedProtocols;
+Name=Portable Media Player
+Name[et]=Kaasaskantav meediamängija
+Name[ga]=Seinnteoir Iniompair Meán
+Name[ja]=ポータブルメディアプレーヤー
+Name[nb]=Portabel mediaspiller
+Name[nds]=Mobil-Medienafspeler
+Name[nl]=Draagbare mediaspeler
+Name[pt]=Leitor Multimédia Portátil
+Name[pt_BR]=Reprodutor de mídia portátil
+Name[ro]=Lector multimedia portabil
+Name[sv]=Portabel mediaspelare
+Name[uk]=Портативний медіапрогравач
+Name[x-test]=xxPortable Media Playerxx
+Name[zh_TW]=可攜式媒體播放器
+Type=Service
+X-KDE-Solid-Actions-Type=PortableMediaPlayer
+
 [Desktop Action objectName]
 Name=Object Name
 Name[et]=Objekti nimi
@@ -45,22 +64,3 @@ Name[sv]=Protokoll som stöds
 Name[uk]=Підтримувані протоколи
 Name[x-test]=xxSupported Protocolsxx
 Name[zh_TW]=支援的協定
-
-[Desktop Entry]
-Actions=objectName;supportedDrivers;supportedProtocols
-Name=Portable Media Player
-Name[et]=Kaasaskantav meediamängija
-Name[ga]=Seinnteoir Iniompair Meán
-Name[ja]=ポータブルメディアプレーヤー
-Name[nb]=Portabel mediaspiller
-Name[nds]=Mobil-Medienafspeler
-Name[nl]=Draagbare mediaspeler
-Name[pt]=Leitor Multimédia Portátil
-Name[pt_BR]=Reprodutor de mídia portátil
-Name[ro]=Lector multimedia portabil
-Name[sv]=Portabel mediaspelare
-Name[uk]=Портативний медіапрогравач
-Name[x-test]=xxPortable Media Playerxx
-Name[zh_TW]=可攜式媒體播放器
-Type=Solid-Device-Type
-X-KDE-Solid-Actions-Type=PortableMediaPlayer

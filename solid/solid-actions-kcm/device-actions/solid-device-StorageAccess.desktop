@@ -1,3 +1,22 @@
+[Desktop Entry]
+Actions=accessible;filePath;objectName;
+Name=Storage Access
+Name[et]=Salvesti juurdepääs
+Name[ga]=Rochtain Stórais
+Name[ja]=ストレージアクセス
+Name[nb]=Lagringstilgang
+Name[nds]=Spiekertogriep
+Name[nl]=Toegang tot opslag
+Name[pt]=Acesso de Armazenamento
+Name[pt_BR]=Acesso de armazenamento
+Name[ro]=Acces la stocare
+Name[sv]=Lagringsåtkomst
+Name[uk]=Доступ до даних
+Name[x-test]=xxStorage Accessxx
+Name[zh_TW]=儲存裝置存取
+Type=Service
+X-KDE-Solid-Actions-Type=StorageAccess
+
 [Desktop Action accessible]
 Name=Accessible
 Name[et]=Juurdepääsuga
@@ -45,22 +64,3 @@ Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
 Name[x-test]=xxObject Namexx
 Name[zh_TW]=物件名稱
-
-[Desktop Entry]
-Actions=accessible;filePath;objectName
-Name=Storage Access
-Name[et]=Salvesti juurdepääs
-Name[ga]=Rochtain Stórais
-Name[ja]=ストレージアクセス
-Name[nb]=Lagringstilgang
-Name[nds]=Spiekertogriep
-Name[nl]=Toegang tot opslag
-Name[pt]=Acesso de Armazenamento
-Name[pt_BR]=Acesso de armazenamento
-Name[ro]=Acces la stocare
-Name[sv]=Lagringsåtkomst
-Name[uk]=Доступ до даних
-Name[x-test]=xxStorage Accessxx
-Name[zh_TW]=儲存裝置存取
-Type=Solid-Device-Type
-X-KDE-Solid-Actions-Type=StorageAccess

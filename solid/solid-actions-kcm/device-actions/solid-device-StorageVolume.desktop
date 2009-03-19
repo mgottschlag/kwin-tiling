@@ -1,3 +1,22 @@
+[Desktop Entry]
+Actions=fsType;ignored;label;objectName;size;usage;uuid;
+Name=Storage Volume
+Name[et]=Salvesti
+Name[ga]=Imleabhar Stórais
+Name[ja]=ストレージボリューム
+Name[nb]=Lagervolum
+Name[nds]=Spiekermedium
+Name[nl]=Opslagvolume
+Name[pt]=Volume de Armazenamento
+Name[pt_BR]=Volume de armazenamento
+Name[ro]=Volum de stocare
+Name[sv]=Lagringsvolym
+Name[uk]=Том зберігання даних
+Name[x-test]=xxStorage Volumexx
+Name[zh_TW]=儲存容量
+Type=Service
+X-KDE-Solid-Actions-Type=StorageVolume
+
 [Desktop Action fsType]
 Name=Fs Type
 Name[et]=Failisüsteemi tüüp
@@ -100,22 +119,3 @@ Name[pt]=UUID
 Name[pt_BR]=UUID
 Name[x-test]=xxUuidxx
 Name[zh_TW]=UUID
-
-[Desktop Entry]
-Actions=fsType;ignored;label;objectName;size;usage;uuid
-Name=Storage Volume
-Name[et]=Salvesti
-Name[ga]=Imleabhar Stórais
-Name[ja]=ストレージボリューム
-Name[nb]=Lagervolum
-Name[nds]=Spiekermedium
-Name[nl]=Opslagvolume
-Name[pt]=Volume de Armazenamento
-Name[pt_BR]=Volume de armazenamento
-Name[ro]=Volum de stocare
-Name[sv]=Lagringsvolym
-Name[uk]=Том зберігання даних
-Name[x-test]=xxStorage Volumexx
-Name[zh_TW]=儲存容量
-Type=Solid-Device-Type
-X-KDE-Solid-Actions-Type=StorageVolume

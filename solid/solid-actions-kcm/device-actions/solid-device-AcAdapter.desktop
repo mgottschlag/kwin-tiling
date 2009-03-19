@@ -1,3 +1,22 @@
+[Desktop Entry]
+Actions=objectName;plugged;
+Name=Ac Adapter
+Name[et]=AC adapter
+Name[ga]=Cuibheoir SA
+Name[ja]=AC アダプタ
+Name[nb]=Nettadapter
+Name[nds]=Stroomnett
+Name[nl]=Netstroomadapter
+Name[pt]=Adaptador AC
+Name[pt_BR]=Adaptador de CA
+Name[ro]=Adaptor AC
+Name[sv]=Nätadapter
+Name[uk]=Блок живлення
+Name[x-test]=xxAc Adapterxx
+Name[zh_TW]=AC 電源
+Type=Service
+X-KDE-Solid-Actions-Type=AcAdapter
+
 [Desktop Action objectName]
 Name=Object Name
 Name[et]=Objekti nimi
@@ -29,22 +48,3 @@ Name[sv]=Anslutet
 Name[uk]=З’єднано
 Name[x-test]=xxPluggedxx
 Name[zh_TW]=已插入
-
-[Desktop Entry]
-Actions=objectName;plugged
-Name=Ac Adapter
-Name[et]=AC adapter
-Name[ga]=Cuibheoir SA
-Name[ja]=AC アダプタ
-Name[nb]=Nettadapter
-Name[nds]=Stroomnett
-Name[nl]=Netstroomadapter
-Name[pt]=Adaptador AC
-Name[pt_BR]=Adaptador de CA
-Name[ro]=Adaptor AC
-Name[sv]=Nätadapter
-Name[uk]=Блок живлення
-Name[x-test]=xxAc Adapterxx
-Name[zh_TW]=AC 電源
-Type=Solid-Device-Type
-X-KDE-Solid-Actions-Type=AcAdapter

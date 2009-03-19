@@ -1,3 +1,21 @@
+[Desktop Entry]
+Actions=device;major;minor;objectName;
+Name=Block
+Name[et]=Plokk
+Name[ga]=Bloc
+Name[ja]=ブロック
+Name[nb]=Blokk
+Name[nds]=Blockeren
+Name[nl]=Blok
+Name[pt]=Bloco
+Name[pt_BR]=Bloco
+Name[ro]=Bloc
+Name[uk]=Блоковий
+Name[x-test]=xxBlockxx
+Name[zh_TW]=區塊
+Type=Service
+X-KDE-Solid-Actions-Type=Block
+
 [Desktop Action device]
 Name=Device
 Name[et]=Seade
@@ -57,21 +75,3 @@ Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
 Name[x-test]=xxObject Namexx
 Name[zh_TW]=物件名稱
-
-[Desktop Entry]
-Actions=device;major;minor;objectName
-Name=Block
-Name[et]=Plokk
-Name[ga]=Bloc
-Name[ja]=ブロック
-Name[nb]=Blokk
-Name[nds]=Blockeren
-Name[nl]=Blok
-Name[pt]=Bloco
-Name[pt_BR]=Bloco
-Name[ro]=Bloc
-Name[uk]=Блоковий
-Name[x-test]=xxBlockxx
-Name[zh_TW]=區塊
-Type=Solid-Device-Type
-X-KDE-Solid-Actions-Type=Block

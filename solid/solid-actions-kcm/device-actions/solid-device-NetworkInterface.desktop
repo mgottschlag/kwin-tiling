@@ -1,3 +1,22 @@
+[Desktop Entry]
+Actions=hwAddress;ifaceName;macAddress;objectName;wireless;
+Name=Network Interface
+Name[et]=Võrguliides
+Name[ga]=Comhéadan Líonra
+Name[ja]=ネットワークインターフェース
+Name[nb]=Nettverksgrensesnitt
+Name[nds]=Nettwark-Koppelsteed
+Name[nl]=Netwerkinterface
+Name[pt]=Interface de Rede
+Name[pt_BR]=Interface de rede
+Name[ro]=Interfață de rețea
+Name[sv]=Nätverksgränssnitt
+Name[uk]=Мережний інтерфейс
+Name[x-test]=xxNetwork Interfacexx
+Name[zh_TW]=網路介面
+Type=Service
+X-KDE-Solid-Actions-Type=NetworkInterface
+
 [Desktop Action hwAddress]
 Name=Hw Address
 Name[et]=Riistvara-aadress
@@ -77,22 +96,3 @@ Name[sv]=Trådlöst
 Name[uk]=Бездротове
 Name[x-test]=xxWirelessxx
 Name[zh_TW]=無線
-
-[Desktop Entry]
-Actions=hwAddress;ifaceName;macAddress;objectName;wireless
-Name=Network Interface
-Name[et]=Võrguliides
-Name[ga]=Comhéadan Líonra
-Name[ja]=ネットワークインターフェース
-Name[nb]=Nettverksgrensesnitt
-Name[nds]=Nettwark-Koppelsteed
-Name[nl]=Netwerkinterface
-Name[pt]=Interface de Rede
-Name[pt_BR]=Interface de rede
-Name[ro]=Interfață de rețea
-Name[sv]=Nätverksgränssnitt
-Name[uk]=Мережний інтерфейс
-Name[x-test]=xxNetwork Interfacexx
-Name[zh_TW]=網路介面
-Type=Solid-Device-Type
-X-KDE-Solid-Actions-Type=NetworkInterface

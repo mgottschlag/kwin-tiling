@@ -1,3 +1,22 @@
+[Desktop Entry]
+Actions=device;deviceAdapter;deviceIndex;deviceType;objectName;
+Name=Dvb Interface
+Name[et]=DVB liides
+Name[ga]=Comhéadan Dvb
+Name[ja]=DVB インターフェース
+Name[nb]=Dvb-grensesnitt
+Name[nds]=DVB-Koppelsteed
+Name[nl]=Dvb-interface
+Name[pt]=Interface DVB
+Name[pt_BR]=Interface DVB
+Name[ro]=Interfață Dvb
+Name[sv]=Dvb-gränssnitt
+Name[uk]=Інтерфейс DVB
+Name[x-test]=xxDvb Interfacexx
+Name[zh_TW]=DVB 介面
+Type=Service
+X-KDE-Solid-Actions-Type=DvbInterface
+
 [Desktop Action device]
 Name=Device
 Name[et]=Seade
@@ -77,22 +96,3 @@ Name[sv]=Objektnamn
 Name[uk]=Назва об'єкта
 Name[x-test]=xxObject Namexx
 Name[zh_TW]=物件名稱
-
-[Desktop Entry]
-Actions=device;deviceAdapter;deviceIndex;deviceType;objectName
-Name=Dvb Interface
-Name[et]=DVB liides
-Name[ga]=Comhéadan Dvb
-Name[ja]=DVB インターフェース
-Name[nb]=Dvb-grensesnitt
-Name[nds]=DVB-Koppelsteed
-Name[nl]=Dvb-interface
-Name[pt]=Interface DVB
-Name[pt_BR]=Interface DVB
-Name[ro]=Interfață Dvb
-Name[sv]=Dvb-gränssnitt
-Name[uk]=Інтерфейс DVB
-Name[x-test]=xxDvb Interfacexx
-Name[zh_TW]=DVB 介面
-Type=Solid-Device-Type
-X-KDE-Solid-Actions-Type=DvbInterface

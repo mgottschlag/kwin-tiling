@@ -1,3 +1,32 @@
+[Desktop Entry]
+Actions=hasState;objectName;stateValue;type;
+Name=Button
+Name[be]=Кнопка
+Name[be@latin]=Кнопка
+Name[de]=Knopf
+Name[et]=Nupp
+Name[fa]=بوتان
+Name[fy]=Knop
+Name[ga]=Cnaipe
+Name[hr]=Gumb
+Name[ja]=ボタン
+Name[kn]=ಗುಂಡಿ
+Name[nb]=Knapp
+Name[nds]=Knoop
+Name[ne]=बटन
+Name[nl]=Knop
+Name[pt]=Botão
+Name[pt_BR]=Botão
+Name[ro]=Buton
+Name[sl]=Gumb
+Name[sv]=Knapp
+Name[uk]=Кнопка
+Name[vi]=Nút
+Name[x-test]=xxButtonxx
+Name[zh_TW]=按鍵
+Type=Service
+X-KDE-Solid-Actions-Type=Button
+
 [Desktop Action hasState]
 Name=Has State
 Name[et]=Olekuga
@@ -59,32 +88,3 @@ Name[sv]=Typ
 Name[uk]=Тип
 Name[x-test]=xxTypexx
 Name[zh_TW]=類型
-
-[Desktop Entry]
-Actions=hasState;objectName;stateValue;type
-Name=Button
-Name[be]=Кнопка
-Name[be@latin]=Кнопка
-Name[de]=Knopf
-Name[et]=Nupp
-Name[fa]=بوتان
-Name[fy]=Knop
-Name[ga]=Cnaipe
-Name[hr]=Gumb
-Name[ja]=ボタン
-Name[kn]=ಗುಂಡಿ
-Name[nb]=Knapp
-Name[nds]=Knoop
-Name[ne]=बटन
-Name[nl]=Knop
-Name[pt]=Botão
-Name[pt_BR]=Botão
-Name[ro]=Buton
-Name[sl]=Gumb
-Name[sv]=Knapp
-Name[uk]=Кнопка
-Name[vi]=Nút
-Name[x-test]=xxButtonxx
-Name[zh_TW]=按鍵
-Type=Solid-Device-Type
-X-KDE-Solid-Actions-Type=Button
