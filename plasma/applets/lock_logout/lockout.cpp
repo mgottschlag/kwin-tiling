@@ -44,8 +44,8 @@
 #include <windows.h>
 #endif // Q_OS_WIN
 
-static const int MINBUTTONSIZE = 80;
-static const int MARGINSIZE = 2;
+static const int MINBUTTONSIZE = 10;
+static const int MARGINSIZE = 1;
 
 LockOut::LockOut(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args)
@@ -53,7 +53,7 @@ LockOut::LockOut(QObject *parent, const QVariantList &args)
 #ifndef Q_OS_WIN
     setHasConfigurationInterface(true);
 #endif
-    resize(MINBUTTONSIZE, MINBUTTONSIZE * 2 + MARGINSIZE);
+    resize(MINBUTTONSIZE*4, MINBUTTONSIZE * 2 *4 + MARGINSIZE);
 }
 
 void LockOut::init()
