@@ -60,6 +60,8 @@ protected:
     virtual void leaveEvent(QEvent *event);
     virtual void mouseMoveEvent(QMouseEvent *event);
     virtual void resizeEvent(QResizeEvent* event);
+    virtual void showEvent(QShowEvent* event);
+    virtual void hideEvent(QHideEvent* event);
 
     bool isHorizontal() const;
     bool isVertical() const;
@@ -69,18 +71,22 @@ protected slots:
     void animationFinished();
     void startAnimation();
     void onValueChanged(qreal val);
+    void onIntroValueChanged(qreal val);
+    void startIntroAnimation();
 
 private:
-    QPainterPath tabPath(const QRect &r);
+    QPainterPath tabPath(const QRectF &r);
 
     static const int TAB_CONTENTS_MARGIN = 6;
     int m_hoveredTabIndex;
     QTimer m_tabSwitchTimer;
+    QTimer m_startAnimationTimer;
     bool m_switchOnHover;
     bool m_animateSwitch;
-    QRect m_currentAnimRect;
+    QRectF m_currentAnimRect;
     int m_lastIndex[2];
     qreal m_animProgress;
+    qreal m_introAnimProgress;
     Plasma::FrameSvg *background;
 
     QSize tabSize(int index) const;
