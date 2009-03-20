@@ -1,4 +1,5 @@
 /***************************************************************************
+ *                                                                         *
  *   Copyright (C) 2009 Marco Martin <notmart@gmail.com>                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -17,53 +18,20 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef DBUSSYSTEMTRAYPROTOCOL_H
-#define DBUSSYSTEMTRAYPROTOCOL_H
+#ifndef SYSTEMTRAYTYPES_H
+#define SYSTEMTRAYTYPES_H
 
-#include "../../core/protocol.h"
+#include <QDBusArgument>
 
-#include "systemtraydaemon_interface.h"
-
-#include <QHash>
-
-#include <QDBusConnection>
-
-
-namespace SystemTray
-{
-
-class DBusSystemTrayTask;
-
-class DBusSystemTrayProtocol : public Protocol
-{
-    Q_OBJECT
-
-public:
-    DBusSystemTrayProtocol(QObject *parent);
-    ~DBusSystemTrayProtocol();
-    void init();
-
-protected:
-    void newTask(QString service);
-    void cleanupTask(QString typeId);
-    void initRegisteredServices();
-
-protected Q_SLOTS:
-    void serviceChange(const QString& name,
-                       const QString& oldOwner,
-                       const QString& newOwner);
-    void registerWatcher(const QString& service);
-    void unregisterWatcher(const QString& service);
-    void serviceRegistered(const QString &service);
-    void serviceUnregistered(const QString &service);
-
-private:
-    QDBusConnection m_dbus;
-    QHash<QString, DBusSystemTrayTask*> m_tasks;
-    org::kde::SystemtrayDaemon *m_sysTrayDaemon;
+struct Icon {
+    int width;
+    int height;
+    QByteArray data;
 };
 
-}
+const QDBusArgument &operator<<(QDBusArgument &argument, const Icon &icon);
+const QDBusArgument &operator>>(const QDBusArgument &argument, Icon &icon);
 
+Q_DECLARE_METATYPE(Icon)
 
 #endif

@@ -1,7 +1,6 @@
 /***************************************************************************
- *   DBusSystemTrayTask.cpp                                                  *
  *                                                                         *
- *   Copyright (C) 2008 Jason Stubbs <jasonbstubbs@gmail.com>              *
+ *   Copyright (C) 2009 Marco Martin <notmart@gmail.com>                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -20,10 +19,13 @@
  ***************************************************************************/
 
 #include "dbussystemtraytask.h"
+#include "systemtray_interface.h"
+#include "systemtraytypes.h"
 
 #include <QGraphicsWidget>
 #include <QGraphicsSceneContextMenuEvent>
 #include <QIcon>
+#include <QDBusReply>
 
 #include <KIcon>
 #include <KIconLoader>
@@ -73,6 +75,9 @@ DBusSystemTrayTask::DBusSystemTrayTask(const QString &service)
     : Task(),
       d(new DBusSystemTrayTaskPrivate(this))
 {
+    setObjectName("DBusSystemTrayTask");
+    qDBusRegisterMetaType<Icon>();
+
     d->name = service;
     d->iconWidget = new Plasma::IconWidget();
 
@@ -162,10 +167,13 @@ void DBusSystemTrayTaskPrivate::askContextMenu()
 
 void DBusSystemTrayTaskPrivate::syncIcon()
 {
-    if (!systemTrayIcon->iconName().value().isNull()) {
+    if (systemTrayIcon->iconName().value().length() > 0) {
         icon = KIcon(systemTrayIcon->iconName());
     } else {
-        QImage iconImage; iconImage.loadFromData(systemTrayIcon->iconPixmap().value());
+        QDBusReply<Icon> iconReply = systemTrayIcon->iconPixmap();
+        Icon iconStruct = iconReply.value();
+        QImage iconImage(QSize(iconStruct.width, iconStruct.height), QImage::Format_ARGB32);kWarning()<<iconStruct.width<<iconStruct.height;
+        iconImage.loadFromData(iconStruct.data);
         icon = QPixmap::fromImage(iconImage);
     }
     iconWidget->setIcon(icon);
@@ -179,10 +187,14 @@ void DBusSystemTrayTaskPrivate::syncTooltip()
     }
 
     QIcon tooltipIcon;
-    if (!systemTrayIcon->iconName().value().isNull()) {
-        tooltipIcon = KIcon(systemTrayIcon->iconName());
+    if (systemTrayIcon->tooltipIconName().value().length() > 0) {
+        tooltipIcon = KIcon(systemTrayIcon->tooltipIconName());
     } else {
-        QImage iconImage; iconImage.loadFromData(systemTrayIcon->iconPixmap().value());
+        QDBusReply<Icon> iconReply = systemTrayIcon->tooltipIconPixmap();
+        Icon iconStruct = iconReply.value();
+        QImage iconImage(QSize(iconStruct.width, iconStruct.height), QImage::Format_ARGB32);
+        iconImage.loadFromData(iconStruct.data);
+        icon = QPixmap::fromImage(iconImage);
         tooltipIcon = QPixmap::fromImage(iconImage);
     }
 

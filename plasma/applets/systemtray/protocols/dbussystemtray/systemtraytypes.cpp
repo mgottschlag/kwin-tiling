@@ -1,4 +1,5 @@
 /***************************************************************************
+ *                                                                         *
  *   Copyright (C) 2009 Marco Martin <notmart@gmail.com>                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -17,53 +18,36 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef DBUSSYSTEMTRAYPROTOCOL_H
-#define DBUSSYSTEMTRAYPROTOCOL_H
-
-#include "../../core/protocol.h"
-
-#include "systemtraydaemon_interface.h"
-
-#include <QHash>
-
-#include <QDBusConnection>
+#include "systemtraytypes.h"
 
 
-namespace SystemTray
+// Marshall the Icon data into a D-BUS argument
+const QDBusArgument &operator<<(QDBusArgument &argument, const Icon &icon)
 {
-
-class DBusSystemTrayTask;
-
-class DBusSystemTrayProtocol : public Protocol
-{
-    Q_OBJECT
-
-public:
-    DBusSystemTrayProtocol(QObject *parent);
-    ~DBusSystemTrayProtocol();
-    void init();
-
-protected:
-    void newTask(QString service);
-    void cleanupTask(QString typeId);
-    void initRegisteredServices();
-
-protected Q_SLOTS:
-    void serviceChange(const QString& name,
-                       const QString& oldOwner,
-                       const QString& newOwner);
-    void registerWatcher(const QString& service);
-    void unregisterWatcher(const QString& service);
-    void serviceRegistered(const QString &service);
-    void serviceUnregistered(const QString &service);
-
-private:
-    QDBusConnection m_dbus;
-    QHash<QString, DBusSystemTrayTask*> m_tasks;
-    org::kde::SystemtrayDaemon *m_sysTrayDaemon;
-};
-
+    argument.beginStructure();
+    argument << icon.width;
+    argument << icon.height;
+    argument << icon.data;
+    argument.endStructure();
+    return argument;
 }
 
+// Retrieve the Icon data from the D-BUS argument
+const QDBusArgument &operator>>(const QDBusArgument &argument, Icon &icon)
+{
+    qint32 width;
+    qint32 height;
+    QByteArray data;
 
-#endif
+    argument.beginStructure();
+    argument >> width;
+    argument >> height;
+    argument >> data;
+    argument.endStructure();
+
+    icon.width = width;
+    icon.height = height;
+    icon.data = data;
+
+    return argument;
+}

@@ -22,10 +22,10 @@
       <arg type="s" direction="out"/>
     </method>
 
-    <!--hmm is the right way to pass pixmaps?-->
+    <!--struct containing width, height and image data-->
     <method name="iconPixmap">
-      <arg type="ay" direction="out"/>
-      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QImage"/>
+      <arg type="(iiay)" direction="out"/>
+      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="Icon"/>
     </method>
 
 
@@ -34,9 +34,10 @@
       <arg type="s" direction="out"/>
     </method>
 
+    <!--same definition as iconPixmap-->
     <method name="tooltipIconPixmap">
-      <arg type="ay" direction="out"/>
-      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QImage"/>
+      <arg type="(iiay)" direction="out"/>
+      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="Icon"/>
     </method>
 
     <method name="tooltipTitle">

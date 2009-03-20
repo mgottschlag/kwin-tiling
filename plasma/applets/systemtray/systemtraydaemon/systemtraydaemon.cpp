@@ -28,7 +28,7 @@
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
 #include "systemtraydaemonadaptor.h"
-#include "../systemtray_interface.h"
+#include "systemtray_interface.h"
 
 
 static inline KAboutData aboutData()

@@ -28,6 +28,7 @@ set(systemtray_SRCS
 
     protocols/dbussystemtray/dbussystemtraytask.cpp
     protocols/dbussystemtray/dbussystemtrayprotocol.cpp
+    protocols/dbussystemtray/systemtraytypes.cpp
 
     ui/applet.cpp
     ui/compactlayout.cpp
@@ -42,7 +43,14 @@ add_subdirectory(systemtraydaemon)
 set(systemtraydaemon_xml systemtraydaemon/org.kde.SystemTrayDaemon.xml)
 QT4_ADD_DBUS_INTERFACE(systemtray_SRCS ${systemtraydaemon_xml} systemtraydaemon_interface)
 
+
 set(systemtray_xml systemtraydaemon/org.kde.SystemTray.xml)
+
+set_source_files_properties(${systemtray_xml} PROPERTIES
+   NO_NAMESPACE false
+   INCLUDE "protocols/dbussystemtray/systemtraytypes.h"
+   CLASSNAME OrgKdeSystemTrayInterface
+)
 QT4_ADD_DBUS_INTERFACE(systemtray_SRCS ${systemtray_xml} systemtray_interface)
 
 kde4_add_plugin(plasma_applet_systemtray ${systemtray_SRCS})
