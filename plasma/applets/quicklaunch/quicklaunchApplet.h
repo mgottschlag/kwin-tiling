@@ -153,8 +153,8 @@ class QuicklaunchApplet : public Plasma::Applet
         QList<QuicklaunchIcon*> m_icons;
         Plasma::IconWidget *m_arrow;
         int m_visibleIcons;
-        int m_rowCount;
-        int m_dialogRowCount;
+        int m_iconSize;
+        int m_dialogIconSize;
         Plasma::Dialog *m_dialog;
         QGraphicsWidget * m_dialogWidget;
         QuicklaunchLayout *m_dialogLayout;

@@ -52,6 +52,17 @@ class QuicklaunchIcon : public Plasma::IconWidget
          */
         KUrl url() const;
 
+        /**
+         * Set the size of the icon to be painted
+         * @param size the size in pxs
+         */
+        void setIconSize(int px);
+
+        /**
+         * @returns the icon size
+         */
+        int iconSize() const;
+
     public slots:
         /**
          * Open the url
@@ -61,11 +72,13 @@ class QuicklaunchIcon : public Plasma::IconWidget
     protected:
         void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
         //bool eventFilter(QObject * object, QEvent * event);
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
     private:
         QuicklaunchApplet *m_launcher;
         KUrl m_appUrl;
         QAction *m_removeAction;
+        int m_iconSize;
 };
 
 #endif

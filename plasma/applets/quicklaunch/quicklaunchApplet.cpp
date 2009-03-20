@@ -32,6 +32,7 @@
 #include <KMimeType>
 #include <KStandardDirs>
 #include <KWindowSystem>
+#include <KIconLoader>
 
 #include <plasma/containment.h>
 #include <plasma/dialog.h>
@@ -47,8 +48,8 @@ QuicklaunchApplet::QuicklaunchApplet(QObject *parent, const QVariantList &args)
     m_layout(0),
     m_innerLayout(0),
     m_visibleIcons(6),
-    m_rowCount(2),
-    m_dialogRowCount(2),
+    m_iconSize(s_defaultIconSize),
+    m_dialogIconSize(s_defaultIconSize),
     m_dialog(0),
     m_dialogWidget(0),
     m_dialogLayout(0),
@@ -62,9 +63,9 @@ QuicklaunchApplet::QuicklaunchApplet(QObject *parent, const QVariantList &args)
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
 
     // set our default size here
-    resize((m_visibleIcons / m_rowCount) * s_defaultIconSize +
+    /*resize((m_visibleIcons / m_rowCount) * s_defaultIconSize +
             (s_defaultSpacing * (m_visibleIcons + 1)),
-           m_rowCount * 22 + s_defaultSpacing * 3);
+           m_rowCount * 22 + s_defaultSpacing * 3);*/
 }
 
 QuicklaunchApplet::~QuicklaunchApplet()
@@ -90,9 +91,9 @@ void QuicklaunchApplet::saveState(KConfigGroup &config) const
 void QuicklaunchApplet::init()
 {
     KConfigGroup cg = config();
-    m_rowCount = qMax(1, cg.readEntry("rowCount", m_rowCount));
+    m_iconSize = qMax(1, (int)cg.readEntry("iconSize", contentsRect().height() / 2));
     m_visibleIcons = qMax(1, cg.readEntry("visibleIcons", m_visibleIcons));
-    m_dialogRowCount = qMax(1, cg.readEntry("dialogRowCount", m_dialogRowCount));
+    m_dialogIconSize = qMax(1, (int)cg.readEntry("dialogIconSize", contentsRect().height() / 2));
 
     // Initialize outer layout
     m_layout = new QGraphicsLinearLayout(this);
@@ -101,7 +102,7 @@ void QuicklaunchApplet::init()
     setLayout(m_layout);
 
     // Initialize inner layout
-    m_innerLayout = new QuicklaunchLayout(m_rowCount, this, 0);
+    m_innerLayout = new QuicklaunchLayout(1, this, 0);
     m_innerLayout->setContentsMargins(0, 0, 0, 0);
     m_innerLayout->setSpacing(0);
     m_layout->addItem(m_innerLayout);
@@ -166,39 +167,36 @@ void QuicklaunchApplet::refactorUi()
 
     if (m_dialogLayout) {
         clearLayout(m_dialogLayout);
-        m_dialogLayout->setRowCount(m_dialogRowCount);
+        m_dialogLayout->setRowCount((int)(size().height() / m_dialogIconSize));
     }
     int rowCount;
     int iconWidth;
     if (formFactor() == Plasma::Vertical) {
-        rowCount = qMin(m_rowCount, int(size().width()) / (s_defaultIconSize + s_defaultSpacing));
+        rowCount = contentsRect().width() / m_iconSize;
         // prevent possible division by zero if size().width() is 0
         rowCount = qMax(1, rowCount );
-        iconWidth = size().width() / rowCount;
     } else {
-        rowCount = qMin(m_rowCount, int(size().height()) / (s_defaultIconSize + s_defaultSpacing));
+        rowCount = contentsRect().height() / m_iconSize;
         // prevent possible division by zero if size().height() is 0
-        rowCount = qMax(1, rowCount );
-        iconWidth = qMax(s_defaultIconSize, int(size().height()) / rowCount);
+        rowCount = qMax(1, rowCount);
     }
 
     m_innerLayout->setRowCount(rowCount);
-    const QSizeF minSize = QSizeF(iconWidth, iconWidth);
-    const QSizeF maxSize = QSizeF(iconWidth, iconWidth);
     int count = 0;
     kDebug() << m_icons.count() << iconWidth << "pixel icons in" << rowCount
              << "rows, with a max of" << m_visibleIcons << "visible";
     foreach (QuicklaunchIcon *icon, m_icons) {
         //icon->setMinimumSize(minSize);
         //icon->setMaximumSize(maxSize);
-        icon->resize(minSize);
-
         if (count < m_visibleIcons || m_visibleIcons == -1) {
+            icon->resize(QSize(m_iconSize, m_iconSize));
+            icon->setIconSize(m_iconSize);
             icon->show();
             m_innerLayout->addItem(icon);
         } else if (m_dialogLayout) {
-            icon->setMinimumSize(minSize);
-            icon->setMaximumSize(maxSize);
+            icon->setMinimumSize(QSize(m_dialogIconSize, m_dialogIconSize));//TODO: Remove maximum/minimum sizes
+            icon->setMaximumSize(QSize(m_dialogIconSize, m_dialogIconSize));
+            icon->setIconSize(m_dialogIconSize);
             icon->show();
             m_dialogLayout->addItem(icon);
         } else {
@@ -212,7 +210,7 @@ void QuicklaunchApplet::refactorUi()
     if (count > m_visibleIcons && m_visibleIcons != -1) {
         //m_arrow->setMinimumSize(minSize);
         //m_arrow->setMaximumSize(maxSize);
-        m_arrow->resize(minSize);
+        m_arrow->resize(QSize(size().height(), size().height()));
         m_layout->addItem(m_arrow);
         m_arrow->show();
     } else {
@@ -224,8 +222,12 @@ void QuicklaunchApplet::refactorUi()
         m_dialogLayout->updateGeometry();
         m_dialog->adjustSize();
     }
-    m_innerLayout->updateGeometry();
-    m_layout->updateGeometry();
+    //resize(sizeHint(Qt::PreferredSize));
+    //adjustSize();
+    //m_innerLayout->updateGeometry();
+    //m_layout->updateGeometry();
+    resize(sizeHint(Qt::PreferredSize));
+    update();
 }
 
 void QuicklaunchApplet::showDialog()
@@ -241,7 +243,7 @@ void QuicklaunchApplet::showDialog()
         m_dialog->setAcceptDrops(true);
         //m_dialog->installEventFilter(this);
         m_dialog->setContextMenuPolicy(Qt::ActionsContextMenu);
-        m_dialogLayout = new QuicklaunchLayout(m_dialogRowCount, m_dialogWidget, m_dialogWidget);
+        m_dialogLayout = new QuicklaunchLayout(1, m_dialogWidget, m_dialogWidget);
         m_dialogWidget->setLayout(m_dialogLayout);
         refactorUi();
         m_dialog->setGraphicsWidget(m_dialogWidget);
@@ -252,7 +254,7 @@ void QuicklaunchApplet::showDialog()
     } else {
         m_dialog->resize(m_dialogLayout->preferredSize().toSize());
         //m_dialog->updateGeometry();
-        if(containment() && containment()->corona()) {
+        if (containment() && containment()->corona()) {
             kDebug() << "position:" << containment()->corona()->popupPosition(m_arrow, m_dialog->size()) << "dialog size:" << m_dialog->size() << "layout preferred-size:" << m_dialogLayout->preferredSize().toSize();
             m_dialog->move(containment()->corona()->popupPosition(m_arrow, m_dialog->size()));
         }
@@ -268,25 +270,30 @@ void QuicklaunchApplet::createConfigurationInterface(KConfigDialog *parent)
     QWidget *widget = new QWidget(parent);
     uiConfig.setupUi(widget);
     connect(parent, SIGNAL(accepted()), SLOT(configAccepted()));
-    uiConfig.rowCount->setValue(m_rowCount);
-    uiConfig.dialogRowCount->setValue(m_dialogRowCount);
-    uiConfig.dialogRowCount->hide();
-    uiConfig.dialogrowLabel->hide();
+
+    int height = contentsRect().height() - 2 * s_defaultSpacing;
+    int dialogHeight = (int)KIconLoader::SizeEnormous;
+
+    uiConfig.iconSizeSpin->setMaximum(height);
+    uiConfig.iconSizeSlider->setMaximum(height);
+    uiConfig.dialogIconSizeSpin->setMaximum(dialogHeight);
+    uiConfig.dialogIconSizeSlider->setMaximum(dialogHeight);
+
+    uiConfig.iconSizeSpin->setValue(m_iconSize);
+    uiConfig.iconSizeSlider->setValue(m_iconSize);
+    uiConfig.dialogIconSizeSpin->setValue(m_dialogIconSize);
+    uiConfig.dialogIconSizeSlider->setValue(m_dialogIconSize);
+
     uiConfig.icons->setValue(m_visibleIcons);
     parent->addPage(widget, i18n("General"), icon());
 }
 
 void QuicklaunchApplet::configAccepted()
 {
-    bool changed = false;
-    int temp = uiConfig.rowCount->value();
-
     KConfigGroup cg = config();
-    if (temp != m_rowCount) {
-        m_rowCount = temp;
-        cg.writeEntry("rowCount", m_rowCount);
-        changed = true;
-    }
+
+    bool changed = false;
+    int temp;
 
     temp = uiConfig.icons->value();
     if (temp != m_visibleIcons) {
@@ -295,10 +302,17 @@ void QuicklaunchApplet::configAccepted()
         changed = true;
     }
 
-    temp = uiConfig.dialogRowCount->value();
-    if (temp != m_dialogRowCount) {
-        m_dialogRowCount = temp;
-        cg.writeEntry("dialogRowCount", m_dialogRowCount);
+    temp = uiConfig.iconSizeSpin->value();
+    if (temp != m_iconSize) {
+        m_iconSize = temp;
+        cg.writeEntry("iconSize", m_iconSize);
+        changed = true;
+    }
+
+    temp = uiConfig.dialogIconSizeSpin->value();
+    if (temp != m_dialogIconSize) {
+        m_dialogIconSize = temp;
+        cg.writeEntry("dialogIconSize", m_dialogIconSize);
         changed = true;
     }
 
@@ -354,15 +368,20 @@ void QuicklaunchApplet::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 
 void QuicklaunchApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
-    // Calculate position
-    QPointF point = mapFromScene(event->scenePos());
-    int rowCount = m_innerLayout->rowCount();
-    int cols = static_cast<int>(ceil(1.0 * qMin(m_icons.size(), m_visibleIcons) / rowCount));
-    int col = static_cast<int>((round(point.x()) * cols / m_innerLayout->geometry().width()));
-    col = (col >= cols) ? col - 1 : col;
-    int row = static_cast<int>(floor(point.y() * rowCount / m_innerLayout->geometry().height()));
-    row = (row >= m_rowCount) ? row - 1 : row;
-    int pos = row * cols + col;
+    int pos;
+    //if (!m_dialog || !m_dialog->geometry().contains(m_dialog->mapFromGlobal(QCursor::pos()))) {
+        // Calculate position
+        QPointF point = mapFromScene(event->scenePos());
+        int rowCount = m_innerLayout->rowCount();
+        int cols = static_cast<int>(ceil(1.0 * qMin(m_icons.size(), m_visibleIcons) / rowCount));
+        int col = static_cast<int>((round(point.x()) * cols / m_innerLayout->geometry().width()));
+        col = (col >= cols) ? col - 1 : col;
+        int row = static_cast<int>(floor(point.y() * rowCount / m_innerLayout->geometry().height()));
+        row = (row >= m_innerLayout->rowCount()) ? row - 1 : row;
+        pos = row * cols + col;
+    /*} else {
+        kDebug() << "WE'RE ON THE DIALOG";
+    }*/
 
     if (pos >= m_icons.size()) {
         pos = m_icons.size() - 1;

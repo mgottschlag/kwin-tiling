@@ -21,6 +21,7 @@
 
 #include <QGraphicsSceneContextMenuEvent>
 #include <QGraphicsSceneDragDropEvent>
+#include <QPainter>
 
 #include <KMenu>
 #include <KRun>
@@ -31,7 +32,8 @@ QuicklaunchIcon::QuicklaunchIcon(const KUrl & appUrl, const KIcon & icon, Quickl
   : Plasma::IconWidget(icon, QString(), parent),
     m_launcher(parent),
     m_appUrl(appUrl),
-    m_removeAction(0)
+    m_removeAction(0),
+    m_iconSize(0)
 {
     setAcceptDrops(true);
     connect(this, SIGNAL(clicked()), SLOT(execute()));
@@ -44,6 +46,30 @@ QuicklaunchIcon::~QuicklaunchIcon()
 KUrl QuicklaunchIcon::url() const
 {
     return m_appUrl;
+}
+
+void QuicklaunchIcon::setIconSize(int px)
+{
+    m_iconSize = px;
+}
+
+int QuicklaunchIcon::iconSize() const
+{
+    return m_iconSize;
+}
+
+void QuicklaunchIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    painter->setClipRect(option->rect);
+    QRect rect = option->rect;
+    rect.setSize(QSize(m_iconSize, m_iconSize));
+    rect.moveCenter(option->rect.center());
+    //QStyleOptionGraphicsItem opt = *option;
+    //opt.rect = rect;
+    kDebug() << "Paint to:" << rect;
+
+    painter->drawPixmap(rect, icon().pixmap(m_iconSize));
+    //IconWidget::paint(painter, &opt, widget);
 }
 
 void QuicklaunchIcon::execute()
