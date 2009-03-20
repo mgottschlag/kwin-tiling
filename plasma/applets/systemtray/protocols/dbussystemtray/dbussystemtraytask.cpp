@@ -53,7 +53,6 @@ public:
         delete iconWidget;
     }
 
-    void askContextMenu();
     void syncIcon();
     void syncTooltip();
     void syncStatus(int status);
@@ -145,7 +144,8 @@ QIcon DBusSystemTrayTask::icon() const
 bool DBusSystemTrayTask::eventFilter(QObject *watched, QEvent *event)
 {
     if (watched == d->iconWidget && event->type() == QEvent::GraphicsSceneContextMenu) {
-        d->askContextMenu();
+        QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
+        d->systemTrayIcon->contextMenu(me->screenPos().x(), me->screenPos().y());
         return true;
     }
     return false;
@@ -153,17 +153,6 @@ bool DBusSystemTrayTask::eventFilter(QObject *watched, QEvent *event)
 
 //DBusSystemTrayTaskPrivate
 
-void DBusSystemTrayTaskPrivate::askContextMenu()
-{
-    QPoint popupPos(0,0);
-
-    QGraphicsView *view = Plasma::viewFor(iconWidget);
-    if (view) {
-        popupPos = view->mapToGlobal(view->mapFromScene(iconWidget->scenePos()));
-    }
-
-    systemTrayIcon->contextMenu(popupPos.x(), popupPos.y());
-}
 
 void DBusSystemTrayTaskPrivate::syncIcon()
 {
