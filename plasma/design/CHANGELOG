@@ -56,6 +56,9 @@ Plugins/Addons
          * Comics
              * Added optional Nepomuk support when manually saving a comic strip.
              * Added per comic setting to store the current position.
+         *Taskbar
+             * New popup menu for grouped tasks with animation and tooltips for each item
+             * Tooltips of grouped tasks can show tooltips of multiple windows
 
 KRunner
 -------
