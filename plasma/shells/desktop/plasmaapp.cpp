@@ -485,6 +485,12 @@ Plasma::Corona* PlasmaApp::corona()
         activityAction->setShortcutContext(Qt::ApplicationShortcut);
         c->addAction("add sibling containment", activityAction);
 
+        KAction *zoomAction = new KAction(i18n("Zoom Out"), this);
+        zoomAction->setIcon(KIcon("zoom-out"));
+        connect(zoomAction, SIGNAL(triggered()), this, SLOT(zoomOut()));
+        zoomAction->setShortcut(QKeySequence("alt+d,-"));
+        c->addAction("zoom out", zoomAction);
+
         m_corona = c;
         c->setItemIndexMethod(QGraphicsScene::NoIndex);
         c->initializeLayout();
@@ -724,6 +730,11 @@ void PlasmaApp::addContainment()
     }
 }
 
+void PlasmaApp::zoomOut()
+{
+    zoom(0, Plasma::ZoomOut);
+}
+
 void PlasmaApp::zoom(Plasma::Containment *containment, Plasma::ZoomDirection direction)
 {
     if (direction == Plasma::ZoomIn) {
@@ -785,10 +796,10 @@ void PlasmaApp::zoomIn(Plasma::Containment *containment)
         }
 
         c->enableAction("zoom in", zoomIn);
-        c->enableAction("zoom out", zoomOut);
         c->enableAction("remove", remove && (c->screen() == -1));
         c->enableAction("add widgets", isMutable);
     }
+    m_corona->enableAction("zoom out", zoomOut);
     m_corona->enableAction("add sibling containment", addSibling);
 }
 
@@ -822,10 +833,10 @@ void PlasmaApp::zoomOut(Plasma::Containment *)
         }
 
         c->enableAction("zoom in", zoomIn);
-        c->enableAction("zoom out", zoomOut);
         c->enableAction("remove", isMutable && c->screen() == -1);
         c->enableAction("add widgets", addWidgets);
     }
+    m_corona->enableAction("zoom out", zoomOut);
     m_corona->enableAction("add sibling containment", addSibling);
 }
 

@@ -116,6 +116,7 @@ private:
     void zoomOut(Plasma::Containment *containment);
 
 private Q_SLOTS:
+    void zoomOut();
     void setupDesktop();
     void cleanup();
     void containmentAdded(Plasma::Containment *containment);
