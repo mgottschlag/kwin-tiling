@@ -34,6 +34,7 @@
 
 Image::Image(QObject *parent, const QVariantList &args)
     : Plasma::Wallpaper(parent, args),
+      m_configWidget(0),
       m_currentSlide(-1),
       m_model(0),
       m_dialog(0),
@@ -97,12 +98,18 @@ void Image::save(KConfigGroup &config)
     config.writeEntry("userswallpapers", m_usersWallpapers);
 }
 
+void Image::configWidgetDestroyed()
+{
+    m_configWidget = 0;
+}
+
 QWidget* Image::createConfigurationInterface(QWidget* parent)
 {
-    m_widget = new QWidget(parent);
+    m_configWidget = new QWidget(parent);
+    connect(m_configWidget, SIGNAL(destroyed(QObject*)), this, SLOT(configWidgetDestroyed()));
 
     if (m_mode == "SingleImage") {
-        m_uiImage.setupUi(m_widget);
+        m_uiImage.setupUi(m_configWidget);
 
         m_model = new BackgroundListModel(m_ratio, this);
         m_model->setResizeMethod(m_resizeMethod);
@@ -147,7 +154,7 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
 
         connect(m_uiImage.m_newStuff, SIGNAL(clicked()), this, SLOT(getNewWallpaper()));
     } else {
-        m_uiSlideshow.setupUi(m_widget);
+        m_uiSlideshow.setupUi(m_configWidget);
 
         m_uiSlideshow.m_dirlist->clear();
         foreach (const QString &dir, m_dirs) {
@@ -187,7 +194,7 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         connect(m_uiSlideshow.m_newStuff, SIGNAL(clicked()), this, SLOT(getNewWallpaper()));
     }
 
-    return m_widget;
+    return m_configWidget;
 }
 
 void Image::calculateGeometry()
@@ -256,7 +263,7 @@ void Image::timeChanged(const QTime& time)
 void Image::slotAddDir()
 {
     KUrl empty;
-    KDirSelectDialog dialog(empty, true, m_widget);
+    KDirSelectDialog dialog(empty, true, m_configWidget);
     if (dialog.exec()) {
         QString urlDir = dialog.url().path();
         if (!urlDir.isEmpty() && m_uiSlideshow.m_dirlist->findItems(urlDir, Qt::MatchExactly).isEmpty()) {
@@ -330,7 +337,7 @@ void Image::startSlideshow()
     m_slideshowBackgrounds.clear();
 
     {
-        KProgressDialog progressDialog;
+        KProgressDialog progressDialog(m_configWidget);
         BackgroundListModel::initProgressDialog(&progressDialog);
         foreach (const QString& dir, m_dirs) {
             m_slideshowBackgrounds += BackgroundListModel::findAllBackgrounds(0, dir, m_ratio, &progressDialog);
@@ -350,9 +357,9 @@ void Image::startSlideshow()
 
 void Image::getNewWallpaper()
 {
-    KNS::Engine engine(m_widget);
+    KNS::Engine engine(m_configWidget);
     if (engine.init("wallpaper.knsrc")) {
-        KNS::Entry::List entries = engine.downloadDialogModal(m_widget);
+        KNS::Entry::List entries = engine.downloadDialogModal(m_configWidget);
 
         if (entries.size() > 0 && m_model) {
             m_model->reload();
@@ -445,12 +452,13 @@ bool Image::setMetadata(QLabel *label, const QString &text)
 void Image::showFileDialog()
 {
     if (!m_dialog) {
-        m_dialog = new KFileDialog(KUrl(), "*.png *.jpeg *.jpg *.xcf *.svg *.svgz", m_widget);
+        m_dialog = new KFileDialog(KUrl(), "*.png *.jpeg *.jpg *.xcf *.svg *.svgz", m_configWidget);
         m_dialog->setOperationMode(KFileDialog::Opening);
         m_dialog->setInlinePreviewShown(true);
         m_dialog->setCaption(i18n("Select Wallpaper Image File"));
         m_dialog->setModal(false);
     }
+
     m_dialog->show();
     m_dialog->raise();
     m_dialog->activateWindow();

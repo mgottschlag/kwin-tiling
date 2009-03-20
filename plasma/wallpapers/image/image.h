@@ -50,6 +50,7 @@ class Image : public Plasma::Wallpaper
         void updateScreenshot(QPersistentModelIndex index);
         void removeBackground(const QString &path);
         void updateFadedImage(qreal frame);
+        void configWidgetDestroyed();
 
     protected:
         void init(const KConfigGroup &config);
@@ -70,7 +71,7 @@ class Image : public Plasma::Wallpaper
         QColor m_color;
         QStringList m_usersWallpapers;
 
-        QWidget* m_widget;
+        QWidget* m_configWidget;
         Ui::ImageConfig m_uiImage;
         Ui::SlideshowConfig m_uiSlideshow;
         QString m_mode;
