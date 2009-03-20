@@ -153,9 +153,14 @@ void DictEngine::getDicts()
             break;
         }
 
-        if (!curr.startsWith('-')) {
+        // ignore status code and empty lines
+        if (curr.startsWith("250") || curr.startsWith("110") || curr.isEmpty()) {
+            continue;
+        }
+
+        if (!curr.startsWith('-') && !curr.startsWith('.')) {
             curr = curr.trimmed();
-            tmp1 = curr.section(' ', 0, 1);
+            tmp1 = curr.section(' ', 0, 0);
             tmp2 = curr.section(' ', 1);
   //          theHash.insert(tmp1, tmp2);
             //kDebug() << tmp1 + "  " + tmp2;
