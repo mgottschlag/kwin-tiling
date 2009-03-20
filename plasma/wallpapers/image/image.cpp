@@ -21,6 +21,7 @@
 #include <KGlobalSettings>
 #include <KImageFilePreview>
 #include <KNS/Engine>
+#include <KProgressDialog>
 #include <KRandom>
 #include <KStandardDirs>
 
@@ -327,8 +328,13 @@ void Image::startSlideshow()
     m_timer.stop();
     qDeleteAll(m_slideshowBackgrounds);
     m_slideshowBackgrounds.clear();
-    foreach (const QString& dir, m_dirs) {
-        m_slideshowBackgrounds += BackgroundListModel::findAllBackgrounds(0, dir, m_ratio);
+
+    {
+        KProgressDialog progressDialog;
+        BackgroundListModel::initProgressDialog(&progressDialog);
+        foreach (const QString& dir, m_dirs) {
+            m_slideshowBackgrounds += BackgroundListModel::findAllBackgrounds(0, dir, m_ratio, &progressDialog);
+        }
     }
 
     // start slideshow

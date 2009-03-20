@@ -15,6 +15,7 @@
 #include <QAbstractListModel>
 #include <KDirWatch>
 
+class KProgressDialog;
 class Background;
 
 class BackgroundContainer
@@ -42,12 +43,15 @@ public:
     virtual bool contains(const QString &bg) const;
 
     static QList<Background *> findAllBackgrounds(const BackgroundContainer *container,
-                                                    const QString &path, float ratio);
+                                                  const QString &path, float ratio,
+                                                  KProgressDialog *progress = 0);
+    static void initProgressDialog(KProgressDialog *dialog);
 
     void setWallpaperSize(QSize size);
     void setResizeMethod(Background::ResizeMethod resizeMethod);
 
 private:
+
     QObject *m_listener;
     QList<Background*> m_packages;
     float m_ratio;

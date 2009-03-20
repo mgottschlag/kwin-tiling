@@ -9,10 +9,13 @@
 
 #include "backgroundlistmodel.h"
 
+#include <QCoreApplication>
 #include <QFile>
 #include <QDir>
+#include <QProgressBar>
 
 #include <KGlobal>
+#include <KProgressDialog>
 #include <KStandardDirs>
 
 #include "backgroundpackage.h"
@@ -46,13 +49,20 @@ void BackgroundListModel::reload(const QStringList& selected)
 {
     QStringList dirs = KGlobal::dirs()->findDirs("wallpaper", "");
     QList<Background *> tmp;
+
     foreach (const QString &file, selected) {
         if (!contains(file) && QFile::exists(file)) {
             tmp << new BackgroundFile(file, m_ratio);
         }
     }
-    foreach (const QString &dir, dirs) {
-        tmp += findAllBackgrounds(this, dir, m_ratio);
+
+    {
+        KProgressDialog progressDialog;
+        initProgressDialog(&progressDialog);
+
+        foreach (const QString &dir, dirs) {
+            tmp += findAllBackgrounds(this, dir, m_ratio, &progressDialog);
+        }
     }
 
     // add new files to dirwatch
@@ -155,9 +165,24 @@ Background* BackgroundListModel::package(int index) const
     return m_packages.at(index);
 }
 
-QList<Background *> BackgroundListModel::findAllBackgrounds(const BackgroundContainer *container,
-                                                            const QString &path, float ratio)
+void BackgroundListModel::initProgressDialog(KProgressDialog *progress)
 {
+    progress->setAllowCancel(false);
+    progress->setModal(true);
+    progress->setLabelText(i18n("Finding images for the wallpaper slideshow."));
+    progress->progressBar()->setRange(0, 0);
+}
+
+QList<Background *> BackgroundListModel::findAllBackgrounds(const BackgroundContainer *container,
+                                                            const QString &path, float ratio,
+                                                            KProgressDialog *progress)
+{
+    KProgressDialog *myProgress = 0;
+    if (!progress) {
+        myProgress = progress = new KProgressDialog;
+        initProgressDialog(myProgress);
+    }
+
     //kDebug() << "looking for" << path;
     QList<Background *> res;
 
@@ -166,9 +191,13 @@ QList<Background *> BackgroundListModel::findAllBackgrounds(const BackgroundCont
     QStringList packages = Plasma::Package::listInstalledPaths(path);
     QSet<QString> validPackages;
     foreach (const QString &packagePath, packages) {
+        QCoreApplication::processEvents();
+        progress->setLabelText(i18n("Finding images for the wallpaper slideshow.") + "\n\n" +
+                               i18n("Testing %1 for a Wallpaper package", packagePath));
         std::auto_ptr<Background> pkg(new BackgroundPackage(path + packagePath, ratio));
-        if (pkg->isValid() &&
-            (!container || !container->contains(pkg->path()))) {
+        if (pkg->isValid() && (!container || !container->contains(pkg->path()))) {
+            progress->setLabelText(i18n("Finding images for the wallpaper slideshow.") + "\n\n" +
+                                   i18n("Adding wallpaper package in %1", packagePath));
             res.append(pkg.release());
             //kDebug() << "    adding valid package:" << packagePath;
             validPackages << packagePath;
@@ -184,8 +213,11 @@ QList<Background *> BackgroundListModel::findAllBackgrounds(const BackgroundCont
     dir.setFilter(QDir::Files | QDir::Hidden | QDir::Readable);
     QFileInfoList files = dir.entryInfoList();
     foreach (const QFileInfo &wp, files) {
+        QCoreApplication::processEvents();
         if (!container || !container->contains(wp.filePath())) {
             //kDebug() << "     adding image file" << wp.filePath();
+            progress->setLabelText(i18n("Finding images for the wallpaper slideshow.") + "\n\n" +
+                                   i18n("Adding image %1", wp.filePath()));
             res.append(new BackgroundFile(wp.filePath(), ratio));
         }
     }
@@ -194,17 +226,18 @@ QList<Background *> BackgroundListModel::findAllBackgrounds(const BackgroundCont
     //kDebug() << "recursing dirs";
     dir.setFilter(QDir::AllDirs | QDir::Readable);
     files = dir.entryInfoList();
-    //TODO: we should show a KProgressDialog here as this can take a while if someone
-    //      indexes, say, their entire home directory!
+
     foreach (const QFileInfo &wp, files) {
+        QCoreApplication::processEvents();
         QString name = wp.fileName();
         if (name != "." && name != ".." && !validPackages.contains(wp.fileName())) {
             //kDebug() << "    " << name << wp.filePath();
-            res += findAllBackgrounds(container, wp.filePath(), ratio);
+            res += findAllBackgrounds(container, wp.filePath(), ratio, progress);
         }
     }
 
     //kDebug() << "completed.";
+    delete myProgress;
     return res;
 }
 
