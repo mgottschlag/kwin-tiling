@@ -47,6 +47,8 @@
 #include "core/favoritesmodel.h"
 #include "core/models.h"
 
+Q_DECLARE_METATYPE(QPersistentModelIndex)
+
 using namespace Kickoff;
 
 class ContextMenuFactory::Private
@@ -101,11 +103,15 @@ ContextMenuFactory::~ContextMenuFactory()
     delete d;
 }
 
-void ContextMenuFactory::showContextMenu(QAbstractItemView *view, const QPoint &pos)
+void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
+                                         const QPersistentModelIndex& index, const QPoint& pos)
 {
-    Q_ASSERT(view);
+    Q_UNUSED(pos);
 
-    const QModelIndex index = view->indexAt(pos);
+    if (!index.isValid()) {
+        return;
+    }
+
     const QString url = index.data(UrlRole).value<QString>();
 
     if (url.isEmpty()) {
@@ -128,7 +134,6 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view, const QPoint &
         favoriteAction->setIcon(KIcon("bookmark-new"));
         actions << favoriteAction;
     }
-
 
     // add to desktop
     QAction *addToDesktopAction = new QAction(this);
@@ -192,9 +197,11 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view, const QPoint &
 
     // add view specific actions
     QAction *viewSeparator = new QAction(this);
-    viewSeparator->setSeparator(true);
-    actions << viewSeparator;
-    actions << viewActions(view);
+    if (view) {
+        viewSeparator->setSeparator(true);
+        actions << viewSeparator;
+        actions << viewActions(view);
+    }
 
     // display menu
     KMenu menu;
@@ -254,6 +261,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view, const QPoint &
     delete viewSeparator;
     delete ejectAction;
 }
+
 void ContextMenuFactory::setViewActions(QAbstractItemView *view, const QList<QAction*>& actions)
 {
     if (actions.isEmpty()) {

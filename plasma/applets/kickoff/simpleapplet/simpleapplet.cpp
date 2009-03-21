@@ -67,6 +67,9 @@
 #include "core/recentapplications.h"
 #include "core/leavemodel.h"
 #include "core/urlitemlauncher.h"
+#include "ui/contextmenufactory.h"
+
+Q_DECLARE_METATYPE(QPersistentModelIndex)
 
 /// @internal KBookmarkOwner specialization
 class BookmarkOwner : public KBookmarkOwner
@@ -109,13 +112,14 @@ public:
 
     QList<QAction*> actions;
     QAction* switcher;
+    Kickoff::ContextMenuFactory *contextMenuFactory;
 
     explicit Private(MenuLauncherApplet *q)
             : q(q),
             menuview(0), icon(0), launcher(0),
             bookmarkcollection(0), bookmarkowner(0), bookmarkmenu(0),
             view(0), iconButton(0), formatComboBox(0),
-            switcher(0) {}
+            switcher(0), contextMenuFactory(0) {}
     ~Private() {
         delete bookmarkmenu;
         delete bookmarkowner;
@@ -263,6 +267,9 @@ MenuLauncherApplet::MenuLauncherApplet(QObject *parent, const QVariantList &args
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
     layout->addItem(d->icon);
+
+    d->contextMenuFactory = new Kickoff::ContextMenuFactory(this);
+    d->contextMenuFactory->setApplet(this);
 }
 
 MenuLauncherApplet::~MenuLauncherApplet()
@@ -342,6 +349,19 @@ void MenuLauncherApplet::switchMenuStyle()
 void MenuLauncherApplet::startMenuEditor()
 {
     KProcess::execute("kmenuedit");
+}
+
+void MenuLauncherApplet::customContextMenuRequested(const QPoint& pos)
+{
+    if (!d->menuview) {
+        return;
+    }
+
+    QAction* menuAction = d->menuview->actionAt(pos);
+    if (menuAction) {
+        const QPersistentModelIndex index = menuAction->data().value<QPersistentModelIndex>();
+        d->contextMenuFactory->showContextMenu(0, index, pos);
+    }
 }
 
 void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
@@ -485,8 +505,11 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
         d->menuview = new Kickoff::MenuView();
         d->menuview->setAttribute(Qt::WA_DeleteOnClose);
         d->menuview->setFormatType( (Kickoff::MenuView::FormatType) d->formattype );
+        d->menuview->setContextMenuPolicy(Qt::CustomContextMenu);
         connect(d->menuview, SIGNAL(triggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
         connect(d->menuview, SIGNAL(aboutToHide()), d->icon, SLOT(setUnpressed()));
+        connect(d->menuview, SIGNAL(customContextMenuRequested(const QPoint&)),
+                this, SLOT(customContextMenuRequested(const QPoint&)));
         //connect(d->menuview, SIGNAL(afterBeingHidden()), d->menuview, SLOT(deleteLater()));
 
         //Kickoff::MenuView::ModelOptions options = d->viewtypes.count() < 2 ? Kickoff::MenuView::MergeFirstLevel : Kickoff::MenuView::None;

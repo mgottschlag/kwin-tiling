@@ -21,6 +21,7 @@
 
 // Qt
 #include <QAction>
+#include <QPersistentModelIndex>
 
 // Plasma
 #include <Plasma/Applet>
@@ -44,7 +45,8 @@ public:
     void setApplet(Plasma::Applet *applet);
 
 public Q_SLOTS:
-    void showContextMenu(QAbstractItemView *view, const QPoint& pos);
+    void showContextMenu(QAbstractItemView *view,
+                         const QPersistentModelIndex& index, const QPoint& pos);
 
 private:
     class Private;

@@ -71,7 +71,11 @@ install(FILES applet/plasma-applet-launcher.desktop DESTINATION ${SERVICES_INSTA
 #######################################################################################
 # Kickoff Simple KMenu Plasma Applet
 
-set(SimpleApplet_SRCS simpleapplet/menuview.cpp simpleapplet/simpleapplet.cpp)
+set(SimpleApplet_SRCS
+    ui/contextmenufactory.cpp
+    simpleapplet/menuview.cpp
+    simpleapplet/simpleapplet.cpp
+)
 kde4_add_plugin(plasma_applet_simplelauncher ${SimpleApplet_SRCS})
 target_link_libraries(plasma_applet_simplelauncher ${KDE4_KUTILS_LIBS} ${KDE4_PLASMA_LIBS} solidcontrol ${Kickoff_LIBS} kickoff)
 install(TARGETS plasma_applet_simplelauncher DESTINATION ${PLUGIN_INSTALL_DIR})

@@ -115,6 +115,11 @@ public Q_SLOTS:
      */
     void startMenuEditor();
 
+    /**
+     * Show a custom context menu for the selected action.
+     */
+    void customContextMenuRequested(const QPoint& pos);
+
 protected:
     /**
      * Create a configuration dialog.

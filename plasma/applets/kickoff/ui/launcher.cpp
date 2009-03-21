@@ -721,7 +721,8 @@ void Launcher::showViewContextMenu(const QPoint& pos)
 {
     QAbstractItemView *view = qobject_cast<QAbstractItemView*>(sender());
     if (view) {
-        d->contextMenuFactory->showContextMenu(view, pos);
+        const QModelIndex index = view->indexAt(pos);
+        d->contextMenuFactory->showContextMenu(view, index, pos);
     }
 }
 
