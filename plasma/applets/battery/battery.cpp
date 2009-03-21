@@ -208,7 +208,7 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
     }
     if (source == "Battery0") {
         m_remainingMSecs  = data["Remaining msec"].toInt();
-        //kDebug() << "Remaining msecs on battery:" << m_remainingMSecs;
+        // kDebug() << "Remaining msecs on battery:" << m_remainingMSecs;
     }
 
     updateStatus();
@@ -878,14 +878,14 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
                 // Show the charge percentage with a box on top of the battery
                 QString batteryLabel;
                 if (battery_data.value()["Plugged in"].toBool()) {
-                    // kDebug() << m_showRemainingTime;
-                    if (!m_showRemainingTime || m_remainingMSecs==0) {
+                    int hours = m_remainingMSecs/1000/3600;
+                    int minutes = qRound(m_remainingMSecs/60000) % 60;
+                    // kDebug() << m_showRemainingTime << m_remainingMSecs << hours << minutes;
+                    if (!m_showRemainingTime || (minutes==0 && hours==0)) {
                         batteryLabel = battery_data.value()["Percent"].toString();
                         batteryLabel.append("%");
                     } else {
                         m_remainingMSecs = battery_data.value()["Remaining msec"].toInt();
-                        int hours = m_remainingMSecs/1000/3600;
-                        int minutes = qRound(m_remainingMSecs/60000) % 60;
                         QTime t = QTime(hours, minutes);
                         KLocale tmpLocale(*KGlobal::locale());
                         tmpLocale.setTimeFormat("%k:%M");
