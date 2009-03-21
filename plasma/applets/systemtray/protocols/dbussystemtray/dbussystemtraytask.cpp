@@ -156,12 +156,12 @@ bool DBusSystemTrayTask::eventFilter(QObject *watched, QEvent *event)
 
 void DBusSystemTrayTaskPrivate::syncIcon()
 {
-    if (systemTrayIcon->iconName().value().length() > 0) {
-        icon = KIcon(systemTrayIcon->iconName());
+    if (systemTrayIcon->icon().value().length() > 0) {
+        icon = KIcon(systemTrayIcon->icon());
     } else {
-        QDBusReply<Icon> iconReply = systemTrayIcon->iconPixmap();
+        QDBusReply<Icon> iconReply = systemTrayIcon->image();
         Icon iconStruct = iconReply.value();
-        QImage iconImage(QSize(iconStruct.width, iconStruct.height), QImage::Format_ARGB32);kWarning()<<iconStruct.width<<iconStruct.height;
+        QImage iconImage(QSize(iconStruct.width, iconStruct.height), QImage::Format_ARGB32);
         iconImage.loadFromData(iconStruct.data);
         icon = QPixmap::fromImage(iconImage);
     }
@@ -176,10 +176,10 @@ void DBusSystemTrayTaskPrivate::syncTooltip()
     }
 
     QIcon tooltipIcon;
-    if (systemTrayIcon->tooltipIconName().value().length() > 0) {
-        tooltipIcon = KIcon(systemTrayIcon->tooltipIconName());
+    if (systemTrayIcon->tooltipIcon().value().length() > 0) {
+        tooltipIcon = KIcon(systemTrayIcon->tooltipIcon());
     } else {
-        QDBusReply<Icon> iconReply = systemTrayIcon->tooltipIconPixmap();
+        QDBusReply<Icon> iconReply = systemTrayIcon->tooltipImage();
         Icon iconStruct = iconReply.value();
         QImage iconImage(QSize(iconStruct.width, iconStruct.height), QImage::Format_ARGB32);
         iconImage.loadFromData(iconStruct.data);
