@@ -72,6 +72,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "client.h"
 #include "shutdowndlg.h"
 
+#include <solid/powermanagement.h>
 
 #include <kdebug.h>
 
@@ -82,8 +83,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 void KSMServer::logout( int confirm, int sdtype, int sdmode )
 {
-    emit loggingOut( confirm, sdtype, sdmode );
-
     shutdown( (KWorkSpace::ShutdownConfirm)confirm,
             (KWorkSpace::ShutdownType)sdtype,
             (KWorkSpace::ShutdownMode)sdmode );
@@ -157,6 +156,10 @@ void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
     }
 
     if ( logoutConfirmed ) {
+
+        // If the logout was confirmed, let's start a powermanagement inhibition.
+        // We store the cookie so we can interrupt it if the logout will be canceled
+        inhibitCookie = Solid::PowerManagement::beginSuppressingSleep();
 
         shutdownType = sdtype;
         shutdownMode = sdmode;
@@ -357,6 +360,7 @@ void KSMServer::handlePendingInteractions()
 
 void KSMServer::cancelShutdown( KSMClient* c )
 {
+    Solid::PowerManagement::stopSuppressingSleep(inhibitCookie);
     kDebug( 1218 ) << "Client " << c->program() << " (" << c->clientId() << ") canceled shutdown.";
     KNotification::event( "cancellogout" , i18n( "Logout canceled by '%1'", c->program()),
         QPixmap() , 0l , KNotification::DefaultEvent  );

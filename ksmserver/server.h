@@ -194,9 +194,6 @@ private:
     QStringList sessionList();
     void wmChanged();
 
- Q_SIGNALS:
-    void loggingOut( int, int, int );
-
  private:
     QList<KSMListener*> listener;
     QList<KSMClient*> clients;
@@ -252,6 +249,8 @@ private:
 
     OrgKdeKLauncherInterface* klauncherSignals;
     QDBusInterface* kcminitSignals;
+
+    int inhibitCookie;
 };
 
 #endif

@@ -27,11 +27,5 @@
       <arg type="s" direction="in"/>
     </method>
     <method name="wmChanged"/>
-    
-    <signal name="loggingOut">
-      <arg type="i" direction="out"/>
-      <arg type="i" direction="out"/>
-      <arg type="i" direction="out"/>
-    </signal>
   </interface>
 </node>
