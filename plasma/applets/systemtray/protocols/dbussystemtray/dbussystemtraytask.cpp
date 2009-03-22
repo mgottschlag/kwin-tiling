@@ -201,7 +201,10 @@ void DBusSystemTrayTaskPrivate::syncIcon()
         Icon iconStruct = iconReply.value();
         icon = iconDataToPixmap(iconStruct);
     }
-    iconWidget->setIcon(icon);
+
+    if (status != DBusSystemTrayTask::NeedsAttention) {
+        iconWidget->setIcon(icon);
+    }
 }
 
 void DBusSystemTrayTaskPrivate::syncTooltip()
@@ -246,6 +249,7 @@ void DBusSystemTrayTaskPrivate::syncStatus(int newStatus)
             movieTimer->deleteLater();
             movieTimer = 0;
         }
+        syncIcon();
     }
     emit q->changed(q);
 }
