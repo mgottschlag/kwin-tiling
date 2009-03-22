@@ -77,6 +77,7 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::PopupApplet
         void configAccepted();
         void updateClockDefaultsTo();
         void dateChanged(const QDate &);
+        void speakTime(const QTime &);
 
     private:
         class Private;

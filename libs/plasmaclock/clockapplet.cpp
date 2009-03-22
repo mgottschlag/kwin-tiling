@@ -30,6 +30,8 @@
 #include <QtGui/QGraphicsProxyWidget>
 #include <QtGui/QGraphicsSceneMouseEvent>
 #include <QtGui/QGraphicsView>
+#include <QtDBus/QDBusInterface>
+#include <QtDBus/QDBusPendingCall>
 #include <QtCore/QDate>
 #include <QtCore/QTimer>
 
@@ -56,7 +58,7 @@
 #include "dateextenderwidget.h"
 
 #include "ui_timezonesConfig.h"
-#include "ui_calendarConfig.h"
+#include "ui_generalConfig.h"
 
 class ClockApplet::Private
 {
@@ -69,7 +71,7 @@ public:
 
     ClockApplet *q;
     Ui::timezonesConfig ui;
-    Ui::calendarConfig calendarUi;
+    Ui::generalConfig generalUi;
     QString timezone;
     QString defaultTimezone;
     QPoint clicked;
@@ -78,6 +80,9 @@ public:
     bool forceTzDisplay;
     Plasma::Label *label;
     QString holidaysRegion;
+    int announceInterval;
+    int prevHour;
+    int prevMinute;
 
     void addTzToTipText(QString &subText, QString tz) 
     {
@@ -166,6 +171,16 @@ ClockApplet::~ClockApplet()
     delete d;
 }
 
+void ClockApplet::speakTime(const QTime &time)
+{
+    if (time.minute() != d->prevMinute && d->announceInterval>0 && (time.minute() % d->announceInterval) == 0) {
+        d->prevHour = time.hour();
+        d->prevMinute = time.minute();
+        QDBusInterface ktts("org.kde.kttsd", "/KSpeech", "org.kde.KSpeech");
+        ktts.asyncCall("say", i18nc("Sent to KTTSD to be read aloud as the current time", "It is %1", time.toString("h:m AP")), 0);
+    }
+}
+
 void ClockApplet::toolTipAboutToShow()
 {
     updateTipContent();
@@ -234,10 +249,23 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
 {
     createClockConfigurationInterface(parent);
 
+    QWidget *generalWidget = new QWidget();
+    d->generalUi.setupUi(generalWidget);
+
+    parent->addPage(generalWidget, i18n("General"), Applet::icon());
+
+    QStringList regions = dataEngine("calendar")->query("holidaysRegions").value("holidaysRegions").toStringList();
+    for (int i = 0; i < regions.size(); i++){
+        d->generalUi.regionComboBox->addItem(regions[i]);
+        if (regions[i] == d->holidaysRegion) d->generalUi.regionComboBox->setCurrentIndex(i);
+    }
+
+    d->generalUi.interval->setValue(d->announceInterval);
+
     QWidget *widget = new QWidget();
     d->ui.setupUi(widget);
 
-    parent->addPage(widget, i18n("Time Zones"), Applet::icon());
+    parent->addPage(widget, i18n("Time Zones"), "preferences-desktop-locale");
 
     foreach (const QString &tz, d->selectedTimezones) {
         d->ui.timeZones->setSelected(tz, true);
@@ -250,18 +278,6 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
         kDebug() << d->defaultTimezone << "not in list!?";
     }
     d->ui.clockDefaultsTo->setCurrentIndex(defaultSelection);
-
-
-    QWidget *calendarWidget = new QWidget();
-    d->calendarUi.setupUi(calendarWidget);
-
-    parent->addPage(calendarWidget, i18n("Calendar"), "view-pim-calendar");
-    
-    QStringList regions = dataEngine("calendar")->query("holidaysRegions").value("holidaysRegions").toStringList();
-    for (int i = 0; i < regions.size(); i++){
-        d->calendarUi.regionComboBox->addItem(regions[i]);
-        if (regions[i] == d->holidaysRegion) d->calendarUi.regionComboBox->setCurrentIndex(i);
-    }
 
     parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
@@ -307,8 +323,11 @@ void ClockApplet::configAccepted()
     changeEngineTimezone(currentTimezone(), d->defaultTimezone);
     setCurrentTimezone(d->defaultTimezone);
 
-    d->holidaysRegion = d->calendarUi.regionComboBox->currentText();
+    d->holidaysRegion = d->generalUi.regionComboBox->currentText();
     cg.writeEntry("holidaysRegion", d->holidaysRegion);
+
+    d->announceInterval = d->generalUi.interval->value();
+    cg.writeEntry("announceInterval", d->announceInterval);
 
     clockConfigAccepted();
     constraintsEvent(Plasma::SizeConstraint);
@@ -443,6 +462,8 @@ void ClockApplet::init()
         tmpRegion = QString::null;
     }
     d->holidaysRegion = cg.readEntry("holidaysRegion", tmpRegion);
+
+    d->announceInterval = cg.readEntry("announceInterval", 0);
 
     Plasma::ToolTipManager::self()->registerWidget(this);
 

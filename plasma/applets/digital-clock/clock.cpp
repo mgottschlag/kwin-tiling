@@ -190,6 +190,7 @@ void Clock::dataUpdated(const QString &source, const Plasma::DataEngine::Data &d
         m_lastTimeSeen = m_time;
         update();
     }
+    speakTime(m_time);
 }
 
 void Clock::createClockConfigurationInterface(KConfigDialog *parent)
@@ -197,7 +198,7 @@ void Clock::createClockConfigurationInterface(KConfigDialog *parent)
     //TODO: Make the size settable
     QWidget *widget = new QWidget();
     ui.setupUi(widget);
-    parent->addPage(widget, i18n("General"), icon());
+    parent->addPage(widget, i18n("Appearance"), "view-media-visualization");
 
     ui.showDate->setChecked(m_showDate);
     ui.showYear->setChecked(m_showYear);
