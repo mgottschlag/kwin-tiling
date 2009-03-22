@@ -145,12 +145,16 @@ public Q_SLOTS:
      */
     void actionTriggered(QAction* action);
 
+    void contextMenuRequested(const QPoint& pos);
+
 Q_SIGNALS:
     /**
      * Compared to the aboutToShow() this signal will be emitted after the menu
      * got hidden.
      */
     void afterBeingHidden();
+
+    void customContextMenuRequested(QMenu* menu, const QPoint& pos);
 
 private Q_SLOTS:
     /// new items have been inserted into the model

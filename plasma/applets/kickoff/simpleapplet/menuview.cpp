@@ -60,6 +60,9 @@ public:
         if (model->hasChildren(index)) {
             KMenu *childMenu = new KMenu(parent);
             childMenu->installEventFilter(q);
+            childMenu->setContextMenuPolicy(Qt::CustomContextMenu);
+            connect(childMenu, SIGNAL(customContextMenuRequested(const QPoint&)),
+                    q, SLOT(contextMenuRequested(const QPoint&)));
             action = childMenu->menuAction();
             if (model->canFetchMore(index)) {
                 model->fetchMore(index);
@@ -98,6 +101,9 @@ MenuView::MenuView(QWidget *parent, const QString &title, const QIcon &icon)
         setIcon(icon);
 
     installEventFilter(this);
+
+    connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
+            this, SLOT(contextMenuRequested(const QPoint&)));
 }
 
 MenuView::~MenuView()
@@ -432,6 +438,12 @@ void MenuView::actionTriggered(QAction *action)
             kWarning()<<"Invalid action objectName="<<action->objectName()<<"text="<<action->text()<<"parent="<<(action->parent()?action->parent()->metaObject()->className():"NULL");
         }
     }
+}
+
+void MenuView::contextMenuRequested(const QPoint& pos)
+{
+    KMenu* menu = qobject_cast<KMenu*>(sender());
+    emit customContextMenuRequested(menu, pos);
 }
 
 #include "menuview.moc"

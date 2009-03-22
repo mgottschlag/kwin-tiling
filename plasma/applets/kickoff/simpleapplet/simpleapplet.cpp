@@ -351,13 +351,13 @@ void MenuLauncherApplet::startMenuEditor()
     KProcess::execute("kmenuedit");
 }
 
-void MenuLauncherApplet::customContextMenuRequested(const QPoint& pos)
+void MenuLauncherApplet::customContextMenuRequested(QMenu* menu, const QPoint& pos)
 {
-    if (!d->menuview) {
+    if (!menu) {
         return;
     }
 
-    QAction* menuAction = d->menuview->actionAt(pos);
+    QAction* menuAction = menu->activeAction();
     if (menuAction) {
         const QPersistentModelIndex index = menuAction->data().value<QPersistentModelIndex>();
         d->contextMenuFactory->showContextMenu(0, index, pos);
@@ -508,8 +508,8 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
         d->menuview->setContextMenuPolicy(Qt::CustomContextMenu);
         connect(d->menuview, SIGNAL(triggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
         connect(d->menuview, SIGNAL(aboutToHide()), d->icon, SLOT(setUnpressed()));
-        connect(d->menuview, SIGNAL(customContextMenuRequested(const QPoint&)),
-                this, SLOT(customContextMenuRequested(const QPoint&)));
+        connect(d->menuview, SIGNAL(customContextMenuRequested(QMenu*, const QPoint&)),
+                this, SLOT(customContextMenuRequested(QMenu*, const QPoint&)));
         //connect(d->menuview, SIGNAL(afterBeingHidden()), d->menuview, SLOT(deleteLater()));
 
         //Kickoff::MenuView::ModelOptions options = d->viewtypes.count() < 2 ? Kickoff::MenuView::MergeFirstLevel : Kickoff::MenuView::None;

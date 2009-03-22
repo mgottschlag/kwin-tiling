@@ -118,7 +118,7 @@ public Q_SLOTS:
     /**
      * Show a custom context menu for the selected action.
      */
-    void customContextMenuRequested(const QPoint& pos);
+    void customContextMenuRequested(QMenu* menu, const QPoint& pos);
 
 protected:
     /**
