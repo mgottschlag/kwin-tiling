@@ -91,9 +91,9 @@ void QuicklaunchApplet::saveState(KConfigGroup &config) const
 void QuicklaunchApplet::init()
 {
     KConfigGroup cg = config();
-    m_iconSize = qMax(1, (int)cg.readEntry("iconSize", contentsRect().height() / 2));
+    m_iconSize = qMax(s_defaultIconSize, (int)cg.readEntry("iconSize", contentsRect().height() / 2));
     m_visibleIcons = qMax(1, cg.readEntry("visibleIcons", m_visibleIcons));
-    m_dialogIconSize = qMax(1, (int)cg.readEntry("dialogIconSize", contentsRect().height() / 2));
+    m_dialogIconSize = qMax(s_defaultIconSize, (int)cg.readEntry("dialogIconSize", contentsRect().height() / 2));
 
     // Initialize outer layout
     m_layout = new QGraphicsLinearLayout(this);
@@ -164,6 +164,9 @@ void QuicklaunchApplet::constraintsEvent(Plasma::Constraints constraints)
 void QuicklaunchApplet::refactorUi()
 {
     clearLayout(m_innerLayout);
+
+    m_iconSize = qMax(m_iconSize, s_defaultIconSize);//Don't accept values under 16
+    m_dialogIconSize = qMax(m_iconSize, s_defaultIconSize);
 
     if (m_dialogLayout) {
         clearLayout(m_dialogLayout);
@@ -278,6 +281,11 @@ void QuicklaunchApplet::createConfigurationInterface(KConfigDialog *parent)
     uiConfig.iconSizeSlider->setMaximum(height);
     uiConfig.dialogIconSizeSpin->setMaximum(dialogHeight);
     uiConfig.dialogIconSizeSlider->setMaximum(dialogHeight);
+
+    uiConfig.iconSizeSpin->setMinimum(s_defaultIconSize);
+    uiConfig.iconSizeSlider->setMinimum(s_defaultIconSize);
+    uiConfig.dialogIconSizeSpin->setMinimum(s_defaultIconSize);
+    uiConfig.dialogIconSizeSlider->setMinimum(s_defaultIconSize);
 
     uiConfig.iconSizeSpin->setValue(m_iconSize);
     uiConfig.iconSizeSlider->setValue(m_iconSize);
