@@ -22,6 +22,7 @@
 #define SYSTEMTRAYTYPES_H
 
 #include <QDBusArgument>
+#include <QVector>
 
 struct Icon {
     int width;
@@ -33,5 +34,11 @@ const QDBusArgument &operator<<(QDBusArgument &argument, const Icon &icon);
 const QDBusArgument &operator>>(const QDBusArgument &argument, Icon &icon);
 
 Q_DECLARE_METATYPE(Icon)
+
+typedef QVector<Icon> IconVector;
+const QDBusArgument &operator<<(QDBusArgument &argument, const IconVector &iconVector);
+const QDBusArgument &operator>>(const QDBusArgument &argument, IconVector &iconVector);
+
+Q_DECLARE_METATYPE(IconVector)
 
 #endif

@@ -51,3 +51,32 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, Icon &icon)
 
     return argument;
 }
+
+// Marshall the IconVector data into a D-BUS argument
+const QDBusArgument &operator<<(QDBusArgument &argument, const IconVector &iconVector)
+{
+    argument.beginArray(iconVector.size());
+    for (int i=0; i<iconVector.size(); ++i) {
+        argument << iconVector[i]; 
+    }
+    argument.endArray();
+    return argument;
+}
+
+// Retrieve the IconVector data from the D-BUS argument
+const QDBusArgument &operator>>(const QDBusArgument &argument, IconVector &iconVector)
+{
+    argument.beginArray();
+    iconVector.clear();
+
+    while ( !argument.atEnd() ) {
+       Icon element;
+       argument >> element;
+       iconVector.append(element);
+    }
+
+    argument.endArray();
+
+
+    return argument;
+}

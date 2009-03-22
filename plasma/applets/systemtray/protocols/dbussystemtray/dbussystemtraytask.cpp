@@ -40,11 +40,14 @@
 namespace SystemTray
 {
 
+
 class DBusSystemTrayTaskPrivate
 {
 public:
     DBusSystemTrayTaskPrivate(DBusSystemTrayTask *q)
-        : q(q)
+        : q(q),
+          currentFrame(0),
+          movieTimer(0)
     {
     }
 
@@ -56,6 +59,9 @@ public:
     void syncIcon();
     void syncTooltip();
     void syncStatus(int status);
+    QPixmap iconDataToPixmap(const Icon &icon) const;
+    void syncMovie();
+    void updateMovieFrame();
 
 
     DBusSystemTrayTask *q;
@@ -64,6 +70,9 @@ public:
     DBusSystemTrayTask::Status status;
     DBusSystemTrayTask::Category category;
     QIcon icon;
+    QVector<QPixmap> movie;
+    int currentFrame;
+    QTimer *movieTimer;
     Plasma::IconWidget *iconWidget;
     Plasma::ToolTipContent tooltipData;
     org::kde::SystemTray *systemTrayIcon;
@@ -76,6 +85,7 @@ DBusSystemTrayTask::DBusSystemTrayTask(const QString &service)
 {
     setObjectName("DBusSystemTrayTask");
     qDBusRegisterMetaType<Icon>();
+    qDBusRegisterMetaType<IconVector>();
 
     d->name = service;
     d->iconWidget = new Plasma::IconWidget();
@@ -151,8 +161,37 @@ bool DBusSystemTrayTask::eventFilter(QObject *watched, QEvent *event)
     return false;
 }
 
+
+
 //DBusSystemTrayTaskPrivate
 
+QPixmap DBusSystemTrayTaskPrivate::iconDataToPixmap(const Icon &icon) const
+{
+    QDBusReply<Icon> iconReply = systemTrayIcon->image();
+    QImage iconImage(QSize(icon.width, icon.height), QImage::Format_ARGB32);
+    iconImage.loadFromData(icon.data);
+    return QPixmap::fromImage(iconImage);
+}
+
+void DBusSystemTrayTaskPrivate::syncMovie()
+{
+    QDBusReply<IconVector> movieReply = systemTrayIcon->movie();
+
+    QVector<Icon> movieData = movieReply.value();
+    movie = QVector<QPixmap>(movieData.size());
+
+    if (!movieData.isEmpty()) {
+        for (int i=0; i<movieData.size(); ++i) {
+            movie[i] = iconDataToPixmap(movieData[i]);
+        }
+    }
+}
+
+void DBusSystemTrayTaskPrivate::updateMovieFrame()
+{
+    iconWidget->setIcon(movie[currentFrame]);
+    currentFrame = (currentFrame + 1) % movie.size();
+}
 
 void DBusSystemTrayTaskPrivate::syncIcon()
 {
@@ -161,9 +200,7 @@ void DBusSystemTrayTaskPrivate::syncIcon()
     } else {
         QDBusReply<Icon> iconReply = systemTrayIcon->image();
         Icon iconStruct = iconReply.value();
-        QImage iconImage(QSize(iconStruct.width, iconStruct.height), QImage::Format_ARGB32);
-        iconImage.loadFromData(iconStruct.data);
-        icon = QPixmap::fromImage(iconImage);
+        icon = iconDataToPixmap(iconStruct);
     }
     iconWidget->setIcon(icon);
 }
@@ -181,10 +218,7 @@ void DBusSystemTrayTaskPrivate::syncTooltip()
     } else {
         QDBusReply<Icon> iconReply = systemTrayIcon->tooltipImage();
         Icon iconStruct = iconReply.value();
-        QImage iconImage(QSize(iconStruct.width, iconStruct.height), QImage::Format_ARGB32);
-        iconImage.loadFromData(iconStruct.data);
-        icon = QPixmap::fromImage(iconImage);
-        tooltipIcon = QPixmap::fromImage(iconImage);
+        tooltipIcon = iconDataToPixmap(iconStruct);
     }
 
     tooltipData.setMainText(systemTrayIcon->tooltipTitle().value());
@@ -198,9 +232,23 @@ void DBusSystemTrayTaskPrivate::syncStatus(int newStatus)
     status = (DBusSystemTrayTask::Status)newStatus;
     if (status == DBusSystemTrayTask::NeedsAttention) {
         q->setOrder(Task::Last);
+        if (movie.size() != 0) {
+            syncMovie();
+            if (!movieTimer) {
+                movieTimer = new QTimer(q);
+                q->connect(movieTimer, SIGNAL(timeout()), q, SLOT(updateMovieFrame()));
+                movieTimer->start(250);
+            }
+        }
     } else {
         q->setOrder(Task::Normal);
+        if (movieTimer) {
+            movieTimer->stop();
+            movieTimer->deleteLater();
+            movieTimer = 0;
+        }
     }
+    emit q->changed(q);
 }
 
 }
