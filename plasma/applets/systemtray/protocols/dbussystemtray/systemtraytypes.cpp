@@ -55,7 +55,7 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, Icon &icon)
 // Marshall the IconVector data into a D-BUS argument
 const QDBusArgument &operator<<(QDBusArgument &argument, const IconVector &iconVector)
 {
-    argument.beginArray(iconVector.size());
+    argument.beginArray(qMetaTypeId<Icon>());
     for (int i=0; i<iconVector.size(); ++i) {
         argument << iconVector[i]; 
     }

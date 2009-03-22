@@ -167,7 +167,6 @@ bool DBusSystemTrayTask::eventFilter(QObject *watched, QEvent *event)
 
 QPixmap DBusSystemTrayTaskPrivate::iconDataToPixmap(const Icon &icon) const
 {
-    QDBusReply<Icon> iconReply = systemTrayIcon->image();
     QImage iconImage(QSize(icon.width, icon.height), QImage::Format_ARGB32);
     iconImage.loadFromData(icon.data);
     return QPixmap::fromImage(iconImage);
@@ -232,8 +231,8 @@ void DBusSystemTrayTaskPrivate::syncStatus(int newStatus)
     status = (DBusSystemTrayTask::Status)newStatus;
     if (status == DBusSystemTrayTask::NeedsAttention) {
         q->setOrder(Task::Last);
+        syncMovie();
         if (movie.size() != 0) {
-            syncMovie();
             if (!movieTimer) {
                 movieTimer = new QTimer(q);
                 q->connect(movieTimer, SIGNAL(timeout()), q, SLOT(updateMovieFrame()));
