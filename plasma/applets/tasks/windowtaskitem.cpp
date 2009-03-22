@@ -179,10 +179,15 @@ void WindowTaskItem::updateToolTip()
         return;
     }
 
+    QPixmap p = m_task->task()->icon(KIconLoader::SizeLarge, KIconLoader::SizeLarge, false);
+    if (p.height() > KIconLoader::SizeLarge) {
+        p = p.scaled(QSize(KIconLoader::SizeLarge, KIconLoader::SizeLarge),
+                     Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
+
     Plasma::ToolTipContent data(m_task->name(),
                                 i18nc("Which virtual desktop a window is currently on", "On %1",
-                                      KWindowSystem::desktopName(m_task->desktop())),
-                                m_task->task()->icon(KIconLoader::SizeLarge, KIconLoader::SizeLarge, false));
+                                      KWindowSystem::desktopName(m_task->desktop())), p);
     data.setWindowToPreview(m_task->task()->window());
 
     Plasma::ToolTipManager::self()->setContent(this, data);
