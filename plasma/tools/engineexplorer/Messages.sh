@@ -1,2 +1,2 @@
 #! /usr/bin/env bash
-$XGETTEXT *.cpp -o $podir/plasmaengineexplorer.pot
+$XGETTEXT *.cpp *.h -o $podir/plasmaengineexplorer.pot
