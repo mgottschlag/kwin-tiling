@@ -281,6 +281,7 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
         normalRect.setWidth(normalRect.width() - d->taskArea->leftEasement());
         normalRect.setLeft(rightEasement);
 
+        lastRect.setX(0);
         lastRect.setWidth(rightEasement);
     } else {
         const int rightEasement = d->taskArea->rightEasement() + d->background->marginSize(Plasma::RightMargin);

@@ -226,10 +226,13 @@ int TaskArea::rightEasement() const
 {
     if (d->lastTasksLayout->count() > 0) {
         QGraphicsLayoutItem *item = d->lastTasksLayout->itemAt(0);
-        if (d->topLayout->orientation() == Qt::Horizontal) {
-            return size().width() - item->geometry().left() + d->topLayout->spacing();
-        } else {
+
+        if (d->topLayout->orientation() == Qt::Vertical) {
             return size().height() - item->geometry().top() + d->topLayout->spacing();
+        } else if (QApplication::layoutDirection() == Qt::RightToLeft) {
+            return item->geometry().right() + d->topLayout->spacing();
+        } else {
+            return size().width() - item->geometry().left() + d->topLayout->spacing();
         }
     } else {
         return 0;
