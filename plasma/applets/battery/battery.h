@@ -121,6 +121,8 @@ class Battery : public Plasma::PopupApplet
         bool m_showBatteryString;
         /* Should that info be percentage (false) or time (true)? */
         bool m_showRemainingTime;
+        int m_minutes;
+        int m_hours;
         QSizeF m_size;
         int m_pixelSize;
         Plasma::Svg* m_theme;

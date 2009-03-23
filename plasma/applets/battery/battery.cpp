@@ -88,7 +88,9 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_firstRun(true),
       m_numOfBattery(0),
       m_acadapter_plugged(false),
-      m_remainingMSecs(0)
+      m_remainingMSecs(0),
+      m_minutes(0),
+      m_hours(0)
 {
     kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
@@ -880,16 +882,23 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
                 if (battery_data.value()["Plugged in"].toBool()) {
                     int hours = m_remainingMSecs/1000/3600;
                     int minutes = qRound(m_remainingMSecs/60000) % 60;
-                    // kDebug() << m_showRemainingTime << m_remainingMSecs << hours << minutes;
-                    if (!m_showRemainingTime || (minutes==0 && hours==0)) {
-                        batteryLabel = battery_data.value()["Percent"].toString();
-                        batteryLabel.append("%");
-                    } else {
+                    if (!(minutes==0 && hours==0)) {
+                        m_minutes= minutes;
+                        m_hours= hours;
+                    }
+                    QString state = battery_data.value()["State"].toString();
+                    // kDebug() << m_showRemainingTime << m_remainingMSecs << m_hours << m_minutes << state;
+                    // thanks nueces
+                    if (m_showRemainingTime && (state=="Charging" || state=="Discharging" )) {
                         m_remainingMSecs = battery_data.value()["Remaining msec"].toInt();
-                        QTime t = QTime(hours, minutes);
+                        QTime t = QTime(m_hours, m_minutes);
+                        // kDebug() << t
                         KLocale tmpLocale(*KGlobal::locale());
                         tmpLocale.setTimeFormat("%k:%M");
                         batteryLabel = tmpLocale.formatTime(t, false, true); // minutes, hours as duration
+                    } else {
+                        batteryLabel = battery_data.value()["Percent"].toString();
+                        batteryLabel.append("%");
                     }
                     // kDebug() << batteryLabel;
                     paintLabel(p, corect, batteryLabel);
