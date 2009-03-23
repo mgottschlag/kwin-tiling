@@ -133,7 +133,10 @@ endif(NOT WIN32)
 macro_optional_add_subdirectory( krunner )
 macro_optional_add_subdirectory( solid )
 macro_optional_add_subdirectory( kmenuedit )
-macro_optional_add_subdirectory( plasma )
+if(NOT WIN32)
+  # disable until kworkspace lib is compilable on win32...
+  macro_optional_add_subdirectory( plasma )
+endif(NOT WIN32)
 macro_optional_add_subdirectory( kstartupconfig )
 
 
