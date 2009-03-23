@@ -1,11 +1,11 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #include "command_url_shortcut_action_data.h"
@@ -23,25 +23,28 @@ namespace KHotKeys
 
 template<> KDE_EXPORT
 void Simple_action_data< ShortcutTrigger, CommandUrlAction >
-    ::cfg_write( KConfigGroup& cfg_P ) const
+    ::cfg_write( KConfigGroup& cfg ) const
     {
-    base::cfg_write( cfg_P );
-    cfg_P.writeEntry( "Type", "COMMAND_URL_SHORTCUT_ACTION_DATA" );
+    base::cfg_write( cfg );
+    cfg.writeEntry( "Type", "COMMAND_URL_SHORTCUT_ACTION_DATA" );
     }
 
 
-CommandUrlShortcutActionData::CommandUrlShortcutActionData( 
-        ActionDataGroup* parent_P,
-        const QString& name_P,
-        const QString& comment_P,
-        const KShortcut& shortcut_P,
-        const QString& command_url_P,
-        bool enabled_P )
-    : Simple_action_data< ShortcutTrigger, CommandUrlAction >( parent_P, name_P,
-        comment_P, enabled_P )
+CommandUrlShortcutActionData::CommandUrlShortcutActionData(
+        ActionDataGroup* parent,
+        const QString& name,
+        const QString& comment,
+        const KShortcut& shortcut,
+        const QString& command_url,
+        bool enabled)
+    :   Simple_action_data< ShortcutTrigger, CommandUrlAction >(
+            parent,
+            name,
+            comment,
+            enabled)
     {
-    set_action( new CommandUrlAction( this, command_url_P ));
-    set_trigger( new ShortcutTrigger( this, shortcut_P ));
+    set_action( new CommandUrlAction( this, command_url ));
+    set_trigger( new ShortcutTrigger( this, shortcut ));
     }
 
 
@@ -51,20 +54,24 @@ void CommandUrlShortcutActionData::accept(ActionDataVisitor *visitor) const
     }
 
 
-CommandUrlShortcutActionData::CommandUrlShortcutActionData( ActionDataGroup* parent_P,
-    const QString& name_P, const QString& comment_P, bool enabled_P )
-    : Simple_action_data< ShortcutTrigger, CommandUrlAction >( parent_P, name_P,
-        comment_P, enabled_P )
-    {
-    }
+CommandUrlShortcutActionData::CommandUrlShortcutActionData(
+        ActionDataGroup* parent,
+        const QString& name,
+        const QString& comment,
+        bool enabled)
+    :   Simple_action_data< ShortcutTrigger, CommandUrlAction >(
+            parent,
+            name,
+            comment,
+            enabled)
+    {}
 
 
-CommandUrlShortcutActionData::CommandUrlShortcutActionData( 
-        KConfigGroup& cfg_P,
-        ActionDataGroup* parent_P )
-    : Simple_action_data< ShortcutTrigger, CommandUrlAction >( cfg_P, parent_P )
-    {
-    }
+CommandUrlShortcutActionData::CommandUrlShortcutActionData(
+        KConfigGroup& cfg,
+        ActionDataGroup* parent)
+    :   Simple_action_data< ShortcutTrigger, CommandUrlAction >(cfg, parent)
+    {}
 
 
 } // namespace KHotKeys

@@ -19,14 +19,27 @@ namespace KHotKeys {
 class KDE_EXPORT CommandUrlShortcutActionData
     : public Simple_action_data< ShortcutTrigger, CommandUrlAction >
     {
-        typedef Simple_action_data< ShortcutTrigger, CommandUrlAction > base;
+    typedef Simple_action_data< ShortcutTrigger, CommandUrlAction > base;
+
     public:
-        CommandUrlShortcutActionData( ActionDataGroup* parent_P, const QString& name_P,
-            const QString& comment_P, bool enabled_P = true );
-        CommandUrlShortcutActionData( ActionDataGroup* parent_P, const QString& name_P,
-            const QString& comment_P, const KShortcut& shortcut_P, const QString& command_url_P,
-            bool enabled_P = true );
-        CommandUrlShortcutActionData( KConfigGroup& cfg_P, ActionDataGroup* parent_P );
+
+        CommandUrlShortcutActionData(
+                ActionDataGroup* parent,
+                const QString& name,
+                const QString& comment,
+                bool enabled = true);
+
+        CommandUrlShortcutActionData(
+                ActionDataGroup* parent,
+                const QString& name,
+                const QString& comment,
+                const KShortcut& shortcut,
+                const QString& command_url,
+                bool enabled = true);
+
+        CommandUrlShortcutActionData(
+                KConfigGroup& cfg,
+                ActionDataGroup* parent);
 
         /**
          * Visitor pattern
