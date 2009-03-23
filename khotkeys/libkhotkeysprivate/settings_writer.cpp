@@ -171,14 +171,7 @@ void SettingsWriter::visitSimpleActionData(const SimpleActionData *data)
     visitActionData(data);
 
     KConfigGroup *config = _stack.top();
-    if (dynamic_cast<const Activate_window_shortcut_action_data*>(data))
-        config->writeEntry( "Type", "ACTIVATE_WINDOW_SHORTCUT_ACTION_DATA" );
-    else if (dynamic_cast<const Dbus_shortcut_action_data*>(data))
-        config->writeEntry( "Type", "DBUS_SHORTCUT_ACTION_DATA" );
-    else if (dynamic_cast<const Keyboard_input_shortcut_action_data*>(data))
-        config->writeEntry( "Type", "KEYBOARD_INPUT_SHORTCUT_ACTION_DATA" );
-    else
-        config->writeEntry( "Type", "SIMPLE_ACTION_DATA" );
+    config->writeEntry( "Type", "SIMPLE_ACTION_DATA" );
     }
 
 
