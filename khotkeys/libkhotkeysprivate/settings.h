@@ -44,8 +44,6 @@ class KDE_EXPORT Settings
 
 public:
 
-    static const int CurrentFileVersion;
-
     Settings();
     ~Settings();
 
@@ -71,7 +69,7 @@ public:
     /**
      * Write the settings.
      */
-    void write_settings();
+    void write();
 
     /**
      * Export settings to @a config
@@ -89,6 +87,7 @@ public:
      * Get all actions
      */
     ActionDataGroup *actions();
+    const ActionDataGroup *actions() const;
 
     /**
      * Take the actions. 
@@ -175,21 +174,6 @@ protected:
             bool disable_actions = false);
 
     /**
-     * Read settings in the v1 legacy format from \a cfg_P .
-     */
-    void read_settings_v1(ActionDataGroup *root, KConfigBase const& cfg);
-
-    /**
-     * Write \a parent_P recursively to \a cfg_P
-     *
-     * The return value specifies the number of active input actions written.
-     */
-    int write_actions_recursively_v2(
-        KConfigGroup& cfg_P,
-        ActionDataGroup* parent_P,
-        bool enabled_P );
-
-    /**
      * Make sure all System Groups exists
      */
     void validate();
@@ -243,6 +227,8 @@ private:
      * List of id's for all imported files.
      */
     QStringList already_imported;
+
+    friend class SettingsWriter;
 };
 
 } // namespace KHotKeys

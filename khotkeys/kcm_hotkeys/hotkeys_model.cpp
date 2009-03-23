@@ -612,7 +612,7 @@ int KHotkeysModel::rowCount( const QModelIndex &index ) const
 
 void KHotkeysModel::save()
     {
-    _settings.write_settings();
+    _settings.write();
     }
 
 

@@ -70,7 +70,7 @@ void KHotKeysModule::reread_configuration()
     // Do updates (if available)
     if (_settings.update())
         {
-        _settings.write_settings();
+        _settings.write();
         }
 
     KHotKeys::gesture_handler->set_mouse_button( _settings.gestureMouseButton() );
@@ -167,7 +167,7 @@ QString KHotKeysModule::register_menuentry_shortcut(
                 KShortcut(sequence),
                 storageId);
 
-        _settings.write_settings();
+        _settings.write();
 
         // Return the real shortcut
         return newAction->trigger()->shortcut().primary();
@@ -180,7 +180,7 @@ QString KHotKeysModule::register_menuentry_shortcut(
             kDebug() << "Deleting the action";
             actionData->aboutToBeErased();
             delete actionData;
-            _settings.write_settings();
+            _settings.write();
             return "";
             }
         else
@@ -194,7 +194,7 @@ QString KHotKeysModule::register_menuentry_shortcut(
 
             // Change the actionData
             shortcutTrigger->set_key_sequence(sequence);
-            _settings.write_settings();
+            _settings.write();
 
             // Remove the resulting real shortcut
             return shortcutTrigger->shortcut().primary();

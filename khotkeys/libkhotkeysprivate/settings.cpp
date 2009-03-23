@@ -18,11 +18,11 @@
  **/
 
 #include "settings.h"
-#include "settings_reader_v2.h"
-#include "settings_reader_v1.h"
 
 #include "action_data/action_data.h"
-
+#include "settings_reader_v2.h"
+#include "settings_reader_v1.h"
+#include "settings_writer.h"
 #include "windows_helper/window_selection_list.h"
 
 #include <KDE/KConfig>
@@ -32,8 +32,6 @@
 
 namespace KHotKeys
 {
-
-const int Settings::CurrentFileVersion = 2;
 
 // Settings
 
@@ -52,6 +50,12 @@ Settings::~Settings()
 
 
 ActionDataGroup *Settings::actions()
+    {
+    return m_actions;
+    }
+
+
+const ActionDataGroup *Settings::actions() const
     {
     return m_actions;
     }
@@ -87,37 +91,10 @@ void Settings::enableGestures()
     }
 
 
-void Settings::exportTo(ActionDataBase *element, KConfigBase &config)
+void Settings::exportTo(ActionDataBase *what, KConfigBase &config)
     {
-    if (!element)
-        {
-        Q_ASSERT(element);
-        return;
-        }
-
-    // Clean the file
-    QStringList groups = config.groupList();
-    Q_FOREACH (QString name, config.groupList())
-        {
-        config.deleteGroup(name);
-        }
-
-    KConfigGroup mainGroup(&config, "Main");
-    mainGroup.writeEntry("Version", CurrentFileVersion);
-
-    // The root group contains nothing but the datacount!
-    KConfigGroup dataGroup(&config,  "Data");
-    dataGroup.writeEntry("DataCount", 1);
-
-    // The group for the element to export
-    KConfigGroup data1Group(&config,  "Data_1");
-    element->cfg_write(data1Group);
-
-    ActionDataGroup *group = dynamic_cast<ActionDataGroup*>(element);
-    if (group)
-        {
-        write_actions_recursively_v2(data1Group, group, true);
-        }
+    SettingsWriter writer(this);
+    writer.exportTo(what, config);
     }
 
 
@@ -454,69 +431,17 @@ bool Settings::update()
 
     if (imported)
         {
-        write_settings();
+        write();
         }
     return false;
     }
 
 
-void Settings::write_settings()
+void Settings::write()
     {
     KConfig cfg( KHOTKEYS_CONFIG_FILE );
-
-// CHECKME    smazat stare sekce ?
-    QStringList groups = cfg.groupList();
-    for( QStringList::ConstIterator it = groups.constBegin();
-         it != groups.constEnd();
-         ++it )
-        cfg.deleteGroup( *it );
-    KConfigGroup mainGroup( &cfg, "Main" ); // main group
-    mainGroup.writeEntry( "Version", 2 ); // now it's version 2 cfg. file
-    mainGroup.writeEntry( "AlreadyImported", already_imported );
-    KConfigGroup dataGroup( &cfg,  "Data" );
-    int cnt = write_actions_recursively_v2( dataGroup, m_actions, true );
-    mainGroup.writeEntry( "Autostart", cnt != 0 && !daemon_disabled );
-    mainGroup.writeEntry( "Disabled", daemon_disabled );
-    KConfigGroup gesturesConfig( &cfg, "Gestures" );
-    gesturesConfig.writeEntry( "Disabled", gestures_disabled );
-    gesturesConfig.writeEntry( "MouseButton", gesture_mouse_button );
-    gesturesConfig.writeEntry( "Timeout", gesture_timeout );
-    if( gestures_exclude != NULL )
-        {
-        KConfigGroup gesturesExcludeConfig( &cfg, "GesturesExclude" );
-        gestures_exclude->cfg_write( gesturesExcludeConfig );
-        }
-    else
-        cfg.deleteGroup( "GesturesExclude" );
-    KConfigGroup voiceConfig( &cfg, "Voice" );
-    voiceConfig.writeEntry("Shortcut" , voice_shortcut.toString() );
-
-    }
-
-
-// return value means the number of enabled actions written in the cfg file
-// i.e. 'Autostart' for value > 0 should be on
-int Settings::write_actions_recursively_v2(KConfigGroup& cfg_P, ActionDataGroup* parent_P, bool enabled_P)
-    {
-    int enabled_cnt = 0;
-    QString save_cfg_group = cfg_P.name();
-    int cnt = 0;
-    if( parent_P )
-        {
-        Q_FOREACH(ActionDataBase *child,parent_P->children())
-            {
-            ++cnt;
-            if( enabled_P && child->enabled( true ))
-                ++enabled_cnt;
-            KConfigGroup itConfig( cfg_P.config(), save_cfg_group + '_' + QString::number( cnt ));
-            child->cfg_write( itConfig );
-            ActionDataGroup* grp = dynamic_cast< ActionDataGroup* >(child);
-            if( grp != NULL )
-                enabled_cnt += write_actions_recursively_v2( itConfig, grp, enabled_P && child->enabled( true ));
-            }
-        }
-    cfg_P.writeEntry( "DataCount", cnt );
-    return enabled_cnt;
+    SettingsWriter writer(this);
+    writer.writeTo(cfg);
     }
 
 } // namespace KHotKeys
