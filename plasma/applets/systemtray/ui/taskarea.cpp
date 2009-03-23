@@ -166,7 +166,12 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
                 d->normalTasksLayout->addItem(widget);
                 break;
             case SystemTray::Task::Last:
-                d->lastTasksLayout->addItem(widget);
+                //not really pretty, but for consistency attempts to put the extender expander always in the last position
+                if (task->typeId() == "toggle_extender") {
+                    d->lastTasksLayout->addItem(widget);
+                } else {
+                    d->lastTasksLayout->insertItem(0, widget);
+                }
                 break;
             }
             widget->show();
