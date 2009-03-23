@@ -174,7 +174,7 @@ QPixmap DBusSystemTrayTaskPrivate::iconDataToPixmap(const Icon &icon) const
 
 void DBusSystemTrayTaskPrivate::syncMovie()
 {
-    QDBusReply<IconVector> movieReply = systemTrayIcon->movie();
+    QDBusReply<IconVector> movieReply = systemTrayIcon->attentionMovie();
 
     QVector<Icon> movieData = movieReply.value();
     movie = QVector<QPixmap>(movieData.size());

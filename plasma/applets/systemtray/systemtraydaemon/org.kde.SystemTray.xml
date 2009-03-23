@@ -28,18 +28,31 @@
       <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="Icon"/>
     </method>
 
-    <method name="movie">
+
+    <!-- Requesting attention icon -->
+    <method name="attentionIcon">
+      <arg type="s" direction="out"/>
+    </method>
+
+    <!--same definition as image-->
+    <method name="attentionImage">
+      <arg type="(iiay)" direction="out"/>
+      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="Icon"/>
+    </method>
+
+    <method name="attentionMovie">
       <arg type="a(iiay)" direction="out"/>
-      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVector&lt;Icon&gt;"/>
+      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="IconVector"/>
     </method>
 
 
-    <!-- tooltip stuff -->
+
+    <!-- tooltip data -->
     <method name="tooltipIcon">
       <arg type="s" direction="out"/>
     </method>
 
-    <!--same definition as iconPixmap-->
+    <!--same definition as image-->
     <method name="tooltipImage">
       <arg type="(iiay)" direction="out"/>
       <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="Icon"/>
@@ -71,6 +84,9 @@
 
     <!-- Signals: the client wants to change something in the status-->
     <signal name="newIcon">
+    </signal>
+
+    <signal name="newAttentionIcon">
     </signal>
 
     <signal name="newTooltip">
