@@ -27,6 +27,13 @@ class KDE_EXPORT CommandUrlShortcutActionData
             const QString& comment_P, const KShortcut& shortcut_P, const QString& command_url_P,
             bool enabled_P = true );
         CommandUrlShortcutActionData( KConfigGroup& cfg_P, ActionDataGroup* parent_P );
+
+        /**
+         * Visitor pattern
+         * @reimp
+         */
+        virtual void accept(ActionDataVisitor *visitor) const;
+
     };
 
 

@@ -64,6 +64,12 @@ class KDE_EXPORT ActionDataGroup
 
         ActionDataGroup(const KConfigGroup& cfg_P, ActionDataGroup* parent_P );
         virtual ~ActionDataGroup();
+
+        /**
+         * Visitor pattern
+         */
+        virtual void accept(ActionDataVisitor *visitor) const;
+
         virtual void update_triggers();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
 

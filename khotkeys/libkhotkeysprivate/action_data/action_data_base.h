@@ -22,6 +22,7 @@ class KConfigGroup;
 namespace KHotKeys {
 
 class ActionDataGroup;
+class ActionDataVisitor;
 class Condition_list;
 
 /**
@@ -64,6 +65,11 @@ class KDE_EXPORT ActionDataBase
          * Destructor
          */
         virtual ~ActionDataBase();
+
+        /**
+         * Visitor pattern
+         */
+        virtual void accept(ActionDataVisitor *visitor) const;
 
         /**
          * Write the this action  to the \a cfg configuration

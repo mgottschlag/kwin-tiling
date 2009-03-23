@@ -26,6 +26,8 @@ set(khotkeysprivate_SRCS
     action_data/simple_action_data.cpp
     action_data/simple_action_data_base.cpp
 
+    action_data/action_data_visitor.cpp
+
     # CONDITIONS
     conditions/active_window_condition.cpp
     conditions/and_condition.cpp

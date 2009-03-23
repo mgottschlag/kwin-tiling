@@ -9,6 +9,8 @@
 ****************************************************************************/
 
 #include "action_data_group.h"
+
+#include "action_data/action_data_visitor.h"
 #include "actions/actions.h"
 
 #include <kconfiggroup.h>
@@ -55,6 +57,12 @@ ActionDataGroup::~ActionDataGroup()
     {
     qDeleteAll(_list);
     _list.clear();
+    }
+
+
+void ActionDataGroup::accept(ActionDataVisitor *visitor) const
+    {
+    visitor->visitActionDataGroup(this);
     }
 
 

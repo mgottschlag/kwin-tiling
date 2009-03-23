@@ -10,10 +10,11 @@
 
 #include "action_data_base.h"
 
-#include "generic_action_data.h"
-#include "command_url_shortcut_action_data.h"
-#include "menuentry_shortcut_action_data.h"
-#include "keyboard_input_gesture_action_data.h"
+#include "action_data/action_data_visitor.h"
+#include "action_data/command_url_shortcut_action_data.h"
+#include "action_data/generic_action_data.h"
+#include "action_data/keyboard_input_gesture_action_data.h"
+#include "action_data/menuentry_shortcut_action_data.h"
 
 #include "triggers/triggers.h"
 #include "conditions/conditions.h"
@@ -82,6 +83,12 @@ ActionDataBase::~ActionDataBase()
     if( parent())
         parent()->remove_child( this );
     delete _conditions;
+    }
+
+
+void ActionDataBase::accept(ActionDataVisitor *visitor) const
+    {
+    visitor->visitActionDataBase(this);
     }
 
 

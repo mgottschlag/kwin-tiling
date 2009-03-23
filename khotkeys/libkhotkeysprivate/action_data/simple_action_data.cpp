@@ -9,6 +9,7 @@
 ****************************************************************************/
 
 #include "simple_action_data.h"
+#include "action_data/action_data_visitor.h"
 #include "actions/actions.h"
 
 #include <kconfiggroup.h>
@@ -17,6 +18,12 @@
 
 namespace KHotKeys
 {
+
+
+void SimpleActionData::accept(ActionDataVisitor *visitor) const
+    {
+    visitor->visitSimpleActionData(this);
+    }
 
 
 // Dbus_shortcut_action_data
@@ -38,6 +45,7 @@ void Simple_action_data< ShortcutTrigger, KeyboardInputAction >
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "KEYBOARD_INPUT_SHORTCUT_ACTION_DATA" );
     }
+
 
 // Activate_window_shortcut_action_data
 

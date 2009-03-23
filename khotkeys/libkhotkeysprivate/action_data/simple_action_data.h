@@ -35,6 +35,12 @@ public:
         const KConfigGroup& cfg_P,
         ActionDataGroup* parent_P );
 
+    /**
+     * Visitor pattern
+     * @reimp
+     */
+    virtual void accept(ActionDataVisitor *visitor) const;
+
     //! The action associated with this hotkey
     virtual const Action* action() const;
     virtual Action* action();

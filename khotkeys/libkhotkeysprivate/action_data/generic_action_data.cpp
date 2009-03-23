@@ -9,6 +9,8 @@
 ****************************************************************************/
 
 #include "generic_action_data.h"
+
+#include "action_data/action_data_visitor.h"
 #include "actions/actions.h"
 
 #include <kconfiggroup.h>
@@ -39,6 +41,12 @@ Generic_action_data::Generic_action_data(
     :   ActionData( cfg_P, parent_P )
 
     {}
+
+
+void Generic_action_data::accept(ActionDataVisitor *visitor) const
+    {
+    visitor->visitGenericActionData(this);
+    }
 
 
 } // namespace KHotKeys

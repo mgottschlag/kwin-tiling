@@ -9,6 +9,8 @@
 ****************************************************************************/
 
 #include "command_url_shortcut_action_data.h"
+
+#include "action_data/action_data_visitor.h"
 #include "actions/actions.h"
 #include "conditions/conditions.h"
 
@@ -40,6 +42,12 @@ CommandUrlShortcutActionData::CommandUrlShortcutActionData(
     {
     set_action( new CommandUrlAction( this, command_url_P ));
     set_trigger( new ShortcutTrigger( this, shortcut_P ));
+    }
+
+
+void CommandUrlShortcutActionData::accept(ActionDataVisitor *visitor) const
+    {
+    visitor->visitCommandUrlShortcutActionData(this);
     }
 
 

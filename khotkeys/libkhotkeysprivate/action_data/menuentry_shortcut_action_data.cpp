@@ -9,6 +9,8 @@
 ****************************************************************************/
 
 #include "menuentry_shortcut_action_data.h"
+
+#include "action_data/action_data_visitor.h"
 #include "actions/actions.h"
 #include "conditions/conditions.h"
 
@@ -59,6 +61,13 @@ MenuEntryShortcutActionData::MenuEntryShortcutActionData( KConfigGroup& cfg_P,
     : Simple_action_data< ShortcutTrigger, MenuEntryAction >( cfg_P, parent_P )
     {
     }
+
+
+void MenuEntryShortcutActionData::accept(ActionDataVisitor *visitor) const
+    {
+    visitor->visitMenuentryShortcutActionData(this);
+    }
+
 
 
 } // namespace KHotKeys

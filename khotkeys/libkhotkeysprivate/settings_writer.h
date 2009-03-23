@@ -19,6 +19,10 @@
  * Boston, MA 02110-1301, USA.
  **/
 
+#include "action_data/action_data_visitor.h"
+
+#include <QtCore/QStack>
+
 class KConfigBase;
 class KConfigGroup;
 
@@ -33,7 +37,7 @@ class Settings;
 /**
  * @author Michael Jansen <kde@michael-jansen.biz>
  */
-class SettingsWriter
+class SettingsWriter : public ActionDataVisitor
     {
 
 public:
@@ -44,6 +48,20 @@ public:
 
     void writeTo(KConfigBase &cfg);
 
+    virtual void visitActionDataBase(const ActionDataBase *base);
+
+    virtual void visitActionData(const ActionData *group);
+
+    virtual void visitActionDataGroup(const ActionDataGroup *group);
+
+    virtual void visitCommandUrlShortcutActionData(const CommandUrlShortcutActionData *data);
+
+    virtual void visitGenericActionData(const Generic_action_data *data);
+
+    virtual void visitMenuentryShortcutActionData(const MenuEntryShortcutActionData *data);
+
+    virtual void visitSimpleActionData(const SimpleActionData *data);
+
 private:
 
     int write_actions(
@@ -52,6 +70,8 @@ private:
             bool enabled);
 
     const Settings *_settings;
+
+    QStack<KConfigGroup*> _stack;
 
     }; //SettingsWriter
 

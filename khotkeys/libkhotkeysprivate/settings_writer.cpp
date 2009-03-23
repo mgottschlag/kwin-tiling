@@ -21,12 +21,21 @@
 #include "settings_writer.h"
 
 #include "action_data/action_data_group.h"
+#include "action_data/action_data.h"
+#include "action_data/command_url_shortcut_action_data.h"
+#include "action_data/generic_action_data.h"
+#include "action_data/menuentry_shortcut_action_data.h"
+#include "action_data/simple_action_data.h"
+
+#include "conditions/conditions_list.h"
+
 #include "settings.h"
 #include "windows_helper/window_selection_list.h"
 
 
 #include <KDE/KConfig>
 #include <KDE/KConfigGroup>
+#include <KDE/KDebug>
 
 namespace KHotKeys {
 
@@ -73,32 +82,168 @@ void SettingsWriter::exportTo(const ActionDataBase *element, KConfigBase &config
     }
 
 
-void SettingsWriter::writeTo(KConfigBase &cfg)
+void SettingsWriter::visitActionData(const ActionData *data)
     {
-    QStringList groups = cfg.groupList();
+    visitActionDataBase(data);
+
+    KConfigGroup *config = _stack.top();
+
+    // Write triggers if available
+    if (data->triggers())
+        {
+        KConfigGroup triggersGroup( config->config(), config->name() + "Triggers" );
+        data->triggers()->cfg_write( triggersGroup );
+        }
+
+    // Write actions if available
+    if (data->actions())
+        {
+        KConfigGroup actionsGroup( config->config(), config->name() + "Actions" );
+        data->actions()->cfg_write( actionsGroup );
+        }
+    }
+
+
+void SettingsWriter::visitActionDataBase(const ActionDataBase *base)
+    {
+    KConfigGroup *config = _stack.top();
+
+    config->writeEntry( "Type",    "ERROR" ); // derived classes should call with their type
+    config->writeEntry( "Name",    base->name());
+    config->writeEntry( "Comment", base->comment());
+    config->writeEntry( "Enabled", base->enabled(true));
+
+    if (base->conditions())
+        {
+        KConfigGroup conditionsConfig( config->config(), config->name() + "Conditions" );
+        base->conditions()->cfg_write( conditionsConfig );
+        }
+    else
+        {
+        kDebug() << "No conditions";
+        }
+    }
+
+void SettingsWriter::visitActionDataGroup(const ActionDataGroup *group)
+    {
+    visitActionDataBase(group);
+
+    KConfigGroup *config = _stack.top();
+
+    config->writeEntry( "SystemGroup", int(group->system_group()));
+    config->writeEntry( "Type", "ACTION_DATA_GROUP" );
+
+    int cnt = 0;
+    Q_FOREACH(ActionDataBase *child, group->children())
+        {
+        ++cnt;
+        KConfigGroup childConfig(
+                config->config(),
+                config->name() + QString("_") + QString::number(cnt));
+        _stack.push(&childConfig);
+        kDebug() << child->name();
+        child->accept(this);
+        _stack.pop();
+        }
+    config->writeEntry( "DataCount", cnt );
+    }
+
+
+void SettingsWriter::visitCommandUrlShortcutActionData(const CommandUrlShortcutActionData *data)
+    {
+    visitActionData(data);
+
+    KConfigGroup *config = _stack.top();
+    config->writeEntry( "Type", "COMMAND_URL_SHORTCUT_ACTION_DATA" );
+    }
+
+
+void SettingsWriter::visitGenericActionData(const Generic_action_data *data)
+    {
+    visitActionData(data);
+
+    KConfigGroup *config = _stack.top();
+    config->writeEntry( "Type", "GENERIC_ACTION_DATA" );
+    }
+
+
+void SettingsWriter::visitMenuentryShortcutActionData(const MenuEntryShortcutActionData *data)
+    {
+    visitActionData(data);
+
+    KConfigGroup *config = _stack.top();
+    config->writeEntry( "Type", "MENUENTRY_SHORTCUT_ACTION_DATA" );
+    }
+
+
+void SettingsWriter::visitSimpleActionData(const SimpleActionData *data)
+    {
+    visitActionData(data);
+
+    KConfigGroup *config = _stack.top();
+    if (dynamic_cast<const Activate_window_shortcut_action_data*>(data))
+        config->writeEntry( "Type", "ACTIVATE_WINDOW_SHORTCUT_ACTION_DATA" );
+    else if (dynamic_cast<const Dbus_shortcut_action_data*>(data))
+        config->writeEntry( "Type", "DBUS_SHORTCUT_ACTION_DATA" );
+    else if (dynamic_cast<const Keyboard_input_shortcut_action_data*>(data))
+        config->writeEntry( "Type", "KEYBOARD_INPUT_SHORTCUT_ACTION_DATA" );
+    else
+        config->writeEntry( "Type", "SIMPLE_ACTION_DATA" );
+    }
+
+
+void SettingsWriter::writeTo(KConfigBase &config)
+    {
+    QStringList groups = config.groupList();
     for( QStringList::ConstIterator it = groups.constBegin();
          it != groups.constEnd();
          ++it )
-        cfg.deleteGroup( *it );
-    KConfigGroup mainGroup( &cfg, "Main" ); // main group
-    mainGroup.writeEntry( "Version", 2 ); // now it's version 2 cfg. file
-    mainGroup.writeEntry( "AlreadyImported", _settings->already_imported );
-    KConfigGroup dataGroup( &cfg,  "Data" );
-    int cnt = write_actions( dataGroup, _settings->actions(), true );
-    mainGroup.writeEntry( "Autostart", cnt != 0 && !_settings->isDaemonDisabled() );
-    mainGroup.writeEntry( "Disabled", _settings->isDaemonDisabled());
-    KConfigGroup gesturesConfig( &cfg, "Gestures" );
+        config.deleteGroup( *it );
+
+    // Write the global settings
+    KConfigGroup mainGroup(&config, "Main");
+    mainGroup.writeEntry("Version", 2);
+    mainGroup.writeEntry("AlreadyImported", _settings->already_imported);
+    mainGroup.writeEntry("Disabled", _settings->isDaemonDisabled());
+
+    // Write the actions
+    KConfigGroup dataGroup( &config,  "Data" );
+    _stack.push(&dataGroup);
+
+    int cnt = 0;
+    if (_settings->actions())
+        {
+        Q_FOREACH(ActionDataBase *child, _settings->actions()->children())
+            {
+            ++cnt;
+            KConfigGroup childConfig(
+                    dataGroup.config(),
+                    QString("Data_") + QString::number(cnt));
+            _stack.push(&childConfig);
+            child->accept(this);
+            _stack.pop();
+            }
+        }
+    dataGroup.writeEntry( "DataCount", cnt );
+    _stack.pop();
+
+    // CHECKME Count still needed????
+    // int cnt = write_actions( dataGroup, _settings->actions(), true );
+    // mainGroup.writeEntry( "Autostart", cnt != 0 && !_settings->isDaemonDisabled() );
+
+    // Write the gestures configuration
+    KConfigGroup gesturesConfig( &config, "Gestures" );
     gesturesConfig.writeEntry( "Disabled", _settings->areGesturesDisabled() );
     gesturesConfig.writeEntry( "MouseButton", _settings->gestureMouseButton() );
     gesturesConfig.writeEntry( "Timeout", _settings->gestureTimeOut() );
     if( _settings->gesturesExclude() != NULL )
         {
-        KConfigGroup gesturesExcludeConfig( &cfg, "GesturesExclude" );
+        KConfigGroup gesturesExcludeConfig( &config, "GesturesExclude" );
         _settings->gesturesExclude()->cfg_write( gesturesExcludeConfig );
         }
     else
-        cfg.deleteGroup( "GesturesExclude" );
-    KConfigGroup voiceConfig( &cfg, "Voice" );
+        config.deleteGroup( "GesturesExclude" );
+    KConfigGroup voiceConfig( &config, "Voice" );
     voiceConfig.writeEntry("Shortcut" , _settings->voice_shortcut.toString() );
     }
 

@@ -39,6 +39,12 @@ class KDE_EXPORT ActionData
 
         virtual ~ActionData();
 
+        /**
+         * Visitor pattern
+         * @reimp
+         */
+        virtual void accept(ActionDataVisitor *visitor) const;
+
         virtual void update_triggers();
 
         virtual void cfg_write( KConfigGroup& cfg_P ) const = 0;

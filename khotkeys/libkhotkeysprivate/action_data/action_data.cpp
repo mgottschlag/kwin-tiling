@@ -10,6 +10,7 @@
 
 #include "action_data/action_data.h"
 
+#include "action_data/action_data_visitor.h"
 #include "actions/actions.h"
 #include "triggers/triggers.h"
 
@@ -57,6 +58,12 @@ ActionData::ActionData(
     {
     // Now activate the triggers if necessary
     update_triggers();
+    }
+
+
+void ActionData::accept(ActionDataVisitor *visitor) const
+    {
+    visitor->visitActionData(this);
     }
 
 

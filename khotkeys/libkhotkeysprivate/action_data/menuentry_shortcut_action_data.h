@@ -34,6 +34,13 @@ class KDE_EXPORT MenuEntryShortcutActionData
             bool enabled_P = true );
 
         MenuEntryShortcutActionData( KConfigGroup& cfg_P, ActionDataGroup* parent_P );
+
+        /**
+         * Visitor pattern
+         * @reimp
+         */
+        virtual void accept(ActionDataVisitor *visitor) const;
+
     };
 
 

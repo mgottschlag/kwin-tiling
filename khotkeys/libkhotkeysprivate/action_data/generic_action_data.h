@@ -33,6 +33,12 @@ class KDE_EXPORT Generic_action_data
 
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
 
+        /**
+         * Visitor pattern
+         * @reimp
+         */
+        virtual void accept(ActionDataVisitor *visitor) const;
+
         // CHECKME: Why this?
         using ActionDataBase::set_conditions; // make public
         using ActionData::add_trigger; // make public
