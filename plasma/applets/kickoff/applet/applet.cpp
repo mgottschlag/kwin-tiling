@@ -31,6 +31,7 @@
 
 // KDE
 #include <KIcon>
+#include <KIconButton>
 #include <KDebug>
 #include <KConfigDialog>
 #include <KProcess>
@@ -57,6 +58,7 @@ public:
 
     Kickoff::Launcher *launcher;
 
+    KIconButton *iconButton;
     QCheckBox *switchOnHoverCheckBox;
     QList<QAction*> actions;
     QAction* switcher;
@@ -93,7 +95,6 @@ LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
 {
     KGlobal::locale()->insertCatalog("plasma_applet_launcher");
     setHasConfigurationInterface(true);
-    setPopupIcon("start-here-kde");
 }
 
 LauncherApplet::~LauncherApplet()
@@ -103,6 +104,9 @@ LauncherApplet::~LauncherApplet()
 
 void LauncherApplet::init()
 {
+    KConfigGroup cg = globalConfig();
+    setPopupIcon(cg.readEntry("icon", "start-here-kde"));
+
     if (KService::serviceByStorageId("kde4-kmenuedit.desktop")) {
         QAction* menueditor = new QAction(i18n("Menu Editor"), this);
         d->actions.append(menueditor);
@@ -141,13 +145,18 @@ void LauncherApplet::startMenuEditor()
 void LauncherApplet::createConfigurationInterface(KConfigDialog *parent)
 {
     QWidget *widget = new QWidget(parent);
-    QVBoxLayout *widgetLayout = new QVBoxLayout(widget);
+    QGridLayout *widgetLayout = new QGridLayout(widget);
     widget->setLayout(widgetLayout);
 
-    d->switchOnHoverCheckBox = new QCheckBox(i18n("Switch tabs on hover"), widget);
-    widgetLayout->addWidget(d->switchOnHoverCheckBox);
+    QLabel *iconLabel = new QLabel(i18n("Icon:"), widget);
+    widgetLayout->addWidget(iconLabel, 0, 0, Qt::AlignRight);
+    d->iconButton = new KIconButton(widget);
+    d->iconButton->setIcon(popupIcon());
+    iconLabel->setBuddy(d->iconButton);
+    widgetLayout->addWidget(d->iconButton, 0, 1);
 
-    widgetLayout->addStretch();
+    d->switchOnHoverCheckBox = new QCheckBox(i18n("Switch tabs on hover"), widget);
+    widgetLayout->addWidget(d->switchOnHoverCheckBox, 1, 0);
 
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
@@ -179,13 +188,22 @@ void LauncherApplet::configAccepted()
 {
     bool switchTabsOnHover = d->switchOnHoverCheckBox->isChecked();
 
+    const QString iconname = d->iconButton->icon();
+
     // TODO: should this be moved into Launcher as well? perhaps even the config itself?
     KConfigGroup cg = globalConfig();
     cg.writeEntry("SwitchTabsOnHover", switchTabsOnHover);
+    if (!iconname.isEmpty()) {
+        cg.writeEntry("icon", iconname);
+    }
     emit configNeedsSaving();
 
     d->createLauncher();
     d->launcher->setSwitchTabsOnHover(switchTabsOnHover);
+    if (!iconname.isEmpty()) {
+        setPopupIcon(iconname);
+        d->initToolTip();
+    }
 }
 
 QList<QAction*> LauncherApplet::contextualActions()
