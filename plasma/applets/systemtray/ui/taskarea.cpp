@@ -121,6 +121,8 @@ void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
 void TaskArea::addTask(Task *task)
 {
     addWidgetForTask(task);
+    connect (task, SIGNAL(changed(Task*)), this, SLOT(addWidgetForTask(SystemTray::Task *)));
+
     checkUnhideTool();
     emit sizeHintChanged(Qt::PreferredSize);
 }
@@ -142,23 +144,35 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
             kDebug() << "just hiding the widget";
             widget->hide();
         }
-    } else  if (widget) {
-        kDebug() << "widget already exists!";
-        widget->show();
     } else {
-        widget = task->widget(d->host);
+        if (widget) {
+            kDebug() << "widget already exists, trying to reposition it";
+            d->firstTasksLayout->removeItem(widget);
+            d->normalTasksLayout->removeItem(widget);
+            d->lastTasksLayout->removeItem(widget);
+        } else {
+            widget = task->widget(d->host);
+        }
 
         if (widget) {
             switch (task->order()) {
-                case SystemTray::Task::First:
-                    d->firstTasksLayout->addItem(widget);
-                    break;
-                case SystemTray::Task::Normal:
-                    d->normalTasksLayout->addItem(widget);
-                    break;
-                case SystemTray::Task::Last:
-                    d->lastTasksLayout->addItem(widget);
-                    break;
+            case SystemTray::Task::First:
+                d->firstTasksLayout->addItem(widget);
+                break;
+            case SystemTray::Task::Normal:
+                d->normalTasksLayout->addItem(widget);
+                break;
+            case SystemTray::Task::Last:
+                d->lastTasksLayout->addItem(widget);
+                break;
+            }
+            widget->show();
+
+            //the applet could have to be repainted due to easement change
+            QGraphicsWidget *applet = dynamic_cast<QGraphicsWidget *>(parentItem());
+
+            if (applet) {
+                applet->update();
             }
         }
     }
@@ -217,6 +231,8 @@ int TaskArea::rightEasement() const
         } else {
             return size().height() - item->geometry().top() + d->topLayout->spacing();
         }
+    } else {
+        return 0;
     }
 }
 

@@ -55,9 +55,9 @@ public:
 
     ~DBusSystemTrayTaskPrivate()
     {
-        delete iconWidget;
         delete movieTimer;
         delete blinkTimer;
+        delete iconWidget;
     }
 
     QPixmap iconDataToPixmap(const Icon &icon) const;
