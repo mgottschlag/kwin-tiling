@@ -21,7 +21,6 @@
 
 #include "action_data/action_data.h"
 #include "settings_reader_v2.h"
-#include "settings_reader_v1.h"
 #include "settings_writer.h"
 #include "windows_helper/window_selection_list.h"
 
@@ -385,11 +384,7 @@ bool Settings::read_settings(ActionDataGroup *root, KConfigBase const &config, b
     switch (version)
         {
         case 1:
-                {
-                kDebug() << "Version 1 File!";
-                SettingsReaderV1 reader(this);
-                reader.read(config, root);
-                }
+            kError() << "Version 1 file no longer supported!";
             break;
 
         case 2:

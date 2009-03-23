@@ -62,7 +62,6 @@ set(khotkeysprivate_SRCS
     # OTHER
     khotkeysglobal.cpp
     settings.cpp
-    settings_reader_v1.cpp
     settings_reader_v2.cpp
     settings_writer.cpp
     shortcuts_handler.cpp
