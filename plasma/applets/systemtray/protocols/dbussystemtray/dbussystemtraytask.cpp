@@ -47,21 +47,31 @@ public:
     DBusSystemTrayTaskPrivate(DBusSystemTrayTask *q)
         : q(q),
           currentFrame(0),
-          movieTimer(0)
+          movieTimer(0),
+          blinkTimer(0),
+          blink(false)
     {
     }
 
     ~DBusSystemTrayTaskPrivate()
     {
         delete iconWidget;
+        delete movieTimer;
+        delete blinkTimer;
     }
 
-    void syncIcon();
-    void syncTooltip();
-    void syncStatus(int status);
     QPixmap iconDataToPixmap(const Icon &icon) const;
+
+    void syncIcon();
+
+    void syncAttentionIcon();
+    void blinkAttention();
     void syncMovie();
     void updateMovieFrame();
+
+    void syncTooltip();
+    void syncStatus(int status);
+
 
 
     DBusSystemTrayTask *q;
@@ -70,9 +80,12 @@ public:
     DBusSystemTrayTask::Status status;
     DBusSystemTrayTask::Category category;
     QIcon icon;
+    QIcon attentionIcon;
     QVector<QPixmap> movie;
     int currentFrame;
     QTimer *movieTimer;
+    QTimer *blinkTimer;
+    bool blink;
     Plasma::IconWidget *iconWidget;
     Plasma::ToolTipContent tooltipData;
     org::kde::SystemTray *systemTrayIcon;
@@ -99,10 +112,13 @@ DBusSystemTrayTask::DBusSystemTrayTask(const QString &service)
     d->title = d->systemTrayIcon->title().value();
     d->category = (Category)d->systemTrayIcon->category().value();
     d->syncIcon();
+    d->syncAttentionIcon();
+    d->syncMovie();
     d->syncTooltip();
     d->syncStatus(d->systemTrayIcon->status().value());
 
     connect(d->systemTrayIcon, SIGNAL(newIcon()), this, SLOT(syncIcon()));
+    connect(d->systemTrayIcon, SIGNAL(newAttentionIcon()), this, SLOT(syncAttentionIcon()));
     connect(d->systemTrayIcon, SIGNAL(newTooltip()), this, SLOT(syncTooltip()));
     connect(d->systemTrayIcon, SIGNAL(newStatus(int)), this, SLOT(syncStatus(int)));
 
@@ -172,6 +188,46 @@ QPixmap DBusSystemTrayTaskPrivate::iconDataToPixmap(const Icon &icon) const
     return QPixmap::fromImage(iconImage);
 }
 
+//normal icon
+void DBusSystemTrayTaskPrivate::syncIcon()
+{
+    if (systemTrayIcon->icon().value().length() > 0) {
+        icon = KIcon(systemTrayIcon->icon());
+    } else {
+        QDBusReply<Icon> iconReply = systemTrayIcon->image();
+        Icon iconStruct = iconReply.value();
+        icon = iconDataToPixmap(iconStruct);
+    }
+
+    if (status != DBusSystemTrayTask::NeedsAttention) {
+        iconWidget->setIcon(icon);
+    }
+}
+
+
+//Attention icon and movie
+
+void DBusSystemTrayTaskPrivate::syncAttentionIcon()
+{
+    if (systemTrayIcon->attentionIcon().value().length() > 0) {
+        attentionIcon = KIcon(systemTrayIcon->attentionIcon());
+    } else {
+        QDBusReply<Icon> iconReply = systemTrayIcon->attentionImage();
+        Icon iconStruct = iconReply.value();
+        attentionIcon = iconDataToPixmap(iconStruct);
+    }
+}
+
+void DBusSystemTrayTaskPrivate::blinkAttention()
+{
+    if (blink) {
+        iconWidget->setIcon(attentionIcon);
+    } else {
+        iconWidget->setIcon(icon);
+    }
+    blink = !blink;
+}
+
 void DBusSystemTrayTaskPrivate::syncMovie()
 {
     QDBusReply<IconVector> movieReply = systemTrayIcon->attentionMovie();
@@ -192,20 +248,8 @@ void DBusSystemTrayTaskPrivate::updateMovieFrame()
     currentFrame = (currentFrame + 1) % movie.size();
 }
 
-void DBusSystemTrayTaskPrivate::syncIcon()
-{
-    if (systemTrayIcon->icon().value().length() > 0) {
-        icon = KIcon(systemTrayIcon->icon());
-    } else {
-        QDBusReply<Icon> iconReply = systemTrayIcon->image();
-        Icon iconStruct = iconReply.value();
-        icon = iconDataToPixmap(iconStruct);
-    }
 
-    if (status != DBusSystemTrayTask::NeedsAttention) {
-        iconWidget->setIcon(icon);
-    }
-}
+//Tooltip
 
 void DBusSystemTrayTaskPrivate::syncTooltip()
 {
@@ -229,17 +273,26 @@ void DBusSystemTrayTaskPrivate::syncTooltip()
     Plasma::ToolTipManager::self()->setContent(iconWidget, tooltipData);
 }
 
+
+//Status
+
 void DBusSystemTrayTaskPrivate::syncStatus(int newStatus)
 {
     status = (DBusSystemTrayTask::Status)newStatus;
     if (status == DBusSystemTrayTask::NeedsAttention) {
         q->setOrder(Task::Last);
-        syncMovie();
+
         if (movie.size() != 0) {
             if (!movieTimer) {
                 movieTimer = new QTimer(q);
                 q->connect(movieTimer, SIGNAL(timeout()), q, SLOT(updateMovieFrame()));
-                movieTimer->start(250);
+                movieTimer->start(50);
+            }
+        } else if (!attentionIcon.isNull()) {
+            if (!blinkTimer) {
+                blinkTimer = new QTimer(q);
+                q->connect(blinkTimer, SIGNAL(timeout()), q, SLOT(blinkAttention()));
+                blinkTimer->start(500);
             }
         }
     } else {
@@ -249,7 +302,13 @@ void DBusSystemTrayTaskPrivate::syncStatus(int newStatus)
             movieTimer->deleteLater();
             movieTimer = 0;
         }
-        syncIcon();
+        if (blinkTimer) {
+            blinkTimer->stop();
+            blinkTimer->deleteLater();
+            blinkTimer = 0;
+        }
+
+        iconWidget->setIcon(icon);
     }
     emit q->changed(q);
 }
