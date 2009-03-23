@@ -42,72 +42,91 @@ SettingsReaderV2::~SettingsReaderV2()
 void SettingsReaderV2::read(const KConfigBase &config, KHotKeys::ActionDataGroup *parent)
     {
     KConfigGroup data(&config, "Data");
-    readGroup(data, parent);
+
+    // We have to skip the top level group.
+    QString configName = data.name();
+    int cnt = data.readEntry("DataCount", 0);
+    for (int i = 1; i <= cnt; ++i)
+        {
+        KConfigGroup childConfig(data.config(), configName + '_' + QString::number(i));
+        if (_loadAll || KHotKeys::ActionDataBase::cfg_is_enabled(childConfig))
+            {
+            readAction(childConfig, parent);
+            }
+        }
     }
 
 
-void SettingsReaderV2::readGroup(const KConfigGroup &group, KHotKeys::ActionDataGroup *parent)
+KHotKeys::ActionDataGroup *SettingsReaderV2::readGroup(
+        const KConfigGroup &config,
+        KHotKeys::ActionDataGroup *parent)
     {
-    QString groupName = group.name();
+    KHotKeys::ActionDataGroup *group = NULL;
 
-    int cnt = group.readEntry("DataCount", 0);
-    for (int i = 1; i <= cnt; ++i)
+    // Check if it is allowed to merge the group. If yes check for a group
+    // with the desired name
+    if (config.readEntry("AllowMerge", false))
         {
-        KConfigGroup dataGroup(group.config(), groupName + '_' + QString::number(i));
-        if (_loadAll || KHotKeys::ActionDataBase::cfg_is_enabled(dataGroup))
+        Q_FOREACH (KHotKeys::ActionDataBase *child, parent->children())
             {
-
-            KHotKeys::ActionDataBase* new_action = readAction(dataGroup, parent);
-
-            if (_disableActions)
+            if (KHotKeys::ActionDataGroup* existing = dynamic_cast< KHotKeys::ActionDataGroup* >(child))
                 {
-                new_action->set_enabled(false);
+                if (config.readEntry( "Name" ) == existing->name())
+                    {
+                    group = existing;
+                    break;
+                    }
                 }
-
-            KHotKeys::ActionDataGroup* grp = dynamic_cast< KHotKeys::ActionDataGroup* >( new_action );
-
-            if (grp)
-                {
-                readGroup(dataGroup, grp);
-                }
-
             }
         }
+
+    // if no group was found or merging is disabled create a new group
+    if (!group)
+        {
+        kDebug() << "Creating group " << config.name() << parent->comment();
+        group = new KHotKeys::ActionDataGroup(config, parent );
+        }
+
+    Q_ASSERT(group);
+
+    // Now load the children
+    QString configName = config.name();
+    int cnt = config.readEntry("DataCount", 0);
+    for (int i = 1; i <= cnt; ++i)
+        {
+        KConfigGroup childConfig(config.config(), configName + '_' + QString::number(i));
+        if (_loadAll || KHotKeys::ActionDataBase::cfg_is_enabled(childConfig))
+            {
+            readAction(childConfig, group);
+            }
+        }
+
+    return group;
     }
 
 
 KHotKeys::ActionDataBase *SettingsReaderV2::readAction(
-        const KConfigGroup &actionGroup,
+        const KConfigGroup &config,
         KHotKeys::ActionDataGroup *parent)
     {
-    QString type = actionGroup.readEntry( "Type" );
+    KHotKeys::ActionDataBase *newObject = NULL;
+
+    QString type =config.readEntry( "Type" );
 
     if (type == "ACTION_DATA_GROUP")
         {
-        if (actionGroup.readEntry("AllowMerge", false))
-            {
-            Q_FOREACH (KHotKeys::ActionDataBase *child,parent->children())
-                {
-                if (KHotKeys::ActionDataGroup* existing = dynamic_cast< KHotKeys::ActionDataGroup* >(child))
-                    {
-                    if (actionGroup.readEntry( "Name" ) == existing->name())
-                        {
-                        return existing;
-                        }
-                    }
-                }
-            }
-        return new KHotKeys::ActionDataGroup( actionGroup, parent );
+        newObject = readGroup(config, parent);
         }
+
     else if (type == "GENERIC_ACTION_DATA")
         {
-        return new KHotKeys::Generic_action_data( actionGroup, parent );
+        newObject = new KHotKeys::Generic_action_data( config, parent );
         }
 #if 0
     // TODO: Remove KEYBOARD_INPUT_GESTURE_ACTION_DATA
     else if( type == "KEYBOARD_INPUT_GESTURE_ACTION_DATA" )
         {
-        return new Keyboard_input_gesture_action_data( actionGroup, parent );
+        return new Keyboard_input_gesture_action_data( config, parent );
         }
 #endif
     else if (type == "SIMPLE_ACTION_DATA"
@@ -118,12 +137,20 @@ KHotKeys::ActionDataBase *SettingsReaderV2::readAction(
           || type == "KEYBOARD_INPUT_SHORTCUT_ACTION_DATA"
           || type == "ACTIVATE_WINDOW_SHORTCUT_ACTION_DATA")
         {
-        return new KHotKeys::SimpleActionData( actionGroup, parent );
+        newObject = new KHotKeys::SimpleActionData( config, parent );
         }
     else
         {
         kWarning() << "Unknown ActionDataBase type read from cfg file\n";
-        return 0;
+        return NULL;
         }
+
+    // Disable the action
+    if (_disableActions)
+        {
+        newObject->set_enabled(false);
+        }
+
+    return newObject;
     }
 

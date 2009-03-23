@@ -42,7 +42,7 @@ public:
 
     void read(const KConfigBase &config, KHotKeys::ActionDataGroup *parent);
 
-    void readGroup(const KConfigGroup &config, KHotKeys::ActionDataGroup *parent);
+    KHotKeys::ActionDataGroup *readGroup(const KConfigGroup &config, KHotKeys::ActionDataGroup *parent);
 
     KHotKeys::ActionDataBase *readAction(const KConfigGroup &config, KHotKeys::ActionDataGroup *parent);
 
