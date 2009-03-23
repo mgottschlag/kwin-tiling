@@ -18,20 +18,30 @@ namespace KHotKeys {
 
 class KeyboardInputAction;
 
-class KDE_EXPORT Keyboard_input_gesture_action_data
-    : public ActionData
+class KDE_EXPORT Keyboard_input_gesture_action_data : public ActionData
     {
-        typedef ActionData base;
+    typedef ActionData base;
+
     public:
-        Keyboard_input_gesture_action_data( ActionDataGroup* parent_P, const QString& name_P,
-            const QString& comment_P, bool enabled_P = true );
-        Keyboard_input_gesture_action_data( KConfigGroup& cfg_P, ActionDataGroup* parent_P );
+
+        Keyboard_input_gesture_action_data(
+                ActionDataGroup* parent,
+                const QString& name,
+                const QString& comment,
+                bool enabled = true);
+
+        Keyboard_input_gesture_action_data(
+                KConfigGroup& cfg,
+                ActionDataGroup* parent);
+
         const KeyboardInputAction* action() const;
-        // CHECKME kontrola, ze se dava jen jedna akce ?
-        void set_action( KeyboardInputAction* action_P );
+
+        void set_action( KeyboardInputAction* action );
         enum { NUM_TRIGGERS = 3 }; // needs changing code elsewhere
-        using ActionData::set_triggers; // make public // CHECKME kontrola poctu?
-        virtual void cfg_write( KConfigGroup& cfg_P ) const;
+
+        using ActionData::set_triggers;
+
+        virtual void cfg_write( KConfigGroup& cfg ) const;
     };
 
 } // namespace KHotKeys

@@ -1,30 +1,54 @@
-/****************************************************************************
-
- KHotKeys
- 
- Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
-
- Distributed under the terms of the GNU General Public License version 2.
- 
-****************************************************************************/
+/**
+ * Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
+ * Copyright (C) 2009 Michael Jansen <kde@michael-jansen.biz>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License version 2 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB. If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
 
 #include "keyboard_input_gesture_action_data.h"
+
 #include "actions/actions.h"
 #include "conditions/conditions.h"
 #include "conditions/conditions_list.h"
 
-#include <kconfiggroup.h>
+#include <KDE/KConfigGroup>
 
-namespace KHotKeys
-{
+namespace KHotKeys {
+
+Keyboard_input_gesture_action_data::Keyboard_input_gesture_action_data(
+        ActionDataGroup* parent,
+        const QString& name,
+        const QString& comment,
+        bool enabled)
+    :   ActionData(
+            parent,
+            name,
+            comment,
+            0,
+            new Condition_list( "", this ),
+            0,
+            enabled)
+    {}
 
 
-void Keyboard_input_gesture_action_data::set_action( KeyboardInputAction* action_P )
-    {
-    ActionList* tmp = new ActionList( "Keyboard_input_gesture_action_data" );
-    tmp->append( action_P );
-    set_actions( tmp );
-    }
+
+Keyboard_input_gesture_action_data::Keyboard_input_gesture_action_data(
+        KConfigGroup& cfg,
+        ActionDataGroup* parent)
+    :   ActionData(cfg, parent)
+    {}
 
 
 const KeyboardInputAction* Keyboard_input_gesture_action_data::action() const
@@ -35,25 +59,18 @@ const KeyboardInputAction* Keyboard_input_gesture_action_data::action() const
     }
 
 
-void Keyboard_input_gesture_action_data::cfg_write( KConfigGroup& cfg_P ) const
+void Keyboard_input_gesture_action_data::cfg_write( KConfigGroup& cfg ) const
     {
-    base::cfg_write( cfg_P );
-    cfg_P.writeEntry( "Type", "KEYBOARD_INPUT_GESTURE_ACTION_DATA" );
+    base::cfg_write( cfg );
+    cfg.writeEntry( "Type", "KEYBOARD_INPUT_GESTURE_ACTION_DATA" );
     }
 
 
-Keyboard_input_gesture_action_data::Keyboard_input_gesture_action_data(
-    ActionDataGroup* parent_P, const QString& name_P, const QString& comment_P, bool enabled_P )
-    : ActionData( parent_P, name_P, comment_P, 0,
-        new Condition_list( "", this ), 0, enabled_P )
+void Keyboard_input_gesture_action_data::set_action( KeyboardInputAction* action )
     {
-    }
-
-
-Keyboard_input_gesture_action_data::Keyboard_input_gesture_action_data( KConfigGroup& cfg_P,
-    ActionDataGroup* parent_P )
-    : ActionData( cfg_P, parent_P )
-    { // CHECKME nothing ?
+    ActionList* tmp = new ActionList( "Keyboard_input_gesture_action_data" );
+    tmp->append( action );
+    set_actions( tmp );
     }
 
 
