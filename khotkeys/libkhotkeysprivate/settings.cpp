@@ -1,35 +1,33 @@
-/****************************************************************************
-
- KHotKeys
-
- Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
-
- Distributed under the terms of the GNU General Public License version 2.
-
-****************************************************************************/
-
-#define _SETTINGS_CPP_
+/**
+ * Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
+ * Copyright (C) 2009 Michael Jansen <kde@michael-jansen.biz>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License version 2 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB. If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ **/
 
 #include "settings.h"
 #include "settings_reader_v2.h"
+#include "settings_reader_v1.h"
 
 #include "action_data/action_data.h"
-#include "action_data/menuentry_shortcut_action_data.h"
-#include "action_data/command_url_shortcut_action_data.h"
-
-#include "triggers/triggers.h"
-#include "conditions/conditions.h"
-#include "conditions/conditions_list.h"
 
 #include "windows_helper/window_selection_list.h"
 
-#include <kconfig.h>
-#include <kconfiggroup.h>
-#include <kdebug.h>
-#include <khotkeysglobal.h>
-#include <klocale.h>
-#include <kglobal.h>
-#include <kmessagebox.h>
+#include <KDE/KConfig>
+#include <KDE/KDebug>
+#include <KDE/KMessageBox>
 #include <KDE/KStandardDirs>
 
 namespace KHotKeys
@@ -410,8 +408,11 @@ bool Settings::read_settings(ActionDataGroup *root, KConfigBase const &config, b
     switch (version)
         {
         case 1:
-            kDebug() << "Version 1 File!";
-            read_settings_v1(root, config);
+                {
+                kDebug() << "Version 1 File!";
+                SettingsReaderV1 reader(this);
+                reader.read(config, root);
+                }
             break;
 
         case 2:
@@ -516,64 +517,6 @@ int Settings::write_actions_recursively_v2(KConfigGroup& cfg_P, ActionDataGroup*
         }
     cfg_P.writeEntry( "DataCount", cnt );
     return enabled_cnt;
-    }
-
-
-// backward compatibility
-void Settings::read_settings_v1(ActionDataGroup *root, KConfigBase const& config)
-    {
-    KConfigGroup mainGroup( &config, "Main" );
-    int sections = mainGroup.readEntry( "Num_Sections", 0 );
-    ActionDataGroup* menuentries = NULL;
-    Q_FOREACH(ActionDataBase *child, root->children())
-        {
-        ActionDataGroup* tmp = dynamic_cast< ActionDataGroup* >(child);
-        if( tmp == NULL )
-            continue;
-        if( tmp->system_group() == ActionDataGroup::SYSTEM_MENUENTRIES )
-            {
-            menuentries = tmp;
-            break;
-            }
-        }
-    for( int sect = 1;
-         sect <= sections;
-         ++sect )
-        {
-        QString group = QString( "Section%1" ).arg( sect );
-        if( !config.hasGroup( group ))
-            continue;
-        KConfigGroup sectionConfig( &config, group );
-        QString name = sectionConfig.readEntry( "Name" );
-        if( name.isNull() )
-            continue;
-        QString shortcut = sectionConfig.readEntry( "Shortcut" );
-        if( shortcut.isNull() )
-            continue;
-        QString run = sectionConfig.readEntry( "Run" );
-        if( run.isNull() )
-            continue;
-        bool menuentry = sectionConfig.readEntry( "MenuEntry", false);
-        // CHECKME tohle pridavani az pak je trosku HACK
-        if( menuentry )
-            {
-            if( menuentries == NULL )
-                {
-                menuentries = new ActionDataGroup( root,
-                    i18n( MENU_EDITOR_ENTRIES_GROUP_NAME ),
-                    i18n( "These entries were created using Menu Editor." ), NULL,
-                    ActionDataGroup::SYSTEM_MENUENTRIES, true );
-                menuentries->set_conditions( new Condition_list( "", menuentries ));
-                }
-            ( void ) new MenuEntryShortcutActionData( menuentries, name, "",
-                KShortcut( shortcut ), run );
-            }
-        else
-            {
-            ( void ) new CommandUrlShortcutActionData( root, name, "",
-                KShortcut( shortcut ), run );
-            }
-        }
     }
 
 } // namespace KHotKeys
