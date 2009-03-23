@@ -180,15 +180,6 @@ protected:
     void read_settings_v1(ActionDataGroup *root, KConfigBase const& cfg);
 
     /**
-     * Read settings in the v2 format from \a cfg_P .
-     */
-    void read_settings_v2(
-            ActionDataGroup *root,
-            KConfigBase const& cfg,
-            bool include_disabled,
-            bool disable_actions = false);
-
-    /**
      * Write \a parent_P recursively to \a cfg_P
      *
      * The return value specifies the number of active input actions written.
@@ -197,15 +188,6 @@ protected:
         KConfigGroup& cfg_P,
         ActionDataGroup* parent_P,
         bool enabled_P );
-
-    /**
-     * Read \a parent_P recursively to \a cfg_P
-     */
-    void read_actions_recursively_v2(
-        KConfigGroup& cfg_P,
-        ActionDataGroup* parent_P,
-        bool include_disabled_P,
-        bool disable_actions = false);
 
     /**
      * Make sure all System Groups exists

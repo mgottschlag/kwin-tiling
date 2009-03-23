@@ -35,7 +35,7 @@ class KDE_EXPORT ActionData
             const QString& comment_P, Trigger_list* triggers_P, Condition_list* conditions_P,
             ActionList* actions_P, bool enabled_P = true );
 
-        ActionData( KConfigGroup& cfg_P, ActionDataGroup* parent_P );
+        ActionData( const KConfigGroup& cfg_P, ActionDataGroup* parent_P );
 
         virtual ~ActionData();
 

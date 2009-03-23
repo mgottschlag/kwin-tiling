@@ -44,7 +44,7 @@ SimpleActionData::SimpleActionData(
     {}
 
 
-SimpleActionData::SimpleActionData( KConfigGroup& cfg_P, ActionDataGroup* parent_P )
+SimpleActionData::SimpleActionData( const KConfigGroup& cfg_P, ActionDataGroup* parent_P )
     : ActionData( cfg_P, parent_P )
     {}
 

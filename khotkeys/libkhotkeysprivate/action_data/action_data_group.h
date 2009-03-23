@@ -62,7 +62,7 @@ class KDE_EXPORT ActionDataGroup
             system_group_t system_group_P = SYSTEM_NONE,
             bool enabled_P = false );
 
-        ActionDataGroup( KConfigGroup& cfg_P, ActionDataGroup* parent_P );
+        ActionDataGroup(const KConfigGroup& cfg_P, ActionDataGroup* parent_P );
         virtual ~ActionDataGroup();
         virtual void update_triggers();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;

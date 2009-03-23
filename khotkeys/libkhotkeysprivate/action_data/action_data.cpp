@@ -21,7 +21,7 @@ namespace KHotKeys
 {
 
 
-ActionData::ActionData( KConfigGroup& cfg_P, ActionDataGroup* parent_P )
+ActionData::ActionData(const KConfigGroup& cfg_P, ActionDataGroup* parent_P )
     : ActionDataBase( cfg_P, parent_P )
     {
     KConfigGroup triggersGroup( cfg_P.config(), cfg_P.name() + "Triggers" );

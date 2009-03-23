@@ -19,7 +19,7 @@ namespace KHotKeys
 {
 
 ActionDataGroup::ActionDataGroup(
-        KConfigGroup& cfg_P,
+        const KConfigGroup& cfg_P,
         ActionDataGroup* parent_P)
             : ActionDataBase( cfg_P, parent_P )
               ,_list()

@@ -11,6 +11,7 @@
 #define _SETTINGS_CPP_
 
 #include "settings.h"
+#include "settings_reader_v2.h"
 
 #include "action_data/action_data.h"
 #include "action_data/menuentry_shortcut_action_data.h"
@@ -414,8 +415,11 @@ bool Settings::read_settings(ActionDataGroup *root, KConfigBase const &config, b
             break;
 
         case 2:
-            kDebug() << "Version 2 File!";
-            read_settings_v2(root, config, include_disabled, disable);
+                {
+                kDebug() << "Version 2 File!";
+                SettingsReaderV2 reader(this, include_disabled, disable);
+                reader.read(config, root);
+                }
             break;
 
         case -1234576: // no config file
@@ -514,44 +518,6 @@ int Settings::write_actions_recursively_v2(KConfigGroup& cfg_P, ActionDataGroup*
     return enabled_cnt;
     }
 
-
-void Settings::read_settings_v2(
-        ActionDataGroup *root,
-        KConfigBase const& config,
-        bool include_disabled,
-        bool disable_actions)
-    {
-    KConfigGroup dataGroup(&config, "Data");
-    read_actions_recursively_v2(dataGroup, root, include_disabled, disable_actions);
-    }
-
-
-void Settings::read_actions_recursively_v2(
-        KConfigGroup& cfg_P,
-        ActionDataGroup* parent_P,
-        bool include_disabled_P,
-        bool disable_actions)
-    {
-    QString save_cfg_group = cfg_P.name();
-    int cnt = cfg_P.readEntry( "DataCount",0 );
-    for( int i = 1;
-         i <= cnt;
-         ++i )
-        {
-        KConfigGroup itConfig( cfg_P.config(), save_cfg_group + '_' + QString::number( i ));
-        if( include_disabled_P || ActionDataBase::cfg_is_enabled( itConfig ))
-            {
-            ActionDataBase* new_action = ActionDataBase::create_cfg_read( itConfig, parent_P );
-            if (disable_actions)
-                {
-                new_action->set_enabled(false);
-                }
-            ActionDataGroup* grp = dynamic_cast< ActionDataGroup* >( new_action );
-            if( grp != NULL )
-                read_actions_recursively_v2( itConfig, grp, include_disabled_P );
-            }
-        }
-    }
 
 // backward compatibility
 void Settings::read_settings_v1(ActionDataGroup *root, KConfigBase const& config)

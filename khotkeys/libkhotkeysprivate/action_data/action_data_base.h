@@ -36,29 +36,29 @@ class KDE_EXPORT ActionDataBase
         /**
          * Create a action data base object.
          *
-         * \param parent_P  A ActionDataGroup or 0. If provided this action is
+         * \param parent  A ActionDataGroup or 0. If provided this action is
          *        registered with the group.
-         * \param name_P    Name for the object.
-         * \param comment_P Comment for the object.
-         * \param condition_P Conditions for the object or 0
-         * \param enabled_P Is the action enabled?
+         * \param name    Name for the object.
+         * \param comment Comment for the object.
+         * \param condition Conditions for the object or 0
+         * \param enabled Is the action enabled?
          */
         ActionDataBase( 
-            ActionDataGroup* parent_P,
-            const QString& name_P,
-            const QString& comment_P,
-            Condition_list* condition_P,
-            bool enabled_P );
+            ActionDataGroup* parent,
+            const QString& name,
+            const QString& comment,
+            Condition_list* condition,
+            bool enabled );
 
         /**
          * Read the setting for the \c ActionDataBase object from the \a
-         * cfg_P configuration object.
+         * cfg configuration object.
          *
-         * \param cfg_P KConfigGroup to read from
-         * \param parent_P  A ActionDataGroup or 0. If provided the object is
+         * \param cfg KConfigGroup to read from
+         * \param parent  A ActionDataGroup or 0. If provided the object is
          *        registered with the group.
          */
-        ActionDataBase( KConfigGroup& cfg_P, ActionDataGroup* parent_P );
+        ActionDataBase(const KConfigGroup& cfg, ActionDataGroup* parent);
 
         /**
          * Destructor
@@ -66,10 +66,10 @@ class KDE_EXPORT ActionDataBase
         virtual ~ActionDataBase();
 
         /**
-         * Write the this action  to the \a cfg_P configuration
+         * Write the this action  to the \a cfg configuration
          * object.
          */
-        virtual void cfg_write( KConfigGroup& cfg_P ) const = 0;
+        virtual void cfg_write(KConfigGroup& cfg ) const = 0;
 
         /**
          * Get the conditions for this action or 0 if the action has no
@@ -104,7 +104,7 @@ class KDE_EXPORT ActionDataBase
          * Name for the action
          */
         QString name() const;
-        void set_name( const QString& name_P );
+        void set_name( const QString& name );
         //@}
 
 
@@ -120,24 +120,19 @@ class KDE_EXPORT ActionDataBase
         /**
          * Is that action enabled
          */
-        bool enabled( bool ignore_group_P = false ) const;
+        bool enabled( bool ignore_group = false ) const;
         void set_enabled( bool enabled );
         //@}
 
         /**
-         * Factory method.
-         */
-        static ActionDataBase* create_cfg_read( KConfigGroup& cfg_P, ActionDataGroup* parent_P );
-
-        /**
          * See if it the config group is enabled.
          */
-        static bool cfg_is_enabled( KConfigGroup& cfg_P );
+        static bool cfg_is_enabled(const KConfigGroup& cfg);
 
     protected:
 
         //! Set the list of condition for this element
-        void set_conditions(Condition_list* conditions_P);
+        void set_conditions(Condition_list* conditions);
 
     private:
 

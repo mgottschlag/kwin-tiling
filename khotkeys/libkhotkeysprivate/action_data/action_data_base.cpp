@@ -53,7 +53,7 @@ ActionDataBase::ActionDataBase(
 
 
 ActionDataBase::ActionDataBase(
-        KConfigGroup& cfg_P
+        const KConfigGroup& cfg_P
         ,ActionDataGroup* parent_P)
             : _parent( parent_P)
               ,_conditions(NULL)
@@ -85,7 +85,7 @@ ActionDataBase::~ActionDataBase()
     }
 
 
-bool ActionDataBase::cfg_is_enabled( KConfigGroup& cfg_P )
+bool ActionDataBase::cfg_is_enabled(const KConfigGroup& cfg_P )
     {
     return cfg_P.readEntry( "Enabled", true);
     }
@@ -136,44 +136,6 @@ bool ActionDataBase::conditions_match() const
     {
     return ( conditions() ? conditions()->match() : true )
         && ( parent() ? parent()->conditions_match() : true );
-    }
-
-
-ActionDataBase* ActionDataBase::create_cfg_read( KConfigGroup& cfg_P, ActionDataGroup* parent_P )
-    {
-    QString type = cfg_P.readEntry( "Type" );
-    if( type == "ACTION_DATA_GROUP" )
-        {
-        if( cfg_P.readEntry( "AllowMerge", false ))
-            {
-            Q_FOREACH(ActionDataBase *child,parent_P->children())
-                {
-                if( ActionDataGroup* existing = dynamic_cast< ActionDataGroup* >(child))
-                    {
-                    if( cfg_P.readEntry( "Name" ) == existing->name())
-                        return existing;
-                    }
-                }
-            }
-        return new ActionDataGroup( cfg_P, parent_P );
-        }
-    if( type == "GENERIC_ACTION_DATA" )
-        return new Generic_action_data( cfg_P, parent_P );
-#if 0
-    // TODO: Remove KEYBOARD_INPUT_GESTURE_ACTION_DATA
-    else if( type == "KEYBOARD_INPUT_GESTURE_ACTION_DATA" )
-        return new Keyboard_input_gesture_action_data( cfg_P, parent_P );
-#endif
-    else if( type == "SIMPLE_ACTION_DATA"
-          || type == "DCOP_SHORTCUT_ACTION_DATA" || type == "DBUS_SHORTCUT_ACTION_DATA"
-          || type == "KEYBOARD_INPUT_GESTURE_ACTION_DATA"
-          || type == "MENUENTRY_SHORTCUT_ACTION_DATA"
-          || type == "COMMAND_URL_SHORTCUT_ACTION_DATA"
-          || type == "KEYBOARD_INPUT_SHORTCUT_ACTION_DATA"
-          || type == "ACTIVATE_WINDOW_SHORTCUT_ACTION_DATA" )
-        return new SimpleActionData( cfg_P, parent_P );
-    kWarning() << "Unknown ActionDataBase type read from cfg file\n";
-    return 0;
     }
 
 

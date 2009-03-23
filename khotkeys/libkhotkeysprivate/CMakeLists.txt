@@ -60,6 +60,7 @@ set(khotkeysprivate_SRCS
     # OTHER
     khotkeysglobal.cpp
     settings.cpp
+    settings_reader_v2.cpp
     shortcuts_handler.cpp
     windows_handler.cpp
     # search for FIXME: SOUND

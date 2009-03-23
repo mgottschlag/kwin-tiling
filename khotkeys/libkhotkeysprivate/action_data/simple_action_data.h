@@ -32,7 +32,7 @@ public:
         bool enabled_P = true );
 
     SimpleActionData(
-        KConfigGroup& cfg_P,
+        const KConfigGroup& cfg_P,
         ActionDataGroup* parent_P );
 
     //! The action associated with this hotkey

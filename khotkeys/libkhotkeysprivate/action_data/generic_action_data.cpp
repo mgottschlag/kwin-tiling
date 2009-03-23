@@ -33,10 +33,12 @@ Generic_action_data::Generic_action_data( ActionDataGroup* parent_P, const QStri
     }
 
 
-Generic_action_data::Generic_action_data( KConfigGroup& cfg_P, ActionDataGroup* parent_P )
-    : ActionData( cfg_P, parent_P )
-    { // CHECKME do nothing ?
-    }
+Generic_action_data::Generic_action_data(
+        const KConfigGroup& cfg_P,
+        ActionDataGroup* parent_P)
+    :   ActionData( cfg_P, parent_P )
+
+    {}
 
 
 } // namespace KHotKeys
