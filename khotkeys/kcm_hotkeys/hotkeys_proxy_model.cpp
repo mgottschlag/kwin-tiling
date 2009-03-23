@@ -51,13 +51,9 @@ KHotkeysProxyModel::~KHotkeysProxyModel()
 
 bool KHotkeysProxyModel::filterAcceptsRow( int source_row, const QModelIndex &source_parent ) const
     {
-    // Check what type it is
-    QModelIndex isGroupIndex = sourceModel()->index( source_row, 2, source_parent );
-    QModelIndex typeOfIndex = sourceModel()->index( source_row, 3, source_parent );
-
+    Q_UNUSED(source_row);
+    Q_UNUSED(source_parent);
     return true;
-/*    return sourceModel()->data( isGroupIndex ).toBool() 
-        || sourceModel()->data( typeOfIndex ) == KHotkeysModel::CommandUrlShortcutActionData; */
     }
 
 
