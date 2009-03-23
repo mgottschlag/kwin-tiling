@@ -62,6 +62,13 @@ public:
     bool reread_settings(bool include_disabled = true);
 
     /**
+     * Update the settings.
+     *
+     * Checks if updates are available and imports them if not yet done.
+     */
+    bool update();
+
+    /**
      * Write the settings.
      */
     void write_settings();
@@ -74,7 +81,7 @@ public:
     /**
      * Import settings from \a cfg_P.
      */
-    bool import( KConfig& cfg_P, bool ask_P );
+    bool import(KConfig& cfg_P, bool ask = true);
 
     bool importFrom(ActionDataGroup *parent, KConfigBase const &config, bool ask=false);
 
@@ -94,7 +101,8 @@ public:
     /**
      * Set the actions. 
      *
-     * \note Ownership is taken. The current action list will be deleted.
+     * \note Ownership is taken. The current action list will be deleted. If
+     * \@a actions is NULL the method will create a new ActionDataGroup
      */
     void setActions( ActionDataGroup *actions );
 
@@ -117,6 +125,11 @@ public:
      */
     bool isDaemonDisabled() const;
     //@}
+
+    /**
+     * Load the default settings
+     */
+    bool loadDefaults();
 
     /**
      * @name Gestures
@@ -195,11 +208,14 @@ protected:
         bool disable_actions = false);
 
     /**
-     * Initialize the settings
+     * Make sure all System Groups exists
      */
-    void initialize();
+    void validate();
 
 private:
+
+    // Reset all values. No defaults are loaded
+    void reinitialize();
 
     /**
      * TODO
@@ -245,8 +261,6 @@ private:
      * List of id's for all imported files.
      */
     QStringList already_imported;
-
-
 };
 
 } // namespace KHotKeys

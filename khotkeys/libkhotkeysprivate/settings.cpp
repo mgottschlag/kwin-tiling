@@ -29,6 +29,7 @@
 #include <klocale.h>
 #include <kglobal.h>
 #include <kmessagebox.h>
+#include <KDE/KStandardDirs>
 
 namespace KHotKeys
 {
@@ -39,12 +40,9 @@ const int Settings::CurrentFileVersion = 2;
 
 Settings::Settings()
     : m_actions( NULL ),
-      gestures_disabled(false),
-      gesture_mouse_button(0),
-      gesture_timeout(0),
-      gestures_exclude(NULL),
-      daemon_disabled(false)
+      gestures_exclude(NULL)
     {
+    reinitialize();
     }
 
 
@@ -154,10 +152,59 @@ bool Settings::isDaemonDisabled() const
     }
 
 
+bool Settings::loadDefaults()
+    {
+    reinitialize();
+
+    // Load the default set.
+    QString installPath = KGlobal::dirs()->installPath("data");
+
+    KConfig file(installPath + "khotkeys/defaults.khotkeys");
+    if (read_settings(m_actions, file, true, false))
+        {
+        kDebug() << "Loaded defaults from" << file.name();
+        already_imported.append("defaults");
+        return true;
+        }
+    else
+        {
+        kDebug() << "Failed to load defaults from" << file.name();
+        return false;
+        }
+
+    }
+
+
+void Settings::reinitialize()
+    {
+    // Rereading settings. First delete what we have
+    setActions(NULL);
+
+    gestures_disabled = false;
+    gesture_mouse_button = 2;
+    gesture_timeout = 300;
+    gestures_exclude = NULL,
+
+    daemon_disabled = false;
+
+    already_imported = QStringList();
+    }
+
+
 void Settings::setActions( ActionDataGroup *actions )
     {
     delete m_actions;
-    m_actions = actions;
+
+    m_actions = actions
+        ? actions
+        : new ActionDataGroup(
+                NULL,
+                "should never see",
+                "should never see",
+                NULL,
+                ActionDataGroup::SYSTEM_ROOT,
+                true );
+
     }
 
 
@@ -210,9 +257,6 @@ bool Settings::importFrom(ActionDataGroup *element, KConfigBase const &config, b
     {
     KConfigGroup mainGroup(&config, "Main");
 
-    // List of already imported configuration files
-    already_imported = mainGroup.readEntry( "AlreadyImported",QStringList() );
-
     // A file can have a import id.
     QString import_id = mainGroup.readEntry( "ImportId" );
     if( !import_id.isEmpty())
@@ -231,7 +275,7 @@ bool Settings::importFrom(ActionDataGroup *element, KConfigBase const &config, b
             }
         else
             {
-            already_imported.append( import_id );
+            already_imported.append(import_id);
             }
         }
     else
@@ -244,13 +288,14 @@ bool Settings::importFrom(ActionDataGroup *element, KConfigBase const &config, b
             return true;
         }
 
-    return read_settings(element, config, true);
+    // Include Disabled, Disable the imported actions
+    return read_settings(element, config, true, true);
     }
 
 
-void Settings::initialize()
+void Settings::validate()
     {
-    // Create the KMenuEdit group
+    // Create the KMenuEdit group if it does not yet exist
     get_system_group(ActionDataGroup::SYSTEM_MENUENTRIES);
     }
 
@@ -303,29 +348,26 @@ bool Settings::reread_settings(bool include_disabled)
     {
     KConfig config( KHOTKEYS_CONFIG_FILE );
 
-    // Rereading settings. First delete what we have
-    setActions(NULL);
-
-    // Initialize m_actions
-    m_actions = new ActionDataGroup(
-            NULL,
-            "should never see",
-            "should never see",
-            NULL,
-            ActionDataGroup::SYSTEM_ROOT,
-            true );
-
     // If we read the main settings and there is no main. Initialize the file
     // and return
     KConfigGroup mainGroup( &config, "Main" ); // main group
     if (!mainGroup.exists())
         {
-        initialize();
+        loadDefaults();
+        validate();
         return false;
         }
 
+    // First delete what we have
+    reinitialize();
+
     // ### Read the global configurations
     daemon_disabled = mainGroup.readEntry( "Disabled", false);
+
+    // ### List of already imported configuration files
+    already_imported = mainGroup.readEntry(
+            "AlreadyImported",
+            QStringList());
 
     // ### Gestures
     KConfigGroup gesturesConfig( &config, "Gestures" );
@@ -348,7 +390,7 @@ bool Settings::reread_settings(bool include_disabled)
 
     bool rc = read_settings(m_actions, config, include_disabled);
     // Ensure the system groups exist
-    initialize();
+    validate();
     return rc;
     }
 
@@ -386,6 +428,30 @@ bool Settings::read_settings(ActionDataGroup *root, KConfigBase const &config, b
         }
 
     return true;
+    }
+
+
+bool Settings::update()
+    {
+    QStringList updates(KGlobal::dirs()->findAllResources("data", "khotkeys/*.khotkeys"));
+    bool imported(false);
+
+    Q_FOREACH (const QString path, updates)
+        {
+        // Import checks if the file was already imported.
+        KConfig file(path);
+        if (import(file, false))
+            {
+            kDebug() << "Imported file" << path;
+            imported = true;
+            }
+        }
+
+    if (imported)
+        {
+        write_settings();
+        }
+    return false;
     }
 
 

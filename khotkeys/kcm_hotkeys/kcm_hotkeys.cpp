@@ -268,6 +268,9 @@ KCMHotkeysPrivate::KCMHotkeysPrivate( KCMHotkeys *host )
 
 void KCMHotkeysPrivate::load()
     {
+    // Start khotkeys
+    KHotKeys::Daemon::start();
+
     // disconnect the signals
     if (tree_view->selectionModel())
         {
@@ -293,8 +296,6 @@ void KCMHotkeysPrivate::load()
         tree_view->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)),
         q, SLOT(currentChanged(QModelIndex,QModelIndex)) );
 
-    // Start khotkeys
-    KHotKeys::Daemon::start();
     }
 
 
@@ -359,6 +360,10 @@ void KCMHotkeysPrivate::save()
 
     // Reread the configuration. We have no possibility to check if it worked.
     iface->reread_configuration();
+
+    // Reload the possible changes
+    model->load();
+
     }
 
 

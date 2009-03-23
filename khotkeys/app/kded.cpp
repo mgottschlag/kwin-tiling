@@ -65,7 +65,14 @@ void KHotKeysModule::reread_configuration()
     KHotKeys::khotkeys_set_active( false );
 
     // Load the settings
-    _settings.reread_settings(false);
+    _settings.reread_settings(true);
+
+    // Do updates (if available)
+    if (_settings.update())
+        {
+        _settings.write_settings();
+        }
+
     KHotKeys::gesture_handler->set_mouse_button( _settings.gestureMouseButton() );
     KHotKeys::gesture_handler->set_timeout( _settings.gestureTimeOut() );
     kDebug() << _settings.areGesturesDisabled();
@@ -102,6 +109,7 @@ SimpleActionData* KHotKeysModule::menuentry_action(const QString &storageId)
 
     return NULL;
     }
+
 
 QString KHotKeysModule::get_menuentry_shortcut(const QString &storageId)
     {
