@@ -22,6 +22,7 @@
 #include "action_data/action_data_group.h"
 #include "action_data/simple_action_data.h"
 #include "action_data/generic_action_data.h"
+#include "settings.h"
 
 #include <KDE/KConfig>
 #include <KDE/KConfigBase>
@@ -81,11 +82,27 @@ KHotKeys::ActionDataGroup *SettingsReaderV2::readGroup(
             }
         }
 
+    // Do not allow loading a system group if there is already one.
+    unsigned int system_group_tmp = config.readEntry( "SystemGroup", 0 );
+    if ((system_group_tmp != 0) && (system_group_tmp < KHotKeys::ActionDataGroup::SYSTEM_MAX))
+            {
+            // It's a valid value. Get the system group and load into it
+            group = _settings->get_system_group(
+                    static_cast< KHotKeys::ActionDataGroup::system_group_t > (system_group_tmp));
+            }
+
     // if no group was found or merging is disabled create a new group
     if (!group)
         {
         kDebug() << "Creating group " << config.name() << parent->comment();
         group = new KHotKeys::ActionDataGroup(config, parent );
+
+        // We only disable newly created groups
+        if (_disableActions)
+            {
+            group->set_enabled(false);
+            }
+
         }
 
     Q_ASSERT(group);
@@ -117,6 +134,9 @@ KHotKeys::ActionDataBase *SettingsReaderV2::readAction(
     if (type == "ACTION_DATA_GROUP")
         {
         newObject = readGroup(config, parent);
+
+        // Groups take care of disabling themselves.
+        return newObject;
         }
 
     else if (type == "GENERIC_ACTION_DATA")
@@ -144,12 +164,6 @@ KHotKeys::ActionDataBase *SettingsReaderV2::readAction(
         {
         kWarning() << "Unknown ActionDataBase type read from cfg file\n";
         return NULL;
-        }
-
-    // Disable the action
-    if (_disableActions)
-        {
-        newObject->set_enabled(false);
         }
 
     return newObject;
