@@ -1,10 +1,10 @@
 /**
+ * Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
  * Copyright (C) 2009 Michael Jansen <kde@michael-jansen.biz>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * License version 2 as published by the Free Software Foundation.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,7 +15,7 @@
  * along with this library; see the file COPYING.LIB. If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- */
+ **/
 
 #include "settings_reader_v2.h"
 
@@ -28,7 +28,8 @@
 #include <KDE/KConfigGroup>
 #include <KDE/KDebug>
 
-    SettingsReaderV2::SettingsReaderV2(KHotKeys::Settings *settings, bool loadAll, bool loadDisabled)
+
+SettingsReaderV2::SettingsReaderV2(KHotKeys::Settings *settings, bool loadAll, bool loadDisabled)
     :   _settings(settings),
         _loadAll(loadAll),
         _disableActions(loadDisabled)
