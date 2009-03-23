@@ -166,7 +166,10 @@ KHotKeys::ActionDataBase *SettingsReaderV2::readAction(
                 && sa->action()->type() == KHotKeys::Action::MenuEntryActionType)
             {
             delete sa;
-            newObject = new KHotKeys::MenuEntryShortcutActionData(config, parent);
+            // We collect all of those in the system group
+            newObject = new KHotKeys::MenuEntryShortcutActionData(
+                    config,
+                    _settings->get_system_group(KHotKeys::ActionDataGroup::SYSTEM_MENUENTRIES));
             }
         else
             {
@@ -177,6 +180,12 @@ KHotKeys::ActionDataBase *SettingsReaderV2::readAction(
         {
         kWarning() << "Unknown ActionDataBase type read from cfg file\n";
         return NULL;
+        }
+
+    // We only disable newly created groups
+    if (_disableActions)
+        {
+        newObject->set_enabled(false);
         }
 
     return newObject;
