@@ -69,8 +69,9 @@ class JobWidget : public QGraphicsWidget
         Plasma::Label *m_toNameLabel;
         Plasma::Label *m_toLabel;
         Plasma::Label *m_speedLabel;
-        Plasma::Label *m_processedLabel;
         Plasma::Label *m_totalBytesLabel;
+        Plasma::Label *m_dirCountLabel;
+        Plasma::Label *m_fileCountLabel;
 
         QString labelName0;
         QString labelName1;
