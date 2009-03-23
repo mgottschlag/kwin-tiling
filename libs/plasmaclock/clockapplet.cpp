@@ -177,7 +177,7 @@ void ClockApplet::speakTime(const QTime &time)
         d->prevHour = time.hour();
         d->prevMinute = time.minute();
         QDBusInterface ktts("org.kde.kttsd", "/KSpeech", "org.kde.KSpeech");
-        ktts.asyncCall("say", i18nc("Sent to the text to speech service to be read aloud as the current time", "It is %1", time.toString("h:m AP")), 0);
+        ktts.asyncCall("say", i18nc("Sent to the text to speech service to be read aloud as the current time", "It is %1", KGlobal::locale()->formatTime(time)), 0);
     }
 }
 
