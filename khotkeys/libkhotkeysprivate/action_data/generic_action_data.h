@@ -31,7 +31,7 @@ class KDE_EXPORT Generic_action_data
 
         Generic_action_data(const KConfigGroup& cfg_P, ActionDataGroup* parent_P );
 
-        virtual void cfg_write( KConfigGroup& cfg_P ) const;
+        ~Generic_action_data();
 
         /**
          * Visitor pattern

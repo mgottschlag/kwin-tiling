@@ -56,13 +56,6 @@ void SimpleActionData::accept(ActionDataVisitor *visitor) const
     }
 
 
-void SimpleActionData::cfg_write( KConfigGroup& cfg_P ) const
-    {
-    base::cfg_write( cfg_P );
-    cfg_P.writeEntry( "Type", "SIMPLE_ACTION_DATA" );
-    }
-
-
 void SimpleActionData::set_action( Action* action_P )
     {
     ActionList* tmp = new ActionList( "Simple_action_data" );

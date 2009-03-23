@@ -72,12 +72,6 @@ class KDE_EXPORT ActionDataBase
         virtual void accept(ActionDataVisitor *visitor) const;
 
         /**
-         * Write the this action  to the \a cfg configuration
-         * object.
-         */
-        virtual void cfg_write(KConfigGroup& cfg ) const = 0;
-
-        /**
          * Get the conditions for this action or 0 if the action has no
          * conditions.
          */

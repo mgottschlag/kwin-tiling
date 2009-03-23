@@ -62,11 +62,6 @@ public:
 
 private:
 
-    int write_actions(
-            KConfigGroup &group,
-            const ActionDataGroup *parent,
-            bool enabled);
-
     const Settings *_settings;
 
     QStack<KConfigGroup*> _stack;

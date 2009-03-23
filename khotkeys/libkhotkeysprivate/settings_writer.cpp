@@ -71,13 +71,9 @@ void SettingsWriter::exportTo(const ActionDataBase *element, KConfigBase &config
 
     // The group for the element to export
     KConfigGroup data1Group(&config,  "Data_1");
-    element->cfg_write(data1Group);
-
-    const ActionDataGroup *group = dynamic_cast<const ActionDataGroup*>(element);
-    if (group)
-        {
-        write_actions(data1Group, group, true);
-        }
+    _stack.push(&data1Group);
+    element->accept(this);
+    _stack.pop();
     }
 
 
@@ -229,34 +225,6 @@ void SettingsWriter::writeTo(KConfigBase &config)
     KConfigGroup voiceConfig( &config, "Voice" );
     voiceConfig.writeEntry("Shortcut" , _settings->voice_shortcut.toString() );
     }
-
-
-// return value means the number of enabled actions written in the cfg file
-// i.e. 'Autostart' for value > 0 should be on
-int SettingsWriter::write_actions(KConfigGroup& cfg_P, const ActionDataGroup* parent_P, bool enabled_P)
-    {
-    int enabled_cnt = 0;
-    QString save_cfg_group = cfg_P.name();
-    int cnt = 0;
-    if( parent_P )
-        {
-        Q_FOREACH(ActionDataBase *child,parent_P->children())
-            {
-            ++cnt;
-            if( enabled_P && child->enabled( true ))
-                ++enabled_cnt;
-            KConfigGroup itConfig( cfg_P.config(), save_cfg_group + '_' + QString::number( cnt ));
-            child->cfg_write( itConfig );
-            ActionDataGroup* grp = dynamic_cast< ActionDataGroup* >(child);
-            if( grp != NULL )
-                enabled_cnt += write_actions( itConfig, grp, enabled_P && child->enabled( true ));
-            }
-        }
-    cfg_P.writeEntry( "DataCount", cnt );
-    return enabled_cnt;
-    }
-
-
 
 
 } // namespace KHotKeys

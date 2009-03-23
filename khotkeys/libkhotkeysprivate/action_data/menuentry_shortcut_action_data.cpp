@@ -65,13 +65,4 @@ void MenuEntryShortcutActionData::accept(ActionDataVisitor *visitor) const
     }
 
 
-template<> KDE_EXPORT
-void SimpleActionDataHelper< ShortcutTrigger, MenuEntryAction >
-    ::cfg_write( KConfigGroup& cfg ) const
-    {
-    base::cfg_write( cfg );
-    cfg.writeEntry( "Type", "MENUENTRY_SHORTCUT_ACTION_DATA" );
-    }
-
-
 } // namespace KHotKeys

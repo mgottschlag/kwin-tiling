@@ -52,7 +52,6 @@ public:
     void set_action( Action* action_P );
     void set_trigger( Trigger* trigger_P );
 
-    virtual void cfg_write( KConfigGroup& cfg_P ) const;
     }; // class SimpleActionData
 
 
@@ -92,7 +91,6 @@ class KDE_EXPORT SimpleActionDataHelper
         void set_action( Action *action_P );
         void set_trigger( Trigger *trigger_P );
 
-        virtual void cfg_write( KConfigGroup& cfg_P ) const;
     };
 
 // ==========================================================================

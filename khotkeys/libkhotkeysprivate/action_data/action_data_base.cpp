@@ -92,29 +92,6 @@ bool ActionDataBase::cfg_is_enabled(const KConfigGroup& cfg_P )
     }
 
 
-void ActionDataBase::cfg_write( KConfigGroup& cfg_P ) const
-    {
-    kDebug() << name();
-    kDebug() << cfg_P.keyList();
-
-    cfg_P.writeEntry( "Type", "ERROR" ); // derived classes should call with their type
-    cfg_P.writeEntry( "Name", name());
-    cfg_P.writeEntry( "Comment", comment());
-    cfg_P.writeEntry( "Enabled", enabled( true ));
-
-    if (conditions())
-        {
-        kDebug() << "writing conditions";
-        KConfigGroup conditionsConfig( cfg_P.config(), cfg_P.name() + "Conditions" );
-        conditions()->cfg_write( conditionsConfig );
-        }
-    else
-        {
-        kDebug() << "No conditions";
-        }
-    }
-
-
 QString ActionDataBase::comment() const
     {
     return _comment;

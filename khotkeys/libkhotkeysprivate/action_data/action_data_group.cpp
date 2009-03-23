@@ -168,15 +168,6 @@ int ActionDataGroup::size() const
     }
 
 
-void ActionDataGroup::cfg_write( KConfigGroup& cfg_P ) const
-    {
-    kDebug() << "Writing group " << cfg_P.name();
-    ActionDataBase::cfg_write( cfg_P );
-    cfg_P.writeEntry( "SystemGroup", int(system_group()));
-    cfg_P.writeEntry( "Type", "ACTION_DATA_GROUP" );
-    }
-
-
 void ActionDataGroup::update_triggers()
     {
     Q_FOREACH(ActionDataBase *child, children())

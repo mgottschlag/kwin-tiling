@@ -71,7 +71,6 @@ class KDE_EXPORT ActionDataGroup
         virtual void accept(ActionDataVisitor *visitor) const;
 
         virtual void update_triggers();
-        virtual void cfg_write( KConfigGroup& cfg_P ) const;
 
         /**
          * What kind of actions are allowed for this group?

@@ -47,8 +47,6 @@ class KDE_EXPORT ActionData
 
         virtual void update_triggers();
 
-        virtual void cfg_write( KConfigGroup& cfg_P ) const = 0;
-
         virtual void execute();
 
         /**

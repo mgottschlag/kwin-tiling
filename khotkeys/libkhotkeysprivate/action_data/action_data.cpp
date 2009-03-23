@@ -87,25 +87,6 @@ const ActionList* ActionData::actions() const
     }
 
 
-void ActionData::cfg_write( KConfigGroup& cfg_P ) const
-    {
-    ActionDataBase::cfg_write( cfg_P );
-
-    // Write triggers if available
-    if (triggers())
-        {
-        KConfigGroup triggersGroup( cfg_P.config(), cfg_P.name() + "Triggers" );
-        triggers()->cfg_write( triggersGroup );
-        }
-    // Write actions if available
-    if (actions())
-        {
-        KConfigGroup actionsGroup( cfg_P.config(), cfg_P.name() + "Actions" );
-        actions()->cfg_write( actionsGroup );
-        }
-    }
-
-
 void ActionData::execute()
     {
     for( ActionList::Iterator it = _actions->begin();
