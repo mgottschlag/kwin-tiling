@@ -150,10 +150,16 @@ KHotKeys::ActionDataBase *SettingsReaderV2::readAction(
         return new Keyboard_input_gesture_action_data( config, parent );
         }
 #endif
+    else if (type == "MENUENTRY_SHORTCUT_ACTION_DATA")
+        {
+        // We collect all of those in the system group
+        newObject = new KHotKeys::SimpleActionData(
+                config,
+                _settings->get_system_group(KHotKeys::ActionDataGroup::SYSTEM_MENUENTRIES));
+        }
     else if (type == "SIMPLE_ACTION_DATA"
           || type == "DCOP_SHORTCUT_ACTION_DATA" || type == "DBUS_SHORTCUT_ACTION_DATA"
           || type == "KEYBOARD_INPUT_GESTURE_ACTION_DATA"
-          || type == "MENUENTRY_SHORTCUT_ACTION_DATA"
           || type == "COMMAND_URL_SHORTCUT_ACTION_DATA"
           || type == "KEYBOARD_INPUT_SHORTCUT_ACTION_DATA"
           || type == "ACTIVATE_WINDOW_SHORTCUT_ACTION_DATA")
