@@ -33,6 +33,7 @@ class Task::Private
 public:
     QList<QGraphicsWidget*> associatedWidgets;
     Task::Order order;
+    Task::HideStates hiddenState;
 };
 
 
@@ -40,6 +41,7 @@ Task::Task()
     : d(new Private)
 {
     d->order = Normal;
+    d->hiddenState = NotHidden;
 }
 
 Task::~Task()
@@ -81,6 +83,16 @@ QList<QGraphicsWidget*> Task::associatedWidgets() const
 bool Task::isHideable() const
 {
     return true;
+}
+
+void Task::setHidden(HideStates state)
+{
+    d->hiddenState = state;
+}
+
+Task::HideStates Task::hidden() const
+{
+    return d->hiddenState;
 }
 
 Task::Order Task::order() const

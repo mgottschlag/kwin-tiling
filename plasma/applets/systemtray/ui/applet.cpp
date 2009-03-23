@@ -371,7 +371,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         listItem->setIcon(task->icon());
         listItem->setData(Qt::UserRole, task->typeId());
 
-        if (d->taskArea->isHiddenType(task->typeId(), false)) {
+        if (task->hidden() & Task::UserHidden) {
             hiddenList->addItem(listItem);
         } else {
             visibleList->addItem(listItem);

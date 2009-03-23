@@ -48,6 +48,12 @@ class Task : public QObject
 
 public:
     enum Order { First, Normal, Last };
+    enum HideState {
+        NotHidden = 0,
+        UserHidden = 1,
+        AutoHidden = 2
+    };
+    Q_DECLARE_FLAGS(HideStates, HideState)
 
     virtual ~Task();
 
@@ -97,6 +103,17 @@ public:
      * Returns whether the task is currently hideable by the user or not
      */
     virtual bool isHideable() const;
+
+    /**
+     * Make the task ask to be hidden. The systemtray may or may not fullfill that requirement
+     */
+    void setHidden(HideStates state);
+
+    /**
+     * Returns the state of the icon: visible, hidden by the user or hidden by itself
+     */
+    HideStates hidden() const;
+
 
     /**
      * Returns the order this Task should be placed in: first, normal or last

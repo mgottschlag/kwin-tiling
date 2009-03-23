@@ -281,6 +281,9 @@ void DBusSystemTrayTaskPrivate::syncStatus(int newStatus)
     status = (DBusSystemTrayTask::Status)newStatus;
     if (status == DBusSystemTrayTask::NeedsAttention) {
         q->setOrder(Task::Last);
+        if (q->hidden() & Task::AutoHidden) {
+            q->setHidden(q->hidden()^Task::AutoHidden);
+        }
 
         if (movie.size() != 0) {
             if (!movieTimer) {
@@ -296,6 +299,12 @@ void DBusSystemTrayTaskPrivate::syncStatus(int newStatus)
             }
         }
     } else {
+        if (status == DBusSystemTrayTask::Active &&
+            (q->hidden() & Task::AutoHidden)) {
+            q->setHidden(q->hidden()^Task::AutoHidden);
+        } else if (status == DBusSystemTrayTask::Passive) {
+            q->setHidden(q->hidden()|Task::AutoHidden);
+        }
         q->setOrder(Task::Normal);
         if (movieTimer) {
             movieTimer->stop();
@@ -310,6 +319,7 @@ void DBusSystemTrayTaskPrivate::syncStatus(int newStatus)
 
         iconWidget->setIcon(icon);
     }
+
     emit q->changed(q);
 }
 

@@ -95,14 +95,7 @@ void TaskArea::setHiddenTypes(const QStringList &hiddenTypes)
     d->hiddenTypes = QSet<QString>::fromList(hiddenTypes);
 }
 
-bool TaskArea::isHiddenType(const QString &typeId, bool always) const
-{
-    if (always) {
-        return !d->showingHidden && d->hiddenTypes.contains(typeId);
-    } else {
-        return d->hiddenTypes.contains(typeId);
-    }
-}
+
 
 void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
 {
@@ -110,6 +103,9 @@ void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
     d->hasHiddenTasks = false;
     foreach (Task *task, tasks) {
         kDebug() << "checking" << task->name() << d->showingHidden;
+        if (d->hiddenTypes.contains(task->typeId())) {
+            task->setHidden(task->hidden()|Task::UserHidden);
+        }
         addWidgetForTask(task);
     }
 
@@ -120,6 +116,10 @@ void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
 
 void TaskArea::addTask(Task *task)
 {
+    if (d->hiddenTypes.contains(task->typeId())) {
+        task->setHidden(task->hidden()|Task::UserHidden);
+    }
+
     addWidgetForTask(task);
     connect (task, SIGNAL(changed(Task*)), this, SLOT(addWidgetForTask(SystemTray::Task *)));
 
@@ -135,9 +135,17 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
         return;
     }
 
-    d->hasTasksThatCanHide = d->hasTasksThatCanHide || isHiddenType(task->typeId(), false);
+    d->hasTasksThatCanHide = d->hasTasksThatCanHide || (task->hidden() != Task::NotHidden);
 
-    if (isHiddenType(task->typeId())) {
+
+    if (widget) {
+        kDebug() << "widget already exists, trying to reposition it";
+        d->firstTasksLayout->removeItem(widget);
+        d->normalTasksLayout->removeItem(widget);
+        d->lastTasksLayout->removeItem(widget);
+    }
+
+    if (!d->showingHidden && task->hidden() != Task::NotHidden) {
         kDebug() << "is a hidden type";
         d->hasHiddenTasks = true;
         if (widget) {
@@ -145,12 +153,7 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
             widget->hide();
         }
     } else {
-        if (widget) {
-            kDebug() << "widget already exists, trying to reposition it";
-            d->firstTasksLayout->removeItem(widget);
-            d->normalTasksLayout->removeItem(widget);
-            d->lastTasksLayout->removeItem(widget);
-        } else {
+        if (!widget) {
             widget = task->widget(d->host);
         }
 
@@ -167,14 +170,14 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
                 break;
             }
             widget->show();
-
-            //the applet could have to be repainted due to easement change
-            QGraphicsWidget *applet = dynamic_cast<QGraphicsWidget *>(parentItem());
-
-            if (applet) {
-                applet->update();
-            }
         }
+    }
+
+    //the applet could have to be repainted due to easement change
+    QGraphicsWidget *applet = dynamic_cast<QGraphicsWidget *>(parentItem());
+
+    if (applet) {
+        applet->update();
     }
 }
 
