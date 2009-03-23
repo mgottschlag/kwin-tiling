@@ -286,7 +286,7 @@ void DBusSystemTrayTaskPrivate::syncStatus(int newStatus)
             if (!movieTimer) {
                 movieTimer = new QTimer(q);
                 q->connect(movieTimer, SIGNAL(timeout()), q, SLOT(updateMovieFrame()));
-                movieTimer->start(50);
+                movieTimer->start(100);
             }
         } else if (!attentionIcon.isNull()) {
             if (!blinkTimer) {

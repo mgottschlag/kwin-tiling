@@ -49,9 +49,9 @@ public:
         : host(h),
           unhider(0),
           topLayout(new QGraphicsLinearLayout(Qt::Horizontal)),
-          taskLayout(new CompactLayout()),
-          lastItemMargin(0),
-          lastItemCount(0),
+          firstTasksLayout(new CompactLayout()),
+          normalTasksLayout(new CompactLayout()),
+          lastTasksLayout(new CompactLayout()),
           showingHidden(false),
           hasHiddenTasks(false),
           hasTasksThatCanHide(false)
@@ -61,12 +61,11 @@ public:
     SystemTray::Applet *host;
     Plasma::IconWidget *unhider;
     QGraphicsLinearLayout *topLayout;
-    CompactLayout *taskLayout;
-    //This item gives a bit of extra margin that separes the last items and the "normal" ones
-    QGraphicsWidget *lastItemMargin;
+    CompactLayout *firstTasksLayout;
+    CompactLayout *normalTasksLayout;
+    CompactLayout *lastTasksLayout;
 
     QSet<QString> hiddenTypes;
-    int lastItemCount;
     bool showingHidden : 1;
     bool hasHiddenTasks : 1;
     bool hasTasksThatCanHide : 1;
@@ -78,7 +77,9 @@ TaskArea::TaskArea(SystemTray::Applet *parent)
       d(new Private(parent))
 {
     setLayout(d->topLayout);
-    d->topLayout->addItem(d->taskLayout);
+    d->topLayout->addItem(d->firstTasksLayout);
+    d->topLayout->addItem(d->normalTasksLayout);
+    d->topLayout->addItem(d->lastTasksLayout);
     d->topLayout->setContentsMargins(0, 0, 0, 0);
 }
 
@@ -150,47 +151,25 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
         if (widget) {
             switch (task->order()) {
                 case SystemTray::Task::First:
-                    d->taskLayout->insertItem(0, widget);
+                    d->firstTasksLayout->addItem(widget);
                     break;
                 case SystemTray::Task::Normal:
-                    d->taskLayout->insertItem(d->taskLayout->count() - d->lastItemCount, widget);
+                    d->normalTasksLayout->addItem(widget);
                     break;
                 case SystemTray::Task::Last:
-                    /*on the first added "last" task add also a little separator: the size depends from the applet margins,
-                    in order to make the background of the last items look "balanced"*/
-                    if (d->lastItemCount == 0) {
-                        QGraphicsWidget *applet = dynamic_cast<QGraphicsWidget *>(parentItem());
-
-                        if (applet) {
-                          qreal left, top, right, bottom;
-                          applet->getContentsMargins(&left, &top, &right, &bottom);
-                          d->lastItemMargin = new QGraphicsWidget();
-
-                          d->lastItemMargin->setMinimumSize(right, bottom);
-                        }
-                    }
-                    ++d->lastItemCount;
-                    d->taskLayout->addItem(widget);
+                    d->lastTasksLayout->addItem(widget);
                     break;
             }
         }
     }
 }
 
+//TODO: check if is still necessary with 4.5
 void TaskArea::checkSizes()
 {
-    d->taskLayout->updateGeometry();
     d->topLayout->updateGeometry();
 
-    // this bit of braindamage is due to the "quirks" of QGrahics[Linear]Layout
-    QSizeF s = d->taskLayout->effectiveSizeHint(Qt::PreferredSize);
-    if (d->unhider) {
-        if (d->topLayout->orientation() == Qt::Horizontal) {
-            s.setWidth(s.width() + d->unhider->size().width());
-        } else {
-            s.setHeight(s.height() + d->unhider->size().height());
-        }
-    }
+    QSizeF s = d->topLayout->effectiveSizeHint(Qt::PreferredSize);
 
     setPreferredSize(s);
 }
@@ -198,18 +177,14 @@ void TaskArea::checkSizes()
 void TaskArea::removeTask(Task *task)
 {
     foreach (QGraphicsWidget *widget, task->associatedWidgets()) {
-        if (d->taskLayout->containsItem(widget)) {
-            if (task->order() == Task::Last) {
-                --d->lastItemCount;
-                //we have removed the last item, remove also the spacer
-                if (d->lastItemCount == 0 && d->lastItemMargin) {
-                    d->taskLayout->removeItem(d->lastItemMargin);
-                    d->lastItemMargin->deleteLater();
-                    d->lastItemMargin = 0;
-                }
-            }
+        if (d->normalTasksLayout->containsItem(widget) ||
+            d->lastTasksLayout->containsItem(widget) ||
+            d->firstTasksLayout->containsItem(widget)) {
 
-            d->taskLayout->removeItem(widget);
+            //try to remove from all three layouts, one will succeed
+            d->firstTasksLayout->removeItem(widget);
+            d->normalTasksLayout->removeItem(widget);
+            d->lastTasksLayout->removeItem(widget);
             d->topLayout->invalidate();
             emit sizeHintChanged(Qt::PreferredSize);
             break;
@@ -232,13 +207,17 @@ int TaskArea::leftEasement() const
     return 0;
 }
 
+
 int TaskArea::rightEasement() const
 {
-    int extraMargin = 0;
-    if (d->lastItemMargin) {
-        extraMargin = qMin(d->lastItemMargin->size().width(), d->lastItemMargin->size().height());
+    if (d->lastTasksLayout->count() > 0) {
+        QGraphicsLayoutItem *item = d->lastTasksLayout->itemAt(0);
+        if (d->topLayout->orientation() == Qt::Horizontal) {
+            return size().width() - item->geometry().left() + d->topLayout->spacing();
+        } else {
+            return size().height() - item->geometry().top() + d->topLayout->spacing();
+        }
     }
-    return d->lastItemCount * 24 + int(qreal(extraMargin)/2.0);
 }
 
 bool TaskArea::hasHiddenTasks() const
@@ -263,6 +242,21 @@ void TaskArea::setOrientation(Qt::Orientation o)
         }
     }
     updateUnhideToolIcon();
+
+    /*on the first added "last" task add also a little separator: the size depends from the applet margins,
+    in order to make the background of the last items look "balanced"*/
+    QGraphicsWidget *applet = dynamic_cast<QGraphicsWidget *>(parentItem());
+
+    if (applet) {
+      qreal left, top, right, bottom;
+      applet->getContentsMargins(&left, &top, &right, &bottom);
+
+      if (o == Qt::Horizontal) {
+          d->topLayout->setSpacing(right);
+      } else {
+          d->topLayout->setSpacing(bottom);
+      }
+    }
 }
 
 void TaskArea::initUnhideTool()
@@ -284,10 +278,11 @@ void TaskArea::initUnhideTool()
         d->unhider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     }
 
-    d->topLayout->removeItem(d->taskLayout);
-    //d->topLayout->insertItem(0, d->unhider);
-    d->topLayout->addItem(d->unhider);
-    d->topLayout->addItem(d->taskLayout);
+    //FIXME
+    //d->topLayout->removeItem(d->taskLayout);
+    d->topLayout->insertItem(0, d->unhider);
+    //d->topLayout->addItem(d->unhider);
+    //d->topLayout->addItem(d->taskLayout);
     connect(d->unhider, SIGNAL(clicked()), this, SLOT(toggleHiddenItems()));
 
     emit sizeHintChanged(Qt::PreferredSize);
@@ -335,7 +330,9 @@ void TaskArea::checkUnhideTool()
 QGraphicsWidget* TaskArea::findWidget(Task *task)
 {
     foreach (QGraphicsWidget *widget, task->associatedWidgets()) {
-        if (d->taskLayout->containsItem(widget)) {
+        if (d->normalTasksLayout->containsItem(widget) ||
+            d->lastTasksLayout->containsItem(widget) ||
+            d->firstTasksLayout->containsItem(widget)) {
             return widget;
         }
     }
