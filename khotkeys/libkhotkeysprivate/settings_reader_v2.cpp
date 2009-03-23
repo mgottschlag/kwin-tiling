@@ -20,8 +20,14 @@
 #include "settings_reader_v2.h"
 
 #include "action_data/action_data_group.h"
-#include "action_data/simple_action_data.h"
+#include "action_data/command_url_shortcut_action_data.h"
 #include "action_data/generic_action_data.h"
+#include "action_data/keyboard_input_gesture_action_data.h"
+#include "action_data/menuentry_shortcut_action_data.h"
+#include "action_data/simple_action_data.h"
+
+#include "triggers/triggers.h"
+
 #include "settings.h"
 
 #include <KDE/KConfig>
@@ -129,42 +135,45 @@ KHotKeys::ActionDataBase *SettingsReaderV2::readAction(
     {
     KHotKeys::ActionDataBase *newObject = NULL;
 
-    QString type =config.readEntry( "Type" );
+    QString type = config.readEntry("Type");
 
     if (type == "ACTION_DATA_GROUP")
         {
         newObject = readGroup(config, parent);
-
         // Groups take care of disabling themselves.
         return newObject;
         }
-
     else if (type == "GENERIC_ACTION_DATA")
         {
-        newObject = new KHotKeys::Generic_action_data( config, parent );
+        newObject = new KHotKeys::Generic_action_data(config, parent);
         }
-#if 0
-    // TODO: Remove KEYBOARD_INPUT_GESTURE_ACTION_DATA
-    else if( type == "KEYBOARD_INPUT_GESTURE_ACTION_DATA" )
-        {
-        return new Keyboard_input_gesture_action_data( config, parent );
-        }
-#endif
     else if (type == "MENUENTRY_SHORTCUT_ACTION_DATA")
         {
         // We collect all of those in the system group
-        newObject = new KHotKeys::SimpleActionData(
+        newObject = new KHotKeys::MenuEntryShortcutActionData(
                 config,
                 _settings->get_system_group(KHotKeys::ActionDataGroup::SYSTEM_MENUENTRIES));
         }
     else if (type == "SIMPLE_ACTION_DATA"
+          || type == "COMMAND_URL_SHORTCUT_ACTION_DATA"
           || type == "DCOP_SHORTCUT_ACTION_DATA" || type == "DBUS_SHORTCUT_ACTION_DATA"
           || type == "KEYBOARD_INPUT_GESTURE_ACTION_DATA"
-          || type == "COMMAND_URL_SHORTCUT_ACTION_DATA"
           || type == "KEYBOARD_INPUT_SHORTCUT_ACTION_DATA"
           || type == "ACTIVATE_WINDOW_SHORTCUT_ACTION_DATA")
         {
-        newObject = new KHotKeys::SimpleActionData( config, parent );
+        KHotKeys::SimpleActionData *sa;
+
+        sa = new KHotKeys::SimpleActionData(config, parent);
+        if (sa->trigger()->type() == KHotKeys::Trigger::ShortcutTriggerType
+                && sa->action()->type() == KHotKeys::Action::MenuEntryActionType)
+            {
+            delete sa;
+            newObject = new KHotKeys::MenuEntryShortcutActionData(config, parent);
+            }
+        else
+            {
+            newObject = sa;
+            }
         }
     else
         {

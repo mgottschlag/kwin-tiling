@@ -49,7 +49,7 @@ class KDE_EXPORT MenuEntryShortcutActionData
                 bool enabled = true);
 
         MenuEntryShortcutActionData(
-                KConfigGroup& cfg,
+                const KConfigGroup& cfg,
                 ActionDataGroup* parent);
 
         /**

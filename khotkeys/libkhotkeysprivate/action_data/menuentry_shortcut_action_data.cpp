@@ -29,15 +29,6 @@
 namespace KHotKeys {
 
 
-template<> KDE_EXPORT
-void Simple_action_data< ShortcutTrigger, MenuEntryAction >
-    ::cfg_write( KConfigGroup& cfg ) const
-    {
-    base::cfg_write( cfg );
-    cfg.writeEntry( "Type", "MENUENTRY_SHORTCUT_ACTION_DATA" );
-    }
-
-
 MenuEntryShortcutActionData::MenuEntryShortcutActionData( 
         ActionDataGroup* parent,
         const QString& name,
@@ -70,7 +61,7 @@ MenuEntryShortcutActionData::MenuEntryShortcutActionData(
 
 
 MenuEntryShortcutActionData::MenuEntryShortcutActionData(
-        KConfigGroup& cfg,
+        const KConfigGroup& cfg,
         ActionDataGroup* parent)
     :   Simple_action_data< ShortcutTrigger, MenuEntryAction >(cfg, parent)
     {}
@@ -79,6 +70,15 @@ MenuEntryShortcutActionData::MenuEntryShortcutActionData(
 void MenuEntryShortcutActionData::accept(ActionDataVisitor *visitor) const
     {
     visitor->visitMenuentryShortcutActionData(this);
+    }
+
+
+template<> KDE_EXPORT
+void Simple_action_data< ShortcutTrigger, MenuEntryAction >
+    ::cfg_write( KConfigGroup& cfg ) const
+    {
+    base::cfg_write( cfg );
+    cfg.writeEntry( "Type", "MENUENTRY_SHORTCUT_ACTION_DATA" );
     }
 
 

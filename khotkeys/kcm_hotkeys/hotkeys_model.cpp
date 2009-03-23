@@ -20,6 +20,7 @@
 #include "hotkeys_model.h"
 
 #include "action_data/simple_action_data.h"
+#include "action_data/menuentry_shortcut_action_data.h"
 #include "action_data/action_data_group.h"
 
 #include <typeinfo>
@@ -178,6 +179,8 @@ QVariant KHotkeysModel::data( const QModelIndex &index, int role ) const
                 {
                 const std::type_info &ti = typeid(*action);
                 if (ti==typeid(KHotKeys::SimpleActionData))
+                    return KHotkeysModel::SimpleActionData;
+                else if (ti==typeid(KHotKeys::MenuEntryShortcutActionData))
                     return KHotkeysModel::SimpleActionData;
                 else if (ti==typeid(KHotKeys::ActionDataGroup))
                     return KHotkeysModel::ActionDataGroup;

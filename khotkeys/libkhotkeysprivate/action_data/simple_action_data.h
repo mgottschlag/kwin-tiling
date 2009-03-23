@@ -76,7 +76,7 @@ class KDE_EXPORT Simple_action_data
             {}
 
         Simple_action_data(
-                KConfigGroup& cfg_P,
+                const KConfigGroup& cfg_P,
                 ActionDataGroup* parent_P )
             : base( cfg_P, parent_P )
             {}
