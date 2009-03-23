@@ -60,14 +60,14 @@ public:
  * A template adding convenience methods to SimpleActionData.
  */
 template< typename T, typename A >
-class KDE_EXPORT Simple_action_data
+class KDE_EXPORT SimpleActionDataHelper
     : public SimpleActionData
     {
         typedef SimpleActionData base;
 
     public:
 
-        Simple_action_data(
+        SimpleActionDataHelper(
                 ActionDataGroup* parent_P,
                 const QString& name_P,
                 const QString& comment_P,
@@ -75,7 +75,7 @@ class KDE_EXPORT Simple_action_data
             : base( parent_P, name_P, comment_P, enabled_P )
             {}
 
-        Simple_action_data(
+        SimpleActionDataHelper(
                 const KConfigGroup& cfg_P,
                 ActionDataGroup* parent_P )
             : base( cfg_P, parent_P )
@@ -100,21 +100,21 @@ class KDE_EXPORT Simple_action_data
 
 
 template< typename T, typename A >
-void Simple_action_data< T, A >::set_action( Action* action_P )
+void SimpleActionDataHelper< T, A >::set_action( Action* action_P )
     {
     Q_ASSERT( dynamic_cast<A*>( action_P ) );
     base::set_action(action_P);
     }
 
 template< typename T, typename A >
-void Simple_action_data< T, A >::set_trigger( Trigger* trigger_P )
+void SimpleActionDataHelper< T, A >::set_trigger( Trigger* trigger_P )
     {
     Q_ASSERT( dynamic_cast<T*>( trigger_P ) );
     base::set_trigger(trigger_P);
     }
 
 template< typename T, typename A >
-const A* Simple_action_data< T, A >::action() const
+const A* SimpleActionDataHelper< T, A >::action() const
     {
     if( actions() == 0 || actions()->isEmpty() )
         return 0;
@@ -122,7 +122,7 @@ const A* Simple_action_data< T, A >::action() const
     }
 
 template< typename T, typename A >
-A* Simple_action_data< T, A >::action()
+A* SimpleActionDataHelper< T, A >::action()
     {
     if( actions() == 0 || actions()->isEmpty() )
         return 0;
@@ -130,7 +130,7 @@ A* Simple_action_data< T, A >::action()
     }
 
 template< typename T, typename A >
-const T* Simple_action_data< T, A >::trigger() const
+const T* SimpleActionDataHelper< T, A >::trigger() const
     {
     if( triggers() == 0 || triggers()->isEmpty() )
         return 0;
@@ -138,7 +138,7 @@ const T* Simple_action_data< T, A >::trigger() const
     }
 
 template< typename T, typename A >
-T* Simple_action_data< T, A >::trigger()
+T* SimpleActionDataHelper< T, A >::trigger()
     {
     if( triggers() == 0 || triggers()->isEmpty() )
         return 0;

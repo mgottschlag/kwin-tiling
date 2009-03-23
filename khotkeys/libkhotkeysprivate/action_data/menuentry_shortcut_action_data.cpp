@@ -36,11 +36,7 @@ MenuEntryShortcutActionData::MenuEntryShortcutActionData(
         const KShortcut& shortcut,
         const QString& menuentry,
         bool enabled )
-    : Simple_action_data< ShortcutTrigger, MenuEntryAction >(
-        parent,
-        name,
-        comment,
-        enabled )
+    :   base(parent, name, comment, enabled)
     {
     set_action( new MenuEntryAction( this, menuentry ));
     set_trigger( new ShortcutTrigger( this, shortcut ));
@@ -52,18 +48,14 @@ MenuEntryShortcutActionData::MenuEntryShortcutActionData(
         const QString& name,
         const QString& comment,
         bool enabled)
-    :   Simple_action_data< ShortcutTrigger, MenuEntryAction >(
-            parent,
-            name,
-            comment,
-            enabled)
+    :   base(parent, name, comment, enabled)
     {}
 
 
 MenuEntryShortcutActionData::MenuEntryShortcutActionData(
         const KConfigGroup& cfg,
         ActionDataGroup* parent)
-    :   Simple_action_data< ShortcutTrigger, MenuEntryAction >(cfg, parent)
+    :   base(cfg, parent)
     {}
 
 
@@ -74,7 +66,7 @@ void MenuEntryShortcutActionData::accept(ActionDataVisitor *visitor) const
 
 
 template<> KDE_EXPORT
-void Simple_action_data< ShortcutTrigger, MenuEntryAction >
+void SimpleActionDataHelper< ShortcutTrigger, MenuEntryAction >
     ::cfg_write( KConfigGroup& cfg ) const
     {
     base::cfg_write( cfg );
