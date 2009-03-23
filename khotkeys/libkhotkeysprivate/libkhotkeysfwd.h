@@ -26,7 +26,6 @@ namespace KHotKeys
     class ActionDataGroup;
     class ActionList;
     class CommandUrlAction;
-    class CommandUrlShortcutActionData;
     class DBusAction;
     class MenuEntryAction;
     class MenuEntryShortcutActionData;

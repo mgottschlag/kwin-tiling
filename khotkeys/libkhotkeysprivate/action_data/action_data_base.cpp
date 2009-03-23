@@ -11,15 +11,9 @@
 #include "action_data_base.h"
 
 #include "action_data/action_data_visitor.h"
-#include "action_data/command_url_shortcut_action_data.h"
-#include "action_data/generic_action_data.h"
-#include "action_data/keyboard_input_gesture_action_data.h"
-#include "action_data/menuentry_shortcut_action_data.h"
+#include "action_data/action_data_group.h"
 
-#include "triggers/triggers.h"
-#include "conditions/conditions.h"
 #include "conditions/conditions_list.h"
-
 
 #include <kconfiggroup.h>
 #include <kdebug.h>

@@ -54,8 +54,6 @@ public:
 
     virtual void visitActionDataGroup(const ActionDataGroup *group);
 
-    virtual void visitCommandUrlShortcutActionData(const CommandUrlShortcutActionData *data);
-
     virtual void visitGenericActionData(const Generic_action_data *data);
 
     virtual void visitMenuentryShortcutActionData(const MenuEntryShortcutActionData *data);

@@ -19,9 +19,7 @@ set(khotkeysprivate_SRCS
     action_data/action_data.cpp
     action_data/action_data_base.cpp
     action_data/action_data_group.cpp
-    action_data/command_url_shortcut_action_data.cpp
     action_data/generic_action_data.cpp
-    action_data/keyboard_input_gesture_action_data.cpp
     action_data/menuentry_shortcut_action_data.cpp
     action_data/simple_action_data.cpp
     action_data/simple_action_data_base.cpp

@@ -22,7 +22,6 @@
 
 #include "action_data/action_data_group.h"
 #include "action_data/action_data.h"
-#include "action_data/command_url_shortcut_action_data.h"
 #include "action_data/generic_action_data.h"
 #include "action_data/menuentry_shortcut_action_data.h"
 #include "action_data/simple_action_data.h"
@@ -146,15 +145,6 @@ void SettingsWriter::visitActionDataGroup(const ActionDataGroup *group)
         _stack.pop();
         }
     config->writeEntry( "DataCount", cnt );
-    }
-
-
-void SettingsWriter::visitCommandUrlShortcutActionData(const CommandUrlShortcutActionData *data)
-    {
-    visitActionData(data);
-
-    KConfigGroup *config = _stack.top();
-    config->writeEntry( "Type", "COMMAND_URL_SHORTCUT_ACTION_DATA" );
     }
 
 

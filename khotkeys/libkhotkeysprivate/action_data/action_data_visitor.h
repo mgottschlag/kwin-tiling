@@ -24,7 +24,6 @@ namespace KHotKeys {
 class ActionData;
 class ActionDataBase;
 class ActionDataGroup;
-class CommandUrlShortcutActionData;
 class Generic_action_data;
 class MenuEntryShortcutActionData;
 class SimpleActionData;
@@ -45,8 +44,6 @@ public:
     virtual void visitActionData(const ActionData *base) = 0;
 
     virtual void visitActionDataGroup(const ActionDataGroup *group) = 0;
-
-    virtual void visitCommandUrlShortcutActionData(const CommandUrlShortcutActionData *data) = 0;
 
     virtual void visitGenericActionData(const Generic_action_data *data) = 0;
 

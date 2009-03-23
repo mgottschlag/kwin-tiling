@@ -20,9 +20,7 @@
 #include "settings_reader_v2.h"
 
 #include "action_data/action_data_group.h"
-#include "action_data/command_url_shortcut_action_data.h"
 #include "action_data/generic_action_data.h"
-#include "action_data/keyboard_input_gesture_action_data.h"
 #include "action_data/menuentry_shortcut_action_data.h"
 #include "action_data/simple_action_data.h"
 
