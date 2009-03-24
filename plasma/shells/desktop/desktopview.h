@@ -60,6 +60,9 @@ public slots:
     void screenResized(Kephal::Screen *);
     void screenMoved(Kephal::Screen *);
     void adjustSize();
+    void toolBoxOpened();
+    void toolBoxClosed();
+    void showDesktopUntoggled();
 
     void screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment);
 

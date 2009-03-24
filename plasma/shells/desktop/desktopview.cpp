@@ -29,6 +29,7 @@
 #include <KRun>
 #include <KToggleAction>
 #include <KWindowSystem>
+#include <NETRootInfo>
 
 #include <Plasma/Applet>
 #include <Plasma/Corona>
@@ -207,8 +208,8 @@ void DesktopView::setContainment(Plasma::Containment *containment)
     }
 
     if (oldContainment) {
-        disconnect(oldContainment, SIGNAL(toolBoxToggled()),
-                   PlasmaApp::self(), SLOT(toggleDashboardIfWindows()));
+        disconnect(oldContainment, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxOpened()));
+        disconnect(oldContainment, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxClosed()));
         if (zoomLevel == Plasma::DesktopZoom) {
             //make sure actions are up-to-date
             oldContainment->enableAction("zoom in", false);
@@ -216,8 +217,53 @@ void DesktopView::setContainment(Plasma::Containment *containment)
         }
     }
 
-    connect(containment, SIGNAL(toolBoxToggled()), PlasmaApp::self(), SLOT(toggleDashboardIfWindows()));
+    connect(containment, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxOpened()));
     View::setContainment(containment);
+}
+
+void DesktopView::toolBoxOpened()
+{
+    NETRootInfo info(QX11Info::display(), NET::Supported);
+    if (!info.isSupported(NET::WM2ShowingDesktop)) {
+        kDebug() << "meedp";
+        return;
+    }
+
+    Plasma::Containment *c = containment();
+    disconnect(c, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxOpened()));
+    connect(c, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxClosed()));
+    connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)),
+            this, SLOT(showDesktopUntoggled()));
+
+    info.setShowingDesktop(true);
+}
+
+void DesktopView::toolBoxClosed()
+{
+    NETRootInfo info(QX11Info::display(), NET::Supported);
+    if (!info.isSupported(NET::WM2ShowingDesktop)) {
+        kDebug() << "meedp";
+        return;
+    }
+        kDebug() << "moop!";
+
+    Plasma::Containment *c = containment();
+    disconnect(c, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxClosed()));
+    disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)),
+               this, SLOT(showDesktopUntoggled()));
+    connect(c, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxOpened()));
+
+    info.setShowingDesktop(false);
+}
+
+void DesktopView::showDesktopUntoggled()
+{
+    disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)),
+               this, SLOT(showDesktopUntoggled()));
+
+    if (containment()) {
+        containment()->setToolBoxOpen(false);
+    }
 }
 
 void DesktopView::zoomIn(Plasma::ZoomLevel zoomLevel)

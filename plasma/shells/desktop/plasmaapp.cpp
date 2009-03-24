@@ -256,6 +256,15 @@ void PlasmaApp::syncConfig()
 
 void PlasmaApp::toggleDashboardIfWindows()
 {
+    if (m_desktops.isEmpty()) {
+        return;
+    }
+
+    if (m_desktops.first()->isDashboardVisible()) {
+        toggleDashboard();
+        return;
+    }
+
     const int desktop = KWindowSystem::currentDesktop();
 
     foreach (WId id, KWindowSystem::stackingOrder()) {
