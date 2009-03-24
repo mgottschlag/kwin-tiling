@@ -29,8 +29,12 @@
 
 #include <kdemacros.h>
 
+#ifdef Q_WS_X11
 #include <X11/Xlib.h>
 #include <fixx11h.h>
+#else
+#define None 0
+#endif
 
 namespace KHotKeys {
 

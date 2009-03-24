@@ -22,8 +22,10 @@
 
 #include <KDE/KConfigGroup>
 
+#ifdef Q_WS_X11
 // Has to be behind all qt related stuff. Else the build fails miserably
 #include <X11/X.h>
+#endif
 
 namespace KHotKeys {
 
