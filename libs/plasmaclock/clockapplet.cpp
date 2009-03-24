@@ -177,7 +177,47 @@ void ClockApplet::speakTime(const QTime &time)
         d->prevHour = time.hour();
         d->prevMinute = time.minute();
         QDBusInterface ktts("org.kde.kttsd", "/KSpeech", "org.kde.KSpeech");
-        ktts.asyncCall("say", i18nc("Sent to the text to speech service to be read aloud as the current time", "It is %1", KGlobal::locale()->formatTime(time)), 0);
+        QString text;
+        if (time.minute() == 0) {
+            if (KGlobal::locale()->use12Clock()) {
+                if (time.hour() < 12) {
+                    text = i18nc("Text sent to the text to speech service "
+                                    "when minutes==0 and it is AM",
+                                "It is %1 o clock a m",
+                                time.hour());
+                } else {
+                    text = i18nc("Text sent to the text to speech service "
+                                    "when minutes==0 and it is PM",
+                                "It is %1 o clock p m",
+                                time.hour()-12);
+                }
+            } else {
+                text = i18nc("Text sent to the text to speech service "
+                                "when minutes==0 and it is the 24 hour clock",
+                                "It is %1 o clock",
+                                time.hour());
+            }
+        } else {
+            if (KGlobal::locale()->use12Clock()) {
+                if (time.hour() < 12) {
+                    text = i18nc("Text sent to the text to speech service for AM",
+                                "It is %1:%2 a m",
+                                time.hour(),
+                                time.minute());
+                } else {
+                    text = i18nc("Text sent to the text to speech service for PM",
+                                "It is %1:%2 p m",
+                                time.hour()-12,
+                                time.minute());
+                }
+            } else {
+                text = i18nc("Text sent to the text to speech service for the 24 hour clock",
+                                "It is %1:%2",
+                                time.hour(),
+                                time.minute());
+            }
+        }
+        ktts.asyncCall("say", text, 0);
     }
 }
 
