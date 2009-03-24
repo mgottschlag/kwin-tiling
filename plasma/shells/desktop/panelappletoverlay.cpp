@@ -219,7 +219,8 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
             m_spacer->deleteLater();
             m_layout = 0;
             m_spacer = 0;
-            c->addApplet(m_applet, pos, false);
+            c->addApplet(m_applet, pos, true);
+            m_applet->flushPendingConstraintsEvents();
             releaseMouse();
             return;
         }
