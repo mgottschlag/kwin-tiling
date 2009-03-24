@@ -71,15 +71,16 @@ KWindowListMenu::~KWindowListMenu()
 
 static bool standaloneDialog( const KWindowInfo* info, const QList<KWindowInfo*>& list )
 {
+#ifndef Q_WS_WIN
   WId group = info->groupLeader();
 
   if ( group == 0 )
-    return info->transientFor() == QX11Info::appRootWindow();
+  return info->transientFor() == QX11Info::appRootWindow();
 
   foreach ( KWindowInfo* info, list )
     if ( info->groupLeader() == group )
       return false;
-
+#endif
   return true;
 }
 
@@ -189,7 +190,7 @@ void KWindowListMenu::slotForceActiveWindow()
     if (!window || !window->data().canConvert(QVariant::Int))
         return;
 
-    KWindowSystem::forceActiveWindow(window->data().toInt());
+    KWindowSystem::forceActiveWindow((WId)window->data().toInt());
 }
 
 void KWindowListMenu::slotSetCurrentDesktop()
