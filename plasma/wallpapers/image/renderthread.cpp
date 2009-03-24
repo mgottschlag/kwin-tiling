@@ -142,6 +142,10 @@ void RenderThread::run()
             imgSize.setHeight(1);
         }
 
+        if (m_ratio < 1) {
+            m_ratio = 1;
+        }
+
         // set render parameters according to resize mode
         switch (method)
         {
