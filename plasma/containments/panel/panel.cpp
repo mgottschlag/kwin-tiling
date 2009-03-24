@@ -100,7 +100,6 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     m_background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
     connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(backgroundChanged()));
     setZValue(150);
-    setContainmentType(Containment::PanelContainment);
     resize(m_currentSize);
     setMinimumSize(m_currentSize);
     setMaximumSize(m_currentSize);
@@ -118,6 +117,8 @@ Panel::~Panel()
 
 void Panel::init()
 {
+    setContainmentType(Containment::PanelContainment);
+
     Containment::init();
     //FIXME: This should be enabled, but in that case proxywidgets won't get rendered
     //setFlag(ItemClipsChildrenToShape, true);
