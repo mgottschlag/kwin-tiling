@@ -228,8 +228,6 @@ void Image::paint(QPainter *painter, const QRectF& exposedRect)
         return;
     }
 
-    painter->save();
-
     if (painter->worldMatrix() == QMatrix()) {
         // draw the background untransformed when possible;(saves lots of per-pixel-math)
         painter->resetTransform();
@@ -247,9 +245,6 @@ void Image::paint(QPainter *painter, const QRectF& exposedRect)
         painter->setCompositionMode(QPainter::CompositionMode_SourceAtop);
         painter->drawPixmap(exposedRect, m_oldFadedPixmap, exposedRect);
     }
-
-    // restore transformation and composition mode
-    painter->restore();
 }
 
 void Image::timeChanged(const QTime& time)
@@ -548,21 +543,15 @@ void Image::render(const QString& image)
 
 void Image::updateBackground(int token, const QImage &img)
 {
-
     if (m_rendererToken == token) {
-
         m_oldPixmap = m_pixmap;
-        if (m_oldPixmap.isNull()) {
-            m_oldPixmap = QPixmap(img.size());
-            m_oldPixmap.fill(m_color);
-        }
         m_oldFadedPixmap = m_oldPixmap;
-
         m_pixmap = QPixmap::fromImage(img);
 
-        Plasma::Animator::self()->customAnimation(254, 1500, Plasma::Animator::LinearCurve, this, "updateFadedImage");
-        
-        suspendStartup(false);
+        if (!m_oldPixmap.isNull()) {
+            Plasma::Animator::self()->customAnimation(254, 1500, Plasma::Animator::LinearCurve, this, "updateFadedImage");
+            suspendStartup(false);
+        }
     }
 }
 
@@ -591,7 +580,6 @@ void Image::removeBackground(const QString &path)
 
 void Image::updateFadedImage(qreal frame)
 {
-
     //If we are done, delete the pixmaps and don't draw.
     if (frame == 1) {
         m_oldFadedPixmap = QPixmap();
@@ -599,7 +587,7 @@ void Image::updateFadedImage(qreal frame)
         emit update(boundingRect());
         return;
     }
-   
+
     //Create the faded image.
     m_oldFadedPixmap.fill(Qt::transparent);
 
