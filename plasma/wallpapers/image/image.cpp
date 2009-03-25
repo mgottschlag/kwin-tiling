@@ -551,6 +551,8 @@ void Image::updateBackground(int token, const QImage &img)
         if (!m_oldPixmap.isNull()) {
             Plasma::Animator::self()->customAnimation(254, 1500, Plasma::Animator::LinearCurve, this, "updateFadedImage");
             suspendStartup(false);
+        } else {
+            emit update(boundingRect());
         }
     }
 }
