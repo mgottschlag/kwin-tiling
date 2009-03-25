@@ -71,11 +71,11 @@ uint NotificationsEngine::Notify(const QString &app_name, uint replaces_id, cons
     notificationData.insert("actions", actions);
     notificationData.insert("expireTimeout", timeout);
 
+    QImage image;
     if (hints.contains("image_data")) {
-        QImage image;
         image.loadFromData(hints["image_data"].toByteArray());
-        notificationData.insert("image", image);
     }
+    notificationData.insert("image", image);
 
     setData(QString("notification %1").arg(id), notificationData );
     return id;
