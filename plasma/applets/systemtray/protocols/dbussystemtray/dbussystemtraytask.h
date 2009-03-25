@@ -31,6 +31,9 @@ class DBusSystemTrayTask : public Task
 {
     Q_OBJECT
 
+    Q_ENUMS(Status)
+    Q_ENUMS(Category)
+
     friend class DBusSystemTrayProtocol;
 
 public:
@@ -68,7 +71,7 @@ private:
     Q_PRIVATE_SLOT(d, void syncIcon())
     Q_PRIVATE_SLOT(d, void syncAttentionIcon())
     Q_PRIVATE_SLOT(d, void syncTooltip())
-    Q_PRIVATE_SLOT(d, void syncStatus(int status))
+    Q_PRIVATE_SLOT(d, void syncStatus(QString status))
     Q_PRIVATE_SLOT(d, void updateMovieFrame())
     Q_PRIVATE_SLOT(d, void blinkAttention())
 };

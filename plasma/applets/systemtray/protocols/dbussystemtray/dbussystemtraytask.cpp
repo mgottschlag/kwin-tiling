@@ -70,7 +70,7 @@ public:
     void updateMovieFrame();
 
     void syncTooltip();
-    void syncStatus(int status);
+    void syncStatus(QString status);
 
 
 
@@ -115,12 +115,12 @@ DBusSystemTrayTask::DBusSystemTrayTask(const QString &service)
     d->syncAttentionIcon();
     d->syncMovie();
     d->syncTooltip();
-    d->syncStatus((Status)metaObject()->enumerator(metaObject()->indexOfEnumerator("Status")).keyToValue(d->systemTrayIcon->status().toLatin1()));
+    d->syncStatus(d->systemTrayIcon->status());
 
     connect(d->systemTrayIcon, SIGNAL(newIcon()), this, SLOT(syncIcon()));
     connect(d->systemTrayIcon, SIGNAL(newAttentionIcon()), this, SLOT(syncAttentionIcon()));
     connect(d->systemTrayIcon, SIGNAL(newTooltip()), this, SLOT(syncTooltip()));
-    connect(d->systemTrayIcon, SIGNAL(newStatus(int)), this, SLOT(syncStatus(int)));
+    connect(d->systemTrayIcon, SIGNAL(newStatus(QString)), this, SLOT(syncStatus(QString)));
 
     connect(d->iconWidget, SIGNAL(clicked()), d->systemTrayIcon, SLOT(activate()));
     d->iconWidget->installEventFilter(this);
@@ -268,9 +268,10 @@ void DBusSystemTrayTaskPrivate::syncTooltip()
 
 //Status
 
-void DBusSystemTrayTaskPrivate::syncStatus(int newStatus)
+void DBusSystemTrayTaskPrivate::syncStatus(QString newStatus)
 {
-    status = (DBusSystemTrayTask::Status)newStatus;
+    status = (DBusSystemTrayTask::Status)q->metaObject()->enumerator(q->metaObject()->indexOfEnumerator("Status")).keyToValue(newStatus.toLatin1());
+
     if (status == DBusSystemTrayTask::NeedsAttention) {
         q->setOrder(Task::Last);
         if (q->hidden() & Task::AutoHidden) {
