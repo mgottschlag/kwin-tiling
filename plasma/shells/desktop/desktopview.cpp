@@ -225,7 +225,6 @@ void DesktopView::toolBoxOpened()
 {
     NETRootInfo info(QX11Info::display(), NET::Supported);
     if (!info.isSupported(NET::WM2ShowingDesktop)) {
-        kDebug() << "meedp";
         return;
     }
 
@@ -242,10 +241,8 @@ void DesktopView::toolBoxClosed()
 {
     NETRootInfo info(QX11Info::display(), NET::Supported);
     if (!info.isSupported(NET::WM2ShowingDesktop)) {
-        kDebug() << "meedp";
         return;
     }
-        kDebug() << "moop!";
 
     Plasma::Containment *c = containment();
     disconnect(c, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxClosed()));
@@ -261,7 +258,10 @@ void DesktopView::showDesktopUntoggled()
     disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)),
                this, SLOT(showDesktopUntoggled()));
 
-    if (containment()) {
+    Plasma::Containment *c = containment();
+    if (c) {
+        disconnect(c, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxClosed()));
+        connect(c, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxOpened()));
         containment()->setToolBoxOpen(false);
     }
 }
@@ -286,6 +286,8 @@ void DesktopView::zoomIn(Plasma::ZoomLevel zoomLevel)
             }
             setSceneRect(containment()->geometry());
         }
+
+        toolBoxClosed();
     } else if (zoomLevel == Plasma::GroupZoom) {
         qreal factor = Plasma::scalingFactor(zoomLevel);
         factor = factor / matrix().m11();
