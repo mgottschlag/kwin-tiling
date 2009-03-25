@@ -23,4 +23,4 @@ endif(X11_XTest_FOUND)
 
 install(TARGETS kcm_keyboard  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
-install( FILES keyboard.desktop DESTINATION  ${SERVICES_INSTALL_DIR} )
+install( FILES keyboard.desktop kcm_keyboard.desktop DESTINATION  ${SERVICES_INSTALL_DIR} )
