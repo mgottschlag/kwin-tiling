@@ -118,12 +118,29 @@ NotificationWidget::~NotificationWidget()
 
 void NotificationWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
-    d->body->setTextWidth(event->newSize().width());
-    d->body->setPos(0, 0);
+    if (d->notification) {
+        if (!d->notification->image().isNull()) {
+            d->body->setTextWidth(event->newSize().width() -
+                                  d->notification->image().size().width() - 4);
+            d->body->setPos(d->notification->image().size().width() + 4, 0);
+        } else {
+            d->body->setTextWidth(event->newSize().width());
+            d->body->setPos(0, 0);
+        }
+    }
+
     if (d->actionsWidget) {
         d->actionsWidget->setPos(event->newSize().width() - d->actionsWidget->size().width(),
                                  event->newSize().height() - d->actionsWidget->size().height());
     }
+}
+
+void NotificationWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    Q_UNUSED(option)
+    Q_UNUSED(widget)
+
+    painter->drawImage(QPointF(0, 0), d->notification->image());
 }
 
 void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
@@ -197,15 +214,20 @@ void NotificationWidgetPrivate::updateNotification()
     actionOrder = notification->actionOrder();
     updateActions();
 
+    qreal imageHeight = 0;
+    if (!notification->image().isNull()) {
+        imageHeight = notification->image().size().height();
+    }
+
     //set the correct size hint and display a close action if no actions are provided by the
     //notification
     qreal bodyHeight = body->boundingRect().height();
     if (actionsWidget) {
         extenderItem->hideCloseButton();
-        q->setPreferredHeight(bodyHeight + actionsWidget->size().height());
+        q->setPreferredHeight(qMax(bodyHeight + actionsWidget->size().height(), imageHeight));
     } else {
         extenderItem->showCloseButton();
-        q->setPreferredHeight(bodyHeight);
+        q->setPreferredHeight(qMax(bodyHeight, imageHeight));
     }
 }
 

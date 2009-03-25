@@ -48,6 +48,7 @@ public:
 
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
+    void paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget *widget = 0 );
 
 private:
     NotificationWidgetPrivate* const d;

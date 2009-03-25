@@ -23,6 +23,8 @@
 
 #include <Plasma/Service>
 
+#include <QImage>
+
 NotificationsEngine::NotificationsEngine( QObject* parent, const QVariantList& args )
     : Plasma::DataEngine( parent, args ), m_nextId( 1 )
 {
@@ -54,9 +56,6 @@ uint NotificationsEngine::Notify(const QString &app_name, uint replaces_id, cons
     uint id = 0;
     id = replaces_id || m_nextId++;
 
-    // TODO implement hints support
-    Q_UNUSED(hints)
-
     QString appname_str = app_name;
     if (appname_str.isEmpty()) {
         appname_str = i18n("Unknown Application");
@@ -71,6 +70,12 @@ uint NotificationsEngine::Notify(const QString &app_name, uint replaces_id, cons
     notificationData.insert("body", body);
     notificationData.insert("actions", actions);
     notificationData.insert("expireTimeout", timeout);
+
+    if (hints.contains("image_data")) {
+        QImage image;
+        image.loadFromData(hints["image_data"].toByteArray());
+        notificationData.insert("image", image);
+    }
 
     setData(QString("notification %1").arg(id), notificationData );
     return id;

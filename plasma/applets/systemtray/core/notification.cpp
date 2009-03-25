@@ -21,6 +21,7 @@
 
 #include "notification.h"
 
+#include <QImage>
 #include <QtCore/QTimer>
 
 #include <KDebug>
@@ -44,6 +45,7 @@ public:
     QString message;
     QString summary;
     int timeout;
+    QImage image;
 
     QHash<QString, QString> actions;
     QStringList actionOrder;
@@ -129,6 +131,15 @@ int Notification::timeout() const
     return d->timeout;
 }
 
+QImage Notification::image() const
+{
+    return d->image;
+}
+
+void Notification::setImage(QImage image)
+{
+    d->image = image;
+}
 
 void Notification::setTimeout(int timeout)
 {

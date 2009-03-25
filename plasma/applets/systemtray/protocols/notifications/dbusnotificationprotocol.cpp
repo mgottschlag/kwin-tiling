@@ -91,6 +91,11 @@ void DBusNotificationProtocol::dataUpdated(const QString &source, const Plasma::
     notification->setMessage(data.value("body").toString());
     notification->setTimeout(data.value("expireTimeout").toInt());
 
+    if (data.contains("image")) {
+        QImage image = qvariant_cast<QImage>(data.value("image"));
+        notification->setImage(image);
+    }
+
     QStringList codedActions = data.value("actions").toStringList();
     if (codedActions.count() % 2 != 0) {
         kDebug() << "Invalid actions" << codedActions << "from" << notification->applicationName();

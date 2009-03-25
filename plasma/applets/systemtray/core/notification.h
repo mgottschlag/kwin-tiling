@@ -22,6 +22,7 @@
 #ifndef SYSTEMTRAYNOTIFICATION_H
 #define SYSTEMTRAYNOTIFICATION_H
 
+#include <QImage>
 #include <QtCore/QHash>
 #include <QtCore/QObject>
 
@@ -45,6 +46,7 @@ public:
     QString message() const;
     QString summary() const;
     int timeout() const;
+    QImage image() const;
 
     QHash<QString, QString> actions() const;
     QStringList actionOrder() const;
@@ -67,6 +69,7 @@ protected:
     void setMessage(const QString &message);
     void setSummary(const QString &summary);
     void setTimeout(int timeout);
+    void setImage(QImage image);
 
     void setActions(const QHash<QString, QString> &actions);
     void setActionOrder(const QStringList &actionOrder);
