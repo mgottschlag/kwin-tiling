@@ -62,6 +62,7 @@ private:
     ScreenPreviewWidgetPrivate *const d;
 
     Q_PRIVATE_SLOT(d, void updateRect(const QRectF& rect))
+    Q_PRIVATE_SLOT(d, void wallpaperDeleted())
 };
 
 

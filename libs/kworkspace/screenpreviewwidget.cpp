@@ -37,12 +37,13 @@ public:
             wallpaper(0),
             ratio(1)
     {}
+
     ~ScreenPreviewWidgetPrivate()
     {}
 
     void updateRect(const QRectF& rect)
     {
-        q->update(rect.toRect().translated(q->previewRect().topLeft()));
+        q->update(rect.toRect());
     }
 
     void updateScreenGraphics()
@@ -50,7 +51,6 @@ public:
         QRect bounds(QPoint(0,0), QSize(q->size().width(), q->height() - screenGraphics->elementSize("base").height() + screenGraphics->marginSize(Plasma::BottomMargin)));
 
         QSize monitorSize(q->size().width(), q->size().width()/ratio);
-
         monitorSize.scale(bounds.size(), Qt::KeepAspectRatio);
 
         monitorRect = QRect(QPoint(0,0), monitorSize);
@@ -61,10 +61,14 @@ public:
         previewRect = screenGraphics->contentsRect().toRect();
         previewRect.moveCenter(bounds.center());
 
-
         if (wallpaper) {
-            wallpaper->setBoundingRect(QRect(QPoint(0,0), previewRect.size()));
+            wallpaper->setBoundingRect(previewRect);
         }
+    }
+
+    void wallpaperDeleted()
+    {
+        wallpaper = 0;
     }
 
     ScreenPreviewWidget *q;
@@ -102,12 +106,20 @@ const QPixmap ScreenPreviewWidget::preview() const
 void ScreenPreviewWidget::setPreview(Plasma::Wallpaper* wallpaper)
 {
     d->preview = QPixmap();
-    d->wallpaper = wallpaper;
+
     if (d->wallpaper) {
-        connect(d->wallpaper, SIGNAL(update(const QRectF &)),
-                this, SLOT(updateRect(const QRectF &)));
-        resizeEvent(0);
+        disconnect(d->wallpaper, 0, this, 0);
     }
+
+    d->wallpaper = wallpaper;
+
+    if (d->wallpaper) {
+        connect(d->wallpaper, SIGNAL(update(QRectF)), this, SLOT(updateRect(QRectF)));
+        connect(d->wallpaper, SIGNAL(destroyed(QObject*)), this, SLOT(wallpaperDeleted()));
+        d->wallpaper->setBoundingRect(d->previewRect);
+    }
+
+    update(d->previewRect);
 }
 
 void ScreenPreviewWidget::setRatio(const qreal ratio)
@@ -143,9 +155,7 @@ void ScreenPreviewWidget::paintEvent(QPaintEvent *event)
 
     painter.save();
     if (d->wallpaper) {
-        //FIXME: seems to not be other ways beside translating the painter
-        painter.translate(previewRect().topLeft());
-        d->wallpaper->paint(&painter, event->rect().translated(-previewRect().topLeft()));
+        d->wallpaper->paint(&painter, event->rect().intersected(d->previewRect));
     } else if (!d->preview.isNull()) {
         painter.setRenderHint(QPainter::SmoothPixmapTransform);
         painter.drawPixmap(d->previewRect, d->preview, d->preview.rect());
