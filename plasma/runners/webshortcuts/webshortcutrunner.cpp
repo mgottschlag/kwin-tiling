@@ -52,8 +52,6 @@ void WebshortcutRunner::loadDelimiter()
     m_delimiter = generalgroup.readEntry("KeywordDelimiter", QString(':'));
     //kDebug() << "keyworddelimiter is: " << delimiter;
 
-    clearSyntaxes();
-
     KService::List offers = serviceQuery("SearchProvider");
     if (!offers.isEmpty()) {
         QString knownShortcuts;
