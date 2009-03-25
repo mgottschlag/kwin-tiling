@@ -194,10 +194,8 @@ void KRunnerApp::initialize()
     }
 
     m_actionCollection->readSettings();
-
     m_runnerManager->reloadConfiguration(); // pre-load the runners
-
-} // end void KRunnerApp::initializeBindings
+}
 
 void KRunnerApp::initializeStartupNotification()
 {
@@ -216,13 +214,6 @@ void KRunnerApp::initializeStartupNotification()
     }
 #endif
 }
-
-/*TODO: fixme - move to kwin
-void KRunnerApp::showWindowList()
-{
-     //KRootWm::self()->slotWindowList();
-}
-*/
 
 void KRunnerApp::showTaskManager()
 {

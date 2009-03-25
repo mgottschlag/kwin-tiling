@@ -58,8 +58,6 @@ public:
     bool hasCompositeManager() const;
 
 public Q_SLOTS:
-    //void showWindowList();
-
     void logout();
     void logoutWithoutConfirmation();
     void haltWithoutConfirmation();
