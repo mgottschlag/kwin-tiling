@@ -576,13 +576,6 @@ void TaskGroupItem::popupMenu()
     m_popupDialog->clearFocus();
 }
 
-void TaskGroupItem::hidePopup()
-{
-    if (m_popupLostFocus) {
-        m_popupDialog->hide();
-    }
-}
-
 bool TaskGroupItem::eventFilter(QObject *watched, QEvent *event)
 {
     if (watched == m_popupDialog && event->type() == QEvent::WindowDeactivate) {

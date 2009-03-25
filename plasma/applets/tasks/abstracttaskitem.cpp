@@ -325,6 +325,8 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
         }
 
         update();
+    } else {
+        QGraphicsWidget::timerEvent(event);
     }
 }
 

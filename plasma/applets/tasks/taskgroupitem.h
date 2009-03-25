@@ -206,7 +206,6 @@ private:
     QGraphicsLinearLayout *m_dialogLayout;
     Plasma::Dialog *m_popupDialog;
     bool m_popupLostFocus;
-    void hidePopup();
 };
 
 #endif
