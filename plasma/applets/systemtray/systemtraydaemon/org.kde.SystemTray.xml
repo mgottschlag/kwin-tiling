@@ -2,69 +2,46 @@
 <node>
   <interface name="org.kde.SystemTray">
 
-    <!-- those will be pretty enums, over dbus opaque ugly integers :/-->
-    <method name="category">
-      <arg type="i" direction="out"/>
-    </method>
-
-    <method name="title">
-      <arg type="s" direction="out"/>
-    </method>
-
-    <method name="status">
-      <arg type="i" direction="out"/>
-    </method>
+    <property name="category" type="s" access="read"/>
+    <property name="title" type="s" access="read"/>
+    <property name="status" type="s" access="read"/>
 
 
     <!-- main icon -->
     <!-- names are preferred over pixmaps -->
-    <method name="icon">
-      <arg type="s" direction="out"/>
-    </method>
+    <property name="icon" type="s" access="read"/>
 
     <!--struct containing width, height and image data-->
-    <method name="image">
-      <arg type="(iiay)" direction="out"/>
-      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="Icon"/>
-    </method>
+    <property name="image" type="(iiay)" access="read">
+      <annotation name="com.trolltech.QtDBus.QtTypeName" value="Icon"/>
+    </property>
 
 
     <!-- Requesting attention icon -->
-    <method name="attentionIcon">
-      <arg type="s" direction="out"/>
-    </method>
+    <property name="attentionIcon" type="s" access="read"/>
 
     <!--same definition as image-->
-    <method name="attentionImage">
-      <arg type="(iiay)" direction="out"/>
-      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="Icon"/>
-    </method>
+    <property name="attentionImage" type="(iiay)" access="read">
+      <annotation name="com.trolltech.QtDBus.QtTypeName" value="Icon"/>
+    </property>
 
-    <method name="attentionMovie">
-      <arg type="a(iiay)" direction="out"/>
-      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="IconVector"/>
-    </method>
+    <property name="attentionMovie" type="a(iiay)" access="read">
+      <annotation name="com.trolltech.QtDBus.QtTypeName" value="IconVector"/>
+    </property>
 
 
 
     <!-- tooltip data -->
-    <method name="tooltipIcon">
-      <arg type="s" direction="out"/>
-    </method>
+    <property name="tooltipIcon" type="s" access="read"/>
 
     <!--same definition as image-->
-    <method name="tooltipImage">
-      <arg type="(iiay)" direction="out"/>
-      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="Icon"/>
-    </method>
+    <property name="tooltipImage" type="(iiay)" access="read">
+      <annotation name="com.trolltech.QtDBus.QtTypeName" value="Icon"/>
+    </property>
 
-    <method name="tooltipTitle">
-      <arg type="s" direction="out"/>
-    </method>
+    <property name="tooltipTitle" type="s" access="read"/>
 
-    <method name="tooltipSubTitle">
-      <arg type="s" direction="out"/>
-    </method>
+    <property name="tooltipSubTitle" type="s" access="read"/>
 
 
     <!-- interaction: the systemtray wants the application to do something -->
@@ -93,7 +70,7 @@
     </signal>
 
     <signal name="newStatus">
-      <arg name="status" type="i"/>
+      <arg name="status" type="s"/>
     </signal>
 
   </interface>

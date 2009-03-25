@@ -109,13 +109,13 @@ DBusSystemTrayTask::DBusSystemTrayTask(const QString &service)
 
     d->systemTrayIcon = new org::kde::SystemTray(service, "/SystemTray",
                                                  QDBusConnection::sessionBus());
-    d->title = d->systemTrayIcon->title().value();
-    d->category = (Category)d->systemTrayIcon->category().value();
+    d->title = d->systemTrayIcon->title();
+    d->category = (Category)metaObject()->enumerator(metaObject()->indexOfEnumerator("Category")).keyToValue(d->systemTrayIcon->category().toLatin1());
     d->syncIcon();
     d->syncAttentionIcon();
     d->syncMovie();
     d->syncTooltip();
-    d->syncStatus(d->systemTrayIcon->status().value());
+    d->syncStatus((Status)metaObject()->enumerator(metaObject()->indexOfEnumerator("Status")).keyToValue(d->systemTrayIcon->status().toLatin1()));
 
     connect(d->systemTrayIcon, SIGNAL(newIcon()), this, SLOT(syncIcon()));
     connect(d->systemTrayIcon, SIGNAL(newAttentionIcon()), this, SLOT(syncAttentionIcon()));
@@ -191,12 +191,10 @@ QPixmap DBusSystemTrayTaskPrivate::iconDataToPixmap(const Icon &icon) const
 //normal icon
 void DBusSystemTrayTaskPrivate::syncIcon()
 {
-    if (systemTrayIcon->icon().value().length() > 0) {
+    if (systemTrayIcon->icon().length() > 0) {
         icon = KIcon(systemTrayIcon->icon());
     } else {
-        QDBusReply<Icon> iconReply = systemTrayIcon->image();
-        Icon iconStruct = iconReply.value();
-        icon = iconDataToPixmap(iconStruct);
+        icon = iconDataToPixmap(systemTrayIcon->image());
     }
 
     if (status != DBusSystemTrayTask::NeedsAttention) {
@@ -209,12 +207,10 @@ void DBusSystemTrayTaskPrivate::syncIcon()
 
 void DBusSystemTrayTaskPrivate::syncAttentionIcon()
 {
-    if (systemTrayIcon->attentionIcon().value().length() > 0) {
+    if (systemTrayIcon->attentionIcon().length() > 0) {
         attentionIcon = KIcon(systemTrayIcon->attentionIcon());
     } else {
-        QDBusReply<Icon> iconReply = systemTrayIcon->attentionImage();
-        Icon iconStruct = iconReply.value();
-        attentionIcon = iconDataToPixmap(iconStruct);
+        attentionIcon = iconDataToPixmap(systemTrayIcon->attentionImage());
     }
 }
 
@@ -230,9 +226,7 @@ void DBusSystemTrayTaskPrivate::blinkAttention()
 
 void DBusSystemTrayTaskPrivate::syncMovie()
 {
-    QDBusReply<IconVector> movieReply = systemTrayIcon->attentionMovie();
-
-    QVector<Icon> movieData = movieReply.value();
+    IconVector movieData = systemTrayIcon->attentionMovie();
     movie = QVector<QPixmap>(movieData.size());
 
     if (!movieData.isEmpty()) {
@@ -253,22 +247,20 @@ void DBusSystemTrayTaskPrivate::updateMovieFrame()
 
 void DBusSystemTrayTaskPrivate::syncTooltip()
 {
-    if (systemTrayIcon->tooltipTitle().value().isEmpty()) {
+    if (systemTrayIcon->tooltipTitle().isEmpty()) {
         Plasma::ToolTipManager::self()->clearContent(iconWidget);
         return;
     }
 
     QIcon tooltipIcon;
-    if (systemTrayIcon->tooltipIcon().value().length() > 0) {
+    if (systemTrayIcon->tooltipIcon().length() > 0) {
         tooltipIcon = KIcon(systemTrayIcon->tooltipIcon());
     } else {
-        QDBusReply<Icon> iconReply = systemTrayIcon->tooltipImage();
-        Icon iconStruct = iconReply.value();
-        tooltipIcon = iconDataToPixmap(iconStruct);
+        tooltipIcon = iconDataToPixmap(systemTrayIcon->tooltipImage());
     }
 
-    tooltipData.setMainText(systemTrayIcon->tooltipTitle().value());
-    tooltipData.setSubText(systemTrayIcon->tooltipSubTitle().value());
+    tooltipData.setMainText(systemTrayIcon->tooltipTitle());
+    tooltipData.setSubText(systemTrayIcon->tooltipSubTitle());
     tooltipData.setImage(tooltipIcon);
     Plasma::ToolTipManager::self()->setContent(iconWidget, tooltipData);
 }
