@@ -12,6 +12,9 @@ libplasma
         * co-operative security
     * Theme
         * Themes can now set UseNativeWidgetStyle=true in the [Settings] group of the metadata.desktop file and Plasma will default to native (QStyle) painting for all widgets
+    * Extender
+        * NEW: ExtenderGroup, class for grouping ExtenderItems.
+	* hasItem function in Extender to provide an easy way for applets to avoid duplication of ExtenderItems.
     * Widgets
         * NEW: SpinBox
         * NEW: VideoWidget
@@ -63,6 +66,8 @@ Plugins/Addons
          * System tray
              * New D-Bus based system tray protocol
              * Jobs show file/dir progress
+             * Jobs are grouped together: normally only total progress is shown, but the user can expand this item to show all individual jobs
+             * Notifications now show custom images like kopete's contact images.
          * Taskbar
              * New popup menu for grouped tasks with animation and tooltips for each item
              * Tooltips of grouped tasks can show tooltips of multiple windows
