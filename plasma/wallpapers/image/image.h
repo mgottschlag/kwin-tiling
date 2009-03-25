@@ -46,6 +46,7 @@ class Image : public Plasma::Wallpaper
         void browse();
         void nextSlide();
         void updateBackground(int token, const QImage &img);
+        void updateBackground(int token, const QImage &img, bool cache);
         void showFileDialog();
         void updateScreenshot(QPersistentModelIndex index);
         void removeBackground(const QString &path);
@@ -62,6 +63,7 @@ class Image : public Plasma::Wallpaper
         void suspendStartup(bool suspend); // for ksmserver
         void calculateGeometry();
         void setSingleImage();
+        QString cacheId() const;
 
     private:
         int m_delay;

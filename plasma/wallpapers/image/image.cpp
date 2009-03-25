@@ -541,16 +541,43 @@ void Image::render(const QString& image)
         return;
     }
 
+    if (m_mode == "SingleImage") {
+        QString cache = KGlobal::dirs()->locateLocal("cache", "plasma-wallpapers/" + cacheId() + ".png");
+        if (QFile::exists(cache)) {
+            kDebug() << "loading cached wallpaper from" << cache;
+            m_rendererToken = 1;
+            QImage img(cache);
+            updateBackground(1, img, false);
+            suspendStartup(true); // during KDE startup, make ksmserver until the wallpaper is ready
+            return;
+        }
+    }
+
     m_rendererToken = m_renderer.render(m_img, m_color, m_resizeMethod, Qt::SmoothTransformation);
     suspendStartup(true); // during KDE startup, make ksmserver until the wallpaper is ready
 }
 
+QString Image::cacheId() const
+{
+    QSize s = boundingRect().size().toSize();
+    return QString("%5_%3_%4_%1x%2").arg(s.width()).arg(s.height()).arg(m_color.name()).arg(m_resizeMethod).arg(m_img);
+}
+
 void Image::updateBackground(int token, const QImage &img)
+{
+    updateBackground(token, img, true);
+}
+
+void Image::updateBackground(int token, const QImage &img, bool cache)
 {
     if (m_rendererToken == token) {
         m_oldPixmap = m_pixmap;
         m_oldFadedPixmap = m_oldPixmap;
         m_pixmap = QPixmap::fromImage(img);
+
+        if (cache && m_mode == "SingleImage") {
+            img.save(KGlobal::dirs()->locateLocal("cache", "plasma-wallpapers/" + cacheId() + ".png"));
+        }
 
         if (!m_oldPixmap.isNull()) {
             Plasma::Animator::self()->customAnimation(254, 1500, Plasma::Animator::LinearCurve, this, "updateFadedImage");
