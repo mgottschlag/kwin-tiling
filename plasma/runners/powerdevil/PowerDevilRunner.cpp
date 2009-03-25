@@ -60,6 +60,7 @@ PowerDevilRunner::PowerDevilRunner( QObject *parent, const QVariantList &args )
     addSyntax(cpuFreqSyntax);
 
     Plasma::RunnerSyntax brightnessSyntax(i18nc("Note this is a KRunner keyword", "screen brightness"),
+                            // xgettext:no-c-format
                             i18n("Lists screen brightness options or sets it to the brightness defined by :q:; "
                                  "e.g. screen brightness 50 would dim the screen to 50% maximum brightness"));
     brightnessSyntax.addExampleQuery(i18nc("Note this is a KRunner keyword", "dim screen"));
