@@ -3,18 +3,23 @@ libplasma 3.1 / KDE 4.3
 libplasma
 ---------
 * Features
+    * AbstractRunners can now register their syntax for online documentation purposes
+    * RunnerContext
+        * Introduced the isValid() method so runners can abort matches early
+    * NEW: RunnerSyntax, class for describing query syntax
+    * Security
+        * Categories of applets can be excluded from the appletbrowser
+        * co-operative security
+    * Theme
+        * Themes can now set UseNativeWidgetStyle=true in the [Settings] group of the metadata.desktop file and Plasma will default to native (QStyle) painting for all widgets
     * Widgets
         * NEW: SpinBox
         * NEW: VideoWidget
         * NEW: ScrollWidget. A widget that puts scrollbars when it contains a widget bigger than him.
         * NEW: TextBrowser
-    * Theme
-        * Themes can now set UseNativeWidgetStyle=true in the [Settings] group of the metadata.desktop file and Plasma will default to native (QStyle) painting for all widgets
-    * RunnerContext
-        * Introduced the isValid() method so runners can abort matches early
-    * Security
-        * Categories of applets can be excluded from the appletbrowser
-        * co-operative security
+
+
+* Added ScreenPreviewWidget to libkworkspace that works with Plasma::Wallpaper or pixmaps that provides a nicely themed and appropriately sized "monitor" to show screen previews in
 
 Developer Documentation
 -----------------------
@@ -22,9 +27,9 @@ Developer Documentation
 Desktop Theme
 -------------
 * Features
-    *FrameSvg
-       *NEW: overlays for a filigrane effect, can be either random positioned, fixed, scaled or tiled
-    *Desktop and panel toolboxes are now svg themed
+    * FrameSvg
+       * NEW: overlays for a filigrane effect, can be either random positioned, fixed, scaled or tiled
+    * Desktop and panel toolboxes are now svg themed
 
 Plasma Desktop Shell
 --------------------
@@ -45,23 +50,35 @@ Plugins/Addons
 --------------
 * Features
      * Plasmoids and Containments
-         * Twitter
-             * Added support for other Twitter API based services like identi.ca (that is based on laconi.ca).
-         * File Watcher
-             * Added support for filtering (both regular expressions and exact matches are supported).
-         * Web browser
-             * real page zoom instead of just font scaling.
-         *Pager
-             * User can choose to do nothing, toogle the desktop or the dashboard when he click on the current desktop.
          * Comics
              * Added optional Nepomuk support when manually saving a comic strip.
              * Added per comic setting to store the current position.
-         *Taskbar
+         * File Watcher
+             * Added support for filtering (both regular expressions and exact matches are supported).
+         * Microblogging (was KDE Twitter)
+             * Added support for other Twitter API based services like identi.ca (that is based on laconi.ca)
+         * Pager
+             * User can choose to do nothing, toogle the desktop or the dashboard when he click on the current desktop.
+         * System tray
+             * New D-Bus based system tray protocol
+             * Jobs show file/dir progress
+         * Taskbar
              * New popup menu for grouped tasks with animation and tooltips for each item
              * Tooltips of grouped tasks can show tooltips of multiple windows
+         * Web browser
+             * Real page zoom instead of just font scaling
+
+    * Wallpapers
+        * Image plugin caches wallpaper between runs in single image mode
 
 KRunner
 -------
+* Features
+    * Display all known syntax in the results area when Help button pressed
+    * Vertical display of results
+
+* Bugs
+    * Race conditions affecting proper selection of default item fixed (often known as the "I pressed <Enter> and nothing happened!" bug)
 
 
 Platforms
