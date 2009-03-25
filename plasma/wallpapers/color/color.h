@@ -42,7 +42,7 @@ class Color : public Plasma::Wallpaper
 
     private:
         Ui::Config m_ui;
-        QColor m_color;
+        QBrush m_color;
 };
 
 K_EXPORT_PLASMA_WALLPAPER(color, Color)

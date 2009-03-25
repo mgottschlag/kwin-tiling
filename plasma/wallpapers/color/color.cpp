@@ -30,7 +30,7 @@ Color::Color(QObject *parent, const QVariantList &args)
 void Color::paint(QPainter *painter, const QRectF& exposedRect)
 {
     painter->setCompositionMode(QPainter::CompositionMode_Source);
-    painter->fillRect(exposedRect, QBrush(m_color));
+    painter->fillRect(exposedRect, m_color);
 }
 
 void Color::init(const KConfigGroup &config)
@@ -43,20 +43,20 @@ QWidget* Color::createConfigurationInterface(QWidget* parent)
     QWidget *widget = new QWidget(parent);
     m_ui.setupUi(widget);
 
-    m_ui.m_color->setColor(m_color);
+    m_ui.m_color->setColor(m_color.color());
     connect(m_ui.m_color, SIGNAL(changed(const QColor&)), this, SLOT(setColor(const QColor&)));
     return widget;
 }
 
 void Color::setColor(const QColor& color)
 {
-    m_color = color;
+    m_color.setColor(color);
     emit update(boundingRect());
 }
 
 void Color::save(KConfigGroup &config)
 {
-    config.writeEntry("wallpapercolor", m_color);
+    config.writeEntry("wallpapercolor", m_color.color());
 }
 
 #include "color.moc"
