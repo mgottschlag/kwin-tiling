@@ -423,7 +423,7 @@ PanelController::PanelController(QWidget* parent)
     modeLayout->addWidget(d->normalPanelTool);
     connect(d->normalPanelTool, SIGNAL(toggled(bool)), this, SLOT(panelVisibilityModeChanged(bool)));
 
-    d->autoHideTool = d->addTool("video-display", i18n("Auto hide"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
+    d->autoHideTool = d->addTool("video-display", i18n("Auto-hide"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
     d->autoHideTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     modeLayout->addWidget(d->autoHideTool);
     connect(d->autoHideTool, SIGNAL(toggled(bool)), this, SLOT(panelVisibilityModeChanged(bool)));

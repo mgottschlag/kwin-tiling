@@ -38,7 +38,7 @@
       <item>
        <widget class="QCheckBox" name="enabled">
         <property name="text">
-         <string>Start the Input Actions daemon on logon</string>
+         <string>Start the Input Actions daemon on login</string>
         </property>
        </widget>
       </item>
