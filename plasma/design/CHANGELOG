@@ -44,7 +44,8 @@ Other Shells
 
 Tools
 -----
-
+* libplasmaclock
+    * FEATURE: Support for using the text to speech service (KTTSD) to read aloud the time
 
 Plugins/Addons
 --------------
