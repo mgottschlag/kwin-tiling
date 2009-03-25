@@ -82,10 +82,6 @@ void Image::init(const KConfigGroup &config)
     } else {
         startSlideshow();
     }
-
-    if(m_model) {
-        m_model->setResizeMethod(m_resizeMethod);
-    }
 }
 
 void Image::save(KConfigGroup &config)
@@ -204,7 +200,7 @@ void Image::calculateGeometry()
     m_ratio = boundingRect().width() / boundingRect().height();
     m_renderer.setRatio(m_ratio);
 
-    if(m_model) {
+    if (m_model) {
         m_model->setWallpaperSize(m_size);
     }
 }
@@ -238,12 +234,13 @@ void Image::paint(QPainter *painter, const QRectF& exposedRect)
 
     // for pixmaps we draw only the exposed part (untransformed since the
     // bitmapBackground already has the size of the viewport)
-    painter->drawPixmap(exposedRect, m_pixmap, exposedRect);
+    painter->drawPixmap(exposedRect, m_pixmap, exposedRect.translated(-boundingRect().topLeft()));
 
     if (!m_oldFadedPixmap.isNull()) {
         // Put old faded image on top.
         painter->setCompositionMode(QPainter::CompositionMode_SourceAtop);
-        painter->drawPixmap(exposedRect, m_oldFadedPixmap, exposedRect);
+        painter->drawPixmap(exposedRect, m_oldFadedPixmap,
+                            exposedRect.translated(-boundingRect().topLeft()));
     }
 }
 
@@ -312,6 +309,10 @@ void Image::updateDirs()
 
 void Image::setSingleImage()
 {
+    if (m_wallpaper.isEmpty()) {
+        return;
+    }
+
     QString img;
     BackgroundPackage b(m_wallpaper, m_ratio);
 
@@ -535,9 +536,12 @@ void Image::render(const QString& image)
     if (!image.isEmpty()) {
         m_img = image;
     }
-    // else re-render previous image
-    m_rendererToken = m_renderer.render(m_img, m_color, m_resizeMethod,
-                                        Qt::SmoothTransformation);
+
+    if (m_img.isEmpty()) {
+        return;
+    }
+
+    m_rendererToken = m_renderer.render(m_img, m_color, m_resizeMethod, Qt::SmoothTransformation);
     suspendStartup(true); // during KDE startup, make ksmserver until the wallpaper is ready
 }
 
