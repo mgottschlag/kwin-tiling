@@ -44,19 +44,12 @@
 ResultScene::ResultScene(Plasma::RunnerManager *manager, QObject *parent)
     : QGraphicsScene(parent),
       m_runnerManager(manager),
-      m_cIndex(0),
-      m_rowStride(0),
-      m_pageStride(0),
-      m_pageCount(0),
-      m_currentPage(0)
+      m_currentIndex(0)
 {
     setItemIndexMethod(NoIndex);
 
     connect(m_runnerManager, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)),
             this, SLOT(setQueryMatches(const QList<Plasma::QueryMatch>&)));
-
-    m_resizeTimer.setSingleShot(true);
-    connect(&m_resizeTimer, SIGNAL(timeout()), this, SLOT(layoutIcons()));
 
     m_clearTimer.setSingleShot(true);
     connect(&m_clearTimer, SIGNAL(timeout()), this, SLOT(clearMatches()));
@@ -70,7 +63,7 @@ ResultScene::ResultScene(Plasma::RunnerManager *manager, QObject *parent)
     }
 
     m_frame->setCacheAllRenderedFrames(true);
-    m_frame->setElementPrefix("normal");
+    m_frame->setElementPrefix("hover");
     //QColor bg(255, 255, 255, 126);
     //setBackgroundBrush(bg);
 }
@@ -87,25 +80,9 @@ QSize ResultScene::minimumSizeHint() const
 
 void ResultScene::resize(int width, int height)
 {
-    // optimize
-    if (m_size.width() == width && m_size.height() == height) {
-        return;
-    }
-
-    m_size = QSize(width, height);
-    m_rowStride = width / (ResultItem::BOUNDING_WIDTH);
-    m_pageStride = height / (ResultItem::BOUNDING_WIDTH) * m_rowStride;
     setSceneRect(0.0, 0.0, (qreal)width, (qreal)height);
-    m_resizeTimer.start(150);
-}
-
-void ResultScene::layoutIcons()
-{
-    QListIterator<ResultItem *> it(m_items);
-
-    while (it.hasNext()) {
-        ResultItem *item = it.next();
-        item->setRowStride(m_rowStride);
+    foreach (ResultItem *item, m_items) {
+        item->resize(width - 8, item->geometry().height());
     }
 }
 
@@ -117,21 +94,26 @@ void ResultScene::clearMatches()
 
     m_itemsById.clear();
     m_items.clear();
-    m_pageCount = 0;
-    setPage(0);
     emit matchCountChanged(0);
 }
 
 void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
 {
-    // kDebug() << "============================" << endl << "matches retrieved: " << m.count();
+    //kDebug() << "============================" << endl << "matches retrieved: " << m.count();
+    /*
+    foreach (const Plasma::QueryMatch &match, m) {
+        kDebug() << "    " << match.id() << match.text();
+    }
+    */
+
     if (m.isEmpty()) {
-        //kDebug() << "clearing";
+        kDebug() << "clearing";
         emit itemHoverEnter(0);
         m_clearTimer.start(200);
         return;
     }
 
+    resize(width(), m.count() * ResultItem::BOUNDING_HEIGHT);
     m_clearTimer.stop();
     m_items.clear();
 
@@ -167,11 +149,6 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     // this will leave them in *reverse* order
     qSort(m_items.begin(), m_items.end(), ResultItem::compare);
 
-    m_pageCount = m.count();
-    m_pageCount = m_pageCount / m_pageStride + (m_pageCount % m_pageStride != 0 ? 1 : 0);
-    setPage(0);
-    //kDebug() << "gots us" << m_pageCount << "m_pageCount of items";
-
     emit matchCountChanged(m.count());
 
     QListIterator<ResultItem*> matchIt(m_items);
@@ -186,6 +163,7 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         // it is vital that focus is set *after* the index
         if (i == 0) {
             setFocusItem(item);
+            item->setSelected(true);
         }
 
         ++i;
@@ -208,8 +186,6 @@ ResultItem* ResultScene::addQueryMatch(const Plasma::QueryMatch &match, bool use
             item = new ResultItem(match, 0, m_frame);
             addItem(item);
             item->hide();
-            int rowStride = sceneRect().width() / (ResultItem::BOUNDING_WIDTH);
-            item->setRowStride(rowStride);
             connect(item, SIGNAL(activated(ResultItem*)), this, SIGNAL(itemActivated(ResultItem*)));
             connect(item, SIGNAL(hoverEnter(ResultItem*)), this, SIGNAL(itemHoverEnter(ResultItem*)));
             connect(item, SIGNAL(hoverLeave(ResultItem*)), this, SIGNAL(itemHoverLeave(ResultItem*)));
@@ -238,87 +214,64 @@ void ResultScene::focusOutEvent(QFocusEvent *focusEvent)
 void ResultScene::keyPressEvent(QKeyEvent * keyEvent)
 {
     //kDebug() << "m_items (size): " << m_items.size() << "\n";
-    ResultItem *currentFocus = dynamic_cast<ResultItem*>(focusItem());
-    int m_cIndex = currentFocus ? currentFocus->index() : 0;
     switch (keyEvent->key()) {
-        case Qt::Key_Up:{
-            if (m_cIndex < m_rowStride) {
-                if (m_items.size() < m_rowStride) {
-                    // we have less than one row of items, so lets just move to the next item
-                    m_cIndex = (m_cIndex + 1) % m_items.size();
-                } else {
-                    m_cIndex = m_items.size() - (m_items.size() % m_rowStride) - 1 + (m_cIndex % m_items.size());
-                    if (m_cIndex >= m_items.size()) {
-                        // we should be on the bottom row, but there is nothing there; move up one row
-                        m_cIndex -= m_rowStride % m_items.size();
-                    }
-                }
-            } else {
-                m_cIndex = m_cIndex - m_rowStride;
-            }
-            break;
-        }
-
-        case Qt::Key_Down:{
-            if (m_cIndex + m_rowStride >= m_items.size()) {
-                // warp to the top
-                m_cIndex = (m_cIndex + 1) % m_rowStride % m_items.size();
-            } else {
-                // next row!
-                m_cIndex += m_rowStride;
-            }
-
-            break;
-        }
-
+        case Qt::Key_Up:
         case Qt::Key_Left:
-            m_cIndex = (m_cIndex == 0) ? m_items.size() - 1 : m_cIndex - 1;
-        break;
+            selectNextItem();
+            break;
 
+        case Qt::Key_Down:
         case Qt::Key_Right:
-            m_cIndex = (m_cIndex + 1) % m_items.size();
+            selectPreviousItem();
         break;
 
-        case Qt::Key_Return:
-            //TODO: run the item
-        case Qt::Key_Space:
         default:
             // pass the event to the item
             QGraphicsScene::keyPressEvent(keyEvent);
             return;
         break;
     }
+}
 
-    if (m_items[m_cIndex]->pos().y() + m_items[m_cIndex]->size().height() > sceneRect().y() + sceneRect().height()){
-        setPage(m_currentPage + 1);
-    }else if (m_items[m_cIndex]->pos().y() < sceneRect().y()){
-        setPage(m_currentPage - 1);
+void ResultScene::selectNextItem()
+{
+    ResultItem *currentFocus = dynamic_cast<ResultItem*>(focusItem());
+    int m_currentIndex = currentFocus ? currentFocus->index() : 0;
+
+    if (m_currentIndex > 0) {
+        --m_currentIndex;
+    } else {
+        m_currentIndex = m_items.size() - 1;
     }
 
-    // If we arrive here, it was due to an arrow button.
-    Q_ASSERT(m_cIndex  >= 0);
-    Q_ASSERT(m_cIndex < m_items.count());
-    //kDebug() << "m_cIndex: " << m_cIndex << "\n";
-    setFocusItem(m_items.at(m_cIndex));
+    setFocusItem(m_items.at(m_currentIndex));
+    clearSelection();
+    m_items.at(m_currentIndex)->setSelected(true);
+}
+
+void ResultScene::selectPreviousItem()
+{
+    ResultItem *currentFocus = dynamic_cast<ResultItem*>(focusItem());
+    int m_currentIndex = currentFocus ? currentFocus->index() : 0;
+
+    ++m_currentIndex;
+
+    if (m_currentIndex >= m_items.size()) {
+        m_currentIndex = 0;
+    }
+
+    setFocusItem(m_items.at(m_currentIndex));
+    clearSelection();
+    m_items.at(m_currentIndex)->setSelected(true);
 }
 
 void ResultScene::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
     if (event->delta() > 0) {
-        setPage(m_currentPage - 1);
+        selectPreviousItem();
     }else{
-        setPage(m_currentPage + 1);
+        selectNextItem();
     }
-}
-
-void ResultScene::slotArrowResultItemPressed()
-{
-
-}
-
-void ResultScene::slotArrowResultItemReleased()
-{
-
 }
 
 bool ResultScene::launchQuery(const QString &term)
@@ -365,30 +318,5 @@ Plasma::RunnerManager* ResultScene::manager() const
     return m_runnerManager;
 }
 
-uint ResultScene::pageCount() const
-{
-    return m_pageCount;
-}
-
-void ResultScene::nextPage()
-{
-    setPage(m_currentPage + 1);
-}
-
-void ResultScene::previousPage()
-{
-    setPage(m_currentPage - 1);
-}
-
-void ResultScene::setPage(uint index)
-{
-    if (index > m_pageCount || index == m_currentPage) {
-        return;
-    }
-
-    m_currentPage = index;
-    setSceneRect(0.0, ((m_currentPage * (m_pageStride / m_rowStride))) * ResultItem::BOUNDING_HEIGHT,
-                 width(), height());
-}
 #include "resultscene.moc"
 

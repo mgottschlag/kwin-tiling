@@ -77,19 +77,20 @@ public:
     void setIndex(int index);
     int index() const;
     void setRowStride(int stride);
-    int rowStride() const;
     void remove();
     void run(Plasma::RunnerManager *manager);
+    bool isQueryPrototype() const;
 
     static bool compare(const ResultItem *one, const ResultItem *other);
     bool operator<(const ResultItem &other) const;
 
-    static const int ITEM_SIZE = 68;
     static const int PADDING = 2;
     static const int MARGIN = 3;
     static const int TEXT_MARGIN = 1;
+    static const int ITEM_SIZE = 32 + PADDING*2;
     static const int BOUNDING_WIDTH = ITEM_SIZE + MARGIN*2;
-    static const int BOUNDING_HEIGHT = ITEM_SIZE + MARGIN*3 + TEXT_MARGIN*2;
+    static const int BOUNDING_HEIGHT = ITEM_SIZE + MARGIN*2;
+    static const int HOVER_TROFF = 4;
 
 signals:
     void indexReleased(int index);
@@ -110,15 +111,25 @@ protected:
 private:
     // must always call remove()
     ~ResultItem();
-    class Private;
-    Private * const d;
-//    Q_PRIVATE_SLOT(d, void animationComplete())
 
-private slots:
-    void slotTestTransp();
-    void animationComplete();
-    void animate();
-    void becomeVisible();
+    QPointF targetPos() const;
+    void appear();
+    void move();
+
+private:
+    Plasma::QueryMatch m_match;
+    Plasma::FrameSvg *m_frame;
+    // static description
+    QIcon m_icon;
+    // dyn params
+    QBrush m_bgBrush;
+    QPixmap m_fadeout;
+    qreal m_tempTransp;
+    int m_highlight;
+    int m_index;
+    int m_highlightTimerId;
+
+    static int s_fontHeight;
 };
 
 #endif

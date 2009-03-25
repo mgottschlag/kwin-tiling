@@ -102,6 +102,13 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     bottomLayout->addWidget(m_activityButton);
     //bottomLayout->addStretch(10);
 
+    m_helpButton = new QToolButton(m_buttonContainer);
+    m_helpButton->setText(i18n("Help"));
+    m_helpButton->setToolTip(i18n("Information on using this application"));
+    m_helpButton->setIcon(m_iconSvg->pixmap("maximize"));//TODO: proper icon
+    connect(m_helpButton, SIGNAL(clicked(bool)), SLOT(showHelp()));
+    bottomLayout->addWidget(m_helpButton);
+
     m_closeButton = new QToolButton(m_buttonContainer);
     KGuiItem guiItem = KStandardGuiItem::close();
     m_closeButton->setText(guiItem.text());
@@ -185,9 +192,8 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     connect(m_resultsScene, SIGNAL(matchCountChanged(int)), this, SLOT(matchCountChanged(int)));
     connect(m_resultsScene, SIGNAL(itemActivated(ResultItem *)), this, SLOT(run(ResultItem *)));
     connect(m_resultsScene, SIGNAL(itemHoverEnter(ResultItem *)), this, SLOT(updateDescriptionLabel(ResultItem *)));
+    connect(m_resultsScene, SIGNAL(selectionChanged()), this, SLOT(itemSelected()));
     connect(m_resultsScene, SIGNAL(itemHoverLeave(ResultItem *)), m_descriptionLabel, SLOT(clear()));
-    connect(m_previousPage, SIGNAL(linkActivated(const QString&)), m_resultsScene, SLOT(previousPage()));
-    connect(m_nextPage, SIGNAL(linkActivated(const QString&)), m_resultsScene, SLOT(nextPage()));
 
     m_layout->addWidget(m_resultsView);
 
@@ -206,7 +212,8 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     setTabOrder(m_searchTerm, m_previousPage);
     setTabOrder(m_previousPage, m_nextPage);
     setTabOrder(m_nextPage, m_resultsView);
-    setTabOrder(m_resultsView, m_closeButton);
+    setTabOrder(m_resultsView, m_helpButton);
+    setTabOrder(m_helpButton, m_closeButton);
 
     //kDebug() << "size:" << m_resultsView->size() << m_resultsView->minimumSize();
     // we restore the original size, which will set the results view back to its
@@ -235,7 +242,8 @@ void Interface::resizeEvent(QResizeEvent *event)
         p.setBrush(QPalette::Background, gr);
         m_dividerLine->setPalette(p);
     }
-    m_resultsScene->resize(m_resultsView->width(), m_resultsView->height());
+    m_resultsScene->resize(m_resultsView->width(),
+                           qMax(m_resultsView->height(), int(m_resultsScene->height())));
     KRunnerDialog::resizeEvent(event);
 }
 
@@ -266,6 +274,7 @@ void Interface::themeUpdated()
                                .arg(theme->color(Plasma::Theme::HighlightColor).name());
     m_configButton->setStyleSheet(buttonStyleSheet);
     m_activityButton->setStyleSheet(buttonStyleSheet);
+    m_helpButton->setStyleSheet(buttonStyleSheet);
     m_closeButton->setStyleSheet(buttonStyleSheet);
     //kDebug() << "stylesheet is" << buttonStyleSheet;
 
@@ -359,6 +368,41 @@ void Interface::resetInterface()
     resize(qMax(minimumSizeHint().width(), MIN_WIDTH), minimumSizeHint().height()+1);
 }
 
+void Interface::showHelp()
+{
+    QMap<QString, Plasma::QueryMatch> matches;
+
+    foreach (Plasma::AbstractRunner *runner, m_runnerManager->runners()) {
+        int count = 0;
+        QIcon icon(runner->icon());
+        if (icon.isNull()) {
+            icon = KIcon("system-run");
+        }
+
+        foreach (const Plasma::RunnerSyntax &syntax, runner->syntaxes()) {
+            Plasma::QueryMatch match(0);
+            match.setType(Plasma::QueryMatch::InformationalMatch);
+            match.setIcon(icon);
+            match.setText(syntax.exampleQueriesWithTermDescription().join(", "));
+            match.setSubtext(syntax.description() + "<p>" + 
+                             i18n("(From %1, %2)", runner->name(), runner->description()));
+            match.setData(syntax.exampleQueries().first());
+            matches.insert(runner->name() + QString::number(++count), match);
+        }
+    }
+
+    m_resultsScene->setQueryMatches(matches.values());
+}
+
+void Interface::itemSelected()
+{
+    QList<QGraphicsItem *> items = m_resultsScene->selectedItems();
+    if (!items.isEmpty()) {
+        //TODO: change this to do some smooth scrolling
+        m_resultsView->ensureVisible(items.value(0), 0, 0);
+    }
+}
+
 void Interface::setStaticQueryMode(bool staticQuery)
 {
     if (staticQuery) {
@@ -405,9 +449,21 @@ void Interface::run(ResultItem *item)
 
     if (item->group() == Plasma::QueryMatch::InformationalMatch) {
         QString info = item->data();
+        int editPos = info.length();
 
         if (!info.isEmpty()) {
+            if (item->isQueryPrototype()) {
+                // lame way of checking to see if this is a Help Button generated match!
+                int index = info.indexOf(":q:");
+
+                if (index != -1) {
+                    editPos = index;
+                    info.replace(":q:", "");
+                }
+            }
+
             m_searchTerm->setItemText(0, info);
+            m_searchTerm->lineEdit()->setCursorPosition(editPos);
             m_searchTerm->setCurrentIndex(0);
             QApplication::clipboard()->setText(info);
         }
@@ -462,9 +518,6 @@ void Interface::matchCountChanged(int count)
     m_queryRunning = false;
     bool show = count > 0;
     m_hideResultsTimer.stop();
-    bool pages = m_resultsScene->pageCount() > 1;
-    m_previousPage->setVisible(pages);
-    m_nextPage->setVisible(pages);
 
     if (show && m_delayedRun) {
         kDebug() << "delayed run with" << count << "items";

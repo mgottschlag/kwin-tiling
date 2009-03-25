@@ -27,8 +27,6 @@
 #include <QtCore/QMultiMap>
 #include <QtCore/QTimer>
 #include <QtGui/QGraphicsScene>
-#include <QtGui/QIcon>
-#include <QtGui/QPixmap>
 
 #include <Plasma/QueryMatch>
 
@@ -55,12 +53,8 @@ class ResultScene : public QGraphicsScene
 
         Plasma::RunnerManager* manager() const;
 
-        uint pageCount() const;
 
     public slots:
-        void nextPage();
-        void previousPage();
-        void setPage(uint index);
         void setQueryMatches(const QList<Plasma::QueryMatch> &matches);
         bool launchQuery(const QString &term);
         bool launchQuery(const QString &term, const QString &runner);
@@ -78,37 +72,23 @@ class ResultScene : public QGraphicsScene
         void wheelEvent(QGraphicsSceneWheelEvent * wheelEvent);
 
     private:
+        void selectPreviousItem();
+        void selectNextItem();
+
         ResultItem* addQueryMatch(const Plasma::QueryMatch &match, bool useAnyId);
-        void performResize(int width, int height);
 
         Plasma::RunnerManager *m_runnerManager;
 
         QSize       m_size;
-        QPixmap     m_backPixmap;
-        QPixmap     m_forePixmap1;
-        QPixmap     m_forePixmap2;
-
-        // for resize optimization
-        QTimer      m_resizeTimer;
         QTimer      m_clearTimer;
-        bool        m_successfullyResized;
-        int         m_resizeW;
-        int         m_resizeH;
 
         QList<ResultItem *>  m_items;
         QMultiMap<QString, ResultItem *>  m_itemsById;
 
-        int m_cIndex;
-        int m_rowStride;
-        int m_pageStride;
-        uint m_pageCount;
-        uint m_currentPage;
+        int m_currentIndex;
         Plasma::FrameSvg *m_frame;
 
     private slots:
-        void layoutIcons();
-        void slotArrowResultItemPressed();
-        void slotArrowResultItemReleased();
         void clearMatches();
 };
 

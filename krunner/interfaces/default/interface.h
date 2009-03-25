@@ -71,6 +71,8 @@ class Interface : public KRunnerDialog
         void hideResultsArea();
         void themeUpdated();
         void resetInterface();
+        void showHelp();
+        void itemSelected();
 
     private:
         void centerOnScreen();
@@ -86,6 +88,7 @@ class Interface : public KRunnerDialog
         QLabel *m_nextPage;
         QToolButton *m_configButton;
         QToolButton *m_activityButton;
+        QToolButton *m_helpButton;
         QToolButton *m_closeButton;
         KHistoryComboBox* m_searchTerm;
         KCompletion *m_completion;
