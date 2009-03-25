@@ -25,6 +25,7 @@
 #include <QFont>
 #include <QAction>
 #include <QGraphicsGridLayout>
+#include <QLabel>
 
 #include <plasma/widgets/meter.h>
 #include <Plasma/DataEngine>
@@ -68,6 +69,15 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
     m_dirCountLabel->setAlignment(Qt::AlignRight);
     m_fileCountLabel->setAlignment(Qt::AlignRight);
     m_totalBytesLabel->setAlignment(Qt::AlignRight);
+
+    //m_fromNameLabel->nativeWidget()->setWordWrap(false);
+    m_fromLabel->nativeWidget()->setWordWrap(false);
+    //m_toNameLabel->nativeWidget()->setWordWrap(false);
+    m_toLabel->nativeWidget()->setWordWrap(false);
+    m_speedLabel->nativeWidget()->setWordWrap(false);
+    m_dirCountLabel->nativeWidget()->setWordWrap(false);
+    m_fileCountLabel->nativeWidget()->setWordWrap(false);
+    m_totalBytesLabel->nativeWidget()->setWordWrap(false);
 
     QGraphicsGridLayout *layout = new QGraphicsGridLayout(this);
     layout->addItem(m_fromNameLabel, 0, 0);
@@ -252,6 +262,7 @@ void JobWidget::updateLabels()
     if (label1.startsWith("file://")) {
         label1 = KUrl(label1).toLocalFile();
     }
+
     m_toLabel->setText(fm.elidedText(label1, Qt::ElideMiddle, m_toLabel->size().width()));
 }
 

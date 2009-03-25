@@ -60,6 +60,11 @@ public:
     QList<Job*> jobs() const;
 
     /**
+     * @return a Job instance that can be used to monitor total progress
+     **/
+    Job *jobTotals() const;
+
+    /**
      * Integrates the Job progress info into the applet's notification system
      **/
     void registerJobProtocol();
@@ -134,6 +139,7 @@ private slots:
     void removeNotification(SystemTray::Notification *notification);
     void addJob(SystemTray::Job *job);
     void removeJob(SystemTray::Job *job);
+    void updateTotals();
 
 private:
     class Private;

@@ -22,6 +22,7 @@
 
 #include "applet.h"
 #include "jobwidget.h"
+#include "jobtotalswidget.h"
 #include "notificationwidget.h"
 #include "taskarea.h"
 
@@ -41,7 +42,9 @@
 
 #include <plasma/extender.h>
 #include <plasma/extenderitem.h>
+#include <plasma/extendergroup.h>
 #include <plasma/framesvg.h>
+#include <plasma/widgets/label.h>
 #include <plasma/theme.h>
 
 #include "../core/manager.h"
@@ -64,6 +67,7 @@ public:
           configInterface(0),
 	  notificationInterface(0),
           background(0),
+          jobSummaryWidget(0),
           extenderTask(0)
     {
         if (!s_manager) {
@@ -92,8 +96,10 @@ public:
     QPointer<QWidget> notificationInterface;
     QCheckBox *showNotifications;
     QCheckBox *showJobs;
+    QList<Job*> jobs;
 
     Plasma::FrameSvg *background;
+    JobTotalsWidget *jobSummaryWidget;
     SystemTray::ExtenderTask *extenderTask;
     static SystemTray::Manager *s_manager;
     static int s_managerUsage;
@@ -153,9 +159,16 @@ void Applet::init()
     d->taskArea->syncTasks(Private::s_manager->tasks());
 
     extender()->setEmptyExtenderMessage(i18n("No notifications and no jobs"));
+    connect(extender(), SIGNAL(itemDetached(Plasma::ExtenderItem*)), this, SLOT(hidePopupIfEmpty()));
 
     KConfigGroup globalCg = globalConfig();
     if (globalCg.readEntry("ShowJobs", true)) {
+        if (!extender()->hasItem("jobGroup")) {
+            Plasma::ExtenderGroup *extenderGroup = new Plasma::ExtenderGroup(extender());
+            extenderGroup->setName("jobGroup");
+            initExtenderItem(extenderGroup);
+        }
+
         Private::s_manager->registerJobProtocol();
         connect(Private::s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
                 this, SLOT(addJob(SystemTray::Job*)));
@@ -166,6 +179,7 @@ void Applet::init()
         connect(Private::s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
                 this, SLOT(addNotification(SystemTray::Notification*)));
     }
+
 }
 
 void Applet::constraintsEvent(Plasma::Constraints constraints)
@@ -429,8 +443,6 @@ void Applet::addNotification(Notification *notification)
     extenderItem->config().writeEntry("type", "notification");
     extenderItem->setWidget(new NotificationWidget(notification, extenderItem));
 
-    connect(extenderItem, SIGNAL(destroyed()), this, SLOT(hidePopupIfEmpty()));
-
     showPopup();
 }
 
@@ -440,13 +452,21 @@ void Applet::addJob(Job *job)
     extenderItem->config().writeEntry("type", "job");
     extenderItem->setWidget(new JobWidget(job, extenderItem));
 
-    connect(extenderItem, SIGNAL(destroyed()), this, SLOT(hidePopupIfEmpty()));
+    showPopup();
 
-    showPopup(5000);
+    if (extender()->item("jobGroup")) {
+        extenderItem->setGroup(qobject_cast<Plasma::ExtenderGroup*>(extender()->item("jobGroup")));
+    }
 }
 
 void Applet::initExtenderItem(Plasma::ExtenderItem *extenderItem)
 {
+    if (extenderItem->name() == "jobGroup") {
+        d->jobSummaryWidget = new JobTotalsWidget(Private::s_manager->jobTotals(), extenderItem);
+        extenderItem->setWidget(d->jobSummaryWidget);
+        return;
+    }
+
     if (extenderItem->config().readEntry("type", "") == "notification") {
         extenderItem->setWidget(new NotificationWidget(0, extenderItem));
     } else {
@@ -456,7 +476,8 @@ void Applet::initExtenderItem(Plasma::ExtenderItem *extenderItem)
 
 void Applet::hidePopupIfEmpty()
 {
-    if (d->extenderTask && extender()->attachedItems().isEmpty()) {
+    if (d->extenderTask && Private::s_manager->jobs().isEmpty()
+                        && Private::s_manager->notifications().isEmpty()) {
         hidePopup();
 
         // even though there is code to do this in popupEvent... we may need to delete
@@ -469,8 +490,10 @@ void Applet::hidePopupIfEmpty()
 
 void Applet::popupEvent(bool visibility)
 {
-    kDebug() << visibility << extender()->attachedItems().isEmpty();
-    if (extender()->attachedItems().isEmpty()) {
+    Q_UNUSED(visibility)
+
+    if (Private::s_manager->jobs().isEmpty() &&
+        Private::s_manager->notifications().isEmpty()) {
         delete d->extenderTask;
         d->extenderTask = 0;
     } else {

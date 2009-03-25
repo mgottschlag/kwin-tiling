@@ -35,6 +35,7 @@ set(systemtray_SRCS
     ui/extendertask.cpp
     ui/taskarea.cpp
     ui/notificationwidget.cpp
+    ui/jobtotalswidget.cpp
     ui/jobwidget.cpp
     )
 

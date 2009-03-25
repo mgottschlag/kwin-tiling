@@ -45,6 +45,7 @@ class Manager::Private
 public:
     Private(Manager *manager)
         : q(manager),
+          jobTotals(new Job(manager)),
           jobProtocol(0),
           notificationProtocol(0)
     {
@@ -56,6 +57,7 @@ public:
     QList<Task*> tasks;
     QList<Notification*> notifications;
     QList<Job*> jobs;
+    Job *jobTotals;
     Protocol *jobProtocol;
     Protocol *notificationProtocol;
 };
@@ -167,6 +169,7 @@ void Manager::addJob(Job *job)
 {
     connect(job, SIGNAL(destroyed(SystemTray::Job*)), this, SLOT(removeJob(SystemTray::Job*)));
     connect(job, SIGNAL(changed(SystemTray::Job*)), this, SIGNAL(jobChanged(SystemTray::Job*)));
+    connect(job, SIGNAL(changed(SystemTray::Job*)), this, SLOT(updateTotals()));
 
     d->jobs.append(job);
     emit jobAdded(job);
@@ -176,6 +179,23 @@ void Manager::removeJob(Job *job)
 {
     d->jobs.removeAll(job);
     emit jobRemoved(job);
+}
+
+void Manager::updateTotals()
+{
+    uint totalPercent;
+    foreach (Job *job, d->jobs) {
+        totalPercent += job->percentage();
+    }
+
+    d->jobTotals->setPercentage(totalPercent / d->jobs.count());
+    d->jobTotals->setMessage(i18np("1 running job", "%1 running jobs", d->jobs.count()));
+    //TODO: set a sensible icon
+}
+
+Job *Manager::jobTotals() const
+{
+    return d->jobTotals;
 }
 
 QList<Job*> Manager::jobs() const
