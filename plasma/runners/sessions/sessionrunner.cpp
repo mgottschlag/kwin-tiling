@@ -41,6 +41,26 @@ SessionRunner::SessionRunner(QObject *parent, const QVariantList &args)
     setPriority(LowPriority);
     setIgnoredTypes(Plasma::RunnerContext::Directory | Plasma::RunnerContext::File | 
                     Plasma::RunnerContext::NetworkLocation);
+
+    addSyntax(Plasma::RunnerSyntax(i18nc("log out command", "logout"),
+                     i18n("Logs out, exiting the current desktop session")));
+    addSyntax(Plasma::RunnerSyntax(i18nc("shutdown computer command", "shutdown"),
+                     i18n("Turns off the computer")));
+    addSyntax(Plasma::RunnerSyntax(i18nc("lock screen command", "lock"),
+                     i18n("Locks the current sessions and starts the screen saver")));
+
+    Plasma::RunnerSyntax rebootSyntax(i18nc("restart computer command", "restart"), i18n("Reboots the computer"));
+    rebootSyntax.addExampleQuery(i18nc("restart computer command", "reboot"));
+    addSyntax(rebootSyntax);
+
+    addSyntax(Plasma::RunnerSyntax(i18nc("switch user command", "switch :q:"),
+                     i18n("Switches to the active session for the user :q:, "
+                          "or lists all active sessions if :q: is not provided")));
+
+    Plasma::RunnerSyntax fastUserSwitchSyntax(i18n("switch user"),
+                                i18n("Starts a new session as a different user"));
+    fastUserSwitchSyntax.addExampleQuery(i18n("new session"));
+    addSyntax(fastUserSwitchSyntax);
 }
 
 SessionRunner::~SessionRunner()
@@ -104,7 +124,7 @@ void SessionRunner::match(Plasma::RunnerContext &context)
 
     if (!listAll) {
         //no luck, try switch user command
-        if (term.startsWith(i18nc("switch user command","switch"), Qt::CaseInsensitive)) {
+        if (term.startsWith(i18nc("switch user command", "switch"), Qt::CaseInsensitive)) {
             // interestingly, this means that if one wants to switch to a
             // session named "switch", they'd have to enter
             // switch switch. ha!
@@ -127,7 +147,6 @@ void SessionRunner::match(Plasma::RunnerContext &context)
     }
 
     //kDebug() << "session switching to" << (listAll ? "all sessions" : term);
-
     bool switchUser = listAll ||
                       term.compare(i18n("switch user"), Qt::CaseInsensitive) == 0 ||
                       term.compare(i18n("new session"), Qt::CaseInsensitive) == 0;

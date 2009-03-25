@@ -42,6 +42,8 @@ LocationsRunner::LocationsRunner(QObject *parent, const QVariantList& args)
     // set the name shown after the result in krunner window
     setObjectName("Locations");
     setIgnoredTypes(Plasma::RunnerContext::Executable | Plasma::RunnerContext::ShellCommand);
+    addSyntax(Plasma::RunnerSyntax(":q:",
+              i18n("Finds local directories and files, network locations and Internet sites with paths matching :q:.")));
 }
 
 LocationsRunner::~LocationsRunner()

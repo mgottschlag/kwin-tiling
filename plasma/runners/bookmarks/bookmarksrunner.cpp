@@ -41,6 +41,7 @@ BookmarksRunner::BookmarksRunner( QObject* parent, const QVariantList &args )
     setObjectName("Bookmarks");
     m_icon = KIcon("bookmarks");
     m_bookmarkManager = KBookmarkManager::userBookmarksManager();
+    addSyntax(Plasma::RunnerSyntax(":q:", i18n("Finds web browser bookmarks matching :q:.")));
 }
 
 BookmarksRunner::~BookmarksRunner()

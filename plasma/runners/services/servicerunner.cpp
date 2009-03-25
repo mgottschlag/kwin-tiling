@@ -34,6 +34,8 @@ ServiceRunner::ServiceRunner(QObject *parent, const QVariantList &args)
 
     setObjectName("Application");
     setPriority(AbstractRunner::HighestPriority);
+
+    addSyntax(Plasma::RunnerSyntax(":q:", i18n("Finds applications whose name or description match :q:")));
 }
 
 ServiceRunner::~ServiceRunner()

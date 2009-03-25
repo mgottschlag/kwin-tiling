@@ -37,21 +37,51 @@ WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
     setObjectName("Web Shortcut");
     // query ktrader for all available searchproviders and preload the default icon
     m_icon = KIcon("internet-web-browser");
-    m_delimiter = loadDelimiter();
+    loadDelimiter();
     setIgnoredTypes(Plasma::RunnerContext::FileSystem);
 
     m_match.setType(Plasma::QueryMatch::ExactMatch);
     m_match.setRelevance(0.9);
 }
 
-QString WebshortcutRunner::loadDelimiter()
+void WebshortcutRunner::loadDelimiter()
 {
     // TODO: KDirWatch :)
     KConfig kuriconfig("kuriikwsfilterrc", KConfig::NoGlobals);
     KConfigGroup generalgroup(&kuriconfig, "General");
-    QString delimiter = generalgroup.readEntry("KeywordDelimiter", QString(':'));
+    m_delimiter = generalgroup.readEntry("KeywordDelimiter", QString(':'));
     //kDebug() << "keyworddelimiter is: " << delimiter;
-    return delimiter;
+
+    clearSyntaxes();
+
+    KService::List offers = serviceQuery("SearchProvider");
+    if (!offers.isEmpty()) {
+        QString knownShortcuts;
+
+        foreach (const KService::Ptr &offer, offers) {
+            knownShortcuts.append("<li>");
+
+            if (offer->comment().isEmpty()) {
+                knownShortcuts.append(i18nc("A web shortcut and its name",
+                                            "%1: %2",
+                                            offer->property("Keys", QVariant::String).toString(),
+                                            offer->name()));
+            } else {
+                knownShortcuts.append(i18nc("A web shortcut, its name and a description",
+                                            "%1: %2 %3",
+                                            offer->property("Keys", QVariant::String).toString(),
+                                            offer->name(),
+                                            offer->comment()));
+            }
+
+            knownShortcuts.append("</li>");
+        }
+
+        Plasma::RunnerSyntax s("shortcut" + m_delimiter + ":q:",
+                 i18n("Opens the location associated with \"shortcut\"  in a web browser with the query :q:. "
+                      "Known shortcuts include: <ul>%1<ul>", knownShortcuts));
+        addSyntax(s);
+    }
 }
 
 WebshortcutRunner::~WebshortcutRunner()
@@ -101,10 +131,11 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
         QString query = service->property("Query").toString();
         m_match.setData(query);
 
-        if(service->icon().isEmpty())
+        if (service->icon().isEmpty()) {
             m_match.setIcon(iconForUrl(query));
-        else
+        } else {
             m_match.setIcon(KIcon(service->icon()));
+        }
     }
 
     QString actionText = i18n("Search %1 for %2", m_lastServiceName,

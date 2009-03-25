@@ -42,6 +42,7 @@ RecentDocuments::RecentDocuments(QObject *parent, const QVariantList& args)
     connect(recentDocWatch,SIGNAL(created(QString)),this,SLOT(loadRecentDocuments()));
     connect(recentDocWatch,SIGNAL(deleted(QString)),this,SLOT(loadRecentDocuments()));
     connect(recentDocWatch,SIGNAL(dirty(QString)),this,SLOT(loadRecentDocuments()));
+    addSyntax(Plasma::RunnerSyntax(":q:", i18n("Looks for documents recently used with names matching :q:.")));
 }
 
 RecentDocuments::~RecentDocuments()

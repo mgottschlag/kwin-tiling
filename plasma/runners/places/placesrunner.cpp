@@ -30,6 +30,7 @@ PlacesRunner::PlacesRunner(QObject* parent, const QVariantList &args)
     setObjectName("Places");
     m_filePlaces = new KFilePlacesModel(this);
     connect(m_filePlaces, SIGNAL(setupDone(QModelIndex, bool)), SLOT(setupComplete(QModelIndex, bool)));
+    addSyntax(Plasma::RunnerSyntax(":q:", i18n("Finds file manager locations that match :q:")));
 }
 
 PlacesRunner::~PlacesRunner()

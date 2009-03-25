@@ -40,7 +40,6 @@ class PowerDevilRunner : public Plasma::AbstractRunner
     private:
         void initUpdateTriggers();
 
-        QStringList m_words;
         QDBusConnection m_dbus;
 
         QStringList m_supportedGovernors;
@@ -50,6 +49,8 @@ class PowerDevilRunner : public Plasma::AbstractRunner
         QStringList m_supportedSchemes;
         QStringList m_suspendMethods;
         QHash<QString, int> m_suspendData;
+
+        int m_shortestCommand;
 };
 
 K_EXPORT_PLASMA_RUNNER( powerdevil, PowerDevilRunner )

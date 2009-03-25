@@ -67,6 +67,7 @@ void Nepomuk::SearchRunner::init()
 
     // we are way less important than others, mostly because we are slow
     setPriority( LowPriority );
+    addSyntax(Plasma::RunnerSyntax(":q:", i18n("Finds files, documents and other content that matches :q: using the desktop search system.")));
 }
 
 

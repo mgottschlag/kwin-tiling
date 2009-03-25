@@ -43,8 +43,9 @@ ShellRunner::ShellRunner(QObject *parent, const QVariantList &args)
                     Plasma::RunnerContext::NetworkLocation | Plasma::RunnerContext::UnknownType |
                     Plasma::RunnerContext::Help);
     reloadConfig();
-}
 
+    addSyntax(Plasma::RunnerSyntax(":q:", i18n("Finds commands that match :q:, using common shell syntax")));
+}
 ShellRunner::~ShellRunner()
 {
 }
