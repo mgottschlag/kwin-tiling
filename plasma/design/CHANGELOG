@@ -73,9 +73,59 @@ Plugins/Addons
              * Tooltips of grouped tasks can show tooltips of multiple windows
          * Web browser
              * Real page zoom instead of just font scaling
-
+         * NEW: Unit converter
+         * LCD Weather Station
+             * New config dialog
+             * Use geolocation dataengine for initial city if available.
+             * Use Condition Icon for current weather and fallback to pressure if not available.
+             * Show pressure tendency arrows. BUG:184457
+         * System monitor
+             * Handle new/removed network interfaces in network monitor
+             * NEW: Memory monitor. BUG:182704
+             * temperature plotter uses now same range as analog meter
+             * Temperature widget now defaults to plotter in panel
+             * Show tooltips when in panel. BUG:180102
+             * Advanced config page added
+             * Plotter labels added
+             
     * Wallpapers
         * Image plugin caches wallpaper between runs in single image mode
+
+    * Runners
+         * Converter
+             * If not exact unit found offer possible mathes.
+
+    * Libraries
+         * NEW: Conversion library
+             * Add fuel efficiency
+             * Add time
+             * Add power
+             * Add currency
+             * Add energy
+             * Add pressure
+             * More SI Units
+             * Add beaufort scale to velocity
+             * Add delisle, newton, rankine, reaumur & romer to temperature
+
+* Bugs
+     * Plasmoids and Containments
+         * Show Desktop
+             * Fix keyboard shorcuts BUG:180661
+         * News
+             * Better alternate background color for generated css. BUG: 185527
+             * correctly use feed urls with parameters BUG:178936
+         * LCD Weather Station
+             * Replace "N/A" with "-" (Looks better in lcd letters). BUG:186610
+             * Make credit clickable. BUG:183984
+             * Fix wind speed and unit on some data sources.
+         * System monitor
+             * Allow smaller minimum size. BUG:186501
+             * Limit initial temperature count to 5. BUG:178314
+             * Lock buttons when desktop is locked. BUG:178469
+             * Fix config. BUG:181378
+             * don't crash when removing an applet by it's own context menu BUG:178860
+             * Display an IconWidget when there are no available sources. BUG: 178192
+             * activate layout to calculate fixed size ratio correctly on applet start. BUG: 176268
 
 KRunner
 -------
