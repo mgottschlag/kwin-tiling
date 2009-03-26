@@ -65,8 +65,7 @@ int RenderThread::render(const QString &file,
 
     if (!isRunning()) {
         start();
-    }
-    else {
+    } else {
         m_condition.wakeOne();
     }
 

@@ -197,7 +197,7 @@ void Image::calculateGeometry()
 {
     m_size = boundingRect().size().toSize();
     m_renderer.setSize(m_size);
-    m_ratio = boundingRect().width() / boundingRect().height();
+    m_ratio = m_size.isEmpty() ? 1.0 : m_size.width() / m_size.height();
     m_renderer.setRatio(m_ratio);
 
     if (m_model) {
@@ -211,7 +211,7 @@ void Image::paint(QPainter *painter, const QRectF& exposedRect)
     //kDebug() << m_size << boundingRect().size().toSize();
     if (m_size != boundingRect().size().toSize()) {
         calculateGeometry();
-        if (!m_img.isEmpty()) { // We have previous image
+        if (!m_size.isEmpty() && !m_img.isEmpty()) { // We have previous image
             render();
             //kDebug() << "re-rendering";
             return;
@@ -322,7 +322,9 @@ void Image::setSingleImage()
         img = m_wallpaper;
     }
 
-    render(img);
+    if (!m_size.isEmpty()) {
+        render(img);
+    }
 }
 
 void Image::startSlideshow()
