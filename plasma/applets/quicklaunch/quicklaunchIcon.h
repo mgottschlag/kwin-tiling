@@ -37,9 +37,11 @@ class QuicklaunchIcon : public Plasma::IconWidget
          * Constructor
          * @param appUrl Url to desktop file
          * @param mimetype Icon mimetype
+         * @param text Desktop file name
          * @param icon Icon object
+         * @param genericName Desktop file generic name
          */
-        QuicklaunchIcon(const KUrl & appUrl, const KIcon & icon, QuicklaunchApplet *parent);
+        QuicklaunchIcon(const KUrl & appUrl, const QString & text, const KIcon & icon, const QString & genericName, QuicklaunchApplet *parent);
 
         /**
          * Desctructor
@@ -69,6 +71,16 @@ class QuicklaunchIcon : public Plasma::IconWidget
          */
         void execute();
 
+        /**
+         * @internal Sets the tooltip content properly before showing.
+         */
+        void toolTipAboutToShow();
+
+        /**
+         * @internal Clears memory when needed.
+         */
+        void toolTipHidden();
+
     protected:
         void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
         //bool eventFilter(QObject * object, QEvent * event);
@@ -77,6 +89,8 @@ class QuicklaunchIcon : public Plasma::IconWidget
     private:
         QuicklaunchApplet *m_launcher;
         KUrl m_appUrl;
+        QString m_text;
+        QString m_genericName;
         QAction *m_removeAction;
         int m_iconSize;
 };

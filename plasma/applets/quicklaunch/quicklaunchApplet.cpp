@@ -412,20 +412,29 @@ void QuicklaunchApplet::addProgram(int index, const QString &url)
         return;
     KUrl appUrl = KUrl(url);
     KIcon icon;
+    QString text;
+    QString genericName;
 
     if (appUrl.isLocalFile() && KDesktopFile::isDesktopFile(appUrl.toLocalFile())) {
         KDesktopFile *f = new KDesktopFile(appUrl.toLocalFile());
+
+        text = f->readName();
         icon = KIcon(f->readIcon());
+        genericName = f->readGenericName();
         delete f;
     } else {
         icon = KIcon(KMimeType::iconNameForUrl(appUrl));
+    }
+
+    if (text.isNull()) {
+        text = appUrl.fileName();
     }
 
     if (icon.isNull()) {
         icon = KIcon("unknown");
     }
 
-    QuicklaunchIcon *container = new QuicklaunchIcon(appUrl, icon, this);
+    QuicklaunchIcon *container = new QuicklaunchIcon(appUrl, text, icon, genericName, this);
     container->installEventFilter(this);
     m_icons.insert(index, container);
 }

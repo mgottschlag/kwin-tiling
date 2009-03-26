@@ -26,21 +26,27 @@
 #include <KMenu>
 #include <KRun>
 
+#include <Plasma/ToolTipManager>
+
 #include "quicklaunchApplet.h"
 
-QuicklaunchIcon::QuicklaunchIcon(const KUrl & appUrl, const KIcon & icon, QuicklaunchApplet *parent)
+QuicklaunchIcon::QuicklaunchIcon(const KUrl & appUrl, const QString & text, const KIcon & icon, const QString & genericName, QuicklaunchApplet *parent)
   : Plasma::IconWidget(icon, QString(), parent),
     m_launcher(parent),
     m_appUrl(appUrl),
+    m_text(text),
+    m_genericName(genericName),
     m_removeAction(0),
     m_iconSize(0)
 {
     setAcceptDrops(true);
+    Plasma::ToolTipManager::self()->registerWidget(this);
     connect(this, SIGNAL(clicked()), SLOT(execute()));
 }
 
 QuicklaunchIcon::~QuicklaunchIcon()
 {
+    Plasma::ToolTipManager::self()->unregisterWidget(this);
 }
 
 KUrl QuicklaunchIcon::url() const
@@ -69,7 +75,7 @@ void QuicklaunchIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
     //rect.setTop((option->rect.height() - m_iconSize) / 2);
     //QStyleOptionGraphicsItem opt = *option;
     //opt.rect = rect;
-    kDebug() << "Paint to:" << rect << "Original rect was:" << option->rect;
+    //kDebug() << "Paint to:" << rect << "Original rect was:" << option->rect;
 
     painter->drawPixmap(rect, icon().pixmap(m_iconSize));
     //IconWidget::paint(painter, &opt, widget);
@@ -89,6 +95,21 @@ void QuicklaunchIcon::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     m.addSeparator();
     m.addAction(m_launcher->action("remove"));
     m.exec(event->screenPos());
+}
+
+void QuicklaunchIcon::toolTipAboutToShow()
+{
+  Plasma::ToolTipContent toolTip;
+  toolTip.setMainText(m_text);
+  toolTip.setSubText(m_genericName);
+  toolTip.setImage(icon().pixmap(m_iconSize));
+
+  Plasma::ToolTipManager::self()->setContent(this, toolTip);
+}
+
+void QuicklaunchIcon::toolTipHidden()
+{
+    Plasma::ToolTipManager::self()->clearContent(this);
 }
 
 /*bool QuicklaunchIcon::eventFilter(QObject * object, QEvent * event)
