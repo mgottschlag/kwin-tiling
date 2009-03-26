@@ -105,6 +105,8 @@ void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
         kDebug() << "checking" << task->name() << d->showingHidden;
         if (d->hiddenTypes.contains(task->typeId())) {
             task->setHidden(task->hidden()|Task::UserHidden);
+        } else if (task->hidden()&Task::UserHidden) {
+            task->setHidden(task->hidden()^Task::UserHidden);
         }
         addWidgetForTask(task);
     }
@@ -155,6 +157,7 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
     } else {
         if (!widget) {
             widget = task->widget(d->host);
+            widget->setParent(this);
         }
 
         if (widget) {
@@ -357,9 +360,8 @@ void TaskArea::checkUnhideTool()
 QGraphicsWidget* TaskArea::findWidget(Task *task)
 {
     foreach (QGraphicsWidget *widget, task->associatedWidgets()) {
-        if (d->normalTasksLayout->containsItem(widget) ||
-            d->lastTasksLayout->containsItem(widget) ||
-            d->firstTasksLayout->containsItem(widget)) {
+
+        if (widget->parent() == this) {
             return widget;
         }
     }
