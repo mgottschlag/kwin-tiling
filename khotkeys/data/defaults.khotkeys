@@ -3,10 +3,18 @@ DataCount=1
 
 [Data_1]
 Comment=Comment
+Comment[ga]=Nóta
+Comment[gu]=ટીપ્પણી
+Comment[nds]=Kommentar
+Comment[pt]=Comentário
+Comment[pt_BR]=Comentário
+Comment[si]=සටහන
 Comment[uk]=Коментар
+Comment[zh_TW]=註解
 DataCount=1
 Enabled=true
 Name=KMenuEdit
+Name[zh_TW]=選單編輯器
 SystemGroup=1
 Type=ACTION_DATA_GROUP
 
@@ -16,12 +24,24 @@ ConditionsCount=0
 
 [Data_1_1]
 Comment=Comment
+Comment[ga]=Nóta
+Comment[gu]=ટીપ્પણી
+Comment[nds]=Kommentar
+Comment[pt]=Comentário
+Comment[pt_BR]=Comentário
+Comment[si]=සටහන
 Comment[uk]=Коментар
+Comment[zh_TW]=註解
 Enabled=true
 Name=Search
+Name[ga]=Cuardach
+Name[gu]=શોધ
+Name[nds]=Söök
 Name[pt]=Pesquisa
 Name[pt_BR]=Pesquisa
+Name[si]=සෙවුම
 Name[uk]=Пошук
+Name[zh_TW]=搜尋
 Type=SIMPLE_ACTION_DATA
 
 [Data_1_1Actions]
