@@ -77,8 +77,8 @@ void MenuEntryAction::execute()
         {
         KMessageBox::sorry(
                 NULL,
-                i18n("No service configured!"),
-                i18n("Input Action : %1", data->comment()));
+                i18n("No service configured."),
+                i18n("Input Action: %1", data->comment()));
         return;
         }
 
@@ -86,8 +86,8 @@ void MenuEntryAction::execute()
         {
         KMessageBox::sorry(
                 NULL,
-                i18n("Failed to start service '%1'!", service()->name()),
-                i18n("Input Action : %1", data->comment()));
+                i18n("Failed to start service '%1'.", service()->name()),
+                i18n("Input Action: %1", data->comment()));
         return;
         }
     }
