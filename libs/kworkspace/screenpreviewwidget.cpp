@@ -24,9 +24,10 @@
 #include <QPaintEvent>
 #include <QPainter>
 
+#include <KDebug>
 
-#include "plasma/framesvg.h"
-#include "plasma/wallpaper.h"
+#include "Plasma/FrameSvg"
+#include "Plasma/Wallpaper"
 
 
 class ScreenPreviewWidgetPrivate
@@ -48,10 +49,15 @@ public:
 
     void updateScreenGraphics()
     {
-        QRect bounds(QPoint(0,0), QSize(q->size().width(), q->height() - screenGraphics->elementSize("base").height() + screenGraphics->marginSize(Plasma::BottomMargin)));
+        int bottomElements = screenGraphics->elementSize("base").height() + screenGraphics->marginSize(Plasma::BottomMargin);
+        QRect bounds(QPoint(0,0), QSize(q->size().width(), q->height() - bottomElements));
 
         QSize monitorSize(q->size().width(), q->size().width()/ratio);
         monitorSize.scale(bounds.size(), Qt::KeepAspectRatio);
+
+        if (monitorSize.isEmpty()) {
+            return;
+        }
 
         monitorRect = QRect(QPoint(0,0), monitorSize);
         monitorRect.moveCenter(bounds.center());
@@ -61,7 +67,7 @@ public:
         previewRect = screenGraphics->contentsRect().toRect();
         previewRect.moveCenter(bounds.center());
 
-        if (wallpaper) {
+        if (wallpaper && !previewRect.isEmpty()) {
             wallpaper->setBoundingRect(previewRect);
         }
     }
@@ -121,7 +127,7 @@ void ScreenPreviewWidget::setPreview(Plasma::Wallpaper* wallpaper)
     if (d->wallpaper) {
         connect(d->wallpaper, SIGNAL(update(QRectF)), this, SLOT(updateRect(QRectF)));
         connect(d->wallpaper, SIGNAL(destroyed(QObject*)), this, SLOT(wallpaperDeleted()));
-        d->wallpaper->setBoundingRect(d->previewRect);
+        d->updateScreenGraphics();
     }
 
     update(d->previewRect);
@@ -146,12 +152,16 @@ QRect ScreenPreviewWidget::previewRect() const
 void ScreenPreviewWidget::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
-
+    d->screenGraphics->resize(size());
     d->updateScreenGraphics();
 }
 
 void ScreenPreviewWidget::paintEvent(QPaintEvent *event)
 {
+    if (d->monitorRect.size().isEmpty()) {
+        return;
+    }
+
     QPainter painter(this);
     QPoint standPosition(d->monitorRect.center().x() - d->screenGraphics->elementSize("base").width()/2, d->previewRect.bottom());
 
