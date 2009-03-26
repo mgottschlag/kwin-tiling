@@ -18,7 +18,6 @@
 
 #include "webshortcutrunner.h"
 
-#include <QAction>
 #include <QStringList>
 
 #include <KDebug>
@@ -52,6 +51,8 @@ void WebshortcutRunner::loadDelimiter()
     m_delimiter = generalgroup.readEntry("KeywordDelimiter", QString(':'));
     //kDebug() << "keyworddelimiter is: " << delimiter;
 
+    QList<Plasma::RunnerSyntax> syns;
+
     KService::List offers = serviceQuery("SearchProvider");
     if (!offers.isEmpty()) {
         QString knownShortcuts;
@@ -78,8 +79,10 @@ void WebshortcutRunner::loadDelimiter()
         Plasma::RunnerSyntax s("shortcut" + m_delimiter + ":q:",
                  i18n("Opens the location associated with \"shortcut\"  in a web browser with the query :q:. "
                       "Known shortcuts include: <ul>%1<ul>", knownShortcuts));
-        addSyntax(s);
+        syns << s;
     }
+
+    setSyntaxes(syns);
 }
 
 WebshortcutRunner::~WebshortcutRunner()
