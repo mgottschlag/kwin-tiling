@@ -251,7 +251,7 @@ void Applet::checkSizes()
             constraint = QSize(-1, actualSize.height() - topMargin - bottomMargin);
         }
 
-        preferredSize = d->taskArea->effectiveSizeHint(Qt::PreferredSize, constraint);
+        preferredSize = d->taskArea->effectiveSizeHint(Qt::PreferredSize, actualSize);
         preferredSize.setWidth(qMax(actualSize.width(), preferredSize.width()));
         preferredSize.setHeight(qMax(actualSize.height(), preferredSize.height()));
 
