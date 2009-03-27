@@ -57,11 +57,12 @@ public:
     {
         delete movieTimer;
         delete blinkTimer;
-        delete iconWidget;
     }
 
     QPixmap iconDataToPixmap(const Icon &icon) const;
 
+    void iconDestroyed(QObject *obj);
+    void refresh();
     void syncIcon();
 
     void syncAttentionIcon();
@@ -86,7 +87,7 @@ public:
     QTimer *movieTimer;
     QTimer *blinkTimer;
     bool blink;
-    Plasma::IconWidget *iconWidget;
+    QList<Plasma::IconWidget *>iconWidgets;
     Plasma::ToolTipContent tooltipData;
     org::kde::SystemTray *systemTrayIcon;
 };
@@ -101,29 +102,17 @@ DBusSystemTrayTask::DBusSystemTrayTask(const QString &service)
     qDBusRegisterMetaType<IconVector>();
 
     d->name = service;
-    d->iconWidget = new Plasma::IconWidget();
-
-    d->iconWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    d->iconWidget->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
-    d->iconWidget->setPreferredSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
 
     d->systemTrayIcon = new org::kde::SystemTray(service, "/SystemTray",
                                                  QDBusConnection::sessionBus());
     d->title = d->systemTrayIcon->title();
     d->category = (Category)metaObject()->enumerator(metaObject()->indexOfEnumerator("Category")).keyToValue(d->systemTrayIcon->category().toLatin1());
-    d->syncIcon();
-    d->syncAttentionIcon();
-    d->syncMovie();
-    d->syncTooltip();
-    d->syncStatus(d->systemTrayIcon->status());
+
 
     connect(d->systemTrayIcon, SIGNAL(newIcon()), this, SLOT(syncIcon()));
     connect(d->systemTrayIcon, SIGNAL(newAttentionIcon()), this, SLOT(syncAttentionIcon()));
     connect(d->systemTrayIcon, SIGNAL(newTooltip()), this, SLOT(syncTooltip()));
     connect(d->systemTrayIcon, SIGNAL(newStatus(QString)), this, SLOT(syncStatus(QString)));
-
-    connect(d->iconWidget, SIGNAL(clicked()), d->systemTrayIcon, SLOT(activate()));
-    d->iconWidget->installEventFilter(this);
 }
 
 
@@ -135,8 +124,24 @@ DBusSystemTrayTask::~DBusSystemTrayTask()
 
 QGraphicsWidget* DBusSystemTrayTask::createWidget(Plasma::Applet *host)
 {
-    Q_UNUSED(host)
-    return static_cast<QGraphicsWidget*>(d->iconWidget);
+    kDebug()<<"creating a new icon for the applet"<<(QObject*)host;
+
+    Plasma::IconWidget *iconWidget = new Plasma::IconWidget(host);
+
+    iconWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    iconWidget->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
+    iconWidget->setPreferredSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
+
+    connect(iconWidget, SIGNAL(clicked()), d->systemTrayIcon, SLOT(activate()));
+    iconWidget->installEventFilter(this);
+
+    connect(iconWidget, SIGNAL(destroyed(QObject *)), this, SLOT(iconDestroyed(QObject *)));
+    d->iconWidgets.append(iconWidget);
+
+    //Delay because syncStatus needs that createWidget is done
+    QTimer::singleShot(0, this, SLOT(refresh()));
+
+    return static_cast<QGraphicsWidget*>(iconWidget);
 }
 
 bool DBusSystemTrayTask::isEmbeddable() const
@@ -169,7 +174,8 @@ QIcon DBusSystemTrayTask::icon() const
 
 bool DBusSystemTrayTask::eventFilter(QObject *watched, QEvent *event)
 {
-    if (watched == d->iconWidget && event->type() == QEvent::GraphicsSceneContextMenu) {
+    Plasma::IconWidget *iw = qobject_cast<Plasma::IconWidget *>(watched);
+    if (d->iconWidgets.contains(iw) && event->type() == QEvent::GraphicsSceneContextMenu) {
         QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
         d->systemTrayIcon->contextMenu(me->screenPos().x(), me->screenPos().y());
         return true;
@@ -180,6 +186,21 @@ bool DBusSystemTrayTask::eventFilter(QObject *watched, QEvent *event)
 
 
 //DBusSystemTrayTaskPrivate
+
+void DBusSystemTrayTaskPrivate::iconDestroyed(QObject *obj)
+{
+    Plasma::IconWidget *iw = qobject_cast<Plasma::IconWidget *>(obj);
+    iconWidgets.removeAll(iw);
+}
+
+void DBusSystemTrayTaskPrivate::refresh()
+{
+    syncIcon();
+    syncAttentionIcon();
+    syncMovie();
+    syncTooltip();
+    syncStatus(systemTrayIcon->status());
+}
 
 QPixmap DBusSystemTrayTaskPrivate::iconDataToPixmap(const Icon &icon) const
 {
@@ -198,7 +219,9 @@ void DBusSystemTrayTaskPrivate::syncIcon()
     }
 
     if (status != DBusSystemTrayTask::NeedsAttention) {
-        iconWidget->setIcon(icon);
+        foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
+            iconWidget->setIcon(icon);
+        }
     }
 }
 
@@ -217,9 +240,13 @@ void DBusSystemTrayTaskPrivate::syncAttentionIcon()
 void DBusSystemTrayTaskPrivate::blinkAttention()
 {
     if (blink) {
-        iconWidget->setIcon(attentionIcon);
+        foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
+            iconWidget->setIcon(attentionIcon);
+        }
     } else {
-        iconWidget->setIcon(icon);
+        foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
+            iconWidget->setIcon(icon);
+        }
     }
     blink = !blink;
 }
@@ -238,7 +265,9 @@ void DBusSystemTrayTaskPrivate::syncMovie()
 
 void DBusSystemTrayTaskPrivate::updateMovieFrame()
 {
-    iconWidget->setIcon(movie[currentFrame]);
+    foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
+        iconWidget->setIcon(movie[currentFrame]);
+    }
     currentFrame = (currentFrame + 1) % movie.size();
 }
 
@@ -248,7 +277,9 @@ void DBusSystemTrayTaskPrivate::updateMovieFrame()
 void DBusSystemTrayTaskPrivate::syncTooltip()
 {
     if (systemTrayIcon->tooltipTitle().isEmpty()) {
-        Plasma::ToolTipManager::self()->clearContent(iconWidget);
+        foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
+            Plasma::ToolTipManager::self()->clearContent(iconWidget);
+        }
         return;
     }
 
@@ -262,7 +293,9 @@ void DBusSystemTrayTaskPrivate::syncTooltip()
     tooltipData.setMainText(systemTrayIcon->tooltipTitle());
     tooltipData.setSubText(systemTrayIcon->tooltipSubTitle());
     tooltipData.setImage(tooltipIcon);
-    Plasma::ToolTipManager::self()->setContent(iconWidget, tooltipData);
+    foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
+        Plasma::ToolTipManager::self()->setContent(iconWidget, tooltipData);
+    }
 }
 
 
@@ -310,7 +343,9 @@ void DBusSystemTrayTaskPrivate::syncStatus(QString newStatus)
             blinkTimer = 0;
         }
 
-        iconWidget->setIcon(icon);
+        foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
+            iconWidget->setIcon(icon);
+        }
     }
 
     emit q->changed(q);
