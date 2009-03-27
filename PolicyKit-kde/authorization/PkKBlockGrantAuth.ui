@@ -1,0 +1,232 @@
+<ui version="4.0" >
+ <class>PkKBlockGrantAuth</class>
+ <widget class="QWidget" name="PkKBlockGrantAuth" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>344</width>
+    <height>426</height>
+   </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle" >
+   <string>Grant Authorization</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2" >
+   <item row="0" column="0" >
+    <layout class="QGridLayout" name="gridLayout_3" >
+     <item rowspan="7" row="0" column="0" >
+      <layout class="QVBoxLayout" name="verticalLayout" >
+       <item>
+        <widget class="QLabel" name="iconL" >
+         <property name="text" >
+          <string>Icon Here</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_2" >
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item row="0" column="1" >
+      <widget class="QLabel" name="label" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text" >
+        <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'DejaVu Sans'; font-size:9pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:11pt; font-weight:600;">Granting an authorization for the &lt;/span>&lt;span style=" font-size:11pt; font-weight:600; font-style:italic;">%s&lt;/span>&lt;span style=" font-size:11pt; font-weight:600;"> action requires more information&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+       </property>
+       <property name="wordWrap" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" >
+      <widget class="QLabel" name="instructionsL" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text" >
+        <string>Select the beneficiary and, optionally, how to constrain the authorization that you are about to grant.</string>
+       </property>
+       <property name="wordWrap" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1" >
+      <widget class="QWidget" native="1" name="widget" >
+       <layout class="QGridLayout" name="gridLayout_4" >
+        <item row="2" column="0" >
+         <widget class="QLabel" name="beneficiaryL" >
+          <property name="text" >
+           <string>Select the user that will receive the authorization.</string>
+          </property>
+          <property name="wordWrap" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" >
+         <widget class="KComboBox" name="userCB" />
+        </item>
+        <item row="4" column="0" >
+         <widget class="QCheckBox" name="showSysUsersChB" >
+          <property name="text" >
+           <string>&amp;Show system users</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" >
+         <widget class="QLabel" name="label_2" >
+          <property name="font" >
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text" >
+           <string>Beneficiary</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="2" column="1" >
+      <widget class="Line" name="line" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1" >
+      <widget class="Line" name="line_2" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1" >
+      <widget class="QWidget" native="1" name="widget_2" >
+       <layout class="QGridLayout" name="gridLayout" >
+        <item row="1" column="0" >
+         <widget class="QLabel" name="label_4" >
+          <property name="text" >
+           <string>Constraints limits the authorization such that it only applies under certain circumstances.</string>
+          </property>
+          <property name="wordWrap" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0" >
+         <widget class="QRadioButton" name="activeConsoleRB" >
+          <property name="text" >
+           <string>Must be in &amp;active session on local console</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0" >
+         <widget class="QRadioButton" name="activeRB" >
+          <property name="text" >
+           <string>Must be &amp;in active session</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" >
+         <widget class="QRadioButton" name="noneRB" >
+          <property name="text" >
+           <string>&amp;None</string>
+          </property>
+          <property name="checked" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" >
+         <widget class="QRadioButton" name="consoleRB" >
+          <property name="text" >
+           <string>Must be on &amp;local console</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" >
+         <widget class="QLabel" name="label_3" >
+          <property name="font" >
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text" >
+           <string>Constraints</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0" >
+    <spacer name="verticalSpacer" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

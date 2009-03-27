@@ -1,0 +1,72 @@
+<ui version="4.0" >
+ <class>PkKAuthorization</class>
+ <widget class="QWidget" name="PkKAuthorization" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>562</width>
+    <height>504</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Authorizations</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout" >
+   <item row="0" column="0" >
+    <widget class="QSplitter" name="splitter" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="childrenCollapsible" >
+      <bool>false</bool>
+     </property>
+     <widget class="QWidget" name="verticalLayoutWidget" >
+      <layout class="QVBoxLayout" name="verticalLayout" >
+       <item>
+        <widget class="KLineEdit" name="searchLine" >
+         <property name="clickMessage" >
+          <string comment="Search for the entered word in available actions and groups" >Search</string>
+         </property>
+         <property name="showClearButton" stdset="0" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTreeView" name="treeView" >
+         <property name="alternatingRowColors" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" native="1" name="widget" >
+      <layout class="QGridLayout" name="gridLayout_2" >
+       <item row="0" column="0" >
+        <widget class="QLabel" name="label" >
+         <property name="text" >
+          <string>Select an Action</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>klineedit.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
