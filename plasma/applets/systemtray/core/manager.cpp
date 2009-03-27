@@ -188,8 +188,10 @@ void Manager::updateTotals()
         totalPercent += job->percentage();
     }
 
-    d->jobTotals->setPercentage(totalPercent / d->jobs.count());
-    d->jobTotals->setMessage(i18np("1 running job", "%1 running jobs", d->jobs.count()));
+    if (d->jobs.count() > 0) {
+        d->jobTotals->setPercentage(totalPercent / d->jobs.count());
+        d->jobTotals->setMessage(i18np("1 running job", "%1 running jobs", d->jobs.count()));
+    }
     //TODO: set a sensible icon
 }
 
