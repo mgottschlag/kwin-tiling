@@ -123,7 +123,7 @@ void DBusSystemTrayProtocol::serviceChange(const QString& name,
 
 void DBusSystemTrayProtocol::registerWatcher(const QString& service)
 {
-    kWarning()<<"service appeared"<<service;
+    kDebug()<<"service appeared"<<service;
     if (service == "org.kde.SystemTrayDaemon") {
         QString interface("org.kde.SystemTrayDaemon");
         m_sysTrayDaemon = new org::kde::SystemtrayDaemon(interface, "/SystemTrayWatcher",
