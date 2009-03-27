@@ -45,14 +45,12 @@ TabBar::TabBar(QWidget *parent)
         m_hoveredTabIndex(-1),
         m_switchOnHover(true),
         m_animateSwitch(true),
-        m_animProgress(1.0),
-        m_introAnimProgress(0.0)
+        m_animProgress(1.0)
 {
     m_lastIndex[0] = -1;
     connect(this, SIGNAL(currentChanged(int)), this, SLOT(startAnimation()));
 
     m_tabSwitchTimer.setSingleShot(true);
-    m_startAnimationTimer.setSingleShot(true);
     connect(&m_tabSwitchTimer, SIGNAL(timeout()), this, SLOT(switchToHoveredTab()));
     setMouseTracking(true);
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -198,7 +196,7 @@ QSize TabBar::sizeHint() const
 
 QPainterPath TabBar::tabPath(const QRectF &_r)
 {
-    const qreal radius = 6 * m_introAnimProgress;
+    const qreal radius = 6;
     Shape s = shape();
     QPainterPath path;
     QRectF r = _r;
@@ -206,7 +204,6 @@ QPainterPath TabBar::tabPath(const QRectF &_r)
     switch (s) {
     case RoundedSouth:
     case TriangularSouth:
-        r.setHeight(r.height() * m_introAnimProgress);
         r.adjust(0, 0, 0, -3);
         path.moveTo(r.topLeft());
         // Top left corner
@@ -223,8 +220,7 @@ QPainterPath TabBar::tabPath(const QRectF &_r)
         break;
     case RoundedNorth:
     case TriangularNorth:
-        r.setHeight(r.height() * m_introAnimProgress);
-        r.moveBottom(_r.bottom());
+
         r.adjust(0, 3, 0, 1);
         path.moveTo(r.bottomLeft());
         // Bottom left corner
@@ -241,8 +237,6 @@ QPainterPath TabBar::tabPath(const QRectF &_r)
         break;
     case RoundedWest:
     case TriangularWest:
-        r.setWidth(r.width() * m_introAnimProgress);
-        r.moveRight(_r.right());
         r.adjust(3, 0, 1, 0);
         path.moveTo(r.topRight());
         // Top right corner
@@ -260,7 +254,6 @@ QPainterPath TabBar::tabPath(const QRectF &_r)
         break;
     case RoundedEast:
     case TriangularEast:
-        r.setWidth(r.width() * m_introAnimProgress);
         r.adjust(0, 0, -3, 0);
         path.moveTo(r.topLeft());
         // Top left corner
@@ -322,47 +315,6 @@ void TabBar::paintEvent(QPaintEvent *event)
         iconRect.setBottom(iconRect.bottom() - textHeight);
         iconRect.adjust(0, (isVertical() ? 1 : 0) * TAB_CONTENTS_MARGIN + 3, 0, 0);
 
-        if (!qFuzzyCompare(m_introAnimProgress, 1.0)) {
-            QRectF centerRect = iconRect;
-            centerRect.moveCenter(this->rect().center());
-            
-            qreal distance = QLineF(iconRect.center(), centerRect.center()).length() * m_introAnimProgress;
-            
-            Shape s = shape();
-            switch (s) {
-                case RoundedNorth:
-                case RoundedSouth:
-                case TriangularNorth:
-                case TriangularSouth:
-                    centerRect.moveTop(iconRect.top());
-                    if (iconRect.left() < centerRect.left()) {
-                        iconRect.moveCenter(centerRect.center() - QPoint(distance, 0));
-                    } else {
-                        iconRect.moveCenter(centerRect.center() + QPoint(distance, 0));
-                    }
-                    break;
-                case RoundedEast:
-                case RoundedWest:
-                case TriangularEast:
-                case TriangularWest:
-                    centerRect.moveLeft(iconRect.left());
-                    if (iconRect.top() < centerRect.top()) {
-                        iconRect.moveCenter(centerRect.center() - QPoint(0, distance));
-                    } else {
-                        iconRect.moveCenter(centerRect.center() + QPoint(0, distance));
-                    }
-                    break;
-            }
-            
-            // icon zoom effect
-            QPointF iconCenter = iconRect.center();
-            const qreal MIN_ZOOM = 0.8;
-            iconRect.setWidth(iconRect.width() * MIN_ZOOM + iconRect.width() * (1.0 - MIN_ZOOM) * m_introAnimProgress);
-            iconRect.setHeight(iconRect.height() * MIN_ZOOM + iconRect.height() * (1.0 - MIN_ZOOM) * m_introAnimProgress);
-            iconRect.moveCenter(iconCenter);
-            
-            painter.setOpacity(m_introAnimProgress);
-        }
         tabIcon(i).paint(&painter, iconRect.toRect());
 
         // draw tab text
@@ -422,21 +374,6 @@ void TabBar::startAnimation()
     Plasma::Animator::self()->customAnimation(10, 150, Plasma::Animator::EaseInOutCurve, this, "onValueChanged");
 }
 
-void TabBar::startIntroAnimation()
-{
-    Plasma::Animator::self()->customAnimation(10, 200, Plasma::Animator::EaseInCurve, this, "onIntroValueChanged");
-}
-
-void TabBar::showEvent(QShowEvent* event)
-{
-    QTimer::singleShot(250, this, SLOT(startIntroAnimation()));
-}
-
-void TabBar::hideEvent(QHideEvent* event)
-{
-    m_introAnimProgress = 0.0;
-}
-
 void TabBar::onValueChanged(qreal value)
 {
     if ((m_animProgress = value) == 1.0) {
@@ -450,13 +387,6 @@ void TabBar::onValueChanged(qreal value)
     int y = isHorizontal() ? rect.y() : (int)(lastRect.y() - value * (lastRect.y() - rect.y()));
     QSizeF sz = lastRect.size() - value * (lastRect.size() - rect.size());
     m_currentAnimRect = QRect(x, y, (int)(sz.width()), (int)(sz.height()));
-    update();
-}
-
-void TabBar::onIntroValueChanged(qreal value)
-{ 
-    m_introAnimProgress = value;
-
     update();
 }
 
