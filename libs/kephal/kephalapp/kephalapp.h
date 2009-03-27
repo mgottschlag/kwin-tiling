@@ -23,6 +23,8 @@
 
 #include <QApplication>
 
+#include <kephal/screens.h>
+
 
 class KephalApp : public QApplication
 {
@@ -32,11 +34,22 @@ class KephalApp : public QApplication
         ~KephalApp();
         
     private:
-        void init();
+        bool m_listen;
+        QString m_arg;
+        QString m_exec;
+        
+        void init(int & argc, char ** argv);
         void query();
         
     private Q_SLOTS:
         void run();
+        void printHelp();
+        void unknownArg();
+        
+        void screenMoved(Kephal::Screen * s, QPoint o, QPoint n);
+        void screenResized(Kephal::Screen * s, QSize o, QSize n);
+        void screenRemoved(int s);
+        void screenAdded(Kephal::Screen * s);
 };
 
 
