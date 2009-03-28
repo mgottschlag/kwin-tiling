@@ -144,11 +144,11 @@ void Battery::init()
 
     dataUpdated("AC Adapter", dataEngine("powermanagement")->query("AC Adapter"));
 
-    if (!m_isEmbedded) {
+    if (!m_isEmbedded && !extender()->hasItem("powermanagement")) {
         Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
         eItem->setName("powermanagement");
-        initBatteryExtender(eItem);
-        extender()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+        initExtenderItem(eItem);
+        //extender()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     }
 }
 
@@ -333,13 +333,13 @@ void Battery::setEmbedded(const bool embedded)
     m_isEmbedded = embedded;
 }
 
-void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
+void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 {
     // We only show the extender for applets that are not embedded, as
     // that would create infinitve loops, you really don't want an applet
     // extender when the applet is embedded into another applet, such
     // as the battery applet is also embedded into the battery's extender.
-    if (!m_isEmbedded) {
+    if (!m_isEmbedded && item->name() == "powermanagement") {
         int row = 0;
         int rowHeight = 20;
         int columnWidth = 120;

@@ -86,7 +86,7 @@ class Battery : public Plasma::PopupApplet
 
     private:
         void connectSources();
-        void initBatteryExtender(Plasma::ExtenderItem *item);
+        void initExtenderItem(Plasma::ExtenderItem *item);
         void updateStatus();
 
         /* Prevent creating infinite loops by embedding applets inside applets */
