@@ -19,6 +19,83 @@
 
 #include "networkinterface.h"
 
+class WicdNetworkInterfacePrivate {
+    public:
+        WicdNetworkInterfacePrivate(const QString &name);
 
+        QString name;
+};
+
+WicdNetworkInterfacePrivate::WicdNetworkInterfacePrivate(const QString &n)
+ : name(n)
+{
+
+}
+
+WicdNetworkInterface::WicdNetworkInterface(const QString &name)
+ : NetworkInterface(), d(new WicdNetworkInterfacePrivate(name))
+{
+
+}
+
+WicdNetworkInterface::~WicdNetworkInterface()
+{
+
+}
+
+QString WicdNetworkInterface::interfaceName() const
+{
+    return d->name;
+}
+
+QString WicdNetworkInterface::driver() const
+{
+    return QString();
+}
+
+Solid::Control::IPv4Config WicdNetworkInterface::ipV4Config() const
+{
+
+}
+
+QString WicdNetworkInterface::uni() const
+{
+    return d->name;
+}
+
+bool WicdNetworkInterface::isActive() const
+{
+
+}
+
+Solid::Control::NetworkInterface::Type WicdNetworkInterface::type() const
+{
+
+}
+
+Solid::Control::NetworkInterface::ConnectionState WicdNetworkInterface::connectionState() const
+{
+
+}
+
+int WicdNetworkInterface::designSpeed() const
+{
+
+}
+
+Solid::Control::NetworkInterface::Capabilities WicdNetworkInterface::capabilities() const
+{
+
+}
+
+bool WicdNetworkInterface::activateConnection(const QString & connectionUni, const QVariantMap & connectionParameters)
+{
+    return false;
+}
+
+bool WicdNetworkInterface::deactivateConnection()
+{
+    return false;
+}
 
 #include "networkinterface.moc"

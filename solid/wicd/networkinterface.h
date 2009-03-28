@@ -28,14 +28,14 @@
 
 class QDBusInterface;
 
-//class WicdNetworkInterfacePrivate;
+class WicdNetworkInterfacePrivate;
 
 class WicdNetworkInterface : public QObject, virtual public Solid::Control::Ifaces::NetworkInterface
 {
 Q_OBJECT
 Q_INTERFACES(Solid::Control::Ifaces::NetworkInterface)
 public:
-    WicdNetworkInterface(const QString  & objectPath);
+    WicdNetworkInterface(const QString &name);
     virtual ~WicdNetworkInterface();
     QString interfaceName() const;
     QString driver() const;
@@ -52,12 +52,8 @@ public:
 Q_SIGNALS:
     void ipDetailsChanged();
     void connectionStateChanged(int state);
-/*protected:
-    WicdNetworkInterface(WicdNetworkInterfacePrivate &dd);
-    WicdNetworkInterfacePrivate * d_ptr;*/
 private:
-//    Q_DECLARE_PRIVATE(WicdNetworkInterface)
-    Q_DISABLE_COPY(WicdNetworkInterface)
+    WicdNetworkInterfacePrivate *d;
 };
 
 #endif

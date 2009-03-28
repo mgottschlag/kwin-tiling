@@ -19,6 +19,65 @@
 
 #include "wirelessaccesspoint.h"
 
+WicdAccessPoint::WicdAccessPoint(const QString &networkPath)
+ : AccessPoint(0)
+{
 
+}
+
+WicdAccessPoint::~WicdAccessPoint()
+{
+
+}
+
+QString WicdAccessPoint::uni() const
+{
+
+}
+
+Solid::Control::AccessPoint::Capabilities WicdAccessPoint::capabilities() const
+{
+
+}
+
+Solid::Control::AccessPoint::WpaFlags WicdAccessPoint::wpaFlags() const
+{
+
+}
+
+Solid::Control::AccessPoint::WpaFlags WicdAccessPoint::rsnFlags() const
+{
+
+}
+
+QString WicdAccessPoint::ssid() const
+{
+
+}
+
+uint WicdAccessPoint::frequency() const
+{
+
+}
+
+QString WicdAccessPoint::hardwareAddress() const
+{
+
+}
+
+uint WicdAccessPoint::maxBitRate() const
+{
+
+}
+
+Solid::Control::WirelessNetworkInterface::OperationMode WicdAccessPoint::mode() const
+{
+
+}
+
+int WicdAccessPoint::signalStrength() const
+{
+
+}
 
 #include "wirelessaccesspoint.moc"

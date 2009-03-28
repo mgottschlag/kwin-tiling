@@ -42,7 +42,6 @@ public:
     QString hardwareAddress() const;
     uint maxBitRate() const;
     Solid::Control::WirelessNetworkInterface::OperationMode mode() const;
-    void setSignalStrength(int strength);
     int signalStrength() const;
 private:
     WicdAccessPointPrivate * d;

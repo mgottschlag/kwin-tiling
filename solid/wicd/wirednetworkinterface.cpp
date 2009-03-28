@@ -19,4 +19,40 @@
 
 #include "wirednetworkinterface.h"
 
+WicdWiredNetworkInterface::WicdWiredNetworkInterface(const QString &name)
+ : WicdNetworkInterface(name)
+{
+
+}
+
+WicdWiredNetworkInterface::~WicdWiredNetworkInterface()
+{
+
+}
+
+QString WicdWiredNetworkInterface::hardwareAddress() const
+{
+
+}
+
+int WicdWiredNetworkInterface::bitRate() const
+{
+
+}
+
+bool WicdWiredNetworkInterface::carrier() const
+{
+
+}
+
+bool WicdWiredNetworkInterface::activateConnection(const QString & connectionUni, const QVariantMap & connectionParameters)
+{
+    return false;
+}
+
+bool WicdWiredNetworkInterface::deactivateConnection()
+{
+    return false;
+}
+
 #include "wirednetworkinterface.moc"
