@@ -21,17 +21,18 @@
 
 #include <QProcess>
 
-class WicdNetworkInterfacePrivate {
-    public:
-        WicdNetworkInterfacePrivate(const QString &name);
+class WicdNetworkInterfacePrivate
+{
+public:
+    WicdNetworkInterfacePrivate(const QString &name);
 
-        quint32 parseIPv4Address(const QString & addressString);
+    quint32 parseIPv4Address(const QString & addressString);
 
-        QString name;
+    QString name;
 };
 
 WicdNetworkInterfacePrivate::WicdNetworkInterfacePrivate(const QString &n)
- : name(n)
+        : name(n)
 {
 }
 
@@ -42,8 +43,7 @@ quint32 WicdNetworkInterfacePrivate::parseIPv4Address(const QString & addressStr
         return 0;
 
     quint32 address = 0;
-    for (int i = 0; i < 4; ++i)
-    {
+    for (int i = 0; i < 4; ++i) {
         bool ok = false;
         const short value = parts.at(i).toShort(&ok);
         if (value < 0 || value > 255)
@@ -54,7 +54,7 @@ quint32 WicdNetworkInterfacePrivate::parseIPv4Address(const QString & addressStr
 }
 
 WicdNetworkInterface::WicdNetworkInterface(const QString &name)
- : NetworkInterface(), d(new WicdNetworkInterfacePrivate(name))
+        : NetworkInterface(), d(new WicdNetworkInterfacePrivate(name))
 {
 
 }
@@ -89,28 +89,28 @@ Solid::Control::IPv4Config WicdNetworkInterface::ipV4Config() const
 
     if (!result.contains("inet addr:")) {
         return Solid::Control::IPv4Config(
-                QList<Solid::Control::IPv4Address>(),
-                QList<quint32>() /*nameservers*/,
-                QStringList() /* domains */,
-                QList<Solid::Control::IPv4Route>() /* routes*/);
+                   QList<Solid::Control::IPv4Address>(),
+                   QList<quint32>() /*nameservers*/,
+                   QStringList() /* domains */,
+                   QList<Solid::Control::IPv4Route>() /* routes*/);
     }
     QString inetadd = lines.at(1).split("inet addr:").at(1).split(' ').at(0);
     QString bcast = lines.at(1).split("Bcast:").at(1).split(' ').at(0);
     QString mask = lines.at(1).split("Mask:").at(1);
 
     Solid::Control::IPv4Address address(
-            d->parseIPv4Address(inetadd),
-            d->parseIPv4Address(mask),
-            d->parseIPv4Address(bcast));
+        d->parseIPv4Address(inetadd),
+        d->parseIPv4Address(mask),
+        d->parseIPv4Address(bcast));
 
     QList<quint32> dnsServers;
     dnsServers.append(d->parseIPv4Address(bcast));
 
     return Solid::Control::IPv4Config(
-            QList<Solid::Control::IPv4Address>() << address,
-            dnsServers /*nameservers*/,
-            QStringList() /* domains */,
-            QList<Solid::Control::IPv4Route>() /* routes*/);
+               QList<Solid::Control::IPv4Address>() << address,
+               dnsServers /*nameservers*/,
+               QStringList() /* domains */,
+               QList<Solid::Control::IPv4Route>() /* routes*/);
 }
 
 QString WicdNetworkInterface::uni() const

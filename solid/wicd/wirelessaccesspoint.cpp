@@ -25,21 +25,21 @@
 
 class WicdAccessPoint::Private
 {
-    public:
-        Private() {};
+public:
+    Private() {};
 
-        void recacheInformation();
-        void reloadNetworkId();
+    void recacheInformation();
+    void reloadNetworkId();
 
-        int networkid;
-        QString essid;
-        QString bssid;
-        int channel;
-        QString mode;
-        int strength;
-        int quality;
-        QString encryption_method;
-        QString enctype;
+    int networkid;
+    QString essid;
+    QString bssid;
+    int channel;
+    QString mode;
+    int strength;
+    int quality;
+    QString encryption_method;
+    QString enctype;
 };
 
 void WicdAccessPoint::Private::recacheInformation()
@@ -77,7 +77,7 @@ void WicdAccessPoint::Private::reloadNetworkId()
 }
 
 WicdAccessPoint::WicdAccessPoint(int networkid)
- : AccessPoint(0)
+        : AccessPoint(0)
 {
     d->networkid = networkid;
     d->recacheInformation();

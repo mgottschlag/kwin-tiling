@@ -22,6 +22,6 @@
 // KDE includes
 #include <kpluginfactory.h>
 
-K_PLUGIN_FACTORY(NetworkManagerBackendFactory, registerPlugin<WicdNetworkManager>(); )
+K_PLUGIN_FACTORY(NetworkManagerBackendFactory, registerPlugin<WicdNetworkManager>();)
 K_EXPORT_PLUGIN(NetworkManagerBackendFactory("NetworkManagerbackend"))
 

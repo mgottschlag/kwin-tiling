@@ -25,7 +25,7 @@
 #include <QProcess>
 
 WicdWiredNetworkInterface::WicdWiredNetworkInterface(const QString &name)
- : WicdNetworkInterface(name)
+        : WicdNetworkInterface(name)
 {
 
 }

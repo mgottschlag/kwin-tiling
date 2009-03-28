@@ -26,29 +26,29 @@
 class WicdNetworkManagerPrivate;
 class WicdNetworkManager : public Solid::Control::Ifaces::NetworkManager
 {
-Q_INTERFACES(Solid::Control::Ifaces::NetworkManager)
-Q_OBJECT
+    Q_INTERFACES(Solid::Control::Ifaces::NetworkManager)
+    Q_OBJECT
 
-    public:
-        WicdNetworkManager(QObject * parent, const QVariantList  & args);
-        virtual ~WicdNetworkManager();
-        Solid::Networking::Status status() const;
-        QStringList networkInterfaces() const;
-        QObject * createNetworkInterface(const QString &);
-        void activateConnection(const QString & interfaceUni, const QString & connectionUni, const QVariantMap & connectionParameters);
-        void deactivateConnection(const QString & activeConnection);
+public:
+    WicdNetworkManager(QObject * parent, const QVariantList  & args);
+    virtual ~WicdNetworkManager();
+    Solid::Networking::Status status() const;
+    QStringList networkInterfaces() const;
+    QObject * createNetworkInterface(const QString &);
+    void activateConnection(const QString & interfaceUni, const QString & connectionUni, const QVariantMap & connectionParameters);
+    void deactivateConnection(const QString & activeConnection);
 
-        bool isNetworkingEnabled() const;
-        bool isWirelessEnabled() const;
-        bool isWirelessHardwareEnabled() const;
-        QStringList activeConnections() const;
+    bool isNetworkingEnabled() const;
+    bool isWirelessEnabled() const;
+    bool isWirelessHardwareEnabled() const;
+    QStringList activeConnections() const;
 
-    public Q_SLOTS:
-        void setWirelessEnabled(bool);
-        void setNetworkingEnabled(bool);
+public Q_SLOTS:
+    void setWirelessEnabled(bool);
+    void setNetworkingEnabled(bool);
 
-    private:
-        WicdNetworkManagerPrivate * d;
+private:
+    WicdNetworkManagerPrivate * d;
 };
 
 #endif

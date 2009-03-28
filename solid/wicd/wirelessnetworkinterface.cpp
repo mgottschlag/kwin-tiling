@@ -51,8 +51,8 @@ QMap<int, QString> WicdWirelessNetworkInterface::Private::getAccessPointsWithId(
 }
 
 WicdWirelessNetworkInterface::WicdWirelessNetworkInterface(const QString &objectPath)
- : WicdNetworkInterface(objectPath)
- , d(new Private())
+        : WicdNetworkInterface(objectPath)
+        , d(new Private())
 {
 
 }

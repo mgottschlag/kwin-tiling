@@ -32,8 +32,8 @@ class WicdNetworkInterfacePrivate;
 
 class WicdNetworkInterface : public QObject, virtual public Solid::Control::Ifaces::NetworkInterface
 {
-Q_OBJECT
-Q_INTERFACES(Solid::Control::Ifaces::NetworkInterface)
+    Q_OBJECT
+    Q_INTERFACES(Solid::Control::Ifaces::NetworkInterface)
 public:
     WicdNetworkInterface(const QString &name);
     virtual ~WicdNetworkInterface();

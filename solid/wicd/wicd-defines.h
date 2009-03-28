@@ -17,15 +17,16 @@
 #define WICD_WIRED_DBUS_INTERFACE "org.wicd.daemon.wired"
 #define WICD_WIRELESS_DBUS_INTERFACE "org.wicd.daemon.wireless"
 
-namespace Wicd {
-    enum ConnectionStatus {
-        NOT_CONNECTED = 0,
-        CONNECTING = 1,
-        WIRELESS = 2,
-        WIRED = 3,
-        SUSPENDED = 4,
-        Unknown = 16
-    };
+namespace Wicd
+{
+enum ConnectionStatus {
+    NOT_CONNECTED = 0,
+    CONNECTING = 1,
+    WIRELESS = 2,
+    WIRED = 3,
+    SUSPENDED = 4,
+    Unknown = 16
+};
 }
 
 #endif /* WICDDEFINES_H */

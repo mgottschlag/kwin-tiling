@@ -24,21 +24,21 @@
 
 class WicdDbusInterface
 {
-    public:
+public:
 
-        static WicdDbusInterface * instance();
+    static WicdDbusInterface * instance();
 
-        WicdDbusInterface();
-        virtual ~WicdDbusInterface();
+    WicdDbusInterface();
+    virtual ~WicdDbusInterface();
 
-        QDBusInterface &daemon() const;
-        QDBusInterface &wireless() const;
-        QDBusInterface &wired() const;
-        QDBusInterface &config() const;
+    QDBusInterface &daemon() const;
+    QDBusInterface &wireless() const;
+    QDBusInterface &wired() const;
+    QDBusInterface &config() const;
 
-    private:
-        class Private;
-        Private *d;
+private:
+    class Private;
+    Private *d;
 };
 
 #endif /* WICDDBUSINTERFACE_H */

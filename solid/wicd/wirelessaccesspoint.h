@@ -26,8 +26,8 @@
 
 class WicdAccessPoint : public Solid::Control::Ifaces::AccessPoint
 {
-Q_OBJECT
-Q_INTERFACES(Solid::Control::Ifaces::AccessPoint)
+    Q_OBJECT
+    Q_INTERFACES(Solid::Control::Ifaces::AccessPoint)
 public:
     WicdAccessPoint(int networkid);
     virtual ~WicdAccessPoint();

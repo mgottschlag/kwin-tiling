@@ -27,8 +27,8 @@
 
 class WicdWirelessNetworkInterface : public WicdNetworkInterface, virtual public Solid::Control::Ifaces::WirelessNetworkInterface
 {
-Q_OBJECT
-Q_INTERFACES(Solid::Control::Ifaces::WirelessNetworkInterface)
+    Q_OBJECT
+    Q_INTERFACES(Solid::Control::Ifaces::WirelessNetworkInterface)
 public:
     WicdWirelessNetworkInterface(const QString  & objectPath);
     virtual ~WicdWirelessNetworkInterface();

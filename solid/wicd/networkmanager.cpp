@@ -44,13 +44,13 @@ public:
 };
 
 WicdNetworkManagerPrivate::WicdNetworkManagerPrivate()
- : cachedState(Wicd::Unknown)
+        : cachedState(Wicd::Unknown)
 {
 }
 
 
 WicdNetworkManager::WicdNetworkManager(QObject * parent, const QVariantList  & /*args */)
- : NetworkManager(parent), d(new WicdNetworkManagerPrivate())
+        : NetworkManager(parent), d(new WicdNetworkManagerPrivate())
 {
 
 }
@@ -62,30 +62,28 @@ WicdNetworkManager::~WicdNetworkManager()
 
 Solid::Networking::Status WicdNetworkManager::status() const
 {
-    if (d->cachedState == Wicd::Unknown)
-    {
+    if (d->cachedState == Wicd::Unknown) {
         QDBusReply< uint > state = WicdDbusInterface::instance()->daemon().call("GetConnectionStatus");
-        if (state.isValid())
-        {
+        if (state.isValid()) {
             kDebug(1441) << "  got state: " << state.value();
             d->cachedState = static_cast<Wicd::ConnectionStatus>(state.value());
         }
     }
-    switch ( d->cachedState ) {
-        case Wicd::CONNECTING:
-            return Solid::Networking::Connecting;
-            break;
-        case Wicd::WIRED:
-        case Wicd::WIRELESS:
-            return Solid::Networking::Connected;
-            break;
-        case Wicd::NOT_CONNECTED:
-            return Solid::Networking::Unconnected;
-            break;
-        default:
-        case Wicd::SUSPENDED:
-            return Solid::Networking::Unknown;
-            break;
+    switch (d->cachedState) {
+    case Wicd::CONNECTING:
+        return Solid::Networking::Connecting;
+        break;
+    case Wicd::WIRED:
+    case Wicd::WIRELESS:
+        return Solid::Networking::Connected;
+        break;
+    case Wicd::NOT_CONNECTED:
+        return Solid::Networking::Unconnected;
+        break;
+    default:
+    case Wicd::SUSPENDED:
+        return Solid::Networking::Unknown;
+        break;
     }
 }
 
@@ -106,7 +104,7 @@ QStringList WicdNetworkManager::networkInterfaces() const
 
     bool enterIface = true;
 
-    foreach (const QString &line, lines) {
+    foreach(const QString &line, lines) {
         if (enterIface) {
             if (!line.split(' ').at(0).isEmpty()) {
                 ifaces.append(line.split(' ').at(0));
@@ -147,7 +145,7 @@ QObject * WicdNetworkManager::createNetworkInterface(const QString  & uni)
 
     QStringList wired;
 
-    foreach (const QString &line, lines) {
+    foreach(const QString &line, lines) {
         if (!line.isEmpty()) {
             wired << line.split(' ').at(0);
         }
@@ -161,8 +159,7 @@ QObject * WicdNetworkManager::createNetworkInterface(const QString  & uni)
         netInterface = new WicdWirelessNetworkInterface(uni);
     }
 
-    if (netInterface)
-    {
+    if (netInterface) {
         kDebug() << "Interface created successfully";
         //netInterface->setManagerInterface(&WicdDbusInterface::instance()->daemon());
         d->interfaces[uni] = netInterface;
@@ -173,11 +170,9 @@ QObject * WicdNetworkManager::createNetworkInterface(const QString  & uni)
 
 bool WicdNetworkManager::isNetworkingEnabled() const
 {
-    if (d->cachedState == Wicd::Unknown)
-    {
+    if (d->cachedState == Wicd::Unknown) {
         QDBusReply< uint > state = WicdDbusInterface::instance()->daemon().call("GetConnectionStatus");
-        if (state.isValid())
-        {
+        if (state.isValid()) {
             kDebug(1441) << "  got state: " << state.value();
             d->cachedState = static_cast<Wicd::ConnectionStatus>(state.value());
         }
@@ -212,11 +207,9 @@ QStringList WicdNetworkManager::activeConnections() const
 {
     QStringList activeConnections;
     QHash<QString, WicdNetworkInterface *>::ConstIterator it = d->interfaces.constBegin(), itEnd = d->interfaces.constEnd();
-    for ( ; it != itEnd; ++it)
-    {
+    for (; it != itEnd; ++it) {
         WicdNetworkInterface * interface = it.value();
-        if (interface && interface->isActive())
-        {
+        if (interface && interface->isActive()) {
             activeConnections << it.key();
         }
     }
@@ -228,16 +221,14 @@ void WicdNetworkManager::activateConnection(const QString & interfaceUni, const 
 {
     kDebug(1441) << interfaceUni << connectionUni << connectionParameters;
     QHash<QString, WicdNetworkInterface *>::ConstIterator it = d->interfaces.find(interfaceUni);
-    if (it != d->interfaces.end())
-    {
+    if (it != d->interfaces.end()) {
         WicdNetworkInterface * interface = it.value();
         if (!interface)
             interface = qobject_cast<WicdNetworkInterface *>(createNetworkInterface(interfaceUni));
-            if (interface)
-            {
-                bool activated = interface->activateConnection(connectionUni, connectionParameters);
-                Q_UNUSED(activated)
-            }
+        if (interface) {
+            bool activated = interface->activateConnection(connectionUni, connectionParameters);
+            Q_UNUSED(activated)
+        }
     }
 }
 
@@ -245,8 +236,7 @@ void WicdNetworkManager::deactivateConnection(const QString & activeConnection)
 {
     kDebug(1441) << activeConnection;
     QHash<QString, WicdNetworkInterface *>::ConstIterator it = d->interfaces.find(activeConnection);
-    if (it != d->interfaces.end() && it.value())
-    {
+    if (it != d->interfaces.end() && it.value()) {
         WicdNetworkInterface * interface = it.value();
         bool deactivated = interface->deactivateConnection();
         Q_UNUSED(deactivated)

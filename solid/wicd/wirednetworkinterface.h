@@ -30,20 +30,20 @@ class WicdWiredNetworkInterface : public WicdNetworkInterface, virtual public So
     Q_OBJECT
     Q_INTERFACES(Solid::Control::Ifaces::WiredNetworkInterface)
 
-    public:
-        WicdWiredNetworkInterface(const QString  & objectPath);
-        virtual ~WicdWiredNetworkInterface();
+public:
+    WicdWiredNetworkInterface(const QString  & objectPath);
+    virtual ~WicdWiredNetworkInterface();
 
-        QString hardwareAddress() const;
-        int bitRate() const;
-        bool carrier() const;
+    QString hardwareAddress() const;
+    int bitRate() const;
+    bool carrier() const;
 
-        /* reimp */ bool activateConnection(const QString & connectionUni, const QVariantMap & connectionParameters);
-        /* reimp */ bool deactivateConnection();
+    /* reimp */ bool activateConnection(const QString & connectionUni, const QVariantMap & connectionParameters);
+    /* reimp */ bool deactivateConnection();
 
-    Q_SIGNALS:
-        void bitRateChanged(int bitRate);
-        void carrierChanged(bool plugged);
+Q_SIGNALS:
+    void bitRateChanged(int bitRate);
+    void carrierChanged(bool plugged);
 };
 
 #endif // WICD_WIRELESSNETWORKINTERFACE_H

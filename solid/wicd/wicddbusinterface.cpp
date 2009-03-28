@@ -25,18 +25,17 @@
 
 class WicdDbusInterface::Private
 {
-    public:
-        Private()
-        : manager(WICD_DBUS_SERVICE, WICD_DBUS_PATH, WICD_DAEMON_DBUS_INTERFACE, QDBusConnection::systemBus())
-        , wireless(WICD_DBUS_SERVICE, WICD_DBUS_PATH, WICD_WIRELESS_DBUS_INTERFACE, QDBusConnection::systemBus())
-        , wired(WICD_DBUS_SERVICE, WICD_DBUS_PATH, WICD_WIRED_DBUS_INTERFACE, QDBusConnection::systemBus())
-        , config(WICD_DBUS_SERVICE, WICD_DBUS_PATH, WICD_CONFIG_DBUS_INTERFACE, QDBusConnection::systemBus())
-        {};
+public:
+    Private()
+            : manager(WICD_DBUS_SERVICE, WICD_DBUS_PATH, WICD_DAEMON_DBUS_INTERFACE, QDBusConnection::systemBus())
+            , wireless(WICD_DBUS_SERVICE, WICD_DBUS_PATH, WICD_WIRELESS_DBUS_INTERFACE, QDBusConnection::systemBus())
+            , wired(WICD_DBUS_SERVICE, WICD_DBUS_PATH, WICD_WIRED_DBUS_INTERFACE, QDBusConnection::systemBus())
+            , config(WICD_DBUS_SERVICE, WICD_DBUS_PATH, WICD_CONFIG_DBUS_INTERFACE, QDBusConnection::systemBus()) {};
 
-        QDBusInterface manager;
-        QDBusInterface wireless;
-        QDBusInterface wired;
-        QDBusInterface config;
+    QDBusInterface manager;
+    QDBusInterface wireless;
+    QDBusInterface wired;
+    QDBusInterface config;
 };
 
 class WicdDbusInterfaceHelper
@@ -61,7 +60,7 @@ WicdDbusInterface *WicdDbusInterface::instance()
 }
 
 WicdDbusInterface::WicdDbusInterface()
- : d(new Private())
+        : d(new Private())
 {
     Q_ASSERT(!s_globalWicdDbusInterface->q);
     s_globalWicdDbusInterface->q = this;
