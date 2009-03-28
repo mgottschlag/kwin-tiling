@@ -21,7 +21,6 @@ libplasma
         * NEW: ScrollWidget. A widget that puts scrollbars when it contains a widget bigger than him.
         * NEW: TextBrowser
 
-
 * Added ScreenPreviewWidget to libkworkspace that works with Plasma::Wallpaper or pixmaps that provides a nicely themed and appropriately sized "monitor" to show screen previews in
 
 Developer Documentation
@@ -63,6 +62,13 @@ Plugins/Addons
              * Added support for other Twitter API based services like identi.ca (that is based on laconi.ca)
          * Pager
              * User can choose to do nothing, toogle the desktop or the dashboard when he click on the current desktop.
+         * Notes
+	     * Highlight current line
+             * Change font size with Control + Scrollwheel
+	 * Pastebin
+             * New look and feel
+             * Pasting through context menu
+             * Using knotification to tell the user that the data has been saved online
          * System tray
              * New D-Bus based system tray protocol
              * Jobs show file/dir progress
