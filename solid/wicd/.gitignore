@@ -1,7 +1,0 @@
-*.moc
-*~
-build/
-.svn/
-.cproject
-.project
-Debug/
