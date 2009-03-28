@@ -19,6 +19,50 @@
 
 #include "wirelessnetworkinterface.h"
 
+WicdWirelessNetworkInterface::WicdWirelessNetworkInterface(const QString &objectPath)
+ : WicdNetworkInterface(objectPath)
+{
 
+}
+
+WicdWirelessNetworkInterface::~WicdWirelessNetworkInterface()
+{
+
+}
+
+int WicdWirelessNetworkInterface::bitRate() const
+{
+
+}
+
+Solid::Control::WirelessNetworkInterface::Capabilities WicdWirelessNetworkInterface::wirelessCapabilities() const
+{
+
+}
+
+Solid::Control::WirelessNetworkInterface::OperationMode WicdWirelessNetworkInterface::mode() const
+{
+
+}
+
+MacAddressList WicdWirelessNetworkInterface::accessPoints() const
+{
+
+}
+
+QString WicdWirelessNetworkInterface::activeAccessPoint() const
+{
+
+}
+
+QString WicdWirelessNetworkInterface::hardwareAddress() const
+{
+
+}
+
+QObject * WicdWirelessNetworkInterface::createAccessPoint(const QString & uni)
+{
+
+}
 
 #include "wirelessnetworkinterface.moc"

@@ -38,6 +38,9 @@ class WicdWiredNetworkInterface : public WicdNetworkInterface, virtual public So
         int bitRate() const;
         bool carrier() const;
 
+        /* reimp */ bool activateConnection(const QString & connectionUni, const QVariantMap & connectionParameters);
+        /* reimp */ bool deactivateConnection();
+
     Q_SIGNALS:
         void bitRateChanged(int bitRate);
         void carrierChanged(bool plugged);
