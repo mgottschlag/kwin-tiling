@@ -117,6 +117,7 @@ QStringList WicdNetworkManager::networkInterfaces() const
 
     QProcess ifconfig;
 
+    ifconfig.setEnvironment(QStringList() << QProcess::systemEnvironment() << "LANG=C");
     ifconfig.start(QString("ifconfig -a"));
     ifconfig.waitForFinished();
 
@@ -168,6 +169,7 @@ QObject * WicdNetworkManager::createNetworkInterface(const QString  & uni)
 
     QProcess iwconfig;
 
+    iwconfig.setEnvironment(QStringList() << QProcess::systemEnvironment() << "LANG=C");
     iwconfig.start(QString("iwconfig"));
     iwconfig.waitForFinished();
 

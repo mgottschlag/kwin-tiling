@@ -76,6 +76,7 @@ Solid::Control::IPv4Config WicdNetworkInterface::ipV4Config() const
 
     QProcess ifconfig;
 
+    ifconfig.setEnvironment(QStringList() << QProcess::systemEnvironment() << "LANG=C");
     ifconfig.start(QString("ifconfig %1").arg(d->name));
     ifconfig.waitForFinished();
 
