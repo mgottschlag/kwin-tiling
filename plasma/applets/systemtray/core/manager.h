@@ -50,7 +50,7 @@ public:
     QList<Task*> tasks() const;
 
     /**
-     * @return a list of all known Task instances
+     * @return a list of all known Notification instances
      **/
     QList<Notification*> notifications() const;
 

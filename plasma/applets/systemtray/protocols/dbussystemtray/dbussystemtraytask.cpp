@@ -154,6 +154,11 @@ bool DBusSystemTrayTask::isValid() const
     return !d->name.isEmpty();
 }
 
+DBusSystemTrayTask::Category DBusSystemTrayTask::category() const
+{
+    return d->category;
+}
+
 QString DBusSystemTrayTask::name() const
 {
     return d->name;
@@ -189,7 +194,7 @@ bool DBusSystemTrayTask::eventFilter(QObject *watched, QEvent *event)
 
 void DBusSystemTrayTaskPrivate::iconDestroyed(QObject *obj)
 {
-    Plasma::IconWidget *iw = qobject_cast<Plasma::IconWidget *>(obj);
+    Plasma::IconWidget *iw = static_cast<Plasma::IconWidget *>(obj);
     iconWidgets.removeAll(iw);
 }
 

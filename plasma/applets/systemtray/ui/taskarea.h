@@ -24,6 +24,8 @@
 
 #include <QGraphicsWidget>
 
+#include "../protocols/dbussystemtray/dbussystemtraytask.h"
+
 namespace SystemTray
 {
 
@@ -40,6 +42,9 @@ public:
 
     void setHiddenTypes(const QStringList &hiddenTypes);
     bool isHiddenType(const QString &typeId, bool always = true) const;
+    void setShownCategories(const QList<DBusSystemTrayTask::Category> &shownCategories);
+    void setShowFdoTasks(bool show);
+    bool showFdoTasks() const;
     void syncTasks(const QList<SystemTray::Task*> &tasks);
     bool hasHiddenTasks() const;
     int leftEasement() const;

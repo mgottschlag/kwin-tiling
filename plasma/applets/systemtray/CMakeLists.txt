@@ -39,6 +39,8 @@ set(systemtray_SRCS
     ui/jobwidget.cpp
     )
 
+kde4_add_ui_files(systemtray_SRCS ui/protocols.ui )
+
 add_subdirectory(systemtraydaemon)
 
 set(systemtraydaemon_xml systemtraydaemon/org.kde.SystemTrayDaemon.xml)

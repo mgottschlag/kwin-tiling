@@ -56,6 +56,7 @@ public:
 
     QGraphicsWidget* createWidget(Plasma::Applet *host);
     bool isValid() const;
+    Category category() const;
     virtual bool isEmbeddable() const;
     virtual QString name() const;
     virtual QString typeId() const;

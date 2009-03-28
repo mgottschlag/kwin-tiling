@@ -34,6 +34,9 @@
 #include "../core/manager.h"
 #include "../core/task.h"
 
+#include "../protocols/fdo/fdotask.h"
+
+
 #include "applet.h"
 #include "compactlayout.h"
 
@@ -66,6 +69,8 @@ public:
     CompactLayout *lastTasksLayout;
 
     QSet<QString> hiddenTypes;
+    QSet<DBusSystemTrayTask::Category> shownCategories;
+    bool showFdoTasks : 1;
     bool showingHidden : 1;
     bool hasHiddenTasks : 1;
     bool hasTasksThatCanHide : 1;
@@ -95,7 +100,22 @@ void TaskArea::setHiddenTypes(const QStringList &hiddenTypes)
     d->hiddenTypes = QSet<QString>::fromList(hiddenTypes);
 }
 
+void TaskArea::setShownCategories(const QList<DBusSystemTrayTask::Category> &shownCategories)
+{
+    d->shownCategories = QSet<DBusSystemTrayTask::Category>::fromList(shownCategories);
+    syncTasks(d->host->manager()->tasks());
+}
 
+void TaskArea::setShowFdoTasks(bool show)
+{
+    d->showFdoTasks = show;
+    syncTasks(d->host->manager()->tasks());
+}
+
+bool TaskArea::showFdoTasks() const
+{
+    return d->showFdoTasks;
+}
 
 void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
 {
@@ -108,6 +128,7 @@ void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
         } else if (task->hidden()&Task::UserHidden) {
             task->setHidden(task->hidden()^Task::UserHidden);
         }
+
         addWidgetForTask(task);
     }
 
@@ -137,8 +158,6 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
         return;
     }
 
-    d->hasTasksThatCanHide = d->hasTasksThatCanHide || (task->hidden() != Task::NotHidden);
-
 
     if (widget) {
         kDebug() << "widget already exists, trying to reposition it";
@@ -146,6 +165,23 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
         d->normalTasksLayout->removeItem(widget);
         d->lastTasksLayout->removeItem(widget);
     }
+
+
+    //If the applet doesn't want to show FDO tasks, remove (not just hide) any of them
+    //if the dbus icon has a category that the applet doesn't want to show remove it
+    DBusSystemTrayTask *dbusTask = qobject_cast<DBusSystemTrayTask *>(task);
+    FdoTask *fdoTask = qobject_cast<FdoTask *>(task);
+
+    if ((dbusTask || fdoTask) &&
+         ((fdoTask && !d->showFdoTasks) ||
+          (dbusTask && !d->shownCategories.contains(dbusTask->category())))) {
+        if (widget) {
+            widget->deleteLater();
+        }
+        return;
+    }
+
+    d->hasTasksThatCanHide = d->hasTasksThatCanHide || (task->hidden() != Task::NotHidden);
 
     if (!d->showingHidden && task->hidden() != Task::NotHidden) {
         kDebug() << "is a hidden type";

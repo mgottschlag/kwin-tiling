@@ -26,6 +26,8 @@
 #include "notificationwidget.h"
 #include "taskarea.h"
 
+#include "ui_protocols.h"
+
 #include <QtGui/QApplication>
 #include <QtGui/QGraphicsLayout>
 #include <QtGui/QVBoxLayout>
@@ -50,7 +52,8 @@
 #include "../core/manager.h"
 #include "../core/task.h"
 #include "extendertask.h"
-
+#include "../protocols/dbussystemtray/dbussystemtraytask.h"
+#include "../protocols/fdo/fdotask.h"
 
 namespace SystemTray
 {
@@ -65,7 +68,7 @@ public:
         : q(q),
           taskArea(0),
           configInterface(0),
-	  notificationInterface(0),
+          notificationInterface(0),
           background(0),
           jobSummaryWidget(0),
           extenderTask(0)
@@ -94,15 +97,16 @@ public:
     TaskArea *taskArea;
     QPointer<KActionSelector> configInterface;
     QPointer<QWidget> notificationInterface;
-    QCheckBox *showNotifications;
-    QCheckBox *showJobs;
     QList<Job*> jobs;
+    QList<DBusSystemTrayTask::Category> shownCategories;
 
     Plasma::FrameSvg *background;
     JobTotalsWidget *jobSummaryWidget;
     SystemTray::ExtenderTask *extenderTask;
     static SystemTray::Manager *s_manager;
     static int s_managerUsage;
+
+    Ui::ProtocolsConfig ui;
 };
 
 Manager *Applet::Private::s_manager = 0;
@@ -161,7 +165,26 @@ void Applet::init()
     extender()->setEmptyExtenderMessage(i18n("No notifications and no jobs"));
     connect(extender(), SIGNAL(itemDetached(Plasma::ExtenderItem*)), this, SLOT(hidePopupIfEmpty()));
 
+
     KConfigGroup globalCg = globalConfig();
+
+    if (globalCg.readEntry("ShowApplicationStatus", true)) {
+        d->shownCategories.append(DBusSystemTrayTask::ApplicationStatus);
+    }
+    if (globalCg.readEntry("ShowCommunications", true)) {
+        d->shownCategories.append(DBusSystemTrayTask::Communications);
+    }
+    if (globalCg.readEntry("ShowSystemServices", true)) {
+        d->shownCategories.append(DBusSystemTrayTask::SystemServices);
+    }
+    if (globalCg.readEntry("ShowHardware", true)) {
+        d->shownCategories.append(DBusSystemTrayTask::Hardware);
+    }
+
+    d->taskArea->setShownCategories(d->shownCategories);
+    d->taskArea->setShowFdoTasks(globalCg.readEntry("ShowFdoTasks", true));
+
+
     if (globalCg.readEntry("ShowJobs", true)) {
         if (!extender()->hasItem("jobGroup")) {
             Plasma::ExtenderGroup *extenderGroup = new Plasma::ExtenderGroup(extender());
@@ -179,7 +202,6 @@ void Applet::init()
         connect(Private::s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
                 this, SLOT(addNotification(SystemTray::Notification*)));
     }
-
 }
 
 void Applet::constraintsEvent(Plasma::Constraints constraints)
@@ -346,20 +368,16 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         KConfigGroup globalCg = globalConfig();
         d->notificationInterface = new QWidget();
 
-        QLabel *description = new QLabel(i18n("Select the types of application feedback that should "
-                                              "be integrated with the system tray:"), d->notificationInterface);
-        description->setWordWrap(true);
-        d->showJobs = new QCheckBox(i18n("Jobs, such as file transfers"), d->notificationInterface);
-        d->showJobs->setChecked(globalCg.readEntry("ShowJobs", true));
-        d->showNotifications = new QCheckBox(i18n("Notifications, such as chat requests"), d->notificationInterface);
-        d->showNotifications->setChecked(globalCg.readEntry("ShowNotifications", true));
+        d->ui.setupUi(d->notificationInterface);
 
-        QVBoxLayout *layout = new QVBoxLayout;
-        layout->addWidget(description);
-        layout->addWidget(d->showJobs);
-        layout->addWidget(d->showNotifications);
-        layout->addStretch();
-        d->notificationInterface->setLayout(layout);
+        d->ui.showJobs->setChecked(globalCg.readEntry("ShowJobs", true));
+        d->ui.showNotifications->setChecked(globalCg.readEntry("ShowNotifications", true));
+        d->ui.showFdoTasks->setChecked(globalCg.readEntry("ShowFdoTasks", true));
+
+        d->ui.showApplicationStatus->setChecked(globalCg.readEntry("ShowApplicationStatus", true));
+        d->ui.showCommunications->setChecked(globalCg.readEntry("ShowCommunications", true));
+        d->ui.showSystemServices->setChecked(globalCg.readEntry("ShowSystemServices", true));
+        d->ui.showHardware->setChecked(globalCg.readEntry("ShowHardware", true));
 
         connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
         connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
@@ -376,6 +394,15 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     hiddenList->clear();
 
     foreach (Task *task, Private::s_manager->tasks()) {
+        DBusSystemTrayTask *dbusTask = qobject_cast<DBusSystemTrayTask *>(task);
+        FdoTask *fdoTask = qobject_cast<FdoTask *>(task);
+
+        if ((dbusTask || fdoTask) &&
+            ((fdoTask && !d->taskArea->showFdoTasks()) ||
+              (dbusTask && !d->shownCategories.contains(dbusTask->category())))) {
+             continue;
+        }
+
         if (!task->isHideable()) {
             continue;
         }
@@ -410,12 +437,12 @@ void Applet::configAccepted()
     cg.writeEntry("hidden", hiddenTypes);
 
     KConfigGroup globalCg = globalConfig();
-    globalCg.writeEntry("ShowJobs", d->showJobs->isChecked());
-    globalCg.writeEntry("ShowNotifications", d->showNotifications->isChecked());
+    globalCg.writeEntry("ShowJobs", d->ui.showJobs->isChecked());
+    globalCg.writeEntry("ShowNotifications", d->ui.showNotifications->isChecked());
 
     disconnect(Private::s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
                this, SLOT(addJob(SystemTray::Job*)));
-    if (d->showJobs->isChecked()) {
+    if (d->ui.showJobs->isChecked()) {
         Private::s_manager->registerJobProtocol();
         connect(Private::s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
                 this, SLOT(addJob(SystemTray::Job*)));
@@ -425,13 +452,40 @@ void Applet::configAccepted()
 
     disconnect(Private::s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
                this, SLOT(addNotification(SystemTray::Notification*)));
-    if (d->showNotifications->isChecked()) {
+    if (d->ui.showNotifications->isChecked()) {
         Private::s_manager->registerNotificationProtocol();
         connect(Private::s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
                 this, SLOT(addNotification(SystemTray::Notification*)));
     } else {
 	Private::s_manager->unregisterNotificationProtocol();
     }
+
+
+    d->shownCategories.clear();
+
+    globalCg.writeEntry("ShowApplicationStatus", d->ui.showApplicationStatus->isChecked());
+    if (d->ui.showApplicationStatus->isChecked()) {
+        d->shownCategories.append(DBusSystemTrayTask::ApplicationStatus);
+    }
+
+    globalCg.writeEntry("ShowCommunications", d->ui.showCommunications->isChecked());
+    if (d->ui.showCommunications->isChecked()) {
+        d->shownCategories.append(DBusSystemTrayTask::Communications);
+    }
+
+    globalCg.writeEntry("ShowSystemServices", d->ui.showSystemServices->isChecked());
+    if (d->ui.showSystemServices->isChecked()) {
+        d->shownCategories.append(DBusSystemTrayTask::SystemServices);
+    }
+
+    globalCg.writeEntry("ShowHardware", d->ui.showHardware->isChecked());
+    if (d->ui.showHardware->isChecked()) {
+        d->shownCategories.append(DBusSystemTrayTask::Hardware);
+    }
+
+    d->taskArea->setShownCategories(d->shownCategories);
+    globalCg.writeEntry("ShowFdoTasks", d->ui.showFdoTasks->isChecked());
+    d->taskArea->setShowFdoTasks(d->ui.showFdoTasks->isChecked());
 
     emit configNeedsSaving();
 }
