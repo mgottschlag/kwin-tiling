@@ -29,7 +29,7 @@ class WicdWiredNetworkInterface::Private
 public:
     Private()
      : manager(WICD_DBUS_SERVICE, WICD_DBUS_PATH, WICD_DAEMON_DBUS_INTERFACE, QDBusConnection::systemBus())
-     , wired(WICD_DBUS_SERVICE, WICD_DBUS_PATH, WICD_WIRELESS_DBUS_INTERFACE, QDBusConnection::systemBus())
+     , wired(WICD_DBUS_SERVICE, WICD_DBUS_PATH, WICD_WIRED_DBUS_INTERFACE, QDBusConnection::systemBus())
      {};
 
     QDBusInterface manager;

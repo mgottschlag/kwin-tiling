@@ -25,8 +25,6 @@
 
 #include "networkinterface.h"
 
-class WicdWirelessNetworkInterfacePrivate;
-
 class WicdWirelessNetworkInterface : public WicdNetworkInterface, virtual public Solid::Control::Ifaces::WirelessNetworkInterface
 {
 Q_OBJECT
@@ -48,8 +46,8 @@ Q_SIGNALS:
     void accessPointAppeared(const QString &);
     void accessPointDisappeared(const QString &);
 private:
-    Q_DECLARE_PRIVATE(WicdWirelessNetworkInterface)
-    Q_DISABLE_COPY(WicdWirelessNetworkInterface)
+    class Private;
+    Private *d;
 };
 
 #endif //SOLID_IFACES_WIRELESSNETWORKINTERFACE_H

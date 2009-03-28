@@ -19,15 +19,53 @@
 
 #include "wirelessnetworkinterface.h"
 
+#include "wirelessaccesspoint.h"
+
+#include "wicd-defines.h"
+
+#include <QtDBus/QDBusInterface>
+#include <QtDBus/QDBusReply>
+#include <QProcess>
+
+#include <KDebug>
+
+class WicdWirelessNetworkInterface::Private
+{
+public:
+    Private()
+     : manager(WICD_DBUS_SERVICE, WICD_DBUS_PATH, WICD_DAEMON_DBUS_INTERFACE, QDBusConnection::systemBus())
+     , wireless(WICD_DBUS_SERVICE, WICD_DBUS_PATH, WICD_WIRELESS_DBUS_INTERFACE, QDBusConnection::systemBus())
+     {};
+
+    QMap<int, QString> getAccessPointsWithId();
+
+    QDBusInterface manager;
+    QDBusInterface wireless;
+};
+
+QMap<int, QString> WicdWirelessNetworkInterface::Private::getAccessPointsWithId()
+{
+    QDBusReply< int > networks = wireless.call("GetNumberOfNetworks");
+    QMap<int, QString> retlist;
+
+    for (int i = 0; i < networks.value(); ++i) {
+        QDBusReply< QString > r = wireless.call("GetWirelessProperty", i, "bssid");
+        retlist[i] = r;
+    }
+
+    return retlist;
+}
+
 WicdWirelessNetworkInterface::WicdWirelessNetworkInterface(const QString &objectPath)
  : WicdNetworkInterface(objectPath)
+ , d(new Private())
 {
 
 }
 
 WicdWirelessNetworkInterface::~WicdWirelessNetworkInterface()
 {
-
+    delete d;
 }
 
 int WicdWirelessNetworkInterface::bitRate() const
@@ -47,7 +85,7 @@ Solid::Control::WirelessNetworkInterface::OperationMode WicdWirelessNetworkInter
 
 MacAddressList WicdWirelessNetworkInterface::accessPoints() const
 {
-
+    return d->getAccessPointsWithId().values();
 }
 
 QString WicdWirelessNetworkInterface::activeAccessPoint() const
@@ -62,7 +100,15 @@ QString WicdWirelessNetworkInterface::hardwareAddress() const
 
 QObject * WicdWirelessNetworkInterface::createAccessPoint(const QString & uni)
 {
+    QMap<int, QString> aps = d->getAccessPointsWithId();
 
+    if (aps.values().contains(uni)) {
+        kDebug() << "Requested a non existant AP";
+    }
+
+    int network = aps.key(uni);
+
+    return new WicdAccessPoint(uni);
 }
 
 #include "wirelessnetworkinterface.moc"
