@@ -202,7 +202,7 @@ bool WicdNetworkManager::isWirelessEnabled() const
 
 bool WicdNetworkManager::isWirelessHardwareEnabled() const
 {
-    QDBusReply< bool > state = d->manager.call("GetKillSwitchEnabled");
+    QDBusReply< bool > state = d->wireless.call("GetKillSwitchEnabled");
 
     if (state.isValid()) {
         return !state.value();
