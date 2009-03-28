@@ -140,7 +140,9 @@ void NotificationWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
-    painter->drawImage(QPointF(0, 0), d->notification->image());
+    if (d->notification) {
+        painter->drawImage(QPointF(0, 0), d->notification->image());
+    }
 }
 
 void NotificationWidgetPrivate::setTextFields(const QString &applicationName,
