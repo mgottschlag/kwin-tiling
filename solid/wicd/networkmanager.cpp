@@ -29,6 +29,8 @@
 #include <QtDBus/QDBusMetaType>
 #include <QtDBus/QDBusReply>
 
+#include <QProcess>
+
 #include <kdebug.h>
 
 class WicdNetworkManagerPrivate
@@ -92,6 +94,33 @@ Solid::Networking::Status WicdNetworkManager::status() const
 
 QStringList WicdNetworkManager::networkInterfaces() const
 {
+    // Let's parse ifconfig here
+
+    QProcess ifconfig;
+
+    ifconfig.start(QString("ifconfig"));
+    ifconfig.waitForFinished();
+
+    QString result = ifconfig.readAllStandardOutput();
+
+    QStringList lines = result.split('\n');
+
+    QStringList ifaces;
+
+    bool enterIface = true;
+
+    foreach (const QString &line, lines) {
+        if (enterIface) {
+            ifaces.append(line.split(' ').at(0));
+            enterIface = false;
+        }
+
+        if (line.isEmpty()) {
+            enterIface = true;
+        }
+    }
+
+    return ifaces;
 }
 
 QObject * WicdNetworkManager::createNetworkInterface(const QString  & uni)
