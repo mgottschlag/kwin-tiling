@@ -19,6 +19,23 @@
 
 #include "wirednetworkinterface.h"
 
+#include "wicd-defines.h"
+
+#include <QDBusInterface>
+#include <QProcess>
+
+class WicdWiredNetworkInterface::Private
+{
+public:
+    Private()
+     : manager(WICD_DBUS_SERVICE, WICD_DBUS_PATH, WICD_DAEMON_DBUS_INTERFACE, QDBusConnection::systemBus())
+     , wired(WICD_DBUS_SERVICE, WICD_DBUS_PATH, WICD_WIRELESS_DBUS_INTERFACE, QDBusConnection::systemBus())
+     {};
+
+    QDBusInterface manager;
+    QDBusInterface wired;
+};
+
 WicdWiredNetworkInterface::WicdWiredNetworkInterface(const QString &name)
  : WicdNetworkInterface(name)
 {
@@ -32,7 +49,18 @@ WicdWiredNetworkInterface::~WicdWiredNetworkInterface()
 
 QString WicdWiredNetworkInterface::hardwareAddress() const
 {
+    // Let's parse ifconfig here
 
+    QProcess ifconfig;
+
+    ifconfig.start(QString("ifconfig %1").arg(uni()));
+    ifconfig.waitForFinished();
+
+    QString result = ifconfig.readAllStandardOutput();
+
+    QStringList lines = result.split('\n');
+
+    return lines.at(0).split("HWaddr ").at(1);
 }
 
 int WicdWiredNetworkInterface::bitRate() const
@@ -47,12 +75,15 @@ bool WicdWiredNetworkInterface::carrier() const
 
 bool WicdWiredNetworkInterface::activateConnection(const QString & connectionUni, const QVariantMap & connectionParameters)
 {
-    return false;
+    Q_UNUSED(connectionUni)
+    Q_UNUSED(connectionParameters)
+    d->wired.call("ConnectWired");
 }
 
 bool WicdWiredNetworkInterface::deactivateConnection()
 {
-    return false;
+    d->wired.call("DisconnectWired");
+    return true;
 }
 
 #include "wirednetworkinterface.moc"

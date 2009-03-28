@@ -37,13 +37,15 @@ public:
     WicdNetworkManagerPrivate();
 
     QDBusInterface manager;
+    QDBusInterface wireless;
     Wicd::ConnectionStatus cachedState;
     QHash<QString, WicdNetworkInterface *> interfaces;
 };
 
 WicdNetworkManagerPrivate::WicdNetworkManagerPrivate()
- : manager(WICD_DBUS_SERVICE, WICD_DBUS_PATH, WICD_DAEMON_DBUS_INTERFACE, QDBusConnection::systemBus()),
- cachedState(Wicd::Unknown)
+ : manager(WICD_DBUS_SERVICE, WICD_DBUS_PATH, WICD_DAEMON_DBUS_INTERFACE, QDBusConnection::systemBus())
+ , wireless(WICD_DBUS_SERVICE, WICD_DBUS_PATH, WICD_WIRELESS_DBUS_INTERFACE, QDBusConnection::systemBus())
+ , cachedState(Wicd::Unknown)
 {
 }
 
@@ -157,7 +159,12 @@ bool WicdNetworkManager::isNetworkingEnabled() const
 
 bool WicdNetworkManager::isWirelessEnabled() const
 {
-    // TODO: How does Wicd handles this?
+    QDBusReply< bool > state = d->wireless.call("IsWirelessUp");
+    if (state.isValid()) {
+        return state.value();
+    }
+
+    return false;
 }
 
 bool WicdNetworkManager::isWirelessHardwareEnabled() const
