@@ -1,0 +1,39 @@
+Some usage examples for wicd-cli.py
+
+Scan for new wireless networks and display them:
+  python wicd-cli.py --wireless --scan --list-networks
+or (same thing, short version)
+  python wicd-cli.py -y -S -l
+
+Or, you can view the networks Wicd has in its cache:
+  python wicd-cli.py --wireless --list-networks
+
+If you want to do anything with these networks, you''ll need to note the 
+network ID listed on the left side of the above command.
+
+Get the channel number from network 0:
+  python wicd-cli.py --wireless --network 0 --network-property channel
+
+Or get the BSSID, channel, and ESSID for a certain network, do:
+  python wicd-cli.py --wireless --network 0 --network-details
+
+View the available encryption templates Wicd can use:
+  python wicd-cli.py --wireless --list-encryption-types
+
+If you want to use any type of encryption, you'll need to note the number in
+the left column. Then, you can use the following command to display the
+required values for an encryption template (where 0 is the number you noted
+from the previous command):
+  python wicd-cli.py --wireless --template 0
+
+From the above command, you'll need to note the items in the Name column. You
+will need to set each of those values to use that encryption type.
+
+Frequently you'll need to set a network property. For instance, if we wanted 
+to use WPA with network 0:
+  python wicd-cli.py --wireless --network 0 \
+    --network-property enctype --set-to wpa
+
+We know we need to set the key property from the --template 0 argument (above):
+  python wicd-cli.py --wireless --network 0 \
+    --network-property key MYSUPERSECRETWIRELESSKEY
