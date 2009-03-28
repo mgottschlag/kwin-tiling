@@ -247,7 +247,7 @@ void WicdNetworkManager::activateConnection(const QString & interfaceUni, const 
         const QVariantMap & connectionParameters)
 {
     kDebug(1441) << interfaceUni << connectionUni << connectionParameters;
-    QHash<QString, WicdNetworkInterface *>::ConstIterator it = d->interfaces.find(interfaceUni);
+    const QHash<QString, WicdNetworkInterface *>::Iterator it = d->interfaces.find(interfaceUni);
     if (it != d->interfaces.end()) {
         WicdNetworkInterface * interface = it.value();
 
@@ -265,9 +265,9 @@ void WicdNetworkManager::activateConnection(const QString & interfaceUni, const 
 void WicdNetworkManager::deactivateConnection(const QString & activeConnection)
 {
     kDebug(1441) << activeConnection;
-    QHash<QString, WicdNetworkInterface *>::ConstIterator it = d->interfaces.find(activeConnection);
+    const QHash<QString, WicdNetworkInterface *>::Iterator it = d->interfaces.find(activeConnection);
     if (it != d->interfaces.end() && it.value()) {
-        WicdNetworkInterface * interface = it.value();
+        WicdNetworkInterface * const interface = it.value();
         bool deactivated = interface->deactivateConnection();
         Q_UNUSED(deactivated)
     }
