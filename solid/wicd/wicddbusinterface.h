@@ -34,7 +34,6 @@ public:
     QDBusInterface &daemon() const;
     QDBusInterface &wireless() const;
     QDBusInterface &wired() const;
-    QDBusInterface &config() const;
 
 private:
     class Private;

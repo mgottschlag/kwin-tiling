@@ -23,10 +23,11 @@
 // All Wicd Definitions will be stored in here
 
 #define WICD_DBUS_SERVICE "org.wicd.daemon"
-#define WICD_DBUS_PATH "/org/wicd/daemon"
+#define WICD_DAEMON_DBUS_PATH "/org/wicd/daemon"
 #define WICD_DAEMON_DBUS_INTERFACE "org.wicd.daemon"
-#define WICD_CONFIG_DBUS_INTERFACE "org.wicd.daemon.config"
+#define WICD_WIRED_DBUS_PATH "/org/wicd/daemon/wired"
 #define WICD_WIRED_DBUS_INTERFACE "org.wicd.daemon.wired"
+#define WICD_WIRELESS_DBUS_PATH "/org/wicd/daemon/wireless"
 #define WICD_WIRELESS_DBUS_INTERFACE "org.wicd.daemon.wireless"
 
 namespace Wicd

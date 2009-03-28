@@ -67,6 +67,8 @@ Solid::Networking::Status WicdNetworkManager::status() const
         if (state.isValid()) {
             kDebug(1441) << "  got state: " << state.value();
             d->cachedState = static_cast<Wicd::ConnectionStatus>(state.value());
+        } else {
+          kDebug() << "Invalid reply from DBus";
         }
     }
     switch (d->cachedState) {
@@ -171,10 +173,13 @@ QObject * WicdNetworkManager::createNetworkInterface(const QString  & uni)
 bool WicdNetworkManager::isNetworkingEnabled() const
 {
     if (d->cachedState == Wicd::Unknown) {
+        kDebug() << "First run";
         QDBusReply< uint > state = WicdDbusInterface::instance()->daemon().call("GetConnectionStatus");
         if (state.isValid()) {
             kDebug(1441) << "  got state: " << state.value();
             d->cachedState = static_cast<Wicd::ConnectionStatus>(state.value());
+        } else {
+            kDebug() << "Invalid reply!!";
         }
     }
 
