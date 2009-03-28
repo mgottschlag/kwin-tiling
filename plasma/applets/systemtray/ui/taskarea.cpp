@@ -144,7 +144,6 @@ void TaskArea::addTask(Task *task)
     }
 
     addWidgetForTask(task);
-    connect (task, SIGNAL(changed(Task*)), this, SLOT(addWidgetForTask(SystemTray::Task *)));
 
     checkUnhideTool();
     emit sizeHintChanged(Qt::PreferredSize);
@@ -193,7 +192,6 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
     } else {
         if (!widget) {
             widget = task->widget(d->host);
-            widget->setParent(this);
         }
 
         if (widget) {
@@ -397,7 +395,7 @@ QGraphicsWidget* TaskArea::findWidget(Task *task)
 {
     foreach (QGraphicsWidget *widget, task->associatedWidgets()) {
 
-        if (widget->parent() == this) {
+        if (widget->parent() == parent()) {
             return widget;
         }
     }
