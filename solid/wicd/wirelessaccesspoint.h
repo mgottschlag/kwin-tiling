@@ -41,6 +41,22 @@ public:
     uint maxBitRate() const;
     Solid::Control::WirelessNetworkInterface::OperationMode mode() const;
     int signalStrength() const;
+
+private Q_SLOTS:
+    void refreshStatus();
+
+Q_SIGNALS:
+    void signalStrengthChanged(int strength);
+
+    void bitRateChanged(int bitrate);
+
+    void wpaFlagsChanged(Solid::Control::AccessPoint::WpaFlags flags);
+
+    void rsnFlagsChanged(Solid::Control::AccessPoint::WpaFlags flags);
+
+    void ssidChanged(const QString &ssid);
+
+    void frequencyChanged(uint frequency);
 private:
     class Private;
     Private *d;

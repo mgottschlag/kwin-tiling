@@ -20,19 +20,123 @@
 #include "wirednetworkinterface.h"
 
 #include "wicddbusinterface.h"
+#include "wicd-defines.h"
 
 #include <QtDBus/QDBusInterface>
-#include <QProcess>
+#include <QtDBus/QDBusReply>
+#include <QtCore/QProcess>
+
+#include <KDebug>
+
+class WicdWiredNetworkInterface::Private
+{
+public:
+
+    bool isActiveInterface;
+    QString uni;
+    int bitrate;
+    QString driver;
+    bool carrier;
+    Solid::Control::NetworkInterface::ConnectionState connection_state;
+};
 
 WicdWiredNetworkInterface::WicdWiredNetworkInterface(const QString &name)
         : WicdNetworkInterface(name)
+        , d(new Private())
 {
-
+    d->uni = uni();
+    recacheInformation();
+    QDBusConnection::systemBus().connect(WICD_DBUS_SERVICE, WICD_DAEMON_DBUS_PATH, WICD_DAEMON_DBUS_INTERFACE,
+                                         "StatusChanged", this, SLOT(refreshStatus()));
 }
 
 WicdWiredNetworkInterface::~WicdWiredNetworkInterface()
 {
 
+}
+
+void WicdWiredNetworkInterface::recacheInformation()
+{
+    //QDBusReply< QString > bitrater = WicdDbusInterface::instance()->wireless().call("GetCurrentBitrate", iwconfig);
+    QDBusReply< QString > interfacer = WicdDbusInterface::instance()->daemon().call("GetWiredInterface");
+    QDBusReply< bool > carrierr = WicdDbusInterface::instance()->wired().call("CheckPluggedIn");
+    QDBusReply< QString > cstater = WicdDbusInterface::instance()->wired().call("CheckWiredConnectingMessage");
+
+    if (interfacer.value() == d->uni) {
+        kDebug() << "Active interface";
+
+        if (d->carrier != carrierr.value()) {
+            d->carrier = carrierr.value();
+            emit carrierChanged(d->carrier);
+        }
+
+        Solid::Control::NetworkInterface::ConnectionState connection_state;
+
+        if (cstater.value() == "configuring_interface") {
+            connection_state = Solid::Control::NetworkInterface::Configuring;
+        } else if (cstater.value() == "validating_authentication") {
+            connection_state = Solid::Control::NetworkInterface::NeedAuth;
+        } else if (cstater.value() == "done") {
+            connection_state = Solid::Control::NetworkInterface::Activated;
+        } else if (cstater.value() == "interface_down") {
+            connection_state = Solid::Control::NetworkInterface::Disconnected;
+        } else if (cstater.value() == "running_dhcp" ||
+                   cstater.value() == "setting_static_ip" ||
+                   cstater.value() == "setting_broadcast_address") {
+            connection_state = Solid::Control::NetworkInterface::IPConfig;
+        } else if (cstater.value() == "interface_up") {
+            connection_state = Solid::Control::NetworkInterface::Preparing;
+        } else {
+            connection_state = Solid::Control::NetworkInterface::UnknownState;
+        }
+
+        if (connection_state != d->connection_state) {
+            connection_state = d->connection_state;
+            emit connectionStateChanged(d->connection_state);
+        }
+    } else {
+        if (d->carrier != false) {
+            d->carrier = false;
+            emit carrierChanged(d->carrier);
+        }
+    }
+}
+
+Solid::Control::NetworkInterface::ConnectionState WicdWiredNetworkInterface::connectionState() const
+{
+    if (d->isActiveInterface) {
+        return d->connection_state;
+    } else {
+        return Solid::Control::NetworkInterface::Unavailable;
+    }
+}
+
+Solid::Control::NetworkInterface::Type WicdWiredNetworkInterface::type() const
+{
+    return Solid::Control::NetworkInterface::Ieee8023;
+}
+
+bool WicdWiredNetworkInterface::isActive() const
+{
+    return d->isActiveInterface;
+}
+
+Solid::Control::NetworkInterface::Capabilities WicdWiredNetworkInterface::capabilities() const
+{
+    Solid::Control::NetworkInterface::Capabilities cap;
+
+    if (interfaceName() != "lo" || !interfaceName().contains("wmaster")) {
+        cap |= Solid::Control::NetworkInterface::IsManageable;
+    }
+
+    cap |= Solid::Control::NetworkInterface::SupportsCarrierDetect;
+
+    return cap;
+}
+
+QString WicdWiredNetworkInterface::driver() const
+{
+    return QString();
 }
 
 QString WicdWiredNetworkInterface::hardwareAddress() const
@@ -53,20 +157,21 @@ QString WicdWiredNetworkInterface::hardwareAddress() const
 
 int WicdWiredNetworkInterface::bitRate() const
 {
-
+    return d->bitrate;
 }
 
 bool WicdWiredNetworkInterface::carrier() const
 {
-
+    return d->carrier;
 }
 
 bool WicdWiredNetworkInterface::activateConnection(const QString & connectionUni, const QVariantMap & connectionParameters)
 {
     Q_UNUSED(connectionUni)
     Q_UNUSED(connectionParameters)
-    WicdDbusInterface::instance()->daemon().call("SetWiredInterface", uni());
+    WicdDbusInterface::instance()->daemon().call("SetWiredInterface", interfaceName());
     WicdDbusInterface::instance()->wired().call("ConnectWired");
+    return true;
 }
 
 bool WicdWiredNetworkInterface::deactivateConnection()

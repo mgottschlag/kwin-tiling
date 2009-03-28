@@ -38,14 +38,14 @@ public:
     WicdNetworkInterface(const QString &name);
     virtual ~WicdNetworkInterface();
     QString interfaceName() const;
-    QString driver() const;
+    virtual QString driver() const = 0;
     Solid::Control::IPv4Config ipV4Config() const;
     QString uni() const;
-    bool isActive() const;
-    Solid::Control::NetworkInterface::Type type() const;
-    Solid::Control::NetworkInterface::ConnectionState connectionState() const;
+    virtual bool isActive() const = 0;
+    virtual Solid::Control::NetworkInterface::Type type() const = 0;
+    virtual Solid::Control::NetworkInterface::ConnectionState connectionState() const = 0;
     int designSpeed() const;
-    Solid::Control::NetworkInterface::Capabilities capabilities() const;
+    virtual Solid::Control::NetworkInterface::Capabilities capabilities() const = 0;
 
     virtual bool activateConnection(const QString & connectionUni, const QVariantMap & connectionParameters);
     virtual bool deactivateConnection();

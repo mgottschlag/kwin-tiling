@@ -29,6 +29,7 @@ public:
     quint32 parseIPv4Address(const QString & addressString);
 
     QString name;
+
 };
 
 WicdNetworkInterfacePrivate::WicdNetworkInterfacePrivate(const QString &n)
@@ -67,11 +68,6 @@ WicdNetworkInterface::~WicdNetworkInterface()
 QString WicdNetworkInterface::interfaceName() const
 {
     return d->name;
-}
-
-QString WicdNetworkInterface::driver() const
-{
-    return QString();
 }
 
 Solid::Control::IPv4Config WicdNetworkInterface::ipV4Config() const
@@ -118,32 +114,12 @@ QString WicdNetworkInterface::uni() const
     return d->name;
 }
 
-bool WicdNetworkInterface::isActive() const
-{
-
-}
-
-Solid::Control::NetworkInterface::Type WicdNetworkInterface::type() const
-{
-
-}
-
-Solid::Control::NetworkInterface::ConnectionState WicdNetworkInterface::connectionState() const
-{
-
-}
-
 int WicdNetworkInterface::designSpeed() const
 {
-
+    return 0;
 }
 
-Solid::Control::NetworkInterface::Capabilities WicdNetworkInterface::capabilities() const
-{
-
-}
-
-bool WicdNetworkInterface::activateConnection(const QString & connectionUni, const QVariantMap & connectionParameters)
+bool WicdNetworkInterface::activateConnection(const QString &, const QVariantMap &)
 {
     return false;
 }
