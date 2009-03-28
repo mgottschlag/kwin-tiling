@@ -102,7 +102,7 @@ QObject * WicdWirelessNetworkInterface::createAccessPoint(const QString & uni)
 
     int network = aps.key(uni);
 
-    return new WicdAccessPoint(uni);
+    return new WicdAccessPoint(network);
 }
 
 #include "wirelessnetworkinterface.moc"

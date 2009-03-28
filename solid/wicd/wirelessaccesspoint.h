@@ -29,7 +29,7 @@ class WicdAccessPoint : public Solid::Control::Ifaces::AccessPoint
 Q_OBJECT
 Q_INTERFACES(Solid::Control::Ifaces::AccessPoint)
 public:
-    WicdAccessPoint(const QString  & networkPath);
+    WicdAccessPoint(int networkid);
     virtual ~WicdAccessPoint();
     QString uni() const;
     Solid::Control::AccessPoint::Capabilities capabilities() const;
@@ -42,7 +42,8 @@ public:
     Solid::Control::WirelessNetworkInterface::OperationMode mode() const;
     int signalStrength() const;
 private:
-
+    class Private;
+    Private *d;
 };
 
 #endif // WICD_WIRELESSAP_H
