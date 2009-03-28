@@ -17,8 +17,8 @@
 
 */
 
-#ifndef WICD_WIRELESSAP_H
-#define WICD_WIRELESSAP_H
+#ifndef WICD_WIRELESSACCESSPOINT_H
+#define WICD_WIRELESSACCESSPOINT_H
 
 #include <QtCore/qobject.h>
 
@@ -46,5 +46,5 @@ private:
     Private *d;
 };
 
-#endif // WICD_WIRELESSAP_H
+#endif // WICD_WIRELESSACCESSPOINT_H
 

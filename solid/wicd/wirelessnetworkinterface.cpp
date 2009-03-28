@@ -97,7 +97,7 @@ QObject * WicdWirelessNetworkInterface::createAccessPoint(const QString & uni)
     QMap<int, QString> aps = d->getAccessPointsWithId();
 
     if (aps.values().contains(uni)) {
-        kDebug() << "Requested a non existant AP";
+        kDebug() << "Requested a non existent AP";
     }
 
     int network = aps.key(uni);
