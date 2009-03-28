@@ -19,22 +19,10 @@
 
 #include "wirednetworkinterface.h"
 
-#include "wicd-defines.h"
+#include "wicddbusinterface.h"
 
-#include <QDBusInterface>
+#include <QtDBus/QDBusInterface>
 #include <QProcess>
-
-class WicdWiredNetworkInterface::Private
-{
-public:
-    Private()
-     : manager(WICD_DBUS_SERVICE, WICD_DBUS_PATH, WICD_DAEMON_DBUS_INTERFACE, QDBusConnection::systemBus())
-     , wired(WICD_DBUS_SERVICE, WICD_DBUS_PATH, WICD_WIRED_DBUS_INTERFACE, QDBusConnection::systemBus())
-     {};
-
-    QDBusInterface manager;
-    QDBusInterface wired;
-};
 
 WicdWiredNetworkInterface::WicdWiredNetworkInterface(const QString &name)
  : WicdNetworkInterface(name)
@@ -77,13 +65,13 @@ bool WicdWiredNetworkInterface::activateConnection(const QString & connectionUni
 {
     Q_UNUSED(connectionUni)
     Q_UNUSED(connectionParameters)
-    d->manager.call("SetWiredInterface", uni());
-    d->wired.call("ConnectWired");
+    WicdDbusInterface::instance()->daemon().call("SetWiredInterface", uni());
+    WicdDbusInterface::instance()->wired().call("ConnectWired");
 }
 
 bool WicdWiredNetworkInterface::deactivateConnection()
 {
-    d->wired.call("DisconnectWired");
+    WicdDbusInterface::instance()->wired().call("DisconnectWired");
     return true;
 }
 

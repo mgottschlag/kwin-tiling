@@ -17,6 +17,7 @@ include_directories(
 #add_subdirectory(tests)
 
 set(solid_wicd_PART_SRCS
+   wicddbusinterface.cpp
    wirelessaccesspoint.cpp
    networkmanager.cpp
    networkinterface.cpp

@@ -21,7 +21,7 @@
 
 #include "wirelessaccesspoint.h"
 
-#include "wicd-defines.h"
+#include "wicddbusinterface.h"
 
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusReply>
@@ -32,24 +32,18 @@
 class WicdWirelessNetworkInterface::Private
 {
 public:
-    Private()
-     : manager(WICD_DBUS_SERVICE, WICD_DBUS_PATH, WICD_DAEMON_DBUS_INTERFACE, QDBusConnection::systemBus())
-     , wireless(WICD_DBUS_SERVICE, WICD_DBUS_PATH, WICD_WIRELESS_DBUS_INTERFACE, QDBusConnection::systemBus())
-     {};
+    Private() {};
 
     QMap<int, QString> getAccessPointsWithId();
-
-    QDBusInterface manager;
-    QDBusInterface wireless;
 };
 
 QMap<int, QString> WicdWirelessNetworkInterface::Private::getAccessPointsWithId()
 {
-    QDBusReply< int > networks = wireless.call("GetNumberOfNetworks");
+    QDBusReply< int > networks = WicdDbusInterface::instance()->wireless().call("GetNumberOfNetworks");
     QMap<int, QString> retlist;
 
     for (int i = 0; i < networks.value(); ++i) {
-        QDBusReply< QString > r = wireless.call("GetWirelessProperty", i, "bssid");
+        QDBusReply< QString > r = WicdDbusInterface::instance()->wireless().call("GetWirelessProperty", i, "bssid");
         retlist[i] = r;
     }
 

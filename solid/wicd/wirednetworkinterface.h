@@ -44,10 +44,6 @@ class WicdWiredNetworkInterface : public WicdNetworkInterface, virtual public So
     Q_SIGNALS:
         void bitRateChanged(int bitRate);
         void carrierChanged(bool plugged);
-
-    private:
-        class Private;
-        Private *d;
 };
 
 #endif // WICD_WIRELESSNETWORKINTERFACE_H

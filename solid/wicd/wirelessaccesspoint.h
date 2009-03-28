@@ -24,8 +24,6 @@
 
 #include <solid/control/ifaces/wirelessaccesspoint.h>
 
-class WicdAccessPointPrivate;
-
 class WicdAccessPoint : public Solid::Control::Ifaces::AccessPoint
 {
 Q_OBJECT
@@ -44,7 +42,7 @@ public:
     Solid::Control::WirelessNetworkInterface::OperationMode mode() const;
     int signalStrength() const;
 private:
-    WicdAccessPointPrivate * d;
+
 };
 
 #endif // WICD_WIRELESSAP_H

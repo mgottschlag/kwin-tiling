@@ -20,6 +20,7 @@
 #include "networkmanager.h"
 
 #include "wicd-defines.h"
+#include "wicddbusinterface.h"
 #include "wirednetworkinterface.h"
 #include "wirelessnetworkinterface.h"
 
@@ -38,16 +39,12 @@ class WicdNetworkManagerPrivate
 public:
     WicdNetworkManagerPrivate();
 
-    QDBusInterface manager;
-    QDBusInterface wireless;
     Wicd::ConnectionStatus cachedState;
     QHash<QString, WicdNetworkInterface *> interfaces;
 };
 
 WicdNetworkManagerPrivate::WicdNetworkManagerPrivate()
- : manager(WICD_DBUS_SERVICE, WICD_DBUS_PATH, WICD_DAEMON_DBUS_INTERFACE, QDBusConnection::systemBus())
- , wireless(WICD_DBUS_SERVICE, WICD_DBUS_PATH, WICD_WIRELESS_DBUS_INTERFACE, QDBusConnection::systemBus())
- , cachedState(Wicd::Unknown)
+ : cachedState(Wicd::Unknown)
 {
 }
 
@@ -67,7 +64,7 @@ Solid::Networking::Status WicdNetworkManager::status() const
 {
     if (d->cachedState == Wicd::Unknown)
     {
-        QDBusReply< uint > state = d->manager.call("GetConnectionStatus");
+        QDBusReply< uint > state = WicdDbusInterface::instance()->daemon().call("GetConnectionStatus");
         if (state.isValid())
         {
             kDebug(1441) << "  got state: " << state.value();
@@ -167,7 +164,7 @@ QObject * WicdNetworkManager::createNetworkInterface(const QString  & uni)
     if (netInterface)
     {
         kDebug() << "Interface created successfully";
-        //netInterface->setManagerInterface(&d->manager);
+        //netInterface->setManagerInterface(&WicdDbusInterface::instance()->daemon());
         d->interfaces[uni] = netInterface;
     }
 
@@ -178,7 +175,7 @@ bool WicdNetworkManager::isNetworkingEnabled() const
 {
     if (d->cachedState == Wicd::Unknown)
     {
-        QDBusReply< uint > state = d->manager.call("GetConnectionStatus");
+        QDBusReply< uint > state = WicdDbusInterface::instance()->daemon().call("GetConnectionStatus");
         if (state.isValid())
         {
             kDebug(1441) << "  got state: " << state.value();
@@ -192,7 +189,7 @@ bool WicdNetworkManager::isNetworkingEnabled() const
 
 bool WicdNetworkManager::isWirelessEnabled() const
 {
-    QDBusReply< bool > state = d->wireless.call("IsWirelessUp");
+    QDBusReply< bool > state = WicdDbusInterface::instance()->wireless().call("IsWirelessUp");
     if (state.isValid()) {
         return state.value();
     }
@@ -202,7 +199,7 @@ bool WicdNetworkManager::isWirelessEnabled() const
 
 bool WicdNetworkManager::isWirelessHardwareEnabled() const
 {
-    QDBusReply< bool > state = d->wireless.call("GetKillSwitchEnabled");
+    QDBusReply< bool > state = WicdDbusInterface::instance()->wireless().call("GetKillSwitchEnabled");
 
     if (state.isValid()) {
         return !state.value();
