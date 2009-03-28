@@ -23,6 +23,8 @@
 #include <QObject>
 #include <solid/control/ifaces/networkmanager.h>
 
+#include <QMetaType>
+
 class WicdNetworkManagerPrivate;
 class WicdNetworkManager : public Solid::Control::Ifaces::NetworkManager
 {

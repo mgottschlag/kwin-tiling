@@ -20,6 +20,7 @@
 #include "networkmanager.h"
 
 #include "wicd-defines.h"
+#include "wicdcustomtypes.h"
 #include "wicddbusinterface.h"
 #include "wirednetworkinterface.h"
 #include "wirelessnetworkinterface.h"
@@ -52,7 +53,7 @@ WicdNetworkManagerPrivate::WicdNetworkManagerPrivate()
 WicdNetworkManager::WicdNetworkManager(QObject * parent, const QVariantList  & /*args */)
         : NetworkManager(parent), d(new WicdNetworkManagerPrivate())
 {
-
+    qDBusRegisterMetaType<WicdConnectionInfo>();
 }
 
 WicdNetworkManager::~WicdNetworkManager()
@@ -174,13 +175,12 @@ bool WicdNetworkManager::isNetworkingEnabled() const
 {
     if (d->cachedState == Wicd::Unknown) {
         kDebug() << "First run";
-        QDBusReply< uint > state = WicdDbusInterface::instance()->daemon().call("GetConnectionStatus");
-        if (state.isValid()) {
-            kDebug(1441) << "  got state: " << state.value();
-            d->cachedState = static_cast<Wicd::ConnectionStatus>(state.value());
-        } else {
-            kDebug() << "Invalid reply!!";
-        }
+        QDBusMessage message = WicdDbusInterface::instance()->daemon().call("GetConnectionStatus");
+        WicdConnectionInfo s;
+        message.arguments().at(0).value<QDBusArgument>() >> s;
+        kDebug() << "State: " << s.status << " Info: " << s.info;
+        d->cachedState = static_cast<Wicd::ConnectionStatus>(s.status);
+
     }
 
     return Wicd::CONNECTING == d->cachedState || Wicd::WIRED == d->cachedState ||

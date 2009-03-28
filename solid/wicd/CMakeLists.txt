@@ -23,6 +23,7 @@ set(solid_wicd_PART_SRCS
    networkinterface.cpp
    wirelessnetworkinterface.cpp
    wirednetworkinterface.cpp
+   wicdcustomtypes.cpp
 )
 
 kde4_add_library(solid_wicd_static STATIC ${solid_wicd_PART_SRCS})
