@@ -111,7 +111,9 @@ QStringList WicdNetworkManager::networkInterfaces() const
 
     foreach (const QString &line, lines) {
         if (enterIface) {
-            ifaces.append(line.split(' ').at(0));
+            if (!line.split(' ').at(0).isEmpty()) {
+                ifaces.append(line.split(' ').at(0));
+            }
             enterIface = false;
         }
 
@@ -128,45 +130,47 @@ QObject * WicdNetworkManager::createNetworkInterface(const QString  & uni)
     kDebug(1441) << uni;
     WicdNetworkInterface * netInterface = 0;
     QHash<QString, WicdNetworkInterface *>::Iterator it = d->interfaces.find(uni);
-    if (it == d->interfaces.end())
-    {
-        kDebug() << "unknown interface:" << uni;
-        return 0;
+    if (it == d->interfaces.end()) {
+        kDebug() << "unknown interface:" << uni << "creating it";
+    } else {
+        kDebug() << "Interface already created";
+        return it.value();
     }
-    if (it.value())
-    {
-        netInterface = it.value();
-    }
-    else
-    {
-        QDBusInterface wired_iface(WICD_DBUS_SERVICE,
-                WICD_DBUS_PATH,
-                WICD_WIRED_DBUS_INTERFACE,
-                QDBusConnection::systemBus());
-        QDBusInterface wireless_iface(WICD_DBUS_SERVICE,
-                WICD_DBUS_PATH,
-                WICD_WIRELESS_DBUS_INTERFACE,
-                QDBusConnection::systemBus());
-        QDBusReply<QStringList> wired_reply = wired_iface.call("DetectWiredInterface");
-        QDBusReply<QStringList> wireless_reply = wireless_iface.call("DetectWirelessInterface");
-        if (!wired_reply.isValid() && !wireless_reply.isValid())
-        {
-            kDebug(1441) << "Invalid reply, most probably the specified device does not exists.";
-            return 0;
-        }
 
-        if (wired_reply.value().contains(uni)) {
-            netInterface = new WicdWiredNetworkInterface(uni);
-        } else if (wireless_reply.value().contains(uni)) {
-            netInterface = new WicdWirelessNetworkInterface(uni);
-        }
+    // Let's parse iwconfig here
 
-        if (netInterface)
-        {
-            //netInterface->setManagerInterface(&d->manager);
-            it.value() = netInterface;
+    QProcess iwconfig;
+
+    iwconfig.start(QString("iwconfig"));
+    iwconfig.waitForFinished();
+
+    QString result = iwconfig.readAllStandardError();
+
+    QStringList lines = result.split('\n');
+
+    QStringList wired;
+
+    foreach (const QString &line, lines) {
+        if (!line.isEmpty()) {
+            wired << line.split(' ').at(0);
         }
     }
+
+    if (wired.contains(uni)) {
+        kDebug() << "Wired interface";
+        netInterface = new WicdWiredNetworkInterface(uni);
+    } else {
+        kDebug() << "Wireless interface";
+        netInterface = new WicdWirelessNetworkInterface(uni);
+    }
+
+    if (netInterface)
+    {
+        kDebug() << "Interface created successfully";
+        //netInterface->setManagerInterface(&d->manager);
+        d->interfaces[uni] = netInterface;
+    }
+
     return netInterface;
 }
 
