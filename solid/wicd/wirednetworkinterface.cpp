@@ -77,6 +77,7 @@ bool WicdWiredNetworkInterface::activateConnection(const QString & connectionUni
 {
     Q_UNUSED(connectionUni)
     Q_UNUSED(connectionParameters)
+    d->manager.call("SetWiredInterface", uni());
     d->wired.call("ConnectWired");
 }
 
