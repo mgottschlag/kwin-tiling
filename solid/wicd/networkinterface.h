@@ -26,7 +26,6 @@
 #include <QtCore/qobject.h>
 #include <QVariantMap>
 
-class QDBusInterface;
 
 class WicdNetworkInterfacePrivate;
 
