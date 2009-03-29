@@ -39,7 +39,7 @@ class PkKBlockGrantAuth : public KDialog, Ui::PkKBlockGrantAuth
     Q_OBJECT
 
 public:
-    PkKBlockGrantAuth(PolKitPolicyFileEntry *pfe, bool block = false, QWidget *parent = 0);
+    explicit PkKBlockGrantAuth(PolKitPolicyFileEntry *pfe, bool block = false, QWidget *parent = 0);
     ~PkKBlockGrantAuth();
 
 private slots:

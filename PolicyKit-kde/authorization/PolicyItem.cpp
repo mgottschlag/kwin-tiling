@@ -18,11 +18,12 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
+#include "PolicyItem.h"
+
 #include <QStringList>
 #include <KIconLoader>
 #include <KIcon>
 
-#include "PolicyItem.h"
 #include "PoliciesModel.h"
 
 using namespace PolkitKde;

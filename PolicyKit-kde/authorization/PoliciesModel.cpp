@@ -18,11 +18,12 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#include <QtGui>
+#include "PoliciesModel.h"
+
+#include <QStringList>
 #include <KDebug>
 
 #include "PolicyItem.h"
-#include "PoliciesModel.h"
 
 using namespace PolkitKde;
 
@@ -127,7 +128,7 @@ void PoliciesModel::setCurrentEntries(const QList<PolKitPolicyFileEntry *> &entr
             // if we have an action id bigger than
             // "org.kde"
             QString rootString = actionPath.takeFirst();
-            rootString        += "." + actionPath.takeFirst();
+            rootString        += '.' + actionPath.takeFirst();
             actionPath.prepend(rootString);
             insertOrUpdate(actionPath, entry, rootItem);
         } else if (actionPath.size() > 1) {

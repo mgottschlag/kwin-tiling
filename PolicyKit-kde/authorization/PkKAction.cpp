@@ -426,7 +426,7 @@ void PkKAction::on_modifyPB_clicked()
     m_updatingEntry = true;
     PolKitError *pk_error;
     PolKitPolicyDefault *new_defaults;
-    // we cache the pfe as this is all asyncronous
+    // we cache the pfe as this is all asynchronous
     PolKitPolicyFileEntry *pfe = m_pfe;
     polkit_policy_file_entry_ref(pfe);
     kDebug() << "Setting PFE";
