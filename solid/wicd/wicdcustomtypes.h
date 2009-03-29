@@ -29,7 +29,7 @@ struct WicdConnectionInfo {
     QStringList info;
 };
 
-Q_DECLARE_METATYPE(WicdConnectionInfo);
+Q_DECLARE_METATYPE(WicdConnectionInfo)
 
 QDBusArgument &operator<<(QDBusArgument &argument, const WicdConnectionInfo &mystruct);
 const QDBusArgument &operator>>(const QDBusArgument &argument, WicdConnectionInfo &mystruct);
