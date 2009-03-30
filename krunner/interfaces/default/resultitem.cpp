@@ -56,7 +56,8 @@ ResultItem::ResultItem(const Plasma::QueryMatch &match, QGraphicsWidget *parent)
       m_highlight(0),
       m_index(-1),
       m_highlightTimerId(0),
-      m_innerHeight(DEFAULT_ICON_SIZE)
+      m_innerHeight(DEFAULT_ICON_SIZE),
+      m_ignoreNextChangeEvent(false)
 {
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFlag(QGraphicsItem::ItemIsSelectable);
@@ -84,6 +85,13 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
     m_match = match;
     m_icon = KIcon(match.icon());
     calculateInnerHeight();
+
+    if (m_index != -1) {
+        // we've already been used once before, so reset our size when 
+        // our match changes
+        setSize();
+    }
+
     update();
 }
 
@@ -365,7 +373,11 @@ void ResultItem::changeEvent(QEvent *event)
     QGraphicsWidget::changeEvent(event);
 
     if (event->type() == QEvent::ContentsRectChange) {
-        setSize();
+        if (m_ignoreNextChangeEvent) {
+            m_ignoreNextChangeEvent = false;
+        } else {
+            setSize();
+        }
     }
 }
 
@@ -373,6 +385,7 @@ void ResultItem::setSize()
 {
     qreal left, top, right, bottom;
     getContentsMargins(&left, &top, &right, &bottom);
+    m_ignoreNextChangeEvent = true;
     resize(scene() ? scene()->width() : geometry().width(), m_innerHeight + top + bottom);
     //kDebug() << m_innerHeight << geometry().size();
 }
@@ -383,8 +396,18 @@ void ResultItem::calculateInnerHeight()
     const int maxHeight = fm.height() * 4;
     const int minHeight = DEFAULT_ICON_SIZE;
 
-    QString text = name() + "\n" + description();
+    QString text = name();
+
+    if (!description().isEmpty()) {
+        text.append("\n").append(description());
+    }
+
     QRect textBounds(contentsRect().toRect());
+
+    if (scene()) {
+        textBounds.setWidth(scene()->width());
+    }
+
     textBounds.adjust(DEFAULT_ICON_SIZE + TEXT_MARGIN, 0, 0, 0);
 
     if (maxHeight > textBounds.height()) {
@@ -392,7 +415,7 @@ void ResultItem::calculateInnerHeight()
     }
 
     int height = fm.boundingRect(textBounds, Qt::AlignLeft | Qt::TextWordWrap, text).height();
-    //kDebug() << (QObject*)this << text;// << m_match.text();
+    //kDebug() << (QObject*)this << text << fm.boundingRect(textBounds, Qt::AlignLeft | Qt::TextWordWrap, text);
     //kDebug() << fm.height() << maxHeight << textBounds << height << minHeight << qMax(height, minHeight);
     m_innerHeight = qMax(height, minHeight);
 }

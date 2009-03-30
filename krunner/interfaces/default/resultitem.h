@@ -122,6 +122,7 @@ private:
     int m_index;
     int m_highlightTimerId;
     int m_innerHeight;
+    bool m_ignoreNextChangeEvent;
 
     static int s_fontHeight;
 };
