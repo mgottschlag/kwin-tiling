@@ -1,6 +1,5 @@
 PROJECT (solid-actions)
 
-find_package(KDE4 REQUIRED)
 INCLUDE (KDE4Defaults)
 
 ADD_SUBDIRECTORY(device-actions)
