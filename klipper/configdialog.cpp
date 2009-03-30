@@ -89,11 +89,11 @@ void ActionsWidget::setActionList(const ActionList& list)
         QTreeWidgetItem *item = new QTreeWidgetItem(m_ui.kcfg_ActionList, actionProps);
         item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
 
-        foreach (ClipCommand* command, action->commands()) {
+        foreach (const ClipCommand& command, action->commands()) {
             QStringList cmdProps;
-            cmdProps << command->command << command->description;
+            cmdProps << command.command << command.description;
             QTreeWidgetItem *child = new QTreeWidgetItem(item, cmdProps);
-            child->setIcon(0, KIcon(command->pixmap.isEmpty() ? "system-run" : command->pixmap));
+            child->setIcon(0, KIcon(command.pixmap.isEmpty() ? "system-run" : command.pixmap));
             child->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
         }
     }
@@ -183,7 +183,7 @@ void ActionsWidget::onItemChanged(QTreeWidgetItem *item, int column)
 {
     if (!item->parent() || column != 0)
         return;
-    ClipCommand command( 0, item->text(0), item->text(1) );
+    ClipCommand command( item->text(0), item->text(1) );
 
     m_ui.kcfg_ActionList->blockSignals(true); // don't lead in infinite recursion...
     item->setIcon(0, KIcon(command.pixmap.isEmpty() ? "system-run" : command.pixmap));

@@ -66,7 +66,7 @@ public:
 
 private:
   const ActionList& matchingActions( const QString& );
-  void execute( const struct ClipCommand *command ) const;
+  void execute( const ClipAction *action, int commandIdx ) const;
   bool isAvoidedWindow() const;
   void actionMenu( bool wm_class_check );
 
@@ -75,7 +75,9 @@ private:
   QStringList m_myAvoidWindows;
   QString m_myClipData;
   ClipAction *m_myCurrentAction;
-  QHash<QString, ClipCommand*> m_myCommandMapper;
+
+  // holds mappings of menu action IDs to action commands (action+cmd index in it)
+  QHash<QString, QPair<ClipAction*, int> > m_myCommandMapper;
   KMenu *m_myMenu;
   QTimer *m_myPopupKillTimer;
   int m_myPopupKillTimeout;
@@ -97,8 +99,9 @@ Q_SIGNALS:
 
 struct ClipCommand
 {
-    ClipCommand( ClipAction *, const QString &, const QString &, bool = true, const QString & = QString() );
-    ClipAction *parent;
+    ClipCommand( const QString & command, const QString & description,
+            bool = true, const QString & icon = QString() );
+
     QString command;
     QString description;
     bool isEnabled;
@@ -116,7 +119,6 @@ public:
   explicit ClipAction( const QString& regExp = QString(),
                        const QString& description = QString() );
 
-  ClipAction( const ClipAction& );
   ClipAction( KSharedConfigPtr kc, const QString& );
   ~ClipAction();
 
@@ -140,7 +142,12 @@ public:
                     bool isEnabled,
                     const QString& icon = QString() );
 
-  QList<ClipCommand*> commands() const { return m_myCommands; }
+  /**
+   * Returns command by its index in command list
+   */
+  ClipCommand command(int idx) const { return m_myCommands.at(idx); }
+
+  QList<ClipCommand> commands() const { return m_myCommands; }
 
   /**
    * Saves this action to a a given KConfig object
@@ -151,7 +158,7 @@ public:
 private:
   QRegExp m_myRegExp;
   QString m_myDescription;
-  QList<ClipCommand*> m_myCommands;
+  QList<ClipCommand> m_myCommands;
 
 };
 

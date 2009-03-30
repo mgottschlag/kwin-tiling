@@ -165,7 +165,6 @@ void URLGrabber::actionMenu( bool wm_class_check )
         if ( wm_class_check && isAvoidedWindow() )
             return;
 
-        QString item;
         m_myCommandMapper.clear();
 
         m_myPopupKillTimer->stop();
@@ -177,20 +176,24 @@ void URLGrabber::actionMenu( bool wm_class_check )
         foreach (ClipAction* clipAct, matchingActionsList) {
             m_myMenu->addTitle(KIcon( "klipper" ),
                                i18n("%1 - Actions For: %2", clipAct->description(), KStringHandler::csqueeze(m_myClipData, 45)));
-            foreach( ClipCommand* command, clipAct->commands() ) {
-                item = command->description;
+            QList<ClipCommand> cmdList = clipAct->commands();
+            int listSize = cmdList.count();
+            for (int i=0; i<listSize;++i) {
+                ClipCommand command = cmdList.at(i);
+
+                QString item = command.description;
                 if ( item.isEmpty() )
-                    item = command->command;
+                    item = command.command;
 
                 QString id = QUuid::createUuid().toString();
                 QAction * action = new QAction(this);
                 action->setData(id);
                 action->setText(item);
 
-                if (!command->pixmap.isEmpty())
-                    action->setIcon(KIcon(command->pixmap));
+                if (!command.pixmap.isEmpty())
+                    action->setIcon(KIcon(command.pixmap));
 
-                m_myCommandMapper.insert(id, command);
+                m_myCommandMapper.insert(id, qMakePair(clipAct,i));
                 m_myMenu->addAction(action);
             }
         }
@@ -234,38 +237,38 @@ void URLGrabber::slotItemSelected(QAction *action)
         return;
     }
 
-    QHash<QString, ClipCommand*>::iterator i = m_myCommandMapper.find(id);
-    ClipCommand *command = i.value();
+    // first is action ptr, second is command index
+    QPair<ClipAction*, int> actionCommand = m_myCommandMapper.value(id);
 
-    if (command)
-        execute(command);
+    if (actionCommand.first)
+        execute(actionCommand.first, actionCommand.second);
     else
         kDebug() << "Klipper: cannot find associated action";
 }
 
 
-void URLGrabber::execute( const struct ClipCommand *command ) const
+void URLGrabber::execute( const ClipAction *action, int cmdIdx ) const
 {
-    if ( command->isEnabled ) {
+    if (!action) {
+        kDebug() << "Action object is null";
+        return;
+    }
+
+    ClipCommand command = action->command(cmdIdx);
+
+    if ( command.isEnabled ) {
         QHash<QChar,QString> map;
         map.insert( 's', m_myClipData );
         map.insert( 'u', m_myClipData );
         map.insert( 'U', m_myClipData );
-        // commands executed should always have a parent,
-        // but a simple check won't hurt...
-        if ( command->parent )
-        {
-            const QStringList matches = command->parent->regExpMatches();
-            // support only %0 and the first 9 matches...
-            const int numMatches = qMin(10, matches.count());
-            for ( int i = 0; i < numMatches; ++i )
-                map.insert( QChar( '0' + i ), matches.at( i ) );
-        }
-        else
-        {
-            kDebug() << "No parent for" << command->description << "(" << command->command << ")";
-        }
-        QString cmdLine = KMacroExpander::expandMacrosShellQuote( command->command, map );
+
+        const QStringList matches = action->regExpMatches();
+        // support only %0 and the first 9 matches...
+        const int numMatches = qMin(10, matches.count());
+        for ( int i = 0; i < numMatches; ++i )
+            map.insert( QChar( '0' + i ), matches.at( i ) );
+
+        QString cmdLine = KMacroExpander::expandMacrosShellQuote( command.command, map );
 
         if ( cmdLine.isEmpty() )
             return;
@@ -406,14 +409,13 @@ void URLGrabber::slotKillPopupMenu()
 ///////////////////////////////////////////////////////////////////////////
 ////////
 
-ClipCommand::ClipCommand(ClipAction *_parent, const QString &_command, const QString &_description,
+ClipCommand::ClipCommand(const QString &_command, const QString &_description,
                          bool _isEnabled, const QString &_icon)
-    : parent(_parent),
-      command(_command),
+    : command(_command),
       description(_description),
       isEnabled(_isEnabled)
 {
-    int len = command.indexOf(" ");
+    int len = command.indexOf(' ');
     if (len == -1)
         len = command.length();
 
@@ -434,21 +436,6 @@ ClipAction::ClipAction( const QString& regExp, const QString& description )
     : m_myRegExp( regExp ), m_myDescription( description )
 {
 }
-
-
-ClipAction::ClipAction( const ClipAction& action )
-{
-    m_myRegExp      = action.m_myRegExp;
-    m_myDescription = action.m_myDescription;
-
-    ClipCommand *command = 0L;
-    QListIterator<ClipCommand*> it( m_myCommands );
-    while (it.hasNext()) {
-        command = it.next();
-        addCommand(command->command, command->description, command->isEnabled);
-    }
-}
-
 
 ClipAction::ClipAction( KSharedConfigPtr kc, const QString& group )
     : m_myRegExp( kc->group(group).readEntry("Regexp") ),
@@ -473,7 +460,7 @@ ClipAction::ClipAction( KSharedConfigPtr kc, const QString& group )
 
 ClipAction::~ClipAction()
 {
-    qDeleteAll(m_myCommands);
+    m_myCommands.clear();
 }
 
 
@@ -483,9 +470,7 @@ void ClipAction::addCommand( const QString& command,
     if ( command.isEmpty() )
         return;
 
-    struct ClipCommand *cmd = new ClipCommand( this, command, description, enabled, icon );
-    //    cmd->id = m_myCommands.count(); // superfluous, I think...
-    m_myCommands.append( cmd );
+    m_myCommands.append( ClipCommand(command, description, enabled, icon) );
 }
 
 
@@ -497,19 +482,15 @@ void ClipAction::save( KSharedConfigPtr kc, const QString& group ) const
     cg.writeEntry( "Regexp", regExp() );
     cg.writeEntry( "Number of commands", m_myCommands.count() );
 
-    struct ClipCommand *cmd;
-    QListIterator<struct ClipCommand*> it( m_myCommands );
-
+    int i=0;
     // now iterate over all commands of this action
-    int i = 0;
-    while (it.hasNext()) {
-        cmd = it.next();
+    foreach (const ClipCommand& cmd, m_myCommands) {
         QString _group = group + "/Command_%1";
         KConfigGroup cg(kc, _group.arg(i));
 
-        cg.writePathEntry( "Commandline", cmd->command );
-        cg.writeEntry( "Description", cmd->description );
-        cg.writeEntry( "Enabled", cmd->isEnabled );
+        cg.writePathEntry( "Commandline", cmd.command );
+        cg.writeEntry( "Description", cmd.description );
+        cg.writeEntry( "Enabled", cmd.isEnabled );
 
         ++i;
     }
