@@ -12,10 +12,6 @@ include_directories(
    ${CMAKE_CURRENT_BUILD_DIR}
 )
 
-#add_subdirectory(dbus)
-
-#add_subdirectory(tests)
-
 set(solid_wicd_PART_SRCS
    wicddbusinterface.cpp
    wirelessaccesspoint.cpp
