@@ -1,6 +1,7 @@
 /*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
     Copyright 2008-2009 Sebastian Sauer <mail@dipe.org>
+    Copyright 2009 Christian Loose <christian.loose@kdemail.net>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -24,6 +25,7 @@
 
 // Qt
 #include <QtGui/QLabel>
+#include <QtGui/QCheckBox>
 #include <QtGui/QComboBox>
 #include <QtGui/QSpinBox>
 #include <QtGui/QGridLayout>
@@ -104,11 +106,13 @@ public:
     QStringList viewtypes;//QList<MenuLauncherApplet::ViewType>
     MenuLauncherApplet::FormatType formattype;
     int maxRecentApps;
+    bool showMenuTitles;
 
     QListWidget *view;
     KIconButton *iconButton;
     QComboBox *formatComboBox;
     QSpinBox *recentApplicationsSpinBox;
+    QCheckBox *showMenuTitlesCheckBox;
 
     QList<QAction*> actions;
     QAction* switcher;
@@ -118,7 +122,7 @@ public:
             : q(q),
             menuview(0), icon(0), launcher(0),
             bookmarkcollection(0), bookmarkowner(0), bookmarkmenu(0),
-            view(0), iconButton(0), formatComboBox(0),
+            view(0), iconButton(0), formatComboBox(0), showMenuTitlesCheckBox(0),
             switcher(0), contextMenuFactory(0) {}
     ~Private() {
         delete bookmarkmenu;
@@ -298,6 +302,7 @@ void MenuLauncherApplet::init()
     d->formattype = (MenuLauncherApplet::FormatType) fte.keyToValue(ftb);
 
     d->setMaxRecentApps(cg.readEntry("maxRecentApps", qMin(5, Kickoff::RecentApplications::self()->maximum())));
+    d->showMenuTitles = cg.readEntry("showMenuTitles", false);
 
     d->icon->setIcon(KIcon(cg.readEntry("icon", iconname)));
 
@@ -408,7 +413,7 @@ void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     d->setCurrentItem(d->formatComboBox, d->formattype);
     grid->addWidget(d->formatComboBox, 1, 1);
 
-    QLabel *recentLabel = new QLabel(i18n("Recently Used Applications:"), p);
+    QLabel *recentLabel = new QLabel(i18n("Recently used applications:"), p);
     grid->addWidget(recentLabel, 2, 0, Qt::AlignRight);
     d->recentApplicationsSpinBox = new QSpinBox(p);
     d->recentApplicationsSpinBox->setMaximum(10);
@@ -417,7 +422,13 @@ void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     recentLabel->setBuddy(d->recentApplicationsSpinBox);
     grid->addWidget(d->recentApplicationsSpinBox, 2, 1);
 
-    grid->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), 3, 0, 1, 3);
+    QLabel *showMenuTitlesLabel = new QLabel(i18n("Show menu titles:"), p);
+    grid->addWidget(showMenuTitlesLabel, 3, 0, Qt::AlignRight);
+    d->showMenuTitlesCheckBox = new QCheckBox(p);
+    d->showMenuTitlesCheckBox->setChecked(d->showMenuTitles);
+    grid->addWidget(d->showMenuTitlesCheckBox, 3, 1);
+
+    grid->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), 4, 0, 1, 3);
     parent->addPage(p, i18n("Options"), "configure");
 
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
@@ -466,6 +477,13 @@ void MenuLauncherApplet::configAccepted()
         needssaving = true;
         d->setMaxRecentApps(maxRecentApps);
         cg.writeEntry("maxRecentApps", maxRecentApps);
+    }
+
+    const bool showMenuTitles = d->showMenuTitlesCheckBox->isChecked();
+    if (showMenuTitles != d->showMenuTitles) {
+        needssaving = true;
+        d->showMenuTitles = showMenuTitles;
+        cg.writeEntry("showMenuTitles", showMenuTitles);
     }
 
     if (needssaving) {
@@ -520,8 +538,15 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
                 if (d->formattype == Name || d->formattype == NameDescription || d->formattype == NameDashDescription)
                     appModel->setPrimaryNamePolicy(Kickoff::ApplicationModel::AppNamePrimary);
                 appModel->setSystemApplicationPolicy(Kickoff::ApplicationModel::ShowApplicationAndSystemPolicy);
-                d->menuview->addModel(appModel);
-                d->menuview->addSeparator();
+
+                if (d->showMenuTitles) {
+                    d->menuview->addTitle(i18n("All Applications"));
+                    d->menuview->addModel(appModel);
+                    d->menuview->addTitle(i18n("Actions"));
+                } else {
+                    d->menuview->addModel(appModel);
+                    d->menuview->addSeparator();
+                }
             } else if(vtname == "Favorites") {
                 d->addModel(new Kickoff::FavoritesModel(d->menuview), Favorites);
             } else if(vtname == "Computer") {
@@ -530,12 +555,18 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
                 d->addModel(new Kickoff::RecentlyUsedModel(d->menuview), RecentlyUsed);
             } else if(vtname == "RecentlyUsedApplications") {
                 if (d->maxRecentApps > 0) {
+                    if (d->showMenuTitles)
+                        d->menuview->addTitle(i18n("Recently Used Applications"));
                     d->menuview->addModel(new Kickoff::RecentlyUsedModel(d->menuview, Kickoff::RecentlyUsedModel::ApplicationsOnly, d->maxRecentApps), Kickoff::MenuView::MergeFirstLevel);
-                    d->menuview->addSeparator();
+                    if (!d->showMenuTitles)
+                        d->menuview->addSeparator();
                 }
             } else if(vtname == "RecentlyUsedDocuments") {
+                if (d->showMenuTitles)
+                    d->menuview->addTitle(i18n("Recently Used Documents"));
                 d->menuview->addModel(new Kickoff::RecentlyUsedModel(d->menuview, Kickoff::RecentlyUsedModel::DocumentsOnly), Kickoff::MenuView::MergeFirstLevel);
-                d->menuview->addSeparator();
+                if (!d->showMenuTitles)
+                    d->menuview->addSeparator();
             } else if(vtname == "Bookmarks") {
                 KMenu* menu = d->menuview;
                 if(d->viewtypes.count() > 1) {
