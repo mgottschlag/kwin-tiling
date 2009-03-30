@@ -44,6 +44,9 @@
 #include <KGlobalSettings>
 #include <KLocale>
 #include <KTimeZone>
+#include <KToolInvocation>
+#include <KMessageBox>
+#include <QDBusConnectionInterface>
 
 #include <Plasma/Containment>
 #include <Plasma/Corona>
@@ -84,7 +87,7 @@ public:
     int prevHour;
     int prevMinute;
 
-    void addTzToTipText(QString &subText, QString tz) 
+    void addTzToTipText(QString &subText, QString tz)
     {
         Plasma::Applet applet;
         Plasma::DataEngine::Data data = applet.dataEngine("time")->query(tz);
@@ -176,6 +179,16 @@ void ClockApplet::speakTime(const QTime &time)
     if (time.minute() != d->prevMinute && d->announceInterval>0 && (time.minute() % d->announceInterval) == 0) {
         d->prevHour = time.hour();
         d->prevMinute = time.minute();
+        // If KTTSD not running, start it.
+        if (!QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.kttsd"))
+        {
+            QString error;
+            if (KToolInvocation::startServiceByDesktopName("kttsd", QStringList(), &error))
+            {
+                KMessageBox::error(0, i18n( "Starting KTTSD Failed"), error );
+                return;
+            }
+        }
         QDBusInterface ktts("org.kde.kttsd", "/KSpeech", "org.kde.KSpeech");
         QString text;
         if (time.minute() == 0) {
@@ -245,8 +258,8 @@ void ClockApplet::updateTipContent()
     }
 
     QString subText;
-    if (!isLocalTimezone()) { 
-        d->addTzToTipText(subText, localTimezone()); 
+    if (!isLocalTimezone()) {
+        d->addTzToTipText(subText, localTimezone());
     }
 
     foreach (const QString &tz, getSelectedTimezones()) {
