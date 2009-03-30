@@ -6,5 +6,9 @@ InitialPreference=80
 
 Name=Wicd
 Comment=Network management using the Wicd daemon
+Comment[en_GB]=Network management using the Wicd dæmon
+Comment[pt]=Gestão de redes com o servidor Wicd
+Comment[pt_BR]=Gestão de redes com o servidor Wicd
+Comment[uk]=Керування мережею за допомогою фонової служби Wicd
 
 Icon=wicd
