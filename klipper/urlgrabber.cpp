@@ -259,8 +259,12 @@ void URLGrabber::execute( const ClipAction *action, int cmdIdx ) const
     if ( command.isEnabled ) {
         QHash<QChar,QString> map;
         map.insert( 's', m_myClipData );
+
+        // support %u, %U (indicates url param(s)) and %f, %F (file param(s))
         map.insert( 'u', m_myClipData );
         map.insert( 'U', m_myClipData );
+        map.insert( 'f', m_myClipData );
+        map.insert( 'F', m_myClipData );
 
         const QStringList matches = action->regExpMatches();
         // support only %0 and the first 9 matches...
