@@ -44,6 +44,12 @@ JobView::JobView(QObject* parent)
 void JobView::terminate(const QString &errorMessage)
 {
     m_error = errorMessage;
+    emit viewUpdated(this);
+    QTimer::singleShot(0, this, SLOT(finished()));
+}
+
+void JobView::finished()
+{
     m_state = Stopped;
     emit viewUpdated(this);
 }

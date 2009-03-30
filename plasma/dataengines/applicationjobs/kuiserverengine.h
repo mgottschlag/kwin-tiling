@@ -97,6 +97,9 @@ public:
 
     QDBusObjectPath objectPath() const;
 
+public Q_SLOTS:
+    void finished();
+
 Q_SIGNALS:
     void suspendRequested();
     void resumeRequested();
