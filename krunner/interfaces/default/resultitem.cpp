@@ -44,7 +44,6 @@
 #include <Plasma/RunnerManager>
 #include <Plasma/PaintUtils>
 
-#define TEXT_AREA_HEIGHT ResultItem::MARGIN + ResultItem::TEXT_MARGIN*2 + ResultItem::s_fontHeight
 //#define NO_GROW_ANIM
 
 void shadowBlur(QImage &image, int radius, const QColor &color);
@@ -56,14 +55,14 @@ ResultItem::ResultItem(const Plasma::QueryMatch &match, QGraphicsWidget *parent)
       m_match(0),
       m_highlight(0),
       m_index(-1),
-      m_highlightTimerId(0)
+      m_highlightTimerId(0),
+      m_innerHeight(DEFAULT_ICON_SIZE)
 {
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFlag(QGraphicsItem::ItemIsSelectable);
     setAcceptHoverEvents(true);
     setFocusPolicy(Qt::TabFocus);
     setCacheMode(DeviceCoordinateCache);
-    resize(ITEM_SIZE, ITEM_SIZE);
     setZValue(0);
 
     if (s_fontHeight < 1) {
@@ -80,31 +79,11 @@ ResultItem::~ResultItem()
 {
 }
 
-QPointF ResultItem::targetPos() const
-{
-    const int x = 0;
-    //TODO: we will want/need something that doesn't rely on a fixed height
-    const int y = m_index * ResultItem::BOUNDING_HEIGHT + m_index * HOVER_TROFF;
-    //kDebug() << x << y << "for" << index;
-    return QPointF(x, y);
-}
-
-void ResultItem::appear()
-{
-    setPos(targetPos());
-    show();
-}
-
-void ResultItem::move()
-{
-    //qDebug() << "moving to" << index;
-    setPos(targetPos());
-}
-
 void ResultItem::setMatch(const Plasma::QueryMatch &match)
 {
     m_match = match;
     m_icon = KIcon(match.icon());
+    calculateInnerHeight();
     update();
 }
 
@@ -166,20 +145,7 @@ void ResultItem::setIndex(int index)
         return;
     }
 
-    bool first = m_index == -1;
-    m_index = index;
-
-    if (index < 0) {
-        index = -1;
-        return;
-    }
-
-    //kDebug() << index << first << hasFocus();
-    if (first) {
-        appear();
-    } else {
-        move();
-    }
+    m_index = qMax(-1, index);
 }
 
 int ResultItem::index() const
@@ -257,7 +223,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         painter->setOpacity(1);
     }
 
-    QRect textRect(iRect.topLeft() + QPoint(iconSize.width() + PADDING + TEXT_MARGIN, 0),
+    QRect textRect(iRect.topLeft() + QPoint(iconSize.width() + TEXT_MARGIN, 0),
                    iRect.bottomRight());
 
     // Draw the text on a pixmap
@@ -275,7 +241,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     int fontHeight = italicMetrics.height();
     italics.setItalic(true);
     p.setFont(italics);
-    p.drawText(pixmap.rect().adjusted(0, fontHeight, 0, 0), Qt::AlignLeft, description());
+    p.drawText(pixmap.rect().adjusted(0, fontHeight, 0, 0), Qt::AlignLeft | Qt::TextWordWrap, description());
 
     // Fade the pixmap out at the end
     if (width > pixmap.width()) {
@@ -388,7 +354,7 @@ void ResultItem::keyPressEvent(QKeyEvent *event)
 QVariant ResultItem::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     if (change == QGraphicsItem::ItemSceneHasChanged && scene()) {
-        resize(scene()->width(), geometry().height());
+        calculateSize();
     }
 
     return QGraphicsWidget::itemChange(change, value);
@@ -399,9 +365,42 @@ void ResultItem::changeEvent(QEvent *event)
     QGraphicsWidget::changeEvent(event);
 
     if (event->type() == QEvent::ContentsRectChange) {
-        qreal left, top, right, bottom;
-        getContentsMargins(&left, &top, &right, &bottom);
+        setSize();
     }
+}
+
+void ResultItem::setSize()
+{
+    qreal left, top, right, bottom;
+    getContentsMargins(&left, &top, &right, &bottom);
+    resize(scene() ? scene()->width() : geometry().width(), m_innerHeight + top + bottom);
+    //kDebug() << m_innerHeight << geometry().size();
+}
+
+void ResultItem::calculateInnerHeight()
+{
+    QFontMetrics fm(font());
+    const int maxHeight = fm.height() * 4;
+    const int minHeight = DEFAULT_ICON_SIZE;
+
+    QString text = name() + "\n" + description();
+    QRect textBounds(contentsRect().toRect());
+    textBounds.adjust(DEFAULT_ICON_SIZE + TEXT_MARGIN, 0, 0, 0);
+
+    if (maxHeight > textBounds.height()) {
+        textBounds.setHeight(maxHeight);
+    }
+
+    int height = fm.boundingRect(textBounds, Qt::AlignLeft | Qt::TextWordWrap, text).height();
+    //kDebug() << (QObject*)this << text;// << m_match.text();
+    //kDebug() << fm.height() << maxHeight << textBounds << height << minHeight << qMax(height, minHeight);
+    m_innerHeight = qMax(height, minHeight);
+}
+
+void ResultItem::calculateSize()
+{
+    calculateInnerHeight();
+    setSize();
 }
 
 #include "resultitem.moc"

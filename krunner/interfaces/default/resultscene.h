@@ -51,7 +51,7 @@ class ResultScene : public QGraphicsScene
         void run(ResultItem* item) const;
         QSize minimumSizeHint() const;
 
-        Plasma::RunnerManager* manager() const;
+//        Plasma::RunnerManager* manager() const;
 
 
     public slots:
@@ -74,6 +74,7 @@ class ResultScene : public QGraphicsScene
     private:
         void selectPreviousItem();
         void selectNextItem();
+
         ResultItem* addQueryMatch(const Plasma::QueryMatch &match, bool useAnyId);
 
     private slots:

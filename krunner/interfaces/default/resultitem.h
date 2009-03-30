@@ -79,18 +79,13 @@ public:
     void remove();
     void run(Plasma::RunnerManager *manager);
     bool isQueryPrototype() const;
-    QPointF targetPos() const;
+    void calculateSize();
 
     static bool compare(const ResultItem *one, const ResultItem *other);
     bool operator<(const ResultItem &other) const;
 
-    static const int PADDING = 2;
-    static const int MARGIN = 3;
-    static const int TEXT_MARGIN = 1;
-    static const int ITEM_SIZE = 32 + PADDING*2;
-    static const int BOUNDING_WIDTH = ITEM_SIZE + MARGIN*2;
-    static const int BOUNDING_HEIGHT = ITEM_SIZE + MARGIN*2;
-    static const int HOVER_TROFF = 4;
+    static const int TEXT_MARGIN = 3;
+    static const int DEFAULT_ICON_SIZE = 32;
     static const int TIMER_INTERVAL = 40;
 
 signals:
@@ -113,9 +108,8 @@ protected:
 private:
     // must always call remove()
     ~ResultItem();
-
-    void appear();
-    void move();
+    void calculateInnerHeight();
+    void setSize();
 
 private:
     Plasma::QueryMatch m_match;
@@ -127,6 +121,7 @@ private:
     int m_highlight;
     int m_index;
     int m_highlightTimerId;
+    int m_innerHeight;
 
     static int s_fontHeight;
 };

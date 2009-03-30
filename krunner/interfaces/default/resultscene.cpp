@@ -73,14 +73,14 @@ ResultScene::~ResultScene()
 QSize ResultScene::minimumSizeHint() const
 {
     QFontMetrics fm(font());
-    return QSize(ResultItem::BOUNDING_WIDTH * 4 + 6, (ResultItem::BOUNDING_HEIGHT + fm.height()) * 2 + 6);
+    return QSize(ResultItem::DEFAULT_ICON_SIZE * 4, (fm.height() * 5) * 3);
 }
 
 void ResultScene::resize(int width, int height)
 {
     setSceneRect(0.0, 0.0, (qreal)width, (qreal)height);
     foreach (ResultItem *item, m_items) {
-        item->resize(width - 8, item->geometry().height());
+        item->calculateSize();
     }
 }
 
@@ -111,7 +111,7 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         return;
     }
 
-    resize(width(), m.count() * ResultItem::BOUNDING_HEIGHT);
+    //resize(width(), m.count() * ResultItem::BOUNDING_HEIGHT);
     m_clearTimer.stop();
     m_items.clear();
 
@@ -151,12 +151,17 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
 
     QListIterator<ResultItem*> matchIt(m_items);
     QGraphicsWidget *tab = 0;
+    int y = 0;
     while (matchIt.hasNext()) {
         ResultItem *item = matchIt.next();
         //kDebug()  << item->name() << item->id() << item->priority() << i;
         QGraphicsWidget::setTabOrder(tab, item);
         m_itemsById.insert(item->id(), item);
         item->setIndex(i);
+        item->setPos(0, y);
+        item->show();
+        //kDebug() << item->pos();
+        y += item->geometry().height();
 
         // it is vital that focus is set *after* the index
         if (i == 0) {
@@ -313,11 +318,12 @@ void ResultScene::run(ResultItem *item) const
     item->run(m_runnerManager);
 }
 
+/*
 Plasma::RunnerManager* ResultScene::manager() const
 {
     return m_runnerManager;
 }
-
+*/
 void ResultScene::updateItemMargins()
 {
     m_selectionBar->getMargins(m_itemMarginLeft, m_itemMarginTop,

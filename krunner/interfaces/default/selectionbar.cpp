@@ -91,8 +91,7 @@ void SelectionBar::movementFinished(QGraphicsItem *movedItem)
 
     ResultItem *item = targetItem();
     if (item) {
-        QRectF rect(item->targetPos(), item->size());
-        resize(rect.size());
+        resize(item->size());
     }
 }
 
@@ -123,8 +122,7 @@ void SelectionBar::itemSelected()
 
     m_hideTimer->stop();
 
-    QRectF rect(item->targetPos(), item->size());
-
+    QRectF rect(item->geometry());
     if (!isVisible()) {
         resize(rect.size());
         setPos(rect.topLeft());

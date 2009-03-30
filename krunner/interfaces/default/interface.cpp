@@ -372,7 +372,7 @@ void Interface::showHelp()
             match.setType(Plasma::QueryMatch::InformationalMatch);
             match.setIcon(icon);
             match.setText(syntax.exampleQueriesWithTermDescription().join(", "));
-            match.setSubtext(syntax.description() + "<p>" + 
+            match.setSubtext(syntax.description() + "\n" + 
                              i18n("(From %1, %2)", runner->name(), runner->description()));
             match.setData(syntax.exampleQueries().first());
             matches.insert(runner->name() + QString::number(++count), match);
