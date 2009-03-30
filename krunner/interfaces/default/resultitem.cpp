@@ -324,15 +324,11 @@ void ResultItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *e)
     //update();
     //emit hoverLeave(this);
     setFocus(Qt::MouseFocusReason);
-    setSelected(false);
 }
 
 void ResultItem::hoverEnterEvent(QGraphicsSceneHoverEvent *e)
 {
     QGraphicsItem::hoverEnterEvent(e);
-//    update();
-//    emit hoverEnter(this);
-    //setFocusItem(this);
     setFocus(Qt::MouseFocusReason);
     scene()->clearSelection();
     setSelected(true);
