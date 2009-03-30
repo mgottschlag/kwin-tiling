@@ -78,9 +78,13 @@ QSize ResultScene::minimumSizeHint() const
 
 void ResultScene::resize(int width, int height)
 {
+    bool resizeItems = width != sceneRect().width();
     setSceneRect(0.0, 0.0, (qreal)width, (qreal)height);
-    foreach (ResultItem *item, m_items) {
-        item->calculateSize();
+
+    if (resizeItems) {
+        foreach (ResultItem *item, m_items) {
+            item->calculateSize();
+        }
     }
 }
 
