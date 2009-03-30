@@ -30,6 +30,7 @@
 #include <QHeaderView>
 
 #include "klipper.h"
+#include "editactiondialog.h"
 
 GeneralWidget::GeneralWidget(QWidget* parent)
     : QWidget(parent)
@@ -44,12 +45,13 @@ void GeneralWidget::onSyncronizeToggled(bool toggled)
 }
 
 ActionsWidget::ActionsWidget(QWidget* parent)
-    : QWidget(parent)
+    : QWidget(parent), m_editActDlg(0)
 {
     m_ui.setupUi(this);
 
     m_ui.pbAddAction->setIcon(KIcon("list-add"));
     m_ui.pbDelAction->setIcon(KIcon("list-remove"));
+    m_ui.pbEditAction->setIcon(KIcon("document-edit"));
     m_ui.pbAdvanced->setIcon(KIcon("configure"));
 
     m_ui.kcfg_ActionList->header()->resizeSection(0, 250);
@@ -67,6 +69,7 @@ ActionsWidget::ActionsWidget(QWidget* parent)
     connect(m_ui.kcfg_ActionList, SIGNAL(itemChanged(QTreeWidgetItem*, int)), SLOT(onItemChanged(QTreeWidgetItem*, int)));
 
     connect(m_ui.pbAddAction, SIGNAL(clicked()), SLOT(onAddAction()));
+    connect(m_ui.pbEditAction, SIGNAL(clicked()), SLOT(onEditAction()));
     connect(m_ui.pbDelAction, SIGNAL(clicked()), SLOT(onDeleteAction()));
     connect(m_ui.pbAdvanced, SIGNAL(clicked()), SLOT(onAdvanced()));
 
@@ -143,7 +146,9 @@ void ActionsWidget::resetModifiedState()
 
 void ActionsWidget::onSelectionChanged()
 {
-    m_ui.pbDelAction->setEnabled(!m_ui.kcfg_ActionList->selectedItems().isEmpty());
+    bool itemIsSelected = !m_ui.kcfg_ActionList->selectedItems().isEmpty();
+    m_ui.pbEditAction->setEnabled(itemIsSelected);
+    m_ui.pbDelAction->setEnabled(itemIsSelected);
 }
 
 void ActionsWidget::onContextMenu(const QPoint& pos)
@@ -187,10 +192,44 @@ void ActionsWidget::onItemChanged(QTreeWidgetItem *item, int column)
 
 void ActionsWidget::onAddAction()
 {
+    /**
+     *  TODO implement fully and uncoment
+    if (!m_editActDlg) {
+        m_editActDlg = new EditActionDialog(this);
+    }
+
+    ClipAction* newAct = new ClipAction;
+    m_editActDlg->setAction(newAct);
+    if (m_editActDlg->exec() == QDialog::Accepted) {
+        // do stuff with newAct
+    }
+     */
     QTreeWidgetItem *item = new QTreeWidgetItem(m_ui.kcfg_ActionList,
                                                 QStringList() << i18n("Double-click here to set the regular expression")
                                                               << i18n("<new action>"));
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
+}
+
+void ActionsWidget::onEditAction()
+{
+    if (!m_editActDlg) {
+        m_editActDlg = new EditActionDialog(this);
+    }
+
+    QTreeWidgetItem *item = m_ui.kcfg_ActionList->currentItem();
+    if (item) {
+        if (item->parent()) {
+            item = item->parent(); // interested in toplevel action
+        }
+
+        // TODO: hold a list of clipactions in this dialog
+        // and pick action from that list here
+        ClipAction* action = new ClipAction(item->text(0), item->text(1));;
+        m_editActDlg->setAction(action);
+        if (m_editActDlg->exec() == QDialog::Accepted) {
+            // do stuff with action
+        }
+    }
 }
 
 

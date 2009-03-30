@@ -13,9 +13,10 @@ set(libklipper_common_SRCS
     historyimageitem.cpp
     historyurlitem.cpp
     actionstreewidget.cpp
+    editactiondialog.cpp
 )
 
-kde4_add_ui_files(libklipper_common_SRCS generalconfig.ui actionsconfig.ui)
+kde4_add_ui_files(libklipper_common_SRCS generalconfig.ui actionsconfig.ui editactiondialog.ui)
 kde4_add_kcfg_files(libklipper_common_SRCS klippersettings.kcfgc)
 
 set(klipper_KDEINIT_SRCS ${libklipper_common_SRCS} main.cpp tray.cpp)

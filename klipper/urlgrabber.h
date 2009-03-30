@@ -113,28 +113,34 @@ struct ClipCommand
 class ClipAction
 {
 public:
-  ClipAction( const QString& regExp, const QString& description );
+  explicit ClipAction( const QString& regExp = QString(),
+                       const QString& description = QString() );
+
   ClipAction( const ClipAction& );
   ClipAction( KSharedConfigPtr kc, const QString& );
   ~ClipAction();
 
-  void  setRegExp( const QString& r) 	      { m_myRegExp = QRegExp( r ); }
-  QString regExp() 			const { return m_myRegExp.pattern(); }
-  inline bool matches( const QString& string ) const {
-      return ( m_myRegExp.indexIn( string ) != -1 );
-  }
-  QStringList regExpMatches() { return m_myRegExp.capturedTexts(); }
+  void  setRegExp( const QString& r) { m_myRegExp = QRegExp( r ); }
+  QString regExp() const             { return m_myRegExp.pattern(); }
 
-  void 	setDescription( const QString& d)     { m_myDescription = d; }
-  const QString& description() 		const { return m_myDescription; }
+  bool matches( const QString& string ) const { return ( m_myRegExp.indexIn( string ) != -1 ); }
+
+  QStringList regExpMatches() const { return m_myRegExp.capturedTexts(); }
+
+  void setDescription( const QString& d) { m_myDescription = d; }
+  QString description() const            { return m_myDescription; }
 
   /**
    * Removes all ClipCommands associated with this ClipAction.
    */
   void clearCommands() { m_myCommands.clear(); }
 
-  void  addCommand( const QString& command, const QString& description, bool, const QString& icon = QString() );
-  const QList<ClipCommand*>& commands() 	const { return m_myCommands; }
+  void  addCommand( const QString& command, 
+                    const QString& description, 
+                    bool isEnabled,
+                    const QString& icon = QString() );
+
+  QList<ClipCommand*> commands() const { return m_myCommands; }
 
   /**
    * Saves this action to a a given KConfig object
@@ -143,9 +149,9 @@ public:
 
 
 private:
-  QRegExp 		m_myRegExp;
-  QString 		m_myDescription;
-  QList<ClipCommand*> 	m_myCommands;
+  QRegExp m_myRegExp;
+  QString m_myDescription;
+  QList<ClipCommand*> m_myCommands;
 
 };
 

@@ -34,6 +34,7 @@ class QPushButton;
 class Klipper;
 class KEditListBox;
 class KActionCollection;
+class EditActionDialog;
 
 class GeneralWidget : public QWidget
 {
@@ -67,11 +68,13 @@ private slots:
     void onContextMenu(const QPoint&);
     void onItemChanged(QTreeWidgetItem*,int);
     void onAddAction();
+    void onEditAction();
     void onDeleteAction();
     void onAdvanced();
 
 private:
     Ui::ActionsWidget m_ui;
+    EditActionDialog* m_editActDlg;
 
     QStringList m_exclWMClasses;
 };
