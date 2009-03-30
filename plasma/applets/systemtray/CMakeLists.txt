@@ -41,20 +41,20 @@ set(systemtray_SRCS
 
 kde4_add_ui_files(systemtray_SRCS ui/protocols.ui )
 
-add_subdirectory(systemtraydaemon)
+add_subdirectory(notificationareawatcher)
 
-set(systemtraydaemon_xml systemtraydaemon/org.kde.SystemTrayDaemon.xml)
-QT4_ADD_DBUS_INTERFACE(systemtray_SRCS ${systemtraydaemon_xml} systemtraydaemon_interface)
+set(notificationareawatcher_xml notificationareawatcher/org.kde.NotificationAreaWatcher.xml)
+QT4_ADD_DBUS_INTERFACE(systemtray_SRCS ${notificationareawatcher_xml} notificationareawatcher_interface)
 
 
-set(systemtray_xml systemtraydaemon/org.kde.SystemTray.xml)
+set(notificationareaitem_xml notificationareawatcher/org.kde.NotificationAreaItem.xml)
 
-set_source_files_properties(${systemtray_xml} PROPERTIES
+set_source_files_properties(${notificationareaitem_xml} PROPERTIES
    NO_NAMESPACE false
    INCLUDE "protocols/dbussystemtray/systemtraytypes.h"
-   CLASSNAME OrgKdeSystemTrayInterface
+   CLASSNAME OrgKdeNotificationAreaInterface
 )
-QT4_ADD_DBUS_INTERFACE(systemtray_SRCS ${systemtray_xml} systemtray_interface)
+QT4_ADD_DBUS_INTERFACE(systemtray_SRCS ${notificationareaitem_xml} notificationarea_interface)
 
 kde4_add_plugin(plasma_applet_systemtray ${systemtray_SRCS})
 include_directories(${CMAKE_SOURCE_DIR})

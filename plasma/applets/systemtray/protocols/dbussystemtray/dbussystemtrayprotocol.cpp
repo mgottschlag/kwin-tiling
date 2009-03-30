@@ -31,8 +31,6 @@
 namespace SystemTray
 {
 
-static const char *engineName = "traybus";
-
 DBusSystemTrayProtocol::DBusSystemTrayProtocol(QObject *parent)
     : Protocol(parent),
       m_dbus(QDBusConnection::sessionBus())
@@ -58,7 +56,7 @@ void DBusSystemTrayProtocol::init()
         connect(dbusInterface, SIGNAL(serviceOwnerChanged(QString,QString,QString)),
            this, SLOT(serviceChange(QString,QString,QString)));
 
-        registerWatcher("org.kde.SystemTrayDaemon");
+        registerWatcher("org.kde.NotificationAreaWatcher");
     }
 }
 
@@ -94,15 +92,15 @@ void DBusSystemTrayProtocol::cleanupTask(QString typeId)
 
 void DBusSystemTrayProtocol::initRegisteredServices()
 {
-    QString interface("org.kde.SystemTrayDaemon");
-    org::kde::SystemtrayDaemon sysTrayDaemon(interface, "/SystemTrayWatcher",
+    QString interface("org.kde.NotificationAreaWatcher");
+    org::kde::NotificationAreaWatcher notificationAreaWatcher(interface, "/NotificationAreaWatcher",
                                               QDBusConnection::sessionBus());
-    if (sysTrayDaemon.isValid()) {
-        foreach (QString service, sysTrayDaemon.registeredServices().value()) {
+    if (notificationAreaWatcher.isValid()) {
+        foreach (QString service, notificationAreaWatcher.registeredServices().value()) {
             newTask(service);
         }
     } else {
-        kDebug()<<"System tray daemon not reachable";
+        kDebug()<<"Notification area watcher not reachable";
     }
 }
 
@@ -124,15 +122,15 @@ void DBusSystemTrayProtocol::serviceChange(const QString& name,
 void DBusSystemTrayProtocol::registerWatcher(const QString& service)
 {
     kDebug()<<"service appeared"<<service;
-    if (service == "org.kde.SystemTrayDaemon") {
-        QString interface("org.kde.SystemTrayDaemon");
-        m_sysTrayDaemon = new org::kde::SystemtrayDaemon(interface, "/SystemTrayWatcher",
+    if (service == "org.kde.NotificationAreaWatcher") {
+        QString interface("org.kde.NotificationAreaWatcher");
+        m_notificationAreaWatcher = new org::kde::NotificationAreaWatcher(interface, "/NotificationAreaWatcher",
                                                  QDBusConnection::sessionBus());
-        if (m_sysTrayDaemon->isValid()) {
-            connect(m_sysTrayDaemon, SIGNAL(serviceRegistered(const QString&)), this, SLOT(serviceRegistered(const QString &)));
-            connect(m_sysTrayDaemon, SIGNAL(serviceUnregistered(const QString&)), this, SLOT(serviceUnregistered(const QString&)));
+        if (m_notificationAreaWatcher->isValid()) {
+            connect(m_notificationAreaWatcher, SIGNAL(serviceRegistered(const QString&)), this, SLOT(serviceRegistered(const QString &)));
+            connect(m_notificationAreaWatcher, SIGNAL(serviceUnregistered(const QString&)), this, SLOT(serviceUnregistered(const QString&)));
 
-            foreach (QString service, m_sysTrayDaemon->registeredServices().value()) {
+            foreach (QString service, m_notificationAreaWatcher->registeredServices().value()) {
                 newTask(service);
             }
         } else {
@@ -143,11 +141,11 @@ void DBusSystemTrayProtocol::registerWatcher(const QString& service)
 
 void DBusSystemTrayProtocol::unregisterWatcher(const QString& service)
 {
-    if (service == "org.kde.SystemTrayDaemon") {
-        kDebug()<<"org.kde.SystemTrayDaemon disappeared";
+    if (service == "org.kde.NotificationAreaWatcher") {
+        kDebug()<<"org.kde.NotificationAreaWatcher disappeared";
 
-        disconnect(m_sysTrayDaemon, SIGNAL(serviceRegistered(const QString&)), this, SLOT(serviceRegistered(const QString &)));
-        disconnect(m_sysTrayDaemon, SIGNAL(serviceUnregistered(const QString&)), this, SLOT(serviceUnregistered(const QString&)));
+        disconnect(m_notificationAreaWatcher, SIGNAL(serviceRegistered(const QString&)), this, SLOT(serviceRegistered(const QString &)));
+        disconnect(m_notificationAreaWatcher, SIGNAL(serviceUnregistered(const QString&)), this, SLOT(serviceUnregistered(const QString&)));
 
         foreach (DBusSystemTrayTask *task, m_tasks) {
             emit task->destroyed(task);

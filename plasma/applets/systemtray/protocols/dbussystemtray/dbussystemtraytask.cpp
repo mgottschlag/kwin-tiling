@@ -19,7 +19,7 @@
  ***************************************************************************/
 
 #include "dbussystemtraytask.h"
-#include "systemtray_interface.h"
+#include "notificationarea_interface.h"
 #include "systemtraytypes.h"
 
 #include <QGraphicsWidget>
@@ -89,7 +89,7 @@ public:
     bool blink;
     QList<Plasma::IconWidget *>iconWidgets;
     Plasma::ToolTipContent tooltipData;
-    org::kde::SystemTray *systemTrayIcon;
+    org::kde::NotificationAreaItem *notificationAreaItemInterface;
 };
 
 
@@ -103,16 +103,17 @@ DBusSystemTrayTask::DBusSystemTrayTask(const QString &service)
 
     d->name = service;
 
-    d->systemTrayIcon = new org::kde::SystemTray(service, "/SystemTray",
+    d->notificationAreaItemInterface = new org::kde::NotificationAreaItem(service, "/NotificationAreaItem",
                                                  QDBusConnection::sessionBus());
-    d->title = d->systemTrayIcon->title();
-    d->category = (Category)metaObject()->enumerator(metaObject()->indexOfEnumerator("Category")).keyToValue(d->systemTrayIcon->category().toLatin1());
+    d->notificationAreaItemInterface->title();
+
+    d->category = (Category)metaObject()->enumerator(metaObject()->indexOfEnumerator("Category")).keyToValue(d->notificationAreaItemInterface->category().toLatin1());
 
 
-    connect(d->systemTrayIcon, SIGNAL(newIcon()), this, SLOT(syncIcon()));
-    connect(d->systemTrayIcon, SIGNAL(newAttentionIcon()), this, SLOT(syncAttentionIcon()));
-    connect(d->systemTrayIcon, SIGNAL(newTooltip()), this, SLOT(syncTooltip()));
-    connect(d->systemTrayIcon, SIGNAL(newStatus(QString)), this, SLOT(syncStatus(QString)));
+    connect(d->notificationAreaItemInterface, SIGNAL(newIcon()), this, SLOT(syncIcon()));
+    connect(d->notificationAreaItemInterface, SIGNAL(newAttentionIcon()), this, SLOT(syncAttentionIcon()));
+    connect(d->notificationAreaItemInterface, SIGNAL(newTooltip()), this, SLOT(syncTooltip()));
+    connect(d->notificationAreaItemInterface, SIGNAL(newStatus(QString)), this, SLOT(syncStatus(QString)));
 }
 
 
@@ -132,7 +133,7 @@ QGraphicsWidget* DBusSystemTrayTask::createWidget(Plasma::Applet *host)
     iconWidget->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
     iconWidget->setPreferredSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
 
-    connect(iconWidget, SIGNAL(clicked()), d->systemTrayIcon, SLOT(activate()));
+    connect(iconWidget, SIGNAL(clicked()), d->notificationAreaItemInterface, SLOT(activate()));
     iconWidget->installEventFilter(this);
 
     connect(iconWidget, SIGNAL(destroyed(QObject *)), this, SLOT(iconDestroyed(QObject *)));
@@ -182,7 +183,7 @@ bool DBusSystemTrayTask::eventFilter(QObject *watched, QEvent *event)
     Plasma::IconWidget *iw = qobject_cast<Plasma::IconWidget *>(watched);
     if (d->iconWidgets.contains(iw) && event->type() == QEvent::GraphicsSceneContextMenu) {
         QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
-        d->systemTrayIcon->contextMenu(me->screenPos().x(), me->screenPos().y());
+        d->notificationAreaItemInterface->contextMenu(me->screenPos().x(), me->screenPos().y());
         return true;
     }
     return false;
@@ -204,7 +205,7 @@ void DBusSystemTrayTaskPrivate::refresh()
     syncAttentionIcon();
     syncMovie();
     syncTooltip();
-    syncStatus(systemTrayIcon->status());
+    syncStatus(notificationAreaItemInterface->status());
 }
 
 QPixmap DBusSystemTrayTaskPrivate::iconDataToPixmap(const Icon &icon) const
@@ -217,10 +218,10 @@ QPixmap DBusSystemTrayTaskPrivate::iconDataToPixmap(const Icon &icon) const
 //normal icon
 void DBusSystemTrayTaskPrivate::syncIcon()
 {
-    if (systemTrayIcon->icon().length() > 0) {
-        icon = KIcon(systemTrayIcon->icon());
+    if (notificationAreaItemInterface->icon().length() > 0) {
+        icon = KIcon(notificationAreaItemInterface->icon());
     } else {
-        icon = iconDataToPixmap(systemTrayIcon->image());
+        icon = iconDataToPixmap(notificationAreaItemInterface->image());
     }
 
     if (status != DBusSystemTrayTask::NeedsAttention) {
@@ -235,10 +236,10 @@ void DBusSystemTrayTaskPrivate::syncIcon()
 
 void DBusSystemTrayTaskPrivate::syncAttentionIcon()
 {
-    if (systemTrayIcon->attentionIcon().length() > 0) {
-        attentionIcon = KIcon(systemTrayIcon->attentionIcon());
+    if (notificationAreaItemInterface->attentionIcon().length() > 0) {
+        attentionIcon = KIcon(notificationAreaItemInterface->attentionIcon());
     } else {
-        attentionIcon = iconDataToPixmap(systemTrayIcon->attentionImage());
+        attentionIcon = iconDataToPixmap(notificationAreaItemInterface->attentionImage());
     }
 }
 
@@ -258,7 +259,7 @@ void DBusSystemTrayTaskPrivate::blinkAttention()
 
 void DBusSystemTrayTaskPrivate::syncMovie()
 {
-    IconVector movieData = systemTrayIcon->attentionMovie();
+    IconVector movieData = notificationAreaItemInterface->attentionMovie();
     movie = QVector<QPixmap>(movieData.size());
 
     if (!movieData.isEmpty()) {
@@ -281,7 +282,7 @@ void DBusSystemTrayTaskPrivate::updateMovieFrame()
 
 void DBusSystemTrayTaskPrivate::syncTooltip()
 {
-    if (systemTrayIcon->tooltipTitle().isEmpty()) {
+    if (notificationAreaItemInterface->tooltipTitle().isEmpty()) {
         foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
             Plasma::ToolTipManager::self()->clearContent(iconWidget);
         }
@@ -289,14 +290,14 @@ void DBusSystemTrayTaskPrivate::syncTooltip()
     }
 
     QIcon tooltipIcon;
-    if (systemTrayIcon->tooltipIcon().length() > 0) {
-        tooltipIcon = KIcon(systemTrayIcon->tooltipIcon());
+    if (notificationAreaItemInterface->tooltipIcon().length() > 0) {
+        tooltipIcon = KIcon(notificationAreaItemInterface->tooltipIcon());
     } else {
-        tooltipIcon = iconDataToPixmap(systemTrayIcon->tooltipImage());
+        tooltipIcon = iconDataToPixmap(notificationAreaItemInterface->tooltipImage());
     }
 
-    tooltipData.setMainText(systemTrayIcon->tooltipTitle());
-    tooltipData.setSubText(systemTrayIcon->tooltipSubTitle());
+    tooltipData.setMainText(notificationAreaItemInterface->tooltipTitle());
+    tooltipData.setSubText(notificationAreaItemInterface->tooltipSubTitle());
     tooltipData.setImage(tooltipIcon);
     foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
         Plasma::ToolTipManager::self()->setContent(iconWidget, tooltipData);

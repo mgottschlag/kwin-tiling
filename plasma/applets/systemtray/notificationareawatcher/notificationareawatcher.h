@@ -17,8 +17,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef SYSTEMTRAYDAEMON
-#define SYSTEMTRAYDAEMON
+#ifndef NOTIFICATIONAREAWATCHER
+#define NOTIFICATIONAREAWATCHER
 
 #include <kdedmodule.h>
 
@@ -27,12 +27,12 @@
 
 class QDBusConnectionInterface;
 
-class SystemTrayDaemon : public KDEDModule
+class NotificationAreaWatcher : public KDEDModule
 {
 Q_OBJECT
 public:
-    SystemTrayDaemon(QObject *parent, const QList<QVariant>&);
-    ~SystemTrayDaemon();
+    NotificationAreaWatcher(QObject *parent, const QList<QVariant>&);
+    ~NotificationAreaWatcher();
 
 public Q_SLOTS:
     void registerService(const QString &service);

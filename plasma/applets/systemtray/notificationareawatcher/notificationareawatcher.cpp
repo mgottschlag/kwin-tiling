@@ -17,7 +17,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#include "systemtraydaemon.h"
+#include "notificationareawatcher.h"
 
 #include <QDBusConnection>
 
@@ -27,49 +27,49 @@
 
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
-#include "systemtraydaemonadaptor.h"
-#include "systemtray_interface.h"
+#include "notificationareawatcheradaptor.h"
+#include "notificationarea_interface.h"
 
 
 static inline KAboutData aboutData()
 {
-    return KAboutData("systemtraydaemon", 0, ki18n("systemtraydaemon"), KDE_VERSION_STRING);
+    return KAboutData("notificationareawatcher", 0, ki18n("notificationareawatcher"), KDE_VERSION_STRING);
 }
 
-K_PLUGIN_FACTORY(SystemTrayDaemonFactory,
-                 registerPlugin<SystemTrayDaemon>();
+K_PLUGIN_FACTORY(NotificationAreaWatcherFactory,
+                 registerPlugin<NotificationAreaWatcher>();
     )
-K_EXPORT_PLUGIN(SystemTrayDaemonFactory(aboutData()))
+K_EXPORT_PLUGIN(NotificationAreaWatcherFactory(aboutData()))
 
-SystemTrayDaemon::SystemTrayDaemon(QObject *parent, const QList<QVariant>&)
+NotificationAreaWatcher::NotificationAreaWatcher(QObject *parent, const QList<QVariant>&)
       : KDEDModule(parent)
 {
-    setModuleName("systemtraydaemon");
-    new SystemtrayDaemonAdaptor(this);
+    setModuleName("NotificationAreaWatcher");
+    new NotificationAreaWatcherAdaptor(this);
     QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.registerService("org.kde.SystemTrayDaemon");
-    dbus.registerObject("/SystemTrayWatcher", this);
+    dbus.registerService("org.kde.NotificationAreaWatcher");
+    dbus.registerObject("/NotificationAreaWatcher", this);
     m_dbusInterface = dbus.interface();
 
     connect(m_dbusInterface, SIGNAL(serviceOwnerChanged(QString,QString,QString)),
            this, SLOT(serviceChange(QString,QString,QString)));
 }
 
-SystemTrayDaemon::~SystemTrayDaemon()
+NotificationAreaWatcher::~NotificationAreaWatcher()
 {
     QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.unregisterService("org.kde.SystemTrayDaemon");
+    dbus.unregisterService("org.kde.NotificationAreaWatcher");
 }
 
 
-void SystemTrayDaemon::registerService(const QString &service)
+void NotificationAreaWatcher::registerService(const QString &service)
 {
     if (m_dbusInterface->isServiceRegistered(service).value() &&
         !m_registeredServices.contains(service)) {
         kDebug()<<"Registering"<<service<<"to system tray";
 
         //check if the service has registered a SystemTray object
-        org::kde::SystemTray trayclient(service, "/SystemTray",
+        org::kde::NotificationAreaItem trayclient(service, "/NotificationAreaItem",
                                         QDBusConnection::sessionBus());
         if (trayclient.isValid()) {
             m_registeredServices.append(service);
@@ -78,13 +78,13 @@ void SystemTrayDaemon::registerService(const QString &service)
     }
 }
 
-QStringList SystemTrayDaemon::registeredServices() const
+QStringList NotificationAreaWatcher::registeredServices() const
 {
     return m_registeredServices;
 }
 
 
-void SystemTrayDaemon::serviceChange(const QString& name,
+void NotificationAreaWatcher::serviceChange(const QString& name,
                                 const QString& oldOwner,
                                 const QString& newOwner)
 {
@@ -96,4 +96,4 @@ void SystemTrayDaemon::serviceChange(const QString& name,
     }
 }
 
-#include "systemtraydaemon.moc"
+#include "notificationareawatcher.moc"

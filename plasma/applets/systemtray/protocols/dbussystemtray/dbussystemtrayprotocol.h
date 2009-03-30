@@ -22,7 +22,7 @@
 
 #include "../../core/protocol.h"
 
-#include "systemtraydaemon_interface.h"
+#include "notificationareawatcher_interface.h"
 
 #include <QHash>
 
@@ -60,7 +60,7 @@ protected Q_SLOTS:
 private:
     QDBusConnection m_dbus;
     QHash<QString, DBusSystemTrayTask*> m_tasks;
-    org::kde::SystemtrayDaemon *m_sysTrayDaemon;
+    org::kde::NotificationAreaWatcher *m_notificationAreaWatcher;
 };
 
 }

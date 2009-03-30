@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Service
+Name=KDED Notification area watcher
+Comment=Keep track of applications that want to use the D-Bus based notification area
+
+X-KDE-ServiceTypes=KDEDModule
+X-KDE-Library=notificationareawatcher
+X-KDE-DBus-ModuleName=notificationareawatcher
+X-KDE-Kded-autoload=true
+X-KDE-Kded-load-on-demand=true
