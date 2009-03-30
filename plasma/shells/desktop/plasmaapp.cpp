@@ -63,6 +63,7 @@
 #include "appletbrowser.h"
 #include "appadaptor.h"
 #include "backgrounddialog.h"
+#include "checkbox.h"
 #include "desktopcorona.h"
 #include "desktopview.h"
 #include "panelview.h"
@@ -862,7 +863,7 @@ void PlasmaApp::setControllerVisible(bool show)
             layout->addWidget(actionButton);
         }
 
-        QCheckBox *perVirtualDesktopViews = new QCheckBox(m_controllerDialog);
+        CheckBox *perVirtualDesktopViews = new CheckBox(m_controllerDialog);
         layout->addWidget(perVirtualDesktopViews);
         perVirtualDesktopViews->setChecked(AppSettings::perVirtualDesktopViews());
         perVirtualDesktopViews->setText(i18n("Different activity for each desktop"));

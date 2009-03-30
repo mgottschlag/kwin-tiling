@@ -23,6 +23,7 @@ kde4_add_ui_files (
 
 set(plasma_SRCS
     backgrounddialog.cpp
+    checkbox.cpp
     dashboardview.cpp
     desktopcorona.cpp
     desktopview.cpp
