@@ -35,6 +35,8 @@
 #include <kstringhandler.h>
 #include <kmacroexpander.h>
 #include <kglobal.h>
+#include <kmimetypetrader.h>
+#include <kmimetype.h>
 
 #include "klippersettings.h"
 #include "urlgrabber.h"
@@ -108,6 +110,24 @@ const ActionList& URLGrabber::matchingActions( const QString& clipData )
 {
     m_myMatches.clear();
 
+    // try to figure out if clipData contains a filename
+    KMimeType::Ptr mimetype = KMimeType::findByUrl( KUrl( clipData ), 0,
+                                                    false,
+                                                    true /*fast mode*/ );
+
+    // let's see if we found some reasonable mimetype.
+    // If we do we'll populate menu with actions for apps
+    // that can handle that mimetype
+    if ( mimetype->name() != "application/octet-stream" ) {
+        ClipAction* action = new ClipAction( QString(), mimetype->comment() );
+        KService::List lst = KMimeTypeTrader::self()->query( mimetype->name(), "Application" );
+        foreach( KService::Ptr service, lst ) {
+            action->addCommand( service->exec(), service->name(), true, service->icon() );
+        }
+        if ( !lst.isEmpty() )
+            m_myMatches.append( action );
+    }
+
     foreach (ClipAction* action, m_myActions) {
         if ( action->matches( clipData ) )
             m_myMatches.append( action );
@@ -139,7 +159,6 @@ void URLGrabber::actionMenu( bool wm_class_check )
         return;
 
     ActionList matchingActionsList = matchingActions( m_myClipData );
-    ClipCommand *command = 0L;
 
     if (!matchingActionsList.isEmpty()) {
         // don't react on konqi's/netscape's urls...
@@ -155,13 +174,10 @@ void URLGrabber::actionMenu( bool wm_class_check )
 
         connect(m_myMenu, SIGNAL(triggered(QAction*)), SLOT(slotItemSelected(QAction*)));
 
-        foreach (ClipAction* action, matchingActionsList) {
-            QListIterator<ClipCommand*> it( action->commands() );
-            if ( it.hasNext() )
-                m_myMenu->addTitle(KIcon( "klipper" ),
-                        i18n("%1 - Actions For: %2", action->description(), KStringHandler::csqueeze(m_myClipData, 45)));
-            while (it.hasNext()) {
-                command = it.next();
+        foreach (ClipAction* clipAct, matchingActionsList) {
+            m_myMenu->addTitle(KIcon( "klipper" ),
+                               i18n("%1 - Actions For: %2", clipAct->description(), KStringHandler::csqueeze(m_myClipData, 45)));
+            foreach( ClipCommand* command, clipAct->commands() ) {
                 item = command->description;
                 if ( item.isEmpty() )
                     item = command->command;
@@ -233,6 +249,8 @@ void URLGrabber::execute( const struct ClipCommand *command ) const
     if ( command->isEnabled ) {
         QHash<QChar,QString> map;
         map.insert( 's', m_myClipData );
+        map.insert( 'u', m_myClipData );
+        map.insert( 'U', m_myClipData );
         // commands executed should always have a parent,
         // but a simple check won't hurt...
         if ( command->parent )
