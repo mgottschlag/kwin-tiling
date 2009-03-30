@@ -91,7 +91,7 @@ public:
     static const int BOUNDING_WIDTH = ITEM_SIZE + MARGIN*2;
     static const int BOUNDING_HEIGHT = ITEM_SIZE + MARGIN*2;
     static const int HOVER_TROFF = 4;
-    static const int TIMER_INTERVAL = 80;
+    static const int TIMER_INTERVAL = 40;
 
 signals:
     void indexReleased(int index);
