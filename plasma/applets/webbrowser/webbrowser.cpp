@@ -110,6 +110,7 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
     m_browser = new Plasma::WebView(this);
     m_browser->setPreferredSize(400, 400);
     m_browser->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_browser->setDragToScroll(cg.readEntry("DragToScroll", false));
 
 
     m_layout->addItem(m_browser);
@@ -480,6 +481,7 @@ void WebBrowser::createConfigurationInterface(KConfigDialog *parent)
     ui.autoRefresh->setChecked(m_autoRefresh);
     ui.autoRefreshInterval->setValue(m_autoRefreshInterval);
     updateSpinBoxSuffix(m_autoRefreshInterval);
+    ui.dragToScroll->setChecked(m_browser->dragToScroll());
 }
 
 void WebBrowser::updateSpinBoxSuffix(int interval)
@@ -496,6 +498,8 @@ void WebBrowser::configAccepted()
 
     cg.writeEntry("autoRefresh", m_autoRefresh);
     cg.writeEntry("autoRefreshInterval", m_autoRefreshInterval);
+    cg.writeEntry("DragToScroll", ui.dragToScroll->isChecked());
+    m_browser->setDragToScroll(ui.dragToScroll->isChecked());
 
     if (m_autoRefresh) {
         if (!m_autoRefreshTimer) {
