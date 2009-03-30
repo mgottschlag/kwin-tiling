@@ -33,7 +33,8 @@
 SelectionBar::SelectionBar(QGraphicsWidget *parent)
     : QGraphicsWidget(parent),
       m_frame(new Plasma::FrameSvg(this)),
-      m_animId(0)
+      m_animId(0),
+      m_target(0)
 {
     setCacheMode(DeviceCoordinateCache);
     setZValue(-1000);
@@ -66,15 +67,26 @@ void SelectionBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     m_frame->paintFrame(painter, option->exposedRect, option->exposedRect);
 }
 
-ResultItem *SelectionBar::targetItem()
+void SelectionBar::acquireTarget()
 {
+    if (m_target) {
+        disconnect(m_target, SIGNAL(destroyed(QObject*)), this, SLOT(targetDestroyed()));
+        m_target->removeSceneEventFilter(this);
+    }
+
+    m_target = 0;
     QList<QGraphicsItem *> selection = scene()->selectedItems();
 
     if (selection.count() != 1) {
-        return 0;
+        return;
     }
 
-    return dynamic_cast<ResultItem *>(selection.first());
+    m_target = dynamic_cast<ResultItem *>(selection.first());
+
+    if (m_target) {
+        connect(m_target, SIGNAL(destroyed(QObject*)), this, SLOT(targetDestroyed()));
+        m_target->installSceneEventFilter(this);
+    }
 }
 
 void SelectionBar::movementFinished(QGraphicsItem *movedItem)
@@ -85,13 +97,8 @@ void SelectionBar::movementFinished(QGraphicsItem *movedItem)
 
     m_animId = 0;
 
-    if (!isVisible()) {
-        return;
-    }
-
-    ResultItem *item = targetItem();
-    if (item) {
-        resize(item->size());
+    if (m_target) {
+        resize(m_target->size());
     }
 }
 
@@ -106,15 +113,20 @@ void SelectionBar::disappear()
     hide();
 }
 
+void SelectionBar::targetDestroyed()
+{
+    m_target = 0;
+}
+
 void SelectionBar::itemSelected()
 {
     if (m_animId) {
         Plasma::Animator::self()->stopItemMovement(m_animId);
     }
 
-    ResultItem *item = targetItem();
+    acquireTarget();
 
-    if (!item) {
+    if (!m_target) {
         //TODO: animate the hide
         m_hideTimer->start();
         return;
@@ -122,7 +134,8 @@ void SelectionBar::itemSelected()
 
     m_hideTimer->stop();
 
-    QRectF rect(item->geometry());
+    QRectF rect(m_target->geometry());
+
     if (!isVisible()) {
         resize(rect.size());
         setPos(rect.topLeft());
@@ -147,11 +160,35 @@ QVariant SelectionBar::itemChange(QGraphicsItem::GraphicsItemChange change, cons
             }
         }
         break;
+
         default:
         break;
     }
 
     return QGraphicsWidget::itemChange(change, value);
+}
+
+bool SelectionBar::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
+{
+    if (m_target == watched) {
+        switch (event->type()) {
+            case QEvent::GraphicsSceneResize: {
+                QResizeEvent *resizeEvent = static_cast<QResizeEvent*>(event);
+                //kDebug() << "resizing to" << resizeEvent->oldSize() << resizeEvent->size();
+                resize(resizeEvent->size());
+            }
+            break;
+
+            case QEvent::GraphicsSceneMove:
+                setPos(m_target->pos());
+            break;
+
+            default:
+            break;
+        }
+    }
+
+    return QGraphicsWidget::sceneEventFilter(watched, event);
 }
 
 void SelectionBar::resizeEvent(QGraphicsSceneResizeEvent *event)

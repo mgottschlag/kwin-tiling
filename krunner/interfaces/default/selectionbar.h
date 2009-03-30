@@ -47,20 +47,23 @@ signals:
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
     QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value);
+    bool sceneEventFilter(QGraphicsItem *watched, QEvent *event);
 
 private:
-    ResultItem *targetItem();
+    void acquireTarget();
 
 private slots:
     void itemSelected();
     void movementFinished(QGraphicsItem *item);
     void frameSvgChanged();
     void disappear();
+    void targetDestroyed();
 
 private:
     QTimer *m_hideTimer;
     Plasma::FrameSvg *m_frame;
     int m_animId;
+    ResultItem *m_target;
 };
 
 #endif
