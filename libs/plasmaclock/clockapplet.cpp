@@ -34,6 +34,7 @@
 #include <QtDBus/QDBusPendingCall>
 #include <QtCore/QDate>
 #include <QtCore/QTimer>
+#include <QtDBus/QDBusConnectionInterface>
 
 #include <KColorScheme>
 #include <KConfigDialog>
@@ -46,7 +47,6 @@
 #include <KTimeZone>
 #include <KToolInvocation>
 #include <KMessageBox>
-#include <QDBusConnectionInterface>
 
 #include <Plasma/Containment>
 #include <Plasma/Corona>
