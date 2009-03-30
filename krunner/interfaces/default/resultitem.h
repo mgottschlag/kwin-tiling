@@ -31,7 +31,6 @@ class QGraphicsLinearLayout;
 
 namespace Plasma
 {
-    class FrameSvg;
     class RunnerManager;
 } // namespace Plasma
 
@@ -60,9 +59,9 @@ class ResultItem : public QGraphicsWidget
     Q_OBJECT
 
 public:
-    ResultItem(const Plasma::QueryMatch &match, QGraphicsWidget *parent, Plasma::FrameSvg *frame);
+    ResultItem(const Plasma::QueryMatch &match, QGraphicsWidget *parent);
 
-    void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
     void setMatch(const Plasma::QueryMatch &match);
 
     // getters
@@ -80,6 +79,7 @@ public:
     void remove();
     void run(Plasma::RunnerManager *manager);
     bool isQueryPrototype() const;
+    QPointF targetPos() const;
 
     static bool compare(const ResultItem *one, const ResultItem *other);
     bool operator<(const ResultItem &other) const;
@@ -91,6 +91,7 @@ public:
     static const int BOUNDING_WIDTH = ITEM_SIZE + MARGIN*2;
     static const int BOUNDING_HEIGHT = ITEM_SIZE + MARGIN*2;
     static const int HOVER_TROFF = 4;
+    static const int TIMER_INTERVAL = 80;
 
 signals:
     void indexReleased(int index);
@@ -107,24 +108,22 @@ protected:
     void focusOutEvent(QFocusEvent *event);
     void keyPressEvent(QKeyEvent *event);
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+    void changeEvent(QEvent *event);
 
 private:
     // must always call remove()
     ~ResultItem();
 
-    QPointF targetPos() const;
     void appear();
     void move();
 
 private:
     Plasma::QueryMatch m_match;
-    Plasma::FrameSvg *m_frame;
     // static description
     QIcon m_icon;
     // dyn params
     QBrush m_bgBrush;
     QPixmap m_fadeout;
-    qreal m_tempTransp;
     int m_highlight;
     int m_index;
     int m_highlightTimerId;

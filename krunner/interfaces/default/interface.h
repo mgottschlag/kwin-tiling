@@ -66,7 +66,6 @@ class Interface : public KRunnerDialog
         void run(ResultItem *item);
         void runDefaultResultItem();
         void queryTextEdited(const QString &query);
-        void updateDescriptionLabel(ResultItem *item);
         void matchCountChanged(int count);
         void hideResultsArea();
         void themeUpdated();
@@ -83,7 +82,6 @@ class Interface : public KRunnerDialog
         QWidget *m_buttonContainer;
         QVBoxLayout* m_layout;
         QHBoxLayout* m_statusLayout;
-        QLabel *m_descriptionLabel;
         QLabel *m_previousPage;
         QLabel *m_nextPage;
         QToolButton *m_configButton;

@@ -152,10 +152,6 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     bottomLayout->insertWidget(2, m_searchTerm, 10);
 
     m_statusLayout = new QHBoxLayout();
-    m_descriptionLabel = new QLabel(w);
-    m_descriptionLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
-    m_descriptionLabel->hide();
-    m_statusLayout->addWidget(m_descriptionLabel, 10, Qt::AlignLeft | Qt::AlignTop);
 
     m_previousPage = new QLabel(w);
     m_previousPage->setText("<a href=\"prev\">&lt;&lt;</a>");
@@ -191,9 +187,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_resultsView->setMinimumSize(m_resultsScene->minimumSizeHint());
     connect(m_resultsScene, SIGNAL(matchCountChanged(int)), this, SLOT(matchCountChanged(int)));
     connect(m_resultsScene, SIGNAL(itemActivated(ResultItem *)), this, SLOT(run(ResultItem *)));
-    connect(m_resultsScene, SIGNAL(itemHoverEnter(ResultItem *)), this, SLOT(updateDescriptionLabel(ResultItem *)));
     connect(m_resultsScene, SIGNAL(selectionChanged()), this, SLOT(itemSelected()));
-    connect(m_resultsScene, SIGNAL(itemHoverLeave(ResultItem *)), m_descriptionLabel, SLOT(clear()));
 
     m_layout->addWidget(m_resultsView);
 
@@ -278,11 +272,10 @@ void Interface::themeUpdated()
     m_closeButton->setStyleSheet(buttonStyleSheet);
     //kDebug() << "stylesheet is" << buttonStyleSheet;
 
-    QPalette p = m_descriptionLabel->palette();
+    QPalette p = m_previousPage->palette();
     p.setColor(QPalette::WindowText, theme->color(Plasma::Theme::TextColor));
     p.setColor(QPalette::Link, theme->color(Plasma::Theme::TextColor));
     p.setColor(QPalette::LinkVisited, theme->color(Plasma::Theme::TextColor));
-    m_descriptionLabel->setPalette(p);
     m_previousPage->setPalette(p);
     m_nextPage->setPalette(p);
 
@@ -303,9 +296,6 @@ void Interface::display(const QString &term)
     m_searchTerm->setFocus();
 
     KWindowSystem::setOnDesktop(winId(), KWindowSystem::currentDesktop());
-
-    // TODO: set a nice welcome string when the string freeze lifts
-    m_descriptionLabel->clear();
 
     show();
     resetInterface();
@@ -356,8 +346,6 @@ void Interface::resetInterface()
     setStaticQueryMode(false);
     m_delayedRun = false;
     m_searchTerm->setCurrentItem(QString(), true, 0);
-    m_descriptionLabel->clear();
-    m_descriptionLabel->hide();
     m_previousPage->hide();
     m_nextPage->hide();
     m_resultsScene->clearQuery();
@@ -426,7 +414,6 @@ void Interface::closeEvent(QCloseEvent *e)
     } else {
         m_delayedRun = false;
         m_resultsView->hide();
-        m_descriptionLabel->hide();
         m_previousPage->hide();
         m_nextPage->hide();
         m_dividerLine->hide();
@@ -500,21 +487,6 @@ void Interface::queryTextEdited(const QString &query)
     }
 }
 
-void Interface::updateDescriptionLabel(ResultItem *item)
-{
-    // we want it always visible once we start showing it
-    // so that the interface isn't jumping all around
-    m_descriptionLabel->setVisible(m_resultsView->isVisible());
-    m_dividerLine->setVisible(m_resultsView->isVisible());
-    if (!item) {
-        m_descriptionLabel->setText(" ");
-    } else if (item->description().isEmpty()) {
-        m_descriptionLabel->setText(item->name());
-    } else {
-        m_descriptionLabel->setText(i18n("%1: %2",item->name() ,item->description()));
-    }
-}
-
 void Interface::matchCountChanged(int count)
 {
     m_queryRunning = false;
@@ -534,6 +506,7 @@ void Interface::matchCountChanged(int count)
     if (show) {
         //kDebug() << "showing!";
         m_resultsView->show();
+        m_dividerLine->show();
         setMinimumSize(QSize(MIN_WIDTH, 0));
         adjustSize();
     } else {
@@ -546,8 +519,6 @@ void Interface::matchCountChanged(int count)
 void Interface::hideResultsArea()
 {
     m_resultsView->hide();
-    m_descriptionLabel->hide();
-    m_descriptionLabel->clear();
     m_previousPage->hide();
     m_nextPage->hide();
     m_dividerLine->hide();

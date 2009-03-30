@@ -33,10 +33,10 @@
 namespace Plasma
 {
     class RunnerManager;
-    class FrameSvg;
 }
 
 class ResultItem;
+class SelectionBar;
 
 class ResultScene : public QGraphicsScene
 {
@@ -74,9 +74,13 @@ class ResultScene : public QGraphicsScene
     private:
         void selectPreviousItem();
         void selectNextItem();
-
         ResultItem* addQueryMatch(const Plasma::QueryMatch &match, bool useAnyId);
 
+    private slots:
+        void clearMatches();
+        void updateItemMargins();
+
+    private:
         Plasma::RunnerManager *m_runnerManager;
 
         QSize       m_size;
@@ -84,12 +88,13 @@ class ResultScene : public QGraphicsScene
 
         QList<ResultItem *>  m_items;
         QMultiMap<QString, ResultItem *>  m_itemsById;
+        SelectionBar *m_selectionBar;
 
         int m_currentIndex;
-        Plasma::FrameSvg *m_frame;
-
-    private slots:
-        void clearMatches();
+        qreal m_itemMarginLeft;
+        qreal m_itemMarginTop;
+        qreal m_itemMarginRight;
+        qreal m_itemMarginBottom;
 };
 
 #endif

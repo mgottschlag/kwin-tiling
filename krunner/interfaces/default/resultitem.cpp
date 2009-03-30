@@ -43,7 +43,6 @@
 #include <Plasma/Plasma>
 #include <Plasma/RunnerManager>
 #include <Plasma/PaintUtils>
-#include <Plasma/FrameSvg>
 
 #define TEXT_AREA_HEIGHT ResultItem::MARGIN + ResultItem::TEXT_MARGIN*2 + ResultItem::s_fontHeight
 //#define NO_GROW_ANIM
@@ -52,12 +51,10 @@ void shadowBlur(QImage &image, int radius, const QColor &color);
 
 int ResultItem::s_fontHeight = 0;
 
-ResultItem::ResultItem(const Plasma::QueryMatch &match, QGraphicsWidget *parent, Plasma::FrameSvg *frame)
+ResultItem::ResultItem(const Plasma::QueryMatch &match, QGraphicsWidget *parent)
     : QGraphicsWidget(parent),
       m_match(0),
-      m_frame(frame),
-      m_tempTransp(1.0),
-      m_highlight(false),
+      m_highlight(0),
       m_index(-1),
       m_highlightTimerId(0)
 {
@@ -66,7 +63,7 @@ ResultItem::ResultItem(const Plasma::QueryMatch &match, QGraphicsWidget *parent,
     setAcceptHoverEvents(true);
     setFocusPolicy(Qt::TabFocus);
     setCacheMode(DeviceCoordinateCache);
-    resize(ITEM_SIZE, ITEM_SIZE + TEXT_AREA_HEIGHT);
+    resize(ITEM_SIZE, ITEM_SIZE);
     setZValue(0);
 
     if (s_fontHeight < 1) {
@@ -85,9 +82,9 @@ ResultItem::~ResultItem()
 
 QPointF ResultItem::targetPos() const
 {
-    const int x = HOVER_TROFF;
+    const int x = 0;
     //TODO: we will want/need something that doesn't rely on a fixed height
-    const int y = m_index * ResultItem::BOUNDING_HEIGHT + HOVER_TROFF;
+    const int y = m_index * ResultItem::BOUNDING_HEIGHT + m_index * HOVER_TROFF;
     //kDebug() << x << y << "for" << index;
     return QPointF(x, y);
 }
@@ -207,29 +204,10 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     bool oldClipping = painter->hasClipping();
     painter->setClipping(false);
 
-    QRectF rect = boundingRect().adjusted(0, 0, 0, -(TEXT_AREA_HEIGHT));
-    QRect iRect = rect.toRect().adjusted(PADDING, PADDING, -PADDING, -PADDING);
+    QRect iRect = contentsRect().toRect();
     QSize iconSize = iRect.size().boundedTo(QSize(32, 32));
-    //kDebug() << PADDING << PADDING;
 
     painter->setRenderHint(QPainter::Antialiasing);
-
-    // Draw background
-    if (isSelected() || m_highlight > 0) {
-        m_frame->resizeFrame(rect.size());
-        m_frame->paintFrame(painter, rect.topLeft());
-    }/* else {
-        m_frame->setElementPrefix("normal");
-    }*/
-
-    if (!hasFocus() && m_tempTransp < 0.9) {
-        painter->setOpacity(m_tempTransp);
-
-        if (!m_highlightTimerId) {
-            m_highlightTimerId = startTimer(40);
-        }
-    }
-
     bool drawMixed = false;
 
     if (hasFocus() || isSelected()) {
@@ -238,36 +216,25 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         // item ... or unless we are over 2 ticks into the higlight anim. complex but it works
         if (((scene() && !scene()->views().isEmpty() && !scene()->views()[0]->hasFocus()) &&
             !(option->state & QStyle::State_MouseOver)) || m_highlight > 2) {
-            painter->drawPixmap(PADDING, PADDING, m_icon.pixmap(iconSize, QIcon::Active));
+            painter->drawPixmap(iRect.topLeft(), m_icon.pixmap(iconSize, QIcon::Active));
         } else {
             drawMixed = true;
-
             ++m_highlight;
-            if (m_highlight == 1) {
-                setGeometry(sceneBoundingRect().adjusted(-1, -1, 1, 1));
-            } else if (m_highlight == 3) {
-                setGeometry(sceneBoundingRect().adjusted(-2, -2, 2, 2));
-            }
 
             if (!m_highlightTimerId) {
-                m_highlightTimerId = startTimer(40);
+                m_highlightTimerId = startTimer(TIMER_INTERVAL);
             }
         }
     } else if (m_highlight > 0) {
         drawMixed = true;
 
         --m_highlight;
-        if (m_highlight == 0) {
-            setGeometry(sceneBoundingRect().adjusted(1, 1, -1, -1));
-        } else if (m_highlight == 2) {
-            setGeometry(sceneBoundingRect().adjusted(2, 2, -2, -2));
-        }
 
         if (!m_highlightTimerId) {
-            m_highlightTimerId = startTimer(40);
+            m_highlightTimerId = startTimer(TIMER_INTERVAL);
         }
     } else {
-        painter->drawPixmap(PADDING, PADDING, m_icon.pixmap(iconSize, QIcon::Disabled));
+        painter->drawPixmap(iRect.topLeft(), m_icon.pixmap(iconSize, QIcon::Disabled));
     }
 
     if (drawMixed) {
@@ -284,12 +251,13 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         qreal activeOpacity = painter->opacity() * factor;
 
         painter->setOpacity(painter->opacity() * (1 - factor));
-        painter->drawPixmap(PADDING, PADDING, m_icon.pixmap(iconSize, QIcon::Disabled));
+        painter->drawPixmap(iRect.topLeft(), m_icon.pixmap(iconSize, QIcon::Disabled));
         painter->setOpacity(activeOpacity);
-        painter->drawPixmap(PADDING, PADDING, m_icon.pixmap(iconSize, QIcon::Active));
+        painter->drawPixmap(iRect.topLeft(), m_icon.pixmap(iconSize, QIcon::Active));
+        painter->setOpacity(1);
     }
 
-    QRect textRect(iRect.topLeft() + QPoint(iconSize.width() + PADDING + TEXT_MARGIN, PADDING),
+    QRect textRect(iRect.topLeft() + QPoint(iconSize.width() + PADDING + TEXT_MARGIN, 0),
                    iRect.bottomRight());
 
     // Draw the text on a pixmap
@@ -302,6 +270,12 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     p.setPen(textColor);
     //TODO: add subtext, make bold, etc...
     p.drawText(pixmap.rect(), Qt::AlignLeft, name());
+    QFont italics = p.font();
+    QFontMetrics italicMetrics(italics);
+    int fontHeight = italicMetrics.height();
+    italics.setItalic(true);
+    p.setFont(italics);
+    p.drawText(pixmap.rect().adjusted(0, fontHeight, 0, 0), Qt::AlignLeft, description());
 
     // Fade the pixmap out at the end
     if (width > pixmap.width()) {
@@ -368,7 +342,6 @@ void ResultItem::timerEvent(QTimerEvent *e)
 {
     Q_UNUSED(e)
 
-    m_tempTransp += 0.1;
     killTimer(m_highlightTimerId);
     m_highlightTimerId = 0;
 
@@ -385,8 +358,11 @@ void ResultItem::focusInEvent(QFocusEvent * event)
     QGraphicsWidget::focusInEvent(event);
     setZValue(1);
 
+    scene()->clearSelection();
+    setSelected(true);
+
     if (!m_highlightTimerId) {
-        m_highlightTimerId = startTimer(40);
+        m_highlightTimerId = startTimer(TIMER_INTERVAL);
     }
 
     emit hoverEnter(this);
@@ -398,7 +374,7 @@ void ResultItem::focusOutEvent(QFocusEvent * event)
     setZValue(0);
 
     if (!m_highlightTimerId) {
-        m_highlightTimerId = startTimer(40);
+        m_highlightTimerId = startTimer(TIMER_INTERVAL);
     }
 
     emit hoverLeave(this);
@@ -416,10 +392,20 @@ void ResultItem::keyPressEvent(QKeyEvent *event)
 QVariant ResultItem::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     if (change == QGraphicsItem::ItemSceneHasChanged && scene()) {
-        resize(scene()->width() - HOVER_TROFF * 2, geometry().height());
+        resize(scene()->width(), geometry().height());
     }
 
     return QGraphicsWidget::itemChange(change, value);
+}
+
+void ResultItem::changeEvent(QEvent *event)
+{
+    QGraphicsWidget::changeEvent(event);
+
+    if (event->type() == QEvent::ContentsRectChange) {
+        qreal left, top, right, bottom;
+        getContentsMargins(&left, &top, &right, &bottom);
+    }
 }
 
 #include "resultitem.moc"

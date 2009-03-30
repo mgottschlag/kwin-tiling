@@ -20,8 +20,8 @@
 *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
 ***************************************************************************/
 
-
 #include "resultscene.h"
+
 #include <QtCore/QDebug>
 #include <QtGui/QKeyEvent>
 #include <QtCore/QMutexLocker>
@@ -36,10 +36,10 @@
 #include <KDE/KLineEdit>
 
 #include <Plasma/AbstractRunner>
-#include <Plasma/FrameSvg>
 #include <Plasma/RunnerManager>
 
 #include "resultitem.h"
+#include "selectionbar.h"
 
 ResultScene::ResultScene(Plasma::RunnerManager *manager, QObject *parent)
     : QGraphicsScene(parent),
@@ -54,22 +54,20 @@ ResultScene::ResultScene(Plasma::RunnerManager *manager, QObject *parent)
     m_clearTimer.setSingleShot(true);
     connect(&m_clearTimer, SIGNAL(timeout()), this, SLOT(clearMatches()));
 
-    m_frame = new Plasma::FrameSvg(this);
+    m_selectionBar = new SelectionBar(0);
+    addItem(m_selectionBar);
+    m_selectionBar->hide();
+    updateItemMargins();
 
-    {
-        // lock because setImagePath uses KSycoca
-        QMutexLocker lock(Plasma::AbstractRunner::bigLock());
-        m_frame->setImagePath("widgets/viewitem");
-    }
-
-    m_frame->setCacheAllRenderedFrames(true);
-    m_frame->setElementPrefix("hover");
+    connect(m_selectionBar, SIGNAL(graphicsChanged()), this, SLOT(updateItemMargins()));
     //QColor bg(255, 255, 255, 126);
     //setBackgroundBrush(bg);
 }
 
 ResultScene::~ResultScene()
 {
+    clearMatches();
+    delete m_selectionBar;
 }
 
 QSize ResultScene::minimumSizeHint() const
@@ -183,8 +181,10 @@ ResultItem* ResultScene::addQueryMatch(const Plasma::QueryMatch &match, bool use
         //kDebug() << "did not find for" << match.id();
         if (useAnyId) {
             //kDebug() << "creating for" << match.id();
-            item = new ResultItem(match, 0, m_frame);
+            item = new ResultItem(match, 0);
             addItem(item);
+            item->setContentsMargins(m_itemMarginLeft, m_itemMarginTop,
+                                     m_itemMarginRight, m_itemMarginBottom);
             item->hide();
             connect(item, SIGNAL(activated(ResultItem*)), this, SIGNAL(itemActivated(ResultItem*)));
             connect(item, SIGNAL(hoverEnter(ResultItem*)), this, SIGNAL(itemHoverEnter(ResultItem*)));
@@ -316,6 +316,17 @@ void ResultScene::run(ResultItem *item) const
 Plasma::RunnerManager* ResultScene::manager() const
 {
     return m_runnerManager;
+}
+
+void ResultScene::updateItemMargins()
+{
+    m_selectionBar->getMargins(m_itemMarginLeft, m_itemMarginTop,
+                               m_itemMarginRight, m_itemMarginBottom);
+
+    foreach (ResultItem *item, m_items) {
+        item->setContentsMargins(m_itemMarginLeft, m_itemMarginTop,
+                                m_itemMarginRight, m_itemMarginBottom);
+    }
 }
 
 #include "resultscene.moc"
