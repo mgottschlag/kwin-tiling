@@ -41,6 +41,7 @@ set(kscreensaver_dbusXML dbus/org.kde.screensaver.xml)
 set(default_interface_SRCS
    interfaces/default/resultitem.cpp
    interfaces/default/resultscene.cpp
+   interfaces/default/selectionbar.cpp
    interfaces/default/interface.cpp)
 
 set(quicksand_interface_SRCS
