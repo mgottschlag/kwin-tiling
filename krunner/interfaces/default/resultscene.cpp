@@ -277,9 +277,9 @@ void ResultScene::selectPreviousItem()
 void ResultScene::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
     if (event->delta() > 0) {
-        selectPreviousItem();
-    } else {
         selectNextItem();
+    } else {
+        selectPreviousItem();
     }
 }
 
