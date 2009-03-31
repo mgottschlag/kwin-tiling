@@ -193,13 +193,13 @@ KDModule::KDModule( QWidget *parent, const QVariantList & )
 	tab = new QTabWidget( this );
 
 	general = new KDMGeneralWidget( this );
-	tab->addTab( general, i18n("General (&1)") );
+	tab->addTab( general, i18n("&General") );
 	connect( general, SIGNAL(changed()), SLOT(changed()) );
 	connect( general, SIGNAL(useThemeChanged( bool )),
 	         SLOT(slotUseThemeChanged( bool )) );
 
 	dialog_stack = new QStackedWidget( this );
-	tab->addTab( dialog_stack, i18n("Dialog (&2)") );
+	tab->addTab( dialog_stack, i18n("&Dialog") );
 	dialog = new KDMDialogWidget( dialog_stack );
 	dialog_stack->addWidget( dialog );
 	connect( dialog, SIGNAL(changed()), SLOT(changed()) );
@@ -210,7 +210,7 @@ KDModule::KDModule( QWidget *parent, const QVariantList & )
 	dialog_stack->addWidget( lbl );
 
 	background_stack = new QStackedWidget( this );
-	tab->addTab( background_stack, i18n("Background (&3)") );
+	tab->addTab( background_stack, i18n("&Background") );
 	background = new KBackground( background_stack );
 	background_stack->addWidget( background );
 	connect( background, SIGNAL(changed()), SLOT(changed()) );
@@ -221,7 +221,7 @@ KDModule::KDModule( QWidget *parent, const QVariantList & )
 	background_stack->addWidget( lbl );
 
 	theme_stack = new QStackedWidget( this );
-	tab->addTab( theme_stack, i18n("Theme (&4)") );
+	tab->addTab( theme_stack, i18n("&Theme") );
 	lbl = new QLabel(
 		i18n("Themed mode is disabled. See \"General\" tab."),
 		theme_stack );
@@ -232,11 +232,11 @@ KDModule::KDModule( QWidget *parent, const QVariantList & )
 	connect( theme, SIGNAL(changed()), SLOT(changed()) );
 
 	sessions = new KDMSessionsWidget( this );
-	tab->addTab( sessions, i18n("Shutdown (&5)") );
+	tab->addTab( sessions, i18n("&Shutdown") );
 	connect( sessions, SIGNAL(changed()), SLOT(changed()) );
 
 	users = new KDMUsersWidget( this );
-	tab->addTab( users, i18n("Users (&6)") );
+	tab->addTab( users, i18n("&Users") );
 	connect( users, SIGNAL(changed()), SLOT(changed()) );
 	connect( users, SIGNAL(setMinMaxUID( int,int )), SLOT(slotMinMaxUID( int,int )) );
 	connect( this, SIGNAL(addUsers( const QMap<QString,int> & )),
@@ -246,7 +246,7 @@ KDModule::KDModule( QWidget *parent, const QVariantList & )
 	connect( this, SIGNAL(clearUsers()), users, SLOT(slotClearUsers()) );
 
 	convenience = new KDMConvenienceWidget( this );
-	tab->addTab( convenience, i18n("Convenience (&7)") );
+	tab->addTab( convenience, i18n("&Convenience") );
 	connect( convenience, SIGNAL(changed()), SLOT(changed()) );
 	connect( this, SIGNAL(addUsers( const QMap<QString,int> & )),
 	         convenience, SLOT(slotAddUsers( const QMap<QString,int> & )) );
