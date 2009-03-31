@@ -1,7 +1,7 @@
 // -*- Mode: C++; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 8; -*-
 /* This file is part of the KDE project
    Copyright (C) 2000 by Carsten Pfeiffer <pfeiffer@kde.org>
-   Copyright (C) 2008 by Dmitry Suzdalev <dimsuz@gmail.com>
+   Copyright (C) 2008-2009 by Dmitry Suzdalev <dimsuz@gmail.com>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -65,8 +65,6 @@ ActionsWidget::ActionsWidget(QWidget* parent)
 #endif
 
     connect(m_ui.kcfg_ActionList, SIGNAL(itemSelectionChanged()), SLOT(onSelectionChanged()));
-    connect(m_ui.kcfg_ActionList, SIGNAL(customContextMenuRequested(const QPoint &)), SLOT(onContextMenu(const QPoint &)));
-    connect(m_ui.kcfg_ActionList, SIGNAL(itemChanged(QTreeWidgetItem*, int)), SLOT(onItemChanged(QTreeWidgetItem*, int)));
 
     connect(m_ui.pbAddAction, SIGNAL(clicked()), SLOT(onAddAction()));
     connect(m_ui.pbEditAction, SIGNAL(clicked()), SLOT(onEditAction()));
@@ -78,30 +76,62 @@ ActionsWidget::ActionsWidget(QWidget* parent)
 
 void ActionsWidget::setActionList(const ActionList& list)
 {
-    m_ui.kcfg_ActionList->clear();
+    qDeleteAll( m_actionList );
+    m_actionList.clear();
+
     foreach (ClipAction* action, list) {
         if (!action) {
             kDebug() << "action is null!";
             continue;
         }
-        QStringList actionProps;
-        actionProps << action->regExp() << action->description();
-        QTreeWidgetItem *item = new QTreeWidgetItem(m_ui.kcfg_ActionList, actionProps);
-        item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
 
-        foreach (const ClipCommand& command, action->commands()) {
-            QStringList cmdProps;
-            cmdProps << command.command << command.description;
-            QTreeWidgetItem *child = new QTreeWidgetItem(item, cmdProps);
-            child->setIcon(0, KIcon(command.pixmap.isEmpty() ? "system-run" : command.pixmap));
-            child->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
+        // make a copy for us to work with from now on
+        m_actionList.append( new ClipAction( *action ) );
+    }
+
+    updateActionListView();
+}
+
+void ActionsWidget::updateActionListView()
+{
+    m_ui.kcfg_ActionList->clear();
+
+    foreach (ClipAction* action, m_actionList) {
+        if (!action) {
+            kDebug() << "action is null!";
+            continue;
         }
+
+        QTreeWidgetItem *item = new QTreeWidgetItem;
+        updateActionItem( item, action );
+
+        m_ui.kcfg_ActionList->addTopLevelItem( item );
     }
 
     // after all actions loaded, reset modified state of tree widget.
     // Needed because tree widget reacts on item changed events to tell if it is changed
     // this will ensure that apply button state will be correctly changed
     m_ui.kcfg_ActionList->resetModifiedState();
+}
+
+void ActionsWidget::updateActionItem( QTreeWidgetItem* item, ClipAction* action )
+{
+    if ( !item || !action ) {
+        kDebug() << "null pointer passed to function, nothing done";
+        return;
+    }
+
+    // clear children if any
+    item->takeChildren();
+    item->setText( 0, action->regExp() );
+    item->setText( 1, action->description() );
+
+    foreach (const ClipCommand& command, action->commands()) {
+        QStringList cmdProps;
+        cmdProps << command.command << command.description;
+        QTreeWidgetItem *child = new QTreeWidgetItem(item, cmdProps);
+        child->setIcon(0, KIcon(command.pixmap.isEmpty() ? "system-run" : command.pixmap));
+    }
 }
 
 void ActionsWidget::setExcludedWMClasses(const QStringList& excludedWMClasses)
@@ -116,25 +146,15 @@ QStringList ActionsWidget::excludedWMClasses() const
 
 ActionList ActionsWidget::actionList() const
 {
-    ClipAction *action = 0;
+    // return a copy of our action list
     ActionList list;
-
-    QTreeWidgetItemIterator it(m_ui.kcfg_ActionList);
-    while (*it) {
-        if (!(*it)->parent()) {
-            if (action) {
-                list.append(action);
-                action = 0;
-            }
-            action = new ClipAction((*it)->text(0), (*it)->text(1));
-        } else {
-            if (action)
-                action->addCommand((*it)->text(0), (*it)->text(1), true);
+    foreach( ClipAction* action, m_actionList ) {
+        if ( !action ) {
+            kDebug() << "action is null";
+            continue;
         }
-        it++;
+        list.append( new ClipAction( *action ) );
     }
-    if (action)
-        list.append(action);
 
     return list;
 }
@@ -151,49 +171,8 @@ void ActionsWidget::onSelectionChanged()
     m_ui.pbDelAction->setEnabled(itemIsSelected);
 }
 
-void ActionsWidget::onContextMenu(const QPoint& pos)
-{
-    QTreeWidgetItem *item = m_ui.kcfg_ActionList->itemAt(pos);
-    if ( !item )
-        return;
-
-    KMenu *menu = new KMenu;
-    QAction *addCmd = menu->addAction(KIcon("list-add"), i18n("Add Command"));
-    QAction *rmCmd = menu->addAction(KIcon("list-remove"), i18n("Remove Command"));
-    if ( !item->parent() ) {// no "command" item
-        rmCmd->setEnabled( false );
-        item->setExpanded ( true );
-    }
-
-    QAction *executed = menu->exec(mapToGlobal(pos));
-    if ( executed == addCmd ) {
-        QTreeWidgetItem *child = new QTreeWidgetItem(item->parent() ? item->parent() : item, QStringList()
-                                                     << i18n("Double-click here to set the command to be executed")
-                                                     << i18n("<new command>"));
-        child->setIcon(0, KIcon("system-run"));
-        child->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
-    }
-    else if ( executed == rmCmd )
-        delete item;
-
-    delete menu;
-}
-
-void ActionsWidget::onItemChanged(QTreeWidgetItem *item, int column)
-{
-    if (!item->parent() || column != 0)
-        return;
-    ClipCommand command( item->text(0), item->text(1) );
-
-    m_ui.kcfg_ActionList->blockSignals(true); // don't lead in infinite recursion...
-    item->setIcon(0, KIcon(command.pixmap.isEmpty() ? "system-run" : command.pixmap));
-    m_ui.kcfg_ActionList->blockSignals(false);
-}
-
 void ActionsWidget::onAddAction()
 {
-    /**
-     *  TODO implement fully and uncoment
     if (!m_editActDlg) {
         m_editActDlg = new EditActionDialog(this);
     }
@@ -201,13 +180,12 @@ void ActionsWidget::onAddAction()
     ClipAction* newAct = new ClipAction;
     m_editActDlg->setAction(newAct);
     if (m_editActDlg->exec() == QDialog::Accepted) {
-        // do stuff with newAct
+        m_actionList.append( newAct );
+
+        QTreeWidgetItem* item = new QTreeWidgetItem;
+        updateActionItem( item, newAct );
+        m_ui.kcfg_ActionList->addTopLevelItem( item );
     }
-     */
-    QTreeWidgetItem *item = new QTreeWidgetItem(m_ui.kcfg_ActionList,
-                                                QStringList() << i18n("Double-click here to set the regular expression")
-                                                              << i18n("<new action>"));
-    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
 }
 
 void ActionsWidget::onEditAction()
@@ -220,15 +198,22 @@ void ActionsWidget::onEditAction()
     if (item) {
         if (item->parent()) {
             item = item->parent(); // interested in toplevel action
+            // TODO in action props dialog focus on selected command if any
         }
 
-        // TODO: hold a list of clipactions in this dialog
-        // and pick action from that list here
-        ClipAction* action = new ClipAction(item->text(0), item->text(1));;
-        m_editActDlg->setAction(action);
-        if (m_editActDlg->exec() == QDialog::Accepted) {
-            // do stuff with action
+        int idx = m_ui.kcfg_ActionList->indexOfTopLevelItem( item );
+        ClipAction* action = m_actionList.at( idx );
+
+        if ( !action ) {
+            kDebug() << "action is null";
+            return;
         }
+
+        m_editActDlg->setAction(action);
+        // dialog will save values into action if user hits OK
+        m_editActDlg->exec();
+
+        updateActionItem(item, action);
     }
 }
 
@@ -238,6 +223,13 @@ void ActionsWidget::onDeleteAction()
     QTreeWidgetItem *item = m_ui.kcfg_ActionList->currentItem();
     if ( item && item->parent() )
         item = item->parent();
+
+    if ( item )
+    {
+        int idx = m_ui.kcfg_ActionList->indexOfTopLevelItem( item );
+        m_actionList.removeAt( idx );
+    }
+
     delete item;
 }
 

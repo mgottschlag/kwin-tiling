@@ -49,6 +49,13 @@ private:
      */
     void updateWidgets();
 
+    /**
+     * Saves a values from widgets to action
+     */
+    void saveAction();
+
+    virtual void slotButtonClicked( int button );
+
 private:
     Ui::EditActionDialog* m_ui;
 

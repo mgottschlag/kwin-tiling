@@ -61,8 +61,41 @@ void EditActionDialog::updateWidgets()
         return;
     }
 
+    m_ui->twCommandList->clear();
+
     m_ui->leRegExp->setText(m_action->regExp());
     m_ui->leDescription->setText(m_action->description());
+
+    foreach( const ClipCommand& cmd, m_action->commands() ) {
+        QTreeWidgetItem* item = new QTreeWidgetItem;
+        item->setText( 0, cmd.command );
+        item->setText( 1, cmd.description );
+        m_ui->twCommandList->addTopLevelItem( item );
+    }
+}
+
+void EditActionDialog::saveAction()
+{
+    if (!m_action) {
+        kDebug() << "no action to edit was set";
+        return;
+    }
+
+    m_action->setRegExp( m_ui->leRegExp->text() );
+    m_action->setDescription( m_ui->leDescription->text() );
+
+    //m_action->clearCommands();
+
+    //for
+}
+
+void EditActionDialog::slotButtonClicked( int button )
+{
+    if ( button == KDialog::Ok ) {
+        saveAction();
+    }
+
+    KDialog::slotButtonClicked( button );
 }
 
 #include "editactiondialog.moc"

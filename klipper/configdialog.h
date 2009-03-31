@@ -65,16 +65,22 @@ public:
 
 private slots:
     void onSelectionChanged();
-    void onContextMenu(const QPoint&);
-    void onItemChanged(QTreeWidgetItem*,int);
     void onAddAction();
     void onEditAction();
     void onDeleteAction();
     void onAdvanced();
 
 private:
+    void updateActionItem( QTreeWidgetItem* item, ClipAction* action );
+    void updateActionListView();
+
     Ui::ActionsWidget m_ui;
     EditActionDialog* m_editActDlg;
+
+    /**
+     * List of actions this page works with
+     */
+    ActionList m_actionList;
 
     QStringList m_exclWMClasses;
 };

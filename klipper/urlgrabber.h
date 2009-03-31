@@ -143,6 +143,11 @@ public:
                     const QString& icon = QString() );
 
   /**
+   * Replaces command at index @p idx with command @p newCmd
+   */
+  void replaceCommand( int idx, const ClipCommand& newCmd );
+
+  /**
    * Returns command by its index in command list
    */
   ClipCommand command(int idx) const { return m_myCommands.at(idx); }

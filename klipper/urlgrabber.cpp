@@ -477,6 +477,16 @@ void ClipAction::addCommand( const QString& command,
     m_myCommands.append( ClipCommand(command, description, enabled, icon) );
 }
 
+void ClipAction::replaceCommand( int idx, const ClipCommand& cmd )
+{
+    if ( idx < 0 || idx >= m_myCommands.count() ) {
+        kDebug() << "wrong command index given";
+        return;
+    }
+
+    m_myCommands[idx] = cmd;
+}
+
 
 // precondition: we're in the correct action's group of the KConfig object
 void ClipAction::save( KSharedConfigPtr kc, const QString& group ) const
