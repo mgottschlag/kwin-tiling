@@ -137,9 +137,9 @@ public:
    */
   void clearCommands() { m_myCommands.clear(); }
 
-  void  addCommand( const QString& command, 
-                    const QString& description, 
-                    bool isEnabled,
+  void  addCommand( const QString& command,
+                    const QString& description,
+                    bool isEnabled = true,
                     const QString& icon = QString() );
 
   /**

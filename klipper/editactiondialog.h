@@ -29,6 +29,7 @@ namespace Ui
 }
 
 class ClipAction;
+class QTreeWidgetItem;
 
 class EditActionDialog : public KDialog
 {
@@ -41,6 +42,12 @@ public:
      * Sets the action this dialog will work with
      */
     void setAction(ClipAction* act);
+
+private slots:
+    void onAddCommand();
+    void onRemoveCommand();
+    void onSelectionChanged();
+    void onItemChanged( QTreeWidgetItem*, int );
 
 private:
     /**
