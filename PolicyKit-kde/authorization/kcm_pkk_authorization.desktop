@@ -13,12 +13,14 @@ Name[en_GB]=PolicyKit Authorisation
 Name[ga]=Údarú PolicyKit
 Name[pt]=Autorização do PolicyKit
 Name[pt_BR]=Autorização do PolicyKit
+Name[sv]=Policykit behörighet
 Name[uk]=Уповноваження PolicyKit
 
 Comment=Set up policies for applications using PolicyKit
 Comment[ga]=Socraigh polasaithe le haghaidh feidhmchlár a bhaineann úsáid as PolicyKit
 Comment[pt]=Configurar as políticas das aplicações que usam o PolicyKit
 Comment[pt_BR]=Configurar as políticas das aplicações que usam o PolicyKit
+Comment[sv]=Ställ in handlingssätt för program med användning av Policykit
 Comment[uk]=Встановіть правила для програм за допомогою PolicyKit
 
 X-KDE-Keywords=Password,Policy,Polkit,Policies,Security,Management
