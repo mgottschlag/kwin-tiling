@@ -1,3 +1,12 @@
+# This file is no longer installed by default,
+# but left here for historical reasons :)
+# (it used to be renamed to klipperrc and put in $INSTALL_DIR/share/config)
+# Just in case anyone will want to take a look.
+# At the moment klipper automatically determines actions depending on mimetype,
+# so there's actually no need to supply some defaults.
+
+# Maybe this file should be removed later
+#  - dimsuz 31.03.2009
 [General]
 Number of Actions=7
 

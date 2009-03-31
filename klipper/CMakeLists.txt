@@ -34,7 +34,6 @@ install(TARGETS klipper         ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 install(FILES klipper.desktop DESTINATION ${XDG_APPS_INSTALL_DIR})
 install(FILES klipper.desktop DESTINATION ${AUTOSTART_INSTALL_DIR})
-install(FILES klipperrc.desktop DESTINATION ${CONFIG_INSTALL_DIR} RENAME klipperrc)
 
 if(NOT WIN32)
   install( FILES klipper-kconfigxt.upd DESTINATION  ${KCONF_UPDATE_INSTALL_DIR} )
