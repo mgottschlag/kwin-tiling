@@ -41,6 +41,8 @@ public:
     //QString countryName; // USA
     QString locationName;
     QString stationID;
+    QString stationLat;
+    QString stationLon;
     QString stateName;
 
     // Current observation information.
@@ -95,6 +97,8 @@ private:
     QString country(const QString& source);
     QString place(const QString& source);
     QString station(const QString& source);
+    QString latitude(const QString& source);
+    QString longitude(const QString& source);
 
     // Current Conditions Weather info
     QString observationTime(const QString& source);

@@ -352,6 +352,10 @@ WeatherData NOAAIon::parseWeatherSite(WeatherData& data, QXmlStreamReader& xml)
                 data.locationName = xml.readElementText();
             } else if (xml.name() == "station_id") {
                 data.stationID = xml.readElementText();
+            } else if (xml.name() == "latitude") {
+                data.stationLat = xml.readElementText();
+            } else if (xml.name() == "longitude") {
+                data.stationLon = xml.readElementText();
             } else if (xml.name() == "observation_time") {
                 data.observationTime = xml.readElementText();
                 QStringList tmpDateStr = data.observationTime.split(' ');
@@ -451,6 +455,9 @@ void NOAAIon::updateWeather(const QString& source)
     setData(source, "Place", place(source));
     setData(source, "Station", station(source));
 
+    setData(source, "Latitude", latitude(source));
+    setData(source, "Longitude", longitude(source));
+
     // Real weather - Current conditions
     setData(source, "Observation Period", observationTime(source));
     setData(source, "Current Conditions", condition(source));
@@ -541,6 +548,16 @@ QString NOAAIon::place(const QString& source)
 QString NOAAIon::station(const QString& source)
 {
     return d->m_weatherData[source].stationID;
+}
+
+QString NOAAIon::latitude(const QString& source)
+{
+    return d->m_weatherData[source].stationLat;
+}
+
+QString NOAAIon::longitude(const QString& source)
+{
+    return d->m_weatherData[source].stationLon;
 }
 
 QString NOAAIon::observationTime(const QString& source)
