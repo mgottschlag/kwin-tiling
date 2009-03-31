@@ -59,7 +59,7 @@ public:
         delete blinkTimer;
     }
 
-    QPixmap iconDataToPixmap(const Icon &icon) const;
+    QPixmap iconDataToPixmap(const ImageStruct &icon) const;
 
     void iconDestroyed(QObject *obj);
     void refresh();
@@ -98,8 +98,8 @@ DBusSystemTrayTask::DBusSystemTrayTask(const QString &service)
       d(new DBusSystemTrayTaskPrivate(this))
 {
     setObjectName("DBusSystemTrayTask");
-    qDBusRegisterMetaType<Icon>();
-    qDBusRegisterMetaType<IconVector>();
+    qDBusRegisterMetaType<ImageStruct>();
+    qDBusRegisterMetaType<ImageVector>();
 
     d->name = service;
 
@@ -110,10 +110,10 @@ DBusSystemTrayTask::DBusSystemTrayTask(const QString &service)
     d->category = (Category)metaObject()->enumerator(metaObject()->indexOfEnumerator("Category")).keyToValue(d->notificationAreaItemInterface->category().toLatin1());
 
 
-    connect(d->notificationAreaItemInterface, SIGNAL(newIcon()), this, SLOT(syncIcon()));
-    connect(d->notificationAreaItemInterface, SIGNAL(newAttentionIcon()), this, SLOT(syncAttentionIcon()));
-    connect(d->notificationAreaItemInterface, SIGNAL(newTooltip()), this, SLOT(syncTooltip()));
-    connect(d->notificationAreaItemInterface, SIGNAL(newStatus(QString)), this, SLOT(syncStatus(QString)));
+    connect(d->notificationAreaItemInterface, SIGNAL(NewIcon()), this, SLOT(syncIcon()));
+    connect(d->notificationAreaItemInterface, SIGNAL(NewAttentionIcon()), this, SLOT(syncAttentionIcon()));
+    connect(d->notificationAreaItemInterface, SIGNAL(NewTooltip()), this, SLOT(syncTooltip()));
+    connect(d->notificationAreaItemInterface, SIGNAL(NewStatus(QString)), this, SLOT(syncStatus(QString)));
 }
 
 
@@ -183,7 +183,7 @@ bool DBusSystemTrayTask::eventFilter(QObject *watched, QEvent *event)
     Plasma::IconWidget *iw = qobject_cast<Plasma::IconWidget *>(watched);
     if (d->iconWidgets.contains(iw) && event->type() == QEvent::GraphicsSceneContextMenu) {
         QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
-        d->notificationAreaItemInterface->contextMenu(me->screenPos().x(), me->screenPos().y());
+        d->notificationAreaItemInterface->ContextMenu(me->screenPos().x(), me->screenPos().y());
         return true;
     }
     return false;
@@ -208,7 +208,7 @@ void DBusSystemTrayTaskPrivate::refresh()
     syncStatus(notificationAreaItemInterface->status());
 }
 
-QPixmap DBusSystemTrayTaskPrivate::iconDataToPixmap(const Icon &icon) const
+QPixmap DBusSystemTrayTaskPrivate::iconDataToPixmap(const ImageStruct &icon) const
 {
     QImage iconImage(QSize(icon.width, icon.height), QImage::Format_ARGB32);
     iconImage.loadFromData(icon.data);
@@ -259,7 +259,7 @@ void DBusSystemTrayTaskPrivate::blinkAttention()
 
 void DBusSystemTrayTaskPrivate::syncMovie()
 {
-    IconVector movieData = notificationAreaItemInterface->attentionMovie();
+    ImageVector movieData = notificationAreaItemInterface->attentionMovie();
     movie = QVector<QPixmap>(movieData.size());
 
     if (!movieData.isEmpty()) {

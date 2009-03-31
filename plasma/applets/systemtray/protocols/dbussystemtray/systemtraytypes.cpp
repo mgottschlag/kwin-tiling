@@ -21,8 +21,8 @@
 #include "systemtraytypes.h"
 
 
-// Marshall the Icon data into a D-BUS argument
-const QDBusArgument &operator<<(QDBusArgument &argument, const Icon &icon)
+// Marshall the ImageStruct data into a D-BUS argument
+const QDBusArgument &operator<<(QDBusArgument &argument, const ImageStruct &icon)
 {
     argument.beginStructure();
     argument << icon.width;
@@ -32,8 +32,8 @@ const QDBusArgument &operator<<(QDBusArgument &argument, const Icon &icon)
     return argument;
 }
 
-// Retrieve the Icon data from the D-BUS argument
-const QDBusArgument &operator>>(const QDBusArgument &argument, Icon &icon)
+// Retrieve the ImageStruct data from the D-BUS argument
+const QDBusArgument &operator>>(const QDBusArgument &argument, ImageStruct &icon)
 {
     qint32 width;
     qint32 height;
@@ -52,10 +52,10 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, Icon &icon)
     return argument;
 }
 
-// Marshall the IconVector data into a D-BUS argument
-const QDBusArgument &operator<<(QDBusArgument &argument, const IconVector &iconVector)
+// Marshall the ImageVector data into a D-BUS argument
+const QDBusArgument &operator<<(QDBusArgument &argument, const ImageVector &iconVector)
 {
-    argument.beginArray(qMetaTypeId<Icon>());
+    argument.beginArray(qMetaTypeId<ImageStruct>());
     for (int i=0; i<iconVector.size(); ++i) {
         argument << iconVector[i]; 
     }
@@ -63,14 +63,14 @@ const QDBusArgument &operator<<(QDBusArgument &argument, const IconVector &iconV
     return argument;
 }
 
-// Retrieve the IconVector data from the D-BUS argument
-const QDBusArgument &operator>>(const QDBusArgument &argument, IconVector &iconVector)
+// Retrieve the ImageVector data from the D-BUS argument
+const QDBusArgument &operator>>(const QDBusArgument &argument, ImageVector &iconVector)
 {
     argument.beginArray();
     iconVector.clear();
 
     while ( !argument.atEnd() ) {
-       Icon element;
+       ImageStruct element;
        argument >> element;
        iconVector.append(element);
     }

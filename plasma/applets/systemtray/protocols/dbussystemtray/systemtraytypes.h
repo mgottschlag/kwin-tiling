@@ -24,21 +24,21 @@
 #include <QDBusArgument>
 #include <QVector>
 
-struct Icon {
+struct ImageStruct {
     int width;
     int height;
     QByteArray data;
 };
 
-const QDBusArgument &operator<<(QDBusArgument &argument, const Icon &icon);
-const QDBusArgument &operator>>(const QDBusArgument &argument, Icon &icon);
+const QDBusArgument &operator<<(QDBusArgument &argument, const ImageStruct &icon);
+const QDBusArgument &operator>>(const QDBusArgument &argument, ImageStruct &icon);
 
-Q_DECLARE_METATYPE(Icon)
+Q_DECLARE_METATYPE(ImageStruct)
 
-typedef QVector<Icon> IconVector;
-const QDBusArgument &operator<<(QDBusArgument &argument, const IconVector &iconVector);
-const QDBusArgument &operator>>(const QDBusArgument &argument, IconVector &iconVector);
+typedef QVector<ImageStruct> ImageVector;
+const QDBusArgument &operator<<(QDBusArgument &argument, const ImageVector &iconVector);
+const QDBusArgument &operator>>(const QDBusArgument &argument, ImageVector &iconVector);
 
-Q_DECLARE_METATYPE(IconVector)
+Q_DECLARE_METATYPE(ImageVector)
 
 #endif

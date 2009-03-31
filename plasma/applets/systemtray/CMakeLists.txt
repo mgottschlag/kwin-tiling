@@ -52,7 +52,7 @@ set(notificationareaitem_xml notificationareawatcher/org.kde.NotificationAreaIte
 set_source_files_properties(${notificationareaitem_xml} PROPERTIES
    NO_NAMESPACE false
    INCLUDE "protocols/dbussystemtray/systemtraytypes.h"
-   CLASSNAME OrgKdeNotificationAreaInterface
+   CLASSNAME OrgKdeNotificationAreaItem
 )
 QT4_ADD_DBUS_INTERFACE(systemtray_SRCS ${notificationareaitem_xml} notificationarea_interface)
 

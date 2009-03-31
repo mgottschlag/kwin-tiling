@@ -2,74 +2,74 @@
 <node>
   <interface name="org.kde.NotificationAreaItem">
 
-    <property name="category" type="s" access="read"/>
-    <property name="title" type="s" access="read"/>
-    <property name="status" type="s" access="read"/>
+    <property name="Category" type="s" access="read"/>
+    <property name="Title" type="s" access="read"/>
+    <property name="Status" type="s" access="read"/>
 
 
     <!-- main icon -->
     <!-- names are preferred over pixmaps -->
-    <property name="icon" type="s" access="read"/>
+    <property name="Icon" type="s" access="read"/>
 
     <!--struct containing width, height and image data-->
-    <property name="image" type="(iiay)" access="read">
-      <annotation name="com.trolltech.QtDBus.QtTypeName" value="Icon"/>
+    <property name="Image" type="(iiay)" access="read">
+      <annotation name="com.trolltech.QtDBus.QtTypeName" value="ImageStruct"/>
     </property>
 
 
     <!-- Requesting attention icon -->
-    <property name="attentionIcon" type="s" access="read"/>
+    <property name="AttentionIcon" type="s" access="read"/>
 
     <!--same definition as image-->
-    <property name="attentionImage" type="(iiay)" access="read">
-      <annotation name="com.trolltech.QtDBus.QtTypeName" value="Icon"/>
+    <property name="AttentionImage" type="(iiay)" access="read">
+      <annotation name="com.trolltech.QtDBus.QtTypeName" value="ImageStruct"/>
     </property>
 
-    <property name="attentionMovie" type="a(iiay)" access="read">
-      <annotation name="com.trolltech.QtDBus.QtTypeName" value="IconVector"/>
+    <property name="AttentionMovie" type="a(iiay)" access="read">
+      <annotation name="com.trolltech.QtDBus.QtTypeName" value="ImageVector"/>
     </property>
 
 
 
     <!-- tooltip data -->
-    <property name="tooltipIcon" type="s" access="read"/>
+    <property name="TooltipIcon" type="s" access="read"/>
 
     <!--same definition as image-->
-    <property name="tooltipImage" type="(iiay)" access="read">
-      <annotation name="com.trolltech.QtDBus.QtTypeName" value="Icon"/>
+    <property name="TooltipImage" type="(iiay)" access="read">
+      <annotation name="com.trolltech.QtDBus.QtTypeName" value="ImageStruct"/>
     </property>
 
-    <property name="tooltipTitle" type="s" access="read"/>
+    <property name="TooltipTitle" type="s" access="read"/>
 
-    <property name="tooltipSubTitle" type="s" access="read"/>
+    <property name="TooltipSubTitle" type="s" access="read"/>
 
 
     <!-- interaction: the systemtray wants the application to do something -->
-    <method name="contextMenu">
+    <method name="ContextMenu">
         <!-- we're passing the coordinates of the icon, so the app knows where to put the popup window -->
         <arg name="x" type="i" direction="in"/>
         <arg name="y" type="i" direction="in"/>
     </method>
 
-    <method name="activate">
+    <method name="Activate">
     </method>
 
     <!-- this probably is too much...-->
-    <method name="wheel">
+    <method name="Wheel">
       <arg name="delta" type="i" direction="in"/>
     </method>
 
     <!-- Signals: the client wants to change something in the status-->
-    <signal name="newIcon">
+    <signal name="NewIcon">
     </signal>
 
-    <signal name="newAttentionIcon">
+    <signal name="NewAttentionIcon">
     </signal>
 
-    <signal name="newTooltip">
+    <signal name="NewTooltip">
     </signal>
 
-    <signal name="newStatus">
+    <signal name="NewStatus">
       <arg name="status" type="s"/>
     </signal>
 
