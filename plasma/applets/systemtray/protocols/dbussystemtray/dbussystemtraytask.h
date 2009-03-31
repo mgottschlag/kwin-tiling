@@ -31,20 +31,20 @@ class DBusSystemTrayTask : public Task
 {
     Q_OBJECT
 
-    Q_ENUMS(Status)
-    Q_ENUMS(Category)
+    Q_ENUMS(ItemStatus)
+    Q_ENUMS(ItemCategory)
 
     friend class DBusSystemTrayProtocol;
 
 public:
     //FIXME: those enums have to be redefined until the library won't be in kdelibs
-    enum Status {
+    enum ItemStatus {
         Passive = 1,
         Active = 2,
         NeedsAttention = 3
     };
 
-    enum Category {
+    enum ItemCategory {
         ApplicationStatus = 1,
         Communications = 2,
         SystemServices = 3,
@@ -56,7 +56,7 @@ public:
 
     QGraphicsWidget* createWidget(Plasma::Applet *host);
     bool isValid() const;
-    Category category() const;
+    ItemCategory category() const;
     virtual bool isEmbeddable() const;
     virtual QString name() const;
     virtual QString typeId() const;

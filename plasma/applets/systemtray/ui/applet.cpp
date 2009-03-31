@@ -98,7 +98,7 @@ public:
     QPointer<KActionSelector> configInterface;
     QPointer<QWidget> notificationInterface;
     QList<Job*> jobs;
-    QList<DBusSystemTrayTask::Category> shownCategories;
+    QList<DBusSystemTrayTask::ItemCategory> shownCategories;
 
     Plasma::FrameSvg *background;
     JobTotalsWidget *jobSummaryWidget;

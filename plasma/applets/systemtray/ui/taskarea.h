@@ -42,7 +42,7 @@ public:
 
     void setHiddenTypes(const QStringList &hiddenTypes);
     bool isHiddenType(const QString &typeId, bool always = true) const;
-    void setShownCategories(const QList<DBusSystemTrayTask::Category> &shownCategories);
+    void setShownCategories(const QList<DBusSystemTrayTask::ItemCategory> &shownCategories);
     void setShowFdoTasks(bool show);
     bool showFdoTasks() const;
     void syncTasks(const QList<SystemTray::Task*> &tasks);

@@ -78,8 +78,8 @@ public:
     DBusSystemTrayTask *q;
     QString name;
     QString title;
-    DBusSystemTrayTask::Status status;
-    DBusSystemTrayTask::Category category;
+    DBusSystemTrayTask::ItemStatus status;
+    DBusSystemTrayTask::ItemCategory category;
     QIcon icon;
     QIcon attentionIcon;
     QVector<QPixmap> movie;
@@ -107,7 +107,7 @@ DBusSystemTrayTask::DBusSystemTrayTask(const QString &service)
                                                  QDBusConnection::sessionBus());
     d->notificationAreaItemInterface->title();
 
-    d->category = (Category)metaObject()->enumerator(metaObject()->indexOfEnumerator("Category")).keyToValue(d->notificationAreaItemInterface->category().toLatin1());
+    d->category = (ItemCategory)metaObject()->enumerator(metaObject()->indexOfEnumerator("ItemCategory")).keyToValue(d->notificationAreaItemInterface->category().toLatin1());
 
 
     connect(d->notificationAreaItemInterface, SIGNAL(NewIcon()), this, SLOT(syncIcon()));
@@ -155,7 +155,7 @@ bool DBusSystemTrayTask::isValid() const
     return !d->name.isEmpty();
 }
 
-DBusSystemTrayTask::Category DBusSystemTrayTask::category() const
+DBusSystemTrayTask::ItemCategory DBusSystemTrayTask::category() const
 {
     return d->category;
 }
@@ -309,7 +309,7 @@ void DBusSystemTrayTaskPrivate::syncTooltip()
 
 void DBusSystemTrayTaskPrivate::syncStatus(QString newStatus)
 {
-    status = (DBusSystemTrayTask::Status)q->metaObject()->enumerator(q->metaObject()->indexOfEnumerator("Status")).keyToValue(newStatus.toLatin1());
+    status = (DBusSystemTrayTask::ItemStatus)q->metaObject()->enumerator(q->metaObject()->indexOfEnumerator("ItemStatus")).keyToValue(newStatus.toLatin1());
 
     if (status == DBusSystemTrayTask::NeedsAttention) {
         q->setOrder(Task::Last);

@@ -69,7 +69,7 @@ public:
     CompactLayout *lastTasksLayout;
 
     QSet<QString> hiddenTypes;
-    QSet<DBusSystemTrayTask::Category> shownCategories;
+    QSet<DBusSystemTrayTask::ItemCategory> shownCategories;
     bool showFdoTasks : 1;
     bool showingHidden : 1;
     bool hasHiddenTasks : 1;
@@ -100,9 +100,9 @@ void TaskArea::setHiddenTypes(const QStringList &hiddenTypes)
     d->hiddenTypes = QSet<QString>::fromList(hiddenTypes);
 }
 
-void TaskArea::setShownCategories(const QList<DBusSystemTrayTask::Category> &shownCategories)
+void TaskArea::setShownCategories(const QList<DBusSystemTrayTask::ItemCategory> &shownCategories)
 {
-    d->shownCategories = QSet<DBusSystemTrayTask::Category>::fromList(shownCategories);
+    d->shownCategories = QSet<DBusSystemTrayTask::ItemCategory>::fromList(shownCategories);
     syncTasks(d->host->manager()->tasks());
 }
 
