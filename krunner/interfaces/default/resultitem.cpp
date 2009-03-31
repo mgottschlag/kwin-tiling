@@ -392,9 +392,13 @@ void ResultItem::setSize()
 
 void ResultItem::calculateInnerHeight()
 {
-    QFontMetrics fm(font());
-    const int maxHeight = fm.height() * 4;
-    const int minHeight = DEFAULT_ICON_SIZE;
+    QRect textBounds(contentsRect().toRect());
+
+    if (scene()) {
+        textBounds.setWidth(scene()->width());
+    } else {
+        return;
+    }
 
     QString text = name();
 
@@ -402,11 +406,9 @@ void ResultItem::calculateInnerHeight()
         text.append("\n").append(description());
     }
 
-    QRect textBounds(contentsRect().toRect());
-
-    if (scene()) {
-        textBounds.setWidth(scene()->width());
-    }
+    QFontMetrics fm(font());
+    const int maxHeight = fm.height() * 4;
+    const int minHeight = DEFAULT_ICON_SIZE;
 
     textBounds.adjust(DEFAULT_ICON_SIZE + TEXT_MARGIN, 0, 0, 0);
 
@@ -416,7 +418,7 @@ void ResultItem::calculateInnerHeight()
 
     int height = fm.boundingRect(textBounds, Qt::AlignLeft | Qt::TextWordWrap, text).height();
     //kDebug() << (QObject*)this << text << fm.boundingRect(textBounds, Qt::AlignLeft | Qt::TextWordWrap, text);
-    //kDebug() << fm.height() << maxHeight << textBounds << height << minHeight << qMax(height, minHeight);
+    kDebug() << fm.height() << maxHeight << textBounds << height << minHeight << qMax(height, minHeight);
     m_innerHeight = qMax(height, minHeight);
 }
 
