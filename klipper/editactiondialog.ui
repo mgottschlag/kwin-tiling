@@ -70,6 +70,9 @@
    </item>
    <item row="4" column="1">
     <widget class="QTreeWidget" name="twCommandList">
+     <property name="toolTip">
+      <string>Double-click an item to edit</string>
+     </property>
      <column>
       <property name="text">
        <string>Command</string>

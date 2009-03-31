@@ -59,14 +59,14 @@ EditActionDialog::~EditActionDialog()
     delete m_ui;
 }
 
-void EditActionDialog::setAction(ClipAction* act)
+void EditActionDialog::setAction(ClipAction* act, int commandIdxToSelect)
 {
     m_action = act;
 
-    updateWidgets();
+    updateWidgets( commandIdxToSelect );
 }
 
-void EditActionDialog::updateWidgets()
+void EditActionDialog::updateWidgets(int commandIdxToSelect)
 {
     if (!m_action) {
         kDebug() << "no action to edit was set";
@@ -88,6 +88,10 @@ void EditActionDialog::updateWidgets()
         item->setData( 0, Qt::UserRole, iconName ); // store icon name too
         item->setText( 1, cmd.description );
         m_ui->twCommandList->addTopLevelItem( item );
+    }
+
+    if (commandIdxToSelect != -1) {
+        m_ui->twCommandList->setCurrentItem( m_ui->twCommandList->topLevelItem( commandIdxToSelect ) );
     }
 
     // update Remove button

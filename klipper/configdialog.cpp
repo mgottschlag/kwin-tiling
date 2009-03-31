@@ -65,6 +65,8 @@ ActionsWidget::ActionsWidget(QWidget* parent)
 #endif
 
     connect(m_ui.kcfg_ActionList, SIGNAL(itemSelectionChanged()), SLOT(onSelectionChanged()));
+    connect(m_ui.kcfg_ActionList, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
+            SLOT(onEditAction()));
 
     connect(m_ui.pbAddAction, SIGNAL(clicked()), SLOT(onAddAction()));
     connect(m_ui.pbEditAction, SIGNAL(clicked()), SLOT(onEditAction()));
@@ -195,10 +197,11 @@ void ActionsWidget::onEditAction()
     }
 
     QTreeWidgetItem *item = m_ui.kcfg_ActionList->currentItem();
+    int commandIdx = -1;
     if (item) {
         if (item->parent()) {
+            commandIdx = item->parent()->indexOfChild( item );
             item = item->parent(); // interested in toplevel action
-            // TODO in action props dialog focus on selected command if any
         }
 
         int idx = m_ui.kcfg_ActionList->indexOfTopLevelItem( item );
@@ -209,7 +212,7 @@ void ActionsWidget::onEditAction()
             return;
         }
 
-        m_editActDlg->setAction(action);
+        m_editActDlg->setAction(action, commandIdx);
         // dialog will save values into action if user hits OK
         m_editActDlg->exec();
 

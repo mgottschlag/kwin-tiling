@@ -41,7 +41,7 @@ public:
     /**
      * Sets the action this dialog will work with
      */
-    void setAction(ClipAction* act);
+    void setAction(ClipAction* act, int commandIdxToSelect = -1);
 
 private slots:
     void onAddCommand();
@@ -52,9 +52,10 @@ private slots:
 private:
     /**
      * Updates dialog's widgets according to values
-     * in m_action
+     * in m_action.
+     * If commandIdxToSelect != -1 this command will be preselected
      */
-    void updateWidgets();
+    void updateWidgets(int commandIdxToSelect);
 
     /**
      * Saves a values from widgets to action
