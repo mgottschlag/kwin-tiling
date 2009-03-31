@@ -271,7 +271,7 @@ void HotkeysTreeViewContextMenu::newGlobalShortcutActionAction( int actionType )
         }
 
     KHotKeys::SimpleActionData *data =
-        new KHotKeys::SimpleActionData( 0, i18n("New Group"), i18n("Comment"));
+        new KHotKeys::SimpleActionData( 0, i18n("New Action"), i18n("Comment"));
     data->set_trigger( new KHotKeys::ShortcutTrigger( data, KShortcut() ) );
 
     createActionFromType(actionType, data);
@@ -327,7 +327,7 @@ void HotkeysTreeViewContextMenu::newWindowTriggerActionAction( int actionType )
         }
 
     KHotKeys::SimpleActionData *data =
-        new KHotKeys::SimpleActionData( 0, i18n("New Group"), i18n("Comment"));
+        new KHotKeys::SimpleActionData( 0, i18n("New Action"), i18n("Comment"));
     data->set_trigger( new KHotKeys::WindowTrigger(data) );
 
     createActionFromType(actionType, data);
