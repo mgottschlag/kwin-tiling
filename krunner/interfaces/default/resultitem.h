@@ -108,8 +108,6 @@ protected:
 private:
     // must always call remove()
     ~ResultItem();
-    void calculateInnerHeight();
-    void setSize();
 
 private:
     Plasma::QueryMatch m_match;
@@ -121,8 +119,6 @@ private:
     int m_highlight;
     int m_index;
     int m_highlightTimerId;
-    int m_innerHeight;
-    bool m_ignoreNextChangeEvent;
 
     static int s_fontHeight;
 };

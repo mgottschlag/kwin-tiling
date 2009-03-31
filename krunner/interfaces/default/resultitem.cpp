@@ -55,9 +55,7 @@ ResultItem::ResultItem(const Plasma::QueryMatch &match, QGraphicsWidget *parent)
       m_match(0),
       m_highlight(0),
       m_index(-1),
-      m_highlightTimerId(0),
-      m_innerHeight(DEFAULT_ICON_SIZE),
-      m_ignoreNextChangeEvent(false)
+      m_highlightTimerId(0)
 {
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFlag(QGraphicsItem::ItemIsSelectable);
@@ -84,14 +82,7 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
 {
     m_match = match;
     m_icon = KIcon(match.icon());
-    calculateInnerHeight();
-
-    if (m_index != -1) {
-        // we've already been used once before, so reset our size when 
-        // our match changes
-        setSize();
-    }
-
+    calculateSize();
     update();
 }
 
@@ -373,24 +364,11 @@ void ResultItem::changeEvent(QEvent *event)
     QGraphicsWidget::changeEvent(event);
 
     if (event->type() == QEvent::ContentsRectChange) {
-        if (m_ignoreNextChangeEvent) {
-            m_ignoreNextChangeEvent = false;
-        } else {
-            setSize();
-        }
+        calculateSize();
     }
 }
 
-void ResultItem::setSize()
-{
-    qreal left, top, right, bottom;
-    getContentsMargins(&left, &top, &right, &bottom);
-    m_ignoreNextChangeEvent = true;
-    resize(scene() ? scene()->width() : geometry().width(), m_innerHeight + top + bottom);
-    //kDebug() << m_innerHeight << geometry().size();
-}
-
-void ResultItem::calculateInnerHeight()
+void ResultItem::calculateSize()
 {
     QRect textBounds(contentsRect().toRect());
 
@@ -418,14 +396,13 @@ void ResultItem::calculateInnerHeight()
 
     int height = fm.boundingRect(textBounds, Qt::AlignLeft | Qt::TextWordWrap, text).height();
     //kDebug() << (QObject*)this << text << fm.boundingRect(textBounds, Qt::AlignLeft | Qt::TextWordWrap, text);
-    kDebug() << fm.height() << maxHeight << textBounds << height << minHeight << qMax(height, minHeight);
-    m_innerHeight = qMax(height, minHeight);
-}
+    //kDebug() << fm.height() << maxHeight << textBounds << height << minHeight << qMax(height, minHeight);
+    int innerHeight = qMax(height, minHeight);
 
-void ResultItem::calculateSize()
-{
-    calculateInnerHeight();
-    setSize();
+    qreal left, top, right, bottom;
+    getContentsMargins(&left, &top, &right, &bottom);
+    resize(scene() ? scene()->width() : geometry().width(), innerHeight + top + bottom);
+    //kDebug() << innerHeight << geometry().size();
 }
 
 #include "resultitem.moc"
