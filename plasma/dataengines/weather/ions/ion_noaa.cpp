@@ -27,6 +27,7 @@ private:
     struct XMLMapInfo {
         QString stateName;
         QString stationName;
+        QString stationID;
         QString XMLurl;
         QString sourceOptions;
     };
@@ -37,6 +38,7 @@ public:
     QHash<QString, QString> m_locations;
     QString m_state;
     QString m_station_name;
+    QString m_station_id;
     QString m_xmlurl;
 
     // Weather information
@@ -109,11 +111,22 @@ QStringList NOAAIon::validate(const QString& source) const
 {
     QStringList placeList;
     QHash<QString, QString>::const_iterator it = d->m_locations.constBegin();
+    QHash<QString, NOAAIon::Private::XMLMapInfo>::const_iterator it_station = d->m_place.constBegin();
+
     while (it != d->m_locations.constEnd()) {
         if (it.value().toLower().contains(source.toLower())) {
             placeList.append(QString("place|%1").arg(it.value().split('|')[1]));
         }
         ++it;
+    }
+
+    // If the source name might look like a station ID, check these too and return the name
+    while (it_station != d->m_place.constEnd()) {
+            if (it_station.value().stationID.contains(source.toUpper().split('|')[1])) {
+                QString matchID = it_station.value().stationName + ", " + it_station.value().stateName;
+                placeList.append(QString("place|%1").arg(matchID));
+            }
+        ++it_station;
     }
 
     // Check if placeList is empty if so, return nothing.
@@ -256,7 +269,9 @@ void NOAAIon::parseStationID()
         }
 
         if (d->m_xmlSetup.isStartElement()) {
-            if (d->m_xmlSetup.name() == "state") {
+            if (d->m_xmlSetup.name() == "station_id") {
+                d->m_station_id = d->m_xmlSetup.readElementText();
+            } else if (d->m_xmlSetup.name() == "state") {
                 d->m_state = d->m_xmlSetup.readElementText();
             } else if (d->m_xmlSetup.name() == "station_name") {
                 d->m_station_name = d->m_xmlSetup.readElementText();
@@ -266,6 +281,7 @@ void NOAAIon::parseStationID()
                 tmp = "noaa|" + d->m_station_name + ", " + d->m_state; // Build the key name.
                 d->m_place[tmp].stateName = d->m_state;
                 d->m_place[tmp].stationName = d->m_station_name;
+                d->m_place[tmp].stationID = d->m_station_id;
                 d->m_place[tmp].XMLurl = d->m_xmlurl.replace("http://", "http://www.");
 
                 d->m_locations[tmp] = tmp;
