@@ -71,6 +71,8 @@ public:
     QString cityName;
     QString regionName;
     QString stationID;
+    QString stationLat;
+    QString stationLon;
 
     // Current observation information.
     QString obsTimestamp;
@@ -165,6 +167,8 @@ private:
     QString city(const QString& source);
     QString region(const QString& source);
     QString station(const QString& source);
+    QString latitude(const QString& source);
+    QString longitude(const QString& source);
 
     // Current Conditions Weather info
     QString observationTime(const QString& source);

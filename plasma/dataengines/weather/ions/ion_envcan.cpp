@@ -811,6 +811,8 @@ void EnvCanadaIon::parseConditions(WeatherData& data, QXmlStreamReader& xml)
     data.condition = "N/A";
     data.comforttemp = "N/A";
     data.stationID = "N/A";
+    data.stationLat = "N/A";
+    data.stationLon = "N/A";
     data.pressure = 0.0;
     data.pressureTendency = "N/A";
     data.visibility = 0;
@@ -827,6 +829,8 @@ void EnvCanadaIon::parseConditions(WeatherData& data, QXmlStreamReader& xml)
         if (xml.isStartElement()) {
             if (xml.name() == "station") {
                 data.stationID = xml.attributes().value("code").toString();
+                data.stationLat = xml.attributes().value("lat").toString();
+                data.stationLon = xml.attributes().value("lon").toString();
             } else if (xml.name() == "dateTime") {
                 parseDateTime(data, xml);
             } else if (xml.name() == "condition") {
@@ -1281,6 +1285,9 @@ void EnvCanadaIon::updateWeather(const QString& source)
     setData(source, "Region", region(source));
     setData(source, "Station", station(source));
 
+    setData(source, "Latitude", latitude(source));
+    setData(source, "Longitude", longitude(source));
+   
     // Real weather - Current conditions
     setData(source, "Observation Period", observationTime(source));
     setData(source, "Current Conditions", condition(source));
@@ -1469,6 +1476,16 @@ QString EnvCanadaIon::station(const QString& source)
     }
 
     return "N/A";
+}
+
+QString EnvCanadaIon::latitude(const QString& source)
+{    
+    return d->m_weatherData[source].stationLat;
+}
+
+QString EnvCanadaIon::longitude(const QString& source)
+{
+    return d->m_weatherData[source].stationLon;
 }
 
 QString EnvCanadaIon::observationTime(const QString& source)
