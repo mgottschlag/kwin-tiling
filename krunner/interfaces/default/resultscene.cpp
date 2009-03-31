@@ -191,9 +191,9 @@ ResultItem* ResultScene::addQueryMatch(const Plasma::QueryMatch &match, bool use
         if (useAnyId) {
             //kDebug() << "creating for" << match.id();
             item = new ResultItem(match, 0);
-            addItem(item);
             item->setContentsMargins(m_itemMarginLeft, m_itemMarginTop,
                                      m_itemMarginRight, m_itemMarginBottom);
+            addItem(item);
             item->hide();
             connect(item, SIGNAL(activated(ResultItem*)), this, SIGNAL(itemActivated(ResultItem*)));
             connect(item, SIGNAL(hoverEnter(ResultItem*)), this, SIGNAL(itemHoverEnter(ResultItem*)));
