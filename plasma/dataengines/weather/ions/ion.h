@@ -63,22 +63,6 @@ public:
     virtual ~IonInterface() {}
 
     /**
-     * Increment ion counter. This is used to check if the ion is being used.
-     */
-    void ref();
-
-    /**
-     * Decrement ion counter. Called when ion is destroyed/unloaded.
-     */
-    void deref();
-
-    /**
-     * Returns whether the ion is being used.
-     * @return true if the ion is being used, false otherwise
-     */
-    bool isUsed() const;
-
-    /**
      * Returns weather icon filename to display in applet.
      * @param conditionList a QList map pair of icons mapped to a enumeration of conditions.
      * @param condition the current condition being reported.
