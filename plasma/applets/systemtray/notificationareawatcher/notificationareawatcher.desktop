@@ -1,7 +1,19 @@
 [Desktop Entry]
 Type=Service
 Name=KDED Notification area watcher
+Name[ga]=Fairtheoir limistéar fógartha KDE
+Name[nds]=KDED-Beschedenrebeet-Beluern
+Name[pt]=Servidor de Notificações do KDED
+Name[pt_BR]=Servidor de Notificações do KDED
+Name[sv]=KDED bevakning av underrättelseområde
+Name[uk]=Переглядач області сповіщень KDED
 Comment=Keep track of applications that want to use the D-Bus based notification area
+Comment[ga]=Bainistigh feidhmchláir ar mian leo úsáid a bhaint as an limistéar fógartha bunaithe ar D-Bus
+Comment[nds]=De Översicht över Programmen wohren, de dat Beschedenrebeet bruukt, dat op den D-Bus opbuut 
+Comment[pt]=Mantém o registo das aplicações que desejam usar a bandeja do sistema baseada em D-Bus
+Comment[pt_BR]=Mantém o registo das aplicações que desejam usar a bandeja do sistema baseada em D-Bus
+Comment[sv]=Håll reda på program som vill använda det D-Bus baserade underrättelseområdet
+Comment[uk]=Стежте за програмами, які бажають використовувати засновану на D-Bus область сповіщення
 
 X-KDE-ServiceTypes=KDEDModule
 X-KDE-Library=notificationareawatcher
