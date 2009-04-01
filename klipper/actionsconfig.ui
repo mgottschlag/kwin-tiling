@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>450</width>
+    <width>458</width>
     <height>360</height>
    </rect>
   </property>
@@ -14,7 +14,7 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Action list (right click to add/remove commands):</string>
+      <string>Action list:</string>
      </property>
     </widget>
    </item>
