@@ -7,8 +7,10 @@ InitialPreference=80
 Name=Wicd
 Comment=Network management using the Wicd daemon
 Comment[en_GB]=Network management using the Wicd dæmon
+Comment[nds]=Nettwarkpleeg mit den Dämoon Wicd
 Comment[pt]=Gestão de redes com o servidor Wicd
 Comment[pt_BR]=Gestão de redes com o servidor Wicd
+Comment[sv]=Nätverkshantering med användning av Wicd-demonen
 Comment[tr]=Wicd servisi kullanan ağ yönetimi
 Comment[uk]=Керування мережею за допомогою фонової служби Wicd
 
