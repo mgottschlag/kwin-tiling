@@ -432,19 +432,24 @@ ClipCommand::ClipCommand(const QString &_command, const QString &_description,
       description(_description),
       isEnabled(_isEnabled)
 {
-    int len = command.indexOf(' ');
-    if (len == -1)
-        len = command.length();
 
     if (!_icon.isEmpty())
         pixmap = _icon;
     else
     {
-    KService::Ptr service= KService::serviceByDesktopName(command.left(len));
-    if (service)
-        pixmap = service->icon();
-    else
-        pixmap.clear();
+        // try to find suitable icon
+        QString appName = command.section( ' ', 0, 0 );
+        if ( !appName.isEmpty() )
+        {
+            QPixmap iconPix = KIconLoader::global()->loadIcon(
+                                         appName, KIconLoader::Small, 0,
+                                         KIconLoader::DefaultState,
+                                         QStringList(), 0, true /* canReturnNull */ );
+            if ( !iconPix.isNull() )
+                pixmap = appName;
+            else
+                pixmap.clear();
+        }
     }
 }
 
@@ -518,6 +523,7 @@ void ClipAction::save( KSharedConfigPtr kc, const QString& group ) const
         cg.writePathEntry( "Commandline", cmd.command );
         cg.writeEntry( "Description", cmd.description );
         cg.writeEntry( "Enabled", cmd.isEnabled );
+        cg.writeEntry( "Icon", cmd.pixmap );
 
         ++i;
     }
