@@ -118,6 +118,18 @@ const ActionList& URLGrabber::matchingActions( const QString& clipData )
     // let's see if we found some reasonable mimetype.
     // If we do we'll populate menu with actions for apps
     // that can handle that mimetype
+
+    // first: if clipboard contents starts with http, let's assume it's "text/html".
+    // That is even if we've url like "http://www.kde.org/somescript.pl", we'll
+    // still treat that as html page, because determining a mimetype using kio
+    // might take a long time, and i want this function to be quick!
+    if ( ( clipData.startsWith( "http://" ) || clipData.startsWith( "https://"))
+         && mimetype->name() != "text/html" )
+    {
+        // use a fake path to create a mimetype that corresponds to "text/html"
+        mimetype = KMimeType::findByPath( "/tmp/klipper.html", 0, true /*fast mode*/ );
+    }
+
     if ( mimetype->name() != "application/octet-stream" ) {
         ClipAction* action = new ClipAction( QString(), mimetype->comment() );
         KService::List lst = KMimeTypeTrader::self()->query( mimetype->name(), "Application" );
@@ -128,6 +140,7 @@ const ActionList& URLGrabber::matchingActions( const QString& clipData )
             m_myMatches.append( action );
     }
 
+    // now look for matches in custom user actions
     foreach (ClipAction* action, m_myActions) {
         if ( action->matches( clipData ) )
             m_myMatches.append( action );
