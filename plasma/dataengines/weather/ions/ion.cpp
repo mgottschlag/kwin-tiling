@@ -27,7 +27,6 @@ public:
             : ion(i),
             initialized(false) {}
 
-    int ref;
     IonInterface *ion;
     bool initialized;
 };
@@ -36,26 +35,6 @@ IonInterface::IonInterface(QObject *parent, const QVariantList &args)
         : Plasma::DataEngine(parent, args),
         d(new Private(this))
 {
-// Initialize the loaded ion with a reference count of 0.
-    d->ref = 0;
-}
-
-// Increment reference counter
-void IonInterface::ref()
-{
-    ++d->ref;
-}
-
-// Decrement reference counter
-void IonInterface::deref()
-{
-    --d->ref;
-}
-
-// Check if Ion is used
-bool IonInterface::isUsed() const
-{
-    return d->ref != 0;
 }
 
 /**
