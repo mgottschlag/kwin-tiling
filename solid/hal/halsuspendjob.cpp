@@ -22,6 +22,8 @@
 #include <QtDBus/QDBusMessage>
 #include <QtDBus/QDBusReply>
 #include <QTimer>
+#include <KConfig>
+#include <KConfigGroup>
 
 HalSuspendJob::HalSuspendJob(QDBusInterface &powermanagement, QDBusInterface &computer,
                               Solid::Control::PowerManager::SuspendMethod method,
@@ -42,7 +44,14 @@ HalSuspendJob::HalSuspendJob(QDBusInterface &powermanagement, QDBusInterface &co
                 bool can_hybrid = reply;
                 if (can_hybrid)
                 {
-                    m_dbusMethod = "SuspendHybrid";
+                    // Temporary: let's check if the user agrees with Hybrid. Default is no.
+                    KConfig sconf("suspendpreferencesrc", KConfig::SimpleConfig);
+                    KConfigGroup group(&sconf, "Preferences");
+                    if (group.readEntry("use_hybrid", false)) {
+                        m_dbusMethod = "SuspendHybrid";
+                    } else {
+                        m_dbusMethod = "Suspend";
+                    }
                 }
                 else
                 {
