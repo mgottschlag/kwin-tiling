@@ -10,7 +10,7 @@
 #include <kicon.h>
 #include <klocale.h>
 #include <kmenu.h>
-#include <k3process.h>
+#include <kprocess.h>
 #include <kwindowsystem.h>
 #include <kconfig.h>
 #include <ksystemtrayicon.h>
@@ -38,7 +38,16 @@ KSysTrayCmd::KSysTrayCmd()
 KSysTrayCmd::~KSysTrayCmd()
 {
     delete menu;
-    delete client;
+    if( client )
+    {
+        if( client->state() == QProcess::Running )
+        {
+            client->terminate();
+            client->kill();
+            client->waitForFinished( 5000 );
+        }
+        delete client;
+    }
 }
 
 //
@@ -172,13 +181,14 @@ void KSysTrayCmd::refresh()
 
 bool KSysTrayCmd::startClient()
 {
-  client = new K3ShellProcess();
-  *client << command;
+  client = new KProcess();
+  client->setShellCommand( command );
   connect( KWindowSystem::self(), SIGNAL(windowAdded(WId)), SLOT(windowAdded(WId)) );
-  connect( client, SIGNAL( processExited(K3Process *) ),
+  connect( client, SIGNAL( finished(int,QProcess::ExitStatus) ),
 	   this, SLOT( clientExited() ) );
 
-  return client->start();
+  client->start();
+  return client->waitForStarted( -1 );
 }
 
 void KSysTrayCmd::clientExited()

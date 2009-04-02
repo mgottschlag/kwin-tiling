@@ -5,7 +5,7 @@
 
 #include <KSystemTrayIcon>
 
-class K3ShellProcess;
+class KProcess;
 class KMenu;
 
 /**
@@ -23,7 +23,7 @@ public:
   void setWindow( WId w ) { win = w; }
   void setCommand( const QString &cmd ) { command = cmd; }
   void setPattern( const QString &regexp ) { window = regexp; }
-    void setStartOnShow( bool enable ) { lazyStart = enable; isVisible = !enable; }
+  void setStartOnShow( bool enable ) { lazyStart = enable; isVisible = !enable; }
   void setNoQuit( bool enable ) { noquit = enable; }
   void setQuitOnHide( bool enable ) { quitOnHide = enable; }
   void setOnTop( bool enable ) { onTop = enable; }
@@ -74,7 +74,7 @@ private:
   KMenu * menu;
 
   WId win;
-  K3ShellProcess *client;
+  KProcess *client;
   QString errStr;
 
   /** Memorized 'top' position of the window*/
