@@ -79,24 +79,27 @@ int main(int argc, char **argv)
         int maxLen = 0;
         QMap<QString, QString> applets;
         foreach (const KPluginInfo &info, Plasma::Applet::listAppletInfo()) {
-            if (info.property("NoDisplay").toBool())
+            if (info.property("NoDisplay").toBool()) {
                 continue;
+            }
 
             int len = info.pluginName().length();
-            if (len > maxLen)
+            if (len > maxLen) {
                 maxLen = len;
+            }
 
             QString name = info.pluginName();
             QString comment = info.comment();
 
-            if(comment.isEmpty())
+            if (comment.isEmpty()) {
                 comment = i18n("No description available");
+            }
 
             applets.insert(name, comment);
         }
 
         QMap<QString, QString>::const_iterator it;
-        for(it = applets.constBegin(); it != applets.constEnd(); it++) {
+        for (it = applets.constBegin(); it != applets.constEnd(); it++) {
             QString applet("%1 - %2");
 
             applet = applet.arg(it.key().leftJustified(maxLen, ' ')).arg(it.value());
