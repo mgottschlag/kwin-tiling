@@ -58,6 +58,8 @@ class Trash : public Plasma::Applet
         void slotEmpty();
 
     protected:
+        void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
+        void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
         void dropEvent(QGraphicsSceneDragDropEvent *event);
         void createConfigurationInterface(KConfigDialog *parent);
         void createMenu();

@@ -292,6 +292,39 @@ QList<QAction*> Trash::contextualActions()
     return actions;
 }
 
+void Trash::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
+{
+    if (KUrl::List::canDecode(event->mimeData())) {
+        const KUrl::List urls = KUrl::List::fromMimeData(event->mimeData());
+        if (urls.count() == 1) {
+            if (!m_places) {
+                m_places = new KFilePlacesModel(this);
+            }
+
+            KUrl url = urls.at(0);
+
+            const Solid::Predicate predicate(Solid::DeviceInterface::StorageAccess, "filePath", url.path());
+
+            //query for mounted devices
+            const QList<Solid::Device> devList = Solid::Device::listFromQuery(predicate, QString());
+
+            //seek for an item in the places (e.g. Dolphin sidebar)
+            const QModelIndex index = m_places->closestItem(url);
+
+            if (devList.count() > 0) {
+                m_icon->setIcon("arrow-up-double");
+            } else if (m_places->bookmarkForIndex(index).url() == url) {
+                m_icon->setIcon("edit-delete");
+            }
+        }
+    }
+}
+
+void Trash::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
+{
+    updateIcon();
+}
+
 void Trash::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
     if (KUrl::List::canDecode(event->mimeData())) {
