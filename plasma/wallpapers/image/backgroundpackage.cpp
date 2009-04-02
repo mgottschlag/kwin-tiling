@@ -28,9 +28,12 @@
 #include <KLocalizedString>
 #include <KStandardDirs>
 #include <KSvgRenderer>
-#include <Plasma/PackageStructure>
-#include <Plasma/PackageMetadata>
+
 #include <ThreadWeaver/Weaver>
+
+#include <Plasma/PackageMetadata>
+#include <Plasma/Wallpaper>
+
 #include <kfilemetainfo.h>
 
 using namespace Plasma;
@@ -138,30 +141,8 @@ QImage Background::defaultScreenshot()
 }
 
 
-class BackgroundPackageStructure : public PackageStructure
-{
-public:
-    BackgroundPackageStructure(QObject *parent = 0);
-private:
-    void addResolution(const char *res);
-};
-
-BackgroundPackageStructure::BackgroundPackageStructure(QObject *parent)
-    : PackageStructure(parent, "Background")
-{
-    QStringList mimetypes;
-    mimetypes << "image/svg" << "image/png" << "image/jpeg" << "image/jpg";
-    setDefaultMimetypes(mimetypes);
-
-    addDirectoryDefinition("images", "images", i18n("Images"));
-    addFileDefinition("screenshot", "screenshot.png", i18n("Screenshot"));
-    setAllowExternalPaths(true);
-}
-
-
-
 BackgroundPackage::BackgroundPackage(const QString &path, float ratio)
-    : Package(path, KSharedPtr<Plasma::PackageStructure>(new BackgroundPackageStructure(this))),
+    : Package(path, Plasma::Wallpaper::packageStructure()),
       m_path(path),
       m_ratio(ratio)
 {
@@ -298,8 +279,7 @@ QString BackgroundPackage::license() const
     return metadata().license();
 }
 
-QSize BackgroundPackage::bestSize(const QSize &resolution,
-                              ResizeMethod method) const
+QSize BackgroundPackage::bestSize(const QSize &resolution, ResizeMethod method) const
 {
     QStringList images = entryList("images");
     if (images.empty()) {
@@ -408,20 +388,23 @@ QString BackgroundFile::license() const
     return QString();
 }
 
-QSize BackgroundFile::bestSize(const QSize &resolution,
-                          ResizeMethod method) const
+QSize BackgroundFile::bestSize(const QSize &resolution, ResizeMethod method) const
 {
-    if(!m_sizeCache.isValid()) {
+    Q_UNUSED(resolution)
+    Q_UNUSED(method)
+
+    if (!m_sizeCache.isValid()) {
         KFileMetaInfo info(m_file, QString(), KFileMetaInfo::TechnicalInfo);
         m_sizeCache = QSize(info.item("http://freedesktop.org/standards/xesam/1.0/core#width").value().toInt(),
-                      info.item("http://freedesktop.org/standards/xesam/1.0/core#height").value().toInt());
+                            info.item("http://freedesktop.org/standards/xesam/1.0/core#height").value().toInt());
 
         //backup solution if strigi does not work
-        if(m_sizeCache.width() == 0 || m_sizeCache.height() == 0) {
+        if (m_sizeCache.width() == 0 || m_sizeCache.height() == 0) {
             kDebug() << "fall back to QImage, check your strigi";
             m_sizeCache = QImage(m_file).size();
         }
     }
+
     return m_sizeCache;
 }
 
