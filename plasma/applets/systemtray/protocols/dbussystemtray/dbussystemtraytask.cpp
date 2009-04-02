@@ -36,7 +36,7 @@
 #include <Plasma/IconWidget>
 #include <Plasma/ToolTipContent>
 #include <Plasma/ToolTipManager>
-
+#include <QDateTime>
 namespace SystemTray
 {
 
@@ -210,8 +210,9 @@ void DBusSystemTrayTaskPrivate::refresh()
 
 QPixmap DBusSystemTrayTaskPrivate::iconDataToPixmap(const ImageStruct &icon) const
 {
-    QImage iconImage(QSize(icon.width, icon.height), QImage::Format_ARGB32);
-    iconImage.loadFromData(icon.data);
+    QImage iconImage( icon.width, icon.height, QImage::Format_ARGB32 );
+    memcpy(iconImage.bits(), (uchar*)icon.data.data(), iconImage.numBytes());
+
     return QPixmap::fromImage(iconImage);
 }
 
