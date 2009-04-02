@@ -41,7 +41,7 @@ void JobAction::start()
     } else if (operationName() == "stop") {
         emit m_jobView->cancelRequested();
         //in case the app crashed and won't call terminate on the jobview.
-        m_jobView->terminate(i18n("Job cancelled by user."));
+        m_jobView->terminate(i18n("Job canceled by user."));
     }
 
     emitResult();
