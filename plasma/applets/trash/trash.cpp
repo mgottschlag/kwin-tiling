@@ -236,14 +236,14 @@ void Trash::updateIcon()
     data.setMainText(i18n("Trash"));
 
     if (m_count > 0) {
-        m_icon->setIcon(KIcon("user-trash-full"));
+        m_icon->setIcon("user-trash-full");
 
         data.setSubText(i18np("One item", "%1 items", m_count));
         if (m_showText) {
             m_icon->setInfoText(i18np("One item", "%1 items", m_count));
         }
     } else {
-        m_icon->setIcon(KIcon("user-trash"));
+        m_icon->setIcon("user-trash");
 
         data.setSubText(i18nc("The trash is empty. This is not an action, but a state", "Empty"));
         if (m_showText) {
