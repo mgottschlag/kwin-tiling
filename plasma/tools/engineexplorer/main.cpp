@@ -56,14 +56,14 @@ int main(int argc, char **argv)
     EngineExplorer* w = new EngineExplorer;
 
     bool ok1, ok2 = false;
-    //get pos if available
+    //get size
     int x = args->getOption("height").toInt(&ok1);
     int y = args->getOption("width").toInt(&ok2);
     if (ok1 && ok2) {
         w->resize(x,y);
     }
 
-    //get size
+    //get pos if available
     x = args->getOption("x").toInt(&ok1);
     y = args->getOption("y").toInt(&ok2);
     if (ok1 && ok2) {
