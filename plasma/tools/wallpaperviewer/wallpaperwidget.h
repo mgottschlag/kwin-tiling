@@ -22,6 +22,10 @@
 
 #include <QWidget>
 
+#include <KConfigGroup>
+
+class KDialog;
+
 namespace Plasma
 {
     class Wallpaper;
@@ -42,12 +46,23 @@ protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
     void wheelEvent(QWheelEvent *event);
+    void contextMenuEvent(QContextMenuEvent *event);
 
 protected Q_SLOTS:
     void updatePaper(const QRectF &exposedRect);
+    void configure();
+    void saveConfig();
+    void configDone();
 
 private:
+    KConfigGroup configGroup();
+
     Plasma::Wallpaper *m_wallpaper;
+    KDialog *m_configDialog;
+    QPoint m_mousePressPoint;
+    QPoint m_mousePressScreenPoint;
+    QPoint m_mouseMovePoint;
+    QPoint m_mouseMoveScreenPoint;
 };
 
 #endif

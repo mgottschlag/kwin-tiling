@@ -20,16 +20,19 @@
 #include "wallpaperwidget.h"
 
 #include <QApplication>
+#include <QContextMenuEvent>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneWheelEvent>
+#include <QMenu>
 #include <QMouseEvent>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QVBoxLayout>
 #include <QWheelEvent>
 
 #include <KAction>
-#include <KConfigGroup>
 #include <KDebug>
+#include <KDialog>
 #include <KGlobal>
 #include <KStandardAction>
 
@@ -37,7 +40,8 @@
 
 WallpaperWidget::WallpaperWidget(const QString &paper, const QString &mode, QWidget *parent)
     : QWidget(parent),
-      m_wallpaper(Plasma::Wallpaper::load(paper))
+      m_wallpaper(Plasma::Wallpaper::load(paper)),
+      m_configDialog(0)
 {
     if (m_wallpaper && !mode.isEmpty()) {
         m_wallpaper->setRenderingMode(mode);
@@ -52,19 +56,12 @@ WallpaperWidget::~WallpaperWidget()
     delete m_wallpaper;
 }
 
-void WallpaperWidget::updatePaper(const QRectF &exposedRect)
-{
-    update(exposedRect.toRect());
-}
-
 void WallpaperWidget::paintEvent(QPaintEvent *event)
 {
     if (m_wallpaper) {
         if (!m_wallpaper->isInitialized()) {
             // delayed paper initialization
-            KConfigGroup wallpaperConfig(KGlobal::config(), "Wallpaper");
-            wallpaperConfig = KConfigGroup(&wallpaperConfig, m_wallpaper->pluginName());
-            m_wallpaper->restore(wallpaperConfig);
+            m_wallpaper->restore(configGroup());
         }
 
         QPainter p(this);
@@ -81,51 +78,86 @@ void WallpaperWidget::resizeEvent(QResizeEvent *event)
     }
 }
 
-void WallpaperWidget::mouseMoveEvent(QMouseEvent *event)
-{
-    if (m_wallpaper && m_wallpaper->isInitialized()) {
-        /*
-        QGraphicsSceneMouseEvent me(QEvent::MouseButtonPress, event->pos().toPoint(),
-                                    event->button(), event->buttons(), event->modifiers());
-        m_wallpaper->mouseMoveEvent(&me);
-
-        if (me.isAccepted()) {
-            return;
-        }
-        */
-    }
-
-    QWidget::mouseMoveEvent(event);
-}
-
 void WallpaperWidget::mousePressEvent(QMouseEvent *event)
 {
     if (m_wallpaper && m_wallpaper->isInitialized()) {
-        /*
-        QGraphicsSceneMouseEvent me(QEvent::MouseButtonPress, event->pos().toPoint(),
-                                    event->button(), event->buttons(), event->modifiers());
-        m_wallpaper->mousePressEvent(&me);
+        m_mousePressPoint = event->pos();
+        m_mousePressScreenPoint = event->globalPos();
+        m_mouseMovePoint = m_mousePressPoint;
+        m_mouseMoveScreenPoint = m_mousePressScreenPoint;
 
-        if (me.isAccepted()) {
+        QGraphicsSceneMouseEvent mouseEvent(QEvent::GraphicsSceneMousePress);
+        mouseEvent.setWidget(this);
+        mouseEvent.setButtonDownScenePos(event->button(), event->pos());
+        mouseEvent.setButtonDownScreenPos(event->button(), event->pos());
+        mouseEvent.setScenePos(m_mousePressPoint);
+        mouseEvent.setScreenPos(m_mousePressScreenPoint);
+        mouseEvent.setLastScenePos(m_mousePressPoint);
+        mouseEvent.setLastScreenPos(m_mousePressScreenPoint);
+        mouseEvent.setButtons(event->buttons());
+        mouseEvent.setButton(event->button());
+        mouseEvent.setModifiers(event->modifiers());
+        mouseEvent.setAccepted(false);
+
+        m_wallpaper->mousePressEvent(&mouseEvent);
+
+        if (mouseEvent.isAccepted()) {
             return;
         }
-        */
     }
 
     QWidget::mousePressEvent(event);
 }
 
+void WallpaperWidget::mouseMoveEvent(QMouseEvent *event)
+{
+    if (m_wallpaper && m_wallpaper->isInitialized()) {
+        QGraphicsSceneMouseEvent mouseEvent(QEvent::GraphicsSceneMousePress);
+        mouseEvent.setWidget(this);
+        mouseEvent.setButtonDownScenePos(event->button(), m_mousePressPoint);
+        mouseEvent.setButtonDownScreenPos(event->button(), m_mousePressScreenPoint);
+        mouseEvent.setScenePos(event->pos());
+        mouseEvent.setScreenPos(event->globalPos());
+        mouseEvent.setLastScenePos(m_mouseMovePoint);
+        mouseEvent.setLastScreenPos(m_mouseMoveScreenPoint);
+        mouseEvent.setButtons(event->buttons());
+        mouseEvent.setButton(event->button());
+        mouseEvent.setModifiers(event->modifiers());
+        mouseEvent.setAccepted(false);
+        m_mouseMovePoint = event->pos();
+        m_mouseMoveScreenPoint = event->globalPos();
+
+        m_wallpaper->mousePressEvent(&mouseEvent);
+
+        if (mouseEvent.isAccepted()) {
+            return;
+        }
+    }
+
+    QWidget::mouseMoveEvent(event);
+}
+
 void WallpaperWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     if (m_wallpaper && m_wallpaper->isInitialized()) {
-        /*
-        QGraphicsSceneMouseEvent me(QEvent::MouseButtonPress, event->pos().toPoint(),
-                                    event->button(), event->buttons(), event->modifiers());
-        m_wallpaper->mousePressEvent(&me);
-        if (me.isAccepted()) {
+        QGraphicsSceneMouseEvent mouseEvent(QEvent::GraphicsSceneMouseRelease);
+        mouseEvent.setWidget(this);
+        mouseEvent.setButtonDownScenePos(event->button(), m_mousePressPoint);
+        mouseEvent.setButtonDownScreenPos(event->button(), m_mousePressScreenPoint);
+        mouseEvent.setScenePos(event->pos());
+        mouseEvent.setScreenPos(event->globalPos());
+        mouseEvent.setLastScenePos(m_mouseMovePoint);
+        mouseEvent.setLastScreenPos(m_mouseMoveScreenPoint);
+        mouseEvent.setButtons(event->buttons());
+        mouseEvent.setButton(event->button());
+        mouseEvent.setModifiers(event->modifiers());
+        mouseEvent.setAccepted(false);
+
+        m_wallpaper->mouseReleaseEvent(&mouseEvent);
+
+        if (mouseEvent.isAccepted()) {
             return;
         }
-        */
     }
 
     QWidget::mouseReleaseEvent(event);
@@ -152,6 +184,67 @@ void WallpaperWidget::wheelEvent(QWheelEvent *event)
     }
 
     QWidget::wheelEvent(event);
+}
+
+void WallpaperWidget::contextMenuEvent(QContextMenuEvent *event)
+{
+    QMenu m;
+    m.addAction(KStandardAction::preferences(this, SLOT(configure()), &m));
+    m.exec(event->globalPos());
+}
+
+void WallpaperWidget::updatePaper(const QRectF &exposedRect)
+{
+    update(exposedRect.toRect());
+}
+
+void WallpaperWidget::configure()
+{
+    if (m_wallpaper) {
+        if (!m_configDialog) {
+            m_configDialog = new KDialog(this);
+            m_configDialog->setCaption(i18n("Configure %1 Wallpaper", m_wallpaper->name()));
+            m_configDialog->setButtons(KDialog::Ok | KDialog::Apply | KDialog::Cancel);
+
+            QWidget *w = new QWidget(m_configDialog);
+            QVBoxLayout *layout = new QVBoxLayout(w);
+            layout->addWidget(m_wallpaper->createConfigurationInterface(w));
+            m_configDialog->setMainWidget(w);
+
+            connect(m_configDialog, SIGNAL(applyClicked()), this, SLOT(saveConfig()));
+            connect(m_configDialog, SIGNAL(okClicked()), this, SLOT(saveConfig()));
+            connect(m_configDialog, SIGNAL(finished()), this, SLOT(configDone()));
+        }
+
+        m_configDialog->show();
+        m_configDialog->raise();
+    }
+}
+
+void WallpaperWidget::saveConfig()
+{
+    if (m_wallpaper) {
+        KConfigGroup config = configGroup();
+        m_wallpaper->save(config);
+        m_wallpaper->restore(config);
+    }
+}
+
+void WallpaperWidget::configDone()
+{
+    m_configDialog->deleteLater();
+    m_configDialog = 0;
+}
+
+KConfigGroup WallpaperWidget::configGroup()
+{
+    KConfigGroup wallpaperConfig(KGlobal::config(), "Wallpaper");
+
+    if (m_wallpaper) {
+        wallpaperConfig = KConfigGroup(&wallpaperConfig, m_wallpaper->pluginName());
+    }
+
+    return wallpaperConfig;
 }
 
 #include "wallpaperwidget.moc"
