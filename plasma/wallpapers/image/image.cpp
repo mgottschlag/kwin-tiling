@@ -80,7 +80,7 @@ void Image::init(const KConfigGroup &config)
     if (m_mode == "SingleImage") {
         setSingleImage();
     } else {
-        startSlideshow();
+        QTimer::singleShot(0, this, SLOT(startSlideshow()));
     }
 }
 

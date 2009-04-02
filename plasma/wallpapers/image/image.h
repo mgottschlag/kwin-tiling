@@ -52,11 +52,11 @@ class Image : public Plasma::Wallpaper
         void removeBackground(const QString &path);
         void updateFadedImage(qreal frame);
         void configWidgetDestroyed();
+        void startSlideshow();
 
     protected:
         void init(const KConfigGroup &config);
         void updateDirs();
-        void startSlideshow();
         void fillMetaInfo(Background* b);
         bool setMetadata(QLabel *label, const QString &text);
         void render(const QString& image = QString());
