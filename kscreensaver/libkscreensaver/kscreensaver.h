@@ -64,7 +64,11 @@ protected:
     bool event( QEvent* event );
 
 private:
-    KScreenSaverPrivate *d;
+    //Note: To keep binary compatibility this class must have only one member, which is a pointer.
+    //      If more members are needed, use the d-pointer technique.
+    //      See http://techbase.kde.org/Policies/Binary_Compatibility_Issues_With_C%2B%2B
+    //KScreenSaverPrivate *d;
+    QWidget *embeddedWidget;
 };
 
 /**
