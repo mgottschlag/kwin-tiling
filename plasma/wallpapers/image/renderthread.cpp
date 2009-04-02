@@ -17,7 +17,6 @@
 RenderThread::RenderThread()
 : m_current_token(-1)
 , m_size(0, 0)
-, m_ratio(1.0)
 {
     m_abort = false;
     m_restart = false;
@@ -41,16 +40,9 @@ void RenderThread::setSize(const QSize& size)
     m_size = size;
 }
 
-void RenderThread::setRatio(float ratio)
-{
-    QMutexLocker lock(&m_mutex);
-    m_ratio = ratio;
-}
-
 int RenderThread::render(const QString &file,
                           const QColor &color,
-                          Background::ResizeMethod method,
-                          Qt::TransformationMode mode)
+                          Background::ResizeMethod method)
 {
     int token;
     {
@@ -58,7 +50,6 @@ int RenderThread::render(const QString &file,
         m_file = file;
         m_color = color;
         m_method = method;
-        m_mode = mode;
         m_restart = true;
         token = ++m_current_token;
     }
@@ -77,9 +68,8 @@ void RenderThread::run()
     QString file;
     QColor color;
     QSize size;
-    float ratio;
+    qreal ratio;
     Background::ResizeMethod method;
-    Qt::TransformationMode mode;
     int token;
 
     forever {
@@ -101,9 +91,8 @@ void RenderThread::run()
             file = m_file;
             color = m_color;
             size = m_size;
-            ratio = m_ratio;
+            ratio = m_size.width() / qreal(m_size.height());
             method = m_method;
-            mode = m_mode;
         }
 
         QImage result(size, QImage::Format_ARGB32_Premultiplied);
@@ -141,8 +130,8 @@ void RenderThread::run()
             imgSize.setHeight(1);
         }
 
-        if (m_ratio < 1) {
-            m_ratio = 1;
+        if (ratio < 1) {
+            ratio = 1;
         }
 
         // set render parameters according to resize mode
@@ -233,7 +222,7 @@ void RenderThread::run()
             svg.render(&p);
         } else {
             if (scaledSize != imgSize) {
-                img = img.scaled(scaledSize, Qt::IgnoreAspectRatio, mode);
+                img = img.scaled(scaledSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
             }
 
             if (m_restart) {

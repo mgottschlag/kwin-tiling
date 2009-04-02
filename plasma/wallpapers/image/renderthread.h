@@ -26,8 +26,7 @@ public:
 
     int render(const QString &file,
                const QColor &color,
-               Background::ResizeMethod method,
-               Qt::TransformationMode mode);
+               Background::ResizeMethod method);
 
     void setSize(const QSize &size);
     void setRatio(float ratio);
@@ -46,7 +45,6 @@ private:
     QSize m_size;
     float m_ratio;
     Background::ResizeMethod m_method;
-    Qt::TransformationMode m_mode;
 
     bool m_abort;
     bool m_restart;

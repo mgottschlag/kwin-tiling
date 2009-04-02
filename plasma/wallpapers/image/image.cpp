@@ -107,13 +107,14 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
     if (m_mode == "SingleImage") {
         m_uiImage.setupUi(m_configWidget);
 
-        m_model = new BackgroundListModel(m_ratio, this);
+        qreal ratio = m_size.isEmpty() ? 1.0 : m_size.width() / qreal(m_size.height());
+        m_model = new BackgroundListModel(ratio, this);
         m_model->setResizeMethod(m_resizeMethod);
         m_model->setWallpaperSize(m_size);
         m_model->reload(m_usersWallpapers);
         m_uiImage.m_view->setModel(m_model);
         m_uiImage.m_view->setItemDelegate(new BackgroundDelegate(m_uiImage.m_view->view(),
-                                                                 m_ratio, this));
+                                                                 ratio, this));
         m_uiImage.m_view->view()->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
         int index = m_model->indexOf(m_wallpaper);
         if (index != -1) {
@@ -197,8 +198,6 @@ void Image::calculateGeometry()
 {
     m_size = boundingRect().size().toSize();
     m_renderer.setSize(m_size);
-    m_ratio = m_size.isEmpty() ? 1.0 : m_size.width() / m_size.height();
-    m_renderer.setRatio(m_ratio);
 
     if (m_model) {
         m_model->setWallpaperSize(m_size);
@@ -314,7 +313,8 @@ void Image::setSingleImage()
     }
 
     QString img;
-    BackgroundPackage b(m_wallpaper, m_ratio);
+    qreal ratio = m_size.isEmpty() ? 1.0 : m_size.width() / qreal(m_size.height());
+    BackgroundPackage b(m_wallpaper, ratio);
 
     img = b.findBackground(m_size, m_resizeMethod); // isValid() returns true for jpg?
     kDebug() << img << m_wallpaper;
@@ -335,10 +335,11 @@ void Image::startSlideshow()
     m_slideshowBackgrounds.clear();
 
     {
+        qreal ratio = m_size.isEmpty() ? 1.0 : m_size.width() / qreal(m_size.height());
         KProgressDialog progressDialog(m_configWidget);
         BackgroundListModel::initProgressDialog(&progressDialog);
         foreach (const QString& dir, m_dirs) {
-            m_slideshowBackgrounds += BackgroundListModel::findAllBackgrounds(0, dir, m_ratio, &progressDialog);
+            m_slideshowBackgrounds += BackgroundListModel::findAllBackgrounds(0, dir, ratio, &progressDialog);
         }
     }
 
@@ -555,7 +556,7 @@ void Image::render(const QString& image)
         }
     }
 
-    m_rendererToken = m_renderer.render(m_img, m_color, m_resizeMethod, Qt::SmoothTransformation);
+    m_rendererToken = m_renderer.render(m_img, m_color, m_resizeMethod);
     suspendStartup(true); // during KDE startup, make ksmserver until the wallpaper is ready
 }
 

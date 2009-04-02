@@ -83,7 +83,6 @@ class Image : public Plasma::Wallpaper
         QPixmap m_oldPixmap;
         QPixmap m_oldFadedPixmap;
         int m_currentSlide;
-        qreal m_ratio;
         BackgroundListModel *m_model;
         KFileDialog *m_dialog;
         RenderThread m_renderer;
