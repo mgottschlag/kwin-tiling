@@ -16,7 +16,6 @@
 #include <QStringList>
 #include <Plasma/Wallpaper>
 #include "backgroundpackage.h"
-#include "renderthread.h"
 #include "ui_imageconfig.h"
 #include "ui_slideshowconfig.h"
 
@@ -45,8 +44,7 @@ class Image : public Plasma::Wallpaper
         void pictureChanged(int index);
         void browse();
         void nextSlide();
-        void updateBackground(int token, const QImage &img);
-        void updateBackground(int token, const QImage &img, bool cache);
+        void updateBackground(const QImage &img);
         void showFileDialog();
         void updateScreenshot(QPersistentModelIndex index);
         void removeBackground(const QString &path);
@@ -59,7 +57,7 @@ class Image : public Plasma::Wallpaper
         void updateDirs();
         void fillMetaInfo(Background* b);
         bool setMetadata(QLabel *label, const QString &text);
-        void render(const QString& image = QString());
+        void renderWallpaper(const QString& image = QString());
         void suspendStartup(bool suspend); // for ksmserver
         void calculateGeometry();
         void setSingleImage();
@@ -67,7 +65,7 @@ class Image : public Plasma::Wallpaper
 
     private:
         int m_delay;
-        Background::ResizeMethod m_resizeMethod;
+        Plasma::Wallpaper::ResizeMethod m_resizeMethod;
         QStringList m_dirs;
         QString m_wallpaper;
         QColor m_color;
@@ -85,12 +83,11 @@ class Image : public Plasma::Wallpaper
         int m_currentSlide;
         BackgroundListModel *m_model;
         KFileDialog *m_dialog;
-        RenderThread m_renderer;
-        int m_rendererToken;
         QSize m_size;
         QString m_img;
         QDateTime m_previousModified;
         bool m_randomize;
+        bool m_startupResumed;
 };
 
 K_EXPORT_PLASMA_WALLPAPER(image, Image)

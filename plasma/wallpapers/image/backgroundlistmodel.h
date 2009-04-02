@@ -15,6 +15,8 @@
 #include <QAbstractListModel>
 #include <KDirWatch>
 
+#include <Plasma/Wallpaper>
+
 class KProgressDialog;
 class Background;
 
@@ -48,7 +50,7 @@ public:
     static void initProgressDialog(KProgressDialog *dialog);
 
     void setWallpaperSize(QSize size);
-    void setResizeMethod(Background::ResizeMethod resizeMethod);
+    void setResizeMethod(Plasma::Wallpaper::ResizeMethod resizeMethod);
 
 private:
 
@@ -58,7 +60,7 @@ private:
     KDirWatch m_dirwatch;
 
     QSize m_size;
-    Background::ResizeMethod m_resizeMethod;
+    Plasma::Wallpaper::ResizeMethod m_resizeMethod;
 };
 
 #endif // BACKGROUNDLISTMODEL_H

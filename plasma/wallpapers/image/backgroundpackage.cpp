@@ -32,7 +32,6 @@
 #include <ThreadWeaver/Weaver>
 
 #include <Plasma/PackageMetadata>
-#include <Plasma/Wallpaper>
 
 #include <kfilemetainfo.h>
 
@@ -165,7 +164,7 @@ QSize BackgroundPackage::resSize(const QString &str) const
 }
 
 QString BackgroundPackage::findBackground(const QSize &size,
-                                          ResizeMethod method) const
+                                          Plasma::Wallpaper::ResizeMethod method) const
 {
     QStringList images = entryList("images");
     if (images.empty()) {
@@ -201,7 +200,7 @@ QString BackgroundPackage::findBackground(const QSize &size,
 
 float BackgroundPackage::distance(const QSize& size,
                                    const QSize& desired,
-                                   ResizeMethod method) const
+                                   Plasma::Wallpaper::ResizeMethod method) const
 {
     // compute difference of areas
     float delta = size.width() * size.height() -
@@ -211,7 +210,7 @@ float BackgroundPackage::distance(const QSize& size,
 
 
     switch (method) {
-    case Scale: {
+    case Plasma::Wallpaper::ScaledResize: {
         // Consider first the difference in aspect ratio,
         // then in areas. Prefer scaling down.
         float deltaRatio = 1.0;
@@ -221,10 +220,9 @@ float BackgroundPackage::distance(const QSize& size,
         }
         return fabs(deltaRatio) * 3.0 + (delta >= 0.0 ? delta : -delta + 5.0);
     }
-    case ScaleCrop:
+    case Plasma::Wallpaper::ScaledAndCroppedResize:
         // Difference of areas, slight preference to scale down
         return delta >= 0.0 ? delta : -delta + 2.0;
-    case Center:
     default:
         // Difference in areas
         return fabs(delta);
@@ -279,7 +277,7 @@ QString BackgroundPackage::license() const
     return metadata().license();
 }
 
-QSize BackgroundPackage::bestSize(const QSize &resolution, ResizeMethod method) const
+QSize BackgroundPackage::bestSize(const QSize &resolution, Plasma::Wallpaper::ResizeMethod method) const
 {
     QStringList images = entryList("images");
     if (images.empty()) {
@@ -333,7 +331,7 @@ BackgroundFile::~BackgroundFile()
 }
 
 QString BackgroundFile::findBackground(const QSize &,
-                                       ResizeMethod) const
+                                       Plasma::Wallpaper::ResizeMethod) const
 {
     return m_file;
 }
@@ -388,7 +386,7 @@ QString BackgroundFile::license() const
     return QString();
 }
 
-QSize BackgroundFile::bestSize(const QSize &resolution, ResizeMethod method) const
+QSize BackgroundFile::bestSize(const QSize &resolution, Plasma::Wallpaper::ResizeMethod method) const
 {
     Q_UNUSED(resolution)
     Q_UNUSED(method)

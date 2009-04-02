@@ -3,7 +3,6 @@ project(plasma-wallpaper-image)
 set(image_SRCS
     image.cpp
     backgroundpackage.cpp
-    renderthread.cpp
     backgrounddelegate.cpp
     backgroundlistmodel.cpp
 )

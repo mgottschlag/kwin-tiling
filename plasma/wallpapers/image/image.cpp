@@ -38,11 +38,10 @@ Image::Image(QObject *parent, const QVariantList &args)
       m_currentSlide(-1),
       m_model(0),
       m_dialog(0),
-      m_rendererToken(-1),
-      m_randomize(true)
+      m_randomize(true),
+      m_startupResumed(false)
 {
-    qRegisterMetaType<QImage>("QImage");
-    connect(&m_renderer, SIGNAL(done(int, QImage)), this, SLOT(updateBackground(int, QImage)));
+    connect(this, SIGNAL(renderCompleted(QImage)), this, SLOT(updateBackground(QImage)));
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(nextSlide()));
 }
 
@@ -58,8 +57,7 @@ void Image::init(const KConfigGroup &config)
     calculateGeometry();
 
     m_delay = config.readEntry("slideTimer", 600);
-    m_resizeMethod = (Background::ResizeMethod)config.readEntry("wallpaperposition",
-                                                                (int)Background::Scale);
+    m_resizeMethod = (ResizeMethod)config.readEntry("wallpaperposition", (int)ScaledResize);
     m_wallpaper = config.readEntry("wallpaper", QString());
     if (m_wallpaper.isEmpty()) {
         m_wallpaper = Plasma::Theme::defaultTheme()->wallpaperPath();
@@ -76,6 +74,8 @@ void Image::init(const KConfigGroup &config)
     if (m_dirs.isEmpty()) {
         m_dirs << KStandardDirs::installPath("wallpaper");
     }
+
+    setUsingDiskCache(m_mode == "SingleImage");
 
     if (m_mode == "SingleImage") {
         setSingleImage();
@@ -131,12 +131,12 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
 
         m_uiImage.m_emailLine->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
-        m_uiImage.m_resizeMethod->addItem(i18n("Scaled & Cropped"), Background::ScaleCrop);
-        m_uiImage.m_resizeMethod->addItem(i18n("Scaled"), Background::Scale);
-        m_uiImage.m_resizeMethod->addItem(i18n("Scaled, keep proportions"), Background::Maxpect);
-        m_uiImage.m_resizeMethod->addItem(i18n("Centered"), Background::Center);
-        m_uiImage.m_resizeMethod->addItem(i18n("Tiled"), Background::Tiled);
-        m_uiImage.m_resizeMethod->addItem(i18n("Center Tiled"), Background::CenterTiled);
+        m_uiImage.m_resizeMethod->addItem(i18n("Scaled & Cropped"), ScaledAndCroppedResize);
+        m_uiImage.m_resizeMethod->addItem(i18n("Scaled"), ScaledResize);
+        m_uiImage.m_resizeMethod->addItem(i18n("Scaled, keep proportions"), MaxpectResize);
+        m_uiImage.m_resizeMethod->addItem(i18n("Centered"), CenteredResize);
+        m_uiImage.m_resizeMethod->addItem(i18n("Tiled"), TiledResize);
+        m_uiImage.m_resizeMethod->addItem(i18n("Center Tiled"), CenterTiledResize);
         for (int i = 0; i < m_uiImage.m_resizeMethod->count(); ++i) {
             if (m_resizeMethod == m_uiImage.m_resizeMethod->itemData(i).value<int>()) {
                 m_uiImage.m_resizeMethod->setCurrentIndex(i);
@@ -171,12 +171,12 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         connect(m_uiSlideshow.m_slideshowDelay, SIGNAL(timeChanged(const QTime&)),
                 this, SLOT(timeChanged(const QTime&)));
 
-        m_uiSlideshow.m_resizeMethod->addItem(i18n("Scaled & Cropped"), Background::ScaleCrop);
-        m_uiSlideshow.m_resizeMethod->addItem(i18n("Scaled"), Background::Scale);
-        m_uiSlideshow.m_resizeMethod->addItem(i18n("Scaled, keep proportions"), Background::Maxpect);
-        m_uiSlideshow.m_resizeMethod->addItem(i18n("Centered"), Background::Center);
-        m_uiSlideshow.m_resizeMethod->addItem(i18n("Tiled"), Background::Tiled);
-        m_uiSlideshow.m_resizeMethod->addItem(i18n("Center Tiled"), Background::CenterTiled);
+        m_uiSlideshow.m_resizeMethod->addItem(i18n("Scaled & Cropped"), ScaledAndCroppedResize);
+        m_uiSlideshow.m_resizeMethod->addItem(i18n("Scaled"), ScaledResize);
+        m_uiSlideshow.m_resizeMethod->addItem(i18n("Scaled, keep proportions"), MaxpectResize);
+        m_uiSlideshow.m_resizeMethod->addItem(i18n("Centered"), CenteredResize);
+        m_uiSlideshow.m_resizeMethod->addItem(i18n("Tiled"), TiledResize);
+        m_uiSlideshow.m_resizeMethod->addItem(i18n("Center Tiled"), CenterTiledResize);
         for (int i = 0; i < m_uiSlideshow.m_resizeMethod->count(); ++i) {
             if (m_resizeMethod == m_uiSlideshow.m_resizeMethod->itemData(i).value<int>()) {
                 m_uiSlideshow.m_resizeMethod->setCurrentIndex(i);
@@ -197,7 +197,6 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
 void Image::calculateGeometry()
 {
     m_size = boundingRect().size().toSize();
-    m_renderer.setSize(m_size);
 
     if (m_model) {
         m_model->setWallpaperSize(m_size);
@@ -211,7 +210,7 @@ void Image::paint(QPainter *painter, const QRectF& exposedRect)
     if (m_size != boundingRect().size().toSize()) {
         calculateGeometry();
         if (!m_size.isEmpty() && !m_img.isEmpty()) { // We have previous image
-            render();
+            renderWallpaper();
             //kDebug() << "re-rendering";
             return;
         }
@@ -323,7 +322,7 @@ void Image::setSingleImage()
     }
 
     if (!m_size.isEmpty()) {
-        render(img);
+        renderWallpaper(img);
     }
 }
 
@@ -391,12 +390,10 @@ void Image::pictureChanged(int index)
 void Image::positioningChanged(int index)
 {
     if (m_mode == "SingleImage") {
-        m_resizeMethod =
-                (Background::ResizeMethod)m_uiImage.m_resizeMethod->itemData(index).value<int>();
+        m_resizeMethod = (ResizeMethod)m_uiImage.m_resizeMethod->itemData(index).value<int>();
         setSingleImage();
     } else {
-        m_resizeMethod =
-                (Background::ResizeMethod)m_uiSlideshow.m_resizeMethod->itemData(index).value<int>();
+        m_resizeMethod = (ResizeMethod)m_uiSlideshow.m_resizeMethod->itemData(index).value<int>();
         startSlideshow();
     }
 
@@ -531,10 +528,10 @@ void Image::nextSlide()
     QFileInfo info(current);
     m_previousModified = info.lastModified();
 
-    render(current);
+    renderWallpaper(current);
 }
 
-void Image::render(const QString& image)
+void Image::renderWallpaper(const QString& image)
 {
     if (!image.isEmpty()) {
         m_img = image;
@@ -544,19 +541,7 @@ void Image::render(const QString& image)
         return;
     }
 
-    if (m_mode == "SingleImage") {
-        QString cache = KGlobal::dirs()->locateLocal("cache", "plasma-wallpapers/" + cacheId() + ".png");
-        if (QFile::exists(cache)) {
-            kDebug() << "loading cached wallpaper from" << cache;
-            m_rendererToken = 1;
-            QImage img(cache);
-            updateBackground(1, img, false);
-            suspendStartup(true); // during KDE startup, make ksmserver until the wallpaper is ready
-            return;
-        }
-    }
-
-    m_rendererToken = m_renderer.render(m_img, m_color, m_resizeMethod);
+    render(m_img, m_size, m_resizeMethod, m_color);
     suspendStartup(true); // during KDE startup, make ksmserver until the wallpaper is ready
 }
 
@@ -566,38 +551,32 @@ QString Image::cacheId() const
     return QString("%5_%3_%4_%1x%2").arg(s.width()).arg(s.height()).arg(m_color.name()).arg(m_resizeMethod).arg(m_img);
 }
 
-void Image::updateBackground(int token, const QImage &img)
+void Image::updateBackground(const QImage &img)
 {
-    updateBackground(token, img, true);
-}
+    m_oldPixmap = m_pixmap;
+    m_oldFadedPixmap = m_oldPixmap;
+    m_pixmap = QPixmap::fromImage(img);
 
-void Image::updateBackground(int token, const QImage &img, bool cache)
-{
-    if (m_rendererToken == token) {
-        m_oldPixmap = m_pixmap;
-        m_oldFadedPixmap = m_oldPixmap;
-        m_pixmap = QPixmap::fromImage(img);
-
-        if (cache && m_mode == "SingleImage") {
-            img.save(KGlobal::dirs()->locateLocal("cache", "plasma-wallpapers/" + cacheId() + ".png"));
-        }
-
-        if (!m_oldPixmap.isNull()) {
-            Plasma::Animator::self()->customAnimation(254, 1500, Plasma::Animator::LinearCurve, this, "updateFadedImage");
-            suspendStartup(false);
-        } else {
-            emit update(boundingRect());
-        }
+    if (!m_oldPixmap.isNull()) {
+        Plasma::Animator::self()->customAnimation(254, 1000, Plasma::Animator::LinearCurve, this, "updateFadedImage");
+        suspendStartup(false);
+    } else {
+        emit update(boundingRect());
     }
 }
 
 void Image::suspendStartup(bool suspend)
 {
+    if (m_startupResumed) {
+        return;
+    }
+
     org::kde::KSMServerInterface ksmserver("org.kde.ksmserver", "/KSMServer", QDBusConnection::sessionBus());
     const QString startupID("desktop wallaper");
     if (suspend) {
         ksmserver.suspendStartup(startupID);
     } else {
+        m_startupResumed = true;
         ksmserver.resumeStartup(startupID);
     }
 }

@@ -26,8 +26,11 @@
 #include <QSize>
 #include <QThread>
 #include <QVariant>
+
 #include <ThreadWeaver/Job>
+
 #include <Plasma/Package>
+#include <Plasma/Wallpaper>
 
 namespace Plasma { class PackageMetadata; }
 
@@ -42,22 +45,13 @@ class Background : public QObject
 {
 Q_OBJECT
 public:
-    enum ResizeMethod {
-        Scale,
-        Center,
-        ScaleCrop,
-        Tiled,
-        CenterTiled,
-        Maxpect
-    };
-
     static const int SCREENSHOT_HEIGHT = 60;
 
     virtual ~Background();
 
     virtual QString path() const = 0;
     virtual QString findBackground(const QSize &resolution,
-                                   ResizeMethod method) const = 0;
+                                   Plasma::Wallpaper::ResizeMethod method) const = 0;
     virtual QPixmap screenshot() const = 0;
     virtual bool screenshotGenerationStarted() const = 0;
     virtual void generateScreenshot(QPersistentModelIndex index) const = 0;
@@ -66,7 +60,7 @@ public:
     virtual QString email() const = 0;
     virtual QString license() const = 0;
     virtual QSize bestSize(const QSize &resolution,
-                            ResizeMethod method) const = 0;
+                            Plasma::Wallpaper::ResizeMethod method) const = 0;
 
     virtual bool isValid() const = 0;
 
@@ -85,7 +79,7 @@ public:
 
     virtual QString path() const;
     virtual QString findBackground(const QSize &resolution,
-                                   ResizeMethod method) const;
+                                   Plasma::Wallpaper::ResizeMethod method) const;
     virtual QPixmap screenshot() const;
     virtual bool screenshotGenerationStarted() const;
     virtual void generateScreenshot(QPersistentModelIndex index) const;
@@ -94,15 +88,15 @@ public:
     virtual QString email() const;
     virtual QString license() const;
     virtual QSize bestSize(const QSize &resolution,
-                            ResizeMethod method) const;
+                           Plasma::Wallpaper::ResizeMethod method) const;
     virtual bool isValid() const;
 private:
     QString resString(const QSize &size) const;
     QSize resSize(const QString &res) const;
 
     float distance(const QSize &size,
-                    const QSize &desired,
-                    ResizeMethod method) const;
+                   const QSize &desired,
+                   Plasma::Wallpaper::ResizeMethod method) const;
 
     QString m_path;
     float m_ratio;
@@ -118,7 +112,7 @@ public:
 
     virtual QString path() const;
     virtual QString findBackground(const QSize &resolution,
-                                   ResizeMethod method) const;
+                                   Plasma::Wallpaper::ResizeMethod method) const;
     virtual bool screenshotGenerationStarted() const;
     virtual void generateScreenshot(QPersistentModelIndex index) const;
     virtual QPixmap screenshot() const;
@@ -127,7 +121,7 @@ public:
     virtual QString email() const;
     virtual QString license() const;
     virtual QSize bestSize(const QSize &resolution,
-                          ResizeMethod method) const;
+                           Plasma::Wallpaper::ResizeMethod method) const;
     virtual bool isValid() const;
 private:
     QString m_file;

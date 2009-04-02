@@ -22,10 +22,10 @@
 #include "backgrounddelegate.h"
 
 BackgroundListModel::BackgroundListModel(float ratio, QObject *listener)
-: m_listener(listener)
-, m_ratio(ratio)
-, m_size(0,0)
-, m_resizeMethod(Background::Scale)
+    : m_listener(listener),
+      m_ratio(ratio),
+      m_size(0,0),
+      m_resizeMethod(Plasma::Wallpaper::ScaledResize)
 {
     connect(&m_dirwatch, SIGNAL(deleted(QString)), listener, SLOT(removeBackground(QString)));
 }
@@ -246,7 +246,7 @@ void BackgroundListModel::setWallpaperSize(QSize size)
     m_size = size;
 }
 
-void BackgroundListModel::setResizeMethod(Background::ResizeMethod resizeMethod)
+void BackgroundListModel::setResizeMethod(Plasma::Wallpaper::ResizeMethod resizeMethod)
 {
     m_resizeMethod = resizeMethod;
 }
