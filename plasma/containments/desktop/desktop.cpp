@@ -211,7 +211,6 @@ QList<QAction*> DefaultDesktop::contextualActions()
         if (panelPlugins.size() == 1) {
             m_addPanelAction = new QAction(i18n("Add Panel"), this);
             connect(m_addPanelAction, SIGNAL(triggered(bool)), this, SLOT(addPanel()));
-            m_addPanelAction->setIcon(KIcon("list-add"));
         } else if (!panelPlugins.isEmpty()) {
             m_addPanelsMenu = new QMenu();
             m_addPanelAction = m_addPanelsMenu->menuAction();
@@ -222,11 +221,17 @@ QList<QAction*> DefaultDesktop::contextualActions()
 
             foreach (const KPluginInfo &plugin, panelPlugins) {
                 QAction *action = new QAction(plugin.name(), this);
+                if (!plugin.icon().isEmpty()) {
+                    action->setIcon(KIcon(plugin.icon()));
+                }
+
                 mapper->setMapping(action, plugin.pluginName());
                 connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
                 m_addPanelsMenu->addAction(action);
             }
         }
+
+        m_addPanelAction->setIcon(KIcon("list-add"));
 
         m_runCommandAction = new QAction(i18n("Run Command..."), this);
         connect(m_runCommandAction, SIGNAL(triggered(bool)), this, SLOT(runCommand()));
