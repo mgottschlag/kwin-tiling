@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=objectName;supportedDrivers;supportedProtocols;
 Name=Portable Media Player
+Name[el]=Φορητός αναπαραγωγέας πολυμέσων
 Name[et]=Kaasaskantav meediamängija
 Name[ga]=Seinnteoir Iniompair Meán
 Name[gu]=પોર્ટેબલ મીડિઆ પ્લેયર
@@ -22,6 +23,7 @@ X-KDE-Solid-Actions-Type=PortableMediaPlayer
 
 [Desktop Action objectName]
 Name=Object Name
+Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi
 Name[ga]=Ainm Réada
 Name[gu]=વસ્તુ નામ
@@ -41,6 +43,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action supportedDrivers]
 Name=Supported Drivers
+Name[el]=Υποστηριζόμενοι οδηγοί
 Name[et]=Toetatud draiverid
 Name[ga]=Tiománaithe a dTacaítear Leo
 Name[gu]=આધારિત ડ્રાઇવરો
@@ -60,6 +63,7 @@ Name[zh_TW]=支援的驅動程式
 
 [Desktop Action supportedProtocols]
 Name=Supported Protocols
+Name[el]=Υποστηριζόμενα πρωτόκολλα
 Name[et]=Toetatud protokollid
 Name[ga]=Prótacail a dTacaítear Leo
 Name[gu]=આધારિત પ્રોટોકોલ્સ

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=fsType;ignored;label;objectName;size;usage;uuid;
 Name=Storage Volume
+Name[el]=Τόμος αποθήκευσης
 Name[et]=Salvesti
 Name[ga]=Imleabhar Stórais
 Name[gu]=સંગ્રહ કદ
@@ -22,6 +23,7 @@ X-KDE-Solid-Actions-Type=StorageVolume
 
 [Desktop Action fsType]
 Name=Fs Type
+Name[el]=Τύπος συστήματος αρχείων
 Name[et]=Failisüsteemi tüüp
 Name[ga]=Cineál an Chórais Comhad
 Name[ko]=파일 시스템 종류
@@ -39,6 +41,7 @@ Name[zh_TW]=檔案系統型態
 
 [Desktop Action ignored]
 Name=Ignored
+Name[el]=Παράβλεψη
 Name[et]=Eiratav
 Name[ga]=Neamhaird Déanta De
 Name[gu]=અવગણેલ
@@ -57,6 +60,7 @@ Name[zh_TW]=忽略
 
 [Desktop Action label]
 Name=Label
+Name[el]=Ετικέτα
 Name[et]=Pealdis
 Name[ga]=Lipéad
 Name[gu]=લેબલ
@@ -76,6 +80,7 @@ Name[zh_TW]=標籤
 
 [Desktop Action objectName]
 Name=Object Name
+Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi
 Name[ga]=Ainm Réada
 Name[gu]=વસ્તુ નામ
@@ -95,6 +100,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action size]
 Name=Size
+Name[el]=Μέγεθος
 Name[et]=Suurus
 Name[ga]=Méid
 Name[gu]=માપ
@@ -115,6 +121,7 @@ Name[zh_TW]=大小
 
 [Desktop Action usage]
 Name=Usage
+Name[el]=Χρήση
 Name[et]=Kasutus
 Name[ga]=Úsáid
 Name[gu]=વપરાશ

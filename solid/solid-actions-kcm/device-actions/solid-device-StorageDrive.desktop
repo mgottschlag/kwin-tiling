@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=bus;driveType;hotpluggable;objectName;removable;
 Name=Storage Drive
+Name[el]=Συσκευή αποθήκευσης
 Name[et]=Salvestusseade
 Name[ga]=Tiomántán Stórais
 Name[gu]=સંગ્રહ ઉપકરણ
@@ -22,6 +23,7 @@ X-KDE-Solid-Actions-Type=StorageDrive
 
 [Desktop Action bus]
 Name=Bus
+Name[el]=Δίαυλος
 Name[et]=Siin
 Name[gu]=બસ
 Name[ja]=バス
@@ -38,6 +40,7 @@ Name[zh_TW]=匯流排
 
 [Desktop Action driveType]
 Name=Drive Type
+Name[el]=Τύπος οδηγού
 Name[et]=Seadme tüüp
 Name[ga]=Cineál an Tiomántáin
 Name[gu]=ડ્રાઇવ પ્રકાર
@@ -57,6 +60,7 @@ Name[zh_TW]=磁碟型態
 
 [Desktop Action hotpluggable]
 Name=Hotpluggable
+Name[el]=Δυνατότητα Hotplug
 Name[et]=Töö ajal ühendatav
 Name[ga]=Inphlugáilte
 Name[ja]=Hotplug 可能
@@ -74,6 +78,7 @@ Name[zh_TW]=可熱插拔
 
 [Desktop Action objectName]
 Name=Object Name
+Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi
 Name[ga]=Ainm Réada
 Name[gu]=વસ્તુ નામ
@@ -93,6 +98,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action removable]
 Name=Removable
+Name[el]=Αφαιρούμενο μέσο
 Name[et]=Eemaldatav
 Name[ga]=Inbhainte
 Name[ja]=リムーバブル

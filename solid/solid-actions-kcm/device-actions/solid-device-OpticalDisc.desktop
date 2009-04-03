@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=appendable;availableContent;blank;capacity;discType;fsType;ignored;label;objectName;rewritable;size;usage;uuid;
 Name=Optical Disc
+Name[el]=Οπτικός δίσκος
 Name[et]=Optiline plaat
 Name[ga]=Diosca Optúil
 Name[ja]=光学ディスク
@@ -21,6 +22,7 @@ X-KDE-Solid-Actions-Type=OpticalDisc
 
 [Desktop Action appendable]
 Name=Appendable
+Name[el]=Προσαρτήσιμο
 Name[et]=Lisatav
 Name[ga]=In-iarcheangailte
 Name[ja]=追記可能
@@ -39,6 +41,7 @@ Name[zh_TW]=可附加
 
 [Desktop Action availableContent]
 Name=Available Content
+Name[el]=Διαθέσιμο περιεχόμενο
 Name[et]=Sisuga
 Name[ga]=Ábhar Le Fáil
 Name[gu]=પ્રાપ્ત વિગત
@@ -58,6 +61,7 @@ Name[zh_TW]=可用的內容
 
 [Desktop Action blank]
 Name=Blank
+Name[el]=Κενό
 Name[et]=Tühi
 Name[ga]=Folamh
 Name[gu]=ખાલી
@@ -78,6 +82,7 @@ Name[zh_TW]=空白
 
 [Desktop Action capacity]
 Name=Capacity
+Name[el]=Χωρητικότητα
 Name[et]=Mahtuvus
 Name[ga]=Toilleadh
 Name[gu]=ક્ષમતા
@@ -98,6 +103,7 @@ Name[zh_TW]=空間
 
 [Desktop Action discType]
 Name=Disc Type
+Name[el]=Τύπος δίσκου
 Name[et]=Plaadi tüüp
 Name[ga]=Cineál an Diosca
 Name[gu]=ડિસ્ક પ્રકાર
@@ -117,6 +123,7 @@ Name[zh_TW]=磁碟型態
 
 [Desktop Action fsType]
 Name=Fs Type
+Name[el]=Τύπος συστήματος αρχείων
 Name[et]=Failisüsteemi tüüp
 Name[ga]=Cineál an Chórais Comhad
 Name[ko]=파일 시스템 종류
@@ -134,6 +141,7 @@ Name[zh_TW]=檔案系統型態
 
 [Desktop Action ignored]
 Name=Ignored
+Name[el]=Παράβλεψη
 Name[et]=Eiratav
 Name[ga]=Neamhaird Déanta De
 Name[gu]=અવગણેલ
@@ -152,6 +160,7 @@ Name[zh_TW]=忽略
 
 [Desktop Action label]
 Name=Label
+Name[el]=Ετικέτα
 Name[et]=Pealdis
 Name[ga]=Lipéad
 Name[gu]=લેબલ
@@ -171,6 +180,7 @@ Name[zh_TW]=標籤
 
 [Desktop Action objectName]
 Name=Object Name
+Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi
 Name[ga]=Ainm Réada
 Name[gu]=વસ્તુ નામ
@@ -190,6 +200,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action rewritable]
 Name=Rewritable
+Name[el]=Επανεγγράψιμο
 Name[et]=Korduvkirjutatav
 Name[ga]=In-Athscríofa
 Name[ja]=リライタブル
@@ -208,6 +219,7 @@ Name[zh_TW]=可覆寫
 
 [Desktop Action size]
 Name=Size
+Name[el]=Μέγεθος
 Name[et]=Suurus
 Name[ga]=Méid
 Name[gu]=માપ
@@ -228,6 +240,7 @@ Name[zh_TW]=大小
 
 [Desktop Action usage]
 Name=Usage
+Name[el]=Χρήση
 Name[et]=Kasutus
 Name[ga]=Úsáid
 Name[gu]=વપરાશ

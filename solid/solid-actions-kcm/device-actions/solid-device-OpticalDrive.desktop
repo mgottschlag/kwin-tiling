@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=bus;driveType;hotpluggable;objectName;readSpeed;removable;supportedMedia;writeSpeed;writeSpeeds;
 Name=Optical Drive
+Name[el]=Οπτικός δίσκος
 Name[et]=Optiline seade
 Name[ga]=Tiomántán Optúil
 Name[ja]=光学ドライブ
@@ -21,6 +22,7 @@ X-KDE-Solid-Actions-Type=OpticalDrive
 
 [Desktop Action bus]
 Name=Bus
+Name[el]=Δίαυλος
 Name[et]=Siin
 Name[gu]=બસ
 Name[ja]=バス
@@ -37,6 +39,7 @@ Name[zh_TW]=匯流排
 
 [Desktop Action driveType]
 Name=Drive Type
+Name[el]=Τύπος οδηγού
 Name[et]=Seadme tüüp
 Name[ga]=Cineál an Tiomántáin
 Name[gu]=ડ્રાઇવ પ્રકાર
@@ -56,6 +59,7 @@ Name[zh_TW]=磁碟型態
 
 [Desktop Action hotpluggable]
 Name=Hotpluggable
+Name[el]=Δυνατότητα Hotplug
 Name[et]=Töö ajal ühendatav
 Name[ga]=Inphlugáilte
 Name[ja]=Hotplug 可能
@@ -73,6 +77,7 @@ Name[zh_TW]=可熱插拔
 
 [Desktop Action objectName]
 Name=Object Name
+Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi
 Name[ga]=Ainm Réada
 Name[gu]=વસ્તુ નામ
@@ -92,6 +97,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action readSpeed]
 Name=Read Speed
+Name[el]=Ταχύτητα ανάγνωσης
 Name[et]=Lugemiskiirus
 Name[ga]=Luas Léite
 Name[gu]=લખવાની ઝડપ
@@ -111,6 +117,7 @@ Name[zh_TW]=讀取速度
 
 [Desktop Action removable]
 Name=Removable
+Name[el]=Αφαιρούμενο μέσο
 Name[et]=Eemaldatav
 Name[ga]=Inbhainte
 Name[ja]=リムーバブル
@@ -129,6 +136,7 @@ Name[zh_TW]=可移除
 
 [Desktop Action supportedMedia]
 Name=Supported Media
+Name[el]=Υποστηριζόμενα μέσα
 Name[et]=Toetatud meedia
 Name[ga]=Meáin a dTacaítear Leo
 Name[gu]=આધારિત મિડીઆ
@@ -148,6 +156,7 @@ Name[zh_TW]=支援的媒體
 
 [Desktop Action writeSpeed]
 Name=Write Speed
+Name[el]=Ταχύτητα εγγραφής
 Name[et]=Kirjutamiskiirus
 Name[ga]=Luas Scríofa
 Name[ja]=書き込み速度
@@ -166,6 +175,7 @@ Name[zh_TW]=寫入速度
 
 [Desktop Action writeSpeeds]
 Name=Write Speeds
+Name[el]=Ταχύτητες εγγραφής
 Name[et]=Kirjutamiskiirus
 Name[ga]=Luasanna Scríofa
 Name[ja]=書き込み速度

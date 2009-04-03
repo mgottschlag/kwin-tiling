@@ -9,6 +9,7 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=system
 
 Name=PolicyKit Authorization
+Name[el]=Εξουσιοδότηση PolicyKit
 Name[en_GB]=PolicyKit Authorisation
 Name[ga]=Údarú PolicyKit
 Name[nds]=PolicyKit-Verlöven
@@ -18,6 +19,7 @@ Name[sv]=Policykit behörighet
 Name[uk]=Уповноваження PolicyKit
 
 Comment=Set up policies for applications using PolicyKit
+Comment[el]=Ρύθμιση πολιτικών για εφαρμογές που χρησιμοποιούν το PolicyKit
 Comment[ga]=Socraigh polasaithe le haghaidh feidhmchlár a bhaineann úsáid as PolicyKit
 Comment[nds]=Regeln för Programmen opstellen, de PolicyKit bruukt
 Comment[pt]=Configurar as políticas das aplicações que usam o PolicyKit

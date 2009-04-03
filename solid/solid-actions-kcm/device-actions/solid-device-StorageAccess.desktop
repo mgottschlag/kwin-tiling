@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=accessible;filePath;objectName;
 Name=Storage Access
+Name[el]=Πρόσβαση χώρου αποθήκευσης
 Name[et]=Salvesti juurdepääs
 Name[ga]=Rochtain Stórais
 Name[gu]=સંગ્રહ ઉપયોગ
@@ -22,6 +23,7 @@ X-KDE-Solid-Actions-Type=StorageAccess
 
 [Desktop Action accessible]
 Name=Accessible
+Name[el]=Προσβάσιμο
 Name[et]=Juurdepääsuga
 Name[ga]=Inrochtana
 Name[gu]=ઉપયોગી
@@ -41,6 +43,7 @@ Name[zh_TW]=可存取
 
 [Desktop Action filePath]
 Name=File Path
+Name[el]=Διαδρομή αρχείου
 Name[et]=Faili asukoht
 Name[ga]=Conair Chomhaid
 Name[gu]=ફાઇલ પાથ
@@ -60,6 +63,7 @@ Name[zh_TW]=檔案路徑
 
 [Desktop Action objectName]
 Name=Object Name
+Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi
 Name[ga]=Ainm Réada
 Name[gu]=વસ્તુ નામ

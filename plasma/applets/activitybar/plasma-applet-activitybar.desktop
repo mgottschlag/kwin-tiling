@@ -57,6 +57,7 @@ Name[x-test]=xxActivity Barxx
 Name[zh_CN]=活动栏
 Name[zh_TW]=活動列
 Comment=Tab bar to switch activities
+Comment[el]=Γραμμή καρτελών για την εναλλαγή δραστηριότητας
 Comment[et]=Kaardiriba tegevuse lülitamiseks
 Comment[ga]=Barra na gcluaisíní chun an ghníomhaíocht a mhalartú
 Comment[ja]=アクティビティを切り替えるタブバー

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=driverHandle;objectName;port;serialType;
 Name=Serial Interface
+Name[el]=Σειριακή διασύνδεση
 Name[et]=Jadaliides
 Name[ga]=Comhéadan Srathach
 Name[gu]=સીરિયલ ઇન્ટરફેસ
@@ -22,6 +23,7 @@ X-KDE-Solid-Actions-Type=SerialInterface
 
 [Desktop Action driverHandle]
 Name=Driver Handle
+Name[el]=Χειριστήριο οδηγού
 Name[et]=Draiveri pide
 Name[ga]=Hanla an Tiománaí
 Name[ko]=드라이버 핸들
@@ -37,6 +39,7 @@ Name[zh_TW]=驅動程式處理
 
 [Desktop Action objectName]
 Name=Object Name
+Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi
 Name[ga]=Ainm Réada
 Name[gu]=વસ્તુ નામ
@@ -56,6 +59,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action port]
 Name=Port
+Name[el]=Θύρα
 Name[gu]=પોર્ટ
 Name[ja]=ポート
 Name[ko]=포트
@@ -68,6 +72,7 @@ Name[zh_TW]=連接埠
 
 [Desktop Action serialType]
 Name=Serial Type
+Name[el]=Τύπος σειριακής
 Name[et]=Jadaliidese tüüp
 Name[ga]=Cineál Srathach
 Name[gu]=સીરિઅલ પ્રકાર

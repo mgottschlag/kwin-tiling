@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Audio Interface
+Name[el]=Διασύνδεση ήχου
 Name[et]=Heliliides
 Name[ga]=Comhéadan Fuaime
 Name[gu]=ધ્વનિ ઇન્ટરફેસ
@@ -22,6 +23,7 @@ X-KDE-Solid-Actions-Type=AudioInterface
 
 [Desktop Action deviceType]
 Name=Device Type
+Name[el]=Τύπος συσκευής
 Name[et]=Seadme tüüp
 Name[ga]=Cineál Gléis
 Name[gu]=ઉપકરણ પ્રકાર
@@ -42,6 +44,7 @@ Name[zh_TW]=裝置類型
 
 [Desktop Action driver]
 Name=Driver
+Name[el]=Οδηγός
 Name[et]=Draiver
 Name[ga]=Tiománaí
 Name[gu]=ડ્રાઇવર
@@ -58,6 +61,7 @@ Name[zh_TW]=驅動程式
 
 [Desktop Action driverHandle]
 Name=Driver Handle
+Name[el]=Χειριστήριο οδηγού
 Name[et]=Draiveri pide
 Name[ga]=Hanla an Tiománaí
 Name[ko]=드라이버 핸들
@@ -73,6 +77,7 @@ Name[zh_TW]=驅動程式處理
 
 [Desktop Action name]
 Name=Name
+Name[el]=Όνομα
 Name[et]=Nimi
 Name[ga]=Ainm
 Name[gu]=નામ
@@ -93,6 +98,7 @@ Name[zh_TW]=名稱
 
 [Desktop Action objectName]
 Name=Object Name
+Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi
 Name[ga]=Ainm Réada
 Name[gu]=વસ્તુ નામ
@@ -112,6 +118,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action soundcardType]
 Name=Soundcard Type
+Name[el]=Τύπος κάρτας ήχου
 Name[et]=Helikaardi tüüp
 Name[ga]=Cineál an Chárta Fuaime
 Name[ja]=サウンドカードのタイプ

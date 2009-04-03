@@ -4,6 +4,7 @@ Name=Button
 Name[be]=Кнопка
 Name[be@latin]=Кнопка
 Name[de]=Knopf
+Name[el]=Κουμπί
 Name[et]=Nupp
 Name[fa]=بوتان
 Name[fy]=Knop
@@ -32,6 +33,7 @@ X-KDE-Solid-Actions-Type=Button
 
 [Desktop Action hasState]
 Name=Has State
+Name[el]=Έχει κατάσταση
 Name[et]=Olekuga
 Name[ga]=Staid Aige
 Name[ja]=状態あり
@@ -49,6 +51,7 @@ Name[zh_TW]=有狀態
 
 [Desktop Action objectName]
 Name=Object Name
+Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi
 Name[ga]=Ainm Réada
 Name[gu]=વસ્તુ નામ
@@ -68,6 +71,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action stateValue]
 Name=State Value
+Name[el]=Τιμή κατάστασης
 Name[et]=Oleku väärtus
 Name[ga]=Luach na Staide
 Name[gu]=સ્થિતિ કિંમત
@@ -87,6 +91,7 @@ Name[zh_TW]=狀態值
 
 [Desktop Action type]
 Name=Type
+Name[el]=Τύπος
 Name[et]=Tüüp
 Name[ga]=Cineál
 Name[gu]=પ્રકાર

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=device;deviceAdapter;deviceIndex;deviceType;objectName;
 Name=Dvb Interface
+Name[el]=Διασύνδεση Dvb
 Name[et]=DVB liides
 Name[ga]=Comhéadan Dvb
 Name[gu]=Dvb ઇન્ટરફેસ
@@ -22,6 +23,7 @@ X-KDE-Solid-Actions-Type=DvbInterface
 
 [Desktop Action device]
 Name=Device
+Name[el]=Συσκευή
 Name[et]=Seade
 Name[ga]=Gléas
 Name[gu]=ઉપકરણ
@@ -42,6 +44,7 @@ Name[zh_TW]=裝置
 
 [Desktop Action deviceAdapter]
 Name=Device Adapter
+Name[el]=Προσαρμογέας συσκευής
 Name[et]=Seadme adapter
 Name[ga]=Cuibheoir Gléis
 Name[ja]=デバイスのアダプタ
@@ -60,6 +63,7 @@ Name[zh_TW]=裝置接合器
 
 [Desktop Action deviceIndex]
 Name=Device Index
+Name[el]=Δείκτης συσκευής
 Name[et]=Seadme indeks
 Name[ga]=Innéacs Gléis
 Name[gu]=ઉપકરણ અનુક્રમ
@@ -79,6 +83,7 @@ Name[zh_TW]=裝置索引
 
 [Desktop Action deviceType]
 Name=Device Type
+Name[el]=Τύπος συσκευής
 Name[et]=Seadme tüüp
 Name[ga]=Cineál Gléis
 Name[gu]=ઉપકરણ પ્રકાર
@@ -99,6 +104,7 @@ Name[zh_TW]=裝置類型
 
 [Desktop Action objectName]
 Name=Object Name
+Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi
 Name[ga]=Ainm Réada
 Name[gu]=વસ્તુ નામ
