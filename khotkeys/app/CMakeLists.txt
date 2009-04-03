@@ -7,7 +7,7 @@ set(kded_khotkeys_PART_SRCS
 qt4_generate_dbus_interface(kded.h org.kde.khotkeys.xml )
 
 kde4_add_plugin(kded_khotkeys ${kded_khotkeys_PART_SRCS})
-target_link_libraries(kded_khotkeys khotkeysprivate kworkspace ${KDE4_KDE3SUPPORT_LIBS})
+target_link_libraries(kded_khotkeys khotkeysprivate kworkspace ${KDE4_KDEUI_LIBS})
 
 # I'm not sure if this is needed anymore. Check it
 if(X11_XTest_FOUND)

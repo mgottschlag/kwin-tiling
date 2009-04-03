@@ -89,7 +89,6 @@ target_link_libraries(
     khotkeysprivate
     ${KDE4_KIO_LIBS}
     ${QT_QTGUI_LIBRARY}
-    ${QT_QT3SUPPORT_LIBRARY}
     ${X11_X11_LIB}
     )
 
