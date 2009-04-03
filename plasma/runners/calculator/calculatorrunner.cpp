@@ -38,7 +38,7 @@ CalculatorRunner::CalculatorRunner( QObject* parent, const QVariantList &args )
                          Plasma::RunnerContext::ShellCommand);
 
     QString description = i18n("Calculates the value of :q: when :q: is made up of numbers and "
-                               "mathematical symbols such a +, -, /, *, ^.");
+                               "mathematical symbols such as +, -, /, * and ^.");
     addSyntax(Plasma::RunnerSyntax("=:q:", description));
     addSyntax(Plasma::RunnerSyntax(":q:=", description));
 }
