@@ -73,7 +73,7 @@ void listWallpapers()
     spaces.fill(' ', maxLen + 3);
 
     if (wallpapers.isEmpty()) {
-        std::cout << i18n("No wallpaper plugins installed!").toLocal8Bit().data() << std::endl << std::endl;
+        std::cout << i18n("No wallpaper plugins installed.").toLocal8Bit().data() << std::endl << std::endl;
         return;
     }
 
