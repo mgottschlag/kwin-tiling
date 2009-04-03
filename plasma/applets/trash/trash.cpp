@@ -75,7 +75,6 @@ Trash::Trash(QObject *parent, const QVariantList &args)
     m_icon = new Plasma::IconWidget(KIcon("user-trash"),QString(),this);
     m_icon->setNumDisplayLines(2);
     m_icon->setDrawBackground(true);
-    m_icon->setAcceptDrops(true);
 
     resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
     createMenu();
@@ -95,6 +94,7 @@ void Trash::init()
     layout->addItem(m_icon);
 
     setAcceptDrops(true);
+    installSceneEventFilter(m_icon);
 
     m_dirLister = new KDirLister();
     connect( m_dirLister, SIGNAL( clear() ),
