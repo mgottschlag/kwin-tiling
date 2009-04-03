@@ -80,7 +80,7 @@ void IconApplet::init()
     }
     setDisplayLines(2);
 
-    m_icon->setAcceptDrops(true);
+    installSceneEventFilter(m_icon);
     registerAsDragHandle(m_icon);
     Plasma::ToolTipManager::self()->registerWidget(m_icon);
 
