@@ -133,7 +133,7 @@ QGraphicsWidget* DBusSystemTrayTask::createWidget(Plasma::Applet *host)
     iconWidget->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
     iconWidget->setPreferredSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
 
-    connect(iconWidget, SIGNAL(clicked()), d->notificationAreaItemInterface, SLOT(activate()));
+    connect(iconWidget, SIGNAL(clicked()), d->notificationAreaItemInterface, SLOT(Activate()));
     iconWidget->installEventFilter(this);
 
     connect(iconWidget, SIGNAL(destroyed(QObject *)), this, SLOT(iconDestroyed(QObject *)));
