@@ -21,18 +21,19 @@
 
 #include <limits>
 
-#include <QApplication>
-#include <QGraphicsLinearLayout>
-#include <QPainter>
-#include <QBitmap>
-#include <QDesktopWidget>
-#include <QGridLayout>
-#include <QLabel>
-#include <QComboBox>
 #include <QAction>
+#include <QApplication>
+#include <QBitmap>
+#include <QComboBox>
+#include <QDesktopWidget>
+#include <QGraphicsLinearLayout>
+#include <QGridLayout>
 #include <QGraphicsLayout>
 #include <QGraphicsSceneDragDropEvent>
-
+#include <QLabel>
+#include <QMenu>
+#include <QPainter>
+#include <QSignalMapper>
 
 #include <KDebug>
 #include <KIcon>
@@ -88,6 +89,7 @@ protected:
 
 Panel::Panel(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
+      m_addPanelsMenu(0),
       m_configureAction(0),
       m_addPanelAction(0),
       m_currentSize(QSize(Kephal::ScreenUtils::screenSize(screen()).width(), 35)),
@@ -113,6 +115,7 @@ Panel::Panel(QObject *parent, const QVariantList &args)
 
 Panel::~Panel()
 {
+    delete m_addPanelsMenu;
 }
 
 void Panel::init()
@@ -144,8 +147,31 @@ QList<QAction*> Panel::contextualActions()
         m_configureAction->setIcon(KIcon("configure"));
         connect(m_configureAction, SIGNAL(triggered()), this, SIGNAL(toolBoxToggled()));
 
-        m_addPanelAction = new QAction(i18n("Add Panel"), this);
-        connect(m_addPanelAction, SIGNAL(triggered(bool)), this, SLOT(addPanel()));
+        KPluginInfo::List panelPlugins = listContainmentsOfType("panel");
+
+        if (panelPlugins.size() == 1) {
+            m_addPanelAction = new QAction(i18n("Add Panel"), this);
+            connect(m_addPanelAction, SIGNAL(triggered(bool)), this, SLOT(addPanel()));
+        } else if (!panelPlugins.isEmpty()) {
+            m_addPanelsMenu = new QMenu();
+            m_addPanelAction = m_addPanelsMenu->menuAction();
+            m_addPanelAction->setText(i18n("Add Panel"));
+
+            QSignalMapper *mapper = new QSignalMapper(this);
+            connect(mapper, SIGNAL(mapped(QString)), this, SLOT(addPanel(QString)));
+
+            foreach (const KPluginInfo &plugin, panelPlugins) {
+                QAction *action = new QAction(plugin.name(), this);
+                if (!plugin.icon().isEmpty()) {
+                    action->setIcon(KIcon(plugin.icon()));
+                }
+
+                mapper->setMapping(action, plugin.pluginName());
+                connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
+                m_addPanelsMenu->addAction(action);
+            }
+        }
+
         m_addPanelAction->setIcon(KIcon("list-add"));
         constraintsEvent(Plasma::ImmutableConstraint);
     }
@@ -264,10 +290,18 @@ void Panel::updateSize()
 
 void Panel::addPanel()
 {
-    if (corona()) {
-        Containment* panel = corona()->addContainment("panel");
-        panel->showConfigurationInterface();
+    KPluginInfo::List panelPlugins = listContainments("panel");
 
+    if (!panelPlugins.isEmpty()) {
+        addPanel(panelPlugins.first().pluginName());
+    }
+}
+
+void Panel::addPanel(const QString &plugin)
+{
+    if (corona()) {
+        Containment* panel = corona()->addContainment(plugin);
+        panel->showConfigurationInterface();
         panel->setScreen(screen());
 
         QList<Plasma::Location> freeEdges = corona()->freeEdges(screen());

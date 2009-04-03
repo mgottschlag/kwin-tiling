@@ -61,6 +61,7 @@ private slots:
     void appletRemoved(Plasma::Applet* applet);
     void updateSize();
     void addPanel();
+    void addPanel(const QString &plugin);
 
 private:
     /**
@@ -74,6 +75,7 @@ private:
     void updateBorders(const QRect &geom);
 
     Plasma::FrameSvg *m_background;
+    QMenu *m_addPanelsMenu;
     QAction* m_configureAction;
     QAction* m_addPanelAction;
 
