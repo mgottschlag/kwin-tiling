@@ -93,7 +93,7 @@ void PlayerActionJob::start()
                     m_player->seek(time);
                 } else {
                     setErrorText(i18n("The 'seconds' argument to the 'seek' command must be "
-                                      "between 0 and the length of the track".));
+                                      "between 0 and the length of the track."));
                     setError(-2);
                 }
             } else {
