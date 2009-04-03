@@ -61,6 +61,7 @@ class DefaultDesktop : public Plasma::Containment
 
 public:
     DefaultDesktop(QObject *parent, const QVariantList &args);
+    ~DefaultDesktop();
     void constraintsEvent(Plasma::Constraints constraints);
 
     QList<QAction*> contextualActions();
@@ -75,6 +76,7 @@ protected Q_SLOTS:
     void logout();
 
     void addPanel();
+    void addPanel(const QString &plugin);
 
     void onAppletAdded(Plasma::Applet *, const QPointF &);
     void onAppletRemoved(Plasma::Applet *);
@@ -83,6 +85,7 @@ protected Q_SLOTS:
     void refreshWorkingArea();
 
 private:
+    QMenu *m_addPanelsMenu;
     QAction *m_lockDesktopAction;
     QAction *m_appletBrowserAction;
     QAction *m_addPanelAction;

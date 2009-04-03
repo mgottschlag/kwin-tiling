@@ -28,7 +28,9 @@
 #include <QFileInfo>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QMenu>
 #include <QPainter>
+#include <QSignalMapper>
 #include <QTimeLine>
 
 #include <KAuthorized>
@@ -58,6 +60,7 @@ using namespace Plasma;
 
 DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
+      m_addPanelsMenu(0),
       m_lockDesktopAction(0),
       m_appletBrowserAction(0),
       m_addPanelAction(0),
@@ -81,6 +84,11 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
 
     setHasConfigurationInterface(true);
     //kDebug() << "!!! loading desktop";
+}
+
+DefaultDesktop::~DefaultDesktop()
+{
+    delete m_addPanelsMenu;
 }
 
 void DefaultDesktop::constraintsEvent(Plasma::Constraints constraints)
@@ -118,9 +126,17 @@ void DefaultDesktop::constraintsEvent(Plasma::Constraints constraints)
 
 void DefaultDesktop::addPanel()
 {
+    KPluginInfo::List panelPlugins = listContainments("panel");
+
+    if (!panelPlugins.isEmpty()) {
+        addPanel(panelPlugins.first().pluginName());
+    }
+}
+
+void DefaultDesktop::addPanel(const QString &plugin)
+{
     if (corona()) {
-        // make a panel at the top
-        Containment* panel = corona()->addContainment("panel");
+        Containment* panel = corona()->addContainment(plugin);
         panel->showConfigurationInterface();
 
         panel->setScreen(screen());
@@ -190,9 +206,27 @@ QList<QAction*> DefaultDesktop::contextualActions()
     if (!m_appletBrowserAction) {
         m_appletBrowserAction = action("add widgets");
 
-        m_addPanelAction = new QAction(i18n("Add Panel"), this);
-        connect(m_addPanelAction, SIGNAL(triggered(bool)), this, SLOT(addPanel()));
-        m_addPanelAction->setIcon(KIcon("list-add"));
+        KPluginInfo::List panelPlugins = listContainmentsOfType("panel");
+
+        if (panelPlugins.size() == 1) {
+            m_addPanelAction = new QAction(i18n("Add Panel"), this);
+            connect(m_addPanelAction, SIGNAL(triggered(bool)), this, SLOT(addPanel()));
+            m_addPanelAction->setIcon(KIcon("list-add"));
+        } else if (!panelPlugins.isEmpty()) {
+            m_addPanelsMenu = new QMenu();
+            m_addPanelAction = m_addPanelsMenu->menuAction();
+            m_addPanelAction->setText(i18n("Add Panel"));
+
+            QSignalMapper *mapper = new QSignalMapper(this);
+            connect(mapper, SIGNAL(mapped(QString)), this, SLOT(addPanel(QString)));
+
+            foreach (const KPluginInfo &plugin, panelPlugins) {
+                QAction *action = new QAction(plugin.name(), this);
+                mapper->setMapping(action, plugin.pluginName());
+                connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
+                m_addPanelsMenu->addAction(action);
+            }
+        }
 
         m_runCommandAction = new QAction(i18n("Run Command..."), this);
         connect(m_runCommandAction, SIGNAL(triggered(bool)), this, SLOT(runCommand()));
