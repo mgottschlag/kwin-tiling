@@ -36,7 +36,8 @@
 #include <Plasma/IconWidget>
 #include <Plasma/ToolTipContent>
 #include <Plasma/ToolTipManager>
-#include <QDateTime>
+#include <Plasma/Applet>
+
 namespace SystemTray
 {
 
@@ -87,7 +88,7 @@ public:
     QTimer *movieTimer;
     QTimer *blinkTimer;
     bool blink;
-    QList<Plasma::IconWidget *>iconWidgets;
+    QHash<Plasma::Applet *, Plasma::IconWidget *>iconWidgets;
     Plasma::ToolTipContent tooltipData;
     org::kde::NotificationAreaItem *notificationAreaItemInterface;
 };
@@ -127,6 +128,10 @@ QGraphicsWidget* DBusSystemTrayTask::createWidget(Plasma::Applet *host)
 {
     kDebug()<<"creating a new icon for the applet"<<(QObject*)host;
 
+    if (d->iconWidgets.contains(host)) {
+        return d->iconWidgets[host];
+    }
+
     Plasma::IconWidget *iconWidget = new Plasma::IconWidget(host);
 
     iconWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -137,7 +142,7 @@ QGraphicsWidget* DBusSystemTrayTask::createWidget(Plasma::Applet *host)
     iconWidget->installEventFilter(this);
 
     connect(iconWidget, SIGNAL(destroyed(QObject *)), this, SLOT(iconDestroyed(QObject *)));
-    d->iconWidgets.append(iconWidget);
+    d->iconWidgets[host] = iconWidget;
 
     //Delay because syncStatus needs that createWidget is done
     QTimer::singleShot(0, this, SLOT(refresh()));
@@ -181,7 +186,7 @@ QIcon DBusSystemTrayTask::icon() const
 bool DBusSystemTrayTask::eventFilter(QObject *watched, QEvent *event)
 {
     Plasma::IconWidget *iw = qobject_cast<Plasma::IconWidget *>(watched);
-    if (d->iconWidgets.contains(iw) && event->type() == QEvent::GraphicsSceneContextMenu) {
+    if (d->iconWidgets.values().contains(iw) && event->type() == QEvent::GraphicsSceneContextMenu) {
         QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
         d->notificationAreaItemInterface->ContextMenu(me->screenPos().x(), me->screenPos().y());
         return true;
@@ -196,7 +201,15 @@ bool DBusSystemTrayTask::eventFilter(QObject *watched, QEvent *event)
 void DBusSystemTrayTaskPrivate::iconDestroyed(QObject *obj)
 {
     Plasma::IconWidget *iw = static_cast<Plasma::IconWidget *>(obj);
-    iconWidgets.removeAll(iw);
+
+    QHash<Plasma::Applet *, Plasma::IconWidget*>::const_iterator i = iconWidgets.constBegin();
+    while (i != iconWidgets.end()) {
+        if (i.value() == iw) {
+            iconWidgets.remove(i.key());
+            return;
+        }
+        ++i;
+    }
 }
 
 void DBusSystemTrayTaskPrivate::refresh()
