@@ -51,7 +51,16 @@ if(USE_XKLAVIER STREQUAL ON)
 endif(USE_XKLAVIER STREQUAL ON)
 macro_log_feature(X11_Xkbfile_FOUND "xkbfile" "X11 KXB library for keyboard handling software" "http://www.x.org" FALSE "" "xkbfile is required to build kxkb.")
 
-macro_bool_to_01(X11_Xinput_FOUND HAVE_XINPUT)
+SET(CMAKE_REQUIRED_LIBRARIES -lXi)
+CHECK_FUNCTION_EXISTS(_XiGetDevicePresenceNotifyEvent XiGetDevicePresenceNotifyEvent_EXISTS)
+
+if( X11_Xinput_FOUND AND XiGetDevicePresenceNotifyEvent_EXISTS )
+    set(XiGetDevicePresence_FOUND 1)
+else( X11_Xinput_FOUND AND XiGetDevicePresenceNotifyEvent_EXISTS )
+    MESSAGE(STATUS "_XiGetDevicePresenceNotifyEvent is not found, libXi version 1.2.0 or later is required to keep layouts with keyboard hotplugging")
+endif( X11_Xinput_FOUND AND XiGetDevicePresenceNotifyEvent_EXISTS )
+
+macro_bool_to_01(XiGetDevicePresence_FOUND HAVE_XINPUT)
 ADD_DEFINITIONS(-DHAVE_XINPUT=${HAVE_XINPUT})
 
 if(X11_Xkbfile_FOUND AND HAVE_XKLAVIER)
@@ -89,9 +98,9 @@ if(X11_XTest_FOUND)
   target_link_libraries(kcm_keyboard_layout ${X11_XTest_LIB})
 endif(X11_XTest_FOUND)
 
-if(X11_Xinput_FOUND)
+if(XiGetDevicePresence_FOUND)
   target_link_libraries(kcm_keyboard_layout ${X11_Xinput_LIB})
-endif(X11_Xinput_FOUND)
+endif(XiGetDevicePresence_FOUND)
 
 install(TARGETS kcm_keyboard_layout DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES keyboard_layout.desktop DESTINATION  ${SERVICES_INSTALL_DIR})
@@ -113,9 +122,9 @@ kde4_add_kdeinit_executable(kxkb ${kxkb_KDEINIT_SRCS})
 target_link_libraries(kdeinit_kxkb ${X11_X11_LIB} ${X11_Xext_LIB} ${KDE4_KDEUI_LIBS}
      ${XKB_SUPPORT_LIB})
 
-if(X11_Xinput_FOUND)
+if(XiGetDevicePresence_FOUND)
   target_link_libraries(kdeinit_kxkb ${X11_Xinput_LIB})
-endif(X11_Xinput_FOUND)
+endif(XiGetDevicePresence_FOUND)
 
 install(TARGETS kdeinit_kxkb ${INSTALL_TARGETS_DEFAULT_ARGS})
 install(TARGETS kxkb         ${INSTALL_TARGETS_DEFAULT_ARGS})
