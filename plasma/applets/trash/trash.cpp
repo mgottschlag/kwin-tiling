@@ -367,8 +367,11 @@ void Trash::dropEvent(QGraphicsSceneDragDropEvent *event)
                 }
             }
 
-             //finally, try to trash a file
-            if (!specialOperation) {
+            if (specialOperation) {
+                updateIcon();
+
+            //finally, try to trash a file
+            }else{
                 KIO::Job* job = KIO::trash(urls);
                 job->ui()->setWindow(0);
                 job->ui()->setAutoErrorHandlingEnabled(true);
