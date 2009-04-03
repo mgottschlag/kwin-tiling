@@ -441,21 +441,19 @@ void BackgroundDialog::reloadConfig()
     int wallpaperIndex = 0;
 
     // Containment
-    KPluginInfo::List plugins = Plasma::Containment::listContainments();
+    KPluginInfo::List plugins = Plasma::Containment::listContainmentsOfType("desktop");
     m_containmentModel->clear();
     int i = 0;
     foreach (const KPluginInfo& info, plugins) {
-        if (!info.service()->property("X-Plasma-ContainmentCategories").toStringList().contains("desktop")) {
-            continue;
-        }
-
         QStandardItem* item = new QStandardItem(KIcon(info.icon()), info.name());
         item->setData(info.comment(), AppletDelegate::DescriptionRole);
         item->setData(info.pluginName(), AppletDelegate::PluginNameRole);
         m_containmentModel->appendRow(item);
+
         if (info.pluginName() == m_containment->pluginName()) {
             containmentIndex = i;
         }
+
         ++i;
     }
     m_containmentComboBox->setCurrentIndex(containmentIndex);
