@@ -54,9 +54,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QStyle>
 
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <errno.h>
 #include <pwd.h>
 #include <grp.h>
 
@@ -218,14 +220,36 @@ KGreeter::~KGreeter()
 #define PIXEL_LIMIT_ICON 100
 #define PIXEL_LIMIT_IMAGE 300
 
+// replace this with a simple !access(..., X_OK) once we run with non-root real uid
 static bool
-loadFace( QByteArray &fn, QImage &p )
+dirAccessible( const char *dir )
+{
+    struct stat st;
+
+    if (stat( dir, &st ))
+        return false;
+    return (st.st_mode & S_IXOTH) != 0;
+}
+
+static bool
+loadFace( QByteArray &fn, QImage &p, const QByteArray &pp, bool complain = false )
 {
 	int fd, ico;
 	if ((fd = open( fn.data(), O_RDONLY | O_NONBLOCK )) < 0) {
-		fn.chop( 5 );
-		if ((fd = open( fn.data(), O_RDONLY | O_NONBLOCK )) < 0)
+		if (errno != ENOENT) {
+			if (pp.isEmpty() || dirAccessible( pp.data() ))
+				(complain ? logError : logInfo)
+					( "Cannot load %s: %m\n", fn.data() );
 			return false;
+		}
+		fn.chop( 5 );
+		if ((fd = open( fn.data(), O_RDONLY | O_NONBLOCK )) < 0) {
+			if ((complain || errno != ENOENT) &&
+			    (pp.isEmpty() || dirAccessible( pp.data() )))
+				(complain ? logError : logInfo)
+					( "Cannot load %s: %m\n", fn.data() );
+			return false;
+		}
 		ico = 0;
 	} else
 		ico = 1;
@@ -285,11 +309,17 @@ KGreeter::insertUser( const QImage &default_pix,
 	QImage p;
 	do {
 		dp ^= 1;
-		QByteArray fn = !dp ?
-		                QByteArray( ps->pw_dir ) + '/' :
-		                QFile::encodeName( _faceDir + '/' + username );
+		QByteArray pp, fn;
+		if (!dp) {
+			fn = pp = QByteArray( ps->pw_dir );
+			fn += '/';
+		} else {
+			fn = QFile::encodeName( _faceDir );
+			fn += '/';
+			fn += ps->pw_name;
+		}
 		fn += ".face.icon";
-		if (loadFace( fn, p ))
+		if (loadFace( fn, p, pp ))
 			goto gotit;
 	} while (--nd >= 0);
 	p = default_pix;
@@ -348,9 +378,8 @@ KGreeter::insertUsers()
 
 	QImage default_pix;
 	if (userView) {
-		QByteArray fn = QFile::encodeName( _faceDir + "/.default.face.icon" );
-		if (!loadFace( fn, default_pix )) {
-			logError( "Cannot open default user face\n" );
+		QByteArray fn = QFile::encodeName( _faceDir ) + "/.default.face.icon";
+		if (!loadFace( fn, default_pix, QByteArray(), true )) {
 			default_pix = QImage( 48, 48, QImage::Format_ARGB32 );
 			default_pix.fill( 0 );
 		}
