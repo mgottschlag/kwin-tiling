@@ -63,7 +63,6 @@ class KDMConvenienceWidget : public QWidget {
 	QRadioButton *npRadio, *ppRadio, *spRadio;
 	KComboBox *userlb, *puserlb;
 	QListWidget *npuserlv;
-	QLabel *pu_label;
 	QString autoUser, preselUser;
 	QStringList noPassUsers;
 };

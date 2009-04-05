@@ -98,9 +98,9 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	ppRadio->setWhatsThis( i18n(
 		"Preselect the user that logged in previously. "
 		"Use this if this computer is usually used several consecutive times by one user.") );
-	spRadio = new QRadioButton( i18nc("@option:radio preselected user", "Specif&y"), puGroup );
+	spRadio = new QRadioButton( i18nc("@option:radio preselected user", "Specifi&ed:"), puGroup );
 	spRadio->setWhatsThis( i18n(
-		"Preselect the user specified in the combo box below. "
+		"Preselect the user specified in the combo box to the right. "
 		"Use this if this computer is predominantly used by a certain user.") );
 	QButtonGroup *buttonGroup = new QButtonGroup( puGroup );
 	connect( buttonGroup, SIGNAL(buttonClicked( int )), SLOT(slotPresChanged()) );
@@ -115,23 +115,23 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 
 	puserlb = new KComboBox( true, puGroup );
 
-	pu_label = new QLabel( i18n("Us&er:"), puGroup );
-	pu_label->setBuddy( puserlb );
 	connect( puserlb, SIGNAL(editTextChanged( const QString & )), SIGNAL(changed()) );
 	wtstr = i18n(
 		"Select the user to be preselected for login. "
 		"This box is editable, so you can specify an arbitrary non-existent "
 		"user to mislead possible attackers.");
-	pu_label->setWhatsThis( wtstr );
 	puserlb->setWhatsThis( wtstr );
 	QBoxLayout *hlpl = new QHBoxLayout();
 	laygroup5->addItem( hlpl );
 	hlpl->setSpacing( KDialog::spacingHint() );
 	hlpl->setMargin( 0 );
 	hlpl->addWidget( spRadio );
-	hlpl->addWidget( pu_label );
 	hlpl->addWidget( puserlb );
 	hlpl->addStretch( 1 );
+	// This is needed before the abuse below to ensure the combo is enabled in time
+	connect( spRadio, SIGNAL(clicked( bool )), SLOT(slotPresChanged()) );
+	// Abuse the radio button text as a label for the combo
+	connect( spRadio, SIGNAL(clicked( bool )), puserlb, SLOT(setFocus()) );
 	cbjumppw = new QCheckBox( i18nc("@option:check action", "Focus pass&word"), puGroup );
 	laygroup5->addWidget( cbjumppw );
 	cbjumppw->setWhatsThis( i18n(
@@ -217,11 +217,9 @@ void KDMConvenienceWidget::makeReadOnly()
 
 void KDMConvenienceWidget::slotPresChanged()
 {
-	bool en = spRadio->isChecked();
-	pu_label->setEnabled( en );
 	if (!alGroup->isEnabled()) // read-only
 	   return;
-	puserlb->setEnabled( en );
+	puserlb->setEnabled( spRadio->isChecked() );
 	cbjumppw->setEnabled( !npRadio->isChecked() );
 }
 
