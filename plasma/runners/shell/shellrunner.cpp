@@ -19,7 +19,6 @@
 #include "shellrunner.h"
 
 #include <QWidget>
-#include <QAction>
 #include <QPushButton>
 
 #include <KAuthorized>
@@ -30,29 +29,28 @@
 #include <KStandardDirs>
 #include <KToolInvocation>
 
+#include "shell_config.h"
+
 ShellRunner::ShellRunner(QObject *parent, const QVariantList &args)
     : Plasma::AbstractRunner(parent, args),
-      m_inTerminal(false)
+      m_inTerminal(false),
+      m_asOtherUser(false)
 {
     Q_UNUSED(args)
 
     setObjectName("Command");
     setPriority(AbstractRunner::HighestPriority);
+    setHasRunOptions(true);
     m_enabled = KAuthorized::authorizeKAction("shell_access");
     setIgnoredTypes(Plasma::RunnerContext::Directory | Plasma::RunnerContext::File |
                     Plasma::RunnerContext::NetworkLocation | Plasma::RunnerContext::UnknownType |
                     Plasma::RunnerContext::Help);
-    reloadConfig();
 
     addSyntax(Plasma::RunnerSyntax(":q:", i18n("Finds commands that match :q:, using common shell syntax")));
 }
+
 ShellRunner::~ShellRunner()
 {
-}
-
-void ShellRunner::reloadConfig()
-{
-    //TODO
 }
 
 void ShellRunner::match(Plasma::RunnerContext &context)
@@ -77,18 +75,41 @@ void ShellRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryM
 {
     QMutexLocker lock(bigLock());
     Q_UNUSED(match);
-    if (!m_enabled) {
-        return;
+    if (m_enabled) {
+        if (m_inTerminal) {
+            KToolInvocation::invokeTerminal(context.query());
+        } else {
+            KRun::runCommand(context.query(), NULL);
+        }
     }
 
-    if (m_inTerminal) {
-        KToolInvocation::invokeTerminal(context.query());
+    // reset for the next run!
+    m_inTerminal = false;
+    m_asOtherUser = false;
+}
 
-        // reset for the next run!
-        m_inTerminal = false;
-    } else {
-        KRun::runCommand(context.query(), NULL);
-    }
+void ShellRunner::createRunInterface(QWidget *parent)
+{
+    //TODO: for multiple runners?
+    m_configWidget = new ShellConfig(config(), parent);
+    connect(m_configWidget, SIGNAL(destroyed(QObject*)), this, SLOT(configWidgetDestroyed()));
+    connect(m_configWidget->m_ui.cbRunAsOther, SIGNAL(clicked(bool)), this, SLOT(setRunAsOtherUser(bool)));
+    connect(m_configWidget->m_ui.cbRunInTerminal, SIGNAL(clicked(bool)), this, SLOT(setRunInTerminal(bool)));
+}
+
+void ShellRunner::configWidgetDestroyed()
+{
+    m_configWidget = 0;
+}
+
+void ShellRunner::setRunAsOtherUser(bool asOtherUser)
+{
+    m_asOtherUser = asOtherUser;
+}
+
+void ShellRunner::setRunInTerminal(bool runInTerminal)
+{
+    m_inTerminal = runInTerminal;
 }
 
 #include "shellrunner.moc"

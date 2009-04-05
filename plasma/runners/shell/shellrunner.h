@@ -24,6 +24,8 @@
 class QWidget;
 class QAction;
 
+class ShellConfig;
+
 /**
  * This class runs programs using the literal name of the binary, much as one
  * would use at a shell prompt.
@@ -38,13 +40,18 @@ class ShellRunner : public Plasma::AbstractRunner
 
         void match(Plasma::RunnerContext &context);
         void run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &action);
+        void createRunInterface(QWidget *parent);
 
-    protected:
-        void reloadConfig();
+    private slots:
+        void configWidgetDestroyed();
+        void setRunAsOtherUser(bool asOtherUser);
+        void setRunInTerminal(bool runInTerminal);
 
     private:
+        ShellConfig *m_configWidget;
         bool m_enabled;
         bool m_inTerminal;
+        bool m_asOtherUser;
 };
 
 K_EXPORT_PLASMA_RUNNER(shell, ShellRunner)

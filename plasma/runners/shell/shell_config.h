@@ -20,23 +20,20 @@
 #ifndef SHELLCONFIG_H
 #define SHELLCONFIG_H
 
-#include <KCModule>
+#include <QWidget>
+
+#include <KConfigGroup>
+
 #include "ui_shellOptions.h"
 
-
-class ShellConfigForm : public QWidget, public Ui::shellOptions
+class ShellConfig : public QWidget
 {
     Q_OBJECT
     public:
-        explicit ShellConfigForm(QWidget* parent);
-};
-
-class ShellConfig : public KCModule
-{
-    Q_OBJECT
-    public:
-        explicit ShellConfig(QWidget* parent = 0, const QVariantList& args = QVariantList());
+        explicit ShellConfig(const KConfigGroup &config, QWidget* parent = 0);
         ~ShellConfig();
+
+        Ui::shellOptions m_ui;
 
     public slots:
         void save();
@@ -48,7 +45,7 @@ class ShellConfig : public KCModule
         void slotPriority(bool);
 
     private:
-        ShellConfigForm* m_ui;
+        KConfigGroup m_config;
 };
 
 #endif
