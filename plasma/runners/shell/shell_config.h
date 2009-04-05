@@ -38,11 +38,9 @@ class ShellConfig : public QWidget
     public slots:
         void save();
         void load();
-        void defaults();
 
     protected slots:
         void slotUpdateUser(bool);
-        void slotPriority(bool);
 
     private:
         KConfigGroup m_config;

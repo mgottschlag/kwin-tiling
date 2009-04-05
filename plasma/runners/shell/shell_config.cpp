@@ -37,7 +37,6 @@ ShellConfig::ShellConfig(const KConfigGroup &config, QWidget* parent)
     load();
 
     connect(m_ui.cbRunAsOther, SIGNAL(clicked(bool)), this, SLOT(slotUpdateUser(bool)));
-    connect(m_ui.cbPriority, SIGNAL(clicked(bool)), this, SLOT(slotPriority(bool)));
 }
 
 ShellConfig::~ShellConfig()
@@ -51,8 +50,6 @@ void ShellConfig::load()
 
     m_ui.cbRunInTerminal->setChecked(grp.readEntry("RunInTerminal", false));
     m_ui.cbRunAsOther->setChecked(grp.readEntry("RunAsOther", false));
-    m_ui.cbPriority->setChecked(grp.readEntry("Priority", false));
-    m_ui.cbRealtime->setChecked(grp.readEntry("RealTime", false));
     //m_ui.lePassword->text();
     //m_ui.leUsername->text();
 }
@@ -64,8 +61,6 @@ void ShellConfig::save()
     grp.writeEntry("RunInTerminal", m_ui.cbRunInTerminal->isChecked());
     bool runAsOther = m_ui.cbRunAsOther->isChecked();
     grp.writeEntry("RunAsOther", runAsOther);
-    grp.writeEntry("Priority", m_ui.cbPriority->isChecked());
-    grp.writeEntry("RealTime", m_ui.cbRealtime->isChecked());
     //m_ui.lePassword->text();
     //m_ui.leUsername->text();
     grp.sync();
@@ -75,22 +70,6 @@ void ShellConfig::slotUpdateUser(bool b)
 {
     m_ui.leUsername->setEnabled(b);
     m_ui.lePassword->setEnabled(b);
-}
-
-void ShellConfig::slotPriority(bool b)
-{
-    m_ui.slPriority->setEnabled(b);
-    m_ui.textLabel1->setEnabled(b);
-}
-
-void ShellConfig::defaults()
-{
-    m_ui.cbRunInTerminal->setChecked(false);
-    m_ui.cbRunAsOther->setChecked(false);
-    m_ui.cbPriority->setChecked(false);
-    m_ui.cbRealtime->setChecked(false);
-    m_ui.lePassword->clear();
-    m_ui.leUsername->clear();
 }
 
 #include "shell_config.moc"
