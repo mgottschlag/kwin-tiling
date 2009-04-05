@@ -105,7 +105,8 @@ protected Q_SLOTS:
      /** Returns the strategy type */
     void setType(GroupManager::TaskGroupingStrategy type);
 
-protected:
+public:
+//rotected:
     /** Create a group with items and returns the newly created group */
     TaskGroup* createGroup(ItemList items);
 

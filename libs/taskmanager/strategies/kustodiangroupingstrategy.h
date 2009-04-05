@@ -55,6 +55,7 @@ public:
 protected Q_SLOTS:
     /** Checks if the group is still necessary */
     void checkGroup();
+    QString desktopNameFromClassName(const QString & );
 
 private:
     bool programGrouping(TaskItem* taskItem, TaskGroup* groupItem);

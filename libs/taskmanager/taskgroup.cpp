@@ -57,6 +57,7 @@ public:
     QIcon groupIcon;
     bool aboutToDie;
     GroupManager *groupingStrategy;
+    bool pinned;
 };
 
 TaskGroup::TaskGroup(GroupManager *parent,const QString &name, const QColor &color)
@@ -67,6 +68,7 @@ TaskGroup::TaskGroup(GroupManager *parent,const QString &name, const QColor &col
     d->groupName = name;
     d->groupColor = color;
     d->groupIcon = KIcon("xorg");
+    d->pinned = false;
 
     //kDebug() << "Group Created: Name: " << d->groupName << "Color: " << d->groupColor;
 }
@@ -79,6 +81,7 @@ TaskGroup::TaskGroup(GroupManager *parent)
 //    d->groupName = "default";
     d->groupColor = Qt::red;
     d->groupIcon = KIcon("xorg");
+    d->pinned = false;
 
     //kDebug() << "Group Created: Name: " << d->groupName << "Color: " << d->groupColor;
 }
@@ -224,6 +227,16 @@ void TaskGroup::setIcon(const QIcon &newIcon)
 {
     d->groupIcon = newIcon;
     emit changed(IconChanged);
+}
+
+bool TaskGroup::isPinned() const
+{
+    return d->pinned;
+}
+
+void TaskGroup::setPinned(bool pinned)
+{
+    d->pinned = pinned;
 }
 
 bool TaskGroup::isRootGroup() const

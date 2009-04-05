@@ -1,6 +1,7 @@
 /*****************************************************************
 
 Copyright 2008 Christian Mollekopf <chrigi_1@hotmail.com>
+Copyright 2009 CasperBoemann <cbr@boemann.dk>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <KDebug>
 #include <KLocale>
 #include <KIcon>
+#include <KService>
 
 #include "abstractgroupingstrategy.h"
 #include "groupmanager.h"
@@ -52,7 +54,21 @@ KustodianGroupingStrategy::KustodianGroupingStrategy(GroupManager *groupManager)
      d(new Private)
 {
     d->groupManager = groupManager;
-    setType(GroupManager::ProgramGrouping);
+    setType(GroupManager::KustodianGrouping);
+
+    QStringList defaultApps;
+    defaultApps << "dolphin" << "krita" << "konqueror" << "kwrite" << "konsole" << "gwenview" << "kontact" << "konversation" << "amarok" << "kword";
+    foreach (QString name, defaultApps) {
+        QList <AbstractItemPtr> list;
+        TaskGroup* group = createGroup(list);
+        group->setName(name);
+        group->setPinned(true);
+        KService::Ptr service = KService::serviceByDesktopName(name);
+        if (service && service->isValid()) {
+            QIcon icon = KIcon(service->icon());
+            group->setIcon(icon);
+        }
+    }
 }
 
 KustodianGroupingStrategy::~KustodianGroupingStrategy()
@@ -77,8 +93,19 @@ void KustodianGroupingStrategy::handleItem(AbstractItemPtr item)
 
     TaskItem *task = dynamic_cast<TaskItem*>(item);
     if (task && !programGrouping(task, d->groupManager->rootGroup())) {
-        //kDebug() << "joined rootGroup ";
-        d->groupManager->rootGroup()->add(item);
+        QString name = desktopNameFromClassName(task->task()->classClass());
+        //kDebug() << "create new subgroup in root as this classname doesn't have a group " << name;
+
+        QList <AbstractItemPtr> list;
+        list.append(task);
+        TaskGroup* group = createGroup(list);
+        group->setName(name);
+        group->setColor(Qt::red);
+        KService::Ptr service = KService::serviceByDesktopName(name);
+        if (service && service->isValid()) {
+            QIcon icon = KIcon(service->icon());
+            group->setIcon(icon);
+        }
     }
 }
 
@@ -96,22 +123,31 @@ bool KustodianGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* g
         }
     }
 
-    QString name = taskItem->task()->classClass();
+    QString name = desktopNameFromClassName(taskItem->task()->classClass());
     if (groupItem->name() == name) { //join this group
         //kDebug() << "joined this Group";
         groupItem->add(taskItem);
         return true;
-    } else { //create new subgroup as this task has not been pinned
-        //kDebug() << "create Group";
-        QIcon icon = KIcon(name.toLower());
-        QList <AbstractItemPtr> list;
-        list.append(taskItem);
-        TaskGroup* group = createGroup(list);
-        group->setName(name);
-        group->setColor(Qt::red);
-        group->setIcon(icon);
-        return true;
+    } else
+        return false;
+}
+
+QString KustodianGroupingStrategy::desktopNameFromClassName(const QString & name)
+{
+    KService::Ptr service = KService::serviceByDesktopName(name.toLower());
+    if (service && service->isValid()) {
+        return name.toLower();
     }
+    service = KService::serviceByDesktopName(name);
+    if (service && service->isValid()) {
+        return name;
+    }
+    service = KService::serviceByDesktopName(name.toLower().remove(QChar(' ')));
+    if (service && service->isValid()) {
+        return name.toLower().remove(' ');
+    }
+
+    return "bugger";
 }
 
 void KustodianGroupingStrategy::checkGroup()
@@ -121,7 +157,7 @@ void KustodianGroupingStrategy::checkGroup()
         return;
     }
 
-    if (group->members().size()==0 && true) {
+    if (group->members().size()==0 && !group->isPinned()) {
         closeGroup(group);
     }
 }

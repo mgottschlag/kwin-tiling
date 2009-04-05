@@ -53,6 +53,9 @@ public:
     virtual bool isGroupItem() const { return true; }
     bool isRootGroup() const;
 
+    bool isPinned() const;
+    void setPinned(bool pinned);
+
     /** only true if item is in this group */
     bool hasDirectMember(AbstractItemPtr item) const;
     /** only true if item is in this or any sub group */
