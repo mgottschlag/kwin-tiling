@@ -122,6 +122,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_layout->addWidget(m_buttonContainer);
 
     m_searchTerm = new KHistoryComboBox(false, w);
+    m_searchTerm->setPalette(QApplication::palette());
     m_searchTerm->setDuplicatesEnabled(false);
 
     KLineEdit *lineEdit = new KLineEdit(m_searchTerm);
