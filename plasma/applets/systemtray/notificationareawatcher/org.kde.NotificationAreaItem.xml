@@ -5,6 +5,7 @@
     <property name="Category" type="s" access="read"/>
     <property name="Title" type="s" access="read"/>
     <property name="Status" type="s" access="read"/>
+    <property name="WindowId" type="i" access="read"/>
 
 
     <!-- main icon -->
