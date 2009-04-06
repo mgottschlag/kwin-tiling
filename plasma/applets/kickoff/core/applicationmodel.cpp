@@ -259,7 +259,7 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
 }
 
 ApplicationModel::ApplicationModel(QObject *parent, bool allowSeparators)
-        : KickoffAbstractModel(parent), d(new ApplicationModelPrivate(this, allowSeparators))
+  : KickoffAbstractModel(parent), d(new ApplicationModelPrivate(this, allowSeparators)),m_displayOrder(ApplicationModel::NameAfterDescription)
 {
     QDBusConnection dbus = QDBusConnection::sessionBus();
     (void)new KickoffAdaptor(this);
@@ -283,6 +283,16 @@ bool ApplicationModel::canFetchMore(const QModelIndex &parent) const
     return node->isDir && !node->fetched;
 }
 
+void ApplicationModel::setNameDisplayOrder(DisplayOrder displayOrder) 
+{   
+    m_displayOrder = displayOrder;
+}
+
+ApplicationModel::DisplayOrder ApplicationModel::nameDisplayOrder() const
+{
+   return m_displayOrder;
+}
+
 int ApplicationModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
@@ -298,14 +308,16 @@ QVariant ApplicationModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
     case Qt::DisplayRole:
-        if (!node->genericName.isEmpty()) {
+      if (node->isDir || ((m_displayOrder == NameAfterDescription) && (!node->genericName.isEmpty()))) {
             return node->genericName;
         } else {
             return node->appName;
         }
         break;
     case Kickoff::SubTitleRole:
-        if (!node->genericName.isEmpty()) {
+      if (!node->isDir && (m_displayOrder == NameBeforeDescription) && (!node->genericName.isEmpty())) {
+            return node->genericName;
+        } else {
             return node->appName;
         }
         break;

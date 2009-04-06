@@ -49,6 +49,11 @@ public:
     void setAutoHide(bool autoHide);
     bool autoHide() const;
 
+    /** Specifies whether the application names in the launcher should be displayed *
+        before or after the description                                             */
+    void setShowAppsByName(bool showAppByName);
+    bool showAppsByName() const;
+
     /** Specifies whether hovering switches between tabs or if a click is required to switch the tabs. */
     void setSwitchTabsOnHover(bool switchOnHover);
     bool switchTabsOnHover() const;

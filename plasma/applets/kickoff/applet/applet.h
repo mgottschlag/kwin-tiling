@@ -63,10 +63,12 @@ protected slots:
     //void toggleMenu(bool pressed);
 
 protected:
+
     void createConfigurationInterface(KConfigDialog *parent);
     void popupEvent(bool show);
 
 private:
+    friend class Kickoff::Launcher;
     class Private;
     Private * const d;
 };

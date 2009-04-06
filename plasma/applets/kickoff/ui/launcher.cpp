@@ -70,6 +70,7 @@ using namespace Kickoff;
 class Launcher::Private
 {
 public:
+    ApplicationModel  *applicationModel;
     Private(Launcher *launcher)
             : q(launcher)
             , applet(0)
@@ -89,6 +90,7 @@ public:
             , visibleItemCount(10)
             , placement(Plasma::TopPosedLeftAlignedPopup)
             , panelEdge(Plasma::BottomEdge) {
+
     }
 
     ~Private() {
@@ -187,7 +189,7 @@ public:
     }
 
     void setupAllProgramsView() {
-        ApplicationModel *applicationModel = new ApplicationModel(q);
+        applicationModel = new ApplicationModel(q);
         applicationModel->setDuplicatePolicy(ApplicationModel::ShowLatestOnlyPolicy);
 
         applicationView = new FlipScrollView();
@@ -456,6 +458,7 @@ Launcher::Launcher(Plasma::Applet *applet)
 {
     init();
     setApplet(applet);
+
 }
 
 void Launcher::init()
@@ -588,12 +591,40 @@ bool Launcher::autoHide() const
 
 void Launcher::setSwitchTabsOnHover(bool switchOnHover)
 {
+    if (d->applet && switchOnHover != d->contentSwitcher->switchTabsOnHover()) {
+        KConfigGroup cg = d->applet->globalConfig();
+        cg.writeEntry("SwitchTabsOnHover", switchOnHover);
+        emit configNeedsSaving();
+    }
+
     d->contentSwitcher->setSwitchTabsOnHover(switchOnHover);
+}
+
+void Launcher::setShowAppsByName(bool showAppsByName)
+{
+    //ApplicationModel *m_applicationModel = applicationModel;
+    const bool wasByName = d->applicationModel->nameDisplayOrder() == ApplicationModel::NameBeforeDescription;
+    if (d->applet && showAppsByName != wasByName) {
+        KConfigGroup cg = d->applet->config();
+        cg.writeEntry("ShowAppsByName", showAppsByName);
+        emit configNeedsSaving();
+    }
+
+    if (showAppsByName) {
+        d->applicationModel->setNameDisplayOrder(ApplicationModel::NameBeforeDescription);
+    } else {
+        d->applicationModel->setNameDisplayOrder(ApplicationModel::NameAfterDescription);
+    }
 }
 
 bool Launcher::switchTabsOnHover() const
 {
     return d->contentSwitcher->switchTabsOnHover();
+}
+
+bool Launcher::showAppsByName() const
+{
+  return d->applicationModel->nameDisplayOrder() == ApplicationModel::NameBeforeDescription;
 }
 
 void Launcher::setVisibleItemCount(int count)
@@ -608,14 +639,15 @@ int Launcher::visibleItemCount() const
 
 void Launcher::setApplet(Plasma::Applet *applet)
 {
-    d->applet = applet;
-    d->contextMenuFactory->setApplet(applet);
-
     KConfigGroup cg = applet->globalConfig();
     setSwitchTabsOnHover(cg.readEntry("SwitchTabsOnHover", switchTabsOnHover()));
 
     cg = applet->config();
+    setShowAppsByName(cg.readEntry("ShowAppsByName", showAppsByName()));
     setVisibleItemCount(cg.readEntry("VisibleItemsCount", visibleItemCount()));
+
+    d->applet = applet;
+    d->contextMenuFactory->setApplet(applet);
 }
 
 void Launcher::reset()

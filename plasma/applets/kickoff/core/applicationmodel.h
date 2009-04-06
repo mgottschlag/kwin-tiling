@@ -36,11 +36,22 @@ class ApplicationModelPrivate;
 class KICKOFF_EXPORT ApplicationModel : public KickoffAbstractModel
 {
     Q_OBJECT
+    Q_ENUMS(DisplayOrder)
 
 public:
     ApplicationModel(QObject *parent = 0, bool allowSeparators = false);
     virtual ~ApplicationModel();
 
+    /**
+     * This enum describes the policy for displaying 
+     * Name of Application - Description
+     * Description - Name of Application
+     */
+    enum DisplayOrder {
+         NameAfterDescription,
+         NameBeforeDescription
+    };
+    
     /**
      * This enum describes the policy for
      * handling duplicate applications (that is,
@@ -80,6 +91,9 @@ public:
         GenericNamePrimary
     };
 
+    void setNameDisplayOrder(DisplayOrder displayOrder);
+    DisplayOrder nameDisplayOrder() const;
+    //DisplayOrder m_displayOrder;
     /**
      * Sets the policy for handling duplicate applications.
      * See DuplicatePolicy
@@ -117,6 +131,7 @@ public slots:
 private:
     friend class ApplicationModelPrivate;
     ApplicationModelPrivate *const d;
+    DisplayOrder m_displayOrder;
 
     Q_DISABLE_COPY(ApplicationModel)
 };
