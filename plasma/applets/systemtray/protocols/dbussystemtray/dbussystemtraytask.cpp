@@ -203,7 +203,7 @@ void DBusSystemTrayTaskPrivate::iconDestroyed(QObject *obj)
     Plasma::IconWidget *iw = static_cast<Plasma::IconWidget *>(obj);
 
     QHash<Plasma::Applet *, Plasma::IconWidget*>::const_iterator i = iconWidgets.constBegin();
-    while (i != iconWidgets.end()) {
+    while (i != iconWidgets.constEnd()) {
         if (i.value() == iw) {
             iconWidgets.remove(i.key());
             return;
