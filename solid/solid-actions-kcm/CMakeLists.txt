@@ -35,7 +35,7 @@ TARGET_LINK_LIBRARIES(solid-action-desktop-gen ${KDE4_SOLID_LIBS} ${KDE4_KIO_LIB
 ########### install files ###############
 
 INSTALL( TARGETS kcm_solid_actions DESTINATION ${PLUGIN_INSTALL_DIR} )
-INSTALL( TARGETS solid-action-desktop-gen DESTINATION ${BIN_INSTALL_DIR} )
+INSTALL( TARGETS solid-action-desktop-gen ${INSTALL_TARGETS_DEFAULT_ARGS} )
 INSTALL( FILES solid-actions.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
 INSTALL( FILES solid-action-template.desktop DESTINATION ${DATA_INSTALL_DIR}/kcmsolidactions )
 
