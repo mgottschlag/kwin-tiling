@@ -9,6 +9,7 @@ Name[pt_BR]=Servidor de Notificações do KDED
 Name[sv]=KDED bevakning av underrättelseområde
 Name[uk]=Переглядач області сповіщень KDED
 Name[x-test]=xxKDED Notification area watcherxx
+Name[zh_TW]=KDE Notification 區域監控器 
 Comment=Keep track of applications that want to use the D-Bus based notification area
 Comment[el]=Καταγραφή των εφαρμογών που επιθυμούν να χρησιμοποιήσουν την περιοχή ειδοποιήσεων του D-Bus
 Comment[ga]=Bainistigh feidhmchláir ar mian leo úsáid a bhaint as an limistéar fógartha bunaithe ar D-Bus
@@ -18,6 +19,7 @@ Comment[pt_BR]=Mantém o registo das aplicações que desejam usar a bandeja do 
 Comment[sv]=Håll reda på program som vill använda det D-Bus baserade underrättelseområdet
 Comment[uk]=Стежте за програмами, які бажають використовувати засновану на D-Bus область сповіщення
 Comment[x-test]=xxKeep track of applications that want to use the D-Bus based notification areaxx
+Comment[zh_TW]=追蹤要使用 D-Bus 系統匣的通知區域
 
 X-KDE-ServiceTypes=KDEDModule
 X-KDE-Library=notificationareawatcher
