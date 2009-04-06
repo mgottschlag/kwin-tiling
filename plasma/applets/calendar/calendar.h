@@ -45,12 +45,9 @@ class CalendarApplet : public Plasma::PopupApplet
          */
         QGraphicsWidget *graphicsWidget();
 
-    protected:
-        void updateDate();
-        void timerEvent(QTimerEvent *event);
-
     protected slots:
         void configAccepted();
+        void updateDate();
 
     private:
         void paintIcon();
@@ -58,7 +55,6 @@ class CalendarApplet : public Plasma::PopupApplet
         Plasma::Calendar *m_calendarDialog;
         Plasma::Svg *m_theme;
         int m_date;
-        int m_updateTimerId;
 };
 
 K_EXPORT_PLASMA_APPLET(calendar, CalendarApplet)

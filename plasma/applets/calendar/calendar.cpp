@@ -19,6 +19,7 @@
 
 #include <QGraphicsLayout>
 #include <QPainter>
+#include <QTimer>
 
 #include <KDebug>
 #include <KIcon>
@@ -34,8 +35,7 @@ CalendarApplet::CalendarApplet(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args),
     m_calendarDialog(0),
     m_theme(0),
-    m_date(0),
-    m_updateTimerId(0)
+    m_date(0)
 {
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
     setCacheMode(DeviceCoordinateCache);
@@ -115,18 +115,8 @@ void CalendarApplet::updateDate()
     QDateTime d = QDateTime::currentDateTime();
     m_date = d.date().day();
     int updateIn = (24 * 60 * 60) - (d.toTime_t() + KSystemTimeZones::local().currentOffset()) % (24 * 60 * 60);
-    m_updateTimerId = startTimer(updateIn * 1000);
+    QTimer::singleShot(updateIn * 1000, this, SLOT(updateDate()));
     constraintsEvent(Plasma::FormFactorConstraint);
-}
-
-void CalendarApplet::timerEvent(QTimerEvent *event)
-{
-    if (event->timerId() != m_updateTimerId) {
-        return;
-    }
-
-    killTimer(m_updateTimerId);
-    updateDate();
 }
 
 #include "calendar.moc"
