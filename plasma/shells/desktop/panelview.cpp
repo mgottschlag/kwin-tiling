@@ -61,6 +61,10 @@ public:
         KWindowSystem::setType(winId(), NET::Dock);
         m_svg->setImagePath("widgets/glowbar");
 
+        QPalette pal = palette();
+        pal.setColor(backgroundRole(), Qt::transparent);
+        setPalette(pal);
+
         QRect glowGeom = triggerZone;
         QSize s = sizeHint();
         switch (m_direction) {
