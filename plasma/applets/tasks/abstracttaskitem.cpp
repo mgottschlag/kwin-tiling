@@ -91,10 +91,14 @@ QSize AbstractTaskItem::basicPreferredSize() const
     // in small panels, we'll reduce the spacing a bit so it's easier to cramp the text in and still get two rows
     int topMargin = m_applet->itemTopMargin();
     int bottomMargin = m_applet->itemBottomMargin();
-    if (m_applet->size().height() < 44) {
+
+    //if this item is out of the applet rect must be in a popup
+    const bool inPopup = !m_applet->rect().contains(geometry());
+
+    if (!inPopup && m_applet->size().height() < 44) {
         topMargin = 1; 
         bottomMargin = 1; 
-    } else if (m_applet->size().height() < 64) {
+    } else if (!inPopup && m_applet->size().height() < 64) {
         topMargin = qMax(1, topMargin/2); 
         bottomMargin = qMax(1, bottomMargin/2); 
     }
