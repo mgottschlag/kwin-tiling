@@ -9,16 +9,16 @@
 
 #include "backgrounddelegate.h"
 
-#include <KGlobalSettings>
 #include <QPen>
 #include <QPainter>
-#include "backgroundpackage.h"
 
-BackgroundDelegate::BackgroundDelegate(QObject *listener,
-                                       float ratio, QObject *parent)
-: QAbstractItemDelegate(parent)
-, m_listener(listener)
-, m_ratio(ratio)
+#include <KGlobalSettings>
+#include <KLocalizedString>
+
+BackgroundDelegate::BackgroundDelegate(QObject *listener, float ratio, QObject *parent)
+    : QAbstractItemDelegate(parent), 
+      m_listener(listener),
+      m_ratio(ratio)
 {
 }
 
@@ -40,7 +40,7 @@ void BackgroundDelegate::paint(QPainter *painter,
     }
 
     // draw pixmap
-    int maxheight = Background::SCREENSHOT_HEIGHT;
+    int maxheight = SCREENSHOT_SIZE;
     int maxwidth = int(maxheight * m_ratio);
     if (!pix.isNull()) {
         QSize sz = pix.size();
@@ -101,11 +101,11 @@ QSize BackgroundDelegate::sizeHint(const QStyleOptionViewItem &option,
                                    const QModelIndex &index) const
 {
     const QString title = index.model()->data(index, Qt::DisplayRole).toString();
-    const int maxwidth = int(Background::SCREENSHOT_HEIGHT * m_ratio);
+    const int maxwidth = int(SCREENSHOT_SIZE * m_ratio);
     QFont font = option.font;
     font.setWeight(QFont::Bold);
     QFontMetrics fm(font);
-    //kDebug() << QSize(maxwidth + qBound(100, fm.width(title), 500), Background::SCREENSHOT_HEIGHT + MARGIN * 2);
-    return QSize(maxwidth + qBound(100, fm.width(title), 500), Background::SCREENSHOT_HEIGHT + MARGIN * 2);
+    //kDebug() << QSize(maxwidth + qBound(100, fm.width(title), 500), Background::SCREENSHOT_SIZE + MARGIN * 2);
+    return QSize(maxwidth + qBound(100, fm.width(title), 500), SCREENSHOT_SIZE + MARGIN * 2);
 }
 

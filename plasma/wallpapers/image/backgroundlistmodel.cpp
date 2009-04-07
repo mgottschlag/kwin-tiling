@@ -14,15 +14,21 @@
 #include <QDir>
 #include <QProgressBar>
 
+#include <KFileMetaInfo>
 #include <KGlobal>
+#include <KIO/PreviewJob>
 #include <KProgressDialog>
 #include <KStandardDirs>
 
-#include "backgroundpackage.h"
-#include "backgrounddelegate.h"
+#include <Plasma/Package>
+#include <Plasma/PackageStructure>
 
-BackgroundListModel::BackgroundListModel(float ratio, QObject *listener)
+#include "backgrounddelegate.h"
+#include "image.h"
+
+BackgroundListModel::BackgroundListModel(float ratio, Plasma::Wallpaper *listener)
     : m_listener(listener),
+      m_structureParent(listener),
       m_ratio(ratio),
       m_size(0,0),
       m_resizeMethod(Plasma::Wallpaper::ScaledResize)
@@ -48,11 +54,11 @@ void BackgroundListModel::reload()
 void BackgroundListModel::reload(const QStringList& selected)
 {
     QStringList dirs = KGlobal::dirs()->findDirs("wallpaper", "");
-    QList<Background *> tmp;
+    QList<Plasma::Package *> tmp;
 
     foreach (const QString &file, selected) {
         if (!contains(file) && QFile::exists(file)) {
-            tmp << new BackgroundFile(file, m_ratio);
+            tmp << new Plasma::Package(file, Plasma::Wallpaper::packageStructure(m_structureParent));
         }
     }
 
@@ -61,12 +67,12 @@ void BackgroundListModel::reload(const QStringList& selected)
         initProgressDialog(&progressDialog);
 
         foreach (const QString &dir, dirs) {
-            tmp += findAllBackgrounds(this, dir, m_ratio, &progressDialog);
+            tmp += findAllBackgrounds(m_structureParent, this, dir, m_ratio, &progressDialog);
         }
     }
 
     // add new files to dirwatch
-    foreach (Background *b, tmp) {
+    foreach (Plasma::Package *b, tmp) {
         //TODO: packages need to be added to the dir watch as well
         if (!m_dirwatch.contains(b->path())) {
             m_dirwatch.addFile(b->path());
@@ -80,13 +86,16 @@ void BackgroundListModel::reload(const QStringList& selected)
     }
 }
 
-void BackgroundListModel::addBackground(const QString& path) {
+void BackgroundListModel::addBackground(const QString& path)
+{
     if (!contains(path)) {
         if (!m_dirwatch.contains(path)) {
             m_dirwatch.addFile(path);
         }
         beginInsertRows(QModelIndex(), 0, 0);
-        m_packages.prepend(new BackgroundFile(path, m_ratio));
+        Plasma::PackageStructure::Ptr structure = Plasma::Wallpaper::packageStructure(m_structureParent);
+        Plasma::Package *pkg = new Plasma::Package(path, structure);
+        m_packages.prepend(pkg);
         endInsertRows();
     }
 }
@@ -108,7 +117,7 @@ bool BackgroundListModel::contains(const QString &path) const
 
 BackgroundListModel::~BackgroundListModel()
 {
-    foreach (Background* pkg, m_packages) {
+    foreach (Plasma::Package *pkg, m_packages) {
         delete pkg;
     }
 }
@@ -116,6 +125,31 @@ BackgroundListModel::~BackgroundListModel()
 int BackgroundListModel::rowCount(const QModelIndex &) const
 {
     return m_packages.size();
+}
+
+QSize BackgroundListModel::bestSize(Plasma::Package *package) const
+{
+    if (m_sizeCache.contains(package)) {
+        return m_sizeCache.value(package);
+    }
+
+    QString image = package->filePath("preferred");
+    if (image.isEmpty()) {
+        return QSize();
+    }
+
+    KFileMetaInfo info(image, QString(), KFileMetaInfo::TechnicalInfo);
+    QSize size(info.item("http://freedesktop.org/standards/xesam/1.0/core#width").value().toInt(),
+               info.item("http://freedesktop.org/standards/xesam/1.0/core#height").value().toInt());
+
+    //backup solution if strigi does not work
+    if (size.width() == 0 || size.height() == 0) {
+        kDebug() << "fall back to QImage, check your strigi";
+        size = QImage(image).size();
+    }
+
+    const_cast<BackgroundListModel *>(this)->m_sizeCache.insert(package, size);
+    return size;
 }
 
 QVariant BackgroundListModel::data(const QModelIndex &index, int role) const
@@ -128,39 +162,94 @@ QVariant BackgroundListModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
-    Background *b = package(index.row());
+    Plasma::Package *b = package(index.row());
     if (!b) {
         return QVariant();
     }
 
     switch (role) {
-    case Qt::DisplayRole:
-        return b->title();
-    case BackgroundDelegate::ScreenshotRole: {
-        QPixmap pix = b->screenshot();
-        if (pix.isNull() && !b->screenshotGenerationStarted()) {
-            connect(b, SIGNAL(screenshotDone(QPersistentModelIndex)),
-                    m_listener, SLOT(updateScreenshot(QPersistentModelIndex)),
-                    Qt::QueuedConnection);
-            b->generateScreenshot(index);
+    case Qt::DisplayRole: {
+        QString title = b->metadata().name();
+
+        if (title.isEmpty()) {
+            return QFileInfo(b->filePath("preferred")).completeBaseName();
         }
+
+        return title;
+    }
+    break;
+
+    case BackgroundDelegate::ScreenshotRole: {
+        if (m_previews.contains(b)) {
+            return m_previews.value(b);
+        }
+
+        KUrl file(b->filePath("preferred"));
+
+        if (file.isValid()) {
+            KIO::PreviewJob* job = KIO::filePreview(KUrl::List() << file,
+                                                    BackgroundDelegate::SCREENSHOT_SIZE,
+                                                    BackgroundDelegate::SCREENSHOT_SIZE);
+
+            connect(job, SIGNAL(gotPreview(const KFileItem&, const QPixmap&)),
+                    this, SLOT(showPreview(const KFileItem&, const QPixmap&)));
+            connect(job, SIGNAL(failed(const KFileItem&)),
+                    this, SLOT(previewFailed(const KFileItem&)));
+            const_cast<BackgroundListModel *>(this)->m_previewJobs.insert(file, QPersistentModelIndex(index));
+        }
+
+        QPixmap pix(BackgroundDelegate::SCREENSHOT_SIZE, BackgroundDelegate::SCREENSHOT_SIZE);
+        pix.fill(Qt::transparent);
+        const_cast<BackgroundListModel *>(this)->m_previews.insert(b, pix);
         return pix;
     }
+    break;
+
     case BackgroundDelegate::AuthorRole:
-        return b->author();
+        return b->metadata().author();
+    break;
+
     case BackgroundDelegate::ResolutionRole:{
-        QSize size = b->bestSize(m_size, m_resizeMethod);
+        QSize size = bestSize(b);
+
         if (size.isValid()) {
             return QString("%1x%2").arg(size.width()).arg(size.height());
         }
+
         return QString();
     }
+    break;
+
     default:
         return QVariant();
+    break;
     }
 }
 
-Background* BackgroundListModel::package(int index) const
+void BackgroundListModel::showPreview(const KFileItem &item, const QPixmap &preview)
+{
+    QPersistentModelIndex index = m_previewJobs.value(item.url());
+    m_previewJobs.remove(item.url());
+
+    if (!index.isValid()) {
+        return;
+    }
+
+    Plasma::Package *b = package(index.row());
+    if (!b) {
+        return;
+    }
+
+    m_previews.insert(b, preview);
+    static_cast<Image*>(m_listener)->updateScreenshot(index);
+}
+
+void BackgroundListModel::previewFailed(const KFileItem &item)
+{
+    m_previewJobs.remove(item.url());
+}
+
+Plasma::Package* BackgroundListModel::package(int index) const
 {
     return m_packages.at(index);
 }
@@ -173,9 +262,10 @@ void BackgroundListModel::initProgressDialog(KProgressDialog *progress)
     progress->progressBar()->setRange(0, 0);
 }
 
-QList<Background *> BackgroundListModel::findAllBackgrounds(const BackgroundContainer *container,
-                                                            const QString &path, float ratio,
-                                                            KProgressDialog *progress)
+QList<Plasma::Package *> BackgroundListModel::findAllBackgrounds(Plasma::Wallpaper *structureParent,
+                                                                 const BackgroundListModel *container,
+                                                                 const QString &path, float ratio,
+                                                                 KProgressDialog *progress)
 {
     KProgressDialog *myProgress = 0;
     if (!progress) {
@@ -184,7 +274,7 @@ QList<Background *> BackgroundListModel::findAllBackgrounds(const BackgroundCont
     }
 
     //kDebug() << "looking for" << path;
-    QList<Background *> res;
+    QList<Plasma::Package *> res;
 
     // get all packages in this directory
     //kDebug() << "getting packages";
@@ -194,13 +284,16 @@ QList<Background *> BackgroundListModel::findAllBackgrounds(const BackgroundCont
         QCoreApplication::processEvents();
         progress->setLabelText(i18n("Finding images for the wallpaper slideshow.") + "\n\n" +
                                i18n("Testing %1 for a Wallpaper package", packagePath));
-        std::auto_ptr<Background> pkg(new BackgroundPackage(path + packagePath, ratio));
+        Plasma::PackageStructure::Ptr structure = Plasma::Wallpaper::packageStructure(structureParent);
+        Plasma::Package *pkg = new Plasma::Package(path + packagePath, structure);
         if (pkg->isValid() && (!container || !container->contains(pkg->path()))) {
             progress->setLabelText(i18n("Finding images for the wallpaper slideshow.") + "\n\n" +
                                    i18n("Adding wallpaper package in %1", packagePath));
-            res.append(pkg.release());
+            res.append(pkg);
             //kDebug() << "    adding valid package:" << packagePath;
             validPackages << packagePath;
+        } else {
+            delete pkg;
         }
     }
 
@@ -218,7 +311,8 @@ QList<Background *> BackgroundListModel::findAllBackgrounds(const BackgroundCont
             //kDebug() << "     adding image file" << wp.filePath();
             progress->setLabelText(i18n("Finding images for the wallpaper slideshow.") + "\n\n" +
                                    i18n("Adding image %1", wp.filePath()));
-            res.append(new BackgroundFile(wp.filePath(), ratio));
+            Plasma::PackageStructure::Ptr structure = Plasma::Wallpaper::packageStructure(structureParent);
+            res.append(new Plasma::Package(wp.filePath(), structure));
         }
     }
 
@@ -232,7 +326,7 @@ QList<Background *> BackgroundListModel::findAllBackgrounds(const BackgroundCont
         QString name = wp.fileName();
         if (name != "." && name != ".." && !validPackages.contains(wp.fileName())) {
             //kDebug() << "    " << name << wp.filePath();
-            res += findAllBackgrounds(container, wp.filePath(), ratio, progress);
+            res += findAllBackgrounds(structureParent, container, wp.filePath(), ratio, progress);
         }
     }
 
@@ -250,4 +344,7 @@ void BackgroundListModel::setResizeMethod(Plasma::Wallpaper::ResizeMethod resize
 {
     m_resizeMethod = resizeMethod;
 }
+
+#include "backgroundlistmodel.moc"
+
 

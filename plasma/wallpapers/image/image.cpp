@@ -31,6 +31,7 @@
 #include "backgrounddelegate.h"
 #include "ksmserver_interface.h"
 
+K_EXPORT_PLASMA_WALLPAPER(image, Image)
 
 Image::Image(QObject *parent, const QVariantList &args)
     : Plasma::Wallpaper(parent, args),
@@ -119,7 +120,7 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         int index = m_model->indexOf(m_wallpaper);
         if (index != -1) {
             m_uiImage.m_view->setCurrentIndex(index);
-            Background *b = m_model->package(index);
+            Plasma::Package *b = m_model->package(index);
             if (b) {
                 fillMetaInfo(b);
             }
@@ -312,10 +313,9 @@ void Image::setSingleImage()
     }
 
     QString img;
-    qreal ratio = m_size.isEmpty() ? 1.0 : m_size.width() / qreal(m_size.height());
-    BackgroundPackage b(m_wallpaper, ratio);
+    Plasma::Package b(m_wallpaper, packageStructure(this));
 
-    img = b.findBackground(m_size, m_resizeMethod); // isValid() returns true for jpg?
+    img = b.filePath("preferred");
     kDebug() << img << m_wallpaper;
     if (img.isEmpty()) {
         img = m_wallpaper;
@@ -338,7 +338,7 @@ void Image::startSlideshow()
         KProgressDialog progressDialog(m_configWidget);
         BackgroundListModel::initProgressDialog(&progressDialog);
         foreach (const QString& dir, m_dirs) {
-            m_slideshowBackgrounds += BackgroundListModel::findAllBackgrounds(0, dir, ratio, &progressDialog);
+            m_slideshowBackgrounds += BackgroundListModel::findAllBackgrounds(this, 0, dir, ratio, &progressDialog);
         }
     }
 
@@ -377,7 +377,7 @@ void Image::pictureChanged(int index)
         return;
     }
 
-    Background *b = m_model->package(index);
+    Plasma::Package *b = m_model->package(index);
     if (!b) {
         return;
     }
@@ -402,7 +402,7 @@ void Image::positioningChanged(int index)
     }
 }
 
-void Image::fillMetaInfo(Background *b)
+void Image::fillMetaInfo(Plasma::Package *b)
 {
     // Prepare more user-friendly forms of some pieces of data.
     // - license by config is more a of a key value,
@@ -418,13 +418,14 @@ void Image::fillMetaInfo(Background *b)
     */
     // - last ditch attempt to localize author's name, if not such by config
     //   (translators can "hook" names from outside if resolute enough).
-    if (!b->author().isEmpty()) {
-        QString author = i18nc("Wallpaper info, author name", "%1", b->author());
-        m_uiImage.m_authorLabel->setAlignment(Qt::AlignRight);
-        setMetadata(m_uiImage.m_authorLine, author);
-    } else {
+    QString author = b->metadata().author();
+    if (author.isEmpty()) {
         setMetadata(m_uiImage.m_authorLine, QString());
         m_uiImage.m_authorLabel->setAlignment(Qt::AlignLeft);
+    } else {
+        QString authorIntl = i18nc("Wallpaper info, author name", "%1", author);
+        m_uiImage.m_authorLabel->setAlignment(Qt::AlignRight);
+        setMetadata(m_uiImage.m_authorLine, authorIntl);
     }
     setMetadata(m_uiImage.m_licenseLine, QString());
     setMetadata(m_uiImage.m_emailLine, QString());
@@ -498,7 +499,7 @@ void Image::nextSlide()
 
     QString previous;
     if (m_currentSlide >= 0 && m_currentSlide < m_slideshowBackgrounds.size()) {
-        previous = m_slideshowBackgrounds[m_currentSlide]->findBackground(m_size, m_resizeMethod);
+        previous = m_slideshowBackgrounds[m_currentSlide]->filePath("preferred");
     }
 
     if (m_randomize) {
@@ -507,7 +508,7 @@ void Image::nextSlide()
         m_currentSlide = 0;
     }
 
-    QString current = m_slideshowBackgrounds[m_currentSlide]->findBackground(m_size, m_resizeMethod);
+    QString current = m_slideshowBackgrounds[m_currentSlide]->filePath("preferred");
     if (current == previous) {
         QFileInfo info(previous);
         if (m_previousModified == info.lastModified()) {
@@ -521,7 +522,7 @@ void Image::nextSlide()
                 m_currentSlide = 0;
             }
 
-            current = m_slideshowBackgrounds[m_currentSlide]->findBackground(m_size, m_resizeMethod);
+            current = m_slideshowBackgrounds[m_currentSlide]->filePath("preferred");
         }
     }
 

@@ -30,6 +30,8 @@ public:
     virtual QSize sizeHint(const QStyleOptionViewItem &option,
                            const QModelIndex &index) const;
 
+    static const int SCREENSHOT_SIZE = 60;
+
 private:
     static const int MARGIN = 5;
     QObject *m_listener;

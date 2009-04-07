@@ -14,13 +14,14 @@
 #include <QTimer>
 #include <QPixmap>
 #include <QStringList>
+
 #include <Plasma/Wallpaper>
-#include "backgroundpackage.h"
+#include <Plasma/Package>
+
 #include "ui_imageconfig.h"
 #include "ui_slideshowconfig.h"
 
 class KFileDialog;
-class BackgroundContainer;
 class BackgroundListModel;
 
 class Image : public Plasma::Wallpaper
@@ -33,6 +34,7 @@ class Image : public Plasma::Wallpaper
         virtual void save(KConfigGroup &config);
         virtual void paint(QPainter* painter, const QRectF& exposedRect);
         virtual QWidget* createConfigurationInterface(QWidget* parent);
+        void updateScreenshot(QPersistentModelIndex index);
 
     protected slots:
         void timeChanged(const QTime& time);
@@ -46,7 +48,6 @@ class Image : public Plasma::Wallpaper
         void nextSlide();
         void updateBackground(const QImage &img);
         void showFileDialog();
-        void updateScreenshot(QPersistentModelIndex index);
         void removeBackground(const QString &path);
         void updateFadedImage(qreal frame);
         void configWidgetDestroyed();
@@ -55,7 +56,7 @@ class Image : public Plasma::Wallpaper
     protected:
         void init(const KConfigGroup &config);
         void updateDirs();
-        void fillMetaInfo(Background* b);
+        void fillMetaInfo(Plasma::Package *b);
         bool setMetadata(QLabel *label, const QString &text);
         void renderWallpaper(const QString& image = QString());
         void suspendStartup(bool suspend); // for ksmserver
@@ -75,7 +76,7 @@ class Image : public Plasma::Wallpaper
         Ui::ImageConfig m_uiImage;
         Ui::SlideshowConfig m_uiSlideshow;
         QString m_mode;
-        QList<Background *> m_slideshowBackgrounds;
+        QList<Plasma::Package *> m_slideshowBackgrounds;
         QTimer m_timer;
         QPixmap m_pixmap;
         QPixmap m_oldPixmap;
@@ -89,7 +90,5 @@ class Image : public Plasma::Wallpaper
         bool m_randomize;
         bool m_startupResumed;
 };
-
-K_EXPORT_PLASMA_WALLPAPER(image, Image)
 
 #endif
