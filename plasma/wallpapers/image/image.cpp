@@ -383,7 +383,13 @@ void Image::pictureChanged(int index)
     }
 
     fillMetaInfo(b);
-    m_wallpaper = b->path();
+    if (b->structure()->contentsPrefix().isEmpty()) {
+        // it's not a full package, but a single paper
+        m_wallpaper = b->filePath("preferred");
+    } else {
+        m_wallpaper = b->path();
+    }
+
     setSingleImage();
 }
 
@@ -561,7 +567,7 @@ void Image::updateBackground(const QImage &img)
     m_pixmap = QPixmap::fromImage(img);
 
     if (!m_oldPixmap.isNull()) {
-        Plasma::Animator::self()->customAnimation(254, 1000, Plasma::Animator::LinearCurve, this, "updateFadedImage");
+        Plasma::Animator::self()->customAnimation(254, 1000, Plasma::Animator::EaseInCurve, this, "updateFadedImage");
         suspendStartup(false);
     } else {
         emit update(boundingRect());
@@ -619,7 +625,6 @@ void Image::updateFadedImage(qreal frame)
     p.end();
 
     emit update(boundingRect());
-
 }
 
 #include "image.moc"
