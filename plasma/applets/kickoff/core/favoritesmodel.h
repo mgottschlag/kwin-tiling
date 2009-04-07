@@ -53,6 +53,7 @@ public:
 
     virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action,
                               int row, int column, const QModelIndex & parent);
+    virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
 public Q_SLOTS:
     void sortFavoritesAscending();

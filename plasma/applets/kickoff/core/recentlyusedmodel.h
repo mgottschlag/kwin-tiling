@@ -51,6 +51,8 @@ public:
     explicit RecentlyUsedModel(QObject *parent = 0, RecentType recenttype = DocumentsAndApplications, int maxRecentApps = -1);
     virtual ~RecentlyUsedModel();
 
+    virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+
 public Q_SLOTS:
     void clearRecentApplications();
     void clearRecentDocuments();

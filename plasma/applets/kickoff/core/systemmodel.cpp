@@ -358,6 +358,21 @@ QVariant SystemModel::data(const QModelIndex &index, int role) const
     return d->placesModel->data(mapToSource(index), role);
 }
 
+QVariant SystemModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if (orientation != Qt::Horizontal || section != 0) {
+        return QVariant();
+    }
+
+    switch (role) {
+    case Qt::DisplayRole:
+        return i18n("Computer");
+        break;
+    default:
+        return QVariant();
+    }
+}
+
 void SystemModel::startRefreshingUsageInfo()
 {
     if (!d->mountPointsQueue.isEmpty()) {

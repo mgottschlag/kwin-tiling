@@ -539,12 +539,12 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
                     appModel->setPrimaryNamePolicy(Kickoff::ApplicationModel::AppNamePrimary);
                 appModel->setSystemApplicationPolicy(Kickoff::ApplicationModel::ShowApplicationAndSystemPolicy);
 
+                d->menuview->addModel(appModel);
+
                 if (d->showMenuTitles) {
-                    d->menuview->addTitle(i18n("All Applications"));
-                    d->menuview->addModel(appModel);
+                    d->menuview->setModelTitleVisible(appModel, true);
                     d->menuview->addTitle(i18n("Actions"));
                 } else {
-                    d->menuview->addModel(appModel);
                     d->menuview->addSeparator();
                 }
             } else if(vtname == "Favorites") {
@@ -555,18 +555,24 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
                 d->addModel(new Kickoff::RecentlyUsedModel(d->menuview), RecentlyUsed);
             } else if(vtname == "RecentlyUsedApplications") {
                 if (d->maxRecentApps > 0) {
-                    if (d->showMenuTitles)
-                        d->menuview->addTitle(i18n("Recently Used Applications"));
-                    d->menuview->addModel(new Kickoff::RecentlyUsedModel(d->menuview, Kickoff::RecentlyUsedModel::ApplicationsOnly, d->maxRecentApps), Kickoff::MenuView::MergeFirstLevel);
-                    if (!d->showMenuTitles)
+                    Kickoff::RecentlyUsedModel *recentModel = new Kickoff::RecentlyUsedModel(d->menuview, Kickoff::RecentlyUsedModel::ApplicationsOnly, d->maxRecentApps);
+                    d->menuview->addModel(recentModel, Kickoff::MenuView::MergeFirstLevel);
+
+                    if (d->showMenuTitles) {
+                        d->menuview->setModelTitleVisible(recentModel, true);
+                    } else {
                         d->menuview->addSeparator();
+                    }
                 }
             } else if(vtname == "RecentlyUsedDocuments") {
-                if (d->showMenuTitles)
-                    d->menuview->addTitle(i18n("Recently Used Documents"));
-                d->menuview->addModel(new Kickoff::RecentlyUsedModel(d->menuview, Kickoff::RecentlyUsedModel::DocumentsOnly), Kickoff::MenuView::MergeFirstLevel);
-                if (!d->showMenuTitles)
+                Kickoff::RecentlyUsedModel *recentModel = new Kickoff::RecentlyUsedModel(d->menuview, Kickoff::RecentlyUsedModel::DocumentsOnly);
+                d->menuview->addModel(recentModel, Kickoff::MenuView::MergeFirstLevel);
+
+                if (d->showMenuTitles) {
+                    d->menuview->setModelTitleVisible(recentModel, true);
+                } else {
                     d->menuview->addSeparator();
+                }
             } else if(vtname == "Bookmarks") {
                 KMenu* menu = d->menuview;
                 if(d->viewtypes.count() > 1) {

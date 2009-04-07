@@ -164,6 +164,26 @@ RecentlyUsedModel::~RecentlyUsedModel()
     delete d;
 }
 
+QVariant RecentlyUsedModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if (orientation != Qt::Horizontal || section != 0) {
+        return QVariant();
+    }
+
+    switch (role) {
+    case Qt::DisplayRole:
+        if (d->recenttype == DocumentsAndApplications) {
+            return i18n("Recently Used");
+        } else if (d->recenttype == DocumentsOnly) {
+            return i18n("Recently Used Documents");
+        } else if (d->recenttype == ApplicationsOnly) {
+            return i18n("Recently Used Applications");
+        }
+    default:
+        return QVariant();
+    }
+}
+
 void RecentlyUsedModel::recentDocumentAdded(const QString& path)
 {
     kDebug() << "Recent document added" << path;

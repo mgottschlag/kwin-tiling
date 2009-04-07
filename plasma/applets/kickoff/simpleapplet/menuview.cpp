@@ -89,6 +89,7 @@ public:
     MenuView::FormatType formattype;
     QPoint mousePressPos;
     QList<QStandardItem*> items;
+    QHash<QAbstractItemModel*, QAction*> modelsHeader;
 };
 
 MenuView::MenuView(QWidget *parent, const QString &title, const QIcon &icon)
@@ -234,6 +235,13 @@ bool MenuView::eventFilter(QObject *watched, QEvent *event)
 
 void MenuView::addModel(QAbstractItemModel *model, MenuView::ModelOptions options)
 {
+    QString title = model->headerData(0, Qt::Horizontal, Qt::DisplayRole).toString();
+
+    QAction *header = addTitle(title);
+    header->setVisible(false);
+
+    d->modelsHeader.insert(model, header);
+
     if(options & MergeFirstLevel) {
         const int count = model->rowCount();
         for(int row = 0; row < count; ++row) {
@@ -334,6 +342,12 @@ void MenuView::rowsInserted(const QModelIndex& parent, int start, int end)
                 break;
         }
     }
+
+    if (lastidx < 0 && d->modelsHeader.contains(model)) {
+        QAction *header = d->modelsHeader[model];
+        lastidx = menu->actions().indexOf(header);
+    }
+
     if (lastidx >= 0) {
         if (offset < start)
             lastidx++; // insert action the item right after the last valid index
@@ -423,6 +437,14 @@ MenuView::FormatType MenuView::formatType() const
 void MenuView::setFormatType(MenuView::FormatType formattype)
 {
     d->formattype = formattype;
+}
+
+void MenuView::setModelTitleVisible(QAbstractItemModel *model, bool visible)
+{
+    if (d->modelsHeader.contains(model)) {
+        QAction *header = d->modelsHeader[model];
+        header->setVisible(visible);
+    }
 }
 
 void MenuView::actionTriggered(QAction *action)

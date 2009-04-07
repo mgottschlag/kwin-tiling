@@ -95,6 +95,21 @@ LeaveModel::LeaveModel(QObject *parent)
 {
 }
 
+QVariant LeaveModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if (orientation != Qt::Horizontal || section != 0) {
+        return QVariant();
+    }
+
+    switch (role) {
+    case Qt::DisplayRole:
+        return i18n("Leave");
+        break;
+    default:
+        return QVariant();
+    }
+}
+
 void LeaveModel::updateModel()
 {
     clear();

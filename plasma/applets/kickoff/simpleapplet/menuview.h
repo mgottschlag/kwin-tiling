@@ -112,6 +112,8 @@ public:
     FormatType formatType() const;
     /** Set the format type. */
     void setFormatType(FormatType formattype);
+    /** Set visibility of model title on menu. */
+    void setModelTitleVisible(QAbstractItemModel *model, bool visible);
 
 protected:
 

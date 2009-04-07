@@ -36,6 +36,7 @@ public:
     ~LeaveModel();
 
     static QStandardItem* createStandardItem(const QString& url);
+    virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
     void updateModel();
 

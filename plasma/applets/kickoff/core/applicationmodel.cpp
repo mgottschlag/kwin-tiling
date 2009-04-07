@@ -374,7 +374,7 @@ QVariant ApplicationModel::headerData(int section, Qt::Orientation orientation, 
 
     switch (role) {
     case Qt::DisplayRole:
-        return i18n("Known Applications");
+        return i18n("All Applications");
         break;
     default:
         return QVariant();

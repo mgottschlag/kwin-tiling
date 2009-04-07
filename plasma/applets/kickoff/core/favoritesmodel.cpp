@@ -253,4 +253,19 @@ bool FavoritesModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
 
     return true;
 }
+
+QVariant FavoritesModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if (orientation != Qt::Horizontal || section != 0) {
+        return QVariant();
+    }
+
+    switch (role) {
+    case Qt::DisplayRole:
+        return i18n("Favorites");
+        break;
+    default:
+        return QVariant();
+    }
+}
 #include "favoritesmodel.moc"
