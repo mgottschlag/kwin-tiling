@@ -9,6 +9,7 @@ Name[x-test]=xxWicdxx
 Comment=Network management using the Wicd daemon
 Comment[en_GB]=Network management using the Wicd dæmon
 Comment[es]=Gestionar la red utilizando el demonio Wicd
+Comment[et]=Võrgu haldamine Wicd deemoni abil
 Comment[nds]=Nettwarkpleeg mit den Dämoon Wicd
 Comment[pt]=Gestão de redes com o servidor Wicd
 Comment[pt_BR]=Gestão de redes com o servidor Wicd
