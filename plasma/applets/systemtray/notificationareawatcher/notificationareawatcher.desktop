@@ -2,6 +2,7 @@
 Type=Service
 Name=KDED Notification area watcher
 Name[el]=Επόπτης περιοχής ειδοποιήσεων του KDE
+Name[et]=KDED märguannete ala jälgija
 Name[ga]=Fairtheoir limistéar fógartha KDE
 Name[nds]=KDED-Beschedenrebeet-Beluern
 Name[pt]=Servidor de Notificações do KDED
@@ -12,6 +13,7 @@ Name[x-test]=xxKDED Notification area watcherxx
 Name[zh_TW]=KDE Notification 區域監控器 
 Comment=Keep track of applications that want to use the D-Bus based notification area
 Comment[el]=Καταγραφή των εφαρμογών που επιθυμούν να χρησιμοποιήσουν την περιοχή ειδοποιήσεων του D-Bus
+Comment[et]=Silma peal hoidmine rakendustel, mis soovivad kasutada D-Busi põhist märguannete ala
 Comment[ga]=Bainistigh feidhmchláir ar mian leo úsáid a bhaint as an limistéar fógartha bunaithe ar D-Bus
 Comment[nds]=De Översicht över Programmen wohren, de dat Beschedenrebeet bruukt, dat op den D-Bus opbuut 
 Comment[pt]=Mantém o registo das aplicações que desejam usar a bandeja do sistema baseada em D-Bus
