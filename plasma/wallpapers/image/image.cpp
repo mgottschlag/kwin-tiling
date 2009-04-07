@@ -397,6 +397,8 @@ void Image::positioningChanged(int index)
         startSlideshow();
     }
 
+    setResizeMethodHint(m_resizeMethod);
+
     if (m_model) {
         m_model->setResizeMethod(m_resizeMethod);
     }
