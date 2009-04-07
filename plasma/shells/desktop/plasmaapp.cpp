@@ -869,6 +869,23 @@ void PlasmaApp::setControllerVisible(bool show)
         perVirtualDesktopViews->setText(i18n("Different activity for each desktop"));
         connect(perVirtualDesktopViews, SIGNAL(stateChanged(int)), this, SLOT(setPerVirtualDesktopViews(int)));
 
+        CheckBox *fixedDashboard = new CheckBox(m_controllerDialog);
+        layout->addWidget(fixedDashboard);
+        fixedDashboard->setText(i18n("Fix dashboard on last activity"));
+
+        //try to find out if every view has a DashboardContainment
+        bool dashboardFollowsDesktop = true;
+
+        foreach (DesktopView *view, m_desktops) {
+            if (!view->dashboardFollowsDesktop()) {
+                dashboardFollowsDesktop = false;
+                break;
+            }
+        }
+
+        fixedDashboard->setChecked(dashboardFollowsDesktop);
+        connect(fixedDashboard, SIGNAL(stateChanged(int)), this, SLOT(setFixedDashboard(int)));
+
         m_controllerDialog->show();
     } else if (!show) {
         delete m_controllerDialog;
@@ -892,6 +909,13 @@ void PlasmaApp::setPerVirtualDesktopViews(int toggle)
 
     foreach (DesktopView *view, m_desktops) {
         view->zoomOut(m_zoomLevel);
+    }
+}
+
+void PlasmaApp::setFixedDashboard(int toggle)
+{
+    foreach (DesktopView *view, m_desktops) {
+        view->setDashboardFollowsDesktop(toggle == Qt::Checked);
     }
 }
 

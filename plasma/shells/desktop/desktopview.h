@@ -48,6 +48,16 @@ public:
      */
     bool isDashboardVisible() const;
 
+    /**
+     * Returns whether the dashboard containment will always be the desktop's one
+     */
+    bool dashboardFollowsDesktop() const;
+
+    /**
+     * Set if the dashboard will be fixed to the current desktop containment
+     */
+    void setDashboardFollowsDesktop(bool follow);
+
 public slots:
     /**
      * zoom in towards the given containment.

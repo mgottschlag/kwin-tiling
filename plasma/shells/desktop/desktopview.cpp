@@ -104,6 +104,22 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
     QBrush b(tile);
     setBackgroundBrush(tile);
 
+    //FIXME: evil duplication, but can't really be moved to an own function
+    KConfigGroup cg = config();
+    Plasma::Containment *dc = View::containment();
+    int containmentId = cg.readEntry("DashboardContainment", 0);
+    if (containmentId > 0) {
+        foreach (Plasma::Containment *c, View::containment()->corona()->containments()) {
+            if ((int)c->id() == containmentId) {
+                dc = c;
+                m_dashboardFollowsDesktop = false;
+                break;
+            }
+        }
+    } else {
+        m_dashboardFollowsDesktop = false;
+    }
+
     // since Plasma::View has a delayed init we need to
     // put a delay also for this call in order to be sure
     // to have correct information set (e.g. screen())
@@ -140,6 +156,8 @@ void DesktopView::toggleDashboard()
                     break;
                 }
             }
+        } else {
+            m_dashboardFollowsDesktop = false;
         }
 
         m_dashboard = new DashboardView(dc, 0);
@@ -185,6 +203,22 @@ void DesktopView::adjustSize()
 bool DesktopView::isDashboardVisible() const
 {
     return m_dashboard && m_dashboard->isVisible();
+}
+
+bool DesktopView::dashboardFollowsDesktop() const
+{
+    return m_dashboardFollowsDesktop;
+}
+
+void DesktopView::setDashboardFollowsDesktop(bool follow)
+{
+    m_dashboardFollowsDesktop = follow;
+
+    if (follow) {
+        config().writeEntry("DashboardContainment", containment()->id());
+    } else {
+        config().writeEntry("DashboardContainment", 0);
+    }
 }
 
 void DesktopView::setContainment(Plasma::Containment *containment)
@@ -373,7 +407,7 @@ void DesktopView::drawBackground(QPainter *painter, const QRectF &rect)
 
 void DesktopView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* newContainment)
 {
-    kDebug() << "was:" << wasScreen << "is:" << isScreen << "my screen:" << screen() << "containment:" << (QObject*)newContainment << "myself:" << (QObject*)this;
+    //kDebug() << "was:" << wasScreen << "is:" << isScreen << "my screen:" << screen() << "containment:" << (QObject*)newContainment << newContainment->activity() << "myself:" << (QObject*)this <<"containment desktop:"<<newContainment->desktop() << "my desktop:"<<containment()->desktop();
     if (PlasmaApp::isPanelContainment(newContainment)) {
         // we don't care about panel containments changing screens on us
         return;
