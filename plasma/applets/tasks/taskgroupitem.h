@@ -128,6 +128,7 @@ public slots:
 private Q_SLOTS:
     void constraintsChanged(Plasma::Constraints);
     void clearPopupLostFocus();
+    void reloadTheme();
 
 protected:
     AbstractTaskItem *taskItemForWId(WId id);

@@ -29,7 +29,7 @@ LayoutWidget::LayoutWidget(TaskGroupItem *parent, Tasks *applet)
       m_applet(applet),
       m_layoutOrientation(Qt::Horizontal)
 {
-	setContentsMargins(0,0,0,0);
+    setContentsMargins(0,0,0,0);
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
     setMaximumSize(INT_MAX,INT_MAX);
     //kDebug();

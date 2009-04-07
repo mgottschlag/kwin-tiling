@@ -75,6 +75,7 @@ TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet, const bool 
       m_popupLostFocus(false)
 {
     setAcceptDrops(true);
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(reloadTheme()));
 }
 
 
@@ -592,6 +593,15 @@ void TaskGroupItem::clearPopupLostFocus()
     m_popupLostFocus = false;
 }
 
+void TaskGroupItem::reloadTheme()
+{
+    if (m_applet && m_expandedLayout && m_applet->itemBackground()->hasElement("hint-tasks-margin")) {
+        QSize spacing = m_applet->itemBackground()->elementSize("hint-tasks-margin");
+        m_expandedLayout->setHorizontalSpacing(spacing.width());
+        m_expandedLayout->setVerticalSpacing(spacing.height());
+    }
+}
+
 void TaskGroupItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     if (QPoint(event->screenPos() - event->buttonDownScreenPos(Qt::LeftButton)).manhattanLength() < QApplication::startDragDistance()) {
@@ -666,6 +676,7 @@ LayoutWidget *TaskGroupItem::layoutWidget()
         m_expandedLayout->setMaximumRows(m_maximumRows);
         m_expandedLayout->setForceRows(m_forceRows);
         m_expandedLayout->setOrientation(m_applet->formFactor());
+        reloadTheme();
     }
     return m_expandedLayout;
 }
