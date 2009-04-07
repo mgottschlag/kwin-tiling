@@ -136,7 +136,9 @@ int main(int argc, char **argv)
     }
 
     args->clear();
-
     w->show();
-    return app.exec();
+    int rv = app.exec();
+
+    delete w;
+    return rv;
 }

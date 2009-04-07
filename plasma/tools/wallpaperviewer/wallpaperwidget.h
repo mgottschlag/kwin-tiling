@@ -53,6 +53,7 @@ protected Q_SLOTS:
     void configure();
     void saveConfig();
     void configDone();
+    void syncConfig();
 
 private:
     KConfigGroup configGroup();

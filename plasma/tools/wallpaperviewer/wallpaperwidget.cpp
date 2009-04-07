@@ -43,9 +43,12 @@ WallpaperWidget::WallpaperWidget(const QString &paper, const QString &mode, QWid
       m_wallpaper(Plasma::Wallpaper::load(paper)),
       m_configDialog(0)
 {
-    if (m_wallpaper && !mode.isEmpty()) {
-        m_wallpaper->setRenderingMode(mode);
+    if (m_wallpaper) {
+        if (!mode.isEmpty()) {
+            m_wallpaper->setRenderingMode(mode);
+        }
         connect(m_wallpaper, SIGNAL(update(QRectF)), this, SLOT(updatePaper(QRectF)));
+        connect(m_wallpaper, SIGNAL(configNeedsSaving()), this, SLOT(syncConfig()));
     }
 
     addAction(KStandardAction::quit(qApp, SLOT(quit()), this));
@@ -228,6 +231,11 @@ void WallpaperWidget::saveConfig()
         m_wallpaper->save(config);
         m_wallpaper->restore(config);
     }
+}
+
+void WallpaperWidget::syncConfig()
+{
+    KGlobal::config()->sync();
 }
 
 void WallpaperWidget::configDone()
