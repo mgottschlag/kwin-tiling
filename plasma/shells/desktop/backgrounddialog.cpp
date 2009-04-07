@@ -59,7 +59,7 @@ private:
 };
 
 ThemeModel::ThemeModel( QObject *parent )
-: QAbstractListModel( parent )
+    : QAbstractListModel( parent )
 {
     reload();
 }
@@ -538,6 +538,7 @@ void BackgroundDialog::changeBackgroundMode(int mode)
         m_wallpaper->setRenderingMode(wallpaperInfo.second);
         KConfigGroup cfg = wallpaperConfig(wallpaperInfo.first);
         kDebug() << "making a" << wallpaperInfo.first << "in mode" << wallpaperInfo.second;
+        m_wallpaper->setTargetSizeHint(m_containment->size());
         m_wallpaper->restore(cfg);
         w = m_wallpaper->createConfigurationInterface(m_wallpaperGroup);
     }
