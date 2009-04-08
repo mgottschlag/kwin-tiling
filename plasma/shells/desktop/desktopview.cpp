@@ -104,21 +104,7 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
     QBrush b(tile);
     setBackgroundBrush(tile);
 
-    //FIXME: evil duplication, but can't really be moved to an own function
-    KConfigGroup cg = config();
-    Plasma::Containment *dc = View::containment();
-    int containmentId = cg.readEntry("DashboardContainment", 0);
-    if (containmentId > 0) {
-        foreach (Plasma::Containment *c, View::containment()->corona()->containments()) {
-            if ((int)c->id() == containmentId) {
-                dc = c;
-                m_dashboardFollowsDesktop = false;
-                break;
-            }
-        }
-    } else {
-        m_dashboardFollowsDesktop = false;
-    }
+    m_dashboardFollowsDesktop = (dashboardContainment() == 0);
 
     // since Plasma::View has a delayed init we need to
     // put a delay also for this call in order to be sure
@@ -147,16 +133,9 @@ void DesktopView::toggleDashboard()
         m_dashboardFollowsDesktop = true;
         KConfigGroup cg = config();
         Plasma::Containment *dc = containment();
-        int containmentId = cg.readEntry("DashboardContainment", 0);
-        if (containmentId > 0) {
-            foreach (Plasma::Containment *c, containment()->corona()->containments()) {
-                if ((int)c->id() == containmentId) {
-                    dc = c;
-                    m_dashboardFollowsDesktop = false;
-                    break;
-                }
-            }
-        } else {
+        if (dashboardContainment()) {
+            dc = dashboardContainment();
+            dc->resize(containment()->size());
             m_dashboardFollowsDesktop = false;
         }
 
@@ -166,6 +145,40 @@ void DesktopView::toggleDashboard()
 
     m_dashboard->toggleVisibility();
     //kDebug() << "toggling dashboard for screen" << screen() << m_dashboard->isVisible();
+}
+
+Plasma::Containment *DesktopView::dashboardContainment() const
+{
+    KConfigGroup cg = config();
+    Plasma::Containment *dc = 0;
+    int containmentId = cg.readEntry("DashboardContainment", 0);
+    if (containmentId > 0) {
+        foreach (Plasma::Containment *c, containment()->corona()->containments()) {
+            if ((int)c->id() == containmentId) {
+                dc = c;
+                break;
+            }
+        }
+    }
+    return dc;
+}
+
+void DesktopView::setDashboardContainment(Plasma::Containment *containment)
+{
+    if (containment) {
+        config().writeEntry("DashboardContainment", containment->id());
+        if (m_dashboard) {
+            m_dashboard->setContainment(containment);
+        }
+    } else {
+        if (dashboardContainment()) {
+            dashboardContainment()->destroy(false);
+        }
+        config().writeEntry("DashboardContainment", 0);
+        if (m_dashboard) {
+            m_dashboard->setContainment(View::containment());
+        }
+    }
 }
 
 void DesktopView::screenResized(Kephal::Screen *s)

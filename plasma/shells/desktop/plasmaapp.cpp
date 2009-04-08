@@ -871,19 +871,19 @@ void PlasmaApp::setControllerVisible(bool show)
 
         CheckBox *fixedDashboard = new CheckBox(m_controllerDialog);
         layout->addWidget(fixedDashboard);
-        fixedDashboard->setText(i18n("Fix dashboard on last activity"));
+        fixedDashboard->setText(i18n("Use a separate dashboard"));
 
         //try to find out if every view has a DashboardContainment
         bool dashboardFollowsDesktop = true;
 
         foreach (DesktopView *view, m_desktops) {
-            if (!view->dashboardFollowsDesktop()) {
+            if (view->dashboardContainment()) {
                 dashboardFollowsDesktop = false;
                 break;
             }
         }
 
-        fixedDashboard->setChecked(dashboardFollowsDesktop);
+        fixedDashboard->setChecked(!dashboardFollowsDesktop);
         connect(fixedDashboard, SIGNAL(stateChanged(int)), this, SLOT(setFixedDashboard(int)));
 
         m_controllerDialog->show();
@@ -918,8 +918,26 @@ void PlasmaApp::setPerVirtualDesktopViews(int toggle)
 
 void PlasmaApp::setFixedDashboard(int toggle)
 {
+    bool dashboardFollowsDesktop = true;
     foreach (DesktopView *view, m_desktops) {
-        view->setDashboardFollowsDesktop(toggle == Qt::Checked);
+        if (view->dashboardContainment()) {
+            dashboardFollowsDesktop = false;
+            break;
+        }
+    }
+
+    if (!dashboardFollowsDesktop && (toggle == Qt::Checked)) {
+        return;
+    }
+
+    Plasma::Containment *c = 0;
+    if (toggle == Qt::Checked) {
+        c = m_corona->addContainment("desktop");
+        m_corona->addOffscreenWidget(c);
+    }
+
+    foreach (DesktopView *view, m_desktops) {
+        view->setDashboardContainment(c);
     }
 }
 

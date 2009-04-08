@@ -57,6 +57,9 @@ public:
      * Set if the dashboard will be fixed to the current desktop containment
      */
     void setDashboardFollowsDesktop(bool follow);
+    
+    Plasma::Containment *dashboardContainment() const;
+    void setDashboardContainment(Plasma::Containment *containment);
 
 public slots:
     /**
