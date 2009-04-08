@@ -68,6 +68,7 @@ Tasks::Tasks(QObject* parent, const QVariantList &arguments)
 Tasks::~Tasks()
 {
     delete m_colorScheme;
+    delete m_rootGroupItem;
     delete m_groupManager;
 }
 
