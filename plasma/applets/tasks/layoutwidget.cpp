@@ -67,6 +67,7 @@ void LayoutWidget::addTaskItem(AbstractTaskItem * item)
         kDebug() << "invalid item";
         return;
     }
+
     if (m_itemPositions.contains(item)) {
         kDebug() << "already in this layout";
         return;
@@ -78,10 +79,11 @@ void LayoutWidget::addTaskItem(AbstractTaskItem * item)
         //kDebug() << "itemScene" << item->scene();
     }
 
-   if (!insert(m_groupItem->indexOf(item), item)) {
+    if (!insert(m_groupItem->indexOf(item), item)) {
         kDebug() << "error on  insert";
         return;
     }
+
     item->show();
     //kDebug() << "end";
 }
@@ -110,6 +112,7 @@ bool LayoutWidget::insert(int index, AbstractTaskItem* item)
         kDebug() << "error";
         return false;
     }
+
     int listIndex;
     for (listIndex = 0; listIndex < m_itemPositions.size(); listIndex++) {
         if (index <= m_groupItem->indexOf(m_itemPositions.at(listIndex))) {
