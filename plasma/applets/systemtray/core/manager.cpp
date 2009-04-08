@@ -183,7 +183,7 @@ void Manager::removeJob(Job *job)
 
 void Manager::updateTotals()
 {
-    uint totalPercent;
+    uint totalPercent = 0;
     foreach (Job *job, d->jobs) {
         totalPercent += job->percentage();
     }
