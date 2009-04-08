@@ -456,9 +456,9 @@ void BackgroundDialog::reloadConfig()
 
         ++i;
     }
+
     m_containmentComboBox->setCurrentIndex(containmentIndex);
     m_activityName->setText(m_containment->activity());
-
 
     // Wallpaper
     bool doWallpaper = m_containment->drawWallpaper();
@@ -476,6 +476,8 @@ void BackgroundDialog::reloadConfig()
         if (currentWallpaper) {
             currentPlugin = currentWallpaper->pluginName();
             currentMode = currentWallpaper->renderingMode().name();
+            KConfigGroup cg = wallpaperConfig(currentPlugin);
+            currentWallpaper->save(cg);
         }
 
         plugins = Plasma::Wallpaper::listWallpaperInfo();
