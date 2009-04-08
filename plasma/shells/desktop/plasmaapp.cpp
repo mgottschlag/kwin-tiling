@@ -910,6 +910,10 @@ void PlasmaApp::setPerVirtualDesktopViews(int toggle)
     foreach (DesktopView *view, m_desktops) {
         view->zoomOut(m_zoomLevel);
     }
+
+    foreach (Plasma::Containment *c, m_corona->containments()) {
+        c->enableAction("zoom in", true);
+    }
 }
 
 void PlasmaApp::setFixedDashboard(int toggle)
