@@ -22,9 +22,11 @@
 
 #include <Plasma/DataEngine>
 
+class SolarPosition;
+
 /**
  * This engine provides the current date and time for a given
- * timezone.
+ * timezone. Optionally it can also provide solar position info.
  *
  * "Local" is a special source that is an alias for the current
  * timezone.
@@ -35,12 +37,19 @@ class TimeEngine : public Plasma::DataEngine
 
     public:
         TimeEngine(QObject *parent, const QVariantList &args);
+        ~TimeEngine();
+
         void init();
         QStringList sources() const;
 
     protected:
         bool sourceRequestEvent(const QString &name);
         bool updateSourceEvent(const QString &source);
+        
+        QString parse(const QString &tz, QHash<QString, QString>* args);
+
+    private:
+        SolarPosition *solarPosition;
 };
 
 #endif // TIMEENGINE_H

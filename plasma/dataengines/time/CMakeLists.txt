@@ -1,5 +1,6 @@
 set(time_engine_SRCS
     timeengine.cpp
+    solarposition.cpp
 )
 
 kde4_add_plugin(plasma_engine_time ${time_engine_SRCS})
