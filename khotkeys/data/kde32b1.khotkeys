@@ -2361,6 +2361,7 @@ Comment=After pressing Win+E (Tux+E) a WWW browser will be launched, and it will
 Comment[el]=Μετά το πάτημα του Win+E (Tux+E) θα εκτελεστεί ο περιηγητής WWW και θα ανοίξει το http://www.kde.org . Μπορείτε να εκτελέσετε όλες τις εντολές που εκτελούνται με το minicli (Alt+F2).
 Comment[et]=Klahvidele Win+E (Tux+E) vajutades avatakse veebibrauser leheküljel http://www.kde.org. Käivitada võib kõiki käske, mida saab käivitada minikäsuaknas (Alt+F2).
 Comment[ga]=Tar éis Win+E (Tux+E) a bhrú, tosófar brabhsálaí Gréasáin, agus osclóidh sé http://www.kde.org/. Is féidir leat gach cineál d'ordú a rith i minicli (Alt+F2).
+Comment[gu]=વિન+E (ટક્સ+E) દબાવ્યા પછી, WWW બ્રાઉઝર શરૂ થશે અને તે http://www.kde.org ખોલશે . તમે બધા પ્રકારનાં આદેશો મિનિક્લી (Alt+F2) માં ચલાવી શકો છો.
 Comment[ko]=Win+E(Tux+E) 키를 누르면 웹 브라우저가 실행되고 'http://www.kde.org'를 표시합니다. minicli(Alt+F2)에서 실행할 수 있는 모든 명령을 실행할 수 있습니다.
 Comment[nb]=Når Win+E (Tux+E) trykkes, starter en WWW-leser og åpner http://www.kde.org. Alle kommandoer som kan kjøres i mini-kommandolinja (Alt+F2) kan kjøres her.
 Comment[nds]=Dat Drücken vun Win+E (Tux+E) maakt den Nettkieker op, de denn "http://www.kde.org" laadt. Du kannst so all Befehlen utföhren, de Du ok över den Dialoog "Befehl utföhren" (Alt+F2) opropen kannst.
