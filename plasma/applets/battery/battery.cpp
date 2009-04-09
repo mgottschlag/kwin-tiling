@@ -834,13 +834,6 @@ void Battery::paintBattery(QPainter *p, const QRect &contentsRect, const int bat
         m_theme->paint(p, scaleRectF(m_acAlpha, contentsRect), "AcAdapter");
     }
 
-    // For small FormFactors, we're drawing a shadow
-    if (formFactor() == Plasma::Vertical ||
-        formFactor() == Plasma::Horizontal) {
-        if (plugState) {
-            m_theme->paint(p, contentsRect, "Shadow");
-        }
-    }
     if (plugState && m_theme->hasElement("Overlay")) {
         m_theme->paint(p, scaleRectF(m_batteryAlpha, contentsRect), "Overlay");
     }
