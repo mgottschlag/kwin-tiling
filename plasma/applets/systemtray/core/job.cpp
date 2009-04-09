@@ -33,6 +33,7 @@ public:
     Private() :
         state(Running),
         percentage(0),
+        eta(0),
         timerId(0),
         killable(false),
         suspendable(false),
@@ -53,6 +54,7 @@ public:
 
     State state;
     uint percentage;
+    uint eta;
     int timerId;
 
     bool killable : 1;
@@ -142,6 +144,16 @@ void Job::setSpeed(const QString &speed)
         d->speed = speed;
         scheduleChangedSignal();
     }
+}
+
+ulong Job::eta() const
+{
+    return d->eta;
+}
+
+void Job::setEta(ulong eta)
+{
+    d->eta = eta;
 }
 
 QMap<QString, qlonglong> Job::totalAmounts() const

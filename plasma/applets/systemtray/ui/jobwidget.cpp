@@ -53,50 +53,51 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
     m_fromLabel = new Plasma::Label(this);
     m_toNameLabel = new Plasma::Label(this);
     m_toLabel = new Plasma::Label(this);
-    m_speedLabel = new Plasma::Label(this);
     m_totalBytesLabel = new Plasma::Label(this);
     m_dirCountLabel = new Plasma::Label(this);
     m_fileCountLabel = new Plasma::Label(this);
+    m_eta = new Plasma::Label(this);
+    m_details = new Plasma::Label(this);
 
+    m_totalBytesLabel->setVisible(false);
     m_dirCountLabel->setVisible(false);
     m_fileCountLabel->setVisible(false);
 
-    m_fromNameLabel->setAlignment(Qt::AlignRight);
+    m_fromNameLabel->setAlignment(Qt::AlignLeft);
     m_fromLabel->setAlignment(Qt::AlignLeft);
-    m_toNameLabel->setAlignment(Qt::AlignRight);
+    m_toNameLabel->setAlignment(Qt::AlignLeft);
     m_toLabel->setAlignment(Qt::AlignLeft);
-    m_speedLabel->setAlignment(Qt::AlignLeft);
+    m_totalBytesLabel->setAlignment(Qt::AlignRight);
     m_dirCountLabel->setAlignment(Qt::AlignRight);
     m_fileCountLabel->setAlignment(Qt::AlignRight);
-    m_totalBytesLabel->setAlignment(Qt::AlignRight);
+    m_eta->setAlignment(Qt::AlignRight);
+    m_details->setAlignment(Qt::AlignLeft);
 
-    //m_fromNameLabel->nativeWidget()->setWordWrap(false);
     m_fromLabel->nativeWidget()->setWordWrap(false);
-    //m_toNameLabel->nativeWidget()->setWordWrap(false);
     m_toLabel->nativeWidget()->setWordWrap(false);
-    m_speedLabel->nativeWidget()->setWordWrap(false);
     m_dirCountLabel->nativeWidget()->setWordWrap(false);
     m_fileCountLabel->nativeWidget()->setWordWrap(false);
     m_totalBytesLabel->nativeWidget()->setWordWrap(false);
+    m_eta->nativeWidget()->setWordWrap(false);
 
-    QGraphicsGridLayout *layout = new QGraphicsGridLayout(this);
-    layout->addItem(m_fromNameLabel, 0, 0);
-    layout->addItem(m_fromLabel, 0, 1, 1, 3);
-    layout->addItem(m_toNameLabel, 1, 0);
-    layout->addItem(m_toLabel, 1, 1, 1, 3);
-
-    layout->addItem(m_speedLabel, 2, 1);
-    layout->addItem(m_totalBytesLabel, 2, 2, 1, 2);
-
-    layout->addItem(m_fileCountLabel, 3, 1, 1, 3);
-    layout->addItem(m_dirCountLabel, 4, 1, 1, 3);
-    layout->addItem(m_meter, 5, 1, 1, 3);
+    m_layout = new QGraphicsGridLayout(this);
+    m_layout->addItem(m_fromNameLabel, 0, 0);
+    m_layout->addItem(m_fromLabel, 0, 1);
+    m_layout->addItem(m_toNameLabel, 1, 0);
+    m_layout->addItem(m_toLabel, 1, 1);
+    m_layout->addItem(m_details, 2, 0);
+    m_layout->addItem(m_eta, 2, 1);
+    m_layout->addItem(m_meter, 3, 1);
 
     setMinimumWidth(350);
 
     if (m_job) {
+        m_details->setText("<a href=\"more\">" + i18n("more") + "</a>");
+
         connect(m_job, SIGNAL(changed(SystemTray::Job*)), this, SLOT(updateJob()));
         connect(m_job, SIGNAL(destroyed(SystemTray::Job*)), this, SLOT(destroy()));
+        connect(m_details, SIGNAL(linkActivated(const QString &)),
+                this, SLOT(detailsLinkClicked(const QString &)));
 
         //the suspend action
         QAction *suspendAction = new QAction(m_extenderItem);
@@ -184,15 +185,19 @@ void JobWidget::updateJob()
         item->setTitle(m_job->error());
     } else if (m_job->state() == SystemTray::Job::Running) {
         item->setTitle(m_job->message());
+        m_eta->setText(i18n("%1 (%2 remaining)", m_job->speed(),
+                             KGlobal::locale()->prettyFormatDuration(m_job->eta())));
     } else if (m_job->state() == SystemTray::Job::Suspended) {
         item->setTitle(
             i18nc("%1 is the name of the job, can be things like Copying, deleting, moving",
                   "(paused) %1", m_job->message()));
+        m_eta->setText(i18n("paused"));
     } else {
         item->setTitle(
             i18nc("%1 is the name of the job, can be things like Copying, deleting, moving",
                   "(finished) %1", m_job->message()));
         item->showCloseButton();
+        m_details->hide();
     }
 
     //set the correct actions to visible.
@@ -215,22 +220,17 @@ void JobWidget::updateJob()
     QMap<QString, qlonglong> totals = m_job->totalAmounts();
 
     qlonglong dirs = totals.value("dirs");
-    m_dirCountLabel->setVisible(dirs > 1);
     if (dirs > 1) {
         m_dirCountLabel->setText(i18np("%2 / 1 folder", "%2 / %1 folders", dirs, processed["dirs"]));
     }
 
     qlonglong files = totals.value("files");
-    m_fileCountLabel->setVisible(files > 1);
     if (files > 1) {
         m_fileCountLabel->setText(i18np("%2 / 1 file", "%2 / %1 files", files, processed["files"]));
     }
 
-    m_speedLabel->setText(m_job->speed());
-
     QString processedString = KGlobal::locale()->formatByteSize(processed["bytes"]);
     QString totalsString = KGlobal::locale()->formatByteSize(totals["bytes"]);
-    kDebug() << dirs << files << totalsString;
     m_totalBytesLabel->setText(QString("%1 / %2").arg(processedString, totalsString));
 
     item->setIcon(m_job->applicationIconName());
@@ -264,6 +264,30 @@ void JobWidget::updateLabels()
     }
 
     m_toLabel->setText(fm.elidedText(label1, Qt::ElideMiddle, m_toLabel->size().width()));
+}
+
+void JobWidget::detailsLinkClicked(const QString &link)
+{
+    if (link == "more") {
+        m_details->setText("<a href=\"less\">" + i18n("less") + "</a>");
+        m_totalBytesLabel->setVisible(true);
+        m_dirCountLabel->setVisible(true);
+        m_fileCountLabel->setVisible(true);
+        m_layout->addItem(m_totalBytesLabel, 4, 1);
+        m_layout->addItem(m_fileCountLabel, 5, 1);
+        m_layout->addItem(m_dirCountLabel, 6, 1);
+        m_extenderItem->setCollapsed(m_extenderItem->isCollapsed());
+    } else {
+        m_details->setText("<a href=\"more\">" + i18n("more") + "</a>");
+        m_totalBytesLabel->setVisible(false);
+        m_dirCountLabel->setVisible(false);
+        m_fileCountLabel->setVisible(false);
+        for (int i = 0; i < 3; i++) {
+            m_layout->removeAt(m_layout->count() - 1);
+        }
+        m_layout->updateGeometry();
+        m_extenderItem->setCollapsed(m_extenderItem->isCollapsed());
+    }
 }
 
 #include "jobwidget.moc"

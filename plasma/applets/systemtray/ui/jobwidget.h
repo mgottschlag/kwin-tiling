@@ -25,6 +25,7 @@
 #include <KJob>
 
 #include <QGraphicsWidget>
+#include <QGraphicsGridLayout>
 
 #include <Plasma/Service>
 #include <Plasma/ExtenderItem>
@@ -57,6 +58,9 @@ class JobWidget : public QGraphicsWidget
     protected:
         void resizeEvent(QGraphicsSceneResizeEvent *event);
 
+    private Q_SLOTS:
+        void detailsLinkClicked(const QString &link);
+
     private:
         void updateLabels();
 
@@ -68,10 +72,13 @@ class JobWidget : public QGraphicsWidget
         Plasma::Label *m_fromLabel;
         Plasma::Label *m_toNameLabel;
         Plasma::Label *m_toLabel;
-        Plasma::Label *m_speedLabel;
         Plasma::Label *m_totalBytesLabel;
         Plasma::Label *m_dirCountLabel;
         Plasma::Label *m_fileCountLabel;
+        Plasma::Label *m_eta;
+        Plasma::Label *m_details;
+
+        QGraphicsGridLayout *m_layout;
 
         QString labelName0;
         QString labelName1;

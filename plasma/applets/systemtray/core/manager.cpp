@@ -184,13 +184,17 @@ void Manager::removeJob(Job *job)
 void Manager::updateTotals()
 {
     uint totalPercent = 0;
+    ulong totalEta = 0;
     foreach (Job *job, d->jobs) {
         totalPercent += job->percentage();
+        totalEta += job->eta();
     }
 
     if (d->jobs.count() > 0) {
         d->jobTotals->setPercentage(totalPercent / d->jobs.count());
-        d->jobTotals->setMessage(i18np("1 running job", "%1 running jobs", d->jobs.count()));
+        d->jobTotals->setMessage(i18np("1 running job (%2 remaining)", "%1 running jobs (%2 remaining)",
+                                 d->jobs.count(),
+                                 KGlobal::locale()->prettyFormatDuration(totalEta)));
     }
     //TODO: set a sensible icon
 }

@@ -70,6 +70,13 @@ public:
      */
     QString speed() const;
 
+    /**
+     * @return the time (in seconds) in which this job is expected to complete.
+     */
+    ulong eta() const;
+
+    void setEta(ulong eta);
+
     QMap<QString, qlonglong> totalAmounts() const;
 
     QMap<QString, qlonglong> processedAmounts() const;

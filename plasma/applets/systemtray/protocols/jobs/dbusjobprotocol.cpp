@@ -96,6 +96,7 @@ void DBusJobProtocol::dataUpdated(const QString &source, const Plasma::DataEngin
     job->setSuspendable(data["suspendable"].toBool());
     job->setKillable(data["killable"].toBool());
     job->setSpeed(data["speed"].toString());
+    job->setEta(data["eta"].toULongLong());
 
     if (data["state"].toString() == "running") {
         job->setState(Job::Running);
