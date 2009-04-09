@@ -541,7 +541,7 @@ void TaskGroupItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 void TaskGroupItem::popupMenu()
 {
     //kDebug();
-    if (!collapsed()) {
+    if (!m_collapsed) {
         return;
     }
 
@@ -570,14 +570,13 @@ void TaskGroupItem::popupMenu()
         m_popupDialog->setGraphicsWidget(m_offscreenWidget);
     }
 
-
     if (m_popupDialog->isVisible()) {
         m_popupDialog->clearFocus();
         m_popupDialog->hide();
     } else {
         m_expandedLayout->setOrientation(Plasma::Vertical);
         m_expandedLayout->setMaximumRows(1);
-        m_offscreenWidget->resize(m_expandedLayout->preferredSize().toSize());
+        m_offscreenWidget->adjustSize();
         if (m_applet->containment() && m_applet->containment()->corona()) {
             m_popupDialog->move(m_applet->containment()->corona()->popupPosition(this, m_popupDialog->size()));
         }
@@ -656,7 +655,7 @@ void TaskGroupItem::expand()
     //connect(m_expandedLayout, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updatePreferredSize()));
     m_collapsed = false;
     layoutWidget()->layoutItems();
-    kDebug() << layoutWidget()->preferredSize() << preferredSize() << m_groupMembers.count();
+    //kDebug() << layoutWidget()->preferredSize() << preferredSize() << m_groupMembers.count();
     emit changed();
     checkSettings();
     //kDebug() << "expanded";
