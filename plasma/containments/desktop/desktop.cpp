@@ -126,7 +126,7 @@ void DefaultDesktop::constraintsEvent(Plasma::Constraints constraints)
 
 void DefaultDesktop::addPanel()
 {
-    KPluginInfo::List panelPlugins = listContainments("panel");
+    KPluginInfo::List panelPlugins = listContainmentsOfType("panel");
 
     if (!panelPlugins.isEmpty()) {
         addPanel(panelPlugins.first().pluginName());
