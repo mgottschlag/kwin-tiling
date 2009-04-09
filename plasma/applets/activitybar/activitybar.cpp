@@ -65,7 +65,7 @@ void ActivityBar::init()
 
         QList<Plasma::Containment*> containments = c->containments();
         foreach (Plasma::Containment *cont, containments) {
-            if (cont->containmentType() == Plasma::Containment::PanelContainment) {
+            if (cont->containmentType() == Plasma::Containment::PanelContainment || c->offscreenWidgets().contains(cont)) {
                 continue;
             }
 
@@ -181,7 +181,9 @@ void ActivityBar::currentDesktopChanged(const int currentDesktop)
 
 void ActivityBar::containmentAdded(Plasma::Containment *cont)
 {
-    if (cont->containmentType() == Plasma::Containment::PanelContainment || m_containments.contains(cont)) {
+    if (cont->containmentType() == Plasma::Containment::PanelContainment ||
+        cont->containmentType() == Plasma::Containment::CustomPanelContainment ||
+        m_containments.contains(cont) || c->offscreenWidgets().contains(cont)) {
         return;
     }
 
