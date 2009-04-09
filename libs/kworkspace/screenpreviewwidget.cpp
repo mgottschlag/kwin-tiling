@@ -152,7 +152,6 @@ QRect ScreenPreviewWidget::previewRect() const
 void ScreenPreviewWidget::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
-    d->screenGraphics->resize(size());
     d->updateScreenGraphics();
 }
 
