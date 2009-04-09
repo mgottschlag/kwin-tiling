@@ -49,7 +49,7 @@ Name[tr]=MacOS Kontrol Paneli Programcıkları
 Name[uk]=Віджети панелі приладів MacOS
 Name[x-test]=xxMacOS Dashboard Widgetsxx
 Name[zh_CN]=MacOS 部件板部件
-Name[zh_TW]=MacOS 儀表板元件
+Name[zh_TW]=MacOS 資訊看板元件
 Comment=MacOS dashboard widget
 Comment[ar]=ودجة لوحة MacOS
 Comment[be@latin]=Widžet „Dashboard” dla systemy „MacOS”
@@ -105,7 +105,7 @@ Comment[tr]=MacOS kontrol paneli programcığı
 Comment[uk]=Віджет панелі приладів MacOS
 Comment[x-test]=xxMacOS dashboard widgetxx
 Comment[zh_CN]=MacOS 部件板
-Comment[zh_TW]=MacOS 儀表板元件
+Comment[zh_TW]=MacOS 資訊看板元件
 Type=Service
 ServiceTypes=Plasma/PackageStructure
 
