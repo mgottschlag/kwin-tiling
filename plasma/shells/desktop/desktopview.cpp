@@ -135,7 +135,8 @@ void DesktopView::toggleDashboard()
         Plasma::Containment *dc = containment();
         if (dashboardContainment()) {
             dc = dashboardContainment();
-            dc->resize(containment()->size());
+            dc->resize(size());
+            dc->enableAction("remove", false);
             m_dashboardFollowsDesktop = false;
         }
 
