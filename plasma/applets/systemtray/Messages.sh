@@ -1,2 +1,4 @@
 #! /usr/bin/env bash
-$XGETTEXT ui/*.cpp -o $podir/plasma_applet_systemtray.pot
+$EXTRACTRC ui/*.ui >> rc.cpp
+$XGETTEXT rc.cpp ui/*.cpp -o $podir/plasma_applet_systemtray.pot
+rm rc.cpp
