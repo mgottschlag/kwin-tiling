@@ -67,6 +67,8 @@ Plugins/Addons
          * Notes
 	     * Highlight current line
              * Change font size with Control + Scrollwheel
+         * Folder View
+            * Added keyboard navigation to iconview. User can navigate using direction keys and launch using Enter/Return.
 	 * Pastebin
              * New look and feel
              * Pasting through context menu
