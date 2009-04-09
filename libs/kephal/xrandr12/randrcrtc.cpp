@@ -282,7 +282,10 @@ bool RandRCrtc::applyProposed()
         {
             QRect r = QRect(0,0,0,0).united(m_proposedRect);
             if (r.width() > m_screen->maxSize().width() || r.height() > m_screen->maxSize().height())
+            {
+                delete[] outputs;
                 return false;
+            }
 
             // if the desired mode is bigger than the current screen size, first change the 
             // screen size, and then the crtc size
@@ -290,7 +293,10 @@ bool RandRCrtc::applyProposed()
             {
                 // try to adjust the screen size
                 if (!m_screen->adjustSize(r))
+                {
+                    delete[] outputs;
                     return false;
+                }
             }
 
         }
@@ -303,12 +309,18 @@ bool RandRCrtc::applyProposed()
                 // check if the rotated rect is smaller than the max screen size
                 r = m_screen->rect().united(r);
                 if (r.width() > m_screen->maxSize().width() || r.height() > m_screen->maxSize().height())
+                {
+                    delete[] outputs;
                     return false;
+                }
                 
                 // adjust the screen size
                 r = r.united(m_currentRect);
                 if (!m_screen->adjustSize(r))
+                {
+                    delete[] outputs;
                     return false;
+                }
             }
         }
     }
