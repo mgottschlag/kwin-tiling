@@ -242,7 +242,7 @@ void LayoutWidget::layoutItems()
 {
     //kDebug();
 
-    QPair <int,int> grid = gridLayoutSize();
+    QPair<int,int> grid = gridLayoutSize();
     int columns = grid.first;
     int rows = grid.second;
 
@@ -254,7 +254,7 @@ void LayoutWidget::layoutItems()
     //kDebug() << "column width set to " << columnWidth;
 
     //clearLayout
-    while(count()) {
+    while (count()) {
         removeAt(0);
     }
 
@@ -277,16 +277,7 @@ void LayoutWidget::layoutItems()
     foreach (AbstractTaskItem *item, m_itemPositions) {
         int row;
         int col;
-        if (!m_forceRows) {
-            if (m_layoutOrientation == Qt::Vertical) {
-                row = numberOfItems % columns;
-                col = numberOfItems / columns;
-            } else {
-                row = numberOfItems / columns;
-                col = numberOfItems % columns;
-            }
-
-        } else {
+        if (m_forceRows) {
             if (m_layoutOrientation == Qt::Vertical) {
                 row = numberOfItems / rows;
                 col = numberOfItems % rows;
@@ -294,6 +285,12 @@ void LayoutWidget::layoutItems()
                 row = numberOfItems % rows;
                 col = numberOfItems / rows;
             }
+        } else if (m_layoutOrientation == Qt::Vertical) {
+            row = numberOfItems % columns;
+            col = numberOfItems / columns;
+        } else {
+            row = numberOfItems / columns;
+            col = numberOfItems % columns;
         }
 
         //not good if we don't recreate the layout every time
@@ -313,37 +310,56 @@ void LayoutWidget::layoutItems()
             if (group->collapsed()) {
                 group->unsplitGroup();
                 addItem(item, row, col, 1, 1);
+                numberOfItems++;
             } else {
                 LayoutWidget *layout = group->layoutWidget();
                 if (!layout) {
                     kDebug() << "group has no valid layout";
                     continue;
                 }
-                int groupRowWidth = layout->numberOfColumns();
 
-                if ((columns-col) < groupRowWidth) {//we need to split the group
+                int groupRowWidth = m_layoutOrientation == Qt::Vertical ? layout->numberOfRows() : layout->numberOfColumns();
+
+                if ((columns - col) < groupRowWidth) {
+                    //we need to split the group
                     int splitIndex = columns - col;//number of items in group that are on this row
                     TaskGroupItem *splitChild = group->splitGroup(splitIndex);
-                    addItem(item, row, col, 1, splitIndex); //Add the normal item
+                    if (m_layoutOrientation == Qt::Vertical) {
+                        addItem(item, row, col, splitIndex, 1);
+                    } else {
+                        addItem(item, row, col, 1, splitIndex);
+                    }
+
                     //kDebug() << "add normal item: split index = column span " << splitIndex;
                     if (splitChild) {
-                       addItem(splitChild, row + 1, 0, 1, groupRowWidth - splitIndex);//also add the second part of the group if there is one
+                        //also add the second part of the group if there is one
+                        if (m_layoutOrientation == Qt::Vertical) {
+                            addItem(splitChild, 0, col + 1, groupRowWidth - splitIndex, 1);
+                        } else {
+                            addItem(splitChild, row + 1, 0, 1, groupRowWidth - splitIndex);
+                        }
                     }
                     //kDebug() << "add split item: column span " << groupRowWidth - splitIndex;
                 } else  {
+                    //Add the normal item
                     group->unsplitGroup();
-                    addItem(item, row, col, 1, groupRowWidth); //Add the normal item
+
+                    if (m_layoutOrientation == Qt::Vertical) {
+                        addItem(item, row, col, groupRowWidth, 1);
+                    } else {
+                        addItem(item, row, col, 1, groupRowWidth);
+                    }
                     //kDebug() << "add unsplit expanded item over columns " << groupRowWidth;
                 }
 
-                numberOfItems += groupRowWidth - 1;
+                numberOfItems += groupRowWidth;
             }
         } else {
             addItem(item, row, col, 1, 1);
+            numberOfItems++;
         }
 
         //kDebug() << "addItem at: " << row  <<  col;
-        numberOfItems++;
     }
 
     updatePreferredSize();
@@ -356,11 +372,11 @@ void LayoutWidget::updatePreferredSize()
     //kDebug() << "column count: " << m_layout->columnCount();
 
     if (count() > 0) {
-        AbstractTaskItem *item = dynamic_cast<AbstractTaskItem *>(itemAt(0));
-        Q_ASSERT(item);
-        setPreferredSize(item->basicPreferredSize().width()*columnCount(), item->basicPreferredSize().height()*rowCount());
-    //Empty taskbar, arbitrary small value
+        QSizeF s = itemAt(0)->preferredSize();
+        kDebug() << s << columnCount();
+        setPreferredSize(s.width() * columnCount(), s.height() * rowCount());
     } else {
+        //Empty taskbar, arbitrary small value
         kDebug() << "Empty layout!!!!!!!!!!!!!!!!!!";
         if (m_layoutOrientation == Qt::Vertical) {
             setPreferredSize(/*m_layout->preferredSize().width()*/10, 10); //since we recreate the layout we don't have the previous values
