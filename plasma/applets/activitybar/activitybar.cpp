@@ -183,7 +183,7 @@ void ActivityBar::containmentAdded(Plasma::Containment *cont)
 {
     if (cont->containmentType() == Plasma::Containment::PanelContainment ||
         cont->containmentType() == Plasma::Containment::CustomPanelContainment ||
-        m_containments.contains(cont) || c->offscreenWidgets().contains(cont)) {
+        m_containments.contains(cont) || (containment() && containment()->corona()->offscreenWidgets().contains(cont))) {
         return;
     }
 
