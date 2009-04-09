@@ -932,7 +932,10 @@ void PlasmaApp::setFixedDashboard(int toggle)
 
     Plasma::Containment *c = 0;
     if (toggle == Qt::Checked) {
+        //avoid the containmentAdded signal being emitted
+        m_corona->blockSignals(true);
         c = m_corona->addContainment("desktop");
+        m_corona->blockSignals(false);
         m_corona->addOffscreenWidget(c);
     }
 
