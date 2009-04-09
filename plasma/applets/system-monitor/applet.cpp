@@ -284,6 +284,16 @@ void Applet::displayNoAvailableSources()
     mainLayout()->addItem(m_noSourcesIcon);
 }
 
+QVariant Applet::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    // We must be able to change position when in monitor even if not mutable
+    if (m_mode == Monitor && change == ItemPositionChange) {
+        return QGraphicsWidget::itemChange(change, value);
+    } else {
+        return Plasma::Applet::itemChange(change, value);
+    }
+}
+
 /*
 QSizeF Applet::sizeHint(Qt::SizeHint which, const QSizeF& constraint) const
 {

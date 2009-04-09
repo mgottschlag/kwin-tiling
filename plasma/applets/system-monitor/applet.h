@@ -96,6 +96,7 @@ class SM_EXPORT Applet : public Plasma::Applet
         void displayNoAvailableSources();
         virtual void deleteMeters(QGraphicsLinearLayout* layout = 0);
         virtual void setDetail(Detail detail);
+        virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
     private:
         uint m_interval;
