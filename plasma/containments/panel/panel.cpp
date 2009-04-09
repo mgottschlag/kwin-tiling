@@ -290,7 +290,7 @@ void Panel::updateSize()
 
 void Panel::addPanel()
 {
-    KPluginInfo::List panelPlugins = listContainments("panel");
+    KPluginInfo::List panelPlugins = listContainmentsOfType("panel");
 
     if (!panelPlugins.isEmpty()) {
         addPanel(panelPlugins.first().pluginName());
