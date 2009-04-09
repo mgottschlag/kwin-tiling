@@ -204,7 +204,6 @@ private:
     QGraphicsLinearLayout *m_offscreenLayout;
     bool m_collapsed;
     QGraphicsLinearLayout *m_mainLayout;
-    QGraphicsLinearLayout *m_dialogLayout;
     Plasma::Dialog *m_popupDialog;
     bool m_popupLostFocus;
 };

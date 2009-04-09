@@ -68,9 +68,9 @@ TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet, const bool 
       m_parentSplitGroup(0),
       m_childSplitGroup(0),
       m_offscreenWidget(0),
+      m_offscreenLayout(0),
       m_collapsed(true),
       m_mainLayout(0),
-      m_offscreenLayout(0),
       m_popupDialog(0),
       m_popupLostFocus(false)
 {
@@ -407,6 +407,10 @@ AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractItemPtr
         return 0;
     }
 
+    if (m_collapsed) {
+        item->setPreferredOffscreenSize();
+    }
+
     return item;
 }
 
@@ -542,12 +546,18 @@ void TaskGroupItem::popupMenu()
     }
 
     if (!m_offscreenWidget) {
+        foreach (AbstractTaskItem *member, m_groupMembers) {
+            member->setPreferredOffscreenSize();
+        }
+
+        layoutWidget()->invalidate();
         m_offscreenWidget = new QGraphicsWidget(this);
         m_offscreenLayout = new QGraphicsLinearLayout(m_offscreenWidget);
         m_offscreenLayout->setContentsMargins(0,0,0,0); //default are 4 on each side
         m_offscreenLayout->addItem(layoutWidget());
         m_offscreenWidget->setLayout(m_offscreenLayout);
         m_applet->containment()->corona()->addOffscreenWidget(m_offscreenWidget);
+        m_offscreenLayout->activate();
     }
 
     if (!m_popupDialog) {
@@ -562,19 +572,21 @@ void TaskGroupItem::popupMenu()
 
 
     if (m_popupDialog->isVisible()) {
+        m_popupDialog->clearFocus();
         m_popupDialog->hide();
     } else {
         m_expandedLayout->setOrientation(Plasma::Vertical);
         m_expandedLayout->setMaximumRows(1);
         m_offscreenWidget->resize(m_expandedLayout->preferredSize().toSize());
-        if(m_applet->containment() && m_applet->containment()->corona()) {
+        if (m_applet->containment() && m_applet->containment()->corona()) {
             m_popupDialog->move(m_applet->containment()->corona()->popupPosition(this, m_popupDialog->size()));
         }
         KWindowSystem::setState(m_popupDialog->winId(), NET::SkipTaskbar| NET::SkipPager);
         m_popupDialog->show();
+        m_popupDialog->raise();
+        KWindowSystem::activateWindow(m_popupDialog->winId());
         //kDebug() << m_popupDialog->size() << m_expandedLayout->size();
     }
-    m_popupDialog->clearFocus();
 }
 
 bool TaskGroupItem::eventFilter(QObject *watched, QEvent *event)
@@ -585,6 +597,7 @@ bool TaskGroupItem::eventFilter(QObject *watched, QEvent *event)
         m_popupDialog->hide();
         QTimer::singleShot(100, this, SLOT(clearPopupLostFocus()));
     }
+
     return QGraphicsWidget::eventFilter(watched, event);
 }
 
@@ -627,7 +640,6 @@ void TaskGroupItem::expand()
         m_offscreenLayout->removeItem(layoutWidget());
     }
 
-
     if (!m_mainLayout) { //this layout is needed since we can't take a layout directly from a widget without destroying it
         m_mainLayout = new QGraphicsLinearLayout(this);
         m_mainLayout->setContentsMargins(0,0,0,0); //default are 4 on each side
@@ -643,7 +655,8 @@ void TaskGroupItem::expand()
     connect(m_applet, SIGNAL(constraintsChanged(Plasma::Constraints)), this, SLOT(constraintsChanged(Plasma::Constraints)));
     //connect(m_expandedLayout, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updatePreferredSize()));
     m_collapsed = false;
-    updatePreferredSize();
+    layoutWidget()->layoutItems();
+    kDebug() << layoutWidget()->preferredSize() << preferredSize() << m_groupMembers.count();
     emit changed();
     checkSettings();
     //kDebug() << "expanded";
@@ -652,7 +665,6 @@ void TaskGroupItem::expand()
 void TaskGroupItem::constraintsChanged(Plasma::Constraints constraints)
 {
     //kDebug();
-
     if (constraints & Plasma::SizeConstraint && layoutWidget()) {
         layoutWidget()->layoutItems();
     }
@@ -678,6 +690,7 @@ LayoutWidget *TaskGroupItem::layoutWidget()
         m_expandedLayout->setOrientation(m_applet->formFactor());
         reloadTheme();
     }
+
     return m_expandedLayout;
 }
 
@@ -721,14 +734,23 @@ bool TaskGroupItem::collapsed() const
 
 void TaskGroupItem::updatePreferredSize()
 {
-    if (!collapsed()) {
+    if (m_collapsed) {
+        foreach (AbstractTaskItem *taskItem, m_groupMembers) {
+            taskItem->setPreferredOffscreenSize();
+        }
+
+        //FIXME: copypaste from abstracttaskitem: to be done better with proper sizeHint()
+        setPreferredSize(basicPreferredSize());
+    } else {
+        foreach (AbstractTaskItem *taskItem, m_groupMembers) {
+            taskItem->setPreferredOnscreenSize();
+        }
+
         layout()->invalidate();
         setPreferredSize(layout()->preferredSize());
         //kDebug() << "expanded group" << layout()->preferredSize();
-    } else {
-        //FIXME: copypaste from abstracttaskitem: to be done better with proper sizeHint()
-        setPreferredSize(basicPreferredSize());
     }
+
     //kDebug() << preferredSize();
     emit sizeHintChanged(Qt::PreferredSize);
 }

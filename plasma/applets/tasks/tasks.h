@@ -92,6 +92,10 @@ public:
         qreal itemRightMargin() { return m_rightMargin; }
         qreal itemTopMargin() { return m_topMargin; }
         qreal itemBottomMargin() { return m_bottomMargin; }
+        qreal offscreenLeftMargin() { return m_offscreenLeftMargin; }
+        qreal offscreenRightMargin() { return m_offscreenRightMargin; }
+        qreal offscreenTopMargin() { return m_offscreenTopMargin; }
+        qreal offscreenBottomMargin() { return m_offscreenBottomMargin; }
         void resizeItemBackground(const QSizeF &newSize);
 
         TaskGroupItem*  rootGroupItem();
@@ -146,6 +150,10 @@ private:
         qreal m_topMargin;
         qreal m_rightMargin;
         qreal m_bottomMargin;
+        qreal m_offscreenLeftMargin;
+        qreal m_offscreenTopMargin;
+        qreal m_offscreenRightMargin;
+        qreal m_offscreenBottomMargin;
 
         TaskGroupItem *m_rootGroupItem;
         GroupManager *m_groupManager;

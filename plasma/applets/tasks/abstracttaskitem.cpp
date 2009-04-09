@@ -45,9 +45,11 @@
 #include <taskmanager/taskmanager.h>
 #include <taskmanager/taskgroup.h>
 
-#include <Plasma/Theme>
-#include <Plasma/PaintUtils>
+#include <Plasma/Containment>
+#include <Plasma/Corona>
 #include <Plasma/FrameSvg>
+#include <Plasma/PaintUtils>
+#include <Plasma/Theme>
 #include <Plasma/ToolTipManager>
 
 #include "tasks.h"
@@ -73,9 +75,9 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet, const
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
     setAcceptsHoverEvents(true);
     setAcceptDrops(true);
+//    setPreferredSize(basicPreferredSize());
 
     Plasma::ToolTipManager::self()->registerWidget(this);
-    setPreferredSize(basicPreferredSize());
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(syncActiveRect()));
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(queueUpdate()));
     connect(applet, SIGNAL(settingsChanged()), this, SLOT(checkSettings()));
@@ -86,24 +88,47 @@ QSize AbstractTaskItem::basicPreferredSize() const
     QFontMetrics fm(KGlobalSettings::taskbarFont());
     QSize mSize = fm.size(0, "M");
     int iconsize = KIconLoader::SizeSmall;
-    
+
     //the 4 should be the default spacing between layout items, is there a way to fetch it without hardcoding?
     // in small panels, we'll reduce the spacing a bit so it's easier to cramp the text in and still get two rows
     int topMargin = m_applet->itemTopMargin();
     int bottomMargin = m_applet->itemBottomMargin();
 
     //if this item is out of the applet rect must be in a popup
-    const bool inPopup = !m_applet->rect().contains(geometry());
+    //const bool inPopup = (m_applet->mapToScene(m_applet->rect()).boundingRect().contains(mapToScene(rect()).boundingRect()))
 
-    if (!inPopup && m_applet->size().height() < 44) {
-        topMargin = 1; 
-        bottomMargin = 1; 
-    } else if (!inPopup && m_applet->size().height() < 64) {
+    if (m_applet->size().height() < 44) {
+        topMargin = 1;
+        bottomMargin = 1;
+    } else if (m_applet->size().height() < 64) {
         topMargin = qMax(1, topMargin/2); 
         bottomMargin = qMax(1, bottomMargin/2); 
     }
+
+    //kDebug() << (QObject*)this;
     return QSize(mSize.width()*12 + m_applet->itemLeftMargin() + m_applet->itemRightMargin() + KIconLoader::SizeSmall,
-                           qMax(mSize.height(), iconsize) + topMargin + bottomMargin);
+            qMax(mSize.height(), iconsize) + topMargin + bottomMargin);
+}
+
+void AbstractTaskItem::setPreferredOffscreenSize()
+{
+    QFontMetrics fm(KGlobalSettings::taskbarFont());
+    QSize mSize = fm.size(0, "M");
+    int iconsize = KIconLoader::SizeSmall;
+    int topMargin = m_applet->offscreenTopMargin();
+    int bottomMargin = m_applet->offscreenBottomMargin();
+    int rightMargin = m_applet->offscreenRightMargin();
+    int leftMargin = m_applet->offscreenLeftMargin();
+
+    //kDebug() << (QObject*)this;
+    QSizeF s(mSize.width() * 12 + leftMargin + rightMargin + KIconLoader::SizeSmall,
+             qMax(mSize.height(), iconsize) + topMargin + bottomMargin);
+    setPreferredSize(s);
+}
+
+void AbstractTaskItem::setPreferredOnscreenSize()
+{
+    setPreferredSize(basicPreferredSize());
 }
 
 AbstractTaskItem::~AbstractTaskItem()
@@ -728,6 +753,7 @@ void AbstractTaskItem::publishIconGeometry() const
 
 void AbstractTaskItem::publishIconGeometry(const QRect &rect) const
 {
+    Q_UNUSED(rect)
 }
 
 void AbstractTaskItem::setGeometry(const QRectF& geometry)

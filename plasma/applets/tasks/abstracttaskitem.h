@@ -128,6 +128,8 @@ public:
 
     /** Returns the preferred size calculated on base of the fontsize and the iconsize*/
     QSize basicPreferredSize() const;
+    void setPreferredOffscreenSize();
+    void setPreferredOnscreenSize();
 
 Q_SIGNALS:
     void activated(AbstractTaskItem *);
