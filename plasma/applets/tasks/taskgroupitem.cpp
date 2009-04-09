@@ -20,8 +20,6 @@
 
 // Own
 #include "taskgroupitem.h"
-#include "layoutwidget.h"
-#include "windowtaskitem.h"
 
 // Qt
 #include <QGraphicsSceneContextMenuEvent>
@@ -53,12 +51,13 @@
 #include <Plasma/Dialog>
 
 #include "tasks.h"
-#include "layoutwidget.h"
+#include "taskitemlayout.h"
+#include "windowtaskitem.h"
 
 TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet, const bool showTooltip)
     : AbstractTaskItem(parent, applet, showTooltip),
       m_group(0),
-      m_expandedLayout(0),
+      m_tasksLayout(0),
       m_popupMenuTimer(0),
       m_lastActivated(-1),
       m_activeTaskIndex(0),
@@ -117,7 +116,7 @@ TaskGroupItem * TaskGroupItem::splitGroup()
 void TaskGroupItem::setSplitIndex(int position)
 {
     //kDebug() << position;
-    Q_ASSERT(m_expandedLayout);
+    Q_ASSERT(m_tasksLayout);
     Q_ASSERT(m_parentSplitGroup);
 
     for (int i = position ; i < m_parentSplitGroup->group()->members().size() ; i++) {
@@ -126,7 +125,7 @@ void TaskGroupItem::setSplitIndex(int position)
         if (!m_groupMembers.contains(item)) {
             m_groupMembers.insert(item, m_parentSplitGroup->abstractTaskItem(item));
         }
-        m_expandedLayout->addTaskItem(abstractTaskItem(item));
+        m_tasksLayout->addTaskItem(abstractTaskItem(item));
     }
     m_splitPosition = position;
 }
@@ -134,19 +133,19 @@ void TaskGroupItem::setSplitIndex(int position)
 TaskGroupItem * TaskGroupItem::splitGroup(int newSplitPosition)
 {
     //kDebug() << "split position" << newSplitPosition;
-    Q_ASSERT(m_expandedLayout);
+    Q_ASSERT(m_tasksLayout);
 
     //remove all items which move to the splitgroup from the expandedLayout
     for (int i = newSplitPosition ; i < m_groupMembers.size() ; i++) {
         AbstractGroupableItem *item = group()->members().at(i);
-        m_expandedLayout->removeTaskItem(abstractTaskItem(item));
+        m_tasksLayout->removeTaskItem(abstractTaskItem(item));
         //kDebug() << "remove from parentSplitGroup" << i;
     }
     //add items which arent in the splitgroup anymore and should be displayed again
     if (m_splitPosition) { //if 0 is the init value and shouldn't happen otherwise
         for (int i = m_splitPosition ; i < newSplitPosition ; i++) {
             AbstractGroupableItem *item = group()->members().at(i);
-            m_expandedLayout->addTaskItem(abstractTaskItem(item));
+            m_tasksLayout->addTaskItem(abstractTaskItem(item));
             //kDebug() << "add Item to parentSplitGroup" << i;
         }
     }
@@ -439,8 +438,8 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
         splitGroup(m_splitPosition);
         //emit changed();
         //m_childSplitGroup->reload();
-    } else if (m_expandedLayout) { //add to layout either for popup or expanded group
-        m_expandedLayout->addTaskItem(item);
+    } else if (m_tasksLayout) { //add to layout either for popup or expanded group
+        m_tasksLayout->addTaskItem(item);
     } else { //collapsed and no layout so far
         item->hide();
         QRect rect = iconGeometry();
@@ -481,8 +480,8 @@ void TaskGroupItem::itemRemoved(TaskManager::AbstractItemPtr groupableItem)
 
     disconnect(item, 0, 0, 0);
 
-    if (m_expandedLayout) {
-        m_expandedLayout->removeTaskItem(item);
+    if (m_tasksLayout) {
+        m_tasksLayout->removeTaskItem(item);
     }
 
     item->close();
@@ -550,11 +549,11 @@ void TaskGroupItem::popupMenu()
             member->setPreferredOffscreenSize();
         }
 
-        layoutWidget()->invalidate();
+        tasksLayout()->invalidate();
         m_offscreenWidget = new QGraphicsWidget(this);
         m_offscreenLayout = new QGraphicsLinearLayout(m_offscreenWidget);
         m_offscreenLayout->setContentsMargins(0,0,0,0); //default are 4 on each side
-        m_offscreenLayout->addItem(layoutWidget());
+        m_offscreenLayout->addItem(tasksLayout());
         m_offscreenWidget->setLayout(m_offscreenLayout);
         m_applet->containment()->corona()->addOffscreenWidget(m_offscreenWidget);
         m_offscreenLayout->activate();
@@ -574,8 +573,8 @@ void TaskGroupItem::popupMenu()
         m_popupDialog->clearFocus();
         m_popupDialog->hide();
     } else {
-        m_expandedLayout->setOrientation(Plasma::Vertical);
-        m_expandedLayout->setMaximumRows(1);
+        m_tasksLayout->setOrientation(Plasma::Vertical);
+        m_tasksLayout->setMaximumRows(1);
         m_offscreenWidget->adjustSize();
         if (m_applet->containment() && m_applet->containment()->corona()) {
             m_popupDialog->move(m_applet->containment()->corona()->popupPosition(this, m_popupDialog->size()));
@@ -584,7 +583,7 @@ void TaskGroupItem::popupMenu()
         m_popupDialog->show();
         m_popupDialog->raise();
         KWindowSystem::activateWindow(m_popupDialog->winId());
-        //kDebug() << m_popupDialog->size() << m_expandedLayout->size();
+        //kDebug() << m_popupDialog->size() << m_tasksLayout->size();
     }
 }
 
@@ -607,10 +606,10 @@ void TaskGroupItem::clearPopupLostFocus()
 
 void TaskGroupItem::reloadTheme()
 {
-    if (m_applet && m_expandedLayout && m_applet->itemBackground()->hasElement("hint-tasks-margin")) {
+    if (m_applet && m_tasksLayout && m_applet->itemBackground()->hasElement("hint-tasks-margin")) {
         QSize spacing = m_applet->itemBackground()->elementSize("hint-tasks-margin");
-        m_expandedLayout->setHorizontalSpacing(spacing.width());
-        m_expandedLayout->setVerticalSpacing(spacing.height());
+        m_tasksLayout->setHorizontalSpacing(spacing.width());
+        m_tasksLayout->setVerticalSpacing(spacing.height());
     }
 }
 
@@ -636,7 +635,7 @@ void TaskGroupItem::expand()
     }
 
     if (m_offscreenLayout) {
-        m_offscreenLayout->removeItem(layoutWidget());
+        m_offscreenLayout->removeItem(tasksLayout());
     }
 
     if (!m_mainLayout) { //this layout is needed since we can't take a layout directly from a widget without destroying it
@@ -646,16 +645,16 @@ void TaskGroupItem::expand()
     }
 
     //set it back from the popup settings (always vertical and 1 row)
-    layoutWidget()->setOrientation(m_applet->formFactor());
-    layoutWidget()->setMaximumRows(m_maximumRows);
+    tasksLayout()->setOrientation(m_applet->formFactor());
+    tasksLayout()->setMaximumRows(m_maximumRows);
 
-    m_mainLayout->addItem(layoutWidget());
+    m_mainLayout->addItem(tasksLayout());
 
     connect(m_applet, SIGNAL(constraintsChanged(Plasma::Constraints)), this, SLOT(constraintsChanged(Plasma::Constraints)));
-    //connect(m_expandedLayout, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updatePreferredSize()));
+    //connect(m_tasksLayout, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updatePreferredSize()));
     m_collapsed = false;
-    layoutWidget()->layoutItems();
-    //kDebug() << layoutWidget()->preferredSize() << preferredSize() << m_groupMembers.count();
+    tasksLayout()->layoutItems();
+    //kDebug() << tasksLayout()->preferredSize() << preferredSize() << m_groupMembers.count();
     emit changed();
     checkSettings();
     //kDebug() << "expanded";
@@ -664,33 +663,33 @@ void TaskGroupItem::expand()
 void TaskGroupItem::constraintsChanged(Plasma::Constraints constraints)
 {
     //kDebug();
-    if (constraints & Plasma::SizeConstraint && layoutWidget()) {
-        layoutWidget()->layoutItems();
+    if (constraints & Plasma::SizeConstraint && tasksLayout()) {
+        tasksLayout()->layoutItems();
     }
 
-    if (constraints & Plasma::FormFactorConstraint && layoutWidget()) {
-        layoutWidget()->setOrientation(m_applet->formFactor());
+    if (constraints & Plasma::FormFactorConstraint && tasksLayout()) {
+        tasksLayout()->setOrientation(m_applet->formFactor());
     }
 }
 
 void TaskGroupItem::relayoutItems()
 {
-    if (m_expandedLayout) {
-        m_expandedLayout->layoutItems();
+    if (m_tasksLayout) {
+        m_tasksLayout->layoutItems();
     }
 }
 
-LayoutWidget *TaskGroupItem::layoutWidget()
+TaskItemLayout *TaskGroupItem::tasksLayout()
 {
-    if (!m_expandedLayout) {
-        m_expandedLayout = new LayoutWidget(this, m_applet);
-        m_expandedLayout->setMaximumRows(m_maximumRows);
-        m_expandedLayout->setForceRows(m_forceRows);
-        m_expandedLayout->setOrientation(m_applet->formFactor());
+    if (!m_tasksLayout) {
+        m_tasksLayout = new TaskItemLayout(this, m_applet);
+        m_tasksLayout->setMaximumRows(m_maximumRows);
+        m_tasksLayout->setForceRows(m_forceRows);
+        m_tasksLayout->setOrientation(m_applet->formFactor());
         reloadTheme();
     }
 
-    return m_expandedLayout;
+    return m_tasksLayout;
 }
 
 void TaskGroupItem::collapse()
@@ -708,9 +707,9 @@ void TaskGroupItem::collapse()
     //kDebug();
     unsplitGroup();
 
-    m_mainLayout->removeItem(layoutWidget());
+    m_mainLayout->removeItem(tasksLayout());
     if (m_offscreenLayout) {
-        m_offscreenLayout->addItem(layoutWidget());
+        m_offscreenLayout->addItem(tasksLayout());
     } else {
         foreach (AbstractTaskItem *member, m_groupMembers) {
             scene()->removeItem(member);
@@ -718,7 +717,7 @@ void TaskGroupItem::collapse()
     }
 
     //kDebug();
-    //delete m_expandedLayout;
+    //delete m_tasksLayout;
     m_collapsed = true;
     updatePreferredSize();
     //kDebug();
@@ -806,7 +805,7 @@ void TaskGroupItem::editGroup()
 void  TaskGroupItem::itemPositionChanged(AbstractItemPtr item)
 {
     //kDebug();
-    if (!m_expandedLayout) {
+    if (!m_tasksLayout) {
         return;
     }
 
@@ -821,8 +820,8 @@ void  TaskGroupItem::itemPositionChanged(AbstractItemPtr item)
 
     AbstractTaskItem *taskItem = abstractTaskItem(item);
 
-    m_expandedLayout->removeTaskItem(taskItem);
-    m_expandedLayout->insert(m_group->members().indexOf(item), taskItem);
+    m_tasksLayout->removeTaskItem(taskItem);
+    m_tasksLayout->insert(m_group->members().indexOf(item), taskItem);
 }
 
 
@@ -873,7 +872,7 @@ AbstractTaskItem *TaskGroupItem::taskItemForWId(WId id)
 
 void TaskGroupItem::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
-    //kDebug() << "LayoutWidget dropEvent";
+    //kDebug() << "TaskItemLayout dropEvent";
     if (event->mimeData()->hasFormat(TaskManager::Task::mimetype()) ||
         event->mimeData()->hasFormat(TaskManager::Task::groupMimetype())) {
         bool ok;
@@ -893,7 +892,7 @@ void TaskGroupItem::dropEvent(QGraphicsSceneDragDropEvent *event)
             handleDroppedId(id, targetTask, event);
         }
 
-        //kDebug() << "LayoutWidget dropEvent done";
+        //kDebug() << "TaskItemLayout dropEvent done";
         event->acceptProposedAction();
     } else {
         event->ignore();
@@ -968,11 +967,11 @@ void TaskGroupItem::handleDroppedId(WId id, AbstractTaskItem *targetTask, QGraph
 
 void TaskGroupItem::layoutTaskItem(AbstractTaskItem* item, const QPointF &pos)
 {
-    if (!m_expandedLayout) {
+    if (!m_tasksLayout) {
         return;
     }
 
-    int insertIndex = m_expandedLayout->insertionIndexAt(pos);
+    int insertIndex = m_tasksLayout->insertionIndexAt(pos);
     // kDebug() << "Item inserting at: " << insertIndex << "of: " << numberOfItems();
     if (insertIndex == -1) {
         m_applet->groupManager().manualSortingRequest(item->abstractItem(), -1);
@@ -989,7 +988,7 @@ void TaskGroupItem::layoutTaskItem(AbstractTaskItem* item, const QPointF &pos)
 
 void TaskGroupItem::updateActive(AbstractTaskItem *task)
 {
-    if (!m_expandedLayout) {
+    if (!m_tasksLayout) {
         return;
     }
 
@@ -1128,8 +1127,8 @@ int TaskGroupItem::maxRows()
 void TaskGroupItem::setMaxRows(int rows)
 {
     m_maximumRows = rows;
-    if (m_expandedLayout) {
-        m_expandedLayout->setMaximumRows(m_maximumRows);
+    if (m_tasksLayout) {
+        m_tasksLayout->setMaximumRows(m_maximumRows);
     }
 }
 
@@ -1141,15 +1140,15 @@ bool TaskGroupItem::forceRows()
 void TaskGroupItem::setForceRows(bool forceRows)
 {
     m_forceRows = forceRows;
-    if (m_expandedLayout) {
-        m_expandedLayout->setForceRows(m_forceRows);
+    if (m_tasksLayout) {
+        m_tasksLayout->setForceRows(m_forceRows);
     }
 }
 
 int TaskGroupItem::optimumCapacity()
 {
-    if (m_expandedLayout) {
-        return m_expandedLayout->maximumRows() * m_expandedLayout->preferredColumns();
+    if (m_tasksLayout) {
+        return m_tasksLayout->maximumRows() * m_tasksLayout->preferredColumns();
     }
 
     return 1;

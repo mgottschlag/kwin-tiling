@@ -35,9 +35,10 @@ using TaskManager::GroupPtr;
 using TaskManager::TaskItem;
 using TaskManager::AbstractGroupableItem;
 
-class LayoutWidget;
+class TaskItemLayout;
 class SplitGroupItem;
 class QGraphicsLinearLayout;
+
 namespace Plasma
 {
     class Dialog;
@@ -97,7 +98,7 @@ public:
     void setSplitGroup(TaskGroup *group);
     bool isSplit();
 
-    LayoutWidget *layoutWidget();
+    TaskItemLayout *tasksLayout();
 
     int indexOf (AbstractTaskItem *task);
 
@@ -189,7 +190,7 @@ private:
 
     QHash<AbstractItemPtr, AbstractTaskItem*> m_groupMembers;
 
-    LayoutWidget *m_expandedLayout;
+    TaskItemLayout *m_tasksLayout;
     QTimer *m_popupMenuTimer;
     QHash <int, Order> m_taskOrder;
     int m_lastActivated;

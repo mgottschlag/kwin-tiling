@@ -54,7 +54,6 @@
 
 #include "tasks.h"
 #include "taskgroupitem.h"
-#include "layoutwidget.h"
 
 AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet, const bool showTooltip)
     : QGraphicsWidget(parent),

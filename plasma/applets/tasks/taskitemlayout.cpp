@@ -1,4 +1,4 @@
-#include "layoutwidget.h"
+#include "taskitemlayout.h"
 
 //Taskmanager
 #include <taskmanager/taskmanager.h>
@@ -18,7 +18,7 @@
 
 
 //GroupItem Constructor
-LayoutWidget::LayoutWidget(TaskGroupItem *parent, Tasks *applet)
+TaskItemLayout::TaskItemLayout(TaskGroupItem *parent, Tasks *applet)
     : QGraphicsGridLayout(0),
       m_hasSpacer(false),
       m_spacer(0),
@@ -38,12 +38,12 @@ LayoutWidget::LayoutWidget(TaskGroupItem *parent, Tasks *applet)
     }
 }
 
-LayoutWidget::~LayoutWidget()
+TaskItemLayout::~TaskItemLayout()
 {
     //kDebug();
 }
 
-void LayoutWidget::setOrientation(Plasma::FormFactor orientation)
+void TaskItemLayout::setOrientation(Plasma::FormFactor orientation)
 {
     Qt::Orientation oldOrientation = m_layoutOrientation;
 
@@ -60,7 +60,7 @@ void LayoutWidget::setOrientation(Plasma::FormFactor orientation)
 
 
 
-void LayoutWidget::addTaskItem(AbstractTaskItem * item)
+void TaskItemLayout::addTaskItem(AbstractTaskItem * item)
 {
     //kDebug();
     if (!item) {
@@ -88,7 +88,7 @@ void LayoutWidget::addTaskItem(AbstractTaskItem * item)
     //kDebug() << "end";
 }
 
-void LayoutWidget::removeTaskItem(AbstractTaskItem * item)
+void TaskItemLayout::removeTaskItem(AbstractTaskItem * item)
 {
     if (!remove(item)) {
         return;
@@ -105,7 +105,7 @@ void LayoutWidget::removeTaskItem(AbstractTaskItem * item)
     //kDebug() << "done";
 }
 
-bool LayoutWidget::insert(int index, AbstractTaskItem* item)
+bool TaskItemLayout::insert(int index, AbstractTaskItem* item)
 {
     //kDebug() << item->text() << index;
     if (!item ) {
@@ -126,7 +126,7 @@ bool LayoutWidget::insert(int index, AbstractTaskItem* item)
     return true;
 }
 
-bool LayoutWidget::remove(AbstractTaskItem* item)
+bool TaskItemLayout::remove(AbstractTaskItem* item)
 {
     if (!item) {
         kDebug() << "null Item";
@@ -139,7 +139,7 @@ bool LayoutWidget::remove(AbstractTaskItem* item)
 
 
 /** size including expanded groups*/
-int LayoutWidget::size()
+int TaskItemLayout::size()
 {
     int groupSize = 0;
 
@@ -152,7 +152,7 @@ int LayoutWidget::size()
         if (item->abstractItem()->isGroupItem()) {
             TaskGroupItem *group = static_cast<TaskGroupItem*>(item);
             if (!group->collapsed()) {
-                LayoutWidget *layout = dynamic_cast<LayoutWidget*>(group->layoutWidget());
+                TaskItemLayout *layout = dynamic_cast<TaskItemLayout*>(group->tasksLayout());
                 if (!layout) {
                     kDebug() << "Error group has no layout";
                     continue;
@@ -169,7 +169,7 @@ int LayoutWidget::size()
 }
 
 //return maximum colums set by the user unless the setting is to high and the items would get unusable
-int LayoutWidget::maximumRows()
+int TaskItemLayout::maximumRows()
 {
     int maxRows;
     if (m_itemPositions.isEmpty()) {
@@ -193,7 +193,7 @@ int LayoutWidget::maximumRows()
 }
 
 //returns a reasonable amount of columns
-int LayoutWidget::preferredColumns()
+int TaskItemLayout::preferredColumns()
 {
     if (m_forceRows) {
         m_rowSize = 1;
@@ -215,7 +215,7 @@ int LayoutWidget::preferredColumns()
     return qMax(1, qMin(m_rowSize, size()));
 }
 // <columns,rows>
-QPair<int, int> LayoutWidget::gridLayoutSize()
+QPair<int, int> TaskItemLayout::gridLayoutSize()
 {
     int groupSize = size();
     //the basic settings
@@ -238,7 +238,7 @@ QPair<int, int> LayoutWidget::gridLayoutSize()
 }
 
 
-void LayoutWidget::layoutItems()
+void TaskItemLayout::layoutItems()
 {
     //kDebug();
 
@@ -312,7 +312,7 @@ void LayoutWidget::layoutItems()
                 addItem(item, row, col, 1, 1);
                 numberOfItems++;
             } else {
-                LayoutWidget *layout = group->layoutWidget();
+                TaskItemLayout *layout = group->tasksLayout();
                 if (!layout) {
                     kDebug() << "group has no valid layout";
                     continue;
@@ -367,7 +367,7 @@ void LayoutWidget::layoutItems()
 }
 
 
-void LayoutWidget::updatePreferredSize()
+void TaskItemLayout::updatePreferredSize()
 {
     //kDebug() << "column count: " << m_layout->columnCount();
 
@@ -388,7 +388,7 @@ void LayoutWidget::updatePreferredSize()
     m_groupItem->updatePreferredSize();
 }
 
-void LayoutWidget::setMaximumRows(int rows)
+void TaskItemLayout::setMaximumRows(int rows)
 {
     if (rows != m_maxRows) {
         m_maxRows = rows;
@@ -396,12 +396,12 @@ void LayoutWidget::setMaximumRows(int rows)
     }
 }
 
-void LayoutWidget::setForceRows(bool forceRows)
+void TaskItemLayout::setForceRows(bool forceRows)
 {
     m_forceRows = forceRows;
 }
 
-int LayoutWidget::insertionIndexAt(const QPointF &pos)
+int TaskItemLayout::insertionIndexAt(const QPointF &pos)
 {
     int insertIndex = -1;
     int row = numberOfRows();
@@ -469,7 +469,7 @@ int LayoutWidget::insertionIndexAt(const QPointF &pos)
     return insertIndex;
 }
 
-int LayoutWidget::numberOfRows()
+int TaskItemLayout::numberOfRows()
 {
     if (m_layoutOrientation == Qt::Vertical) {
         return columnCount();
@@ -478,7 +478,7 @@ int LayoutWidget::numberOfRows()
     }
 }
 
-int LayoutWidget::numberOfColumns()
+int TaskItemLayout::numberOfColumns()
 {
     if (m_layoutOrientation == Qt::Vertical) {
         return rowCount();
@@ -488,5 +488,5 @@ int LayoutWidget::numberOfColumns()
 }
 
 
-#include "layoutwidget.moc"
+#include "taskitemlayout.moc"
 

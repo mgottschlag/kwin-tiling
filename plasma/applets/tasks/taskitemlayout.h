@@ -19,8 +19,8 @@
  ***************************************************************************/
 
 
-#ifndef LAYOUTWIDGET_H
-#define LAYOUTWIDGET_H
+#ifndef TASKITEMLAYOUT_H
+#define TASKITEMLAYOUT_H
 
 //Own
 #include "tasks.h"
@@ -43,13 +43,13 @@ using TaskManager::GroupManager;
 /**
  * A Layout for the expanded group
  */
-class LayoutWidget : public QGraphicsGridLayout
+class TaskItemLayout : public QGraphicsGridLayout
 {
     //Q_OBJECT
 
 public:
-    LayoutWidget(TaskGroupItem * parent, Tasks *applet);
-    ~LayoutWidget();
+    TaskItemLayout(TaskGroupItem * parent, Tasks *applet);
+    ~TaskItemLayout();
     /** insert the item on the index in TaskGroupItem::getMemberList */
     void addTaskItem(AbstractTaskItem*);
     void removeTaskItem(AbstractTaskItem*);
