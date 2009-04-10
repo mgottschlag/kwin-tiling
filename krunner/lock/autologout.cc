@@ -32,7 +32,6 @@
 AutoLogout::AutoLogout(LockProcess *parent) : QDialog(parent, Qt::X11BypassWindowManagerHint)
 {
     setObjectName("password dialog");
-    setModal(true);
     frame = new QFrame(this);
     frame->setFrameStyle(QFrame::Panel | QFrame::Raised);
     frame->setLineWidth(2);

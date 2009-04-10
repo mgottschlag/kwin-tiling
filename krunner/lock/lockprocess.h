@@ -80,8 +80,6 @@ public:
 
 public Q_SLOTS:
     void quitSaver();
-    void preparePopup();
-    void cleanupPopup();
     //dbus methods
     /**
      * bring up the password dialog with @param reason displayed instead of the usual "this session

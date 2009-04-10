@@ -1246,22 +1246,6 @@ int LockProcess::execDialog( QDialog *dlg )
     return rt;
 }
 
-void LockProcess::preparePopup()
-{
-    QWidget *dlg = (QWidget *)sender();
-    mDialogs.prepend( dlg );
-    fakeFocusIn( dlg->winId() );
-}
-
-void LockProcess::cleanupPopup()
-{
-    QWidget *dlg = (QWidget *)sender();
-
-    int pos = mDialogs.indexOf( dlg );
-    mDialogs.remove( pos );
-    updateFocus();
-}
-
 void LockProcess::updateFocus()
 {
     if (mDialogs.isEmpty()) {
@@ -1471,28 +1455,6 @@ LockProcess::WindowType LockProcess::windowType(WId id)
         XFree(data);
     }
     return type;
-/*    if (result != Success) {
-        return false;
-    }
-    if (actualType == tag) {
-        return true;
-    }
-    //managed windows will have a pesky frame we have to bypass
-    XWindowAttributes attr;
-    XGetWindowAttributes(display, id, &attr);
-    if (!attr.override_redirect) {
-        //check the real client window
-        if (Window client = XmuClientWindow(display, id)) {
-            result = XGetWindowProperty(display, client, tag, 0, 0, False, tag, &actualType,
-                    &actualFormat, &nitems, &remaining, &data);
-            kDebug() << (result == Success) << (actualType == tag);
-            if (data) {
-                XFree(data);
-            }
-            return (result == Success) && (actualType == tag);
-*        }
-    }
-    return false;*/
 }
 
 void LockProcess::stayOnTop()
@@ -1595,7 +1557,6 @@ void LockProcess::unlockXF86()
 void LockProcess::msgBox( QWidget *parent, QMessageBox::Icon type, const QString &txt )
 {
     QDialog box( parent, Qt::X11BypassWindowManagerHint );
-    box.setModal( true );
 
     QLabel *label1 = new QLabel( &box );
     label1->setPixmap( QMessageBox::standardIcon( type ) );
