@@ -104,7 +104,7 @@ Plasma::Containment *DesktopCorona::findFreeContainment() const
     foreach (Plasma::Containment *cont, containments()) {
         if ((cont->type() == Plasma::Containment::DesktopContainment ||
             cont->type() >= Plasma::Containment::CustomContainment) &&
-            cont->screen() == -1) {
+            cont->screen() == -1 && !offscreenWidgets().contains(cont)) {
             return cont;
         }
     }
