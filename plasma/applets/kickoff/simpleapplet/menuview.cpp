@@ -143,7 +143,7 @@ void MenuView::updateAction(QAbstractItemModel *model, QAction *action, const QM
                     action->setText(name);
                 } else { // seems we have a perfect desktop-file (likely a KDE one, heh) and name+description are clear separated
                     if (d->formattype == NameDescription) {
-                        action->setText(QString("%1 %2").arg(name).arg(text));
+                        action->setText(QString("%1 (%2)").arg(name).arg(text));
                     } else if (d->formattype == NameDashDescription) {
                         action->setText(QString("%1 - %2").arg(name).arg(text));
                     } else {
