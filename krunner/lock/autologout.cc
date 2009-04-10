@@ -94,12 +94,12 @@ void AutoLogout::timerEvent(QTimerEvent *ev)
     if (ev->timerId() == mCountdownTimerId)
     {
         updateInfo(mRemaining);
-	--mRemaining;
-	if (mRemaining < 0)
-	{
-		killTimer(mCountdownTimerId);
-		logout();
-	}
+        --mRemaining;
+        if (mRemaining < 0)
+        {
+            killTimer(mCountdownTimerId);
+            logout();
+        }
     }
 }
 

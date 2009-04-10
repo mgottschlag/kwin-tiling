@@ -26,7 +26,7 @@ public:
     AutoLogout(LockProcess *parent);
     ~AutoLogout();
     virtual void setVisible(bool visible);
- 
+
 protected:
     virtual void timerEvent(QTimerEvent *);
 

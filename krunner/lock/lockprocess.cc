@@ -621,7 +621,7 @@ void LockProcess::setVRoot(Window win, Window vr)
     if (gVRoot)
         removeVRoot(gVRoot);
 
-	QX11Info info;
+        QX11Info info;
     unsigned long rw = RootWindowOfScreen(ScreenOfDisplay(QX11Info::display(), info.screen()));
     unsigned long vroot_data[1] = { vr };
 
@@ -665,7 +665,7 @@ bool LockProcess::grabKeyboard()
 }
 
 #define GRABEVENTS ButtonPressMask | ButtonReleaseMask | PointerMotionMask | \
-		   EnterWindowMask | LeaveWindowMask
+                   EnterWindowMask | LeaveWindowMask
 
 //---------------------------------------------------------------------------
 //
@@ -912,8 +912,8 @@ void LockProcess::stopHack()
 //
 void LockProcess::hackExited()
 {
-	// Hack exited while we're supposed to be saving the screen.
-	// Make sure the saver window is black.
+    // Hack exited while we're supposed to be saving the screen.
+    // Make sure the saver window is black.
     XSetWindowBackground(QX11Info::display(), winId(), 0);
     XClearWindow(QX11Info::display(), winId());
 }

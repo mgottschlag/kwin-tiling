@@ -303,11 +303,11 @@ bool PasswordDlg::GRecvArr (char **ret)
         return false;
     *ret = buf;
     if (GRead (buf, len)) {
-	return true;
+        return true;
     } else {
-	::free(buf);
-	*ret = 0;
-	return false;
+        ::free(buf);
+        *ret = 0;
+        return false;
     }
 }
 
@@ -547,12 +547,12 @@ void PasswordDlg::slotStartNewSession()
 class LockListViewItem : public QTreeWidgetItem {
 public:
     LockListViewItem( QTreeWidget *parent,
-		      const QString &sess, const QString &loc, int _vt )
-	: QTreeWidgetItem( parent )
-	, vt( _vt )
+                      const QString &sess, const QString &loc, int _vt )
+        : QTreeWidgetItem( parent )
+        , vt( _vt )
     {
-	setText( 0, sess );
-	setText( 1, loc );
+        setText( 0, sess );
+        setText( 1, loc );
     }
 
     int vt;

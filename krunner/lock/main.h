@@ -34,6 +34,6 @@ Q_SIGNALS:
     void activity();
 private:
     time_t lastTick;
-};      
+};
 
 #endif
