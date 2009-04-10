@@ -97,6 +97,7 @@ void AutoLogout::timerEvent(QTimerEvent *ev)
 	--mRemaining;
 	if (mRemaining < 0)
 	{
+		killTimer(mCountdownTimerId);
 		logout();
 	}
     }
@@ -104,7 +105,8 @@ void AutoLogout::timerEvent(QTimerEvent *ev)
 
 void AutoLogout::slotActivity()
 {
-    accept();
+    if (mRemaining >= 0)
+        accept();
 }
 
 void AutoLogout::logout()
