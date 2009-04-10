@@ -25,6 +25,7 @@
 #include <QGraphicsLinearLayout>
 #include <QGraphicsLayoutItem>
 #include <QList>
+#include <QTimer>
 #include <KIcon>
 #include <KDialog>
 
@@ -115,6 +116,7 @@ class QuicklaunchApplet : public Plasma::Applet
 	void configAccepted();
 
     private slots:
+        void performUiRefactor();
         void refactorUi();
         void showDialog();
         void removeCurrentIcon();
@@ -150,6 +152,7 @@ class QuicklaunchApplet : public Plasma::Applet
 
         QGraphicsLinearLayout *m_layout;
         QuicklaunchLayout *m_innerLayout;
+        QTimer *m_timer;
         QList<QuicklaunchIcon*> m_icons;
         Plasma::IconWidget *m_arrow;
         int m_visibleIcons;

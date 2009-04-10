@@ -47,6 +47,7 @@ QuicklaunchApplet::QuicklaunchApplet(QObject *parent, const QVariantList &args)
   : Plasma::Applet(parent, args),
     m_layout(0),
     m_innerLayout(0),
+    m_timer(new QTimer(this)),
     m_visibleIcons(6),
     m_iconSize(s_defaultIconSize),
     m_dialogIconSize(s_defaultIconSize),
@@ -61,6 +62,9 @@ QuicklaunchApplet::QuicklaunchApplet(QObject *parent, const QVariantList &args)
     setHasConfigurationInterface(true);
     setAcceptDrops(true);
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
+    connect(m_timer,SIGNAL(timeout()), this, SLOT(performUiRefactor()));
+    m_timer->setSingleShot(true);
+    kDebug() << "Foo Start"; 
 
     // set our default size here
     /*resize((m_visibleIcons / m_rowCount) * s_defaultIconSize +
@@ -132,7 +136,7 @@ void QuicklaunchApplet::init()
     }
 
     loadPrograms(desktopFiles);
-    refactorUi();
+    performUiRefactor();
 }
 
 QSizeF QuicklaunchApplet::sizeHint(Qt::SizeHint which, const QSizeF & constraint) const
@@ -156,13 +160,21 @@ QSizeF QuicklaunchApplet::sizeHint(Qt::SizeHint which, const QSizeF & constraint
 void QuicklaunchApplet::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::SizeConstraint) {
-        //TODO: don't call so often
         refactorUi();
     }
 }
 
 void QuicklaunchApplet::refactorUi()
 {
+     static int my_counter = 0;
+     kDebug() << "refactorUi count = " << my_counter++;
+     m_timer->start(100);
+}
+
+void QuicklaunchApplet::performUiRefactor()
+{
+    static int my_perforcount = 0;
+    kDebug() << "performUiRefactor count = " << my_perforcount++;
     clearLayout(m_innerLayout);
 
     m_iconSize = qMax(m_iconSize, s_defaultIconSize);//Don't accept values under 16
@@ -230,6 +242,7 @@ void QuicklaunchApplet::refactorUi()
     //m_innerLayout->updateGeometry();
     //m_layout->updateGeometry();
     resize(sizeHint(Qt::PreferredSize));
+    kDebug() << "Bar see";
     update();
 }
 
@@ -248,7 +261,7 @@ void QuicklaunchApplet::showDialog()
         m_dialog->setContextMenuPolicy(Qt::ActionsContextMenu);
         m_dialogLayout = new QuicklaunchLayout(1, m_dialogWidget, m_dialogWidget);
         m_dialogWidget->setLayout(m_dialogLayout);
-        refactorUi();
+        performUiRefactor();
         m_dialog->setGraphicsWidget(m_dialogWidget);
     }
 
@@ -326,7 +339,7 @@ void QuicklaunchApplet::configAccepted()
 
     if (changed) {
         emit configNeedsSaving();
-        refactorUi();
+        performUiRefactor();
     }
 }
 
@@ -399,7 +412,7 @@ void QuicklaunchApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
         event->setDropAction(Qt::MoveAction);
         event->accept();
         saveConfig();
-        refactorUi();
+        performUiRefactor();
     }
 }
 
@@ -458,7 +471,7 @@ void QuicklaunchApplet::removeCurrentIcon()
     m_icons.removeAll(m_rightClickedIcon);
     m_rightClickedIcon->hide();
     m_rightClickedIcon->deleteLater();
-    refactorUi();
+    performUiRefactor();
 }
 
 bool QuicklaunchApplet::dropHandler(const int pos, const QMimeData *mimedata)
@@ -505,7 +518,7 @@ void QuicklaunchApplet::addAccepted()
 {
     int insertplace = m_rightClickedIcon ? m_icons.indexOf(m_rightClickedIcon) : m_icons.size();
     addProgram(insertplace, addUi.urlIcon->url().url());
-    refactorUi();
+    performUiRefactor();
 }
 
 K_EXPORT_PLASMA_APPLET(quicklaunch, QuicklaunchApplet)
