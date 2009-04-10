@@ -235,7 +235,6 @@ void LockProcess::timerEvent(QTimerEvent *ev)
 {
     if (ev->timerId() == mAutoLogoutTimerId)
     {
-        killTimer(mAutoLogoutTimerId);
         AutoLogout autologout(this);
         execDialog(&autologout);
     }
@@ -364,10 +363,8 @@ void LockProcess::configure()
         mLockGrace = -1;
     }
 
-    if ( KScreenSaverSettings::autoLogout() ) {
-        mAutoLogoutTimeout = KScreenSaverSettings::autoLogoutTimeout();
-        mAutoLogoutTimerId = startTimer(mAutoLogoutTimeout * 1000); // in milliseconds
-    }
+    mAutoLogoutTimeout = KScreenSaverSettings::autoLogout() ?
+                         KScreenSaverSettings::autoLogoutTimeout() : 0;
 
 #ifdef HAVE_DPMS
     mDPMSDepend = KScreenSaverSettings::suspendWhenInvisible();
@@ -742,6 +739,8 @@ bool LockProcess::startSaver()
         QSocketNotifier *notifier = new QSocketNotifier(mParent, QSocketNotifier::Read, this);
         connect(notifier, SIGNAL( activated (int)), SLOT( quitSaver()));
     }
+    if (mAutoLogoutTimeout && !mSetupMode)
+        mAutoLogoutTimerId = startTimer(mAutoLogoutTimeout * 1000); // in milliseconds
     createSaverWindow();
     move(0, 0);
     show();
@@ -1120,8 +1119,6 @@ void LockProcess::resume( bool force )
 //
 bool LockProcess::checkPass()
 {
-    killTimer(mAutoLogoutTimerId);
-
     if (isPlasmaValid()) {
         mPlasmaDBus->call(QDBus::NoBlock, "setActive", true);
     }
@@ -1208,6 +1205,7 @@ bool LockProcess::eventFilter(QObject *o, QEvent *e)
 
 int LockProcess::execDialog( QDialog *dlg )
 {
+
     QFrame *winFrame = new QFrame( dlg );
     winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
     winFrame->setLineWidth( 2 );
@@ -1223,6 +1221,8 @@ int LockProcess::execDialog( QDialog *dlg )
 
     if (mDialogs.isEmpty())
     {
+        if (mAutoLogoutTimerId)
+            killTimer(mAutoLogoutTimerId);
         suspend();
         XChangeActivePointerGrab( QX11Info::display(), GRABEVENTS,
                 QCursor(Qt::ArrowCursor).handle(), CurrentTime);
@@ -1235,6 +1235,8 @@ int LockProcess::execDialog( QDialog *dlg )
         mDialogs.remove( pos );
     if( mDialogs.isEmpty() ) {
         resume( false );
+        if (mAutoLogoutTimerId)
+            mAutoLogoutTimerId = startTimer(mAutoLogoutTimeout * 1000);
     }
     updateFocus();
 
@@ -1309,15 +1311,14 @@ bool LockProcess::x11Event(XEvent *event)
             //note: mSetupMode should end when we either get a winid or hit the checkPlasma timeout
             if (mSuppressUnlock.isActive() && (mSetupMode || !mForeignInputWindows.isEmpty())) {
                 mSuppressUnlock.start(); //help, help, I'm being suppressed!
+                if (mAutoLogoutTimerId) {
+                    killTimer(mAutoLogoutTimerId);
+                    mAutoLogoutTimerId = startTimer(mAutoLogoutTimeout * 1000);
+                }
             } else if (!mLocked || checkPass()) {
                 quitSaver();
                 mBusy = false;
                 return true; //it's better not to forward any input while quitting, right?
-            }
-            if (mAutoLogoutTimerId) // we need to restart the auto logout countdown
-            {
-                killTimer(mAutoLogoutTimerId);
-                mAutoLogoutTimerId = startTimer(mAutoLogoutTimeout * 1000);
             }
             mBusy = false;
             ret = true;
