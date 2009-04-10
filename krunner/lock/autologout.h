@@ -12,7 +12,6 @@
 #include <QLayout>
 
 class LockProcess;
-class QFrame;
 class QGridLayout;
 class QLabel;
 class QDialog;
@@ -35,7 +34,6 @@ private Q_SLOTS:
 
 private:
     void        updateInfo(int);
-    QFrame      *frame;
     QGridLayout *frameLayout;
     QLabel      *mStatusLabel;
     int         mCountdownTimerId;

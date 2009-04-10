@@ -31,31 +31,23 @@
 
 AutoLogout::AutoLogout(LockProcess *parent) : QDialog(parent, Qt::X11BypassWindowManagerHint)
 {
-    setObjectName("password dialog");
-    frame = new QFrame(this);
-    frame->setFrameStyle(QFrame::Panel | QFrame::Raised);
-    frame->setLineWidth(2);
-
-    QLabel *pixLabel = new QLabel( frame );
+    QLabel *pixLabel = new QLabel( this );
     pixLabel->setObjectName( "pixlabel" );
     pixLabel->setPixmap(DesktopIcon("application-exit"));
 
-    QLabel *greetLabel = new QLabel(i18n("<qt><nobr><b>Automatic Log Out</b></nobr></qt>"), frame);
-    QLabel *infoLabel = new QLabel(i18n("<qt>To prevent being logged out, resume using this session by moving the mouse or pressing a key.</qt>"), frame);
+    QLabel *greetLabel = new QLabel(i18n("<qt><nobr><b>Automatic Log Out</b></nobr></qt>"), this);
+    QLabel *infoLabel = new QLabel(i18n("<qt>To prevent being logged out, resume using this session by moving the mouse or pressing a key.</qt>"), this);
 
-    mStatusLabel = new QLabel("<b> </b>", frame);
+    mStatusLabel = new QLabel("<b> </b>", this);
     mStatusLabel->setAlignment(Qt::AlignCenter);
 
-    QLabel *mProgressLabel = new QLabel(i18n("Time Remaining:"), frame);
-    mProgressRemaining = new QProgressBar(frame);
+    QLabel *mProgressLabel = new QLabel(i18n("Time Remaining:"), this);
+    mProgressRemaining = new QProgressBar(this);
     mProgressRemaining->setTextVisible(false);
 
-    QVBoxLayout *unlockDialogLayout = new QVBoxLayout( this );
-    unlockDialogLayout->addWidget( frame );
-
-    frameLayout = new QGridLayout(frame);
+    frameLayout = new QGridLayout(this);
     frameLayout->setSpacing(KDialog::spacingHint());
-    frameLayout->setMargin(KDialog::marginHint());
+    frameLayout->setMargin(KDialog::marginHint() * 2);
     frameLayout->addWidget(pixLabel, 0, 0, 3, 1, Qt::AlignCenter | Qt::AlignTop);
     frameLayout->addWidget(greetLabel, 0, 1);
     frameLayout->addWidget(mStatusLabel, 1, 1);
