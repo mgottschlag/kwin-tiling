@@ -11,6 +11,7 @@ X-KDE-ServiceTypes=KCModule
 X-KDE-Library=kcm_joystick
 X-KDE-Test-Module=true
 X-KDE-System-Settings-Parent-Category=keyboard-and-mouse
+X-KDE-ParentApp=kcontrol
 X-KDE-Weight=70
 
 Comment=Joystick settings
