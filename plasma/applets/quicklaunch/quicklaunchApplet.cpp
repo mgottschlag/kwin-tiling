@@ -40,6 +40,8 @@
 
 #include "math.h"
 
+//TODO: Make Dialog resizeable (which also makes the number of rows in it configurable :)
+
 static const int s_defaultIconSize = 16;
 static const int s_defaultSpacing = 2;
 
@@ -64,12 +66,6 @@ QuicklaunchApplet::QuicklaunchApplet(QObject *parent, const QVariantList &args)
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
     connect(m_timer,SIGNAL(timeout()), this, SLOT(performUiRefactor()));
     m_timer->setSingleShot(true);
-    kDebug() << "Foo Start"; 
-
-    // set our default size here
-    /*resize((m_visibleIcons / m_rowCount) * s_defaultIconSize +
-            (s_defaultSpacing * (m_visibleIcons + 1)),
-           m_rowCount * 22 + s_defaultSpacing * 3);*/
 }
 
 QuicklaunchApplet::~QuicklaunchApplet()
@@ -237,10 +233,7 @@ void QuicklaunchApplet::performUiRefactor()
         m_dialogLayout->updateGeometry();
         m_dialog->adjustSize();
     }
-    //resize(sizeHint(Qt::PreferredSize));
-    //adjustSize();
-    //m_innerLayout->updateGeometry();
-    //m_layout->updateGeometry();
+
     resize(sizeHint(Qt::PreferredSize));
     kDebug() << "Bar see";
     update();
@@ -275,8 +268,6 @@ void QuicklaunchApplet::showDialog()
             m_dialog->move(containment()->corona()->popupPosition(m_arrow, m_dialog->size()));
         }
         KWindowSystem::setState(m_dialog->winId(), NET::SkipTaskbar);
-        //QPoint(popupPosition(m_dialog->sizeHint()).x() + (m_visibleIcons) * size().height() / m_rowCount,
-        //               popupPosition(m_dialog->sizeHint()).y()));
         m_dialog->show();
     }
 }
@@ -402,7 +393,7 @@ void QuicklaunchApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
         pos = row * cols + col;
     /*} else {
         kDebug() << "WE'RE ON THE DIALOG";
-    }*/
+    }*/ //FIXME: Also get position of drop on the dialog, at the moment the Icon just gets appended instead of inserting to the correct position...
 
     if (pos >= m_icons.size()) {
         pos = m_icons.size() - 1;
