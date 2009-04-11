@@ -58,7 +58,7 @@ KustodianGroupingStrategy::KustodianGroupingStrategy(GroupManager *groupManager)
 
     QStringList defaultApps;
     defaultApps << "dolphin" << "krita" << "konqueror" << "kwrite" << "konsole" << "gwenview" << "kontact" << "konversation" << "amarok" << "kword";
-    foreach (QString name, defaultApps) {
+    foreach (const QString &name, defaultApps) {
         QList <AbstractItemPtr> list;
         TaskGroup* group = createGroup(list);
         group->setName(name);

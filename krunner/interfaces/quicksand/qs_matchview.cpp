@@ -628,7 +628,7 @@ void QsMatchView::keyPressEvent(QKeyEvent *e)
     }
 
     //Don't add control characters to the search term
-    foreach (QChar c, e->text()) {
+    foreach (const QChar &c, e->text()) {
         if (c.isPrint()) {
             if (d->m_stack->currentIndex() == 1) {
                 d->m_searchTerm = d->m_lineEdit->text() + c;

@@ -133,7 +133,7 @@ const ActionList& URLGrabber::matchingActions( const QString& clipData )
     if ( mimetype->name() != "application/octet-stream" ) {
         ClipAction* action = new ClipAction( QString(), mimetype->comment() );
         KService::List lst = KMimeTypeTrader::self()->query( mimetype->name(), "Application" );
-        foreach( KService::Ptr service, lst ) {
+        foreach( const KService::Ptr &service, lst ) {
             action->addCommand( service->exec(), service->name(), true, service->icon() );
         }
         if ( !lst.isEmpty() )

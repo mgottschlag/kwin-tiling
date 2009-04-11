@@ -413,7 +413,7 @@ bool Settings::update()
     QStringList updates(KGlobal::dirs()->findAllResources("data", "khotkeys/*.khotkeys"));
     bool imported(false);
 
-    Q_FOREACH (const QString path, updates)
+    Q_FOREACH (const QString &path, updates)
         {
         // Import checks if the file was already imported.
         KConfig file(path);

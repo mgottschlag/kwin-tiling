@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 
     QMap<QString, QVariant> props =  iface.getProperties();
 
-    foreach(QString key, props.keys()) {
+    foreach(const QString &key, props.keys()) {
         kDebug() << "Interface Property: " << key << " : " << props[key];
     }
 

@@ -356,7 +356,7 @@ void KGlobalShortcutsEditor::load()
         }
     QList<QDBusObjectPath> components = componentsRc;
 
-    Q_FOREACH(QDBusObjectPath componentPath, components) {
+    Q_FOREACH(const QDBusObjectPath &componentPath, components) {
         d->loadComponent(componentPath);
     } // Q_FOREACH(component)
 }
@@ -513,7 +513,7 @@ bool KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::loadComponent(const 
 
     // We add the shortcuts for all shortcut contexts to the editor. This
     // way the user keeps full control of it's shortcuts.
-    Q_FOREACH (QString shortcutContext, shortcutContexts) {
+    Q_FOREACH (const QString &shortcutContext, shortcutContexts) {
 
         QDBusReply< QList<KGlobalShortcutInfo> > shortcutsRc =
             component.allShortcutInfos(shortcutContext);

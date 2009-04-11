@@ -96,7 +96,7 @@ void DBusSystemTrayProtocol::initRegisteredServices()
     org::kde::NotificationAreaWatcher notificationAreaWatcher(interface, "/NotificationAreaWatcher",
                                               QDBusConnection::sessionBus());
     if (notificationAreaWatcher.isValid()) {
-        foreach (QString service, notificationAreaWatcher.registeredServices().value()) {
+        foreach (const QString &service, notificationAreaWatcher.registeredServices().value()) {
             newTask(service);
         }
     } else {
@@ -130,7 +130,7 @@ void DBusSystemTrayProtocol::registerWatcher(const QString& service)
             connect(m_notificationAreaWatcher, SIGNAL(serviceRegistered(const QString&)), this, SLOT(serviceRegistered(const QString &)));
             connect(m_notificationAreaWatcher, SIGNAL(serviceUnregistered(const QString&)), this, SLOT(serviceUnregistered(const QString&)));
 
-            foreach (QString service, m_notificationAreaWatcher->registeredServices().value()) {
+            foreach (const QString &service, m_notificationAreaWatcher->registeredServices().value()) {
                 newTask(service);
             }
         } else {

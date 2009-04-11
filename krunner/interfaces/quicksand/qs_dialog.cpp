@@ -189,14 +189,14 @@ void QsDialog::setMatches(const QList<Plasma::QueryMatch> &matches)
     QList<MatchItem*> items;
     QMultiMap<QString, Plasma::QueryMatch> temp;
     QMultiMap<QString, Plasma::QueryMatch>::iterator end = m_matches.end();
-    foreach (Plasma::QueryMatch match, matches) {
+    foreach (const Plasma::QueryMatch &match, matches) {
         temp.insert(match.id(), match);
         // Do not create new MatchItems for existing matches when the query hasn't changed
         if (!m_newQuery && m_matches.find(match.id()) != end) {
             // kDebug() << "A match with id " << match.id() << " already exists." << endl;
             QList<Plasma::QueryMatch> duplicates = m_matches.values(match.id());
             bool exists = false;
-            foreach (Plasma::QueryMatch m, duplicates) {
+            foreach (const Plasma::QueryMatch &m, duplicates) {
                 // FIXME: Matching the displayed text isn't always reliable
                 // maybe adding an operator== to QueryMatch would help
                 if (m.text() == match.text()) {

@@ -163,12 +163,12 @@ void KephalApp::query() {
         cout << "    Screen: " << (output->screen() ? output->screen()->id() : -1) << "\n";
 
         cout << "\n    Available sizes: ";
-        foreach (QSize size, output->availableSizes()) {
+        foreach (const QSize &size, output->availableSizes()) {
             cout << size.width() << "x" << size.height() << ", ";
         }
 
         cout << "\n    Available positions: ";
-        foreach (QPoint pos, output->availablePositions()) {
+        foreach (const QPoint &pos, output->availablePositions()) {
             cout << "(" << pos.x() << "," << pos.y() << "), ";
         }
 

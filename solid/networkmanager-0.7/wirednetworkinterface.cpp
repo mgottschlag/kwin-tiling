@@ -105,7 +105,7 @@ void NMWiredNetworkInterface::wiredPropertiesChanged(const QVariantMap &properti
     }
     if (propKeys.count()) {
         kDebug(1441) << "Unhandled properties: ";
-        foreach (QString key, propKeys) {
+        foreach (const QString &key, propKeys) {
             kDebug(1441) << key << properties.value(key);
         }
     }

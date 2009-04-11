@@ -472,7 +472,7 @@ QMimeData *KHotkeysModel::mimeData(const QModelIndexList &indexes) const
 
     QDataStream stream(&encodedData, QIODevice::WriteOnly);
 
-    Q_FOREACH (QModelIndex index, indexes)
+    Q_FOREACH (const QModelIndex &index, indexes)
         {
         if (index.isValid() and index.column() == 0)
             {

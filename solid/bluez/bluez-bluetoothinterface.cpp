@@ -117,7 +117,7 @@ QStringList BluezBluetoothInterface::listDevices() const
     if(!devices.isValid()) {
         return QStringList();
     }
-    foreach(QDBusObjectPath path, devices.value()) {
+    foreach(const QDBusObjectPath &path, devices.value()) {
         deviceList.append(path.path());
     }
     return deviceList;

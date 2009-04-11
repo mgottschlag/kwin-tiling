@@ -67,7 +67,7 @@ NMWirelessNetworkInterface::NMWirelessNetworkInterface(const QString & path, NMN
     {
         kDebug(1441) << "Got device list";
         QList <QDBusObjectPath> aps = apPathList.value();
-        foreach (QDBusObjectPath op, aps)
+        foreach (const QDBusObjectPath &op, aps)
         {
             d->accessPoints.append(op.path());
             kDebug(1441) << "  " << op.path();

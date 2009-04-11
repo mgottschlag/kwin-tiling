@@ -450,7 +450,7 @@ void AppletBrowserPrivate::populateWidgetsMenu()
     widgetsMenu->addAction(action);
 
     KService::List offers = KServiceTypeTrader::self()->query("Plasma/PackageStructure");
-    foreach (const KService::Ptr service, offers) {
+    foreach (const KService::Ptr &service, offers) {
         //kDebug() << service->property("X-Plasma-ProvidesWidgetBrowser");
         if (service->property("X-Plasma-ProvidesWidgetBrowser").toBool()) {
             QAction *action = new QAction(KIcon("applications-internet"),

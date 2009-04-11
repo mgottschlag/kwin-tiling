@@ -57,7 +57,7 @@ void SettingsWriter::exportTo(const ActionDataBase *element, KConfigBase &config
 
     // Clean the file
     QStringList groups = config.groupList();
-    Q_FOREACH (QString name, config.groupList())
+    Q_FOREACH (const QString &name, config.groupList())
         {
         config.deleteGroup(name);
         }

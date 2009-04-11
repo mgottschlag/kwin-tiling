@@ -68,7 +68,7 @@ NMNetworkManager::NMNetworkManager(QObject * parent, const QStringList &)
     {
         kDebug(1441) << "Device list";
         QList <QDBusObjectPath> devices = deviceList.value();
-        foreach (QDBusObjectPath op, devices)
+        foreach (const QDBusObjectPath &op, devices)
         {
             d->networkInterfaces.append(op.path());
             kDebug(1441) << "  " << op.path();
@@ -79,7 +79,7 @@ NMNetworkManager::NMNetworkManager(QObject * parent, const QStringList &)
 
     kDebug(1441) << "Active connections:";
     QList <QDBusObjectPath> activeConnections = d->iface.activeConnections();
-    foreach (QDBusObjectPath ac, activeConnections)
+    foreach (const QDBusObjectPath &ac, activeConnections)
     {
         d->activeConnections.append(ac.path());
         kDebug(1441) << "  " << ac.path();
@@ -230,7 +230,7 @@ void NMNetworkManager::propertiesChanged(const QVariantMap &properties)
         if ( activePaths.count() ) {
             kDebug(1441) << activeConnKey;
         }
-        foreach (QDBusObjectPath ac, activePaths)
+        foreach (const QDBusObjectPath &ac, activePaths)
         {
             d->activeConnections.append(ac.path());
             kDebug(1441) << "  " << ac.path();

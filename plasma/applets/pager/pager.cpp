@@ -923,7 +923,7 @@ void Pager::dropEvent(QGraphicsSceneDragDropEvent *event)
 void Pager::animationUpdate(qreal progress, int animId)
 {
     int i = 0;
-    foreach (AnimInfo anim, m_animations) {
+    foreach (const AnimInfo &anim, m_animations) {
         if (anim.animId == animId) {
             break;
         }
@@ -1187,7 +1187,7 @@ void Pager::updateToolTip()
 
     QList<WId> windows;
 
-    foreach(KWindowInfo winInfo, m_windowInfo){
+    foreach(const KWindowInfo &winInfo, m_windowInfo){
         if (winInfo.isOnDesktop(hoverDesktopNumber) && !windows.contains(winInfo.win())) {
             bool active = (winInfo.win() == KWindowSystem::activeWindow());
             if ((taskCounter < 4) || active){    

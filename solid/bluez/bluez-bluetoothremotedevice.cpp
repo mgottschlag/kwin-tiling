@@ -110,7 +110,7 @@ QStringList BluezBluetoothRemoteDevice::listNodes() const
     QStringList list;
     QDBusReply< QList<QDBusObjectPath> > path = device->call("ListNodes");
         if (path.isValid()) {
-            foreach(QDBusObjectPath objectPath, path.value()) {
+            foreach(const QDBusObjectPath &objectPath, path.value()) {
                 list.append(objectPath.path());
             }
 	    return list;

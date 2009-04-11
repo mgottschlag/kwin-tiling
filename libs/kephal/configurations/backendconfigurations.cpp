@@ -189,7 +189,7 @@ namespace Kephal {
     QSet<QPoint> BackendConfiguration::possiblePositions(int screen) {
         QList<QSet<QPoint> > partitions = partition(screen);
         QSet<QPoint> result = border(partitions[0]);
-        foreach (QSet<QPoint> partition, partitions) {
+        foreach (const QSet<QPoint> &partition, partitions) {
             result.intersect(border(partition));
         }
         return result;

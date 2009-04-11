@@ -240,7 +240,7 @@ public:
 
     void updateTooltip() {
         QStringList names;
-        foreach(QString vtname, viewtypes)
+        foreach(const QString &vtname, viewtypes)
             names << viewText(viewType(vtname.toUtf8()));
         Plasma::ToolTipContent data(i18n("Application Launcher Menu"), names.join(", "), icon->icon());
         Plasma::ToolTipManager::self()->setContent(q, data);
@@ -531,7 +531,7 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
         //connect(d->menuview, SIGNAL(afterBeingHidden()), d->menuview, SLOT(deleteLater()));
 
         //Kickoff::MenuView::ModelOptions options = d->viewtypes.count() < 2 ? Kickoff::MenuView::MergeFirstLevel : Kickoff::MenuView::None;
-        foreach(QString vtname, d->viewtypes) {
+        foreach(const QString &vtname, d->viewtypes) {
             if(vtname == "Applications") {
                 Kickoff::ApplicationModel *appModel = new Kickoff::ApplicationModel(d->menuview, true /*allow separators*/);
                 appModel->setDuplicatePolicy(Kickoff::ApplicationModel::ShowLatestOnlyPolicy);
@@ -595,10 +595,10 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
                     d->menuview->addMenu(parentmenu);
                 }
                 QMap<QString, KMenu*> menus;
-                foreach(KService::Ptr rootentry, sortServices(KServiceTypeTrader::self()->query("SystemSettingsCategory", "(not exist [X-KDE-System-Settings-Parent-Category]) or [X-KDE-System-Settings-Parent-Category]==''"))) {
+                foreach(const KService::Ptr &rootentry, sortServices(KServiceTypeTrader::self()->query("SystemSettingsCategory", "(not exist [X-KDE-System-Settings-Parent-Category]) or [X-KDE-System-Settings-Parent-Category]==''"))) {
                     parentmenu->addTitle(rootentry->name().replace('&',"&&"));
                     const QString rootcategory = rootentry->property("X-KDE-System-Settings-Category").toString();
-                    foreach(KService::Ptr entry, sortServices(KServiceTypeTrader::self()->query("SystemSettingsCategory", QString("[X-KDE-System-Settings-Parent-Category]=='%1'").arg(rootcategory)))) {
+                    foreach(const KService::Ptr &entry, sortServices(KServiceTypeTrader::self()->query("SystemSettingsCategory", QString("[X-KDE-System-Settings-Parent-Category]=='%1'").arg(rootcategory)))) {
                         KMenu* menu = new KMenu(entry->name().replace('&',"&&"), parentmenu);
                         menu->setIcon(KIcon(entry->icon()));
                         parentmenu->addMenu(menu);
@@ -607,7 +607,7 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
                     }
                 }
                 QMap<QString, QList<KService::Ptr> > modules;
-                foreach(KService::Ptr entry, sortServices(KServiceTypeTrader::self()->query("KCModule"))) {
+                foreach(const KService::Ptr &entry, sortServices(KServiceTypeTrader::self()->query("KCModule"))) {
                     const QString category = entry->property("X-KDE-System-Settings-Parent-Category").toString();
                     if(! category.isEmpty() && ! entry->noDisplay())
                         modules[category] << entry;
@@ -630,7 +630,7 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
                     KMenu* m = menus[menucategory];
                     if(! subcategory.isNull())
                         m->addTitle(subcategory->name().replace('&',"&&"));
-                    foreach(KService::Ptr entry, modules[category]) {
+                    foreach(const KService::Ptr &entry, modules[category]) {
                         KCModuleInfo module(entry->entryPath());
                         m->addAction(KIcon(module.icon()), module.moduleName().replace('&',"&&"))->setData(KUrl("kcm:/" + entry->entryPath()));
                     }
