@@ -228,7 +228,7 @@ bool Hdd::addMeter(const QString& source)
 void Hdd::themeChanged()
 {
     Plasma::Theme* theme = Plasma::Theme::defaultTheme();
-    foreach (Plasma::Meter *w, meters().values()) {
+    foreach (Plasma::Meter *w, meters()) {
         QColor text = theme->color(Plasma::Theme::TextColor);
         QColor background = theme->color(Plasma::Theme::BackgroundColor);
         QColor darkerText((text.red() + background.red()) / 2,

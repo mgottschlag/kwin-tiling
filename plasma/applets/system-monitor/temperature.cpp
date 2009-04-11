@@ -235,7 +235,7 @@ bool Temperature::addMeter(const QString& source)
 void Temperature::themeChanged()
 {
     Plasma::Theme* theme = Plasma::Theme::defaultTheme();
-    foreach (Plasma::Meter *w, meters().values()) {
+    foreach (Plasma::Meter *w, meters()) {
         w->setLabelColor(0, theme->color(Plasma::Theme::TextColor));
         QFont font = theme->font(Plasma::Theme::DefaultFont);
         font.setPointSize(7);

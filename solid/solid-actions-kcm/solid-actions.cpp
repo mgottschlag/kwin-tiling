@@ -132,7 +132,7 @@ void SolidActions::addAction()
     delete newDesktop;
     // Prepare to open the editDialog
     fillActionsList();
-    foreach(ActionItem * newItem, actionsDb.values()) { // Lets find our new action
+    foreach(ActionItem * newItem, actionsDb) { // Lets find our new action
         if (newItem->desktopMasterPath == filePath) {
             newAction = actionsDb.key(newItem); // Grab it
             break;
@@ -264,7 +264,7 @@ void SolidActions::enableEditDelete()
 
 void SolidActions::clearActions()
 {
-    foreach(ActionItem * deleteAction, actionsDb.values()) { // destroy all action items
+    foreach(ActionItem * deleteAction, actionsDb) { // destroy all action items
         delete deleteAction;
     }
     mainUi->LwActions->clear(); // Clear the list of actions

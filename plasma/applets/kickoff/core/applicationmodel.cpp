@@ -249,7 +249,7 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
     // set the subTitleMandatory field for nodes that do not provide a unique generic
     // name what may help us on display to show in such cases also the subtitle to
     // provide a hint to the user what the duplicate entries are about.
-    foreach (QList<AppNode*> list, genericNames.values()) {
+    foreach (const QList<AppNode*> &list, genericNames) {
         if (list.count() >= 2) {
             foreach (AppNode* n, list) {
                 n->subTitleMandatory = true;

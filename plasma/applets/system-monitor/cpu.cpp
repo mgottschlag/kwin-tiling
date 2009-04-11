@@ -128,7 +128,7 @@ bool SM::Cpu::addMeter(const QString& source)
 void SM::Cpu::themeChanged()
 {
     Plasma::Theme* theme = Plasma::Theme::defaultTheme();
-    foreach (Plasma::SignalPlotter *plotter, plotters().values()) {
+    foreach (Plasma::SignalPlotter *plotter, plotters()) {
         plotter->setFontColor(theme->color(Plasma::Theme::HighlightColor));
         plotter->setHorizontalLinesColor(theme->color(Plasma::Theme::HighlightColor));
         plotter->setVerticalLinesColor(theme->color(Plasma::Theme::HighlightColor));
