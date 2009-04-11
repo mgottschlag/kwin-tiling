@@ -71,8 +71,8 @@ ThemeModel::~ThemeModel()
 void ThemeModel::reload()
 {
     reset();
-    foreach (const QString& key, m_themes.keys()) {
-        delete m_themes[key].svg;
+    foreach (const ThemeInfo &info, m_themes) {
+        delete info.svg;
     }
     m_themes.clear();
 
