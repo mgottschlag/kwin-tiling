@@ -69,9 +69,11 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
 #endif
 
     if (AppSettings::perVirtualDesktopViews()) {
-        kDebug() << "setting to desktop" << containment->desktop() + 1;
-        KWindowSystem::setOnDesktop(winId(), containment->desktop() + 1);
+        m_desktop = containment->desktop() + 1;
+        kDebug() << "setting to desktop" << m_desktop;
+        KWindowSystem::setOnDesktop(winId(), m_desktop);
     } else {
+        m_desktop = -1;
         KWindowSystem::setOnAllDesktops(winId(), true);
     }
 
@@ -204,8 +206,10 @@ void DesktopView::adjustSize()
     QRect geom = Kephal::ScreenUtils::screenGeometry(screen());
     kDebug() << "screen" << screen() << "geom" << geom;
     setGeometry(geom);
-    containment()->resize(geom.size());
-    kDebug() << "Containment's geom after resize" << containment()->geometry(); 
+    if (containment()) {
+        containment()->resize(geom.size());
+        kDebug() << "Containment's geom after resize" << containment()->geometry();
+    }
 
     if (m_dashboard) {
         m_dashboard->setGeometry(geom);
@@ -427,15 +431,11 @@ void DesktopView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Contai
         return;
     }
 
-    if (AppSettings::perVirtualDesktopViews() && containment() && newContainment->desktop() != containment()->desktop()) {
-        return;
-    }
-
     if (wasScreen == screen() && this->containment() == newContainment) {
         setContainment(0);
     }
 
-    if (isScreen == screen()) {
+    if (isScreen > -1 && isScreen == screen() && (!AppSettings::perVirtualDesktopViews() || newContainment->desktop() == m_desktop-1) ) {
         setContainment(newContainment);
     }
 }

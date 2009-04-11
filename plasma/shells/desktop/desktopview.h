@@ -105,6 +105,7 @@ private:
     DashboardView *m_dashboard;
     bool m_dashboardFollowsDesktop : 1;
     bool m_init : 1;
+    int m_desktop;
 
     //FIXME: duplicated from containment_p.h 
     //(but with a bigger margin to make room even for very big panels)
