@@ -80,8 +80,8 @@ ThemeModel::~ThemeModel()
 
 void ThemeModel::clearThemeList()
 {
-    foreach (const QString& key, m_themes.keys()) {
-        delete m_themes[key].svg;
+    foreach (const ThemeInfo& themeInfo, m_themes) {
+        delete themeInfo.svg;
     }
     m_themes.clear();
 }
