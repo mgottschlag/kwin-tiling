@@ -66,6 +66,12 @@
      <property name="title">
       <string>Implicit Authorizations</string>
      </property>
+     <property name="toolTip">
+      <string>&lt;i&gt;Implicit authorizations&lt;/i&gt; are authorizations automatically given to users based on certain criteria such as if they are on the local console.</string>
+     </property>
+     <property name="whatsThis">
+      <string>&lt;i&gt;Implicit authorizations&lt;/i&gt; are authorizations automatically given to users based on certain criteria such as if they are on the local console.</string>
+     </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <layout class="QFormLayout" name="formLayout">
@@ -181,6 +187,12 @@
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
       <string>Explicit Authorizations</string>
+     </property>
+     <property name="toolTip">
+      <string>This list displays authorizations that are either obtained through authentication or specifically given to the entity in question. Blocked authorizations are marked with a &lt;b&gt;STOP&lt;/b&gt; sign.</string>
+     </property>
+     <property name="whatsThis">
+      <string>This list displays authorizations that are either obtained through authentication or specifically given to the entity in question. Blocked authorizations are marked with a &lt;b&gt;STOP&lt;/b&gt; sign.</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
