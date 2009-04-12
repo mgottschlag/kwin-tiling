@@ -151,11 +151,11 @@ void PkKAction::updateEntryView()
     QPixmap icon;
     if (!iconName.isEmpty()) {
         icon = KIconLoader::global()->loadIcon(iconName,
-                                               KIconLoader::NoGroup, KIconLoader::SizeHuge, KIconLoader::DefaultState, QStringList(), NULL, true);
+                                               KIconLoader::NoGroup, KIconLoader::SizeLarge, KIconLoader::DefaultState, QStringList(), NULL, true);
     }
     if (icon.isNull())
         icon = KIconLoader::global()->loadIcon("preferences-desktop-cryptography",
-                                               KIconLoader::NoGroup, KIconLoader::SizeHuge);
+                                               KIconLoader::NoGroup, KIconLoader::SizeLarge);
     appIconL->setPixmap(icon);
 
     // IMPLICIT AUTHORIZATIONS

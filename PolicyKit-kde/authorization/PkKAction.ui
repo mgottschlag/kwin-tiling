@@ -1,76 +1,60 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>PkKAction</class>
- <widget class="QWidget" name="PkKAction" >
-  <property name="geometry" >
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>506</width>
-    <height>489</height>
-   </rect>
-  </property>
-  <property name="sizePolicy" >
-   <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
-  </property>
-  <property name="minimumSize" >
-   <size>
-    <width>0</width>
-    <height>0</height>
-   </size>
-  </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
+ <widget class="QWidget" name="PkKAction">
+  <layout class="QVBoxLayout" name="verticalLayout_3">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item>
-    <layout class="QGridLayout" name="gridLayout" >
-     <item rowspan="2" row="0" column="0" >
-      <widget class="QLabel" name="appIconL" >
-       <property name="text" >
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0" rowspan="2">
+      <widget class="QLabel" name="appIconL">
+       <property name="text">
         <string>App icon here</string>
        </property>
-       <property name="alignment" >
+       <property name="alignment">
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>
-     <item row="0" column="1" >
-      <widget class="KUrlLabel" name="vendorUrlKUL" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+     <item row="0" column="1">
+      <widget class="KUrlLabel" name="vendorUrlKUL">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>vendor url</string>
        </property>
-       <property name="alignment" >
+       <property name="alignment">
         <set>Qt::AlignCenter</set>
        </property>
-       <property name="openExternalLinks" >
+       <property name="openExternalLinks">
         <bool>true</bool>
        </property>
-       <property name="useCursor" >
+       <property name="useCursor">
         <bool>true</bool>
        </property>
       </widget>
      </item>
-     <item row="1" column="1" >
-      <widget class="QLabel" name="descriptionL" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+     <item row="1" column="1">
+      <widget class="QLabel" name="descriptionL">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>Description</string>
        </property>
-       <property name="alignment" >
+       <property name="alignment">
         <set>Qt::AlignCenter</set>
        </property>
-       <property name="wordWrap" >
+       <property name="wordWrap">
         <bool>true</bool>
        </property>
       </widget>
@@ -78,134 +62,112 @@
     </layout>
    </item>
    <item>
-    <widget class="Line" name="line_2" >
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Implicit Authorizations</string>
      </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QFrame" name="frame" >
-     <property name="toolTip" >
-      <string>&lt;i>Implicit authorizations&lt;/i> are authorizations automatically given to users based on certain criteria such as if they are on the local console.</string>
-     </property>
-     <property name="whatsThis" >
-      <string>&lt;i>Implicit authorizations&lt;/i> are authorizations automatically given to users based on certain criteria such as if they are on the local console.</string>
-     </property>
-     <property name="frameShape" >
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow" >
-      <enum>QFrame::Plain</enum>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_3" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
-      <property name="spacing" >
-       <number>0</number>
-      </property>
-      <item row="0" column="0" >
-       <layout class="QGridLayout" name="gridLayout_2" >
-        <item row="2" column="0" >
-         <widget class="QLabel" name="allowInactiveL" >
-          <property name="text" >
-           <string>Console:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0" >
-         <widget class="QLabel" name="allowActiveL" >
-          <property name="text" >
-           <string>Active Console:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1" >
-         <widget class="KComboBox" name="allowAnyCB" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1" >
-         <widget class="KComboBox" name="allowInactiveCB" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1" >
-         <widget class="KComboBox" name="allowActiveCB" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" >
-         <widget class="QLabel" name="allowAnyL" >
-          <property name="text" >
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <layout class="QFormLayout" name="formLayout">
+        <property name="fieldGrowthPolicy">
+         <enum>QFormLayout::ExpandingFieldsGrow</enum>
+        </property>
+        <item row="0" column="0">
+         <widget class="QLabel" name="allowAnyL">
+          <property name="text">
            <string>Anyone:</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="0" colspan="2" >
-         <widget class="QLabel" name="label" >
-          <property name="font" >
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
+        <item row="0" column="1">
+         <widget class="KComboBox" name="allowAnyCB">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <property name="text" >
-           <string>Implicit Authorizations</string>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="allowInactiveL">
+          <property name="text">
+           <string>Console:</string>
           </property>
-          <property name="alignment" >
-           <set>Qt::AlignCenter</set>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="KComboBox" name="allowInactiveCB">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="allowActiveL">
+          <property name="text">
+           <string>Active Console:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="KComboBox" name="allowActiveCB">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
          </widget>
         </item>
        </layout>
       </item>
-      <item row="1" column="0" >
-       <layout class="QHBoxLayout" name="horizontalLayout" >
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="KPushButton" name="modifyPB" >
-          <property name="enabled" >
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="KPushButton" name="modifyPB">
+          <property name="enabled">
            <bool>false</bool>
           </property>
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>&amp;Modify</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="KPushButton" name="revertPB" >
-          <property name="enabled" >
+         <widget class="KPushButton" name="revertPB">
+          <property name="enabled">
            <bool>false</bool>
           </property>
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Revert to &amp;defaults</string>
           </property>
          </widget>
@@ -216,121 +178,43 @@
     </widget>
    </item>
    <item>
-    <widget class="Line" name="line" >
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Explicit Authorizations</string>
      </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QFrame" name="frame_2" >
-     <property name="toolTip" >
-      <string>This list displays authorizations that are either obtained through authentication or specifically given to the entity in question. Blocked authorizations are marked with a &lt;b>STOP&lt;/b> sign.</string>
-     </property>
-     <property name="whatsThis" >
-      <string>This list displays authorizations that are either obtained through authentication or specifically given to the entity in question. Blocked authorizations are marked with a &lt;b>STOP&lt;/b> sign.</string>
-     </property>
-     <property name="frameShape" >
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow" >
-      <enum>QFrame::Plain</enum>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_5" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
-      <property name="spacing" >
-       <number>0</number>
-      </property>
-      <item row="0" column="0" >
-       <widget class="QLabel" name="label_2" >
-        <property name="font" >
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text" >
-         <string>Explicit Authorizations</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" >
-       <layout class="QGridLayout" name="gridLayout_4" >
-        <item row="0" column="1" >
-         <widget class="KPushButton" name="grantPB" >
-          <property name="text" >
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="0" column="1">
+         <widget class="KPushButton" name="grantPB">
+          <property name="text">
            <string>&amp;Grant</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="1" >
-         <widget class="KPushButton" name="blockPB" >
-          <property name="enabled" >
+        <item row="1" column="1">
+         <widget class="KPushButton" name="blockPB">
+          <property name="enabled">
            <bool>true</bool>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>&amp;Block</string>
           </property>
          </widget>
         </item>
-        <item rowspan="5" row="0" column="0" >
-         <widget class="QTreeView" name="explicitAuthTV" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Minimum" hsizetype="Preferred" >
-            <horstretch>50</horstretch>
-            <verstretch>80</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize" >
-           <size>
-            <width>180</width>
-            <height>50</height>
-           </size>
-          </property>
-          <property name="baseSize" >
-           <size>
-            <width>0</width>
-            <height>90</height>
-           </size>
-          </property>
-          <property name="editTriggers" >
-           <set>QAbstractItemView::NoEditTriggers</set>
-          </property>
-          <property name="alternatingRowColors" >
-           <bool>true</bool>
-          </property>
-          <property name="rootIsDecorated" >
-           <bool>false</bool>
-          </property>
-          <property name="itemsExpandable" >
-           <bool>false</bool>
-          </property>
-          <property name="sortingEnabled" >
-           <bool>true</bool>
-          </property>
-          <property name="expandsOnDoubleClick" >
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0" colspan="2" >
-         <widget class="QCheckBox" name="showChB" >
-          <property name="text" >
+        <item row="5" column="0" colspan="2">
+         <widget class="QCheckBox" name="showChB">
+          <property name="text">
            <string>&amp;Show authorizations from all users</string>
           </property>
          </widget>
         </item>
-        <item rowspan="2" row="3" column="1" >
-         <spacer name="verticalSpacer" >
-          <property name="orientation" >
+        <item row="3" column="1" rowspan="2">
+         <spacer name="verticalSpacer">
+          <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
-          <property name="sizeHint" stdset="0" >
+          <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
             <height>40</height>
@@ -338,31 +222,65 @@
           </property>
          </spacer>
         </item>
-        <item row="2" column="1" >
-         <widget class="KPushButton" name="revokePB" >
-          <property name="enabled" >
+        <item row="2" column="1">
+         <widget class="KPushButton" name="revokePB">
+          <property name="enabled">
            <bool>false</bool>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>&amp;Revoke</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" rowspan="5">
+         <widget class="QTreeView" name="explicitAuthTV">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+            <horstretch>50</horstretch>
+            <verstretch>80</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>180</width>
+            <height>50</height>
+           </size>
+          </property>
+          <property name="baseSize">
+           <size>
+            <width>0</width>
+            <height>90</height>
+           </size>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="rootIsDecorated">
+           <bool>false</bool>
+          </property>
+          <property name="itemsExpandable">
+           <bool>false</bool>
+          </property>
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
+          <property name="expandsOnDoubleClick">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
        </layout>
       </item>
      </layout>
-     <zorder>label_2</zorder>
      <zorder></zorder>
     </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>KComboBox</class>
-   <extends>QComboBox</extends>
-   <header>kcombobox.h</header>
-  </customwidget>
   <customwidget>
    <class>KPushButton</class>
    <extends>QPushButton</extends>
@@ -372,6 +290,11 @@
    <class>KUrlLabel</class>
    <extends>QLabel</extends>
    <header>kurllabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
