@@ -76,7 +76,7 @@ void LauncherApplet::Private::createLauncher()
     launcher->setAttribute(Qt::WA_NoSystemBackground);
     launcher->setAutoHide(true);
     QObject::connect(launcher, SIGNAL(aboutToHide()), q, SLOT(hidePopup()));
-    QObject::connect(launcher, SIGNAL(configNeedsSaving()), q, SIGNAL(configNeedSaving()));
+    QObject::connect(launcher, SIGNAL(configNeedsSaving()), q, SIGNAL(configNeedsSaving()));
     //launcher->resize(launcher->sizeHint());
     //QObject::connect(launcher, SIGNAL(aboutToHide()), icon, SLOT(setUnpressed()));
 }
