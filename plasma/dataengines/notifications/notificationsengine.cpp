@@ -54,7 +54,7 @@ uint NotificationsEngine::Notify(const QString &app_name, uint replaces_id, cons
                                  const QStringList &actions, const QVariantMap &hints, int timeout)
 {
     uint id = 0;
-    id = replaces_id || m_nextId++;
+    id = replaces_id ? replaces_id : m_nextId++;
 
     QString appname_str = app_name;
     if (appname_str.isEmpty()) {
