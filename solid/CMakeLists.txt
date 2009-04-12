@@ -30,6 +30,7 @@ if(NETWORKMANAGER_FOUND)
   endif (NM_0_7)
 endif (NETWORKMANAGER_FOUND)
 macro_log_feature(HAVE_NETWORKMANAGER "NetworkManager" "A daemon for user controlled networking" "http://www.gnome.org/projects/NetworkManager" FALSE "0.6.5" "Needed for building Network Management support in Solid.")
+macro_optional_add_subdirectory(wicd)
 
 if(BLUEZ_FOUND)
   add_subdirectory(bluez)

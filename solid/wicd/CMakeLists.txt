@@ -1,12 +1,3 @@
-project(solid-wicd)
-
-find_package(KDE4 REQUIRED)
-include (KDE4Defaults)
-include(MacroOptionalAddSubdirectory)
-
-add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
-include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
-
 include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}
    ${CMAKE_CURRENT_BUILD_DIR}
@@ -32,4 +23,4 @@ install(TARGETS solid_wicd DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install(FILES solid_wicd.desktop DESTINATION ${SERVICES_INSTALL_DIR}/solidbackends )
 
-kde4_install_icons( ${ICON_INSTALL_DIR} )
+#kde4_install_icons( ${ICON_INSTALL_DIR} )
