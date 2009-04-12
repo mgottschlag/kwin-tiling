@@ -45,8 +45,6 @@ using TaskManager::GroupManager;
  */
 class TaskItemLayout : public QGraphicsGridLayout
 {
-    //Q_OBJECT
-
 public:
     TaskItemLayout(TaskGroupItem * parent, Tasks *applet);
     ~TaskItemLayout();
