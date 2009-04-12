@@ -141,7 +141,7 @@ WicdAccessPoint::WicdAccessPoint(int networkid)
 
 WicdAccessPoint::~WicdAccessPoint()
 {
-
+    delete d;
 }
 
 void WicdAccessPoint::refreshStatus()

@@ -62,7 +62,7 @@ WicdNetworkInterface::WicdNetworkInterface(const QString &name)
 
 WicdNetworkInterface::~WicdNetworkInterface()
 {
-
+    delete d;
 }
 
 QString WicdNetworkInterface::interfaceName() const

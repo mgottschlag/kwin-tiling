@@ -52,7 +52,7 @@ WicdWiredNetworkInterface::WicdWiredNetworkInterface(const QString &name)
 
 WicdWiredNetworkInterface::~WicdWiredNetworkInterface()
 {
-
+    delete d;
 }
 
 void WicdWiredNetworkInterface::recacheInformation()
