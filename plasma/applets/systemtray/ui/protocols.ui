@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>412</width>
-    <height>322</height>
+    <width>320</width>
+    <height>303</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string/>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QFormLayout" name="formLayout">
+   <item row="0" column="0" colspan="2">
     <widget class="QLabel" name="label">
      <property name="text">
       <string>Select the types of application feedback that should be integrated with the system tray:</string>
@@ -24,7 +24,7 @@
      </property>
     </widget>
    </item>
-   <item>
+   <item row="1" column="0" colspan="2">
     <widget class="QLabel" name="label_2">
      <property name="font">
       <font>
@@ -37,21 +37,105 @@
      </property>
     </widget>
    </item>
-   <item>
+   <item row="3" column="1">
     <widget class="QCheckBox" name="showNotifications">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QCheckBox" name="showJobs">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="1">
+    <widget class="QCheckBox" name="showFdoTasks">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0">
+    <widget class="QLabel" name="label_7">
+     <property name="text">
+      <string>Application status</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="1">
+    <widget class="QCheckBox" name="showApplicationStatus">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="0">
+    <widget class="QLabel" name="label_8">
+     <property name="text">
+      <string>Communications</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="1">
+    <widget class="QCheckBox" name="showCommunications">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="0">
+    <widget class="QLabel" name="label_9">
+     <property name="text">
+      <string>System services</string>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="1">
+    <widget class="QCheckBox" name="showSystemServices">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="0">
+    <widget class="QLabel" name="label_10">
+     <property name="text">
+      <string>Hardware control</string>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="1">
+    <widget class="QCheckBox" name="showHardware">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="0">
+    <widget class="QLabel" name="label_6">
+     <property name="text">
+      <string>Traditional system tray icons</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_4">
      <property name="text">
       <string>Notifications, such as task requests</string>
      </property>
     </widget>
    </item>
-   <item>
-    <widget class="QCheckBox" name="showJobs">
+   <item row="5" column="0">
+    <widget class="QLabel" name="label_5">
      <property name="text">
       <string>Jobs, such as file transfers</string>
      </property>
     </widget>
    </item>
-   <item>
+   <item row="9" column="0" colspan="2">
     <widget class="QLabel" name="label_3">
      <property name="font">
       <font>
@@ -61,41 +145,6 @@
      </property>
      <property name="text">
       <string>Icons</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="showFdoTasks">
-     <property name="text">
-      <string>Traditional system tray icons</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="showApplicationStatus">
-     <property name="text">
-      <string>Application status</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="showCommunications">
-     <property name="text">
-      <string>Communications</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="showSystemServices">
-     <property name="text">
-      <string>System services</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="showHardware">
-     <property name="text">
-      <string>Hardware control</string>
      </property>
     </widget>
    </item>
