@@ -320,4 +320,3 @@ void Solid::Control::ManagedSocketContainer::performConnectToHost()
 }
 
 #include "networking_p.moc"
-#include "networking.moc"
