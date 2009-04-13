@@ -19,6 +19,7 @@
 
 #include "panelappletoverlay.h"
 
+
 #include <QApplication>
 #include <QGraphicsLinearLayout>
 #include <QPainter>
@@ -188,8 +189,10 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
 
     Plasma::FormFactor f = m_applet->formFactor();
 
-    if ( ((f != Plasma::Horizontal && f != Plasma::Vertical) && rect().intersects(m_applet->rect().toRect())) ||
-          ((f == Plasma::Horizontal || f == Plasma::Vertical) && !rect().contains(event->globalPos())) ) {
+
+    if ( !m_applet->inherits("PanelSpacer") &&
+          (((f != Plasma::Horizontal && f != Plasma::Vertical) && rect().intersects(m_applet->rect().toRect())) ||
+          ((f == Plasma::Horizontal || f == Plasma::Vertical) && !rect().contains(event->globalPos()))) ) {
         Plasma::View *view = Plasma::View::topLevelViewAt(event->globalPos());
         kDebug() << "checking view" << view << m_applet->view();
 

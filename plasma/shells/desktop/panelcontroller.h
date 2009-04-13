@@ -84,6 +84,7 @@ private:
     Q_PRIVATE_SLOT(d, void panelVisibilityModeChanged(bool toggle))
     Q_PRIVATE_SLOT(d, void settingsPopup())
     Q_PRIVATE_SLOT(d, void maximizePanel())
+    Q_PRIVATE_SLOT(d, void addSpace())
 
     class ButtonGroup;
     class ResizeHandle;

@@ -291,6 +291,11 @@ public:
         ruler->setMinLength(length);
     }
 
+    void addSpace()
+    {
+        containment->addApplet("panelspacer_internal");
+    }
+
      enum DragElement { NoElement = 0,
                         ResizeButtonElement,
                         MoveButtonElement
@@ -522,6 +527,12 @@ void PanelController::setContainment(Plasma::Containment *containment)
         ++insertIndex;
         connect(addWidgetTool, SIGNAL(clicked()), this, SLOT(hide()));
     }
+
+    action = new QAction(i18n("Add space"), this);
+    ToolButton *addSpaceTool = d->addTool(action, this);
+    d->layout->insertWidget(insertIndex, addSpaceTool);
+    ++insertIndex;
+    connect(action, SIGNAL(triggered()), this, SLOT(addSpace()));
 
     action = containment->action("lock widgets");
     if (action) {
