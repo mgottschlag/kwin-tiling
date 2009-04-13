@@ -58,7 +58,7 @@ void listWallpapers()
 
         const QList<KServiceAction>& modeActions = info.service()->actions();
         QStringList modeStrings;
-        if (modeActions.count() > 0) {
+        if (!modeActions.isEmpty()) {
             foreach (const KServiceAction& mode, modeActions) {
                 modeStrings << mode.name();
             }
