@@ -88,7 +88,8 @@ public Q_SLOTS:
 
 private:
 
-    Q_PRIVATE_SLOT(d, void slotHotkeyChanged(KHotKeys::ActionDataBase*))
+    Q_PRIVATE_SLOT(d, void _k_hotkeyChanged(KHotKeys::ActionDataBase*))
+    Q_PRIVATE_SLOT(d, void _k_activateCurrentItem())
 
     KCMHotkeysPrivate *d;
 };

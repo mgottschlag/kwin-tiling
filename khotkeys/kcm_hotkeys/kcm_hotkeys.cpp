@@ -66,11 +66,14 @@ class KCMHotkeysPrivate : public Ui::KCMHotkeysWidget
         //! The currently shown dialog
         HotkeysWidgetIFace *current;
 
+        //! The currently shown item
+        QModelIndex currentIndex;
+
         /**
          * Show the widget. If the current widget has changes allow
          * cancelation ! of this action
          */
-        bool maybeShowWidget();
+        bool maybeShowWidget(const QModelIndex &next);
 
         /**
          * Applies the changes from the current item
@@ -80,7 +83,12 @@ class KCMHotkeysPrivate : public Ui::KCMHotkeysWidget
         /**
          * A Hotkey was changed. Update the treeview.
          */
-        void slotHotkeyChanged(KHotKeys::ActionDataBase*);
+        void _k_hotkeyChanged(KHotKeys::ActionDataBase*);
+
+        /**
+         * Activate the current item. The method is needed because of qt bug
+         */
+        void _k_activateCurrentItem();
 
         void load();
         void save();
@@ -123,10 +131,10 @@ KCMHotkeys::KCMHotkeys( QWidget *parent, const QVariantList & /* args */ )
     // Update TreeView if hotkeys was changed
     connect(
         d->simple_action, SIGNAL(changed(KHotKeys::ActionDataBase*)),
-        this, SLOT(slotHotkeyChanged(KHotKeys::ActionDataBase*)));
+        this, SLOT(_k_hotkeyChanged(KHotKeys::ActionDataBase*)));
     connect(
         d->action_group, SIGNAL(changed(KHotKeys::ActionDataBase*)),
-        this, SLOT(slotHotkeyChanged(KHotKeys::ActionDataBase*)));
+        this, SLOT(_k_hotkeyChanged(KHotKeys::ActionDataBase*)));
 
     // Show the context menu
     d->menu_button->setMenu(new HotkeysTreeViewContextMenu(d->tree_view));
@@ -150,14 +158,21 @@ void KCMHotkeys::currentChanged( const QModelIndex &pCurrent, const QModelIndex 
         : QModelIndex();
 
     // Now it's possible for previous and current to be the same
-    if (current==previous)
+    if (current==previous || current==d->currentIndex)
         {
         return;
         }
 
     // Current and previous differ. Ask user if there are unsaved changes
-    if ( !d->maybeShowWidget() )
+    if ( !d->maybeShowWidget(current) )
         {
+        // Bring focus back to the current item
+        d->tree_view->selectionModel()->setCurrentIndex(
+                d->currentIndex,
+                QItemSelectionModel::SelectCurrent);
+
+        // See http://www.qtsoftware.com/developer/task-tracker/index_html?method=entry&id=132516
+        QTimer::singleShot(0, this, SLOT(_k_activateCurrentItem()));
         return;
         }
 
@@ -203,6 +218,7 @@ void KCMHotkeys::currentChanged( const QModelIndex &pCurrent, const QModelIndex 
 
         } // switch
 
+    d->currentIndex = current;
     d->stack->setCurrentWidget( d->current );
     }
 
@@ -229,6 +245,9 @@ void KCMHotkeys::load()
 void KCMHotkeys::showGlobalSettings()
     {
     d->current = d->global_settings;
+    d->currentIndex = QModelIndex();
+
+    d->tree_view->setCurrentIndex(d->currentIndex);
     d->global_settings->copyFromObject();
     d->stack->setCurrentWidget( d->global_settings );
     }
@@ -249,6 +268,7 @@ void KCMHotkeys::slotReset()
 void KCMHotkeys::save()
     {
     d->save();
+    emit changed(false);
     }
 
 
@@ -309,10 +329,10 @@ void KCMHotkeysPrivate::load()
     }
 
 
-bool KCMHotkeysPrivate::maybeShowWidget()
+bool KCMHotkeysPrivate::maybeShowWidget(const QModelIndex &nextIndex)
     {
     // If the current widget is changed, ask user if switch is ok
-    if (current && current->isChanged())
+    if (current && (currentIndex != nextIndex) && current->isChanged())
         {
         int choice = KMessageBox::warningContinueCancel(
              q,
@@ -323,8 +343,8 @@ bool KCMHotkeysPrivate::maybeShowWidget()
             return false;
             }
         // Apply the changes from the current item
-        applyCurrentItem();
-        save();
+        //applyCurrentItem();
+        //save();
         }
     return true;
     }
@@ -394,10 +414,17 @@ void KCMHotkeysPrivate::applyCurrentItem()
     }
 
 
-void KCMHotkeysPrivate::slotHotkeyChanged(KHotKeys::ActionDataBase* hotkey)
+void KCMHotkeysPrivate::_k_hotkeyChanged(KHotKeys::ActionDataBase* hotkey)
     {
     model->emitChanged(hotkey);
     }
 
+
+void KCMHotkeysPrivate::_k_activateCurrentItem()
+    {
+    tree_view->selectionModel()->setCurrentIndex(
+            tree_view->selectionModel()->currentIndex(),
+            QItemSelectionModel::SelectCurrent);
+    }
 
 #include "moc_kcm_hotkeys.cpp"
