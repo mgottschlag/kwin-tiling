@@ -125,7 +125,7 @@ void SaverCorona::updateActions(Plasma::ImmutabilityType immutability)
 
 void SaverCorona::toggleLock()
 {
-    //requre a password to unlock
+    //require a password to unlock
     QDBusInterface lockprocess("org.kde.screenlocker", "/LockProcess",
             "org.kde.screenlocker.LockProcess", QDBusConnection::sessionBus(), this);
     if (immutability() == Plasma::Mutable) {
