@@ -240,6 +240,12 @@ void KCMHotkeys::slotChanged()
     }
 
 
+void KCMHotkeys::slotReset()
+    {
+    showGlobalSettings();
+    }
+
+
 void KCMHotkeys::save()
     {
     d->save();
@@ -290,6 +296,10 @@ void KCMHotkeysPrivate::load()
     QObject::connect(
         model, SIGNAL( dataChanged( QModelIndex, QModelIndex )),
         q,  SLOT( slotChanged() ));
+
+    QObject::connect(
+            model, SIGNAL( modelAboutToBeReset()),
+            q,  SLOT( slotReset() ));
 
     // reconnect the signals
     QObject::connect(

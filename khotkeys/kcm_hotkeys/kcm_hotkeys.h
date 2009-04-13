@@ -74,6 +74,8 @@ public Q_SLOTS:
 
     void slotChanged();
 
+    void slotReset();
+
     /**
      * Call when the current item has changed
      */
