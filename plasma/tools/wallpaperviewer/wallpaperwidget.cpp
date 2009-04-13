@@ -56,7 +56,11 @@ WallpaperWidget::WallpaperWidget(const QString &paper, const QString &mode, QWid
 
 WallpaperWidget::~WallpaperWidget()
 {
-    delete m_wallpaper;
+    if (m_wallpaper) {
+        KConfigGroup config = configGroup();
+        m_wallpaper->save(config);
+        delete m_wallpaper;
+    }
 }
 
 void WallpaperWidget::paintEvent(QPaintEvent *event)
