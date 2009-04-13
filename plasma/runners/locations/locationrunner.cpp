@@ -95,7 +95,6 @@ void LocationsRunner::match(Plasma::RunnerContext &context)
         match.setText(i18n("Open %1", term));
         match.setIcon(KIcon("system-help"));
         match.setRelevance(1);
-        match.setRelevance(1);
         match.setType(Plasma::QueryMatch::ExactMatch);
         match.setId("help");
         context.addMatch(term, match);
