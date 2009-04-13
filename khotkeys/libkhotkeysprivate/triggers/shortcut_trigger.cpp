@@ -44,7 +44,14 @@ ShortcutTrigger::ShortcutTrigger(
         {
         name = "TODO";
         }
+
+    // FIXME: The following workaround tries to prevent having to actions with
+    // the same uuid which happens with exporting/importing
     KAction *act = keyboard_handler->addAction( _uuid, name, shortcut );
+    // addAction can change the uuid. That's why we store the uuid from the
+    // action
+    _uuid = act->objectName();
+
     connect(
         act, SIGNAL(triggered(bool)),
         this, SLOT(trigger()) );
@@ -71,6 +78,7 @@ ShortcutTrigger::ShortcutTrigger(
         _uuid,
         data_P->name(),
         KShortcut(shortcutString));
+    _uuid = act->objectName();
 
     connect(
         act, SIGNAL(triggered(bool)),
@@ -154,9 +162,12 @@ KShortcut ShortcutTrigger::shortcut() const
     {
     // Get the action from the keyboard handler
     KAction *action = qobject_cast<KAction*>(keyboard_handler->getAction( _uuid ));
-    Q_ASSERT(action);
-    if (!action) 
+    if (!action)
+        {
+        qWarning() << "Failed to find action" << _uuid;
+        Q_ASSERT(action);
         return KShortcut();
+        }
 
     return action->globalShortcut();
     }

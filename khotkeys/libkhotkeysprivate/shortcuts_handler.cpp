@@ -32,6 +32,8 @@
 
 #include <KDE/KAction>
 #include <KDE/KDebug>
+
+#include <QtCore/QUuid>
 #include <kkeyserver.h>
 
 namespace KHotKeys {
@@ -57,8 +59,18 @@ KAction *ShortcutsHandler::addAction(
         const QString &text,
         const KShortcut &shortcut )
     {
+    QString realId(id);
+    // HACK: Do this correctly. Remove uuid on importing / exporting
+    // On import it can happen that id is already taken. Create it under a
+    // different name then.
+    if (_actions->action(id))
+        {
+        qDebug() << id << " already present. Using new id!";
+        realId = QUuid::createUuid();
+        }
+
     // Create the action
-    KAction *newAction = _actions->addAction(id);
+    KAction *newAction = _actions->addAction(realId);
     if (!newAction)
         {
         return 0;
