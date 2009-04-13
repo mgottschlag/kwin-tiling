@@ -338,11 +338,21 @@ void KCMHotkeysPrivate::save()
     // Write the settings
     model->save();
 
-    if (!(KHotKeys::Daemon::isRunning() or KHotKeys::Daemon::start()))
+    if (!KHotKeys::Daemon::isRunning())
         {
-        KMessageBox::error(
-            q,
-            "<qt>" + i18n("Unable to contact khotkeys. Your changes are saved, but they could not be activated.") + "</qt>" );
+        if (!KHotKeys::Daemon::start())
+            {
+            // On startup the demon does the updating stuff, therefore reload
+            // the actions.
+            model->load();
+            }
+        else
+            {
+            KMessageBox::error(
+                q,
+                "<qt>" + i18n("Unable to contact khotkeys. Your changes are saved, but they could not be activated.") + "</qt>" );
+            }
+
         return;
         }
 
@@ -370,12 +380,7 @@ void KCMHotkeysPrivate::save()
 
     // Reread the configuration. We have no possibility to check if it worked.
     iface->reread_configuration();
-
-    // Reload the possible changes
-    model->load();
-
     }
-
 
 
 void KCMHotkeysPrivate::applyCurrentItem()
