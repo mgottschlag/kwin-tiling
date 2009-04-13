@@ -46,6 +46,14 @@ KHotKeysModule::KHotKeysModule(QObject* parent, const QList<QVariant>&)
 
     // Read the configuration from file khotkeysrc
     reread_configuration();
+
+    if (_settings.update())
+        {
+        KHotKeys::khotkeys_set_active( false );
+        _settings.write();
+        KHotKeys::khotkeys_set_active( true );
+        }
+
     }
 
 
@@ -66,12 +74,6 @@ void KHotKeysModule::reread_configuration()
 
     // Load the settings
     _settings.reread_settings(true);
-
-    // Do updates (if available)
-    if (_settings.update())
-        {
-        _settings.write();
-        }
 
     KHotKeys::gesture_handler->set_mouse_button( _settings.gestureMouseButton() );
     KHotKeys::gesture_handler->set_timeout( _settings.gestureTimeOut() );
