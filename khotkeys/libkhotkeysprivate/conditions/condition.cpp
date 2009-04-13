@@ -31,14 +31,22 @@ namespace KHotKeys {
 Condition::Condition( Condition_list_base* parent )
     : _parent(NULL)
     {
-    if( parent ) parent->append( this );
+    if (parent)
+        {
+        parent->append(this);
+        Q_ASSERT(_parent);
+        }
     }
 
 
 Condition::Condition( KConfigGroup&, Condition_list_base* parent )
     : _parent(NULL)
     {
-    if( parent ) parent->append( this );
+    if (parent)
+        {
+        parent->append(this);
+        Q_ASSERT(_parent);
+        }
     }
 
 
@@ -96,9 +104,11 @@ void Condition::reparent(Condition_list_base *parent)
 
 void Condition::updated() const
     {
-    if( !khotkeys_active()) return;
+    if (!khotkeys_active() || !_parent)
+        {
+        return;
+        }
 
-    Q_ASSERT( _parent != NULL );
     _parent->updated();
     }
 
