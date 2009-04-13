@@ -84,6 +84,8 @@ kde4_add_plugin(
     ${kcm_hotkeys_PART_SRCS}
     )
 
+add_dependencies(kcm_hotkeys kded_khotkeys)
+
 target_link_libraries(
     kcm_hotkeys
     khotkeysprivate
