@@ -54,7 +54,7 @@ void DBusSystemTrayProtocol::init()
         connect(dbusInterface, SIGNAL(serviceUnregistered(const QString&)),
             this, SLOT(unregisterWatcher(const QString&)));*/
         connect(dbusInterface, SIGNAL(serviceOwnerChanged(QString,QString,QString)),
-           this, SLOT(serviceChange(QString,QString,QString)));
+                this, SLOT(serviceChange(QString,QString,QString)));
 
         registerWatcher("org.kde.NotificationAreaWatcher");
     }
@@ -109,13 +109,17 @@ void DBusSystemTrayProtocol::serviceChange(const QString& name,
                                            const QString& oldOwner,
                                            const QString& newOwner)
 {
+    if (name != "org.kde.NotificationAreaWatcher") {
+        return;
+    }
+
     kDebug()<<"Service "<<name<<"status change, old owner:"<<oldOwner<<"new:"<<newOwner;
 
-    //unregistered
     if (newOwner.isEmpty()) {
+        //unregistered
         unregisterWatcher(name);
-    //registered
     } else if (oldOwner.isEmpty()) {
+        //registered
         registerWatcher(name);
     }
 }
