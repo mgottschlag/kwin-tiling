@@ -14,7 +14,7 @@ libplasma
         * Themes can now set UseNativeWidgetStyle=true in the [Settings] group of the metadata.desktop file and Plasma will default to native (QStyle) painting for all widgets
     * Extender
         * NEW: ExtenderGroup, class for grouping ExtenderItems.
-	* hasItem function in Extender to provide an easy way for applets to avoid duplication of ExtenderItems.
+        * hasItem function in Extender to provide an easy way for applets to avoid duplication of ExtenderItems.
     * Widgets
         * NEW: SpinBox
         * NEW: VideoWidget
@@ -65,11 +65,11 @@ Plugins/Addons
          * Pager
              * User can choose to do nothing, toogle the desktop or the dashboard when he click on the current desktop.
          * Notes
-	     * Highlight current line
+             * Highlight current line
              * Change font size with Control + Scrollwheel
          * Folder View
             * Added keyboard navigation to iconview. User can navigate using direction keys and launch using Enter/Return.
-	 * Pastebin
+         * Pastebin
              * New look and feel
              * Pasting through context menu
              * Using knotification to tell the user that the data has been saved online
@@ -97,7 +97,14 @@ Plugins/Addons
              * Show tooltips when in panel. BUG:180102
              * Advanced config page added
              * Plotter labels added
-             
+         * Lancelot
+             * theming: Scrollbars follow Plasma style
+             * actions for system buttons are configurable
+             * highlighted path in application browser
+             * clear documents history
+             * places are loaded from Dolphin
+             * applications in menu are sorted
+
     * Wallpapers
         * Image plugin caches wallpaper between runs in single image mode
 
