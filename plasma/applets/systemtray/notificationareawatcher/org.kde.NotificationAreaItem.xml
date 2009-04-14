@@ -53,6 +53,8 @@
     </method>
 
     <method name="Activate">
+        <arg name="x" type="i" direction="in"/>
+        <arg name="y" type="i" direction="in"/>
     </method>
 
     <!-- this probably is too much...-->
