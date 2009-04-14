@@ -72,6 +72,8 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_profileLabel(0),
       m_profileCombo(0),
       m_brightnessSlider(0),
+      m_minutes(0),
+      m_hours(0),
       m_theme(0),
       m_availableProfiles(QStringList()),
       m_currentProfile(0),
@@ -88,9 +90,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_firstRun(true),
       m_numOfBattery(0),
       m_acadapter_plugged(false),
-      m_remainingMSecs(0),
-      m_minutes(0),
-      m_hours(0)
+      m_remainingMSecs(0)
 {
     kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
@@ -456,6 +456,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
                 suspendButton->setOrientation(Qt::Horizontal);
                 suspendButton->setMaximumHeight(36);
                 suspendButton->setDrawBackground(true);
+                suspendButton->setTextBackgroundColor(QColor());
                 actionsLayout->addItem(suspendButton, 0, 0);
                 connect(suspendButton, SIGNAL(clicked()), this, SLOT(suspend()));
                 actionsLayout->setColumnSpacing(0, 20);
@@ -466,6 +467,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
                 hibernateButton->setOrientation(Qt::Horizontal);
                 hibernateButton->setMaximumHeight(36);
                 hibernateButton->setDrawBackground(true);
+                hibernateButton->setTextBackgroundColor(QColor());
                 actionsLayout->addItem(hibernateButton, 0, 1);
                 connect(hibernateButton, SIGNAL(clicked()), this, SLOT(hibernate()));
             }
@@ -480,6 +482,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         configButton->setOrientation(Qt::Horizontal);
         configButton->setMaximumHeight(36);
         configButton->setDrawBackground(true);
+        configButton->setTextBackgroundColor(QColor());
         configButton->setIcon("preferences-system-power-management");
         //configButton->nativeWidget()->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
         connect(configButton, SIGNAL(clicked()), this, SLOT(openConfig()));
