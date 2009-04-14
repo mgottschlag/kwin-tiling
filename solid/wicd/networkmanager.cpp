@@ -55,6 +55,17 @@ WicdNetworkManagerPrivate::WicdNetworkManagerPrivate()
 bool WicdNetworkManagerPrivate::recacheState()
 {
     QDBusMessage message = WicdDbusInterface::instance()->daemon().call("GetConnectionStatus");
+
+    if (message.arguments().count() == 0) {
+        cachedState = Solid::Networking::Unknown;
+        return false;
+    }
+
+    if (!message.arguments().at(0).isValid()) {
+        cachedState = Solid::Networking::Unknown;
+        return false;
+    }
+
     WicdConnectionInfo s;
     message.arguments().at(0).value<QDBusArgument>() >> s;
     kDebug() << "State: " << s.status << " Info: " << s.info;
