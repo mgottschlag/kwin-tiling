@@ -19,8 +19,6 @@
  ***************************************************************************/
 
 #include "dbussystemtraytask.h"
-#include "notificationarea_interface.h"
-#include "systemtraytypes.h"
 
 #include <QGraphicsWidget>
 #include <QGraphicsSceneContextMenuEvent>
@@ -38,9 +36,12 @@
 #include <Plasma/ToolTipManager>
 #include <Plasma/Applet>
 
+#include "dbussystemtraywidget.h"
+#include "notificationarea_interface.h"
+#include "systemtraytypes.h"
+
 namespace SystemTray
 {
-
 
 class DBusSystemTrayTaskPrivate
 {
@@ -126,13 +127,12 @@ DBusSystemTrayTask::~DBusSystemTrayTask()
 
 QGraphicsWidget* DBusSystemTrayTask::createWidget(Plasma::Applet *host)
 {
-    kDebug()<<"creating a new icon for the applet"<<(QObject*)host;
-
     if (d->iconWidgets.contains(host)) {
         return d->iconWidgets[host];
     }
 
-    Plasma::IconWidget *iconWidget = new Plasma::IconWidget(host);
+    Plasma::IconWidget *iconWidget = new DBusSystemTrayWidget(host, d->notificationAreaItemInterface);
+    iconWidget->show();
 
     iconWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     iconWidget->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
@@ -146,8 +146,7 @@ QGraphicsWidget* DBusSystemTrayTask::createWidget(Plasma::Applet *host)
 
     //Delay because syncStatus needs that createWidget is done
     QTimer::singleShot(0, this, SLOT(refresh()));
-
-    return static_cast<QGraphicsWidget*>(iconWidget);
+    return iconWidget;
 }
 
 bool DBusSystemTrayTask::isEmbeddable() const
