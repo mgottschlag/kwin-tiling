@@ -49,6 +49,7 @@ protected:
     void contextMenuEvent(QContextMenuEvent *event);
 
 protected Q_SLOTS:
+    void quit();
     void updatePaper(const QRectF &exposedRect);
     void configure();
     void saveConfig();

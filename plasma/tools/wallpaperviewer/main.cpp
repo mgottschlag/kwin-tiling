@@ -116,6 +116,8 @@ int main(int argc, char **argv)
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
     KApplication app;
+    app.setQuitOnLastWindowClosed(false);
+    KGlobal::setAllowQuit(true);
 
     if (args->isSet("list")) {
         listWallpapers();

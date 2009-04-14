@@ -47,20 +47,28 @@ WallpaperWidget::WallpaperWidget(const QString &paper, const QString &mode, QWid
         if (!mode.isEmpty()) {
             m_wallpaper->setRenderingMode(mode);
         }
+
         connect(m_wallpaper, SIGNAL(update(QRectF)), this, SLOT(updatePaper(QRectF)));
         connect(m_wallpaper, SIGNAL(configNeedsSaving()), this, SLOT(syncConfig()));
     }
 
-    addAction(KStandardAction::quit(qApp, SLOT(quit()), this));
+    addAction(KStandardAction::quit(this, SLOT(quit()), this));
+    KGlobal::ref();
 }
 
 WallpaperWidget::~WallpaperWidget()
+{
+}
+
+void WallpaperWidget::quit()
 {
     if (m_wallpaper) {
         KConfigGroup config = configGroup();
         m_wallpaper->save(config);
         delete m_wallpaper;
     }
+
+    KGlobal::deref();
 }
 
 void WallpaperWidget::paintEvent(QPaintEvent *event)
