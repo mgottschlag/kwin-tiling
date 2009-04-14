@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Panel spacer
-Comment=Reserve empty spaces into the panel
+Comment=Reserves empty spaces within the panel.
 
 NoDisplay=true
 Type=Service
