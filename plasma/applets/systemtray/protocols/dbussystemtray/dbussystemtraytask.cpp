@@ -187,7 +187,7 @@ bool DBusSystemTrayTask::eventFilter(QObject *watched, QEvent *event)
     Plasma::IconWidget *iw = qobject_cast<Plasma::IconWidget *>(watched);
     if (d->iconWidgets.values().contains(iw) && event->type() == QEvent::GraphicsSceneContextMenu) {
         QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
-        d->notificationAreaItemInterface->ContextMenu(me->screenPos().x(), me->screenPos().y());
+        d->notificationAreaItemInterface->call(QDBus::NoBlock, "ContextMenu", me->screenPos().x(), me->screenPos().y());
         return true;
     }
     return false;
