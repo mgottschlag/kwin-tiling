@@ -28,6 +28,7 @@ set(systemtray_SRCS
 
     protocols/dbussystemtray/dbussystemtraytask.cpp
     protocols/dbussystemtray/dbussystemtrayprotocol.cpp
+    protocols/dbussystemtray/dbussystemtraywidget.cpp
     protocols/dbussystemtray/systemtraytypes.cpp
 
     ui/applet.cpp
