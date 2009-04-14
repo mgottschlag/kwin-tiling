@@ -33,16 +33,16 @@
 
 
     <!-- tooltip data -->
-    <property name="TooltipIcon" type="s" access="read"/>
+    <property name="ToolTipIcon" type="s" access="read"/>
 
     <!--same definition as image-->
-    <property name="TooltipImage" type="(iiay)" access="read">
+    <property name="ToolTipImage" type="(iiay)" access="read">
       <annotation name="com.trolltech.QtDBus.QtTypeName" value="ImageStruct"/>
     </property>
 
-    <property name="TooltipTitle" type="s" access="read"/>
+    <property name="ToolTipTitle" type="s" access="read"/>
 
-    <property name="TooltipSubTitle" type="s" access="read"/>
+    <property name="ToolTipSubTitle" type="s" access="read"/>
 
 
     <!-- interaction: the systemtray wants the application to do something -->
@@ -67,7 +67,7 @@
     <signal name="NewAttentionIcon">
     </signal>
 
-    <signal name="NewTooltip">
+    <signal name="NewToolTip">
     </signal>
 
     <signal name="NewStatus">

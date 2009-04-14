@@ -72,7 +72,7 @@ public:
     void syncMovie();
     void updateMovieFrame();
 
-    void syncTooltip();
+    void syncToolTip();
     void syncStatus(QString status);
 
 
@@ -90,7 +90,7 @@ public:
     QTimer *blinkTimer;
     bool blink;
     QHash<Plasma::Applet *, Plasma::IconWidget *>iconWidgets;
-    Plasma::ToolTipContent tooltipData;
+    Plasma::ToolTipContent toolTipData;
     org::kde::NotificationAreaItem *notificationAreaItemInterface;
 };
 
@@ -114,7 +114,7 @@ DBusSystemTrayTask::DBusSystemTrayTask(const QString &service)
 
     connect(d->notificationAreaItemInterface, SIGNAL(NewIcon()), this, SLOT(syncIcon()));
     connect(d->notificationAreaItemInterface, SIGNAL(NewAttentionIcon()), this, SLOT(syncAttentionIcon()));
-    connect(d->notificationAreaItemInterface, SIGNAL(NewTooltip()), this, SLOT(syncTooltip()));
+    connect(d->notificationAreaItemInterface, SIGNAL(NewToolTip()), this, SLOT(syncToolTip()));
     connect(d->notificationAreaItemInterface, SIGNAL(NewStatus(QString)), this, SLOT(syncStatus(QString)));
 }
 
@@ -216,7 +216,7 @@ void DBusSystemTrayTaskPrivate::refresh()
     syncIcon();
     syncAttentionIcon();
     syncMovie();
-    syncTooltip();
+    syncToolTip();
     syncStatus(notificationAreaItemInterface->status());
 }
 
@@ -291,29 +291,29 @@ void DBusSystemTrayTaskPrivate::updateMovieFrame()
 }
 
 
-//Tooltip
+//toolTip
 
-void DBusSystemTrayTaskPrivate::syncTooltip()
+void DBusSystemTrayTaskPrivate::syncToolTip()
 {
-    if (notificationAreaItemInterface->tooltipTitle().isEmpty()) {
+    if (notificationAreaItemInterface->toolTipTitle().isEmpty()) {
         foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
             Plasma::ToolTipManager::self()->clearContent(iconWidget);
         }
         return;
     }
 
-    QIcon tooltipIcon;
-    if (notificationAreaItemInterface->tooltipIcon().length() > 0) {
-        tooltipIcon = KIcon(notificationAreaItemInterface->tooltipIcon());
+    QIcon toolTipIcon;
+    if (notificationAreaItemInterface->toolTipIcon().length() > 0) {
+        toolTipIcon = KIcon(notificationAreaItemInterface->toolTipIcon());
     } else {
-        tooltipIcon = iconDataToPixmap(notificationAreaItemInterface->tooltipImage());
+        toolTipIcon = iconDataToPixmap(notificationAreaItemInterface->toolTipImage());
     }
 
-    tooltipData.setMainText(notificationAreaItemInterface->tooltipTitle());
-    tooltipData.setSubText(notificationAreaItemInterface->tooltipSubTitle());
-    tooltipData.setImage(tooltipIcon);
+    toolTipData.setMainText(notificationAreaItemInterface->toolTipTitle());
+    toolTipData.setSubText(notificationAreaItemInterface->toolTipSubTitle());
+    toolTipData.setImage(toolTipIcon);
     foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
-        Plasma::ToolTipManager::self()->setContent(iconWidget, tooltipData);
+        Plasma::ToolTipManager::self()->setContent(iconWidget, toolTipData);
     }
 }
 
