@@ -41,4 +41,17 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, ImageVector &icon
 
 Q_DECLARE_METATYPE(ImageVector)
 
+
+struct ToolTipStruct {
+    QString icon;
+    ImageStruct image;
+    QString title;
+    QString subTitle;
+};
+
+const QDBusArgument &operator<<(QDBusArgument &argument, const ToolTipStruct &toolTip);
+const QDBusArgument &operator>>(const QDBusArgument &argument, ToolTipStruct &toolTip);
+
+Q_DECLARE_METATYPE(ToolTipStruct)
+
 #endif

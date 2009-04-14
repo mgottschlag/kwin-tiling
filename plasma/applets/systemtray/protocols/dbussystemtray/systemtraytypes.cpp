@@ -80,3 +80,38 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, ImageVector &icon
 
     return argument;
 }
+
+// Marshall the ToolTipStruct data into a D-BUS argument
+const QDBusArgument &operator<<(QDBusArgument &argument, const ToolTipStruct &toolTip)
+{
+    argument.beginStructure();
+    argument << toolTip.icon;
+    argument << toolTip.image;
+    argument << toolTip.title;
+    argument << toolTip.subTitle;
+    argument.endStructure();
+    return argument;
+}
+
+// Retrieve the ToolTipStruct data from the D-BUS argument
+const QDBusArgument &operator>>(const QDBusArgument &argument, ToolTipStruct &toolTip)
+{
+    QString icon;
+    ImageStruct image;
+    QString title;
+    QString subTitle;
+
+    argument.beginStructure();
+    argument >> icon;
+    argument >> image;
+    argument >> title;
+    argument >> subTitle;
+    argument.endStructure();
+
+    toolTip.icon = icon;
+    toolTip.image = image;
+    toolTip.title = title;
+    toolTip.subTitle = subTitle;
+
+    return argument;
+}

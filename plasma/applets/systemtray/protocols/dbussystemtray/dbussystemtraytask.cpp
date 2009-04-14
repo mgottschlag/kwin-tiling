@@ -102,6 +102,7 @@ DBusSystemTrayTask::DBusSystemTrayTask(const QString &service)
     setObjectName("DBusSystemTrayTask");
     qDBusRegisterMetaType<ImageStruct>();
     qDBusRegisterMetaType<ImageVector>();
+    qDBusRegisterMetaType<ToolTipStruct>();
 
     d->name = service;
 
@@ -300,7 +301,9 @@ void DBusSystemTrayTaskPrivate::updateMovieFrame()
 
 void DBusSystemTrayTaskPrivate::syncToolTip()
 {
-    if (notificationAreaItemInterface->toolTipTitle().isEmpty()) {
+    ToolTipStruct tipStruct = notificationAreaItemInterface->toolTip();
+
+    if (tipStruct.title.isEmpty()) {
         foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
             Plasma::ToolTipManager::self()->clearContent(iconWidget);
         }
@@ -308,14 +311,14 @@ void DBusSystemTrayTaskPrivate::syncToolTip()
     }
 
     QIcon toolTipIcon;
-    if (notificationAreaItemInterface->toolTipIcon().length() > 0) {
-        toolTipIcon = KIcon(notificationAreaItemInterface->toolTipIcon());
+    if (tipStruct.icon.length() > 0) {
+        toolTipIcon = KIcon(tipStruct.icon);
     } else {
-        toolTipIcon = iconDataToPixmap(notificationAreaItemInterface->toolTipImage());
+        toolTipIcon = iconDataToPixmap(tipStruct.image);
     }
 
-    toolTipData.setMainText(notificationAreaItemInterface->toolTipTitle());
-    toolTipData.setSubText(notificationAreaItemInterface->toolTipSubTitle());
+    toolTipData.setMainText(tipStruct.title);
+    toolTipData.setSubText(tipStruct.subTitle);
     toolTipData.setImage(toolTipIcon);
     foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
         Plasma::ToolTipManager::self()->setContent(iconWidget, toolTipData);
