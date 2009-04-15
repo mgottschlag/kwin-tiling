@@ -37,7 +37,7 @@ signals:
     void modified(bool isModified);
 
 public slots:
-    void settingsChanged(bool isModified = true);
+    void settingsChanged(bool isModified);
 };
 
 class BackgroundDialog : public KConfigDialog, public Ui::BackgroundDialog

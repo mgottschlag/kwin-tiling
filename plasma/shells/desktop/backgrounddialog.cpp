@@ -351,7 +351,7 @@ QSize AppletDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelI
     return QSize(200, calcItemHeight(option));
 }
 
-void WallpaperWidget::settingsChanged(bool isDefault)
+void WallpaperWidget::settingsChanged(bool isModified)
 {
     emit modified(isDefault);
 }
