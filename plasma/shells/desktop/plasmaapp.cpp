@@ -173,7 +173,8 @@ PlasmaApp::PlasmaApp()
     showAction->setGlobalShortcut(KShortcut(Qt::CTRL + Qt::Key_F12));
     connect(showAction, SIGNAL(triggered()), this, SLOT(toggleDashboard()));
 
-    connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanup()));
+    KGlobal::setAllowQuit(true);
+    KGlobal::ref();
     QTimer::singleShot(0, this, SLOT(setupDesktop()));
 }
 
@@ -210,6 +211,12 @@ void PlasmaApp::setupDesktop()
 
     // and now, let everyone know we're ready!
     notifyStartup(true);
+}
+
+void PlasmaApp::quit()
+{
+    cleanup();
+    KGlobal::deref();
 }
 
 void PlasmaApp::cleanup()
