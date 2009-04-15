@@ -374,14 +374,14 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
     QSize monitorSize(200, int(200 * previewRatio));
 
 
-    m_monitor->setFixedSize(200,200);
+    m_monitor->setFixedSize(200, 200);
     m_monitor->setText(QString());
     m_monitor->setWhatsThis(i18n(
         "This picture of a monitor contains a preview of "
         "what the current settings will look like on your desktop."));
     m_preview = new ScreenPreviewWidget(m_monitor);
     m_preview->setRatio(previewRatio);
-    m_preview->resize(200,200);
+    m_preview->resize(200, 200);
 
     connect(m_newThemeButton, SIGNAL(clicked()), this, SLOT(getNewThemes()));
 
@@ -545,7 +545,7 @@ void BackgroundDialog::changeBackgroundMode(int mode)
     if (m_wallpaper) {
         m_wallpaper->setRenderingMode(wallpaperInfo.second);
         KConfigGroup cfg = wallpaperConfig(wallpaperInfo.first);
-        kDebug() << "making a" << wallpaperInfo.first << "in mode" << wallpaperInfo.second;
+        //kDebug() << "making a" << wallpaperInfo.first << "in mode" << wallpaperInfo.second;
         m_wallpaper->setTargetSizeHint(m_containment->size());
         m_wallpaper->restore(cfg);
         w = m_wallpaper->createConfigurationInterface(m_wallpaperGroup);
@@ -553,6 +553,11 @@ void BackgroundDialog::changeBackgroundMode(int mode)
 
     if (!w) {
         w = new QWidget(m_wallpaperGroup);
+    } else if (w->layout()) {
+        QGridLayout *gridLayout = dynamic_cast<QGridLayout *>(w->layout());
+        if (gridLayout) {
+            gridLayout->setColumnMinimumWidth(0, m_wallpaperTypeLabel->minimumWidth());
+        }
     }
 
     m_wallpaperGroup->layout()->addWidget(w);
