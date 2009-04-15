@@ -22,7 +22,11 @@
 
 #include <KService>
 #include <KGenericFactory>
+
+#include <Solid/Networking>
+
 #include <Plasma/DataEngine>
+
 #include "ions/ion.h"
 
 class QTimer;
@@ -92,6 +96,11 @@ protected slots:
      * @param source The datasource to update.
      */
     bool updateSourceEvent(const QString& source);
+
+    /**
+     * Whenever networking changes, take action
+     */
+    void networkStatusChanged(Solid::Networking::Status);
 
 private:
     class Private;

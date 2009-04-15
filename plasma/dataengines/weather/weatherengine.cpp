@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "weatherengine.h"
+
 #include <KServiceTypeTrader>
 #include <KDateTime>
 #include <KLocale>
@@ -30,11 +31,17 @@
 class WeatherEngine::Private
 {
 public:
+    Private()
+        : m_networkAvailable(false)
+    {
+    }
+
     /**
      * Get instance of a loaded ion.
      * @returns a IonInterface instance of a loaded plugin.
      */
-    IonInterface* ionForSource(const QString& name) {
+    IonInterface* ionForSource(const QString& name)
+    {
         int offset = name.indexOf('|');
 
         if (offset < 1) {
@@ -60,6 +67,7 @@ public:
 
     KDateTime m_localTime;
     QStringList m_ions;
+    bool m_networkAvailable;
 };
 
 /**
@@ -113,6 +121,10 @@ void WeatherEngine::init()
         setData("ions", info.pluginName(),
                 QString("%1|%2").arg(info.property("Name").toString()).arg(info.pluginName()));
     }
+
+    d->m_networkAvailable = Solid::Networking::status() == Solid::Networking::Connected;
+    connect(Solid::Networking::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
+            this, SLOT(networkStatusChanged(Solid::Networking::Status)));
 }
 
 /**
@@ -195,6 +207,11 @@ bool WeatherEngine::sourceRequestEvent(const QString &source)
         }
     }
 
+    if (!d->m_networkAvailable) {
+        setData(source, Data());
+        return true;
+    }
+
     QByteArray str = source.toLocal8Bit();
 
     ion->connectSource(source, this);
@@ -215,18 +232,27 @@ bool WeatherEngine::updateSourceEvent(const QString& source)
 
     QByteArray str = source.toLocal8Bit();
 
-    kDebug() << "updateSourceEvent()";
+    kDebug() << "updateSourceEvent()" << ion << d->m_networkAvailable;
     if (!ion) {
+        return false;
+    }
+
+    if (!d->m_networkAvailable) {
         return false;
     }
 
     ion->setProperty("timezone", d->m_localTime.isUtc());
     ion->setProperty("unit", KGlobal::locale()->measureSystem());
+    return ion->updateSourceEvent(source);
+}
 
-    if (ion->updateSourceEvent(source)) {
-        return true;
-    } else {
-        return false;
+void WeatherEngine::networkStatusChanged(Solid::Networking::Status status)
+{
+    d->m_networkAvailable = status == Solid::Networking::Connected;
+    //kDebug() << "status changed" << d->m_networkAvailable;
+
+    if (d->m_networkAvailable) {
+        updateAllSources();
     }
 }
 
