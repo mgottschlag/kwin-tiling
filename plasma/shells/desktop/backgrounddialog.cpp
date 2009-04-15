@@ -482,15 +482,17 @@ void BackgroundDialog::reloadConfig()
 
         plugins = Plasma::Wallpaper::listWallpaperInfo();
         m_wallpaperMode->clear();
-        i = 0;
+        int i = 0;
         foreach (const KPluginInfo& info, plugins) {
-            kDebug() << "doing wallpaper" << info.pluginName();
+            //kDebug() << "doing wallpaper" << info.pluginName() << currentPlugin;
             bool matches = info.pluginName() == currentPlugin;
             const QList<KServiceAction>& modes = info.service()->actions();
             if (modes.count() > 0) {
+                wallpaperIndex = i;
                 foreach (const KServiceAction& mode, modes) {
                     m_wallpaperMode->addItem(KIcon(mode.icon()), mode.text(),
                                     QVariant::fromValue(WallpaperInfo(info.pluginName(), mode.name())));
+                    //kDebug() << matches << mode.name() << currentMode;
                     if (matches && mode.name() == currentMode) {
                         wallpaperIndex = i;
                     }
@@ -505,6 +507,7 @@ void BackgroundDialog::reloadConfig()
                 ++i;
             }
         }
+
         m_wallpaperMode->setCurrentIndex(wallpaperIndex);
         changeBackgroundMode(wallpaperIndex);
     }
@@ -523,7 +526,10 @@ void BackgroundDialog::changeBackgroundMode(int mode)
     WallpaperInfo wallpaperInfo = m_wallpaperMode->itemData(mode).value<WallpaperInfo>();
 
     if (m_wallpaperGroup->layout()->count() > 1) {
-        delete dynamic_cast<QWidgetItem*>(m_wallpaperGroup->layout()->takeAt(1))->widget();
+        QLayoutItem *item = m_wallpaperGroup->layout()->takeAt(1);
+        QWidget *widget = item->widget();
+        delete item;
+        delete widget;
     }
 
     if (m_wallpaper && m_wallpaper->pluginName() != wallpaperInfo.first) {
