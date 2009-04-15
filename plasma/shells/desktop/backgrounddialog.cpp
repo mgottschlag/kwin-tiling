@@ -353,7 +353,7 @@ QSize AppletDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelI
 
 void WallpaperWidget::settingsChanged(bool isModified)
 {
-    emit modified(isDefault);
+    emit modified(isModified);
 }
 
 BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Plasma::View* view,
