@@ -1,5 +1,7 @@
 [Desktop Entry]
 Name=Panel spacer
+Name[sv]=Panelavskiljare
+Name[uk]=Розпірка панелі
 Comment=Reserves empty spaces within the panel.
 
 NoDisplay=true
