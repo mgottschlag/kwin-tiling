@@ -198,6 +198,10 @@ void KuiserverEngine::sourceUpdated(JobView *jobView)
     data["suspendable"] = (jobView->m_capabilities & KJob::Suspendable);
     data["killable"] = (jobView->m_capabilities & KJob::Killable);
     data["infoMessage"] = jobView->m_infoMessage;
+    if (jobView->m_speed > 0) {
+        qlonglong remaining = 1000*(jobView->m_totalMap.value("bytes") - jobView->m_processedMap.value("bytes"));
+        data["eta"] = remaining / jobView->m_speed;
+    }
 
     if (!jobView->m_error.isEmpty()) {
         data["error"] = jobView->m_error;

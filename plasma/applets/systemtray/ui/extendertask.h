@@ -22,6 +22,7 @@
 
 #include "../core/task.h"
 
+class QStyleOptionGraphicsItem;
 
 namespace Plasma
 {
@@ -31,12 +32,14 @@ namespace Plasma
 namespace SystemTray
 {
 
+class Manager;
+
 class ExtenderTask : public SystemTray::Task
 {
     Q_OBJECT
 
 public:
-    ExtenderTask(Plasma::PopupApplet *systemTray);
+    ExtenderTask(Plasma::PopupApplet *systemTray, Manager *manager);
     virtual ~ExtenderTask();
 
     bool isValid() const;
@@ -56,6 +59,8 @@ protected:
 private:
     class Private;
     Private* const d;
+
+    Q_PRIVATE_SLOT(d, void updateTask())
 };
 
 }

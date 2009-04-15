@@ -102,7 +102,7 @@ public:
 
     Plasma::FrameSvg *background;
     JobTotalsWidget *jobSummaryWidget;
-    SystemTray::ExtenderTask *extenderTask;
+    QPointer<SystemTray::ExtenderTask> extenderTask;
     static SystemTray::Manager *s_manager;
     static int s_managerUsage;
 
@@ -163,7 +163,6 @@ void Applet::init()
     d->taskArea->syncTasks(Private::s_manager->tasks());
 
     extender()->setEmptyExtenderMessage(i18n("No notifications and no jobs"));
-    connect(extender(), SIGNAL(itemDetached(Plasma::ExtenderItem*)), this, SLOT(hidePopupIfEmpty()));
 
 
     KConfigGroup globalCg = globalConfig();
@@ -528,31 +527,15 @@ void Applet::initExtenderItem(Plasma::ExtenderItem *extenderItem)
     }
 }
 
-void Applet::hidePopupIfEmpty()
-{
-    if (d->extenderTask && Private::s_manager->jobs().isEmpty()
-                        && Private::s_manager->notifications().isEmpty()) {
-        hidePopup();
-
-        // even though there is code to do this in popupEvent... we may need to delete
-        // here anyways because the popup may already be hidden, resultin gin no
-        // popupEvent
-        delete d->extenderTask;
-        d->extenderTask = 0;
-    }
-}
-
 void Applet::popupEvent(bool visibility)
 {
     Q_UNUSED(visibility)
+    kDebug();
 
-    if (Private::s_manager->jobs().isEmpty() &&
-        Private::s_manager->notifications().isEmpty()) {
-        delete d->extenderTask;
-        d->extenderTask = 0;
-    } else {
+    if (!(Private::s_manager->jobs().isEmpty() &&
+          Private::s_manager->notifications().isEmpty())) {
         if (!d->extenderTask) {
-            d->extenderTask = new SystemTray::ExtenderTask(this);
+            d->extenderTask = new SystemTray::ExtenderTask(this, Private::s_manager);
             d->extenderTask->setIcon("help-about");
         }
 

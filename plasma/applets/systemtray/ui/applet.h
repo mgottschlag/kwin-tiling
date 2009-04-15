@@ -62,7 +62,6 @@ private slots:
     void checkSizes();
     void addNotification(SystemTray::Notification *notification);
     void addJob(SystemTray::Job *job);
-    void hidePopupIfEmpty();
 
 private:
     class Private;
