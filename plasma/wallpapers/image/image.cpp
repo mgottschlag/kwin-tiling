@@ -98,6 +98,7 @@ void Image::save(KConfigGroup &config)
 void Image::configWidgetDestroyed()
 {
     m_configWidget = 0;
+    m_model = 0;
 }
 
 QWidget* Image::createConfigurationInterface(QWidget* parent)
@@ -109,13 +110,13 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         m_uiImage.setupUi(m_configWidget);
 
         qreal ratio = m_size.isEmpty() ? 1.0 : m_size.width() / qreal(m_size.height());
-        m_model = new BackgroundListModel(ratio, this);
+        m_model = new BackgroundListModel(ratio, this, m_configWidget);
         m_model->setResizeMethod(m_resizeMethod);
         m_model->setWallpaperSize(m_size);
         m_model->reload(m_usersWallpapers);
         m_uiImage.m_view->setModel(m_model);
         m_uiImage.m_view->setItemDelegate(new BackgroundDelegate(m_uiImage.m_view->view(),
-                                                                 ratio, this));
+                                                                 ratio, m_configWidget));
         m_uiImage.m_view->view()->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
         int index = m_model->indexOf(m_wallpaper);
         if (index != -1) {
@@ -593,13 +594,6 @@ void Image::suspendStartup(bool suspend)
 void Image::updateScreenshot(QPersistentModelIndex index)
 {
     m_uiImage.m_view->view()->update(index);
-}
-
-void Image::removeBackground(const QString &path)
-{
-    if (m_model) {
-        m_model->removeBackground(path);
-    }
 }
 
 void Image::updateFadedImage(qreal frame)

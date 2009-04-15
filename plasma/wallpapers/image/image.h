@@ -48,7 +48,6 @@ class Image : public Plasma::Wallpaper
         void nextSlide();
         void updateBackground(const QImage &img);
         void showFileDialog();
-        void removeBackground(const QString &path);
         void updateFadedImage(qreal frame);
         void configWidgetDestroyed();
         void startSlideshow();
