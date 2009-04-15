@@ -36,6 +36,9 @@ class Image : public Plasma::Wallpaper
         virtual QWidget* createConfigurationInterface(QWidget* parent);
         void updateScreenshot(QPersistentModelIndex index);
 
+    signals:
+        void settingsChanged(bool);
+
     protected slots:
         void timeChanged(const QTime& time);
         void positioningChanged(int index);
@@ -51,6 +54,7 @@ class Image : public Plasma::Wallpaper
         void updateFadedImage(qreal frame);
         void configWidgetDestroyed();
         void startSlideshow();
+        void modified();
 
     protected:
         void init(const KConfigGroup &config);

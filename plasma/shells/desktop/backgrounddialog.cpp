@@ -351,6 +351,11 @@ QSize AppletDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelI
     return QSize(200, calcItemHeight(option));
 }
 
+void WallpaperWidget::settingsChanged(bool isDefault)
+{
+    emit modified(isDefault);
+}
+
 BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Plasma::View* view,
                                    QWidget* parent, const QString &id, KConfigSkeleton *s)
     : KConfigDialog(parent, id, s),
@@ -359,7 +364,8 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
       m_wallpaper(0),
       m_view(view),
       m_containment(c),
-      m_preview(0)
+      m_preview(0),
+      m_modified(false)
 {
     setWindowIcon(KIcon("preferences-desktop-wallpaper"));
     setCaption(i18n("Desktop Settings"));
@@ -407,6 +413,14 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
 
     reloadConfig();
     adjustSize();
+
+    connect(m_containmentComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(settingsModified()));
+    connect(m_activityName, SIGNAL(textChanged(const QString&)), this, SLOT(settingsModified()));
+
+    connect(m_theme, SIGNAL(currentIndexChanged(int)), this, SLOT(settingsModified()));
+    connect(m_wallpaperMode, SIGNAL(currentIndexChanged(int)), this, SLOT(settingsModified()));
+
+    settingsModified(false);
 }
 
 BackgroundDialog::~BackgroundDialog()
@@ -517,6 +531,8 @@ void BackgroundDialog::reloadConfig()
     m_theme->setCurrentIndex(m_themeModel->indexOf(Plasma::Theme::defaultTheme()->themeName()));
 
     connect(m_wallpaperMode, SIGNAL(currentIndexChanged(int)), this, SLOT(changeBackgroundMode(int)));
+
+    settingsModified(false);
 }
 
 void BackgroundDialog::changeBackgroundMode(int mode)
@@ -548,7 +564,10 @@ void BackgroundDialog::changeBackgroundMode(int mode)
         //kDebug() << "making a" << wallpaperInfo.first << "in mode" << wallpaperInfo.second;
         m_wallpaper->setTargetSizeHint(m_containment->size());
         m_wallpaper->restore(cfg);
-        w = m_wallpaper->createConfigurationInterface(m_wallpaperGroup);
+
+        WallpaperWidget *wallpaperWidget = new WallpaperWidget(m_wallpaperGroup);
+        w = m_wallpaper->createConfigurationInterface(wallpaperWidget);
+        connect(wallpaperWidget, SIGNAL(modified(bool)), this, SLOT(settingsModified(bool)));
     }
 
     if (!w) {
@@ -561,6 +580,8 @@ void BackgroundDialog::changeBackgroundMode(int mode)
     }
 
     m_wallpaperGroup->layout()->addWidget(w);
+
+    settingsModified(true);
 }
 
 KConfigGroup BackgroundDialog::wallpaperConfig(const QString &plugin)
@@ -607,4 +628,17 @@ void BackgroundDialog::saveConfig()
 
     // Plasma Theme
     Plasma::Theme::defaultTheme()->setThemeName(theme);
+
+    settingsModified(false);
+}
+
+void BackgroundDialog::settingsModified(bool modified)
+{
+    m_modified = modified;
+    updateButtons();
+}
+
+bool BackgroundDialog::hasChanged()
+{
+    return m_modified;
 }

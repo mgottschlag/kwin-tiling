@@ -24,6 +24,22 @@ class WallpaperPreview;
 class QStandardItemModel;
 class ScreenPreviewWidget;
 
+// WallpaperWidget is passed the wallpaper
+// in createConfigurationInterface so it can notify
+// of changes (used to enable the apply button)
+class WallpaperWidget :public QWidget
+{
+    Q_OBJECT
+public:
+      WallpaperWidget(QWidget *parent) :QWidget(parent) {}
+
+signals:
+    void modified(bool isModified);
+
+public slots:
+    void settingsChanged(bool isModified = true);
+};
+
 class BackgroundDialog : public KConfigDialog, public Ui::BackgroundDialog
 {
     Q_OBJECT
@@ -38,6 +54,9 @@ public:
 public slots:
     void saveConfig();
 
+protected:
+    virtual bool hasChanged();
+
 private:
     KConfigGroup wallpaperConfig(const QString &plugin);
 
@@ -45,6 +64,7 @@ private slots:
     void getNewThemes();
     void changeBackgroundMode(int mode);
     void cleanup();
+    void settingsModified(bool modified = true);
 
 private:
     ThemeModel* m_themeModel;
@@ -53,6 +73,7 @@ private:
     Plasma::View* m_view;
     Plasma::Containment* m_containment;
     ScreenPreviewWidget* m_preview;
+    bool m_modified;
 };
 
 #endif // BACKGROUNDDIALOG_H

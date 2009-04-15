@@ -152,6 +152,11 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         connect(m_uiImage.m_color, SIGNAL(changed(const QColor&)), this, SLOT(colorChanged(const QColor&)));
 
         connect(m_uiImage.m_newStuff, SIGNAL(clicked()), this, SLOT(getNewWallpaper()));
+
+        connect(m_uiImage.m_color, SIGNAL(changed(const QColor&)), this, SLOT(modified()));
+        connect(m_uiImage.m_resizeMethod, SIGNAL(currentIndexChanged(int)), this, SLOT(modified()));
+        connect(m_uiImage.m_view, SIGNAL(currentIndexChanged(int)), this, SLOT(modified()));
+
     } else {
         m_uiSlideshow.setupUi(m_configWidget);
 
@@ -191,9 +196,21 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         m_uiSlideshow.m_color->setColor(m_color);
         connect(m_uiSlideshow.m_color, SIGNAL(changed(const QColor&)), this, SLOT(colorChanged(const QColor&)));
         connect(m_uiSlideshow.m_newStuff, SIGNAL(clicked()), this, SLOT(getNewWallpaper()));
+
+        connect(m_uiSlideshow.m_color, SIGNAL(changed(const QColor&)), this, SLOT(modified()));
+        connect(m_uiSlideshow.m_resizeMethod, SIGNAL(currentIndexChanged(int)), this, SLOT(modified()));
+        connect(m_uiSlideshow.m_addDir, SIGNAL(clicked()), this, SLOT(modified()));
+        connect(m_uiSlideshow.m_removeDir, SIGNAL(clicked()), this, SLOT(modified()));
+        connect(m_uiSlideshow.m_slideshowDelay, SIGNAL(dateTimeChanged(QDateTime)), this, SLOT(modified()));
     }
 
+    connect(this, SIGNAL(settingsChanged(bool)), parent, SLOT(settingsChanged(bool)));
     return m_configWidget;
+}
+
+void Image::modified()
+{
+    emit settingsChanged(true);
 }
 
 void Image::calculateGeometry()
