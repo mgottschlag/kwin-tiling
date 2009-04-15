@@ -34,8 +34,12 @@ class Color : public Plasma::Wallpaper
         virtual void paint(QPainter* painter, const QRectF& exposedRect);
         virtual QWidget* createConfigurationInterface(QWidget* parent);
 
+    Q_SIGNALS:
+        void settingsChanged(bool modified);
+
     protected:
         virtual void init(const KConfigGroup &config);
+        void settingsModified();
 
     protected slots:
         void setColor(const QColor& color);
@@ -43,6 +47,7 @@ class Color : public Plasma::Wallpaper
     private:
         Ui::Config m_ui;
         QBrush m_color;
+        QBrush m_currentColor; // the color when the config dialog is opened
 };
 
 K_EXPORT_PLASMA_WALLPAPER(color, Color)

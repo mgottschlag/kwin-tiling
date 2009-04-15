@@ -40,11 +40,13 @@ void Color::init(const KConfigGroup &config)
 
 QWidget* Color::createConfigurationInterface(QWidget* parent)
 {
+    m_currentColor = m_color;
     QWidget *widget = new QWidget(parent);
     m_ui.setupUi(widget);
 
     m_ui.m_color->setColor(m_color.color());
     connect(m_ui.m_color, SIGNAL(changed(const QColor&)), this, SLOT(setColor(const QColor&)));
+    connect(this, SIGNAL(settingsChanged(bool)), parent, SLOT(settingsChanged(bool)));
     return widget;
 }
 
@@ -52,11 +54,18 @@ void Color::setColor(const QColor& color)
 {
     m_color.setColor(color);
     emit update(boundingRect());
+    settingsModified();
 }
 
 void Color::save(KConfigGroup &config)
 {
     config.writeEntry("wallpapercolor", m_color.color());
+}
+
+void Color::settingsModified()
+{
+    bool modified = m_color != m_currentColor;
+    emit settingsChanged(modified);
 }
 
 #include "color.moc"
