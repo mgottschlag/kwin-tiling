@@ -65,16 +65,18 @@ public:
 
     void iconDestroyed(QObject *obj);
     void refresh();
-    void syncIcon();
 
-    void syncAttentionIcon();
     void blinkAttention();
-    void syncMovie();
     void updateMovieFrame();
 
     void syncToolTip();
     void syncStatus(QString status);
 
+    //callbacks
+    void setCategory(const QString &);
+    void syncToolTip(const ToolTipStruct &);
+    void syncMovie(const ImageVector &);
+    void refreshCallback(QDBusPendingCallWatcher *call);
 
 
     DBusSystemTrayTask *q;
@@ -108,14 +110,12 @@ DBusSystemTrayTask::DBusSystemTrayTask(const QString &service)
 
     d->notificationAreaItemInterface = new org::kde::NotificationAreaItem(service, "/NotificationAreaItem",
                                                  QDBusConnection::sessionBus());
-    d->notificationAreaItemInterface->title();
 
-    d->category = (ItemCategory)metaObject()->enumerator(metaObject()->indexOfEnumerator("ItemCategory")).keyToValue(d->notificationAreaItemInterface->category().toLatin1());
+    d->refresh();
 
-
-    connect(d->notificationAreaItemInterface, SIGNAL(NewIcon()), this, SLOT(syncIcon()));
-    connect(d->notificationAreaItemInterface, SIGNAL(NewAttentionIcon()), this, SLOT(syncAttentionIcon()));
-    connect(d->notificationAreaItemInterface, SIGNAL(NewToolTip()), this, SLOT(syncToolTip()));
+    connect(d->notificationAreaItemInterface, SIGNAL(NewIcon()), this, SLOT(refresh()));
+    connect(d->notificationAreaItemInterface, SIGNAL(NewAttentionIcon()), this, SLOT(refresh()));
+    connect(d->notificationAreaItemInterface, SIGNAL(NewToolTip()), this, SLOT(refresh()));
     connect(d->notificationAreaItemInterface, SIGNAL(NewStatus(QString)), this, SLOT(syncStatus(QString)));
 }
 
@@ -219,11 +219,58 @@ void DBusSystemTrayTaskPrivate::iconDestroyed(QObject *obj)
 
 void DBusSystemTrayTaskPrivate::refresh()
 {
-    syncIcon();
-    syncAttentionIcon();
-    syncMovie();
-    syncToolTip();
-    syncStatus(notificationAreaItemInterface->status());
+    QDBusMessage message = QDBusMessage::createMethodCall(notificationAreaItemInterface->service(),
+    notificationAreaItemInterface->path(), "org.freedesktop.DBus.Properties", "GetAll");
+
+    message << notificationAreaItemInterface->interface();
+    QDBusPendingCall call = notificationAreaItemInterface->connection().asyncCall(message);
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, q);
+    q->connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher *)), q, SLOT(refreshCallback(QDBusPendingCallWatcher *)));
+}
+
+
+void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
+{
+    QDBusPendingReply<QVariantMap> reply = *call;
+    QVariantMap properties = reply.argumentAt<0>();
+    if (!reply.isError()) {
+        setCategory(properties["Category"].toString());
+
+        syncStatus(properties["Status"].toString());
+
+        //Icon
+        if (properties["Icon"].toString().length() > 0) {
+            icon = KIcon(properties["Icon"].toString());
+        } else {
+            ImageStruct image;
+            properties["Image"].value<QDBusArgument>()>>image;
+            icon = iconDataToPixmap(image);
+        }
+
+        if (status != DBusSystemTrayTask::NeedsAttention) {
+            foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
+                iconWidget->setIcon(icon);
+            }
+        }
+
+        //Attention icon
+        if (properties["AttentionIcon"].toString().length() > 0) {
+            attentionIcon = KIcon(properties["AttentionIcon"].toString());
+        } else {
+            ImageStruct image;
+            properties["AttentionImage"].value<QDBusArgument>()>>image;
+            attentionIcon = iconDataToPixmap(image);
+        }
+
+        ImageVector movie;
+        properties["AttentionMovie"].value<QDBusArgument>()>>movie;
+        syncMovie(movie);
+
+        ToolTipStruct toolTip;
+        properties["ToolTip"].value<QDBusArgument>()>>toolTip;
+        syncToolTip(toolTip);
+    }
+    delete call;
 }
 
 QPixmap DBusSystemTrayTaskPrivate::iconDataToPixmap(const ImageStruct &icon) const
@@ -232,34 +279,6 @@ QPixmap DBusSystemTrayTaskPrivate::iconDataToPixmap(const ImageStruct &icon) con
     memcpy(iconImage.bits(), (uchar*)icon.data.data(), iconImage.numBytes());
 
     return QPixmap::fromImage(iconImage);
-}
-
-//normal icon
-void DBusSystemTrayTaskPrivate::syncIcon()
-{
-    if (notificationAreaItemInterface->icon().length() > 0) {
-        icon = KIcon(notificationAreaItemInterface->icon());
-    } else {
-        icon = iconDataToPixmap(notificationAreaItemInterface->image());
-    }
-
-    if (status != DBusSystemTrayTask::NeedsAttention) {
-        foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
-            iconWidget->setIcon(icon);
-        }
-    }
-}
-
-
-//Attention icon and movie
-
-void DBusSystemTrayTaskPrivate::syncAttentionIcon()
-{
-    if (notificationAreaItemInterface->attentionIcon().length() > 0) {
-        attentionIcon = KIcon(notificationAreaItemInterface->attentionIcon());
-    } else {
-        attentionIcon = iconDataToPixmap(notificationAreaItemInterface->attentionImage());
-    }
 }
 
 void DBusSystemTrayTaskPrivate::blinkAttention()
@@ -276,9 +295,8 @@ void DBusSystemTrayTaskPrivate::blinkAttention()
     blink = !blink;
 }
 
-void DBusSystemTrayTaskPrivate::syncMovie()
+void DBusSystemTrayTaskPrivate::syncMovie(const ImageVector &movieData)
 {
-    ImageVector movieData = notificationAreaItemInterface->attentionMovie();
     movie = QVector<QPixmap>(movieData.size());
 
     if (!movieData.isEmpty()) {
@@ -287,6 +305,8 @@ void DBusSystemTrayTaskPrivate::syncMovie()
         }
     }
 }
+
+
 
 void DBusSystemTrayTaskPrivate::updateMovieFrame()
 {
@@ -299,10 +319,8 @@ void DBusSystemTrayTaskPrivate::updateMovieFrame()
 
 //toolTip
 
-void DBusSystemTrayTaskPrivate::syncToolTip()
+void DBusSystemTrayTaskPrivate::syncToolTip(const ToolTipStruct &tipStruct)
 {
-    ToolTipStruct tipStruct = notificationAreaItemInterface->toolTip();
-
     if (tipStruct.title.isEmpty()) {
         foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
             Plasma::ToolTipManager::self()->clearContent(iconWidget);
@@ -376,6 +394,12 @@ void DBusSystemTrayTaskPrivate::syncStatus(QString newStatus)
     }
 
     emit q->changed(q);
+}
+
+
+void DBusSystemTrayTaskPrivate::setCategory(const QString &cat)
+{
+    category = (DBusSystemTrayTask::ItemCategory)q->metaObject()->enumerator(q->metaObject()->indexOfEnumerator("ItemCategory")).keyToValue(cat.toLatin1());
 }
 
 }

@@ -71,10 +71,8 @@ private:
 
     Q_PRIVATE_SLOT(d, void iconDestroyed(QObject *obj))
     Q_PRIVATE_SLOT(d, void refresh())
-    Q_PRIVATE_SLOT(d, void syncIcon())
-    Q_PRIVATE_SLOT(d, void syncAttentionIcon())
-    Q_PRIVATE_SLOT(d, void syncToolTip())
     Q_PRIVATE_SLOT(d, void syncStatus(QString status))
+    Q_PRIVATE_SLOT(d, void refreshCallback(QDBusPendingCallWatcher *))
     Q_PRIVATE_SLOT(d, void updateMovieFrame())
     Q_PRIVATE_SLOT(d, void blinkAttention())
 };
