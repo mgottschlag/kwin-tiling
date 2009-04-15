@@ -96,6 +96,7 @@ public Q_SLOTS:
     // qdbuscpp2xml plasmaapp.h -o dbus/org.kde.plasma.App.xml
     void toggleDashboard();
     void toggleDashboardIfWindows();
+    Q_SCRIPTABLE void quit();
 
     /**
      * Request a zoom based on the containment
