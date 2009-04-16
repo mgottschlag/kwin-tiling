@@ -69,7 +69,8 @@ public:
     Private(ClockApplet *clockapplet)
         : q(clockapplet),
           timezone(ClockApplet::localTimezoneUntranslated()),
-          forceTzDisplay(false)
+          forceTzDisplay(false),
+          displayHolidays(true)
     {}
 
     ClockApplet *q;
@@ -80,12 +81,13 @@ public:
     QPoint clicked;
     QStringList selectedTimezones;
     QString prettyTimezone;
-    bool forceTzDisplay;
     Plasma::Label *label;
     QString holidaysRegion;
     int announceInterval;
     int prevHour;
     int prevMinute;
+    bool forceTzDisplay : 1;
+    bool displayHolidays : 1;
 
     void addTzToTipText(QString &subText, QString tz)
     {
@@ -122,7 +124,7 @@ public:
             eItem->setName("today");
             q->initExtenderItem(eItem);
 
-        }else if (todayExtender && !isHoliday){
+        } else if (todayExtender && !isHoliday) {
             todayExtender->destroy();
         }
     }
@@ -158,6 +160,17 @@ public:
 
         prettyTimezone = prettyTimezone.replace('_', ' ');
     }
+
+    Plasma::Calendar *calendarWidget()
+    {
+        Plasma::ExtenderItem *item = q->extender()->item("calendar");
+        if (!item) {
+            return 0;
+        }
+
+        return dynamic_cast<Plasma::Calendar *>(item->widget());
+    }
+
 };
 
 ClockApplet::ClockApplet(QObject *parent, const QVariantList &args)
@@ -307,10 +320,13 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
 
     parent->addPage(generalWidget, i18n("General"), Applet::icon());
 
+    d->generalUi.displayHolidays->setChecked(d->displayHolidays);
     QStringList regions = dataEngine("calendar")->query("holidaysRegions").value("holidaysRegions").toStringList();
     for (int i = 0; i < regions.size(); i++){
         d->generalUi.regionComboBox->addItem(regions[i]);
-        if (regions[i] == d->holidaysRegion) d->generalUi.regionComboBox->setCurrentIndex(i);
+        if (regions[i] == d->holidaysRegion) {
+            d->generalUi.regionComboBox->setCurrentIndex(i);
+        }
     }
 
     d->generalUi.interval->setValue(d->announceInterval);
@@ -376,8 +392,15 @@ void ClockApplet::configAccepted()
     changeEngineTimezone(currentTimezone(), d->defaultTimezone);
     setCurrentTimezone(d->defaultTimezone);
 
+    d->displayHolidays = d->generalUi.displayHolidays->isChecked();
+    cg.writeEntry("displayHolidays", d->displayHolidays);
     d->holidaysRegion = d->generalUi.regionComboBox->currentText();
     cg.writeEntry("holidaysRegion", d->holidaysRegion);
+
+    Plasma::Calendar *calendar = d->calendarWidget();
+    if (calendar) {
+        calendar->setRegion(d->displayHolidays ? d->holidaysRegion : QString());
+    }
 
     d->announceInterval = d->generalUi.interval->value();
     cg.writeEntry("announceInterval", d->announceInterval);
@@ -463,14 +486,14 @@ void ClockApplet::wheelEvent(QGraphicsSceneWheelEvent *event)
 
 void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
 {
-    if (item->name() == "calendar"){
+    if (item->name() == "calendar") {
         item->setTitle(i18n("Calendar"));
         item->setIcon("view-pim-calendar");
 
         Plasma::Calendar *calendar = new Plasma::Calendar;
         calendar->setMinimumSize(QSize(230, 220));
         calendar->setDataEngine(dataEngine("calendar"));
-        calendar->setQueryString("isHoliday:" + d->holidaysRegion + ":");
+        calendar->setRegion(d->displayHolidays ? d->holidaysRegion : QString());
         connect(calendar, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateChanged(const QDate &)));
 
         Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
@@ -481,20 +504,15 @@ void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
 
         item->setWidget(calendar);
 
-    }else if (item->name() == "today"){
+    } else if (item->name() == "today") {
         item->setTitle(i18n("Today"));
         item->setIcon("view-pim-calendar");
-
         d->label = new Plasma::Label();
-
         item->setWidget(d->label);
-
-    }else if (item->name().startsWith("dateExtender-")){
+    } else if (item->name().startsWith("dateExtender-")) {
         item->setIcon("view-pim-calendar");
         item->showCloseButton();
-
         QDate date = QDate::fromString(item->name().remove(0, 13), Qt::ISODate);
-
         item->setTitle(date.toString());
         item->setWidget(new DateExtenderWidget(date, dataEngine("calendar"), d->holidaysRegion));
     }
@@ -514,8 +532,9 @@ void ClockApplet::init()
     if(!dataEngine("calendar")->query("holidaysRegions").value("holidaysRegions").toStringList().contains(tmpRegion)){
         tmpRegion = QString::null;
     }
-    d->holidaysRegion = cg.readEntry("holidaysRegion", tmpRegion);
 
+    d->displayHolidays = cg.readEntry("displayHolidays", true);
+    d->holidaysRegion = cg.readEntry("holidaysRegion", tmpRegion);
     d->announceInterval = cg.readEntry("announceInterval", 0);
 
     Plasma::ToolTipManager::self()->registerWidget(this);
@@ -531,12 +550,7 @@ void ClockApplet::popupEvent(bool show)
         return;
     }
 
-    Plasma::ExtenderItem *item = extender()->item("calendar");
-    if (!item) {
-        return;
-    }
-
-    Plasma::Calendar *calendar = dynamic_cast<Plasma::Calendar *>(item->widget());
+    Plasma::Calendar *calendar = d->calendarWidget();
     if (calendar){
         Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
         QDate date = data["Date"].toDate();
