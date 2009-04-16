@@ -34,18 +34,10 @@ set(plasma_SRCS
     plasmaapp.cpp
     positioningruler.cpp
     toolbutton.cpp
-    panelspacer.cpp
     ${appletbrowserdialog_SRCS}
     ${wallpaper_SRCS}
 )
 
-set(panelspacer_SRCS
-    panelspacer.cpp)
-
-kde4_add_plugin(plasma_applet_panelspacer_internal ${panelspacer_SRCS})
-target_link_libraries(plasma_applet_panelspacer_internal ${KDE4_PLASMA_LIBS})
-
-install(TARGETS plasma_applet_panelspacer_internal DESTINATION ${PLUGIN_INSTALL_DIR})
 
 kde4_add_ui_files(plasma_SRCS BackgroundDialog.ui)
 kde4_add_kcfg_files(plasma_SRCS kcfg/plasma-shell-desktop.kcfgc)
@@ -79,5 +71,4 @@ install(TARGETS plasma-desktop ${INSTALL_TARGETS_DEFAULT_ARGS})
 install(FILES plasma.desktop plasma-desktop.desktop DESTINATION ${AUTOSTART_INSTALL_DIR})
 install(FILES kcfg/plasma-shell-desktop.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
 install(FILES plasma-themes.knsrc DESTINATION  ${CONFIG_INSTALL_DIR})
-install(FILES plasma-applet-panelspacer-internal.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 

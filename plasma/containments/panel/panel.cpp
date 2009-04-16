@@ -594,7 +594,7 @@ void Panel::paintInterface(QPainter *painter,
         m_lastViewGeom = viewGeom;
 
         updateBorders(viewGeom);
-        if (containmentOpt && containmentOpt->view) {
+        if (containmentOpt && containmentOpt->view && !m_background->mask().isEmpty()) {
             containmentOpt->view->setMask(m_background->mask());
         }
     }

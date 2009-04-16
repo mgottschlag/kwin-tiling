@@ -9,6 +9,7 @@ add_subdirectory(kickoff)
 add_subdirectory(lock_logout)
 add_subdirectory(quicklaunch)
 add_subdirectory(trash)
+add_subdirectory(panelspacer)
 
 if(QT_QTWEBKIT_FOUND)
    add_subdirectory(webbrowser)
