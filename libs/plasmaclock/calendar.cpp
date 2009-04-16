@@ -65,7 +65,7 @@ class CalendarPrivate
         Plasma::SpinBox *weekSpinBox;
 
         Plasma::DataEngine *dataEngine;
-        QString queryString;
+        QString region;
 };
 
 Calendar::Calendar(const QDate &date, QGraphicsWidget *parent)
@@ -97,7 +97,6 @@ Calendar::~Calendar()
 void Calendar::init(CalendarTable *calendarTable)
 {
     d->dataEngine = 0;
-    d->queryString = "";
 
     QGraphicsLinearLayout *m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
     QGraphicsLinearLayout *m_hLayout = new QGraphicsLinearLayout(m_layout);
@@ -174,7 +173,7 @@ void Calendar::init(CalendarTable *calendarTable)
 void Calendar::manualDateChange()
 {
     QDate date = KGlobal::locale()->readDate(((QLineEdit*)sender())->text());
-    if(date.isValid()) {
+    if (date.isValid()) {
         setDate(date);
     }
 }
@@ -191,9 +190,15 @@ bool Calendar::setCalendar(KCalendarSystem *calendar)
 
 bool Calendar::setDate(const QDate &date)
 {
-    bool r = d->calendarTable->setDate(date);
+    bool refreshHolidays = date.month() != d->calendarTable->date().month();
+    bool rv = d->calendarTable->setDate(date);
+
+    if (refreshHolidays) {
+        populateHolidays();
+    }
+
     dateUpdated(date);
-    return r;
+    return rv;
 }
 
 const QDate& Calendar::date() const
@@ -226,10 +231,10 @@ void Calendar::prevMonth()
     int month = calendar->month(tmpDate);
     int year = calendar->year(tmpDate);
 
-    if (month == 1){
+    if (month == 1) {
         month = 12;
         year--;
-    }else{
+    } else {
         month--;
     }
 
@@ -237,16 +242,6 @@ void Calendar::prevMonth()
         setDate(newDate);
     }else if (calendar->setYMD(newDate, year, month, 1)){
         setDate(newDate);
-    }
-
-    if (d->dataEngine){
-        for (int i = -10; i < 40; i++){
-            QDate tmpDate = newDate.addDays(i);
-            QString tmpStr = d->queryString + tmpDate.toString(Qt::ISODate);
-            if (d->dataEngine->query(tmpStr).value(tmpStr).toBool()){
-                setDateProperty(tmpDate);
-            }
-        }
     }
 }
 
@@ -260,26 +255,60 @@ void Calendar::nextMonth()
     int month = calendar->month(tmpDate);
     int year = calendar->year(tmpDate);
 
-    if (month == 12){
+    if (month == 12) {
         month = 1;
         year++;
-    }else{
+    } else {
         month++;
     }
 
-    if (calendar->setYMD(newDate, year, month, calendar->day(tmpDate))){
+    if (calendar->setYMD(newDate, year, month, calendar->day(tmpDate))) {
         setDate(newDate);
-    }else if (calendar->setYMD(newDate, year, month, 1)){
+    } else if (calendar->setYMD(newDate, year, month, 1)) {
         setDate(newDate);
     }
+}
 
-    if (d->dataEngine){
-        for (int i = -10; i < 40; i++){
-            QDate tmpDate = newDate.addDays(i);
-            QString tmpStr = d->queryString + tmpDate.toString(Qt::ISODate);
-            if (d->dataEngine->query(tmpStr).value(tmpStr).toBool()){
-                setDateProperty(tmpDate);
-            }
+void Calendar::populateHolidays()
+{
+    d->calendarTable->clearDateProperties();
+
+    if (!d->dataEngine || d->region.isEmpty()) {
+        return;
+    }
+
+    QDate date = d->calendarTable->date();
+    QString prevMonthString = date.addMonths(-1).toString(Qt::ISODate);
+    QString nextMonthString = date.addMonths(1).toString(Qt::ISODate);
+
+    Plasma::DataEngine::Data prevMonth = d->dataEngine->query("holidaysInMonth:" + d->region +
+                                                              ":" + prevMonthString);
+    for (int i = -10; i < 0; i++) {
+        QDate tempDate = date.addDays(i);
+        if (prevMonth.contains(tempDate.toString(Qt::ISODate))) {
+            d->calendarTable->setDateProperty(tempDate);
+        }
+    }
+
+    date.setDate(date.year(), date.month(), 1);
+    Plasma::DataEngine::Data thisMonth = d->dataEngine->query("holidaysInMonth:" + d->region +
+                                                              ":" + date.toString(Qt::ISODate));
+    int numDays = KGlobal::locale()->calendar()->daysInMonth(date);
+    for (int i = 0; i < numDays; i++) {
+        QDate tempDate = date.addDays(i);
+        if (thisMonth.contains(tempDate.toString(Qt::ISODate))) {
+            d->calendarTable->setDateProperty(tempDate);
+        }
+    }
+
+
+    date = date.addMonths(1);
+    Plasma::DataEngine::Data nextMonth = d->dataEngine->query("holidaysInMonth:" + d->region +
+                                                              ":" + nextMonthString);
+    for (int i = 0; i < 10; i++) {
+        QDate tempDate = date.addDays(i);
+        if (nextMonth.contains(tempDate.toString(Qt::ISODate))) {
+            d->calendarTable->setDateProperty(tempDate);
         }
     }
 }
@@ -313,9 +342,9 @@ void Calendar::monthTriggered()
 
     int year = calendar->year(tmpDate);
 
-    if (calendar->setYMD(newDate, year, month, calendar->day(tmpDate))){
+    if (calendar->setYMD(newDate, year, month, calendar->day(tmpDate))) {
         setDate(newDate);
-    }else if (calendar->setYMD(newDate, year, month, 1)){
+    } else if (calendar->setYMD(newDate, year, month, 1)) {
         setDate(newDate);
     }
 }
@@ -372,21 +401,24 @@ CalendarTable *Calendar::calendarTable() const
     return d->calendarTable;
 }
 
-
-//HACK
-void Calendar::setDateProperty(QDate date)
-{
-    d->calendarTable->setDateProperty(date);
-}
-
 void Calendar::setDataEngine(Plasma::DataEngine *dataEngine)
 {
+    if (d->dataEngine == dataEngine) {
+        return;
+    }
+
     d->dataEngine = dataEngine;
+    populateHolidays();
 }
 
-void Calendar::setQueryString(QString queryString)
+void Calendar::setRegion(const QString &region)
 {
-    d->queryString = queryString;
+    if (d->region == region) {
+        return;
+    }
+
+    d->region = region;
+    populateHolidays();
 }
 
 }

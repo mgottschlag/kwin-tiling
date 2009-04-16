@@ -56,7 +56,7 @@ public:
 
     void setDataEngine(Plasma::DataEngine *dataEngine);
 
-    void setQueryString(QString queryString); //HACK
+    void setRegion(const QString &region);
 
 Q_SIGNALS:
     void dateChanged(const QDate &cur, const QDate &old);
@@ -77,8 +77,8 @@ private Q_SLOTS:
     void hideYearSpinBox();
 
 private:
-    void setDateProperty(QDate date); //HACK
     void init(CalendarTable *calendarTable);
+    void populateHolidays();
     CalendarPrivate* const d;
 };
 
