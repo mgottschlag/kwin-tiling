@@ -1,3 +1,4 @@
+find_package(KdepimLibs REQUIRED)
 find_package(Boost REQUIRED)
 
 include_directories(
