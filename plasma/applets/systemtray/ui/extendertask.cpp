@@ -26,7 +26,10 @@
 #include <QtGui/QTextOption>
 
 #include <plasma/popupapplet.h>
+#include <plasma/tooltipmanager.h>
 #include <plasma/widgets/busywidget.h>
+
+#include <KIcon>
 
 
 namespace SystemTray
@@ -46,9 +49,14 @@ public:
     void updateTask()
     {
         int runningJobs = 0;
+        int pausedJobs = 0;
         foreach (Job *job, manager->jobs()) {
             if (job->state() == Job::Running) {
                 runningJobs++;
+                break;
+            }
+            if (job->state() == Job::Suspended) {
+                pausedJobs++;
                 break;
             }
         }
@@ -59,6 +67,7 @@ public:
             manager->notifications().isEmpty()) {
             systemTray->hidePopup();
             delete q;
+            return;
         } else if (runningJobs > 0) {
             busyWidget->setRunning(true);
             busyWidget->setLabel(QString("%1/%2").arg(QString::number(total - runningJobs))
@@ -67,6 +76,24 @@ public:
             busyWidget->setRunning(false);
             busyWidget->setLabel(QString::number(total));
         }
+
+        //make a nice plasma tooltip
+        QString tooltipContent;
+        if (runningJobs > 0) {
+            tooltipContent += i18np("%1 running job", "%1 running jobs", runningJobs) + "<br>";
+        }
+        if (pausedJobs > 0) {
+            tooltipContent += i18np("%1 suspended job", "%1 suspended jobs", pausedJobs) + "<br>";
+        }
+        if (!manager->notifications().isEmpty()) {
+            tooltipContent += i18np("%1 notification", "%1 notifications",
+                                    manager->notifications().count()) + "<br>";
+        }
+
+        Plasma::ToolTipContent data(i18n("Notifications and jobs"),
+                                    tooltipContent,
+                                    KIcon("help-about"));
+        Plasma::ToolTipManager::self()->setContent(systemTray, data);
     }
 
     Task *q;
@@ -110,6 +137,7 @@ ExtenderTask::ExtenderTask(Plasma::PopupApplet *systemTray, Manager *manager)
 ExtenderTask::~ExtenderTask()
 {
     emit taskDeleted(d->typeId);
+    Plasma::ToolTipManager::self()->unregisterWidget(d->systemTray);
     delete d;
 }
 
