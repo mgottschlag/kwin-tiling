@@ -311,6 +311,11 @@ Plasma::ToolTipContent ClockApplet::toolTipContent()
     return Plasma::ToolTipContent();
 }
 
+bool caseInsensitiveLessThan(const QString &s1, const QString &s2)
+{
+    return s1.toLower() < s2.toLower();
+}
+
 void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
 {
     createClockConfigurationInterface(parent);
@@ -322,11 +327,30 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
 
     d->generalUi.displayHolidays->setChecked(d->displayHolidays);
     QStringList regions = dataEngine("calendar")->query("holidaysRegions").value("holidaysRegions").toStringList();
-    for (int i = 0; i < regions.size(); i++){
-        d->generalUi.regionComboBox->addItem(regions[i]);
-        if (regions[i] == d->holidaysRegion) {
+    QMap<QString, QPair<QString, QString> > names;
+    foreach (const QString &region, regions) {
+        // get a proper name!
+        QString name = KGlobal::locale()->countryCodeToName(region);
+
+        if (name.isEmpty()) {
+            name = region;
+        }
+
+        names.insert(name.toLower(), qMakePair(name, region));
+    }
+
+    int i = 0;
+
+    QMapIterator<QString, QPair<QString, QString> > it(names);
+    while (it.hasNext()) {
+        it.next();
+        QString name = it.value().first;
+        QString region = it.value().second;
+        d->generalUi.regionComboBox->addItem(name, region);
+        if (region == d->holidaysRegion) {
             d->generalUi.regionComboBox->setCurrentIndex(i);
         }
+        ++i;
     }
 
     d->generalUi.interval->setValue(d->announceInterval);
@@ -394,7 +418,7 @@ void ClockApplet::configAccepted()
 
     d->displayHolidays = d->generalUi.displayHolidays->isChecked();
     cg.writeEntry("displayHolidays", d->displayHolidays);
-    d->holidaysRegion = d->generalUi.regionComboBox->currentText();
+    d->holidaysRegion = d->generalUi.regionComboBox->itemData(d->generalUi.regionComboBox->currentIndex()).toString();
     cg.writeEntry("holidaysRegion", d->holidaysRegion);
 
     Plasma::Calendar *calendar = d->calendarWidget();
