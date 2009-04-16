@@ -105,7 +105,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_helpButton = new QToolButton(m_buttonContainer);
     m_helpButton->setText(i18n("Help"));
     m_helpButton->setToolTip(i18n("Information on using this application"));
-    m_helpButton->setIcon(m_iconSvg->pixmap("maximize"));//TODO: proper icon
+    m_helpButton->setIcon(m_iconSvg->pixmap("help"));
     connect(m_helpButton, SIGNAL(clicked(bool)), SLOT(showHelp()));
     bottomLayout->addWidget(m_helpButton);
 
