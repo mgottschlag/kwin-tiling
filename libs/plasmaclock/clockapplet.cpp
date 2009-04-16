@@ -329,11 +329,16 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
     QStringList regions = dataEngine("calendar")->query("holidaysRegions").value("holidaysRegions").toStringList();
     QMap<QString, QPair<QString, QString> > names;
     foreach (const QString &region, regions) {
+        if (region.isEmpty()) {
+            continue;
+        }
+
         // get a proper name!
         QString name = KGlobal::locale()->countryCodeToName(region);
 
         if (name.isEmpty()) {
             name = region;
+            name[0] = name.at(0).toUpper();
         }
 
         names.insert(name.toLower(), qMakePair(name, region));
