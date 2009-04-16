@@ -293,7 +293,7 @@ int Task::desktop() const
 
 bool Task::demandsAttention() const
 {
-    return (d->info.valid() && (d->info.state() & NET::DemandsAttention)) ||
+    return (d->info.valid(true) && (d->info.state() & NET::DemandsAttention)) ||
             !d->transientsDemandingAttention.isEmpty();
 }
 
