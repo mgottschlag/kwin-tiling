@@ -22,6 +22,7 @@
 
 #include <QDate>
 
+#include <KCalendarSystem>
 #include <KHolidays/Holidays>
 
 CalendarEngine::CalendarEngine(QObject* parent, const QVariantList& args)
@@ -32,6 +33,7 @@ CalendarEngine::CalendarEngine(QObject* parent, const QVariantList& args)
 
 CalendarEngine::~CalendarEngine()
 {
+    qDeleteAll(m_regions);
 }
 
 bool CalendarEngine::sourceRequestEvent(const QString &name)
@@ -40,25 +42,48 @@ bool CalendarEngine::sourceRequestEvent(const QString &name)
     QStringList tokens = name.split(":");
 
     if (tokens.count() < 3) {
-        if (name == "holidaysRegions"){
+        if (name == "holidaysRegions") {
             setData(name, KHolidays::HolidayRegion::locations());
             return true;
-
-        }else{
+        } else {
             return false;
         }
     }
 
-    kDebug() << tokens[0] << "\n";
-    kDebug() << tokens[2] << "\n";
-    KHolidays::HolidayRegion region(tokens[1]);
+    kDebug() << tokens[0];
+    kDebug() << tokens[2];
+    QString regionName = tokens[1];
+    KHolidays::HolidayRegion *region = m_regions.value(regionName);
+
+    if (!region) {
+        region = new KHolidays::HolidayRegion(regionName);
+        m_regions.insert(regionName, region);
+    }
+
     QDate dateArg = QDate::fromString(tokens[2], Qt::ISODate);
 
-    if (tokens[0] == "isHoliday") {
-        setData(name, region.isHoliday(dateArg));
+    if (tokens[0] == "holidaysInMonth") {
+        Plasma::DataEngine::Data data;
+        int days = KGlobal::locale()->calendar()->daysInMonth(dateArg);
+        dateArg.setDate(dateArg.year(), dateArg.month(), 1);
+
+        for (int i = 0; i < days; ++i) {
+            KHolidays::Holiday::List holidays = region->holidays(dateArg);
+
+            if (!holidays.isEmpty()) {
+                //FIXME: should show ALL holidays, not just the first
+                data.insert(dateArg.toString(Qt::ISODate), holidays[0].text());
+            }
+
+            dateArg = dateArg.addDays(1);
+        }
+
+        setData(name, data);
+    } else if (tokens[0] == "isHoliday") {
+        setData(name, region->isHoliday(dateArg));
     } else if (tokens[0] == "description") {
-        KHolidays::Holiday::List holidays = region.holidays(dateArg);
-        if (holidays.size() > 0){
+        KHolidays::Holiday::List holidays = region->holidays(dateArg);
+        if (holidays.size() > 0) {
             setData(name, holidays[0].text());
         } else {
             setData(name, QString());

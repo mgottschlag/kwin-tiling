@@ -23,6 +23,11 @@
 
 #include <Plasma/DataEngine>
 
+namespace KHolidays
+{
+    class HolidayRegion;
+} // namespace KHolidays
+
 class CalendarEngine : public Plasma::DataEngine
 {
     Q_OBJECT
@@ -33,6 +38,9 @@ class CalendarEngine : public Plasma::DataEngine
 
     protected:
         bool sourceRequestEvent(const QString &name);
+
+    private:
+        QHash<QString, KHolidays::HolidayRegion *> m_regions;
 };
 
 K_EXPORT_PLASMA_DATAENGINE(calendar, CalendarEngine)
