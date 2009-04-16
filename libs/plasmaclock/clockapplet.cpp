@@ -514,7 +514,17 @@ void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
         item->showCloseButton();
         QDate date = QDate::fromString(item->name().remove(0, 13), Qt::ISODate);
         item->setTitle(date.toString());
-        item->setWidget(new DateExtenderWidget(date, dataEngine("calendar"), d->holidaysRegion));
+        Plasma::Calendar *calendar = d->calendarWidget();
+        DateExtenderWidget *widget = 0;
+
+        if (calendar) {
+            QString holidayDesc = calendar->dateProperty(date);
+            widget = new DateExtenderWidget(holidayDesc);
+        } else {
+            widget = new DateExtenderWidget(date, dataEngine("calendar"), d->holidaysRegion);
+        }
+
+        item->setWidget(widget);
     }
 }
 
@@ -617,9 +627,18 @@ void ClockApplet::dateChanged(const QDate &date)
 {
     d->destroyDateExtenders();
 
-    QString tmpStr = "isHoliday:" + d->holidaysRegion + ":" + date.toString(Qt::ISODate);
-    if (dataEngine("calendar")->query(tmpStr).value(tmpStr).toBool()){
-        d->createDateExtender(date);
+    Plasma::Calendar *calendar = d->calendarWidget();
+
+    if (calendar) {
+        QString holidayDesc = calendar->dateProperty(date);
+        if (!holidayDesc.isEmpty()) {
+            d->createDateExtender(date);
+        }
+    } else {
+        QString tmpStr = "isHoliday:" + d->holidaysRegion + ":" + date.toString(Qt::ISODate);
+        if (dataEngine("calendar")->query(tmpStr).value(tmpStr).toBool()) {
+            d->createDateExtender(date);
+        }
     }
 }
 

@@ -285,8 +285,9 @@ void Calendar::populateHolidays()
                                                               ":" + prevMonthString);
     for (int i = -10; i < 0; i++) {
         QDate tempDate = date.addDays(i);
-        if (prevMonth.contains(tempDate.toString(Qt::ISODate))) {
-            d->calendarTable->setDateProperty(tempDate);
+        QString reason = prevMonth.value(tempDate.toString(Qt::ISODate)).toString();
+        if (!reason.isEmpty()) {
+            d->calendarTable->setDateProperty(tempDate, reason);
         }
     }
 
@@ -296,8 +297,9 @@ void Calendar::populateHolidays()
     int numDays = KGlobal::locale()->calendar()->daysInMonth(date);
     for (int i = 0; i < numDays; i++) {
         QDate tempDate = date.addDays(i);
-        if (thisMonth.contains(tempDate.toString(Qt::ISODate))) {
-            d->calendarTable->setDateProperty(tempDate);
+        QString reason = thisMonth.value(tempDate.toString(Qt::ISODate)).toString();
+        if (!reason.isEmpty()) {
+            d->calendarTable->setDateProperty(tempDate, reason);
         }
     }
 
@@ -307,8 +309,9 @@ void Calendar::populateHolidays()
                                                               ":" + nextMonthString);
     for (int i = 0; i < 10; i++) {
         QDate tempDate = date.addDays(i);
-        if (nextMonth.contains(tempDate.toString(Qt::ISODate))) {
-            d->calendarTable->setDateProperty(tempDate);
+        QString reason = nextMonth.value(tempDate.toString(Qt::ISODate)).toString();
+        if (!reason.isEmpty()) {
+            d->calendarTable->setDateProperty(tempDate, reason);
         }
     }
 }
@@ -419,6 +422,11 @@ void Calendar::setRegion(const QString &region)
 
     d->region = region;
     populateHolidays();
+}
+
+QString Calendar::dateProperty(const QDate &date) const
+{
+    return d->calendarTable->dateProperty(date);
 }
 
 }

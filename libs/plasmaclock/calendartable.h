@@ -56,7 +56,8 @@ public:
     bool setCalendar(KCalendarSystem *calendar = 0);
 
     void clearDateProperties();
-    void setDateProperty(QDate date); //HACK
+    void setDateProperty(QDate date, const QString &reason); //HACK
+    QString dateProperty(QDate date) const;
 
 Q_SIGNALS:
     void dateChanged(const QDate &cur, const QDate &old);

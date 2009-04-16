@@ -55,8 +55,8 @@ public:
     CalendarTable *calendarTable() const;
 
     void setDataEngine(Plasma::DataEngine *dataEngine);
-
     void setRegion(const QString &region);
+    QString dateProperty(const QDate &date) const;
 
 Q_SIGNALS:
     void dateChanged(const QDate &cur, const QDate &old);

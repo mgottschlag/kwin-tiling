@@ -188,7 +188,7 @@ class CalendarTablePrivate
         int headerSpace;
         int weekBarSpace;
         int glowRadius;
-        QSet<QString> specialDates;
+        QHash<QString, QString> specialDates; // ISODate -> what's special about it
 };
 
 CalendarTable::CalendarTable(const QDate &date, QGraphicsWidget *parent)
@@ -563,9 +563,14 @@ void CalendarTable::clearDateProperties()
     d->specialDates.clear();
 }
 
-void CalendarTable::setDateProperty(QDate date)
+void CalendarTable::setDateProperty(QDate date, const QString &description)
 {
-    d->specialDates.insert(date.toString(Qt::ISODate));
+    d->specialDates.insert(date.toString(Qt::ISODate), description);
+}
+
+QString CalendarTable::dateProperty(QDate date) const
+{
+    return d->specialDates.value(date.toString(Qt::ISODate));
 }
 
 } //namespace Plasma

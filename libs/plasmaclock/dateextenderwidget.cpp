@@ -25,7 +25,17 @@
 #include <Plasma/Label>
 #include <Plasma/DataEngine>
 
-DateExtenderWidget::DateExtenderWidget(QDate date, Plasma::DataEngine *engine, 	QString region, QGraphicsWidget *parent)
+DateExtenderWidget::DateExtenderWidget(const QString &reason, QGraphicsWidget *parent)
+    : QGraphicsWidget(parent)
+{
+    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(Qt::Vertical, this);
+    Plasma::Label *descriptionLabel = new Plasma::Label();
+
+    descriptionLabel->setText(i18n("Holiday: %1", reason));
+    layout->addItem(descriptionLabel);
+}
+
+DateExtenderWidget::DateExtenderWidget(const QDate &date, Plasma::DataEngine *engine, const QString &region, QGraphicsWidget *parent)
     : QGraphicsWidget(parent)
 {
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(Qt::Vertical, this);
