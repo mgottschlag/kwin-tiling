@@ -55,6 +55,7 @@ public:
 
     bool setCalendar(KCalendarSystem *calendar = 0);
 
+    void clearDateProperties();
     void setDateProperty(QDate date); //HACK
 
 Q_SIGNALS:

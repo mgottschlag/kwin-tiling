@@ -60,7 +60,7 @@ public:
 class CalendarTablePrivate
 {
     public:
-        CalendarTablePrivate(CalendarTable *q, const QDate &cDate = QDate::currentDate())
+        CalendarTablePrivate(CalendarTable *, const QDate &cDate = QDate::currentDate())
         {
             svg = new Svg();
             svg->setImagePath("widgets/calendar");
@@ -188,7 +188,7 @@ class CalendarTablePrivate
         int headerSpace;
         int weekBarSpace;
         int glowRadius;
-        QList<QDate> dates;
+        QSet<QString> specialDates;
 };
 
 CalendarTable::CalendarTable(const QDate &date, QGraphicsWidget *parent)
@@ -485,7 +485,7 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
                 type |= Selected;
             }
 
-            if (d->dates.indexOf(cellDate) >= 0){
+            if (d->specialDates.contains(cellDate.toString(Qt::ISODate))) {
                 type |= Holiday;
             }
 
@@ -558,9 +558,14 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
 }
 
 //HACK
+void CalendarTable::clearDateProperties()
+{
+    d->specialDates.clear();
+}
+
 void CalendarTable::setDateProperty(QDate date)
 {
-    d->dates << date;
+    d->specialDates.insert(date.toString(Qt::ISODate));
 }
 
 } //namespace Plasma
