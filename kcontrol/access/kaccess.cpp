@@ -214,7 +214,7 @@ void KAccessApp::readSettings()
   xkb->ctrls->debounce_delay = keyboardGroup.readEntry("BounceKeysDelay", 500);
 
   // gestures for enabling the other features
-  _gestures = keyboardGroup.readEntry("Gestures", true);
+  _gestures = keyboardGroup.readEntry("Gestures", false);
   if (_gestures)
       xkb->ctrls->enabled_ctrls |= XkbAccessXKeysMask;
   else

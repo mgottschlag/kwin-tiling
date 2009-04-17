@@ -696,7 +696,7 @@ void KAccessConfig::load()
   bounceKeysDelay->setValue(keyboardGroup.readEntry("BounceKeysDelay", 500));
   bounceKeysRejectBeep->setChecked(keyboardGroup.readEntry("BounceKeysRejectBeep", true));
 
-  gestures->setChecked(keyboardGroup.readEntry("Gestures", true));
+  gestures->setChecked(keyboardGroup.readEntry("Gestures", false));
   timeout->setChecked(keyboardGroup.readEntry("AccessXTimeout", false));
   timeoutDelay->setValue(keyboardGroup.readEntry("AccessXTimeoutDelay", 30));
 
@@ -817,7 +817,7 @@ void KAccessConfig::defaults()
   toggleKeysBeep->setChecked(false);
   kNotifyModifiers->setChecked(false);
 
-  gestures->setChecked(true);
+  gestures->setChecked(false);
   timeout->setChecked(false);
   timeoutDelay->setValue(30);
 
