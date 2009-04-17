@@ -6,7 +6,7 @@ Name[sv]=Panelavskiljare
 Name[uk]=Розпірка панелі
 Name[x-test]=xxPanel spacerxx
 Name[zh_TW]=面板間隔器
-Comment=Reserve empty spaces into the panel
+Comment=Reserve empty spaces within the panel.
 
 NoDisplay=true
 Type=Service
