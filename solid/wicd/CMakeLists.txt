@@ -22,5 +22,3 @@ target_link_libraries(solid_wicd ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} solidco
 install(TARGETS solid_wicd DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install(FILES solid_wicd.desktop DESTINATION ${SERVICES_INSTALL_DIR}/solidbackends )
-
-#kde4_install_icons( ${ICON_INSTALL_DIR} )
