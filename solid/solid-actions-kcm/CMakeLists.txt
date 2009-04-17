@@ -1,11 +1,6 @@
 PROJECT (solid-actions)
 
-INCLUDE (KDE4Defaults)
-
 ADD_SUBDIRECTORY(device-actions)
-
-ADD_DEFINITIONS (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
-INCLUDE_DIRECTORIES (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
 
 ########### next target ###############
 
