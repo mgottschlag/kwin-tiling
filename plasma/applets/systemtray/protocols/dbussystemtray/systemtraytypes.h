@@ -44,7 +44,7 @@ Q_DECLARE_METATYPE(ImageVector)
 
 struct ToolTipStruct {
     QString icon;
-    ImageStruct image;
+    ImageVector image;
     QString title;
     QString subTitle;
 };

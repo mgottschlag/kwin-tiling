@@ -97,7 +97,7 @@ const QDBusArgument &operator<<(QDBusArgument &argument, const ToolTipStruct &to
 const QDBusArgument &operator>>(const QDBusArgument &argument, ToolTipStruct &toolTip)
 {
     QString icon;
-    ImageStruct image;
+    ImageVector image;
     QString title;
     QString subTitle;
 
