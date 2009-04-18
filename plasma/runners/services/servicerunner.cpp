@@ -60,15 +60,16 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
     QHash<QString, bool> seen;
     if (!services.isEmpty()) {
         //kDebug() << service->name() << "is an exact match!" << service->storageId() << service->exec();
-        KService::Ptr service = services.at(0);
-        if (!service->noDisplay()) {
-            Plasma::QueryMatch match(this);
-            match.setType(Plasma::QueryMatch::ExactMatch);
-            setupAction(service, match);
-            match.setRelevance(1);
-            matches << match;
-            seen[service->storageId()] = true;
-            seen[service->exec()] = true;
+        foreach (const KService::Ptr &service, services) {
+            if (!service->noDisplay()) {
+                Plasma::QueryMatch match(this);
+                match.setType(Plasma::QueryMatch::ExactMatch);
+                setupAction(service, match);
+                match.setRelevance(1);
+                matches << match;
+                seen[service->storageId()] = true;
+                seen[service->exec()] = true;
+            }
         }
     }
 
