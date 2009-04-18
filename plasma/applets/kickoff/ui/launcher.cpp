@@ -798,21 +798,34 @@ void Launcher::setLauncherOrigin(const Plasma::PopupPlacement placement, Plasma:
     if (d->placement != placement) {
         d->placement = placement;
 
+        Private::TabOrder normalOrder;
+        Private::TabOrder reverseOrder;
+
+        //QTabBar attempts to be smart and flips what we say in rtl mode so say the opposite when the tabbar is horizontal
+        if (QApplication::layoutDirection() == Qt::RightToLeft) {
+            normalOrder = Private::ReverseTabOrder;
+            reverseOrder = Private::NormalTabOrder;
+        } else {
+            normalOrder = Private::NormalTabOrder;
+            reverseOrder = Private::ReverseTabOrder;
+        }
+
         switch (placement) {
         case Plasma::TopPosedRightAlignedPopup:
-            d->setSouthLayout(Private::ReverseTabOrder);
+            d->setSouthLayout(reverseOrder);
             break;
         case Plasma::LeftPosedTopAlignedPopup:
+            //when the tabbar is vertical it's fine
             d->setEastLayout(Private::NormalTabOrder);
             break;
         case Plasma::LeftPosedBottomAlignedPopup:
             d->setEastLayout(Private::ReverseTabOrder);
             break;
         case Plasma::BottomPosedLeftAlignedPopup:
-            d->setNorthLayout(Private::NormalTabOrder);
+            d->setNorthLayout(normalOrder);
             break;
         case Plasma::BottomPosedRightAlignedPopup:
-            d->setNorthLayout(Private::ReverseTabOrder);
+            d->setNorthLayout(reverseOrder);
             break;
         case Plasma::RightPosedTopAlignedPopup:
             d->setWestLayout(Private::NormalTabOrder);
@@ -822,7 +835,7 @@ void Launcher::setLauncherOrigin(const Plasma::PopupPlacement placement, Plasma:
             break;
         case Plasma::TopPosedLeftAlignedPopup:
         default:
-            d->setSouthLayout(Private::NormalTabOrder);
+            d->setSouthLayout(normalOrder);
             break;
         }
     }
