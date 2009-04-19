@@ -8,6 +8,8 @@ Name[uk]=Розпірка панелі
 Name[x-test]=xxPanel spacerxx
 Name[zh_TW]=面板間隔器
 Comment=Reserve empty spaces within the panel.
+Comment[sv]=Reservera tomt utrymme inne i panelen.
+Comment[uk]=Створює прогалини на панелі.
 
 NoDisplay=true
 Type=Service
