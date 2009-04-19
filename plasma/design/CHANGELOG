@@ -97,6 +97,9 @@ Plugins/Addons
              * Show tooltips when in panel. BUG:180102
              * Advanced config page added
              * Plotter labels added
+         * Timer
+             * A timer can have a title
+             * Count down is restored after a plasma shutdown/restart
          * Lancelot
              * theming: Scrollbars follow Plasma style
              * actions for system buttons are configurable
