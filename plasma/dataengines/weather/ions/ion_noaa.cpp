@@ -23,7 +23,7 @@
 
 class NOAAIon::Private : public QObject
 {
-private:
+public:
     struct XMLMapInfo {
         QString stateName;
         QString stationName;
