@@ -253,6 +253,16 @@ void TaskItemLayout::layoutItems()
     //int columnWidth = qMax(1, int(m_groupItem->geometry().size().width() / columns));
     //kDebug() << "column width set to " << columnWidth;
 
+    //FIXME: resetting column preferred sizesthey shouldn't be taken into account for inexistent ones but they are, probably upstream issue
+    for (int i = 0; i<columnCount(); ++i) {
+        setColumnMaximumWidth(i, 0);
+        setColumnPreferredWidth(i, 0);
+    }
+    for (int i = 0; i<rowCount(); ++i) {
+        setRowMaximumHeight(i, 0);
+        setRowPreferredHeight(i, 0);
+    }
+
     //clearLayout
     while (count()) {
         removeAt(0);
@@ -297,12 +307,18 @@ void TaskItemLayout::layoutItems()
         //m_layout->setColumnPreferredWidth(col, columnWidth);//Somehow this line is absolutely crucial
         //m_layout->setRowPreferredHeight(row, rowHeight);//Somehow this line is absolutely crucial
 
+
+        //FIXME: this is a glorious hack
         if (maximumCellSize.isValid()) {
             if (m_layoutOrientation == Qt::Vertical) {
                 setRowMaximumHeight(row, maximumCellSize.height());
+                setColumnMaximumWidth(col, QWIDGETSIZE_MAX);
             } else {
                 setColumnMaximumWidth(col, maximumCellSize.width());
+                setRowMaximumHeight(row, QWIDGETSIZE_MAX);
             }
+            setRowPreferredHeight(row, maximumCellSize.height());
+            setColumnPreferredWidth(col, maximumCellSize.width());
         }
 
         if (item->abstractItem() && item->abstractItem()->isGroupItem()) {
