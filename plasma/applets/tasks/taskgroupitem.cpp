@@ -571,7 +571,11 @@ void TaskGroupItem::popupMenu()
 
     if (m_popupDialog->isVisible()) {
         m_popupDialog->clearFocus();
-        m_popupDialog->hide();
+        if (m_applet->location() != Plasma::Floating) {
+            m_popupDialog->animatedHide(Plasma::locationToInverseDirection(m_applet->location()));
+        } else {
+            m_popupDialog->hide();
+        }
     } else {
         m_tasksLayout->setOrientation(Plasma::Vertical);
         m_tasksLayout->setMaximumRows(1);
@@ -580,7 +584,11 @@ void TaskGroupItem::popupMenu()
             m_popupDialog->move(m_applet->containment()->corona()->popupPosition(this, m_popupDialog->size()));
         }
         KWindowSystem::setState(m_popupDialog->winId(), NET::SkipTaskbar| NET::SkipPager);
-        m_popupDialog->show();
+        if (m_applet->location() != Plasma::Floating) {
+            m_popupDialog->animatedShow(Plasma::locationToDirection(m_applet->location()));
+        } else {
+            m_popupDialog->show();
+        }
         m_popupDialog->raise();
         KWindowSystem::activateWindow(m_popupDialog->winId());
         //kDebug() << m_popupDialog->size() << m_tasksLayout->size();
@@ -592,7 +600,11 @@ bool TaskGroupItem::eventFilter(QObject *watched, QEvent *event)
     if (watched == m_popupDialog && event->type() == QEvent::WindowDeactivate) {
         Q_ASSERT(m_popupDialog);
         m_popupLostFocus = true; //avoid opening it again when clicking on the group
-        m_popupDialog->hide();
+        if (m_applet->location() != Plasma::Floating) {
+            m_popupDialog->animatedHide(Plasma::locationToInverseDirection(m_applet->location()));
+        } else {
+            m_popupDialog->hide();
+        }
         QTimer::singleShot(100, this, SLOT(clearPopupLostFocus()));
     }
 
