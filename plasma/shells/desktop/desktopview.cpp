@@ -275,26 +275,31 @@ void DesktopView::setContainment(Plasma::Containment *containment)
 
 void DesktopView::toolBoxOpened()
 {
+#ifndef Q_WS_WIN
     NETRootInfo info(QX11Info::display(), NET::Supported);
     if (!info.isSupported(NET::WM2ShowingDesktop)) {
         return;
     }
-
+#endif
     Plasma::Containment *c = containment();
     disconnect(c, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxOpened()));
     connect(c, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxClosed()));
     connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)),
             this, SLOT(showDesktopUntoggled()));
 
+#ifndef Q_WS_WIN
     info.setShowingDesktop(true);
+#endif
 }
 
 void DesktopView::toolBoxClosed()
 {
+#ifndef Q_WS_WIN
     NETRootInfo info(QX11Info::display(), NET::Supported);
     if (!info.isSupported(NET::WM2ShowingDesktop)) {
         return;
     }
+#endif
 
     Plasma::Containment *c = containment();
     disconnect(c, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxClosed()));
@@ -302,7 +307,9 @@ void DesktopView::toolBoxClosed()
                this, SLOT(showDesktopUntoggled()));
     connect(c, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxOpened()));
 
+#ifndef Q_WS_WIN
     info.setShowingDesktop(false);
+#endif
 }
 
 void DesktopView::showDesktopUntoggled()
