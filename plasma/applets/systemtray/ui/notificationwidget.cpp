@@ -226,6 +226,7 @@ void NotificationWidgetPrivate::updateNotification()
     qreal bodyHeight = body->boundingRect().height();
     if (actionsWidget) {
         extenderItem->hideCloseButton();
+        q->setPreferredWidth(qMax(q->preferredWidth(), actionsWidget->preferredWidth()));
         q->setPreferredHeight(qMax(bodyHeight + actionsWidget->size().height(), imageHeight));
     } else {
         extenderItem->showCloseButton();

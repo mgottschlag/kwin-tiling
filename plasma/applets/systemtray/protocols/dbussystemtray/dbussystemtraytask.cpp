@@ -110,7 +110,7 @@ DBusSystemTrayTask::DBusSystemTrayTask(const QString &service)
     d->name = service;
 
     d->notificationAreaItemInterface = new org::kde::NotificationAreaItem(service, "/NotificationAreaItem",
-                                                 QDBusConnection::sessionBus());
+                                                                          QDBusConnection::sessionBus(), this);
 
     d->refresh();
 
@@ -133,14 +133,12 @@ QGraphicsWidget* DBusSystemTrayTask::createWidget(Plasma::Applet *host)
         return d->iconWidgets[host];
     }
 
-    Plasma::IconWidget *iconWidget = new DBusSystemTrayWidget(host, d->notificationAreaItemInterface);
+    DBusSystemTrayWidget *iconWidget = new DBusSystemTrayWidget(host, d->notificationAreaItemInterface);
     iconWidget->show();
 
     iconWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     iconWidget->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
     iconWidget->setPreferredSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
-
-    iconWidget->installEventFilter(this);
 
     connect(iconWidget, SIGNAL(destroyed(QObject *)), this, SLOT(iconDestroyed(QObject *)));
     d->iconWidgets[host] = iconWidget;
@@ -181,25 +179,6 @@ QIcon DBusSystemTrayTask::icon() const
 {
     return d->icon;
 }
-
-
-bool DBusSystemTrayTask::eventFilter(QObject *watched, QEvent *event)
-{
-    Plasma::IconWidget *iw = qobject_cast<Plasma::IconWidget *>(watched);
-    if (d->iconWidgets.values().contains(iw)) {
-        if (event->type() == QEvent::GraphicsSceneContextMenu) {
-            QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
-            d->notificationAreaItemInterface->call(QDBus::NoBlock, "ContextMenu", me->screenPos().x(), me->screenPos().y());
-            return true;
-        }
-        if (event->type() == QEvent::GraphicsSceneMouseRelease) {
-            QGraphicsSceneMouseEvent *me = static_cast<QGraphicsSceneMouseEvent *>(event);
-            d->notificationAreaItemInterface->call(QDBus::NoBlock, "Activate", me->screenPos().x(), me->screenPos().y());
-        }
-    }
-    return false;
-}
-
 
 
 //DBusSystemTrayTaskPrivate

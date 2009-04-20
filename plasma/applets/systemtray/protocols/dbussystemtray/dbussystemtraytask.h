@@ -62,9 +62,6 @@ public:
     virtual QString typeId() const;
     virtual QIcon icon() const;
 
-protected:
-    bool eventFilter(QObject *watched, QEvent *event);
-
 private:
     DBusSystemTrayTaskPrivate *const d;
     friend class DBusSystemTrayTaskPrivate;

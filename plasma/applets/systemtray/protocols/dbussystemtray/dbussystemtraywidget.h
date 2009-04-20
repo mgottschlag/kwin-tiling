@@ -24,6 +24,11 @@
 
 #include <Plasma/IconWidget>
 
+namespace Plasma
+{
+    class Applet;
+}
+
 class QDBusAbstractInterface;
 
 namespace SystemTray
@@ -34,13 +39,21 @@ class DBusSystemTrayWidget : public Plasma::IconWidget
     Q_OBJECT
 
 public:
-    DBusSystemTrayWidget(QGraphicsWidget *parent, QDBusAbstractInterface *iface);
+    DBusSystemTrayWidget(Plasma::Applet *parent, QDBusAbstractInterface *iface);
+
+Q_SIGNALS:
+    void clicked(const QPoint &pos);
 
 protected:
     void wheelEvent(QGraphicsSceneWheelEvent *event);
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+
+private Q_SLOTS:
+    void calculateShowPosition();
 
 private:
     QPointer<QDBusAbstractInterface> m_iface;
+    Plasma::Applet *m_host;
 };
 
 }

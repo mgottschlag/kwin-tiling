@@ -76,11 +76,12 @@ void DBusNotificationProtocol::dataUpdated(const QString &source, const Plasma::
     bool isNew = !m_notifications.contains(source);
 
     if (isNew) {
-        m_notifications[source] = new DBusNotification(source, this);
-        connect(m_notifications[source], SIGNAL(notificationDeleted(const QString&)),
+        DBusNotification * notification = new DBusNotification(source, this);
+        connect(notification, SIGNAL(notificationDeleted(const QString&)),
                 this, SLOT(removeNotification(const QString&)));
-        connect(m_notifications[source], SIGNAL(actionTriggered(const QString&, const QString&)),
+        connect(notification, SIGNAL(actionTriggered(const QString&, const QString&)),
                 this, SLOT(relayAction(const QString&, const QString&)));
+        m_notifications[source] = notification;
     }
 
     DBusNotification* notification = m_notifications[source];

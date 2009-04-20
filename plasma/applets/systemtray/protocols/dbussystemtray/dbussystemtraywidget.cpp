@@ -22,13 +22,18 @@
 #include <QDBusAbstractInterface>
 #include <QGraphicsSceneWheelEvent>
 
+#include <Plasma/Containment>
+#include <Plasma/Corona>
+
 namespace SystemTray
 {
 
-DBusSystemTrayWidget::DBusSystemTrayWidget(QGraphicsWidget *parent, QDBusAbstractInterface *iface)
+DBusSystemTrayWidget::DBusSystemTrayWidget(Plasma::Applet *parent, QDBusAbstractInterface *iface)
     : Plasma::IconWidget(parent),
-      m_iface(iface)
+      m_iface(iface),
+      m_host(parent)
 {
+    connect(this, SIGNAL(clicked()), this, SLOT(calculateShowPosition()));
 }
 
 void DBusSystemTrayWidget::wheelEvent(QGraphicsSceneWheelEvent *event)
@@ -36,6 +41,23 @@ void DBusSystemTrayWidget::wheelEvent(QGraphicsSceneWheelEvent *event)
     //kDebug() << m_iface << event->delta();
     if (m_iface) {
         m_iface->call(QDBus::NoBlock, "Wheel", event->delta());
+    }
+}
+
+void DBusSystemTrayWidget::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    if (m_iface) {
+        m_iface->call(QDBus::NoBlock, "ContextMenu", event->screenPos().x(), event->screenPos().y());
+    }
+}
+
+void DBusSystemTrayWidget::calculateShowPosition()
+{
+    if (m_iface) {
+        Plasma::Corona *corona = m_host->containment()->corona();
+        QSize s(1, 1);
+        QPoint pos = corona->popupPosition(this, s);
+        m_iface->call(QDBus::NoBlock, "Activate", pos.x(), pos.y());
     }
 }
 
