@@ -2,21 +2,21 @@
 <node>
   <interface name="org.kde.NotificationAreaWatcher">
 
-    <method name="registerService">
+    <method name="RegisterService">
        <arg name="service" type="s" direction="in"/>
     </method>
 
-    <method name="registeredServices">
+    <method name="RegisteredServices">
         <arg type="as" direction="out"/>
         <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QStringList"/>
     </method>
 
 
-    <signal name="serviceRegistered">
+    <signal name="ServiceRegistered">
         <arg type="s"/>
     </signal>
 
-    <signal name="serviceUnregistered">
+    <signal name="ServiceUnregistered">
         <arg type="s"/>
     </signal>
 

@@ -101,7 +101,7 @@ void DBusSystemTrayProtocol::initRegisteredServices()
     org::kde::NotificationAreaWatcher notificationAreaWatcher(interface, "/NotificationAreaWatcher",
                                               QDBusConnection::sessionBus());
     if (notificationAreaWatcher.isValid()) {
-        foreach (const QString &service, notificationAreaWatcher.registeredServices().value()) {
+        foreach (const QString &service, notificationAreaWatcher.RegisteredServices().value()) {
             newTask(service);
         }
     } else {
@@ -136,12 +136,12 @@ void DBusSystemTrayProtocol::registerWatcher(const QString& service)
         m_notificationAreaWatcher = new org::kde::NotificationAreaWatcher(interface, "/NotificationAreaWatcher",
                                                  QDBusConnection::sessionBus());
         if (m_notificationAreaWatcher->isValid()) {
-            connect(m_notificationAreaWatcher, SIGNAL(serviceRegistered(const QString&)), this, SLOT(serviceRegistered(const QString &)));
-            connect(m_notificationAreaWatcher, SIGNAL(serviceUnregistered(const QString&)), this, SLOT(serviceUnregistered(const QString&)));
+            connect(m_notificationAreaWatcher, SIGNAL(ServiceRegistered(const QString&)), this, SLOT(serviceRegistered(const QString &)));
+            connect(m_notificationAreaWatcher, SIGNAL(ServiceUnregistered(const QString&)), this, SLOT(serviceUnregistered(const QString&)));
 
             m_notificationAreaWatcher->call(QDBus::NoBlock, "RegisterNotificationArea", m_serviceName);
 
-            foreach (const QString &service, m_notificationAreaWatcher->registeredServices().value()) {
+            foreach (const QString &service, m_notificationAreaWatcher->RegisteredServices().value()) {
                 newTask(service);
             }
         } else {
@@ -155,8 +155,8 @@ void DBusSystemTrayProtocol::unregisterWatcher(const QString& service)
     if (service == "org.kde.NotificationAreaWatcher") {
         kDebug()<<"org.kde.NotificationAreaWatcher disappeared";
 
-        disconnect(m_notificationAreaWatcher, SIGNAL(serviceRegistered(const QString&)), this, SLOT(serviceRegistered(const QString &)));
-        disconnect(m_notificationAreaWatcher, SIGNAL(serviceUnregistered(const QString&)), this, SLOT(serviceUnregistered(const QString&)));
+        disconnect(m_notificationAreaWatcher, SIGNAL(ServiceRegistered(const QString&)), this, SLOT(serviceRegistered(const QString &)));
+        disconnect(m_notificationAreaWatcher, SIGNAL(ServiceUnregistered(const QString&)), this, SLOT(serviceUnregistered(const QString&)));
 
         foreach (DBusSystemTrayTask *task, m_tasks) {
             emit task->destroyed(task);

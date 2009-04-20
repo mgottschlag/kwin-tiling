@@ -36,14 +36,14 @@ public:
     ~NotificationAreaWatcher();
 
 public Q_SLOTS:
-    void registerService(const QString &service);
+    void RegisterService(const QString &service);
 
-    //TODO: property and uppercase
-    QStringList registeredServices() const;
+    //TODO: property?
+    QStringList RegisteredServices() const;
 
     void RegisterNotificationArea(const QString &service);
 
-    //TODO: property
+    //TODO: property?
     bool IsNotificationAreaRegistered() const;
 
 protected Q_SLOTS:
@@ -52,9 +52,9 @@ protected Q_SLOTS:
                        const QString& newOwner);
 
 Q_SIGNALS:
-    void serviceRegistered(const QString &service);
+    void ServiceRegistered(const QString &service);
     //TODO: decide if this makes sense, the systray itself could notice the vanishing of items, but looks complete putting it here
-    void serviceUnregistered(const QString &service);
+    void ServiceUnregistered(const QString &service);
 
 private:
     QDBusConnectionInterface *m_dbusInterface;

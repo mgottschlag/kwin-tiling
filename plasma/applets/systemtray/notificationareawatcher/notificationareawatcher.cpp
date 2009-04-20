@@ -62,7 +62,7 @@ NotificationAreaWatcher::~NotificationAreaWatcher()
 }
 
 
-void NotificationAreaWatcher::registerService(const QString &service)
+void NotificationAreaWatcher::RegisterService(const QString &service)
 {
     if (m_dbusInterface->isServiceRegistered(service).value() &&
         !m_registeredServices.contains(service)) {
@@ -73,12 +73,12 @@ void NotificationAreaWatcher::registerService(const QString &service)
                                         QDBusConnection::sessionBus());
         if (trayclient.isValid()) {
             m_registeredServices.append(service);
-            emit serviceRegistered(service);
+            emit ServiceRegistered(service);
         }
     }
 }
 
-QStringList NotificationAreaWatcher::registeredServices() const
+QStringList NotificationAreaWatcher::RegisteredServices() const
 {
     return m_registeredServices;
 }
@@ -93,7 +93,7 @@ void NotificationAreaWatcher::serviceChange(const QString& name,
     if (newOwner.isEmpty()) {
         if (m_registeredServices.contains(name)) {
             m_registeredServices.removeAll(name);
-            emit serviceUnregistered(name);
+            emit ServiceUnregistered(name);
         }
 
         if (m_notificationAreaServices.contains(name)) {
