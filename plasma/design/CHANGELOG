@@ -100,6 +100,7 @@ Plugins/Addons
          * Timer
              * A timer can have a title
              * Count down is restored after a plasma shutdown/restart
+             * User can hide seconds.
          * Lancelot
              * theming: Scrollbars follow Plasma style
              * actions for system buttons are configurable
