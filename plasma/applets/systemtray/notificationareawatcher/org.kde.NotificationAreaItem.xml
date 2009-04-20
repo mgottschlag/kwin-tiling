@@ -52,6 +52,11 @@
         <arg name="y" type="i" direction="in"/>
     </method>
 
+    <method name="SecondaryActivate">
+        <arg name="x" type="i" direction="in"/>
+        <arg name="y" type="i" direction="in"/>
+    </method>
+
     <!-- this probably is too much...-->
     <method name="Wheel">
       <arg name="delta" type="i" direction="in"/>
