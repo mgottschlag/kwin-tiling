@@ -81,6 +81,7 @@ public:
 
 
     DBusSystemTrayTask *q;
+    QString id;
     QString name;
     QString title;
     DBusSystemTrayTask::ItemStatus status;
@@ -107,6 +108,7 @@ DBusSystemTrayTask::DBusSystemTrayTask(const QString &service)
     qDBusRegisterMetaType<ImageVector>();
     qDBusRegisterMetaType<ToolTipStruct>();
 
+    d->id = service;
     d->name = service;
 
     d->notificationAreaItemInterface = new org::kde::NotificationAreaItem(service, "/NotificationAreaItem",
@@ -155,7 +157,7 @@ bool DBusSystemTrayTask::isEmbeddable() const
 
 bool DBusSystemTrayTask::isValid() const
 {
-    return !d->name.isEmpty();
+    return !d->id.isEmpty();
 }
 
 DBusSystemTrayTask::ItemCategory DBusSystemTrayTask::category() const
@@ -171,7 +173,7 @@ QString DBusSystemTrayTask::name() const
 
 QString DBusSystemTrayTask::typeId() const
 {
-    return d->name;
+    return d->id;
 }
 
 
@@ -215,8 +217,12 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
     QVariantMap properties = reply.argumentAt<0>();
     if (!reply.isError()) {
         setCategory(properties["Category"].toString());
-
         syncStatus(properties["Status"].toString());
+
+        QString title = properties["Title"].toString();
+        if (!title.isEmpty()) {
+            name = title;
+        }
 
         //Icon
         {
