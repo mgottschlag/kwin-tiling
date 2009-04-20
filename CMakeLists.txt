@@ -74,7 +74,7 @@ macro_optional_find_package(Nepomuk)
 macro_log_feature(Nepomuk_FOUND "Nepomuk" "Nepomuk Libraries" "kdelibs" FALSE "" "Required to build Nepomuk features.")
 
 macro_optional_find_package(PolkitQt)
-macro_log_feature(POLKITQT_FOUND "Polkit-QT" "QT Wrapper around PolicyKit" "kdesupport" FALSE "" "Required to build PolicyKit-KDE")
+macro_log_feature(POLKITQT_FOUND "Polkit-Qt" "Qt Wrapper around PolicyKit" "kdesupport" FALSE "" "Required to build PolicyKit-KDE")
 
 include(ConfigureChecks.cmake)
 if(NOT WIN32)
