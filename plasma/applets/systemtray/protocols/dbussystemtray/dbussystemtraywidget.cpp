@@ -36,6 +36,14 @@ DBusSystemTrayWidget::DBusSystemTrayWidget(Plasma::Applet *parent, QDBusAbstract
     connect(this, SIGNAL(clicked()), this, SLOT(calculateShowPosition()));
 }
 
+void DBusSystemTrayWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (event->button() == Qt::MidButton) {
+        m_iface->call(QDBus::NoBlock, "SecondaryActivate", event->screenPos().x(), event->screenPos().y());
+    }
+    Plasma::IconWidget::mouseReleaseEvent(event);
+}
+
 void DBusSystemTrayWidget::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
     //kDebug() << m_iface << event->delta();
