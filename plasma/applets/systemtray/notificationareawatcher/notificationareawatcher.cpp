@@ -90,10 +90,38 @@ void NotificationAreaWatcher::serviceChange(const QString& name,
 {
     //kDebug()<<"Service "<<name<<"status change, old owner:"<<oldOwner<<"new:"<<newOwner;
 
-    if (newOwner.isEmpty() && m_registeredServices.contains(name)) {
-        m_registeredServices.removeAll(name);
-        emit serviceUnregistered(name);
+    if (newOwner.isEmpty()) {
+        if (m_registeredServices.contains(name)) {
+            m_registeredServices.removeAll(name);
+            emit serviceUnregistered(name);
+        }
+
+        if (m_notificationAreaServices.contains(name)) {
+            m_notificationAreaServices.remove(name);
+        }
     }
+}
+
+void NotificationAreaWatcher::RegisterNotificationArea(const QString &service)
+{
+    if (service.contains("org.kde.NotificationArea-") &&
+        m_dbusInterface->isServiceRegistered(service).value() &&
+        !m_notificationAreaServices.contains(service)) {
+        kDebug()<<"Registering"<<service<<"as system tray";
+
+        //check if the service has registered a SystemTray object
+        org::kde::NotificationAreaItem tray(service, "/",
+                                        QDBusConnection::sessionBus());
+
+        if (tray.isValid()) {
+            m_notificationAreaServices.insert(service);
+        }
+    }
+}
+
+bool NotificationAreaWatcher::IsNotificationAreaRegistered() const
+{
+    m_notificationAreaServices.count() > 0;
 }
 
 #include "notificationareawatcher.moc"

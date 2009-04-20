@@ -61,6 +61,7 @@ private:
     QDBusConnection m_dbus;
     QHash<QString, DBusSystemTrayTask*> m_tasks;
     org::kde::NotificationAreaWatcher *m_notificationAreaWatcher;
+    QString m_serviceName;
 };
 
 }

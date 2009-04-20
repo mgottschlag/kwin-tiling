@@ -24,6 +24,7 @@
 
 #include <QObject>
 #include <QStringList>
+#include <QSet>
 
 class QDBusConnectionInterface;
 
@@ -37,7 +38,13 @@ public:
 public Q_SLOTS:
     void registerService(const QString &service);
 
+    //TODO: property and uppercase
     QStringList registeredServices() const;
+
+    void RegisterNotificationArea(const QString &service);
+
+    //TODO: property
+    bool IsNotificationAreaRegistered() const;
 
 protected Q_SLOTS:
     void serviceChange(const QString& name,
@@ -52,5 +59,6 @@ Q_SIGNALS:
 private:
     QDBusConnectionInterface *m_dbusInterface;
     QStringList m_registeredServices;
+    QSet<QString> m_notificationAreaServices;
 };
 #endif

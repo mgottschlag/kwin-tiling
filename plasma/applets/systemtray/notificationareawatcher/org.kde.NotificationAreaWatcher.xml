@@ -19,5 +19,13 @@
     <signal name="serviceUnregistered">
         <arg type="s"/>
     </signal>
+
+    <method name="RegisterNotificationArea">
+       <arg name="service" type="s" direction="in"/>
+    </method>
+
+    <method name="IsNotificationAreaRegistered">
+       <arg name="service" type="b" direction="out"/>
+    </method>
   </interface>
 </node>

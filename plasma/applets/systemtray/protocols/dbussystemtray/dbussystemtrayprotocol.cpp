@@ -48,6 +48,10 @@ void DBusSystemTrayProtocol::init()
 {
     if (m_dbus.isConnected()) {
         QDBusConnectionInterface *dbusInterface = m_dbus.interface();
+
+        m_serviceName = "org.kde.NotificationArea-" + QString::number(QCoreApplication::applicationPid());
+        m_dbus.registerService(m_serviceName);
+
         //FIXME: understand why registerWatcher/unregisterWatcher doesn't work
         /*connect(dbusInterface, SIGNAL(serviceRegistered(const QString&)),
             this, SLOT(registerWatcher(const QString&)));
@@ -134,6 +138,8 @@ void DBusSystemTrayProtocol::registerWatcher(const QString& service)
         if (m_notificationAreaWatcher->isValid()) {
             connect(m_notificationAreaWatcher, SIGNAL(serviceRegistered(const QString&)), this, SLOT(serviceRegistered(const QString &)));
             connect(m_notificationAreaWatcher, SIGNAL(serviceUnregistered(const QString&)), this, SLOT(serviceUnregistered(const QString&)));
+
+            m_notificationAreaWatcher->call(QDBus::NoBlock, "RegisterNotificationArea", m_serviceName);
 
             foreach (const QString &service, m_notificationAreaWatcher->registeredServices().value()) {
                 newTask(service);
