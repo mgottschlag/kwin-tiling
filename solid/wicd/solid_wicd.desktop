@@ -8,6 +8,7 @@ Name=Wicd
 Name[sv]=WICD
 Name[x-test]=xxWicdxx
 Comment=Network management using the Wicd daemon.
+Comment[el]=Διαχείριση δικτύου με χρήση του δαίμονα Wicd.
 Comment[en_GB]=Network management using the Wicd dæmon.
 Comment[pt]=Gestão da rede com o servidor Wicd.
 Comment[pt_BR]=Gestão da rede com o servidor Wicd.
