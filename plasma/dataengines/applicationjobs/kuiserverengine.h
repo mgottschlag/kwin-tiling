@@ -69,6 +69,7 @@ public:
                };
 
     JobView(QObject *parent = 0);
+    ~JobView();
 
     void setTotalAmount(qlonglong amount, const QString &unit);
     QString totalAmountSize() const;

@@ -41,6 +41,11 @@ JobView::JobView(QObject* parent)
     m_jobId = KuiserverEngine::s_jobId;
 }
 
+JobView::~JobView()
+{
+    //kDebug();
+}
+
 void JobView::terminate(const QString &errorMessage)
 {
     m_error = errorMessage;
@@ -161,8 +166,7 @@ QDBusObjectPath KuiserverEngine::requestView(const QString &appName,
                                              const QString &appIconName, int capabilities)
 {
     JobView *jobView = new JobView();
-    connect(jobView, SIGNAL(viewUpdated(JobView*)),
-            this, SLOT(sourceUpdated(JobView*)));
+    connect(jobView, SIGNAL(viewUpdated(JobView*)), this, SLOT(sourceUpdated(JobView*)));
 
     jobView->setAppName(appName);
     jobView->setAppIconName(appIconName);
@@ -241,9 +245,10 @@ void KuiserverEngine::sourceUpdated(JobView *jobView)
             data["state"] = "stopped";
             setData(sourceName, data);
             removeSource(sourceName);
+            m_jobViews.remove(jobView->sourceName());
+            jobView->deleteLater();
             break;
     }
-
 }
 
 K_EXPORT_PLASMA_DATAENGINE(kuiserver, KuiserverEngine)
