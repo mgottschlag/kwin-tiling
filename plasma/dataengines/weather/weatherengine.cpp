@@ -248,7 +248,7 @@ bool WeatherEngine::updateSourceEvent(const QString& source)
 
 void WeatherEngine::networkStatusChanged(Solid::Networking::Status status)
 {
-    d->m_networkAvailable = status == Solid::Networking::Connected;
+    d->m_networkAvailable = (status == Solid::Networking::Connected || status == Solid::Networking::Unknown);
     //kDebug() << "status changed" << d->m_networkAvailable;
 
     if (d->m_networkAvailable) {
