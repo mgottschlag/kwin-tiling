@@ -27,5 +27,8 @@
     <method name="IsNotificationAreaRegistered">
        <arg name="service" type="b" direction="out"/>
     </method>
+
+    <signal name="NotificationAreaRegistered">
+    </signal>
   </interface>
 </node>

@@ -115,6 +115,7 @@ void NotificationAreaWatcher::RegisterNotificationArea(const QString &service)
 
         if (tray.isValid()) {
             m_notificationAreaServices.insert(service);
+            emit NotificationAreaRegistered();
         }
     }
 }

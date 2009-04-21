@@ -55,6 +55,7 @@ Q_SIGNALS:
     void ServiceRegistered(const QString &service);
     //TODO: decide if this makes sense, the systray itself could notice the vanishing of items, but looks complete putting it here
     void ServiceUnregistered(const QString &service);
+    void NotificationAreaRegistered();
 
 private:
     QDBusConnectionInterface *m_dbusInterface;
