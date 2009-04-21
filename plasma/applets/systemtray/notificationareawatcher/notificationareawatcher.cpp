@@ -121,7 +121,7 @@ void NotificationAreaWatcher::RegisterNotificationArea(const QString &service)
 
 bool NotificationAreaWatcher::IsNotificationAreaRegistered() const
 {
-    m_notificationAreaServices.count() > 0;
+    return !m_notificationAreaServices.isEmpty();
 }
 
 #include "notificationareawatcher.moc"
