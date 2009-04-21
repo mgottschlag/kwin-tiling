@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Panel spacer
 Name[el]=Κενό πίνακα
+Name[et]=Paneeliruumi korraldaja
 Name[pt]=Espaço do painel
 Name[pt_BR]=Espaço do painel
 Name[sv]=Panelavskiljare
@@ -10,6 +11,7 @@ Name[x-test]=xxPanel spacerxx
 Name[zh_TW]=面板間隔器
 Comment=Reserve empty spaces within the panel.
 Comment[el]=Διατήρηση κενού χώρου μέσα στον πίνακα.
+Comment[et]=Tühja ruumi reserveerimine paneelil.
 Comment[pt]=Reserva espaços vazios dentro do painel.
 Comment[pt_BR]=Reserva espaços vazios dentro do painel.
 Comment[sv]=Reservera tomt utrymme inne i panelen.
