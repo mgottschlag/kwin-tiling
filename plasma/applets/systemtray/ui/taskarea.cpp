@@ -34,12 +34,8 @@
 #include "../core/manager.h"
 #include "../core/task.h"
 
-#include "../protocols/fdo/fdotask.h"
-
-
 #include "applet.h"
 #include "compactlayout.h"
-
 
 namespace SystemTray
 {
@@ -69,7 +65,6 @@ public:
     CompactLayout *lastTasksLayout;
 
     QSet<QString> hiddenTypes;
-    bool showFdoTasks : 1;
     bool showingHidden : 1;
     bool hasHiddenTasks : 1;
     bool hasTasksThatCanHide : 1;
@@ -97,17 +92,6 @@ TaskArea::~TaskArea()
 void TaskArea::setHiddenTypes(const QStringList &hiddenTypes)
 {
     d->hiddenTypes = QSet<QString>::fromList(hiddenTypes);
-}
-
-void TaskArea::setShowFdoTasks(bool show)
-{
-    d->showFdoTasks = show;
-    syncTasks(d->host->manager()->tasks());
-}
-
-bool TaskArea::showFdoTasks() const
-{
-    return d->showFdoTasks;
 }
 
 void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)

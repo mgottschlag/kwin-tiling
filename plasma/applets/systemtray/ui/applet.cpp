@@ -175,8 +175,6 @@ void Applet::init()
     }
 
     d->shownCategories.insert(Task::UnknownCategory);
-    d->taskArea->setShowFdoTasks(globalCg.readEntry("ShowFdoTasks", true));
-
 
     if (globalCg.readEntry("ShowJobs", true)) {
         if (!extender()->hasItem("jobGroup")) {
@@ -372,7 +370,6 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
 
         d->ui.showJobs->setChecked(globalCg.readEntry("ShowJobs", true));
         d->ui.showNotifications->setChecked(globalCg.readEntry("ShowNotifications", true));
-        d->ui.showFdoTasks->setChecked(globalCg.readEntry("ShowFdoTasks", true));
 
         d->ui.showApplicationStatus->setChecked(globalCg.readEntry("ShowApplicationStatus", true));
         d->ui.showCommunications->setChecked(globalCg.readEntry("ShowCommunications", true));
@@ -382,9 +379,10 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
         connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 
-        parent->addPage(d->configInterface, i18n("Auto Hide"), icon());
-        parent->addPage(d->notificationInterface, i18n("Notifications"),
-                        "preferences-desktop-notification");
+        parent->addPage(d->notificationInterface, i18n("Information"),
+                        "preferences-desktop-notification",
+                        i18n("Select which kinds of information to show"));
+        parent->addPage(d->configInterface, i18n("Auto Hide"), "window-suppressed");
     }
 
     QListWidget *visibleList = d->configInterface->availableListWidget();
@@ -479,8 +477,6 @@ void Applet::configAccepted()
     }
 
     d->shownCategories.insert(Task::UnknownCategory);
-    globalCg.writeEntry("ShowFdoTasks", d->ui.showFdoTasks->isChecked());
-    d->taskArea->setShowFdoTasks(d->ui.showFdoTasks->isChecked());
 
     d->taskArea->syncTasks(manager()->tasks());
     emit configNeedsSaving();

@@ -6,22 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>320</width>
-    <height>303</height>
+    <width>213</width>
+    <height>241</height>
    </rect>
   </property>
   <layout class="QFormLayout" name="formLayout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::ExpandingFieldsGrow</enum>
+   </property>
    <item row="0" column="0" colspan="2">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Select the types of application feedback that should be integrated with the system tray:</string>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0" colspan="2">
     <widget class="QLabel" name="label_2">
      <property name="font">
       <font>
@@ -30,109 +23,39 @@
       </font>
      </property>
      <property name="text">
-      <string>Notifications</string>
+      <string>Pop Up Notices</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Application notifications</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
     <widget class="QCheckBox" name="showNotifications">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
-   <item row="5" column="1">
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>File transfers and other jobs</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
     <widget class="QCheckBox" name="showJobs">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
-   <item row="10" column="1">
-    <widget class="QCheckBox" name="showFdoTasks">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="11" column="0">
-    <widget class="QLabel" name="label_7">
-     <property name="text">
-      <string>Application status</string>
-     </property>
-    </widget>
-   </item>
-   <item row="11" column="1">
-    <widget class="QCheckBox" name="showApplicationStatus">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="12" column="0">
-    <widget class="QLabel" name="label_8">
-     <property name="text">
-      <string>Communications</string>
-     </property>
-    </widget>
-   </item>
-   <item row="12" column="1">
-    <widget class="QCheckBox" name="showCommunications">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="13" column="0">
-    <widget class="QLabel" name="label_9">
-     <property name="text">
-      <string>System services</string>
-     </property>
-    </widget>
-   </item>
-   <item row="13" column="1">
-    <widget class="QCheckBox" name="showSystemServices">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="14" column="0">
-    <widget class="QLabel" name="label_10">
-     <property name="text">
-      <string>Hardware control</string>
-     </property>
-    </widget>
-   </item>
-   <item row="14" column="1">
-    <widget class="QCheckBox" name="showHardware">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="0">
-    <widget class="QLabel" name="label_6">
-     <property name="text">
-      <string>Traditional system tray icons</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="label_4">
-     <property name="text">
-      <string>Notifications, such as task requests</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="label_5">
-     <property name="text">
-      <string>Jobs, such as file transfers</string>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="0" colspan="2">
+   <item row="8" column="0" colspan="2">
     <widget class="QLabel" name="label_3">
      <property name="font">
       <font>
@@ -142,6 +65,62 @@
      </property>
      <property name="text">
       <string>Icons</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0">
+    <widget class="QLabel" name="label_7">
+     <property name="text">
+      <string>Application status</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="1">
+    <widget class="QCheckBox" name="showApplicationStatus">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="0">
+    <widget class="QLabel" name="label_8">
+     <property name="text">
+      <string>Communications</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="1">
+    <widget class="QCheckBox" name="showCommunications">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0">
+    <widget class="QLabel" name="label_9">
+     <property name="text">
+      <string>System services</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="1">
+    <widget class="QCheckBox" name="showSystemServices">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="0">
+    <widget class="QLabel" name="label_10">
+     <property name="text">
+      <string>Hardware control</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="1">
+    <widget class="QCheckBox" name="showHardware">
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </item>
