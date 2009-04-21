@@ -1,7 +1,4 @@
 <ui version="4.0" stdsetdef="1" >
-  <author></author>
-  <comment></comment>
-  <exportmacro></exportmacro>
   <class>BGMultiWallpaperBase</class>
   <widget class="QWidget" name="BGMultiWallpaperBase" >
     <property name="geometry" >
@@ -137,8 +134,6 @@
       </item>
     </layout>
   </widget>
-  <layoutdefault spacing="3" margin="6" />
-  <layoutfunction spacing="KDialog::spacingHint" margin="KDialog::marginHint" />
     <customwidgets>
     <customwidget>
       <class>BGMultiWallpaperList</class>

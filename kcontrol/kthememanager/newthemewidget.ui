@@ -127,7 +127,6 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
   <tabstops>
   <tabstop>leName</tabstop>
   <tabstop>leAuthor</tabstop>
