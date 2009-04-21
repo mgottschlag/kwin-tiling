@@ -74,7 +74,6 @@ public:
     void syncStatus(QString status);
 
     //callbacks
-    void setCategory(const QString &);
     void syncToolTip(const ToolTipStruct &);
     void syncMovie(const ImageVector &);
     void refreshCallback(QDBusPendingCallWatcher *call);
@@ -84,8 +83,6 @@ public:
     QString id;
     QString name;
     QString title;
-    DBusSystemTrayTask::ItemStatus status;
-    DBusSystemTrayTask::ItemCategory category;
     QIcon icon;
     QIcon attentionIcon;
     QVector<QPixmap> movie;
@@ -160,11 +157,6 @@ bool DBusSystemTrayTask::isValid() const
     return !d->id.isEmpty();
 }
 
-DBusSystemTrayTask::ItemCategory DBusSystemTrayTask::category() const
-{
-    return d->category;
-}
-
 QString DBusSystemTrayTask::name() const
 {
     return d->name;
@@ -216,7 +208,16 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
     QDBusPendingReply<QVariantMap> reply = *call;
     QVariantMap properties = reply.argumentAt<0>();
     if (!reply.isError()) {
-        setCategory(properties["Category"].toString());
+        QString cat = properties["Category"].toString();
+        if (!cat.isEmpty()) {
+            int index = q->metaObject()->indexOfEnumerator("Category");
+            int key = q->metaObject()->enumerator(index).keyToValue(cat.toLatin1());
+
+            if (key != -1) {
+                q->setCategory((Task::Category)key);
+            }
+        }
+
         syncStatus(properties["Status"].toString());
 
         QString title = properties["Title"].toString();
@@ -235,7 +236,7 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
             }
         }
 
-        if (status != DBusSystemTrayTask::NeedsAttention) {
+        if (q->status() != Task::NeedsAttention) {
             foreach (Plasma::IconWidget *iconWidget, iconWidgets) {
                 iconWidget->setIcon(icon);
             }
@@ -349,14 +350,9 @@ void DBusSystemTrayTaskPrivate::syncToolTip(const ToolTipStruct &tipStruct)
 
 void DBusSystemTrayTaskPrivate::syncStatus(QString newStatus)
 {
-    status = (DBusSystemTrayTask::ItemStatus)q->metaObject()->enumerator(q->metaObject()->indexOfEnumerator("ItemStatus")).keyToValue(newStatus.toLatin1());
+    Task::Status status = (Task::Status)q->metaObject()->enumerator(q->metaObject()->indexOfEnumerator("Status")).keyToValue(newStatus.toLatin1());
 
-    if (status == DBusSystemTrayTask::NeedsAttention) {
-        q->setOrder(Task::Last);
-        if (q->hidden() & Task::AutoHidden) {
-            q->setHidden(q->hidden()^Task::AutoHidden);
-        }
-
+    if (status == Task::NeedsAttention) {
         if (movie.size() != 0) {
             if (!movieTimer) {
                 movieTimer = new QTimer(q);
@@ -371,18 +367,12 @@ void DBusSystemTrayTaskPrivate::syncStatus(QString newStatus)
             }
         }
     } else {
-        if (status == DBusSystemTrayTask::Active &&
-            (q->hidden() & Task::AutoHidden)) {
-            q->setHidden(q->hidden()^Task::AutoHidden);
-        } else if (status == DBusSystemTrayTask::Passive) {
-            q->setHidden(q->hidden()|Task::AutoHidden);
-        }
-        q->setOrder(Task::Normal);
         if (movieTimer) {
             movieTimer->stop();
             movieTimer->deleteLater();
             movieTimer = 0;
         }
+
         if (blinkTimer) {
             blinkTimer->stop();
             blinkTimer->deleteLater();
@@ -394,13 +384,7 @@ void DBusSystemTrayTaskPrivate::syncStatus(QString newStatus)
         }
     }
 
-    emit q->changed(q);
-}
-
-
-void DBusSystemTrayTaskPrivate::setCategory(const QString &cat)
-{
-    category = (DBusSystemTrayTask::ItemCategory)q->metaObject()->enumerator(q->metaObject()->indexOfEnumerator("ItemCategory")).keyToValue(cat.toLatin1());
+    q->setStatus(status);
 }
 
 }

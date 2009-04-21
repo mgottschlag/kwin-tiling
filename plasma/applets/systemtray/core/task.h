@@ -48,12 +48,32 @@ class Task : public QObject
 
 public:
     enum Order { First, Normal, Last };
+
     enum HideState {
         NotHidden = 0,
         UserHidden = 1,
         AutoHidden = 2
     };
     Q_DECLARE_FLAGS(HideStates, HideState)
+
+    enum Status {
+        UnknownStatus = 0,
+        Passive = 1,
+        Active = 2,
+        NeedsAttention = 3
+    };
+    Q_ENUMS(Status)
+
+    enum Category {
+        UnknownCategory = 0,
+        ApplicationStatus = 1,
+        Communications = 2,
+        SystemServices = 3,
+        Hardware = 4
+    };
+    Q_ENUMS(Category)
+
+
 
     virtual ~Task();
 
@@ -127,16 +147,38 @@ public:
      */
     void setOrder(Order order);
 
-signals:
+    /**
+     * Sets the category of the task, UnknownCategory by default
+     * @arg category the category for this task
+     */
+    void setCategory(Category category);
+
+    /**
+     * @return the category of this task
+     */
+    Category category() const;
+
+    /**
+     * Sets the status of the task, UnknownStatus by default.
+     * @arg status the status for this task
+     */
+    void setStatus(Status status);
+
+    /**
+     * @return the status for this task
+     */
+    Status status() const;
+
+Q_SIGNALS:
     /**
      * Emitted when something about the task has changed
      **/
-    void changed(SystemTray::Task *task = 0);
+    void changed(SystemTray::Task *task);
 
     /**
      * Emitted when the task is about to be destroyed
      **/
-    void destroyed(SystemTray::Task *task = 0);
+    void destroyed(SystemTray::Task *task);
 
 protected:
     Task();

@@ -21,12 +21,6 @@
  ***************************************************************************/
 
 #include "applet.h"
-#include "jobwidget.h"
-#include "jobtotalswidget.h"
-#include "notificationwidget.h"
-#include "taskarea.h"
-
-#include "ui_protocols.h"
 
 #include <QtGui/QApplication>
 #include <QtGui/QGraphicsLayout>
@@ -50,10 +44,13 @@
 #include <plasma/theme.h>
 
 #include "../core/manager.h"
-#include "../core/task.h"
 #include "extendertask.h"
-#include "../protocols/dbussystemtray/dbussystemtraytask.h"
-#include "../protocols/fdo/fdotask.h"
+#include "jobwidget.h"
+#include "jobtotalswidget.h"
+#include "notificationwidget.h"
+#include "taskarea.h"
+
+#include "ui_protocols.h"
 
 namespace SystemTray
 {
@@ -98,7 +95,7 @@ public:
     QPointer<KActionSelector> configInterface;
     QPointer<QWidget> notificationInterface;
     QList<Job*> jobs;
-    QList<DBusSystemTrayTask::ItemCategory> shownCategories;
+    QSet<Task::Category> shownCategories;
 
     Plasma::FrameSvg *background;
     JobTotalsWidget *jobSummaryWidget;
@@ -160,27 +157,24 @@ void Applet::init()
             this, SLOT(checkSizes()));
     checkSizes();
 
-    d->taskArea->syncTasks(Private::s_manager->tasks());
-
     extender()->setEmptyExtenderMessage(i18n("No notifications and no jobs"));
-
 
     KConfigGroup globalCg = globalConfig();
 
     if (globalCg.readEntry("ShowApplicationStatus", true)) {
-        d->shownCategories.append(DBusSystemTrayTask::ApplicationStatus);
+        d->shownCategories.insert(Task::ApplicationStatus);
     }
     if (globalCg.readEntry("ShowCommunications", true)) {
-        d->shownCategories.append(DBusSystemTrayTask::Communications);
+        d->shownCategories.insert(Task::Communications);
     }
     if (globalCg.readEntry("ShowSystemServices", true)) {
-        d->shownCategories.append(DBusSystemTrayTask::SystemServices);
+        d->shownCategories.insert(Task::SystemServices);
     }
     if (globalCg.readEntry("ShowHardware", true)) {
-        d->shownCategories.append(DBusSystemTrayTask::Hardware);
+        d->shownCategories.insert(Task::Hardware);
     }
 
-    d->taskArea->setShownCategories(d->shownCategories);
+    d->shownCategories.insert(Task::UnknownCategory);
     d->taskArea->setShowFdoTasks(globalCg.readEntry("ShowFdoTasks", true));
 
 
@@ -201,6 +195,8 @@ void Applet::init()
         connect(Private::s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
                 this, SLOT(addNotification(SystemTray::Notification*)));
     }
+
+    d->taskArea->syncTasks(Private::s_manager->tasks());
 }
 
 void Applet::constraintsEvent(Plasma::Constraints constraints)
@@ -230,6 +226,11 @@ void Applet::constraintsEvent(Plasma::Constraints constraints)
 SystemTray::Manager *Applet::manager() const
 {
     return d->s_manager;
+}
+
+QSet<Task::Category> Applet::shownCategories() const
+{
+    return d->shownCategories;
 }
 
 void Applet::setGeometry(const QRectF &rect)
@@ -393,12 +394,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     hiddenList->clear();
 
     foreach (Task *task, Private::s_manager->tasks()) {
-        DBusSystemTrayTask *dbusTask = qobject_cast<DBusSystemTrayTask *>(task);
-        FdoTask *fdoTask = qobject_cast<FdoTask *>(task);
-
-        if ((dbusTask || fdoTask) &&
-            ((fdoTask && !d->taskArea->showFdoTasks()) ||
-              (dbusTask && !d->shownCategories.contains(dbusTask->category())))) {
+        if (!d->shownCategories.contains(task->category())) {
              continue;
         }
 
@@ -464,28 +460,29 @@ void Applet::configAccepted()
 
     globalCg.writeEntry("ShowApplicationStatus", d->ui.showApplicationStatus->isChecked());
     if (d->ui.showApplicationStatus->isChecked()) {
-        d->shownCategories.append(DBusSystemTrayTask::ApplicationStatus);
+        d->shownCategories.insert(Task::ApplicationStatus);
     }
 
     globalCg.writeEntry("ShowCommunications", d->ui.showCommunications->isChecked());
     if (d->ui.showCommunications->isChecked()) {
-        d->shownCategories.append(DBusSystemTrayTask::Communications);
+        d->shownCategories.insert(Task::Communications);
     }
 
     globalCg.writeEntry("ShowSystemServices", d->ui.showSystemServices->isChecked());
     if (d->ui.showSystemServices->isChecked()) {
-        d->shownCategories.append(DBusSystemTrayTask::SystemServices);
+        d->shownCategories.insert(Task::SystemServices);
     }
 
     globalCg.writeEntry("ShowHardware", d->ui.showHardware->isChecked());
     if (d->ui.showHardware->isChecked()) {
-        d->shownCategories.append(DBusSystemTrayTask::Hardware);
+        d->shownCategories.insert(Task::Hardware);
     }
 
-    d->taskArea->setShownCategories(d->shownCategories);
+    d->shownCategories.insert(Task::UnknownCategory);
     globalCg.writeEntry("ShowFdoTasks", d->ui.showFdoTasks->isChecked());
     d->taskArea->setShowFdoTasks(d->ui.showFdoTasks->isChecked());
 
+    d->taskArea->syncTasks(manager()->tasks());
     emit configNeedsSaving();
 }
 

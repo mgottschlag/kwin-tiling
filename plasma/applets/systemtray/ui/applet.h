@@ -24,6 +24,8 @@
 
 #include <plasma/popupapplet.h>
 
+#include "../core/task.h"
+
 namespace SystemTray
 {
 
@@ -42,7 +44,8 @@ public:
     void init();
     void constraintsEvent(Plasma::Constraints constraints);
     void setGeometry(const QRectF &rect);
-    Manager *manager()const;
+    Manager *manager() const;
+    QSet<Task::Category> shownCategories() const;
 
 protected:
     void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);

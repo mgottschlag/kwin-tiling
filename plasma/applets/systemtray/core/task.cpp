@@ -31,17 +31,25 @@ namespace SystemTray
 class Task::Private
 {
 public:
+    Private()
+        : hiddenState(Task::NotHidden),
+          order(Task::Normal),
+          status(Task::UnknownStatus),
+          category(Task::UnknownCategory)
+    {
+    }
+
     QList<QGraphicsWidget*> associatedWidgets;
-    Task::Order order;
     Task::HideStates hiddenState;
+    Task::Order order;
+    Task::Status status;
+    Task::Category category;
 };
 
 
 Task::Task()
     : d(new Private)
 {
-    d->order = Normal;
-    d->hiddenState = NotHidden;
 }
 
 Task::~Task()
@@ -103,6 +111,50 @@ Task::Order Task::order() const
 void Task::setOrder(Order order)
 {
     d->order = order;
+}
+
+void Task::setCategory(Category category)
+{
+    if (d->category == category) {
+        return;
+    }
+
+    d->category = category;
+    emit changed(this);
+}
+
+Task::Category Task::category() const
+{
+    return d->category;
+}
+
+void Task::setStatus(Status status)
+{
+    if (d->status == status) {
+        return;
+    }
+
+    if (status == NeedsAttention) {
+        setOrder(Last);
+        if (hidden() & AutoHidden) {
+            setHidden(hidden() ^ AutoHidden);
+        }
+    } else {
+        if (status == Active && (hidden() & AutoHidden)) {
+            setHidden(hidden() ^ AutoHidden);
+        } else if (status == Passive) {
+            setHidden(hidden() | AutoHidden);
+        }
+
+        setOrder(Task::Normal);
+    }
+
+    emit changed(this);
+}
+
+Task::Status Task::status() const
+{
+    return d->status;
 }
 
 }
