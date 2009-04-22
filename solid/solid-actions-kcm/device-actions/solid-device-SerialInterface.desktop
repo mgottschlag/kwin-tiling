@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=driverHandle;objectName;port;serialType;
 Name=Serial Interface
+Name[de]=Serielle Schnittstellen
 Name[el]=Σειριακή διασύνδεση
 Name[et]=Jadaliides
 Name[ga]=Comhéadan Srathach

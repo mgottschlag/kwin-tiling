@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=chargePercent;chargeState;objectName;plugged;rechargeable;type;
 Name=Battery
+Name[de]=Akku
 Name[el]=Μπαταρία
 Name[et]=Aku
 Name[ga]=Cadhnra

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=hwAddress;ifaceName;macAddress;objectName;wireless;
 Name=Network Interface
+Name[de]=Netzwerkschnittstelle
 Name[el]=Διασύνδεση δικτύου
 Name[et]=Võrguliides
 Name[ga]=Comhéadan Líonra

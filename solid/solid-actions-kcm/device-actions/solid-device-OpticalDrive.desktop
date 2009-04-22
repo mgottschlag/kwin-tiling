@@ -99,6 +99,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action readSpeed]
 Name=Read Speed
+Name[de]=Lesegeschwindigkeit
 Name[el]=Ταχύτητα ανάγνωσης
 Name[et]=Lugemiskiirus
 Name[ga]=Luas Léite
@@ -119,6 +120,7 @@ Name[zh_TW]=讀取速度
 
 [Desktop Action removable]
 Name=Removable
+Name[de]=Wechselbar
 Name[el]=Αφαιρούμενο μέσο
 Name[et]=Eemaldatav
 Name[ga]=Inbhainte
@@ -139,6 +141,7 @@ Name[zh_TW]=可移除
 
 [Desktop Action supportedMedia]
 Name=Supported Media
+Name[de]=Unterstützte Medien
 Name[el]=Υποστηριζόμενα μέσα
 Name[et]=Toetatud meedia
 Name[ga]=Meáin a dTacaítear Leo

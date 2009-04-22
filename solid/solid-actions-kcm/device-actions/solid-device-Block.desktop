@@ -21,6 +21,7 @@ X-KDE-Solid-Actions-Type=Block
 
 [Desktop Action device]
 Name=Device
+Name[de]=Gerät
 Name[el]=Συσκευή
 Name[et]=Seade
 Name[ga]=Gléas

@@ -2358,6 +2358,7 @@ Type=GESTURE
 
 [Data_1_8]
 Comment=After pressing Win+E (Tux+E) a WWW browser will be launched, and it will open http://www.kde.org . You may run all kind of commands you can run in minicli (Alt+F2).
+Comment[de]=Wenn Sie Windows+E drücken, wird der Webbrowser gestartet und http://www.kde.org geladen. Sie können alle Befehle ausführen, die von der Mini-Befehlszeile unterstützt werden (Alt+F2).
 Comment[el]=Μετά το πάτημα του Win+E (Tux+E) θα εκτελεστεί ο περιηγητής WWW και θα ανοίξει το http://www.kde.org . Μπορείτε να εκτελέσετε όλες τις εντολές που εκτελούνται με το minicli (Alt+F2).
 Comment[et]=Klahvidele Win+E (Tux+E) vajutades avatakse veebibrauser leheküljel http://www.kde.org. Käivitada võib kõiki käske, mida saab käivitada minikäsuaknas (Alt+F2).
 Comment[ga]=Tar éis Win+E (Tux+E) a bhrú, tosófar brabhsálaí Gréasáin, agus osclóidh sé http://www.kde.org/. Is féidir leat gach cineál d'ordú a rith i minicli (Alt+F2).

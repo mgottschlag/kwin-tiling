@@ -43,6 +43,7 @@ Name[zh_TW]=可存取
 
 [Desktop Action filePath]
 Name=File Path
+Name[de]=Dateipfad
 Name[el]=Διαδρομή αρχείου
 Name[et]=Faili asukoht
 Name[ga]=Conair Chomhaid

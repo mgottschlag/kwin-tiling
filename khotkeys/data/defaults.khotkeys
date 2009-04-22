@@ -3,6 +3,7 @@ DataCount=1
 
 [Data_1]
 Comment=Comment
+Comment[de]=Kommentar
 Comment[el]=Σχόλιο
 Comment[et]=Kommentaar
 Comment[ga]=Nóta
@@ -31,6 +32,7 @@ ConditionsCount=0
 
 [Data_1_1]
 Comment=Comment
+Comment[de]=Kommentar
 Comment[el]=Σχόλιο
 Comment[et]=Kommentaar
 Comment[ga]=Nóta
@@ -46,10 +48,12 @@ Comment[x-test]=xxCommentxx
 Comment[zh_TW]=註解
 Enabled=true
 Name=Search
+Name[de]=Suchen
 Name[el]=Αναζήτηση
 Name[et]=Otsing
 Name[ga]=Cuardach
 Name[gu]=શોધ
+Name[km]=ការ​ស្វែងរក
 Name[nds]=Söök
 Name[pt]=Pesquisa
 Name[pt_BR]=Pesquisar

@@ -16,6 +16,7 @@ Comment[pt]=Reserva espaços vazios dentro do painel.
 Comment[pt_BR]=Reserva espaços vazios dentro do painel.
 Comment[sv]=Reservera tomt utrymme inne i panelen.
 Comment[uk]=Створює прогалини на панелі.
+Comment[zh_TW]=在面板內保留空間。
 
 NoDisplay=true
 Type=Service
