@@ -92,7 +92,7 @@ void Nepomuk::SearchRunner::match( Plasma::RunnerContext& context )
     m_mutex.unlock();
 
     if (!context.isValid()) {
-        kDebug() << "deprecated search";
+        kDebug() << "deprecated search:" << context.query();
         // we are no longer the latest call
         return;
     }

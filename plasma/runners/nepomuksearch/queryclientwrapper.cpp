@@ -114,7 +114,7 @@ void Nepomuk::QueryClientWrapper::slotNewEntries( const QList<Nepomuk::Search::R
         match.setIcon( KIcon( s.isEmpty() ? QString("nepomuk") : s ) );
 
         match.setData( qVariantFromValue( res ) );
-
+        match.setId(res.resourceUri().toString());
         m_runnerContext->addMatch( m_runnerContext->query(), match );
     }
 }
