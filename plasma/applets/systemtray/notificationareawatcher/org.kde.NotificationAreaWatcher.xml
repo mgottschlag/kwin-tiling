@@ -11,14 +11,9 @@
         <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QStringList"/>
     </method>
 
-
-    <signal name="ServiceRegistered">
-        <arg type="s"/>
-    </signal>
-
-    <signal name="ServiceUnregistered">
-        <arg type="s"/>
-    </signal>
+    <method name="ProtocolVersion">
+        <arg type="i" direction="out"/>
+    </method>
 
     <method name="RegisterNotificationArea">
        <arg name="service" type="s" direction="in"/>
@@ -27,6 +22,14 @@
     <method name="IsNotificationAreaRegistered">
        <arg name="service" type="b" direction="out"/>
     </method>
+
+    <signal name="ServiceRegistered">
+        <arg type="s"/>
+    </signal>
+
+    <signal name="ServiceUnregistered">
+        <arg type="s"/>
+    </signal>
 
     <signal name="NotificationAreaRegistered">
     </signal>

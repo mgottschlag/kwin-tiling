@@ -33,7 +33,8 @@ namespace SystemTray
 
 DBusSystemTrayProtocol::DBusSystemTrayProtocol(QObject *parent)
     : Protocol(parent),
-      m_dbus(QDBusConnection::sessionBus())
+      m_dbus(QDBusConnection::sessionBus()),
+      m_notificationAreaWatcher(0)
 {
 }
 
@@ -133,9 +134,14 @@ void DBusSystemTrayProtocol::registerWatcher(const QString& service)
     kDebug()<<"service appeared"<<service;
     if (service == "org.kde.NotificationAreaWatcher") {
         QString interface("org.kde.NotificationAreaWatcher");
+        if (m_notificationAreaWatcher) {
+            delete m_notificationAreaWatcher;
+        }
+
         m_notificationAreaWatcher = new org::kde::NotificationAreaWatcher(interface, "/NotificationAreaWatcher",
-                                                 QDBusConnection::sessionBus());
-        if (m_notificationAreaWatcher->isValid()) {
+                                                                          QDBusConnection::sessionBus());
+        if (m_notificationAreaWatcher->isValid() &&
+            m_notificationAreaWatcher->ProtocolVersion() == s_protocolVersion) {
             connect(m_notificationAreaWatcher, SIGNAL(ServiceRegistered(const QString&)), this, SLOT(serviceRegistered(const QString &)));
             connect(m_notificationAreaWatcher, SIGNAL(ServiceUnregistered(const QString&)), this, SLOT(serviceUnregistered(const QString&)));
 
@@ -145,6 +151,8 @@ void DBusSystemTrayProtocol::registerWatcher(const QString& service)
                 newTask(service);
             }
         } else {
+            delete m_notificationAreaWatcher;
+            m_notificationAreaWatcher = 0;
             kDebug()<<"System tray daemon not reachable";
         }
     }
@@ -162,6 +170,9 @@ void DBusSystemTrayProtocol::unregisterWatcher(const QString& service)
             emit task->destroyed(task);
         }
         m_tasks.clear();
+
+        delete m_notificationAreaWatcher;
+        m_notificationAreaWatcher = 0;
     }
 }
 

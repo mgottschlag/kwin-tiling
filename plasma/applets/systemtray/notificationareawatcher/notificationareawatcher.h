@@ -46,6 +46,8 @@ public Q_SLOTS:
     //TODO: property?
     bool IsNotificationAreaRegistered() const;
 
+    int ProtocolVersion() const;
+
 protected Q_SLOTS:
     void serviceChange(const QString& name,
                        const QString& oldOwner,

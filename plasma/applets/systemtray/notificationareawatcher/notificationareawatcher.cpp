@@ -125,4 +125,9 @@ bool NotificationAreaWatcher::IsNotificationAreaRegistered() const
     return !m_notificationAreaServices.isEmpty();
 }
 
+int NotificationAreaWatcher::ProtocolVersion() const
+{
+    return 0;
+}
+
 #include "notificationareawatcher.moc"

@@ -62,6 +62,7 @@ private:
     QHash<QString, DBusSystemTrayTask*> m_tasks;
     org::kde::NotificationAreaWatcher *m_notificationAreaWatcher;
     QString m_serviceName;
+    static const int s_protocolVersion = 0;
 };
 
 }
