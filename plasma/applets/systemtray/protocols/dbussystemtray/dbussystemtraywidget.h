@@ -45,6 +45,7 @@ Q_SIGNALS:
     void clicked(const QPoint &pos);
 
 protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void wheelEvent(QGraphicsSceneWheelEvent *event);
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
