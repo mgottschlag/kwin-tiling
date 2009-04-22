@@ -82,6 +82,7 @@ Trash::Trash(QObject *parent, const QVariantList &args)
 
 Trash::~Trash()
 {
+    delete m_dirLister;
 }
 
 void Trash::init()
