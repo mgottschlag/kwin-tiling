@@ -21,7 +21,7 @@ require 'plasma_applet'
 
 module PlasmaScripting
   class Applet < Qt::Object
-  slots  "setImmutability(Plasma::ImmutabilityType)",
+    slots  "setImmutability(Plasma::ImmutabilityType)",
             :destroy,
             :showConfigurationInterface,
             :raise,
@@ -131,6 +131,18 @@ module PlasmaScripting
 
     def flushPendingConstraintsEvents
       @applet_script.applet.flushPendingConstraintsEvents
+    end
+  end
+
+  class Containment < Applet
+    def initialize(parent, args = nil)
+      super(parent, args)
+    end
+  end
+
+  class PopupApplet < Applet
+    def initialize(parent, args = nil)
+      super(parent, args)
     end
   end
 end

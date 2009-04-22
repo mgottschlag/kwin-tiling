@@ -1,3 +1,7 @@
+2009-04-22  Richard Dale  <richard.j.dale@gmail.com>
+* Added PlasmaScripting::Containment and PlasmaScripting::PopupApplet classes,
+  now that scripting containments and popups can be created
+
 2009-02-10  Richard Dale  <richard.j.dale@gmail.com>
 * For the methods that need to be special cased to work with 
   PlasmaScripting::Applet type arguments, add lower case/underscore versions
