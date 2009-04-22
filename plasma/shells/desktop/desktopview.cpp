@@ -275,6 +275,10 @@ void DesktopView::setContainment(Plasma::Containment *containment)
 
 void DesktopView::toolBoxOpened()
 {
+    if (isDashboardVisible()) {
+        return;
+    }
+
 #ifndef Q_WS_WIN
     NETRootInfo info(QX11Info::display(), NET::Supported);
     if (!info.isSupported(NET::WM2ShowingDesktop)) {
@@ -294,6 +298,10 @@ void DesktopView::toolBoxOpened()
 
 void DesktopView::toolBoxClosed()
 {
+    if (isDashboardVisible()) {
+        return;
+    }
+
 #ifndef Q_WS_WIN
     NETRootInfo info(QX11Info::display(), NET::Supported);
     if (!info.isSupported(NET::WM2ShowingDesktop)) {
@@ -314,6 +322,10 @@ void DesktopView::toolBoxClosed()
 
 void DesktopView::showDesktopUntoggled()
 {
+    if (isDashboardVisible()) {
+        return;
+    }
+
     disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)),
                this, SLOT(showDesktopUntoggled()));
 
