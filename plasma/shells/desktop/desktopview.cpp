@@ -269,7 +269,10 @@ void DesktopView::setContainment(Plasma::Containment *containment)
         }
     }
 
-    connect(containment, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxOpened()));
+    if (containment) {
+        connect(containment, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxOpened()));
+    }
+
     View::setContainment(containment);
 }
 
