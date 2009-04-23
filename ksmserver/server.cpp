@@ -85,7 +85,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kdisplaymanager.h>
 #include <QX11Info>
 #include <krandom.h>
-#include "klauncher_interface.h"
+#include <klauncher_interface.h>
 
 KSMServer* the_server = 0;
 
