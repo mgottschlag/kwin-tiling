@@ -423,8 +423,9 @@ void ClockApplet::configAccepted()
     }
 
     cg.writeEntry("defaultTimezone", d->defaultTimezone);
-    changeEngineTimezone(currentTimezone(), d->defaultTimezone);
+    QString cur = currentTimezone();
     setCurrentTimezone(d->defaultTimezone);
+    changeEngineTimezone(cur, d->defaultTimezone);
 
     d->displayHolidays = d->generalUi.displayHolidays->isChecked();
     cg.writeEntry("displayHolidays", d->displayHolidays);
@@ -526,9 +527,9 @@ void ClockApplet::wheelEvent(QGraphicsSceneWheelEvent *event)
         }
     }
 
-    changeEngineTimezone(currentTimezone(), newTimezone);
+    QString cur = currentTimezone();
     setCurrentTimezone(newTimezone);
-
+    changeEngineTimezone(currentTimezone(), newTimezone);
     update();
 }
 
