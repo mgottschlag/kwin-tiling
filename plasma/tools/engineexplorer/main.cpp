@@ -17,15 +17,51 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <iostream>
+
 #include <KApplication>
 #include <KAboutData>
 #include <KCmdLineArgs>
 #include <KLocale>
 
+#include <Plasma/DataEngineManager>
+
 #include "engineexplorer.h"
 
 static const char description[] = I18N_NOOP("Explore the data published by Plasma DataEngines");
-static const char version[] = "0.0";
+static const char version[] = "0.2";
+
+void listEngines()
+{
+    int maxLen = 0;
+    QMap<QString, QString> engines;
+    foreach (const KPluginInfo &info, Plasma::DataEngineManager::listEngineInfo()) {
+        if (info.property("NoDisplay").toBool()) {
+            continue;
+        }
+
+        int len = info.pluginName().length();
+        if (len > maxLen) {
+            maxLen = len;
+        }
+
+        QString name = info.pluginName();
+        QString comment = info.comment();
+
+        if (comment.isEmpty()) {
+            comment = i18n("No description available");
+        }
+
+        engines.insert(name, comment);
+    }
+
+    QMap<QString, QString>::const_iterator it;
+    for (it = engines.constBegin(); it != engines.constEnd(); it++) {
+        QString engine("%1 - %2");
+        engine = engine.arg(it.key().leftJustified(maxLen, ' ')).arg(it.value());
+        std::cout << engine.toLocal8Bit().data() << std::endl;
+    }
+}
 
 int main(int argc, char **argv)
 {
@@ -39,6 +75,7 @@ int main(int argc, char **argv)
     KCmdLineArgs::init(argc, argv, &aboutData);
 
     KCmdLineOptions options;
+    options.add("list", ki18n("Displays a list of known engines and their descriptions"));
     options.add("height <pixels>", ki18n("The desired height in pixels"));
     options.add("width <pixels>", ki18n("The desired width in pixels"));
     options.add("x <pixels>", ki18n("The desired x position in pixels"));
@@ -48,9 +85,14 @@ int main(int argc, char **argv)
     options.add("interval <ms>", ki18n("Update interval in milliseconds"));
     options.add("app <application>", ki18n("Only show engines associated with the parent application; "
                                            "maps to the X-KDE-ParentApp entry in the DataEngine's .desktop file."));
-    KCmdLineArgs::addCmdLineOptions(options);
 
+    KCmdLineArgs::addCmdLineOptions(options);
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+
+    if (args->isSet("list")) {
+        listEngines();
+        return 0;
+    }
 
     KApplication app;
     EngineExplorer* w = new EngineExplorer;
