@@ -47,6 +47,7 @@
 #include <KDialog>
 
 #include <Plasma/Dialog>
+#include <Plasma/FrameSvg>
 #include <Plasma/PaintUtils>
 #include <Plasma/Svg>
 #include <Plasma/Theme>
@@ -55,6 +56,8 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     : ClockApplet(parent, args),
       m_showSecondHand(false),
       m_showTimezoneString(false),
+      m_showingTimezone(false),
+      m_tzFrame(0),
       m_repaintCache(RepaintAll),
       m_faceCache(QPixmap()),
       m_handsCache(QPixmap()),
@@ -86,6 +89,7 @@ void Clock::init()
     KConfigGroup cg = config();
     m_showSecondHand = cg.readEntry("showSecondHand", false);
     m_showTimezoneString = cg.readEntry("showTimezoneString", false);
+    m_showingTimezone = m_showTimezoneString;
     m_fancyHands = cg.readEntry("fancyHands", false);
     setCurrentTimezone(cg.readEntry("timezone", localTimezone()));
 
@@ -112,11 +116,19 @@ void Clock::constraintsEvent(Plasma::Constraints constraints)
 
     if (constraints & Plasma::SizeConstraint) {
         QSize pixmapSize = size().toSize();
+
+        if (m_showingTimezone) {
+            QRect tzArea = tzRect();
+            pixmapSize.setHeight(qMax(10, pixmapSize.height() - tzArea.height()));
+            tzFrame()->resizeFrame(tzArea.size());
+        }
+
+        pixmapSize.setWidth(pixmapSize.height());
         m_faceCache = QPixmap(pixmapSize);
         m_handsCache = QPixmap(pixmapSize);
         m_glassCache = QPixmap(pixmapSize);
 
-        m_theme->resize(size());
+        m_theme->resize(pixmapSize);
     }
 
     m_repaintCache = RepaintAll;
@@ -180,6 +192,7 @@ void Clock::clockConfigAccepted()
     KConfigGroup cg = config();
     m_showSecondHand = ui.showSecondHandCheckBox->isChecked();
     m_showTimezoneString = ui.showTimezoneStringCheckBox->isChecked();
+    m_showingTimezone = m_showTimezoneString || shouldDisplayTimezone();
 
     cg.writeEntry("showSecondHand", m_showSecondHand);
     cg.writeEntry("showTimezoneString", m_showTimezoneString);
@@ -188,7 +201,6 @@ void Clock::clockConfigAccepted()
     dataEngine("time")->disconnectSource(currentTimezone(), this);
     connectToEngine();
 
-    //TODO: why we don't call updateConstraints()?
     constraintsEvent(Plasma::AllConstraints);
     emit configNeedsSaving();
 }
@@ -204,6 +216,10 @@ void Clock::changeEngineTimezone(const QString &oldTimezone, const QString &newT
         timeEngine->connectSource(newTimezone, this, 6000, Plasma::AlignToMinute);
     }
 
+    if (m_showingTimezone != (m_showTimezoneString || shouldDisplayTimezone())) {
+        m_showingTimezone = !m_showingTimezone;
+        constraintsEvent(Plasma::SizeConstraint);
+    }
     m_repaintCache = RepaintAll;
 }
 
@@ -236,7 +252,7 @@ void Clock::drawHand(QPainter *p, const QRect &rect, const qreal verticalTransla
             elementRect.setWidth( elementRect.width() * 2.5 );
         static const QPoint offset = QPoint(2, 3);
 
-        p->translate(rect.width()/2+offset.x(), rect.height()/2+offset.y());
+        p->translate(rect.x() + (rect.width() / 2) + offset.x(), rect.y() + (rect.height() / 2) + offset.y());
         p->rotate(rotation);
         p->translate(-elementRect.width()/2, elementRect.y()-verticalTranslation);
         m_theme->paint(p, QRectF(QPointF(0, 0), elementRect.size()), name);
@@ -248,10 +264,11 @@ void Clock::drawHand(QPainter *p, const QRect &rect, const qreal verticalTransla
 
     name = handName + "Hand";
     elementRect = m_theme->elementRect(name);
-    if( rect.height() < KIconLoader::SizeEnormous )
-        elementRect.setWidth( elementRect.width() * 2.5 );
+    if (rect.height() < KIconLoader::SizeEnormous) {
+        elementRect.setWidth(elementRect.width() * 2.5);
+    }
 
-    p->translate(rect.width()/2, rect.height()/2);
+    p->translate(rect.x() + rect.width()/2, rect.y() + rect.height()/2);
     p->rotate(rotation);
     p->translate(-elementRect.width()/2, elementRect.y()-verticalTranslation);
     m_theme->paint(p, QRectF(QPointF(0, 0), elementRect.size()), name);
@@ -317,6 +334,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     }
 
     // paint face and glass cache
+    QRect faceRect = m_faceCache.rect();
     if (m_repaintCache == RepaintAll) {
         m_faceCache.fill(Qt::transparent);
         m_glassCache.fill(Qt::transparent);
@@ -326,48 +344,15 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         facePainter.setRenderHint(QPainter::SmoothPixmapTransform);
         glassPainter.setRenderHint(QPainter::SmoothPixmapTransform);
 
-        m_theme->paint(&facePainter, rect, "ClockFace");
-
-        // optionally paint the time string
-        if (m_showTimezoneString || shouldDisplayTimezone()) {
-            QString time = prettyTimezone();
-            QFontMetrics fm(QApplication::font());
-            const int margin = 4;
-
-            if (!time.isEmpty()) {
-                const qreal labelHeight = fm.height() + 2 * margin;
-                // for small clocks, compute a minimum offset
-                qreal labelOffset = m_theme->elementRect("HandCenterScrew").height() / 2 + labelHeight;
-                // for larger clocks, add a relative component to the offset
-                if ((rect.height() / 2) / 3 > labelHeight) {
-                    labelOffset += rect.height() / 2 * 0.05;
-                }
-                QRect textRect(rect.width() / 2 - fm.width(time) / 2, rect.height() / 2 - labelOffset,
-                      fm.width(time), fm.height());
-
-                facePainter.setPen(Qt::NoPen);
-                QColor background = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
-                background.setAlphaF(0.5);
-                facePainter.setBrush(background);
-
-                facePainter.setRenderHint(QPainter::Antialiasing, true);
-                facePainter.drawPath(Plasma::PaintUtils::roundedRectangle(textRect.adjusted(-margin, -margin, margin, margin), margin));
-                facePainter.setRenderHint(QPainter::Antialiasing, false);
-
-                facePainter.setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
-
-                facePainter.setFont(Plasma::Theme::defaultTheme()->font(Plasma::Theme::DefaultFont));
-                facePainter.drawText(textRect, Qt::AlignCenter, time);
-            }
-        }
+        m_theme->paint(&facePainter, m_faceCache.rect(), "ClockFace");
 
         glassPainter.save();
         QRectF elementRect = QRectF(QPointF(0, 0), m_theme->elementSize("HandCenterScrew"));
-        glassPainter.translate(rect.width() / 2 - elementRect.width() / 2, rect.height() / 2 - elementRect.height() / 2);
+        glassPainter.translate(faceRect.width() / 2 - elementRect.width() / 2, faceRect.height() / 2 - elementRect.height() / 2);
         m_theme->paint(&glassPainter, elementRect, "HandCenterScrew");
         glassPainter.restore();
 
-        m_theme->paint(&glassPainter, rect, "Glass");
+        m_theme->paint(&glassPainter, faceRect, "Glass");
 
         // get vertical translation, see drawHand() for more details
         m_verticalTranslation = m_theme->elementRect("ClockFace").center().y();
@@ -378,24 +363,63 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         m_handsCache.fill(Qt::transparent);
 
         QPainter handsPainter(&m_handsCache);
-        handsPainter.drawPixmap(rect, m_faceCache, rect);
+        handsPainter.drawPixmap(faceRect, m_faceCache, faceRect);
         handsPainter.setRenderHint(QPainter::SmoothPixmapTransform);
 
-        drawHand(&handsPainter, rect, m_verticalTranslation, hours, "Hour");
-        drawHand(&handsPainter, rect, m_verticalTranslation, minutes, "Minute");
+        drawHand(&handsPainter, faceRect, m_verticalTranslation, hours, "Hour");
+        drawHand(&handsPainter, faceRect, m_verticalTranslation, minutes, "Minute");
     }
 
     // reset repaint cache flag
     m_repaintCache = RepaintNone;
 
     // paint caches and second hand
-    p->setRenderHint(QPainter::SmoothPixmapTransform);
-    p->drawPixmap(rect, m_handsCache, rect);
-    if (m_showSecondHand) {
-        drawHand(p, rect, m_verticalTranslation, seconds, "Second");
+    QRect targetRect = faceRect;
+    if (targetRect.width() < rect.width()) {
+        targetRect.moveLeft((rect.width() - targetRect.width()) / 2);
     }
-    p->drawPixmap(rect, m_glassCache, rect);
 
+    p->drawPixmap(targetRect, m_handsCache, faceRect);
+    if (m_showSecondHand) {
+        p->setRenderHint(QPainter::SmoothPixmapTransform);
+        drawHand(p, targetRect, m_verticalTranslation, seconds, "Second");
+    }
+    p->drawPixmap(targetRect, m_glassCache, faceRect);
+
+    // optionally paint the time string
+    if (m_showingTimezone) {
+        QString time = prettyTimezone();
+
+        if (!time.isEmpty()) {
+            QRect textRect = tzRect();
+            tzFrame()->paintFrame(p, textRect, QRect(QPoint(0, 0), textRect.size()));
+
+            p->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+            p->setFont(Plasma::Theme::defaultTheme()->font(Plasma::Theme::DefaultFont));
+            p->drawText(textRect, Qt::AlignCenter, time);
+        }
+    }
+}
+
+QRect Clock::tzRect()
+{
+    QRect rect = contentsRect().toRect();
+    QFont font = Plasma::Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
+    QFontMetrics fm(font);
+    qreal left, top, right, bottom;
+    tzFrame()->getMargins(left, top, right, bottom);
+    int height = top + bottom + fm.height();
+    return QRect(0, rect.bottom() - height, rect.width(), height);
+}
+
+Plasma::FrameSvg *Clock::tzFrame()
+{
+    if (!m_tzFrame) {
+        m_tzFrame = new Plasma::FrameSvg(this);
+        m_tzFrame->setImagePath("widgets/background");
+    }
+
+    return m_tzFrame;
 }
 
 #include "clock.moc"

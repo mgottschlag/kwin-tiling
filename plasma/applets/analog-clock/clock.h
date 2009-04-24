@@ -42,6 +42,7 @@ class QTimer;
 
 namespace Plasma
 {
+    class FrameSvg;
     class Svg;
     class Dialog;
 }
@@ -73,11 +74,15 @@ class Clock : public ClockApplet
     private:
         void connectToEngine();
         void drawHand(QPainter *p, const QRect &rect, const qreal verticalTranslation, const qreal rotation, const QString &handName);
+        QRect tzRect();
+        Plasma::FrameSvg *tzFrame();
 
         bool m_showSecondHand;
         bool m_fancyHands;
         bool m_showTimezoneString;
-        Plasma::Svg* m_theme;
+        bool m_showingTimezone;
+        Plasma::FrameSvg *m_tzFrame;
+        Plasma::Svg *m_theme;
         QTime m_time;
         QTime m_lastTimeSeen;
         enum RepaintCache {
