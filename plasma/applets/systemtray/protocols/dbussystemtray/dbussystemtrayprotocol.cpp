@@ -38,12 +38,10 @@ DBusSystemTrayProtocol::DBusSystemTrayProtocol(QObject *parent)
 {
 }
 
-
 DBusSystemTrayProtocol::~DBusSystemTrayProtocol()
 {
-
+    m_dbus.unregisterService(m_serviceName);
 }
-
 
 void DBusSystemTrayProtocol::init()
 {
@@ -64,7 +62,6 @@ void DBusSystemTrayProtocol::init()
         registerWatcher("org.kde.NotificationAreaWatcher");
     }
 }
-
 
 void DBusSystemTrayProtocol::newTask(QString service)
 {
