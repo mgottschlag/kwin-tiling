@@ -213,7 +213,7 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
                 m_spacer = 0;
             }
 
-            QPointF pos = m_applet->view()->mapFromGlobal(event->globalPos());
+            QPointF pos = c->view()->mapFromGlobal(event->globalPos());
             QRectF g = m_applet->geometry();
             pos += QPoint(m_offset, m_offset);
             g.moveTo(pos);
@@ -224,6 +224,7 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
             m_spacer = 0;
             c->addApplet(m_applet, pos, true);
             m_applet->flushPendingConstraintsEvents();
+            m_applet->setPos(pos);
             releaseMouse();
             return;
         }
