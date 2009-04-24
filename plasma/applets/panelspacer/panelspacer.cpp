@@ -33,6 +33,7 @@ PanelSpacer::PanelSpacer(QObject *parent, const QVariantList &args)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setHasConfigurationInterface(false);
+    setCacheMode(DeviceCoordinateCache);
 }
 
 PanelSpacer::~PanelSpacer()
@@ -105,8 +106,10 @@ void PanelSpacer::paintInterface(QPainter *painter, const QStyleOptionGraphicsIt
 
 void PanelSpacer::updateConfigurationMode(bool config)
 {
-    m_configurationMode = config;
-    update();
+    if (config != m_configurationMode) {
+        m_configurationMode = config;
+        update();
+    }
 }
 
 
