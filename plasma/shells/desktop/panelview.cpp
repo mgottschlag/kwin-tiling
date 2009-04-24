@@ -1004,6 +1004,7 @@ QTimeLine *PanelView::timeLine()
 void PanelView::hideMousePoll()
 {
     QPoint mousePos = QCursor::pos();
+
     if (!geometry().contains(mousePos) && !hasPopup()) {
         startAutoHide();
     }
@@ -1123,7 +1124,7 @@ void PanelView::unhide(bool destroyTrigger)
     tl->setDirection(QTimeLine::Backward);
     tl->setDuration(100);
 
-    if (m_visibilityMode == AutoHide) {
+    if (m_visibilityMode == AutoHide || m_visibilityMode == LetWindowsCover) {
         // LetWindowsCover panels are always shown, so don't bother and prevent
         // some unsightly flickers
         show();
@@ -1174,6 +1175,9 @@ void PanelView::startAutoHide()
         if (tl->state() == QTimeLine::NotRunning) {
             tl->start();
         }
+    } else if (m_visibilityMode == LetWindowsCover) {
+	KWindowSystem::lowerWindow(winId());
+        createUnhideTrigger();
     } else {
         animateHide(1.0);
     }
@@ -1181,14 +1185,10 @@ void PanelView::startAutoHide()
 
 void PanelView::leaveEvent(QEvent *event)
 {
-    if (m_visibilityMode == LetWindowsCover) {
-        if (m_triggerEntered) {
-            //kDebug() << "not creating!";
-            m_triggerEntered = false;
-        } else {
-            createUnhideTrigger();
-        }
-    } else if (m_visibilityMode == AutoHide && !m_editting) {
+    if (m_visibilityMode == LetWindowsCover && m_triggerEntered) {
+	//kDebug() << "not creating!";
+	m_triggerEntered = false;
+    } else if ((m_visibilityMode == AutoHide || m_visibilityMode == LetWindowsCover) && !m_editting) {
         // even if we dont have a popup, we'll start a timer, so
         // that the panel stays if the mouse only leaves for a
         // few ms
