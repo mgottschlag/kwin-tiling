@@ -122,7 +122,9 @@ void WeatherEngine::init()
                 QString("%1|%2").arg(info.property("Name").toString()).arg(info.pluginName()));
     }
 
-    d->m_networkAvailable = Solid::Networking::status() == Solid::Networking::Connected;
+    Solid::Networking::Status status = Solid::Networking::status();
+    d->m_networkAvailable = (status == Solid::Networking::Connected ||
+                             status == Solid::Networking::Unknown);
     connect(Solid::Networking::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
             this, SLOT(networkStatusChanged(Solid::Networking::Status)));
 }
