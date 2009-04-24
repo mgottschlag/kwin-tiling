@@ -41,15 +41,18 @@ Player::Ptr MprisFactory::create(const QVariantList& args)
     if (args.isEmpty()) {
         return Player::Ptr(0);
     }
+
     QString dbusName(args.first().toString());
     if (dbusName.isEmpty()) {
         return Player::Ptr(0);
     }
+
     Mpris* player = new Mpris(dbusName, this);
     if (!player->isRunning()) {
         delete player;
         player = 0;
     }
+
     return Player::Ptr(player);
 }
 
