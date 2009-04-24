@@ -26,6 +26,7 @@
 #include <QtGui/QPainter>
 #include <QtGui/QStyleOptionGraphicsItem>
 #include <QtGui/QSpinBox>
+#include <QtGui/QClipboard>
 #include <QtCore/QTimeLine>
 #include <QtGui/QGraphicsProxyWidget>
 #include <QtGui/QGraphicsSceneMouseEvent>
@@ -40,6 +41,7 @@
 #include <KConfigDialog>
 #include <KConfigGroup>
 #include <KDatePicker>
+#include <KMenu>
 #include <KDebug>
 #include <KDialog>
 #include <KGlobalSettings>
@@ -69,6 +71,8 @@ public:
     Private(ClockApplet *clockapplet)
         : q(clockapplet),
           timezone(ClockApplet::localTimezoneUntranslated()),
+          clipboardMenu(0),
+          label(0),
           forceTzDisplay(false),
           displayHolidays(true)
     {}
@@ -80,6 +84,7 @@ public:
     QString defaultTimezone;
     QPoint clicked;
     QStringList selectedTimezones;
+    KMenu *clipboardMenu;
     QString prettyTimezone;
     Plasma::Label *label;
     QString holidaysRegion;
@@ -96,7 +101,7 @@ public:
         if (tz == "UTC")  {
             subText += "<br><b>UTC</b> ";
         }
-        else  {
+        else {
             subText += "<br><b>" + data["Timezone City"].toString().replace("_", " ")+"</b> ";
         }
         subText += KGlobal::locale()->formatTime(data["Time"].toTime(), false) + ", ";
@@ -177,13 +182,13 @@ ClockApplet::ClockApplet(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args),
       d(new Private(this))
 {
-    d->label = 0;
     setPopupIcon(QIcon());
     setPassivePopup(true);
 }
 
 ClockApplet::~ClockApplet()
 {
+    delete d->clipboardMenu;
     delete d;
 }
 
@@ -473,6 +478,20 @@ bool ClockApplet::shouldDisplayTimezone() const
     return d->forceTzDisplay;
 }
 
+QList<QAction *> ClockApplet::contextualActions()
+{
+    if (!d->clipboardMenu) {
+        d->clipboardMenu = new KMenu(i18n("C&opy to Clipboard"));
+        d->clipboardMenu->setIcon(KIcon("edit-copy"));
+        connect(d->clipboardMenu, SIGNAL(aboutToShow()), this, SLOT(updateClipboardMenu()));
+        connect(d->clipboardMenu, SIGNAL(triggered(QAction*)), this, SLOT(copyToClipboard(QAction*)));
+    }
+
+    QList<QAction*> contextualActions;
+    contextualActions << d->clipboardMenu->menuAction();
+    return contextualActions;
+}
+
 void ClockApplet::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
     if (d->selectedTimezones.count() < 1) {
@@ -669,6 +688,33 @@ void ClockApplet::dateChanged(const QDate &date)
             d->createDateExtender(date);
         }
     }
+}
+
+void ClockApplet::updateClipboardMenu()
+{
+    d->clipboardMenu->clear();
+    QList<QAction*> actions;
+    Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
+    QDateTime dateTime = QDateTime(data["Date"].toDate(), data["Time"].toTime());
+    KLocale *locale = KGlobal::locale();
+
+    d->clipboardMenu->addAction(locale->formatDateTime(dateTime));
+    d->clipboardMenu->addAction(locale->formatDate(dateTime.date(), KLocale::ShortDate));
+    d->clipboardMenu->addAction(locale->formatDate(dateTime.date(), KLocale::LongDate));
+    d->clipboardMenu->addAction(locale->formatTime(dateTime.time(), false));
+    d->clipboardMenu->addAction(locale->formatTime(dateTime.time(), true));
+    d->clipboardMenu->addAction(dateTime.date().toString());
+    d->clipboardMenu->addAction(dateTime.time().toString());
+    d->clipboardMenu->addAction(dateTime.toString());
+    d->clipboardMenu->addAction(dateTime.toString("yyyy-MM-dd hh:mm:ss"));
+}
+
+void ClockApplet::copyToClipboard(QAction* action)
+{
+    QString text = action->text();
+    text.remove(QChar('&'));
+
+    QApplication::clipboard()->setText(text);
 }
 
 #include "clockapplet.moc"

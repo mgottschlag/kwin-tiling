@@ -53,6 +53,7 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::PopupApplet
         bool isLocalTimezone() const;
         QStringList getSelectedTimezones() const;
         bool shouldDisplayTimezone() const;
+        QList<QAction*> contextualActions();
 
         static QString localTimezone();
         static QString localTimezoneUntranslated();
@@ -78,6 +79,10 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::PopupApplet
         void updateClockDefaultsTo();
         void dateChanged(const QDate &);
         void speakTime(const QTime &);
+
+    private Q_SLOTS:
+        void updateClipboardMenu();
+        void copyToClipboard(QAction* action);
 
     private:
         class Private;
