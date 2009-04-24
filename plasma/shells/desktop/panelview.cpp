@@ -221,6 +221,8 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 
     connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(pinchContainmentToCurrentScreen()));
 
+    connect(containment(), SIGNAL(appletAdded(Plasma::Applet *, const QPointF &)), this, SLOT(appletAdded(Plasma::Applet *)));
+
     // Graphics view setup
     setFrameStyle(QFrame::NoFrame);
     //setAutoFillBackground(true);
@@ -1238,6 +1240,22 @@ bool PanelView::event(QEvent *event)
     }
 
     return Plasma::View::event(event);
+}
+
+void PanelView::appletAdded(Plasma::Applet *applet)
+{
+    if (m_panelController) {
+        QColor overlayColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
+        QBrush overlayBrush(overlayColor);
+        QPalette p(palette());
+        p.setBrush(QPalette::Window, overlayBrush);
+
+        PanelAppletOverlay *moveOverlay = new PanelAppletOverlay(applet, this);
+        moveOverlay->setPalette(p);
+        moveOverlay->show();
+        moveOverlay->raise();
+        m_moveOverlays << moveOverlay;
+    }
 }
 
 void PanelView::animateHide(qreal progress)

@@ -47,6 +47,7 @@ namespace Plasma
 {
     class Containment;
     class Corona;
+    class Applet;
     class Svg;
 }
 
@@ -176,6 +177,11 @@ public Q_SLOTS:
      * trigger, such as compositing changing.
      */
     void recreateUnhideTrigger();
+
+    /**
+     * Called when a new applet is added into the view's containment
+     */
+    void appletAdded(Plasma::Applet *applet);
 
 protected Q_SLOTS:
     void updateStruts();
