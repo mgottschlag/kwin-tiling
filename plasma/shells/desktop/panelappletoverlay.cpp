@@ -139,6 +139,7 @@ void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
 {
     Q_UNUSED(event)
 
+    m_lastGlobalPos = event->globalPos();
     //kDebug() << m_clickDrag;
     if (m_clickDrag) {
         setMouseTracking(false);
@@ -176,6 +177,25 @@ void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
         m_offset = geometry().x() - m_origin.x();
     } else {
         m_offset = geometry().y() - m_origin.y();
+    }
+
+    m_dragAction = Move;
+
+    const int margin = 9;
+    if (m_applet->inherits("PanelSpacer")) {
+        if (m_applet->formFactor() == Plasma::Horizontal) {
+            if (event->pos().x() < margin) {
+                m_dragAction = LeftResize;
+            } else if (event->pos().x() > m_applet->size().width() - margin) {
+                m_dragAction = RightResize;
+            }
+        } else if (m_applet->formFactor() == Plasma::Vertical) {
+            if (event->pos().y() < margin) {
+                m_dragAction = LeftResize;
+            } else if (event->pos().y() > m_applet->size().height() - margin) {
+                m_dragAction = RightResize;
+            }
+        }
     }
 
     grabMouse();
@@ -228,6 +248,32 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
             releaseMouse();
             return;
         }
+    } else if (m_applet->inherits("PanelSpacer") && m_dragAction != Move) {
+        if (m_applet->formFactor() == Plasma::Horizontal) {
+            if (m_dragAction == LeftResize) {
+                int fixedWidth = m_applet->size().width()+(m_lastGlobalPos.x() - event->globalPos().x());
+                m_applet->setPos(m_applet->pos().x()-(fixedWidth-m_applet->size().width()), m_applet->pos().y());
+                m_applet->setMinimumWidth(fixedWidth);
+                m_applet->setMaximumWidth(fixedWidth);
+            } else if (m_dragAction == RightResize) {
+                int fixedWidth = m_applet->size().width()-(m_lastGlobalPos.x() - event->globalPos().x());
+                m_applet->setMinimumWidth(fixedWidth);
+                m_applet->setMaximumWidth(fixedWidth);
+            }
+        } else if (m_applet->formFactor() == Plasma::Vertical) {
+            if (m_dragAction == LeftResize) {
+                int fixedHeight = m_applet->size().height()+(m_lastGlobalPos.y() - event->globalPos().y());
+                m_applet->setPos(m_applet->pos().y()-(fixedHeight-m_applet->size().width()), m_applet->pos().y());
+                m_applet->setMinimumHeight(fixedHeight);
+                m_applet->setMaximumHeight(fixedHeight);
+            } else if (m_dragAction == RightResize) {
+                int fixedHeight = m_applet->size().width()-(m_lastGlobalPos.y() - event->globalPos().y());
+                m_applet->setMinimumHeight(fixedHeight);
+                m_applet->setMaximumHeight(fixedHeight);
+            }
+        }
+        m_lastGlobalPos = event->globalPos();
+        return;
     }
 
     if (!m_spacer) {
@@ -265,6 +311,7 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
         swapWithNext();
     }
 
+    m_lastGlobalPos = event->globalPos();
     //kDebug() << "=================================";
 }
 

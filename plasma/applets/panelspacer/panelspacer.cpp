@@ -46,6 +46,30 @@ void PanelSpacer::init()
     }
 }
 
+void PanelSpacer::constraintsEvent(Plasma::Constraints constraints)
+{
+    if (constraints & Plasma::FormFactorConstraint) {
+        if (formFactor() == Plasma::Horizontal) {
+            setMaximumHeight(QWIDGETSIZE_MAX);
+            setMinimumHeight(0);
+        } else if (formFactor() == Plasma::Vertical) {
+            setMaximumWidth(QWIDGETSIZE_MAX);
+            setMinimumWidth(0);
+        }
+    }
+
+    if (constraints & Plasma::StartupCompletedConstraint) {
+
+         if (formFactor() == Plasma::Horizontal) {
+            setMaximumWidth(size().width());
+            setMinimumWidth(size().width());
+        } else if (formFactor() == Plasma::Vertical) {
+            setMaximumHeight(size().height());
+            setMinimumHeight(size().height());
+        }
+    }
+}
+
 void PanelSpacer::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
     Q_UNUSED(option)
@@ -59,6 +83,24 @@ void PanelSpacer::paintInterface(QPainter *painter, const QStyleOptionGraphicsIt
     c.setAlphaF(0.3);
 
     painter->fillPath(p, c);
+
+    painter->setRenderHint(QPainter::Antialiasing);
+    c = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    c.setAlphaF(0.7);
+
+    const int margin = 8;
+
+    QPainterPath path;
+    if (formFactor() == Plasma::Horizontal) {
+        path = Plasma::PaintUtils::roundedRectangle(contentsRect.adjusted(1, 1, -contentsRect.width()+margin-1, -2), 4);
+        painter->fillPath(path, c);
+        path = Plasma::PaintUtils::roundedRectangle(contentsRect.adjusted(contentsRect.width()-margin, 1, -2, -2), 4);
+    } else if (formFactor() == Plasma::Vertical) {
+        path = Plasma::PaintUtils::roundedRectangle(contentsRect.adjusted(1, 1, -2, -contentsRect.height()+margin-1), 4);
+        painter->fillPath(path, c);
+        path = Plasma::PaintUtils::roundedRectangle(contentsRect.adjusted(1, contentsRect.height()-margin, -2, -2), 4);
+    }
+    painter->fillPath(path, c);
 }
 
 void PanelSpacer::updateConfigurationMode(bool config)

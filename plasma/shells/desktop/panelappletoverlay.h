@@ -35,6 +35,12 @@ class PanelAppletOverlay : public QWidget
     Q_OBJECT
 
 public:
+    enum DragType {
+       Move = 1,
+       LeftResize = 2,
+       RightResize = 3
+    };
+
     PanelAppletOverlay(Plasma::Applet *applet, QWidget *parent);
     ~PanelAppletOverlay();
 
@@ -63,6 +69,8 @@ private:
     QRectF m_prevGeom;
     QRectF m_nextGeom;
     QPoint m_origin;
+    QPoint m_lastGlobalPos;
+    DragType m_dragAction;
     int m_offset;
     int m_index;
     bool m_clickDrag;

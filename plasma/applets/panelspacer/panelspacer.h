@@ -31,6 +31,7 @@ public:
     ~PanelSpacer();
     void init();
     void paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
+    void constraintsEvent(Plasma::Constraints constraints);
 
 private Q_SLOTS:
     void updateConfigurationMode(bool config);
