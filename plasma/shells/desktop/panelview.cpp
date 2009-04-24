@@ -832,6 +832,10 @@ void PanelView::edittingComplete()
     containment()->closeToolBox();
     updateStruts();
     m_firstPaint = true; // triggers autohide
+
+    if (m_visibilityMode == LetWindowsCover) {
+         startAutoHide();
+    }
 }
 
 Qt::Alignment PanelView::alignmentFilter(Qt::Alignment align) const
@@ -1046,8 +1050,6 @@ bool PanelView::hintOrUnhide(const QPoint &point, bool dueToDnd)
     }
 
     //kDebug() << point << m_triggerZone;
-//    if (point == QPoint()) {
-        //kDebug() << "enter, we should start glowing!";
     if (m_triggerZone.contains(point)) {
         //kDebug() << "unhide!" << point;
         unhide(!dueToDnd);
@@ -1176,7 +1178,7 @@ void PanelView::startAutoHide()
             tl->start();
         }
     } else if (m_visibilityMode == LetWindowsCover) {
-	KWindowSystem::lowerWindow(winId());
+        KWindowSystem::lowerWindow(winId());
         createUnhideTrigger();
     } else {
         animateHide(1.0);
@@ -1186,8 +1188,8 @@ void PanelView::startAutoHide()
 void PanelView::leaveEvent(QEvent *event)
 {
     if (m_visibilityMode == LetWindowsCover && m_triggerEntered) {
-	//kDebug() << "not creating!";
-	m_triggerEntered = false;
+        //kDebug() << "not creating!";
+        m_triggerEntered = false;
     } else if ((m_visibilityMode == AutoHide || m_visibilityMode == LetWindowsCover) && !m_editting) {
         // even if we dont have a popup, we'll start a timer, so
         // that the panel stays if the mouse only leaves for a
