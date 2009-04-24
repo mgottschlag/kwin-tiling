@@ -58,8 +58,9 @@
     </method>
 
     <!-- this probably is too much...-->
-    <method name="Wheel">
+    <method name="Scroll">
       <arg name="delta" type="i" direction="in"/>
+      <arg name="orietation" type="s" direction="in"/>
     </method>
 
     <!-- Signals: the client wants to change something in the status-->

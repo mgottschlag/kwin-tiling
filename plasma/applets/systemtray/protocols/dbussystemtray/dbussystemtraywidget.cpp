@@ -58,7 +58,7 @@ void DBusSystemTrayWidget::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
     //kDebug() << m_iface << event->delta();
     if (m_iface) {
-        m_iface->call(QDBus::NoBlock, "Wheel", event->delta());
+        m_iface->call(QDBus::NoBlock, "Scroll", event->delta(), "Vertical");
     }
 }
 
