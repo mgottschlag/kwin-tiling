@@ -221,6 +221,9 @@ void Pager::createConfigurationInterface(KConfigDialog *parent)
     }
 
     ui.showWindowIconsCheckBox->setChecked(m_showWindowIcons);
+    if (formFactor() == Plasma::Vertical) {
+        ui.labelRows->setText(i18n("Number of columns:"));
+    }
     ui.spinRows->setValue(m_rows);
     ui.spinRows->setMaximum(m_desktopCount);
 
