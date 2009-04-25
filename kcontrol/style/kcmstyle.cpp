@@ -194,18 +194,16 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 	hbLayout->setObjectName( "hbLayout" );
 
 	QLabel* label=new QLabel(i18n("Widget style:"),this);
-	label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
 	hbLayout->addWidget( label );
 
 	cbStyle = new KComboBox( gbWidgetStyle );
         cbStyle->setObjectName( "cbStyle" );
 	cbStyle->setEditable( false );
-	cbStyle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 	hbLayout->addWidget( cbStyle );
+	hbLayout->setStretchFactor( cbStyle, 1 );
 	label->setBuddy(cbStyle);
 
 	pbConfigStyle = new QPushButton( i18n("Con&figure..."), gbWidgetStyle );
-	pbConfigStyle->setSizePolicy( QSizePolicy::Maximum, QSizePolicy::Minimum );
 	pbConfigStyle->setEnabled( false );
 	hbLayout->addWidget( pbConfigStyle );
 
