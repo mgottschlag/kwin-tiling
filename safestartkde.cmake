@@ -1,4 +1,9 @@
 #!/bin/sh
+
+echo '************************************************************************'
+echo '**** safestartkde is DEPRECATED - use "startkde --failsafe" instead ****'
+echo '************************************************************************'
+
 #
 #  FAILSAFE KDE STARTUP SCRIPT ( @KDE_VERSION_STRING@ )
 #
