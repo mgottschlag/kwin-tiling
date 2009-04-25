@@ -133,7 +133,12 @@ void LauncherApplet::constraintsEvent(Plasma::Constraints constraints)
 void LauncherApplet::switchMenuStyle()
 {
     if (containment()) {
-        containment()->addApplet("simplelauncher", QVariantList(), geometry());
+        Plasma::Applet * simpleLauncher = 
+                            containment()->addApplet("simplelauncher", QVariantList(), geometry());
+        //Switch shortcuts with the new launcher to avoid losing it
+        KShortcut currentShortcut = globalShortcut();
+        setGlobalShortcut(KShortcut());
+        simpleLauncher->setGlobalShortcut(currentShortcut);
         destroy();
     }
 }
