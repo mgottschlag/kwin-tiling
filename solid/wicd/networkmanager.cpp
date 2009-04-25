@@ -254,6 +254,14 @@ QStringList WicdNetworkManager::activeConnections() const
     return activeConnections;
 }
 
+Solid::Control::NetworkInterface::Types WicdNetworkManager::supportedInterfaceTypes() const
+{
+    return (Solid::Control::NetworkInterface::Types) (
+           Solid::Control::NetworkInterface::Ieee80211 |
+           Solid::Control::NetworkInterface::Ieee8023
+           );
+}
+
 void WicdNetworkManager::activateConnection(const QString & interfaceUni, const QString & connectionUni,
         const QVariantMap & connectionParameters)
 {

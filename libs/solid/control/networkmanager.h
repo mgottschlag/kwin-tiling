@@ -26,6 +26,7 @@
 
 #include <solid/networking.h>
 #include "solid_control_export.h"
+#include "networkinterface.h"
 
 namespace Solid
 {
@@ -36,9 +37,8 @@ namespace Control
         class NetworkManager;
     }
     class Network;
-    class NetworkInterface;
     typedef QList<NetworkInterface*> NetworkInterfaceList;
-        
+
     /**
      * This class allow to query the underlying system to discover the available
      * network interfaces and reachable network.It has also the
@@ -130,6 +130,15 @@ namespace Control
          * Access the list of any active connections
          */
         QStringList SOLIDCONTROL_EXPORT activeConnections();
+
+        /**
+         * Retrieves the interface types supported by this network manager.
+         *
+         * @return the interface types supported by the network manager
+         *
+         * @since 4.3
+         */
+        SOLIDCONTROL_EXPORT Solid::Control::NetworkInterface::Types supportedInterfaceTypes();
 
         class SOLIDCONTROL_EXPORT Notifier : public QObject
         {

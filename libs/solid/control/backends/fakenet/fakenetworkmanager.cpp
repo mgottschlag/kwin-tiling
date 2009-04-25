@@ -281,5 +281,16 @@ QStringList FakeNetworkManager::activeConnections() const
     return mActiveConnections;
 }
 
+Solid::Control::NetworkInterface::Types FakeNetworkManager::supportedInterfaceTypes() const
+{
+    return (Solid::Control::NetworkInterface::Types) (
+           Solid::Control::NetworkInterface::Ieee80211 |
+           Solid::Control::NetworkInterface::Ieee8023 |
+           Solid::Control::NetworkInterface::Gsm |
+           Solid::Control::NetworkInterface::Cdma |
+           Solid::Control::NetworkInterface::Serial
+           );
+}
+
 #include "fakenetworkmanager.moc"
 

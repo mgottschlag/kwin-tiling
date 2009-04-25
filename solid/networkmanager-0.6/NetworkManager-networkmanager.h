@@ -44,6 +44,7 @@ Q_OBJECT
         bool isWirelessEnabled() const;
         bool isWirelessHardwareEnabled() const;
         QStringList activeConnections() const;
+        Solid::Control::NetworkInterface::Types supportedInterfaceTypes() const;
     public Q_SLOTS:
         void setWirelessEnabled(bool);
         void setNetworkingEnabled(bool);

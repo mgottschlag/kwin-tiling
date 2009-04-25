@@ -108,6 +108,16 @@ namespace Ifaces
          */
         virtual QStringList activeConnections() const = 0;
 
+        /**
+         * Retrieves the interface types supported by this network manager.
+         *
+         * @return the interface types supported by the network manager
+         * @see Solid::Control::NetworkManager::SupportedInterfaceType
+         *
+         * @since 4.3
+         */
+        virtual Solid::Control::NetworkInterface::Types supportedInterfaceTypes() const = 0;
+
     public Q_SLOTS:
         /**
          * Activates or deactivates networking (as a whole).

@@ -43,6 +43,7 @@ namespace Control
     Q_OBJECT
     Q_ENUMS(ConnectionState Capability Type)
     Q_FLAGS(Capabilities)
+    Q_FLAGS(Types)
     Q_DECLARE_PRIVATE(NetworkInterface)
 
     public:
@@ -69,9 +70,10 @@ namespace Control
          * - Gsm: cellular device of the GSM family, used in Europe
          * - Cdma: cellular device of the CDMA family, used in the USA
          */
-        enum Type { UnknownType, Ieee8023, Ieee80211, Serial, Gsm, Cdma };
+        enum Type { UnknownType = 0x0, Ieee8023 = 0x1, Ieee80211 = 0x2, Serial = 0x4, Gsm = 0x8, Cdma = 0x16 };
 
         Q_DECLARE_FLAGS(Capabilities, Capability)
+        Q_DECLARE_FLAGS(Types, Type)
 
         /**
          * Creates a new NetworkInterface object.

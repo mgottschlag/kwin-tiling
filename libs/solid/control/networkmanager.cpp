@@ -143,6 +143,12 @@ Solid::Networking::Status Solid::Control::NetworkManager::status()
     return_SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), Solid::Networking::Unknown, status());
 }
 
+Solid::Control::NetworkInterface::Types Solid::Control::NetworkManager::supportedInterfaceTypes()
+{
+    return_SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(),
+                      Solid::Control::NetworkInterface::Types(), supportedInterfaceTypes());
+}
+
 Solid::Control::NetworkInterface * Solid::Control::NetworkManagerPrivate::findNetworkInterface(const QString &uni)
 {
     Ifaces::NetworkManager *backend = qobject_cast<Ifaces::NetworkManager *>(managerBackend());

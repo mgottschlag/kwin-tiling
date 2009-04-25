@@ -51,6 +51,7 @@ public:
     void activateConnection(const QString & interfaceUni, const QString & connectionUni, const QVariantMap & connectionParameters);
     void deactivateConnection(const QString & activeConnection);
     QStringList activeConnections() const;
+    Solid::Control::NetworkInterface::Types supportedInterfaceTypes() const;
 public Q_SLOTS:
     void setNetworkingEnabled(bool enabled);
     void setWirelessEnabled(bool enabled);
