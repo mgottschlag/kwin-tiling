@@ -256,10 +256,13 @@ void Applet::checkSizes()
     QSizeF actualSize = size();
     Plasma::FormFactor f = formFactor();
 
+    setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
     if (f == Plasma::Horizontal) {
         setMinimumSize(preferredSize.width(), 0);
+        setMaximumSize(preferredSize.width(), QWIDGETSIZE_MAX);
     } else if (f == Plasma::Vertical) {
         setMinimumSize(0, preferredSize.height());
+        setMaximumSize(QWIDGETSIZE_MAX, preferredSize.height());
     } else if (actualSize.width() < preferredSize.width() ||
                actualSize.height() < preferredSize.height()) {
         setMinimumSize(22, 22);
