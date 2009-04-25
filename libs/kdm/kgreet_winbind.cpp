@@ -23,8 +23,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include "kgreet_winbind.h"
-#include "themer/kdmthemer.h"
-#include "themer/kdmitem.h"
 
 #include <klocale.h>
 #include <kglobal.h>
