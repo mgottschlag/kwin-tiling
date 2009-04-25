@@ -49,8 +49,6 @@ if (DL_LIBRARY)
   target_link_libraries(kscreenlocker ${DL_LIBRARY})
 endif(DL_LIBRARY)
 
-target_link_libraries(kscreenlocker kworkspace)
-
 if (HAVE_XF86MISC)
   target_link_libraries(kscreenlocker ${X11_Xxf86misc_LIB})
 endif (HAVE_XF86MISC)

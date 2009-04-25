@@ -182,6 +182,7 @@ KDisplayManager::exec( const char *cmd, QByteArray &buf )
 	return ret;
 }
 
+#ifndef KDM_NO_SHUTDOWN
 bool
 KDisplayManager::canShutdown()
 {
@@ -266,6 +267,7 @@ KDisplayManager::bootOptions( QStringList &opts, int &defopt, int &current )
 
 	return true;
 }
+#endif // KDM_NO_SHUTDOWN
 
 void
 KDisplayManager::setLock( bool on )
