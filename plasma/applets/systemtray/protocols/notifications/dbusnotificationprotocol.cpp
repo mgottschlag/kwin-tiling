@@ -77,6 +77,8 @@ void DBusNotificationProtocol::dataUpdated(const QString &source, const Plasma::
 
     if (isNew) {
         DBusNotification * notification = new DBusNotification(source, this);
+        connect(notification, SIGNAL(unregisterNotification(const QString&)),
+                this, SLOT(unregisterNotification(const QString&)));
         connect(notification, SIGNAL(notificationDeleted(const QString&)),
                 this, SLOT(removeNotification(const QString&)));
         connect(notification, SIGNAL(actionTriggered(const QString&, const QString&)),
@@ -137,6 +139,12 @@ void DBusNotificationProtocol::relayAction(const QString &source, const QString 
     }
 }
 
+void DBusNotificationProtocol::unregisterNotification(const QString &source)
+{
+    Plasma::Service *service = m_engine->serviceForSource(source);
+    KConfigGroup op = service->operationDescription("userClosed");
+    service->startOperationCall(op);
+}
 
 void DBusNotificationProtocol::removeNotification(const QString &source)
 {

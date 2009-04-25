@@ -53,6 +53,7 @@ public:
 
 public slots:
     virtual void triggerAction(const QString &actionId);
+    virtual void remove();
 
 signals:
     void changed(SystemTray::Notification *notification = 0);

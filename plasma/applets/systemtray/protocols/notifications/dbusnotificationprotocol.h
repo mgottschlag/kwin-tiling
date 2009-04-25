@@ -48,6 +48,7 @@ private slots:
     void dataUpdated(const QString &source, const Plasma::DataEngine::Data &data);
     void removeNotification(const QString &source);
     void relayAction(const QString &source, const QString &actionId);
+    void unregisterNotification(const QString&);
 
 private:
     Plasma::DataEngine *m_engine;

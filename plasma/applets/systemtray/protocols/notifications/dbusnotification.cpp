@@ -21,6 +21,7 @@
 
 #include "dbusnotification.h"
 
+#include <KDebug>
 
 namespace SystemTray
 {
@@ -37,6 +38,10 @@ DBusNotification::~DBusNotification()
     emit notificationDeleted(m_source);
 }
 
+void DBusNotification::remove()
+{
+    emit unregisterNotification(m_source);
+}
 
 void DBusNotification::triggerAction(const QString &actionId)
 {

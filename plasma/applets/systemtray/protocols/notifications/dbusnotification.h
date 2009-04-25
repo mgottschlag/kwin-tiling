@@ -39,11 +39,13 @@ public:
     ~DBusNotification();
 
 public slots:
+    void remove();
     void triggerAction(const QString &actionId);
 
 signals:
     void notificationDeleted(const QString &source);
     void actionTriggered(const QString &source, const QString &actionId);
+    void unregisterNotification(const QString &source);
 
 private:
     QString m_source;

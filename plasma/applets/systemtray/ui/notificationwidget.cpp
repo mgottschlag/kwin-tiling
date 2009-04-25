@@ -113,6 +113,11 @@ NotificationWidget::NotificationWidget(SystemTray::Notification *notification, P
 
 NotificationWidget::~NotificationWidget()
 {
+    if (d->notification) {
+        // we were destroyed by the user, and the notification still exists
+        d->notification->remove();
+    }
+
     delete d;
 }
 
@@ -237,6 +242,7 @@ void NotificationWidgetPrivate::updateNotification()
 void NotificationWidgetPrivate::destroy()
 {
     Plasma::ExtenderItem *extenderItem = dynamic_cast<Plasma::ExtenderItem *>(q->parentItem());
+    notification = 0;
 
     if (extenderItem->isDetached()) {
         completeDetach();
@@ -244,8 +250,6 @@ void NotificationWidgetPrivate::destroy()
         completeDetach();
         extenderItem->destroy();
     }
-
-    notification = 0;
 }
 
 #include "notificationwidget.moc"

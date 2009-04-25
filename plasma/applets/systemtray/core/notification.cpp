@@ -180,6 +180,10 @@ void Notification::triggerAction(const QString &actionId)
     kDebug() << "action triggered but no handler implemented";
 }
 
+void Notification::remove()
+{
+    kDebug() << "remove requested but no handler implemented";
+}
 
 }
 
