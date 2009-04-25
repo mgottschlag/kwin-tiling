@@ -32,12 +32,16 @@ public:
     void init();
     void paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
     void constraintsEvent(Plasma::Constraints constraints);
+    QList<QAction*> contextualActions();
 
 private Q_SLOTS:
     void updateConfigurationMode(bool config);
+    void toggleFixed();
 
 private:
     bool m_configurationMode;
+    bool m_fixedSize;
+    QList <QAction*> m_actions;
 };
 
 #endif

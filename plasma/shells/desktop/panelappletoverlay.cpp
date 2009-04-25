@@ -24,6 +24,8 @@
 #include <QGraphicsLinearLayout>
 #include <QPainter>
 #include <QTimer>
+#include <QAction>
+#include <QMenu>
 
 #include <KGlobalSettings>
 #include <KIcon>
@@ -75,6 +77,7 @@ PanelAppletOverlay::PanelAppletOverlay(Plasma::Applet *applet, QWidget *parent)
       m_applet(applet),
       m_spacer(0),
       m_layout(static_cast<QGraphicsLinearLayout*>(applet->containment()->layout())), // ++assumptions;
+      m_menuButtonRect(2,2,10,10),
       m_index(0),
       m_clickDrag(false)
 {
@@ -124,6 +127,10 @@ void PanelAppletOverlay::paintEvent(QPaintEvent *event)
     int iconSize;
     QRect iconRect;
 
+
+    KIcon configIcon("arrow-up");
+    p.drawPixmap(m_menuButtonRect, configIcon.pixmap(m_menuButtonRect.size()));
+
     if (m_orientation == Qt::Horizontal) {
         iconSize = qMin(qMin(height(), int(m_applet->size().width())), 64);
         iconRect = QRect(rect().center() - QPoint(iconSize / 2, iconSize / 2), QSize(iconSize, iconSize));
@@ -148,11 +155,20 @@ void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
         return;
     }
 
-    if (event->button() != Qt::LeftButton) {
+    if (event->button() != Qt::LeftButton ||
+        m_menuButtonRect.contains(event->pos())) {
         //kDebug() << "sending even to" << (QWidget*)parent();
         Plasma::View *view = dynamic_cast<Plasma::View*>(parent());
 
-        if (view && view->containment()) {
+        if (m_applet->inherits("PanelSpacer")) {
+            QMenu menu;
+            QAction *toggleFixed = m_applet->action("toggle fixed");
+            if (toggleFixed) {
+                menu.addAction(toggleFixed);
+            }
+            menu.addAction(m_applet->action("remove"));
+            menu.exec(event->globalPos());
+        } else if (view && view->containment()) {
             view->containment()->showContextMenu(mapToParent(event->pos()), event->globalPos());
         }
 
@@ -197,8 +213,6 @@ void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
             }
         }
     }
-
-    grabMouse();
 }
 
 void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)

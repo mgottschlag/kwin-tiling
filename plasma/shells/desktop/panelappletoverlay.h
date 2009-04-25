@@ -66,6 +66,7 @@ private:
     QGraphicsWidget *m_spacer;
     Qt::Orientation m_orientation;
     QGraphicsLinearLayout *m_layout;
+    QRect m_menuButtonRect;
     QRectF m_prevGeom;
     QRectF m_nextGeom;
     QPoint m_origin;

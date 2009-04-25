@@ -20,6 +20,7 @@
 #include "panelspacer.h"
 
 #include <QPainter>
+#include <QAction>
 
 #include <Plasma/PaintUtils>
 #include <Plasma/Containment>
@@ -29,10 +30,15 @@ K_EXPORT_PLASMA_APPLET(panelspacer_internal, PanelSpacer)
 
 PanelSpacer::PanelSpacer(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
-      m_configurationMode(false)
+      m_configurationMode(false),
+      m_fixedSize(true)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setHasConfigurationInterface(false);
+    QAction *toggleFixed = new QAction(i18n("Set flexible size"), this);
+    m_actions.append(toggleFixed);
+    addAction("toggle fixed", toggleFixed);
+    connect(toggleFixed, SIGNAL(triggered()), this, SLOT(toggleFixed()));
     setCacheMode(DeviceCoordinateCache);
 }
 
@@ -40,11 +46,38 @@ PanelSpacer::~PanelSpacer()
 {
 }
 
+QList<QAction*> PanelSpacer::contextualActions()
+{
+    if (m_fixedSize) {
+        return m_actions;
+    } else {
+        return QList<QAction *>();
+    }
+}
+
+void PanelSpacer::toggleFixed()
+{
+    m_fixedSize = !m_fixedSize;
+
+    if (!m_fixedSize) {
+        setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+        setMinimumSize(0,0);
+    } else if (formFactor() == Plasma::Horizontal) {
+        setMaximumWidth(size().width());
+        setMinimumWidth(size().width());
+    } else if (formFactor() == Plasma::Vertical) {
+        setMaximumHeight(size().height());
+        setMinimumHeight(size().height());
+    }
+}
+
 void PanelSpacer::init()
 {
     if (containment()) {
         connect(containment(), SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(updateConfigurationMode(bool)));
     }
+
+    m_fixedSize = config().readEntry("FixedSize", true);
 }
 
 void PanelSpacer::constraintsEvent(Plasma::Constraints constraints)
@@ -60,14 +93,22 @@ void PanelSpacer::constraintsEvent(Plasma::Constraints constraints)
     }
 
     if (constraints & Plasma::StartupCompletedConstraint) {
-
-         if (formFactor() == Plasma::Horizontal) {
+        if (!m_fixedSize) {
+            setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+            setMinimumSize(0,0);
+        } else if (formFactor() == Plasma::Horizontal) {
             setMaximumWidth(size().width());
             setMinimumWidth(size().width());
         } else if (formFactor() == Plasma::Vertical) {
             setMaximumHeight(size().height());
             setMinimumHeight(size().height());
         }
+    }
+
+    if (constraints & Plasma::SizeConstraint) {
+        m_fixedSize = ((formFactor() == Plasma::Horizontal && maximumWidth() == minimumWidth()) || (formFactor() == Plasma::Vertical && maximumHeight() == minimumHeight()));
+        config().writeEntry("FixedSize", m_fixedSize);
+        m_actions.first()->setEnabled(m_fixedSize);
     }
 }
 
