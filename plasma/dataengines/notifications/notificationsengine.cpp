@@ -21,6 +21,7 @@
 #include "notificationservice.h"
 #include "visualnotificationsadaptor.h"
 
+#include <Plasma/DataContainer>
 #include <Plasma/Service>
 
 #include <QImage>
@@ -61,8 +62,18 @@ uint NotificationsEngine::Notify(const QString &app_name, uint replaces_id, cons
         appname_str = i18n("Unknown Application");
     }
 
+    QString source = QString("notification %1").arg(id);
+    if (replaces_id) {
+        Plasma::DataContainer *container = containerForSource(source);
+        if (container->data()["expireTimeout"].toInt() != timeout) {
+            int timerId = m_sourceTimers.value(source);
+            killTimer(timerId);
+            m_sourceTimers.remove(source);
+            m_timeouts.remove(timerId);
+        }
+    }
     Plasma::DataEngine::Data notificationData;
-    notificationData.insert("id", QString::number(id ));
+    notificationData.insert("id", QString::number(id));
     notificationData.insert("appName", appname_str);
     notificationData.insert("appIcon", app_icon);
     notificationData.insert("eventId", event_id);
@@ -77,8 +88,28 @@ uint NotificationsEngine::Notify(const QString &app_name, uint replaces_id, cons
     }
     notificationData.insert("image", image);
 
-    setData(QString("notification %1").arg(id), notificationData );
+    setData(source, notificationData );
+
+    if (timeout) {
+        int timerId = startTimer(timeout);
+        m_sourceTimers.insert(source, timerId);
+        m_timeouts.insert(timerId, source);
+    }
+
     return id;
+}
+
+void NotificationsEngine::timerEvent(QTimerEvent *event)
+{
+    QString source = m_timeouts.value(event->timerId());
+    if (!source.isEmpty()) {
+        m_sourceTimers.remove(source);
+        m_timeouts.remove(event->timerId());
+        removeSource(source);
+        return;
+    }
+
+    Plasma::DataEngine::timerEvent(event);
 }
 
 void NotificationsEngine::CloseNotification(uint id)
