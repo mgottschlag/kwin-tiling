@@ -351,8 +351,11 @@ void WebBrowser::dataUpdated( const QString &source, const Plasma::DataEngine::D
     // is only used to save the icon files
     if (source == m_historyCombo->currentText()) {
         QPixmap favicon(QPixmap::fromImage(data["Icon"].value<QImage>()));
-        m_historyCombo->nativeWidget()->setItemIcon(m_historyCombo->nativeWidget()->currentIndex(), QIcon(favicon));
-        setPopupIcon(QIcon(favicon));
+        if (!favicon.isNull()) {
+            m_historyCombo->nativeWidget()->setItemIcon(
+                                    m_historyCombo->nativeWidget()->currentIndex(), QIcon(favicon));
+            setPopupIcon(QIcon(favicon));
+        }
     }
 }
 
