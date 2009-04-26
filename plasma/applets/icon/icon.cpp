@@ -49,7 +49,8 @@
 IconApplet::IconApplet(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_icon(0),
-      m_dialog(0)
+      m_dialog(0),
+      m_watchDestopFile(0)
 {
     setAcceptDrops(true);
     setBackgroundHints(NoBackground);
@@ -100,6 +101,8 @@ void IconApplet::init()
 IconApplet::~IconApplet()
 {
     delete m_dialog;
+    if(m_watchDestopFile)
+       delete m_watchDestopFile;
 }
 
 void IconApplet::saveState(KConfigGroup &cg) const
@@ -123,6 +126,14 @@ void IconApplet::setUrl(const KUrl& url)
         m_icon->setIcon(f.readIcon());
 
         m_genericName = f.readGenericName();
+        
+        if(m_watchDestopFile) {
+            delete m_watchDestopFile;
+        }
+
+        m_watchDestopFile = new KDirWatch;
+        m_watchDestopFile->addFile(m_url.toLocalFile());
+        connect(m_watchDestopFile, SIGNAL(dirty(const QString &)), this, SLOT(updateDesktopFile()));
     } else {
         m_text = m_url.fileName();
 
@@ -142,6 +153,11 @@ void IconApplet::setUrl(const KUrl& url)
     }
 
     kDebug() << "url was" << url << "and is" << m_url;
+}
+
+void IconApplet::updateDesktopFile()
+{
+    setUrl(m_url);
 }
 
 void IconApplet::openUrl()
