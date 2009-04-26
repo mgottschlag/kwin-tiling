@@ -28,6 +28,7 @@
 #include "fullview.h"
 
 #include <QApplication>
+#include <QDir>
 #include <QFileInfo>
 #include <QIcon>
 #include <QResizeEvent>
@@ -99,8 +100,12 @@ void FullView::addApplet(const QString &name, const QString &containment,
     setScene(m_containment->scene());
 
     QFileInfo info(name);
-    if (info.isAbsolute() && info.exists()) {
-        m_applet = Applet::loadPlasmoid(name);
+    if (!info.isAbsolute()) {
+        info = QFileInfo(QDir::currentPath() + "/" + name);
+    }
+
+    if (info.exists()) {
+        m_applet = Applet::loadPlasmoid(info.absoluteFilePath());
     }
 
     if (!m_applet) {

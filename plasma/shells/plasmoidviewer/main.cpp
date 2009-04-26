@@ -67,8 +67,10 @@ int main(int argc, char **argv)
     options.add("wallpaper <name>", ki18n("Name of the wallpaper plugin"), QByteArray());
     options.add("p");
     options.add("pixmapcache <size>", ki18n("The size in KB to set the pixmap cache to"));
-    options.add("+applet", ki18n("Name of applet to add (required)"));
-    options.add("+[args]", ki18n("Optional arguments of the applet to add"));
+    options.add("applet", ki18n("Name of applet to view; may refer to the plugin name or be a path "
+                                "(absolute or relative) to a package. If not provided, then an "
+                                "attempt is made to load a package from the current directory."));
+    options.add("[args]", ki18n("Optional arguments of the applet to add"));
     KCmdLineArgs::addCmdLineOptions(options);
 
     KApplication app;
@@ -109,12 +111,10 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    if (args->count() == 0) {
-        KCmdLineArgs::usageError(i18n("No applet name specified"));
+    QString pluginName;
+    if (args->count() > 0) {
+        pluginName = args->arg(0);
     }
-
-    //At this point arg(0) is always set
-    QString pluginName = args->arg(0);
 
     QString formfactor = args->getOption("formfactor");
     kDebug() << "setting FormFactor to" << args->getOption("formfactor");
