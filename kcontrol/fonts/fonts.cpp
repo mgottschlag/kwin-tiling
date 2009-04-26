@@ -22,6 +22,7 @@
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QFormLayout>
 
 
 #include <kacceleratormanager.h>
@@ -227,20 +228,20 @@ FontAASettings::FontAASettings(QWidget *parent)
   showButtonSeparator( true );
 
   QWidget     *mw=new QWidget(this);
-  QGridLayout *layout=new QGridLayout(mw);
-  layout->setSpacing(KDialog::spacingHint());
+  QFormLayout *layout=new QFormLayout(mw);
   layout->setMargin(0);
 
-  excludeRange=new QCheckBox(i18n("E&xclude range:"), mw),
-  layout->addWidget(excludeRange, 0, 0);
-  excludeFrom=new KDoubleNumInput(0, 72, 8.0, mw,1, 1),
+  excludeRange=new QCheckBox(i18n("E&xclude range:"), mw);
+  QHBoxLayout *rangeLayout = new QHBoxLayout();
+  excludeFrom=new KDoubleNumInput(0, 72, 8.0, mw, 1, 1);
   excludeFrom->setSuffix(i18n(" pt"));
-  layout->addWidget(excludeFrom, 0, 1);
+  rangeLayout->addWidget(excludeFrom);
   excludeToLabel=new QLabel(i18n(" to "), mw);
-  layout->addWidget(excludeToLabel, 0, 2);
+  rangeLayout->addWidget(excludeToLabel);
   excludeTo=new KDoubleNumInput(0, 72, 15.0, mw, 1, 1);
   excludeTo->setSuffix(i18n(" pt"));
-  layout->addWidget(excludeTo, 0, 3);
+  rangeLayout->addWidget(excludeTo);
+  layout->addRow(excludeRange, rangeLayout);
 
   QString subPixelWhatsThis = i18n("<p>If you have a TFT or LCD screen you"
        " can further improve the quality of displayed fonts by selecting"
@@ -254,11 +255,10 @@ FontAASettings::FontAASettings(QWidget *parent)
        " This feature does not work with CRT monitors.</p>" );
 
   useSubPixel=new QCheckBox(i18n("&Use sub-pixel rendering:"), mw);
-  layout->addWidget(useSubPixel, 1, 0);
   useSubPixel->setWhatsThis( subPixelWhatsThis );
 
   subPixelType=new QComboBox(mw);
-  layout->addWidget(subPixelType, 1, 1, 1, 3);
+  layout->addRow(useSubPixel, subPixelType);
 
   subPixelType->setEditable(false);
   subPixelType->setWhatsThis( subPixelWhatsThis );
@@ -267,10 +267,9 @@ FontAASettings::FontAASettings(QWidget *parent)
     subPixelType->addItem(QPixmap(aaPixmaps[t-1]), i18n(KXftConfig::description((KXftConfig::SubPixel::Type)t).toUtf8()));
 
   QLabel *hintingLabel=new QLabel(i18n("Hinting style: "), mw);
-  layout->addWidget(hintingLabel, 2, 0);
   hintingStyle=new QComboBox(mw);
   hintingStyle->setEditable(false);
-  layout->addWidget(hintingStyle, 2, 1, 1, 3);
+  layout->addRow(hintingLabel, hintingStyle);
   for(int s=KXftConfig::Hint::NotSet+1; s<=KXftConfig::Hint::Full; ++s)
     hintingStyle->addItem(i18n(KXftConfig::description((KXftConfig::Hint::Style)s).toUtf8()));
 
