@@ -60,6 +60,7 @@ Name[x-test]=xxWindow Informationxx
 Name[zh_CN]=窗口信息
 Name[zh_TW]=視窗資訊
 Comment=Information on and management services for all available windows
+Comment[uk]=Відомості щодо служб і керування ними для всіх доступних вікон
 Type=Service
 Icon=user-desktop
 

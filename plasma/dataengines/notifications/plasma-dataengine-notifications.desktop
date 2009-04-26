@@ -60,6 +60,7 @@ Name[x-test]=xxApplication Notificationsxx
 Name[zh_CN]=应用程序通知
 Name[zh_TW]=應用程式通知
 Comment=Passive visual notifications for the user
+Comment[uk]=Пасивні візуальні сповіщення для користувача
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=notifier

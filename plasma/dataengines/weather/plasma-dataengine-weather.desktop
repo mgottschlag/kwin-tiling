@@ -61,6 +61,7 @@ Name[x-test]=xxWeatherxx
 Name[zh_CN]=天气
 Name[zh_TW]=天氣
 Comment=Weather data from multiple online sources
+Comment[uk]=Дані щодо погоди з декількох мережевих джерел
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=
