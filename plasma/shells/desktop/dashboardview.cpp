@@ -217,7 +217,7 @@ void DashboardView::toggleVisibility()
 {
     if (isHidden() && containment()) {
         if (m_suppressShow) {
-            kDebug() << "DashboardView::toggleVisibility but show was suppressed";
+            //kDebug() << "DashboardView::toggleVisibility but show was suppressed";
             return;
         }
 
@@ -239,7 +239,6 @@ void DashboardView::toggleVisibility()
 
         m_suppressShow = true;
         QTimer::singleShot(SUPPRESS_SHOW_TIMEOUT, this, SLOT(suppressShowTimeout()));
-        containment()->openToolBox();
     } else {
         hideView();
     }
@@ -310,8 +309,16 @@ void DashboardView::hideView()
 
 void DashboardView::suppressShowTimeout()
 {
-    kDebug() << "DashboardView::suppressShowTimeout";
+    //kDebug() << "DashboardView::suppressShowTimeout";
     m_suppressShow = false;
+
+    if (!config().readEntry("DashboardShown", false)) {
+        // the first time we show the user the dashboard, expand
+        // the toolbox; some people don't know how to get out of it at first
+        // so we do this as a hint for them
+        containment()->openToolBox();
+        config().writeEntry("DashboardShown", true);
+    }
 }
 
 void DashboardView::keyPressEvent(QKeyEvent *event)
