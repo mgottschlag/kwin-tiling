@@ -179,11 +179,11 @@ public:
             case RunCommand:               return i18n("Run Command...");
             case SwitchUser:               return i18n("Switch User");
             case SaveSession:              return i18n("Save Session");
-            case LockScreen:               return i18n("Lock the screen");
+            case LockScreen:               return i18n("Lock Screen");
             case Standby:                  return i18nc("Puts the system on standby", "Standby");
             case SuspendDisk:              return i18n("Suspend to Disk");
             case SuspendRAM:               return i18n("Suspend to RAM");
-            case Restart:                  return i18nc("Restart computer", "Restart");
+            case Restart:                  return i18nc("Restart Computer", "Restart");
             case Shutdown:                 return i18n("Shutdown");
             case Logout:                   return i18n("Logout");
             case Leave:                    return i18n("Leave");

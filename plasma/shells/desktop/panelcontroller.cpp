@@ -528,7 +528,7 @@ void PanelController::setContainment(Plasma::Containment *containment)
         connect(addWidgetTool, SIGNAL(clicked()), this, SLOT(hide()));
     }
 
-    action = new QAction(i18n("Add spacer"), this);
+    action = new QAction(i18n("Add Spacer"), this);
     ToolButton *addSpaceTool = d->addTool(action, this);
     d->layout->insertWidget(insertIndex, addSpaceTool);
     ++insertIndex;

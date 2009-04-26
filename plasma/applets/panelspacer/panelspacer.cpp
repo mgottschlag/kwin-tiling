@@ -35,7 +35,7 @@ PanelSpacer::PanelSpacer(QObject *parent, const QVariantList &args)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setHasConfigurationInterface(false);
-    QAction *toggleFixed = new QAction(i18n("Set flexible size"), this);
+    QAction *toggleFixed = new QAction(i18n("Set Flexible Size"), this);
     m_actions.append(toggleFixed);
     addAction("toggle fixed", toggleFixed);
     connect(toggleFixed, SIGNAL(triggered()), this, SLOT(toggleFixed()));

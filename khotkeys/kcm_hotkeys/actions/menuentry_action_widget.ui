@@ -16,7 +16,7 @@
    <item>
     <widget class="QLabel" name="applicationLabel" >
      <property name="text" >
-      <string>Application</string>
+      <string>Application:</string>
      </property>
     </widget>
    </item>

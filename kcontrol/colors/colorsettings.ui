@@ -231,7 +231,7 @@
           </sizepolicy>
          </property>
          <property name="text" >
-          <string>Color Set:</string>
+          <string>Color set:</string>
          </property>
         </widget>
        </item>

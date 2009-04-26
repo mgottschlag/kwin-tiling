@@ -20,7 +20,7 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>&amp;Network Interfaces:</string>
+      <string>&amp;Network interfaces:</string>
      </property>
      <property name="buddy">
       <cstring>treeView</cstring>

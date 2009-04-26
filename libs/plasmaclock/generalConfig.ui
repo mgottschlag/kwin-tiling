@@ -115,7 +115,7 @@
    <item row="4" column="1">
     <widget class="QLabel" name="label_5">
      <property name="text">
-      <string>Speak Time:</string>
+      <string>Speak time:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

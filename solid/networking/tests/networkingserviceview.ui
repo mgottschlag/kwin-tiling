@@ -120,7 +120,7 @@ p, li { white-space: pre-wrap; }
      <item>
       <widget class="QPushButton" name="changeButton" >
        <property name="text" >
-        <string>Perform change</string>
+        <string>Perform Change</string>
        </property>
       </widget>
      </item>

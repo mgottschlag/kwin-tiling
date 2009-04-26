@@ -170,7 +170,7 @@ void SM::Net::createConfigurationInterface(KConfigDialog *parent)
     QWidget *widget = new QWidget();
     ui.setupUi(widget);
     m_model.clear();
-    m_model.setHorizontalHeaderLabels(QStringList() << i18n("Network interface"));
+    m_model.setHorizontalHeaderLabels(QStringList() << i18n("Network Interface"));
     QStandardItem *parentItem = m_model.invisibleRootItem();
 
     foreach (const QString& interface, m_interfaces) {

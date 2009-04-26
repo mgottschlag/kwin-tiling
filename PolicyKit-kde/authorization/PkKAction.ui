@@ -115,7 +115,7 @@
         <item row="2" column="0">
          <widget class="QLabel" name="allowActiveL">
           <property name="text">
-           <string>Active Console:</string>
+           <string>Active console:</string>
           </property>
          </widget>
         </item>
@@ -174,7 +174,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>Revert to &amp;defaults</string>
+           <string>Revert to &amp;Defaults</string>
           </property>
          </widget>
         </item>

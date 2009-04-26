@@ -54,7 +54,7 @@
          </size>
         </property>
         <property name="text" >
-         <string>Requirement Type:</string>
+         <string>Requirement type:</string>
         </property>
        </widget>
       </item>
@@ -91,7 +91,7 @@
          </size>
         </property>
         <property name="text" >
-         <string>Logic Type:</string>
+         <string>Logic type:</string>
         </property>
        </widget>
       </item>
@@ -99,12 +99,12 @@
        <widget class="KComboBox" name="CbContainerLogic" >
         <item>
          <property name="text" >
-          <string>All Contained Requirements must match</string>
+          <string>All Contained Requirements Must Match</string>
          </property>
         </item>
         <item>
          <property name="text" >
-          <string>Any Contained Required must match</string>
+          <string>Any Contained Required Must Match</string>
          </property>
         </item>
        </widget>
@@ -144,7 +144,7 @@
            </size>
           </property>
           <property name="text" >
-           <string>Restriction Type:</string>
+           <string>Restriction type:</string>
           </property>
          </widget>
         </item>
@@ -193,7 +193,7 @@
            </size>
           </property>
           <property name="text" >
-           <string>Device Type:</string>
+           <string>Device type:</string>
           </property>
          </widget>
         </item>
@@ -271,7 +271,7 @@
            </size>
           </property>
           <property name="text" >
-           <string>Value Name:</string>
+           <string>Value name:</string>
           </property>
          </widget>
         </item>

@@ -14,21 +14,21 @@
    <item>
     <widget class="QCheckBox" name="showPlotters">
      <property name="text">
-      <string>Show Plotters</string>
+      <string>Show plotters</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QCheckBox" name="showTopBarCheckBox">
      <property name="text">
-      <string>Show Interface Name Above The Graph</string>
+      <string>Show interface name above the graph</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QCheckBox" name="showBackgroundCheckBox">
      <property name="text">
-      <string>Show Plotter Background</string>
+      <string>Show plotter background</string>
      </property>
     </widget>
    </item>
@@ -37,7 +37,7 @@
      <item>
       <widget class="QLabel" name="graphLabel">
        <property name="text">
-        <string>Graph Color:</string>
+        <string>Graph color:</string>
        </property>
       </widget>
      </item>

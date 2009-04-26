@@ -56,7 +56,7 @@
      <item row="1" column="1" >
       <widget class="QLabel" name="label" >
        <property name="text" >
-        <string>User Activity:</string>
+        <string>User activity:</string>
        </property>
        <property name="alignment" >
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -82,7 +82,7 @@
      <item row="2" column="1" >
       <widget class="QLabel" name="label_3" >
        <property name="text" >
-        <string>While Idle:</string>
+        <string>While idle:</string>
        </property>
        <property name="alignment" >
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

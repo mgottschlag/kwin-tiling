@@ -33,21 +33,21 @@
         <item>
          <widget class="QRadioButton" name="active_radio" >
           <property name="text" >
-           <string>Active Window</string>
+           <string>Active window</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QRadioButton" name="specific_radio" >
           <property name="text" >
-           <string>Specific Window</string>
+           <string>Specific window</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QRadioButton" name="action_radio" >
           <property name="text" >
-           <string>Action Window</string>
+           <string>Action window</string>
           </property>
          </widget>
         </item>

@@ -28,28 +28,28 @@
       <item row="0" column="0" >
        <widget class="QRadioButton" name="window_appears" >
         <property name="text" >
-         <string>Window Appears</string>
+         <string>Window appears</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1" >
        <widget class="QRadioButton" name="window_disappears" >
         <property name="text" >
-         <string>Window Disappears</string>
+         <string>Window disappears</string>
         </property>
        </widget>
       </item>
       <item row="1" column="0" >
        <widget class="QRadioButton" name="window_gets_focus" >
         <property name="text" >
-         <string>Window Gets Focus</string>
+         <string>Window gets focus</string>
         </property>
        </widget>
       </item>
       <item row="1" column="1" >
        <widget class="QRadioButton" name="window_lost_focus" >
         <property name="text" >
-         <string>Window Loses Focus</string>
+         <string>Window loses focus</string>
         </property>
        </widget>
       </item>

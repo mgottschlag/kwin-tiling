@@ -14,7 +14,7 @@
    <item>
     <widget class="QLabel" name="components_label">
      <property name="text">
-      <string>Select the components to export</string>
+      <string>Select the Components to Export</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
