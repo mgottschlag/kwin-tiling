@@ -55,6 +55,7 @@ class EngineExplorer : public KDialog, public Ui::EngineExplorer
         void removeSource(const QString& source);
         void requestSource();
         void showDataContextMenu(const QPoint &point);
+        void cleanUp();
 
     private:
         void listEngines();

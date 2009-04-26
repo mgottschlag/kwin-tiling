@@ -88,10 +88,18 @@ EngineExplorer::EngineExplorer(QWidget* parent)
     connect(m_data, SIGNAL(customContextMenuRequested(QPoint)),
             this, SLOT(showDataContextMenu(QPoint)));
     m_data->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(cleanUp()));
 }
 
 EngineExplorer::~EngineExplorer()
 {
+}
+
+void EngineExplorer::cleanUp()
+{
+    if (!m_engineName.isEmpty()) {
+        m_engineManager->unloadEngine(m_engineName);
+    }
 }
 
 void EngineExplorer::setApp(const QString &app)
