@@ -115,8 +115,7 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
   hbox->setMargin( 0 );
 
   QVBoxLayout* leftbox = new QVBoxLayout(  );
-  hbox->addItem( leftbox );
-  leftbox->setSpacing( KDialog::spacingHint() );
+  hbox->addLayout( leftbox );
   hbox->setStretchFactor( leftbox, 1 );
 
   mThemesList = new ThemeListBox(this);
@@ -152,8 +151,7 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
   connect(mBtnTest, SIGNAL(clicked()), SLOT(slotTest()));
 
   QVBoxLayout* rightbox = new QVBoxLayout(  );
-  hbox->addItem( rightbox );
-  rightbox->setSpacing( KDialog::spacingHint() );
+  hbox->addLayout( rightbox );
   hbox->setStretchFactor( rightbox, 3 );
 
   QScrollArea* scrollarea = new QScrollArea(this);
@@ -161,7 +159,6 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
   mPreview = new QLabel(this);
   scrollarea->setWidget(mPreview);
   mPreview->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
-  mPreview->setFrameStyle(QFrame::Panel|QFrame::Sunken);
   mPreview->setMinimumSize(QSize(320,240));
   mPreview->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
   rightbox->addWidget(scrollarea);
