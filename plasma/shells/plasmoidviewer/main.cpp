@@ -67,10 +67,10 @@ int main(int argc, char **argv)
     options.add("wallpaper <name>", ki18n("Name of the wallpaper plugin"), QByteArray());
     options.add("p");
     options.add("pixmapcache <size>", ki18n("The size in KB to set the pixmap cache to"));
-    options.add("applet", ki18n("Name of applet to view; may refer to the plugin name or be a path "
+    options.add("+applet", ki18n("Name of applet to view; may refer to the plugin name or be a path "
                                 "(absolute or relative) to a package. If not provided, then an "
                                 "attempt is made to load a package from the current directory."));
-    options.add("[args]", ki18n("Optional arguments of the applet to add"));
+    options.add("+[args]", ki18n("Optional arguments of the applet to add"));
     KCmdLineArgs::addCmdLineOptions(options);
 
     KApplication app;
