@@ -703,15 +703,25 @@ void ClockApplet::updateClipboardMenu()
     QDateTime dateTime = QDateTime(data["Date"].toDate(), data["Time"].toTime());
     KLocale *locale = KGlobal::locale();
 
-    d->clipboardMenu->addAction(locale->formatDateTime(dateTime));
-    d->clipboardMenu->addAction(locale->formatDate(dateTime.date(), KLocale::ShortDate));
     d->clipboardMenu->addAction(locale->formatDate(dateTime.date(), KLocale::LongDate));
+    d->clipboardMenu->addAction(locale->formatDate(dateTime.date(), KLocale::ShortDate));
+    d->clipboardMenu->addAction(locale->formatDateTime(dateTime));
+
+    QAction *sep0 = new QAction(this);
+    sep0->setSeparator(true);
+    d->clipboardMenu->addAction(sep0);
+
     d->clipboardMenu->addAction(locale->formatTime(dateTime.time(), false));
     d->clipboardMenu->addAction(locale->formatTime(dateTime.time(), true));
+
+    QAction *sep1 = new QAction(this);
+    sep1->setSeparator(true);
+    d->clipboardMenu->addAction(sep1);
+
     d->clipboardMenu->addAction(dateTime.date().toString());
-    d->clipboardMenu->addAction(dateTime.time().toString());
     d->clipboardMenu->addAction(dateTime.toString());
     d->clipboardMenu->addAction(dateTime.toString("yyyy-MM-dd hh:mm:ss"));
+    d->clipboardMenu->addAction(dateTime.time().toString());
 }
 
 void ClockApplet::copyToClipboard(QAction* action)
