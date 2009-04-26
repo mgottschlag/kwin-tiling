@@ -194,19 +194,23 @@ ClockApplet::~ClockApplet()
 
 void ClockApplet::speakTime(const QTime &time)
 {
-    if (time.minute() != d->prevMinute && d->announceInterval>0 && (time.minute() % d->announceInterval) == 0) {
+    if (!d->announceInterval) {
+        return;
+    }
+
+    if (time.minute() != d->prevMinute && (time.minute() % d->announceInterval) == 0) {
         d->prevHour = time.hour();
         d->prevMinute = time.minute();
+
         // If KTTSD not running, start it.
-        if (!QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.kttsd"))
-        {
+        if (!QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.kttsd")) {
             QString error;
-            if (KToolInvocation::startServiceByDesktopName("kttsd", QStringList(), &error))
-            {
+            if (KToolInvocation::startServiceByDesktopName("kttsd", QStringList(), &error)) {
                 KMessageBox::error(0, i18n( "Starting KTTSD Failed"), error );
                 return;
             }
         }
+
         QDBusInterface ktts("org.kde.kttsd", "/KSpeech", "org.kde.KSpeech");
         QString text;
         if (time.minute() == 0) {
