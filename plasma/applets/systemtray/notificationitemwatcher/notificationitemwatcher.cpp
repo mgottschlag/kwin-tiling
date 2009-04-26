@@ -17,7 +17,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#include "notificationareawatcher.h"
+#include "notificationitemwatcher.h"
 
 #include <QDBusConnection>
 
@@ -27,49 +27,49 @@
 
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
-#include "notificationareawatcheradaptor.h"
-#include "notificationarea_interface.h"
+#include "notificationitemwatcheradaptor.h"
+#include "notificationitem_interface.h"
 
 
 static inline KAboutData aboutData()
 {
-    return KAboutData("notificationareawatcher", 0, ki18n("notificationareawatcher"), KDE_VERSION_STRING);
+    return KAboutData("notificationitemwatcher", 0, ki18n("notificationitemwatcher"), KDE_VERSION_STRING);
 }
 
-K_PLUGIN_FACTORY(NotificationAreaWatcherFactory,
-                 registerPlugin<NotificationAreaWatcher>();
+K_PLUGIN_FACTORY(NotificationItemWatcherFactory,
+                 registerPlugin<NotificationItemWatcher>();
     )
-K_EXPORT_PLUGIN(NotificationAreaWatcherFactory(aboutData()))
+K_EXPORT_PLUGIN(NotificationItemWatcherFactory(aboutData()))
 
-NotificationAreaWatcher::NotificationAreaWatcher(QObject *parent, const QList<QVariant>&)
+NotificationItemWatcher::NotificationItemWatcher(QObject *parent, const QList<QVariant>&)
       : KDEDModule(parent)
 {
-    setModuleName("NotificationAreaWatcher");
-    new NotificationAreaWatcherAdaptor(this);
+    setModuleName("NotificationItemWatcher");
+    new NotificationItemWatcherAdaptor(this);
     QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.registerService("org.kde.NotificationAreaWatcher");
-    dbus.registerObject("/NotificationAreaWatcher", this);
+    dbus.registerService("org.kde.NotificationItemWatcher");
+    dbus.registerObject("/NotificationItemWatcher", this);
     m_dbusInterface = dbus.interface();
 
     connect(m_dbusInterface, SIGNAL(serviceOwnerChanged(QString,QString,QString)),
            this, SLOT(serviceChange(QString,QString,QString)));
 }
 
-NotificationAreaWatcher::~NotificationAreaWatcher()
+NotificationItemWatcher::~NotificationItemWatcher()
 {
     QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.unregisterService("org.kde.NotificationAreaWatcher");
+    dbus.unregisterService("org.kde.NotificationItemWatcher");
 }
 
 
-void NotificationAreaWatcher::RegisterService(const QString &service)
+void NotificationItemWatcher::RegisterService(const QString &service)
 {
     if (m_dbusInterface->isServiceRegistered(service).value() &&
         !m_registeredServices.contains(service)) {
         kDebug()<<"Registering"<<service<<"to system tray";
 
         //check if the service has registered a SystemTray object
-        org::kde::NotificationAreaItem trayclient(service, "/NotificationAreaItem",
+        org::kde::NotificationItem trayclient(service, "/NotificationItem",
                                         QDBusConnection::sessionBus());
         if (trayclient.isValid()) {
             m_registeredServices.append(service);
@@ -78,16 +78,17 @@ void NotificationAreaWatcher::RegisterService(const QString &service)
     }
 }
 
-QStringList NotificationAreaWatcher::RegisteredServices() const
+QStringList NotificationItemWatcher::RegisteredServices() const
 {
     return m_registeredServices;
 }
 
 
-void NotificationAreaWatcher::serviceChange(const QString& name,
+void NotificationItemWatcher::serviceChange(const QString& name,
                                 const QString& oldOwner,
                                 const QString& newOwner)
 {
+    Q_UNUSED(oldOwner)
     //kDebug()<<"Service "<<name<<"status change, old owner:"<<oldOwner<<"new:"<<newOwner;
 
     if (newOwner.isEmpty()) {
@@ -96,38 +97,38 @@ void NotificationAreaWatcher::serviceChange(const QString& name,
             emit ServiceUnregistered(name);
         }
 
-        if (m_notificationAreaServices.contains(name)) {
-            m_notificationAreaServices.remove(name);
+        if (m_notificationHostServices.contains(name)) {
+            m_notificationHostServices.remove(name);
         }
     }
 }
 
-void NotificationAreaWatcher::RegisterNotificationArea(const QString &service)
+void NotificationItemWatcher::RegisterNotificationHost(const QString &service)
 {
-    if (service.contains("org.kde.NotificationArea-") &&
+    if (service.contains("org.kde.NotificationHost-") &&
         m_dbusInterface->isServiceRegistered(service).value() &&
-        !m_notificationAreaServices.contains(service)) {
+        !m_notificationHostServices.contains(service)) {
         kDebug()<<"Registering"<<service<<"as system tray";
 
         //check if the service has registered a SystemTray object
-        org::kde::NotificationAreaItem tray(service, "/",
+        org::kde::NotificationItem tray(service, "/",
                                         QDBusConnection::sessionBus());
 
         if (tray.isValid()) {
-            m_notificationAreaServices.insert(service);
-            emit NotificationAreaRegistered();
+            m_notificationHostServices.insert(service);
+            emit NotificationHostRegistered();
         }
     }
 }
 
-bool NotificationAreaWatcher::IsNotificationAreaRegistered() const
+bool NotificationItemWatcher::IsNotificationHostRegistered() const
 {
-    return !m_notificationAreaServices.isEmpty();
+    return !m_notificationHostServices.isEmpty();
 }
 
-int NotificationAreaWatcher::ProtocolVersion() const
+int NotificationItemWatcher::ProtocolVersion() const
 {
     return 0;
 }
 
-#include "notificationareawatcher.moc"
+#include "notificationitemwatcher.moc"

@@ -37,7 +37,7 @@
 #include <Plasma/Applet>
 
 #include "dbussystemtraywidget.h"
-#include "notificationarea_interface.h"
+#include "notificationitem_interface.h"
 #include "systemtraytypes.h"
 
 namespace SystemTray
@@ -93,7 +93,7 @@ public:
     bool blink;
     QHash<Plasma::Applet *, Plasma::IconWidget *>iconWidgets;
     Plasma::ToolTipContent toolTipData;
-    org::kde::NotificationAreaItem *notificationAreaItemInterface;
+    org::kde::NotificationItem *notificationItemInterface;
 };
 
 
@@ -109,15 +109,15 @@ DBusSystemTrayTask::DBusSystemTrayTask(const QString &service)
     d->id = service;
     d->name = service;
 
-    d->notificationAreaItemInterface = new org::kde::NotificationAreaItem(service, "/NotificationAreaItem",
+    d->notificationItemInterface = new org::kde::NotificationItem(service, "/NotificationItem",
                                                                           QDBusConnection::sessionBus(), this);
 
     d->refresh();
 
-    connect(d->notificationAreaItemInterface, SIGNAL(NewIcon()), this, SLOT(refresh()));
-    connect(d->notificationAreaItemInterface, SIGNAL(NewAttentionIcon()), this, SLOT(refresh()));
-    connect(d->notificationAreaItemInterface, SIGNAL(NewToolTip()), this, SLOT(refresh()));
-    connect(d->notificationAreaItemInterface, SIGNAL(NewStatus(QString)), this, SLOT(syncStatus(QString)));
+    connect(d->notificationItemInterface, SIGNAL(NewIcon()), this, SLOT(refresh()));
+    connect(d->notificationItemInterface, SIGNAL(NewAttentionIcon()), this, SLOT(refresh()));
+    connect(d->notificationItemInterface, SIGNAL(NewToolTip()), this, SLOT(refresh()));
+    connect(d->notificationItemInterface, SIGNAL(NewStatus(QString)), this, SLOT(syncStatus(QString)));
 }
 
 
@@ -133,7 +133,7 @@ QGraphicsWidget* DBusSystemTrayTask::createWidget(Plasma::Applet *host)
         return d->iconWidgets[host];
     }
 
-    DBusSystemTrayWidget *iconWidget = new DBusSystemTrayWidget(host, d->notificationAreaItemInterface);
+    DBusSystemTrayWidget *iconWidget = new DBusSystemTrayWidget(host, d->notificationItemInterface);
     iconWidget->show();
 
     iconWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -194,11 +194,11 @@ void DBusSystemTrayTaskPrivate::iconDestroyed(QObject *obj)
 
 void DBusSystemTrayTaskPrivate::refresh()
 {
-    QDBusMessage message = QDBusMessage::createMethodCall(notificationAreaItemInterface->service(),
-    notificationAreaItemInterface->path(), "org.freedesktop.DBus.Properties", "GetAll");
+    QDBusMessage message = QDBusMessage::createMethodCall(notificationItemInterface->service(),
+    notificationItemInterface->path(), "org.freedesktop.DBus.Properties", "GetAll");
 
-    message << notificationAreaItemInterface->interface();
-    QDBusPendingCall call = notificationAreaItemInterface->connection().asyncCall(message);
+    message << notificationItemInterface->interface();
+    QDBusPendingCall call = notificationItemInterface->connection().asyncCall(message);
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, q);
     q->connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher *)), q, SLOT(refreshCallback(QDBusPendingCallWatcher *)));
 }
