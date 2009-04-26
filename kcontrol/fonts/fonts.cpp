@@ -546,11 +546,10 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
     << i18n("Used for desktop icons.");
 
   QVBoxLayout * layout = new QVBoxLayout(this );
-  layout->setSpacing( KDialog::spacingHint() );
   layout->setMargin(0);
 
   QGridLayout * fontUseLayout = new QGridLayout( );
-  layout->addItem( fontUseLayout );
+  layout->addLayout( fontUseLayout );
   fontUseLayout->setColumnStretch(0, 0);
   fontUseLayout->setColumnStretch(1, 1);
   fontUseLayout->setColumnStretch(2, 0);
@@ -594,8 +593,7 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
   }
 
    QHBoxLayout *hblay = new QHBoxLayout();
-   layout->addItem(hblay);
-   hblay->setSpacing(KDialog::spacingHint());
+   layout->addLayout(hblay);
    hblay->addStretch();
    QPushButton * fontAdjustButton = new QPushButton(i18n("Ad&just All Fonts..."), this);
    fontAdjustButton->setWhatsThis( i18n("Click to change all fonts"));
@@ -605,9 +603,8 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
    layout->addSpacing(KDialog::spacingHint());
 
    QGridLayout* lay = new QGridLayout();
-   layout->addItem(lay);
+   layout->addLayout(lay);
    lay->setColumnStretch( 3, 10 );
-   lay->setSpacing(KDialog::spacingHint());
    QLabel* label=0L;
 #ifdef HAVE_FONTCONFIG
    label = new QLabel( i18n( "Use a&nti-aliasing:" ), this );
