@@ -1,5 +1,6 @@
 set(time_engine_SRCS
     timeengine.cpp
+    moonphase.cpp
     solarposition.cpp
 )
 

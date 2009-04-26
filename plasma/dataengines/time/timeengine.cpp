@@ -1,4 +1,4 @@
-/*
+    /*
  *   Copyright 2007 Aaron Seigo <aseigo@kde.org>
  *   Copyright 2008 Alex Merry <alex.merry@kdemail.net>
  *
@@ -29,6 +29,7 @@
 #include <KSystemTimeZones>
 #include <KDateTime>
 
+#include "moonphase.h"
 #include "solarposition.h"
 
 //timezone is defined in msvc
@@ -140,6 +141,9 @@ bool TimeEngine::updateSourceEvent(const QString &tz)
                 solarPosition = new SolarPosition;
             }
             solarPosition->appendData(data);
+        }
+        if (args.contains(I18N_NOOP("Moon"))) {
+            appendMoonphase(data);
         }
     }
     setData(tz, data);
