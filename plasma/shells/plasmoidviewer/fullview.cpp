@@ -28,6 +28,7 @@
 #include "fullview.h"
 
 #include <QApplication>
+#include <QFileInfo>
 #include <QIcon>
 #include <QResizeEvent>
 
@@ -97,7 +98,17 @@ void FullView::addApplet(const QString &name, const QString &containment,
     m_containment->setLocation(m_location);
     setScene(m_containment->scene());
 
-    m_applet = m_containment->addApplet(name, args, QRectF(0, 0, -1, -1));
+    QFileInfo info(name);
+    if (info.isAbsolute() && info.exists()) {
+        m_applet = Applet::loadPlasmoid(name);
+    }
+
+    if (!m_applet) {
+        m_applet = m_containment->addApplet(name, args, QRectF(0, 0, -1, -1));
+    } else {
+        m_containment->addApplet(m_applet, QPointF(-1, -1), false);
+    }
+
     m_applet->setFlag(QGraphicsItem::ItemIsMovable, false);
 
     setSceneRect(m_applet->geometry());
