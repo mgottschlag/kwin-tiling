@@ -315,7 +315,6 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QL
 
     setTitle(item->name());
     setIcon(item->icon());
-    addMenu(new AdvancedMenu(this, item));
 
     if (TaskManager::self()->numberOfDesktops() > 1) {
         addMenu(new DesktopsMenu(this, item));
@@ -327,6 +326,8 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* item, GroupManager *strategy, QL
     addAction(new MinimizeActionImpl(this, item));
     addAction(new MaximizeActionImpl(this, item));
     addAction(new ShadeActionImpl(this, item));
+
+    addMenu(new AdvancedMenu(this, item));
 
     if (strategy->taskGrouper()) {
         QList<QAction*> groupingStrategyActions = strategy->taskGrouper()->strategyActions(this, item);
@@ -363,7 +364,6 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, 
         }
     }
     addSeparator();
-    addMenu(new AdvancedMenu(this, group));
 
     if (TaskManager::self()->numberOfDesktops() > 1) {
         addMenu(new DesktopsMenu(this, group));
@@ -373,6 +373,8 @@ BasicMenu::BasicMenu(QWidget *parent, TaskGroup* group, GroupManager *strategy, 
     addAction(new MinimizeActionImpl(this, group));
     addAction(new MaximizeActionImpl(this, group));
     addAction(new ShadeActionImpl(this, group));
+
+    addMenu(new AdvancedMenu(this, group));
 
     if (strategy->taskGrouper()) {
         QList<QAction*> groupingStrategyActions = strategy->taskGrouper()->strategyActions(this, group);
