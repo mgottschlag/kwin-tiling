@@ -215,11 +215,11 @@ void PlasmaApp::setupDesktop()
 
     // and now, let everyone know we're ready!
     notifyStartup(true);
+    connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanUp()));
 }
 
 void PlasmaApp::quit()
 {
-    cleanup();
     KGlobal::deref();
 }
 
