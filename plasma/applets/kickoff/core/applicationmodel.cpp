@@ -85,6 +85,7 @@ public:
     QList<AppNode*> children;
 
     QIcon icon;
+    QString iconName;
     QString genericName;
     QString appName;
     QString relPath;
@@ -172,23 +173,28 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
             // check for duplicates (eg. KDE 3 and KDE 4 versions of application
             // both present)
             if (duplicatePolicy == ApplicationModel::ShowLatestOnlyPolicy &&
-                    existingServices.contains(appName)) {
+                existingServices.contains(appName)) {
                 if (Kickoff::isLaterVersion(existingServices[appName], service)) {
                     continue;
                 } else {
                     // find and remove the existing entry with the same name
                     for (int i = node->children.count() - 1; i >= 0; --i) {
-                        if (node->children[i]->appName == appName) {
-                            AppNode* n = node->children.takeAt(i);
-                            const QString s = n->genericName.toLower();
-                            if(genericNames.contains(s)) {
-                                QList<AppNode*> l = genericNames[s];
-                                for(int j = l.count() - 1; j >= 0; --j)
-                                    if(l[j] == n)
-                                        l.takeAt(j);
-                                genericNames[s] = l;
+                        AppNode *app = node->children.at(i);
+                        if (app->appName == appName &&
+                            app->genericName == genericName &&
+                            app->iconName == icon) {
+                            app = node->children.takeAt(i);
+                            const QString s = app->genericName.toLower();
+                            if (genericNames.contains(s)) {
+                                QList<AppNode*> list = genericNames[s];
+                                for (int j = list.count() - 1; j >= 0; --j) {
+                                    if(list.at(j) == app) {
+                                        list.takeAt(j);
+                                    }
+                                }
+                                genericNames[s] = list;
                             }
-                            delete n;
+                            delete app;
                         }
                     }
                 }
@@ -205,8 +211,9 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
         } else if (p->isType(KST_KServiceGroup)) {
             const KServiceGroup::Ptr serviceGroup = KServiceGroup::Ptr::staticCast(p);
 
-            if (serviceGroup->noDisplay() || serviceGroup->childCount() == 0)
+            if (serviceGroup->noDisplay() || serviceGroup->childCount() == 0) {
                 continue;
+            }
 
             kDebug(250) << "Service group" << serviceGroup->entryPath() << serviceGroup->icon()
             << serviceGroup->relPath() << serviceGroup->directoryEntryPath();
@@ -228,6 +235,7 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
         }
 
         AppNode *newnode = new AppNode();
+        newnode->iconName = icon;
         newnode->icon = KIcon(icon);
         newnode->appName = appName;
         newnode->genericName = genericName;
