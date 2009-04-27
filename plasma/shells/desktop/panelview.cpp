@@ -208,20 +208,17 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
       m_triggerEntered(false)
 {
     Q_ASSERT(qobject_cast<Plasma::Corona*>(panel->scene()));
+    kDebug() << "Panel geometry is" << panel->geometry();
 
     m_strutsTimer = new QTimer(this);
     m_strutsTimer->setSingleShot(true);
     connect(m_strutsTimer, SIGNAL(timeout()), this, SLOT(updateStruts()));
 
-    if (panel) {
-        connect(panel, SIGNAL(destroyed(QObject*)), this, SLOT(panelDeleted()));
-        connect(panel, SIGNAL(toolBoxToggled()), this, SLOT(togglePanelController()));
-        kDebug() << "Panel geometry is" << panel->geometry();
-    }
-
+    connect(panel, SIGNAL(destroyed(QObject*)), this, SLOT(panelDeleted()));
+    connect(panel, SIGNAL(toolBoxToggled()), this, SLOT(togglePanelController()));
+    connect(panel, SIGNAL(appletAdded(Plasma::Applet *, const QPointF &)), this, SLOT(appletAdded(Plasma::Applet *)));
     connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(pinchContainmentToCurrentScreen()));
 
-    connect(containment(), SIGNAL(appletAdded(Plasma::Applet *, const QPointF &)), this, SLOT(appletAdded(Plasma::Applet *)));
 
     // Graphics view setup
     setFrameStyle(QFrame::NoFrame);
@@ -243,7 +240,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 
     KConfigGroup viewConfig = config();
     KConfigGroup sizes = KConfigGroup(&viewConfig, "Sizes");
-    QRect screenRect = Kephal::ScreenUtils::screenGeometry(containment()->screen());
+    QRect screenRect = Kephal::ScreenUtils::screenGeometry(panel->screen());
     m_lastSeenSize = sizes.readEntry("lastsize", m_lastHorizontal ? screenRect.width() : screenRect.height());
     m_alignment = alignmentFilter((Qt::Alignment)viewConfig.readEntry("Alignment", (int)Qt::AlignLeft));
     m_offset = viewConfig.readEntry("Offset", 0);
@@ -251,14 +248,48 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 
     KWindowSystem::setType(winId(), NET::Dock);
 
+    // ensure we aren't overlapping other panels
+    const QRegion availGeom = PlasmaApp::self()->corona()->availableScreenRegion(panel->screen());
+    const int w = panel->size().width();
+    const int h = panel->size().height();
+    const int length = panel->formFactor() == Plasma::Horizontal ? w : h;
+
+    switch (location()) {
+        case Plasma::LeftEdge: {
+            QRect r = availGeom.intersected(QRect(0, m_offset, w, length)).boundingRect();
+            if (m_offset != r.top()) {
+                setOffset(r.top());
+            }
+        }
+        break;
+
+        case Plasma::RightEdge: {
+            QRect r = availGeom.intersected(QRect(screenRect.right() - w, m_offset, w, length)).boundingRect();
+            setOffset(r.top());
+        }
+        break;
+
+        case Plasma::TopEdge: {
+            QRect r = availGeom.intersected(QRect(m_offset, 0, length, h)).boundingRect();
+            setOffset(r.left());
+        }
+        break;
+
+        case Plasma::BottomEdge:
+        default: {
+            QRect r = availGeom.intersected(QRect(m_offset, screenRect.bottom() - h, length, h)).boundingRect();
+            setOffset(r.left());
+        }
+        break;
+    }
+
     // pinchContainment calls updatePanelGeometry for us
     pinchContainment(screenRect);
-    m_lastMin = containment()->minimumSize();
-    m_lastMax = containment()->maximumSize();
+    m_lastMin = panel->minimumSize();
+    m_lastMax = panel->maximumSize();
 
     // KWin setup
     KWindowSystem::setOnAllDesktops(winId(), true);
-
     QTimer::singleShot(0, this, SLOT(init()));
 }
 
