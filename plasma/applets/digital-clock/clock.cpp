@@ -380,11 +380,20 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         // magic 10 is for very big spaces,
         // where there's enough space to grow without harming time space
         QFontMetrics fm(smallFont);
-        smallFont.setPixelSize(qMax(contentsRect.height()/10, fm.ascent()));
         // kDebug(96669) << "=========";
         // kDebug(96669) << "contentsRect: " << contentsRect;
 
-        m_dateRect = preparePainter(p, contentsRect, smallFont, dateString);
+        if (contentsRect.height() > contentsRect.width() * 2) {
+            //kDebug() << Plasma::Vertical << contentsRect.height() <<contentsRect.width() * 2;
+            QRect dateRect = contentsRect;
+            dateRect.setHeight(dateRect.width());
+            smallFont.setPixelSize(qMax(dateRect.height() / 2, fm.ascent()));
+            m_dateRect = preparePainter(p, dateRect, smallFont, dateString);
+        } else {
+            smallFont.setPixelSize(qMax(contentsRect.height()/10, fm.ascent()));
+            m_dateRect = preparePainter(p, contentsRect, smallFont, dateString);
+        }
+
         // kDebug(96669) << "m_dateRect: " << m_dateRect;
 
         int subtitleHeight = m_dateRect.height();
