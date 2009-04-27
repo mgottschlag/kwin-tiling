@@ -122,13 +122,13 @@ void Trash::createConfigurationInterface(KConfigDialog *parent)
 
 void Trash::createMenu()
 {
-    QAction* open = new QAction(SmallIcon("document-open"),i18n("&Open"), this);
+    QAction* open = new QAction(SmallIcon("document-open"), i18n("&Open"), this);
     actions.append(open);
     connect(open, SIGNAL(triggered(bool)), this , SLOT(slotOpen()));
 
-    emptyTrash = new QAction(SmallIcon("trash-empty"),i18n("&Empty Trashcan"), this);
+    emptyTrash = new QAction(SmallIcon("trash-empty"), i18n("&Empty Trashcan"), this);
     actions.append(emptyTrash);
-    connect(emptyTrash, SIGNAL(triggered(bool)), this , SLOT(slotEmpty()));
+    connect(emptyTrash, SIGNAL(triggered(bool)), this, SLOT(slotEmpty()));
 
     m_menu.addTitle(i18n("Trash"));
     m_menu.addAction(open);
@@ -195,9 +195,7 @@ void Trash::slotOpen()
 void Trash::slotEmpty()
 {
     if (m_emptyProcess) {
-        //FIXME 4.3: Instead, tell the user the trash is still being empties and just return
-        delete m_emptyProcess;
-        m_emptyProcess = 0;
+        return;
     }
 
     emit releaseVisualFocus();
@@ -214,6 +212,8 @@ void Trash::slotEmpty()
          // We can't use KonqOperations here. To avoid duplicating its code (small, though),
         // we can simply call ktrash.
         //KonqOperations::emptyTrash(&m_menu);
+        emptyTrash->setEnabled(false);
+        emptyTrash->setText(i18n("Emptying Trashcan..."));
         m_emptyProcess = new KProcess(this);
         connect(m_emptyProcess, SIGNAL(finished(int,QProcess::ExitStatus)),
                 this, SLOT(emptyFinished(int,QProcess::ExitStatus)));
@@ -229,6 +229,8 @@ void Trash::emptyFinished(int exitCode, QProcess::ExitStatus exitStatus)
     //TODO: check the exit status and let the user know if it fails
     delete m_emptyProcess;
     m_emptyProcess = 0;
+    emptyTrash->setEnabled(true);
+    emptyTrash->setText(i18n("&Empty Trashcan"));
 }
 
 void Trash::updateIcon()
