@@ -371,6 +371,10 @@ void TaskGroupItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
     TaskManager::BasicMenu menu(qobject_cast<QWidget*>(this), m_group, &m_applet->groupManager(), actionList);
     menu.adjustSize();
 
+    if (m_applet->formFactor() != Plasma::Vertical) {
+        menu.setMinimumWidth(size().width());
+    }
+
     Q_ASSERT(m_applet->containment());
     Q_ASSERT(m_applet->containment()->corona());
     menu.exec(m_applet->containment()->corona()->popupPosition(this, menu.size()));
@@ -566,6 +570,10 @@ void TaskGroupItem::popupMenu()
         m_popupDialog->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
         //TODO in the future it may be possible to use the Qt::Popup flag instead of the eventFilter, but for now the focus works better with the eventFilter
         m_popupDialog->installEventFilter(this);
+
+        int left, top, right, bottom;
+        m_popupDialog->getContentsMargins(&left, &top, &right, &bottom);
+        m_offscreenWidget->setMinimumWidth(size().width() - left - right);
         m_popupDialog->setGraphicsWidget(m_offscreenWidget);
     }
 
@@ -637,6 +645,17 @@ void TaskGroupItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         m_popupMenuTimer->stop();
     } //Wait a bit before starting drag
     AbstractTaskItem::mouseMoveEvent(event);
+}
+
+void TaskGroupItem::resizeEvent(QGraphicsSceneResizeEvent *event)
+{
+    Q_UNUSED(event)
+
+    if (m_offscreenWidget && m_popupDialog) {
+        int left, top, right, bottom;
+        m_popupDialog->getContentsMargins(&left, &top, &right, &bottom);
+        m_offscreenWidget->setMinimumWidth(size().width() - left - right);
+    }
 }
 
 void TaskGroupItem::expand()

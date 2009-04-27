@@ -126,10 +126,8 @@ public slots:
     void collapse();
     void updatePreferredSize();
 
-private Q_SLOTS:
-    void constraintsChanged(Plasma::Constraints);
-    void clearPopupLostFocus();
-    void reloadTheme();
+public slots:
+    void updateActive(AbstractTaskItem *);
 
 protected:
     AbstractTaskItem *taskItemForWId(WId id);
@@ -145,17 +143,18 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void resizeEvent(QGraphicsSceneResizeEvent *event);
 
-public slots:
-    void updateActive(AbstractTaskItem *);
-
-protected:
     void updateToolTip();
 
 protected slots:
     virtual void wheelEvent(QGraphicsSceneWheelEvent *event);
 
-private slots:
+private Q_SLOTS:
+    void constraintsChanged(Plasma::Constraints);
+    void clearPopupLostFocus();
+    void reloadTheme();
+
     void updateTask(::TaskManager::TaskChanges changes);
 
     /** Stay informed about changes in group */

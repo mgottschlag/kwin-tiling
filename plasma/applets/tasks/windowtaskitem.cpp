@@ -276,6 +276,11 @@ void WindowTaskItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
 
     TaskManager::BasicMenu menu(0, m_task, &m_applet->groupManager(), actionList);
     menu.adjustSize();
+
+    if (m_applet->formFactor() != Plasma::Vertical) {
+        menu.setMinimumWidth(size().width());
+    }
+
     Q_ASSERT(m_applet->containment());
     Q_ASSERT(m_applet->containment()->corona());
     menu.exec(m_applet->containment()->corona()->popupPosition(this, menu.size()));

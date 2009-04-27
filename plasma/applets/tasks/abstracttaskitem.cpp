@@ -291,7 +291,7 @@ void AbstractTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 void AbstractTaskItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (event->button() == Qt::LeftButton/* || event->button() == Qt::MidButton*/) {
+    if (event->button() == Qt::LeftButton) {
         activate();
     }
 }
