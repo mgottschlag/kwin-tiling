@@ -365,7 +365,14 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
 
-    mainLayout->setContentsMargins(12, 9, 12, 7);
+    qreal left, top, right, bottom;
+    m_svg->getMargins(left, top, right, bottom);
+    //not in framesvg mode
+    if (left == 0) {
+        mainLayout->setContentsMargins(12, 9, 12, 7);
+    } else {
+        mainLayout->setContentsMargins(left, top, right, bottom);
+    }
 
     QVBoxLayout *buttonLayout = new QVBoxLayout();
     QHBoxLayout *buttonMainLayout = new QHBoxLayout();
