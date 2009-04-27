@@ -65,8 +65,6 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
     setAspectRatioMode(IgnoreAspectRatio);
 
     // let's initialize the widget
-    (void)widget();
-
     resize(widget()->sizeHint());
 }
 

@@ -94,7 +94,7 @@ class DeviceNotifier : public Plasma::PopupApplet
          * @internal Clears memory when needed.
          */
          void toolTipHidden();
-    
+
     protected slots:
         /**
         * slot called when a source/device is added in the hotplug engine
