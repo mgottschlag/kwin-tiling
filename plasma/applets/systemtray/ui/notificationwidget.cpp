@@ -198,7 +198,7 @@ void NotificationWidgetPrivate::updateActions()
         layout->addItem(button);
     }
 
-    layout->updateGeometry();
+    actionsWidget->adjustSize();
     actionsWidget->setPos(q->size().width() - actionsWidget->size().width(),
                           q->size().width() - actionsWidget->size().height());
 }
