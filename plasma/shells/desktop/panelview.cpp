@@ -1473,6 +1473,7 @@ void PanelView::panelDeleted()
         // the panel was removed at runtime; clean up our configuration object as well
         KConfigGroup c = config();
         c.deleteGroup();
+        configNeedsSaving();
     }
 
     deleteLater();
