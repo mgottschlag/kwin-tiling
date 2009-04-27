@@ -1,3 +1,7 @@
+2009-04-27  Richard Dale  <richard.j.dale@gmail.com>
+* Added some special casing for the new KDE 4.3 widgets, so they work with 
+PLasmaScripting::Applet arguments
+
 2009-04-22  Richard Dale  <richard.j.dale@gmail.com>
 * Added PlasmaScripting::Containment and PlasmaScripting::PopupApplet classes,
   now that scripting containments and popups can be created

@@ -447,6 +447,16 @@ module Plasma
     end
   end
 
+  class ScrollWidget < Qt::Base
+    def initialize(parent = nil)
+      if parent.kind_of?(PlasmaScripting::Applet)
+        super(parent.applet_script.applet)
+      else
+        super
+      end
+    end
+  end
+
   class SignalPlotter < Qt::Base
     def initialize(parent = nil)
       if parent.kind_of?(PlasmaScripting::Applet)
@@ -463,6 +473,24 @@ module Plasma
         super(parent.applet_script.applet)
       else
         super
+      end
+    end
+  end
+
+  class SpinBox < Qt::Base
+    def initialize(parent = nil)
+      if parent.kind_of?(PlasmaScripting::Applet)
+        super(parent.applet_script.applet)
+      else
+        super
+      end
+    end
+
+    def range=(arg)
+      if arg.kind_of? Range
+        return super(arg.begin, arg.exclude_end?  ? arg.end - 1 : arg.end)
+      else
+        return super(arg)
       end
     end
   end
@@ -491,7 +519,27 @@ module Plasma
     end
   end
 
+  class TextBrowser < Qt::Base
+    def initialize(parent = nil)
+      if parent.kind_of?(PlasmaScripting::Applet)
+        super(parent.applet_script.applet)
+      else
+        super
+      end
+    end
+  end
+
   class TextEdit < Qt::Base
+    def initialize(parent = nil)
+      if parent.kind_of?(PlasmaScripting::Applet)
+        super(parent.applet_script.applet)
+      else
+        super
+      end
+    end
+  end
+
+  class ToolButton < Qt::Base
     def initialize(parent = nil)
       if parent.kind_of?(PlasmaScripting::Applet)
         super(parent.applet_script.applet)
@@ -582,6 +630,16 @@ module Plasma
   end
 
   class WebView < Qt::Base
+    def initialize(parent = nil)
+      if parent.kind_of?(PlasmaScripting::Applet)
+        super(parent.applet_script.applet)
+      else
+        super
+      end
+    end
+  end
+
+  class VideoWidget < Qt::Base
     def initialize(parent = nil)
       if parent.kind_of?(PlasmaScripting::Applet)
         super(parent.applet_script.applet)
