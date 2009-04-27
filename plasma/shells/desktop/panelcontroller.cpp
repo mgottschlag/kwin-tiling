@@ -262,8 +262,7 @@ public:
 
     void syncRuler()
     {
-        QRect screenGeom =
-              Kephal::ScreenUtils::screenGeometry(containment->screen());
+        QRect screenGeom = Kephal::ScreenUtils::screenGeometry(containment->screen());
 
         switch (location) {
         case Plasma::LeftEdge:
@@ -285,8 +284,47 @@ public:
     void maximizePanel()
     {
         const int length = ruler->availableLength();
-        rulersMoved(0, length, length);
-        ruler->setOffset(0);
+        const int screen = containment->screen();
+        const QRect screenGeom = PlasmaApp::self()->corona()->screenGeometry(screen);
+        QRegion availGeom(screenGeom);
+        foreach (PanelView *view, PlasmaApp::self()->panelViews()) {
+            if (view->containment() != containment &&
+                view->screen() == screen && view->visibilityMode() == PanelView::NormalPanel) {
+                availGeom = availGeom.subtracted(view->geometry());
+            }
+        }
+        int offset = 0;
+        const int w = containment->size().width();
+        const int h = containment->size().height();
+
+        switch (location) {
+            case Plasma::LeftEdge: {
+                QRect r = availGeom.intersected(QRect(0, 0, w, length)).boundingRect();
+                offset = r.top();
+            }
+            break;
+
+            case Plasma::RightEdge: {
+                QRect r = availGeom.intersected(QRect(screenGeom.right() - w, 0, w, length)).boundingRect();
+                offset = r.top();
+            }
+            break;
+
+            case Plasma::TopEdge: {
+                QRect r = availGeom.intersected(QRect(0, 0, length, h)).boundingRect();
+                offset = r.left();
+            }
+            break;
+
+            case Plasma::BottomEdge:
+            default: {
+                QRect r = availGeom.intersected(QRect(0, screenGeom.bottom() - h, length, h)).boundingRect();
+                offset = r.left();
+            }
+            break;
+        }
+
+        rulersMoved(offset, length, length);
         ruler->setMaxLength(length);
         ruler->setMinLength(length);
     }
@@ -555,8 +593,7 @@ void PanelController::setContainment(Plasma::Containment *containment)
 
 QSize PanelController::sizeHint() const
 {
-    QRect screenGeom =
-        Kephal::ScreenUtils::screenGeometry(d->containment->screen());
+    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(d->containment->screen());
 
     switch (d->location) {
     case Plasma::LeftEdge:
@@ -573,8 +610,7 @@ QSize PanelController::sizeHint() const
 
 QPoint PanelController::positionForPanelGeometry(const QRect &panelGeom) const
 {
-    QRect screenGeom =
-        Kephal::ScreenUtils::screenGeometry(d->containment->screen());
+    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(d->containment->screen());
 
     switch (d->location) {
     case Plasma::LeftEdge:
@@ -601,8 +637,7 @@ void PanelController::setLocation(const Plasma::Location &loc)
 
     d->location = loc;
     d->ruler->setLocation(loc);
-    QRect screenGeom =
-        Kephal::ScreenUtils::screenGeometry(d->containment->screen());
+    QRect screenGeom = Kephal::ScreenUtils::screenGeometry(d->containment->screen());
 
     switch (loc) {
     case Plasma::LeftEdge:
@@ -681,7 +716,6 @@ void PanelController::setLocation(const Plasma::Location &loc)
     }
 
     d->ruler->setMaximumSize(d->ruler->sizeHint());
-
     d->syncRuler();
 }
 
