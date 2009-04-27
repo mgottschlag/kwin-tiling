@@ -29,6 +29,8 @@
 
 #include <Plasma/Plasma>
 
+class QTimer;
+
 namespace Plasma
 {
     class AppletBrowser;
@@ -125,6 +127,8 @@ private Q_SLOTS:
     void appletBrowserDestroyed();
     void createView(Plasma::Containment *containment);
     void panelRemoved(QObject* panel);
+    void waitingPanelRemoved(QObject* panel);
+    void createWaitingPanels();
     void screenRemoved(int id);
     void compositingChanged();
     void showAppletBrowser();
@@ -133,13 +137,16 @@ private Q_SLOTS:
     void updateActions(Plasma::ImmutabilityType immutability);
     void setPerVirtualDesktopViews(int toggle);
     void setFixedDashboard(int toggle);
+    void setWmClass(WId id);
 
 private:
     DesktopCorona *m_corona;
     QList<PanelView*> m_panels;
+    QList<Plasma::Containment*> m_panelsWaiting;
     Plasma::AppletBrowser *m_appletBrowser;
     Plasma::Dialog *m_controllerDialog;
     QList<DesktopView*> m_desktops;
+    QTimer *m_panelViewCreationTimer;
     Plasma::ZoomLevel m_zoomLevel;
     int m_panelHidden;
 };

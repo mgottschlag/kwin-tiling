@@ -44,9 +44,8 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QPixmapCache>
-#include <QTimer>
 #include <QtDBus/QtDBus>
-#include <QCheckBox>
+#include <QTimer>
 
 #include <KAction>
 #include <KCrash>
@@ -60,6 +59,8 @@
 #include <Plasma/Theme>
 #include <Plasma/Dialog>
 
+#include <kephal/screens.h>
+
 #include "appletbrowser.h"
 #include "appadaptor.h"
 #include "backgrounddialog.h"
@@ -69,8 +70,6 @@
 #include "panelview.h"
 #include "plasma-shell-desktop.h"
 #include "toolbutton.h"
-
-#include <kephal/screens.h>
 
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>
@@ -97,6 +96,11 @@ PlasmaApp::PlasmaApp()
     KGlobal::locale()->insertCatalog("libplasma");
     KGlobal::locale()->insertCatalog("plasma-shells-common");
     KCrash::setFlags(KCrash::AutoRestart);
+
+    m_panelViewCreationTimer = new QTimer(this);
+    m_panelViewCreationTimer->setSingleShot(true);
+    m_panelViewCreationTimer->setInterval(0);
+    connect(m_panelViewCreationTimer, SIGNAL(timeout()), this, SLOT(createWaitingPanels()));
 
     new PlasmaAppAdaptor(this);
     QDBusConnection::sessionBus().registerObject("/App", this);
@@ -606,21 +610,15 @@ void PlasmaApp::createView(Plasma::Containment *containment)
 
     // find the mapping of View to Containment, if any,
     // so we can restore things on start.
-    KConfigGroup viewIds(KGlobal::config(), "ViewIds");
-    int id = viewIds.readEntry(QString::number(containment->id()), 0);
-
-    WId viewWindow = 0;
 
     if (isPanelContainment(containment)) {
-        if (containment->screen() < Kephal::ScreenUtils::numScreens()) {
-            PanelView *panelView = new PanelView(containment, id);
-            viewWindow = panelView->winId();
-            connect(panelView, SIGNAL(destroyed(QObject*)), this, SLOT(panelRemoved(QObject*)));
-            m_panels << panelView;
-            panelView->show();
-        }
+        m_panelsWaiting << containment;
+        connect(containment, SIGNAL(destroyed(QObject*)), this, SLOT(waitingPanelRemoved(QObject*)));
+        m_panelViewCreationTimer->start();
     } else if (containment->screen() > -1 &&
                containment->screen() < Kephal::ScreenUtils::numScreens()) {
+        KConfigGroup viewIds(KGlobal::config(), "ViewIds");
+        int id = viewIds.readEntry(QString::number(containment->id()), 0);
         DesktopView *view = viewForScreen(containment->screen(), containment->desktop());
         if (view) {
             kDebug() << "had a view for" << containment->screen() << containment->desktop();
@@ -633,7 +631,6 @@ void PlasmaApp::createView(Plasma::Containment *containment)
 
         // we have a new screen. neat.
         view = new DesktopView(containment, id, 0);
-        viewWindow = view->winId();
         if (m_corona) {
             connect(m_corona, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
                     view, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
@@ -641,19 +638,39 @@ void PlasmaApp::createView(Plasma::Containment *containment)
 
         m_desktops.append(view);
         view->show();
+        setWmClass(view->winId());
     }
+}
 
+void PlasmaApp::setWmClass(WId id)
+{
 #ifdef Q_WS_X11
     //FIXME: if argb visuals enabled Qt will always set WM_CLASS as "qt-subapplication" no matter what
     //the application name is we set the proper XClassHint here, hopefully won't be necessary anymore when
     //qapplication will manage apps with argvisuals in a better way
-    if (viewWindow) {
-        XClassHint classHint;
-        classHint.res_name = const_cast<char*>("Plasma");
-        classHint.res_class = const_cast<char*>("Plasma");
-        XSetClassHint(QX11Info::display(), viewWindow, &classHint);
-    }
+    XClassHint classHint;
+    classHint.res_name = const_cast<char*>("Plasma");
+    classHint.res_class = const_cast<char*>("Plasma");
+    XSetClassHint(QX11Info::display(), id, &classHint);
 #endif
+}
+
+void PlasmaApp::createWaitingPanels()
+{
+    foreach (Plasma::Containment *containment, m_panelsWaiting) {
+        disconnect(containment, SIGNAL(destroyed(QObject*)), this, SLOT(waitingPanelRemoved(QObject*)));
+        KConfigGroup viewIds(KGlobal::config(), "ViewIds");
+        int id = viewIds.readEntry(QString::number(containment->id()), 0);
+        if (containment->screen() < Kephal::ScreenUtils::numScreens()) {
+            PanelView *panelView = new PanelView(containment, id);
+            connect(panelView, SIGNAL(destroyed(QObject*)), this, SLOT(panelRemoved(QObject*)));
+            m_panels << panelView;
+            panelView->show();
+            setWmClass(panelView->winId());
+        }
+    }
+
+    m_panelsWaiting.clear();
 }
 
 void PlasmaApp::containmentAdded(Plasma::Containment *containment)
@@ -951,9 +968,14 @@ void PlasmaApp::setFixedDashboard(int toggle)
     }
 }
 
-void PlasmaApp::panelRemoved(QObject* panel)
+void PlasmaApp::panelRemoved(QObject *panel)
 {
-    m_panels.removeAll((PanelView*)panel);
+    m_panels.removeAll((PanelView *)panel);
+}
+
+void PlasmaApp::waitingPanelRemoved(QObject *panelContainment)
+{
+    m_panelsWaiting.removeAll((Plasma::Containment *)panelContainment);
 }
 
 void PlasmaApp::updateActions(Plasma::ImmutabilityType immutability)
