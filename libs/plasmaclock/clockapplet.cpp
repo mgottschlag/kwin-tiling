@@ -371,6 +371,7 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
 
     QWidget *widget = new QWidget();
     d->ui.setupUi(widget);
+    d->ui.searchLine->addTreeWidget(d->ui.timeZones);
 
     parent->addPage(widget, i18n("Time Zones"), "preferences-desktop-locale");
 
