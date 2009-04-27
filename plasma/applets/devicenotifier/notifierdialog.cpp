@@ -294,9 +294,8 @@ void NotifierDialog::buildDialog()
 void NotifierDialog::storageTeardownDone(Solid::ErrorType error, QVariant errorData)
 {
     if (error && errorData.isValid()) {
-        KMessageBox::error(0, i18n("Cannot unmount the device.\nOne or more files on this device are open within an application."), QString());
-    }
-    else {
+        QTimer::singleShot(0, this, SLOT(showTeardownError()));
+    } else {
         m_notifier->changeNotifierIcon("dialog-ok");
         m_notifier->update();
         QTimer::singleShot(5000, this, SLOT(resetNotifierIcon()));
@@ -305,6 +304,12 @@ void NotifierDialog::storageTeardownDone(Solid::ErrorType error, QVariant errorD
     //show the message only one time
     disconnect(sender(), SIGNAL(teardownDone(Solid::ErrorType, QVariant, const QString &)),
                this, SLOT(storageTeardownDone(Solid::ErrorType, QVariant)));
+}
+
+void NotifierDialog::showTeardownError()
+{
+    //FIXME: modal dialog are bad m'kay
+    KMessageBox::error(0, i18n("Could not unmount the device.\nOne or more files on this device are open within an application."), QString());
 }
 
 void NotifierDialog::storageEjectDone(Solid::ErrorType error, QVariant errorData)

@@ -155,6 +155,11 @@ namespace Notifier
 
       private slots:
           /**
+          * @internal called when a teardown error occurs
+          */
+          void showTeardownError();
+
+          /**
           * @internal slot called when user has click on a item in the dialog
           * @param index the model index which is clicked
           **/
@@ -166,7 +171,7 @@ namespace Notifier
           * @param error type of error given by solid
           **/
           void storageEjectDone(Solid::ErrorType error, QVariant errorData);
-          
+
           /**
           * @internal slot called when a storage tear is finished
           * @param errorData the error if problem
