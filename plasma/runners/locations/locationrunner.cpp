@@ -18,7 +18,6 @@
 
 #include "locationrunner.h"
 
-#include <QAction>
 #include <QDir>
 #include <QStringList>
 

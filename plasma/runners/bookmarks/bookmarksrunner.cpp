@@ -19,7 +19,6 @@
 
 #include "bookmarksrunner.h"
 
-#include <QAction>
 #include <QDBusInterface>
 #include <QDBusReply>
 #include <QLabel>

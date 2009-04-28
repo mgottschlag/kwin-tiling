@@ -19,10 +19,7 @@
 #include "sessionrunner.h"
 
 #include <QWidget>
-#include <QAction>
 
-#include <KAction>
-#include <KActionCollection>
 #include <KAuthorized>
 #include <KDebug>
 #include <KLocale>
