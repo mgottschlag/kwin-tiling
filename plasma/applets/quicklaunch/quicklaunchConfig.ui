@@ -13,9 +13,6 @@
   <property name="windowTitle">
    <string>Configure QuickLaunch</string>
   </property>
-  <property name="accessibleName">
-   <string>Configure QuickLaunch</string>
-  </property>
   <layout class="QGridLayout">
    <item row="0" column="0">
     <widget class="QLabel" name="label">

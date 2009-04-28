@@ -12,9 +12,6 @@
   <property name="windowTitle" >
    <string>Configure Lock/Logout</string>
   </property>
-  <property name="accessibleName" >
-   <string>Configure Lock/Logout</string>
-  </property>
   <layout class="QGridLayout" name="gridLayout" >
    <item row="0" column="0" >
     <widget class="QCheckBox" name="checkBox_lock" >

@@ -13,9 +13,6 @@
   <property name="windowTitle">
    <string>Configure Pager</string>
   </property>
-  <property name="accessibleName">
-   <string>Configure Pager</string>
-  </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <property name="margin">
     <number>0</number>
