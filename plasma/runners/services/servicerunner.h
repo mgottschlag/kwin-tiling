@@ -46,7 +46,7 @@ class ServiceRunner : public Plasma::AbstractRunner
         void run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &action);
 
     protected:
-        void setupAction(const KService::Ptr &service, Plasma::QueryMatch &action);
+        void setupMatch(const KService::Ptr &service, Plasma::QueryMatch &action);
 };
 
 K_EXPORT_PLASMA_RUNNER(services, ServiceRunner)

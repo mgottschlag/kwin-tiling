@@ -64,7 +64,7 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
             if (!service->noDisplay()) {
                 Plasma::QueryMatch match(this);
                 match.setType(Plasma::QueryMatch::ExactMatch);
-                setupAction(service, match);
+                setupMatch(service, match);
                 match.setRelevance(1);
                 matches << match;
                 seen[service->storageId()] = true;
@@ -110,7 +110,7 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
 
         Plasma::QueryMatch match(this);
         match.setType(Plasma::QueryMatch::PossibleMatch);
-        setupAction(service, match);
+        setupMatch(service, match);
         qreal relevance(0.6);
 
         if (service->name().contains(term, Qt::CaseInsensitive)) {
@@ -166,7 +166,7 @@ void ServiceRunner::run(const Plasma::RunnerContext &context, const Plasma::Quer
     }
 }
 
-void ServiceRunner::setupAction(const KService::Ptr &service, Plasma::QueryMatch &match)
+void ServiceRunner::setupMatch(const KService::Ptr &service, Plasma::QueryMatch &match)
 {
     const QString name = service->name();
 
