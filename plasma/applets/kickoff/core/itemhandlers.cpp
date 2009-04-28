@@ -173,8 +173,7 @@ void LeaveItemHandler::logout()
 void LeaveItemHandler::lock()
 {
     QString interface("org.freedesktop.ScreenSaver");
-    org::freedesktop::ScreenSaver screensaver(interface, "/ScreenSaver",
-            QDBusConnection::sessionBus());
+    org::freedesktop::ScreenSaver screensaver(interface, "/ScreenSaver", QDBusConnection::sessionBus());
     screensaver.Lock();
 }
 
@@ -189,8 +188,7 @@ void LeaveItemHandler::saveSession()
 {
     QString interface("org.kde.ksmserver");
 
-    org::kde::KSMServerInterface ksmserver(interface, "/KSMServer",
-                                           QDBusConnection::sessionBus());
+    org::kde::KSMServerInterface ksmserver(interface, "/KSMServer", QDBusConnection::sessionBus());
     if (ksmserver.isValid()) {
         ksmserver.saveCurrentSession();
     }
@@ -200,22 +198,25 @@ void LeaveItemHandler::standby()
 {
     Solid::Control::PowerManager::SuspendMethod spdMethod = Solid::Control::PowerManager::Standby;
     KJob *job = Solid::Control::PowerManager::suspend(spdMethod);
-    if (job != 0)
+    if (job) {
         job->start();
+    }
 }
 
 void LeaveItemHandler::suspendRAM()
 {
     Solid::Control::PowerManager::SuspendMethod spdMethod = Solid::Control::PowerManager::ToRam;
     KJob *job = Solid::Control::PowerManager::suspend(spdMethod);
-    if (job != 0)
+    if (job) {
         job->start();
+    }
 }
 
 void LeaveItemHandler::suspendDisk()
 {
     Solid::Control::PowerManager::SuspendMethod spdMethod = Solid::Control::PowerManager::ToDisk;
     KJob *job = Solid::Control::PowerManager::suspend(spdMethod);
-    if (job != 0)
+    if (job) {
         job->start();
+    }
 }
