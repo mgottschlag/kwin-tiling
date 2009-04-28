@@ -215,7 +215,7 @@ void PlasmaApp::setupDesktop()
 
     // and now, let everyone know we're ready!
     notifyStartup(true);
-    connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanUp()));
+    connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanup()));
 }
 
 void PlasmaApp::quit()
