@@ -7,4 +7,6 @@
       <label>The id of the action to be invoked.</label>
     </entry>
   </group>
+  <group name="userClosed">
+  </group>
 </kcfg>

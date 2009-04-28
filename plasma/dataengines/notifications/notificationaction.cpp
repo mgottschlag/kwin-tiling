@@ -23,8 +23,8 @@
 
 void NotificationAction::start()
 {
-    kDebug() << "Trying to perform the action " << operationName() << " on " << destination();
-    kDebug() << "actionId: " << parameters()["actionId"].toString();
+    //kDebug() << "Trying to perform the action " << operationName() << " on " << destination();
+    //kDebug() << "actionId: " << parameters()["actionId"].toString();
 
     if (!m_engine) {
         setErrorText(i18n("The notification dataEngine is not set."));
@@ -33,18 +33,22 @@ void NotificationAction::start()
         return;
     }
 
+    const QStringList dest = destination().split(" ");
+
+    if (dest.count() >  1 && !dest[1].toInt()) {
+        setErrorText(i18n("Invalid destination: ", destination()));
+        setError(-2);
+        emitResult();
+        return;
+    }
+
+    uint id = dest[1].toUInt();
+
     if (operationName() == "invokeAction") {
-        const QStringList dest = destination().split(" ");
-
-        if (dest.count() >  1 && !dest[1].toInt()) {
-            setErrorText(i18n("Invalid destination: ", destination()));
-            setError(-2);
-            emitResult();
-            return;
-        }
-
-        kDebug() << "firing";
-        emit m_engine->ActionInvoked(dest[1].toUInt(), parameters()["actionId"].toString());
+        //kDebug() << "invoking action on " << id;
+        emit m_engine->ActionInvoked(id, parameters()["actionId"].toString());
+    } else if (operationName() == "userClosed") {
+        m_engine->CloseNotification(id);
     }
 
     emitResult();

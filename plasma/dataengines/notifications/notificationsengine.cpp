@@ -115,7 +115,7 @@ void NotificationsEngine::timerEvent(QTimerEvent *event)
 void NotificationsEngine::CloseNotification(uint id)
 {
     removeSource(QString("notification %1").arg(id));
-    emit NotificationClosed(id,0);
+    emit NotificationClosed(id, 0);
 }
 
 Plasma::Service* NotificationsEngine::serviceForSource(const QString& source)
