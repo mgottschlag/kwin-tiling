@@ -29,10 +29,10 @@
 #include <KService>
 #include <KToolInvocation>
 #include <KUrl>
-#include <solid/control/powermanager.h>
 
 // KDE Base
 #include <kworkspace/kworkspace.h>
+#include <solid/control/powermanager.h>
 
 // Local
 #include "core/recentapplications.h"
@@ -196,27 +196,21 @@ void LeaveItemHandler::saveSession()
 
 void LeaveItemHandler::standby()
 {
-    Solid::Control::PowerManager::SuspendMethod spdMethod = Solid::Control::PowerManager::Standby;
-    KJob *job = Solid::Control::PowerManager::suspend(spdMethod);
-    if (job) {
-        job->start();
-    }
+    QDBusConnection dbus(QDBusConnection::sessionBus());
+    QDBusInterface iface("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus);
+    iface.asyncCall("suspend", Solid::Control::PowerManager::Standby);
 }
 
 void LeaveItemHandler::suspendRAM()
 {
-    Solid::Control::PowerManager::SuspendMethod spdMethod = Solid::Control::PowerManager::ToRam;
-    KJob *job = Solid::Control::PowerManager::suspend(spdMethod);
-    if (job) {
-        job->start();
-    }
+    QDBusConnection dbus(QDBusConnection::sessionBus());
+    QDBusInterface iface("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus);
+    iface.asyncCall("suspend", Solid::Control::PowerManager::ToRam);
 }
 
 void LeaveItemHandler::suspendDisk()
 {
-    Solid::Control::PowerManager::SuspendMethod spdMethod = Solid::Control::PowerManager::ToDisk;
-    KJob *job = Solid::Control::PowerManager::suspend(spdMethod);
-    if (job) {
-        job->start();
-    }
+    QDBusConnection dbus(QDBusConnection::sessionBus());
+    QDBusInterface iface("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus);
+    iface.asyncCall("suspend", Solid::Control::PowerManager::ToDisk);
 }

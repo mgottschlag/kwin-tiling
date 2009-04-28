@@ -24,6 +24,7 @@
 #include <QApplication>
 #include <QDBusConnection>
 #include <QDBusInterface>
+#include <QDBusPendingCall>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QFont>
@@ -33,7 +34,6 @@
 
 #include <KDebug>
 #include <KIcon>
-#include <KJob>
 #include <KLocalizedString>
 #include <KSharedConfig>
 #include <KToolInvocation>
@@ -298,21 +298,17 @@ Battery::~Battery()
 void Battery::suspend()
 {
     hidePopup();
-    Solid::Control::PowerManager::SuspendMethod spdMethod = Solid::Control::PowerManager::ToRam;
-    KJob *job = Solid::Control::PowerManager::suspend(spdMethod);
-    if (job) {
-        job->start();
-    }
+    QDBusConnection dbus(QDBusConnection::sessionBus());
+    QDBusInterface iface("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus);
+    iface.asyncCall("suspend", Solid::Control::PowerManager::ToRam);
 }
 
 void Battery::hibernate()
 {
     hidePopup();
-    Solid::Control::PowerManager::SuspendMethod spdMethod = Solid::Control::PowerManager::ToDisk;
-    KJob *job = Solid::Control::PowerManager::suspend(spdMethod);
-    if (job) {
-        job->start();
-    }
+    QDBusConnection dbus(QDBusConnection::sessionBus());
+    QDBusInterface iface("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus);
+    iface.asyncCall("suspend", Solid::Control::PowerManager::ToDisk);
 }
 
 void Battery::brightnessChanged(const int brightness)
