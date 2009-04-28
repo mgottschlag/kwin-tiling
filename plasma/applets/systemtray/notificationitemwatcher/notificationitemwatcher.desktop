@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=KDED Notification item watcher
-Comment=Keep track of applications that want to use the D-Bus based notification item
+Comment=Keep track of applications that want to use the D-Bus based notification item.
 
 X-KDE-ServiceTypes=KDEDModule
 X-KDE-Library=notificationitemwatcher
