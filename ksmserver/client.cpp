@@ -173,7 +173,7 @@ int KSMClient::restartStyleHint() const
     SmProp* p = property( SmRestartStyleHint );
     if ( !p || qstrcmp( p->type, SmCARD8) || p->num_vals < 1)
         return SmRestartIfRunning;
-    return *((int*)p->vals[0].value);
+    return *((unsigned char*)p->vals[0].value);
 }
 
 QString KSMClient::userId() const
