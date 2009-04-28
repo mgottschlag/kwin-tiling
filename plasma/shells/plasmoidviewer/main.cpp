@@ -26,6 +26,8 @@
 
 #include "fullview.h"
 
+#include <iostream>
+
 #include <QPixmapCache>
 
 #include <KApplication>
@@ -37,7 +39,7 @@
 
 // for --list
 #include <Plasma/Applet>
-#include <iostream>
+#include <Plasma/Theme>
 
 using namespace Plasma;
 
@@ -56,17 +58,19 @@ int main(int argc, char **argv)
     KCmdLineArgs::init(argc, argv, &aboutData);
 
     KCmdLineOptions options;
-    options.add("list", ki18n("Displays a list of known applets"));
-    options.add("f");
-    options.add("formfactor <name>", ki18nc("Do not translate horizontal, vertical, mediacenter nor planar", "The formfactor to use (horizontal, vertical, mediacenter or planar)"), "planar");
-    options.add("l");
-    options.add("location <name>", ki18nc("Do not translate floating, desktop, fullscreen, top, bottom, left nor right", "The location constraint to start the Containment with (floating, desktop, fullscreen, top, bottom, left, right)"), "floating");
     options.add("c");
     options.add("containment <name>", ki18n("Name of the containment plugin"), "null");
-    options.add("w");
-    options.add("wallpaper <name>", ki18n("Name of the wallpaper plugin"), QByteArray());
+    options.add("f");
+    options.add("formfactor <name>", ki18nc("Do not translate horizontal, vertical, mediacenter nor planar", "The formfactor to use (horizontal, vertical, mediacenter or planar)"), "planar");
+    options.add("list", ki18n("Displays a list of known applets"));
+    options.add("l");
+    options.add("location <name>", ki18nc("Do not translate floating, desktop, fullscreen, top, bottom, left nor right", "The location constraint to start the Containment with (floating, desktop, fullscreen, top, bottom, left, right)"), "floating");
     options.add("p");
     options.add("pixmapcache <size>", ki18n("The size in KB to set the pixmap cache to"));
+    options.add("t");
+    options.add("theme <name>", ki18n("Desktop SVG theme to use"));
+    options.add("w");
+    options.add("wallpaper <name>", ki18n("Name of the wallpaper plugin"), QByteArray());
     options.add("+applet", ki18n("Name of applet to view; may refer to the plugin name or be a path "
                                 "(absolute or relative) to a package. If not provided, then an "
                                 "attempt is made to load a package from the current directory."));
@@ -124,6 +128,12 @@ int main(int argc, char **argv)
 
     QString containment = args->getOption("containment");
     kDebug() << "setting containment to" << containment;
+
+    if (args->isSet("theme")) {
+        QString theme = args->getOption("theme");
+        Plasma::Theme::defaultTheme()->setThemeName(theme);
+        kDebug() << "setting theme to" << theme;
+    }
 
     QString wallpaper;
     if (args->isSet("wallpaper")) {
