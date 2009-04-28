@@ -33,6 +33,7 @@
 
 #include <KDebug>
 #include <KIcon>
+#include <KJob>
 #include <KLocalizedString>
 #include <KSharedConfig>
 #include <KToolInvocation>
@@ -297,17 +298,21 @@ Battery::~Battery()
 void Battery::suspend()
 {
     hidePopup();
-    QDBusConnection dbus( QDBusConnection::sessionBus() );
-    QDBusInterface iface( "org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus );
-    iface.call( "suspend", Solid::Control::PowerManager::ToRam );
+    Solid::Control::PowerManager::SuspendMethod spdMethod = Solid::Control::PowerManager::ToRam;
+    KJob *job = Solid::Control::PowerManager::suspend(spdMethod);
+    if (job) {
+        job->start();
+    }
 }
 
 void Battery::hibernate()
 {
     hidePopup();
-    QDBusConnection dbus( QDBusConnection::sessionBus() );
-    QDBusInterface iface( "org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus );
-    iface.call( "suspend", Solid::Control::PowerManager::ToDisk );
+    Solid::Control::PowerManager::SuspendMethod spdMethod = Solid::Control::PowerManager::ToDisk;
+    KJob *job = Solid::Control::PowerManager::suspend(spdMethod);
+    if (job) {
+        job->start();
+    }
 }
 
 void Battery::brightnessChanged(const int brightness)
