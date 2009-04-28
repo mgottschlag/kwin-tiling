@@ -416,6 +416,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
                 this, SLOT(setFullBrightness()));
         brightnessIcon->setDrawBackground(true);
         brightnessIcon->setMinimumSize(rowHeight, rowHeight);
+        brightnessIcon->setMaximumSize(rowHeight, rowHeight);
         m_controlsLayout->addItem(brightnessIcon, row, 2, 1, 1);
         m_controlsLayout->setRowSpacing(row, 10);
         row++;
