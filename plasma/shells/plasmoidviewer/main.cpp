@@ -131,6 +131,7 @@ int main(int argc, char **argv)
 
     if (args->isSet("theme")) {
         QString theme = args->getOption("theme");
+        Plasma::Theme::defaultTheme()->setUseGlobalSettings(false);
         Plasma::Theme::defaultTheme()->setThemeName(theme);
         kDebug() << "setting theme to" << theme;
     }
