@@ -77,6 +77,7 @@ FullView::FullView(const QString &ff, const QString &loc, QWidget *parent)
         m_location = Plasma::LeftEdge;
     }
 
+    resize(250, 200);
     setScene(&m_corona);
     connect(&m_corona, SIGNAL(sceneRectChanged(QRectF)), this, SLOT(sceneRectChanged(QRectF)));
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -97,6 +98,7 @@ void FullView::addApplet(const QString &name, const QString &containment,
 
     m_containment->setFormFactor(m_formfactor);
     m_containment->setLocation(m_location);
+    m_containment->resize(size());
     setScene(m_containment->scene());
 
     QFileInfo info(name);
@@ -115,8 +117,7 @@ void FullView::addApplet(const QString &name, const QString &containment,
     }
 
     m_applet->setFlag(QGraphicsItem::ItemIsMovable, false);
-
-    setSceneRect(m_applet->geometry());
+    setSceneRect(m_containment->geometry());
     setWindowTitle(m_applet->name());
     setWindowIcon(SmallIcon(m_applet->icon()));
 }
@@ -135,11 +136,19 @@ void FullView::resizeEvent(QResizeEvent *event)
         return;
     }
 
+    m_containment->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+    m_containment->setMinimumSize(size());
+    m_containment->setMaximumSize(size());
+    m_containment->resize(size());
+    if (m_containment->layout()) {
+        return;
+    }
+
     //kDebug() << size();
     qreal newWidth = 0;
     qreal newHeight = 0;
 
-    if (m_applet->aspectRatioMode() == Plasma::KeepAspectRatio) {
+    if (false && m_applet->aspectRatioMode() == Plasma::KeepAspectRatio) {
         // The applet always keeps its aspect ratio, so let's respect it.
         qreal ratio = m_applet->size().width() / m_applet->size().height();
         qreal widthForCurrentHeight = (qreal)size().height() * ratio;
@@ -156,7 +165,6 @@ void FullView::resizeEvent(QResizeEvent *event)
     }
     QSizeF newSize(newWidth, newHeight);
 
-    m_containment->resize(size());
     // check if the rect is valid, or else it seems to try to allocate
     // up to infinity memory in exponential increments
     if (newSize.isValid()) {
@@ -174,6 +182,12 @@ void FullView::sceneRectChanged(const QRectF &rect)
 {
     Q_UNUSED(rect)
     if (m_applet) {
+        setSceneRect(m_applet->geometry());
+    }
+    return;
+    if (m_containment && m_containment->layout()) {
+        setSceneRect(m_containment->geometry());
+    } else if (m_applet) {
         //kDebug() << m_applet->geometry();
         setSceneRect(m_applet->geometry());
     }
