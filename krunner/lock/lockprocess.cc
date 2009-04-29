@@ -1469,14 +1469,52 @@ void LockProcess::stayOnTop()
     // dialogs first
     foreach( QWidget* w, mDialogs )
         stack[ count++ ] = w->winId();
-    //now the plasma stuff below the dialogs
+    // now the plasma stuff below the dialogs
     foreach( WId w, mForeignWindows )
         stack[ count++ ] = w;
-    //finally, the saver window
+    // finally, the saver window
     stack[ count++ ] = winId();
+    // We actually have to check the current stacking order. When an override-redirect
+    // window is shown or raised, it can get above the screensaver window and there's not
+    // much to do to prevent it (only the compositing manager can prevent that). This
+    // is detected by the screenlocker and handled here, but the contents of the window
+    // may remain visible, since some screensavers don't react to Expose events and
+    // don't repaint as necessary. Therefore, if a window is detected above any of the windows
+    // related to screenlocking, I don't see any better possibility than to completely
+    // erase the screenlocker window.
+    // It is important to first detect, than restack and then erase.
+    bool needs_erase = false;
+    Window r, p;
+    Window* real;
+    unsigned int nreal;
+    if( XQueryTree( x11Info().display(), x11Info().appRootWindow(), &r, &p, &real, &nreal )
+        && real != NULL ) {
+        bool found_ours = false;
+        for( unsigned int i = 0;
+             i < nreal;
+             ++i ) {
+            if( stack.contains( real[ i ] ))
+                found_ours = true;
+            else {
+                if( found_ours ) {
+                    needs_erase = true;
+                    break;
+                }
+            }
+        }
+        XFree( real );
+    }
+    // do the actual restacking if needed
     XRaiseWindow( x11Info().display(), stack[ 0 ] );
     if( count > 1 )
         XRestackWindows( x11Info().display(), stack.data(), count );
+    if( needs_erase ) {
+        kDebug( 1024 ) << "Window above screensaver, raising, erasing";
+        QPainter p( this );
+        p.fillRect( rect(), Qt::black );
+        p.end();
+        QApplication::syncX();
+    }
 }
 
 void LockProcess::checkDPMSActive()
