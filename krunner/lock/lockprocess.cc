@@ -1459,37 +1459,24 @@ LockProcess::WindowType LockProcess::windowType(WId id)
 
 void LockProcess::stayOnTop()
 {
-    if(!(mDialogs.isEmpty() && mForeignWindows.isEmpty()))
-    {
-        // this restacking is written in a way so that
-        // if the stacking positions actually don't change,
-        // all restacking operations will be no-op,
-        // and no ConfigureNotify will be generated,
-        // thus avoiding possible infinite loops
-        Window* stack = new Window[ mDialogs.count() + mForeignWindows.count() + 1 ];
-        int count = 0;
-        if (!mDialogs.isEmpty()) {
-            XRaiseWindow( QX11Info::display(), mDialogs.first()->winId()); // raise topmost
-            // and stack others below it
-            for( QVector< QWidget* >::ConstIterator it = mDialogs.constBegin();
-                    it != mDialogs.constEnd();
-                    ++it )
-                stack[ count++ ] = (*it)->winId();
-        } else {
-            XRaiseWindow( QX11Info::display(), mForeignWindows.first()); // raise topmost
-        }
-        //now the plasma stuff below the dialogs
-        foreach (const WId w, mForeignWindows) {
-            stack[count++] = w;
-        }
-        //finally, the saver window
-        stack[ count++ ] = winId();
-        XRestackWindows( x11Info().display(), stack, count );
-        //kDebug() << "restacked" << count;
-        delete[] stack;
-    } else {
-        XRaiseWindow(QX11Info::display(), winId());
-    }
+    // this restacking is written in a way so that
+    // if the stacking positions actually don't change,
+    // all restacking operations will be no-op,
+    // and no ConfigureNotify will be generated,
+    // thus avoiding possible infinite loops
+    QVector< Window > stack( mDialogs.count() + mForeignWindows.count() + 1 );
+    int count = 0;
+    // dialogs first
+    foreach( QWidget* w, mDialogs )
+        stack[ count++ ] = w->winId();
+    //now the plasma stuff below the dialogs
+    foreach( WId w, mForeignWindows )
+        stack[ count++ ] = w;
+    //finally, the saver window
+    stack[ count++ ] = winId();
+    XRaiseWindow( x11Info().display(), stack[ 0 ] );
+    if( count > 1 )
+        XRestackWindows( x11Info().display(), stack.data(), count );
 }
 
 void LockProcess::checkDPMSActive()
