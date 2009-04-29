@@ -52,7 +52,6 @@ class JobWidget : public QGraphicsWidget
         ~JobWidget();
 
     public Q_SLOTS:
-        void destroy();
         void updateJob();
 
     protected:

@@ -170,6 +170,7 @@ void Manager::addJob(Job *job)
     connect(job, SIGNAL(destroyed(SystemTray::Job*)), this, SLOT(removeJob(SystemTray::Job*)));
     connect(job, SIGNAL(changed(SystemTray::Job*)), this, SIGNAL(jobChanged(SystemTray::Job*)));
     connect(job, SIGNAL(changed(SystemTray::Job*)), this, SLOT(updateTotals()));
+    connect(job, SIGNAL(destroyed(SystemTray::Job*)), this, SLOT(updateTotals()));
 
     d->jobs.append(job);
     emit jobAdded(job);
@@ -195,6 +196,9 @@ void Manager::updateTotals()
         d->jobTotals->setMessage(i18np("1 running job (%2 remaining)", "%1 running jobs (%2 remaining)",
                                  d->jobs.count(),
                                  KGlobal::locale()->prettyFormatDuration(totalEta)));
+    } else {
+        d->jobTotals->setPercentage(0);
+        d->jobTotals->setMessage(i18n("no running jobs"));
     }
     //TODO: set a sensible icon
 }

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2008 Rob Scheepmaker <r.scheepmaker@student.utwente.nl> *
+ *   Copyright (C) 2008, 2009 Rob Scheepmaker <r.scheepmaker@student.utwente.nl> *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -25,6 +25,9 @@
 #include <QtGui/QWidget> // QWIDGETSIZE_MAX
 #include <QtGui/QTextOption>
 
+#include <plasma/extender.h>
+#include <plasma/extenderitem.h>
+#include <plasma/extendergroup.h>
 #include <plasma/popupapplet.h>
 #include <plasma/tooltipmanager.h>
 #include <plasma/widgets/busywidget.h>
@@ -38,11 +41,13 @@ namespace SystemTray
 class ExtenderTask::Private
 {
 public:
-    Private(Plasma::PopupApplet *systemTray, Manager *manager, Task *q)
+    Private(Plasma::PopupApplet *systemTray, Manager *manager,
+            Plasma::Extender *extender, Task *q)
         : q(q),
           busyWidget(0),
           systemTray(systemTray),
-          manager(manager)
+          manager(manager),
+          extender(extender)
     {
     }
 
@@ -50,6 +55,7 @@ public:
     {
         int runningJobs = 0;
         int pausedJobs = 0;
+        int completedJobs = 0;
         foreach (Job *job, manager->jobs()) {
             if (job->state() == Job::Running) {
                 runningJobs++;
@@ -61,10 +67,15 @@ public:
             }
         }
 
-        int total= manager->jobs().count() + manager->notifications().count();
+        Plasma::ExtenderGroup *group = extender->group("completedJobsGroup");
+        if (group) {
+            completedJobs = group->items().count();
+        }
+        int total= manager->jobs().count() + manager->notifications().count() + completedJobs;
 
         if (manager->jobs().isEmpty() &&
-            manager->notifications().isEmpty()) {
+            manager->notifications().isEmpty() &&
+            group && group->items().isEmpty()) {
             systemTray->hidePopup();
             delete q;
             return;
@@ -103,15 +114,16 @@ public:
     Plasma::BusyWidget *busyWidget;
     Plasma::PopupApplet *systemTray;
     Manager *manager;
+    Plasma::Extender *extender;
 };
 
 
-ExtenderTask::ExtenderTask(Plasma::PopupApplet *systemTray, Manager *manager)
-    : d(new Private(systemTray, manager, this))
+ExtenderTask::ExtenderTask(Plasma::PopupApplet *systemTray, Manager *manager, 
+                           Plasma::Extender *extender)
+    : d(new Private(systemTray, manager, extender, this))
 {
     setOrder(Last);
 
-    //FIXME: one signal in the manager maybe?
     connect(manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
             this, SLOT(updateTask()));
     connect(manager, SIGNAL(notificationRemoved(SystemTray::Notification*)),
@@ -123,6 +135,8 @@ ExtenderTask::ExtenderTask(Plasma::PopupApplet *systemTray, Manager *manager)
     connect(manager, SIGNAL(jobRemoved(SystemTray::Job*)),
             this, SLOT(updateTask()));
     connect(manager, SIGNAL(jobChanged(SystemTray::Job*)),
+            this, SLOT(updateTask()));
+    connect(extender, SIGNAL(itemDetached(Plasma::ExtenderItem*)),
             this, SLOT(updateTask()));
 
     d->busyWidget = new Plasma::BusyWidget(systemTray);
@@ -182,6 +196,7 @@ void ExtenderTask::setIcon(const QString &icon)
 
 QGraphicsWidget* ExtenderTask::createWidget(Plasma::Applet *host)
 {
+    Q_UNUSED(host)
     return d->busyWidget;
 }
 

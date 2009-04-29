@@ -26,6 +26,7 @@ class QStyleOptionGraphicsItem;
 
 namespace Plasma
 {
+    class Extender;
     class PopupApplet;
 }
 
@@ -39,7 +40,7 @@ class ExtenderTask : public SystemTray::Task
     Q_OBJECT
 
 public:
-    ExtenderTask(Plasma::PopupApplet *systemTray, Manager *manager);
+    ExtenderTask(Plasma::PopupApplet *systemTray, Manager *manager, Plasma::Extender *extender);
     virtual ~ExtenderTask();
 
     bool isValid() const;

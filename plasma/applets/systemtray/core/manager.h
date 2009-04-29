@@ -131,7 +131,6 @@ signals:
      **/
     void jobRemoved(SystemTray::Job *job);
 
-
 private slots:
     void addTask(SystemTray::Task *task);
     void removeTask(SystemTray::Task *task);

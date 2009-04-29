@@ -30,6 +30,7 @@
 #include <QtGui/QListWidget>
 #include <QtGui/QCheckBox>
 #include <QtGui/QPainter>
+#include <QtCore/QProcess>
 
 #include <KActionSelector>
 #include <KConfigDialog>
@@ -54,6 +55,8 @@
 
 namespace SystemTray
 {
+
+static const int autoHideTimeout = 6000;
 
 K_EXPORT_PLASMA_APPLET(systemtray, Applet)
 
@@ -86,6 +89,7 @@ public:
             s_managerUsage = 0;
         }
     }
+
 
     void setTaskAreaGeometry();
 
@@ -127,10 +131,12 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
 
 Applet::~Applet()
 {
-    //destroy any item in the systray, since it doesn't make sense for not detached notifications
-    //and jobs to stay around after a plasma reboot
+    //destroy any item in the systray, that doesn't belong to the completedJobsGroup, since running
+    //jobs and notifications can't really survive reboots anyways
     foreach (Plasma::ExtenderItem *item, extender()->attachedItems()) {
-        item->destroy();
+        if (!item->isGroup() && (item->group() != extender()->group("completedJobsGroup"))) {
+            item->destroy();
+        }
     }
 
     delete d;
@@ -177,15 +183,24 @@ void Applet::init()
     d->shownCategories.insert(Task::UnknownCategory);
 
     if (globalCg.readEntry("ShowJobs", true)) {
-        if (!extender()->hasItem("jobGroup")) {
-            Plasma::ExtenderGroup *extenderGroup = new Plasma::ExtenderGroup(extender());
-            extenderGroup->setName("jobGroup");
-            initExtenderItem(extenderGroup);
-        }
+        createJobGroups();
 
         Private::s_manager->registerJobProtocol();
         connect(Private::s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
                 this, SLOT(addJob(SystemTray::Job*)));
+        connect(Private::s_manager, SIGNAL(jobRemoved(SystemTray::Job*)),
+                this, SLOT(finishJob(SystemTray::Job*)));
+
+        //there might still be completed jobs in the tray, in which case we directly want to show
+        //the extender task spinner.
+        if (extender()->group("completedJobsGroup") &&
+            !extender()->group("completedJobsGroup")->items().isEmpty()) {
+            if (!d->extenderTask) {
+                d->extenderTask = new SystemTray::ExtenderTask(this, Private::s_manager, extender());
+                d->extenderTask->setIcon("help-about");
+            }
+            Private::s_manager->addTask(d->extenderTask);
+        }
     }
 
     if (globalCg.readEntry("ShowNotifications", true)) {
@@ -439,6 +454,8 @@ void Applet::configAccepted()
     disconnect(Private::s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
                this, SLOT(addJob(SystemTray::Job*)));
     if (d->ui.showJobs->isChecked()) {
+        createJobGroups();
+
         Private::s_manager->registerJobProtocol();
         connect(Private::s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
                 this, SLOT(addJob(SystemTray::Job*)));
@@ -492,7 +509,7 @@ void Applet::addNotification(Notification *notification)
     extenderItem->config().writeEntry("type", "notification");
     extenderItem->setWidget(new NotificationWidget(notification, extenderItem));
 
-    showPopup();
+    showPopup(autoHideTimeout);
 }
 
 void Applet::addJob(Job *job)
@@ -501,11 +518,9 @@ void Applet::addJob(Job *job)
     extenderItem->config().writeEntry("type", "job");
     extenderItem->setWidget(new JobWidget(job, extenderItem));
 
-    showPopup();
+    showPopup(autoHideTimeout);
 
-    if (extender()->item("jobGroup")) {
-        extenderItem->setGroup(qobject_cast<Plasma::ExtenderGroup*>(extender()->item("jobGroup")));
-    }
+    extenderItem->setGroup(extender()->group("jobGroup"));
 }
 
 void Applet::initExtenderItem(Plasma::ExtenderItem *extenderItem)
@@ -516,22 +531,57 @@ void Applet::initExtenderItem(Plasma::ExtenderItem *extenderItem)
         return;
     }
 
+    if (extenderItem->name() == "completedJobsGroup") {
+        Plasma::Label *label = new Plasma::Label(extenderItem);
+        label->setText(QString("<div align='right'><a href='clear'>%1</a></div>").arg(i18n("clear all")));
+        label->setPreferredSize(label->minimumSize());
+        connect(label, SIGNAL(linkActivated(const QString &)), this, SLOT(clearAllCompletedJobs()));
+        extenderItem->setWidget(label);
+        return;
+    }
+
     if (extenderItem->config().readEntry("type", "") == "notification") {
         extenderItem->setWidget(new NotificationWidget(0, extenderItem));
+    } else if (extenderItem->config().readEntry("type", "") == "completedJob") {
+        Plasma::Label *label = new Plasma::Label(extenderItem);
+
+        QString destination = extenderItem->config().readEntry("destination", "");
+        KUrl dest(destination);
+        QString unformattedText;
+        if (dest.isValid()) {
+            //TODO: also check if it isn't a temp file
+            label->setText(QString("%1: <a href='%2'>%3</a>")
+                            .arg(i18n("Destination"))
+                            .arg(dest.prettyUrl())
+                            .arg(dest.prettyUrl()));
+            connect(label, SIGNAL(linkActivated(const QString &)), this, SLOT(open(const QString &)));
+            unformattedText = QString("%1: %2").arg(i18n("Destination")).arg(dest.prettyUrl());
+        } else {
+            label->setText(extenderItem->config().readEntry("text", ""));
+            unformattedText = label->text();
+        }
+
+        QFontMetrics fm = label->nativeWidget()->fontMetrics();
+        //sensible size hint:
+        label->setPreferredSize(fm.boundingRect(QRect(0, 0, 300, 60),
+                                  Qt::TextWordWrap, unformattedText).size());
+        extenderItem->setWidget(label);
+        extenderItem->showCloseButton();
     } else {
         extenderItem->setWidget(new JobWidget(0, extenderItem));
     }
+
 }
 
 void Applet::popupEvent(bool visibility)
 {
     Q_UNUSED(visibility)
-    kDebug();
 
     if (!(Private::s_manager->jobs().isEmpty() &&
-          Private::s_manager->notifications().isEmpty())) {
+          Private::s_manager->notifications().isEmpty() &&
+          extender()->group("completedJobsGroup")->items().isEmpty())) {
         if (!d->extenderTask) {
-            d->extenderTask = new SystemTray::ExtenderTask(this, Private::s_manager);
+            d->extenderTask = new SystemTray::ExtenderTask(this, Private::s_manager, extender());
             d->extenderTask->setIcon("help-about");
         }
 
@@ -539,6 +589,63 @@ void Applet::popupEvent(bool visibility)
     }
 }
 
+void Applet::clearAllCompletedJobs()
+{
+    Plasma::ExtenderGroup *completedJobsGroup = extender()->group("completedJobsGroup");
+    if (!completedJobsGroup) {
+        return;
+    }
+
+    foreach (Plasma::ExtenderItem *item, completedJobsGroup->items()) {
+        item->destroy();
+    }
+}
+
+void Applet::finishJob(SystemTray::Job *job)
+{
+    Plasma::ExtenderItem *item = new Plasma::ExtenderItem(extender());
+    item->setTitle(job->message());
+    item->setIcon(job->applicationIconName());
+
+    item->config().writeEntry("type", "completedJob");
+    if (!job->error().isEmpty()) {
+        item->config().writeEntry("text", job->error());
+    } else {
+        if (job->labels().count() > 1) {
+            item->config().writeEntry("destination", job->labels().value(1).second);
+            item->config().writeEntry("text", i18n("Destination: %1", job->labels().value(1).second));
+        } else {
+            item->config().writeEntry("text", QString("%1: %2").arg(job->labels().value(0).first)
+                                                               .arg(job->labels().value(0).second));
+        }
+    }
+
+    initExtenderItem(item);
+    item->setGroup(extender()->group("completedJobsGroup"));
+    showPopup(autoHideTimeout);
+}
+
+void Applet::open(const QString &url)
+{
+    QProcess::startDetached("kde-open", QStringList() << url);
+}
+
+void Applet::createJobGroups()
+{
+    if (!extender()->hasItem("jobGroup")) {
+        Plasma::ExtenderGroup *extenderGroup = new Plasma::ExtenderGroup(extender());
+        extenderGroup->setName("jobGroup");
+        initExtenderItem(extenderGroup);
+    }
+
+    if (!extender()->hasItem("completedJobsGroup")) {
+        Plasma::ExtenderGroup *completedJobsGroup = new Plasma::ExtenderGroup(extender());
+        completedJobsGroup->setName("completedJobsGroup");
+        completedJobsGroup->setTitle(i18n("Completed jobs"));
+        initExtenderItem(completedJobsGroup);
+        completedJobsGroup->expandGroup();
+    }
+}
 
 }
 

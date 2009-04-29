@@ -95,7 +95,7 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
         m_details->setText("<a href=\"more\">" + i18n("more") + "</a>");
 
         connect(m_job, SIGNAL(changed(SystemTray::Job*)), this, SLOT(updateJob()));
-        connect(m_job, SIGNAL(destroyed(SystemTray::Job*)), this, SLOT(destroy()));
+        connect(m_job, SIGNAL(destroyed(SystemTray::Job*)), m_extenderItem, SLOT(destroy()));
         connect(m_details, SIGNAL(linkActivated(const QString &)),
                 this, SLOT(detailsLinkClicked(const QString &)));
 
@@ -144,16 +144,6 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
 
 JobWidget::~JobWidget()
 {
-}
-
-void JobWidget::destroy()
-{
-    if (!m_extenderItem->isDetached()) {
-        //TODO: make configurable:
-        m_extenderItem->setAutoExpireDelay(15000);
-        updateJob();
-        m_meter->setValue(100);
-    }
 }
 
 void JobWidget::updateJob()
