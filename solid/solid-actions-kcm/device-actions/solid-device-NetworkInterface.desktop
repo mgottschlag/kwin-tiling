@@ -25,6 +25,7 @@ X-KDE-Solid-Actions-Type=NetworkInterface
 
 [Desktop Action hwAddress]
 Name=Hw Address
+Name[de]=HW-Adresse
 Name[el]=Διεύθυνση Hw
 Name[et]=Riistvara-aadress
 Name[ga]=Seoladh Crua-Earraí
@@ -67,6 +68,7 @@ Name[zh_TW]=介面名稱
 
 [Desktop Action macAddress]
 Name=Mac Address
+Name[de]=MAC-Adresse
 Name[el]=Διεύθυνση MAC
 Name[et]=MAC-aadress
 Name[ga]=Seoladh MAC
@@ -88,6 +90,7 @@ Name[zh_TW]=Mac 位址
 
 [Desktop Action objectName]
 Name=Object Name
+Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi
 Name[ga]=Ainm Réada

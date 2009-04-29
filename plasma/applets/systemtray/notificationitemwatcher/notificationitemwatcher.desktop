@@ -1,6 +1,15 @@
 [Desktop Entry]
 Type=Service
 Name=KDED Notification item watcher
+Name[el]=Επόπτης περιοχής ειδοποιήσεων του KDE
+Name[et]=KDED märguannete jälgija
+Name[km]=កម្មវិធី​មើល​ធាតុ​ជូនដំណឹង KDED
+Name[pt]=Vigilante de itens de notificações do KDED
+Name[pt_BR]=Vigilante de itens de notificações do KDED
+Name[ro]=Supraveghetor zonă de notificare KDED
+Name[sv]=KDED bevakning av underrättelseobjekt
+Name[uk]=Переглядач елементів сповіщень KDED
+Name[zh_TW]=KDE 通知項目監控器 
 Comment=Keep track of applications that want to use the D-Bus based notification item.
 
 X-KDE-ServiceTypes=KDEDModule

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=objectName;plugged;
 Name=Ac Adapter
+Name[de]=Netzteil
 Name[el]=Ρεύμα AC
 Name[et]=AC adapter
 Name[ga]=Cuibheoir SA
@@ -24,6 +25,7 @@ X-KDE-Solid-Actions-Type=AcAdapter
 
 [Desktop Action objectName]
 Name=Object Name
+Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi
 Name[ga]=Ainm Réada

@@ -24,6 +24,7 @@ X-KDE-Solid-Actions-Type=StorageVolume
 
 [Desktop Action fsType]
 Name=Fs Type
+Name[de]=Dateisystemtyp
 Name[el]=Τύπος συστήματος αρχείων
 Name[et]=Failisüsteemi tüüp
 Name[ga]=Cineál an Chórais Comhad
@@ -44,6 +45,7 @@ Name[zh_TW]=檔案系統型態
 
 [Desktop Action ignored]
 Name=Ignored
+Name[de]=Ignoriert
 Name[el]=Παράβλεψη
 Name[et]=Eiratav
 Name[ga]=Neamhaird Déanta De
@@ -85,6 +87,7 @@ Name[zh_TW]=標籤
 
 [Desktop Action objectName]
 Name=Object Name
+Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi
 Name[ga]=Ainm Réada
