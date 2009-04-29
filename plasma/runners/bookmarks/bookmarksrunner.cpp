@@ -92,7 +92,7 @@ void BookmarksRunner::match(Plasma::RunnerContext &context)
             relevance = 1.0;
         } else if (bookmark.text().contains(term, Qt::CaseInsensitive)) {
             type = Plasma::QueryMatch::PossibleMatch;
-            relevance = 0.4;
+            relevance = 0.45;
         } else if (bookmark.url().prettyUrl().contains(term, Qt::CaseInsensitive)) {
             type = Plasma::QueryMatch::PossibleMatch;
             relevance = 0.2;
