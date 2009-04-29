@@ -153,12 +153,17 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
         devicetypes << I18N_NOOP("Storage Access");
         setData(name, I18N_NOOP("Accessible"), storageaccess->isAccessible());
         setData(name, I18N_NOOP("File Path"), storageaccess->filePath());
-        QVariant freeDiskVar;
-        qlonglong freeDisk = freeDiskSpace(storageaccess->filePath());
-        if ( freeDisk != -1 ) {
-            freeDiskVar.setValue( freeDisk );
+
+        if (storageaccess->isAccessible()) {
+            QVariant freeDiskVar;
+            qlonglong freeDisk = freeDiskSpace(storageaccess->filePath());
+            if ( freeDisk != -1 ) {
+                freeDiskVar.setValue( freeDisk );
+            }
+            if (!device.is<Solid::OpticalDisc>()) {
+                setData(name, I18N_NOOP("Free Space"), freeDiskVar );
+            }
         }
-        setData(name, I18N_NOOP("Free Space"), freeDiskVar );
 
         signalmanager->mapDevice(storageaccess, device.udi());
     }
@@ -538,8 +543,10 @@ qlonglong SolidDeviceEngine::freeDiskSpace(const QString &mountPoint)
 bool SolidDeviceEngine::updateFreeSpace(const QString &udi)
 {
     Solid::Device device = devicemap.value(udi);
-    if (!device.is<Solid::StorageAccess>()) {
+    if (!device.is<Solid::StorageAccess>() || device.is<Solid::OpticalDisc>()) {
         return false;
+    } else if (!device.as<Solid::StorageAccess>()->isAccessible()) {
+        removeData(udi, I18N_NOOP("Free Space"));
     }
 
     Solid::StorageAccess *storageaccess = device.as<Solid::StorageAccess>();
