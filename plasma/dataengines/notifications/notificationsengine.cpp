@@ -65,13 +65,14 @@ uint NotificationsEngine::Notify(const QString &app_name, uint replaces_id, cons
     QString source = QString("notification %1").arg(id);
     if (replaces_id) {
         Plasma::DataContainer *container = containerForSource(source);
-        if (container->data()["expireTimeout"].toInt() != timeout) {
+        if (container && container->data()["expireTimeout"].toInt() != timeout) {
             int timerId = m_sourceTimers.value(source);
             killTimer(timerId);
             m_sourceTimers.remove(source);
             m_timeouts.remove(timerId);
         }
     }
+
     Plasma::DataEngine::Data notificationData;
     notificationData.insert("id", QString::number(id));
     notificationData.insert("appName", appname_str);
