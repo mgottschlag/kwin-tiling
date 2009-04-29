@@ -131,14 +131,6 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
 
 Applet::~Applet()
 {
-    //destroy any item in the systray, that doesn't belong to the completedJobsGroup, since running
-    //jobs and notifications can't really survive reboots anyways
-    foreach (Plasma::ExtenderItem *item, extender()->attachedItems()) {
-        if (!item->isGroup() && (item->group() != extender()->group("completedJobsGroup"))) {
-            item->destroy();
-        }
-    }
-
     delete d;
 }
 
@@ -181,6 +173,14 @@ void Applet::init()
     }
 
     d->shownCategories.insert(Task::UnknownCategory);
+
+    //destroy any item in the systray, that doesn't belong to the completedJobsGroup, since running
+    //jobs and notifications can't really survive reboots anyways
+    foreach (Plasma::ExtenderItem *item, extender()->attachedItems()) {
+        if (!item->isGroup() && (item->group() != extender()->group("completedJobsGroup"))) {
+            item->destroy();
+        }
+    }
 
     if (globalCg.readEntry("ShowJobs", true)) {
         createJobGroups();
