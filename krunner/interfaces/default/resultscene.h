@@ -43,7 +43,7 @@ class ResultScene : public QGraphicsScene
     Q_OBJECT
 
     public:
-        explicit ResultScene(Plasma::RunnerManager *runnerManager, QObject *parent = 0);
+        explicit ResultScene(Plasma::RunnerManager *runnerManager, QWidget *focusBase, QObject *parent = 0);
         ~ResultScene();
 
         void resize(int width, int height);
@@ -77,6 +77,8 @@ class ResultScene : public QGraphicsScene
 
         ResultItem* addQueryMatch(const Plasma::QueryMatch &match, bool useAnyId);
 
+        bool canMoveItemFocus() const;
+	
     private slots:
         void clearMatches();
         void updateItemMargins();
@@ -96,6 +98,8 @@ class ResultScene : public QGraphicsScene
         qreal m_itemMarginTop;
         qreal m_itemMarginRight;
         qreal m_itemMarginBottom;
+
+        QWidget *m_focusBase;
 };
 
 #endif

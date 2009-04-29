@@ -128,13 +128,13 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     KLineEdit *lineEdit = new KLineEdit(m_searchTerm);
     QAction *focusEdit = new QAction(this);
     focusEdit->setShortcut(Qt::Key_F6);
-    
+
     // in therory, the widget should detect the direction from the content
     // but this is not available in Qt4.4/KDE 4.2, so the best default for this widget
     // is LTR: as it's more or less a "command line interface"
     // FIXME remove this code when KLineEdit has automatic direction detection of the "paragraph"
     m_searchTerm->setLayoutDirection( Qt::LeftToRight );
-    
+
     connect(focusEdit, SIGNAL(triggered(bool)), lineEdit, SLOT(setFocus()));
     addAction(focusEdit);
 
@@ -183,7 +183,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_resultsView->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
     //kDebug() << "size:" << m_resultsView->size() << m_resultsView->minimumSize();
-    m_resultsScene = new ResultScene(runnerManager, this);
+    m_resultsScene = new ResultScene(runnerManager, m_searchTerm, this);
     m_resultsView->setScene(m_resultsScene);
     m_resultsView->setMinimumSize(m_resultsScene->minimumSizeHint());
     connect(m_resultsScene, SIGNAL(matchCountChanged(int)), this, SLOT(matchCountChanged(int)));
