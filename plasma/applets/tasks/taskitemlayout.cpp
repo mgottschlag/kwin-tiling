@@ -389,7 +389,7 @@ void TaskItemLayout::updatePreferredSize()
 
     if (count() > 0) {
         QSizeF s = itemAt(0)->preferredSize();
-        kDebug() << s << columnCount();
+        //kDebug() << s << columnCount();
         setPreferredSize(s.width() * columnCount(), s.height() * rowCount());
     } else {
         //Empty taskbar, arbitrary small value
