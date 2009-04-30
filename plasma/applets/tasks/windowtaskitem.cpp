@@ -99,35 +99,6 @@ void WindowTaskItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
     event->accept();
 }
 
-void WindowTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-{
-    Q_UNUSED(event)
-
-#ifdef Q_WS_X11
-    QVarLengthArray<long, 1024> data(1);
-    data[0] = m_task->task()->window();
-
-    Display *dpy = QX11Info::display();
-    Atom atom = XInternAtom(dpy, "_KDE_WINDOW_HIGHLIGHT", False);
-    XChangeProperty(dpy, m_task->task()->window(), atom, atom, 32, PropModeReplace, reinterpret_cast<unsigned char *>(data.data()), data.size());
-#endif
-
-    AbstractTaskItem::hoverEnterEvent(event);
-}
-
-void WindowTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
-{
-    Q_UNUSED(event)
-
-#ifdef Q_WS_X11
-    Display *dpy = QX11Info::display();
-    Atom atom = XInternAtom(dpy, "_KDE_WINDOW_HIGHLIGHT", False);
-    XDeleteProperty(dpy, m_task->task()->window(), atom);
-#endif
-
-    AbstractTaskItem::hoverLeaveEvent(event);
-}
-
 //destroy this item
 void WindowTaskItem::close()
 {

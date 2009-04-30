@@ -23,13 +23,15 @@
 #include "abstracttaskitem.h"
 
 // Qt
-#include <QGraphicsSceneContextMenuEvent>
-#include <QStyleOptionGraphicsItem>
-#include <QGraphicsView>
-#include <QTimer>
 #include <QApplication>
-#include <QTextLayout>
 #include <QGraphicsLinearLayout>
+#include <QGraphicsSceneContextMenuEvent>
+#include <QGraphicsView>
+#include <QStyleOptionGraphicsItem>
+#include <QTextLayout>
+#include <QTimer>
+#include <QVarLengthArray>
+#include <QX11Info>
 
 // KDE
 #include <KAuthorized>
@@ -55,6 +57,8 @@
 #include "tasks.h"
 #include "taskgroupitem.h"
 
+static const int HOVER_EFFECT_TIMEOUT = 500;
+
 AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet, const bool showTooltip)
     : QGraphicsWidget(parent),
       m_abstractItem(0),
@@ -65,6 +69,7 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet, const
       m_alpha(1),
       m_backgroundPrefix("normal"),
       m_updateTimerId(0),
+      m_hoverEffectTimerId(0),
       m_attentionTimerId(0),
       m_attentionTicks(0),
       m_fadeIn(true),
@@ -266,8 +271,8 @@ void AbstractTaskItem::queueUpdate()
 void AbstractTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event)
-
     fadeBackground("hover", 175, true);
+    m_hoverEffectTimerId = startTimer(HOVER_EFFECT_TIMEOUT);
 }
 
 void AbstractTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
@@ -275,6 +280,17 @@ void AbstractTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     Q_UNUSED(event)
 
     QString backgroundPrefix;
+    if (m_hoverEffectTimerId) {
+        killTimer(m_hoverEffectTimerId);
+        m_hoverEffectTimerId = 0;
+    }
+
+#ifdef Q_WS_X11
+    Display *dpy = QX11Info::display();
+    const WId rootWin = QX11Info::appRootWindow();
+    Atom atom = XInternAtom(dpy, "_KDE_WINDOW_HIGHLIGHT", False);
+    XDeleteProperty(dpy, rootWin, atom);
+#endif
 
     if (m_flags & TaskWantsAttention) {
         backgroundPrefix = "attention";
@@ -336,8 +352,8 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == m_updateTimerId) {
         killTimer(m_updateTimerId);
-        update();
         m_updateTimerId = 0;
+        update();
     } else if (event->timerId() == m_attentionTimerId) {
         ++m_attentionTicks;
         if (m_attentionTicks > 6) {
@@ -353,6 +369,41 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
         }
 
         update();
+    } else if (event->timerId() == m_hoverEffectTimerId) {
+#ifdef Q_WS_X11
+        QList<TaskManager::TaskItem *> windows;
+
+        if (m_abstractItem->isGroupItem()) {
+            foreach (AbstractGroupableItem *item,
+                     static_cast<TaskManager::TaskGroup*>(m_abstractItem)->members()) {
+                if (item->isGroupItem()) {
+                    //TODO: recurse through sub-groups?
+                } else {
+                    windows.append(static_cast<TaskManager::TaskItem*>(item));
+                }
+            }
+        } else {
+            windows.append(static_cast<TaskManager::TaskItem*>(m_abstractItem));
+        }
+
+        const int numWindows = windows.count();
+        QVarLengthArray<long, 1024> data(1 + numWindows);
+        data[0] = numWindows;
+
+        kDebug() << "setting for" << numWindows;
+        for (int i = 0; i < numWindows; ++i) {
+            data[i + 1] = windows.at(i)->task()->window();
+        }
+
+        Display *dpy = QX11Info::display();
+        const WId rootWin = QX11Info::appRootWindow();
+        Atom atom = XInternAtom(dpy, "_KDE_WINDOW_HIGHLIGHT", False);
+        XChangeProperty(dpy, rootWin, atom, atom, 32, PropModeReplace,
+                        reinterpret_cast<unsigned char *>(data.data()), data.size());
+#endif
+
+        killTimer(m_hoverEffectTimerId);
+        m_hoverEffectTimerId = 0;
     } else {
         QGraphicsWidget::timerEvent(event);
     }

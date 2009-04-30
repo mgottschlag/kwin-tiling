@@ -64,7 +64,7 @@ public:
 
     virtual void close();
 
-    QList <AbstractTaskItem*> memberList() const;
+    QList<AbstractTaskItem*> memberList() const;
     AbstractTaskItem * activeSubTask();
 
     virtual bool isWindowItem() const;
@@ -100,7 +100,7 @@ public:
 
     TaskItemLayout *tasksLayout();
 
-    int indexOf (AbstractTaskItem *task);
+    int indexOf(AbstractTaskItem *task);
 
     int optimumCapacity();
 
@@ -191,7 +191,7 @@ private:
 
     TaskItemLayout *m_tasksLayout;
     QTimer *m_popupMenuTimer;
-    QHash <int, Order> m_taskOrder;
+    QHash<int, Order> m_taskOrder;
     int m_lastActivated;
     int m_activeTaskIndex;
     int m_maximumRows;
