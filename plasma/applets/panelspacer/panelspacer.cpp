@@ -31,7 +31,7 @@ K_EXPORT_PLASMA_APPLET(panelspacer_internal, PanelSpacer)
 PanelSpacer::PanelSpacer(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_configurationMode(false),
-      m_fixedSize(true)
+      m_fixedSize(false)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setHasConfigurationInterface(false);
@@ -77,7 +77,7 @@ void PanelSpacer::init()
         connect(containment(), SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(updateConfigurationMode(bool)));
     }
 
-    m_fixedSize = config().readEntry("FixedSize", true);
+    m_fixedSize = config().readEntry("FixedSize", false);
 }
 
 void PanelSpacer::constraintsEvent(Plasma::Constraints constraints)
