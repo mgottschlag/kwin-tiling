@@ -205,6 +205,7 @@ int main(int argc, char **argv)
                     output(i18n("Successfully removed %1", pluginName));
                 } else if (!args->isSet("upgrade")) {
                     output(i18n("Removal of %1 failed.", pluginName));
+		    delete installer;
                     return 1;
                 }
             } else {
@@ -216,6 +217,7 @@ int main(int argc, char **argv)
                 output(i18n("Successfully installed %1", packageFile));
             } else {
                 output(i18n("Installation of %1 failed.", packageFile));
+		delete installer;
                 return 1;
             }
         }
@@ -225,6 +227,7 @@ int main(int argc, char **argv)
             runKbuildsycoca();
         }
     }
+    delete installer;
     return 0;
 }
 
