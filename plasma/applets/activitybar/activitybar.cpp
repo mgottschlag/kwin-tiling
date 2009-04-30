@@ -50,7 +50,7 @@ void ActivityBar::init()
     m_tabBar = new Plasma::TabBar(this);
     layout->addItem(m_tabBar);
     layout->setContentsMargins(0,0,0,0);
-    layout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
+    //layout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
 
     if (containment()) {
         Plasma::Corona *c = containment()->corona();
@@ -99,7 +99,6 @@ void ActivityBar::init()
 
     connect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)), this, SLOT(currentDesktopChanged(int)));
 
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
     emit sizeHintChanged(Qt::PreferredSize);
 }
@@ -109,16 +108,15 @@ void ActivityBar::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::FormFactorConstraint ) {
         if (formFactor() == Plasma::Vertical) {
             m_tabBar->nativeWidget()->setShape(QTabBar::RoundedWest);
+            setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding));
         } else {
             m_tabBar->nativeWidget()->setShape(QTabBar::RoundedNorth);
+            setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Expanding));
         }
         setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
         emit sizeHintChanged(Qt::PreferredSize);
     }
-    if (constraints & Plasma::SizeConstraint) {
-        setPreferredSize(m_tabBar->nativeWidget()->sizeHint());
-        setMinimumSize(m_tabBar->nativeWidget()->minimumSize());
-    }
+
 }
 
 void ActivityBar::switchContainment(int newActive)
