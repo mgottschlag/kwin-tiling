@@ -61,6 +61,12 @@ Name[x-test]=xxPlacesxx
 Name[zh_CN]=地点
 Name[zh_TW]=地方
 Comment=Places, as seen in the file manager and in file dialogs.
+Comment[en_GB]=Places, as seen in the file manager and in file dialogues.
+Comment[km]=ដាក់​ឲ្យ​ឃើញ​ក្នុង​កម្មវិធី​គ្រប់គ្រង​ឯកសារ និង​ប្រអប់​​ឯកសារ ។
+Comment[pt]=Os locais vistos nas janelas e gestores de ficheiros.
+Comment[pt_BR]=Os locais vistos nas janelas e gestores de ficheiros.
+Comment[sv]=Platser som visas i filhanterare och fildialogrutor.
+Comment[uk]=Місця, так як їх показано у менеджері файлів і діалогових вікнах.
 Type=Service
 Icon=folder
 

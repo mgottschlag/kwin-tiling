@@ -60,6 +60,11 @@ Name[x-test]=xxWindow Informationxx
 Name[zh_CN]=窗口信息
 Name[zh_TW]=視窗資訊
 Comment=Information and management services for all available windows.
+Comment[km]=ព័ត៌មាន​អំពី​សេវា និង​ការ​គ្រប់គ្រង​សម្រាប់​វីនដូ​ដែល​អាច​ប្រើ​បានទាំង​អស់ ។
+Comment[pt]=Serviços de informação e gestão dos serviços para todas as janelas disponíveis.
+Comment[pt_BR]=Serviços de informação e gestão dos serviços para todas as janelas disponíveis.
+Comment[sv]=Information om och hanteringstjänster för alla tillgängliga fönster.
+Comment[uk]=Відомості щодо служб і керування ними для всіх доступних вікон.
 Type=Service
 Icon=user-desktop
 
