@@ -185,10 +185,6 @@ void TaskGroup::clear()
         }
         remove(item);
     }
-
-    if (!d->members.isEmpty()) {
-        kDebug() << "clear doesn't work";
-    }
 }
 
 ItemList TaskGroup::members() const

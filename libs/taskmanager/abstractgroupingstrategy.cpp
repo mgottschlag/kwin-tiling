@@ -101,7 +101,6 @@ QList<QAction*> AbstractGroupingStrategy::strategyActions(QObject *parent, Abstr
 
 TaskGroup* AbstractGroupingStrategy::createGroup(ItemList items)
 {
-    kDebug();
     GroupPtr oldGroup;
     if (!items.isEmpty() && items.first()->isGrouped()) {
         oldGroup = items.first()->parentGroup();
@@ -124,7 +123,6 @@ void AbstractGroupingStrategy::closeGroup(TaskGroup *group)
 {
     Q_ASSERT(group);
     disconnect(group, 0, this, 0);
-    kDebug();
     d->createdGroups.removeAll(group);
     d->usedNames.removeAll(group->name());
     d->usedColors.removeAll(group->color());

@@ -282,7 +282,6 @@ void TaskGroupItem::updateToolTip()
 
 void TaskGroupItem::reload()
 {
-    kDebug();
     QList <AbstractItemPtr> itemsToRemove = m_groupMembers.keys();
 
     foreach (AbstractItemPtr item, group()->members()) {
@@ -500,7 +499,7 @@ bool TaskGroupItem::isWindowItem() const
 
 bool TaskGroupItem::isActive() const
 {
-    kDebug() << "Not Implemented";
+    //kDebug() << "Not Implemented";
     return false;
 }
 
