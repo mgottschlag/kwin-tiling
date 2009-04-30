@@ -234,9 +234,7 @@ void JobWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 
 void JobWidget::updateLabels()
 {
-    Plasma::Theme *theme = Plasma::Theme::defaultTheme();
-    QFont font = theme->font(Plasma::Theme::DefaultFont);
-    QFontMetricsF fm(font);
+    QFontMetricsF fm = m_fromLabel->nativeWidget()->fontMetrics();
     if (!labelName0.isEmpty()) {
         m_fromNameLabel->setText(QString("%1: ").arg(labelName0));
     }
