@@ -25,6 +25,7 @@
 
 class QComboBox;
 class QAction;
+class QTimer;
 class KDialog;
 class KIntNumInput;
 class Spacer;
@@ -62,6 +63,7 @@ private slots:
     void updateSize();
     void addPanel();
     void addPanel(const QString &plugin);
+    void adjustLastSpace();
 
 private:
     /**
@@ -85,6 +87,8 @@ private:
     bool m_maskDirty;
     int m_spacerIndex;
     Spacer *m_spacer;
+    QGraphicsWidget *m_lastSpace;
+    QTimer *m_lastSpaceTimer;
 
     friend class Spacer;
 };

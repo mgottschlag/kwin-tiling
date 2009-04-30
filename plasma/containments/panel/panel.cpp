@@ -32,6 +32,7 @@
 #include <QGraphicsSceneDragDropEvent>
 #include <QLabel>
 #include <QMenu>
+#include <QTimer>
 #include <QPainter>
 #include <QSignalMapper>
 
@@ -95,7 +96,8 @@ Panel::Panel(QObject *parent, const QVariantList &args)
       m_currentSize(QSize(Kephal::ScreenUtils::screenSize(screen()).width(), 35)),
       m_maskDirty(true),
       m_spacerIndex(-1),
-      m_spacer(0)
+      m_spacer(0),
+      m_lastSpace(0)
 {
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/panel-background");
@@ -138,6 +140,10 @@ void Panel::init()
     setMinimumSize(cg.readEntry("minimumSize", m_currentSize));
     setMaximumSize(cg.readEntry("maximumSize", m_currentSize));
     setDrawWallpaper(false);
+
+    m_lastSpaceTimer = new QTimer(this);
+    m_lastSpaceTimer->setSingleShot(true);
+    connect(m_lastSpaceTimer, SIGNAL(timeout()), this, SLOT(adjustLastSpace()));
 }
 
 QList<QAction*> Panel::contextualActions()
@@ -184,6 +190,47 @@ QList<QAction*> Panel::contextualActions()
 void Panel::backgroundChanged()
 {
     constraintsEvent(Plasma::LocationConstraint);
+}
+
+void Panel::adjustLastSpace()
+{
+    QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout*>(layout());
+    if (!lay) {
+        return;
+    }
+
+    bool useSpacer = true;
+
+    if (formFactor() == Plasma::Vertical) {
+        foreach (Applet *applet, applets()) {
+            if (applet->sizePolicy().verticalPolicy() == QSizePolicy::Expanding || applet->sizePolicy().verticalPolicy() == QSizePolicy::MinimumExpanding) {
+                useSpacer = false;
+                break;
+            }
+        }
+    } else {
+        foreach (Applet *applet, applets()) {
+          kWarning()<<"AAAAAA"<<applet->name()<<(applet->sizePolicy().horizontalPolicy() & QSizePolicy::ExpandFlag);
+            if (applet->sizePolicy().horizontalPolicy() & QSizePolicy::ExpandFlag) {
+                useSpacer = false;
+                break;
+            }
+        }
+    }
+
+
+    if (useSpacer) {
+        if (!m_lastSpace) {
+            m_lastSpace = new QGraphicsWidget(this);
+            m_lastSpace->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+            lay->addItem(m_lastSpace);
+        }
+    } else {
+        lay->removeItem(m_lastSpace);
+        delete m_lastSpace;
+        m_lastSpace = 0;
+    }
+
 }
 
 void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
@@ -238,11 +285,19 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
         }
     }
 
+    lay->removeItem(m_lastSpace);
+
     if (insertIndex == -1) {
         lay->addItem(applet);
     } else {
         lay->insertItem(insertIndex, applet);
     }
+
+    if (m_lastSpace) {
+        lay->addItem(m_lastSpace);
+    }
+
+    m_lastSpaceTimer->start(200);
 
     connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
 }
@@ -263,6 +318,8 @@ void Panel::appletRemoved(Plasma::Applet* applet)
         resize(size().width(), size().height() - applet->size().height());
     }
     layout()->setMaximumSize(size());
+
+    m_lastSpaceTimer->start(200);
 }
 
 void Panel::updateSize()
@@ -485,11 +542,13 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
             setLayout(lay);
             updateBorders(geometry().toRect());
             lay->setMaximumSize(size());
+            lay->addItem(m_lastSpace);
 
             foreach (Applet *applet, applets()) {
-                lay->addItem(applet);
+                lay->insertItem(lay->count()-2, applet);
             }
 
+            adjustLastSpace();
         }
     }
 
