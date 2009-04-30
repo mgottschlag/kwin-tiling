@@ -52,6 +52,7 @@ TabBar::TabBar(QWidget *parent)
 
     m_tabSwitchTimer.setSingleShot(true);
     connect(&m_tabSwitchTimer, SIGNAL(timeout()), this, SLOT(switchToHoveredTab()));
+    setAcceptDrops(true);
     setMouseTracking(true);
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     setUsesScrollButtons(false);
@@ -353,6 +354,14 @@ void TabBar::resizeEvent(QResizeEvent* event)
     background->resizeFrame(event->size());
 
     update();
+}
+
+void TabBar::dragEnterEvent(QDragEnterEvent *event)
+{
+    m_hoveredTabIndex = tabAt(event->pos());
+    m_tabSwitchTimer.stop();
+    m_tabSwitchTimer.start(50);
+    event->ignore();
 }
 
 void TabBar::switchToHoveredTab()
