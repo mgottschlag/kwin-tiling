@@ -601,7 +601,7 @@ void UrlItemView::dragMoveEvent(QDragMoveEvent *event)
 
 void UrlItemView::startDrag(Qt::DropActions supportedActions)
 {
-    kDebug() << "Starting UrlItemView drag with actions" << supportedActions;
+    //kDebug() << "Starting UrlItemView drag with actions" << supportedActions;
 
     if (!d->watchedIndexForDrag.isValid()) {
         return;
@@ -623,14 +623,10 @@ void UrlItemView::startDrag(Qt::DropActions supportedActions)
 
     d->dropRect = QRect();
     drag->exec();
-
-    QAbstractItemView::startDrag(supportedActions);
 }
 
 void UrlItemView::dropEvent(QDropEvent *event)
 {
-    QAbstractItemView::dropEvent(event);
-
     if (!d->dragging) {
         return;
     }
@@ -666,7 +662,7 @@ void UrlItemView::leaveEvent(QEvent *event)
 {
     Q_UNUSED(event)
 
-    kDebug() << "UrlItemView leave event";
+    //kDebug() << "UrlItemView leave event";
 
     d->hoveredIndex = QModelIndex();
     setCurrentIndex(QModelIndex());
