@@ -272,26 +272,30 @@ void AbstractTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event)
     fadeBackground("hover", 175, true);
-    m_hoverEffectTimerId = startTimer(HOVER_EFFECT_TIMEOUT);
+    if (parentGroup()) {
+        m_hoverEffectTimerId = startTimer(HOVER_EFFECT_TIMEOUT);
+    }
 }
 
 void AbstractTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event)
 
-    QString backgroundPrefix;
-    if (m_hoverEffectTimerId) {
-        killTimer(m_hoverEffectTimerId);
-        m_hoverEffectTimerId = 0;
-    }
+    if (parentGroup()) {
+        if (m_hoverEffectTimerId) {
+            killTimer(m_hoverEffectTimerId);
+            m_hoverEffectTimerId = 0;
+        }
 
 #ifdef Q_WS_X11
-    Display *dpy = QX11Info::display();
-    const WId rootWin = QX11Info::appRootWindow();
-    Atom atom = XInternAtom(dpy, "_KDE_WINDOW_HIGHLIGHT", False);
-    XDeleteProperty(dpy, rootWin, atom);
+        Display *dpy = QX11Info::display();
+        const WId rootWin = QX11Info::appRootWindow();
+        Atom atom = XInternAtom(dpy, "_KDE_WINDOW_HIGHLIGHT", False);
+        XDeleteProperty(dpy, rootWin, atom);
 #endif
+    }
 
+    QString backgroundPrefix;
     if (m_flags & TaskWantsAttention) {
         backgroundPrefix = "attention";
     } else if (m_flags & TaskIsMinimized) {
