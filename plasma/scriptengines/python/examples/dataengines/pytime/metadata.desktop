@@ -125,7 +125,6 @@ X-KDE-PluginInfo-Name=plasma-dataengine-pytime
 X-KDE-PluginInfo-Version=1.0
 X-KDE-PluginInfo-Website=http://plasma.kde.org/
 X-KDE-PluginInfo-Category=Python Date and Time
-Keywords=Python Date and Time
 X-KDE-PluginInfo-Depends=
 X-KDE-PluginInfo-License=LGPL
 X-KDE-PluginInfo-EnabledByDefault=true
