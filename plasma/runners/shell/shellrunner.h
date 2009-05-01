@@ -40,7 +40,7 @@ class ShellRunner : public Plasma::AbstractRunner
 
         void match(Plasma::RunnerContext &context);
         void run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &action);
-        void createRunInterface(QWidget *parent);
+        void createRunOptions(QWidget *parent);
 
     private slots:
         void configWidgetDestroyed();
