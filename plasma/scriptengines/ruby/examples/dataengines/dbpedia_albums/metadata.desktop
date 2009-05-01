@@ -117,6 +117,7 @@ X-KDE-PluginInfo-Name=dbpedia-albums
 X-KDE-PluginInfo-Version=1.0
 X-KDE-PluginInfo-Website=http://plasma.kde.org/
 X-KDE-PluginInfo-Category=Semantic Web
+Keywords=Semantic Web
 X-KDE-PluginInfo-Depends=
 X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=true

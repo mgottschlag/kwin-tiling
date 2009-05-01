@@ -54,9 +54,8 @@ Qt::ItemFlags KickoffModel::flags(const QModelIndex &index) const
 QMimeData *KickoffModel::mimeData(const QModelIndexList &indexes) const
 {
     KUrl::List urls;
-    QByteArray itemData;
 
-    foreach(const QModelIndex &index, indexes) {
+    foreach (const QModelIndex &index, indexes) {
         KUrl itemUrl = KUrl(data(index, UrlRole).toString());
         if (itemUrl.isValid()) {
             urls << itemUrl;
