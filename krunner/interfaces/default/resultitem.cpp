@@ -38,11 +38,12 @@
 
 #include <KDebug>
 #include <KIcon>
+#include <KPushButton>
 
 #include <Plasma/PaintUtils>
+#include <Plasma/PushButton>
 #include <Plasma/Plasma>
 #include <Plasma/RunnerManager>
-#include <Plasma/PaintUtils>
 
 //#define NO_GROW_ANIM
 
@@ -53,6 +54,7 @@ int ResultItem::s_fontHeight = 0;
 ResultItem::ResultItem(const Plasma::QueryMatch &match, QGraphicsWidget *parent)
     : QGraphicsWidget(parent),
       m_match(0),
+      m_configButton(0),
       m_highlight(0),
       m_index(-1),
       m_highlightTimerId(0)
@@ -82,6 +84,18 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
 {
     m_match = match;
     m_icon = KIcon(match.icon());
+
+    //kDebug() << match.hasConfigurationInterface();
+    if (match.hasConfigurationInterface()) {
+        m_configButton = new Plasma::PushButton(this);
+        m_configButton->nativeWidget()->setIcon(KIcon("configure"));
+        m_configButton->show();
+        connect(m_configButton, SIGNAL(clicked()), this, SLOT(showConfig()));
+    } else {
+        delete m_configButton;
+        m_configButton = 0;
+    }
+
     calculateSize();
     update();
 }
@@ -368,6 +382,16 @@ void ResultItem::changeEvent(QEvent *event)
     }
 }
 
+void ResultItem::showConfig()
+{
+    QWidget *w = new QWidget;
+    m_match.createConfigurationInterface(w);
+    w->show();
+    QGraphicsProxyWidget *proxy = new QGraphicsProxyWidget(this);
+    proxy->setWidget(w);
+    proxy->show();
+}
+
 void ResultItem::calculateSize()
 {
     QRect textBounds(contentsRect().toRect());
@@ -401,8 +425,15 @@ void ResultItem::calculateSize()
 
     qreal left, top, right, bottom;
     getContentsMargins(&left, &top, &right, &bottom);
-    resize(scene() ? scene()->width() : geometry().width(), innerHeight + top + bottom);
+    QSize newSize(scene() ? scene()->width() : geometry().width(), innerHeight + top + bottom);
+    resize(newSize);
     //kDebug() << innerHeight << geometry().size();
+
+    if (m_configButton) {
+        QSizeF s = m_configButton->size();
+        m_configButton->setPos(newSize.width() - s.width(),
+                               newSize.height() - s.height());
+    }
 }
 
 #include "resultitem.moc"

@@ -31,6 +31,7 @@ class QGraphicsLinearLayout;
 
 namespace Plasma
 {
+    class PushButton;
     class RunnerManager;
 } // namespace Plasma
 
@@ -105,15 +106,18 @@ protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
     void changeEvent(QEvent *event);
 
+protected slots:
+    void showConfig();
+
 private:
     // must always call remove()
     ~ResultItem();
 
 private:
     Plasma::QueryMatch m_match;
-    // static description
+    Plasma::PushButton *m_configButton;
+
     QIcon m_icon;
-    // dyn params
     QBrush m_bgBrush;
     QPixmap m_fadeout;
     int m_highlight;

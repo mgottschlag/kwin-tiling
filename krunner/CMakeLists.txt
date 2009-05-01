@@ -39,10 +39,11 @@ set(screensaver_dbusXML dbus/org.freedesktop.ScreenSaver.xml)
 set(kscreensaver_dbusXML dbus/org.kde.screensaver.xml)
 
 set(default_interface_SRCS
-   interfaces/default/resultitem.cpp
-   interfaces/default/resultscene.cpp
-   interfaces/default/selectionbar.cpp
-   interfaces/default/interface.cpp)
+    interfaces/default/interface.cpp
+    interfaces/default/resultitem.cpp
+    interfaces/default/resultscene.cpp
+    interfaces/default/selectionbar.cpp
+    )
 
 set(quicksand_interface_SRCS
    interfaces/quicksand/qs_completionbox.cpp
