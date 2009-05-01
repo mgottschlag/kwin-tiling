@@ -25,6 +25,7 @@ X-KDE-Solid-Actions-Type=Battery
 
 [Desktop Action chargePercent]
 Name=Charge Percent
+Name[de]=Ladestand
 Name[el]=Ποσοστό φόρτισης
 Name[et]=Täituvuse protsent
 Name[ga]=Céatadán Luchtaithe
@@ -46,6 +47,7 @@ Name[zh_TW]=充電百分比
 
 [Desktop Action chargeState]
 Name=Charge State
+Name[de]=Ladestatus
 Name[el]=Κατάσταση φόρτισης
 Name[et]=Täituvuse olek
 Name[ga]=Staid Luchtaithe

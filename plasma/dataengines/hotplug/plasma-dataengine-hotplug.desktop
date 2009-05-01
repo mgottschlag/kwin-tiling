@@ -60,6 +60,7 @@ Comment[pt]=Segue os dispositivos removíveis, à medida que aparecem e desapare
 Comment[pt_BR]=Segue os dispositivos removíveis, à medida que aparecem e desaparecem.
 Comment[sv]=Följer enheter som kan kopplas in under spänning när de dyker upp och försvinner.
 Comment[uk]=Стежить за з’єднанням і від’єднанням портативних пристроїв.
+Comment[zh_TW]=追蹤熱插拔裝置的插入與拔除。
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=notifier

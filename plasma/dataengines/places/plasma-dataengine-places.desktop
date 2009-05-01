@@ -67,6 +67,7 @@ Comment[pt]=Os locais vistos nas janelas e gestores de ficheiros.
 Comment[pt_BR]=Os locais vistos nas janelas e gestores de ficheiros.
 Comment[sv]=Platser som visas i filhanterare och fildialogrutor.
 Comment[uk]=Місця, так як їх показано у менеджері файлів і діалогових вікнах.
+Comment[zh_TW]=在檔案管理員與檔案對話框中看到的「地方」項目。
 Type=Service
 Icon=folder
 

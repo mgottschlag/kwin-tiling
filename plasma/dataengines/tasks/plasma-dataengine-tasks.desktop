@@ -65,6 +65,7 @@ Comment[pt]=Serviços de informação e gestão dos serviços para todas as jane
 Comment[pt_BR]=Serviços de informação e gestão dos serviços para todas as janelas disponíveis.
 Comment[sv]=Information om och hanteringstjänster för alla tillgängliga fönster.
 Comment[uk]=Відомості щодо служб і керування ними для всіх доступних вікон.
+Comment[zh_TW]=所有可用的視窗的資訊與管理服務。
 Type=Service
 Icon=user-desktop
 

@@ -66,6 +66,7 @@ Name[zh_TW]=可用的內容
 
 [Desktop Action blank]
 Name=Blank
+Name[de]=Leer
 Name[el]=Κενό
 Name[et]=Tühi
 Name[ga]=Folamh
@@ -217,6 +218,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action rewritable]
 Name=Rewritable
+Name[de]=Wiederbeschreibbar
 Name[el]=Επανεγγράψιμο
 Name[et]=Korduvkirjutatav
 Name[ga]=In-Athscríofa

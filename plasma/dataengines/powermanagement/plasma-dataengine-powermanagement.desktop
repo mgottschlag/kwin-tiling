@@ -66,6 +66,7 @@ Comment[pt]=Informação sobre a bateria, corrente eléctrica e o PowerDevil.
 Comment[pt_BR]=Informação sobre a bateria, corrente eléctrica e o PowerDevil.
 Comment[sv]=Information om batteri, nätspänning, viloläge och Powerdevil.
 Comment[uk]=Акумулятор, мережеве живлення, відомості щодо присипляння і PowerDevil.
+Comment[zh_TW]=電池、市電電源、睡眠模式與 PowerDevil 資訊。
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=preferences-system-power-management

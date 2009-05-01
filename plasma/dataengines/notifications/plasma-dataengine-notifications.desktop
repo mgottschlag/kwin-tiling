@@ -65,6 +65,7 @@ Comment[pt]=Notificações passivas visuais para o utilizador.
 Comment[pt_BR]=Notificações passivas visuais para o utilizador.
 Comment[sv]=Passiva visuella underrättelser för användaren.
 Comment[uk]=Пасивні візуальні сповіщення для користувача.
+Comment[zh_TW]=給使用者的被動視覺通知。
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=notifier

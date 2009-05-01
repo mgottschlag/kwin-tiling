@@ -127,6 +127,7 @@ Name[zh_TW]=指令集
 
 [Desktop Action maxSpeed]
 Name=Max Speed
+Name[de]=Maximalgeschwindigkeit
 Name[el]=Μέγιστη ταχύτητα
 Name[et]=Maks. kiirus
 Name[ga]=Uasluas
@@ -148,6 +149,7 @@ Name[zh_TW]=最大速率
 
 [Desktop Action number]
 Name=Number
+Name[de]=Nummer
 Name[el]=Αριθμός
 Name[et]=Arv
 Name[ga]=Uimhir

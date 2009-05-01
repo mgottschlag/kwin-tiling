@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=bus;driveType;hotpluggable;objectName;readSpeed;removable;supportedMedia;writeSpeed;writeSpeeds;
 Name=Optical Drive
+Name[de]=Optisches Laufwerk
 Name[el]=Οπτικός δίσκος
 Name[et]=Optiline seade
 Name[ga]=Tiomántán Optúil
@@ -42,6 +43,7 @@ Name[zh_TW]=匯流排
 
 [Desktop Action driveType]
 Name=Drive Type
+Name[de]=Laufwerkstyp
 Name[el]=Τύπος οδηγού
 Name[et]=Seadme tüüp
 Name[ga]=Cineál an Tiomántáin
@@ -171,6 +173,7 @@ Name[zh_TW]=支援的媒體
 
 [Desktop Action writeSpeed]
 Name=Write Speed
+Name[de]=Schreibgeschwindigkeit
 Name[el]=Ταχύτητα εγγραφής
 Name[et]=Kirjutamiskiirus
 Name[ga]=Luas Scríofa
@@ -192,6 +195,7 @@ Name[zh_TW]=寫入速度
 
 [Desktop Action writeSpeeds]
 Name=Write Speeds
+Name[de]=Schreibgeschwindigkeiten
 Name[el]=Ταχύτητες εγγραφής
 Name[et]=Kirjutamiskiirus
 Name[ga]=Luasanna Scríofa

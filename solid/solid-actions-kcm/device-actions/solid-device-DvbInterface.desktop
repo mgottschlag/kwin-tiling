@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=device;deviceAdapter;deviceIndex;deviceType;objectName;
 Name=Dvb Interface
+Name[de]=DVB-Schnittstelle
 Name[el]=Διασύνδεση Dvb
 Name[et]=DVB liides
 Name[ga]=Comhéadan Dvb

@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Audio Interface
+Name[de]=Audioschnittstellen
 Name[el]=Διασύνδεση ήχου
 Name[et]=Heliliides
 Name[ga]=Comhéadan Fuaime
@@ -128,6 +129,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action soundcardType]
 Name=Soundcard Type
+Name[de]=Soundkartentyp
 Name[el]=Τύπος κάρτας ήχου
 Name[et]=Helikaardi tüüp
 Name[ga]=Cineál an Chárta Fuaime
