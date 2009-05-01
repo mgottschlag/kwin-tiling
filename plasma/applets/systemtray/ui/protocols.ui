@@ -32,6 +32,9 @@
      <property name="text">
       <string>Application notifications</string>
      </property>
+     <property name="buddy">
+      <cstring>showNotifications</cstring>
+     </property>
     </widget>
    </item>
    <item row="2" column="1">
@@ -45,6 +48,9 @@
     <widget class="QLabel" name="label_5">
      <property name="text">
       <string>File transfers and other jobs</string>
+     </property>
+     <property name="buddy">
+      <cstring>showJobs</cstring>
      </property>
     </widget>
    </item>
@@ -73,6 +79,9 @@
      <property name="text">
       <string>Application status</string>
      </property>
+     <property name="buddy">
+      <cstring>showApplicationStatus</cstring>
+     </property>
     </widget>
    </item>
    <item row="9" column="1">
@@ -86,6 +95,9 @@
     <widget class="QLabel" name="label_8">
      <property name="text">
       <string>Communications</string>
+     </property>
+     <property name="buddy">
+      <cstring>showCommunications</cstring>
      </property>
     </widget>
    </item>
@@ -101,6 +113,9 @@
      <property name="text">
       <string>System services</string>
      </property>
+     <property name="buddy">
+      <cstring>showSystemServices</cstring>
+     </property>
     </widget>
    </item>
    <item row="11" column="1">
@@ -114,6 +129,9 @@
     <widget class="QLabel" name="label_10">
      <property name="text">
       <string>Hardware control</string>
+     </property>
+     <property name="buddy">
+      <cstring>showHardware</cstring>
      </property>
     </widget>
    </item>
