@@ -135,8 +135,8 @@ void AppletBrowserWidgetPrivate::initFilters()
     filterModel.addSeparator(i18n("Categories:"));
 
     foreach (const QString &category, Plasma::Applet::listCategories(application)) {
-        filterModel.addFilter(category,
-                              KCategorizedItemsViewModels::Filter("category", category));
+        filterModel.addFilter(i18n(category.toLocal8Bit()),
+                              KCategorizedItemsViewModels::Filter("category", category.toLower()));
     }
 }
 

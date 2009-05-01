@@ -146,7 +146,7 @@ void PlasmaAppletItemModel::populateModel()
         attrs.insert("name", info.name());
         attrs.insert("pluginName", info.pluginName());
         attrs.insert("description", info.comment());
-        attrs.insert("category", info.category());
+        attrs.insert("category", info.category().toLower());
         attrs.insert("icon",
                      static_cast<QIcon>(KIcon(info.icon().isEmpty() ?
                                               "application-x-plasma" : info.icon())));
