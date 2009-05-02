@@ -52,16 +52,20 @@ void SaverCorona::init()
 
     bool unlocked = immutability() == Plasma::Mutable;
 
+    //TODO delete the lock action and make our own
+    //so that Corona won't fuck with it
+    //remember to update our containment too
+
     //re-wire the lock action so we can check for a password
     QAction *lock = action("lock widgets");
     if (lock) {
         lock->disconnect(SIGNAL(triggered(bool)));
         connect(lock, SIGNAL(triggered(bool)), this, SLOT(toggleLock()));
-        lock->setText(unlocked ? i18n("Lock") : i18n("Unlock"));
+        lock->setText(unlocked ? i18n("Lock Screen") : i18n("Configure Widgets"));
     }
 
     //the most important action ;)
-    QAction *leave = new QAction(unlocked ? i18n("Quit") : i18n("Unlock and Quit"), this);
+    QAction *leave = new QAction(unlocked ? i18n("Leave Screensaver") : i18n("Unlock"), this);
     leave->setIcon(KIcon("system-lock-screen"));
     leave->setShortcut(QKeySequence("esc"));
     connect(leave, SIGNAL(triggered()), this, SLOT(unlockDesktop()));
@@ -115,11 +119,11 @@ void SaverCorona::updateActions(Plasma::ImmutabilityType immutability)
     bool unlocked = immutability == Plasma::Mutable;
     QAction *a = action("lock widgets");
     if (a) {
-        a->setText(unlocked ? i18n("Lock") : i18n("Unlock"));
+        a->setText(unlocked ? i18n("Lock Screen") : i18n("Configure Widgets"));
     }
     a = action("unlock desktop");
     if (a) {
-        a->setText(unlocked ? i18n("Quit") : i18n("Unlock and Quit"));
+        a->setText(unlocked ? i18n("Leave Screensaver") : i18n("Unlock"));
     }
 }
 
@@ -134,7 +138,7 @@ void SaverCorona::toggleLock()
         kDebug() << "locking up!";
     } else if (immutability() == Plasma::UserImmutable) {
         QList<QVariant> args;
-        args << i18n("Unlock Plasma Widgets");
+        args << i18n("Unlock widgets to configure them");
         bool sent = lockprocess.callWithCallback("checkPass", args, this, SLOT(unlock(QDBusMessage)), SLOT(dbusError(QDBusError)));
         kDebug() << sent;
     }
