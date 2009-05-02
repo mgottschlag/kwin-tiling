@@ -1,0 +1,26 @@
+[Desktop Entry]
+Name=Meta Data
+Name[de]=Metadaten
+Name[et]=Metaandmed
+Name[fr]=Méta Data
+Name[pt]=Meta-Dados
+Name[pt_BR]=Meta-Dados
+Name[sv]=Metadata
+Name[tr]=Meta Verisi
+Name[uk]=Метадані
+Name[zh_TW]=中繼資料
+Type=Service
+Icon=nepomuk
+X-KDE-ServiceTypes=Plasma/DataEngine
+
+X-Plasma-EngineName=metadata
+X-KDE-Library=plasma_engine_metadata
+X-KDE-PluginInfo-Author=Anne-Marie Mahfouf
+X-KDE-PluginInfo-Email=annma@kde.org
+X-KDE-PluginInfo-Name=metadata
+X-KDE-PluginInfo-Version=0.0.1
+X-KDE-PluginInfo-Website=
+X-KDE-PluginInfo-Category=Utilities
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=LGPL
+X-KDE-PluginInfo-EnabledByDefault=true
