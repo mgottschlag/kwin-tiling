@@ -58,7 +58,7 @@ void SaverDesktop::init()
         addToolBoxAction(leave);
     }
 
-    QAction *lock = action("lock widgets");
+    QAction *lock = corona()->action("unlock widgets");
     if (lock) {
         addToolBoxAction(lock);
     }
@@ -79,7 +79,7 @@ QList<QAction*> SaverDesktop::contextualActions()
 {
     if (!m_appletBrowserAction) {
         m_appletBrowserAction = action("add widgets");
-        m_lockDesktopAction = action("lock widgets");
+        m_lockDesktopAction = corona()->action("unlock widgets");
     }
     QAction *config = action("configure");
     QAction *quit = corona()->action("unlock desktop");

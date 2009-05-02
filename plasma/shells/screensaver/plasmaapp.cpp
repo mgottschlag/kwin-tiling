@@ -379,11 +379,9 @@ void PlasmaApp::createView(Plasma::Containment *containment)
     connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
             this, SLOT(configureContainment(Plasma::Containment*)));
 
-    QAction *leave = corona()->action("unlock desktop");
-    if (leave) {
-        //a hack to make sure the keyboard shortcut works
-        containment->addAction("unlock desktop", leave);
-    }
+    //a hack to make sure the keyboard shortcut works
+    m_view->addAction(corona()->action("unlock desktop"));
+    m_view->addAction(corona()->action("unlock widgets"));
 
     connect(m_view, SIGNAL(hidden()), SLOT(lock()));
     connect(m_view, SIGNAL(hidden()), SIGNAL(hidden()));

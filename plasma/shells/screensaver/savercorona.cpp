@@ -52,15 +52,15 @@ void SaverCorona::init()
 
     bool unlocked = immutability() == Plasma::Mutable;
 
-    //TODO delete the lock action and make our own
-    //so that Corona won't fuck with it
-    //remember to update our containment too
-
-    //re-wire the lock action so we can check for a password
     QAction *lock = action("lock widgets");
     if (lock) {
+        kDebug() << "unlock action";
+        //rename the lock action so that corona doesn't mess with it
+        addAction("unlock widgets", lock);
+        //rewire the action so we can check for a password
         lock->disconnect(SIGNAL(triggered(bool)));
-        connect(lock, SIGNAL(triggered(bool)), this, SLOT(toggleLock()));
+        connect(lock, SIGNAL(triggered()), this, SLOT(toggleLock()));
+        lock->setIcon(KIcon(unlocked ? "object-locked" : "configure"));
         lock->setText(unlocked ? i18n("Lock Screen") : i18n("Configure Widgets"));
     }
 
@@ -70,6 +70,8 @@ void SaverCorona::init()
     leave->setShortcut(QKeySequence("esc"));
     connect(leave, SIGNAL(triggered()), this, SLOT(unlockDesktop()));
     addAction("unlock desktop", leave);
+
+    updateShortcuts(); //just in case we ever get a config dialog
 
     connect(this, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)), SLOT(updateActions(Plasma::ImmutabilityType)));
 }
@@ -117,8 +119,9 @@ QRect SaverCorona::screenGeometry(int id) const
 void SaverCorona::updateActions(Plasma::ImmutabilityType immutability)
 {
     bool unlocked = immutability == Plasma::Mutable;
-    QAction *a = action("lock widgets");
+    QAction *a = action("unlock widgets");
     if (a) {
+        a->setIcon(KIcon(unlocked ? "object-locked" : "configure"));
         a->setText(unlocked ? i18n("Lock Screen") : i18n("Configure Widgets"));
     }
     a = action("unlock desktop");
