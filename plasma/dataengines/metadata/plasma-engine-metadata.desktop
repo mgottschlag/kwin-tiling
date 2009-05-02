@@ -1,14 +1,6 @@
 [Desktop Entry]
 Name=Meta Data
-Name[de]=Metadaten
-Name[et]=Metaandmed
-Name[fr]=Méta Data
-Name[pt]=Meta-Dados
-Name[pt_BR]=Meta-Dados
-Name[sv]=Metadata
-Name[tr]=Meta Verisi
 Name[uk]=Метадані
-Name[zh_TW]=中繼資料
 Type=Service
 Icon=nepomuk
 X-KDE-ServiceTypes=Plasma/DataEngine
