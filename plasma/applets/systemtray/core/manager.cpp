@@ -188,7 +188,9 @@ void Manager::updateTotals()
     ulong totalEta = 0;
     foreach (Job *job, d->jobs) {
         totalPercent += job->percentage();
-        totalEta += job->eta();
+        if (job->eta() > totalEta) {
+            totalEta = job->eta();
+        }
     }
 
     if (d->jobs.count() > 0) {
