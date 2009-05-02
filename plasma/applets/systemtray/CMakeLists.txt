@@ -40,7 +40,9 @@ set(systemtray_SRCS
     ui/jobwidget.cpp
     )
 
-kde4_add_ui_files(systemtray_SRCS ui/protocols.ui )
+kde4_add_ui_files(systemtray_SRCS
+                  ui/protocols.ui
+                  ui/autohide.ui )
 
 add_subdirectory(notificationitemwatcher)
 

@@ -52,11 +52,11 @@
 #include "taskarea.h"
 
 #include "ui_protocols.h"
+#include "ui_autohide.h"
 
 namespace SystemTray
 {
 
-static const int autoHideTimeout = 6000;
 
 K_EXPORT_PLASMA_APPLET(systemtray, Applet)
 
@@ -67,8 +67,8 @@ public:
     Private(Applet *q)
         : q(q),
           taskArea(0),
-          configInterface(0),
           notificationInterface(0),
+          autoHideInterface(0),
           background(0),
           jobSummaryWidget(0),
           extenderTask(0)
@@ -96,8 +96,8 @@ public:
     Applet *q;
 
     TaskArea *taskArea;
-    QPointer<KActionSelector> configInterface;
     QPointer<QWidget> notificationInterface;
+    QPointer<QWidget> autoHideInterface;
     QList<Job*> jobs;
     QSet<Task::Category> shownCategories;
 
@@ -106,8 +106,10 @@ public:
     QPointer<SystemTray::ExtenderTask> extenderTask;
     static SystemTray::Manager *s_manager;
     static int s_managerUsage;
+    int autoHideTimeout;
 
-    Ui::ProtocolsConfig ui;
+    Ui::ProtocolsConfig notificationUi;
+    Ui::AutoHideConfig autoHideUi;
 };
 
 Manager *Applet::Private::s_manager = 0;
@@ -170,6 +172,12 @@ void Applet::init()
     }
     if (globalCg.readEntry("ShowHardware", true)) {
         d->shownCategories.insert(Task::Hardware);
+    }
+
+    if (config().readEntry("AutoHidePopup", true)) {
+        d->autoHideTimeout = 6000;
+    } else {
+        d->autoHideTimeout = 0;
     }
 
     d->shownCategories.insert(Task::UnknownCategory);
@@ -375,24 +383,27 @@ void Applet::propogateSizeHintChange(Qt::SizeHint which)
 
 void Applet::createConfigurationInterface(KConfigDialog *parent)
 {
-    if (!d->configInterface) {
-        d->configInterface = new KActionSelector();
-        d->configInterface->setAvailableLabel(i18n("Visible icons:"));
-        d->configInterface->setSelectedLabel(i18n("Hidden icons:"));
-        d->configInterface->setShowUpDownButtons(false);
-
+    if (!d->autoHideInterface) {
         KConfigGroup globalCg = globalConfig();
         d->notificationInterface = new QWidget();
+        d->autoHideInterface = new QWidget();
 
-        d->ui.setupUi(d->notificationInterface);
+        d->notificationUi.setupUi(d->notificationInterface);
 
-        d->ui.showJobs->setChecked(globalCg.readEntry("ShowJobs", true));
-        d->ui.showNotifications->setChecked(globalCg.readEntry("ShowNotifications", true));
+        d->notificationUi.showJobs->setChecked(globalCg.readEntry("ShowJobs", true));
+        d->notificationUi.showNotifications->setChecked(globalCg.readEntry("ShowNotifications", true));
 
-        d->ui.showApplicationStatus->setChecked(globalCg.readEntry("ShowApplicationStatus", true));
-        d->ui.showCommunications->setChecked(globalCg.readEntry("ShowCommunications", true));
-        d->ui.showSystemServices->setChecked(globalCg.readEntry("ShowSystemServices", true));
-        d->ui.showHardware->setChecked(globalCg.readEntry("ShowHardware", true));
+        d->notificationUi.showApplicationStatus->setChecked(globalCg.readEntry("ShowApplicationStatus", true));
+        d->notificationUi.showCommunications->setChecked(globalCg.readEntry("ShowCommunications", true));
+        d->notificationUi.showSystemServices->setChecked(globalCg.readEntry("ShowSystemServices", true));
+        d->notificationUi.showHardware->setChecked(globalCg.readEntry("ShowHardware", true));
+
+        d->autoHideUi.setupUi(d->autoHideInterface);
+        d->autoHideUi.taskSelector->setAvailableLabel(i18n("Visible icons:"));
+        d->autoHideUi.taskSelector->setSelectedLabel(i18n("Hidden icons:"));
+        d->autoHideUi.taskSelector->setShowUpDownButtons(false);
+
+        d->autoHideUi.autoHide->setChecked(config().readEntry("AutoHidePopup", true));
 
         connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
         connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
@@ -400,11 +411,11 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         parent->addPage(d->notificationInterface, i18n("Information"),
                         "preferences-desktop-notification",
                         i18n("Select which kinds of information to show"));
-        parent->addPage(d->configInterface, i18n("Auto Hide"), "window-suppressed");
+        parent->addPage(d->autoHideInterface, i18n("Auto Hide"), "window-suppressed");
     }
 
-    QListWidget *visibleList = d->configInterface->availableListWidget();
-    QListWidget *hiddenList = d->configInterface->selectedListWidget();
+    QListWidget *visibleList = d->autoHideUi.taskSelector->availableListWidget();
+    QListWidget *hiddenList = d->autoHideUi.taskSelector->selectedListWidget();
 
     visibleList->clear();
     hiddenList->clear();
@@ -436,7 +447,7 @@ void Applet::configAccepted()
 {
     QStringList hiddenTypes;
 
-    QListWidget *hiddenList = d->configInterface->selectedListWidget();
+    QListWidget *hiddenList = d->autoHideUi.taskSelector->selectedListWidget();
     for (int i = 0; i < hiddenList->count(); ++i) {
         hiddenTypes << hiddenList->item(i)->data(Qt::UserRole).toString();
     }
@@ -447,13 +458,20 @@ void Applet::configAccepted()
     KConfigGroup cg = config();
     cg.writeEntry("hidden", hiddenTypes);
 
+    cg.writeEntry("AutoHidePopup", d->autoHideUi.autoHide->isChecked());
+    if (d->autoHideUi.autoHide->isChecked()) {
+        d->autoHideTimeout = 6000;
+    } else {
+        d->autoHideTimeout = 0;
+    }
+
     KConfigGroup globalCg = globalConfig();
-    globalCg.writeEntry("ShowJobs", d->ui.showJobs->isChecked());
-    globalCg.writeEntry("ShowNotifications", d->ui.showNotifications->isChecked());
+    globalCg.writeEntry("ShowJobs", d->notificationUi.showJobs->isChecked());
+    globalCg.writeEntry("ShowNotifications", d->notificationUi.showNotifications->isChecked());
 
     disconnect(Private::s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
                this, SLOT(addJob(SystemTray::Job*)));
-    if (d->ui.showJobs->isChecked()) {
+    if (d->notificationUi.showJobs->isChecked()) {
         createJobGroups();
 
         Private::s_manager->registerJobProtocol();
@@ -465,7 +483,7 @@ void Applet::configAccepted()
 
     disconnect(Private::s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
                this, SLOT(addNotification(SystemTray::Notification*)));
-    if (d->ui.showNotifications->isChecked()) {
+    if (d->notificationUi.showNotifications->isChecked()) {
         Private::s_manager->registerNotificationProtocol();
         connect(Private::s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
                 this, SLOT(addNotification(SystemTray::Notification*)));
@@ -476,23 +494,23 @@ void Applet::configAccepted()
 
     d->shownCategories.clear();
 
-    globalCg.writeEntry("ShowApplicationStatus", d->ui.showApplicationStatus->isChecked());
-    if (d->ui.showApplicationStatus->isChecked()) {
+    globalCg.writeEntry("ShowApplicationStatus", d->notificationUi.showApplicationStatus->isChecked());
+    if (d->notificationUi.showApplicationStatus->isChecked()) {
         d->shownCategories.insert(Task::ApplicationStatus);
     }
 
-    globalCg.writeEntry("ShowCommunications", d->ui.showCommunications->isChecked());
-    if (d->ui.showCommunications->isChecked()) {
+    globalCg.writeEntry("ShowCommunications", d->notificationUi.showCommunications->isChecked());
+    if (d->notificationUi.showCommunications->isChecked()) {
         d->shownCategories.insert(Task::Communications);
     }
 
-    globalCg.writeEntry("ShowSystemServices", d->ui.showSystemServices->isChecked());
-    if (d->ui.showSystemServices->isChecked()) {
+    globalCg.writeEntry("ShowSystemServices", d->notificationUi.showSystemServices->isChecked());
+    if (d->notificationUi.showSystemServices->isChecked()) {
         d->shownCategories.insert(Task::SystemServices);
     }
 
-    globalCg.writeEntry("ShowHardware", d->ui.showHardware->isChecked());
-    if (d->ui.showHardware->isChecked()) {
+    globalCg.writeEntry("ShowHardware", d->notificationUi.showHardware->isChecked());
+    if (d->notificationUi.showHardware->isChecked()) {
         d->shownCategories.insert(Task::Hardware);
     }
 
@@ -509,7 +527,7 @@ void Applet::addNotification(Notification *notification)
     extenderItem->config().writeEntry("type", "notification");
     extenderItem->setWidget(new NotificationWidget(notification, extenderItem));
 
-    showPopup(autoHideTimeout);
+    showPopup(d->autoHideTimeout);
 }
 
 void Applet::addJob(Job *job)
@@ -518,7 +536,7 @@ void Applet::addJob(Job *job)
     extenderItem->config().writeEntry("type", "job");
     extenderItem->setWidget(new JobWidget(job, extenderItem));
 
-    showPopup(autoHideTimeout);
+    showPopup(d->autoHideTimeout);
 
     extenderItem->setGroup(extender()->group("jobGroup"));
 }
@@ -622,7 +640,7 @@ void Applet::finishJob(SystemTray::Job *job)
 
     initExtenderItem(item);
     item->setGroup(extender()->group("completedJobsGroup"));
-    showPopup(autoHideTimeout);
+    showPopup(d->autoHideTimeout);
 }
 
 void Applet::open(const QString &url)
