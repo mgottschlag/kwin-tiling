@@ -245,7 +245,7 @@ InputStream * FontThroughAnalyzer::connectInputStream(InputStream *in)
             int        n=in->read(d, size, -1);
 
             in->reset(0);
-            if(-2==n)
+            if(n <= 0)
                 return in;
 
             CFontEngine fe;
