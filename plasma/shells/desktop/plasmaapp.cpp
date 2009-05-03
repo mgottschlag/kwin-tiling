@@ -502,15 +502,20 @@ Plasma::Corona* PlasmaApp::corona()
         activityAction->setVisible(false);
         activityAction->setEnabled(false);
         connect(activityAction, SIGNAL(triggered()), this, SLOT(addContainment()));
-        activityAction->setShortcut(QKeySequence("alt+d,alt+a"));
+        activityAction->setShortcut(KShortcut("alt+d, alt+a"));
         activityAction->setShortcutContext(Qt::ApplicationShortcut);
         c->addAction("add sibling containment", activityAction);
 
         KAction *zoomAction = new KAction(i18n("Zoom Out"), this);
         zoomAction->setIcon(KIcon("zoom-out"));
         connect(zoomAction, SIGNAL(triggered()), this, SLOT(zoomOut()));
-        zoomAction->setShortcut(QKeySequence("alt+d,-"));
+        zoomAction->setShortcut(KShortcut("alt+d, -"));
         c->addAction("zoom out", zoomAction);
+
+        c->updateShortcuts();
+
+        //add stuff to shortcut config
+        c->addShortcuts(DesktopView::shortcutActions(this));
 
         m_corona = c;
         c->setItemIndexMethod(QGraphicsScene::NoIndex);
@@ -634,6 +639,8 @@ void PlasmaApp::createView(Plasma::Containment *containment)
         if (m_corona) {
             connect(m_corona, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
                     view, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
+            connect(m_corona, SIGNAL(shortcutsChanged()),
+                    view, SLOT(updateShortcuts()));
         }
 
         m_desktops.append(view);

@@ -34,6 +34,7 @@ namespace Kephal
 } // namespace Kephal
 
 class DashboardView;
+class KActionCollection;
 
 class DesktopView : public Plasma::View
 {
@@ -57,9 +58,14 @@ public:
      * Set if the dashboard will be fixed to the current desktop containment
      */
     void setDashboardFollowsDesktop(bool follow);
-    
+
     Plasma::Containment *dashboardContainment() const;
     void setDashboardContainment(Plasma::Containment *containment);
+
+    /**
+     * all the actions with keyboard shortcuts
+     */
+    static KActionCollection* shortcutActions(QObject *parent);
 
 public slots:
     /**
@@ -97,6 +103,11 @@ public slots:
      */
     void setContainment(Plasma::Containment *containment);
 
+    /**
+     * reread shortcut config
+     */
+    void updateShortcuts();
+
 protected:
     void wheelEvent(QWheelEvent *event);
     void drawBackground(QPainter *painter, const QRectF &rect);
@@ -106,6 +117,7 @@ private:
     bool m_dashboardFollowsDesktop : 1;
     bool m_init : 1;
     int m_desktop;
+    KActionCollection *m_actions;
 
     //FIXME: duplicated from containment_p.h 
     //(but with a bigger margin to make room even for very big panels)

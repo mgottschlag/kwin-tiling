@@ -19,7 +19,6 @@
 
 #include "desktopview.h"
 
-#include <KAction>
 #include <QFile>
 #include <QWheelEvent>
 #include <QCoreApplication>
@@ -30,6 +29,8 @@
 #include <KToggleAction>
 #include <KWindowSystem>
 #include <NETRootInfo>
+#include <KAction>
+#include <KActionCollection>
 
 #include <Plasma/Applet>
 #include <Plasma/Corona>
@@ -55,7 +56,8 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
     : Plasma::View(containment, id, parent),
       m_dashboard(0),
       m_dashboardFollowsDesktop(true),
-      m_init(false)
+      m_init(false),
+      m_actions(shortcutActions(this))
 {
     setAttribute(Qt::WA_TranslucentBackground, false);
     setFocusPolicy(Qt::NoFocus);
@@ -84,15 +86,12 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
         containment->enableAction("zoom in", false);
         containment->enableAction("add sibling containment", false);
     }
-    //FIXME should we have next/prev or up/down/left/right or what?
-    KAction *action = new KAction(i18n("Next Activity"), this);
-    action->setShortcut(QKeySequence(Qt::ALT + Qt::Key_D, Qt::Key_Right));
+
+    m_actions->addAssociatedWidget(this);
+    QAction *action = m_actions->action("next");
     connect(action, SIGNAL(triggered()), this, SLOT(nextContainment()));
-    addAction(action);
-    action = new KAction(i18n("Previous Activity"), this);
-    action->setShortcut(QKeySequence(Qt::ALT + Qt::Key_D, Qt::Key_Left));
+    action = m_actions->action("prev");
     connect(action, SIGNAL(triggered()), this, SLOT(previousContainment()));
-    addAction(action);
 
     const int w = 25;
     QPixmap tile(w * 2, w * 2);
@@ -123,6 +122,29 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
 DesktopView::~DesktopView()
 {
     delete m_dashboard;
+}
+
+KActionCollection* DesktopView::shortcutActions(QObject *parent)
+{
+    KActionCollection *actions = new KActionCollection(parent);
+    actions->setConfigGroup("Shortcuts-DesktopView");
+
+    //FIXME should we have next/prev or up/down/left/right or what?
+    KAction *action = new KAction(i18n("Next Activity"), actions);
+    action->setShortcut(QKeySequence(Qt::ALT + Qt::Key_D, Qt::Key_Right));
+    actions->addAction("next", action);
+
+    action = new KAction(i18n("Previous Activity"), actions);
+    action->setShortcut(QKeySequence(Qt::ALT + Qt::Key_D, Qt::Key_Left));
+    actions->addAction("prev", action);
+
+    actions->readSettings();
+    return actions;
+}
+
+void DesktopView::updateShortcuts()
+{
+    m_actions->readSettings();
 }
 
 void DesktopView::toggleDashboard()
