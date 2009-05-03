@@ -410,7 +410,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
 
         parent->addPage(d->notificationInterface, i18n("Information"),
                         "preferences-desktop-notification",
-                        i18n("Select which kinds of information to show"));
+                        i18n("Choose which information to show"));
         parent->addPage(d->autoHideInterface, i18n("Auto Hide"), "window-suppressed");
     }
 
