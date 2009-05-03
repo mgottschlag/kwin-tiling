@@ -75,8 +75,9 @@ Plugins/Addons
              * Using knotification to tell the user that the data has been saved online
          * System tray
              * New D-Bus based system tray protocol
-             * Jobs show file/dir progress
-             * Jobs are grouped together: normally only total progress is shown, but the user can expand this item to show all individual jobs
+             * Jobs show file/dir progress and ETA
+             * Jobs are grouped together: there's one group for running jobs and one for completed jobs. So you can have a single bar to show progress of all jobs, or view the individual jobs by expanding the group.
+	     * Completed jobs have a different appearence and allow the user to open the destination file/directory.
              * Notifications now show custom images like kopete's contact images.
          * Taskbar
              * New popup menu for grouped tasks with animation and tooltips for each item
