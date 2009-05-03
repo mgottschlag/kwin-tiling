@@ -29,7 +29,6 @@ public:
         QString stationName;
         QString stationID;
         QString XMLurl;
-        QString sourceOptions;
     };
 
 public:

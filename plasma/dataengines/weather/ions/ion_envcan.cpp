@@ -29,7 +29,6 @@ private:
         QString cityName;
         QString territoryName;
         QString cityCode;
-        QString sourceOptions;
     };
 
 public:

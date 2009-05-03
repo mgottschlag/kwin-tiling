@@ -29,7 +29,6 @@ private:
         QString XMLurl;
         QString XMLforecastURL;
         bool ukPlace;
-        QString sourceOptions;
     };
 
 public:
