@@ -130,13 +130,13 @@ KActionCollection* DesktopView::shortcutActions(QObject *parent)
     actions->setConfigGroup("Shortcuts-DesktopView");
 
     //FIXME should we have next/prev or up/down/left/right or what?
-    KAction *action = new KAction(i18n("Next Activity"), actions);
+    KAction *action = actions->addAction("next");
+    action->setText(i18n("Next Activity"));
     action->setShortcut(QKeySequence(Qt::ALT + Qt::Key_D, Qt::Key_Right));
-    actions->addAction("next", action);
 
-    action = new KAction(i18n("Previous Activity"), actions);
+    action = actions->addAction("prev");
+    action->setText(i18n("Previous Activity"));
     action->setShortcut(QKeySequence(Qt::ALT + Qt::Key_D, Qt::Key_Left));
-    actions->addAction("prev", action);
 
     actions->readSettings();
     return actions;

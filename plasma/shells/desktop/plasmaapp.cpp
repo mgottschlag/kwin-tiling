@@ -497,20 +497,20 @@ Plasma::Corona* PlasmaApp::corona()
         }
 
         //actions!
-        KAction *activityAction = new KAction(i18n("Add Activity"), this);
+        KAction *activityAction = c->addAction("add sibling containment");
+        activityAction->setText(i18n("Add Activity"));
         activityAction->setIcon(KIcon("list-add"));
         activityAction->setVisible(false);
         activityAction->setEnabled(false);
         connect(activityAction, SIGNAL(triggered()), this, SLOT(addContainment()));
         activityAction->setShortcut(KShortcut("alt+d, alt+a"));
         activityAction->setShortcutContext(Qt::ApplicationShortcut);
-        c->addAction("add sibling containment", activityAction);
 
-        KAction *zoomAction = new KAction(i18n("Zoom Out"), this);
+        KAction *zoomAction = c->addAction("zoom out");
+        zoomAction->setText(i18n("Zoom Out"));
         zoomAction->setIcon(KIcon("zoom-out"));
         connect(zoomAction, SIGNAL(triggered()), this, SLOT(zoomOut()));
         zoomAction->setShortcut(KShortcut("alt+d, -"));
-        c->addAction("zoom out", zoomAction);
 
         c->updateShortcuts();
 
