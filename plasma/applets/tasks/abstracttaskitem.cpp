@@ -289,9 +289,11 @@ void AbstractTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 #ifdef Q_WS_X11
         Display *dpy = QX11Info::display();
-        const WId rootWin = QX11Info::appRootWindow();
-        Atom atom = XInternAtom(dpy, "_KDE_WINDOW_HIGHLIGHT", False);
-        XDeleteProperty(dpy, rootWin, atom);
+        if (m_applet->view()) {
+            const WId winId = m_applet->view()->winId();
+            Atom atom = XInternAtom(dpy, "_KDE_WINDOW_HIGHLIGHT", False);
+            XDeleteProperty(dpy, winId, atom);
+        }
 #endif
     }
 
@@ -391,19 +393,20 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
         }
 
         const int numWindows = windows.count();
-        QVarLengthArray<long, 1024> data(1 + numWindows);
-        data[0] = numWindows;
+        QVarLengthArray<long, 1024> data(numWindows);
 
         kDebug() << "setting for" << numWindows;
         for (int i = 0; i < numWindows; ++i) {
-            data[i + 1] = windows.at(i)->task()->window();
+            data[i] = windows.at(i)->task()->window();
         }
 
         Display *dpy = QX11Info::display();
-        const WId rootWin = QX11Info::appRootWindow();
-        Atom atom = XInternAtom(dpy, "_KDE_WINDOW_HIGHLIGHT", False);
-        XChangeProperty(dpy, rootWin, atom, atom, 32, PropModeReplace,
-                        reinterpret_cast<unsigned char *>(data.data()), data.size());
+        if (m_applet->view()) {
+            const WId winId = m_applet->view()->winId();
+            Atom atom = XInternAtom(dpy, "_KDE_WINDOW_HIGHLIGHT", False);
+            XChangeProperty(dpy, winId, atom, atom, 32, PropModeReplace,
+                            reinterpret_cast<unsigned char *>(data.data()), data.size());
+        }
 #endif
 
         killTimer(m_hoverEffectTimerId);
