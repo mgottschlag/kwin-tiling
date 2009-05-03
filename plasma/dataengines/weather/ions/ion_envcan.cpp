@@ -1271,6 +1271,26 @@ void EnvCanadaIon::parseUnknownElement(QXmlStreamReader& xml)
     }
 }
 
+static double toFractionalHour(const QString & from, const double abort=-1.0)
+{ 
+    int colon = from.indexOf(':');
+    if (colon == -1 || colon < 2 || colon + 3 > from.length() ) return abort;
+    
+    bool ok;
+    
+    const double h = from.mid(colon - 2, 2).toDouble(&ok);
+    if (!ok) {
+        return abort;
+    }
+    
+    const double m = from.mid(colon + 1,2).toDouble(&ok);
+    if (!ok) {
+        return abort;
+    }
+    
+    return (h + (m / 60.0));
+}
+
 void EnvCanadaIon::updateWeather(const QString& source)
 {
     QMap<QString, QString> dataFields;
@@ -1290,11 +1310,16 @@ void EnvCanadaIon::updateWeather(const QString& source)
     setData(source, "Observation Period", observationTime(source));
     setData(source, "Current Conditions", condition(source));
 
+    const double sunrise = toFractionalHour(d->m_weatherData[source].sunriseTimestamp, 6.0);
+    const double sunset = toFractionalHour(d->m_weatherData[source].sunsetTimestamp, 18.0);
+    
+    const double obsHour = toFractionalHour(observationTime(source), (double) periodHour(source));
+    
     // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
     QMap<QString, ConditionIcons> conditionList;
     conditionList = conditionIcons();
 
-    if ((periodHour(source) >= 0 && periodHour(source) < 6) || (periodHour(source) >= 18)) {
+    if ((obsHour >= 0.0 && obsHour < sunrise) || (obsHour >= sunset)) {
         conditionList["decreasing cloud"] = FewCloudsNight;
         conditionList["mostly cloudy"] = PartlyCloudyNight;
         conditionList["partly cloudy"] = PartlyCloudyNight;
