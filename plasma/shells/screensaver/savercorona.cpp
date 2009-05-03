@@ -71,7 +71,7 @@ void SaverCorona::init()
     connect(leave, SIGNAL(triggered()), this, SLOT(unlockDesktop()));
     addAction("unlock desktop", leave);
 
-    updateShortcuts(); //just in case we ever get a config dialog
+    //updateShortcuts(); //just in case we ever get a config dialog
 
     connect(this, SIGNAL(immutabilityChanged(Plasma::ImmutabilityType)), SLOT(updateActions(Plasma::ImmutabilityType)));
 }
