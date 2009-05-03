@@ -1,5 +1,8 @@
 [Desktop Entry]
 Name=Meta Data
+Name[pt]=Meta-Dados
+Name[pt_BR]=Meta-Dados
+Name[sv]=Metadata
 Name[uk]=Метадані
 Type=Service
 Icon=nepomuk
