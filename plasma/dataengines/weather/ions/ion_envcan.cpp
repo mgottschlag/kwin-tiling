@@ -1128,7 +1128,6 @@ void EnvCanadaIon::parsePrecipitationForecast(WeatherData::ForecastInfo *forecas
         }
 
         if (xml.isStartElement()) {
-            //kDebug() << "parsePrecipitationForecast() ====> TAG: " << xml.name().toString();
             if (xml.name() == "textSummary") {
                 forecast->precipForecast = xml.readElementText();
             } else if (xml.name() == "precipType") {

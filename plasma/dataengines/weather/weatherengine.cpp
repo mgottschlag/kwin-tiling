@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Shawn Starr <shawn.starr@rogers.com>            *
+ *   Copyright (C) 2007-2009 by Shawn Starr <shawn.starr@rogers.com>       *
  *   Copyright (C) 2009 by Aaron Seigo <aseigo@kde.org>                    *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -93,13 +93,6 @@ Plasma::DataEngine *WeatherEngine::loadIon(const QString& plugName)
     ion->setObjectName(plugName);
     connect(ion, SIGNAL(sourceAdded(QString)), this, SLOT(newIonSource(QString)));
 
-    /* Set system related properties for the ion
-     * timezone is displaying the time/date in UTC or user's local time
-     * unit is setting the weather units used, Celsius/Fahrenheit, Kilopascals/Inches of Mercury, etc
-     */
-
-    ion->setProperty("timezone", d->m_localTime.isUtc());
-    ion->setProperty("unit", KGlobal::locale()->measureSystem());
     d->m_ions << plugName;
 
     return ion;
@@ -136,7 +129,6 @@ void WeatherEngine::newIonSource(const QString& source)
 {
     IonInterface *ion = qobject_cast<IonInterface*>(sender());
 
-    kDebug() << "New Ion Source" << source;
     if (!ion) {
         return;
     }
@@ -154,7 +146,6 @@ void WeatherEngine::removeIonSource(const QString& source)
         ion->removeSource(source);
         // If plugin has no more sources let's unload the plugin
         if (ion->isEmpty()) {
-            kDebug() << "No more Sources found for this plugin let's unload it!";
             unloadIon(d->ionNameForSource(source));
         }
     }
@@ -165,7 +156,6 @@ void WeatherEngine::removeIonSource(const QString& source)
  */
 void WeatherEngine::dataUpdated(const QString& source, Plasma::DataEngine::Data data)
 {
-    kDebug() << "data updated" << source;
     setData(source, data);
 }
 
@@ -198,11 +188,9 @@ WeatherEngine::~WeatherEngine()
  */
 bool WeatherEngine::sourceRequestEvent(const QString &source)
 {
-    kDebug() << "sourceRequestEvent()" << source;
     Plasma::DataEngine *ion = d->ionForSource(source);
 
     if (!ion) {
-        kDebug() << "sourceRequestEvent(): No Ion Found, load it up!";
         ion = loadIon(d->ionNameForSource(source));
         if (!ion) {
             return false;
@@ -219,7 +207,6 @@ bool WeatherEngine::sourceRequestEvent(const QString &source)
     ion->connectSource(source, this);
     if (!containerForSource(source)) {
         // it is an async reply, we need to set up the data anyways
-        kDebug() << "no item?";
         setData(source, Data());
     }
     return true;
@@ -234,7 +221,6 @@ bool WeatherEngine::updateSourceEvent(const QString& source)
 
     QByteArray str = source.toLocal8Bit();
 
-    kDebug() << "updateSourceEvent()" << ion << d->m_networkAvailable;
     if (!ion) {
         return false;
     }

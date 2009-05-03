@@ -152,7 +152,6 @@ bool NOAAIon::updateIonSource(const QString& source)
     }
     
     if (sourceAction[1] == "validate" && sourceAction.size() > 2) {
-        kDebug() << "Initiate Validating of place: " << sourceAction[2];
         QStringList result = validate(QString("%1|%2").arg(sourceAction[0]).arg(sourceAction[2]));
 
         if (result.size() == 1) {
@@ -197,8 +196,6 @@ void NOAAIon::getXMLData(const QString& source)
     QString dataKey = source;
     dataKey.remove("|weather");
     url = d->m_place[dataKey].XMLurl;
-
-    kDebug() << "URL Location: " << url.url();
 
     // If this is empty we have no valid data, send out an error and abort.
     //
