@@ -1,3 +1,4 @@
+add_subdirectory(akonadi)
 add_subdirectory(applicationjobs)
 add_subdirectory(dict)
 add_subdirectory(executable)
