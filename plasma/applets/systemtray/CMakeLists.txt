@@ -46,6 +46,13 @@ kde4_add_ui_files(systemtray_SRCS
 
 add_subdirectory(notificationitemwatcher)
 
+include (CheckLibraryExists)
+check_library_exists (Xss XScreenSaverQueryInfo "" HAVE_LIBXSS)
+configure_file (${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+IF (HAVE_LIBXSS)
+   SET (IDLE_DETECTION_LIB "Xss")
+ENDIF (HAVE_LIBXSS)
+
 set(notificationitemwatcher_xml ${KDE4_DBUS_INTERFACES_DIR}/org.kde.NotificationItemWatcher.xml)
 QT4_ADD_DBUS_INTERFACE(systemtray_SRCS ${notificationitemwatcher_xml} notificationitemwatcher_interface)
 
@@ -65,6 +72,9 @@ target_link_libraries(plasma_applet_systemtray ${KDE4_KDEUI_LIBS} ${KDE4_PLASMA_
 if(HAVE_XCOMPOSITE AND HAVE_XFIXES AND HAVE_XDAMAGE)
 target_link_libraries(plasma_applet_systemtray ${X11_Xfixes_LIB} ${X11_Xdamage_LIB} ${X11_Xcomposite_LIB})
 endif(HAVE_XCOMPOSITE AND HAVE_XFIXES AND HAVE_XDAMAGE)
+if(HAVE_LIBXSS)
+   target_link_libraries(plasma_applet_systemtray ${IDLE_DETECTION_LIB})
+endif(HAVE_LIBXSS)
 
 install(TARGETS plasma_applet_systemtray DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-applet-systemtray.desktop DESTINATION ${SERVICES_INSTALL_DIR})

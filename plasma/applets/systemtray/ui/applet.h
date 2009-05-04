@@ -59,6 +59,8 @@ protected:
 
     void popupEvent(bool show);
 
+    void timerEvent(QTimerEvent *event);
+
 private slots:
     void configAccepted();
     void propogateSizeHintChange(Qt::SizeHint which);

@@ -30,6 +30,7 @@
 #include <QtGui/QListWidget>
 #include <QtGui/QCheckBox>
 #include <QtGui/QPainter>
+#include <QtGui/QX11Info>
 #include <QtCore/QProcess>
 
 #include <KActionSelector>
@@ -43,6 +44,14 @@
 #include <plasma/framesvg.h>
 #include <plasma/widgets/label.h>
 #include <plasma/theme.h>
+
+#include "config.h"
+#ifdef HAVE_LIBXSS      // Idle detection.
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/extensions/scrnsaver.h>
+#include <fixx11h.h>
+#endif // HAVE_LIBXSS
 
 #include "../core/manager.h"
 #include "extendertask.h"
@@ -71,7 +80,8 @@ public:
           autoHideInterface(0),
           background(0),
           jobSummaryWidget(0),
-          extenderTask(0)
+          extenderTask(0),
+          timerId(0)
     {
         if (!s_manager) {
             s_manager = new SystemTray::Manager();
@@ -100,6 +110,7 @@ public:
     QPointer<QWidget> autoHideInterface;
     QList<Job*> jobs;
     QSet<Task::Category> shownCategories;
+    QDateTime lastActivity;
 
     Plasma::FrameSvg *background;
     JobTotalsWidget *jobSummaryWidget;
@@ -107,6 +118,7 @@ public:
     static SystemTray::Manager *s_manager;
     static int s_managerUsage;
     int autoHideTimeout;
+    int timerId;
 
     Ui::ProtocolsConfig notificationUi;
     Ui::AutoHideConfig autoHideUi;
@@ -114,6 +126,8 @@ public:
 
 Manager *Applet::Private::s_manager = 0;
 int Applet::Private::s_managerUsage = 0;
+static const int idleCheckInterval = 60 * 1000;
+static const int completedJobExpireDelay = 5 * 60 * 1000;
 
 Applet::Applet(QObject *parent, const QVariantList &arguments)
     : Plasma::PopupApplet(parent, arguments),
@@ -591,6 +605,38 @@ void Applet::popupEvent(bool visibility)
     }
 }
 
+void Applet::timerEvent(QTimerEvent *event)
+{
+    if (event->timerId() != d->timerId) {
+        Plasma::Applet::timerEvent(event);
+        return;
+    }
+
+    int totalIdle;
+#ifdef HAVE_LIBXSS      // Idle detection.
+    XScreenSaverInfo*  _mit_info;
+    _mit_info = XScreenSaverAllocInfo();
+    XScreenSaverQueryInfo( QX11Info::display(), QX11Info::appRootWindow(), _mit_info );
+    totalIdle =  _mit_info->idle;
+    XFree( _mit_info );
+#else
+    totalIdle = 0;
+#endif // HAVE_LIBXSS
+
+    if (totalIdle < idleCheckInterval) {
+        if (extender()->group("completedJobsGroup")) {
+            foreach (Plasma::ExtenderItem *item, extender()->group("completedJobsGroup")->items()) {
+                if (!item->autoExpireDelay()) {
+                    item->setAutoExpireDelay(completedJobExpireDelay);
+                }
+            }
+        }
+
+        killTimer(d->timerId);
+        d->timerId = 0;
+    }
+}
+
 void Applet::clearAllCompletedJobs()
 {
     Plasma::ExtenderGroup *completedJobsGroup = extender()->group("completedJobsGroup");
@@ -619,6 +665,9 @@ void Applet::finishJob(SystemTray::Job *job)
     initExtenderItem(item);
     item->setGroup(extender()->group("completedJobsGroup"));
     showPopup(d->autoHideTimeout);
+    if (!d->timerId) {
+        d->timerId = startTimer(idleCheckInterval);
+    }
 }
 
 void Applet::open(const QString &url)
