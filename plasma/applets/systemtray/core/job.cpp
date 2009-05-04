@@ -22,6 +22,8 @@
 #include <QtCore/QTimer>
 
 #include <KDebug>
+#include <KUrl>
+#include <KLocalizedString>
 
 namespace SystemTray
 {
@@ -46,6 +48,8 @@ public:
     QString message;
     QString error;
     QString speed;
+    QString destination;
+
 
     QMap<QString, qlonglong> totalAmounts;
     QMap<QString, qlonglong> processedAmounts;
@@ -146,6 +150,33 @@ void Job::setSpeed(const QString &speed)
     }
 }
 
+QString Job::completedMessage() const
+{
+    KUrl location(d->destination);
+    if (location.isValid()) {
+        if (totalAmounts().value("files") > 1) {
+            location.setFileName(QString());
+        }
+
+        QString destinationString;
+        if (location.isLocalFile()) {
+            destinationString = location.toLocalFile();
+        } else {
+            destinationString = location.prettyUrl();
+        }
+
+        QString destinationLink = QString("<a href=\"%1\">%1</a>").arg(destinationString);
+        if (totalAmounts().value("files") > 1) {
+            return i18np("%1 file, to: %2", "%1 files, to: %2", totalAmounts().value("files"),
+                         destinationLink);
+        } else {
+            return destinationLink;
+        }
+    } else {
+        return QString("%1: %2").arg(labels().value(0).first).arg(labels().value(0).second);
+    }
+}
+
 ulong Job::eta() const
 {
     return d->eta;
@@ -201,6 +232,9 @@ QList<QPair<QString, QString> > Job::labels() const
 void Job::setLabels(QList<QPair<QString, QString> > labels)
 {
     d->labels = labels;
+    if (d->labels.count() > 1 && d->destination.isEmpty()) {
+        d->destination = d->labels.value(1).second;
+    }
     scheduleChangedSignal();
 }
 

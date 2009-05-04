@@ -562,27 +562,11 @@ void Applet::initExtenderItem(Plasma::ExtenderItem *extenderItem)
         extenderItem->setWidget(new NotificationWidget(0, extenderItem));
     } else if (extenderItem->config().readEntry("type", "") == "completedJob") {
         Plasma::Label *label = new Plasma::Label(extenderItem);
+        label->nativeWidget()->setLineWidth(300);
+        label->setMinimumWidth(300);
+        label->setText(extenderItem->config().readEntry("text", ""));
+        label->setPreferredSize(label->minimumSize());
 
-        QString destination = extenderItem->config().readEntry("destination", "");
-        KUrl dest(destination);
-        QString unformattedText;
-        if (dest.isValid()) {
-            //TODO: also check if it isn't a temp file
-            label->setText(QString("%1: <a href='%2'>%3</a>")
-                            .arg(i18n("Destination"))
-                            .arg(destination)
-                            .arg(destination));
-            connect(label, SIGNAL(linkActivated(const QString &)), this, SLOT(open(const QString &)));
-            unformattedText = QString("%1: %2").arg(i18n("Destination")).arg(dest.prettyUrl());
-        } else {
-            label->setText(extenderItem->config().readEntry("text", ""));
-            unformattedText = label->text();
-        }
-
-        QFontMetrics fm = label->nativeWidget()->fontMetrics();
-        //sensible size hint:
-        label->setPreferredSize(fm.boundingRect(QRect(0, 0, 300, 60),
-                                  Qt::TextWordWrap, unformattedText).size());
         extenderItem->setWidget(label);
         extenderItem->showCloseButton();
     } else {
@@ -629,25 +613,7 @@ void Applet::finishJob(SystemTray::Job *job)
     if (!job->error().isEmpty()) {
         item->config().writeEntry("text", job->error());
     } else {
-        if (job->labels().count() > 1) {
-            KUrl location(job->labels().value(1).second);
-            if (job->totalAmounts().value("files") > 1) {
-                location.setFileName(QString());
-            }
-
-            QString locationString;
-            if (location.isLocalFile()) {
-                locationString = location.toLocalFile();
-            } else {
-                locationString = location.prettyUrl();
-            }
-
-            item->config().writeEntry("destination", locationString);
-            item->config().writeEntry("text", i18n("Destination: %1", locationString));
-        } else {
-            item->config().writeEntry("text", QString("%1: %2").arg(job->labels().value(0).first)
-                                                               .arg(job->labels().value(0).second));
-        }
+        item->config().writeEntry("text", job->completedMessage());
     }
 
     initExtenderItem(item);

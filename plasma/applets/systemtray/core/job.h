@@ -71,6 +71,11 @@ public:
     QString speed() const;
 
     /**
+     * @return a nice description of the job that has been completed.
+     */
+    QString completedMessage() const;
+
+    /**
      * @return the time (in seconds) in which this job is expected to complete.
      */
     ulong eta() const;
