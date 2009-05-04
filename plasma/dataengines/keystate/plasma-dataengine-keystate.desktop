@@ -1,0 +1,34 @@
+[Desktop Entry]
+Name=Keyboard and Mouse State
+Name[et]=Klaviatuuri ja hiire olek
+Name[fr]=État du clavier et de la souris
+Name[pt]=Estado do Rato e Teclado
+Name[pt_BR]=Estado do Rato e Teclado
+Name[sv]=Tillstånd för tangentbord och mus
+Name[tr]=Klavye ve Fare Durumu
+Name[uk]=Стан клавіатури і миші
+Name[zh_TW]=鍵盤與滑鼠狀態
+Comment=Keyboard modifier and mouse buttons states
+Comment[et]=Klaviatuuri muuteklahvide ja hiirenuppude olekud
+Comment[fr]=États des modificateurs de clavier et des boutons de souris
+Comment[pt]=Estados das teclas modificadoras do teclado e dos botões do rato
+Comment[pt_BR]=Estados das teclas modificadoras do teclado e dos botões do rato
+Comment[sv]=Tillstånd för väljartangenter och musknappar
+Comment[tr]=Farenin ve klavyenin değiştirici tuşlarının durumları
+Comment[uk]=Стан модифікаторів клавіатури і кнопок миші
+Comment[zh_TW]=鍵盤變更鍵與滑鼠按鍵狀態
+Type=Service
+Icon=input-keyboard
+
+X-KDE-ServiceTypes=Plasma/DataEngine
+X-KDE-Library=plasma_engine_keystate
+
+X-KDE-PluginInfo-Author=Aaron Seigo
+X-KDE-PluginInfo-Email=aseigo@kde.org
+X-KDE-PluginInfo-Name=keystate
+X-KDE-PluginInfo-Version=1.0
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=Accessibility
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=LGPL
+X-KDE-PluginInfo-EnabledByDefault=true
