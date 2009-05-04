@@ -728,9 +728,8 @@ void EnvCanadaIon::parseDateTime(WeatherData& data, QXmlStreamReader& xml, Weath
                 } else if (dateType == "observation") {
                     xml.readElementText();
                     d->m_dateFormat = QDateTime::fromString(selectTimeStamp, "yyyyMMddHHmmss");
-                    data.obsTimestamp = d->m_dateFormat.toString("dd.MM.yyyy @ hh:mm ap");
-                    data.iconPeriodHour = d->m_dateFormat.toString("HH").toInt();
-                    data.iconPeriodAP = d->m_dateFormat.toString("ap");
+                    data.obsTimestamp = d->m_dateFormat.toString("dd.MM.yyyy @ hh:mm");
+                    data.iconPeriodHour = d->m_dateFormat.toString("hh").toInt();
                 } else if (dateType == "forecastIssue") {
                     data.forecastTimestamp = xml.readElementText();
                 } else if (dateType == "sunrise") {
@@ -1314,7 +1313,7 @@ void EnvCanadaIon::updateWeather(const QString& source)
     const double sunset = toFractionalHour(d->m_weatherData[source].sunsetTimestamp, 18.0);
     
     const double obsHour = toFractionalHour(observationTime(source), (double) periodHour(source));
-    
+   
     // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
     QMap<QString, ConditionIcons> conditionList;
     conditionList = conditionIcons();
@@ -1515,16 +1514,6 @@ QString EnvCanadaIon::observationTime(const QString& source)
 {
     return d->m_weatherData[source].obsTimestamp;
 }
-
-/*
-bool EnvCanadaIon::night(const QString& source)
-{
-    if (d->m_weatherData[source].iconPeriodAP == "pm") {
-        return true;
-    }
-    return false;
-}
-*/
 
 int EnvCanadaIon::periodHour(const QString& source)
 {
