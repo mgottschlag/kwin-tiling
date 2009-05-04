@@ -2,7 +2,7 @@ project(NotificationItemWatcher)
 
 set(kded_notificationitemwatcher_SRCS notificationitemwatcher.cpp )
 
-QT4_ADD_DBUS_ADAPTOR(kded_notificationitemwatcher_SRCS     org.kde.NotificationItemWatcher.xml
+QT4_ADD_DBUS_ADAPTOR(kded_notificationitemwatcher_SRCS     ${KDE4_DBUS_INTERFACES_DIR}/org.kde.NotificationItemWatcher.xml
                      notificationitemwatcher.h NotificationItemWatcher)
 
 
@@ -24,5 +24,3 @@ install(TARGETS kded_notificationitemwatcher  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install( FILES notificationitemwatcher.desktop  DESTINATION ${SERVICES_INSTALL_DIR}/kded)
 
-install(FILES org.kde.NotificationItemWatcher.xml
-        DESTINATION ${DBUS_INTERFACES_INSTALL_DIR})

@@ -46,7 +46,7 @@ kde4_add_ui_files(systemtray_SRCS
 
 add_subdirectory(notificationitemwatcher)
 
-set(notificationitemwatcher_xml notificationitemwatcher/org.kde.NotificationItemWatcher.xml)
+set(notificationitemwatcher_xml ${KDE4_DBUS_INTERFACES_DIR}/org.kde.NotificationItemWatcher.xml)
 QT4_ADD_DBUS_INTERFACE(systemtray_SRCS ${notificationitemwatcher_xml} notificationitemwatcher_interface)
 
 
