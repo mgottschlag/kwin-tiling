@@ -35,6 +35,11 @@ void QuicklaunchLayout::setRowCount(int rowCount)
     m_rowCount = rowCount;
 }
 
+int QuicklaunchLayout::rowCount() const
+{
+    return m_rowCount;
+}
+
 void QuicklaunchLayout::addItem(Plasma::IconWidget *icon)
 {
     //kDebug() << "Row count is" << rowCount() << "Wanted row count is" << m_rowCount;
