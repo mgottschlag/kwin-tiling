@@ -1,0 +1,26 @@
+[Desktop Entry]
+Name=Akonadi
+Name[x-test]=xxAkonadixx
+Comment=Akonadi PIM data engine
+Comment[et]=Akonadi PIM-i andmete mootor
+Comment[fr]=Moteur de données pour Akonadi PIM
+Comment[pt]=Motor de dados PIM do Akonadi
+Comment[pt_BR]=Motor de dados PIM do Akonadi
+Comment[sv]=Akonadi PIM-datagränssnitt
+Comment[tr]=Akonadi PIM veri motoru
+Comment[uk]=Рушій даних Akonadi PIM
+Comment[x-test]=xxAkonadi PIM data enginexx
+Comment[zh_TW]=Akonadi PIM 資料引擎
+X-KDE-ServiceTypes=Plasma/DataEngine
+Type=Service
+Icon=akonadi
+X-KDE-Library=plasma_engine_akonadi
+
+X-KDE-PluginInfo-Author=
+X-KDE-PluginInfo-Email=
+X-KDE-PluginInfo-Name=akonadi
+X-KDE-PluginInfo-Version=
+X-KDE-PluginInfo-Website=
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Depends=
+
