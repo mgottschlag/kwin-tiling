@@ -30,14 +30,14 @@
         <item row="0" column="0" >
          <widget class="QLabel" name="comment_label" >
           <property name="text" >
-           <string>Comment</string>
+           <string>Comment:</string>
           </property>
          </widget>
         </item>
         <item row="1" column="0" >
          <widget class="QLabel" name="window_title_label" >
           <property name="text" >
-           <string>Window Title</string>
+           <string>Window title:</string>
           </property>
          </widget>
         </item>
@@ -83,7 +83,7 @@
         <item row="3" column="0" >
          <widget class="QLabel" name="window_class_label" >
           <property name="text" >
-           <string>Window Class</string>
+           <string>Window class:</string>
           </property>
          </widget>
         </item>
@@ -129,7 +129,7 @@
         <item row="5" column="0" >
          <widget class="QLabel" name="window_role_label" >
           <property name="text" >
-           <string>Window Role</string>
+           <string>Window role:</string>
           </property>
          </widget>
         </item>

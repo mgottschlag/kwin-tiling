@@ -4,7 +4,7 @@ Type=Service
 Actions=open;
 
 [Desktop Action open]
-Name=Open with the file manager
+Name=Open with File Manager
 Name[ca]=Obre amb el gestor de fitxers
 Name[ca@valencia]=Obre amb el gestor de fitxers
 Name[cs]=Otevřít ve správci souborů

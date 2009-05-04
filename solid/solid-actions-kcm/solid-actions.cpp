@@ -151,7 +151,7 @@ void SolidActions::editAction()
     editUi->ui.IbActionIcon->setIcon(selectedItem->icon());
     editUi->ui.LeActionFriendlyName->setText(selectedItem->name());
     editUi->ui.LeActionCommand->setPath(selectedItem->exec());
-    editUi->setCaption(i18n("Editing action %1", selectedItem->name())); // Set a friendly i18n caption
+    editUi->setCaption(i18n("Editing Action %1", selectedItem->name())); // Set a friendly i18n caption
     // Display us!
     editUi->show(); // We need to show it now so that the predicate error handler works
     // Import the device conditions

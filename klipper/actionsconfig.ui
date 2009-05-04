@@ -40,14 +40,14 @@
      <item>
       <widget class="QPushButton" name="pbAddAction">
        <property name="text">
-        <string>Add Action</string>
+        <string>Add Action...</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="pbEditAction">
        <property name="text">
-        <string>Edit Action</string>
+        <string>Edit Action...</string>
        </property>
       </widget>
      </item>

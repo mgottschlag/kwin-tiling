@@ -144,8 +144,8 @@ void HotkeysTreeViewContextMenu::slotAboutToShow()
 
     addSeparator();
 
-    addAction( i18n("Export"), this, SLOT(exportAction()) );
-    addAction( i18n("Import"), this, SLOT(importAction()) );
+    addAction( i18n("Export..."), this, SLOT(exportAction()) );
+    addAction( i18n("Import..."), this, SLOT(importAction()) );
     }
 
 

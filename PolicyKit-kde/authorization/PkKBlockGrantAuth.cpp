@@ -101,7 +101,7 @@ void PkKBlockGrantAuth::fillCombo(bool showSystemUsers)
 {
     m_userModelSIM->clear();
     QStandardItem *item;
-    m_userModelSIM->appendRow(item = new QStandardItem(i18n("Select user")));
+    m_userModelSIM->appendRow(item = new QStandardItem(i18n("Select User")));
     item->setSelectable(false);
     foreach(const KUser& user, KUser::allUsers()) {
         if (!showSystemUsers) {

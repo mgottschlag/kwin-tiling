@@ -35,21 +35,21 @@
        <item>
         <widget class="QPushButton" name="edit_button">
          <property name="text">
-          <string>&amp;Edit</string>
+          <string>&amp;Edit...</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="new_button">
          <property name="text">
-          <string>&amp;New</string>
+          <string>&amp;New...</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="duplicate_button">
          <property name="text">
-          <string>&amp;Duplicate</string>
+          <string>&amp;Duplicate...</string>
          </property>
         </widget>
        </item>

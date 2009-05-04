@@ -106,7 +106,7 @@ This can include any or all of the following case insensitive expands:
         <string>Add a new requirement</string>
        </property>
        <property name="text">
-        <string>Add</string>
+        <string>Add...</string>
        </property>
       </widget>
      </item>
@@ -116,7 +116,7 @@ This can include any or all of the following case insensitive expands:
         <string>Edit current requirement</string>
        </property>
        <property name="text">
-        <string>Edit</string>
+        <string>Edit...</string>
        </property>
       </widget>
      </item>

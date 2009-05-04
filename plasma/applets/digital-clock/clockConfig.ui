@@ -137,7 +137,7 @@
         <string>When checked you can choose a custom color for the clock font by clicking on the color widget on the right.</string>
        </property>
        <property name="text" >
-        <string>Use custom color</string>
+        <string>Use custom color:</string>
        </property>
       </widget>
      </item>

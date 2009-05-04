@@ -32,7 +32,7 @@ SolidActionEditPredicate::SolidActionEditPredicate(QWidget *parent) : KDialog(pa
     setMainWidget(predicateWidget);
     ui.setupUi(predicateWidget);
     setInitialSize(QSize(150, 100)); // Set a decent size
-    setCaption(i18n("Editing requirement"));
+    setCaption(i18n("Editing Requirement"));
 
     ui.CbRestrictionDeviceType->addItems(deviceData->types.values()); // Add the device types to the list
 
