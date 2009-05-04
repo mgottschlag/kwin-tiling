@@ -36,8 +36,6 @@ KRandRApp::KRandRApp()
 {
 	m_display = new RandRDisplay();
 	m_tray = new KRandRSystemTray(m_display);
-
-	m_tray->show();
 	m_tray->setObjectName("RANDRTray");
 
 	// do not close when the last window is closed:

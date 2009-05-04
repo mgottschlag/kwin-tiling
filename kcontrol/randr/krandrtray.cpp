@@ -43,29 +43,28 @@
 #include <QVariant>
 
 KRandRSystemTray::KRandRSystemTray(RandRDisplay *dpy, QWidget* parent)
-	: KSystemTrayIcon("preferences-desktop-display-randr", parent),
+	: KNotificationItem(parent),
 	  m_help(new KHelpMenu(parent, KGlobal::mainComponent().aboutData(), false, actionCollection())),
 	  m_popupUp(false),
 	  m_display(dpy)
 {
-	setIcon(KSystemTrayIcon::loadIcon("preferences-desktop-display-randr"));
-	connect(this, SIGNAL(quitSelected()), kapp, SLOT(quit()));
-	this->setToolTip( i18n("Screen resize & rotate"));
+	setIcon("preferences-desktop-display-randr");
+    setCategory(Hardware);
+	setToolTip("preferences-desktop-display-randr", i18n("KRandR"), i18n("Screen resize & rotate"));
 
-	m_menu = new KMenu(parentWidget());
+	m_menu = new KMenu(associatedWidget());
 	setContextMenu(m_menu);
-	
-	connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(slotActivated(QSystemTrayIcon::ActivationReason)));
-	
+
+    //TODO: probably we need an about to show signal
 	connect(m_menu, SIGNAL(aboutToShow()), this, SLOT(slotPrepareMenu()));
 	m_display->refresh();
 }
 
-void KRandRSystemTray::slotActivated(QSystemTrayIcon::ActivationReason reason)
+void KRandRSystemTray::activate(const QPoint &pos)
 {
-	if(reason == QSystemTrayIcon::DoubleClick) {
-		slotPrefs();
-	}
+    Q_UNUSED(pos)
+
+	slotPrefs();
 }
 
 void KRandRSystemTray::slotPrepareMenu()
@@ -86,7 +85,7 @@ void KRandRSystemTray::slotPrepareMenu()
 		for (int s = 0; s < m_display->numScreens(); s++) 
 		{
 			m_display->setCurrentScreen(s);
-			if (s == m_display->screenIndexOfWidget(parentWidget())) 
+			if (s == m_display->screenIndexOfWidget(associatedWidget())) 
 			{
 				/*lastIndex = menu->insertItem(i18n("Screen %1").arg(s+1));
 				menu->setItemEnabled(lastIndex, false);*/
@@ -150,7 +149,7 @@ void KRandRSystemTray::configChanged()
 		KRandrPassivePopup::message(
 		i18n("Screen configuration has changed"),
 		message, SmallIcon("view-fullscreen"),
-		parentWidget());
+		associatedWidget());
 	}
 
 	first = false;
@@ -463,7 +462,7 @@ void KRandRSystemTray::slotRefreshRateChanged(QAction *action)
 
 void KRandRSystemTray::slotPrefs()
 {
-	KCMultiDialog *kcm = new KCMultiDialog( parentWidget() );
+	KCMultiDialog *kcm = new KCMultiDialog( associatedWidget() );
 	kcm->setFaceType( KCMultiDialog::Plain );
 	kcm->setPlainCaption( i18n( "Configure Display" ) );
 	kcm->addModule( "display" );

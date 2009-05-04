@@ -21,7 +21,7 @@
 
 #include <QMouseEvent>
 
-#include <KSystemTrayIcon>
+#include <knotificationitem-1/knotificationitem.h>
 
 #include "randrdisplay.h"
 
@@ -30,17 +30,19 @@ class QAction;
 class QActionGroup;
 class KMenu;
 
-class KRandRSystemTray : public KSystemTrayIcon
+using namespace Experimental;
+
+class KRandRSystemTray : public KNotificationItem
 {
 	Q_OBJECT
 
 public:
 	explicit KRandRSystemTray(RandRDisplay *dpy, QWidget* parent = 0);
-
+    
 	void configChanged();
+    void activate(const QPoint &pos);
 
 protected Q_SLOTS:
-	void slotActivated(QSystemTrayIcon::ActivationReason reason);
 	void slotScreenActivated();
 	void slotResolutionChanged(QAction *action);
 	void slotOrientationChanged(QAction *action);
