@@ -652,7 +652,7 @@ void Applet::clearAllCompletedJobs()
 void Applet::finishJob(SystemTray::Job *job)
 {
     Plasma::ExtenderItem *item = new Plasma::ExtenderItem(extender());
-    item->setTitle(i18n("%1 [finished]", job->message()));
+    item->setTitle(i18n("%1 [Finished]", job->message()));
     item->setIcon(job->applicationIconName());
 
     item->config().writeEntry("type", "completedJob");
@@ -686,7 +686,7 @@ void Applet::createJobGroups()
     if (!extender()->hasItem("completedJobsGroup")) {
         Plasma::ExtenderGroup *completedJobsGroup = new Plasma::ExtenderGroup(extender());
         completedJobsGroup->setName("completedJobsGroup");
-        completedJobsGroup->setTitle(i18n("Completed jobs"));
+        completedJobsGroup->setTitle(i18n("Recently Completed Jobs"));
         initExtenderItem(completedJobsGroup);
         completedJobsGroup->expandGroup();
     }

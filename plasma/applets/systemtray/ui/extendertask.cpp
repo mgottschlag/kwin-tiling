@@ -70,7 +70,7 @@ public:
         Plasma::ExtenderGroup *group = extender->group("completedJobsGroup");
         if (group) {
             completedJobs = group->items().count();
-            group->setTitle(i18np("%1 recently completed job:", "%1 recently completed jobs:",
+            group->setTitle(i18np("%1 Recently Completed Job:", "%1 Recently Completed Jobs:",
                             completedJobs));
         }
         int total= manager->jobs().count() + manager->notifications().count() + completedJobs;
