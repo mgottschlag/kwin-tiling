@@ -6,7 +6,7 @@ QT4_ADD_DBUS_ADAPTOR(kded_notificationitemwatcher_SRCS     org.kde.NotificationI
                      notificationitemwatcher.h NotificationItemWatcher)
 
 
-set(notificationitem_xml org.kde.NotificationItem.xml)
+set(notificationitem_xml ${KDE4_DBUS_INTERFACES_DIR}/org.kde.NotificationItem.xml)
 set_source_files_properties(${notificationitem_xml} PROPERTIES
    NO_NAMESPACE false
    INCLUDE "../protocols/dbussystemtray/systemtraytypes.h"

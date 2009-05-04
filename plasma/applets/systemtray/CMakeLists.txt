@@ -50,7 +50,7 @@ set(notificationitemwatcher_xml notificationitemwatcher/org.kde.NotificationItem
 QT4_ADD_DBUS_INTERFACE(systemtray_SRCS ${notificationitemwatcher_xml} notificationitemwatcher_interface)
 
 
-set(notificationitem_xml notificationitemwatcher/org.kde.NotificationItem.xml)
+set(notificationitem_xml ${KDE4_DBUS_INTERFACES_DIR}/org.kde.NotificationItem.xml)
 
 set_source_files_properties(${notificationitem_xml} PROPERTIES
    NO_NAMESPACE false
