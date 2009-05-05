@@ -20,7 +20,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Jobs and notifications:</string>
+      <string>Jobs &amp; Notifications</string>
      </property>
     </widget>
    </item>
@@ -40,7 +40,7 @@
       </font>
      </property>
      <property name="text">
-      <string>System tray icons:</string>
+      <string>System Tray Icons</string>
      </property>
     </widget>
    </item>
