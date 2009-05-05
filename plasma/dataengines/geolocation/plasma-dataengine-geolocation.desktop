@@ -1,0 +1,36 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Geolocation
+Name[de]=Geo-Lokalisierung
+Name[es]=Geolocalización
+Name[et]=Geolokatsioon
+Name[fr]=Géolocalisation
+Name[pt]=Geo-localização
+Name[pt_BR]=Geo-localização
+Name[sv]=Lokalisera geografiskt
+Name[uk]=Геолокація
+Name[x-test]=xxGeolocationxx
+Comment=Geolocation Data Engine
+Comment[es]=Motor de datos de geolocalización
+Comment[et]=Geolokatsiooni andmete mootor
+Comment[fr]=Moteur des données de géolocalisation
+Comment[pt]=Motor de Dados de Geo-Localização
+Comment[pt_BR]=Motor de Dados de Geo-Localização
+Comment[sv]=Datagränssnitt för geografisk lokalisering
+Comment[tr]=Geolocation Veri Motoru
+Comment[uk]=Рушій даних геолокації
+Comment[x-test]=xxGeolocation Data Enginexx
+Comment[zh_TW]=Geolocation 資料引擎
+ServiceTypes=Plasma/DataEngine
+Type=Service
+Icon=applications-internet
+X-KDE-Library=plasma_engine_geolocation
+
+X-KDE-PluginInfo-Author=Petri Damstén
+X-KDE-PluginInfo-Email=damu@iki.fi
+X-KDE-PluginInfo-Name=geolocation
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-Website=http://plasma@kde.org
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Depends=
+
