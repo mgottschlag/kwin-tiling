@@ -175,17 +175,21 @@ void JobWidget::updateJob()
         item->setTitle(m_job->error());
     } else if (m_job->state() == SystemTray::Job::Running) {
         item->setTitle(m_job->message());
-        m_eta->setText(i18n("%1 (%2 remaining)", m_job->speed(),
-                             KGlobal::locale()->prettyFormatDuration(m_job->eta())));
+        if (m_job->eta()) {
+            m_eta->setText(i18n("%1 (%2 remaining)", m_job->speed(),
+                                 KGlobal::locale()->prettyFormatDuration(m_job->eta())));
+        } else {
+            m_eta->setText(QString());
+        }
     } else if (m_job->state() == SystemTray::Job::Suspended) {
         item->setTitle(
             i18nc("%1 is the name of the job, can be things like Copying, deleting, moving",
-                  "(paused) %1", m_job->message()));
-        m_eta->setText(i18n("paused"));
+                  "%1 [Paused]", m_job->message()));
+        m_eta->setText(i18n("Paused"));
     } else {
         item->setTitle(
             i18nc("%1 is the name of the job, can be things like Copying, deleting, moving",
-                  "(finished) %1", m_job->message()));
+                  "%1 [Finished]", m_job->message()));
         item->showCloseButton();
         m_details->hide();
     }
