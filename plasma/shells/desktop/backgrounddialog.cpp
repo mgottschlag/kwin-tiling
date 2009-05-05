@@ -502,13 +502,18 @@ void BackgroundDialog::reloadConfig()
             bool matches = info.pluginName() == currentPlugin;
             const QList<KServiceAction>& modes = info.service()->actions();
             if (modes.count() > 0) {
-                wallpaperIndex = i;
+                if (matches) {
+                    wallpaperIndex = i;
+                    //kDebug() << "matches at" << wallpaperIndex;
+                }
+
                 foreach (const KServiceAction& mode, modes) {
                     m_wallpaperMode->addItem(KIcon(mode.icon()), mode.text(),
                                     QVariant::fromValue(WallpaperInfo(info.pluginName(), mode.name())));
                     //kDebug() << matches << mode.name() << currentMode;
                     if (matches && mode.name() == currentMode) {
                         wallpaperIndex = i;
+                        //kDebug() << "matches at" << wallpaperIndex;
                     }
                     ++i;
                 }
@@ -517,11 +522,14 @@ void BackgroundDialog::reloadConfig()
                                 QVariant::fromValue(WallpaperInfo(info.pluginName(), QString())));
                 if (matches) {
                     wallpaperIndex = i;
+                    //kDebug() << "matches at" << wallpaperIndex;
                 }
+
                 ++i;
             }
         }
 
+        //kDebug() << "match is said to be" << wallpaperIndex << "out of" << m_wallpaperMode->count();
         m_wallpaperMode->setCurrentIndex(wallpaperIndex);
         changeBackgroundMode(wallpaperIndex);
     }
@@ -531,7 +539,6 @@ void BackgroundDialog::reloadConfig()
     m_theme->setCurrentIndex(m_themeModel->indexOf(Plasma::Theme::defaultTheme()->themeName()));
 
     connect(m_wallpaperMode, SIGNAL(currentIndexChanged(int)), this, SLOT(changeBackgroundMode(int)));
-
     settingsModified(false);
 }
 
@@ -580,7 +587,6 @@ void BackgroundDialog::changeBackgroundMode(int mode)
     }
 
     m_wallpaperGroup->layout()->addWidget(w);
-
     settingsModified(true);
 }
 
