@@ -1,4 +1,4 @@
-add_subdirectory(akonadi)
+# add_subdirectory(akonadi) # disabled because there's no configure check for KDE4_AKONADI_LIBS
 add_subdirectory(applicationjobs)
 add_subdirectory(dict)
 add_subdirectory(executable)
