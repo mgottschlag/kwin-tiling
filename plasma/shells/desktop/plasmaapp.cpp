@@ -894,34 +894,53 @@ void PlasmaApp::setControllerVisible(bool show)
             layout->addWidget(actionButton);
         }
 
-        CheckBox *perVirtualDesktopViews = new CheckBox(m_controllerDialog);
-        layout->addWidget(perVirtualDesktopViews);
-        perVirtualDesktopViews->setChecked(AppSettings::perVirtualDesktopViews());
-        perVirtualDesktopViews->setText(i18n("Different activity for each desktop"));
-        connect(perVirtualDesktopViews, SIGNAL(stateChanged(int)), this, SLOT(setPerVirtualDesktopViews(int)));
-
-        CheckBox *fixedDashboard = new CheckBox(m_controllerDialog);
-        layout->addWidget(fixedDashboard);
-        fixedDashboard->setText(i18n("Use a separate dashboard"));
-
-        //try to find out if every view has a DashboardContainment
-        bool dashboardFollowsDesktop = true;
-
-        foreach (DesktopView *view, m_desktops) {
-            if (view->dashboardContainment()) {
-                dashboardFollowsDesktop = false;
-                break;
-            }
-        }
-
-        fixedDashboard->setChecked(!dashboardFollowsDesktop);
-        connect(fixedDashboard, SIGNAL(stateChanged(int)), this, SLOT(setFixedDashboard(int)));
+        ToolButton *actionButton = new ToolButton(m_controllerDialog);
+        actionButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        actionButton->setIcon(KIcon("configure"));
+        actionButton->setText(i18n("Configure Plasma..."));
+        layout->addWidget(actionButton);
+        connect(actionButton, SIGNAL(clicked()), this, SLOT(createConfigurationInterface()));
 
         m_controllerDialog->show();
     } else if (!show) {
         delete m_controllerDialog;
         m_controllerDialog = 0;
     }
+}
+
+void PlasmaApp::createConfigurationInterface()
+{
+    QWidget *widget = new QWidget();
+    m_configUi.setupUi(widget);
+    KConfigSkeleton *nullManager = new KConfigSkeleton(0);
+    KConfigDialog *dialog = new KConfigDialog(0, "Plasma settings", nullManager);
+    dialog ->addPage(widget, i18n("Plasma settings"));
+    dialog->setAttribute(Qt::WA_DeleteOnClose, true);
+    dialog->setFaceType(KPageDialog::Auto);
+    dialog->showButton(KDialog::Apply, false);
+
+    //try to find out if every view has a DashboardContainment
+    bool dashboardFollowsDesktop = true;
+
+    foreach (DesktopView *view, m_desktops) {
+        if (view->dashboardContainment()) {
+            dashboardFollowsDesktop = false;
+            break;
+        }
+    }
+
+    m_configUi.fixedDashboard->setChecked(!dashboardFollowsDesktop);
+    m_configUi.perVirtualDesktopViews->setChecked(AppSettings::perVirtualDesktopViews());
+
+    connect(dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+
+    dialog->show();
+}
+
+void PlasmaApp::configAccepted()
+{
+    setPerVirtualDesktopViews(m_configUi.perVirtualDesktopViews->checkState());
+    setFixedDashboard(m_configUi.fixedDashboard->checkState());
 }
 
 void PlasmaApp::setPerVirtualDesktopViews(int toggle)

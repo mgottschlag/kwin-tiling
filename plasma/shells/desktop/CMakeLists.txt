@@ -39,7 +39,7 @@ set(plasma_SRCS
 )
 
 
-kde4_add_ui_files(plasma_SRCS BackgroundDialog.ui)
+kde4_add_ui_files(plasma_SRCS BackgroundDialog.ui globaloptions.ui)
 kde4_add_kcfg_files(plasma_SRCS kcfg/plasma-shell-desktop.kcfgc)
 
 if(WIN32)

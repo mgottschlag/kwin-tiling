@@ -29,6 +29,8 @@
 
 #include <Plasma/Plasma>
 
+#include "ui_globaloptions.h"
+
 class QTimer;
 
 namespace Plasma
@@ -121,6 +123,8 @@ private:
 private Q_SLOTS:
     void zoomOut();
     void setupDesktop();
+    void createConfigurationInterface();
+    void configAccepted();
     void cleanup();
     void containmentAdded(Plasma::Containment *containment);
     void syncConfig();
@@ -149,6 +153,8 @@ private:
     QTimer *m_panelViewCreationTimer;
     Plasma::ZoomLevel m_zoomLevel;
     int m_panelHidden;
+
+    Ui::GlobalOptions m_configUi;
 };
 
 #endif // multiple inclusion guard
