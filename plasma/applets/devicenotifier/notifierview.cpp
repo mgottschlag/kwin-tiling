@@ -36,6 +36,7 @@
 
 //Plasma
 #include <Plasma/Delegate>
+#include <Plasma/Theme>
 
 using namespace Notifier;
 
@@ -46,6 +47,12 @@ NotifierView::NotifierView(QWidget *parent)
     setRootIsDecorated(true);
     setHeaderHidden(true);
     setMouseTracking(true);
+    viewport()->setAutoFillBackground(true);
+    QPalette p(palette());
+    p.setColor(QPalette::Base, Qt::transparent);
+    viewport()->setAttribute(Qt::WA_NoSystemBackground, true);
+    setPalette(p);
+    setFrameShape(QFrame::NoFrame);
 }
 
 NotifierView::~NotifierView()
@@ -214,16 +221,22 @@ void NotifierView::paintHeaderItem(QPainter &painter, const QRect &itemRect, con
 
     QLinearGradient gradient(option.rect.topLeft(), option.rect.topRight());
     gradient.setColorAt(0.0, Qt::transparent);
-    gradient.setColorAt(0.1, option.palette.midlight().color());
-    gradient.setColorAt(0.5, option.palette.mid().color());
-    gradient.setColorAt(0.9, option.palette.midlight().color());
+    gradient.setColorAt(0.5, Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
     gradient.setColorAt(1.0, Qt::transparent);
     painter.setPen(QPen(gradient, 1));
 
     painter.drawLine(option.rect.x() + 6, option.rect.y() + dy + 2,
                      option.rect.right() - rightMargin , option.rect.y() + dy + 2);
+
+    gradient.setColorAt(0.5, Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
+    painter.setPen(QPen(gradient, 1));
+    painter.drawLine(option.rect.x() + 6, option.rect.y() + dy + 3,
+                     option.rect.right() - rightMargin , option.rect.y() + dy + 3);
+
     painter.setFont(KGlobalSettings::smallestReadableFont());
-    painter.setPen(QPen(KColorScheme(QPalette::Active).foreground(KColorScheme::InactiveText), 0));
+    QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    textColor.setAlphaF(0.6);
+    painter.setPen(textColor);
     QString text = index.data(Qt::DisplayRole).value<QString>();
     painter.drawText(option.rect.adjusted(0, dy, -rightMargin, 0),
                     Qt::AlignVCenter|Qt::AlignRight, text);
