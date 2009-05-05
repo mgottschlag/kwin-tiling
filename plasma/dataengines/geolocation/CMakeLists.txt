@@ -13,9 +13,10 @@ set_target_properties(plasma-geolocation-interface PROPERTIES
 )
 install(TARGETS plasma-geolocation-interface ${INSTALL_TARGETS_DEFAULT_ARGS})
 
-#install(FILES interface.h geolocation_export.h
-#        DESTINATION ${INCLUDE_INSTALL_DIR}/plasma/geolocation
-#        COMPONENT Devel)
+install(FILES geolocationprovider.h geolocation_export.h
+        DESTINATION ${INCLUDE_INSTALL_DIR}/plasma/geolocation
+        COMPONENT Devel)
+
 #install(FILES includes/Interface
 #        DESTINATION ${INCLUDE_INSTALL_DIR}/KDE/Plasma/Geolocation
 #        COMPONENT Devel)
