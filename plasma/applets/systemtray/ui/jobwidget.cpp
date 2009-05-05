@@ -92,7 +92,7 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
     setMinimumWidth(350);
 
     if (m_job) {
-        m_details->setText("<a href=\"more\">" + i18n("more") + "</a>");
+        m_details->setText("<a href=\"more\">" + i18n("More") + "</a>");
 
         connect(m_job, SIGNAL(changed(SystemTray::Job*)), this, SLOT(updateJob()));
         connect(m_job, SIGNAL(destroyed(SystemTray::Job*)), m_extenderItem, SLOT(destroy()));
