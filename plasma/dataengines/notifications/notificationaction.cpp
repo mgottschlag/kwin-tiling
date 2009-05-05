@@ -36,7 +36,7 @@ void NotificationAction::start()
     const QStringList dest = destination().split(" ");
 
     if (dest.count() >  1 && !dest[1].toInt()) {
-        setErrorText(i18n("Invalid destination: ", destination()));
+        setErrorText(i18n("Invalid destination: %1", destination()));
         setError(-2);
         emitResult();
         return;
