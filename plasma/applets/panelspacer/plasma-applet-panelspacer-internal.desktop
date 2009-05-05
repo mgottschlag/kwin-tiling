@@ -1,17 +1,5 @@
 [Desktop Entry]
 Name=Panel Spacer
-Name[el]=Κενό πίνακα
-Name[et]=Paneeliruumi korraldaja
-Name[km]=ចន្លោះ​បន្ទះ
-Name[nds]=Paneel-Platzmaker
-Name[pt]=Espaço do painel
-Name[pt_BR]=Espaçador do painel
-Name[ro]=Spațiator panou
-Name[sv]=Panelavskiljare
-Name[tr]=Panel ayırıcı
-Name[uk]=Розпірка панелі
-Name[x-test]=xxPanel spacerxx
-Name[zh_TW]=面板間隔器
 Comment=Reserve empty spaces within the panel.
 Comment[el]=Διατήρηση κενού χώρου μέσα στον πίνακα.
 Comment[et]=Tühja ruumi reserveerimine paneelil.
