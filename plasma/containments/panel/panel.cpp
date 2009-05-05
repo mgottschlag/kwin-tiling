@@ -210,7 +210,6 @@ void Panel::adjustLastSpace()
         }
     } else {
         foreach (Applet *applet, applets()) {
-          kWarning()<<"AAAAAA"<<applet->name()<<(applet->sizePolicy().horizontalPolicy() & QSizePolicy::ExpandFlag);
             if (applet->sizePolicy().horizontalPolicy() & QSizePolicy::ExpandFlag) {
                 useSpacer = false;
                 break;
@@ -222,6 +221,7 @@ void Panel::adjustLastSpace()
     if (useSpacer) {
         if (!m_lastSpace) {
             m_lastSpace = new QGraphicsWidget(this);
+            m_lastSpace->setPreferredSize(0,0);
             m_lastSpace->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
             lay->addItem(m_lastSpace);
         }
