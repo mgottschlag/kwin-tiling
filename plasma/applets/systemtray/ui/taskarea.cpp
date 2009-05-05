@@ -134,6 +134,13 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
         return;
     }
 
+    //check if it's not necessary to move the icon
+    if (task->hidden() == Task::NotHidden &&
+        ((d->firstTasksLayout->containsItem(widget) && task->order() == SystemTray::Task::First) ||
+        (d->normalTasksLayout->containsItem(widget) && task->order() == SystemTray::Task::Normal) ||
+        (d->lastTasksLayout->containsItem(widget) && task->order() == SystemTray::Task::Last))) {
+        return;
+    }
 
     if (widget) {
         kDebug() << "widget already exists, trying to reposition it";

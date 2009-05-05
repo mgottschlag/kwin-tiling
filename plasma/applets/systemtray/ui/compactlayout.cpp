@@ -194,7 +194,6 @@ void CompactLayout::removeAt(int index)
     }
 }
 
-
 QSizeF CompactLayout::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
 {
     if (which != Qt::PreferredSize) {
