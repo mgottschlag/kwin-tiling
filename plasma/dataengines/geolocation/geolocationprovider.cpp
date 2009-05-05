@@ -29,6 +29,7 @@ GeolocationProvider::GeolocationProvider(QObject *parent, const QVariantList &ar
     Q_UNUSED(args)
     m_updateTimer.setSingleShot(true);
     m_updateTimer.setInterval(0);
+    qRegisterMetaType<Plasma::DataEngine::Data>("Plasma::DataEngine::Data");
     connect(&m_updateTimer, SIGNAL(timeout()), this, SIGNAL(updated()));
 }
 
