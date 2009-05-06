@@ -131,7 +131,7 @@ void TaskArea::addTask(Task *task)
 
 void TaskArea::addWidgetForTask(SystemTray::Task *task)
 {
-    QGraphicsWidget *widget = findWidget(task);
+    QGraphicsWidget *widget = task->widget(d->host, false);
     if (!task->isEmbeddable() && !widget) {
         kDebug() << "task is not embeddable, so FAIL" << task->name();
         return;
@@ -208,20 +208,18 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
 
 void TaskArea::removeTask(Task *task)
 {
-    foreach (QGraphicsWidget *widget, task->associatedWidgets()) {
-        if (d->normalTasksLayout->containsItem(widget) ||
-            d->lastTasksLayout->containsItem(widget) ||
-            d->firstTasksLayout->containsItem(widget)) {
+    QGraphicsWidget *widget = task->widget(d->host, false);
 
-            //try to remove from all three layouts, one will succeed
-            d->firstTasksLayout->removeItem(widget);
-            d->normalTasksLayout->removeItem(widget);
-            d->lastTasksLayout->removeItem(widget);
-            d->topLayout->invalidate();
-            emit sizeHintChanged(Qt::PreferredSize);
-            break;
-        }
+    if (!widget) {
+        return;
     }
+
+    //try to remove from all three layouts, one will succeed
+    d->firstTasksLayout->removeItem(widget);
+    d->normalTasksLayout->removeItem(widget);
+    d->lastTasksLayout->removeItem(widget);
+    d->topLayout->invalidate();
+    emit sizeHintChanged(Qt::PreferredSize);
 }
 
 int TaskArea::leftEasement() const
@@ -359,19 +357,6 @@ void TaskArea::checkUnhideTool()
         }
     }
 }
-
-QGraphicsWidget* TaskArea::findWidget(Task *task)
-{
-    foreach (QGraphicsWidget *widget, task->associatedWidgets()) {
-
-        if (widget->parentWidget() == this) {
-            return widget;
-        }
-    }
-
-    return 0;
-}
-
 
 }
 

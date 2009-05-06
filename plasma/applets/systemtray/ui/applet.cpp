@@ -231,8 +231,9 @@ void Applet::init()
 void Applet::initExtenderTask(bool create)
 {
     if (create) {
+        extender(); // make sure it exists
         if (!d->extenderTask) {
-            d->extenderTask = new SystemTray::ExtenderTask(Private::s_manager, extender());
+            d->extenderTask = new SystemTray::ExtenderTask(Private::s_manager);
             d->extenderTask->setIcon("help-about");
             Private::s_manager->addTask(d->extenderTask);
         }

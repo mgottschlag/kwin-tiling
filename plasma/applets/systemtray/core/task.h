@@ -82,13 +82,7 @@ public:
      *
      * isEmbeddable() should be checked before creating a new widget.
      **/
-    QGraphicsWidget* widget(Plasma::Applet *host);
-
-    /**
-     * Returns the current list of graphics widgets that have been created
-     * for this task and have not yet been deleted
-     **/
-    QList<QGraphicsWidget*> associatedWidgets() const;
+    QGraphicsWidget* widget(Plasma::Applet *host, bool createIfNecessary = true);
 
     /**
      * Returns whether this task can be embeddable
@@ -134,6 +128,11 @@ public:
      */
     HideStates hidden() const;
 
+    /**
+     * @return true if this task is current being used, e.g. it has created
+     * widgets for one or more hosts
+     */
+    bool isUsed() const;
 
     /**
      * Returns the order this Task should be placed in: first, normal or last

@@ -39,7 +39,7 @@ public:
     {
     }
 
-    QList<QGraphicsWidget*> associatedWidgets;
+    QHash<Plasma::Applet *, QGraphicsWidget *> widgetsByHost;
     Task::HideStates hiddenState;
     Task::Order order;
     Task::Status status;
@@ -59,15 +59,21 @@ Task::~Task()
 }
 
 
-QGraphicsWidget* Task::widget(Plasma::Applet *host)
+QGraphicsWidget* Task::widget(Plasma::Applet *host, bool createIfNecessary)
 {
     Q_ASSERT(host);
 
-    QGraphicsWidget *widget;
-    widget = createWidget(host);
-    d->associatedWidgets.append(widget);
-    connect(widget, SIGNAL(destroyed()), this, SLOT(widgetDeleted()));
-    connect(this, SIGNAL(destroyed()), widget, SLOT(deleteLater()));
+    QGraphicsWidget *widget = d->widgetsByHost.value(host);
+
+    if (!widget && createIfNecessary) {
+        widget = createWidget(host);
+
+        if (widget) {
+            d->widgetsByHost.insert(host, widget);
+            connect(widget, SIGNAL(destroyed()), this, SLOT(widgetDeleted()));
+            connect(this, SIGNAL(destroyed()), widget, SLOT(deleteLater()));
+        }
+    }
 
     return widget;
 }
@@ -76,16 +82,19 @@ QGraphicsWidget* Task::widget(Plasma::Applet *host)
 void Task::widgetDeleted()
 {
     bool wasEmbeddable = isEmbeddable();
-    d->associatedWidgets.removeAll(static_cast<QGraphicsWidget*>(sender()));
+
+    QGraphicsWidget * w = static_cast<QGraphicsWidget*>(sender());
+    QMutableHashIterator<Plasma::Applet *, QGraphicsWidget *> it(d->widgetsByHost);
+    while (it.hasNext()) {
+        it.next();
+        if (it.value() == w) {
+            it.remove();
+        }
+    }
+
     if (!wasEmbeddable && isEmbeddable()) {
         emit changed(this);
     }
-}
-
-
-QList<QGraphicsWidget*> Task::associatedWidgets() const
-{
-    return d->associatedWidgets;
 }
 
 bool Task::isHideable() const
@@ -101,6 +110,11 @@ void Task::setHidden(HideStates state)
 Task::HideStates Task::hidden() const
 {
     return d->hiddenState;
+}
+
+bool Task::isUsed() const
+{
+    return !d->widgetsByHost.isEmpty();
 }
 
 Task::Order Task::order() const

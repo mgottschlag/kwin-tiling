@@ -20,6 +20,10 @@
 #ifndef EXTENDERTASK_H
 #define EXTENDERTASK_H
 
+#include <KIcon>
+
+#include <Plasma/BusyWidget>
+
 #include "../core/task.h"
 
 class QStyleOptionGraphicsItem;
@@ -28,6 +32,7 @@ namespace Plasma
 {
     class Extender;
     class PopupApplet;
+    class Svg;
 }
 
 namespace SystemTray
@@ -35,12 +40,36 @@ namespace SystemTray
 
 class Manager;
 
+class ExtenderTaskBusyWidget : public Plasma::BusyWidget
+{
+    Q_OBJECT
+
+public:
+    enum State { Empty, Info, Running };
+
+    ExtenderTaskBusyWidget(Plasma::PopupApplet *parent, Manager *manager);
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+    void setState(State state);
+
+protected slots:
+    void updateTask();
+
+private:
+    QString expanderElement() const;
+
+    KIcon m_icon;
+    State m_state;
+    Plasma::Svg *m_svg;
+    Plasma::PopupApplet *m_systray;
+    Manager *m_manager;
+};
+
 class ExtenderTask : public SystemTray::Task
 {
     Q_OBJECT
 
 public:
-    ExtenderTask(Manager *manager, Plasma::Extender *extender);
+    ExtenderTask(Manager *manager);
     virtual ~ExtenderTask();
 
     bool isValid() const;
@@ -60,8 +89,6 @@ protected:
 private:
     class Private;
     Private* const d;
-
-    Q_PRIVATE_SLOT(d, void updateTask())
 };
 
 }

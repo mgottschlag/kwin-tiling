@@ -69,7 +69,7 @@ FdoTask::~FdoTask()
 
 bool FdoTask::isEmbeddable() const
 {
-    return associatedWidgets().count() == 0;
+    return !isUsed();
 }
 
 
