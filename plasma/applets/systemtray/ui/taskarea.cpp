@@ -139,6 +139,7 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
 
     //check if it's not necessary to move the icon
     if (task->hidden() == Task::NotHidden &&
+        d->host->shownCategories().contains(task->category()) &&
         ((d->firstTasksLayout->containsItem(widget) && task->order() == SystemTray::Task::First) ||
         (d->normalTasksLayout->containsItem(widget) && task->order() == SystemTray::Task::Normal) ||
         (d->lastTasksLayout->containsItem(widget) && task->order() == SystemTray::Task::Last))) {
