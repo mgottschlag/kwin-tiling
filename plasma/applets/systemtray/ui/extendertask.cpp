@@ -46,12 +46,13 @@ class ExtenderTaskBusyWidget : public Plasma::BusyWidget
 public:
     enum State { Empty, Info, Running };
 
-    ExtenderTaskBusyWidget(Plasma::PopupApplet *parent)
+    ExtenderTaskBusyWidget(Plasma::PopupApplet *parent, Manager *manager)
         : Plasma::BusyWidget(parent),
           m_icon("dialog-information"),
           m_state(Empty),
           m_svg(new Plasma::Svg(this)),
-          m_systray(parent)
+          m_systray(parent),
+          m_manager(manager)
     {
         setAcceptsHoverEvents(true);
         m_svg->setImagePath("widgets/tasks");
@@ -118,32 +119,12 @@ public:
         }
     }
 
-private:
-    KIcon m_icon;
-    State m_state;
-    Plasma::Svg *m_svg;
-    Plasma::PopupApplet *m_systray;
-};
-
-class ExtenderTask::Private
-{
-public:
-    Private(Plasma::PopupApplet *systemTray, Manager *manager,
-            Plasma::Extender *extender, Task *q)
-        : q(q),
-          busyWidget(0),
-          systemTray(systemTray),
-          manager(manager),
-          extender(extender)
-    {
-    }
-
     void updateTask()
     {
         int runningJobs = 0;
         int pausedJobs = 0;
         int completedJobs = 0;
-        foreach (Job *job, manager->jobs()) {
+        foreach (Job *job, m_manager->jobs()) {
             if (job->state() == Job::Running) {
                 runningJobs++;
             } else if (job->state() == Job::Suspended) {
@@ -151,26 +132,30 @@ public:
             }
         }
 
-        Plasma::ExtenderGroup *group = extender->group("completedJobsGroup");
-        if (group) {
-            completedJobs = group->items().count();
-            group->setTitle(i18np("%1 Recently Completed Job:", "%1 Recently Completed Jobs:",
-                            completedJobs));
+        //FIXME: assumptions++
+        Plasma::Extender *extender = qobject_cast<Plasma::Extender *>(m_systray->graphicsWidget());
+        if (extender) {
+            Plasma::ExtenderGroup *group = extender->group("completedJobsGroup");
+            if (group) {
+                completedJobs = group->items().count();
+                group->setTitle(i18np("%1 Recently Completed Job:", "%1 Recently Completed Jobs:",
+                                completedJobs));
+            }
         }
 
-        int total = manager->jobs().count() + manager->notifications().count() + completedJobs;
+        int total = m_manager->jobs().count() + m_manager->notifications().count() + completedJobs;
 
         if (!total) {
-            systemTray->hidePopup();
-            busyWidget->setState(ExtenderTaskBusyWidget::Empty);
-            busyWidget->setLabel(QString());
+            m_systray->hidePopup();
+            setState(ExtenderTaskBusyWidget::Empty);
+            setLabel(QString());
         } else if (runningJobs) {
-            busyWidget->setState(ExtenderTaskBusyWidget::Running);
-            busyWidget->setLabel(QString("%1/%2").arg(QString::number(total - runningJobs))
+            setState(ExtenderTaskBusyWidget::Running);
+            setLabel(QString("%1/%2").arg(QString::number(total - runningJobs))
                                                  .arg(QString::number(total)));
         } else {
-            busyWidget->setState(ExtenderTaskBusyWidget::Info);
-            busyWidget->setLabel(QString::number(total));
+            setState(ExtenderTaskBusyWidget::Info);
+            setLabel(QString::number(total));
         }
 
         //make a nice plasma tooltip
@@ -183,9 +168,9 @@ public:
             tooltipContent += i18np("%1 suspended job", "%1 suspended jobs", pausedJobs) + "<br>";
         }
 
-        if (!manager->notifications().isEmpty()) {
+        if (!m_manager->notifications().isEmpty()) {
             tooltipContent += i18np("%1 notification", "%1 notifications",
-                                    manager->notifications().count()) + "<br>";
+                                    m_manager->notifications().count()) + "<br>";
         }
 
         if (tooltipContent.isEmpty()) {
@@ -195,23 +180,48 @@ public:
         Plasma::ToolTipContent data(i18n("Notifications and jobs"),
                                     tooltipContent,
                                     KIcon("help-about"));
-        Plasma::ToolTipManager::self()->setContent(busyWidget, data);
+        Plasma::ToolTipManager::self()->setContent(this, data);
+    }
+
+private:
+    KIcon m_icon;
+    State m_state;
+    Plasma::Svg *m_svg;
+    Plasma::PopupApplet *m_systray;
+    Manager *m_manager;
+};
+
+class ExtenderTask::Private
+{
+public:
+    Private(Manager *manager,
+            Plasma::Extender *extender, Task *q)
+        : q(q),
+          manager(manager),
+          extender(extender)
+    {
+    }
+
+    void updateTask()
+    {
+        foreach (ExtenderTaskBusyWidget *widget, busyWidgets) {
+            widget->updateTask();
+        }
     }
 
     Task *q;
     QString typeId;
     QString iconName;
     QIcon icon;
-    ExtenderTaskBusyWidget *busyWidget;
-    Plasma::PopupApplet *systemTray;
+    QHash<Plasma::Applet *, ExtenderTaskBusyWidget *>busyWidgets;
     Manager *manager;
     Plasma::Extender *extender;
 };
 
 
-ExtenderTask::ExtenderTask(Plasma::PopupApplet *systemTray, Manager *manager, 
+ExtenderTask::ExtenderTask(Manager *manager, 
                            Plasma::Extender *extender)
-    : d(new Private(systemTray, manager, extender, this))
+    : d(new Private(manager, extender, this))
 {
     setOrder(Last);
 
@@ -229,20 +239,12 @@ ExtenderTask::ExtenderTask(Plasma::PopupApplet *systemTray, Manager *manager,
             this, SLOT(updateTask()));
     connect(extender, SIGNAL(itemDetached(Plasma::ExtenderItem*)),
             this, SLOT(updateTask()));
-
-    d->busyWidget = new ExtenderTaskBusyWidget(systemTray);
-    d->busyWidget->setMinimumSize(22, 22);
-    d->busyWidget->setMaximumSize(26, QWIDGETSIZE_MAX);
-    connect(d->busyWidget, SIGNAL(clicked()), systemTray, SLOT(togglePopup()));
-
-    d->updateTask();
 }
 
 
 ExtenderTask::~ExtenderTask()
 {
     emit taskDeleted(d->typeId);
-    delete d->busyWidget;
     delete d;
 }
 
@@ -285,8 +287,19 @@ void ExtenderTask::setIcon(const QString &icon)
 
 QGraphicsWidget* ExtenderTask::createWidget(Plasma::Applet *host)
 {
-    Q_UNUSED(host)
-    return d->busyWidget;
+    if (d->busyWidgets.contains(host)) {
+        return d->busyWidgets[host];
+    }
+
+    //Assumption on the systray being a popupapplet
+    Plasma::PopupApplet *popupApplet = static_cast<Plasma::PopupApplet *>(host);
+    ExtenderTaskBusyWidget *busyWidget = new ExtenderTaskBusyWidget(popupApplet, d->manager);
+    busyWidget->setMinimumSize(22, 22);
+    busyWidget->setMaximumSize(26, QWIDGETSIZE_MAX);
+    connect(busyWidget, SIGNAL(clicked()), popupApplet, SLOT(togglePopup()));
+    d->busyWidgets[host] = busyWidget;
+    busyWidget->updateTask();
+    return busyWidget;
 }
 
 }

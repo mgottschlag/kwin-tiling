@@ -232,7 +232,7 @@ void Applet::initExtenderTask(bool create)
 {
     if (create) {
         if (!d->extenderTask) {
-            d->extenderTask = new SystemTray::ExtenderTask(this, Private::s_manager, extender());
+            d->extenderTask = new SystemTray::ExtenderTask(Private::s_manager, extender());
             d->extenderTask->setIcon("help-about");
             Private::s_manager->addTask(d->extenderTask);
         }
