@@ -822,6 +822,13 @@ void PanelController::paintEvent(QPaintEvent *event)
     d->background->paintFrame(&painter);
 }
 
+void PanelController::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape) {
+        close();
+    }
+}
+
 bool PanelController::eventFilter(QObject *watched, QEvent *event)
 {
     if (watched == d->optionsDialog && event->type() == QEvent::WindowDeactivate) {

@@ -66,6 +66,7 @@ protected:
     void paintEvent(QPaintEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
     void focusOutEvent(QFocusEvent * event);
+    void keyPressEvent(QKeyEvent *event);
 
 Q_SIGNALS:
     /**
