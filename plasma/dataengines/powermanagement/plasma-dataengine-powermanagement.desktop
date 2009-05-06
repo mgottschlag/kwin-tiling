@@ -61,6 +61,7 @@ Name[x-test]=xxPower Managementxx
 Name[zh_CN]=电源管理
 Name[zh_TW]=電源管理
 Comment=Battery, AC, sleep and PowerDevil information.
+Comment[de]=Informationen zu Akku, Netzanschluss, Ruhezustand und PowerDevil.
 Comment[et]=Aku, voolutoite, puhkeseisundi ja PowerDevili teave.
 Comment[km]=ព័ត៌មាន ថ្ម AC ដេក និង​ PowerDevil ។
 Comment[nds]=Batterie-, Stroom-, Utsett- un Stroomdüvel-Infos

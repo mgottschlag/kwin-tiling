@@ -1,6 +1,20 @@
 [Desktop Entry]
 Name=Keyboard and Mouse State
+Name[de]=Status von Tastatur und Maus
+Name[km]=ស្ថានភាព​ក្ដារចុច និង​កណ្ដុល
+Name[pt]=Estado do Teclado e Rato
+Name[pt_BR]=Estado do Teclado e Rato
+Name[sv]=Tillstånd för tangentbord och mus
+Name[uk]=Стан клавіатури і миші
+Name[zh_TW]=鍵盤與滑鼠狀態
 Comment=Keyboard modifier and mouse buttons states
+Comment[de]=.
+Comment[km]=កម្មវិធី​កែប្រែ​ក្ដារចុច និង​ស្ថានភាព​ប៊ូតុង​កណ្ដុរ
+Comment[pt]=Estados das teclas modificadoras e dos botões do rato
+Comment[pt_BR]=Estados das teclas modificadoras e dos botões do rato
+Comment[sv]=Tillstånd för väljartangenter och musknappar
+Comment[uk]=Стан модифікаторів клавіатури і кнопок миші
+Comment[zh_TW]=鍵盤變更鍵與滑鼠按鍵狀態
 Type=Service
 Icon=input-keyboard
 

@@ -1,6 +1,19 @@
 [Desktop Entry]
 Name=Geolocation IP
+Name[de]=Geolokalisierung IP
+Name[km]=IP ទីតាំង​ភូមិសាស្ត្រ
+Name[pt]=Geo-Localização por IP
+Name[pt_BR]=Geo-Localização por IP
+Name[sv]=Lokalisera geografiskt med IP-adress
+Name[uk]=Геопозиціювання за IP
 Comment=Geolocation from IP address.
+Comment[de]=Geolokalisierung mittels IP-Adresse.
+Comment[km]=ទីតាំង​ភូមិសាស្ត្រ​ពី​​អាសយដ្ឋាន IP ។
+Comment[pt]=Geo-localização a partir do endereço IP.
+Comment[pt_BR]=Geo-localização a partir do endereço IP.
+Comment[sv]=Geografisk lokalisering från IP-adress.
+Comment[uk]=Геопозиціювання за IP-адресою
+Comment[zh_TW]=從 IP 位址取得 Geolocation。
 X-KDE-ServiceTypes=Plasma/GeolocationProvider
 X-KDE-ParentApp=geolocation
 Type=Service

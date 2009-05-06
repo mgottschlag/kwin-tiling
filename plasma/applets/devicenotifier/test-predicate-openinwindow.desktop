@@ -5,5 +5,12 @@ Actions=open;
 
 [Desktop Action open]
 Name=Open with File Manager
+Name[de]=Mit Dateimanager öffnen
+Name[km]=បើក​ជា​មួយ​កម្មវិធី​គ្រប់គ្រង​ឯកសារ
+Name[pt]=Abrir com o Gestor de Ficheiros
+Name[pt_BR]=Abrir com o Gestor de Ficheiros
+Name[sv]=Öppna med filhanterare
+Name[uk]=Відкрити за допомогою менеджера файлів
+Name[zh_TW]=使用檔案管理員開啟
 Exec=kioclient exec %f
 Icon=system-file-manager

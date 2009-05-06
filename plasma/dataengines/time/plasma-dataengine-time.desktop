@@ -63,6 +63,7 @@ Name[x-test]=xxDate and Timexx
 Name[zh_CN]=日期和时间
 Name[zh_TW]=日期與時間
 Comment=Date and time by timezone
+Comment[de]=Datum und Zeit nach Zeitzone
 Comment[el]=Ημερομηνία και ώρα ανά ωρολογιακή ζώνη
 Comment[et]=Kuupäev ja kellaaeg ajavööndi põhjal
 Comment[km]=កាលបរិច្ឆេទ និង​ពេលវេលា​តាម​តំបន់​ពេលវេលា

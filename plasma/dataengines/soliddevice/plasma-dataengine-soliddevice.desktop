@@ -62,6 +62,7 @@ Name[x-test]=xxDevice Informationxx
 Name[zh_CN]=设备信息
 Name[zh_TW]=裝置資訊
 Comment=Device data via Solid
+Comment[de]=Gerätedaten mittels Solid
 Comment[el]=Δεδομένα συσκευών μέσω Solid
 Comment[et]=Seadmete andmed Solidi vahendusel
 Comment[km]=ទិន្នន័យ​ឧបករណ៍តាម​រយៈ Solid​

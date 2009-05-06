@@ -64,6 +64,7 @@ Name[zh_TW]=磁碟型態
 
 [Desktop Action hotpluggable]
 Name=Hotpluggable
+Name[de]=Hotplug-fähig
 Name[el]=Δυνατότητα Hotplug
 Name[et]=Töö ajal ühendatav
 Name[ga]=Inphlugáilte

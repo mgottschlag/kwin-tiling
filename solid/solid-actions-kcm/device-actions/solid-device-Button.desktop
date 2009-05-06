@@ -34,6 +34,7 @@ X-KDE-Solid-Actions-Type=Button
 
 [Desktop Action hasState]
 Name=Has State
+Name[de]=Hat den Status
 Name[el]=Έχει κατάσταση
 Name[et]=Olekuga
 Name[ga]=Staid Aige
@@ -76,6 +77,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action stateValue]
 Name=State Value
+Name[de]=Status-Wert
 Name[el]=Τιμή κατάστασης
 Name[et]=Oleku väärtus
 Name[ga]=Luach na Staide

@@ -60,6 +60,7 @@ Name[x-test]=xxWindow Informationxx
 Name[zh_CN]=窗口信息
 Name[zh_TW]=視窗資訊
 Comment=Information and management services for all available windows.
+Comment[de]=Informationen und Verwaltungsdienste für alle verfügbaren Fenster.
 Comment[et]=Teave kõikide akende kohta ja vastavad haldamisteenused.
 Comment[km]=ព័ត៌មាន​អំពី​សេវា និង​ការ​គ្រប់គ្រង​សម្រាប់​វីនដូ​ដែល​អាច​ប្រើ​បានទាំង​អស់ ។
 Comment[nds]=Informatschonen un Pleegdeensten för all verföögbor Finstern

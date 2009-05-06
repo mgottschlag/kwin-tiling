@@ -86,6 +86,7 @@ X-KDE-Solid-Actions-Type=Processor
 
 [Desktop Action canChangeFrequency]
 Name=Can Change Frequency
+Name[de]=Kann die Frequenz wechseln
 Name[el]=Δυνατότητα αλλαγής συχνότητας
 Name[et]=Muudetava sagedusega
 Name[ga]=Is Féidir Minicíocht a Athrú

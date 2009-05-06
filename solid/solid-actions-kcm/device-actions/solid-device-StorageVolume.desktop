@@ -66,6 +66,7 @@ Name[zh_TW]=忽略
 
 [Desktop Action label]
 Name=Label
+Name[de]=Beschriftung
 Name[el]=Ετικέτα
 Name[et]=Pealdis
 Name[ga]=Lipéad
@@ -132,6 +133,7 @@ Name[zh_TW]=大小
 
 [Desktop Action usage]
 Name=Usage
+Name[de]=Verwendung
 Name[el]=Χρήση
 Name[et]=Kasutus
 Name[ga]=Úsáid

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=appendable;availableContent;blank;capacity;discType;fsType;ignored;label;objectName;rewritable;size;usage;uuid;
 Name=Optical Disc
+Name[de]=Optisches Medium
 Name[el]=Οπτικός δίσκος
 Name[et]=Optiline plaat
 Name[ga]=Diosca Optúil
@@ -24,6 +25,7 @@ X-KDE-Solid-Actions-Type=OpticalDisc
 
 [Desktop Action appendable]
 Name=Appendable
+Name[de]=Anhängbar
 Name[el]=Προσαρτήσιμο
 Name[et]=Lisatav
 Name[ga]=In-iarcheangailte
@@ -45,6 +47,7 @@ Name[zh_TW]=可附加
 
 [Desktop Action availableContent]
 Name=Available Content
+Name[de]=Verfügbarer Inhalt
 Name[el]=Διαθέσιμο περιεχόμενο
 Name[et]=Sisuga
 Name[ga]=Ábhar Le Fáil
@@ -112,6 +115,7 @@ Name[zh_TW]=空間
 
 [Desktop Action discType]
 Name=Disc Type
+Name[de]=Disc-Typ
 Name[el]=Τύπος δίσκου
 Name[et]=Plaadi tüüp
 Name[ga]=Cineál an Diosca
@@ -175,6 +179,7 @@ Name[zh_TW]=忽略
 
 [Desktop Action label]
 Name=Label
+Name[de]=Beschriftung
 Name[el]=Ετικέτα
 Name[et]=Pealdis
 Name[ga]=Lipéad
@@ -263,6 +268,7 @@ Name[zh_TW]=大小
 
 [Desktop Action usage]
 Name=Usage
+Name[de]=Verwendung
 Name[el]=Χρήση
 Name[et]=Kasutus
 Name[ga]=Úsáid

@@ -47,6 +47,7 @@ Name[zh_TW]=硬體位址
 
 [Desktop Action ifaceName]
 Name=Iface Name
+Name[de]=Schnittstellen-Name
 Name[el]=Όνομα Iface
 Name[et]=Liidese nimi
 Name[ga]=Ainm an Chomhéadain
@@ -112,6 +113,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action wireless]
 Name=Wireless
+Name[de]=Drahtlos
 Name[el]=Ασύρματο
 Name[et]=Juhtmeta
 Name[ga]=Gan Sreang

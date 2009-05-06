@@ -48,6 +48,7 @@ Name[zh_TW]=裝置
 
 [Desktop Action deviceAdapter]
 Name=Device Adapter
+Name[de]=Geräteadapter
 Name[el]=Προσαρμογέας συσκευής
 Name[et]=Seadme adapter
 Name[ga]=Cuibheoir Gléis
@@ -69,6 +70,7 @@ Name[zh_TW]=裝置接合器
 
 [Desktop Action deviceIndex]
 Name=Device Index
+Name[de]=Geräteindex
 Name[el]=Δείκτης συσκευής
 Name[et]=Seadme indeks
 Name[ga]=Innéacs Gléis

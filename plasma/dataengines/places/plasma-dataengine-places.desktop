@@ -61,6 +61,7 @@ Name[x-test]=xxPlacesxx
 Name[zh_CN]=地点
 Name[zh_TW]=地方
 Comment=Places, as seen in the file manager and in file dialogs.
+Comment[de]=Orte, wie sie im Dateimanager und in Dateiauswahl-Dialogen zu sehen sind.
 Comment[en_GB]=Places, as seen in the file manager and in file dialogues.
 Comment[et]=Asukohad, nagu neid näeb failihalduris ja -dialoogides.
 Comment[km]=ដាក់​ឲ្យ​ឃើញ​ក្នុង​កម្មវិធី​គ្រប់គ្រង​ឯកសារ និង​ប្រអប់​​ឯកសារ ។

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=KDED Notification item watcher
+Name[de]=KDE-Benachrichtigungsüberwachung
 Name[el]=Επόπτης περιοχής ειδοποιήσεων του KDE
 Name[et]=KDED märguannete jälgija
 Name[km]=កម្មវិធី​មើល​ធាតុ​ជូនដំណឹង KDED
@@ -13,6 +14,7 @@ Name[tr]=KDED Bildirim ögesi izleyici
 Name[uk]=Переглядач елементів сповіщень KDED
 Name[zh_TW]=KDE 通知項目監控器 
 Comment=Keep track of applications that want to use the D-Bus based notification item.
+Comment[de]=Überwacht Anwendungen, die Benachrichtigungselemente des D-Bus-Systems verwenden.
 Comment[et]=Silma peal hoidmine rakendustel, mis soovivad kasutada D-Busi põhist märguannet.
 Comment[km]=តាមដាន​កម្មវិធី​ដែល​ចង់​ឲ្យ​ប្រើធាតុ​​ជូនដំណឹង​ដែល​មាន​មូលដ្ឋាន​លើ D-Bus
 Comment[nds]=De Översicht över Programmen wohren, de den Bescheedindrag bruukt, de op den D-Bus opbuut
