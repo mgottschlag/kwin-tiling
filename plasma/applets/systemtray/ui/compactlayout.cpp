@@ -64,7 +64,7 @@ CompactLayout::CompactLayout(QGraphicsLayoutItem *parent)
 CompactLayout::~CompactLayout()
 {
     foreach (QGraphicsLayoutItem* item, d->items) {
-          removeItem(item);
+        removeItem(item);
     }
     delete d;
 }
@@ -181,6 +181,10 @@ void CompactLayout::Private::addPadding(QHash<QGraphicsLayoutItem*, QRectF> &geo
 
 QGraphicsLayoutItem* CompactLayout::itemAt(int index) const
 {
+    if (index > d->items.count()) {
+        return 0;
+    }
+
     return d->items.at(index);
 }
 
