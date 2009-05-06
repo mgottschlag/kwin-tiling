@@ -92,6 +92,7 @@ PanelAppletOverlay::PanelAppletOverlay(Plasma::Applet *applet, QWidget *parent)
 
     syncOrientation();
     syncGeometry();
+    setMouseTracking(true);
 
     connect(m_applet, SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater()));
     connect(m_applet, SIGNAL(geometryChanged()), this, SLOT(delaySyncGeometry()));
@@ -218,6 +219,26 @@ void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
 void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
 {
     if (!m_layout) {
+        return;
+    }
+
+    const int margin = 9;
+    if (m_applet->inherits("PanelSpacer")) {
+        if (m_applet->formFactor() == Plasma::Horizontal) {
+            if (event->pos().x() < margin || event->pos().x() > m_applet->size().width() - margin) {
+                setCursor(Qt::SizeHorCursor);
+            } else {
+                setCursor(Qt::ArrowCursor);
+            }
+        } else if (m_applet->formFactor() == Plasma::Vertical) {
+            if (event->pos().y() < margin || event->pos().y() > m_applet->size().height() - margin) {
+                setCursor(Qt::SizeVerCursor);
+            } else {
+                setCursor(Qt::ArrowCursor);
+            }
+        }
+    }
+    if (!(event->buttons() & Qt::LeftButton)) {
         return;
     }
 
@@ -376,6 +397,7 @@ void PanelAppletOverlay::enterEvent(QEvent *event)
 
 void PanelAppletOverlay::leaveEvent(QEvent *event)
 {
+    setCursor(Qt::ArrowCursor);
     Q_UNUSED(event)
     update();
 }
