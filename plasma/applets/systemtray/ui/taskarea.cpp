@@ -131,18 +131,19 @@ void TaskArea::addTask(Task *task)
 
 void TaskArea::addWidgetForTask(SystemTray::Task *task)
 {
-    QGraphicsWidget *widget = task->widget(d->host, false);
-    if (!task->isEmbeddable() && !widget) {
+    if (!task->isEmbeddable()) {
         kDebug() << "task is not embeddable, so FAIL" << task->name();
         return;
     }
+
+    QGraphicsWidget *widget = task->widget(d->host);
 
     //check if it's not necessary to move the icon
     if (task->hidden() == Task::NotHidden &&
         d->host->shownCategories().contains(task->category()) &&
         ((d->firstTasksLayout->containsItem(widget) && task->order() == SystemTray::Task::First) ||
-        (d->normalTasksLayout->containsItem(widget) && task->order() == SystemTray::Task::Normal) ||
-        (d->lastTasksLayout->containsItem(widget) && task->order() == SystemTray::Task::Last))) {
+         (d->normalTasksLayout->containsItem(widget) && task->order() == SystemTray::Task::Normal) ||
+         (d->lastTasksLayout->containsItem(widget) && task->order() == SystemTray::Task::Last))) {
         return;
     }
 
