@@ -32,6 +32,22 @@
     </widget>
    </item>
    <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>6</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
     <widget class="QLabel" name="label_2">
      <property name="font">
       <font>
@@ -45,17 +61,10 @@
     </widget>
    </item>
    <item>
-    <widget class="KActionSelector" name="taskSelector"/>
+    <widget class="QListWidget" name="icons"/>
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>KActionSelector</class>
-   <extends>QWidget</extends>
-   <header>kactionselector.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

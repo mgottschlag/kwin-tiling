@@ -419,10 +419,6 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         d->notificationUi.showHardware->setChecked(globalCg.readEntry("ShowHardware", true));
 
         d->autoHideUi.setupUi(d->autoHideInterface);
-        d->autoHideUi.taskSelector->setAvailableLabel(i18n("Visible icons:"));
-        d->autoHideUi.taskSelector->setSelectedLabel(i18n("Hidden icons:"));
-        d->autoHideUi.taskSelector->setShowUpDownButtons(false);
-
         d->autoHideUi.autoHide->setChecked(config().readEntry("AutoHidePopup", true));
 
         connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
@@ -434,11 +430,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         parent->addPage(d->autoHideInterface, i18n("Auto Hide"), "window-suppressed");
     }
 
-    QListWidget *visibleList = d->autoHideUi.taskSelector->availableListWidget();
-    QListWidget *hiddenList = d->autoHideUi.taskSelector->selectedListWidget();
-
-    visibleList->clear();
-    hiddenList->clear();
+    d->autoHideUi.icons->clear();
 
     foreach (Task *task, Private::s_manager->tasks()) {
         if (!d->shownCategories.contains(task->category())) {
@@ -452,13 +444,10 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         QListWidgetItem *listItem = new QListWidgetItem();
         listItem->setText(task->name());
         listItem->setIcon(task->icon());
+        listItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
         listItem->setData(Qt::UserRole, task->typeId());
-
-        if (task->hidden() & Task::UserHidden) {
-            hiddenList->addItem(listItem);
-        } else {
-            visibleList->addItem(listItem);
-        }
+        listItem->setCheckState((task->hidden() & Task::UserHidden) ? Qt::Unchecked : Qt::Checked);
+        d->autoHideUi.icons->addItem(listItem);
     }
 }
 
@@ -466,10 +455,12 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
 void Applet::configAccepted()
 {
     QStringList hiddenTypes;
-
-    QListWidget *hiddenList = d->autoHideUi.taskSelector->selectedListWidget();
+    QListWidget *hiddenList = d->autoHideUi.icons;
     for (int i = 0; i < hiddenList->count(); ++i) {
-        hiddenTypes << hiddenList->item(i)->data(Qt::UserRole).toString();
+        QListWidgetItem *item = hiddenList->item(i);
+        if (item->checkState() != Qt::Checked) {
+            hiddenTypes << item->data(Qt::UserRole).toString();
+        }
     }
 
     d->taskArea->setHiddenTypes(hiddenTypes);
