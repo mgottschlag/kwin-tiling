@@ -35,6 +35,7 @@
 #include "../protocols/plasmoid/plasmoidtaskprotocol.h"
 #include "../protocols/jobs/dbusjobprotocol.h"
 #include "../protocols/dbussystemtray/dbussystemtrayprotocol.h"
+#include "../ui/extendertask.h"
 
 namespace SystemTray
 {
@@ -45,6 +46,7 @@ class Manager::Private
 public:
     Private(Manager *manager)
         : q(manager),
+          extenderTask(0),
           jobTotals(new Job(manager)),
           jobProtocol(0),
           notificationProtocol(0)
@@ -54,9 +56,10 @@ public:
     void setupProtocol(Protocol *protocol);
 
     Manager *q;
-    QList<Task*> tasks;
+    Task *extenderTask;
+    QList<Task *> tasks;
     QList<Notification*> notifications;
-    QList<Job*> jobs;
+    QList<Job *> jobs;
     Job *jobTotals;
     Protocol *jobProtocol;
     Protocol *notificationProtocol;
@@ -77,6 +80,17 @@ Manager::~Manager()
 }
 
 
+Task* Manager::extenderTask(bool createIfNecessary) const
+{
+    if (!d->extenderTask && createIfNecessary) {
+        d->extenderTask = new ExtenderTask(this);
+        connect(d->extenderTask, SIGNAL(destroyed(SystemTray::Task*)), this, SLOT(removeTask(SystemTray::Task*)));
+        connect(d->extenderTask, SIGNAL(changed(SystemTray::Task*)), this, SIGNAL(taskChanged(SystemTray::Task*)));
+    }
+
+    return d->extenderTask;
+}
+
 QList<Task*> Manager::tasks() const
 {
     return d->tasks;
@@ -96,6 +110,10 @@ void Manager::addTask(Task *task)
 
 void Manager::removeTask(Task *task)
 {
+    if (task == d->extenderTask) {
+        d->extenderTask = 0;
+    }
+
     d->tasks.removeAll(task);
     emit taskRemoved(task);
 }
@@ -150,7 +168,7 @@ void Manager::unregisterJobProtocol()
 {
     if (d->jobProtocol) {
         delete d->jobProtocol;
-	d->jobProtocol = 0;
+        d->jobProtocol = 0;
     }
 }
 

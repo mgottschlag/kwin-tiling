@@ -47,7 +47,7 @@ class ExtenderTaskBusyWidget : public Plasma::BusyWidget
 public:
     enum State { Empty, Info, Running };
 
-    ExtenderTaskBusyWidget(Plasma::PopupApplet *parent, Manager *manager);
+    ExtenderTaskBusyWidget(Plasma::PopupApplet *parent, const Manager *manager);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
     void setState(State state);
 
@@ -61,7 +61,7 @@ private:
     State m_state;
     Plasma::Svg *m_svg;
     Plasma::PopupApplet *m_systray;
-    Manager *m_manager;
+    const Manager *m_manager;
 };
 
 class ExtenderTask : public SystemTray::Task
@@ -69,7 +69,7 @@ class ExtenderTask : public SystemTray::Task
     Q_OBJECT
 
 public:
-    ExtenderTask(Manager *manager);
+    ExtenderTask(const Manager *manager);
     virtual ~ExtenderTask();
 
     bool isValid() const;

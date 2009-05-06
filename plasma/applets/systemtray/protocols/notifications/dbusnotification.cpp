@@ -32,7 +32,6 @@ DBusNotification::DBusNotification(const QString &source, QObject *parent)
 {
 }
 
-
 DBusNotification::~DBusNotification()
 {
     emit notificationDeleted(m_source);

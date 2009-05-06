@@ -180,7 +180,7 @@ Q_SIGNALS:
     void destroyed(SystemTray::Task *task);
 
 protected:
-    Task();
+    Task(QObject *parent = 0);
 
     /**
      * Called when a new widget is required

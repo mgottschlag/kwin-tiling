@@ -232,14 +232,11 @@ void Applet::initExtenderTask(bool create)
 {
     if (create) {
         extender(); // make sure it exists
-        if (!d->extenderTask) {
-            d->extenderTask = new SystemTray::ExtenderTask(Private::s_manager);
-            d->extenderTask->setIcon("help-about");
-            Private::s_manager->addTask(d->extenderTask);
-        }
-    } else {
-        delete d->extenderTask;
-        d->extenderTask = 0;
+        d->taskArea->addTask(Private::s_manager->extenderTask());
+    } else if (Private::s_manager->extenderTask(false)) {
+        d->taskArea->removeTask(Private::s_manager->extenderTask());
+        QGraphicsWidget *widget = Private::s_manager->extenderTask(false)->widget(this, false);
+        widget->deleteLater();
     }
 }
 

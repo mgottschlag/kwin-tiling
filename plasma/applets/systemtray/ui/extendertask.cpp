@@ -41,7 +41,7 @@ namespace SystemTray
 {
 
 
-ExtenderTaskBusyWidget::ExtenderTaskBusyWidget(Plasma::PopupApplet *parent, Manager *manager)
+ExtenderTaskBusyWidget::ExtenderTaskBusyWidget(Plasma::PopupApplet *parent, const Manager *manager)
     : Plasma::BusyWidget(parent),
       m_icon("dialog-information"),
       m_state(Empty),
@@ -196,7 +196,7 @@ void ExtenderTaskBusyWidget::updateTask()
 class ExtenderTask::Private
 {
 public:
-    Private(Manager *manager, Task *q)
+    Private(const Manager *manager, Task *q)
         : q(q),
           manager(manager)
     {
@@ -206,12 +206,14 @@ public:
     QString typeId;
     QString iconName;
     QIcon icon;
-    Manager *manager;
+    const Manager *manager;
 };
 
-ExtenderTask::ExtenderTask(Manager *manager)
-    : d(new Private(manager, this))
+ExtenderTask::ExtenderTask(const Manager *manager)
+    : Task(const_cast<Manager *>(manager)), //FIXME: that's a little ugly :)
+      d(new Private(manager, this))
 {
+    setIcon("help-about");
     setOrder(Last);
 }
 

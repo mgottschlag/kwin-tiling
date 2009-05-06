@@ -47,6 +47,11 @@ public:
     /**
      * @return a list of all known Task instances
      **/
+    Task* extenderTask(bool createIfNecessary = true) const;
+
+    /**
+     * @return a list of all known Task instances
+     **/
     QList<Task*> tasks() const;
 
     /**

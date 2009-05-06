@@ -47,8 +47,9 @@ public:
 };
 
 
-Task::Task()
-    : d(new Private)
+Task::Task(QObject *parent)
+    : QObject(parent),
+      d(new Private)
 {
 }
 
