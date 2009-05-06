@@ -54,7 +54,6 @@
 #endif // HAVE_LIBXSS
 
 #include "../core/manager.h"
-#include "extendertask.h"
 #include "jobwidget.h"
 #include "jobtotalswidget.h"
 #include "notificationwidget.h"
@@ -80,7 +79,6 @@ public:
           autoHideInterface(0),
           background(0),
           jobSummaryWidget(0),
-          extenderTask(0),
           timerId(0)
     {
         if (!s_manager) {
@@ -114,7 +112,6 @@ public:
 
     Plasma::FrameSvg *background;
     JobTotalsWidget *jobSummaryWidget;
-    QPointer<SystemTray::ExtenderTask> extenderTask;
     static SystemTray::Manager *s_manager;
     static int s_managerUsage;
     int autoHideTimeout;

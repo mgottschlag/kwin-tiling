@@ -2,6 +2,7 @@ project(plasma-systemtray)
 
 set(systemtray_SRCS
 
+    core/extendertask.cpp
     core/manager.cpp
     core/protocol.cpp
     core/task.cpp
@@ -33,7 +34,6 @@ set(systemtray_SRCS
 
     ui/applet.cpp
     ui/compactlayout.cpp
-    ui/extendertask.cpp
     ui/taskarea.cpp
     ui/notificationwidget.cpp
     ui/jobtotalswidget.cpp

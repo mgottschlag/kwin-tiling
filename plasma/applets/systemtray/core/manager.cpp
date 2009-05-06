@@ -25,17 +25,17 @@
 
 #include <plasma/applet.h>
 
+#include "extendertask.h"
+#include "job.h"
 #include "notification.h"
 #include "protocol.h"
 #include "task.h"
-#include "job.h"
 
 #include "../protocols/notifications/dbusnotificationprotocol.h"
 #include "../protocols/fdo/fdoprotocol.h"
 #include "../protocols/plasmoid/plasmoidtaskprotocol.h"
 #include "../protocols/jobs/dbusjobprotocol.h"
 #include "../protocols/dbussystemtray/dbussystemtrayprotocol.h"
-#include "../ui/extendertask.h"
 
 namespace SystemTray
 {
