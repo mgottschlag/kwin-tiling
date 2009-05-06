@@ -483,7 +483,7 @@ void Panel::updateBorders(const QRect &geom)
         QSizeF s = box->boundingRect().size();
         if (formFactor() == Vertical) {
             //hardcoded extra margin for the toolbox right now
-            bottomHeight += s.height();;
+            bottomHeight += s.height();
             //Default to horizontal for now
         } else {
             if (QApplication::layoutDirection() == Qt::RightToLeft) {
@@ -512,8 +512,20 @@ void Panel::updateBorders(const QRect &geom)
         default:
             break;
         }
+        qreal oldLeft, oldTop, oldRight, oldBottom;
+        layout()->getContentsMargins(&oldLeft, &oldTop, &oldRight, &oldBottom);
+
         layout()->setContentsMargins(leftWidth, topHeight, rightWidth, bottomHeight);
+
+        if (formFactor() == Plasma::Vertical) {
+            setPreferredHeight(preferredHeight() - (oldBottom-bottomHeight));
+        } else if (QApplication::layoutDirection() == Qt::LeftToRight) {
+            setPreferredWidth(preferredWidth() - (oldRight-rightWidth));
+        } else {
+            setPreferredWidth(preferredWidth() - (oldLeft-leftWidth));
+        }
         layout()->invalidate();
+        resize(preferredSize());
     }
 
     update();
