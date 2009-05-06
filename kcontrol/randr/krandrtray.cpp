@@ -54,6 +54,7 @@ KRandRSystemTray::KRandRSystemTray(RandRDisplay *dpy, QWidget* parent)
 
 	m_menu = new KMenu(associatedWidget());
 	setContextMenu(m_menu);
+    setStatus(Active);
 
     //TODO: probably we need an about to show signal
 	connect(m_menu, SIGNAL(aboutToShow()), this, SLOT(slotPrepareMenu()));
