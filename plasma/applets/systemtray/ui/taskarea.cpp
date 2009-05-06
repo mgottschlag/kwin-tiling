@@ -206,16 +206,6 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
     }
 }
 
-//TODO: check if is still necessary with 4.5
-void TaskArea::checkSizes()
-{
-    d->topLayout->updateGeometry();
-
-    QSizeF s = d->topLayout->effectiveSizeHint(Qt::PreferredSize);
-
-    setPreferredSize(s);
-}
-
 void TaskArea::removeTask(Task *task)
 {
     foreach (QGraphicsWidget *widget, task->associatedWidgets()) {
@@ -295,14 +285,14 @@ void TaskArea::setOrientation(Qt::Orientation o)
     QGraphicsWidget *applet = dynamic_cast<QGraphicsWidget *>(parentItem());
 
     if (applet) {
-      qreal left, top, right, bottom;
-      applet->getContentsMargins(&left, &top, &right, &bottom);
+        qreal left, top, right, bottom;
+        applet->getContentsMargins(&left, &top, &right, &bottom);
 
-      if (o == Qt::Horizontal) {
-          d->topLayout->setSpacing(right);
-      } else {
-          d->topLayout->setSpacing(bottom);
-      }
+        if (o == Qt::Horizontal) {
+            d->topLayout->setSpacing(right);
+        } else {
+            d->topLayout->setSpacing(bottom);
+        }
     }
 }
 
@@ -325,11 +315,7 @@ void TaskArea::initUnhideTool()
         d->unhider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     }
 
-    //FIXME
-    //d->topLayout->removeItem(d->taskLayout);
     d->topLayout->insertItem(0, d->unhider);
-    //d->topLayout->addItem(d->unhider);
-    //d->topLayout->addItem(d->taskLayout);
     connect(d->unhider, SIGNAL(clicked()), this, SLOT(toggleHiddenItems()));
 
     emit sizeHintChanged(Qt::PreferredSize);
@@ -343,7 +329,7 @@ void TaskArea::updateUnhideToolIcon()
 
     if (!d->showingHidden && d->topLayout->orientation() == Qt::Vertical) {
         d->unhider->setSvg("widgets/systemtray", "expander-up");
-    } else if(d->showingHidden && d->topLayout->orientation() == Qt::Vertical){
+    } else if(d->showingHidden && d->topLayout->orientation() == Qt::Vertical) {
         d->unhider->setSvg("widgets/systemtray", "expander-down");
     }else if (d->showingHidden || QApplication::layoutDirection() == Qt::RightToLeft) {
         d->unhider->setSvg("widgets/systemtray", "expander-right");

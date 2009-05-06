@@ -44,10 +44,10 @@ public:
     virtual ~ExtenderTask();
 
     bool isValid() const;
-    virtual bool isEmbeddable() const;
-    virtual QString name() const;
-    virtual QString typeId() const;
-    virtual QIcon icon() const;
+    bool isEmbeddable() const;
+    QString name() const;
+    QString typeId() const;
+    QIcon icon() const;
     void setIcon(const QString &icon);
     bool isHideable() const;
 
@@ -55,7 +55,7 @@ signals:
     void taskDeleted(QString typeId);
 
 protected:
-    virtual QGraphicsWidget* createWidget(Plasma::Applet *applet);
+    QGraphicsWidget* createWidget(Plasma::Applet *applet);
 
 private:
     class Private;

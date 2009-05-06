@@ -49,7 +49,6 @@ public:
     int leftEasement() const;
     int rightEasement() const;
     void setOrientation(Qt::Orientation);
-    void checkSizes();
 
 public slots:
     void addTask(SystemTray::Task *task);

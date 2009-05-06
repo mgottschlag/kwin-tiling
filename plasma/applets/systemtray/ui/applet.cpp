@@ -204,7 +204,10 @@ void Applet::init()
         }
     }
 
+    bool createExtenderTask = false;
+
     if (globalCg.readEntry("ShowJobs", true)) {
+        createExtenderTask = true;
         createJobGroups();
 
         Private::s_manager->registerJobProtocol();
@@ -212,26 +215,31 @@ void Applet::init()
                 this, SLOT(addJob(SystemTray::Job*)));
         connect(Private::s_manager, SIGNAL(jobRemoved(SystemTray::Job*)),
                 this, SLOT(finishJob(SystemTray::Job*)));
-
-        //there might still be completed jobs in the tray, in which case we directly want to show
-        //the extender task spinner.
-        if (extender()->group("completedJobsGroup") &&
-            !extender()->group("completedJobsGroup")->items().isEmpty()) {
-            if (!d->extenderTask) {
-                d->extenderTask = new SystemTray::ExtenderTask(this, Private::s_manager, extender());
-                d->extenderTask->setIcon("help-about");
-            }
-            Private::s_manager->addTask(d->extenderTask);
-        }
     }
 
     if (globalCg.readEntry("ShowNotifications", true)) {
+        createExtenderTask = true;
         Private::s_manager->registerNotificationProtocol();
         connect(Private::s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
                 this, SLOT(addNotification(SystemTray::Notification*)));
     }
 
+    initExtenderTask(createExtenderTask);
     d->taskArea->syncTasks(Private::s_manager->tasks());
+}
+
+void Applet::initExtenderTask(bool create)
+{
+    if (create) {
+        if (!d->extenderTask) {
+            d->extenderTask = new SystemTray::ExtenderTask(this, Private::s_manager, extender());
+            d->extenderTask->setIcon("help-about");
+            Private::s_manager->addTask(d->extenderTask);
+        }
+    } else {
+        delete d->extenderTask;
+        d->extenderTask = 0;
+    }
 }
 
 void Applet::constraintsEvent(Plasma::Constraints constraints)
@@ -279,8 +287,6 @@ void Applet::setGeometry(const QRectF &rect)
 
 void Applet::checkSizes()
 {
-    d->taskArea->checkSizes();
-
     qreal leftMargin, topMargin, rightMargin, bottomMargin;
     d->background->getMargins(leftMargin, topMargin, rightMargin, bottomMargin);
     setContentsMargins(leftMargin, topMargin, rightMargin, bottomMargin);
@@ -482,30 +488,34 @@ void Applet::configAccepted()
     KConfigGroup globalCg = globalConfig();
     globalCg.writeEntry("ShowJobs", d->notificationUi.showJobs->isChecked());
     globalCg.writeEntry("ShowNotifications", d->notificationUi.showNotifications->isChecked());
+    bool createExtenderTask = false;
 
     disconnect(Private::s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
                this, SLOT(addJob(SystemTray::Job*)));
     if (d->notificationUi.showJobs->isChecked()) {
         createJobGroups();
+        createExtenderTask = true;
 
         Private::s_manager->registerJobProtocol();
         connect(Private::s_manager, SIGNAL(jobAdded(SystemTray::Job*)),
                 this, SLOT(addJob(SystemTray::Job*)));
     } else {
-	Private::s_manager->unregisterJobProtocol();
+        Private::s_manager->unregisterJobProtocol();
     }
 
     disconnect(Private::s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
                this, SLOT(addNotification(SystemTray::Notification*)));
     if (d->notificationUi.showNotifications->isChecked()) {
+        createExtenderTask = true;
         Private::s_manager->registerNotificationProtocol();
         connect(Private::s_manager, SIGNAL(notificationAdded(SystemTray::Notification*)),
                 this, SLOT(addNotification(SystemTray::Notification*)));
     } else {
-	Private::s_manager->unregisterNotificationProtocol();
+        Private::s_manager->unregisterNotificationProtocol();
     }
 
 
+    initExtenderTask(createExtenderTask);
     d->shownCategories.clear();
 
     globalCg.writeEntry("ShowApplicationStatus", d->notificationUi.showApplicationStatus->isChecked());
@@ -587,22 +597,6 @@ void Applet::initExtenderItem(Plasma::ExtenderItem *extenderItem)
         extenderItem->setWidget(new JobWidget(0, extenderItem));
     }
 
-}
-
-void Applet::popupEvent(bool visibility)
-{
-    Q_UNUSED(visibility)
-
-    if (!(Private::s_manager->jobs().isEmpty() &&
-          Private::s_manager->notifications().isEmpty() &&
-          extender()->group("completedJobsGroup")->items().isEmpty())) {
-        if (!d->extenderTask) {
-            d->extenderTask = new SystemTray::ExtenderTask(this, Private::s_manager, extender());
-            d->extenderTask->setIcon("help-about");
-        }
-
-        Private::s_manager->addTask(d->extenderTask);
-    }
 }
 
 void Applet::timerEvent(QTimerEvent *event)

@@ -57,8 +57,6 @@ protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) { Q_UNUSED(event); }
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) { Q_UNUSED(event); }
 
-    void popupEvent(bool show);
-
     void timerEvent(QTimerEvent *event);
 
 private slots:
@@ -73,6 +71,7 @@ private slots:
 
 private:
     void createJobGroups();
+    void initExtenderTask(bool create);
 
     class Private;
     Private* const d;
