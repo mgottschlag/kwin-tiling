@@ -53,8 +53,9 @@ public:
 };
 
 
-PlasmoidTask::PlasmoidTask(QString appletname)
-    : d(new Private(appletname, this))
+PlasmoidTask::PlasmoidTask(QString appletname, QObject *parent)
+    : Task(parent),
+      d(new Private(appletname, this))
 {
 }
 

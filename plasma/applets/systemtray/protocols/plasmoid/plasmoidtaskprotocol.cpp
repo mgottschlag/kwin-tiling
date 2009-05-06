@@ -57,7 +57,7 @@ void PlasmoidProtocol::newTask(QString appletName)
     }
 
     kDebug() << "Registering task with the manager" << appletName;
-    PlasmoidTask *task = new PlasmoidTask(appletName);
+    PlasmoidTask *task = new PlasmoidTask(appletName, this);
 
     if (!task->isValid()) {
         // we failed to load our applet *sob*

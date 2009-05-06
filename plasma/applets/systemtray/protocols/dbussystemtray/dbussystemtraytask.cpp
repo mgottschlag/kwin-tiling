@@ -97,8 +97,8 @@ public:
 };
 
 
-DBusSystemTrayTask::DBusSystemTrayTask(const QString &service)
-    : Task(),
+DBusSystemTrayTask::DBusSystemTrayTask(const QString &service, QObject *parent)
+    : Task(parent),
       d(new DBusSystemTrayTaskPrivate(this))
 {
     setObjectName("DBusSystemTrayTask");

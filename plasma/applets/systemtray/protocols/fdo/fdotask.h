@@ -33,7 +33,7 @@ class FdoTask : public Task
     Q_OBJECT
 
 public:
-    FdoTask(WId winId);
+    FdoTask(WId winId, QObject *parent);
     virtual ~FdoTask();
 
     virtual bool isEmbeddable() const;

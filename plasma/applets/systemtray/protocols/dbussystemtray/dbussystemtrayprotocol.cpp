@@ -71,7 +71,7 @@ void DBusSystemTrayProtocol::newTask(QString service)
     }
 
     kDebug() << "Registering task with the manager" << service;
-    DBusSystemTrayTask *task = new DBusSystemTrayTask(service);
+    DBusSystemTrayTask *task = new DBusSystemTrayTask(service, this);
 
     if (!task->isValid()) {
         // we failed to load our task, *sob*

@@ -34,7 +34,7 @@ class DBusSystemTrayTask : public Task
     friend class DBusSystemTrayProtocol;
 
 public:
-    DBusSystemTrayTask(const QString &service);
+    DBusSystemTrayTask(const QString &service, QObject *parent);
     ~DBusSystemTrayTask();
 
     QGraphicsWidget* createWidget(Plasma::Applet *host);
