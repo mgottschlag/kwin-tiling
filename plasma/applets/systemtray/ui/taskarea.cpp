@@ -85,6 +85,9 @@ TaskArea::TaskArea(SystemTray::Applet *parent)
 
 TaskArea::~TaskArea()
 {
+    delete d->firstTasksLayout;
+    delete d->normalTasksLayout;
+    delete d->lastTasksLayout;
     delete d;
 }
 
@@ -374,7 +377,7 @@ QGraphicsWidget* TaskArea::findWidget(Task *task)
 {
     foreach (QGraphicsWidget *widget, task->associatedWidgets()) {
 
-        if (widget->parent() == parent()) {
+        if (widget->parentWidget() == this) {
             return widget;
         }
     }
