@@ -26,7 +26,6 @@ if(KDEPIMLIBS_FOUND)
    add_subdirectory(akonadi)
    add_subdirectory(calendar)
    add_subdirectory(rss)
-   add_subdirectory(akonadi)
 endif(KDEPIMLIBS_FOUND)
 
 if(NOT WIN32)
