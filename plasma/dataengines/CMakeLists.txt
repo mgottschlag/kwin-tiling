@@ -1,4 +1,3 @@
-# add_subdirectory(akonadi) # disabled because there's no configure check for KDE4_AKONADI_LIBS
 add_subdirectory(applicationjobs)
 add_subdirectory(dict)
 add_subdirectory(executable)
@@ -26,6 +25,7 @@ macro_log_feature(KDEPIMLIBS_FOUND "kdepimlibs" "KDE PIM libraries" "http://www.
 if(KDEPIMLIBS_FOUND)
    add_subdirectory(calendar)
    add_subdirectory(rss)
+   add_subdirectory(akonadi)
 endif(KDEPIMLIBS_FOUND)
 
 if(NOT WIN32)
