@@ -227,6 +227,7 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
         }
 
         QIcon overlay;
+        QStringList overlayNames;
 
         //Icon
         {
@@ -236,6 +237,7 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
             if (image.isEmpty()) {
                 QString iconName = properties["OverlayIcon"].toString();
                 if (!iconName.isEmpty()) {
+                    overlayNames << iconName;
                     overlay = KIcon(iconName);
                 }
             } else {
@@ -246,14 +248,17 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
             if (image.isEmpty()) {
                 QString iconName = properties["Icon"].toString();
                 if (!iconName.isEmpty()) {
-                    icon = KIcon(iconName);
+                    icon = KIcon(iconName, 0, overlayNames);
+
+                    if (overlayNames.isEmpty() && !overlay.isNull()) {
+                        overlayIcon(&icon, &overlay);
+                    }
                 }
             } else {
                 icon = imageVectorToPixmap(image);
-            }
-
-            if (!overlay.isNull()) {
-                overlayIcon(&icon, &overlay);
+                if (!icon.isNull() && !overlay.isNull()) {
+                    overlayIcon(&icon, &overlay);
+                }
             }
         }
 
@@ -270,14 +275,17 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
             if (image.isEmpty()) {
                 QString iconName = properties["AttentionIcon"].toString();
                 if (!iconName.isEmpty()) {
-                    attentionIcon = KIcon(iconName);
+                    attentionIcon = KIcon(iconName, 0, overlayNames);
+
+                    if (overlayNames.isEmpty() && !overlay.isNull()) {
+                        overlayIcon(&attentionIcon, &overlay);
+                    }
                 }
             } else {
                 attentionIcon = imageVectorToPixmap(image);
-            }
-
-            if (!overlay.isNull()) {
-                overlayIcon(&icon, &overlay);
+                if (!attentionIcon.isNull() && !overlay.isNull()) {
+                    overlayIcon(&icon, &overlay);
+                }
             }
         }
 
@@ -314,6 +322,7 @@ QIcon DBusSystemTrayTaskPrivate::imageVectorToPixmap(const ExperimentalKDbusImag
 
 void DBusSystemTrayTaskPrivate::overlayIcon(QIcon *icon, QIcon *overlay)
 {
+    kDebug() << "WRRRRRRROOOOOOOOOOOOOONG!";
     QPixmap iconPixmap = icon->pixmap(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
 
     QPainter p(&iconPixmap);
