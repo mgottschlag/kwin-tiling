@@ -128,6 +128,14 @@ void Panel::init()
     //FIXME: This should be enabled, but in that case proxywidgets won't get rendered
     //setFlag(ItemClipsChildrenToShape, true);
 
+    QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(this);
+    lay->setContentsMargins(0, 0, 0, 0);
+    lay->setSpacing(4);
+    lay->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
+    setLayout(lay);
+    updateBorders(geometry().toRect());
+    lay->setMaximumSize(size());
+
     KConfigGroup cg = config("Configuration");
 
     m_currentSize = cg.readEntry("minimumSize", m_currentSize);
@@ -297,7 +305,8 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
         lay->addItem(m_lastSpace);
     }
 
-    m_lastSpaceTimer->start(200);
+    //FIXME: there must be some beter way to do this rather than this rather error prone arbitrary wait
+    m_lastSpaceTimer->start(2000);
 
     connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
 }
@@ -545,22 +554,6 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
             QGraphicsLinearLayout * linearLay = static_cast<QGraphicsLinearLayout *>(layout());
             linearLay->setMaximumSize(size());
             linearLay->setOrientation(layoutDirection);
-        } else {
-            QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(this);
-            lay->setOrientation(layoutDirection);
-            lay->setContentsMargins(0, 0, 0, 0);
-            lay->setSpacing(4);
-            lay->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
-            setLayout(lay);
-            updateBorders(geometry().toRect());
-            lay->setMaximumSize(size());
-            lay->addItem(m_lastSpace);
-
-            foreach (Applet *applet, applets()) {
-                lay->insertItem(lay->count()-2, applet);
-            }
-
-            adjustLastSpace();
         }
     }
 
