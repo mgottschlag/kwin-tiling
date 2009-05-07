@@ -45,14 +45,16 @@ SystemMonitor::SystemMonitor(QObject *parent, const QVariantList &args)
 
 SystemMonitor::~SystemMonitor()
 {
+}
+
+void SystemMonitor::saveState(KConfigGroup &group) const
+{
     QStringList appletNames;
     foreach (Plasma::Applet *applet, m_applets) {
         appletNames << applet->objectName();
-        applet->destroy();
     }
 
-    KConfigGroup cg = config();
-    cg.writeEntry("applets", appletNames);
+    group.writeEntry("applets", appletNames);
 }
 
 void SystemMonitor::init()
@@ -103,6 +105,7 @@ void SystemMonitor::addApplet(const QString &name)
     if (name.isEmpty()) {
         return;
     }
+
     SM::Applet* applet = qobject_cast<SM::Applet*>(Plasma::Applet::load(name, 0, QVariantList() << "SM"));
     if (applet) {
         m_applets.append(applet);
@@ -113,7 +116,12 @@ void SystemMonitor::addApplet(const QString &name)
         applet->setBackgroundHints(Plasma::Applet::NoBackground);
         applet->setParentItem(m_widget);
         applet->setObjectName(name);
+        connect(applet, SIGNAL(configNeedsSaving()), this, SIGNAL(configNeedsSaving()));
         m_layout->addItem(applet);
+
+        KConfigGroup cg = config();
+        saveState(cg);
+        emit configNeedsSaving();
     }
 }
 
@@ -135,6 +143,10 @@ void SystemMonitor::appletRemoved(QObject *object)
             m_layout->removeItem(applet);
             m_applets.removeAll(applet);
             checkGeometry();
+
+            KConfigGroup cg = config();
+            saveState(cg);
+            emit configNeedsSaving();
         }
     }
 }

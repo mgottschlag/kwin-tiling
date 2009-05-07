@@ -51,6 +51,7 @@ class SystemMonitor : public Plasma::PopupApplet
     protected:
         void addApplet(const QString &name);
         void removeApplet(const QString &name);
+        void saveState(KConfigGroup &group) const;
 
     private:
         QGraphicsLinearLayout *m_layout;
