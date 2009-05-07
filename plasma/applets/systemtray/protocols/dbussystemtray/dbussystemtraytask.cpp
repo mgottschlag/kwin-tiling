@@ -232,20 +232,29 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
         {
             ExperimentalKDbusImageVector image;
 
-            properties["OverlayImage"].value<QDBusArgument>()>>image;
-            if (image.size() == 0) {
-                overlay = KIcon(properties["OverlayIcon"].toString());
+            properties["OverlayImage"].value<QDBusArgument>() >> image;
+            if (image.isEmpty()) {
+                QString iconName = properties["OverlayIcon"].toString();
+                if (!iconName.isEmpty()) {
+                    overlay = KIcon(iconName);
+                }
             } else {
                 overlay = imageVectorToPixmap(image);
             }
 
-            properties["Image"].value<QDBusArgument>()>>image;
-            if (image.size() == 0) {
-                icon = KIcon(properties["Icon"].toString());
+            properties["Image"].value<QDBusArgument>() >> image;
+            if (image.isEmpty()) {
+                QString iconName = properties["Icon"].toString();
+                if (!iconName.isEmpty()) {
+                    icon = KIcon(iconName);
+                }
             } else {
                 icon = imageVectorToPixmap(image);
             }
-            overlayIcon(&icon, &overlay);
+
+            if (!overlay.isNull()) {
+                overlayIcon(&icon, &overlay);
+            }
         }
 
         if (q->status() != Task::NeedsAttention) {
@@ -257,23 +266,30 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
         //Attention icon
         {
             ExperimentalKDbusImageVector image;
-            properties["AttentionImage"].value<QDBusArgument>()>>image;
-            if (image.size() == 0) {
-                attentionIcon = KIcon(properties["AttentionIcon"].toString());
+            properties["AttentionImage"].value<QDBusArgument>() >> image;
+            if (image.isEmpty()) {
+                QString iconName = properties["AttentionIcon"].toString();
+                if (!iconName.isEmpty()) {
+                    attentionIcon = KIcon(iconName);
+                }
             } else {
                 attentionIcon = imageVectorToPixmap(image);
             }
-            overlayIcon(&attentionIcon, &overlay);
+
+            if (!overlay.isNull()) {
+                overlayIcon(&icon, &overlay);
+            }
         }
 
         ExperimentalKDbusImageVector movie;
-        properties["AttentionMovie"].value<QDBusArgument>()>>movie;
+        properties["AttentionMovie"].value<QDBusArgument>() >> movie;
         syncMovie(movie);
 
         ExperimentalKDbusToolTipStruct toolTip;
-        properties["ToolTip"].value<QDBusArgument>()>>toolTip;
+        properties["ToolTip"].value<QDBusArgument>() >> toolTip;
         syncToolTip(toolTip);
     }
+
     delete call;
 }
 
@@ -313,6 +329,7 @@ void DBusSystemTrayTaskPrivate::overlayIcon(QIcon *icon, QIcon *overlay)
         QPainter p(&iconPixmap);
         p.drawPixmap(QRect(iconPixmap.width()-size, iconPixmap.height()-size, size, size), overlay->pixmap(size, size), QRect(0,0,size,size));
         p.end();
+        icon->addPixmap(iconPixmap);
     }
 
     iconPixmap = icon->pixmap(KIconLoader::SizeMedium, KIconLoader::SizeMedium);
@@ -321,6 +338,7 @@ void DBusSystemTrayTaskPrivate::overlayIcon(QIcon *icon, QIcon *overlay)
         QPainter p(&iconPixmap);
         p.drawPixmap(QRect(iconPixmap.width()-size, iconPixmap.height()-size, size, size), overlay->pixmap(size, size), QRect(0,0,size,size));
         p.end();
+        icon->addPixmap(iconPixmap);
     }
 
     iconPixmap = icon->pixmap(KIconLoader::SizeLarge, KIconLoader::SizeLarge);
@@ -329,6 +347,7 @@ void DBusSystemTrayTaskPrivate::overlayIcon(QIcon *icon, QIcon *overlay)
         QPainter p(&iconPixmap);
         p.drawPixmap(QRect(iconPixmap.width()-size, iconPixmap.height()-size, size, size), overlay->pixmap(size, size), QRect(0,0,size,size));
         p.end();
+        icon->addPixmap(iconPixmap);
     }
 
     //hopefully huge and enormous not necessary right now, since it's quite costly
