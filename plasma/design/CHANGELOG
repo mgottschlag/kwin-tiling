@@ -67,12 +67,14 @@ Plugins/Addons
          * Notes
              * Highlight current line
              * Change font size with Control + Scrollwheel
+             * Text formatting, such as alignment, bold, italic, etc
          * Folder View
             * Added keyboard navigation to iconview. User can navigate using direction keys and launch using Enter/Return.
          * Pastebin
              * New look and feel
              * Pasting through context menu
              * Using knotification to tell the user that the data has been saved online
+             * History of pastebin URLs
          * System tray
              * New D-Bus based system tray protocol
              * Jobs show file/dir progress and ETA
@@ -313,6 +315,7 @@ Plugins/Addons
         * NEW: Eyes
         * NEW: LCD Weather Station plasmoid
         * NEW: Quicklaunch plasmoid
+        * NEW: openDesktop Plasmoid: Basic interaction with openDesktop contacts
         * Task bar
             * Grouping: manually or by application
             * Sorting: manually or by program name
@@ -364,6 +367,8 @@ Plugins/Addons
         * NEW: Application jobs (aka kuiserver) engine; shows any published KJobs such as file operations
         * NEW: Executables: run commands and get their output from stdout and stderr
         * NEW: RSS
+        * NEW: Akonadi engine: emails, contacts and microblogs from Akonadi
+        * NEW: OCS engine: interface for scripted applets to Open Collaboration Services
         * NowPlaying
             * Plasma::Service for controlling media players
             * supports MPRIS
