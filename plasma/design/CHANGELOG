@@ -43,7 +43,6 @@ Plasma Desktop Shell
 
 Other Shells
 ------------
-* NEW: plasma-mid, a shell for mobile internet devices
 
 
 Tools
@@ -54,63 +53,67 @@ Tools
 Plugins/Addons
 --------------
 * Features
-     * Plasmoids and Containments
-         * Comics
-             * Added optional Nepomuk support when manually saving a comic strip.
-             * Added per comic setting to store the current position.
-         * File Watcher
-             * Added support for filtering (both regular expressions and exact matches are supported).
-         * Microblogging (was KDE Twitter)
-             * Added support for other Twitter API based services like identi.ca (that is based on laconi.ca)
-         * Pager
-             * User can choose to do nothing, toogle the desktop or the dashboard when he click on the current desktop.
-         * Notes
-             * Highlight current line
-             * Change font size with Control + Scrollwheel
-             * Text formatting, such as alignment, bold, italic, etc
-         * Folder View
-            * Added keyboard navigation to iconview. User can navigate using direction keys and launch using Enter/Return.
-         * Pastebin
-             * New look and feel
-             * Pasting through context menu
-             * Using knotification to tell the user that the data has been saved online
-             * History of pastebin URLs
-         * System tray
-             * New D-Bus based system tray protocol
-             * Jobs show file/dir progress and ETA
-             * Jobs are grouped together: there's one group for running jobs and one for completed jobs. So you can have a single bar to show progress of all jobs, or view the individual jobs by expanding the group.
-	     * Completed jobs have a different appearence and allow the user to open the destination file/directory.
-             * Notifications now show custom images like kopete's contact images.
-         * Taskbar
-             * New popup menu for grouped tasks with animation and tooltips for each item
-             * Tooltips of grouped tasks can show tooltips of multiple windows
-         * Web browser
-             * Real page zoom instead of just font scaling
-         * NEW: Unit converter
-         * LCD Weather Station
-             * New config dialog
-             * Use geolocation dataengine for initial city if available.
-             * Use Condition Icon for current weather and fallback to pressure if not available.
-             * Show pressure tendency arrows. BUG:184457
-         * System monitor
-             * Handle new/removed network interfaces in network monitor
-             * NEW: Memory monitor. BUG:182704
-             * temperature plotter uses now same range as analog meter
-             * Temperature widget now defaults to plotter in panel
-             * Show tooltips when in panel. BUG:180102
-             * Advanced config page added
-             * Plotter labels added
-         * Timer
-             * A timer can have a title
-             * Count down is restored after a plasma shutdown/restart
-             * User can hide seconds.
-         * Lancelot
-             * theming: Scrollbars follow Plasma style
-             * actions for system buttons are configurable
-             * highlighted path in application browser
-             * clear documents history
-             * places are loaded from Dolphin
-             * applications in menu are sorted
+    * Plasmoids and Containments
+        * NEW: openDesktop Plasmoid: Basic interaction with openDesktop contacts
+        * NEW: Unit converter
+        * Comics
+            * Added optional Nepomuk support when manually saving a comic strip.
+            * Added per comic setting to store the current position.
+        * File Watcher
+            * Added support for filtering (both regular expressions and exact matches are supported).
+        * Microblogging (was KDE Twitter)
+            * Added support for other Twitter API based services like identi.ca (that is based on laconi.ca)
+        * Pager
+            * User can choose to do nothing, toogle the desktop or the dashboard when he click on the current desktop.
+        * Notes
+            * Highlight current line
+            * Change font size with Control + Scrollwheel
+        * Folder View
+           * Added keyboard navigation to iconview. User can navigate using direction keys and launch using Enter/Return.
+        * Pastebin
+            * New look and feel
+            * Pasting through context menu
+            * Using knotification to tell the user that the data has been saved online
+            * History of pastebin URLs
+        * System tray
+            * New D-Bus based system tray protocol
+            * Jobs show file/dir progress and ETA
+            * Jobs are grouped together: there's one group for running jobs and one for completed jobs. So you can have a single bar to show progress of all jobs, or view the individual jobs by expanding the group.
+            * Completed jobs have a different appearence and allow the user to open the destination file/directory.
+            * Notifications now show custom images like kopete's contact images.
+        * Taskbar
+            * New popup menu for grouped tasks with animation and tooltips for each item
+            * Tooltips of grouped tasks can show tooltips of multiple windows
+        * Web browser
+            * Real page zoom instead of just font scaling
+        * LCD Weather Station
+            * New config dialog
+            * Use geolocation dataengine for initial city if available.
+            * Use Condition Icon for current weather and fallback to pressure if not available.
+            * Show pressure tendency arrows. BUG:184457
+        * System monitor
+            * Handle new/removed network interfaces in network monitor
+            * NEW: Memory monitor. BUG:182704
+            * temperature plotter uses now same range as analog meter
+            * Temperature widget now defaults to plotter in panel
+            * Show tooltips when in panel. BUG:180102
+            * Advanced config page added
+            * Plotter labels added
+        * Timer
+            * A timer can have a title
+            * Count down is restored after a plasma shutdown/restart
+            * User can hide seconds.
+        * Lancelot
+            * theming: Scrollbars follow Plasma style
+            * actions for system buttons are configurable
+            * highlighted path in application browser
+            * clear documents history
+            * places are loaded from Dolphin
+            * applications in menu are sorted
+
+    * DataEngines
+        * NEW: Akonadi engine: emails, contacts and microblogs from Akonadi
+        * NEW: OCS engine: interface for scripted applets to Open Collaboration Services
 
     * Wallpapers
         * Image plugin caches wallpaper between runs in single image mode
@@ -315,7 +318,6 @@ Plugins/Addons
         * NEW: Eyes
         * NEW: LCD Weather Station plasmoid
         * NEW: Quicklaunch plasmoid
-        * NEW: openDesktop Plasmoid: Basic interaction with openDesktop contacts
         * Task bar
             * Grouping: manually or by application
             * Sorting: manually or by program name
@@ -330,6 +332,7 @@ Plugins/Addons
         * Notes
             * Custom colors
             * Export notes to file
+            * Text formatting, such as alignment, bold, italic, etc
         * Clocks
             * Custom colors for digital clock
             * Standardized multi-timezone support in libplasmaclock
@@ -367,8 +370,6 @@ Plugins/Addons
         * NEW: Application jobs (aka kuiserver) engine; shows any published KJobs such as file operations
         * NEW: Executables: run commands and get their output from stdout and stderr
         * NEW: RSS
-        * NEW: Akonadi engine: emails, contacts and microblogs from Akonadi
-        * NEW: OCS engine: interface for scripted applets to Open Collaboration Services
         * NowPlaying
             * Plasma::Service for controlling media players
             * supports MPRIS
