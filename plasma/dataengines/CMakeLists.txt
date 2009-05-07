@@ -23,6 +23,7 @@ macro_optional_find_package(KdepimLibs)
 macro_log_feature(KDEPIMLIBS_FOUND "kdepimlibs" "KDE PIM libraries" "http://www.kde.org" FALSE "" "Needed for building several plasma dataengines")
 
 if(KDEPIMLIBS_FOUND)
+   add_subdirectory(akonadi)
    add_subdirectory(calendar)
    add_subdirectory(rss)
    add_subdirectory(akonadi)

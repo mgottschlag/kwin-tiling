@@ -1,4 +1,5 @@
 find_package(Boost REQUIRED)
+find_package(Akonadi REQUIRED)
 find_package(KdepimLibs REQUIRED)
 
 include_directories(
