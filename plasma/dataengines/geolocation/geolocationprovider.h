@@ -18,11 +18,11 @@
 #ifndef GEOLOCATIONPROVIDER_H
 #define GEOLOCATIONPROVIDER_H
 
-#include <QHash>
-#include <QObject>
-#include <QTimer>
+#include <QtCore/QHash>
+#include <QtCore/QObject>
+#include <QtCore/QTimer>
 
-#include <Plasma/DataEngine>
+#include <KDE/Plasma/DataEngine>
 
 #include "geolocation_export.h"
 
@@ -45,7 +45,7 @@ public:
     bool requestUpdate(UpdateTriggers trigger);
     bool populateSharedData();
 
-signals:
+Q_SIGNALS:
     void updated();
     void availabilityChanged(GeolocationProvider *provider);
 
@@ -56,7 +56,7 @@ protected:
     virtual void init();
     virtual void update();
 
-protected slots:
+protected Q_SLOTS:
     void setData(const Plasma::DataEngine::Data &data);
     void setData(const QString &key, const QVariant &value);
 
