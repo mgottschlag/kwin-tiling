@@ -99,6 +99,8 @@ class QuicklaunchApplet : public Plasma::Applet
          */
         void dropEvent(QGraphicsSceneDragDropEvent *event);
 
+        void dropApp(QGraphicsSceneDragDropEvent *event, bool droppedOnDialog);
+
         /**
          * Called when something in the geometry has changed
          */

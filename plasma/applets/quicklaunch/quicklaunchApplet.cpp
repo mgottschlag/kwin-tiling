@@ -356,13 +356,53 @@ QList<QAction*> QuicklaunchApplet::contextActions(QuicklaunchIcon *icon)
     return tempActions;
 }
 
+void QuicklaunchApplet::dropApp(QGraphicsSceneDragDropEvent *event, bool droppedOnDialog)
+{
+    int pos;
+    if (!droppedOnDialog) {
+        QPointF point = mapFromScene(event->scenePos());
+        int rowCount = m_innerLayout->rowCount();
+        kDebug() << "RowCount = " << rowCount;
+        int cols = static_cast<int>(ceil(1.0 * qMin(m_icons.size(), m_visibleIcons) / rowCount));
+        int col = static_cast<int>((round(point.x()) * cols / m_innerLayout->geometry().width()));
+        col = (col >= cols) ? col - 1 : col;
+        int row = static_cast<int>(floor(point.y() * rowCount / m_innerLayout->geometry().height()));
+        row = (row >= m_innerLayout->rowCount()) ? row - 1 : row;
+        kDebug() << "row = " << row << "cols = " << cols << "col = " << col;
+        pos = row * cols + col;
+        kDebug() << "position is " << pos;
+        if (pos >= m_icons.size()) {
+           pos = m_icons.size() - 1;
+        }
+    
+    } else {
+        QPointF point = event->pos();
+        for(int i = 0; i < m_dialogLayout->count(); i++) {
+           QGraphicsLayoutItem *item = m_dialogLayout->itemAt(i);
+           if (item->geometry().contains(point)) {
+	      //m_dialogLayout->insertItem(dropedItem, i + 1);
+	      pos = i+1+m_visibleIcons;
+              kDebug() << "The position of Droped Item in dialog is = " << pos;
+              break;
+	   }
+        }
+    }
+    if (dropHandler(pos, event->mimeData())) {
+       event->setDropAction(Qt::MoveAction);
+       event->accept();
+       saveConfig();
+       performUiRefactor();
+    }
+}
+
 bool QuicklaunchApplet::eventFilter(QObject * object, QEvent * event)
 {
     Q_UNUSED(object)
     if (event->type() == QEvent::GraphicsSceneDrop) {
-        dropEvent(static_cast<QGraphicsSceneDragDropEvent*>(event));
+        dropApp(static_cast<QGraphicsSceneDragDropEvent*>(event),true);
         return true;
     }
+
     return QObject::eventFilter(object, event);
 }
 
@@ -380,31 +420,8 @@ void QuicklaunchApplet::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 
 void QuicklaunchApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
-    int pos;
-    //if (!m_dialog || !m_dialog->geometry().contains(m_dialog->mapFromGlobal(QCursor::pos()))) {
-        // Calculate position
-        QPointF point = mapFromScene(event->scenePos());
-        int rowCount = m_innerLayout->rowCount();
-        int cols = static_cast<int>(ceil(1.0 * qMin(m_icons.size(), m_visibleIcons) / rowCount));
-        int col = static_cast<int>((round(point.x()) * cols / m_innerLayout->geometry().width()));
-        col = (col >= cols) ? col - 1 : col;
-        int row = static_cast<int>(floor(point.y() * rowCount / m_innerLayout->geometry().height()));
-        row = (row >= m_innerLayout->rowCount()) ? row - 1 : row;
-        pos = row * cols + col;
-    /*} else {
-        kDebug() << "WE'RE ON THE DIALOG";
-    }*/ //FIXME: Also get position of drop on the dialog, at the moment the Icon just gets appended instead of inserting to the correct position...
-
-    if (pos >= m_icons.size()) {
-        pos = m_icons.size() - 1;
-    }
-
-    if (dropHandler(pos, event->mimeData())) {
-        event->setDropAction(Qt::MoveAction);
-        event->accept();
-        saveConfig();
-        performUiRefactor();
-    }
+         kDebug()<< "I am in dropEvent";
+         dropApp(static_cast<QGraphicsSceneDragDropEvent*>(event),false);
 }
 
 void QuicklaunchApplet::addProgram(int index, const QString &url)
