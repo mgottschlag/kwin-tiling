@@ -2,4 +2,7 @@
 Type=ServiceType
 X-KDE-ServiceType=Plasma/GeolocationProvider
 Comment=Plasma Geolocation Provider
+Comment[sv]=Plasma geografisk lokalisering
+Comment[uk]=Інструмент геопозиціювання Плазми
+Comment[zh_TW]=Plasma Geolocation 提供者
 
