@@ -148,6 +148,7 @@ void Task::setStatus(Status status)
     if (d->status == status) {
         return;
     }
+    d->status = status;
 
     if (status == NeedsAttention) {
         setOrder(Last);

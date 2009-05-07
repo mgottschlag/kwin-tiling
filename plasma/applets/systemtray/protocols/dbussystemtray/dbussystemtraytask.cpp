@@ -431,6 +431,10 @@ void DBusSystemTrayTaskPrivate::syncStatus(QString newStatus)
 {
     Task::Status status = (Task::Status)q->metaObject()->enumerator(q->metaObject()->indexOfEnumerator("Status")).keyToValue(newStatus.toLatin1());
 
+    if (q->status() == status) {
+        return;
+    }
+
     if (status == Task::NeedsAttention) {
         if (movie.size() != 0) {
             if (!movieTimer) {
