@@ -31,12 +31,23 @@ libplasma
 
 Other Libraries
 ---------------
+* NEW: KNotificationItem library added to kdelibs/experimental/ which provides access to the new system tray protocol (complete with legacy fallback support)
 * NEW: ScreenPreviewWidget to libkworkspace that works with Plasma::Wallpaper or pixmaps that provides a nicely themed and appropriately sized "monitor" to show screen previews in
 * NEW: RememberTheMilk library added to kdeplasma-addons/libs
-* NEW: KNotificationItem library added to kdelibs/experimental/ which provides access to the new system tray protocol (complete with legacy fallback support)
+* NEW: Conversion librarya dd to kdeplasma-addons/libs
+    * Add fuel efficiency
+    * Add time
+    * Add power
+    * Add currency
+    * Add energy
+    * Add pressure
+    * More SI Units
+    * Add beaufort scale to velocity
+    * Add delisle, newton, rankine, reaumur & romer to temperature
 * libplasmaclock
     * Text to speech service (KTTSD) to read aloud the time
     * Holidays shown in pop-up calendar
+
 
 Developer Documentation
 -----------------------
@@ -166,17 +177,12 @@ Plugins/Addons
          * Converter
              * If not exact unit found offer possible mathes.
 
-    * Libraries
-         * NEW: Conversion library
-             * Add fuel efficiency
-             * Add time
-             * Add power
-             * Add currency
-             * Add energy
-             * Add pressure
-             * More SI Units
-             * Add beaufort scale to velocity
-             * Add delisle, newton, rankine, reaumur & romer to temperature
+    * ScriptEngines
+        * Simple JavaScript API
+            * Support for Url objects
+            * Added new Plasma::Widget entries
+            * Completed LinearLayout API
+            * file() method to get paths from the Plasmoid's package
 
 * Bugs
      * Plasmoids and Containments
