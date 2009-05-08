@@ -28,6 +28,7 @@ libplasma
         * NEW: ScrollWidget. A widget that puts scrollbars when it contains a widget bigger than him.
         * NEW: TextBrowser
         * TabBar styling and interaction improvements (animations, click-n-flick, ..)
+        * WebView can scroll its contents by simply dragging a point in the page with the mouse
 
 Other Libraries
 ---------------
@@ -69,6 +70,7 @@ Plasma Desktop Shell
     * Renamed binary from plasma to plasma-desktop; config files also changed as a result
     * Desktop Toolbox: it's smaller and shows the activity name if any is set
     * ZUI: the global actions such as add activity and lock desktop are on a global toolbox when the desktop is zoomed out.
+    * Configuration gui to activate a different activity for each desktop and to decouple the dashboard contents with desktop contents
     * Panels
         * access to spacers to control how widgets arrange themselves
         * 'Windows go below' mode
@@ -79,6 +81,7 @@ Other Shells
 * plasmoidviewer
     * supports loading uninstalled packages by passing the path to the package
     * can define the wallpaper to load
+    * can use a theme different from the one used in the workspace
     * improved containment usage, so loaded plasmoids behave more like they do in plasma-desktop
 
 Tools
@@ -92,6 +95,7 @@ Plugins/Addons
     * Plasmoids and Containments
         * NEW: Bubble Monitor: track system status via a lava lamp style visualization
         * NEW: Magnifique: View and magnify sections of the Plasma canvas
+        * NEW: Media player: Play video and audio files by dragging them on the desktop
         * NEW: openDesktop Plasmoid: Basic interaction with openDesktop contacts
         * NEW: RememberTheMilk: interface for the online time management service of the same name
         * NEW: System Load Viewer: simple yet effective retro-style system load and memory usage display
@@ -132,6 +136,7 @@ Plugins/Addons
             * Hovering of tasks (grouped or not) will request the window manager (at its discretion) to highlight those windows
         * Web browser
             * Real page zoom instead of just font scaling
+            * Can scroll the page by dragging the contents themselves
         * LCD Weather Station
             * New config dialog
             * Use geolocation dataengine for initial city if available.
@@ -171,7 +176,7 @@ Plugins/Addons
         * NEW: Virus: artificial life simulation, watch it colonize and eat your wallpaper!
         * NEW: Weather: selects wallpapers based on weather station information
         * NEW: Mandelbrot: draws fractals on the desktop; click and drag or zoom in/out to explore the Mandelbrot set
-        * NEW: Marble: interactiv desktop globe as your desktop background; powered by KDE's Marble
+        * NEW: Marble: interactive desktop globe as your desktop background; powered by KDE's Marble
 
     * Runners
          * Converter
