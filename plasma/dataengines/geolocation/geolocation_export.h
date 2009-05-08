@@ -25,7 +25,7 @@
 #include <kdemacros.h>
 
 #ifndef GEOLOCATION_EXPORT
-# if defined(MAKE_WEATHER_GEOLOCATION_LIB)
+# if defined(MAKE_PLASMA_GEOLOCATION_INTERFACE_LIB)
 /* We are building this library */
 #  define GEOLOCATION_EXPORT KDE_EXPORT
 # else
