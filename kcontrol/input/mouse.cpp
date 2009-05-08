@@ -629,6 +629,8 @@ void MouseConfig::defaults()
   mk_time_to_max->setValue(5000);
   mk_max_speed->setValue(1000);
   mk_curve->setValue(0);
+  
+  themetab->defaults();
 
   checkAccess();
 

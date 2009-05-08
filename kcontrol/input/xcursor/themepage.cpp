@@ -244,6 +244,8 @@ void ThemePage::load()
 
 void ThemePage::defaults()
 {
+    QModelIndex defaultIndex = proxy->findIndex("Oxygen_White");
+    view->setCurrentIndex(defaultIndex);
 }
 
 
