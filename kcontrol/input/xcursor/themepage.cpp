@@ -75,6 +75,7 @@ ThemePage::ThemePage(QWidget *parent)
     view->setModel(proxy);
     view->setItemDelegate(new ItemDelegate(this));
     view->setIconSize(QSize(size, size));
+    view->setSelectionMode( QAbstractItemView::SingleSelection );
 
     // Make sure we find out about selection changes
     connect(view->selectionModel(),
@@ -203,6 +204,7 @@ void ThemePage::save()
 
 void ThemePage::load()
 {
+    view->selectionModel()->clear();
     // Get the name of the theme libXcursor currently uses
     QString currentTheme = XcursorGetTheme(x11Info().display());
 
@@ -244,7 +246,8 @@ void ThemePage::load()
 
 void ThemePage::defaults()
 {
-    QModelIndex defaultIndex = proxy->findIndex("Oxygen_White");
+    view->selectionModel()->clear();
+    QModelIndex defaultIndex = proxy->findIndex("Oxygen_Black");
     view->setCurrentIndex(defaultIndex);
 }
 
