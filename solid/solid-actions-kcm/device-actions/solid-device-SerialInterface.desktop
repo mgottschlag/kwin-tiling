@@ -46,6 +46,7 @@ Name=Object Name
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi
+Name[fi]=Objektinimi
 Name[ga]=Ainm Réada
 Name[gu]=વસ્તુ નામ
 Name[ja]=オブジェクト名
@@ -66,6 +67,7 @@ Name[zh_TW]=物件名稱
 [Desktop Action port]
 Name=Port
 Name[el]=Θύρα
+Name[fi]=Portti
 Name[gu]=પોર્ટ
 Name[ja]=ポート
 Name[km]=ច្រក

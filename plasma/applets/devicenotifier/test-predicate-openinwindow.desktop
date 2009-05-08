@@ -6,6 +6,7 @@ Actions=open;
 [Desktop Action open]
 Name=Open with File Manager
 Name[de]=Mit Dateimanager öffnen
+Name[fi]=Avaa tiedostonhallintaohjelmalla
 Name[km]=បើក​ជា​មួយ​កម្មវិធី​គ្រប់គ្រង​ឯកសារ
 Name[pt]=Abrir com o Gestor de Ficheiros
 Name[pt_BR]=Abrir com o gerenciador de arquivos
