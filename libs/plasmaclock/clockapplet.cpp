@@ -74,7 +74,7 @@ public:
           clipboardMenu(0),
           label(0),
           forceTzDisplay(false),
-          displayHolidays(true)
+          displayHolidays(false)
     {}
 
     ClockApplet *q;
@@ -597,7 +597,7 @@ void ClockApplet::init()
         tmpRegion = QString::null;
     }
 
-    d->displayHolidays = cg.readEntry("displayHolidays", true);
+    d->displayHolidays = cg.readEntry("displayHolidays", false);
     d->holidaysRegion = cg.readEntry("holidaysRegion", tmpRegion);
     d->announceInterval = cg.readEntry("announceInterval", 0);
 
