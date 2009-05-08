@@ -109,7 +109,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
        " the \"Require password\" feature of the screen saver; if you do not, you can still"
        " explicitly lock the session using the desktop's \"Lock Session\" action.</p>"));
 
-    setButtons( KCModule::Help | KCModule::Default | KCModule::Apply );
+    setButtons( KCModule::Help |  KCModule::Apply );
 
 
 
