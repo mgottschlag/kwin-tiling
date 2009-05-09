@@ -86,6 +86,9 @@ KRandRModule::~KRandRModule(void)
 
 void KRandRModule::defaults()
 {
+        if (!m_display->isValid()) {
+                return;
+        }
 #ifdef HAS_RANDR_1_2
 	if (RandR::has_1_2)
 		m_config->defaults();
@@ -98,6 +101,9 @@ void KRandRModule::load()
 {
 	kDebug() << "Loading KRandRModule...";
 	
+        if (!m_display->isValid()) {
+                return;
+        }
 #ifdef HAS_RANDR_1_2
 	if (RandR::has_1_2)
 		m_config->load();
@@ -110,6 +116,9 @@ void KRandRModule::load()
 
 void KRandRModule::save()
 {
+        if (!m_display->isValid()) {
+                return;
+        }
 #ifdef HAS_RANDR_1_2
 	if (RandR::has_1_2)
 		m_config->save();
@@ -121,6 +130,9 @@ void KRandRModule::save()
 
 void KRandRModule::apply()
 {
+        if (!m_display->isValid()) {
+                return;
+        }
 #ifdef HAS_RANDR_1_2
 	if (RandR::has_1_2)
 		m_config->apply();
