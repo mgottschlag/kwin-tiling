@@ -204,7 +204,7 @@ void FontUseItem::applyFontDiff( const QFont &fnt, int fontDiffFlags )
     _font.setPointSize( fnt.pointSize() );
   }
   if (fontDiffFlags & KFontChooser::FontDiffFamily) {
-    if (!isFixedOnly()) _font.setFamily( fnt.family() );
+    if (!isFixedOnly() || QFontInfo(fnt).fixedPitch()) _font.setFamily( fnt.family() );
   }
   if (fontDiffFlags & KFontChooser::FontDiffStyle) {
     _font.setBold( fnt.bold() );
