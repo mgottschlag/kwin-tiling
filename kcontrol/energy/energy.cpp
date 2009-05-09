@@ -184,6 +184,7 @@ KEnergy::KEnergy(QWidget *parent, const QVariantList &args)
          hbox->addWidget(lbl);
     }
 
+#if 0    // Re-enable when / if we have permission to use official logo
     KUrlLabel *logo = new KUrlLabel(this);
     logo->setUrl("http://www.energystar.gov");
     logo->setPixmap(QPixmap(KStandardDirs::locate("data", "kcontrol/pics/energybig.png")));
@@ -193,6 +194,7 @@ KEnergy::KEnergy(QWidget *parent, const QVariantList &args)
 
     hbox->addStretch();
     hbox->addWidget(logo);
+#endif
 
     // Sliders
     m_pStandbySlider = new KIntNumInput(m_Standby, this);
