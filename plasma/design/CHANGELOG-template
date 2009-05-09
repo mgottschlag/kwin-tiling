@@ -1,10 +1,10 @@
-libplasma 3.<version> / KDE 4.<version>
-=======================
+Significant changes in libplasma 3.<version> / KDE 4.<version>
+==============================================
 libplasma
 ---------
 * Features
 
-* Bugs
+* Bugfixes
 
 Developer Documentation
 -----------------------
@@ -16,7 +16,7 @@ Plasma Desktop Shell
 --------------------
 * Features
 
-* Bugs
+* Bugfixes
 
 
 Other Shells
@@ -32,12 +32,12 @@ KRunner
 -------
 * Features
 
-* Bugs
+* Bugfixes
 
 
 Platforms
 ---------
 * Features
 
-* Bugs
+* Bugfixes
 
