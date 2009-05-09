@@ -19,160 +19,32 @@
 #include <math.h>
 #include <QDateTime>
 
-/*
- *   This class is ported from public domain javascript code:
- *   http://www.srrb.noaa.gov/highlights/solarrise/azel.html
- *   http://www.srrb.noaa.gov/highlights/sunrise/sunrise.html
- *   Calculation details:
- *   http://www.srrb.noaa.gov/highlights/sunrise/calcdetails.html
- */
-
-class NOAASolarCalc
+namespace NOAASolarCalc
 {
-    public:
-        static void   calc(const QDateTime &dt, double longitude, double latitude,
-                           double zone, double *jd, double *century, double *eqTime,
-                           double *solarDec, double *azimuth, double *zenith);
-        static double radToDeg(double angleRad);
-        static double degToRad(double angleDeg);
-        static double calcJD(double year, double month, double day);
-        static QDateTime calcDateFromJD(double jd, double minutes, double zone);
-        static double calcTimeJulianCent(double jd);
-        static double calcJDFromJulianCent(double t);
-        static double calcGeomMeanLongSun(double t);
-        static double calcGeomMeanAnomalySun(double t);
-        static double calcEccentricityEarthOrbit(double t);
-        static double calcSunEqOfCenter(double t);
-        static double calcSunTrueLong(double t);
-        static double calcSunTrueAnomaly(double t);
-        static double calcSunRadVector(double t);
-        static double calcSunApparentLong(double t);
-        static double calcMeanObliquityOfEcliptic(double t);
-        static double calcObliquityCorrection(double t);
-        static double calcSunRtAscension(double t);
-        static double calcSunDeclination(double t);
-        static double calcEquationOfTime(double t);
-        static void   calcAzimuthAndZenith(QDateTime now, double eqTime, double zone,
-                                           double solarDec, double latitude, double longitude,
-                                           double *zenith, double *azimuth);
-        static double calcElevation(double zenith);
-        static double calcHourAngle(double zenith, double solarDec, double latitude);
-        static void   calcTimeUTC(double zenith, bool rise, double *jd, double *minutes,
-                                  double latitude, double longitude);
-        static double calcSolNoonUTC(double t, double longitude);
-};
-
-SolarPosition::SolarPosition()
-{
-}
-
-SolarPosition::~SolarPosition()
-{
-}
-
-void SolarPosition::appendData(Plasma::DataEngine::Data &data)
-{
-    //QTime time;
-    //time.start();
-    double longitude = data["Longitude"].toDouble();
-    double latitude = data["Latitude"].toDouble();
-    double zone = data["Offset"].toDouble() / -3600.0;
-    QDateTime dt(data["Date"].toDate(), data["Time"].toTime());
-
-    double jd;
-    double century;
-    double eqTime;
-    double solarDec;
-    double azimuth;
-    double zenith;
-    
-    NOAASolarCalc::calc(dt, longitude, latitude, zone, &jd, &century, &eqTime,
-                        &solarDec, &azimuth, &zenith);
-    data["Equation of Time"] = eqTime;
-    data["Solar Declination"] = solarDec;
-    data["Azimuth"] = azimuth;
-    data["Zenith"] = zenith;
-    data["Corrected Elevation"] = NOAASolarCalc::calcElevation(zenith);
-
-    const QString cacheKey = QString("%1|%2|%3")
-            .arg(latitude).arg(longitude).arg(dt.date().toString(Qt::ISODate));
-    if (!m_cache.contains(cacheKey)) {
-        double minutes;
-        double jd2;
-        
-        jd2 = jd;
-        NOAASolarCalc::calcTimeUTC(90.833, true, &jd2, &minutes, latitude, longitude);
-        m_cache[cacheKey]["Apparent Sunrise"] = NOAASolarCalc::calcDateFromJD(jd2, minutes, zone);
-        jd2 = jd;
-        NOAASolarCalc::calcTimeUTC(90.833, false, &jd2, &minutes, latitude, longitude);
-        m_cache[cacheKey]["Apparent Sunset"] = NOAASolarCalc::calcDateFromJD(jd2, minutes, zone);
-
-        jd2 = jd;
-        NOAASolarCalc::calcTimeUTC(90.0, true, &jd2, &minutes, latitude, longitude);
-        m_cache[cacheKey]["Sunrise"] = NOAASolarCalc::calcDateFromJD(jd2, minutes, zone);
-        jd2 = jd;
-        NOAASolarCalc::calcTimeUTC(90.0, false, &jd2, &minutes, latitude, longitude);
-        m_cache[cacheKey]["Sunset"] = NOAASolarCalc::calcDateFromJD(jd2, minutes, zone);
-
-        jd2 = jd;
-        NOAASolarCalc::calcTimeUTC(96.0, true, &jd2, &minutes, latitude, longitude);
-        m_cache[cacheKey]["Civil Dawn"] = NOAASolarCalc::calcDateFromJD(jd2, minutes, zone);
-        jd2 = jd;
-        NOAASolarCalc::calcTimeUTC(96.0, false, &jd2, &minutes, latitude, longitude);
-        m_cache[cacheKey]["Civil Dusk"] = NOAASolarCalc::calcDateFromJD(jd2, minutes, zone);
-
-        jd2 = jd;
-        NOAASolarCalc::calcTimeUTC(102.0, true, &jd2, &minutes, latitude, longitude);
-        m_cache[cacheKey]["Nautical Dawn"] = NOAASolarCalc::calcDateFromJD(jd2, minutes, zone);
-        jd2 = jd;
-        NOAASolarCalc::calcTimeUTC(102.0, false, &jd2, &minutes, latitude, longitude);
-        m_cache[cacheKey]["Nautical Dusk"] = NOAASolarCalc::calcDateFromJD(jd2, minutes, zone);
-
-        jd2 = jd;
-        NOAASolarCalc::calcTimeUTC(108.0, true, &jd2, &minutes, latitude, longitude);
-        m_cache[cacheKey]["Astronomical Dawn"] = NOAASolarCalc::calcDateFromJD(jd2, minutes, zone);
-        jd2 = jd;
-        NOAASolarCalc::calcTimeUTC(108.0, false, &jd2, &minutes, latitude, longitude);
-        m_cache[cacheKey]["Astronomical Dusk"] = NOAASolarCalc::calcDateFromJD(jd2, minutes, zone);
-
-        century = NOAASolarCalc::calcTimeJulianCent(jd);
-        minutes = NOAASolarCalc::calcSolNoonUTC(century, longitude);
-        dt = NOAASolarCalc::calcDateFromJD(jd, minutes, zone);
-        NOAASolarCalc::calc(dt, longitude, latitude, zone, &jd, &century, &eqTime,
-                            &solarDec, &azimuth, &zenith);
-        m_cache[cacheKey]["Solar Noon"] = dt;
-        m_cache[cacheKey]["Min Zenith"] = zenith;
-        m_cache[cacheKey]["Max Corrected Elevation"] = NOAASolarCalc::calcElevation(zenith);
-    }
-    data.unite(m_cache[cacheKey]);
-    //kDebug() << "Calculation took:" << time.elapsed() << "ms";
-    //kDebug() << data;
-}
-
-void NOAASolarCalc::calc(const QDateTime &dt, double longitude, double latitude,
-                         double zone, double *jd, double *century, double *eqTime,
-                         double *solarDec, double *azimuth, double *zenith)
+void calc(const QDateTime &dt, double longitude, double latitude,
+          double zone, double *jd, double *century, double *eqTime,
+          double *solarDec, double *azimuth, double *zenith)
 {
     double timenow = dt.time().hour() + dt.time().minute() / 60.0 +
                      dt.time().second() / 3600.0 + zone;
-    *jd = NOAASolarCalc::calcJD(dt.date().year(), dt.date().month(), dt.date().day());
-    *century = NOAASolarCalc::calcTimeJulianCent(*jd + timenow / 24.0);
-    //double earthRadVec = NOAASolarCalc::calcSunRadVector(*century);
-    //double alpha = NOAASolarCalc::calcSunRtAscension(*century);
-    *eqTime = NOAASolarCalc::calcEquationOfTime(*century);
-    *solarDec = NOAASolarCalc::calcSunDeclination(*century);
-    NOAASolarCalc::calcAzimuthAndZenith(dt, *eqTime, zone, *solarDec, latitude, longitude,
+    *jd = calcJD(dt.date().year(), dt.date().month(), dt.date().day());
+    *century = calcTimeJulianCent(*jd + timenow / 24.0);
+    //double earthRadVec = calcSunRadVector(*century);
+    //double alpha = calcSunRtAscension(*century);
+    *eqTime = calcEquationOfTime(*century);
+    *solarDec = calcSunDeclination(*century);
+    calcAzimuthAndZenith(dt, *eqTime, zone, *solarDec, latitude, longitude,
                                         zenith, azimuth);
 }
 
 // Convert radian angle to degrees
-double NOAASolarCalc::radToDeg(double angleRad)
+double radToDeg(double angleRad)
 {
     return (180.0 * angleRad / M_PI);
 }
 
 // Convert degree angle to radians
-double NOAASolarCalc::degToRad(double angleDeg)
+double degToRad(double angleDeg)
 {
     return (M_PI * angleDeg / 180.0);
 }
@@ -191,7 +63,7 @@ double NOAASolarCalc::degToRad(double angleDeg)
 //*   Number is returned for start of day.  Fractional days should be   */
 //*   added later.                                                      */
 //***********************************************************************/
-double NOAASolarCalc::calcJD(double year, double month, double day)
+double calcJD(double year, double month, double day)
 {
     if (month <= 2) {
         year -= 1;
@@ -214,7 +86,7 @@ double NOAASolarCalc::calcJD(double year, double month, double day)
 //*   QDateTime                                                         */
 //* Note:                                                               */
 //***********************************************************************/
-QDateTime NOAASolarCalc::calcDateFromJD(double jd, double minutes, double zone)
+QDateTime calcDateFromJD(double jd, double minutes, double zone)
 {
     QDateTime result;
     
@@ -265,7 +137,7 @@ QDateTime NOAASolarCalc::calcDateFromJD(double jd, double minutes, double zone)
 //* Return value:                                                       */
 //*   the T value corresponding to the Julian Day                       */
 //***********************************************************************/
-double NOAASolarCalc::calcTimeJulianCent(double jd)
+double calcTimeJulianCent(double jd)
 {
     return (jd - 2451545.0) / 36525.0;
 }
@@ -279,7 +151,7 @@ double NOAASolarCalc::calcTimeJulianCent(double jd)
 //* Return value:                                                       */
 //*   the Julian Day corresponding to the t value                       */
 //***********************************************************************/
-double NOAASolarCalc::calcJDFromJulianCent(double t)
+double calcJDFromJulianCent(double t)
 {
     return t * 36525.0 + 2451545.0;
 }
@@ -293,7 +165,7 @@ double NOAASolarCalc::calcJDFromJulianCent(double t)
 //* Return value:                                                       */
 //*   the Geometric Mean Longitude of the Solar in degrees              */
 //***********************************************************************/
-double NOAASolarCalc::calcGeomMeanLongSun(double t)
+double calcGeomMeanLongSun(double t)
 {
     double L0 = 280.46646 + t * (36000.76983 + 0.0003032 * t);
     while (L0 > 360.0) {
@@ -314,7 +186,7 @@ double NOAASolarCalc::calcGeomMeanLongSun(double t)
 //* Return value:                                                       */
 //*   the Geometric Mean Anomaly of the Solar in degrees                */
 //***********************************************************************/
-double NOAASolarCalc::calcGeomMeanAnomalySun(double t)
+double calcGeomMeanAnomalySun(double t)
 {
     return 357.52911 + t * (35999.05029 - 0.0001537 * t); // in degrees
 }
@@ -328,7 +200,7 @@ double NOAASolarCalc::calcGeomMeanAnomalySun(double t)
 //* Return value:                                                       */
 //*   the unitless eccentricity                                         */
 //***********************************************************************/
-double NOAASolarCalc::calcEccentricityEarthOrbit(double t)
+double calcEccentricityEarthOrbit(double t)
 {
     return 0.016708634 - t * (0.000042037 + 0.0000001267 * t); // unitless
 }
@@ -342,7 +214,7 @@ double NOAASolarCalc::calcEccentricityEarthOrbit(double t)
 //* Return value:                                                       */
 //*   in degrees                                                        */
 //***********************************************************************/
-double NOAASolarCalc::calcSunEqOfCenter(double t)
+double calcSunEqOfCenter(double t)
 {
     double m = calcGeomMeanAnomalySun(t);
 
@@ -365,7 +237,7 @@ double NOAASolarCalc::calcSunEqOfCenter(double t)
 //* Return value:                                                       */
 //*   solar's true longitude in degrees                                 */
 //***********************************************************************/
-double NOAASolarCalc::calcSunTrueLong(double t)
+double calcSunTrueLong(double t)
 {
     double l0 = calcGeomMeanLongSun(t);
     double c = calcSunEqOfCenter(t);
@@ -382,7 +254,7 @@ double NOAASolarCalc::calcSunTrueLong(double t)
 //* Return value:                                                       */
 //*   solar's true anamoly in degrees                                   */
 //***********************************************************************/
-double NOAASolarCalc::calcSunTrueAnomaly(double t)
+double calcSunTrueAnomaly(double t)
 {
     double m = calcGeomMeanAnomalySun(t);
     double c = calcSunEqOfCenter(t);
@@ -399,7 +271,7 @@ double NOAASolarCalc::calcSunTrueAnomaly(double t)
 //* Return value:                                                       */
 //*   solar radius vector in AUs                                        */
 //***********************************************************************/
-double NOAASolarCalc::calcSunRadVector(double t)
+double calcSunRadVector(double t)
 {
     double v = calcSunTrueAnomaly(t);
     double e = calcEccentricityEarthOrbit(t);
@@ -417,7 +289,7 @@ double NOAASolarCalc::calcSunRadVector(double t)
 //* Return value:                                                       */
 //*   solar's apparent longitude in degrees                             */
 //***********************************************************************/
-double NOAASolarCalc::calcSunApparentLong(double t)
+double calcSunApparentLong(double t)
 {
     double o = calcSunTrueLong(t);
 
@@ -435,7 +307,7 @@ double NOAASolarCalc::calcSunApparentLong(double t)
 //* Return value:                                                       */
 //*   mean obliquity in degrees                                         */
 //***********************************************************************/
-double NOAASolarCalc::calcMeanObliquityOfEcliptic(double t)
+double calcMeanObliquityOfEcliptic(double t)
 {
     double seconds = 21.448 - t * (46.8150 + t * (0.00059 - t * (0.001813)));
     return 23.0 + (26.0 + (seconds/60.0)) / 60.0; // in degrees
@@ -450,7 +322,7 @@ double NOAASolarCalc::calcMeanObliquityOfEcliptic(double t)
 //* Return value:                                                       */
 //*   corrected obliquity in degrees                                    */
 //***********************************************************************/
-double NOAASolarCalc::calcObliquityCorrection(double t)
+double calcObliquityCorrection(double t)
 {
     double e0 = calcMeanObliquityOfEcliptic(t);
 
@@ -467,7 +339,7 @@ double NOAASolarCalc::calcObliquityCorrection(double t)
 //* Return value:                                                       */
 //*   solar's right ascension in degrees                                */
 //***********************************************************************/
-double NOAASolarCalc::calcSunRtAscension(double t)
+double calcSunRtAscension(double t)
 {
     double e = calcObliquityCorrection(t);
     double lambda = calcSunApparentLong(t);
@@ -486,7 +358,7 @@ double NOAASolarCalc::calcSunRtAscension(double t)
 //* Return value:                                                       */
 //*   solar's declination in degrees                                    */
 //***********************************************************************/
-double NOAASolarCalc::calcSunDeclination(double t)
+double calcSunDeclination(double t)
 {
     double e = calcObliquityCorrection(t);
     double lambda = calcSunApparentLong(t);
@@ -507,7 +379,7 @@ double NOAASolarCalc::calcSunDeclination(double t)
 //* Return value:                                                       */
 //*   hour angle of sunset in radians                                   */
 //***********************************************************************/
-double NOAASolarCalc::calcHourAngle(double zenith, double solarDec, double latitude)
+double calcHourAngle(double zenith, double solarDec, double latitude)
 {
     double latRad = degToRad(latitude);
     double sdRad  = degToRad(solarDec);
@@ -529,7 +401,7 @@ double NOAASolarCalc::calcHourAngle(double zenith, double solarDec, double latit
 //* Return value:                                                       */
 //*   equation of time in minutes of time                               */
 //***********************************************************************/
-double NOAASolarCalc::calcEquationOfTime(double t)
+double calcEquationOfTime(double t)
 {
     double epsilon = calcObliquityCorrection(t);
     double l0 = calcGeomMeanLongSun(t);
@@ -562,7 +434,7 @@ double NOAASolarCalc::calcEquationOfTime(double t)
 //* Return value:                                                       */
 //*   time in minutes from zero Z                                       */
 //***********************************************************************/
-double NOAASolarCalc::calcSolNoonUTC(double t, double longitude)
+double calcSolNoonUTC(double t, double longitude)
 {
     // First pass uses approximate solar noon to calculate eqtime
     double tnoon = calcTimeJulianCent(calcJDFromJulianCent(t) + longitude / 360.0);
@@ -591,8 +463,8 @@ double NOAASolarCalc::calcSolNoonUTC(double t, double longitude)
 //* Return value:                                                       */
 //*   time in minutes from zero Z                                       */
 //***********************************************************************/
-void NOAASolarCalc::calcTimeUTC(double zenith, bool rise, double *jd, double *minutes,
-                                double latitude, double longitude)
+void calcTimeUTC(double zenith, bool rise, double *jd, double *minutes,
+                 double latitude, double longitude)
 {
     forever {
         double t = calcTimeJulianCent(*jd);
@@ -633,9 +505,9 @@ void NOAASolarCalc::calcTimeUTC(double zenith, bool rise, double *jd, double *mi
     }
 }
 
-void NOAASolarCalc::calcAzimuthAndZenith(QDateTime dt, double eqTime, double zone,
-                                         double solarDec, double latitude, double longitude,
-                                         double *zenith, double *azimuth)
+void calcAzimuthAndZenith(QDateTime dt, double eqTime, double zone,
+                          double solarDec, double latitude, double longitude,
+                          double *zenith, double *azimuth)
 {
     double solarTimeFix = eqTime - 4.0 * longitude + 60.0 * zone;
     double trueSolarTime = dt.time().hour() * 60.0 + dt.time().minute() +
@@ -692,7 +564,7 @@ void NOAASolarCalc::calcAzimuthAndZenith(QDateTime dt, double eqTime, double zon
     }
 }
 
-double NOAASolarCalc::calcElevation(double zenith)
+double calcElevation(double zenith)
 {
     double exoatmElevation = 90.0 - zenith;
     double refractionCorrection;
@@ -715,4 +587,5 @@ double NOAASolarCalc::calcElevation(double zenith)
     double solarZen = zenith - refractionCorrection;
     return 90.0 - solarZen;
 }
+} // namespace NOAASolarCalc
 

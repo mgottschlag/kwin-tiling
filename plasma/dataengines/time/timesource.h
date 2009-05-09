@@ -1,5 +1,5 @@
 /*
- *   Copyright 2007 Aaron Seigo <aseigo@kde.org>
+ *   Copyright 2009 Aaron Seigo <aseigo@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
@@ -17,32 +17,35 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef TIMEENGINE_H
-#define TIMEENGINE_H
+#ifndef TIMESOURCE_H
+#define TIMESOURCE_H
 
-#include <Plasma/DataEngine>
+#include <KDateTime>
 
-/**
- * This engine provides the current date and time for a given
- * timezone. Optionally it can also provide solar position info.
- *
- * "Local" is a special source that is an alias for the current
- * timezone.
- */
-class TimeEngine : public Plasma::DataEngine
+#include <Plasma/DataContainer>
+
+class TimeSource : public Plasma::DataContainer
 {
     Q_OBJECT
 
-    public:
-        TimeEngine(QObject *parent, const QVariantList &args);
-        ~TimeEngine();
+public:
+    explicit TimeSource(const QString &name, QObject *parent = 0);
+    void updateTime();
 
-        void init();
-        QStringList sources() const;
+private:
+    QString parseName(const QString &name);
+    void addMoonPhaseData(const QDateTime &dt);
+    void addSolarPositionData(const QDateTime &dt);
+    void addDailySolarPositionData(const QDateTime &dt);
 
-    protected:
-        bool sourceRequestEvent(const QString &name);
-        bool updateSourceEvent(const QString &source);
+    QString m_tzName;
+    KTimeZone m_tz;
+    int m_offset;
+    double m_latitude;
+    double m_longitude;
+    bool m_moonPhase : 1;
+    bool m_solarPosition : 1;
 };
 
-#endif // TIMEENGINE_H
+#endif
+

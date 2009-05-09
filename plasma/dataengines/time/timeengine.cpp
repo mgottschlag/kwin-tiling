@@ -29,8 +29,7 @@
 #include <KSystemTimeZones>
 #include <KDateTime>
 
-#include "moonphase.h"
-#include "solarposition.h"
+#include "timesource.h"
 
 //timezone is defined in msvc
 #ifdef timezone
@@ -39,7 +38,6 @@
 
 TimeEngine::TimeEngine(QObject *parent, const QVariantList &args)
     : Plasma::DataEngine(parent, args)
-    , solarPosition(0)
 {
     Q_UNUSED(args)
     setMinimumPollingInterval(333);
@@ -51,7 +49,6 @@ TimeEngine::TimeEngine(QObject *parent, const QVariantList &args)
 
 TimeEngine::~TimeEngine()
 {
-    delete solarPosition;
 }
 
 void TimeEngine::init()
@@ -68,88 +65,24 @@ QStringList TimeEngine::sources() const
     return timezones;
 }
 
-QString TimeEngine::parse(const QString &tz, QHash<QString, QString>* args)
-{
-    if (tz.indexOf('|') > 0) {
-        QStringList list = tz.split('|', QString::SkipEmptyParts);
-
-        for (int i = 1; i < list.size(); ++i) {
-            const QString arg = list[i];
-            int n = arg.indexOf('=');
-            if (n >= 0) {
-                args->insert(arg.mid(0, n), arg.mid(n + 1));
-            } else {
-                args->insert(arg, QString());
-            }
-        }
-        return list[0];
-    }
-    return tz;
-}
-
 bool TimeEngine::sourceRequestEvent(const QString &name)
 {
-    return updateSourceEvent(name);
+    addSource(new TimeSource(name));
+    return true;
 }
 
 bool TimeEngine::updateSourceEvent(const QString &tz)
 {
-    QHash<QString, QString> args;
-    QString timezone = parse(tz, &args);
-    DataEngine::Data data;
+    TimeSource *s = qobject_cast<TimeSource *>(containerForSource(tz));
 
-    static const QString localName = I18N_NOOP("Local");
-    if (timezone == localName) {
-        data[I18N_NOOP("Time")] = QTime::currentTime();
-        data[I18N_NOOP("Date")] = QDate::currentDate();
-        data[I18N_NOOP("Offset")] = KSystemTimeZones::local().currentOffset();
-        // this is relatively cheap - KSTZ::local() is cached
-        timezone = KSystemTimeZones::local().name();
-    } else {
-        KTimeZone newTz = KSystemTimeZones::zone(tz);
-        if (!newTz.isValid()) {
-            return false;
-        }
-        KDateTime dt = KDateTime::currentDateTime(newTz);
-        data[I18N_NOOP("Time")] = dt.time();
-        data[I18N_NOOP("Date")] = dt.date();
-        data[I18N_NOOP("Offset")] = newTz.currentOffset();
+    if (s) {
+        s->updateTime();
+        scheduleSourcesUpdated();
+        return true;
     }
 
-    QString trTimezone = i18n(timezone.toUtf8());
-    data[I18N_NOOP("Timezone")] = trTimezone;
-    
-    QStringList tzParts = trTimezone.split("/");
-    data[I18N_NOOP("Timezone Continent")] = tzParts.value(0);
-    data[I18N_NOOP("Timezone City")] = tzParts.value(1);
-
-    if (args.count() > 0) {
-        static const QString latitude = I18N_NOOP("Latitude");
-        static const QString longitude = I18N_NOOP("Longitude");
-        
-        data[latitude] = args[latitude].toDouble();
-        data[longitude] = args[longitude].toDouble();
-        QDateTime dt = QDateTime::fromString(args[I18N_NOOP("DateTime")], Qt::ISODate);
-        if (dt.date().isValid()) {
-            data[I18N_NOOP("Date")] = dt.date();
-        }
-        if (dt.time().isValid()) {
-            data[I18N_NOOP("Time")] = dt.time();
-        }
-        if (args.contains(I18N_NOOP("Solar"))) {
-            if (!solarPosition) {
-                solarPosition = new SolarPosition;
-            }
-            solarPosition->appendData(data);
-        }
-        if (args.contains(I18N_NOOP("Moon"))) {
-            appendMoonphase(data);
-        }
-    }
-    setData(tz, data);
-    return true;
+    return false;
 }
-
 
 K_EXPORT_PLASMA_DATAENGINE(time, TimeEngine)
 

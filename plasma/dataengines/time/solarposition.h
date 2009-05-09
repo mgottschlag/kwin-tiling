@@ -19,17 +19,48 @@
 #define SOLARPOSITION_H
 
 #include <Plasma/DataEngine>
+/*
+ *   These function were ported from public domain javascript code:
+ *   http://www.srrb.noaa.gov/highlights/solarrise/azel.html
+ *   http://www.srrb.noaa.gov/highlights/sunrise/sunrise.html
+ *   Calculation details:
+ *   http://www.srrb.noaa.gov/highlights/sunrise/calcdetails.html
+ */
 
-class SolarPosition
+namespace NOAASolarCalc
 {
-    public:
-        SolarPosition();
-        virtual ~SolarPosition();
 
-        void appendData(Plasma::DataEngine::Data &data);
+void calc(const QDateTime &dt, double longitude, double latitude,
+          double zone, double *jd, double *century, double *eqTime,
+          double *solarDec, double *azimuth, double *zenith);
+double radToDeg(double angleRad);
+double degToRad(double angleDeg);
+double calcJD(double year, double month, double day);
+QDateTime calcDateFromJD(double jd, double minutes, double zone);
+double calcTimeJulianCent(double jd);
+double calcJDFromJulianCent(double t);
+double calcGeomMeanLongSun(double t);
+double calcGeomMeanAnomalySun(double t);
+double calcEccentricityEarthOrbit(double t);
+double calcSunEqOfCenter(double t);
+double calcSunTrueLong(double t);
+double calcSunTrueAnomaly(double t);
+double calcSunRadVector(double t);
+double calcSunApparentLong(double t);
+double calcMeanObliquityOfEcliptic(double t);
+double calcObliquityCorrection(double t);
+double calcSunRtAscension(double t);
+double calcSunDeclination(double t);
+double calcEquationOfTime(double t);
+void   calcAzimuthAndZenith(QDateTime now, double eqTime, double zone,
+                            double solarDec, double latitude, double longitude,
+                            double *zenith, double *azimuth);
+double calcElevation(double zenith);
+double calcHourAngle(double zenith, double solarDec, double latitude);
+void   calcTimeUTC(double zenith, bool rise, double *jd, double *minutes,
+                   double latitude, double longitude);
+double calcSolNoonUTC(double t, double longitude);
+}
 
-    private:
-        QHash<QString, Plasma::DataEngine::Data> m_cache;
-};
 
 #endif
