@@ -12,6 +12,7 @@ Comment[km]=ទីតាំង​ភូមិសាស្ត្រ​ពី​�
 Comment[pt]=Geo-localização a partir do endereço IP.
 Comment[pt_BR]=Geo-localização a partir do endereço IP.
 Comment[sv]=Geografisk lokalisering från IP-adress.
+Comment[tr]=IP adresinden coğrafi konum.
 Comment[uk]=Геопозиціювання за IP-адресою
 Comment[zh_TW]=從 IP 位址取得 Geolocation。
 X-KDE-ServiceTypes=Plasma/GeolocationProvider

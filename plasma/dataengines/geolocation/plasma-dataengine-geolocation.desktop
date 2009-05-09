@@ -13,6 +13,7 @@ Comment[km]=ម៉ាស៊ីន​ទិន្នន័យ​ Geolocation
 Comment[pt]=Motor de Dados de Geo-Localização
 Comment[pt_BR]=Motor de Dados de Geo-Localização
 Comment[sv]=Datagränssnitt för geografisk lokalisering
+Comment[tr]=Geolocation Veri Motoru
 Comment[uk]=Рушій даних геопозиціювання
 Comment[zh_TW]=Geolocation 資料引擎
 ServiceTypes=Plasma/DataEngine
