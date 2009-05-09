@@ -142,10 +142,17 @@ int main(int argc, char **argv)
         kDebug() << "setting wallpaper to" << wallpaper;
     }
 
+    if (args->isSet("pixmapcache")) {
+        kDebug() << "setting pixmap cache to" << args->getOption("pixmapcache").toInt();
+        QPixmapCache::setCacheLimit(args->getOption("pixmapcache").toInt());
+    }
+
     QVariantList appletArgs;
     for (int i = 1; i < args->count(); ++i) {
         appletArgs << args->arg(i);
     }
+
+    args->clear();
 
     FullView view(formfactor, location);
     view.addApplet(pluginName, containment, wallpaper, appletArgs);
@@ -153,12 +160,6 @@ int main(int argc, char **argv)
 
     QAction *action = KStandardAction::quit(&app, SLOT(quit()), &view);
     view.addAction(action);
-
-    if (args->isSet("pixmapcache")) {
-        kDebug() << "setting pixmap cache to" << args->getOption("pixmapcache").toInt();
-        QPixmapCache::setCacheLimit(args->getOption("pixmapcache").toInt());
-    }
-    args->clear();
 
     return app.exec();
 }
