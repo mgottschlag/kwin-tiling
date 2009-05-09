@@ -102,7 +102,7 @@ QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupConditionIconMapp
     // Available conditions
     conditionList["blowing snow"] = Snow;
     conditionList["cloudy"] = Overcast;
-    conditionList["distance precipitation"] = LightRain;
+    conditionList["distant precipitation"] = LightRain;
     conditionList["drifting snow"] = Flurries;
     conditionList["drizzle"] = LightRain;
     conditionList["dust"] = NotAvailable;
