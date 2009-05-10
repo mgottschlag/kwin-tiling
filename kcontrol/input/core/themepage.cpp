@@ -62,7 +62,7 @@ ThemePage::ThemePage( QWidget* parent, const char* name )
 	listview = new K3ListView( this );
 	listview->setFullWidth( true );
 	listview->setAllColumnsShowFocus( true );
-        listview->seSelectionModeExt( Q3ListView::Single );
+	listview->setSelectionModeExt( K3ListView::Single );
 	listview->addColumn( i18n("Name") );
 	listview->addColumn( i18n("Description") );
 	layout->addWidget(listview);
