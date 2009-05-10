@@ -204,8 +204,6 @@ Dtime::Dtime(QWidget * parent)
 
   connect( &internalTimer, SIGNAL(timeout()), SLOT(timeout()) );
 
-  load();
-
   kclock->setEnabled(false);
 }
 
@@ -262,6 +260,7 @@ void Dtime::load()
   // since there is nothing writing it.
   KConfig _config( "kcmclockrc", KConfig::NoGlobals );
   KConfigGroup config(&_config, "NTP");
+  timeServerList->clear();
   timeServerList->addItems(config.readEntry("servers",
     i18n("Public Time Server (pool.ntp.org),\
 asia.pool.ntp.org,\
