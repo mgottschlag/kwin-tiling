@@ -73,12 +73,10 @@ public:
     */
     void currentDesktopChanged(int);
     void taskChanged(TaskPtr, ::TaskManager::TaskChanges);
-
     void checkScreenChange();
-
-    void itemDestroyed();
+    void taskItemDestroyed(AbstractGroupableItem *);
+    void startupItemDestroyed(AbstractGroupableItem *);
     void checkIfFull();
-
     bool addTask(TaskPtr);
     void removeTask(TaskPtr);
     void addStartup(StartupPtr);
@@ -95,7 +93,7 @@ public:
     AbstractSortingStrategy *abstractSortingStrategy;
     int currentScreen;
     QTimer screenTimer;
-    QList<TaskPtr> geometryTasks;
+    QSet<TaskPtr> geometryTasks;
     int groupIsFullLimit;
     bool showOnlyCurrentDesktop : 1;
     bool showOnlyCurrentScreen : 1;
@@ -154,11 +152,12 @@ void GroupManagerPrivate::reloadTasks()
 void GroupManagerPrivate::addStartup(StartupPtr task)
 {
     //kDebug();
-    TaskItem *item;
     if (!startupList.contains(task)) {
-        item = new TaskItem(q, task);
+        TaskItem *item = new TaskItem(q, task);
         startupList.insert(task, item); 
         rootGroup->add(item);
+        QObject::connect(item, SIGNAL(destroyed(AbstractGroupableItem*)),
+                         q, SLOT(startupItemDestroyed(AbstractGroupableItem*)));
     }
 }
 
@@ -237,12 +236,13 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
     TaskItem *item = 0;
     if (!itemList.contains(task)) {
         //Lookout for existing startuptask of this task
-        QMutableHashIterator<StartupPtr, TaskItem*> it(startupList);
+        QMutableHashIterator<StartupPtr, TaskItem *> it(startupList);
         while (it.hasNext()) {
             it.next();
             if (it.key()->matchesWindow(task->window())) {
                 //kDebug() << "startup task";
                 item = it.value();
+                QObject::disconnect(item, 0, q, 0);
                 item->setTaskPointer(task);
                 it.remove();
                 break;
@@ -253,7 +253,8 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
             item = new TaskItem(q, task);
         }
 
-        QObject::connect(item, SIGNAL(destroyed()), q, SLOT(itemDestroyed()));
+        QObject::connect(item, SIGNAL(destroyed(AbstractGroupableItem*)),
+                         q, SLOT(taskItemDestroyed(AbstractGroupableItem*)));
         itemList.insert(task, item); 
     } else {
         item = itemList.value(task); //we add it again so the group is evaluated again
@@ -274,7 +275,7 @@ void GroupManagerPrivate::removeTask(TaskPtr task)
 {
     //kDebug() << "remove: " << task->visibleName();
     if (!geometryTasks.isEmpty()) {
-        geometryTasks.removeAll(task);
+        geometryTasks.remove(task);
     }
 
     TaskItem *item = itemList.value(task);
@@ -293,17 +294,17 @@ void GroupManagerPrivate::removeTask(TaskPtr task)
     //the item must exist as long as the TaskPtr does because of activate calls so don't delete the item here, it will delete itself. We keep it in the itemlist because it may return
 }
 
-void GroupManagerPrivate::itemDestroyed()
+void GroupManagerPrivate::taskItemDestroyed(AbstractGroupableItem *item)
 {
-    TaskItem *taskItem = qobject_cast<TaskItem*>(q->sender());
-    TaskItem *item = itemList.take(itemList.key(taskItem));
-    if (!item) {
-        kDebug() << "invalid item";
-        return;
-    }
-    QObject::disconnect(item, 0, q, 0);
+    TaskItem *taskItem = static_cast<TaskItem*>(item);
+    itemList.remove(itemList.key(taskItem));
 }
 
+void GroupManagerPrivate::startupItemDestroyed(AbstractGroupableItem *item)
+{
+    TaskItem *taskItem = static_cast<TaskItem*>(item);
+    startupList.remove(startupList.key(taskItem));
+}
 
 bool GroupManager::manualGroupingRequest(AbstractGroupableItem* item, TaskGroup* groupItem)
 {
@@ -389,7 +390,7 @@ void GroupManagerPrivate::taskChanged(TaskPtr task, ::TaskManager::TaskChanges c
 
     if (changes & ::TaskManager::GeometryChanged) {
         if (!geometryTasks.contains(task)) {
-            geometryTasks.append(task);
+            geometryTasks.insert(task);
         }
 
         if (!screenTimer.isActive()) {

@@ -44,24 +44,24 @@ public:
 };
 
 
-TaskItem::TaskItem(QObject *parent,TaskPtr task)
-:   AbstractGroupableItem(parent),
-    d(new Private)
+TaskItem::TaskItem(QObject *parent, TaskPtr task)
+    : AbstractGroupableItem(parent),
+      d(new Private)
 {
     d->task = task;
     connect(task.data(), SIGNAL(changed(::TaskManager::TaskChanges)),
             this, SIGNAL(changed(::TaskManager::TaskChanges)));
-    connect(task.data(), SIGNAL(destroyed()), this, SLOT(deleteLater())); //this item isn't useful anymore if the Task was closed
+    connect(task.data(), SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater())); //this item isn't useful anymore if the Task was closed
 }
 
 
 TaskItem::TaskItem(QObject *parent, StartupPtr task)
-:   AbstractGroupableItem(parent),
-    d(new Private)
+    : AbstractGroupableItem(parent),
+      d(new Private)
 {
     d->startupTask = task;
     connect(task.data(), SIGNAL(changed(::TaskManager::TaskChanges)), this, SIGNAL(changed(::TaskManager::TaskChanges)));
-    connect(task.data(), SIGNAL(destroyed()), this, SLOT(deleteLater())); //this item isn't useful anymore if the Task was closed
+    connect(task.data(), SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater())); //this item isn't useful anymore if the Task was closed
 }
 
 TaskItem::~TaskItem()
@@ -76,14 +76,17 @@ TaskItem::~TaskItem()
 void TaskItem::setTaskPointer(TaskPtr task)
 {
     if (d->startupTask) {
-        disconnect(d->startupTask.data(), 0, 0, 0);
+        disconnect(d->startupTask.data(), 0, this, 0);
         d->startupTask = 0;
     }
-    d->task = task;
-    connect(task.data(), SIGNAL(changed(::TaskManager::TaskChanges)),
-            this, SIGNAL(changed(::TaskManager::TaskChanges)));
-    connect(task.data(), SIGNAL(destroyed()), this, SLOT(deleteLater()));
-    emit gotTaskPointer();
+
+    if (d->task != task) {
+        d->task = task;
+        connect(task.data(), SIGNAL(changed(::TaskManager::TaskChanges)),
+                this, SIGNAL(changed(::TaskManager::TaskChanges)));
+        connect(task.data(), SIGNAL(destroyed()), this, SLOT(deleteLater()));
+        emit gotTaskPointer();
+    }
 }
 
 TaskPtr TaskItem::task() const
