@@ -76,17 +76,19 @@ PanelAppletOverlay::PanelAppletOverlay(Plasma::Applet *applet, QWidget *parent)
     : QWidget(parent),
       m_applet(applet),
       m_spacer(0),
-      m_layout(static_cast<QGraphicsLinearLayout*>(applet->containment()->layout())), // ++assumptions;
+      m_layout(dynamic_cast<QGraphicsLinearLayout*>(applet->containment()->layout())), // ++assumptions;
       m_menuButtonRect(2,2,10,10),
       m_index(0),
       m_clickDrag(false)
 {
     int i = 0;
-    for (; i < m_layout->count(); ++i) {
-        QGraphicsWidget *w = dynamic_cast<QGraphicsWidget*>(m_layout->itemAt(i));
-        if (w == m_applet) {
-            m_index = i;
-            break;
+    if (m_layout) {
+        for (; i < m_layout->count(); ++i) {
+            QGraphicsWidget *w = dynamic_cast<QGraphicsWidget*>(m_layout->itemAt(i));
+            if (w == m_applet) {
+                m_index = i;
+                break;
+            }
         }
     }
 
@@ -179,15 +181,17 @@ void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
     m_clickDrag = false;
     if (!m_spacer) {
         m_spacer = new AppletMoveSpacer(m_applet);
-    } else {
+    } else if (m_layout) {
         m_layout->removeItem(m_spacer);
     }
 
     m_origin = mapToParent(event->pos());
     m_spacer->setMinimumSize(m_applet->geometry().size());
     m_spacer->setMaximumSize(m_applet->geometry().size());
-    m_layout->removeItem(m_applet);
-    m_layout->insertItem(m_index, m_spacer);
+    if (m_layout) {
+        m_layout->removeItem(m_applet);
+        m_layout->insertItem(m_index, m_spacer);
+    }
     m_applet->setZValue(m_applet->zValue() + 1);
 
     if (m_orientation == Qt::Horizontal) {
@@ -381,11 +385,17 @@ void PanelAppletOverlay::mouseReleaseEvent(QMouseEvent *event)
 
     releaseMouse();
     //kDebug();
-    m_layout->removeItem(m_spacer);
+    if (m_layout) {
+        m_layout->removeItem(m_spacer);
+    }
+
     m_spacer->deleteLater();
     m_spacer = 0;
 
-    m_layout->insertItem(m_index, m_applet);
+    if (m_layout) {
+        m_layout->insertItem(m_index, m_applet);
+    }
+
     m_applet->setZValue(m_applet->zValue() - 1);
 }
 
@@ -404,6 +414,10 @@ void PanelAppletOverlay::leaveEvent(QEvent *event)
 
 void PanelAppletOverlay::swapWithPrevious()
 {
+    if (!m_layout) {
+        return;
+    }
+
     //kDebug();
     --m_index;
 
@@ -420,6 +434,10 @@ void PanelAppletOverlay::swapWithPrevious()
 
 void PanelAppletOverlay::swapWithNext()
 {
+    if (!m_layout) {
+        return;
+    }
+
     //kDebug();
     ++m_index;
 
