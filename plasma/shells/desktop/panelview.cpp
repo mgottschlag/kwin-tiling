@@ -241,10 +241,10 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     KConfigGroup viewConfig = config();
     KConfigGroup sizes = KConfigGroup(&viewConfig, "Sizes");
     QRect screenRect = Kephal::ScreenUtils::screenGeometry(panel->screen());
+    m_lastHorizontal = isHorizontal();
     m_lastSeenSize = sizes.readEntry("lastsize", m_lastHorizontal ? screenRect.width() : screenRect.height());
     m_alignment = alignmentFilter((Qt::Alignment)viewConfig.readEntry("Alignment", (int)Qt::AlignLeft));
     m_offset = viewConfig.readEntry("Offset", 0);
-    m_lastHorizontal = isHorizontal();
 
     KWindowSystem::setType(winId(), NET::Dock);
 
