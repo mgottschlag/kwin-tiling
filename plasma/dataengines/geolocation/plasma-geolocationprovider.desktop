@@ -2,6 +2,7 @@
 Type=ServiceType
 X-KDE-ServiceType=Plasma/GeolocationProvider
 Comment=Plasma Geolocation Provider
+Comment[km]=ក្រុមហ៊ុន​ផ្ដល់​ទីតាំង​ភូមិសាស្ត្រ​ប្លាស្មា
 Comment[pt]=Fornecedor de Geo-Localização do Plasma
 Comment[pt_BR]=Fornecedor de Geo-Localização do Plasma
 Comment[sv]=Plasma geografisk lokalisering
