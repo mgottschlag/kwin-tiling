@@ -397,9 +397,42 @@ void QuicklaunchApplet::dropApp(QGraphicsSceneDragDropEvent *event, bool dropped
 
 bool QuicklaunchApplet::eventFilter(QObject * object, QEvent * event)
 {
-    Q_UNUSED(object)
+    if (event->type() == QEvent::GraphicsSceneMousePress) {
+        m_mousePressPos = static_cast<QGraphicsSceneMouseEvent*>(event)->pos();
+    }
+
+    if (event->type() == QEvent::GraphicsSceneMouseMove) {
+        QuicklaunchIcon * icon = qobject_cast<QuicklaunchIcon*>(object);
+        if (m_icons.contains(icon)) {
+            QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent*>(event);
+            int dragDistance = (mouseEvent->pos() - m_mousePressPos).toPoint().manhattanLength();
+            if (dragDistance >= QApplication::startDragDistance()) {
+                int numberOfPreviousIcons = m_icons.count();
+                QMimeData *mimeData = new QMimeData();
+                mimeData->setData("text/uri-list", icon->url().url().toAscii());
+                mimeData->setText(mimeData->text());
+
+                QDrag *drag = new QDrag(mouseEvent->widget());
+                drag->setMimeData(mimeData);
+                drag->setPixmap(icon->icon().pixmap(m_iconSize, m_iconSize));
+
+                Qt::DropAction dropAction = drag->exec();
+
+                // If the current number of icons is more than the previous amount then
+                // it means that the icon was re-arranged and not dragged outside the applet
+                // Therefore we remove the previous icon
+                if (dropAction == Qt::MoveAction && m_icons.count() > numberOfPreviousIcons) {
+                    m_icons.removeAll(icon);
+                    icon->hide();
+                    icon->deleteLater();
+                    performUiRefactor();
+                }
+            }
+        }
+    }
+
     if (event->type() == QEvent::GraphicsSceneDrop) {
-        dropApp(static_cast<QGraphicsSceneDragDropEvent*>(event),true);
+        dropApp(static_cast<QGraphicsSceneDragDropEvent*>(event), object == m_dialogWidget);
         return true;
     }
 
@@ -420,8 +453,7 @@ void QuicklaunchApplet::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 
 void QuicklaunchApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
-         kDebug()<< "I am in dropEvent";
-         dropApp(static_cast<QGraphicsSceneDragDropEvent*>(event),false);
+    dropApp(static_cast<QGraphicsSceneDragDropEvent*>(event),false);
 }
 
 void QuicklaunchApplet::addProgram(int index, const QString &url)
