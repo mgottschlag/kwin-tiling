@@ -329,6 +329,7 @@ void QuicklaunchApplet::configAccepted()
 
     if (changed) {
         emit configNeedsSaving();
+        resize(sizeHint(Qt::PreferredSize));
         performUiRefactor();
     }
 }
