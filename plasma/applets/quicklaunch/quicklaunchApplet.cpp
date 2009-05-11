@@ -173,15 +173,14 @@ void QuicklaunchApplet::performUiRefactor()
     kDebug() << "performUiRefactor count = " << my_perforcount++;
     clearLayout(m_innerLayout);
 
-    m_iconSize = qMax(m_iconSize, s_defaultIconSize);//Don't accept values under 16
+    m_iconSize = qMin(qMax(m_iconSize, s_defaultIconSize), (int)(contentsRect().height() - 2 * s_defaultSpacing));//Don't accept values under 16 nor anything over applet's height
     m_dialogIconSize = qMax(m_iconSize, s_defaultIconSize);
 
     if (m_dialogLayout) {
         clearLayout(m_dialogLayout);
-        m_dialogLayout->setRowCount((int)(size().height() / m_dialogIconSize));
+        m_dialogLayout->setRowCount((int)(size().height() / qMin(m_dialogIconSize, m_dialog->size().height())));
     }
     int rowCount;
-    int iconWidth;
     if (formFactor() == Plasma::Vertical) {
         rowCount = contentsRect().width() / m_iconSize;
         // prevent possible division by zero if size().width() is 0
@@ -194,7 +193,7 @@ void QuicklaunchApplet::performUiRefactor()
 
     m_innerLayout->setRowCount(rowCount);
     int count = 0;
-    kDebug() << m_icons.count() << iconWidth << "pixel icons in" << rowCount
+    kDebug() << m_icons.count() << "pixel icons in" << rowCount
              << "rows, with a max of" << m_visibleIcons << "visible";
     foreach (QuicklaunchIcon *icon, m_icons) {
         //icon->setMinimumSize(minSize);
@@ -234,7 +233,7 @@ void QuicklaunchApplet::performUiRefactor()
         m_dialog->adjustSize();
     }
 
-    resize(sizeHint(Qt::PreferredSize));
+    //resize(sizeHint(Qt::PreferredSize));
     kDebug() << "Bar see";
     update();
 }
