@@ -30,10 +30,12 @@
 #include <Plasma/Service>
 #include <Plasma/ExtenderItem>
 #include <plasma/dataengine.h>
+#include <Plasma/PushButton>
 
 namespace Plasma
 {
     class ExtenderItem;
+    class PushButton;
     class Label;
     class Meter;
 } // namespace Plasma
@@ -58,7 +60,7 @@ class JobWidget : public QGraphicsWidget
         void resizeEvent(QGraphicsSceneResizeEvent *event);
 
     private Q_SLOTS:
-        void detailsLinkClicked(const QString &link);
+        void detailsClicked();
 
     private:
         void updateLabels();
@@ -75,7 +77,7 @@ class JobWidget : public QGraphicsWidget
         Plasma::Label *m_dirCountLabel;
         Plasma::Label *m_fileCountLabel;
         Plasma::Label *m_eta;
-        Plasma::Label *m_details;
+        Plasma::PushButton *m_details;
 
         QGraphicsGridLayout *m_layout;
 

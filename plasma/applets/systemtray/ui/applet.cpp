@@ -24,6 +24,7 @@
 
 #include <QtGui/QApplication>
 #include <QtGui/QGraphicsLayout>
+#include <QtGui/QGraphicsLinearLayout>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QIcon>
 #include <QtGui/QLabel>
@@ -111,6 +112,7 @@ public:
     QDateTime lastActivity;
 
     Plasma::FrameSvg *background;
+    Plasma::Svg *icons;
     JobTotalsWidget *jobSummaryWidget;
     static SystemTray::Manager *s_manager;
     static int s_managerUsage;
@@ -134,6 +136,9 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
     d->background->setImagePath("widgets/systemtray");
     d->background->setCacheAllRenderedFrames(true);
     d->taskArea = new TaskArea(this);
+
+    d->icons = new Plasma::Svg(this);
+    d->icons->setImagePath("widgets/configuration-icons");
 
     setPopupIcon(QIcon());
     setPassivePopup(true);
@@ -582,11 +587,15 @@ void Applet::initExtenderItem(Plasma::ExtenderItem *extenderItem)
     }
 
     if (extenderItem->name() == "completedJobsGroup") {
-        Plasma::Label *label = new Plasma::Label(extenderItem);
-        label->setText(QString("<div align='right'><a href='clear'>%1</a></div>").arg(i18n("clear all")));
-        label->setPreferredSize(label->minimumSize());
-        connect(label, SIGNAL(linkActivated(const QString &)), this, SLOT(clearAllCompletedJobs()));
-        extenderItem->setWidget(label);
+        QGraphicsWidget *widget = new QGraphicsWidget(this);
+        widget->setMaximumHeight(0);
+        extenderItem->setWidget(widget);
+
+        QAction *clearAction = new QAction(this);
+        clearAction->setIcon(KIcon(d->icons->pixmap("close")));
+        extenderItem->addAction("space", new QAction(this));
+        extenderItem->addAction("clear", clearAction);
+        connect(clearAction, SIGNAL(triggered()), this, SLOT(clearAllCompletedJobs()));
         return;
     }
 

@@ -34,6 +34,7 @@
 #include <Plasma/Theme>
 #include <Plasma/Label>
 #include <Plasma/Meter>
+#include <Plasma/PushButton>
 
 JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
     : QGraphicsWidget(parent),
@@ -57,7 +58,7 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
     m_dirCountLabel = new Plasma::Label(this);
     m_fileCountLabel = new Plasma::Label(this);
     m_eta = new Plasma::Label(this);
-    m_details = new Plasma::Label(this);
+    m_details = new Plasma::PushButton(this);
 
     m_totalBytesLabel->setVisible(false);
     m_dirCountLabel->setVisible(false);
@@ -71,7 +72,6 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
     m_dirCountLabel->setAlignment(Qt::AlignRight);
     m_fileCountLabel->setAlignment(Qt::AlignRight);
     m_eta->setAlignment(Qt::AlignRight);
-    m_details->setAlignment(Qt::AlignLeft);
 
     m_fromLabel->nativeWidget()->setWordWrap(false);
     m_toLabel->nativeWidget()->setWordWrap(false);
@@ -92,12 +92,12 @@ JobWidget::JobWidget(SystemTray::Job *job, Plasma::ExtenderItem *parent)
     setMinimumWidth(350);
 
     if (m_job) {
-        m_details->setText("<a href=\"more\">" + i18n("More") + "</a>");
+        m_details->setText(i18n("More"));
 
         connect(m_job, SIGNAL(changed(SystemTray::Job*)), this, SLOT(updateJob()));
         connect(m_job, SIGNAL(destroyed(SystemTray::Job*)), m_extenderItem, SLOT(destroy()));
-        connect(m_details, SIGNAL(linkActivated(const QString &)),
-                this, SLOT(detailsLinkClicked(const QString &)));
+        connect(m_details, SIGNAL(clicked()),
+                this, SLOT(detailsClicked()));
 
         //the suspend action
         QAction *suspendAction = new QAction(m_extenderItem);
@@ -258,10 +258,10 @@ void JobWidget::updateLabels()
     m_toLabel->setText(fm.elidedText(label1, Qt::ElideMiddle, m_toLabel->size().width()));
 }
 
-void JobWidget::detailsLinkClicked(const QString &link)
+void JobWidget::detailsClicked()
 {
-    if (link == "more") {
-        m_details->setText("<a href=\"less\">" + i18n("less") + "</a>");
+    if (!m_totalBytesLabel->isVisible()) {
+        m_details->setText(i18n("less"));
         m_totalBytesLabel->setVisible(true);
         m_dirCountLabel->setVisible(true);
         m_fileCountLabel->setVisible(true);
@@ -270,7 +270,7 @@ void JobWidget::detailsLinkClicked(const QString &link)
         m_layout->addItem(m_dirCountLabel, 6, 1);
         m_extenderItem->setCollapsed(m_extenderItem->isCollapsed());
     } else {
-        m_details->setText("<a href=\"more\">" + i18n("more") + "</a>");
+        m_details->setText(i18n("more"));
         m_totalBytesLabel->setVisible(false);
         m_dirCountLabel->setVisible(false);
         m_fileCountLabel->setVisible(false);
