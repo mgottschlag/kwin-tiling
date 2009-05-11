@@ -200,14 +200,30 @@ void CompactLayout::removeAt(int index)
 
 QSizeF CompactLayout::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
 {
-    if (which != Qt::PreferredSize) {
+    if (which == Qt::PreferredSize) {
+        QHash<QGraphicsLayoutItem*, QRectF> geometries =
+            d->calculateGeometries(geometry(), which, d->hackedConstraint(constraint));
+        return d->boundingRect(geometries.values()).size();
+    } else if (which == Qt::MinimumSize) {
+        QSizeF min;
+
+        foreach (QGraphicsLayoutItem *item, d->items) {
+            QSizeF itemMin = item->minimumSize();
+
+            if (itemMin.height() > min.height()) {
+                min.setHeight(itemMin.height());
+            }
+
+            if (itemMin.width() > min.width()) {
+                min.setWidth(itemMin.width());
+            }
+        }
+
+        kDebug() << "porporting" << min;
+        return min;
+    } else {
         return QSizeF();
     }
-
-    QHash<QGraphicsLayoutItem*, QRectF> geometries =
-        d->calculateGeometries(geometry(), which, d->hackedConstraint(constraint));
-
-    return d->boundingRect(geometries.values()).size();
 }
 
 

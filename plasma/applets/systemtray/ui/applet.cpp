@@ -282,9 +282,32 @@ void Applet::setGeometry(const QRectF &rect)
 
 void Applet::checkSizes()
 {
+    Plasma::FormFactor f = formFactor();
     qreal leftMargin, topMargin, rightMargin, bottomMargin;
+    d->background->setElementPrefix(QString());
+    d->background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
     d->background->getMargins(leftMargin, topMargin, rightMargin, bottomMargin);
-    setContentsMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+
+    QSizeF minSize = d->taskArea->effectiveSizeHint(Qt::MinimumSize);
+    if (f == Plasma::Horizontal && minSize.height() >= size().height() - topMargin - bottomMargin) {
+        d->background->setElementPrefix(QString());
+        d->background->setEnabledBorders(Plasma::FrameSvg::LeftBorder | Plasma::FrameSvg::RightBorder);
+        d->background->setElementPrefix("lastelements");
+        d->background->setEnabledBorders(Plasma::FrameSvg::LeftBorder | Plasma::FrameSvg::RightBorder);
+        setContentsMargins(leftMargin, 0, rightMargin, 0);
+    } else if (f == Plasma::Vertical && minSize.width() >= size().width() - leftMargin - rightMargin) {
+        d->background->setElementPrefix(QString());
+        d->background->setEnabledBorders(Plasma::FrameSvg::TopBorder | Plasma::FrameSvg::BottomBorder);
+        d->background->setElementPrefix("lastelements");
+        d->background->setEnabledBorders(Plasma::FrameSvg::TopBorder | Plasma::FrameSvg::BottomBorder);
+        setContentsMargins(0, topMargin, 0, bottomMargin);
+    } else {
+        d->background->setElementPrefix(QString());
+        d->background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
+        d->background->setElementPrefix("lastelements");
+        d->background->setEnabledBorders(Plasma::FrameSvg::AllBorders);
+        setContentsMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+    }
 
     QSizeF preferredSize = d->taskArea->effectiveSizeHint(Qt::PreferredSize);
     preferredSize.setWidth(preferredSize.width() + leftMargin + rightMargin);
@@ -292,7 +315,6 @@ void Applet::checkSizes()
     setPreferredSize(preferredSize);
 
     QSizeF actualSize = size();
-    Plasma::FormFactor f = formFactor();
 
     setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
     if (f == Plasma::Horizontal) {

@@ -268,11 +268,11 @@ void TaskArea::setOrientation(Qt::Orientation o)
         d->unhider->setOrientation(o);
         if (d->topLayout->orientation() == Qt::Horizontal) {
             d->unhider->setMaximumSize(KIconLoader::SizeSmallMedium, QWIDGETSIZE_MAX);
-            d->unhider->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmall);
+            d->unhider->setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
             d->unhider->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
         } else {
             d->unhider->setMaximumSize(QWIDGETSIZE_MAX, KIconLoader::SizeSmallMedium);
-            d->unhider->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmall);
+            d->unhider->setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
             d->unhider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
         }
     }
@@ -305,11 +305,11 @@ void TaskArea::initUnhideTool()
 
     if (d->topLayout->orientation() == Qt::Horizontal) {
         d->unhider->setMaximumSize(KIconLoader::SizeSmallMedium, QWIDGETSIZE_MAX);
-        d->unhider->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmall);
+        d->unhider->setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
         d->unhider->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     } else {
         d->unhider->setMaximumSize(QWIDGETSIZE_MAX, KIconLoader::SizeSmallMedium);
-        d->unhider->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmall);
+        d->unhider->setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
         d->unhider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     }
 

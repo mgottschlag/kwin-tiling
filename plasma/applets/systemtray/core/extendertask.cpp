@@ -264,8 +264,8 @@ QGraphicsWidget* ExtenderTask::createWidget(Plasma::Applet *host)
     //Assumption on the systray being a popupapplet
     Plasma::PopupApplet *popupApplet = static_cast<Plasma::PopupApplet *>(host);
     ExtenderTaskBusyWidget *busyWidget = new ExtenderTaskBusyWidget(popupApplet, d->manager);
-    busyWidget->setMinimumSize(22, 22);
-    busyWidget->setMaximumSize(26, QWIDGETSIZE_MAX);
+    busyWidget->setMinimumSize(8, 8);
+    busyWidget->setPreferredSize(22, 22);
     connect(busyWidget, SIGNAL(clicked()), popupApplet, SLOT(togglePopup()));
     return busyWidget;
 }
