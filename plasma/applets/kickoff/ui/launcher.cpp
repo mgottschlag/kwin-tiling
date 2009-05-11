@@ -70,7 +70,6 @@ using namespace Kickoff;
 class Launcher::Private
 {
 public:
-    ApplicationModel  *applicationModel;
     Private(Launcher *launcher)
             : q(launcher)
             , applet(0)
@@ -89,22 +88,25 @@ public:
             , autoHide(false)
             , visibleItemCount(10)
             , placement(Plasma::TopPosedLeftAlignedPopup)
-            , panelEdge(Plasma::BottomEdge) {
-
+            , panelEdge(Plasma::BottomEdge)
+    {
     }
 
-    ~Private() {
+    ~Private()
+    {
     }
 
     enum TabOrder { NormalTabOrder, ReverseTabOrder };
 
-    void setupEventHandler(QAbstractItemView *view) {
+    void setupEventHandler(QAbstractItemView *view)
+    {
         view->viewport()->installEventFilter(q);
         view->installEventFilter(q);
     }
 
     void addView(const QString& name, const QIcon& icon,
-                 QAbstractItemModel *model = 0, QAbstractItemView *view = 0) {
+                 QAbstractItemModel *model = 0, QAbstractItemView *view = 0)
+    {
         view->setFrameStyle(QFrame::NoFrame);
         // prevent the view from stealing focus from the search bar
         view->setFocusPolicy(Qt::NoFocus);
@@ -129,7 +131,8 @@ public:
         contentArea->addWidget(view);
     }
 
-    void initTabs() {
+    void initTabs()
+    {
         // Favorites view
         setupFavoritesView();
 
@@ -149,7 +152,8 @@ public:
         setupSearchView();
     }
 
-    void setupLeaveView() {
+    void setupLeaveView()
+    {
         leaveModel = new LeaveModel(q);
         leaveModel->updateModel();
         UrlItemView *view = new UrlItemView();
@@ -161,15 +165,16 @@ public:
         addView(i18n("Leave"), KIcon("system-shutdown"), leaveModel, view);
     }
 
-    void setupFavoritesView() {
-        FavoritesModel *model = new FavoritesModel(q);
+    void setupFavoritesView()
+    {
+        favoritesModel = new FavoritesModel(q);
         UrlItemView *view = new UrlItemView();
         ItemDelegate *delegate = new ItemDelegate(q);
         delegate->setRoleMapping(Plasma::Delegate::SubTitleRole, SubTitleRole);
         delegate->setRoleMapping(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
-        addView(i18n("Favorites"), KIcon("bookmarks"), model, view);
+        addView(i18n("Favorites"), KIcon("bookmarks"), favoritesModel, view);
 
         QAction *sortAscendingAction = new QAction(KIcon("view-sort-ascending"), 
                                                    i18n("Sort Alphabetically (A to Z)"), q);
@@ -178,9 +183,9 @@ public:
                                                     i18n("Sort Alphabetically (Z to A)"), q);  
 
 
-        connect(model, SIGNAL(rowsInserted(QModelIndex, int, int)), q, SLOT(focusFavoritesView()));
-        connect(sortAscendingAction, SIGNAL(triggered()), model, SLOT(sortFavoritesAscending()));
-        connect(sortDescendingAction, SIGNAL(triggered()), model, SLOT(sortFavoritesDescending()));
+        connect(favoritesModel, SIGNAL(rowsInserted(QModelIndex, int, int)), q, SLOT(focusFavoritesView()));
+        connect(sortAscendingAction, SIGNAL(triggered()), favoritesModel, SLOT(sortFavoritesAscending()));
+        connect(sortDescendingAction, SIGNAL(triggered()), favoritesModel, SLOT(sortFavoritesDescending()));
 
         favoritesView = view;
         QList<QAction*> actions;
@@ -188,7 +193,8 @@ public:
         contextMenuFactory->setViewActions(view, actions);
     }
 
-    void setupAllProgramsView() {
+    void setupAllProgramsView()
+    {
         applicationModel = new ApplicationModel(q);
         applicationModel->setDuplicatePolicy(ApplicationModel::ShowLatestOnlyPolicy);
 
@@ -202,26 +208,28 @@ public:
                 applicationModel, applicationView);
     }
 
-    void setupRecentView() {
-        RecentlyUsedModel *model = new RecentlyUsedModel(q);
+    void setupRecentView()
+    {
+        recentlyUsedModel = new RecentlyUsedModel(q);
         UrlItemView *view = new UrlItemView();
         ItemDelegate *delegate = new ItemDelegate(q);
         delegate->setRoleMapping(Plasma::Delegate::SubTitleRole, SubTitleRole);
         delegate->setRoleMapping(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
-        addView(i18n("Recently Used"), KIcon("document-open-recent"), model, view);
+        addView(i18n("Recently Used"), KIcon("document-open-recent"), recentlyUsedModel, view);
 
         QAction *clearApplications = new QAction(KIcon("edit-clear-history"), i18n("Clear Recent Applications"), q);
         QAction *clearDocuments = new QAction(KIcon("edit-clear-history"), i18n("Clear Recent Documents"), q);
 
-        connect(clearApplications, SIGNAL(triggered()), model, SLOT(clearRecentApplications()));
-        connect(clearDocuments, SIGNAL(triggered()), model, SLOT(clearRecentDocuments()));
+        connect(clearApplications, SIGNAL(triggered()), recentlyUsedModel, SLOT(clearRecentApplications()));
+        connect(clearDocuments, SIGNAL(triggered()), recentlyUsedModel, SLOT(clearRecentDocuments()));
 
         contextMenuFactory->setViewActions(view, QList<QAction*>() << clearApplications << clearDocuments);
     }
 
-    void setupSystemView() {
+    void setupSystemView()
+    {
         SystemModel *model = new SystemModel(q);
         UrlItemView *view = new UrlItemView();
         ItemDelegate *delegate = new ItemDelegate(q);
@@ -233,7 +241,8 @@ public:
         addView(i18n("Computer"), systemIcon(), model, view);
     }
 
-    void setupSearchView() {
+    void setupSearchView()
+    {
         searchModel = new SearchModel(q);
         UrlItemView *view = new UrlItemView();
         ItemDelegate *delegate = new ItemDelegate(q);
@@ -260,12 +269,14 @@ public:
         searchView = view;
     }
 
-    void registerUrlHandlers() {
+    void registerUrlHandlers()
+    {
         UrlItemLauncher::addGlobalHandler(UrlItemLauncher::ExtensionHandler, "desktop", new ServiceItemHandler);
         UrlItemLauncher::addGlobalHandler(UrlItemLauncher::ProtocolHandler, "leave", new LeaveItemHandler);
     }
 
-    QIcon systemIcon() {
+    QIcon systemIcon()
+    {
         QList<Solid::Device> batteryList = Solid::Device::listFromType(Solid::DeviceInterface::Battery, QString());
 
         if (batteryList.isEmpty()) {
@@ -275,7 +286,8 @@ public:
         }
     }
 
-    void setNorthLayout(TabOrder tabOrder) {
+    void setNorthLayout(TabOrder tabOrder)
+    {
         contentSwitcher->setShape(QTabBar::RoundedNorth);
         QLayout * layout = q->layout();
         delete layout;
@@ -292,7 +304,8 @@ public:
         setTabOrder(tabOrder);
     }
 
-    void setSouthLayout(TabOrder tabOrder) {
+    void setSouthLayout(TabOrder tabOrder)
+    {
         contentSwitcher->setShape(QTabBar::RoundedSouth);
         QLayout * layout = q->layout();
         delete layout;
@@ -309,7 +322,8 @@ public:
         setTabOrder(tabOrder);
     }
 
-    void setWestLayout(TabOrder tabOrder) {
+    void setWestLayout(TabOrder tabOrder)
+    {
         contentSwitcher->setShape(QTabBar::RoundedWest);
         QLayout * layout = q->layout();
         delete layout;
@@ -341,7 +355,8 @@ public:
         setTabOrder(tabOrder);
     }
 
-    void setEastLayout(TabOrder tabOrder) {
+    void setEastLayout(TabOrder tabOrder)
+    {
         contentSwitcher->setShape(QTabBar::RoundedEast);
         QLayout * layout = q->layout();
         delete layout;
@@ -373,7 +388,8 @@ public:
         setTabOrder(tabOrder);
     }
 
-    void setTabOrder(TabOrder newOrder) {
+    void setTabOrder(TabOrder newOrder)
+    {
         // identify current TabOrder, assumes favoritesView is first in normal order
         TabOrder oldOrder;
         if (contentArea->widget(0) == favoritesView) {
@@ -420,12 +436,15 @@ public:
         QString tabToolTip;
         QString tabWhatsThis;
         QIcon tabIcon;
-        QWidget * widget;
+        QWidget *widget;
     };
 
     Launcher * const q;
     Plasma::Applet *applet;
     UrlItemLauncher *urlLauncher;
+    FavoritesModel *favoritesModel;
+    ApplicationModel  *applicationModel;
+    RecentlyUsedModel *recentlyUsedModel;
     SearchModel *searchModel;
     LeaveModel *leaveModel;
     SearchBar *searchBar;
@@ -603,7 +622,7 @@ void Launcher::setSwitchTabsOnHover(bool switchOnHover)
 void Launcher::setShowAppsByName(bool showAppsByName)
 {
     //ApplicationModel *m_applicationModel = applicationModel;
-    const bool wasByName = d->applicationModel->nameDisplayOrder() == ApplicationModel::NameBeforeDescription;
+    const bool wasByName = d->applicationModel->nameDisplayOrder() == Kickoff::NameBeforeDescription;
     if (d->applet && showAppsByName != wasByName) {
         KConfigGroup cg = d->applet->config();
         cg.writeEntry("ShowAppsByName", showAppsByName);
@@ -611,9 +630,15 @@ void Launcher::setShowAppsByName(bool showAppsByName)
     }
 
     if (showAppsByName) {
-        d->applicationModel->setNameDisplayOrder(ApplicationModel::NameBeforeDescription);
+        d->applicationModel->setNameDisplayOrder(Kickoff::NameBeforeDescription);
+        d->recentlyUsedModel->setNameDisplayOrder(Kickoff::NameBeforeDescription);
+        d->favoritesModel->setNameDisplayOrder(Kickoff::NameBeforeDescription);
+        d->searchModel->setNameDisplayOrder(Kickoff::NameBeforeDescription);
     } else {
-        d->applicationModel->setNameDisplayOrder(ApplicationModel::NameAfterDescription);
+        d->applicationModel->setNameDisplayOrder(Kickoff::NameAfterDescription);
+        d->recentlyUsedModel->setNameDisplayOrder(Kickoff::NameAfterDescription);
+        d->favoritesModel->setNameDisplayOrder(Kickoff::NameAfterDescription);
+        d->searchModel->setNameDisplayOrder(Kickoff::NameAfterDescription);
     }
 }
 
@@ -624,7 +649,7 @@ bool Launcher::switchTabsOnHover() const
 
 bool Launcher::showAppsByName() const
 {
-  return d->applicationModel->nameDisplayOrder() == ApplicationModel::NameBeforeDescription;
+  return d->applicationModel->nameDisplayOrder() == Kickoff::NameBeforeDescription;
 }
 
 void Launcher::setVisibleItemCount(int count)

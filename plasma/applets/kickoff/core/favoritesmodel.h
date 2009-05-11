@@ -22,6 +22,7 @@
 
 #include "core/kickoff_export.h"
 #include "core/kickoffmodel.h"
+#include "core/models.h"
 
 namespace Kickoff
 {
@@ -54,6 +55,8 @@ public:
     virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action,
                               int row, int column, const QModelIndex & parent);
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+    void setNameDisplayOrder(DisplayOrder displayOrder);
+    DisplayOrder nameDisplayOrder() const;
 
 public Q_SLOTS:
     void sortFavoritesAscending();

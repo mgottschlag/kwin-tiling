@@ -32,15 +32,16 @@
 #endif
 #include <solid/networking.h>
 
-// Local
-#include "core/models.h"
-
 using namespace Kickoff;
 
 class SearchModel::Private
 {
 public:
-    Private(SearchModel *parent) : q(parent) {}
+    Private(SearchModel *parent)
+        : q(parent),
+          displayOrder(NameAfterDescription)
+    {
+    }
 
     void addItemForIface(SearchInterface *iface, QStandardItem *item) {
         int index = searchIfaces.indexOf(iface);
@@ -55,6 +56,7 @@ public:
 
     SearchModel * const q;
     QList<SearchInterface*> searchIfaces;
+    DisplayOrder displayOrder;
 };
 
 SearchModel::SearchModel(QObject *parent)
@@ -78,10 +80,12 @@ SearchModel::SearchModel(QObject *parent)
                 this, SIGNAL(resultsAvailable()));
     }
 }
+
 SearchModel::~SearchModel()
 {
     delete d;
 }
+
 void SearchModel::resultsAvailable(const QStringList& results)
 {
     SearchInterface *iface = qobject_cast<SearchInterface*>(sender());
@@ -90,10 +94,11 @@ void SearchModel::resultsAvailable(const QStringList& results)
 
     foreach(const QString& result, results) {
         //kDebug() << "Search hit from" << iface->name() << result;
-        QStandardItem *resultItem = StandardItemFactory::createItemForUrl(result);
+        QStandardItem *resultItem = StandardItemFactory::createItemForUrl(result, d->displayOrder);
         d->addItemForIface(iface, resultItem);
     }
 }
+
 void SearchModel::resultsAvailable(const ResultList& results)
 {
     SearchInterface *iface = qobject_cast<SearchInterface*>(sender());
@@ -101,12 +106,13 @@ void SearchModel::resultsAvailable(const ResultList& results)
     Q_ASSERT(iface);
 
     foreach(const SearchResult& result, results) {
-        QStandardItem *item = StandardItemFactory::createItemForUrl(result.url);
+        QStandardItem *item = StandardItemFactory::createItemForUrl(result.url, d->displayOrder);
         item->setData(result.title, Qt::DisplayRole);
         item->setData(result.subTitle, SubTitleRole);
         d->addItemForIface(iface, item);
     }
 }
+
 void SearchModel::setQuery(const QString& query)
 {
     d->clear();
@@ -118,6 +124,16 @@ void SearchModel::setQuery(const QString& query)
     foreach(SearchInterface *iface, d->searchIfaces) {
         iface->setQuery(query);
     }
+}
+
+void SearchModel::setNameDisplayOrder(DisplayOrder displayOrder) 
+{
+    d->displayOrder = displayOrder;
+}
+
+DisplayOrder SearchModel::nameDisplayOrder() const
+{
+   return d->displayOrder;
 }
 
 SearchInterface::SearchInterface(QObject *parent)
@@ -195,14 +211,17 @@ QString ApplicationSearch::mimeNameForQuery(const QString& query) const
     }
     return QString();
 }
+
 WebSearch::WebSearch(QObject *parent)
         : SearchInterface(parent)
 {
 }
+
 QString WebSearch::name() const
 {
     return i18n("Web Searches");
 }
+
 void WebSearch::setQuery(const QString& query)
 {
     ResultList results;
@@ -212,14 +231,17 @@ void WebSearch::setQuery(const QString& query)
     results << googleResult;
     emit resultsAvailable(results);
 }
+
 IndexerSearch::IndexerSearch(QObject *parent)
         : SearchInterface(parent)
 {
 }
+
 QString IndexerSearch::name() const
 {
     return i18n("Documents");
 }
+
 void IndexerSearch::setQuery(const QString& query)
 {
 #ifdef HAVE_STRIGIDBUS

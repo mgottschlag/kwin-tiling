@@ -92,10 +92,11 @@ public:
     QString desktopEntry;
 
     AppNode *parent;
-    bool fetched;
-    bool isDir;
-    bool isSeparator;
-    bool subTitleMandatory;
+    DisplayOrder displayOrder;
+    bool fetched : 1;
+    bool isDir : 1;
+    bool isSeparator : 1;
+    bool subTitleMandatory : 1;
 };
 
 class ApplicationModelPrivate
@@ -107,6 +108,7 @@ public:
               duplicatePolicy(ApplicationModel::ShowDuplicatesPolicy),
               systemApplicationPolicy(ApplicationModel::ShowSystemOnlyPolicy),
               primaryNamePolicy(ApplicationModel::GenericNamePrimary),
+              displayOrder(NameAfterDescription),
               allowSeparators(_allowSeparators)
     {
         systemApplications = Kickoff::systemApplicationList();
@@ -125,8 +127,9 @@ public:
     ApplicationModel::DuplicatePolicy duplicatePolicy;
     ApplicationModel::SystemApplicationPolicy systemApplicationPolicy;
     ApplicationModel::PrimaryNamePolicy primaryNamePolicy;
-    bool allowSeparators;
     QStringList systemApplications;
+    DisplayOrder displayOrder;
+    bool allowSeparators;
 };
 
 void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
@@ -267,7 +270,8 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
 }
 
 ApplicationModel::ApplicationModel(QObject *parent, bool allowSeparators)
-  : KickoffAbstractModel(parent), d(new ApplicationModelPrivate(this, allowSeparators)),m_displayOrder(ApplicationModel::NameAfterDescription)
+  : KickoffAbstractModel(parent),
+    d(new ApplicationModelPrivate(this, allowSeparators))
 {
     QDBusConnection dbus = QDBusConnection::sessionBus();
     (void)new KickoffAdaptor(this);
@@ -292,13 +296,13 @@ bool ApplicationModel::canFetchMore(const QModelIndex &parent) const
 }
 
 void ApplicationModel::setNameDisplayOrder(DisplayOrder displayOrder) 
-{   
-    m_displayOrder = displayOrder;
+{
+    d->displayOrder = displayOrder;
 }
 
-ApplicationModel::DisplayOrder ApplicationModel::nameDisplayOrder() const
+DisplayOrder ApplicationModel::nameDisplayOrder() const
 {
-   return m_displayOrder;
+   return d->displayOrder;
 }
 
 int ApplicationModel::columnCount(const QModelIndex &parent) const
@@ -316,14 +320,14 @@ QVariant ApplicationModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
     case Qt::DisplayRole:
-      if (node->isDir || ((m_displayOrder == NameAfterDescription) && (!node->genericName.isEmpty()))) {
+      if (node->isDir || ((d->displayOrder == NameAfterDescription) && (!node->genericName.isEmpty()))) {
             return node->genericName;
         } else {
             return node->appName;
         }
         break;
     case Kickoff::SubTitleRole:
-      if (!node->isDir && (m_displayOrder == NameBeforeDescription) && (!node->genericName.isEmpty())) {
+      if (!node->isDir && (d->displayOrder == NameBeforeDescription) && (!node->genericName.isEmpty())) {
             return node->genericName;
         } else {
             return node->appName;

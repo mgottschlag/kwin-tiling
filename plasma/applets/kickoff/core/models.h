@@ -75,14 +75,25 @@ enum DataRole {
 };
 
 /**
+ * This enum describes the policy for displaying 
+ * Name of Application - Description
+ * Description - Name of Application
+ */
+enum DisplayOrder {
+    NameAfterDescription,
+    NameBeforeDescription
+};
+
+/**
  * Factory for creating QStandardItems with appropriate text, icons, URL
  * and other Kickoff-specific information for a given URL or Service.
  */
 class StandardItemFactory
 {
 public:
-    static QStandardItem *createItemForUrl(const QString& url);
-    static QStandardItem *createItemForService(KService::Ptr service);
+    static QStandardItem *createItemForUrl(const QString& url, DisplayOrder displayOrder);
+    static QStandardItem *createItemForService(KService::Ptr service,
+                                               DisplayOrder displayOrder);
 
 private:
     static void setSpecialUrlProperties(const KUrl& url, QStandardItem *item);

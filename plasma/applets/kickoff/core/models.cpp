@@ -53,7 +53,7 @@ StandardItemFactoryData* deviceFactoryData()
 }
 } // namespace Kickoff
 
-QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString)
+QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString, DisplayOrder displayOrder)
 {
     KUrl url(urlString);
 
@@ -67,7 +67,7 @@ QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString)
         // otherwise represent it as a generic .desktop file
         KService::Ptr service = KService::serviceByDesktopPath(url.toLocalFile());
         if (service) {
-            return createItemForService(service);
+            return createItemForService(service, displayOrder);
         }
 
         item = new QStandardItem;
@@ -97,8 +97,10 @@ QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString)
         item = new QStandardItem;
         const QString subTitle = url.isLocalFile() ? url.toLocalFile() : url.prettyUrl();
         QString basename = QFileInfo(urlString).completeBaseName();
-        if (basename.isNull())
+        if (basename.isNull()) {
             basename = subTitle;
+        }
+
         item->setText(basename);
         item->setIcon(KIcon(KMimeType::iconNameForUrl(url)));
         item->setData(url.url(), Kickoff::UrlRole);
@@ -121,19 +123,26 @@ void StandardItemFactory::setSpecialUrlProperties(const KUrl& url, QStandardItem
     }
 }
 
-QStandardItem *StandardItemFactory::createItemForService(KService::Ptr service)
+QStandardItem *StandardItemFactory::createItemForService(KService::Ptr service, DisplayOrder displayOrder)
 {
     QStandardItem *appItem = new QStandardItem;
 
     QString genericName = service->genericName();
     QString appName = service->name();
-
-    appItem->setText(genericName.isEmpty() ? appName : genericName);
+    bool nameFirst = displayOrder == NameBeforeDescription;
+    appItem->setText(nameFirst || genericName.isEmpty() ? appName : genericName);
     appItem->setIcon(KIcon(service->icon()));
     appItem->setData(service->entryPath(), Kickoff::UrlRole);
 
-    if (!genericName.isEmpty()) {
-        appItem->setData(service->name(), Kickoff::SubTitleRole);
+    if (nameFirst) {
+        if (!genericName.isEmpty()) {
+            appItem->setData(genericName, Kickoff::SubTitleRole);
+        }
+     } else if (!genericName.isEmpty()) {
+         // we only set the subtitle to appname if the generic name is empty because if
+         // the generic name IS empty, then the app name is used as the title role
+         // and we don't want it repeated twice.
+         appItem->setData(appName, Kickoff::SubTitleRole);
     }
 
     return appItem;

@@ -33,7 +33,6 @@
 #include <KDebug>
 
 // Local
-#include "core/models.h"
 #include "core/recentapplications.h"
 #include "recentadaptor.h"
 
@@ -43,13 +42,15 @@ class RecentlyUsedModel::Private
 {
 public:
     Private(RecentlyUsedModel *parent, RecentType recenttype, int maxRecentApps)
-            : q(parent)
-            , recenttype(recenttype)
-            , maxRecentApps(maxRecentApps >= 0 ? maxRecentApps : Kickoff::RecentApplications::self()->defaultMaximum())
-            , recentDocumentItem(0)
-            , recentAppItem(0)
+            : q(parent),
+              recenttype(recenttype),
+              maxRecentApps(maxRecentApps >= 0 ? maxRecentApps : Kickoff::RecentApplications::self()->defaultMaximum()),
+              recentDocumentItem(0),
+              recentAppItem(0),
+              displayOrder(NameAfterDescription)
     {
     }
+
     void removeExistingItem(const QString& path) {
         if (!itemsByPath.contains(path)) {
             return;
@@ -61,11 +62,12 @@ public:
         existingItem->parent()->removeRow(existingItem->row());
         itemsByPath.remove(path);
     }
+
     void addRecentApplication(KService::Ptr service, bool append) {
         // remove existing item if any
         removeExistingItem(service->entryPath());
 
-        QStandardItem *appItem = StandardItemFactory::createItemForService(service);
+        QStandardItem *appItem = StandardItemFactory::createItemForService(service, displayOrder);
         itemsByPath.insert(service->entryPath(), appItem);
 
         if (append) {
@@ -84,6 +86,7 @@ public:
             qDeleteAll(row.begin(), row.end());
         }
     }
+
     void addRecentDocument(const QString& desktopPath, bool append) {
         // remove existing item if any
         KDesktopFile desktopFile(desktopPath);
@@ -91,7 +94,7 @@ public:
 
         removeExistingItem(documentUrl.url());
 
-        QStandardItem *documentItem = StandardItemFactory::createItemForUrl(desktopPath);
+        QStandardItem *documentItem = StandardItemFactory::createItemForUrl(desktopPath, displayOrder);
         documentItem->setData(true, Kickoff::SubTitleMandatoryRole);
         itemsByPath.insert(desktopPath, documentItem);
 
@@ -102,21 +105,28 @@ public:
             recentDocumentItem->insertRow(0, documentItem);
         }
     }
-    void loadRecentDocuments() {
+
+    void loadRecentDocuments()
+    {
         // create branch for documents and add existing items
         recentDocumentItem = new QStandardItem(i18n("Documents"));
         QStringList documents = KRecentDocument::recentDocuments();
         foreach(const QString& document, documents) {
             addRecentDocument(document, true);
         }
+
         q->appendRow(recentDocumentItem);
     }
-    void loadRecentApplications() {
+
+    void loadRecentApplications()
+    {
         recentAppItem = new QStandardItem(i18n("Applications"));
+
         QList<KService::Ptr> services = RecentApplications::self()->recentApplications();
         for(int i = 0; i < maxRecentApps && i < services.count(); ++i) {
             addRecentApplication(services[i], true);
         }
+
         q->appendRow(recentAppItem);
     }
 
@@ -127,18 +137,19 @@ public:
     QStandardItem *recentDocumentItem;
     QStandardItem *recentAppItem;
     QHash<QString, QStandardItem*> itemsByPath;
+    DisplayOrder displayOrder;
 };
 
 RecentlyUsedModel::RecentlyUsedModel(QObject *parent, RecentType recenttype, int maxRecentApps)
-        : KickoffModel(parent)
-        , d(new Private(this, recenttype, maxRecentApps))
+        : KickoffModel(parent),
+          d(new Private(this, recenttype, maxRecentApps))
 {
     QDBusConnection dbus = QDBusConnection::sessionBus();
     (void)new RecentAdaptor(this);
     QDBusConnection::sessionBus().registerObject("/kickoff/RecentAppDoc", this);
     dbus.connect(QString(), "/kickoff/RecentAppDoc", "org.kde.plasma", "clearRecentDocumentsAndApplications", this, SLOT(clearRecentDocumentsAndApplications()));
 
-    if(recenttype != DocumentsOnly) {
+    if (recenttype != DocumentsOnly) {
         d->loadRecentApplications();
 
         // listen for changes to the list of recent applications
@@ -149,7 +160,8 @@ RecentlyUsedModel::RecentlyUsedModel(QObject *parent, RecentType recenttype, int
         connect(RecentApplications::self(), SIGNAL(cleared()),
                 this, SLOT(recentApplicationsCleared()));
     }
-    if(recenttype != ApplicationsOnly) {
+
+    if (recenttype != ApplicationsOnly) {
         d->loadRecentDocuments();
 
         // listen for changes to the list of recent documents
@@ -159,6 +171,7 @@ RecentlyUsedModel::RecentlyUsedModel(QObject *parent, RecentType recenttype, int
         connect(recentDocWatch, SIGNAL(deleted(QString)), this, SLOT(recentDocumentRemoved(QString)));
     }
 }
+
 RecentlyUsedModel::~RecentlyUsedModel()
 {
     delete d;
@@ -182,6 +195,31 @@ QVariant RecentlyUsedModel::headerData(int section, Qt::Orientation orientation,
     default:
         return QVariant();
     }
+}
+
+void RecentlyUsedModel::setNameDisplayOrder(DisplayOrder displayOrder) 
+{
+    if (d->displayOrder == displayOrder) {
+        return;
+    }
+
+    d->displayOrder = displayOrder;
+
+    d->itemsByPath.clear();
+    clear();
+
+    if (d->recenttype != DocumentsOnly) {
+        d->loadRecentApplications();
+    }
+
+    if (d->recenttype != ApplicationsOnly) {
+        d->loadRecentDocuments();
+    }
+}
+
+DisplayOrder RecentlyUsedModel::nameDisplayOrder() const
+{
+   return d->displayOrder;
 }
 
 void RecentlyUsedModel::recentDocumentAdded(const QString& path)

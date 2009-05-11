@@ -23,6 +23,7 @@
 // Qt
 #include "core/kickoff_export.h"
 #include "core/kickoffmodel.h"
+#include "core/models.h"
 
 // KDE
 #include <KService>
@@ -52,6 +53,8 @@ public:
     virtual ~RecentlyUsedModel();
 
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+    void setNameDisplayOrder(DisplayOrder displayOrder);
+    DisplayOrder nameDisplayOrder() const;
 
 public Q_SLOTS:
     void clearRecentApplications();

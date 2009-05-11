@@ -20,6 +20,7 @@
 #ifndef SEARCHMODEL_H
 #define SEARCHMODEL_H
 
+#include "core/models.h"
 #include "core/kickoff_export.h"
 #include "core/kickoffmodel.h"
 
@@ -42,6 +43,8 @@ class KICKOFF_EXPORT SearchModel : public KickoffModel
 public:
     SearchModel(QObject *parent);
     virtual ~SearchModel();
+    void setNameDisplayOrder(DisplayOrder displayOrder);
+    DisplayOrder nameDisplayOrder() const;
 
 public Q_SLOTS:
     void setQuery(const QString& query);
