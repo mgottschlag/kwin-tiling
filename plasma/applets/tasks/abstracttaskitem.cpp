@@ -385,19 +385,42 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
                 if (item->isGroupItem()) {
                     //TODO: recurse through sub-groups?
                 } else {
-                    windows.append(static_cast<TaskManager::TaskItem*>(item));
+                    TaskManager::TaskItem *taskItem = static_cast<TaskManager::TaskItem*>(item);
+                    if (taskItem->task()) {
+                        windows.append(taskItem);
+                    }
                 }
             }
         } else {
-            windows.append(static_cast<TaskManager::TaskItem*>(m_abstractItem));
+            TaskManager::TaskItem *taskItem = static_cast<TaskManager::TaskItem*>(m_abstractItem);
+            if (taskItem->task()) {
+                windows.append(taskItem);
+            }
         }
 
         const int numWindows = windows.count();
-        QVarLengthArray<long, 1024> data(numWindows);
+        QVarLengthArray<long, 32> data(numWindows);
 
-        kDebug() << "setting for" << numWindows;
+        //kDebug() << "setting for" << numWindows;
+        int actualCount = 0;
         for (int i = 0; i < numWindows; ++i) {
-            data[i] = windows.at(i)->task()->window();
+            TaskManager::TaskItem *item = windows.at(i);
+
+            // we've already checked that the item has a task in the foreach above
+            // but this bit of paranoia should lock the deal; the checks in the foreach
+            // above will help prevent call to data.resize below from happening,
+            // but this should catch any odd events that might happen; afaict this is
+            // currently impossible, but it's too easy to introduce such situations in the
+            // future with modifications to the code above this and it's easy to do
+            // the check here. better safe than sorry, right? :) - aseigo
+            if (item->task()) {
+                data[i] = item->task()->window();
+                ++actualCount;
+            }
+        }
+
+        if (actualCount != numWindows) {
+            data.resize(actualCount);
         }
 
         Display *dpy = QX11Info::display();
