@@ -664,6 +664,10 @@ void TaskGroupItem::expand()
         return;
     }
 
+    if (m_popupDialog) {
+        m_popupDialog->hide();
+    }
+
     if (m_offscreenLayout) {
         m_offscreenLayout->removeItem(tasksLayout());
     }
