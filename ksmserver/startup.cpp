@@ -148,7 +148,7 @@ void KSMServer::launchWM( const QList< QStringList >& wmStartCommands )
     // when we have a window manager, we start it first and give
     // it some time before launching other processes. Results in a
     // visually more appealing startup.
-    wmProcess = startApplication( wmStartCommands[ 0 ] );
+    wmProcess = startApplication( wmStartCommands[ 0 ], QString(), QString(), true );
     connect( wmProcess, SIGNAL( error( QProcess::ProcessError )), SLOT( wmProcessChange()));
     connect( wmProcess, SIGNAL( finished( int, QProcess::ExitStatus )), SLOT( wmProcessChange()));
     // there can be possibly more wm's (because of forking for multihead),

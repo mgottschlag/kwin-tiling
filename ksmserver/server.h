@@ -161,7 +161,8 @@ private:
 
     KProcess* startApplication( const QStringList& command,
         const QString& clientMachine = QString(),
-        const QString& userId = QString() );
+        const QString& userId = QString(),
+        bool wm = false );
     void executeCommand( const QStringList& command );
 
     bool isWM( const KSMClient* client ) const;

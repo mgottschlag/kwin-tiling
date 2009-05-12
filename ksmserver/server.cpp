@@ -98,7 +98,7 @@ KSMServer* KSMServer::self()
  * to restart applications.
  */
 KProcess* KSMServer::startApplication( const QStringList& cmd, const QString& clientMachine,
-    const QString& userId )
+    const QString& userId, bool wm )
 {
     QStringList command = cmd;
     if ( command.isEmpty() )
@@ -116,13 +116,29 @@ KProcess* KSMServer::startApplication( const QStringList& cmd, const QString& cl
         command.prepend( clientMachine );
         command.prepend( xonCommand ); // "xon" by default
     }
-    KProcess* process = new KProcess( this );
-    *process << command;
-    // make it auto-delete
-    connect( process, SIGNAL( error( QProcess::ProcessError )), process, SLOT( deleteLater()));
-    connect( process, SIGNAL( finished( int, QProcess::ExitStatus )), process, SLOT( deleteLater()));
-    process->start();
-    return process;
+
+// TODO this function actually should not use KProcess at all and use klauncher (kdeinit) instead.
+// Klauncher should also have support for tracking whether the launched process is still alive
+// or not, so this should be redone. For now, use KProcess for wm's, as they need to be tracked,
+// klauncher for the rest where ksmserver doesn't care.
+    if( wm ) {
+        KProcess* process = new KProcess( this );
+        *process << command;
+        // make it auto-delete
+        connect( process, SIGNAL( error( QProcess::ProcessError )), process, SLOT( deleteLater()));
+        connect( process, SIGNAL( finished( int, QProcess::ExitStatus )), process, SLOT( deleteLater()));
+        process->start();
+        return process;
+    } else {
+        int n = command.count();
+        org::kde::KLauncher klauncher("org.kde.klauncher", "/KLauncher", QDBusConnection::sessionBus());
+        QString app = command[0];
+        QStringList argList;
+        for ( int i=1; i < n; i++)
+           argList.append( command[i]);
+        klauncher.exec_blind(app, argList );
+        return NULL;
+    }
 }
 
 /*! Utility function to execute a command on the local machine. Used
