@@ -423,8 +423,8 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
             data.resize(actualCount);
         }
 
-        Display *dpy = QX11Info::display();
-        if (m_applet->view()) {
+        if (!data.isEmpty() && m_applet->view()) {
+            Display *dpy = QX11Info::display();
             const WId winId = m_applet->view()->winId();
             Atom atom = XInternAtom(dpy, "_KDE_WINDOW_HIGHLIGHT", False);
             XChangeProperty(dpy, winId, atom, atom, 32, PropModeReplace,
