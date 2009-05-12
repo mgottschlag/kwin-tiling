@@ -133,17 +133,22 @@ GroupManager::~GroupManager()
 void GroupManagerPrivate::reloadTasks()
 {
     //kDebug() << "number of tasks available " << TaskManager::self()->tasks().size();
+    QHash<WId, TaskPtr> taskList = TaskManager::self()->tasks();
+    QMutableHashIterator<WId, TaskPtr> it(taskList);
 
-    QList <TaskPtr> taskList = TaskManager::self()->tasks().values();
-    foreach (const TaskPtr& task, taskList) { //Add all existing tasks
-        if (!addTask(task)) {
-            removeTask(task); //remove what isn't needed anymore
+    while (it.hasNext()) {
+        it.next();
+
+        if (addTask(it.value())) {
+            it.remove();
         }
-        taskList.removeAll(task);
     }
 
-    foreach (const TaskPtr& task, taskList) { //Remove the remaining
-        removeTask(task);
+    // Remove what remains
+    it.toFront();
+    while (it.hasNext()) {
+        it.next();
+        removeTask(it.value());
     }
 
     emit q->reload();
@@ -234,19 +239,24 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
 
     //Ok the Task should be displayed
     TaskItem *item = 0;
-    if (!itemList.contains(task)) {
-        //Lookout for existing startuptask of this task
-        QMutableHashIterator<StartupPtr, TaskItem *> it(startupList);
-        while (it.hasNext()) {
-            it.next();
+    if (itemList.contains(task)) {
+        // we pretend to add it again so the group strategy evaluates it again
+        item = itemList.value(task);
+    } else {
+        // first search for an existing startuptask for this task
+        QHash<StartupPtr, TaskItem *>::iterator it = startupList.begin();
+        QHash<StartupPtr, TaskItem *>::iterator itEnd = startupList.end();
+        while (it != itEnd) {
             if (it.key()->matchesWindow(task->window())) {
-                //kDebug() << "startup task";
+                //kDebug() << "startup task found";
                 item = it.value();
+                startupList.erase(it);
                 QObject::disconnect(item, 0, q, 0);
                 item->setTaskPointer(task);
-                it.remove();
                 break;
             }
+
+            ++it;
         }
 
         if (!item) {
@@ -256,12 +266,10 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
         QObject::connect(item, SIGNAL(destroyed(AbstractGroupableItem*)),
                          q, SLOT(taskItemDestroyed(AbstractGroupableItem*)));
         itemList.insert(task, item); 
-    } else {
-        item = itemList.value(task); //we add it again so the group is evaluated again
     }
 
     //Find a fitting group for the task with GroupingStrategies
-    if (abstractGroupingStrategy && !task->demandsAttention()) { //do not group attetion tasks
+    if (abstractGroupingStrategy && !task->demandsAttention()) { //do not group attention tasks
         abstractGroupingStrategy->handleItem(item);
     } else {
         rootGroup->add(item);
@@ -274,9 +282,7 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
 void GroupManagerPrivate::removeTask(TaskPtr task)
 {
     //kDebug() << "remove: " << task->visibleName();
-    if (!geometryTasks.isEmpty()) {
-        geometryTasks.remove(task);
-    }
+    geometryTasks.remove(task);
 
     TaskItem *item = itemList.value(task);
     if (!item) {
