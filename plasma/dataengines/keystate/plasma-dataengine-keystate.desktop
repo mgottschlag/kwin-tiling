@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=Keyboard and Mouse State
+Name[csb]=Stón klawiaturë ë mëszë
 Name[de]=Status von Tastatur und Maus
+Name[et]=Klaviatuuri ja hiire olek
 Name[fi]=Näppäimistön ja hiiren tila
 Name[gu]=કીબોર્ડ અને માઉસ સ્થિતિ
 Name[km]=ស្ថានភាព​ក្ដារចុច និង​កណ្ដុល
@@ -11,7 +13,9 @@ Name[tr]=Klavye ve Fare Durumu
 Name[uk]=Стан клавіатури і миші
 Name[zh_TW]=鍵盤與滑鼠狀態
 Comment=Keyboard modifier and mouse buttons states
+Comment[csb]=Mòdifikatora klawiaturë ë stónu klawiszów mëszë
 Comment[de]=.
+Comment[et]=Klaviatuuri muuteklahvide ja hiirenuppude olekud
 Comment[km]=កម្មវិធី​កែប្រែ​ក្ដារចុច និង​ស្ថានភាព​ប៊ូតុង​កណ្ដុរ
 Comment[pt]=Estados das teclas modificadoras e dos botões do rato
 Comment[pt_BR]=Estados das teclas modificadoras e dos botões do rato

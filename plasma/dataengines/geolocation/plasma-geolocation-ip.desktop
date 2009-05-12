@@ -1,13 +1,17 @@
 [Desktop Entry]
 Name=Geolocation IP
+Name[csb]=IP geògrafny lokalizacëji
 Name[de]=Geolokalisierung IP
+Name[et]=Geolokatsioon IP-st
 Name[km]=IP ទីតាំង​ភូមិសាស្ត្រ
 Name[pt]=Geo-Localização por IP
 Name[pt_BR]=Geo-Localização por IP
 Name[sv]=Lokalisera geografiskt med IP-adress
 Name[uk]=Геопозиціювання за IP
 Comment=Geolocation from IP address.
+Comment[csb]=Geògrafnô lokalizacëjô z adresë IP.
 Comment[de]=Geolokalisierung mittels IP-Adresse.
+Comment[et]=Geolokatsioon IP-aadressi põhjal
 Comment[km]=ទីតាំង​ភូមិសាស្ត្រ​ពី​​អាសយដ្ឋាន IP ។
 Comment[pt]=Geo-localização a partir do endereço IP.
 Comment[pt_BR]=Geo-localização a partir do endereço IP.

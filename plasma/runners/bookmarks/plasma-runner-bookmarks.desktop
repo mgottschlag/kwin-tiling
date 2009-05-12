@@ -1,6 +1,12 @@
 [Desktop Entry]
 # ctxt: plasma runner
 Name=Bookmarks
+Name[et]=Järjehoidjad
+Name[pt]=Favoritos
+Name[pt_BR]=Favoritos
+Name[sv]=Bokmärken
+Name[uk]=Закладки
+Name[zh_TW]=書籤
 Comment=Find and open bookmarks
 Comment[ar]=اعثر وافتح العلامة
 Comment[be@latin]=Pošuk i adčynieńnie zakładak.
