@@ -84,9 +84,13 @@ void PanelSpacer::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::FormFactorConstraint) {
         if (formFactor() == Plasma::Horizontal) {
+            setMinimumWidth(minimumHeight());
+            setMaximumWidth(maximumHeight());
             setMaximumHeight(QWIDGETSIZE_MAX);
             setMinimumHeight(0);
         } else if (formFactor() == Plasma::Vertical) {
+            setMinimumHeight(minimumWidth());
+            setMaximumHeight(maximumWidth());
             setMaximumWidth(QWIDGETSIZE_MAX);
             setMinimumWidth(0);
         }
