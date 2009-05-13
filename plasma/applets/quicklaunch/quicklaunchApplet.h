@@ -131,13 +131,7 @@ class QuicklaunchApplet : public Plasma::Applet
          * @param index The position to insert the icon into
          * @param desktopFile The Url to read
          */
-        void addProgram(int index, const QString &desktopFile);
-
-        /**
-         * Read all Urls from a list, and insert into icon list
-         * @param desktopFiles List with Urls
-         */
-        void loadPrograms(const QStringList &desktopFiles);
+        void addProgram(int index, const QString &desktopFile, bool isNewIcon = false);
 
         /**
          * Removes all items from a BoxLayout

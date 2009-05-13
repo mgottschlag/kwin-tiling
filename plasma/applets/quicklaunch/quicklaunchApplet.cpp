@@ -128,10 +128,13 @@ void QuicklaunchApplet::init()
                 }
             }
         }
-        kDebug() << desktopFiles;
+        //kDebug() << desktopFiles;
     }
 
-    loadPrograms(desktopFiles);
+    foreach (const QString &desktopFile, desktopFiles) {
+        addProgram(-1, desktopFile);
+    }
+
     performUiRefactor();
 }
 
@@ -162,15 +165,15 @@ void QuicklaunchApplet::constraintsEvent(Plasma::Constraints constraints)
 
 void QuicklaunchApplet::refactorUi()
 {
-     static int my_counter = 0;
-     kDebug() << "refactorUi count = " << my_counter++;
+     //static int my_counter = 0;
+     //kDebug() << "refactorUi count = " << my_counter++;
      m_timer->start(100);
 }
 
 void QuicklaunchApplet::performUiRefactor()
 {
-    static int my_perforcount = 0;
-    kDebug() << "performUiRefactor count = " << my_perforcount++;
+    //static int my_perforcount = 0;
+    //kDebug() << "performUiRefactor count = " << my_perforcount++;
     clearLayout(m_innerLayout);
 
     m_iconSize = qMin(qMax(m_iconSize, s_defaultIconSize), (int)(contentsRect().height() - 2 * s_defaultSpacing));//Don't accept values under 16 nor anything over applet's height
@@ -234,7 +237,6 @@ void QuicklaunchApplet::performUiRefactor()
     }
 
     //resize(sizeHint(Qt::PreferredSize));
-    kDebug() << "Bar see";
     update();
 }
 
@@ -456,13 +458,16 @@ void QuicklaunchApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
     dropApp(static_cast<QGraphicsSceneDragDropEvent*>(event),false);
 }
 
-void QuicklaunchApplet::addProgram(int index, const QString &url)
+void QuicklaunchApplet::addProgram(int index, const QString &url, bool isNewIcon)
 {
     if (index < 0 || index > m_icons.size()) {
         index = m_icons.size();
     }
-    if( url.isEmpty() )
+
+    if (url.isEmpty()) {
         return;
+    }
+
     KUrl appUrl = KUrl(url);
     KIcon icon;
     QString text;
@@ -490,12 +495,11 @@ void QuicklaunchApplet::addProgram(int index, const QString &url)
     QuicklaunchIcon *container = new QuicklaunchIcon(appUrl, text, icon, genericName, this);
     container->installEventFilter(this);
     m_icons.insert(index, container);
-}
 
-void QuicklaunchApplet::loadPrograms(const QStringList &desktopFiles)
-{
-    foreach (const QString &desktopFile, desktopFiles) {
-        addProgram(-1, desktopFile);
+    if (isNewIcon) {
+        KConfigGroup cg = config();
+        saveState(cg);
+        emit configNeedsSaving();
     }
 }
 
@@ -512,6 +516,10 @@ void QuicklaunchApplet::removeCurrentIcon()
     m_rightClickedIcon->hide();
     m_rightClickedIcon->deleteLater();
     performUiRefactor();
+
+    KConfigGroup cg = config();
+    saveState(cg);
+    emit configNeedsSaving();
 }
 
 bool QuicklaunchApplet::dropHandler(const int pos, const QMimeData *mimedata)
@@ -522,7 +530,7 @@ bool QuicklaunchApplet::dropHandler(const int pos, const QMimeData *mimedata)
 
     KUrl::List urls = KUrl::List::fromMimeData(mimedata);
 
-    if (!urls.count()) {
+    if (urls.isEmpty()) {
         return false;
     }
 
@@ -532,8 +540,8 @@ bool QuicklaunchApplet::dropHandler(const int pos, const QMimeData *mimedata)
     }
 
     foreach (const KUrl &url, urls) {
-        if(KDesktopFile::isDesktopFile(url.toLocalFile())) {
-            addProgram(pos, url.toLocalFile());
+        if (KDesktopFile::isDesktopFile(url.toLocalFile())) {
+            addProgram(pos, url.toLocalFile(), true);
         }
     }
     return true;
@@ -557,7 +565,7 @@ void QuicklaunchApplet::showAddInterface()
 void QuicklaunchApplet::addAccepted()
 {
     int insertplace = m_rightClickedIcon ? m_icons.indexOf(m_rightClickedIcon) : m_icons.size();
-    addProgram(insertplace, addUi.urlIcon->url().url());
+    addProgram(insertplace, addUi.urlIcon->url().url(), true);
     performUiRefactor();
 }
 
