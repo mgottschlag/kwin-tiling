@@ -88,6 +88,9 @@ public:
 
     static void loadFavorites()
     {
+        globalFavoriteList.clear();
+        globalFavoriteSet.clear();
+
         KConfigGroup favoritesGroup = componentData().config()->group("Favorites");
         QList<QString> favoriteList = favoritesGroup.readEntry("FavoriteURLs", QList<QString>());
         if (favoriteList.isEmpty()) {
