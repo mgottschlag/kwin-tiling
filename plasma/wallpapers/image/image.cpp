@@ -76,7 +76,7 @@ void Image::init(const KConfigGroup &config)
         m_dirs << KStandardDirs::installPath("wallpaper");
     }
 
-    setUsingDiskCache(m_mode == "SingleImage");
+    setUsingRenderingCache(m_mode == "SingleImage");
 
     if (m_mode == "SingleImage") {
         setSingleImage();
