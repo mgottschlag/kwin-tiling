@@ -23,7 +23,7 @@ Note that this will not remove existing instances of plasmoids. It only hides th
 
 Existing constraints/features:
 -FileDialog. When this is restricted, use of open or save dialogs is forbidden. Reason: users can delete files from there and cause all kinds of havoc.
--KRun. When this is restricted, running other applications or opening urls (generally done through KRun) is forbidden. Reason: although they're not accessible from the screensaver, they can still pile up and need to be closed after the screen's unlocked.
+-LaunchApp. When this is restricted, running other applications or opening urls (generally done through KRun) is forbidden. Reason: although they're not accessible from the screensaver, they can still pile up and need to be closed after the screen's unlocked.
 
 ^^ this is obviously not a final list. more will be added soon.
 
