@@ -18,12 +18,13 @@
 
 #include <Plasma/Wallpaper>
 
+class QEventLoop;
+class KProgressDialog;
+
 namespace Plasma
 {
     class Package;
 } // namespace Plasma
-
-class KProgressDialog;
 
 class BackgroundListModel : public QAbstractListModel
 {
@@ -44,10 +45,9 @@ public:
     void removeBackground(const QString &path);
     virtual bool contains(const QString &bg) const;
 
-    static QList<Plasma::Package *> findAllBackgrounds(Plasma::Wallpaper *structureParent,
+    static QStringList findAllBackgrounds(Plasma::Wallpaper *structureParent,
                                                        const BackgroundListModel *container,
-                                                       const QString &path, float ratio,
-                                                       KProgressDialog *progress = 0);
+                                                       const QStringList &path);
     static void initProgressDialog(KProgressDialog *dialog);
 
     void setWallpaperSize(QSize size);
@@ -71,6 +71,32 @@ private:
 
     QSize m_size;
     Plasma::Wallpaper::ResizeMethod m_resizeMethod;
+};
+
+class BackgroundFinder : public QObject
+{
+    Q_OBJECT
+
+public:
+    BackgroundFinder(Plasma::Wallpaper *structureParent,
+                     const BackgroundListModel *container,
+                     const QStringList &p,
+                     QEventLoop *eventLoop);
+
+    QStringList papersFound() const;
+
+public slots:
+    void start();
+
+signals:
+    void finished();
+
+private:
+    Plasma::Wallpaper *m_structureParent;
+    const BackgroundListModel *m_container;
+    QStringList m_paths;
+    QStringList m_papersFound;
+    QEventLoop *m_eventLoop;
 };
 
 #endif // BACKGROUNDLISTMODEL_H

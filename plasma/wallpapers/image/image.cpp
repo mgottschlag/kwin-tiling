@@ -36,6 +36,7 @@ K_EXPORT_PLASMA_WALLPAPER(image, Image)
 Image::Image(QObject *parent, const QVariantList &args)
     : Plasma::Wallpaper(parent, args),
       m_configWidget(0),
+      m_wallpaperPackage(0),
       m_currentSlide(-1),
       m_model(0),
       m_dialog(0),
@@ -48,7 +49,6 @@ Image::Image(QObject *parent, const QVariantList &args)
 
 Image::~Image()
 {
-    qDeleteAll(m_slideshowBackgrounds);
 }
 
 void Image::init(const KConfigGroup &config)
@@ -57,7 +57,7 @@ void Image::init(const KConfigGroup &config)
     m_mode = renderingMode().name();
     calculateGeometry();
 
-    m_delay = config.readEntry("slideTimer", 600);
+    m_delay = config.readEntry("slideTimer", 10);
     m_resizeMethod = (ResizeMethod)config.readEntry("wallpaperposition", (int)ScaledResize);
     m_wallpaper = config.readEntry("wallpaper", QString());
     if (m_wallpaper.isEmpty()) {
@@ -174,7 +174,7 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         QTime time(0, 0, 0);
         time = time.addSecs(m_delay);
         m_uiSlideshow.m_slideshowDelay->setTime(time);
-        m_uiSlideshow.m_slideshowDelay->setMinimumTime(QTime(0, 0, 30));
+        m_uiSlideshow.m_slideshowDelay->setMinimumTime(QTime(0, 0, 10));
         connect(m_uiSlideshow.m_slideshowDelay, SIGNAL(timeChanged(const QTime&)),
                 this, SLOT(timeChanged(const QTime&)));
 
@@ -332,9 +332,9 @@ void Image::setSingleImage()
 
     QString img;
     Plasma::Package b(m_wallpaper, packageStructure(this));
-
     img = b.filePath("preferred");
     kDebug() << img << m_wallpaper;
+
     if (img.isEmpty()) {
         img = m_wallpaper;
     }
@@ -348,17 +348,8 @@ void Image::startSlideshow()
 {
     // populate background list
     m_timer.stop();
-    qDeleteAll(m_slideshowBackgrounds);
     m_slideshowBackgrounds.clear();
-
-    {
-        qreal ratio = m_size.isEmpty() ? 1.0 : m_size.width() / qreal(m_size.height());
-        KProgressDialog progressDialog(m_configWidget);
-        BackgroundListModel::initProgressDialog(&progressDialog);
-        foreach (const QString& dir, m_dirs) {
-            m_slideshowBackgrounds += BackgroundListModel::findAllBackgrounds(this, 0, dir, ratio, &progressDialog);
-        }
-    }
+    m_slideshowBackgrounds = BackgroundListModel::findAllBackgrounds(this, 0, m_dirs);
 
     // start slideshow
     if (m_slideshowBackgrounds.isEmpty()) {
@@ -519,13 +510,14 @@ void Image::browse()
 
 void Image::nextSlide()
 {
-    if (m_slideshowBackgrounds.size() < 1) {
+    if (m_slideshowBackgrounds.isEmpty()) {
         return;
     }
 
     QString previous;
     if (m_currentSlide >= 0 && m_currentSlide < m_slideshowBackgrounds.size()) {
-        previous = m_slideshowBackgrounds[m_currentSlide]->filePath("preferred");
+        m_wallpaperPackage->setPath(m_slideshowBackgrounds.at(m_currentSlide));
+        previous = m_wallpaperPackage->filePath("preferred");
     }
 
     if (m_randomize) {
@@ -534,7 +526,14 @@ void Image::nextSlide()
         m_currentSlide = 0;
     }
 
-    QString current = m_slideshowBackgrounds[m_currentSlide]->filePath("preferred");
+    if (!m_wallpaperPackage) {
+        m_wallpaperPackage = new Plasma::Package(m_slideshowBackgrounds.at(m_currentSlide),
+                                                 packageStructure(this));
+    } else {
+        m_wallpaperPackage->setPath(m_slideshowBackgrounds.at(m_currentSlide));
+    }
+
+    QString current = m_wallpaperPackage->filePath("preferred");
     if (current == previous) {
         QFileInfo info(previous);
         if (m_previousModified == info.lastModified()) {
@@ -548,7 +547,8 @@ void Image::nextSlide()
                 m_currentSlide = 0;
             }
 
-            current = m_slideshowBackgrounds[m_currentSlide]->filePath("preferred");
+            m_wallpaperPackage->setPath(m_slideshowBackgrounds.at(m_currentSlide));
+            current = m_wallpaperPackage->filePath("preferred");
         }
     }
 

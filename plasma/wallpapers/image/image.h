@@ -79,7 +79,8 @@ class Image : public Plasma::Wallpaper
         Ui::ImageConfig m_uiImage;
         Ui::SlideshowConfig m_uiSlideshow;
         QString m_mode;
-        QList<Plasma::Package *> m_slideshowBackgrounds;
+        Plasma::Package *m_wallpaperPackage;
+        QStringList m_slideshowBackgrounds;
         QTimer m_timer;
         QPixmap m_pixmap;
         QPixmap m_oldPixmap;
