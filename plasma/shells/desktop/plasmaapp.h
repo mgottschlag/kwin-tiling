@@ -65,11 +65,6 @@ public:
     void showAppletBrowser(Plasma::Containment *containment);
 
     /**
-     * Creates a view for the given containment
-     */
-    void createDesktopView(Plasma::Containment *containment, int id = 0);
-
-    /**
      * Should be called when a panel hides or unhides itself
      */
     void panelHidden(bool hidden);
