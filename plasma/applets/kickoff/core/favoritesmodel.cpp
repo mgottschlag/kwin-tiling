@@ -30,6 +30,7 @@
 #include <KConfigGroup>
 #include <KService>
 #include <kdebug.h>
+#include <KUrl>
 
 using namespace Kickoff;
 
@@ -216,9 +217,24 @@ int FavoritesModel::numberOfFavorites()
 
 void FavoritesModel::sortFavorites(Qt::SortOrder order)
 {
+    if(Private::models.isEmpty()) {
+       return;
+    }
+
     foreach (FavoritesModel *model, Private::models) {
         model->d->headerItem->sortChildren(0, order);
     }
+
+    Private::globalFavoriteList.clear();
+
+    FavoritesModel *model = *Private::models.begin();
+    QStandardItem *childData;
+    for (int i = 0; i <= numberOfFavorites(); i++) {
+        childData = model->d->headerItem->child(i, 0);
+        Private::globalFavoriteList.append(childData->data(Kickoff::UrlRole).toString());
+    }
+
+    Private::saveFavorites();
 }
 
 void FavoritesModel::sortFavoritesAscending()
