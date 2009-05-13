@@ -209,6 +209,11 @@ void NotifierView::paintEvent(QPaintEvent *event)
     }
 }
 
+QRect NotifierView::visualRect(const QModelIndex &index) const
+{
+    return itemRects[index];
+}
+
 void NotifierView::paintHeaderItem(QPainter &painter, const QRect &itemRect, const QModelIndex &index)
 {
     QStyleOptionViewItem option = viewOptions();

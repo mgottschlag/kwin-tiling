@@ -50,6 +50,11 @@ namespace Notifier
        */
       void calculateRects();
 
+      /**
+       * Reimplemented from QTreeView
+       */
+      QRect visualRect(const QModelIndex &index) const;
+
   protected:
       /**
       * Call when the view is resized
