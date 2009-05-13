@@ -1,6 +1,8 @@
 [Desktop Entry]
 Actions=appendable;availableContent;blank;capacity;discType;fsType;ignored;label;objectName;rewritable;size;usage;uuid;
 Name=Optical Disc
+Name[csb]=Òpticzny disk
+Name[da]=Optisk disk
 Name[de]=Optisches Medium
 Name[el]=Οπτικός δίσκος
 Name[et]=Optiline plaat
@@ -26,6 +28,8 @@ X-KDE-Solid-Actions-Type=OpticalDisc
 
 [Desktop Action appendable]
 Name=Appendable
+Name[csb]=Dodôwny
+Name[da]=Data kan tilføjes
 Name[de]=Anhängbar
 Name[el]=Προσαρτήσιμο
 Name[et]=Lisatav
@@ -48,6 +52,7 @@ Name[zh_TW]=可附加
 
 [Desktop Action availableContent]
 Name=Available Content
+Name[da]=Tilgængeligt indhold
 Name[de]=Verfügbarer Inhalt
 Name[el]=Διαθέσιμο περιεχόμενο
 Name[et]=Sisuga
@@ -70,6 +75,8 @@ Name[zh_TW]=可用的內容
 
 [Desktop Action blank]
 Name=Blank
+Name[csb]=Czësti
+Name[da]=Tom
 Name[de]=Leer
 Name[el]=Κενό
 Name[et]=Tühi
@@ -94,6 +101,8 @@ Name[zh_TW]=空白
 
 [Desktop Action capacity]
 Name=Capacity
+Name[csb]=Plac na diskù
+Name[da]=Kapacitet
 Name[de]=Kapazität
 Name[el]=Χωρητικότητα
 Name[et]=Mahtuvus
@@ -118,6 +127,8 @@ Name[zh_TW]=空間
 
 [Desktop Action discType]
 Name=Disc Type
+Name[csb]=Ôrt diskù
+Name[da]=Disktype
 Name[de]=Disc-Typ
 Name[el]=Τύπος δίσκου
 Name[et]=Plaadi tüüp
@@ -141,6 +152,8 @@ Name[zh_TW]=磁碟型態
 
 [Desktop Action fsType]
 Name=Fs Type
+Name[csb]=Ôrt Fs
+Name[da]=FS-type
 Name[de]=Dateisystemtyp
 Name[el]=Τύπος συστήματος αρχείων
 Name[et]=Failisüsteemi tüüp
@@ -163,6 +176,8 @@ Name[zh_TW]=檔案系統型態
 
 [Desktop Action ignored]
 Name=Ignored
+Name[csb]=Ignorowóné
+Name[da]=Ignoreret
 Name[de]=Ignoriert
 Name[el]=Παράβλεψη
 Name[et]=Eiratav
@@ -184,6 +199,8 @@ Name[zh_TW]=忽略
 
 [Desktop Action label]
 Name=Label
+Name[csb]=Znakòwnik
+Name[da]=Etiket
 Name[de]=Beschriftung
 Name[el]=Ετικέτα
 Name[et]=Pealdis
@@ -207,6 +224,7 @@ Name[zh_TW]=標籤
 
 [Desktop Action objectName]
 Name=Object Name
+Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi
@@ -230,6 +248,8 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action rewritable]
 Name=Rewritable
+Name[csb]=Wielorazowò zapisëwanlné
+Name[da]=Genbrændbar
 Name[de]=Wiederbeschreibbar
 Name[el]=Επανεγγράψιμο
 Name[et]=Korduvkirjutatav
@@ -253,6 +273,8 @@ Name[zh_TW]=可覆寫
 
 [Desktop Action size]
 Name=Size
+Name[csb]=Miara
+Name[da]=Størrelse
 Name[de]=Größe
 Name[el]=Μέγεθος
 Name[et]=Suurus
@@ -277,6 +299,8 @@ Name[zh_TW]=大小
 
 [Desktop Action usage]
 Name=Usage
+Name[csb]=Brëkòwóné
+Name[da]=Brug
 Name[de]=Verwendung
 Name[el]=Χρήση
 Name[et]=Kasutus

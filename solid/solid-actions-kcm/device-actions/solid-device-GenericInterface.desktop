@@ -1,6 +1,8 @@
 [Desktop Entry]
 Actions=objectName;
 Name=Generic Interface
+Name[csb]=Genericzny interfejs
+Name[da]=Generisk grænseflade
 Name[de]=Allgemeine Schnittstelle
 Name[el]=Γενική διασύνδεση
 Name[et]=Üldliides
@@ -26,6 +28,7 @@ X-KDE-Solid-Actions-Type=GenericInterface
 
 [Desktop Action objectName]
 Name=Object Name
+Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi

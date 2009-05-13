@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Panel Spacer
+Name[da]=Panel-afstandsstykke
 Name[de]=Abstandhalter
 Name[et]=Paneeliruumi korraldaja
 Name[km]=ចន្លោះ​បន្ទះ
@@ -10,6 +11,7 @@ Name[tr]=Panel Ayırıcı
 Name[uk]=Розпірка панелі
 Name[zh_TW]=面板間隔器
 Comment=Reserve empty spaces within the panel.
+Comment[da]=Reservér tom plads i panelet.
 Comment[de]=Reserviert freien Platz in der Kontrollleiste.
 Comment[el]=Διατήρηση κενού χώρου μέσα στον πίνακα.
 Comment[et]=Tühja ruumi reserveerimine paneelil.

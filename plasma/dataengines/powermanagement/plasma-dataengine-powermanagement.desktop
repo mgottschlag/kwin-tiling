@@ -1,19 +1,22 @@
 [Desktop Entry]
 # ctxt: plasma data engine
 Name=Power Management
+Name[csb]=Sprôwianié mòcą
+Name[da]=Strømstyring
 Name[et]=Voolutarbe haldus
 Name[pt]=Gestão de Energia
-Name[pt_BR]=Gestão de Energia
+Name[pt_BR]=Gerenciamento de energia
 Name[sv]=Strömsparhantering
 Name[uk]=Керування живленням
 Name[zh_TW]=電源管理
 Comment=Battery, AC, sleep and PowerDevil information.
+Comment[da]=Information om batteri, strømforsyning og PowerDevil.
 Comment[de]=Informationen zu Akku, Netzanschluss, Ruhezustand und PowerDevil.
 Comment[et]=Aku, voolutoite, puhkeseisundi ja PowerDevili teave.
 Comment[km]=ព័ត៌មាន ថ្ម AC ដេក និង​ PowerDevil ។
 Comment[nds]=Batterie-, Stroom-, Utsett- un Stroomdüvel-Infos
 Comment[pt]=Informação sobre a bateria, corrente eléctrica e o PowerDevil.
-Comment[pt_BR]=Informação sobre a bateria, corrente eléctrica e o PowerDevil.
+Comment[pt_BR]=Bateria, adaptador de CA, dormir e informação do PowerDevil.
 Comment[sv]=Information om batteri, nätspänning, viloläge och Powerdevil.
 Comment[uk]=Акумулятор, мережеве живлення, відомості щодо присипляння і PowerDevil.
 Comment[zh_TW]=電池、市電電源、睡眠模式與 PowerDevil 資訊。

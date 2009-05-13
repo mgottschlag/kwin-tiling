@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=objectName;supportedDrivers;
 Name=Video
+Name[csb]=Wideò
 Name[el]=Βίντεο
 Name[ga]=Fís
 Name[gu]=વિડીઓ
@@ -17,6 +18,7 @@ X-KDE-Solid-Actions-Type=Video
 
 [Desktop Action objectName]
 Name=Object Name
+Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi
@@ -40,6 +42,8 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action supportedDrivers]
 Name=Supported Drivers
+Name[csb]=Wspiéróné czérowniczi
+Name[da]=Understøttede drivere
 Name[de]=Unterstützte Treiber
 Name[el]=Υποστηριζόμενοι οδηγοί
 Name[et]=Toetatud draiverid

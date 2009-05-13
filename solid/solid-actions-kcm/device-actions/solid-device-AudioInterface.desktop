@@ -1,5 +1,7 @@
 [Desktop Entry]
 Name=Audio Interface
+Name[csb]=Zwãkòwé interfejsë
+Name[da]=Lydgrænseflade
 Name[de]=Audioschnittstelle
 Name[el]=Διασύνδεση ήχου
 Name[et]=Heliliides
@@ -26,6 +28,8 @@ X-KDE-Solid-Actions-Type=AudioInterface
 
 [Desktop Action deviceType]
 Name=Device Type
+Name[csb]=Ôrt ùrządzenia
+Name[da]=Enhedstype
 Name[de]=Gerätetyp
 Name[el]=Τύπος συσκευής
 Name[et]=Seadme tüüp
@@ -50,6 +54,7 @@ Name[zh_TW]=裝置類型
 
 [Desktop Action driver]
 Name=Driver
+Name[csb]=Czérownik
 Name[de]=Treiber
 Name[el]=Οδηγός
 Name[et]=Draiver
@@ -70,6 +75,8 @@ Name[zh_TW]=驅動程式
 
 [Desktop Action driverHandle]
 Name=Driver Handle
+Name[csb]=Czérownik Handle
+Name[da]=Driver-handle
 Name[el]=Χειριστήριο οδηγού
 Name[et]=Draiveri pide
 Name[ga]=Hanla an Tiománaí
@@ -88,6 +95,8 @@ Name[zh_TW]=驅動程式處理
 
 [Desktop Action name]
 Name=Name
+Name[csb]=Miono
+Name[da]=Navn
 Name[el]=Όνομα
 Name[et]=Nimi
 Name[fi]=Nimi
@@ -111,6 +120,7 @@ Name[zh_TW]=名稱
 
 [Desktop Action objectName]
 Name=Object Name
+Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi
@@ -134,6 +144,8 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action soundcardType]
 Name=Soundcard Type
+Name[csb]=Ôrt zwãkòwi kôrtë
+Name[da]=Type af lydkort
 Name[de]=Soundkartentyp
 Name[el]=Τύπος κάρτας ήχου
 Name[et]=Helikaardi tüüp

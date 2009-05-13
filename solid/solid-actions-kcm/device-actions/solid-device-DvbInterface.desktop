@@ -1,6 +1,8 @@
 [Desktop Entry]
 Actions=device;deviceAdapter;deviceIndex;deviceType;objectName;
 Name=Dvb Interface
+Name[csb]=Interfejs Dvb
+Name[da]=Dvb-grænseflade
 Name[de]=DVB-Schnittstelle
 Name[el]=Διασύνδεση Dvb
 Name[et]=DVB liides
@@ -26,6 +28,8 @@ X-KDE-Solid-Actions-Type=DvbInterface
 
 [Desktop Action device]
 Name=Device
+Name[csb]=Ùrządzenié
+Name[da]=Enhed
 Name[de]=Gerät
 Name[el]=Συσκευή
 Name[et]=Seade
@@ -50,6 +54,8 @@ Name[zh_TW]=裝置
 
 [Desktop Action deviceAdapter]
 Name=Device Adapter
+Name[csb]=Adapter ùrządzenia
+Name[da]=Enhedsadapter
 Name[de]=Geräteadapter
 Name[el]=Προσαρμογέας συσκευής
 Name[et]=Seadme adapter
@@ -72,6 +78,8 @@ Name[zh_TW]=裝置接合器
 
 [Desktop Action deviceIndex]
 Name=Device Index
+Name[csb]=Indeks ùrządzeniów
+Name[da]=Enhedsindeks
 Name[de]=Geräteindex
 Name[el]=Δείκτης συσκευής
 Name[et]=Seadme indeks
@@ -94,6 +102,8 @@ Name[zh_TW]=裝置索引
 
 [Desktop Action deviceType]
 Name=Device Type
+Name[csb]=Ôrt ùrządzenia
+Name[da]=Enhedstype
 Name[de]=Gerätetyp
 Name[el]=Τύπος συσκευής
 Name[et]=Seadme tüüp
@@ -118,6 +128,7 @@ Name[zh_TW]=裝置類型
 
 [Desktop Action objectName]
 Name=Object Name
+Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi

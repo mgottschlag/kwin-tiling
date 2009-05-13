@@ -1,6 +1,8 @@
 [Desktop Entry]
 Actions=objectName;supportedDrivers;supportedProtocols;
 Name=Camera
+Name[csb]=Kaméra
+Name[da]=Kamera
 Name[de]=Kamera
 Name[el]=Φωτογραφική
 Name[et]=Kaamera
@@ -25,6 +27,7 @@ X-KDE-Solid-Actions-Type=Camera
 
 [Desktop Action objectName]
 Name=Object Name
+Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi
@@ -48,6 +51,8 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action supportedDrivers]
 Name=Supported Drivers
+Name[csb]=Wspiéróné czérowniczi
+Name[da]=Understøttede drivere
 Name[de]=Unterstützte Treiber
 Name[el]=Υποστηριζόμενοι οδηγοί
 Name[et]=Toetatud draiverid
@@ -71,6 +76,8 @@ Name[zh_TW]=支援的驅動程式
 
 [Desktop Action supportedProtocols]
 Name=Supported Protocols
+Name[csb]=Wspiéróné protokòłë
+Name[da]=Understøttede protokoller
 Name[de]=Unterstützte Protokolle
 Name[el]=Υποστηριζόμενα πρωτόκολλα
 Name[et]=Toetatud protokollid

@@ -2,9 +2,10 @@
 # ctxt: plasma containment
 Name=Desktop
 Name[csb]=Pùlt
+Name[da]=Skrivebord
 Name[et]=Töölaud
 Name[pt]=Ambiente de Trabalho
-Name[pt_BR]=Ambiente de Trabalho
+Name[pt_BR]=Área de trabalho
 Name[sv]=Skrivbord
 Name[uk]=Стільниця
 Name[zh_TW]=桌面

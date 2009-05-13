@@ -3,6 +3,7 @@ DataCount=1
 
 [Data_1]
 Comment=Comment
+Comment[da]=Kommentar
 Comment[de]=Kommentar
 Comment[el]=Σχόλιο
 Comment[et]=Kommentaar
@@ -37,6 +38,7 @@ ConditionsCount=0
 
 [Data_1_1]
 Comment=Comment
+Comment[da]=Kommentar
 Comment[de]=Kommentar
 Comment[el]=Σχόλιο
 Comment[et]=Kommentaar
@@ -57,6 +59,7 @@ Comment[zh_TW]=註解
 Enabled=true
 Name=Search
 Name[csb]=Szëkba
+Name[da]=Søg
 Name[de]=Suchen
 Name[el]=Αναζήτηση
 Name[et]=Otsing

@@ -1,6 +1,8 @@
 [Desktop Entry]
 Actions=chargePercent;chargeState;objectName;plugged;rechargeable;type;
 Name=Battery
+Name[csb]=Baterëjô
+Name[da]=Batteri
 Name[de]=Akku
 Name[el]=Μπαταρία
 Name[et]=Aku
@@ -26,6 +28,7 @@ X-KDE-Solid-Actions-Type=Battery
 
 [Desktop Action chargePercent]
 Name=Charge Percent
+Name[da]=Ladningsprocent
 Name[de]=Ladestand
 Name[el]=Ποσοστό φόρτισης
 Name[et]=Täituvuse protsent
@@ -49,6 +52,7 @@ Name[zh_TW]=充電百分比
 
 [Desktop Action chargeState]
 Name=Charge State
+Name[da]=Ladningstilstand
 Name[de]=Ladestatus
 Name[el]=Κατάσταση φόρτισης
 Name[et]=Täituvuse olek
@@ -72,6 +76,7 @@ Name[zh_TW]=充電狀態
 
 [Desktop Action objectName]
 Name=Object Name
+Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi
@@ -95,6 +100,8 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action plugged]
 Name=Plugged
+Name[csb]=Dodóné
+Name[da]=I stikkontakten
 Name[de]=Angeschlossen
 Name[el]=Σε σύνδεση
 Name[et]=Ühendatud
@@ -118,6 +125,7 @@ Name[zh_TW]=已插入
 
 [Desktop Action rechargeable]
 Name=Rechargeable
+Name[da]=Genopladeligt
 Name[de]=Wiederaufladbar
 Name[el]=Επαναφορτιζόμενο
 Name[et]=Laaditav
@@ -140,6 +148,7 @@ Name[zh_TW]=可重新充電
 
 [Desktop Action type]
 Name=Type
+Name[csb]=Ôrt
 Name[de]=Typ
 Name[el]=Τύπος
 Name[et]=Tüüp

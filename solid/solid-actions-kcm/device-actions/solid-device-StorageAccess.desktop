@@ -1,6 +1,8 @@
 [Desktop Entry]
 Actions=accessible;filePath;objectName;
 Name=Storage Access
+Name[csb]=Przëstãp zôpisu
+Name[da]=Lageradgang
 Name[el]=Πρόσβαση χώρου αποθήκευσης
 Name[et]=Salvesti juurdepääs
 Name[ga]=Rochtain Stórais
@@ -24,6 +26,8 @@ X-KDE-Solid-Actions-Type=StorageAccess
 
 [Desktop Action accessible]
 Name=Accessible
+Name[csb]=Pòmòce przëstãpù
+Name[da]=Tilgængelig
 Name[el]=Προσβάσιμο
 Name[et]=Juurdepääsuga
 Name[fi]=Saatavilla
@@ -46,6 +50,8 @@ Name[zh_TW]=可存取
 
 [Desktop Action filePath]
 Name=File Path
+Name[csb]=Stegna lopka
+Name[da]=Filsti
 Name[de]=Dateipfad
 Name[el]=Διαδρομή αρχείου
 Name[et]=Faili asukoht
@@ -69,6 +75,7 @@ Name[zh_TW]=檔案路徑
 
 [Desktop Action objectName]
 Name=Object Name
+Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi

@@ -1,9 +1,11 @@
 [Desktop Entry]
 # ctxt: plasma runner
 Name=Web Shortcuts
+Name[csb]=Sécowé skrodzënë
+Name[da]=Webgenveje
 Name[et]=Veebi kiirkorraldused
 Name[pt]=Atalhos Web
-Name[pt_BR]=Atalhos Web
+Name[pt_BR]=Atalhos da Internet
 Name[sv]=Webbgenvägar
 Name[uk]=Скорочення Тенет
 Name[zh_TW]=網頁捷徑
@@ -14,7 +16,7 @@ Comment[bg]=Разрешаване на потребителя да изпозл
 Comment[ca]=Permet que l'usuari utilitzi les dreceres web del Konqueror
 Comment[ca@valencia]=Permet que l'usuari utilitzi les dreceres web del Konqueror
 Comment[cs]=Umožňuje používat webové zkratky Konqueroru
-Comment[da]=Lader brugeren anvende Konquerors netgenveje
+Comment[da]=Lader brugeren anvende Konquerors webgenveje
 Comment[de]=Ermöglicht die Verwendung von Konqueror-Webkürzeln
 Comment[el]=Επιτρέπει τη χρήση συντομεύσεων ιστού του Konqueror
 Comment[eo]=Permesas la uzon de TTT-mallongigoj en Konkeranto

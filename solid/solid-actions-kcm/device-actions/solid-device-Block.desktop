@@ -1,6 +1,8 @@
 [Desktop Entry]
 Actions=device;major;minor;objectName;
 Name=Block
+Name[csb]=Blok
+Name[da]=Blok
 Name[el]=Τμήμα
 Name[et]=Plokk
 Name[fi]=Lohko
@@ -24,6 +26,8 @@ X-KDE-Solid-Actions-Type=Block
 
 [Desktop Action device]
 Name=Device
+Name[csb]=Ùrządzenié
+Name[da]=Enhed
 Name[de]=Gerät
 Name[el]=Συσκευή
 Name[et]=Seade
@@ -48,6 +52,8 @@ Name[zh_TW]=裝置
 
 [Desktop Action major]
 Name=Major
+Name[csb]=Wësok
+Name[da]=Stor
 Name[el]=Κύριο
 Name[et]=Põhiversioon
 Name[fi]=Ensisijainen
@@ -68,6 +74,8 @@ Name[zh_TW]=主要
 
 [Desktop Action minor]
 Name=Minor
+Name[csb]=Niskò
+Name[da]=Mindre
 Name[el]=Δευτερεύον
 Name[et]=Alamversioon
 Name[fi]=Toissijainen
@@ -88,6 +96,7 @@ Name[zh_TW]=次要
 
 [Desktop Action objectName]
 Name=Object Name
+Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi

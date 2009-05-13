@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=System Monitor - RAM
 Name[csb]=Mònitór systemë - RAM
+Name[da]=Systemovervågning - ram
 Name[de]=Systemmonitor - RAM
 Name[el]=Επόπτης συστήματος - RAM
 Name[et]=Süsteemi jälgija - RAM
@@ -25,6 +26,7 @@ Name[x-test]=xxSystem Monitor - RAMxx
 Name[zh_TW]=系統監視器─記憶體
 Comment=A RAM usage monitor
 Comment[csb]=Mònitór brëkòwaniô pamiãcë RAM
+Comment[da]=Overvågning af ram-forbrug
 Comment[de]=Ein Überwachungsmonitor für den Arbeitsspeicher
 Comment[el]=Ένας επόπτης χρήσης μνήμης RAM
 Comment[et]=RAM-i kasutuse jälgija

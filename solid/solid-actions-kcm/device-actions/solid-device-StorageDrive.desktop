@@ -1,6 +1,8 @@
 [Desktop Entry]
 Actions=bus;driveType;hotpluggable;objectName;removable;
 Name=Storage Drive
+Name[csb]=Zôpisowny nëk
+Name[da]=Lagerdrev
 Name[el]=Συσκευή αποθήκευσης
 Name[et]=Salvestusseade
 Name[ga]=Tiomántán Stórais
@@ -43,6 +45,8 @@ Name[zh_TW]=匯流排
 
 [Desktop Action driveType]
 Name=Drive Type
+Name[csb]=Ôrt nëkù
+Name[da]=Drevtype
 Name[de]=Laufwerkstyp
 Name[el]=Τύπος οδηγού
 Name[et]=Seadme tüüp
@@ -66,6 +70,7 @@ Name[zh_TW]=磁碟型態
 
 [Desktop Action hotpluggable]
 Name=Hotpluggable
+Name[da]=Flytbar
 Name[de]=Hotplug-fähig
 Name[el]=Δυνατότητα Hotplug
 Name[et]=Töö ajal ühendatav
@@ -87,6 +92,7 @@ Name[zh_TW]=可熱插拔
 
 [Desktop Action objectName]
 Name=Object Name
+Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi
@@ -110,6 +116,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action removable]
 Name=Removable
+Name[da]=Flytbar
 Name[de]=Wechselbar
 Name[el]=Αφαιρούμενο μέσο
 Name[et]=Eemaldatav

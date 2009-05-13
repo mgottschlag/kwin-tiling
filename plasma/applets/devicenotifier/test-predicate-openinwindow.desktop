@@ -6,6 +6,7 @@ Actions=open;
 [Desktop Action open]
 Name=Open with File Manager
 Name[csb]=Òtemkni w &menadzérze lopków
+Name[da]=Åbn med filhåndtering
 Name[de]=Mit Dateimanager öffnen
 Name[et]=Ava failihalduriga
 Name[fi]=Avaa tiedostonhallintaohjelmalla

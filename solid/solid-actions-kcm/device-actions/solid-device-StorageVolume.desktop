@@ -1,6 +1,8 @@
 [Desktop Entry]
 Actions=fsType;ignored;label;objectName;size;usage;uuid;
 Name=Storage Volume
+Name[csb]=Òbjim zôpisu
+Name[da]=Lagerenhed
 Name[el]=Τόμος αποθήκευσης
 Name[et]=Salvesti
 Name[ga]=Imleabhar Stórais
@@ -24,6 +26,8 @@ X-KDE-Solid-Actions-Type=StorageVolume
 
 [Desktop Action fsType]
 Name=Fs Type
+Name[csb]=Ôrt Fs
+Name[da]=FS-type
 Name[de]=Dateisystemtyp
 Name[el]=Τύπος συστήματος αρχείων
 Name[et]=Failisüsteemi tüüp
@@ -46,6 +50,8 @@ Name[zh_TW]=檔案系統型態
 
 [Desktop Action ignored]
 Name=Ignored
+Name[csb]=Ignorowóné
+Name[da]=Ignoreret
 Name[de]=Ignoriert
 Name[el]=Παράβλεψη
 Name[et]=Eiratav
@@ -67,6 +73,8 @@ Name[zh_TW]=忽略
 
 [Desktop Action label]
 Name=Label
+Name[csb]=Znakòwnik
+Name[da]=Etiket
 Name[de]=Beschriftung
 Name[el]=Ετικέτα
 Name[et]=Pealdis
@@ -90,6 +98,7 @@ Name[zh_TW]=標籤
 
 [Desktop Action objectName]
 Name=Object Name
+Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
 Name[et]=Objekti nimi
@@ -113,6 +122,8 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action size]
 Name=Size
+Name[csb]=Miara
+Name[da]=Størrelse
 Name[de]=Größe
 Name[el]=Μέγεθος
 Name[et]=Suurus
@@ -137,6 +148,8 @@ Name[zh_TW]=大小
 
 [Desktop Action usage]
 Name=Usage
+Name[csb]=Brëkòwóné
+Name[da]=Brug
 Name[de]=Verwendung
 Name[el]=Χρήση
 Name[et]=Kasutus
