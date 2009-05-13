@@ -274,6 +274,7 @@ QStringList BackgroundListModel::findAllBackgrounds(Plasma::Wallpaper *structure
                                                     const BackgroundListModel *container,
                                                     const QStringList &p)
 {
+    //TODO: put this in a thread so that it can run in the background without blocking
     QEventLoop localEventLoop;
     BackgroundFinder finder(structureParent, container, p, &localEventLoop);
     connect(&finder, SIGNAL(finished()), &localEventLoop, SLOT(quit()));
