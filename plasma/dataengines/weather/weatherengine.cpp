@@ -20,6 +20,8 @@
 
 #include "weatherengine.h"
 
+#include <QCoreApplication>
+
 #include <KServiceTypeTrader>
 #include <KDateTime>
 #include <KLocale>
@@ -170,17 +172,24 @@ WeatherEngine::WeatherEngine(QObject *parent, const QVariantList& args)
 
     // Globally notify all plugins to remove their sources (and unload plugin)
     connect(this, SIGNAL(sourceRemoved(QString)), this, SLOT(removeIonSource(QString)));
+    connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(unloadIons()));
 }
 
 // Destructor
 WeatherEngine::~WeatherEngine()
 {
     // Cleanup all private data.
+    unloadIons();
+    delete d;
+}
+
+void WeatherEngine::unloadIons()
+{
     foreach (const QString &ion, d->m_ions) {
         Plasma::DataEngineManager::self()->unloadEngine(ion);
     }
 
-    delete d;
+    d->m_ions.clear();
 }
 
 /**

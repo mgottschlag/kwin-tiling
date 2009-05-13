@@ -102,6 +102,11 @@ protected slots:
      */
     void networkStatusChanged(Solid::Networking::Status);
 
+    /**
+     * Cleans up the ions that are currently loaded
+     */
+    void unloadIons();
+
 private:
     class Private;
     Private *const d;
