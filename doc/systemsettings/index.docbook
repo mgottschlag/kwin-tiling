@@ -24,7 +24,7 @@
 </copyright>
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2008-05-26</date>
+<date>2009-05-13</date>
 <releaseinfo>1.01.00</releaseinfo>
 
 <abstract>
@@ -126,6 +126,7 @@ When you start &systemsettings;, you are presented with a window, which is divid
 
 <para>
 Across the top is a toolbar. The toolbar provides the user with the ability to go back into the main view from within a module, or to search for something within all of the modules.
+You can also find a <guiicon>Help</guiicon> menu as well as a <guiicon>Configure</guiicon> icon which provides you a dialog with alternate view settings.
 </para>
 
 <para>
@@ -133,7 +134,8 @@ Underneath the toolbar are two tabs, <link linkend="general">General</link> and 
 </para>
 
 <para>
-Underneath the tabs is an icon view of the individual modules that make up &systemsettings;.
+Underneath the tabs is an icon view of the individual modules that make up &systemsettings;. By default, if your mouse stays a few seconds 
+over an icon, a detailed tooltip appears, explaining the purpose of the module.
 </para>
 </sect1>
 
@@ -222,10 +224,24 @@ Press <keycombo>&Ctrl;<keycap>Q</keycap></keycombo> on the keyboard.
 </listitem>
 <listitem>
 <para>
-click on the Close button located in the top right hand corner of the window.
+Click on the <guibutton>Close</guibutton> button located in the top right hand corner of the window.
 </para>
 </listitem>
 </orderedlist>
+</sect1>
+
+<sect1 id="configuring">
+<title>Configuring &systemsettings;</title>
+
+<para>
+The <guiicon>Configure</guiicon> icon in the toolbar allows you to change some &systemsettings; parameters.
+You can change from <guilabel>Icon View</guilabel> (default view) to <guilabel>Classic Tree View</guilabel>.
+</para>
+
+<para>
+You can also turn on the detailed tooltips by unchecking <guilabel>Show detailed tooltips</guilabel>. 
+You will then get only normal tooltips.
+</para>
 </sect1>
 
 <sect1 id="run-modules-individually">
