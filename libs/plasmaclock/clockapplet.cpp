@@ -157,8 +157,12 @@ public:
         if (timezone == "UTC")  {
             prettyTimezone = timezone;
         } else if (!q->isLocalTimezone()) {
-            QStringList tzParts = timezone.split("/");
-            prettyTimezone = tzParts.value(1);
+            QStringList tzParts = timezone.split("/", QString::SkipEmptyParts);
+            if (tzParts.count() == 1) {
+                prettyTimezone = timezone;
+            } else {
+                prettyTimezone = tzParts.value(1);
+            }
         } else {
             prettyTimezone = localTimezone();
         }

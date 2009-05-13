@@ -1,4 +1,4 @@
-    /*
+/*
  *   Copyright 2007 Aaron Seigo <aseigo@kde.org>
  *   Copyright 2008 Alex Merry <alex.merry@kdemail.net>
  *

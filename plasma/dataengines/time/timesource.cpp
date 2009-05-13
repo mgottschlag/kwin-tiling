@@ -63,9 +63,15 @@ TimeSource::TimeSource(const QString &name, QObject *parent)
     QString trTimezone = i18n(timezone.toUtf8());
     setData(I18N_NOOP("Timezone"), trTimezone);
 
-    QStringList tzParts = trTimezone.split("/");
-    setData(I18N_NOOP("Timezone Continent"), tzParts.value(0));
-    setData(I18N_NOOP("Timezone City"), tzParts.value(1));
+    QStringList tzParts = trTimezone.split("/", QString::SkipEmptyParts);
+    if (tzParts.count() == 1) {
+        // no '/' so just set it as the city
+        setData(I18N_NOOP("Timezone City"), trTimezone);
+    } else {
+        setData(I18N_NOOP("Timezone Continent"), tzParts.value(0));
+        setData(I18N_NOOP("Timezone City"), tzParts.value(1));
+    }
+
     updateTime();
 }
 
