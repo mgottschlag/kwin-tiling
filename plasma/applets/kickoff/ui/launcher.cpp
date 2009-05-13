@@ -706,6 +706,8 @@ void Launcher::focusFavoritesView()
 {
     d->contentSwitcher->setCurrentIndex(d->contentArea->indexOf(d->favoritesView));
     d->contentArea->setCurrentWidget(d->favoritesView);
+    d->contentSwitcher->setVisible(true);
+    d->searchBar->clear();
 }
 
 bool Launcher::eventFilter(QObject *object, QEvent *event)
