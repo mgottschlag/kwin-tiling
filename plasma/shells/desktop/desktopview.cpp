@@ -85,6 +85,7 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
     if (containment) {
         containment->enableAction("zoom in", false);
         containment->enableAction("add sibling containment", false);
+        connect(containment->corona(), SIGNAL(containmentAdded(Plasma::Containment *)), this, SLOT(containmentAdded(Plasma::Containment *)));
     }
 
     m_actions->addAssociatedWidget(this);
@@ -92,6 +93,7 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
     connect(action, SIGNAL(triggered()), this, SLOT(nextContainment()));
     action = m_actions->action("prev");
     connect(action, SIGNAL(triggered()), this, SLOT(previousContainment()));
+
 
     const int w = 25;
     QPixmap tile(w * 2, w * 2);
@@ -360,6 +362,20 @@ void DesktopView::showDesktopUntoggled()
         connect(c, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxOpened()));
         containment()->setToolBoxOpen(false);
     }
+}
+
+void DesktopView::containmentAdded(Plasma::Containment *c)
+{
+    Q_UNUSED(c)
+
+    if (transform().m11() != 1) {
+        QTimer::singleShot(0, this, SLOT(syncSceneRect()));
+    }
+}
+
+void DesktopView::syncSceneRect()
+{
+    setSceneRect(QRectF(0, 0, scene()->sceneRect().right(), scene()->sceneRect().bottom() + TOOLBOX_MARGIN));
 }
 
 void DesktopView::zoomIn(Plasma::ZoomLevel zoomLevel)

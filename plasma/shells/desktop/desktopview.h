@@ -82,6 +82,8 @@ public slots:
     void toolBoxOpened();
     void toolBoxClosed();
     void showDesktopUntoggled();
+    void containmentAdded(Plasma::Containment *c);
+    void syncSceneRect();
 
     void screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment);
 
