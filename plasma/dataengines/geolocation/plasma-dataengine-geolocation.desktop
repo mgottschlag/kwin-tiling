@@ -1,11 +1,13 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Geolocation
+Name[cs]=Geolokace
 Name[csb]=Geògrafnô lokalizacëjô
 Name[da]=Geo-lokalisering
 Name[de]=Geolokalisierung
 Name[et]=Geolokatsioon
 Name[km]=ទីតាំង​ភូមិសាស្ដ្រ
+Name[nds]=Eersteden
 Name[pt]=Geo-Localização
 Name[pt_BR]=Localização geográfica
 Name[sv]=Geografisk lokalisering
@@ -16,6 +18,7 @@ Comment[da]=Datamotor til geo-lokalisering
 Comment[de]=Geolokalisierungs-Datentreiber
 Comment[et]=Geolokatsiooni andmete mootor
 Comment[km]=ម៉ាស៊ីន​ទិន្នន័យ​ Geolocation
+Comment[nds]=Eersteden-Datenkarn
 Comment[pt]=Motor de Dados de Geo-Localização
 Comment[pt_BR]=Mecanismo de dados de localização geográfica
 Comment[sv]=Datagränssnitt för geografisk lokalisering

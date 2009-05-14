@@ -1,12 +1,15 @@
 [Desktop Entry]
 # ctxt: plasma containment
 Name=Desktop
+Name[cs]=Pracovní plocha
 Name[csb]=Pùlt
 Name[da]=Skrivebord
 Name[et]=Töölaud
+Name[nds]=Schriefdisch
 Name[pt]=Ambiente de Trabalho
 Name[pt_BR]=Área de trabalho
 Name[sv]=Skrivbord
+Name[tr]=Masaüstü
 Name[uk]=Стільниця
 Name[zh_TW]=桌面
 Comment=Default desktop containment

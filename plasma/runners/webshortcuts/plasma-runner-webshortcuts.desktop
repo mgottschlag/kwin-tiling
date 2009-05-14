@@ -1,12 +1,15 @@
 [Desktop Entry]
 # ctxt: plasma runner
 Name=Web Shortcuts
+Name[cs]=Webové zkratky
 Name[csb]=Sécowé skrodzënë
 Name[da]=Webgenveje
 Name[et]=Veebi kiirkorraldused
+Name[nds]=Söökafkörten
 Name[pt]=Atalhos Web
 Name[pt_BR]=Atalhos da Internet
 Name[sv]=Webbgenvägar
+Name[tr]=Web Kısayolları
 Name[uk]=Скорочення Тенет
 Name[zh_TW]=網頁捷徑
 Comment=Allows user to use Konqueror's Web shortcuts
