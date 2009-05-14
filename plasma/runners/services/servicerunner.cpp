@@ -117,13 +117,13 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
             relevance = 0.8;
 
             if (service->name().startsWith(term, Qt::CaseInsensitive)) {
-                relevance += 0.5;
+                relevance += 0.1;
             }
         } else if (service->genericName().contains(term, Qt::CaseInsensitive)) {
             relevance = 0.7;
 
             if (service->genericName().startsWith(term, Qt::CaseInsensitive)) {
-                relevance += 0.5;
+                relevance += 0.1;
             }
         }
 
