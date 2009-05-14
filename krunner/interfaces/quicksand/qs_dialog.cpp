@@ -19,7 +19,9 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .
  */
 
+#include <QApplication>
 #include <QBoxLayout>
+#include <QDesktopWidget>
 #include <QLabel>
 #include <QToolButton>
 
@@ -129,6 +131,17 @@ void QsDialog::display(const QString &term)
     adjustSize();
     show();
     m_matchView->setFocus();
+
+    int screen = 0;
+    if (QApplication::desktop()->numScreens() > 1) {
+        screen = QApplication::desktop()->screenNumber(QCursor::pos());
+    }
+
+    //KDialog::centerOnScreen(this, screen); // For some reason, this isn't working
+    QDesktopWidget *desktop = QApplication::desktop();
+    QRect r = desktop->screenGeometry(screen);
+    move(r.left() + (r.width() / 2) - (width() / 2),
+         r.top() + (r.height() / 2) - (height() / 2));
 
     KWindowSystem::forceActiveWindow(winId());
     if (term.isEmpty()) {
