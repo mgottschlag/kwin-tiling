@@ -239,7 +239,7 @@ You can change from <guilabel>Icon View</guilabel> (default view) to <guilabel>C
 </para>
 
 <para>
-You can also turn on the detailed tooltips by unchecking <guilabel>Show detailed tooltips</guilabel>. 
+You can also turn off the detailed tooltips by unchecking <guilabel>Show detailed tooltips</guilabel>. 
 You will then get only normal tooltips.
 </para>
 </sect1>
