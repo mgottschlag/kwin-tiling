@@ -488,6 +488,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         configButton->setIcon("preferences-system-power-management");
         //configButton->nativeWidget()->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
         connect(configButton, SIGNAL(clicked()), this, SLOT(openConfig()));
+        configButton->setEnabled(isAllowed("LaunchApp"));
 
         //QGraphicsGridLayout *moreLayout = new QGraphicsGridLayout(m_controlsLayout);
         //moreLayout->setColumnPreferredWidth(0, columnWidth);
