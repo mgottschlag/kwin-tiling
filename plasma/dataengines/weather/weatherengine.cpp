@@ -67,7 +67,6 @@ public:
         return QString(source.left(offset));
     }
 
-    KDateTime m_localTime;
     QStringList m_ions;
     bool m_networkAvailable;
 };
@@ -171,9 +170,6 @@ WeatherEngine::WeatherEngine(QObject *parent, const QVariantList& args)
         :  Plasma::DataEngine(parent, args), d(new Private())
 {
     Q_UNUSED(args)
-
-    // Set any local properties for Ion to use
-    d->m_localTime = KDateTime::currentDateTime(KDateTime::LocalZone);
 
     // Globally notify all plugins to remove their sources (and unload plugin)
     connect(this, SIGNAL(sourceRemoved(QString)), this, SLOT(removeIonSource(QString)));
