@@ -115,6 +115,25 @@ UKMETIon::~UKMETIon()
     delete d;
 }
 
+void UKMETIon::reset()
+{
+	// Destroy each forecast stored in a QVector
+	foreach(const WeatherData &item, d->m_weatherData) {
+		foreach(WeatherData::ForecastInfo *forecast, item.forecasts) {
+			if (forecast) {
+				delete forecast;
+			}
+		}
+	}
+	
+	// Destroy dptr
+	delete d;
+	d = new Private();
+	setInitialized(false);
+}
+
+
+
 // Get the master list of locations to be parsed
 void UKMETIon::init()
 {

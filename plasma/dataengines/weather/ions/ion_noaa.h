@@ -79,6 +79,9 @@ public:
     bool updateIonSource(const QString& source); // Sync data source with Applet
     void updateWeather(const QString& source);
 
+public slots:
+    virtual void reset();
+    
 protected slots:
     void setup_slotDataArrived(KIO::Job *, const QByteArray &);
     void setup_slotJobFinished(KJob *);
@@ -133,7 +136,7 @@ private:
 
 private:
     class Private;
-    Private *const d;
+    Private * d;
 };
 
 K_EXPORT_PLASMA_DATAENGINE(noaa, NOAAIon)

@@ -18,8 +18,8 @@ kde4_add_plugin(ion_envcan ${ion_envcan_SRCS})
 kde4_add_plugin(ion_noaa ${ion_noaa_SRCS})
 kde4_add_plugin(ion_bbcukmet ${ion_bbcukmet_SRCS})
 
-target_link_libraries (ion_envcan weather_ion)
-target_link_libraries (ion_noaa weather_ion)
+target_link_libraries (ion_envcan ${KDE4_SOLID_LIBS} weather_ion)
+target_link_libraries (ion_noaa ${KDE4_SOLID_LIBS} weather_ion)
 target_link_libraries (ion_bbcukmet weather_ion time_solar)
 
 INSTALL (FILES ion.h

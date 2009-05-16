@@ -93,6 +93,13 @@ NOAAIon::NOAAIon(QObject *parent, const QVariantList &args)
     Q_UNUSED(args)
 }
 
+void NOAAIon::reset()
+{
+	delete d;
+	d = new Private();
+	setInitialized(false);
+}
+
 NOAAIon::~NOAAIon()
 {
     // Destroy dptr

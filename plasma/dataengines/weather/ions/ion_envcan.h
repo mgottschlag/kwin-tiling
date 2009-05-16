@@ -29,6 +29,7 @@
 #include <kurl.h>
 #include <kio/job.h>
 #include <kio/scheduler.h>
+#include <Solid/Networking>
 #include <kdemacros.h>
 #include <plasma/dataengine.h>
 #include "ion.h"
@@ -140,7 +141,10 @@ public:
     ~EnvCanadaIon();
     bool updateIonSource(const QString& source); // Sync data source with Applet
     void updateWeather(const QString& source);
-
+    
+public slots:
+    virtual void reset();
+	
 protected:
     void init();  // Setup the city location, fetching the correct URL name.
 
@@ -150,6 +154,8 @@ protected slots:
 
     void slotDataArrived(KIO::Job *, const QByteArray &);
     void slotJobFinished(KJob *);
+    
+    void redoXMLSetup(void);
 
 private:
     /* Environment Canada Methods - Internal for Ion */
@@ -225,7 +231,7 @@ private:
 
 private:
     class Private;
-    Private *const d;
+    Private * d;
 };
 
 K_EXPORT_PLASMA_DATAENGINE(envcan, EnvCanadaIon)

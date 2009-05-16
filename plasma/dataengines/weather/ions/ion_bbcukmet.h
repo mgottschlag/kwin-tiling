@@ -102,6 +102,9 @@ public:
     QMap<QString, QString> pressure(const QString& source);
     QVector<QString> forecasts(const QString& source);
 
+public slots:
+    virtual void reset();
+    
 protected slots:
     void setup_slotDataArrived(KIO::Job *, const QByteArray &);
     void setup_slotJobFinished(KJob *);
@@ -139,7 +142,7 @@ private:
     
 private:
     class Private;
-    Private *const d;
+    Private * d;
 };
 
 K_EXPORT_PLASMA_DATAENGINE(bbcukmet, UKMETIon)

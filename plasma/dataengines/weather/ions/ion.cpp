@@ -57,8 +57,9 @@ bool IonInterface::sourceRequestEvent(const QString &source)
  */
 bool IonInterface::updateSourceEvent(const QString& source)
 {
-    kDebug() << "updateSource()";
+    kDebug() << "updateSource(" << source << ")";
     if (d->initialized) {
+	kDebug() << "Calling updateIonSource(" << source << ")";
         return updateIonSource(source);
     }
 

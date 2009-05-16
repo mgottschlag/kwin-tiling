@@ -86,7 +86,13 @@ public Q_SLOTS:
      */
     bool updateSourceEvent(const QString& source);
 
+    virtual void reset() = 0;
+    
+signals:
+    void resetCompleted(IonInterface *);	
+    
 protected:
+	
     /**
      * Call this method to flush waiting source requests that may be pending
      * initialization

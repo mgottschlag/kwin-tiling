@@ -232,6 +232,7 @@ bool WeatherEngine::sourceRequestEvent(const QString &source)
  */
 bool WeatherEngine::updateSourceEvent(const QString& source)
 {
+    kDebug() << "uSE for " << source;
     IonInterface *ion = d->ionForSource(source);
 
     QByteArray str = source.toLocal8Bit();
@@ -254,8 +255,26 @@ void WeatherEngine::networkStatusChanged(Solid::Networking::Status status)
     kDebug() << "status changed" << d->m_networkAvailable;
 
     if (d->m_networkAvailable) {
-        updateAllSources();
+	    foreach (const QString &source, sources()) {
+		    IonInterface *ion = d->ionForSource(source);
+		    if (ion) {
+			    connect(ion, SIGNAL(resetCompleted(IonInterface *)), this, SLOT(resetCompleted(IonInterface *)));
+				ion->reset();			
+		    }
+	    }
+	    
+	    //updateAllSources();
     }
+}
+
+void WeatherEngine::resetCompleted(IonInterface * i)
+{
+	foreach (const QString &source, sources()) {
+		IonInterface *ion = d->ionForSource(source);
+		if (ion == i) {
+			ion->updateSourceEvent(source);			
+		}
+	}
 }
 
 #include "weatherengine.moc"
