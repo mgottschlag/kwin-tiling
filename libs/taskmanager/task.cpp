@@ -707,7 +707,7 @@ void Task::activateRaiseOrIconify()
     //kDebug() << isActive() << isIconified() << isOnTop();
     if (!isActive() || isIconified()) {
         activate();
-    } else if (!isActive() && !isOnTop()) {
+    } else if (!isOnTop()) {
        raise();
     } else {
        setIconified(true);
