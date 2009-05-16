@@ -18,6 +18,7 @@ Name[pt_BR]=Abrir com o gerenciador de arquivos
 Name[sv]=Öppna med filhanterare
 Name[tr]=Dosya yöneticisi ile aç
 Name[uk]=Відкрити за допомогою менеджера файлів
+Name[zh_CN]=用文件浏览器打开
 Name[zh_TW]=使用檔案管理員開啟
 Exec=kioclient exec %f
 Icon=system-file-manager

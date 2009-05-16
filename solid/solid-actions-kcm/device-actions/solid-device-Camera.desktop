@@ -22,6 +22,7 @@ Name[sv]=Kamera
 Name[tr]=Fotoğraf Makinesi
 Name[uk]=Фотоапарат
 Name[x-test]=xxCameraxx
+Name[zh_CN]=相机
 Name[zh_TW]=相機
 Type=Service
 X-KDE-Solid-Actions-Type=Camera
@@ -71,6 +72,7 @@ Name[sv]=Drivrutiner som stöds
 Name[tr]=Desteklenen Sürücüler
 Name[uk]=Підтримувані драйвери
 Name[x-test]=xxSupported Driversxx
+Name[zh_CN]=支持的驱动
 Name[zh_TW]=支援的驅動程式
 
 [Desktop Action supportedProtocols]
@@ -95,5 +97,6 @@ Name[sv]=Protokoll som stöds
 Name[tr]=Desteklenen Protokoller
 Name[uk]=Підтримувані протоколи
 Name[x-test]=xxSupported Protocolsxx
+Name[zh_CN]=支持的协议
 Name[zh_TW]=支援的協定
 

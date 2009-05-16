@@ -14,6 +14,7 @@ Name[ro]=Supraveghetor zonă de notificare KDED
 Name[sv]=KDED bevakning av underrättelseobjekt
 Name[tr]=KDED Bildirim ögesi izleyici
 Name[uk]=Переглядач елементів сповіщень KDED
+Name[zh_CN]=KDED 通知项监视器
 Name[zh_TW]=KDE 通知項目監控器 
 Comment=Keep track of applications that want to use the D-Bus based notification item.
 Comment[da]=Hold styr på programmer som vil bruge D-Bus-baseret bekendtgørelseselement.

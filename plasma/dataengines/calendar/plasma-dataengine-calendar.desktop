@@ -83,6 +83,7 @@ Comment[sv]=Datagränssnitt för kalendrar
 Comment[tr]=Takvim veri motoru
 Comment[uk]=Рушій даних календаря
 Comment[x-test]=xxCalendar data enginexx
+Comment[zh_CN]=日历数据引擎
 Comment[zh_TW]=行事曆資料引擎
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service

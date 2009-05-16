@@ -21,6 +21,7 @@ Name[sv]=Ljudgränssnitt
 Name[tr]=Ses Arayüzü
 Name[uk]=Звуковий інтерфейс
 Name[x-test]=xxAudio Interfacexx
+Name[zh_CN]=音频接口
 Name[zh_TW]=音效介面
 Type=Service
 X-KDE-Solid-Actions-Type=AudioInterface
@@ -49,6 +50,7 @@ Name[sv]=Enhetstyp
 Name[tr]=Aygıt Tipi
 Name[uk]=Тип пристрою
 Name[x-test]=xxDevice Typexx
+Name[zh_CN]=设备类型
 Name[zh_TW]=裝置類型
 
 [Desktop Action driver]
@@ -69,6 +71,7 @@ Name[sv]=Drivrutin
 Name[tr]=Sürücü
 Name[uk]=Драйвер
 Name[x-test]=xxDriverxx
+Name[zh_CN]=驱动
 Name[zh_TW]=驅動程式
 
 [Desktop Action driverHandle]
@@ -113,6 +116,7 @@ Name[sv]=Namn
 Name[tr]=İsim
 Name[uk]=Назва
 Name[x-test]=xxNamexx
+Name[zh_CN]=名称
 Name[zh_TW]=名稱
 
 [Desktop Action objectName]
@@ -160,4 +164,5 @@ Name[sv]=Typ av ljudkort
 Name[tr]=Ses Kartı Tipi
 Name[uk]=Тип звукової картки
 Name[x-test]=xxSoundcard Typexx
+Name[zh_CN]=声卡类型
 Name[zh_TW]=音效卡類型

@@ -10,6 +10,7 @@ Name[pt_BR]=Gerenciamento de energia
 Name[sv]=Strömsparhantering
 Name[tr]=Güç Yönetimi
 Name[uk]=Керування живленням
+Name[zh_CN]=电源管理
 Name[zh_TW]=電源管理
 Comment=Battery, AC, sleep and PowerDevil information.
 Comment[da]=Information om batteri, strømforsyning og PowerDevil.

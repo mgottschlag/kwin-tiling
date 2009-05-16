@@ -21,6 +21,7 @@ Name[sv]=Dvb-gränssnitt
 Name[tr]=Dvb Arayüzü
 Name[uk]=Інтерфейс DVB
 Name[x-test]=xxDvb Interfacexx
+Name[zh_CN]=Dvb 接口
 Name[zh_TW]=DVB 介面
 Type=Service
 X-KDE-Solid-Actions-Type=DvbInterface
@@ -49,6 +50,7 @@ Name[sv]=Enhet
 Name[tr]=Aygıt
 Name[uk]=Пристрій
 Name[x-test]=xxDevicexx
+Name[zh_CN]=设备
 Name[zh_TW]=裝置
 
 [Desktop Action deviceAdapter]
@@ -95,6 +97,7 @@ Name[sv]=Enhetsindex
 Name[tr]=Aygıt İndeksi
 Name[uk]=Індекс пристрою
 Name[x-test]=xxDevice Indexxx
+Name[zh_CN]=设备索引
 Name[zh_TW]=裝置索引
 
 [Desktop Action deviceType]
@@ -121,6 +124,7 @@ Name[sv]=Enhetstyp
 Name[tr]=Aygıt Tipi
 Name[uk]=Тип пристрою
 Name[x-test]=xxDevice Typexx
+Name[zh_CN]=设备类型
 Name[zh_TW]=裝置類型
 
 [Desktop Action objectName]

@@ -21,6 +21,7 @@ Name[sv]=Nätverksgränssnitt
 Name[tr]=Ağ Arayüzü
 Name[uk]=Мережний інтерфейс
 Name[x-test]=xxNetwork Interfacexx
+Name[zh_CN]=网络接口
 Name[zh_TW]=網路介面
 Type=Service
 X-KDE-Solid-Actions-Type=NetworkInterface
@@ -47,6 +48,7 @@ Name[sv]=Hårdvaruadress
 Name[tr]=Donanım Adresi
 Name[uk]=Апар. адреса
 Name[x-test]=xxHw Addressxx
+Name[zh_CN]=硬件地址
 Name[zh_TW]=硬體位址
 
 [Desktop Action ifaceName]
@@ -95,6 +97,7 @@ Name[sv]=MAC-adress
 Name[tr]=Mac Adresi
 Name[uk]=Mac-адреса
 Name[x-test]=xxMac Addressxx
+Name[zh_CN]=Mac 地址
 Name[zh_TW]=Mac 位址
 
 [Desktop Action objectName]
@@ -144,4 +147,5 @@ Name[sv]=Trådlöst
 Name[tr]=Kablosuz
 Name[uk]=Бездротове
 Name[x-test]=xxWirelessxx
+Name[zh_CN]=无线
 Name[zh_TW]=無線

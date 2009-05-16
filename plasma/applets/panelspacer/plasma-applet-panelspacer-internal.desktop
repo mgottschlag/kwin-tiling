@@ -10,6 +10,7 @@ Name[pt_BR]=Espaçador do painel
 Name[sv]=Panelavskiljare
 Name[tr]=Panel Ayırıcı
 Name[uk]=Розпірка панелі
+Name[zh_CN]=面板间距
 Name[zh_TW]=面板間隔器
 Comment=Reserve empty spaces within the panel.
 Comment[da]=Reservér tom plads i panelet.
@@ -23,6 +24,7 @@ Comment[pt_BR]=Reserva espaços vazios no painel.
 Comment[ro]=Rezervează spații goale în cadrul panoului.
 Comment[sv]=Reservera tomt utrymme inne i panelen.
 Comment[uk]=Створює прогалини на панелі.
+Comment[zh_CN]=在面板中留空。
 Comment[zh_TW]=在面板內保留空間。
 
 NoDisplay=true

@@ -21,6 +21,7 @@ Name[sv]=Portabel mediaspelare
 Name[tr]=Taşınabilir Çoklu Ortam Yürütücüsü
 Name[uk]=Портативний медіапрогравач
 Name[x-test]=xxPortable Media Playerxx
+Name[zh_CN]=可移植播放器
 Name[zh_TW]=可攜式媒體播放器
 Type=Service
 X-KDE-Solid-Actions-Type=PortableMediaPlayer
@@ -70,6 +71,7 @@ Name[sv]=Drivrutiner som stöds
 Name[tr]=Desteklenen Sürücüler
 Name[uk]=Підтримувані драйвери
 Name[x-test]=xxSupported Driversxx
+Name[zh_CN]=支持的驱动
 Name[zh_TW]=支援的驅動程式
 
 [Desktop Action supportedProtocols]
@@ -94,4 +96,5 @@ Name[sv]=Protokoll som stöds
 Name[tr]=Desteklenen Protokoller
 Name[uk]=Підтримувані протоколи
 Name[x-test]=xxSupported Protocolsxx
+Name[zh_CN]=支持的协议
 Name[zh_TW]=支援的協定

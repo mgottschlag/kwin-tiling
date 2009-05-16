@@ -20,6 +20,7 @@ Name[sv]=Seriegränssnitt
 Name[tr]=Seri Port Arayüzü
 Name[uk]=Послідовний інтерфейс
 Name[x-test]=xxSerial Interfacexx
+Name[zh_CN]=串口接口
 Name[zh_TW]=序列介面
 Type=Service
 X-KDE-Solid-Actions-Type=SerialInterface
@@ -79,6 +80,7 @@ Name[pt]=Porta
 Name[pt_BR]=Porta
 Name[uk]=Порт
 Name[x-test]=xxPortxx
+Name[zh_CN]=端口
 Name[zh_TW]=連接埠
 
 [Desktop Action serialType]
@@ -101,4 +103,5 @@ Name[sv]=Serietyp
 Name[tr]=Seri Port Tipi
 Name[uk]=Послідовний тип
 Name[x-test]=xxSerial Typexx
+Name[zh_CN]=串口类型
 Name[zh_TW]=序列類型

@@ -108,6 +108,7 @@ Comment[sv]=Anpassa inställningar av inmatningsåtgärder
 Comment[tr]=Girdi Eylemleri ayarlarını yapılandır
 Comment[uk]=Налаштування параметрів дій з вводу
 Comment[x-test]=xxConfigure Input Actions settingsxx
+Comment[zh_CN]=配置输入动作设置
 Comment[zh_TW]=設定輸入動作
 Categories=Qt;KDE;X-KDE-settings-accessibility;
 

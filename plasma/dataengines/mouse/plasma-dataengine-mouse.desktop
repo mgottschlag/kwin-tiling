@@ -68,6 +68,7 @@ Comment[pt_BR]=Posição do mouse e cursor
 Comment[sv]=Musposition och pekare
 Comment[tr]=Fare konumu ve işaretçisi
 Comment[uk]=Позиція вказівника миші і курсора
+Comment[zh_CN]=鼠标位置和光标
 Comment[zh_TW]=滑鼠位置與游標
 Type=Service
 X-KDE-ServiceTypes=Plasma/DataEngine

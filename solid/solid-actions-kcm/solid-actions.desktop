@@ -31,6 +31,7 @@ Name[sv]=Enhetsåtgärder
 Name[tr]=Aygıt Eylemleri
 Name[uk]=Дії з пристроями
 Name[x-test]=xxDevice Actionsxx
+Name[zh_CN]=设备动作
 Name[zh_TW]=裝置動作
 
 Comment=A configuration tool for managing the actions available to the user when connecting new devices to the computer

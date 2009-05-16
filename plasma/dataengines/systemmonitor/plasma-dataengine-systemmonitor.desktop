@@ -89,6 +89,7 @@ Comment[pt_BR]=Informação do status do sistema
 Comment[sv]=Information om systemstatus
 Comment[tr]=Sistem durumu bilgileri
 Comment[uk]=Інформація про стан системи
+Comment[zh_CN]=系统状态信息
 Comment[zh_TW]=系統狀態資訊
 ServiceTypes=Plasma/DataEngine
 Icon=utilities-system-monitor

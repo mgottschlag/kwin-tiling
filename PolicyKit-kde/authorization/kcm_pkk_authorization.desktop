@@ -25,6 +25,7 @@ Name[sv]=Policykit behörighet
 Name[tr]=PolicyKit Yetkilendirmesi
 Name[uk]=Уповноваження PolicyKit
 Name[x-test]=xxPolicyKit Authorizationxx
+Name[zh_CN]=PolicyKit 授权
 Name[zh_TW]=PolicyKit 授權
 
 Comment=Set up policies for applications using PolicyKit
