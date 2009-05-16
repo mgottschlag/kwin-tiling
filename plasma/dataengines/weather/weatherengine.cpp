@@ -251,11 +251,11 @@ void WeatherEngine::networkStatusChanged(Solid::Networking::Status status)
     kDebug() << "status changed" << d->m_networkAvailable;
 
     if (d->m_networkAvailable) {
-	    foreach (const QString &source, sources()) {
-		    IonInterface *ion = d->ionForSource(source);
+		foreach (const QString &i, d->m_ions) {
+			IonInterface *ion = dynamic_cast<IonInterface*>(Plasma::DataEngineManager::self()->loadEngine(i));
 		    if (ion) {
-			    connect(ion, SIGNAL(resetCompleted(IonInterface *)), this, SLOT(resetCompleted(IonInterface *)));
-				ion->reset();			
+			    connect(ion, SIGNAL(resetCompleted(IonInterface *,bool)), this, SLOT(resetCompleted(IonInterface *,bool)));
+				ion->reset();
 		    }
 	    }
 	    
@@ -263,12 +263,15 @@ void WeatherEngine::networkStatusChanged(Solid::Networking::Status status)
     }
 }
 
-void WeatherEngine::resetCompleted(IonInterface * i)
+void WeatherEngine::resetCompleted(IonInterface * i,bool b)
 {
-	foreach (const QString &source, sources()) {
-		IonInterface *ion = d->ionForSource(source);
-		if (ion == i) {
-			ion->updateSourceEvent(source);			
+	disconnect(i, SIGNAL(resetCompleted(IonInterface*,bool)),this,SLOT(resetCompleted(IonInterface *,bool)));
+	if (b) {	
+		foreach (const QString &source, sources()) {
+			IonInterface *ion = d->ionForSource(source);
+			if (ion == i) {
+				ion->updateSourceEvent(source);			
+			}
 		}
 	}
 }

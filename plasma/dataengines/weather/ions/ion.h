@@ -89,7 +89,7 @@ public Q_SLOTS:
     virtual void reset() = 0;
     
 signals:
-    void resetCompleted(IonInterface *);	
+    void resetCompleted(IonInterface *, bool);	
     
 protected:
 	

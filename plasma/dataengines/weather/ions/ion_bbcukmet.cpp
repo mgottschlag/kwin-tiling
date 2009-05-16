@@ -129,7 +129,7 @@ void UKMETIon::reset()
 	// Destroy dptr
 	delete d;
 	d = new Private();
-	setInitialized(false);
+	emit(resetCompleted(this,true));
 }
 
 

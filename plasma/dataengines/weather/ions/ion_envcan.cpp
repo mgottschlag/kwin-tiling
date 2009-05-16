@@ -622,12 +622,12 @@ void EnvCanadaIon::slotJobFinished(KJob *job)
 void EnvCanadaIon::setup_slotJobFinished(KJob *job)
 {
     Q_UNUSED(job)
-    readXMLSetup();
-    setInitialized(true);
+    const bool success = readXMLSetup();
+    setInitialized(success);
     if (d->emitWhenSetup) {
 		d->emitWhenSetup = false;
-		emit(resetCompleted(this));
-    } else {
+		emit(resetCompleted(this,success));
+    } else if (success) {
 		kDebug() << "UPDATE DATA NOW ===========>" << sources();
 		foreach (QString source, sources()) {
 			updateIonSource(source);
@@ -638,6 +638,7 @@ void EnvCanadaIon::setup_slotJobFinished(KJob *job)
 // Parse the city list and store into a QMap
 bool EnvCanadaIon::readXMLSetup()
 {
+	bool success = false;
     QString tmp;
     QString territory;
     QString code;
@@ -670,11 +671,12 @@ bool EnvCanadaIon::readXMLSetup()
 
                 // Set the string list, we will use for the applet to display the available cities.
                 d->m_locations[tmp] = tmp;
+				success = true;
             }
         }
 
     }
-    return !d->m_xmlSetup.error();
+    return (success && !d->m_xmlSetup.error());
 }
 
 WeatherData EnvCanadaIon::parseWeatherSite(WeatherData& data, QXmlStreamReader& xml)

@@ -50,6 +50,12 @@ public:
     KIO::TransferJob *m_job;
 
     QDateTime m_dateFormat;
+	bool emitWhenSetup;
+	
+	Private() : emitWhenSetup(false)
+	{
+	}
+	
 };
 
 QMap<QString, IonInterface::WindDirections> NOAAIon::setupWindIconMappings(void)
@@ -98,6 +104,7 @@ void NOAAIon::reset()
 	delete d;
 	d = new Private();
 	setInitialized(false);
+	getXMLSetup();
 }
 
 NOAAIon::~NOAAIon()
@@ -257,8 +264,12 @@ void NOAAIon::slotJobFinished(KJob *job)
 void NOAAIon::setup_slotJobFinished(KJob *job)
 {
     Q_UNUSED(job)
-    readXMLSetup();
-    setInitialized(true);
+    const bool success = readXMLSetup();
+    setInitialized(success);
+	if (d->emitWhenSetup) {
+		d->emitWhenSetup = false;
+		emit(resetCompleted(this,success));
+	}
 }
 
 void NOAAIon::parseStationID()
@@ -317,16 +328,18 @@ void NOAAIon::parseStationList()
 // Parse the city list and store into a QMap
 bool NOAAIon::readXMLSetup()
 {
+	bool success = false;
     while (!d->m_xmlSetup.atEnd()) {
         d->m_xmlSetup.readNext();
 
         if (d->m_xmlSetup.isStartElement()) {
             if (d->m_xmlSetup.name() == "wx_station_index") {
                 parseStationList();
+				success = true;
             }
         }
     }
-    return !d->m_xmlSetup.error();
+    return (!d->m_xmlSetup.error() && success);
 }
 
 WeatherData NOAAIon::parseWeatherSite(WeatherData& data, QXmlStreamReader& xml)
