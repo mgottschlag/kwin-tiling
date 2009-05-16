@@ -656,10 +656,10 @@ void UKMETIon::parseWeatherObservation(const QString& source, WeatherData& data,
                 data.pressureTendency = observeData[5].split(',')[1].trimmed();
 
                 data.visibilityStr = observeData[6].trimmed();
-	    } else if (xml.name() == "geo:lat") {
+	    } else if (xml.name() == "lat") {
 	        const QString ordinate = xml.readElementText();
 	        data.latitude = ordinate.toDouble();
-	    } else if (xml.name() == "geo:long") {
+	    } else if (xml.name() == "long") {
 	        const QString ordinate = xml.readElementText();
 	        data.longitude = ordinate.toDouble();
 	    } else {
