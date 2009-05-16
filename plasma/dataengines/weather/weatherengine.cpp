@@ -255,7 +255,7 @@ bool WeatherEngine::updateSourceEvent(const QString& source)
 void WeatherEngine::triggerReset()
 {
     foreach (const QString &i, d->m_ions) {
-        IonInterface *ion = dynamic_cast<IonInterface*>(Plasma::DataEngineManager::self()->loadEngine(i));
+        IonInterface * ion = qobject_cast<IonInterface *>(Plasma::DataEngineManager::self()->engine(i));
         if (ion) {
             kDebug() << "triggerReset()";
             ion->reset();
