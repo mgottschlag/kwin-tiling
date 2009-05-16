@@ -43,7 +43,7 @@ public:
     QMap<KJob *, QXmlStreamReader*> m_jobXml;
     QMap<KJob *, QString> m_jobList;
     QXmlStreamReader m_xmlSetup;
-    KIO::TransferJob *m_job;
+//    KIO::TransferJob *m_job;
 
     QDateTime m_dateFormat;
     bool emitWhenSetup;
@@ -82,6 +82,7 @@ void EnvCanadaIon::reset() {
 	}
 	delete d;
 	d = new Private();
+	setInitialized(false);
 	d->emitWhenSetup = true;
 	redoXMLSetup();
 }
@@ -574,15 +575,15 @@ void EnvCanadaIon::getXMLData(const QString& source)
         return;
     }
 
-    d->m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
+    KIO::TransferJob* const newJob  = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
 
-    d->m_jobXml.insert(d->m_job, new QXmlStreamReader);
-    d->m_jobList.insert(d->m_job, source);
+    d->m_jobXml.insert(newJob, new QXmlStreamReader);
+    d->m_jobList.insert(newJob, source);
  
-    if (d->m_job) {
-        connect(d->m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
+    if (newJob) {
+        connect(newJob, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
                 SLOT(slotDataArrived(KIO::Job *, const QByteArray &)));
-        connect(d->m_job, SIGNAL(result(KJob *)), this, SLOT(slotJobFinished(KJob *)));
+        connect(newJob, SIGNAL(result(KJob *)), this, SLOT(slotJobFinished(KJob *)));
     }
 }
 
