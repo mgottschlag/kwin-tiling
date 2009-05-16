@@ -122,6 +122,8 @@ void WeatherEngine::init()
                              status == Solid::Networking::Unknown);
     connect(Solid::Networking::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
             this, SLOT(networkStatusChanged(Solid::Networking::Status)));
+
+    kDebug() << "WeatherEngine::init()";
 }
 
 /**
@@ -135,6 +137,7 @@ void WeatherEngine::newIonSource(const QString& source)
         return;
     }
 
+    kDebug() << "WeatherEngine::newIonSource()";
     ion->connectSource(source, this);
 }
 
@@ -151,6 +154,7 @@ void WeatherEngine::removeIonSource(const QString& source)
             unloadIon(d->ionNameForSource(source));
         }
     }
+    kDebug() << "WeatherEngine::removeIonSource()";
 }
 
 /**
@@ -158,6 +162,7 @@ void WeatherEngine::removeIonSource(const QString& source)
  */
 void WeatherEngine::dataUpdated(const QString& source, Plasma::DataEngine::Data data)
 {
+    kDebug() << "WeatherEngine::dataUpdated()";
     setData(source, data);
 }
 
@@ -206,6 +211,7 @@ bool WeatherEngine::sourceRequestEvent(const QString &source)
         }
     }
 
+    kDebug() << "WeatherEngine::sourceRequestEvent(): Network is: " << d->m_networkAvailable;
     if (!d->m_networkAvailable) {
         setData(source, Data());
         return true;
@@ -234,19 +240,18 @@ bool WeatherEngine::updateSourceEvent(const QString& source)
         return false;
     }
 
+    kDebug() << "WeatherEngine::updateSourceEvent(): Network is: " << d->m_networkAvailable;
     if (!d->m_networkAvailable) {
         return false;
     }
 
-    ion->setProperty("timezone", d->m_localTime.isUtc());
-    ion->setProperty("unit", KGlobal::locale()->measureSystem());
     return ion->updateSourceEvent(source);
 }
 
 void WeatherEngine::networkStatusChanged(Solid::Networking::Status status)
 {
     d->m_networkAvailable = (status == Solid::Networking::Connected || status == Solid::Networking::Unknown);
-    //kDebug() << "status changed" << d->m_networkAvailable;
+    kDebug() << "status changed" << d->m_networkAvailable;
 
     if (d->m_networkAvailable) {
         updateAllSources();
