@@ -86,9 +86,16 @@ public Q_SLOTS:
      */
     bool updateSourceEvent(const QString& source);
 
+    /**
+     * Reimplement for ion to reload data if network status comes back up
+     */
     virtual void reset() = 0;
 
 signals:
+   
+    /**
+     * Triggered when we get initial setup data for ions that provide a list of places
+     */ 
     void resetCompleted(IonInterface *, bool);
 
 protected:
