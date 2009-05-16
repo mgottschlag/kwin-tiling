@@ -612,7 +612,6 @@ void UKMETIon::parseWeatherChannel(const QString& source, WeatherData& data, QXm
 
 void UKMETIon::parseWeatherObservation(const QString& source, WeatherData& data, QXmlStreamReader& xml)
 {
-    Q_UNUSED(data)
     Q_ASSERT(xml.isStartElement() && xml.name() == "item");
 
     while (!xml.atEnd()) {
@@ -673,7 +672,7 @@ void UKMETIon::parseWeatherObservation(const QString& source, WeatherData& data,
 bool UKMETIon::readObservationXMLData(const QString& source, QXmlStreamReader& xml)
 {
     WeatherData data;
-
+    bool haveObservation = false;
     while (!xml.atEnd()) {
         xml.readNext();
 
@@ -683,7 +682,8 @@ bool UKMETIon::readObservationXMLData(const QString& source, QXmlStreamReader& x
 
         if (xml.isStartElement()) {
             if (xml.name() == "rss") {
-                parsePlaceObservation(source, data, xml);
+                parsePlaceObservation(source, data, xml); 
+		haveObservation = true;
             } else {
                 parseUnknownElement(xml);
             }
@@ -691,6 +691,9 @@ bool UKMETIon::readObservationXMLData(const QString& source, QXmlStreamReader& x
 
     }
 
+    if (!haveObservation) {
+	return false;    
+    }
     d->m_weatherData[source] = data;
 
     // Get the 5 day forecast info next.
@@ -701,6 +704,7 @@ bool UKMETIon::readObservationXMLData(const QString& source, QXmlStreamReader& x
 
 bool UKMETIon::readFiveDayForecastXMLData(const QString& source, QXmlStreamReader& xml)
 {
+    bool haveFiveDay = false;
     while (!xml.atEnd()) {
         xml.readNext();
 
@@ -711,11 +715,13 @@ bool UKMETIon::readFiveDayForecastXMLData(const QString& source, QXmlStreamReade
         if (xml.isStartElement()) {
             if (xml.name() == "wml") {
                 parseFiveDayForecast(source, xml);
+		haveFiveDay = true;
             } else {
                 parseUnknownElement(xml);
             }
         }
     }
+    if (!haveFiveDay) return false;
     updateWeather(source);
     return !xml.error();
 }
