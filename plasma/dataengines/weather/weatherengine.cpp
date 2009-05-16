@@ -69,7 +69,6 @@ public:
     }
 
     QStringList m_ions;
-    QTimer *m_timer;
     bool m_networkAvailable;
 };
 
@@ -125,7 +124,7 @@ void WeatherEngine::init()
     connect(Solid::Networking::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
             this, SLOT(networkStatusChanged(Solid::Networking::Status)));
 
-    kDebug() << "WeatherEngine::init()";
+    kDebug() << "init()";
 }
 
 /**
@@ -139,7 +138,7 @@ void WeatherEngine::newIonSource(const QString& source)
         return;
     }
 
-    kDebug() << "WeatherEngine::newIonSource()";
+    kDebug() << "newIonSource()";
     ion->connectSource(source, this);
 }
 
@@ -156,7 +155,7 @@ void WeatherEngine::removeIonSource(const QString& source)
             unloadIon(d->ionNameForSource(source));
         }
     }
-    kDebug() << "WeatherEngine::removeIonSource()";
+    kDebug() << "removeIonSource()";
 }
 
 /**
@@ -164,7 +163,7 @@ void WeatherEngine::removeIonSource(const QString& source)
  */
 void WeatherEngine::dataUpdated(const QString& source, Plasma::DataEngine::Data data)
 {
-    kDebug() << "WeatherEngine::dataUpdated()";
+    kDebug() << "dataUpdated()";
     setData(source, data);
 }
 
@@ -174,13 +173,9 @@ WeatherEngine::WeatherEngine(QObject *parent, const QVariantList& args)
 {
     Q_UNUSED(args)
 
-    d->m_timer = new QTimer();
-
     // Globally notify all plugins to remove their sources (and unload plugin)
     connect(this, SIGNAL(sourceRemoved(QString)), this, SLOT(removeIonSource(QString)));
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(unloadIons()));
-    connect(d->m_timer, SIGNAL(timeout()), this, SLOT(triggerReset()));
-    d->m_timer->setInterval(6000);
 }
 
 // Destructor
@@ -214,7 +209,7 @@ bool WeatherEngine::sourceRequestEvent(const QString &source)
         }
     }
 
-    kDebug() << "WeatherEngine::sourceRequestEvent(): Network is: " << d->m_networkAvailable;
+    kDebug() << "sourceRequestEvent(): Network is: " << d->m_networkAvailable;
     if (!d->m_networkAvailable) {
         setData(source, Data());
         return true;
@@ -235,7 +230,6 @@ bool WeatherEngine::sourceRequestEvent(const QString &source)
  */
 bool WeatherEngine::updateSourceEvent(const QString& source)
 {
-    kDebug() << "uSE for " << source;
     IonInterface *ion = d->ionForSource(source);
 
     QByteArray str = source.toLocal8Bit();
@@ -244,7 +238,7 @@ bool WeatherEngine::updateSourceEvent(const QString& source)
         return false;
     }
 
-    kDebug() << "WeatherEngine::updateSourceEvent(): Network is: " << d->m_networkAvailable;
+    kDebug() << "updateSourceEvent(): Network is: " << d->m_networkAvailable;
     if (!d->m_networkAvailable) {
         return false;
     }
@@ -254,24 +248,22 @@ bool WeatherEngine::updateSourceEvent(const QString& source)
 
 void WeatherEngine::triggerReset()
 {
+    kDebug() << "triggerReset()";
     foreach (const QString &i, d->m_ions) {
         IonInterface * ion = qobject_cast<IonInterface *>(Plasma::DataEngineManager::self()->engine(i));
         if (ion) {
-            kDebug() << "triggerReset()";
             ion->reset();
         }
     }
-    d->m_timer->stop();
 }
 
 void WeatherEngine::networkStatusChanged(Solid::Networking::Status status)
 {
     d->m_networkAvailable = (status == Solid::Networking::Connected || status == Solid::Networking::Unknown);
-    kDebug() << "WEATHERENGINE: status changed" << d->m_networkAvailable << "state: " << status;
+    kDebug() << "networkStatusChanged(): Status changed: " << d->m_networkAvailable << "state: " << status;
 
     if (d->m_networkAvailable) {
-        kDebug() << "NETWORK IS BACK UP --> START TIMER!!!!";
-        d->m_timer->start();
+        QTimer::singleShot(6000, this, SLOT(triggerReset()));
     }
 }
 
