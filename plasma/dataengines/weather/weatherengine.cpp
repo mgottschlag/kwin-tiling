@@ -25,6 +25,7 @@
 #include <KServiceTypeTrader>
 #include <KDateTime>
 #include <KLocale>
+#include <QTimer>
 
 #include <Plasma/DataEngineManager>
 
@@ -68,6 +69,7 @@ public:
     }
 
     QStringList m_ions;
+    QTimer *m_timer;
     bool m_networkAvailable;
 };
 
@@ -93,6 +95,7 @@ Plasma::DataEngine *WeatherEngine::loadIon(const QString& plugName)
     Plasma::DataEngine *ion = Plasma::DataEngineManager::self()->loadEngine(foundPlugin.pluginName());
     ion->setObjectName(plugName);
     connect(ion, SIGNAL(sourceAdded(QString)), this, SLOT(newIonSource(QString)));
+    connect(ion, SIGNAL(resetCompleted(IonInterface *,bool)), this, SLOT(resetCompleted(IonInterface *,bool)));
 
     d->m_ions << plugName;
 
@@ -174,6 +177,8 @@ WeatherEngine::WeatherEngine(QObject *parent, const QVariantList& args)
     // Globally notify all plugins to remove their sources (and unload plugin)
     connect(this, SIGNAL(sourceRemoved(QString)), this, SLOT(removeIonSource(QString)));
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(unloadIons()));
+    connect(d->m_timer, SIGNAL(timeout()), this, SLOT(triggerReset()));
+    d->m_timer->setInterval(6000);
 }
 
 // Destructor
@@ -245,21 +250,26 @@ bool WeatherEngine::updateSourceEvent(const QString& source)
     return ion->updateSourceEvent(source);
 }
 
+void WeatherEngine::triggerReset()
+{
+    foreach (const QString &i, d->m_ions) {
+        IonInterface *ion = dynamic_cast<IonInterface*>(Plasma::DataEngineManager::self()->loadEngine(i));
+        if (ion) {
+            kDebug() << "triggerReset()";
+            ion->reset();
+        }
+    }
+    d->m_timer->stop();
+}
+
 void WeatherEngine::networkStatusChanged(Solid::Networking::Status status)
 {
     d->m_networkAvailable = (status == Solid::Networking::Connected || status == Solid::Networking::Unknown);
-    kDebug() << "status changed" << d->m_networkAvailable;
+    kDebug() << "WEATHERENGINE: status changed" << d->m_networkAvailable << "state: " << status;
 
     if (d->m_networkAvailable) {
-		foreach (const QString &i, d->m_ions) {
-			IonInterface *ion = dynamic_cast<IonInterface*>(Plasma::DataEngineManager::self()->loadEngine(i));
-		    if (ion) {
-			    connect(ion, SIGNAL(resetCompleted(IonInterface *,bool)), this, SLOT(resetCompleted(IonInterface *,bool)));
-				ion->reset();
-		    }
-	    }
-	    
-	    //updateAllSources();
+        kDebug() << "NETWORK IS BACK UP --> START TIMER!!!!";
+        d->m_timer->start();
     }
 }
 
@@ -267,12 +277,12 @@ void WeatherEngine::resetCompleted(IonInterface * i,bool b)
 {
 	disconnect(i, SIGNAL(resetCompleted(IonInterface*,bool)),this,SLOT(resetCompleted(IonInterface *,bool)));
 	if (b) {	
-		foreach (const QString &source, sources()) {
-			IonInterface *ion = d->ionForSource(source);
-			if (ion == i) {
-				ion->updateSourceEvent(source);			
-			}
+            foreach (const QString &source, sources()) {
+                IonInterface *ion = d->ionForSource(source);
+                if (ion == i) {
+                    ion->updateSourceEvent(source);			
 		}
+	    }
 	}
 }
 
