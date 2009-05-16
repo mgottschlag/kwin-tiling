@@ -44,8 +44,11 @@ public:
     // Current observation information.
     QString obsTime;
     int iconPeriodHour;
+    int iconPeriodMinute;
     //QString iconPeriodAP;
-
+    double longitude;
+    double latitude;
+    
     QString condition;
     QString conditionIcon;
     QString temperature_C;
@@ -88,6 +91,9 @@ public:
     QString observationTime(const QString& source);
     //bool night(const QString& source);
     int periodHour(const QString& source);
+    int periodMinute(const QString& source);
+    double periodLatitude(const QString& source);
+    double periodLongitude(const QString& source);
     QString condition(const QString& source);
     QMap<QString, QString> temperature(const QString& source);
     QMap<QString, QString> wind(const QString& source);
@@ -130,7 +136,7 @@ private:
     void parseWeatherObservation(const QString& source, WeatherData& data, QXmlStreamReader& xml);
     void parseFiveDayForecast(const QString& source, QXmlStreamReader& xml);
     void parseUnknownElement(QXmlStreamReader& xml);
-
+    
 private:
     class Private;
     Private *const d;

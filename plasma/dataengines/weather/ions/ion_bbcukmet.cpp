@@ -20,6 +20,7 @@
 /* Ion for BBC's Weather from the UK Met Office */
 
 #include "ion_bbcukmet.h"
+#include "../../time/solarposition.h"
 
 class UKMETIon::Private : public QObject
 {
@@ -54,6 +55,42 @@ public:
     QDateTime m_dateFormat;
 };
 
+static double calculateSunriseTime(const int & day, const int & month, const int & year, const double & latitude, const double & longitude)
+{
+
+    QDate d(year, month, day);
+    QDateTime dt(d);
+
+    double jd,century,eqTime,solarDec,azimuth,zenith;
+
+    NOAASolarCalc::calc(dt, longitude, latitude, 0.0,
+                        &jd, &century, &eqTime, &solarDec, &azimuth, &zenith);
+
+    double toReturn;
+    NOAASolarCalc::calcTimeUTC(zenith, true, &jd, &toReturn, latitude, longitude);
+
+    toReturn *= 60;
+    return toReturn;
+}
+
+static double calculateSunsetTime(const int & day, const int & month, const int & year, const double & latitude, const double & longitude)
+{
+
+    QDate d(year, month, day);
+    QDateTime dt(d);
+
+    double jd,century,eqTime,solarDec,azimuth,zenith;
+
+    NOAASolarCalc::calc(dt, longitude, latitude, 0.0,
+                        &jd, &century, &eqTime, &solarDec, &azimuth, &zenith);
+
+    double toReturn;
+    NOAASolarCalc::calcTimeUTC(zenith, false, &jd, &toReturn, latitude, longitude);
+
+    toReturn *= 60;
+    return toReturn;
+
+}
 
 // ctor, dtor
 UKMETIon::UKMETIon(QObject *parent, const QVariantList &args)
@@ -595,7 +632,8 @@ void UKMETIon::parseWeatherObservation(const QString& source, WeatherData& data,
                 data.obsTime = conditionData[0];
                 // Friday at 0200 GMT
                 d->m_dateFormat =  QDateTime::fromString(data.obsTime.split("at")[1].trimmed(), "hhmm 'GMT'");
-                data.iconPeriodHour = d->m_dateFormat.toString("HH").toInt();
+                data.iconPeriodHour = d->m_dateFormat.toString("hh").toInt();
+		data.iconPeriodMinute = d->m_dateFormat.toString("mm").toInt();
                 //data.iconPeriodAP = d->m_dateFormat.toString("ap");
 
                 data.condition = conditionData[1].split('.')[0].trimmed();
@@ -619,8 +657,13 @@ void UKMETIon::parseWeatherObservation(const QString& source, WeatherData& data,
                 data.pressureTendency = observeData[5].split(',')[1].trimmed();
 
                 data.visibilityStr = observeData[6].trimmed();
-
-            } else {
+	    } else if (xml.name() == "geo:lat") {
+	        const QString ordinate = xml.readElementText();
+	        data.latitude = ordinate.toDouble();
+	    } else if (xml.name() == "geo:long") {
+	        const QString ordinate = xml.readElementText();
+	        data.longitude = ordinate.toDouble();
+	    } else {
                 parseUnknownElement(xml);
             }
         }
@@ -799,12 +842,26 @@ void UKMETIon::updateWeather(const QString& source)
     setData(weatherSource, "Observation Period", observationTime(source));
     setData(weatherSource, "Current Conditions", condition(source));
 
+    const double observationSeconds = 60.0 * (periodMinute(source) + 60.0 * periodHour(source));
+
+    const double lati = periodLatitude(source);
+    const double longi = periodLongitude(source);
+    const QDate today = QDate::currentDate();
+    const double sunrise = calculateSunriseTime(today.day(), today.month(), today.year(), lati, longi);
+    const double sunset = calculateSunsetTime(today.day(), today.month(), today.year(), lati, longi);
+
+    //kDebug() << "Calculated sunrise and sunset as " << sunrise << ", " << sunset;
+    //kDebug() << "Observation was made at " << observationSeconds;
+    
     // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
-    if (periodHour(source) >= 0 && periodHour(source) < 6) {
+    if (observationSeconds >= 0 && observationSeconds < sunrise) {
+        //kDebug() << "Before sunrise - using night icons\n";
         setData(weatherSource, "Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
-    } else if (periodHour(source) >= 18) {
+    } else if (observationSeconds >= sunset) {
+        //kDebug() << "After sunset - using night icons\n";
         setData(weatherSource, "Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
     } else {
+        //kDebug() << "Using daytime icons\n";
         setData(weatherSource, "Condition Icon", getWeatherIcon(dayIcons(), condition(source)));
     }
 
@@ -871,6 +928,21 @@ bool UKMETIon::night(const QString& source)
 int UKMETIon::periodHour(const QString& source)
 {
     return d->m_weatherData[source].iconPeriodHour;
+}
+
+int UKMETIon::periodMinute(const QString& source)
+{
+    return d->m_weatherData[source].iconPeriodMinute;
+}
+
+double UKMETIon::periodLatitude(const QString& source)
+{
+    return d->m_weatherData[source].latitude;
+}
+
+double UKMETIon::periodLongitude(const QString& source)
+{
+    return d->m_weatherData[source].longitude;
 }
 
 QString UKMETIon::condition(const QString& source)

@@ -20,7 +20,7 @@ kde4_add_plugin(ion_bbcukmet ${ion_bbcukmet_SRCS})
 
 target_link_libraries (ion_envcan weather_ion)
 target_link_libraries (ion_noaa weather_ion)
-target_link_libraries (ion_bbcukmet weather_ion)
+target_link_libraries (ion_bbcukmet weather_ion time_solar)
 
 INSTALL (FILES ion.h
                ion_export.h
