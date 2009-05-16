@@ -57,7 +57,7 @@ float convertTemperature(float value, int srcUnit, int destUnit)
         };
     }
 
-    kWarning() << "Your application is trying to use convertTemperature() with an invalid srcUnit or destUnit";
+    kWarning() << "Your application is trying to use convertTemperature() with an invalid srcUnit (" << srcUnit << ") or destUnit (" << destUnit << ")";
     return InvalidConversion;
 }
 
@@ -105,7 +105,7 @@ float convertDistance(float value, int srcUnit, int destUnit)
         };
     }
 
-    kWarning() << "Your application is trying to use convertDistance() with an invalid srcUnit or destUnit";
+    kWarning() << "Your application is trying to use convertDistance() with an invalid srcUnit (" << srcUnit << ") or destUnit (" << destUnit << ")";
     return InvalidConversion;
 }
 
@@ -166,7 +166,7 @@ float convertSpeed(float value, int srcUnit, int destUnit)
         };
     }
 
-    kWarning() << "Your application is trying to use convertSpeed() with an invalid srcUnit or destUnit";
+    kWarning() << "Your application is trying to use convertSpeed() with an invalid srcUnit (" << srcUnit << ") or destUnit (" << destUnit << ")";
     return InvalidConversion;
 }
 
@@ -207,7 +207,7 @@ float convertPressure(float value, int srcUnit, int destUnit)
         };
     }
 
-    kWarning() << "Your application is trying to use convertPressure() with an invalid srcUnit or destUnit";
+    kWarning() << "Your application is trying to use convertPressure() with an invalid srcUnit (" << srcUnit << ") or destUnit (" << destUnit << ")";
     return InvalidConversion;
 }
 
@@ -242,7 +242,7 @@ float convert(float value, int srcUnit, int destUnit)
 
     };
 
-    kWarning() << "Your application is using WeatherUtils::update() with an unknown srcUnit, please check your code..";
+    kWarning() << "Your application is using WeatherUtils::update() with an unknown srcUnit (" << srcUnit << "), please check your code..";
     return NoSuchUnit;
 }
 
