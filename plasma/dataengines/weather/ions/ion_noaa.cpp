@@ -46,8 +46,7 @@ public:
     // Store KIO jobs
     QMap<KJob *, QXmlStreamReader*> m_jobXml;
     QMap<KJob *, QString> m_jobList;
-    QXmlStreamReader m_xmlSetup;
-    KIO::TransferJob *m_job;
+    QXmlStreamReader m_xmlSetup;    
 
     QDateTime m_dateFormat;
     bool emitWhenSetup;
@@ -102,6 +101,7 @@ void NOAAIon::reset()
 {
     delete d;
     d = new Private();
+    d->emitWhenSetup = true;
     setInitialized(false);
     getXMLSetup();
 }
@@ -198,6 +198,8 @@ void NOAAIon::getXMLSetup()
         connect(job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
                 SLOT(setup_slotDataArrived(KIO::Job *, const QByteArray &)));
         connect(job, SIGNAL(result(KJob *)), this, SLOT(setup_slotJobFinished(KJob *)));
+    } else {
+        kDebug() << "Could not create place name list transfer job";   
     }
 }
 
@@ -217,14 +219,14 @@ void NOAAIon::getXMLData(const QString& source)
         return;
     }
 
-    d->m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
-    d->m_jobXml.insert(d->m_job, new QXmlStreamReader);
-    d->m_jobList.insert(d->m_job, source);
+    KIO::TransferJob * const m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
+    d->m_jobXml.insert(m_job, new QXmlStreamReader);
+    d->m_jobList.insert(m_job, source);
 
-    if (d->m_job) {
-        connect(d->m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-                SLOT(slotDataArrived(KIO::Job *, const QByteArray &)));
-        connect(d->m_job, SIGNAL(result(KJob *)), this, SLOT(slotJobFinished(KJob *)));
+    if (m_job) {
+        connect(m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
+             SLOT(slotDataArrived(KIO::Job *, const QByteArray &)));
+        connect(m_job, SIGNAL(result(KJob *)), this, SLOT(slotJobFinished(KJob *)));
     }
 }
 
