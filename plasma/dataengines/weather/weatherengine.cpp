@@ -174,11 +174,12 @@ WeatherEngine::WeatherEngine(QObject *parent, const QVariantList& args)
 {
     Q_UNUSED(args)
 
+    d->m_timer = new QTimer();
+
     // Globally notify all plugins to remove their sources (and unload plugin)
     connect(this, SIGNAL(sourceRemoved(QString)), this, SLOT(removeIonSource(QString)));
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(unloadIons()));
     connect(d->m_timer, SIGNAL(timeout()), this, SLOT(triggerReset()));
-    d->m_timer = new QTimer();
     d->m_timer->setInterval(6000);
 }
 
