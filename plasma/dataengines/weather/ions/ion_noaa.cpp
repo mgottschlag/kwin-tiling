@@ -50,12 +50,11 @@ public:
     KIO::TransferJob *m_job;
 
     QDateTime m_dateFormat;
-	bool emitWhenSetup;
-	
-	Private() : emitWhenSetup(false)
-	{
-	}
-	
+    bool emitWhenSetup;
+
+    Private() : emitWhenSetup(false) {
+    }
+
 };
 
 QMap<QString, IonInterface::WindDirections> NOAAIon::setupWindIconMappings(void)
@@ -101,10 +100,10 @@ NOAAIon::NOAAIon(QObject *parent, const QVariantList &args)
 
 void NOAAIon::reset()
 {
-	delete d;
-	d = new Private();
-	setInitialized(false);
-	getXMLSetup();
+    delete d;
+    d = new Private();
+    setInitialized(false);
+    getXMLSetup();
 }
 
 NOAAIon::~NOAAIon()
@@ -135,10 +134,10 @@ QStringList NOAAIon::validate(const QString& source) const
 
     // If the source name might look like a station ID, check these too and return the name
     while (it_station != d->m_place.constEnd()) {
-            if (it_station.value().stationID.contains(source.toUpper().split('|')[1])) {
-                QString matchID = it_station.value().stationName + ", " + it_station.value().stateName;
-                placeList.append(QString("place|%1").arg(matchID));
-            }
+        if (it_station.value().stationID.contains(source.toUpper().split('|')[1])) {
+            QString matchID = it_station.value().stationName + ", " + it_station.value().stateName;
+            placeList.append(QString("place|%1").arg(matchID));
+        }
         ++it_station;
     }
 
@@ -164,7 +163,7 @@ bool NOAAIon::updateIonSource(const QString& source)
         setData(source, "validate", "noaa|malformed");
         return true;
     }
-    
+
     if (sourceAction[1] == "validate" && sourceAction.size() > 2) {
         QStringList result = validate(QString("%1|%2").arg(sourceAction[0]).arg(sourceAction[2]));
 
@@ -213,7 +212,7 @@ void NOAAIon::getXMLData(const QString& source)
 
     // If this is empty we have no valid data, send out an error and abort.
     //
-    if (url.url().isEmpty()) { 
+    if (url.url().isEmpty()) {
         setData(source, "validate", QString("noaa|malformed"));
         return;
     }
@@ -266,10 +265,10 @@ void NOAAIon::setup_slotJobFinished(KJob *job)
     Q_UNUSED(job)
     const bool success = readXMLSetup();
     setInitialized(success);
-	if (d->emitWhenSetup) {
-		d->emitWhenSetup = false;
-		emit(resetCompleted(this,success));
-	}
+    if (d->emitWhenSetup) {
+        d->emitWhenSetup = false;
+        emit(resetCompleted(this, success));
+    }
 }
 
 void NOAAIon::parseStationID()
@@ -328,14 +327,14 @@ void NOAAIon::parseStationList()
 // Parse the city list and store into a QMap
 bool NOAAIon::readXMLSetup()
 {
-	bool success = false;
+    bool success = false;
     while (!d->m_xmlSetup.atEnd()) {
         d->m_xmlSetup.readNext();
 
         if (d->m_xmlSetup.isStartElement()) {
             if (d->m_xmlSetup.name() == "wx_station_index") {
                 parseStationList();
-				success = true;
+                success = true;
             }
         }
     }
@@ -482,15 +481,15 @@ void NOAAIon::updateWeather(const QString& source)
     //QMap<QString, ConditionIcons> conditionList;
     //conditionList = conditionIcons();
 
-/*
-    if ((periodHour(source) >= 0 && periodHour(source) < 6) || (periodHour(source) >= 18)) {
-        // Night
-        // - Fill in condition fuzzy logic 
-    } else {
-        // Day
-        // - Fill in condition fuzzy logic
-    }
-*/
+    /*
+        if ((periodHour(source) >= 0 && periodHour(source) < 6) || (periodHour(source) >= 18)) {
+            // Night
+            // - Fill in condition fuzzy logic
+        } else {
+            // Day
+            // - Fill in condition fuzzy logic
+        }
+    */
     setData(source, "Condition Icon", "weather-none-available");
 
     dataFields = temperature(source);

@@ -48,7 +48,7 @@ public:
     //QString iconPeriodAP;
     double longitude;
     double latitude;
-    
+
     QString condition;
     QString conditionIcon;
     QString temperature_C;
@@ -104,7 +104,7 @@ public:
 
 public slots:
     virtual void reset();
-    
+
 protected slots:
     void setup_slotDataArrived(KIO::Job *, const QByteArray &);
     void setup_slotJobFinished(KJob *);
@@ -139,7 +139,7 @@ private:
     void parseWeatherObservation(const QString& source, WeatherData& data, QXmlStreamReader& xml);
     void parseFiveDayForecast(const QString& source, QXmlStreamReader& xml);
     void parseUnknownElement(QXmlStreamReader& xml);
-    
+
 private:
     class Private;
     Private * d;

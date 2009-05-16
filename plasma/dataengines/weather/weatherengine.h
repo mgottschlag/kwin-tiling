@@ -81,16 +81,16 @@ protected slots:
      * @param data The new data updated.
      */
     void dataUpdated(const QString& source, Plasma::DataEngine::Data data);
-    
+
     /**
     * Reimplemented from Plasma::DataEngine.
     * @param source The datasource to be updated.
     * @param data The new data updated.
     */
     void resetCompleted(IonInterface *, bool);
-   
+
     void triggerReset(void);
- 
+
     /**
      * Notify WeatherEngine a new ion has data sources.
      * @arg source datasource name.

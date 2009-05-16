@@ -61,7 +61,7 @@ static double calculateSunriseTime(const int & day, const int & month, const int
     QDate d(year, month, day);
     QDateTime dt(d);
 
-    double jd,century,eqTime,solarDec,azimuth,zenith;
+    double jd, century, eqTime, solarDec, azimuth, zenith;
 
     NOAASolarCalc::calc(dt, longitude, latitude, 0.0,
                         &jd, &century, &eqTime, &solarDec, &azimuth, &zenith);
@@ -79,7 +79,7 @@ static double calculateSunsetTime(const int & day, const int & month, const int 
     QDate d(year, month, day);
     QDateTime dt(d);
 
-    double jd,century,eqTime,solarDec,azimuth,zenith;
+    double jd, century, eqTime, solarDec, azimuth, zenith;
 
     NOAASolarCalc::calc(dt, longitude, latitude, 0.0,
                         &jd, &century, &eqTime, &solarDec, &azimuth, &zenith);
@@ -117,19 +117,19 @@ UKMETIon::~UKMETIon()
 
 void UKMETIon::reset()
 {
-	// Destroy each forecast stored in a QVector
-	foreach(const WeatherData &item, d->m_weatherData) {
-		foreach(WeatherData::ForecastInfo *forecast, item.forecasts) {
-			if (forecast) {
-				delete forecast;
-			}
-		}
-	}
-	
-	// Destroy dptr
-	delete d;
-	d = new Private();
-	emit(resetCompleted(this,true));
+    // Destroy each forecast stored in a QVector
+    foreach(const WeatherData &item, d->m_weatherData) {
+        foreach(WeatherData::ForecastInfo *forecast, item.forecasts) {
+            if (forecast) {
+                delete forecast;
+            }
+        }
+    }
+
+    // Destroy dptr
+    delete d;
+    d = new Private();
+    emit(resetCompleted(this, true));
 }
 
 
@@ -285,8 +285,8 @@ bool UKMETIon::updateIonSource(const QString& source)
             return false;
         }
     } else {
-      setData(source, "validate", "bbcukmet|malformed");
-      return true;
+        setData(source, "validate", "bbcukmet|malformed");
+        return true;
     }
 
     return false;
@@ -651,7 +651,7 @@ void UKMETIon::parseWeatherObservation(const QString& source, WeatherData& data,
                 // Friday at 0200 GMT
                 d->m_dateFormat =  QDateTime::fromString(data.obsTime.split("at")[1].trimmed(), "hhmm 'GMT'");
                 data.iconPeriodHour = d->m_dateFormat.toString("hh").toInt();
-		data.iconPeriodMinute = d->m_dateFormat.toString("mm").toInt();
+                data.iconPeriodMinute = d->m_dateFormat.toString("mm").toInt();
                 //data.iconPeriodAP = d->m_dateFormat.toString("ap");
 
                 data.condition = conditionData[1].split('.')[0].trimmed();
@@ -675,13 +675,13 @@ void UKMETIon::parseWeatherObservation(const QString& source, WeatherData& data,
                 data.pressureTendency = observeData[5].split(',')[1].trimmed();
 
                 data.visibilityStr = observeData[6].trimmed();
-	    } else if (xml.name() == "lat") {
-	        const QString ordinate = xml.readElementText();
-	        data.latitude = ordinate.toDouble();
-	    } else if (xml.name() == "long") {
-	        const QString ordinate = xml.readElementText();
-	        data.longitude = ordinate.toDouble();
-	    } else {
+            } else if (xml.name() == "lat") {
+                const QString ordinate = xml.readElementText();
+                data.latitude = ordinate.toDouble();
+            } else if (xml.name() == "long") {
+                const QString ordinate = xml.readElementText();
+                data.longitude = ordinate.toDouble();
+            } else {
                 parseUnknownElement(xml);
             }
         }
@@ -701,8 +701,8 @@ bool UKMETIon::readObservationXMLData(const QString& source, QXmlStreamReader& x
 
         if (xml.isStartElement()) {
             if (xml.name() == "rss") {
-                parsePlaceObservation(source, data, xml); 
-		haveObservation = true;
+                parsePlaceObservation(source, data, xml);
+                haveObservation = true;
             } else {
                 parseUnknownElement(xml);
             }
@@ -711,7 +711,7 @@ bool UKMETIon::readObservationXMLData(const QString& source, QXmlStreamReader& x
     }
 
     if (!haveObservation) {
-	return false;    
+        return false;
     }
     d->m_weatherData[source] = data;
 
@@ -734,7 +734,7 @@ bool UKMETIon::readFiveDayForecastXMLData(const QString& source, QXmlStreamReade
         if (xml.isStartElement()) {
             if (xml.name() == "wml") {
                 parseFiveDayForecast(source, xml);
-		haveFiveDay = true;
+                haveFiveDay = true;
             } else {
                 parseUnknownElement(xml);
             }
@@ -877,7 +877,7 @@ void UKMETIon::updateWeather(const QString& source)
 
     //kDebug() << "Calculated sunrise and sunset as " << sunrise << ", " << sunset;
     //kDebug() << "Observation was made at " << observationSeconds;
-    
+
     // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
     if (observationSeconds >= 0 && observationSeconds < sunrise) {
         //kDebug() << "Before sunrise - using night icons\n";

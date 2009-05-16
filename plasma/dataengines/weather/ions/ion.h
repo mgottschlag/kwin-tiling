@@ -42,7 +42,7 @@ public:
     enum ConditionIcons { ClearDay = 1, FewCloudsDay, PartlyCloudyDay, Overcast,
                           Rain, LightRain, Showers, ChanceShowersDay, Thunderstorm, Hail,
                           Snow, LightSnow, Flurries, FewCloudsNight, ChanceShowersNight,
-                          PartlyCloudyNight, ClearNight, Mist, Haze, FreezingRain, 
+                          PartlyCloudyNight, ClearNight, Mist, Haze, FreezingRain,
                           RainSnow, FreezingDrizzle, ChanceThunderstormDay, ChanceThunderstormNight,
                           ChanceSnowDay, ChanceSnowNight, NotAvailable
                         };
@@ -87,12 +87,12 @@ public Q_SLOTS:
     bool updateSourceEvent(const QString& source);
 
     virtual void reset() = 0;
-    
+
 signals:
-    void resetCompleted(IonInterface *, bool);	
-    
+    void resetCompleted(IonInterface *, bool);
+
 protected:
-	
+
     /**
      * Call this method to flush waiting source requests that may be pending
      * initialization

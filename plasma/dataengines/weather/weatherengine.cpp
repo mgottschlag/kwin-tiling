@@ -35,16 +35,14 @@ class WeatherEngine::Private
 {
 public:
     Private()
-        : m_networkAvailable(false)
-    {
+            : m_networkAvailable(false) {
     }
 
     /**
      * Get instance of a loaded ion.
      * @returns a IonInterface instance of a loaded plugin.
      */
-    IonInterface* ionForSource(const QString& name)
-    {
+    IonInterface* ionForSource(const QString& name) {
         int offset = name.indexOf('|');
 
         if (offset < 1) {
@@ -79,7 +77,7 @@ Plasma::DataEngine *WeatherEngine::loadIon(const QString& plugName)
 {
     KPluginInfo foundPlugin;
 
-    foreach (const KPluginInfo &info, Plasma::DataEngineManager::listEngineInfo("weatherengine")) {
+    foreach(const KPluginInfo &info, Plasma::DataEngineManager::listEngineInfo("weatherengine")) {
         if (info.pluginName() == plugName) {
             foundPlugin = info;
             break;
@@ -94,7 +92,7 @@ Plasma::DataEngine *WeatherEngine::loadIon(const QString& plugName)
     Plasma::DataEngine *ion = Plasma::DataEngineManager::self()->loadEngine(foundPlugin.pluginName());
     ion->setObjectName(plugName);
     connect(ion, SIGNAL(sourceAdded(QString)), this, SLOT(newIonSource(QString)));
-    connect(ion, SIGNAL(resetCompleted(IonInterface *,bool)), this, SLOT(resetCompleted(IonInterface *,bool)));
+    connect(ion, SIGNAL(resetCompleted(IonInterface *, bool)), this, SLOT(resetCompleted(IonInterface *, bool)));
 
     d->m_ions << plugName;
 
@@ -188,7 +186,7 @@ WeatherEngine::~WeatherEngine()
 
 void WeatherEngine::unloadIons()
 {
-    foreach (const QString &ion, d->m_ions) {
+    foreach(const QString &ion, d->m_ions) {
         Plasma::DataEngineManager::self()->unloadEngine(ion);
     }
 
@@ -249,7 +247,7 @@ bool WeatherEngine::updateSourceEvent(const QString& source)
 void WeatherEngine::triggerReset()
 {
     kDebug() << "triggerReset()";
-    foreach (const QString &i, d->m_ions) {
+    foreach(const QString &i, d->m_ions) {
         IonInterface * ion = qobject_cast<IonInterface *>(Plasma::DataEngineManager::self()->engine(i));
         if (ion) {
             ion->reset();
@@ -267,17 +265,17 @@ void WeatherEngine::networkStatusChanged(Solid::Networking::Status status)
     }
 }
 
-void WeatherEngine::resetCompleted(IonInterface * i,bool b)
+void WeatherEngine::resetCompleted(IonInterface * i, bool b)
 {
-	disconnect(i, SIGNAL(resetCompleted(IonInterface*,bool)),this,SLOT(resetCompleted(IonInterface *,bool)));
-	if (b) {	
-            foreach (const QString &source, sources()) {
-                IonInterface *ion = d->ionForSource(source);
-                if (ion == i) {
-                    ion->updateSourceEvent(source);			
-		}
-	    }
-	}
+    disconnect(i, SIGNAL(resetCompleted(IonInterface*, bool)), this, SLOT(resetCompleted(IonInterface *, bool)));
+    if (b) {
+        foreach(const QString &source, sources()) {
+            IonInterface *ion = d->ionForSource(source);
+            if (ion == i) {
+                ion->updateSourceEvent(source);
+            }
+        }
+    }
 }
 
 #include "weatherengine.moc"

@@ -47,9 +47,8 @@ public:
 
     QDateTime m_dateFormat;
     bool emitWhenSetup;
-    
-    Private() : emitWhenSetup(false)
-    {
+
+    Private() : emitWhenSetup(false) {
     }
 };
 
@@ -60,31 +59,32 @@ EnvCanadaIon::EnvCanadaIon(QObject *parent, const QVariantList &args)
 {
 }
 
-void EnvCanadaIon::reset() {
-	foreach(const WeatherData &item, d->m_weatherData) {
-		foreach(WeatherData::WeatherEvent *warning, item.warnings) {
-			if (warning) {
-				delete warning;
-			}
-		}
-		
-		foreach(WeatherData::WeatherEvent *watch, item.watches) {
-			if (watch) {
-				delete watch;
-			}
-		}
-		
-		foreach(WeatherData::ForecastInfo *forecast, item.forecasts) {
-			if (forecast) {
-				delete forecast;
-			}
-		}
-	}
-	delete d;
-	d = new Private();
-	setInitialized(false);
-	d->emitWhenSetup = true;
-	redoXMLSetup();
+void EnvCanadaIon::reset()
+{
+    foreach(const WeatherData &item, d->m_weatherData) {
+        foreach(WeatherData::WeatherEvent *warning, item.warnings) {
+            if (warning) {
+                delete warning;
+            }
+        }
+
+        foreach(WeatherData::WeatherEvent *watch, item.watches) {
+            if (watch) {
+                delete watch;
+            }
+        }
+
+        foreach(WeatherData::ForecastInfo *forecast, item.forecasts) {
+            if (forecast) {
+                delete forecast;
+            }
+        }
+    }
+    delete d;
+    d = new Private();
+    setInitialized(false);
+    d->emitWhenSetup = true;
+    redoXMLSetup();
 }
 
 EnvCanadaIon::~EnvCanadaIon()
@@ -129,7 +129,7 @@ QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupConditionIconMapp
     conditionList["mainly sunny"] = FewCloudsDay;
     conditionList["mainly clear"] = FewCloudsNight;
     conditionList["sunny"] = ClearDay;
-    conditionList["clear"] = ClearNight; 
+    conditionList["clear"] = ClearNight;
 
     // Available conditions
     conditionList["blowing snow"] = Snow;
@@ -217,7 +217,7 @@ QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupForecastIconMappi
 {
     QMap<QString, ConditionIcons> forecastList;
 
-    // Abbreviated forecast descriptions 
+    // Abbreviated forecast descriptions
     forecastList["a few flurries"] = Flurries;
     forecastList["a few flurries mixed with ice pellets"] = RainSnow;
     forecastList["a few flurries or rain showers"] = RainSnow;
@@ -406,7 +406,7 @@ QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupForecastIconMappi
     forecastList["wet snow mixed with rain"] = RainSnow;
     forecastList["wet snow or rain"] = RainSnow;
     forecastList["windy"] = NotAvailable;
-    
+
     forecastList["chance of drizzle mixed with freezing drizzle"] = LightRain;
     forecastList["chance of flurries mixed with ice pellets"] = Flurries;
     forecastList["chance of flurries or ice pellets"] = Flurries;
@@ -543,16 +543,16 @@ void EnvCanadaIon::redoXMLSetup()
 void EnvCanadaIon::getXMLSetup()
 {
     kDebug() << "getXMLSetup()";
-  
+
     // If network is down, we need to spin and wait
 
-	KIO::TransferJob *job = KIO::get(KUrl("http://dd.weatheroffice.ec.gc.ca/EC_sites/xml/siteList.xml"), KIO::NoReload, KIO::HideProgressInfo);
+    KIO::TransferJob *job = KIO::get(KUrl("http://dd.weatheroffice.ec.gc.ca/EC_sites/xml/siteList.xml"), KIO::NoReload, KIO::HideProgressInfo);
 
-	if (job) {
-			connect(job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-					SLOT(setup_slotDataArrived(KIO::Job *, const QByteArray &)));
-			connect(job, SIGNAL(result(KJob *)), this, SLOT(setup_slotJobFinished(KJob *)));
-	}
+    if (job) {
+        connect(job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
+                SLOT(setup_slotDataArrived(KIO::Job *, const QByteArray &)));
+        connect(job, SIGNAL(result(KJob *)), this, SLOT(setup_slotJobFinished(KJob *)));
+    }
 }
 
 // Gets specific city XML data
@@ -579,7 +579,7 @@ void EnvCanadaIon::getXMLData(const QString& source)
 
     d->m_jobXml.insert(newJob, new QXmlStreamReader);
     d->m_jobList.insert(newJob, source);
- 
+
     if (newJob) {
         connect(newJob, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
                 SLOT(slotDataArrived(KIO::Job *, const QByteArray &)));
@@ -626,20 +626,20 @@ void EnvCanadaIon::setup_slotJobFinished(KJob *job)
     const bool success = readXMLSetup();
     setInitialized(success);
     if (d->emitWhenSetup) {
-		d->emitWhenSetup = false;
-		emit(resetCompleted(this,success));
+        d->emitWhenSetup = false;
+        emit(resetCompleted(this, success));
     } else if (success) {
-		kDebug() << "UPDATE DATA NOW ===========>" << sources();
-		foreach (QString source, sources()) {
-			updateIonSource(source);
-		}
+        kDebug() << "UPDATE DATA NOW ===========>" << sources();
+        foreach(QString source, sources()) {
+            updateIonSource(source);
+        }
     }
 }
 
 // Parse the city list and store into a QMap
 bool EnvCanadaIon::readXMLSetup()
 {
-	bool success = false;
+    bool success = false;
     QString tmp;
     QString territory;
     QString code;
@@ -672,7 +672,7 @@ bool EnvCanadaIon::readXMLSetup()
 
                 // Set the string list, we will use for the applet to display the available cities.
                 d->m_locations[tmp] = tmp;
-				success = true;
+                success = true;
             }
         }
 
@@ -1105,32 +1105,32 @@ void EnvCanadaIon::parseShortForecast(WeatherData::ForecastInfo *forecast, QXmlS
                 QMap<QString, ConditionIcons> forecastList;
                 forecastList = forecastIcons();
                 if ((forecast->forecastPeriod == "tonight") || (forecast->forecastPeriod.contains("night"))) {
-	             forecastList["a few clouds"] = FewCloudsNight;
-                     forecastList["cloudy periods"] = PartlyCloudyNight;
-		     forecastList["chance of drizzle mixed with rain"] = ChanceShowersNight;
-                     forecastList["chance of drizzle"] = ChanceShowersNight;	     
-                     forecastList["chance of drizzle or rain"] = ChanceShowersNight; 
-                     forecastList["chance of flurries"] = ChanceSnowNight;
-                     forecastList["chance of light snow"] = ChanceSnowNight;
-                     forecastList["chance of flurries at times heavy"] = ChanceSnowNight;
-		     forecastList["chance of showers or drizzle"] = ChanceShowersNight;
-                     forecastList["chance of showers"] = ChanceShowersNight;
-                     forecastList["clearing"] = ClearNight;
+                    forecastList["a few clouds"] = FewCloudsNight;
+                    forecastList["cloudy periods"] = PartlyCloudyNight;
+                    forecastList["chance of drizzle mixed with rain"] = ChanceShowersNight;
+                    forecastList["chance of drizzle"] = ChanceShowersNight;
+                    forecastList["chance of drizzle or rain"] = ChanceShowersNight;
+                    forecastList["chance of flurries"] = ChanceSnowNight;
+                    forecastList["chance of light snow"] = ChanceSnowNight;
+                    forecastList["chance of flurries at times heavy"] = ChanceSnowNight;
+                    forecastList["chance of showers or drizzle"] = ChanceShowersNight;
+                    forecastList["chance of showers"] = ChanceShowersNight;
+                    forecastList["clearing"] = ClearNight;
                 } else {
-	             forecastList["a few clouds"] = FewCloudsDay;
-                     forecastList["cloudy periods"] = PartlyCloudyDay;
-		     forecastList["chance of drizzle mixed with rain"] = ChanceShowersDay;
-                     forecastList["chance of drizzle"] = ChanceShowersDay;	     
-                     forecastList["chance of drizzle or rain"] = ChanceShowersDay; 
-                     forecastList["chance of flurries"] = ChanceSnowDay;
-                     forecastList["chance of light snow"] = ChanceSnowDay;
-                     forecastList["chance of flurries at times heavy"] = ChanceSnowDay;
-		     forecastList["chance of showers or drizzle"] = ChanceShowersDay;
-                     forecastList["chance of showers"] = ChanceShowersDay;
-                     forecastList["clearing"] = ClearDay;
+                    forecastList["a few clouds"] = FewCloudsDay;
+                    forecastList["cloudy periods"] = PartlyCloudyDay;
+                    forecastList["chance of drizzle mixed with rain"] = ChanceShowersDay;
+                    forecastList["chance of drizzle"] = ChanceShowersDay;
+                    forecastList["chance of drizzle or rain"] = ChanceShowersDay;
+                    forecastList["chance of flurries"] = ChanceSnowDay;
+                    forecastList["chance of light snow"] = ChanceSnowDay;
+                    forecastList["chance of flurries at times heavy"] = ChanceSnowDay;
+                    forecastList["chance of showers or drizzle"] = ChanceShowersDay;
+                    forecastList["chance of showers"] = ChanceShowersDay;
+                    forecastList["clearing"] = ClearDay;
                 }
-                    forecast->shortForecast = shortText;
-                    forecast->iconName = getWeatherIcon(forecastList, shortText.toLower());
+                forecast->shortForecast = shortText;
+                forecast->iconName = getWeatherIcon(forecastList, shortText.toLower());
             }
         }
     }
@@ -1336,23 +1336,23 @@ void EnvCanadaIon::parseUnknownElement(QXmlStreamReader& xml)
     }
 }
 
-static double toFractionalHour(const QString & from, const double abort=-1.0)
-{ 
+static double toFractionalHour(const QString & from, const double abort = -1.0)
+{
     int colon = from.indexOf(':');
-    if (colon == -1 || colon < 2 || colon + 3 > from.length() ) return abort;
-    
+    if (colon == -1 || colon < 2 || colon + 3 > from.length()) return abort;
+
     bool ok;
-    
+
     const double h = from.mid(colon - 2, 2).toDouble(&ok);
     if (!ok) {
         return abort;
     }
-    
-    const double m = from.mid(colon + 1,2).toDouble(&ok);
+
+    const double m = from.mid(colon + 1, 2).toDouble(&ok);
     if (!ok) {
         return abort;
     }
-    
+
     return (h + (m / 60.0));
 }
 
@@ -1372,16 +1372,16 @@ void EnvCanadaIon::updateWeather(const QString& source)
 
     setData(source, "Latitude", latitude(source));
     setData(source, "Longitude", longitude(source));
-   
+
     // Real weather - Current conditions
     setData(source, "Observation Period", observationTime(source));
     setData(source, "Current Conditions", condition(source));
 
     const double sunrise = toFractionalHour(d->m_weatherData[source].sunriseTimestamp, 6.0);
     const double sunset = toFractionalHour(d->m_weatherData[source].sunsetTimestamp, 18.0);
-    
+
     const double obsHour = toFractionalHour(observationTime(source), (double) periodHour(source));
-   
+
     // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
     QMap<QString, ConditionIcons> conditionList;
     conditionList = conditionIcons();
@@ -1569,7 +1569,7 @@ QString EnvCanadaIon::station(const QString& source)
 }
 
 QString EnvCanadaIon::latitude(const QString& source)
-{    
+{
     return d->m_weatherData[source].stationLat;
 }
 
@@ -1630,7 +1630,7 @@ QMap<QString, QString> EnvCanadaIon::temperature(const QString& source)
     QMap<QString, QString> temperatureInfo;
     if (!d->m_weatherData[source].temperature.isEmpty()) {
         temperatureInfo.insert("temperature", QString::number(d->m_weatherData[source].temperature.toFloat(), 'f', 1));
-    } 
+    }
 
     if (d->m_weatherData[source].temperature == "N/A") {
         temperatureInfo.insert("temperature", "N/A");

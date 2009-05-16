@@ -141,10 +141,10 @@ public:
     ~EnvCanadaIon();
     bool updateIonSource(const QString& source); // Sync data source with Applet
     void updateWeather(const QString& source);
-    
+
 public slots:
     virtual void reset();
-	
+
 protected:
     void init();  // Setup the city location, fetching the correct URL name.
 
@@ -154,7 +154,7 @@ protected slots:
 
     void slotDataArrived(KIO::Job *, const QByteArray &);
     void slotJobFinished(KJob *);
-    
+
     void redoXMLSetup(void);
 
 private:

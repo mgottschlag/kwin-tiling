@@ -59,7 +59,7 @@ bool IonInterface::updateSourceEvent(const QString& source)
 {
     kDebug() << "updateSource(" << source << ")";
     if (d->initialized) {
-	kDebug() << "Calling updateIonSource(" << source << ")";
+        kDebug() << "Calling updateIonSource(" << source << ")";
         return updateIonSource(source);
     }
 
@@ -85,7 +85,7 @@ void IonInterface::setInitialized(bool initialized)
  */
 QString IonInterface::getWindDirectionIcon(const QMap<QString, WindDirections> &windDirList, const QString& windDirection)
 {
-    switch (windDirList[windDirection.toLower()]) {   
+    switch (windDirList[windDirection.toLower()]) {
     case N:
         return "N";
     case NNE:
@@ -125,7 +125,7 @@ QString IonInterface::getWindDirectionIcon(const QMap<QString, WindDirections> &
     // No icon available, use 'X'
     return "N/A";
 }
-  
+
 /**
  * Return weather icon to display in an applet when given a condition.
  */

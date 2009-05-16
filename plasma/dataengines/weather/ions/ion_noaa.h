@@ -81,7 +81,7 @@ public:
 
 public slots:
     virtual void reset();
-    
+
 protected slots:
     void setup_slotDataArrived(KIO::Job *, const QByteArray &);
     void setup_slotJobFinished(KJob *);
