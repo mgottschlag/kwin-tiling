@@ -112,6 +112,7 @@ bool ShortcutsHandler::removeAction( const QString &id )
         }
     else
         {
+        // This delete the action
         _actions->removeAction(action);
         return true;
         }

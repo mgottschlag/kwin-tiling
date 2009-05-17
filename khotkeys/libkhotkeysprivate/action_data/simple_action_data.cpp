@@ -32,16 +32,14 @@ namespace KHotKeys {
 SimpleActionData::SimpleActionData(
         ActionDataGroup* parent_P,
         const QString& name_P,
-        const QString& comment_P,
-        bool enabled_P )
+        const QString& comment_P)
     : ActionData(
         parent_P,
         name_P,
         comment_P,
         0,
         new Condition_list( "", this ),
-        0,
-        enabled_P )
+        0)
     {}
 
 
@@ -53,6 +51,20 @@ SimpleActionData::SimpleActionData( const KConfigGroup& cfg_P, ActionDataGroup* 
 void SimpleActionData::accept(ActionDataVisitor *visitor) const
     {
     visitor->visitSimpleActionData(this);
+    }
+
+
+void SimpleActionData::doEnable()
+    {
+    trigger()->enable();
+    update_triggers();
+    }
+
+
+void SimpleActionData::doDisable()
+    {
+    trigger()->disable();
+    update_triggers();
     }
 
 

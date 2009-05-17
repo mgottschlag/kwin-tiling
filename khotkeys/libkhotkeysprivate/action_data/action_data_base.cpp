@@ -26,13 +26,12 @@ ActionDataBase::ActionDataBase(
         ActionDataGroup* parent_P
         ,const QString& name_P
         ,const QString& comment_P
-        ,Condition_list* conditions_P
-        ,bool enabled_P)
-            : _parent(parent_P)
-              ,_conditions(conditions_P)
-              ,_name(name_P)
-              ,_comment(comment_P)
-              ,_enabled(enabled_P)
+        ,Condition_list* conditions_P)
+    :   _parent(parent_P)
+        ,_conditions(conditions_P)
+        ,_name(name_P)
+        ,_comment(comment_P)
+        ,_enabled(false)
     {
     if (parent()) parent()->add_child( this );
 
@@ -52,10 +51,13 @@ ActionDataBase::ActionDataBase(
         ,ActionDataGroup* parent_P)
             : _parent( parent_P)
               ,_conditions(NULL)
+              ,_name()
+              ,_comment()
+              ,_enabled(false)
     {
     _name = cfg_P.readEntry( "Name" );
     _comment = cfg_P.readEntry( "Comment" );
-    _enabled = cfg_P.readEntry( "Enabled", true);
+
     KConfigGroup conditionsConfig( cfg_P.config(), cfg_P.name() + "Conditions" );
 
     // Load the conditions if they exist
@@ -117,12 +119,12 @@ bool ActionDataBase::conditions_match() const
     }
 
 
-bool ActionDataBase::enabled( bool ignore_group_P ) const
+bool ActionDataBase::isEnabled(IgnoreParent ip ) const
     {
-    if( ignore_group_P )
+    if( ip == Ignore )
         return _enabled;
     else
-        return _enabled && ( parent() == 0 || parent()->enabled( false ));
+        return _enabled && ( parent() == 0 || parent()->isEnabled());
     }
 
 
@@ -144,9 +146,26 @@ void ActionDataBase::set_comment( const QString &comment )
     }
 
 
-void ActionDataBase::set_enabled( bool enabled )
+void ActionDataBase::disable()
     {
-    _enabled = enabled;
+    if (!_enabled)
+        return;
+
+    _enabled = false;
+    doDisable();
+    }
+
+
+void ActionDataBase::enable()
+    {
+    if (_enabled)
+        return;
+
+    _enabled = true;
+
+    // Enable only if the parent is enabled too
+    if (isEnabled())
+        doEnable();
     }
 
 
@@ -164,3 +183,5 @@ void ActionDataBase::set_conditions( Condition_list* conditions_P )
 
 
 } // namespace KHotKeys
+
+#include "moc_action_data_base.cpp"

@@ -20,10 +20,14 @@ namespace KHotKeys
 {
 
 
-Generic_action_data::Generic_action_data( ActionDataGroup* parent_P, const QString& name_P,
-    const QString& comment_P, Trigger_list* triggers_P, Condition_list* conditions_P,
-    ActionList* actions_P, bool enabled_P )
-    : ActionData( parent_P, name_P, comment_P, triggers_P, conditions_P, actions_P, enabled_P )
+Generic_action_data::Generic_action_data(
+        ActionDataGroup* parent,
+        const QString& name,
+        const QString& comment,
+        Trigger_list* triggers,
+        Condition_list* conditions,
+        ActionList* actions)
+    :   ActionData(parent, name, comment, triggers, conditions, actions)
     {
     }
 

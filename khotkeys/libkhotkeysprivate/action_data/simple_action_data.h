@@ -28,8 +28,7 @@ public:
     SimpleActionData(
         ActionDataGroup* parent_P,
         const QString& name_P,
-        const QString& comment_P,
-        bool enabled_P = true );
+        const QString& comment_P);
 
     SimpleActionData(
         const KConfigGroup& cfg_P,
@@ -52,6 +51,12 @@ public:
     void set_action( Action* action_P );
     void set_trigger( Trigger* trigger_P );
 
+protected:
+
+    void doEnable();
+
+    void doDisable();
+
     }; // class SimpleActionData
 
 
@@ -69,9 +74,8 @@ class KDE_EXPORT SimpleActionDataHelper
         SimpleActionDataHelper(
                 ActionDataGroup* parent_P,
                 const QString& name_P,
-                const QString& comment_P,
-                bool enabled_P = true )
-            : base( parent_P, name_P, comment_P, enabled_P )
+                const QString& comment_P)
+            : base( parent_P, name_P, comment_P)
             {}
 
         SimpleActionDataHelper(

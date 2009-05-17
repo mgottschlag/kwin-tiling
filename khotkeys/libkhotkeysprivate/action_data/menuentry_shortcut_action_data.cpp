@@ -34,9 +34,8 @@ MenuEntryShortcutActionData::MenuEntryShortcutActionData(
         const QString& name,
         const QString& comment,
         const KShortcut& shortcut,
-        const QString& menuentry,
-        bool enabled )
-    :   base(parent, name, comment, enabled)
+        const QString& menuentry)
+    :   base(parent, name, comment)
     {
     set_action( new MenuEntryAction( this, menuentry ));
     set_trigger( new ShortcutTrigger( this, shortcut ));
@@ -46,9 +45,8 @@ MenuEntryShortcutActionData::MenuEntryShortcutActionData(
 MenuEntryShortcutActionData::MenuEntryShortcutActionData(
         ActionDataGroup* parent,
         const QString& name,
-        const QString& comment,
-        bool enabled)
-    :   base(parent, name, comment, enabled)
+        const QString& comment)
+    :   base(parent, name, comment)
     {}
 
 

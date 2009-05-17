@@ -34,6 +34,8 @@ namespace KHotKeys {
 class KDE_EXPORT ActionDataGroup
     : public ActionDataBase
     {
+    Q_OBJECT
+
     public:
 
         enum system_group_t {
@@ -59,8 +61,7 @@ class KDE_EXPORT ActionDataGroup
             const QString& name_P,
             const QString& comment_P,
             Condition_list* conditions_P = NULL,
-            system_group_t system_group_P = SYSTEM_NONE,
-            bool enabled_P = false );
+            system_group_t system_group_P = SYSTEM_NONE);
 
         ActionDataGroup(const KConfigGroup& cfg_P, ActionDataGroup* parent_P );
         virtual ~ActionDataGroup();
@@ -118,6 +119,10 @@ class KDE_EXPORT ActionDataGroup
         //! Remove a child from this collection
         void remove_child( ActionDataBase* child_P );
 
+    Q_SIGNALS:
+
+        void stateChanged(bool isEnabled);
+
     protected:
 
         //! The children
@@ -125,6 +130,10 @@ class KDE_EXPORT ActionDataGroup
 
         //! System group type
         system_group_t _system_group; // e.g. menuedit entries, can't be deleted or renamed
+
+        virtual void doEnable();
+
+        virtual void doDisable();
 
     };
 

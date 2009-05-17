@@ -177,9 +177,8 @@ void Settings::setActions( ActionDataGroup *actions )
                 "should never see",
                 "should never see",
                 NULL,
-                ActionDataGroup::SYSTEM_ROOT,
-                true );
-
+                ActionDataGroup::SYSTEM_ROOT);
+    m_actions->enable();
     }
 
 
@@ -304,8 +303,8 @@ ActionDataGroup *Settings::get_system_group(ActionDataGroup::system_group_t grou
                         "KMenuEdit",
                         "KMenuEdit Global Shortcuts",
                         NULL,
-                        ActionDataGroup::SYSTEM_MENUENTRIES,
-                        true);
+                        ActionDataGroup::SYSTEM_MENUENTRIES);
+                system_group->enable();
                 break;
 
             default:

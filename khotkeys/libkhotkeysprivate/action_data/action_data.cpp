@@ -29,18 +29,13 @@ ActionData::ActionData(const KConfigGroup& cfg_P, ActionDataGroup* parent_P )
     _triggers = new Trigger_list( triggersGroup, this );
     KConfigGroup actionsGroup( cfg_P.config(), cfg_P.name() + "Actions" );
     _actions = new ActionList( actionsGroup, this );
-
-    // Now activate the triggers if necessary
-    update_triggers();
     }
 
 
 ActionData::~ActionData()
     {
-//    kDebug() << "~ActionData" << this;
     delete _triggers;
     delete _actions;
-    // CHECKME jeste remove z parenta ?
     }
 
 
@@ -50,15 +45,11 @@ ActionData::ActionData(
         const QString& comment_P,
         Trigger_list* triggers_P,
         Condition_list* conditions_P,
-        ActionList* actions_P,
-        bool enabled_P)
-    :   ActionDataBase( parent_P, name_P, comment_P, conditions_P, enabled_P ),
+        ActionList* actions_P)
+    :   ActionDataBase( parent_P, name_P, comment_P, conditions_P),
         _triggers( triggers_P ),
         _actions( actions_P )
-    {
-    // Now activate the triggers if necessary
-    update_triggers();
-    }
+    {}
 
 
 void ActionData::accept(ActionDataVisitor *visitor) const
@@ -67,9 +58,28 @@ void ActionData::accept(ActionDataVisitor *visitor) const
     }
 
 
+void ActionData::doDisable()
+    {
+    triggers()->disable();
+    update_triggers();
+    }
+
+
+void ActionData::doEnable()
+    {
+    triggers()->enable();
+    update_triggers();
+    }
+
+
+Trigger_list* ActionData::triggers()
+    {
+    return _triggers;
+    }
+
+
 const Trigger_list* ActionData::triggers() const
     {
-//    Q_ASSERT( _triggers != 0 );
     return _triggers;
     }
 
@@ -82,7 +92,6 @@ void ActionData::aboutToBeErased()
 
 const ActionList* ActionData::actions() const
     {
-//    Q_ASSERT( _actions != 0 );
     return _actions;
     }
 
@@ -93,7 +102,6 @@ void ActionData::execute()
          it != _actions->end();
          ++it )
         (*it)->execute();
-// CHECKME nebo nejak zpozdeni ?
     }
 
 
@@ -173,7 +181,7 @@ void ActionData::update_triggers()
     bool activate = false;
     // Activate the triggers if the actions is enabled and the conditions
     // match.
-    if (enabled(false) && conditions_match())
+    if (isEnabled() && conditions_match())
         {
         activate = true;
         }

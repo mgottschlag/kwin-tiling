@@ -37,16 +37,14 @@ class KDE_EXPORT MenuEntryShortcutActionData
         MenuEntryShortcutActionData(
                 ActionDataGroup* parent,
                 const QString& name,
-                const QString& comment,
-                bool enabled = true);
+                const QString& comment);
 
         MenuEntryShortcutActionData(
                 ActionDataGroup* parent,
                 const QString& name,
                 const QString& comment,
                 const KShortcut& shortcut,
-                const QString& command_url,
-                bool enabled = true);
+                const QString& command_url);
 
         MenuEntryShortcutActionData(
                 const KConfigGroup& cfg,

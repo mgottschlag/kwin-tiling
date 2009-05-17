@@ -31,9 +31,13 @@ class KDE_EXPORT ActionData
 
     public:
 
-        ActionData( ActionDataGroup* parent_P, const QString& name_P,
-            const QString& comment_P, Trigger_list* triggers_P, Condition_list* conditions_P,
-            ActionList* actions_P, bool enabled_P = true );
+        ActionData(
+                ActionDataGroup* parent_P,
+                const QString& name_P,
+                const QString& comment_P,
+                Trigger_list* triggers_P,
+                Condition_list* conditions_P,
+                ActionList* actions_P);
 
         ActionData( const KConfigGroup& cfg_P, ActionDataGroup* parent_P );
 
@@ -55,6 +59,7 @@ class KDE_EXPORT ActionData
         void aboutToBeErased();
 
         const Trigger_list* triggers() const;
+        Trigger_list* triggers();
 
         const ActionList* actions() const;
 
@@ -78,6 +83,8 @@ class KDE_EXPORT ActionData
         Trigger_list* _triggers;
         ActionList* _actions;
 
+        virtual void doEnable();
+        virtual void doDisable();
     };
 
 

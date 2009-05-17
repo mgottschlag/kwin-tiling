@@ -69,6 +69,12 @@ class KDE_EXPORT Trigger
         static Trigger* create_cfg_read( KConfigGroup& cfg_P, ActionData* data_P );
         virtual void activate( bool activate_P ) = 0;
 
+        //! Disable the trigger
+        virtual void disable();
+
+        //! Enable the trigger
+        virtual void enable();
+
         /**
          * The trigger will be erased permanently
          */
@@ -94,7 +100,7 @@ class KDE_EXPORT Trigger_list
     public:
         Trigger_list( const QString& comment_P ); // CHECKME nebo i data ?
         Trigger_list( KConfigGroup& cfg_P, ActionData* data_P );
-        ~Trigger_list();
+        virtual ~Trigger_list();
         void activate( bool activate_P );
         void cfg_write( KConfigGroup& cfg_P ) const;
         //! Some convenience typedef
@@ -102,6 +108,12 @@ class KDE_EXPORT Trigger_list
         typedef QList< Trigger* >::ConstIterator ConstIterator;
         const QString comment() const;
         Trigger_list* copy( ActionData* data_P ) const;
+
+        //! Disable the trigger
+        virtual void disable();
+
+        //! Enable the trigger
+        virtual void enable();
 
         /**
          * @reimp
@@ -144,6 +156,12 @@ class KDE_EXPORT ShortcutTrigger
          */
         void aboutToBeErased();
 
+        //! Disable the trigger
+        virtual void disable();
+
+        //! Enable the trigger
+        virtual void enable();
+
     Q_SIGNALS:
 
         //! Emitted when the global shortcut is changed from somewhere else
@@ -159,7 +177,20 @@ class KDE_EXPORT ShortcutTrigger
         //! A persistent identifier for this shortcut
         QUuid _uuid;
 
+        //! Are the conditions met?
         bool _conditions_met;
+
+        /**
+         * The Key Sequence associated with this Trigger. This is needed
+         * because a inactive trigger doesn't register it's shortcut with
+         * kde's global shortcuts registry so we have to remember the shortcut
+         * ourselves. Beware of synchronizing saved state, global shortcuts
+         * registry state and state of this var :-) .
+         */
+        KShortcut    _shortcut;
+
+
+
     };
 
 

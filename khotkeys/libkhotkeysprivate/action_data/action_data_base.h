@@ -13,6 +13,7 @@
 
 #include "kdemacros.h"
 
+#include <QtCore/QObject>
 #include <QtCore/QString>
 
 
@@ -25,11 +26,14 @@ class ActionDataGroup;
 class ActionDataVisitor;
 class Condition_list;
 
+
 /**
  * Base class for all actions.
  */
-class KDE_EXPORT ActionDataBase
+class KDE_EXPORT ActionDataBase : public QObject
     {
+    Q_OBJECT
+
     Q_DISABLE_COPY( ActionDataBase )
 
     public:
@@ -42,14 +46,12 @@ class KDE_EXPORT ActionDataBase
          * \param name    Name for the object.
          * \param comment Comment for the object.
          * \param condition Conditions for the object or 0
-         * \param enabled Is the action enabled?
          */
         ActionDataBase( 
             ActionDataGroup* parent,
             const QString& name,
             const QString& comment,
-            Condition_list* condition,
-            bool enabled );
+            Condition_list* condition);
 
         /**
          * Read the setting for the \c ActionDataBase object from the \a
@@ -116,12 +118,27 @@ class KDE_EXPORT ActionDataBase
         void set_comment( const QString &comment );
         //@}
 
-        //@{
         /**
-         * Is that action enabled
+         * Is the action enabled?
+         *
+         * The action has different states.
+         *
+         * Absolute State:  Has the action an enabled/disabled state?
+         * Effective State: Even if the action is enabled it's effective state
+         *                  is disabled if it's parent is disabled.
          */
-        bool enabled( bool ignore_group = false ) const;
-        void set_enabled( bool enabled );
+        enum IgnoreParent
+            {
+            Ignore,
+            DontIgnore
+            };
+        bool isEnabled(IgnoreParent ip = DontIgnore) const;
+
+        /**
+         * Enable the action.
+         */
+        void enable();
+        void disable();
         //@}
 
         /**
@@ -133,6 +150,10 @@ class KDE_EXPORT ActionDataBase
 
         //! Set the list of condition for this element
         void set_conditions(Condition_list* conditions);
+
+        virtual void doEnable() = 0;
+
+        virtual void doDisable() = 0;
 
     private:
 
@@ -152,6 +173,7 @@ class KDE_EXPORT ActionDataBase
 
         //! If this element is enabled
         bool _enabled; // is not really important, only used in conf. module and when reading cfg. file
+
     };
 
 

@@ -108,5 +108,26 @@ void Trigger_list::activate( bool activate_P )
         }
     }
 
+
+void Trigger_list::disable()
+    {
+    QListIterator<Trigger*> it(*this);
+    while (it.hasNext())
+        {
+        it.next()->disable();
+        }
+    }
+
+
+void Trigger_list::enable()
+    {
+    QListIterator<Trigger*> it(*this);
+    while (it.hasNext())
+        {
+        it.next()->enable();
+        }
+    }
+
+
 } // namespace KHotKeys
 

@@ -33,32 +33,8 @@ ShortcutTrigger::ShortcutTrigger(
         ActionData* data_P,
         const KShortcut& shortcut,
         const QUuid &uuid )
-    : Trigger( data_P ), _uuid(uuid), _conditions_met(true)
+    : Trigger( data_P ), _uuid(uuid), _conditions_met(true), _shortcut(shortcut)
     {
-    QString name;
-    if (data_P)
-        {
-        name = data_P->name();
-        }
-    else
-        {
-        name = "TODO";
-        }
-
-    // FIXME: The following workaround tries to prevent having to actions with
-    // the same uuid which happens with exporting/importing
-    KAction *act = keyboard_handler->addAction( _uuid, name, shortcut );
-    // addAction can change the uuid. That's why we store the uuid from the
-    // action
-    _uuid = act->objectName();
-
-    connect(
-        act, SIGNAL(triggered(bool)),
-        this, SLOT(trigger()) );
-
-    connect(
-        act, SIGNAL(globalShortcutChanged(const QKeySequence&)),
-        this, SIGNAL(globalShortcutChanged(const QKeySequence&)));
     }
 
 
@@ -67,26 +43,15 @@ ShortcutTrigger::ShortcutTrigger(
        ,ActionData* data_P )
     :   Trigger( cfg_P, data_P ),
         _uuid( cfg_P.readEntry( "Uuid", QUuid::createUuid().toString())),
-        _conditions_met(true)
+        _conditions_met(true),
+        _shortcut()
     {
     QString shortcutString = cfg_P.readEntry( "Key" );
 
     // TODO: Check if this is still necessary
     shortcutString.replace("Win+", "Meta+"); // Qt4 doesn't parse Win+, avoid a shortcut without modifier
 
-    KAction *act = keyboard_handler->addAction(
-        _uuid,
-        data_P->name(),
-        KShortcut(shortcutString));
-    _uuid = act->objectName();
-
-    connect(
-        act, SIGNAL(triggered(bool)),
-        this, SLOT(trigger()) );
-
-    connect(
-        act, SIGNAL(globalShortcutChanged(const QKeySequence&)),
-        this, SIGNAL(globalShortcutChanged(const QKeySequence&)));
+    _shortcut.setPrimary(shortcutString);
     }
 
 
@@ -98,13 +63,7 @@ ShortcutTrigger::~ShortcutTrigger()
 
 void ShortcutTrigger::aboutToBeErased()
     {
-    kDebug();
-    KAction *action = qobject_cast<KAction*>(keyboard_handler->getAction( _uuid ));
-    if(action)
-        {
-        kDebug() << "removing the global shortcut";
-        action->forgetGlobalShortcut();
-        }
+    disable();
     }
 
 
@@ -132,7 +91,6 @@ void ShortcutTrigger::cfg_write( KConfigGroup& cfg_P ) const
 
 ShortcutTrigger* ShortcutTrigger::copy( ActionData* data_P ) const
     {
-    kDebug() << "Shortcut_trigger::copy()";
     return new ShortcutTrigger( data_P ? data_P : data, shortcut(), QUuid::createUuid());
     }
 
@@ -140,6 +98,44 @@ ShortcutTrigger* ShortcutTrigger::copy( ActionData* data_P ) const
 const QString ShortcutTrigger::description() const
     {
     return i18n( "Shortcut trigger: " ) + shortcut().toString();
+    }
+
+
+void ShortcutTrigger::disable()
+    {
+    KAction *action = qobject_cast<KAction*>(keyboard_handler->getAction( _uuid ));
+    if(action)
+        {
+        // In case the shortcut was changed from the kcm.
+        _shortcut = action->globalShortcut();
+        // Unregister the global shortcut.
+        action->forgetGlobalShortcut();
+        keyboard_handler->removeAction(_uuid);
+        }
+    }
+
+
+void ShortcutTrigger::enable()
+    {
+    QString name = data
+        ? data->name()
+        : "TODO";
+
+    // FIXME: The following workaround tries to prevent having two actions with
+    // the same uuid. That happens wile exporting/importing actions. The uuid
+    // is exported too.
+    KAction *act = keyboard_handler->addAction( _uuid, name, _shortcut );
+    // addAction can change the uuid. That's why we store the uuid from the
+    // action
+    _uuid = act->objectName();
+
+    connect(
+        act, SIGNAL(triggered(bool)),
+        this, SLOT(trigger()) );
+
+    connect(
+        act, SIGNAL(globalShortcutChanged(const QKeySequence&)),
+        this, SIGNAL(globalShortcutChanged(const QKeySequence&)));
     }
 
 
@@ -164,9 +160,8 @@ KShortcut ShortcutTrigger::shortcut() const
     KAction *action = qobject_cast<KAction*>(keyboard_handler->getAction( _uuid ));
     if (!action)
         {
-        qWarning() << "Failed to find action" << _uuid;
-        Q_ASSERT(action);
-        return KShortcut();
+        // Not active!
+        return _shortcut;
         }
 
     return action->globalShortcut();
@@ -175,7 +170,6 @@ KShortcut ShortcutTrigger::shortcut() const
 
 void ShortcutTrigger::trigger()
     {
-    kDebug() << data->name() << " was triggered";
     if (_conditions_met && khotkeys_active())
         {
         windows_handler->set_action_window( 0 ); // use active window

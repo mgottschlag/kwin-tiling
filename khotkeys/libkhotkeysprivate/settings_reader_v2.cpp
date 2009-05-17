@@ -102,10 +102,8 @@ KHotKeys::ActionDataGroup *SettingsReaderV2::readGroup(
         group = new KHotKeys::ActionDataGroup(config, parent );
 
         // We only disable newly created groups
-        if (_disableActions)
-            {
-            group->set_enabled(false);
-            }
+        if (!_disableActions && config.readEntry( "Enabled", true))
+            group->enable();
 
         }
 
@@ -183,10 +181,8 @@ KHotKeys::ActionDataBase *SettingsReaderV2::readAction(
         }
 
     // We only disable newly created groups
-    if (_disableActions)
-        {
-        newObject->set_enabled(false);
-        }
+    if (!_disableActions && config.readEntry( "Enabled", true))
+        newObject->enable();
 
     return newObject;
     }

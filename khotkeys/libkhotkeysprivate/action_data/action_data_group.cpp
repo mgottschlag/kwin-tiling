@@ -45,9 +45,8 @@ ActionDataGroup::ActionDataGroup(
         const QString& name_P,
         const QString& comment_P,
         Condition_list* conditions_P,
-        system_group_t system_group_P,
-        bool enabled_P)
-            : ActionDataBase(parent_P, name_P, comment_P, conditions_P, enabled_P)
+        system_group_t system_group_P)
+            : ActionDataBase(parent_P, name_P, comment_P, conditions_P)
               ,_list()
               ,_system_group(system_group_P)
     {}
@@ -91,7 +90,6 @@ Trigger::TriggerTypes ActionDataGroup::allowedTriggerTypes() const
             return Trigger::AllTypes;
         }
     }
-
 
 
 bool ActionDataGroup::is_system_group() const
@@ -155,6 +153,14 @@ const QList<ActionDataBase*> ActionDataGroup::children() const
     }
 
 
+void ActionDataGroup::doDisable()
+    {}
+
+
+void ActionDataGroup::doEnable()
+    {}
+
+
 void ActionDataGroup::remove_child( ActionDataBase* child_P )
     {
     child_P->_parent = NULL;
@@ -178,3 +184,5 @@ void ActionDataGroup::update_triggers()
 
 
 } // namespace KHotKeys
+
+#include "moc_action_data_group.cpp"

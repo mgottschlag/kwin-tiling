@@ -106,7 +106,7 @@ void SettingsWriter::visitActionDataBase(const ActionDataBase *base)
     config->writeEntry( "Type",    "ERROR" ); // derived classes should call with their type
     config->writeEntry( "Name",    base->name());
     config->writeEntry( "Comment", base->comment());
-    config->writeEntry( "Enabled", base->enabled(true));
+    config->writeEntry( "Enabled", base->isEnabled(ActionDataBase::Ignore));
 
     if (base->conditions())
         {

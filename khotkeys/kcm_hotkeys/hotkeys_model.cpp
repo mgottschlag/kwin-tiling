@@ -147,11 +147,11 @@ QVariant KHotkeysModel::data( const QModelIndex &index, int role ) const
             case EnabledColumn:
                 // If the parent is enabled we display the state of the object.
                 // If the parent is disabled this object is disabled too.
-                if (action->parent() && !action->parent()->enabled())
+                if (action->parent() && !action->parent()->isEnabled())
                     {
                     return Qt::Unchecked;
                     }
-                return action->enabled()
+                return action->isEnabled()
                     ? Qt::Checked
                     : Qt::Unchecked;
 
@@ -229,7 +229,7 @@ QVariant KHotkeysModel::data( const QModelIndex &index, int role ) const
         switch (index.column())
             {
             case NameColumn:
-                if (!action->enabled())
+                if (!action->isEnabled())
                     {
                     return pal.color(QPalette::Disabled, QPalette::Foreground);
                     }
@@ -640,13 +640,17 @@ bool KHotkeysModel::setData( const QModelIndex &index, const QVariant &value, in
                 {
                 // If the parent is enabled we display the state of the object.
                 // If the parent is disabled this object is disabled too.
-                if (action->parent() && !action->parent()->enabled())
+                if (action->parent() && !action->parent()->isEnabled())
                     {
                     // TODO: Either show a message box or enhance the gui to
                     // show this item cannot be enabled
                     return false;
                     }
-                action->set_enabled( value.toInt() == Qt::Checked );
+
+                value.toInt() == Qt::Checked
+                    ? action->enable()
+                    : action->disable();
+
                 // If this is a group we have to inform the view that all our
                 // childs have changed. They are all disabled now
                 KHotKeys::ActionDataGroup *actionGroup = indexToActionDataGroup(index);

@@ -71,5 +71,13 @@ Trigger* Trigger::create_cfg_read( KConfigGroup& cfg_P, ActionData* data_P )
     }
 
 
+void Trigger::enable()
+    {}
+
+
+void Trigger::disable()
+    {}
+
+
 } // namespace KHotKeys
 
