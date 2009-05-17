@@ -237,8 +237,8 @@ void KCMHotkeys::defaults()
 
 void KCMHotkeys::load()
     {
-    d->load();
     showGlobalSettings();
+    d->load();
     }
 
 
@@ -331,6 +331,8 @@ void KCMHotkeysPrivate::load()
 
 bool KCMHotkeysPrivate::maybeShowWidget(const QModelIndex &nextIndex)
     {
+    kDebug();
+
     // If the current widget is changed, ask user if switch is ok
     if (current && (currentIndex != nextIndex) && current->isChanged())
         {
