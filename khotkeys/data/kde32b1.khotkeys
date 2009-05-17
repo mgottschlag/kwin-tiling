@@ -846,6 +846,163 @@ TriggersCount=1
 Key=Alt+Ctrl+T
 Type=SHORTCUT
 
+[Data_1_4]
+Comment=Read the comment on the "Type 'Hello'" action first.\n\nQt Designer uses Ctrl+F4 for closing windows.  In KDE, however, Ctrl+F4 is the shortcut for going to virtual desktop 4, so this shortcut does not work in QT Designer.  Further, Qt Designer does not use KDE's standard Ctrl+W for closing the window.\n\nThis problem can be solved by remapping Ctrl+W to Ctrl+F4 when the active window is Qt Designer. When Qt Designer is active, every time Ctrl+W is pressed, Ctrl+F4 will be sent to Qt Designer instead. In other applications, the effect of Ctrl+W is unchanged.\n\nWe now need to specify three things: A new shortcut trigger on 'Ctrl+W', a new keyboard input action sending Ctrl+F4, and a new condition that the active window is Qt Designer.\nQt Designer seems to always have title 'Qt Designer by Trolltech', so the condition will check for the active window having that title.
+Comment[de]=Lesen Sie bitte zunächst den Kommentar zu der Aktion „Hello ausgeben“.\n\nQt-Designer benutzt die Tastenkombination Strg+F4 zum Schließen von Fenstern (vermutlich, weil dies so auch in Windows üblich ist). In KDE wiederum ist dies die übliche Tastenkombination, um auf die Arbeitsfläche 4 zu wechseln. Das in KDE übliche Strg+W zum Schließen eines Fensters funktioniert ebenfalls nicht in Qt-Designer. Das Problem kann aber umgangen werden: Dazu muss Strg+W auf Strg+F4 umgelegt werden, wenn Qt-Designer das aktive Fenster ist. Immer wenn Sie dann in Qt-Designer Strg+W drücken, wird in Wirklichkeit Strg+F4 an das Programm gemeldet. In anderen Programmen wird Strg+W natürlich wie gewohnt weiter funktionieren.\n\nEs müssen drei Dinge eingestellt werden: Eine neue Tastenkombination für „Strg+W“, eine neue Tastaturaktion, die Strg+F4 sendet, und eine neue Bedingung für das aktive Qt-Designer-Fenster.\nDer Fenstertitel von Qt-Designer scheint grundsätzlich „Qt Designer by Trolltech“ zu lauten, also wird die Bedingung auf diesen Fenstertitel prüfen.
+Comment[el]=Διαβάστε πρώτα το σχόλιο στην ενέργεια "Πληκτρολόγηση 'Γεια σου'".\n\n Ο σχεδιαστής Qt χρησιμοποιεί το Ctrl+F4 για το κλείσιμο παραθύρων (ίσως επειδή τα MS Windows κάνουν το ίδιο *shrug*). Αλλά το Ctrl+F4 στο KDE εκτελεί μετάβαση στην εικονική επιφάνεια εργασίας 4, γι' αυτό και δε λειτουργεί στο σχεδιαστή Qt, καθώς επίσης ο σχεδιαστής Qt δε χρησιμοποιεί το τυπικό Ctrl+W του KDE για το κλείσιμο του παραθύρου.\n\nΤο πρόβλημα επιλύεται με την αντιστοίχηση του Ctrl+W στο Ctrl+F4 όταν το ενεργό παράθυρο είναι ο σχεδιαστής Qt. Όταν αυτός είναι ενεργός κάθε φορά που πιέζετε το Ctrl+W θα αποστέλλεται ένα Ctrl+F4 στο σχεδιαστή Qt. Στις υπόλοιπες εφαρμογές το Ctrl+W συνεχίζει να λειτουργεί με το γνωστό τρόπο.\n\nΘα πρέπει λοιπόν να οριστούν 3 πράγματα: Μία ενεργοποίηση συντόμευσης για το 'Ctrl+W', μια νέα ενέργεια πληκτρολογίου που θα αποστέλλει το Ctrl+F4 και μια νέα συνθήκη ελέγχου αν το ενεργό παράθυρο είναι ο σχεδιαστής Qt.\nΑυτός έχει πάντα τον τίτλο 'Qt Designer by Trolltech', οπότε η συνθήκη θα ελέγχει αν το ενεργό παράθυρο έχει αυτόν τον τίτλο.
+Comment[et]=Loe kõigepealt toimingu "'Hello' kirjutamine" kommentaari.\n\nQt Disainer kasutab kombinatsiooni Ctrl+F4 akna sulgemiseks (vahest seepärast, et sama teeb ka MS Windows? :-) ). Kuid KDE-s tähendab Ctrl+F4 liikumist neljandale virtuaalsele töölauale, mistõttu see ei toimi Qt Disaineris, lisaks sellele ei kasuta Qt Disainer akna sulgemiseks KDE tüüpkombinatsiooni Ctrl+W.\n\nKuid probleemi saab lahendada Ctrl+W sidumisega Ctrl+F4 külge, kui Qt Disaineri aken on aktiivne. Sel juhul saadetakse siis, kui Qt Disaineri aken on aktiivne, Ctrl+W vajutamisel aknale tegelikult käsk Ctrl+F4. Teistes rakendustes töötab Ctrl+W mõistagi endiselt samamoodi edasi.\n\nNüüd tuleb ära määrata kolm asja: uus kiirklahvi käivitaja 'Ctrl+W' jaoks, uus klaviatuuritoiming Ctrl+F4 saatmiseks ja uus tingimus, et aktiivne aken peab olema Qt Disaineri aken.\nPaistab, et Qt Disaineri akna tiitel on alati 'Qt Designer by Trolltech', nii et tingimus peab konrollima sellise tiitliga aktiivse akna olemasolu.
+Comment[ga]=Léigh an nóta a bhaineann leis an ngníomh "Clóscríobh 'Hello'" ar dtús.\n\nÚsáideann Qt Designer Ctrl+F4 chun fuinneoga a dhúnadh.  Ach i KDE, osclaíonn Ctrl+F4 deasc fhíorúil 4 agus dá bhrí sin ní oibríonn sé i Qt Designer.  Agus freisin ní úsáideann Qt Designer an t-aicearra (Ctrl+W) chun fuinneog a dhúnadh atá caighdeánach i KDE.\n\nIs féidir an fhadhb seo a réiteach trí Ctrl+W a mhapáil go dtí Ctrl+F4 nuair is é Qt Designer an fhuinneog ghníomhach. Nuair atá Qt Designer gníomhach, seolfar Ctrl+F4 chuig Qt Designer in ionad Ctrl+W gach uair a bhrúitear Ctrl+W. I bhfeidhmchláir eile, oibríonn Ctrl+W mar is gnách.\n\nCaithfidh muid trí rud a shonrú anois: truicear nua don aicearra 'Ctrl+W', gníomh nua ionchurtha a sheolann Ctrl+F4, agus coinníoll nua a deir gur é Qt Designer an fhuinneog ghníomhach.\nDe réir cosúlachta, is é 'Qt Designer by Trolltech' an teideal ar Qt Designer i gcónaí agus dá bhrí sin seiceálfaidh an coinníoll go bhfuil an teideal seo ag an bhfuinneog ghníomhach.
+Comment[ko]="Hello 입력하기"의 설명을 읽어 보십시오.\n\nQt 디자이너는 창을 닫을 때 Ctrl+F4 키를 사용합니다. 그런데 KDE에서 그 키를 누르면 가상 데스크톱 4번으로 가기 때문에 Qt 디자이너에서 작동하지 않습니다. 또한 Qt 디자이너는 KDE 표준 단축키 Ctrl+W 키를 인식하지 않습니다.\n\n활성 창이 Qt 디자이너인 경우 Ctrl+W 키를 Ctrl+F4 키로 다시 매핑하면 문제를 해결할 수 있습니다. Qt 디자이너가 활성화된 경우 Ctrl+W 키를 누르면 Qt 디자이너에는 Ctrl+F4 키를 보냅니다. 다른 프로그램에서는 Ctrl+W 키가 의도했던 대로 작동합니다.\n\n다음 세 가지를 명확하게 할 필요가 있습니다: 'Ctrl+W' 키를 눌렀을 때 동작을 실행시키기, Ctrl+F4 키를 누르는 키보드 입력 동작, 활성 창이 Qt 디자이너라는 조건.\n대개의 경우 Qt 디자이너는 'Qt Designer by Trolltech'이라는 제목을 가지므로 조건을 볼 때 창 제목을 검사합니다.
+Comment[nb]=Les først kommentaren til handlinga «Tast 'Hallo'» .\n\nQt Designer bruker Ctrl+F4 til å lukke vinduer. Men i KDE står Ctrl+F4 for å gå til virtuelt skrivebord 4, så denne snarveien virker ikke i Qt Designer. Videre bruker ikke Qt Designer KDEs standard Ctrl+W til å lukke vinduet.\n\nDette problemet kan løses ved å avbilde Ctrl+W til Ctrl+F4 når det aktive vinduet er Qt Designer. Når Qt Designer er aktivt blir Ctrl+F4 sendt til Qt Designer hver gang Ctrl+W trykkes. I andre programmer er effekten av Ctrl+W uendret.\n\nNå trenger vi å oppgi tre ting: En ny snarveistast til Ctrl+W, en ny handling for inntasting som sender Ctrl+F4 og en ny betingelse – at det aktive vinduet er Qt Designer.\nDet ser ut til at Qt Designer alltid har tittelen «Qt Designer by Trolltech», så betingelsen ser etter at det aktive vinduet har den tittelen.
+Comment[nds]=Lees bitte eerst den Kommentar för de Akschoon "»Hello« tippen".\n\nQt-Designer bruukt Strg+F4 för't Tomaken vun Finstern, man in KDE jumpt Een mit Strg+F4 na Schriefdisch 4. Dat funkscheneert also in Qt-Designer nich, wat ok keen Strg+W bruukt, wat de KDE-Standard för't Tomaken vun Finstern is.\n\nDat Problem lett sik lösen, wenn Een för Qt-Designer-Finstern Strg+W as Strg+F4 översett. Hett Qt-Designer den Fokus un drückst Du Strg+W, kriggt Qt-Designer Strg+F4 tostüert. In anner Programmen funkscheneert Strg+W as jümmers.\n\nDu muttst nu dree Saken angeven: En nieg Utlöser för »Strg+W«, en nieg Tastatuur-Ingaavakschoon, de Strg+F4 loosstüert, un en nieg Beding, dat Qt-Designer aktiev wesen (den Fokus hebben) mutt.\nAs't lett hett dat Finster vun Qt-Designer jümmers den Titel "Qt Designer by Trolltech", also pröövt wi mit de Beding, wat dat aktive Finster dissen Titel hett.
+Comment[nl]=Lees de opmerking over de actie "Hallo typen" eerst.\n\nQt Designer gebruikt Ctrl+F4 om vensters te sluiten. Maar in KDE betekent Ctrl+4 het gaan naar het virtuele bureaublad 4. Daardoor werkt de sneltoets niet in Qt Designer. Qt Designer gebruikt KDE's Ctrl+W niet voor het sluiten van van een venster.\n\n U kunt dit probleem oplossen door Ctrl+W naar Ctrl+F4 te laten verwijzen wanneer het actieve venster Qt Designer is. Wanneer Qt Designer actief is, zal iedere keer dat Ctrl+W wordt ingedrukt het signaal Ctrl+F4 naar Qt Designer gestuurd worden. Ctrl+W blijft in andere programma's gewoon dezelfde betekenis houden.\n\nEr dienen drie gegevens ingevuld te worden: een nieuwe sneltoetstrigger op 'Ctrl+W', de nieuwe toetsenbordinvoeractie die Ctrl+F4 verzend en de nieuwe voorwaarde dat het actieve venster Qt Designer moet zijn.\nQt Designer heeft altijd de titel 'Qt Designer by Trolltech', dus de voorwaarde zal eerst controleren of het venster die titel heeft.
+Comment[pt]=Leia o comentário sobre a acção "Escrever 'Olá'" primeiro.\n\nO Qt Designer usa o Ctrl+F4 para fechar as janelas (talvez porque o MS Windows também o faz *shrug*). Mas o Ctrl+F4 no KDE significa ir para o ecrã virtual 4, por isso não funciona no Qt Designer; do mesmo modo, o Qt Designer não usa a sequência Ctrl+W normal do KDE para fechar a janela.\n\nMas o problema poderá ser resolvido se atribuir de novo o Ctrl+W ao Ctrl+F4 quando a janela activa for o Qt Designer. Quando o Qt Designer estiver activo, sempre que carregar no Ctrl+W, o Ctrl+F4 será enviado para o Qt Designer em alternativa. Nas outras aplicações, o Ctrl+W continua a funcionar da forma normal, como é óbvio.\n\nAgora é necessário definir três coisas: Um novo atalho para o 'Ctrl+W', uma nova acção de entrada do teclado que envia o Ctrl+F4 e uma nova condição que a janela seja o Qt Designer.\nO Qt Designer parece ter sempre o título 'Qt Designer by Trolltech', por isso a condição irá procurar a janela activa que tiver esse título.
+Comment[pt_BR]=Leia o comentário sobre a acção "Escrever 'Olá'" primeiro.\n\nO Qt Designer usa o Ctrl+F4 para fechar as janelas (talvez porque o MS Windows também o faz *shrug*). Mas o Ctrl+F4 no KDE significa ir para o ecrã virtual 4, por isso não funciona no Qt Designer; do mesmo modo, o Qt Designer não usa a sequência Ctrl+W normal do KDE para fechar a janela.\n\nMas o problema poderá ser resolvido se atribuir de novo o Ctrl+W ao Ctrl+F4 quando a janela activa for o Qt Designer. Quando o Qt Designer estiver activo, sempre que carregar no Ctrl+W, o Ctrl+F4 será enviado para o Qt Designer em alternativa. Nas outras aplicações, o Ctrl+W continua a funcionar da forma normal, como é óbvio.\n\nAgora é necessário definir três coisas: Um novo atalho para o 'Ctrl+W', uma nova acção de entrada do teclado que envia o Ctrl+F4 e uma nova condição que a janela seja o Qt Designer.\nO Qt Designer parece ter sempre o título 'Qt Designer by Trolltech', por isso a condição irá procurar a janela activa que tiver esse título.
+Comment[sv]=Läs kommentaren om åtgärden "Skriv 'Hej'" först.\n\nQt Designer använder Ctrl+F4 för att stänga fönster. Men Ctrl+F4 i KDE betyder att gå till virtuellt skrivbord 4, så den genvägen fungerar inte i Qt Designer. Dessutom använder inte Qt Designer KDE:s standard för att stänga fönster, Ctrl+W.\n\nProblemet kan lösas genom att ändra Ctrl+W till Ctrl+F4 när det aktiva fönstret är Qt Designer. När Qt Designer är aktiverat, skickas Ctrl+F4 till Qt Designer istället, varje gång Ctrl+W trycks ner. I andra program är effekten av Ctrl+W oförändrad.\n\nNu måste vi ange tre saker: En ny snabbtangent som utlöses med 'Ctrl+W', en ny inmatningsåtgärd för tangentbordet som skickar Ctrl+F4, och ett nytt villkor att det aktiva fönstret är Qt Designer.\nQt Designer verkar alltid ha titeln 'Qt Designer by Trolltech', så villkoret kontrollerar att det aktiva fönstret har den titeln.
+Comment[uk]=Спочатку прочитайте коментар до дії "Написати «Hello»".\n\nQt Designer використовує сполучення Ctrl+F4 для закриття вікон. Але Ctrl+F4 у KDE означає "перейти до віртуальної стільниці 4", отже, ця комбінація не працюватиме у Qt Designer, з іншого боку, Qt Designer не використовує стандартне для KDE сполучення Ctrl+W для закриття вікон.\n\nЦю проблему можна вирішити переспрямуванням викликів Ctrl+W у Ctrl+F4, коли активним вікном є вікно Qt Designer. Коли активним буде вікно Qt Designer, кожного разу, коли ви натискатимете Ctrl+W, Qt Designer отримуватиме замість нього Ctrl+F4. У інших програмах, звичайно, Ctrl+W працюватиме як і раніше.\n\nТепер нам слід вказати три речі: нове клавіатурне скорочення, що відповідатиме "Ctrl+W", нову дію з вводу — надсилання Ctrl+F4, і нову умову щодо активного вікна — Qt Designer.\nЗдається, Qt Designer завжди має заголовок "Qt Designer by Trolltech", отже, умова буде перевіряти, чи має активне вікно цей заголовок.
+Comment[x-test]=xxRead the comment on the "Type 'Hello'" action first.\n\nQt Designer uses Ctrl+F4 for closing windows.  In KDE, however, Ctrl+F4 is the shortcut for going to virtual desktop 4, so this shortcut does not work in QT Designer.  Further, Qt Designer does not use KDE's standard Ctrl+W for closing the window.\n\nThis problem can be solved by remapping Ctrl+W to Ctrl+F4 when the active window is Qt Designer. When Qt Designer is active, every time Ctrl+W is pressed, Ctrl+F4 will be sent to Qt Designer instead. In other applications, the effect of Ctrl+W is unchanged.\n\nWe now need to specify three things: A new shortcut trigger on 'Ctrl+W', a new keyboard input action sending Ctrl+F4, and a new condition that the active window is Qt Designer.\nQt Designer seems to always have title 'Qt Designer by Trolltech', so the condition will check for the active window having that title.xx
+Comment[zh_TW]=請先參考「輸入 Hello」的註解。\n\nQt 設計器用 Ctrl+F4 來關閉視窗（也許是因為微軟用這個鍵？），不過在 KDE 中 Ctrl+F4 是跳到 4 號虛擬桌面，所以在 Qt 設計師中會無法使用。此外，Qt 設計師並未使用 KDE 標準的關閉視窗鍵 Ctrl+W。\n\n不過您可以利用此重新映射的功能來解決這個問題。當 Qt 設計師視窗取得焦點時，每次按下 Ctrl+W 鍵，實際上會送出 Ctrl+F4 給 Qt 設計師。而在其他應用程式中，Ctrl+W 鍵則不受影響。\n\n要使用此功能，要指定三個參數：快捷鍵 Ctrl+W，要做的動作為送出 Ctrl+F4，以及生效條件為目前焦點處於 Qt 設計師視窗。\nQt 設計師的視窗標題是 'Qt Designer by Trolltech'，所以生效條件可以檢查視窗的標題是否符合。
+Enabled=false
+Name=Remap Ctrl+W to Ctrl+F4 in Qt Designer
+Name[ar]=غير Ctrl +W لتصبح Crl + F4 في التصميم Qt
+Name[be@latin]=Pryznač skarot „Ctrl+W” dla „Ctrl+F4” u prahramie „Qt Designer”
+Name[bg]=Задаване на Ctrl+W за Ctrl+F4 в Qt Designer
+Name[ca]=Reassigna Ctrl+W a Ctrl+F4 en el Qt Designer
+Name[ca@valencia]=Reassigna Ctrl+W a Ctrl+F4 en el Qt Designer
+Name[cs]=Přemapovat Ctrl-w na Ctrl-F4 v Qt Designeru
+Name[csb]=Przełożë Ctrl+W na Ctrl+F4 in Qt Designer
+Name[da]=Omtildel Ctrl+W til Ctrl+F4 i Qt Designer
+Name[de]=Strg+W in Qt-Designer auf Strg+F4 umleiten
+Name[el]=Αντιστοίχιση Ctrl+W στο Ctrl+F4 στο σχεδιαστή Qt
+Name[eo]=Reĵeti Ctrl+W al Ctrl+F4 en Qt-Desegnilo
+Name[es]=Asignar Ctrl+W a Ctrl+F4 en Qt Designer
+Name[et]=Ctrl+W asendamine kombinatsiooniga Ctrl+F4 Qt Disaineris
+Name[eu]=Bermapeatu Ctrl+W to Ctrl+F4 Qt Designer-en
+Name[fa]=نگاشت مجدد مهار+W با مهار+F4 در طراح Qt
+Name[fi]=Laita Ctrl+W-näppäinyhdistelmä osoittamaan Ctrl+F4-näppäinyhdistelmään Qt Designer -ohjelmassa
+Name[fr]=Rediriger « Ctrl+W » vers « Ctrl+F4 » dans Qt Designer
+Name[fy]=Ctrl+W omsette nei Ctrl+F4 yn Qt Designer
+Name[ga]=Athmhapáil Ctrl+W go Ctrl+F4 i Qt Designer
+Name[gl]=Asinar Ctrl+W a Ctrl+F4 en Qt Designer
+Name[gu]=Qt ડિઝાઇનરમાં Ctrl+W ને Ctrl+F4 વડે ફરી જોડો
+Name[he]=מפה את Ctrl+W ל־Ctrl+F4 ב־Qt Designer
+Name[hi]=क्यूटी डिजाइनर में Ctrl+W को Ctrl+F4 में रीमैप करें
+Name[hne]=क्यूटी डिजाइनर मं कंट्रोल+w ल कंट्रोल+F4 मं रीमेप करव
+Name[hsb]=Redefinuju Strg+W na Strg+F4 w Qt-designeru
+Name[hu]=A Ctrl+W leképezése a Ctrl+F4-re a Qt Designerben
+Name[is]=Endurtúlka Ctrl+W sem Ctrl+F4 í Qt hönnuðinum
+Name[it]=Rimappa Ctrl+W su Ctrl+F4 in Qt Designer
+Name[ja]=Qt デザイナーで Ctrl+W を Ctrl+F4 に割り当て直す
+Name[kk]=Qt Designer-де Ctrl+W -> Ctrl+F4 түрлендіру
+Name[km]=ផ្គូផ្គង​បញ្ជា​(Ctrl)+W ទៅ​នឹង​បញ្ជា(Ctrl + F4) ​ឡើង​វិញ​នៅ​ក្នុង Qt Designer
+Name[kn]=Qt Designer ನಲ್ಲಿರುವ Ctrl+W to Ctrl+F4 ಅನ್ನು  ಪುನರ್ನಿರೂಪಿಸು (ರಿಮಾಪ್)
+Name[ko]=Qt 디자이너에서 Ctrl+W 키를 Ctrl+F4 키로 바꾸기
+Name[lt]=Pakeisti derinį Vald(Ctrl)+W į derinį Vald(Ctrl)+F4 Qt designer programoje
+Name[lv]=Pārkartēt Ctrl+W uz Ctrl+F4 Qt maketētājā
+Name[ml]=Qt ഡിസൈനറില്‍ Ctrl+W to Ctrl+F4 വീണ്ടും മാപ്പ് ചെയ്യുന്നു
+Name[mr]=Qt डिजाइनर मध्ये Ctrl+W ला Ctrl+F4 असे निश्चित करा
+Name[nb]=Viderefør Ctrl+W til Ctrl+F4 i QT Designer
+Name[nds]=Binnen Qt-Designer Strg+W as Strg+F4 översetten
+Name[ne]=Ctrl+W to Ctrl+F4 लाई Qt डिजाइनरमा पुन: नक्साङ्कन गर्नुहोस्
+Name[nl]=Ctrl+W omzetten naar Ctrl+F4 in Qt Designer
+Name[nn]=Omordna «Ctrl + W» til «Ctrl + F4» i Qt Designer
+Name[pl]=Zamień Ctrl+W na Ctrl+F4 w Qt Designerze
+Name[pt]=Mapear o Ctrl+W para Ctrl+F4 no Qt Designer
+Name[pt_BR]=Remapear Ctrl+W para Ctrl+F4 no Qt Designer
+Name[ro]=Realocă Ctrl+W la Ctrl+F4 în Qt Designer
+Name[ru]=Замена Ctrl+W на Ctrl+F4 для Qt Designer
+Name[sk]=Premapovať Ctrl+W na Ctrl+F4 v Qt Designeri
+Name[sl]=V Qt Designer preslika Ctrl+W v Ctrl+F4
+Name[sr]=Ctrl+F4 уместо Ctrl+W у КуТ‑дизајнеру
+Name[sr@latin]=Ctrl+F4 umesto Ctrl+W u QtDesigneru
+Name[sv]=Ändra Ctrl+W till Ctrl+F4 i Qt Designer
+Name[te]=Qt రూపకరణినందు Ctrl+W ను Ctrl+F4 కు తిరిగి మాప్‌చేయుము
+Name[th]=ตั้งค่าปุ่ม Ctrl+W เป็น Ctrl+F4 ใน Qt Designer
+Name[tr]=Qt Tasarımcı içerisinde Ctrl+W kısayolunu Ctrl+F4 olarak ata
+Name[uk]=Перепризначити Ctrl+W в Qt Designer на Ctrl+F4
+Name[vi]=Ánh xạ lại Ctrl+W tới Ctrl+F4 trong Qt Designer
+Name[wa]=Rimaper CTRL+W viè CTRL+F4 e Qt Designer
+Name[x-test]=xxRemap Ctrl+W to Ctrl+F4 in Qt Designerxx
+Name[zh_CN]=在 Qt 设计器中重新映射 Ctrl+W 到 Ctrl+F4
+Name[zh_TW]=在 Qt 設計師中重新映射 Ctrl+W 到 Ctrl+F4
+Type=GENERIC_ACTION_DATA
+
+[Data_1_4Actions]
+ActionsCount=1
+
+[Data_1_4Actions0]
+Input=Ctrl+F4
+IsDestinationWindow=false
+Type=KEYBOARD_INPUT
+
+[Data_1_4Conditions]
+Comment=
+ConditionsCount=1
+
+[Data_1_4Conditions0]
+Type=ACTIVE_WINDOW
+
+[Data_1_4Conditions0Window]
+Comment=Qt Designer
+Comment[af]=Qt Ontwerper
+Comment[ar]=مصمم Qt
+Comment[bn]=কিউ-টি ডিসাইনার
+Comment[ca]=Dissenyador Qt
+Comment[ca@valencia]=Dissenyador Qt
+Comment[el]=Σχεδιαστής Qt
+Comment[eo]=Qt-Desegnilo
+Comment[es]=Diseñador Qt
+Comment[et]=Qt Disainer
+Comment[eu]=Qt diseinatzailea
+Comment[fa]=طراح Qt
+Comment[gu]=Qt ડીઝાઇનર
+Comment[hi]=क्यूटी डिज़ाइनर
+Comment[hne]=क्यूटी डिजाइनर
+Comment[is]=Qt hönnuðurinn
+Comment[ja]=Qt デザイナー
+Comment[ko]=Qt 디자이너
+Comment[ku]=Pêşnûmakerê Qt
+Comment[lv]=Qt maketētājs
+Comment[mai]=क्यूटी डिजाइनर
+Comment[mk]=Qt-Дизајнер
+Comment[ml]=ക്യൂട്ടി ഡിസൈനര്‍ 
+Comment[mr]=Qt डिजाइनर
+Comment[nds]=Qt-Designer
+Comment[ne]=Qt डिजाइनर
+Comment[pa]=Qt ਡਿਜ਼ਾਈਨਰ
+Comment[pt_BR]=Designer Qt
+Comment[sl]=Snovalnik Qt
+Comment[sr]=КуТ‑дизајнер
+Comment[sr@latin]=QtDesigner
+Comment[ta]=Qt வடிவமைப்பாளர்
+Comment[te]=Qt డిజైనర్
+Comment[tr]=Qt Tasarımcı
+Comment[uk]=Дизайнер Qt
+Comment[vi]=Trình thiết kế Qt
+Comment[x-test]=xxQt Designerxx
+Comment[zh_CN]=Qt 设计器
+Comment[zh_TW]=Qt 設計器
+WindowsCount=1
+
+[Data_1_4Conditions0Window0]
+Class=
+ClassType=0
+Comment=
+Role=
+RoleType=0
+Title=Qt Designer by Trolltech
+TitleType=2
+Type=SIMPLE
+WindowTypes=33
+
+[Data_1_4Triggers]
+Comment=
+TriggersCount=1
+
+[Data_1_4Triggers0]
+Key=Ctrl+W
+Type=SHORTCUT
+
 [Data_1_5]
 Comment=By pressing Alt+Ctrl+W a D-Bus call will be performed that will show the minicli. You can use any kind of D-Bus call, just like using the command line 'qdbus' tool.
 Comment[ar]=عند الضغط على Alt Ctrl W سيؤدي إلى عرض minicli تستطيع تغيير الاختصار بكل طرق D-Bus مثل استخدام الأمر 'qdbus' 
