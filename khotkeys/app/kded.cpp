@@ -19,16 +19,18 @@
 
 #include <kaboutdata.h>
 #include <kdebug.h>
+#include <kglobalaccel.h>
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
 
 #include <unistd.h>
 
+#define COMPONENT_NAME "khotkeys"
 
 K_PLUGIN_FACTORY(KHotKeysModuleFactory,
                  registerPlugin<KHotKeysModule>();
     )
-K_EXPORT_PLUGIN(KHotKeysModuleFactory("khotkeys"))
+K_EXPORT_PLUGIN(KHotKeysModuleFactory(COMPONENT_NAME))
 
 using namespace KHotKeys;
 
@@ -39,13 +41,15 @@ KHotKeysModule::KHotKeysModule(QObject* parent, const QList<QVariant>&)
     , actions_root(NULL)
     , _settings()
     {
-    setModuleName("khotkeys");
+    setModuleName(COMPONENT_NAME);
 
     // Initialize the global data, grab keys
     KHotKeys::init_global_data( true, this );
 
     // Read the configuration from file khotkeysrc
     reread_configuration();
+
+    KGlobalAccel::cleanComponent(COMPONENT_NAME);
 
     if (_settings.update())
         {
