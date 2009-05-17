@@ -92,7 +92,7 @@ void QuicklaunchApplet::init()
 {
     KConfigGroup cg = config();
     m_iconSize = qMax(s_defaultIconSize, (int)cg.readEntry("iconSize", contentsRect().height() / 2));
-    m_visibleIcons = qMax(1, cg.readEntry("visibleIcons", m_visibleIcons));
+    m_visibleIcons = qMax(0, cg.readEntry("visibleIcons", m_visibleIcons));
     m_dialogIconSize = qMax(s_defaultIconSize, (int)cg.readEntry("dialogIconSize", contentsRect().height() / 2));
 
     // Initialize outer layout
