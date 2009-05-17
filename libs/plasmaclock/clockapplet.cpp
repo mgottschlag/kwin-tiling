@@ -220,21 +220,24 @@ void ClockApplet::speakTime(const QTime &time)
         if (time.minute() == 0) {
             if (KGlobal::locale()->use12Clock()) {
                 if (time.hour() < 12) {
-                    text = i18nc("Text sent to the text to speech service "
-                                    "when minutes==0 and it is AM",
-                                "It is %1 o clock a m",
-                                time.hour());
+                    text = i18ncp("Text sent to the text to speech service "
+                                     "when minutes==0 and it is AM",
+                                 "It is 1 o clock a m",
+                                 "It is %1 o clock a m",
+                                 time.hour());
                 } else {
-                    text = i18nc("Text sent to the text to speech service "
-                                    "when minutes==0 and it is PM",
-                                "It is %1 o clock p m",
-                                time.hour()-12);
+                    text = i18ncp("Text sent to the text to speech service "
+                                     "when minutes==0 and it is PM",
+                                 "It is 1 o clock p m",
+                                 "It is %1 o clock p m",
+                                 time.hour()-12);
                 }
             } else {
-                text = i18nc("Text sent to the text to speech service "
-                                "when minutes==0 and it is the 24 hour clock",
-                                "It is %1 o clock",
-                                time.hour());
+                text = i18ncp("Text sent to the text to speech service "
+                                 "when minutes==0 and it is the 24 hour clock",
+                                 "It is 1 o clock",
+                                 "It is %1 o clock",
+                                 time.hour());
             }
         } else {
             if (KGlobal::locale()->use12Clock()) {
