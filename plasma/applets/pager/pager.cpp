@@ -162,10 +162,13 @@ void Pager::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::FormFactorConstraint) {
         if (formFactor() == Plasma::Horizontal) {
             setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+            setMinimumSize(preferredSize().width(), 0);
         } else if (formFactor() == Plasma::Vertical) {
             setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+            setMinimumSize(0, preferredSize().height());
         } else {
             setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+            setMinimumSize(preferredSize());
         }
     }
 }
