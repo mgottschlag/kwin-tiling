@@ -67,7 +67,7 @@ SearchModel::SearchModel(QObject *parent)
     //d->searchIfaces << new IndexerSearch(this);
     d->searchIfaces << new WebSearch(this);
 
-    foreach(SearchInterface *iface, d->searchIfaces) {
+    foreach (SearchInterface *iface, d->searchIfaces) {
         QStandardItem *ifaceItem = new QStandardItem(iface->name());
         appendRow(ifaceItem);
         connect(iface, SIGNAL(resultsAvailable(QStringList)),
@@ -92,7 +92,7 @@ void SearchModel::resultsAvailable(const QStringList& results)
 
     Q_ASSERT(iface);
 
-    foreach(const QString& result, results) {
+    foreach (const QString& result, results) {
         //kDebug() << "Search hit from" << iface->name() << result;
         QStandardItem *resultItem = StandardItemFactory::createItemForUrl(result, d->displayOrder);
         d->addItemForIface(iface, resultItem);
@@ -105,7 +105,7 @@ void SearchModel::resultsAvailable(const ResultList& results)
 
     Q_ASSERT(iface);
 
-    foreach(const SearchResult& result, results) {
+    foreach (const SearchResult& result, results) {
         QStandardItem *item = StandardItemFactory::createItemForUrl(result.url, d->displayOrder);
         item->setData(result.title, Qt::DisplayRole);
         item->setData(result.subTitle, SubTitleRole);
@@ -121,7 +121,7 @@ void SearchModel::setQuery(const QString& query)
         return;
     }
 
-    foreach(SearchInterface *iface, d->searchIfaces) {
+    foreach (SearchInterface *iface, d->searchIfaces) {
         iface->setQuery(query);
     }
 }
@@ -137,12 +137,12 @@ DisplayOrder SearchModel::nameDisplayOrder() const
 }
 
 SearchInterface::SearchInterface(QObject *parent)
-        : QObject(parent)
+    : QObject(parent)
 {
 }
 
 ApplicationSearch::ApplicationSearch(QObject *parent)
-        : SearchInterface(parent)
+    : SearchInterface(parent)
 {
 }
 
@@ -153,11 +153,7 @@ QString ApplicationSearch::name() const
 
 void ApplicationSearch::setQuery(const QString& query)
 {
-    //QString mimeName = mimeNameForQuery(query);
-    QString traderQuery = QString("((exist GenericName) and ('%1' ~~ GenericName)) or ('%1' ~~ Name) or ('%1' ~~ Exec) or ((exist Keywords) and ('%1' ~in Keywords))"
-                                  //" or ('%2' in MimeType)"
-                                 )
-                          .arg(query); //.arg(mimeName);
+    QString traderQuery = QString("((exist GenericName) and ('%1' ~~ GenericName)) or ('%1' ~~ Name) or ('%1' ~~ Exec) or ((exist Keywords) and ('%1' ~in Keywords))").arg(query);
     KServiceTypeTrader *trader = KServiceTypeTrader::self();
     KService::List results = trader->query("Application", traderQuery);
 
@@ -165,40 +161,33 @@ void ApplicationSearch::setQuery(const QString& query)
     // KDE 4 version
     QHash<QString, int> desktopNames;
     QSet<QString> execFields;
-
-
-    for (int i = 0;i < results.count();i++) {
+    for (int i = 0; i < results.count(); ++i) {
         KService::Ptr service = results[i];
         int existingPos = desktopNames.value(service->name(), -1);
         KService::Ptr existing = existingPos < 0 ? KService::Ptr(0) : results[existingPos];
 
-
-        if (!existing.isNull()) {
-            if (isLaterVersion(existing, service)) {
-                results[i] = 0;
-            } else if (isLaterVersion(service, existing)) {
-                results[existingPos] = 0;
-            } else {
-                // do not show more than one entry which does the same thing when run
-                // (ie. ignore entries that have an identical 'Exec' field to an existing
-                // entry)
-                if (execFields.contains(service->exec()) && service->noDisplay()) {
-                    results[i] = 0;
-                }
-            }
-        } else {
+        if (existing.isNull()) {
             desktopNames.insert(service->name(), i);
             execFields.insert(service->exec());
+        } else if (isLaterVersion(existing, service)) {
+                results[i] = 0;
+        } else if (isLaterVersion(service, existing)) {
+            results[existingPos] = 0;
+        } else if (execFields.contains(service->exec()) && service->noDisplay()) {
+            // do not show more than one entry which does the same thing when run
+            // (ie. ignore entries that have an identical 'Exec' field to an existing
+            // entry)
+            results[i] = 0;
         }
     }
 
-
     QStringList pathResults;
-    foreach(const KService::Ptr &service, results) {
+    foreach (const KService::Ptr &service, results) {
         if (!service.isNull() && !service->noDisplay())  {
             pathResults << service->entryPath();
         }
     }
+
     emit resultsAvailable(pathResults);
 }
 
@@ -249,7 +238,7 @@ void IndexerSearch::setQuery(const QString& query)
 
     QList<QString> urls;
     QList<StrigiHit> hits = searchClient.getHits(query, 10, 0);
-    foreach(const StrigiHit& hit, hits) {
+    foreach (const StrigiHit& hit, hits) {
         if (!hit.uri.isEmpty()) {
             urls << hit.uri;
         }
