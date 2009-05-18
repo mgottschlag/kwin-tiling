@@ -273,6 +273,7 @@ void HotkeysTreeViewContextMenu::newGlobalShortcutActionAction( int actionType )
     KHotKeys::SimpleActionData *data =
         new KHotKeys::SimpleActionData( 0, i18n("New Action"), i18n("Comment"));
     data->set_trigger( new KHotKeys::ShortcutTrigger( data, KShortcut() ) );
+    data->enable();
 
     createActionFromType(actionType, data);
 
@@ -301,6 +302,7 @@ void HotkeysTreeViewContextMenu::newMouseGestureTriggerActionAction( int actionT
     KHotKeys::SimpleActionData *data =
         new KHotKeys::SimpleActionData( 0, i18n("New Action"), i18n("Comment"));
     data->set_trigger( new KHotKeys::GestureTrigger(data) );
+    data->enable();
 
     createActionFromType(actionType, data);
 
@@ -329,6 +331,7 @@ void HotkeysTreeViewContextMenu::newWindowTriggerActionAction( int actionType )
     KHotKeys::SimpleActionData *data =
         new KHotKeys::SimpleActionData( 0, i18n("New Action"), i18n("Comment"));
     data->set_trigger( new KHotKeys::WindowTrigger(data) );
+    data->enable();
 
     createActionFromType(actionType, data);
 

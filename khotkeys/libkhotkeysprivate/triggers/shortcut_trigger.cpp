@@ -33,7 +33,7 @@ ShortcutTrigger::ShortcutTrigger(
         ActionData* data_P,
         const KShortcut& shortcut,
         const QUuid &uuid )
-    : Trigger( data_P ), _uuid(uuid), _conditions_met(true), _shortcut(shortcut)
+    : Trigger( data_P ), _uuid(uuid), _shortcut(shortcut)
     {
     }
 
@@ -43,7 +43,6 @@ ShortcutTrigger::ShortcutTrigger(
        ,ActionData* data_P )
     :   Trigger( cfg_P, data_P ),
         _uuid( cfg_P.readEntry( "Uuid", QUuid::createUuid().toString())),
-        _conditions_met(true),
         _shortcut()
     {
     QString shortcutString = cfg_P.readEntry( "Key" );
@@ -69,13 +68,40 @@ void ShortcutTrigger::aboutToBeErased()
 
 void ShortcutTrigger::activate( bool activate_P )
     {
+    kDebug() << activate_P;
     if(activate_P)
         {
-        _conditions_met = true;
-        }
+        QString name = data
+            ? data->name()
+            : "TODO";
+
+        // FIXME: The following workaround tries to prevent having two actions with
+        // the same uuid. That happens wile exporting/importing actions. The uuid
+        // is exported too.
+        KAction *act = keyboard_handler->addAction( _uuid, name, _shortcut );
+        // addAction can change the uuid. That's why we store the uuid from the
+        // action
+        _uuid = act->objectName();
+
+        connect(
+            act, SIGNAL(triggered(bool)),
+            this, SLOT(trigger()) );
+
+        connect(
+            act, SIGNAL(globalShortcutChanged(const QKeySequence&)),
+            this, SIGNAL(globalShortcutChanged(const QKeySequence&)));
+            _conditions_met = true;
+            }
     else
         {
-        _conditions_met = false;
+        // Disable the trigger. Delete the action.
+        KAction *action = qobject_cast<KAction*>(keyboard_handler->getAction( _uuid ));
+        if(action)
+            {
+            // In case the shortcut was changed from the kcm.
+            _shortcut = action->globalShortcut();
+            keyboard_handler->removeAction(_uuid);
+            }
         }
     }
 
@@ -103,6 +129,7 @@ const QString ShortcutTrigger::description() const
 
 void ShortcutTrigger::disable()
     {
+    // Unregister the shortcut with kglobalaccel
     KAction *action = qobject_cast<KAction*>(keyboard_handler->getAction( _uuid ));
     if(action)
         {
@@ -117,25 +144,10 @@ void ShortcutTrigger::disable()
 
 void ShortcutTrigger::enable()
     {
-    QString name = data
-        ? data->name()
-        : "TODO";
-
-    // FIXME: The following workaround tries to prevent having two actions with
-    // the same uuid. That happens wile exporting/importing actions. The uuid
-    // is exported too.
-    KAction *act = keyboard_handler->addAction( _uuid, name, _shortcut );
-    // addAction can change the uuid. That's why we store the uuid from the
-    // action
-    _uuid = act->objectName();
-
-    connect(
-        act, SIGNAL(triggered(bool)),
-        this, SLOT(trigger()) );
-
-    connect(
-        act, SIGNAL(globalShortcutChanged(const QKeySequence&)),
-        this, SIGNAL(globalShortcutChanged(const QKeySequence&)));
+    // To enable the shortcut we have to just register it once with
+    // kglobalaccel and deactivate it immediately
+    activate(true);
+    activate(false);
     }
 
 
@@ -143,14 +155,17 @@ void ShortcutTrigger::set_key_sequence( const QKeySequence &seq )
     {
     // Get the action from the keyboard handler
     KAction *action = qobject_cast<KAction*>(keyboard_handler->getAction( _uuid ));
-    Q_ASSERT(action);
-    if (!action) return;
-
-    // Set our key sequence
-    action->setGlobalShortcut( 
-        KShortcut(seq),
-        KAction::ActiveShortcut,
-        KAction::NoAutoloading );
+    if (!action)
+        {
+        _shortcut.setPrimary(seq);
+        }
+    else
+        {
+        action->setGlobalShortcut(
+            KShortcut(seq),
+            KAction::ActiveShortcut,
+            KAction::NoAutoloading );
+        }
     }
 
 
@@ -170,7 +185,7 @@ KShortcut ShortcutTrigger::shortcut() const
 
 void ShortcutTrigger::trigger()
     {
-    if (_conditions_met && khotkeys_active())
+    if (khotkeys_active())
         {
         windows_handler->set_action_window( 0 ); // use active window
         data->execute();
