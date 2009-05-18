@@ -47,6 +47,7 @@ ShortcutsHandler::ShortcutsHandler( HandlerType type, QObject *parent )
     _actions->setComponentData(KComponentData("khotkeys"));
     }
 
+
 ShortcutsHandler::~ShortcutsHandler()
     {
     _actions->clear();
@@ -93,6 +94,11 @@ KAction *ShortcutsHandler::addAction(
         return 0;
         }
     Q_ASSERT(newAction->isEnabled());
+
+    connect(
+        newAction, SIGNAL(globalShortcutChanged(const QKeySequence&)),
+        this, SIGNAL(shortcutChanged()));
+
     return newAction;
     }
 
@@ -114,6 +120,11 @@ bool ShortcutsHandler::removeAction( const QString &id )
         {
         // This delete the action
         _actions->removeAction(action);
+
+        disconnect(
+            action, SIGNAL(globalShortcutChanged(const QKeySequence&)),
+            this, SIGNAL(shortcutChanged()));
+
         return true;
         }
     }

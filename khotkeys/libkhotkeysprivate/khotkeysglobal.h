@@ -26,7 +26,7 @@ namespace KHotKeys
 class WindowsHandler;
 class ShortcutsHandler;
 
-extern QPointer<ShortcutsHandler> keyboard_handler;
+KDE_EXPORT extern QPointer<ShortcutsHandler> keyboard_handler;
 extern QPointer<WindowsHandler> windows_handler;
 
 // CHECKME hmms :(

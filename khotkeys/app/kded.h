@@ -59,6 +59,11 @@ class KHotKeysModule
          */
         Q_SCRIPTABLE QString get_menuentry_shortcut(const QString &storageId);
 
+    private Q_SLOTS:
+
+        //! Save
+        void save();
+
     public:
 
         KHotKeysModule(QObject* parent, const QList<QVariant>&);

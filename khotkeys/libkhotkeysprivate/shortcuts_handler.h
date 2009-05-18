@@ -100,6 +100,13 @@ public:
      */
     bool send_macro_key( const QKeySequence &key, Window window_P );
 
+Q_SIGNALS:
+
+    /**
+     * One of the actions shortcuts was changed.
+     */
+    void shortcutChanged() const;
+
 private:
 
     HandlerType _type;

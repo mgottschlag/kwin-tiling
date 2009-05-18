@@ -14,6 +14,8 @@
 #include "action_data/menuentry_shortcut_action_data.h"
 #include "actions/actions.h"
 
+#include "shortcuts_handler.h"
+
 #include "triggers/gestures.h"
 
 
@@ -46,6 +48,11 @@ KHotKeysModule::KHotKeysModule(QObject* parent, const QList<QVariant>&)
     // Initialize the global data, grab keys
     KHotKeys::init_global_data( true, this );
 
+    // If a shortcut was changed (global shortcuts kcm), save
+    connect(
+            keyboard_handler.data(), SIGNAL(shortcutChanged()),
+            this, SLOT(save()));
+
     // Read the configuration from file khotkeysrc
     reread_configuration();
 
@@ -53,9 +60,7 @@ KHotKeysModule::KHotKeysModule(QObject* parent, const QList<QVariant>&)
 
     if (_settings.update())
         {
-        KHotKeys::khotkeys_set_active( false );
-        _settings.write();
-        KHotKeys::khotkeys_set_active( true );
+        save();
         }
 
     }
@@ -217,5 +222,12 @@ void KHotKeysModule::quit()
     deleteLater();
     }
 
+
+void KHotKeysModule::save()
+    {
+    KHotKeys::khotkeys_set_active( false );
+    _settings.write();
+    KHotKeys::khotkeys_set_active( true );
+    }
 
 #include "kded.moc"
