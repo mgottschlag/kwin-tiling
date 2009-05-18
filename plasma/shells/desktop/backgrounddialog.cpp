@@ -77,32 +77,24 @@ void ThemeModel::reload()
     m_themes.clear();
 
     // get all desktop themes
-    KStandardDirs dirs;
-    QStringList themes = dirs.findAllResources("data", "desktoptheme/*/metadata.desktop",
-                                               KStandardDirs::NoDuplicates);
-    foreach (const QString &theme, themes) {
-        kDebug() << theme;
-        int themeSepIndex = theme.lastIndexOf('/', -1);
-        QString themeRoot = theme.left(themeSepIndex);
-        int themeNameSepIndex = themeRoot.lastIndexOf('/', -1);
-        QString packageName = themeRoot.right(themeRoot.length() - themeNameSepIndex - 1);
+    KPluginInfo::List themeInfos = Plasma::Theme::listThemeInfo();
 
-        KDesktopFile df(theme);
-        QString name = df.readName();
+    foreach (const KPluginInfo &themeInfo, themeInfos) {
+        kDebug() << themeInfo.name() << themeInfo.pluginName();
+        QString name = themeInfo.name();
         if (name.isEmpty()) {
-            name = packageName;
+            name = themeInfo.pluginName();
         }
 
-        Plasma::FrameSvg *svg = new Plasma::FrameSvg(this);
-        QString svgFile = themeRoot + "/widgets/background.svg";
-        if (QFile::exists(svgFile)) {
-            svg->setImagePath(svgFile);
-        } else {
-            svg->setImagePath(svgFile + "z");
-        }
+        Plasma::Theme *theme = new Plasma::Theme(themeInfo.pluginName(), this);
+        Plasma::FrameSvg *svg = new Plasma::FrameSvg(theme);
+        svg->setUsingRenderingCache(false);
+        svg->setTheme(theme);
+        svg->setImagePath("widgets/background");
         svg->setEnabledBorders(Plasma::FrameSvg::AllBorders);
+
         ThemeInfo info;
-        info.package = packageName;
+        info.package = themeInfo.pluginName();
         info.svg = svg;
         m_themes[name] = info;
     }
