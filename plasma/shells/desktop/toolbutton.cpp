@@ -138,6 +138,8 @@ void ToolButton::paintEvent(QPaintEvent *event)
 
 void ToolButton::enterEvent(QEvent *event)
 {
+    Q_UNUSED(event)
+
     if (isChecked()) {
         return;
     }
@@ -156,6 +158,8 @@ void ToolButton::enterEvent(QEvent *event)
 
 void ToolButton::leaveEvent(QEvent *event)
 {
+    Q_UNUSED(event)
+
     if (isChecked()) {
         return;
     }
