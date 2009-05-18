@@ -1,5 +1,6 @@
 add_subdirectory(clock)
 add_subdirectory(colors)
+add_subdirectory(desktopthemedetails)
 add_subdirectory(joystick)
 add_subdirectory(kcmaccess)
 add_subdirectory(kcmdisplay)

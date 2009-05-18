@@ -1,0 +1,105 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % English "INCLUDE">
+]>
+<article lang="&language;">
+<articleinfo>
+<authorgroup>
+<author>
+<firstname>Andrew</firstname>
+<surname>Lake</surname></author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2009-05-18</date>
+<releaseinfo>0.9</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>System Settings</keyword>
+<keyword>desktop</keyword>
+<keyword>theme</keyword>
+</keywordset>
+</articleinfo>
+
+<sect1 id="kcm_desktopthemedetails">
+<title><guilabel>Desktop Theme Details</guilabel></title>
+
+<para>The KDE plasma desktop theme is made up of several components or items.  This 
+module allows you to customize your deskop Plasma theme and to replace theme items 
+with items from other themes or from files.
+</para>
+
+<sect2 id="custom">
+<title>Creating a custom theme</title>
+<para>When the module is opened, it will show items from the current desktop theme. 
+If you would like to start customizing with a different theme, select it from 
+the drop box above the list of theme items.</para>
+
+<para>
+In the list of items, for each item you would like to replace, select 
+replacement item from the drop list for that item.  You may select the 
+corresponding item from another theme, or you may select a file. Plasma 
+desktop theme items are svg files, except for the color scheme which is a KDE 
+color scheme file.
+</para>
+
+<para>
+Click <guibutton>Apply</guibutton> when all the changes have been made.  This will create a new 
+theme named <guilabel>(Customized)</guilabel> which you can select from the Appearance Settings 
+dialog on the desktop.
+</para>
+
+<note><para>
+The theme items listed are the most visible components of the plasma 
+desktop theme.  Other theme components are not listed.  Your newly created 
+theme will use these unlisted components from the theme that you  selected at 
+the start of creating the customized theme.
+</para></note>
+</sect2>
+
+<sect2 id="naming">
+<title>Naming a custom theme</title>
+<para>
+To provide a name for your customized theme, click on the <guilabel>More</guilabel> checkbox and 
+enter the name of the theme.  You may also provide your name (author), a theme 
+version and a description of your theme.  Click <guibutton>Apply</guibutton> when done.
+</para>
+</sect2>
+
+<sect2 id="removing">
+<title>Removing a theme</title>
+<para>
+Select the theme you would like to remove from the drop box above the list of 
+theme items. Click on the <guilabel>More</guilabel> check box. Click the "Remove Theme" button to 
+remove the selected theme.
+</para>
+</sect2>
+
+<sect2 id="exporting">
+<title>Exporting a theme to a file</title>
+<para>
+You can share your newly customized theme with the community by exporting the 
+theme to a file. Select your customized theme from the drop box above the list 
+of theme items.  Click on the <guilabel>More</guilabel> check box.  Click the "Export Theme to 
+File...".  Enter the name of the zip file to which the theme will be saved.
+</para>
+</sect2>
+
+</sect1>
+</article>
+
+<!--
+Local Variables:
+mode: xml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
+End:
+
+vim:tabstop=2:shiftwidth=2:expandtab
+kate: space-indent on; indent-width 2; tab-width 2; indent-mode none;
+-->
