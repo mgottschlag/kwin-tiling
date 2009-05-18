@@ -112,12 +112,15 @@ DBusSystemTrayTask::DBusSystemTrayTask(const QString &service, QObject *parent)
     d->notificationItemInterface = new org::kde::NotificationItem(service, "/NotificationItem",
                                                                           QDBusConnection::sessionBus(), this);
 
-    d->refresh();
+    //TODO: how to behave if its not valid?
+    if (d->notificationItemInterface->isValid()) {
+        d->refresh();
 
-    connect(d->notificationItemInterface, SIGNAL(NewIcon()), this, SLOT(refresh()));
-    connect(d->notificationItemInterface, SIGNAL(NewAttentionIcon()), this, SLOT(refresh()));
-    connect(d->notificationItemInterface, SIGNAL(NewToolTip()), this, SLOT(refresh()));
-    connect(d->notificationItemInterface, SIGNAL(NewStatus(QString)), this, SLOT(syncStatus(QString)));
+        connect(d->notificationItemInterface, SIGNAL(NewIcon()), this, SLOT(refresh()));
+        connect(d->notificationItemInterface, SIGNAL(NewAttentionIcon()), this, SLOT(refresh()));
+        connect(d->notificationItemInterface, SIGNAL(NewToolTip()), this, SLOT(refresh()));
+        connect(d->notificationItemInterface, SIGNAL(NewStatus(QString)), this, SLOT(syncStatus(QString)));
+    }
 }
 
 
