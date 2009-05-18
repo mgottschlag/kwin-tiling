@@ -118,12 +118,8 @@ bool ShortcutsHandler::removeAction( const QString &id )
         }
     else
         {
-        // This delete the action
+        // This will delete the action.
         _actions->removeAction(action);
-
-        disconnect(
-            action, SIGNAL(globalShortcutChanged(const QKeySequence&)),
-            this, SIGNAL(shortcutChanged()));
 
         return true;
         }

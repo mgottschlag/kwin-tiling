@@ -278,17 +278,14 @@ void KCMHotkeys::save()
 
 KCMHotkeysPrivate::KCMHotkeysPrivate( KCMHotkeys *host )
     : Ui::KCMHotkeysWidget()
-     ,model(new KHotkeysModel)
+     ,model(NULL)
      ,q(host)
-     ,current(0)
+     ,current(NULL)
     {
     setupUi(q);
 
     // Initialize the global part of the khotkeys lib ( handler ... )
     KHotKeys::init_global_data(false, q);
-
-    tree_view->setModel(model);
-    global_settings->setModel(model);
     }
 
 
@@ -304,6 +301,14 @@ void KCMHotkeysPrivate::load()
             tree_view->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)),
             q, SLOT(currentChanged(QModelIndex,QModelIndex)) );
         }
+
+    // Create a new model;
+    tree_view->setModel(new KHotkeysModel);
+    // Delete the old
+    delete model;
+    // Now use the old
+    model = tree_view->model();
+    global_settings->setModel(model);
 
     model->load();
 
