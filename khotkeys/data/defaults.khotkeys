@@ -3,6 +3,8 @@ DataCount=1
 
 [Data_1]
 Comment=Comment
+Comment[ca]=Comentari
+Comment[ca@valencia]=Comentari
 Comment[da]=Kommentar
 Comment[de]=Kommentar
 Comment[el]=Σχόλιο
@@ -39,6 +41,8 @@ ConditionsCount=0
 
 [Data_1_1]
 Comment=Comment
+Comment[ca]=Comentari
+Comment[ca@valencia]=Comentari
 Comment[da]=Kommentar
 Comment[de]=Kommentar
 Comment[el]=Σχόλιο
@@ -60,6 +64,8 @@ Comment[zh_CN]=注释
 Comment[zh_TW]=註解
 Enabled=true
 Name=Search
+Name[ca]=Cerca
+Name[ca@valencia]=Cerca
 Name[csb]=Szëkba
 Name[da]=Søg
 Name[de]=Suchen
