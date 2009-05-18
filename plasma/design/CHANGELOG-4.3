@@ -17,10 +17,14 @@ libplasma
     * Theme
         * Themes can now set UseNativeWidgetStyle=true in the [Settings] group of the metadata.desktop file and Plasma will default to native (QStyle) painting for all widgets
         * Backgrounds can now have variable backgrounds
+        * Ability to list all known themes
     * Extenders
         * NEW: ExtenderGroup, class for grouping ExtenderItems.
         * hasItem function in Extender to provide an easy way for applets to avoid duplication of ExtenderItems.
         * Improved drag-and-drop
+    * Svg
+        * Ability to set Theme object to use
+        * Ability to turn off disk caching is not needed/desired
     * Wallpaper:
         * Cache for completed wallpaper renderings
         * Threaded rendering of image files to specified size, scaling method and coloring
@@ -67,6 +71,8 @@ Desktop Theme
     * configuration-icons
        * NEW: collapse/restore icons for use in ExtenderGroup
     * Desktop and panel toolboxes are now svg themed
+
+* Themes must now set the X-KDE-PluginInfo-Name entry in the metadata.desktop correctly, namely to the name of the directory containing the theme (e.g. default or Clean-Blend). While this was always the case, it was never relied on by libplasma. As of 4.3 there is now code that does rely on this being properly set.
 
 Plasma Desktop Shell
 --------------------
