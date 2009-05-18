@@ -189,10 +189,7 @@ bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* gro
 void ProgramGroupingStrategy::checkGroup()
 {
     TaskGroup *group = qobject_cast<TaskGroup*>(sender()); 
-    if (!group) {
-        return;
-    }
-    if (group->members().size() <= 1) {
+    if (group && group->members().size() <= 1) {
         closeGroup(group);
     }
 }

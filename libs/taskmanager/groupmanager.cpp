@@ -328,25 +328,28 @@ bool GroupManager::manualGroupingRequest(AbstractGroupableItem* item, TaskGroup*
 
 bool GroupManager::manualGroupingRequest(ItemList items)
 {
-    // kDebug();
-    if (d->abstractGroupingStrategy) {
-     //   kDebug() << d->abstractGroupingStrategy->type() << ManualGrouping;
-        if (d->abstractGroupingStrategy->type() == ManualGrouping) {
-      //      kDebug();
-            return (qobject_cast<ManualGroupingStrategy*>(d->abstractGroupingStrategy))->groupItems(items);
+    //kDebug();
+    if (d->abstractGroupingStrategy && d->abstractGroupingStrategy->type() == ManualGrouping) {
+        //kDebug();
+        ManualGroupingStrategy *strategy = qobject_cast<ManualGroupingStrategy*>(d->abstractGroupingStrategy);
+        if (strategy) {
+            return strategy->groupItems(items);
         }
     }
+
     return false;
 }
 
 bool GroupManager::manualSortingRequest(AbstractGroupableItem* taskItem, int newIndex)
 {
     //kDebug();
-    if (d->abstractSortingStrategy) {
-        if (d->abstractSortingStrategy->type() == ManualSorting) {
-            return (qobject_cast<ManualSortingStrategy*>(d->abstractSortingStrategy))->moveItem(taskItem, newIndex);
+    if (d->abstractSortingStrategy && d->abstractSortingStrategy->type() == ManualSorting) {
+        ManualSortingStrategy *strategy = qobject_cast<ManualSortingStrategy*>(d->abstractSortingStrategy);
+        if (strategy) {
+            return strategy->moveItem(taskItem, newIndex);
         }
     }
+
     return false;
 }
 
@@ -570,17 +573,15 @@ void GroupManager::setSortingStrategy(TaskSortingStrategy sortOrder)
     //kDebug() << sortOrder;
 
     if (d->abstractSortingStrategy) {
-        if (d->abstractSortingStrategy->type() == sortOrder){
+        if (d->abstractSortingStrategy->type() == sortOrder) {
             return;
-        } else {
-            d->abstractSortingStrategy->deleteLater();
         }
+
+        d->abstractSortingStrategy->deleteLater();
+        d->abstractSortingStrategy = 0;
     }
 
     switch (sortOrder) {
-        case NoSorting: //manual and no grouping result both in non automatic grouping
-            d->abstractSortingStrategy = 0;
-            break;
         case ManualSorting:
             d->abstractSortingStrategy = new ManualSortingStrategy(this);
             d->abstractSortingStrategy->handleGroup(d->rootGroup);
@@ -596,9 +597,11 @@ void GroupManager::setSortingStrategy(TaskSortingStrategy sortOrder)
             d->abstractSortingStrategy->handleGroup(d->rootGroup);
             break;
 
+        case NoSorting: //manual and no grouping result both in non automatic grouping
+            break;
+
         default:
             kDebug() << "Invalid Strategy";
-            d->abstractSortingStrategy = 0;
     }
 
     d->sortingStrategy = sortOrder;

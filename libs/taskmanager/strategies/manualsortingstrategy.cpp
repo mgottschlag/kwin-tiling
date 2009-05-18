@@ -86,7 +86,7 @@ ManualSortingStrategy::~ManualSortingStrategy()
 void ManualSortingStrategy::storePositions(TaskGroup *group)
 {
     Q_ASSERT(group);
-    for(int i = 0; i < group->members().size(); i++) {
+    for (int i = 0; i < group->members().size(); i++) {
         AbstractGroupableItem *item = group->members().at(i);
         Q_ASSERT(item);
         if (item->isGroupItem()) {
@@ -95,7 +95,8 @@ void ManualSortingStrategy::storePositions(TaskGroup *group)
         } else {
             d->managedItems->insert(item, i);
         }
-        kDebug() << item << i;
+
+        //kDebug() << item << i;
     }
 }
 
