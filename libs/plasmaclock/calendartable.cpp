@@ -70,9 +70,8 @@ class CalendarTablePrivate
 
             date = cDate;
 
-            QDate currentDate = QDate::currentDate();
-            month = calendar->month(currentDate);
-            year = calendar->year(currentDate);
+            month = calendar->month(date);
+            year = calendar->year(date);
 
             opacity = 0.5; //transparency for the inactive text
         }
@@ -85,7 +84,7 @@ class CalendarTablePrivate
         int firstMonthDayIndex(int y, int m)
         {
             QDate myDate;
-            calendar->setYMD(myDate, y, m, 1);
+            calendar->setDate(myDate, y, m, 1);
 
             return (((calendar->dayOfWeek(myDate) - 1) + (calendar->daysInWeek(date) - (calendar->weekStartDay() - 1))) % calendar->daysInWeek(date)) + 1;
         }
@@ -137,19 +136,20 @@ class CalendarTablePrivate
         int cell(int week, int weekDay, CalendarTable::CellTypes *type, QDate &cellDate)
         {
             QDate myDate;
+            bool valid = calendar->setDate(myDate, year, month, 1);
+            int numMonths = calendar->monthsInYear(myDate);
 
-            if ((week == 0) && (weekDay < firstMonthDayIndex(year, month))){
-                int prevMonth = (month == 1) ? 12 : month - 1;
-                calendar->setYMD(myDate, year, prevMonth, 1);
-
+            if ((week == 0) && (weekDay < firstMonthDayIndex(year, month))) {
                 if (type) {
                     (*type) |= CalendarTable::NotInCurrentMonth;
                 }
 
-                calendar->setYMD(cellDate, (prevMonth == 12) ? year - 1 : year, prevMonth, calendar->daysInMonth(myDate) - (firstMonthDayIndex(year, month) - 1 - weekDay));
+                int prevMonth = (month == 1) ? numMonths : month - 1;
+                calendar->setDate(myDate, year, prevMonth, 1);
+                calendar->setDate(cellDate, (prevMonth == numMonths) ? year - 1 : year, prevMonth,
+                                 calendar->daysInMonth(myDate) - (firstMonthDayIndex(year, month) - 1 - weekDay));
                 return calendar->daysInMonth(myDate) - (firstMonthDayIndex(year, month) - 1 - weekDay);
             } else {
-                calendar->setYMD(myDate, year, month, 1);
                 int day = (week * calendar->daysInWeek(date) + weekDay) - firstMonthDayIndex(year, month) + 1;
 
                 if (day <= calendar->daysInMonth(myDate)) {
@@ -157,14 +157,15 @@ class CalendarTablePrivate
                         (*type) &= ~CalendarTable::NotInCurrentMonth;
                     }
 
-                    calendar->setYMD(cellDate, year, month, day);
+                    calendar->setDate(cellDate, year, month, day);
                     return day;
                 } else {
                     if (type) {
                         (*type) |= CalendarTable::NotInCurrentMonth;
                     }
-                    int nextMonth = (month == 12) ? 1 : month + 1;
-                    calendar->setYMD(cellDate, (nextMonth == 1) ? year + 1 : year, nextMonth, day - calendar->daysInMonth(myDate));
+
+                    int nextMonth = (numMonths == month) ? 1 : month + 1;
+                    calendar->setDate(cellDate, (nextMonth == 1) ? year + 1 : year, nextMonth, day - calendar->daysInMonth(myDate));
                     return day - calendar->daysInMonth(myDate);
                 }
             }
@@ -227,6 +228,7 @@ bool CalendarTable::setDate(const QDate &date)
     QDate oldDate = d->date;
     d->year = d->calendar->year(date);
     d->month = d->calendar->month(date);
+    //kDebug( )<< "setting date to" << date << d->year << d->month;
     bool fullUpdate = false;
 
     if (oldYear != d->year){
@@ -295,7 +297,7 @@ void CalendarTable::wheelEvent(QGraphicsSceneWheelEvent * event)
     Q_UNUSED(event);
 
     if (event->delta() < 0) {
-        if (d->month == 12) {
+        if (d->month == d->calendar->monthsInYear(d->date)) {
             d->month = 1;
             d->year++;
             emit displayedYearChanged(d->year, d->month);
@@ -306,7 +308,7 @@ void CalendarTable::wheelEvent(QGraphicsSceneWheelEvent * event)
         emit displayedMonthChanged(d->year, d->month);
     } else if (event->delta() > 0) {
         if (d->month == 1) {
-            d->month = 12;
+            d->month = d->calendar->monthsInYear(d->date);
             d->year--;
             emit displayedYearChanged(d->year, d->month);
         } else {
@@ -344,13 +346,13 @@ void CalendarTable::mousePressEvent(QGraphicsSceneMouseEvent *event)
             d->hoverDay = -1;
             d->hoverWeek = -1;
             QDate tmpDate;
-            QDate oldDate = d->date;
             d->cell(week, weekDay + 1, 0, tmpDate);
 
-            if (tmpDate == oldDate) {
+            if (tmpDate == d->date) {
                 return;
             }
 
+            QDate oldDate = d->date;
             setDate(tmpDate);
             emit dateChanged(tmpDate, oldDate);
             emit dateChanged(tmpDate);
