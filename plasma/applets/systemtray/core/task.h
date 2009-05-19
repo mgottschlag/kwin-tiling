@@ -172,6 +172,8 @@ Q_SIGNALS:
     /**
      * Emitted when something about the task has changed
      **/
+    //TODO: this should also state _what_ was changed so we can react more
+    //      precisely (and therefore with greater efficiency)
     void changed(SystemTray::Task *task);
 
     /**
