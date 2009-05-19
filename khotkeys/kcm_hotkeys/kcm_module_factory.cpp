@@ -30,25 +30,6 @@
 
 K_PLUGIN_FACTORY_DEFINITION(
     KCMModuleFactory,
-    registerPlugin<KCMHotkeys>("khotkeys");
+    registerPlugin<KCMHotkeys>("hotkeys");
     )
-K_EXPORT_PLUGIN(KCMModuleFactory("kcm_khotkeys"))
-
-
-extern "C"
-{
-    KDE_EXPORT void kcminit_khotkeys()
-        {
-        kDebug() << "Starting khotkeys daemon";
-
-        // If the daemon is not enabled there is nothing to do
-        if (!KHotKeys::Daemon::isEnabled())
-            {
-            kDebug() << "KHotKeys daemon is disabled.";
-            return;
-            }
-
-        } // kcminit_khotkeys()
-}
-
-
+K_EXPORT_PLUGIN(KCMModuleFactory("hotkeys"))
