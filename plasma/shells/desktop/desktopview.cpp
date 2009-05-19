@@ -158,12 +158,13 @@ void DesktopView::toggleDashboard()
 
         m_dashboardFollowsDesktop = true;
         KConfigGroup cg = config();
-        Plasma::Containment *dc = containment();
-        if (dashboardContainment()) {
-            dc = dashboardContainment();
+        Plasma::Containment *dc = dashboardContainment();
+        if (dc) {
             dc->resize(size());
             dc->enableAction("remove", false);
             m_dashboardFollowsDesktop = false;
+        } else {
+            dc = containment();
         }
 
         m_dashboard = new DashboardView(dc, 0);
@@ -179,6 +180,7 @@ Plasma::Containment *DesktopView::dashboardContainment() const
     KConfigGroup cg = config();
     Plasma::Containment *dc = 0;
     int containmentId = cg.readEntry("DashboardContainment", 0);
+
     if (containmentId > 0) {
         foreach (Plasma::Containment *c, containment()->corona()->containments()) {
             if ((int)c->id() == containmentId) {
@@ -187,6 +189,7 @@ Plasma::Containment *DesktopView::dashboardContainment() const
             }
         }
     }
+
     return dc;
 }
 
