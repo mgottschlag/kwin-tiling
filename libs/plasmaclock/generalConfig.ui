@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>428</width>
-    <height>348</height>
+    <height>142</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout">
@@ -57,19 +57,6 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="3">
-    <spacer name="horizontalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item row="2" column="1">
     <widget class="QLabel" name="label">
      <property name="text">
@@ -80,12 +67,29 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="2">
-    <widget class="KComboBox" name="regionComboBox">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-    </widget>
+   <item row="2" column="2" colspan="2">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="KComboBox" name="regionComboBox">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>188</width>
+         <height>17</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
    <item row="3" column="0" colspan="2">
     <widget class="QLabel" name="label_4">
@@ -127,22 +131,39 @@
     </widget>
    </item>
    <item row="4" column="2" colspan="2">
-    <widget class="KIntSpinBox" name="interval">
-     <property name="specialValueText">
-      <string>Never</string>
-     </property>
-     <property name="suffix">
-      <string>th minute</string>
-     </property>
-     <property name="prefix">
-      <string>Every </string>
-     </property>
-     <property name="maximum">
-      <number>60</number>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="KIntSpinBox" name="interval">
+       <property name="specialValueText">
+        <string>Never</string>
+       </property>
+       <property name="suffix">
+        <string>th minute</string>
+       </property>
+       <property name="prefix">
+        <string>Every </string>
+       </property>
+       <property name="maximum">
+        <number>60</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>138</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
-   <item row="5" column="2">
+   <item row="5" column="3">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
