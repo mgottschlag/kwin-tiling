@@ -13,6 +13,7 @@ Name[gu]=બેટ્રી
 Name[ja]=バッテリ
 Name[km]=ថ្ម
 Name[ko]=배터리
+Name[lv]=Baterija
 Name[nb]=Batteri
 Name[nds]=Batterie
 Name[pt]=Bateria
@@ -39,6 +40,7 @@ Name[gu]=ચાર્જ ટકા
 Name[ja]=充電率
 Name[km]=ភាគរយបញ្ចូលថ្ម
 Name[ko]=충전률
+Name[lv]=Uzlādes procenti
 Name[nb]=Prosent lading
 Name[nds]=Oplaadperzent
 Name[pt]=Percentagem de Carga
@@ -48,6 +50,7 @@ Name[sv]=Laddningsprocent
 Name[tr]=Şarj Yüzdesi
 Name[uk]=Рівень заряду
 Name[x-test]=xxCharge Percentxx
+Name[zh_CN]=充电百分比
 Name[zh_TW]=充電百分比
 
 [Desktop Action chargeState]
@@ -62,6 +65,7 @@ Name[gu]=ચાર્જ સ્થિતિ
 Name[ja]=充電の状態
 Name[km]=ស្ថានភាព​បញ្ចូល​ថ្ម
 Name[ko]=충전 상태
+Name[lv]=Uzlādes stāvoklis
 Name[nb]=Ladingstilstand
 Name[nds]=Oplaadtostand
 Name[pt]=Estado da Carga
@@ -71,6 +75,7 @@ Name[sv]=Laddningstillstånd
 Name[tr]=Şarj Durumu
 Name[uk]=Стан зарядженості
 Name[x-test]=xxCharge Statexx
+Name[zh_CN]=充电状态
 Name[zh_TW]=充電狀態
 
 [Desktop Action objectName]
@@ -85,6 +90,7 @@ Name[gu]=વસ્તુ નામ
 Name[ja]=オブジェクト名
 Name[km]=ឈ្មោះវត្ថុ
 Name[ko]=개체 이름
+Name[lv]=Objekta nosaukums
 Name[nb]=Objektnavn
 Name[nds]=Objektnaam
 Name[pt]=Nome do Objecto
@@ -94,6 +100,7 @@ Name[sv]=Objektnamn
 Name[tr]=Nesne Adı
 Name[uk]=Назва об'єкта
 Name[x-test]=xxObject Namexx
+Name[zh_CN]=对象名称
 Name[zh_TW]=物件名稱
 
 [Desktop Action plugged]
@@ -110,6 +117,7 @@ Name[gu]=જોડેલ
 Name[ja]=接続されています
 Name[km]=បានដោត
 Name[ko]=연결됨
+Name[lv]=Iesprausta
 Name[nb]=Tilkoblet
 Name[nds]=Tokoppelt
 Name[pt]=Ligado
@@ -119,6 +127,7 @@ Name[sv]=Anslutet
 Name[tr]=Fişe takılı
 Name[uk]=З’єднано
 Name[x-test]=xxPluggedxx
+Name[zh_CN]=已插入
 Name[zh_TW]=已插入
 
 [Desktop Action rechargeable]
@@ -132,6 +141,7 @@ Name[ga]=In-Athluchtaithe
 Name[ja]=再充電可能
 Name[km]=អាច​បញ្ចូល​ថ្ម​បាន
 Name[ko]=충전 가능
+Name[lv]=Lādējams
 Name[nb]=Oppladbar
 Name[nds]=Wedderlaadbor
 Name[pt]=Recarregável
@@ -141,6 +151,7 @@ Name[sv]=Uppladdningsbart
 Name[tr]=Yeniden şarj edilebilir
 Name[uk]=Перезарядка
 Name[x-test]=xxRechargeablexx
+Name[zh_CN]=可重新充电
 Name[zh_TW]=可重新充電
 
 [Desktop Action type]
@@ -155,6 +166,7 @@ Name[gu]=પ્રકાર
 Name[ja]=タイプ
 Name[km]=ប្រភេទ
 Name[ko]=종류
+Name[lv]=Tips
 Name[nds]=Typ
 Name[pt]=Tipo
 Name[pt_BR]=Tipo

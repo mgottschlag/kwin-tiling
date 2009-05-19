@@ -18,6 +18,7 @@ Comment[et]=Võrgu haldamine Wicd deemoni abil.
 Comment[fi]=Verkkojen hallinta käyttäen Wicd-palvelua
 Comment[gu]=Wicd ડેમનનો ઉપયોગ કરીને નેટવર્ક વ્યવસ્થા.
 Comment[km]=កា​រគ្រប់គ្រង​បណ្ដាញ​ដោយ​ប្រើ​ដេមិន Wicd ។
+Comment[lv]=Tīkla pārvaldība lietojot Wicd dēmonu.
 Comment[nds]=Nettwarkpleeg mit den Wicd-Dämoon
 Comment[pt]=Gestão da rede com o servidor Wicd.
 Comment[pt_BR]=Gerenciamento de rede usando o daemon Wicd.
@@ -26,6 +27,7 @@ Comment[sv]=Nätverkshantering med användning av WICD-demonen.
 Comment[tr]=Wicd servisi kullanan ağ yönetimi.
 Comment[uk]=Керування мережею за допомогою фонової служби Wicd.
 Comment[x-test]=xxNetwork management using the Wicd daemon.xx
+Comment[zh_CN]=使用 Wicd 守护程序的网络管理器
 Comment[zh_TW]=用 Wicd 伺服程式做網路管理
 
 Icon=wicd
