@@ -80,7 +80,6 @@ Q_SIGNALS:
 private Q_SLOTS:
     void itemDestroyed(AbstractGroupableItem *);
 
-
 public Q_SLOTS:
     /** Needed because we subclass AbstractGroupableItem */
     void toDesktop(int) {}
@@ -173,7 +172,19 @@ public:
 
     void desktopChanged(int newDesktop);
 
-private slots:
+protected Q_SLOTS:
+    void closeGroup(TaskGroup*);
+
+    /** Checks if the group is still necessary, removes group if empty*/
+    void checkGroup();
+
+private:
+    bool manualGrouping(TaskItem* taskItem, TaskGroup* groupItem);
+
+    /** Create a duplication of a group with all subgroups TaskItems arent duplicated */
+    TaskGroupTemplate *createDuplication(TaskGroup *group);
+
+private Q_SLOTS:
 
     /** Actions which the strategy offers*/
     /** sender item leaves group*/
@@ -194,15 +205,7 @@ private slots:
     /** This function makes sure that if the rootGroup template already got deleted nobody tries to access it again*/
     void resetCurrentTemplate();
 
-protected:
-    void closeGroup(TaskGroup*);
-
 private:
-    bool manualGrouping(TaskItem* taskItem, TaskGroup* groupItem);
-
-    /** Create a duplication of a group with all subgroups TaskItems arent duplicated */
-    TaskGroupTemplate *createDuplication(TaskGroup *group);
-
     class Private;
     Private * const d;
 };

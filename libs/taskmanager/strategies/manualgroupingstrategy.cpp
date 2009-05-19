@@ -377,10 +377,12 @@ void TaskGroupTemplate::add(AbstractItemPtr item)
     if (d->members.contains(item)) {
         return;
     }
+
     d->members.append(item);
+
     if (item->isGroupItem()) { 
         connect(item, SIGNAL(destroyed(AbstractGroupableItem *)), this, SLOT(itemDestroyed(AbstractGroupableItem *)));
-        (dynamic_cast<TaskGroupTemplate*>(item))->setParentGroup(this);
+        (static_cast<TaskGroupTemplate*>(item))->setParentGroup(this);
     }
 }
 
@@ -391,7 +393,7 @@ void TaskGroupTemplate::remove(AbstractItemPtr item)
     disconnect(this, 0, item, 0);
     d->members.removeAll(item);
     if (item->isGroupItem()) { 
-        (dynamic_cast<TaskGroupTemplate*>(item))->setParentGroup(0);
+        (static_cast<TaskGroupTemplate*>(item))->setParentGroup(0);
     }
     if (d->members.isEmpty()) {
         closeGroup();
@@ -464,7 +466,7 @@ bool TaskGroupTemplate::hasMember(AbstractItemPtr item) const
     ItemList::const_iterator iterator = members().constBegin();
     while (iterator != members().constEnd()) {
         if ((*iterator)->isGroupItem()) {
-            if ((dynamic_cast<TaskGroupTemplate *>(*iterator))->hasMember(item)) { //look into group
+            if ((static_cast<TaskGroupTemplate *>(*iterator))->hasMember(item)) { //look into group
                 return true;
             }
         }
@@ -483,7 +485,7 @@ AbstractItemPtr TaskGroupTemplate::directMember(AbstractItemPtr item) const
         ItemList::const_iterator iterator = members().constBegin();
         while (iterator != members().constEnd()) {
             if ((*iterator)->isGroupItem()) {
-                if ((dynamic_cast<TaskGroupTemplate*>(*iterator))->hasMember(item)) {
+                if ((static_cast<TaskGroupTemplate*>(*iterator))->hasMember(item)) {
                     //kDebug() << "item found";
                     return (*iterator);
                 }
@@ -503,7 +505,7 @@ TaskGroupTemplate *TaskGroupTemplate::findParentGroup(AbstractItemPtr item) cons
         ItemList::const_iterator iterator = members().constBegin();
         while (iterator != members().constEnd()) {
             if ((*iterator)->isGroupItem()) {
-                TaskGroupTemplate *returnedGroup = (dynamic_cast<TaskGroupTemplate*>(*iterator))->findParentGroup(item);
+                TaskGroupTemplate *returnedGroup = (static_cast<TaskGroupTemplate*>(*iterator))->findParentGroup(item);
                 if (returnedGroup) {
                     //kDebug() << "item found";
                     return returnedGroup;
@@ -531,6 +533,14 @@ void TaskGroupTemplate::itemDestroyed(AbstractGroupableItem *item)
     disconnect(this, 0, item, 0);
     if (members().isEmpty()) {
         closeGroup();
+    }
+}
+
+void ManualGroupingStrategy::checkGroup()
+{
+    TaskGroup *group = qobject_cast<TaskGroup*>(sender()); 
+    if (group && group->members().size() <= 1) {
+        closeGroup(group);
     }
 }
 
