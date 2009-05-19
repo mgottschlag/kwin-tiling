@@ -238,9 +238,9 @@ void Calendar::prevMonth()
         month--;
     }
 
-    if (calendar->setYMD(newDate, year, month, calendar->day(tmpDate))){
+    if (calendar->setYMD(newDate, year, month, calendar->day(tmpDate))) {
         setDate(newDate);
-    }else if (calendar->setYMD(newDate, year, month, 1)){
+    } else if (calendar->setYMD(newDate, year, month, 1)) {
         setDate(newDate);
     }
 }
@@ -374,7 +374,10 @@ void Calendar::goToWeek(int week)
 
 void Calendar::goToMonth(int year, int month)
 {
-    setDate(QDate(year, month, 1));
+    // this is actually called from the calendar table, so we dupe a bit of code from setData, 
+    // so we don't set the date on the calendar table (causing fun circles)
+    populateHolidays();
+    dateUpdated(QDate(year, month, 1));
 }
 
 void Calendar::showYearSpinBox()
