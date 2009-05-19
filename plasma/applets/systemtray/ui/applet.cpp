@@ -160,6 +160,7 @@ void Applet::init()
     d->setTaskAreaGeometry();
     connect(Private::s_manager, SIGNAL(taskAdded(SystemTray::Task*)),
             d->taskArea, SLOT(addTask(SystemTray::Task*)));
+    //TODO: we re-add the task when it changed: slightly silly!
     connect(Private::s_manager, SIGNAL(taskChanged(SystemTray::Task*)),
             d->taskArea, SLOT(addTask(SystemTray::Task*)));
     connect(Private::s_manager, SIGNAL(taskRemoved(SystemTray::Task*)),
@@ -454,7 +455,8 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
 
     d->autoHideUi.icons->clear();
 
-    foreach (Task *task, Private::s_manager->tasks()) {
+    QMultiMap<QString, const Task *> sortedTasks;
+    foreach (const Task *task, Private::s_manager->tasks()) {
         if (!d->shownCategories.contains(task->category())) {
              continue;
         }
@@ -463,6 +465,10 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
             continue;
         }
 
+        sortedTasks.insert(task->name(), task);
+    }
+
+    foreach (const Task *task, sortedTasks) {
         QListWidgetItem *listItem = new QListWidgetItem();
         listItem->setText(task->name());
         listItem->setIcon(task->icon());
@@ -472,7 +478,6 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         d->autoHideUi.icons->addItem(listItem);
     }
 }
-
 
 void Applet::configAccepted()
 {
