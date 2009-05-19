@@ -36,11 +36,13 @@
 #include <kephal/screens.h>
 
 #include "appletbrowser.h"
+#include "plasma-shell-desktop.h"
 
 static const int SUPPRESS_SHOW_TIMEOUT = 500; // Number of millis to prevent reshow of dashboard
 
-DashboardView::DashboardView(Plasma::Containment *containment, QWidget *parent)
-    : Plasma::View(containment, parent),
+DashboardView::DashboardView(Plasma::Containment *containment, Plasma::View *view)
+    : Plasma::View(containment, 0),
+      m_view(view),
       m_appletBrowser(0),
       m_suppressShow(false),
       m_zoomIn(false),
@@ -49,16 +51,13 @@ DashboardView::DashboardView(Plasma::Containment *containment, QWidget *parent)
 {
     //setContextMenuPolicy(Qt::NoContextMenu);
     setWindowFlags(Qt::FramelessWindowHint);
+    setWallpaperEnabled(!PlasmaApp::hasComposite());
     if (!PlasmaApp::hasComposite()) {
         setAutoFillBackground(false);
         setAttribute(Qt::WA_NoSystemBackground);
     }
 
     setGeometry(Kephal::ScreenUtils::screenGeometry(containment->screen()));
-
-    setWallpaperEnabled(!PlasmaApp::hasComposite());
-
-    connect(scene(), SIGNAL(releaseVisualFocus()), SLOT(hideView()));
 
     m_hideAction = new QAction(i18n("Hide Dashboard"), this);
     m_hideAction->setIcon(KIcon("preferences-desktop-display"));
@@ -67,6 +66,8 @@ DashboardView::DashboardView(Plasma::Containment *containment, QWidget *parent)
     connect(m_hideAction, SIGNAL(triggered()), this, SLOT(hideView()));
 
     installEventFilter(this);
+
+    connect(scene(), SIGNAL(releaseVisualFocus()), SLOT(hideView()));
 }
 
 DashboardView::~DashboardView()
@@ -221,9 +222,14 @@ void DashboardView::toggleVisibility()
             return;
         }
 
-        setWindowState(Qt::WindowFullScreen);
-        KWindowSystem::setOnAllDesktops(winId(), true);
         KWindowSystem::setState(winId(), NET::KeepAbove|NET::SkipTaskbar);
+        setWindowState(Qt::WindowFullScreen);
+
+        if (AppSettings::perVirtualDesktopViews()) {
+            KWindowSystem::setOnDesktop(winId(), m_view->desktop());
+        } else {
+            KWindowSystem::setOnAllDesktops(winId(), true);
+        }
 
         QAction *action = containment()->action("zoom out");
         m_zoomOut = action ? action->isEnabled() : false;

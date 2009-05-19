@@ -37,7 +37,7 @@ class DashboardView : public Plasma::View
     Q_OBJECT
 
 public:
-    DashboardView(Plasma::Containment* containment, QWidget *parent);
+    DashboardView(Plasma::Containment* containment, Plasma::View *parent);
     ~DashboardView();
 
 protected:
@@ -67,6 +67,7 @@ protected slots:
     void suppressShowTimeout();
 
 private:
+    Plasma::View *m_view;
     Plasma::AppletBrowser *m_appletBrowser;
     QPoint m_appletBrowserDragStart;
     QAction *m_hideAction;

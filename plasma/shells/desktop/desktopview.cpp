@@ -167,7 +167,7 @@ void DesktopView::toggleDashboard()
             dc = containment();
         }
 
-        m_dashboard = new DashboardView(dc, 0);
+        m_dashboard = new DashboardView(dc, this);
         m_dashboard->addActions(actions());
     }
 
