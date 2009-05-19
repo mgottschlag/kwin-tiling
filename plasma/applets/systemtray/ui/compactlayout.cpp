@@ -219,7 +219,7 @@ QSizeF CompactLayout::sizeHint(Qt::SizeHint which, const QSizeF &constraint) con
             }
         }
 
-        kDebug() << "porporting" << min;
+        //kDebug() << "porporting" << min;
         return min;
     } else {
         return QSizeF();
