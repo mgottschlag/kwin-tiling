@@ -232,6 +232,9 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
         QString title = properties["Title"].toString();
         if (!title.isEmpty()) {
             name = title;
+            //FIXME: the problem of the id is that we need something that a) is unique b) is consistent between runs, the service name is only a, the name is only b, but duplicates should be somewhat rare so it's the less worse way.
+            //what is probably needed is a way to fetch the dbus service name of the parent app (so org.kde.konueror, not org.kde.NotificationItem) without the pid
+            id = title;
         }
 
         QString id = properties["Id"].toString();
@@ -315,6 +318,8 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
 
     emit q->changed(q);
     delete call;
+
+    emit q->changed(q);
 }
 
 QPixmap DBusSystemTrayTaskPrivate::ExperimentalKDbusImageStructToPixmap(const ExperimentalKDbusImageStruct &icon) const
