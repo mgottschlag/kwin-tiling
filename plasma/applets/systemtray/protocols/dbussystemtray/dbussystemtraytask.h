@@ -39,7 +39,7 @@ public:
 
     QGraphicsWidget* createWidget(Plasma::Applet *host);
     bool isValid() const;
-    virtual bool isEmbeddable() const;
+    bool isEmbeddable() const;
     virtual QString name() const;
     virtual QString typeId() const;
     virtual QIcon icon() const;

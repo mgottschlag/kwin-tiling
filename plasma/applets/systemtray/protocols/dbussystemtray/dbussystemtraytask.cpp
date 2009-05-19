@@ -51,7 +51,9 @@ public:
           currentFrame(0),
           movieTimer(0),
           blinkTimer(0),
-          blink(false)
+          blink(false),
+          valid(false),
+          embeddable(false)
     {
     }
 
@@ -81,7 +83,7 @@ public:
 
 
     DBusSystemTrayTask *q;
-    QString id;
+    QString typeId;
     QString name;
     QString title;
     QIcon icon;
@@ -90,10 +92,12 @@ public:
     int currentFrame;
     QTimer *movieTimer;
     QTimer *blinkTimer;
-    bool blink;
     QHash<Plasma::Applet *, Plasma::IconWidget *>iconWidgets;
     Plasma::ToolTipContent toolTipData;
     org::kde::NotificationItem *notificationItemInterface;
+    bool blink : 1;
+    bool valid : 1;
+    bool embeddable : 1;
 };
 
 
@@ -106,20 +110,21 @@ DBusSystemTrayTask::DBusSystemTrayTask(const QString &service, QObject *parent)
     qDBusRegisterMetaType<ExperimentalKDbusImageVector>();
     qDBusRegisterMetaType<ExperimentalKDbusToolTipStruct>();
 
-    d->id = service;
+    d->typeId = service;
     d->name = service;
 
     d->notificationItemInterface = new org::kde::NotificationItem(service, "/NotificationItem",
-                                                                          QDBusConnection::sessionBus(), this);
+                                                                  QDBusConnection::sessionBus(), this);
 
     //TODO: how to behave if its not valid?
-    if (d->notificationItemInterface->isValid()) {
-        d->refresh();
+    d->valid = !service.isEmpty() && d->notificationItemInterface->isValid();
 
+    if (d->valid) {
         connect(d->notificationItemInterface, SIGNAL(NewIcon()), this, SLOT(refresh()));
         connect(d->notificationItemInterface, SIGNAL(NewAttentionIcon()), this, SLOT(refresh()));
         connect(d->notificationItemInterface, SIGNAL(NewToolTip()), this, SLOT(refresh()));
         connect(d->notificationItemInterface, SIGNAL(NewStatus(QString)), this, SLOT(syncStatus(QString)));
+        d->refresh();
     }
 }
 
@@ -151,14 +156,14 @@ QGraphicsWidget* DBusSystemTrayTask::createWidget(Plasma::Applet *host)
     return iconWidget;
 }
 
-bool DBusSystemTrayTask::isEmbeddable() const
-{
-    return true;
-}
-
 bool DBusSystemTrayTask::isValid() const
 {
-    return !d->id.isEmpty();
+    return d->valid;
+}
+
+bool DBusSystemTrayTask::isEmbeddable() const
+{
+    return d->embeddable;
 }
 
 QString DBusSystemTrayTask::name() const
@@ -166,18 +171,15 @@ QString DBusSystemTrayTask::name() const
     return d->name;
 }
 
-
 QString DBusSystemTrayTask::typeId() const
 {
-    return d->id;
+    return d->typeId;
 }
-
 
 QIcon DBusSystemTrayTask::icon() const
 {
     return d->icon;
 }
-
 
 //DBusSystemTrayTaskPrivate
 
@@ -211,7 +213,10 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
 {
     QDBusPendingReply<QVariantMap> reply = *call;
     QVariantMap properties = reply.argumentAt<0>();
-    if (!reply.isError()) {
+    if (reply.isError()) {
+        valid = false;
+        embeddable = false;
+    } else {
         QString cat = properties["Category"].toString();
         if (!cat.isEmpty()) {
             int index = q->metaObject()->indexOfEnumerator("Category");
@@ -227,6 +232,11 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
         QString title = properties["Title"].toString();
         if (!title.isEmpty()) {
             name = title;
+        }
+
+        QString id = properties["Id"].toString();
+        if (!id.isEmpty()) {
+            typeId = id;
         }
 
         QIcon overlay;
@@ -299,8 +309,11 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
         ExperimentalKDbusToolTipStruct toolTip;
         properties["ToolTip"].value<QDBusArgument>() >> toolTip;
         syncToolTip(toolTip);
+
+        embeddable = true;
     }
 
+    emit q->changed(q);
     delete call;
 }
 
@@ -325,7 +338,7 @@ QIcon DBusSystemTrayTaskPrivate::imageVectorToPixmap(const ExperimentalKDbusImag
 
 void DBusSystemTrayTaskPrivate::overlayIcon(QIcon *icon, QIcon *overlay)
 {
-    kDebug() << "WRRRRRRROOOOOOOOOOOOOONG!";
+    //kDebug() << "WRRRRRRROOOOOOOOOOOOOONG!";
     QPixmap iconPixmap = icon->pixmap(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
 
     QPainter p(&iconPixmap);
