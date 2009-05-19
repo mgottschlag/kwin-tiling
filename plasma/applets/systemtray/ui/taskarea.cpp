@@ -99,14 +99,16 @@ void TaskArea::setHiddenTypes(const QStringList &hiddenTypes)
 
 void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
 {
+    //TODO: this is completely brute force; we shouldn't be redoing the
+    //      layout or re-adding widgets unless there's actual change imho
     d->hasTasksThatCanHide = false;
     d->hasHiddenTasks = false;
     foreach (Task *task, tasks) {
         kDebug() << "checking" << task->name() << d->showingHidden;
         if (d->hiddenTypes.contains(task->typeId())) {
             task->setHidden(task->hidden()|Task::UserHidden);
-        } else if (task->hidden()&Task::UserHidden) {
-            task->setHidden(task->hidden()^Task::UserHidden);
+        } else if (task->hidden() & Task::UserHidden) {
+            task->setHidden(task->hidden() ^ Task::UserHidden);
         }
 
         addWidgetForTask(task);
@@ -120,7 +122,7 @@ void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
 void TaskArea::addTask(Task *task)
 {
     if (d->hiddenTypes.contains(task->typeId())) {
-        task->setHidden(task->hidden()|Task::UserHidden);
+        task->setHidden(task->hidden() | Task::UserHidden);
     }
 
     addWidgetForTask(task);
@@ -131,9 +133,15 @@ void TaskArea::addTask(Task *task)
 
 void TaskArea::addWidgetForTask(SystemTray::Task *task)
 {
-    QGraphicsWidget *widget = task->widget(d->host);
-    if (!widget && !task->isEmbeddable()) {
+    if (!task->isEmbeddable()) {
         kDebug() << "task is not embeddable, so FAIL" << task->name();
+        return;
+    }
+
+    QGraphicsWidget *widget = task->widget(d->host);
+
+    if (!widget) {
+        kDebug() << "embeddable, but we received no widget?!";
         return;
     }
 
@@ -152,7 +160,6 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
         d->normalTasksLayout->removeItem(widget);
         d->lastTasksLayout->removeItem(widget);
     }
-
 
     //If the applet doesn't want to show FDO tasks, remove (not just hide) any of them
     //if the dbus icon has a category that the applet doesn't want to show remove it
