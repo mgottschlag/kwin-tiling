@@ -232,6 +232,10 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
         QString title = properties["Title"].toString();
         if (!title.isEmpty()) {
             name = title;
+
+            if (typeId.isEmpty()) {
+                typeId = title;
+            }
         }
 
         QString id = properties["Id"].toString();
