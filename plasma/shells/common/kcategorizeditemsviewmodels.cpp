@@ -31,6 +31,17 @@ QString AbstractItem::name() const
     return text();
 }
 
+QString AbstractItem::id() const
+{
+    QString plugin = data().toMap()["pluginName"].toString();
+
+    if (plugin.isEmpty()) {
+        return name();
+    }
+
+    return plugin;
+}
+
 QString AbstractItem::description() const
 {
     return "";

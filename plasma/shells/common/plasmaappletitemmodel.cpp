@@ -158,12 +158,12 @@ void PlasmaAppletItemModel::populateModel()
 void PlasmaAppletItemModel::setRunningApplets(const QHash<QString, int> &apps)
 {
     //foreach item, find that string and set the count
-    for (int r=0; r<rowCount(); ++r) {
+    for (int r = 0; r < rowCount(); ++r) {
         QStandardItem *i = item(r);
         PlasmaAppletItem *p = dynamic_cast<PlasmaAppletItem *>(i);
 
         if (p) {
-            const bool running = apps.value(p->name());
+            const bool running = apps.value(p->pluginName());
             const bool used = m_used.contains(p->pluginName());
 
             p->setRunning(running);
@@ -184,7 +184,7 @@ void PlasmaAppletItemModel::setRunningApplets(const QString &name, int count)
     for (int r=0; r<rowCount(); ++r) {
         QStandardItem *i = item(r);
         PlasmaAppletItem *p = dynamic_cast<PlasmaAppletItem *>(i);
-        if (p && p->name() == name) {
+        if (p && p->pluginName() == name) {
             const bool used = m_used.contains(p->pluginName());
 
             p->setRunning(count);

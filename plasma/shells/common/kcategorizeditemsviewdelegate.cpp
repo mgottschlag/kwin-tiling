@@ -320,10 +320,10 @@ bool KCategorizedItemsViewDelegate::editorEvent(
             return true;
         } else if (index.column() == 2 && item->running()) {
             item->setRunning(0);
-            emit destroyApplets(item->name());
+            emit destroyApplets(item->id());
             return true;
         } else if (index.column() == 3) {
-            emit infoAboutApplet(item->name());
+            emit infoAboutApplet(item->id());
             return true;
         }
     }

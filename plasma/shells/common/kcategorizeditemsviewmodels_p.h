@@ -40,6 +40,11 @@ public:
     virtual QString name() const;
 
     /**
+     * Returns a unique id related to this item
+     */
+    virtual QString id() const;
+
+    /**
      * Returns a localized string - description of the item
      */
     virtual QString description() const;

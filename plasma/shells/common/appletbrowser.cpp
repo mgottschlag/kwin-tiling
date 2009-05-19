@@ -199,7 +199,7 @@ void AppletBrowserWidgetPrivate::initRunningApplets()
         QObject::connect(containment, SIGNAL(appletRemoved(Plasma::Applet*)), q, SLOT(appletRemoved(Plasma::Applet*)));
 
         foreach (Applet *applet, containment->applets()) {
-            runningApplets[applet->name()]++;
+            runningApplets[applet->pluginName()]++;
         }
     }
 
@@ -268,7 +268,7 @@ void AppletBrowserWidget::addApplet()
 
 void AppletBrowserWidgetPrivate::appletAdded(Plasma::Applet *applet)
 {
-    QString name = applet->name();
+    QString name = applet->pluginName();
     //kDebug() << name;
 
     runningApplets[name]++;
@@ -315,7 +315,7 @@ void AppletBrowserWidget::destroyApplets(const QString &name)
     foreach (Containment *containment, c->containments()) {
         QList<Applet*> applets = containment->applets();
         foreach (Applet *applet, applets) {
-            if (applet->name() == name) {
+            if (applet->pluginName() == name) {
                 d->appletNames.remove(applet);
                 applet->disconnect(this);
                 applet->destroy();
@@ -356,7 +356,7 @@ void AppletBrowserWidget::infoAboutApplet(const QString &name)
 
     KPluginInfo::List applets = Plasma::Applet::listAppletInfo();
     foreach (const KPluginInfo &info, applets) {
-        if (info.name() == name) {
+        if (info.pluginName() == name) {
             KAboutData *aboutData = new KAboutData(info.name().toUtf8(),
                                               info.name().toUtf8(),
                                               ki18n(info.name().toUtf8()),
