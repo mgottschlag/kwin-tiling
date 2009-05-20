@@ -274,13 +274,9 @@ void TaskItemLayout::layoutItems()
     }
 
 
-    if (m_layoutOrientation == Qt::Vertical) {
-        setHorizontalSpacing(0);
-        setVerticalSpacing(2);
-    } else {
-        setHorizontalSpacing(2);
-        setVerticalSpacing(0);
-    }
+    setHorizontalSpacing(0);
+    setVerticalSpacing(0);
+
 
     //go through all items of this layoutwidget and populate the layout with items
     int numberOfItems = 0;
