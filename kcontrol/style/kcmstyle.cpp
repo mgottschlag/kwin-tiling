@@ -388,7 +388,7 @@ void KCMStyle::save()
 	g.writeEntry( "GraphicEffectsLevel", comboGraphicEffectsLevel->itemData(comboGraphicEffectsLevel->currentIndex()), KConfig::Normal|KConfig::Global);
 
 	KConfigGroup generalGroup(_config, "General");
-	generalGroup.writeEntry("widgetStyle", currentStyle());
+	generalGroup.writeEntry("widgetStyle", currentStyle(), KConfig::Normal|KConfig::Global);
 
 	KConfigGroup toolbarStyleGroup(_config, "Toolbar style");
 	QString tbIcon;
