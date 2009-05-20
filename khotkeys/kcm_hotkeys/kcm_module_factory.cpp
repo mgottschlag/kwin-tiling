@@ -30,6 +30,6 @@
 
 K_PLUGIN_FACTORY_DEFINITION(
     KCMModuleFactory,
-    registerPlugin<KCMHotkeys>("hotkeys");
+    registerPlugin<KCMHotkeys>("khotkeys" /*plugin keyword, cf .desktop file*/);
     )
-K_EXPORT_PLUGIN(KCMModuleFactory("hotkeys"))
+K_EXPORT_PLUGIN(KCMModuleFactory("khotkeys" /*component data name & catalog name*/))
