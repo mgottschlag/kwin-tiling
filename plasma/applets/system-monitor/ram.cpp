@@ -215,7 +215,8 @@ void SM::Ram::configAccepted()
     cg.writeEntry("showTopBar", m_showTopBar = uiAdv.showTopBarCheckBox->isChecked());
     cg.writeEntry("showBackground", m_showBackground = uiAdv.showBackgroundCheckBox->isChecked());
     cg.writeEntry("graphColor", m_graphColor = uiAdv.graphColorCombo->color());
-    
+
+    m_max.clear();
     emit configNeedsSaving();
     connectToEngine();
 }
