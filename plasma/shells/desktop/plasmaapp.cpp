@@ -305,7 +305,7 @@ void PlasmaApp::toggleDashboard()
         currentDesktop = KWindowSystem::currentDesktop();
     }
 
-    DesktopView *view = viewForScreen(currentScreen, currentDesktop);
+    DesktopView *view = viewForScreen(currentScreen, currentDesktop-1);
     if (!view) {
         kWarning() << "we don't have a DesktopView for the current screen!" << currentScreen << currentDesktop;
         return;

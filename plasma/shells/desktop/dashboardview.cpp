@@ -226,7 +226,7 @@ void DashboardView::toggleVisibility()
         setWindowState(Qt::WindowFullScreen);
 
         if (AppSettings::perVirtualDesktopViews()) {
-            KWindowSystem::setOnDesktop(winId(), m_view->desktop());
+            KWindowSystem::setOnDesktop(winId(), m_view->desktop()+1);
         } else {
             KWindowSystem::setOnAllDesktops(winId(), true);
         }
