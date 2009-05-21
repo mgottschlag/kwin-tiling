@@ -39,7 +39,7 @@ set(polkit_authorization_SRCS
 )
 
 kde4_add_executable(polkit-kde-authorization ${polkit_authorization_SRCS})
-target_link_libraries(polkit-kde-authorization polkitkdeprivate)
+target_link_libraries(polkit-kde-authorization polkitkdeprivate ${KDE4_KDEUI_LIBS})
 
 install(TARGETS polkit-kde-authorization ${INSTALL_TARGETS_DEFAULT_ARGS})
 
