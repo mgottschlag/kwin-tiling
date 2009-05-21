@@ -36,14 +36,11 @@ using namespace PolkitQt;
 namespace PolkitKde
 {
 
-PkKAuthorization *PkKAuthorization::m_self;
-
 PkKAuthorization::PkKAuthorization(QWidget *parent)
-        : QWidget(parent), m_pkKAction(0), m_displayingAction(false)
+        : QWidget(parent)
+        , m_pkKAction(0)
+        , m_displayingAction(false)
 {
-    Q_ASSERT(!m_self);
-    m_self = this;
-
     kDebug() << "Constructing PolicyKitKDE PkKAuthorization";
     // check if our context was correctly set
     if (Context::instance()->hasError()) {

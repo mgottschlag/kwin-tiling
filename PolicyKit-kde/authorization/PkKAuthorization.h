@@ -62,8 +62,6 @@ private:
     PkKAction *m_pkKAction;
     bool m_displayingAction;
 
-    static PkKAuthorization *m_self;
-
     QMap<int, QSocketNotifier*> m_watches;
     AuthorizationsFilterModel *m_proxyModel;
     static polkit_bool_t
