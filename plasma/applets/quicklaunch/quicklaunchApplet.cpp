@@ -24,6 +24,7 @@
 #include <QGraphicsSceneDragDropEvent>
 #include <QGraphicsWidget>
 #include <QDrag>
+#include <QHash>
 #include <QMouseEvent>
 #include <QMimeData>
 #include <QToolButton>
@@ -33,6 +34,7 @@
 #include <KStandardDirs>
 #include <KWindowSystem>
 #include <KIconLoader>
+#include <KUrl>
 
 #include <plasma/containment.h>
 #include <plasma/dialog.h>
@@ -44,6 +46,7 @@
 
 static const int s_defaultIconSize = 16;
 static const int s_defaultSpacing = 2;
+
 
 QuicklaunchApplet::QuicklaunchApplet(QObject *parent, const QVariantList &args)
   : Plasma::Applet(parent, args),
@@ -58,6 +61,8 @@ QuicklaunchApplet::QuicklaunchApplet(QObject *parent, const QVariantList &args)
     m_dialogLayout(0),
     m_addDialog(0),
     m_rightClickedIcon(0),
+    m_sortappAscending(0),
+    m_sortappDescending(0),
     m_addAction(0),
     m_removeAction(0)
 {
@@ -354,8 +359,72 @@ QList<QAction*> QuicklaunchApplet::contextActions(QuicklaunchIcon *icon)
         }
         tempActions << m_removeAction;
     }
+    
+    if (!m_sortappAscending) {
+        m_sortappAscending = new QAction(KIcon("view-sort-ascending"), i18n("Sort Alphabetically (A to Z)"), this);
+        connect(m_sortappAscending, SIGNAL(triggered(bool)), this, SLOT(ascendingSort()));
+    }
+    tempActions << m_sortappAscending;
+
+    if (!m_sortappDescending) {
+        m_sortappDescending = new QAction(KIcon("view-sort-descending"), i18n("Sort Alphabetically (Z to A)"), this);
+        connect(m_sortappDescending, SIGNAL(triggered(bool)), this, SLOT(descendingSort()));
+    }
+    tempActions << m_sortappDescending;
 
     return tempActions;
+}
+
+void QuicklaunchApplet::ascendingSort() 
+{
+    sortQuicklaunch(AscendingSort);
+}
+
+void QuicklaunchApplet::descendingSort()
+{
+    sortQuicklaunch(DescendingSort);
+}
+
+void QuicklaunchApplet::sortQuicklaunch(SortingOrder sortingorder)
+{
+    QHash <QString,QString> quicklaunchHash;
+    KUrl::List urls;
+    QList<QString> sortedList;
+    QList<QString> saveSortedUrlList;
+
+    foreach (QuicklaunchIcon *icon, m_icons) {
+        quicklaunchHash.insert(icon->appName(),icon->url().prettyUrl());
+    }
+    sortedList = quicklaunchHash.keys();
+
+    qSort(sortedList);
+
+    for (int i = 0; i < quicklaunchHash.size(); i++) {
+        saveSortedUrlList.append(quicklaunchHash.value(sortedList.value(i)));
+    }
+
+    if (sortingorder == DescendingSort) {
+        QList<QString> tempUrl;
+
+        for (int i = saveSortedUrlList.size(); i > 0; i--) {
+            tempUrl.append(saveSortedUrlList.takeLast());
+        }
+        saveSortedUrlList = tempUrl;
+    }
+
+    foreach (QuicklaunchIcon *icon, m_icons) {
+        m_icons.removeAll(icon);
+        icon->hide();
+        icon->deleteLater();
+    }
+
+    foreach (const QString &desktopFile, saveSortedUrlList) {
+        addProgram(-1, desktopFile);
+    }
+    performUiRefactor();
+
+    KConfigGroup cg = config();
+    cg.writeEntry("iconUrls", saveSortedUrlList);
 }
 
 void QuicklaunchApplet::dropApp(QGraphicsSceneDragDropEvent *event, bool droppedOnDialog)
