@@ -44,7 +44,9 @@ void PkItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option
 {
     QStyleOptionViewItemV4 opt(option);
 
-    const int ROW_HEIGHT = index.data(PolkitKde::PoliciesModel::IsGroupRole).toBool() ? GROUP_ROW_HEIGHT : ITEM_ROW_HEIGHT;
+    const int gHeight = (opt.rect.height() > GROUP_ROW_HEIGHT) ? opt.rect.height() : GROUP_ROW_HEIGHT;
+    const int iHeight = (opt.rect.height() > ITEM_ROW_HEIGHT) ? opt.rect.height() : ITEM_ROW_HEIGHT;
+    const int ROW_HEIGHT = index.data(PolkitKde::PoliciesModel::IsGroupRole).toBool() ? gHeight : iHeight;
 
     QStyle *style = QApplication::style();
     style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, opt.widget);
@@ -89,15 +91,15 @@ void PkItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option
     p.setFont(descriptionFont);
 
     // let's differ groups from items
-    if (index.data(PolkitKde::PoliciesModel::IsGroupRole).toBool()) {
+    if (index.data(PolkitKde::PoliciesModel::IsGroupRole).toBool()) { // it is a group item
         clipRect.setSize(QSize(clipRect.width(), GROUP_ROW_HEIGHT));
         p.setClipRect(clipRect);
         p.drawText(clipRect, Qt::AlignLeft | Qt::AlignVCenter, index.data(Qt::DisplayRole).toString());
-    } else {
+    } else { // it is a normal item
         p.drawText(clipRect, Qt::AlignLeft | Qt::AlignBottom, index.data(Qt::DisplayRole).toString());
 
         // here we draw the action raw name
-        clipRect.translate(0, ITEM_ROW_HEIGHT / 2);
+        clipRect.translate(0, qApp->fontMetrics().height());
         p.setClipRect(clipRect);
 
         QFont actionNameFont = KGlobalSettings::smallestReadableFont();
