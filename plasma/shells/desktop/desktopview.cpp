@@ -60,7 +60,7 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
       m_actions(shortcutActions(this))
 {
     setAttribute(Qt::WA_TranslucentBackground, false);
-    setFocusPolicy(Qt::NoFocus);
+    //setFocusPolicy(Qt::NoFocus);
 #ifdef Q_WS_WIN
     setWindowFlags(Qt::FramelessWindowHint);
     SetWindowPos(winId(), HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
