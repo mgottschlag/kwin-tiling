@@ -244,9 +244,11 @@ void X11EmbedContainer::setBackgroundPixmap(QPixmap background)
     else
       image = background.copy().toImage(); //With the X11 graphics engine, we have to create a copy first, else we get a crash
 
-    if(d->oldBackgroundImage == image)
+    if(d->oldBackgroundImage == image) {
+      XFreePixmap(display, bg);
+      XRenderFreePicture(display, picture);
       return;
-
+    }
     d->oldBackgroundImage = image;
 
     if (background.paintEngine()->type() != QPaintEngine::X11) {
@@ -342,8 +344,11 @@ void X11EmbedContainer::setBackgroundPixmap(QPixmap background)
             ximage.blue_mask    = 0x001f;
         }
         ximage.obdata           = 0;
-        if (XInitImage(&ximage) == 0)
+        if (XInitImage(&ximage) == 0) {
+            XRenderFreePicture(display, picture);
+            XFreePixmap(display, bg);
             return;
+        }
 
         Pixmap pm = XCreatePixmap(display, clientWinId(), width(), height(), ximage.depth);
         GC gc = XCreateGC(display, pm, 0, 0);
