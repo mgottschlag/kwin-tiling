@@ -64,13 +64,6 @@ class QuicklaunchApplet : public Plasma::Applet
          * @return List of QAction pointers
          */
         virtual QList<QAction*> contextActions(QuicklaunchIcon *icon = 0);
-        /**
-         * This enum is to know which sorting action has to be taken.
-         */
-        enum SortingOrder { 
-           AscendingSort,
-           DescendingSort
-         };
 
     public slots:
         void createConfigurationInterface(KConfigDialog *parent);
@@ -78,16 +71,6 @@ class QuicklaunchApplet : public Plasma::Applet
          * Slot for showing the Add Icon interface
          */
         void showAddInterface();
-        /**
-         * Slot for sorting the applications in the quicklaunch
-         */        
-        void ascendingSort();
-        void descendingSort();
-        /**
-         * Action of sorting is taken here.
-	 */
-        void sortQuicklaunch(SortingOrder );
-
 
     protected:
         /**
@@ -182,8 +165,6 @@ class QuicklaunchApplet : public Plasma::Applet
 
         QAction* m_addAction;
         QAction* m_removeAction;
-        QAction* m_sortappAscending;
-        QAction* m_sortappDescending;
 };
 
 #endif

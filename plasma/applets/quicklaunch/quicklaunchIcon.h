@@ -54,8 +54,6 @@ class QuicklaunchIcon : public Plasma::IconWidget
          */
         KUrl url() const;
 
-        QString appName();
-   
         /**
          * Set the size of the icon to be painted
          * @param size the size in pxs

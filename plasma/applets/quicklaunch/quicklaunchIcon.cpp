@@ -54,11 +54,6 @@ KUrl QuicklaunchIcon::url() const
     return m_appUrl;
 }
 
-QString QuicklaunchIcon::appName()
-{
-    return m_text;
-}
-
 void QuicklaunchIcon::setIconSize(int px)
 {
     m_iconSize = px;
