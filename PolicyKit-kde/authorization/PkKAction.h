@@ -94,7 +94,6 @@ private:
 
     QString m_oldActionId;
     bool m_updatingEntry;
-    int  m_mostRecentUpdateCount;
 };
 
 

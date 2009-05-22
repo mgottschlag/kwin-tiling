@@ -242,6 +242,8 @@ void PoliciesModel::insertOrUpdate(const QStringList &actionPath, PolKitPolicyFi
             parent->appendChild(action = new PolicyItem(false, parent));
             action->setPolkitEntry(entry);
             endInsertRows();
+            // Update the parent
+            emit dataChanged(index, index);
         }
     } else {
         // here we are adding or finding a group

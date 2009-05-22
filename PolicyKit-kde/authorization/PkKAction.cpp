@@ -41,8 +41,7 @@ namespace PolkitKde
 PkKAction::PkKAction(QWidget *parent)
         : QWidget(parent),
           m_pfe(0),
-          m_updatingEntry(false),
-          m_mostRecentUpdateCount(0)
+          m_updatingEntry(false)
 {
     setupUi(this);
 
@@ -69,6 +68,7 @@ PkKAction::PkKAction(QWidget *parent)
     m_explicitModel = new ExplicitAuthorizationsModel(explicitAuthTV);
     explicitAuthTV->setModel(m_explicitModel);
 
+    // Caller should not unref this object.
     m_authdb = polkit_context_get_authorization_db(Context::instance()->getPolKitContext());
 
     connect(explicitAuthTV, SIGNAL(clicked(const QModelIndex &)),
@@ -102,10 +102,6 @@ PkKAction::~PkKAction()
 {
     if (m_pfe != 0) {
         polkit_policy_file_entry_unref(m_pfe);
-    }
-
-    if (m_authdb) {
-        polkit_authorization_db_unref(m_authdb);
     }
 }
 

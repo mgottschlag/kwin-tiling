@@ -29,12 +29,22 @@ using namespace PolkitKde;
 
 int main(int argc, char *argv[])
 {
-    KAboutData aboutData("polkit-kde-authorization", "", ki18n("PolicyKit KDE Authorization"),
-                         "0.1", ki18n("KDE interface for managing PolicyKit Authorizations"),
-                         KAboutData::License_GPL, ki18n("(C) 2008 Daniel Nicoletti"));
-    aboutData.addAuthor(ki18n("Daniel Nicoletti"), ki18n("Author"), "dantti85-pk@yahoo.com.br");
-    aboutData.addAuthor(ki18n("Dario Freddi"), ki18n("Developer"), "drf54321@gmail.com", "http://drfav.wordpress.com");
-    KCmdLineArgs::init(argc, argv, &aboutData);
+    // NOTE If you update aboutData here please do it at main.cpp too, thanks :D
+    KAboutData *aboutData;
+    aboutData = new KAboutData("polkit-kde-authorization",
+                               "polkit-kde-authorization",
+                               ki18n("PolicyKit KDE Authorization"),
+                               "0.1",
+                               ki18n("KDE interface for managing PolicyKit Authorizations"),
+                               KAboutData::License_GPL,
+                               ki18n("(C) 2008-2009 Daniel Nicoletti"));
+    aboutData->addAuthor(ki18n("Daniel Nicoletti"), ki18n("Author"), "dantti85-pk@yahoo.com.br");
+    aboutData->addAuthor(ki18n("Dario Freddi"), ki18n("Developer"), "drf54321@gmail.com", "http://drfav.wordpress.com");
+    aboutData->addAuthor(ki18n("Alessandro Diaferia"), ki18n("Developer"), "alediaferia@gmail.com");
+    aboutData->addAuthor(ki18n("Lukas Appelhans"), ki18n("Developer"), "l.appelhans@gmx.de", "http://boom1992.wordpress.com");
+    aboutData->addAuthor(ki18n("Trever Fischer"), ki18n("Developer"), "wm161@wm161.net");
+
+    KCmdLineArgs::init(argc, argv, aboutData);
 
     KCmdLineOptions options;
     options.add("+[action]", ki18n("Action to be displayed"));

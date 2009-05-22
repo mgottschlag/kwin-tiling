@@ -41,7 +41,6 @@ PkKAuthorization::PkKAuthorization(QWidget *parent)
         , m_pkKAction(0)
         , m_displayingAction(false)
 {
-    kDebug() << "Constructing PolicyKitKDE PkKAuthorization";
     // check if our context was correctly set
     if (Context::instance()->hasError()) {
         KMessageBox::error(this,
