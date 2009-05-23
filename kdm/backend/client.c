@@ -377,12 +377,14 @@ doPAMAuth( const char *psrv, struct pam_data *pdata )
 # ifdef PAM_XDISPLAY
 	if ((pretc = pam_set_item( pamh, PAM_XDISPLAY,
 	                           displayName( td ) )) != PAM_SUCCESS)
-		goto pam_bail;
-	if (td->authFile && (pam_xauth = getPAMXauthData( td->authFile ))) {
+		debug( "setting PAM_XDISPLAY failed: %s\n",
+		       pam_strerror( 0, pretc ) );
+	else if (td->authFile && (pam_xauth = getPAMXauthData( td->authFile ))) {
 		pretc = pam_set_item( pamh, PAM_XAUTHDATA, pam_xauth );
 		free( pam_xauth );
 		if (pretc != PAM_SUCCESS)
-			goto pam_bail;
+			debug( "setting PAM_XAUTHDATA failed: %s\n",
+			       pam_strerror( 0, pretc ) );
 	}
 # endif
 	pam_set_item( pamh, PAM_USER_PROMPT, (void *)"Username:" );
