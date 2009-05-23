@@ -43,6 +43,7 @@
 #include "qs_statusbar.h"
 #include "qs_matchitem.h"
 #include "qs_matchview.h"
+#include "qs_querymatchitem.h"
 
 //Widget dimensions
 const int WIDTH = 390;
@@ -176,28 +177,37 @@ void QsMatchView::reset()
     setDescriptionText(i18n("Type to search."));
 }
 
+bool queryMatchCompare(MatchItem *a, MatchItem *b)
+{
+    QueryMatchItem *m1 = qobject_cast<QueryMatchItem*>(a);
+    QueryMatchItem *m2 = qobject_cast<QueryMatchItem*>(b);
+    if (m1 && m2) {
+        return m2->match() < m1->match();
+    }
+    return a < b;
+}
+
 void QsMatchView::setItems(const QList<MatchItem*> &items, bool popup, bool append)
 {
     int spacing = MatchItem::ITEM_SIZE/2;
 
     int pos = spacing;
 
+    d->m_currentItem = -1;
+
     if (!append) {
         clear(true);
         d->m_compBox->clear();
-
-        d->m_currentItem = -1;
         d->m_items = items;
     } else {
-        // FIXME: This completely disregards item ranking
-        // Maybe should we just sort then scroll to previously selected item
-        if (!d->m_items.isEmpty()) {
+        /*if (!d->m_items.isEmpty()) {
             pos += d->m_items.last()->pos().x();
-        }
+        }*/
         d->m_items << items;
     }
+    qStableSort(d->m_items.begin(), d->m_items.end(), queryMatchCompare);
 
-    foreach(MatchItem *item, items) {
+    foreach(MatchItem *item, d->m_items) {
         if (item) {
             item->setPos(pos, SMALL_ICON_PADDING);
             item->scale(0.5, 0.5);
