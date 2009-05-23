@@ -1,5 +1,7 @@
 [Desktop Entry]
 Name=Keyboard and Mouse State
+Name[ca]=Estat del teclat i ratolí
+Name[ca@valencia]=Estat del teclat i ratolí
 Name[csb]=Stón klawiaturë ë mëszë
 Name[da]=Tilstand for tastatur og mus
 Name[de]=Status von Tastatur und Maus
@@ -18,6 +20,8 @@ Name[uk]=Стан клавіатури і миші
 Name[zh_CN]=键盘和鼠标状态
 Name[zh_TW]=鍵盤與滑鼠狀態
 Comment=Keyboard modifier and mouse buttons states
+Comment[ca]=Modificador de l'estat del teclat i dels botons del ratolí
+Comment[ca@valencia]=Modificador de l'estat del teclat i dels botons del ratolí
 Comment[csb]=Mòdifikatora klawiaturë ë stónu klawiszów mëszë
 Comment[da]=Tilstand for tastaturets ændringstaster og museknapper
 Comment[de]=.

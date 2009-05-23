@@ -1,6 +1,8 @@
 [Desktop Entry]
 Actions=driverHandle;objectName;port;serialType;
 Name=Serial Interface
+Name[ca]=Interfície sèrie
+Name[ca@valencia]=Interfície sèrie
 Name[csb]=Serijny interfejs
 Name[da]=Serialgrænseflade
 Name[de]=Serielle Schnittstellen
@@ -29,6 +31,8 @@ X-KDE-Solid-Actions-Type=SerialInterface
 
 [Desktop Action driverHandle]
 Name=Driver Handle
+Name[ca]=Gestor de controlador
+Name[ca@valencia]=Gestor de controlador
 Name[csb]=Czérownik Handle
 Name[da]=Driver-handle
 Name[el]=Χειριστήριο οδηγού
@@ -51,6 +55,8 @@ Name[zh_TW]=驅動程式處理
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ca]=Nom de l'objecte
+Name[ca@valencia]=Nom de l'objecte
 Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
@@ -95,6 +101,8 @@ Name[zh_TW]=連接埠
 
 [Desktop Action serialType]
 Name=Serial Type
+Name[ca]=Tipus de sèrie
+Name[ca@valencia]=Tipus de sèrie
 Name[csb]=Serijny Ôrt
 Name[da]=Serialtype
 Name[el]=Τύπος σειριακής

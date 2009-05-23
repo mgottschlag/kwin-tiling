@@ -3,6 +3,8 @@ Actions=hasState;objectName;stateValue;type;
 Name=Button
 Name[be]=Кнопка
 Name[be@latin]=Кнопка
+Name[ca]=Botó
+Name[ca@valencia]=Botó
 Name[cs]=Tlačítko
 Name[csb]=Knąpa
 Name[da]=Knap
@@ -40,6 +42,8 @@ X-KDE-Solid-Actions-Type=Button
 
 [Desktop Action hasState]
 Name=Has State
+Name[ca]=Té estat
+Name[ca@valencia]=Té estat
 Name[csb]=Mô stón
 Name[da]=Har tilstanden
 Name[de]=Hat den Status
@@ -66,6 +70,8 @@ Name[zh_TW]=有狀態
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ca]=Nom de l'objecte
+Name[ca@valencia]=Nom de l'objecte
 Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
@@ -92,6 +98,8 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action stateValue]
 Name=State Value
+Name[ca]=Valor de l'estat
+Name[ca@valencia]=Valor de l'estat
 Name[da]=Tilstandsværdi
 Name[de]=Status-Wert
 Name[el]=Τιμή κατάστασης
@@ -117,6 +125,8 @@ Name[zh_TW]=狀態值
 
 [Desktop Action type]
 Name=Type
+Name[ca]=Tipus
+Name[ca@valencia]=Tipus
 Name[csb]=Ôrt
 Name[de]=Typ
 Name[el]=Τύπος

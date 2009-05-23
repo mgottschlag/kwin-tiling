@@ -1,6 +1,8 @@
 [Desktop Entry]
 Actions=appendable;availableContent;blank;capacity;discType;fsType;ignored;label;objectName;rewritable;size;usage;uuid;
 Name=Optical Disc
+Name[ca]=Disc òptic
+Name[ca@valencia]=Disc òptic
 Name[csb]=Òpticzny disk
 Name[da]=Optisk disk
 Name[de]=Optisches Medium
@@ -30,6 +32,8 @@ X-KDE-Solid-Actions-Type=OpticalDisc
 
 [Desktop Action appendable]
 Name=Appendable
+Name[ca]=Afegible
+Name[ca@valencia]=Afegible
 Name[cs]=Připojitelný
 Name[csb]=Dodôwny
 Name[da]=Data kan tilføjes
@@ -57,6 +61,8 @@ Name[zh_TW]=可附加
 
 [Desktop Action availableContent]
 Name=Available Content
+Name[ca]=Contingut disponible
+Name[ca@valencia]=Contingut disponible
 Name[da]=Tilgængeligt indhold
 Name[de]=Verfügbarer Inhalt
 Name[el]=Διαθέσιμο περιεχόμενο
@@ -82,6 +88,8 @@ Name[zh_TW]=可用的內容
 
 [Desktop Action blank]
 Name=Blank
+Name[ca]=En blanc
+Name[ca@valencia]=En blanc
 Name[cs]=Prázdné
 Name[csb]=Czësti
 Name[da]=Tom
@@ -111,6 +119,8 @@ Name[zh_TW]=空白
 
 [Desktop Action capacity]
 Name=Capacity
+Name[ca]=Capacitat
+Name[ca@valencia]=Capacitat
 Name[cs]=Kapacita
 Name[csb]=Plac na diskù
 Name[da]=Kapacitet
@@ -140,6 +150,8 @@ Name[zh_TW]=空間
 
 [Desktop Action discType]
 Name=Disc Type
+Name[ca]=Tipus de disc
+Name[ca@valencia]=Tipus de disc
 Name[csb]=Ôrt diskù
 Name[da]=Disktype
 Name[de]=Disc-Typ
@@ -167,6 +179,8 @@ Name[zh_TW]=磁碟型態
 
 [Desktop Action fsType]
 Name=Fs Type
+Name[ca]=Tipus de sistema de fitxers
+Name[ca@valencia]=Tipus de sistema de fitxers
 Name[csb]=Ôrt Fs
 Name[da]=FS-type
 Name[de]=Dateisystemtyp
@@ -193,6 +207,8 @@ Name[zh_TW]=檔案系統型態
 
 [Desktop Action ignored]
 Name=Ignored
+Name[ca]=Ignorat
+Name[ca@valencia]=Ignorat
 Name[cs]=Ignorováno
 Name[csb]=Ignorowóné
 Name[da]=Ignoreret
@@ -219,6 +235,8 @@ Name[zh_TW]=忽略
 
 [Desktop Action label]
 Name=Label
+Name[ca]=Etiqueta
+Name[ca@valencia]=Etiqueta
 Name[cs]=Popisek
 Name[csb]=Znakòwnik
 Name[da]=Etiket
@@ -248,6 +266,8 @@ Name[zh_TW]=標籤
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ca]=Nom de l'objecte
+Name[ca@valencia]=Nom de l'objecte
 Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
@@ -274,6 +294,8 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action rewritable]
 Name=Rewritable
+Name[ca]=Regravable
+Name[ca@valencia]=Regravable
 Name[csb]=Wielorazowò zapisëwanlné
 Name[da]=Genbrændbar
 Name[de]=Wiederbeschreibbar
@@ -301,6 +323,8 @@ Name[zh_TW]=可覆寫
 
 [Desktop Action size]
 Name=Size
+Name[ca]=Mida
+Name[ca@valencia]=Mida
 Name[cs]=Velikost
 Name[csb]=Miara
 Name[da]=Størrelse
@@ -330,6 +354,8 @@ Name[zh_TW]=大小
 
 [Desktop Action usage]
 Name=Usage
+Name[ca]=Ús
+Name[ca@valencia]=Ús
 Name[cs]=Použití
 Name[csb]=Brëkòwóné
 Name[da]=Brug
@@ -359,6 +385,8 @@ Name[zh_TW]=使用量
 
 [Desktop Action uuid]
 Name=Uuid
+Name[ca]=UUID
+Name[ca@valencia]=UUID
 Name[is]=UUID
 Name[ja]=UUID
 Name[ko]=UUID

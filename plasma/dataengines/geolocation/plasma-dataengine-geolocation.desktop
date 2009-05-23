@@ -1,6 +1,8 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Geolocation
+Name[ca]=Geolocalització
+Name[ca@valencia]=Geolocalització
 Name[cs]=Geolokace
 Name[csb]=Geògrafnô lokalizacëjô
 Name[da]=Geo-lokalisering
@@ -16,6 +18,8 @@ Name[sv]=Geografisk lokalisering
 Name[uk]=Геопозиціювання
 Name[zh_CN]=地理
 Comment=Geolocation Data Engine
+Comment[ca]=Motor de dades de geolocalització
+Comment[ca@valencia]=Motor de dades de geolocalització
 Comment[csb]=Czérownik pòdôwków geògrafny lokalizacëji
 Comment[da]=Datamotor til geo-lokalisering
 Comment[de]=Geolokalisierungs-Datentreiber

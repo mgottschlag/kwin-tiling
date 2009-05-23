@@ -1,6 +1,8 @@
 [Desktop Entry]
 Actions=accessible;filePath;objectName;
 Name=Storage Access
+Name[ca]=Accés d'emmagatzematge
+Name[ca@valencia]=Accés d'emmagatzematge
 Name[csb]=Przëstãp zôpisu
 Name[da]=Lageradgang
 Name[el]=Πρόσβαση χώρου αποθήκευσης
@@ -54,6 +56,8 @@ Name[zh_TW]=可存取
 
 [Desktop Action filePath]
 Name=File Path
+Name[ca]=Camí al fitxer
+Name[ca@valencia]=Camí al fitxer
 Name[cs]=Cesta k souboru
 Name[csb]=Stegna lopka
 Name[da]=Filsti
@@ -82,6 +86,8 @@ Name[zh_TW]=檔案路徑
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ca]=Nom de l'objecte
+Name[ca@valencia]=Nom de l'objecte
 Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου

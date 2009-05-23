@@ -1,6 +1,8 @@
 [Desktop Entry]
 Actions=bus;driveType;hotpluggable;objectName;removable;
 Name=Storage Drive
+Name[ca]=Unitat d'emmagatzematge
+Name[ca@valencia]=Unitat d'emmagatzematge
 Name[csb]=Zôpisowny nëk
 Name[da]=Lagerdrev
 Name[el]=Συσκευή αποθήκευσης
@@ -50,6 +52,8 @@ Name[zh_TW]=匯流排
 
 [Desktop Action driveType]
 Name=Drive Type
+Name[ca]=Tipus d'unitat
+Name[ca@valencia]=Tipus d'unitat
 Name[csb]=Ôrt nëkù
 Name[da]=Drevtype
 Name[de]=Laufwerkstyp
@@ -77,6 +81,8 @@ Name[zh_TW]=磁碟型態
 
 [Desktop Action hotpluggable]
 Name=Hotpluggable
+Name[ca]=Connectable en calent
+Name[ca@valencia]=Connectable en calent
 Name[da]=Flytbar
 Name[de]=Hotplug-fähig
 Name[el]=Δυνατότητα Hotplug
@@ -101,6 +107,8 @@ Name[zh_TW]=可熱插拔
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ca]=Nom de l'objecte
+Name[ca@valencia]=Nom de l'objecte
 Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
@@ -127,6 +135,8 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action removable]
 Name=Removable
+Name[ca]=Extraïble
+Name[ca@valencia]=Extraïble
 Name[da]=Flytbar
 Name[de]=Wechselbar
 Name[el]=Αφαιρούμενο μέσο

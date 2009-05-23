@@ -1,6 +1,8 @@
 [Desktop Entry]
 Actions=objectName;plugged;
 Name=Ac Adapter
+Name[ca]=Adaptador d'AC
+Name[ca@valencia]=Adaptador d'AC
 Name[da]=Strømforsyning
 Name[de]=Netzteil
 Name[el]=Ρεύμα AC
@@ -29,6 +31,8 @@ X-KDE-Solid-Actions-Type=AcAdapter
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ca]=Nom de l'objecte
+Name[ca@valencia]=Nom de l'objecte
 Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
@@ -55,6 +59,8 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action plugged]
 Name=Plugged
+Name[ca]=Endollat
+Name[ca@valencia]=Endollat
 Name[cs]=Připojeno
 Name[csb]=Dodóné
 Name[da]=I stikkontakten

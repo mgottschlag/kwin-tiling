@@ -1,5 +1,7 @@
 [Desktop Entry]
 Name=Geolocation IP
+Name[ca]=Geolocalització IP
+Name[ca@valencia]=Geolocalització IP
 Name[csb]=IP geògrafny lokalizacëji
 Name[da]=IP-adresse til geo-lokalisering
 Name[de]=Geolokalisierung IP
@@ -14,6 +16,8 @@ Name[sv]=Lokalisera geografiskt med IP-adress
 Name[uk]=Геопозиціювання за IP
 Name[zh_CN]=地理 IP
 Comment=Geolocation from IP address.
+Comment[ca]=Geolocalització des d'una adreça IP.
+Comment[ca@valencia]=Geolocalització des d'una adreça IP.
 Comment[csb]=Geògrafnô lokalizacëjô z adresë IP.
 Comment[da]=Geo-lokalisering ud fra IP-adresse.
 Comment[de]=Geolokalisierung mittels IP-Adresse.

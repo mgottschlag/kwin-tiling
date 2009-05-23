@@ -1,6 +1,8 @@
 [Desktop Entry]
 Actions=bus;driveType;hotpluggable;objectName;readSpeed;removable;supportedMedia;writeSpeed;writeSpeeds;
 Name=Optical Drive
+Name[ca]=Unitat òptica
+Name[ca@valencia]=Unitat òptica
 Name[csb]=Òpticzny nëk
 Name[da]=Optisk drev
 Name[de]=Optisches Laufwerk
@@ -52,6 +54,8 @@ Name[zh_TW]=匯流排
 
 [Desktop Action driveType]
 Name=Drive Type
+Name[ca]=Tipus d'unitat
+Name[ca@valencia]=Tipus d'unitat
 Name[csb]=Ôrt nëkù
 Name[da]=Drevtype
 Name[de]=Laufwerkstyp
@@ -79,6 +83,8 @@ Name[zh_TW]=磁碟型態
 
 [Desktop Action hotpluggable]
 Name=Hotpluggable
+Name[ca]=Connectable en calent
+Name[ca@valencia]=Connectable en calent
 Name[da]=Flytbar
 Name[de]=Hotplug-fähig
 Name[el]=Δυνατότητα Hotplug
@@ -103,6 +109,8 @@ Name[zh_TW]=可熱插拔
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ca]=Nom de l'objecte
+Name[ca@valencia]=Nom de l'objecte
 Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
@@ -129,6 +137,8 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action readSpeed]
 Name=Read Speed
+Name[ca]=Velocitat de lectura
+Name[ca@valencia]=Velocitat de lectura
 Name[csb]=Chùtkòsc czëtaniô
 Name[da]=Læsehastighed
 Name[de]=Lesegeschwindigkeit
@@ -156,6 +166,8 @@ Name[zh_TW]=讀取速度
 
 [Desktop Action removable]
 Name=Removable
+Name[ca]=Extraïble
+Name[ca@valencia]=Extraïble
 Name[da]=Flytbar
 Name[de]=Wechselbar
 Name[el]=Αφαιρούμενο μέσο
@@ -182,6 +194,8 @@ Name[zh_TW]=可移除
 
 [Desktop Action supportedMedia]
 Name=Supported Media
+Name[ca]=Suports acceptats
+Name[ca@valencia]=Suports acceptats
 Name[csb]=Wspiéróné media
 Name[da]=Understøttede medier
 Name[de]=Unterstützte Medien
@@ -209,6 +223,8 @@ Name[zh_TW]=支援的媒體
 
 [Desktop Action writeSpeed]
 Name=Write Speed
+Name[ca]=Velocitat d'escriptura
+Name[ca@valencia]=Velocitat d'escriptura
 Name[csb]=Chùtkòsc pisaniô
 Name[da]=Brændehastighed
 Name[de]=Schreibgeschwindigkeit
@@ -236,6 +252,8 @@ Name[zh_TW]=寫入速度
 
 [Desktop Action writeSpeeds]
 Name=Write Speeds
+Name[ca]=Velocitats d'escriptura
+Name[ca@valencia]=Velocitats d'escriptura
 Name[csb]=Chùtkòscë pisaniô
 Name[da]=Brændehastigheder
 Name[de]=Schreibgeschwindigkeiten

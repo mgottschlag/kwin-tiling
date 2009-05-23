@@ -1,6 +1,8 @@
 [Desktop Entry]
 Actions=objectName;supportedDrivers;supportedProtocols;
 Name=Portable Media Player
+Name[ca]=Reproductor de suports portàtil
+Name[ca@valencia]=Reproductor de suports portàtil
 Name[csb]=Przenosny grôcz mediów
 Name[da]=Transportabel medieafspiller
 Name[de]=Tragbarer Mediaplayer
@@ -30,6 +32,8 @@ X-KDE-Solid-Actions-Type=PortableMediaPlayer
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ca]=Nom de l'objecte
+Name[ca@valencia]=Nom de l'objecte
 Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
@@ -56,6 +60,8 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action supportedDrivers]
 Name=Supported Drivers
+Name[ca]=Controladors acceptats
+Name[ca@valencia]=Controladors acceptats
 Name[csb]=Wspiéróné czérowniczi
 Name[da]=Understøttede drivere
 Name[de]=Unterstützte Treiber
@@ -83,6 +89,8 @@ Name[zh_TW]=支援的驅動程式
 
 [Desktop Action supportedProtocols]
 Name=Supported Protocols
+Name[ca]=Protocols acceptats
+Name[ca@valencia]=Protocols acceptats
 Name[csb]=Wspiéróné protokòłë
 Name[da]=Understøttede protokoller
 Name[de]=Unterstützte Protokolle

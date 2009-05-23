@@ -1,6 +1,8 @@
 [Desktop Entry]
 Actions=hwAddress;ifaceName;macAddress;objectName;wireless;
 Name=Network Interface
+Name[ca]=Interfície de xarxa
+Name[ca@valencia]=Interfície de xarxa
 Name[csb]=Sécowi interfejs
 Name[da]=Netværkskort
 Name[de]=Netzwerkschnittstelle
@@ -30,6 +32,8 @@ X-KDE-Solid-Actions-Type=NetworkInterface
 
 [Desktop Action hwAddress]
 Name=Hw Address
+Name[ca]=Adreça maquinari
+Name[ca@valencia]=Adreça maquinari
 Name[csb]=Adresa Hw
 Name[da]=HW-adresse
 Name[de]=HW-Adresse
@@ -57,6 +61,8 @@ Name[zh_TW]=硬體位址
 
 [Desktop Action ifaceName]
 Name=Iface Name
+Name[ca]=Nom d'interfície
+Name[ca@valencia]=Nom d'interfície
 Name[csb]=Miono Iface
 Name[da]=Navn på grænseflade
 Name[de]=Schnittstellen-Name
@@ -84,6 +90,8 @@ Name[zh_TW]=介面名稱
 
 [Desktop Action macAddress]
 Name=Mac Address
+Name[ca]=Adreça MAC
+Name[ca@valencia]=Adreça MAC
 Name[csb]=Adresa Mac
 Name[da]=MAC-adresse
 Name[de]=MAC-Adresse
@@ -111,6 +119,8 @@ Name[zh_TW]=Mac 位址
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ca]=Nom de l'objecte
+Name[ca@valencia]=Nom de l'objecte
 Name[da]=Objektnavn
 Name[de]=Objektname
 Name[el]=Όνομα αντικειμένου
@@ -137,6 +147,8 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action wireless]
 Name=Wireless
+Name[ca]=Sense fils
+Name[ca@valencia]=Sense fils
 Name[cs]=Bezdrátové
 Name[csb]=Bezkablowé
 Name[da]=Trådløst
