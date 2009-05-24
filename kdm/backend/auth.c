@@ -886,6 +886,9 @@ defineSelf( int fd, FILE *file, Xauth *auth, int *ok )
 
 #else /* SIOCGIFCONF */
 
+#include <sys/utsname.h>
+#include <netdb.h>
+
 /* Define this host for access control.  Find all the hosts the OS knows about
  * for this fd and add them to the selfhosts list.
  */
