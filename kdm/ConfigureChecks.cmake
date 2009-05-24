@@ -73,6 +73,12 @@ define_library(posix4 sched_yield)
 define_library(socket connect)
 define_library(resolv dn_expand)
 
+# for Solaris
+check_function_exists(gethostbyname have_gethostbyname)
+if (NOT have_gethostbyname)
+	define_library(nsl gethostbyname)
+endif (NOT have_gethostbyname)
+
 # for genkdmconf; this is TODO
 #if (EXISTS /etc/ttys)
 #	set(BSD_INIT 1)
@@ -171,7 +177,10 @@ endif (KDE4_XDMCP AND X11_Xdmcp_FOUND)
 option(KDE4_KDM_XCONSOLE "Build KDM with built-in xconsole" OFF)
 macro_bool_to_01(KDE4_KDM_XCONSOLE WITH_KDM_XCONSOLE)
 
-check_function_exists(getifaddrs  HAVE_GETIFADDRS)
+macro_push_required_vars()
+set(CMAKE_REQUIRED_LIBRARIES ${NSL_LIBRARIES})
+check_function_exists(getifaddrs HAVE_GETIFADDRS)
+macro_pop_required_vars()
 check_function_exists(getloadavg  HAVE_GETLOADAVG)
 check_function_exists(setproctitle HAVE_SETPROCTITLE)
 check_function_exists(strnlen     HAVE_STRNLEN)
