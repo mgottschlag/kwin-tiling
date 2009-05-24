@@ -52,7 +52,12 @@ from the copyright holder.
 # include <netdnet/dnetdb.h>
 #endif
 
-#if (defined(_POSIX_SOURCE) && !defined(_AIX) && !defined(__QNX__)) || defined(__hpux) || defined(__svr4__) /* XXX */
+/*
+  This condition is copied verbatim from XlibInt.
+  As since the demise of imake nobody is setting many of these variables
+  any more, NEED_UTSNAME is essentially always defined. Who cares?
+*/
+#if (defined(_POSIX_SOURCE) && !defined(AIXV3) && !defined(__QNX__)) || defined(hpux) || defined(USG) || defined(SVR4)
 # define NEED_UTSNAME
 # include <sys/utsname.h>
 #endif
@@ -506,9 +511,7 @@ writeAddr( int family, int addr_length, CARD8 *addr,
 static void
 defineLocal( FILE *file, Xauth *auth, int *ok )
 {
-#if !defined(NEED_UTSNAME) || defined(__hpux)
 	char displayname[100];
-#endif
 #ifdef NEED_UTSNAME
 	struct utsname name;
 #endif
@@ -524,7 +527,6 @@ defineLocal( FILE *file, Xauth *auth, int *ok )
  */
 
 #ifdef NEED_UTSNAME
-
 	/* hpux:
 	 * Why not use gethostname()?  Well, at least on my system, I've had to
 	 * make an ugly kernel patch to get a name longer than 8 characters, and
@@ -535,12 +537,6 @@ defineLocal( FILE *file, Xauth *auth, int *ok )
 	writeAddr( FamilyLocal, strlen( name.nodename ), (CARD8 *)name.nodename,
 	           file, auth, ok );
 #endif
-
-#if !defined(NEED_UTSNAME) || defined(__hpux)
-	/* _AIX:
-	 * In _AIX, _POSIX_SOURCE is defined, but uname gives only first
-	 * field of hostname. Thus, we use gethostname instead.
-	 */
 
 	/*
 	 * For HP-UX, HP's Xlib expects a fully-qualified domain name, which
@@ -560,7 +556,6 @@ defineLocal( FILE *file, Xauth *auth, int *ok )
 # endif
 		writeAddr( FamilyLocal, strlen( displayname ), (CARD8 *)displayname,
 		           file, auth, ok );
-#endif
 }
 
 #ifdef SYSV_SIOCGIFCONF
