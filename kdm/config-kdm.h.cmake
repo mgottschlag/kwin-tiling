@@ -123,6 +123,9 @@
 /* Define to 1 if you have the <termios.h> header file. */
 #cmakedefine HAVE_TERMIOS_H 1
 
+/* Define to 1 if you have the <sys/sockio.h> header file. */
+#cmakedefine HAVE_SYS_SOCKIO_H 1
+
 /* Define to 1 if the ck-connector library is found */
 #cmakedefine HAVE_CKCONNECTOR 1
 

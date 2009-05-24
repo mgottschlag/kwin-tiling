@@ -39,13 +39,16 @@ from the copyright holder.
 #include "dm_socket.h"
 
 #include <ctype.h>
-
-#ifdef __svr4__
+#include <sys/ioctl.h>
+#ifdef HAVE_SYS_SOCKIO_H
 # include <sys/sockio.h>
 #endif
+#ifndef __GNU__
+# include <net/if.h>
+#endif
 #include <arpa/inet.h>
+#include <netdb.h>
 
-#include <sys/ioctl.h>
 #ifdef STREAMSCONN
 # ifdef WINTCP /* NCR with Wollongong TCP */
 #  include <netinet/ip.h>
@@ -55,12 +58,6 @@ from the copyright holder.
 # include <netconfig.h>
 # include <netdir.h>
 #endif
-
-#if !defined(__GNU__) && !defined(__hpux) /* XXX __hpux might be wrong */
-# include <net/if.h>
-#endif
-
-#include <netdb.h>
 
 typedef struct _Choices {
 	struct _Choices *next;

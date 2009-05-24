@@ -17,6 +17,7 @@ check_struct_member("struct utmp" "ut_host" "utmp.h" HAVE_STRUCT_UTMP_UT_HOST)
 check_include_files(lastlog.h HAVE_LASTLOG_H)
 check_include_files(termio.h HAVE_TERMIO_H)
 check_include_files(termios.h HAVE_TERMIOS_H)
+check_include_files(sys/sockio.h HAVE_SYS_SOCKIO_H)
 
 check_symbol_exists(sysinfo "sys/sysinfo.h" HAVE_SYSINFO)
 check_symbol_exists(systeminfo "sys/systeminfo.h" HAVE_SYS_SYSTEMINFO)
