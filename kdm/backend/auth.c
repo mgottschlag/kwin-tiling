@@ -740,26 +740,13 @@ defineSelf( int fd, FILE *file, Xauth *auth, int *ok )
 
 #else /* WINTCP */
 
-/* Solaris provides an extended interface SIOCGLIFCONF.  Other systems
- * may have this as well, but the code has only been tested on Solaris
- * so far, so we only enable it there.  Other platforms may be added as
- * needed.
- *
- * Test for Solaris commented out  --  TSI @ UQV 2003.06.13
- */
-#ifdef SIOCGLIFCONF
-/* #if defined(sun) */
-# define USE_SIOCGLIFCONF
-/* #endif */
-#endif
+#if defined(SIOCGIFCONF) || defined (SIOCGLIFCONF)
 
-#if defined(SIOCGIFCONF) || defined (USE_SIOCGLIFCONF)
-
-#if !defined(SYSV_SIOCGIFCONF) || defined(USE_SIOCGLIFCONF)
+#if !defined(SYSV_SIOCGIFCONF) || defined(SIOCGLIFCONF)
 # define ifioctl ioctl
 #endif
 
-#ifdef USE_SIOCGLIFCONF
+#ifdef SIOCGLIFCONF
 # define ifr_type struct lifreq
 #else
 # define ifr_type struct ifreq
@@ -774,7 +761,7 @@ defineSelf( int fd, FILE *file, Xauth *auth, int *ok )
 # define ifr_size(p) (sizeof(ifr_type))
 #endif
 
-#ifdef USE_SIOCGLIFCONF
+#ifdef SIOCGLIFCONF
 # define IFC_IOCTL_REQ SIOCGLIFCONF
 # define IFC_REQ(ifc) ifc.lifc_req
 # define IFC_LEN(ifc) ifc.lifc_len
@@ -799,7 +786,7 @@ defineSelf( int fd, FILE *file, Xauth *auth, int *ok )
 	CARD8 *addr;
 	int family;
 	ifr_type *ifr;
-#ifdef USE_SIOCGLIFCONF
+#ifdef SIOCGLIFCONF
 	int n;
 	void * bufptr = buf;
 	size_t buflen = sizeof(buf);
@@ -822,7 +809,7 @@ defineSelf( int fd, FILE *file, Xauth *auth, int *ok )
 	}
 #endif
 
-#ifdef USE_SIOCGLIFCONF
+#ifdef SIOCGLIFCONF
 	ifc.lifc_family = AF_UNSPEC;
 	ifc.lifc_flags = 0;
 	ifc.lifc_len = buflen;
