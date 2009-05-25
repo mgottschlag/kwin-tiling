@@ -12,13 +12,13 @@ set(appletbrowserdialog_SRCS
     ../common/plasmaappletitemmodel.cpp
 )
 
-set(wallpaper_SRCS
-    ../common/wallpaperpreview.cpp
-)
-
 kde4_add_ui_files (
     appletbrowserdialog_SRCS
     ../common/kcategorizeditemsviewbase.ui
+)
+
+set(wallpaper_SRCS
+    ../common/wallpaperpreview.cpp
 )
 
 set(plasma_SRCS
