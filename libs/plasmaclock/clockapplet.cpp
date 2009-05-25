@@ -541,7 +541,7 @@ void ClockApplet::wheelEvent(QGraphicsSceneWheelEvent *event)
 
     QString cur = currentTimezone();
     setCurrentTimezone(newTimezone);
-    changeEngineTimezone(currentTimezone(), newTimezone);
+    changeEngineTimezone(cur, newTimezone);
     update();
 }
 
