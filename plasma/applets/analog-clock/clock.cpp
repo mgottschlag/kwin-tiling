@@ -93,6 +93,13 @@ void Clock::init()
     m_fancyHands = cg.readEntry("fancyHands", false);
     setCurrentTimezone(cg.readEntry("timezone", localTimezone()));
 
+    if (m_showSecondHand) {
+        //We don't need to cache the applet if it update every seconds
+        setCacheMode(QGraphicsItem::NoCache);
+    } else {
+        setCacheMode(QGraphicsItem::DeviceCoordinateCache);
+    }
+
     connectToEngine();
 }
 
@@ -190,9 +197,16 @@ void Clock::createClockConfigurationInterface(KConfigDialog *parent)
 void Clock::clockConfigAccepted()
 {
     KConfigGroup cg = config();
-    m_showSecondHand = ui.showSecondHandCheckBox->isChecked();
     m_showTimezoneString = ui.showTimezoneStringCheckBox->isChecked();
     m_showingTimezone = m_showTimezoneString || shouldDisplayTimezone();
+    m_showSecondHand = ui.showSecondHandCheckBox->isChecked();
+
+    if (m_showSecondHand) {
+        //We don't need to cache the applet if it update every seconds
+        setCacheMode(QGraphicsItem::NoCache);
+    } else {
+        setCacheMode(QGraphicsItem::DeviceCoordinateCache);
+    }
 
     cg.writeEntry("showSecondHand", m_showSecondHand);
     cg.writeEntry("showTimezoneString", m_showTimezoneString);
