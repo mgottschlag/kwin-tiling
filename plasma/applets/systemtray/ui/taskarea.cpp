@@ -133,7 +133,7 @@ void TaskArea::addTask(Task *task)
 
 void TaskArea::addWidgetForTask(SystemTray::Task *task)
 {
-    if (!task->isEmbeddable()) {
+    if (!task->isEmbeddable(d->host)) {
         kDebug() << "task is not embeddable, so FAIL" << task->name();
         return;
     }

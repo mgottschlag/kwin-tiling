@@ -85,6 +85,12 @@ public:
     QGraphicsWidget* widget(Plasma::Applet *host, bool createIfNecessary = true);
 
     /**
+     * @return whether this task is embeddable; true if there is already a widget
+     * for this host.
+     */
+    bool isEmbeddable(Plasma::Applet *host);
+
+    /**
      * Returns whether this task can be embeddable
      *
      * Depending on the protocol, there may be circumstances under which

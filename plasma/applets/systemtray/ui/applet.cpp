@@ -485,6 +485,7 @@ void Applet::configAccepted()
     QListWidget *hiddenList = d->autoHideUi.icons;
     for (int i = 0; i < hiddenList->count(); ++i) {
         QListWidgetItem *item = hiddenList->item(i);
+        //kDebug() << (item->checkState() == Qt::Checked) << item->data(Qt::UserRole).toString();
         if (item->checkState() != Qt::Checked) {
             hiddenTypes << item->data(Qt::UserRole).toString();
         }

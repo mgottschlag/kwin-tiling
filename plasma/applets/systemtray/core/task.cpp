@@ -79,6 +79,15 @@ QGraphicsWidget* Task::widget(Plasma::Applet *host, bool createIfNecessary)
     return widget;
 }
 
+bool Task::isEmbeddable(Plasma::Applet *host)
+{
+    if (!host) {
+        return false;
+    }
+
+    return d->widgetsByHost.value(host) || isEmbeddable();
+}
+
 void Task::widgetDeleted()
 {
     bool wasEmbeddable = isEmbeddable();
