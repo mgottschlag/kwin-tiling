@@ -67,6 +67,7 @@ bool KSysTrayCmd::start()
 	  return true;
       }
 
+      waitingForWindow = true;
       checkExistingWindows();
       if ( win ) {
         // Window always on top
@@ -202,6 +203,7 @@ void KSysTrayCmd::clientExited()
   delete client;
   client = 0;
   win = 0;
+  waitingForWindow = false;
 
   if ( lazyStart && noquit )
     refresh();
