@@ -124,7 +124,7 @@ void KSysTrayCmd::hideWindow()
 
 void KSysTrayCmd::setTargetWindow( WId w )
 {
-  disconnect( KWindowSystem::self(), SIGNAL(windowAdded(WId)), this, SLOT(windowAdded(WId)) );
+    disconnect( KWindowSystem::self(), SIGNAL(windowAdded(WId)), this, SLOT(windowAdded(WId)) );
   connect( KWindowSystem::self(), SIGNAL(windowChanged(WId)), SLOT(windowChanged(WId)) );
   win = w;
 //  KWindowSystem::setSystemTrayWindowFor( winId(), win );
@@ -181,9 +181,10 @@ void KSysTrayCmd::refresh()
 
 bool KSysTrayCmd::startClient()
 {
+  kDebug() << "startClient()";
   client = new KProcess();
   client->setShellCommand( command );
-  connect( KWindowSystem::self(), SIGNAL(windowAdded(WId)), SLOT(windowAdded(WId)) );
+  connect( KWindowSystem::self(), SIGNAL(windowAdded(WId)), this, SLOT(windowAdded(WId)) );
   connect( client, SIGNAL( finished(int,QProcess::ExitStatus) ),
 	   this, SLOT( clientExited() ) );
 
@@ -268,6 +269,7 @@ void KSysTrayCmd::execContextMenu( const QPoint &pos )
 
 void KSysTrayCmd::checkExistingWindows()
 {
+  kDebug() << "checkExistingWindows()";
   QList<WId>::ConstIterator it;
   for ( it = KWindowSystem::windows().begin(); it != KWindowSystem::windows().end(); ++it ) {
     windowAdded( *it );
@@ -276,11 +278,35 @@ void KSysTrayCmd::checkExistingWindows()
   }
 }
 
+const int SUPPORTED_WINDOW_TYPES_MASK = NET::NormalMask | NET::DesktopMask | NET::DockMask
+    | NET::ToolbarMask | NET::MenuMask | NET::DialogMask | NET::OverrideMask | NET::TopMenuMask
+    | NET::UtilityMask | NET::SplashMask;
+
 void KSysTrayCmd::windowAdded(WId w)
 {
-  if ( !window.isEmpty() && ( QRegExp( window ).indexIn( KWindowSystem::windowInfo(w,NET::WMName).name() ) == -1 ) )
-    return; // no match
-  setTargetWindow( w );
+    KWindowInfo info = KWindowSystem::windowInfo( w, NET::WMWindowType | NET::WMName );
+    kDebug() << "windowAdded, id" << w << "pattern is " << window << " window is " << info.name();
+
+    // always ignore these window types
+    if( info.windowType( SUPPORTED_WINDOW_TYPES_MASK ) == NET::TopMenu
+        || info.windowType( SUPPORTED_WINDOW_TYPES_MASK ) == NET::Toolbar
+        || info.windowType( SUPPORTED_WINDOW_TYPES_MASK ) == NET::Desktop )
+        return;
+
+    // If we're grabbing the first window we see
+    if( window.isEmpty() ) {
+        // accept only "normal" windows
+        if( info.windowType( SUPPORTED_WINDOW_TYPES_MASK ) != NET::Unknown
+            && info.windowType( SUPPORTED_WINDOW_TYPES_MASK ) != NET::Normal
+            && info.windowType( SUPPORTED_WINDOW_TYPES_MASK ) != NET::Dialog )
+            return;
+    }
+    else if ( QRegExp( window ).indexIn( info.name() ) == -1 ) {
+	return;
+    }
+
+    kDebug() << "windowAdded, setting target " << (int) w;
+    setTargetWindow( w );
 }
 
 void KSysTrayCmd::windowChanged( WId w )
