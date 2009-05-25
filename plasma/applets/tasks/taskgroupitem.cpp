@@ -1228,5 +1228,10 @@ void TaskGroupItem::publishIconGeometry(const QRect &rect) const
     }
 }
 
+QWidget *TaskGroupItem::popupDialog() const
+{
+    return m_popupDialog;
+}
+
 #include "taskgroupitem.moc"
 

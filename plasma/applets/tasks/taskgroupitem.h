@@ -109,6 +109,7 @@ public:
     void setAdditionalMimeData(QMimeData* mimeData);
     void publishIconGeometry() const;
     void publishIconGeometry(const QRect &rect) const;
+    QWidget *popupDialog() const;
 
 signals:
     /** Emitted when a window is selected for activation, minimization, iconification */

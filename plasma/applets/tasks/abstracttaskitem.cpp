@@ -377,24 +377,41 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
         update();
     } else if (event->timerId() == m_hoverEffectTimerId) {
 #ifdef Q_WS_X11
-        QList<TaskManager::TaskItem *> windows;
+        QList<WId> windows;
 
         if (m_abstractItem->isGroupItem()) {
-            foreach (AbstractGroupableItem *item,
-                     static_cast<TaskManager::TaskGroup*>(m_abstractItem)->members()) {
-                if (item->isGroupItem()) {
-                    //TODO: recurse through sub-groups?
-                } else {
-                    TaskManager::TaskItem *taskItem = static_cast<TaskManager::TaskItem*>(item);
-                    if (taskItem->task()) {
-                        windows.append(taskItem);
+            TaskManager::TaskGroup *group = qobject_cast<TaskManager::TaskGroup *>(m_abstractItem);
+
+            if (group) {
+                TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(this);
+                if (groupItem && groupItem->popupDialog()) {
+                    kDebug() << "adding" << groupItem->popupDialog()->winId();
+                    windows.append(groupItem->popupDialog()->winId());
+                }
+
+                foreach (AbstractGroupableItem *item, group->members()) {
+                    if (item->isGroupItem()) {
+                        //TODO: recurse through sub-groups?
+                    } else {
+                        TaskManager::TaskItem *taskItem = qobject_cast<TaskManager::TaskItem *>(item);
+                        if (taskItem && taskItem->task()) {
+                            windows.append(taskItem->task()->window());
+                        }
                     }
                 }
             }
         } else {
-            TaskManager::TaskItem *taskItem = static_cast<TaskManager::TaskItem*>(m_abstractItem);
-            if (taskItem->task()) {
-                windows.append(taskItem);
+            WindowTaskItem *windowTaskItem = qobject_cast<WindowTaskItem *>(this);
+            if (windowTaskItem && windowTaskItem->parent()) {
+                TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(windowTaskItem->parent());
+                if (groupItem && groupItem->popupDialog()) {
+                    windows.append(groupItem->popupDialog()->winId());
+                }
+            }
+
+            TaskManager::TaskItem *taskItem = qobject_cast<TaskManager::TaskItem *>(m_abstractItem);
+            if (taskItem && taskItem->task()) {
+                windows.append(taskItem->task()->window());
             }
         }
 
@@ -404,19 +421,8 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
         //kDebug() << "setting for" << numWindows;
         int actualCount = 0;
         for (int i = 0; i < numWindows; ++i) {
-            TaskManager::TaskItem *item = windows.at(i);
-
-            // we've already checked that the item has a task in the foreach above
-            // but this bit of paranoia should lock the deal; the checks in the foreach
-            // above will help prevent call to data.resize below from happening,
-            // but this should catch any odd events that might happen; afaict this is
-            // currently impossible, but it's too easy to introduce such situations in the
-            // future with modifications to the code above this and it's easy to do
-            // the check here. better safe than sorry, right? :) - aseigo
-            if (item->task()) {
-                data[i] = item->task()->window();
-                ++actualCount;
-            }
+            data[i] = windows.at(i);
+            ++actualCount;
         }
 
         if (actualCount != numWindows) {
