@@ -378,9 +378,14 @@ void TaskGroupItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
     menu.exec(m_applet->containment()->corona()->popupPosition(this, menu.size()));
 }
 
-QList<AbstractTaskItem*> TaskGroupItem::memberList() const
+QHash<AbstractItemPtr, AbstractTaskItem*> TaskGroupItem::members() const
 {
-    return m_groupMembers.values();
+    return m_groupMembers;
+}
+
+int TaskGroupItem::count() const
+{
+    return m_groupMembers.count();
 }
 
 AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractItemPtr groupableItem)
@@ -1043,7 +1048,7 @@ int TaskGroupItem::indexOf(AbstractTaskItem *task)
             if (groupItem) {
                 int subIndex = groupItem->indexOf(task);
                 if(subIndex == -1) {
-                    index += groupItem->memberList().count();
+                    index += groupItem->count();
                 } else {
                     return index+subIndex;
                 }
@@ -1081,7 +1086,7 @@ int TaskGroupItem::totalSubTasks()
         if (taskItem) {
             TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(taskItem);
             if (groupItem) {
-                count += groupItem->memberList().count();
+                count += groupItem->count();
             } else {
                 count++;
             }
@@ -1098,10 +1103,10 @@ AbstractTaskItem * TaskGroupItem::selectSubTask(int index)
         if (taskItem) {
             TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(taskItem);
             if (groupItem) {
-                if (index < groupItem->memberList().count()) {
+                if (index < groupItem->count()) {
                    return groupItem->abstractTaskItem(groupItem->group()->members().at(index));
                 } else {
-                   index -= groupItem->memberList().count();
+                   index -= groupItem->count();
                 }
             } else if (index == 0) {
                 return taskItem;

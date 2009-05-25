@@ -64,7 +64,8 @@ public:
 
     virtual void close();
 
-    QList<AbstractTaskItem*> memberList() const;
+    QHash<AbstractItemPtr, AbstractTaskItem*> members() const;
+    int count() const;
     AbstractTaskItem * activeSubTask();
 
     virtual bool isWindowItem() const;

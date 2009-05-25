@@ -33,7 +33,7 @@ TaskItemLayout::TaskItemLayout(TaskGroupItem *parent, Tasks *applet)
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
     setMaximumSize(INT_MAX,INT_MAX);
     //kDebug();
-    foreach(AbstractTaskItem *item, m_groupItem->memberList()) {
+    foreach (AbstractTaskItem *item, m_groupItem->members()) {
         addTaskItem(item);
     }
 }
@@ -143,7 +143,7 @@ int TaskItemLayout::size()
 {
     int groupSize = 0;
 
-    foreach (AbstractTaskItem *item, m_groupItem->memberList()) {
+    foreach (AbstractTaskItem *item, m_groupItem->members()) {
         if (!item->abstractItem()) { //this item is a startup task
             kDebug() << "Error, invalid item in groupMembers";
             continue;

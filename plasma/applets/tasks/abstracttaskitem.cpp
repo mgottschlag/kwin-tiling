@@ -608,10 +608,10 @@ void AbstractTaskItem::drawTask(QPainter *painter, const QStyleOptionGraphicsIte
 
             painter->setFont(font);
             rect.setTop(arrowRect.bottom());
-            painter->drawText(rect, Qt::AlignHCenter|Qt::AlignTop, QString::number(groupItem->memberList().count()));
+            painter->drawText(rect, Qt::AlignHCenter|Qt::AlignTop, QString::number(groupItem->count()));
         } else {
             painter->setFont(font);
-            painter->drawText(rect, Qt::AlignCenter, QString::number(groupItem->memberList().count()));
+            painter->drawText(rect, Qt::AlignCenter, QString::number(groupItem->count()));
         }
     }
 }
@@ -884,7 +884,7 @@ QRectF AbstractTaskItem::expanderRect(const QRectF &bounds) const
     QFontMetrics fm(KGlobalSettings::smallestReadableFont());
     Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
 
-    QSize expanderSize(qMax(fm.width(QString::number(groupItem->memberList().count())),
+    QSize expanderSize(qMax(fm.width(QString::number(groupItem->count())),
                        itemBackground ?  itemBackground->elementSize(expanderElement()).width() : 0),
                        size().height());
 
