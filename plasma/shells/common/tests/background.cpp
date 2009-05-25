@@ -35,10 +35,9 @@ static const char version[] = "1.0";
 
 int main(int argc, char *argv[])
 {
-    KAboutData aboutData("plasmbackgrounddialog", 0, "Plasma Desktop Shell Background Dialog",
+    KAboutData aboutData("plasmbackgrounddialog", 0, ki18n("Plasma"),
                          version, ki18n( description ), KAboutData::License_GPL,
-                         "(C) 2009, Aaron Seigo");
-    aboutData.addAuthor("Aaron Seigo", "Original author", "aseigo@kde.org");
+                         ki18n("(C) 2008, Aaron Seigo"));
     KCmdLineArgs::init(argc, argv, &aboutData);
     KApplication app;
 
