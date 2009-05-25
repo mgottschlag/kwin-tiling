@@ -71,6 +71,7 @@ private:
   bool quitOnHide;
   bool onTop; ///< tells if window must stay on top or not
   bool ownIcon; ///< tells if the ksystraycmd icon must be used in systray
+  bool waitingForWindow;
   KMenu * menu;
 
   WId win;

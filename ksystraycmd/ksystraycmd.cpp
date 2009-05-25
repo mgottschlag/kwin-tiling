@@ -26,9 +26,13 @@
 
 KSysTrayCmd::KSysTrayCmd()
   : KSystemTrayIcon( static_cast<QWidget*>(0) ),
-    isVisible(true), lazyStart( false ), noquit( false ), quitOnHide( false ), onTop(false), ownIcon(false),
+    isVisible(true), lazyStart( false ), noquit( false ), 
+    quitOnHide( false ), onTop(false), ownIcon(false),
+    waitingForWindow( false ),
     win(0), client(0), top(0), left(0)
 {
+  connect( KWindowSystem::self(), SIGNAL(windowAdded(WId)), this, SLOT(windowAdded(WId)) );
+
   menu = new KMenu();
   setContextMenu(menu);
   connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(mousePressEvent(QSystemTrayIcon::ActivationReason)));
@@ -184,7 +188,8 @@ bool KSysTrayCmd::startClient()
   kDebug() << "startClient()";
   client = new KProcess();
   client->setShellCommand( command );
-  connect( KWindowSystem::self(), SIGNAL(windowAdded(WId)), this, SLOT(windowAdded(WId)) );
+  //connect( KWindowSystem::self(), SIGNAL(windowAdded(WId)), this, SLOT(windowAdded(WId)) );
+  waitingForWindow = true;
   connect( client, SIGNAL( finished(int,QProcess::ExitStatus) ),
 	   this, SLOT( clientExited() ) );
 
@@ -284,6 +289,9 @@ const int SUPPORTED_WINDOW_TYPES_MASK = NET::NormalMask | NET::DesktopMask | NET
 
 void KSysTrayCmd::windowAdded(WId w)
 {
+    if ( !waitingForWindow )
+	return;
+
     KWindowInfo info = KWindowSystem::windowInfo( w, NET::WMWindowType | NET::WMName );
     kDebug() << "windowAdded, id" << w << "pattern is " << window << " window is " << info.name();
 
