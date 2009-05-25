@@ -187,17 +187,18 @@ void Clock::dataUpdated(const QString &source, const Plasma::DataEngine::Data &d
     m_time = data["Time"].toTime();
     m_date = data["Date"].toDate();
 
-    if (Plasma::ToolTipManager::self()->isVisible(this)) {
-        updateTipContent();
-    }
-
     // avoid unnecessary repaints
     if ((m_showSeconds && m_time.second() != m_lastTimeSeen.second()) ||
         m_time.minute() != m_lastTimeSeen.minute()) {
         m_lastTimeSeen = m_time;
+
+        if (Plasma::ToolTipManager::self()->isVisible(this)) {
+            updateTipContent();
+        }
+
         update();
+        speakTime(m_time);
     }
-    speakTime(m_time);
 }
 
 void Clock::createClockConfigurationInterface(KConfigDialog *parent)
