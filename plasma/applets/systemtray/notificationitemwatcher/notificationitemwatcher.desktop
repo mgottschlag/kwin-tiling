@@ -44,4 +44,4 @@ X-KDE-ServiceTypes=KDEDModule
 X-KDE-Library=notificationitemwatcher
 X-KDE-DBus-ModuleName=notificationitemwatcher
 X-KDE-Kded-autoload=true
-X-KDE-Kded-load-on-demand=true
+X-KDE-Kded-load-on-demand=false
