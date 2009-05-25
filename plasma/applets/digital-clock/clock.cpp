@@ -241,8 +241,7 @@ void Clock::clockConfigAccepted()
             setCacheMode(QGraphicsItem::DeviceCoordinateCache);
         }
 
-        dataEngine("time")->disconnectSource(currentTimezone(), this);
-        dataEngine("time")->connectSource(currentTimezone(), this, updateInterval(), intervalAlignment());
+        changeEngineTimezone(currentTimezone(), currentTimezone());
     }
 
     m_showDate = ui.showDate->checkState() == Qt::Checked;
@@ -276,6 +275,7 @@ void Clock::clockConfigAccepted()
 
 void Clock::changeEngineTimezone(const QString &oldTimezone, const QString &newTimezone)
 {
+    m_lastTimeSeen = QTime();
     dataEngine("time")->disconnectSource(oldTimezone, this);
     dataEngine("time")->connectSource(newTimezone, this, updateInterval(), intervalAlignment());
 }
