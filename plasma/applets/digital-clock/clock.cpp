@@ -84,11 +84,13 @@ void Clock::init()
     m_showDay = cg.readEntry("showDay", true);
 
     m_showSeconds = cg.readEntry("showSeconds", false);
-    //We don't need to cache the applet if it update every seconds
-    if (m_showSeconds)
+    if (m_showSeconds) {
+        //We don't need to cache the applet if it update every seconds
         setCacheMode(QGraphicsItem::NoCache);
-    else
+    } else {
         setCacheMode(QGraphicsItem::DeviceCoordinateCache);
+    }
+
     m_plainClockFont = cg.readEntry("plainClockFont", m_plainClockFont);
     m_useCustomColor = cg.readEntry("useCustomColor", false);
     if (m_useCustomColor) {
@@ -229,12 +231,14 @@ void Clock::clockConfigAccepted()
     //that the update interval is set properly.
     if (m_showSeconds != ui.secondsCheckbox->isChecked()) {
         m_showSeconds = !m_showSeconds;
-	//We don't need to cache the applet if it update every seconds
-        if (m_showSeconds)
-            setCacheMode(QGraphicsItem::NoCache);
-	else
-	    setCacheMode(QGraphicsItem::DeviceCoordinateCache);
         cg.writeEntry("showSeconds", m_showSeconds);
+
+        if (m_showSeconds) {
+            //We don't need to cache the applet if it update every seconds
+            setCacheMode(QGraphicsItem::NoCache);
+        } else {
+            setCacheMode(QGraphicsItem::DeviceCoordinateCache);
+        }
 
         dataEngine("time")->disconnectSource(currentTimezone(), this);
         dataEngine("time")->connectSource(currentTimezone(), this, updateInterval(), intervalAlignment());
