@@ -45,3 +45,5 @@ X-KDE-Library=notificationitemwatcher
 X-KDE-DBus-ModuleName=notificationitemwatcher
 X-KDE-Kded-autoload=true
 X-KDE-Kded-load-on-demand=false
+X-KDE-Kded-phase=1
+
