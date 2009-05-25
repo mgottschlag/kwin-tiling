@@ -386,7 +386,10 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
     connect(this, SIGNAL(finished(int)), this, SLOT(cleanup()));
     connect(this, SIGNAL(okClicked()), this, SLOT(saveConfig()));
     connect(this, SIGNAL(applyClicked()), this, SLOT(saveConfig()));
-    connect(m_containment, SIGNAL(destroyed()), this, SLOT(close()));
+
+    if (m_containment) {
+        connect(m_containment, SIGNAL(destroyed()), this, SLOT(close()));
+    }
 
     m_themeModel = new ThemeModel(this);
     m_theme->setModel(m_themeModel);
@@ -399,7 +402,7 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
 
     addPage(main, i18n("Appearance"), "preferences-desktop-wallpaper");
 
-    if (m_containment->hasConfigurationInterface()) {
+    if (m_containment && m_containment->hasConfigurationInterface()) {
         m_containment->createConfigurationInterface(this);
     }
 
@@ -456,7 +459,7 @@ void BackgroundDialog::reloadConfig()
         item->setData(info.pluginName(), AppletDelegate::PluginNameRole);
         m_containmentModel->appendRow(item);
 
-        if (info.pluginName() == m_containment->pluginName()) {
+        if (m_containment && info.pluginName() == m_containment->pluginName()) {
             containmentIndex = i;
         }
 
@@ -464,10 +467,13 @@ void BackgroundDialog::reloadConfig()
     }
 
     m_containmentComboBox->setCurrentIndex(containmentIndex);
-    m_activityName->setText(m_containment->activity());
+
+    if (m_containment) {
+        m_activityName->setText(m_containment->activity());
+    }
 
     // Wallpaper
-    bool doWallpaper = m_containment->drawWallpaper();
+    bool doWallpaper = !m_containment || m_containment->drawWallpaper();
     m_wallpaperLabel->setVisible(doWallpaper);
     m_wallpaperGroup->setVisible(doWallpaper);
     m_monitor->setVisible(doWallpaper);
@@ -478,7 +484,7 @@ void BackgroundDialog::reloadConfig()
         QString currentPlugin;
         QString currentMode;
 
-        Plasma::Wallpaper *currentWallpaper = m_containment->wallpaper();
+        Plasma::Wallpaper *currentWallpaper = m_containment ? m_containment->wallpaper() : 0;
         if (currentWallpaper) {
             currentPlugin = currentWallpaper->pluginName();
             currentMode = currentWallpaper->renderingMode().name();
@@ -561,7 +567,9 @@ void BackgroundDialog::changeBackgroundMode(int mode)
         m_wallpaper->setRenderingMode(wallpaperInfo.second);
         KConfigGroup cfg = wallpaperConfig(wallpaperInfo.first);
         //kDebug() << "making a" << wallpaperInfo.first << "in mode" << wallpaperInfo.second;
-        m_wallpaper->setTargetSizeHint(m_containment->size());
+        if (m_containment) {
+            m_wallpaper->setTargetSizeHint(m_containment->size());
+        }
         m_wallpaper->restore(cfg);
 
         WallpaperWidget *wallpaperWidget = new WallpaperWidget(m_wallpaperGroup);
@@ -584,10 +592,8 @@ void BackgroundDialog::changeBackgroundMode(int mode)
 
 KConfigGroup BackgroundDialog::wallpaperConfig(const QString &plugin)
 {
-    Q_ASSERT(m_containment);
-
     //FIXME: we have details about the structure of the containment config duplicated here!
-    KConfigGroup cfg = m_containment->config();
+    KConfigGroup cfg = m_containment ? m_containment->config() : KConfigGroup(KGlobal::config(), "Wallpaper");
     cfg = KConfigGroup(&cfg, "Wallpaper");
     return KConfigGroup(&cfg, plugin);
 }
@@ -602,19 +608,21 @@ void BackgroundDialog::saveConfig()
                                                           AppletDelegate::PluginNameRole).toString();
 
     // Containment
-    if (m_containment->pluginName() != containment) {
-        disconnect(m_containment, SIGNAL(destroyed()), this, SLOT(close()));
-        m_containment = m_view->swapContainment(m_containment, containment);
-        connect(m_containment, SIGNAL(destroyed()), this, SLOT(close()));
-    }
+    if (m_containment) {
+        if (m_containment->pluginName() != containment) {
+            disconnect(m_containment, SIGNAL(destroyed()), this, SLOT(close()));
+            m_containment = m_view->swapContainment(m_containment, containment);
+            connect(m_containment, SIGNAL(destroyed()), this, SLOT(close()));
+        }
 
-    m_containment->setActivity(m_activityName->text());
+        m_containment->setActivity(m_activityName->text());
 
-    // Wallpaper
-    Plasma::Wallpaper *currentWallpaper = m_containment->wallpaper();
-    if (currentWallpaper) {
-        KConfigGroup cfg = wallpaperConfig(currentWallpaper->pluginName());
-        currentWallpaper->save(cfg);
+        // Wallpaper
+        Plasma::Wallpaper *currentWallpaper = m_containment->wallpaper();
+        if (currentWallpaper) {
+            KConfigGroup cfg = wallpaperConfig(currentWallpaper->pluginName());
+            currentWallpaper->save(cfg);
+        }
     }
 
     if (m_wallpaper) {
@@ -622,7 +630,9 @@ void BackgroundDialog::saveConfig()
         m_wallpaper->save(cfg);
     }
 
-    m_containment->setWallpaper(wallpaperPlugin, wallpaperMode);
+    if (m_containment) {
+        m_containment->setWallpaper(wallpaperPlugin, wallpaperMode);
+    }
 
     // Plasma Theme
     Plasma::Theme::defaultTheme()->setThemeName(theme);
