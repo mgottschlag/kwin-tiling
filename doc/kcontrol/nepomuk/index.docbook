@@ -59,20 +59,20 @@ trigger an update (an event can be a newly created file or a changed file or a t
 <listitem><para><guilabel>Strigi is currently indexing files in folder foobar</guilabel> - The file indexer is currently running though
 all files in folder foobar and analyzes new or changed files.</para></listitem>
 <listitem><para><guilabel>Checking file system for new files</guilabel> - The file indexer is currently performing its recurring check
-for new files in all index folders. This check is intended to find files that were not catched through normal file system
+for new files in all index folders. This check is intended to find files that were not caught through normal file system
 monitoring.</para></listitem>
 <listitem><para><guilabel>File indexer is suspended</guilabel> - The file indexer has been suspended, i.e. it is in a paused state.
 This can either be triggered by the user or due to low disk space or a laptop being in a power-saving state. In the two latter
 cases the indexer will resume once the reason for the suspension has been resolved.</para></listitem>
 </itemizedlist>
 
-<para>Apart from the normal operation states the Strigi service can have an errorneous state. There are two possibilities:</para>
+<para>Apart from the normal operation states the Strigi service can have an erroneous state. There are two possibilities:</para>
 <itemizedlist>
 <listitem><para><guilabel>Strigi service failed to initialize, most likely due to an installation problem.</guilabel> - This should rarely
-occure that means that a mandatory plugin could not be loaded. This can be due to an installation problem (missing dependancy) or due
+occur that means that a mandatory plugin could not be loaded. This can be due to an installation problem (missing dependency) or due
 to a faulty setup of the &kde; plugin system.</para></listitem>
 <listitem><para>Any other error means a communication problem with the service. These errors are produced by the &DBus; subsystem and need
-to be evaulated case by case.</para></listitem>
+to be evaluated case by case.</para></listitem>
 </itemizedlist>
 
 </sect1>
