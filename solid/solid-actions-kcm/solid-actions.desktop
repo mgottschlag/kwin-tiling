@@ -25,6 +25,7 @@ Name[ja]=デバイスに対するアクション
 Name[km]=សកម្មភាព​ឧបករណ៍
 Name[ko]=장치 동작
 Name[lv]=Ierīces darbības
+Name[ml]=ഉപകരണത്തിനുള്ള പ്രവൃത്തികള്‍
 Name[nb]=Enhetshandlinger
 Name[nds]=Reedschap-Akschonen
 Name[pt]=Acções do Dispositivo
@@ -51,6 +52,7 @@ Comment[ja]=コンピュータに新しいデバイスを接続したときに�
 Comment[km]=ឧបករណ៍​កំណត់​រចនាសម្ព័ន្ធ​សម្រាប់​គ្រប់គ្រង​សកម្ម​ភាព​ដែល​អ្នក​ប្រើ​​អាច​ប្រើបាន នៅពេល​តភ្ជាប់​ឧបករណ៍​ថ្មី​ទៅ​កាន់កុំព្យូទ័រ
 Comment[ko]=컴퓨터에 새 장치를 연결했을 때 표시할 동작을 관리합니다
 Comment[lv]=Konfigurācijas rīks lietotājam pieejamo darbību pārvaldīšanai, pieslēdzot datoram jaunas ierīces
+Comment[ml]=കമ്പ്യൂട്ടറില്‍ പുതിയ ഉപകരണങ്ങള്‍ ഘടിപ്പിക്കുമ്പോള്‍ ഉപയോക്താവിന് ലഭ്യമാകുന്ന നടപടികള്‍കൈകാര്യം ചെയ്യാനുള്ള ക്രമീകരണായുധം
 Comment[nb]=Et oppsettsverktøy for å håndtere handlingene som er tilgjengelige for brukeren når nye enheter kobles til datamaskinen
 Comment[nds]=En Instellwarktüüch för de Akschonen, de för Brukers praatstaht, wenn nieg Reedschappen den Reekner tokoppelt warrt
 Comment[pt]=Uma ferramenta de configuração para gerir as acções disponíveis para o utilizador, quando são ligados dispositivos novos ao computador
