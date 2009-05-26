@@ -51,6 +51,7 @@ QuicklaunchApplet::QuicklaunchApplet(QObject *parent, const QVariantList &args)
     m_innerLayout(0),
     m_timer(new QTimer(this)),
     m_visibleIcons(6),
+    m_preferredIconSize(s_defaultIconSize),
     m_iconSize(s_defaultIconSize),
     m_dialogIconSize(s_defaultIconSize),
     m_dialog(0),
@@ -66,6 +67,11 @@ QuicklaunchApplet::QuicklaunchApplet(QObject *parent, const QVariantList &args)
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
     connect(m_timer,SIGNAL(timeout()), this, SLOT(performUiRefactor()));
     m_timer->setSingleShot(true);
+
+    qreal left, top, right, bottom;
+    getContentsMargins(&left, &top, &right, &bottom);
+    resize(s_defaultIconSize * 3 + s_defaultSpacing * 4 + left + right,
+           s_defaultIconSize + s_defaultSpacing * 2 + top + bottom);
 }
 
 QuicklaunchApplet::~QuicklaunchApplet()
@@ -91,7 +97,7 @@ void QuicklaunchApplet::saveState(KConfigGroup &config) const
 void QuicklaunchApplet::init()
 {
     KConfigGroup cg = config();
-    m_iconSize = qMax(s_defaultIconSize, (int)cg.readEntry("iconSize", contentsRect().height() / 2));
+    m_preferredIconSize = m_iconSize = qMax(s_defaultIconSize, (int)cg.readEntry("iconSize", contentsRect().height() / 2));
     m_visibleIcons = qMax(0, cg.readEntry("visibleIcons", m_visibleIcons));
     m_dialogIconSize = qMax(s_defaultIconSize, (int)cg.readEntry("dialogIconSize", contentsRect().height() / 2));
 
@@ -176,8 +182,9 @@ void QuicklaunchApplet::performUiRefactor()
     //kDebug() << "performUiRefactor count = " << my_perforcount++;
     clearLayout(m_innerLayout);
 
-    m_iconSize = qMin(qMax(m_iconSize, s_defaultIconSize), (int)(contentsRect().height() - 2 * s_defaultSpacing));//Don't accept values under 16 nor anything over applet's height
-    m_dialogIconSize = qMax(m_iconSize, s_defaultIconSize);
+    //Don't accept values under 16 nor anything over applet's height
+    m_iconSize = qMin(qMax(m_preferredIconSize, s_defaultIconSize), (int)(contentsRect().height() - 2 * s_defaultSpacing));
+    m_dialogIconSize = qMax(m_dialogIconSize, s_defaultIconSize);
 
     if (m_dialogLayout) {
         clearLayout(m_dialogLayout);
@@ -279,8 +286,12 @@ void QuicklaunchApplet::createConfigurationInterface(KConfigDialog *parent)
     uiConfig.setupUi(widget);
     connect(parent, SIGNAL(accepted()), SLOT(configAccepted()));
 
-    int height = contentsRect().height() - 2 * s_defaultSpacing;
     int dialogHeight = (int)KIconLoader::SizeEnormous;
+    int height = dialogHeight;
+
+    if (formFactor() == Plasma::Horizontal || formFactor() == Plasma::Vertical) {
+        height = contentsRect().height() - 2 * s_defaultSpacing;
+    }
 
     uiConfig.iconSizeSpin->setMaximum(height);
     uiConfig.iconSizeSlider->setMaximum(height);
@@ -292,8 +303,8 @@ void QuicklaunchApplet::createConfigurationInterface(KConfigDialog *parent)
     uiConfig.dialogIconSizeSpin->setMinimum(s_defaultIconSize);
     uiConfig.dialogIconSizeSlider->setMinimum(s_defaultIconSize);
 
-    uiConfig.iconSizeSpin->setValue(m_iconSize);
-    uiConfig.iconSizeSlider->setValue(m_iconSize);
+    uiConfig.iconSizeSpin->setValue(m_preferredIconSize);
+    uiConfig.iconSizeSlider->setValue(m_preferredIconSize);
     uiConfig.dialogIconSizeSpin->setValue(m_dialogIconSize);
     uiConfig.dialogIconSizeSlider->setValue(m_dialogIconSize);
 
@@ -316,9 +327,9 @@ void QuicklaunchApplet::configAccepted()
     }
 
     temp = uiConfig.iconSizeSpin->value();
-    if (temp != m_iconSize) {
-        m_iconSize = temp;
-        cg.writeEntry("iconSize", m_iconSize);
+    if (temp != m_preferredIconSize) {
+        m_preferredIconSize = temp;
+        cg.writeEntry("iconSize", m_preferredIconSize);
         changed = true;
     }
 
