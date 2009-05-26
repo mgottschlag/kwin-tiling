@@ -60,6 +60,16 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
       m_actions(shortcutActions(this))
 {
     setAttribute(Qt::WA_TranslucentBackground, false);
+
+    /*FIXME: Work around for a (maybe) Qt bug:
+     * QApplication::focusWidget() can't track focus change in QGraphicsProxyWidget
+     *   wrapped normal widget (eg. QLineEdit), if the QGraphicsView has called 
+     *   setFocusPolicy(Qt::NoFocus)
+     * I've created a bug report to Qt Software.
+     * There is also a simple reproduce program in case you're interested in this bug:
+     *   ftp://fearee:public@public.sjtu.edu.cn/reproduce.tar.gz
+     */
+
     //setFocusPolicy(Qt::NoFocus);
 #ifdef Q_WS_WIN
     setWindowFlags(Qt::FramelessWindowHint);
