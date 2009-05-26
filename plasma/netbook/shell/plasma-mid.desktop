@@ -1,0 +1,23 @@
+[Desktop Entry]
+Exec=plasma-mid --desktop
+X-DBUS-StartupType=wait
+Name=Plasma MID
+Name[km]=ប្លាស្មា MID
+Name[nds]=Plasma-MIR
+Name[pa]=ਪਲਾਜ਼ਮਾ MID
+Name[sv]=Plasma MIE
+Name[uk]=Плазма МІП
+Name[x-test]=xxPlasma MIDxx
+Comment=Workspace shell for mobile Internet devices.
+Comment[et]=Tööruumi shell mobiilsetele internetiseadmetele.
+Comment[pt]=Área de trabalho para os dispositivos de Internet móveis (MID).
+Comment[pt_BR]=Área de trabalho para os dispositivos de Internet móveis (MID).
+Comment[sv]=Kommandotolk för mobila internetenheter.
+Comment[tr]=Mobil İnternet Donanımları için çalışma uçbirimi.
+Comment[uk]=Оболонка робочого простору для мобільних інтернет-пристроїв.
+Comment[x-test]=xxWorkspace shell for mobile Internet devices.xx
+Type=Service
+X-KDE-StartupNotify=false
+OnlyShowIn=KDE;
+X-KDE-autostart-phase=0
+
