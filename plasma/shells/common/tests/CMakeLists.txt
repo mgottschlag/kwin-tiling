@@ -31,7 +31,7 @@ kde4_add_ui_files(backgrounddialog_SRCS ../../desktop/BackgroundDialog.ui)
 kde4_add_kcfg_files(backgrounddialog_SRCS ../../desktop/kcfg/plasma-shell-desktop.kcfgc)
 
 kde4_add_executable(plasmabackgrounddialog ${backgrounddialog_SRCS})
-target_link_libraries(plasmabackgrounddialog ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_KFILE_LIBRARY} kworkspace)
+target_link_libraries(plasmabackgrounddialog ${KDE4_PLASMA_LIBS} ${KDE4_KNEWSTUFF2_LIBS} ${KDE4_KFILE_LIBRARY} kworkspace)
 
 endif (KDE4_BUILD_TESTS)
 
