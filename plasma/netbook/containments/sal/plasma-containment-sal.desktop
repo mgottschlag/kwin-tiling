@@ -1,0 +1,20 @@
+[Desktop Entry]
+Name=Search and Locate Containment
+Comment=Special Containment with Launcher
+
+Icon=
+Type=Service
+X-KDE-ServiceTypes=Plasma/Applet,Plasma/Containment
+X-Plasma-ContainmentCategories=mid
+NoDisplay=true
+
+X-KDE-Library=plasma_containment_sal
+X-KDE-PluginInfo-Author=The Plasma Team
+X-KDE-PluginInfo-Email=plasma-devel@kde.org
+X-KDE-PluginInfo-Name=sal
+X-KDE-PluginInfo-Version=1.0
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=Containments
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true
