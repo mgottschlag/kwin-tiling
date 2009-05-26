@@ -63,6 +63,9 @@ module PlasmaScripting
       end
     end
 
+    def configChanged
+    end
+
     def paintInterface(painter, option, contentsRect)
     end
 
@@ -176,6 +179,10 @@ module PlasmaScriptengineRuby
 
       set_up_event_handlers
       return true
+    end
+
+    def configChanged
+      @applet_script.configChanged
     end
 
     def paintInterface(painter, option, contentsRect)
