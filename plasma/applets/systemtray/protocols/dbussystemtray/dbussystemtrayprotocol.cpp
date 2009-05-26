@@ -88,9 +88,12 @@ void DBusSystemTrayProtocol::newTask(QString service)
 void DBusSystemTrayProtocol::cleanupTask(QString typeId)
 {
     kDebug() << "task with typeId" << typeId << "removed";
-    emit m_tasks[typeId]->destroyed(m_tasks[typeId]);
-    delete m_tasks[typeId];
-    m_tasks.remove(typeId);
+    DBusSystemTrayTask *task = m_tasks[typeId];
+    if (task) {
+        emit task->destroyed(m_tasks[typeId]);
+        delete task;
+        m_tasks.remove(typeId);
+    }
 }
 
 void DBusSystemTrayProtocol::initRegisteredServices()
