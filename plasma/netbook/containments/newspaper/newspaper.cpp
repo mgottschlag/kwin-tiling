@@ -55,6 +55,7 @@ Newspaper::Newspaper(QObject *parent, const QVariantList &args)
 {
     setContainmentType(Containment::CustomContainment);
 
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
     connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
             this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
 }
@@ -76,8 +77,15 @@ void Newspaper::init()
 
     Containment::init();
     setHasConfigurationInterface(true);
+    themeUpdated();
 }
 
+void Newspaper::themeUpdated()
+{
+    qreal left, top, right, bottom;
+    m_background->getMargins(left, top, right, bottom);
+    m_mainLayout->setContentsMargins(left, top, right, bottom);
+}
 
 void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 {
