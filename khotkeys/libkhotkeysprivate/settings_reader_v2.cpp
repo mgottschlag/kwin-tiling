@@ -160,8 +160,8 @@ KHotKeys::ActionDataBase *SettingsReaderV2::readAction(
         KHotKeys::SimpleActionData *sa;
 
         sa = new KHotKeys::SimpleActionData(config, parent);
-        if (sa->trigger()->type() == KHotKeys::Trigger::ShortcutTriggerType
-                && sa->action()->type() == KHotKeys::Action::MenuEntryActionType)
+        if ( (sa->trigger() && sa->trigger()->type() == KHotKeys::Trigger::ShortcutTriggerType)
+              && ( sa->action() && sa->action()->type() == KHotKeys::Action::MenuEntryActionType))
             {
             delete sa;
             // We collect all of those in the system group
