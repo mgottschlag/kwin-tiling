@@ -20,7 +20,7 @@
 #ifndef PLASMA_PANELVIEW_H
 #define PLASMA_PANELVIEW_H
 
-#include <QList>
+#include <QSet>
 
 #include <KConfigGroup>
 
@@ -221,6 +221,7 @@ private Q_SLOTS:
     void init();
     void togglePanelController();
     void edittingComplete();
+    void overlayDestroyed(PanelAppletOverlay*);
     void animateHide(qreal);
     void panelDeleted();
     void hideMousePoll();
@@ -236,7 +237,7 @@ private Q_SLOTS:
 private:
     Plasma::Svg *m_background;
     PanelController *m_panelController;
-    QList<PanelAppletOverlay*> m_moveOverlays;
+    QSet<PanelAppletOverlay*> m_moveOverlays;
     GlowBar *m_glowBar;
     QTimer *m_mousePollTimer;
     QTimer *m_strutsTimer;

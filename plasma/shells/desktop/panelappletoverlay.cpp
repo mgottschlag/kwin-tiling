@@ -96,7 +96,7 @@ PanelAppletOverlay::PanelAppletOverlay(Plasma::Applet *applet, QWidget *parent)
     syncGeometry();
     setMouseTracking(true);
 
-    connect(m_applet, SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater()));
+    connect(m_applet, SIGNAL(destroyed(QObject*)), this, SLOT(appletDestroyed()));
     connect(m_applet, SIGNAL(geometryChanged()), this, SLOT(delaySyncGeometry()));
 }
 
@@ -452,6 +452,12 @@ void PanelAppletOverlay::swapWithNext()
     m_layout->insertItem(m_index, m_spacer);
 }
 
+void PanelAppletOverlay::appletDestroyed()
+{
+    emit removedWithApplet(this);
+    deleteLater();
+}
+
 void PanelAppletOverlay::delaySyncGeometry()
 {
     // we need to do this because it gets called in a round-about-way
@@ -488,6 +494,11 @@ void PanelAppletOverlay::syncGeometry()
 void PanelAppletOverlay::syncOrientation()
 {
     m_orientation = m_applet->formFactor() == Plasma::Horizontal ? Qt::Horizontal : Qt::Vertical;
+}
+
+Plasma::Applet *PanelAppletOverlay::applet() const
+{
+    return m_applet;
 }
 
 #include "panelappletoverlay.moc"

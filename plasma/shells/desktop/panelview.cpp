@@ -822,6 +822,9 @@ void PanelView::togglePanelController()
         connect(m_panelController, SIGNAL(panelVisibilityModeChanged(PanelView::VisibilityMode)), this, SLOT(setVisibilityMode(PanelView::VisibilityMode)));
 
         if (dynamic_cast<QGraphicsLinearLayout*>(containment()->layout())) {
+            setTabOrder(0, m_panelController);
+            QWidget *prior = m_panelController;
+
             // we only support mouse over drags for panels with linear layouts
             QColor overlayColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
             QBrush overlayBrush(overlayColor);
@@ -829,18 +832,15 @@ void PanelView::togglePanelController()
             p.setBrush(QPalette::Window, overlayBrush);
             foreach (Plasma::Applet *applet, containment()->applets()) {
                 PanelAppletOverlay *moveOverlay = new PanelAppletOverlay(applet, this);
+                connect(moveOverlay, SIGNAL(removedWithApplet(PanelAppletOverlay*)),
+                        this, SLOT(overlayDestroyed(PanelAppletOverlay*)));
                 moveOverlay->setPalette(p);
                 moveOverlay->show();
                 moveOverlay->raise();
                 m_moveOverlays << moveOverlay;
                 //kDebug() << moveOverlay << moveOverlay->geometry();
-            }
-
-            setTabOrder(0, m_panelController);
-            QWidget *prior = m_panelController;
-            foreach (PanelAppletOverlay *w, m_moveOverlays) {
-                setTabOrder(prior, w);
-                prior = w;
+                setTabOrder(prior, moveOverlay);
+                prior = moveOverlay;
             }
         }
     }
@@ -870,6 +870,11 @@ void PanelView::edittingComplete()
     if (m_visibilityMode == LetWindowsCover) {
          startAutoHide();
     }
+}
+
+void PanelView::overlayDestroyed(PanelAppletOverlay *overlay)
+{
+    m_moveOverlays.remove(overlay);
 }
 
 Qt::Alignment PanelView::alignmentFilter(Qt::Alignment align) const
@@ -1287,10 +1292,33 @@ void PanelView::appletAdded(Plasma::Applet *applet)
         p.setBrush(QPalette::Window, overlayBrush);
 
         PanelAppletOverlay *moveOverlay = new PanelAppletOverlay(applet, this);
+        connect(moveOverlay, SIGNAL(removedWithApplet(PanelAppletOverlay*)),
+                this, SLOT(overlayDestroyed(PanelAppletOverlay*)));
         moveOverlay->setPalette(p);
         moveOverlay->show();
         moveOverlay->raise();
         m_moveOverlays << moveOverlay;
+
+        QWidget *prior = m_panelController;
+        Plasma::Applet *priorApplet = 0;
+        foreach (Plasma::Applet *otherApplet, containment()->applets()) {
+            if (applet == otherApplet) {
+                break;
+            }
+
+            priorApplet = otherApplet;
+        }
+
+        if (priorApplet) {
+            foreach (PanelAppletOverlay *overlay, m_moveOverlays) {
+                if (overlay->applet() == priorApplet) {
+                    prior = overlay;
+                    break;
+                }
+            }
+        }
+
+        setTabOrder(prior, moveOverlay);
     }
 }
 
