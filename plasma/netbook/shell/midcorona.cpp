@@ -138,13 +138,14 @@ int MidCorona::numScreens() const
 
 QRect MidCorona::screenGeometry(int id) const
 {
-    return QApplication::desktop()->screenGeometry(id);
+    return QRect(QPoint(0,0), m_mainWindow->size());
 }
 
 QRegion MidCorona::availableScreenRegion(int id) const
 {
     // TODO: more precise implementation needed
-    return QRegion(QApplication::desktop()->availableGeometry(id));
+    //FIXME: no hardcoded stuff
+    return QRegion(QRect(QPoint(0,24), m_mainWindow->size()-QSize(0,24)));
 }
 
 

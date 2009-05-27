@@ -129,10 +129,12 @@ void MidView::drawBackground(QPainter *painter, const QRectF &rect)
     }
 }
 
+
 void MidView::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event)
     updateGeometry();
+    emit geometryChanged();
 }
 
 void MidView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment)

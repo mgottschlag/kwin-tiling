@@ -284,8 +284,8 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
         QSize size = geometry().size().toSize();
         QRectF screenRect = screen() >= 0 ? QApplication::desktop()->screenGeometry(screen()) : geometry();
 
-        if ((formFactor() == Horizontal && size.width() >= screenRect.width()) ||
-            (formFactor() == Vertical && size.height() >= screenRect.height())) {
+        if (formFactor() == Horizontal ||
+            formFactor() == Vertical) {
             m_background->setElementPrefix(location());
         } else {
             m_background->setElementPrefix(QString());
@@ -375,15 +375,9 @@ void Panel::paintInterface(QPainter *painter,
         viewGeom = containmentOpt->view->geometry();
     }
 
-    // blit the background (saves all the per-pixel-products that blending does)
-    painter->setCompositionMode(QPainter::CompositionMode_Source);
-    painter->setRenderHint(QPainter::Antialiasing);
-
+    painter->fillRect(option->exposedRect, Qt::transparent);
     m_background->paintFrame(painter, option->exposedRect, option->exposedRect);
 
-    if (containmentOpt && containmentOpt->view) {
-        containmentOpt->view->setMask(m_background->mask());
-    }
 
     // restore transformation and composition mode
     painter->restore();

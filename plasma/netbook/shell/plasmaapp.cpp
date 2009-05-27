@@ -88,7 +88,8 @@ PlasmaApp::PlasmaApp()
     KConfigGroup cg(KGlobal::config(), "General");
     Plasma::Theme::defaultTheme()->setFont(cg.readEntry("desktopFont", font()));
 
-    m_window = new QWidget;
+    //m_window = new QWidget;
+    m_window = m_mainView = new MidView(0, MidView::mainViewId(), 0);
 
     //FIXME: if argb visuals enabled Qt will always set WM_CLASS as "qt-subapplication" no matter what
     //the application name is we set the proper XClassHint here, hopefully won't be necessary anymore when
@@ -98,18 +99,24 @@ PlasmaApp::PlasmaApp()
     classHint.res_class = const_cast<char*>("Plasma");
     XSetClassHint(QX11Info::display(), m_window->winId(), &classHint);
 
-    m_layout = new QBoxLayout(QBoxLayout::TopToBottom, m_window);
+    m_layout = new QBoxLayout(QBoxLayout::TopToBottom, m_mainView);
     m_layout->setMargin(0);
     m_layout->setSpacing(0);
 
+
     m_controlBar = new MidView(0, MidView::controlBarId(), m_window);
     //m_controlBar->setFixedHeight(CONTROL_BAR_HEIGHT);
-    m_controlBar->setBackgroundBrush(Qt::red);
+    m_controlBar->setAttribute(Qt::WA_TranslucentBackground);
+    m_controlBar->setAutoFillBackground(false);
+    m_controlBar->viewport()->setAutoFillBackground(false);
+    m_controlBar->setAttribute(Qt::WA_TranslucentBackground);
     connect(m_controlBar, SIGNAL(locationChanged(const MidView *)), this, SLOT(controlBarMoved(const MidView *)));
-    m_mainView = new MidView(0, MidView::mainViewId(), m_window);
+    connect(m_controlBar, SIGNAL(geometryChanged()), this, SLOT(syncMainContainmentsMargins()));
 
     m_layout->addWidget(m_controlBar);
-    m_layout->addWidget(m_mainView);
+    m_layout->addStretch();
+
+    //m_layout->addWidget(m_mainView);
 
     int width = 400;
     int height = 200;
@@ -155,6 +162,10 @@ void PlasmaApp::cleanup()
         m_corona->saveLayout();
     }
 
+    if (!m_mainView->containment()) {
+        return;
+    }
+
     // save the mapping of Views to Containments at the moment
     // of application exit so we can restore that when we start again.
     KConfigGroup viewIds(KGlobal::config(), "ViewIds");
@@ -176,6 +187,24 @@ void PlasmaApp::cleanup()
 void PlasmaApp::syncConfig()
 {
     KGlobal::config()->sync();
+}
+
+void PlasmaApp::syncMainContainmentsMargins()
+{
+    const QRect availableScreen = m_corona->availableScreenRegion(0).boundingRect();
+    const QRect screen = m_corona->screenGeometry(0);
+
+    int left, top, right, bottom;
+    left = availableScreen.left() - screen.left();
+    right = screen.right() - availableScreen.right();
+    top = availableScreen.top() - screen.top();
+    bottom = screen.bottom() - availableScreen.bottom();
+
+    foreach (Plasma::Containment *containment, m_corona->containments()) {
+        if (containment->formFactor() == Plasma::Planar) {
+            containment->setContentsMargins(left, top, right, bottom);
+        }
+    }
 }
 
 void PlasmaApp::setIsDesktop(bool isDesktop)

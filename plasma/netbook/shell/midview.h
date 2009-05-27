@@ -64,6 +64,7 @@ public slots:
 
 Q_SIGNALS:
     void locationChanged(const MidView *view);
+    void geometryChanged();
 
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);

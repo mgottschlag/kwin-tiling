@@ -73,6 +73,7 @@ private:
 private Q_SLOTS:
     void cleanup();
     void syncConfig();
+    void syncMainContainmentsMargins();
     void createView(Plasma::Containment *containment);
     void adjustSize(int screen);
     void controlBarMoved(const MidView *controlBar);
