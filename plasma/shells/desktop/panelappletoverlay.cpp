@@ -102,6 +102,15 @@ PanelAppletOverlay::PanelAppletOverlay(Plasma::Applet *applet, QWidget *parent)
 
 PanelAppletOverlay::~PanelAppletOverlay()
 {
+    bool mover = mouseGrabber() == this;
+    if (mover) {
+        kDebug() << "MOVER!" << m_layout << m_index;
+        releaseMouse();
+        if (m_layout && m_applet) {
+            m_layout->insertItem(m_index, m_applet);
+        }
+    }
+
     if (m_spacer) {
         if (m_layout) {
             m_layout->removeItem(m_spacer);
@@ -223,6 +232,7 @@ void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
 void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
 {
     if (!m_layout) {
+        //kDebug() << "no layout";
         return;
     }
 
@@ -242,18 +252,20 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
             }
         }
     }
-    if (!(event->buttons() & Qt::LeftButton)) {
+
+    if (!m_clickDrag && !(event->buttons() & Qt::LeftButton)) {
+        //kDebug() << "no left button and we aren't click dragging";
         return;
     }
 
     Plasma::FormFactor f = m_applet->formFactor();
 
 
-    if ( !m_applet->inherits("PanelSpacer") &&
+    if (!m_applet->inherits("PanelSpacer") &&
           (((f != Plasma::Horizontal && f != Plasma::Vertical) && rect().intersects(m_applet->rect().toRect())) ||
           ((f == Plasma::Horizontal || f == Plasma::Vertical) && !rect().contains(event->globalPos()))) ) {
         Plasma::View *view = Plasma::View::topLevelViewAt(event->globalPos());
-        kDebug() << "checking view" << view << m_applet->view();
+        //kDebug() << "checking view" << view << m_applet->view();
 
         if (!view) {
             return;
@@ -343,7 +355,7 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
     // swap items if we pass completely over the next/previous item or cross
     // more than halfway across it, whichever comes first
     if (m_orientation == Qt::Horizontal) {
-        //kDebug() << m_prevGeom << g << m_nextGeom;
+        //kDebug() << prevIsApplet << m_prevGeom << g << nextIsApplet << m_nextGeom;
         if (prevIsApplet && m_prevGeom.isValid() && g.left() <= m_prevGeom.left()) {
             swapWithPrevious();
         } else if (nextIsApplet && m_nextGeom.isValid() && g.right() >= m_nextGeom.right()) {
@@ -363,7 +375,9 @@ void PanelAppletOverlay::mouseReleaseEvent(QMouseEvent *event)
 {
     Q_UNUSED(event)
     if (!m_spacer) {
+        //kDebug() << "releasing as we don't have a spacer";
         releaseMouse();
+        setMouseTracking(false);
         return;
     }
 
@@ -377,6 +391,7 @@ void PanelAppletOverlay::mouseReleaseEvent(QMouseEvent *event)
 
         if (m_clickDrag) {
             //kDebug() << "click dragging." << this << mouseGrabber();
+            grabMouse();
             setMouseTracking(true);
             event->setAccepted(false);
             return;
@@ -384,7 +399,7 @@ void PanelAppletOverlay::mouseReleaseEvent(QMouseEvent *event)
     }
 
     releaseMouse();
-    //kDebug();
+    //kDebug() << "released mouse";
     if (m_layout) {
         m_layout->removeItem(m_spacer);
     }
@@ -454,6 +469,7 @@ void PanelAppletOverlay::swapWithNext()
 
 void PanelAppletOverlay::appletDestroyed()
 {
+    m_applet = 0;
     emit removedWithApplet(this);
     deleteLater();
 }
