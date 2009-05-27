@@ -53,8 +53,7 @@ Newspaper::Newspaper(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
       m_orientation(Qt::Vertical)
 {
-
-    setContainmentType(Containment::DesktopContainment);
+    setContainmentType(Containment::CustomContainment);
 
     connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
             this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
@@ -84,10 +83,18 @@ void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 {
     QGraphicsLinearLayout *lay;
 
-    if (pos.x() >= size().width()/2) {
-        lay = m_rightLayout;
+    if (m_orientation == Qt::Horizontal) {
+        if (pos.y() >= size().height()/4) {
+            lay = m_rightLayout;
+        } else {
+            lay = m_leftLayout;
+        }
     } else {
-        lay = m_leftLayout;
+        if (pos.x() >= size().width()/4) {
+            lay = m_rightLayout;
+        } else {
+            lay = m_leftLayout;
+        }
     }
 
     int insertIndex = -1;
@@ -105,7 +112,7 @@ void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
                     insertIndex = i + 1;
                     break;
                 }
-            } else { // Plasma::Vertical
+            } else { //Vertical
                 qreal middle = (siblingGeometry.top() + siblingGeometry.bottom()) / 2.0;
                 if (pos.y() < middle) {
                     insertIndex = i;
