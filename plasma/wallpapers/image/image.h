@@ -55,6 +55,7 @@ class Image : public Plasma::Wallpaper
         void configWidgetDestroyed();
         void startSlideshow();
         void modified();
+        void fileDialogFinished();
 
     protected:
         void init(const KConfigGroup &config);

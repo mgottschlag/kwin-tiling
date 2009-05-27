@@ -471,13 +471,19 @@ void Image::showFileDialog()
         m_dialog->setInlinePreviewShown(true);
         m_dialog->setCaption(i18n("Select Wallpaper Image File"));
         m_dialog->setModal(false);
+
+        connect(m_dialog, SIGNAL(okClicked()), this, SLOT(browse()));
+        connect(m_dialog, SIGNAL(destroyed(QObject*)), this, SLOT(fileDialogFinished()));
     }
 
     m_dialog->show();
     m_dialog->raise();
     m_dialog->activateWindow();
+}
 
-    connect(m_dialog, SIGNAL(okClicked()), this, SLOT(browse()));
+void Image::fileDialogFinished()
+{
+    m_dialog = 0;
 }
 
 void Image::browse()
