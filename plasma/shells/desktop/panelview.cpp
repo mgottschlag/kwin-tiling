@@ -618,8 +618,11 @@ bool PanelView::isHorizontal() const
 
 void PanelView::pinchContainmentToCurrentScreen()
 {
+    kDebug() << "pinching to current screen";
+    disconnect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(pinchContainmentToCurrentScreen()));
     QRect screenRect = Kephal::ScreenUtils::screenGeometry(containment()->screen());
     pinchContainment(screenRect);
+    connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(pinchContainmentToCurrentScreen()));
 }
 
 void PanelView::pinchContainment(const QRect &screenGeom)
