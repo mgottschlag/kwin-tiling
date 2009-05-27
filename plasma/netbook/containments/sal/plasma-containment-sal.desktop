@@ -1,6 +1,10 @@
 [Desktop Entry]
 Name=Search and Locate Containment
+Name[sv]=Sök- och lokaliseringsomgivning
+Name[uk]=Контейнер пошуку і адрес
 Comment=Special Containment with Launcher
+Comment[sv]=Särskild omgivning med programstart
+Comment[uk]=Особливий контейнер з інструментом запуску
 
 Icon=
 Type=Service
