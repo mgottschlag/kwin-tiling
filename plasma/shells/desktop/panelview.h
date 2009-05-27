@@ -237,7 +237,7 @@ private Q_SLOTS:
 private:
     Plasma::Svg *m_background;
     PanelController *m_panelController;
-    QSet<PanelAppletOverlay*> m_moveOverlays;
+    QSet<PanelAppletOverlay*> m_appletOverlays;
     GlowBar *m_glowBar;
     QTimer *m_mousePollTimer;
     QTimer *m_strutsTimer;

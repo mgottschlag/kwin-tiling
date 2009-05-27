@@ -604,7 +604,7 @@ void PanelView::updatePanelGeometry()
             m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
         }
 
-        foreach (PanelAppletOverlay *o, m_moveOverlays) {
+        foreach (PanelAppletOverlay *o, m_appletOverlays) {
             o->syncOrientation();
         }
     }
@@ -837,7 +837,7 @@ void PanelView::togglePanelController()
                 moveOverlay->setPalette(p);
                 moveOverlay->show();
                 moveOverlay->raise();
-                m_moveOverlays << moveOverlay;
+                m_appletOverlays << moveOverlay;
                 //kDebug() << moveOverlay << moveOverlay->geometry();
                 setTabOrder(prior, moveOverlay);
                 prior = moveOverlay;
@@ -861,8 +861,8 @@ void PanelView::edittingComplete()
     //kDebug();
     m_panelController = 0;
     m_editting = false;
-    qDeleteAll(m_moveOverlays);
-    m_moveOverlays.clear();
+    qDeleteAll(m_appletOverlays);
+    m_appletOverlays.clear();
     containment()->closeToolBox();
     updateStruts();
     m_firstPaint = true; // triggers autohide
@@ -874,7 +874,7 @@ void PanelView::edittingComplete()
 
 void PanelView::overlayDestroyed(PanelAppletOverlay *overlay)
 {
-    m_moveOverlays.remove(overlay);
+    m_appletOverlays.remove(overlay);
 }
 
 Qt::Alignment PanelView::alignmentFilter(Qt::Alignment align) const
@@ -994,7 +994,7 @@ void PanelView::updateStruts()
             m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
         }
 
-        foreach (PanelAppletOverlay *o, m_moveOverlays) {
+        foreach (PanelAppletOverlay *o, m_appletOverlays) {
             o->syncOrientation();
         }
     }
@@ -1297,7 +1297,7 @@ void PanelView::appletAdded(Plasma::Applet *applet)
         moveOverlay->setPalette(p);
         moveOverlay->show();
         moveOverlay->raise();
-        m_moveOverlays << moveOverlay;
+        m_appletOverlays << moveOverlay;
 
         QWidget *prior = m_panelController;
         Plasma::Applet *priorApplet = 0;
@@ -1310,7 +1310,7 @@ void PanelView::appletAdded(Plasma::Applet *applet)
         }
 
         if (priorApplet) {
-            foreach (PanelAppletOverlay *overlay, m_moveOverlays) {
+            foreach (PanelAppletOverlay *overlay, m_appletOverlays) {
                 if (overlay->applet() == priorApplet) {
                     prior = overlay;
                     break;
