@@ -57,10 +57,6 @@
 
 //#define KFI_FONTLIST_DEBUG
 
-// #define to control whether generated inline preview thumbs should be
-// cached to disk.
-#define KFI_SAVE_PIXMAPS
-
 #ifdef KFI_FONTLIST_DEBUG
 #include <kdebug.h>
 #endif
@@ -69,6 +65,8 @@ namespace KFI
 {
 
 int CFontList::theirPreviewSize=CFontList::constDefaultPreviewSize;
+
+static CFcEngine * theFcEngine=0L;
 
 static void decompose(const QString &name, QString &family, QString &style)
 {
@@ -186,40 +184,6 @@ QStringList CFontList::compact(const QStringList &fonts)
     return compacted;
 }
 
-class CPreviewCache
-{
-    public:
-
-    CPreviewCache(CFcEngine *eng);
-#ifdef KFI_SAVE_PIXMAPS
-    ~CPreviewCache() { clearOld(); }
-#endif
-
-    static QString thumbKey(const QString &family, quint32 style, int height, const QColor &col);
-    QImage getImage(const QString &family, const QString &name, const QString &fileName,
-                    int height, quint32 stlye, bool selected, bool force=false);
-#ifdef KFI_SAVE_PIXMAPS
-    void clearOld();
-#endif
-    void empty();
-
-    private:
-
-    CFcEngine             *itsFcEngine;
-    QMap<QString, QImage> itsMap;
-#ifdef KFI_SAVE_PIXMAPS
-    QString               itsPath;
-#endif
-};
-
-CPreviewCache::CPreviewCache(CFcEngine *eng)
-             : itsFcEngine(eng)
-#ifdef KFI_SAVE_PIXMAPS
-             , itsPath(KGlobal::dirs()->saveLocation("cache", "fontpreview"))
-#endif
-{
-}
-
 static QString replaceChars(const QString &in)
 {
     QString rv(in);
@@ -272,132 +236,6 @@ static void toggle(QString &file, bool enable)
     if(!Misc::fExists(file) && Misc::fExists(newFile))
         file=newFile;
 }
-
-#ifdef KFI_SAVE_PIXMAPS
-static void setTimeStamp(const QString &f)
-{
-    QByteArray      fC(QFile::encodeName(f));
-    KDE_struct_stat fStat;
-
-    if(0==KDE_lstat(fC, &fStat))
-    {
-        struct utimbuf times;
-
-        times.actime=times.modtime=time(NULL);
-        utime(fC, &times);
-    }
-}
-#endif
-QString CPreviewCache::thumbKey(const QString &name, quint32 style, int height, const QColor &col)
-{
-    return replaceChars(name)+
-           QString().sprintf("-%06lX%02d%02X%02X%02X.png", (long unsigned int)style, height,
-                             col.red(), col.green(), col.blue());
-}
-
-QImage CPreviewCache::getImage(const QString &family, const QString &name, const QString &fileName,
-                               int height, quint32 style, bool selected, bool force)
-{
-#ifdef KFI_SAVE_PIXMAPS
-    static const char *constFileType="PNG";
-#endif
-
-    QColor  col(QApplication::palette().color(selected ? QPalette::HighlightedText : QPalette::Text)),
-            bgnd(Qt::black);
-    QString thumbName(thumbKey(family, style, height, col));
-
-    if(!force && !itsMap[thumbName].isNull())
-        return itsMap[thumbName];
-
-#ifdef KFI_SAVE_PIXMAPS
-    QString thumbFile(itsPath+thumbName);
-
-    if(!force && itsMap[thumbName].load(thumbFile, constFileType))
-        return itsMap[thumbName];
-#endif
-
-    itsMap[thumbName]=QImage();
-
-    bgnd.setAlpha(0);
-    itsMap[thumbName]=itsFcEngine->drawPreview(fileName.isEmpty() ? name : fileName, col, bgnd,
-                                               height, style);  // CPD:TODO face???
-
-    if(!itsMap[thumbName].isNull())
-    {
-#ifdef KFI_SAVE_PIXMAPS
-        QFile pngFile(thumbFile);
-
-        if(pngFile.open(QIODevice::WriteOnly))
-        {
-#endif
-#ifdef KFI_SAVE_PIXMAPS
-            itsMap[thumbName].save(&pngFile, constFileType);
-            pngFile.close();
-#endif
-            return itsMap[thumbName];
-#ifdef KFI_SAVE_PIXMAPS
-        }
-#endif
-    }
-
-    return QImage();
-}
-
-#ifdef KFI_SAVE_PIXMAPS
-void CPreviewCache::clearOld()
-{
-    //
-    // Remove any files that have not been accessed for constMaxAge days.
-    // ...this should be OK, as this function is called after the font list is completed,
-    // so any existing fonts will already have accessed their thumbnail.
-
-    static const int constMaxAge = 7;
-
-    QDir d(itsPath);
-
-    if(d.isReadable())
-    {
-        d.setFilter(QDir::Files);
-
-        QFileInfoList list(d.entryInfoList());
-        QDateTime     current(QDateTime::currentDateTime());
-
-        for (int i = 0; i < list.size(); ++i)
-        {
-            QFileInfo fileInfo(list.at(i));
-            int       diff=abs(current.daysTo(fileInfo.lastRead()));
-
-            if(diff>constMaxAge) // More than constMaxAge days ago, so remove
-                ::unlink(QFile::encodeName(fileInfo.absoluteFilePath()));
-        }
-    }
-}
-#endif
-
-void CPreviewCache::empty()
-{
-#ifdef KFI_SAVE_PIXMAPS
-    QDir d(itsPath);
-
-    if(d.isReadable())
-    {
-        d.setFilter(QDir::Files);
-
-        QFileInfoList list(d.entryInfoList());
-
-        for (int i = 0; i < list.size(); ++i)
-        {
-            QFileInfo fileInfo(list.at(i));
-
-            if(-1!=fileInfo.fileName().lastIndexOf(".png"))
-                ::unlink(QFile::encodeName(fileInfo.absoluteFilePath()));
-        }
-    }
-#endif
-    itsMap.clear();
-}
-
-static CPreviewCache *theCache=NULL;
 
 inline bool isSysFolder(const QString &sect)
 {
@@ -474,10 +312,15 @@ const QImage & CFontItem::image(bool selected, bool force)
     if(parent() &&
        (itsImage[idx].isNull() || force ||
         itsImage[idx].height()!=CFontList::previewSize()))
-        itsImage[idx]=theCache->getImage(family(), name(), isEnabled()
-                                                            ? QString()
-                                                            : itsFileName,
-                                         CFontList::previewSize(), itsStyleInfo, selected, force);
+    {
+        QColor bgnd(Qt::black);
+        bgnd.setAlpha(0);
+        itsImage[idx]=theFcEngine->drawPreview(isEnabled() ? name() : itsFileName,
+                                               QApplication::palette().color(selected ? QPalette::HighlightedText : QPalette::Text), 
+                                               bgnd,
+                                               CFontList::previewSize(),
+                                               itsStyleInfo); 
+    }
 
     return itsImage[idx];
 }
@@ -673,9 +516,7 @@ CFontList::CFontList(CFcEngine *eng, QWidget *parent)
            itsAllowSys(true),
            itsAllowUser(true)
 {
-    if(!theCache)
-        theCache=new CPreviewCache(eng);
-
+    theFcEngine=eng;
     QFont font;
     int   pixelSize((int)(((font.pointSizeF()*QX11Info::appDpiY())/72.0)+0.5));
 
@@ -695,8 +536,7 @@ CFontList::CFontList(CFcEngine *eng, QWidget *parent)
 
 CFontList::~CFontList()
 {
-    delete theCache;
-    theCache=NULL;
+    theFcEngine=0L;
     delete itsLister;
     itsLister=NULL;
     qDeleteAll(itsFamilies);
@@ -863,8 +703,6 @@ void CFontList::forceNewPreviews()
         for(; fit!=fend; ++fit)
             (*fit)->clearImage();
     }
-
-    theCache->empty();
 }
 
 void CFontList::refresh(bool allowSys, bool allowUser)
