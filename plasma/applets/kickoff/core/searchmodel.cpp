@@ -166,18 +166,18 @@ void ApplicationSearch::setQuery(const QString& query)
         int existingPos = desktopNames.value(service->name(), -1);
         KService::Ptr existing = existingPos < 0 ? KService::Ptr(0) : results[existingPos];
 
-        if (existing.isNull()) {
-            desktopNames.insert(service->name(), i);
-            execFields.insert(service->exec());
-        } else if (isLaterVersion(existing, service)) {
-                results[i] = 0;
-        } else if (isLaterVersion(service, existing)) {
-            results[existingPos] = 0;
-        } else if (execFields.contains(service->exec()) && service->noDisplay()) {
+        if (execFields.contains(service->exec()) || service->noDisplay()) {
             // do not show more than one entry which does the same thing when run
             // (ie. ignore entries that have an identical 'Exec' field to an existing
             // entry)
             results[i] = 0;
+        } else if (existing.isNull()) {
+            desktopNames.insert(service->name(), i);
+            execFields.insert(service->exec());
+        } else if (isLaterVersion(existing, service)) {
+            results[i] = 0;
+        } else if (isLaterVersion(service, existing)) {
+            results[existingPos] = 0;
         }
     }
 
