@@ -27,7 +27,7 @@ from PyKDE4.plasma import Plasma # Plasma C++ namespace
 #import gc
 
 class Applet(QObject):
-    ''' Subclass Applet in your module and return an instance of it in a global function named 
+    ''' Subclass Applet in your module and return an instance of it in a global function named
     applet(). Implement the following functions to breathe life into your applet:
         * paint - Draw the applet given a QPainter and some options
     It provides the same API as Plasma.Applet; it just has slightly less irritating event names. '''
@@ -56,10 +56,13 @@ class Applet(QObject):
 
     def init(self):
         pass
-    
+
+    def configChanged(self):
+        pass
+
     def paintInterface(self, painter, options, rect):
         pass
-        
+
     def constraintsEvent(self, flags):
         pass
 

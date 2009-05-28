@@ -40,7 +40,7 @@ class PythonAppletScript(Plasma.AppletScript):
         # on either; it might have been changed in the module itself)
         self.m_moduleName = str(self.applet().pluginName())
         #print("pluginname: " + str(self.applet().pluginName()))
-        
+
         self.plugin_name = str(self.applet().pluginName()).replace('-','_')
 
         PythonAppletScript.importer.register_top_level(self.plugin_name, str(self.applet().package().path()))
@@ -73,6 +73,11 @@ class PythonAppletScript(Plasma.AppletScript):
             return
         #print("Script: showConfigurationInterface")
         self.pyapplet.showConfigurationInterface()
+
+    def configChanged(self):
+        if not self.initialized:
+            return
+        self.pyapplet.configChanged()
 
     def paintInterface(self, painter, option, contentsRect):
         if not self.initialized:
