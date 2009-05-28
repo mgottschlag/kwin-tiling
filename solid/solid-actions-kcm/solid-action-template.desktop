@@ -2,7 +2,7 @@
 Actions=open;
 Type=Service
 X-KDE-Action-Custom=true
-X-KDE-Solid-Predicate=[ IS StorageDevice AND StorageDevice.IsIgnored == false ]
+X-KDE-Solid-Predicate=[ IS StorageVolume AND StorageVolume.ignored == false ]
 
 [Desktop Action open]
 Icon=unknown

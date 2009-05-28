@@ -115,7 +115,7 @@ void SolidActionEditPredicate::finishShow(QTreeWidgetItem *updating)
         QString internalName = deviceData->types.key(ui.CbRestrictionDeviceType->currentText());
         foreach(const QString &deviceName, deviceData->valueList(internalName).keys()) {
             QString fullInternalName = internalName + QChar('.') + deviceName; // Prepare the full internal name
-            if (fullInternalName == ui.CbRestrictionDeviceValue->currentText()) { // Does the value name match the selected
+            if (deviceData->valueList(internalName).value(deviceName) == ui.CbRestrictionDeviceValue->currentText()) { // Does the value name match the selected
                 updating->setText(1, fullInternalName);
             } // Set the value name
         }
