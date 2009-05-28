@@ -48,7 +48,7 @@ KRandRSystemTray::KRandRSystemTray(RandRDisplay *dpy, QWidget* parent)
 	  m_popupUp(false),
 	  m_display(dpy)
 {
-	setIcon("preferences-desktop-display-randr");
+	setIconByName("preferences-desktop-display-randr");
     setCategory(Hardware);
 	setToolTip("preferences-desktop-display-randr", i18n("KRandR"), i18n("Screen resize & rotate"));
 

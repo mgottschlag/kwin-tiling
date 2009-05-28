@@ -250,9 +250,9 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
         {
             ExperimentalKDbusImageVector image;
 
-            properties["OverlayImage"].value<QDBusArgument>() >> image;
+            properties["OverlayIconPixmap"].value<QDBusArgument>() >> image;
             if (image.isEmpty()) {
-                QString iconName = properties["OverlayIcon"].toString();
+                QString iconName = properties["OverlayIconName"].toString();
                 if (!iconName.isEmpty()) {
                     overlayNames << iconName;
                     overlay = KIcon(iconName);
@@ -261,9 +261,9 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
                 overlay = imageVectorToPixmap(image);
             }
 
-            properties["Image"].value<QDBusArgument>() >> image;
+            properties["IconPixmap"].value<QDBusArgument>() >> image;
             if (image.isEmpty()) {
-                QString iconName = properties["Icon"].toString();
+                QString iconName = properties["IconName"].toString();
                 if (!iconName.isEmpty()) {
                     icon = KIcon(iconName, 0, overlayNames);
 
@@ -288,9 +288,9 @@ void DBusSystemTrayTaskPrivate::refreshCallback(QDBusPendingCallWatcher *call)
         //Attention icon
         {
             ExperimentalKDbusImageVector image;
-            properties["AttentionImage"].value<QDBusArgument>() >> image;
+            properties["AttentionIconPixmap"].value<QDBusArgument>() >> image;
             if (image.isEmpty()) {
-                QString iconName = properties["AttentionIcon"].toString();
+                QString iconName = properties["AttentionIconName"].toString();
                 if (!iconName.isEmpty()) {
                     attentionIcon = KIcon(iconName, 0, overlayNames);
 
