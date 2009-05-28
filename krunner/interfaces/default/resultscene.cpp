@@ -103,10 +103,12 @@ void ResultScene::clearMatches()
 bool ResultScene::canMoveItemFocus() const
 {
     // We prevent a late query result from stealing the item focus from the user
-    // The item focus can be moved only if the focusBase widget (the khistorycombobox)
-    // has focus (i.e. the user is still typing or waiting) or if there is no item currently focused
+    // The item focus can be moved only if 
+    // 1) the focusBase widget (the khistorycombobox) has focus (i.e. the user is still typing or waiting) 
+    // 2) there is no item currently focused
+    // 3) the currently focused item is not visible anymore
 
-    return m_focusBase->hasFocus() || (!focusItem());
+    return m_focusBase->hasFocus() || !(focusItem()) || (!m_items.contains(static_cast<ResultItem*>(focusItem())));
 }
 
 void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)

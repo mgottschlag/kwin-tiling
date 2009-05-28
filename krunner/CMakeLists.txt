@@ -43,7 +43,8 @@ set(default_interface_SRCS
     interfaces/default/resultitem.cpp
     interfaces/default/resultscene.cpp
     interfaces/default/selectionbar.cpp
-    )
+    interfaces/default/krunnertabfilter.cpp
+)
 
 set(quicksand_interface_SRCS
    interfaces/quicksand/qs_completionbox.cpp

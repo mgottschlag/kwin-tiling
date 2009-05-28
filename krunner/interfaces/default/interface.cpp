@@ -53,6 +53,7 @@
 #include "krunnersettings.h"
 #include "interfaces/default/resultscene.h"
 #include "interfaces/default/resultitem.h"
+#include "interfaces/default/krunnertabfilter.h"
 
 static const int MIN_WIDTH = 420;
 
@@ -194,6 +195,9 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
 
     connect(lineEdit, SIGNAL(userTextChanged(QString)), this, SLOT(queryTextEdited(QString)));
     connect(m_searchTerm, SIGNAL(returnPressed()), this, SLOT(runDefaultResultItem()));
+
+    KrunnerTabFilter *krunnerTabFilter = new KrunnerTabFilter(m_resultsScene, lineEdit, this);
+    m_searchTerm->installEventFilter(krunnerTabFilter);
 
     themeUpdated();
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
