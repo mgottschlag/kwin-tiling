@@ -41,6 +41,12 @@ bool AuthorizationsFilterModel::filterAcceptsRow(int source_row, const QModelInd
 {
     QModelIndex index = sourceModel()->index(source_row, 0, source_parent);
 
+    // if the filter is empty avoid checking since if the model isn't complete populated
+    // some items might be hidden
+    if (filterRegExp().isEmpty()) {
+        return true;
+    }
+
     if (index.data(PolkitKde::PoliciesModel::IsGroupRole).toBool()) {
         return groupHasMatchingItem(index);
     }

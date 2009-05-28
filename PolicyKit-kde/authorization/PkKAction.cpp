@@ -327,9 +327,9 @@ void PkKAction::on_revokePB_clicked()
 
 void PkKAction::setPolKitPolicyFileEntry(PolKitPolicyFileEntry *pfe)
 {
-    kDebug() << "Setting PFE";
-    if (m_pfe != 0)
+    if (m_pfe) {
         polkit_policy_file_entry_unref(m_pfe);
+    }
     m_pfe = pfe;
     polkit_policy_file_entry_ref(m_pfe);
     updateEntryView();
