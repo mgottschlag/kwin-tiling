@@ -1,8 +1,12 @@
 [Desktop Entry]
 Name=Search and Locate Containment
+Name[pt]=Contentor de Pesquisa e Localização
+Name[pt_BR]=Contentor de Pesquisa e Localização
 Name[sv]=Sök- och lokaliseringsomgivning
 Name[uk]=Контейнер пошуку і адрес
 Comment=Special Containment with Launcher
+Comment[pt]=Contentor Especial com Lançador
+Comment[pt_BR]=Contentor Especial com Lançador
 Comment[sv]=Särskild omgivning med programstart
 Comment[uk]=Особливий контейнер з інструментом запуску
 
