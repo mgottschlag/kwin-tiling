@@ -211,6 +211,8 @@ void KSMPushButton::paintEvent( QPaintEvent * e )
 
     p.save();
 
+    m_glowSvg->resize();
+
     if (m_glowOpacity > 0) {
         p.setOpacity(m_glowOpacity); // fade in
         m_glowSvg->paint(&p, QRect(0, 0, width(), height()), m_smallButton ? "button-small-hover" : "button-hover");
@@ -218,7 +220,6 @@ void KSMPushButton::paintEvent( QPaintEvent * e )
         m_glowSvg->paint(&p, QRect(0, 0, width(), height()), m_smallButton ? "button-small-normal" : "button-normal");
         p.setOpacity(1.0);
     } else {
-        m_glowSvg->resize();
         m_glowSvg->paint(&p, QRect(0, 0, width(), height()), m_smallButton ? "button-small-normal" : "button-normal");
     }
 
@@ -567,6 +568,7 @@ void KSMShutdownDlg::paintEvent(QPaintEvent *e)
         QRect r = layout()->geometry();
         r.setWidth(m_pictureWidth);
 
+	m_svg->resize();
         m_svg->resize(m_svg->elementRect("picture").size());
         QPixmap picture = m_svg->pixmap("picture");
         m_svg->resize();
