@@ -29,6 +29,7 @@
 #include <plasma/extendergroup.h>
 #include <plasma/popupapplet.h>
 #include <plasma/tooltipmanager.h>
+#include <plasma/theme.h>
 
 #include <KIcon>
 #include <KGlobalSettings>
@@ -88,6 +89,8 @@ void ExtenderTaskBusyWidget::paint(QPainter *painter, const QStyleOptionGraphics
         QFont font(KGlobalSettings::smallestReadableFont());
         painter->setFont(font);
         QRectF r = rect();
+
+        painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
 
         if (m_svg && m_svg->hasElement(expanderElement())) {
             QFontMetrics fm(font);
