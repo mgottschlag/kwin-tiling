@@ -96,7 +96,7 @@ QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString, D
     } else {
         item = new QStandardItem;
         const QString subTitle = url.isLocalFile() ? url.toLocalFile() : url.prettyUrl();
-        QString basename = QFileInfo(urlString).completeBaseName();
+        QString basename = QFileInfo(url.prettyUrl()).completeBaseName();
         if (basename.isNull()) {
             basename = subTitle;
         }
