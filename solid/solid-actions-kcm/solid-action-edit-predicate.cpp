@@ -78,7 +78,6 @@ void SolidActionEditPredicate::prepareShow(QTreeWidgetItem *editItem)
             ui.CbRestrictionDeviceType->setCurrentIndex(deviceData->types.keys().indexOf(deviceRequirement.at(0))); // Import <DeviceType>
             updateValuesList(); // The action list should be refreshed now so it is ready for setting
             QStringList deviceReqList = deviceData->valueList(deviceRequirement.at(0)).keys();
-            qSort(deviceReqList.begin(), deviceReqList.end());
             ui.CbRestrictionDeviceValue->setCurrentIndex(deviceReqList.indexOf(deviceRequirement.at(1))); // Import <Value>
             // If the comparer is "equals" then we should set it as so
             if (editItem->text(2) == "==") {
@@ -151,7 +150,6 @@ void SolidActionEditPredicate::updateValuesList()
     ui.CbRestrictionDeviceValue->clear(); // No need to keep previous values
     QString deviceInternalName = deviceData->types.key(ui.CbRestrictionDeviceType->currentText()); // Retrieve the device internal name
     deviceValuesList = deviceData->valueList(deviceInternalName).values(); // Add the user friendly name to the list of values
-    qSort(deviceValuesList.begin(), deviceValuesList.end()); // Sort it so the correct one is selected later
     ui.CbRestrictionDeviceValue->addItems(deviceValuesList); // Add the items to the combobox
 }
 
