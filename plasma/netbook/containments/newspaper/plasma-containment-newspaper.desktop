@@ -1,7 +1,15 @@
 [Desktop Entry]
 Name=Newspaper activity
+Name[pt]=Actividade de jornal
+Name[pt_BR]=Actividade de jornal
+Name[sv]=Tidningsaktivitet
+Name[uk]=Газетна обробка
 
 Comment=An activity that puts widgets on two columns
+Comment[pt]=Uma actividade que coloca os itens em duas colunas
+Comment[pt_BR]=Uma actividade que coloca os itens em duas colunas
+Comment[sv]=En aktivitet som placerar grafiska komponenter i två kolumner
+Comment[uk]=Інструмент обробки з розміщення тексту в дві колонки
 
 
 Icon=

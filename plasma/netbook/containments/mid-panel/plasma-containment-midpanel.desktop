@@ -1,5 +1,9 @@
 [Desktop Entry]
 Name=Panel for Mobile Internet Devices
+Name[pt]=Painel dos Dispositivos de Internet Móveis (MID)
+Name[pt_BR]=Painel dos Dispositivos de Internet Móveis (MID)
+Name[sv]=Panel för mobila internetenheter
+Name[uk]=Панель для мобільних інтернет-пристроїв
 Comment=A containment for a panel
 Comment[de]=Ein Behältnis für eine Kontrollleiste
 Comment[et]=Paneeli konteiner
