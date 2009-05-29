@@ -89,7 +89,7 @@ void WindowTaskItem::activate()
 void WindowTaskItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->buttons() & Qt::MidButton) {
-        if (isGrouped()) {
+        if (isGrouped() && parentGroup()) {
             parentGroup()->collapse();
         }
     } else {

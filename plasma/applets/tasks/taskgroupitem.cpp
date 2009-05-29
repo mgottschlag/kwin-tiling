@@ -288,6 +288,7 @@ void TaskGroupItem::reload()
             kDebug() << "invalid Item";
             continue;
         }
+
         itemsToRemove.removeAll(item);
         itemAdded(item);
 
@@ -420,8 +421,6 @@ AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractItemPtr
     return item;
 }
 
-
-
 void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
 {
     //kDebug();
@@ -465,8 +464,7 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
 
     TaskGroupItem *group = qobject_cast<TaskGroupItem*>(item);
     if (group) {
-        connect(item, SIGNAL(changed()),
-            this, SLOT(relayoutItems()));
+        connect(item, SIGNAL(changed()), this, SLOT(relayoutItems()));
     }
 }
 
@@ -477,6 +475,7 @@ void TaskGroupItem::itemRemoved(TaskManager::AbstractItemPtr groupableItem)
         kDebug() << "No Applet";
         return;
     }
+
     AbstractTaskItem *item = m_groupMembers.take(groupableItem);;
 
     if (!item) {
@@ -494,7 +493,6 @@ void TaskGroupItem::itemRemoved(TaskManager::AbstractItemPtr groupableItem)
     item->close();
     item->deleteLater();
 }
-
 
 bool TaskGroupItem::isWindowItem() const
 {

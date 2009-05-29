@@ -775,6 +775,7 @@ void AbstractTaskItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
         m_activateTimer->setInterval(300);
         connect(m_activateTimer, SIGNAL(timeout()), this, SLOT(activate()));
     }
+
     m_activateTimer->start();
 }
 
@@ -978,6 +979,7 @@ bool AbstractTaskItem::isGrouped() const
         kDebug() <<"no item";
         return false;
     }
+
     return m_abstractItem->isGrouped();
 }
 
