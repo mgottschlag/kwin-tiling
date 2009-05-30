@@ -117,6 +117,13 @@ void ActivityBar::constraintsEvent(Plasma::Constraints constraints)
         emit sizeHintChanged(Qt::PreferredSize);
     }
 
+    if (constraints & Plasma::SizeConstraint ) {
+        Plasma::Containment *c = containment();
+        if (c) {
+            const bool drawBase = size().width() + 2 <= c->size().width() && size().height() + 2 <= c->size().height();
+            m_tabBar->nativeWidget()->setDrawBase(drawBase);
+        }
+    }
 }
 
 void ActivityBar::switchContainment(int newActive)
