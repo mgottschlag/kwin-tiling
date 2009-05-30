@@ -23,19 +23,19 @@ screen=0
 zvalue=150
 
 [Containments][2][Applets][1]
-geometry=-1,-1,0,0
+geometry=0,0,10,10
 immutability=1
 plugin=currentappcontrol
 zvalue=0
 
 [Containments][2][Applets][2]
-geometry=-1,-1,0,0
+geometry=300,0,10,10
 immutability=1
 plugin=activitybar
 zvalue=0
 
 [Containments][2][Applets][3]
-geometry=-1,-1,0,0
+geometry=550,0,10,10
 immutability=1
 plugin=panelspacer_internal
 zvalue=0
@@ -44,13 +44,13 @@ zvalue=0
 FixedSize=false
 
 [Containments][2][Applets][4]
-geometry=-1,-1,0,0
+geometry=650,0,10,10
 immutability=1
 plugin=systemtray
 zvalue=0
 
 [Containments][2][Applets][5]
-geometry=-1,-1,0,0
+geometry=700,0,10,10
 immutability=1
 plugin=digital-clock
 zvalue=0
