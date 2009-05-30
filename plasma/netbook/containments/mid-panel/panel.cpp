@@ -404,7 +404,7 @@ void Panel::setFormFactorFromLocation(Plasma::Location loc) {
     }
 }
 
-K_EXPORT_PLASMA_APPLET(panel, Panel)
+K_EXPORT_PLASMA_APPLET(mid-panel, Panel)
 
 #include "panel.moc"
 
