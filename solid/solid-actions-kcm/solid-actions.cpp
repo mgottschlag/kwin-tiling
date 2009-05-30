@@ -26,6 +26,7 @@
 #include <KAboutData>
 #include <KDialog>
 #include <KDesktopFile>
+#include <KBuildSycocaProgressDialog>
 #include <KUrl>
 #include <kdesktopfileactions.h>
 #include <KIO/NetAccess>
@@ -232,6 +233,7 @@ void SolidActions::acceptActionChanges()
         selectedItem->setKey(ActionItem::GroupDesktop, "X-KDE-Solid-Predicate", predicate); // Write the change
     }
     // Re-read the actions list to ensure changes are reflected
+    KBuildSycocaProgressDialog::rebuildKSycoca(this);
     fillActionsList();
 }
 
