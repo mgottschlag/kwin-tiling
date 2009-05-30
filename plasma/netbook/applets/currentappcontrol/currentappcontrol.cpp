@@ -24,6 +24,7 @@
 #include <QGraphicsLinearLayout>
 #include <QX11Info>
 #include <QTimer>
+#include <QFontMetrics>
 
 //KDE
 #include <kwindowsystem.h>
@@ -33,6 +34,7 @@
 //Plasma
 #include <Plasma/IconWidget>
 #include <Plasma/View>
+#include <Plasma/Theme>
 
 //X
 #ifdef Q_WS_X11
@@ -46,8 +48,8 @@ CurrentAppControl::CurrentAppControl(QObject *parent, const QVariantList &args)
       m_activeWindow(0),
       m_pendingActiveWindow(0)
 {
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_currentTask = new Plasma::IconWidget(this);
-    m_currentTask->setOrientation(Qt::Horizontal);
     m_currentTask->setTextBackgroundColor(QColor());
     m_closeTask = new Plasma::IconWidget(this);
     m_closeTask->setSvg("widgets/configuration-icons", "close");
@@ -60,7 +62,6 @@ CurrentAppControl::CurrentAppControl(QObject *parent, const QVariantList &args)
 
 CurrentAppControl::~CurrentAppControl()
 {
-
 }
 
 void CurrentAppControl::init()
@@ -74,6 +75,21 @@ void CurrentAppControl::init()
     lay->addItem(m_closeTask);
     activeWindowChanged(KWindowSystem::activeWindow());
 }
+
+void CurrentAppControl::constraintsEvent(Plasma::Constraints constraints)
+{
+    if (constraints && Plasma::FormFactorConstraint) {
+        QFontMetrics fm(Plasma::Theme::defaultTheme()->font(Plasma::Theme::DefaultFont));
+        if (formFactor() == Plasma::Vertical) {
+            m_currentTask->setOrientation(Qt::Vertical);
+            m_currentTask->setMinimumSize(0, KIconLoader::SizeSmallMedium*2 + fm.xHeight()*10);
+        } else {
+            m_currentTask->setOrientation(Qt::Horizontal);
+            m_currentTask->setMinimumSize(KIconLoader::SizeSmallMedium*2 + fm.width('M')*10, 0);
+        }
+    }
+}
+
 
 void CurrentAppControl::activeWindowChanged(WId id)
 {
@@ -98,7 +114,6 @@ void CurrentAppControl::syncActiveWindow()
     }
 
     m_pendingActiveWindow = 0;
-    m_currentTask->setMinimumWidth(m_currentTask->sizeFromIconSize(KIconLoader::SizeSmallMedium).width());
 }
 
 void CurrentAppControl::closeWindow()

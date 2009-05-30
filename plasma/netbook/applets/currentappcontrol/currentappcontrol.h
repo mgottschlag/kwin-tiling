@@ -38,6 +38,7 @@ public:
     ~CurrentAppControl();
 
     void init();
+    void constraintsEvent(Plasma::Constraints constraints);
 
 protected Q_SLOTS:
     void activeWindowChanged(WId id);
