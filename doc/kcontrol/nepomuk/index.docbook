@@ -61,7 +61,7 @@ all files in folder foobar and analyzes new or changed files.</para></listitem>
 <listitem><para><guilabel>Checking file system for new files</guilabel> - The file indexer is currently performing its recurring check
 for new files in all index folders. This check is intended to find files that were not caught through normal file system
 monitoring.</para></listitem>
-<listitem><para><guilabel>File indexer is suspended</guilabel> - The file indexer has been suspended, i.e. it is in a paused state.
+<listitem><para><guilabel>File indexer is suspended</guilabel> - The file indexer has been suspended, &ie; it is in a paused state.
 This can either be triggered by the user or due to low disk space or a laptop being in a power-saving state. In the two latter
 cases the indexer will resume once the reason for the suspension has been resolved.</para></listitem>
 </itemizedlist>
