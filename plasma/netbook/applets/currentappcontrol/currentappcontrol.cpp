@@ -49,9 +49,7 @@ CurrentAppControl::CurrentAppControl(QObject *parent, const QVariantList &args)
     m_currentTask = new Plasma::IconWidget(this);
     m_currentTask->setOrientation(Qt::Horizontal);
     m_currentTask->setTextBackgroundColor(QColor());
-    m_currentTask->setDrawBackground(true);
     m_closeTask = new Plasma::IconWidget(this);
-    m_closeTask->setDrawBackground(true);
     m_closeTask->setSvg("widgets/configuration-icons", "close");
     m_closeTask->setMaximumWidth(KIconLoader::SizeSmallMedium);
 
@@ -70,6 +68,8 @@ void CurrentAppControl::init()
     connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)),
             this, SLOT(activeWindowChanged(WId)));
     QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(Qt::Horizontal, this);
+    lay->setContentsMargins(0, 0, 0, 0);
+    lay->setSpacing(0);
     lay->addItem(m_currentTask);
     lay->addItem(m_closeTask);
     activeWindowChanged(KWindowSystem::activeWindow());
