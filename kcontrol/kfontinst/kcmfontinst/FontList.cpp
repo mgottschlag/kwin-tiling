@@ -272,22 +272,6 @@ CFontItem::CFontItem(CFontModelItem *p, const KFileItem &item, const QString &st
                                            udsEntry.stringValue((uint)UDS_EXTRA_FOUNDRY)));
 }
 
-void CFontItem::touchThumbnail()
-{
-#ifdef KFI_SAVE_PIXMAPS
-    // Access thumbFile, if it exists, to prevent its removal from the cache
-    if(itsParent)
-    {
-        QColor norm(QApplication::palette().color(QPalette::Text)),
-               sel(QApplication::palette().color(QPalette::HighlightedText));
-
-        setTimeStamp(CPreviewCache::thumbKey(family(), itsStyleInfo, CFontList::previewSize(), norm));
-        if(norm!=sel)
-            setTimeStamp(CPreviewCache::thumbKey(family(), itsStyleInfo, CFontList::previewSize(), sel));
-    }
-#endif
-}
-
 void CFontItem::setUrl(const KUrl &url)
 {
     itsUrl=url;
@@ -339,12 +323,6 @@ CFamilyItem::~CFamilyItem()
 {
     qDeleteAll(itsFonts);
     itsFonts.clear();
-}
-
-void CFamilyItem::touchThumbnail()
-{
-    if(itsRegularFont)
-        itsRegularFont->touchThumbnail();
 }
 
 CFontItem * CFamilyItem::findFont(const KFileItem &i)
@@ -407,7 +385,6 @@ void CFamilyItem::refresh()
     updateStatus();
     itsRegularFont=NULL;
     updateRegularFont(NULL);
-    touchThumbnail();
 }
 
 bool CFamilyItem::updateStatus()
@@ -775,7 +752,6 @@ QString CFontList::whatsThis() const
 
 void CFontList::listingCompleted()
 {
-    touchThumbnails();
     emit finished();
 }
 
@@ -941,17 +917,6 @@ CFontItem * CFontList::findFont(const KUrl &url)
     return itsFonts.contains(url)
             ? itsFonts[url]
             : NULL;
-}
-
-void CFontList::touchThumbnails()
-{
-#ifdef KFI_SAVE_PIXMAPS
-    QList<CFamilyItem *>::ConstIterator it(itsFamilies.begin()),
-                                        end(itsFamilies.end());
-
-    for(; it!=end; ++it)
-        (*it)->touchThumbnail();
-#endif
 }
 
 inline bool matchString(const QString &str, const QString &pattern)

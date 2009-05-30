@@ -135,7 +135,6 @@ class CFontList : public QAbstractItemModel
     void            addItem(const KFileItem &item);
     CFamilyItem *   findFamily(const QString &familyName, bool create=false);
     CFontItem *     findFont(const KUrl &url);
-    void            touchThumbnails();
 
     private:
 
@@ -184,7 +183,6 @@ class CFamilyItem : public CFontModelItem
 
     bool operator==(const CFamilyItem &other) const       { return itsName==other.itsName; }
 
-    void                 touchThumbnail();
     const QString &      name() const                     { return itsName; }
     const QString &      icon() const                     { return itsIcon; }
     const QList<CFontItem *> & fonts() const              { return itsFonts; }
@@ -225,7 +223,6 @@ class CFontItem : public CFontModelItem
     CFontItem(CFontModelItem *p, const KFileItem &item, const QString &style=QString());
     virtual ~CFontItem() { }
 
-    void                              touchThumbnail();
     const QString &                   name() const             { return itsName; }
     QString                           mimetype() const         { return itsMimeType; }
     bool                              isEnabled() const        { return itsEnabled; }
