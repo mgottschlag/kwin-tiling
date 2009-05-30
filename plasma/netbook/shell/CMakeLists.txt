@@ -20,5 +20,6 @@ endif(X11_Xrender_FOUND)
 
 install(TARGETS kdeinit_plasma-mid DESTINATION ${LIB_INSTALL_DIR})
 install(TARGETS plasma-mid ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(FILES plasma-default-layoutrc DESTINATION ${DATA_INSTALL_DIR}/plasma-mid/)
 #install(FILES plasma-mid.desktop DESTINATION ${AUTOSTART_INSTALL_DIR})
 
