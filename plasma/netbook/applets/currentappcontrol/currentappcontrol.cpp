@@ -45,7 +45,10 @@ CurrentAppControl::CurrentAppControl(QObject *parent, const QVariantList &args)
 {
     m_currentTask = new Plasma::IconWidget(this);
     m_currentTask->setOrientation(Qt::Horizontal);
+    m_currentTask->setTextBackgroundColor(QColor());
+    m_currentTask->setDrawBackground(true);
     m_closeTask = new Plasma::IconWidget(this);
+    m_closeTask->setDrawBackground(true);
     m_closeTask->setSvg("widgets/configuration-icons", "close");
     m_closeTask->setMaximumWidth(KIconLoader::SizeSmallMedium);
 
@@ -75,13 +78,15 @@ void CurrentAppControl::activeWindowChanged(WId id)
         m_activeWindow = 0;
         m_currentTask->setIcon("preferences-system-windows");
         m_currentTask->setText(i18np("%1 running app", "%1 running apps", KWindowSystem::windows().count()-1));
-        m_closeTask->setEnabled("false");
+        m_closeTask->hide();
     } else {
         m_activeWindow = id;
         KWindowInfo info = KWindowSystem::windowInfo(m_activeWindow, NET::WMName);
         m_currentTask->setIcon(KWindowSystem::icon(m_activeWindow, KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium));
         m_currentTask->setText(info.name());
+        m_closeTask->show();
     }
+    m_currentTask->setMinimumWidth(m_currentTask->sizeFromIconSize(KIconLoader::SizeSmallMedium).width());
 }
 
 void CurrentAppControl::closeWindow()
