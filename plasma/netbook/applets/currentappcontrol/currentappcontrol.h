@@ -41,6 +41,7 @@ public:
 
 protected Q_SLOTS:
     void activeWindowChanged(WId id);
+    void syncActiveWindow();
     void closeWindow();
     void listWindows();
 
@@ -48,6 +49,7 @@ private:
     Plasma::IconWidget *m_currentTask;
     Plasma::IconWidget *m_closeTask;
     WId m_activeWindow;
+    WId m_pendingActiveWindow;
 };
 
 K_EXPORT_PLASMA_APPLET(currentappcontrol, CurrentAppControl)

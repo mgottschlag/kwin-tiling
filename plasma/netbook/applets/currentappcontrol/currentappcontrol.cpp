@@ -23,6 +23,7 @@
 //Qt
 #include <QGraphicsLinearLayout>
 #include <QX11Info>
+#include <QTimer>
 
 //KDE
 #include <kwindowsystem.h>
@@ -41,7 +42,9 @@
 #endif
 
 CurrentAppControl::CurrentAppControl(QObject *parent, const QVariantList &args)
-    : Plasma::Applet(parent, args)
+    : Plasma::Applet(parent, args),
+      m_activeWindow(0),
+      m_pendingActiveWindow(0)
 {
     m_currentTask = new Plasma::IconWidget(this);
     m_currentTask->setOrientation(Qt::Horizontal);
@@ -74,18 +77,27 @@ void CurrentAppControl::init()
 
 void CurrentAppControl::activeWindowChanged(WId id)
 {
-    if (id == view()->effectiveWinId()) {
+    m_pendingActiveWindow = id;
+    //delay the switch to permit to pass the close action to the proper window if our view accepts focus
+    QTimer::singleShot(100, this, SLOT(syncActiveWindow()));
+}
+
+void CurrentAppControl::syncActiveWindow()
+{
+    if (m_pendingActiveWindow == view()->effectiveWinId()) {
         m_activeWindow = 0;
         m_currentTask->setIcon("preferences-system-windows");
         m_currentTask->setText(i18np("%1 running app", "%1 running apps", KWindowSystem::windows().count()-1));
         m_closeTask->hide();
     } else {
-        m_activeWindow = id;
+        m_activeWindow = m_pendingActiveWindow;
         KWindowInfo info = KWindowSystem::windowInfo(m_activeWindow, NET::WMName);
         m_currentTask->setIcon(KWindowSystem::icon(m_activeWindow, KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium));
         m_currentTask->setText(info.name());
         m_closeTask->show();
     }
+
+    m_pendingActiveWindow = 0;
     m_currentTask->setMinimumWidth(m_currentTask->sizeFromIconSize(KIconLoader::SizeSmallMedium).width());
 }
 
