@@ -39,7 +39,6 @@ public:
     Panel(QObject *parent, const QVariantList &args);
     ~Panel();
     void init();
-    QList<QAction*> contextualActions();
 
     void constraintsEvent(Plasma::Constraints constraints);
 
@@ -70,7 +69,6 @@ private:
     void updateBorders();
 
     Plasma::FrameSvg *m_background;
-    QAction* m_configureAction;
 };
 
 

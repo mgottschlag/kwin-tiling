@@ -50,8 +50,7 @@ using namespace Plasma;
 static const int CONTROL_BAR_HEIGHT = 22;
 
 Panel::Panel(QObject *parent, const QVariantList &args)
-    : Containment(parent, args),
-      m_configureAction(0)
+    : Containment(parent, args)
 {
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/panel-background");
@@ -83,19 +82,6 @@ void Panel::init()
     Containment::init();
 }
 
-QList<QAction*> Panel::contextualActions()
-{
-    if (!m_configureAction) {
-        m_configureAction = new QAction(i18n("Panel Settings"), this);
-        m_configureAction->setIcon(KIcon("configure"));
-        connect(m_configureAction, SIGNAL(triggered()), this, SIGNAL(toolBoxToggled()));
-    }
-
-    QList<QAction*> actions;
-    actions << action("add widgets") << m_configureAction;
-    return actions;
-}
-
 void Panel::backgroundChanged()
 {
     constraintsEvent(Plasma::LocationConstraint);
@@ -112,14 +98,6 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 
     Plasma::FormFactor f = formFactor();
     int insertIndex = -1;
-
-    //Enlarge the panel if possible
-    if (f == Plasma::Horizontal) {
-        resize(size().width() + applet->preferredWidth(), size().height());
-    } else {
-        resize(size().width(), size().height() + applet->preferredHeight());
-    }
-    layout()->setMaximumSize(size());
 
     //if pos is (-1,-1) insert at the end of the panel
     if (pos != QPoint(-1, -1)) {
@@ -221,6 +199,7 @@ void Panel::updateBorders()
     m_background->setEnabledBorders(enabledBorders);
     m_background->getMargins(leftWidth, topHeight, rightWidth, bottomHeight);
 
+    //FIXME: is it needed here?
     //calculation of extra margins has to be done after getMargins
     if (formFactor() == Vertical) {
         //hardcoded extra margin for the toolbox right now
@@ -239,6 +218,22 @@ void Panel::updateBorders()
         }
     }
 
+    switch (location()) {
+    case LeftEdge:
+        rightWidth = qMin(rightWidth, qMax(qreal(1), size().width() - KIconLoader::SizeMedium));
+        break;
+    case RightEdge:
+        leftWidth = qMin(leftWidth, qMax(qreal(1), size().width() - KIconLoader::SizeMedium));
+        break;
+    case TopEdge:
+        bottomHeight = qMin(bottomHeight, qMax(qreal(1), size().height() - KIconLoader::SizeMedium));
+        break;
+    case BottomEdge:
+        topHeight = qMin(topHeight, qMax(qreal(1), size().height() - KIconLoader::SizeMedium));
+        break;
+    default:
+        break;
+    }
 
     //invalidate the layout and set again
     if (layout()) {
@@ -308,11 +303,6 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
 
     if (constraints & Plasma::ImmutableConstraint) {
         bool unlocked = immutability() == Plasma::Mutable;
-
-        if (m_configureAction) {
-            m_configureAction->setEnabled(unlocked);
-            m_configureAction->setVisible(unlocked);
-        }
 
         updateBorders();
     }
@@ -404,7 +394,7 @@ void Panel::setFormFactorFromLocation(Plasma::Location loc) {
     }
 }
 
-K_EXPORT_PLASMA_APPLET(mid-panel, Panel)
+K_EXPORT_PLASMA_APPLET(midpanel, Panel)
 
 #include "panel.moc"
 
