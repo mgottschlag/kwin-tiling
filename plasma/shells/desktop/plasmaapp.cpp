@@ -213,6 +213,12 @@ void PlasmaApp::setupDesktop()
     Kephal::Screens *screens = Kephal::Screens::self();
     connect(screens, SIGNAL(screenRemoved(int)), SLOT(screenRemoved(int)));
 
+    // free the memory possibly occupied by the background image of the
+    // root window - login managers will typically set one
+    QPalette palette;
+    palette.setColor(desktop()->backgroundRole(), Qt::black);
+    desktop()->setPalette(palette);
+
     // and now, let everyone know we're ready!
     notifyStartup(true);
     connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanup()));
