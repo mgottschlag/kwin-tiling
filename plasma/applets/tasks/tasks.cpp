@@ -185,11 +185,6 @@ void Tasks::resizeItemBackground(const QSizeF &size)
   //kDebug();
     if (!m_taskItemBackground) {
         itemBackground();
-
-        if (!m_taskItemBackground) {
-            //kDebug() << "Error1";
-            return;
-        }
     }
 
     if (m_taskItemBackground->frameSize() == size) {
@@ -404,17 +399,6 @@ void Tasks::needsVisualFocus()
 {
     emit activate();
 }
-
-void Tasks::themeRefresh()
-{
-    delete m_taskItemBackground;
-    m_taskItemBackground = 0;
-
-    delete m_colorScheme;
-    m_colorScheme = 0;
-}
-
-
 
 TaskGroupItem* Tasks::rootGroupItem()
 {

@@ -461,11 +461,6 @@ void AbstractTaskItem::paint(QPainter *painter,
 void AbstractTaskItem::syncActiveRect()
 {
     Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
-
-    if (!itemBackground) {
-        return;
-    }
-
     itemBackground->setElementPrefix("normal");
 
     qreal left, top, right, bottom;
@@ -495,10 +490,6 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     */
     Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
 
-    if (!itemBackground) {
-        return;
-    }
-
     //if the size is changed have to resize all the elements
     if (itemBackground->size() != size().toSize() && itemBackground->size() != m_activeRect.size().toSize()) {
         syncActiveRect();
@@ -517,8 +508,6 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
         //restore the prefix
         itemBackground->setElementPrefix(m_backgroundPrefix);
     }
-
-   
 
     if (!m_animId && ~option->state & QStyle::State_Sunken) {
         itemBackground->setElementPrefix(m_backgroundPrefix);
@@ -601,7 +590,7 @@ void AbstractTaskItem::drawTask(QPainter *painter, const QStyleOptionGraphicsIte
 
         Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
 
-        if (itemBackground && itemBackground->hasElement(expanderElement())) {
+        if (itemBackground->hasElement(expanderElement())) {
             QSizeF arrowSize(itemBackground->elementSize(expanderElement()));
             QRectF arrowRect(rect.center()-QPointF(arrowSize.width()/2, arrowSize.height()+fm.xHeight()/2), arrowSize);
             itemBackground->paint(painter, arrowRect, expanderElement());
@@ -886,7 +875,7 @@ QRectF AbstractTaskItem::expanderRect(const QRectF &bounds) const
     Plasma::FrameSvg *itemBackground = m_applet->itemBackground();
 
     QSize expanderSize(qMax(fm.width(QString::number(groupItem->count())),
-                       itemBackground ?  itemBackground->elementSize(expanderElement()).width() : 0),
+                       itemBackground->elementSize(expanderElement()).width()),
                        size().height());
 
     return QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignRight | Qt::AlignVCenter,
@@ -920,7 +909,7 @@ QColor AbstractTaskItem::textColor() const
     Plasma::Theme *theme = Plasma::Theme::defaultTheme();
 
     if ((m_oldBackgroundPrefix == "attention" || m_backgroundPrefix == "attention") &&
-        m_applet->itemBackground() && m_applet->itemBackground()->hasElement("hint-attention-button-color")) {
+         m_applet->itemBackground()->hasElement("hint-attention-button-color")) {
         if (!m_animId && m_backgroundPrefix != "attention") {
             color = theme->color(Plasma::Theme::TextColor);
         } else if (!m_animId) {

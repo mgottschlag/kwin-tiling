@@ -120,7 +120,6 @@ signals:
 
 protected slots:
         void configAccepted();
-        void themeRefresh();
 
 protected:
         void createConfigurationInterface(KConfigDialog *parent);
