@@ -121,7 +121,6 @@ PlasmaApp::PlasmaApp()
     int width = 400;
     int height = 200;
     if (isDesktop) {
-        //TODO: reserve a WM strut for m_controlBar
         QRect rect = desktop()->screenGeometry(0);
         width = rect.width();
         height = rect.height();
@@ -334,7 +333,8 @@ void PlasmaApp::createView(Plasma::Containment *containment)
 
     kDebug() << "new containment" << (QObject*)containment << containment->id()<<"view id"<<id;
 
-    if (m_mainView && id == MidView::mainViewId()) {
+    if ((m_mainView && id == MidView::mainViewId()) ||
+        (!viewIds.exists() && m_mainView->containment() == 0)) {
         m_mainView->setContainment(containment);
     } else if (m_controlBar && id == MidView::controlBarId()) {
         m_controlBar->setContainment(containment);
