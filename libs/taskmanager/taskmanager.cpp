@@ -33,8 +33,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <KConfig>
 #include <KConfigGroup>
 #include <KDebug>
+#include <KDirWatch>
 #include <KGlobal>
 #include <KLocale>
+#include <KStandardDirs>
 
 #ifdef Q_WS_X11
 #include <QX11Info>
@@ -102,6 +104,13 @@ TaskManager::TaskManager()
     // set active window
     WId win = KWindowSystem::activeWindow();
     activeWindowChanged(win);
+
+    KDirWatch *watcher = new KDirWatch(this);
+    watcher->addFile(KGlobal::dirs()->locateLocal("config", "klaunchrc"));
+    connect(watcher, SIGNAL(dirty(const QString&)), this, SLOT(configureStartup()));
+    connect(watcher, SIGNAL(created(const QString&)), this, SLOT(configureStartup()));
+    connect(watcher, SIGNAL(deleted(const QString&)), this, SLOT(configureStartup()));
+
     configureStartup();
 }
 
