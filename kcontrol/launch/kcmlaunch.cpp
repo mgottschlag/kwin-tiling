@@ -216,10 +216,6 @@ LaunchConfig::save()
 
   org::kde::krunner::App desktop("org.kde.krunner", "/App", QDBusConnection::sessionBus());
   desktop.initializeStartupNotification();
-  //TODO: do we need to replace this with a call to plasma to kick over the taskbar? needs
-  //investigating
-  //QDBusInterface kicker("org.kde.kicker", "/Panel", "org.kde.kicker.Panel");
-  //kicker.call("restart");
 }
 
   void
