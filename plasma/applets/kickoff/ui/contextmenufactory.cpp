@@ -38,6 +38,7 @@
 #include <Solid/OpticalDrive>
 #include <Solid/OpticalDisc>
 #include <KUrl>
+#include <KStandardDirs>
 
 // Plasma
 #include <Plasma/Containment>
@@ -149,7 +150,15 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
     if ((d->applet) && (kurl.scheme() != "leave")) {
         Plasma::Containment *containment = d->applet->containment();
 
-        if (containment && containment->corona()) {
+        // There might be relative paths for .desktop installed in
+        // /usr/shar/applnk, we need to locate them
+        bool urlFound = true;
+        if (kurl.isRelative() && kurl.url().endsWith(".desktop")) {
+            kurl = KStandardDirs::locate("apps", url);
+            urlFound = !kurl.isEmpty();
+        }
+
+        if (urlFound && containment && containment->corona()) {
             Plasma::Containment *desktop = containment->corona()->containmentForScreen(containment->screen());
 
             if (desktop && desktop->immutability() == Plasma::Mutable) {
@@ -158,7 +167,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
             }
         }
 
-        if (containment && containment->immutability() == Plasma::Mutable &&
+        if (urlFound && containment && containment->immutability() == Plasma::Mutable &&
                 containment->containmentType() == Plasma::Containment::PanelContainment) {
             addToPanelAction->setText(i18n("Add to Panel"));
             actions << addToPanelAction;
@@ -234,7 +243,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
                     Plasma::Containment *desktop = corona->containmentForScreen(containment->screen());
                     if (desktop) {
                         QVariantList args;
-                        args << url;
+                        args << kurl.url();
                         desktop->addApplet("icon", args);
                     }
                 }
@@ -246,7 +255,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
             Plasma::Containment *panel = d->applet->containment();
             if (panel) {
                 QVariantList args;
-                args << url;
+                args << kurl.url();
 
                 // move it to the middle of the panel
                 QRectF rect(panel->geometry().width() / 2, 0, 150, panel->boundingRect().height());

@@ -59,7 +59,10 @@ QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString, D
 
     QStandardItem *item = 0;
 
-    if (url.isLocalFile() && urlString.endsWith(".desktop")) {
+    // Match files ending with ".desktop" and being local or having a relative
+    // path. For instance applications that still installs .desktop files at
+    // /usr/share/applnk, like KVirc 3
+    if (urlString.endsWith(".desktop") && (url.isLocalFile() || url.isRelative())) {
         // .desktop files may be services (type field == 'Application' or 'Service')
         // or they may be other types such as links.
         //
