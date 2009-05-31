@@ -334,7 +334,9 @@ void PlasmaApp::createView(Plasma::Containment *containment)
     kDebug() << "new containment" << (QObject*)containment << containment->id()<<"view id"<<id;
 
     if ((m_mainView && id == MidView::mainViewId()) ||
-        (!viewIds.exists() && m_mainView->containment() == 0)) {
+        (containment->containmentType() != Plasma::Containment::PanelContainment &&
+         containment->containmentType() != Plasma::Containment::CustomPanelContainment &&
+         !viewIds.exists() && m_mainView->containment() == 0)) {
         m_mainView->setContainment(containment);
     } else if (m_controlBar && id == MidView::controlBarId()) {
         m_controlBar->setContainment(containment);
