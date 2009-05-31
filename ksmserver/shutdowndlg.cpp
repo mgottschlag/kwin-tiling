@@ -337,6 +337,7 @@ Q_DECLARE_METATYPE(Solid::Control::PowerManager::SuspendMethod)
 KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
                                 bool maysd, KWorkSpace::ShutdownType sdtype )
   : QDialog( parent, Qt::Popup ), //krazy:exclude=qclasses
+    m_lastButton(0),
     m_btnLogout(0),
     m_btnHalt(0),
     m_btnReboot(0),
@@ -524,6 +525,10 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 void KSMShutdownDlg::automaticallyDoTimeout()
 {
     QPushButton *focusedButton = qobject_cast<QPushButton *>(focusWidget());
+    if (focusedButton != m_lastButton) {
+        m_lastButton = focusedButton;
+        m_automaticallyDoSeconds = 30;
+    }
     if (focusedButton) {
         if (m_automaticallyDoSeconds <= 0) { // timeout is at 0, do selected action
                 focusedButton->click();

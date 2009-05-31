@@ -129,6 +129,7 @@ private:
     QPixmap m_renderedSvg;
     Plasma::FrameSvg* m_svg;
     QLabel *m_automaticallyDoLabel;
+    QPushButton *m_lastButton;
     KSMPushButton *m_btnLogout;
     KSMPushButton *m_btnHalt;
     KSMPushButton *m_btnReboot;
