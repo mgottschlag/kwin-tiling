@@ -1,0 +1,6 @@
+[Desktop Entry] 
+Type=XSession
+TryExec=awesome
+Exec=awesome
+Name=awesome
+Comment=Highly configurable framework window manager
