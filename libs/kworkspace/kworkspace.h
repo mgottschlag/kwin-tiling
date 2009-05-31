@@ -52,7 +52,7 @@ namespace KWorkSpace
      */
     ShutdownTypeDefault = -1,
     /**
-     * Only show log out dialog
+     * Only log out
      */
     ShutdownTypeNone = 0,
     /**
@@ -64,14 +64,16 @@ namespace KWorkSpace
      */
     ShutdownTypeHalt = 2,
     /**
-     * Only log out
+     * Temporary brain damage. Don't use. Same as ShutdownTypeNone
      */
+    // KDE5: kill this
     ShutdownTypeLogout = 3
   };
 
   /**
    * The possible values for the @p sdmode parameter of requestShutDown().
    */
+  // KDE5: this seems fairly useless
   enum ShutdownMode {
     /**
      * Select previous mode or the default if it's the first time.

@@ -311,7 +311,7 @@ void KRunnerApp::taskDialogFinished()
 
 void KRunnerApp::logout()
 {
-    logout( KWorkSpace::ShutdownConfirmDefault,
+    logout( KWorkSpace::ShutdownConfirmYes,
             KWorkSpace::ShutdownTypeDefault );
 }
 

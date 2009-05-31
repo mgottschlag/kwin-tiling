@@ -171,7 +171,7 @@ void LockOut::clickLogout()
 {
     kDebug()<<"LockOut:: logout clicked ";
 #ifndef Q_OS_WIN
-    KWorkSpace::requestShutDown( KWorkSpace::ShutdownConfirmDefault,
+    KWorkSpace::requestShutDown( KWorkSpace::ShutdownConfirmYes,
                                  KWorkSpace::ShutdownTypeDefault,
                                  KWorkSpace::ShutdownModeDefault);
 #endif

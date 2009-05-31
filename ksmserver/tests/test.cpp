@@ -24,15 +24,13 @@ main(int argc, char *argv[])
 
     QString sdtypeOption = args->getOption("type").toLower();
 
-    KWorkSpace::ShutdownType sdtype = KWorkSpace::ShutdownTypeNone;
-    if (sdtypeOption == "default") {
-        sdtype = KWorkSpace::ShutdownTypeDefault;
-    } else if (sdtypeOption == "reboot") {
+    KWorkSpace::ShutdownType sdtype = KWorkSpace::ShutdownTypeDefault;
+    if (sdtypeOption == "reboot") {
         sdtype = KWorkSpace::ShutdownTypeReboot;
     } else if (sdtypeOption == "halt") {
-        sdtype = KWorkSpace::ShutdownTypeReboot;
+        sdtype = KWorkSpace::ShutdownTypeHalt;
     } else if (sdtypeOption == "logout") {
-        sdtype = KWorkSpace::ShutdownTypeReboot;
+        sdtype = KWorkSpace::ShutdownTypeNone;
     }
 
     QString bopt;

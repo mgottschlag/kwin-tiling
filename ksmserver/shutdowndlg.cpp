@@ -335,7 +335,7 @@ bool KSMPushButton::event( QEvent *e )
 Q_DECLARE_METATYPE(Solid::Control::PowerManager::SuspendMethod)
 
 KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
-                                bool maysd, KWorkSpace::ShutdownType sdtype )
+                                bool maysd, bool choose, KWorkSpace::ShutdownType sdtype )
   : QDialog( parent, Qt::Popup ), //krazy:exclude=qclasses
     m_lastButton(0),
     m_btnLogout(0),
@@ -392,84 +392,78 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     QPalette palette;
     palette.setColor(QPalette::WindowText, fntColor);
 
-    m_btnLogout = new KSMPushButton( i18n("&Logout"), this );
-    m_btnLogout->setPixmap(KIconLoader::global()->loadIcon("system-log-out", KIconLoader::NoGroup, 32));
-    if ( sdtype == KWorkSpace::ShutdownTypeLogout )
-        m_btnLogout->setFocus();
-    connect(m_btnLogout, SIGNAL(clicked()), SLOT(slotLogout()));
-    buttonLayout->addWidget(m_btnLogout, Qt::AlignRight | Qt::AlignTop);
+    if ( choose || sdtype == KWorkSpace::ShutdownTypeNone ) {
+        m_btnLogout = new KSMPushButton( i18n("&Logout"), this );
+        m_btnLogout->setPixmap(KIconLoader::global()->loadIcon("system-log-out", KIconLoader::NoGroup, 32));
+        if ( sdtype == KWorkSpace::ShutdownTypeNone )
+            m_btnLogout->setFocus();
+        connect(m_btnLogout, SIGNAL(clicked()), SLOT(slotLogout()));
+        buttonLayout->addWidget(m_btnLogout, Qt::AlignRight | Qt::AlignTop);
+    }
 
     if (maysd) {
         // Shutdown
-        m_btnHalt = new KSMPushButton( i18n("&Turn Off Computer"), this );
-        m_btnHalt->setPixmap(KIconLoader::global()->loadIcon("system-shutdown", KIconLoader::NoGroup, 32));
-        buttonLayout->addWidget(m_btnHalt, Qt::AlignTop | Qt::AlignRight);
-        connect(m_btnHalt, SIGNAL(clicked()), SLOT(slotHalt()));
-        if ( sdtype == KWorkSpace::ShutdownTypeHalt )
-            m_btnHalt->setFocus();
 
-        QMenu *shutdownMenu = new QMenu( m_btnHalt );
-        QActionGroup* spdActionGroup = new QActionGroup(shutdownMenu);
-        connect( spdActionGroup, SIGNAL(triggered(QAction*)), SLOT(slotSuspend(QAction*)) );
-        m_btnHalt->setPopupMenu( shutdownMenu );
-        Solid::Control::PowerManager::SuspendMethods spdMethods = Solid::Control::PowerManager::supportedSuspendMethods();
-        if( spdMethods & Solid::Control::PowerManager::Standby ) {
-            QAction* action = new QAction(i18n("&Standby"), spdActionGroup);
-            action->setData(QVariant::fromValue(Solid::Control::PowerManager::Standby));
-        }
-        if( spdMethods & Solid::Control::PowerManager::ToRam ) {
-            QAction* action = new QAction(i18n("Suspend to &RAM"), spdActionGroup);
-            action->setData(QVariant::fromValue(Solid::Control::PowerManager::ToRam));
-        }
-        if( spdMethods & Solid::Control::PowerManager::ToDisk ) {
-            QAction* action = new QAction(i18n("Suspend to &Disk"), spdActionGroup);
-            action->setData(QVariant::fromValue(Solid::Control::PowerManager::ToDisk));
-        }
-        shutdownMenu->addActions(spdActionGroup->actions());
+        if ( choose || sdtype == KWorkSpace::ShutdownTypeHalt ) {
+            m_btnHalt = new KSMPushButton( i18n("&Turn Off Computer"), this );
+            m_btnHalt->setPixmap(KIconLoader::global()->loadIcon("system-shutdown", KIconLoader::NoGroup, 32));
+            buttonLayout->addWidget(m_btnHalt, Qt::AlignTop | Qt::AlignRight);
+            connect(m_btnHalt, SIGNAL(clicked()), SLOT(slotHalt()));
+            if ( sdtype == KWorkSpace::ShutdownTypeHalt )
+                m_btnHalt->setFocus();
 
-        // Reboot
-        m_btnReboot = new KSMPushButton( i18n("&Restart Computer"), this );
-        m_btnReboot->setPixmap(KIconLoader::global()->loadIcon("system-reboot", KIconLoader::NoGroup, 32));
-        connect(m_btnReboot, SIGNAL(clicked()), SLOT(slotReboot()));
-        buttonLayout->addWidget(m_btnReboot, Qt::AlignTop | Qt::AlignRight);
-        if ( sdtype == KWorkSpace::ShutdownTypeReboot )
-            m_btnReboot->setFocus();
-
-        int def, cur;
-        if ( KDisplayManager().bootOptions( rebootOptions, def, cur ) ) {
-            if ( cur == -1 )
-                cur = def;
-
-            QMenu *rebootMenu = new QMenu( m_btnReboot );
-            QActionGroup* rebootActionGroup = new QActionGroup(rebootMenu);
-            connect( rebootActionGroup, SIGNAL(triggered(QAction*)), SLOT(slotReboot(QAction*)) );
-            m_btnReboot->setPopupMenu( rebootMenu );
-
-            int index = 0;
-            for (QStringList::ConstIterator it = rebootOptions.constBegin(); it != rebootOptions.constEnd(); ++it, ++index) {
-                QString label = (*it);
-                label=label.replace('&',"&&");
-                QAction* action = new QAction(label, rebootActionGroup);
-                action->setData(index);
-                if (index == cur) {
-                    action->setText( label + i18nc("default option in boot loader", " (default)") );
-                }
+            QMenu *shutdownMenu = new QMenu( m_btnHalt );
+            QActionGroup* spdActionGroup = new QActionGroup(shutdownMenu);
+            connect( spdActionGroup, SIGNAL(triggered(QAction*)), SLOT(slotSuspend(QAction*)) );
+            m_btnHalt->setPopupMenu( shutdownMenu );
+            Solid::Control::PowerManager::SuspendMethods spdMethods = Solid::Control::PowerManager::supportedSuspendMethods();
+            if( spdMethods & Solid::Control::PowerManager::Standby ) {
+                QAction* action = new QAction(i18n("&Standby"), spdActionGroup);
+                action->setData(QVariant::fromValue(Solid::Control::PowerManager::Standby));
             }
-            rebootMenu->addActions(rebootActionGroup->actions());
+            if( spdMethods & Solid::Control::PowerManager::ToRam ) {
+                QAction* action = new QAction(i18n("Suspend to &RAM"), spdActionGroup);
+                action->setData(QVariant::fromValue(Solid::Control::PowerManager::ToRam));
+            }
+            if( spdMethods & Solid::Control::PowerManager::ToDisk ) {
+                QAction* action = new QAction(i18n("Suspend to &Disk"), spdActionGroup);
+                action->setData(QVariant::fromValue(Solid::Control::PowerManager::ToDisk));
+            }
+            shutdownMenu->addActions(spdActionGroup->actions());
         }
-    }
 
-    if ( sdtype == KWorkSpace::ShutdownTypeLogout ) {
-        m_btnReboot->setHidden(true);
-        m_btnHalt->setHidden(true);
-    }
-    else if ( sdtype == KWorkSpace::ShutdownTypeHalt ) {
-        m_btnReboot->setHidden(true);
-        m_btnLogout->setHidden(true);
-    }
-    else if ( sdtype == KWorkSpace::ShutdownTypeReboot ) {
-        m_btnHalt->setHidden(true);
-        m_btnLogout->setHidden(true);
+        if ( choose || sdtype == KWorkSpace::ShutdownTypeReboot ) {
+            // Reboot
+            m_btnReboot = new KSMPushButton( i18n("&Restart Computer"), this );
+            m_btnReboot->setPixmap(KIconLoader::global()->loadIcon("system-reboot", KIconLoader::NoGroup, 32));
+            connect(m_btnReboot, SIGNAL(clicked()), SLOT(slotReboot()));
+            buttonLayout->addWidget(m_btnReboot, Qt::AlignTop | Qt::AlignRight);
+            if ( sdtype == KWorkSpace::ShutdownTypeReboot )
+                m_btnReboot->setFocus();
+
+            int def, cur;
+            if ( KDisplayManager().bootOptions( rebootOptions, def, cur ) ) {
+                if ( cur == -1 )
+                    cur = def;
+
+                QMenu *rebootMenu = new QMenu( m_btnReboot );
+                QActionGroup* rebootActionGroup = new QActionGroup(rebootMenu);
+                connect( rebootActionGroup, SIGNAL(triggered(QAction*)), SLOT(slotReboot(QAction*)) );
+                m_btnReboot->setPopupMenu( rebootMenu );
+
+                int index = 0;
+                for (QStringList::ConstIterator it = rebootOptions.constBegin(); it != rebootOptions.constEnd(); ++it, ++index) {
+                    QString label = (*it);
+                    label=label.replace('&',"&&");
+                    QAction* action = new QAction(label, rebootActionGroup);
+                    action->setData(index);
+                    if (index == cur) {
+                        action->setText( label + i18nc("default option in boot loader", " (default)") );
+                    }
+                }
+                rebootMenu->addActions(rebootActionGroup->actions());
+            }
+        }
     }
 
     btnBack = new KSMPushButton(i18n("&Cancel"), this, true);
@@ -664,11 +658,12 @@ void KSMShutdownDlg::slotSuspend(QAction* action)
     reject();
 }
 
-bool KSMShutdownDlg::confirmShutdown( bool maysd, KWorkSpace::ShutdownType& sdtype, QString& bootOption )
+bool KSMShutdownDlg::confirmShutdown(
+        bool maysd, bool choose, KWorkSpace::ShutdownType& sdtype, QString& bootOption )
 {
     KSMShutdownDlg* l = new KSMShutdownDlg( 0,
                                             //KSMShutdownFeedback::self(),
-                                            maysd, sdtype );
+                                            maysd, choose, sdtype );
     XClassHint classHint;
     classHint.res_name = const_cast<char*>("ksmserver");
     classHint.res_class = const_cast<char*>("ksmserver");

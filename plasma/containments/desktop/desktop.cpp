@@ -309,7 +309,7 @@ void DefaultDesktop::logout()
         return;
     }
 #ifndef Q_WS_WIN
-    KWorkSpace::requestShutDown(KWorkSpace::ShutdownConfirmDefault,
+    KWorkSpace::requestShutDown(KWorkSpace::ShutdownConfirmYes,
                                 KWorkSpace::ShutdownTypeDefault,
                                 KWorkSpace::ShutdownModeDefault);
 #endif

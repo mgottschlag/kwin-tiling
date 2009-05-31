@@ -83,6 +83,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 void KSMServer::logout( int confirm, int sdtype, int sdmode )
 {
+    // KDE5: remove me
+    if (sdtype == KWorkSpace::ShutdownTypeLogout)
+        sdtype = KWorkSpace::ShutdownTypeNone;
+
     shutdown( (KWorkSpace::ShutdownConfirm)confirm,
             (KWorkSpace::ShutdownType)sdtype,
             (KWorkSpace::ShutdownMode)sdmode );
@@ -127,6 +131,7 @@ void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
         (confirm == KWorkSpace::ShutdownConfirmYes) ? false :
     (confirm == KWorkSpace::ShutdownConfirmNo) ? true :
                 !cg.readEntry( "confirmLogout", true );
+    bool choose = false;
     bool maysd = false;
     if (cg.readEntry( "offerShutdown", true ) && KDisplayManager().canShutdown())
         maysd = true;
@@ -136,9 +141,11 @@ void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
             logoutConfirmed)
             return; /* unsupported fast shutdown */
         sdtype = KWorkSpace::ShutdownTypeNone;
-    } else if (sdtype == KWorkSpace::ShutdownTypeDefault)
+    } else if (sdtype == KWorkSpace::ShutdownTypeDefault) {
         sdtype = (KWorkSpace::ShutdownType)
                 cg.readEntry( "shutdownType", (int)KWorkSpace::ShutdownTypeNone );
+        choose = true;
+    }
     if (sdmode == KWorkSpace::ShutdownModeDefault)
         sdmode = KWorkSpace::ShutdownModeInteractive;
 
@@ -147,7 +154,7 @@ void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
     if ( !logoutConfirmed ) {
         KSMShutdownFeedback::start(); // make the screen gray
         logoutConfirmed =
-            KSMShutdownDlg::confirmShutdown( maysd, sdtype, bopt );
+            KSMShutdownDlg::confirmShutdown( maysd, choose, sdtype, bopt );
         // ###### We can't make the screen remain gray while talking to the apps,
         // because this prevents interaction ("do you want to save", etc.)
         // TODO: turn the feedback widget into a list of apps to be closed,

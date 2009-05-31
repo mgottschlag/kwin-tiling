@@ -150,10 +150,8 @@ void LeaveItemHandler::logout()
     KWorkSpace::ShutdownConfirm confirm = KWorkSpace::ShutdownConfirmDefault;
     KWorkSpace::ShutdownType type = KWorkSpace::ShutdownTypeNone;
 
-    if (m_logoutAction == "logout") {
+    if (m_logoutAction == "logout" || m_logoutAction == "logoutonly") {
         type = KWorkSpace::ShutdownTypeNone;
-    } else if (m_logoutAction == "logoutonly") {
-        type = KWorkSpace::ShutdownTypeLogout;
     } else if (m_logoutAction == "lock") {
         kDebug() << "Locking screen";
     } else if (m_logoutAction == "switch") {
