@@ -34,8 +34,8 @@ main(int argc, char *argv[])
     }
 
     QString bopt;
-    (void)KSMShutdownDlg::confirmShutdown( true, sdtype, bopt );
-/*   (void)KSMShutdownDlg::confirmShutdown( false, sdtype, bopt ); */
+    (void)KSMShutdownDlg::confirmShutdown( true, true, sdtype, bopt );
+/*   (void)KSMShutdownDlg::confirmShutdown( false, false, sdtype, bopt ); */
 
     KSMShutdownFeedback::stop();
 }
