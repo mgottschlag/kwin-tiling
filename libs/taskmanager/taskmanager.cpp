@@ -116,22 +116,26 @@ void TaskManager::configureStartup()
     KConfig _c("klaunchrc");
     KConfigGroup c(&_c, "FeedbackStyle");
     if (!c.readEntry("TaskbarButton", true)) {
+        delete d->startupInfo;
+        d->startupInfo = 0;
         return;
     }
 
-    d->startupInfo = new KStartupInfo( KStartupInfo::CleanOnCantDetect, this );
-    connect( d->startupInfo,
-        SIGNAL( gotNewStartup( const KStartupInfoId&, const KStartupInfoData& )),
-        SLOT( gotNewStartup( const KStartupInfoId&, const KStartupInfoData& )));
-    connect( d->startupInfo,
-        SIGNAL( gotStartupChange( const KStartupInfoId&, const KStartupInfoData& )),
-        SLOT( gotStartupChange( const KStartupInfoId&, const KStartupInfoData& )));
-    connect( d->startupInfo,
-        SIGNAL( gotRemoveStartup( const KStartupInfoId&, const KStartupInfoData& )),
-        SLOT( killStartup( const KStartupInfoId& )));
+    if (!d->startupInfo) {
+        d->startupInfo = new KStartupInfo(KStartupInfo::CleanOnCantDetect, this );
+        connect(d->startupInfo,
+                SIGNAL(gotNewStartup(const KStartupInfoId&, const KStartupInfoData&)),
+                SLOT(gotNewStartup(const KStartupInfoId&, const KStartupInfoData&)));
+        connect(d->startupInfo,
+                SIGNAL(gotStartupChange(const KStartupInfoId&, const KStartupInfoData&)),
+                SLOT(gotStartupChange(const KStartupInfoId&, const KStartupInfoData&)));
+        connect(d->startupInfo,
+                SIGNAL(gotRemoveStartup(const KStartupInfoId&, const KStartupInfoData&)),
+                SLOT(killStartup(const KStartupInfoId&)));
+    }
 
     c = KConfigGroup(&_c, "TaskbarButtonSettings");
-    d->startupInfo->setTimeout(c.readEntry( "Timeout", 30 ));
+    d->startupInfo->setTimeout(c.readEntry("Timeout", 30));
 }
 
 TaskPtr TaskManager::findTask(WId w)
