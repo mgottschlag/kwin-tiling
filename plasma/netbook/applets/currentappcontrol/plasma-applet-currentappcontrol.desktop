@@ -1,8 +1,6 @@
 [Desktop Entry]
 Name=Current Application Control
-Name[x-test]=xxcurrentappcontrolxx
 Comment=Controls for the active window
-Comment[x-test]=xxPlasma currentappcontrolxx
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/Applet
