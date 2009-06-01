@@ -186,6 +186,10 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
         } else {
             setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
             setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
+            if (constraints & Plasma::FormFactorConstraint && 
+                             (formFactor() == Plasma::Planar || formFactor() == Plasma::MediaCenter) ) {
+                resize(KIconLoader::SizeEnormous, KIconLoader::SizeEnormous);
+            }
         }
 
         m_theme->resize(contentsRect().size().toSize());
