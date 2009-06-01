@@ -1082,6 +1082,11 @@ bool PanelView::hintOrUnhide(const QPoint &point, bool dueToDnd)
         return false;
     }
 
+    KWindowInfo activeWindow = KWindowSystem::windowInfo(KWindowSystem::activeWindow(), NET::WMState);
+    if (activeWindow.state() & NET::FullScreen) {
+        return false;
+    }
+
     if (!shouldHintHide()) {
         //kDebug() << "should not hint hide";
         unhide(!dueToDnd);
