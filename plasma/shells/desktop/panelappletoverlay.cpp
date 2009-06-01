@@ -356,7 +356,13 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
     // more than halfway across it, whichever comes first
     if (m_orientation == Qt::Horizontal) {
         //kDebug() << prevIsApplet << m_prevGeom << g << nextIsApplet << m_nextGeom;
-        if (prevIsApplet && m_prevGeom.isValid() && g.left() <= m_prevGeom.left()) {
+        if (QApplication::layoutDirection() == Qt::RightToLeft) {
+            if (prevIsApplet && m_prevGeom.isValid() && g.right() >= m_prevGeom.right()) {
+                swapWithPrevious();
+            } else if (nextIsApplet && m_nextGeom.isValid() && g.left() <= m_nextGeom.left()) {
+                swapWithNext();
+            }
+        } else if (prevIsApplet && m_prevGeom.isValid() && g.left() <= m_prevGeom.left()) {
             swapWithPrevious();
         } else if (nextIsApplet && m_nextGeom.isValid() && g.right() >= m_nextGeom.right()) {
             swapWithNext();
