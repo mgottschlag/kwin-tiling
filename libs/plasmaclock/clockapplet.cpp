@@ -98,14 +98,18 @@ public:
     {
         Plasma::Applet applet;
         Plasma::DataEngine::Data data = applet.dataEngine("time")->query(tz);
+
         if (tz == "UTC")  {
-            subText += "<br><b>UTC</b> ";
+            subText.append("<br><b>UTC</b>&nbsp;");
+        } else {
+            subText.append("<br><b>")
+                   .append(data["Timezone City"].toString().replace("_", "&nbsp;"))
+                   .append("</b> ");
         }
-        else {
-            subText += "<br><b>" + data["Timezone City"].toString().replace("_", " ")+"</b> ";
-        }
-        subText += KGlobal::locale()->formatTime(data["Time"].toTime(), false) + ", ";
-        subText += KGlobal::locale()->formatDate(data["Date"].toDate());
+
+        subText.append(KGlobal::locale()->formatTime(data["Time"].toTime(), false).replace(" ", "&nbsp;"))
+               .append(",&nbsp;")
+               .append(KGlobal::locale()->formatDate(data["Date"].toDate()).replace(" ", "&nbsp;"));
     }
 
     void createCalendar()
@@ -295,6 +299,7 @@ void ClockApplet::updateTipContent()
         if (tz == currentTimezone()) {
             continue;
         }
+
         d->addTzToTipText(subText, tz);
     }
 
