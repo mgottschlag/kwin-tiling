@@ -945,18 +945,20 @@ void PlasmaApp::createConfigurationInterface()
 
 void PlasmaApp::configAccepted()
 {
-    setPerVirtualDesktopViews(m_configUi.perVirtualDesktopViews->checkState());
-    setFixedDashboard(m_configUi.fixedDashboard->checkState());
+    setPerVirtualDesktopViews(m_configUi.perVirtualDesktopViews->isChecked());
+    setFixedDashboard(m_configUi.fixedDashboard->isChecked());
 }
 
-void PlasmaApp::setPerVirtualDesktopViews(int toggle)
+void PlasmaApp::setPerVirtualDesktopViews(bool perDesktopViews)
 {
-    AppSettings::setPerVirtualDesktopViews(toggle == Qt::Checked);
+    AppSettings::setPerVirtualDesktopViews(perDesktopViews);
     AppSettings::self()->writeConfig();
 
     //FIXME: now destroying the old views and recreating them is really a bit brutal, it has to be done in a gentler way by creating only the new views and deleting the old ones
     foreach (DesktopView *view, m_desktops) {
-        view->containment()->setScreen(-1, -1);
+        if (view->containment())  {
+            view->containment()->setScreen(-1, -1);
+        }
         delete view;
     }
     m_desktops.clear();
@@ -972,7 +974,7 @@ void PlasmaApp::setPerVirtualDesktopViews(int toggle)
     }
 }
 
-void PlasmaApp::setFixedDashboard(int toggle)
+void PlasmaApp::setFixedDashboard(bool fixedDashboard)
 {
     bool dashboardFollowsDesktop = true;
     foreach (DesktopView *view, m_desktops) {
@@ -982,12 +984,12 @@ void PlasmaApp::setFixedDashboard(int toggle)
         }
     }
 
-    if (!dashboardFollowsDesktop && (toggle == Qt::Checked)) {
+    if (!dashboardFollowsDesktop && fixedDashboard) {
         return;
     }
 
     Plasma::Containment *c = 0;
-    if (toggle == Qt::Checked) {
+    if (fixedDashboard) {
         //avoid the containmentAdded signal being emitted
         m_corona->blockSignals(true);
         c = m_corona->addContainment("desktop");
