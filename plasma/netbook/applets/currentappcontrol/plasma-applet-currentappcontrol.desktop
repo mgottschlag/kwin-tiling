@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=Current Application Control
+Name[uk]=Керування поточною програмою
 Comment=Controls for the active window
+Comment[uk]=Інструменти керування активним вікном
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/Applet
