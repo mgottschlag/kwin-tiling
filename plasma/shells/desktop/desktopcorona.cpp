@@ -92,7 +92,7 @@ void DesktopCorona::checkScreen(int screen, bool signalWhenExists)
 
             Plasma::Containment::Type t = c->containmentType();
             if (t == Plasma::Containment::PanelContainment ||
-                    t == Plasma::Containment::CustomPanelContainment) {
+                t == Plasma::Containment::CustomPanelContainment) {
                 emit containmentAdded(c);
             }
         }
@@ -118,14 +118,33 @@ void DesktopCorona::addDesktopContainment(int screen, int desktop)
 
     Plasma::Containment* c = findFreeContainment();
     if (!c) {
+        // first try for "desktop", if it doesn't exist then we try for any 
+        // desktopy containment
         c = addContainment("desktop");
+
+        if (!c) {
+            KPluginInfo::List desktopPlugins = Plasma::Containment::listContainmentsOfType("desktop");
+
+            if (!desktopPlugins.isEmpty()) {
+                c = addContainment(desktopPlugins.first().pluginName());
+            }
+        }
+
+        if (!c) {
+            kWarning() << "complete failure to load a desktop containment!";
+            return;
+        }
+
+        c->setActivity(i18n("Desktop"));
+    } else {
+        kDebug() << "found an existing containment:" << c->screen() << c->desktop();
     }
 
     c->setScreen(screen, desktop);
     c->setFormFactor(Plasma::Planar);
     c->flushPendingConstraintsEvents();
-    c->setActivity(i18n("Desktop"));
     emit containmentAdded(c);
+    requestConfigSync();
 }
 
 int DesktopCorona::numScreens() const
