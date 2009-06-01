@@ -91,7 +91,7 @@ QSize AbstractTaskItem::basicPreferredSize() const
 {
     QFontMetrics fm(KGlobalSettings::taskbarFont());
     QSize mSize = fm.size(0, "M");
-    int iconsize = KIconLoader::SizeSmall;
+    const int iconsize = KIconLoader::SizeSmall;
 
     //the 4 should be the default spacing between layout items, is there a way to fetch it without hardcoding?
     // in small panels, we'll reduce the spacing a bit so it's easier to cramp the text in and still get two rows
@@ -540,7 +540,6 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
         painter->drawPixmap(QPoint(0,0), result);
     }
 
-    return;
 }
 
 void AbstractTaskItem::drawTask(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
@@ -783,10 +782,8 @@ void AbstractTaskItem::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
 {
     Q_UNUSED(event);
 
-    if (m_activateTimer) {
-        delete m_activateTimer;
-        m_activateTimer = 0;
-    }
+    delete m_activateTimer;
+    m_activateTimer = 0;
 }
 
 QRect AbstractTaskItem::iconGeometry() const

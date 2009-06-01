@@ -818,8 +818,8 @@ void TaskGroupItem::editGroup()
     Q_ASSERT(m_applet);
     if (m_applet->groupManager().taskGrouper()->editableGroupProperties() & TaskManager::AbstractGroupingStrategy::Name) {
         bool ok;
-        QString text = QInputDialog::getText(qobject_cast<QWidget*>(this), tr("Edit Group"),
-                                            tr("New Group Name: "), QLineEdit::Normal,
+        QString text = QInputDialog::getText(qobject_cast<QWidget*>(this), i18n("Edit Group"),
+                                            i18n("New Group Name: "), QLineEdit::Normal,
                                             m_group->name(), &ok);
         if (ok && !text.isEmpty()) {
             m_group->setName(text);
