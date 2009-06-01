@@ -57,7 +57,7 @@ IconApplet::IconApplet(QObject *parent, const QVariantList &args)
     setHasConfigurationInterface(true);
     m_icon = new Plasma::IconWidget(this);
 
-    if (args.count() > 0) {
+    if (!args.isEmpty()) {
         setUrl(args.value(0).toString());
         m_icon->setText(m_text);
     }
@@ -101,8 +101,7 @@ void IconApplet::init()
 IconApplet::~IconApplet()
 {
     delete m_dialog;
-    if(m_watchDestopFile)
-       delete m_watchDestopFile;
+    delete m_watchDestopFile;
 }
 
 void IconApplet::saveState(KConfigGroup &cg) const
@@ -164,7 +163,7 @@ void IconApplet::openUrl()
 {
     if (m_url.isValid()) {
         emit releaseVisualFocus();
-        KRun *run = new KRun(m_url, 0);
+        new KRun(m_url, 0);
     }
 }
 
@@ -250,7 +249,7 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
 
     KUrl::List urls = KUrl::List::fromMimeData(event->mimeData());
 
-    if (urls.count() > 0) {
+    if (!urls.isEmpty()) {
         event->accept();
     } else {
         return;
