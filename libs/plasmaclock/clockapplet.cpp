@@ -96,8 +96,7 @@ public:
 
     void addTzToTipText(QString &subText, QString tz)
     {
-        Plasma::Applet applet;
-        Plasma::DataEngine::Data data = applet.dataEngine("time")->query(tz);
+        Plasma::DataEngine::Data data = q->dataEngine("time")->query(tz);
 
         if (tz == "UTC")  {
             subText.append("<br><b>UTC</b>&nbsp;");
