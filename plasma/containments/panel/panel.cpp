@@ -225,7 +225,6 @@ void Panel::adjustLastSpace()
         }
     }
 
-
     if (useSpacer) {
         if (!m_lastSpace) {
             m_lastSpace = new QGraphicsWidget(this);
@@ -238,7 +237,6 @@ void Panel::adjustLastSpace()
         delete m_lastSpace;
         m_lastSpace = 0;
     }
-
 }
 
 void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
@@ -495,11 +493,7 @@ void Panel::updateBorders(const QRect &geom)
             bottomHeight += s.height();
             //Default to horizontal for now
         } else {
-            if (QApplication::layoutDirection() == Qt::RightToLeft) {
-                leftWidth += s.width();
-            } else {
-                rightWidth += s.width();
-            }
+            rightWidth += s.width();
         }
     }
 
