@@ -52,6 +52,7 @@ SolidActionEdit::SolidActionEdit(QWidget *parent) : KDialog(parent)
     ui.PbAddRequirement->setGuiItem(KStandardGuiItem::add());
     ui.PbEditRequirement->setIcon(KIcon("document-edit"));
     ui.PbRemoveRequirement->setGuiItem(KStandardGuiItem::remove());
+    ui.IbActionIcon->setIconSize( KIconLoader::SizeLarge );
 
     // Instantiate the predicate edit dialog
     predicateUi = new SolidActionEditPredicate(this);
