@@ -97,13 +97,13 @@ void FileBrowserEngine::updateData(const QString &path, EventType event)
     if (type == DIRECTORY) {
         kDebug() << "directory info processing: "<< path;
         if (dir.isReadable()) {
-            QStringList visibleFiles = dir.entryList(QDir::Files, QDir::Name);
-            QStringList allFiles = dir.entryList(QDir::Files | QDir::Hidden,
+            const QStringList visibleFiles = dir.entryList(QDir::Files, QDir::Name);
+            const QStringList allFiles = dir.entryList(QDir::Files | QDir::Hidden,
                     QDir::Name);
 
-            QStringList visibleDirectories = dir.entryList(QDir::Dirs
+            const QStringList visibleDirectories = dir.entryList(QDir::Dirs
                     | QDir::NoDotAndDotDot, QDir::Name);
-            QStringList allDirectories = dir.entryList(QDir::Dirs
+            const QStringList allDirectories = dir.entryList(QDir::Dirs
                     | QDir::NoDotAndDotDot | QDir::Hidden, QDir::Name);
 
             forMatchingSources {
