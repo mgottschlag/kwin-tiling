@@ -139,11 +139,12 @@ void SM::Cpu::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
 {
     Plasma::SignalPlotter *plotter = plotters()[source];
     if (plotter) {
-        plotter->addSample(QList<double>() << data["value"].toDouble());
+        double value = data["value"].toDouble();
+        plotter->addSample(QList<double>() << value);
         if (mode() == SM::Applet::Panel) {
-            m_html[source] = QString("<tr><td>%1</td><td>%2</td><td>%</td></tr>")
+            m_html[source] = QString("<tr><td>%1&nbsp;</td><td>%2%</td></tr>")
                     .arg(plotter->title())
-                    .arg(data["value"].toDouble());
+                    .arg(KGlobal::locale()->formatNumber(value, 1));
             QString html = "<table>";
             foreach (const QString& s, m_html.keys()) {
                 html += m_html[s];
