@@ -106,7 +106,7 @@ void DictEngine::getDefinition()
     tcpSocket->write(QByteArray("DEFINE "));
     tcpSocket->write(dictName.toAscii());
     tcpSocket->write(QByteArray(" \""));
-    tcpSocket->write(currentWord.toAscii());
+    tcpSocket->write(currentWord.toUtf8());
     tcpSocket->write(QByteArray("\"\n"));
     tcpSocket->flush();
 
@@ -121,9 +121,6 @@ void DictEngine::getDefinition()
     //       qWarning()<<ret;
     setData(currentWord, "text", wnToHtml(currentWord,ret));
 }
-
-
-
 
 void DictEngine::getDicts()
 {
@@ -182,30 +179,38 @@ void DictEngine::socketClosed()
 
 bool DictEngine::sourceRequestEvent(const QString &word)
 {
-      if (tcpSocket && currentWord != word)
-      {
-          tcpSocket->abort(); //stop if lookup is in progress and new word is requested
-          tcpSocket->deleteLater();
-          tcpSocket = 0;
-      }
-      currentWord = word;
-      if (currentWord.simplified().count() != 0)
-      {
-          setData(currentWord, dictName, QString());
-          tcpSocket = new QTcpSocket(this);
-          tcpSocket->abort();
-          connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(socketClosed()));
+    // FIXME: this is COMPLETELY broken .. it can only look up one word at a time!
+    //        a DataContainer subclass that does the look up should probably be made
+    if (currentWord == word) {
+        return false;
+    }
 
-          if (currentWord == "list-dictionaries") {
-              connect(tcpSocket, SIGNAL(connected()), this, SLOT(getDicts()));
-          } else {
-              connect(tcpSocket, SIGNAL(connected()), this ,SLOT(getDefinition()));
-          }
-          tcpSocket->connectToHost(serverName, 2628);
-      } else {
-          setData(currentWord, dictName, QString());
-      }
-      return true;
+    if (tcpSocket) {
+        tcpSocket->abort(); //stop if lookup is in progress and new word is requested
+        tcpSocket->deleteLater();
+        tcpSocket = 0;
+    }
+
+    currentWord = word;
+
+    if (currentWord.simplified().isEmpty()) {
+        setData(currentWord, dictName, QString());
+    } else {
+        setData(currentWord, dictName, QString());
+        tcpSocket = new QTcpSocket(this);
+        tcpSocket->abort();
+        connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(socketClosed()));
+
+        if (currentWord == "list-dictionaries") {
+            connect(tcpSocket, SIGNAL(connected()), this, SLOT(getDicts()));
+        } else {
+            connect(tcpSocket, SIGNAL(connected()), this, SLOT(getDefinition()));
+        }
+
+        tcpSocket->connectToHost(serverName, 2628);
+    }
+
+    return true;
 }
 
 #include "dictengine.moc"
