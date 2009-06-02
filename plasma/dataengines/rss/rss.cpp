@@ -235,7 +235,7 @@ void RssEngine::updateFeeds(const QString & source, const QString & title)
      */
     const QVariantList list = mergeFeeds(source);
     setData(source, "items", list);
-    QStringList sources = source.split(' ', QString::SkipEmptyParts);
+    const QStringList sources = source.split(' ', QString::SkipEmptyParts);
     if (sources.size() >  1) {
         setData(source, "title", i18np("1 RSS feed fetched",
                                        "%1 RSS feeds fetched", sources.size()));
@@ -246,7 +246,7 @@ void RssEngine::updateFeeds(const QString & source, const QString & title)
 
 bool RssEngine::cachesUpToDate(const QString & source) const
 {
-    QStringList sources = source.split(' ', QString::SkipEmptyParts);
+    const QStringList sources = source.split(' ', QString::SkipEmptyParts);
     bool outOfDate = false;
     foreach (const QString &url, sources) {
         if (QDateTime::currentDateTime() >
@@ -268,7 +268,7 @@ bool compare(const QVariant &v1, const QVariant &v2)
 QVariantList RssEngine::mergeFeeds(QString source) const
 {
     QVariantList result;
-    QStringList sources = source.split(' ', QString::SkipEmptyParts);
+    const QStringList sources = source.split(' ', QString::SkipEmptyParts);
 
     foreach (const QString& feed, sources) {
         result += m_feedItems[feed.toLower()];
