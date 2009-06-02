@@ -13,9 +13,9 @@ co-operative security
 ---------------------
 
 this is fairly basic security for plasmoids.
-the idea is, shells (like plasma-overlay) can specify a list of constraints in their desktop file, and then all plasmoids that require the disabled feature don't show up in the appletbrowser. also, plasmoids that would like a certain feature but don't *need* it can check isAllowed() and turn it off when it's not allowed.
+the idea is, shells (like plasma-overlay) can specify a list of constraints in their desktop file, and then all plasmoids that require the disabled feature don't show up in the appletbrowser. also, plasmoids that would like a certain feature but don't *need* it can check hasAuthorization() and turn it off when it's not allowed.
 This type of security relies heavily on plasmoid developers. Each plasmoid's .desktop file must list what features the plasmoid requires, and be kept up to date with the code. X-Plasma-Requires-<feature> can be set to Required, Unused, or Optional. Example: X-Plasma-Requires-FileDialog=Required
-Features the plasmoid would like but does not require should be guarded by isAllowed, and set to Optional in the .desktop. [example](http://websvn.kde.org/?view=rev&revision=967792).
+Features the plasmoid would like but does not require should be guarded by hasAuthorization, and set to Optional in the .desktop. [example](http://websvn.kde.org/?view=rev&revision=967792).
 All the plasmoids in workspace and kdeplasma-addons should probably be reviewed before release. some of them don't have an active maintainer to take responsibility.
 
 Currenly, plasmoids that don't mention a constraint are assumed to not use it. however, by release time the opposite should be true. this is just so that they don't *all* disappear from the screensaver before anyone has a chance to review their plasmoids.
