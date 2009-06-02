@@ -56,7 +56,7 @@ public:
 
 BookmarksDelegate::BookmarksDelegate(QObject *parent)
         : QStyledItemDelegate(parent),
-        d(new BookmarksDelegatePrivate)
+        d(/*new BookmarksDelegatePrivate*/0)
 {
 }
 
