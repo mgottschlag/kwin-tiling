@@ -146,7 +146,7 @@ KIcon BookmarksRunner::getFavicon(const KUrl &url)
     }
 
     // locate the favicon
-    QString iconFile = KGlobal::dirs()->findResource("cache",reply.value()+".png");
+    const QString iconFile = KGlobal::dirs()->findResource("cache",reply.value()+".png");
     if(iconFile.isNull()) {
         return KIcon();
     }

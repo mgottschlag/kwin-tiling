@@ -136,13 +136,13 @@ void LocationsRunner::match(Plasma::RunnerContext &context)
 
 void LocationsRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match)
 {
-    QString data = match.data().toString();
     const QString location = context.query();
-    Plasma::RunnerContext::Type type = context.type();
 
     if (location.isEmpty()) {
         return;
     }
+    QString data = match.data().toString();
+    Plasma::RunnerContext::Type type = context.type();
 
     //kDebug() << "command: " << context.query();
     //kDebug() << "url: " << location << data;

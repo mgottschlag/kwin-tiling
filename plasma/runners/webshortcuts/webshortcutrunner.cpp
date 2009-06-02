@@ -53,7 +53,7 @@ void WebshortcutRunner::loadDelimiter()
 
     QList<Plasma::RunnerSyntax> syns;
 
-    KService::List offers = serviceQuery("SearchProvider");
+    const KService::List offers = serviceQuery("SearchProvider");
     if (!offers.isEmpty()) {
         QString knownShortcuts;
 
@@ -113,7 +113,7 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
     }
 
     if (key != m_lastKey) {
-        KService::List offers = serviceQuery("SearchProvider", QString("'%1' in Keys").arg(key));
+        const KService::List offers = serviceQuery("SearchProvider", QString("'%1' in Keys").arg(key));
 
         if (!context.isValid()) {
             return;
@@ -129,7 +129,7 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
         m_lastFailedKey.clear();
         m_lastServiceName = service->name();
 
-        QString query = service->property("Query").toString();
+        const QString query = service->property("Query").toString();
         m_match.setData(query);
 
         if (service->icon().isEmpty()) {
@@ -149,7 +149,7 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
 
 QString WebshortcutRunner::searchQuery(const QString &query, const QString &term)
 {
-    QString searchWord = term.right(term.length() - term.indexOf(m_delimiter) - 1);
+    const QString searchWord = term.right(term.length() - term.indexOf(m_delimiter) - 1);
     if (searchWord.isEmpty()) {
         return QString();
     }
@@ -164,7 +164,7 @@ QString WebshortcutRunner::searchQuery(const QString &query, const QString &term
 KIcon WebshortcutRunner::iconForUrl(const KUrl &url)
 {
     // locate the favicon
-    QString iconFile = KMimeType::favIconForUrl(url);
+    const QString iconFile = KMimeType::favIconForUrl(url);
 
     if (iconFile.isEmpty()) {
         return m_icon;
