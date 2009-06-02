@@ -1154,15 +1154,15 @@ void PanelView::unhide(bool destroyTrigger)
     unhintHide();
     if (destroyTrigger) {
         destroyUnhideTrigger();
-    } else {
-        if (!m_mousePollTimer) {
-            m_mousePollTimer = new QTimer(this);
-        }
-
-        disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
-        connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
-        m_mousePollTimer->start(200);
     }
+
+    if (!m_mousePollTimer) {
+        m_mousePollTimer = new QTimer(this);
+    }
+
+    disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
+    connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
+    m_mousePollTimer->start(200);
 
     // with composite, we can quite do some nice animations with transparent
     // backgrounds; without it we can't so we just show/hide
