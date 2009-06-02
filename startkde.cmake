@@ -367,7 +367,7 @@ KDE_SESSION_VERSION=4
 export KDE_SESSION_VERSION
 xprop -root -f KDE_SESSION_VERSION 32c -set KDE_SESSION_VERSION 4
 
-KDE_SESSION_UID=$UID
+KDE_SESSION_UID=`id -ru`
 export KDE_SESSION_UID
 
 # We set LD_BIND_NOW to increase the efficiency of kdeinit.
