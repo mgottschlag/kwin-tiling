@@ -155,12 +155,15 @@ void Settings::reinitialize()
     // Rereading settings. First delete what we have
     setActions(NULL);
 
-    gestures_disabled = false;
+    gestures_disabled = true;
     gesture_mouse_button = 2;
     gesture_timeout = 300;
     gestures_exclude = NULL,
 
     daemon_disabled = false;
+
+    // Currently unused
+    voice_shortcut = KShortcut();
 
     already_imported = QStringList();
     }
@@ -335,8 +338,8 @@ bool Settings::reread_settings(bool include_disabled)
     // First delete what we have
     reinitialize();
 
-    // ### Read the global configurations
-    daemon_disabled = mainGroup.readEntry( "Disabled", false);
+    // ### Read the global configurations. Reinitialize sets the default
+    daemon_disabled = mainGroup.readEntry( "Disabled", daemon_disabled);
 
     // ### List of already imported configuration files
     already_imported = mainGroup.readEntry(
@@ -345,10 +348,12 @@ bool Settings::reread_settings(bool include_disabled)
 
     // ### Gestures
     KConfigGroup gesturesConfig( &config, "Gestures" );
-    gestures_disabled = gesturesConfig.readEntry( "Disabled", false);
-    gesture_mouse_button = gesturesConfig.readEntry( "MouseButton", 2 );
+    // ### Read the gesture configurations. Reinitialize sets the default.
+    // Keep them
+    gestures_disabled = gesturesConfig.readEntry( "Disabled", gestures_disabled);
+    gesture_mouse_button = gesturesConfig.readEntry( "MouseButton", gesture_mouse_button );
     gesture_mouse_button = qBound( 2, gesture_mouse_button, 9 );
-    gesture_timeout = gesturesConfig.readEntry( "Timeout", 300 );
+    gesture_timeout = gesturesConfig.readEntry( "Timeout", gesture_timeout );
 
     // Somhow gesture_timeout found it's way into my config file. Fix it for
     // everyone else too.
