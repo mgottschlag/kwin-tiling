@@ -1,5 +1,7 @@
 [Desktop Entry]
 Name=Panel for Mobile Internet Devices
+Name[et]=Paneel mobiilsetele internetiseadmetele
+Name[km]=បន្ទះ​សម្រាប់​ឧបករណ៍​អ៊ីនធឺណិត​ចល័ត
 Name[pt]=Painel dos Dispositivos de Internet Móveis (MID)
 Name[pt_BR]=Painel dos Dispositivos de Internet Móveis (MID)
 Name[sv]=Panel för mobila internetenheter
@@ -9,6 +11,7 @@ Comment[de]=Ein Behältnis für eine Kontrollleiste
 Comment[et]=Paneeli konteiner
 Comment[fr]=Un conteneur pour un panneau
 Comment[gl]=Un contedor para un panel
+Comment[km]=ការ​ផ្ទុក​សម្រាប់​បន្ទះ
 Comment[pt]=Um contentor para um painel
 Comment[pt_BR]=Um contentor para um painel
 Comment[sv]=En inneslutning för en panel

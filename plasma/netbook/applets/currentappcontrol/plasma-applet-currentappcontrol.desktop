@@ -1,7 +1,13 @@
 [Desktop Entry]
 Name=Current Application Control
+Name[et]=Aktiivne rakenduse juhtimine
+Name[km]=វត្ថុ​បញ្ជា​កម្មវិធី​បច្ចុប្បន្ន
+Name[sv]=Styr aktuellt program
 Name[uk]=Керування поточною програмою
 Comment=Controls for the active window
+Comment[et]=Aktiivse akna juhtimine
+Comment[km]=វត្ថុ​បញ្ជា​សម្រាប់​បង្អួច​សកម្ម
+Comment[sv]=Styrning av det aktiva fönstret
 Comment[uk]=Інструменти керування активним вікном
 Type=Service
 
