@@ -1,8 +1,8 @@
 /*
 *   Copyright 2007 by Alex Merry <alex.merry@kdemail.net>
 *   Copyright 2008 by Alexis Ménard <darktears31@gmail.com>
-*   Copyright 2009 vy Marco Martin <notmart@gmail.com>
-*
+*   Copyright 2008 by Aaron Seigo <aseigo@kde.org>
+*   Copyright 2009 by Marco Martin <notmart@gmail.com>
 *
 *   This program is free software; you can redistribute it and/or modify
 *   it under the terms of the GNU Library General Public License version 2,
@@ -29,6 +29,7 @@ class QGraphicsLinearLayout;
 namespace Plasma
 {
     class FrameSvg;
+    class ScrollWidget;
 }
 
 class Newspaper : public Plasma::Containment
@@ -54,6 +55,9 @@ private slots:
 
 private:
 
+    QGraphicsWidget *m_mainWidget;
+    Plasma::ScrollWidget *m_scrollWidget;
+    QGraphicsLinearLayout *m_externalLayout;
     QGraphicsLinearLayout *m_mainLayout;
     QGraphicsLinearLayout *m_leftLayout;
     QGraphicsLinearLayout *m_rightLayout;

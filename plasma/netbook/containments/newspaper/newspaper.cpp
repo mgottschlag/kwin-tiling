@@ -2,7 +2,7 @@
 *   Copyright 2007 by Alex Merry <alex.merry@kdemail.net>
 *   Copyright 2008 by Alexis Ménard <darktears31@gmail.com>
 *   Copyright 2008 by Aaron Seigo <aseigo@kde.org>
-*   Copyright 2009 vy Marco Martin <notmart@gmail.com>
+*   Copyright 2009 by Marco Martin <notmart@gmail.com>
 *
 *   This program is free software; you can redistribute it and/or modify
 *   it under the terms of the GNU Library General Public License version 2,
@@ -45,6 +45,8 @@
 #include <Plasma/FrameSvg>
 #include <Plasma/Theme>
 #include <Plasma/View>
+#include <Plasma/ScrollWidget>
+#include <Plasma/PopupApplet>
 
 using namespace Plasma;
 
@@ -66,7 +68,13 @@ Newspaper::~Newspaper()
 
 void Newspaper::init()
 {
-    m_mainLayout = new QGraphicsLinearLayout(Qt::Horizontal, this);
+    m_externalLayout = new QGraphicsLinearLayout(this);
+    m_scrollWidget = new Plasma::ScrollWidget(this);
+    m_externalLayout->addItem(m_scrollWidget);
+    m_mainWidget = new QGraphicsWidget(m_scrollWidget);
+    m_scrollWidget->setWidget(m_mainWidget);
+    //m_mainWidget->setMinimumHeight(600);
+    m_mainLayout = new QGraphicsLinearLayout(Qt::Horizontal, m_mainWidget);
     m_leftLayout = new QGraphicsLinearLayout(Qt::Vertical);
     m_rightLayout = new QGraphicsLinearLayout(Qt::Vertical);
     m_mainLayout->addItem(m_leftLayout);
@@ -84,7 +92,7 @@ void Newspaper::themeUpdated()
 {
     qreal left, top, right, bottom;
     m_background->getMargins(left, top, right, bottom);
-    m_mainLayout->setContentsMargins(left, top, right, bottom);
+    m_externalLayout->setContentsMargins(left, top, right, bottom);
 }
 
 void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
@@ -133,11 +141,28 @@ void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
         }
     }
 
+
+    QSizeF appletSize;
+    Plasma::PopupApplet *popup = qobject_cast<Plasma::PopupApplet *>(applet);
+    if (popup && popup->graphicsWidget()) {
+        appletSize = popup->graphicsWidget()->preferredSize();
+    } else {
+        appletSize = applet->size();
+    }
+
     if (insertIndex == -1) {
         lay->addItem(applet);
     } else {
         lay->insertItem(insertIndex, applet);
     }
+
+    if (m_orientation == Qt::Horizontal) {
+        applet->setMinimumWidth(qMax(appletSize.width()*(applet->size().height()/appletSize.height()), applet->minimumWidth()));
+    } else {
+        applet->setMinimumHeight(qMax(appletSize.height()*(applet->size().width()/appletSize.width()), applet->minimumHeight()));
+    }
+
+
 
     applet->setBackgroundHints(NoBackground);
 }
