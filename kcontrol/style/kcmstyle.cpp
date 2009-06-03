@@ -379,18 +379,17 @@ void KCMStyle::save()
 		return;
 
 	// Save effects.
-	KSharedConfigPtr _config = KGlobal::config();
-	KConfigGroup config(_config, "KDE");
-
+        KConfig      _config("kdeglobals", KConfig::NoGlobals);                
+        KConfigGroup config(&_config, "KDE"); 
 	// Effects page
-	config.writeEntry( "ShowIconsOnPushButtons", cbIconsOnButtons->isChecked(), KConfig::Normal|KConfig::Global);
-	KConfigGroup g( _config, "KDE-Global GUI Settings" );
-	g.writeEntry( "GraphicEffectsLevel", comboGraphicEffectsLevel->itemData(comboGraphicEffectsLevel->currentIndex()), KConfig::Normal|KConfig::Global);
+	config.writeEntry( "ShowIconsOnPushButtons", cbIconsOnButtons->isChecked());
+	KConfigGroup g( &_config, "KDE-Global GUI Settings" );
+	g.writeEntry( "GraphicEffectsLevel", comboGraphicEffectsLevel->itemData(comboGraphicEffectsLevel->currentIndex()));
 
-	KConfigGroup generalGroup(_config, "General");
-	generalGroup.writeEntry("widgetStyle", currentStyle(), KConfig::Normal|KConfig::Global);
+	KConfigGroup generalGroup(&_config, "General");
+	generalGroup.writeEntry("widgetStyle", currentStyle());
 
-	KConfigGroup toolbarStyleGroup(_config, "Toolbar style");
+	KConfigGroup toolbarStyleGroup(&_config, "Toolbar style");
 	QString tbIcon;
 	switch( comboToolbarIcons->currentIndex() )
 	{
@@ -400,8 +399,8 @@ void KCMStyle::save()
 		default:
 		case 3: tbIcon = "TextUnderIcon"; break;
 	}
-	toolbarStyleGroup.writeEntry("ToolButtonStyle", tbIcon, KConfig::Normal|KConfig::Global);
-	_config->sync();
+	toolbarStyleGroup.writeEntry("ToolButtonStyle", tbIcon);
+	_config.sync();
 
 	// Export the changes we made to qtrc, and update all qt-only
 	// applications on the fly, ensuring that we still follow the user's
