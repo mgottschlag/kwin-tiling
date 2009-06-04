@@ -76,7 +76,6 @@ private:
     QList<Plasma::IconWidget*> m_items;
     QList<Plasma::QueryMatch> m_matches;
 
-    //    QAction* m_configureAction;
     QGraphicsLinearLayout *favourites;
     QGraphicsGridLayout *launchGrid;
 };

@@ -73,12 +73,10 @@ void SearchLaunch::doSearch()
     runnermg->launchQuery(tedit->text());
     queryCounter = 0;
 
-    if (!m_items.isEmpty()) {
-        for (int i = 0; i < m_items.size(); i++) {
-            delete m_items.takeAt(i);
-        }
-        m_matches.clear();
+    foreach (Plasma::IconWidget *icon, m_items) {
+        delete icon;
     }
+    m_matches.clear();
 }
 
 void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
