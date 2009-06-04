@@ -29,6 +29,8 @@
 #include <QGraphicsLinearLayout>
 #include <QGraphicsGridLayout>
 
+#include <QSignalMapper>
+
 class QAction;
 class KDialog;
 class KIntNumInput;
@@ -62,6 +64,9 @@ private slots:
     void doSearch();
     void setQueryMatches(const QList<Plasma::QueryMatch> &m);
     void launch();
+    void launchFavourite();
+    void addFavourite();
+    void removeFavourite();
 
 private:
     /**
@@ -74,7 +79,10 @@ private:
 
     int queryCounter;
     QList<Plasma::IconWidget*> m_items;
+    QList<Plasma::IconWidget*> m_favourites;
+
     QList<Plasma::QueryMatch> m_matches;
+    QList<Plasma::QueryMatch> m_favouritesMatches;
 
     QGraphicsLinearLayout *favourites;
     QGraphicsGridLayout *launchGrid;

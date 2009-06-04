@@ -76,6 +76,8 @@ void SearchLaunch::doSearch()
     foreach (Plasma::IconWidget *icon, m_items) {
         delete icon;
     }
+
+    m_items.clear();
     m_matches.clear();
 }
 
@@ -89,6 +91,8 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     int i;
     for (i = queryCounter; i < m.size(); i++) {
         Plasma::QueryMatch match = m[i];
+
+        // create new IconWidget with information from the match
         Plasma::IconWidget *icon = new Plasma::IconWidget();
         icon->setText(match.text());
         icon->setIcon(match.icon());
@@ -97,9 +101,16 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         icon->setDrawBackground(true);
         connect(icon, SIGNAL(activated()), this, SLOT(launch()));
 
+        // create action to add to favourites strip
+        QAction *action = new QAction(icon);
+        action->setIcon(KIcon("favorites"));
+        icon->addIconAction(action);
+        connect(action, SIGNAL(triggered()), this, SLOT(addFavourite()));
+
+        // add to layout and data structures
         m_items.append(icon);
         m_matches.append(match);
-        launchGrid->addItem(icon, i / 6, i % 6);
+        launchGrid->addItem(icon, i / 8, i % 8);
     }
     queryCounter = i;
 }
@@ -110,6 +121,54 @@ void SearchLaunch::launch()
     int idx = m_items.indexOf(icon);
     Plasma::QueryMatch match = m_matches[idx];
     runnermg->run(match);
+}
+
+void SearchLaunch::launchFavourite()
+{
+    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender());
+    int idx = m_favourites.indexOf(icon);
+    Plasma::QueryMatch match = m_favouritesMatches[idx];
+    runnermg->run(match);
+}
+
+void SearchLaunch::addFavourite()
+{
+    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender()->parent());
+    int idx = m_items.indexOf(icon);
+    Plasma::QueryMatch match = m_matches[idx];
+
+    // create new IconWidget for favourite strip
+    Plasma::IconWidget *fav = new Plasma::IconWidget();
+    fav->setText(match.text());
+    fav->setIcon(match.icon());
+    fav->setMinimumSize(QSize(120, 120));
+    fav->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed, QSizePolicy::DefaultType);
+    connect(fav, SIGNAL(activated()), this, SLOT(launchFavourite()));
+
+    // set an action to be able to remove from favourites
+    QAction *action = new QAction(fav);
+    action->setIcon(KIcon("list-remove"));
+    fav->addIconAction(action);
+    connect(action, SIGNAL(triggered()), this, SLOT(removeFavourite()));
+
+    // add to layout and data structures
+
+    // FIXME: need to change this after the strip widget is created ;)
+    favourites->insertItem(favourites->count() - 1, fav);
+    m_favourites.append(fav);
+    m_favouritesMatches.append(match);
+}
+
+void SearchLaunch::removeFavourite()
+{
+    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender()->parent());
+    int idx = m_favourites.indexOf(icon);
+    Plasma::QueryMatch match = m_favouritesMatches[idx];
+
+    // must be deleteLater because the IconWidget will return from the action?
+    icon->deleteLater();
+    m_favouritesMatches.removeAt(idx);
+    m_favourites.removeAt(idx);
 }
 
 QList<QAction*> SearchLaunch::contextualActions()
@@ -198,29 +257,21 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             // create favourites strip
             favourites = new QGraphicsLinearLayout();
             favourites->setOrientation(layoutDirection);
-            favourites->setContentsMargins(0, 0, 0, 0);
+            favourites->setContentsMargins(5, 0, 5, 0);
             favourites->setSpacing(4);
             favourites->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum));
+
+            // TODO: later we need to change this to the widget that will be the strip
+            // so it will have arrows and will work like a "carroussel".
+
+            // to make items in the center
+            favourites->insertStretch(0);
+            favourites->insertStretch(1);
 
             // create launch grid
             launchGrid = new QGraphicsGridLayout();
             launchGrid->setSpacing(4);
             launchGrid->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
-
-            // test icons inside the favourite strip
-            for (int i = 0; i < 6; i++) {
-                Plasma::IconWidget *icon = new Plasma::IconWidget();
-                icon->setIcon(KIcon("system-lock-screen"));
-                icon->setMinimumSize(QSize(80, 80));
-                favourites->addItem(icon);
-            }
-
-            // test icons inside the grid where the search result will be put
-//             for (int i = 0; i < 30; i++) {
-//                 Plasma::IconWidget *icon = new Plasma::IconWidget(this);
-//                 icon->setIcon(KIcon("get-hot-new-stuff"));
-//                 launchGrid->addItem(icon, i % 6, i / 6);
-//             }
 
             // add our layouts to main vertical layout
             lay->addItem(tedit);
