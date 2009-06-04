@@ -314,11 +314,11 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
         } else if (m_applet->formFactor() == Plasma::Vertical) {
             if (m_dragAction == LeftResize) {
                 int fixedHeight = m_applet->size().height()+(m_lastGlobalPos.y() - event->globalPos().y());
-                m_applet->setPos(m_applet->pos().y()-(fixedHeight-m_applet->size().width()), m_applet->pos().y());
+                m_applet->setPos(m_applet->pos().x(), m_applet->pos().y()-(fixedHeight-m_applet->size().height()));
                 m_applet->setMinimumHeight(fixedHeight);
                 m_applet->setMaximumHeight(fixedHeight);
             } else if (m_dragAction == RightResize) {
-                int fixedHeight = m_applet->size().width()-(m_lastGlobalPos.y() - event->globalPos().y());
+                int fixedHeight = m_applet->size().height()-(m_lastGlobalPos.y() - event->globalPos().y());
                 m_applet->setMinimumHeight(fixedHeight);
                 m_applet->setMaximumHeight(fixedHeight);
             }
