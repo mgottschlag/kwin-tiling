@@ -37,7 +37,6 @@ class SystemMonitor : public Plasma::PopupApplet
         virtual ~SystemMonitor();
 
         void init();
-        virtual QList<QAction*> contextualActions();
         virtual QGraphicsWidget *graphicsWidget();
         virtual void constraintsEvent(Plasma::Constraints constraints);
 
@@ -52,6 +51,7 @@ class SystemMonitor : public Plasma::PopupApplet
         void addApplet(const QString &name);
         void removeApplet(const QString &name);
         void saveState(KConfigGroup &group) const;
+        void createConfigurationInterface(KConfigDialog *parent);
 
     private:
         QGraphicsLinearLayout *m_layout;

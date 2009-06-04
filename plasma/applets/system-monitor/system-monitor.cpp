@@ -51,10 +51,18 @@ void SystemMonitor::saveState(KConfigGroup &group) const
 {
     QStringList appletNames;
     foreach (Plasma::Applet *applet, m_applets) {
+        //applet->saveState(group);
         appletNames << applet->objectName();
     }
 
     group.writeEntry("applets", appletNames);
+}
+
+void SystemMonitor::createConfigurationInterface(KConfigDialog *parent)
+{
+    foreach (Plasma::Applet *applet, m_applets) {
+        applet->createConfigurationInterface(parent);
+    }
 }
 
 void SystemMonitor::init()
@@ -81,10 +89,12 @@ void SystemMonitor::init()
         m_buttons->addItem(button);
         m_monitorButtons << button;
     }
+
     m_layout->addItem(m_buttons);
     foreach (const QString& applet, appletNames) {
         addApplet(applet);
     }
+
     m_widget->setLayout(m_layout);
     checkGeometry();
 
@@ -187,15 +197,6 @@ void SystemMonitor::checkGeometry()
     */
 }
 
-QList<QAction*> SystemMonitor::contextualActions()
-{
-    QList<QAction*> result;
-    foreach (Plasma::Applet *applet, m_applets) {
-        result << applet->action("configure");
-    }
-    return result;
-}
-
 QGraphicsWidget *SystemMonitor::graphicsWidget()
 {
     return m_widget;
@@ -203,11 +204,29 @@ QGraphicsWidget *SystemMonitor::graphicsWidget()
 
 void SystemMonitor::constraintsEvent(Plasma::Constraints constraints)
 {
+    Plasma::Constraints passOn = Plasma::NoConstraint;
+
     if (constraints & Plasma::ImmutableConstraint) {
         foreach (MonitorButton* button, m_monitorButtons) {
             button->setEnabled(immutability() == Plasma::Mutable);
         }
+
+        passOn |= Plasma::ImmutableConstraint;
     }
+
+    if (constraints & Plasma::StartupCompletedConstraint) {
+        passOn |= Plasma::StartupCompletedConstraint;
+    }
+
+    if (passOn != Plasma::NoConstraint) {
+        foreach (Plasma::Applet *applet, m_applets) {
+            applet->updateConstraints(passOn);
+            if (passOn & Plasma::StartupCompletedConstraint) {
+                applet->flushPendingConstraintsEvents();
+            }
+        }
+    }
+
     PopupApplet::constraintsEvent(constraints);
 }
 
