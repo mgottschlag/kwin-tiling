@@ -79,8 +79,12 @@ void Newspaper::init()
     m_mainLayout->addItem(m_leftLayout);
     m_mainLayout->addItem(m_rightLayout);
 
-    m_leftLayout->addItem(new QGraphicsWidget(this));
-    m_rightLayout->addItem(new QGraphicsWidget(this));
+    QGraphicsWidget *spacer1 = new QGraphicsWidget(m_mainWidget);
+    spacer1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    QGraphicsWidget *spacer2 = new QGraphicsWidget(m_mainWidget);
+    spacer2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_leftLayout->addItem(spacer1);
+    m_rightLayout->addItem(spacer2);
 
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/background");
@@ -144,10 +148,9 @@ void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
     }
 
     if (insertIndex == -1) {
-        //lay->addItem(applet);
-        lay->insertItem(lay->count()-2, applet);
+        lay->insertItem(lay->count()-1, applet);
     } else {
-        lay->insertItem(insertIndex, applet);
+        lay->insertItem(qMin(insertIndex, lay->count()-1), applet);
     }
 
 
