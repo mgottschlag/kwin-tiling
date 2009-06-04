@@ -32,6 +32,10 @@
 #include <Plasma/Corona>
 #include <Plasma/FrameSvg>
 #include <Plasma/Theme>
+#include <Plasma/LineEdit>
+
+#include <Plasma/RunnerManager>
+#include <Plasma/QueryMatch>
 
 
 SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
@@ -43,6 +47,8 @@ SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
 
 SearchLaunch::~SearchLaunch()
 {
+    delete tedit;
+    delete runnermg;
 }
 
 void SearchLaunch::init()
@@ -52,6 +58,60 @@ void SearchLaunch::init()
             this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
     connect(this, SIGNAL(appletRemoved(Plasma::Applet*)),
             this, SLOT(appletRemoved(Plasma::Applet*)));
+
+    runnermg = new Plasma::RunnerManager(this);
+    connect(runnermg, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)),
+            this, SLOT(setQueryMatches(const QList<Plasma::QueryMatch>&)));
+
+    // before this text edit goes to panel, we'll try here
+    tedit = new Plasma::LineEdit(this);
+    connect(tedit, SIGNAL(returnPressed()), this, SLOT(doSearch()));
+}
+
+void SearchLaunch::doSearch()
+{
+    runnermg->launchQuery(tedit->text());
+    queryCounter = 0;
+
+    if (!m_items.isEmpty()) {
+        for (int i = 0; i < m_items.size(); i++) {
+            delete m_items.takeAt(i);
+        }
+        m_matches.clear();
+    }
+}
+
+void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
+{
+    if (m.isEmpty()) {
+        return;
+    }
+
+    // just add new QueryMatch
+    int i;
+    for (i = queryCounter; i < m.size(); i++) {
+        Plasma::QueryMatch match = m[i];
+        Plasma::IconWidget *icon = new Plasma::IconWidget();
+        icon->setText(match.text());
+        icon->setIcon(match.icon());
+        icon->setMinimumSize(QSize(100, 100));
+        icon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed, QSizePolicy::DefaultType);
+        icon->setDrawBackground(true);
+        connect(icon, SIGNAL(activated()), this, SLOT(launch()));
+
+        m_items.append(icon);
+        m_matches.append(match);
+        launchGrid->addItem(icon, i / 6, i % 6);
+    }
+    queryCounter = i;
+}
+
+void SearchLaunch::launch()
+{
+    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender());
+    int idx = m_items.indexOf(icon);
+    Plasma::QueryMatch match = m_matches[idx];
+    runnermg->run(match);
 }
 
 QList<QAction*> SearchLaunch::contextualActions()
@@ -138,32 +198,35 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             setLayout(lay);
 
             // create favourites strip
-            QGraphicsLinearLayout *favourites = new QGraphicsLinearLayout();
+            favourites = new QGraphicsLinearLayout();
             favourites->setOrientation(layoutDirection);
             favourites->setContentsMargins(0, 0, 0, 0);
             favourites->setSpacing(4);
             favourites->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum));
 
             // create launch grid
-            QGraphicsGridLayout *launchGrid = new QGraphicsGridLayout();
+            launchGrid = new QGraphicsGridLayout();
             launchGrid->setSpacing(4);
             launchGrid->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 
             // test icons inside the favourite strip
-            for (int i = 0; i < 10; i++) {
-                Plasma::IconWidget *icon = new Plasma::IconWidget(this);
+            for (int i = 0; i < 6; i++) {
+                Plasma::IconWidget *icon = new Plasma::IconWidget();
                 icon->setIcon(KIcon("system-lock-screen"));
+                icon->setMinimumSize(QSize(80, 80));
                 favourites->addItem(icon);
             }
 
             // test icons inside the grid where the search result will be put
-            for (int i = 0; i < 30; i++) {
-                Plasma::IconWidget *icon = new Plasma::IconWidget(this);
-                icon->setIcon(KIcon("get-hot-new-stuff"));
-                launchGrid->addItem(icon, i % 6, i / 6);
-            }
+//             for (int i = 0; i < 30; i++) {
+//                 Plasma::IconWidget *icon = new Plasma::IconWidget(this);
+//                 icon->setIcon(KIcon("get-hot-new-stuff"));
+//                 launchGrid->addItem(icon, i % 6, i / 6);
+//             }
 
             // add our layouts to main vertical layout
+            lay->addItem(tedit);
+            tedit->setZValue(9999999);
             lay->addItem(favourites);
             lay->addItem(launchGrid);
         }

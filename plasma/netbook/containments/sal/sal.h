@@ -36,6 +36,9 @@ class KIntNumInput;
 namespace Plasma
 {
     class IconWidget;
+    class LineEdit;
+    class RunnerManager;
+    class QueryMatch;
 }
 
 class SearchLaunch : public Plasma::Containment
@@ -56,12 +59,22 @@ private slots:
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
     void appletRemoved(Plasma::Applet* applet);
     void updateSize();
+    void doSearch();
+    void setQueryMatches(const QList<Plasma::QueryMatch> &m);
+    void launch();
 
 private:
     /**
      * update the formfactor based on the location
      */
     void setFormFactorFromLocation(Plasma::Location loc);
+
+    Plasma::LineEdit *tedit;
+    Plasma::RunnerManager *runnermg;
+
+    int queryCounter;
+    QList<Plasma::IconWidget*> m_items;
+    QList<Plasma::QueryMatch> m_matches;
 
     //    QAction* m_configureAction;
     QGraphicsLinearLayout *favourites;
