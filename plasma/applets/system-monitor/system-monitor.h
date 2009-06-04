@@ -48,7 +48,7 @@ class SystemMonitor : public Plasma::PopupApplet
         void appletRemoved(QObject *object);
 
     protected:
-        void addApplet(const QString &name);
+        SM::Applet *addApplet(const QString &name);
         void removeApplet(const QString &name);
         void saveState(KConfigGroup &group) const;
         void createConfigurationInterface(KConfigDialog *parent);

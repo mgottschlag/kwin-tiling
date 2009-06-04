@@ -105,18 +105,27 @@ void SystemMonitor::init()
 void SystemMonitor::toggled(bool toggled)
 {
     removeApplet(sender()->objectName());
+
     if (toggled) {
-        addApplet(sender()->objectName());
+        SM::Applet * applet = addApplet(sender()->objectName());
+
+        if (applet) {
+            Plasma::Constraints constraints(Plasma::ImmutableConstraint |
+                                            Plasma::StartupCompletedConstraint);
+            applet->updateConstraints(constraints);
+            applet->flushPendingConstraintsEvents();
+        }
     }
 }
 
-void SystemMonitor::addApplet(const QString &name)
+SM::Applet *SystemMonitor::addApplet(const QString &name)
 {
     if (name.isEmpty()) {
-        return;
+        return 0;
     }
 
-    SM::Applet* applet = qobject_cast<SM::Applet*>(Plasma::Applet::load(name, 0, QVariantList() << "SM"));
+    Plasma::Applet* plasmaApplet = Plasma::Applet::load(name, 0, QVariantList() << "SM");
+    SM::Applet* applet = qobject_cast<SM::Applet*>(plasmaApplet);
     if (applet) {
         m_applets.append(applet);
         connect(applet, SIGNAL(geometryChecked()), this, SLOT(checkGeometry()));
@@ -132,7 +141,11 @@ void SystemMonitor::addApplet(const QString &name)
         KConfigGroup cg = config();
         saveState(cg);
         emit configNeedsSaving();
+    } else if (plasmaApplet) {
+        delete plasmaApplet;
     }
+
+    return applet;
 }
 
 void SystemMonitor::removeApplet(const QString &name)
