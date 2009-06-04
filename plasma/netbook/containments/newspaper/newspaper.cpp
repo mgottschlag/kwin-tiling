@@ -73,12 +73,14 @@ void Newspaper::init()
     m_externalLayout->addItem(m_scrollWidget);
     m_mainWidget = new QGraphicsWidget(m_scrollWidget);
     m_scrollWidget->setWidget(m_mainWidget);
-    //m_mainWidget->setMinimumHeight(600);
     m_mainLayout = new QGraphicsLinearLayout(Qt::Horizontal, m_mainWidget);
     m_leftLayout = new QGraphicsLinearLayout(Qt::Vertical);
     m_rightLayout = new QGraphicsLinearLayout(Qt::Vertical);
     m_mainLayout->addItem(m_leftLayout);
     m_mainLayout->addItem(m_rightLayout);
+
+    m_leftLayout->addItem(new QGraphicsWidget(this));
+    m_rightLayout->addItem(new QGraphicsWidget(this));
 
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/background");
@@ -142,7 +144,8 @@ void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
     }
 
     if (insertIndex == -1) {
-        lay->addItem(applet);
+        //lay->addItem(applet);
+        lay->insertItem(lay->count()-2, applet);
     } else {
         lay->insertItem(insertIndex, applet);
     }
@@ -154,20 +157,10 @@ void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 
 void Newspaper::updateSize()
 {
-    Plasma::Applet *applet = qobject_cast<Plasma::Applet *>(sender());
-
-    if (applet) {
-        if (m_orientation == Qt::Horizontal) {
-            const int delta = applet->preferredWidth() - applet->size().width();
-            if (delta != 0) {
-                m_mainWidget->setMinimumWidth(m_mainWidget->size().width() + delta);
-            }
-        } else if (m_orientation == Qt::Vertical) {
-            const int delta = applet->effectiveSizeHint(Qt::PreferredSize).height() - applet->size().height();
-            if (delta != 0) {
-                m_mainWidget->setMinimumHeight(m_mainWidget->size().height() + delta);
-            }
-        }
+    if (m_orientation == Qt::Horizontal) {
+        m_mainWidget->resize(m_mainWidget->effectiveSizeHint(Qt::PreferredSize).width(), m_mainWidget->size().height());
+    } else {
+        m_mainWidget->resize(m_mainWidget->size().width(), m_mainWidget->effectiveSizeHint(Qt::PreferredSize).height());
     }
 }
 
