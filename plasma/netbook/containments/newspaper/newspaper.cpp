@@ -141,32 +141,35 @@ void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
         }
     }
 
-
-    QSizeF appletSize;
-    Plasma::PopupApplet *popup = qobject_cast<Plasma::PopupApplet *>(applet);
-    if (popup && popup->graphicsWidget()) {
-        appletSize = popup->graphicsWidget()->preferredSize();
-    } else {
-        appletSize = applet->size();
-    }
-
     if (insertIndex == -1) {
         lay->addItem(applet);
     } else {
         lay->insertItem(insertIndex, applet);
     }
 
-    if (m_orientation == Qt::Horizontal) {
-        applet->setMinimumWidth(qMax(appletSize.width()*(applet->size().height()/appletSize.height()), applet->minimumWidth()));
-    } else {
-        applet->setMinimumHeight(qMax(appletSize.height()*(applet->size().width()/appletSize.width()), applet->minimumHeight()));
-    }
 
-
-
+    connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
     applet->setBackgroundHints(NoBackground);
 }
 
+void Newspaper::updateSize()
+{
+    Plasma::Applet *applet = qobject_cast<Plasma::Applet *>(sender());
+
+    if (applet) {
+        if (m_orientation == Qt::Horizontal) {
+            const int delta = applet->preferredWidth() - applet->size().width();
+            if (delta != 0) {
+                m_mainWidget->setMinimumWidth(m_mainWidget->size().width() + delta);
+            }
+        } else if (m_orientation == Qt::Vertical) {
+            const int delta = applet->effectiveSizeHint(Qt::PreferredSize).height() - applet->size().height();
+            if (delta != 0) {
+                m_mainWidget->setMinimumHeight(m_mainWidget->size().height() + delta);
+            }
+        }
+    }
+}
 
 void Newspaper::constraintsEvent(Plasma::Constraints constraints)
 {

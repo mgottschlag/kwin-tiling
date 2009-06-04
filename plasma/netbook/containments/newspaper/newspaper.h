@@ -52,6 +52,7 @@ private slots:
 
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
     void themeUpdated();
+    void updateSize();
 
 private:
 
