@@ -24,16 +24,12 @@
 #define SEARCHLAUNCH_CONTAINMENT_H
 
 #include <Plasma/Containment>
-#include <Plasma/IconWidget>
 
 #include <QGraphicsLinearLayout>
 #include <QGraphicsGridLayout>
 
-#include <QSignalMapper>
-
 class QAction;
-class KDialog;
-class KIntNumInput;
+class StripWidget;
 
 namespace Plasma
 {
@@ -83,6 +79,8 @@ private:
 
     QList<Plasma::QueryMatch> m_matches;
     QList<Plasma::QueryMatch> m_favouritesMatches;
+
+    StripWidget *stripWidget;
 
     QGraphicsLinearLayout *favourites;
     QGraphicsGridLayout *launchGrid;

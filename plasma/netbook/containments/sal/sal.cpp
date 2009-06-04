@@ -19,21 +19,19 @@
  */
 
 #include "sal.h"
+#include "stripwidget.h"
 
 #include <QPainter>
 #include <QAction>
 
 #include <KDebug>
 #include <KIcon>
-#include <KDialog>
-#include <KIntNumInput>
-#include <KMessageBox>
 
+#include <Plasma/Theme>
 #include <Plasma/Corona>
 #include <Plasma/FrameSvg>
-#include <Plasma/Theme>
 #include <Plasma/LineEdit>
-
+#include <Plasma/IconWidget>
 #include <Plasma/RunnerManager>
 #include <Plasma/QueryMatch>
 
@@ -152,9 +150,7 @@ void SearchLaunch::addFavourite()
     connect(action, SIGNAL(triggered()), this, SLOT(removeFavourite()));
 
     // add to layout and data structures
-
-    // FIXME: need to change this after the strip widget is created ;)
-    favourites->insertItem(favourites->count() - 1, fav);
+    stripWidget->add(fav);
     m_favourites.append(fav);
     m_favouritesMatches.append(match);
 }
@@ -163,10 +159,8 @@ void SearchLaunch::removeFavourite()
 {
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender()->parent());
     int idx = m_favourites.indexOf(icon);
-    Plasma::QueryMatch match = m_favouritesMatches[idx];
 
-    // must be deleteLater because the IconWidget will return from the action?
-    icon->deleteLater();
+    stripWidget->remove(icon);
     m_favouritesMatches.removeAt(idx);
     m_favourites.removeAt(idx);
 }
@@ -257,16 +251,18 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             // create favourites strip
             favourites = new QGraphicsLinearLayout();
             favourites->setOrientation(layoutDirection);
-            favourites->setContentsMargins(5, 0, 5, 0);
+            favourites->setContentsMargins(0, 0, 0, 0);
             favourites->setSpacing(4);
             favourites->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum));
 
             // TODO: later we need to change this to the widget that will be the strip
             // so it will have arrows and will work like a "carroussel".
+            stripWidget = new StripWidget(this);
+            stripWidget->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
 
-            // to make items in the center
-            favourites->insertStretch(0);
-            favourites->insertStretch(1);
+            favourites->addStretch();
+            favourites->addStretch();
+            favourites->insertItem(1, stripWidget);
 
             // create launch grid
             launchGrid = new QGraphicsGridLayout();
