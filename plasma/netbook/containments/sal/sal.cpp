@@ -121,48 +121,13 @@ void SearchLaunch::launch()
     runnermg->run(match);
 }
 
-void SearchLaunch::launchFavourite()
-{
-    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender());
-    int idx = m_favourites.indexOf(icon);
-    Plasma::QueryMatch match = m_favouritesMatches[idx];
-    runnermg->run(match);
-}
-
 void SearchLaunch::addFavourite()
 {
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender()->parent());
     int idx = m_items.indexOf(icon);
     Plasma::QueryMatch match = m_matches[idx];
 
-    // create new IconWidget for favourite strip
-    Plasma::IconWidget *fav = new Plasma::IconWidget();
-    fav->setText(match.text());
-    fav->setIcon(match.icon());
-    fav->setMinimumSize(QSize(120, 120));
-    fav->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed, QSizePolicy::DefaultType);
-    connect(fav, SIGNAL(activated()), this, SLOT(launchFavourite()));
-
-    // set an action to be able to remove from favourites
-    QAction *action = new QAction(fav);
-    action->setIcon(KIcon("list-remove"));
-    fav->addIconAction(action);
-    connect(action, SIGNAL(triggered()), this, SLOT(removeFavourite()));
-
-    // add to layout and data structures
-    stripWidget->add(fav);
-    m_favourites.append(fav);
-    m_favouritesMatches.append(match);
-}
-
-void SearchLaunch::removeFavourite()
-{
-    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender()->parent());
-    int idx = m_favourites.indexOf(icon);
-
-    stripWidget->remove(icon);
-    m_favouritesMatches.removeAt(idx);
-    m_favourites.removeAt(idx);
+    stripWidget->add(match);
 }
 
 QList<QAction*> SearchLaunch::contextualActions()
@@ -255,11 +220,10 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             favourites->setSpacing(4);
             favourites->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum));
 
-            // TODO: later we need to change this to the widget that will be the strip
-            // so it will have arrows and will work like a "carroussel".
-            stripWidget = new StripWidget(this);
+            stripWidget = new StripWidget(runnermg, this);
             stripWidget->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
 
+            // put the strip in the center
             favourites->addStretch();
             favourites->addStretch();
             favourites->insertItem(1, stripWidget);
