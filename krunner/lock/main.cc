@@ -139,6 +139,7 @@ int main( int argc, char **argv )
     MyApp app;
     kDebug() << "app " << kdesktop_screen_number << " " << starting_screen << " " << child << " " << child_sockets.count() << " " << parent_connection;
     app.disableSessionManagement();
+    app.setQuitOnLastWindowClosed( false );
     KGlobal::locale()->insertCatalog("libkworkspace");
 
     LockProcess process(child, args->isSet("blank"));
