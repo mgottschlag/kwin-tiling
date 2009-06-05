@@ -51,6 +51,7 @@
 #include <KCrash>
 #include <KDebug>
 #include <KCmdLineArgs>
+#include <KGlobalAccel>
 #include <KWindowSystem>
 
 #include <ksmserver_interface.h>
@@ -96,6 +97,46 @@ PlasmaApp::PlasmaApp()
     KGlobal::locale()->insertCatalog("libplasma");
     KGlobal::locale()->insertCatalog("plasma-shells-common");
     KCrash::setFlags(KCrash::AutoRestart);
+
+    // why is the next line of code here here?
+    //
+    // plasma-desktop was once plasma. not a big deal, right?
+    // 
+    // well, kglobalaccel has a policy of forever
+    // reserving shortcuts. even if the application is not running, it will still
+    // defend that application's right to using that global shortcut. this has,
+    // at least to me, some very obvious negative impacts on usability, such as
+    // making it difficult for the user to switch between applications of the 
+    // same type and use the same global shortcuts, or when the component changes
+    // name as in plasma-desktop.
+    //
+    // applications can unregister each other's shortcuts, though, and so that's
+    // exactly what we do here.
+    //
+    // i'd love to just rely on the kconf_update script, but kglobalaccel doesn't
+    // listen to changes in its config file nor has a dbus interace to tickle it
+    // into re-reading it and it starts too early in the start up sequence for
+    // kconf_update to beat it to the config file.
+    //
+    // so we instead deal with a dbus roundtrip with kded 
+    // (8 context switches at minimum iirc?)
+    // at every app start for something that really only needs to be done once
+    // but which we can't know for sure when it has been done.
+    //
+    // if kglobalaccel ignored non-running apps or could be prompted into
+    // reloading its config, this would be unecessary.
+    //
+    // what's kind of funny is that if plasma actually relied on kglobalaccel for
+    // the plasmoid shortcuts (which it can't because layouts change too often and
+    // can be stored/retreived making kglobalaccel management a non-option) this
+    // would be a total disaster. As it is it's "just" potentially losing the user's
+    // customization of the Ctrl+F12 default shortcut to bring up the dashboard.
+    //
+    // this line should be removed when we decide that 4.[012]->4.<current> is
+    // no longer a supported upgrade path. sometime after dragons make a comeback
+    // and can be seen circling the skies again.
+    // - aseigo.
+    KGlobalAccel::cleanComponent("plasma");
 
     m_panelViewCreationTimer = new QTimer(this);
     m_panelViewCreationTimer->setSingleShot(true);
