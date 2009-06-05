@@ -25,16 +25,6 @@
 #include <Plasma/Containment>
 #include <Plasma/Corona>
 
-#define APPLETS 6
-static const char *sm_applets[][2] = {
-    { "media-flash", "sm_temperature" },
-    { "media-flash-memory-stick", "sm_ram" },
-    { "cpu", "sm_cpu" },
-    { "hwinfo", "sm_hwinfo" },
-    { "network-workgroup", "sm_net" },
-    { "drive-harddisk", "sm_hdd" }
-};
-
 SystemMonitor::SystemMonitor(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args), m_layout(0), m_buttons(0), m_widget(0)
 {
@@ -77,12 +67,20 @@ void SystemMonitor::init()
     m_buttons->setContentsMargins(0, 0, 0, 0);
     m_buttons->setSpacing(5);
 
-    for (int i = 0; i < APPLETS; ++i) {
+    QMap<QString, KPluginInfo> appletsFound;
+    KPluginInfo::List appletList = listAppletInfo("System Information");
+    foreach (const KPluginInfo &pluginInfo, appletList) {
+        if (pluginInfo.pluginName().startsWith("sm_") && !pluginInfo.isHidden()) {
+            appletsFound.insert(pluginInfo.pluginName(), pluginInfo);
+        }
+    }
+
+    foreach (const KPluginInfo &pluginInfo, appletsFound) {
         MonitorButton *button = new MonitorButton(m_widget);
-        button->setObjectName(sm_applets[i][1]);
+        button->setObjectName(pluginInfo.pluginName());
         button->setCheckable(true);
-        button->setImage(sm_applets[i][0]);
-        if (appletNames.contains(sm_applets[i][1])) {
+        button->setImage(pluginInfo.icon());
+        if (appletNames.contains(pluginInfo.pluginName())) {
             button->setChecked(true);
         }
         connect(button, SIGNAL(toggled(bool)), this, SLOT(toggled(bool)));
@@ -92,7 +90,9 @@ void SystemMonitor::init()
 
     m_layout->addItem(m_buttons);
     foreach (const QString& applet, appletNames) {
-        addApplet(applet);
+        if (appletsFound.contains(applet)) {
+                addApplet(applet);
+        }
     }
 
     m_widget->setLayout(m_layout);
