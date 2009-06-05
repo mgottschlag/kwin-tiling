@@ -49,12 +49,14 @@ class SM_EXPORT Applet : public Plasma::Applet
         ~Applet();
 
         virtual void constraintsEvent(Plasma::Constraints constraints);
+        void saveConfig(KConfigGroup &config);
         QSizeF minSize() const { return m_min; };
 
     signals:
         void geometryChecked();
 
     protected:
+        KConfigGroup config();
         void connectToEngine();
         void connectSource(const QString& source);
         void disconnectSources();
@@ -121,6 +123,7 @@ class SM_EXPORT Applet : public Plasma::Applet
         QSizeF m_max;
 
         QGraphicsLinearLayout *m_mainLayout;
+        Plasma::Applet *m_configSource;
 };
 
 }

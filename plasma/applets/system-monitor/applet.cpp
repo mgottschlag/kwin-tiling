@@ -40,7 +40,8 @@ Applet::Applet(QObject *parent, const QVariantList &args)
      m_noSourcesIcon(0),
      m_mode(Desktop),
      m_detail(Low),
-     m_mainLayout(0)
+     m_mainLayout(0),
+     m_configSource(0)
 {
     if (args.count() > 0) {
         if (args[0].toString() == "SM") {
@@ -284,8 +285,41 @@ void Applet::displayNoAvailableSources()
     mainLayout()->addItem(m_noSourcesIcon);
 }
 
+KConfigGroup Applet::config()
+{
+    if (m_configSource) {
+        return m_configSource->config();
+    }
+
+    return Plasma::Applet::config();
+}
+
+void Applet::saveConfig(KConfigGroup &config)
+{
+    // work around for saveState being protected
+    saveState(config);
+}
+
 QVariant Applet::itemChange(GraphicsItemChange change, const QVariant &value)
 {
+    if (m_mode == Monitor && change == ItemParentHasChanged) {
+        QGraphicsWidget *parent = parentWidget();
+        Plasma::Applet *container = 0;
+        while (parent) {
+            container = qobject_cast<Plasma::Applet *>(parent);
+
+            if (container) {
+                break;
+            }
+
+            parent = parent->parentWidget();
+        }
+
+        if (container && container != containment()) {
+            m_configSource = container;
+        }
+    }
+
     // We must be able to change position when in monitor even if not mutable
     if (m_mode == Monitor && change == ItemPositionChange) {
         return QGraphicsWidget::itemChange(change, value);

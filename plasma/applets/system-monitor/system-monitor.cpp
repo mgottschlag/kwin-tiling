@@ -50,8 +50,8 @@ SystemMonitor::~SystemMonitor()
 void SystemMonitor::saveState(KConfigGroup &group) const
 {
     QStringList appletNames;
-    foreach (Plasma::Applet *applet, m_applets) {
-        //applet->saveState(group);
+    foreach (SM::Applet *applet, m_applets) {
+        applet->saveConfig(group);
         appletNames << applet->objectName();
     }
 
