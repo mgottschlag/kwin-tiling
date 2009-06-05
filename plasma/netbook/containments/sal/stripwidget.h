@@ -48,10 +48,13 @@ public:
 
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
+    void createIcon(Plasma::QueryMatch *match, int idx);
 
 private slots:
     void removeFavourite();
     void launchFavourite();
+    void goLeft();
+    void goRight();
 
 private:
     Plasma::PushButton *leftArrow;
@@ -62,8 +65,9 @@ private:
     Plasma::FrameSvg *background;
     QGraphicsLinearLayout *stripLayout;
 
-    QList<Plasma::IconWidget*> m_favourites;
-    QList<Plasma::QueryMatch> m_favouritesMatches;
+    QList<Plasma::QueryMatch*> m_favouritesMatches;
+
+    QMap<Plasma::IconWidget*,Plasma::QueryMatch*> m_favouriteMap;
 };
 
 #endif

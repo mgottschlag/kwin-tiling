@@ -108,7 +108,7 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         // add to layout and data structures
         m_items.append(icon);
         m_matches.append(match);
-        launchGrid->addItem(icon, i / 8, i % 8);
+        launchGrid->addItem(icon, i / 7, i % 7);
     }
     queryCounter = i;
 }
@@ -208,7 +208,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             // create main layout
             QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(this);
             lay->setOrientation(layoutOtherDirection);
-            lay->setContentsMargins(0, 0, 0, 0);
+            lay->setContentsMargins(5, 0, 5, 0);
             lay->setSpacing(4);
             lay->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
             setLayout(lay);
@@ -216,7 +216,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             // create favourites strip
             favourites = new QGraphicsLinearLayout();
             favourites->setOrientation(layoutDirection);
-            favourites->setContentsMargins(0, 0, 0, 0);
+            favourites->setContentsMargins(5, 0, 5, 0);
             favourites->setSpacing(4);
             favourites->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum));
 
