@@ -68,6 +68,8 @@ void CurrentAppControl::init()
 {
     connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)),
             this, SLOT(activeWindowChanged(WId)));
+    connect(KWindowSystem::self(), SIGNAL(windowChanged(WId)),
+            this, SLOT(windowChanged(WId)));
     QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(Qt::Horizontal, this);
     lay->setContentsMargins(0, 0, 0, 0);
     lay->setSpacing(0);
@@ -82,14 +84,21 @@ void CurrentAppControl::constraintsEvent(Plasma::Constraints constraints)
         QFontMetrics fm(Plasma::Theme::defaultTheme()->font(Plasma::Theme::DefaultFont));
         if (formFactor() == Plasma::Vertical) {
             m_currentTask->setOrientation(Qt::Vertical);
-            m_currentTask->setMinimumSize(0, KIconLoader::SizeSmallMedium*2 + fm.xHeight()*10);
+            setMinimumSize(0, KIconLoader::SizeSmallMedium*2 + fm.xHeight()*10);
         } else {
             m_currentTask->setOrientation(Qt::Horizontal);
-            m_currentTask->setMinimumSize(KIconLoader::SizeSmallMedium*2 + fm.width('M')*10, 0);
+            setMinimumSize(KIconLoader::SizeSmallMedium*2 + fm.width('M')*10, 0);
         }
     }
 }
 
+void CurrentAppControl::windowChanged(WId id)
+{
+    if (id == m_activeWindow) {
+        m_pendingActiveWindow = m_activeWindow;
+        syncActiveWindow();
+    }
+}
 
 void CurrentAppControl::activeWindowChanged(WId id)
 {

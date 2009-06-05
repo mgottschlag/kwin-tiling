@@ -42,6 +42,7 @@ public:
 
 protected Q_SLOTS:
     void activeWindowChanged(WId id);
+    void windowChanged(WId id);
     void syncActiveWindow();
     void closeWindow();
     void listWindows();
