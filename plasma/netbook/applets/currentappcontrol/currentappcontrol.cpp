@@ -50,6 +50,7 @@ CurrentAppControl::CurrentAppControl(QObject *parent, const QVariantList &args)
 {
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_currentTask = new Plasma::IconWidget(this);
+    m_currentTask->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_currentTask->setTextBackgroundColor(QColor());
     m_closeTask = new Plasma::IconWidget(this);
     m_closeTask->setSvg("widgets/configuration-icons", "close");
@@ -109,7 +110,7 @@ void CurrentAppControl::activeWindowChanged(WId id)
 
 void CurrentAppControl::syncActiveWindow()
 {
-    if (m_pendingActiveWindow == view()->effectiveWinId()) {
+    if (m_pendingActiveWindow <= 0 || m_pendingActiveWindow == view()->effectiveWinId()) {
         m_activeWindow = 0;
         m_currentTask->setIcon("preferences-system-windows");
         m_currentTask->setText(i18np("%1 running app", "%1 running apps", KWindowSystem::windows().count()-1));
@@ -119,6 +120,8 @@ void CurrentAppControl::syncActiveWindow()
         KWindowInfo info = KWindowSystem::windowInfo(m_activeWindow, NET::WMName);
         m_currentTask->setIcon(KWindowSystem::icon(m_activeWindow, KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium));
         m_currentTask->setText(info.name());
+        //FIXME: this is utterly bad: the layout seems to -not- resize it?
+        m_currentTask->resize(size().width() - m_closeTask->size().width(), m_currentTask->size().height());
         m_closeTask->show();
     }
 
