@@ -331,7 +331,10 @@ public:
 
     void addSpace()
     {
-        containment->addApplet("panelspacer_internal");
+        Plasma::Applet *spacer = containment->addApplet("panelspacer_internal");
+        if (spacer) {
+           QMetaObject::invokeMethod(spacer, "updateConfigurationMode", Q_ARG(bool, true));
+        }
     }
 
      enum DragElement { NoElement = 0,

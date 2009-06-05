@@ -34,6 +34,7 @@ PanelSpacer::PanelSpacer(QObject *parent, const QVariantList &args)
       m_fixedSize(false)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    setAspectRatioMode(Plasma::IgnoreAspectRatio);
     setHasConfigurationInterface(false);
     QAction *toggleFixed = new QAction(i18n("Set Flexible Size"), this);
     m_actions.append(toggleFixed);
