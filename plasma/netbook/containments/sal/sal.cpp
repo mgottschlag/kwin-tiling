@@ -213,25 +213,17 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             lay->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
             setLayout(lay);
 
-            // create favourites strip
-            favourites = new QGraphicsLinearLayout();
-            favourites->setOrientation(layoutDirection);
-            favourites->setContentsMargins(5, 0, 5, 0);
-            favourites->setSpacing(4);
-            favourites->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum));
-
-            stripWidget = new StripWidget(runnermg, this);
-            stripWidget->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
-
-            // put the strip in the center
-            favourites->addStretch();
-            favourites->addStretch();
-            favourites->insertItem(1, stripWidget);
-
             // create launch grid
             launchGrid = new QGraphicsGridLayout();
             launchGrid->setSpacing(4);
             launchGrid->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+
+            favourites = new QGraphicsLinearLayout();
+            stripWidget = new StripWidget(runnermg, this);
+
+            favourites->addStretch();
+            favourites->addStretch();
+            favourites->insertItem(1, stripWidget);
 
             // add our layouts to main vertical layout
             lay->addItem(tedit);

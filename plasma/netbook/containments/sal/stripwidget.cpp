@@ -19,8 +19,7 @@
 
 #include "stripwidget.h"
 
-#include <Plasma/FrameSvg>
-#include <Plasma/Theme>
+#include <Plasma/Frame>
 #include <Plasma/PushButton>
 #include <Plasma/IconWidget>
 #include <Plasma/QueryMatch>
@@ -34,12 +33,17 @@
 StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsItem *parent)
     : QGraphicsWidget(parent), runnermg(rm)
 {
-    // FIXME: it's not working =/
-    background = new Plasma::FrameSvg(this);
-    background->setImagePath("widgets/background");
-    background->resizeFrame(geometry().size());
+    background = new Plasma::Frame();
+    background->setFrameShadow(Plasma::Frame::Raised);
+    background->setMinimumSize(QSize(600, 115));
+    background->setMaximumSize(QSize(600, 115));
 
-    stripLayout = new QGraphicsLinearLayout(this);
+    // mainLayout to correctly setup the background
+    QGraphicsLinearLayout *mainLayout = new QGraphicsLinearLayout(this);
+    mainLayout->addItem(background);
+    mainLayout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+
+    stripLayout = new QGraphicsLinearLayout(background);
 
     leftArrow = new Plasma::PushButton(this);
     leftArrow->nativeWidget()->setIcon(KIcon("arrow-left"));
@@ -66,12 +70,6 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsItem *parent)
 
 StripWidget::~StripWidget()
 {
-}
-
-void StripWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
-{
-    QGraphicsWidget::resizeEvent(event);
-    background->resizeFrame(boundingRect().size());
 }
 
 void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)

@@ -28,7 +28,7 @@
 namespace Plasma
 {
     class IconWidget;
-    class FrameSvg;
+    class Frame;
     class PushButton;
     class QueryMatch;
     class RunnerManager;
@@ -47,7 +47,6 @@ public:
     void remove(Plasma::IconWidget *favourite);
 
 protected:
-    void resizeEvent(QGraphicsSceneResizeEvent *event);
     void createIcon(Plasma::QueryMatch *match, int idx);
 
 private slots:
@@ -59,14 +58,11 @@ private slots:
 private:
     Plasma::PushButton *leftArrow;
     Plasma::PushButton *rightArrow;
-
-    Plasma::RunnerManager *runnermg;
-
-    Plasma::FrameSvg *background;
+    Plasma::Frame *background;
     QGraphicsLinearLayout *stripLayout;
 
+    Plasma::RunnerManager *runnermg;
     QList<Plasma::QueryMatch*> m_favouritesMatches;
-
     QMap<Plasma::IconWidget*,Plasma::QueryMatch*> m_favouriteMap;
 };
 
