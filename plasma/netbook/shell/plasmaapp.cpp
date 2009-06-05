@@ -338,8 +338,11 @@ void PlasmaApp::createView(Plasma::Containment *containment)
          containment->containmentType() != Plasma::Containment::CustomPanelContainment &&
          !viewIds.exists() && m_mainView->containment() == 0)) {
         m_mainView->setContainment(containment);
+        containment->setScreen(0);
     } else if (m_controlBar && id == MidView::controlBarId()) {
         m_controlBar->setContainment(containment);
+    } else {
+        containment->setScreen(-1);
     }
 }
 
