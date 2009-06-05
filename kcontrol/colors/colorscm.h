@@ -149,8 +149,8 @@ private:
     void setupColorTable();
 
     /** helper to create color entries */
-    void createColorEntry(QString text,
-                          QString key,
+    void createColorEntry(const QString &text,
+                          const QString &key,
                           QList<KColorButton *> &list,
                           int index);
 

@@ -115,18 +115,18 @@ void KColorCm::populateSchemeList()
     schemeList->addItem(new QListWidgetItem(icon, i18nc("Default color scheme", "Default")));
     m_config->setReadDefaults(false);
 
-    QStringList schemeFiles = KGlobal::dirs()->findAllResources("data", "color-schemes/*.colors", KStandardDirs::NoDuplicates);
+    const QStringList schemeFiles = KGlobal::dirs()->findAllResources("data", "color-schemes/*.colors", KStandardDirs::NoDuplicates);
     for (int i = 0; i < schemeFiles.size(); ++i)
     {
         // get the file name
-        QString filename = schemeFiles[i];
-        QFileInfo info(filename);
+        const QString filename = schemeFiles[i];
+        const QFileInfo info(filename);
 
         // add the entry
         KSharedConfigPtr config = KSharedConfig::openConfig(filename);
         icon = createSchemePreviewIcon(config);
         KConfigGroup group(config, "General");
-        QString name = group.readEntry("Name", info.baseName());
+        const QString name = group.readEntry("Name", info.baseName());
         QListWidgetItem * newItem = new QListWidgetItem(icon, name);
         // stash the file basename for use later
         newItem->setData(Qt::UserRole, info.baseName());
@@ -216,8 +216,8 @@ void KColorCm::loadScheme()
 {
     if (schemeList->currentItem() != NULL)
     {
-        QString name = schemeList->currentItem()->text();
-        QString fileBaseName = schemeList->currentItem()->data(Qt::UserRole).toString();
+        const QString name = schemeList->currentItem()->text();
+        const QString fileBaseName = schemeList->currentItem()->data(Qt::UserRole).toString();
         if (name == i18nc("Default color scheme", "Default"))
         {
             schemeRemoveButton->setEnabled(false);
@@ -236,11 +236,11 @@ void KColorCm::loadScheme()
         }
         else
         {
-            QString path = KGlobal::dirs()->findResource("data",
+            const QString path = KGlobal::dirs()->findResource("data",
                 "color-schemes/" + fileBaseName + ".colors");
 
-            int permissions = QFile(path).permissions();
-            bool canWrite = (permissions & QFile::WriteUser);
+            const int permissions = QFile(path).permissions();
+            const bool canWrite = (permissions & QFile::WriteUser);
             kDebug() << "checking permissions of " << path;
             schemeRemoveButton->setEnabled(canWrite);
 
@@ -269,7 +269,7 @@ void KColorCm::on_schemeRemoveButton_clicked()
 {
     if (schemeList->currentItem() != NULL)
     {
-        QString path = KGlobal::dirs()->findResource("data",
+        const QString path = KGlobal::dirs()->findResource("data",
             "color-schemes/" + schemeList->currentItem()->data(Qt::UserRole).toString() +
             ".colors");
         if (KIO::NetAccess::del(path, this))
@@ -310,7 +310,7 @@ void KColorCm::on_schemeKnsButton_clicked()
 
 
         KNS::Entry::List entries = engine.downloadDialogModal(this);
-        if (entries.size() > 0)
+        if (!entries.isEmpty())
         {
             populateSchemeList();
         }
@@ -345,12 +345,12 @@ void KColorCm::saveScheme(const QString &name)
     filename.replace(0, 1, filename.at(0).toUpper());
 
     // check if that name is already in the list
-    QString path = KGlobal::dirs()->saveLocation("data", "color-schemes/") +
+    const QString path = KGlobal::dirs()->saveLocation("data", "color-schemes/") +
         filename + ".colors";
 
     QFile file(path);
-    int permissions = file.permissions();
-    bool canWrite = (permissions & QFile::WriteUser);
+    const int permissions = file.permissions();
+    const bool canWrite = (permissions & QFile::WriteUser);
     // or if we can overwrite it if it exists
     if (path.isEmpty() || !file.exists() || canWrite)
     {
@@ -412,7 +412,7 @@ void KColorCm::saveScheme(const QString &name)
     }
 }
 
-void KColorCm::createColorEntry(QString text, QString key, QList<KColorButton *> &list, int index)
+void KColorCm::createColorEntry(const QString &text, const QString &key, QList<KColorButton *> &list, int index)
 {
     KColorButton *button = new KColorButton(this);
     button->setObjectName(QString::number(index));
@@ -429,7 +429,7 @@ void KColorCm::createColorEntry(QString text, QString key, QList<KColorButton *>
 void KColorCm::variesClicked()
 {
     // find which button was changed
-    int row = sender()->objectName().toInt();
+    const int row = sender()->objectName().toInt();
 
     QColor color;
     if(KColorDialog::getColor(color, this ) != QDialog::Rejected )
@@ -704,7 +704,7 @@ void KColorCm::setCommonDecoration(KColorScheme::DecorationRole role, int stackI
 void KColorCm::updateColorTable()
 {
     // subtract one here since the 0 item  is "Common Colors"
-    int currentSet = colorSet->currentIndex() - 1;
+    const int currentSet = colorSet->currentIndex() - 1;
 
     if (currentSet == -1)
     {
@@ -785,14 +785,14 @@ void KColorCm::updateColorTable()
 void KColorCm::colorChanged( const QColor &newColor )
 {
     // find which button was changed
-    int row = sender()->objectName().toInt();
+    const int row = sender()->objectName().toInt();
     changeColor(row, newColor);
 }
 
 void KColorCm::changeColor(int row, const QColor &newColor)
 {
     // update the m_colorSchemes for the selected colorSet
-    int currentSet = colorSet->currentIndex() - 1;
+    const int currentSet = colorSet->currentIndex() - 1;
 
     if (currentSet == -1)
     {
