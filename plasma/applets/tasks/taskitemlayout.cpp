@@ -211,8 +211,8 @@ int TaskItemLayout::preferredColumns()
             m_rowSize = qMax(1, int(m_groupItem->geometry().width() / itemSize.width()));
         }
     }
-    //kDebug() << "preferred columns: " << qMax(1, qMin(m_rowSize, size()));
-    return qMax(1, qMin(m_rowSize, size()));
+    //kDebug() << "preferred columns: " << qMax(1, m_rowSize);
+    return qMax(1, m_rowSize);
 }
 // <columns,rows>
 QPair<int, int> TaskItemLayout::gridLayoutSize()
