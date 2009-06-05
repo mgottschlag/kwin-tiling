@@ -104,7 +104,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     m_extenderApplet = 0;
     m_theme = new Plasma::Svg(this);
     m_theme->setImagePath("widgets/battery-oxygen");
-    m_theme->setContainsMultipleImages(false);
+    m_theme->setContainsMultipleImages(true);
 }
 
 void Battery::init()
@@ -185,14 +185,29 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
             //kDebug() << "Horizontal FormFactor" << m_textRect.width() << contentsRect().height();
         } else {
             setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
-            setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
+
+            if (m_showMultipleBatteries) {
+                setMinimumSize(KIconLoader::SizeSmall * m_numOfBattery, KIconLoader::SizeSmall);
+            } else {
+                setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
+            }
+
             if (constraints & Plasma::FormFactorConstraint && 
-                             (formFactor() == Plasma::Planar || formFactor() == Plasma::MediaCenter) ) {
+                    (formFactor() == Plasma::Planar || formFactor() == Plasma::MediaCenter) ) {
                 resize(KIconLoader::SizeEnormous, KIconLoader::SizeEnormous);
             }
         }
 
-        m_theme->resize(contentsRect().size().toSize());
+        QSize c(contentsRect().size().toSize());
+        if (m_showMultipleBatteries) {
+            if (formFactor() == Plasma::Vertical) {
+                c.setHeight(size().height() / m_numOfBattery);
+            } else if (formFactor() == Plasma::Horizontal) {
+                c.setWidth(size().width() / m_numOfBattery);
+            }
+        }
+        m_theme->resize(c);
+
         m_font.setPointSize(qMax(KGlobalSettings::smallestReadableFont().pointSize(),
                                  qRound(contentsRect().height() / 10)));
         update();
@@ -868,14 +883,27 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
     if (m_isEmbedded || m_showMultipleBatteries || m_firstRun) {
         // paint each battery with own charge level
         int battery_num = 0;
-        int width = contentsRect.width()/m_numOfBattery;
+        int height = contentsRect.height();
+        int width = contentsRect.width();
+        int xdelta = 0;
+        int ydelta = 0;
+        if (m_showMultipleBatteries) {
+            if (formFactor() == Plasma::Vertical) {
+                height = height / m_numOfBattery;
+                ydelta = height;
+            } else {
+                width = width / m_numOfBattery;
+                xdelta = width;
+                kDebug() << "woot" << width << xdelta << size() << m_numOfBattery;
+            }
+        }
         QHashIterator<QString, QHash<QString, QVariant > > battery_data(m_batteries_data);
         while (battery_data.hasNext()) {
             battery_data.next();
-            QRect corect = QRect(contentsRect.left()+battery_num*width,
-                                 contentsRect.top(),
-                                 width, contentsRect.height());
-
+            QRect corect = QRect(contentsRect.left() + battery_num * xdelta,
+                                 contentsRect.top() + battery_num * ydelta,
+                                 width, height);
+            kDebug() << corect;
             // paint battery with appropriate charge level
             paintBattery(p, corect, battery_data.value()["Percent"].toInt(), battery_data.value()["Plugged in"].toBool());
 
