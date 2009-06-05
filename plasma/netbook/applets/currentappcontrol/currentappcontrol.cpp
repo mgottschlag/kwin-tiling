@@ -45,6 +45,7 @@
 
 CurrentAppControl::CurrentAppControl(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
+      m_syncDelay(false),
       m_activeWindow(0),
       m_pendingActiveWindow(0)
 {
@@ -57,6 +58,7 @@ CurrentAppControl::CurrentAppControl(QObject *parent, const QVariantList &args)
     m_closeTask->setMaximumWidth(KIconLoader::SizeSmallMedium);
 
     connect(m_closeTask, SIGNAL(clicked()), this, SLOT(closeWindow()));
+    connect(m_closeTask, SIGNAL(pressed(bool)), this, SLOT(setSyncDelay(bool)));
     connect(m_currentTask, SIGNAL(clicked()), this, SLOT(listWindows()));
 }
 
@@ -105,12 +107,18 @@ void CurrentAppControl::activeWindowChanged(WId id)
 {
     m_pendingActiveWindow = id;
     //delay the switch to permit to pass the close action to the proper window if our view accepts focus
-    QTimer::singleShot(100, this, SLOT(syncActiveWindow()));
+    //QTimer::singleShot(100, this, SLOT(syncActiveWindow()));
+    if (!m_syncDelay) {
+        syncActiveWindow();
+    }
 }
 
 void CurrentAppControl::syncActiveWindow()
 {
-    if (m_pendingActiveWindow <= 0 || m_pendingActiveWindow == view()->effectiveWinId()) {
+    m_syncDelay = false;
+    QGraphicsView *v = view();
+
+    if (m_pendingActiveWindow <= 0 || (v && m_pendingActiveWindow == v->effectiveWinId())) {
         m_activeWindow = 0;
         m_currentTask->setIcon("preferences-system-windows");
         m_currentTask->setText(i18np("%1 running app", "%1 running apps", KWindowSystem::windows().count()-1));
@@ -128,12 +136,21 @@ void CurrentAppControl::syncActiveWindow()
     m_pendingActiveWindow = 0;
 }
 
+void CurrentAppControl::setSyncDelay(bool delay)
+{
+    m_syncDelay = delay;
+}
+
 void CurrentAppControl::closeWindow()
 {
+    m_syncDelay = false;
+
     if (m_activeWindow) {
         NETRootInfo ri( QX11Info::display(), NET::CloseWindow );
         ri.closeWindowRequest(m_activeWindow);
     }
+
+    syncActiveWindow();
 }
 
 void CurrentAppControl::listWindows()

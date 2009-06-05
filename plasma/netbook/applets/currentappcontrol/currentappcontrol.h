@@ -43,6 +43,7 @@ public:
 protected Q_SLOTS:
     void activeWindowChanged(WId id);
     void windowChanged(WId id);
+    void setSyncDelay(bool delay);
     void syncActiveWindow();
     void closeWindow();
     void listWindows();
@@ -50,6 +51,7 @@ protected Q_SLOTS:
 private:
     Plasma::IconWidget *m_currentTask;
     Plasma::IconWidget *m_closeTask;
+    bool m_syncDelay;
     WId m_activeWindow;
     WId m_pendingActiveWindow;
 };
