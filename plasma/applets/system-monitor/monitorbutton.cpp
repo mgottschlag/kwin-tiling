@@ -82,23 +82,24 @@ void MonitorButton::highlight()
 void MonitorButton::hoverEnterEvent(QGraphicsSceneHoverEvent * event)
 {
     Q_UNUSED(event)
-    if (nativeWidget()->isChecked() || !isEnabled()) {
-        return;
-    }
 
     d->highlighter.setDirection(QTimeLine::Forward);
-    d->highlighter.start();
+    if (d->highlighter.currentValue() < 1 &&
+        d->highlighter.state() == QTimeLine::NotRunning) {
+        d->highlighter.start();
+    }
 }
 
 void MonitorButton::hoverLeaveEvent(QGraphicsSceneHoverEvent * event)
 {
     Q_UNUSED(event)
-    if (nativeWidget()->isChecked() || !isEnabled()) {
-        return;
-    }
 
     d->highlighter.setDirection(QTimeLine::Backward);
-    d->highlighter.start();
+
+    if (d->highlighter.currentValue() > 0 &&
+        d->highlighter.state() == QTimeLine::NotRunning) {
+        d->highlighter.start();
+    }
 }
 
 void MonitorButton::paint(QPainter *p,
@@ -109,13 +110,13 @@ void MonitorButton::paint(QPainter *p,
     Q_UNUSED(widget)
 
     QIcon::Mode mode = QIcon::Disabled;
-    if (nativeWidget()->isChecked()) {
+    if (isChecked()) {
         mode = QIcon::Normal;
     }
 
     QPixmap icon = Plasma::PaintUtils::transition(d->icon.pixmap(d->imageSize, QIcon::Disabled),
                                                   d->icon.pixmap(d->imageSize, QIcon::Normal),
-                                                  nativeWidget()->isChecked() ? 1 : d->highlighter.currentValue());
+                                                  isChecked() ? 1 : d->highlighter.currentValue());
     p->drawPixmap(QPointF((size().width() - d->imageSize.width()) / 2,
                         (size().height() - d->imageSize.height()) / 2),
                   icon);

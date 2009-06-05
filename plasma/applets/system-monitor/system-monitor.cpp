@@ -79,13 +79,13 @@ void SystemMonitor::init()
 
     for (int i = 0; i < APPLETS; ++i) {
         MonitorButton *button = new MonitorButton(m_widget);
-        button->nativeWidget()->setObjectName(sm_applets[i][1]);
-        button->nativeWidget()->setCheckable(true);
+        button->setObjectName(sm_applets[i][1]);
+        button->setCheckable(true);
         button->setImage(sm_applets[i][0]);
         if (appletNames.contains(sm_applets[i][1])) {
-            button->nativeWidget()->setChecked(true);
+            button->setChecked(true);
         }
-        connect(button->nativeWidget(), SIGNAL(toggled(bool)), this, SLOT(toggled(bool)));
+        connect(button, SIGNAL(toggled(bool)), this, SLOT(toggled(bool)));
         m_buttons->addItem(button);
         m_monitorButtons << button;
     }
@@ -170,6 +170,19 @@ void SystemMonitor::appletRemoved(QObject *object)
             KConfigGroup cg = config();
             saveState(cg);
             emit configNeedsSaving();
+        }
+    }
+
+    // sanity check the buttons
+    QSet<QString> running;
+    foreach (SM::Applet *a, m_applets) {
+        running << a->objectName();
+    }
+
+    foreach (MonitorButton* button, m_monitorButtons) {
+        if (!running.contains(button->objectName())) {
+            kDebug() << "unchecking" << button->objectName();
+            button->setChecked(false);
         }
     }
 }
