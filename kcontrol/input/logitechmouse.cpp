@@ -294,18 +294,18 @@ void LogitechMouse::setLogitechTo400()
     }
 }
 
-quint8 LogitechMouse::batteryLevel()
+quint8 LogitechMouse::batteryLevel() const
 {
     return m_batteryLevel;
 }
 
 
-quint8 LogitechMouse::channel()
+quint8 LogitechMouse::channel() const
 {
     return m_channel;
 }
 
-bool LogitechMouse::isDualChannelCapable()
+bool LogitechMouse::isDualChannelCapable() const
 {
     return m_twoChannelCapable;
 }
@@ -344,7 +344,7 @@ void LogitechMouse::setChannel2()
 
 }
 
-QString LogitechMouse::cordlessName()
+QString LogitechMouse::cordlessName() const
 {
     switch ( m_cordlessNameIndex ) {
     case 0x00:

@@ -72,12 +72,12 @@ private:
     void setLogitechTo400();
     void setLogitechTo800();
 
-    QString cordlessName();
+    QString cordlessName() const ;
     quint8 resolution();
     void updateResolution();
-    quint8 batteryLevel();
-    quint8 channel();
-    bool isDualChannelCapable();
+    quint8 batteryLevel() const;
+    quint8 channel() const;
+    bool isDualChannelCapable() const;
 
     QTimer *doUpdate;
 
