@@ -528,7 +528,7 @@ void Battery::updateStatus()
             battery_data.next();
             QString state = battery_data.value()["State"].toString();
             m_remainingMSecs = battery_data.value()["Remaining msec"].toInt();
-            kDebug() << "time left:" << m_remainingMSecs;
+            //kDebug() << "time left:" << m_remainingMSecs;
             if (state == "Discharging" && m_remainingMSecs > 0 && m_showRemainingTime) {
 
                 // FIXME: Somehow, m_extenderApplet is null here, so the label never becomes visible
@@ -602,7 +602,7 @@ void Battery::updateStatus()
 
     if (m_brightnessSlider) {
         m_brightnessSlider->setValue(Solid::Control::PowerManager::brightness());
-        kDebug() << "Updating brightness:" << Solid::Control::PowerManager::brightness();
+        //kDebug() << "Updating brightness:" << Solid::Control::PowerManager::brightness();
     }
     //kDebug() << "SIZE LABEL" << m_batteryLabel->size() << m_batteryLabel->preferredSize() << m_batteryLabel->preferredSize();
     m_controlsLayout->setColumnMinimumWidth(1,280);
@@ -878,7 +878,6 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
             } else {
                 width = width / m_numOfBattery;
                 xdelta = width;
-                kDebug() << "woot" << width << xdelta << size() << m_numOfBattery;
             }
         }
         QHashIterator<QString, QHash<QString, QVariant > > battery_data(m_batteries_data);
@@ -887,7 +886,6 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
             QRect corect = QRect(contentsRect.left() + battery_num * xdelta,
                                  contentsRect.top() + battery_num * ydelta,
                                  width, height);
-            kDebug() << corect;
             // paint battery with appropriate charge level
             paintBattery(p, corect, battery_data.value()["Percent"].toInt(), battery_data.value()["Plugged in"].toBool());
 
@@ -902,12 +900,10 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
                         m_hours= hours;
                     }
                     QString state = battery_data.value()["State"].toString();
-                    // kDebug() << m_showRemainingTime << m_remainingMSecs << m_hours << m_minutes << state;
-                    // thanks nueces
+
                     if (m_showRemainingTime && (state=="Charging" || state=="Discharging" )) {
                         m_remainingMSecs = battery_data.value()["Remaining msec"].toInt();
                         QTime t = QTime(m_hours, m_minutes);
-                        // kDebug() << t
                         KLocale tmpLocale(*KGlobal::locale());
                         tmpLocale.setTimeFormat("%k:%M");
                         batteryLabel = tmpLocale.formatTime(t, false, true); // minutes, hours as duration
@@ -915,7 +911,6 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
                         batteryLabel = battery_data.value()["Percent"].toString();
                         batteryLabel.append("%");
                     }
-                    // kDebug() << batteryLabel;
                     paintLabel(p, corect, batteryLabel);
                 }
             }
