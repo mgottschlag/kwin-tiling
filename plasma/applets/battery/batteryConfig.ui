@@ -1,103 +1,45 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>batteryConfig</class>
- <widget class="QWidget" name="batteryConfig" >
-  <property name="geometry" >
+ <widget class="QWidget" name="batteryConfig">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>363</width>
-    <height>270</height>
+    <width>247</width>
+    <height>73</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Configure Battery Monitor</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QCheckBox" name="showBatteryStringCheckBox" >
-     <property name="toolTip" >
+    <widget class="QCheckBox" name="showBatteryStringCheckBox">
+     <property name="toolTip">
       <string/>
      </property>
-     <property name="text" >
+     <property name="text">
       <string>Show charge &amp;information</string>
      </property>
     </widget>
    </item>
    <item>
-    <layout class="QGridLayout" name="gridLayout" >
-     <item row="0" column="1" >
-      <widget class="QRadioButton" name="showPercentageRadioButton" >
-       <property name="enabled" >
-        <bool>false</bool>
-       </property>
-       <property name="text" >
-        <string>Show &amp;percentage</string>
-       </property>
-       <property name="checked" >
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0" >
-      <spacer name="horizontalSpacer" >
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType" >
-        <enum>QSizePolicy::Fixed</enum>
-       </property>
-       <property name="sizeHint" stdset="0" >
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="1" column="0" >
-      <spacer name="horizontalSpacer_2" >
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType" >
-        <enum>QSizePolicy::Fixed</enum>
-       </property>
-       <property name="sizeHint" stdset="0" >
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="1" column="1" >
-      <widget class="QRadioButton" name="showTimeRadioButton" >
-       <property name="enabled" >
-        <bool>false</bool>
-       </property>
-       <property name="text" >
-        <string>Show remaining &amp;time</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="showMultipleBatteriesCheckBox" >
-     <property name="toolTip" >
+    <widget class="QCheckBox" name="showMultipleBatteriesCheckBox">
+     <property name="toolTip">
       <string/>
      </property>
-     <property name="text" >
+     <property name="text">
       <string>Show the state for &amp;each battery present</string>
      </property>
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer" >
-     <property name="orientation" >
+    <spacer name="verticalSpacer">
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
        <height>15</height>
@@ -108,38 +50,5 @@
   </layout>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>showBatteryStringCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>showPercentageRadioButton</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>181</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>195</x>
-     <y>52</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>showBatteryStringCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>showTimeRadioButton</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>181</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>195</x>
-     <y>83</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

@@ -192,7 +192,7 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
                 setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
             }
 
-            if (constraints & Plasma::FormFactorConstraint && 
+            if (constraints & Plasma::FormFactorConstraint &&
                     (formFactor() == Plasma::Planar || formFactor() == Plasma::MediaCenter) ) {
                 resize(KIconLoader::SizeEnormous, KIconLoader::SizeEnormous);
             }
@@ -245,27 +245,12 @@ void Battery::createConfigurationInterface(KConfigDialog *parent)
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
     ui.showBatteryStringCheckBox->setChecked(m_showBatteryString ? Qt::Checked : Qt::Unchecked);
-    if (m_showRemainingTime) {
-        ui.showTimeRadioButton->setChecked(Qt::Checked);
-    } else {
-        ui.showPercentageRadioButton->setChecked(Qt::Checked);
-    }
     ui.showMultipleBatteriesCheckBox->setChecked(m_showMultipleBatteries ? Qt::Checked : Qt::Unchecked);
 }
 
 void Battery::configAccepted()
 {
     KConfigGroup cg = config();
-
-    if (m_showRemainingTime != ui.showTimeRadioButton->isChecked()) {
-        // kDebug() << "config changed";
-        m_showRemainingTime = !m_showRemainingTime;
-        cg.writeEntry("showRemainingTime", m_showRemainingTime);
-        // kDebug() << m_showRemainingTime;
-        if (m_showBatteryString && m_showBatteryString == ui.showBatteryStringCheckBox->isChecked()) {
-            showLabel(m_showBatteryString);
-        }
-    }
 
     if (m_showBatteryString != ui.showBatteryStringCheckBox->isChecked()) {
         m_showBatteryString = !m_showBatteryString;
@@ -544,13 +529,12 @@ void Battery::updateStatus()
             QString state = battery_data.value()["State"].toString();
             m_remainingMSecs = battery_data.value()["Remaining msec"].toInt();
             kDebug() << "time left:" << m_remainingMSecs;
-            if (state == "Discharging" && m_remainingMSecs > 0) {
+            if (state == "Discharging" && m_remainingMSecs > 0 && m_showRemainingTime) {
 
                 // FIXME: Somehow, m_extenderApplet is null here, so the label never becomes visible
                 if (m_extenderApplet) {
                     m_extenderApplet->showBatteryLabel(true);
                 }
-
                 // we don't have too much accuracy so only give hours and minutes
                 batteryLabelText.append(i18n("Time remaining: <b>%1</b><br />", KGlobal::locale()->prettyFormatDuration(m_remainingMSecs)));
             } else {
