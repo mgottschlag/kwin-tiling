@@ -181,6 +181,10 @@ void DesktopView::toggleDashboard()
         m_dashboard->addActions(actions());
     }
 
+    //If a separate dashboard is used we must use the screen of this containment instead of the dashboard one
+    if (!m_dashboardFollowsDesktop && containment()) {
+        m_dashboard->setGeometry(Kephal::ScreenUtils::screenGeometry(containment()->screen()));
+    }
     m_dashboard->toggleVisibility();
     //kDebug() << "toggling dashboard for screen" << screen() << m_dashboard->isVisible();
 }
