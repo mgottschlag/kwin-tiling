@@ -309,12 +309,14 @@ void GroupManagerPrivate::taskItemDestroyed(AbstractGroupableItem *item)
 {
     TaskItem *taskItem = static_cast<TaskItem*>(item);
     itemList.remove(itemList.key(taskItem));
+    geometryTasks.remove(taskItem->task());
 }
 
 void GroupManagerPrivate::startupItemDestroyed(AbstractGroupableItem *item)
 {
     TaskItem *taskItem = static_cast<TaskItem*>(item);
     startupList.remove(startupList.key(taskItem));
+    geometryTasks.remove(taskItem->task());
 }
 
 bool GroupManager::manualGroupingRequest(AbstractGroupableItem* item, TaskGroup* groupItem)
@@ -519,12 +521,13 @@ void GroupManagerPrivate::checkIfFull()
     if (!onlyGroupWhenFull || groupingStrategy != GroupManager::ProgramGrouping) {
         return;
     }
-
-    if (geometryTasks.size() >= groupIsFullLimit) {
+    if (itemList.size() >= groupIsFullLimit) {
         if (!abstractGroupingStrategy) {
+            geometryTasks.clear();
             q->setGroupingStrategy(GroupManager::ProgramGrouping);
         }
     } else if (abstractGroupingStrategy) {
+         geometryTasks.clear();
         q->setGroupingStrategy(GroupManager::NoGrouping);
         //let the visualization thing we still use the programGrouping
         groupingStrategy = GroupManager::ProgramGrouping;
