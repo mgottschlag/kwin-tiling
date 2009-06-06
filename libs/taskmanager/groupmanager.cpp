@@ -136,6 +136,7 @@ void GroupManagerPrivate::reloadTasks()
     QHash<WId, TaskPtr> taskList = TaskManager::self()->tasks();
     QMutableHashIterator<WId, TaskPtr> it(taskList);
 
+
     while (it.hasNext()) {
         it.next();
 
@@ -265,7 +266,11 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
 
         QObject::connect(item, SIGNAL(destroyed(AbstractGroupableItem*)),
                          q, SLOT(taskItemDestroyed(AbstractGroupableItem*)));
-        itemList.insert(task, item); 
+        itemList.insert(task, item);
+    }
+
+    if (!geometryTasks.contains(task)) {
+        geometryTasks.insert(task);
     }
 
     //Find a fitting group for the task with GroupingStrategies
@@ -443,8 +448,6 @@ void GroupManagerPrivate::checkScreenChange()
             removeTask(task);
         }
     }
-
-    geometryTasks.clear();
 }
 
 
@@ -517,7 +520,7 @@ void GroupManagerPrivate::checkIfFull()
         return;
     }
 
-    if (itemList.size() >= groupIsFullLimit) {
+    if (geometryTasks.size() >= groupIsFullLimit) {
         if (!abstractGroupingStrategy) {
             q->setGroupingStrategy(GroupManager::ProgramGrouping);
         }
@@ -536,6 +539,7 @@ bool GroupManager::showOnlyCurrentScreen() const
 void GroupManager::setShowOnlyCurrentScreen(bool showOnlyCurrentScreen)
 {
     d->showOnlyCurrentScreen = showOnlyCurrentScreen;
+    d->reloadTasks();
 }
 
 bool GroupManager::showOnlyCurrentDesktop() const
@@ -546,6 +550,7 @@ bool GroupManager::showOnlyCurrentDesktop() const
 void GroupManager::setShowOnlyCurrentDesktop(bool showOnlyCurrentDesktop)
 {
     d->showOnlyCurrentDesktop = showOnlyCurrentDesktop;
+    d->reloadTasks();
 }
 
 bool GroupManager::showOnlyMinimized() const
