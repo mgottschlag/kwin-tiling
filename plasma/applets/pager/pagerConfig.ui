@@ -51,7 +51,7 @@
          <string>Desktop number</string>
         </property>
         <attribute name="buttonGroup">
-         <string>buttonGroupText</string>
+         <string comment="KDE::DoNotExtract">buttonGroupText</string>
         </attribute>
        </widget>
       </item>
@@ -61,7 +61,7 @@
          <string>Desktop name</string>
         </property>
         <attribute name="buttonGroup">
-         <string>buttonGroupText</string>
+         <string comment="KDE::DoNotExtract">buttonGroupText</string>
         </attribute>
        </widget>
       </item>
@@ -71,7 +71,7 @@
          <string>No text</string>
         </property>
         <attribute name="buttonGroup">
-         <string>buttonGroupText</string>
+         <string comment="KDE::DoNotExtract">buttonGroupText</string>
         </attribute>
        </widget>
       </item>
@@ -156,7 +156,7 @@
          <string>Does nothing</string>
         </property>
         <attribute name="buttonGroup">
-         <string>buttonGroupAction</string>
+         <string comment="KDE::DoNotExtract">buttonGroupAction</string>
         </attribute>
        </widget>
       </item>
@@ -166,7 +166,7 @@
          <string>Shows desktop</string>
         </property>
         <attribute name="buttonGroup">
-         <string>buttonGroupAction</string>
+         <string comment="KDE::DoNotExtract">buttonGroupAction</string>
         </attribute>
        </widget>
       </item>
@@ -176,7 +176,7 @@
          <string>Shows the dashboard</string>
         </property>
         <attribute name="buttonGroup">
-         <string>buttonGroupAction</string>
+         <string comment="KDE::DoNotExtract">buttonGroupAction</string>
         </attribute>
        </widget>
       </item>
