@@ -30,6 +30,7 @@
 
 #include <QAction>
 
+
 StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsItem *parent)
     : QGraphicsWidget(parent), runnermg(rm)
 {
@@ -115,10 +116,12 @@ void StripWidget::remove(Plasma::IconWidget *favourite)
     delete match;
 
     // the IconWidget was not removed yet
-    if (m_favouritesMatches.size() < 5) {
+    if (m_favouritesMatches.size() <= 5) {
         leftArrow->setEnabled(false);
         rightArrow->setEnabled(false);
-    } else {
+    }
+
+    if (m_favouritesMatches.size() >= 5) {
         // adds the new item to the end of the list
         int idx = m_favouritesMatches.indexOf(match);
         int newpos = (idx + 5) % m_favouritesMatches.size();
