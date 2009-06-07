@@ -28,6 +28,7 @@
 #include <KIcon>
 
 #include <Plasma/Theme>
+#include <Plasma/Frame>
 #include <Plasma/Corona>
 #include <Plasma/FrameSvg>
 #include <Plasma/LineEdit>
@@ -64,6 +65,16 @@ void SearchLaunch::init()
     // before this text edit goes to panel, we'll try here
     tedit = new Plasma::LineEdit(this);
     connect(tedit, SIGNAL(returnPressed()), this, SLOT(doSearch()));
+
+    m_background = new Plasma::FrameSvg(this);
+    m_background->setImagePath("widgets/translucentbackground");
+}
+
+void SearchLaunch::themeUpdated()
+{
+    qreal left, top, right, bottom;
+    m_background->getMargins(left, top, right, bottom);
+    m_mainLayout->setContentsMargins(left, top, right, bottom);
 }
 
 void SearchLaunch::doSearch()
@@ -108,7 +119,7 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         // add to layout and data structures
         m_items.append(icon);
         m_matches.append(match);
-        launchGrid->addItem(icon, i / 7, i % 7);
+        m_launchGrid->addItem(icon, i / 7, i % 7);
     }
     queryCounter = i;
 }
@@ -126,7 +137,7 @@ void SearchLaunch::addFavourite()
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender()->parent());
     int idx = m_items.indexOf(icon);
     Plasma::QueryMatch match = m_matches[idx];
-    stripWidget->add(match);
+    m_stripWidget->add(match);
 }
 
 QList<QAction*> SearchLaunch::contextualActions()
@@ -192,44 +203,53 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 
     if (constraints & Plasma::FormFactorConstraint ||
         constraints & Plasma::StartupCompletedConstraint) {
+
         Plasma::FormFactor form = formFactor();
-        Qt::Orientation layoutDirection = form == Plasma::Vertical ? Qt::Vertical : Qt::Horizontal;
-        Qt::Orientation layoutOtherDirection = form == Plasma::Vertical ? Qt::Horizontal : Qt::Vertical;
+        Qt::Orientation layoutDirection = form == Plasma::Vertical ? \
+            Qt::Vertical : Qt::Horizontal;
+        Qt::Orientation layoutOtherDirection = form == Plasma::Vertical ? \
+            Qt::Horizontal : Qt::Vertical;
 
         // create our layout!
-        if (layout()) {
-            QGraphicsLayout *lay = layout();
-            QGraphicsLinearLayout *linearLay = dynamic_cast<QGraphicsLinearLayout *>(lay);
-            if (linearLay) {
-                linearLay->setOrientation(layoutOtherDirection);
-            }
-        } else {
+        if (!layout()) {
             // create main layout
-            QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(this);
-            lay->setOrientation(layoutOtherDirection);
-            lay->setContentsMargins(5, 0, 5, 0);
-            lay->setSpacing(4);
-            lay->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,
-                                           QSizePolicy::Expanding));
-            setLayout(lay);
+            m_mainLayout = new QGraphicsLinearLayout();
+            m_mainLayout->setOrientation(layoutOtherDirection);
+            m_mainLayout->setSpacing(4);
+            m_mainLayout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,
+                                                    QSizePolicy::Expanding));
+            setLayout(m_mainLayout);
 
-            // create launch grid
-            launchGrid = new QGraphicsGridLayout();
-            launchGrid->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,
+            // create launch grid and make it centered
+            QGraphicsLinearLayout *gridLayout = new QGraphicsLinearLayout();
+            gridLayout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,
                                                   QSizePolicy::Expanding));
 
-            favourites = new QGraphicsLinearLayout();
-            stripWidget = new StripWidget(runnermg, this);
+            Plasma::Frame *gridBackground = new Plasma::Frame();
+            gridBackground->setFrameShadow(Plasma::Frame::Sunken);
+            gridLayout->addItem(gridBackground);
 
-            favourites->addStretch();
-            favourites->addStretch();
-            favourites->insertItem(1, stripWidget);
+            m_launchGrid = new QGraphicsGridLayout();
+            m_launchGrid->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,
+                                                    QSizePolicy::Expanding));
+            gridBackground->setLayout(m_launchGrid);
+
+            m_stripWidget = new StripWidget(runnermg, this);
+
+            QGraphicsLinearLayout *m_favourites = new QGraphicsLinearLayout();
+            m_favourites->setOrientation(layoutDirection);
+            m_favourites->addStretch();
+            m_favourites->addStretch();
+            m_favourites->insertItem(1, m_stripWidget);
 
             // add our layouts to main vertical layout
-            lay->addItem(tedit);
+            m_mainLayout->addItem(tedit);
             tedit->setZValue(9999999);
-            lay->addItem(favourites);
-            lay->addItem(launchGrid);
+            m_mainLayout->addItem(m_favourites);
+            m_mainLayout->addItem(gridLayout);
+
+            // correctly set margins
+            themeUpdated();
         }
     }
 
@@ -245,10 +265,8 @@ void SearchLaunch::paintInterface(QPainter *painter,
 {
     Q_UNUSED(contentsRect)
     Containment::paintInterface(painter, option, contentsRect);
-
-    QColor bgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
-    bgColor.setAlphaF(0);
-    painter->fillRect(contentsRect, bgColor);
+    m_background->resizeFrame(contentsRect.size());
+    m_background->paintFrame(painter, contentsRect.topLeft());
 }
 
 void SearchLaunch::setFormFactorFromLocation(Plasma::Location loc) {

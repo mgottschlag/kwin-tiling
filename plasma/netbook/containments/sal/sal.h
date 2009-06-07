@@ -54,9 +54,11 @@ public:
                         const QRect &contentsRect);
 
 private slots:
+    void themeUpdated();
+    void updateSize();
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
     void appletRemoved(Plasma::Applet* applet);
-    void updateSize();
+
     void doSearch();
     void setQueryMatches(const QList<Plasma::QueryMatch> &m);
     void launch();
@@ -69,16 +71,17 @@ private:
     void setFormFactorFromLocation(Plasma::Location loc);
 
     Plasma::LineEdit *tedit;
+    Plasma::FrameSvg *m_background;
     Plasma::RunnerManager *runnermg;
 
     int queryCounter;
     QList<Plasma::IconWidget*> m_items;
     QList<Plasma::QueryMatch> m_matches;
 
-    StripWidget *stripWidget;
+    StripWidget *m_stripWidget;
 
-    QGraphicsLinearLayout *favourites;
-    QGraphicsGridLayout *launchGrid;
+    QGraphicsLinearLayout *m_mainLayout;
+    QGraphicsGridLayout *m_launchGrid;
 };
 
 
