@@ -35,6 +35,7 @@
 #include <Plasma/IconWidget>
 #include <Plasma/RunnerManager>
 #include <Plasma/QueryMatch>
+#include <Plasma/ScrollWidget>
 
 
 SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
@@ -221,25 +222,30 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             setLayout(m_mainLayout);
 
             // create launch grid and make it centered
-            QGraphicsLinearLayout *gridLayout = new QGraphicsLinearLayout();
-            gridLayout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,
-                                                  QSizePolicy::Expanding));
+            QGraphicsLinearLayout *gridLayout = new QGraphicsLinearLayout(Qt::Vertical);
 
-            Plasma::Frame *gridBackground = new Plasma::Frame();
+            gridBackground = new Plasma::Frame(this);
             gridBackground->setFrameShadow(Plasma::Frame::Sunken);
-            gridLayout->addItem(gridBackground);
+            gridBackground->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
+                                                      QSizePolicy::MinimumExpanding));
+
+            gridScroll = new Plasma::ScrollWidget(this);
+            gridScroll->setWidget(gridBackground);
+            gridScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            gridLayout->addItem(gridScroll);
 
             m_launchGrid = new QGraphicsGridLayout();
             m_launchGrid->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,
                                                     QSizePolicy::Expanding));
             gridBackground->setLayout(m_launchGrid);
 
-            m_stripWidget = new StripWidget(runnermg, this);
 
             QGraphicsLinearLayout *m_favourites = new QGraphicsLinearLayout();
             m_favourites->setOrientation(layoutDirection);
             m_favourites->addStretch();
             m_favourites->addStretch();
+
+            m_stripWidget = new StripWidget(runnermg, this);
             m_favourites->insertItem(1, m_stripWidget);
 
             // add our layouts to main vertical layout

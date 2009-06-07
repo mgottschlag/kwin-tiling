@@ -37,6 +37,8 @@ namespace Plasma
     class LineEdit;
     class RunnerManager;
     class QueryMatch;
+    class ScrollWidget;
+    class Frame;
 }
 
 class SearchLaunch : public Plasma::Containment
@@ -78,6 +80,8 @@ private:
     QList<Plasma::IconWidget*> m_items;
     QList<Plasma::QueryMatch> m_matches;
 
+    Plasma::Frame *gridBackground;
+    Plasma::ScrollWidget *gridScroll;
     StripWidget *m_stripWidget;
 
     QGraphicsLinearLayout *m_mainLayout;
