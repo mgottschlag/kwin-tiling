@@ -95,7 +95,7 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         icon->setText(match.text());
         icon->setIcon(match.icon());
         icon->setMinimumSize(QSize(100, 100));
-        icon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed, QSizePolicy::DefaultType);
+        icon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         icon->setDrawBackground(true);
         connect(icon, SIGNAL(activated()), this, SLOT(launch()));
 
@@ -126,7 +126,6 @@ void SearchLaunch::addFavourite()
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender()->parent());
     int idx = m_items.indexOf(icon);
     Plasma::QueryMatch match = m_matches[idx];
-
     stripWidget->add(match);
 }
 
@@ -210,13 +209,14 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             lay->setOrientation(layoutOtherDirection);
             lay->setContentsMargins(5, 0, 5, 0);
             lay->setSpacing(4);
-            lay->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+            lay->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,
+                                           QSizePolicy::Expanding));
             setLayout(lay);
 
             // create launch grid
             launchGrid = new QGraphicsGridLayout();
-            launchGrid->setSpacing(4);
-            launchGrid->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+            launchGrid->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,
+                                                  QSizePolicy::Expanding));
 
             favourites = new QGraphicsLinearLayout();
             stripWidget = new StripWidget(runnermg, this);

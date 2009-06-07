@@ -60,6 +60,7 @@ private:
     Plasma::PushButton *rightArrow;
     Plasma::Frame *background;
     QGraphicsLinearLayout *stripLayout;
+    QGraphicsLinearLayout *arrowsLayout;
 
     Plasma::RunnerManager *runnermg;
     QList<Plasma::QueryMatch*> m_favouritesMatches;
