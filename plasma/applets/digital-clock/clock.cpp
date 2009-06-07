@@ -330,7 +330,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     p->setRenderHint(QPainter::SmoothPixmapTransform);
     p->setRenderHint(QPainter::Antialiasing);
 
-    /* ... helps debugging contentsRect and sizing ... 
+    /* ... helps debugging contentsRect and sizing ...
        QColor c = QColor(Qt::blue);
        c.setAlphaF(.5);
        p->setBrush(c);
@@ -405,7 +405,12 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
             smallFont.setPixelSize(qMax(dateRect.height() / 2, fm.ascent()));
             m_dateRect = preparePainter(p, dateRect, smallFont, dateString);
         } else {
-            smallFont.setPixelSize(qMax(contentsRect.height()/10, fm.ascent()));
+            // Find a suitable size for the date font
+            if (formFactor() == Plasma::Vertical) {
+                smallFont.setPixelSize(qMax(contentsRect.height()/6, fm.ascent()));
+            } else {
+                smallFont.setPixelSize(qMax(contentsRect.height()*2/7, fm.ascent()));
+            }
             m_dateRect = preparePainter(p, contentsRect, smallFont, dateString);
         }
 
