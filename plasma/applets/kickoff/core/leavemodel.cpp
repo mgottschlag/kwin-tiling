@@ -79,7 +79,7 @@ QStandardItem* LeaveModel::createStandardItem(const QString& url)
         item->setData(i18n("Pause without logging out"), Kickoff::SubTitleRole);
     } else if (basename == "suspendram") {
         item->setText(i18n("Suspend to RAM"));
-        item->setIcon(KIcon("system-suspend-hibernate"));
+        item->setIcon(KIcon("system-suspend"));
         item->setData(i18n("Pause without logging out"), Kickoff::SubTitleRole);
     } else {
         item->setText(basename);
