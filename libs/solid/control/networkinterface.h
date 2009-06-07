@@ -67,6 +67,7 @@ namespace Control
          * Device medium types
          * - Ieee8023: wired ethernet
          * - Ieee80211: the popular family of wireless networks
+         * - Serial: generic serial type for non-cellular ppp connections
          * - Gsm: cellular device of the GSM family, used in Europe
          * - Cdma: cellular device of the CDMA family, used in the USA
          */
