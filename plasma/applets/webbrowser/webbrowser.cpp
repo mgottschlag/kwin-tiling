@@ -159,13 +159,16 @@ QGraphicsWidget *WebBrowser::graphicsWidget()
     m_zoom->hide();
     m_zoom->setMaximumWidth(0);
     m_statusbarLayout->addItem(m_zoom);
-    connect(m_zoom, SIGNAL(valueChanged(int)), this, SLOT(zoom(int)));
 
     if (!m_url.isValid()) {
         m_url = KUrl(cg.readEntry("Url", "http://www.kde.org"));
         m_verticalScrollValue = cg.readEntry("VerticalScrollValue", 0);
         m_horizontalScrollValue = cg.readEntry("HorizontalScrollValue", 0);
+        int value = cg.readEntry("Zoom", 1);
+        m_zoom->setValue(value);
+        m_browser->mainFrame()->setZoomFactor((qreal)0.2 + ((qreal)value/(qreal)50));
     }
+    connect(m_zoom, SIGNAL(valueChanged(int)), this, SLOT(zoom(int)));
     m_browser->setUrl(m_url);
     m_browser->update();
 
@@ -442,6 +445,7 @@ void WebBrowser::bookmarkClicked(const QModelIndex &index)
 
 void WebBrowser::zoom(int value)
 {
+    config().writeEntry("Zoom", value);
     m_browser->mainFrame()->setZoomFactor((qreal)0.2 + ((qreal)value/(qreal)50));
 }
 
