@@ -171,13 +171,10 @@ void StripWidget::goRight()
     icon->hide();
     delete icon;
 
-    icon = static_cast<Plasma::IconWidget*>(stripLayout->itemAt(0));
-    match = m_favouriteMap.value(icon);
-
     // adds the new item to the end of the list
     int idx = m_favouritesMatches.indexOf(match);
     int size = m_favouritesMatches.size();
-    int newpos = (idx + size - 1) % size;
+    int newpos = (idx + size - 5) % size;
     match = m_favouritesMatches[newpos];
     createIcon(match, 0);
 }
