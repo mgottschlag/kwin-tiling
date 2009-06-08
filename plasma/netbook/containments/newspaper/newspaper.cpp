@@ -54,17 +54,33 @@ using namespace Plasma;
 
 Newspaper::Newspaper(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
-      m_orientation(Qt::Vertical)
+      m_orientation(Qt::Vertical),
+      m_appletOverlay(0)
 {
     setContainmentType(Containment::CustomContainment);
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
     connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
             this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
+
+    //FIXME:eh, actually useless for a custom containment...
+    connect(this, SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(updateConfigurationMode(bool)));
+
+    //FIXME: this thing is temporary
+    QAction *config = new QAction(i18n("configuration mode"), this);
+    config->setCheckable(true);
+    connect(config, SIGNAL(toggled(bool)), this, SLOT(updateConfigurationMode(bool)));
+    m_actions.append(config);
 }
 
 Newspaper::~Newspaper()
 {
+}
+
+//FIXME: this must die
+QList<QAction*> Newspaper::contextualActions()
+{
+    return m_actions;
 }
 
 void Newspaper::init()
@@ -179,9 +195,22 @@ void Newspaper::constraintsEvent(Plasma::Constraints constraints)
             applet->setBackgroundHints(NoBackground);
         }
     }
+
+    if (constraints & Plasma::SizeConstraint && m_appletOverlay) {
+        m_appletOverlay->resize(size());
+    }
 }
 
-
+void Newspaper::updateConfigurationMode(bool config)
+{
+    if (config && !m_appletOverlay) {
+        m_appletOverlay = new AppletOverlay(this, this);
+        m_appletOverlay->resize(size());
+    } else if (!config) {
+        delete m_appletOverlay;
+        m_appletOverlay = 0;
+    }
+}
 
 
 void Newspaper::paintInterface(QPainter *painter,
@@ -195,7 +224,6 @@ void Newspaper::paintInterface(QPainter *painter,
     m_background->resizeFrame(contentsRect.size());
     m_background->paintFrame(painter, contentsRect.topLeft());
 }
-
 
 
 K_EXPORT_PLASMA_APPLET(newspaper, Newspaper)

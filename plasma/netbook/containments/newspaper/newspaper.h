@@ -25,6 +25,7 @@
 #include <Plasma/Containment>
 
 class QGraphicsLinearLayout;
+class AppletOverlay;
 
 namespace Plasma
 {
@@ -48,6 +49,8 @@ public:
                         const QStyleOptionGraphicsItem *option,
                         const QRect &contentsRect);
 
+    QList<QAction*> contextualActions();
+
 
 
 private slots:
@@ -55,6 +58,7 @@ private slots:
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
     void themeUpdated();
     void updateSize();
+    void updateConfigurationMode(bool config);
 
 private:
 
@@ -66,6 +70,8 @@ private:
     QGraphicsLinearLayout *m_rightLayout;
     Qt::Orientation m_orientation;
     Plasma::FrameSvg *m_background;
+    AppletOverlay *m_appletOverlay;
+    QList<QAction*> m_actions;
 };
 
 
