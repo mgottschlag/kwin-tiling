@@ -175,6 +175,7 @@ void Applet::init()
     checkSizes();
 
     extender()->setEmptyExtenderMessage(i18n("No notifications and no jobs"));
+    extender()->setWindowFlags(Qt::X11BypassWindowManagerHint);
 
     KConfigGroup globalCg = globalConfig();
 
