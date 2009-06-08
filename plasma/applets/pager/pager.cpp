@@ -51,7 +51,7 @@
 
 #include <taskmanager/task.h>
 
-const int FAST_UPDATE_DELAY = 200;
+const int FAST_UPDATE_DELAY = 100;
 const int UPDATE_DELAY = 500;
 const int DRAG_SWITCH_DELAY = 1000;
 
