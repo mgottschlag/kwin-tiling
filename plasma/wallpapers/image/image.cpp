@@ -472,7 +472,7 @@ void Image::showFileDialog()
         m_dialog->setCaption(i18n("Select Wallpaper Image File"));
         m_dialog->setModal(false);
 
-        connect(m_dialog, SIGNAL(okClicked()), this, SLOT(browse()));
+        connect(m_dialog, SIGNAL(okClicked()), this, SLOT(wallpaperBrowseCompleted()));
         connect(m_dialog, SIGNAL(destroyed(QObject*)), this, SLOT(fileDialogFinished()));
     }
 
@@ -486,12 +486,11 @@ void Image::fileDialogFinished()
     m_dialog = 0;
 }
 
-void Image::browse()
+void Image::wallpaperBrowseCompleted()
 {
     Q_ASSERT(m_model);
 
     QString wallpaper = m_dialog->selectedFile();
-    disconnect(m_dialog, SIGNAL(okClicked()), this, SLOT(browse()));
 
     if (wallpaper.isEmpty()) {
         return;
@@ -510,6 +509,7 @@ void Image::browse()
     if (index != -1) {
         m_uiImage.m_view->setCurrentIndex(index);
     }
+
     // save it
     m_usersWallpapers << wallpaper;
 }

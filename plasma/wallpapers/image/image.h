@@ -47,7 +47,7 @@ class Image : public Plasma::Wallpaper
         void getNewWallpaper();
         void colorChanged(const QColor& color);
         void pictureChanged(int index);
-        void browse();
+        void wallpaperBrowseCompleted();
         void nextSlide();
         void updateBackground(const QImage &img);
         void showFileDialog();
