@@ -78,7 +78,11 @@ void AppletOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     painter->fillRect(option->exposedRect, QColor(0,0,0,30));
 
     if (m_applet) {
-        painter->fillRect(m_applet->geometry(), QColor(0,0,0,90));
+        QRectF geom = m_applet->geometry();
+        //FIXME: calculate the offset ONE time, mmkay?
+        QPointF offset = m_newspaper->m_mainWidget->pos() + m_newspaper->m_scrollWidget->pos();
+        geom.moveTopLeft(geom.topLeft() + offset);
+        painter->fillRect(geom, QColor(0,0,0,70));
     }
 }
 
@@ -87,6 +91,7 @@ void AppletOverlay::mousePressEvent(QGraphicsSceneMouseEvent *event)
     if (m_applet) {
         QPointF offset = m_newspaper->m_mainWidget->pos() + m_newspaper->m_scrollWidget->pos();
         showSpacer(event->pos());
+        m_spacerLayout->removeItem(m_applet);
         m_spacer->setMinimumHeight(m_applet->size().height());
     }
 }
@@ -96,6 +101,8 @@ void AppletOverlay::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     QPointF offset = m_newspaper->m_mainWidget->pos() + m_newspaper->m_scrollWidget->pos();
     m_applet = 0;
 
+    Plasma::Applet *oldApplet;
+
     //FIXME: is there a way more efficient than this linear one? scene()itemAt() won't work because it would always be == this
     foreach (Plasma::Applet *applet, m_newspaper->applets()) {
         if (applet->geometry().contains(event->pos()-offset)) {
@@ -103,11 +110,19 @@ void AppletOverlay::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
             break;
         }
     }
+    if (m_applet != oldApplet) {
+        update();
+    }
+}
+
+void AppletOverlay::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
     if (m_spacer) {
         QPointF delta = event->pos()-event->lastPos();
         m_applet->moveBy(delta.x(), delta.y());
         showSpacer(event->pos());
     }
+    update();
 }
 
 void AppletOverlay::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -116,7 +131,7 @@ void AppletOverlay::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
     if (m_spacer && m_spacerLayout) {
         m_spacerLayout->removeItem(m_spacer);
-        m_spacerLayout->addItem(m_applet);
+        m_spacerLayout->insertItem(m_spacerIndex, m_applet);
     }
 
     delete m_spacer;

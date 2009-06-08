@@ -45,7 +45,7 @@ public:
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget=0);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    //void mouseMoveEvent(QMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
