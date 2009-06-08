@@ -1,6 +1,7 @@
 
 set(newspaper_SRCS
-    newspaper.cpp)
+    newspaper.cpp
+    appletoverlay.cpp)
 
 kde4_add_plugin(plasma_containment_newspaper ${newspaper_SRCS})
 target_link_libraries(plasma_containment_newspaper ${KDE4_PLASMA_LIBS} ${KDE4_KIO_LIBS})

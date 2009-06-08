@@ -20,6 +20,7 @@
 */
 
 #include "newspaper.h"
+#include "appletoverlay.h"
 
 #include <limits>
 
