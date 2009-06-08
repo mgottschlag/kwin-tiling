@@ -172,6 +172,7 @@ void SM::Ram::createConfigurationInterface(KConfigDialog *parent)
     ui.treeView->setModel(&m_model);
     ui.treeView->resizeColumnToContents(0);
     ui.intervalSpinBox->setValue(interval() / 1000);
+    updateSpinBoxSuffix(interval() / 1000);
     connect(ui.intervalSpinBox, SIGNAL(valueChanged(int)), this, SLOT(updateSpinBoxSuffix(int)));
     parent->addPage(widget, i18n("RAM"), "ram");
 
