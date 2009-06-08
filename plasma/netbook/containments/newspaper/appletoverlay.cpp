@@ -23,6 +23,7 @@
 #include <QGraphicsLinearLayout>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
+#include <QTimer>
 
 #include <Plasma/Applet>
 #include <Plasma/PaintUtils>
@@ -64,6 +65,9 @@ AppletOverlay::AppletOverlay(QGraphicsWidget *parent, Newspaper *newspaper)
 {
     setAcceptHoverEvents(true);
     setZValue(900);
+    m_scrollTimer = new QTimer(this);
+    m_scrollTimer->setSingleShot(false);
+    connect(m_scrollTimer, SIGNAL(timeout()), this, SLOT(scrollTimeout()));
 }
 
 AppletOverlay::~AppletOverlay()
@@ -91,8 +95,12 @@ void AppletOverlay::mousePressEvent(QGraphicsSceneMouseEvent *event)
     if (m_applet) {
         QPointF offset = m_newspaper->m_mainWidget->pos() + m_newspaper->m_scrollWidget->pos();
         showSpacer(event->pos());
-        m_spacerLayout->removeItem(m_applet);
-        m_spacer->setMinimumHeight(m_applet->size().height());
+        if (m_spacerLayout) {
+            m_spacerLayout->removeItem(m_applet);
+        }
+        if (m_spacer) {
+            m_spacer->setMinimumHeight(m_applet->size().height());
+        }
     }
 }
 
@@ -122,12 +130,25 @@ void AppletOverlay::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         m_applet->moveBy(delta.x(), delta.y());
         showSpacer(event->pos());
     }
+
+    if (event->pos().y() > size().height()*0.70) {
+        m_scrollTimer->start(50);
+        m_scrollDown = true;
+    } else if (event->pos().y() < size().height()*0.30) {
+        m_scrollTimer->start(50);
+        m_scrollDown = false;
+    } else {
+        m_scrollTimer->stop();
+    }
+
     update();
 }
 
 void AppletOverlay::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
+
+    m_scrollTimer->stop();
 
     if (m_spacer && m_spacerLayout) {
         m_spacerLayout->removeItem(m_spacer);
@@ -210,6 +231,25 @@ void AppletOverlay::showSpacer(const QPointF &pos)
         m_spacer->show();
         lay->insertItem(insertIndex, m_spacer);
         m_spacerLayout = lay;
+    }
+}
+
+void AppletOverlay::scrollTimeout()
+{
+    if (!m_applet) {
+        return;
+    }
+
+    if (m_scrollDown) {
+        if (m_newspaper->m_mainWidget->geometry().bottom() > m_newspaper->m_scrollWidget->geometry().bottom()) {
+            m_newspaper->m_mainWidget->moveBy(0, -5);
+            m_applet->moveBy(0, 5);
+        }
+    } else {
+        if (m_newspaper->m_mainWidget->pos().y() < 0) {
+            m_newspaper->m_mainWidget->moveBy(0, 5);
+            m_applet->moveBy(0, -5);
+        }
     }
 }
 

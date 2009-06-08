@@ -31,6 +31,7 @@ namespace Plasma
 class Newspaper;
 class AppletMoveSpacer;
 class QGraphicsLinearLayout;
+class QTimer;
 
 class AppletOverlay : public QGraphicsWidget
 {
@@ -49,12 +50,17 @@ protected:
     void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
+protected Q_SLOTS:
+    void scrollTimeout();
+
 private:
     Plasma::Applet *m_applet;
     Newspaper *m_newspaper;
     AppletMoveSpacer *m_spacer;
     QGraphicsLinearLayout *m_spacerLayout;
     int m_spacerIndex;
+    QTimer *m_scrollTimer;
+    bool m_scrollDown;
 };
 
 #endif
