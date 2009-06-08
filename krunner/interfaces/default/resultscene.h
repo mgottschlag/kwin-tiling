@@ -65,11 +65,11 @@ class ResultScene : public QGraphicsScene
         void itemHoverEnter(ResultItem *item);
         void itemHoverLeave(ResultItem *item);
         void matchCountChanged(int count);
+        void ensureVisibility(QGraphicsItem *item);
 
     protected:
         void keyPressEvent(QKeyEvent * keyEvent);
         void focusOutEvent(QFocusEvent *focusEvent);
-        void wheelEvent(QGraphicsSceneWheelEvent * wheelEvent);
 
     private:
         void selectPreviousItem();

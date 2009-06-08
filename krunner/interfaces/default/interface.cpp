@@ -189,7 +189,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_resultsView->setMinimumSize(m_resultsScene->minimumSizeHint());
     connect(m_resultsScene, SIGNAL(matchCountChanged(int)), this, SLOT(matchCountChanged(int)));
     connect(m_resultsScene, SIGNAL(itemActivated(ResultItem *)), this, SLOT(run(ResultItem *)));
-    connect(m_resultsScene, SIGNAL(selectionChanged()), this, SLOT(itemSelected()));
+    connect(m_resultsScene, SIGNAL(ensureVisibility(QGraphicsItem *)), this, SLOT(ensureVisibility(QGraphicsItem *)));
 
     m_layout->addWidget(m_resultsView);
 
@@ -387,13 +387,22 @@ void Interface::showHelp()
     m_resultsScene->setQueryMatches(matches.values());
 }
 
-void Interface::itemSelected()
+void Interface::ensureVisibility(QGraphicsItem* item)
 {
-    QList<QGraphicsItem *> items = m_resultsScene->selectedItems();
-    if (!items.isEmpty()) {
-        //TODO: change this to do some smooth scrolling
-        m_resultsView->ensureVisible(items.value(0), 0, 0);
+    //We should not touch the scrollbar, but since it cannot be focused anyways
+    //this is good enough:
+
+    foreach (QGraphicsItem* tmpItem, m_resultsScene->items()) {
+        tmpItem->setAcceptHoverEvents(false);
     }
+
+    m_resultsView->ensureVisible(item);
+
+    foreach (QGraphicsItem* tmpItem, m_resultsScene->items()) {
+        tmpItem->setAcceptHoverEvents(true);
+    }
+
+
 }
 
 void Interface::setStaticQueryMode(bool staticQuery)

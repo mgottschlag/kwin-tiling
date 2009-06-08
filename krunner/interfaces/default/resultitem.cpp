@@ -57,7 +57,8 @@ ResultItem::ResultItem(const Plasma::QueryMatch &match, QGraphicsWidget *parent)
       m_configButton(0),
       m_highlight(0),
       m_index(-1),
-      m_highlightTimerId(0)
+      m_highlightTimerId(0),
+      m_mouseHovered(false)
 {
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFlag(QGraphicsItem::ItemIsSelectable);
@@ -328,10 +329,17 @@ void ResultItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *)
     emit activated(this);
 }
 
+bool ResultItem::mouseHovered() const
+{
+    return m_mouseHovered;
+}
+
 void ResultItem::focusInEvent(QFocusEvent * event)
 {
     QGraphicsWidget::focusInEvent(event);
     setZValue(1);
+
+    m_mouseHovered = (event->reason() == Qt::MouseFocusReason);
 
     scene()->clearSelection();
     setSelected(true);

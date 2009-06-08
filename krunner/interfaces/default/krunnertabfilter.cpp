@@ -41,7 +41,11 @@ bool KrunnerTabFilter::eventFilter(QObject *obj, QEvent *event)
 {
     if (event->type() == QEvent::KeyPress) {
         QKeyEvent *e = static_cast<QKeyEvent *>( event );
-        bool emptyScene = !(m_resultScene->defaultResultItem());
+
+	//FIXME: find a reliable way to see if the scene is empty; now defaults to 
+        //       never complete
+        bool emptyScene = false; 
+
 	bool suggestedCompletion = (m_lineEdit->text() != m_lineEdit->userText());
 
 	if (e->key() == Qt::Key_Tab) {

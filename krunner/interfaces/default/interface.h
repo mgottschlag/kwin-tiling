@@ -28,6 +28,7 @@
 #include "krunnerdialog.h"
 
 class QGraphicsView;
+class QGraphicsItem;
 class QLabel;
 class QToolButton;
 class QHBoxLayout;
@@ -71,7 +72,7 @@ class Interface : public KRunnerDialog
         void themeUpdated();
         void resetInterface();
         void showHelp();
-        void itemSelected();
+        void ensureVisibility(QGraphicsItem *item);
 
     private:
         void centerOnScreen();

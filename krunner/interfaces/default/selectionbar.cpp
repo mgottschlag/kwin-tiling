@@ -52,8 +52,8 @@ SelectionBar::SelectionBar(QGraphicsWidget *parent)
     m_frame->setElementPrefix("hover");
 
     connect(m_frame, SIGNAL(repaintNeeded()), this, SLOT(frameSvgChanged()));
-    connect(Plasma::Animator::self(), SIGNAL(movementFinished(QGraphicsItem*)),
-            this, SLOT(movementFinished(QGraphicsItem*)));
+    connect(Plasma::Animator::self(), SIGNAL(customAnimationFinished(int)),
+            this, SLOT(movementFinished(int)));
 }
 
 void SelectionBar::getMargins(qreal &left, qreal &top, qreal &right, qreal &bottom) const
@@ -65,6 +65,12 @@ void SelectionBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 {
     Q_UNUSED(widget)
     m_frame->paintFrame(painter, option->exposedRect, option->exposedRect);
+}
+
+void SelectionBar::animateAndCenter(qreal t)
+{
+    setPos(m_animStartRect.topLeft()*(1-t)+m_animEndRect.topLeft()*t);
+    if (m_target && !m_target->mouseHovered()) emit ensureVisibility(this);
 }
 
 void SelectionBar::acquireTarget()
@@ -89,9 +95,9 @@ void SelectionBar::acquireTarget()
     }
 }
 
-void SelectionBar::movementFinished(QGraphicsItem *movedItem)
+void SelectionBar::movementFinished(int id)
 {
-    if (movedItem != this) {
+    if (id != m_animId) {
         return;
     }
 
@@ -121,7 +127,7 @@ void SelectionBar::targetDestroyed()
 void SelectionBar::itemSelected()
 {
     if (m_animId) {
-        Plasma::Animator::self()->stopItemMovement(m_animId);
+        Plasma::Animator::self()->stopCustomAnimation(m_animId);
     }
 
     acquireTarget();
@@ -141,8 +147,9 @@ void SelectionBar::itemSelected()
         setPos(rect.topLeft());
         show();
     } else {
-        m_animId = Plasma::Animator::self()->moveItem(this, Plasma::Animator::SlideInMovement,
-                                                      rect.topLeft().toPoint());
+        m_animStartRect = geometry();
+        m_animEndRect = rect;
+        m_animId = Plasma::Animator::self()->customAnimation(ANIM_FRAMES,ANIM_DURATION, Plasma::Animator::EaseInCurve, this, "animateAndCenter");
     }
 }
 

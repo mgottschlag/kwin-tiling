@@ -57,6 +57,9 @@ ResultScene::ResultScene(Plasma::RunnerManager *manager, QWidget *focusBase, QOb
 
     m_selectionBar = new SelectionBar(0);
     addItem(m_selectionBar);
+    
+    connect(m_selectionBar, SIGNAL(ensureVisibility(QGraphicsItem *)), this, SIGNAL(ensureVisibility(QGraphicsItem *)));
+    
     m_selectionBar->hide();
     updateItemMargins();
 
@@ -122,6 +125,7 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
 
     if (m.isEmpty()) {
         kDebug() << "clearing";
+	resize(width(), 0);
         emit itemHoverEnter(0);
         m_clearTimer.start(200);
         return;
@@ -189,6 +193,8 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         ++i;
         tab = item;
     }
+
+    setSceneRect(itemsBoundingRect());
 
 }
 
@@ -284,15 +290,6 @@ void ResultScene::selectPreviousItem()
     setFocusItem(m_items.at(m_currentIndex));
     clearSelection();
     m_items.at(m_currentIndex)->setSelected(true);
-}
-
-void ResultScene::wheelEvent(QGraphicsSceneWheelEvent *event)
-{
-    if (event->delta() > 0) {
-        selectNextItem();
-    } else {
-        selectPreviousItem();
-    }
 }
 
 bool ResultScene::launchQuery(const QString &term)

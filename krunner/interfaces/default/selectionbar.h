@@ -43,6 +43,7 @@ public:
 
 signals:
     void graphicsChanged();
+    void ensureVisibility(QGraphicsItem * item);
 
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
@@ -54,16 +55,22 @@ private:
 
 private slots:
     void itemSelected();
-    void movementFinished(QGraphicsItem *item);
+    void movementFinished(int id);
     void frameSvgChanged();
     void disappear();
     void targetDestroyed();
+    void animateAndCenter(qreal t);
 
 private:
     QTimer *m_hideTimer;
     Plasma::FrameSvg *m_frame;
     int m_animId;
     ResultItem *m_target;
+    QRectF m_animStartRect;
+    QRectF m_animEndRect;
+    
+    static const int ANIM_FRAMES = 20;
+    static const int ANIM_DURATION = 100;
 };
 
 #endif

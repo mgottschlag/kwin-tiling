@@ -80,6 +80,7 @@ public:
     void remove();
     void run(Plasma::RunnerManager *manager);
     bool isQueryPrototype() const;
+    bool mouseHovered() const;
     void calculateSize();
 
     static bool compare(const ResultItem *one, const ResultItem *other);
@@ -123,6 +124,7 @@ private:
     int m_highlight;
     int m_index;
     int m_highlightTimerId;
+    bool m_mouseHovered;
 
     static int s_fontHeight;
 };
