@@ -116,7 +116,7 @@ public:
         Q_UNUSED(headerIndex)
         QFontMetrics fm(KGlobalSettings::smallestReadableFont());
         const int top = ItemDelegate::TOP_OFFSET - q->verticalScrollBar()->value();
-        int minHeight = ItemDelegate::FIRST_HEADER_HEIGHT;
+        const int minHeight = ItemDelegate::FIRST_HEADER_HEIGHT;
 
         QRect rect(backArrowRect().right() + ItemDelegate::BACK_ARROW_SPACING, top,
                    q->width() - backArrowRect().width() - ItemDelegate::BACK_ARROW_SPACING + 1,
@@ -464,7 +464,7 @@ void FlipScrollView::openItem(const QModelIndex& index)
         model()->fetchMore(index);
     }
 
-    bool hasChildren = model()->hasChildren(index);
+    const bool hasChildren = model()->hasChildren(index);
 
     if (hasChildren) {
         d->setCurrentRoot(index);

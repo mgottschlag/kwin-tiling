@@ -168,7 +168,7 @@ public:
     }
 
     void updateScrollBarRange() {
-        int pageSize = q->height();
+        const int pageSize = q->height();
         q->verticalScrollBar()->setRange(0, contentsHeight - pageSize);
         q->verticalScrollBar()->setPageStep(pageSize);
         q->verticalScrollBar()->setSingleStep(q->sizeHintForRow(0));

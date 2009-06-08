@@ -286,7 +286,7 @@ void MenuLauncherApplet::init()
     KConfigGroup cg = config();
     QString iconname = "start-here-kde";
 
-    QStringList viewtypes = cg.readEntry("views", QStringList());
+    const QStringList viewtypes = cg.readEntry("views", QStringList());
     if(viewtypes.isEmpty()) { // backward-compatibility to <KDE4.3
         QByteArray oldview = cg.readEntry("view", QByteArray());
         if (!oldview.isEmpty() && oldview != "Combined") {
@@ -686,7 +686,7 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
 
 void MenuLauncherApplet::actionTriggered(QAction *action)
 {
-    KUrl url = action->data().value<KUrl>();
+    const KUrl url = action->data().value<KUrl>();
     if (url.scheme() == "leave") {
         if (! d->launcher)
             d->launcher = new Kickoff::UrlItemLauncher(d->menuview);

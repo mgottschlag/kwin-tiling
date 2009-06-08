@@ -105,7 +105,7 @@ public:
     }
 
     void loadApplications() {
-        QStringList apps = Kickoff::systemApplicationList();
+        const QStringList apps = Kickoff::systemApplicationList();
         appsList.clear();
 
         foreach(const QString &app, apps) {

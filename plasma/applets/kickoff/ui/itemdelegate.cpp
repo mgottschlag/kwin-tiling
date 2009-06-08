@@ -105,7 +105,7 @@ bool ItemDelegate::isVisible(const QModelIndex& index) const
     Q_ASSERT(index.isValid());
 
     if (index.model()->hasChildren(index)) {
-        int childCount = index.model()->rowCount(index);
+        const int childCount = index.model()->rowCount(index);
         for (int i = 0; i < childCount; ++i) {
             QModelIndex child = index.model()->index(i, 0, index);
             if (!child.data(UrlRole).isNull()) {

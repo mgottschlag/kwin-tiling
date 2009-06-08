@@ -103,7 +103,7 @@ void TabBar::setAnimateSwitch(bool animateSwitch)
     m_animateSwitch = animateSwitch;
 }
 
-bool TabBar::animateSwitch()
+bool TabBar::animateSwitch() const 
 {
     return m_animateSwitch;
 }

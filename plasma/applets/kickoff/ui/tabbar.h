@@ -48,7 +48,7 @@ public:
     void setSwitchTabsOnHover(bool switchOnHover);
     bool switchTabsOnHover() const;
     void setAnimateSwitch(bool animateSwitch);
-    bool animateSwitch();
+    bool animateSwitch() const ;
     void setShape(Shape shape);
 
 protected:

@@ -63,7 +63,7 @@ public:
         KUrl kUrl(url);
         KActionCollection actionCollection((QObject*)0);
         KFileItemList items;
-        QString mimeType = KMimeType::findByUrl(kUrl, 0, false, true)->name();
+        const QString mimeType = KMimeType::findByUrl(kUrl, 0, false, true)->name();
         items << KFileItem(url, mimeType, KFileItem::Unknown);
         KParts::BrowserExtension::PopupFlags browserFlags = KParts::BrowserExtension::DefaultPopupItems;
         if (items.first().isLocalFile()) {
@@ -119,7 +119,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
         return;
     }
 
-    bool isFavorite = FavoritesModel::isFavorite(url);
+    const bool isFavorite = FavoritesModel::isFavorite(url);
 
     QList<QAction*> actions;
 
@@ -185,7 +185,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,
     }
 
     // device actions
-    QString udi = index.data(DeviceUdiRole).toString();
+    const QString udi = index.data(DeviceUdiRole).toString();
     Solid::Device device(udi);
     Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
     QAction *ejectAction = 0;
