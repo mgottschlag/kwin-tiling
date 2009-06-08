@@ -73,11 +73,15 @@ StripWidget::~StripWidget()
 void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
 {
     // create new IconWidget for favourite strip
-    Plasma::IconWidget *fav = new Plasma::IconWidget();
+    QGraphicsWidget *widget = new QGraphicsWidget();
+    widget->setSizePolicy(QSizePolicy::MinimumExpanding,
+                          QSizePolicy::MinimumExpanding);
+
+    Plasma::IconWidget *fav = new Plasma::IconWidget(widget);
     fav->setText(match->text());
     fav->setIcon(match->icon());
     fav->setMinimumSize(QSize(100, 100));
-    fav->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    fav->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(fav, SIGNAL(activated()), this, SLOT(launchFavourite()));
 
     // set an action to be able to remove from favourites
@@ -87,7 +91,7 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
     connect(action, SIGNAL(triggered()), this, SLOT(removeFavourite()));
 
     m_favouriteMap.insert(fav, match);
-    stripLayout->insertItem(idx, fav);
+    stripLayout->insertItem(idx, widget);
 }
 
 void StripWidget::add(Plasma::QueryMatch match)
@@ -112,7 +116,8 @@ void StripWidget::remove(Plasma::IconWidget *favourite)
     m_favouriteMap.remove(favourite);
 
     // must be deleteLater because the IconWidget will return from the action?
-    favourite->deleteLater();
+    QGraphicsWidget *widget = favourite->parentWidget();
+    widget->deleteLater();
     delete match;
 
     // the IconWidget was not removed yet
@@ -145,16 +150,17 @@ void StripWidget::launchFavourite()
     runnermg->run(*match);
 }
 
-void StripWidget::goLeft()
+void StripWidget::goRight()
 {
     // discover the item that will be removed
-    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(stripLayout->itemAt(0));
+    QGraphicsWidget *widget = static_cast<QGraphicsWidget*>(stripLayout->itemAt(0));
+    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(widget->childItems()[0]);
     Plasma::QueryMatch *match = m_favouriteMap.value(icon);
 
     // removes the first item
     m_favouriteMap.remove(icon);
     icon->hide();
-    delete icon;
+    delete widget;
 
     // adds the new item to the end of the list
     int idx = m_favouritesMatches.indexOf(match);
@@ -163,16 +169,17 @@ void StripWidget::goLeft()
     createIcon(match, 4);
 }
 
-void StripWidget::goRight()
+void StripWidget::goLeft()
 {
     // discover the item that will be removed
-    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(stripLayout->itemAt(4));
+    QGraphicsWidget *widget = static_cast<QGraphicsWidget*>(stripLayout->itemAt(4));
+    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(widget->childItems()[0]);
     Plasma::QueryMatch *match = m_favouriteMap.value(icon);
 
     // removes the first item
     m_favouriteMap.remove(icon);
     icon->hide();
-    delete icon;
+    delete widget;
 
     // adds the new item to the end of the list
     int idx = m_favouritesMatches.indexOf(match);

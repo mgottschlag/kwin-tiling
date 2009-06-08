@@ -225,20 +225,16 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             QGraphicsLinearLayout *gridLayout = new QGraphicsLinearLayout(Qt::Vertical);
 
             gridBackground = new Plasma::Frame(this);
-            gridBackground->setFrameShadow(Plasma::Frame::Sunken);
-            gridBackground->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,
-                                                      QSizePolicy::MinimumExpanding));
+            gridBackground->setFrameShadow(Plasma::Frame::Plain);
 
             gridScroll = new Plasma::ScrollWidget(this);
             gridScroll->setWidget(gridBackground);
             gridScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            gridScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
             gridLayout->addItem(gridScroll);
 
             m_launchGrid = new QGraphicsGridLayout();
-            m_launchGrid->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,
-                                                    QSizePolicy::Expanding));
             gridBackground->setLayout(m_launchGrid);
-
 
             QGraphicsLinearLayout *m_favourites = new QGraphicsLinearLayout();
             m_favourites->setOrientation(layoutDirection);
