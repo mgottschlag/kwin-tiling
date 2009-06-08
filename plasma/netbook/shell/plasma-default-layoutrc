@@ -55,6 +55,12 @@ immutability=1
 plugin=digital-clock
 zvalue=0
 
+[Containments][2][Applets][6]
+geometry=750,0,10,10
+immutability=1
+plugin=searchbox
+zvalue=0
+
 [Containments][3]
 activity=Newspaper
 desktop=-1

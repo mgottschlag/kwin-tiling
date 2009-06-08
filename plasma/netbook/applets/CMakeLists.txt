@@ -1,1 +1,2 @@
 add_subdirectory(currentappcontrol)
+add_subdirectory(searchbox)

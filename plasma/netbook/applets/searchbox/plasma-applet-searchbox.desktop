@@ -1,0 +1,16 @@
+[Desktop Entry]
+Name=Search Box
+Comment=Search Box for a given RunnerManager
+Type=Service
+
+X-KDE-ServiceTypes=Plasma/Applet
+X-KDE-Library=plasma_applet_searchbox
+X-KDE-PluginInfo-Author=Artur Souza
+X-KDE-PluginInfo-Email=morpheuz@gmail.com
+X-KDE-PluginInfo-Name=searchbox
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true
