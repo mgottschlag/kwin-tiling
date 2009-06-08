@@ -126,9 +126,7 @@ void IconApplet::setUrl(const KUrl& url)
 
         m_genericName = f.readGenericName();
         
-        if(m_watchDestopFile) {
-            delete m_watchDestopFile;
-        }
+        delete m_watchDestopFile;
 
         m_watchDestopFile = new KDirWatch;
         m_watchDestopFile->addFile(m_url.toLocalFile());
