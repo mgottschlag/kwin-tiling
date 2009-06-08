@@ -87,6 +87,7 @@ void AppletOverlay::mousePressEvent(QGraphicsSceneMouseEvent *event)
     if (m_applet) {
         QPointF offset = m_newspaper->m_mainWidget->pos() + m_newspaper->m_scrollWidget->pos();
         showSpacer(event->pos());
+        m_spacer->setMinimumHeight(m_applet->size().height());
     }
 }
 
@@ -188,7 +189,9 @@ void AppletOverlay::showSpacer(const QPointF &pos)
         if (!m_spacer) {
             m_spacer = new AppletMoveSpacer(this);
         }
-        m_spacerLayout->removeItem(m_spacer);
+        if (m_spacerLayout) {
+            m_spacerLayout->removeItem(m_spacer);
+        }
         m_spacer->show();
         lay->insertItem(insertIndex, m_spacer);
         m_spacerLayout = lay;
