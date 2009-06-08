@@ -71,7 +71,7 @@ WebBrowser::WebBrowser(QObject *parent, const QVariantList &args)
 
     m_layout = 0;
     resize(500,500);
-    if (args.count() > 0) {
+    if (!args.isEmpty()) {
         m_url = KUrl(args.value(0).toString());
     }
     setPopupIcon("konqueror");
@@ -405,7 +405,7 @@ void WebBrowser::removeBookmark(const QModelIndex &index)
 
 void WebBrowser::removeBookmark()
 {
-    QModelIndexList list = m_bookmarkModel->match(m_bookmarkModel->index(0,0), BookmarkItem::UrlRole, m_url.prettyUrl());
+    const QModelIndexList list = m_bookmarkModel->match(m_bookmarkModel->index(0,0), BookmarkItem::UrlRole, m_url.prettyUrl());
 
     if (!list.isEmpty()) {
         removeBookmark(list.first());
