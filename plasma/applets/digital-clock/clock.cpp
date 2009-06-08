@@ -99,8 +99,8 @@ void Clock::init()
         m_plainClockColor = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::defaultTheme()->colorScheme()).foreground().color();
     }
 
-    QFontMetricsF metrics(KGlobalSettings::smallestReadableFont());
-    QString timeString = KGlobal::locale()->formatTime(QTime(23, 59), m_showSeconds);
+    const QFontMetricsF metrics(KGlobalSettings::smallestReadableFont());
+    const QString timeString = KGlobal::locale()->formatTime(QTime(23, 59), m_showSeconds);
     setMinimumSize(metrics.size(Qt::TextSingleLine, timeString));
 
     dataEngine("time")->connectSource(currentTimezone(), this, updateInterval(), intervalAlignment());
@@ -121,9 +121,9 @@ void Clock::updateSize()
     Plasma::FormFactor f = formFactor();
 
     if (f != Plasma::Vertical && f != Plasma::Horizontal) {
-        QFontMetricsF metrics(KGlobalSettings::smallestReadableFont());
+        const QFontMetricsF metrics(KGlobalSettings::smallestReadableFont());
         // calculates based on size of "23:59"!
-        QString timeString = KGlobal::locale()->formatTime(QTime(23, 59), m_showSeconds);
+        const QString timeString = KGlobal::locale()->formatTime(QTime(23, 59), m_showSeconds);
         setMinimumSize(metrics.size(Qt::TextSingleLine, timeString));
     }
 
@@ -135,8 +135,8 @@ void Clock::updateSize()
 
     int w, h;
     if (m_showDate || showTimezone()) {
-        QFont f(KGlobalSettings::smallestReadableFont());
-        QFontMetrics metrics(f);
+        const QFont f(KGlobalSettings::smallestReadableFont());
+        const QFontMetrics metrics(f);
         // if there's enough vertical space, wrap the words
         if (contentsRect().height() < f.pointSize() * 6) {
             QSize s = metrics.size(Qt::TextSingleLine, m_dateString);
@@ -340,7 +340,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     // Paint the date, conditionally, and let us know afterwards how much
     // space is left for painting the time on top of it.
     QRectF dateRect;
-    QString timeString = KGlobal::locale()->formatTime(m_time, m_showSeconds);
+    const QString timeString = KGlobal::locale()->formatTime(m_time, m_showSeconds);
     QFont smallFont = KGlobalSettings::smallestReadableFont();
 
     if (m_showDate || showTimezone()) {
@@ -416,8 +416,8 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
         // kDebug(96669) << "m_dateRect: " << m_dateRect;
 
-        int subtitleHeight = m_dateRect.height();
-        int subtitleWidth = m_dateRect.width();
+        const int subtitleHeight = m_dateRect.height();
+        const int subtitleWidth = m_dateRect.width();
         // kDebug(96669) << "subtitleWitdh: " << subtitleWitdh;
         // kDebug(96669) << "subtitleHeight: " << subtitleHeight;
 
@@ -500,7 +500,7 @@ QRect Clock::preparePainter(QPainter *p, const QRect &rect, const QFont &font, c
             tmpFont.setPointSize(qMax(KGlobalSettings::smallestReadableFont().pointSize(), tmpFont.pointSize() - 1));
         }
 
-        QFontMetrics fm(tmpFont);
+        const QFontMetrics fm(tmpFont);
         int flags = (singleline || ((formFactor() == Plasma::Horizontal) &&
                                     (contentsRect().height() < tmpFont.pointSize()*6))) ?
                     Qt::TextSingleLine : Qt::TextWordWrap;
