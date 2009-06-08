@@ -99,8 +99,6 @@ void Pager::init()
 
     if (m_rows < 1) {
         m_rows = 1;
-    } else if (m_rows > m_desktopCount) {
-        m_rows = m_desktopCount;
     }
 
     m_timer = new QTimer(this);
@@ -254,13 +252,13 @@ void Pager::recalculateGeometry()
 
     int padding = 2; // Space between miniatures of desktops
     int textMargin = 3; // Space between name of desktop and border
-    int columns = m_desktopCount / m_rows + m_desktopCount % m_rows;
-    int rows = m_rows;
+    int rows = qMax(qMin(m_rows, m_desktopCount), 1);
+    int columns = m_desktopCount / rows + m_desktopCount % rows;
 
     //inverse rows and columns in vertical panel
     if (formFactor() == Plasma::Vertical) {
         rows = columns;
-        columns = m_rows;
+        columns = rows;
     }
 
     qreal leftMargin = 0;
@@ -558,10 +556,6 @@ void Pager::numberOfDesktopsChanged(int num)
 
     m_dirtyDesktop = -1;
     m_desktopCount = num;
-
-    if (m_rows > m_desktopCount) {
-        m_rows = m_desktopCount;
-    }
 
     m_rects.clear();
     recalculateGeometry();
