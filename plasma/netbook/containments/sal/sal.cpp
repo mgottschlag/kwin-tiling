@@ -47,8 +47,8 @@ SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
 
 SearchLaunch::~SearchLaunch()
 {
-    delete tedit;
     delete runnermg;
+    delete m_background;
 }
 
 void SearchLaunch::init()
@@ -64,11 +64,12 @@ void SearchLaunch::init()
             this, SLOT(setQueryMatches(const QList<Plasma::QueryMatch>&)));
 
     // before this text edit goes to panel, we'll try here
-    tedit = new Plasma::LineEdit(this);
-    connect(tedit, SIGNAL(returnPressed()), this, SLOT(doSearch()));
 
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/translucentbackground");
+
+    Plasma::DataEngine *engine = dataEngine("searchlaunch");
+    engine->connectSource("query", this);
 }
 
 void SearchLaunch::themeUpdated()
@@ -78,9 +79,9 @@ void SearchLaunch::themeUpdated()
     m_mainLayout->setContentsMargins(left, top, right, bottom);
 }
 
-void SearchLaunch::doSearch()
+void SearchLaunch::doSearch(const QString query)
 {
-    runnermg->launchQuery(tedit->text());
+    runnermg->launchQuery(query);
     queryCounter = 0;
 
     foreach (Plasma::IconWidget *icon, m_items) {
@@ -245,8 +246,6 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_favourites->insertItem(1, m_stripWidget);
 
             // add our layouts to main vertical layout
-            m_mainLayout->addItem(tedit);
-            tedit->setZValue(9999999);
             m_mainLayout->addItem(m_favourites);
             m_mainLayout->addItem(gridLayout);
 
@@ -290,6 +289,12 @@ void SearchLaunch::setFormFactorFromLocation(Plasma::Location loc) {
     default:
         kDebug() << "invalid location!!";
     }
+}
+
+void SearchLaunch::dataUpdated(const QString &sourceName, const Plasma::DataEngine::Data &data)
+{
+    Q_UNUSED(sourceName);
+    doSearch(data["query"].toString());
 }
 
 K_EXPORT_PLASMA_APPLET(sal, SearchLaunch)

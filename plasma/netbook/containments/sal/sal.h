@@ -24,6 +24,7 @@
 #define SEARCHLAUNCH_CONTAINMENT_H
 
 #include <Plasma/Containment>
+#include <Plasma/DataEngine>
 
 #include <QGraphicsLinearLayout>
 #include <QGraphicsGridLayout>
@@ -55,13 +56,16 @@ public:
                         const QStyleOptionGraphicsItem *option,
                         const QRect &contentsRect);
 
+public slots:
+    void dataUpdated(const QString &sourceName, const Plasma::DataEngine::Data &data);
+
 private slots:
     void themeUpdated();
     void updateSize();
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
     void appletRemoved(Plasma::Applet* applet);
 
-    void doSearch();
+    void doSearch(const QString query);
     void setQueryMatches(const QList<Plasma::QueryMatch> &m);
     void launch();
     void addFavourite();
@@ -72,7 +76,6 @@ private:
      */
     void setFormFactorFromLocation(Plasma::Location loc);
 
-    Plasma::LineEdit *tedit;
     Plasma::FrameSvg *m_background;
     Plasma::RunnerManager *runnermg;
 

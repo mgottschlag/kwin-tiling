@@ -40,6 +40,9 @@ public:
 
     QGraphicsWidget *graphicsWidget();
 
+public slots:
+    void query();
+
 protected:
     void popupEvent(bool shown);
     void focusEditor();

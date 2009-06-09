@@ -23,6 +23,7 @@
 #include <Plasma/ToolTipContent>
 #include <Plasma/ToolTipManager>
 #include <Plasma/Containment>
+#include <Plasma/Service>
 
 #include <KDebug>
 #include <KIcon>
@@ -65,6 +66,8 @@ QGraphicsWidget *SearchBox::graphicsWidget()
     m_search = new Plasma::LineEdit();
     m_search->nativeWidget()->setClearButtonShown(true);
     m_search->nativeWidget()->setClickMessage(i18n("Enter your query here"));
+    connect(m_search, SIGNAL(returnPressed()), this, SLOT(query()));
+
 
     m_icon = new Plasma::IconWidget();
     m_icon->setIcon("page-zoom");
@@ -95,6 +98,14 @@ void SearchBox::focusEditor()
     m_search->setFocus();
     m_search->nativeWidget()->clearFocus();
     m_search->nativeWidget()->setFocus();
+}
+
+void SearchBox::query()
+{
+    Plasma::Service *service = dataEngine("searchlaunch")->serviceForSource("query");
+    KConfigGroup ops = service->operationDescription("query");
+    ops.writeEntry("query", m_search->text());
+    service->startOperationCall(ops);
 }
 
 #include "searchbox.moc"
