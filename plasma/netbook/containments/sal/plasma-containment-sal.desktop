@@ -6,6 +6,7 @@ Name[pt]=Contentor de Pesquisa e Localização
 Name[pt_BR]=Contentor de Pesquisa e Localização
 Name[sv]=Sök- och lokaliseringsomgivning
 Name[uk]=Контейнер пошуку і адрес
+Name[x-test]=xxSearch and Locate Containmentxx
 Comment=Special Containment with Launcher
 Comment[et]=Erikonteiner käivitajaga
 Comment[km]=ការ​ផ្ទុក​ពិសេស​ជា​មួយ​កម្មវិធី​ចាប់ផ្ដើម
@@ -13,6 +14,7 @@ Comment[pt]=Contentor Especial com Lançador
 Comment[pt_BR]=Contentor Especial com Lançador
 Comment[sv]=Särskild omgivning med programstart
 Comment[uk]=Особливий контейнер з інструментом запуску
+Comment[x-test]=xxSpecial Containment with Launcherxx
 
 Icon=
 Type=Service
