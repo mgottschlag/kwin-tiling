@@ -1011,40 +1011,44 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
     }
 
     // Draw miniatures of windows from each desktop
-    painter->setPen(windowPen);
-    for (int i = 0; i < m_windowRects.count(); i++) {
-        for (int j = 0; j < m_windowRects[i].count(); j++) {
-            QRect rect = m_windowRects[i][j].second;
+    if (!m_rects.isEmpty() && m_rects[0].width() > 12 && m_rects[0].height() > 12) {
+        painter->setPen(windowPen);
+        for (int i = 0; i < m_windowRects.count(); i++) {
+            for (int j = 0; j < m_windowRects[i].count(); j++) {
+                QRect rect = m_windowRects[i][j].second;
 
-            if (m_currentDesktop > 0 &&
-                m_currentDesktop <= m_rects.count() &&
-                m_rects[m_currentDesktop-1].contains(rect)) {
-                if (m_activeWindows.contains(rect)) {
-                    painter->setBrush(activeWindowBrushActiveDesk);
-                    painter->setPen(activeWindowPen);
+                if (m_currentDesktop > 0 &&
+                        m_currentDesktop <= m_rects.count() &&
+                        m_rects[m_currentDesktop-1].contains(rect)) {
+                    if (m_activeWindows.contains(rect)) {
+                        painter->setBrush(activeWindowBrushActiveDesk);
+                        painter->setPen(activeWindowPen);
+                    } else {
+                        painter->setBrush(windowBrushActiveDesk);
+                        painter->setPen(windowPen);
+                    }
                 } else {
-                    painter->setBrush(windowBrushActiveDesk);
-                    painter->setPen(windowPen);
+                    if (m_activeWindows.contains(rect)) {
+                        painter->setBrush(activeWindowBrush);
+                        painter->setPen(activeWindowPen);
+                    } else {
+                        painter->setBrush(windowBrush);
+                        painter->setPen(windowPen);
+                    }
                 }
-            } else {
-                if (m_activeWindows.contains(rect)) {
-                    painter->setBrush(activeWindowBrush);
-                    painter->setPen(activeWindowPen);
-                } else {
-                    painter->setBrush(windowBrush);
-                    painter->setPen(windowPen);
+                if (m_dragId == m_windowRects[i][j].first) {
+                    rect.translate((m_dragCurrentPos - m_dragOriginalPos).toPoint());
+                    painter->setClipRect(option->exposedRect);
+                } else if (i < m_rects.count()) {
+                    painter->setClipRect(m_rects[i].adjusted(1, 1, -1, -1));
                 }
-            }
-            if (m_dragId == m_windowRects[i][j].first) {
-                rect.translate((m_dragCurrentPos - m_dragOriginalPos).toPoint());
-                painter->setClipRect(option->exposedRect);
-            } else if (i < m_rects.count()) {
-                painter->setClipRect(m_rects[i].adjusted(1, 1, -1, -1));
-            }
-            painter->drawRect(rect);
-            if ((rect.width() > 16) && (rect.height() > 16) && m_showWindowIcons){
-                painter->drawPixmap(rect.x() + (rect.width() - 16) / 2, rect.y() + (rect.height() - 16) / 2, 16, 16,
-                                    KWindowSystem::icon(m_windowRects[i][j].first, 16, 16, true));
+
+                painter->drawRect(rect);
+
+                if ((rect.width() > 16) && (rect.height() > 16) && m_showWindowIcons) {
+                    painter->drawPixmap(rect.x() + (rect.width() - 16) / 2, rect.y() + (rect.height() - 16) / 2, 16, 16,
+                            KWindowSystem::icon(m_windowRects[i][j].first, 16, 16, true));
+                }
             }
         }
     }
