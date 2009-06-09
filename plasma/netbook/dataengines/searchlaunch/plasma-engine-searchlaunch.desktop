@@ -1,0 +1,17 @@
+[Desktop Entry]
+Name=Search and Launch Engine
+Comment=Engine to handle queries to SAL containment
+Type=Service
+ 
+X-KDE-ServiceTypes=Plasma/DataEngine
+X-KDE-Library=plasma_engine_searchlaunch
+X-Plasma-EngineName=searchlaunch
+X-KDE-PluginInfo-Author=Artur Souza
+X-KDE-PluginInfo-Email=morpheuz@gmail.com
+X-KDE-PluginInfo-Name=searchlaunch
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=LGPL
+X-KDE-PluginInfo-EnabledByDefault=true

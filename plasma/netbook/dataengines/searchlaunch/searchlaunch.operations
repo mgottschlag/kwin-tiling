@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE kcfg SYSTEM
+    "http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+<kcfg>
+    <group name="query">
+        <entry name="query" type="String">
+            <label>The text to query the RunnerManager.</label>
+        </entry>
+    </group>
+</kcfg>
