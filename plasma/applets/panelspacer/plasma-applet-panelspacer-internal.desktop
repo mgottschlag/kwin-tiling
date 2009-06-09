@@ -17,6 +17,7 @@ Name[sl]=Praznina za na pult
 Name[sv]=Panelavskiljare
 Name[tr]=Panel Ayırıcı
 Name[uk]=Розпірка панелі
+Name[x-test]=xxPanel Spacerxx
 Name[zh_CN]=面板间距
 Name[zh_TW]=面板間隔器
 Comment=Reserve empty spaces within the panel.
@@ -39,6 +40,7 @@ Comment[ro]=Rezervează spații goale în cadrul panoului.
 Comment[sl]=Na pultu rezervira prazen prostor.
 Comment[sv]=Reservera tomt utrymme inne i panelen.
 Comment[uk]=Створює прогалини на панелі.
+Comment[x-test]=xxReserve empty spaces within the panel.xx
 Comment[zh_CN]=在面板中留空。
 Comment[zh_TW]=在面板內保留空間。
 

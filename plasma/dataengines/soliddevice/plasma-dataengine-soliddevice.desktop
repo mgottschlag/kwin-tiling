@@ -84,6 +84,7 @@ Comment[sl]=Podatki o napravah s pomočjo Solid
 Comment[sv]=Enhetsdata via Solid
 Comment[tr]=Solid üzerinden aygıt verisi
 Comment[uk]=Дані щодо пристроїв з Solid
+Comment[x-test]=xxDevice data via Solidxx
 Comment[zh_CN]=通过 Solid 获得设备数据
 Comment[zh_TW]=透過 Solid 的裝置資料
 X-KDE-ServiceTypes=Plasma/DataEngine

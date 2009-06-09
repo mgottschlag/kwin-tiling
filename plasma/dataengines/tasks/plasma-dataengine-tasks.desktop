@@ -77,6 +77,7 @@ Comment[pt_BR]=Informação e gerenciamento de serviços para todas as janelas d
 Comment[sl]=Podatki o vseh razpoložljivih oknih in storitve za upravljanje oken.
 Comment[sv]=Information om och hanteringstjänster för alla tillgängliga fönster.
 Comment[uk]=Відомості щодо служб і керування ними для всіх доступних вікон.
+Comment[x-test]=xxInformation and management services for all available windows.xx
 Comment[zh_CN]=全部可用窗口的信息和管理服务
 Comment[zh_TW]=所有可用的視窗的資訊與管理服務。
 Type=Service

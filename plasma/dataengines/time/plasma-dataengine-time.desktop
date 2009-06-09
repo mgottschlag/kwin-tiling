@@ -83,6 +83,7 @@ Comment[sl]=Datum in čas po časovnih pasovih
 Comment[sv]=Datum och tid enligt tidszon
 Comment[tr]=Zaman dilimine göre tarih ve saat
 Comment[uk]=Дата і час за часовими поясами
+Comment[x-test]=xxDate and time by timezonexx
 Comment[zh_CN]=根据时区提供日期和时间
 Comment[zh_TW]=時區的日期和時間
 Type=Service

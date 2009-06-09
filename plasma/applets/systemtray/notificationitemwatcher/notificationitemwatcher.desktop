@@ -22,6 +22,7 @@ Name[sl]=KDE-jev demon za opazovanje obvestil
 Name[sv]=KDED bevakning av underrättelseobjekt
 Name[tr]=KDED Bildirim ögesi izleyici
 Name[uk]=Переглядач елементів сповіщень KDED
+Name[x-test]=xxKDED Notification item watcherxx
 Name[zh_CN]=KDED 通知项监视器
 Name[zh_TW]=KDE 通知項目監控器 
 Comment=Keep track of applications that want to use the D-Bus based notification item.
@@ -42,6 +43,7 @@ Comment[pt_BR]=Mantém o registro dos aplicativos que desejam usar o D-Bus basea
 Comment[sl]=Spremlja programe, ki želijo uporabiti obveščanje prek D-Busa.
 Comment[sv]=Håll reda på program som vill använda det D-Bus baserade underrättelseobjektet.
 Comment[uk]=Стежте за програмами, які бажають використовувати заснований на D-Bus елемент сповіщення.
+Comment[x-test]=xxKeep track of applications that want to use the D-Bus based notification item.xx
 Comment[zh_CN]=跟踪基于 D-Bus 系统通知架构的程序的情况。
 Comment[zh_TW]=追蹤要使用 D-Bus 系統匣的通知項目。
 

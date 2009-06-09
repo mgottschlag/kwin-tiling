@@ -76,6 +76,7 @@ Comment[sl]=Položaj miškinega kazalca
 Comment[sv]=Musposition och pekare
 Comment[tr]=Fare konumu ve işaretçisi
 Comment[uk]=Позиція вказівника миші і курсора
+Comment[x-test]=xxMouse position and cursorxx
 Comment[zh_CN]=鼠标位置和光标
 Comment[zh_TW]=滑鼠位置與游標
 Type=Service

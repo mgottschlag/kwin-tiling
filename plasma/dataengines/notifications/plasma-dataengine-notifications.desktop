@@ -78,6 +78,7 @@ Comment[sl]=Pasivna vidna obvestila za uporabnika.
 Comment[sv]=Passiva visuella underrättelser för användaren.
 Comment[tr]=Kullanıcı için pasif görsel bildirimler.
 Comment[uk]=Пасивні візуальні сповіщення для користувача.
+Comment[x-test]=xxPassive visual notifications for the user.xx
 Comment[zh_CN]=为用户提供被动出现的视觉通知。
 Comment[zh_TW]=給使用者的被動視覺通知。
 X-KDE-ServiceTypes=Plasma/DataEngine
