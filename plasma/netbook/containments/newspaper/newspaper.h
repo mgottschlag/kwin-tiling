@@ -49,9 +49,6 @@ public:
                         const QStyleOptionGraphicsItem *option,
                         const QRect &contentsRect);
 
-    QList<QAction*> contextualActions();
-
-
 
 private slots:
 
@@ -71,7 +68,6 @@ private:
     Qt::Orientation m_orientation;
     Plasma::FrameSvg *m_background;
     AppletOverlay *m_appletOverlay;
-    QList<QAction*> m_actions;
 };
 
 

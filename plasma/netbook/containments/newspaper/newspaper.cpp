@@ -63,24 +63,11 @@ Newspaper::Newspaper(QObject *parent, const QVariantList &args)
     connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
             this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
 
-    //FIXME:eh, actually useless for a custom containment...
     connect(this, SIGNAL(toolBoxVisibilityChanged(bool)), this, SLOT(updateConfigurationMode(bool)));
-
-    //FIXME: this thing is temporary
-    QAction *config = new QAction(i18n("configuration mode"), this);
-    config->setCheckable(true);
-    connect(config, SIGNAL(toggled(bool)), this, SLOT(updateConfigurationMode(bool)));
-    m_actions.append(config);
 }
 
 Newspaper::~Newspaper()
 {
-}
-
-//FIXME: this must die
-QList<QAction*> Newspaper::contextualActions()
-{
-    return m_actions;
 }
 
 void Newspaper::init()
