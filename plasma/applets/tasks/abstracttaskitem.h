@@ -182,6 +182,7 @@ protected:
     virtual void updateTask(::TaskManager::TaskChanges changes) = 0; // pure virtual function
     virtual void updateToolTip() = 0; // pure virtual function
     QString expanderElement() const;
+    void stopWindowHoverEffect();
 
 protected Q_SLOTS:
     /** Event compression **/

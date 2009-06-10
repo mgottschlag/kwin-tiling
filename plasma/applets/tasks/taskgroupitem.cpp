@@ -1128,10 +1128,10 @@ void TaskGroupItem::wheelEvent(QGraphicsSceneWheelEvent *event)
     if (event->delta() < 0) {
         m_activeTaskIndex++;
         if (m_activeTaskIndex >= subTasks) {
-            m_activeTaskIndex = 0;
+            m_activeTaskIndex = 0; // last item is spacer
         }
-        //mouse wheel up
     } else {
+        //mouse wheel up
         m_activeTaskIndex--;
         if (m_activeTaskIndex < 0) {
             m_activeTaskIndex = subTasks - 1; //last item is a spacer
@@ -1141,6 +1141,7 @@ void TaskGroupItem::wheelEvent(QGraphicsSceneWheelEvent *event)
     //kDebug() << "Wheel event m_activeTaskIndex: " << m_activeTaskIndex << " of " << subTasks;
     AbstractTaskItem *taskItem = selectSubTask(m_activeTaskIndex);
     if (taskItem) {
+        stopWindowHoverEffect();
         taskItem->activate();
     }
 }

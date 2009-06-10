@@ -281,21 +281,7 @@ void AbstractTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event)
 
-    if (parentGroup()) {
-        if (m_hoverEffectTimerId) {
-            killTimer(m_hoverEffectTimerId);
-            m_hoverEffectTimerId = 0;
-        }
-
-#ifdef Q_WS_X11
-        Display *dpy = QX11Info::display();
-        if (m_applet->view()) {
-            const WId winId = m_applet->view()->winId();
-            Atom atom = XInternAtom(dpy, "_KDE_WINDOW_HIGHLIGHT", False);
-            XDeleteProperty(dpy, winId, atom);
-        }
-#endif
-    }
+     stopWindowHoverEffect();
 
     QString backgroundPrefix;
     if (m_flags & TaskWantsAttention) {
@@ -309,6 +295,27 @@ void AbstractTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     }
 
     fadeBackground(backgroundPrefix, 150, false);
+}
+
+void AbstractTaskItem::stopWindowHoverEffect()
+{
+    if (!parentGroup()) {
+        return;
+    }
+
+    if (m_hoverEffectTimerId) {
+        killTimer(m_hoverEffectTimerId);
+        m_hoverEffectTimerId = 0;
+    }
+
+#ifdef Q_WS_X11
+    Display *dpy = QX11Info::display();
+    if (m_applet->view()) {
+        const WId winId = m_applet->view()->winId();
+        Atom atom = XInternAtom(dpy, "_KDE_WINDOW_HIGHLIGHT", False);
+        XDeleteProperty(dpy, winId, atom);
+    }
+#endif
 }
 
 void AbstractTaskItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
