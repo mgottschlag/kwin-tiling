@@ -619,15 +619,14 @@ bool PanelView::isHorizontal() const
 void PanelView::pinchContainmentToCurrentScreen()
 {
     kDebug() << "pinching to current screen";
-    disconnect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(pinchContainmentToCurrentScreen()));
     QRect screenRect = Kephal::ScreenUtils::screenGeometry(containment()->screen());
     pinchContainment(screenRect);
-    connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(pinchContainmentToCurrentScreen()));
 }
 
 void PanelView::pinchContainment(const QRect &screenGeom)
 {
     kDebug() << "**************************** pinching" << screenGeom << m_lastSeenSize;
+    disconnect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(pinchContainmentToCurrentScreen()));
     bool horizontal = isHorizontal();
 
     int sw = screenGeom.width();
@@ -676,9 +675,15 @@ void PanelView::pinchContainment(const QRect &screenGeom)
             if (horizontal) {
                 c->setMaximumSize(sw, max.height());
                 c->resize(sw, c->geometry().height());
+                if (min.width() == max.width()) {
+                    c->setMinimumSize(sw, min.height());
+                }
             } else {
                 c->setMaximumSize(max.width(), sh);
                 c->resize(c->geometry().width(), sh);
+                if (min.height() == max.height()) {
+                    c->setMinimumSize(min.width(), sh);
+                }
             }
         }
     }
@@ -762,6 +767,7 @@ void PanelView::pinchContainment(const QRect &screenGeom)
         m_panelController->setOffset(m_offset);
     }
 
+    connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(pinchContainmentToCurrentScreen()));
     kDebug() << "Done pinching, containement's geom" << c->geometry() << "own geom" << geometry();
 }
 
