@@ -92,8 +92,7 @@ void NotifierView::mouseMoveEvent(QMouseEvent *event)
     const QModelIndex itemUnderMouse = indexAt(event->pos());
     if (itemUnderMouse != m_hoveredIndex && itemUnderMouse.isValid() &&
         state() == NoState) {
-        update(itemUnderMouse);
-        update(m_hoveredIndex);
+        update();
         m_hoveredIndex = itemUnderMouse;
         setCurrentIndex(m_hoveredIndex);
     } else if (!itemUnderMouse.isValid()) {
@@ -197,13 +196,14 @@ void NotifierView::paintEvent(QPaintEvent *event)
     while (it.hasNext()) {
         it.next();
         QRect itemRect = it.value();
-        if (event->region().contains(itemRect)) {
+	QRect rect(itemRect.x(), itemRect.y() - verticalOffset(), itemRect.width(), itemRect.height()); 
+        if (event->region().contains(rect)) {
             QModelIndex index = it.key();
             if (model()->hasChildren(index)) {
-                //kDebug()<<"header"<<itemRect;
-                paintHeaderItem(painter, itemRect, index);
+                //kDebug()<<"header"<<rect;
+                paintHeaderItem(painter, rect, index);
             } else {
-                paintItem(painter, itemRect, index);
+                paintItem(painter, rect, index);
             }
         }
     }
