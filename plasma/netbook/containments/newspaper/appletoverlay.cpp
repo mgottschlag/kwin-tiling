@@ -79,7 +79,7 @@ void AppletOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     Q_UNUSED(widget)
 
     QColor c = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-    c.setAlphaF(0.3);
+    c.setAlphaF(0.25);
 
     painter->fillRect(option->exposedRect, c);
 
@@ -87,9 +87,15 @@ void AppletOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
         QRectF geom = m_applet->geometry();
         //FIXME: calculate the offset ONE time, mmkay?
         QPointF offset = m_newspaper->m_mainWidget->pos() + m_newspaper->m_scrollWidget->pos();
-        geom.moveTopLeft(geom.topLeft() + offset);
-        c.setAlphaF(0.5);
-        painter->fillRect(geom, c);
+        //FIXME: why 4,4 (some layout margins not taken into account i suppose)?
+        geom.moveTopLeft(geom.topLeft() + offset + QPoint(4,4));
+        geom = geom.intersected(m_newspaper->m_scrollWidget->geometry());
+        c.setAlphaF(0.3);
+        QPainterPath p = Plasma::PaintUtils::roundedRectangle(geom, 4);
+        painter->save();
+        painter->setRenderHint(QPainter::Antialiasing, true);
+        painter->fillPath(p, c);
+        painter->restore();
     }
 }
 
@@ -100,6 +106,7 @@ void AppletOverlay::mousePressEvent(QGraphicsSceneMouseEvent *event)
         showSpacer(event->pos());
         if (m_spacerLayout) {
             m_spacerLayout->removeItem(m_applet);
+            m_applet->raise();
         }
         if (m_spacer) {
             m_spacer->setMinimumHeight(m_applet->size().height());
