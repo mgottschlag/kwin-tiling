@@ -88,9 +88,9 @@ PlasmaApp* PlasmaApp::self()
 
 PlasmaApp::PlasmaApp()
     : KUniqueApplication(),
-
       m_corona(0),
       m_appletBrowser(0),
+      m_controllerDialog(0),
       m_zoomLevel(Plasma::DesktopZoom),
       m_panelHidden(0)
 {
@@ -930,23 +930,25 @@ void PlasmaApp::zoomOut(Plasma::Containment *)
 
 void PlasmaApp::setControllerVisible(bool show)
 {
-    if (show && !m_controllerDialog) {
-        m_controllerDialog = new Plasma::Dialog;
-        QVBoxLayout *layout = new QVBoxLayout(m_controllerDialog);
+    if (show) {
+        if (!m_controllerDialog) {
+            m_controllerDialog = new Plasma::Dialog;
+            QVBoxLayout *layout = new QVBoxLayout(m_controllerDialog);
 
-        foreach (QAction *action, m_corona->actions()) {
+            foreach (QAction *action, m_corona->actions()) {
+                ToolButton *actionButton = new ToolButton(m_controllerDialog);
+                actionButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+                actionButton->setDefaultAction(action);
+                layout->addWidget(actionButton);
+            }
+
             ToolButton *actionButton = new ToolButton(m_controllerDialog);
             actionButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-            actionButton->setDefaultAction(action);
+            actionButton->setIcon(KIcon("configure"));
+            actionButton->setText(i18n("Configure Plasma..."));
             layout->addWidget(actionButton);
+            connect(actionButton, SIGNAL(clicked()), this, SLOT(createConfigurationInterface()));
         }
-
-        ToolButton *actionButton = new ToolButton(m_controllerDialog);
-        actionButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-        actionButton->setIcon(KIcon("configure"));
-        actionButton->setText(i18n("Configure Plasma..."));
-        layout->addWidget(actionButton);
-        connect(actionButton, SIGNAL(clicked()), this, SLOT(createConfigurationInterface()));
 
         m_controllerDialog->show();
     } else if (!show) {
