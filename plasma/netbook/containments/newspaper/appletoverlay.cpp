@@ -168,13 +168,13 @@ void AppletOverlay::showSpacer(const QPointF &pos)
         return;
     }
 
-    QPointF offset = m_newspaper->m_mainWidget->pos() + m_newspaper->m_scrollWidget->pos();
+    QPointF translatedPos = pos - m_newspaper->m_mainWidget->pos() - m_newspaper->m_scrollWidget->pos();
 
     QGraphicsLinearLayout *lay;
 
-    if (m_newspaper->m_leftLayout->geometry().contains(pos-offset)) {
+    if (m_newspaper->m_leftLayout->geometry().contains(translatedPos)) {
         lay = m_newspaper->m_leftLayout;
-    } else if (m_newspaper->m_rightLayout->geometry().contains(pos-offset)) {
+    } else if (m_newspaper->m_rightLayout->geometry().contains(translatedPos)) {
         lay = m_newspaper->m_rightLayout;
     } else {
         m_spacerLayout = 0;
@@ -190,7 +190,7 @@ void AppletOverlay::showSpacer(const QPointF &pos)
     }
 
     //lucky case: the spacer is already in the right position
-    if (m_spacer && m_spacer->geometry().contains(pos)) {
+    if (m_spacer && m_spacer->geometry().contains(translatedPos)) {
         return;
     }
 
@@ -200,24 +200,29 @@ void AppletOverlay::showSpacer(const QPointF &pos)
         QRectF siblingGeometry = lay->itemAt(i)->geometry();
 
         if (m_newspaper->m_orientation == Qt::Horizontal) {
-            qreal middle = (siblingGeometry.left() + siblingGeometry.right()) / 2.0;
-            if (pos.x() < middle) {
+            qreal middle = siblingGeometry.center().x();
+            if (translatedPos.x() < middle) {
                 insertIndex = i;
                 break;
-            } else if (pos.x() <= siblingGeometry.right()) {
+            } else if (translatedPos.x() <= siblingGeometry.right()) {
                 insertIndex = i + 1;
                 break;
             }
-        } else { // Plasma::Vertical
-            qreal middle = (siblingGeometry.top() + siblingGeometry.bottom()) / 2.0;
-            if (pos.y() < middle) {
+        } else { // Vertical
+            qreal middle = siblingGeometry.center().y();
+
+            if (translatedPos.y() < middle) {
                 insertIndex = i;
                 break;
-            } else if (pos.y() <= siblingGeometry.bottom()) {
+            } else if (translatedPos.y() <= siblingGeometry.bottom()) {
                 insertIndex = i + 1;
                 break;
             }
         }
+    }
+
+    if (m_spacerLayout == lay && m_spacerIndex < insertIndex) {
+        --insertIndex;
     }
 
     m_spacerIndex = insertIndex;
@@ -247,6 +252,7 @@ void AppletOverlay::scrollTimeout()
         }
     } else {
         if (m_newspaper->m_mainWidget->pos().y() < 0) {
+            kWarning()<<m_newspaper->m_mainWidget->geometry();
             m_newspaper->m_mainWidget->moveBy(0, 5);
             m_applet->moveBy(0, -5);
         }
