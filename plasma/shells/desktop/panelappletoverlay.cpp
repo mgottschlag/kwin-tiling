@@ -201,7 +201,7 @@ void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
         m_layout->removeItem(m_applet);
         m_layout->insertItem(m_index, m_spacer);
     }
-    m_applet->setZValue(m_applet->zValue() + 1);
+    m_applet->raise();
 
     if (m_orientation == Qt::Horizontal) {
         m_offset = geometry().x() - m_origin.x();
