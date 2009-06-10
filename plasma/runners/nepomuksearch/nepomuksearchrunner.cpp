@@ -111,15 +111,14 @@ void Nepomuk::SearchRunner::run( const Plasma::RunnerContext&, const Plasma::Que
     Nepomuk::Resource res = match.data().value<Nepomuk::Resource>();
     KUrl url;
 
-    if( res.hasType( Soprano::Vocabulary::NAO::Tag() ) ) {
-        url.setProtocol( "nepomuksearch" );
-        url.setPath( QString( "/hasTag:\"%1\"" ).arg( res.genericLabel() ) );
-     }
-    else {
+    if (res.hasType( Soprano::Vocabulary::NAO::Tag())) {
+        url.setProtocol("nepomuksearch");
+        url.setPath(QString("/hasTag:\"%1\"").arg(res.genericLabel()));
+    } else {
         url = res.resourceUri();
     }
 
-    (void)new KRun( url, 0 );
+    (void)new KRun(url, 0);
 }
 
 K_EXPORT_PLASMA_RUNNER(nepomuksearchrunner, Nepomuk::SearchRunner)
