@@ -1,6 +1,10 @@
 [Desktop Entry]
 Name=Search Box
+Name[sv]=Sökruta
+Name[uk]=Панель пошуку
 Comment=Search Box for a given RunnerManager
+Comment[sv]=Sökruta för en given hanterare av programkörning
+Comment[uk]=Панель пошуку для вказаного Керування запуском
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/Applet

@@ -2,7 +2,7 @@
 Name=Search and Launch Engine
 Comment=Engine to handle queries to SAL containment
 Type=Service
- 
+
 X-KDE-ServiceTypes=Plasma/DataEngine
 X-KDE-Library=plasma_engine_searchlaunch
 X-Plasma-EngineName=searchlaunch
