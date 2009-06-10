@@ -315,7 +315,7 @@ void NotifierDialog::showTeardownError()
 void NotifierDialog::storageEjectDone(Solid::ErrorType error, QVariant errorData)
 {
     if (error && errorData.isValid()) {
-        KMessageBox::error(0, i18n("Cannot eject the disc.\nOne or more files on this disc are open within an application."), QString());
+        QTimer::singleShot(0, this, SLOT(showStorageEjectDoneError()));
     } else {
         m_notifier->changeNotifierIcon("dialog-ok");
         m_notifier->update();
@@ -324,6 +324,11 @@ void NotifierDialog::storageEjectDone(Solid::ErrorType error, QVariant errorData
     //show the message only one time
     disconnect(sender(), SIGNAL(ejectDone(Solid::ErrorType, QVariant, const QString &)),
                this, SLOT(storageEjectDone(Solid::ErrorType, QVariant)));
+}
+
+void NotifierDialog::showStorageEjectDoneError()
+{
+    KMessageBox::error(0, i18n("Cannot eject the disc.\nOne or more files on this disc are open within an application."), QString());
 }
 
 QModelIndex NotifierDialog::indexForUdi(const QString &udi) const

@@ -155,9 +155,14 @@ namespace Notifier
 
       private slots:
           /**
-          * @internal called when a teardown error occurs
-          */
+           * @internal called when a teardown error occurs
+           */
           void showTeardownError();
+
+          /**
+           * @internal called when an eject error occurs
+           */
+          void showStorageEjectDoneError();
 
           /**
           * @internal slot called when user has click on a item in the dialog
