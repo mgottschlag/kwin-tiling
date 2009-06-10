@@ -62,7 +62,8 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_faceCache(QPixmap()),
       m_handsCache(QPixmap()),
       m_glassCache(QPixmap()),
-      m_secondHandUpdateTimer(0)
+      m_secondHandUpdateTimer(0),
+      m_animateSeconds(false)
 {
     KGlobal::locale()->insertCatalog("libplasmaclock");
 
@@ -105,6 +106,8 @@ void Clock::init()
 
 void Clock::connectToEngine()
 {
+    m_lastTimeSeen = QTime();
+
     Plasma::DataEngine* timeEngine = dataEngine("time");
     if (m_showSecondHand) {
         timeEngine->connectSource(currentTimezone(), this, 500);
@@ -177,6 +180,7 @@ void Clock::dataUpdated(const QString& source, const Plasma::DataEngine::Data &d
         m_secondHandUpdateTimer->stop();
     }
 
+    m_animateSeconds = true;
     m_lastTimeSeen = m_time;
     update();
 
@@ -309,7 +313,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                 connect(m_secondHandUpdateTimer, SIGNAL(timeout()), this, SLOT(moveSecondHand()));
             }
 
-            if (!m_secondHandUpdateTimer->isActive()) {
+            if (m_animateSeconds && !m_secondHandUpdateTimer->isActive()) {
                 //kDebug() << "starting second hand movement";
                 m_secondHandUpdateTimer->start(50);
                 m_animationStart = QTime::currentTime().msec();
@@ -328,6 +332,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
                 if (elapsed > runTime) {
                     m_secondHandUpdateTimer->stop();
+                    m_animateSeconds = false;
                 } else {
                     seconds += -anglePerSec + (anglePerSec * val);
                 }

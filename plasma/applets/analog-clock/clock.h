@@ -96,6 +96,7 @@ class Clock : public ClockApplet
         QPixmap m_glassCache;
         qreal m_verticalTranslation;
         QTimer *m_secondHandUpdateTimer;
+        bool m_animateSeconds;
         int m_animationStart;
         /// Designer Config file
         Ui::clockConfig ui;
