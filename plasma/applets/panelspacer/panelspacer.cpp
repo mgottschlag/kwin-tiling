@@ -37,9 +37,10 @@ PanelSpacer::PanelSpacer(QObject *parent, const QVariantList &args)
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
     setHasConfigurationInterface(false);
     QAction *toggleFixed = new QAction(i18n("Set Flexible Size"), this);
+    toggleFixed->setCheckable(true);
     m_actions.append(toggleFixed);
     addAction("toggle fixed", toggleFixed);
-    connect(toggleFixed, SIGNAL(triggered()), this, SLOT(toggleFixed()));
+    connect(toggleFixed, SIGNAL(toggled(bool)), this, SLOT(toggleFixed(bool)));
     setCacheMode(DeviceCoordinateCache);
 }
 
@@ -47,18 +48,14 @@ PanelSpacer::~PanelSpacer()
 {
 }
 
-QList<QAction*> PanelSpacer::contextualActions()
+QList<QAction *> PanelSpacer::contextualActions()
 {
-    if (m_fixedSize) {
-        return m_actions;
-    } else {
-        return QList<QAction *>();
-    }
+    return m_actions;
 }
 
-void PanelSpacer::toggleFixed()
+void PanelSpacer::toggleFixed(bool flexible)
 {
-    m_fixedSize = !m_fixedSize;
+    m_fixedSize = !flexible;
 
     if (!m_fixedSize) {
         setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
@@ -79,6 +76,10 @@ void PanelSpacer::init()
     }
 
     m_fixedSize = config().readEntry("FixedSize", false);
+    QAction *fixedAction = action("toggle fixed");
+    if (fixedAction) {
+        fixedAction->setChecked(!m_fixedSize);
+    }
 }
 
 void PanelSpacer::constraintsEvent(Plasma::Constraints constraints)
@@ -113,7 +114,11 @@ void PanelSpacer::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::SizeConstraint) {
         m_fixedSize = ((formFactor() == Plasma::Horizontal && maximumWidth() == minimumWidth()) || (formFactor() == Plasma::Vertical && maximumHeight() == minimumHeight()));
         config().writeEntry("FixedSize", m_fixedSize);
-        m_actions.first()->setEnabled(m_fixedSize);
+
+        QAction *fixedAction = action("toggle fixed");
+        if (fixedAction) {
+            fixedAction->setChecked(!m_fixedSize);
+        }
     }
 }
 
