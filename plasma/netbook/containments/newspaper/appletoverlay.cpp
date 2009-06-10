@@ -78,15 +78,18 @@ void AppletOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 {
     Q_UNUSED(widget)
 
-    //FIXME: Plasma::Theme
-    painter->fillRect(option->exposedRect, QColor(0,0,0,30));
+    QColor c = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    c.setAlphaF(0.3);
+
+    painter->fillRect(option->exposedRect, c);
 
     if (m_applet) {
         QRectF geom = m_applet->geometry();
         //FIXME: calculate the offset ONE time, mmkay?
         QPointF offset = m_newspaper->m_mainWidget->pos() + m_newspaper->m_scrollWidget->pos();
         geom.moveTopLeft(geom.topLeft() + offset);
-        painter->fillRect(geom, QColor(0,0,0,70));
+        c.setAlphaF(0.5);
+        painter->fillRect(geom, c);
     }
 }
 
@@ -252,7 +255,6 @@ void AppletOverlay::scrollTimeout()
         }
     } else {
         if (m_newspaper->m_mainWidget->pos().y() < 0) {
-            kWarning()<<m_newspaper->m_mainWidget->geometry();
             m_newspaper->m_mainWidget->moveBy(0, 5);
             m_applet->moveBy(0, -5);
         }
