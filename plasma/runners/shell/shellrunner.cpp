@@ -76,17 +76,15 @@ void ShellRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryM
 {
     QMutexLocker lock(bigLock());
     Q_UNUSED(match);
-    Q_UNUSED(context);
 
     // filter match's id to remove runner's name
     // as this is the command we want to run
-    const QString command = match.id().split("_")[1];
 
     if (m_enabled) {
         if (m_inTerminal) {
-            KToolInvocation::invokeTerminal(command);
+            KToolInvocation::invokeTerminal(context.query());
         } else {
-            KRun::runCommand(command, NULL);
+            KRun::runCommand(context.query(), NULL);
         }
     }
 
