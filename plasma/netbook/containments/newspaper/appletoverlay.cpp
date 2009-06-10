@@ -175,13 +175,11 @@ void AppletOverlay::showSpacer(const QPointF &pos)
 
     QGraphicsLinearLayout *lay;
 
-    if (m_newspaper->m_leftLayout->geometry().contains(translatedPos)) {
+    if ((m_newspaper->m_orientation == Qt::Horizontal && translatedPos.y() < m_newspaper->m_leftLayout->geometry().bottom()) ||
+        (m_newspaper->m_orientation == Qt::Vertical && translatedPos.x() < m_newspaper->m_leftLayout->geometry().right())) {
         lay = m_newspaper->m_leftLayout;
-    } else if (m_newspaper->m_rightLayout->geometry().contains(translatedPos)) {
-        lay = m_newspaper->m_rightLayout;
     } else {
-        m_spacerLayout = 0;
-        return;
+        lay = m_newspaper->m_rightLayout;
     }
 
     if (pos == QPoint()) {
