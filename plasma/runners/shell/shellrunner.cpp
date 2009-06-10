@@ -63,6 +63,7 @@ void ShellRunner::match(Plasma::RunnerContext &context)
         context.type() == Plasma::RunnerContext::ShellCommand)  {
         const QString term = context.query();
         Plasma::QueryMatch match(this);
+        match.setId(term);
         match.setType(Plasma::QueryMatch::ExactMatch);
         match.setIcon(KIcon("system-run"));
         match.setText(i18n("Run %1", term));
@@ -75,11 +76,17 @@ void ShellRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryM
 {
     QMutexLocker lock(bigLock());
     Q_UNUSED(match);
+    Q_UNUSED(context);
+
+    // filter match's id to remove runner's name
+    // as this is the command we want to run
+    const QString command = match.id().split("_")[1];
+
     if (m_enabled) {
         if (m_inTerminal) {
-            KToolInvocation::invokeTerminal(context.query());
+            KToolInvocation::invokeTerminal(command);
         } else {
-            KRun::runCommand(context.query(), NULL);
+            KRun::runCommand(command, NULL);
         }
     }
 
