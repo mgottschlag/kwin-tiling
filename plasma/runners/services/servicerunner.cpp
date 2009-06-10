@@ -28,7 +28,7 @@
 #include <KServiceTypeTrader>
 
 ServiceRunner::ServiceRunner(QObject *parent, const QVariantList &args)
-    : Plasma::AbstractRunner( parent )
+    : Plasma::AbstractRunner(parent, args)
 {
     Q_UNUSED(args)
 
