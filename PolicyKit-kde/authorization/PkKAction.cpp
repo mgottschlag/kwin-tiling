@@ -293,7 +293,7 @@ void PkKAction::on_grantPB_clicked()
 
 void PkKAction::on_blockPB_clicked()
 {
-    PkKBlockGrantAuth *frm = new PkKBlockGrantAuth(m_pfe, true, this);
+    QPointer<PkKBlockGrantAuth> frm = new PkKBlockGrantAuth(m_pfe, true, this);
     frm->exec();
     delete frm;
 }
