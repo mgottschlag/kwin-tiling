@@ -68,7 +68,6 @@ QGraphicsWidget *SearchBox::graphicsWidget()
     m_search->nativeWidget()->setClickMessage(i18n("Enter your query here"));
     connect(m_search, SIGNAL(returnPressed()), this, SLOT(query()));
 
-
     m_icon = new Plasma::IconWidget();
     m_icon->setIcon("page-zoom");
     m_icon->setPreferredSize(KIconLoader::SizeSmallMedium,
@@ -81,6 +80,7 @@ QGraphicsWidget *SearchBox::graphicsWidget()
 
     m_widget = new QGraphicsWidget(this);
     m_widget->setLayout(layout);
+    m_widget->setPreferredWidth(300);
 
     return m_widget;
 }
