@@ -583,7 +583,8 @@ void PlasmaApp::showAppletBrowser()
     }
 
     foreach (DesktopView *view, m_desktops) {
-        if (view->containment() == containment && view->isDashboardVisible()) {
+        if (view->isDashboardVisible() &&
+            (view->containment() == containment || view->dashboardContainment() == containment)) {
             // the dashboard will pick this one up!
             return;
         }
