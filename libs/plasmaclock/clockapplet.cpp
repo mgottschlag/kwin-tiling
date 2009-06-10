@@ -644,17 +644,17 @@ void ClockApplet::setCurrentTimezone(const QString &tz)
     }
 
     if (tz == localTimezone()) {
-        // catch peple accidentally passing in the translation of "Local"
+        // catch people accidentally passing in the translation of "Local"
         d->timezone = localTimezoneUntranslated();
     } else {
         d->timezone = tz;
     }
 
-    d->forceTzDisplay = tz != d->defaultTimezone;
+    d->forceTzDisplay = d->timezone != d->defaultTimezone;
     d->setPrettyTimezone();
 
     KConfigGroup cg = config();
-    cg.writeEntry("timezone", tz);
+    cg.writeEntry("timezone", d->timezone);
     emit configNeedsSaving();
 }
 
