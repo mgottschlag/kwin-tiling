@@ -265,7 +265,7 @@ void Interface::themeUpdated()
                                       .arg(buttonBgColor.red())
                                       .arg(buttonBgColor.green())
                                       .arg(buttonBgColor.blue())
-                                      .arg(theme->color(Plasma::Theme::HighlightColor).name(), "50%");
+                                      .arg(theme->color(Plasma::Theme::BackgroundColor).name(), "50%");
     buttonBgColor = theme->color(Plasma::Theme::TextColor);
     buttonStyleSheet += QString("QToolButton:hover { border: 2px solid %1; }")
                                .arg(theme->color(Plasma::Theme::HighlightColor).name());
