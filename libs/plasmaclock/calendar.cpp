@@ -210,6 +210,7 @@ void Calendar::dateUpdated(const QDate &date)
 {
     QString formatted = KGlobal::locale()->formatDate( date,  KLocale::ShortDate );
     d->month->setText(d->calendarTable->calendar()->monthName(date));
+    d->month->setMinimumSize(static_cast<QToolButton*>(d->month->widget())->sizeHint());
     d->year->setText(QString::number(d->calendarTable->calendar()->year(date)));
     d->dateText->setText(formatted);
 
