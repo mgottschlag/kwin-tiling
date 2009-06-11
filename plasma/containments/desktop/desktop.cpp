@@ -61,8 +61,6 @@ using namespace Plasma;
 DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
       m_addPanelsMenu(0),
-      m_lockDesktopAction(0),
-      m_appletBrowserAction(0),
       m_addPanelAction(0),
       m_runCommandAction(0),
       m_lockScreenAction(0),
@@ -93,10 +91,12 @@ DefaultDesktop::~DefaultDesktop()
 
 void DefaultDesktop::constraintsEvent(Plasma::Constraints constraints)
 {
-    if (constraints & Plasma::ImmutableConstraint && m_appletBrowserAction) {
-        // we need to update the menu items that have already been created
-        bool locked = immutability() != Mutable;
-        m_addPanelAction->setVisible(!locked);
+    if (constraints & Plasma::ImmutableConstraint) {
+        if (m_addPanelAction) {
+            // we need to update the menu items that have already been created
+            bool locked = immutability() != Mutable;
+            m_addPanelAction->setVisible(!locked);
+        }
     }
 
     if (constraints & Plasma::SizeConstraint) {
@@ -223,11 +223,7 @@ void DefaultDesktop::lockScreen()
 
 QList<QAction*> DefaultDesktop::contextualActions()
 {
-    //TODO: should we offer "Switch User" here?
-
-    if (!m_appletBrowserAction) {
-        m_appletBrowserAction = action("add widgets");
-
+    if (!m_runCommandAction) {
         KPluginInfo::List panelPlugins = listContainmentsOfType("panel");
 
         if (panelPlugins.size() == 1) {
@@ -253,14 +249,13 @@ QList<QAction*> DefaultDesktop::contextualActions()
             }
         }
 
-        m_addPanelAction->setIcon(KIcon("list-add"));
+        if (m_addPanelAction) {
+            m_addPanelAction->setIcon(KIcon("list-add"));
+        }
 
         m_runCommandAction = new QAction(i18n("Run Command..."), this);
-        connect(m_runCommandAction, SIGNAL(triggered(bool)), this, SLOT(runCommand()));
         m_runCommandAction->setIcon(KIcon("system-run"));
-
-        m_setupDesktopAction = action("activity settings");
-        m_lockDesktopAction = action("lock widgets");
+        connect(m_runCommandAction, SIGNAL(triggered(bool)), this, SLOT(runCommand()));
 
         m_lockScreenAction = new QAction(i18n("Lock Screen"), this);
         m_lockScreenAction->setIcon(KIcon("system-lock-screen"));
@@ -281,14 +276,29 @@ QList<QAction*> DefaultDesktop::contextualActions()
         actions.append(m_runCommandAction);
     }
 
-    actions.append(m_appletBrowserAction);
-    actions.append(m_addPanelAction);
-    actions.append(m_setupDesktopAction);
-    if (screen() == -1) {
-        actions.append(action("remove"));
+    QAction *appletBrowserAction = action("add widgets");
+    if (appletBrowserAction) {
+        actions.append(appletBrowserAction);
     }
 
-    actions.append(m_lockDesktopAction);
+    if (m_addPanelAction) {
+        actions.append(m_addPanelAction);
+    }
+
+    QAction *setupDesktopAction = action("activity settings");
+    if (setupDesktopAction) {
+        actions.append(setupDesktopAction);
+    }
+
+    QAction *removeAction = action("remove");
+    if (screen() == -1 && removeAction) {
+        actions.append(removeAction);
+    }
+
+    QAction *lockDesktopAction = action("lock widgets");
+    if (lockDesktopAction) {
+        actions.append(lockDesktopAction);
+    }
 
     actions.append(m_separator);
 
