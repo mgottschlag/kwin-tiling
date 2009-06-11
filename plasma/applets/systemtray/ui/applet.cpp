@@ -429,12 +429,12 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
         painter->setClipRect(lastRect);
         d->background->paintFrame(painter, r, QRectF(QPointF(0, 0), r.size()));
 
-        if (formFactor() == Plasma::Vertical) {
-            d->background->paint(painter, lastRect.topLeft(), "horizontal-separator");
-        } else if (QApplication::layoutDirection() == Qt::RightToLeft) {
-            d->background->paint(painter, lastRect.topRight(), "vertical-separator");
-        } else {
-            d->background->paint(painter, lastRect.topLeft(), "vertical-separator");
+        if (formFactor() == Plasma::Vertical && d->background->hasElement("horizontal-separator")) {
+            d->background->paint(painter, QRect(lastRect.topLeft(), QSize(lastRect.width(), d->background->elementRect("horizontal-separator").height())), "horizontal-separator");
+        } else if (QApplication::layoutDirection() == Qt::RightToLeft && d->background->hasElement("vertical-separator")) {
+            d->background->paint(painter, QRect(lastRect.topRight(), QSize(d->background->elementRect("vertical-separator").width(), lastRect.height())), "vertical-separator");
+        } else if (d->background->hasElement("vertical-separator")) {
+            d->background->paint(painter, QRect(lastRect.topLeft(), QSize(d->background->elementRect("vertical-separator").width(), lastRect.height())), "vertical-separator");
         }
     }
 
