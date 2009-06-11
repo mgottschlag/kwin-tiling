@@ -68,6 +68,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_extenderVisible(false),
       m_controlsLayout(0),
       m_batteryLayout(0),
+      m_brightnessLayout(0),
       m_statusLabel(0),
       m_batteryLabel(0),
       m_profileLabel(0),
@@ -395,10 +396,11 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 
         Plasma::Label *brightnessLabel = new Plasma::Label(controls);
         brightnessLabel->setText(i18n("Screen Brightness"));
-        brightnessLabel->nativeWidget()->setWordWrap(false);
         m_controlsLayout->addItem(brightnessLabel, row, 0, 1, 3);
         brightnessLabel->nativeWidget()->setWordWrap(false);
         row++;
+
+        m_brightnessLayout = new QGraphicsLinearLayout();
 
         m_brightnessSlider = new Plasma::Slider(controls);
         m_brightnessSlider->setRange(0, 100);
@@ -412,7 +414,7 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 
         connect(notifier, SIGNAL(brightnessChanged(float)),
                 this, SLOT(updateSlider(float)));
-        m_controlsLayout->addItem(m_brightnessSlider, row, 1, 1, 1);
+        m_brightnessLayout->addItem(m_brightnessSlider);
 
         Plasma::IconWidget *brightnessIcon = new Plasma::IconWidget(controls);
         brightnessIcon->setIcon("ktip");
@@ -421,8 +423,8 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
         brightnessIcon->setDrawBackground(true);
         brightnessIcon->setMinimumSize(rowHeight, rowHeight);
         brightnessIcon->setMaximumSize(rowHeight, rowHeight);
-        m_controlsLayout->addItem(brightnessIcon, row, 2, 1, 1);
-        m_controlsLayout->setRowSpacing(row, 10);
+        m_brightnessLayout->addItem(brightnessIcon);
+        m_controlsLayout->addItem(m_brightnessLayout, row, 1, 1, 1);
         row++;
 
         m_profileLabel = new Plasma::Label(controls);
