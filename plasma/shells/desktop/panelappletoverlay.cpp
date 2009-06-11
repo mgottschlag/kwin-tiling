@@ -279,7 +279,9 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
             syncGeometry();
 
             if (m_spacer) {
-                m_layout->removeItem(m_spacer);
+                if (m_layout) {
+                    m_layout->removeItem(m_spacer);
+                }
                 m_spacer->deleteLater();
                 m_spacer = 0;
             }
@@ -289,10 +291,7 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
             pos += QPoint(m_offset, m_offset);
             g.moveTo(pos);
             m_applet->setGeometry(g);
-            m_layout->removeItem(m_spacer);
-            m_spacer->deleteLater();
             m_layout = 0;
-            m_spacer = 0;
             c->addApplet(m_applet, pos, true);
             m_applet->flushPendingConstraintsEvents();
             m_applet->setPos(pos);
