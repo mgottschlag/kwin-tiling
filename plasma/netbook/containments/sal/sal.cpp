@@ -47,8 +47,8 @@ SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
 
 SearchLaunch::~SearchLaunch()
 {
-    //KConfigGroup cg = config();
-    //m_stripWidget->save(cg);
+    KConfigGroup cg = config();
+    m_stripWidget->save(cg);
 
     delete runnermg;
     delete m_background;
@@ -245,6 +245,8 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 
             m_stripWidget = new StripWidget(runnermg, this);
             m_favourites->insertItem(1, m_stripWidget);
+            KConfigGroup cg = config();
+            m_stripWidget->restore(cg);
 
             // add our layouts to main vertical layout
             m_mainLayout->addItem(m_favourites);

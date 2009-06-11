@@ -195,6 +195,52 @@ void StripWidget::goLeft()
     createIcon(match, 0);
 }
 
-void StripWidget::save()
+void StripWidget::save(KConfigGroup &cg)
 {
+    kDebug() << "----------------> Saving Stuff...";
+
+    foreach(Plasma::QueryMatch *match, m_favouritesMatches) {
+        QString runnerId = match->runner()->id();
+
+        // Write now just saves one for tests. Later will save
+        // all the strip
+
+        //        KConfigGroup config(cg);
+        //        config.writeEntry("", );
+
+        cg.writeEntry("runnerid", runnerId);
+        cg.writeEntry("query", m_favouritesQueries.value(match));
+        cg.writeEntry("matchId", match->id());
+    }
+}
+
+void StripWidget::restore(KConfigGroup &cg)
+{
+    kDebug() << "----------------> Restoring Stuff...";
+
+    // right now only restore 1 favourite
+    QString runnerId = cg.readEntry("runnerid");
+    QString query = cg.readEntry("query");
+    QString matchId = cg.readEntry("matchId");
+
+    if (runnerId.isEmpty() || query.isEmpty() || matchId.isEmpty()) {
+        return;
+    }
+
+    // This is the "lazy mode". We do the queries again just for
+    // that runner (should be fast). This way we are able to put
+    // contacts and nepomuk stuff on the favourites strip.
+    // Later we can improve load time for specific runners (services)
+    // so we do not have to query again.
+
+    // perform the query
+    if (runnermg->execQuery(query, runnerId)) {
+        // find our match
+        Plasma::QueryMatch match(runnermg->searchContext()->match(matchId));
+
+        // we should verify some other saved information to avoid putting the
+        // wrong item if the search result is different!
+
+        add(match, query);
+    }
 }

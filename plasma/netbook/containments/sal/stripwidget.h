@@ -52,8 +52,8 @@ public:
     void add(Plasma::QueryMatch match, const QString &query);
     void remove(Plasma::IconWidget *favourite);
 
-public slots:
-    void save();
+    void save(KConfigGroup &cg);
+    void restore(KConfigGroup &cg);
 
 protected:
     void createIcon(Plasma::QueryMatch *match, int idx);
