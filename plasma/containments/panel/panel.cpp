@@ -186,12 +186,36 @@ QList<QAction*> Panel::contextualActions()
             }
         }
 
-        m_addPanelAction->setIcon(KIcon("list-add"));
+        if (m_addPanelAction) {
+            m_addPanelAction->setIcon(KIcon("list-add"));
+        }
+
         constraintsEvent(Plasma::ImmutableConstraint);
     }
 
     QList<QAction*> actions;
-    actions << action("add widgets") << m_addPanelAction << action("lock widgets") << m_configureAction << action("remove");
+
+    QAction *a = action("add widgets");
+    if (a) {
+        actions.append(a);
+    }
+
+    if (m_addPanelAction) {
+        actions.append(m_addPanelAction);
+    }
+
+    a = action("lock widgets");
+    if (a) {
+        actions.append(a);
+    }
+
+    actions.append(m_configureAction);
+
+    a = action("remove");
+    if (a) {
+        actions.append(a);
+    }
+
     return actions;
 }
 
