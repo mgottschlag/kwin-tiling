@@ -33,7 +33,7 @@ class AnalogClockConfig(QWidget,Ui_clockConfig):
         self.setupUi(self)
         self.connect(self.localTimeZone, SIGNAL("stateChanged(int)"), self, SLOT("slotLocalTimeZoneToggled(int)"))
 
-    @pyqtSignature("slotLocalTimeZoneToggled(int)")    
+    @pyqtSignature("slotLocalTimeZoneToggled(int)")
     def slotLocalTimeZoneToggled(self,b):
         self.timeZones.setDisabled(b)
 
@@ -50,7 +50,6 @@ class PyClockApplet(plasmascript.Applet):
         KGlobal.locale().insertCatalog("libplasmaclock")
 
         self.setHasConfigurationInterface(True)
-        self.resize(125, 125)
         self.setAspectRatioMode(Plasma.Square)
 
         self.timezone = ""
@@ -169,7 +168,7 @@ class PyClockApplet(plasmascript.Applet):
 
         self.dialog.show()
 
-    @pyqtSignature("configAccepted()")    
+    @pyqtSignature("configAccepted()")
     def configAccepted(self):
         cg = self.config()
 
@@ -248,7 +247,7 @@ class PyClockApplet(plasmascript.Applet):
             painter.setRenderHint(QPainter.Antialiasing, False)
 
             painter.pen = Plasma.Theme.defaultTheme().color(Plasma.Theme.TextColor)
-              
+
             painter.drawText(textRect.bottomLeft(), time)
 
         # Make sure we paint the second hand on top of the others
@@ -265,7 +264,7 @@ class PyClockApplet(plasmascript.Applet):
                 self.drawHand(painter, seconds, "SecondHandShadow",rect)
 
             painter.translate(-1,-3)
-        
+
         self.drawHand(painter, hours, "HourHand",rect)
         self.drawHand(painter, minutes, "MinuteHand",rect)
         if self.showSecondHand:

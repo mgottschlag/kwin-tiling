@@ -41,8 +41,6 @@ class Main < PlasmaScripting::Applet
   end
 
   def init
-    resize(600, 400)
-
     @page = Plasma::WebView.new(self)
     @page.page = Qt::WebPage.new(@page)
     @page.page.linkDelegationPolicy = Qt::WebPage::DelegateAllLinks

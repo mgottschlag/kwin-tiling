@@ -72,3 +72,4 @@ X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=true
 X-Plasma-API=ruby-script
 X-Plasma-MainScript=code/main.rb
+X-Plasma-DefaultSize=600,400

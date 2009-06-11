@@ -32,7 +32,7 @@ module RubyClock
 
 class Main < ClockApplet
 
-  slots :moveSecondHand, :configAccepted, 
+  slots :moveSecondHand, :configAccepted,
         'dataUpdated(QString, Plasma::DataEngine::Data)'
 
   def initialize(parent, args = nil)
@@ -40,7 +40,6 @@ class Main < ClockApplet
     KDE::Global.locale.insertCatalog("libplasmaclock")
 
     setHasConfigurationInterface(true)
-    resize(125, 125)
     setAspectRatioMode(Plasma::Square)
 
     @theme = Plasma::Svg.new(self)
@@ -74,7 +73,7 @@ class Main < ClockApplet
     timeEngine = dataEngine("time")
     if @showSecondHand
         timeEngine.connectSource(currentTimezone(), self, 500)
-    else 
+    else
         timeEngine.connectSource(currentTimezone(), self, 6000, Plasma::AlignToMinute)
     end
   end
@@ -203,7 +202,7 @@ class Main < ClockApplet
       p.setRenderHint(Qt::Painter::Antialiasing, false)
 
       p.pen = Plasma::Theme::defaultTheme.color(Plasma::Theme::TextColor)
-        
+
       p.drawText(textRect.bottomLeft, time)
     end
 
