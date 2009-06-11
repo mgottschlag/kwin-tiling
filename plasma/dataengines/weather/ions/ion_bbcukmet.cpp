@@ -271,7 +271,6 @@ bool UKMETIon::updateIonSource(const QString& source)
         // Look for places to match
         findPlace(sourceAction[2], source);
         return true;
-
     } else if (sourceAction[1] == "weather" && sourceAction.size() >= 3) {
         if (sourceAction.count() >= 3) {
             if (sourceAction[2].isEmpty()) {
@@ -552,7 +551,12 @@ void UKMETIon::observation_slotDataArrived(KIO::Job *job, const QByteArray &data
 void UKMETIon::observation_slotJobFinished(KJob *job)
 {
     setData(d->m_obsJobList[job], Data());
-    readObservationXMLData(d->m_obsJobList[job], *d->m_obsJobXml[job]);
+
+    QXmlStreamReader *reader = d->m_obsJobXml.value(job);
+    if (reader) {
+        readObservationXMLData(d->m_obsJobList[job], *reader);
+    }
+
     d->m_obsJobList.remove(job);
     delete d->m_obsJobXml[job];
     d->m_obsJobXml.remove(job);
