@@ -145,6 +145,7 @@ bool GlobalSettingsWidget::isChanged() const
 void GlobalSettingsWidget::setModel(KHotkeysModel *model)
     {
     _model = model;
+    doCopyFromObject();
     }
 
 
