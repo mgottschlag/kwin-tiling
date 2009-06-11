@@ -36,19 +36,21 @@ const QDBusArgument &operator<<(QDBusArgument &argument, const ExperimentalKDbus
 // Retrieve the ImageStruct data from the D-BUS argument
 const QDBusArgument &operator>>(const QDBusArgument &argument, ExperimentalKDbusImageStruct &icon)
 {
-    qint32 width;
-    qint32 height;
+    qint32 width = 0;
+    qint32 height = 0;
     QByteArray data;
 
-    argument.beginStructure();
-    kDebug() << "begun structure";
-    argument >> width;
-    kDebug() << width;
-    argument >> height;
-    kDebug() << height;
-    argument >> data;
-    kDebug() << data.size();
-    argument.endStructure();
+    if (argument.currentType() == QDBusArgument::StructureType) {
+        argument.beginStructure();
+        //kDebug() << "begun structure";
+        argument >> width;
+        //kDebug() << width;
+        argument >> height;
+        //kDebug() << height;
+        argument >> data;
+        //kDebug() << data.size();
+        argument.endStructure();
+    }
 
     icon.width = width;
     icon.height = height;
@@ -71,16 +73,20 @@ const QDBusArgument &operator<<(QDBusArgument &argument, const ExperimentalKDbus
 // Retrieve the ImageVector data from the D-BUS argument
 const QDBusArgument &operator>>(const QDBusArgument &argument, ExperimentalKDbusImageVector &iconVector)
 {
-    argument.beginArray();
     iconVector.clear();
 
-    while ( !argument.atEnd() ) {
-       ExperimentalKDbusImageStruct element;
-       argument >> element;
-       iconVector.append(element);
+    if (argument.currentType() == QDBusArgument::ArrayType) {
+        argument.beginArray();
+
+        while (!argument.atEnd()) {
+            ExperimentalKDbusImageStruct element;
+            argument >> element;
+            iconVector.append(element);
+        }
+
+        argument.endArray();
     }
 
-    argument.endArray();
     return argument;
 }
 
@@ -93,6 +99,7 @@ const QDBusArgument &operator<<(QDBusArgument &argument, const ExperimentalKDbus
     argument << toolTip.title;
     argument << toolTip.subTitle;
     argument.endStructure();
+
     return argument;
 }
 
@@ -104,12 +111,14 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, ExperimentalKDbus
     QString title;
     QString subTitle;
 
-    argument.beginStructure();
-    argument >> icon;
-    argument >> image;
-    argument >> title;
-    argument >> subTitle;
-    argument.endStructure();
+    if (argument.currentType() == QDBusArgument::StructureType) {
+        argument.beginStructure();
+        argument >> icon;
+        argument >> image;
+        argument >> title;
+        argument >> subTitle;
+        argument.endStructure();
+    }
 
     toolTip.icon = icon;
     toolTip.image = image;
