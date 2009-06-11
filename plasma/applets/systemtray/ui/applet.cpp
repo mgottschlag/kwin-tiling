@@ -149,6 +149,22 @@ Applet::Applet(QObject *parent, const QVariantList &arguments)
 
 Applet::~Applet()
 {
+    // stop listening to the manager
+    disconnect(Private::s_manager, 0, this, 0);
+
+    // remove the taskArea so we can delete the widgets without it going nuts on us
+    delete d->taskArea;
+
+    foreach (Task *task, Private::s_manager->tasks()) {
+        // we don't care about the task updates anymore
+        disconnect(task, 0, this, 0);
+
+        // delete our widget (if any); some widgets (such as the extender info one)
+        // may rely on the applet being around, so we need to delete them here and now
+        // while we're still kicking
+        delete task->widget(this, false);
+    }
+
     delete d;
 }
 
@@ -642,8 +658,9 @@ void Applet::timerEvent(QTimerEvent *event)
 #endif // HAVE_LIBXSS
 
     if (totalIdle < idleCheckInterval) {
-        if (extender()->group("completedJobsGroup")) {
-            foreach (Plasma::ExtenderItem *item, extender()->group("completedJobsGroup")->items()) {
+        Plasma::ExtenderGroup *group = extender()->group("completedJobsGroup");
+        if (group) {
+            foreach (Plasma::ExtenderItem *item, group->items()) {
                 if (!item->autoExpireDelay()) {
                     item->setAutoExpireDelay(completedJobExpireDelay);
                 }
@@ -674,10 +691,10 @@ void Applet::finishJob(SystemTray::Job *job)
     item->setIcon(job->applicationIconName());
 
     item->config().writeEntry("type", "completedJob");
-    if (!job->error().isEmpty()) {
-        item->config().writeEntry("text", job->error());
-    } else {
+    if (job->error().isEmpty()) {
         item->config().writeEntry("text", job->completedMessage());
+    } else {
+        item->config().writeEntry("text", job->error());
     }
 
     initExtenderItem(item);
