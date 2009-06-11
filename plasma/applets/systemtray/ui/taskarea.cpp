@@ -159,6 +159,9 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
         d->firstTasksLayout->removeItem(widget);
         d->normalTasksLayout->removeItem(widget);
         d->lastTasksLayout->removeItem(widget);
+        if (d->firstTasksLayout->count() == 0) {
+            d->topLayout->removeItem(d->firstTasksLayout);
+        }
     }
 
     //If the applet doesn't want to show FDO tasks, remove (not just hide) any of them
@@ -187,6 +190,9 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
         if (widget) {
             switch (task->order()) {
             case SystemTray::Task::First:
+                if (d->firstTasksLayout->count() == 0) {
+                    d->topLayout->addItem(d->firstTasksLayout);
+                }
                 d->firstTasksLayout->addItem(widget);
                 break;
             case SystemTray::Task::Normal:
@@ -251,11 +257,11 @@ int TaskArea::rightEasement() const
         QGraphicsLayoutItem *item = d->lastTasksLayout->itemAt(0);
 
         if (d->topLayout->orientation() == Qt::Vertical) {
-            return size().height() - item->geometry().top() + d->topLayout->spacing();
+            return size().height() - item->geometry().top() + d->topLayout->spacing()/2;
         } else if (QApplication::layoutDirection() == Qt::RightToLeft) {
-            return item->geometry().right() + d->topLayout->spacing();
+            return item->geometry().right() + d->topLayout->spacing()/2;
         } else {
-            return size().width() - item->geometry().left() + d->topLayout->spacing();
+            return size().width() - item->geometry().left() + d->topLayout->spacing()/2;
         }
     } else {
         return 0;
@@ -294,9 +300,9 @@ void TaskArea::setOrientation(Qt::Orientation o)
         applet->getContentsMargins(&left, &top, &right, &bottom);
 
         if (o == Qt::Horizontal) {
-            d->topLayout->setSpacing(right);
+            d->topLayout->setSpacing(right*2);
         } else {
-            d->topLayout->setSpacing(bottom);
+            d->topLayout->setSpacing(bottom*2);
         }
     }
 }
