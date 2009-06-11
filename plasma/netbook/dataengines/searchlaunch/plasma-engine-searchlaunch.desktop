@@ -1,6 +1,12 @@
 [Desktop Entry]
 Name=Search and Launch Engine
+Name[km]=ស្វែងរក​ និង​ចាប់ផ្ដើម​ម៉ាស៊ីន
+Name[sv]=Sök- och startprogram
+Name[uk]=Рушій пошуку і запуску
 Comment=Engine to handle queries to SAL containment
+Comment[km]=ម៉ាស៊ីន​ត្រូវ​គ្រប់គ្រង​សំណួរ​មាន SAL
+Comment[sv]=Program för att hantera förfrågningar till SAL-omgivning
+Comment[uk]=Рушій для обробки запитів до контейнера SAL
 Type=Service
 
 X-KDE-ServiceTypes=Plasma/DataEngine

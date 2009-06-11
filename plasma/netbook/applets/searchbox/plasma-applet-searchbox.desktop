@@ -1,8 +1,14 @@
 [Desktop Entry]
 Name=Search Box
+Name[km]=ប្រអប់​ស្វែងរក
+Name[pt]=Campo de Pesquisa
+Name[pt_BR]=Campo de Pesquisa
 Name[sv]=Sökruta
 Name[uk]=Панель пошуку
 Comment=Search Box for a given RunnerManager
+Comment[km]=ប្រអប់​ស្វែងរក​សម្រាប់​កម្មវិធី​គ្រប់គ្រង​កម្មវិធី​រត់​ដែល​បាន​ផ្ដល់
+Comment[pt]=Campo de pesquisa de um dado gestor de execução
+Comment[pt_BR]=Campo de pesquisa de um dado gestor de execução
 Comment[sv]=Sökruta för en given hanterare av programkörning
 Comment[uk]=Панель пошуку для вказаного Керування запуском
 Type=Service
