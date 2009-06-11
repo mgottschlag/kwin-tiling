@@ -132,7 +132,7 @@ void KCategorizedItemsView::setItemModel(QStandardItemModel *model)
 
 void KCategorizedItemsView::searchTermChanged(const QString &text)
 {
-    kDebug() << "EVENT\n" << text;
+    //kDebug() << "EVENT\n" << text;
     if (m_modelFilterItems) {
         m_modelFilterItems->setSearch(text);
     }

@@ -25,7 +25,22 @@
 #define MAX_COUNT 5
 
 CustomDragTreeView::CustomDragTreeView(QWidget * parent)
-    : QTreeView(parent) {}
+    : QTreeView(parent)
+{
+}
+
+void CustomDragTreeView::focusInEvent(QFocusEvent *event)
+{
+    Q_UNUSED(event)
+
+    if (!selectionModel()->hasSelection()) {
+        QModelIndex index = model()->index(0, 0);
+        if (index.isValid()) {
+            selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+            setCurrentIndex(index);
+        }
+    }
+}
 
 void CustomDragTreeView::startDrag(Qt::DropActions supportedActions)
 {

@@ -31,6 +31,7 @@ public:
     CustomDragTreeView(QWidget *parent = 0);
 
 protected:
+    void focusInEvent(QFocusEvent *event);
     void startDrag(Qt::DropActions supportedActions);
 
 private:

@@ -60,19 +60,6 @@ public:
 
     QList < AbstractItem * > selectedItems() const;
 
-protected:
-    virtual void resizeEvent (QResizeEvent *event) ;
-    virtual bool event (QEvent *event);
-
-protected slots:
-    void searchTermChanged(const QString &text);
-    void filterChanged(int index);
-
-private slots:
-    void itemActivated(const QModelIndex &index);
-    void itemDoubleClicked(const QModelIndex &index);
-    void slotSearchTermChanged(const QString &term);
-
 Q_SIGNALS:
     void activated(const QModelIndex &index);
     void clicked(const QModelIndex &index);
@@ -80,9 +67,23 @@ Q_SIGNALS:
     void entered(const QModelIndex &index);
     void pressed(const QModelIndex &index);
 
+protected:
+    void resizeEvent (QResizeEvent *event) ;
+    bool event (QEvent *event);
+
+protected slots:
+    void searchTermChanged(const QString &text);
+    void filterChanged(int index);
+
 private:
     void updateColumnsWidth(bool force = false);
 
+private slots:
+    void itemActivated(const QModelIndex &index);
+    void itemDoubleClicked(const QModelIndex &index);
+    void slotSearchTermChanged(const QString &term);
+
+private:
     QStandardItemModel *m_modelCategories;
     QStandardItemModel *m_modelFilters;
     QStandardItemModel *m_modelItems;
