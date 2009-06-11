@@ -430,11 +430,11 @@ void Applet::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *o
         d->background->paintFrame(painter, r, QRectF(QPointF(0, 0), r.size()));
 
         if (formFactor() == Plasma::Vertical) {
-            d->background->paint(painter, lastRect.topLeft(), "separator-horizontal");
+            d->background->paint(painter, lastRect.topLeft(), "horizontal-separator");
         } else if (QApplication::layoutDirection() == Qt::RightToLeft) {
-            d->background->paint(painter, lastRect.topRight(), "separator-vertical");
+            d->background->paint(painter, lastRect.topRight(), "vertical-separator");
         } else {
-            d->background->paint(painter, lastRect.topLeft(), "separator-vertical");
+            d->background->paint(painter, lastRect.topLeft(), "vertical-separator");
         }
     }
 
