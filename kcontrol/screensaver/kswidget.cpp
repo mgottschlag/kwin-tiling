@@ -6,6 +6,7 @@
 
 #ifdef HAVE_GLXCHOOSEVISUAL
 #include <GL/glx.h>
+#include <fixx11h.h>
 #endif
 
 KSWidget::KSWidget( QWidget* parent, Qt::WindowFlags wf )

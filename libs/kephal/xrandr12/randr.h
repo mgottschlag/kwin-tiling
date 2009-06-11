@@ -35,6 +35,7 @@ extern "C"
 #undef INT8
 #undef INT32
 #include <X11/extensions/Xrandr.h>
+#include <fixx11h.h>
 }
 
 class RandRScreen;
