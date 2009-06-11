@@ -296,29 +296,39 @@ void CalendarTable::wheelEvent(QGraphicsSceneWheelEvent * event)
 {
     Q_UNUSED(event);
 
+    bool changed = false;
+    
     if (event->delta() < 0) {
         if (d->month == d->calendar->monthsInYear(d->date)) {
-            d->month = 1;
-            d->year++;
-            emit displayedYearChanged(d->year, d->month);
+            if (d->calendar->isValid(d->year + 1, 1, 1)) {
+                changed = true;
+                d->month = 1;
+                d->year++;
+                emit displayedYearChanged(d->year, d->month);
+            }
         } else {
+            changed = true;
             d->month++;
         }
-
-        emit displayedMonthChanged(d->year, d->month);
     } else if (event->delta() > 0) {
         if (d->month == 1) {
-            d->month = d->calendar->monthsInYear(d->date);
-            d->year--;
-            emit displayedYearChanged(d->year, d->month);
+            int tmpMonth = d->calendar->monthsInYear(d->date);
+            if (d->calendar->isValid(d->year - 1, tmpMonth, 1)) {
+                changed = true;
+                d->month = tmpMonth;
+                d->year--;
+                emit displayedYearChanged(d->year, d->month);
+            }
         } else {
+            changed = true;
             d->month--;
         }
-
-        emit displayedMonthChanged(d->year, d->month);
     }
 
-    update();
+    if (changed) {
+        emit displayedMonthChanged(d->year, d->month);
+        update();
+    }
 }
 
 void CalendarTable::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -348,7 +358,7 @@ void CalendarTable::mousePressEvent(QGraphicsSceneMouseEvent *event)
             QDate tmpDate;
             d->cell(week, weekDay + 1, 0, tmpDate);
 
-            if (tmpDate == d->date) {
+            if (tmpDate == d->date || !tmpDate.isValid()) {
                 return;
             }
 
