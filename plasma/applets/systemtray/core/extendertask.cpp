@@ -68,8 +68,10 @@ ExtenderTaskBusyWidget::ExtenderTaskBusyWidget(Plasma::PopupApplet *parent, cons
             this, SLOT(updateTask()));
 
     Plasma::Extender *extender = qobject_cast<Plasma::Extender *>(m_systray->graphicsWidget());
-    connect(extender, SIGNAL(itemDetached(Plasma::ExtenderItem*)),
-            this, SLOT(updateTask()));
+    if (extender) {
+        connect(extender, SIGNAL(itemDetached(Plasma::ExtenderItem*)),
+                this, SLOT(updateTask()));
+    }
 
     updateTask();
 }
