@@ -110,26 +110,23 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
         foreach (const Solid::Device &device_battery, list_battery) {
             const Solid::Battery* battery = device_battery.as<Solid::Battery>();
 
-            if(battery != 0) {
-                if(battery->type() == Solid::Battery::PrimaryBattery) {
-                    QString source = QString("Battery%1").arg(index++);
+            if (battery && battery->type() == Solid::Battery::PrimaryBattery) {
+                QString source = QString("Battery%1").arg(index++);
 
-                    battery_sources<<source;
+                battery_sources << source;
+                m_batterySources[device_battery.udi()] = source;
 
-                    m_batterySources[device_battery.udi()] = source;
+                connect(battery, SIGNAL(chargeStateChanged(int, const QString &)), this,
+                        SLOT(updateBatteryChargeState(int, const QString &)));
+                connect(battery, SIGNAL(chargePercentChanged(int, const QString &)), this,
+                        SLOT(updateBatteryChargePercent(int, const QString &)));
+                connect(battery, SIGNAL(plugStateChanged(bool, const QString &)), this,
+                        SLOT(updateBatteryPlugState(bool, const QString &)));
 
-                    connect(battery, SIGNAL(chargeStateChanged(int, const QString &)), this,
-                            SLOT(updateBatteryChargeState(int, const QString &)));
-                    connect(battery, SIGNAL(chargePercentChanged(int, const QString &)), this,
-                            SLOT(updateBatteryChargePercent(int, const QString &)));
-                    connect(battery, SIGNAL(plugStateChanged(bool, const QString &)), this,
-                            SLOT(updateBatteryPlugState(bool, const QString &)));
-
-                    // Set initial values
-                    updateBatteryChargeState(battery->chargeState(), device_battery.udi());
-                    updateBatteryChargePercent(battery->chargePercent(), device_battery.udi());
-                    updateBatteryPlugState(battery->isPlugged(), device_battery.udi());
-                }
+                // Set initial values
+                updateBatteryChargeState(battery->chargeState(), device_battery.udi());
+                updateBatteryChargePercent(battery->chargePercent(), device_battery.udi());
+                updateBatteryPlugState(battery->isPlugged(), device_battery.udi());
             }
         }
 
@@ -232,7 +229,7 @@ void PowermanagementEngine::deviceAdded(const QString& udi)
     if (device.isValid()) {
         const Solid::Battery* battery = device.as<Solid::Battery>();
 
-        if (battery != 0) {
+        if (battery && battery->type() == Solid::Battery::PrimaryBattery) {
             int index = 0;
             QStringList sourceNames(m_batterySources.values());
             while (sourceNames.contains(QString("Battery%1").arg(index))) {
