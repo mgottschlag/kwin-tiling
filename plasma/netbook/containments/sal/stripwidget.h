@@ -20,10 +20,16 @@
 #ifndef STRIPWIDGET_H
 #define STRIPWIDGET_H
 
+
+#include <KConfigGroup>
+
+#include <QPair>
 #include <QGraphicsWidget>
 #include <QGraphicsLinearLayout>
 #include <QGraphicsSceneResizeEvent>
 
+
+#include <Plasma/RunnerContext>
 
 namespace Plasma
 {
@@ -43,8 +49,11 @@ public:
     StripWidget(Plasma::RunnerManager *rm, QGraphicsItem *parent = 0);
     ~StripWidget();
 
-    void add(Plasma::QueryMatch match);
+    void add(Plasma::QueryMatch match, const QString &query);
     void remove(Plasma::IconWidget *favourite);
+
+public slots:
+    void save();
 
 protected:
     void createIcon(Plasma::QueryMatch *match, int idx);
@@ -64,7 +73,9 @@ private:
 
     Plasma::RunnerManager *runnermg;
     QList<Plasma::QueryMatch*> m_favouritesMatches;
-    QMap<Plasma::IconWidget*,Plasma::QueryMatch*> m_favouriteMap;
+    QHash<Plasma::QueryMatch*, QString> m_favouritesQueries;
+    QHash<Plasma::IconWidget*, Plasma::QueryMatch*> m_favouritesIcons;
+    Plasma::RunnerContext *contexto;
 };
 
 #endif

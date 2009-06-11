@@ -47,6 +47,9 @@ SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
 
 SearchLaunch::~SearchLaunch()
 {
+    //KConfigGroup cg = config();
+    //m_stripWidget->save(cg);
+
     delete runnermg;
     delete m_background;
 }
@@ -62,8 +65,6 @@ void SearchLaunch::init()
     runnermg = new Plasma::RunnerManager(this);
     connect(runnermg, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)),
             this, SLOT(setQueryMatches(const QList<Plasma::QueryMatch>&)));
-
-    // before this text edit goes to panel, we'll try here
 
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/translucentbackground");
@@ -139,7 +140,7 @@ void SearchLaunch::addFavourite()
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender()->parent());
     int idx = m_items.indexOf(icon);
     Plasma::QueryMatch match = m_matches[idx];
-    m_stripWidget->add(match);
+    m_stripWidget->add(match, runnermg->searchContext()->query());
 }
 
 QList<QAction*> SearchLaunch::contextualActions()
