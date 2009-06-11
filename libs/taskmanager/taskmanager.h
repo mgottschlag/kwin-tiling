@@ -205,7 +205,7 @@ protected Q_SLOTS:
     //* @internal
     void taskChanged(::TaskManager::TaskChanges changes);
 
-protected:
+protected Q_SLOTS:
     void configureStartup();
 
 private:

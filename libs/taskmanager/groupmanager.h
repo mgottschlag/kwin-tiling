@@ -144,6 +144,7 @@ private:
     Q_PRIVATE_SLOT(d, void removeTask(TaskPtr))
     Q_PRIVATE_SLOT(d, void addStartup(StartupPtr))
     Q_PRIVATE_SLOT(d, void removeStartup(StartupPtr))
+    Q_PRIVATE_SLOT(d, void actuallyReloadTasks())
 
     friend class GroupManagerPrivate;
     GroupManagerPrivate * const d;

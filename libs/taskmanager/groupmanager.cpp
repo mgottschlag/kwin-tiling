@@ -67,6 +67,7 @@ public:
 
     /** reload all tasks from TaskManager */
     void reloadTasks();
+    void actuallyReloadTasks();
 
     /**
     * Keep track of changes in Taskmanager
@@ -93,6 +94,7 @@ public:
     AbstractSortingStrategy *abstractSortingStrategy;
     int currentScreen;
     QTimer screenTimer;
+    QTimer reloadTimer;
     QSet<TaskPtr> geometryTasks;
     int groupIsFullLimit;
     bool showOnlyCurrentDesktop : 1;
@@ -114,8 +116,13 @@ GroupManager::GroupManager(QObject *parent)
     connect(TaskManager::self(), SIGNAL(taskRemoved(TaskPtr)), this, SLOT(removeTask(TaskPtr)));
     connect(TaskManager::self(), SIGNAL(startupAdded(StartupPtr)), this, SLOT(addStartup(StartupPtr)));
     connect(TaskManager::self(), SIGNAL(startupRemoved(StartupPtr)), this, SLOT(removeStartup(StartupPtr)));
+
     d->rootGroup = new TaskGroup(this, "RootGroup", Qt::transparent);
-    //reloadTasks();
+
+    d->reloadTimer.setSingleShot(true);
+    d->reloadTimer.setInterval(0);
+    connect(&d->reloadTimer, SIGNAL(timeout()), this, SLOT(actuallyReloadTasks()));
+
     d->screenTimer.setSingleShot(true);
     d->screenTimer.setInterval(100);
     connect(&d->screenTimer, SIGNAL(timeout()), this, SLOT(checkScreenChange()));
@@ -131,6 +138,11 @@ GroupManager::~GroupManager()
 }
 
 void GroupManagerPrivate::reloadTasks()
+{
+    reloadTimer.start();
+}
+
+void GroupManagerPrivate::actuallyReloadTasks()
 {
     //kDebug() << "number of tasks available " << TaskManager::self()->tasks().size();
     QHash<WId, TaskPtr> taskList = TaskManager::self()->tasks();
@@ -424,6 +436,8 @@ void GroupManagerPrivate::taskChanged(TaskPtr task, ::TaskManager::TaskChanges c
         return;
     }
 
+    show = show && (!showOnlyCurrentScreen || task->isOnScreen(currentScreen));
+
     if (show) {
         //kDebug() << "add(task);";
         addTask(task);
@@ -437,6 +451,7 @@ void GroupManager::setScreen(int screen)
 {
     //kDebug() << "new Screen: " << screen;
     d->currentScreen = screen;
+    d->reloadTasks();
 }
 
 
