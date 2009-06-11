@@ -524,7 +524,10 @@ void UKMETIon::setup_slotJobFinished(KJob *job)
     }
     // If Redirected, don't go to this routine
     if (!d->m_locations.contains(QString("bbcukmet|%1").arg(d->m_jobList[job]))) {
-        readSearchXMLData(d->m_jobList[job], *d->m_jobXml[job]);
+        QXmlStreamReader *reader = d->m_jobXml.value(job);
+        if (reader) {
+            readSearchXMLData(d->m_jobList[job], *reader);
+        }
     }
     d->m_jobList.remove(job);
     delete d->m_jobXml[job];
@@ -581,7 +584,11 @@ void UKMETIon::forecast_slotDataArrived(KIO::Job *job, const QByteArray &data)
 void UKMETIon::forecast_slotJobFinished(KJob *job)
 {
     setData(d->m_forecastJobList[job], Data());
-    readFiveDayForecastXMLData(d->m_forecastJobList[job], *d->m_forecastJobXml[job]);
+    QXmlStreamReader *reader = d->m_forecastJobXml.value(job);
+    if (reader) {
+        readFiveDayForecastXMLData(d->m_forecastJobList[job], *reader);
+    }
+
     d->m_forecastJobList.remove(job);
     delete d->m_forecastJobXml[job];
     d->m_forecastJobXml.remove(job);

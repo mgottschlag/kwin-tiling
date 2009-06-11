@@ -614,7 +614,11 @@ void EnvCanadaIon::slotJobFinished(KJob *job)
 {
     // Dual use method, if we're fetching location data to parse we need to do this first
     setData(d->m_jobList[job], Data());
-    readXMLData(d->m_jobList[job], *d->m_jobXml[job]);
+    QXmlStreamReader *reader = d->m_jobXml.value(job);
+    if (reader) {
+        readXMLData(d->m_jobList[job], *reader);
+    }
+
     d->m_jobList.remove(job);
     delete d->m_jobXml[job];
     d->m_jobXml.remove(job);
