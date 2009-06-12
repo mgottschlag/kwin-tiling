@@ -95,6 +95,7 @@ Panel::Panel(QObject *parent, const QVariantList &args)
       m_addPanelAction(0),
       m_currentSize(QSize(Kephal::ScreenUtils::screenSize(screen()).width(), 35)),
       m_maskDirty(true),
+      m_canResize(true),
       m_spacerIndex(-1),
       m_spacer(0),
       m_lastSpace(0)
@@ -263,6 +264,11 @@ void Panel::adjustLastSpace()
     }
 }
 
+void Panel::enableUpdateSize()
+{
+    m_canResize = true;
+}
+
 void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 {
     // this gets called whenever an applet is added, and we add it to our layout
@@ -340,6 +346,8 @@ void Panel::appletRemoved(Plasma::Applet* applet)
         return;
     }
 
+    connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
+
     lay->removeItem(applet);
 
     //shrink the panel if possible
@@ -357,7 +365,7 @@ void Panel::updateSize()
 {
     Plasma::Applet *applet = qobject_cast<Plasma::Applet *>(sender());
 
-    if (applet) {
+    if (m_canResize && applet) {
         if (formFactor() == Plasma::Horizontal) {
             const int delta = applet->preferredWidth() - applet->size().width();
             //setting the preferred width when delta = 0 and preferredWidth() < minimumWidth()
@@ -373,6 +381,9 @@ void Panel::updateSize()
         }
 
         resize(preferredSize());
+        //for a while we won't execute updateSize() again
+        m_canResize = false;
+        QTimer::singleShot(400, this, SLOT(enableUpdateSize()));
     }
 }
 

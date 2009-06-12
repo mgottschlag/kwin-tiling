@@ -64,6 +64,7 @@ private slots:
     void addPanel();
     void addPanel(const QString &plugin);
     void adjustLastSpace();
+    void enableUpdateSize();
 
 private:
     /**
@@ -85,6 +86,7 @@ private:
     QSize m_currentSize;
     QRect m_lastViewGeom;
     bool m_maskDirty;
+    bool m_canResize;
     int m_spacerIndex;
     Spacer *m_spacer;
     QGraphicsWidget *m_lastSpace;
