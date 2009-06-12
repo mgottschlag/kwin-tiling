@@ -23,14 +23,17 @@ RandRMode::RandRMode(XRRModeInfo *info)
     : m_size(0, 0)
 {
     m_valid = false;
-    m_rate = 0;
-    m_id = 0;
-    m_name = "Invalid mode";
     
     if (info)
         m_valid = true;
     else
         return;
+
+    m_rate = 0;
+    m_id = 0;
+    m_name = "Invalid mode";
+
+
 
     m_name = info->name;
     m_id = info->id;
