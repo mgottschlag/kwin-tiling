@@ -43,6 +43,8 @@
 #include "midcorona.h"
 #include "midview.h"
 
+#include "appletbrowser.h"
+
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrender.h>
 
@@ -63,6 +65,7 @@ PlasmaApp* PlasmaApp::self()
 PlasmaApp::PlasmaApp()
     : KUniqueApplication(),
       m_corona(0),
+      m_appletBrowser(0),
       m_window(0),
       m_controlBar(0),
       m_mainView(0),
@@ -318,6 +321,7 @@ void PlasmaApp::notifyStartup(bool completed)
 
 void PlasmaApp::createView(Plasma::Containment *containment)
 {
+    connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
 
     KConfigGroup viewIds(KGlobal::config(), "ViewIds");
     int defaultId = 0;
@@ -367,6 +371,46 @@ void PlasmaApp::controlBarMoved(const MidView *controlBar)
         m_layout->setDirection(QBoxLayout::BottomToTop);
         break;
     }
+}
+
+
+void PlasmaApp::showAppletBrowser()
+{
+    Plasma::Containment *containment = dynamic_cast<Plasma::Containment *>(sender());
+
+    if (!containment) {
+        return;
+    }
+
+    showAppletBrowser(containment);
+}
+
+void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
+{
+    if (!containment) {
+        return;
+    }
+
+    if (!m_appletBrowser) {
+        m_appletBrowser = new Plasma::AppletBrowser();
+        m_appletBrowser->setContainment(containment);
+        m_appletBrowser->setApplication();
+        m_appletBrowser->setAttribute(Qt::WA_DeleteOnClose);
+        m_appletBrowser->setWindowTitle(i18n("Add Widgets"));
+        m_appletBrowser->setWindowIcon(KIcon("plasmagik"));
+        connect(m_appletBrowser, SIGNAL(destroyed()), this, SLOT(appletBrowserDestroyed()));
+    } else {
+        m_appletBrowser->setContainment(containment);
+    }
+
+    KWindowSystem::setOnDesktop(m_appletBrowser->winId(), KWindowSystem::currentDesktop());
+    m_appletBrowser->show();
+    KWindowSystem::activateWindow(m_appletBrowser->winId());
+}
+
+void PlasmaApp::appletBrowserDestroyed()
+{
+    m_appletBrowser = 0;
 }
 
 #include "plasmaapp.moc"

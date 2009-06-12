@@ -31,6 +31,7 @@ namespace Plasma
     class Containment;
     class Corona;
     class View;
+    class AppletBrowser;
 } // namespace Plasma
 
 class QBoxLayout;
@@ -66,6 +67,7 @@ public:
      */
     bool isDesktop() const;
 
+    void showAppletBrowser(Plasma::Containment *containment);
 private:
     PlasmaApp();
     void reserveStruts();
@@ -77,9 +79,12 @@ private Q_SLOTS:
     void createView(Plasma::Containment *containment);
     void adjustSize(int screen);
     void controlBarMoved(const MidView *controlBar);
+    void showAppletBrowser();
+    void appletBrowserDestroyed();
 
 private:
     Plasma::Corona *m_corona;
+    Plasma::AppletBrowser *m_appletBrowser;
     QWidget *m_window;
     MidView *m_controlBar;
     MidView *m_mainView;
