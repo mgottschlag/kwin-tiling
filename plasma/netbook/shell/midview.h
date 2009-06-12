@@ -50,7 +50,6 @@ public:
     static uint controlBarId() { return 2; }
 
 public slots:
-    void showAppletBrowser();
     void setContainment(Plasma::Containment *containment);
     void screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment);
     void updateGeometry();

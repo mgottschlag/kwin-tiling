@@ -85,11 +85,6 @@ void MidView::configureContainment(Plasma::Containment *containment)
     */
 }
 
-void MidView::showAppletBrowser()
-{
-    //TODO: implement
-}
-
 void MidView::containmentActivated()
 {
     Plasma::Containment *cont = containment();
