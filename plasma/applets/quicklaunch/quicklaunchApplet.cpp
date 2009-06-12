@@ -65,7 +65,7 @@ QuicklaunchApplet::QuicklaunchApplet(QObject *parent, const QVariantList &args)
     setHasConfigurationInterface(true);
     setAcceptDrops(true);
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
-    connect(m_timer,SIGNAL(timeout()), this, SLOT(performUiRefactor()));
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(performUiRefactor()));
     m_timer->setSingleShot(true);
 
     qreal left, top, right, bottom;
@@ -190,6 +190,7 @@ void QuicklaunchApplet::performUiRefactor()
         clearLayout(m_dialogLayout);
         m_dialogLayout->setRowCount((int)(size().height() / qMin(m_dialogIconSize, m_dialog->size().height())));
     }
+
     int rowCount;
     if (formFactor() == Plasma::Vertical) {
         rowCount = contentsRect().width() / m_iconSize;
@@ -236,6 +237,8 @@ void QuicklaunchApplet::performUiRefactor()
     } else {
         m_arrow->hide();
     }
+
+    setPreferredSize(m_layout->preferredSize() + QSize(4, 4));
 
     if (m_dialog) {
         m_dialog->close();
@@ -387,17 +390,16 @@ void QuicklaunchApplet::dropApp(QGraphicsSceneDragDropEvent *event, bool dropped
         if (pos >= m_icons.size()) {
            pos = m_icons.size() - 1;
         }
-    
     } else {
         QPointF point = event->pos();
         for(int i = 0; i < m_dialogLayout->count(); i++) {
            QGraphicsLayoutItem *item = m_dialogLayout->itemAt(i);
            if (item->geometry().contains(point)) {
-	      //m_dialogLayout->insertItem(dropedItem, i + 1);
-	      pos = i+1+m_visibleIcons;
-              kDebug() << "The position of Droped Item in dialog is = " << pos;
-              break;
-	   }
+               //m_dialogLayout->insertItem(dropedItem, i + 1);
+               pos = i + 1 + m_visibleIcons;
+               kDebug() << "The position of Droped Item in dialog is = " << pos;
+               break;
+           }
         }
     }
     if (dropHandler(pos, event->mimeData())) {
