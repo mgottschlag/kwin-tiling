@@ -19,8 +19,8 @@
 
 /* Ion for Environment Canada XML data */
 
-#ifndef _ION_ENVCAN_H_
-#define _ION_ENVCAN_H_
+#ifndef ION_ENVCAN_H
+#define ION_ENVCAN_H
 
 #include <QtXml/QXmlStreamReader>
 #include <QtCore/QStringList>

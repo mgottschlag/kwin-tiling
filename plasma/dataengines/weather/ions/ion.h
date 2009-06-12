@@ -17,8 +17,8 @@
  * Boston, MA 02110-1301, USA.                                               *
  *****************************************************************************/
 
-#ifndef _ION_H
-#define _ION_H
+#ifndef ION_H
+#define ION_H
 
 #include <QtCore/QObject>
 #include <KDE/KGenericFactory>

@@ -19,8 +19,8 @@
 
 /* Ion for BBC Weather from UKMET Office */
 
-#ifndef _ION_BBCUKMET_H
-#define _ION_BBCUKMET_H
+#ifndef ION_BBCUKMET_H
+#define ION_BBCUKMET_H
 
 #include <QtXml/QXmlStreamReader>
 #include <QRegExp>

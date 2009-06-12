@@ -19,8 +19,8 @@
 
 /* Ion for NOAA's National Weather Service XML data */
 
-#ifndef _ION_NOAA_H
-#define _ION_NOAA_H
+#ifndef ION_NOAA_H
+#define ION_NOAA_H
 
 #include <QtXml/QXmlStreamReader>
 #include <QtCore/QStringList>

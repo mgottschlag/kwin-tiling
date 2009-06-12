@@ -502,8 +502,6 @@ bool EnvCanadaIon::updateIonSource(const QString& source)
 
     QStringList sourceAction = source.split('|');
 
-    kDebug() << "SOURCE STRING ======> " << sourceAction;
-
     // Guard: if the size of array is not 2 then we have bad data, return an error
     if (sourceAction.size() < 2) {
         setData(source, "validate", "envcan|malformed");
@@ -633,8 +631,7 @@ void EnvCanadaIon::setup_slotJobFinished(KJob *job)
         d->emitWhenSetup = false;
         emit(resetCompleted(this, success));
     } else if (success) {
-        kDebug() << "UPDATE DATA NOW ===========>" << sources();
-        foreach(QString source, sources()) {
+        foreach(const QString &source, sources()) {
             updateIonSource(source);
         }
     }
