@@ -114,6 +114,16 @@ void AppletOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 
 void AppletOverlay::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    if (event->button() != Qt::LeftButton) {
+        //Hack to make scene::itemAt() work
+        int z = zValue();
+        setZValue(-100);
+        //FIXME:here we don't have a screen pos in the event
+        m_newspaper->showContextMenu(event->pos(), event->pos().toPoint());
+        setZValue(z);
+        return;
+    }
+
     if (m_clickDrag) {
         m_clickDrag = false;
         m_origin = QPoint();
