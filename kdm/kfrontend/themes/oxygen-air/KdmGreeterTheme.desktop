@@ -1,0 +1,9 @@
+# This is not really a .desktop file like the rest, but it is useful to treat
+# it as such
+
+[KdmGreeterTheme]
+Greeter=oxygen-air.xml
+Name=Oxygen-Air
+Author=Xavier Araque
+Copyright=GPL 2008 Xavier Araque | xavieraraque@gmail.com
+Screenshot=screenshot.png
