@@ -35,8 +35,7 @@ DBusAPIConfigurations::DBusAPIConfigurations(QObject * parent)
     new ConfigurationsAdaptor(this);
     QDBusConnection dbus = QDBusConnection::sessionBus();
     
-    bool result;
-    result = dbus.registerObject("/modules/kephal/Configurations", this);
+    const bool result = dbus.registerObject("/modules/kephal/Configurations", this);
     qDebug() << "configurations registered on the bus:" << result;
     
     connect(Configurations::self(), SIGNAL(configurationActivated(Kephal::Configuration *)), this, SLOT(configurationActivatedSlot(Kephal::Configuration *)));

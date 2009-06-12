@@ -71,9 +71,7 @@ KephalD::KephalD(QObject* parent, const QList<QVariant>&)
 
 KephalD::~KephalD()
 {
-    if (m_eventFilter) {
-        delete m_eventFilter;
-    }
+    delete m_eventFilter;
 }
 
 void KephalD::init() {
