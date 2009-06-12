@@ -54,6 +54,7 @@ public slots:
     void setContainment(Plasma::Containment *containment);
     void screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment);
     void updateGeometry();
+    void containmentActivated();
 
     /**
      * Configure containment.
