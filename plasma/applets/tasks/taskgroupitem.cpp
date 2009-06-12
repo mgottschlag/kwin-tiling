@@ -455,7 +455,7 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
     if (item->isActive()) {
         //kDebug() << "item is Active" ;
         m_activeTaskIndex = indexOf(item);
-    } else if (m_group->members().size() == 1) {
+    } else if (!m_group || m_group->members().size() == 1) {
         m_activeTaskIndex = 0;
     }
 
@@ -847,7 +847,10 @@ void  TaskGroupItem::itemPositionChanged(AbstractItemPtr item)
     AbstractTaskItem *taskItem = abstractTaskItem(item);
 
     m_tasksLayout->removeTaskItem(taskItem);
-    m_tasksLayout->insert(m_group->members().indexOf(item), taskItem);
+
+    if (m_group) {
+        m_tasksLayout->insert(m_group->members().indexOf(item), taskItem);
+    }
 }
 
 
@@ -954,8 +957,8 @@ void TaskGroupItem::handleDroppedId(WId id, AbstractTaskItem *targetTask, QGraph
             m_applet->groupManager().manualGroupingRequest(taskItem->abstractItem(), m_group);
         } else if (targetTask->isWindowItem() && (group == m_group)) { //Both Items in same group
             //Group Items together
-            int targetIndex = m_group->members().indexOf(targetTask->abstractItem());
-            int sourceIndex = m_group->members().indexOf(taskItem->abstractItem());
+            int targetIndex = m_group ? m_group->members().indexOf(targetTask->abstractItem()) : 0;
+            int sourceIndex = m_group ? m_group->members().indexOf(taskItem->abstractItem()) : 0;
             TaskManager::ItemList members;
             members.append(targetTask->abstractItem());
             members.append(taskItem->abstractItem());
@@ -982,7 +985,7 @@ void TaskGroupItem::handleDroppedId(WId id, AbstractTaskItem *targetTask, QGraph
         if (group == m_group) { //same group
             //kDebug() << "Drag within group";
             layoutTaskItem(taskItem, event->pos());
-        } else { //task item was dragged outside of group -> group move
+        } else if (m_group) { //task item was dragged outside of group -> group move
             AbstractTaskItem *directMember = abstractTaskItem(m_group->directMember(group));
             if (directMember) {
                 layoutTaskItem(directMember, event->pos()); //we need to get the group right under the receiver group
