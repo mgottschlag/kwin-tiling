@@ -61,6 +61,8 @@ private:
     int m_spacerIndex;
     QTimer *m_scrollTimer;
     bool m_scrollDown;
+    bool m_clickDrag;
+    QPointF m_origin;
 };
 
 #endif

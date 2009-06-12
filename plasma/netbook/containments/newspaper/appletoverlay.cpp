@@ -25,6 +25,8 @@
 #include <QPainter>
 #include <QTimer>
 
+#include <KGlobalSettings>
+
 #include <Plasma/Applet>
 #include <Plasma/PaintUtils>
 #include <Plasma/ScrollWidget>
@@ -61,7 +63,9 @@ AppletOverlay::AppletOverlay(QGraphicsWidget *parent, Newspaper *newspaper)
       m_newspaper(newspaper),
       m_spacer(0),
       m_spacerLayout(0),
-      m_spacerIndex(0)
+      m_spacerIndex(0),
+      m_scrollDown(false),
+      m_clickDrag(false)
 {
     setAcceptHoverEvents(true);
     setZValue(900);
@@ -101,7 +105,14 @@ void AppletOverlay::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 
 void AppletOverlay::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    if (m_clickDrag) {
+        m_clickDrag = false;
+        m_origin = QPoint();
+        return;
+    }
+
     if (m_applet) {
+        m_origin = event->pos();
         QPointF offset = m_newspaper->m_mainWidget->pos() + m_newspaper->m_scrollWidget->pos();
         showSpacer(event->pos());
         if (m_spacerLayout) {
@@ -116,6 +127,15 @@ void AppletOverlay::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void AppletOverlay::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
+    if (m_clickDrag) {
+        //Cheat and pretend a mousemoveevent is arrived
+        QGraphicsSceneMouseEvent me;
+        me.setPos(event->pos());
+        me.setLastPos(event->lastPos());
+        mouseMoveEvent(&me);
+        return;
+    }
+
     QPointF offset = m_newspaper->m_mainWidget->pos() + m_newspaper->m_scrollWidget->pos();
     m_applet = 0;
 
@@ -159,6 +179,13 @@ void AppletOverlay::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     Q_UNUSED(event)
 
     m_scrollTimer->stop();
+
+    QPoint delta = event->pos().toPoint() - m_origin.toPoint();
+    if (m_origin != QPointF() && delta.manhattanLength() < KGlobalSettings::dndEventDelay()) {
+        m_clickDrag = true;
+        m_origin = QPointF();
+        return;
+    }
 
     if (m_spacer && m_spacerLayout) {
         m_spacerLayout->removeItem(m_spacer);
