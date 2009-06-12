@@ -40,7 +40,15 @@ public:
     {
     }
 
+    AppletOverlay *overlay;
+
 protected:
+    void dropEvent(QGraphicsSceneDragDropEvent *event)
+    {
+        event->setPos(mapToParent(event->pos()));
+        overlay->dropEvent(event);
+    }
+
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget * widget = 0)
     {
         Q_UNUSED(option)
@@ -68,6 +76,7 @@ AppletOverlay::AppletOverlay(QGraphicsWidget *parent, Newspaper *newspaper)
       m_clickDrag(false)
 {
     setAcceptHoverEvents(true);
+    setAcceptDrops(true);
     setZValue(900);
     m_scrollTimer = new QTimer(this);
     m_scrollTimer->setSingleShot(false);
@@ -198,6 +207,43 @@ void AppletOverlay::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     m_spacerIndex = 0;
 }
 
+void AppletOverlay::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
+{
+    showSpacer(event->pos());
+    event->accept();
+}
+
+void AppletOverlay::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
+{
+    if (event->pos().y() > size().height()*0.70) {
+        m_scrollTimer->start(50);
+        m_scrollDown = true;
+    } else if (event->pos().y() < size().height()*0.30) {
+        m_scrollTimer->start(50);
+        m_scrollDown = false;
+    } else {
+        m_scrollTimer->stop();
+    }
+
+    showSpacer(event->pos());
+}
+
+void AppletOverlay::dropEvent(QGraphicsSceneDragDropEvent *event)
+{
+    m_newspaper->dropEvent(event);
+
+    if (m_spacerLayout) {
+        m_spacerLayout->removeItem(m_spacer);
+    }
+
+    if (m_spacer) {
+        m_spacer->deleteLater();
+    }
+
+    m_spacer = 0;
+    m_spacerLayout = 0;
+    m_spacerIndex = 0;
+}
 
 void AppletOverlay::showSpacer(const QPointF &pos)
 {
@@ -264,6 +310,7 @@ void AppletOverlay::showSpacer(const QPointF &pos)
     if (insertIndex != -1) {
         if (!m_spacer) {
             m_spacer = new AppletMoveSpacer(this);
+            m_spacer->overlay = this;
         }
         if (m_spacerLayout) {
             m_spacerLayout->removeItem(m_spacer);

@@ -37,6 +37,8 @@ class AppletOverlay : public QGraphicsWidget
 {
     Q_OBJECT
 
+    friend class AppletMoveSpacer;
+
 public:
     explicit AppletOverlay(QGraphicsWidget *parent = 0, Newspaper *newspaper = 0);
     ~AppletOverlay();
@@ -49,6 +51,9 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
+    void dragMoveEvent(QGraphicsSceneDragDropEvent *event);
+    void dropEvent(QGraphicsSceneDragDropEvent *event);
 
 protected Q_SLOTS:
     void scrollTimeout();
