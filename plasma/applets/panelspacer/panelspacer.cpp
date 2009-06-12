@@ -33,7 +33,6 @@ PanelSpacer::PanelSpacer(QObject *parent, const QVariantList &args)
       m_configurationMode(false),
       m_fixedSize(false)
 {
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
     setHasConfigurationInterface(false);
     QAction *toggleFixed = new QAction(i18n("Set Flexible Size"), this);
@@ -120,6 +119,7 @@ void PanelSpacer::constraintsEvent(Plasma::Constraints constraints)
             fixedAction->setChecked(!m_fixedSize);
         }
     }
+    setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 }
 
 void PanelSpacer::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
