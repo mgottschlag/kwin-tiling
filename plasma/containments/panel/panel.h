@@ -89,7 +89,7 @@ private:
     bool m_canResize;
     int m_spacerIndex;
     Spacer *m_spacer;
-    QGraphicsWidget *m_lastSpace;
+    Spacer *m_lastSpace;
     QTimer *m_lastSpaceTimer;
 
     friend class Spacer;

@@ -56,7 +56,8 @@ class Spacer : public QGraphicsWidget
 {
 public:
     Spacer(QGraphicsWidget *parent)
-         : QGraphicsWidget(parent)
+         : QGraphicsWidget(parent),
+           m_visible(true)
     {
         setAcceptDrops(true);
     }
@@ -65,6 +66,7 @@ public:
     {}
 
     Panel *panel;
+    bool m_visible;
 
 protected:
     void dropEvent(QGraphicsSceneDragDropEvent *event)
@@ -77,6 +79,10 @@ protected:
     {
         Q_UNUSED(option)
         Q_UNUSED(widget)
+
+        if (!m_visible) {
+            return;
+        }
 
         //TODO: make this a pretty gradient?
         painter->setRenderHint(QPainter::Antialiasing);
@@ -252,7 +258,9 @@ void Panel::adjustLastSpace()
 
     if (useSpacer) {
         if (!m_lastSpace) {
-            m_lastSpace = new QGraphicsWidget(this);
+            m_lastSpace = new Spacer(this);
+            m_lastSpace->panel = this;
+            m_lastSpace->m_visible = false;
             m_lastSpace->setPreferredSize(0,0);
             m_lastSpace->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
             lay->addItem(m_lastSpace);
