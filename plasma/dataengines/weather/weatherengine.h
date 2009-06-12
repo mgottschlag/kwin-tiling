@@ -17,8 +17,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA          *
  ***************************************************************************/
 
-#ifndef _WEATHER_ENGINE_H_
-#define _WEATHER_ENGINE_H_
+#ifndef WEATHERENGINE_H
+#define WEATHERENGINE_H
 
 #include <KService>
 #include <KGenericFactory>
