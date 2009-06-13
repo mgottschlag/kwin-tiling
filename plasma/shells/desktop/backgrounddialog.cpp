@@ -582,7 +582,10 @@ void BackgroundDialog::changeBackgroundMode(int mode)
     } else if (w->layout()) {
         QGridLayout *gridLayout = dynamic_cast<QGridLayout *>(w->layout());
         if (gridLayout) {
-            gridLayout->setColumnMinimumWidth(0, m_wallpaperTypeLabel->minimumWidth());
+            gridLayout->setColumnMinimumWidth(0, m_wallpaperTypeLabel->geometry().right());
+            gridLayout->setColumnStretch(0, 0);
+            gridLayout->setColumnStretch(1, 10);
+            gridLayout->setContentsMargins(0, 0, 0, 0);
         }
     }
 
