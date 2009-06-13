@@ -132,7 +132,6 @@ void AppletOverlay::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
     if (m_applet) {
         m_origin = event->pos();
-        QPointF offset = m_newspaper->m_mainWidget->pos() + m_newspaper->m_scrollWidget->pos();
         showSpacer(event->pos());
         if (m_spacerLayout) {
             m_spacerLayout->removeItem(m_applet);
