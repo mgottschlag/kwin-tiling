@@ -135,6 +135,7 @@ private Q_SLOTS:
     void configureContainment(Plasma::Containment*);
     void updateActions(Plasma::ImmutabilityType immutability);
     void setPerVirtualDesktopViews(bool perDesktopViews);
+    void checkVirtualDesktopViews(int numDesktops);
     void setFixedDashboard(bool fixedDashboard);
     void setWmClass(WId id);
 

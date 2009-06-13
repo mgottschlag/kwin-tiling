@@ -51,7 +51,7 @@ public:
     /**
      * Ensures we have the necessary containments for every screen
      */
-    void checkScreens();
+    void checkScreens(bool signalWhenExists = false);
 
     /**
      * Ensures we have the necessary containments for the given screen screen

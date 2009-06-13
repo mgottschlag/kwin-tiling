@@ -80,14 +80,7 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
     setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
 #endif
 
-    if (AppSettings::perVirtualDesktopViews()) {
-        m_desktop = containment->desktop() + 1;
-        kDebug() << "setting to desktop" << m_desktop;
-        KWindowSystem::setOnDesktop(winId(), m_desktop);
-    } else {
-        m_desktop = -1;
-        KWindowSystem::setOnAllDesktops(winId(), true);
-    }
+    checkDesktopAffiliation();
 
     KWindowSystem::setType(winId(), NET::Desktop);
     lower();
@@ -134,6 +127,18 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
 DesktopView::~DesktopView()
 {
     delete m_dashboard;
+}
+
+void DesktopView::checkDesktopAffiliation()
+{
+    if (AppSettings::perVirtualDesktopViews()) {
+        m_desktop = containment() ? containment()->desktop() + 1 : -1;
+        kDebug() << "setting to desktop" << m_desktop;
+        KWindowSystem::setOnDesktop(winId(), m_desktop);
+    } else {
+        m_desktop = -1;
+        KWindowSystem::setOnAllDesktops(winId(), true);
+    }
 }
 
 KActionCollection* DesktopView::shortcutActions(QObject *parent)
@@ -512,7 +517,7 @@ void DesktopView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Contai
         setContainment(0);
     }
 
-    if (isScreen > -1 && isScreen == screen() && (!AppSettings::perVirtualDesktopViews() || newContainment->desktop() == m_desktop-1) ) {
+    if (isScreen > -1 && isScreen == screen() && (!AppSettings::perVirtualDesktopViews() || newContainment->desktop() == m_desktop - 1) ) {
         setContainment(newContainment);
     }
 }

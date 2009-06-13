@@ -52,12 +52,12 @@ void DesktopCorona::init()
     connect(KWindowSystem::self(), SIGNAL(workAreaChanged()), this, SIGNAL(availableScreenRegionChanged()));
 }
 
-void DesktopCorona::checkScreens()
+void DesktopCorona::checkScreens(bool signalWhenExists)
 {
     // quick sanity check to ensure we have containments for each screen
     int numScreens = Kephal::ScreenUtils::numScreens();
     for (int i = 0; i < numScreens; ++i) {
-        checkScreen(i);
+        checkScreen(i, signalWhenExists);
     }
 }
 
@@ -69,6 +69,7 @@ void DesktopCorona::checkScreen(int screen, bool signalWhenExists)
         for (int j = 0; j < numDesktops; ++j) {
             Plasma::Containment *c = containmentForScreen(screen, j);
 
+            kDebug() << screen << j << (QObject*)c;
             if (!c) {
                 addDesktopContainment(screen, j);
             } else if (signalWhenExists) {

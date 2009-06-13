@@ -254,6 +254,11 @@ void PlasmaApp::setupDesktop()
     Kephal::Screens *screens = Kephal::Screens::self();
     connect(screens, SIGNAL(screenRemoved(int)), SLOT(screenRemoved(int)));
 
+    if (AppSettings::perVirtualDesktopViews()) {
+        connect(KWindowSystem::self(), SIGNAL(numberOfDesktopsChanged(int)),
+                this, SLOT(checkVirtualDesktopViews(int)));
+    }
+
     // free the memory possibly occupied by the background image of the
     // root window - login managers will typically set one
     QPalette palette;
@@ -998,16 +1003,27 @@ void PlasmaApp::setPerVirtualDesktopViews(bool perDesktopViews)
     AppSettings::setPerVirtualDesktopViews(perDesktopViews);
     AppSettings::self()->writeConfig();
 
-    //FIXME: now destroying the old views and recreating them is really a bit brutal, it has to be done in a gentler way by creating only the new views and deleting the old ones
-    foreach (DesktopView *view, m_desktops) {
-        if (view->containment())  {
-            view->containment()->setScreen(-1, -1);
-        }
-        delete view;
-    }
-    m_desktops.clear();
+    disconnect(KWindowSystem::self(), SIGNAL(numberOfDesktopsChanged(int)),
+               this, SLOT(checkVirtualDesktopViews(int)));
 
-    m_corona->checkScreens();
+    if (perDesktopViews) {
+        connect(KWindowSystem::self(), SIGNAL(numberOfDesktopsChanged(int)),
+                this, SLOT(checkVirtualDesktopViews(int)));
+        checkVirtualDesktopViews(KWindowSystem::numberOfDesktops());
+    } else {
+        int currentDesktop = KWindowSystem::currentDesktop();
+        QList<DesktopView *> perScreenViews;
+        foreach (DesktopView *view, m_desktops) {
+            if (view->containment()) {
+                view->containment()->setScreen(-1, -1);
+            }
+
+            delete view;
+        }
+
+        m_desktops.clear();
+        m_corona->checkScreens(true);
+    }
 
     foreach (DesktopView *view, m_desktops) {
         view->zoomOut(m_zoomLevel);
@@ -1016,6 +1032,23 @@ void PlasmaApp::setPerVirtualDesktopViews(bool perDesktopViews)
     foreach (Plasma::Containment *c, m_corona->containments()) {
         c->enableAction("zoom in", true);
     }
+}
+
+void PlasmaApp::checkVirtualDesktopViews(int numDesktops)
+{
+    kDebug() << numDesktops;
+    if (AppSettings::perVirtualDesktopViews()) {
+        QMutableListIterator<DesktopView *> it(m_desktops);
+        while (it.hasNext()) {
+            DesktopView *view = it.next();
+            if (!view->containment() || view->desktop() >= numDesktops)  {
+                delete view;
+                it.remove();
+            }
+        }
+    }
+
+    m_corona->checkScreens(true);
 }
 
 void PlasmaApp::setFixedDashboard(bool fixedDashboard)

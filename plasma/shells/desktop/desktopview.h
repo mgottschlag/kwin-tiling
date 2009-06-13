@@ -45,6 +45,11 @@ public:
     ~DesktopView();
 
     /**
+     * Sets things up for per-desktop views (or not)
+     */
+    void checkDesktopAffiliation();
+
+    /**
      * Returns whether or not the dashboard view is visible
      */
     bool isDashboardVisible() const;
