@@ -364,13 +364,11 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
     showButtonSeparator(true);
     setButtons(Ok | Cancel | Apply);
 
-    QWidget * main = new QWidget(this);
+    QWidget *main= new QWidget(this);
     setupUi(main);
-
 
     qreal previewRatio = (qreal)res.width() / (qreal)res.height();
     QSize monitorSize(200, int(200 * previewRatio));
-
 
     m_monitor->setFixedSize(200, 200);
     m_monitor->setText(QString());
@@ -400,7 +398,7 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
     m_containmentComboBox->setModel(m_containmentModel);
     m_containmentComboBox->setItemDelegate(new AppletDelegate());
 
-    addPage(main, i18n("Appearance"), "preferences-desktop-wallpaper");
+    m_appearanceItem = addPage(main, i18n("Appearance"), "preferences-desktop-wallpaper");
 
     if (m_containment && m_containment->hasConfigurationInterface()) {
         m_containment->createConfigurationInterface(this);
@@ -614,7 +612,36 @@ void BackgroundDialog::saveConfig()
     if (m_containment) {
         if (m_containment->pluginName() != containment) {
             disconnect(m_containment, SIGNAL(destroyed()), this, SLOT(close()));
+            disconnect(this, 0, m_containment, 0);
+
             m_containment = m_view->swapContainment(m_containment, containment);
+
+            KPageWidgetModel *m = qobject_cast<KPageWidgetModel *>(pageWidget()->model());
+            if (m) {
+                int rows = m->rowCount();
+                QList<KPageWidgetItem *> itemsToRemove;
+                for (int i = 0; i < rows; ++i) {
+                    QModelIndex idx = m->index(i, 0);
+
+                    if (!idx.isValid()) {
+                        continue;
+                    }
+
+                    KPageWidgetItem *item = m->item(idx);
+
+                    if (item && item != m_appearanceItem) {
+                        itemsToRemove.append(item);
+                    }
+                }
+
+                foreach (KPageWidgetItem *item, itemsToRemove) {
+                    removePage(item);
+                }
+            }
+
+            if (m_containment->hasConfigurationInterface()) {
+                m_containment->createConfigurationInterface(this);
+            }
             connect(m_containment, SIGNAL(destroyed()), this, SLOT(close()));
         }
 

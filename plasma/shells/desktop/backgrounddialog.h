@@ -73,6 +73,7 @@ private:
     Plasma::View* m_view;
     Plasma::Containment* m_containment;
     ScreenPreviewWidget* m_preview;
+    KPageWidgetItem *m_appearanceItem;
     bool m_modified;
 };
 
