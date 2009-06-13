@@ -146,19 +146,20 @@ KSMPushButton::KSMPushButton( const QString &text, QWidget *parent, bool smallBu
 
 void KSMPushButton::init()
 {
+    m_glowSvg = new Plasma::Svg(this);
+    m_glowSvg->setImagePath("dialogs/shutdowndialog");
+
     if (m_smallButton) {
         setMinimumSize(88, 22);
         setFixedHeight(22); // workaround: force correct height
     } else {
-        setMinimumSize(165, 38);
+        setMinimumSize(m_glowSvg->elementSize("button-normal"));
         setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     }
 
     connect( this, SIGNAL(pressed()), SLOT(slotPressed()) );
     connect( this, SIGNAL(released()), SLOT(slotReleased()) );
 
-    m_glowSvg = new Plasma::Svg(this);
-    m_glowSvg->setImagePath("dialogs/shutdowndialog");
     connect( m_glowSvg, SIGNAL(repaintNeeded()), this, SLOT(update()) );
 
     m_glowTimeLine = new QTimeLine( 150, this );
@@ -239,10 +240,11 @@ void KSMPushButton::paintEvent( QPaintEvent * e )
         p.setBrush(fntColor);
         pen.setColor(QColor(fntColor));
         p.setPen( pen );
+        int baseY = height()/2 + m_pixmap.height()/2;
         QPoint points[3] = {
-            QPoint(width() - 10 - 34, height() - 7),
-            QPoint(width() - 4 - 34, height() - 7),
-            QPoint(width() - 7 - 34, height() - 4) };
+            QPoint(width() - 10 - 34, baseY - 3),
+            QPoint(width() - 4 - 34, baseY - 3),
+            QPoint(width() - 7 - 34, baseY) };
         p.drawPolygon(points, 3); // TODO: use QStyle
         p.restore();
     }
