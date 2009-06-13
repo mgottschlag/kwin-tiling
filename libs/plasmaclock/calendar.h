@@ -1,5 +1,6 @@
 /*
  *   Copyright 2008 Davide Bettio <davide.bettio@kdemail.net>
+ *   Copyright 2009 John Layt <john@layt.net>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
@@ -45,12 +46,11 @@ public:
     Calendar(CalendarTable *calendarTable, QGraphicsWidget *parent = 0);
     ~Calendar();
 
+    bool setCalendar(KCalendarSystem *calendar = 0);
     const KCalendarSystem *calendar () const;
 
     bool setDate(const QDate &date);
     const QDate& date() const;
-
-    bool setCalendar(KCalendarSystem *calendar = 0);
 
     CalendarTable *calendarTable() const;
 
@@ -59,17 +59,15 @@ public:
     QString dateProperty(const QDate &date) const;
 
 Q_SIGNALS:
-    void dateChanged(const QDate &cur, const QDate &old);
-    void dateChanged(const QDate &date);
-    void tableClicked();
+    void dateChanged(const QDate &newDate, const QDate &oldDate);
+    void dateChanged(const QDate &newDate);
 
 private Q_SLOTS:
     void prevMonth();
     void nextMonth();
-    void dateUpdated(const QDate &date);
+    void dateUpdated(const QDate &newDate);
     void goToToday();
     void goToWeek(int week);
-    void goToMonth(int year, int month);
     void manualDateChange();
     void monthsPopup();
     void monthTriggered();
@@ -78,7 +76,7 @@ private Q_SLOTS:
 
 private:
     void init(CalendarTable *calendarTable);
-    void populateHolidays();
+    void refreshWidgets();
     CalendarPrivate* const d;
 };
 

@@ -1,5 +1,6 @@
 /*
  *   Copyright 2008 Davide Bettio <davide.bettio@kdemail.net>
+ *   Copyright 2009 John Layt <john@layt.net>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
@@ -24,12 +25,13 @@
 
 #include "plasmaclock_export.h"
 
-#include <kcalendarsystem.h>
+#include <KCalendarSystem>
 
 namespace Plasma
 {
 
 class CalendarTablePrivate;
+class DataEngine;
 
 class PLASMACLOCK_EXPORT CalendarTable : public QGraphicsWidget
 {
@@ -41,30 +43,30 @@ public:
                     Selected = 2,
                     Hovered = 4,
                     Holiday = 8,
-                    NotInCurrentMonth = 16 };
+                    NotInCurrentMonth = 16,
+                    InvalidDate = 32 };
     Q_DECLARE_FLAGS(CellTypes, CellType)
 
     explicit CalendarTable(QGraphicsWidget *parent = 0);
     CalendarTable(const QDate &, QGraphicsWidget *parent = 0);
     ~CalendarTable();
 
+    bool setCalendar(KCalendarSystem *calendar = 0);
     const KCalendarSystem *calendar () const;
 
     bool setDate(const QDate &date);
     const QDate& date() const;
 
-    bool setCalendar(KCalendarSystem *calendar = 0);
-
+    void setDataEngine(Plasma::DataEngine *dataEngine);
+    void setRegion(const QString &region);
     void clearDateProperties();
     void setDateProperty(QDate date, const QString &reason); //HACK
     QString dateProperty(QDate date) const;
 
 Q_SIGNALS:
-    void dateChanged(const QDate &cur, const QDate &old);
-    void dateChanged(const QDate &date);
+    void dateChanged(const QDate &newDate, const QDate &oldDate);
+    void dateChanged(const QDate &newDate);
     void tableClicked();
-    void displayedMonthChanged(int calendarSystemYear, int calendarSystemMonth);
-    void displayedYearChanged(int calendarSystemYear, int calendarSystemMonth);
 
 protected:
     int cellX(int weekDay);
@@ -82,6 +84,7 @@ protected:
     virtual void paintBorder(QPainter *p, int cell, int week, int weekDay, CellTypes type, const QDate &cellDate);
 
 private:
+    void populateHolidays();
     friend class CalendarTablePrivate;
     CalendarTablePrivate* const d;
 };

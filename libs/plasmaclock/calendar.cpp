@@ -1,5 +1,6 @@
 /*
  *   Copyright 2008 Davide Bettio <davide.bettio@kdemail.net>
+ *   Copyright 2009 John Layt <john@layt.net>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
@@ -63,9 +64,6 @@ class CalendarPrivate
         ToolButton *jumpToday;
         QMenu *monthMenu;
         Plasma::SpinBox *weekSpinBox;
-
-        Plasma::DataEngine *dataEngine;
-        QString region;
 };
 
 Calendar::Calendar(const QDate &date, QGraphicsWidget *parent)
@@ -96,8 +94,6 @@ Calendar::~Calendar()
 
 void Calendar::init(CalendarTable *calendarTable)
 {
-    d->dataEngine = 0;
-
     QGraphicsLinearLayout *m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
     QGraphicsLinearLayout *m_hLayout = new QGraphicsLinearLayout(m_layout);
     QGraphicsLinearLayout *m_layoutTools = new QGraphicsLinearLayout(m_layout);
@@ -114,20 +110,20 @@ void Calendar::init(CalendarTable *calendarTable)
     m_hLayout->addStretch();
 
     d->month = new Plasma::ToolButton(this);
-    d->month->setText(d->calendarTable->calendar()->monthName(d->calendarTable->calendar()->month(d->calendarTable->date()), d->calendarTable->calendar()->year(d->calendarTable->date())));
+    d->month->setText(calendar()->monthName(calendar()->month(date()), calendar()->year(date())));
     d->month->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     connect(d->month, SIGNAL(clicked()), this, SLOT(monthsPopup()));
     m_hLayout->addItem(d->month);
 
     d->year = new Plasma::ToolButton(this);
-    d->year->setText(QString::number(d->calendarTable->calendar()->year(d->calendarTable->date())));
+    d->year->setText(QString::number(calendar()->year(date())));
     d->year->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(d->year, SIGNAL(clicked()), this, SLOT(showYearSpinBox()));
     m_hLayout->addItem(d->year);
 
     d->yearSpinBox = new Plasma::SpinBox(this);
-    d->yearSpinBox->setRange(d->calendarTable->calendar()->year(d->calendarTable->calendar()->earliestValidDate()), d->calendarTable->calendar()->year(d->calendarTable->calendar()->latestValidDate()));
-    d->yearSpinBox->setValue(d->calendarTable->calendar()->year(d->calendarTable->date()));
+    d->yearSpinBox->setRange(calendar()->year(calendar()->earliestValidDate()), calendar()->year(calendar()->latestValidDate()));
+    d->yearSpinBox->setValue(calendar()->year(date()));
     d->yearSpinBox->hide();
     connect(d->yearSpinBox->nativeWidget(), SIGNAL(editingFinished()), this, SLOT(hideYearSpinBox()));
 
@@ -142,6 +138,7 @@ void Calendar::init(CalendarTable *calendarTable)
     m_layout->addItem(m_hLayout);
 
     m_layout->addItem(d->calendarTable);
+    connect(d->calendarTable, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateUpdated(const QDate &)));
 
     d->jumpToday = new Plasma::ToolButton(this);
     d->jumpToday->nativeWidget()->setIcon(KIcon("go-jump-today"));
@@ -151,15 +148,13 @@ void Calendar::init(CalendarTable *calendarTable)
     m_layoutTools->addStretch();
 
     d->dateText = new Plasma::LineEdit(this);
-    connect(d->calendarTable, SIGNAL(dateChanged(const QDate &)), this, SLOT(dateUpdated(const QDate &)));
-    connect(d->calendarTable, SIGNAL(displayedMonthChanged(int, int)), this, SLOT(goToMonth(int, int)));
     connect(d->dateText->nativeWidget(), SIGNAL(returnPressed()), this, SLOT(manualDateChange()));
     m_layoutTools->addItem(d->dateText);
     m_layoutTools->addStretch();
 
     d->weekSpinBox = new Plasma::SpinBox(this);
     d->weekSpinBox->setMinimum(1);
-    d->weekSpinBox->setMaximum(d->calendarTable->calendar()->weeksInYear(d->calendarTable->date()));
+    d->weekSpinBox->setMaximum(calendar()->weeksInYear(date()));
     connect(d->weekSpinBox, SIGNAL(valueChanged(int)), this, SLOT(goToWeek(int)));
     m_layoutTools->addItem(d->weekSpinBox);
 
@@ -167,15 +162,12 @@ void Calendar::init(CalendarTable *calendarTable)
 
     d->monthMenu = 0;
 
-    dateUpdated(d->calendarTable->date());
+    dateUpdated(date());
 }
 
 void Calendar::manualDateChange()
 {
-    QDate date = KGlobal::locale()->readDate(((QLineEdit*)sender())->text());
-    if (date.isValid()) {
-        setDate(date);
-    }
+    setDate(calendar()->readDate(((QLineEdit*)sender())->text()));
 }
 
 void Calendar::goToToday()
@@ -188,133 +180,60 @@ bool Calendar::setCalendar(KCalendarSystem *calendar)
     return d->calendarTable->setCalendar(calendar);
 }
 
-bool Calendar::setDate(const QDate &date)
+const KCalendarSystem *Calendar::calendar () const
 {
-    bool refreshHolidays = date.month() != d->calendarTable->date().month();
-    bool rv = d->calendarTable->setDate(date);
+    return calendarTable()->calendar();
+}
 
-    if (refreshHolidays) {
-        populateHolidays();
+bool Calendar::setDate(const QDate &toDate)
+{
+    bool ret = d->calendarTable->setDate(toDate);
+
+    //If set date failed force refresh of nav widgets to reset any user entry
+    if (!ret) {
+        refreshWidgets();
     }
 
-    dateUpdated(date);
-    return rv;
+    return ret;
 }
 
 const QDate& Calendar::date() const
 {
-    return d->calendarTable->date();
+    return calendarTable()->date();
 }
 
-void Calendar::dateUpdated(const QDate &date)
+void Calendar::dateUpdated(const QDate &newDate)
 {
-    QString formatted = KGlobal::locale()->formatDate( date,  KLocale::ShortDate );
-    d->month->setText(d->calendarTable->calendar()->monthName(date));
+    // Ignore the date passed in, only ever show the date to match the CalendarTable
+    Q_UNUSED(newDate);
+
+    refreshWidgets();
+
+    emit dateChanged(date());
+}
+
+// Update the nav widgets to show the current date in the CalendarTable
+void Calendar::refreshWidgets()
+{
+    d->month->setText(calendar()->monthName(date()));
     d->month->setMinimumSize(static_cast<QToolButton*>(d->month->widget())->sizeHint());
-    d->year->setText(QString::number(d->calendarTable->calendar()->year(date)));
-    d->dateText->setText(formatted);
+    d->year->setText(QString::number(calendar()->year(date())));
+    d->dateText->setText(calendar()->formatDate(date(),  KLocale::ShortDate));
 
     // Block the signals to prevent changing the date again
     d->weekSpinBox->blockSignals(true);
-    d->weekSpinBox->setValue(d->calendarTable->calendar()->weekNumber(date));
+    d->weekSpinBox->setValue(calendar()->weekNumber(date()));
     d->weekSpinBox->blockSignals(false);
-
-    emit dateChanged(date);
 }
 
 void Calendar::prevMonth()
 {
-    const KCalendarSystem *calendar = d->calendarTable->calendar();
-
-    QDate tmpDate = d->calendarTable->date();
-    QDate newDate;
-
-    int month = calendar->month(tmpDate);
-    int year = calendar->year(tmpDate);
-
-    if (month == 1) {
-        month = 12;
-        year--;
-    } else {
-        month--;
-    }
-
-    if (calendar->setYMD(newDate, year, month, calendar->day(tmpDate))) {
-        setDate(newDate);
-    } else if (calendar->setYMD(newDate, year, month, 1)) {
-        setDate(newDate);
-    }
+    setDate(calendar()->addMonths(date(), -1));
 }
 
 void Calendar::nextMonth()
 {
-    const KCalendarSystem *calendar = d->calendarTable->calendar();
-
-    QDate tmpDate = d->calendarTable->date();
-    QDate newDate;
-
-    int month = calendar->month(tmpDate);
-    int year = calendar->year(tmpDate);
-
-    if (month == 12) {
-        month = 1;
-        year++;
-    } else {
-        month++;
-    }
-
-    if (calendar->setYMD(newDate, year, month, calendar->day(tmpDate))) {
-        setDate(newDate);
-    } else if (calendar->setYMD(newDate, year, month, 1)) {
-        setDate(newDate);
-    }
-}
-
-void Calendar::populateHolidays()
-{
-    d->calendarTable->clearDateProperties();
-
-    if (!d->dataEngine || d->region.isEmpty()) {
-        return;
-    }
-
-    QDate date = d->calendarTable->date();
-    QString prevMonthString = date.addMonths(-1).toString(Qt::ISODate);
-    QString nextMonthString = date.addMonths(1).toString(Qt::ISODate);
-
-    Plasma::DataEngine::Data prevMonth = d->dataEngine->query("holidaysInMonth:" + d->region +
-                                                              ":" + prevMonthString);
-    for (int i = -10; i < 0; i++) {
-        QDate tempDate = date.addDays(i);
-        QString reason = prevMonth.value(tempDate.toString(Qt::ISODate)).toString();
-        if (!reason.isEmpty()) {
-            d->calendarTable->setDateProperty(tempDate, reason);
-        }
-    }
-
-    date.setDate(date.year(), date.month(), 1);
-    Plasma::DataEngine::Data thisMonth = d->dataEngine->query("holidaysInMonth:" + d->region +
-                                                              ":" + date.toString(Qt::ISODate));
-    int numDays = KGlobal::locale()->calendar()->daysInMonth(date);
-    for (int i = 0; i < numDays; i++) {
-        QDate tempDate = date.addDays(i);
-        QString reason = thisMonth.value(tempDate.toString(Qt::ISODate)).toString();
-        if (!reason.isEmpty()) {
-            d->calendarTable->setDateProperty(tempDate, reason);
-        }
-    }
-
-
-    date = date.addMonths(1);
-    Plasma::DataEngine::Data nextMonth = d->dataEngine->query("holidaysInMonth:" + d->region +
-                                                              ":" + nextMonthString);
-    for (int i = 0; i < 10; i++) {
-        QDate tempDate = date.addDays(i);
-        QString reason = nextMonth.value(tempDate.toString(Qt::ISODate)).toString();
-        if (!reason.isEmpty()) {
-            d->calendarTable->setDateProperty(tempDate, reason);
-        }
-    }
+    setDate(calendar()->addMonths(date(), 1));
 }
 
 void Calendar::monthsPopup()
@@ -322,10 +241,11 @@ void Calendar::monthsPopup()
     delete d->monthMenu;
     d->monthMenu = new QMenu();
 
-    int year = d->calendarTable->calendar()->year(d->calendarTable->date());
+    int year = calendar()->year(date());
+    int monthsInYear = calendar()->monthsInYear(date());
 
-    for (int i = 1; i <= 12; i++){
-        QAction *tmpAction = new QAction(d->calendarTable->calendar()->monthName(i, year), d->monthMenu);
+    for (int i = 1; i <= monthsInYear; i++){
+        QAction *tmpAction = new QAction(calendar()->monthName(i, year), d->monthMenu);
         tmpAction->setProperty("month", i);
         connect(tmpAction, SIGNAL(triggered()), this, SLOT(monthTriggered()));
         d->monthMenu->addAction(tmpAction);
@@ -337,53 +257,25 @@ void Calendar::monthsPopup()
 void Calendar::monthTriggered()
 {
     QAction *action = dynamic_cast<QAction*> (sender());
-    if (!action || action->property("month").type() != QVariant::Int) return;
-    int month = action->property("month").toInt();
 
-    const KCalendarSystem *calendar = d->calendarTable->calendar();
-    QDate tmpDate = d->calendarTable->date();
-    QDate newDate;
-
-    int year = calendar->year(tmpDate);
-
-    if (calendar->setYMD(newDate, year, month, calendar->day(tmpDate))) {
-        setDate(newDate);
-    } else if (calendar->setYMD(newDate, year, month, 1)) {
-        setDate(newDate);
+    if (action && action->property("month").type() == QVariant::Int) {
+        int newMonth = action->property("month").toInt();
+        int currMonth = calendar()->month(date());
+        setDate(calendar()->addMonths(date(), newMonth - currMonth));
     }
 }
 
-void Calendar::goToWeek(int week)
+void Calendar::goToWeek(int newWeek)
 {
-    const KCalendarSystem *calendar = d->calendarTable->calendar();
+    int currWeek = calendar()->weekNumber(date());
+    int daysInWeek = calendar()->daysInWeek(date());
 
-    if (calendar->weekNumber(d->calendarTable->date()) != week){
-        QDate firstDayOfWeek;
-        calendar->setYMD(firstDayOfWeek, calendar->year(d->calendarTable->date()), 1, 1);
-        int weeksInYear = calendar->weeksInYear(d->calendarTable->date());
-
-        for (int i = 1; i < weeksInYear; i++){
-            if (week == calendar->weekNumber(firstDayOfWeek)) //TODO: Check year
-                break;
-
-            firstDayOfWeek= calendar->addDays(firstDayOfWeek, calendar->daysInWeek(firstDayOfWeek));
-        }
-
-        setDate(firstDayOfWeek);
-    }
-}
-
-void Calendar::goToMonth(int year, int month)
-{
-    // this is actually called from the calendar table, so we dupe a bit of code from setData, 
-    // so we don't set the date on the calendar table (causing fun circles)
-    populateHolidays();
-    dateUpdated(QDate(year, month, 1));
+    setDate(calendar()->addDays(date(), (newWeek - currWeek) * daysInWeek));
 }
 
 void Calendar::showYearSpinBox()
 {
-    d->yearSpinBox->setValue(d->calendarTable->calendar()->year(d->calendarTable->date()));
+    d->yearSpinBox->setValue(calendar()->year(date()));
     d->yearSpinBox->setGeometry(d->year->geometry());
     d->year->hide();
     d->yearSpinBox->show();
@@ -394,12 +286,9 @@ void Calendar::hideYearSpinBox()
 {
     d->yearSpinBox->hide();
 
-    const KCalendarSystem *calendar = d->calendarTable->calendar();
-    QDate newDate;
-    if (calendar->setYMD(newDate, d->yearSpinBox->value(), calendar->month(d->calendarTable->date()), calendar->day(d->calendarTable->date()))){
-        setDate(newDate);
-    }
-
+    int newYear = d->yearSpinBox->value();
+    int currYear = calendar()->year(date());
+    setDate(calendar()->addYears(date(), newYear - currYear));
     d->year->show();
 }
 
@@ -410,22 +299,12 @@ CalendarTable *Calendar::calendarTable() const
 
 void Calendar::setDataEngine(Plasma::DataEngine *dataEngine)
 {
-    if (d->dataEngine == dataEngine) {
-        return;
-    }
-
-    d->dataEngine = dataEngine;
-    populateHolidays();
+    d->calendarTable->setDataEngine(dataEngine);
 }
 
 void Calendar::setRegion(const QString &region)
 {
-    if (d->region == region) {
-        return;
-    }
-
-    d->region = region;
-    populateHolidays();
+    d->calendarTable->setRegion(region);
 }
 
 QString Calendar::dateProperty(const QDate &date) const

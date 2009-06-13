@@ -1,5 +1,6 @@
 /*
  *   Copyright 2008 Davide Bettio <davide.bettio@kdemail.net>
+ *   Copyright 2009 John Layt <john@layt.net>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
@@ -25,6 +26,7 @@
 #include <QtGui/QWidget>
 #include <QtGui/QGraphicsSceneWheelEvent>
 #include <QtGui/QStyleOptionGraphicsItem>
+
 //KDECore
 #include <kglobal.h>
 #include <kdebug.h>
@@ -32,6 +34,7 @@
 //Plasma
 #include <Plasma/Svg>
 #include <Plasma/Theme>
+#include <Plasma/DataEngine>
 
 namespace Plasma
 {
@@ -60,33 +63,38 @@ public:
 class CalendarTablePrivate
 {
     public:
-        CalendarTablePrivate(CalendarTable *, const QDate &cDate = QDate::currentDate())
+        CalendarTablePrivate(CalendarTable *, const QDate &initialDate = QDate::currentDate())
         {
             svg = new Svg();
             svg->setImagePath("widgets/calendar");
             svg->setContainsMultipleImages(true);
 
             calendar = KGlobal::locale()->calendar();
+            dataEngine = 0;
 
-            date = cDate;
-
-            month = calendar->month(date);
-            year = calendar->year(date);
+            setDate(initialDate);
 
             opacity = 0.5; //transparency for the inactive text
         }
 
         ~CalendarTablePrivate()
         {
+            // Delete the old calendar first if it's not the global calendar
+            if ( calendar != KGlobal::locale()->calendar() ) {
+                delete calendar;
+            }
+
             delete svg;
         }
 
-        int firstMonthDayIndex(int y, int m)
+        void setDate(const QDate &setDate)
         {
-            QDate myDate;
-            calendar->setDate(myDate, y, m, 1);
-
-            return (((calendar->dayOfWeek(myDate) - 1) + (calendar->daysInWeek(date) - (calendar->weekStartDay() - 1))) % calendar->daysInWeek(date)) + 1;
+            date = setDate;
+            selectedMonth = calendar->month(date);
+            selectedYear = calendar->year(date);
+            weekDayFirstOfSelectedMonth = weekDayFirstOfMonth(date);
+            daysInWeek = calendar->daysInWeek(date);
+            daysInSelectedMonth = calendar->daysInMonth(date);
         }
 
         QRectF hoveredCellRect(CalendarTable *q, const QPointF &hoverPoint)
@@ -106,7 +114,7 @@ class CalendarTablePrivate
             int x = (hoverPoint.x() - centeringSpace) / (cellW + cellSpace);
             int y = (hoverPoint.y() - headerHeight - headerSpace) / (cellH + cellSpace);
 
-            if (x < 1 || x > 7 || y < 0 || y > DISPLAYED_WEEKS) {
+            if (x < 1 || x > daysInWeek || y < 0 || y > DISPLAYED_WEEKS) {
                 return QRectF();
             }
 
@@ -133,52 +141,75 @@ class CalendarTablePrivate
             hoverRect = newHoverRect;
         }
 
-        int cell(int week, int weekDay, CalendarTable::CellTypes *type, QDate &cellDate)
+        //Given a date, return the position in the table as an offset from the upper left cell
+        int offsetFromDate(const QDate &cellDate)
         {
-            QDate myDate;
-            bool valid = calendar->setDate(myDate, year, month, 1);
-            int numMonths = calendar->monthsInYear(myDate);
+            int initialPosition = calendar->day(cellDate);
+            int adjustment = (weekDayFirstOfSelectedMonth - calendar->weekStartDay() + daysInWeek) % daysInWeek;
 
-            if ((week == 0) && (weekDay < firstMonthDayIndex(year, month))) {
-                if (type) {
-                    (*type) |= CalendarTable::NotInCurrentMonth;
-                }
-
-                int prevMonth = (month == 1) ? numMonths : month - 1;
-                calendar->setDate(myDate, year, prevMonth, 1);
-                calendar->setDate(cellDate, (prevMonth == numMonths) ? year - 1 : year, prevMonth,
-                                 calendar->daysInMonth(myDate) - (firstMonthDayIndex(year, month) - 1 - weekDay));
-                return calendar->daysInMonth(myDate) - (firstMonthDayIndex(year, month) - 1 - weekDay);
-            } else {
-                int day = (week * calendar->daysInWeek(date) + weekDay) - firstMonthDayIndex(year, month) + 1;
-
-                if (day <= calendar->daysInMonth(myDate)) {
-                    if (type) {
-                        (*type) &= ~CalendarTable::NotInCurrentMonth;
-                    }
-
-                    calendar->setDate(cellDate, year, month, day);
-                    return day;
-                } else {
-                    if (type) {
-                        (*type) |= CalendarTable::NotInCurrentMonth;
-                    }
-
-                    int nextMonth = (numMonths == month) ? 1 : month + 1;
-                    calendar->setDate(cellDate, (nextMonth == 1) ? year + 1 : year, nextMonth, day - calendar->daysInMonth(myDate));
-                    return day - calendar->daysInMonth(myDate);
-                }
+            // make sure at least one day of the previous month is visible.
+            // adjust this < 1 if more days should be forced visible:
+            if (adjustment < 1) {
+                adjustment += daysInWeek;
             }
+
+            return initialPosition + adjustment;
         }
 
-        Plasma::Svg *svg;
+        //Given a position in the table as an offset from the upper left cell,
+        //return the cell date.  Note can be an invalid date in the calendar system
+        QDate dateFromOffset(int offset)
+        {
+            QDate cellDate;
+
+            int adjustment = (weekDayFirstOfSelectedMonth - calendar->weekStartDay() + daysInWeek) % daysInWeek;
+
+            // make sure at least one day of the previous month is visible.
+            // adjust this < 1 if more days should be forced visible:
+            if (adjustment < 1) {
+                adjustment += daysInWeek;
+            }
+
+            if (calendar->setYMD( cellDate, selectedYear, selectedMonth, 1)) {
+                cellDate = calendar->addDays(cellDate, offset - adjustment);
+            } else {
+                //If first of month is not valid, then that must be before earliestValid Date, so safe to assume next month ok
+                if (calendar->setYMD(cellDate, selectedYear, selectedMonth + 1, 1)) {
+                    cellDate = calendar->addDays(cellDate, offset - adjustment - daysInSelectedMonth);
+                }
+            }
+            return cellDate;
+        }
+
+
+        // set weekday number of first day of this month, but this may not be a valid date so fake
+        // it if needed e.g. in QDate Mon 1 Jan -4713 is not valid when it should be, so fake as day 1
+        int weekDayFirstOfMonth(const QDate &cellDate)
+        {
+            QDate firstDayOfMonth;
+            int weekDay;
+            if ( calendar->setYMD(firstDayOfMonth, selectedYear, selectedMonth, 1)) {
+                weekDay = calendar->dayOfWeek(firstDayOfMonth);
+            } else {
+                weekDay = calendar->dayOfWeek(date) - ((calendar->day(date) - 1) % daysInWeek);
+                if (weekDay <= 0) {
+                    weekDay += daysInWeek;
+                }
+            }
+            return weekDay;
+        }
+
         const KCalendarSystem *calendar;
         QDate date;
-        QRectF hoverRect;
-        int month;
-        int year;
+        int selectedMonth;
+        int selectedYear;
+        int weekDayFirstOfSelectedMonth;
+        int daysInWeek;
+        int daysInSelectedMonth;
 
+        Plasma::Svg *svg;
         float opacity;
+        QRectF hoverRect;
         int hoverWeek;
         int hoverDay;
         int centeringSpace;
@@ -189,7 +220,11 @@ class CalendarTablePrivate
         int headerSpace;
         int weekBarSpace;
         int glowRadius;
-        QHash<QString, QString> specialDates; // ISODate -> what's special about it
+
+        // Hash key: int = Julian Day number, QString = what's special
+        QHash<int, QString> specialDates;
+        Plasma::DataEngine *dataEngine;
+        QString region;
 };
 
 CalendarTable::CalendarTable(const QDate &date, QGraphicsWidget *parent)
@@ -215,64 +250,66 @@ const KCalendarSystem *CalendarTable::calendar() const
     return d->calendar;
 }
 
-bool CalendarTable::setCalendar(KCalendarSystem *calendar)
+bool CalendarTable::setCalendar(KCalendarSystem *newCalendar)
 {
-    d->calendar = calendar;
-    return false;
+    // If not the global calendar, delete the old calendar first
+    if ( d->calendar != KGlobal::locale()->calendar() ) {
+        delete d->calendar;
+    }
+
+    d->calendar = newCalendar;
+
+    // Need to redraw to display correct calendar
+    update();
+
+    return true;
 }
 
-bool CalendarTable::setDate(const QDate &date)
+bool CalendarTable::setDate(const QDate &newDate)
 {
-    int oldYear = d->year;
-    int oldMonth = d->month;
-    QDate oldDate = d->date;
-    d->year = d->calendar->year(date);
-    d->month = d->calendar->month(date);
-    //kDebug( )<< "setting date to" << date << d->year << d->month;
-    bool fullUpdate = false;
-
-    if (oldYear != d->year){
-        emit displayedYearChanged(d->year, d->month);
-        fullUpdate = true;
+    // New date must be valid in the current calendar system
+    if (!calendar()->isValid(newDate)) {
+        return false;
     }
 
-    if (oldMonth != d->month){
-        emit displayedMonthChanged(d->year, d->month);
-        fullUpdate = true;
+    // If new date is the same as old date don't actually need to do anything
+    if (newDate == date()) {
+        return true;
     }
+
+    int oldYear = d->selectedYear;
+    int oldMonth = d->selectedMonth;
+    int oldDay = calendar()->day(date());
+    QDate oldDate = date();
 
     // now change the date
-    d->date = date;
+    //kDebug( )<< "setting date to" << newDate;
+    d->setDate(newDate);
 
     d->updateHoveredPainting(this, QPointF());
 
-    if (fullUpdate) {
+    if (oldYear != d->selectedYear || oldMonth != d->selectedMonth) {
+        populateHolidays();
         update();
     } else {
         // only update the old and the new areas
-        int offset = d->firstMonthDayIndex(d->year, d->month);
-        int daysInWeek = d->calendar->daysInWeek(d->date);
-
-        int day = d->calendar->day(oldDate);
-        int x = ((offset + day - 1) % daysInWeek);
-        if (x == 0) {
-            x = daysInWeek;
-        }
-        int y = (offset + day - 2) / daysInWeek;
+        int offset = d->offsetFromDate(oldDate);
+        int x = offset % d->daysInWeek;
+        int y = offset / d->daysInWeek;
         update(cellX(x - 1) - d->glowRadius, cellY(y) - d->glowRadius,
                d->cellW + d->glowRadius * 2, d->cellH + d->glowRadius * 2);
 
-        day = d->calendar->day(date);
-        x = (offset + day - 1) % daysInWeek;
-        if (x == 0) {
-            x = daysInWeek;
-        }
-        y = (offset + day - 2) / daysInWeek;
+        offset = d->offsetFromDate(newDate);
+        x = offset % d->daysInWeek;
+        y = offset / d->daysInWeek;
         update(cellX(x - 1) - d->glowRadius, cellY(y) - d->glowRadius,
                d->cellW + d->glowRadius * 2, d->cellH + d->glowRadius * 2);
+
     }
 
-    return false;
+    emit dateChanged(newDate, oldDate);
+    emit dateChanged(newDate);
+    return true;
 }
 
 const QDate& CalendarTable::date() const
@@ -280,69 +317,46 @@ const QDate& CalendarTable::date() const
     return d->date;
 }
 
-int CalendarTable::cellX(int weekDay)
+//Returns the x co-ordinate for drawing the day cell on the widget given the day column
+//Note dayColumn is 0-daysInWeek and is not a real weekDay number (i.e. NOT Monday=1).
+int CalendarTable::cellX(int dayColumn)
 {
-    return boundingRect().x() + d->centeringSpace +
-           d->weekBarSpace + d->cellW +
-           ((d->cellW + d->cellSpace) * (weekDay));
+    return boundingRect().x() + d->centeringSpace + d->weekBarSpace + d->cellW
+            + ((d->cellW + d->cellSpace) * (dayColumn));
 }
 
-int CalendarTable::cellY(int week)
+//Returns the y co-ordinate for drawing the day cell on the widget given the weekRow
+//weekRow is 0-DISPLAYED_WEEKS
+int CalendarTable::cellY(int weekRow)
 {
-    return (int) boundingRect().y() + (d->cellH + d->cellSpace) * (week) + d->headerHeight + d->headerSpace;
+    return (int) boundingRect().y() + ((d->cellH + d->cellSpace) * (weekRow))
+            + d->headerHeight + d->headerSpace;
 }
 
 void CalendarTable::wheelEvent(QGraphicsSceneWheelEvent * event)
 {
-    Q_UNUSED(event);
-
     bool changed = false;
     
     if (event->delta() < 0) {
-        if (d->month == d->calendar->monthsInYear(d->date)) {
-            if (d->calendar->isValid(d->year + 1, 1, 1)) {
-                changed = true;
-                d->month = 1;
-                d->year++;
-                emit displayedYearChanged(d->year, d->month);
-            }
-        } else {
-            changed = true;
-            d->month++;
-        }
+        setDate(calendar()->addMonths(date(), 1));
     } else if (event->delta() > 0) {
-        if (d->month == 1) {
-            int tmpMonth = d->calendar->monthsInYear(d->date);
-            if (d->calendar->isValid(d->year - 1, tmpMonth, 1)) {
-                changed = true;
-                d->month = tmpMonth;
-                d->year--;
-                emit displayedYearChanged(d->year, d->month);
-            }
-        } else {
-            changed = true;
-            d->month--;
-        }
-    }
-
-    if (changed) {
-        emit displayedMonthChanged(d->year, d->month);
+        setDate(calendar()->addMonths(date(), -1));
         update();
     }
 }
 
 void CalendarTable::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+//JPL should be able to simplify this, check KDateTable
     event->accept();
 
-    if ((event->pos().x() >= cellX(0)) && (event->pos().x() <= cellX(d->calendar->daysInWeek(d->date)) - d->cellSpace) &&
+    if ((event->pos().x() >= cellX(0)) && (event->pos().x() <= cellX(d->daysInWeek) - d->cellSpace) &&
         (event->pos().y() >= cellY(0)) && (event->pos().y() <= cellY(DISPLAYED_WEEKS) - d->cellSpace)){
 
         int week = -1;
         int weekDay = -1;
-        QDate cellDate;
 
-        for (int i = 0; i < d->calendar->daysInWeek(d->date); i++) {
+        for (int i = 0; i < d->daysInWeek; i++) {
             if ((event->pos().x() >= cellX(i)) && (event->pos().x() <= cellX(i + 1) - d->cellSpace))
                 weekDay = i;
         }
@@ -355,17 +369,7 @@ void CalendarTable::mousePressEvent(QGraphicsSceneMouseEvent *event)
         if ((week >= 0) && (weekDay >= 0)) {
             d->hoverDay = -1;
             d->hoverWeek = -1;
-            QDate tmpDate;
-            d->cell(week, weekDay + 1, 0, tmpDate);
-
-            if (tmpDate == d->date || !tmpDate.isValid()) {
-                return;
-            }
-
-            QDate oldDate = d->date;
-            setDate(tmpDate);
-            emit dateChanged(tmpDate, oldDate);
-            emit dateChanged(tmpDate);
+            setDate(d->dateFromOffset((week * d->daysInWeek) + weekDay));
         }
     }
 }
@@ -392,8 +396,9 @@ void CalendarTable::resizeEvent(QGraphicsSceneResizeEvent * event)
     Q_UNUSED(event);
 
     QRectF r = contentsRect();
+    int numCols = d->daysInWeek + 1;
     int rectSizeH = int(r.height() / (DISPLAYED_WEEKS + 1));
-    int rectSizeW = int(r.width() / 8);
+    int rectSizeW = int(r.width() / numCols);
 
     //Using integers to help to keep things aligned to the grid
     //kDebug() << r.width() << rectSize;
@@ -404,7 +409,7 @@ void CalendarTable::resizeEvent(QGraphicsSceneResizeEvent * event)
     d->cellW = rectSizeW - d->cellSpace;
     d->glowRadius = d->cellW * .1;
     d->headerHeight = (int) (d->cellH / 1.5);
-    d->centeringSpace = qMax(0, int((r.width() - (rectSizeW * 8) - (d->cellSpace * 7)) / 2));
+    d->centeringSpace = qMax(0, int((r.width() - (rectSizeW * numCols) - (d->cellSpace * (numCols -1))) / 2));
 }
 
 void CalendarTable::paintCell(QPainter *p, int cell, int week, int weekDay, CellTypes type, const QDate &cellDate)
@@ -417,7 +422,7 @@ void CalendarTable::paintCell(QPainter *p, int cell, int week, int weekDay, Cell
     d->svg->paint(p, cellArea, cellSuffix); // draw background
 
     QColor numberColor = Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-    if (type & NotInCurrentMonth) {
+    if (type & NotInCurrentMonth || type & InvalidDate) {
         p->setOpacity(d->opacity);
     }
 
@@ -426,7 +431,9 @@ void CalendarTable::paintCell(QPainter *p, int cell, int week, int weekDay, Cell
     font.setBold(true);
     font.setPixelSize(cellArea.height() * 0.7);
     p->setFont(font);
-    p->drawText(cellArea, Qt::AlignCenter, QString::number(cell), &cellArea); //draw number
+    if (!(type & InvalidDate)) {
+        p->drawText(cellArea, Qt::AlignCenter, QString::number(cell), &cellArea); //draw number
+    }
     p->setOpacity(1.0);
 }
 
@@ -451,22 +458,19 @@ void CalendarTable::paintBorder(QPainter *p, int cell, int week, int weekDay, Ce
         return;
     }
 
-    d->svg->paint(p, QRectF(cellX(weekDay) - 1, cellY(week) - 1,
-                            d->cellW + 1, d->cellH + 2),
-                  elementId);
+    d->svg->paint(p, QRectF(cellX(weekDay) - 1, cellY(week) - 1, d->cellW + 1, d->cellH + 2), elementId);
 }
 
 void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(widget);
-    int daysInWeek = d->calendar->daysInWeek(d->date);
 
     // Draw weeks numbers column and day header
     QRectF r = boundingRect();
     d->svg->paint(p, QRectF(r.x() + d->centeringSpace, cellY(0), d->cellW,
                   cellY(DISPLAYED_WEEKS) - cellY(0) - d->cellSpace),  "weeksColumn");
     d->svg->paint(p, QRectF(r.x() + d->centeringSpace, r.y(),
-                  cellX(daysInWeek) - r.x() - d->cellSpace - d->centeringSpace, d->headerHeight), "weekDayHeader");
+                  cellX(d->daysInWeek) - r.x() - d->cellSpace - d->centeringSpace, d->headerHeight), "weekDayHeader");
 
     QList<CalendarCellBorder> borders;
     QList<CalendarCellBorder> hovers;
@@ -474,7 +478,7 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
 
     //kDebug() << "exposed: " << option->exposedRect;
     for (int week = 0; week < DISPLAYED_WEEKS; week++) {
-        for (int weekDay = 0; weekDay < daysInWeek; weekDay++) {
+        for (int weekDay = 0; weekDay < d->daysInWeek; weekDay++) {
             int x = cellX(weekDay);
             int y = cellY(week);
 
@@ -483,22 +487,30 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
                 continue;
             }
 
-            QDate cellDate(d->date.year(), d->date.month(), (week * 7) + (weekDay + 1));
+            QDate cellDate = d->dateFromOffset((week * d->daysInWeek) + weekDay);
             CalendarTable::CellTypes type(CalendarTable::NoType);
             // get cell info
-            int cell = d->cell(week, weekDay + 1, &type, cellDate);
+            int cell = calendar()->day(cellDate);
 
             // check what kind of cell we are
+            if (calendar()->month(cellDate) != d->selectedMonth) {
+                type |= CalendarTable::NotInCurrentMonth;
+            }
+
+            if (!calendar()->isValid(cellDate)) {
+                type |= CalendarTable::InvalidDate;
+            }
+
             if (cellDate == currentDate) {
-                type |= Today;
+                type |= CalendarTable::Today;
             }
 
-            if (cellDate == d->date) {
-                type |= Selected;
+            if (cellDate == date()) {
+                type |= CalendarTable::Selected;
             }
 
-            if (d->specialDates.contains(cellDate.toString(Qt::ISODate))) {
-                type |= Holiday;
+            if (d->specialDates.contains(cellDate.toJulianDay())) {
+                type |= CalendarTable::Holiday;
             }
 
             if (type != CalendarTable::NoType && type != CalendarTable::NotInCurrentMonth) {
@@ -506,7 +518,7 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
             }
 
             if (week == d->hoverWeek && weekDay == d->hoverDay) {
-                type |= Hovered;
+                type |= CalendarTable::Hovered;
                 hovers.append(CalendarCellBorder(cell, week, weekDay, type, cellDate));
             }
 
@@ -519,12 +531,18 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
                 font.setPixelSize(cellRect.height() * 0.7);
                 p->setFont(font);
                 p->setOpacity(d->opacity);
-                QString weekString = QString::number(d->calendar->weekNumber(cellDate));
+                QString weekString;
+                if (calendar()->isValid(cellDate)) {
+                    weekString = QString::number(calendar()->weekNumber(cellDate));
+                }
                 if (cellDate.dayOfWeek() != Qt::Monday) {
                     weekString += "/";
                     QDate date(cellDate);
+// JPL What's this 8?  Columns incl Week No?
                     date = date.addDays(8 - cellDate.dayOfWeek());
-                    weekString += QString::number(d->calendar->weekNumber(date));
+                    if (calendar()->isValid(cellDate)) {
+                        weekString += QString::number(calendar()->weekNumber(date));
+                    }
                 }
                 p->drawText(cellRect, Qt::AlignCenter, weekString); //draw number
                 p->setOpacity(1.0);
@@ -535,10 +553,10 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
     // Draw days
     if (option->exposedRect.intersects(QRect(r.x(), r.y(), r.width(), d->headerHeight))) {
         p->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
-        int weekStartDay = d->calendar->weekStartDay();
-        for (int i = 0; i < daysInWeek; i++){
-            int weekDay = ((i + weekStartDay - 1) % daysInWeek) + 1;
-            QString dayName = d->calendar->weekDayName(weekDay, KCalendarSystem::ShortDayName);
+        int weekStartDay = calendar()->weekStartDay();
+        for (int i = 0; i < d->daysInWeek; i++){
+            int weekDay = ((i + weekStartDay - 1) % d->daysInWeek) + 1;
+            QString dayName = calendar()->weekDayName(weekDay, KCalendarSystem::ShortDayName);
             QFont font = Theme::defaultTheme()->font(Plasma::Theme::DefaultFont);
             font.setPixelSize(d->headerHeight * 0.9);
             p->setFont(font);
@@ -569,6 +587,22 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
     */
 }
 
+void CalendarTable::setDataEngine(Plasma::DataEngine *dataEngine)
+{
+    if (d->dataEngine != dataEngine) {
+        d->dataEngine = dataEngine;
+        populateHolidays();
+    }
+}
+
+void CalendarTable::setRegion(const QString &region)
+{
+    if (d->region != region) {
+        d->region = region;
+        populateHolidays();
+    }
+}
+
 //HACK
 void CalendarTable::clearDateProperties()
 {
@@ -577,12 +611,60 @@ void CalendarTable::clearDateProperties()
 
 void CalendarTable::setDateProperty(QDate date, const QString &description)
 {
-    d->specialDates.insert(date.toString(Qt::ISODate), description);
+    d->specialDates.insert(date.toJulianDay(), description);
 }
 
 QString CalendarTable::dateProperty(QDate date) const
 {
-    return d->specialDates.value(date.toString(Qt::ISODate));
+    return d->specialDates.value(date.toJulianDay());
+}
+
+//JPL Looks to work OK even though non-Gregorian months do not match up, probably due to fetching 3 months worth 
+void CalendarTable::populateHolidays()
+{
+    clearDateProperties();
+
+    if (!d->dataEngine || d->region.isEmpty()) {
+        return;
+    }
+
+    QDate queryDate = date();
+    QString prevMonthString = queryDate.addMonths(-1).toString(Qt::ISODate);
+    QString nextMonthString = queryDate.addMonths(1).toString(Qt::ISODate);
+
+    Plasma::DataEngine::Data prevMonth = d->dataEngine->query("holidaysInMonth:" + d->region +
+                                                              ":" + prevMonthString);
+    for (int i = -10; i < 0; i++) {
+        QDate tempDate = queryDate.addDays(i);
+        QString reason = prevMonth.value(tempDate.toString(Qt::ISODate)).toString();
+        if (!reason.isEmpty()) {
+            setDateProperty(tempDate, reason);
+        }
+    }
+
+    queryDate.setDate(queryDate.year(), queryDate.month(), 1);
+    Plasma::DataEngine::Data thisMonth = d->dataEngine->query("holidaysInMonth:" + d->region +
+                                                              ":" + queryDate.toString(Qt::ISODate));
+    int numDays = calendar()->daysInMonth(queryDate);
+    for (int i = 0; i < numDays; i++) {
+        QDate tempDate = queryDate.addDays(i);
+        QString reason = thisMonth.value(tempDate.toString(Qt::ISODate)).toString();
+        if (!reason.isEmpty()) {
+            setDateProperty(tempDate, reason);
+        }
+    }
+
+
+    queryDate = queryDate.addMonths(1);
+    Plasma::DataEngine::Data nextMonth = d->dataEngine->query("holidaysInMonth:" + d->region +
+                                                              ":" + nextMonthString);
+    for (int i = 0; i < 10; i++) {
+        QDate tempDate = queryDate.addDays(i);
+        QString reason = nextMonth.value(tempDate.toString(Qt::ISODate)).toString();
+        if (!reason.isEmpty()) {
+            setDateProperty(tempDate, reason);
+        }
+    }
 }
 
 } //namespace Plasma
