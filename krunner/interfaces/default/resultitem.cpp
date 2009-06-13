@@ -184,8 +184,8 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     bool oldClipping = painter->hasClipping();
     painter->setClipping(false);
 
-    QRect iRect = contentsRect().toRect();
-    QSize iconSize = iRect.size().boundedTo(QSize(32, 32));
+    QSize iconSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium);
+    QRect iRect = QStyle::alignedRect(option->direction, Qt::AlignLeft,  iconSize, contentsRect().toRect());
 
     painter->setRenderHint(QPainter::Antialiasing);
     bool drawMixed = false;
@@ -238,7 +238,10 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     }
 
     QRect textRect(iRect.topLeft() + QPoint(iconSize.width() + TEXT_MARGIN, 0),
-                   iRect.bottomRight());
+                   contentsRect().size().toSize() - QSize(iRect.width(), 0));
+    if (option->direction == Qt::RightToLeft) {
+        textRect.moveRight(iRect.left() - TEXT_MARGIN);
+    }
 
     // Draw the text on a pixmap
     const QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
@@ -439,8 +442,13 @@ void ResultItem::calculateSize()
 
     if (m_configButton) {
         QSizeF s = m_configButton->size();
-        m_configButton->setPos(newSize.width() - s.width(),
-                               newSize.height() - s.height());
+
+        if (QApplication::layoutDirection() == Qt::RightToLeft) {
+            m_configButton->setPos(0, newSize.height() - s.height());
+        } else {
+            m_configButton->setPos(newSize.width() - s.width(),
+                                   newSize.height() - s.height());
+        }
     }
 }
 
