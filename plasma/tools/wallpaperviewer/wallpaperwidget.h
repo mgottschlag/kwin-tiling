@@ -67,5 +67,27 @@ private:
     QPoint m_mouseMoveScreenPoint;
 };
 
+// WallpaperConfigWidget is passed the wallpaper
+// in createConfigurationInterface so it can notify
+// of changes (used to enable the apply button)
+class WallpaperConfigWidget :public QWidget
+{
+    Q_OBJECT
+public:
+      WallpaperConfigWidget(QWidget *parent)
+          : QWidget(parent)
+      {
+      }
+
+signals:
+    void modified(bool isModified);
+
+public slots:
+    void settingsChanged(bool isModified)
+    {
+        emit modified(isModified);
+    }
+};
+
 #endif
 

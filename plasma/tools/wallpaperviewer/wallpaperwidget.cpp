@@ -221,11 +221,12 @@ void WallpaperWidget::configure()
             m_configDialog->setCaption(i18n("Configure %1 Wallpaper", m_wallpaper->name()));
             m_configDialog->setButtons(KDialog::Ok | KDialog::Apply | KDialog::Cancel);
 
-            QWidget *w = new QWidget(m_configDialog);
+            QWidget *w = new WallpaperConfigWidget(m_configDialog);
             QVBoxLayout *layout = new QVBoxLayout(w);
             layout->addWidget(m_wallpaper->createConfigurationInterface(w));
             m_configDialog->setMainWidget(w);
 
+            connect(w, SIGNAL(modified(bool)), m_configDialog, SLOT(enableButtonApply(bool)));
             connect(m_configDialog, SIGNAL(applyClicked()), this, SLOT(saveConfig()));
             connect(m_configDialog, SIGNAL(okClicked()), this, SLOT(saveConfig()));
             connect(m_configDialog, SIGNAL(finished()), this, SLOT(configDone()));
