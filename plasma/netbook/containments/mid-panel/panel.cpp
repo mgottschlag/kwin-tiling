@@ -19,6 +19,7 @@
 */
 
 #include "panel.h"
+#include "appletoverlay.h"
 
 #include <limits>
 
@@ -47,10 +48,10 @@
 
 using namespace Plasma;
 
-static const int CONTROL_BAR_HEIGHT = 22;
-
 Panel::Panel(QObject *parent, const QVariantList &args)
-    : Containment(parent, args)
+    : Containment(parent, args),
+      m_layout(0),
+      m_appletOverlay(0)
 {
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/panel-background");
@@ -71,6 +72,8 @@ Panel::Panel(QObject *parent, const QVariantList &args)
             this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
     connect(this, SIGNAL(appletRemoved(Plasma::Applet*)),
             this, SLOT(appletRemoved(Plasma::Applet*)));
+    /*connect(this, SIGNAL(toolBoxVisibilityChanged(bool)),
+            this, SLOT(updateConfigurationMode(bool)));*/
 }
 
 Panel::~Panel()
@@ -80,6 +83,13 @@ Panel::~Panel()
 void Panel::init()
 {
     Containment::init();
+
+    //HACK to experiment with an idea: connect with toolBoxVisibilityChanged of /ALL/ containments
+    Plasma::Corona *c = corona();
+    foreach (Plasma::Containment *cont, c->containments()) {
+        connect(cont, SIGNAL(toolBoxVisibilityChanged(bool)),
+            this, SLOT(updateConfigurationMode(bool)));
+    }
 }
 
 void Panel::backgroundChanged()
@@ -89,10 +99,9 @@ void Panel::backgroundChanged()
 
 void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 {
-    // this gets called whenever an applet is added, and we add it to our layout
-    QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout*>(layout());
+    // this gets called whenever an applet is added, and we add it to our m_layoutout
 
-    if (!lay) {
+    if (!m_layout) {
         return;
     }
 
@@ -101,8 +110,8 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 
     //if pos is (-1,-1) insert at the end of the panel
     if (pos != QPoint(-1, -1)) {
-        for (int i = 0; i < lay->count(); ++i) {
-            QRectF siblingGeometry = lay->itemAt(i)->geometry();
+        for (int i = 0; i < m_layout->count(); ++i) {
+            QRectF siblingGeometry = m_layout->itemAt(i)->geometry();
             if (f == Plasma::Horizontal) {
                 qreal middle = (siblingGeometry.left() + siblingGeometry.right()) / 2.0;
                 if (pos.x() < middle) {
@@ -126,9 +135,9 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
     }
 
     if (insertIndex == -1) {
-        lay->addItem(applet);
+        m_layout->addItem(applet);
     } else {
-        lay->insertItem(insertIndex, applet);
+        m_layout->insertItem(insertIndex, applet);
     }
 
     connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
@@ -199,7 +208,8 @@ void Panel::updateBorders()
     m_background->setEnabledBorders(enabledBorders);
     m_background->getMargins(leftWidth, topHeight, rightWidth, bottomHeight);
 
-    //FIXME: is it needed here?
+    //FIXME: this will be probably just killed not kept in this zombie state :)
+#if 0
     //calculation of extra margins has to be done after getMargins
     if (formFactor() == Vertical) {
         //hardcoded extra margin for the toolbox right now
@@ -217,6 +227,7 @@ void Panel::updateBorders()
             }
         }
     }
+#endif
 
     switch (location()) {
     case LeftEdge:
@@ -260,16 +271,16 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
                 linearLay->setOrientation(layoutDirection);
             }
         } else {
-            QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(this);
-            lay->setOrientation(layoutDirection);
-            lay->setContentsMargins(0, 0, 0, 0);
-            lay->setSpacing(4);
-            lay->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
-            setLayout(lay);
+            m_layout = new QGraphicsLinearLayout(this);
+            m_layout->setOrientation(layoutDirection);
+            m_layout->setContentsMargins(0, 0, 0, 0);
+            m_layout->setSpacing(4);
+            m_layout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
+            setLayout(m_layout);
             updateBorders();
 
             foreach (Applet *applet, applets()) {
-                lay->addItem(applet);
+                m_layout->addItem(applet);
             }
         }
     }
@@ -290,6 +301,10 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
         updateBorders();
     }
 
+    if (constraints & Plasma::SizeConstraint && m_appletOverlay) {
+        m_appletOverlay->resize(size());
+    }
+
     //FIXME: this seems the only way to correctly resize the layout the first time when the
     // saved panel size is less than the default is to setting a maximum size.
     // this shouldn't happen. maybe even a qgraphicslayout bug?
@@ -305,6 +320,17 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
         bool unlocked = immutability() == Plasma::Mutable;
 
         updateBorders();
+    }
+}
+
+void Panel::updateConfigurationMode(bool config)
+{
+    if (config && !m_appletOverlay) {
+        m_appletOverlay = new AppletOverlay(this, this);
+        m_appletOverlay->resize(size());
+    } else if (!config) {
+        delete m_appletOverlay;
+        m_appletOverlay = 0;
     }
 }
 

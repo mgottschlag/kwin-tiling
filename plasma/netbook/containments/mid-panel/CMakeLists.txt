@@ -1,6 +1,7 @@
 
 set(panel_SRCS
-    panel.cpp)
+    panel.cpp
+    appletoverlay.cpp)
 
 kde4_add_plugin(plasma_containment_midpanel ${panel_SRCS})
 target_link_libraries(plasma_containment_midpanel ${KDE4_PLASMA_LIBS} ${KDE4_KIO_LIBS})

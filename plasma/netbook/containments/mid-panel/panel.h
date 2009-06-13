@@ -26,6 +26,8 @@
 class QAction;
 class KDialog;
 class KIntNumInput;
+class QGraphicsLinearLayout;
+class AppletOverlay;
 
 namespace Plasma
 {
@@ -35,6 +37,9 @@ namespace Plasma
 class Panel : public Plasma::Containment
 {
     Q_OBJECT
+
+    friend class AppletOverlay;
+
 public:
     Panel(QObject *parent, const QVariantList &args);
     ~Panel();
@@ -56,6 +61,7 @@ private slots:
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
     void appletRemoved(Plasma::Applet* applet);
     void updateSize();
+    void updateConfigurationMode(bool config);
 
 private:
     /**
@@ -69,6 +75,8 @@ private:
     void updateBorders();
 
     Plasma::FrameSvg *m_background;
+    QGraphicsLinearLayout *m_layout;
+    AppletOverlay *m_appletOverlay;
 };
 
 
