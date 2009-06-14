@@ -206,6 +206,7 @@ void DesktopCorona::loadDefaultLayout()
 
         c->init();
         c->setScreen(i, -1);
+        c->resize(screenGeometry(i).size());
         c->setWallpaper("image", "SingleImage");
         c->setFormFactor(Plasma::Planar);
         c->updateConstraints(Plasma::StartupCompletedConstraint);
@@ -284,6 +285,7 @@ void DesktopCorona::saveDefaultSetup()
 
         foreach (Plasma::Applet* applet, containment->applets()) {
             applet->init();
+            applet->updateConstraints(Plasma::AllConstraints | Plasma::StartupCompletedConstraint);
             applet->flushPendingConstraintsEvents();
             applet->save(invalidConfig);
         }
