@@ -5,6 +5,9 @@
     </method>
     <method name="showTaskManager">
     </method>
+    <method name="showTaskManagerWithFilter">
+      <arg name="filterText" type="s" direction="in"/>
+    </method>
     <method name="display">
     </method>
     <method name="query">

@@ -217,6 +217,10 @@ void KRunnerApp::initializeStartupNotification()
 
 void KRunnerApp::showTaskManager()
 {
+    showTaskManagerWithFilter(QString());
+}
+void KRunnerApp::showTaskManagerWithFilter(const QString &filterText)
+{
 #ifndef Q_WS_WIN
     //kDebug(1204) << "Launching KSysGuard...";
     KSysGuardProcessList* w = NULL;
@@ -258,6 +262,7 @@ void KRunnerApp::showTaskManager()
     KWindowSystem::forceActiveWindow(m_tasks->winId());
 
     if (w) {
+        w->filterLineEdit()->setText(filterText);
         w->filterLineEdit()->setFocus();
     }
 #endif

@@ -69,6 +69,8 @@ public Q_SLOTS:
 
     /** Show taskmanager */
     Q_SCRIPTABLE void showTaskManager();
+    /** Show taskmanager, filtering by the given string */
+    Q_SCRIPTABLE void showTaskManagerWithFilter(const QString &filterText);
 
     /** Display the interface */
     Q_SCRIPTABLE void display();
