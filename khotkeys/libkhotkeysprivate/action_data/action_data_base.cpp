@@ -165,6 +165,8 @@ void ActionDataBase::enable()
 
     // Enable only if the parent is enabled too
     if (isEnabled())
+        // FIXME: let doEnable decide if it makes sense do enable (No trigger
+        // .... )
         doEnable();
     }
 

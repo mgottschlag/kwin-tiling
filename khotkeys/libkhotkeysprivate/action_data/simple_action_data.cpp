@@ -56,15 +56,21 @@ void SimpleActionData::accept(ActionDataVisitor *visitor) const
 
 void SimpleActionData::doEnable()
     {
-    trigger()->enable();
-    update_triggers();
+    if (trigger())
+        {
+        trigger()->enable();
+        update_triggers();
+        }
     }
 
 
 void SimpleActionData::doDisable()
     {
-    trigger()->disable();
-    update_triggers();
+    if (trigger())
+        {
+        trigger()->disable();
+        update_triggers();
+        }
     }
 
 
@@ -103,7 +109,8 @@ Action* SimpleActionData::action()
 const Trigger* SimpleActionData::trigger() const
     {
     if( triggers() == 0 || triggers()->isEmpty() )
-        return 0;
+        return NULL;
+
     return triggers()->first();
     }
 
@@ -111,7 +118,8 @@ const Trigger* SimpleActionData::trigger() const
 Trigger* SimpleActionData::trigger()
     {
     if( triggers() == 0 || triggers()->isEmpty() )
-        return 0;
+        return NULL;
+
     return triggers()->first();
     }
 
