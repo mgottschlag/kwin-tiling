@@ -319,10 +319,12 @@ void TaskArea::initUnhideTool()
     if (d->topLayout->orientation() == Qt::Horizontal) {
         d->unhider->setMaximumSize(KIconLoader::SizeSmallMedium, QWIDGETSIZE_MAX);
         d->unhider->setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
+        d->unhider->setPreferredSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
         d->unhider->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     } else {
         d->unhider->setMaximumSize(QWIDGETSIZE_MAX, KIconLoader::SizeSmallMedium);
         d->unhider->setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
+        d->unhider->setPreferredSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
         d->unhider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     }
 
