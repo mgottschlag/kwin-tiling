@@ -308,9 +308,9 @@ void KCMHotkeysPrivate::load()
     delete model;
     // Now use the old
     model = tree_view->model();
-    global_settings->setModel(model);
 
     model->load();
+    global_settings->setModel(model);
 
     QObject::connect(
         model, SIGNAL( rowsRemoved( QModelIndex, int, int )),
@@ -330,7 +330,6 @@ void KCMHotkeysPrivate::load()
     QObject::connect(
         tree_view->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)),
         q, SLOT(currentChanged(QModelIndex,QModelIndex)) );
-
     }
 
 
