@@ -238,6 +238,12 @@ void DesktopCorona::loadDefaultLayout()
     panel->init();
     panel->setScreen(topLeftScreen);
     panel->setLocation(Plasma::BottomEdge);
+
+    const int newHeight = 28;
+    panel->resize(QSize((int)panel->size().width(), newHeight));
+    panel->setMinimumSize(QSize((int)panel->minimumSize().width(), newHeight));
+    panel->setMaximumSize(QSize((int)panel->maximumSize().width(), newHeight));
+
     panel->updateConstraints(Plasma::StartupCompletedConstraint);
     panel->flushPendingConstraintsEvents();
 
