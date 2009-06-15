@@ -59,7 +59,6 @@ public slots:
     QObject* config();
     QObject* globalConfig();
     void setScrollBarPolicy(int orientation, int policy);
-    void setDefaultSize(qreal w, qreal h);
     QVariantList screenRect();
     void setConfigurationRequired(bool needsConfiguring);
     QVariantList getContentsMargins();

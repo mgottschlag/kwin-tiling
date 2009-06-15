@@ -152,21 +152,19 @@ PlasmaWebApplet::~PlasmaWebApplet()
 
 bool PlasmaWebApplet::init()
 {
-    m_useDefaultSize = (applet()->contentsRect().size() == QSizeF(0, 0));
-    m_config.setConfig(applet()->config());
-    m_globalConfig.setConfig(applet()->globalConfig());
     if (WebApplet::init()) {
         connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
                 this, SLOT(themeChanged()));
         makeStylesheet();
         return true;
     }
+
     return false;
 }
 
 void PlasmaWebApplet::makeStylesheet()
 {
-    if (m_temp.open()) {
+    if (page() && m_temp.open()) {
         KColorScheme plasmaColorTheme = KColorScheme(QPalette::Active, KColorScheme::View,
                 Plasma::Theme::defaultTheme()->colorScheme());
         QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
@@ -278,11 +276,13 @@ QObject* PlasmaWebApplet::dataEngine(const QString& name)
 
 QObject* PlasmaWebApplet::config()
 {
+    m_config.setConfig(applet()->config());
     return &m_config;
 }
 
 QObject* PlasmaWebApplet::globalConfig()
 {
+    m_globalConfig.setConfig(applet()->globalConfig());
     return &m_globalConfig;
 }
 
@@ -347,13 +347,6 @@ void PlasmaWebApplet::initJsObjects()
     Q_ASSERT(frame);
     frame->addToJavaScriptWindowObject(QLatin1String("applet"), this);
     frame->addToJavaScriptWindowObject(QLatin1String("plasma"), new PlasmaJs(this));
-}
-
-void PlasmaWebApplet::setDefaultSize(qreal w, qreal h)
-{
-    if (m_useDefaultSize) {
-        applet()->resize(w, h);
-    }
 }
 
 QVariantList PlasmaWebApplet::geometry()
