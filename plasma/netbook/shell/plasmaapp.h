@@ -72,6 +72,9 @@ private:
     PlasmaApp();
     void reserveStruts();
 
+protected:
+    bool eventFilter(QObject *watched, QEvent *event);
+
 private Q_SLOTS:
     void cleanup();
     void syncConfig();
@@ -81,6 +84,7 @@ private Q_SLOTS:
     void controlBarMoved(const MidView *controlBar);
     void showAppletBrowser();
     void appletBrowserDestroyed();
+    void mainContainmentActivated();
 
 private:
     Plasma::Corona *m_corona;

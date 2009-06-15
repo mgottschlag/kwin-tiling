@@ -93,6 +93,8 @@ PlasmaApp::PlasmaApp()
 
     //m_window = new QWidget;
     m_window = m_mainView = new MidView(0, MidView::mainViewId(), 0);
+    connect(m_mainView, SIGNAL(containmentActivated()), this, SLOT(mainContainmentActivated()));
+    m_window->installEventFilter(this);
 
     //FIXME: if argb visuals enabled Qt will always set WM_CLASS as "qt-subapplication" no matter what
     //the application name is we set the proper XClassHint here, hopefully won't be necessary anymore when
@@ -209,6 +211,32 @@ void PlasmaApp::syncMainContainmentsMargins()
     }
 }
 
+void PlasmaApp::mainContainmentActivated()
+{
+    if (!m_isDesktop) {
+        return;
+    }
+
+    const WId id = m_window->effectiveWinId();
+
+    KWindowSystem::clearState(id, NET::KeepBelow);
+    KWindowSystem::setState(id, NET::KeepAbove);
+}
+
+bool PlasmaApp::eventFilter(QObject *watched, QEvent *event)
+{
+    if (!m_isDesktop) {
+        return false;
+    }
+
+    if (watched == m_window && event->type() == QEvent::WindowDeactivate) {
+        const WId id = m_window->effectiveWinId();
+        KWindowSystem::clearState(id, NET::KeepAbove);
+        KWindowSystem::setState(id, NET::KeepBelow);
+    }
+    return false;
+}
+
 void PlasmaApp::setIsDesktop(bool isDesktop)
 {
     m_isDesktop = isDesktop;
@@ -258,14 +286,17 @@ void PlasmaApp::reserveStruts()
         strut.left_width = m_controlBar->width();
         strut.left_start = m_window->y();
         strut.left_end = m_window->y() + m_window->height() - 1;
+        break;
     case Plasma::RightEdge:
         strut.right_width = m_controlBar->width();
         strut.right_start = m_window->y();
         strut.right_end = m_window->y() + m_window->height() - 1;
+        break;
     case Plasma::TopEdge:
         strut.top_width = m_controlBar->height();
         strut.top_start = m_window->x();
         strut.top_end = m_window->x() + m_window->width() - 1;
+        break;
     case Plasma::BottomEdge:
     default:
         strut.bottom_width = m_controlBar->height();

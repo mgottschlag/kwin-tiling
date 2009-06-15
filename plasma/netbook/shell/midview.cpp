@@ -61,7 +61,7 @@ void MidView::connectContainment(Plasma::Containment *containment)
             this, SLOT(setContainment(Plasma::Containment*)));
     connect(containment, SIGNAL(configureRequested(Plasma::Containment*)), this,
             SLOT(configureContainment(Plasma::Containment*)));
-    connect(containment, SIGNAL(activate()), this, SLOT(containmentActivated()));
+    connect(containment, SIGNAL(activate()), this, SIGNAL(containmentActivated()));
     connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updateGeometry()));
 }
 
@@ -85,15 +85,6 @@ void MidView::configureContainment(Plasma::Containment *containment)
     */
 }
 
-void MidView::containmentActivated()
-{
-    Plasma::Containment *cont = containment();
-    if (cont && cont->formFactor() != Plasma::Horizontal && cont->formFactor() != Plasma::Vertical) {
-        WId id = effectiveWinId();
-        KWindowSystem::raiseWindow(id);
-        KWindowSystem::activateWindow(id);
-    }
-}
 
 // This function is reimplemented from QGraphicsView to work around the problem
 // that QPainter::fillRect(QRectF/QRect, QBrush), which QGraphicsView uses, is

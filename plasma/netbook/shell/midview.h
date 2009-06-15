@@ -49,11 +49,10 @@ public:
     static uint mainViewId() { return 1; }
     static uint controlBarId() { return 2; }
 
-public slots:
+public Q_SLOTS:
     void setContainment(Plasma::Containment *containment);
     void screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment);
     void updateGeometry();
-    void containmentActivated();
 
     /**
      * Configure containment.
@@ -65,6 +64,7 @@ public slots:
 Q_SIGNALS:
     void locationChanged(const MidView *view);
     void geometryChanged();
+    void containmentActivated();
 
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
