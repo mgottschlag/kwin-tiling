@@ -88,11 +88,15 @@ bool WebApplet::init()
 
     QString webpage;
     webpage = package()->filePath("mainscript");
-    kDebug() << "webpage is at" << webpage;
+
     if (webpage.isEmpty()) {
+        kDebug() << "fail! no page";
+        delete d->page;
+        d->page = 0;
         return false;
     }
-    kDebug() << package()->path() << package()->filePath("html");
+
+    kDebug() << webpage << package()->path() << package()->filePath("html");
     d->page->mainFrame()->setHtml(dataFor(webpage), QUrl(package()->filePath("html")));
     return true;
 }
