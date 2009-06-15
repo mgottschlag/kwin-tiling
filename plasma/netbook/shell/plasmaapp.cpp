@@ -226,7 +226,6 @@ void PlasmaApp::mainContainmentActivated()
         KWindowSystem::raiseWindow(activeWindow->effectiveWinId());
         activeWindow->setFocus();
     }
-    //KWindowSystem::setState(id, NET::KeepAbove);
 }
 
 bool PlasmaApp::eventFilter(QObject *watched, QEvent *event)
@@ -242,9 +241,14 @@ bool PlasmaApp::eventFilter(QObject *watched, QEvent *event)
         if (!activeWindow) {
             KWindowSystem::setState(id, NET::KeepBelow);
         }
-    }else if (watched == m_window && event->type() == QEvent::WindowActivate) {
+    } else if (watched == m_window && event->type() == QEvent::WindowActivate) {
         const WId id = m_window->effectiveWinId();
-        //TODO: when it's activated with alt+tab or expose bring to front, but not with mouse clicks
+
+        //TODO:we need not undermouse but to know if the mouse is pressed
+        if (!m_controlBar->underMouse()) {
+            KWindowSystem::clearState(id, NET::KeepBelow);
+            KWindowSystem::raiseWindow(id);
+        }
     }
     return false;
 }
@@ -259,6 +263,7 @@ void PlasmaApp::setIsDesktop(bool isDesktop)
         m_window->show();
         KWindowSystem::setState(m_window->winId(), NET::SkipTaskbar | NET::SkipPager);
         //KWindowSystem::setType(m_window->winId(), NET::Desktop);
+        KWindowSystem::setState(m_window->winId(), NET::KeepBelow);
         m_window->lower();
         connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(adjustSize(int)));
     } else {
