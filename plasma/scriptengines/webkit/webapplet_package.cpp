@@ -32,5 +32,17 @@ WebAppletPackage::WebAppletPackage(QObject *parent, QVariantList args)
     Plasma::PackageStructure::operator=(*Plasma::Applet::packageStructure());
     addFileDefinition("mainscript", "code/main.html", i18n("Main Script File"));
     // For Webapplet::init()
-    addDirectoryDefinition("root", "/", i18n("Root HTML directory"));
+    addDirectoryDefinition("html", "code/", i18n("Root HTML directory"));
 }
+
+void WebAppletPackage::pathChanged()
+{
+    KDesktopFile config(path() + "/metadata.desktop");
+    KConfigGroup cg = config.desktopGroup();
+    QString mainScript = cg.readEntry("X-Plasma-MainScript", QString());
+    if (!mainScript.isEmpty()) {
+        addFileDefinition("mainscript", mainScript, i18n("Main Script File"));
+        setRequired("mainscript", true);
+    }
+}
+

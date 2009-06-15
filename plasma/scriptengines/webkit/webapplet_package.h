@@ -23,12 +23,17 @@ THE SOFTWARE.
 #ifndef WEBAPPLET_PACKAGE_H
 #define WEBAPPLET_PACKAGE_H
 
+#include <KDesktopFile>
+
 #include <Plasma/PackageStructure>
 
 class WebAppletPackage : public Plasma::PackageStructure
 {
 public:
     WebAppletPackage(QObject *parent, QVariantList args);
+
+protected:
+    void pathChanged();
 };
 
 K_EXPORT_PLASMA_PACKAGESTRUCTURE(webkit, WebAppletPackage)
