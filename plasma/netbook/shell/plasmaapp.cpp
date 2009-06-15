@@ -242,15 +242,19 @@ bool PlasmaApp::eventFilter(QObject *watched, QEvent *event)
             KWindowSystem::setState(id, NET::KeepBelow);
         }
     } else if (watched == m_window && event->type() == QEvent::WindowActivate) {
-        const WId id = m_window->effectiveWinId();
-
-        //TODO:we need not undermouse but to know if the mouse is pressed
-        if (!m_controlBar->underMouse()) {
-            KWindowSystem::clearState(id, NET::KeepBelow);
-            KWindowSystem::raiseWindow(id);
-        }
+        QTimer::singleShot(0, this, SLOT(maybeRaise()));
     }
     return false;
+}
+
+void PlasmaApp::maybeRaise()
+{
+    const WId id = m_window->effectiveWinId();
+
+    if (!m_controlBar->canRaise()) {
+        KWindowSystem::clearState(id, NET::KeepBelow);
+        KWindowSystem::raiseWindow(id);
+    }
 }
 
 void PlasmaApp::setIsDesktop(bool isDesktop)
@@ -419,6 +423,8 @@ void PlasmaApp::controlBarMoved(const MidView *controlBar)
         m_layout->setDirection(QBoxLayout::BottomToTop);
         break;
     }
+
+    reserveStruts();
 }
 
 

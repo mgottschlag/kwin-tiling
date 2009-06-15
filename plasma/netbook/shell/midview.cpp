@@ -24,11 +24,13 @@
 #include <KWindowSystem>
 
 #include <Plasma/Applet>
+#include <Plasma/PopupApplet>
 #include <Plasma/Corona>
 #include <Plasma/Containment>
 
 MidView::MidView(Plasma::Containment *containment, int uid, QWidget *parent)
-    : Plasma::View(containment, uid, parent)
+    : Plasma::View(containment, uid, parent),
+      m_canRaise(false)
 {
     setFocusPolicy(Qt::NoFocus);
     connectContainment(containment);
@@ -192,6 +194,35 @@ void MidView::updateGeometry()
         c->setMinimumSize(size());
         c->resize(size());
     }
+}
+
+bool MidView::canRaise() const
+{
+    return m_canRaise;
+}
+
+void MidView::mousePressEvent(QMouseEvent *event)
+{
+    Plasma::View::mousePressEvent(event);
+
+    Plasma::Containment *cont = containment();
+
+    m_canRaise = false;
+
+    foreach (Plasma::Applet *applet, cont->applets()) {
+        if (applet->geometry().contains(mapToScene(cont->mapFromScene(event->pos()).toPoint())) &&
+            qobject_cast<Plasma::PopupApplet *>(applet)) {
+            m_canRaise = true;
+            break;
+        }
+    }
+
+}
+
+void MidView::mouseReleaseEvent(QMouseEvent *event)
+{
+    m_canRaise = false;
+    Plasma::View::mouseReleaseEvent(event);
 }
 
 #include "midview.moc"

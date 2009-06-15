@@ -45,9 +45,14 @@ public:
     void connectContainment(Plasma::Containment *containment);
 
     Plasma::Location location() const;
+    bool canRaise() const;
 
     static uint mainViewId() { return 1; }
     static uint controlBarId() { return 2; }
+
+protected:
+    void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
 
 public Q_SLOTS:
     void setContainment(Plasma::Containment *containment);
@@ -69,6 +74,9 @@ Q_SIGNALS:
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
     void resizeEvent(QResizeEvent *event);
+
+private:
+    bool m_canRaise;
 };
 
 #endif // multiple inclusion guard
