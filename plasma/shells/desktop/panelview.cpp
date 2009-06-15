@@ -843,6 +843,8 @@ void PanelView::togglePanelController()
                 PanelAppletOverlay *moveOverlay = new PanelAppletOverlay(applet, this);
                 connect(moveOverlay, SIGNAL(removedWithApplet(PanelAppletOverlay*)),
                         this, SLOT(overlayDestroyed(PanelAppletOverlay*)));
+                connect(moveOverlay, SIGNAL(moved(PanelAppletOverlay*)),
+                        this, SLOT(overlayMoved(PanelAppletOverlay*)));
                 moveOverlay->setPalette(p);
                 moveOverlay->show();
                 moveOverlay->raise();
@@ -884,6 +886,14 @@ void PanelView::edittingComplete()
 void PanelView::overlayDestroyed(PanelAppletOverlay *overlay)
 {
     m_appletOverlays.remove(overlay);
+}
+
+void PanelView::overlayMoved(PanelAppletOverlay *overlay)
+{
+    Q_UNUSED(overlay)
+    foreach (PanelAppletOverlay *o, m_appletOverlays) {
+        o->syncIndex();
+    }
 }
 
 Qt::Alignment PanelView::alignmentFilter(Qt::Alignment align) const

@@ -221,7 +221,8 @@ private Q_SLOTS:
     void init();
     void togglePanelController();
     void edittingComplete();
-    void overlayDestroyed(PanelAppletOverlay*);
+    void overlayDestroyed(PanelAppletOverlay *overlay);
+    void overlayMoved(PanelAppletOverlay *overlay);
     void animateHide(qreal);
     void panelDeleted();
     void hideMousePoll();

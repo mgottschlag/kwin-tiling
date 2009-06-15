@@ -81,17 +81,7 @@ PanelAppletOverlay::PanelAppletOverlay(Plasma::Applet *applet, QWidget *parent)
       m_index(0),
       m_clickDrag(false)
 {
-    int i = 0;
-    if (m_layout) {
-        for (; i < m_layout->count(); ++i) {
-            QGraphicsWidget *w = dynamic_cast<QGraphicsWidget*>(m_layout->itemAt(i));
-            if (w == m_applet) {
-                m_index = i;
-                break;
-            }
-        }
-    }
-
+    syncIndex();
     syncOrientation();
     syncGeometry();
     setMouseTracking(true);
@@ -296,6 +286,7 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
             m_applet->flushPendingConstraintsEvents();
             m_applet->setPos(pos);
             releaseMouse();
+            emit moved(this);
             return;
         }
     } else if (m_applet->inherits("PanelSpacer") && m_dragAction != Move) {
@@ -450,6 +441,7 @@ void PanelAppletOverlay::swapWithPrevious()
     m_nextGeom = m_layout->itemAt(m_index + 1)->geometry();
     m_layout->removeItem(m_spacer);
     m_layout->insertItem(m_index, m_spacer);
+    emit moved(this);
 }
 
 void PanelAppletOverlay::swapWithNext()
@@ -470,6 +462,7 @@ void PanelAppletOverlay::swapWithNext()
     m_prevGeom = m_layout->itemAt(m_index - 1)->geometry();
     m_layout->removeItem(m_spacer);
     m_layout->insertItem(m_index, m_spacer);
+    emit moved(this);
 }
 
 void PanelAppletOverlay::appletDestroyed()
@@ -498,7 +491,7 @@ void PanelAppletOverlay::syncGeometry()
     //kDebug();
     setGeometry(m_applet->geometry().toRect());
 
-    if (m_index > 0) {
+    if (m_index > 0 && m_layout->itemAt(m_index - 1)) {
         m_prevGeom = m_layout->itemAt(m_index - 1)->geometry();
     } else {
         m_prevGeom = QRectF();
@@ -509,6 +502,22 @@ void PanelAppletOverlay::syncGeometry()
         m_nextGeom = m_layout->itemAt(m_index + 1)->geometry();
     } else {
         m_nextGeom = QRectF();
+    }
+}
+
+void PanelAppletOverlay::syncIndex()
+{
+    if (!m_layout || !m_applet) {
+        m_index = -1;
+        return;
+    }
+
+    for (int i = 0; i < m_layout->count(); ++i) {
+        QGraphicsWidget *w = dynamic_cast<QGraphicsWidget*>(m_layout->itemAt(i));
+        if (w == m_applet) {
+            m_index = i;
+            break;
+        }
     }
 }
 

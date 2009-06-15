@@ -45,10 +45,12 @@ public:
     ~PanelAppletOverlay();
 
     void syncOrientation();
+    void syncIndex();
     Plasma::Applet *applet() const;
 
 signals:
     void removedWithApplet(PanelAppletOverlay*);
+    void moved(PanelAppletOverlay*);
 
 protected:
     void paintEvent(QPaintEvent *event);
