@@ -25,7 +25,7 @@
 
 #include "plasmaclock_export.h"
 
-#include <KCalendarSystem>
+#include <KDE/KCalendarSystem>
 
 namespace Plasma
 {
