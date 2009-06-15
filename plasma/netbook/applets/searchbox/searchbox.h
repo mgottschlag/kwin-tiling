@@ -29,6 +29,8 @@ namespace Plasma
     class RunnerManager;
 }
 
+class QTimer;
+
 class SearchBox: public Plasma::PopupApplet
 {
     Q_OBJECT;
@@ -41,6 +43,7 @@ public:
     QGraphicsWidget *graphicsWidget();
 
 public slots:
+    void delayedQuery();
     void query();
 
 protected:
@@ -51,6 +54,7 @@ private:
     QGraphicsWidget *m_widget;
     Plasma::LineEdit *m_search;
     Plasma::IconWidget *m_icon;
+    QTimer *m_searchTimer;
 };
 
 K_EXPORT_PLASMA_APPLET(searchbox, SearchBox)

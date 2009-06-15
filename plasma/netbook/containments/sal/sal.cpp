@@ -297,7 +297,18 @@ void SearchLaunch::setFormFactorFromLocation(Plasma::Location loc) {
 void SearchLaunch::dataUpdated(const QString &sourceName, const Plasma::DataEngine::Data &data)
 {
     Q_UNUSED(sourceName);
-    doSearch(data["query"].toString());
+
+    const QString query(data["query"].toString());
+    //Take ownership of the screen if we don't have one
+    //FIXME: hardcoding 0 is bad: maybe pass the screen from the dataengine?
+    if (!query.isEmpty()) {
+        if (screen() < 0) {
+            setScreen(0);
+        }
+        emit activate();
+    }
+
+    doSearch(query);
 }
 
 K_EXPORT_PLASMA_APPLET(sal, SearchLaunch)

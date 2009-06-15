@@ -18,6 +18,8 @@
 
 #include "searchbox.h"
 
+#include <QTimer>
+
 #include <Plasma/LineEdit>
 #include <Plasma/IconWidget>
 #include <Plasma/ToolTipContent>
@@ -37,7 +39,8 @@ SearchBox::SearchBox(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args), m_widget(0), m_search(0),
       m_icon(0)
 {
-    setPopupIcon("page-zoom");
+    setPopupIcon("edit-find");
+    setPassivePopup(true);
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
 }
 
@@ -47,7 +50,7 @@ void SearchBox::init()
     Plasma::ToolTipContent toolTipData = Plasma::ToolTipContent();
     toolTipData.setAutohide(true);
     toolTipData.setMainText(name());
-    toolTipData.setImage(KIcon("page-zoom"));
+    toolTipData.setImage(KIcon("edit-find"));
 
     Plasma::ToolTipManager::self()->registerWidget(this);
     Plasma::ToolTipManager::self()->setContent(this, toolTipData);
@@ -67,9 +70,15 @@ QGraphicsWidget *SearchBox::graphicsWidget()
     m_search->nativeWidget()->setClearButtonShown(true);
     m_search->nativeWidget()->setClickMessage(i18n("Enter your query here"));
     connect(m_search, SIGNAL(returnPressed()), this, SLOT(query()));
+    connect(m_search->nativeWidget(), SIGNAL(textChanged(const QString &)), this, SLOT(delayedQuery()));
+
+    m_searchTimer = new QTimer(this);
+    m_searchTimer->setSingleShot(true);
+    connect(m_searchTimer, SIGNAL(timeout()), this, SLOT(query()));
+
 
     m_icon = new Plasma::IconWidget();
-    m_icon->setIcon("page-zoom");
+    m_icon->setIcon("edit-find");
     m_icon->setPreferredSize(KIconLoader::SizeSmallMedium,
                              KIconLoader::SizeSmallMedium);
 
@@ -98,6 +107,11 @@ void SearchBox::focusEditor()
     m_search->setFocus();
     m_search->nativeWidget()->clearFocus();
     m_search->nativeWidget()->setFocus();
+}
+
+void SearchBox::delayedQuery()
+{
+    m_searchTimer->start(500);
 }
 
 void SearchBox::query()
