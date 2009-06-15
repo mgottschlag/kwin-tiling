@@ -31,6 +31,8 @@ WebAppletPackage::WebAppletPackage(QObject *parent, QVariantList args)
     // copy the main applet structure
     Plasma::PackageStructure::operator=(*Plasma::Applet::packageStructure());
     addFileDefinition("mainscript", "code/main.html", i18n("Main Script File"));
+    setRequired("mainscript", true);
+
     // For Webapplet::init()
     addDirectoryDefinition("html", "code/", i18n("Root HTML directory"));
 }
