@@ -219,8 +219,14 @@ void PlasmaApp::mainContainmentActivated()
 
     const WId id = m_window->effectiveWinId();
 
+    QWidget * activeWindow = QApplication::activeWindow();
     KWindowSystem::clearState(id, NET::KeepBelow);
-    KWindowSystem::setState(id, NET::KeepAbove);
+    KWindowSystem::raiseWindow(id);
+    if (activeWindow) {
+        KWindowSystem::raiseWindow(activeWindow->effectiveWinId());
+        activeWindow->setFocus();
+    }
+    //KWindowSystem::setState(id, NET::KeepAbove);
 }
 
 bool PlasmaApp::eventFilter(QObject *watched, QEvent *event)
@@ -231,8 +237,14 @@ bool PlasmaApp::eventFilter(QObject *watched, QEvent *event)
 
     if (watched == m_window && event->type() == QEvent::WindowDeactivate) {
         const WId id = m_window->effectiveWinId();
-        KWindowSystem::clearState(id, NET::KeepAbove);
-        KWindowSystem::setState(id, NET::KeepBelow);
+        QWidget * activeWindow = QApplication::activeWindow();
+
+        if (!activeWindow) {
+            KWindowSystem::setState(id, NET::KeepBelow);
+        }
+    }else if (watched == m_window && event->type() == QEvent::WindowActivate) {
+        const WId id = m_window->effectiveWinId();
+        //TODO: when it's activated with alt+tab or expose bring to front, but not with mouse clicks
     }
     return false;
 }
