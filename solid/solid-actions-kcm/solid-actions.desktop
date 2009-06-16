@@ -65,6 +65,7 @@ Comment[pt_BR]=Uma ferramenta de configuração para gerenciar as ações dispon
 Comment[ro]=Unealtă de configurare pentru gestiunea acțiunilor disponibile utilizatorului la conectarea noilor dispozitive la calculator
 Comment[sl]=Nastavitveno orodje za upravljanje dejanj, ki so na voljo uporabniku, ko se nova naprava priključi na računalnik
 Comment[sv]=Ett inställningsverktyg för att hantera tillgängliga åtgärder för användare när nya enheter ansluts till datorn
+Comment[tr]=Bilgisayara yeni bir aygıt takıldığında kullanıcı tarafından kullanılabilecek eylemleri yönetmek için bir yapılandırma aracı.
 Comment[uk]=Інструмент налаштування для керування діями, доступними користувачеві після з’єднання пристроїв з комп’ютером
 Comment[x-test]=xxA configuration tool for managing the actions available to the user when connecting new devices to the computerxx
 Comment[zh_CN]=用于管理当新设备连接到电脑时的系统动作的配置工具

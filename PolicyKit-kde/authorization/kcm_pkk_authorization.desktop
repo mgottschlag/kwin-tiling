@@ -57,6 +57,7 @@ Comment[pt_BR]=Configurar as políticas dos aplicativos usando o PolicyKit
 Comment[ro]=Stabilește politici pentru aplicații utilizînd PolicyKit
 Comment[sl]=Z uporabo PolicyKit nastavite pravila za programe
 Comment[sv]=Ställ in handlingssätt för program med användning av Policykit
+Comment[tr]=PolicyKit kullanarak uygulamalar için politikalar belirleyin
 Comment[uk]=Встановіть правила для програм за допомогою PolicyKit
 Comment[x-test]=xxSet up policies for applications using PolicyKitxx
 Comment[zh_CN]=通过 PolicyKit 设置程序的系统授权
