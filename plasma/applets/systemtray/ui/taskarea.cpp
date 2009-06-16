@@ -305,6 +305,7 @@ void TaskArea::setOrientation(Qt::Orientation o)
             d->topLayout->setSpacing(bottom*2);
         }
     }
+    syncTasks(d->host->manager()->tasks());
 }
 
 void TaskArea::initUnhideTool()
