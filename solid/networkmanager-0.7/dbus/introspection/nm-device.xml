@@ -4,7 +4,7 @@
   <interface name="org.freedesktop.NetworkManager.Device">
     <property name="Udi" type="s" access="read">
       <tp:docstring>
-        HAL UDI for the device.
+        Unique Device Identifier.
       </tp:docstring>
     </property>
     <property name="Interface" type="s" access="read">
@@ -47,11 +47,9 @@
         Whether or not this device is managed by NetworkManager.
       </tp:docstring>
     </property>
-
-    <!-- Ugh, but I see no other way of getting the type on the caller
-    based on dbus object path only -->
-    <property name="DeviceType" type="u" access="read">
+    <property name="DeviceType" type="u" access="read" tp:type="NM_DEVICE_TYPE">
       <tp:docstring>
+        The general type of the network device; ie Ethernet, WiFi, etc.
       </tp:docstring>
     </property>
 
@@ -123,6 +121,34 @@
       <tp:enumvalue suffix="FAILED" value="9">
         <tp:docstring>
           The device is in a failure state following an attempt to activate it.
+        </tp:docstring>
+      </tp:enumvalue>
+    </tp:enum>
+
+    <tp:enum name="NM_DEVICE_TYPE" type="u">
+      <tp:enumvalue suffix="UNKNOWN" value="0">
+        <tp:docstring>
+          The device type is unknown.
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="ETHERNET" value="1">
+        <tp:docstring>
+          The device is wired Ethernet device.
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="WIFI" value="2">
+        <tp:docstring>
+          The device is an 802.11 WiFi device.
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="GSM" value="3">
+        <tp:docstring>
+          The device is a GSM-based cellular WAN device.
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="CDMA" value="4">
+        <tp:docstring>
+          The device is a CDMA/IS-95-based cellular WAN device.
         </tp:docstring>
       </tp:enumvalue>
     </tp:enum>
@@ -318,6 +344,31 @@
       <tp:enumvalue suffix="FIRMWARE_MISSING" value="35">
         <tp:docstring>
           Necessary firmware for the device may be missing.
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="REMOVED" value="36">
+        <tp:docstring>
+          The device was removed.
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="SLEEPING" value="37">
+        <tp:docstring>
+          NetworkManager went to sleep.
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="CONNECTION_REMOVED" value="38">
+        <tp:docstring>
+          The device's active connection was removed or disappeared.
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="USER_REQUESTED" value="39">
+        <tp:docstring>
+          A user or client requested the disconnection.
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="CARRIER" value="40">
+        <tp:docstring>
+          The device's carrier/link changed.
         </tp:docstring>
       </tp:enumvalue>
 	</tp:enum>

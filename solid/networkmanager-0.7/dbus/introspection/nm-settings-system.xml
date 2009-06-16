@@ -38,9 +38,9 @@
       </tp:docstring>
     </property>
 
-    <property name="UnmanagedDevices" type="ao" access="read">
+    <property name="CanModify" type="b" access="read">
       <tp:docstring>
-        The list of HAL UDIs of devices that should not be managed by NetworkManager.
+        If true, adding and modifying connections is supported.
       </tp:docstring>
     </property>
 
@@ -54,3 +54,4 @@
 
   </interface>
 </node>
+

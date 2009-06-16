@@ -18,7 +18,7 @@
       <tp:docstring>The radio channel frequency in use by the access point, in MHz.</tp:docstring>
     </property>
     <property name="HwAddress" type="s" access="read">
-      <tp:docstring>The hardware address of the access point.</tp:docstring>
+      <tp:docstring>The hardware address (BSSID) of the access point.</tp:docstring>
     </property>
 
     <property name="Mode" type="u" access="read" tp:type="NM_802_11_MODE">
@@ -28,12 +28,12 @@
       <tp:docstring>The maximum bitrate this access point is capable of, in kilobits/second (Kb/s).</tp:docstring>
     </property>
     <property name="Strength" type="y" access="read">
-      <tp:docstring>The current signal strength received from this access point.</tp:docstring>
+      <tp:docstring>The current signal quality of the access point, in percent.</tp:docstring>
     </property>
 
     <signal name="PropertiesChanged">
         <arg name="properties" type="a{sv}" tp:type="String_Variant_Map">
-        <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+          <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="QVariantMap"/>
             <tp:docstring>
                 A dictionary mapping property names to variant boxed values
             </tp:docstring>
@@ -70,16 +70,16 @@
         <tp:docstring>Access point supports pairwise CCMP encryption.</tp:docstring>
       </tp:flag>
       <tp:flag suffix="GROUP_WEP40" value="0x10">
-        <tp:docstring>Access point supports a group 40-bit WEP cypher.</tp:docstring>
+        <tp:docstring>Access point supports a group 40-bit WEP cipher.</tp:docstring>
       </tp:flag>
       <tp:flag suffix="GROUP_WEP104" value="0x20">
-        <tp:docstring>Access point supports a group 104-bit WEP cypher.</tp:docstring>
+        <tp:docstring>Access point supports a group 104-bit WEP cipher.</tp:docstring>
       </tp:flag>
       <tp:flag suffix="GROUP_TKIP" value="0x40">
-        <tp:docstring>Access point supports a group TKIP cypher.</tp:docstring>
+        <tp:docstring>Access point supports a group TKIP cipher.</tp:docstring>
       </tp:flag>
       <tp:flag suffix="GROUP_CCMP" value="0x80">
-        <tp:docstring>Access point supports a group CCMP cypher.</tp:docstring>
+        <tp:docstring>Access point supports a group CCMP cipher.</tp:docstring>
       </tp:flag>
       <tp:flag suffix="KEY_MGMT_PSK" value="0x100">
         <tp:docstring>Access point supports PSK key management.</tp:docstring>
