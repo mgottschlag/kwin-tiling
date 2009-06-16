@@ -33,8 +33,7 @@ public:
 
 public:
     // Key dicts
-    QHash<QString, NOAAIon::Private::XMLMapInfo> m_place;
-    QHash<QString, QString> m_locations;
+    QHash<QString, NOAAIon::Private::XMLMapInfo> m_places;
     QString m_state;
     QString m_station_name;
     QString m_station_id;
@@ -46,7 +45,7 @@ public:
     // Store KIO jobs
     QMap<KJob *, QXmlStreamReader*> m_jobXml;
     QMap<KJob *, QString> m_jobList;
-    QXmlStreamReader m_xmlSetup;    
+    QXmlStreamReader m_xmlSetup;
 
     QDateTime m_dateFormat;
     bool emitWhenSetup;
@@ -122,28 +121,20 @@ void NOAAIon::init()
 QStringList NOAAIon::validate(const QString& source) const
 {
     QStringList placeList;
-    QHash<QString, QString>::const_iterator it = d->m_locations.constBegin();
-    QHash<QString, NOAAIon::Private::XMLMapInfo>::const_iterator it_station = d->m_place.constBegin();
-
-    while (it != d->m_locations.constEnd()) {
-        if (it.value().toLower().contains(source.toLower())) {
-            placeList.append(QString("place|%1").arg(it.value().split('|')[1]));
-        }
-        ++it;
-    }
+    QString sourceNormalized = source.toUpper();
 
     // If the source name might look like a station ID, check these too and return the name
-    while (it_station != d->m_place.constEnd()) {
-        if (it_station.value().stationID.contains(source.toUpper().split('|')[1])) {
-            QString matchID = it_station.value().stationName + ", " + it_station.value().stateName;
-            placeList.append(QString("place|%1").arg(matchID));
+    sourceNormalized = source.toUpper();
+    QHash<QString, NOAAIon::Private::XMLMapInfo>::const_iterator it = d->m_places.constBegin();
+    while (it != d->m_places.constEnd()) {
+        if (it.key().toUpper().contains(sourceNormalized)) {
+            placeList.append(QString("place|").append(it.key()));
+        } else if (it.value().stationID.contains(sourceNormalized)) {
+            QString matchID = it.value().stationName + ", " + it.value().stateName;
+            placeList.append(QString("place|").append(matchID));
         }
-        ++it_station;
-    }
 
-    // Check if placeList is empty if so, return nothing.
-    if (placeList.isEmpty()) {
-        return QStringList();
+        ++it;
     }
 
     placeList.sort();
@@ -165,16 +156,16 @@ bool NOAAIon::updateIonSource(const QString& source)
     }
 
     if (sourceAction[1] == "validate" && sourceAction.size() > 2) {
-        QStringList result = validate(QString("%1|%2").arg(sourceAction[0]).arg(sourceAction[2]));
+        QStringList result = validate(sourceAction[2]);
 
         if (result.size() == 1) {
-            setData(source, "validate", QString("noaa|valid|single|%1").arg(result.join("|")));
+            setData(source, "validate", QString("noaa|valid|single|").append(result.join("|")));
             return true;
         } else if (result.size() > 1) {
-            setData(source, "validate", QString("noaa|valid|multiple|%1").arg(result.join("|")));
+            setData(source, "validate", QString("noaa|valid|multiple|").append(result.join("|")));
             return true;
         } else if (result.size() == 0) {
-            setData(source, "validate", QString("noaa|invalid|single|%1").arg(sourceAction[2]));
+            setData(source, "validate", QString("noaa|invalid|single|").append(sourceAction[2]));
             return true;
         }
 
@@ -199,7 +190,7 @@ void NOAAIon::getXMLSetup()
                 SLOT(setup_slotDataArrived(KIO::Job *, const QByteArray &)));
         connect(job, SIGNAL(result(KJob *)), this, SLOT(setup_slotJobFinished(KJob *)));
     } else {
-        kDebug() << "Could not create place name list transfer job";   
+        kDebug() << "Could not create place name list transfer job";
     }
 }
 
@@ -209,11 +200,10 @@ void NOAAIon::getXMLData(const QString& source)
     KUrl url;
 
     QString dataKey = source;
-    dataKey.remove("|weather");
-    url = d->m_place[dataKey].XMLurl;
+    dataKey.remove("noaa|weather|");
+    url = d->m_places[dataKey].XMLurl;
 
     // If this is empty we have no valid data, send out an error and abort.
-    //
     if (url.url().isEmpty()) {
         setData(source, "validate", QString("noaa|malformed"));
         return;
@@ -262,8 +252,8 @@ void NOAAIon::slotJobFinished(KJob *job)
     }
 
     d->m_jobList.remove(job);
-    delete d->m_jobXml[job];
     d->m_jobXml.remove(job);
+    delete reader;
 }
 
 void NOAAIon::setup_slotJobFinished(KJob *job)
@@ -297,13 +287,11 @@ void NOAAIon::parseStationID()
             } else if (d->m_xmlSetup.name() == "xml_url") {
                 d->m_xmlurl = d->m_xmlSetup.readElementText();
 
-                tmp = "noaa|" + d->m_station_name + ", " + d->m_state; // Build the key name.
-                d->m_place[tmp].stateName = d->m_state;
-                d->m_place[tmp].stationName = d->m_station_name;
-                d->m_place[tmp].stationID = d->m_station_id;
-                d->m_place[tmp].XMLurl = d->m_xmlurl.replace("http://", "http://www.");
-
-                d->m_locations[tmp] = tmp;
+                tmp = d->m_station_name + ", " + d->m_state; // Build the key name.
+                d->m_places[tmp].stateName = d->m_state;
+                d->m_places[tmp].stationName = d->m_station_name;
+                d->m_places[tmp].stationID = d->m_station_id;
+                d->m_places[tmp].XMLurl = d->m_xmlurl.replace("http://", "http://www.");
             } else {
                 parseUnknownElement(d->m_xmlSetup);
             }
@@ -470,18 +458,18 @@ void NOAAIon::parseUnknownElement(QXmlStreamReader& xml)
 void NOAAIon::updateWeather(const QString& source)
 {
     QMap<QString, QString> dataFields;
-    QStringList fieldList;
+    Plasma::DataEngine::Data data;
 
-    setData(source, "Country", country(source));
-    setData(source, "Place", place(source));
-    setData(source, "Station", station(source));
+    data.insert("Country", country(source));
+    data.insert("Place", place(source));
+    data.insert("Station", station(source));
 
-    setData(source, "Latitude", latitude(source));
-    setData(source, "Longitude", longitude(source));
+    data.insert("Latitude", latitude(source));
+    data.insert("Longitude", longitude(source));
 
     // Real weather - Current conditions
-    setData(source, "Observation Period", observationTime(source));
-    setData(source, "Current Conditions", condition(source));
+    data.insert("Observation Period", observationTime(source));
+    data.insert("Current Conditions", condition(source));
 
 // FIXME: We'll need major fuzzy logic, this isn't pretty: http://www.weather.gov/xml/current_obs/weather.php
     //QMap<QString, ConditionIcons> conditionList;
@@ -496,65 +484,67 @@ void NOAAIon::updateWeather(const QString& source)
             // - Fill in condition fuzzy logic
         }
     */
-    setData(source, "Condition Icon", "weather-none-available");
+    data.insert("Condition Icon", "weather-none-available");
 
     dataFields = temperature(source);
-    setData(source, "Temperature", dataFields["temperature"]);
+    data.insert("Temperature", dataFields["temperature"]);
 
     if (dataFields["temperature"] != "N/A") {
-        setData(source, "Temperature Unit", dataFields["temperatureUnit"]);
+        data.insert("Temperature Unit", dataFields["temperatureUnit"]);
     }
 
     // Do we have a comfort temperature? if so display it
     if (dataFields["comfortTemperature"] != "N/A") {
         if (d->m_weatherData[source].windchill_F != "NA") {
-            setData(source, "Windchill", QString("%1").arg(dataFields["comfortTemperature"]));
-            setData(source, "Humidex", "N/A");
+            data.insert("Windchill", QString("%1").arg(dataFields["comfortTemperature"]));
+            data.insert("Humidex", "N/A");
         }
         if (d->m_weatherData[source].heatindex_F != "NA" && d->m_weatherData[source].temperature_F.toInt() != d->m_weatherData[source].heatindex_F.toInt()) {
-            setData(source, "Humidex", QString("%1").arg(dataFields["comfortTemperature"]));
-            setData(source, "Windchill", "N/A");
+            data.insert("Humidex", QString("%1").arg(dataFields["comfortTemperature"]));
+            data.insert("Windchill", "N/A");
         }
     } else {
-        setData(source, "Windchill", "N/A");
-        setData(source, "Humidex", "N/A");
+        data.insert("Windchill", "N/A");
+        data.insert("Humidex", "N/A");
     }
 
-    setData(source, "Dewpoint", dewpoint(source));
+    data.insert("Dewpoint", dewpoint(source));
     if (dewpoint(source) != "N/A") {
-        setData(source, "Dewpoint Unit", dataFields["temperatureUnit"]);
+        data.insert("Dewpoint Unit", dataFields["temperatureUnit"]);
     }
 
     dataFields = pressure(source);
-    setData(source, "Pressure", dataFields["pressure"]);
+    data.insert("Pressure", dataFields["pressure"]);
 
     if (dataFields["pressure"] != "N/A") {
-        setData(source, "Pressure Unit", dataFields["pressureUnit"]);
+        data.insert("Pressure Unit", dataFields["pressureUnit"]);
     }
 
     dataFields = visibility(source);
-    setData(source, "Visibility", dataFields["visibility"]);
+    data.insert("Visibility", dataFields["visibility"]);
 
     if (dataFields["visibility"] != "N/A") {
-        setData(source, "Visibility Unit", dataFields["visibilityUnit"]);
+        data.insert("Visibility Unit", dataFields["visibilityUnit"]);
     }
 
-    setData(source, "Humidity", humidity(source));
+    data.insert("Humidity", humidity(source));
 
     // Set number of forecasts per day/night supported, none for this ion right now
-    setData(source, QString("Total Weather Days"), 0);
+    data.insert(QString("Total Weather Days"), 0);
 
     dataFields = wind(source);
-    setData(source, "Wind Speed", dataFields["windSpeed"]);
+    data.insert("Wind Speed", dataFields["windSpeed"]);
 
     if (dataFields["windSpeed"] != "Calm") {
-        setData(source, "Wind Speed Unit", dataFields["windUnit"]);
+        data.insert("Wind Speed Unit", dataFields["windUnit"]);
     }
 
-    setData(source, "Wind Gust", dataFields["windGust"]);
-    setData(source, "Wind Gust Unit", dataFields["windGustUnit"]);
-    setData(source, "Wind Direction", getWindDirectionIcon(windIcons(), dataFields["windDirection"].toLower()));
-    setData(source, "Credit", i18n("Data provided by NOAA National Weather Service"));
+    data.insert("Wind Gust", dataFields["windGust"]);
+    data.insert("Wind Gust Unit", dataFields["windGustUnit"]);
+    data.insert("Wind Direction", getWindDirectionIcon(windIcons(), dataFields["windDirection"].toLower()));
+    data.insert("Credit", i18n("Data provided by NOAA National Weather Service"));
+
+    setData(source, data);
 }
 
 QString NOAAIon::country(const QString& source)
@@ -562,10 +552,12 @@ QString NOAAIon::country(const QString& source)
     Q_UNUSED(source);
     return QString("USA");
 }
+
 QString NOAAIon::place(const QString& source)
 {
     return d->m_weatherData[source].locationName;
 }
+
 QString NOAAIon::station(const QString& source)
 {
     return d->m_weatherData[source].stationID;
