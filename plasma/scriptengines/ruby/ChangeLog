@@ -1,3 +1,8 @@
+2009-06-16  Richard Dale  <richard.j.dale@gmail.com>
+* The resize() method doesn't work with scripting plasmoids, so if it is used
+output a warning message, and suggest adding a X-Plasma-DefautSize entry in
+the metadata.desktop file.
+
 2009-05-26  Richard Dale  <richard.j.dale@gmail.com>
 * Add a callback for the configChanged() method in scripting applets
 

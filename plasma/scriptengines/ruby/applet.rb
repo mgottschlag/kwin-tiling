@@ -77,6 +77,18 @@ module PlasmaScripting
       @applet_script.shape
     end
 
+    def resize(*args)
+      if args.length == 1 && args[0].kindof?(Qt::Size)
+        puts "Warning: invalid resize() call. Add this to your metadata.desktop file:"
+        puts "X-Plasma-DefautSize=%d,%d" % [args[0].width, args[0].height]
+      elsif args.length == 2 
+        puts "Warning: invalid resize() call. Add this to your metadata.desktop file:"
+        puts "X-Plasma-DefautSize=%d,%d" % [args[0].to_i, args[1].to_i]
+      else
+        super(*args)
+      end
+    end
+
     def constraintsEvent(constraints)
     end
 
