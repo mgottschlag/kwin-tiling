@@ -34,10 +34,6 @@ public:
 public:
     // Key dicts
     QHash<QString, NOAAIon::Private::XMLMapInfo> m_places;
-    QString m_state;
-    QString m_station_name;
-    QString m_station_id;
-    QString m_xmlurl;
 
     // Weather information
     QHash<QString, WeatherData> m_weatherData;
@@ -121,23 +117,33 @@ void NOAAIon::init()
 QStringList NOAAIon::validate(const QString& source) const
 {
     QStringList placeList;
+    QString station;
     QString sourceNormalized = source.toUpper();
 
-    // If the source name might look like a station ID, check these too and return the name
     sourceNormalized = source.toUpper();
     QHash<QString, NOAAIon::Private::XMLMapInfo>::const_iterator it = d->m_places.constBegin();
+    // If the source name might look like a station ID, check these too and return the name
+    bool checkState = source.count() == 2;
+
     while (it != d->m_places.constEnd()) {
-        if (it.key().toUpper().contains(sourceNormalized)) {
+        if (checkState) {
+            if (it.value().stateName == source) {
+                placeList.append(QString("place|").append(it.key()));
+            }
+        } else if (it.key().toUpper().contains(sourceNormalized)) {
             placeList.append(QString("place|").append(it.key()));
-        } else if (it.value().stationID.contains(sourceNormalized)) {
-            QString matchID = it.value().stationName + ", " + it.value().stateName;
-            placeList.append(QString("place|").append(matchID));
+        } else if (it.value().stationID == sourceNormalized) {
+            station = QString("place|").append(it.key());
         }
 
         ++it;
     }
 
     placeList.sort();
+    if (!station.isEmpty()) {
+        placeList.prepend(station);
+    }
+
     return placeList;
 }
 
@@ -269,29 +275,37 @@ void NOAAIon::setup_slotJobFinished(KJob *job)
 
 void NOAAIon::parseStationID()
 {
-    QString tmp;
+    QString state;
+    QString stationName;
+    QString stationID;
+    QString xmlurl;
+
     while (!d->m_xmlSetup.atEnd()) {
         d->m_xmlSetup.readNext();
 
         if (d->m_xmlSetup.isEndElement() && d->m_xmlSetup.name() == "station") {
+            if (!xmlurl.isEmpty()) {
+                NOAAIon::Private::XMLMapInfo info;
+                info.stateName = state;
+                info.stationName = stationName;
+                info.stationID = stationID;
+                info.XMLurl = xmlurl;
+
+                QString tmp = stationName + ", " + state; // Build the key name.
+                d->m_places[tmp] = info;
+            }
             break;
         }
 
         if (d->m_xmlSetup.isStartElement()) {
             if (d->m_xmlSetup.name() == "station_id") {
-                d->m_station_id = d->m_xmlSetup.readElementText();
+                stationID = d->m_xmlSetup.readElementText();
             } else if (d->m_xmlSetup.name() == "state") {
-                d->m_state = d->m_xmlSetup.readElementText();
+                state = d->m_xmlSetup.readElementText();
             } else if (d->m_xmlSetup.name() == "station_name") {
-                d->m_station_name = d->m_xmlSetup.readElementText();
+                stationName = d->m_xmlSetup.readElementText();
             } else if (d->m_xmlSetup.name() == "xml_url") {
-                d->m_xmlurl = d->m_xmlSetup.readElementText();
-
-                tmp = d->m_station_name + ", " + d->m_state; // Build the key name.
-                d->m_places[tmp].stateName = d->m_state;
-                d->m_places[tmp].stationName = d->m_station_name;
-                d->m_places[tmp].stationID = d->m_station_id;
-                d->m_places[tmp].XMLurl = d->m_xmlurl.replace("http://", "http://www.");
+                xmlurl = d->m_xmlSetup.readElementText().replace("http://", "http://www.");
             } else {
                 parseUnknownElement(d->m_xmlSetup);
             }
