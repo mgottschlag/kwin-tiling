@@ -6,7 +6,7 @@ include_directories(
    ${CMAKE_CURRENT_BUILD_DIR}
 )
 
-add_subdirectory(dbus)
+#add_subdirectory(dbus)
 
 #add_subdirectory(tests)
 
