@@ -245,7 +245,7 @@ void NOAAIon::slotDataArrived(KIO::Job *job, const QByteArray &data)
 void NOAAIon::slotJobFinished(KJob *job)
 {
     // Dual use method, if we're fetching location data to parse we need to do this first
-    setData(d->m_jobList[job], Data());
+    removeAllData(d->m_jobList[job]);
     QXmlStreamReader *reader = d->m_jobXml.value(job);
     if (reader) {
         readXMLData(d->m_jobList[job], *reader);
