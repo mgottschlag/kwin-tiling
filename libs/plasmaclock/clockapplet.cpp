@@ -637,6 +637,13 @@ void ClockApplet::popupEvent(bool show)
     d->destroyDateExtenders();
 }
 
+void ClockApplet::constraintsEvent(Plasma::Constraints constraints)
+{
+    if (constraints & Plasma::FormFactorConstraint) {
+        setPassivePopup(formFactor() == Plasma::Horizontal || formFactor() == Plasma::Vertical);
+    }
+}
+
 void ClockApplet::setCurrentTimezone(const QString &tz)
 {
     if (d->timezone == tz) {
