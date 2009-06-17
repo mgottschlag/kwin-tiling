@@ -20,7 +20,7 @@
 #define RAM_HEADER
 
 #include <ui_ram-config.h>
-#include <ui_cpu-config-adv.h>
+#include <ui_ram-config-adv.h>
 #include "applet.h"
 #include <Plasma/DataEngine>
 #include <QStandardItemModel>
