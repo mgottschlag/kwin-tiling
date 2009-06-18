@@ -390,7 +390,11 @@ void PanelView::setLocation(Plasma::Location location)
 
 Plasma::Location PanelView::location() const
 {
-    return containment()->location();
+    if (containment()) {
+        return containment()->location();
+    } else {
+        return Plasma::BottomEdge;
+    }
 }
 
 void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
