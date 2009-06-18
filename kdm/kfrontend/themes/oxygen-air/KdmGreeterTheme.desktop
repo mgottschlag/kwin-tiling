@@ -5,7 +5,10 @@
 Greeter=oxygen-air.xml
 Name=Oxygen-Air
 Name[km]=ខ្យល់​អុកស៊ីហ្សែន
+Name[pt]=Ar-Oxygen
+Name[pt_BR]=Ar-Oxygen
 Name[sv]=Oxygenluft
+Name[x-test]=xxOxygen-Airxx
 Name[zh_CN]=绿氧
 Author=Xavier Araque
 Copyright=GPL 2008 Xavier Araque | xavieraraque@gmail.com
