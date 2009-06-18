@@ -408,8 +408,10 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
             // Find a suitable size for the date font
             if (formFactor() == Plasma::Vertical) {
                 smallFont.setPixelSize(qMax(contentsRect.height()/6, fm.ascent()));
+            } else if (formFactor() == Plasma::Horizontal) {
+                    smallFont.setPixelSize(qMax(qMin(contentsRect.height(), contentsRect.width())*2/7, fm.ascent()));
             } else {
-                smallFont.setPixelSize(qMax(contentsRect.height()*2/7, fm.ascent()));
+                smallFont.setPixelSize(qMax(qMin(contentsRect.height(), contentsRect.width())/8, KGlobalSettings::smallestReadableFont().pointSize()));
             }
             m_dateRect = preparePainter(p, contentsRect, smallFont, dateString);
         }
