@@ -120,7 +120,6 @@ QStringList NOAAIon::validate(const QString& source) const
     QString station;
     QString sourceNormalized = source.toUpper();
 
-    sourceNormalized = source.toUpper();
     QHash<QString, NOAAIon::Private::XMLMapInfo>::const_iterator it = d->m_places.constBegin();
     // If the source name might look like a station ID, check these too and return the name
     bool checkState = source.count() == 2;
