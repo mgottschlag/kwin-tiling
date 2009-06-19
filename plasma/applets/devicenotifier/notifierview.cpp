@@ -114,6 +114,17 @@ void NotifierView::mousePressEvent(QMouseEvent *event)
     QAbstractItemView::mousePressEvent(event);
 }
 
+void NotifierView::mouseReleaseEvent(QMouseEvent *event)
+{
+    const QModelIndex itemUnderMouse = indexAt(event->pos());
+    //don't pass click for header
+    if (event->button() != Qt::LeftButton || model()->hasChildren(itemUnderMouse)) {
+        return;
+    }
+
+    QAbstractItemView::mouseReleaseEvent(event);
+}
+
 void NotifierView::leaveEvent(QEvent *event)
 {
     Q_UNUSED(event)
@@ -164,7 +175,7 @@ void NotifierView::calculateRects()
                         QModelIndex childIndex = childItem->index();
                         QRect itemChildRect;
                         if (l % 2 == 0) {
-                            QSize size(width() - COLUMN_EJECT_SIZE,sizeHintForIndex(index).height());
+                            QSize size(width() - COLUMN_EJECT_SIZE, sizeHintForIndex(index).height());
                             itemChildRect = QRect(QPoint(HEADER_LEFT_MARGIN, verticalOffset), size);
                             itemRects.insert(childIndex, itemChildRect);
                         } else {

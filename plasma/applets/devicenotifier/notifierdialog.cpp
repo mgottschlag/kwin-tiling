@@ -274,7 +274,7 @@ void NotifierDialog::buildDialog()
     m_notifierView->setModel(m_hotplugModel);
     m_notifierView->setMinimumSize(150,300);
     m_notifierView->setFocusPolicy(Qt::NoFocus);
-    
+
     Plasma::Delegate *delegate = new Delegate(this);
     //map the roles of m_hotplugModel into the standard Plasma::Delegate roles
     delegate->setRoleMapping(Plasma::Delegate::SubTitleRole, ActionRole);
@@ -286,7 +286,7 @@ void NotifierDialog::buildDialog()
     l_layout->addWidget(m_notifierView);
     m_widget->setLayout(l_layout);
 
-    connect(m_notifierView, SIGNAL(clicked(const QModelIndex&)),this,SLOT(slotOnItemClicked(const QModelIndex&)));
+    connect(m_notifierView, SIGNAL(clicked(const QModelIndex&)),this,SLOT(itemClicked(const QModelIndex&)));
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));    // allows updating of colors automatically
 }
@@ -350,7 +350,7 @@ QModelIndex NotifierDialog::indexForUdi(const QString &udi) const
     return QModelIndex();
 }
 
-void NotifierDialog::slotOnItemClicked(const QModelIndex &index)
+void NotifierDialog::itemClicked(const QModelIndex &index)
 {
     QString udi = QString(m_hotplugModel->data(index, SolidUdiRole).toString());
 

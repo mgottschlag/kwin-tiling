@@ -63,16 +63,22 @@ namespace Notifier
       void resizeEvent(QResizeEvent * event);
 
       /**
-      * Call when a mouse move event is catch
+      * Call when a mouse move event occurs
       * @param event the mouse event
       **/
       void mouseMoveEvent(QMouseEvent *event);
 
       /**
-       * Call when a mouse move event is catch
+       * Call when a mouse press event occurs
        * @param event the mouse event
        **/
       void mousePressEvent(QMouseEvent *event);
+
+      /**
+       * Call when a mouse release event occurs
+       * @param event the mouse event
+       **/
+      void mouseReleaseEvent(QMouseEvent *event);
 
       /**
       * Call when cursor leave the widget

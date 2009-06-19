@@ -168,7 +168,7 @@ namespace Notifier
           * @internal slot called when user has click on a item in the dialog
           * @param index the model index which is clicked
           **/
-          void slotOnItemClicked(const QModelIndex & index);
+          void itemClicked(const QModelIndex & index);
 
           /**
           * @internal slot called when an eject is finished
