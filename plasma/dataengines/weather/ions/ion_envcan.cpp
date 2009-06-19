@@ -23,18 +23,15 @@
 
 class EnvCanadaIon::Private : public QObject
 {
-
-private:
+public:
     struct XMLMapInfo {
         QString cityName;
         QString territoryName;
         QString cityCode;
     };
 
-public:
     // Key dicts
-    QHash<QString, EnvCanadaIon::Private::XMLMapInfo> m_place;
-    QHash<QString, QString> m_locations;
+    QHash<QString, EnvCanadaIon::Private::XMLMapInfo> m_places;
 
     // Weather information
     QHash<QString, WeatherData> m_weatherData;
@@ -43,7 +40,6 @@ public:
     QMap<KJob *, QXmlStreamReader*> m_jobXml;
     QMap<KJob *, QString> m_jobList;
     QXmlStreamReader m_xmlSetup;
-//    KIO::TransferJob *m_job;
 
     QDateTime m_dateFormat;
     bool emitWhenSetup;
@@ -474,10 +470,11 @@ QMap<QString, IonInterface::ConditionIcons> const& EnvCanadaIon::forecastIcons(v
 QStringList EnvCanadaIon::validate(const QString& source) const
 {
     QStringList placeList;
-    QHash<QString, QString>::const_iterator it = d->m_locations.constBegin();
-    while (it != d->m_locations.constEnd()) {
-        if (it.value().toLower().contains(source.toLower())) {
-            placeList.append(QString("place|%1").arg(it.value().split('|')[1]));
+    QString sourceNormalized = source.toUpper();
+    QHash<QString, EnvCanadaIon::Private::XMLMapInfo>::const_iterator it = d->m_places.constBegin();
+    while (it != d->m_places.constEnd()) {
+        if (it.key().toUpper().contains(sourceNormalized)) {
+            placeList.append(QString("place|").append(it.key()));
         }
         ++it;
     }
@@ -509,16 +506,16 @@ bool EnvCanadaIon::updateIonSource(const QString& source)
     }
 
     if (sourceAction[1] == "validate" && sourceAction.size() > 2) {
-        QStringList result = validate(QString("%1|%2").arg(sourceAction[0]).arg(sourceAction[2]));
+        QStringList result = validate(sourceAction[2]);
 
         if (result.size() == 1) {
-            setData(source, "validate", QString("envcan|valid|single|%1").arg(result.join("|")));
+            setData(source, "validate", QString("envcan|valid|single|").append(result.join("|")));
             return true;
         } else if (result.size() > 1) {
-            setData(source, "validate", QString("envcan|valid|multiple|%1").arg(result.join("|")));
+            setData(source, "validate", QString("envcan|valid|multiple|").append(result.join("|")));
             return true;
         } else if (result.size() == 0) {
-            setData(source, "validate", QString("envcan|invalid|single|%1").arg(sourceAction[2]));
+            setData(source, "validate", QString("envcan|invalid|single|").append(sourceAction[2]));
             return true;
         }
 
@@ -562,13 +559,13 @@ void EnvCanadaIon::getXMLData(const QString& source)
 
     // Demunge source name for key only.
     QString dataKey = source;
-    dataKey.remove("|weather");
+    dataKey.remove("envcan|weather|");
 
-    url = "http://dd.weatheroffice.ec.gc.ca/EC_sites/xml/" + d->m_place[dataKey].territoryName + "/" + d->m_place[dataKey].cityCode + "_e.xml";
+    url = "http://dd.weatheroffice.ec.gc.ca/EC_sites/xml/" + d->m_places[dataKey].territoryName + "/" + d->m_places[dataKey].cityCode + "_e.xml";
     //url="file:///home/spstarr/Desktop/s0000649_e.xml";
     kDebug() << "Will Try URL: " << url;
 
-    if (d->m_place[dataKey].territoryName.isEmpty() && d->m_place[dataKey].cityCode.isEmpty()) {
+    if (d->m_places[dataKey].territoryName.isEmpty() && d->m_places[dataKey].cityCode.isEmpty()) {
         setData(source, "validate", QString("envcan|malformed"));
         return;
     }
@@ -641,7 +638,6 @@ void EnvCanadaIon::setup_slotJobFinished(KJob *job)
 bool EnvCanadaIon::readXMLSetup()
 {
     bool success = false;
-    QString tmp;
     QString territory;
     QString code;
     QString cityName;
@@ -664,18 +660,21 @@ bool EnvCanadaIon::readXMLSetup()
 
             if (d->m_xmlSetup.name() == "provinceCode") {
                 territory = d->m_xmlSetup.readElementText(); // Provinces/Territory list
-                tmp = "envcan|" + cityName + ", " + territory; // Build the key name.
-
-                // Set the mappings
-                d->m_place[tmp].cityCode = code;
-                d->m_place[tmp].territoryName = territory;
-                d->m_place[tmp].cityName = cityName;
-
-                // Set the string list, we will use for the applet to display the available cities.
-                d->m_locations[tmp] = tmp;
-                success = true;
             }
         }
+            if (d->m_xmlSetup.isEndElement() && d->m_xmlSetup.name() == "site") {
+                EnvCanadaIon::Private::XMLMapInfo info;
+                QString tmp = cityName + ", " + territory; // Build the key name.
+
+                // Set the mappings
+                info.cityCode = code;
+                info.territoryName = territory;
+                info.cityName = cityName;
+
+                // Set the string list, we will use for the applet to display the available cities.
+                d->m_places[tmp] = info;
+                success = true;
+            }
 
     }
     return (success && !d->m_xmlSetup.error());
@@ -727,8 +726,8 @@ bool EnvCanadaIon::readXMLData(const QString& source, QXmlStreamReader& xml)
     kDebug() << "readXMLData()";
 
     QString dataKey = source;
-    dataKey.remove("|weather");
-    data.shortTerritoryName = d->m_place[dataKey].territoryName;
+    dataKey.remove("envcan|weather|");
+    data.shortTerritoryName = d->m_places[dataKey].territoryName;
     while (!xml.atEnd()) {
         xml.readNext();
 
