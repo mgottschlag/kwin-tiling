@@ -642,7 +642,7 @@ QSize AbstractTaskItem::layoutText(QTextLayout &layout, const QString &text,
 
         // Make the last line that will fit infinitely long.
         // drawTextLayout() will handle this by fading the line out
-        // if it won't fit in the contraints.
+        // if it won't fit in the constraints.
         if (height + 2 * lineSpacing > constraints.height()) {
             line.setPosition(QPoint(0, height));
             break;
@@ -688,7 +688,7 @@ void AbstractTaskItem::drawTextLayout(QPainter *painter, const QTextLayout &layo
     int textHeight = layout.lineCount() * fm.lineSpacing();
 
     QPointF position = textHeight < rect.height() ?
-            QPointF(0, (rect.height() - textHeight) / 2 + (fm.tightBoundingRect("M").height() - fm.xHeight())) : QPointF(0, 0);
+            QPointF(0, (rect.height() - textHeight) / 2 + (fm.tightBoundingRect("M").height() - fm.xHeight())/2) : QPointF(0, 0);
     QList<QRect> fadeRects;
     int fadeWidth = 30;
 
