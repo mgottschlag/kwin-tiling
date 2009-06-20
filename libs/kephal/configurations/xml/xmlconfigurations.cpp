@@ -163,7 +163,14 @@ namespace Kephal {
         m_awaitingConfirm(false)
     {
         QDir dir = QDir::home();
-        dir.cd(".local");
+        if (!dir.cd(".local"))
+        {
+            qDebug() << QDir::homePath() + "/.local directory not found, creating now.";
+            if (!dir.mkdir(".local"))
+                qWarning() << "Error during creation of " << QDir::homePath() + "/.local directory.";
+
+            dir.cd(".local");
+        }
         m_configPath = dir.filePath("screen-configurations.xml");
         
         m_externalConfiguration = new ExternalConfiguration(this);
