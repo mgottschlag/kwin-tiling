@@ -873,10 +873,12 @@ void UKMETIon::updateWeather(const QString& source)
     QVector<QString> forecastList;
     int i = 0;
 
-    setData(weatherSource, "Place", place(source));
-    setData(weatherSource, "Station", station(source));
-    setData(weatherSource, "Observation Period", observationTime(source));
-    setData(weatherSource, "Current Conditions", condition(source));
+    Plasma::DataEngine::Data data;
+
+    data.insert("Place", place(source));
+    data.insert("Station", station(source));
+    data.insert("Observation Period", observationTime(source));
+    data.insert("Current Conditions", condition(source));
 
     const double observationSeconds = 60.0 * (periodMinute(source) + 60.0 * periodHour(source));
 
@@ -892,49 +894,51 @@ void UKMETIon::updateWeather(const QString& source)
     // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
     if (observationSeconds >= 0 && observationSeconds < sunrise) {
         //kDebug() << "Before sunrise - using night icons\n";
-        setData(weatherSource, "Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
+        data.insert("Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
     } else if (observationSeconds >= sunset) {
         //kDebug() << "After sunset - using night icons\n";
-        setData(weatherSource, "Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
+        data.insert("Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
     } else {
         //kDebug() << "Using daytime icons\n";
-        setData(weatherSource, "Condition Icon", getWeatherIcon(dayIcons(), condition(source)));
+        data.insert("Condition Icon", getWeatherIcon(dayIcons(), condition(source)));
     }
 
-    setData(weatherSource, "Humidity", humidity(source));
-    setData(weatherSource, "Visibility", visibility(source));
+    data.insert("Humidity", humidity(source));
+    data.insert("Visibility", visibility(source));
 
     dataFields = temperature(source);
-    setData(weatherSource, "Temperature", dataFields["temperature"]);
-    setData(weatherSource, "Temperature Unit", dataFields["temperatureUnit"]);
+    data.insert("Temperature", dataFields["temperature"]);
+    data.insert("Temperature Unit", dataFields["temperatureUnit"]);
 
     dataFields = pressure(source);
-    setData(weatherSource, "Pressure", dataFields["pressure"]);
-    setData(weatherSource, "Pressure Unit", dataFields["pressureUnit"]);
-    setData(weatherSource, "Pressure Tendency", dataFields["pressureTendency"]);
+    data.insert("Pressure", dataFields["pressure"]);
+    data.insert("Pressure Unit", dataFields["pressureUnit"]);
+    data.insert("Pressure Tendency", dataFields["pressureTendency"]);
 
     dataFields = wind(source);
-    setData(weatherSource, "Wind Speed", dataFields["windSpeed"]);
-    setData(weatherSource, "Wind Speed Unit", dataFields["windUnit"]);
-    setData(weatherSource, "Wind Direction", dataFields["windDirection"]);
+    data.insert("Wind Speed", dataFields["windSpeed"]);
+    data.insert("Wind Speed Unit", dataFields["windUnit"]);
+    data.insert("Wind Direction", dataFields["windDirection"]);
 
     // 5 Day forecast info
     forecastList = forecasts(source);
 
     // Set number of forecasts per day/night supported
-    setData(weatherSource, QString("Total Weather Days"), d->m_weatherData[source].forecasts.size());
+    data.insert("Total Weather Days", d->m_weatherData[source].forecasts.size());
 
     foreach(const QString &forecastItem, forecastList) {
         fieldList = forecastItem.split('|');
 
-        setData(weatherSource, QString("Short Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5|%6") \
+        data.insert(QString("Short Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5|%6") \
                 .arg(fieldList[0]).arg(fieldList[1]).arg(fieldList[2]).arg(fieldList[3]) \
                 .arg(fieldList[4]).arg(fieldList[5]));
         i++;
     }
 
-    setData(weatherSource, "Credit", i18n("Supported by backstage.bbc.co.uk / Data from UK MET Office"));
-    setData(weatherSource, "Credit Url", d->m_place[source].XMLforecastURL);
+    data.insert("Credit", i18n("Supported by backstage.bbc.co.uk / Data from UK MET Office"));
+    data.insert("Credit Url", d->m_place[source].XMLforecastURL);
+    
+    setData(weatherSource, data);
 }
 
 QString UKMETIon::place(const QString& source)
