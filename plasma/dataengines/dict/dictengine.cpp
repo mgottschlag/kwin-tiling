@@ -142,7 +142,7 @@ void DictEngine::getDicts()
     QString tmp1, tmp2;
 
     while (!retLines.empty()) {
-        QString curr = QString(retLines.takeFirst());
+        QString curr(retLines.takeFirst());
 
         if (curr.startsWith("554")) {
             //TODO: What happens if no DB available?

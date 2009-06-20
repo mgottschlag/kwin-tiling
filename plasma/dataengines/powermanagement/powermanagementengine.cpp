@@ -97,9 +97,9 @@ QStringList PowermanagementEngine::sources() const
 bool PowermanagementEngine::sourceRequestEvent(const QString &name)
 {
     if (name == "Battery") {
-        QList<Solid::Device> list_battery =
+        const QList<Solid::Device> list_battery =
                         Solid::Device::listFromType(Solid::DeviceInterface::Battery, QString());
-        if (list_battery.count() == 0) {
+        if (list_battery.isEmpty()) {
             setData("Battery", "has Battery", false);
             return true;
         }
@@ -111,7 +111,7 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
             const Solid::Battery* battery = device_battery.as<Solid::Battery>();
 
             if (battery && battery->type() == Solid::Battery::PrimaryBattery) {
-                QString source = QString("Battery%1").arg(index++);
+                const QString source = QString("Battery%1").arg(index++);
 
                 battery_sources << source;
                 m_batterySources[device_battery.udi()] = source;
@@ -130,14 +130,14 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
             }
         }
 
-        if (battery_sources.count() > 0) {
+        if (!battery_sources.isEmpty()) {
             setData("Battery", "has Battery", true);
             setData("Battery", "sources", battery_sources);
             setData("Battery", "Remaining msec", Solid::Control::PowerManager::batteryRemainingTime());
         }
     } else if (name == "AC Adapter") {
         // AC Adapter handling
-        QList<Solid::Device> list_ac =
+        const QList<Solid::Device> list_ac =
                         Solid::Device::listFromType(Solid::DeviceInterface::AcAdapter, QString());
         foreach (Solid::Device device_ac, list_ac) {
             m_acadapter = device_ac.as<Solid::AcAdapter>();
@@ -146,7 +146,7 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
                     SLOT(updateAcPlugState(bool)));
         }
     } else if (name == "Sleepstates") {
-        QSet<Solid::PowerManagement::SleepState> sleepstates =
+        const QSet<Solid::PowerManagement::SleepState> sleepstates =
                                 Solid::PowerManagement::supportedSleepStates();
         // We first set all possible sleepstates to false, then enable the ones that are available
         setData("Sleepstates", "Standby", false);
@@ -213,7 +213,7 @@ void PowermanagementEngine::updateAcPlugState(bool newState)
 void PowermanagementEngine::deviceRemoved(const QString& udi)
 {
     if (m_batterySources.contains(udi)) {
-        QString source = m_batterySources[udi];
+        const QString source = m_batterySources[udi];
         m_batterySources.remove(udi);
         removeSource(source);
 
@@ -236,7 +236,7 @@ void PowermanagementEngine::deviceAdded(const QString& udi)
                 index++;
             }
 
-            QString source = QString("Battery%1").arg(index);
+            const QString source = QString("Battery%1").arg(index);
             sourceNames << source;
             m_batterySources[device.udi()] = source;
 

@@ -22,8 +22,6 @@
 #define HOTPLUGENGINE_H
 
 #include <QObject>
-#include <QString>
-#include <QList>
 
 #include <Plasma/DataEngine>
 

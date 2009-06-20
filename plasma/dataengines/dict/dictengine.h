@@ -20,8 +20,6 @@
 #define DICTENGINE_H
 #include <Plasma/DataEngine>
 #include <QMap>
-#include <QString>
-#include <QList>
 class QTcpSocket;
 
 /**

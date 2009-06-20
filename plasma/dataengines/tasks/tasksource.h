@@ -47,7 +47,7 @@ class TaskSource : public Plasma::DataContainer
     protected:
         Plasma::Service *createService();
         TaskPtr getTask();
-        bool isTask();
+        bool isTask() const;
 
     private slots:
         void updateStartup(::TaskManager::TaskChanges startupChanges);

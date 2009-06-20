@@ -31,7 +31,7 @@ TaskJob::~TaskJob()
 void TaskJob::start()
 {
     // only a subset of task operations are exported
-    QString operation = operationName();
+    const QString operation = operationName();
     if (operation.startsWith("set")) {
         if (operation == "setMaximized") {
             m_source->getTask()->setMaximized(parameters().value("maximized").toBool());

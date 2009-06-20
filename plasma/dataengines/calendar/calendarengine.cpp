@@ -39,7 +39,7 @@ CalendarEngine::~CalendarEngine()
 bool CalendarEngine::sourceRequestEvent(const QString &name)
 {
     kDebug() << name << "\n";
-    QStringList tokens = name.split(":");
+    const QStringList tokens = name.split(":");
 
     if (tokens.count() < 3) {
         if (name == "holidaysRegions") {
@@ -52,7 +52,7 @@ bool CalendarEngine::sourceRequestEvent(const QString &name)
 
     kDebug() << tokens[0];
     kDebug() << tokens[2];
-    QString regionName = tokens[1];
+    const QString regionName = tokens[1];
     KHolidays::HolidayRegion *region = m_regions.value(regionName);
 
     if (!region) {
@@ -64,7 +64,7 @@ bool CalendarEngine::sourceRequestEvent(const QString &name)
 
     if (tokens[0] == "holidaysInMonth") {
         Plasma::DataEngine::Data data;
-        int days = KGlobal::locale()->calendar()->daysInMonth(dateArg);
+        const int days = KGlobal::locale()->calendar()->daysInMonth(dateArg);
         dateArg.setDate(dateArg.year(), dateArg.month(), 1);
 
         for (int i = 0; i < days; ++i) {
@@ -83,7 +83,7 @@ bool CalendarEngine::sourceRequestEvent(const QString &name)
         setData(name, region->isHoliday(dateArg));
     } else if (tokens[0] == "description") {
         KHolidays::Holiday::List holidays = region->holidays(dateArg);
-        if (holidays.size() > 0) {
+        if (!holidays.isEmpty()) {
             setData(name, holidays[0].text());
         } else {
             setData(name, QString());

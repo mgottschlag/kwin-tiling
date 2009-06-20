@@ -21,7 +21,6 @@
 #define FILEBROWSERENGINE_H
 
 #include <Plasma/DataEngine>
-#include <QMap>
 
 class KDirWatch;
 

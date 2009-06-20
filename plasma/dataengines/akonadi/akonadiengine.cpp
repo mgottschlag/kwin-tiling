@@ -167,7 +167,7 @@ bool AkonadiEngine::sourceRequestEvent(const QString &name)
     kDebug() << "Source requested:" << name << sources();
 
     if (name == "EmailCollections") {
-        Collection emailCollection = Collection(Collection::root());
+        Collection emailCollection(Collection::root());
         emailCollection.setContentMimeTypes(QStringList() << "message/rfc822");
         CollectionFetchJob *fetch = new CollectionFetchJob( emailCollection, CollectionFetchJob::Recursive);
         connect( fetch, SIGNAL(result(KJob*)), SLOT(fetchEmailCollectionsDone(KJob*)) );
@@ -198,7 +198,7 @@ bool AkonadiEngine::sourceRequestEvent(const QString &name)
         return true;
 
     } else if (name == "ContactCollections") {
-        Collection contactCollection = Collection(Collection::root());
+        Collection contactCollection(Collection::root());
         contactCollection.setContentMimeTypes(QStringList() << "text/directory");
 
         CollectionFetchJob* fetch = new CollectionFetchJob( contactCollection, CollectionFetchJob::Recursive);
@@ -226,7 +226,7 @@ bool AkonadiEngine::sourceRequestEvent(const QString &name)
         return true;
 
     } else if (name == "MicroBlogs") {
-        Collection microblogCollection = Collection(Collection::root());
+        Collection microblogCollection(Collection::root());
         microblogCollection.setContentMimeTypes(QStringList() << "application/x-vnd.kde.microblog");
         CollectionFetchJob *fetch = new CollectionFetchJob( microblogCollection, CollectionFetchJob::Recursive);
         connect( fetch, SIGNAL(result(KJob*)), SLOT(fetchMicroBlogCollectionsDone(KJob*)) );
@@ -322,7 +322,7 @@ void AkonadiEngine::fetchEmailCollectionDone(KJob* job)
         kDebug() << "Job Error:" << job->errorString();
         return;
     }
-    QString col = m_jobCollections[job];
+    const QString col = m_jobCollections[job];
     Item::List items = static_cast<ItemFetchJob*>( job )->items();
     foreach ( const Item &item, items ) {
         emailItemAdded(item, col);
@@ -363,7 +363,7 @@ void AkonadiEngine::microBlogItemAdded(const Akonadi::Item &item)
     kDebug() << "Checking one item";
     if (item.hasPayload<Microblog::StatusItem>()) {
         Microblog::StatusItem s = item.payload<Microblog::StatusItem>();
-        QString source = QString("MicroBlog-%1").arg(s.id());
+        const QString source = QString("MicroBlog-%1").arg(s.id());
         kDebug() << "Adding" << source << s.keys();
         setData(source, "Date", s.date());
         setData(source, "Foo", "Bar");
@@ -396,7 +396,7 @@ void AkonadiEngine::printContact(const QString &source, const KABC::Addressee &a
 
     QStringList phoneNumbers;
     foreach (const KABC::PhoneNumber &pn, a.phoneNumbers()) {
-        QString key = QString("Phone-%1").arg(pn.typeLabel());
+        const QString key = QString("Phone-%1").arg(pn.typeLabel());
         kDebug() << key << a.phoneNumber(pn.type()).number();
         phoneNumbers << a.phoneNumber(pn.type()).number();
     }
@@ -412,7 +412,7 @@ void AkonadiEngine::contactItemAdded( const Akonadi::Item &item )
         //kDebug() << item.id() << "item has payload ...";
         KABC::Addressee a = item.payload<KABC::Addressee>();
         if (!a.isEmpty()) {
-            QString source = QString("Contact-%1").arg(item.id());
+            const QString source = QString("Contact-%1").arg(item.id());
             setData(source, "Id", item.id());
             setData(source, "Url", item.url().url());
 
@@ -436,7 +436,7 @@ void AkonadiEngine::contactItemAdded( const Akonadi::Item &item )
             // Phone and related
             QStringList phoneNumbers;
             foreach (const KABC::PhoneNumber &pn, a.phoneNumbers()) {
-                QString key = QString("Phone-%1").arg(pn.typeLabel());
+                const QString key = QString("Phone-%1").arg(pn.typeLabel());
                 setData(source, key, a.phoneNumber(pn.type()).number());
                 phoneNumbers << a.phoneNumber(pn.type()).number();
             }

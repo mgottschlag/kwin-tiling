@@ -94,7 +94,7 @@ void SystemMonitorEngine::answerReceived(int id, const QList<QByteArray> &answer
             return;
         }
 
-        QStringList newSensorInfo = QString::fromUtf8(answer[0]).split('\t');
+        const QStringList newSensorInfo = QString::fromUtf8(answer[0]).split('\t');
 
         if (newSensorInfo.count() < 4) {
             kDebug() << "bad sensor info, only" << newSensorInfo.count()
@@ -102,10 +102,10 @@ void SystemMonitorEngine::answerReceived(int id, const QList<QByteArray> &answer
             return;
         }
 
-        QString sensorName = newSensorInfo[0];
-        QString min = newSensorInfo[1];
-        QString max = newSensorInfo[2];
-        QString unit = newSensorInfo[3];
+        const QString sensorName = newSensorInfo[0];
+        const QString min = newSensorInfo[1];
+        const QString max = newSensorInfo[2];
+        const QString unit = newSensorInfo[3];
         DataEngine::SourceDict sources = containerDict();
         DataEngine::SourceDict::const_iterator it = sources.constFind(m_sensors.value(-id - 2));
 
@@ -124,8 +124,8 @@ void SystemMonitorEngine::answerReceived(int id, const QList<QByteArray> &answer
         QStringList sensors;
 
         foreach (const QByteArray &sens, answer) {
-            QStringList newSensorInfo = QString::fromUtf8(sens).split('\t');
-            QString newSensor = newSensorInfo[0];
+            const QStringList newSensorInfo = QString::fromUtf8(sens).split('\t');
+            const QString newSensor = newSensorInfo[0];
             sensors.append(newSensor);
             setData(newSensor, "value", QVariant());
             setData(newSensor, "type", newSensorInfo[1]);

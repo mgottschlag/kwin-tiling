@@ -60,7 +60,7 @@ TaskPtr TaskSource::getTask()
     return m_task;
 }
 
-bool TaskSource::isTask()
+bool TaskSource::isTask() const 
 {
     return m_isTask;
 }
@@ -125,7 +125,7 @@ void TaskSource::updateTask(::TaskManager::TaskChanges taskChanges)
 void TaskSource::updateDesktop(int desktop)
 {
     Q_UNUSED(desktop);
-    bool onCurrentDesktop = m_task->isOnCurrentDesktop();
+    const bool onCurrentDesktop = m_task->isOnCurrentDesktop();
     if (data()["onCurrentDesktop"].toBool() != onCurrentDesktop) {
         setData("onCurrentDesktop", onCurrentDesktop);
         checkForUpdate();

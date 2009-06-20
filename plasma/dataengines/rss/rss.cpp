@@ -123,9 +123,9 @@ void RssEngine::slotIconChanged(bool isHost, const QString& hostOrURL,
                                              const QString& iconName)
 {
     Q_UNUSED(isHost);
-    QString iconFile = KGlobal::dirs()->findResource("cache",
+    const QString iconFile = KGlobal::dirs()->findResource("cache",
                                                      iconName+".png");
-    QString url = hostOrURL.toLower();
+    const QString url = hostOrURL.toLower();
 
     m_feedIcons[url] = iconFile;
     QMap<QString, QVariant> map;
@@ -165,8 +165,8 @@ void RssEngine::processRss(Syndication::Loader* loader,
                            Syndication::FeedPtr feed,
                            Syndication::ErrorCode error)
 {
-    QString url = m_feedMap.take(loader);
-    QString source = m_sourceMap.take(loader);
+    const QString url = m_feedMap.take(loader);
+    const QString source = m_sourceMap.take(loader);
     QString title;
     bool iconRequested = false;
     KUrl u(url);

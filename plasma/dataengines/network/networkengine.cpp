@@ -79,7 +79,7 @@ bool NetworkEngine::sourceRequestEvent(const QString &name)
 
 bool NetworkEngine::updateSourceEvent(const QString &source)
 {
-    QString uni = query(source)[I18N_NOOP("UNI")].toString();
+    const QString uni = query(source)[I18N_NOOP("UNI")].toString();
     Solid::Control::NetworkInterface *iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     if (!iface) {
         // remove the source as the interface is no longer available
@@ -180,7 +180,7 @@ void NetworkEngine::updateInterfaceData(const QString &source, const Solid::Cont
 void NetworkEngine::updateWirelessData(const QString &source, const Solid::Control::WirelessNetworkInterface *iface)
 {
     Q_ASSERT(iface);
-    QString currentAP = iface->activeAccessPoint();
+    const QString currentAP = iface->activeAccessPoint();
 
     using namespace Solid::Control;
     AccessPoint *ap = iface->findAccessPoint(currentAP);

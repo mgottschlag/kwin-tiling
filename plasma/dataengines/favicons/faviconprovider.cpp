@@ -69,11 +69,10 @@ FaviconProvider::FaviconProvider(QObject *parent, const QString &url)
 {
     KUrl faviconUrl(url);
     if (faviconUrl.protocol().isEmpty()) {
-        QString host = faviconUrl.host();
         faviconUrl = KUrl("http://" + url);
     }
 
-    QString fileName = KMimeType::favIconForUrl(faviconUrl.url());
+    const QString fileName = KMimeType::favIconForUrl(faviconUrl.url());
 
     if (!fileName.isEmpty()) {
         d->cachePath = KStandardDirs::locateLocal("cache",  fileName + ".png");

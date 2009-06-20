@@ -42,7 +42,7 @@ void Geolocation::init()
     m_networkStatus = Solid::Networking::status();
 
     //TODO: should this be delayed even further, e.g. when the source is requested?
-    KService::List offers = KServiceTypeTrader::self()->query("Plasma/GeolocationProvider");
+    const KService::List offers = KServiceTypeTrader::self()->query("Plasma/GeolocationProvider");
     QVariantList args;
 
     foreach (const KService::Ptr service, offers) {

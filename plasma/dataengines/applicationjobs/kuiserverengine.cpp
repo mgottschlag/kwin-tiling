@@ -214,8 +214,8 @@ void KuiserverEngine::sourceUpdated(JobView *jobView)
     if (jobView->m_state == JobView::Running) {
         data["speed"] = jobView->speedString();
     }
-
-    for (int i = 0; i < jobView->m_labels.count(); i++) {
+    const int nbLabel = jobView->m_labels.count();
+    for (int i = 0; i < nbLabel; ++i) {
         data[QString("label%1").arg(i)] = jobView->m_labels[i];
         data[QString("labelName%1").arg(i)] = jobView->m_labelNames[i];
     }

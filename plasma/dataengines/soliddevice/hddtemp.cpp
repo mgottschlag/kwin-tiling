@@ -72,7 +72,7 @@ bool HddTemp::updateData()
         //kDebug() << socket.errorString();
         return false;
     }
-    QStringList list = data.split('|');
+    const QStringList list = data.split('|');
     int i = 1;
     m_data.clear();
     while (i + 4 < list.size()) {

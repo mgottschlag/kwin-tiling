@@ -62,7 +62,7 @@ uint NotificationsEngine::Notify(const QString &app_name, uint replaces_id, cons
         appname_str = i18n("Unknown Application");
     }
 
-    QString source = QString("notification %1").arg(id);
+    const QString source = QString("notification %1").arg(id);
     if (replaces_id) {
         Plasma::DataContainer *container = containerForSource(source);
         if (container && container->data()["expireTimeout"].toInt() != timeout) {
@@ -102,7 +102,7 @@ uint NotificationsEngine::Notify(const QString &app_name, uint replaces_id, cons
 
 void NotificationsEngine::timerEvent(QTimerEvent *event)
 {
-    QString source = m_timeouts.value(event->timerId());
+    const QString source = m_timeouts.value(event->timerId());
     if (!source.isEmpty()) {
         m_sourceTimers.remove(source);
         m_timeouts.remove(event->timerId());

@@ -68,7 +68,7 @@ bool MetaDataEngine::updateSourceEvent(const QString &name)
 
             if (value.isValid() && convertMetaInfo(metaInfoItem.name(), labelText)) {
                 if (labelText == "Size") {
-                    QString s = QString::number(value.toDouble()/1024/1024, 'f', 2);
+                    const QString s = QString::number(value.toDouble()/1024/1024, 'f', 2);
                     setData(name, labelText, s + " Mb");
                 } else if (labelText == "Source Modified") {
                     QVariant newValue = QVariant(value.toDateTime());

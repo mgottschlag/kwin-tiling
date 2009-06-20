@@ -74,11 +74,11 @@ void PlacesEngine::sendAllData()
 void PlacesEngine::sendData(int start, int end)
 {
     for (int row = start; row <= end; ++row) {
-        QModelIndex index = m_placesModel.index(row, 0);
+        const QModelIndex index = m_placesModel.index(row, 0);
 
         Data map;
 
-        QString source = QString::number(row);
+        const QString source = QString::number(row);
 
         setData(source, "name", m_placesModel.text(index));
         setData(source, "url", m_placesModel.url(index).url());
@@ -90,7 +90,7 @@ void PlacesEngine::sendData(int start, int end)
         setData(source, "isDevice",
                 m_placesModel.deviceForIndex(index).isValid());
 
-        QString path = m_placesModel.url(index).path();
+        const QString path = m_placesModel.url(index).path();
         if (!path.isEmpty()) {
             // We can't get free space for unmounted volumes :-(
             KDiskFreeSpaceInfo info = KDiskFreeSpaceInfo::freeSpaceInfo(path);

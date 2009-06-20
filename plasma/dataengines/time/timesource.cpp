@@ -60,10 +60,10 @@ TimeSource::TimeSource(const QString &name, QObject *parent)
         }
     }
 
-    QString trTimezone = i18n(timezone.toUtf8());
+    const QString trTimezone = i18n(timezone.toUtf8());
     setData(I18N_NOOP("Timezone"), trTimezone);
 
-    QStringList tzParts = trTimezone.split("/", QString::SkipEmptyParts);
+    const QStringList tzParts = trTimezone.split("/", QString::SkipEmptyParts);
     if (tzParts.count() == 1) {
         // no '/' so just set it as the city
         setData(I18N_NOOP("Timezone City"), trTimezone);
@@ -122,14 +122,15 @@ QString TimeSource::parseName(const QString &name)
     static const QString datetime = I18N_NOOP("DataTime");
 
     // now parse out what we got handed in
-    QStringList list = name.split('|', QString::SkipEmptyParts);
+    const QStringList list = name.split('|', QString::SkipEmptyParts);
 
-    for (int i = 1; i < list.size(); ++i) {
+    const int listSize = list.size();
+    for (int i = 1; i < listSize; ++i) {
         const QString arg = list[i];
-        int n = arg.indexOf('=');
+        const int n = arg.indexOf('=');
         if (n != -1) {
-            QString key = arg.mid(0, n);
-            QString value = arg.mid(n + 1);
+            const QString key = arg.mid(0, n);
+            const QString value = arg.mid(n + 1);
 
             if (key == latitude) {
                 m_latitude = value.toDouble();
