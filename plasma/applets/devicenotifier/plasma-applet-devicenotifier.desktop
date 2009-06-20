@@ -113,7 +113,7 @@ Comment[uk]=Сповіщення і доступ до нових пристро�
 Comment[x-test]=xxNotifications and access for new devicesxx
 Comment[zh_CN]=对新设备产生通知和访问反应
 Comment[zh_TW]=通知與存取新裝置
-Icon=drive-removable-media-usb-pendrive
+Icon=device-notifier
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
 
