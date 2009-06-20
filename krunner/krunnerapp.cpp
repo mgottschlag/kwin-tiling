@@ -247,7 +247,7 @@ void KRunnerApp::showTaskManagerWithFilter(const QString &filterText)
         m_tasks->restoreDialogSize(cg);
         w->loadSettings(cg);
         // Since we default to forcing the window to be KeepAbove, if the user turns this off, remember this
-        bool keepAbove = KRunnerSettings::keepTaskDialogAbove();
+        const bool keepAbove = KRunnerSettings::keepTaskDialogAbove();
         if (keepAbove) {
             KWindowSystem::setState( m_tasks->winId(), NET::KeepAbove );
         }
@@ -379,7 +379,7 @@ void KRunnerApp::reloadConfig()
     //Prevent Interface destructor from triggering this method
     disconnect(KRunnerSettings::self(), SIGNAL(configChanged()), this, SLOT(reloadConfig()));
 
-    int interface = KRunnerSettings::interface();
+    const int interface = KRunnerSettings::interface();
     if (qobject_cast<Interface*>(m_interface) &&
         interface == KRunnerSettings::EnumInterface::TaskOriented) {
         delete m_interface;

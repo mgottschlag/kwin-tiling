@@ -175,7 +175,7 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     mSuspendTimer.setSingleShot(true);
     connect(&mSuspendTimer, SIGNAL(timeout()), SLOT(suspend()));
 
-    QStringList dmopt =
+    const QStringList dmopt =
         QString::fromLatin1( ::getenv( "XDM_MANAGED" )).split(QChar(','), QString::SkipEmptyParts);
     for (QStringList::ConstIterator it = dmopt.constBegin(); it != dmopt.constEnd(); ++it)
         if ((*it).startsWith("method="))
@@ -404,24 +404,25 @@ void LockProcess::readSaver()
         QString entryName = mSaver;
         if( entryName.endsWith( ".desktop" ))
             entryName = entryName.left( entryName.length() - 8 ); // strip it
-        KService::List offers = KServiceTypeTrader::self()->query( "ScreenSaver",
+        const KService::List offers = KServiceTypeTrader::self()->query( "ScreenSaver",
             "DesktopEntryName == '" + entryName.toLower() + '\'' );
-        if( offers.count() == 0 )
+        if( offers.isEmpty() )
         {
             kDebug(1204) << "Cannot find screesaver: " << mSaver;
             return;
         }
-        QString file = KStandardDirs::locate("services", offers.first()->entryPath());
+        const QString file = KStandardDirs::locate("services", offers.first()->entryPath());
 
-        bool opengl = KAuthorized::authorizeKAction("opengl_screensavers");
-        bool manipulatescreen = KAuthorized::authorizeKAction("manipulatescreen_screensavers");
+        const bool opengl = KAuthorized::authorizeKAction("opengl_screensavers");
+        const bool manipulatescreen = KAuthorized::authorizeKAction("manipulatescreen_screensavers");
         KDesktopFile config( file );
         KConfigGroup desktopGroup = config.desktopGroup();
         if (!desktopGroup.readEntry("X-KDE-Type").toUtf8().isEmpty())
         {
-            QString saverType = desktopGroup.readEntry("X-KDE-Type").toUtf8();
-            QStringList saverTypes = saverType.split( ";");
-            for (int i = 0; i < saverTypes.count(); i++)
+            const QString saverType = desktopGroup.readEntry("X-KDE-Type").toUtf8();
+            const QStringList saverTypes = saverType.split( ";");
+	    const int nbSaverTypes = saverTypes.count();
+            for (int i = 0; i < nbSaverTypes ; ++i)
             {
                 if ((saverTypes[i] == "ManipulateScreen") && !manipulatescreen)
                 {
@@ -1124,7 +1125,7 @@ bool LockProcess::checkPass()
     }
 
     PasswordDlg passDlg( this, &greetPlugin);
-    int ret = execDialog( &passDlg );
+    const int ret = execDialog( &passDlg );
 
     if (isPlasmaValid()) {
         if (ret == QDialog::Rejected) {
@@ -1155,7 +1156,7 @@ bool LockProcess::checkPass(const QString &reason)
         return false;
     }
     PasswordDlg passDlg(this, &greetPlugin, reason);
-    int ret = execDialog( &passDlg );
+    const int ret = execDialog( &passDlg );
     kDebug() << ret;
 
     //FIXME do we need to copy&paste that SubstructureNotifyMask code above?
@@ -1229,8 +1230,8 @@ int LockProcess::execDialog( QDialog *dlg )
     }
     mDialogs.prepend( dlg );
     fakeFocusIn( dlg->winId());
-    int rt = dlg->exec();
-    int pos = mDialogs.indexOf( dlg );
+    const int rt = dlg->exec();
+    const int pos = mDialogs.indexOf( dlg );
     if (pos != -1)
         mDialogs.remove( pos );
     if( mDialogs.isEmpty() ) {

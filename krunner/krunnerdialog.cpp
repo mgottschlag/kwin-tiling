@@ -93,7 +93,7 @@ void KRunnerDialog::setStaticQueryMode(bool staticQuery)
 
 void KRunnerDialog::switchUser()
 {
-    KService::Ptr service = KService::serviceByStorageId("plasma-runner-sessions.desktop");
+    const KService::Ptr service = KService::serviceByStorageId("plasma-runner-sessions.desktop");
     KPluginInfo info(service);
 
     if (info.isValid()) {
