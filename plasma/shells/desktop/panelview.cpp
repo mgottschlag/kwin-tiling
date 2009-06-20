@@ -1258,7 +1258,8 @@ void PanelView::leaveEvent(QEvent *event)
     if (m_visibilityMode == LetWindowsCover && m_triggerEntered) {
         //kDebug() << "not creating!";
         m_triggerEntered = false;
-    } else if ((m_visibilityMode == AutoHide || m_visibilityMode == LetWindowsCover) && !m_editting) {
+    } else if (containment() &&
+               (m_visibilityMode == AutoHide || m_visibilityMode == LetWindowsCover) && !m_editting) {
         // even if we dont have a popup, we'll start a timer, so
         // that the panel stays if the mouse only leaves for a
         // few ms
@@ -1535,6 +1536,10 @@ void PanelView::panelDeleted()
         c.deleteGroup();
         configNeedsSaving();
     }
+
+    delete m_mousePollTimer;
+    m_mousePollTimer = 0;
+    m_strutsTimer->stop();
 
     deleteLater();
 }
