@@ -578,7 +578,7 @@ void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
         item->setIcon("view-pim-calendar");
         item->showCloseButton();
         QDate date = QDate::fromString(item->name().remove(0, 13), Qt::ISODate);
-        item->setTitle(date.toString());
+        item->setTitle(KGlobal::locale()->formatDate(date));
         Plasma::Calendar *calendar = d->calendarWidget();
         DateExtenderWidget *widget = 0;
 
