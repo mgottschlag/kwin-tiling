@@ -1,8 +1,8 @@
 [KSplash Theme: Default]
-Name = KDE 4.2 Splash Screen
-Description = Oxygen Splash Screen
-Version = 1.1
-Author = Nuno Pinheiro <nuno@oxygen-icons.org> & Riccardo Iaconelli <riccardo@kde.org>
+Name = KDE 4.3 Splash Screen
+Description = Air Splash Screen
+Version = 1.0
+Author = Nuno Pinheiro <nuno@oxygen-icons.org>, Riccardo Iaconelli <riccardo@kde.org> and Marco Martin <notmart@gmail.com>
 Homepage = http://www.kde.org
 
 # Theme behaviour settings.
