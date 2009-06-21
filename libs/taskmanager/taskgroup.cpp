@@ -181,7 +181,7 @@ void TaskGroup::clear()
     //    kDebug();
         Q_ASSERT(item);
         if (item->isGroupItem()) { 
-            (dynamic_cast<GroupPtr>(item))->clear();
+            (static_cast<GroupPtr>(item))->clear();
         }
         remove(item);
     }
