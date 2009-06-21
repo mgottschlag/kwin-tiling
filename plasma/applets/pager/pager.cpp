@@ -224,8 +224,10 @@ void Pager::createConfigurationInterface(KConfigDialog *parent)
     ui.showWindowIconsCheckBox->setChecked(m_showWindowIcons);
     if (formFactor() == Plasma::Vertical) {
         ui.labelRows->setText(i18n("Number of columns:"));
+        ui.spinRows->setValue(m_columns);
+    } else {
+        ui.spinRows->setValue(m_rows);
     }
-    ui.spinRows->setValue(m_rows);
     ui.spinRows->setMaximum(m_desktopCount);
 
     switch (m_currentDesktopSelected){
@@ -476,9 +478,16 @@ void Pager::configAccepted()
     // we need to keep all pager applets consistent since this affects
     // the layout of the desktops as used by the window manager,
     // so we store the row count in the applet global configuration
-    if (m_rows != ui.spinRows->value()) {
+    int rows = 0;
+    if (formFactor() == Plasma::Vertical) {
+        rows = m_desktopCount / ui.spinRows->value() + m_desktopCount % ui.spinRows->value();
+    } else {
+        rows = ui.spinRows->value();
+    }
+kWarning()<<"AAAAAAAAA"<<rows;
+    if (m_rows != rows) {
         KConfigGroup globalcg = globalConfig();
-        m_rows = ui.spinRows->value();
+        m_rows = rows;
         if (m_rows > m_desktopCount) {
             m_rows = m_desktopCount;
         }
