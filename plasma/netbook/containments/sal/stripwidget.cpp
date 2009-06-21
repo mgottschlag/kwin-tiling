@@ -1,5 +1,5 @@
 /*
- *   Copyright 2009 by Artur Duque de Souza <morpheuz@gmail.com>
+ *   Copyright 2009 by Artur Duque de Souza <asouza@kde.org>
  *
  *
  *   This program is free software; you can redistribute it and/or modify

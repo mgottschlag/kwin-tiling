@@ -1,6 +1,6 @@
 /*
  *   Copyright 2009 by Aaron Seigo <aseigo@kde.org>
- *   Copyright 2009 by Artur Duque de Souza <morpheuz@gmail.com>
+ *   Copyright 2009 by Artur Duque de Souza <asouza@kde.org>
  *   Copyright 2009 by Marco Martin <notmart@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
