@@ -44,7 +44,6 @@ public:
         :editableGroupProperties(AbstractGroupingStrategy::None)
     {
     }
-    GroupManager *groupManager;
     AbstractGroupingStrategy::EditableGroupProperties editableGroupProperties;
 };
 
@@ -53,7 +52,6 @@ KustodianGroupingStrategy::KustodianGroupingStrategy(GroupManager *groupManager)
     :AbstractGroupingStrategy(groupManager),
      d(new Private)
 {
-    d->groupManager = groupManager;
     setType(GroupManager::KustodianGrouping);
 
     QStringList defaultApps;
@@ -86,13 +84,17 @@ QList<QAction*> KustodianGroupingStrategy::strategyActions(QObject *parent, Abst
 
 void KustodianGroupingStrategy::handleItem(AbstractItemPtr item)
 {
+    if (!rootGroup()) {
+        return;
+    }
+
     if (item->isGroupItem()) {
-        d->groupManager->rootGroup()->add(item);
+        rootGroup()->add(item);
         return;
     }
 
     TaskItem *task = dynamic_cast<TaskItem*>(item);
-    if (task && !programGrouping(task, d->groupManager->rootGroup())) {
+    if (task && !programGrouping(task, rootGroup())) {
         QString name = desktopNameFromClassName(task->task()->classClass());
         //kDebug() << "create new subgroup in root as this classname doesn't have a group " << name;
 

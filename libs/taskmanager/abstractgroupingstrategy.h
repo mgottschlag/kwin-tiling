@@ -47,6 +47,8 @@ public:
     AbstractGroupingStrategy(GroupManager *groupManager);
     virtual ~AbstractGroupingStrategy();
 
+    void destroy();
+
      /** Handles a new item */
     virtual void handleItem(AbstractItemPtr) = 0;
 
@@ -60,6 +62,11 @@ public:
     *  If the visualization supports grouping it has to show these actions.
     */
     virtual QList<QAction*> strategyActions(QObject *parent, AbstractGroupableItem *item);
+
+    /**
+     * Returns the root group to use in grouping
+     */
+    GroupPtr rootGroup() const;
 
     enum EditableGroupProperties
     {

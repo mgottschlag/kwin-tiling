@@ -24,6 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "manualgroupingstrategy.h"
 
 #include <QAction>
+#include <QPointer>
 
 #include <KDebug>
 #include <KLocale>
@@ -48,13 +49,12 @@ public:
     {
     }
 
-    GroupManager *groupManager;
     QHash<int, TaskGroupTemplate*> templateTrees;
     TaskGroupTemplate* currentTemplate;
     QList<TaskGroup*> protectedGroups;
     AbstractGroupingStrategy::EditableGroupProperties editableGroupProperties;
     AbstractGroupableItem *tempItem;
-    TaskGroup *tempGroup;
+    QPointer<TaskGroup> tempGroup;
     int oldDesktop;
 };
 
@@ -64,7 +64,6 @@ ManualGroupingStrategy::ManualGroupingStrategy(GroupManager *groupManager)
     :AbstractGroupingStrategy(groupManager),
      d(new Private)
 {
-    d->groupManager = groupManager;
     setType(GroupManager::ManualGrouping);
 }
 
@@ -110,13 +109,17 @@ void ManualGroupingStrategy::leaveGroup()
 
 void ManualGroupingStrategy::removeGroup()
 {
-    Q_ASSERT(d->tempGroup);
+    if (!d->tempGroup) {
+        return;
+    }
+
     if (d->tempGroup->parentGroup()) {
         foreach (AbstractGroupableItem *item, d->tempGroup->members()) {
             d->tempGroup->parentGroup()->add(item);
         }
         //Group gets automatically closed on empty signal
     }
+
     d->tempGroup = 0;
 }
 
@@ -138,6 +141,10 @@ void ManualGroupingStrategy::protectGroup(TaskGroup *group)
 //Check if the item was previously manually grouped
 void ManualGroupingStrategy::handleItem(AbstractItemPtr item)
 {
+    if (!rootGroup()) {
+        return;
+    }
+
     //kDebug();
     if (d->currentTemplate) { //TODO this won't work over sessions because the task is identified by the pointer (maybe the name without the current status would work), one way would be to store the items per name if the session is closed and load them per name on startup but use the pointer otherwise because of changing names of browsers etc
         TaskGroupTemplate *templateGroup = d->currentTemplate;
@@ -157,7 +164,7 @@ void ManualGroupingStrategy::handleItem(AbstractItemPtr item)
                     oldTemplateGroup->group()->add(templateGroup->group()); //add group to parent Group
                 } else {
                     //kDebug();
-                    d->groupManager->rootGroup()->add(item);
+                    rootGroup()->add(item);
                     return;
                 }
             }
@@ -167,10 +174,10 @@ void ManualGroupingStrategy::handleItem(AbstractItemPtr item)
             templateGroup->remove(item);
         } else {
             //kDebug() << "Item not in templates";
-            d->groupManager->rootGroup()->add(item);
+            rootGroup()->add(item);
         }
     } else {
-        d->groupManager->rootGroup()->add(item);
+        rootGroup()->add(item);
     }
 }
 
@@ -184,7 +191,7 @@ TaskGroupTemplate *ManualGroupingStrategy::createDuplication(TaskGroup *group)
 void ManualGroupingStrategy::desktopChanged(int newDesktop)
 {
     //kDebug() << "old: " << d->oldDesktop << "new: " << newDesktop;
-    if (d->oldDesktop == newDesktop) {
+    if (d->oldDesktop == newDesktop || !rootGroup()) {
         return;
     }
 
@@ -193,8 +200,8 @@ void ManualGroupingStrategy::desktopChanged(int newDesktop)
         d->currentTemplate->clear();
     }
     //kDebug();
-    TaskGroupTemplate *group = createDuplication(d->groupManager->rootGroup());
-    d->templateTrees.insert(d->oldDesktop, group); 
+    TaskGroupTemplate *group = createDuplication(rootGroup());
+    d->templateTrees.insert(d->oldDesktop, group);
     if (d->templateTrees.contains(newDesktop)) {
         //kDebug() << "Template found";
         d->currentTemplate = d->templateTrees.value(newDesktop);
@@ -218,44 +225,46 @@ void ManualGroupingStrategy::groupChangedDesktop(int newDesktop)
 {
     //kDebug();
     TaskGroup *group = qobject_cast<TaskGroup*>(sender());
-    if (!group) {
+    if (!group || !rootGroup()) {
         return;
     }
+
     if (newDesktop && (newDesktop != d->oldDesktop)) {
         if (group->parentGroup()) {
             group->parentGroup()->remove(group);
         }
     }
+
     TaskGroupTemplate *templateGroup;
-if (newDesktop) {
-    if (d->templateTrees.contains(newDesktop)) {
-        //kDebug() << "Template found";
-        templateGroup = d->templateTrees.value(newDesktop);
-    } else {
-        //kDebug() << "No Template found";
-        templateGroup = new TaskGroupTemplate(this, 0);
-        templateGroup->setGroup(d->groupManager->rootGroup());
-        d->templateTrees.insert(newDesktop, templateGroup);
-    }
-    //Add group to all existing desktops
-} else {
-    for (int i = 1; i <= TaskManager::self()->numberOfDesktops(); i++) {
+    if (newDesktop) {
         if (d->templateTrees.contains(newDesktop)) {
             //kDebug() << "Template found";
             templateGroup = d->templateTrees.value(newDesktop);
-            if (templateGroup->hasMember(group)) {
-                continue;
-            }
         } else {
             //kDebug() << "No Template found";
             templateGroup = new TaskGroupTemplate(this, 0);
-            templateGroup->setGroup(d->groupManager->rootGroup());
+            templateGroup->setGroup(rootGroup());
             d->templateTrees.insert(newDesktop, templateGroup);
         }
-        templateGroup->add(createDuplication(group));
-    }
-}
+        //Add group to all existing desktops
+    } else {
+        for (int i = 1; i <= TaskManager::self()->numberOfDesktops(); i++) {
+            if (d->templateTrees.contains(newDesktop)) {
+                //kDebug() << "Template found";
+                templateGroup = d->templateTrees.value(newDesktop);
+                if (templateGroup->hasMember(group)) {
+                    continue;
+                }
+            } else {
+                //kDebug() << "No Template found";
+                templateGroup = new TaskGroupTemplate(this, 0);
+                templateGroup->setGroup(rootGroup());
+                d->templateTrees.insert(newDesktop, templateGroup);
+            }
 
+            templateGroup->add(createDuplication(group));
+        }
+    }
 }
 
 bool ManualGroupingStrategy::groupItems(ItemList items)

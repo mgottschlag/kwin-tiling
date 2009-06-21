@@ -44,7 +44,7 @@ public:
         :editableGroupProperties(AbstractGroupingStrategy::None)
     {
     }
-    GroupManager *groupManager;
+
     AbstractGroupingStrategy::EditableGroupProperties editableGroupProperties;
     QPointer<AbstractGroupableItem> tempItem;
     QStringList blackList; //Programs in this list should not be grouped
@@ -55,7 +55,6 @@ ProgramGroupingStrategy::ProgramGroupingStrategy(GroupManager *groupManager)
     :AbstractGroupingStrategy(groupManager),
      d(new Private)
 {
-    d->groupManager = groupManager;
     setType(GroupManager::ProgramGrouping);
 
     KConfig groupBlacklist( "taskbargroupblacklistrc", KConfig::NoGlobals );
@@ -69,7 +68,7 @@ ProgramGroupingStrategy::~ProgramGroupingStrategy()
     KConfigGroup blackGroup( &groupBlacklist, "Blacklist" );
     blackGroup.writeEntry( "Applications", d->blackList );
     blackGroup.config()->sync();
-    
+
     delete d;
 }
 
@@ -123,8 +122,8 @@ void ProgramGroupingStrategy::toggleGrouping()
         d->blackList.append(name);
         if (d->tempItem->isGroupItem()) {
             closeGroup(qobject_cast<TaskGroup*>(d->tempItem));
-        } else {
-            d->groupManager->rootGroup()->add(d->tempItem);
+        } else if (rootGroup()) {
+            rootGroup()->add(d->tempItem);
         }
     }
 
@@ -133,20 +132,26 @@ void ProgramGroupingStrategy::toggleGrouping()
 
 void ProgramGroupingStrategy::handleItem(AbstractItemPtr item)
 {
+    GroupPtr root = rootGroup();
+
+    if (!root) {
+        return;
+    }
+
     if (item->isGroupItem()) {
         //kDebug() << "item is groupitem";
-        d->groupManager->rootGroup()->add(item);
+        root->add(item);
         return;
     } else if (d->blackList.contains((qobject_cast<TaskItem*>(item))->task()->classClass())) {
         //kDebug() << "item is in blacklist";
-        d->groupManager->rootGroup()->add(item);
+        root->add(item);
         return;
     }
 
     TaskItem *task = dynamic_cast<TaskItem*>(item);
-    if (task && !programGrouping(task, d->groupManager->rootGroup())) {
+    if (task && !programGrouping(task, root)) {
         //kDebug() << "joined rootGroup ";
-        d->groupManager->rootGroup()->add(item);
+        root->add(item);
     }
 }
 

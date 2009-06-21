@@ -55,6 +55,17 @@ AbstractGroupingStrategy::AbstractGroupingStrategy(GroupManager *groupManager)
 
 AbstractGroupingStrategy::~AbstractGroupingStrategy()
 {
+    destroy();
+    qDeleteAll(d->createdGroups);
+    delete d;
+}
+
+void AbstractGroupingStrategy::destroy()
+{
+    if (!d->groupManager) {
+        return;
+    }
+
     foreach (TaskGroup *group, d->createdGroups) { //cleanup all created groups
         disconnect(group, 0, this, 0);
 
@@ -73,8 +84,8 @@ AbstractGroupingStrategy::~AbstractGroupingStrategy()
         emit groupRemoved(group);
     }
 
-    qDeleteAll(d->createdGroups);
-    delete d;
+    d->groupManager = 0;
+    deleteLater();
 }
 
 GroupManager::TaskGroupingStrategy AbstractGroupingStrategy::type() const
@@ -99,13 +110,22 @@ QList<QAction*> AbstractGroupingStrategy::strategyActions(QObject *parent, Abstr
     return QList<QAction*>();
 }
 
+GroupPtr AbstractGroupingStrategy::rootGroup() const
+{
+    if (d->groupManager) {
+        return d->groupManager->rootGroup();
+    }
+
+    return 0;
+}
+
 TaskGroup* AbstractGroupingStrategy::createGroup(ItemList items)
 {
     GroupPtr oldGroup;
     if (!items.isEmpty() && items.first()->isGrouped()) {
         oldGroup = items.first()->parentGroup();
     } else {
-        oldGroup = d->groupManager->rootGroup();
+        oldGroup = rootGroup();
     }
 
     TaskGroup *newGroup = new TaskGroup(d->groupManager);
@@ -115,7 +135,10 @@ TaskGroup* AbstractGroupingStrategy::createGroup(ItemList items)
         newGroup->add(item);
     }
 
-    oldGroup->add(newGroup);
+    if (oldGroup) {
+        oldGroup->add(newGroup);
+    }
+
     return newGroup;
 }
 
@@ -130,17 +153,20 @@ void AbstractGroupingStrategy::closeGroup(TaskGroup *group)
 
     TaskGroup *parentGroup = group->parentGroup();
     if (!parentGroup) {
-        parentGroup = d->groupManager->rootGroup();
+        parentGroup = rootGroup();
     }
 
-    int index = parentGroup->members().indexOf(group);
-    foreach (const AbstractItemPtr& item, group->members()) {
-        parentGroup->add(item);
-        //move item to the location where its group was
-        d->groupManager->manualSortingRequest(item, index); //move items to position of group
+    if (parentGroup && d->groupManager) {
+        int index = parentGroup->members().indexOf(group);
+        foreach (const AbstractItemPtr& item, group->members()) {
+            parentGroup->add(item);
+            //move item to the location where its group was
+            d->groupManager->manualSortingRequest(item, index); //move items to position of group
+        }
+
+        parentGroup->remove(group);
     }
 
-    parentGroup->remove(group);
     emit groupRemoved(group);
     group->deleteLater();
 }

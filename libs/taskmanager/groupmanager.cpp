@@ -61,7 +61,7 @@ public:
           showOnlyCurrentScreen(false),
           showOnlyMinimized(false),
           onlyGroupWhenFull(false),
-          changingGroupingStragegy(false)
+          changingGroupingStrategy(false)
     {
     }
 
@@ -101,7 +101,7 @@ public:
     bool showOnlyCurrentScreen : 1;
     bool showOnlyMinimized : 1;
     bool onlyGroupWhenFull : 1;
-    bool changingGroupingStragegy : 1;
+    bool changingGroupingStrategy : 1;
     QUuid configToken;
 };
 
@@ -502,22 +502,22 @@ bool GroupManager::onlyGroupWhenFull() const
     return d->onlyGroupWhenFull;
 }
 
-void GroupManager::setOnlyGroupWhenFull(bool state)
+void GroupManager::setOnlyGroupWhenFull(bool onlyGroupWhenFull)
 {
-    //kDebug() << state;
-    if (d->onlyGroupWhenFull == state) {
+    //kDebug() << onlyGroupWhenFull;
+    if (d->onlyGroupWhenFull == onlyGroupWhenFull) {
         return;
     }
 
-    d->onlyGroupWhenFull = state;
+    d->onlyGroupWhenFull = onlyGroupWhenFull;
 
-    if (state) {
+    disconnect(d->rootGroup, SIGNAL(itemAdded(AbstractItemPtr)), this, SLOT(checkIfFull()));
+    disconnect(d->rootGroup, SIGNAL(itemRemoved(AbstractItemPtr)), this, SLOT(checkIfFull()));
+
+    if (onlyGroupWhenFull) {
         connect(d->rootGroup, SIGNAL(itemAdded(AbstractItemPtr)), this, SLOT(checkIfFull()));
         connect(d->rootGroup, SIGNAL(itemRemoved(AbstractItemPtr)), this, SLOT(checkIfFull()));
         d->checkIfFull();
-    } else {
-        disconnect(d->rootGroup, SIGNAL(itemAdded(AbstractItemPtr)), this, SLOT(checkIfFull()));
-        disconnect(d->rootGroup, SIGNAL(itemRemoved(AbstractItemPtr)), this, SLOT(checkIfFull()));
     }
 }
 
@@ -536,13 +536,14 @@ void GroupManagerPrivate::checkIfFull()
     if (!onlyGroupWhenFull || groupingStrategy != GroupManager::ProgramGrouping) {
         return;
     }
+
     if (itemList.size() >= groupIsFullLimit) {
         if (!abstractGroupingStrategy) {
             geometryTasks.clear();
             q->setGroupingStrategy(GroupManager::ProgramGrouping);
         }
     } else if (abstractGroupingStrategy) {
-         geometryTasks.clear();
+        geometryTasks.clear();
         q->setGroupingStrategy(GroupManager::NoGrouping);
         //let the visualization thing we still use the programGrouping
         groupingStrategy = GroupManager::ProgramGrouping;
@@ -643,12 +644,12 @@ AbstractGroupingStrategy* GroupManager::taskGrouper() const
 
 void GroupManager::setGroupingStrategy(TaskGroupingStrategy strategy)
 {
-    if (d->changingGroupingStragegy ||
+    if (d->changingGroupingStrategy ||
         (d->abstractGroupingStrategy && d->abstractGroupingStrategy->type() == strategy)) {
         return;
     }
 
-    d->changingGroupingStragegy = true;
+    d->changingGroupingStrategy = true;
 
     //kDebug() << strategy << kBacktrace();
     if (d->onlyGroupWhenFull) {
@@ -656,13 +657,13 @@ void GroupManager::setGroupingStrategy(TaskGroupingStrategy strategy)
         disconnect(d->rootGroup, SIGNAL(itemRemoved(AbstractItemPtr)), this, SLOT(checkIfFull()));
     }
 
-    delete d->abstractGroupingStrategy;
-    d->abstractGroupingStrategy = 0;
+    if (d->abstractGroupingStrategy) {
+        disconnect(d->abstractGroupingStrategy, 0, this, 0);
+        d->abstractGroupingStrategy->destroy();
+        d->abstractGroupingStrategy = 0;
+    }
 
     switch (strategy) {
-        case NoGrouping:
-            d->abstractGroupingStrategy = 0;
-            break;
         case ManualGrouping:
             d->abstractGroupingStrategy = new ManualGroupingStrategy(this);
             break;
@@ -675,9 +676,11 @@ void GroupManager::setGroupingStrategy(TaskGroupingStrategy strategy)
             d->abstractGroupingStrategy = new KustodianGroupingStrategy(this);
             break;
 
+        case NoGrouping:
+            break;
+
         default:
             kDebug() << "Strategy not implemented";
-            d->abstractGroupingStrategy = 0;
     }
 
     d->groupingStrategy = strategy;
@@ -694,7 +697,7 @@ void GroupManager::setGroupingStrategy(TaskGroupingStrategy strategy)
         connect(d->rootGroup, SIGNAL(itemRemoved(AbstractItemPtr)), this, SLOT(checkIfFull()));
     }
 
-    d->changingGroupingStragegy = false;
+    d->changingGroupingStrategy = false;
 }
 
 } // TaskManager namespace
