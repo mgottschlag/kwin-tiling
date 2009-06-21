@@ -477,19 +477,14 @@ bool TaskManager::isOnTop(const Task* task) const
     QList<WId>::const_iterator begin(list.constBegin());
     QList<WId>::const_iterator it = list.constBegin() + (list.size() - 1);
     do {
-        TaskDict::const_iterator taskItEnd = d->tasksByWId.constEnd();
-        for (TaskDict::const_iterator taskIt = d->tasksByWId.constBegin(); taskIt != taskItEnd; ++taskIt) {
-            TaskPtr t = taskIt.value();
-            if ((*it) == t->window()) {
-                if (t == task) {
-                    return true;
-                }
+        TaskPtr t = d->tasksByWId.value(*it);
+        if (t) {
+            if (t == task) {
+                return true;
+            }
 
-                if (!t->isIconified() && (t->isAlwaysOnTop() == task->isAlwaysOnTop())) {
-                    return false;
-                }
-
-                break;
+            if (!t->isIconified() && (t->isAlwaysOnTop() == task->isAlwaysOnTop())) {
+                return false;
             }
         }
     } while (it-- != begin);
