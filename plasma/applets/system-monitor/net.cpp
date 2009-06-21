@@ -56,7 +56,7 @@ void SM::Net::init()
             this, SLOT(sourceAdded(const QString&)));
     connect(engine(), SIGNAL(sourceRemoved(const QString&)),
             this, SLOT(sourceRemoved(const QString&)));
-    if (engine()->sources().count() > 0) {
+    if (!engine()->sources().isEmpty()) {
         sourcesAdded();
     }
 }

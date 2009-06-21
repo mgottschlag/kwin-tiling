@@ -314,7 +314,7 @@ void Trash::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
             //seek for an item in the places (e.g. Dolphin sidebar)
             const QModelIndex index = m_places->closestItem(url);
 
-            if (devList.count() > 0) {
+            if (!devList.isEmpty()) {
                 m_icon->setIcon("arrow-up-double");
             } else if (m_places->bookmarkForIndex(index).url() == url) {
                 m_icon->setIcon("edit-delete");
@@ -332,7 +332,7 @@ void Trash::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
     if (KUrl::List::canDecode(event->mimeData())) {
         const KUrl::List urls = KUrl::List::fromMimeData(event->mimeData());
-        if (urls.count() > 0) {
+        if (!urls.isEmpty()) {
             event->accept();
 
             //some special operation was done instead of simply deleting a file
@@ -352,7 +352,7 @@ void Trash::dropEvent(QGraphicsSceneDragDropEvent *event)
                 //seek for an item in the places (e.g. Dolphin sidebar)
                 const QModelIndex index = m_places->closestItem(url);
 
-                if (devList.count() > 0) {
+                if (!devList.isEmpty()) {
                     //Assuming a mountpoint has a single device
                     Solid::Device device = devList.first();
 

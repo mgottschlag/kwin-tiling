@@ -35,7 +35,6 @@ class QAction;
 class KCModuleProxy;
 class KFilePlacesModel;
 class KProcess;
-class KPropertiesDialog;
 
 namespace Plasma
 {

@@ -80,10 +80,10 @@ public:
             QList<QStandardItem*> row = recentAppItem->takeRow(recentAppItem->rowCount() - 1);
 
             //don't leave pending stuff in itemsByPath
-            if (row.count() > 0) {
+            if (!row.isEmpty()) {
                 itemsByPath.remove(row.first()->data(UrlRole).toString());
-            }
-            qDeleteAll(row.begin(), row.end());
+		qDeleteAll(row.begin(), row.end());
+	    }
         }
     }
 
@@ -110,7 +110,7 @@ public:
     {
         // create branch for documents and add existing items
         recentDocumentItem = new QStandardItem(i18n("Documents"));
-        QStringList documents = KRecentDocument::recentDocuments();
+        const QStringList documents = KRecentDocument::recentDocuments();
         foreach(const QString& document, documents) {
             addRecentDocument(document, true);
         }
@@ -122,7 +122,7 @@ public:
     {
         recentAppItem = new QStandardItem(i18n("Applications"));
 
-        QList<KService::Ptr> services = RecentApplications::self()->recentApplications();
+        const QList<KService::Ptr> services = RecentApplications::self()->recentApplications();
         for(int i = 0; i < maxRecentApps && i < services.count(); ++i) {
             addRecentApplication(services[i], true);
         }
