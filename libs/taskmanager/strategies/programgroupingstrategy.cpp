@@ -24,6 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "programgroupingstrategy.h"
 
 #include <QAction>
+#include <QPointer>
 
 #include <KDebug>
 #include <KLocale>
@@ -45,7 +46,7 @@ public:
     }
     GroupManager *groupManager;
     AbstractGroupingStrategy::EditableGroupProperties editableGroupProperties;
-    AbstractGroupableItem *tempItem;
+    QPointer<AbstractGroupableItem> tempItem;
     QStringList blackList; //Programs in this list should not be grouped
 };
 
@@ -103,6 +104,10 @@ QString ProgramGroupingStrategy::className(AbstractGroupableItem *item)
 
 void ProgramGroupingStrategy::toggleGrouping()
 {
+    if (!d->tempItem) {
+        return;
+    }
+
     QString name = className(d->tempItem);
 
     if (d->blackList.contains(name)) {
@@ -122,6 +127,7 @@ void ProgramGroupingStrategy::toggleGrouping()
             d->groupManager->rootGroup()->add(d->tempItem);
         }
     }
+
     d->tempItem = 0;
 }
 
