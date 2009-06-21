@@ -484,7 +484,7 @@ void Pager::configAccepted()
     } else {
         rows = ui.spinRows->value();
     }
-kWarning()<<"AAAAAAAAA"<<rows;
+
     if (m_rows != rows) {
         KConfigGroup globalcg = globalConfig();
         m_rows = rows;
