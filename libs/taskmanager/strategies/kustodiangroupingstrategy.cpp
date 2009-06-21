@@ -115,11 +115,10 @@ bool KustodianGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* g
     QHash <QString,AbstractItemPtr> itemMap;
 
     foreach (AbstractItemPtr item, groupItem->members()) { //search for an existing group
-        if (item->isGroupItem()) { //maybe add the condition that the subgroup was created by programGrouping
-            if (programGrouping(taskItem, static_cast<TaskGroup*>(item))) {
-                //kDebug() << "joined subGroup";
-                return true;
-            }
+        if (item->isGroupItem() && programGrouping(taskItem, static_cast<TaskGroup*>(item))) {
+            //maybe add the condition that the subgroup was created by programGrouping
+            //kDebug() << "joined subGroup";
+            return true;
         }
     }
 
@@ -128,8 +127,9 @@ bool KustodianGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* g
         //kDebug() << "joined this Group";
         groupItem->add(taskItem);
         return true;
-    } else
+    } else {
         return false;
+    }
 }
 
 QString KustodianGroupingStrategy::desktopNameFromClassName(const QString & name)
@@ -147,7 +147,7 @@ QString KustodianGroupingStrategy::desktopNameFromClassName(const QString & name
         return name.toLower().remove(' ');
     }
 
-    return "bugger";
+    return "???";
 }
 
 void KustodianGroupingStrategy::checkGroup()
