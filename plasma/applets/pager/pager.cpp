@@ -358,7 +358,7 @@ void Pager::recalculateGeometry()
     }
 
     m_size = QSizeF(ceil(columns * itemWidth + padding * (columns - 1) + leftMargin + rightMargin),
-                    ceil(rows * itemHeight + padding * (rows - 1) + topMargin + bottomMargin));
+                    ceil(m_rows * itemHeight + padding * (m_rows - 1) + topMargin + bottomMargin));
 
     //kDebug() << "new size set" << m_size << m_rows << m_columns << columns << itemWidth;
 
