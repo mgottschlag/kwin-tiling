@@ -84,13 +84,12 @@ void DBusSystemTrayProtocol::newTask(QString service)
     emit taskCreated(task);
 }
 
-
 void DBusSystemTrayProtocol::cleanupTask(QString typeId)
 {
     kDebug() << "task with typeId" << typeId << "removed";
-    DBusSystemTrayTask *task = m_tasks[typeId];
+    DBusSystemTrayTask *task = m_tasks.value(typeId);
     if (task) {
-        emit task->destroyed(m_tasks[typeId]);
+        emit task->destroyed(task);
         delete task;
         m_tasks.remove(typeId);
     }
@@ -167,7 +166,9 @@ void DBusSystemTrayProtocol::unregisterWatcher(const QString& service)
         disconnect(m_notificationItemWatcher, SIGNAL(ServiceUnregistered(const QString&)), this, SLOT(serviceUnregistered(const QString&)));
 
         foreach (DBusSystemTrayTask *task, m_tasks) {
-            emit task->destroyed(task);
+            if (task) {
+                emit task->destroyed(task);
+            }
         }
         m_tasks.clear();
 
