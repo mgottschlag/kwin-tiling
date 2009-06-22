@@ -46,9 +46,7 @@ OpenWidgetAssistant::OpenWidgetAssistant(QWidget *parent)
     selectLabel->setText(i18n("Select the type of widget to install from the list below."));
     m_widgetTypeList = new KListWidget(selectWidget);
     m_widgetTypeList->setSelectionMode(QAbstractItemView::SingleSelection);
-    //m_widgetTypeList->setSelectionBehavior(QAbstractItemView::SelectItems);
-    connect(m_widgetTypeList, SIGNAL(itemActivated(QListWidgetItem*)), this, SLOT(next()));
-    connect(m_widgetTypeList, SIGNAL(itemSelectionChanged ()), this, SLOT(slotItemChanged()));
+    connect(m_widgetTypeList, SIGNAL(itemSelectionChanged()), this, SLOT(slotItemChanged()));
 
     QString constraint("'Applet' in [X-Plasma-ComponentTypes] and exist [X-Plasma-PackageFormat]");
     KService::List offers = KServiceTypeTrader::self()->query("Plasma/ScriptEngine", constraint);
@@ -80,6 +78,7 @@ OpenWidgetAssistant::OpenWidgetAssistant(QWidget *parent)
 
     m_filePageWidget = new QWidget(this);
     m_filePage = new KPageWidgetItem(m_filePageWidget, i18n("Select File"));
+    m_filePage->setIcon(KIcon("document-open"));
     addPage(m_filePage);
 
     connect(this, SIGNAL(currentPageChanged(KPageWidgetItem*,KPageWidgetItem*)), SLOT(prepPage(KPageWidgetItem*,KPageWidgetItem*)));
@@ -111,8 +110,6 @@ void OpenWidgetAssistant::prepPage(KPageWidgetItem *current, KPageWidgetItem *be
         m_fileDialog->setOperationMode(KFileWidget::Opening);
         m_fileDialog->setMode(KFile::File | KFile::ExistingOnly);
         connect(this, SIGNAL(user1Clicked()), m_fileDialog, SLOT(slotOk()));
-        connect(m_fileDialog, SIGNAL(accepted()), this, SLOT(finished()));
-        //m_fileDialog->setWindowFlags(Qt::Widget);
         layout->addWidget(m_fileDialog);
     }
 
