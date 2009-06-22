@@ -68,6 +68,7 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet, const
       m_animId(0),
       m_alpha(1),
       m_backgroundPrefix("normal"),
+      m_updateGeometryTimerId(0),
       m_updateTimerId(0),
       m_hoverEffectTimerId(0),
       m_attentionTimerId(0),
@@ -363,7 +364,11 @@ void AbstractTaskItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void AbstractTaskItem::timerEvent(QTimerEvent *event)
 {
-    if (event->timerId() == m_updateTimerId) {
+    if (event->timerId() == m_updateGeometryTimerId) {
+        killTimer(m_updateGeometryTimerId);
+        m_updateGeometryTimerId = 0;
+        publishIconGeometry();
+    } else if (event->timerId() == m_updateTimerId) {
         killTimer(m_updateTimerId);
         m_updateTimerId = 0;
         update();
@@ -383,6 +388,9 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
 
         update();
     } else if (event->timerId() == m_hoverEffectTimerId) {
+        killTimer(m_hoverEffectTimerId);
+        m_hoverEffectTimerId = 0;
+
 #ifdef Q_WS_X11
         QList<WId> windows;
 
@@ -444,9 +452,6 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
                             reinterpret_cast<unsigned char *>(data.data()), data.size());
         }
 #endif
-
-        killTimer(m_hoverEffectTimerId);
-        m_hoverEffectTimerId = 0;
     } else {
         QGraphicsWidget::timerEvent(event);
     }
@@ -839,7 +844,12 @@ void AbstractTaskItem::publishIconGeometry(const QRect &rect) const
 void AbstractTaskItem::setGeometry(const QRectF& geometry)
 {
     QGraphicsWidget::setGeometry(geometry);
-    publishIconGeometry();
+    if (m_lastGeometryUpdate.elapsed() < 350) {
+        m_updateGeometryTimerId = startTimer(350 - m_lastGeometryUpdate.elapsed());
+    } else {
+        publishIconGeometry();
+        m_lastGeometryUpdate.restart();
+    }
 }
 
 QRectF AbstractTaskItem::iconRect(const QRectF &b) const

@@ -224,7 +224,9 @@ protected:
     QRectF m_activeRect;
 
     QPointF _dragOffset;
+    QTime m_lastGeometryUpdate;
     QTime m_lastUpdate;
+    int m_updateGeometryTimerId;
     int m_updateTimerId;
     int m_hoverEffectTimerId;
     int m_attentionTimerId;
