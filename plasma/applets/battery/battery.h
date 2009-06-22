@@ -159,7 +159,7 @@ class Battery : public Plasma::PopupApplet
         int m_boxAlpha;
         int m_boxHoverAlpha;
         int m_numOfBattery;
-        bool m_acadapter_plugged;
+        bool m_acAdapterPlugged;
         int m_remainingMSecs;
 };
 
