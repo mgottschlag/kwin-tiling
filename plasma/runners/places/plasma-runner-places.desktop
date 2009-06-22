@@ -23,6 +23,7 @@ Name[gu]=જગ્યાઓ
 Name[he]=מקומות
 Name[hi]=स्थान
 Name[hne]=प्लेसेस
+Name[hu]=Helyek
 Name[is]=Staðir
 Name[it]=Risorse
 Name[ja]=場所
@@ -88,6 +89,7 @@ Comment[gu]=ઉપકરણો અને ફોલ્ડર બૂકમાર�
 Comment[he]=פתח סימניות של התקנים ותיקיות
 Comment[hi]=उपकरण व फ़ोल्डर पसंदीदा खोलें
 Comment[hne]=उपकरन अउ फोल्डर निसानी खोलव
+Comment[hu]=Eszközökre és mappákra mutató könyvjelzők megnyitása
 Comment[is]=Opna bókamerki fyrir tæki og möppur
 Comment[it]=Apre segnalibri di dispositivi e cartelle
 Comment[ja]=デバイスやブックマークされたフォルダを開きます
@@ -116,6 +118,7 @@ Comment[sl]=Odpiranje naprav in map, ki so med zaznamki
 Comment[sr]=Отварајте маркере уређаја и фасцикли
 Comment[sr@latin]=Otvarajte markere uređaja i fascikli
 Comment[sv]=Öppna enhets- och katalogbokmärken
+Comment[tg]=Открыть папку закладок в новой вкладке
 Comment[th]=เปิดอุปกรณ์และโฟลเดอร์ที่คั่นหน้า
 Comment[tr]=Aygıt ve Dizin Yer İmlerini Aç
 Comment[uk]=Відкрийте закладки пристроїв і тек

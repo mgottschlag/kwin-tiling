@@ -694,6 +694,7 @@ Comment[sr]=Ова радња покреће Конзолу по притиск�
 Comment[sr@latin]=Ova radnja pokreće Konsolu po pritisku Ctrl+Alt+T
 Comment[sv]=Åtgärden kör Terminal, när man trycker på Ctrl+Alt+T.
 Comment[te]=Ctrl+Alt+T వత్తిన తర్వాత, ఈ చర్య Konsole ను నడుపుతుంది.
+Comment[tg]=Это действие запускает Konsole после нажатия Ctrl+Alt+T.
 Comment[th]=การกระทำนี้จะเรียกโปรแกรม Konsole หลังจากกด Ctrl+Alt+T
 Comment[tr]=Ctrl+Alt+T tuşlarına basıldıktan sonra bu eylem Konsole uygulamasını çalıştırır.
 Comment[uk]=Ця дія запускає Konsole після натискання Ctrl+Alt+T.
