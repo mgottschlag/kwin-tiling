@@ -120,7 +120,8 @@ void QuicklaunchApplet::init()
 
     QStringList desktopFiles = cg.readEntry("iconUrls", QStringList());
 
-    if (desktopFiles.isEmpty()) {
+    bool firstStart = desktopFiles.isEmpty();
+    if (firstStart) {
         QStringList defaultApps;
         defaultApps << "konqbrowser" << "dolphin" << "kopete";
 
@@ -142,6 +143,10 @@ void QuicklaunchApplet::init()
     }
 
     performUiRefactor();
+
+    if (firstStart) {
+        resize(sizeHint(Qt::PreferredSize));
+    }
 }
 
 QSizeF QuicklaunchApplet::sizeHint(Qt::SizeHint which, const QSizeF & constraint) const
@@ -246,7 +251,6 @@ void QuicklaunchApplet::performUiRefactor()
         m_dialog->adjustSize();
     }
 
-    //resize(sizeHint(Qt::PreferredSize));
     update();
 }
 
