@@ -541,7 +541,7 @@ void EnvCanadaIon::getXMLSetup()
 
     // If network is down, we need to spin and wait
 
-    KIO::TransferJob *job = KIO::get(KUrl("http://dd.weatheroffice.ec.gc.ca/EC_sites/xml/siteList.xml"), KIO::NoReload, KIO::HideProgressInfo);
+    KIO::TransferJob *job = KIO::get(KUrl("http://dd.weatheroffice.ec.gc.ca/citypage_weather/xml/siteList.xml"), KIO::NoReload, KIO::HideProgressInfo);
 
     if (job) {
         connect(job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
@@ -561,7 +561,7 @@ void EnvCanadaIon::getXMLData(const QString& source)
     QString dataKey = source;
     dataKey.remove("envcan|weather|");
 
-    url = "http://dd.weatheroffice.ec.gc.ca/EC_sites/xml/" + d->m_places[dataKey].territoryName + "/" + d->m_places[dataKey].cityCode + "_e.xml";
+    url = "http://dd.weatheroffice.ec.gc.ca/citypage_weather/xml/" + d->m_places[dataKey].territoryName + "/" + d->m_places[dataKey].cityCode + "_e.xml";
     //url="file:///home/spstarr/Desktop/s0000649_e.xml";
     kDebug() << "Will Try URL: " << url;
 
