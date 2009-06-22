@@ -537,7 +537,7 @@ void GroupManagerPrivate::checkIfFull()
         return;
     }
 
-    if (itemList.size() >= groupIsFullLimit) {
+    if (geometryTasks.size() >= groupIsFullLimit) {
         if (!abstractGroupingStrategy) {
             geometryTasks.clear();
             q->setGroupingStrategy(GroupManager::ProgramGrouping);
