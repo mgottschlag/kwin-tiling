@@ -149,7 +149,7 @@ int TaskItemLayout::size()
             continue;
         }
 
-        if (item->abstractItem()->isGroupItem()) {
+        if (item->abstractItem() && item->abstractItem()->isGroupItem()) {
             TaskGroupItem *group = static_cast<TaskGroupItem*>(item);
             if (!group->collapsed()) {
                 TaskItemLayout *layout = dynamic_cast<TaskItemLayout*>(group->tasksLayout());
