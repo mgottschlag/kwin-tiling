@@ -116,7 +116,7 @@ void Calendar::init(CalendarTable *calendarTable)
     m_hLayout->addItem(d->month);
 
     d->year = new Plasma::ToolButton(this);
-    d->year->setText(QString::number(calendar()->year(date())));
+    d->year->setText(calendar()->yearString(date()));
     d->year->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(d->year, SIGNAL(clicked()), this, SLOT(showYearSpinBox()));
     m_hLayout->addItem(d->year);
@@ -217,7 +217,7 @@ void Calendar::refreshWidgets()
 {
     d->month->setText(calendar()->monthName(date()));
     d->month->setMinimumSize(static_cast<QToolButton*>(d->month->widget())->sizeHint());
-    d->year->setText(QString::number(calendar()->year(date())));
+    d->year->setText(calendar()->yearString(date()));
     d->dateText->setText(calendar()->formatDate(date(),  KLocale::ShortDate));
 
     // Block the signals to prevent changing the date again

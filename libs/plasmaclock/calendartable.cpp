@@ -41,6 +41,11 @@ namespace Plasma
 
 static const int DISPLAYED_WEEKS = 6;
 
+static QString localeDateNum(int dtnum)
+{
+    return KGlobal::locale()->convertDigits(QString::number(dtnum), KGlobal::locale()->dateTimeDigitSet());
+}
+
 class CalendarCellBorder
 {
 public:
@@ -432,7 +437,7 @@ void CalendarTable::paintCell(QPainter *p, int cell, int week, int weekDay, Cell
     font.setPixelSize(cellArea.height() * 0.7);
     p->setFont(font);
     if (!(type & InvalidDate)) {
-        p->drawText(cellArea, Qt::AlignCenter, QString::number(cell), &cellArea); //draw number
+        p->drawText(cellArea, Qt::AlignCenter, localeDateNum(cell), &cellArea); //draw number
     }
     p->setOpacity(1.0);
 }
@@ -533,7 +538,7 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
                 p->setOpacity(d->opacity);
                 QString weekString;
                 if (calendar()->isValid(cellDate)) {
-                    weekString = QString::number(calendar()->weekNumber(cellDate));
+                    weekString = localeDateNum(calendar()->weekNumber(cellDate));
                 }
                 if (cellDate.dayOfWeek() != Qt::Monday) {
                     weekString += "/";
@@ -541,7 +546,7 @@ void CalendarTable::paint(QPainter *p, const QStyleOptionGraphicsItem *option, Q
 // JPL What's this 8?  Columns incl Week No?
                     date = date.addDays(8 - cellDate.dayOfWeek());
                     if (calendar()->isValid(cellDate)) {
-                        weekString += QString::number(calendar()->weekNumber(date));
+                        weekString += localeDateNum(calendar()->weekNumber(date));
                     }
                 }
                 p->drawText(cellRect, Qt::AlignCenter, weekString); //draw number
