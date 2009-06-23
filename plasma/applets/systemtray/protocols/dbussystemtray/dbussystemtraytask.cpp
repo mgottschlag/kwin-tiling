@@ -145,7 +145,7 @@ QGraphicsWidget* DBusSystemTrayTask::createWidget(Plasma::Applet *host)
     iconWidget->show();
 
     iconWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    iconWidget->setMinimumSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
+    iconWidget->setMinimumSize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
     iconWidget->setPreferredSize(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium);
 
     connect(iconWidget, SIGNAL(destroyed(QObject *)), this, SLOT(iconDestroyed(QObject *)));
