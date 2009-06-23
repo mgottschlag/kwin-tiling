@@ -102,7 +102,7 @@ void QuicklaunchIcon::toolTipAboutToShow()
   Plasma::ToolTipContent toolTip;
   toolTip.setMainText(m_text);
   toolTip.setSubText(m_genericName);
-  toolTip.setImage(icon().pixmap(m_iconSize));
+  toolTip.setImage(icon());
 
   Plasma::ToolTipManager::self()->setContent(this, toolTip);
 }
