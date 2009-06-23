@@ -139,7 +139,7 @@ void ManualSortingStrategy::sortItems(ItemList &items)
 }
 
 //since we have no way of knowing about a desktop change before it happens we have to track every single change....
-void ManualSortingStrategy::handleItem(AbstractItemPtr item)
+void ManualSortingStrategy::handleItem(AbstractGroupableItem *item)
 {
     if (d->managedItems->contains(item)) {
         if (item->isGroupItem()) {

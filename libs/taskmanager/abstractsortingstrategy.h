@@ -54,13 +54,13 @@ public:
     virtual void desktopChanged(int newDesktop);
 
     /** Moves Item to new index*/
-    bool moveItem(AbstractItemPtr, int);
+    bool moveItem(AbstractGroupableItem *, int);
 
 protected Q_SLOTS:
      /** Handles a new item, is typically called after an item was added to a handled group*/
-    virtual void handleItem(AbstractItemPtr);
+    virtual void handleItem(AbstractGroupableItem *);
      /** Checks if the order has to be updated. Must be connected to a AbstractGroupableItem* */
-    void check(AbstractItemPtr item = 0);
+    void check(AbstractGroupableItem *item = 0);
     void removeGroup(); //FIXME necessary?
 
 protected:

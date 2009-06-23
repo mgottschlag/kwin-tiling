@@ -47,7 +47,7 @@ void DesktopSortingStrategy::sortItems(ItemList &items)
     qStableSort(items.begin(), items.end(), DesktopSortingStrategy::lessThan);
 }
 
-bool DesktopSortingStrategy::lessThan(const AbstractItemPtr &left, const AbstractItemPtr &right)
+bool DesktopSortingStrategy::lessThan(const AbstractGroupableItem *left, const AbstractGroupableItem *right)
 {
     if (left->desktop() == right->desktop()) {
         return left->name().toLower() < right->name().toLower();
@@ -56,7 +56,7 @@ bool DesktopSortingStrategy::lessThan(const AbstractItemPtr &left, const Abstrac
     return left->desktop() < right->desktop();
 }
 
-void DesktopSortingStrategy::handleItem(AbstractItemPtr item)
+void DesktopSortingStrategy::handleItem(AbstractGroupableItem *item)
 {
     disconnect(item, 0, this, 0); //To avoid duplicate connections
     connect(item, SIGNAL(changed(::TaskManager::TaskChanges)), this, SLOT(check()));

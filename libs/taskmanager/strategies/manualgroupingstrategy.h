@@ -53,13 +53,13 @@ public:
     bool isGroupItem() const { return true; }
 
     /** only true if item is in this group */
-    bool hasDirectMember(AbstractItemPtr item) const;
+    bool hasDirectMember(AbstractGroupableItem *item) const;
     /** only true if item is in this or any sub group */
-    bool hasMember(AbstractItemPtr item) const;
+    bool hasMember(AbstractGroupableItem *item) const;
     /** Returns Direct Member group if the passed item is in a subgroup */
-    AbstractItemPtr directMember(AbstractItemPtr) const;
+    AbstractGroupableItem *directMember(AbstractGroupableItem *) const;
 
-    TaskGroupTemplate *findParentGroup(AbstractItemPtr item) const;
+    TaskGroupTemplate *findParentGroup(AbstractGroupableItem *item) const;
 
     TaskGroupTemplate *parentGroup() const;
     void setParentGroup(TaskGroupTemplate *);
@@ -122,10 +122,10 @@ public Q_SLOTS:
     bool demandsAttention() const { return false; }
 
     /** add item to group */
-    void add(AbstractItemPtr);
+    void add(AbstractGroupableItem *);
 
     /** remove item from group */
-    void remove(AbstractItemPtr);
+    void remove(AbstractGroupableItem *);
 
     /** Removes all tasks and groups from this group */
     void clear();
@@ -157,7 +157,7 @@ public:
     /** looks up if this item has been grouped before and groups it accordingly.
     *otherwise the item goes to the rootGroup
     */
-    void handleItem(AbstractItemPtr);
+    void handleItem(AbstractGroupableItem *);
     /** Should be called if the user wants to manually add an item to a group */
     //bool addItemToGroup(AbstractGroupableItem*, TaskGroup*);
     /** Should be called if the user wants to group items manually */

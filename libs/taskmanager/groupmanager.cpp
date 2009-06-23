@@ -187,7 +187,7 @@ void GroupManagerPrivate::removeStartup(StartupPtr task)
         return;
     }
 
-    AbstractItemPtr item = startupList.take(task);
+    AbstractGroupableItem *item = startupList.take(task);
     if (item->parentGroup()) {
         item->parentGroup()->remove(item);
     }
@@ -281,9 +281,7 @@ bool GroupManagerPrivate::addTask(TaskPtr task)
         itemList.insert(task, item);
     }
 
-    if (!geometryTasks.contains(task)) {
-        geometryTasks.insert(task);
-    }
+    geometryTasks.insert(task);
 
     //Find a fitting group for the task with GroupingStrategies
     if (abstractGroupingStrategy && !task->demandsAttention()) { //do not group attention tasks
@@ -378,7 +376,6 @@ GroupPtr GroupManager::rootGroup() const
     return d->rootGroup;
 }
 
-
 void GroupManagerPrivate::currentDesktopChanged(int newDesktop)
 {
     //kDebug();
@@ -416,10 +413,8 @@ void GroupManagerPrivate::taskChanged(TaskPtr task, ::TaskManager::TaskChanges c
         show = task->isMinimized();
     }
 
-    if (changes & ::TaskManager::GeometryChanged) {
-        if (!geometryTasks.contains(task)) {
-            geometryTasks.insert(task);
-        }
+    if (showOnlyCurrentScreen && changes & ::TaskManager::GeometryChanged) {
+        geometryTasks.insert(task);
 
         if (!screenTimer.isActive()) {
             screenTimer.start();
@@ -511,12 +506,12 @@ void GroupManager::setOnlyGroupWhenFull(bool onlyGroupWhenFull)
 
     d->onlyGroupWhenFull = onlyGroupWhenFull;
 
-    disconnect(d->rootGroup, SIGNAL(itemAdded(AbstractItemPtr)), this, SLOT(checkIfFull()));
-    disconnect(d->rootGroup, SIGNAL(itemRemoved(AbstractItemPtr)), this, SLOT(checkIfFull()));
+    disconnect(d->rootGroup, SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
+    disconnect(d->rootGroup, SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
 
     if (onlyGroupWhenFull) {
-        connect(d->rootGroup, SIGNAL(itemAdded(AbstractItemPtr)), this, SLOT(checkIfFull()));
-        connect(d->rootGroup, SIGNAL(itemRemoved(AbstractItemPtr)), this, SLOT(checkIfFull()));
+        connect(d->rootGroup, SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
+        connect(d->rootGroup, SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
         d->checkIfFull();
     }
 }
@@ -533,7 +528,9 @@ void GroupManager::setFullLimit(int limit)
 void GroupManagerPrivate::checkIfFull()
 {
     //kDebug();
-    if (!onlyGroupWhenFull || groupingStrategy != GroupManager::ProgramGrouping) {
+    if (!onlyGroupWhenFull ||
+        groupingStrategy != GroupManager::ProgramGrouping ||
+        changingGroupingStrategy) {
         return;
     }
 
@@ -653,8 +650,8 @@ void GroupManager::setGroupingStrategy(TaskGroupingStrategy strategy)
 
     //kDebug() << strategy << kBacktrace();
     if (d->onlyGroupWhenFull) {
-        disconnect(d->rootGroup, SIGNAL(itemAdded(AbstractItemPtr)), this, SLOT(checkIfFull()));
-        disconnect(d->rootGroup, SIGNAL(itemRemoved(AbstractItemPtr)), this, SLOT(checkIfFull()));
+        disconnect(d->rootGroup, SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
+        disconnect(d->rootGroup, SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
     }
 
     if (d->abstractGroupingStrategy) {
@@ -685,16 +682,16 @@ void GroupManager::setGroupingStrategy(TaskGroupingStrategy strategy)
 
     d->groupingStrategy = strategy;
 
-    if (d->groupingStrategy) {
+    if (d->abstractGroupingStrategy) {
         connect(d->abstractGroupingStrategy, SIGNAL(groupRemoved(TaskGroup*)),
                 this, SIGNAL(groupRemoved(TaskGroup*)));
     }
 
-    d->reloadTasks();
+    d->actuallyReloadTasks();
 
     if (d->onlyGroupWhenFull) {
-        connect(d->rootGroup, SIGNAL(itemAdded(AbstractItemPtr)), this, SLOT(checkIfFull()));
-        connect(d->rootGroup, SIGNAL(itemRemoved(AbstractItemPtr)), this, SLOT(checkIfFull()));
+        connect(d->rootGroup, SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
+        connect(d->rootGroup, SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(checkIfFull()));
     }
 
     d->changingGroupingStrategy = false;

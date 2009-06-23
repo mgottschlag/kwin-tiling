@@ -80,12 +80,12 @@ void AbstractSortingStrategy::handleGroup(TaskGroup *group)
 
     d->managedGroups.append(group);
     disconnect(group, 0, this, 0); //To avoid duplicate connections
-    connect(group, SIGNAL(itemAdded(AbstractItemPtr)), this, SLOT(handleItem(AbstractItemPtr)));
+    connect(group, SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(handleItem(AbstractGroupableItem *)));
     connect(group, SIGNAL(destroyed()), this, SLOT(removeGroup())); //FIXME necessary?
     ItemList sortedList = group->members();
     sortItems(sortedList); //the sorting doesn't work with totally unsorted lists, therefore we sort it in the correct order the first time
 
-    foreach (AbstractItemPtr item, sortedList) {
+    foreach (AbstractGroupableItem *item, sortedList) {
         handleItem(item);
     }
 }
@@ -101,7 +101,7 @@ void AbstractSortingStrategy::removeGroup()
     d->managedGroups.removeAll(group);
 }
 
-void AbstractSortingStrategy::handleItem(AbstractItemPtr item)
+void AbstractSortingStrategy::handleItem(AbstractGroupableItem *item)
 {
     //kDebug() << item->name();
     if (item->isGroupItem()) {
@@ -114,11 +114,11 @@ void AbstractSortingStrategy::handleItem(AbstractItemPtr item)
     check(item);
 }
 
-void AbstractSortingStrategy::check(AbstractItemPtr itemToCheck)
+void AbstractSortingStrategy::check(AbstractGroupableItem *itemToCheck)
 {
-    AbstractItemPtr item;
+    AbstractGroupableItem *item;
     if (!itemToCheck) {
-        item = dynamic_cast<AbstractItemPtr>(sender());
+        item = dynamic_cast<AbstractGroupableItem *>(sender());
     } else {
         item = itemToCheck;
     }
@@ -155,7 +155,7 @@ void AbstractSortingStrategy::desktopChanged(int newDesktop)
     Q_UNUSED(newDesktop)
 }
 
-bool AbstractSortingStrategy::moveItem(AbstractItemPtr item, int newIndex)
+bool AbstractSortingStrategy::moveItem(AbstractGroupableItem *item, int newIndex)
 {
     //kDebug() << "move to " << newIndex;
     if (!item->parentGroup()) {

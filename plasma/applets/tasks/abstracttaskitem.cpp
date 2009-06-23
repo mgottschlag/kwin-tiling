@@ -156,6 +156,11 @@ void AbstractTaskItem::checkSettings()
     }
 }
 
+void AbstractTaskItem::clearAbstractItem()
+{
+    m_abstractItem = 0;
+}
+
 void AbstractTaskItem::setShowTooltip(const bool showit)
 {
     m_showTooltip = showit;
@@ -394,7 +399,7 @@ void AbstractTaskItem::timerEvent(QTimerEvent *event)
 #ifdef Q_WS_X11
         QList<WId> windows;
 
-        if (m_abstractItem->isGroupItem()) {
+        if (m_abstractItem && m_abstractItem->isGroupItem()) {
             TaskManager::TaskGroup *group = qobject_cast<TaskManager::TaskGroup *>(m_abstractItem);
 
             if (group) {
@@ -991,7 +996,7 @@ TaskGroupItem * AbstractTaskItem::parentGroup() const
     return qobject_cast<TaskGroupItem*>(parentWidget());
 }
 
-TaskManager::AbstractItemPtr AbstractTaskItem::abstractItem()
+TaskManager::AbstractGroupableItem * AbstractTaskItem::abstractItem()
 {
     return m_abstractItem;
 }

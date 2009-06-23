@@ -124,7 +124,7 @@ public:
     virtual void setAdditionalMimeData(QMimeData* mimeData) = 0;
 
     void setLayoutWidget(LayoutWidget* widget);
-    TaskManager::AbstractItemPtr abstractItem();
+    TaskManager::AbstractGroupableItem * abstractItem();
 
     /** Returns the preferred size calculated on base of the fontsize and the iconsize*/
     QSize basicPreferredSize() const;
@@ -191,6 +191,7 @@ protected Q_SLOTS:
     void animationUpdate(qreal progress);
     void syncActiveRect();
     void checkSettings();
+    void clearAbstractItem();
 
 protected:
     // area of item occupied by task's icon
@@ -204,7 +205,7 @@ protected:
     // text color, use this because it could be animated
     QColor textColor() const;
 
-    TaskManager::AbstractItemPtr m_abstractItem;
+    TaskManager::AbstractGroupableItem * m_abstractItem;
     LayoutWidget *m_layoutWidget;
 
     Tasks *m_applet;

@@ -57,7 +57,6 @@ using TaskManager::StartupPtr;
 using TaskManager::TaskPtr;
 using TaskManager::StartupPtr;
 using TaskManager::GroupPtr;
-using TaskManager::AbstractItemPtr;
 using TaskManager::AbstractGroupableItem;
 using TaskManager::GroupManager;
 using TaskManager::TaskItem;

@@ -139,7 +139,7 @@ void ManualGroupingStrategy::protectGroup(TaskGroup *group)
 }
 
 //Check if the item was previously manually grouped
-void ManualGroupingStrategy::handleItem(AbstractItemPtr item)
+void ManualGroupingStrategy::handleItem(AbstractGroupableItem *item)
 {
     if (!rootGroup()) {
         return;
@@ -381,7 +381,7 @@ QString TaskGroupTemplate::name() const
 }
 
 /** add item to group */
-void TaskGroupTemplate::add(AbstractItemPtr item)
+void TaskGroupTemplate::add(AbstractGroupableItem *item)
 {
     if (d->members.contains(item)) {
         return;
@@ -396,7 +396,7 @@ void TaskGroupTemplate::add(AbstractItemPtr item)
 }
 
 /** remove item from group */
-void TaskGroupTemplate::remove(AbstractItemPtr item)
+void TaskGroupTemplate::remove(AbstractGroupableItem *item)
 {
     disconnect(item, 0, this, 0);
     disconnect(this, 0, item, 0);
@@ -460,13 +460,13 @@ void TaskGroupTemplate::addMimeData(QMimeData *mimeData) const
 }
 
 /** only true if item is in this group */
-bool TaskGroupTemplate::hasDirectMember(AbstractItemPtr item) const
+bool TaskGroupTemplate::hasDirectMember(AbstractGroupableItem *item) const
 {
     return d->members.contains(item);
 }
 
 /** true if item is in this or any sub group */
-bool TaskGroupTemplate::hasMember(AbstractItemPtr item) const
+bool TaskGroupTemplate::hasMember(AbstractGroupableItem *item) const
 {
     //kDebug();
     if (members().contains(item)) {
@@ -486,7 +486,7 @@ bool TaskGroupTemplate::hasMember(AbstractItemPtr item) const
 }
 
 /** Returns Direct Member group if the passed item is in a subgroup */
-AbstractItemPtr TaskGroupTemplate::directMember(AbstractItemPtr item) const
+AbstractGroupableItem *TaskGroupTemplate::directMember(AbstractGroupableItem *item) const
 {
     if (members().contains(item)) {
         return item;
@@ -503,10 +503,10 @@ AbstractItemPtr TaskGroupTemplate::directMember(AbstractItemPtr item) const
         }
     }
     kDebug() << "item not found";
-    return AbstractItemPtr();
+    return 0;
 }
 
-TaskGroupTemplate *TaskGroupTemplate::findParentGroup(AbstractItemPtr item) const
+TaskGroupTemplate *TaskGroupTemplate::findParentGroup(AbstractGroupableItem *item) const
 {
     if (members().contains(item)) {
         return const_cast<TaskGroupTemplate*>(this);

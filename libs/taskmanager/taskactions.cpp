@@ -41,7 +41,7 @@ namespace TaskManager
 {
 
 
-QAction *standardGroupableAction(GroupableAction action, AbstractItemPtr item, QObject *parent, int desktop)
+QAction *standardGroupableAction(GroupableAction action, AbstractGroupableItem *item, QObject *parent, int desktop)
 {
     Q_ASSERT(item);
 
@@ -91,7 +91,7 @@ QAction* standardTaskAction(TaskAction action, TaskItem *item, QObject *parent)
     return 0;
 }
 
-QAction* standardGroupingAction(GroupingAction action, AbstractItemPtr item, GroupManager *strategy, QObject *parent)
+QAction* standardGroupingAction(GroupingAction action, AbstractGroupableItem *item, GroupManager *strategy, QObject *parent)
 {
     Q_ASSERT(item);
     Q_ASSERT(strategy);
@@ -105,7 +105,7 @@ QAction* standardGroupingAction(GroupingAction action, AbstractItemPtr item, Gro
     return 0;
 }
 
-MinimizeActionImpl::MinimizeActionImpl(QObject *parent, AbstractItemPtr item)
+MinimizeActionImpl::MinimizeActionImpl(QObject *parent, AbstractGroupableItem *item)
     : QAction(parent)
 {
     connect(this, SIGNAL(triggered()), item, SLOT(toggleMinimized()));
@@ -116,7 +116,7 @@ MinimizeActionImpl::MinimizeActionImpl(QObject *parent, AbstractItemPtr item)
 }
 
 
-MaximizeActionImpl::MaximizeActionImpl(QObject *parent, AbstractItemPtr item)
+MaximizeActionImpl::MaximizeActionImpl(QObject *parent, AbstractGroupableItem *item)
     : QAction(parent)
 {
     connect(this, SIGNAL(triggered()), item, SLOT(toggleMaximized()));
@@ -126,7 +126,7 @@ MaximizeActionImpl::MaximizeActionImpl(QObject *parent, AbstractItemPtr item)
     setEnabled(item->isActionSupported(NET::ActionMax));
 }
 
-ShadeActionImpl::ShadeActionImpl(QObject *parent, AbstractItemPtr item)
+ShadeActionImpl::ShadeActionImpl(QObject *parent, AbstractGroupableItem *item)
     : QAction(parent)
 {
     connect(this, SIGNAL(triggered()), item, SLOT(toggleShaded()));
@@ -155,7 +155,7 @@ MoveActionImpl::MoveActionImpl(QObject *parent, TaskItem* item)
     setEnabled(item->isActionSupported(NET::ActionMove));
 }
 
-CloseActionImpl::CloseActionImpl(QObject *parent, AbstractItemPtr item)
+CloseActionImpl::CloseActionImpl(QObject *parent, AbstractGroupableItem *item)
     : QAction(parent)
 {
     connect(this, SIGNAL(triggered()), item, SLOT(close()));
@@ -165,7 +165,7 @@ CloseActionImpl::CloseActionImpl(QObject *parent, AbstractItemPtr item)
 }
 
 
-ToCurrentDesktopActionImpl::ToCurrentDesktopActionImpl(QObject *parent, AbstractItemPtr item)
+ToCurrentDesktopActionImpl::ToCurrentDesktopActionImpl(QObject *parent, AbstractGroupableItem *item)
     : QAction(parent),
       m_item(item)
 {
@@ -181,7 +181,7 @@ void ToCurrentDesktopActionImpl::slotToCurrentDesktop()
 
 
 
-ToDesktopActionImpl::ToDesktopActionImpl(QObject *parent, AbstractItemPtr item, int desktop)
+ToDesktopActionImpl::ToDesktopActionImpl(QObject *parent, AbstractGroupableItem *item, int desktop)
     : QAction(parent),
       m_desktop(desktop),
       m_item(item)
@@ -206,7 +206,7 @@ void ToDesktopActionImpl::slotToDesktop()
 
 
 
-DesktopsMenu::DesktopsMenu(QWidget *parent, AbstractItemPtr item)
+DesktopsMenu::DesktopsMenu(QWidget *parent, AbstractGroupableItem *item)
     : QMenu(parent)
 {
     setTitle( i18n("To &Desktop") );
@@ -218,7 +218,7 @@ DesktopsMenu::DesktopsMenu(QWidget *parent, AbstractItemPtr item)
     setEnabled(item->isActionSupported(NET::ActionChangeDesktop));
 }
 
-KeepAboveActionImpl::KeepAboveActionImpl(QObject *parent, AbstractItemPtr item)
+KeepAboveActionImpl::KeepAboveActionImpl(QObject *parent, AbstractGroupableItem *item)
     : QAction(parent)
 {
     connect(this, SIGNAL(triggered()), item, SLOT(toggleAlwaysOnTop()));
@@ -228,7 +228,7 @@ KeepAboveActionImpl::KeepAboveActionImpl(QObject *parent, AbstractItemPtr item)
     setChecked(item->isAlwaysOnTop());
 }
 
-KeepBelowActionImpl::KeepBelowActionImpl(QObject *parent, AbstractItemPtr item)
+KeepBelowActionImpl::KeepBelowActionImpl(QObject *parent, AbstractGroupableItem *item)
     : QAction(parent)
 {
     connect(this, SIGNAL(triggered()), item, SLOT(toggleKeptBelowOthers()));
@@ -238,7 +238,7 @@ KeepBelowActionImpl::KeepBelowActionImpl(QObject *parent, AbstractItemPtr item)
     setChecked(item->isKeptBelowOthers());
 }
 
-ViewFullscreenActionImpl::ViewFullscreenActionImpl(QObject *parent, AbstractItemPtr item)
+ViewFullscreenActionImpl::ViewFullscreenActionImpl(QObject *parent, AbstractGroupableItem *item)
     : QAction(parent)
 {
     connect(this, SIGNAL(triggered()), item, SLOT(toggleFullScreen()));
@@ -249,7 +249,7 @@ ViewFullscreenActionImpl::ViewFullscreenActionImpl(QObject *parent, AbstractItem
     setEnabled(item->isActionSupported(NET::ActionFullScreen));
 }
 
-AdvancedMenu::AdvancedMenu(QWidget *parent, AbstractItemPtr item)
+AdvancedMenu::AdvancedMenu(QWidget *parent, AbstractGroupableItem *item)
     :QMenu(parent)
 {
     setTitle(i18n("Ad&vanced"));
@@ -258,7 +258,7 @@ AdvancedMenu::AdvancedMenu(QWidget *parent, AbstractItemPtr item)
     addAction(new ViewFullscreenActionImpl(this, item));
 }
 
-LeaveGroupActionImpl::LeaveGroupActionImpl(QObject *parent, AbstractItemPtr item, GroupManager *strategy)
+LeaveGroupActionImpl::LeaveGroupActionImpl(QObject *parent, AbstractGroupableItem *item, GroupManager *strategy)
     : QAction(parent), abstractItem(item), groupingStrategy(strategy)
 {
     Q_ASSERT(strategy);

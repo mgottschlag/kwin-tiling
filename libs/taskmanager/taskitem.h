@@ -89,6 +89,7 @@ public Q_SLOTS:
     void toggleAlwaysOnTop();
 
     void close();
+    void taskDestroyed();
 
 Q_SIGNALS:
     /** Indicates that the startup task now is a normal task */

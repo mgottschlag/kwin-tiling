@@ -69,7 +69,7 @@ AbstractGroupableItem::~AbstractGroupableItem()
 
 bool AbstractGroupableItem::isGrouped() const
 {
-    return parentGroup() && parentGroup()->parentGroup();
+    return d->m_parentGroup && d->m_parentGroup->parentGroup();
 }
 
 QIcon AbstractGroupableItem::icon() const

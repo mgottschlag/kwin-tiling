@@ -50,7 +50,7 @@ public:
     void destroy();
 
      /** Handles a new item */
-    virtual void handleItem(AbstractItemPtr) = 0;
+    virtual void handleItem(AbstractGroupableItem *) = 0;
 
      /** Returns the strategy type */
     GroupManager::TaskGroupingStrategy type() const;

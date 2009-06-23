@@ -64,7 +64,7 @@ public:
 
     virtual void close();
 
-    QHash<AbstractItemPtr, AbstractTaskItem*> members() const;
+    QHash<AbstractGroupableItem *, AbstractTaskItem*> members() const;
     int count() const;
     AbstractTaskItem * activeSubTask();
 
@@ -105,7 +105,7 @@ public:
 
     int optimumCapacity();
 
-    AbstractTaskItem* abstractTaskItem(AbstractItemPtr);
+    AbstractTaskItem* abstractTaskItem(AbstractGroupableItem *);
 
     void setAdditionalMimeData(QMimeData* mimeData);
     void publishIconGeometry() const;
@@ -127,6 +127,7 @@ public slots:
     void expand();
     void collapse();
     void updatePreferredSize();
+    void clearGroup();
 
 public slots:
     void updateActive(AbstractTaskItem *);
@@ -159,20 +160,20 @@ private Q_SLOTS:
     void updateTask(::TaskManager::TaskChanges changes);
 
     /** Stay informed about changes in group */
-    void itemAdded(AbstractItemPtr);
-    void itemRemoved(AbstractItemPtr);
+    void itemAdded(AbstractGroupableItem *);
+    void itemRemoved(AbstractGroupableItem *);
 
     /** show a menu for editing group */
     void editGroup();
     /** Update to new position*/
-    void itemPositionChanged(AbstractItemPtr);
+    void itemPositionChanged(AbstractGroupableItem *);
 
     void popupMenu();
     /** force a relayout of all items */
     void relayoutItems();
 
 private:
-    AbstractTaskItem* createAbstractItem(AbstractItemPtr groupableItem);
+    AbstractTaskItem* createAbstractItem(AbstractGroupableItem * groupableItem);
     TaskGroupItem* createNewGroup(QList <AbstractTaskItem *> members);
     WindowTaskItem * createWindowTask(TaskManager::TaskItem* task);
     TaskGroupItem * createTaskGroup(GroupPtr);
@@ -188,7 +189,7 @@ private:
 
     GroupPtr m_group;
 
-    QHash<AbstractItemPtr, AbstractTaskItem*> m_groupMembers;
+    QHash<AbstractGroupableItem *, AbstractTaskItem*> m_groupMembers;
 
     TaskItemLayout *m_tasksLayout;
     QTimer *m_popupMenuTimer;

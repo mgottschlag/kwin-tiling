@@ -94,7 +94,7 @@ TaskGroup::~TaskGroup()
 }
 
 
-void TaskGroup::add(AbstractItemPtr item)
+void TaskGroup::add(AbstractGroupableItem *item)
 {
 /*    if (!item->isGroupItem()) {
         if ((dynamic_cast<TaskItem*>(item))->task()) {
@@ -123,6 +123,8 @@ void TaskGroup::add(AbstractItemPtr item)
     d->members.append(item);
     item->setParentGroup(this);
 
+    connect(item, SIGNAL(destroyed(AbstractGroupableItem*)),
+            this, SLOT(itemDestroyed(AbstractGroupableItem*)));
     connect(item, SIGNAL(changed(::TaskManager::TaskChanges)),
             this, SIGNAL(changed(::TaskManager::TaskChanges)));
     //For debug
@@ -136,7 +138,13 @@ void TaskGroup::add(AbstractItemPtr item)
     emit itemAdded(item);
 }
 
-void TaskGroup::remove(AbstractItemPtr item)
+void TaskGroup::itemDestroyed(AbstractGroupableItem *item)
+{
+    d->members.removeAll(item);
+    emit itemRemoved(item);
+}
+
+void TaskGroup::remove(AbstractGroupableItem *item)
 {
     Q_ASSERT(item);
 
@@ -159,7 +167,7 @@ void TaskGroup::remove(AbstractItemPtr item)
     }*/
 
     if (!d->members.contains(item)) {
-        //kDebug() << "couldn't find item";
+        kDebug() << "couldn't find item";
         return;
     }
 
@@ -241,13 +249,13 @@ bool TaskGroup::isRootGroup() const
 }
 
 /** only true if item is in this group */
-bool TaskGroup::hasDirectMember(AbstractItemPtr item) const
+bool TaskGroup::hasDirectMember(AbstractGroupableItem *item) const
 {
     return d->members.contains(item);
 }
 
 /** true if item is in this or any sub group */
-bool TaskGroup::hasMember(AbstractItemPtr item) const
+bool TaskGroup::hasMember(AbstractGroupableItem *item) const
 {
     //kDebug();
     TaskGroup *group = item->parentGroup();
@@ -261,9 +269,9 @@ bool TaskGroup::hasMember(AbstractItemPtr item) const
 }
 
 /** Returns Direct Member group if the passed item is in a subgroup */
-AbstractItemPtr TaskGroup::directMember(AbstractItemPtr item) const
+AbstractGroupableItem *TaskGroup::directMember(AbstractGroupableItem *item) const
 {
-    AbstractItemPtr tempItem = item;
+    AbstractGroupableItem *tempItem = item;
     while (tempItem) {
         if (d->members.contains(item)) {
             return item;
@@ -272,12 +280,12 @@ AbstractItemPtr TaskGroup::directMember(AbstractItemPtr item) const
     }
 
     kDebug() << "item not found";
-    return AbstractItemPtr();
+    return 0;
 }
 
 void TaskGroup::setShaded(bool state)
 {
-    foreach (AbstractItemPtr item, d->members) {
+    foreach (AbstractGroupableItem *item, d->members) {
         item->setShaded(state);
     }
 }
@@ -289,7 +297,7 @@ void TaskGroup::toggleShaded()
 
 bool TaskGroup::isShaded() const
 {
-    foreach (AbstractItemPtr item, d->members) {
+    foreach (AbstractGroupableItem *item, d->members) {
         if (!item->isShaded()) {
             return false;
         }
@@ -299,7 +307,7 @@ bool TaskGroup::isShaded() const
 
 void TaskGroup::toDesktop(int desk)
 {
-    foreach (AbstractItemPtr item, d->members) {
+    foreach (AbstractGroupableItem *item, d->members) {
         item->toDesktop(desk);
     }
     emit movedToDesktop(desk);
@@ -307,7 +315,7 @@ void TaskGroup::toDesktop(int desk)
 
 bool TaskGroup::isOnCurrentDesktop() const
 {
-    foreach (AbstractItemPtr item, d->members) {
+    foreach (AbstractGroupableItem *item, d->members) {
         if (!item->isOnCurrentDesktop()) {
             return false;
         }
@@ -361,7 +369,7 @@ void TaskGroup::addMimeData(QMimeData *mimeData) const
 
 bool TaskGroup::isOnAllDesktops() const
 {
-    foreach (AbstractItemPtr item, d->members) {
+    foreach (AbstractGroupableItem *item, d->members) {
         if (!item->isOnAllDesktops()) {
             return false;
         }
@@ -377,7 +385,7 @@ int TaskGroup::desktop() const
     }
 
     int desk = d->members.first()->desktop();
-    foreach (AbstractItemPtr item, d->members) {
+    foreach (AbstractGroupableItem *item, d->members) {
         if (item->desktop() != desk) {
             return 0;
         }
@@ -388,7 +396,7 @@ int TaskGroup::desktop() const
 
 void TaskGroup::setMaximized(bool state)
 {
-    foreach (AbstractItemPtr item, d->members) {
+    foreach (AbstractGroupableItem *item, d->members) {
         item->setMaximized(state);
     }
 }
@@ -400,7 +408,7 @@ void TaskGroup::toggleMaximized()
 
 bool TaskGroup::isMaximized() const
 {
-    foreach (AbstractItemPtr item, d->members) {
+    foreach (AbstractGroupableItem *item, d->members) {
         if (!item->isMaximized()) {
             return false;
         }
@@ -410,7 +418,7 @@ bool TaskGroup::isMaximized() const
 
 void TaskGroup::setMinimized(bool state)
 {
-    foreach (AbstractItemPtr item, d->members) {
+    foreach (AbstractGroupableItem *item, d->members) {
         item->setMinimized(state);
     }
 }
@@ -422,7 +430,7 @@ void TaskGroup::toggleMinimized()
 
 bool TaskGroup::isMinimized() const
 {
-    foreach (AbstractItemPtr item, d->members) {
+    foreach (AbstractGroupableItem *item, d->members) {
         if (!item->isMinimized()) {
             return false;
         }
@@ -432,7 +440,7 @@ bool TaskGroup::isMinimized() const
 
 void TaskGroup::setFullScreen(bool state)
 {
-    foreach (AbstractItemPtr item, d->members) {
+    foreach (AbstractGroupableItem *item, d->members) {
         item->setFullScreen(state);
     }
 }
@@ -444,7 +452,7 @@ void TaskGroup::toggleFullScreen()
 
 bool TaskGroup::isFullScreen() const
 {
-    foreach (AbstractItemPtr item, d->members) {
+    foreach (AbstractGroupableItem *item, d->members) {
         if (!item->isFullScreen()) {
             return false;
         }
@@ -454,7 +462,7 @@ bool TaskGroup::isFullScreen() const
 
 void TaskGroup::setKeptBelowOthers(bool state)
 {
-    foreach (AbstractItemPtr item, d->members) {
+    foreach (AbstractGroupableItem *item, d->members) {
         item->setKeptBelowOthers(state);
     }
 }
@@ -466,7 +474,7 @@ void TaskGroup::toggleKeptBelowOthers()
 
 bool TaskGroup::isKeptBelowOthers() const
 {
-    foreach (AbstractItemPtr item, d->members) {
+    foreach (AbstractGroupableItem *item, d->members) {
         if (!item->isKeptBelowOthers()) {
             return false;
         }
@@ -476,7 +484,7 @@ bool TaskGroup::isKeptBelowOthers() const
 
 void TaskGroup::setAlwaysOnTop(bool state)
 {
-    foreach (AbstractItemPtr item, d->members) {
+    foreach (AbstractGroupableItem *item, d->members) {
         item->setAlwaysOnTop(state);
     }
 }
@@ -488,7 +496,7 @@ void TaskGroup::toggleAlwaysOnTop()
 
 bool TaskGroup::isAlwaysOnTop() const
 {
-    foreach (AbstractItemPtr item, d->members) {
+    foreach (AbstractGroupableItem *item, d->members) {
         if (!item->isAlwaysOnTop()) {
             return false;
         }
@@ -499,7 +507,7 @@ bool TaskGroup::isAlwaysOnTop() const
 bool TaskGroup::isActionSupported(NET::Action action) const
 {
     if (KWindowSystem::allowedActionsSupported()) {
-        foreach (AbstractItemPtr item, d->members) {
+        foreach (AbstractGroupableItem *item, d->members) {
             if (!item->isActionSupported(action)) {
                 return false;
             }
@@ -511,14 +519,14 @@ bool TaskGroup::isActionSupported(NET::Action action) const
 
 void TaskGroup::close()
 {
-    foreach (AbstractItemPtr item, d->members) {
+    foreach (AbstractGroupableItem *item, d->members) {
         item->close();
     }
 }
 
 bool TaskGroup::isActive() const
 {
-    foreach (AbstractItemPtr item, d->members) {
+    foreach (AbstractGroupableItem *item, d->members) {
         if (item->isActive()) {
             return true;
         }
@@ -529,7 +537,7 @@ bool TaskGroup::isActive() const
 
 bool TaskGroup::demandsAttention() const
 {
-    foreach (AbstractItemPtr item, d->members) {
+    foreach (AbstractGroupableItem *item, d->members) {
         if (item->demandsAttention()) {
             return true;
         }
@@ -547,7 +555,7 @@ bool TaskGroup::moveItem(int oldIndex, int newIndex)
         return false;
     }
 
-    AbstractItemPtr item = d->members.at(oldIndex);
+    AbstractGroupableItem *item = d->members.at(oldIndex);
     d->members.move(oldIndex, newIndex);
     //kDebug() << "new index " << d->members.indexOf(item);
     emit itemPositionChanged(item);

@@ -57,11 +57,11 @@ public:
     void setPinned(bool pinned);
 
     /** only true if item is in this group */
-    bool hasDirectMember(AbstractItemPtr item) const;
+    bool hasDirectMember(AbstractGroupableItem * item) const;
     /** only true if item is in this or any sub group */
-    bool hasMember(AbstractItemPtr item) const;
+    bool hasMember(AbstractGroupableItem * item) const;
     /** Returns Direct Member group if the passed item is in a subgroup */
-    AbstractItemPtr directMember(AbstractItemPtr) const;
+    AbstractGroupableItem * directMember(AbstractGroupableItem *) const;
 
     int desktop() const;
     bool isShaded() const;
@@ -112,23 +112,26 @@ public Q_SLOTS:
     void close();
 
     /** add item to group */
-    void add(AbstractItemPtr);
+    void add(AbstractGroupableItem *);
 
     /** remove item from group */
-    void remove(AbstractItemPtr);
+    void remove(AbstractGroupableItem *);
 
     /** Removes all tasks and groups from this group */
     void clear();
 
 Q_SIGNALS:
     /** inform visualization about wat is added and removed */
-    void itemAdded(const AbstractItemPtr item);
-    void itemRemoved(const AbstractItemPtr item);
+    void itemAdded(AbstractGroupableItem *item);
+    void itemRemoved(AbstractGroupableItem *item);
     void groupEditRequest();
     /** inform visualization about position change */
-    void itemPositionChanged(AbstractItemPtr item);
+    void itemPositionChanged(AbstractGroupableItem *item);
     /** The group changed the desktop, is emitted in the toDesktop function */
     void movedToDesktop(int newDesk);
+
+private Q_SLOTS:
+    void itemDestroyed(AbstractGroupableItem *item);
 
 private:
     class Private;

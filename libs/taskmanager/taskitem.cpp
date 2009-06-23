@@ -35,7 +35,7 @@ class TaskItem::Private
 public:
     Private()
         :task(0),
-        startupTask(0)
+         startupTask(0)
     {
     }
 
@@ -51,7 +51,7 @@ TaskItem::TaskItem(QObject *parent, TaskPtr task)
     d->task = task;
     connect(task.data(), SIGNAL(changed(::TaskManager::TaskChanges)),
             this, SIGNAL(changed(::TaskManager::TaskChanges)));
-    connect(task.data(), SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater())); //this item isn't useful anymore if the Task was closed
+    connect(task.data(), SIGNAL(destroyed(QObject*)), this, SLOT(taskDestroyed())); //this item isn't useful anymore if the Task was closed
 }
 
 
@@ -61,7 +61,7 @@ TaskItem::TaskItem(QObject *parent, StartupPtr task)
 {
     d->startupTask = task;
     connect(task.data(), SIGNAL(changed(::TaskManager::TaskChanges)), this, SIGNAL(changed(::TaskManager::TaskChanges)));
-    connect(task.data(), SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater())); //this item isn't useful anymore if the Task was closed
+    connect(task.data(), SIGNAL(destroyed(QObject*)), this, SLOT(taskDestroyed())); //this item isn't useful anymore if the Task was closed
 }
 
 TaskItem::~TaskItem()
@@ -73,6 +73,13 @@ TaskItem::~TaskItem()
     delete d;
 }
 
+void TaskItem::taskDestroyed()
+{
+    d->task = 0;
+    d->startupTask = 0;
+    deleteLater();
+}
+
 void TaskItem::setTaskPointer(TaskPtr task)
 {
     if (d->startupTask) {
@@ -81,6 +88,10 @@ void TaskItem::setTaskPointer(TaskPtr task)
     }
 
     if (d->task != task) {
+        if (d->task) {
+            disconnect(d->task.data(), 0, this, 0);
+        }
+
         d->task = task;
         connect(task.data(), SIGNAL(changed(::TaskManager::TaskChanges)),
                 this, SIGNAL(changed(::TaskManager::TaskChanges)));
@@ -261,7 +272,7 @@ void TaskItem::toggleKeptBelowOthers()
 }
 
 bool TaskItem::isKeptBelowOthers() const
-{       
+{
     if (!d->task) {
         return false;
     }

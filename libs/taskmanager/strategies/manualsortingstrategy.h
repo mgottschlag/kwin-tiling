@@ -48,7 +48,7 @@ public:
 
 protected Q_SLOTS:
      /** Handles a new item*/
-    virtual void handleItem(AbstractItemPtr);
+    virtual void handleItem(AbstractGroupableItem *);
 
 private:
     /** Sorts list of items*/

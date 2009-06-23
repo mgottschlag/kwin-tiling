@@ -57,7 +57,7 @@ KustodianGroupingStrategy::KustodianGroupingStrategy(GroupManager *groupManager)
     QStringList defaultApps;
     defaultApps << "dolphin" << "krita" << "konqueror" << "kwrite" << "konsole" << "gwenview" << "kontact" << "konversation" << "amarok" << "kword";
     foreach (const QString &name, defaultApps) {
-        QList <AbstractItemPtr> list;
+        QList <AbstractGroupableItem *> list;
         TaskGroup* group = createGroup(list);
         group->setName(name);
         group->setPinned(true);
@@ -82,7 +82,7 @@ QList<QAction*> KustodianGroupingStrategy::strategyActions(QObject *parent, Abst
     return actionList;
 }
 
-void KustodianGroupingStrategy::handleItem(AbstractItemPtr item)
+void KustodianGroupingStrategy::handleItem(AbstractGroupableItem *item)
 {
     if (!rootGroup()) {
         return;
@@ -98,7 +98,7 @@ void KustodianGroupingStrategy::handleItem(AbstractItemPtr item)
         QString name = desktopNameFromClassName(task->task()->classClass());
         //kDebug() << "create new subgroup in root as this classname doesn't have a group " << name;
 
-        QList <AbstractItemPtr> list;
+        QList <AbstractGroupableItem *> list;
         list.append(task);
         TaskGroup* group = createGroup(list);
         group->setName(name);
@@ -114,9 +114,9 @@ void KustodianGroupingStrategy::handleItem(AbstractItemPtr item)
 bool KustodianGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* groupItem)
 {
     //kDebug();
-    QHash <QString,AbstractItemPtr> itemMap;
+    QHash <QString,AbstractGroupableItem *> itemMap;
 
-    foreach (AbstractItemPtr item, groupItem->members()) { //search for an existing group
+    foreach (AbstractGroupableItem *item, groupItem->members()) { //search for an existing group
         if (item->isGroupItem() && programGrouping(taskItem, static_cast<TaskGroup*>(item))) {
             //maybe add the condition that the subgroup was created by programGrouping
             //kDebug() << "joined subGroup";

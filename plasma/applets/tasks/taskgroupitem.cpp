@@ -281,9 +281,9 @@ void TaskGroupItem::updateToolTip()
 
 void TaskGroupItem::reload()
 {
-    QList <AbstractItemPtr> itemsToRemove = m_groupMembers.keys();
+    QList <AbstractGroupableItem *> itemsToRemove = m_groupMembers.keys();
 
-    foreach (AbstractItemPtr item, group()->members()) {
+    foreach (AbstractGroupableItem * item, group()->members()) {
         if (!item) {
             kDebug() << "invalid Item";
             continue;
@@ -299,7 +299,7 @@ void TaskGroupItem::reload()
             }
         }
     }
-    foreach (AbstractItemPtr item, itemsToRemove) { //remove unused items
+    foreach (AbstractGroupableItem * item, itemsToRemove) { //remove unused items
         if (!item) {
             kDebug() << "invalid Item";
             continue;
@@ -312,20 +312,22 @@ void TaskGroupItem::setGroup(TaskManager::GroupPtr group)
 {
     //kDebug();
     m_group = group;
-    m_abstractItem = qobject_cast<AbstractItemPtr>(group);
-    if (!m_abstractItem) {
-        kDebug() << "error";
+    m_abstractItem = qobject_cast<AbstractGroupableItem *>(group);
+
+    if (m_abstractItem) {
+        connect(m_abstractItem, SIGNAL(destroyed(QObject*)), this, SLOT(clearAbstractItem()));
     }
 
-    connect(m_group, SIGNAL(itemRemoved(AbstractItemPtr)), this, SLOT(itemRemoved(AbstractItemPtr)));
-    connect(m_group, SIGNAL(itemAdded(AbstractItemPtr)), this, SLOT(itemAdded(AbstractItemPtr)));
+    connect(m_group, SIGNAL(destroyed(QObject*)), this, SLOT(clearGroup()));
+    connect(m_group, SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(itemRemoved(AbstractGroupableItem *)));
+    connect(m_group, SIGNAL(itemAdded(AbstractGroupableItem *)), this, SLOT(itemAdded(AbstractGroupableItem *)));
 
     //connect(m_group, SIGNAL(destroyed()), this, SLOT(close()));
 
     connect(m_group, SIGNAL(changed(::TaskManager::TaskChanges)),
             this, SLOT(updateTask(::TaskManager::TaskChanges)));
 
-    connect(m_group, SIGNAL(itemPositionChanged(AbstractItemPtr)), this, SLOT(itemPositionChanged(AbstractItemPtr)));
+    connect(m_group, SIGNAL(itemPositionChanged(AbstractGroupableItem *)), this, SLOT(itemPositionChanged(AbstractGroupableItem *)));
     connect(m_group, SIGNAL(groupEditRequest()), this, SLOT(editGroup()));
 
     //Add already existing items
@@ -338,6 +340,11 @@ void TaskGroupItem::setGroup(TaskManager::GroupPtr group)
 TaskManager::GroupPtr TaskGroupItem::group() const
 {
     return m_group;
+}
+
+void TaskGroupItem::clearGroup()
+{
+    m_group = 0;
 }
 
 void TaskGroupItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
@@ -379,7 +386,7 @@ void TaskGroupItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
     menu.exec(m_applet->containment()->corona()->popupPosition(this, menu.size()));
 }
 
-QHash<AbstractItemPtr, AbstractTaskItem*> TaskGroupItem::members() const
+QHash<AbstractGroupableItem *, AbstractTaskItem*> TaskGroupItem::members() const
 {
     return m_groupMembers;
 }
@@ -389,7 +396,7 @@ int TaskGroupItem::count() const
     return m_groupMembers.count();
 }
 
-AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractItemPtr groupableItem)
+AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractGroupableItem * groupableItem)
 {
     //kDebug() << "item to create" << groupableItem << endl;
     AbstractTaskItem *item = 0;
@@ -421,7 +428,7 @@ AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractItemPtr
     return item;
 }
 
-void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
+void TaskGroupItem::itemAdded(TaskManager::AbstractGroupableItem * groupableItem)
 {
     //kDebug();
     if (!m_applet) {
@@ -468,7 +475,7 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractItemPtr groupableItem)
     }
 }
 
-void TaskGroupItem::itemRemoved(TaskManager::AbstractItemPtr groupableItem)
+void TaskGroupItem::itemRemoved(TaskManager::AbstractGroupableItem * groupableItem)
 {
     //kDebug();
     if (!m_applet) {
@@ -785,7 +792,7 @@ AbstractTaskItem *TaskGroupItem::directMember(AbstractTaskItem *item)
 {
     Q_ASSERT(item);
     Q_ASSERT(m_group);
-    TaskManager::AbstractItemPtr directMember = m_group->directMember(item->abstractItem());
+    TaskManager::AbstractGroupableItem * directMember = m_group->directMember(item->abstractItem());
     if (!directMember) {
         kDebug() << "Error" << item->abstractItem();
     }
@@ -828,7 +835,7 @@ void TaskGroupItem::editGroup()
 }
 
 
-void  TaskGroupItem::itemPositionChanged(AbstractItemPtr item)
+void  TaskGroupItem::itemPositionChanged(AbstractGroupableItem * item)
 {
     //kDebug();
     if (!m_tasksLayout) {
@@ -876,7 +883,7 @@ void TaskGroupItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 
 AbstractTaskItem *TaskGroupItem::taskItemForWId(WId id)
 {
-    QHashIterator<AbstractItemPtr, AbstractTaskItem*> it(m_groupMembers);
+    QHashIterator<AbstractGroupableItem *, AbstractTaskItem*> it(m_groupMembers);
 
     while (it.hasNext()) {
         it.next();
@@ -1033,13 +1040,18 @@ int TaskGroupItem::indexOf(AbstractTaskItem *task)
 
     int index = 0;
 
-    foreach (AbstractGroupableItem *item, group()->members()) {
+    foreach (AbstractGroupableItem *item, m_group->members()) {
         AbstractTaskItem *taskItem = abstractTaskItem(item);
         if (taskItem) {
             if (task == taskItem) {
                 TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(taskItem);
                 if (groupItem) {
-                    return index + groupItem->indexOf(groupItem->activeSubTask());
+                    int subIndex = groupItem->indexOf(groupItem->activeSubTask());
+                     if(subIndex == -1) {
+                         index += groupItem->count();
+                     } else {
+                         return index+subIndex;
+                     }
                 }
 
                 return index;
@@ -1063,7 +1075,11 @@ int TaskGroupItem::indexOf(AbstractTaskItem *task)
 
 AbstractTaskItem * TaskGroupItem::activeSubTask()
 {
-    foreach(AbstractGroupableItem *item, group()->members()) {
+    if (!m_group) {
+        return 0;
+    }
+
+    foreach (AbstractGroupableItem *item, m_group->members()) {
         AbstractTaskItem *taskItem = abstractTaskItem(item);
         if (taskItem) {
             if(taskItem->isActive()) {
@@ -1075,7 +1091,8 @@ AbstractTaskItem * TaskGroupItem::activeSubTask()
             }
         }
     }
-    return NULL;
+
+    return 0;
 }
 
 int TaskGroupItem::totalSubTasks()
@@ -1184,7 +1201,7 @@ int TaskGroupItem::optimumCapacity()
     return 1;
 }
 
-AbstractTaskItem* TaskGroupItem::abstractTaskItem(AbstractItemPtr item)
+AbstractTaskItem* TaskGroupItem::abstractTaskItem(AbstractGroupableItem * item)
 {
     AbstractTaskItem *abstractTaskItem = 0; 
     if (m_groupMembers.contains(item)) {

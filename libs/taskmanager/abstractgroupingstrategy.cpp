@@ -66,7 +66,8 @@ void AbstractGroupingStrategy::destroy()
         return;
     }
 
-    foreach (TaskGroup *group, d->createdGroups) { //cleanup all created groups
+    // cleanup all created groups
+    foreach (TaskGroup *group, d->createdGroups) {
         disconnect(group, 0, this, 0);
 
         TaskGroup *parentGroup = group->parentGroup();
@@ -74,7 +75,7 @@ void AbstractGroupingStrategy::destroy()
             parentGroup = d->groupManager->rootGroup();
         }
 
-        foreach (const AbstractItemPtr& item, group->members()) {
+        foreach (AbstractGroupableItem *item, group->members()) {
             if (!item->isGroupItem()) {
                 parentGroup->add(item);
             }
@@ -130,8 +131,9 @@ TaskGroup* AbstractGroupingStrategy::createGroup(ItemList items)
 
     TaskGroup *newGroup = new TaskGroup(d->groupManager);
     d->createdGroups.append(newGroup);
-    connect(newGroup, SIGNAL(itemRemoved(AbstractItemPtr)), this, SLOT(checkGroup()));
-    foreach (const AbstractItemPtr& item, items) {
+    //kDebug() << "added group" << d->createdGroups.count();
+    connect(newGroup, SIGNAL(itemRemoved(AbstractGroupableItem *)), this, SLOT(checkGroup()));
+    foreach (AbstractGroupableItem *item, items) {
         newGroup->add(item);
     }
 
@@ -147,6 +149,7 @@ void AbstractGroupingStrategy::closeGroup(TaskGroup *group)
     Q_ASSERT(group);
     disconnect(group, 0, this, 0);
     d->createdGroups.removeAll(group);
+    //kDebug() << "closig group" << group->name() << d->createdGroups.count();
     d->usedNames.removeAll(group->name());
     d->usedColors.removeAll(group->color());
     //d->usedIcons.removeAll(group->icon());//TODO
@@ -158,7 +161,7 @@ void AbstractGroupingStrategy::closeGroup(TaskGroup *group)
 
     if (parentGroup && d->groupManager) {
         int index = parentGroup->members().indexOf(group);
-        foreach (const AbstractItemPtr& item, group->members()) {
+        foreach (AbstractGroupableItem *item, group->members()) {
             parentGroup->add(item);
             //move item to the location where its group was
             d->groupManager->manualSortingRequest(item, index); //move items to position of group

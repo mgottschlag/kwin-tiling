@@ -64,9 +64,9 @@ ProgramGroupingStrategy::ProgramGroupingStrategy(GroupManager *groupManager)
 
 ProgramGroupingStrategy::~ProgramGroupingStrategy()
 {
-    KConfig groupBlacklist( "taskbargroupblacklistrc", KConfig::NoGlobals );
-    KConfigGroup blackGroup( &groupBlacklist, "Blacklist" );
-    blackGroup.writeEntry( "Applications", d->blackList );
+    KConfig groupBlacklist("taskbargroupblacklistrc", KConfig::NoGlobals);
+    KConfigGroup blackGroup(&groupBlacklist, "Blacklist");
+    blackGroup.writeEntry("Applications", d->blackList);
     blackGroup.config()->sync();
 
     delete d;
@@ -130,7 +130,7 @@ void ProgramGroupingStrategy::toggleGrouping()
     d->tempItem = 0;
 }
 
-void ProgramGroupingStrategy::handleItem(AbstractItemPtr item)
+void ProgramGroupingStrategy::handleItem(AbstractGroupableItem *item)
 {
     GroupPtr root = rootGroup();
 
@@ -158,9 +158,9 @@ void ProgramGroupingStrategy::handleItem(AbstractItemPtr item)
 bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* groupItem)
 {
     //kDebug();
-    QHash <QString,AbstractItemPtr> itemMap;
+    QHash <QString,AbstractGroupableItem *> itemMap;
 
-    foreach (AbstractItemPtr item, groupItem->members()) { //search for an existing group
+    foreach (AbstractGroupableItem *item, groupItem->members()) { //search for an existing group
         if (item->isGroupItem()) { //maybe add the condition that the subgroup was created by programGrouping
             if (programGrouping(taskItem, static_cast<TaskGroup*>(item))) {
                 //kDebug() << "joined subGroup";
@@ -187,7 +187,7 @@ bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* gro
     } else if (itemMap.count(name) >= 2) { //create new subgroup with at least 2 other task
         //kDebug() << "create Group";
         QIcon icon = taskItem->task()->icon();
-        QList <AbstractItemPtr> list(itemMap.values(name));
+        QList <AbstractGroupableItem *> list(itemMap.values(name));
         TaskGroup* group = createGroup(list);
         group->setName(name);
         group->setColor(Qt::red);

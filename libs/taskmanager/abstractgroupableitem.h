@@ -38,10 +38,9 @@ namespace TaskManager
 class TaskGroup;
 class AbstractGroupableItem;
 
-typedef AbstractGroupableItem* AbstractItemPtr;
 typedef TaskGroup* GroupPtr;
 
-typedef QList<AbstractItemPtr> ItemList;
+typedef QList<AbstractGroupableItem *> ItemList;
 typedef QList<GroupPtr> GroupList;
 
 /**

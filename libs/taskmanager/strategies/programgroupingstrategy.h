@@ -43,7 +43,7 @@ public:
     ~ProgramGroupingStrategy();
     /** Tasks are passed to this function to be grouped by this strategy
     */
-    void handleItem(AbstractItemPtr);
+    void handleItem(AbstractGroupableItem *);
 
     /** Returns list of actions that a task can do in this groupingStrategy
     *  fore example: start/stop group tasks of this program
