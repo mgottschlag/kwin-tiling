@@ -87,7 +87,7 @@ void Ip::update()
 {
     d->m_xmlReader.clear();
 
-    KIO::TransferJob *datajob = KIO::get(KUrl("http://iplocationtools.com/ip_query.php"),
+    KIO::TransferJob *datajob = KIO::get(KUrl("http://ipinfodb.com/ip_query.php"),
                                          KIO::NoReload, KIO::HideProgressInfo);
 
     if (datajob) {
