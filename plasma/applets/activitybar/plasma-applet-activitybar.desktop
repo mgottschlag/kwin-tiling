@@ -58,6 +58,7 @@ Name[x-test]=xxActivity Barxx
 Name[zh_CN]=活动栏
 Name[zh_TW]=活動列
 Comment=Tab bar to switch activities
+Comment[bg]=Лента за превключване на активността
 Comment[ca]=Barra de pestanyes per a canviar d'activitats
 Comment[ca@valencia]=Barra de pestanyes per a canviar d'activitats
 Comment[da]=Fanebladslinje til at skifte mellem aktiviteter

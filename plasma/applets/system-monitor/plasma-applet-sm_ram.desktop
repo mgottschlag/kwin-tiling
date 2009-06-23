@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=System Monitor - RAM
+Name[bg]=Мониторинг на системата - оперативна памет
 Name[ca]=Controlador del sistema - RAM
 Name[ca@valencia]=Controlador del sistema - RAM
 Name[csb]=Mònitór systemë - RAM
@@ -36,6 +37,7 @@ Name[x-test]=xxSystem Monitor - RAMxx
 Name[zh_CN]=系统监视器-RAM
 Name[zh_TW]=系統監視器─記憶體
 Comment=A RAM usage monitor
+Comment[bg]=Изпозлване на оперативната памет (RAM)
 Comment[ca]=Un controlador d'ús de la RAM
 Comment[ca@valencia]=Un controlador d'ús de la RAM
 Comment[csb]=Mònitór brëkòwaniô pamiãcë RAM

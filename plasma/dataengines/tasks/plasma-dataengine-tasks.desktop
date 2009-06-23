@@ -63,6 +63,7 @@ Name[x-test]=xxWindow Informationxx
 Name[zh_CN]=窗口信息
 Name[zh_TW]=視窗資訊
 Comment=Information and management services for all available windows.
+Comment[bg]=Информация и услуги за всички налични прозорци.
 Comment[ca]=Serveis d'informació i gestió de totes les finestres disponibles.
 Comment[ca@valencia]=Serveis d'informació i gestió de totes les finestres disponibles.
 Comment[da]=Information og håndteringstjenester for alle tilgængelige vinduer.

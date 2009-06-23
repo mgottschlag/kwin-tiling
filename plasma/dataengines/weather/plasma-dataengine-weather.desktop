@@ -64,6 +64,7 @@ Name[x-test]=xxWeatherxx
 Name[zh_CN]=天气
 Name[zh_TW]=天氣
 Comment=Weather data from multiple online sources
+Comment[bg]=Информация за метеорологичното време
 Comment[ca]=Dades meteorològiques de múltiples fonts en línia
 Comment[ca@valencia]=Dades meteorològiques de múltiples fonts en línia
 Comment[da]=Vejrdata fra flere online-kilder

@@ -3,6 +3,7 @@ Actions=hasState;objectName;stateValue;type;
 Name=Button
 Name[be]=Кнопка
 Name[be@latin]=Кнопка
+Name[bg]=Бутон
 Name[ca]=Botó
 Name[ca@valencia]=Botó
 Name[cs]=Tlačítko
@@ -84,6 +85,7 @@ Name[zh_TW]=有狀態
 
 [Desktop Action objectName]
 Name=Object Name
+Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[ca@valencia]=Nom de l'objecte
 Name[da]=Objektnavn
@@ -155,6 +157,7 @@ Name[zh_TW]=狀態值
 
 [Desktop Action type]
 Name=Type
+Name[bg]=Тип
 Name[ca]=Tipus
 Name[ca@valencia]=Tipus
 Name[csb]=Ôrt

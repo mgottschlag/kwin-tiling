@@ -9,6 +9,7 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=system
 
 Name=PolicyKit Authorization
+Name[bg]=Удостоверяване (PolicyKit)
 Name[ca]=Autoritzacions del PolicyKit
 Name[ca@valencia]=Autoritzacions del PolicyKit
 Name[da]=PolicyKit-godkendelse
@@ -39,6 +40,7 @@ Name[zh_CN]=PolicyKit 授权
 Name[zh_TW]=PolicyKit 授權
 
 Comment=Set up policies for applications using PolicyKit
+Comment[bg]=Настройване поведението на програмите с PolicyKit
 Comment[ca]=Defineix polítiques per a les aplicacions utilitzant el PolicyKit
 Comment[ca@valencia]=Defineix polítiques per a les aplicacions utilitzant el PolicyKit
 Comment[da]=Opsætning af politikker for programmer der bruger PolicyKit

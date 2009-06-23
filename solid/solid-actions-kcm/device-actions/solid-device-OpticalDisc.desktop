@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=appendable;availableContent;blank;capacity;discType;fsType;ignored;label;objectName;rewritable;size;usage;uuid;
 Name=Optical Disc
+Name[bg]=Оптичен диск
 Name[ca]=Disc òptic
 Name[ca@valencia]=Disc òptic
 Name[csb]=Òpticzny disk
@@ -41,6 +42,7 @@ X-KDE-Solid-Actions-Type=OpticalDisc
 
 [Desktop Action appendable]
 Name=Appendable
+Name[bg]=Незавършен диск
 Name[ca]=Afegible
 Name[ca@valencia]=Afegible
 Name[cs]=Připojitelný
@@ -77,6 +79,7 @@ Name[zh_TW]=可附加
 
 [Desktop Action availableContent]
 Name=Available Content
+Name[bg]=Налично съдържание
 Name[ca]=Contingut disponible
 Name[ca@valencia]=Contingut disponible
 Name[da]=Tilgængeligt indhold
@@ -113,6 +116,7 @@ Name[zh_TW]=可用的內容
 
 [Desktop Action blank]
 Name=Blank
+Name[bg]=Празен диск
 Name[ca]=En blanc
 Name[ca@valencia]=En blanc
 Name[cs]=Prázdné
@@ -152,6 +156,7 @@ Name[zh_TW]=空白
 
 [Desktop Action capacity]
 Name=Capacity
+Name[bg]=Капацитет
 Name[ca]=Capacitat
 Name[ca@valencia]=Capacitat
 Name[cs]=Kapacita
@@ -190,6 +195,7 @@ Name[zh_TW]=空間
 
 [Desktop Action discType]
 Name=Disc Type
+Name[bg]=Тип диск
 Name[ca]=Tipus de disc
 Name[ca@valencia]=Tipus de disc
 Name[csb]=Ôrt diskù
@@ -228,6 +234,7 @@ Name[zh_TW]=磁碟型態
 
 [Desktop Action fsType]
 Name=Fs Type
+Name[bg]=Тип Fs
 Name[ca]=Tipus de sistema de fitxers
 Name[ca@valencia]=Tipus de sistema de fitxers
 Name[csb]=Ôrt Fs
@@ -265,6 +272,7 @@ Name[zh_TW]=檔案系統型態
 
 [Desktop Action ignored]
 Name=Ignored
+Name[bg]=Игнориран
 Name[ca]=Ignorat
 Name[ca@valencia]=Ignorat
 Name[cs]=Ignorováno
@@ -301,6 +309,7 @@ Name[zh_TW]=忽略
 
 [Desktop Action label]
 Name=Label
+Name[bg]=Етикет
 Name[ca]=Etiqueta
 Name[ca@valencia]=Etiqueta
 Name[cs]=Popisek
@@ -339,6 +348,7 @@ Name[zh_TW]=標籤
 
 [Desktop Action objectName]
 Name=Object Name
+Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[ca@valencia]=Nom de l'objecte
 Name[da]=Objektnavn
@@ -376,6 +386,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action rewritable]
 Name=Rewritable
+Name[bg]=Презаписваем диск
 Name[ca]=Regravable
 Name[ca@valencia]=Regravable
 Name[csb]=Wielorazowò zapisëwanlné
@@ -411,6 +422,7 @@ Name[zh_TW]=可覆寫
 
 [Desktop Action size]
 Name=Size
+Name[bg]=Големина
 Name[ca]=Mida
 Name[ca@valencia]=Mida
 Name[cs]=Velikost
@@ -450,6 +462,7 @@ Name[zh_TW]=大小
 
 [Desktop Action usage]
 Name=Usage
+Name[bg]=Използване
 Name[ca]=Ús
 Name[ca@valencia]=Ús
 Name[cs]=Použití

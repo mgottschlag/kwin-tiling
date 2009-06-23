@@ -2,6 +2,7 @@
 Name=Application Notifications
 Name[ar]=تنبيهات التطبيقات
 Name[be@latin]=Infarmavańni aplikacyj
+Name[bg]=Програмни съобщения
 Name[bn]=অ্যাপলিকেশন বিজ্ঞপ্তি
 Name[bn_IN]=অ্যাপ্লিকেশনের সূচনাবার্তা
 Name[ca]=Notificacions de les aplicacions
@@ -62,6 +63,7 @@ Name[x-test]=xxApplication Notificationsxx
 Name[zh_CN]=应用程序通知
 Name[zh_TW]=應用程式通知
 Comment=Passive visual notifications for the user.
+Comment[bg]=Пасивни визуални съобщения за потребителя.
 Comment[ca]=Notificacions visuals pasives per a l'usuari.
 Comment[ca@valencia]=Notificacions visuals pasives per a l'usuari.
 Comment[da]=Passive visuelle bekendtgørelser til brugeren.

@@ -63,6 +63,7 @@ Name[x-test]=xxCalendarxx
 Name[zh_CN]=日历
 Name[zh_TW]=行事曆
 Comment=Calendar data engine
+Comment[bg]=Ядро на календара
 Comment[ca]=Motor de dades de calendari
 Comment[ca@valencia]=Motor de dades de calendari
 Comment[csb]=Kalãdôrz czérownika pòdôwków

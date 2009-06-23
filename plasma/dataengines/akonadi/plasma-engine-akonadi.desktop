@@ -2,6 +2,7 @@
 Name=Akonadi
 Name[x-test]=xxAkonadixx
 Comment=Akonadi PIM data engine
+Comment[bg]=Ядро Akonadi PIM
 Comment[ca]=Motor de dades PIM de l'Akonadi
 Comment[ca@valencia]=Motor de dades PIM de l'Akonadi
 Comment[csb]=Czérownik pòdôwków Akonadi PIM

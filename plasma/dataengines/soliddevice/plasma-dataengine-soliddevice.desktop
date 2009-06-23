@@ -64,6 +64,7 @@ Name[x-test]=xxDevice Informationxx
 Name[zh_CN]=设备信息
 Name[zh_TW]=裝置資訊
 Comment=Device data via Solid
+Comment[bg]=Данни за устройствата (чрез Solid)
 Comment[ca]=Dades dels dispositius via Solid
 Comment[ca@valencia]=Dades dels dispositius via Solid
 Comment[csb]=Pòdôwczi ùrządzeniów z pòmòcą Solid

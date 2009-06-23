@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Geolocation GPS
+Name[bg]=Геолокация GPS
 Name[ca]=Geolocalització GPS
 Name[ca@valencia]=Geolocalització GPS
 Name[csb]=Geògrafnô lokalizacëjô GPS
@@ -23,6 +24,7 @@ Name[uk]=Геопозиціювання за GPS
 Name[x-test]=xxGeolocation GPSxx
 Name[zh_CN]=地理 GPS
 Comment=Geolocation from GPS address.
+Comment[bg]=Геолокация от GPS адрес.
 Comment[ca]=Geolocalització des d'una adreça GPS.
 Comment[ca@valencia]=Geolocalització des d'una adreça GPS.
 Comment[csb]=Geògrafnô lokalizacëjô z adresë GPS.

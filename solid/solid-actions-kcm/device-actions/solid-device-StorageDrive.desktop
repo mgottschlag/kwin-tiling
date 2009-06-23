@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=bus;driveType;hotpluggable;objectName;removable;
 Name=Storage Drive
+Name[bg]=Съхраняващо устройство
 Name[ca]=Unitat d'emmagatzematge
 Name[ca@valencia]=Unitat d'emmagatzematge
 Name[csb]=Zôpisowny nëk
@@ -36,6 +37,7 @@ X-KDE-Solid-Actions-Type=StorageDrive
 
 [Desktop Action bus]
 Name=Bus
+Name[bg]=Шина
 Name[el]=Δίαυλος
 Name[et]=Siin
 Name[fi]=Väylä
@@ -63,6 +65,7 @@ Name[zh_TW]=匯流排
 
 [Desktop Action driveType]
 Name=Drive Type
+Name[bg]=Тип устройство
 Name[ca]=Tipus d'unitat
 Name[ca@valencia]=Tipus d'unitat
 Name[csb]=Ôrt nëkù
@@ -133,6 +136,7 @@ Name[zh_TW]=可熱插拔
 
 [Desktop Action objectName]
 Name=Object Name
+Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[ca@valencia]=Nom de l'objecte
 Name[da]=Objektnavn
@@ -170,6 +174,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action removable]
 Name=Removable
+Name[bg]=Преносим
 Name[ca]=Extraïble
 Name[ca@valencia]=Extraïble
 Name[da]=Flytbar

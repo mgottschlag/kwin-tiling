@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=fsType;ignored;label;objectName;size;usage;uuid;
 Name=Storage Volume
+Name[bg]=Съхраняващо устройство
 Name[ca]=Volum d'emmagatzematge
 Name[ca@valencia]=Volum d'emmagatzematge
 Name[csb]=Òbjim zôpisu
@@ -36,6 +37,7 @@ X-KDE-Solid-Actions-Type=StorageVolume
 
 [Desktop Action fsType]
 Name=Fs Type
+Name[bg]=Тип Fs
 Name[ca]=Tipus de sistema de fitxers
 Name[ca@valencia]=Tipus de sistema de fitxers
 Name[csb]=Ôrt Fs
@@ -73,6 +75,7 @@ Name[zh_TW]=檔案系統型態
 
 [Desktop Action ignored]
 Name=Ignored
+Name[bg]=Игнориран
 Name[ca]=Ignorat
 Name[ca@valencia]=Ignorat
 Name[cs]=Ignorováno
@@ -109,6 +112,7 @@ Name[zh_TW]=忽略
 
 [Desktop Action label]
 Name=Label
+Name[bg]=Етикет
 Name[ca]=Etiqueta
 Name[ca@valencia]=Etiqueta
 Name[cs]=Popisek
@@ -147,6 +151,7 @@ Name[zh_TW]=標籤
 
 [Desktop Action objectName]
 Name=Object Name
+Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[ca@valencia]=Nom de l'objecte
 Name[da]=Objektnavn
@@ -184,6 +189,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action size]
 Name=Size
+Name[bg]=Големина
 Name[ca]=Mida
 Name[ca@valencia]=Mida
 Name[cs]=Velikost
@@ -223,6 +229,7 @@ Name[zh_TW]=大小
 
 [Desktop Action usage]
 Name=Usage
+Name[bg]=Използване
 Name[ca]=Ús
 Name[ca@valencia]=Ús
 Name[cs]=Použití

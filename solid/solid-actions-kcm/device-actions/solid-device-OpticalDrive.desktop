@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=bus;driveType;hotpluggable;objectName;readSpeed;removable;supportedMedia;writeSpeed;writeSpeeds;
 Name=Optical Drive
+Name[bg]=Оптично устройство
 Name[ca]=Unitat òptica
 Name[ca@valencia]=Unitat òptica
 Name[csb]=Òpticzny nëk
@@ -40,6 +41,7 @@ X-KDE-Solid-Actions-Type=OpticalDrive
 
 [Desktop Action bus]
 Name=Bus
+Name[bg]=Шина
 Name[el]=Δίαυλος
 Name[et]=Siin
 Name[fi]=Väylä
@@ -67,6 +69,7 @@ Name[zh_TW]=匯流排
 
 [Desktop Action driveType]
 Name=Drive Type
+Name[bg]=Тип устройство
 Name[ca]=Tipus d'unitat
 Name[ca@valencia]=Tipus d'unitat
 Name[csb]=Ôrt nëkù
@@ -137,6 +140,7 @@ Name[zh_TW]=可熱插拔
 
 [Desktop Action objectName]
 Name=Object Name
+Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[ca@valencia]=Nom de l'objecte
 Name[da]=Objektnavn
@@ -174,6 +178,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action readSpeed]
 Name=Read Speed
+Name[bg]=Скорост на четене
 Name[ca]=Velocitat de lectura
 Name[ca@valencia]=Velocitat de lectura
 Name[csb]=Chùtkòsc czëtaniô
@@ -211,6 +216,7 @@ Name[zh_TW]=讀取速度
 
 [Desktop Action removable]
 Name=Removable
+Name[bg]=Преносим
 Name[ca]=Extraïble
 Name[ca@valencia]=Extraïble
 Name[da]=Flytbar
@@ -246,6 +252,7 @@ Name[zh_TW]=可移除
 
 [Desktop Action supportedMedia]
 Name=Supported Media
+Name[bg]=Поддържа медия
 Name[ca]=Suports acceptats
 Name[ca@valencia]=Suports acceptats
 Name[csb]=Wspiéróné media
@@ -282,6 +289,7 @@ Name[zh_TW]=支援的媒體
 
 [Desktop Action writeSpeed]
 Name=Write Speed
+Name[bg]=Скорост на запис
 Name[ca]=Velocitat d'escriptura
 Name[ca@valencia]=Velocitat d'escriptura
 Name[csb]=Chùtkòsc pisaniô
@@ -319,6 +327,7 @@ Name[zh_TW]=寫入速度
 
 [Desktop Action writeSpeeds]
 Name=Write Speeds
+Name[bg]=Скорости на четене
 Name[ca]=Velocitats d'escriptura
 Name[ca@valencia]=Velocitats d'escriptura
 Name[csb]=Chùtkòscë pisaniô

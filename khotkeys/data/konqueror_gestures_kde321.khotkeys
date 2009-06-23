@@ -352,7 +352,6 @@ Name[ar]=تراجع
 Name[as]=পিছলৈ
 Name[be]=Назад
 Name[be@latin]=Nazad
-Name[bg]=Black
 Name[bn]=পিছিয়ে যাও
 Name[bn_IN]=পূর্ববর্তী
 Name[ca]=Enrere
@@ -430,7 +429,7 @@ Type=KEYBOARD_INPUT_GESTURE_ACTION_DATA
 [Data_1_10]
 Comment=Opera-style: Press, move up, release.\nNOTE: Conflicts with 'New Tab', and as such is disabled by default.
 Comment[af]=Opera-styl: Kliek, skuif op, los.\nLet wel: konflik met 'Nuwe oortjie', en word daarom by verstek afgeskakel.
-Comment[bg]=Стил Opera: натискане, движение нагоре, пускане.\nЗАБЕЛЕЖКА:Има конфликт с "Нов подпрозорец" и затова е изключено по подразбиране.
+Comment[bg]=Стил на Opera: натискане, движение нагоре, пускане.\nЗАБЕЛЕЖКА:Има конфликт с "Нов подпрозорец" и затова е изключено по подразбиране.
 Comment[ca]=Estil Opera: premeu, moveu amunt,deixeu anar.\nNota: els conflictes amb 'Pestanya nova', i similars s'han deshabilitat per omissió.
 Comment[ca@valencia]=Estil Opera: premeu, moveu amunt,deixeu anar.\nNota: els conflictes amb 'Pestanya nova', i similars s'han deshabilitat per omissió.
 Comment[cs]=Styl Opery: Stiskněte, pohněte nahoru, uvolněte.\n Poznámka: Protože koliduje s vytvořením nové karty, je ve výchozím stavu zakázáno.
@@ -633,7 +632,7 @@ Type=GESTURE
 [Data_1_11]
 Comment=Going up in URL/directory structure.\nMozilla-style: Press, move up, move left, move up, release.
 Comment[ar]=انتقل للرابط السابق. \nMozilla-style: اضغط حرك للأعلى ، حرك لليسار ثم اترك
-Comment[bg]=Едно ниво нагоре в директорията..\nСтил Мозила: натискане, движение нагоре, движение наляво, движение нагоре, пускане.
+Comment[bg]=Едно ниво нагоре в директорията..\nСтил на Мозила: натискане, движение нагоре, движение наляво, движение нагоре, пускане.
 Comment[ca]=Anar cap amunt per l'URL/estructura de directoris.\nEstil Mozilla: premeu, moveu amunt, moveu a l'esquerra, moveu amunt, deixeu anar.
 Comment[ca@valencia]=Anar cap amunt per l'URL/estructura de directoris.\nEstil Mozilla: premeu, moveu amunt, moveu a l'esquerra, moveu amunt, deixeu anar.
 Comment[cs]=Přesunout se ve struktuře o úroveň výše.\n Styl Mozilly: Stiskněte, pohněte nahoru, pohněte doleva, pohněte nahoru, uvolněte.
@@ -835,7 +834,7 @@ Type=GESTURE
 [Data_1_12]
 Comment=Going up in URL/directory structure.\nOpera-style: Press, move up, move left, move up, release.\nNOTE: Conflicts with  "Activate Previous Tab", and as such is disabled by default.
 Comment[ar]=انتقل للرابط السابق. \nOpera-style: اضغط حرك للأعلى ، حرك لليسار ثم اترك \nNOTE: إعداد باستخدام  "فعل اللسان السابق", كأنه غير المفعل افتراضياً
-Comment[bg]=Едно ниво нагоре.\nСтил Opera: натискане, движение нагоре, движение наляво, движение нагоре, пускане.\nЗАБЕЛЕЖКА:Има конфликт с "Активиране на предишен подпрозорец" и затова е изключено по подразбиране.
+Comment[bg]=Едно ниво нагоре.\nСтил на Opera: натискане, движение нагоре, движение наляво, движение нагоре, пускане.\nЗАБЕЛЕЖКА:Има конфликт с "Активиране на предишен подпрозорец" и затова е изключено по подразбиране.
 Comment[ca]=Anar cap amunt per l'URL/estructura de directoris.\nEstil Opera: premeu, moveu amunt, moveu a l'esquerra, moveu amunt, deixeu anar.\nNota: els conflictes amb 'Pestanya nova', i similars s'han deshabilitat per omissió.
 Comment[ca@valencia]=Anar cap amunt per l'URL/estructura de directoris.\nEstil Opera: premeu, moveu amunt, moveu a l'esquerra, moveu amunt, deixeu anar.\nNota: els conflictes amb 'Pestanya nova', i similars s'han deshabilitat per omissió.
 Comment[cs]=Přesunout se ve struktuře o úroveň výše.\n Styl Opery: Stiskněte, pohněte nahoru, pohněte doleva, pohněte nahoru, uvolněte.\n Poznámka: Protože koliduje s 'Aktivovat předchozí kartu', je ve výchozím stavu zakázáno.

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=accessible;filePath;objectName;
 Name=Storage Access
+Name[bg]=Достъп до хранилище
 Name[ca]=Accés d'emmagatzematge
 Name[ca@valencia]=Accés d'emmagatzematge
 Name[csb]=Przëstãp zôpisu
@@ -37,6 +38,7 @@ X-KDE-Solid-Actions-Type=StorageAccess
 
 [Desktop Action accessible]
 Name=Accessible
+Name[bg]=Достъпен
 Name[csb]=Pòmòce przëstãpù
 Name[da]=Tilgængelig
 Name[de]=Verfügbar
@@ -71,6 +73,7 @@ Name[zh_TW]=可存取
 
 [Desktop Action filePath]
 Name=File Path
+Name[bg]=Път до файл
 Name[ca]=Camí al fitxer
 Name[ca@valencia]=Camí al fitxer
 Name[cs]=Cesta k souboru
@@ -108,6 +111,7 @@ Name[zh_TW]=檔案路徑
 
 [Desktop Action objectName]
 Name=Object Name
+Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[ca@valencia]=Nom de l'objecte
 Name[da]=Objektnavn

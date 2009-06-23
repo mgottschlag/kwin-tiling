@@ -86,6 +86,7 @@ X-KDE-Solid-Actions-Type=Processor
 
 [Desktop Action canChangeFrequency]
 Name=Can Change Frequency
+Name[bg]=Може да променя честотата
 Name[ca]=Pot canviar la freqüència
 Name[ca@valencia]=Pot canviar la freqüència
 Name[da]=Kan skifte frekvens
@@ -122,6 +123,7 @@ Name[zh_TW]=可變更頻率
 
 [Desktop Action instructionSets]
 Name=Instruction Sets
+Name[bg]=Инструкции
 Name[ca]=Jocs d'instruccions
 Name[ca@valencia]=Jocs d'instruccions
 Name[da]=Instruktionssæt
@@ -156,6 +158,7 @@ Name[zh_TW]=指令集
 
 [Desktop Action maxSpeed]
 Name=Max Speed
+Name[bg]=Макс. скорост
 Name[ca]=Velocitat màxima
 Name[ca@valencia]=Velocitat màxima
 Name[csb]=Maksymalnô chùtkòsc
@@ -194,6 +197,7 @@ Name[zh_TW]=最大速率
 
 [Desktop Action number]
 Name=Number
+Name[bg]=Номер
 Name[ca]=Número
 Name[ca@valencia]=Número
 Name[cs]=Číslo
@@ -233,6 +237,7 @@ Name[zh_TW]=數字
 
 [Desktop Action objectName]
 Name=Object Name
+Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[ca@valencia]=Nom de l'objecte
 Name[da]=Objektnavn

@@ -123,6 +123,7 @@ Name[zh_TW]=接到新訊息
 Comment=The daemon received a new message sent with wall(1) or write(1)
 Comment[ar]=تلقى المراقب رسالة جديد ارسلت بـwall(1) أو write(1)
 Comment[be@latin]=Słužba atrymała novaje paviedamleńnie ad „wall(1)” ci „write(1)”.
+Comment[bg]=Демонът получи ново съобщение (wall(1) или write(1))
 Comment[ca]=El dimoni ha rebut un missatge nou enviat amb wall(1) o write(1)
 Comment[ca@valencia]=El dimoni ha rebut un missatge nou enviat amb wall(1) o write(1)
 Comment[cs]=Démon obdržel novou zprávu zaslanou pomocí wall nebo write

@@ -1,6 +1,7 @@
 [Desktop Entry]
 # ctxt: plasma runner
 Name=Web Shortcuts
+Name[bg]=Уеб отметки
 Name[ca]=Dreceres web
 Name[ca@valencia]=Dreceres web
 Name[cs]=Webové zkratky
@@ -34,7 +35,7 @@ Name[zh_TW]=網頁捷徑
 Comment=Allows user to use Konqueror's Web shortcuts
 Comment[ar]=السماح للمستخدم باستخدام اختصارات كونكيور لتصفح الإنترنت
 Comment[be@latin]=Dazvalaje karystacca sieciŭnymi skarotami prahramy „Konqueror”.
-Comment[bg]=Разрешаване на потребителя да изпозлва уеб-отметките на Konqueror
+Comment[bg]=Потребителя може да изпозлва уеб-отметките на Konqueror
 Comment[ca]=Permet que l'usuari utilitzi les dreceres web del Konqueror
 Comment[ca@valencia]=Permet que l'usuari utilitzi les dreceres web del Konqueror
 Comment[cs]=Umožňuje používat webové zkratky Konqueroru

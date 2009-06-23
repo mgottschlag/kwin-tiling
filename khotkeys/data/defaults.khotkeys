@@ -3,6 +3,7 @@ DataCount=1
 
 [Data_1]
 Comment=Comment
+Comment[bg]=Коментар
 Comment[ca]=Comentari
 Comment[ca@valencia]=Comentari
 Comment[da]=Kommentar
@@ -41,6 +42,7 @@ Comment[zh_TW]=註解
 DataCount=1
 Enabled=true
 Name=KMenuEdit
+Name[bg]=Редактор на системното меню
 Name[csb]=Editora menu KDE
 Name[fi]=Valikkomuokkain
 Name[is]=Sýsla með aðalvalmynd
@@ -59,6 +61,7 @@ ConditionsCount=0
 
 [Data_1_1]
 Comment=Comment
+Comment[bg]=Коментар
 Comment[ca]=Comentari
 Comment[ca@valencia]=Comentari
 Comment[da]=Kommentar
@@ -96,6 +99,7 @@ Comment[zh_CN]=注释
 Comment[zh_TW]=註解
 Enabled=true
 Name=Search
+Name[bg]=Търсене
 Name[ca]=Cerca
 Name[ca@valencia]=Cerca
 Name[csb]=Szëkba

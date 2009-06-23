@@ -8,6 +8,7 @@ Name=Wicd
 Name[sv]=WICD
 Name[x-test]=xxWicdxx
 Comment=Network management using the Wicd daemon.
+Comment[bg]=Управление на мрежата с демона Wicd.
 Comment[ca]=Gestor de xarxes que usa el dimoni Wicd.
 Comment[ca@valencia]=Gestor de xarxes que usa el dimoni Wicd.
 Comment[csb]=Sprôwianié sécë ùżëwające demóna Wicd.

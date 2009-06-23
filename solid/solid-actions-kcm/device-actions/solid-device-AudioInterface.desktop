@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Audio Interface
+Name[bg]=Аудио интерфейс
 Name[ca]=Interfícies d'àudio
 Name[ca@valencia]=Interfícies d'àudio
 Name[csb]=Zwãkòwé interfejsë
@@ -40,6 +41,7 @@ X-KDE-Solid-Actions-Type=AudioInterface
 
 [Desktop Action deviceType]
 Name=Device Type
+Name[bg]=Тип устройство
 Name[ca]=Tipus de dispositiu
 Name[ca@valencia]=Tipus de dispositiu
 Name[cs]=Typ zařízení
@@ -79,6 +81,7 @@ Name[zh_TW]=裝置類型
 
 [Desktop Action driver]
 Name=Driver
+Name[bg]=Драйвер
 Name[ca]=Controlador
 Name[ca@valencia]=Controlador
 Name[csb]=Czérownik
@@ -114,6 +117,7 @@ Name[zh_TW]=驅動程式
 
 [Desktop Action driverHandle]
 Name=Driver Handle
+Name[bg]=Управление на драйвера
 Name[ca]=Gestor de controlador
 Name[ca@valencia]=Gestor de controlador
 Name[csb]=Czérownik Handle
@@ -147,6 +151,7 @@ Name[zh_TW]=驅動程式處理
 
 [Desktop Action name]
 Name=Name
+Name[bg]=Име
 Name[ca]=Nom
 Name[ca@valencia]=Nom
 Name[cs]=Jméno
@@ -185,6 +190,7 @@ Name[zh_TW]=名稱
 
 [Desktop Action objectName]
 Name=Object Name
+Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[ca@valencia]=Nom de l'objecte
 Name[da]=Objektnavn
@@ -222,6 +228,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action soundcardType]
 Name=Soundcard Type
+Name[bg]=Тип звукова карта
 Name[ca]=Tipus de targeta de so
 Name[ca@valencia]=Tipus de targeta de so
 Name[csb]=Ôrt zwãkòwi kôrtë

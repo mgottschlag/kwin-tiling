@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=chargePercent;chargeState;objectName;plugged;rechargeable;type;
 Name=Battery
+Name[bg]=Батерия
 Name[ca]=Bateria
 Name[ca@valencia]=Bateria
 Name[cs]=Baterie
@@ -41,6 +42,7 @@ X-KDE-Solid-Actions-Type=Battery
 
 [Desktop Action chargePercent]
 Name=Charge Percent
+Name[bg]=Зареждане (%)
 Name[ca]=Percentatge de càrrega
 Name[ca@valencia]=Percentatge de càrrega
 Name[da]=Ladningsprocent
@@ -77,6 +79,7 @@ Name[zh_TW]=充電百分比
 
 [Desktop Action chargeState]
 Name=Charge State
+Name[bg]=Състояние на зареждането
 Name[ca]=Estat de la càrrega
 Name[ca@valencia]=Estat de la càrrega
 Name[da]=Ladningstilstand
@@ -113,6 +116,7 @@ Name[zh_TW]=充電狀態
 
 [Desktop Action objectName]
 Name=Object Name
+Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[ca@valencia]=Nom de l'objecte
 Name[da]=Objektnavn
@@ -150,6 +154,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action plugged]
 Name=Plugged
+Name[bg]=Вкл.
 Name[ca]=Endollat
 Name[ca@valencia]=Endollat
 Name[cs]=Připojeno
@@ -188,6 +193,7 @@ Name[zh_TW]=已插入
 
 [Desktop Action rechargeable]
 Name=Rechargeable
+Name[bg]=Презаредима
 Name[ca]=Recarregable
 Name[ca@valencia]=Recarregable
 Name[da]=Genopladeligt
@@ -220,6 +226,7 @@ Name[zh_TW]=可重新充電
 
 [Desktop Action type]
 Name=Type
+Name[bg]=Тип
 Name[ca]=Tipus
 Name[ca@valencia]=Tipus
 Name[csb]=Ôrt

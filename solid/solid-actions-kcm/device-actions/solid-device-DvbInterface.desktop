@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=device;deviceAdapter;deviceIndex;deviceType;objectName;
 Name=Dvb Interface
+Name[bg]=DVB интерфейс
 Name[ca]=Interfície DVB
 Name[ca@valencia]=Interfície DVB
 Name[csb]=Interfejs Dvb
@@ -40,6 +41,7 @@ X-KDE-Solid-Actions-Type=DvbInterface
 
 [Desktop Action device]
 Name=Device
+Name[bg]=Устройство
 Name[ca]=Dispositiu
 Name[ca@valencia]=Dispositiu
 Name[cs]=Zařízení
@@ -79,6 +81,7 @@ Name[zh_TW]=裝置
 
 [Desktop Action deviceAdapter]
 Name=Device Adapter
+Name[bg]=Адаптор на устройството
 Name[ca]=Adaptador de dispositius
 Name[ca@valencia]=Adaptador de dispositius
 Name[csb]=Adapter ùrządzenia
@@ -115,6 +118,7 @@ Name[zh_TW]=裝置接合器
 
 [Desktop Action deviceIndex]
 Name=Device Index
+Name[bg]=Индекс на устройство
 Name[ca]=Índex de dispositius
 Name[ca@valencia]=Índex de dispositius
 Name[csb]=Indeks ùrządzeniów
@@ -151,6 +155,7 @@ Name[zh_TW]=裝置索引
 
 [Desktop Action deviceType]
 Name=Device Type
+Name[bg]=Тип устройство
 Name[ca]=Tipus de dispositiu
 Name[ca@valencia]=Tipus de dispositiu
 Name[cs]=Typ zařízení
@@ -190,6 +195,7 @@ Name[zh_TW]=裝置類型
 
 [Desktop Action objectName]
 Name=Object Name
+Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[ca@valencia]=Nom de l'objecte
 Name[da]=Objektnavn

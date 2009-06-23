@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Geolocation IP
+Name[bg]=Геолокация (IP)
 Name[ca]=Geolocalització IP
 Name[ca@valencia]=Geolocalització IP
 Name[csb]=IP geògrafny lokalizacëji
@@ -24,6 +25,7 @@ Name[uk]=Геопозиціювання за IP
 Name[x-test]=xxGeolocation IPxx
 Name[zh_CN]=地理 IP
 Comment=Geolocation from IP address.
+Comment[bg]=Геолокация по IP.
 Comment[ca]=Geolocalització des d'una adreça IP.
 Comment[ca@valencia]=Geolocalització des d'una adreça IP.
 Comment[csb]=Geògrafnô lokalizacëjô z adresë IP.

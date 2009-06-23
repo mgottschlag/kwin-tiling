@@ -31,6 +31,7 @@ Name[x-test]=xxKDED Notification item watcherxx
 Name[zh_CN]=KDED 通知项监视器
 Name[zh_TW]=KDE 通知項目監控器 
 Comment=Keep track of applications that want to use the D-Bus based notification item.
+Comment[bg]=Следи програмите, които искат да използват D-Bus.
 Comment[ca]=Fa un seguiment de les aplicacions que volen utilitzar l'element de notificacions basat en el D-Bus.
 Comment[ca@valencia]=Fa un seguiment de les aplicacions que volen utilitzar l'element de notificacions basat en el D-Bus.
 Comment[da]=Hold styr på programmer som vil bruge D-Bus-baseret bekendtgørelseselement.
