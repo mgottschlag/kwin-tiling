@@ -80,7 +80,7 @@ void DBusNotificationProtocol::dataUpdated(const QString &source, const Plasma::
         connect(notification, SIGNAL(unregisterNotification(const QString&)),
                 this, SLOT(unregisterNotification(const QString&)));
         connect(notification, SIGNAL(notificationDeleted(const QString&)),
-                this, SLOT(removeNotification(const QString&)));
+                this, SLOT(notificationDeleted(const QString&)));
         connect(notification, SIGNAL(actionTriggered(const QString&, const QString&)),
                 this, SLOT(relayAction(const QString&, const QString&)));
         m_notifications[source] = notification;
@@ -151,6 +151,11 @@ void DBusNotificationProtocol::removeNotification(const QString &source)
     if (m_notifications.contains(source)) {
         m_notifications.take(source)->deleteLater();
     }
+}
+
+void DBusNotificationProtocol::notificationDeleted(const QString &source)
+{
+    m_notifications.remove(source);
 }
 
 }
