@@ -129,7 +129,7 @@ void QuicklaunchApplet::init()
             KService::Ptr service = KService::serviceByStorageId(defaultApp);
             if (service && service->isValid()) {
                 QString path = service->entryPath();
-                kDebug() << path;
+                //kDebug() << path;
                 if (!path.isEmpty() && QDir::isAbsolutePath(path)) {
                     desktopFiles << path;
                 }
@@ -156,7 +156,7 @@ QSizeF QuicklaunchApplet::sizeHint(Qt::SizeHint which, const QSizeF & constraint
         if (!m_innerLayout) {
             return sizeHint;
         }
-        qreal newWidth = m_innerLayout->columnCount() * sizeHint.height() / qMax(1, m_innerLayout->rowCount());
+        qreal newWidth = m_innerLayout->columnCount() * sizeHint.height() / qMax(1, m_innerLayout->preferredRowCount());
         if (m_icons.size() > m_visibleIcons) {
             sizeHint.setWidth(newWidth + sizeHint.height());
         } else {
@@ -193,7 +193,7 @@ void QuicklaunchApplet::performUiRefactor()
 
     if (m_dialogLayout) {
         clearLayout(m_dialogLayout);
-        m_dialogLayout->setRowCount((int)(size().height() / qMin(m_dialogIconSize, m_dialog->size().height())));
+        m_dialogLayout->setPreferredRowCount((int)(size().height() / qMin(m_dialogIconSize, m_dialog->size().height())));
     }
 
     int rowCount;
@@ -207,10 +207,10 @@ void QuicklaunchApplet::performUiRefactor()
         rowCount = qMax(1, rowCount);
     }
 
-    m_innerLayout->setRowCount(rowCount);
+    m_innerLayout->setPreferredRowCount(rowCount);
     int count = 0;
-    kDebug() << m_icons.count() << "pixel icons in" << rowCount
-             << "rows, with a max of" << m_visibleIcons << "visible";
+    //kDebug() << m_icons.count() << "pixel icons in" << rowCount
+    //         << "rows, with a max of" << m_visibleIcons << "visible";
     foreach (QuicklaunchIcon *icon, m_icons) {
         //icon->setMinimumSize(minSize);
         //icon->setMaximumSize(maxSize);
@@ -279,7 +279,7 @@ void QuicklaunchApplet::showDialog()
         m_dialog->resize(m_dialogLayout->preferredSize().toSize());
         //m_dialog->updateGeometry();
         if (containment() && containment()->corona()) {
-            kDebug() << "position:" << containment()->corona()->popupPosition(m_arrow, m_dialog->size()) << "dialog size:" << m_dialog->size() << "layout preferred-size:" << m_dialogLayout->preferredSize().toSize();
+            //kDebug() << "position:" << containment()->corona()->popupPosition(m_arrow, m_dialog->size()) << "dialog size:" << m_dialog->size() << "layout preferred-size:" << m_dialogLayout->preferredSize().toSize();
             m_dialog->move(containment()->corona()->popupPosition(m_arrow, m_dialog->size()));
         }
         KWindowSystem::setState(m_dialog->winId(), NET::SkipTaskbar);
@@ -378,23 +378,8 @@ QList<QAction*> QuicklaunchApplet::contextActions(QuicklaunchIcon *icon)
 
 void QuicklaunchApplet::dropApp(QGraphicsSceneDragDropEvent *event, bool droppedOnDialog)
 {
-    int pos;
-    if (!droppedOnDialog) {
-        QPointF point = mapFromScene(event->scenePos());
-        int rowCount = m_innerLayout->rowCount();
-        kDebug() << "RowCount = " << rowCount;
-        int cols = static_cast<int>(ceil(1.0 * qMin(m_icons.size(), m_visibleIcons) / rowCount));
-        int col = static_cast<int>((round(point.x()) * cols / m_innerLayout->geometry().width()));
-        col = (col >= cols) ? col - 1 : col;
-        int row = static_cast<int>(floor(point.y() * rowCount / m_innerLayout->geometry().height()));
-        row = (row >= m_innerLayout->rowCount()) ? row - 1 : row;
-        kDebug() << "row = " << row << "cols = " << cols << "col = " << col;
-        pos = row * cols + col;
-        kDebug() << "position is " << pos;
-        if (pos >= m_icons.size()) {
-           pos = m_icons.size() - 1;
-        }
-    } else {
+    int pos = 0;
+    if (droppedOnDialog) {
         QPointF point = event->pos();
         for(int i = 0; i < m_dialogLayout->count(); i++) {
            QGraphicsLayoutItem *item = m_dialogLayout->itemAt(i);
@@ -405,7 +390,60 @@ void QuicklaunchApplet::dropApp(QGraphicsSceneDragDropEvent *event, bool dropped
                break;
            }
         }
+    } else if (!m_icons.isEmpty()) {
+        //qreal left, top, bottom, right;
+        //getContentsMargins(&left, &top, &bottom, &right);
+        QPointF point = mapFromScene(event->scenePos());//) + QPointF(left, top);
+        int rowCount = m_innerLayout->rowCount();
+        //kDebug() << "RowCount = " << rowCount;
+        int colCount = m_innerLayout->columnCount();
+        int colWidth = m_innerLayout->geometry().width();
+        int col = 0;
+        while (col < colCount) {
+
+            if (col == colCount || col * rowCount >= m_icons.count()) {
+                break;
+            }
+
+            //kDebug() << col << m_icons.at(col * rowCount)->geometry().left() << point.x();
+            if (m_icons.at(col * rowCount)->geometry().left() > point.x()) {
+                //kDebug() << "broke col at" << col;
+                break;
+            }
+
+            ++col;
+        }
+
+        //int col = static_cast<int>((round(point.x()) * colCount / m_innerLayout->geometry().width()));
+        //col = (col >= colCount) ? colCount - 1 : col;
+        //int row = static_cast<int>(floor(point.y() * rowCount / m_innerLayout->geometry().height()));
+        //row = (row >= m_innerLayout->rowCount()) ? m_innerLayout->rowCount() - 1 : row;
+        //kDebug() << "doing rows";
+        int row = -1;
+        while (row < rowCount) {
+            ++row;
+            if (row == rowCount || row == m_icons.count()) {
+                //kDebug() << "row made rowCount" << row;
+                break;
+            }
+
+            //kDebug() << "row: " << row << m_icons.count();
+            if (m_icons.at(row)->geometry().center().y() > point.y()) {
+                //kDebug() << "broke row at" << row;
+                break;
+            }
+        }
+
+        //kDebug() << "row = " << row << "rows = " << rowCount << "cols = " << colCount << "col = " << col;
+        if (rowCount > 1) {
+            pos = row + rowCount * (col - 1);
+        } else {
+            pos = col;
+        }
+
+        //kDebug() << "position is " << pos;
     }
+
     if (dropHandler(pos, event->mimeData())) {
        event->setDropAction(Qt::MoveAction);
        event->accept();
@@ -444,6 +482,11 @@ bool QuicklaunchApplet::eventFilter(QObject * object, QEvent * event)
                     m_icons.removeAll(icon);
                     icon->hide();
                     icon->deleteLater();
+
+                    KConfigGroup cg = config();
+                    saveState(cg);
+                    emit configNeedsSaving();
+
                     performUiRefactor();
                 }
             }
@@ -511,6 +554,7 @@ void QuicklaunchApplet::addProgram(int index, const QString &url, bool isNewIcon
 
     QuicklaunchIcon *container = new QuicklaunchIcon(appUrl, text, icon, genericName, this);
     container->installEventFilter(this);
+
     m_icons.insert(index, container);
 
     if (isNewIcon) {

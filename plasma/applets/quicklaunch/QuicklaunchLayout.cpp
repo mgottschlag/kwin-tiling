@@ -30,12 +30,12 @@ QuicklaunchLayout::~QuicklaunchLayout()
 {
 }
 
-void QuicklaunchLayout::setRowCount(int rowCount) 
+void QuicklaunchLayout::setPreferredRowCount(int rowCount) 
 {
     m_rowCount = rowCount;
 }
 
-int QuicklaunchLayout::rowCount() const
+int QuicklaunchLayout::preferredRowCount() const
 {
     return m_rowCount;
 }
@@ -50,12 +50,11 @@ void QuicklaunchLayout::addItem(Plasma::IconWidget *icon)
     int column = 0;
     while (itemAt(row, column))
     {
-        kDebug() << "Row is" << row << "column is" << column;
+        //kDebug() << "Row is" << row << "column is" << column;
         if (row < m_rowCount - 1) {
             row++;
-        }
-        else {
-            kDebug() << "column++";
+        } else {
+            //kDebug() << "column++";
             row = 0;
             column++;
         }
