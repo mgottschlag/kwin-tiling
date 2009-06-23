@@ -606,13 +606,7 @@ void KSMShutdownDlg::resizeEvent(QResizeEvent *e)
     if( KWindowSystem::compositingActive()) {
         clearMask();
     } else {
-        QBitmap mask(size());
-        mask.fill(Qt::color0);
-
-        QPainter p(&mask);
-        m_svg->resize(size());
-        m_svg->paint(&p, QRect(0, 0, width(), height()), "background");
-        setMask(mask);
+        setMask(m_svg->mask());
     }
 
     KDialog::centerOnScreen(this);
