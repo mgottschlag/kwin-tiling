@@ -35,10 +35,6 @@ class ShellConfig : public QWidget
 
         Ui::shellOptions m_ui;
 
-    public slots:
-        void save();
-        void load();
-
     protected slots:
         void slotUpdateUser(bool);
 

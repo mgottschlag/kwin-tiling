@@ -36,36 +36,12 @@ ShellConfig::ShellConfig(const KConfigGroup &config, QWidget* parent)
     QHBoxLayout *hboxLayout = new QHBoxLayout(parent);
     hboxLayout->addWidget(this);
     m_ui.setupUi(this);
-    load();
 
     connect(m_ui.cbRunAsOther, SIGNAL(clicked(bool)), this, SLOT(slotUpdateUser(bool)));
 }
 
 ShellConfig::~ShellConfig()
 {
-    save();
-}
-
-void ShellConfig::load()
-{
-    KConfigGroup grp = m_config;
-
-    m_ui.cbRunInTerminal->setChecked(grp.readEntry("RunInTerminal", false));
-    m_ui.cbRunAsOther->setChecked(grp.readEntry("RunAsOther", false));
-    //m_ui.lePassword->text();
-    //m_ui.leUsername->text();
-}
-
-void ShellConfig::save()
-{
-    kDebug()<<" save :";
-    KConfigGroup grp = m_config;
-    grp.writeEntry("RunInTerminal", m_ui.cbRunInTerminal->isChecked());
-    bool runAsOther = m_ui.cbRunAsOther->isChecked();
-    grp.writeEntry("RunAsOther", runAsOther);
-    //m_ui.lePassword->text();
-    //m_ui.leUsername->text();
-    grp.sync();
 }
 
 void ShellConfig::slotUpdateUser(bool b)
