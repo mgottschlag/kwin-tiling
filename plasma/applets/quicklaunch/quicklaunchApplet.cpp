@@ -202,15 +202,16 @@ void QuicklaunchApplet::performUiRefactor()
 
     int rowCount;
     if (formFactor() == Plasma::Vertical) {
-        rowCount = contentsRect().width() / m_iconSize;
+        int numIcons = qMin(m_icons.count(), m_visibleIcons);
+        int colCount = qMax(qreal(1), contentsRect().width() / m_iconSize);
+        rowCount = numIcons / colCount + numIcons % colCount;
         // prevent possible division by zero if size().width() is 0
-        rowCount = qMax(1, rowCount );
     } else {
         rowCount = contentsRect().height() / m_iconSize;
         // prevent possible division by zero if size().height() is 0
-        rowCount = qMax(1, rowCount);
     }
 
+    rowCount = qMax(1, rowCount);
     m_innerLayout->setPreferredRowCount(rowCount);
     int count = 0;
     //kDebug() << m_icons.count() << "pixel icons in" << rowCount
