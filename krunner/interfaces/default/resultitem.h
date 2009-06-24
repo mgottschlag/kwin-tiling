@@ -78,7 +78,6 @@ public:
     void setIndex(int index);
     int index() const;
     void setRowStride(int stride);
-    void remove();
     void run(Plasma::RunnerManager *manager);
     bool isQueryPrototype() const;
     bool mouseHovered() const;
@@ -95,7 +94,7 @@ signals:
     void activated(ResultItem *item);
     void hoverEnter(ResultItem *item);
     void hoverLeave(ResultItem *item);
-    void sizeChanged();
+    void sizeChanged(ResultItem *item);
 
 protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *e);

@@ -171,11 +171,6 @@ int ResultItem::index() const
     return m_index;
 }
 
-void ResultItem::remove()
-{
-    deleteLater();
-}
-
 void ResultItem::run(Plasma::RunnerManager *manager)
 {
     manager->run(m_match);
@@ -390,7 +385,7 @@ QVariant ResultItem::itemChange(GraphicsItemChange change, const QVariant &value
 
 void ResultItem::resizeEvent(QGraphicsSceneResizeEvent *)
 {
-    emit sizeChanged();
+    emit sizeChanged(this);
 }
 
 void ResultItem::changeEvent(QEvent *event)

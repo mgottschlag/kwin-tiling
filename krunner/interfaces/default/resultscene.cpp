@@ -96,7 +96,7 @@ void ResultScene::resize(int width, int height)
 void ResultScene::clearMatches()
 {
     foreach (ResultItem *item, m_items) {
-        item->remove();
+        item->deleteLater();
     }
 
     m_itemsById.clear();
@@ -158,21 +158,25 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     // delete the stragglers
     QMapIterator<QString, ResultItem *> it(m_itemsById);
     while (it.hasNext()) {
-        it.next().value()->remove();
+        it.next().value()->deleteLater();
     }
 
     // organize the remainders
-    int i = 0;
     m_itemsById.clear();
 
     // this will leave them in *reverse* order
     qSort(m_items.begin(), m_items.end(), ResultItem::compare);
 
     emit matchCountChanged(m.count());
+    arrangeItems();
+}
 
+void ResultScene::arrangeItems()
+{
     QListIterator<ResultItem*> matchIt(m_items);
     QGraphicsWidget *tab = 0;
     int y = 0;
+    int i = 0;
     while (matchIt.hasNext()) {
         ResultItem *item = matchIt.next();
         //kDebug()  << item->name() << item->id() << item->priority() << i;
@@ -196,7 +200,6 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     }
 
     setSceneRect(itemsBoundingRect());
-
 }
 
 ResultItem* ResultScene::addQueryMatch(const Plasma::QueryMatch &match, bool useAnyId)
@@ -214,6 +217,7 @@ ResultItem* ResultScene::addQueryMatch(const Plasma::QueryMatch &match, bool use
                                      m_itemMarginRight, m_itemMarginBottom);
             addItem(item);
             item->hide();
+            connect(item, SIGNAL(sizeChanged(ResultItem*)), this, SLOT(arrangeItems()));
             connect(item, SIGNAL(activated(ResultItem*)), this, SIGNAL(itemActivated(ResultItem*)));
             connect(item, SIGNAL(hoverEnter(ResultItem*)), this, SIGNAL(itemHoverEnter(ResultItem*)));
             connect(item, SIGNAL(hoverLeave(ResultItem*)), this, SIGNAL(itemHoverLeave(ResultItem*)));

@@ -78,10 +78,11 @@ class ResultScene : public QGraphicsScene
         ResultItem* addQueryMatch(const Plasma::QueryMatch &match, bool useAnyId);
 
         bool canMoveItemFocus() const;
-	
+
     private slots:
         void clearMatches();
         void updateItemMargins();
+        void arrangeItems();
 
     private:
         Plasma::RunnerManager *m_runnerManager;

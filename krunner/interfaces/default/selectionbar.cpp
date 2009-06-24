@@ -92,7 +92,7 @@ void SelectionBar::acquireTarget()
     m_target = dynamic_cast<ResultItem *>(selection.first());
 
     if (m_target) {
-        connect(m_target, SIGNAL(sizeChanged()), this, SLOT(targetChangedSize()));
+        connect(m_target, SIGNAL(sizeChanged(ResultItem*)), this, SLOT(targetChangedSize()));
         connect(m_target, SIGNAL(destroyed(QObject*)), this, SLOT(targetDestroyed()));
         m_target->installSceneEventFilter(this);
     }
