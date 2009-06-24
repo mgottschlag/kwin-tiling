@@ -59,6 +59,7 @@ private slots:
     void frameSvgChanged();
     void disappear();
     void targetDestroyed();
+    void targetChangedSize();
     void animateAndCenter(qreal t);
 
 private:

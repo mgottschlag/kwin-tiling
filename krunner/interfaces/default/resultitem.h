@@ -28,6 +28,7 @@
 #include <Plasma/QueryMatch>
 
 class QGraphicsLinearLayout;
+class QGraphicsProxyWidget;
 
 namespace Plasma
 {
@@ -94,6 +95,7 @@ signals:
     void activated(ResultItem *item);
     void hoverEnter(ResultItem *item);
     void hoverLeave(ResultItem *item);
+    void sizeChanged();
 
 protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *e);
@@ -105,6 +107,7 @@ protected:
     void keyPressEvent(QKeyEvent *event);
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
     void changeEvent(QEvent *event);
+    void resizeEvent(QGraphicsSceneResizeEvent *);
 
 protected slots:
     void showConfig();
@@ -124,6 +127,7 @@ private:
     int m_index;
     int m_highlightTimerId;
     bool m_mouseHovered;
+    QGraphicsProxyWidget *m_configWidget;
 
     static int s_fontHeight;
 };

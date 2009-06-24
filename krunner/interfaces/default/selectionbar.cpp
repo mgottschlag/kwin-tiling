@@ -78,7 +78,7 @@ void SelectionBar::animateAndCenter(qreal t)
 void SelectionBar::acquireTarget()
 {
     if (m_target) {
-        disconnect(m_target, SIGNAL(destroyed(QObject*)), this, SLOT(targetDestroyed()));
+        disconnect(m_target, 0, this, 0);
         m_target->removeSceneEventFilter(this);
     }
 
@@ -92,6 +92,7 @@ void SelectionBar::acquireTarget()
     m_target = dynamic_cast<ResultItem *>(selection.first());
 
     if (m_target) {
+        connect(m_target, SIGNAL(sizeChanged()), this, SLOT(targetChangedSize()));
         connect(m_target, SIGNAL(destroyed(QObject*)), this, SLOT(targetDestroyed()));
         m_target->installSceneEventFilter(this);
     }
@@ -179,12 +180,14 @@ QVariant SelectionBar::itemChange(QGraphicsItem::GraphicsItemChange change, cons
 
 bool SelectionBar::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
 {
-    if (m_target == watched) {
+    if (static_cast<QGraphicsItem*>(m_target) == watched) {
+        //kDebug() << event->type() << QEvent::GraphicsSceneResize << QEvent::Resize;
         switch (event->type()) {
             case QEvent::GraphicsSceneResize: {
                 QResizeEvent *resizeEvent = static_cast<QResizeEvent*>(event);
                 //kDebug() << "resizing to" << resizeEvent->oldSize() << resizeEvent->size();
                 resize(resizeEvent->size());
+                update();
             }
             break;
 
@@ -198,6 +201,11 @@ bool SelectionBar::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
     }
 
     return QGraphicsWidget::sceneEventFilter(watched, event);
+}
+
+void SelectionBar::targetChangedSize()
+{
+    resize(m_target->size());
 }
 
 void SelectionBar::resizeEvent(QGraphicsSceneResizeEvent *event)

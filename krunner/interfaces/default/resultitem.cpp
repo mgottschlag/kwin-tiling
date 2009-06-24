@@ -58,7 +58,8 @@ ResultItem::ResultItem(const Plasma::QueryMatch &match, QGraphicsWidget *parent)
       m_highlight(0),
       m_index(-1),
       m_highlightTimerId(0),
-      m_mouseHovered(false)
+      m_mouseHovered(false),
+      m_configWidget(0)
 {
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFlag(QGraphicsItem::ItemIsSelectable);
@@ -387,6 +388,11 @@ QVariant ResultItem::itemChange(GraphicsItemChange change, const QVariant &value
     return QGraphicsWidget::itemChange(change, value);
 }
 
+void ResultItem::resizeEvent(QGraphicsSceneResizeEvent *)
+{
+    emit sizeChanged();
+}
+
 void ResultItem::changeEvent(QEvent *event)
 {
     QGraphicsWidget::changeEvent(event);
@@ -398,12 +404,20 @@ void ResultItem::changeEvent(QEvent *event)
 
 void ResultItem::showConfig()
 {
-    QWidget *w = new QWidget;
-    m_match.createConfigurationInterface(w);
-    w->show();
-    QGraphicsProxyWidget *proxy = new QGraphicsProxyWidget(this);
-    proxy->setWidget(w);
-    proxy->show();
+    if (m_configWidget) {
+        delete m_configWidget;
+        m_configWidget = 0;
+    } else {
+        QWidget *w = new QWidget;
+        m_match.createConfigurationInterface(w);
+        w->setAttribute(Qt::WA_NoSystemBackground);
+        m_configWidget = new QGraphicsProxyWidget(this);
+        m_configWidget->setWidget(w);
+        m_configWidget->show();
+    }
+
+    calculateSize();
+    update();
 }
 
 void ResultItem::calculateSize()
@@ -440,7 +454,6 @@ void ResultItem::calculateSize()
     qreal left, top, right, bottom;
     getContentsMargins(&left, &top, &right, &bottom);
     QSize newSize(scene() ? scene()->width() : geometry().width(), innerHeight + top + bottom);
-    resize(newSize);
     //kDebug() << innerHeight << geometry().size();
 
     if (m_configButton) {
@@ -453,6 +466,16 @@ void ResultItem::calculateSize()
                                    newSize.height() - s.height() - bottom);
         }
     }
+
+    if (m_configWidget) {
+        m_configWidget->setMaximumWidth(newSize.width());
+        m_configWidget->adjustSize();
+        newSize.setHeight(newSize.height() + m_configWidget->size().height());
+        m_configWidget->setPos((newSize.width() - m_configWidget->size().width()) / 2,
+                               newSize.height() - m_configWidget->size().height() - bottom);
+    }
+
+    resize(newSize);
 }
 
 #include "resultitem.moc"
