@@ -43,12 +43,10 @@ class ShellRunner : public Plasma::AbstractRunner
         void createRunOptions(QWidget *parent);
 
     private slots:
-        void configWidgetDestroyed();
         void setRunAsOtherUser(bool asOtherUser);
         void setRunInTerminal(bool runInTerminal);
 
     private:
-        ShellConfig *m_configWidget;
         bool m_enabled;
         bool m_inTerminal;
         bool m_asOtherUser;

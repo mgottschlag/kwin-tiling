@@ -96,16 +96,9 @@ void ShellRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryM
 void ShellRunner::createRunOptions(QWidget *parent)
 {
     //TODO: for multiple runners?
-    m_configWidget = new ShellConfig(config(), parent);
-    connect(m_configWidget, SIGNAL(destroyed(QObject*)), this, SLOT(configWidgetDestroyed()));
-    connect(m_configWidget->m_ui.cbRunAsOther, SIGNAL(clicked(bool)), this, SLOT(setRunAsOtherUser(bool)));
-    connect(m_configWidget->m_ui.cbRunInTerminal, SIGNAL(clicked(bool)), this, SLOT(setRunInTerminal(bool)));
-    m_configWidget->show();
-}
-
-void ShellRunner::configWidgetDestroyed()
-{
-    m_configWidget = 0;
+    ShellConfig *configWidget = new ShellConfig(config(), parent);
+    connect(configWidget->m_ui.cbRunAsOther, SIGNAL(clicked(bool)), this, SLOT(setRunAsOtherUser(bool)));
+    connect(configWidget->m_ui.cbRunInTerminal, SIGNAL(clicked(bool)), this, SLOT(setRunInTerminal(bool)));
 }
 
 void ShellRunner::setRunAsOtherUser(bool asOtherUser)

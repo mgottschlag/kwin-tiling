@@ -33,6 +33,8 @@ ShellConfig::ShellConfig(const KConfigGroup &config, QWidget* parent)
     : QWidget(parent),
       m_config(config)
 {
+    QHBoxLayout *hboxLayout = new QHBoxLayout(parent);
+    hboxLayout->addWidget(this);
     m_ui.setupUi(this);
     load();
 
