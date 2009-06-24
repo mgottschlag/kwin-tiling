@@ -240,6 +240,32 @@ ResultItem* ResultScene::addQueryMatch(const Plasma::QueryMatch &match, bool use
     return item;
 }
 
+
+void ResultScene::focusInEvent(QFocusEvent *focusEvent)
+{
+
+    // The default implementation of focusInEvent assumes that if the scene has no focus
+    // then it has no focused item; thus, when a scene gains focus, focusInEvent gives
+    // focus to the last focused item. 
+    // In our case this assumption is not true, as an item can be focused before the scene, 
+    // therefore we revert the behaviour by re-selecting the previously selected item 
+
+    ResultItem *currentFocus = dynamic_cast<ResultItem*>(focusItem());
+  
+    QGraphicsScene::focusInEvent(focusEvent);
+
+    switch (focusEvent->reason()) {
+    case Qt::TabFocusReason:
+    case Qt::BacktabFocusReason:
+        break;
+    default:
+        if (currentFocus) { 
+            setFocusItem(currentFocus);
+        }
+        break;
+    }
+}
+
 void ResultScene::focusOutEvent(QFocusEvent *focusEvent)
 {
     QGraphicsScene::focusOutEvent(focusEvent);
