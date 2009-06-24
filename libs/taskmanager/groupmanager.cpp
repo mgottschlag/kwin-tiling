@@ -312,6 +312,9 @@ void GroupManagerPrivate::removeTask(TaskPtr task)
     }
 
     emit q->itemRemoved(item);
+
+    itemList.remove(task);
+    //FIXME: We keep it in the itemlist because it may return: what does actually mean?
     //the item must exist as long as the TaskPtr does because of activate calls so don't delete the item here, it will delete itself. We keep it in the itemlist because it may return
 }
 
@@ -534,7 +537,7 @@ void GroupManagerPrivate::checkIfFull()
         return;
     }
 
-    if (geometryTasks.size() >= groupIsFullLimit) {
+    if (itemList.size() >= groupIsFullLimit) {
         if (!abstractGroupingStrategy) {
             geometryTasks.clear();
             q->setGroupingStrategy(GroupManager::ProgramGrouping);
