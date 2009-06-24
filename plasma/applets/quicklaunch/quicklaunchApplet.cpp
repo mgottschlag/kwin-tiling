@@ -61,10 +61,10 @@ QuicklaunchApplet::QuicklaunchApplet(QObject *parent, const QVariantList &args)
     m_dialogLayout(0),
     m_addDialog(0),
     m_rightClickedIcon(0),
-    m_sortappAscending(0),
-    m_sortappDescending(0),
     m_addAction(0),
-    m_removeAction(0)
+    m_removeAction(0),
+    m_sortappAscending(0),
+    m_sortappDescending(0)
 {
     setHasConfigurationInterface(true);
     setAcceptDrops(true);
