@@ -397,7 +397,6 @@ void QuicklaunchApplet::dropApp(QGraphicsSceneDragDropEvent *event, bool dropped
         int rowCount = m_innerLayout->rowCount();
         //kDebug() << "RowCount = " << rowCount;
         int colCount = m_innerLayout->columnCount();
-        int colWidth = m_innerLayout->geometry().width();
         int col = 0;
         while (col < colCount) {
 
