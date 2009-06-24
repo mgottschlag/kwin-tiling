@@ -255,7 +255,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     QPainter p(&pixmap);
     p.setPen(textColor);
     //TODO: add subtext, make bold, etc...
-    p.drawText(pixmap.rect(), Qt::AlignLeft, name());
+    p.drawText(pixmap.rect(), Qt::AlignLeft | Qt::TextWordWrap, name());
     QFont italics = p.font();
     QFontMetrics italicMetrics(italics);
     int fontHeight = italicMetrics.height();
