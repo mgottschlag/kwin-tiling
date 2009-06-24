@@ -163,6 +163,12 @@ void AbstractGroupingStrategy::closeGroup(TaskGroup *group)
         int index = parentGroup->members().indexOf(group);
         foreach (AbstractGroupableItem *item, group->members()) {
             parentGroup->add(item);
+
+            if (!d->groupManager) {
+                // this means that the above add() caused a change in grouping strategy
+                break;
+            }
+
             //move item to the location where its group was
             d->groupManager->manualSortingRequest(item, index); //move items to position of group
         }
