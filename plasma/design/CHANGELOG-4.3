@@ -5,6 +5,7 @@ libplasma
 * Features
     * NEW: RunnerSyntax, class for describing query syntax
     * AbstractRunners can now register their syntax for online documentation purposes
+    * Animator: no longer crashes when an animation is started/stopped on a widget already being animated during animation
     * RunnerContext
         * Introduced the isValid() method so runners can abort matches early
     * Plasma::Dialogs now animate show/hide if composited window management is available
@@ -38,6 +39,7 @@ libplasma
         * TabBar styling and interaction improvements (animations, click-n-flick, ..)
         * WebView can scroll its contents by simply dragging a point in the page with the mouse
 
+
 Other Libraries
 ---------------
 * NEW: KNotificationItem library added to kdelibs/experimental/ which provides access to the new system tray protocol (complete with legacy fallback support)
@@ -56,7 +58,7 @@ Other Libraries
 * libplasmaclock
     * Text to speech service (KTTSD) to read aloud the time
     * Holidays shown in pop-up calendar
-
+* libtaskmanager: signficant stability fixes, particularly crashes in closeGroup or add(Task) caused by changes in the grouping strategy
 
 Developer Documentation
 -----------------------
@@ -228,7 +230,8 @@ KRunner
 -------
 * Features
     * Display all known syntax in the results area when Help button pressed
-    * Vertical display of results
+    * Vertical display of results with new selection style and animation
+    * Configure parameters on matches by clicking on the configuration wrench, for matches that support options
 
 * Bugfixes
     * Race conditions affecting proper selection of default item fixed (often known as the "I pressed <Enter> and nothing happened!" bug)
