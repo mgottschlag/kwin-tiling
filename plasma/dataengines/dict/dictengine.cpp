@@ -99,7 +99,6 @@ static QString wnToHtml(const QString &word, QByteArray &text)
 
 void DictEngine::getDefinition()
 {
-    tcpSocket->waitForReadyRead();
     tcpSocket->readAll();
     QByteArray ret;
 
@@ -125,7 +124,6 @@ void DictEngine::getDefinition()
 void DictEngine::getDicts()
 {
     QMap<QString, QString> theHash;
-    tcpSocket->waitForReadyRead();
     tcpSocket->readAll();
     QByteArray ret;
 
@@ -202,9 +200,9 @@ bool DictEngine::sourceRequestEvent(const QString &word)
         connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(socketClosed()));
 
         if (currentWord == "list-dictionaries") {
-            connect(tcpSocket, SIGNAL(connected()), this, SLOT(getDicts()));
+            connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(getDicts()));
         } else {
-            connect(tcpSocket, SIGNAL(connected()), this, SLOT(getDefinition()));
+            connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(getDefinition()));
         }
 
         tcpSocket->connectToHost(serverName, 2628);
