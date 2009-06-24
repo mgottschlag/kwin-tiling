@@ -168,10 +168,10 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     qSort(m_items.begin(), m_items.end(), ResultItem::compare);
 
     emit matchCountChanged(m.count());
-    arrangeItems();
+    arrangeItems(0);
 }
 
-void ResultScene::arrangeItems()
+void ResultScene::arrangeItems(ResultItem *itemChanged)
 {
     QListIterator<ResultItem*> matchIt(m_items);
     QGraphicsWidget *tab = 0;
@@ -180,16 +180,21 @@ void ResultScene::arrangeItems()
     while (matchIt.hasNext()) {
         ResultItem *item = matchIt.next();
         //kDebug()  << item->name() << item->id() << item->priority() << i;
-        QGraphicsWidget::setTabOrder(tab, item);
-        m_itemsById.insert(item->id(), item);
-        item->setIndex(i);
+
+        if (!itemChanged) {
+            // first time set up
+            QGraphicsWidget::setTabOrder(tab, item);
+            m_itemsById.insert(item->id(), item);
+            item->setIndex(i);
+        }
+
         item->setPos(0, y);
         item->show();
         //kDebug() << item->pos();
         y += item->geometry().height();
 
         // it is vital that focus is set *after* the index
-        if (i == 0 && canMoveItemFocus()) {
+        if (!itemChanged && i == 0 && canMoveItemFocus()) {
             setFocusItem(item);
             item->setSelected(true);
             emit itemHoverEnter(item);
@@ -217,7 +222,7 @@ ResultItem* ResultScene::addQueryMatch(const Plasma::QueryMatch &match, bool use
                                      m_itemMarginRight, m_itemMarginBottom);
             addItem(item);
             item->hide();
-            connect(item, SIGNAL(sizeChanged(ResultItem*)), this, SLOT(arrangeItems()));
+            connect(item, SIGNAL(sizeChanged(ResultItem*)), this, SLOT(arrangeItems(ResultItem*)));
             connect(item, SIGNAL(activated(ResultItem*)), this, SIGNAL(itemActivated(ResultItem*)));
             connect(item, SIGNAL(hoverEnter(ResultItem*)), this, SIGNAL(itemHoverEnter(ResultItem*)));
             connect(item, SIGNAL(hoverLeave(ResultItem*)), this, SIGNAL(itemHoverLeave(ResultItem*)));

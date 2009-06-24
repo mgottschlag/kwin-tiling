@@ -82,7 +82,7 @@ class ResultScene : public QGraphicsScene
     private slots:
         void clearMatches();
         void updateItemMargins();
-        void arrangeItems();
+        void arrangeItems(ResultItem *);
 
     private:
         Plasma::RunnerManager *m_runnerManager;
