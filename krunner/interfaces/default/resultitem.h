@@ -31,7 +31,7 @@ class QGraphicsLinearLayout;
 
 namespace Plasma
 {
-    class PushButton;
+    class ToolButton;
     class RunnerManager;
 } // namespace Plasma
 
@@ -87,7 +87,6 @@ public:
     bool operator<(const ResultItem &other) const;
 
     static const int TEXT_MARGIN = 3;
-    static const int DEFAULT_ICON_SIZE = 32;
     static const int TIMER_INTERVAL = 40;
 
 signals:
@@ -116,7 +115,7 @@ private:
 
 private:
     Plasma::QueryMatch m_match;
-    Plasma::PushButton *m_configButton;
+    Plasma::ToolButton *m_configButton;
 
     QIcon m_icon;
     QBrush m_bgBrush;

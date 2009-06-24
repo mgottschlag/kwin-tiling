@@ -33,6 +33,7 @@
 #include <QtGui/QGraphicsProxyWidget>
 
 #include <KDE/KDebug>
+#include <KDE/KIconLoader>
 #include <KDE/KLineEdit>
 
 #include <Plasma/AbstractRunner>
@@ -57,9 +58,9 @@ ResultScene::ResultScene(Plasma::RunnerManager *manager, QWidget *focusBase, QOb
 
     m_selectionBar = new SelectionBar(0);
     addItem(m_selectionBar);
-    
+
     connect(m_selectionBar, SIGNAL(ensureVisibility(QGraphicsItem *)), this, SIGNAL(ensureVisibility(QGraphicsItem *)));
-    
+
     m_selectionBar->hide();
     updateItemMargins();
 
@@ -77,7 +78,7 @@ ResultScene::~ResultScene()
 QSize ResultScene::minimumSizeHint() const
 {
     QFontMetrics fm(font());
-    return QSize(ResultItem::DEFAULT_ICON_SIZE * 4, (fm.height() * 5) * 3);
+    return QSize(KIconLoader::SizeMedium * 4, (fm.height() * 5) * 3);
 }
 
 void ResultScene::resize(int width, int height)

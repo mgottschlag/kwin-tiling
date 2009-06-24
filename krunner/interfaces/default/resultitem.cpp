@@ -38,10 +38,10 @@
 
 #include <KDebug>
 #include <KIcon>
-#include <KPushButton>
+#include <KIconLoader>
 
 #include <Plasma/PaintUtils>
-#include <Plasma/PushButton>
+#include <Plasma/ToolButton>
 #include <Plasma/Plasma>
 #include <Plasma/RunnerManager>
 
@@ -88,9 +88,12 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
 
     //kDebug() << match.hasConfigurationInterface();
     if (match.hasConfigurationInterface()) {
-        m_configButton = new Plasma::PushButton(this);
-        m_configButton->nativeWidget()->setIcon(KIcon("configure"));
+        m_configButton = new Plasma::ToolButton(this);
+        m_configButton->setIcon(KIcon("configure"));
         m_configButton->show();
+        m_configButton->resize(m_configButton->effectiveSizeHint(Qt::MinimumSize,
+                                                        QSize(KIconLoader::SizeSmall,
+                                                              KIconLoader::SizeSmall)));
         connect(m_configButton, SIGNAL(clicked()), this, SLOT(showConfig()));
     } else {
         delete m_configButton;
@@ -185,7 +188,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->setClipping(false);
 
     QSize iconSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium);
-    QRect iRect = QStyle::alignedRect(option->direction, Qt::AlignLeft,  iconSize, contentsRect().toRect());
+    QRect iRect = QStyle::alignedRect(option->direction, Qt::AlignLeft, iconSize, contentsRect().toRect());
 
     painter->setRenderHint(QPainter::Antialiasing);
     bool drawMixed = false;
@@ -421,9 +424,9 @@ void ResultItem::calculateSize()
 
     QFontMetrics fm(font());
     const int maxHeight = fm.height() * 4;
-    const int minHeight = DEFAULT_ICON_SIZE;
+    const int minHeight = KIconLoader::SizeMedium;
 
-    textBounds.adjust(DEFAULT_ICON_SIZE + TEXT_MARGIN, 0, 0, 0);
+    textBounds.adjust(minHeight + TEXT_MARGIN, 0, 0, 0);
 
     if (maxHeight > textBounds.height()) {
         textBounds.setHeight(maxHeight);
@@ -444,10 +447,10 @@ void ResultItem::calculateSize()
         QSizeF s = m_configButton->size();
 
         if (QApplication::layoutDirection() == Qt::RightToLeft) {
-            m_configButton->setPos(0, newSize.height() - s.height());
+            m_configButton->setPos(left, newSize.height() - s.height() - bottom);
         } else {
-            m_configButton->setPos(newSize.width() - s.width(),
-                                   newSize.height() - s.height());
+            m_configButton->setPos(newSize.width() - s.width() - right,
+                                   newSize.height() - s.height() - bottom);
         }
     }
 }
