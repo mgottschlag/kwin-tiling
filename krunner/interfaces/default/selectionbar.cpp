@@ -70,7 +70,9 @@ void SelectionBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 void SelectionBar::animateAndCenter(qreal t)
 {
     setPos(m_animStartRect.topLeft()*(1-t)+m_animEndRect.topLeft()*t);
-    if (m_target && !m_target->mouseHovered()) emit ensureVisibility(this);
+    if (m_target && !m_target->mouseHovered()) {
+        emit ensureVisibility(this);
+    }
 }
 
 void SelectionBar::acquireTarget()
