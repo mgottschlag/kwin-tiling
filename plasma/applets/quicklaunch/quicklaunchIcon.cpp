@@ -68,17 +68,12 @@ void QuicklaunchIcon::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 {
     painter->setClipRect(option->rect);
     QRect rect = option->rect;
-    rect.setSize(QSize(m_iconSize, m_iconSize));
-    //rect.moveCenter(option->rect.center());
-    rect.moveCenter(QPoint(option->rect.width() / 2, option->rect.height() / 2));
-    //rect.setLeft((option->rect.width() - m_iconSize) / 2);
-    //rect.setTop((option->rect.height() - m_iconSize) / 2);
-    //QStyleOptionGraphicsItem opt = *option;
-    //opt.rect = rect;
-    //kDebug() << "Paint to:" << rect << "Original rect was:" << option->rect;
-
-    painter->drawPixmap(rect, icon().pixmap(m_iconSize));
-    //IconWidget::paint(painter, &opt, widget);
+    // the magic 2 is to make up for the 1px border around Plasma::IconWidgets
+    rect.setSize(QSize(m_iconSize + 2, m_iconSize + 2));
+    rect.moveCenter(option->rect.center());
+    QStyleOptionGraphicsItem opt = *option;
+    opt.rect = rect;
+    IconWidget::paint(painter, &opt, widget);
 }
 
 void QuicklaunchIcon::execute()
