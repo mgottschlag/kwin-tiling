@@ -69,6 +69,7 @@ class ResultScene : public QGraphicsScene
 
     protected:
         void keyPressEvent(QKeyEvent * keyEvent);
+        void focusInEvent(QFocusEvent *focusEvent);
         void focusOutEvent(QFocusEvent *focusEvent);
 
     private:
