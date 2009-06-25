@@ -1,5 +1,5 @@
 [Desktop Entry]
-Exec=kcmshell4 kde-clock.desktop
+Exec=kcmshell4 clock
 Icon=preferences-system-time
 Type=Service
 X-KDE-ServiceTypes=KCModule
