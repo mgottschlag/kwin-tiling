@@ -90,7 +90,7 @@ typing <command>kcmshell4 keyboard_layout</command> from the terminal.</para>
 &kxkb; configuration consists of three tabs: <guilabel>Layout</guilabel>, <guilabel>Switching Options</guilabel>, and 
 <guilabel>Advanced</guilabel>. The first one defines layouts you want to use and their options 
 (variant, display label etc.), second defines how the layout switching is done, 
-including which shortcut is used and wether the layout should be remembered for
+including which shortcut is used and whether the layout should be remembered for
 each window, application &etc;. Third tab allows to set options for Xkb extension.
 These options are properties of X.org and are not handled in any way by &kxkb; - 
 it just sets them up.
