@@ -397,13 +397,13 @@ void AppletIconWidget::updateApplet(PlasmaAppletItem *appletItem)
 
 void AppletIconWidget::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    //hoverEnterEvent(event);
+    Plasma::IconWidget::hoverEnterEvent(event);
     emit(hoverEnter(this));
 }
 
 void AppletIconWidget::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-   // hoverLeaveEvent(event);
+    Plasma::IconWidget::hoverLeaveEvent(event);
     emit(hoverLeave(this));
 }
 
