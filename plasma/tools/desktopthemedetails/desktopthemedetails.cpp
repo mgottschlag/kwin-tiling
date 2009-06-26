@@ -93,7 +93,7 @@ void ThemeModel::reload()
 
     // get all desktop themes
     KStandardDirs dirs;
-    QStringList themes = dirs.findAllResources("data", "desktoptheme/*/metadata.desktop",
+    const QStringList themes = dirs.findAllResources("data", "desktoptheme/*/metadata.desktop",
                                                KStandardDirs::NoDuplicates);
     foreach (const QString &theme, themes) {
         int themeSepIndex = theme.lastIndexOf('/', -1);
@@ -106,13 +106,13 @@ void ThemeModel::reload()
         if (name.isEmpty()) {
             name = packageName;
         }
-        QString comment = df.readComment();
-        QString author = df.desktopGroup().readEntry("X-KDE-PluginInfo-Author",QString());
-        QString version = df.desktopGroup().readEntry("X-KDE-PluginInfo-Version",QString());
+        const QString comment = df.readComment();
+        const QString author = df.desktopGroup().readEntry("X-KDE-PluginInfo-Author",QString());
+        const QString version = df.desktopGroup().readEntry("X-KDE-PluginInfo-Version",QString());
 
 
         Plasma::FrameSvg *svg = new Plasma::FrameSvg(this);
-        QString svgFile = themeRoot + "/widgets/background.svg";
+        const QString svgFile = themeRoot + "/widgets/background.svg";
         if (QFile::exists(svgFile)) {
             svg->setImagePath(svgFile);
         } else {
@@ -235,7 +235,7 @@ void ThemeDelegate::paint(QPainter *painter,
     painter->save();
     QFont font = painter->font();
     font.setWeight(QFont::Bold);
-    QString colorFile = KStandardDirs::locate("data", "desktoptheme/" + package + "/colors");
+    const QString colorFile = KStandardDirs::locate("data", "desktoptheme/" + package + "/colors");
     if (!colorFile.isEmpty()) {
         KSharedConfigPtr colors = KSharedConfig::openConfig(colorFile);
         KColorScheme colorScheme(QPalette::Active, KColorScheme::Window, colors);
@@ -343,7 +343,7 @@ void DesktopThemeDetails::reloadConfig()
     // Theme
     //QString theme = Plasma::Theme::defaultTheme()->themeName();
     KConfigGroup cfg = KConfigGroup(KSharedConfig::openConfig("plasmarc"), "Theme");
-    QString theme = cfg.readEntry("name", "default");
+    const QString theme = cfg.readEntry("name", "default");
     m_theme->setCurrentIndex(m_themeModel->indexOf(theme));
 
 }
@@ -413,7 +413,7 @@ void DesktopThemeDetails::save()
 
 
             //Delete item files at destination before copying (possibly there from base theme copy)
-            QStringList deleteFiles = dirs.findAllResources("data", "desktoptheme/" + themeRoot + '/' + m_itemPaths[i.key()] + '*',
+            const QStringList deleteFiles = dirs.findAllResources("data", "desktoptheme/" + themeRoot + '/' + m_itemPaths[i.key()] + '*',
                                             KStandardDirs::NoDuplicates);
             for (int j = 0; j < deleteFiles.size(); ++j) {
                 KIO::DeleteJob *dj = KIO::del(KUrl(deleteFiles.at(j)), KIO::HideProgressInfo);
@@ -473,8 +473,8 @@ void DesktopThemeDetails::removeTheme()
 {
     bool removeTheme = true;
     KConfigGroup cfg = KConfigGroup(KSharedConfig::openConfig("plasmarc"), "Theme");
-    QString activeTheme = cfg.readEntry("name", "default");
-    QString theme = m_theme->itemData(m_theme->currentIndex(),
+    const QString activeTheme = cfg.readEntry("name", "default");
+    const QString theme = m_theme->itemData(m_theme->currentIndex(),
                                       ThemeModel::PackageNameRole).toString();
     if (m_themeCustomized) {
         if(KMessageBox::questionYesNo(this, i18n("Theme items have been changed.  Do you still wish remove the \"%1\" theme?", m_theme->currentText()), i18n("Remove Desktop Theme")) == KMessageBox::No) {
@@ -507,7 +507,7 @@ void DesktopThemeDetails::removeTheme()
 
 void DesktopThemeDetails::exportTheme()
 {
-    QString theme = m_theme->itemData(m_theme->currentIndex(),
+    const QString theme = m_theme->itemData(m_theme->currentIndex(),
                                       ThemeModel::PackageNameRole).toString();
     if (m_themeCustomized ||
         (isCustomized(theme) && m_newThemeName->text() == "")) {
@@ -516,7 +516,7 @@ void DesktopThemeDetails::exportTheme()
         QString themeStoragePath = theme;
 
         KStandardDirs dirs;
-        QString themePath = dirs.findResource("data", "desktoptheme/" + themeStoragePath + "/metadata.desktop");
+        const QString themePath = dirs.findResource("data", "desktoptheme/" + themeStoragePath + "/metadata.desktop");
         if (!themePath.isEmpty()){
             QString expFileName = KFileDialog::getSaveFileName(KUrl(), "*.zip", this, i18n("Export theme to file"));
             if (!expFileName.endsWith(".zip"))
