@@ -138,6 +138,7 @@ public Q_SLOTS:
     virtual void activate() = 0;
     void toolTipAboutToShow();
     void toolTipHidden();
+    void activateWindow(WId id, Qt::MouseButtons buttons);
 
 protected:
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);

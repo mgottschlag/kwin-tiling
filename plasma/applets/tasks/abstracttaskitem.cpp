@@ -1,3 +1,5 @@
+#ifndef ABSTRACTTASKITEM_CPP
+#define ABSTRACTTASKITEM_CPP
 /***************************************************************************
  *   Copyright (C) 2007 by Robert Knight <robertknight@gmail.com>          *
  *   Copyright (C) 2008 by Alexis Ménard <darktears31@gmail.com>           *
@@ -248,6 +250,9 @@ void AbstractTaskItem::toolTipAboutToShow()
     if (m_showTooltip) {
         m_showingTooltip = true;
         updateToolTip();
+        connect(Plasma::ToolTipManager::self(),
+                SIGNAL(windowPreviewActivated(WId,Qt::MouseButtons,Qt::KeyboardModifiers,QPoint)),
+                this, SLOT(activateWindow(WId,Qt::MouseButtons)));
     } else {
         Plasma::ToolTipManager::self()->clearContent(this);
     }
@@ -257,6 +262,21 @@ void AbstractTaskItem::toolTipHidden()
 {
     m_showingTooltip = false;
     Plasma::ToolTipManager::self()->clearContent(this);
+    disconnect(Plasma::ToolTipManager::self(),
+               SIGNAL(windowPreviewActivated(WId,Qt::MouseButtons,Qt::KeyboardModifiers,QPoint)),
+               this, SLOT(activateWindow(WId,Qt::MouseButtons)));
+}
+
+void AbstractTaskItem::activateWindow(WId id, Qt::MouseButtons buttons)
+{
+    if (buttons & Qt::LeftButton) {
+        if (parentGroup()) {
+            AbstractTaskItem *item = parentGroup()->taskItemForWId(id);
+            if (item) {
+                item->activate();
+            }
+        }
+    }
 }
 
 void AbstractTaskItem::queueUpdate()
@@ -1002,3 +1022,4 @@ TaskManager::AbstractGroupableItem * AbstractTaskItem::abstractItem()
 }
 
 #include "abstracttaskitem.moc"
+#endif // ABSTRACTTASKITEM_CPP

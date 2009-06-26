@@ -197,6 +197,7 @@ void WindowTaskItem::updateToolTip()
                                 i18nc("Which virtual desktop a window is currently on", "On %1",
                                       KWindowSystem::desktopName(m_task->desktop())), p);
     data.setWindowToPreview(m_task->task()->window());
+    data.setClickable(true);
 
     Plasma::ToolTipManager::self()->setContent(this, data);
 }
