@@ -296,7 +296,8 @@ void Image::slotRemoveDir()
 void Image::updateDirs()
 {
     m_dirs.clear();
-    for (int i = 0; i < m_uiSlideshow.m_dirlist->count(); i++) {
+    const int dirCount = m_uiSlideshow.m_dirlist->count();
+    for (int i = 0; i < dirCount; ++i) {
         m_dirs.append(m_uiSlideshow.m_dirlist->item(i)->text());
     }
 
@@ -490,7 +491,7 @@ void Image::wallpaperBrowseCompleted()
 {
     Q_ASSERT(m_model);
 
-    QString wallpaper = m_dialog->selectedFile();
+    const QString wallpaper = m_dialog->selectedFile();
 
     if (wallpaper.isEmpty()) {
         return;

@@ -62,7 +62,7 @@ void BackgroundListModel::reload()
 
 void BackgroundListModel::reload(const QStringList &selected)
 {
-    QStringList dirs = KGlobal::dirs()->findDirs("wallpaper", "");
+    const QStringList dirs = KGlobal::dirs()->findDirs("wallpaper", "");
     QList<Plasma::Package *> tmp;
 
     if (!m_packages.isEmpty()) {
@@ -79,7 +79,7 @@ void BackgroundListModel::reload(const QStringList &selected)
     }
 
     {
-        QStringList backgrounds = findAllBackgrounds(m_structureParent, this, dirs);
+        const QStringList backgrounds = findAllBackgrounds(m_structureParent, this, dirs);
         foreach (const QString &background, backgrounds) {
             tmp << new Plasma::Package(background, Plasma::Wallpaper::packageStructure(m_structureParent));
         }
@@ -149,7 +149,7 @@ QSize BackgroundListModel::bestSize(Plasma::Package *package) const
         return m_sizeCache.value(package);
     }
 
-    QString image = package->filePath("preferred");
+    const QString image = package->filePath("preferred");
     if (image.isEmpty()) {
         return QSize();
     }
@@ -316,7 +316,7 @@ void BackgroundFinder::start()
         QString path = m_paths.takeLast();
         //kDebug() << "doing" << path;
         dir.setPath(path);
-        QFileInfoList files = dir.entryInfoList();
+        const QFileInfoList files = dir.entryInfoList();
         foreach (const QFileInfo &wp, files) {
             if (wp.isDir()) {
                 //kDebug() << "directory" << wp.fileName() << validPackages.contains(wp.fileName());
