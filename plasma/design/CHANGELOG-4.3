@@ -16,7 +16,9 @@ libplasma
         * Defaults changed
         * NEW: Config dialog
     * Theme
-        * Themes can now set UseNativeWidgetStyle=true in the [Settings] group of the metadata.desktop file and Plasma will default to native (QStyle) painting for all widgets
+        * Themes can now define options in the [Settings] group of the metadata.desktop file:
+            * UseNativeWidgetStyle=true and Plasma will default to native (QStyle) painting for all widgets
+            * FallbackTheme=<name> to define which fallback theme to define which theme to use as the first fallback for missing elements
         * Backgrounds can now have variable backgrounds
         * Ability to list all known themes
     * Extenders
