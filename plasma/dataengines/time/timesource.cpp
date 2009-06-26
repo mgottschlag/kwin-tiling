@@ -47,9 +47,14 @@ TimeSource::TimeSource(const QString &name, QObject *parent)
       m_solarPosition(false)
 {
     setObjectName(name);
-    QString timezone = parseName(name);
+    setTimeZone(parseName(name));
+    updateTime();
+}
 
-    if (timezone == I18N_NOOP("Local")) { 
+void TimeSource::setTimeZone(const QString &tz)
+{
+    QString timezone = tz;
+    if (timezone == I18N_NOOP("Local")) {
         m_tz = KSystemTimeZones::local();
         timezone = m_tz.name();
     } else {
@@ -71,8 +76,6 @@ TimeSource::TimeSource(const QString &name, QObject *parent)
         setData(I18N_NOOP("Timezone Continent"), tzParts.value(0));
         setData(I18N_NOOP("Timezone City"), tzParts.value(1));
     }
-
-    updateTime();
 }
 
 void TimeSource::updateTime()
