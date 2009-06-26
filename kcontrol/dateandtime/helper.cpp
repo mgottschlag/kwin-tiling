@@ -170,15 +170,6 @@ static int Tzone_save_set( const QString& selectedzone )
         }
         else
         {
-            QFile fTimezoneFile("/etc/timezone");
-
-            if (fTimezoneFile.open(QIODevice::WriteOnly | QIODevice::Truncate) )
-            {
-                QTextStream t(&fTimezoneFile);
-                t << selectedzone;
-                fTimezoneFile.close();
-            }
-
             if (!QFile::remove("/etc/localtime"))
             {
                 ret |= ERROR_TZONE;
@@ -186,6 +177,15 @@ static int Tzone_save_set( const QString& selectedzone )
             else
                 if (!QFile::copy(tz,"/etc/localtime"))
                     ret |= ERROR_TZONE;
+        }
+
+        QFile fTimezoneFile("/etc/timezone");
+
+        if (fTimezoneFile.exists() && fTimezoneFile.open(QIODevice::WriteOnly | QIODevice::Truncate) )
+        {
+            QTextStream t(&fTimezoneFile);
+            t << selectedzone;
+            fTimezoneFile.close();
         }
 
         QString val = ':' + tz;
