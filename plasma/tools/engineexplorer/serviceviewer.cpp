@@ -88,7 +88,7 @@ void ServiceViewer::updateOperations()
     m_operationDescription->clear();
 
     if (m_service) {
-        QStringList operations = m_service->operationNames();
+        const QStringList operations = m_service->operationNames();
 
         if (!operations.isEmpty()) {
             enable = true;
@@ -142,7 +142,7 @@ void ServiceViewer::operationSelected(const QString &operation)
 
     KConfigGroup desc = m_service->operationDescription(operation);
     int i = 0;
-    QStringList keys = desc.keyList();
+    const QStringList keys = desc.keyList();
     m_operationDescription->setRowCount(keys.count());
     foreach (const QString &key, keys) {
         QTableWidgetItem *item = new QTableWidgetItem(key);

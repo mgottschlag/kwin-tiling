@@ -131,7 +131,7 @@ void EngineExplorer::dataUpdated(const QString& source, const Plasma::DataEngine
 {
     QList<QStandardItem*> items = m_dataModel->findItems(source, 0);
 
-    if (items.count() < 1) {
+    if (!items.isEmpty()) {
         return;
     }
 
@@ -184,7 +184,7 @@ void EngineExplorer::showEngine(const QString& name)
         return;
     }
 
-    QStringList sources = m_engine->sources();
+    const QStringList sources = m_engine->sources();
 
     //kDebug() << "showing engine " << m_engine->objectName();
     //kDebug() << "we have " << sources.count() << " data sources";
@@ -268,7 +268,7 @@ void EngineExplorer::showDataContextMenu(const QPoint &point)
             index = m_dataModel->index(index.row(), 0);
         }
 
-        QString source = index.data().toString();
+        const QString source = index.data().toString();
         KMenu menu;
         menu.addTitle(source);
         QAction *service = menu.addAction(i18n("Get associated service"));
