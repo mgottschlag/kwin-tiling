@@ -60,6 +60,7 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
       m_actions(shortcutActions(this))
 {
     setAttribute(Qt::WA_TranslucentBackground, false);
+    setCacheMode(QGraphicsView::CacheNone);
 
     /*FIXME: Work around for a (maybe) Qt bug:
      * QApplication::focusWidget() can't track focus change in QGraphicsProxyWidget
@@ -475,6 +476,11 @@ void DesktopView::wheelEvent(QWheelEvent* event)
 // CompositionMode_Source.
 void DesktopView::drawBackground(QPainter *painter, const QRectF &rect)
 {
+    Plasma::ZoomLevel zoomLevel = PlasmaApp::self()->desktopZoomLevel();
+    if (zoomLevel == Plasma::DesktopZoom) {
+        return;
+    }
+
     const QPainter::CompositionMode savedMode = painter->compositionMode();
     const QBrush brush = backgroundBrush();
 
@@ -491,17 +497,18 @@ void DesktopView::drawBackground(QPainter *painter, const QRectF &rect)
         painter->setCompositionMode(QPainter::CompositionMode_Source);
         painter->drawTiledPixmap(r, texture);
         painter->setCompositionMode(savedMode);
-        return;
+        break;
     }
 
     case Qt::SolidPattern:
         painter->setCompositionMode(QPainter::CompositionMode_Source);
         painter->fillRect(rect.toAlignedRect(), brush.color());
         painter->setCompositionMode(savedMode);
-        return;
+        break;
 
     default:
         QGraphicsView::drawBackground(painter, rect);
+        break;
     }
 }
 
