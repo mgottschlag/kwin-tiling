@@ -131,7 +131,7 @@ void EngineExplorer::dataUpdated(const QString& source, const Plasma::DataEngine
 {
     QList<QStandardItem*> items = m_dataModel->findItems(source, 0);
 
-    if (!items.isEmpty()) {
+    if (items.isEmpty()) {
         return;
     }
 
