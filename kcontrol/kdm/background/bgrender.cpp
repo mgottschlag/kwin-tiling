@@ -35,7 +35,6 @@
 #include <ktemporaryfile.h>
 #include <kcursor.h>
 #include <kfilemetainfo.h>
-#include <kconfig.h>
 #include <kconfiggroup.h>
 #include <ksvgrenderer.h>
 #include <kmacroexpander.h>

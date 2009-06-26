@@ -78,7 +78,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kprocess.h>
 #include <kdebug.h>
 #include <kshell.h>
-#include <kprocess.h>
 
 #include "server.moc"
 
