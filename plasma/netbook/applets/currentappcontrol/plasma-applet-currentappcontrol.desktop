@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Current Application Control
 Name[et]=Aktiivne rakenduse juhtimine
+Name[fr]=Contrôle de l'application actuelle
 Name[km]=វត្ថុ​បញ្ជា​កម្មវិធី​បច្ចុប្បន្ន
 Name[pt]=Controlo da Aplicação Actual
 Name[pt_BR]=Controlo da Aplicação Actual
@@ -10,6 +11,7 @@ Name[uk]=Керування поточною програмою
 Name[x-test]=xxCurrent Application Controlxx
 Comment=Controls for the active window
 Comment[et]=Aktiivse akna juhtimine
+Comment[fr]=Contrôles pour la fenêtre active
 Comment[km]=វត្ថុ​បញ្ជា​សម្រាប់​បង្អួច​សកម្ម
 Comment[pt]=Controlos para a janela activa
 Comment[pt_BR]=Controlos para a janela activa

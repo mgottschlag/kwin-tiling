@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Search Box
 Name[et]=Otsingukast
+Name[fr]=Boîte de recherche
 Name[km]=ប្រអប់​ស្វែងរក
 Name[pt]=Campo de Pesquisa
 Name[pt_BR]=Campo de Pesquisa
@@ -10,6 +11,7 @@ Name[uk]=Панель пошуку
 Name[x-test]=xxSearch Boxxx
 Comment=Search Box for a given RunnerManager
 Comment[et]=Käivitamishalduri otsingukast
+Comment[fr]=Boîte de recherche pour un RunnerManager donné
 Comment[km]=ប្រអប់​ស្វែងរក​សម្រាប់​កម្មវិធី​គ្រប់គ្រង​កម្មវិធី​រត់​ដែល​បាន​ផ្ដល់
 Comment[pt]=Campo de pesquisa de um dado gestor de execução
 Comment[pt_BR]=Campo de pesquisa de um dado gestor de execução
