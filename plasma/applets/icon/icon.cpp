@@ -76,26 +76,17 @@ void IconApplet::init()
 
     KConfigGroup cg = config();
 
-    if (!m_url.isValid()) {
+    if (m_url.isValid()) {
+        // we got this in via the ctor, e.g. as a result of a drop
+        cg.writeEntry("Url", m_url);
+        emit configNeedsSaving();
+    } else {
         setUrl(cg.readEntry("Url", m_url));
     }
+
     setDisplayLines(2);
-
-    installSceneEventFilter(m_icon);
     registerAsDragHandle(m_icon);
-    Plasma::ToolTipManager::self()->registerWidget(m_icon);
-
     setAspectRatioMode(Plasma::ConstrainedSquare);
-
-    // we do this right away since we may have our config
-    // read shortly by the containment. usually applets don't need
-    // this, but desktop icons requires some hacks.
-    //
-    // in particular, if we were created with a url passed into via
-    // the args parameter in the ctor, then there won't be an entry
-    // in our config, and desktop icons support banks on the fact
-    // that there will be
-    cg.writeEntry("Url", m_url);
 }
 
 IconApplet::~IconApplet()
@@ -107,6 +98,13 @@ IconApplet::~IconApplet()
 void IconApplet::saveState(KConfigGroup &cg) const
 {
     cg.writeEntry("Url", m_url);
+
+    Plasma::FormFactor f = formFactor();
+    if (f == Plasma::Vertical || f == Plasma::Horizontal) {
+        cg.readEntry("LastFreeSize", m_lastFreeSize);
+    } else {
+        cg.readEntry("LastFreeSize", size());
+    }
 }
 
 void IconApplet::setUrl(const KUrl& url)
@@ -125,19 +123,18 @@ void IconApplet::setUrl(const KUrl& url)
         m_icon->setIcon(f.readIcon());
 
         m_genericName = f.readGenericName();
-        
-        delete m_watchDestopFile;
 
+        delete m_watchDestopFile;
         m_watchDestopFile = new KDirWatch;
         m_watchDestopFile->addFile(m_url.toLocalFile());
         connect(m_watchDestopFile, SIGNAL(dirty(const QString &)), this, SLOT(updateDesktopFile()));
     } else {
         m_text = m_url.fileName();
 
-        if(m_text.isEmpty() && m_url.isLocalFile()) {
+        if (m_text.isEmpty() && m_url.isLocalFile()) {
             //handle special case like the / folder
             m_text = m_url.directory();
-        }else if(m_text.isEmpty()) { 
+        } else if(m_text.isEmpty()) { 
             //if we can't find a name, at least take the protocol name, like trash, remote etc.
             m_text = m_url.protocol();
         }
@@ -149,7 +146,7 @@ void IconApplet::setUrl(const KUrl& url)
         m_icon->setIcon("unknown");
     }
 
-    kDebug() << "url was" << url << "and is" << m_url;
+    //kDebug() << "url was" << url << "and is" << m_url;
 }
 
 void IconApplet::updateDesktopFile()
@@ -173,12 +170,15 @@ void IconApplet::constraintsEvent(Plasma::Constraints constraints)
         disconnect(m_icon, SIGNAL(activated()), this, SLOT(openUrl()));
         disconnect(m_icon, SIGNAL(clicked()), this, SLOT(openUrl()));
 
-        if (formFactor() == Plasma::Planar ||
-            formFactor() == Plasma::MediaCenter) {
+        if (formFactor() == Plasma::Planar || formFactor() == Plasma::MediaCenter) {
             connect(m_icon, SIGNAL(activated()), this, SLOT(openUrl()));
+
+            if (!m_lastFreeSize.isEmpty()) {
+                resize(m_lastFreeSize);
+            }
+
             m_icon->setText(m_text);
-            //FIXME TOOL TIP MANAGER
-            //m_icon->setToolTip(Plasma::ToolTipData());
+            Plasma::ToolTipManager::self()->unregisterWidget(m_icon);
             m_icon->setDrawBackground(true);
         } else {
             //in the panel the icon behaves like a button
@@ -187,7 +187,21 @@ void IconApplet::constraintsEvent(Plasma::Constraints constraints)
             Plasma::ToolTipContent data(m_text, m_genericName, m_icon->icon());
             Plasma::ToolTipManager::self()->setContent(m_icon, data);
             m_icon->setDrawBackground(false);
+
+            if (!m_lastFreeSize.isEmpty()) {
+                config().writeEntry("LastFreeSize", size().toSize());
+                emit configNeedsSaving();
+            }
         }
+    }
+
+    if (constraints & Plasma::SizeConstraint && !m_lastFreeSize.isEmpty() &&
+        (formFactor() == Plasma::Planar || formFactor() == Plasma::MediaCenter)) {
+        m_lastFreeSize = size().toSize();
+    }
+
+    if (constraints & Plasma::StartupCompletedConstraint) {
+        m_lastFreeSize = config().readEntry("LastFreeSize", size().toSize());
     }
 }
 
