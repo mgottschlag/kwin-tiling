@@ -60,7 +60,7 @@ SolidDeviceEngine::SolidDeviceEngine(QObject* parent, const QVariantList& args)
     temperature = new HddTemp(this);
     setMinimumPollingInterval(1000);
     connect(this, SIGNAL(sourceRemoved(const QString&)),
-            this, SLOT(sourceRemoved(const QString&)));
+            this, SLOT(sourceWasRemoved(const QString&)));
 }
 
 SolidDeviceEngine::~SolidDeviceEngine()
@@ -69,9 +69,10 @@ SolidDeviceEngine::~SolidDeviceEngine()
 
 void SolidDeviceEngine::listenForNewDevices()
 {
-    if(notifier) {
+    if (notifier) {
         return;
     }
+
     //detect when new devices are added
     notifier = Solid::DeviceNotifier::instance();
     connect(notifier, SIGNAL(deviceAdded(const QString&)),
@@ -105,7 +106,7 @@ bool SolidDeviceEngine::sourceRequestEvent(const QString &name)
     return false;
 }
 
-void SolidDeviceEngine::sourceRemoved(const QString &source)
+void SolidDeviceEngine::sourceWasRemoved(const QString &source)
 {
     devicemap.remove(source);
     predicatemap.remove(source);
