@@ -95,33 +95,31 @@ void NotifierDialog::show()
 QStandardItem* NotifierDialog::searchOrCreateDeviceCategory(const QString &categoryName)
 {
     int rowCount = m_hotplugModel->rowCount();
-    if(rowCount > 0)
-    {
+    if (rowCount > 0) {
         int i = 0;
-        while (i<rowCount)
-        {
+        while (i < rowCount) {
             QModelIndex index = m_hotplugModel->index(i, 0);
             QString itemUdi = m_hotplugModel->data(index, SolidUdiRole).toString();
             QStandardItem *currentItem = m_hotplugModel->itemFromIndex(index);
-            if(currentItem)
-            {
+            if (currentItem) {
                 QString currentItemName = currentItem->text();
-                if (currentItemName == categoryName)
-                {
+                if (currentItemName == categoryName) {
                     //the category is find... we have to return the pointer on this category
                     return m_hotplugModel->itemFromIndex(index);
                 }
             }
-            i++;
+
+            ++i;
         }
     }
+
     //insert a new category for device if not find and return the pointer
     QStandardItem *newCategory = new QStandardItem(QString(categoryName));
-    m_hotplugModel->setData(newCategory->index(),categoryName,Qt::DisplayRole);
-    m_rootItem->insertRow(0,newCategory);
+    m_hotplugModel->setData(newCategory->index(), categoryName, Qt::DisplayRole);
+    m_rootItem->insertRow(0, newCategory);
     m_hotplugModel->setItem(0, 1, NULL);
-    m_hotplugModel->setHeaderData(0, Qt::Horizontal,QString(""),Qt::EditRole);
-    m_hotplugModel->setHeaderData(1, Qt::Horizontal,QString(""),Qt::EditRole);
+    m_hotplugModel->setHeaderData(0, Qt::Horizontal, QString(""), Qt::EditRole);
+    m_hotplugModel->setHeaderData(1, Qt::Horizontal, QString(""), Qt::EditRole);
     return newCategory;
 }
 
@@ -138,23 +136,18 @@ void NotifierDialog::insertDevice(const QString &name)
 
     //search or create the category for inserted device
     QString udi = item->data(SolidUdiRole).toString();
-    if(!udi.isNull()) {
+    if (!udi.isNull()) {
         Solid::Device device(udi);
         QString categoryOfInsertedDevice = getCategoryNameOfDevice(device);
         QStandardItem *currentCategory = searchOrCreateDeviceCategory(categoryOfInsertedDevice);
-        if(currentCategory)
-        {
+        if(currentCategory) {
             currentCategory->insertRow(0,item);
             currentCategory->setChild(0, 1, actionItem);
-        }
-        else
-        {
+        } else {
             delete item;
             delete actionItem;
         }
-    }
-    else
-    {
+    } else {
         delete item;
         delete actionItem;
     }
@@ -168,15 +161,17 @@ void NotifierDialog::setUnMount(bool unmount, const QString &name)
     if (!index.isValid()) {
         return;
     }
+
     QStandardItem *currentItem = m_hotplugModel->itemFromIndex(index);
     QStandardItem *childAction = currentItem->parent()->child(currentItem->row(), 1);
     QVariant icon;
+
     if (unmount) {
         icon = KIcon("media-eject");
-    }
-    else {
+    } else {
         icon = KIcon();
     }
+
     m_hotplugModel->setData(childAction->index(),icon,Qt::DecorationRole);
 }
 
@@ -186,6 +181,7 @@ void NotifierDialog::setDeviceData(const QString &name, QVariant data, int role)
     if (!index.isValid()) {
         return;
     }
+
     if (role == Qt::DecorationRole) {
         QStandardItem *device = m_hotplugModel->itemFromIndex(index);
         QStandardItem *category = device->parent();
@@ -194,6 +190,7 @@ void NotifierDialog::setDeviceData(const QString &name, QVariant data, int role)
            m_hotplugModel->setData(parentIndex,data,role);
         }
     }
+
     m_hotplugModel->setData(index,data,role);
 }
 
@@ -202,8 +199,7 @@ QVariant NotifierDialog::getDeviceData(const QString &name, int role)
     QModelIndex index = indexForUdi(name);
     if (!index.isValid()) {
         return QVariant();
-    }
-    else {
+    } else {
         return index.data(role);
     }
 }
@@ -253,10 +249,10 @@ void NotifierDialog::buildDialog()
     QVBoxLayout *l_layout = new QVBoxLayout(m_widget);
     l_layout->setSpacing(0);
     l_layout->setMargin(0);
-    
+
     m_label = new QLabel(m_widget);
     updateColors();
-    
+
     QLabel *icon = new QLabel(m_widget);
     icon->setPixmap(KIcon("emblem-mounted").pixmap(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
 
@@ -360,7 +356,7 @@ void NotifierDialog::itemClicked(const QModelIndex &index)
 
         if (device.is<Solid::OpticalDisc>()) {
             Solid::OpticalDrive *drive = device.parent().as<Solid::OpticalDrive>();
-            if (drive!=0) {
+            if (drive) {
                 connect(drive, SIGNAL(ejectDone(Solid::ErrorType, QVariant, const QString &)),
                         this, SLOT(storageEjectDone(Solid::ErrorType, QVariant)));
                 drive->eject();
