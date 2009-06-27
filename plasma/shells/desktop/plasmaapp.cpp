@@ -1011,7 +1011,6 @@ void PlasmaApp::setPerVirtualDesktopViews(bool perDesktopViews)
                 this, SLOT(checkVirtualDesktopViews(int)));
         checkVirtualDesktopViews(KWindowSystem::numberOfDesktops());
     } else {
-        int currentDesktop = KWindowSystem::currentDesktop();
         QList<DesktopView *> perScreenViews;
         foreach (DesktopView *view, m_desktops) {
             if (view->containment()) {
