@@ -1,5 +1,5 @@
 [Desktop Entry]
-X-KDE-Solid-Predicate=[[ StorageVolume.ignored == false AND StorageVolume.usage == 'FileSystem' ] OR [ IS StorageAccess AND StorageDrive.driveType == 'Floppy' ]]
+X-KDE-Solid-Predicate=[ [ StorageVolume.ignored == false AND [ StorageVolume.usage == 'FileSystem' OR StorageVolume.usage == 'Encrypted' ] ] OR [ IS StorageAccess AND StorageDrive.driveType == 'Floppy' ] ]
 Type=Service
 Actions=open;
 
