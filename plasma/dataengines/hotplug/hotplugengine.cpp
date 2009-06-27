@@ -30,24 +30,12 @@
 #include <solid/devicenotifier.h>
 #include <solid/device.h>
 #include <solid/deviceinterface.h>
-#include <solid/predicate.h>
 
 
 
 HotplugEngine::HotplugEngine(QObject* parent, const QVariantList& args)
     : Plasma::DataEngine(parent, args)
 {
-    Q_UNUSED(args)
-    files = KGlobal::dirs()->findAllResources("data", "solid/actions/");
-
-    foreach (const Solid::Device &dev, Solid::Device::allDevices()) {
-        onDeviceAdded(dev.udi());
-    }
-
-    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString &)),
-            this, SLOT(onDeviceAdded(const QString &)));
-    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString &)),
-            this, SLOT(onDeviceRemoved(const QString &)));
 }
 
 HotplugEngine::~HotplugEngine()
@@ -55,41 +43,73 @@ HotplugEngine::~HotplugEngine()
 
 }
 
-void HotplugEngine::onDeviceAdded(const QString &udi)
+void HotplugEngine::init()
 {
-    bool new_device = false;
-    Solid::Device device(udi);
+    findPredicates();
+    const QString query("[ Is StorageAccess OR [ Is StorageDrive OR [ Is StorageVolume OR [ Is OpticalDrive OR [ Is PortableMediaPlayer OR [ Is SmartCardReader OR Is Camera ] ] ] ] ] ]");
+    foreach (const Solid::Device &dev, Solid::Device::listFromQuery(query)) {
+        onDeviceAdded(dev.udi());
+    }
+    m_predicates.clear();
 
-    QStringList interestingDesktopFiles;
-    //search in all desktop configuration file if the device inserted is a correct device
-    foreach (const QString &path, files) {
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString &)),
+            this, SLOT(onDeviceAdded(const QString &)));
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString &)),
+            this, SLOT(onDeviceRemoved(const QString &)));
+}
+
+void HotplugEngine::findPredicates()
+{
+    foreach (const QString &path, KGlobal::dirs()->findAllResources("data", "solid/actions/")) {
         KDesktopFile cfg(path);
         const QString string_predicate = cfg.desktopGroup().readEntry("X-KDE-Solid-Predicate");
-        //kDebug()<<string_predicate;
-        Solid::Predicate predicate = Solid::Predicate::fromString(string_predicate);
-        if (predicate.matches(device)) {
-            new_device=true;
-            interestingDesktopFiles<<KUrl(path).fileName();
+        //kDebug() << path << string_predicate;
+        m_predicates.insert(KUrl(path).fileName(), Solid::Predicate::fromString(string_predicate));
+    }
+
+    if (m_predicates.isEmpty()) {
+        m_predicates.insert(QString(), Solid::Predicate::fromString(QString()));
+    }
+}
+
+void HotplugEngine::onDeviceAdded(const QString &udi)
+{
+    if (m_predicates.isEmpty()) {
+        findPredicates();
+    }
+
+    Solid::Device device(udi);
+    QStringList interestingDesktopFiles;
+    //search in all desktop configuration file if the device inserted is a correct device
+    QHashIterator<QString, Solid::Predicate> it(m_predicates);
+    //kDebug() << "=================" << udi;
+    while (it.hasNext()) {
+        it.next();
+        if (it.value().matches(device)) {
+            //kDebug() << "     hit" << it.key();
+            interestingDesktopFiles << it.key();
         }
     }
 
-    if (new_device) {
-        //kDebug()<<device.product();
-        //kDebug()<<device.vendor();
-        //kDebug()<< "number of interesting desktop file : " << interestingDesktopFiles.size();
-        setData(udi, "added", true);
-        setData(udi, "udi", device.udi());
+    if (!interestingDesktopFiles.isEmpty()) {
+        //kDebug() << device.product();
+        //kDebug() << device.vendor();
+        //kDebug() << "number of interesting desktop file : " << interestingDesktopFiles.size();
+        Plasma::DataEngine::Data data;
+        data.insert("added", true);
+        data.insert("udi", udi);
 
-        if (device.vendor().length()==0) {
-            setData(udi, "text", device.product());
+        if (device.vendor().isEmpty()) {
+            data.insert("text", device.product());
         } else {
-            setData(udi, "text", device.vendor() + ' ' + device.product());
+            data.insert("text", device.vendor() + ' ' + device.product());
         }
+        data.insert("icon", device.icon());
         setData(udi, "icon", device.icon());
-        setData(udi, "predicateFiles", interestingDesktopFiles);
+        data.insert("predicateFiles", interestingDesktopFiles);
 
-        kDebug() << "add hardware solid : " << udi;
-        scheduleSourcesUpdated();
+        setData(udi, data);
+        //kDebug() << "add hardware solid : " << udi;
     }
 }
 
@@ -97,7 +117,7 @@ void HotplugEngine::onDeviceRemoved(const QString &udi)
 {
     removeSource(udi);
 
-    kDebug() << "remove hardware solid : " << udi;
+    //kDebug() << "remove hardware solid : " << udi;
 
     scheduleSourcesUpdated();
 }

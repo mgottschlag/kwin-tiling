@@ -25,6 +25,8 @@
 
 #include <Plasma/DataEngine>
 
+#include <Solid/Predicate>
+
 /**
  * This class is connected with solid, filter devices and provide signal with source for applet in Plasma
  */
@@ -35,11 +37,16 @@ class HotplugEngine : public Plasma::DataEngine
     public:
         HotplugEngine( QObject* parent, const QVariantList& args);
         ~HotplugEngine();
+        void init();
+
     protected slots :
         void onDeviceAdded(const QString &udi);
         void onDeviceRemoved(const QString &udi);
+
     private :
-        QStringList files;
+        void findPredicates();
+
+        QHash<QString, Solid::Predicate> m_predicates;
 };
 
 K_EXPORT_PLASMA_DATAENGINE(hotplug, HotplugEngine)
