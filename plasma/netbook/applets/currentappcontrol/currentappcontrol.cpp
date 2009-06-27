@@ -25,6 +25,7 @@
 #include <QX11Info>
 #include <QTimer>
 #include <QFontMetrics>
+#include <QVarLengthArray>
 
 //KDE
 #include <kwindowsystem.h>
@@ -155,13 +156,15 @@ void CurrentAppControl::closeWindow()
 
 void CurrentAppControl::listWindows()
 {
-    //FIXME: there has to be a better way to trigger a kwin effect than faking ctrl+f9 :p
-
-    XTestFakeKeyEvent(QX11Info::display(), XKeysymToKeycode(QX11Info::display(), XK_Control_L), 1, 0);
-    XTestFakeKeyEvent(QX11Info::display(), XKeysymToKeycode(QX11Info::display(), XK_F9), 1, 0);
-
-    XTestFakeKeyEvent(QX11Info::display(), XKeysymToKeycode(QX11Info::display(), XK_Control_L), 0, 0);
-    XTestFakeKeyEvent(QX11Info::display(), XKeysymToKeycode(QX11Info::display(), XK_F9), 0, 0);
+#ifdef Q_WS_X11
+    QVarLengthArray<long, 32> data(1);
+    data[0] = KWindowSystem::currentDesktop();
+    Display *dpy = QX11Info::display();
+    const WId winId = view()->winId();
+    Atom atom = XInternAtom(dpy, "_KDE_PRESENT_WINDOWS_DESKTOP", False);
+    XChangeProperty(dpy, winId, atom, atom, 32, PropModeReplace,
+                     reinterpret_cast<unsigned char *>(data.data()), data.size());
+#endif
 }
 
 #include "currentappcontrol.moc"
