@@ -41,7 +41,7 @@ public:
     QHash<QString, WeatherData> m_weatherData;
 
     // Store KIO jobs - Search list
-    QMap<KJob *, QXmlStreamReader*> m_jobXml;
+    QMap<KJob *, QByteArray *> m_jobHtml;
     QMap<KJob *, QString> m_jobList;
 
     QMap<KJob *, QXmlStreamReader*> m_obsJobXml;
@@ -313,11 +313,12 @@ void UKMETIon::getXMLData(const QString& source)
 void UKMETIon::findPlace(const QString& place, const QString& source)
 {
     KUrl url;
-    url = "http://www.bbc.co.uk/cgi-perl/weather/search/new_search.pl?x=0&y=0&=Submit&search_query=" + place + "&tmpl=wap";
+    // url = "http://www.bbc.co.uk/cgi-perl/weather/search/new_search.pl?x=0&y=0&=Submit&search_query=" + place + "&tmpl=wap";
+    url = "http://news.bbc.co.uk/weather/forecast/?&search=" + place + "&itemsPerPage=200&startIndex=1&count=200";
 
     d->m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
     d->m_job->addMetaData("cookies", "none"); // Disable displaying cookies
-    d->m_jobXml.insert(d->m_job, new QXmlStreamReader);
+    d->m_jobHtml.insert(d->m_job, new QByteArray());
     d->m_jobList.insert(d->m_job, source);
 
     if (d->m_job) {
@@ -336,7 +337,15 @@ void UKMETIon::getFiveDayForecast(const QString& source)
     KUrl url;
     url = d->m_place[source].XMLforecastURL;
     QString xmlMap = d->m_place[source].XMLforecastURL;
-    xmlMap.replace("weather/5day.shtml", "weather/mobile/5day.wml");
+    int splitIDPos = xmlMap.lastIndexOf('/');
+    QString stationID = xmlMap.midRef(splitIDPos + 1).toString();
+    xmlMap.replace("news.bbc.co.uk", "www.bbc.co.uk");
+    if (d->m_place[source].ukPlace) {
+        xmlMap.replace("weather/forecast/" + stationID, "weather/mobile/5day.wml?id=" + stationID);
+    } else {
+        xmlMap.replace("weather/forecast/" + stationID, "weather/mobile/5day.wml?world=" + stationID);
+    } 
+     
     url = xmlMap;
 
     d->m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
@@ -351,99 +360,58 @@ void UKMETIon::getFiveDayForecast(const QString& source)
     }
 }
 
-bool UKMETIon::readSearchXMLData(const QString& key, QXmlStreamReader& xml)
+void UKMETIon::readSearchHTMLData(const QString& source, const QByteArray& html)
 {
-
-    while (!xml.atEnd()) {
-        xml.readNext();
-
-        if (xml.isEndElement()) {
-            break;
-        }
-
-        if (xml.isStartElement()) {
-            if (xml.name() == "wml") {
-                parseSearchLocations(key, xml);
-            } else {
-                parseUnknownElement(xml);
-            }
-        }
-    }
-
-    return !xml.error();
-}
-
-void UKMETIon::parseSearchLocations(const QString& source, QXmlStreamReader& xml)
-{
-    int flag = 0;
-    QString url;
-    QString place;
+    QTextStream stream(html.data());
+    QString line;
     QStringList tokens;
+    QString url;
     QString tmp;
+    int flag = 0;
     int counter = 2;
-    int currentParagraph = 0;
+   
+    // "<p><a id="result_40" href ="/weather/forecast/4160?count=200">Vitoria, Brazil</a></p>"
+    QRegExp grabURL("/[a-z]+/[a-z]+/[0-9]{1,4}");
+    QRegExp grabPlace(">([^<]*[a-z()])"); // FIXME: It would be better to strip away the extra '>'
 
-    Q_ASSERT(xml.isStartElement() && xml.name() == "wml");
+    while (!stream.atEnd()) {
+       line = stream.readLine();
+       if (line.contains("<p class=\"response\">") > 0) {
+           flag = 1;
+       }
 
-    while (!xml.atEnd()) {
-        xml.readNext();
+       if (flag) {
+           // Strip out area searching
+           if (!line.contains("area=") > 0) { 
+                   if (grabURL.indexIn(line.trimmed()) > 0) {
+                       tokens = grabURL.cap(0).split('/', QString::SkipEmptyParts);
+                       grabPlace.indexIn(line.trimmed());
+                       url = "http://newsrss.bbc.co.uk/weather/forecast/" + tokens[2] + "/ObservationsRSS.xml";
+                       tmp = QString("bbcukmet|").append(grabPlace.cap(1));
 
-        if (xml.isEndElement() && xml.name() == "wml") {
-            break;
-        }
+                       // Duplicate places can exist
+                       if (d->m_locations.contains(tmp)) {
+                           tmp = QString("bbcukmet|").append(QString("%1 (#%2")).arg(grabPlace.cap(1).arg(counter));
+                           counter++;
+                       }
 
-        if (xml.isStartElement() && xml.name() == "p") {
-            currentParagraph++;
-        }
-
-        if (currentParagraph == 2) {
-            if (xml.isCharacters() && !xml.isWhitespace())  {
-                QString dataText = xml.text().toString().trimmed();
-                if (dataText.contains("No locations")) {
-                    break;
-                }
-            }
-        }
-
-        if (xml.isStartElement()) {
-            if (xml.name() == "a" && !xml.attributes().value("href").isEmpty()) {
-                if (xml.attributes().value("href").toString().contains("5day.wml")) {
-
-                    // Split URL to determine station ID number
-                    tokens = xml.attributes().value("href").toString().split('=');
-                    if (xml.attributes().value("href").toString().contains("world")) {
-                        url = "http://feeds.bbc.co.uk/weather/feeds/obs/world/" + tokens[1] + ".xml";
-                        flag = 0;
-                    } else {
-                        url = "http://feeds.bbc.co.uk/weather/feeds/obs/id/" + tokens[1] + ".xml";
-                        flag = 1;
-                    }
-                    place = xml.readElementText();
-                    tmp = QString("bbcukmet|%1").arg(place);
-
-                    // Duplicate places can exist
-                    if (d->m_locations.contains(tmp)) {
-
-                        QString dupePlace = place;
-                        tmp = QString("bbcukmet|%1").arg(QString("%1 (#%2)").arg(dupePlace).arg(counter));
-                        place = QString("%1 (#%2)").arg(dupePlace).arg(counter);
-                        counter++;
-                    }
-
-                    if (flag) {  // This is a UK specific location
-                        d->m_place[tmp].XMLurl = url;
-                        d->m_place[tmp].place = place;
-                        d->m_place[tmp].ukPlace = true;
-                    } else {
-                        d->m_place[tmp].XMLurl = url;
-                        d->m_place[tmp].place = place;
-                        d->m_place[tmp].ukPlace = false;
-                    }
-                    d->m_locations.append(tmp);
-                }
-            }
-        }
+                       d->m_place[tmp].XMLurl = url;
+                       d->m_place[tmp].place = grabPlace.cap(1);
+                       d->m_locations.append(tmp);
+                   }   
+           }
+       }
+ 
+       if (line.contains("<div class=\"line\">") > 0) {
+           flag = 0;
+       }
     }
+     
+    // I stream ok?
+    //if (stream.status() == QTextStream::Ok) {
+        //return true;
+    //}
+
     validate(source);
 }
 
@@ -472,10 +440,12 @@ void UKMETIon::setup_slotRedirected(KIO::Job *job, const KUrl &url)
     QStringList tokens = url.url().split('=');
     if (url.url().contains("xhtml")) { // We don't care about the first redirection (there is two)
         if (url.url().contains("world")) {
-            obsUrl = "http://feeds.bbc.co.uk/weather/feeds/obs/world/" + tokens[2] + ".xml";
+            //obsUrl = "http://feeds.bbc.co.uk/weather/feeds/obs/world/" + tokens[2] + ".xml";
+            obsUrl = "http://newsrss.bbc.co.uk/weather/forecast/" + tokens[2] + "/ObservationsRSS.xml";
             flag = false;
         } else {
-            obsUrl = "http://feeds.bbc.co.uk/weather/feeds/obs/id/" + tokens[2] + ".xml";
+            //obsUrl = "http://feeds.bbc.co.uk/weather/feeds/obs/id/" + tokens[2] + ".xml";
+            obsUrl = "http://newsrss.bbc.co.uk/weather/forecast/" + tokens[2] + "/ObservationsRSS.xml";
             flag = true;
         }
         place = d->m_jobList[job].split('|')[2]; // Contains the source name (place in this case)
@@ -498,18 +468,11 @@ void UKMETIon::setup_slotRedirected(KIO::Job *job, const KUrl &url)
 
 void UKMETIon::setup_slotDataArrived(KIO::Job *job, const QByteArray &data)
 {
-    QByteArray local = data;
-    if (data.isEmpty() || !d->m_jobXml.contains(job)) {
+    if (data.isEmpty() || !d->m_jobHtml.contains(job)) {
         return;
     }
 
-    // XXX: BBC doesn't convert unicode strings so this breaks XML formatting. Not pretty.
-    if (local.startsWith("<?xml version")) {
-        local.replace("<?xml version=\"1.0\"?>", "<?xml version=\"1.0\" encoding=\"cp1252\" ?>");
-    }
-
-    // Send to xml.
-    d->m_jobXml[job]->addData(local);
+    d->m_jobHtml[job]->append(data);
 }
 
 void UKMETIon::setup_slotJobFinished(KJob *job)
@@ -518,20 +481,21 @@ void UKMETIon::setup_slotJobFinished(KJob *job)
         setData(d->m_jobList[job], "validate", QString("bbcukmet|timeout"));
         disconnectSource(d->m_jobList[job], this);
         d->m_jobList.remove(job);
-        delete d->m_jobXml[job];
-        d->m_jobXml.remove(job);
+        delete d->m_jobHtml[job];
+        d->m_jobHtml.remove(job);
         return;
     }
+
     // If Redirected, don't go to this routine
     if (!d->m_locations.contains(QString("bbcukmet|%1").arg(d->m_jobList[job]))) {
-        QXmlStreamReader *reader = d->m_jobXml.value(job);
+        QByteArray *reader = d->m_jobHtml.value(job);
         if (reader) {
-            readSearchXMLData(d->m_jobList[job], *reader);
+            readSearchHTMLData(d->m_jobList[job], *reader);
         }
     }
     d->m_jobList.remove(job);
-    delete d->m_jobXml[job];
-    d->m_jobXml.remove(job);
+    delete d->m_jobHtml[job];
+    d->m_jobHtml.remove(job);
 }
 
 void UKMETIon::observation_slotDataArrived(KIO::Job *job, const QByteArray &data)
@@ -627,7 +591,6 @@ void UKMETIon::parseWeatherChannel(const QString& source, WeatherData& data, QXm
         if (xml.isStartElement()) {
             if (xml.name() == "title") {
                 data.stationName = xml.readElementText().split("Observations for")[1].trimmed();
-
                 data.stationName.replace("United Kingdom", i18n("UK"));
                 data.stationName.replace("United States of America", i18n("USA"));
 
@@ -655,20 +618,21 @@ void UKMETIon::parseWeatherObservation(const QString& source, WeatherData& data,
             if (xml.name() == "title") {
                 QString conditionString = xml.readElementText();
 
-                // Get the observation time.
-                QStringList conditionData = conditionString.split(':');
+                // Get the observation time and condition
+                int splitIndex = conditionString.lastIndexOf(':');
+                QStringRef conditionData = conditionString.midRef(splitIndex + 1); // Include ':'
+                data.obsTime = conditionString.midRef(0, splitIndex).toString();
 
-                data.obsTime = conditionData[0];
                 // Friday at 0200 GMT
                 d->m_dateFormat =  QDateTime::fromString(data.obsTime.split("at")[1].trimmed(), "hhmm 'GMT'");
                 data.iconPeriodHour = d->m_dateFormat.toString("hh").toInt();
                 data.iconPeriodMinute = d->m_dateFormat.toString("mm").toInt();
-                //data.iconPeriodAP = d->m_dateFormat.toString("ap");
 
-                data.condition = conditionData[1].split('.')[0].trimmed();
+                data.condition = conditionData.toString().split('.')[0].trimmed();
 
             } else if (xml.name() == "link") {
                 d->m_place[source].XMLforecastURL = xml.readElementText();
+
             } else if (xml.name() == "description") {
                 QString observeString = xml.readElementText();
                 QStringList observeData = observeString.split(':');
@@ -677,7 +641,7 @@ void UKMETIon::parseWeatherObservation(const QString& source, WeatherData& data,
                 data.temperature_F = observeData[1].split('(')[1].split(QChar(176))[0];
 
                 data.windDirection = observeData[2].split(',')[0].trimmed();
-                data.windSpeed_miles = observeData[3].split(',')[0].split(' ')[1];
+                data.windSpeed_miles = observeData[3].split(',')[0].split(' ')[1].remove("mph");
 
                 data.humidity = observeData[4].split(',')[0].split(' ')[1];
 
@@ -686,6 +650,18 @@ void UKMETIon::parseWeatherObservation(const QString& source, WeatherData& data,
                 data.pressureTendency = observeData[5].split(',')[1].trimmed();
 
                 data.visibilityStr = observeData[6].trimmed();
+
+/*
+                kDebug() << data.temperature_C;
+                kDebug() << data.temperature_F; 
+                kDebug() << data.windDirection;
+                kDebug() << data.windSpeed_miles;
+                kDebug() << data.humidity;
+                kDebug() << data.pressure;
+                kDebug() << data.pressureTendency;
+                kDebug() << data.visibilityStr;
+*/
+
             } else if (xml.name() == "lat") {
                 const QString ordinate = xml.readElementText();
                 data.latitude = ordinate.toDouble();

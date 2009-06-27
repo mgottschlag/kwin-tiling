@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007-2008 by Shawn Starr <shawn.starr@rogers.com>       *
+ *   Copyright (C) 2007-2009 by Shawn Starr <shawn.starr@rogers.com>       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -45,7 +45,6 @@ public:
     QString obsTime;
     int iconPeriodHour;
     int iconPeriodMinute;
-    //QString iconPeriodAP;
     double longitude;
     double latitude;
 
@@ -128,7 +127,7 @@ private:
     void validate(const QString& source); // Sync data source with Applet
     void getFiveDayForecast(const QString& source);
     void getXMLData(const QString& source);
-    bool readSearchXMLData(const QString& source, QXmlStreamReader& xml);
+    void readSearchHTMLData(const QString& source, const QByteArray& html);
     bool readFiveDayForecastXMLData(const QString& source, QXmlStreamReader& xml);
     void parseSearchLocations(const QString& source, QXmlStreamReader& xml);
 
