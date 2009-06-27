@@ -103,7 +103,7 @@ public:
 
         Qt::KeyboardModifiers groupModifierKey() const;
 
-        bool showTooltip() const;
+        bool showToolTip() const;
 
         void needsVisualFocus();
 

@@ -390,7 +390,7 @@ void Tasks::configAccepted()
     }
 }
 
-bool Tasks::showTooltip() const
+bool Tasks::showToolTip() const
 {
     return m_showTooltip;
 }

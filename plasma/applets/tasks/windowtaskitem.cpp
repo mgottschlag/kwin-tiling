@@ -167,7 +167,7 @@ void WindowTaskItem::updateTask(::TaskManager::TaskChanges changes)
         setText(m_task->name());
     }
 
-    if (m_showingTooltip &&
+    if (Plasma::ToolTipManager::self()->isVisible(this) &&
         (changes & TaskManager::IconChanged ||
          changes & TaskManager::NameChanged ||
          changes & TaskManager::DesktopChanged)) {

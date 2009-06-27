@@ -232,7 +232,7 @@ void TaskGroupItem::updateTask(::TaskManager::TaskChanges changes)
         setText(m_group->name());
     }
 
-    if (m_showingTooltip &&
+    if (Plasma::ToolTipManager::self()->isVisible(this) &&
         (changes & TaskManager::IconChanged ||
         changes & TaskManager::NameChanged ||
         changes & TaskManager::DesktopChanged)) {
@@ -407,11 +407,11 @@ AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractGroupab
     }
 
     if (groupableItem->isGroupItem()) {
-        TaskGroupItem *groupItem = new TaskGroupItem(this, m_applet, m_applet->showTooltip());
+        TaskGroupItem *groupItem = new TaskGroupItem(this, m_applet, m_applet->showToolTip());
         groupItem->setGroup(static_cast<TaskManager::TaskGroup*>(groupableItem));
         item = groupItem;
     } else { //it's a window task
-        WindowTaskItem *windowItem = new WindowTaskItem(this, m_applet, m_applet->showTooltip());
+        WindowTaskItem *windowItem = new WindowTaskItem(this, m_applet, m_applet->showToolTip());
         windowItem->setTask(static_cast<TaskManager::TaskItem*>(groupableItem));
         item = windowItem;
     }
