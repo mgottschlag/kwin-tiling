@@ -43,6 +43,9 @@ class TimeEngine : public Plasma::DataEngine
     protected:
         bool sourceRequestEvent(const QString &name);
         bool updateSourceEvent(const QString &source);
+
+    protected Q_SLOTS:
+        void tzConfigChanged();
 };
 
 #endif // TIMEENGINE_H

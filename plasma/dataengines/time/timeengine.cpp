@@ -55,7 +55,18 @@ void TimeEngine::init()
 {
     //QDBusInterface *ktimezoned = new QDBusInterface("org.kde.kded", "/modules/ktimezoned", "org.kde.KTimeZoned");
     QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.connect(QString(), QString(), "org.kde.KTimeZoned", "configChanged", this, SLOT(updateAllSources()));
+    dbus.connect(QString(), QString(), "org.kde.KTimeZoned", "configChanged", this, SLOT(tzConfigChanged()));
+}
+
+void TimeEngine::tzConfigChanged()
+{
+    TimeSource *s = qobject_cast<TimeSource *>(containerForSource("Local"));
+
+    if (s) {
+        s->setTimeZone("Local");
+    }
+
+    updateAllSources();
 }
 
 QStringList TimeEngine::sources() const
