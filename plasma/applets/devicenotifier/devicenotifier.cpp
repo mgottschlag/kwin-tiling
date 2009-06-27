@@ -114,12 +114,7 @@ void DeviceNotifier::fillPreviousDevices()
 {
     m_fillingPreviousDevices = true;
     foreach (const QString &source, m_solidEngine->sources()) {
-            Solid::Device device = Solid::Device(source);
-            Solid::Device parentDevice = device.parent();
-            Solid::StorageDrive *drive = parentDevice.as<Solid::StorageDrive>();
-            if (drive && (drive->isHotpluggable() || drive->isRemovable())) {
-                onSourceAdded(source);
-            }
+        onSourceAdded(source);
     }
     m_fillingPreviousDevices = false;
 }
@@ -144,68 +139,70 @@ void DeviceNotifier::popupEvent(bool show)
 
 void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data data)
 {
-    if (data.size() > 0) {
-        //data from hotplug engine
-        if (!data["predicateFiles"].isNull()) {
-            int nb_actions = 0;
-            QString lastActionLabel;
-            foreach (const QString &desktop, data["predicateFiles"].toStringList()) {
-                QString filePath = KStandardDirs::locate("data", "solid/actions/" + desktop);
-                QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(filePath, true);
-                nb_actions += services.size();
-                if (services.size() > 0) {
-                    lastActionLabel = QString(services[0].text());
-                }
-            }
-            m_dialog->setDeviceData(source,data["predicateFiles"],NotifierDialog::PredicateFilesRole);
-            m_dialog->setDeviceData(source,data["text"], Qt::DisplayRole);
+    if (data.isEmpty()) {
+        return;
+    }
 
-            //icon name
-            m_dialog->setDeviceData(source,data["icon"], NotifierDialog::IconNameRole);
-            //icon data
-            m_dialog->setDeviceData(source,KIcon(data["icon"].toString()), Qt::DecorationRole);
-
-            if (nb_actions > 1) {
-                QString s = i18np("1 action for this device",
-                                  "%1 actions for this device",
-                                  nb_actions);
-                m_dialog->setDeviceData(source, s, NotifierDialog::ActionRole);
-            } else {
-                m_dialog->setDeviceData(source, lastActionLabel, NotifierDialog::ActionRole);
+    //data from hotplug engine
+    //kDebug() << data["udi"] << data["predicateFiles"].toStringList() << data["Device Types"].toStringList();
+    QStringList predicateFiles = data["predicateFiles"].toStringList();
+    if (!predicateFiles.isEmpty()) {
+        //kDebug() << "adding" << data["udi"];
+        int nb_actions = 0;
+        QString lastActionLabel;
+        foreach (const QString &desktop, data["predicateFiles"].toStringList()) {
+            QString filePath = KStandardDirs::locate("data", "solid/actions/" + desktop);
+            QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(filePath, true);
+            nb_actions += services.size();
+            if (services.size() > 0) {
+                lastActionLabel = QString(services[0].text());
             }
+        }
+        m_dialog->setDeviceData(source,data["predicateFiles"],NotifierDialog::PredicateFilesRole);
+        m_dialog->setDeviceData(source,data["text"], Qt::DisplayRole);
+
+        //icon name
+        m_dialog->setDeviceData(source,data["icon"], NotifierDialog::IconNameRole);
+        //icon data
+        m_dialog->setDeviceData(source,KIcon(data["icon"].toString()), Qt::DecorationRole);
+
+        if (nb_actions > 1) {
+            QString s = i18np("1 action for this device",
+                    "%1 actions for this device",
+                    nb_actions);
+            m_dialog->setDeviceData(source, s, NotifierDialog::ActionRole);
+        } else {
+            m_dialog->setDeviceData(source, lastActionLabel, NotifierDialog::ActionRole);
+        }
 
         //data from soliddevice engine
+    } else if (data["Device Types"].toStringList().contains("Storage Access")) {
+        //kDebug() << "DeviceNotifier::solidDeviceEngine updated" << source;
+        if (data["Accessible"].toBool() == true) {
+            m_dialog->setUnMount(true,source);
+
+            //set icon to mounted device
+            QStringList overlays;
+            overlays << "emblem-mounted";
+            m_dialog->setDeviceData(source, KIcon(m_dialog->getDeviceData(source,NotifierDialog::IconNameRole).toString(), NULL, overlays), Qt::DecorationRole);
+        } else if (data["Device Types"].toStringList().contains("OpticalDisc")) {
+            //Unmounted optical drive
+            m_dialog->setDeviceData(source, KIcon("media-eject"), Qt::DecorationRole);
+            //set icon to unmounted device
+            m_dialog->setUnMount(true,source);
+            m_dialog->setDeviceData(source, KIcon(m_dialog->getDeviceData(source,NotifierDialog::IconNameRole).toString()), Qt::DecorationRole);
         } else {
-            kDebug() << "DeviceNotifier::solidDeviceEngine updated" << source;
-            if (data["Device Types"].toStringList().contains("Storage Access")) {
-                if (data["Accessible"].toBool() == true) {
-                    m_dialog->setUnMount(true,source);
+            m_dialog->setUnMount(false,source);
 
-                    //set icon to mounted device
-                    QStringList overlays;
-                    overlays << "emblem-mounted";
-                    m_dialog->setDeviceData(source, KIcon(m_dialog->getDeviceData(source,NotifierDialog::IconNameRole).toString(), NULL, overlays), Qt::DecorationRole);
-                } else if (data["Device Types"].toStringList().contains("OpticalDisc")) {
-                    //Unmounted optical drive
-                    m_dialog->setDeviceData(source, KIcon("media-eject"), Qt::DecorationRole);
-                    //set icon to unmounted device
-                    m_dialog->setUnMount(true,source);
-                    m_dialog->setDeviceData(source, KIcon(m_dialog->getDeviceData(source,NotifierDialog::IconNameRole).toString()), Qt::DecorationRole);
-                } else {
-                    m_dialog->setUnMount(false,source);
-
-                    //set icon to unmounted device
-                    m_dialog->setDeviceData(source, KIcon(m_dialog->getDeviceData(source,NotifierDialog::IconNameRole).toString()), Qt::DecorationRole);
-                }
-            }
-            // actions specific for other types of devices will go here
+            //set icon to unmounted device
+            m_dialog->setDeviceData(source, KIcon(m_dialog->getDeviceData(source,NotifierDialog::IconNameRole).toString()), Qt::DecorationRole);
         }
-   }
+    }
 }
 
 void DeviceNotifier::notifyDevice(const QString &name)
 {
-    m_lastPlugged<<name;
+    m_lastPlugged << name;
 
     if (!m_fillingPreviousDevices) {
         showPopup();
@@ -217,7 +214,6 @@ void DeviceNotifier::toolTipAboutToShow()
     Plasma::ToolTipContent toolTip;
     if (!m_lastPlugged.isEmpty()) {
         Solid::Device device(m_lastPlugged.last());
-
         toolTip.setSubText(i18n("Last plugged in device: %1", device.product()));
         toolTip.setImage(KIcon(device.icon()));
     } else {
