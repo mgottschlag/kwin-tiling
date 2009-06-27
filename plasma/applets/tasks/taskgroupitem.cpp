@@ -1047,11 +1047,11 @@ int TaskGroupItem::indexOf(AbstractTaskItem *task)
                 TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(taskItem);
                 if (groupItem) {
                     int subIndex = groupItem->indexOf(groupItem->activeSubTask());
-                     if(subIndex == -1) {
-                         index += groupItem->count();
-                     } else {
-                         return index+subIndex;
-                     }
+                    if (subIndex == -1) {
+                        index += groupItem->count();
+                    } else {
+                        return index + subIndex;
+                    }
                 }
 
                 return index;
