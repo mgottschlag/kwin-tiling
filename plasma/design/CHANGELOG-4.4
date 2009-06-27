@@ -4,6 +4,11 @@ libplasma
 ---------
 * Features
     * ToolTipManager and ToolTipContent: Tips can now be set as clickable, allowing the mouse to enter them and select an item
+    * DataEngine:
+        * DataEngine::forceImmediateUpdateOfAllVisualizations() allows an engine to push the current data in sources out to all
+          visualizations without waiting for their timeout period. Useful for changes that can not wait, such as time updates
+          or data that becomes available with network availability.
+        * DataContainer::forceImmediateUpdate() allows engines to do a forced update on just one source.
 
 * Bugfixes
 
