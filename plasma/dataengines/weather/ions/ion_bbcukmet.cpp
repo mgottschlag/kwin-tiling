@@ -391,7 +391,8 @@ void UKMETIon::readSearchHTMLData(const QString& source, const QByteArray& html)
 
                        // Duplicate places can exist
                        if (d->m_locations.contains(tmp)) {
-                           tmp = QString("bbcukmet|").append(QString("%1 (#%2")).arg(grabPlace.cap(1).arg(counter));
+                           tmp = QString("bbcukmet|").append(QString("%1 (#%2)").arg(grabPlace.cap(1)).arg(counter));
+                           kDebug() << tmp;
                            counter++;
                        }
 
