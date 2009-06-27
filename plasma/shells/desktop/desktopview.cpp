@@ -60,7 +60,7 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
       m_actions(shortcutActions(this))
 {
     setAttribute(Qt::WA_TranslucentBackground, false);
-    setCacheMode(QGraphicsView::CacheNone);
+    //setCacheMode(QGraphicsView::CacheNone);
 
     /*FIXME: Work around for a (maybe) Qt bug:
      * QApplication::focusWidget() can't track focus change in QGraphicsProxyWidget
@@ -339,7 +339,7 @@ void DesktopView::toolBoxOpened()
     disconnect(c, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxOpened()));
     connect(c, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxClosed()));
     connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)),
-            this, SLOT(showDesktopUntoggled()));
+            this, SLOT(showDesktopUntoggled(WId)));
 
 #ifndef Q_WS_WIN
     info.setShowingDesktop(true);
@@ -362,7 +362,7 @@ void DesktopView::toolBoxClosed()
     Plasma::Containment *c = containment();
     disconnect(c, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxClosed()));
     disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)),
-               this, SLOT(showDesktopUntoggled()));
+               this, SLOT(showDesktopUntoggled(WId)));
     connect(c, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxOpened()));
 
 #ifndef Q_WS_WIN
@@ -370,14 +370,14 @@ void DesktopView::toolBoxClosed()
 #endif
 }
 
-void DesktopView::showDesktopUntoggled()
+void DesktopView::showDesktopUntoggled(WId id)
 {
     if (isDashboardVisible()) {
         return;
     }
 
     disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)),
-               this, SLOT(showDesktopUntoggled()));
+               this, SLOT(showDesktopUntoggled(Wid)));
 
     Plasma::Containment *c = containment();
     if (c) {
@@ -385,6 +385,15 @@ void DesktopView::showDesktopUntoggled()
         connect(c, SIGNAL(toolBoxToggled()), this, SLOT(toolBoxOpened()));
         containment()->setToolBoxOpen(false);
     }
+
+#ifndef Q_WS_WIN
+    Plasma::ZoomLevel zoomLevel = PlasmaApp::self()->desktopZoomLevel();
+    NETRootInfo info(QX11Info::display(), NET::Supported);
+    if (zoomLevel == Plasma::DesktopZoom && info.isSupported(NET::WM2ShowingDesktop)) {
+        info.setShowingDesktop(false);
+    }
+    KWindowSystem::activateWindow(id);
+#endif
 }
 
 void DesktopView::containmentAdded(Plasma::Containment *c)
