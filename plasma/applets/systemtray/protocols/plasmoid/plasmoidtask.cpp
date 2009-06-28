@@ -108,8 +108,10 @@ QGraphicsWidget* PlasmoidTask::createWidget(Plasma::Applet *host)
 
 void PlasmoidTask::forwardConstraintsEvent(Plasma::Constraints constraints)
 {
-    d->applet->updateConstraints(constraints);
-    d->applet->flushPendingConstraintsEvents();
+    if (d->applet) {
+        d->applet->updateConstraints(constraints);
+        d->applet->flushPendingConstraintsEvents();
+    }
 }
 
 void PlasmoidTask::Private::setupApplet()
