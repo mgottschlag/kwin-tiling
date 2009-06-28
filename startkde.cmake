@@ -37,7 +37,7 @@ fi
 unset DYLD_FORCE_FLAT_NAMESPACE
 
 # Enable lightweight memory corruption checker -- this is for trunk only, we remove it for releases
-MALLOC_CHECK_=2 
+MALLOC_CHECK_=3
 export MALLOC_CHECK_
 
 # in case we have been started with full pathname spec without being in PATH
