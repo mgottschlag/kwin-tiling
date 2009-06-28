@@ -98,9 +98,19 @@ QIcon PlasmoidTask::icon() const
 QGraphicsWidget* PlasmoidTask::createWidget(Plasma::Applet *host)
 {
     Q_UNUSED(host)
+    d->applet->setParent(host);
+    d->applet->setParentItem(host);
+    d->applet->init();
+    d->applet->updateConstraints(Plasma::AllConstraints);
+    d->applet->flushPendingConstraintsEvents();
     return static_cast<QGraphicsWidget*>(d->applet);
 }
 
+void PlasmoidTask::forwardConstraintsEvent(Plasma::Constraints constraints)
+{
+    d->applet->updateConstraints(constraints);
+    d->applet->flushPendingConstraintsEvents();
+}
 
 void PlasmoidTask::Private::setupApplet()
 {
@@ -112,16 +122,19 @@ void PlasmoidTask::Private::setupApplet()
         return;
     }
 
-    applet->setParent(q);
+    //applet->setParent(q);
     applet->setFlag(QGraphicsItem::ItemIsMovable, false);
 
     //connect(applet, SIGNAL(destroyed(QObject*)), this, SLOT(appletDestroyed(QObject*)));
-    applet->init();
+    /*applet->init();
     applet->setBackgroundHints(Plasma::Applet::NoBackground);
+    applet->updateConstraints(Plasma::StartupCompletedConstraint);
+    applet->flushPendingConstraintsEvents();*/
 
     // TODO: We'll need the preferred item size here
     // The applet does need a size, otherwise it won't show up correctly.
     applet->setMinimumSize(22, 22);
+    applet->setMaximumSize(22, 22);
     kDebug() << applet->name() << " Applet loaded";
 }
 

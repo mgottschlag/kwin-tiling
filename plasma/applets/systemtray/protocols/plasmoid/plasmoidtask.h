@@ -25,6 +25,7 @@
 
 #include "../../core/task.h"
 
+#include <plasma/plasma.h>
 
 namespace SystemTray
 {
@@ -43,6 +44,7 @@ public:
     virtual QString name() const;
     virtual QString typeId() const;
     virtual QIcon icon() const;
+    void forwardConstraintsEvent(Plasma::Constraints constraints);
 
 signals:
     void taskDeleted(QString typeId);

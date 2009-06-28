@@ -49,7 +49,8 @@ public:
           extenderTask(0),
           jobTotals(new Job(manager)),
           jobProtocol(0),
-          notificationProtocol(0)
+          notificationProtocol(0),
+          plasmoidProtocol(0)
     {
     }
 
@@ -63,13 +64,15 @@ public:
     Job *jobTotals;
     Protocol *jobProtocol;
     Protocol *notificationProtocol;
+    PlasmoidProtocol *plasmoidProtocol;
 };
 
 
 Manager::Manager()
     : d(new Private(this))
 {
-    d->setupProtocol(new PlasmoidProtocol(this));
+    d->plasmoidProtocol = new PlasmoidProtocol(this);
+    d->setupProtocol(d->plasmoidProtocol);
     d->setupProtocol(new SystemTray::FdoProtocol(this));
     d->setupProtocol(new SystemTray::DBusSystemTrayProtocol(this));
 }
@@ -229,6 +232,11 @@ Job *Manager::jobTotals() const
 QList<Job*> Manager::jobs() const
 {
     return d->jobs;
+}
+
+void Manager::forwardConstraintsEvent(Plasma::Constraints constraints)
+{
+    d->plasmoidProtocol->forwardConstraintsEvent(constraints);
 }
 
 }

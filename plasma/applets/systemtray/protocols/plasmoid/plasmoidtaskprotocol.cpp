@@ -46,8 +46,15 @@ void PlasmoidProtocol::init()
     //newTask("notify");
     //newTask("kuiserver");
     //newTask("mid_control");
+    //newTask("calculator");
 }
 
+void PlasmoidProtocol::forwardConstraintsEvent(Plasma::Constraints constraints)
+{
+    foreach (PlasmoidTask *task, m_tasks) {
+        task->forwardConstraintsEvent(constraints);
+    }
+}
 
 void PlasmoidProtocol::newTask(QString appletName)
 {

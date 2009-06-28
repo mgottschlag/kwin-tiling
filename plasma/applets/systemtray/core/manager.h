@@ -24,6 +24,8 @@
 
 #include <QtCore/QObject>
 
+#include <plasma/plasma.h>
+
 namespace SystemTray
 {
 
@@ -88,6 +90,8 @@ public:
      * Removes the notifications from the applet's notification system
      **/
     void unregisterNotificationProtocol();
+
+    void forwardConstraintsEvent(Plasma::Constraints constraints);
 
 signals:
     /**

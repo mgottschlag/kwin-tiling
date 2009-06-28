@@ -42,6 +42,8 @@ public:
 
     void init();
 
+    void forwardConstraintsEvent(Plasma::Constraints constraints);
+
 private slots:
     void cleanupTask(QString typeId);
     void newTask(QString appletName);

@@ -282,6 +282,8 @@ void Applet::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::SizeConstraint) {
         checkSizes();
     }
+
+    d->s_manager->forwardConstraintsEvent(constraints);
 }
 
 SystemTray::Manager *Applet::manager() const
