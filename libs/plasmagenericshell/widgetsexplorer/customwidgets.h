@@ -18,9 +18,10 @@ class AppletIconWidget;
 class PositionDotsSvgWidget;
 class AppletsList;
 
-class AppletsListSearch : public StandardCustomWidget {
+class AppletsListSearch : public StandardCustomWidget
+{
 
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
     explicit AppletsListSearch(QGraphicsItem *parent = 0);
@@ -56,9 +57,10 @@ private:
 
 };
 
-class AppletsList : public StandardCustomWidget {
+class AppletsList : public StandardCustomWidget
+{
 
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
     AppletsList(QGraphicsItem *parent = 0);
@@ -122,9 +124,10 @@ private:
 };
 
 
-class AppletInfoWidget : public StandardCustomWidget {
+class AppletInfoWidget : public StandardCustomWidget
+{
 
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
     explicit AppletInfoWidget(QGraphicsItem *parent = 0, PlasmaAppletItem *appletItem = 0, QSizeF constSize = QSize(0,0));
@@ -151,8 +154,9 @@ private:
 };
 
 //take this class out of customwidgets
-class AppletIconWidget : public Plasma::IconWidget {
-    Q_OBJECT;
+class AppletIconWidget : public Plasma::IconWidget
+{
+    Q_OBJECT
     public:
         explicit AppletIconWidget(QGraphicsItem *parent = 0, PlasmaAppletItem *appletItem = 0, bool dotsSurrounded = true);
         virtual ~AppletIconWidget();
@@ -205,8 +209,9 @@ class AppletIconWidget : public Plasma::IconWidget {
 
 };
 
-class PositionDotsSvgWidget : public Plasma::IconWidget {
-    Q_OBJECT;
+class PositionDotsSvgWidget : public Plasma::IconWidget
+{
+    Q_OBJECT
     public:
         explicit PositionDotsSvgWidget(QGraphicsWidget *parent = 0);
 //        virtual ~PositionDotsSvgWidget();
@@ -219,9 +224,10 @@ class PositionDotsSvgWidget : public Plasma::IconWidget {
         double m_anglePosition;
 };
 
-class FilteringList : public StandardCustomWidget {
+class FilteringList : public StandardCustomWidget
+{
 
-    Q_OBJECT;
+    Q_OBJECT
 
     public:
         explicit FilteringList(QGraphicsItem * parent = 0, Qt::WindowFlags wFlags = 0);
@@ -241,9 +247,10 @@ class FilteringList : public StandardCustomWidget {
         void filterChanged(const QModelIndex &index);
 };
 
-class ManageWidgetsPushButton : public StandardCustomWidget {
+class ManageWidgetsPushButton : public StandardCustomWidget
+{
 
-    Q_OBJECT;
+    Q_OBJECT
 
     public:
         explicit ManageWidgetsPushButton(QGraphicsItem * parent = 0, Qt::WindowFlags wFlags = 0);

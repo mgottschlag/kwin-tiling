@@ -17,7 +17,7 @@ class WidgetExplorerMainWidgetPrivate;
 
 class WidgetExplorerMainWidget : public StandardCustomWidget {
 
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
     WidgetExplorerMainWidget(QGraphicsItem *parent = 0);
@@ -70,9 +70,9 @@ public Q_SLOTS:
     void populateWidgetsMenu();
 
 private:
-    Q_PRIVATE_SLOT(d, void appletAdded(Plasma::Applet*));
-    Q_PRIVATE_SLOT(d, void appletRemoved(Plasma::Applet*));
-    Q_PRIVATE_SLOT(d, void containmentDestroyed());
+    Q_PRIVATE_SLOT(d, void appletAdded(Plasma::Applet*))
+    Q_PRIVATE_SLOT(d, void appletRemoved(Plasma::Applet*))
+    Q_PRIVATE_SLOT(d, void containmentDestroyed())
 
     WidgetExplorerMainWidgetPrivate * const d;
 
@@ -80,7 +80,7 @@ private:
 
 class WidgetExplorer: public KDialog
 {
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
 
