@@ -377,7 +377,7 @@ void DesktopView::showDesktopUntoggled(WId id)
     }
 
     disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)),
-               this, SLOT(showDesktopUntoggled(Wid)));
+               this, SLOT(showDesktopUntoggled(WId)));
 
     Plasma::Containment *c = containment();
     if (c) {
