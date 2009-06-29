@@ -311,6 +311,11 @@ void TaskGroupItem::reload()
 void TaskGroupItem::setGroup(TaskManager::GroupPtr group)
 {
     //kDebug();
+    if (m_group == group) {
+        kDebug() << "already have this group!";
+        return;
+    }
+
     m_group = group;
     m_abstractItem = qobject_cast<AbstractGroupableItem *>(group);
 
@@ -401,11 +406,6 @@ AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractGroupab
     //kDebug() << "item to create" << groupableItem << endl;
     AbstractTaskItem *item = 0;
 
-    if (m_groupMembers.contains(groupableItem)) {
-        //kDebug() << "existing item found";
-        return m_groupMembers.value(groupableItem);
-    }
-
     if (groupableItem->isGroupItem()) {
         TaskGroupItem *groupItem = new TaskGroupItem(this, m_applet, m_applet->showToolTip());
         groupItem->setGroup(static_cast<TaskManager::TaskGroup*>(groupableItem));
@@ -437,7 +437,13 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractGroupableItem * groupableItem
     }
 
     //returns the corresponding item or creates a new one
-    AbstractTaskItem *item = createAbstractItem(groupableItem);
+    bool isNew = false;
+    AbstractTaskItem *item = m_groupMembers.value(groupableItem);
+
+    if (!item) {
+        item = createAbstractItem(groupableItem);
+        isNew = true;
+    }
 
     if (!item) {
         kDebug() << "invalid Item";
@@ -466,12 +472,14 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractGroupableItem * groupableItem
         m_activeTaskIndex = 0;
     }
 
-    connect(item, SIGNAL(activated(AbstractTaskItem*)),
-            this, SLOT(updateActive(AbstractTaskItem*)));
+    if (!isNew) {
+        connect(item, SIGNAL(activated(AbstractTaskItem*)),
+                this, SLOT(updateActive(AbstractTaskItem*)));
 
-    TaskGroupItem *group = qobject_cast<TaskGroupItem*>(item);
-    if (group) {
-        connect(item, SIGNAL(changed()), this, SLOT(relayoutItems()));
+        TaskGroupItem *group = qobject_cast<TaskGroupItem*>(item);
+        if (group) {
+            connect(item, SIGNAL(changed()), this, SLOT(relayoutItems()));
+        }
     }
 }
 
@@ -684,6 +692,7 @@ void TaskGroupItem::expand()
 
     m_mainLayout->addItem(tasksLayout());
 
+    disconnect(m_applet, SIGNAL(constraintsChanged(Plasma::Constraints)), this, SLOT(constraintsChanged(Plasma::Constraints)));
     connect(m_applet, SIGNAL(constraintsChanged(Plasma::Constraints)), this, SLOT(constraintsChanged(Plasma::Constraints)));
     //connect(m_tasksLayout, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updatePreferredSize()));
     m_collapsed = false;
@@ -751,6 +760,7 @@ void TaskGroupItem::collapse()
 
     //kDebug();
     //delete m_tasksLayout;
+    disconnect(m_applet, SIGNAL(constraintsChanged(Plasma::Constraints)), this, SLOT(constraintsChanged(Plasma::Constraints)));
     m_collapsed = true;
     updatePreferredSize();
     //kDebug();
