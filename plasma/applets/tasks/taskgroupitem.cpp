@@ -472,7 +472,7 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractGroupableItem * groupableItem
         m_activeTaskIndex = 0;
     }
 
-    if (!isNew) {
+    if (isNew) {
         connect(item, SIGNAL(activated(AbstractTaskItem*)),
                 this, SLOT(updateActive(AbstractTaskItem*)));
 
