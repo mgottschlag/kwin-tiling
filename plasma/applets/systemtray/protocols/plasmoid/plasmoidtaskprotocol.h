@@ -25,6 +25,8 @@
 
 #include "../../core/protocol.h"
 
+#include <KConfigGroup>
+
 #include <QHash>
 
 namespace SystemTray
@@ -43,10 +45,10 @@ public:
     void init();
 
     void forwardConstraintsEvent(Plasma::Constraints constraints);
+    void loadFromConfig(const KConfigGroup &cg, Plasma::Applet *parent);
 
 private slots:
     void cleanupTask(QString typeId);
-    void newTask(QString appletName);
 
 private:
     QHash<QString, PlasmoidTask*> m_tasks;

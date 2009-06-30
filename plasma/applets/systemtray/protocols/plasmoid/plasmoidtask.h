@@ -36,7 +36,7 @@ class PlasmoidTask : public Task
     Q_OBJECT
 
 public:
-    PlasmoidTask(QString appletName, QObject *parent);
+    PlasmoidTask(QString appletName, int id, QObject *parent, Plasma::Applet *host);
     virtual ~PlasmoidTask();
 
     bool isValid() const;

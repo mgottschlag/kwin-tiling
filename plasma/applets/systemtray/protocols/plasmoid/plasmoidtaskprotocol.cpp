@@ -25,6 +25,8 @@
 
 #include <KDebug>
 
+#include <Plasma/Applet>
+
 namespace SystemTray
 {
 
@@ -41,12 +43,6 @@ PlasmoidProtocol::~PlasmoidProtocol()
 
 void PlasmoidProtocol::init()
 {
-    // TODO: Load plasmoids from config
-    //newTask("battery");
-    //newTask("notify");
-    //newTask("kuiserver");
-    //newTask("mid_control");
-    //newTask("calculator");
 }
 
 void PlasmoidProtocol::forwardConstraintsEvent(Plasma::Constraints constraints)
@@ -56,25 +52,30 @@ void PlasmoidProtocol::forwardConstraintsEvent(Plasma::Constraints constraints)
     }
 }
 
-void PlasmoidProtocol::newTask(QString appletName)
+void PlasmoidProtocol::loadFromConfig(const KConfigGroup &cg, Plasma::Applet *parent)
 {
-    if (m_tasks.contains(appletName)) {
-        kDebug() << "Task " << appletName << "is already in here.";
-        return;
+    foreach (QString groupName, cg.groupList()) {
+        KConfigGroup childGroup(&cg, groupName);
+        QString appletName = childGroup.readEntry("plugin", QString());
+
+        kDebug() << "Registering task with the manager" << appletName;
+
+        PlasmoidTask *task = new PlasmoidTask(appletName, groupName.toInt(), this, parent);
+        Plasma::Applet *applet = qobject_cast<Plasma::Applet *>(task->widget(parent, true));
+        if (applet) {
+            applet->restore(childGroup);
+        }
+
+        if (!task->isValid()) {
+            // we failed to load our applet *sob*
+            delete task;
+            return;
+        }
+
+        m_tasks[appletName] = task;
+        connect(task, SIGNAL(taskDeleted(QString)), this, SLOT(cleanupTask(QString)));
+        emit taskCreated(task);
     }
-
-    kDebug() << "Registering task with the manager" << appletName;
-    PlasmoidTask *task = new PlasmoidTask(appletName, this);
-
-    if (!task->isValid()) {
-        // we failed to load our applet *sob*
-        delete task;
-        return;
-    }
-
-    m_tasks[appletName] = task;
-    connect(task, SIGNAL(taskDeleted(QString)), this, SLOT(cleanupTask(QString)));
-    emit taskCreated(task);
 }
 
 

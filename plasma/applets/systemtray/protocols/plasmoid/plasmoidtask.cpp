@@ -32,11 +32,14 @@ namespace SystemTray
 class PlasmoidTask::Private
 {
 public:
-    Private(QString name, PlasmoidTask *q)
+    Private(QString name, int appletId, PlasmoidTask *q, Plasma::Applet *parentApplet)
         : q(q),
           name(name),
+          id(appletId),
           typeId(name),
-          applet(0)
+          applet(0),
+          host(parentApplet),
+          takenByParent(false)
     {
         if (!name.isEmpty()) {
             setupApplet();
@@ -47,15 +50,18 @@ public:
 
     PlasmoidTask *q;
     QString name;
+    int id;
     QString typeId;
     QIcon icon;
     Plasma::Applet *applet;
+    Plasma::Applet *host;
+    bool takenByParent;
 };
 
 
-PlasmoidTask::PlasmoidTask(QString appletname, QObject *parent)
+PlasmoidTask::PlasmoidTask(QString appletname, int id, QObject *parent, Plasma::Applet *host)
     : Task(parent),
-      d(new Private(appletname, this))
+      d(new Private(appletname, id, this, host))
 {
 }
 
@@ -69,7 +75,7 @@ PlasmoidTask::~PlasmoidTask()
 
 bool PlasmoidTask::isEmbeddable() const
 {
-    return d->applet != 0;
+    return d->applet != 0 && !d->takenByParent;
 }
 
 bool PlasmoidTask::isValid() const
@@ -97,7 +103,11 @@ QIcon PlasmoidTask::icon() const
 
 QGraphicsWidget* PlasmoidTask::createWidget(Plasma::Applet *host)
 {
-    Q_UNUSED(host)
+    if (host != d->host) {
+        return 0;
+    }
+
+    d->takenByParent = true;
     d->applet->setParent(host);
     d->applet->setParentItem(host);
     d->applet->init();
@@ -116,7 +126,7 @@ void PlasmoidTask::forwardConstraintsEvent(Plasma::Constraints constraints)
 
 void PlasmoidTask::Private::setupApplet()
 {
-    applet = Plasma::Applet::load(name);
+    applet = Plasma::Applet::load(name, id);
 
     if (!applet) {
         kDebug() << "Could not load applet" << name;
@@ -128,10 +138,8 @@ void PlasmoidTask::Private::setupApplet()
     applet->setFlag(QGraphicsItem::ItemIsMovable, false);
 
     //connect(applet, SIGNAL(destroyed(QObject*)), this, SLOT(appletDestroyed(QObject*)));
-    /*applet->init();
     applet->setBackgroundHints(Plasma::Applet::NoBackground);
-    applet->updateConstraints(Plasma::StartupCompletedConstraint);
-    applet->flushPendingConstraintsEvents();*/
+
 
     // TODO: We'll need the preferred item size here
     // The applet does need a size, otherwise it won't show up correctly.
