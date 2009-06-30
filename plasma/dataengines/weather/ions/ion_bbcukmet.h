@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007-2008 by Shawn Starr <shawn.starr@rogers.com>       *
+ *   Copyright (C) 2007-2009 by Shawn Starr <shawn.starr@rogers.com>       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -45,14 +45,12 @@ public:
     QString obsTime;
     int iconPeriodHour;
     int iconPeriodMinute;
-    //QString iconPeriodAP;
     double longitude;
     double latitude;
 
     QString condition;
     QString conditionIcon;
     QString temperature_C;
-    QString temperature_F;
     QString windDirection;
     QString windSpeed_miles;
     QString humidity;
@@ -108,7 +106,7 @@ public slots:
 protected slots:
     void setup_slotDataArrived(KIO::Job *, const QByteArray &);
     void setup_slotJobFinished(KJob *);
-    void setup_slotRedirected(KIO::Job *, const KUrl &url);
+    //void setup_slotRedirected(KIO::Job *, const KUrl &url);
     void observation_slotDataArrived(KIO::Job *, const QByteArray &);
     void observation_slotJobFinished(KJob *);
     void forecast_slotDataArrived(KIO::Job *, const QByteArray &);
@@ -128,7 +126,7 @@ private:
     void validate(const QString& source); // Sync data source with Applet
     void getFiveDayForecast(const QString& source);
     void getXMLData(const QString& source);
-    bool readSearchXMLData(const QString& source, QXmlStreamReader& xml);
+    void readSearchHTMLData(const QString& source, const QByteArray& html);
     bool readFiveDayForecastXMLData(const QString& source, QXmlStreamReader& xml);
     void parseSearchLocations(const QString& source, QXmlStreamReader& xml);
 
@@ -138,6 +136,8 @@ private:
     void parseWeatherChannel(const QString& source, WeatherData& data, QXmlStreamReader& xml);
     void parseWeatherObservation(const QString& source, WeatherData& data, QXmlStreamReader& xml);
     void parseFiveDayForecast(const QString& source, QXmlStreamReader& xml);
+    void parsePlaceForecast(const QString& source, QXmlStreamReader& xml);
+    void parseWeatherForecast(const QString& source, QXmlStreamReader& xml);
     void parseUnknownElement(QXmlStreamReader& xml);
 
 private:
