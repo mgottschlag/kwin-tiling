@@ -52,7 +52,7 @@ void
 ExplicitAuthorizationsModel::setHeaders()
 {
     QStringList headers;
-    headers << "User" << "Scope" << "Obtained" << "How" << "Constraints";
+    headers << i18n("User") << i18n("Scope") << i18n("Obtained") << i18n("How") << i18n("Constraints");
     setHorizontalHeaderLabels(headers);
 }
 

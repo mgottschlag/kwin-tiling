@@ -29,6 +29,7 @@ K_EXPORT_PLUGIN(PkKAuthorizationFactory("kcm_pkk_authorization"))
 KcmPkKAuthorization::KcmPkKAuthorization(QWidget *parent, const QVariantList &args)
         : KCModule(PkKAuthorizationFactory::componentData(), parent, args)
 {
+    KGlobal::locale()->insertCatalog( "polkit-kde-authorization");
     // NOTE If you update aboutData here please do it at main.cpp too, thanks :D
     KAboutData *aboutData;
     aboutData = new KAboutData("polkit-kde-authorization",
