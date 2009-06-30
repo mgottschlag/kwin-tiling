@@ -9,7 +9,7 @@ set(kcm_clock_PART_SRCS dtime.cpp tzone.cpp main.cpp )
 kde4_add_plugin(kcm_clock ${kcm_clock_PART_SRCS})
 
 
-target_link_libraries(kcm_clock  ${KDE4_KIO_LIBS} )
+target_link_libraries(kcm_clock  ${KDE4_KIO_LIBS} ${KDE4_PLASMA_LIBS} )
 
 install(TARGETS kcm_clock  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

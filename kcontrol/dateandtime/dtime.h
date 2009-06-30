@@ -39,6 +39,10 @@
 class Kclock;
 class QTimeEdit;
 
+namespace Plasma {
+    class Svg;
+}
+
 class Dtime : public QWidget
 {
   Q_OBJECT
@@ -92,17 +96,34 @@ class Kclock : public QWidget
   Q_OBJECT
 
 public:
-  Kclock( QWidget *parent=0 )
-    : QWidget(parent) {}
+  Kclock( QWidget *parent=0 );
+  ~Kclock();
 
   void setTime(const QTime&);
 
 protected:
   virtual void	paintEvent( QPaintEvent *event );
+  virtual void	showEvent( QShowEvent *event );
+  virtual void	resizeEvent( QResizeEvent *event );
 
+private:
+  void setClockSize(const QSize &size);
+  void drawHand(QPainter *p, const QRect &rect, const qreal verticalTranslation, const qreal rotation, const QString &handName);
+  void paintInterface(QPainter *p, const QRect &rect);
 
 private:
   QTime		time;
+  Plasma::Svg	*m_theme;
+  enum RepaintCache {
+      RepaintNone,
+      RepaintAll,
+      RepaintHands
+  };
+  RepaintCache	m_repaintCache;
+  QPixmap	m_faceCache;
+  QPixmap	m_handsCache;
+  QPixmap	m_glassCache;
+  qreal		m_verticalTranslation;
 };
 
 #endif // dtime_included

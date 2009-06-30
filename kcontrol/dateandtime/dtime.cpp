@@ -3,6 +3,11 @@
  *
  *  Copyright (C) 1998 Luca Montecchiani <m.luca@usa.net>
  *
+ *  Plasma analog-clock drawing code:
+ *
+ *  Copyright 2007 by Aaron Seigo <aseigo@kde.org>
+ *  Copyright 2007 by Riccardo Iaconelli <riccardo@kde.org>
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -49,6 +54,8 @@
 #include <kdialog.h>
 #include <kconfig.h>
 #include <kcolorscheme.h>
+
+#include <Plasma/Svg>
 
 #include "dtime.moc"
 
@@ -288,70 +295,170 @@ QString Dtime::quickHelp() const
     " administrator.");
 }
 
+Kclock::Kclock(QWidget *parent)
+    : QWidget(parent)
+{
+    m_theme = new Plasma::Svg(this);
+    m_theme->setImagePath("widgets/clock");
+    m_theme->setContainsMultipleImages(true);
+}
+
+Kclock::~Kclock()
+{
+    delete m_theme;
+}
+
+void Kclock::showEvent( QShowEvent *event )
+{
+    setClockSize( size() );
+    QWidget::showEvent( event );
+}
+
+void Kclock::resizeEvent( QResizeEvent * )
+{
+    setClockSize( size() );
+}
+
+void Kclock::setClockSize(const QSize &size)
+{
+    int dim = qMin(size.width(), size.height());
+    QSize newSize = QSize(dim, dim);
+
+    if (newSize != m_faceCache.size()) {
+        m_faceCache = QPixmap(newSize);
+        m_handsCache = QPixmap(newSize);
+        m_glassCache = QPixmap(newSize);
+
+        m_theme->resize(newSize);
+        m_repaintCache = RepaintAll;
+    }
+}
+
 void Kclock::setTime(const QTime &time)
 {
-  this->time = time;
-  repaint();
+    if (time.minute() != this->time.minute() || time.hour() != this->time.hour()) {
+        if (m_repaintCache == RepaintNone) {
+            m_repaintCache = RepaintHands;
+        }
+    }
+    this->time = time;
+    update();
+}
+
+void Kclock::drawHand(QPainter *p, const QRect &rect, const qreal verticalTranslation, const qreal rotation, const QString &handName)
+{
+    // this code assumes the following conventions in the svg file:
+    // - the _vertical_ position of the hands should be set with respect to the center of the face
+    // - the _horizontal_ position of the hands does not matter
+    // - the _shadow_ elements should have the same vertical position as their _hand_ element counterpart
+
+    QRectF elementRect;
+    QString name = handName + "HandShadow";
+    if (m_theme->hasElement(name)) {
+        p->save();
+
+        elementRect = m_theme->elementRect(name);
+        if( rect.height() < 64 )
+            elementRect.setWidth( elementRect.width() * 2.5 );
+        static const QPoint offset = QPoint(2, 3);
+
+        p->translate(rect.x() + (rect.width() / 2) + offset.x(), rect.y() + (rect.height() / 2) + offset.y());
+        p->rotate(rotation);
+        p->translate(-elementRect.width()/2, elementRect.y()-verticalTranslation);
+        m_theme->paint(p, QRectF(QPointF(0, 0), elementRect.size()), name);
+
+        p->restore();
+    }
+
+    p->save();
+
+    name = handName + "Hand";
+    elementRect = m_theme->elementRect(name);
+    if (rect.height() < 64) {
+        elementRect.setWidth(elementRect.width() * 2.5);
+    }
+
+    p->translate(rect.x() + rect.width()/2, rect.y() + rect.height()/2);
+    p->rotate(rotation);
+    p->translate(-elementRect.width()/2, elementRect.y()-verticalTranslation);
+    m_theme->paint(p, QRectF(QPointF(0, 0), elementRect.size()), name);
+
+    p->restore();
+}
+
+void Kclock::paintInterface(QPainter *p, const QRect &rect)
+{
+    const bool m_showSecondHand = true;
+
+    // compute hand angles
+    const qreal minutes = 6.0 * time.minute() - 180;
+    const qreal hours = 30.0 * time.hour() - 180 +
+            ((time.minute() / 59.0) * 30.0);
+    qreal seconds = 0;
+    if (m_showSecondHand) {
+        static const double anglePerSec = 6;
+        seconds = anglePerSec * time.second() - 180;
+    }
+
+    // paint face and glass cache
+    QRect faceRect = m_faceCache.rect();
+    if (m_repaintCache == RepaintAll) {
+        m_faceCache.fill(Qt::transparent);
+        m_glassCache.fill(Qt::transparent);
+
+        QPainter facePainter(&m_faceCache);
+        QPainter glassPainter(&m_glassCache);
+        facePainter.setRenderHint(QPainter::SmoothPixmapTransform);
+        glassPainter.setRenderHint(QPainter::SmoothPixmapTransform);
+
+        m_theme->paint(&facePainter, m_faceCache.rect(), "ClockFace");
+
+        glassPainter.save();
+        QRectF elementRect = QRectF(QPointF(0, 0), m_theme->elementSize("HandCenterScrew"));
+        glassPainter.translate(faceRect.width() / 2 - elementRect.width() / 2, faceRect.height() / 2 - elementRect.height() / 2);
+        m_theme->paint(&glassPainter, elementRect, "HandCenterScrew");
+        glassPainter.restore();
+
+        m_theme->paint(&glassPainter, faceRect, "Glass");
+
+        // get vertical translation, see drawHand() for more details
+        m_verticalTranslation = m_theme->elementRect("ClockFace").center().y();
+    }
+
+    // paint hour and minute hands cache
+    if (m_repaintCache == RepaintHands || m_repaintCache == RepaintAll) {
+        m_handsCache.fill(Qt::transparent);
+
+        QPainter handsPainter(&m_handsCache);
+        handsPainter.drawPixmap(faceRect, m_faceCache, faceRect);
+        handsPainter.setRenderHint(QPainter::SmoothPixmapTransform);
+
+        drawHand(&handsPainter, faceRect, m_verticalTranslation, hours, "Hour");
+        drawHand(&handsPainter, faceRect, m_verticalTranslation, minutes, "Minute");
+    }
+
+    // reset repaint cache flag
+    m_repaintCache = RepaintNone;
+
+    // paint caches and second hand
+    QRect targetRect = faceRect;
+    if (targetRect.width() < rect.width()) {
+        targetRect.moveLeft((rect.width() - targetRect.width()) / 2);
+    }
+
+    p->drawPixmap(targetRect, m_handsCache, faceRect);
+    if (m_showSecondHand) {
+        p->setRenderHint(QPainter::SmoothPixmapTransform);
+        drawHand(p, targetRect, m_verticalTranslation, seconds, "Second");
+    }
+    p->drawPixmap(targetRect, m_glassCache, faceRect);
 }
 
 void Kclock::paintEvent( QPaintEvent * )
 {
-  if ( !isVisible() )
-    return;
-
-  QPainter paint;
-  paint.begin( this );
+  QPainter paint(this);
 
   paint.setRenderHint(QPainter::Antialiasing);
-
-  QPolygon pts;
-  QPoint cp = rect().center();
-  int d = qMin(width(),height());
-
-  KColorScheme colorScheme( QPalette::Normal );
-  QColor hands  = colorScheme.foreground(KColorScheme::NormalText).color();
-
-  paint.setPen( hands );
-  paint.setBrush( hands );
-  paint.setViewport(4,4,width(),height());
-
-  QTransform matrix;
-  matrix.translate( cp.x(), cp.y() );
-  matrix.scale( d/1000.0F, d/1000.0F );
-
-  // hour hand
-  float h_angle = 30*(time.hour()%12-3) + time.minute()/2;
-  matrix.rotate( h_angle );
-  paint.setWorldTransform( matrix );
-  pts.setPoints( 4, -20,0, 0,-20, 300,0, 0,20 );
-  paint.drawPolygon( pts );
-  matrix.rotate( -h_angle );
-
-  // minute hand
-  float m_angle = (time.minute()-15)*6;
-  matrix.rotate( m_angle );
-  paint.setWorldTransform( matrix );
-  pts.setPoints( 4, -10,0, 0,-10, 400,0, 0,10 );
-  paint.drawPolygon( pts );
-  matrix.rotate( -m_angle );
-
-  // second hand
-  float s_angle = (time.second()-15)*6;
-  matrix.rotate( s_angle );
-  paint.setWorldTransform( matrix );
-  pts.setPoints(4,0,0,0,0,400,0,0,0);
-  paint.drawPolygon( pts );
-  matrix.rotate( -s_angle );
-
-  // clock face
-  for ( int i=0 ; i < 60 ; i++ ) {
-    paint.setWorldTransform( matrix );
-    if ( (i % 5) == 0 )
-      paint.drawLine( 450,0, 500,0 ); // draw hour lines
-    else  paint.drawPoint( 480,0 );   // draw second lines
-    matrix.rotate( 6 );
-  }
-
-  paint.end();
+  paintInterface(&paint, rect());
 }
 
