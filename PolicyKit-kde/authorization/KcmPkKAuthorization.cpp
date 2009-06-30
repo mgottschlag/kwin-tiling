@@ -46,7 +46,7 @@ KcmPkKAuthorization::KcmPkKAuthorization(QWidget *parent, const QVariantList &ar
     aboutData->addAuthor(ki18n("Trever Fischer"), ki18n("Developer"), "wm161@wm161.net");
 
     setAboutData(aboutData);
-    setButtons(NoAdditionalButton);
+    setButtons(Help);
 
     m_grid = new QGridLayout(this);
     view = new PolkitKde::PkKAuthorization;

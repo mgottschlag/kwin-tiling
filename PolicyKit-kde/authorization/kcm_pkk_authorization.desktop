@@ -7,6 +7,7 @@ X-KDE-ServiceTypes=KCModule
 X-KDE-Library=kcm_pkk_authorization
 X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=system
+X-DocPath=PolicyKit-kde/index.html
 
 Name=PolicyKit Authorization
 Name[bg]=Удостоверяване (PolicyKit)
