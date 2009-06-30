@@ -273,7 +273,6 @@ void TaskGroupItem::updateToolTip()
     }
 
     data.setWindowsToPreview(windows);
-    data.setClickable(true);
 
     Plasma::ToolTipManager::self()->setContent(this, data);
 }
