@@ -67,7 +67,6 @@ class Net : public Applet
 
     private slots:
         void themeChanged();
-        void updateSpinBoxSuffix(int interval);
 };
 }
 

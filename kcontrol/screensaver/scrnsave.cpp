@@ -180,10 +180,10 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
     mActivateLbl = new QLabel(i18n("After:"), mSettingsGroup);
     mActivateLbl->setEnabled(mEnabled);
     hbox->addWidget(mActivateLbl);
-    mWaitEdit = new QSpinBox(mSettingsGroup);
+    mWaitEdit = new KIntSpinBox(mSettingsGroup);
     //mWaitEdit->setSteps(1, 10);
     mWaitEdit->setRange(1, INT_MAX);
-    mWaitEdit->setSuffix(i18n(" min"));
+    mWaitEdit->setSuffix(ki18np(" minute", " minutes"));
     mWaitEdit->setValue(mTimeout/60);
     mWaitEdit->setEnabled(mEnabled);
     connect(mWaitEdit, SIGNAL(valueChanged(int)),
@@ -215,10 +215,10 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
     mLockLbl->setWhatsThis( i18n(
         "The amount of time, after the screen saver has started, to ask for the unlock password.") );
     hbox->addWidget(mLockLbl);
-    mWaitLockEdit = new QSpinBox(mSettingsGroup);
+    mWaitLockEdit = new KIntSpinBox(mSettingsGroup);
     //mWaitLockEdit->setSteps(1, 10);
     mWaitLockEdit->setRange(1, 300);
-    mWaitLockEdit->setSuffix(i18n(" sec"));
+    mWaitLockEdit->setSuffix(ki18np(" second", " seconds"));
     mWaitLockEdit->setValue(mLockTimeout/1000);
     mWaitLockEdit->setEnabled(mEnabled && mLock);
     if ( mWaitLockEdit->sizeHint().width() <

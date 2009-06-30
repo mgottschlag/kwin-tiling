@@ -46,7 +46,7 @@
             </widget>
           </item>
           <item>
-            <widget class="QSpinBox" name="m_spinInterval" />
+            <widget class="KIntSpinBox" name="m_spinInterval" />
           </item>
           <item>
             <spacer name="spacer4" >
@@ -140,6 +140,11 @@
       <extends>QWidget</extends>
       <header location="local" >background/bgwallpaper.h</header>
       <container>0</container>
+    </customwidget>
+    <customwidget>
+      <class>KIntSpinBox</class>
+      <extends>QSpinBox</extends>
+      <header>knuminput.h</header>
     </customwidget>
   </customwidgets>
 </ui>

@@ -80,17 +80,11 @@ void Hdd::createConfigurationInterface(KConfigDialog *parent)
     ui.treeView->setModel(&m_hddModel);
     ui.treeView->resizeColumnToContents(0);
     ui.intervalSpinBox->setValue(interval() / 60 / 1000);
-    updateSpinBoxSuffix(interval() / 60 / 1000);
+    ui.intervalSpinBox->setSuffix(ki18np(" minute", " minutes"));
 
     parent->addPage(widget, i18n("Partitions"), "drive-harddisk");
-    connect(ui.intervalSpinBox, SIGNAL(valueChanged()), this, SLOT(ui.intervalSpinBox(int)));
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-}
-
-void Hdd::updateSpinBoxSuffix(int interval)
-{
-    ui.intervalSpinBox->setSuffix(i18np(" minute", " minutes", interval));
 }
 
 void Hdd::configAccepted()

@@ -109,7 +109,7 @@
        </widget>
       </item>
       <item row="4" column="1">
-       <widget class="QSpinBox" name="spinRows">
+       <widget class="KIntSpinBox" name="spinRows">
         <property name="toolTip">
          <string>Change the number of rows</string>
         </property>
@@ -251,6 +251,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KIntSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>knuminput.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>desktopNumberRadioButton</tabstop>
   <tabstop>desktopNameRadioButton</tabstop>

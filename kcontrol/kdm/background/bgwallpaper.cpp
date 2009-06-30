@@ -120,7 +120,7 @@ BGMultiWallpaperDialog::BGMultiWallpaperDialog(KBackgroundSettings *settings,
 
    dlg->m_spinInterval->setRange(1, 99999);
    dlg->m_spinInterval->setSingleStep(15);
-   dlg->m_spinInterval->setSuffix(i18n(" min"));
+   dlg->m_spinInterval->setSuffix(ki18np(" minute", " minutes"));
 
    // Load
    dlg->m_spinInterval->setValue(qMax(1,m_pSettings->wallpaperChangeInterval()));

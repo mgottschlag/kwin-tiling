@@ -70,7 +70,7 @@
     <entry name="MaxClipItems" type="Int">
         <label>Clipboard history size</label>
         <default>7</default>
-        <min>2</min>
+        <min>1</min>
         <max>2048</max>
     </entry>
     <entry key="ActionListChanged" name="ActionList" type="Int">

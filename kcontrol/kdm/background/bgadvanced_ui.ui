@@ -152,7 +152,7 @@ You can also remove programs from this list clicking on the &lt;b>Remove&lt;/b> 
        </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="m_spinCache" >
+       <widget class="KIntSpinBox" name="m_spinCache" >
         <property name="whatsThis" >
          <string>In this box you can enter how much memory KDE should use for caching the background(s). If you have different backgrounds for the different desktops caching can make switching desktops smoother at the expense of higher memory use.</string>
         </property>
@@ -201,6 +201,13 @@ You can also remove programs from this list clicking on the &lt;b>Remove&lt;/b> 
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KIntSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>knuminput.h</header>
+  </customwidget>
+ </customwidgets>
   <tabstops>
   <tabstop>m_cbProgram</tabstop>
   <tabstop>m_listPrograms</tabstop>

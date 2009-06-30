@@ -29,8 +29,8 @@
 
 #include "ui_bgadvanced_ui.h"
 
-class QLineEdit;
-class QSpinBox;
+// class QLineEdit;
+// class QSpinBox;
 class QTreeWidgetItem;
 
 class KBackgroundRenderer;

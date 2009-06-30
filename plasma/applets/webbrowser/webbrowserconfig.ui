@@ -51,7 +51,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QSpinBox" name="autoRefreshInterval">
+       <widget class="KIntSpinBox" name="autoRefreshInterval">
         <property name="minimumSize">
          <size>
           <width>130</width>
@@ -85,6 +85,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KIntSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>knuminput.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

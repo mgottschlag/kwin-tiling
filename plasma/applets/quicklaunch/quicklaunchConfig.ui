@@ -68,14 +68,14 @@
     </widget>
    </item>
    <item row="2" column="2">
-    <widget class="QSpinBox" name="iconSizeSpin">
+    <widget class="KIntSpinBox" name="iconSizeSpin">
      <property name="suffix">
       <string>px</string>
      </property>
     </widget>
    </item>
    <item row="0" column="1" colspan="2">
-    <widget class="QSpinBox" name="icons">
+    <widget class="KIntSpinBox" name="icons">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -111,7 +111,7 @@
     </widget>
    </item>
    <item row="3" column="2">
-    <widget class="QSpinBox" name="dialogIconSizeSpin">
+    <widget class="KIntSpinBox" name="dialogIconSizeSpin">
      <property name="suffix">
       <string>px</string>
      </property>
@@ -119,6 +119,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KIntSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>knuminput.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

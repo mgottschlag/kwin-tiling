@@ -104,9 +104,8 @@ void Temperature::createConfigurationInterface(KConfigDialog *parent)
     ui.treeView->resizeColumnToContents(0);
 
     ui.intervalSpinBox->setValue(interval() / 1000);
-    updateSpinBoxSuffix(interval() / 1000);
+    ui.intervalSpinBox->setSuffix(ki18np(" second", " seconds"));
     parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
-    connect(ui.intervalSpinBox, SIGNAL(valueChanged(int)), this, SLOT(updateSpinBoxSuffix(int)));
     parent->addPage(widget, i18n("Temperature"), "cpu");
 
     widget = new QWidget();
@@ -119,11 +118,6 @@ void Temperature::createConfigurationInterface(KConfigDialog *parent)
 
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-}
-
-void Temperature::updateSpinBoxSuffix(int interval)
-{
-    ui.intervalSpinBox->setSuffix(i18np(" second", " seconds", interval));
 }
 
 void Temperature::configAccepted()

@@ -24,13 +24,13 @@
 #include "saverlist.h"
 
 class QTimer;
-class QSpinBox;
 class QCheckBox;
 class QLabel;
 class Q3ListView;
 class Q3ListViewItem;
 class QPushButton;
 class K3Process;
+class KIntSpinBox;
 class ScreenPreviewWidget;
 
 //===========================================================================
@@ -86,8 +86,8 @@ protected:
     QPushButton *mTestBt;
     QPushButton *mPlasmaSetup;
     Q3ListView   *mSaverListView;
-    QSpinBox	*mWaitEdit;
-    QSpinBox    *mWaitLockEdit;
+    KIntSpinBox	*mWaitEdit;
+    KIntSpinBox    *mWaitLockEdit;
     QCheckBox   *mLockCheckBox;
     QCheckBox   *mStarsCheckBox;
     QCheckBox   *mEnabledCheckBox;

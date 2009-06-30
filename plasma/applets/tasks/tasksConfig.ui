@@ -83,7 +83,7 @@
    <item row="4" column="2" >
     <layout class="QHBoxLayout" name="horizontalLayout" >
      <item>
-      <widget class="QSpinBox" name="maxRows" >
+      <widget class="KIntSpinBox" name="maxRows" >
        <property name="minimum" >
         <number>1</number>
        </property>
@@ -308,6 +308,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KIntSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>knuminput.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

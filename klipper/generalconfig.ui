@@ -90,12 +90,9 @@
     </widget>
    </item>
    <item>
-    <widget class="QSpinBox" name="kcfg_TimeoutForActionPopups" >
+    <widget class="KIntSpinBox" name="kcfg_TimeoutForActionPopups" >
      <property name="alignment" >
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="suffix" >
-      <string> sec</string>
      </property>
     </widget>
    </item>
@@ -107,12 +104,9 @@
     </widget>
    </item>
    <item>
-    <widget class="QSpinBox" name="kcfg_MaxClipItems" >
+    <widget class="KIntSpinBox" name="kcfg_MaxClipItems" >
      <property name="alignment" >
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="suffix" >
-      <string> entries</string>
      </property>
     </widget>
    </item>
@@ -132,6 +126,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>KIntSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>knuminput.h</header>
+  </customwidget>
   <customwidget>
    <class>KButtonGroup</class>
    <extends>QGroupBox</extends>

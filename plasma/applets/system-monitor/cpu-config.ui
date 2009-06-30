@@ -65,7 +65,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QSpinBox" name="intervalSpinBox" >
+      <widget class="KIntSpinBox" name="intervalSpinBox" >
        <property name="minimum" >
         <number>1</number>
        </property>
@@ -81,6 +81,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KIntSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>knuminput.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
