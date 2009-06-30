@@ -58,8 +58,8 @@
 #include <fixx11h.h>
 #endif
 
-WindowTaskItem::WindowTaskItem(QGraphicsWidget *parent, Tasks *applet, const bool showTooltip)
-    : AbstractTaskItem(parent, applet, showTooltip),
+WindowTaskItem::WindowTaskItem(QGraphicsWidget *parent, Tasks *applet)
+    : AbstractTaskItem(parent, applet),
       m_task(0)
 {
 }

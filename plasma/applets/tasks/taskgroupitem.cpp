@@ -54,8 +54,8 @@
 #include "taskitemlayout.h"
 #include "windowtaskitem.h"
 
-TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet, const bool showTooltip)
-    : AbstractTaskItem(parent, applet, showTooltip),
+TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet)
+    : AbstractTaskItem(parent, applet),
       m_group(0),
       m_tasksLayout(0),
       m_popupMenuTimer(0),
@@ -151,7 +151,7 @@ TaskGroupItem * TaskGroupItem::splitGroup(int newSplitPosition)
 
     if (!m_childSplitGroup) {
         //kDebug() << "Normal scene " << scene();
-        m_childSplitGroup = new  TaskGroupItem(this, m_applet, true);
+        m_childSplitGroup = new  TaskGroupItem(this, m_applet);
         m_childSplitGroup->setSplitGroup(m_group);
     }
 
@@ -407,11 +407,11 @@ AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractGroupab
     AbstractTaskItem *item = 0;
 
     if (groupableItem->isGroupItem()) {
-        TaskGroupItem *groupItem = new TaskGroupItem(this, m_applet, m_applet->showToolTip());
+        TaskGroupItem *groupItem = new TaskGroupItem(this, m_applet);
         groupItem->setGroup(static_cast<TaskManager::TaskGroup*>(groupableItem));
         item = groupItem;
     } else { //it's a window task
-        WindowTaskItem *windowItem = new WindowTaskItem(this, m_applet, m_applet->showToolTip());
+        WindowTaskItem *windowItem = new WindowTaskItem(this, m_applet);
         windowItem->setTask(static_cast<TaskManager::TaskItem*>(groupableItem));
         item = windowItem;
     }

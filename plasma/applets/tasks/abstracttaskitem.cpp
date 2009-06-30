@@ -61,7 +61,7 @@
 
 static const int HOVER_EFFECT_TIMEOUT = 800;
 
-AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet, const bool showTooltip)
+AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet)
     : QGraphicsWidget(parent),
       m_abstractItem(0),
       m_applet(applet),
@@ -290,6 +290,10 @@ void AbstractTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
     Q_UNUSED(event)
     fadeBackground("hover", 175, true);
     if (parentGroup()) {
+        if (m_hoverEffectTimerId) {
+            killTimer(m_hoverEffectTimerId);
+        }
+
         m_hoverEffectTimerId = startTimer(HOVER_EFFECT_TIMEOUT);
     }
 }
@@ -862,6 +866,10 @@ void AbstractTaskItem::setGeometry(const QRectF& geometry)
 {
     QGraphicsWidget::setGeometry(geometry);
     if (m_lastGeometryUpdate.elapsed() < 350) {
+        if (m_updateGeometryTimerId) {
+            killTimer(m_updateGeometryTimerId);
+        }
+
         m_updateGeometryTimerId = startTimer(350 - m_lastGeometryUpdate.elapsed());
     } else {
         publishIconGeometry();
