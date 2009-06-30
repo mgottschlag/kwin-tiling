@@ -113,8 +113,6 @@ signals:
     * emitted whenever we receive a constraintsEvent
     */
     void constraintsChanged(Plasma::Constraints);
-
-    void desktopChanged(int,int);
     void settingsChanged();
 
 protected slots:
