@@ -172,6 +172,11 @@ void NotifierView::calculateRects()
                 for (int k = 0; k < currentItem->rowCount(); ++k) {
                     for (int l = 0; l < currentItem->columnCount(); ++l) {
                         QStandardItem *childItem = currentItem->child(k, l);
+
+                        if (!childItem) {
+                            continue;
+                        }
+
                         QModelIndex childIndex = childItem->index();
                         QRect itemChildRect;
                         if (l % 2 == 0) {
