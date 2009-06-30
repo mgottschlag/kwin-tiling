@@ -51,7 +51,6 @@ public:
     QString condition;
     QString conditionIcon;
     QString temperature_C;
-    QString temperature_F;
     QString windDirection;
     QString windSpeed_miles;
     QString humidity;
@@ -107,7 +106,7 @@ public slots:
 protected slots:
     void setup_slotDataArrived(KIO::Job *, const QByteArray &);
     void setup_slotJobFinished(KJob *);
-    void setup_slotRedirected(KIO::Job *, const KUrl &url);
+    //void setup_slotRedirected(KIO::Job *, const KUrl &url);
     void observation_slotDataArrived(KIO::Job *, const QByteArray &);
     void observation_slotJobFinished(KJob *);
     void forecast_slotDataArrived(KIO::Job *, const QByteArray &);
@@ -137,6 +136,8 @@ private:
     void parseWeatherChannel(const QString& source, WeatherData& data, QXmlStreamReader& xml);
     void parseWeatherObservation(const QString& source, WeatherData& data, QXmlStreamReader& xml);
     void parseFiveDayForecast(const QString& source, QXmlStreamReader& xml);
+    void parsePlaceForecast(const QString& source, QXmlStreamReader& xml);
+    void parseWeatherForecast(const QString& source, QXmlStreamReader& xml);
     void parseUnknownElement(QXmlStreamReader& xml);
 
 private:
