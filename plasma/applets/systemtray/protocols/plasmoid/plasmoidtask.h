@@ -46,7 +46,10 @@ public:
     virtual QIcon icon() const;
     void forwardConstraintsEvent(Plasma::Constraints constraints);
 
-signals:
+protected Q_SLOTS:
+    void appletDestroyed(QObject *object);
+
+Q_SIGNALS:
     void taskDeleted(QString typeId);
 
 protected:

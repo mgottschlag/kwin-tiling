@@ -137,7 +137,7 @@ void PlasmoidTask::Private::setupApplet()
     //applet->setParent(q);
     applet->setFlag(QGraphicsItem::ItemIsMovable, false);
 
-    //connect(applet, SIGNAL(destroyed(QObject*)), this, SLOT(appletDestroyed(QObject*)));
+    connect(applet, SIGNAL(destroyed(QObject*)), q, SLOT(appletDestroyed(QObject*)));
     applet->setBackgroundHints(Plasma::Applet::NoBackground);
 
 
@@ -146,6 +146,13 @@ void PlasmoidTask::Private::setupApplet()
     applet->setMinimumSize(22, 22);
     applet->setMaximumSize(22, 22);
     kDebug() << applet->name() << " Applet loaded";
+}
+
+void PlasmoidTask::appletDestroyed(QObject *object)
+{
+    if (object == this) {
+        emit destroyed(this);
+    }
 }
 
 }
