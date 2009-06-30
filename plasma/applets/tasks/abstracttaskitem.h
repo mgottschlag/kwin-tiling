@@ -54,13 +54,10 @@ class AbstractTaskItem : public QGraphicsWidget
 
 public:
     /** Constructs a new representation for an abstract task. */
-    AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet, const bool showTooltip);
+    AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet);
 
      /** Destruct the representation for an abstract task. */
     ~AbstractTaskItem();
-
-    /** Switch on/off tooltips above tasks */
-    void setShowTooltip(const bool showit);
 
     /** Sets the text for this task item. */
     void setText(const QString &text);
@@ -138,6 +135,7 @@ public Q_SLOTS:
     virtual void activate() = 0;
     void toolTipAboutToShow();
     void toolTipHidden();
+    void activateWindow(WId id, Qt::MouseButtons buttons);
 
 protected:
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
@@ -209,9 +207,6 @@ protected:
     LayoutWidget *m_layoutWidget;
 
     Tasks *m_applet;
-    LayoutWidget *m_parentWidget;
-    QTimer* m_activateTimer;
-
 
     TaskFlags m_flags;
 
@@ -224,9 +219,9 @@ protected:
     QString m_backgroundPrefix;
     QRectF m_activeRect;
 
-    QPointF _dragOffset;
     QTime m_lastGeometryUpdate;
     QTime m_lastUpdate;
+    int m_activateTimerId;
     int m_updateGeometryTimerId;
     int m_updateTimerId;
     int m_hoverEffectTimerId;
@@ -234,11 +229,9 @@ protected:
     int m_attentionTicks;
 
     bool m_fadeIn : 1;
-    bool m_showTooltip : 1;
-    bool m_showingTooltip : 1;
+
     // distance (in pixels) between a task's icon and its text
     static const int IconTextSpacing = 4;
-
     static const int TaskItemHorizontalMargin = 4;
     static const int TaskItemVerticalMargin = 4;
 };

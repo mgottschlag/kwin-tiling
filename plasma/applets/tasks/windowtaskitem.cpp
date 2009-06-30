@@ -58,8 +58,8 @@
 #include <fixx11h.h>
 #endif
 
-WindowTaskItem::WindowTaskItem(QGraphicsWidget *parent, Tasks *applet, const bool showTooltip)
-    : AbstractTaskItem(parent, applet, showTooltip),
+WindowTaskItem::WindowTaskItem(QGraphicsWidget *parent, Tasks *applet)
+    : AbstractTaskItem(parent, applet),
       m_task(0)
 {
 }
@@ -167,7 +167,7 @@ void WindowTaskItem::updateTask(::TaskManager::TaskChanges changes)
         setText(m_task->name());
     }
 
-    if (m_showingTooltip &&
+    if (Plasma::ToolTipManager::self()->isVisible(this) &&
         (changes & TaskManager::IconChanged ||
          changes & TaskManager::NameChanged ||
          changes & TaskManager::DesktopChanged)) {
@@ -197,6 +197,7 @@ void WindowTaskItem::updateToolTip()
                                 i18nc("Which virtual desktop a window is currently on", "On %1",
                                       KWindowSystem::desktopName(m_task->desktop())), p);
     data.setWindowToPreview(m_task->task()->window());
+    data.setClickable(true);
 
     Plasma::ToolTipManager::self()->setContent(this, data);
 }

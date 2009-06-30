@@ -89,7 +89,7 @@ void Tasks::init()
    // connect(m_groupManager, SIGNAL(reload()), this, SLOT(reload()));
     connect(this, SIGNAL(settingsChanged()), m_groupManager, SLOT(reconnect()));
 
-    m_rootGroupItem = new TaskGroupItem(this, this, false);
+    m_rootGroupItem = new TaskGroupItem(this, this);
     m_rootGroupItem->expand();
     m_rootGroupItem->setGroup(m_groupManager->rootGroup());
 
@@ -390,7 +390,7 @@ void Tasks::configAccepted()
     }
 }
 
-bool Tasks::showTooltip() const
+bool Tasks::showToolTip() const
 {
     return m_showTooltip;
 }

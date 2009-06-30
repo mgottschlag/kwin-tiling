@@ -54,8 +54,8 @@
 #include "taskitemlayout.h"
 #include "windowtaskitem.h"
 
-TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet, const bool showTooltip)
-    : AbstractTaskItem(parent, applet, showTooltip),
+TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet)
+    : AbstractTaskItem(parent, applet),
       m_group(0),
       m_tasksLayout(0),
       m_popupMenuTimer(0),
@@ -151,7 +151,7 @@ TaskGroupItem * TaskGroupItem::splitGroup(int newSplitPosition)
 
     if (!m_childSplitGroup) {
         //kDebug() << "Normal scene " << scene();
-        m_childSplitGroup = new  TaskGroupItem(this, m_applet, true);
+        m_childSplitGroup = new  TaskGroupItem(this, m_applet);
         m_childSplitGroup->setSplitGroup(m_group);
     }
 
@@ -232,7 +232,7 @@ void TaskGroupItem::updateTask(::TaskManager::TaskChanges changes)
         setText(m_group->name());
     }
 
-    if (m_showingTooltip &&
+    if (Plasma::ToolTipManager::self()->isVisible(this) &&
         (changes & TaskManager::IconChanged ||
         changes & TaskManager::NameChanged ||
         changes & TaskManager::DesktopChanged)) {
@@ -273,7 +273,7 @@ void TaskGroupItem::updateToolTip()
     }
 
     data.setWindowsToPreview(windows);
-
+    data.setClickable(true);
 
     Plasma::ToolTipManager::self()->setContent(this, data);
 }
@@ -311,6 +311,11 @@ void TaskGroupItem::reload()
 void TaskGroupItem::setGroup(TaskManager::GroupPtr group)
 {
     //kDebug();
+    if (m_group == group) {
+        kDebug() << "already have this group!";
+        return;
+    }
+
     m_group = group;
     m_abstractItem = qobject_cast<AbstractGroupableItem *>(group);
 
@@ -401,17 +406,12 @@ AbstractTaskItem *TaskGroupItem::createAbstractItem(TaskManager::AbstractGroupab
     //kDebug() << "item to create" << groupableItem << endl;
     AbstractTaskItem *item = 0;
 
-    if (m_groupMembers.contains(groupableItem)) {
-        //kDebug() << "existing item found";
-        return m_groupMembers.value(groupableItem);
-    }
-
     if (groupableItem->isGroupItem()) {
-        TaskGroupItem *groupItem = new TaskGroupItem(this, m_applet, m_applet->showTooltip());
+        TaskGroupItem *groupItem = new TaskGroupItem(this, m_applet);
         groupItem->setGroup(static_cast<TaskManager::TaskGroup*>(groupableItem));
         item = groupItem;
     } else { //it's a window task
-        WindowTaskItem *windowItem = new WindowTaskItem(this, m_applet, m_applet->showTooltip());
+        WindowTaskItem *windowItem = new WindowTaskItem(this, m_applet);
         windowItem->setTask(static_cast<TaskManager::TaskItem*>(groupableItem));
         item = windowItem;
     }
@@ -437,7 +437,13 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractGroupableItem * groupableItem
     }
 
     //returns the corresponding item or creates a new one
-    AbstractTaskItem *item = createAbstractItem(groupableItem);
+    bool isNew = false;
+    AbstractTaskItem *item = m_groupMembers.value(groupableItem);
+
+    if (!item) {
+        item = createAbstractItem(groupableItem);
+        isNew = true;
+    }
 
     if (!item) {
         kDebug() << "invalid Item";
@@ -466,12 +472,14 @@ void TaskGroupItem::itemAdded(TaskManager::AbstractGroupableItem * groupableItem
         m_activeTaskIndex = 0;
     }
 
-    connect(item, SIGNAL(activated(AbstractTaskItem*)),
-            this, SLOT(updateActive(AbstractTaskItem*)));
+    if (isNew) {
+        connect(item, SIGNAL(activated(AbstractTaskItem*)),
+                this, SLOT(updateActive(AbstractTaskItem*)));
 
-    TaskGroupItem *group = qobject_cast<TaskGroupItem*>(item);
-    if (group) {
-        connect(item, SIGNAL(changed()), this, SLOT(relayoutItems()));
+        TaskGroupItem *group = qobject_cast<TaskGroupItem*>(item);
+        if (group) {
+            connect(item, SIGNAL(changed()), this, SLOT(relayoutItems()));
+        }
     }
 }
 
@@ -684,6 +692,7 @@ void TaskGroupItem::expand()
 
     m_mainLayout->addItem(tasksLayout());
 
+    disconnect(m_applet, SIGNAL(constraintsChanged(Plasma::Constraints)), this, SLOT(constraintsChanged(Plasma::Constraints)));
     connect(m_applet, SIGNAL(constraintsChanged(Plasma::Constraints)), this, SLOT(constraintsChanged(Plasma::Constraints)));
     //connect(m_tasksLayout, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updatePreferredSize()));
     m_collapsed = false;
@@ -751,6 +760,7 @@ void TaskGroupItem::collapse()
 
     //kDebug();
     //delete m_tasksLayout;
+    disconnect(m_applet, SIGNAL(constraintsChanged(Plasma::Constraints)), this, SLOT(constraintsChanged(Plasma::Constraints)));
     m_collapsed = true;
     updatePreferredSize();
     //kDebug();
@@ -1047,11 +1057,11 @@ int TaskGroupItem::indexOf(AbstractTaskItem *task)
                 TaskGroupItem *groupItem = qobject_cast<TaskGroupItem *>(taskItem);
                 if (groupItem) {
                     int subIndex = groupItem->indexOf(groupItem->activeSubTask());
-                     if(subIndex == -1) {
-                         index += groupItem->count();
-                     } else {
-                         return index+subIndex;
-                     }
+                    if (subIndex == -1) {
+                        index += groupItem->count();
+                    } else {
+                        return index + subIndex;
+                    }
                 }
 
                 return index;

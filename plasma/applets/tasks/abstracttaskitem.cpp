@@ -1,3 +1,5 @@
+#ifndef ABSTRACTTASKITEM_CPP
+#define ABSTRACTTASKITEM_CPP
 /***************************************************************************
  *   Copyright (C) 2007 by Robert Knight <robertknight@gmail.com>          *
  *   Copyright (C) 2008 by Alexis Ménard <darktears31@gmail.com>           *
@@ -59,23 +61,21 @@
 
 static const int HOVER_EFFECT_TIMEOUT = 800;
 
-AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet, const bool showTooltip)
+AbstractTaskItem::AbstractTaskItem(QGraphicsWidget *parent, Tasks *applet)
     : QGraphicsWidget(parent),
       m_abstractItem(0),
       m_applet(applet),
-      m_activateTimer(0),
       m_flags(0),
       m_animId(0),
       m_alpha(1),
       m_backgroundPrefix("normal"),
+      m_activateTimerId(0),
       m_updateGeometryTimerId(0),
       m_updateTimerId(0),
       m_hoverEffectTimerId(0),
       m_attentionTimerId(0),
       m_attentionTicks(0),
-      m_fadeIn(true),
-      m_showTooltip(showTooltip),
-      m_showingTooltip(false)
+      m_fadeIn(true)
 {
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
     setAcceptsHoverEvents(true);
@@ -149,21 +149,16 @@ void AbstractTaskItem::checkSettings()
 {
     TaskGroupItem *group = qobject_cast<TaskGroupItem *>(this);
 
-    if (group && !group->collapsed()) {
-        m_showTooltip = false;
-    } else if (m_showTooltip != m_applet->showTooltip()) {
-        m_showTooltip = !m_showTooltip;
+    if (m_applet->showToolTip() && (!group || group->collapsed())) {
+        Plasma::ToolTipManager::self()->registerWidget(this);
+    } else {
+        Plasma::ToolTipManager::self()->unregisterWidget(this);
     }
 }
 
 void AbstractTaskItem::clearAbstractItem()
 {
     m_abstractItem = 0;
-}
-
-void AbstractTaskItem::setShowTooltip(const bool showit)
-{
-    m_showTooltip = showit;
 }
 
 void AbstractTaskItem::setText(const QString &text)
@@ -245,9 +240,11 @@ AbstractTaskItem::TaskFlags AbstractTaskItem::taskFlags() const
 
 void AbstractTaskItem::toolTipAboutToShow()
 {
-    if (m_showTooltip) {
-        m_showingTooltip = true;
+    if (m_applet->showToolTip()) {
         updateToolTip();
+        connect(Plasma::ToolTipManager::self(),
+                SIGNAL(windowPreviewActivated(WId,Qt::MouseButtons,Qt::KeyboardModifiers,QPoint)),
+                this, SLOT(activateWindow(WId,Qt::MouseButtons)));
     } else {
         Plasma::ToolTipManager::self()->clearContent(this);
     }
@@ -255,8 +252,22 @@ void AbstractTaskItem::toolTipAboutToShow()
 
 void AbstractTaskItem::toolTipHidden()
 {
-    m_showingTooltip = false;
     Plasma::ToolTipManager::self()->clearContent(this);
+    disconnect(Plasma::ToolTipManager::self(),
+               SIGNAL(windowPreviewActivated(WId,Qt::MouseButtons,Qt::KeyboardModifiers,QPoint)),
+               this, SLOT(activateWindow(WId,Qt::MouseButtons)));
+}
+
+void AbstractTaskItem::activateWindow(WId id, Qt::MouseButtons buttons)
+{
+    if (buttons & Qt::LeftButton) {
+        if (parentGroup()) {
+            AbstractTaskItem *item = parentGroup()->taskItemForWId(id);
+            if (item) {
+                item->activate();
+            }
+        }
+    }
 }
 
 void AbstractTaskItem::queueUpdate()
@@ -279,6 +290,10 @@ void AbstractTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
     Q_UNUSED(event)
     fadeBackground("hover", 175, true);
     if (parentGroup()) {
+        if (m_hoverEffectTimerId) {
+            killTimer(m_hoverEffectTimerId);
+        }
+
         m_hoverEffectTimerId = startTimer(HOVER_EFFECT_TIMEOUT);
     }
 }
@@ -369,7 +384,11 @@ void AbstractTaskItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void AbstractTaskItem::timerEvent(QTimerEvent *event)
 {
-    if (event->timerId() == m_updateGeometryTimerId) {
+    if (event->timerId() == m_activateTimerId) {
+        killTimer(m_activateTimerId);
+        m_activateTimerId = 0;
+        activate();
+    } else if (event->timerId() == m_updateGeometryTimerId) {
         killTimer(m_updateGeometryTimerId);
         m_updateGeometryTimerId = 0;
         publishIconGeometry();
@@ -774,14 +793,9 @@ void AbstractTaskItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 
     event->accept();
 
-    if (!m_activateTimer) {
-        m_activateTimer = new QTimer(this);
-        m_activateTimer->setSingleShot(true);
-        m_activateTimer->setInterval(300);
-        connect(m_activateTimer, SIGNAL(timeout()), this, SLOT(activate()));
+    if (!m_activateTimerId) {
+        m_activateTimerId = startTimer(300);
     }
-
-    m_activateTimer->start();
 }
 
 void AbstractTaskItem::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
@@ -790,8 +804,9 @@ void AbstractTaskItem::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 
     // restart the timer so that activate() is only called after the mouse
     // stops moving
-    if (m_activateTimer) {
-        m_activateTimer->start();
+    if (m_activateTimerId) {
+        killTimer(m_activateTimerId);
+        m_activateTimerId = startTimer(300);
     }
 }
 
@@ -799,8 +814,9 @@ void AbstractTaskItem::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
 {
     Q_UNUSED(event);
 
-    delete m_activateTimer;
-    m_activateTimer = 0;
+    if (m_activateTimerId) {
+        killTimer(m_activateTimerId);
+    }
 }
 
 QRect AbstractTaskItem::iconGeometry() const
@@ -850,6 +866,10 @@ void AbstractTaskItem::setGeometry(const QRectF& geometry)
 {
     QGraphicsWidget::setGeometry(geometry);
     if (m_lastGeometryUpdate.elapsed() < 350) {
+        if (m_updateGeometryTimerId) {
+            killTimer(m_updateGeometryTimerId);
+        }
+
         m_updateGeometryTimerId = startTimer(350 - m_lastGeometryUpdate.elapsed());
     } else {
         publishIconGeometry();
@@ -1002,3 +1022,4 @@ TaskManager::AbstractGroupableItem * AbstractTaskItem::abstractItem()
 }
 
 #include "abstracttaskitem.moc"
+#endif // ABSTRACTTASKITEM_CPP

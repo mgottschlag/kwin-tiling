@@ -36,7 +36,7 @@ class WindowTaskItem : public AbstractTaskItem
 
 public:
     /** Constructs a new representation for a window task. */
-    WindowTaskItem(QGraphicsWidget *parent, Tasks *applet, const bool showTooltip);
+    WindowTaskItem(QGraphicsWidget *parent, Tasks *applet);
 
     /** Sets the window/startup represented by this task. */
     void setTask(TaskManager::TaskItem* taskItem);

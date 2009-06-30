@@ -54,7 +54,7 @@ class TaskGroupItem : public AbstractTaskItem
 
 public:
     /** Constructs a new representation for a taskgroup. */
-    TaskGroupItem(QGraphicsWidget *parent, Tasks *applet, const bool showTooltip);
+    TaskGroupItem(QGraphicsWidget *parent, Tasks *applet);
 
     /** Sets the group represented by this task. */
     void setGroup(TaskManager::GroupPtr);
@@ -111,6 +111,7 @@ public:
     void publishIconGeometry() const;
     void publishIconGeometry(const QRect &rect) const;
     QWidget *popupDialog() const;
+    AbstractTaskItem *taskItemForWId(WId id);
 
 signals:
     /** Emitted when a window is selected for activation, minimization, iconification */
@@ -133,7 +134,6 @@ public slots:
     void updateActive(AbstractTaskItem *);
 
 protected:
-    AbstractTaskItem *taskItemForWId(WId id);
     virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
     virtual void paint(QPainter *painter,const QStyleOptionGraphicsItem *option,QWidget *widget);
 
