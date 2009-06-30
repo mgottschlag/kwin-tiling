@@ -201,9 +201,9 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
         QSize c(contentsRect().size().toSize());
         if (m_showMultipleBatteries) {
             if (formFactor() == Plasma::Vertical) {
-                c.setHeight(size().height() / m_numOfBattery);
+                c.setHeight(size().height() / qMax(1, m_numOfBattery));
             } else if (formFactor() == Plasma::Horizontal) {
-                c.setWidth(size().width() / m_numOfBattery);
+                c.setWidth(size().width() / qMax(1, m_numOfBattery));
             }
         }
         m_theme->resize(c);
