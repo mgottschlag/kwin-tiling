@@ -31,6 +31,7 @@
 #include <QPainter>
 #include <QLayout>
 #include <QLabel>
+#include <QTimeEdit>
 
 #include <QCheckBox>
 #include <QRegExp>
@@ -52,20 +53,6 @@
 #include "dtime.moc"
 
 #include "helper.h"
-
-HMSTimeWidget::HMSTimeWidget(QWidget *parent) :
-	KIntSpinBox(parent)
-{
-}
-
-QString HMSTimeWidget::mapValueToText(int value)
-{
-  QString s = QString::number(value);
-  if( value < 10 ) {
-    s = '0' + s;
-  }
-  return s;
-}
 
 Dtime::Dtime(QWidget * parent)
   : QWidget(parent)
@@ -106,7 +93,6 @@ Dtime::Dtime(QWidget * parent)
 
   QVBoxLayout *l1 = new QVBoxLayout( dateBox );
   l1->setMargin( 0 );
-  l1->setSpacing( KDialog::spacingHint() );
 
   cal = new KDatePicker( dateBox );
   cal->setMinimumSize(cal->sizeHint());
@@ -119,75 +105,33 @@ Dtime::Dtime(QWidget * parent)
 
   QVBoxLayout *v2 = new QVBoxLayout( timeBox );
   v2->setMargin( 0 );
-  v2->setSpacing( KDialog::spacingHint() );
 
   kclock = new Kclock( timeBox );
   kclock->setObjectName("Kclock");
   kclock->setMinimumSize(150,150);
   v2->addWidget( kclock );
 
-  QGridLayout *v3 = new QGridLayout( );
-  v2->addItem( v3 );
+  v2->addSpacing( KDialog::spacingHint() );
 
-  // Even if the module's widgets are reversed (usually when using RTL
-  // languages), the placing of the time fields must always be H:M:S, from
-  // left to right.
-  bool isRTL = QApplication::isRightToLeft();
+  QHBoxLayout *v3 = new QHBoxLayout( );
+  v2->addLayout( v3 );
 
-  QSpacerItem *spacer1 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-  v3->addItem(spacer1, 0, 1, 2, 1);
+  v3->addStretch();
 
-  hour = new HMSTimeWidget( timeBox );
-  hour->setWrapping(true);
-  hour->setMaximum(23);
-#ifdef __GNUC__
-#warning fixme hour->setValidator(new KStrictIntValidator(0, 23, hour));
-#endif
-  v3->addWidget(hour, 0, isRTL ? 6 : 2, 2, 1);
+  timeEdit = new QTimeEdit( timeBox );
+  timeEdit->setWrapping(true);
+  timeEdit->setDisplayFormat("HH:mm:ss");
+  v3->addWidget(timeEdit);
 
-  QLabel *dots1 = new QLabel(":", timeBox);
-  dots1->setMinimumWidth( 7 );
-  dots1->setAlignment( Qt::AlignCenter );
-  v3->addWidget(dots1, 0, 3, 2, 1);
-
-  minute = new HMSTimeWidget( timeBox );
-  minute->setWrapping(true);
-  minute->setMinimum(0);
-  minute->setMaximum(59);
-#ifdef __GNUC__
-  #warning fixme minute->setValidator(new KStrictIntValidator(0, 59, minute));
-#endif
-  v3->addWidget(minute, 0, 4, 2, 1);
-
-  QLabel *dots2 = new QLabel(":", timeBox);
-  dots2->setMinimumWidth( 7 );
-  dots2->setAlignment( Qt::AlignCenter );
-  v3->addWidget(dots2, 0, 5, 2, 1);
-
-  second = new HMSTimeWidget( timeBox );
-  second->setWrapping(true);
-  second->setMinimum(0);
-  second->setMaximum(59);
-#ifdef __GNUC__
-  #warning fixme second->setValidator(new KStrictIntValidator(0, 59, second));
-#endif
-  v3->addWidget(second, 0, isRTL ? 2 : 6, 2, 1);
-
-  v3->addItem(new QSpacerItem(7, 0), 0, 7);
+  v3->addStretch();
 
   QString wtstr = i18n("Here you can change the system time. Click into the"
     " hours, minutes or seconds field to change the relevant value, either"
     " using the up and down buttons to the right or by entering a new value.");
-  hour->setWhatsThis( wtstr );
-  minute->setWhatsThis( wtstr );
-  second->setWhatsThis( wtstr );
-
-  QSpacerItem *spacer3 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-  v3->addItem(spacer3, 0, 9, 2, 1);
+  timeEdit->setWhatsThis( wtstr );
 
   QGridLayout *top = new QGridLayout( this );
   top->setMargin( 0 );
-  top->setSpacing( KDialog::spacingHint() );
 
   top->addWidget(dateBox, 1,0);
   top->addWidget(timeBox, 1,1);
@@ -197,9 +141,7 @@ Dtime::Dtime(QWidget * parent)
   // End Dialog
   // *************************************************************
 
-  connect( hour, SIGNAL(valueChanged(int)), SLOT(set_time()) );
-  connect( minute, SIGNAL(valueChanged(int)), SLOT(set_time()) );
-  connect( second, SIGNAL(valueChanged(int)), SLOT(set_time()) );
+  connect( timeEdit, SIGNAL(timeChanged(QTime)), SLOT(set_time()) );
   connect( cal, SIGNAL(dateChanged(QDate)), SLOT(changeDate(QDate)));
 
   connect( &internalTimer, SIGNAL(timeout()), SLOT(timeout()) );
@@ -210,9 +152,7 @@ Dtime::Dtime(QWidget * parent)
 void Dtime::serverTimeCheck() {
   bool enabled = !setDateTimeAuto->isChecked();
   cal->setEnabled(enabled);
-  hour->setEnabled(enabled);
-  minute->setEnabled(enabled);
-  second->setEnabled(enabled);
+  timeEdit->setEnabled(enabled);
   //kclock->setEnabled(enabled);
 }
 
@@ -238,7 +178,7 @@ void Dtime::set_time()
 
   internalTimer.stop();
 
-  time.setHMS( hour->value(), minute->value(), second->value() );
+  time = timeEdit->time();
   kclock->setTime( time );
 
   emit timeChanged( true );
@@ -304,8 +244,7 @@ void Dtime::save( QStringList& helperargs )
   }
   else {
     // User time setting
-    QDateTime dt(date,
-        QTime(hour->value(), minute->value(), second->value()));
+    QDateTime dt(date, QTime(timeEdit->time()));
 
     kDebug() << "Set date " << dt;
 
@@ -334,9 +273,7 @@ void Dtime::timeout()
   time = QTime::currentTime();
 
   ontimeout = true;
-  second->setValue(time.second());
-  minute->setValue(time.minute());
-  hour->setValue(time.hour());
+  timeEdit->setTime(time);
   ontimeout = false;
 
   kclock->setTime( time );
@@ -418,15 +355,3 @@ void Kclock::paintEvent( QPaintEvent * )
   paint.end();
 }
 
-QValidator::State KStrictIntValidator::validate( QString & input, int & d ) const
-{
-  if( input.isEmpty() )
-    return Intermediate;
-
-  State st = QIntValidator::validate( input, d );
-
-  if( st == Intermediate )
-    return Invalid;
-
-  return st;
-}

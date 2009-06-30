@@ -37,15 +37,7 @@
 #include <knuminput.h>
 
 class Kclock;
-
-class HMSTimeWidget : public KIntSpinBox
-{
-  Q_OBJECT
- public:
-  HMSTimeWidget(QWidget *parent=0);
- protected:
-  QString mapValueToText(int);
-};
+class QTimeEdit;
 
 class Dtime : public QWidget
 {
@@ -81,9 +73,7 @@ private:
   QComboBox	*month;
   QSpinBox	*year;
 
-  HMSTimeWidget	*hour;
-  HMSTimeWidget	*minute;
-  HMSTimeWidget	*second;
+  QTimeEdit	*timeEdit;
 
   Kclock	*kclock;
 
@@ -113,15 +103,6 @@ protected:
 
 private:
   QTime		time;
-};
-
-class KStrictIntValidator : public QIntValidator
-{
-public:
-  KStrictIntValidator(int bottom, int top, QWidget * parent)
-    : QIntValidator(bottom, top, parent) {}
-
-  QValidator::State validate( QString & input, int & d ) const;
 };
 
 #endif // dtime_included
