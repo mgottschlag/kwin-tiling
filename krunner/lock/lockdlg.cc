@@ -22,6 +22,7 @@
 #include <KGlobalSettings>
 #include <KConfig>
 #include <KIconLoader>
+#include <KNotification>
 #include <kdesu/defaults.h>
 #include <KPasswordDialog>
 #include <KDebug>
@@ -330,6 +331,7 @@ void PasswordDlg::reapVerify()
             ok->setEnabled(false);
             cancel->setEnabled(false);
             mNewSessButton->setEnabled( false );
+            KNotification::event( "unlockfailed" );
             return;
         case AuthAbort:
             return;

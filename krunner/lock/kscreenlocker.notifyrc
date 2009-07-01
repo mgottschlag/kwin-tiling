@@ -1,0 +1,28 @@
+[Global]
+IconName=system-lock-screen
+Comment=The KDE Screen Saver
+
+[Event/savingstarted]
+Name=Screen saver started
+Comment=The screen saver has been started
+Action=None
+
+[Event/locked]
+Name=Screen locked
+Comment=The screen has been locked
+Action=None
+
+[Event/savingstopped]
+Name=Screen saver exited
+Comment=The screen saver has finished
+Action=None
+
+[Event/unlocked]
+Name=Screen unlocked
+Comment=The screen has been unlocked
+Action=None
+
+[Event/unlockfailed]
+Name=Screen unlock failed
+Comment=Failed attempt to unlock the screen
+Action=None

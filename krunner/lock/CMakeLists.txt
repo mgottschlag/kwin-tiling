@@ -65,4 +65,5 @@ install_pam_service(kscreensaver)
 ########### install files ###############
 
 
+install( FILES kscreenlocker.notifyrc  DESTINATION  ${DATA_INSTALL_DIR}/kscreenlocker )
 

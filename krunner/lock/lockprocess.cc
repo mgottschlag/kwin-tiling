@@ -35,6 +35,7 @@
 #include <KGlobalSettings>
 #include <KLocale>
 #include <KLibrary>
+#include <KNotification>
 #include <KPushButton>
 #include <KStandardGuiItem>
 #include <KAuthorized>
@@ -753,6 +754,7 @@ bool LockProcess::startSaver()
     setVRoot( winId(), winId() );
     startHack();
     startPlasma();
+    KNotification::event( "savingstarted" );
     return true;
 }
 
@@ -776,6 +778,7 @@ void LockProcess::stopSaver()
         for (QList<int>::ConstIterator it = child_sockets.constBegin(); it != child_sockets.constEnd(); ++it)
             write(*it, out, sizeof(out));
     }
+    KNotification::event( "savingstopped" );
 }
 
 // private static
@@ -810,6 +813,7 @@ bool LockProcess::startLock()
         mLocked = true;
         KDisplayManager().setLock(true);
         lockPlasma();
+        KNotification::event( "locked" );
         return true;
     }
     return false;
