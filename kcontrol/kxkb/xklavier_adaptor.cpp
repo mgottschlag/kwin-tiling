@@ -222,7 +222,7 @@ void XKlavierAdaptor::loadXkbConfig(bool layoutsOnly)
     kDebug() << "Xklavier initialized";
     priv->config = xkl_config_registry_get_instance(priv->engine);
 
-    xkl_config_registry_load(priv->config, false);
+    xkl_config_registry_load(priv->config);
 	
     void *userData = priv;
 
