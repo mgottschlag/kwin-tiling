@@ -23,7 +23,8 @@
 
 class QAction;
 
-class LocationsRunner : public Plasma::AbstractRunner {
+class LocationsRunner : public Plasma::AbstractRunner
+{
     Q_OBJECT
 
     public:
