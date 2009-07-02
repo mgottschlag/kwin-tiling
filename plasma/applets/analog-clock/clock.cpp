@@ -66,6 +66,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_animateSeconds(false)
 {
     KGlobal::locale()->insertCatalog("libplasmaclock");
+    KGlobal::locale()->insertCatalog("timezones4");
 
     setHasConfigurationInterface(true);
     resize(125, 125);
