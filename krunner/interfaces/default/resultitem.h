@@ -82,6 +82,7 @@ public:
     bool isQueryPrototype() const;
     bool mouseHovered() const;
     void calculateSize();
+    void calculateSize(int sceneWidth, int sceneHeight);
 
     static bool compare(const ResultItem *one, const ResultItem *other);
     bool operator<(const ResultItem &other) const;

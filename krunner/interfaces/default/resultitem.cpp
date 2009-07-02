@@ -417,13 +417,16 @@ void ResultItem::showConfig()
 
 void ResultItem::calculateSize()
 {
+    if (scene()) {
+        calculateSize(scene()->width(),scene()->height());
+    }
+}
+void ResultItem::calculateSize(int sceneWidth, int sceneHeight) 
+{
+
     QRect textBounds(contentsRect().toRect());
 
-    if (scene()) {
-        textBounds.setWidth(scene()->width());
-    } else {
-        return;
-    }
+    textBounds.setWidth(sceneWidth);
 
     QString text = name();
 
@@ -448,7 +451,7 @@ void ResultItem::calculateSize()
 
     qreal left, top, right, bottom;
     getContentsMargins(&left, &top, &right, &bottom);
-    QSize newSize(scene() ? scene()->width() : geometry().width(), innerHeight + top + bottom);
+    QSize newSize(sceneWidth, innerHeight + top + bottom);
     //kDebug() << innerHeight << geometry().size();
 
     if (m_configButton) {
