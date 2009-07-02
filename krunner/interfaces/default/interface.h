@@ -77,10 +77,12 @@ class Interface : public KRunnerDialog
     private:
         void centerOnScreen();
         void setStaticQueryMode(bool staticQuery);
+        void resetResultsArea();
 
         QTimer m_hideResultsTimer;
 
         QWidget *m_buttonContainer;
+        QWidget *m_resultsContainer;
         QVBoxLayout* m_layout;
         QHBoxLayout* m_statusLayout;
         QLabel *m_previousPage;
@@ -97,6 +99,7 @@ class Interface : public KRunnerDialog
         bool m_delayedRun;
         bool m_running;
         bool m_queryRunning;
+        QSize m_defaultSize;
 };
 
 #endif

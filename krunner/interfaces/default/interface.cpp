@@ -152,29 +152,18 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_searchTerm->setHistoryItems(pastQueryItems);
     m_completion->insertItems(pastQueryItems);
     bottomLayout->insertWidget(2, m_searchTerm, 10);
-
-    m_statusLayout = new QHBoxLayout();
-
-    m_previousPage = new QLabel(w);
-    m_previousPage->setText("<a href=\"prev\">&lt;&lt;</a>");
-    m_previousPage->hide();
-    m_statusLayout->addWidget(m_previousPage, 0, Qt::AlignLeft | Qt::AlignTop);
-
-    m_nextPage = new QLabel(w);
-    m_nextPage->setText("<a href=\"next\">&gt;&gt;</a>");
-    m_nextPage->hide();
-    m_statusLayout->addWidget(m_nextPage, 0, Qt::AlignLeft | Qt::AlignTop);
-
-    m_layout->addLayout(m_statusLayout);
-
-    m_dividerLine = new QWidget(w);
+    
+    m_resultsContainer = new QWidget(w);
+    QVBoxLayout* resultsLayout = new QVBoxLayout(m_resultsContainer);
+    resultsLayout->setMargin(0);
+    
+    m_dividerLine = new QWidget(m_resultsContainer);
     m_dividerLine->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
     m_dividerLine->setFixedHeight(1);
     m_dividerLine->setAutoFillBackground(true);
-    m_dividerLine->hide();
-    m_layout->addWidget(m_dividerLine);
+    resultsLayout->addWidget(m_dividerLine);
 
-    m_resultsView = new QGraphicsView(w);
+    m_resultsView = new QGraphicsView(m_resultsContainer);
     m_resultsView->setFrameStyle(QFrame::NoFrame);
     m_resultsView->viewport()->setAutoFillBackground(false);
     m_resultsView->setInteractive(true);
@@ -187,12 +176,15 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_resultsScene = new ResultScene(runnerManager, m_searchTerm, this);
     m_resultsView->setScene(m_resultsScene);
     m_resultsView->setMinimumSize(m_resultsScene->minimumSizeHint());
+
     connect(m_resultsScene, SIGNAL(matchCountChanged(int)), this, SLOT(matchCountChanged(int)));
     connect(m_resultsScene, SIGNAL(itemActivated(ResultItem *)), this, SLOT(run(ResultItem *)));
     connect(m_resultsScene, SIGNAL(ensureVisibility(QGraphicsItem *)), this, SLOT(ensureVisibility(QGraphicsItem *)));
+    
+    resultsLayout->addWidget(m_resultsView);
 
-    m_layout->addWidget(m_resultsView);
-
+    m_layout->addWidget(m_resultsContainer);
+    
     connect(lineEdit, SIGNAL(userTextChanged(QString)), this, SLOT(queryTextEdited(QString)));
     connect(m_searchTerm, SIGNAL(returnPressed()), this, SLOT(runDefaultResultItem()));
 
@@ -203,32 +195,53 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
 
     new QShortcut(QKeySequence( Qt::Key_Escape ), this, SLOT(close()));
+    
+    m_layout->setAlignment(Qt::AlignTop);
 
-    m_layout->addStretch(1);
     setTabOrder(0, m_configButton);
     setTabOrder(m_configButton, m_activityButton);
     setTabOrder(m_activityButton, m_searchTerm);
-    setTabOrder(m_searchTerm, m_previousPage);
-    setTabOrder(m_previousPage, m_nextPage);
-    setTabOrder(m_nextPage, m_resultsView);
+    setTabOrder(m_searchTerm, m_resultsView);
     setTabOrder(m_resultsView, m_helpButton);
     setTabOrder(m_helpButton, m_closeButton);
 
-    //kDebug() << "size:" << m_resultsView->size() << m_resultsView->minimumSize();
+    //kDebug() << "size:" << m_resultsView->size() << m_resultsView->minimumSize() << minimumSizeHint();
+
     // we restore the original size, which will set the results view back to its
     // normal size, then we hide the results view and resize the dialog
+    
     setMinimumSize(QSize(MIN_WIDTH , 0));
+    adjustSize();
+
+    // we load the last used size; the saved value is the size of the dialog when the 
+    // results are visible;
+
     if (KGlobal::config()->hasGroup("Interface")) {
         KConfigGroup interfaceConfig(KGlobal::config(), "Interface");
         restoreDialogSize(interfaceConfig);
     }
 
-    //kDebug() << "size:" << minimumSizeHint() << minimumSize();
+    m_defaultSize = size();
+
+    centerOnScreen();
+    m_resultsContainer->hide();
+
     QTimer::singleShot(0, this, SLOT(resetInterface()));
 }
 
 void Interface::resizeEvent(QResizeEvent *event)
 {
+  
+    // We set m_defaultSize only when the event is spontaneous, i.e. when the user resizes the window
+    // We always update the width, but we update the height only if the resultsContainer is visible.
+
+    if (event->spontaneous()) {
+        m_defaultSize.setWidth(width());
+	if (m_resultsContainer->isVisible()) {
+	    m_defaultSize.setHeight(height());
+	}
+    }
+
     Plasma::Theme *theme = Plasma::Theme::defaultTheme();
     int gradientWidth = contentsRect().width() - KDialog::marginHint()*2;
     QLinearGradient gr(0, 0, gradientWidth, 0);
@@ -241,8 +254,9 @@ void Interface::resizeEvent(QResizeEvent *event)
         p.setBrush(QPalette::Background, gr);
         m_dividerLine->setPalette(p);
     }
-    m_resultsScene->resize(m_resultsView->width(),
-                           qMax(m_resultsView->height(), int(m_resultsScene->height())));
+    
+    m_resultsScene->resize(m_resultsView->width(), qMax(m_resultsView->height(), int(m_resultsScene->height())));
+
     KRunnerDialog::resizeEvent(event);
 }
 
@@ -251,6 +265,9 @@ Interface::~Interface()
     KRunnerSettings::setPastQueries(m_searchTerm->historyItems());
     KRunnerSettings::setQueryTextCompletionMode(m_searchTerm->completionMode());
     KRunnerSettings::self()->writeConfig();
+    
+    // Before saving the size we resize to the default size, with the results container shown.
+    resize(m_defaultSize);
     KConfigGroup interfaceConfig(KGlobal::config(), "Interface");
     saveDialogSize(interfaceConfig);
     KGlobal::config()->sync();
@@ -277,13 +294,6 @@ void Interface::themeUpdated()
     m_closeButton->setStyleSheet(buttonStyleSheet);
     //kDebug() << "stylesheet is" << buttonStyleSheet;
 
-    QPalette p = m_previousPage->palette();
-    p.setColor(QPalette::WindowText, theme->color(Plasma::Theme::TextColor));
-    p.setColor(QPalette::Link, theme->color(Plasma::Theme::TextColor));
-    p.setColor(QPalette::LinkVisited, theme->color(Plasma::Theme::TextColor));
-    m_previousPage->setPalette(p);
-    m_nextPage->setPalette(p);
-
     //reset the icons
     m_configButton->setIcon(m_iconSvg->pixmap("configure"));
     m_activityButton->setIcon(m_iconSvg->pixmap("status"));
@@ -299,14 +309,12 @@ void Interface::clearHistory()
 void Interface::display(const QString &term)
 {
     m_searchTerm->setFocus();
-
     KWindowSystem::setOnDesktop(winId(), KWindowSystem::currentDesktop());
 
     show();
     resetInterface();
-    centerOnScreen();
     KWindowSystem::forceActiveWindow(winId());
-
+    
     if (!term.isEmpty()) {
         m_searchTerm->setItemText(0, term);
     }
@@ -319,19 +327,15 @@ void Interface::centerOnScreen()
         screen = QApplication::desktop()->screenNumber(QCursor::pos());
     }
 
-    if (m_resultsView->isVisibleTo(this)) {
-        KDialog::centerOnScreen(this, screen);
-        return;
-    }
+    // this method is now called only by the ctor, with the results view visible, however 
+    // we do not call KDialog::centerOnScreen(this, screen) because the dialog is still hidden
 
-    // center it as if the results view was already visible
     QDesktopWidget *desktop = qApp->desktop();
     QRect r = desktop->screenGeometry(screen);
     int w = width();
-    int h = height() + m_resultsView->height();
+    int h = height(); 
     move(r.left() + (r.width() / 2) - (w / 2),
          r.top() + (r.height() / 2) - (h / 2));
-    //kDebug() << "moved to" << pos();
 }
 
 void Interface::setWidgetPalettes()
@@ -351,14 +355,9 @@ void Interface::resetInterface()
     setStaticQueryMode(false);
     m_delayedRun = false;
     m_searchTerm->setCurrentItem(QString(), true, 0);
-    m_previousPage->hide();
-    m_nextPage->hide();
+    resetResultsArea();
     m_resultsScene->clearQuery();
-    m_resultsView->hide();
-    m_dividerLine->hide();
-    setMinimumSize(QSize(MIN_WIDTH, 0));
-    //kDebug() << size() << minimumSizeHint();
-    resize(qMax(minimumSizeHint().width(), MIN_WIDTH), minimumSizeHint().height()+1);
+    resize(qMax(minimumSizeHint().width(), m_defaultSize.width()), minimumSizeHint().height());
 }
 
 void Interface::showHelp()
@@ -423,15 +422,13 @@ void Interface::setStaticQueryMode(bool staticQuery)
 
 void Interface::closeEvent(QCloseEvent *e)
 {
+    // We hide first, to avoid resizing right before closing
+    hide();
     if (!m_running) {
         resetInterface();
     } else {
         m_delayedRun = false;
-        m_resultsView->hide();
-        m_previousPage->hide();
-        m_nextPage->hide();
-        m_dividerLine->hide();
-        setMinimumSize(QSize(MIN_WIDTH, 0));
+        resetResultsArea();
         adjustSize();
     }
     e->accept();
@@ -518,28 +515,36 @@ void Interface::matchCountChanged(int count)
     }
 
     if (show) {
-        //kDebug() << "showing!";
-        m_resultsView->show();
-        m_dividerLine->show();
-        setMinimumSize(QSize(MIN_WIDTH, 0));
-        adjustSize();
+        //kDebug() << "showing!" << minimumSizeHint();
+        m_resultsContainer->show(); 
+        resize(m_defaultSize);
+	m_resultsScene->resize(m_resultsView->width(), qMax(m_resultsView->height(), int(m_resultsScene->height())));
     } else {
         //kDebug() << "hiding ... eventually";
         m_delayedRun = false;
-        m_hideResultsTimer.start(2000);
+        m_hideResultsTimer.start(1000);
     }
 }
 
 void Interface::hideResultsArea()
 {
-    m_resultsView->hide();
-    m_previousPage->hide();
-    m_nextPage->hide();
-    m_dividerLine->hide();
     m_searchTerm->setFocus();
-    setMinimumSize(QSize(MIN_WIDTH, 0));
-    adjustSize();
-    resize(minimumSizeHint());
+
+    resetResultsArea();
+    
+    resize(qMax(minimumSizeHint().width(), m_defaultSize.width()), minimumSizeHint().height());
+}
+
+void Interface::resetResultsArea()
+{
+    setMinimumSize(QSize(MIN_WIDTH,0));
+    m_resultsContainer->hide();   
+
+    //This is a workaround for some Qt bug which is not fully understood; it seems that 
+    //adding a qgv to a layout and then hiding it gives some issues with resizing
+    //Calling updateGeometry should not be necessary, but it probably triggers some updates which do the trick
+
+    mainWidget()->updateGeometry();
 }
 
 #include "interface.moc"
