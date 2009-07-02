@@ -1060,10 +1060,6 @@ void PlasmaApp::setFixedDashboard(bool fixedDashboard)
         }
     }
 
-    if (!dashboardFollowsDesktop && fixedDashboard) {
-        return;
-    }
-
     Plasma::Containment *c = 0;
     if (fixedDashboard) {
         //avoid the containmentAdded signal being emitted
