@@ -345,9 +345,9 @@ void UKMETIon::getFiveDayForecast(const QString& source)
 {
 
     QString xmlMap = d->m_place[source].forecastHTMLUrl;
-    int splitIDPos = xmlMap.lastIndexOf('/');                                                          
+    int splitIDPos = xmlMap.lastIndexOf('/');
     QString stationID = xmlMap.midRef(splitIDPos + 1).toString();
-    d->m_place[source].XMLforecastURL = "http://newsrss.bbc.co.uk/weather/forecast/" + stationID + "/Next3DaysRSS.xml"; 
+    d->m_place[source].XMLforecastURL = "http://newsrss.bbc.co.uk/weather/forecast/" + stationID + "/Next3DaysRSS.xml";
     KUrl url(d->m_place[source].XMLforecastURL);
 
     d->m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
@@ -371,7 +371,7 @@ void UKMETIon::readSearchHTMLData(const QString& source, const QByteArray& html)
     QString tmp;
     int flag = 0;
     int counter = 2;
-   
+
     // "<p><a id="result_40" href ="/weather/forecast/4160?count=200">Vitoria, Brazil</a></p>"
     QRegExp grabURL("/[a-z]+/[a-z]+/[0-9]{1,4}");
     QRegExp grabPlace(">([^<]*[a-z()])"); // FIXME: It would be better to strip away the extra '>'
@@ -387,9 +387,9 @@ void UKMETIon::readSearchHTMLData(const QString& source, const QByteArray& html)
        }
 
        if (flag) {
-               
+
            // Strip out area searching
-           if (!line.contains("area=") > 0) { 
+           if (!line.contains("area=") > 0) {
                    if (grabURL.indexIn(line.trimmed()) > 0) {
                        tokens = grabURL.cap(0).split('/', QString::SkipEmptyParts);
                        grabPlace.indexIn(line.trimmed());
@@ -405,15 +405,15 @@ void UKMETIon::readSearchHTMLData(const QString& source, const QByteArray& html)
                        d->m_place[tmp].XMLurl = url;
                        d->m_place[tmp].place = grabPlace.cap(1);
                        d->m_locations.append(tmp);
-                   }   
+                   }
            }
        }
- 
+
        if (line.contains("<div class=\"line\">") > 0) {
            flag = 0;
        }
     }
-     
+
     // I stream ok?
     //if (stream.status() == QTextStream::Ok) {
         //return true;
@@ -632,7 +632,7 @@ void UKMETIon::parseWeatherObservation(const QString& source, WeatherData& data,
                 QString observeString = xml.readElementText();
                 QStringList observeData = observeString.split(':');
 
-#warning FIXME: We should make this use a QRegExp but I need some here here :) -spstarr
+//FIXME: We should make this use a QRegExp but I need some here here :) -spstarr
                 data.temperature_C = observeData[1].split(QChar(176))[0].trimmed();
 
                 // Temperature might be not available
@@ -737,7 +737,7 @@ void UKMETIon::parseFiveDayForecast(const QString& source, QXmlStreamReader& xml
         xml.readNext();
         if (xml.name() == "title") {
             line = xml.readElementText().trimmed();
-#warning FIXME: We should make this all use QRegExps in UKMETIon::parseFiveDayForecast() for forecast -spstarr
+//FIXME: We should make this all use QRegExps in UKMETIon::parseFiveDayForecast() for forecast -spstarr
 
             period = line.split(',')[0].split(':')[0];
             summary = line.split(',')[0].split(':')[1].trimmed();
@@ -862,7 +862,7 @@ void UKMETIon::updateWeather(const QString& source)
 
     data.insert("Credit", i18n("Supported by backstage.bbc.co.uk / Data from UK MET Office"));
     data.insert("Credit Url", d->m_place[source].forecastHTMLUrl);
-    
+
     setData(weatherSource, data);
 }
 
