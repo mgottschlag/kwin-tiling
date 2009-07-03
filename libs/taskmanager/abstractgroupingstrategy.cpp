@@ -82,6 +82,9 @@ void AbstractGroupingStrategy::destroy()
         }
 
         parentGroup->remove(group);
+    }
+
+    foreach (TaskGroup *group, d->createdGroups) {
         emit groupRemoved(group);
     }
 
