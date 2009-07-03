@@ -61,6 +61,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_layout(0)
 {
     KGlobal::locale()->insertCatalog("libplasmaclock");
+    // this catalog is only used once on the first start of the clock to translate the timezone in the configuration file
     KGlobal::locale()->insertCatalog("timezones4");
     setHasConfigurationInterface(true);
     resize(150, 75);

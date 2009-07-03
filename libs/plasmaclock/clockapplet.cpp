@@ -157,12 +157,13 @@ public:
 
     void setPrettyTimezone()
     {
+        QString timezonetranslated = i18n(timezone.toUtf8().data());
         if (timezone == "UTC")  {
-            prettyTimezone = timezone;
+            prettyTimezone = timezonetranslated;
         } else if (!q->isLocalTimezone()) {
-            QStringList tzParts = timezone.split("/", QString::SkipEmptyParts);
+            QStringList tzParts = timezonetranslated.split("/", QString::SkipEmptyParts);
             if (tzParts.count() == 1) {
-                prettyTimezone = timezone;
+                prettyTimezone = timezonetranslated;
             } else {
                 prettyTimezone = tzParts.value(1);
             }
