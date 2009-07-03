@@ -23,13 +23,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // Ownm_preferredInsertIndex
 #include "abstractgroupableitem.h"
-#include "taskgroup.h"
-#include "taskmanager.h"
 
+#include <QPointer>
 
-// KDE
 #include <KDebug>
 
+#include "taskgroup.h"
+#include "taskmanager.h"
 
 
 namespace TaskManager
@@ -40,11 +40,11 @@ class AbstractGroupableItem::Private
 {
 public:
     Private()
-        :m_parentGroup(0)
+        : m_parentGroup(0)
     {
     }
 
-    GroupPtr m_parentGroup;
+    QPointer<TaskGroup> m_parentGroup;
 };
 
 
