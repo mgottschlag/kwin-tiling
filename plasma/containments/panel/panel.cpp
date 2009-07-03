@@ -462,7 +462,7 @@ void Panel::addPanel(const QString &plugin)
     }
 }
 
-void Panel::updateBorders(const QRect &geom)
+void Panel::updateBorders(const QRect &geom, bool themeChange)
 {
     Plasma::Location loc = location();
     FrameSvg::EnabledBorders enabledBorders = FrameSvg::AllBorders;
@@ -509,10 +509,12 @@ void Panel::updateBorders(const QRect &geom)
             enabledBorders ^= FrameSvg::LeftBorder;
             leftWidth = 0;
         }
+
         if (geom.y() <= r.y()) {
             enabledBorders ^= FrameSvg::TopBorder;
             topHeight = 0;
         }
+
         if (geom.bottom() >= r.bottom()) {
             enabledBorders ^= FrameSvg::BottomBorder;
             bottomHeight = 0;
@@ -558,18 +560,25 @@ void Panel::updateBorders(const QRect &geom)
         default:
             break;
         }
-        qreal oldLeft, oldTop, oldRight, oldBottom;
-        layout()->getContentsMargins(&oldLeft, &oldTop, &oldRight, &oldBottom);
+
+        qreal oldLeft = leftWidth;
+        qreal oldTop = topHeight;
+        qreal oldRight = rightWidth;
+        qreal oldBottom = bottomHeight;
+
+        if (themeChange) {
+            layout()->getContentsMargins(&oldLeft, &oldTop, &oldRight, &oldBottom);
+        }
 
         layout()->setContentsMargins(leftWidth, topHeight, rightWidth, bottomHeight);
-
         if (formFactor() == Plasma::Vertical) {
-            setPreferredHeight(preferredHeight() - (oldBottom-bottomHeight));
+            setPreferredHeight(preferredHeight() - (oldBottom - bottomHeight));
         } else if (QApplication::layoutDirection() == Qt::LeftToRight) {
-            setPreferredWidth(preferredWidth() - (oldRight-rightWidth));
+            setPreferredWidth(preferredWidth() - (oldRight - rightWidth));
         } else {
-            setPreferredWidth(preferredWidth() - (oldLeft-leftWidth));
+            setPreferredWidth(preferredWidth() - (oldLeft - leftWidth));
         }
+
         layout()->invalidate();
         resize(preferredSize());
     }
@@ -693,7 +702,7 @@ void Panel::themeUpdated()
         setMinimumHeight(newSize.height());
     }
 
-    updateBorders(geometry().toRect());
+    updateBorders(geometry().toRect(), true);
 }
 
 void Panel::paintInterface(QPainter *painter,
