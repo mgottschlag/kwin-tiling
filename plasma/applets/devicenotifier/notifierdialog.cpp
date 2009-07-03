@@ -57,7 +57,7 @@
 using namespace Notifier;
 using namespace Plasma;
 
-NotifierDialog::NotifierDialog(DeviceNotifier * notifier,QObject *parent)
+NotifierDialog::NotifierDialog(DeviceNotifier * notifier, QObject *parent)
     : QObject(parent),
       m_hotplugModel(0),
       m_widget(0),
@@ -377,6 +377,7 @@ void NotifierDialog::itemClicked(const QModelIndex &index)
         QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.SolidUiServer");
         QDBusReply<void> reply = soliduiserver.call("showActionsDialog", udi, desktopFiles);
     }
+
     emit itemSelected();
 }
 

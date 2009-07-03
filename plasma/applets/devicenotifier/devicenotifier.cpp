@@ -105,6 +105,7 @@ QWidget *DeviceNotifier::widget()
 {
     if (!m_dialog) {
         m_dialog = new NotifierDialog(this);
+        connect(m_dialog, SIGNAL(itemSelected()), this, SLOT(hidePopup()));
     }
 
     return m_dialog->dialog();
