@@ -5,6 +5,7 @@ X-KDE-Library=solid_wicd
 InitialPreference=80
 
 Name=Wicd
+Name[sr]=Вицд
 Name[sv]=WICD
 Name[x-test]=xxWicdxx
 Comment=Network management using the Wicd daemon.
@@ -37,6 +38,8 @@ Comment[pt]=Gestão da rede com o servidor Wicd.
 Comment[pt_BR]=Gerenciamento de rede usando o daemon Wicd.
 Comment[ro]=Gestiunea rețelei utilizînd demonul Wicd.
 Comment[sl]=Upravljanje z omrežji z uporabo demona Wicd.
+Comment[sr]=Управљање мрежом демоном Вицда
+Comment[sr@latin]=Upravljanje mrežom demonom Wicda
 Comment[sv]=Nätverkshantering med användning av WICD-demonen.
 Comment[tg]=Управление сетью при помощи службы NetworkManager
 Comment[tr]=Wicd servisi kullanan ağ yönetimi.

@@ -1,28 +1,83 @@
 [Global]
 IconName=system-lock-screen
 Comment=The KDE Screen Saver
+Comment[pt]=O Protector de Ecrã do KDE
+Comment[pt_BR]=O Protector de Ecrã do KDE
+Comment[sv]=KDE:s skärmsläckare
+Comment[uk]=Зберігач екрана KDE
+Comment[zh_TW]=KDE 螢幕保護程式
 
 [Event/savingstarted]
 Name=Screen saver started
+Name[pt]=O protector de ecrã foi iniciado
+Name[pt_BR]=O protector de ecrã foi iniciado
+Name[sv]=Skärmsläckare startad
+Name[uk]=Запущено зберігач екрана
+Name[zh_TW]=螢幕保護程式已啟動
 Comment=The screen saver has been started
+Comment[pt]=O protector de ecrã foi iniciado
+Comment[pt_BR]=O protector de ecrã foi iniciado
+Comment[sv]=Skärmsläckaren har startats
+Comment[uk]=Запущено зберігач екрана
+Comment[zh_TW]=螢幕保護程式已被啟動
 Action=None
 
 [Event/locked]
 Name=Screen locked
+Name[pt]=Ecrã bloqueado
+Name[pt_BR]=Ecrã bloqueado
+Name[sv]=Skärm låst
+Name[uk]=Екран заблоковано
+Name[zh_TW]=螢幕已鎖定
 Comment=The screen has been locked
+Comment[pt]=O ecrã foi bloqueado
+Comment[pt_BR]=O ecrã foi bloqueado
+Comment[sv]=Skärmen har låsts
+Comment[uk]=Екран було заблоковано
+Comment[zh_TW]=螢幕已被鎖定
 Action=None
 
 [Event/savingstopped]
 Name=Screen saver exited
+Name[pt]=O protector de ecrã terminou
+Name[pt_BR]=O protector de ecrã terminou
+Name[sv]=Skärmsläckare avslutades
+Name[uk]=Завершено роботу зберігача екрана
+Name[zh_TW]=螢幕保護程式已離開
 Comment=The screen saver has finished
+Comment[pt]=O protector de ecrã terminou
+Comment[pt_BR]=O protector de ecrã terminou
+Comment[sv]=Skärmsläckaren har avslutats
+Comment[uk]=Роботу зберігача екрана завершено
+Comment[zh_TW]=螢幕保護程式已完成
 Action=None
 
 [Event/unlocked]
 Name=Screen unlocked
+Name[pt]=Ecrã desbloqueado
+Name[pt_BR]=Ecrã desbloqueado
+Name[sv]=Skärm upplåst
+Name[uk]=Екран розблоковано
+Name[zh_TW]=螢幕已解除鎖定
 Comment=The screen has been unlocked
+Comment[pt]=O ecrã foi desbloqueado
+Comment[pt_BR]=O ecrã foi desbloqueado
+Comment[sv]=Skärmen har låsts upp
+Comment[uk]=Екран було розблоковано
+Comment[zh_TW]=螢幕已解除鎖定
 Action=None
 
 [Event/unlockfailed]
 Name=Screen unlock failed
+Name[pt]=O desbloqueio do ecrã foi mal-sucedido
+Name[pt_BR]=O desbloqueio do ecrã foi mal-sucedido
+Name[sv]=Upplåsning av skärm misslyckades
+Name[uk]=Невдала спроба розблокування екрана
+Name[zh_TW]=螢幕解除鎖定失敗
 Comment=Failed attempt to unlock the screen
+Comment[pt]=Falhou a tentativa de desbloquear o ecrã
+Comment[pt_BR]=Falhou a tentativa de desbloquear o ecrã
+Comment[sv]=Misslyckat försök att låsa upp skärmen
+Comment[uk]=Спроба розблокування екрана завершилася невдало
+Comment[zh_TW]=螢幕解除鎖定失敗
 Action=None

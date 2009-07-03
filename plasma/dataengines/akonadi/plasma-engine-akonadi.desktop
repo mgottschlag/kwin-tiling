@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Akonadi
+Name[sr]=Аконади
 Name[x-test]=xxAkonadixx
 Comment=Akonadi PIM data engine
 Comment[bg]=Ядро Akonadi PIM
@@ -24,6 +25,8 @@ Comment[pt]=Motor de dados PIM do Akonadi
 Comment[pt_BR]=Mecanismo de dados PIM do Akonadi
 Comment[ro]=Motor de date Akonadi PIM
 Comment[sl]=Podatkovni pogon za upravljanje z osebnimi podatki
+Comment[sr]=ПИМ датомотор Аконадија
+Comment[sr@latin]=PIM datomotor Akonadija
 Comment[sv]=Akonadi datagränssnitt för personlig information
 Comment[tg]=Системаи санаи Python
 Comment[tr]=Akonadi PIM veri motoru
