@@ -210,6 +210,7 @@ Comment[th]=ง่ายมาก หลังจากกด Ctrl+Alt+I, หน
 Comment[tr]=Ctrl+Alt+I tuşlarına basılırsa var olan KSIRC penceresi etkinleştirilir. Basit.
 Comment[uk]=Після натискання Ctrl+Alt+I буде активовано вікно KSIRC, якщо воно існує. Просто.
 Comment[vi]=Sau khi bấm tổ hợp phím Ctrl+Alt+I, cửa sổ KSIRC sẽ được kích hoạt, nếu có.
+Comment[wa]=Après awè tchôkî Ctrl+Alt+I, li purnea KSIRC srè metowe en alaedje s' elle egzistêye. Åjhey.
 Comment[x-test]=xxAfter pressing Ctrl+Alt+I, the KSIRC window will be activated, if it exists. Simple.xx
 Comment[zh_CN]=在按下 Ctrl+Alt+I 之后，如果这个 KSIRC 窗口存在的话，它将会被激活。就这么简单。
 Comment[zh_TW]=按下 Ctrl+Alt+I 會叫出隱藏的 KSIRC 視窗。就這麼簡單。
