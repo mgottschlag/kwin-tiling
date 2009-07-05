@@ -19,7 +19,7 @@
 
 #include "keyservice.h"
 
-#include "kmodifierkeyinfo.h"
+#include <kmodifierkeyinfo.h>
 
 KeyService::KeyService(QObject* parent, KModifierKeyInfo *keyInfo, Qt::Key key)
     : Plasma::Service(parent),
