@@ -22,7 +22,7 @@
 
 #include <Plasma/DataEngine>
 
-#include "kmodifierkeyinfo.h"
+#include <kmodifierkeyinfo.h>
 
 /**
  * This engine provides the current state of the keyboard modifiers

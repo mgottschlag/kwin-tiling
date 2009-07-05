@@ -20,7 +20,7 @@
 #include "keystate.h"
 
 
-#include "kmodifierkeyinfo.h"
+#include <kmodifierkeyinfo.h>
 #include "keyservice.h"
 
 KeyStatesEngine::KeyStatesEngine(QObject *parent, const QVariantList &args)
