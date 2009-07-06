@@ -97,6 +97,7 @@ ScreenPreviewWidget::ScreenPreviewWidget(QWidget *parent)
 
 ScreenPreviewWidget::~ScreenPreviewWidget()
 {
+   delete d;
 }
 
 void ScreenPreviewWidget::setPreview(const QPixmap &preview)
