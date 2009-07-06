@@ -31,12 +31,59 @@
 module allows you to customize your desktop Plasma theme and to replace theme items 
 with items from other themes or from files.
 </para>
+<para>Desktop theme items consist in panel theme item, kickoff theme item,... all in default
+theme.</para>
+<sect2 id="start">
+<title>Quick start</title>
+<para>First download one or several themes you want to use to customize your 
+desktop items by clicking the <guibutton>Get New Theme...</guibutton> button.</para>
+<para>You can then start customizing each item you want to change with a new theme, 
+for example you can have the panel in Glassified theme, ...</para>
+<para>When you have finished, click the <guibutton>Apply</guibutton> button. You will then get an information 
+message that tells you to enable the <guilabel>(Customized)</guilabel> theme on the 
+Desktop settings dialog.</para>
+
+<para>
+<screenshot>
+<screeninfo>The information message</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="message.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>The information message</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para>
+
+<para>You then need to change the Desktop settings to <guilabel>(Customized)</guilabel> 
+in order for the theme details to be applied to your desktop.</para>
+
+<para>
+<screenshot>
+<screeninfo>Desktop Settings Dialog</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="desktop-settings.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>Desktop Settings Dialog</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para>
+
+<para>Click the <guibutton>Apply</guibutton> button on the dialog above to get the desktop settings applying your 
+new choice.</para>
+</sect2>
 
 <sect2 id="custom">
 <title>Creating a custom theme</title>
 <para>When the module is opened, it will show items from the current desktop theme. 
 If you would like to start customizing with a different theme, select it from 
-the drop box above the list of theme items.</para>
+the drop box above the list of theme items. This theme from the drop box is the starting 
+theme, the base for your new customized desktop theme.</para>
 
 <para>
 In the list of items, for each item you would like to replace, select 
@@ -73,7 +120,7 @@ version and a description of your theme.  Click <guibutton>Apply</guibutton> whe
 <title>Removing a theme</title>
 <para>
 Select the theme you would like to remove from the drop box above the list of 
-theme items. Click on the <guilabel>More</guilabel> check box. Click the "Remove Theme" button to 
+theme items. Click on the <guilabel>More</guilabel> check box. Click the <guibutton>Remove Theme</guibutton> button to 
 remove the selected theme.
 </para>
 </sect2>
