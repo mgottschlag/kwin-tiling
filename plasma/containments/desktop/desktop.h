@@ -86,11 +86,8 @@ protected Q_SLOTS:
 
 private:
     QMenu *m_addPanelsMenu;
-    QAction *m_lockDesktopAction;
-    QAction *m_appletBrowserAction;
     QAction *m_addPanelAction;
     QAction *m_runCommandAction;
-    QAction *m_setupDesktopAction;
     QAction *m_lockScreenAction;
     QAction *m_logoutAction;
     QAction *m_separator;
