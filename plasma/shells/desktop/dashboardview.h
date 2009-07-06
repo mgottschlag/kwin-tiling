@@ -50,6 +50,7 @@ protected:
 
 public slots:
     void toggleVisibility();
+    void showDashboard(bool showDashboard);
 
     /**
      * Sets the containment for this view, which will also cause the view

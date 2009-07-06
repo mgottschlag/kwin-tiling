@@ -81,6 +81,8 @@ public slots:
     void zoomIn(Plasma::ZoomLevel zoomLevel);
     void zoomOut(Plasma::ZoomLevel zoomLevel);
     void toggleDashboard();
+    void showDashboard(bool show);
+
     void screenResized(Kephal::Screen *);
     void screenMoved(Kephal::Screen *);
     void adjustSize();
@@ -118,6 +120,7 @@ public slots:
 protected:
     void wheelEvent(QWheelEvent *event);
     void drawBackground(QPainter *painter, const QRectF &rect);
+    void prepDashboard();
 
 private:
     DashboardView *m_dashboard;

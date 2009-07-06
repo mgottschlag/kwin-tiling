@@ -167,6 +167,19 @@ void DesktopView::updateShortcuts()
 
 void DesktopView::toggleDashboard()
 {
+    prepDashboard();
+    m_dashboard->toggleVisibility();
+    //kDebug() << "toggling dashboard for screen" << screen() << m_dashboard->isVisible();
+}
+
+void DesktopView::showDashboard(bool show)
+{
+    prepDashboard();
+    m_dashboard->showDashboard(show);
+}
+
+void DesktopView::prepDashboard()
+{
     if (!m_dashboard) {
         if (!containment()) {
             return;
@@ -191,8 +204,6 @@ void DesktopView::toggleDashboard()
     if (!m_dashboardFollowsDesktop && containment()) {
         m_dashboard->setGeometry(Kephal::ScreenUtils::screenGeometry(containment()->screen()));
     }
-    m_dashboard->toggleVisibility();
-    //kDebug() << "toggling dashboard for screen" << screen() << m_dashboard->isVisible();
 }
 
 Plasma::Containment *DesktopView::dashboardContainment() const

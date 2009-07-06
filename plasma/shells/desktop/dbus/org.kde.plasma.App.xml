@@ -3,5 +3,10 @@
   <interface name="local.PlasmaApp">
     <method name="toggleDashboard">
     </method>
+    <method name="showDashboard">
+      <arg name="show" type="b" direction="in"/>
+    </method>
+    <method name="quit">
+    </method>
   </interface>
 </node>

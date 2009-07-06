@@ -318,52 +318,18 @@ void PlasmaApp::syncConfig()
     KGlobal::config()->sync();
 }
 
-void PlasmaApp::toggleDashboardIfWindows()
+void PlasmaApp::toggleDashboard()
 {
-    if (m_desktops.isEmpty()) {
-        return;
-    }
-
-    if (m_desktops.first()->isDashboardVisible()) {
-        toggleDashboard();
-        return;
-    }
-
-    const int desktop = KWindowSystem::currentDesktop();
-
-    foreach (WId id, KWindowSystem::stackingOrder()) {
-        const KWindowInfo info = KWindowSystem::windowInfo(id, NET::WMDesktop | NET::WMState |
-                                                               NET::XAWMState | NET::WMWindowType |
-                                                               NET::WMVisibleName);
-        NET::WindowType type = info.windowType(NET::Normal | NET::Dialog);
-        if ((type == NET::Normal || type == NET::Dialog) &&
-            info.isOnDesktop(desktop) && !(info.state() & NET::Hidden) /*!info.isMinimized()*/) {
-            kDebug() << info.visibleName() << info.state() << info.windowType(NET::Normal | NET::Dialog);
-            toggleDashboard();
-            return;
-        }
+    foreach (DesktopView *view, m_desktops) {
+        view->toggleDashboard();
     }
 }
 
-void PlasmaApp::toggleDashboard()
+void PlasmaApp::showDashboard(bool show)
 {
-    int currentScreen = 0;
-    if (Kephal::ScreenUtils::numScreens() > 1) {
-        currentScreen = Kephal::ScreenUtils::screenId(QCursor::pos());
+    foreach (DesktopView *view, m_desktops) {
+        view->showDashboard(show);
     }
-
-    int currentDesktop = -1;
-    if (AppSettings::perVirtualDesktopViews()) {
-        currentDesktop = KWindowSystem::currentDesktop();
-    }
-
-    DesktopView *view = viewForScreen(currentScreen, currentDesktop-1);
-    if (!view) {
-        kWarning() << "we don't have a DesktopView for the current screen!" << currentScreen << currentDesktop;
-        return;
-    }
-
-    view->toggleDashboard();
 }
 
 void PlasmaApp::panelHidden(bool hidden)
@@ -611,7 +577,7 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
         m_appletBrowser->setAttribute(Qt::WA_DeleteOnClose);
         m_appletBrowser->setWindowTitle(i18n("Add Widgets"));
         m_appletBrowser->setWindowIcon(KIcon("plasmagik"));
-        connect(m_appletBrowser, SIGNAL(destroyed()), this, SLOT(appletBrowserDestroyed()));
+        connect(m_appletBrowser, SIGNAL(destroyed(QObject*)), this, SLOT(appletBrowserDestroyed()));
     } else {
         m_appletBrowser->setContainment(containment);
     }

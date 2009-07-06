@@ -216,7 +216,12 @@ bool DashboardView::event(QEvent *event)
 
 void DashboardView::toggleVisibility()
 {
-    if (isHidden() && containment()) {
+    showDashboard(isHidden() && containment());
+}
+
+void DashboardView::showDashboard(bool showDashboard)
+{
+    if (showDashboard) {
         if (m_suppressShow) {
             //kDebug() << "DashboardView::toggleVisibility but show was suppressed";
             return;
