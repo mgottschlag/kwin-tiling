@@ -11,7 +11,7 @@ if (LIBXKLAVIER_CFLAGS AND LIBXKLAVIER_LDFLAGS)
     # in cache already
     SET(LIBXKLAVIER_FOUND TRUE)
 
-else (LIBXKLAVIER_CFLAGS AND LIBXKLAVIER_LDFLASG)
+else (LIBXKLAVIER_CFLAGS AND LIBXKLAVIER_LDFLAGS)
 
     IF (NOT WIN32)
         # use pkg-config to get the directories and then use these values
