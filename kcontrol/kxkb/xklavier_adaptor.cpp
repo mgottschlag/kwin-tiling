@@ -222,7 +222,11 @@ void XKlavierAdaptor::loadXkbConfig(bool layoutsOnly)
     kDebug() << "Xklavier initialized";
     priv->config = xkl_config_registry_get_instance(priv->engine);
 
-    xkl_config_registry_load(priv->config);
+#if LIBXKLAVIER_VERSION >= 40
+	xkl_config_registry_load(priv->config, false);
+#else
+	xkl_config_registry_load(priv->config);
+#endif
 	
     void *userData = priv;
 
