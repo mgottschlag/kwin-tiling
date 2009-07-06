@@ -130,8 +130,8 @@ remove the selected theme.
 <para>
 You can share your newly customized theme with the community by exporting the 
 theme to a file. Select your customized theme from the drop box above the list 
-of theme items.  Click on the <guilabel>More</guilabel> check box.  Click the "Export Theme to 
-File...".  Enter the name of the zip file to which the theme will be saved.
+of theme items.  Click on the <guilabel>More</guilabel> check box.  Click the <guibutton>Export Theme to 
+File...</guibutton>.  Enter the name of the zip file to which the theme will be saved.
 </para>
 </sect2>
 
