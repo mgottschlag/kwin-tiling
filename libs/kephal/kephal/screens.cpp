@@ -28,6 +28,7 @@
 void SCREENS_FACTORY();
 #endif
 
+#include <QDebug>
 
 namespace Kephal {
 
@@ -130,15 +131,15 @@ namespace Kephal {
             return ((p.y() < r.top() ? r.topRight() : r.bottomRight()) - p).manhattanLength();
         }
     }
-    
+
     int ScreenUtils::screenId(QPoint p) {
         if (numScreens() == 0) {
             return 0;
         }
-        
+
         int minDist = distance(screenGeometry(0), p);
         int minScreen = 0;
-        
+
         for(int i = 1; i < numScreens() && minDist > 0; i++) {
             int dist = distance(screenGeometry(i), p);
             if (dist < minDist) {
@@ -146,11 +147,15 @@ namespace Kephal {
                 minScreen = i;
             }
         }
-        
+
         return minScreen;
     }
-    
+
     int ScreenUtils::primaryScreenId() {
+        if (!Screens::self()->primaryScreen()) {
+            return 0;
+        }
+
         return Screens::self()->primaryScreen()->id();
     }
 
