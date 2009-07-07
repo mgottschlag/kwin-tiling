@@ -262,7 +262,9 @@ void Temperature::dataUpdated(const QString& source,
         KGlobal::locale()->measureSystem() != KLocale::Metric) {
         value = (value * (5.0 / 9.0)) + 32;
     }
-    
+
+    value = int(value * 10) / 10.0;
+
     if (KGlobal::locale()->measureSystem() == KLocale::Metric) {
         temp = i18n("%1 °C", value);
     } else {
