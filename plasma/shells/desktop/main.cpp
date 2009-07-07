@@ -26,13 +26,73 @@
 #include <config-workspace.h>
 #include "plasmaapp.h"
 
+#include <X11/Xlib.h>
+#include <fixx11h.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
 static const char description[] = I18N_NOOP( "The KDE desktop, panels and widgets workspace application." );
 static const char version[] = "0.3";
 
 extern "C"
 KDE_EXPORT int kdemain(int argc, char **argv)
 {
-    KAboutData aboutData("plasma-desktop", 0, ki18n("Plasma Workspace"),
+    // dual head support
+    int associatedScreen = 0;
+#ifdef Q_WS_X11
+    {
+    QByteArray multiHead = getenv("KDE_MULTIHEAD");
+    if (multiHead.toLower() == "true") {
+        Display *dpy = XOpenDisplay(NULL);
+        if (!dpy) {
+            fprintf(stderr, "%s: FATAL ERROR: couldn't open display %s\n",
+                    argv[0], XDisplayName(NULL));
+            exit(1);
+        }
+
+        int numberOfScreens = ScreenCount(dpy);
+        associatedScreen = DefaultScreen(dpy);
+        QString displayName = QString::fromLocal8Bit(XDisplayString(dpy));
+        int pos = displayName.lastIndexOf('.');
+
+        XCloseDisplay(dpy);
+        dpy = 0;
+
+        if (pos != -1) {
+            displayName.truncate(pos);
+        }
+
+        if (numberOfScreens > 1) {
+            for (int i = 0; i < numberOfScreens; ++i) {
+                if (i != associatedScreen && fork() == 0) {
+                    associatedScreen = i;
+                    // break here because we are the child process, we don't
+                    // want to fork() anymore
+                    break;
+                }
+            }
+
+            QString env = QString("DISPLAY=%2.%1").arg(associatedScreen).arg(displayName);
+
+            if (putenv(strdup(env.toLocal8Bit()))) {
+                fprintf(stderr,
+                        "%s: WARNING: unable to set DISPLAY environment variable\n",
+                        argv[0]);
+                perror("putenv()");
+            }
+        }
+    }
+    }
+#endif
+
+    QByteArray appName = "plasma-desktop";
+    if (associatedScreen > 0) {
+        appName.append("-screen-").append(associatedScreen);
+    }
+
+    KAboutData aboutData(appName, 0, ki18n("Plasma Workspace"),
                          version, ki18n(description), KAboutData::License_GPL,
                          ki18n("Copyright 2006-2009, The KDE Team"));
     aboutData.addAuthor(ki18n("Aaron J. Seigo"),
