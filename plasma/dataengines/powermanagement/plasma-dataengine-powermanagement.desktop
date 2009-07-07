@@ -2,6 +2,7 @@
 # ctxt: plasma data engine
 Name=Power Management
 Name[bg]=Захранване
+Name[bn_IN]=বিদ্যুৎ সরবরাহ পরিচালনা
 Name[ca]=Gestió d'energia
 Name[ca@valencia]=Gestió d'energia
 Name[cs]=Správa napájení
@@ -15,10 +16,12 @@ Name[gl]=Xestión da enerxía
 Name[gu]=પાવર વ્યવસ્થાપક
 Name[hu]=Energiakezelő
 Name[is]=Orkustýring
+Name[ja]=電源管理
 Name[km]=ការ​គ្រប់គ្រង​ថាមពល​
 Name[ko]=전력 관리
 Name[lv]=Energokontrole
 Name[mk]=Менаџмент на енергија
+Name[mr]=पावर व्यवस्थापन
 Name[nb]=Strømstyring
 Name[nds]=Stroomkuntrull
 Name[nl]=Energiebeheer

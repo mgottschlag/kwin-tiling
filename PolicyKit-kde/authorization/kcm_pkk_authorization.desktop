@@ -11,6 +11,7 @@ X-DocPath=PolicyKit-kde/index.html
 
 Name=PolicyKit Authorization
 Name[bg]=Удостоверяване (PolicyKit)
+Name[bn_IN]=PolicyKit-র অনুমেদন
 Name[ca]=Autoritzacions del PolicyKit
 Name[ca@valencia]=Autoritzacions del PolicyKit
 Name[cs]=Autorizace PolicyKit
@@ -26,6 +27,7 @@ Name[ga]=Údarú PolicyKit
 Name[gl]=Autorización de PolicyKit
 Name[hu]=PolicyKit jogosultságkezelő
 Name[is]=PolicyKit auðkenning
+Name[ja]=PolicyKit 権限付与
 Name[km]=កា​រផ្ទៀងផ្ទាត់​ភាព​ត្រឹមត្រូវ​របស់ PolicyKit
 Name[ko]=PolicyKit 인증
 Name[lv]=PolicyKit autorizācija

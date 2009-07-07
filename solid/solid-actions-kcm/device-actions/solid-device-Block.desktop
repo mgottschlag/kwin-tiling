@@ -2,6 +2,7 @@
 Actions=device;major;minor;objectName;
 Name=Block
 Name[bg]=Блок
+Name[bn_IN]=ব্লক
 Name[ca]=Bloc
 Name[ca@valencia]=Bloc
 Name[cs]=Blok
@@ -23,6 +24,7 @@ Name[ko]=블록
 Name[lv]=Bloks
 Name[mk]=Блок
 Name[ml]=ബ്ലോക്ക്
+Name[mr]=ब्लॉक
 Name[nb]=Blokk
 Name[nds]=Blockeren
 Name[nl]=Blok
@@ -47,6 +49,7 @@ X-KDE-Solid-Actions-Type=Block
 [Desktop Action device]
 Name=Device
 Name[bg]=Устройство
+Name[bn_IN]=ডিভাইস
 Name[ca]=Dispositiu
 Name[ca@valencia]=Dispositiu
 Name[cs]=Zařízení
@@ -70,6 +73,7 @@ Name[lt]=Įrenginys
 Name[lv]=Ierīce
 Name[mk]=Уред
 Name[ml]=ഉപകരണം
+Name[mr]=साधन
 Name[nb]=Enhet
 Name[nds]=Reedschap
 Name[nl]=Apparaat
@@ -93,6 +97,7 @@ Name[zh_TW]=裝置
 
 [Desktop Action major]
 Name=Major
+Name[bn_IN]=মেজর
 Name[cs]=Velké
 Name[csb]=Wësok
 Name[da]=Stor
@@ -113,6 +118,7 @@ Name[ko]=주
 Name[lv]=Galvenais
 Name[mk]=Главен
 Name[ml]=മുഖ്യം
+Name[mr]=मुख्य
 Name[nb]=Hoved
 Name[nds]=Grötter
 Name[nl]=Hoofd
@@ -134,6 +140,7 @@ Name[zh_TW]=主要
 
 [Desktop Action minor]
 Name=Minor
+Name[bn_IN]=মাইনর
 Name[ca]=Menor
 Name[ca@valencia]=Menor
 Name[cs]=Malé
@@ -199,6 +206,7 @@ Name[ko]=개체 이름
 Name[lv]=Objekta nosaukums
 Name[mk]=Име на објект
 Name[ml]=ലക്ഷ്യത്തിന്റെ നാമം
+Name[mr]=घटकाचे नाव
 Name[nb]=Objektnavn
 Name[nds]=Objektnaam
 Name[nl]=Objectnaam

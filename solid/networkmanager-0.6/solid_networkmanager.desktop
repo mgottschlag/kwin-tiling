@@ -51,6 +51,7 @@ Comment[ar]=إدارة الشبكة باستعمال مدير الشبكة
 Comment[be]=Кіраванне сеткай пры дапамозе сервіса NetworkManager
 Comment[be@latin]=Kiravańnie sietkaj praz słužbu „NetworkManager”.
 Comment[bg]=Управление на мрежата с демона NetworkManager
+Comment[bn_IN]=NetworkManager ডেমন সহযোগে নেটওয়ার্ক পরিচালন ব্যবস্থা
 Comment[ca]=Gestor de xarxes que usa el dimoni NetworkManager
 Comment[ca@valencia]=Gestor de xarxes que usa el dimoni NetworkManager
 Comment[cs]=Správa sítě pomocí Networkmanager démona

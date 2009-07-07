@@ -2,6 +2,7 @@
 # ctxt: plasma runner
 Name=Web Shortcuts
 Name[bg]=Уеб отметки
+Name[bn_IN]=ওয়েব শর্ট-কাট
 Name[ca]=Dreceres web
 Name[ca@valencia]=Dreceres web
 Name[cs]=Webové zkratky
@@ -15,10 +16,12 @@ Name[gl]=Atallos web
 Name[gu]=વેબ ટૂંકાણો
 Name[hu]=Keresési azonosítók
 Name[is]=Vefskammstafanir
+Name[ja]=ウェブショートカット
 Name[km]=ផ្លូវកាត់​បណ្ដាញ​
 Name[ko]=웹 바로 가기
 Name[lv]=Ātrās meklēšanas īsceļi
 Name[mk]=Интернет-кратенки
+Name[mr]=वेब शॉर्टकट
 Name[nb]=Nettsnarveier
 Name[nds]=Söökafkörten
 Name[nl]=Websneltoetsen

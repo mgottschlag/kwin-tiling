@@ -2,6 +2,7 @@
 Name=Environment Canada
 Name[ar]=البيئة الكندية
 Name[bg]=Времето в Канада
+Name[bn_IN]=এনভায়রনমেন্ট কানাডা
 Name[ca]=Medi ambient del Canadà
 Name[ca@valencia]=Medi ambient del Canadà
 Name[cs]=Meteorologický úřad Kanady (EC)
@@ -34,6 +35,7 @@ Comment=XML Data from Environment Canada
 Comment[ar]=بيانات XML من البيئة الكندية
 Comment[be@latin]=Źviestki ŭ farmacie „XML” ad „Environment Canada”
 Comment[bg]=XML данни от Environment Canada
+Comment[bn_IN]=এনভায়রনমেন্ট কানাডা থেকে প্রাপ্ত XML তথ্য
 Comment[ca]=Dades XML des de Medi ambient del Canadà
 Comment[ca@valencia]=Dades XML des de Medi ambient del Canadà
 Comment[cs]=XML data z meteorologického úřadu Kanady (EC)

@@ -2,6 +2,7 @@
 # ctxt: plasma runner
 Name=Bookmarks
 Name[bg]=Отметки
+Name[bn_IN]=বুকমার্ক
 Name[ca]=Punts
 Name[ca@valencia]=Punts
 Name[cs]=Záložky
@@ -15,11 +16,13 @@ Name[gl]=Marcadores
 Name[gu]=બુકમાર્કો
 Name[hu]=Könyvjelzők
 Name[is]=Bókamerki
+Name[ja]=ブックマーク
 Name[km]=ចំណាំ​
 Name[ko]=책갈피
 Name[lt]=Žymelės
 Name[lv]=Grāmatzīmes
 Name[mk]=Обележувачи
+Name[mr]=पुस्तकखुण
 Name[nb]=Bokmerker
 Name[nds]=Leestekens
 Name[nl]=Bladwijzers

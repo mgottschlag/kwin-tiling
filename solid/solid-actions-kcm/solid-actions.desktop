@@ -12,6 +12,7 @@ X-KDE-System-Settings-Parent-Category=advanced-user-settings
 
 Name=Device Actions
 Name[bg]=Действия
+Name[bn_IN]=ডিভাই সংক্রান্ত কর্ম
 Name[ca]=Accions de dispositiu
 Name[ca@valencia]=Accions de dispositiu
 Name[cs]=Akce zařízení
@@ -34,6 +35,7 @@ Name[ko]=장치 동작
 Name[lv]=Ierīces darbības
 Name[mk]=Дејства за уреди
 Name[ml]=ഉപകരണത്തിനുള്ള പ്രവൃത്തികള്‍
+Name[mr]=साधन क्रिया
 Name[nb]=Enhetshandlinger
 Name[nds]=Reedschap-Akschonen
 Name[nl]=Apparaatacties
