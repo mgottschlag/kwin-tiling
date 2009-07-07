@@ -6,7 +6,8 @@ include(PkgConfigGetVar)
 
 include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/ksysguard
                     ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/ksysguard/processcore/
-                    ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/screensaver)
+                    ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/screensaver
+                    ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal)
 
 configure_file(config-xautolock.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-xautolock.h)
 
@@ -21,6 +22,7 @@ set(default_interface_SRCS
     interfaces/default/resultscene.cpp
     interfaces/default/selectionbar.cpp
     interfaces/default/krunnertabfilter.cpp
+    interfaces/default/resultsview.cpp
 )
 
 set(quicksand_interface_SRCS
@@ -61,7 +63,7 @@ endif(NOT WIN32)
 kde4_add_kdeinit_executable(krunner ${krunner_SRCS})
 
 if(NOT WIN32)
-target_link_libraries(kdeinit_krunner kworkspace processui ${KDE4_PLASMA_LIBS} ${KDE4_SOLID_LIBRARIES} ${KDE4_THREADWEAVER_LIBRARIES} ${X11_Xrender_LIB} ${KDE4_KDEUI_LIBS}  ${KDE4_KUTILS_LIBS} ${X11_LIBRARIES})
+target_link_libraries(kdeinit_krunner kworkspace processui kephal ${KDE4_PLASMA_LIBS} ${KDE4_SOLID_LIBRARIES} ${KDE4_THREADWEAVER_LIBRARIES} ${X11_Xrender_LIB} ${KDE4_KDEUI_LIBS}  ${KDE4_KUTILS_LIBS} ${X11_LIBRARIES})
 else(NOT WIN32)
 target_link_libraries(kdeinit_krunner ${KDE4_PLASMA_LIBS} ${KDE4_SOLID_LIBRARIES} ${KDE4_THREADWEAVER_LIBRARIES} ${KDE4_KDEUI_LIBS}  ${KDE4_KUTILS_LIBS})
 endif(NOT WIN32)

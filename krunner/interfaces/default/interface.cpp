@@ -50,6 +50,8 @@
 #include <Plasma/Theme>
 #include <Plasma/Svg>
 
+#include <kephal/screens.h>
+
 #include "krunnersettings.h"
 #include "interfaces/default/resultscene.h"
 #include "interfaces/default/resultitem.h"
@@ -322,16 +324,15 @@ void Interface::display(const QString &term)
 
 void Interface::centerOnScreen()
 {
-    int screen = 0;
-    if (QApplication::desktop()->numScreens() > 1) {
-        screen = QApplication::desktop()->screenNumber(QCursor::pos());
-    }
-
     // this method is now called only by the ctor, with the results view visible, however 
     // we do not call KDialog::centerOnScreen(this, screen) because the dialog is still hidden
 
-    QDesktopWidget *desktop = qApp->desktop();
-    QRect r = desktop->screenGeometry(screen);
+    int screen = Kephal::ScreenUtils::primaryScreenId();
+    if (Kephal::ScreenUtils::numScreens() > 1) {
+        screen = Kephal::ScreenUtils::screenId(QCursor::pos());
+    }
+
+    QRect r = Kephal::ScreenUtils::screenGeometry(screen);
     int w = width();
     int h = height(); 
     move(r.left() + (r.width() / 2) - (w / 2),
