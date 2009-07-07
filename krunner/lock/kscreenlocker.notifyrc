@@ -1,6 +1,8 @@
 [Global]
 IconName=system-lock-screen
 Comment=The KDE Screen Saver
+Comment[ja]=KDE スクリーンセーバー
+Comment[nb]=Pauseskjerm for KDE
 Comment[pt]=O Protector de Ecrã do KDE
 Comment[pt_BR]=O protetor de tela do KDE
 Comment[sv]=KDE:s skärmsläckare
@@ -10,6 +12,8 @@ Comment[zh_TW]=KDE 螢幕保護程式
 
 [Event/savingstarted]
 Name=Screen saver started
+Name[ja]=スクリーンセーバー開始
+Name[nb]=Pauseskjerm startet
 Name[pt]=O protector de ecrã foi iniciado
 Name[pt_BR]=O protetor de tela foi iniciado
 Name[sv]=Skärmsläckare startad
@@ -17,6 +21,8 @@ Name[uk]=Запущено зберігач екрана
 Name[x-test]=xxScreen saver startedxx
 Name[zh_TW]=螢幕保護程式已啟動
 Comment=The screen saver has been started
+Comment[ja]=スクリーンセーバーが開始されました
+Comment[nb]=Pauseskjermen er startet
 Comment[pt]=O protector de ecrã foi iniciado
 Comment[pt_BR]=O protetor de tela foi iniciado
 Comment[sv]=Skärmsläckaren har startats
@@ -27,6 +33,8 @@ Action=None
 
 [Event/locked]
 Name=Screen locked
+Name[ja]=スクリーンロック
+Name[nb]=Skjermen låst
 Name[pt]=Ecrã bloqueado
 Name[pt_BR]=Tela bloqueada
 Name[sv]=Skärm låst
@@ -34,6 +42,8 @@ Name[uk]=Екран заблоковано
 Name[x-test]=xxScreen lockedxx
 Name[zh_TW]=螢幕已鎖定
 Comment=The screen has been locked
+Comment[ja]=スクリーンがロックされました
+Comment[nb]=Skjermen er nå låst
 Comment[pt]=O ecrã foi bloqueado
 Comment[pt_BR]=A tela foi bloqueada
 Comment[sv]=Skärmen har låsts
@@ -44,6 +54,8 @@ Action=None
 
 [Event/savingstopped]
 Name=Screen saver exited
+Name[ja]=スクリーンセーバー終了
+Name[nb]=Pauseskjermen avsluttet
 Name[pt]=O protector de ecrã terminou
 Name[pt_BR]=O protetor de tela terminou
 Name[sv]=Skärmsläckare avslutades
@@ -51,6 +63,8 @@ Name[uk]=Завершено роботу зберігача екрана
 Name[x-test]=xxScreen saver exitedxx
 Name[zh_TW]=螢幕保護程式已離開
 Comment=The screen saver has finished
+Comment[ja]=スクリーンセーバーが終了しました
+Comment[nb]=Pauseskjermen er ferdig
 Comment[pt]=O protector de ecrã terminou
 Comment[pt_BR]=O protetor de tela terminou
 Comment[sv]=Skärmsläckaren har avslutats
@@ -61,6 +75,8 @@ Action=None
 
 [Event/unlocked]
 Name=Screen unlocked
+Name[ja]=スクリーンロック解除
+Name[nb]=Skjermen låst opp
 Name[pt]=Ecrã desbloqueado
 Name[pt_BR]=Tela desbloqueada
 Name[sv]=Skärm upplåst
@@ -68,6 +84,8 @@ Name[uk]=Екран розблоковано
 Name[x-test]=xxScreen unlockedxx
 Name[zh_TW]=螢幕已解除鎖定
 Comment=The screen has been unlocked
+Comment[ja]=スクリーンのロックが解除されました
+Comment[nb]=Skjermen er blitt låst opp
 Comment[pt]=O ecrã foi desbloqueado
 Comment[pt_BR]=A tela foi desbloqueada
 Comment[sv]=Skärmen har låsts upp
@@ -78,6 +96,8 @@ Action=None
 
 [Event/unlockfailed]
 Name=Screen unlock failed
+Name[ja]=スクリーンのロック解除失敗
+Name[nb]=Det lyktes ikke å låse opp skjermen
 Name[pt]=O desbloqueio do ecrã foi mal-sucedido
 Name[pt_BR]=O bloqueio de tela falhou
 Name[sv]=Upplåsning av skärm misslyckades
@@ -85,6 +105,8 @@ Name[uk]=Невдала спроба розблокування екрана
 Name[x-test]=xxScreen unlock failedxx
 Name[zh_TW]=螢幕解除鎖定失敗
 Comment=Failed attempt to unlock the screen
+Comment[ja]=スクリーンのロックを解除できませんでした
+Comment[nb]=Klarte ikke å låse opp skjermen
 Comment[pt]=Falhou a tentativa de desbloquear o ecrã
 Comment[pt_BR]=A tentativa de desbloquear a tela falhou
 Comment[sv]=Misslyckat försök att låsa upp skärmen
