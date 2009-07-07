@@ -144,12 +144,13 @@ int TaskItemLayout::size()
     int groupSize = 0;
 
     foreach (AbstractTaskItem *item, m_groupItem->members()) {
-        if (!item->abstractItem()) { //this item is a startup task
+        if (!item->abstractItem()) {
+            // this item is a startup task or the task no longer exists
             kDebug() << "Error, invalid item in groupMembers";
             continue;
         }
 
-        if (item->abstractItem() && item->abstractItem()->isGroupItem()) {
+        if (item->abstractItem()->isGroupItem()) {
             TaskGroupItem *group = static_cast<TaskGroupItem*>(item);
             if (!group->collapsed()) {
                 TaskItemLayout *layout = dynamic_cast<TaskItemLayout*>(group->tasksLayout());
@@ -157,11 +158,14 @@ int TaskItemLayout::size()
                     kDebug() << "Error group has no layout";
                     continue;
                 }
-                groupSize += layout->size();// increase number of items since expanded groups occupy several spaces
+
+                // increase number of items since expanded groups occupy several spaces
+                groupSize += layout->size();
                 continue;
             }
         }
-        groupSize++;
+
+        ++groupSize;
     }
 
     //kDebug() << "group size" << groupSize;
