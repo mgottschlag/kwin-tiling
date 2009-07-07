@@ -42,7 +42,7 @@ kde4_add_kcfg_files(kscreenlocker_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../kcfg/kscre
 
 kde4_add_executable(kscreenlocker ${kscreenlocker_SRCS})
 
-target_link_libraries(kscreenlocker  ${KDE4_KDEUI_LIBS} ${X11_LIBRARIES})
+target_link_libraries(kscreenlocker kephal ${KDE4_KDEUI_LIBS} ${X11_LIBRARIES})
 
 find_library(DL_LIBRARY dl)
 if (DL_LIBRARY)

@@ -25,6 +25,8 @@
 #include "autologout.h"
 #include "kscreensaversettings.h"
 
+#include <kephal/screens.h>
+
 #include <kdisplaymanager.h>
 
 #include <KStandardDirs>
@@ -1216,9 +1218,15 @@ int LockProcess::execDialog( QDialog *dlg )
 
     dlg->adjustSize();
 
+    int screen = Kephal::ScreenUtils::primaryScreenId();
+    if (Kephal::ScreenUtils::numScreens() > 1) {
+        screen = Kephal::ScreenUtils::screenId(QCursor::pos());
+    }
+
+    const QRect screenRect = Kephal::ScreenUtils::screenGeometry(screen);
     QRect rect = dlg->geometry();
-    rect.moveCenter(KGlobalSettings::desktopGeometry(QCursor::pos()).center());
-    dlg->move( rect.topLeft() );
+    rect.moveCenter(screenRect.center());
+    dlg->move(rect.topLeft());
 
     if (mDialogs.isEmpty())
     {
