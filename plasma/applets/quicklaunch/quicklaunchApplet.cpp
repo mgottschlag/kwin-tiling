@@ -688,6 +688,9 @@ void QuicklaunchApplet::showAddInterface()
         m_addDialog->setMainWidget(widget);
         connect(m_addDialog, SIGNAL(okClicked()), this, SLOT(addAccepted()));
     }
+    
+    m_addDialog->resize(460,0); //the prefered size seems to be ignored
+    
     m_addDialog->show();
 }
 
