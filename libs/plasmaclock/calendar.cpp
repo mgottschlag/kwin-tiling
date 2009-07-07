@@ -126,7 +126,7 @@ void Calendar::init(CalendarTable *calendarTable)
     d->yearSpinBox->setValue(calendar()->year(date()));
     d->yearSpinBox->hide();
     connect(d->yearSpinBox->nativeWidget(), SIGNAL(editingFinished()), this, SLOT(hideYearSpinBox()));
-
+    
     m_hLayout->addStretch();
 
     d->forward = new Plasma::ToolButton(this);
@@ -275,8 +275,12 @@ void Calendar::goToWeek(int newWeek)
 
 void Calendar::showYearSpinBox()
 {
+    QGraphicsLinearLayout *m_hLayout = (QGraphicsLinearLayout*)d->year->parentLayoutItem();
+  
     d->yearSpinBox->setValue(calendar()->year(date()));
-    d->yearSpinBox->setGeometry(d->year->geometry());
+    m_hLayout->removeItem(d->year);
+    m_hLayout->insertItem(3,d->yearSpinBox);
+    //d->yearSpinBox->setGeometry(d->year->geometry());
     d->year->hide();
     d->yearSpinBox->show();
     d->yearSpinBox->nativeWidget()->setFocus(Qt::MouseFocusReason);
@@ -284,6 +288,9 @@ void Calendar::showYearSpinBox()
 
 void Calendar::hideYearSpinBox()
 {
+    QGraphicsLinearLayout *m_hLayout = (QGraphicsLinearLayout*)d->yearSpinBox->parentLayoutItem();
+    m_hLayout->removeItem(d->yearSpinBox);
+    m_hLayout->insertItem(3,d->year);
     d->yearSpinBox->hide();
 
     int newYear = d->yearSpinBox->value();
