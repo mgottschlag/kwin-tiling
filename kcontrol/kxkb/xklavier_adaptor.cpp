@@ -30,7 +30,6 @@
 #include "kxkbconfig.h"
 #include "xklavier_adaptor.h"
 
-
 #define KDE_TRANSLATE 1
 #define VERBOSE 0
 
@@ -197,7 +196,7 @@ void XKlavierAdaptor::loadXkbConfig(bool layoutsOnly)
 {
     if( priv->engine == NULL )
         return;
-    
+
     const char* currLocale = setlocale(LOCALE_CATEGORY, NULL);
 
     QString locale = KGlobal::locale()->language();
@@ -208,30 +207,35 @@ void XKlavierAdaptor::loadXkbConfig(bool layoutsOnly)
 	    locale += country.toUpper();
         }
     }
-//  locale = "uk_UA";   // testing
-//  locale = "en_US";
     locale += ".UTF-8";
-    kDebug() << "Setting LC_ALL for libxklavier: " << locale;
+    kDebug() << "Setting LC_ALL for libxklavier:" << locale;
 
     const char* newLocale = setlocale(LOCALE_CATEGORY, locale.toLatin1());
     if( newLocale == NULL ) {
-        kDebug() << "Setting locale " << locale << " failed - will use 'C' locale";
-        setlocale(LC_ALL, "C");
+        QString langLocale = KGlobal::locale()->language();
+        kDebug() << "Setting locale" << locale << "failed, trying" << langLocale;
+
+        locale = langLocale;
+        newLocale = setlocale(LOCALE_CATEGORY, locale.toLatin1());
+
+        if( newLocale == NULL ) {
+            kDebug() << "Setting locale" << locale << "failed, will use 'C' locale";
+            setlocale(LC_ALL, "C");
+        }
     }
 
     kDebug() << "Xklavier initialized";
     priv->config = xkl_config_registry_get_instance(priv->engine);
 
 #if LIBXKLAVIER_VERSION >= 40
-	xkl_config_registry_load(priv->config, false);
+    xkl_config_registry_load(priv->config, false);
 #else
-	xkl_config_registry_load(priv->config);
+    xkl_config_registry_load(priv->config);
 #endif
-	
+//	xkl_config_registry_set_custom_charset(priv->config, "UTF-8");
+
     void *userData = priv;
 
-//	xkl_config_registry_set_custom_charset(priv->config, "UTF-8");
-	
     xkl_config_registry_foreach_layout(priv->config, processLayout, userData);
 
     if( ! layoutsOnly ) {
@@ -249,7 +253,7 @@ void XKlavierAdaptor::loadXkbConfig(bool layoutsOnly)
 XKlavierAdaptor::~XKlavierAdaptor()
 {
     g_object_unref(priv->engine);
-//	delete priv;
+    delete priv;
 //	kDebug() << "Finalizer";
 }
 

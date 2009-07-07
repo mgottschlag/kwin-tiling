@@ -445,7 +445,7 @@ X11Helper::getWindowClass(Window winId, Display* dpy)
     QString  property;
 
     if( winId == X11Helper::UNKNOWN_WINDOW_ID ) {
-        kDebug() << "Got window class for " << winId << ": '" << X11_WIN_CLASS_ROOT << "'";
+//        kDebug() << "Got window class for " << winId << ": '" << X11_WIN_CLASS_ROOT << "'";
         return X11_WIN_CLASS_ROOT;
     }
 
