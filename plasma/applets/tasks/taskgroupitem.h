@@ -55,6 +55,7 @@ class TaskGroupItem : public AbstractTaskItem
 public:
     /** Constructs a new representation for a taskgroup. */
     TaskGroupItem(QGraphicsWidget *parent, Tasks *applet);
+    ~TaskGroupItem();
 
     /** Sets the group represented by this task. */
     void setGroup(TaskManager::GroupPtr);

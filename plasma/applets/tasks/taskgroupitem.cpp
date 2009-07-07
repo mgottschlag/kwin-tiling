@@ -77,6 +77,11 @@ TaskGroupItem::TaskGroupItem(QGraphicsWidget *parent, Tasks *applet)
 }
 
 
+TaskGroupItem::~TaskGroupItem()
+{
+    delete m_tasksLayout;
+}
+
 bool TaskGroupItem::isSplit()
 {
     return m_childSplitGroup != 0;
@@ -186,13 +191,20 @@ void TaskGroupItem::close()
         m_popupDialog->deleteLater();
         m_popupDialog = 0;
     }
+
+    if (m_group) {
+        disconnect(m_group, 0, this, 0);
+    }
+
     m_group = 0;
 }
 
 
 void TaskGroupItem::updateTask(::TaskManager::TaskChanges changes)
 {
-    Q_ASSERT(m_group);
+    if (!m_group) {
+        return;
+    }
 
     bool needsUpdate = false;
     // task flags
@@ -283,7 +295,7 @@ void TaskGroupItem::reload()
 {
     QList <AbstractGroupableItem *> itemsToRemove = m_groupMembers.keys();
 
-    foreach (AbstractGroupableItem * item, group()->members()) {
+    foreach (AbstractGroupableItem *item, group()->members()) {
         if (!item) {
             kDebug() << "invalid Item";
             continue;
@@ -299,6 +311,7 @@ void TaskGroupItem::reload()
             }
         }
     }
+
     foreach (AbstractGroupableItem * item, itemsToRemove) { //remove unused items
         if (!item) {
             kDebug() << "invalid Item";
@@ -314,6 +327,10 @@ void TaskGroupItem::setGroup(TaskManager::GroupPtr group)
     if (m_group == group) {
         kDebug() << "already have this group!";
         return;
+    }
+
+    if (m_group) {
+        disconnect(m_group, 0, this, 0);
     }
 
     m_group = group;
@@ -491,7 +508,7 @@ void TaskGroupItem::itemRemoved(TaskManager::AbstractGroupableItem * groupableIt
         return;
     }
 
-    AbstractTaskItem *item = m_groupMembers.take(groupableItem);;
+    AbstractTaskItem *item = m_groupMembers.take(groupableItem);
 
     if (!item) {
         kDebug() << "Item not found";
@@ -706,12 +723,12 @@ void TaskGroupItem::expand()
 void TaskGroupItem::constraintsChanged(Plasma::Constraints constraints)
 {
     //kDebug();
-    if (constraints & Plasma::SizeConstraint && tasksLayout()) {
-        tasksLayout()->layoutItems();
+    if (constraints & Plasma::SizeConstraint && m_tasksLayout) {
+        m_tasksLayout->layoutItems();
     }
 
-    if (constraints & Plasma::FormFactorConstraint && tasksLayout()) {
-        tasksLayout()->setOrientation(m_applet->formFactor());
+    if (constraints & Plasma::FormFactorConstraint && m_tasksLayout) {
+        m_tasksLayout->setOrientation(m_applet->formFactor());
     }
 }
 
