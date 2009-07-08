@@ -85,7 +85,6 @@ public:
         void constraintsEvent(Plasma::Constraints constraints);
 
         Plasma::FrameSvg *itemBackground();
-        KColorScheme *colorScheme();
 
         qreal itemLeftMargin() { return m_leftMargin; }
         qreal itemRightMargin() { return m_rightMargin; }
@@ -141,7 +140,6 @@ private:
         QTimer m_screenTimer;
 
         Plasma::FrameSvg *m_taskItemBackground;
-        KColorScheme *m_colorScheme;
         qreal m_leftMargin;
         qreal m_topMargin;
         qreal m_rightMargin;

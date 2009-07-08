@@ -46,7 +46,6 @@
 Tasks::Tasks(QObject* parent, const QVariantList &arguments)
      : Plasma::Applet(parent, arguments),
        m_taskItemBackground(0),
-       m_colorScheme(0),
        m_leftMargin(0),
        m_topMargin(0),
        m_rightMargin(0),
@@ -67,7 +66,6 @@ Tasks::Tasks(QObject* parent, const QVariantList &arguments)
 
 Tasks::~Tasks()
 {
-    delete m_colorScheme;
     delete m_rootGroupItem;
     delete m_groupManager;
 }
@@ -149,8 +147,6 @@ Qt::KeyboardModifiers Tasks::groupModifierKey() const
     return m_groupModifierKey;
 }
 
-
-
 void Tasks::constraintsEvent(Plasma::Constraints constraints)
 {
     //kDebug();
@@ -211,16 +207,6 @@ void Tasks::resizeItemBackground(const QSizeF &size)
     }
     m_taskItemBackground->setElementPrefix(oldPrefix);
 }
-
-KColorScheme *Tasks::colorScheme()
-{
-    if (!m_colorScheme) {
-        m_colorScheme = new KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::defaultTheme()->colorScheme());
-    }
-
-    return m_colorScheme;
-}
-
 
 QSizeF Tasks::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
 {
