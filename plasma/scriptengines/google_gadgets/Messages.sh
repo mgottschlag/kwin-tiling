@@ -1,2 +1,2 @@
 #! /usr/bin/env bash
-$XGETTEXT *.cpp -o $podir/plasma_scriptengine_ggl.pot
+$XGETTEXT *.cpp -o $podir/plasma_appletscriptengine_googlegadget.pot
