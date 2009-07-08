@@ -266,8 +266,7 @@ void TaskGroupItem::updateToolTip()
     Plasma::ToolTipContent data(m_group->name(),
                                 i18nc("Which virtual desktop a window is currently on", "On %1",
                                        KWindowSystem::desktopName(m_group->desktop())));
-//    data.image = m_group->icon().pixmap(QSize::small);
-//    data.windowToPreview = m_task->window();
+    data.setImage(m_group->icon());
 
     int i = 0;
     QList<WId> windows;
