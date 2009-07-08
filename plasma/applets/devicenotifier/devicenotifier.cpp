@@ -40,6 +40,7 @@
 //use for desktop view
 #include <Plasma/IconWidget>
 #include <Plasma/Theme>
+#include <Plasma/Plasma>
 
 //solid
 #include <solid/device.h>
@@ -99,6 +100,8 @@ void DeviceNotifier::init()
             this, SLOT(onSourceRemoved(const QString&)));
 
     fillPreviousDevices();
+
+    setStatus(Plasma::PassiveStatus);
 }
 
 QWidget *DeviceNotifier::widget()
@@ -207,6 +210,9 @@ void DeviceNotifier::notifyDevice(const QString &name)
 
     if (!m_fillingPreviousDevices) {
         showPopup();
+        setStatus(Plasma::NeedsAttentionStatus);
+    } else {
+        setStatus(Plasma::ActiveStatus);
     }
 }
 
@@ -261,6 +267,7 @@ void DeviceNotifier::onSourceRemoved(const QString &name)
 
     m_dialog->removeDevice(name);
     removeLastDeviceNotification(name);
+    setStatus(Plasma::PassiveStatus);
 }
 
 #include "devicenotifier.moc"
