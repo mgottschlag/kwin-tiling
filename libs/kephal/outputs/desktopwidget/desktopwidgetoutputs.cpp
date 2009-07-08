@@ -32,7 +32,12 @@ namespace Kephal {
             : Outputs(parent)
     {
         QDesktopWidget * desktop = QApplication::desktop();
+        bool isVirtual = desktop->isVirtualDesktop();
         for (int i = 0; i < desktop->numScreens(); i++) {
+            if (! isVirtual) {
+                i = desktop->primaryScreen();
+            }
+            
             QRect geom = desktop->screenGeometry(i);
             qDebug() << "adding an output" << i << "with geom: " << geom;
             
@@ -43,17 +48,23 @@ namespace Kephal {
                     true,
                     true);
             m_outputs.append(output);
-        }
-        for (int i = desktop->numScreens(); i < 4; i++) {
-            qDebug() << "adding a disconnected output" << i;
             
-            SimpleOutput * output = new SimpleOutput(this,
-                    "SCREEN-" + QString::number(i),
-                    QSize(0, 0),
-                    QPoint(0, 0),
-                    false,
-                    false);
-            m_outputs.append(output);
+            if (! isVirtual) {
+                break;
+            }
+        }
+        if (isVirtual) {
+            for (int i = desktop->numScreens(); i < 4; i++) {
+                qDebug() << "adding a disconnected output" << i;
+                
+                SimpleOutput * output = new SimpleOutput(this,
+                        "SCREEN-" + QString::number(i),
+                        QSize(0, 0),
+                        QPoint(0, 0),
+                        false,
+                        false);
+                m_outputs.append(output);
+            }
         }
         
         connect(desktop, SIGNAL(resized(int)), this, SLOT(screenChanged(int)));
@@ -85,14 +96,18 @@ namespace Kephal {
         Q_UNUSED(screen)
         
         QDesktopWidget * desktop = QApplication::desktop();
-        for(int i = m_outputs.size() - 1; i >= desktop->numScreens(); i--) {
-            SimpleOutput * output = m_outputs.at(i);
-            if (output->isConnected()) {
-                qDebug() << "disconnecting output" << i;
-                output->_setActivated(false);
-                emit outputDeactivated(output);
-                output->_setConnected(false);
-                emit outputDisconnected(output);
+        bool isVirtual = desktop->isVirtualDesktop();
+        
+        if (isVirtual) {
+            for(int i = m_outputs.size() - 1; i >= desktop->numScreens(); i--) {
+                SimpleOutput * output = m_outputs.at(i);
+                if (output->isConnected()) {
+                    qDebug() << "disconnecting output" << i;
+                    output->_setActivated(false);
+                    emit outputDeactivated(output);
+                    output->_setConnected(false);
+                    emit outputDisconnected(output);
+                }
             }
         }
         
@@ -107,6 +122,10 @@ namespace Kephal {
             }
             
             SimpleOutput * output = m_outputs[i];
+            if (! isVirtual) {
+                i = desktop->primaryScreen();
+            }
+            
             QRect geom = desktop->screenGeometry(i);
             if (! output->isConnected()) {
                 output->_setConnected(true);
@@ -132,6 +151,10 @@ namespace Kephal {
                 
                 output->_setSize(newSize);
                 emit outputResized(output, oldSize, newSize);
+            }
+            
+            if (! isVirtual) {
+                break;
             }
         }
     }
