@@ -26,8 +26,10 @@
 #include <config-workspace.h>
 #include "plasmaapp.h"
 
+#ifdef Q_WS_X11
 #include <X11/Xlib.h>
 #include <fixx11h.h>
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
