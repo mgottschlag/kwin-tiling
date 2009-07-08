@@ -27,7 +27,6 @@
 
 #include "ui_colorsettings.h"
 
-class QPalette;
 class QStackedWidget;
 
 /**
