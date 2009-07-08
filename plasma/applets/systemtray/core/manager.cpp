@@ -239,6 +239,11 @@ void Manager::forwardConstraintsEvent(Plasma::Constraints constraints)
     d->plasmoidProtocol->forwardConstraintsEvent(constraints);
 }
 
+void Manager::loadApplets(const KConfigGroup &cg, Plasma::Applet *parent)
+{
+   d->plasmoidProtocol->loadFromConfig(cg, parent);
+}
+
 }
 
 

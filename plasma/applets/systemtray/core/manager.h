@@ -24,7 +24,14 @@
 
 #include <QtCore/QObject>
 
+#include <KConfigGroup>
+
 #include <plasma/plasma.h>
+
+namespace Plasma
+{
+class Applet;
+}
 
 namespace SystemTray
 {
@@ -92,6 +99,8 @@ public:
     void unregisterNotificationProtocol();
 
     void forwardConstraintsEvent(Plasma::Constraints constraints);
+
+    void loadApplets(const KConfigGroup &cg, Plasma::Applet *parent);
 
 signals:
     /**

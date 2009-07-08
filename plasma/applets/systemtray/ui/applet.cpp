@@ -246,6 +246,7 @@ void Applet::init()
 
     initExtenderTask(createExtenderTask);
     d->taskArea->syncTasks(Private::s_manager->tasks());
+    Private::s_manager->loadApplets(config(), this);
 }
 
 void Applet::initExtenderTask(bool create)

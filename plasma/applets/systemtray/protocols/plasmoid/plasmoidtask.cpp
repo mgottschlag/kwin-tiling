@@ -24,6 +24,7 @@
 #include <fixx11h.h>
 
 #include <plasma/applet.h>
+#include <plasma/popupapplet.h>
 
 
 namespace SystemTray
@@ -113,6 +114,10 @@ QGraphicsWidget* PlasmoidTask::createWidget(Plasma::Applet *host)
     d->applet->init();
     d->applet->updateConstraints(Plasma::AllConstraints);
     d->applet->flushPendingConstraintsEvents();
+    Plasma::PopupApplet *pa = qobject_cast<Plasma::PopupApplet*>(d->applet);
+    if (pa) {
+        connect(pa, SIGNAL(newStatus(Plasma::ItemStatus)), this, SLOT(refreshStatus()));
+    }
     return static_cast<QGraphicsWidget*>(d->applet);
 }
 
@@ -153,6 +158,11 @@ void PlasmoidTask::appletDestroyed(QObject *object)
     if (object == this) {
         emit destroyed(this);
     }
+}
+
+void PlasmoidTask::refreshStatus()
+{
+    emit changed(this);
 }
 
 }

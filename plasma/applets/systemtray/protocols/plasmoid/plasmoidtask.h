@@ -48,6 +48,7 @@ public:
 
 protected Q_SLOTS:
     void appletDestroyed(QObject *object);
+    void refreshStatus();
 
 Q_SIGNALS:
     void taskDeleted(QString typeId);
