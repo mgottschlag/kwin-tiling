@@ -35,7 +35,7 @@ namespace Plasma
 } // namespace Plasma
 
 class QBoxLayout;
-class MidView;
+class NetView;
 
 class PlasmaApp : public KUniqueApplication
 {
@@ -81,7 +81,7 @@ private Q_SLOTS:
     void syncMainContainmentsMargins();
     void createView(Plasma::Containment *containment);
     void adjustSize(int screen);
-    void controlBarMoved(const MidView *controlBar);
+    void controlBarMoved(const NetView *controlBar);
     void showAppletBrowser();
     void appletBrowserDestroyed();
     void mainContainmentActivated();
@@ -91,8 +91,8 @@ private:
     Plasma::Corona *m_corona;
     Plasma::AppletBrowser *m_appletBrowser;
     QWidget *m_window;
-    MidView *m_controlBar;
-    MidView *m_mainView;
+    NetView *m_controlBar;
+    NetView *m_mainView;
     QBoxLayout *m_layout;
     bool m_isDesktop;
 };

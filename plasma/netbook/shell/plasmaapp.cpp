@@ -40,8 +40,8 @@
 #include <Plasma/Containment>
 #include <Plasma/Theme>
 
-#include "midcorona.h"
-#include "midview.h"
+#include "netcorona.h"
+#include "netview.h"
 
 #include "appletbrowser.h"
 
@@ -92,7 +92,7 @@ PlasmaApp::PlasmaApp()
     Plasma::Theme::defaultTheme()->setFont(cg.readEntry("desktopFont", font()));
 
     //m_window = new QWidget;
-    m_window = m_mainView = new MidView(0, MidView::mainViewId(), 0);
+    m_window = m_mainView = new NetView(0, NetView::mainViewId(), 0);
     connect(m_mainView, SIGNAL(containmentActivated()), this, SLOT(mainContainmentActivated()));
     m_window->installEventFilter(this);
 
@@ -109,13 +109,13 @@ PlasmaApp::PlasmaApp()
     m_layout->setSpacing(0);
 
 
-    m_controlBar = new MidView(0, MidView::controlBarId(), m_window);
+    m_controlBar = new NetView(0, NetView::controlBarId(), m_window);
     //m_controlBar->setFixedHeight(CONTROL_BAR_HEIGHT);
     m_controlBar->setAttribute(Qt::WA_TranslucentBackground);
     m_controlBar->setAutoFillBackground(false);
     m_controlBar->viewport()->setAutoFillBackground(false);
     m_controlBar->setAttribute(Qt::WA_TranslucentBackground);
-    connect(m_controlBar, SIGNAL(locationChanged(const MidView *)), this, SLOT(controlBarMoved(const MidView *)));
+    connect(m_controlBar, SIGNAL(locationChanged(const NetView *)), this, SLOT(controlBarMoved(const NetView *)));
     connect(m_controlBar, SIGNAL(geometryChanged()), this, SLOT(syncMainContainmentsMargins()));
 
     m_layout->addWidget(m_controlBar);
@@ -174,9 +174,9 @@ void PlasmaApp::cleanup()
     // of application exit so we can restore that when we start again.
     KConfigGroup viewIds(KGlobal::config(), "ViewIds");
     viewIds.deleteGroup();
-    viewIds.writeEntry(QString::number(m_mainView->containment()->id()), MidView::mainViewId());
+    viewIds.writeEntry(QString::number(m_mainView->containment()->id()), NetView::mainViewId());
 
-    viewIds.writeEntry(QString::number(m_controlBar->containment()->id()), MidView::controlBarId());
+    viewIds.writeEntry(QString::number(m_controlBar->containment()->id()), NetView::controlBarId());
 
     delete m_window;
     m_window = 0;
@@ -335,7 +335,7 @@ void PlasmaApp::reserveStruts()
 Plasma::Corona* PlasmaApp::corona()
 {
     if (!m_corona) {
-        m_corona = new MidCorona(this, m_window);
+        m_corona = new NetCorona(this, m_window);
         connect(m_corona, SIGNAL(containmentAdded(Plasma::Containment*)),
                 this, SLOT(createView(Plasma::Containment*)));
         connect(m_corona, SIGNAL(configSynced()), this, SLOT(syncConfig()));
@@ -379,30 +379,30 @@ void PlasmaApp::createView(Plasma::Containment *containment)
     int defaultId = 0;
     if (containment->containmentType() == Plasma::Containment::PanelContainment && 
         m_controlBar->containment() == 0 ) {
-        defaultId = MidView::controlBarId();
+        defaultId = NetView::controlBarId();
     } else if (containment->containmentType() == Plasma::Containment::PanelContainment && 
         m_mainView->containment() == 0 ) {
-        defaultId = MidView::mainViewId();
+        defaultId = NetView::mainViewId();
     }
 
     int id = viewIds.readEntry(QString::number(containment->id()), defaultId);
 
     kDebug() << "new containment" << (QObject*)containment << containment->id()<<"view id"<<id;
 
-    if ((m_mainView && id == MidView::mainViewId()) ||
+    if ((m_mainView && id == NetView::mainViewId()) ||
         (containment->containmentType() != Plasma::Containment::PanelContainment &&
          containment->containmentType() != Plasma::Containment::CustomPanelContainment &&
          !viewIds.exists() && m_mainView->containment() == 0)) {
         m_mainView->setContainment(containment);
         containment->setScreen(0);
-    } else if (m_controlBar && id == MidView::controlBarId()) {
+    } else if (m_controlBar && id == NetView::controlBarId()) {
         m_controlBar->setContainment(containment);
     } else {
         containment->setScreen(-1);
     }
 }
 
-void PlasmaApp::controlBarMoved(const MidView *controlBar)
+void PlasmaApp::controlBarMoved(const NetView *controlBar)
 {
     if (controlBar != m_controlBar) {
         return;

@@ -17,7 +17,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "midcorona.h"
+#include "netcorona.h"
 
 #include <QApplication>
 #include <QDesktopWidget>
@@ -33,20 +33,20 @@
 #include <Plasma/Containment>
 #include <Plasma/DataEngineManager>
 
-MidCorona::MidCorona(QObject *parent, QWidget *mainWindow)
+NetCorona::NetCorona(QObject *parent, QWidget *mainWindow)
     : Plasma::Corona(parent),
       m_mainWindow(mainWindow)
 {
     init();
 }
 
-void MidCorona::init()
+void NetCorona::init()
 {
     QDesktopWidget *desktop = QApplication::desktop();
     QObject::connect(desktop, SIGNAL(resized(int)), this, SLOT(screenResized(int)));
 }
 
-void MidCorona::loadDefaultLayout()
+void NetCorona::loadDefaultLayout()
 {
     QString defaultConfig = KStandardDirs::locate("appdata", "plasma-default-layoutrc");
     if (!defaultConfig.isEmpty()) {
@@ -58,7 +58,7 @@ void MidCorona::loadDefaultLayout()
     // used to force a save into the config file
     KConfigGroup invalidConfig;
 
-    // FIXME: need to load the MID-specific containment
+    // FIXME: need to load the Netbook-specific containment
     // passing in an empty string will get us whatever the default
     // containment type is!
     Plasma::Containment* c = addContainmentDelayed(QString());
@@ -84,9 +84,9 @@ void MidCorona::loadDefaultLayout()
 
     emit containmentAdded(c);
 
-    QVariantList midPanelArgs;
-    midPanelArgs << m_mainWindow->width();
-    c = addContainment("midpanel", midPanelArgs);
+    QVariantList netPanelArgs;
+    netPanelArgs << m_mainWindow->width();
+    c = addContainment("netpanel", netPanelArgs);
     /*
     loadDefaultApplet("systemtray", panel);
 
@@ -106,7 +106,7 @@ void MidCorona::loadDefaultLayout()
     */
 }
 
-Plasma::Applet *MidCorona::loadDefaultApplet(const QString &pluginName, Plasma::Containment *c)
+Plasma::Applet *NetCorona::loadDefaultApplet(const QString &pluginName, Plasma::Containment *c)
 {
     QVariantList args;
     Plasma::Applet *applet = Plasma::Applet::load(pluginName, 0, args);
@@ -118,7 +118,7 @@ Plasma::Applet *MidCorona::loadDefaultApplet(const QString &pluginName, Plasma::
     return applet;
 }
 
-void MidCorona::screenResized(int screen)
+void NetCorona::screenResized(int screen)
 {
     int numScreens = QApplication::desktop()->numScreens();
     if (screen < numScreens) {
@@ -131,17 +131,17 @@ void MidCorona::screenResized(int screen)
     }
 }
 
-int MidCorona::numScreens() const
+int NetCorona::numScreens() const
 {
     return QApplication::desktop()->numScreens();
 }
 
-QRect MidCorona::screenGeometry(int id) const
+QRect NetCorona::screenGeometry(int id) const
 {
     return QRect(QPoint(0,0), m_mainWindow->size());
 }
 
-QRegion MidCorona::availableScreenRegion(int id) const
+QRegion NetCorona::availableScreenRegion(int id) const
 {
     // TODO: more precise implementation needed
     //FIXME: no hardcoded stuff
@@ -150,5 +150,5 @@ QRegion MidCorona::availableScreenRegion(int id) const
 
 
 
-#include "midcorona.moc"
+#include "netcorona.moc"
 

@@ -18,7 +18,7 @@ formfactor=2
 geometry=0,-30,800,24
 immutability=1
 location=3
-plugin=midpanel
+plugin=netpanel
 screen=0
 zvalue=150
 

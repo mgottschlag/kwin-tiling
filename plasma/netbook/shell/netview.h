@@ -17,8 +17,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef MIDVIEW_H
-#define MIDVIEW_H
+#ifndef NETVIEW_H
+#define NETVIEW_H
 
 #include <Plasma/Plasma>
 #include <Plasma/View>
@@ -31,13 +31,13 @@ namespace Plasma
 class DashboardView;
 class BackgroundDialog;
 
-class MidView : public Plasma::View
+class NetView : public Plasma::View
 {
     Q_OBJECT
 
 public:
-    MidView(Plasma::Containment *containment, int uid, QWidget *parent = 0);
-    ~MidView();
+    NetView(Plasma::Containment *containment, int uid, QWidget *parent = 0);
+    ~NetView();
 
     /**
      * hook up all needed signals to a containment
@@ -67,7 +67,7 @@ public Q_SLOTS:
     void configureContainment(Plasma::Containment *containment);
 
 Q_SIGNALS:
-    void locationChanged(const MidView *view);
+    void locationChanged(const NetView *view);
     void geometryChanged();
     void containmentActivated();
 

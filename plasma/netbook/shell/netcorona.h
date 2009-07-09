@@ -17,8 +17,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef MIDVCORONA_H
-#define MIDVCORONA_H
+#ifndef NETVCORONA_H
+#define NETVCORONA_H
 
 #include <QtGui/QGraphicsScene>
 
@@ -32,12 +32,12 @@ namespace Plasma
 /**
  * @short A Corona with desktop-y considerations
  */
-class MidCorona : public Plasma::Corona
+class NetCorona : public Plasma::Corona
 {
     Q_OBJECT
 
 public:
-    MidCorona(QObject * parent, QWidget *mainWindow);
+    NetCorona(QObject * parent, QWidget *mainWindow);
 
     /**
      * Loads the default (system wide) layout for this user

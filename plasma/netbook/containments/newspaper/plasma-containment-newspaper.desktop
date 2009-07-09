@@ -23,7 +23,7 @@ Comment[x-test]=xxAn activity that puts widgets on two columnsxx
 Icon=
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet,Plasma/Containment
-X-Plasma-ContainmentCategories=mid,desktop
+X-Plasma-ContainmentCategories=netbook,desktop
 NoDisplay=true
 
 X-KDE-Library=plasma_containment_newspaper

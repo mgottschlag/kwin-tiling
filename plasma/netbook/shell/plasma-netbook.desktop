@@ -1,13 +1,13 @@
 [Desktop Entry]
-Exec=plasma-mid --desktop
+Exec=plasma-netbook --desktop
 X-DBUS-StartupType=wait
-Name=Plasma MID
+Name=Plasma Netbook
 Name[km]=ប្លាស្មា MID
 Name[nds]=Plasma-MIR
 Name[pa]=ਪਲਾਜ਼ਮਾ MID
 Name[uk]=Плазма МІП
 Name[x-test]=xxPlasma MIDxx
-Comment=Workspace shell for mobile Internet devices.
+Comment=Workspace shell for netbook devices.
 Comment[et]=Tööruumi shell mobiilsetele internetiseadmetele.
 Comment[fr]=Environnement de travail de Shell pour des périphériques mobiles accédant à Internet.
 Comment[km]=សែល​ចន្លោះការងារ​សម្រាប់​ឧបករណ៍​អ៊ិនធឺណិត​ចល័ត ។

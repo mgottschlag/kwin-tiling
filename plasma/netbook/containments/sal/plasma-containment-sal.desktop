@@ -20,7 +20,7 @@ Comment[x-test]=xxSpecial Containment with Launcherxx
 Icon=
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet,Plasma/Containment
-X-Plasma-ContainmentCategories=mid
+X-Plasma-ContainmentCategories=netbook,desktop
 NoDisplay=true
 
 X-KDE-Library=plasma_containment_sal

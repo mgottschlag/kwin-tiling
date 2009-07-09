@@ -16,7 +16,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "midview.h"
+#include "netview.h"
 
 #include <QAction>
 #include <QCoreApplication>
@@ -28,7 +28,7 @@
 #include <Plasma/Corona>
 #include <Plasma/Containment>
 
-MidView::MidView(Plasma::Containment *containment, int uid, QWidget *parent)
+NetView::NetView(Plasma::Containment *containment, int uid, QWidget *parent)
     : Plasma::View(containment, uid, parent),
       m_canRaise(false)
 {
@@ -48,11 +48,11 @@ MidView::MidView(Plasma::Containment *containment, int uid, QWidget *parent)
     setBackgroundBrush(tile);
 }
 
-MidView::~MidView()
+NetView::~NetView()
 {
 }
 
-void MidView::connectContainment(Plasma::Containment *containment)
+void NetView::connectContainment(Plasma::Containment *containment)
 {
     if (!containment) {
         return;
@@ -67,7 +67,7 @@ void MidView::connectContainment(Plasma::Containment *containment)
     connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updateGeometry()));
 }
 
-void MidView::setContainment(Plasma::Containment *c)
+void NetView::setContainment(Plasma::Containment *c)
 {
     if (containment()) {
         disconnect(containment(), 0, this, 0);
@@ -78,7 +78,7 @@ void MidView::setContainment(Plasma::Containment *c)
     updateGeometry();
 }
 
-void MidView::configureContainment(Plasma::Containment *containment)
+void NetView::configureContainment(Plasma::Containment *containment)
 {
     /* TODO: implement; suggestion: as an overlay that takes the whole screen
     m_configDialog->show();
@@ -96,7 +96,7 @@ void MidView::configureContainment(Plasma::Containment *containment)
 // the case of a texture brush, and fillRect(QRect, QColor) in the case of a
 // solid pattern.  As an additional optimization it draws the background with
 // CompositionMode_Source.
-void MidView::drawBackground(QPainter *painter, const QRectF &rect)
+void NetView::drawBackground(QPainter *painter, const QRectF &rect)
 {
     const QPainter::CompositionMode savedMode = painter->compositionMode();
     const QBrush brush = backgroundBrush();
@@ -129,14 +129,14 @@ void MidView::drawBackground(QPainter *painter, const QRectF &rect)
 }
 
 
-void MidView::resizeEvent(QResizeEvent *event)
+void NetView::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event)
     updateGeometry();
     emit geometryChanged();
 }
 
-void MidView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment)
+void NetView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment)
 {
     kDebug() << "was, is, containment:" << wasScreen << isScreen << (QObject*)containment;
     if (containment->containmentType() == Plasma::Containment::PanelContainment) {
@@ -153,12 +153,12 @@ void MidView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containmen
     }
 }
 
-Plasma::Location MidView::location() const
+Plasma::Location NetView::location() const
 {
     return containment()->location();
 }
 
-void MidView::updateGeometry()
+void NetView::updateGeometry()
 {
     Plasma::Containment *c = containment();
     if (!c) {
@@ -196,12 +196,12 @@ void MidView::updateGeometry()
     }
 }
 
-bool MidView::canRaise() const
+bool NetView::canRaise() const
 {
     return m_canRaise;
 }
 
-void MidView::mousePressEvent(QMouseEvent *event)
+void NetView::mousePressEvent(QMouseEvent *event)
 {
     Plasma::View::mousePressEvent(event);
 
@@ -219,11 +219,11 @@ void MidView::mousePressEvent(QMouseEvent *event)
 
 }
 
-void MidView::mouseReleaseEvent(QMouseEvent *event)
+void NetView::mouseReleaseEvent(QMouseEvent *event)
 {
     m_canRaise = false;
     Plasma::View::mouseReleaseEvent(event);
 }
 
-#include "midview.moc"
+#include "netview.moc"
 
