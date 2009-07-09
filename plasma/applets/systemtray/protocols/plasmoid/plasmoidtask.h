@@ -48,7 +48,7 @@ public:
 
 protected Q_SLOTS:
     void appletDestroyed(QObject *object);
-    void refreshStatus();
+    void newAppletStatus(Plasma::ItemStatus status);
 
 Q_SIGNALS:
     void taskDeleted(QString typeId);

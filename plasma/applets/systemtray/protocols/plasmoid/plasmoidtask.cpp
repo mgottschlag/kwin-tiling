@@ -24,6 +24,7 @@
 #include <fixx11h.h>
 
 #include <plasma/applet.h>
+#include <plasma/plasma.h>
 
 
 namespace SystemTray
@@ -114,7 +115,7 @@ QGraphicsWidget* PlasmoidTask::createWidget(Plasma::Applet *host)
     d->applet->updateConstraints(Plasma::AllConstraints);
     d->applet->flushPendingConstraintsEvents();
 
-    connect(d->applet, SIGNAL(newStatus(Plasma::ItemStatus)), this, SLOT(refreshStatus()));
+    connect(d->applet, SIGNAL(newStatus(Plasma::ItemStatus)), this, SLOT(newAppletStatus(Plasma::ItemStatus)));
 
     return static_cast<QGraphicsWidget*>(d->applet);
 }
@@ -158,8 +159,26 @@ void PlasmoidTask::appletDestroyed(QObject *object)
     }
 }
 
-void PlasmoidTask::refreshStatus()
+void PlasmoidTask::newAppletStatus(Plasma::ItemStatus status)
 {
+    switch (status) {
+    case Plasma::PassiveStatus:
+       setStatus(Task::Passive);
+       break;
+
+    case Plasma::ActiveStatus:
+       setStatus(Task::Active);
+       break;
+
+    case Plasma::NeedsAttentionStatus:
+        setStatus(Task::NeedsAttention);
+        break;
+
+    default:
+    case Plasma::UnknownStatus:
+        setStatus(Task::UnknownStatus);
+    }
+
     emit changed(this);
 }
 
