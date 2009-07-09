@@ -41,6 +41,7 @@ BookmarksRunner::BookmarksRunner( QObject* parent, const QVariantList &args )
     m_icon = KIcon("bookmarks");
     m_bookmarkManager = KBookmarkManager::userBookmarksManager();
     addSyntax(Plasma::RunnerSyntax(":q:", i18n("Finds web browser bookmarks matching :q:.")));
+    addSyntax(Plasma::RunnerSyntax(i18nc("list of all konqueror bookmarks", "bookmarks"), i18n("List all bookmarks of the browser")));
 }
 
 BookmarksRunner::~BookmarksRunner()
@@ -96,6 +97,9 @@ void BookmarksRunner::match(Plasma::RunnerContext &context)
         } else if (bookmark.url().prettyUrl().contains(term, Qt::CaseInsensitive)) {
             type = Plasma::QueryMatch::PossibleMatch;
             relevance = 0.2;
+        } else if (term.compare(i18nc("list of all konqueror bookmarks", "bookmarks"), Qt::CaseInsensitive) == 0) {
+            type = Plasma::QueryMatch::PossibleMatch;
+            relevance = 0.18;
         }
 
         if (type != Plasma::QueryMatch::NoMatch) {

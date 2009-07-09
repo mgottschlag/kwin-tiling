@@ -154,6 +154,35 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
         matches << match;
     }
 
+    QString termUpper = term.toUpper();
+    //search for applications whose categories contains the query
+    query = QString("exist Exec and (exist Categories and '%1' ~subin Categories)").arg(term);
+    services = KServiceTypeTrader::self()->query("Application", query);
+
+    if (!services.isEmpty()) {
+        //kDebug() << service->name() << "is an exact match!" << service->storageId() << service->exec();
+        foreach (const KService::Ptr &service, services) {
+            if (!service->noDisplay()) {
+                QString id = service->storageId();
+                QString exec = service->exec();
+                if (seen.contains(id) || seen.contains(exec)) {
+                    //kDebug() << "already seen" << id << exec;
+                    continue;
+                }
+                Plasma::QueryMatch match(this);
+                match.setType(Plasma::QueryMatch::ExactMatch);
+                setupMatch(service, match);
+                match.setRelevance(0.6);
+                if (service->categories().contains("X-KDE-More") ||
+                    service->property("OnlyShownIn") != "KDE" ||
+                    !service->property("OnlyShowIn").isNull()) {
+                    match.setRelevance(0.5);
+                }
+                matches << match;
+            }
+        }
+    }
+
     context.addMatches(term, matches);
 }
 
