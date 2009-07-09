@@ -745,7 +745,8 @@ void UKMETIon::parseFiveDayForecast(const QString& source, QXmlStreamReader& xml
             low.indexIn(line.split(',')[2]);
 
             forecast->period = period;
-            forecast->summary = summary;
+            forecast->summary = i18n(summary.toUtf8());
+            kDebug() << "i18n summary string: " << qPrintable(forecast->summary);
             forecast->iconName = getWeatherIcon(dayIcons(), forecast->summary.toLower());
             forecast->tempHigh = high.cap(0).toInt();
             forecast->tempLow = low.cap(0).toInt();
@@ -804,6 +805,7 @@ void UKMETIon::updateWeather(const QString& source)
     data.insert("Station", station(source));
     data.insert("Observation Period", observationTime(source));
     data.insert("Current Conditions", condition(source));
+    kDebug() << "i18n condition string: " << qPrintable(condition(source));
 
     const double observationSeconds = 60.0 * (periodMinute(source) + 60.0 * periodHour(source));
 
@@ -912,7 +914,7 @@ double UKMETIon::periodLongitude(const QString& source)
 
 QString UKMETIon::condition(const QString& source)
 {
-    return d->m_weatherData[source].condition;
+    return i18n(d->m_weatherData[source].condition.toUtf8());
 }
 
 QMap<QString, QString> UKMETIon::temperature(const QString& source)
