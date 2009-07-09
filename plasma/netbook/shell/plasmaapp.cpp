@@ -104,22 +104,23 @@ PlasmaApp::PlasmaApp()
     classHint.res_class = const_cast<char*>("Plasma");
     XSetClassHint(QX11Info::display(), m_window->winId(), &classHint);
 
-    m_layout = new QBoxLayout(QBoxLayout::TopToBottom, m_mainView);
-    m_layout->setMargin(0);
-    m_layout->setSpacing(0);
+
+    m_controlBar = new NetView(0, NetView::controlBarId(), 0);
+    m_controlBar->show();
+    KWindowSystem::setOnAllDesktops(m_controlBar->effectiveWinId(), true);
+    unsigned long state = NET::Sticky | NET::StaysOnTop | NET::KeepAbove;
+    KWindowSystem::setState(m_controlBar->effectiveWinId(), state);
+    KWindowSystem::setType(m_controlBar->effectiveWinId(), NET::Dock);
+    //m_controlBar->setWindowFlags(m_window->windowFlags() | Qt::FramelessWindowHint);
 
 
-    m_controlBar = new NetView(0, NetView::controlBarId(), m_window);
     //m_controlBar->setFixedHeight(CONTROL_BAR_HEIGHT);
     m_controlBar->setAttribute(Qt::WA_TranslucentBackground);
     m_controlBar->setAutoFillBackground(false);
     m_controlBar->viewport()->setAutoFillBackground(false);
     m_controlBar->setAttribute(Qt::WA_TranslucentBackground);
     connect(m_controlBar, SIGNAL(locationChanged(const NetView *)), this, SLOT(controlBarMoved(const NetView *)));
-    connect(m_controlBar, SIGNAL(geometryChanged()), this, SLOT(syncMainContainmentsMargins()));
-
-    m_layout->addWidget(m_controlBar);
-    m_layout->addStretch();
+    connect(m_controlBar, SIGNAL(geometryChanged()), this, SLOT(positionPanel()));
 
     //m_layout->addWidget(m_mainView);
 
@@ -193,8 +194,13 @@ void PlasmaApp::syncConfig()
     KGlobal::config()->sync();
 }
 
-void PlasmaApp::syncMainContainmentsMargins()
+void PlasmaApp::positionPanel()
 {
+    //move
+    //TODO: support locations
+    controlBarMoved(m_mainView);
+    m_controlBar->resize(m_mainView->size().width(), m_controlBar->size().height());
+    //sync margins
     const QRect availableScreen = m_corona->availableScreenRegion(0).boundingRect();
     const QRect screen = m_corona->screenGeometry(0);
 
@@ -408,19 +414,20 @@ void PlasmaApp::controlBarMoved(const NetView *controlBar)
         return;
     }
 
+    //TODO: manage layouts in the new way
     switch (controlBar->location()) {
     case Plasma::LeftEdge:
-        m_layout->setDirection(QBoxLayout::LeftToRight);
+        m_controlBar->move(m_mainView->geometry().topLeft());
         break;
     case Plasma::RightEdge:
-        m_layout->setDirection(QBoxLayout::RightToLeft);
+        m_controlBar->move(m_mainView->geometry().bottomLeft()-QPoint(m_controlBar->size().width(), 0));
         break;
     case Plasma::TopEdge:
-        m_layout->setDirection(QBoxLayout::TopToBottom);
+        m_controlBar->move(m_mainView->geometry().topLeft());
         break;
     case Plasma::BottomEdge:
+        m_controlBar->move(m_mainView->geometry().bottomLeft()-QPoint(0,m_controlBar->size().height()));
     default:
-        m_layout->setDirection(QBoxLayout::BottomToTop);
         break;
     }
 

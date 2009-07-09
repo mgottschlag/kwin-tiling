@@ -78,7 +78,7 @@ protected:
 private Q_SLOTS:
     void cleanup();
     void syncConfig();
-    void syncMainContainmentsMargins();
+    void positionPanel();
     void createView(Plasma::Containment *containment);
     void adjustSize(int screen);
     void controlBarMoved(const NetView *controlBar);
@@ -93,7 +93,6 @@ private:
     QWidget *m_window;
     NetView *m_controlBar;
     NetView *m_mainView;
-    QBoxLayout *m_layout;
     bool m_isDesktop;
 };
 
