@@ -309,7 +309,13 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
             QRectF siblingGeometry = lay->itemAt(i)->geometry();
             if (f == Plasma::Horizontal) {
                 qreal middle = (siblingGeometry.left() + siblingGeometry.right()) / 2.0;
-                if (pos.x() < middle) {
+                if (QApplication::layoutDirection() == Qt::RightToLeft) {
+                    if (pos.x() > middle) {
+                        insertIndex = i;
+                    } else if (pos.x() >= siblingGeometry.left()) {
+                        insertIndex = i + 1;
+                    }
+                } else if (pos.x() < middle) {
                     insertIndex = i;
                     break;
                 } else if (pos.x() <= siblingGeometry.right()) {
