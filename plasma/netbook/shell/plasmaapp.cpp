@@ -106,12 +106,12 @@ PlasmaApp::PlasmaApp()
 
 
     m_controlBar = new NetView(0, NetView::controlBarId(), 0);
-    m_controlBar->show();
     KWindowSystem::setOnAllDesktops(m_controlBar->effectiveWinId(), true);
     unsigned long state = NET::Sticky | NET::StaysOnTop | NET::KeepAbove;
     KWindowSystem::setState(m_controlBar->effectiveWinId(), state);
+    m_controlBar->setWindowFlags(m_window->windowFlags() | Qt::FramelessWindowHint);
+    m_controlBar->show();
     KWindowSystem::setType(m_controlBar->effectiveWinId(), NET::Dock);
-    //m_controlBar->setWindowFlags(m_window->windowFlags() | Qt::FramelessWindowHint);
 
 
     //m_controlBar->setFixedHeight(CONTROL_BAR_HEIGHT);
