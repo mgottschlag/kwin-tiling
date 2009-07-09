@@ -267,7 +267,7 @@ void DeviceNotifier::onSourceRemoved(const QString &name)
 
     m_dialog->removeDevice(name);
     removeLastDeviceNotification(name);
-    if (m_numberItems > 0) {
+    if (m_numberItems == 0) {
         setStatus(Plasma::PassiveStatus);
     }
 }
