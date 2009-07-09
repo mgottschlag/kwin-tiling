@@ -60,6 +60,7 @@ Name[x-test]=xxPointer Positionxx
 Name[zh_CN]=指针位置
 Name[zh_TW]=指標位置
 Comment=Mouse position and cursor
+Comment[ar]=موقع الفأرة و المؤشر
 Comment[bg]=Позиция на мишката и курсора
 Comment[bn_IN]=মাউসের অবস্থান ও কার্সার
 Comment[ca]=Posició del ratolí i del cursor

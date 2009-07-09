@@ -4,6 +4,7 @@
 [KdmGreeterTheme]
 Greeter=oxygen-air.xml
 Name=Oxygen-Air
+Name[ar]=أكسجين-هواء
 Name[km]=ខ្យល់​អុកស៊ីហ្សែន
 Name[kn]=ಆಮ್ಲಜನಕ -ಗಾಳಿ
 Name[mai]=आक्सीजन-हवा

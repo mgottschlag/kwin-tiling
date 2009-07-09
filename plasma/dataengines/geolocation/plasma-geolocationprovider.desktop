@@ -2,6 +2,7 @@
 Type=ServiceType
 X-KDE-ServiceType=Plasma/GeolocationProvider
 Comment=Plasma Geolocation Provider
+Comment[ar]=مزود الموقع الجغرافي لبلازما
 Comment[bg]=Геолокация Plasma
 Comment[bn_IN]=Plasma Geolocation উপলব্ধকারী
 Comment[ca]=Proveïdor de geolocalització del Plasma

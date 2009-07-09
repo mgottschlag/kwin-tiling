@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Geolocation IP
+Name[ar]=المواقع الجغرافي عنوان الانترنت
 Name[bg]=Геолокация (IP)
 Name[bn_IN]=ভৌগলিক অবস্থানের IP
 Name[ca]=Geolocalització IP
@@ -37,6 +38,7 @@ Name[uk]=Геопозиціювання за IP
 Name[x-test]=xxGeolocation IPxx
 Name[zh_CN]=地理 IP
 Comment=Geolocation from IP address.
+Comment[ar]=الموقع الجغرافي من عنوان الإنترنت
 Comment[bg]=Геолокация по IP.
 Comment[ca]=Geolocalització des d'una adreça IP.
 Comment[ca@valencia]=Geolocalització des d'una adreça IP.

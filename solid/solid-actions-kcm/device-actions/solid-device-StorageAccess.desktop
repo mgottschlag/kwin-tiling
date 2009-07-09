@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=accessible;filePath;objectName;
 Name=Storage Access
+Name[ar]=النفاذ للتخزين
 Name[bg]=Достъп до хранилище
 Name[bn_IN]=সংগ্রহস্থলের ব্যবহার
 Name[ca]=Accés d'emmagatzematge
@@ -50,6 +51,7 @@ X-KDE-Solid-Actions-Type=StorageAccess
 
 [Desktop Action accessible]
 Name=Accessible
+Name[ar]=قابل للوصول
 Name[bg]=Достъпен
 Name[bn_IN]=ব্যবহারযোগ্য
 Name[cs]=Přístupné
@@ -96,6 +98,7 @@ Name[zh_TW]=可存取
 
 [Desktop Action filePath]
 Name=File Path
+Name[ar]=مسار الملف
 Name[bg]=Път до файл
 Name[bn_IN]=ফাইলের পাথ
 Name[ca]=Camí al fitxer
@@ -145,6 +148,7 @@ Name[zh_TW]=檔案路徑
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ar]=اسم الكائن
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[ca@valencia]=Nom de l'objecte

@@ -65,6 +65,7 @@ Name[x-test]=xxFiles and Directoriesxx
 Name[zh_CN]=文件和目录
 Name[zh_TW]=檔案與目錄
 Comment=Information about files and directories.
+Comment[ar]=معلومات عن الملفات والمجلدات.
 Comment[bg]=Информация за файлове и директории.
 Comment[bn_IN]=ফাইল ও ডিরেক্টরি সম্বন্ধীয় তথ্য
 Comment[ca]=Informació quant a fitxers i directoris.

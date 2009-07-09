@@ -65,6 +65,7 @@ Name[x-test]=xxApplication Notificationsxx
 Name[zh_CN]=应用程序通知
 Name[zh_TW]=應用程式通知
 Comment=Passive visual notifications for the user.
+Comment[ar]=إشعارات مرئية غير متفاعلة للمستخدم
 Comment[bg]=Пасивни визуални съобщения за потребителя.
 Comment[ca]=Notificacions visuals pasives per a l'usuari.
 Comment[ca@valencia]=Notificacions visuals pasives per a l'usuari.

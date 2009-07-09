@@ -64,6 +64,7 @@ Name[x-test]=xxCalendarxx
 Name[zh_CN]=日历
 Name[zh_TW]=行事曆
 Comment=Calendar data engine
+Comment[ar]=محرك بيانات التقويم
 Comment[bg]=Ядро на календара
 Comment[bn_IN]=বর্ষপঞ্জির ডাটা ইঞ্জিন
 Comment[ca]=Motor de dades de calendari

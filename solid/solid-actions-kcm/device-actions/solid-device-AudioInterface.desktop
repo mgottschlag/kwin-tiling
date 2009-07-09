@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Audio Interface
+Name[ar]=واجهة الصوت
 Name[bg]=Аудио интерфейс
 Name[bn_IN]=অডিও ইন্টারফেস
 Name[ca]=Interfícies d'àudio
@@ -53,6 +54,7 @@ X-KDE-Solid-Actions-Type=AudioInterface
 
 [Desktop Action deviceType]
 Name=Device Type
+Name[ar]=نوع الجهاز
 Name[bg]=Тип устройство
 Name[bn_IN]=ডিভাইসের ধরন
 Name[ca]=Tipus de dispositiu
@@ -104,6 +106,7 @@ Name[zh_TW]=裝置類型
 
 [Desktop Action driver]
 Name=Driver
+Name[ar]=المشغل
 Name[bg]=Драйвер
 Name[bn_IN]=ড্রাইভার
 Name[ca]=Controlador
@@ -150,6 +153,7 @@ Name[zh_TW]=驅動程式
 
 [Desktop Action driverHandle]
 Name=Driver Handle
+Name[ar]=مقبض المشغل
 Name[bg]=Управление на драйвера
 Name[bn_IN]=ড্রাইভারের হ্যান্ডেল
 Name[ca]=Gestor de controlador
@@ -193,6 +197,7 @@ Name[zh_TW]=驅動程式處理
 
 [Desktop Action name]
 Name=Name
+Name[ar]=الاسم
 Name[bg]=Име
 Name[bn_IN]=নাম
 Name[ca]=Nom
@@ -243,6 +248,7 @@ Name[zh_TW]=名稱
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ar]=اسم الكائن
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[ca@valencia]=Nom de l'objecte
@@ -290,6 +296,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action soundcardType]
 Name=Soundcard Type
+Name[ar]=نوع بطاقة الصوت
 Name[bg]=Тип звукова карта
 Name[bn_IN]=সাউন্ডকার্ডের ধরন
 Name[ca]=Tipus de targeta de so

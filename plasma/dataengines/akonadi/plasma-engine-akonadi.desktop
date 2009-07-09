@@ -1,9 +1,11 @@
 [Desktop Entry]
 Name=Akonadi
+Name[ar]=اكوندا
 Name[pa]=ਅਕੌਂਡੀ
 Name[sr]=Аконади
 Name[x-test]=xxAkonadixx
 Comment=Akonadi PIM data engine
+Comment[ar]=محرك بيانات إدارة المعلومات الشخصية اكوندا
 Comment[bg]=Ядро Akonadi PIM
 Comment[bn_IN]=Akonadi PIM ডাটা ইঞ্জিন
 Comment[ca]=Motor de dades PIM de l'Akonadi

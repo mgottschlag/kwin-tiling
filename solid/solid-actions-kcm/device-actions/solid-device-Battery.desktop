@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=chargePercent;chargeState;objectName;plugged;rechargeable;type;
 Name=Battery
+Name[ar]=البطارية
 Name[bg]=Батерия
 Name[bn_IN]=ব্যাটারি
 Name[ca]=Bateria
@@ -53,6 +54,7 @@ X-KDE-Solid-Actions-Type=Battery
 
 [Desktop Action chargePercent]
 Name=Charge Percent
+Name[ar]=نسبة الشحن
 Name[bg]=Зареждане (%)
 Name[bn_IN]=চার্জের পরিমাণের শতাংশ
 Name[ca]=Percentatge de càrrega
@@ -100,6 +102,7 @@ Name[zh_TW]=充電百分比
 
 [Desktop Action chargeState]
 Name=Charge State
+Name[ar]=حالة الشحن
 Name[bg]=Състояние на зареждането
 Name[bn_IN]=চার্জের অবস্থা
 Name[ca]=Estat de la càrrega
@@ -147,6 +150,7 @@ Name[zh_TW]=充電狀態
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ar]=اسم الكائن
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[ca@valencia]=Nom de l'objecte
@@ -194,6 +198,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action plugged]
 Name=Plugged
+Name[ar]=موصول
 Name[bg]=Вкл.
 Name[bn_IN]=প্লাগ করা হয়েছে
 Name[ca]=Endollat
@@ -244,6 +249,7 @@ Name[zh_TW]=已插入
 
 [Desktop Action rechargeable]
 Name=Rechargeable
+Name[ar]=قابلة للشحن
 Name[bg]=Презаредима
 Name[bn_IN]=পুনরায় চার্জের যোগ্য
 Name[ca]=Recarregable
@@ -287,6 +293,7 @@ Name[zh_TW]=可重新充電
 
 [Desktop Action type]
 Name=Type
+Name[ar]=النوع
 Name[bg]=Тип
 Name[bn_IN]=ধরন
 Name[ca]=Tipus

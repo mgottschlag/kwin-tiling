@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=appendable;availableContent;blank;capacity;discType;fsType;ignored;label;objectName;rewritable;size;usage;uuid;
 Name=Optical Disc
+Name[ar]=قرص ضوئي
 Name[bg]=Оптичен диск
 Name[bn_IN]=অপ্টিক্যাল ডিস্ক
 Name[ca]=Disc òptic
@@ -53,6 +54,7 @@ X-KDE-Solid-Actions-Type=OpticalDisc
 
 [Desktop Action appendable]
 Name=Appendable
+Name[ar]=قابل للإضافة
 Name[bg]=Незавършен диск
 Name[bn_IN]=সংযোজনযোগ্য
 Name[ca]=Afegible
@@ -100,6 +102,7 @@ Name[zh_TW]=可附加
 
 [Desktop Action availableContent]
 Name=Available Content
+Name[ar]=المحتويات المتوفرة
 Name[bg]=Налично съдържание
 Name[bn_IN]=উপলব্ধ সামগ্রী
 Name[ca]=Contingut disponible
@@ -147,6 +150,7 @@ Name[zh_TW]=可用的內容
 
 [Desktop Action blank]
 Name=Blank
+Name[ar]=فارغ
 Name[bg]=Празен диск
 Name[bn_IN]=ফাঁকা
 Name[ca]=En blanc
@@ -197,6 +201,7 @@ Name[zh_TW]=空白
 
 [Desktop Action capacity]
 Name=Capacity
+Name[ar]=السعة
 Name[bg]=Капацитет
 Name[bn_IN]=ধারণক্ষমতা
 Name[ca]=Capacitat
@@ -247,6 +252,7 @@ Name[zh_TW]=空間
 
 [Desktop Action discType]
 Name=Disc Type
+Name[ar]=نوع القرص
 Name[bg]=Тип диск
 Name[bn_IN]=ডিস্কের ধরন
 Name[ca]=Tipus de disc
@@ -296,6 +302,7 @@ Name[zh_TW]=磁碟型態
 
 [Desktop Action fsType]
 Name=Fs Type
+Name[ar]=نوع نظام الملفات
 Name[bg]=Тип Fs
 Name[bn_IN]=ফাইল-সিস্টেমের ধরন
 Name[ca]=Tipus de sistema de fitxers
@@ -344,6 +351,7 @@ Name[zh_TW]=檔案系統型態
 
 [Desktop Action ignored]
 Name=Ignored
+Name[ar]=متجاهل
 Name[bg]=Игнориран
 Name[bn_IN]=উপেক্ষিত
 Name[ca]=Ignorat
@@ -392,6 +400,7 @@ Name[zh_TW]=忽略
 
 [Desktop Action label]
 Name=Label
+Name[ar]=المسمى
 Name[bg]=Етикет
 Name[bn_IN]=লেবেল
 Name[ca]=Etiqueta
@@ -441,6 +450,7 @@ Name[zh_TW]=標籤
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ar]=اسم الكائن
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[ca@valencia]=Nom de l'objecte
@@ -488,6 +498,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action rewritable]
 Name=Rewritable
+Name[ar]=قابل للكتابة
 Name[bg]=Презаписваем диск
 Name[bn_IN]=পুনরায় লিখনযোগ্য
 Name[ca]=Regravable
@@ -535,6 +546,7 @@ Name[zh_TW]=可覆寫
 
 [Desktop Action size]
 Name=Size
+Name[ar]=الحجم
 Name[bg]=Големина
 Name[bn_IN]=মাপ
 Name[ca]=Mida
@@ -586,6 +598,7 @@ Name[zh_TW]=大小
 
 [Desktop Action usage]
 Name=Usage
+Name[ar]=الاستعمال
 Name[bg]=Използване
 Name[bn_IN]=ব্যবহার
 Name[ca]=Ús

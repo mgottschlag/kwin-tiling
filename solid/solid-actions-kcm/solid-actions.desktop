@@ -11,6 +11,7 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=advanced-user-settings
 
 Name=Device Actions
+Name[ar]=إجراءات الجهاز
 Name[bg]=Действия
 Name[bn_IN]=ডিভাই সংক্রান্ত কর্ম
 Name[ca]=Accions de dispositiu
@@ -59,6 +60,7 @@ Name[zh_CN]=设备动作
 Name[zh_TW]=裝置動作
 
 Comment=A configuration tool for managing the actions available to the user when connecting new devices to the computer
+Comment[ar]=أداة ضبط لإدارة الإجراءات المتوفرة للمستخدم عندما يصل أجهزة جديدة بالحاسوب.
 Comment[bg]=Инстумент за настройване на възможните действия при свързване на нови устройства към компютъра
 Comment[ca]=Una eina de configuració per a gestionar les accions disponibles per a l'usuari en connectar dispositius nous a l'ordinador
 Comment[ca@valencia]=Una eina de configuració per a gestionar les accions disponibles per a l'usuari en connectar dispositius nous a l'ordinador

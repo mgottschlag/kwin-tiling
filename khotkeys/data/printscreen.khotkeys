@@ -278,7 +278,7 @@ ConditionsCount=0
 
 [Data_1_1Triggers]
 Comment=Simple_action
-Comment[ar]=إجراء بسيط
+Comment[ar]=إجراء_بسيط
 Comment[be@latin]=Prostaja_aperacyja
 Comment[bg]=Обикновено_действие
 Comment[ca]=Acció_simple

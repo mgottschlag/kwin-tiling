@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=objectName;
 Name=Generic Interface
+Name[ar]=واجهة عامة
 Name[bg]=Основен интерфейс
 Name[bn_IN]=সাধারণ ইন্টারফেস
 Name[ca]=Interfície genèrica
@@ -52,6 +53,7 @@ X-KDE-Solid-Actions-Type=GenericInterface
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ar]=اسم الكائن
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[ca@valencia]=Nom de l'objecte

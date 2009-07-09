@@ -58,6 +58,7 @@ Name[x-test]=xxApplication Job Informationxx
 Name[zh_CN]=程序任务信息
 Name[zh_TW]=應用程式工作資訊
 Comment=Application job updates (via kuiserver)
+Comment[ar]=تحديثات وظائف التطبيق (عن طريق kuiserver)
 Comment[ca]=Actualització de treballs d'aplicacions (via kuiserver)
 Comment[ca@valencia]=Actualització de treballs d'aplicacions (via kuiserver)
 Comment[cs]=Aktualizace úloh aplikací (pomocí kuiserver)

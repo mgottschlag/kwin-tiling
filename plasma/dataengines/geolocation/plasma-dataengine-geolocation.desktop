@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Geolocation
+Name[ar]=الموقع الجغرافي
 Name[bg]=Геолокация
 Name[bn_IN]=ভৌগলিক অবস্থান
 Name[ca]=Geolocalització
@@ -39,6 +40,7 @@ Name[uk]=Геопозиціювання
 Name[x-test]=xxGeolocationxx
 Name[zh_CN]=地理
 Comment=Geolocation Data Engine
+Comment[ar]=محرك بيانات الموقع الجغرافي
 Comment[bg]=Ядро геолокация
 Comment[bn_IN]=ভৌগলিক অবস্থানের ডাটা ইঞ্জিন
 Comment[ca]=Motor de dades de geolocalització

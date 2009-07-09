@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=hwAddress;ifaceName;macAddress;objectName;wireless;
 Name=Network Interface
+Name[ar]=واجهة الشبكة
 Name[bg]=Мрежови интерфейс
 Name[bn_IN]=নেটওয়ার্ক ইন্টারফেস
 Name[ca]=Interfície de xarxa
@@ -53,6 +54,7 @@ X-KDE-Solid-Actions-Type=NetworkInterface
 
 [Desktop Action hwAddress]
 Name=Hw Address
+Name[ar]=عنوان Hw
 Name[bg]=Hw адрес
 Name[bn_IN]=হার্ডওয়্যার ঠিকানা
 Name[ca]=Adreça maquinari
@@ -102,6 +104,7 @@ Name[zh_TW]=硬體位址
 
 [Desktop Action ifaceName]
 Name=Iface Name
+Name[ar]=اسم Iface
 Name[bg]=Iface
 Name[bn_IN]=ইন্টারফেসের নাম
 Name[ca]=Nom d'interfície
@@ -151,6 +154,7 @@ Name[zh_TW]=介面名稱
 
 [Desktop Action macAddress]
 Name=Mac Address
+Name[ar]=عنوان Mac
 Name[bg]=МАС адрес
 Name[bn_IN]=Mac ঠিকানা
 Name[ca]=Adreça MAC
@@ -201,6 +205,7 @@ Name[zh_TW]=Mac 位址
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ar]=اسم الكائن
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[ca@valencia]=Nom de l'objecte
@@ -248,6 +253,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action wireless]
 Name=Wireless
+Name[ar]=لاسلكي
 Name[bg]=Безжична мрежа
 Name[bn_IN]=বেতার
 Name[ca]=Sense fils

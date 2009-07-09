@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=objectName;supportedDrivers;supportedProtocols;
 Name=Portable Media Player
+Name[ar]=مشغل وسائط متنقل
 Name[bg]=Преносим медиен плеър
 Name[bn_IN]=পোর্টেবল মিডিয়া প্লেয়ার
 Name[ca]=Reproductor de suports portàtil
@@ -21,6 +22,7 @@ Name[hu]=Hordozható médialejátszó
 Name[is]=Færanlegur margmiðlunarspilari
 Name[ja]=ポータブルメディアプレーヤー
 Name[km]=កម្មវិធី​មេឌៀ​ចល័ត​
+Name[kn]=ಸಾಗಿಸಬಹುದಾದ ಬಹುಮಾಧ್ಯಮ ನಿರೂಪಕ
 Name[ko]=휴대용 미디어 재생기
 Name[lv]=Pārnēsājams multivides atskaņotājs
 Name[mk]=Пренослив мултимедија-плеер
@@ -51,6 +53,7 @@ X-KDE-Solid-Actions-Type=PortableMediaPlayer
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ar]=اسم الكائن
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[ca@valencia]=Nom de l'objecte
@@ -98,6 +101,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action supportedDrivers]
 Name=Supported Drivers
+Name[ar]=المشغلات المدعومة
 Name[bg]=Поддържани драйвери
 Name[bn_IN]=সমর্থিত ড্রাইভার
 Name[ca]=Controladors acceptats
@@ -147,6 +151,7 @@ Name[zh_TW]=支援的驅動程式
 
 [Desktop Action supportedProtocols]
 Name=Supported Protocols
+Name[ar]=البروتوكولات المدعومة
 Name[bg]=Поддържани протоколи
 Name[bn_IN]=সমর্থিত প্রোটোকল
 Name[ca]=Protocols acceptats

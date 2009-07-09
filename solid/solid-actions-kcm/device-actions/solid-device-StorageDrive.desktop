@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=bus;driveType;hotpluggable;objectName;removable;
 Name=Storage Drive
+Name[ar]=مشغل التخزين
 Name[bg]=Съхраняващо устройство
 Name[bn_IN]=সংগ্রহের ড্রাইভ
 Name[ca]=Unitat d'emmagatzematge
@@ -50,6 +51,7 @@ X-KDE-Solid-Actions-Type=StorageDrive
 
 [Desktop Action bus]
 Name=Bus
+Name[ar]=النقال
 Name[bg]=Шина
 Name[bn_IN]=বাস
 Name[cs]=Sběrnice
@@ -88,6 +90,7 @@ Name[zh_TW]=匯流排
 
 [Desktop Action driveType]
 Name=Drive Type
+Name[ar]=نوع المشغل
 Name[bg]=Тип устройство
 Name[bn_IN]=ড্রাইভের ধরন
 Name[ca]=Tipus d'unitat
@@ -137,6 +140,7 @@ Name[zh_TW]=磁碟型態
 
 [Desktop Action hotpluggable]
 Name=Hotpluggable
+Name[ar]=قابل للتوصيل
 Name[bn_IN]=হট-প্লাগ করার যোগ্য
 Name[ca]=Connectable en calent
 Name[ca@valencia]=Connectable en calent
@@ -181,6 +185,7 @@ Name[zh_TW]=可熱插拔
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ar]=اسم الكائن
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[ca@valencia]=Nom de l'objecte
@@ -228,6 +233,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action removable]
 Name=Removable
+Name[ar]=قابل للإزالة
 Name[bg]=Преносим
 Name[bn_IN]=অপসারণযোগ্য
 Name[ca]=Extraïble

@@ -3,7 +3,7 @@ DataCount=1
 
 [Data_1]
 Comment=This group contains various examples demonstrating most of the features of KHotkeys. (Note that this group and all its actions are disabled by default.)
-Comment[ar]=هذه المجموعة تحتوي على عدد من الأمثلة والمفضلات المبدئية (ملاحظة هذه المجموعة وكل مؤثراتها مقفلة مبدئيا )
+Comment[ar]=هذه المجموعة تحتوي على عدد من الأمثلة والمفضلات الافتراضية (ملاحظة هذه المجموعة وكل مؤثراتها مقفلة مبدئيا )
 Comment[be@latin]=Hety hurt źmiaščaje roznyja ŭzory, jakija vyjaŭlajuć balšyniu mahčymaściaŭ modula „KHotkeys”. Hety hurt dy ŭsie jahonyja aperacyi zmoŭčana vyklučanyja.
 Comment[bg]=Тази група съдържа различни примери, демонстриращи повечето от функциите на горещите клавиши. (Имайте предвид, че групата по подразбиране е изключена.)
 Comment[ca]=Aquest grup conté varis exemples que demostren la majoria de les funcionalitats del KHotkeys (tingueu en compte que aquest grup i totes les seves accions estan deshabilitats per omissió).
@@ -398,7 +398,7 @@ ConditionsCount=0
 
 [Data_1_1Triggers]
 Comment=Simple_action
-Comment[ar]=إجراء بسيط
+Comment[ar]=إجراء_بسيط
 Comment[be@latin]=Prostaja_aperacyja
 Comment[bg]=Обикновено_действие
 Comment[ca]=Acció_simple
@@ -530,7 +530,7 @@ Name[it]=Scrivi "Hello"
 Name[ja]='Hello' を入力
 Name[kk]='Hello' деп теру
 Name[km]=វាយ​ពាក្យ​ 'Hello'
-Name[kn]='ನಮಸ್ಕಾರ' ಎಂದು ಬೆರಳಚ್ಚಿಸು.
+Name[kn]='ನಮಸ್ಕಾರ' ಎಂದು ಟೈಪ್‌ ಮಾಡು.
 Name[ko]='Hello' 입력하기
 Name[ku]='Rojbaş' binivîse
 Name[lt]=Įvesti „Hello“
@@ -582,7 +582,7 @@ ConditionsCount=0
 
 [Data_1_2Triggers]
 Comment=Simple_action
-Comment[ar]=إجراء بسيط
+Comment[ar]=إجراء_بسيط
 Comment[be@latin]=Prostaja_aperacyja
 Comment[bg]=Обикновено_действие
 Comment[ca]=Acció_simple
@@ -715,7 +715,7 @@ Comment[zh_TW]=這個動作會在按下 Ctrl+Alt+T 時執行 Konsole
 Enabled=false
 Name=Run Konsole
 Name[af]=Loop Konsole
-Name[ar]=شغل الكونسول
+Name[ar]=شغل كونسول
 Name[be]=Запусціць Konsole
 Name[be@latin]=Uklučy prahramu „Konsole”
 Name[bg]=Стартиране на конзола
@@ -802,7 +802,7 @@ ConditionsCount=0
 
 [Data_1_3Triggers]
 Comment=Simple_action
-Comment[ar]=إجراء بسيط
+Comment[ar]=إجراء_بسيط
 Comment[be@latin]=Prostaja_aperacyja
 Comment[bg]=Обикновено_действие
 Comment[ca]=Acció_simple
@@ -993,6 +993,7 @@ Comment[hi]=क्यूटी डिज़ाइनर
 Comment[hne]=क्यूटी डिजाइनर
 Comment[is]=Qt hönnuðurinn
 Comment[ja]=Qt デザイナー
+Comment[kn]=Qt ವಿನ್ಯಾಸಗಾರ
 Comment[ko]=Qt 디자이너
 Comment[ku]=Pêşnûmakerê Qt
 Comment[lv]=Qt maketētājs
@@ -1157,7 +1158,7 @@ ConditionsCount=0
 
 [Data_1_5Triggers]
 Comment=Simple_action
-Comment[ar]=إجراء بسيط
+Comment[ar]=إجراء_بسيط
 Comment[be@latin]=Prostaja_aperacyja
 Comment[bg]=Обикновено_действие
 Comment[ca]=Acció_simple
@@ -1501,7 +1502,7 @@ ConditionsCount=0
 
 [Data_1_6Triggers]
 Comment=Simple_action
-Comment[ar]=إجراء بسيط
+Comment[ar]=إجراء_بسيط
 Comment[be@latin]=Prostaja_aperacyja
 Comment[bg]=Обикновено_действие
 Comment[ca]=Acció_simple
@@ -1566,6 +1567,7 @@ Type=SHORTCUT
 
 [Data_1_7]
 Comment=Konqueror in KDE3.1 has tabs, and now you can also have gestures.\n\nJust press the middle mouse button and start drawing one of the gestures, and after you are finished, release the mouse button. If you only need to paste the selection, it still works, just click the middle mouse button. (You can change the mouse button to use in the global settings).\n\nRight now, there are the following gestures available:\nmove right and back left - Forward (Alt+Right)\nmove left and back right - Back (Alt+Left)\nmove up and back down  - Up (Alt+Up)\ncircle anticlockwise - Reload (F5)\n\nThe gesture shapes can be entered by performing them in the configuration dialog. You can also look at your numeric pad to help you: gestures are recognized like a 3x3 grid of fields, numbered 1 to 9.\n\nNote that you must perform exactly the gesture to trigger the action. Because of this, it is possible to enter more gestures for the action. You should try to avoid complicated gestures where you change the direction of mouse movement more than once.  For instance, 45654 or 74123 are simple to perform, but 1236987 may be already quite difficult.\n\nThe conditions for all gestures are defined in this group. All these gestures are active only if the active window is Konqueror (class contains 'konqueror').
+Comment[ar]=يملك الكونكيور في كدي 3.1 الألسنة ، والآن تستطيع الحصول على الإيماءات. .\n\n اضغط على زر الفاره الاوسط وابدأ في رسم إيماءة ، وبعد الإنتهاء اطلق زر الفار ، إذا كنت تريد فقط  أن تلص المحدد فقط قم بالضغط على الزر الاوسط وسوف تعمل بكل بساطة.  (يمكنك ان تغير زر الفاره الذي تريد استخدامة من الإعدادات العامة ).\n\n حتى الآن يوجد هذه الإيماءات: \n التحريك لليمين ثم العودة لليسار تنقل للأمام (Alt+Right)\n التحريك من اليسار و العودة لليمين تنقل إلى الخلف   (Alt+Left)\n التحرك للأعلى و العودة ينقلك إلى الأعلى (Alt+Up)\n دائر باتجاه عقارب الساعة ستعيد التحميل (F5)\n . \n\n يمكن إدخال أشكال الإيماءات بواسطة  رسمها في حوار الضبط. كذلك يمكنك أن تنظر في لوحة المفاتيح لمساعدتك حيث أنه يتم التعرف على الإيماءات في شبكة بقياس 3 في 3  حقول مرقمة من 1 إلى 9.\n\n لاحظ أنك يجب أن تؤدي الإيماءة بالضبط حتى تطلق الإجراء. وبسبب هذا يمكنك أن تدخل عدة إيماءات للإجراء الواحد. ويجب عليك تجنب الإيماءات المعقدة التي تتطلب تحريك إتجاه الفأرة أكثر من مرة ( على سبيل المثال 45654 أو 74123 سهلة التأدية ، ولكن 1236987 صعبة ). \n\n جميع شروط هذه الإيماءات معرفة في هذه المجموعة . جميع هذه الإيماءات نشطة فقط في حالة أن النافذة النشطة هي كونكيور (الصف يحوي 'konqueror').
 Comment[bg]=Konqi в KDE3.1 има подпрозорци, а сега вече има и жестове. Няма нужда от други браузъри >;).\n\nПросто натиснете средният бутон на мишката и започнете да правите жестове, а след като свършите просто пуснете мишката. Ако само трябва да извършите операцията "поставяне", пак ще работи - просто натиснете средния бутон.
 Comment[ca]=D'acord, el Konqueror des del KDE3.1 té pestanyes, i ara també té gestos.\n\nNomés premeu el botó del mig del ratolí i comenceu a dibuixar un dels gestos, després d'acabar deixeu anar el botó del ratolí. Si només us cal enganxar la selecció, encara funciona; senzillament cliqueu el botó del mig del ratolí (podeu canviar el botó del ratolí a usar a l'arranjament global).\n\nActualment hi ha disponibles els gestos següents:\nmoure a la dreta i tornar a l'esquerra - Endavant (Alt+Dreta)\nmoure a l'esquerra i tornar a la dreta - Enrere (Alt+Esquerra)\nmoure amunt i tornar avall - Amunt (Alt+Amunt)\ncercle antihorari - Refresca (F5)\n\nLes formes del gestos es poden introduir senzillament executant-los en el diàleg de configuració. També podeu mirar al teclat numèric per ajudar-vos, els gestos es reconeixen com una graella de camps de 3x3, numerats de l'1 al 9.\n\nTingueu en compte que heu d'executar exactament el gest per a activar l'acció. Degut a això, és possible introduir més gestos per l'acció. Hauríeu d'intentar evitar gestos complicats quan canvieu la direcció del moviment del ratolí més d'un cop (p.ex. 45654 o 74123 són senzills d'executar, però p.ex. 1236987 pot ser bastant difícil).\n\nEn aquest grup es defineixen les condicions per tots els gestos. Els gestos només són actius quan la finestra activa és el Konqueror (la classe conté 'konqueror').
 Comment[ca@valencia]=D'acord, el Konqueror des del KDE3.1 té pestanyes, i ara també té gestos.\n\nNomés premeu el botó del mig del ratolí i comenceu a dibuixar un dels gestos, després d'acabar deixeu anar el botó del ratolí. Si només us cal enganxar la selecció, encara funciona; senzillament cliqueu el botó del mig del ratolí (podeu canviar el botó del ratolí a usar a l'arranjament global).\n\nActualment hi ha disponibles els gestos següents:\nmoure a la dreta i tornar a l'esquerra - Endavant (Alt+Dreta)\nmoure a l'esquerra i tornar a la dreta - Enrere (Alt+Esquerra)\nmoure amunt i tornar avall - Amunt (Alt+Amunt)\ncercle antihorari - Refresca (F5)\n\nLes formes del gestos es poden introduir senzillament executant-los en el diàleg de configuració. També podeu mirar al teclat numèric per ajudar-vos, els gestos es reconeixen com una graella de camps de 3x3, numerats de l'1 al 9.\n\nTingueu en compte que heu d'executar exactament el gest per a activar l'acció. Degut a això, és possible introduir més gestos per l'acció. Hauríeu d'intentar evitar gestos complicats quan canvieu la direcció del moviment del ratolí més d'un cop (p.ex. 45654 o 74123 són senzills d'executar, però p.ex. 1236987 pot ser bastant difícil).\n\nEn aquest grup es defineixen les condicions per tots els gestos. Els gestos només són actius quan la finestra activa és el Konqueror (la classe conté 'konqueror').
@@ -2427,6 +2429,7 @@ Type=GESTURE
 
 [Data_1_8]
 Comment=After pressing Win+E (Tux+E) a WWW browser will be launched, and it will open http://www.kde.org . You may run all kind of commands you can run in minicli (Alt+F2).
+Comment[ar]=بعد الضغط على Win+E  أو ( Tux+E) سيفتح المتصفح وستنقل مباشرة إلى http://www.kde.org تستطيع تشغيل كل الاوامر باضغط على (Alt+F2)
 Comment[bg]=След като натиснете Win+E (Tux+E), ще бъде стартиран уеб браузър, който ще отвори http://www.kde.org . Можете да стартирате всякакви команди (Alt+F2).
 Comment[ca]=Després de prémer Win+E (Tux+E), s'executarà el navegador web i s'obrirà http://www.kde.org . Podeu executar tot tipus d'ordres que es puguin executar en el minicli (Alt+F2).
 Comment[ca@valencia]=Després de prémer Win+E (Tux+E), s'executarà el navegador web i s'obrirà http://www.kde.org . Podeu executar tot tipus d'ordres que es puguin executar en el minicli (Alt+F2).
@@ -2466,7 +2469,7 @@ Comment[zh_TW]=按下 Win+E（Tux+E）後會開啟瀏覽器，並跳到 http://w
 Enabled=false
 Name=Go to KDE Website
 Name[af]=Gaan na die KDE webwerf
-Name[ar]=اذهب إلى موقع الكيدي
+Name[ar]=اذهب إلى موقع كدي
 Name[be@latin]=Pierajdzi da sajta KDE
 Name[bg]=Интернет страницата на KDE
 Name[bn]=কে.ডি.ই. ওয়েব সাইটে যাও
@@ -2550,7 +2553,7 @@ ConditionsCount=0
 
 [Data_1_8Triggers]
 Comment=Simple_action
-Comment[ar]=إجراء بسيط
+Comment[ar]=إجراء_بسيط
 Comment[be@latin]=Prostaja_aperacyja
 Comment[bg]=Обикновено_действие
 Comment[ca]=Acció_simple

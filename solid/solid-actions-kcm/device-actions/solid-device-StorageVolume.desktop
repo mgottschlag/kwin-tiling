@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=fsType;ignored;label;objectName;size;usage;uuid;
 Name=Storage Volume
+Name[ar]=حجم التخزين
 Name[bg]=Съхраняващо устройство
 Name[bn_IN]=সংগ্রহের ভলিউম
 Name[ca]=Volum d'emmagatzematge
@@ -50,6 +51,7 @@ X-KDE-Solid-Actions-Type=StorageVolume
 
 [Desktop Action fsType]
 Name=Fs Type
+Name[ar]=نوع نظام الملفات
 Name[bg]=Тип Fs
 Name[bn_IN]=ফাইল-সিস্টেমের ধরন
 Name[ca]=Tipus de sistema de fitxers
@@ -98,6 +100,7 @@ Name[zh_TW]=檔案系統型態
 
 [Desktop Action ignored]
 Name=Ignored
+Name[ar]=متجاهل
 Name[bg]=Игнориран
 Name[bn_IN]=উপেক্ষিত
 Name[ca]=Ignorat
@@ -146,6 +149,7 @@ Name[zh_TW]=忽略
 
 [Desktop Action label]
 Name=Label
+Name[ar]=المسمى
 Name[bg]=Етикет
 Name[bn_IN]=লেবেল
 Name[ca]=Etiqueta
@@ -195,6 +199,7 @@ Name[zh_TW]=標籤
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ar]=اسم الكائن
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[ca@valencia]=Nom de l'objecte
@@ -242,6 +247,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action size]
 Name=Size
+Name[ar]=الحجم
 Name[bg]=Големина
 Name[bn_IN]=মাপ
 Name[ca]=Mida
@@ -293,6 +299,7 @@ Name[zh_TW]=大小
 
 [Desktop Action usage]
 Name=Usage
+Name[ar]=الاستعمال
 Name[bg]=Използване
 Name[bn_IN]=ব্যবহার
 Name[ca]=Ús

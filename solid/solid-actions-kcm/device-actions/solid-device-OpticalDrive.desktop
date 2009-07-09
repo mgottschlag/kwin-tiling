@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=bus;driveType;hotpluggable;objectName;readSpeed;removable;supportedMedia;writeSpeed;writeSpeeds;
 Name=Optical Drive
+Name[ar]=مشغل ضوئي
 Name[bg]=Оптично устройство
 Name[bn_IN]=অপ্টিক্যাল ড্রাইভ
 Name[ca]=Unitat òptica
@@ -51,6 +52,7 @@ X-KDE-Solid-Actions-Type=OpticalDrive
 
 [Desktop Action bus]
 Name=Bus
+Name[ar]=النقال
 Name[bg]=Шина
 Name[bn_IN]=বাস
 Name[cs]=Sběrnice
@@ -89,6 +91,7 @@ Name[zh_TW]=匯流排
 
 [Desktop Action driveType]
 Name=Drive Type
+Name[ar]=نوع المشغل
 Name[bg]=Тип устройство
 Name[bn_IN]=ড্রাইভের ধরন
 Name[ca]=Tipus d'unitat
@@ -138,6 +141,7 @@ Name[zh_TW]=磁碟型態
 
 [Desktop Action hotpluggable]
 Name=Hotpluggable
+Name[ar]=قابل للتوصيل
 Name[bn_IN]=হট-প্লাগ করার যোগ্য
 Name[ca]=Connectable en calent
 Name[ca@valencia]=Connectable en calent
@@ -182,6 +186,7 @@ Name[zh_TW]=可熱插拔
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ar]=اسم الكائن
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[ca@valencia]=Nom de l'objecte
@@ -229,6 +234,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action readSpeed]
 Name=Read Speed
+Name[ar]=سرعة القراءة
 Name[bg]=Скорост на четене
 Name[bn_IN]=পড়ার গতি
 Name[ca]=Velocitat de lectura
@@ -279,6 +285,7 @@ Name[zh_TW]=讀取速度
 
 [Desktop Action removable]
 Name=Removable
+Name[ar]=قابل للإزالة
 Name[bg]=Преносим
 Name[bn_IN]=অপসারণযোগ্য
 Name[ca]=Extraïble
@@ -325,6 +332,7 @@ Name[zh_TW]=可移除
 
 [Desktop Action supportedMedia]
 Name=Supported Media
+Name[ar]=الوسائط المدعومة
 Name[bg]=Поддържа медия
 Name[bn_IN]=সমর্থিত মিডিয়া
 Name[ca]=Suports acceptats
@@ -373,6 +381,7 @@ Name[zh_TW]=支援的媒體
 
 [Desktop Action writeSpeed]
 Name=Write Speed
+Name[ar]=سرعة الكتابة
 Name[bg]=Скорост на запис
 Name[bn_IN]=লেখার গতি
 Name[ca]=Velocitat d'escriptura
@@ -421,6 +430,7 @@ Name[zh_TW]=寫入速度
 
 [Desktop Action writeSpeeds]
 Name=Write Speeds
+Name[ar]=سرعات الكتابة
 Name[bg]=Скорости на четене
 Name[bn_IN]=লেখার গতি
 Name[ca]=Velocitats d'escriptura

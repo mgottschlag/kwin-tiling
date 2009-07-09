@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=driverHandle;objectName;port;serialType;
 Name=Serial Interface
+Name[ar]=واجهة متسلسلة
 Name[bg]=Сериен интерфейс
 Name[bn_IN]=সিরিয়াল ইন্টারফেস
 Name[ca]=Interfície sèrie
@@ -52,6 +53,7 @@ X-KDE-Solid-Actions-Type=SerialInterface
 
 [Desktop Action driverHandle]
 Name=Driver Handle
+Name[ar]=مقبض المشغل
 Name[bg]=Управление на драйвера
 Name[bn_IN]=ড্রাইভারের হ্যান্ডেল
 Name[ca]=Gestor de controlador
@@ -95,6 +97,7 @@ Name[zh_TW]=驅動程式處理
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ar]=اسم الكائن
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[ca@valencia]=Nom de l'objecte
@@ -142,6 +145,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action port]
 Name=Port
+Name[ar]=المنفذ
 Name[bg]=Порт
 Name[bn_IN]=পোর্ট
 Name[csb]=Pòrt
@@ -178,6 +182,7 @@ Name[zh_TW]=連接埠
 
 [Desktop Action serialType]
 Name=Serial Type
+Name[ar]=نوع التسلسل
 Name[bg]=Сериен тип
 Name[bn_IN]=সিরিয়ালের ধরন
 Name[ca]=Tipus de sèrie

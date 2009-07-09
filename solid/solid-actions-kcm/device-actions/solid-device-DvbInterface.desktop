@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=device;deviceAdapter;deviceIndex;deviceType;objectName;
 Name=Dvb Interface
+Name[ar]=واجه DVB
 Name[bg]=DVB интерфейс
 Name[bn_IN]=Dvb ইন্টারফেস
 Name[ca]=Interfície DVB
@@ -52,6 +53,7 @@ X-KDE-Solid-Actions-Type=DvbInterface
 
 [Desktop Action device]
 Name=Device
+Name[ar]=الجهاز
 Name[bg]=Устройство
 Name[bn_IN]=ডিভাইস
 Name[ca]=Dispositiu
@@ -103,6 +105,7 @@ Name[zh_TW]=裝置
 
 [Desktop Action deviceAdapter]
 Name=Device Adapter
+Name[ar]=محول الجهاز
 Name[bg]=Адаптор на устройството
 Name[bn_IN]=ডিভাইস অ্যাডাপ্টার
 Name[ca]=Adaptador de dispositius
@@ -150,6 +153,7 @@ Name[zh_TW]=裝置接合器
 
 [Desktop Action deviceIndex]
 Name=Device Index
+Name[ar]=فهرس الجهاز
 Name[bg]=Индекс на устройство
 Name[bn_IN]=ডিভাইসের ইন্ডেক্স
 Name[ca]=Índex de dispositius
@@ -197,6 +201,7 @@ Name[zh_TW]=裝置索引
 
 [Desktop Action deviceType]
 Name=Device Type
+Name[ar]=نوع الجهاز
 Name[bg]=Тип устройство
 Name[bn_IN]=ডিভাইসের ধরন
 Name[ca]=Tipus de dispositiu
@@ -248,6 +253,7 @@ Name[zh_TW]=裝置類型
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ar]=اسم الكائن
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[ca@valencia]=Nom de l'objecte

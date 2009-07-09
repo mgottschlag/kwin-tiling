@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=device;major;minor;objectName;
 Name=Block
+Name[ar]=المنطقة
 Name[bg]=Блок
 Name[bn_IN]=ব্লক
 Name[ca]=Bloc
@@ -50,6 +51,7 @@ X-KDE-Solid-Actions-Type=Block
 
 [Desktop Action device]
 Name=Device
+Name[ar]=الجهاز
 Name[bg]=Устройство
 Name[bn_IN]=ডিভাইস
 Name[ca]=Dispositiu
@@ -101,6 +103,7 @@ Name[zh_TW]=裝置
 
 [Desktop Action major]
 Name=Major
+Name[ar]=عام
 Name[bn_IN]=মেজর
 Name[cs]=Velké
 Name[csb]=Wësok
@@ -145,6 +148,7 @@ Name[zh_TW]=主要
 
 [Desktop Action minor]
 Name=Minor
+Name[ar]=فرعي
 Name[bn_IN]=মাইনর
 Name[ca]=Menor
 Name[ca@valencia]=Menor
@@ -190,6 +194,7 @@ Name[zh_TW]=次要
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ar]=اسم الكائن
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[ca@valencia]=Nom de l'objecte

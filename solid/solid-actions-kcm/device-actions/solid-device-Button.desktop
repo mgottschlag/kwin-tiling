@@ -1,6 +1,7 @@
 [Desktop Entry]
 Actions=hasState;objectName;stateValue;type;
 Name=Button
+Name[ar]=زر
 Name[be]=Кнопка
 Name[be@latin]=Кнопка
 Name[bg]=Бутон
@@ -58,6 +59,7 @@ X-KDE-Solid-Actions-Type=Button
 
 [Desktop Action hasState]
 Name=Has State
+Name[ar]=يملك حالة
 Name[ca]=Té estat
 Name[ca@valencia]=Té estat
 Name[cs]=Má stav
@@ -102,6 +104,7 @@ Name[zh_TW]=有狀態
 
 [Desktop Action objectName]
 Name=Object Name
+Name[ar]=اسم الكائن
 Name[bg]=Име на обект
 Name[ca]=Nom de l'objecte
 Name[ca@valencia]=Nom de l'objecte
@@ -149,6 +152,7 @@ Name[zh_TW]=物件名稱
 
 [Desktop Action stateValue]
 Name=State Value
+Name[ar]=قيمة الحالة
 Name[bn_IN]=অবস্থাসূচক মান
 Name[ca]=Valor de l'estat
 Name[ca@valencia]=Valor de l'estat
@@ -193,6 +197,7 @@ Name[zh_TW]=狀態值
 
 [Desktop Action type]
 Name=Type
+Name[ar]=النوع
 Name[bg]=Тип
 Name[bn_IN]=ধরন
 Name[ca]=Tipus

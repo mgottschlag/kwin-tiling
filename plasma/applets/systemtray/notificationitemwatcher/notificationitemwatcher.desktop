@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=KDED Notification item watcher
+Name[ar]=مراقب تنبيهات كدي
 Name[ca]=Vigilant de l'element de notificacions del KDED
 Name[ca@valencia]=Vigilant de l'element de notificacions del KDED
 Name[csb]=Ùsłëżnota dôwaniô wiédzë dozérôcza KDE
@@ -38,6 +39,7 @@ Name[x-test]=xxKDED Notification item watcherxx
 Name[zh_CN]=KDED 通知项监视器
 Name[zh_TW]=KDE 通知項目監控器 
 Comment=Keep track of applications that want to use the D-Bus based notification item.
+Comment[ar]=يراقب التطبيقات التي تريد استعمال إشعارات D-Bus.
 Comment[bg]=Следи програмите, които искат да използват D-Bus.
 Comment[ca]=Fa un seguiment de les aplicacions que volen utilitzar l'element de notificacions basat en el D-Bus.
 Comment[ca@valencia]=Fa un seguiment de les aplicacions que volen utilitzar l'element de notificacions basat en el D-Bus.
@@ -50,6 +52,7 @@ Comment[gl]=Segue a pista dos programas que desexan empregar a notificacion base
 Comment[hu]=Listát vezet a D-Bus értesítő szolgáltatását használó alkalmazásokról.
 Comment[is]=Fylgist með forritum sem vilja nota tilkynningaþjónustu D-Bus.
 Comment[km]=តាមដាន​កម្មវិធី​ដែល​ចង់​ឲ្យ​ប្រើធាតុ​​ជូនដំណឹង​ដែល​មាន​មូលដ្ឋាន​លើ D-Bus
+Comment[kn]=D-ಆಧರಿತವಾದ ಸೂಚನಾ ಅಂಶವನ್ನು ಬಳಸಲು ಬಯಸುವ ಅನ್ವಯಗಳ ಜಾಡನ್ನು ಇರಿಸಿಕೊಳ್ಳಿ.
 Comment[ko]=D-Bus 기반 알림 항목을 기록합니다.
 Comment[lv]=Apkalpo programmas, kas vēlas izmanto D-Bus balstītos paziņojumus.
 Comment[ml]=D-bus അടിസ്ഥാനമാക്കിയുള്ള ശ്രദ്ധാകുറിപ്പ് ആവശ്യമുള്ള പ്രയോഗങ്ങളെ നിരീക്ഷിക്കുക.

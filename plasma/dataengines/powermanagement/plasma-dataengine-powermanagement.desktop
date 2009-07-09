@@ -1,6 +1,7 @@
 [Desktop Entry]
 # ctxt: plasma data engine
 Name=Power Management
+Name[ar]=إدارة الطاقة
 Name[bg]=Захранване
 Name[bn_IN]=বিদ্যুৎ সরবরাহ পরিচালনা
 Name[ca]=Gestió d'energia
@@ -45,6 +46,7 @@ Name[x-test]=xxPower Managementxx
 Name[zh_CN]=电源管理
 Name[zh_TW]=電源管理
 Comment=Battery, AC, sleep and PowerDevil information.
+Comment[ar]=معلومات البطارية ، و التيار المتناوب ، و النوم و عفريت الطاقة.
 Comment[bg]=Информация за батерия, AC, приспиване и PowerDevil
 Comment[ca]=Informació de la bateria, AC, suspensió i del PowerDevil.
 Comment[ca@valencia]=Informació de la bateria, AC, suspensió i del PowerDevil.
@@ -58,6 +60,7 @@ Comment[gl]=Información da batería, corrente, hibernación e PowerDevil.
 Comment[hu]=A telepek, a tápellátás és a PowerDevil energiakezelő jellemzői.
 Comment[is]=Upplýsingar um raflöður, AC-straum, svæfingu og PowerDevil orkustýringarpúkann.
 Comment[km]=ព័ត៌មាន ថ្ម AC ដេក និង​ PowerDevil ។
+Comment[kn]=ವಿದ್ಯುತ್ಕೋಶ, AC, ಜಡ ಹಾಗು PowerDevil ಮಾಹಿತಿ.
 Comment[ko]=배터리, AC, 절전 모드 및 PowerDevil 정보입니다.
 Comment[lv]=Baterija, barošana, gulēšanas un PowerDevil informācija.
 Comment[ml]=ബാറ്ററി, AC, നിദ്ര  പിന്നെ ഊര്‍ജ്ജ വിവരങ്ങളും.

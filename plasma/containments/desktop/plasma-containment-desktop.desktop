@@ -1,6 +1,7 @@
 [Desktop Entry]
 # ctxt: plasma containment
 Name=Desktop
+Name[ar]=سطح المكتب
 Name[bg]=Работен плот
 Name[bn_IN]=ডেস্কটপ
 Name[ca]=Escriptori
@@ -44,7 +45,7 @@ Name[x-test]=xxDesktopxx
 Name[zh_CN]=桌面
 Name[zh_TW]=桌面
 Comment=Default desktop containment
-Comment[ar]=حاوية سطح المكتب المبدئية
+Comment[ar]=حاوية سطح المكتب الافتراضية
 Comment[be@latin]=Zmoŭčanaje jomišča dla rabočaha stała
 Comment[bg]=Стандартен работен плот
 Comment[ca]=Contenidor de l'escriptori per omissió
