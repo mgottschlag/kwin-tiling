@@ -483,7 +483,7 @@ void NOAAIon::updateWeather(const QString& source)
     // Real weather - Current conditions
     data.insert("Observation Period", observationTime(source));
     data.insert("Current Conditions", condition(source));
-
+    kDebug() << "i18n condition string: " << qPrintable(condition(source));
 // FIXME: We'll need major fuzzy logic, this isn't pretty: http://www.weather.gov/xml/current_obs/weather.php
     //QMap<QString, ConditionIcons> conditionList;
     //conditionList = conditionIcons();
@@ -611,7 +611,7 @@ QString NOAAIon::condition(const QString& source)
     if (d->m_weatherData[source].weather.isEmpty() || d->m_weatherData[source].weather == "NA") {
         d->m_weatherData[source].weather = "N/A";
     }
-    return d->m_weatherData[source].weather;
+    return i18n(d->m_weatherData[source].weather.toUtf8());
 }
 
 QString NOAAIon::dewpoint(const QString& source)

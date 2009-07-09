@@ -1377,6 +1377,7 @@ void EnvCanadaIon::updateWeather(const QString& source)
     // Real weather - Current conditions
     data.insert("Observation Period", observationTime(source));
     data.insert("Current Conditions", condition(source));
+    kDebug() << "i18n condition string: " << qPrintable(condition(source));
 
     const double sunrise = toFractionalHour(d->m_weatherData[source].sunriseTimestamp, 6.0);
     const double sunset = toFractionalHour(d->m_weatherData[source].sunsetTimestamp, 18.0);
@@ -1595,7 +1596,7 @@ QString EnvCanadaIon::condition(const QString& source)
     if (d->m_weatherData[source].condition.isEmpty()) {
         d->m_weatherData[source].condition = "N/A";
     }
-    return d->m_weatherData[source].condition;
+    return i18n(d->m_weatherData[source].condition.toUtf8());
 }
 
 QString EnvCanadaIon::dewpoint(const QString& source)
@@ -1756,10 +1757,11 @@ QVector<QString> EnvCanadaIon::forecasts(const QString& source)
         forecastData.append(QString("%1|%2|%3|%4|%5|%6") \
                             .arg(d->m_weatherData[source].forecasts[i]->forecastPeriod) \
                             .arg(d->m_weatherData[source].forecasts[i]->iconName) \
-                            .arg(d->m_weatherData[source].forecasts[i]->shortForecast) \
+                            .arg(i18n(d->m_weatherData[source].forecasts[i]->shortForecast.toUtf8())) \
                             .arg(d->m_weatherData[source].forecasts[i]->forecastTempHigh) \
                             .arg(d->m_weatherData[source].forecasts[i]->forecastTempLow) \
                             .arg(d->m_weatherData[source].forecasts[i]->popPrecent));
+        kDebug() << "i18n summary string: " << qPrintable(i18n(d->m_weatherData[source].forecasts[i]->shortForecast.toUtf8()));
     }
     return forecastData;
 }
