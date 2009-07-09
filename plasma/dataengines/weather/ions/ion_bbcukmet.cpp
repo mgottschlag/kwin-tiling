@@ -631,8 +631,10 @@ void UKMETIon::parseWeatherObservation(const QString& source, WeatherData& data,
             } else if (xml.name() == "description") {
                 QString observeString = xml.readElementText();
                 QStringList observeData = observeString.split(':');
+#ifdef __GNUC__
+#warning FIXME: We should make this use a QRegExp but I need some here here :) -spstarr
+#endif
 
-//FIXME: We should make this use a QRegExp but I need some here here :) -spstarr
                 data.temperature_C = observeData[1].split(QChar(176))[0].trimmed();
 
                 // Temperature might be not available
@@ -737,7 +739,9 @@ void UKMETIon::parseFiveDayForecast(const QString& source, QXmlStreamReader& xml
         xml.readNext();
         if (xml.name() == "title") {
             line = xml.readElementText().trimmed();
-//FIXME: We should make this all use QRegExps in UKMETIon::parseFiveDayForecast() for forecast -spstarr
+#ifdef __GNUC__
+#warning FIXME: We should make this all use QRegExps in UKMETIon::parseFiveDayForecast() for forecast -spstarr
+#endif
 
             period = line.split(',')[0].split(':')[0];
             summary = line.split(',')[0].split(':')[1].trimmed();
