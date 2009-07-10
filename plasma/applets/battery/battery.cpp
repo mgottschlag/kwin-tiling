@@ -106,6 +106,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     m_theme = new Plasma::Svg(this);
     m_theme->setImagePath("widgets/battery-oxygen");
     m_theme->setContainsMultipleImages(true);
+    setStatus(Plasma::ActiveStatus);
 }
 
 void Battery::init()
@@ -231,6 +232,12 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
     if (source == "Battery0") {
         m_remainingMSecs  = data["Remaining msec"].toInt();
         // kDebug() << "Remaining msecs on battery:" << m_remainingMSecs;
+    }
+
+    if (data["Percent"].toInt() < 10) {
+        setStatus(Plasma::NeedsAttentionStatus);
+    } else {
+        setStatus(Plasma::ActiveStatus);
     }
 
     updateStatus();
