@@ -1596,7 +1596,7 @@ QString EnvCanadaIon::condition(const QString& source)
     if (d->m_weatherData[source].condition.isEmpty()) {
         d->m_weatherData[source].condition = "N/A";
     }
-    return i18n(d->m_weatherData[source].condition.toUtf8());
+    return i18nc("weather condition", d->m_weatherData[source].condition.toUtf8());
 }
 
 QString EnvCanadaIon::dewpoint(const QString& source)
@@ -1757,7 +1757,7 @@ QVector<QString> EnvCanadaIon::forecasts(const QString& source)
         forecastData.append(QString("%1|%2|%3|%4|%5|%6") \
                             .arg(d->m_weatherData[source].forecasts[i]->forecastPeriod) \
                             .arg(d->m_weatherData[source].forecasts[i]->iconName) \
-                            .arg(i18n(d->m_weatherData[source].forecasts[i]->shortForecast.toUtf8())) \
+                            .arg(i18nc("weather condition", d->m_weatherData[source].forecasts[i]->shortForecast.toUtf8())) \
                             .arg(d->m_weatherData[source].forecasts[i]->forecastTempHigh) \
                             .arg(d->m_weatherData[source].forecasts[i]->forecastTempLow) \
                             .arg(d->m_weatherData[source].forecasts[i]->popPrecent));

@@ -611,7 +611,7 @@ QString NOAAIon::condition(const QString& source)
     if (d->m_weatherData[source].weather.isEmpty() || d->m_weatherData[source].weather == "NA") {
         d->m_weatherData[source].weather = "N/A";
     }
-    return i18n(d->m_weatherData[source].weather.toUtf8());
+    return i18nc("weather condition", d->m_weatherData[source].weather.toUtf8());
 }
 
 QString NOAAIon::dewpoint(const QString& source)
