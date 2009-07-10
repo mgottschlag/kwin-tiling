@@ -220,6 +220,7 @@ void ClockApplet::speakTime(const QTime &time)
         }
 
         QDBusInterface ktts("org.kde.kttsd", "/KSpeech", "org.kde.KSpeech");
+	ktts.asyncCall("setApplicationName", "plasmaclock");
         QString text;
         if (time.minute() == 0) {
             if (KGlobal::locale()->use12Clock()) {
