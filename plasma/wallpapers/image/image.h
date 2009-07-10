@@ -66,7 +66,6 @@ class Image : public Plasma::Wallpaper
         void suspendStartup(bool suspend); // for ksmserver
         void calculateGeometry();
         void setSingleImage();
-        QString cacheId() const;
 
     private:
         int m_delay;

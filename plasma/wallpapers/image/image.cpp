@@ -119,6 +119,7 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
                                                                  ratio, m_configWidget));
         m_uiImage.m_view->view()->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
         int index = m_model->indexOf(m_wallpaper);
+        kDebug() << m_wallpaper << index;
         if (index != -1) {
             m_uiImage.m_view->setCurrentIndex(index);
             Plasma::Package *b = m_model->package(index);
@@ -579,12 +580,6 @@ void Image::renderWallpaper(const QString& image)
     suspendStartup(true); // during KDE startup, make ksmserver until the wallpaper is ready
 }
 
-QString Image::cacheId() const
-{
-    QSize s = boundingRect().size().toSize();
-    return QString("%5_%3_%4_%1x%2").arg(s.width()).arg(s.height()).arg(m_color.name()).arg(m_resizeMethod).arg(m_img);
-}
-
 void Image::updateBackground(const QImage &img)
 {
     m_oldPixmap = m_pixmap;
@@ -623,7 +618,7 @@ void Image::updateScreenshot(QPersistentModelIndex index)
 void Image::updateFadedImage(qreal frame)
 {
     //If we are done, delete the pixmaps and don't draw.
-    if (frame == 1) {
+    if (qFuzzyCompare(frame, qreal(1.0))) {
         m_oldFadedPixmap = QPixmap();
         m_oldPixmap = QPixmap();
         emit update(boundingRect());
