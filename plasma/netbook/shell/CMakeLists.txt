@@ -1,4 +1,4 @@
-include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ../common)
+include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs ../common ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kephal)
 
 set(appletbrowserdialog_SRCS
     ../common/appletbrowser.cpp
@@ -29,7 +29,7 @@ qt4_add_dbus_interface(plasma-netbook_SRCS ${ksmserver_xml} ksmserver_interface)
 
 kde4_add_kdeinit_executable(plasma-netbook ${plasma-netbook_SRCS})
 
-target_link_libraries(kdeinit_plasma-netbook ${KDE4_PLASMA_LIBS} kworkspace ${KDE4_KNEWSTUFF2_LIBS} ${KDE4_KIO_LIBS} ${X11_LIBRARIES} ${KDE4_KFILE_LIBS})
+target_link_libraries(kdeinit_plasma-netbook ${KDE4_PLASMA_LIBS} kworkspace ${KDE4_KNEWSTUFF2_LIBS} ${KDE4_KIO_LIBS} ${X11_LIBRARIES} ${KDE4_KFILE_LIBS} kephal)
 if(X11_Xrender_FOUND)
    target_link_libraries(kdeinit_plasma-netbook ${X11_Xrender_LIB})
 endif(X11_Xrender_FOUND)

@@ -34,8 +34,12 @@ namespace Plasma
     class AppletBrowser;
 } // namespace Plasma
 
-class QBoxLayout;
 class NetView;
+
+namespace Kephal
+{
+    class Screen;
+}
 
 class PlasmaApp : public KUniqueApplication
 {
@@ -80,7 +84,7 @@ private Q_SLOTS:
     void syncConfig();
     void positionPanel();
     void createView(Plasma::Containment *containment);
-    void adjustSize(int screen);
+    void adjustSize(Kephal::Screen *);
     void controlBarMoved(const NetView *controlBar);
     void showAppletBrowser();
     void appletBrowserDestroyed();

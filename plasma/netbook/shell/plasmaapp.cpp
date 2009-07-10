@@ -22,7 +22,6 @@
 #include <unistd.h>
 
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QPixmapCache>
 #include <QTimer>
 #include <QVBoxLayout>
@@ -36,6 +35,8 @@
 #include <KWindowSystem>
 
 #include <ksmserver_interface.h>
+
+#include <kephal/screens.h>
 
 #include <Plasma/Containment>
 #include <Plasma/Theme>
@@ -107,11 +108,15 @@ PlasmaApp::PlasmaApp()
 
     m_controlBar = new NetView(0, NetView::controlBarId(), 0);
     KWindowSystem::setOnAllDesktops(m_controlBar->effectiveWinId(), true);
-    unsigned long state = NET::Sticky | NET::StaysOnTop | NET::KeepAbove;
-    KWindowSystem::setState(m_controlBar->effectiveWinId(), state);
     m_controlBar->setWindowFlags(m_window->windowFlags() | Qt::FramelessWindowHint);
     m_controlBar->show();
     KWindowSystem::setType(m_controlBar->effectiveWinId(), NET::Dock);
+    unsigned long state = NET::Sticky | NET::StaysOnTop | NET::KeepAbove;
+    KWindowSystem::setState(m_controlBar->effectiveWinId(), state);
+
+    Kephal::Screens *screens = Kephal::Screens::self();
+    connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)),
+            this, SLOT(adjustSize(Kephal::Screen *)));
 
 
     //m_controlBar->setFixedHeight(CONTROL_BAR_HEIGHT);
@@ -127,7 +132,7 @@ PlasmaApp::PlasmaApp()
     int width = 400;
     int height = 200;
     if (isDesktop) {
-        QRect rect = desktop()->screenGeometry(0);
+        QRect rect = Kephal::ScreenUtils::screenGeometry(m_controlBar->screen());
         width = rect.width();
         height = rect.height();
     } else {
@@ -196,10 +201,11 @@ void PlasmaApp::syncConfig()
 
 void PlasmaApp::positionPanel()
 {
+    QRect screenRect = Kephal::ScreenUtils::screenGeometry(m_controlBar->screen());
     //move
     //TODO: support locations
     controlBarMoved(m_mainView);
-    m_controlBar->resize(m_mainView->size().width(), m_controlBar->size().height());
+    m_controlBar->resize(screenRect.width(), m_controlBar->size().height());
     //sync margins
     const QRect availableScreen = m_corona->availableScreenRegion(0).boundingRect();
     const QRect screen = m_corona->screenGeometry(0);
@@ -275,12 +281,10 @@ void PlasmaApp::setIsDesktop(bool isDesktop)
         //KWindowSystem::setType(m_window->winId(), NET::Desktop);
         KWindowSystem::setState(m_window->winId(), NET::KeepBelow);
         m_window->lower();
-        connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(adjustSize(int)));
     } else {
         m_window->setWindowFlags(m_window->windowFlags() & ~Qt::FramelessWindowHint);
         KWindowSystem::setOnAllDesktops(m_window->winId(), false);
         KWindowSystem::setType(m_window->winId(), NET::Normal);
-        disconnect(QApplication::desktop(), SIGNAL(resized(int)), this, SLOT(adjustSize(int)));
     }
 }
 
@@ -289,11 +293,11 @@ bool PlasmaApp::isDesktop() const
     return m_isDesktop;
 }
 
-void PlasmaApp::adjustSize(int screen)
+void PlasmaApp::adjustSize(Kephal::Screen *screen)
 {
     Q_UNUSED(screen)
 
-    QRect rect = desktop()->screenGeometry(0);
+    QRect rect = Kephal::ScreenUtils::screenGeometry(m_controlBar->screen());
 
     int width = rect.width();
     int height = rect.height();
@@ -414,19 +418,21 @@ void PlasmaApp::controlBarMoved(const NetView *controlBar)
         return;
     }
 
+    QRect screenRect = Kephal::ScreenUtils::screenGeometry(m_controlBar->screen());
+
     //TODO: manage layouts in the new way
     switch (controlBar->location()) {
     case Plasma::LeftEdge:
-        m_controlBar->move(m_mainView->geometry().topLeft());
+        m_controlBar->move(screenRect.topLeft());
         break;
     case Plasma::RightEdge:
-        m_controlBar->move(m_mainView->geometry().bottomLeft()-QPoint(m_controlBar->size().width(), 0));
+        m_controlBar->move(screenRect.bottomLeft()-QPoint(m_controlBar->size().width(), 0));
         break;
     case Plasma::TopEdge:
-        m_controlBar->move(m_mainView->geometry().topLeft());
+        m_controlBar->move(screenRect.topLeft());
         break;
     case Plasma::BottomEdge:
-        m_controlBar->move(m_mainView->geometry().bottomLeft()-QPoint(0,m_controlBar->size().height()));
+        m_controlBar->move(screenRect.bottomLeft()-QPoint(0,m_controlBar->size().height()));
     default:
         break;
     }
