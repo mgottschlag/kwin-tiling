@@ -138,6 +138,8 @@ void DeviceNotifier::popupEvent(bool show)
 {
     if (show) {
         Plasma::ToolTipManager::self()->clearContent(this);
+    } else if (status() == Plasma::NeedsAttentionStatus) {
+        setStatus(Plasma::ActiveStatus);
     }
 }
 
