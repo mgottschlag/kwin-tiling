@@ -121,11 +121,17 @@ void BackgroundListModel::addBackground(const QString& path)
 int BackgroundListModel::indexOf(const QString &path) const
 {
     for (int i = 0; i < m_packages.size(); i++) {
-        if (path.startsWith(m_packages[i]->path())) {
+        // packages will end with a '/', but the path passed in may not
+        QString package = m_packages[i]->path();
+        if (package.at(package.length() - 1) == '/') {
+            package.truncate(package.length() - 1);
+        }
+
+        if (path.startsWith(package)) {
             // FIXME: ugly hack to make a difference between local files in the same dir
             // package->path does not contain the actual file name
-            if ( (!m_packages[i]->structure()->contentsPrefix().isEmpty())
-                || (path == m_packages[i]->filePath("preferred")) ) {
+            if ((!m_packages[i]->structure()->contentsPrefix().isEmpty()) ||
+                (path == m_packages[i]->filePath("preferred"))) {
                 return i;
             }
         }
