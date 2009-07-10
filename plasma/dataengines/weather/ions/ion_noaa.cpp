@@ -685,7 +685,7 @@ QMap<QString, QString> NOAAIon::wind(const QString& source)
     }
 
     // May not always have gusty winds
-    if (d->m_weatherData[source].windGust == "NA") {
+    if (d->m_weatherData[source].windGust == "NA" || d->m_weatherData[source].windGust == "N/A") {
         windInfo.insert("windGust", "N/A");
         windInfo.insert("windGustUnit", QString::number(WeatherUtils::NoUnit));
     } else {
