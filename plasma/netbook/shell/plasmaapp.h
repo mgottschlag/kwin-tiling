@@ -89,7 +89,7 @@ private Q_SLOTS:
     void showAppletBrowser();
     void appletBrowserDestroyed();
     void mainContainmentActivated();
-    void maybeRaise();
+    void raise();
 
 private:
     Plasma::Corona *m_corona;

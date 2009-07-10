@@ -109,6 +109,7 @@ PlasmaApp::PlasmaApp()
     m_controlBar = new NetView(0, NetView::controlBarId(), 0);
     KWindowSystem::setOnAllDesktops(m_controlBar->effectiveWinId(), true);
     m_controlBar->setWindowFlags(m_window->windowFlags() | Qt::FramelessWindowHint);
+    m_controlBar->setFrameShape(QFrame::NoFrame);
     m_controlBar->show();
     KWindowSystem::setType(m_controlBar->effectiveWinId(), NET::Dock);
     unsigned long state = NET::Sticky | NET::StaysOnTop | NET::KeepAbove;
@@ -238,6 +239,7 @@ void PlasmaApp::mainContainmentActivated()
         KWindowSystem::raiseWindow(activeWindow->effectiveWinId());
         activeWindow->setFocus();
     }
+    KWindowSystem::raiseWindow(m_controlBar->effectiveWinId());
 }
 
 bool PlasmaApp::eventFilter(QObject *watched, QEvent *event)
@@ -254,19 +256,17 @@ bool PlasmaApp::eventFilter(QObject *watched, QEvent *event)
             KWindowSystem::setState(id, NET::KeepBelow);
         }
     } else if (watched == m_window && event->type() == QEvent::WindowActivate) {
-        QTimer::singleShot(0, this, SLOT(maybeRaise()));
+        QTimer::singleShot(0, this, SLOT(raise()));
     }
     return false;
 }
 
-void PlasmaApp::maybeRaise()
+void PlasmaApp::raise()
 {
     const WId id = m_window->effectiveWinId();
 
-    if (!m_controlBar->canRaise()) {
-        KWindowSystem::clearState(id, NET::KeepBelow);
-        KWindowSystem::raiseWindow(id);
-    }
+    KWindowSystem::clearState(id, NET::KeepBelow);
+    KWindowSystem::raiseWindow(id);
 }
 
 void PlasmaApp::setIsDesktop(bool isDesktop)
