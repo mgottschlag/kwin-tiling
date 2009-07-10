@@ -240,6 +240,7 @@ void PlasmaApp::mainContainmentActivated()
         activeWindow->setFocus();
     }
     KWindowSystem::raiseWindow(m_controlBar->effectiveWinId());
+    m_controlBar->setFocus();
 }
 
 bool PlasmaApp::eventFilter(QObject *watched, QEvent *event)
@@ -256,17 +257,9 @@ bool PlasmaApp::eventFilter(QObject *watched, QEvent *event)
             KWindowSystem::setState(id, NET::KeepBelow);
         }
     } else if (watched == m_window && event->type() == QEvent::WindowActivate) {
-        QTimer::singleShot(0, this, SLOT(raise()));
+        QTimer::singleShot(0, this, SLOT(mainContainmentActivated()));
     }
     return false;
-}
-
-void PlasmaApp::raise()
-{
-    const WId id = m_window->effectiveWinId();
-
-    KWindowSystem::clearState(id, NET::KeepBelow);
-    KWindowSystem::raiseWindow(id);
 }
 
 void PlasmaApp::setIsDesktop(bool isDesktop)
