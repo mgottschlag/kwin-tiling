@@ -1440,7 +1440,9 @@ void EnvCanadaIon::updateWeather(const QString& source)
         data.insert("Visibility Unit", dataFields["visibilityUnit"]);
     }
 
-    data.insert("Humidity", humidity(source));
+    if (humidity(source) != "N/A") {
+        data.insert("Humidity", humidity(source));
+    }
 
     dataFields = wind(source);
     data.insert("Wind Speed", dataFields["windSpeed"]);
@@ -1790,7 +1792,7 @@ QMap<QString, QString> EnvCanadaIon::wind(const QString& source)
         windInfo.insert("windSpeed", "N/A");
         windInfo.insert("windUnit", QString::number(WeatherUtils::NoUnit));
     } else if (d->m_weatherData[source].windSpeed.toInt() == 0) {
-        windInfo.insert("windSpeed", "Calm");
+        windInfo.insert("windSpeed", i18nc("wind speed", "Calm"));
         windInfo.insert("windUnit", QString::number(WeatherUtils::NoUnit));
     } else {
         windInfo.insert("windSpeed", QString::number(d->m_weatherData[source].windSpeed.toInt()));
@@ -1810,9 +1812,9 @@ QMap<QString, QString> EnvCanadaIon::wind(const QString& source)
         windInfo.insert("windDirection", "N/A");
         windInfo.insert("windDegrees", "N/A");
     } else if (d->m_weatherData[source].windSpeed.toInt() == 0) {
-        windInfo.insert("windDirection", "VR");
+        windInfo.insert("windDirection", i18nc("wind direction", "VR")); // Variable/calm
     } else {
-        windInfo.insert("windDirection", d->m_weatherData[source].windDirection);
+        windInfo.insert("windDirection", i18nc("wind direction", d->m_weatherData[source].windDirection.toUtf8()));
         windInfo.insert("windDegrees", d->m_weatherData[source].windDegrees);
     }
     return windInfo;

@@ -540,7 +540,9 @@ void NOAAIon::updateWeather(const QString& source)
         data.insert("Visibility Unit", dataFields["visibilityUnit"]);
     }
 
-    data.insert("Humidity", humidity(source));
+    if (humidity(source) != "N/A") {
+        data.insert("Humidity", QString("%1%").arg(humidity(source))); // FIXME: Turn '%' into a unit field
+    }
 
     // Set number of forecasts per day/night supported, none for this ion right now
     data.insert(QString("Total Weather Days"), 0);
@@ -624,7 +626,7 @@ QString NOAAIon::humidity(const QString& source)
     if (d->m_weatherData[source].humidity == "NA") {
         return QString("N/A");
     } else {
-        return QString("%1%").arg(d->m_weatherData[source].humidity);
+        return (d->m_weatherData[source].humidity);
     }
 }
 
@@ -635,8 +637,13 @@ QMap<QString, QString> NOAAIon::visibility(const QString& source)
         visibilityInfo.insert("visibility", QString("N/A"));
         return visibilityInfo;
     }
-    visibilityInfo.insert("visibility", d->m_weatherData[source].visibility);
-    visibilityInfo.insert("visibilityUnit", QString::number(WeatherUtils::Miles));
+    if (d->m_weatherData[source].visibility == "NA") {
+        visibilityInfo.insert("visibility", QString("N/A"));
+        visibilityInfo.insert("visibilityUnit", QString::number(WeatherUtils::NoUnit));
+    } else {
+        visibilityInfo.insert("visibility", d->m_weatherData[source].visibility);
+        visibilityInfo.insert("visibilityUnit", QString::number(WeatherUtils::Miles));
+    }
     return visibilityInfo;
 }
 
@@ -666,8 +673,13 @@ QMap<QString, QString> NOAAIon::pressure(const QString& source)
         return pressureInfo;
     }
 
-    pressureInfo.insert("pressure", d->m_weatherData[source].pressure);
-    pressureInfo.insert("pressureUnit", QString::number(WeatherUtils::InchesHG));
+    if (d->m_weatherData[source].pressure == "NA") {
+        pressureInfo.insert("pressure", "N/A");
+        pressureInfo.insert("visibilityUnit", QString::number(WeatherUtils::NoUnit));
+    } else {
+        pressureInfo.insert("pressure", d->m_weatherData[source].pressure);
+        pressureInfo.insert("pressureUnit", QString::number(WeatherUtils::InchesHG));
+    }
     return pressureInfo;
 }
 
@@ -677,7 +689,7 @@ QMap<QString, QString> NOAAIon::wind(const QString& source)
 
     // May not have any winds
     if (d->m_weatherData[source].windSpeed == "NA") {
-        windInfo.insert("windSpeed", "Calm");
+        windInfo.insert("windSpeed", i18nc("wind speed", "Calm"));
         windInfo.insert("windUnit", QString::number(WeatherUtils::NoUnit));
     } else {
         windInfo.insert("windSpeed", QString::number(d->m_weatherData[source].windSpeed.toFloat(), 'f', 1));
@@ -696,7 +708,7 @@ QMap<QString, QString> NOAAIon::wind(const QString& source)
     if (d->m_weatherData[source].windDirection.isEmpty()) {
         windInfo.insert("windDirection", "N/A");
     } else {
-        windInfo.insert("windDirection", d->m_weatherData[source].windDirection);
+        windInfo.insert("windDirection", i18nc("wind direction", d->m_weatherData[source].windDirection.toUtf8()));
     }
     return windInfo;
 }
