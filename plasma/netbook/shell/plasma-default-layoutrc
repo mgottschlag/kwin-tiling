@@ -49,6 +49,16 @@ immutability=1
 plugin=systemtray
 zvalue=0
 
+[Containments][2][Applets][4][Configuration][Applets][9]
+plugin=battery
+geometry=0,0,10,10
+immutability=1
+
+[Containments][2][Applets][4][Configuration][Applets][10]
+plugin=notifier
+geometry=10,0,10,10
+immutability=1
+
 [Containments][2][Applets][5]
 geometry=700,0,10,10
 immutability=1
