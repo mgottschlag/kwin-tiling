@@ -20,6 +20,7 @@
 /* Ion for Environment Canada XML data */
 
 #include "ion_envcan.h"
+#include "../../time/solarposition.h"
 
 class EnvCanadaIon::Private : public QObject
 {
@@ -115,6 +116,43 @@ void EnvCanadaIon::init()
 {
     // Get the real city XML URL so we can parse this
     getXMLSetup();
+}
+
+static double calculateSunriseTime(const int & day, const int & month, const int & year, const double & latitude, const double & longitude)
+{
+
+    QDate d(year, month, day);
+    QDateTime dt(d);
+
+    double jd, century, eqTime, solarDec, azimuth, zenith;
+
+    NOAASolarCalc::calc(dt, longitude, latitude, 0.0,
+                        &jd, &century, &eqTime, &solarDec, &azimuth, &zenith);
+
+    double toReturn;
+    NOAASolarCalc::calcTimeUTC(zenith, true, &jd, &toReturn, latitude, longitude);
+
+    toReturn *= 60;
+    return toReturn;
+}
+
+static double calculateSunsetTime(const int & day, const int & month, const int & year, const double & latitude, const double & longitude)
+{
+
+    QDate d(year, month, day);
+    QDateTime dt(d);
+
+    double jd, century, eqTime, solarDec, azimuth, zenith;
+
+    NOAASolarCalc::calc(dt, longitude, latitude, 0.0,
+                        &jd, &century, &eqTime, &solarDec, &azimuth, &zenith);
+
+    double toReturn;
+    NOAASolarCalc::calcTimeUTC(zenith, false, &jd, &toReturn, latitude, longitude);
+
+    toReturn *= 60;
+    return toReturn;
+
 }
 
 QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupConditionIconMappings(void)
@@ -796,6 +834,7 @@ void EnvCanadaIon::parseDateTime(WeatherData& data, QXmlStreamReader& xml, Weath
                     d->m_dateFormat = QDateTime::fromString(selectTimeStamp, "yyyyMMddHHmmss");
                     data.obsTimestamp = d->m_dateFormat.toString("dd.MM.yyyy @ hh:mm");
                     data.iconPeriodHour = d->m_dateFormat.toString("hh").toInt();
+                    data.iconPeriodMinute = d->m_dateFormat.toString("mm").toInt();
                 } else if (dateType == "forecastIssue") {
                     data.forecastTimestamp = xml.readElementText();
                 } else if (dateType == "sunrise") {
@@ -1379,25 +1418,33 @@ void EnvCanadaIon::updateWeather(const QString& source)
     data.insert("Current Conditions", condition(source));
     kDebug() << "i18n condition string: " << qPrintable(condition(source));
 
-    const double sunrise = toFractionalHour(d->m_weatherData[source].sunriseTimestamp, 6.0);
-    const double sunset = toFractionalHour(d->m_weatherData[source].sunsetTimestamp, 18.0);
-
-    const double obsHour = toFractionalHour(observationTime(source), (double) periodHour(source));
-
     // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
     QMap<QString, ConditionIcons> conditionList;
     conditionList = conditionIcons();
 
-    if ((obsHour >= 0.0 && obsHour < sunrise) || (obsHour >= sunset)) {
+    const double observationSeconds = 60.0 * (periodMinute(source) + 60.0 * periodHour(source));
+
+    const double lati = latitude(source).toDouble();
+    const double longi = longitude(source).toDouble();
+    const QDate today = QDate::currentDate();
+    const double sunrise = calculateSunriseTime(today.day(), today.month(), today.year(), lati, longi);
+    const double sunset = calculateSunsetTime(today.day(), today.month(), today.year(), lati, longi);
+
+    //kDebug() << "Calculated sunrise and sunset as " << sunrise << ", " << sunset;
+    //kDebug() << "Observation was made at " << observationSeconds;
+
+    if ((observationSeconds >= 0 && observationSeconds < sunrise) || observationSeconds >= sunset) {
         conditionList["decreasing cloud"] = FewCloudsNight;
         conditionList["mostly cloudy"] = PartlyCloudyNight;
         conditionList["partly cloudy"] = PartlyCloudyNight;
         conditionList["fair"] = FewCloudsNight;
+        //kDebug() << "Before sunrise/After sunset - using night icons\n";
     } else {
         conditionList["decreasing cloud"] = FewCloudsDay;
         conditionList["mostly cloudy"] = PartlyCloudyDay;
         conditionList["partly cloudy"] = PartlyCloudyDay;
         conditionList["fair"] = FewCloudsDay;
+        //kDebug() << "Using daytime icons\n";
     }
 
     data.insert("Condition Icon", getWeatherIcon(conditionList, condition(source)));
@@ -1440,7 +1487,9 @@ void EnvCanadaIon::updateWeather(const QString& source)
         data.insert("Visibility Unit", dataFields["visibilityUnit"]);
     }
 
-    data.insert("Humidity", humidity(source));
+    if (humidity(source) != "N/A") {
+        data.insert("Humidity", humidity(source));
+    }
 
     dataFields = wind(source);
     data.insert("Wind Speed", dataFields["windSpeed"]);
@@ -1591,12 +1640,17 @@ int EnvCanadaIon::periodHour(const QString& source)
     return d->m_weatherData[source].iconPeriodHour;
 }
 
+int EnvCanadaIon::periodMinute(const QString& source)
+{
+    return d->m_weatherData[source].iconPeriodMinute;
+}
+
 QString EnvCanadaIon::condition(const QString& source)
 {
     if (d->m_weatherData[source].condition.isEmpty()) {
         d->m_weatherData[source].condition = "N/A";
     }
-    return i18n(d->m_weatherData[source].condition.toUtf8());
+    return i18nc("weather condition", d->m_weatherData[source].condition.toUtf8());
 }
 
 QString EnvCanadaIon::dewpoint(const QString& source)
@@ -1757,7 +1811,7 @@ QVector<QString> EnvCanadaIon::forecasts(const QString& source)
         forecastData.append(QString("%1|%2|%3|%4|%5|%6") \
                             .arg(d->m_weatherData[source].forecasts[i]->forecastPeriod) \
                             .arg(d->m_weatherData[source].forecasts[i]->iconName) \
-                            .arg(i18n(d->m_weatherData[source].forecasts[i]->shortForecast.toUtf8())) \
+                            .arg(i18nc("weather forecast", d->m_weatherData[source].forecasts[i]->shortForecast.toUtf8())) \
                             .arg(d->m_weatherData[source].forecasts[i]->forecastTempHigh) \
                             .arg(d->m_weatherData[source].forecasts[i]->forecastTempLow) \
                             .arg(d->m_weatherData[source].forecasts[i]->popPrecent));
@@ -1790,7 +1844,7 @@ QMap<QString, QString> EnvCanadaIon::wind(const QString& source)
         windInfo.insert("windSpeed", "N/A");
         windInfo.insert("windUnit", QString::number(WeatherUtils::NoUnit));
     } else if (d->m_weatherData[source].windSpeed.toInt() == 0) {
-        windInfo.insert("windSpeed", "Calm");
+        windInfo.insert("windSpeed", i18nc("wind speed", "Calm"));
         windInfo.insert("windUnit", QString::number(WeatherUtils::NoUnit));
     } else {
         windInfo.insert("windSpeed", QString::number(d->m_weatherData[source].windSpeed.toInt()));
@@ -1810,9 +1864,9 @@ QMap<QString, QString> EnvCanadaIon::wind(const QString& source)
         windInfo.insert("windDirection", "N/A");
         windInfo.insert("windDegrees", "N/A");
     } else if (d->m_weatherData[source].windSpeed.toInt() == 0) {
-        windInfo.insert("windDirection", "VR");
+        windInfo.insert("windDirection", i18nc("wind direction", "VR")); // Variable/calm
     } else {
-        windInfo.insert("windDirection", d->m_weatherData[source].windDirection);
+        windInfo.insert("windDirection", i18nc("wind direction", d->m_weatherData[source].windDirection.toUtf8()));
         windInfo.insert("windDegrees", d->m_weatherData[source].windDegrees);
     }
     return windInfo;
