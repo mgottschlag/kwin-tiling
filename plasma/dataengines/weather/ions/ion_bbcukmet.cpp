@@ -749,7 +749,7 @@ void UKMETIon::parseFiveDayForecast(const QString& source, QXmlStreamReader& xml
             low.indexIn(line.split(',')[2]);
 
             forecast->period = period;
-            forecast->summary = i18nc("weather condition", summary.toUtf8());
+            forecast->summary = i18nc("weather forecast", summary.toUtf8());
             kDebug() << "i18n summary string: " << qPrintable(forecast->summary);
             forecast->iconName = getWeatherIcon(dayIcons(), forecast->summary.toLower());
             forecast->tempHigh = high.cap(0).toInt();

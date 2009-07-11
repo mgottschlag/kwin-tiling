@@ -1811,7 +1811,7 @@ QVector<QString> EnvCanadaIon::forecasts(const QString& source)
         forecastData.append(QString("%1|%2|%3|%4|%5|%6") \
                             .arg(d->m_weatherData[source].forecasts[i]->forecastPeriod) \
                             .arg(d->m_weatherData[source].forecasts[i]->iconName) \
-                            .arg(i18nc("weather condition", d->m_weatherData[source].forecasts[i]->shortForecast.toUtf8())) \
+                            .arg(i18nc("weather forecast", d->m_weatherData[source].forecasts[i]->shortForecast.toUtf8())) \
                             .arg(d->m_weatherData[source].forecasts[i]->forecastTempHigh) \
                             .arg(d->m_weatherData[source].forecasts[i]->forecastTempLow) \
                             .arg(d->m_weatherData[source].forecasts[i]->popPrecent));
