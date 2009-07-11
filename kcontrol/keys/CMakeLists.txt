@@ -14,9 +14,16 @@ kde4_add_ui_files( kcm_keys_PART_SRCS
     kglobalshortcutseditor.ui
     select_scheme_dialog.ui )
 
+set(kglobalaccel_xml ${KDE4_DBUS_INTERFACES_DIR}/org.kde.KGlobalAccel.xml)
+set_source_files_properties(${kglobalaccel_xml} PROPERTIES INCLUDE "kglobalshortcutinfo_p.h")
+qt4_add_dbus_interface(kdeui_LIB_SRCS ${kglobalaccel_xml} kglobalaccel_interface )
+
+message(${KDE4_DBUS_INTERFACES_DIR})
+set(kglobalaccel_component_xml ${KDE4_DBUS_INTERFACES_DIR}/org.kde.kglobalaccel.Component.xml)
+set_source_files_properties(${kglobalaccel_component_xml} PROPERTIES INCLUDE "kglobalshortcutinfo_p.h")
+qt4_add_dbus_interface(kdeui_LIB_SRCS ${kglobalaccel_component_xml} kglobalaccel_component_interface )
+
 kde4_add_plugin(kcm_keys ${kcm_keys_PART_SRCS})
-
-
 target_link_libraries(kcm_keys  ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${X11_X11_LIB})
 
 install(TARGETS kcm_keys  DESTINATION ${PLUGIN_INSTALL_DIR} )
