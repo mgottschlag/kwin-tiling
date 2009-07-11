@@ -2,7 +2,11 @@
 Exec=plasma-netbook --desktop
 X-DBUS-StartupType=wait
 Name=Plasma Netbook
+Name[sv]=Plasma för bärbara nätdatorer
+Name[x-test]=xxPlasma Netbookxx
 Comment=Workspace shell for netbook devices.
+Comment[sv]=Arbetsyta för bärbara nätdatorenheter.
+Comment[x-test]=xxWorkspace shell for netbook devices.xx
 Type=Service
 X-KDE-StartupNotify=false
 OnlyShowIn=KDE;
