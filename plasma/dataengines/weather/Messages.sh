@@ -1,17 +1,17 @@
 #! /usr/bin/env bash
-#grep "weather condition" envcan_i18n.dat | awk -F'|' '{ printf("i18nc(\"%s\", \"%s\");\n", $1, $2) }' >> rc.cpp
-#grep "weather forecast" envcan_i18n.dat | awk -F'|' '{ printf("i18nc(\"%s\", \"%s\");\n", $1, $2) }' >> rc.cpp
-#grep "wind direction" envcan_i18n.dat | awk -F'|' '{ printf("i18nc(\"%s\", \"%s\");\n", $1, $2) }' >> rc.cpp
-#grep "wind speed" envcan_i18n.dat | awk -F'|' '{ printf("i18nc(\"%s\", \"%s\");\n", $1, $2) }' >> rc.cpp
+#grep "weather condition" ions/data/envcan_i18n.dat | awk -F'|' '{ printf("i18nc(\"%s\", \"%s\");\n", $1, $2) }' >> rc.cpp
+#grep "weather forecast" ions/data/envcan_i18n.dat | awk -F'|' '{ printf("i18nc(\"%s\", \"%s\");\n", $1, $2) }' >> rc.cpp
+#grep "wind direction" ions/data/envcan_i18n.dat | awk -F'|' '{ printf("i18nc(\"%s\", \"%s\");\n", $1, $2) }' >> rc.cpp
+#grep "wind speed" ions/data/envcan_i18n.dat | awk -F'|' '{ printf("i18nc(\"%s\", \"%s\");\n", $1, $2) }' >> rc.cpp
 
-#grep "weather condition" noaa_i18n.dat | awk -F'|' '{ printf("i18nc(\"%s\", \"%s\");\n", $1, $2) }' >> rc.cpp
-#grep "weather forecast" noaa_i18n.dat | awk -F'|' '{ printf("i18nc(\"%s\", \"%s\");\n", $1, $2) }' >> rc.cpp
-#grep "wind direction" noaa_i18n.dat | awk -F'|' '{ printf("i18nc(\"%s\", \"%s\");\n", $1, $2) }' >> rc.cpp
-#grep "wind speed" envcan_i18n.dat | awk -F'|' '{ printf("i18nc(\"%s\", \"%s\");\n", $1, $2) }' >> rc.cpp
+#grep "weather condition" ions/data/noaa_i18n.dat | awk -F'|' '{ printf("i18nc(\"%s\", \"%s\");\n", $1, $2) }' >> rc.cpp
+#grep "weather forecast" ions/data/noaa_i18n.dat | awk -F'|' '{ printf("i18nc(\"%s\", \"%s\");\n", $1, $2) }' >> rc.cpp
+#grep "wind direction" ions/data/noaa_i18n.dat | awk -F'|' '{ printf("i18nc(\"%s\", \"%s\");\n", $1, $2) }' >> rc.cpp
+#grep "wind speed" ions/data/envcan_i18n.dat | awk -F'|' '{ printf("i18nc(\"%s\", \"%s\");\n", $1, $2) }' >> rc.cpp
 
-#grep "weather condition" bbcukmet_i18n.dat | awk -F'|' '{ printf("i18nc(\"%s\", \"%s\");\n", $1, $2) }' >> rc.cpp
-#grep "weather forecast" bbcukmet_i18n.dat | awk -F'|' '{ printf("i18nc(\"%s\", \"%s\");\n", $1, $2) }' >> rc.cpp
-#grep "wind direcption" bbcukmet_i18n.dat | awk -F'|' '{ printf("i18nc(\"%s\", \"%s\");\n", $1, $2) }' >> rc.cpp
+#grep "weather condition" ions/data/bbcukmet_i18n.dat | awk -F'|' '{ printf("i18nc(\"%s\", \"%s\");\n", $1, $2) }' >> rc.cpp
+#grep "weather forecast" ions/data/bbcukmet_i18n.dat | awk -F'|' '{ printf("i18nc(\"%s\", \"%s\");\n", $1, $2) }' >> rc.cpp
+#grep "wind direction" ions/data/bbcukmet_i18n.dat | awk -F'|' '{ printf("i18nc(\"%s\", \"%s\");\n", $1, $2) }' >> rc.cpp
 
 
-#$XGETTEXT `find . -name \*.cpp` -o $podir/plasma_engine_weather.pot
+$XGETTEXT `find . -name \*.cpp` -o $podir/plasma_engine_weather.pot
