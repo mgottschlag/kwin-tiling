@@ -94,7 +94,7 @@ public:
                 q, SLOT(startRefreshingUsageInfo()));
         refreshTimer.start(10000);
         QTimer::singleShot(0, q, SLOT(startRefreshingUsageInfo()));
-        connect(KSycoca::self(), SIGNAL(databaseChanged()), q, SLOT(reloadApplications()));
+        connect(KSycoca::self(), SIGNAL(databaseChanged(const QStringList&)), q, SLOT(reloadApplications()));
     }
 
     void queryFreeSpace(const QString& mountPoint) {
