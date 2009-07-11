@@ -277,7 +277,7 @@ ApplicationModel::ApplicationModel(QObject *parent, bool allowSeparators)
     (void)new KickoffAdaptor(this);
     QDBusConnection::sessionBus().registerObject("/kickoff", this);
     dbus.connect(QString(), "/kickoff", "org.kde.plasma", "reloadMenu", this, SLOT(reloadMenu()));
-    connect(KSycoca::self(), SIGNAL(databaseChanged()), this, SLOT(checkSycocaChange()));
+    connect(KSycoca::self(), SIGNAL(databaseChanged(const QStringList&)), this, SLOT(checkSycocaChange()));
     d->fillNode(QString(), d->root);
 }
 
