@@ -80,6 +80,7 @@ public:
 
     // Icon info to aproximate periods
     int iconPeriodHour;
+    int iconPeriodMinute;
 
     QString condition;
     QString temperature;
@@ -178,6 +179,7 @@ private:
     // Current Conditions Weather info
     QString observationTime(const QString& source);
     int periodHour(const QString& source);
+    int periodMinute(const QString& source);
     QMap<QString, QString> watches(const QString& source);
     QMap<QString, QString> warnings(const QString& source);
     QString condition(const QString& source);
