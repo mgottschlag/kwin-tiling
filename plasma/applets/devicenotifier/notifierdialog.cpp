@@ -256,7 +256,7 @@ void NotifierDialog::buildDialog()
     QLabel *icon = new QLabel(m_widget);
     icon->setPixmap(KIcon("emblem-mounted").pixmap(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
 
-    QHBoxLayout *l_layout2 = new QHBoxLayout(m_widget);
+    QHBoxLayout *l_layout2 = new QHBoxLayout;
     l_layout2->setSpacing(0);
     l_layout2->setMargin(0);
 
