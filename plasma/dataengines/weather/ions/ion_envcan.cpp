@@ -1375,26 +1375,6 @@ void EnvCanadaIon::parseUnknownElement(QXmlStreamReader& xml)
     }
 }
 
-static double toFractionalHour(const QString & from, const double abort = -1.0)
-{
-    int colon = from.indexOf(':');
-    if (colon == -1 || colon < 2 || colon + 3 > from.length()) return abort;
-
-    bool ok;
-
-    const double h = from.mid(colon - 2, 2).toDouble(&ok);
-    if (!ok) {
-        return abort;
-    }
-
-    const double m = from.mid(colon + 1, 2).toDouble(&ok);
-    if (!ok) {
-        return abort;
-    }
-
-    return (h + (m / 60.0));
-}
-
 void EnvCanadaIon::updateWeather(const QString& source)
 {
     kDebug() << "updateWeather()";
@@ -1830,7 +1810,7 @@ QMap<QString, QString> EnvCanadaIon::pressure(const QString& source)
     } else {
         pressureInfo.insert("pressure", QString::number(d->m_weatherData[source].pressure, 'f', 1));
         pressureInfo.insert("pressureUnit", QString::number(WeatherUtils::Kilopascals));
-        pressureInfo.insert("pressureTendency", d->m_weatherData[source].pressureTendency);
+        pressureInfo.insert("pressureTendency", i18nc("pressure tendency", d->m_weatherData[source].pressureTendency.toUtf8()));
     }
     return pressureInfo;
 }
