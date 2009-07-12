@@ -84,7 +84,6 @@ class Interface : public KRunnerDialog
         QWidget *m_buttonContainer;
         QWidget *m_resultsContainer;
         QVBoxLayout* m_layout;
-        QHBoxLayout* m_statusLayout;
         QLabel *m_previousPage;
         QLabel *m_nextPage;
         QToolButton *m_configButton;

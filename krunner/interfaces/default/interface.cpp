@@ -155,6 +155,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     lineEdit->setClearButtonShown(true);
     QStringList pastQueryItems = KRunnerSettings::pastQueries();
     m_searchTerm->setHistoryItems(pastQueryItems);
+    m_searchTerm->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
     m_completion->insertItems(pastQueryItems);
     bottomLayout->insertWidget(2, m_searchTerm, 10);
     
