@@ -2,9 +2,11 @@
 Exec=plasma-netbook --desktop
 X-DBUS-StartupType=wait
 Name=Plasma Netbook
+Name[fr]=Netbook pour Plasma
 Name[sv]=Plasma för bärbara nätdatorer
 Name[x-test]=xxPlasma Netbookxx
 Comment=Workspace shell for netbook devices.
+Comment[fr]=Environnement de travail de Shell pour des périphériques de type Netbook.
 Comment[sv]=Arbetsyta för bärbara nätdatorenheter.
 Comment[x-test]=xxWorkspace shell for netbook devices.xx
 Type=Service
