@@ -958,7 +958,7 @@ QString UKMETIon::humidity(const QString& source)
 
 QString UKMETIon::visibility(const QString& source)
 {
-    return d->m_weatherData[source].visibilityStr;
+    return i18nc("visibility", d->m_weatherData[source].visibilityStr.toUtf8());
 }
 
 QMap<QString, QString> UKMETIon::pressure(const QString& source)
@@ -972,7 +972,7 @@ QMap<QString, QString> UKMETIon::pressure(const QString& source)
     pressureInfo.insert("pressure", QString(d->m_weatherData[source].pressure));
     pressureInfo.insert("pressureUnit", QString::number(WeatherUtils::Millibars));
 
-    pressureInfo.insert("pressureTendency", d->m_weatherData[source].pressureTendency);
+    pressureInfo.insert("pressureTendency", i18nc("pressure tendency", d->m_weatherData[source].pressureTendency.toUtf8()));
     return pressureInfo;
 }
 
