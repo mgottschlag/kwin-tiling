@@ -92,7 +92,6 @@ void ResultScene::resize(int width, int height)
     }
 
     setSceneRect(itemsBoundingRect());
-
 }
 
 void ResultScene::clearMatches()
@@ -110,11 +109,12 @@ bool ResultScene::canMoveItemFocus() const
 {
     // We prevent a late query result from stealing the item focus from the user
     // The item focus can be moved only if 
-    // 1) the focusBase widget (the khistorycombobox) has focus (i.e. the user is still typing or waiting) 
-    // 2) there is no item currently focused
-    // 3) the currently focused item is not visible anymore
+    // 1) there is no item currently focused
+    // 2) the currently focused item is not visible anymore
+    // 3) the focusBase widget (the khistorycombobox) has focus (i.e. the user is still typing or waiting) AND the currently focused item has not been hovered
 
-    return m_focusBase->hasFocus() || !(focusItem()) || (!m_items.contains(static_cast<ResultItem*>(focusItem())));
+    return !(focusItem()) || (!m_items.contains(static_cast<ResultItem*>(focusItem()))) || (m_focusBase->hasFocus() && !static_cast<ResultItem*>(focusItem())->mouseHovered()) ;
+
 }
 
 void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
@@ -206,7 +206,7 @@ void ResultScene::arrangeItems(ResultItem *itemChanged)
         tab = item;
     }
 
-    setSceneRect(itemsBoundingRect());
+    setSceneRect(QRect(0,0,width(),y));
 }
 
 ResultItem* ResultScene::addQueryMatch(const Plasma::QueryMatch &match, bool useAnyId)
