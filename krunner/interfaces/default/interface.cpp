@@ -111,6 +111,9 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_helpButton->setIcon(m_iconSvg->pixmap("help"));
     connect(m_helpButton, SIGNAL(clicked(bool)), SLOT(showHelp()));
     bottomLayout->addWidget(m_helpButton);
+    
+    QSpacerItem* closeButtonSpacer = new QSpacerItem(0,0,QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
+    bottomLayout->addSpacerItem(closeButtonSpacer);
 
     m_closeButton = new QToolButton(m_buttonContainer);
     KGuiItem guiItem = KStandardGuiItem::close();
@@ -407,18 +410,13 @@ void Interface::ensureVisibility(QGraphicsItem* item)
 
 void Interface::setStaticQueryMode(bool staticQuery)
 {
-    if (staticQuery) {
-        m_statusLayout->addWidget(m_closeButton);
-    } else {
-        m_buttonContainer->layout()->addWidget(m_closeButton);
-    }
-
-    // don't show the search and other control buttons in the case of a static query
-    m_buttonContainer->setVisible(!staticQuery);
-/*    m_configButton->setVisible(visible);
+     // don't show the search and other control buttons in the case of a static query
+  //   m_buttonContainer->setVisible(!staticQuery);
+    bool visible = !staticQuery;
+    m_configButton->setVisible(visible);
     m_activityButton->setVisible(visible);
-    m_closeButton->setVisible(visible);
-    m_searchTerm->setVisible(visible);*/
+    m_helpButton->setVisible(visible);
+    m_searchTerm->setVisible(visible);
 }
 
 void Interface::closeEvent(QCloseEvent *e)
