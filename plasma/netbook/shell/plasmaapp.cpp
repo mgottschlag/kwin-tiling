@@ -95,7 +95,6 @@ PlasmaApp::PlasmaApp()
     //m_window = new QWidget;
     m_window = m_mainView = new NetView(0, NetView::mainViewId(), 0);
     connect(m_mainView, SIGNAL(containmentActivated()), this, SLOT(mainContainmentActivated()));
-    m_window->installEventFilter(this);
 
     //FIXME: if argb visuals enabled Qt will always set WM_CLASS as "qt-subapplication" no matter what
     //the application name is we set the proper XClassHint here, hopefully won't be necessary anymore when
@@ -120,15 +119,12 @@ PlasmaApp::PlasmaApp()
             this, SLOT(adjustSize(Kephal::Screen *)));
 
 
-    //m_controlBar->setFixedHeight(CONTROL_BAR_HEIGHT);
     m_controlBar->setAttribute(Qt::WA_TranslucentBackground);
     m_controlBar->setAutoFillBackground(false);
     m_controlBar->viewport()->setAutoFillBackground(false);
     m_controlBar->setAttribute(Qt::WA_TranslucentBackground);
     connect(m_controlBar, SIGNAL(locationChanged(const NetView *)), this, SLOT(controlBarMoved(const NetView *)));
     connect(m_controlBar, SIGNAL(geometryChanged()), this, SLOT(positionPanel()));
-
-    //m_layout->addWidget(m_mainView);
 
     int width = 400;
     int height = 200;
@@ -149,7 +145,8 @@ PlasmaApp::PlasmaApp()
         }
     }
 
-    m_window->setFixedSize(width, height);
+    //FIXME, TERRIBLE HACK, having a full size makes the main view to go over the panel
+    m_window->resize(width-1, height);
 
     // this line initializes the corona.
     corona();
@@ -233,7 +230,6 @@ void PlasmaApp::mainContainmentActivated()
     const WId id = m_window->effectiveWinId();
 
     QWidget * activeWindow = QApplication::activeWindow();
-    KWindowSystem::clearState(id, NET::KeepBelow);
     KWindowSystem::raiseWindow(id);
     if (activeWindow) {
         KWindowSystem::raiseWindow(activeWindow->effectiveWinId());
@@ -243,24 +239,6 @@ void PlasmaApp::mainContainmentActivated()
     m_controlBar->setFocus();
 }
 
-bool PlasmaApp::eventFilter(QObject *watched, QEvent *event)
-{
-    if (!m_isDesktop) {
-        return false;
-    }
-
-    if (watched == m_window && event->type() == QEvent::WindowDeactivate) {
-        const WId id = m_window->effectiveWinId();
-        QWidget * activeWindow = QApplication::activeWindow();
-
-        if (!activeWindow) {
-            KWindowSystem::setState(id, NET::KeepBelow);
-        }
-    } else if (watched == m_window && event->type() == QEvent::WindowActivate) {
-        QTimer::singleShot(0, this, SLOT(mainContainmentActivated()));
-    }
-    return false;
-}
 
 void PlasmaApp::setIsDesktop(bool isDesktop)
 {
@@ -271,9 +249,10 @@ void PlasmaApp::setIsDesktop(bool isDesktop)
         KWindowSystem::setOnAllDesktops(m_window->winId(), true);
         m_window->show();
         KWindowSystem::setState(m_window->winId(), NET::SkipTaskbar | NET::SkipPager);
-        //KWindowSystem::setType(m_window->winId(), NET::Desktop);
-        KWindowSystem::setState(m_window->winId(), NET::KeepBelow);
+        KWindowSystem::setType(m_window->winId(), NET::Normal);
+        KWindowSystem::clearState(m_window->winId(), NET::FullScreen);
         m_window->lower();
+        KWindowSystem::lowerWindow(m_window->winId());
     } else {
         m_window->setWindowFlags(m_window->windowFlags() & ~Qt::FramelessWindowHint);
         KWindowSystem::setOnAllDesktops(m_window->winId(), false);

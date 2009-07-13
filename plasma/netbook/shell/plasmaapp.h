@@ -76,8 +76,6 @@ private:
     PlasmaApp();
     void reserveStruts();
 
-protected:
-    bool eventFilter(QObject *watched, QEvent *event);
 
 private Q_SLOTS:
     void cleanup();
