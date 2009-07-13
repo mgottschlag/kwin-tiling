@@ -1844,7 +1844,7 @@ QMap<QString, QString> EnvCanadaIon::wind(const QString& source)
         windInfo.insert("windDirection", "N/A");
         windInfo.insert("windDegrees", "N/A");
     } else if (d->m_weatherData[source].windSpeed.toInt() == 0) {
-        windInfo.insert("windDirection", i18nc("wind direction", "VR")); // Variable/calm
+        windInfo.insert("windDirection", i18nc("wind direction - wind speed is too low to measure", "VR")); // Variable/calm
     } else {
         windInfo.insert("windDirection", i18nc("wind direction", d->m_weatherData[source].windDirection.toUtf8()));
         windInfo.insert("windDegrees", d->m_weatherData[source].windDegrees);
