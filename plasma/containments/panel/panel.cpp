@@ -242,7 +242,7 @@ void Panel::adjustLastSpace()
 
     if (formFactor() == Plasma::Vertical) {
         foreach (Applet *applet, applets()) {
-            if (applet->sizePolicy().verticalPolicy() == QSizePolicy::Expanding || applet->sizePolicy().verticalPolicy() == QSizePolicy::MinimumExpanding) {
+            if (applet->sizePolicy().verticalPolicy() && QSizePolicy::ExpandFlag) {
                 useSpacer = false;
                 break;
             }
