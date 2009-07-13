@@ -393,20 +393,9 @@ void Interface::showHelp()
 
 void Interface::ensureVisibility(QGraphicsItem* item)
 {
-    //We should not touch the scrollbar, but since it cannot be focused anyways
-    //this is good enough:
-
-    foreach (QGraphicsItem* tmpItem, m_resultsScene->items()) {
-        tmpItem->setAcceptHoverEvents(false);
-    }
-
+    m_resultsScene->setItemsAcceptHoverEvents(false);
     m_resultsView->ensureVisible(item);
-
-    foreach (QGraphicsItem* tmpItem, m_resultsScene->items()) {
-        tmpItem->setAcceptHoverEvents(true);
-    }
-
-
+    m_resultsScene->setItemsAcceptHoverEvents(true);
 }
 
 void Interface::setStaticQueryMode(bool staticQuery)

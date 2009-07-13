@@ -50,7 +50,7 @@ class ResultScene : public QGraphicsScene
         ResultItem* defaultResultItem() const;
         void run(ResultItem* item) const;
         QSize minimumSizeHint() const;
-
+        void setItemsAcceptHoverEvents(bool enable);
 //        Plasma::RunnerManager* manager() const;
 
 
@@ -66,7 +66,7 @@ class ResultScene : public QGraphicsScene
         void itemHoverLeave(ResultItem *item);
         void matchCountChanged(int count);
         void ensureVisibility(QGraphicsItem *item);
-
+	
     protected:
         void keyPressEvent(QKeyEvent * keyEvent);
         void focusInEvent(QFocusEvent *focusEvent);
@@ -84,12 +84,14 @@ class ResultScene : public QGraphicsScene
         void clearMatches();
         void updateItemMargins();
         void arrangeItems(ResultItem *);
+        void initItemsHoverEvents();
 
     private:
         Plasma::RunnerManager *m_runnerManager;
 
         QSize       m_size;
         QTimer      m_clearTimer;
+        QTimer      m_hoverTimer;
 
         QList<ResultItem *>  m_items;
         QMultiMap<QString, ResultItem *>  m_itemsById;
