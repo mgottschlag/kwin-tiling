@@ -56,6 +56,9 @@ ResultScene::ResultScene(Plasma::RunnerManager *manager, QWidget *focusBase, QOb
     m_clearTimer.setSingleShot(true);
     connect(&m_clearTimer, SIGNAL(timeout()), this, SLOT(clearMatches()));
 
+    m_hoverTimer.setSingleShot(true);
+    connect(&m_hoverTimer, SIGNAL(timeout()), this, SLOT(initItemsHoverEvents()));
+
     m_selectionBar = new SelectionBar(0);
     addItem(m_selectionBar);
 
@@ -90,7 +93,6 @@ void ResultScene::resize(int width, int height)
 	    item->calculateSize(width, height);
         }
     }
-
     setSceneRect(itemsBoundingRect());
 }
 
@@ -117,6 +119,18 @@ bool ResultScene::canMoveItemFocus() const
 
 }
 
+void ResultScene::setItemsAcceptHoverEvents(bool enable)
+{
+    foreach (QGraphicsItem* tmpItem, items()) {
+        tmpItem->setAcceptHoverEvents(enable);
+    }
+}
+
+void ResultScene::initItemsHoverEvents()
+{
+    setItemsAcceptHoverEvents(true);
+}
+
 void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
 {
     //kDebug() << "============================" << endl << "matches retrieved: " << m.count();
@@ -134,6 +148,9 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         return;
     }
 
+    m_hoverTimer.stop();
+    setItemsAcceptHoverEvents(false);
+    
     //resize(width(), m.count() * ResultItem::BOUNDING_HEIGHT);
     m_clearTimer.stop();
     m_items.clear();
@@ -171,6 +188,9 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
 
     emit matchCountChanged(m.count());
     arrangeItems(0);
+
+    m_hoverTimer.start(200);
+
 }
 
 void ResultScene::arrangeItems(ResultItem *itemChanged)
@@ -206,7 +226,9 @@ void ResultScene::arrangeItems(ResultItem *itemChanged)
         tab = item;
     }
 
-    setSceneRect(QRect(0,0,width(),y));
+    // Here we cannot use itemsBoundingRect().height() because old items will be deleted on the next event cycle
+    // However we use itemsBoundingRect().width() to take care of width changes.
+    setSceneRect(QRect(0,0,itemsBoundingRect().width(),y));
 }
 
 ResultItem* ResultScene::addQueryMatch(const Plasma::QueryMatch &match, bool useAnyId)

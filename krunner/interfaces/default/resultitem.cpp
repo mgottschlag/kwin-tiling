@@ -63,7 +63,8 @@ ResultItem::ResultItem(const Plasma::QueryMatch &match, QGraphicsWidget *parent)
 {
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFlag(QGraphicsItem::ItemIsSelectable);
-    setAcceptHoverEvents(true);
+    // We will accept hover events later on;
+    setAcceptHoverEvents(false);
     setFocusPolicy(Qt::TabFocus);
     setCacheMode(DeviceCoordinateCache);
     setZValue(0);
@@ -421,6 +422,7 @@ void ResultItem::calculateSize()
         calculateSize(scene()->width(),scene()->height());
     }
 }
+
 void ResultItem::calculateSize(int sceneWidth, int sceneHeight) 
 {
 
