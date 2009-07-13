@@ -50,7 +50,6 @@ CurrentAppControl::CurrentAppControl(QObject *parent, const QVariantList &args)
       m_activeWindow(0),
       m_pendingActiveWindow(0)
 {
-    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_currentTask = new Plasma::IconWidget(this);
     m_currentTask->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_currentTask->setTextBackgroundColor(QColor());
