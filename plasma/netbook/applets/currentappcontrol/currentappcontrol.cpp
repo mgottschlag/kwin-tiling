@@ -116,9 +116,16 @@ void CurrentAppControl::activeWindowChanged(WId id)
 void CurrentAppControl::syncActiveWindow()
 {
     m_syncDelay = false;
-    QGraphicsView *v = view();
+    bool applicationActive = false;
 
-    if (m_pendingActiveWindow <= 0 || (v && m_pendingActiveWindow == v->effectiveWinId())) {
+    foreach (QWidget *widget, QApplication::topLevelWidgets()) {
+         if (widget->winId() == m_pendingActiveWindow) {
+             applicationActive = true;
+             break;
+         }
+     }
+
+    if (m_pendingActiveWindow <= 0 || applicationActive) {
         m_activeWindow = 0;
         m_currentTask->setIcon("preferences-system-windows");
         m_currentTask->setText(i18np("%1 running app", "%1 running apps", KWindowSystem::windows().count()-1));
