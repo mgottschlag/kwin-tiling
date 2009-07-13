@@ -1,36 +1,37 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>setpreview</class>
- <widget class="QFrame" name="setpreview" >
-  <property name="geometry" >
+ <widget class="QFrame" name="setpreview">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
-    <height>74</height>
+    <width>550</width>
+    <height>96</height>
    </rect>
   </property>
-  <property name="sizePolicy" >
-   <sizepolicy vsizetype="Minimum" hsizetype="Preferred" >
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="frameShape" >
+  <property name="frameShape">
    <enum>QFrame::StyledPanel</enum>
   </property>
-  <property name="frameShadow" >
+  <property name="frameShadow">
    <enum>QFrame::Sunken</enum>
   </property>
-  <layout class="QGridLayout" name="gridLayout" >
-   <property name="horizontalSpacing" >
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="horizontalSpacing">
     <number>0</number>
    </property>
-   <item row="0" column="0" >
-    <widget class="QWidget" native="1" name="widgetFore0" >
-     <layout class="QHBoxLayout" name="horizontalLayout" >
+   <item row="0" column="0">
+    <widget class="QWidget" name="widgetFore0" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QLabel" name="labelFore0" >
-        <property name="text" >
+       <widget class="QLabel" name="labelFore0">
+        <property name="text">
          <string>normal</string>
         </property>
        </widget>
@@ -38,17 +39,17 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="1" >
-    <widget class="QWidget" native="1" name="widgetFore3" >
-     <layout class="QHBoxLayout" name="horizontalLayout_2" >
+   <item row="0" column="1">
+    <widget class="QWidget" name="widgetFore3" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QLabel" name="labelFore3" >
-        <property name="font" >
+       <widget class="QLabel" name="labelFore3">
+        <property name="font">
          <font>
           <underline>true</underline>
          </font>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>link</string>
         </property>
        </widget>
@@ -56,17 +57,17 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="2" >
-    <widget class="QWidget" native="1" name="widgetFore4" >
-     <layout class="QHBoxLayout" name="horizontalLayout_3" >
+   <item row="0" column="2">
+    <widget class="QWidget" name="widgetFore4" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <widget class="QLabel" name="labelFore4" >
-        <property name="font" >
+       <widget class="QLabel" name="labelFore4">
+        <property name="font">
          <font>
           <underline>true</underline>
          </font>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>visited</string>
         </property>
        </widget>
@@ -74,12 +75,12 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="3" >
-    <widget class="QWidget" native="1" name="widgetFore2" >
-     <layout class="QHBoxLayout" name="horizontalLayout_4" >
+   <item row="0" column="3">
+    <widget class="QWidget" name="widgetFore2" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
-       <widget class="QLabel" name="labelFore2" >
-        <property name="text" >
+       <widget class="QLabel" name="labelFore2">
+        <property name="text">
          <string>active</string>
         </property>
        </widget>
@@ -87,12 +88,12 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="4" >
-    <widget class="QWidget" native="1" name="widgetFore1" >
-     <layout class="QHBoxLayout" name="horizontalLayout_5" >
+   <item row="0" column="4">
+    <widget class="QWidget" name="widgetFore1" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
-       <widget class="QLabel" name="labelFore1" >
-        <property name="text" >
+       <widget class="QLabel" name="labelFore1">
+        <property name="text">
          <string>inactive</string>
         </property>
        </widget>
@@ -100,12 +101,12 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="5" >
-    <widget class="QWidget" native="1" name="widgetFore5" >
-     <layout class="QHBoxLayout" name="horizontalLayout_6" >
+   <item row="0" column="5">
+    <widget class="QWidget" name="widgetFore5" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_6">
       <item>
-       <widget class="QLabel" name="labelFore5" >
-        <property name="text" >
+       <widget class="QLabel" name="labelFore5">
+        <property name="text">
          <string>negative</string>
         </property>
        </widget>
@@ -113,12 +114,12 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="6" >
-    <widget class="QWidget" native="1" name="widgetFore6" >
-     <layout class="QHBoxLayout" name="horizontalLayout_7" >
+   <item row="0" column="6">
+    <widget class="QWidget" name="widgetFore6" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_7">
       <item>
-       <widget class="QLabel" name="labelFore6" >
-        <property name="text" >
+       <widget class="QLabel" name="labelFore6">
+        <property name="text">
          <string>neutral</string>
         </property>
        </widget>
@@ -126,12 +127,12 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="7" >
-    <widget class="QWidget" native="1" name="widgetFore7" >
-     <layout class="QHBoxLayout" name="horizontalLayout_8" >
+   <item row="0" column="7">
+    <widget class="QWidget" name="widgetFore7" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_8">
       <item>
-       <widget class="QLabel" name="labelFore7" >
-        <property name="text" >
+       <widget class="QLabel" name="labelFore7">
+        <property name="text">
          <string>positive</string>
         </property>
        </widget>
@@ -139,12 +140,12 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="8" >
-    <widget class="QWidget" native="1" name="widgetFore8" >
-     <layout class="QHBoxLayout" name="horizontalLayout_9" >
+   <item row="0" column="8">
+    <widget class="QWidget" name="widgetFore8" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_9">
       <item>
-       <widget class="QLabel" name="labelFore8" >
-        <property name="text" >
+       <widget class="QLabel" name="labelFore8">
+        <property name="text">
          <string>hover</string>
         </property>
        </widget>
@@ -152,25 +153,12 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="9" >
-    <widget class="QWidget" native="1" name="widgetFore9" >
-     <layout class="QHBoxLayout" name="horizontalLayout_10" >
+   <item row="1" column="0">
+    <widget class="QWidget" name="widgetBack0" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_11">
       <item>
-       <widget class="QLabel" name="labelFore9" >
-        <property name="text" >
-         <string>focus</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="0" >
-    <widget class="QWidget" native="1" name="widgetBack0" >
-     <layout class="QHBoxLayout" name="horizontalLayout_11" >
-      <item>
-       <widget class="QLabel" name="labelBack0" >
-        <property name="text" >
+       <widget class="QLabel" name="labelBack0">
+        <property name="text">
          <string>normal</string>
         </property>
        </widget>
@@ -178,17 +166,17 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="1" >
-    <widget class="QWidget" native="1" name="widgetBack3" >
-     <layout class="QHBoxLayout" name="horizontalLayout_12" >
+   <item row="1" column="1">
+    <widget class="QWidget" name="widgetBack3" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_12">
       <item>
-       <widget class="QLabel" name="labelBack3" >
-        <property name="font" >
+       <widget class="QLabel" name="labelBack3">
+        <property name="font">
          <font>
           <underline>true</underline>
          </font>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>link</string>
         </property>
        </widget>
@@ -196,17 +184,17 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="2" >
-    <widget class="QWidget" native="1" name="widgetBack4" >
-     <layout class="QHBoxLayout" name="horizontalLayout_13" >
+   <item row="1" column="2">
+    <widget class="QWidget" name="widgetBack4" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_13">
       <item>
-       <widget class="QLabel" name="labelBack4" >
-        <property name="font" >
+       <widget class="QLabel" name="labelBack4">
+        <property name="font">
          <font>
           <underline>true</underline>
          </font>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>visited</string>
         </property>
        </widget>
@@ -214,12 +202,12 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="3" >
-    <widget class="QWidget" native="1" name="widgetBack2" >
-     <layout class="QHBoxLayout" name="horizontalLayout_14" >
+   <item row="1" column="3">
+    <widget class="QWidget" name="widgetBack2" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_14">
       <item>
-       <widget class="QLabel" name="labelBack2" >
-        <property name="text" >
+       <widget class="QLabel" name="labelBack2">
+        <property name="text">
          <string>active</string>
         </property>
        </widget>
@@ -227,12 +215,12 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="4" >
-    <widget class="QWidget" native="1" name="widgetBack1" >
-     <layout class="QHBoxLayout" name="horizontalLayout_15" >
+   <item row="1" column="4">
+    <widget class="QWidget" name="widgetBack1" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_15">
       <item>
-       <widget class="QLabel" name="labelBack1" >
-        <property name="text" >
+       <widget class="QLabel" name="labelBack1">
+        <property name="text">
          <string>alternate</string>
         </property>
        </widget>
@@ -240,12 +228,12 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="5" >
-    <widget class="QWidget" native="1" name="widgetBack5" >
-     <layout class="QHBoxLayout" name="horizontalLayout_16" >
+   <item row="1" column="5">
+    <widget class="QWidget" name="widgetBack5" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_16">
       <item>
-       <widget class="QLabel" name="labelBack5" >
-        <property name="text" >
+       <widget class="QLabel" name="labelBack5">
+        <property name="text">
          <string>negative</string>
         </property>
        </widget>
@@ -253,12 +241,12 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="6" >
-    <widget class="QWidget" native="1" name="widgetBack6" >
-     <layout class="QHBoxLayout" name="horizontalLayout_17" >
+   <item row="1" column="6">
+    <widget class="QWidget" name="widgetBack6" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_17">
       <item>
-       <widget class="QLabel" name="labelBack6" >
-        <property name="text" >
+       <widget class="QLabel" name="labelBack6">
+        <property name="text">
          <string>neutral</string>
         </property>
        </widget>
@@ -266,12 +254,12 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="7" >
-    <widget class="QWidget" native="1" name="widgetBack7" >
-     <layout class="QHBoxLayout" name="horizontalLayout_18" >
+   <item row="1" column="7">
+    <widget class="QWidget" name="widgetBack7" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_18">
       <item>
-       <widget class="QLabel" name="labelBack7" >
-        <property name="text" >
+       <widget class="QLabel" name="labelBack7">
+        <property name="text">
          <string>positive</string>
         </property>
        </widget>
@@ -279,25 +267,12 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="8" >
-    <widget class="QWidget" native="1" name="widgetBack8" >
-     <layout class="QHBoxLayout" name="horizontalLayout_19" >
+   <item row="1" column="8">
+    <widget class="QWidget" name="widgetFore9" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_10">
       <item>
-       <widget class="QLabel" name="labelBack8" >
-        <property name="text" >
-         <string>hover</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="9" >
-    <widget class="QWidget" native="1" name="widgetBack9" >
-     <layout class="QHBoxLayout" name="horizontalLayout_20" >
-      <item>
-       <widget class="QLabel" name="labelBack9" >
-        <property name="text" >
+       <widget class="QLabel" name="labelFore9">
+        <property name="text">
          <string>focus</string>
         </property>
        </widget>

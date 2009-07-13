@@ -44,8 +44,6 @@ SetPreviewWidget::SetPreviewWidget(QWidget *parent) : QFrame(parent)
     setAutoFill(widgetBack5);
     setAutoFill(widgetBack6);
     setAutoFill(widgetBack7);
-    setAutoFill(widgetBack8);
-    setAutoFill(widgetBack9);
     setAutoFillBackground(true);
 /*
     frame->setBackgroundRole(QPalette::Base);
@@ -133,10 +131,6 @@ void SetPreviewWidget::setPalette(const KSharedConfigPtr &config,
     deco = kcs.decoration(KColorScheme::d); \
     palette.setBrush(QPalette::Text, deco); \
     labelFore##n->setPalette(palette); \
-    deco = KColorUtils::tint(kcs.background().color(), deco.color()); \
-    palette.setBrush(QPalette::Base, deco); \
-    labelBack##n->setPalette(palette); \
-    widgetBack##n->setPalette(palette);
 
     SET_DECO_PALETTE(8, HoverColor);
     SET_DECO_PALETTE(9, FocusColor);
