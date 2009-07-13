@@ -259,8 +259,9 @@ void Pager::recalculateGeometry()
 
     //inverse rows and columns in vertical panel
     if (formFactor() == Plasma::Vertical) {
+        int temp = rows;
         rows = columns;
-        columns = rows;
+        columns = temp;
     }
 
     qreal leftMargin = 0;
