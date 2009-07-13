@@ -100,9 +100,9 @@ void HotplugEngine::onDeviceAdded(const QString &udi)
         data.insert("udi", udi);
 
         if (device.vendor().isEmpty()) {
-            data.insert("text", device.product());
+            data.insert("text", device.description());
         } else {
-            data.insert("text", device.vendor() + ' ' + device.product());
+            data.insert("text", device.vendor() + ' ' + device.description());
         }
         data.insert("icon", device.icon());
         setData(udi, "icon", device.icon());

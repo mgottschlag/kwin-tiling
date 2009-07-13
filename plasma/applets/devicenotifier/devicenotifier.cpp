@@ -223,7 +223,7 @@ void DeviceNotifier::toolTipAboutToShow()
     Plasma::ToolTipContent toolTip;
     if (!m_lastPlugged.isEmpty()) {
         Solid::Device device(m_lastPlugged.last());
-        toolTip.setSubText(i18n("Last plugged in device: %1", device.product()));
+        toolTip.setSubText(i18n("Last plugged in device: %1", device.description()));
         toolTip.setImage(KIcon(device.icon()));
     } else {
         toolTip.setSubText(i18n("No devices plugged in"));
