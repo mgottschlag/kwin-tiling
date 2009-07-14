@@ -55,7 +55,7 @@
 
 namespace KWorkSpace
 {
-
+#ifdef Q_WS_X11
 static void save_yourself_callback( SmcConn conn_P, SmPointer, int, Bool , int, Bool )
     {
     SmcSaveYourselfDone( conn_P, True );
@@ -155,10 +155,12 @@ static void cleanup_sm()
 {
     delete helper;
 }
+#endif
 
 bool requestShutDown(
     ShutdownConfirm confirm, ShutdownType sdtype, ShutdownMode sdmode )
 {
+#ifdef Q_WS_X11
     QApplication::syncX();
     kapp->updateRemoteUserTimestamp( "org.kde.ksmserver" );
     /*  use ksmserver's dcop interface if necessary  */
@@ -176,12 +178,16 @@ bool requestShutDown(
         qAddPostRoutine(cleanup_sm);
     }
     return helper->requestShutdown( confirm );
+#else
+    return false;
+#endif
 }
 
 bool canShutDown( ShutdownConfirm confirm,
                   ShutdownType sdtype,
                   ShutdownMode sdmode )
 {
+#ifdef Q_WS_X11
     if ( confirm == ShutdownConfirmYes ||
          sdtype != ShutdownTypeDefault ||
          sdmode != ShutdownModeDefault )
@@ -195,11 +201,15 @@ bool canShutDown( ShutdownConfirm confirm,
     }
 
     return true;
+#else
+    return false;
+#endif
 }
 
 static QTime smModificationTime;
 void propagateSessionManager()
 {
+#ifdef Q_WS_X11
     QByteArray fName = QFile::encodeName(KStandardDirs::locateLocal("socket", "KSMserver"));
     QString display = QString::fromLocal8Bit( ::getenv(DISPLAY) );
     // strip the screen number from the display
@@ -229,6 +239,7 @@ void propagateSessionManager()
         f.close();
         ::setenv( "SESSION_MANAGER", s.toLatin1(), true  );
     }
+#endif
 }
 
 } // end namespace
