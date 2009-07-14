@@ -20,9 +20,9 @@
 #ifndef KWORKSPACE_P_H
 #define KWORKSPACE_P_H
 
-#ifdef Q_WS_X11
-
 #include "kworkspace.h"
+
+#ifdef Q_WS_X11
 
 class QSocketNotifier;
 
