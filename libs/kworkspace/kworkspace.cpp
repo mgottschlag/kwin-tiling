@@ -64,9 +64,10 @@ static void save_yourself_callback( SmcConn conn_P, SmPointer, int, Bool , int, 
 static void dummy_callback( SmcConn, SmPointer )
     {
     }
-
+#endif
 KRequestShutdownHelper::KRequestShutdownHelper()
     {
+#ifdef Q_WS_X11	    
     SmcCallbacks calls;
     calls.save_yourself.callback = save_yourself_callback;
     calls.die.callback = dummy_callback;
@@ -121,34 +122,41 @@ KRequestShutdownHelper::KRequestShutdownHelper()
     notifier = new QSocketNotifier( IceConnectionNumber( SmcGetIceConnection( conn )),
         QSocketNotifier::Read, this );
     connect( notifier, SIGNAL( activated( int )), SLOT( processData()));
+#endif
     }
 
 KRequestShutdownHelper::~KRequestShutdownHelper()
     {
+#ifdef Q_WS_X11	    
     if( conn != NULL )
         {
         delete notifier;
         SmcCloseConnection( conn, 0, NULL );
         }
+#endif
     }
 
 void KRequestShutdownHelper::processData()
     {
+#ifdef Q_WS_X11	    
     if( conn != NULL )
         IceProcessMessages( SmcGetIceConnection( conn ), 0, 0 );
+#endif    
     }
 
 bool KRequestShutdownHelper::requestShutdown( ShutdownConfirm confirm )
     {
+#ifdef Q_WS_X11	    
     if( conn == NULL )
         return false;
     SmcRequestSaveYourself( conn, SmSaveBoth, True, SmInteractStyleAny,
         confirm == ShutdownConfirmNo, True );
     // flush the request
     IceFlush(SmcGetIceConnection(conn));
+#endif    
     return true;
     }
-
+#ifdef Q_WS_X11
 static KRequestShutdownHelper* helper = NULL;
 
 static void cleanup_sm()
