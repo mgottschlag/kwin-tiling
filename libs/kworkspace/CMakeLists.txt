@@ -3,11 +3,8 @@
 set(kworkspace_LIB_SRCS kdisplaymanager.cpp
                         kwindowlistmenu.cpp
                         screenpreviewwidget.cpp
+                        kworkspace.cpp
    )
-
-if(NOT WIN32)
-	list(APPEND kworkspace_LIB_SRCS kworkspace.cpp)
-endif(NOT WIN32)
 
 set(ksmserver_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerInterface.xml)
 qt4_add_dbus_interface( kworkspace_LIB_SRCS ${ksmserver_xml} ksmserver_interface )
@@ -33,10 +30,5 @@ install(TARGETS kworkspace EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_D
 
 install( FILES kdisplaymanager.h
                kwindowlistmenu.h
-         DESTINATION ${INCLUDE_INSTALL_DIR}/kworkspace COMPONENT Devel )
-
-if(NOT WIN32)
-	install( FILES 
                kworkspace.h
          DESTINATION ${INCLUDE_INSTALL_DIR}/kworkspace COMPONENT Devel )
-endif(NOT WIN32)

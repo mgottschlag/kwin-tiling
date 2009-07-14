@@ -20,6 +20,8 @@
 #ifndef KWORKSPACE_P_H
 #define KWORKSPACE_P_H
 
+#ifdef Q_WS_X11
+
 #include "kworkspace.h"
 
 class QSocketNotifier;
@@ -39,13 +41,13 @@ class KRequestShutdownHelper
     private slots:
         void processData();
     private:
-#ifndef Q_WS_WIN
 		SmcConn connection() const { return conn; }
         SmcConn conn;
-#endif
         QSocketNotifier* notifier;
     };
  
 }
+
+#endif
 
 #endif
