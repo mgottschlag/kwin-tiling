@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=Panel for Netbooks
 Name[fr]=Panneau pour Netbooks
+Name[pt]=Painel para Mini-Computadores
+Name[pt_BR]=Painel para Mini-Computadores
 Name[sv]=Panel för bärbara nätdatorer
 Name[x-test]=xxPanel for Netbooksxx
 Comment=A containment for a panel
