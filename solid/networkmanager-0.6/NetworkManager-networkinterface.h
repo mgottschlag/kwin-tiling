@@ -85,6 +85,7 @@ public:
 Q_SIGNALS:
     void ipDetailsChanged();
     void connectionStateChanged(int state);
+    void connectionStateChanged(int new_state, int old_state, int reason);
 protected:
     NMNetworkInterface(NMNetworkInterfacePrivate &dd);
     NMNetworkInterfacePrivate * d_ptr;

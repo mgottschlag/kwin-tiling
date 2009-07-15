@@ -27,10 +27,7 @@
 Solid::Control::NetworkInterface::NetworkInterface(QObject *backendObject)
     : QObject(), d_ptr(new NetworkInterfacePrivate(this))
 {
-    Q_D(NetworkInterface);
-    d->setBackendObject(backendObject);
-}
-
+    Q_D(NetworkInterface); d->setBackendObject(backendObject); } 
 Solid::Control::NetworkInterface::NetworkInterface(const NetworkInterface &other)
     : QObject(), d_ptr(new NetworkInterfacePrivate(this))
 {
@@ -115,6 +112,8 @@ void Solid::Control::NetworkInterfacePrivate::setBackendObject(QObject *object)
     if (object) {
         QObject::connect(object, SIGNAL(connectionStateChanged(int)),
                          parent(), SIGNAL(connectionStateChanged(int)));
+        QObject::connect(object, SIGNAL(connectionStateChanged(int,int,int)),
+                         parent(), SIGNAL(connectionStateChanged(int,int,int)));
     }
 }
 

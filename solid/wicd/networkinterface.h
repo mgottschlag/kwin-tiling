@@ -51,6 +51,7 @@ public:
 Q_SIGNALS:
     void ipDetailsChanged();
     void connectionStateChanged(int state);
+    void connectionStateChanged(int old_state, int new_state, int reason);
 private:
     WicdNetworkInterfacePrivate *d;
 };

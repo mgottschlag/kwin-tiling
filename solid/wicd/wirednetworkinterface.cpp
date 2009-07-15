@@ -91,8 +91,9 @@ void WicdWiredNetworkInterface::recacheInformation()
         }
 
         if (connection_state != d->connection_state) {
+            int old_state = d->connection_state;
             connection_state = d->connection_state;
-            emit connectionStateChanged(d->connection_state);
+            emit connectionStateChanged(d->connection_state, old_state, Solid::Control::NetworkInterface::NoReason);
         }
     } else {
         if (d->carrier != false) {

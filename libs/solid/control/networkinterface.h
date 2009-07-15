@@ -57,6 +57,24 @@ namespace Control
         enum ConnectionState{ UnknownState, Unmanaged, Unavailable, Disconnected, Preparing,
                               Configuring, NeedAuth, IPConfig, Activated, Failed };
         /**
+         * Enums describing the reason for a connection state change
+         */
+        enum ConnectionStateChangeReason{ NoReason=1, NowManagedReason, NowUnmanagedReason,
+                                    ConfigFailedReason, ConfigUnavailableReason,
+                                    ConfigExpiredReason, NoSecretsReason, AuthSupplicantDisconnectReason,
+                                    AuthSupplicantConfigFailedReason, AuthSupplicantFailedReason,
+                                    AuthSupplicantTimeoutReason, PppStartFailedReason, PppDisconnectReason,
+                                    PppFailedReason, DhcpStartFailedReason, DhcpErrorReason, DhcpFailedReason,
+                                    SharedStartFailedReason, SharedFailedReason,
+                                    AutoIpStartFailedReason, AutoIpErrorReason, AutoIpFailedReason,
+                                    ModemBusyReason, ModemNoDialToneReason, ModemNoCarrierReason, ModemDialTimeoutReason,
+                                    ModemDialFailedReason, ModemInitFailedReason,
+                                    GsmApnSelectFailedReason, GsmNotSearchingReason, GsmRegistrationDeniedReason,
+                                    GsmRegistrationTimeoutReason, GsmRegistrationFailedReason,
+                                    GsmPinCheckFailedReason, FirmwareMissingReason, DeviceRemovedReason,
+                                    SleepingReason, ConnectionRemovedReason, UserRequestedReason, CarrierReason,
+                                    Reserved = 65536 };
+        /**
          * Possible Device capabilities
          * - IsManageable: denotes that the device can be controlled by this API
          * - SupportsCarrierDetect: the device informs us when it is plugged in to the medium
@@ -177,6 +195,17 @@ namespace Control
          * @see Solid::Control::NetworkInterface::ConnectionState
          */
         void connectionStateChanged(int state);
+
+        /**
+         * This signal is emitted when the device's link status changed.
+         * 
+         * @param new_state the new state of the connection
+         * @param old_state the previous state of the connection
+         * @param reason the reason for the state change, if any.  ReasonNone where the backend
+         * provides no reason.
+         * @see Solid::Control::NetworkInterface::ConnectionState
+         */
+        void connectionStateChanged(int new_state, int old_state, int reason );
 
     protected:
         /**

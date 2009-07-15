@@ -65,12 +65,12 @@ NMWirelessNetworkInterface::NMWirelessNetworkInterface(const QString & path, NMN
     QDBusReply< QList <QDBusObjectPath> > apPathList = d->wirelessIface.GetAccessPoints();
     if (apPathList.isValid())
     {
-        kDebug(1441) << "Got device list";
+        //kDebug(1441) << "Got device list";
         QList <QDBusObjectPath> aps = apPathList.value();
         foreach (const QDBusObjectPath &op, aps)
         {
             d->accessPoints.append(op.path());
-            kDebug(1441) << "  " << op.path();
+            //kDebug(1441) << "  " << op.path();
         }
     }
     else
@@ -125,7 +125,7 @@ QObject * NMWirelessNetworkInterface::createAccessPoint(const QString & uni)
 
 void NMWirelessNetworkInterface::wirelessPropertiesChanged(const QVariantMap & changedProperties)
 {
-    kDebug(1441) << changedProperties.keys();
+    //kDebug(1441) << changedProperties.keys();
     QStringList propKeys = changedProperties.keys();
     Q_D(NMWirelessNetworkInterface);
     QLatin1String activeApKey("ActiveAccessPoint"),
@@ -168,7 +168,7 @@ void NMWirelessNetworkInterface::wirelessPropertiesChanged(const QVariantMap & c
 
 void NMWirelessNetworkInterface::accessPointAdded(const QDBusObjectPath &apPath)
 {
-    kDebug(1441) << apPath.path();
+    //kDebug(1441) << apPath.path();
     Q_D(NMWirelessNetworkInterface);
     if (!d->accessPoints.contains(apPath.path())) {
         d->accessPoints.append(apPath.path());
@@ -178,7 +178,7 @@ void NMWirelessNetworkInterface::accessPointAdded(const QDBusObjectPath &apPath)
 
 void NMWirelessNetworkInterface::accessPointRemoved(const QDBusObjectPath &apPath)
 {
-    kDebug(1441) << apPath.path();
+    //kDebug(1441) << apPath.path();
     Q_D(NMWirelessNetworkInterface);
     if (!d->accessPoints.contains(apPath.path())) {
         kDebug(1441) << "Access point list lookup failed for " << apPath.path();
