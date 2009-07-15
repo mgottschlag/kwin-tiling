@@ -201,6 +201,7 @@ namespace Control
 } //Solid
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Solid::Control::NetworkInterface::Capabilities)
+Q_DECLARE_OPERATORS_FOR_FLAGS(Solid::Control::NetworkInterface::Types)
 
 #endif //SOLID_CONTROL_NETWORKINTERFACE_H
 
