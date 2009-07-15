@@ -43,7 +43,7 @@ void SM::Ram::init()
     setEngine(dataEngine("systemmonitor"));
     setInterval(cg.readEntry("interval", 2) * 1000);
     setTitle(i18n("RAM"));
-    
+
     Plasma::Theme* theme = Plasma::Theme::defaultTheme();
     m_showTopBar = cg.readEntry("showTopBar", true);
     m_showBackground = cg.readEntry("showBackground", true);
@@ -81,7 +81,7 @@ bool SM::Ram::addMeter(const QString& source)
     QString ram = l[1];
     Plasma::Theme* theme = Plasma::Theme::defaultTheme();
     Plasma::SignalPlotter *plotter = new Plasma::SignalPlotter(this);
-    plotter->addPlot(theme->color(Plasma::Theme::TextColor));
+    plotter->addPlot(m_graphColor);
     plotter->setUseAutoRange(false);
     plotter->setThinFrame(false);
     plotter->setShowLabels(false);
