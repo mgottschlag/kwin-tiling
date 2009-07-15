@@ -113,6 +113,18 @@ namespace Ifaces
          * @see Solid::Control::NetworkInterface::ConnectionState
          */
         virtual void connectionStateChanged(int state) = 0;
+
+        /**
+         * This signal is emitted when the device's link status changed.
+         * 
+         * @param new_state the new state of the connection
+         * @param old_state the previous state of the connection
+         * @param reason the reason for the state change, if any.  ReasonNone where the backend
+         * provides no reason.
+         * @see Solid::Control::NetworkInterface::ConnectionState
+         */
+        virtual void connectionStateChanged(int new_state, int old_state, int reason ) = 0;
+
     };
 } //Ifaces
 } //Control

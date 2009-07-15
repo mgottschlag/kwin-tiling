@@ -72,7 +72,8 @@ public:
 Q_SIGNALS:
     void ipDetailsChanged();
     //void linkUpChanged(bool linkActivated);
-    void connectionStateChanged(int state);
+    void connectionStateChanged(int newstate);
+    void connectionStateChanged(int newstate, int oldstate, int reason);
 protected Q_SLOTS:
     void stateChanged(uint,uint,uint);
 private:

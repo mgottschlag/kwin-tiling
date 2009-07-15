@@ -54,6 +54,7 @@ public:
         void activeChanged(bool);
         void linkUpChanged(bool);
         void connectionStateChanged(int /*NetworkStatus::ConnectionState */);
+        void connectionStateChanged(int,int,int);
 
     protected:
         /* These methods are operations that are carried out by the manager

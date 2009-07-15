@@ -7,6 +7,7 @@ include_directories(
 )
 
 #add_subdirectory(dbus)
+#add_subdirectory(fakemanager)
 
 #add_subdirectory(tests)
 
