@@ -30,7 +30,7 @@ class KBlankSaverInterface : public KScreenSaverInterface
 public:
     virtual KAboutData* aboutData()
     {
-        return new KAboutData( "kblankscrn.kss", 0, ki18n( "KBlankScreen" ),
+        return new KAboutData( "kblankscrn", 0, ki18n( "KBlankScreen" ),
                                KDE_VERSION_STRING, ki18n( "Blank Screen Saver" ) );
     }
 
