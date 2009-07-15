@@ -69,7 +69,7 @@ KGDialog::completeMenu()
 #endif
 
 	if (_allowClose || _isReserve)
-		inserten( _isReserve ? i18n("Abort S&ession") :
+		inserten( _isReserve ? i18n("Canc&el Session") :
 		          _isLocal ? i18n("R&estart X Server") :
 		                     i18n("Clos&e Connection"),
 		          Qt::ALT+Qt::Key_E, SLOT(slotExit()) );

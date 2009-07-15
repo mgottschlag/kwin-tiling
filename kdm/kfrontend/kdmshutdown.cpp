@@ -668,8 +668,8 @@ KDMCancelShutdown::KDMCancelShutdown( int how, int start, int timeout,
 			mayNuke = doesNuke = true;
 	}
 	QLabel *lab = new QLabel( mayOk ?
-	                          i18n("Abort pending shutdown:") :
-	                          i18n("No permission to abort pending shutdown:"),
+	                          i18n("Cancel pending shutdown:") :
+	                          i18n("No permission to cancel pending shutdown:"),
 	                          this );
 	box->addWidget( lab );
 	QDateTime qdt;
