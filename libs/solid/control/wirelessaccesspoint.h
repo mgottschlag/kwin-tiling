@@ -116,7 +116,7 @@ namespace Control
         Solid::Control::WirelessNetworkInterface::OperationMode mode() const;
 
         /**
-         * Retrieves the current signal strength of this wifi network.
+         * Retrieves the current signal strength of this access point
          *
          * @return the signal strength as a percentage
          */
@@ -124,16 +124,16 @@ namespace Control
 
     Q_SIGNALS:
         /**
-         * This signal is emitted when the signal strength of this network has changed.
+         * This signal is emitted when the signal strength of this access point has changed.
          *
-         * @param strength the new signal strength value for this network
+         * @param strength the new signal strength value for this access point.
          */
         void signalStrengthChanged(int strength);
 
         /**
-         * This signal is emitted when the bitrate of this network has changed.
+         * This signal is emitted when the bitrate of this access point has changed.
          *
-         * @param bitrate the new bitrate value for this network
+         * @param bitrate the new bitrate value for this access point
          */
         void bitRateChanged(int bitrate);
 
