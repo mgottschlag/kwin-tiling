@@ -109,7 +109,6 @@ PlasmaApp::PlasmaApp()
     KWindowSystem::setOnAllDesktops(m_controlBar->effectiveWinId(), true);
     m_controlBar->setWindowFlags(m_window->windowFlags() | Qt::FramelessWindowHint);
     m_controlBar->setFrameShape(QFrame::NoFrame);
-    m_controlBar->show();
     KWindowSystem::setType(m_controlBar->effectiveWinId(), NET::Dock);
     unsigned long state = NET::Sticky | NET::StaysOnTop | NET::KeepAbove;
     KWindowSystem::setState(m_controlBar->effectiveWinId(), state);
@@ -123,6 +122,9 @@ PlasmaApp::PlasmaApp()
     m_controlBar->setAutoFillBackground(false);
     m_controlBar->viewport()->setAutoFillBackground(false);
     m_controlBar->setAttribute(Qt::WA_TranslucentBackground);
+    //hack necessary to be in front of the main window
+    m_controlBar->setWindowFlags(Qt::X11BypassWindowManagerHint);
+    m_controlBar->show();
     connect(m_controlBar, SIGNAL(locationChanged(const NetView *)), this, SLOT(controlBarMoved(const NetView *)));
     connect(m_controlBar, SIGNAL(geometryChanged()), this, SLOT(positionPanel()));
 
@@ -145,8 +147,7 @@ PlasmaApp::PlasmaApp()
         }
     }
 
-    //FIXME, TERRIBLE HACK, having a full size makes the main view to go over the panel
-    m_window->resize(width-1, height);
+    m_window->resize(width, height);
 
     // this line initializes the corona.
     corona();
@@ -274,6 +275,7 @@ void PlasmaApp::adjustSize(Kephal::Screen *screen)
     int width = rect.width();
     int height = rect.height();
     m_window->setFixedSize(width, height);
+    m_controlBar->resize(width, m_controlBar->height());
     reserveStruts();
 }
 
