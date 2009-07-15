@@ -36,6 +36,7 @@
 #include <KGenericFactory>
 #include <KGlobal>
 #include <KGlobalSettings>
+#include <KColorUtils>
 #include <KInputDialog>
 #include <KMessageBox>
 #include <KStandardDirs>
@@ -296,10 +297,64 @@ void KColorCm::on_schemeImportButton_clicked()
 
         // load the scheme
         KSharedConfigPtr config = KSharedConfig::openConfig(url.path());
-        loadScheme(config);
 
-        // save it
-        saveScheme(url.fileName());
+        if (config->groupList().contains("Color Scheme"))
+        {
+            if (KMessageBox::Continue != KMessageBox::warningContinueCancel(this,
+                i18n("The scheme you have selected appears to be a KDE3 scheme.\n\n"
+                     "KDE will attempt to import this scheme, however many color roles have been added since KDE3. "
+                     "Some manual work will likely be required.\n\n"
+                     "This scheme will not be saved automatically."),
+                i18n("Notice")))
+            {
+                return;
+            }
+
+            // convert KDE3 scheme to KDE4 scheme
+            KConfigGroup g(config, "Color Scheme");
+
+            colorSet->setCurrentIndex(0);
+            contrastSlider->setValue(g.readEntry("contrast", KGlobalSettings::contrast()));
+            shadeSortedColumn->setCheckState(g.readEntry("shadeSortColumn", KGlobalSettings::shadeSortColumn()) ? Qt::Checked : Qt::Unchecked);
+
+            m_commonColorButtons[0]->setColor(g.readEntry("windowBackground", m_colorSchemes[KColorScheme::View].background().color()));
+            m_commonColorButtons[1]->setColor(g.readEntry("windowForeground", m_colorSchemes[KColorScheme::View].foreground().color()));
+            m_commonColorButtons[2]->setColor(g.readEntry("background", m_colorSchemes[KColorScheme::Window].background().color()));
+            m_commonColorButtons[3]->setColor(g.readEntry("foreground", m_colorSchemes[KColorScheme::Window].foreground().color()));
+            m_commonColorButtons[4]->setColor(g.readEntry("buttonBackground", m_colorSchemes[KColorScheme::Button].background().color()));
+            m_commonColorButtons[5]->setColor(g.readEntry("buttonForeground", m_colorSchemes[KColorScheme::Button].foreground().color()));
+            m_commonColorButtons[6]->setColor(g.readEntry("selectBackground", m_colorSchemes[KColorScheme::Selection].background().color()));
+            m_commonColorButtons[7]->setColor(g.readEntry("selectForeground", m_colorSchemes[KColorScheme::Selection].foreground().color()));
+            m_commonColorButtons[8]->setColor(KColorUtils::mix(m_colorSchemes[KColorScheme::Selection].foreground().color(),
+                                                               m_colorSchemes[KColorScheme::Selection].background().color()));
+            m_commonColorButtons[9]->setColor(KColorUtils::mix(m_colorSchemes[KColorScheme::View].foreground().color(),
+                                                               m_colorSchemes[KColorScheme::View].background().color()));
+            // doesn't exist in KDE3: 10 ActiveText
+            m_commonColorButtons[11]->setColor(g.readEntry("linkColor", m_colorSchemes[KColorScheme::View].foreground(KColorScheme::LinkText).color()));
+            m_commonColorButtons[12]->setColor(g.readEntry("visitedLinkColor", m_colorSchemes[KColorScheme::View].foreground(KColorScheme::VisitedText).color()));
+            // doesn't exist in KDE3: 13-15 PositiveText, NeutralText, NegativeText
+            m_commonColorButtons[16]->setColor(g.readEntry("selectBackground", m_colorSchemes[KColorScheme::View].decoration(KColorScheme::FocusColor).color()));
+            m_commonColorButtons[17]->setColor(g.readEntry("selectBackground", m_colorSchemes[KColorScheme::View].decoration(KColorScheme::HoverColor).color()));
+            m_commonColorButtons[18]->setColor(g.readEntry("windowBackground", m_colorSchemes[KColorScheme::Tooltip].background().color()));
+            m_commonColorButtons[19]->setColor(g.readEntry("windowForeground", m_colorSchemes[KColorScheme::Tooltip].foreground().color()));
+            m_commonColorButtons[20]->setColor(g.readEntry("activeBackground", m_wmColors.color(WindecoColors::ActiveBackground)));
+            m_commonColorButtons[21]->setColor(g.readEntry("activeForeground", m_wmColors.color(WindecoColors::ActiveForeground)));
+            m_commonColorButtons[22]->setColor(g.readEntry("inactiveBackground", m_wmColors.color(WindecoColors::InactiveBackground)));
+            m_commonColorButtons[23]->setColor(g.readEntry("inactiveForeground", m_wmColors.color(WindecoColors::InactiveForeground)));
+
+            colorSet->setCurrentIndex(1);
+            m_backgroundButtons[KColorScheme::AlternateBackground]->setColor(g.readEntry("alternateBackground",
+                                                                                         m_colorSchemes[KColorScheme::View].background(KColorScheme::AlternateBackground).color()));
+            colorSet->setCurrentIndex(0);
+        }
+        else
+        {
+            // load KDE4 scheme
+            loadScheme(config);
+
+            // save it
+            saveScheme(url.fileName());
+        }
     }
 }
 
