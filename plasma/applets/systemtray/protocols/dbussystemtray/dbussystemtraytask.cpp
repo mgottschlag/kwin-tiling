@@ -122,6 +122,7 @@ DBusSystemTrayTask::DBusSystemTrayTask(const QString &service, QObject *parent)
     if (d->valid) {
         connect(d->notificationItemInterface, SIGNAL(NewIcon()), this, SLOT(refresh()));
         connect(d->notificationItemInterface, SIGNAL(NewAttentionIcon()), this, SLOT(refresh()));
+        connect(d->notificationItemInterface, SIGNAL(NewOverlayIcon()), this, SLOT(refresh()));
         connect(d->notificationItemInterface, SIGNAL(NewToolTip()), this, SLOT(refresh()));
         connect(d->notificationItemInterface, SIGNAL(NewStatus(QString)), this, SLOT(syncStatus(QString)));
         d->refresh();
