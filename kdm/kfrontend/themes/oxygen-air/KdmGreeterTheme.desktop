@@ -5,6 +5,7 @@
 Greeter=oxygen-air.xml
 Name=Oxygen-Air
 Name[ar]=أكسجين-هواء
+Name[hi]=आक्सीजन-एयर
 Name[km]=ខ្យល់​អុកស៊ីហ្សែន
 Name[kn]=ಆಮ್ಲಜನಕ -ಗಾಳಿ
 Name[mai]=आक्सीजन-हवा
@@ -12,6 +13,7 @@ Name[mk]=Оксиген-Аир
 Name[pa]=ਆਕਸੀਜਨ-ਹਵਾ
 Name[pt]=Ar-Oxygen
 Name[pt_BR]=Oxygen-Ar
+Name[sl]=Kisik-Zrak
 Name[sr]=Кисеоник-ваздух
 Name[sr@latin]=Kiseonik-vazduh
 Name[sv]=Oxygenluft
