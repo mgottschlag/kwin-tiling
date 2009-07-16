@@ -104,7 +104,7 @@ QIcon PlasmoidTask::icon() const
 
 QGraphicsWidget* PlasmoidTask::createWidget(Plasma::Applet *host)
 {
-    if (host != d->host) {
+    if (host != d->host || !d->applet) {
         return 0;
     }
 
@@ -112,6 +112,8 @@ QGraphicsWidget* PlasmoidTask::createWidget(Plasma::Applet *host)
     d->applet->setParent(host);
     d->applet->setParentItem(host);
     d->applet->init();
+    d->applet->updateConstraints(Plasma::StartupCompletedConstraint);
+    d->applet->flushPendingConstraintsEvents();
     d->applet->updateConstraints(Plasma::AllConstraints);
     d->applet->flushPendingConstraintsEvents();
 

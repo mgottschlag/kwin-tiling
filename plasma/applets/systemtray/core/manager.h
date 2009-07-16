@@ -102,6 +102,12 @@ public:
 
     void loadApplets(const KConfigGroup &cg, Plasma::Applet *parent);
 
+    void addApplet(const QString appletName, Plasma::Applet *parent);
+
+    void removeApplet(const QString appletName, Plasma::Applet *parent);
+
+    QStringList applets() const;
+
 signals:
     /**
      * Emitted when a new task has been added

@@ -34,6 +34,7 @@
 #include <QtGui/QX11Info>
 #include <QtCore/QProcess>
 
+
 #include <KActionSelector>
 #include <KConfigDialog>
 
@@ -62,6 +63,7 @@
 
 #include "ui_protocols.h"
 #include "ui_autohide.h"
+#include "ui_plasmoidtasks.h"
 
 namespace SystemTray
 {
@@ -107,6 +109,7 @@ public:
     TaskArea *taskArea;
     QPointer<QWidget> notificationInterface;
     QPointer<QWidget> autoHideInterface;
+    QPointer<QWidget> plasmoidTasksInterface;
     QList<Job*> jobs;
     QSet<Task::Category> shownCategories;
     QDateTime lastActivity;
@@ -121,6 +124,7 @@ public:
 
     Ui::ProtocolsConfig notificationUi;
     Ui::AutoHideConfig autoHideUi;
+    Ui::PlasmoidTasksConfig plasmoidTasksUi;
 };
 
 Manager *Applet::Private::s_manager = 0;
@@ -464,6 +468,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         KConfigGroup globalCg = globalConfig();
         d->notificationInterface = new QWidget();
         d->autoHideInterface = new QWidget();
+        d->plasmoidTasksInterface = new QWidget();
 
         d->notificationUi.setupUi(d->notificationInterface);
 
@@ -478,6 +483,9 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         d->autoHideUi.setupUi(d->autoHideInterface);
         d->autoHideUi.autoHide->setChecked(config().readEntry("AutoHidePopup", true));
 
+        d->plasmoidTasksUi.setupUi(d->plasmoidTasksInterface);
+
+
         connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
         connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 
@@ -485,9 +493,11 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
                         "preferences-desktop-notification",
                         i18n("Choose which information to show"));
         parent->addPage(d->autoHideInterface, i18n("Auto Hide"), "window-suppressed");
+        parent->addPage(d->plasmoidTasksInterface, i18n("Plasma widgets"), "plasma");
     }
 
     d->autoHideUi.icons->clear();
+    d->plasmoidTasksUi.applets->clear();
 
     QMultiMap<QString, const Task *> sortedTasks;
     foreach (const Task *task, Private::s_manager->tasks()) {
@@ -511,6 +521,20 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         listItem->setCheckState((task->hidden() & Task::UserHidden) ? Qt::Unchecked : Qt::Checked);
         d->autoHideUi.icons->addItem(listItem);
     }
+
+    foreach (const KPluginInfo &info, Plasma::Applet::listAppletInfo()) {
+        KService::Ptr service = info.service();
+        if (service->property("X-Plasma-NotificationArea", QVariant::Bool).toBool()) {
+            QListWidgetItem *listItem = new QListWidgetItem();
+            listItem->setText(service->name());
+            listItem->setIcon(KIcon(service->icon()));
+            listItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+            listItem->setData(Qt::UserRole, info.pluginName());
+            listItem->setCheckState((Private::s_manager->applets().contains(info.pluginName())) ? Qt::Checked : Qt::Unchecked);
+            d->plasmoidTasksUi.applets->addItem(listItem);
+        }
+    }
+
 }
 
 void Applet::configAccepted()
@@ -594,6 +618,22 @@ void Applet::configAccepted()
     d->shownCategories.insert(Task::UnknownCategory);
 
     d->taskArea->syncTasks(manager()->tasks());
+
+    QStringList applets = Private::s_manager->applets();
+    for (int i = 0; i < d->plasmoidTasksUi.applets->count(); ++i) {
+        QListWidgetItem * item = d->plasmoidTasksUi.applets->item(i);
+        QString appletName = item->data(Qt::UserRole).toString();
+
+        if (item->checkState() == Qt::Checked) {
+            applets.removeAll(appletName);
+            Private::s_manager->addApplet(appletName, this);
+        }
+    }
+
+    foreach (QString appletName, applets) {
+        Private::s_manager->removeApplet(appletName, this);
+    }
+
     emit configNeedsSaving();
 }
 

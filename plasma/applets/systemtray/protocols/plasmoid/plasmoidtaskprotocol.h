@@ -28,6 +28,7 @@
 #include <KConfigGroup>
 
 #include <QHash>
+#include <QStringList>
 
 namespace SystemTray
 {
@@ -46,11 +47,15 @@ public:
 
     void forwardConstraintsEvent(Plasma::Constraints constraints);
     void loadFromConfig(const KConfigGroup &cg, Plasma::Applet *parent);
+    void addApplet(const QString appletName, Plasma::Applet *parent);
+    void removeApplet(const QString appletName, Plasma::Applet *parent);
+    QStringList applets() const;
 
 private slots:
     void cleanupTask(QString typeId);
 
 private:
+    //FIXME: applets must be indicized by name -and- parent
     QHash<QString, PlasmoidTask*> m_tasks;
 };
 

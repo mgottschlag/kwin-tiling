@@ -42,7 +42,8 @@ set(systemtray_SRCS
 
 kde4_add_ui_files(systemtray_SRCS
                   ui/protocols.ui
-                  ui/autohide.ui )
+                  ui/autohide.ui
+                  ui/plasmoidtasks.ui)
 
 add_subdirectory(notificationitemwatcher)
 

@@ -241,7 +241,22 @@ void Manager::forwardConstraintsEvent(Plasma::Constraints constraints)
 
 void Manager::loadApplets(const KConfigGroup &cg, Plasma::Applet *parent)
 {
-   d->plasmoidProtocol->loadFromConfig(cg, parent);
+    d->plasmoidProtocol->loadFromConfig(cg, parent);
+}
+
+void Manager::addApplet(const QString appletName, Plasma::Applet *parent)
+{
+    d->plasmoidProtocol->addApplet(appletName, parent);
+}
+
+void Manager::removeApplet(const QString appletName, Plasma::Applet *parent)
+{
+    d->plasmoidProtocol->removeApplet(appletName, parent);
+}
+
+QStringList Manager::applets() const
+{
+    return d->plasmoidProtocol->applets();
 }
 
 }

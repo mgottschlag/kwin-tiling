@@ -151,4 +151,5 @@ X-PlasmoidCategory=System Information
 
 X-Plasma-Requires-FileDialog=Unused
 X-Plasma-Requires-LaunchApp=Optional
+X-Plasma-NotificationArea=true
 

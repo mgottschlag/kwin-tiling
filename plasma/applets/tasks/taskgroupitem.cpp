@@ -29,6 +29,8 @@
 #include <QApplication>
 #include <QGraphicsLinearLayout>
 #include <QInputDialog>
+#include <QVarLengthArray>
+#include <QX11Info>
 
 // KDE
 #include <KAuthorized>
@@ -284,7 +286,7 @@ void TaskGroupItem::updateToolTip()
     }
 
     data.setWindowsToPreview(windows);
-    data.setClickable(true);
+
 
     Plasma::ToolTipManager::self()->setContent(this, data);
 }
@@ -538,7 +540,35 @@ bool TaskGroupItem::isActive() const
 
 void TaskGroupItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 { //TODO add delay so we can still drag group items
-    if ((event->buttons() & Qt::LeftButton) && !m_popupLostFocus) {
+    if ((event->buttons() & Qt::LeftButton) && (event->modifiers() & Qt::Key_Control)) {
+ #ifdef Q_WS_X11
+        QList<WId> ids;
+        foreach (AbstractGroupableItem *groupable, m_group->members()) {
+            if (groupable->isGroupItem()) {
+                //TODO: recurse through sub-groups?
+            } else {
+                TaskItem * item = dynamic_cast<TaskItem*>(groupable);
+                if (item) {
+                    ids << item->task()->info().win();
+                }
+            }
+        }
+        const int numWindows = ids.count();
+        QVarLengthArray<long, 32> data(numWindows);
+
+        for (int i = 0; i < numWindows; ++i) {
+            data[i] = ids[i];
+        }
+
+        if (!data.isEmpty()) {
+            Display *dpy = QX11Info::display();
+            const WId winId = data[0];
+            Atom atom = XInternAtom(dpy, "_KDE_PRESENT_WINDOWS_GROUP", False);
+            XChangeProperty(dpy, winId, atom, atom, 32, PropModeReplace,
+                            reinterpret_cast<unsigned char *>(data.data()), data.size());
+        }
+#endif
+    } else if ((event->buttons() & Qt::LeftButton) && !m_popupLostFocus) {
         if (m_applet->groupManager().sortingStrategy() == TaskManager::GroupManager::ManualSorting ||
             m_applet->groupManager().groupingStrategy() == TaskManager::GroupManager::ManualGrouping) {
             if (!m_popupMenuTimer) {

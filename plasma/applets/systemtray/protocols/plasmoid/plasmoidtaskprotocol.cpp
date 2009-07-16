@@ -80,11 +80,41 @@ void PlasmoidProtocol::loadFromConfig(const KConfigGroup &cg, Plasma::Applet *pa
     }
 }
 
+void PlasmoidProtocol::addApplet(const QString appletName, Plasma::Applet *parent)
+{
+    kDebug() << "Registering task with the manager" << appletName;
+
+    PlasmoidTask *task = new PlasmoidTask(appletName, 0, this, parent);
+
+    if (!task->isValid()) {
+        // we failed to load our applet *sob*
+        delete task;
+        return;
+    }
+
+    m_tasks[appletName] = task;
+    connect(task, SIGNAL(taskDeleted(QString)), this, SLOT(cleanupTask(QString)));
+    emit taskCreated(task);
+}
+
+void PlasmoidProtocol::removeApplet(const QString appletName, Plasma::Applet *parent)
+{
+    Plasma::Applet *applet = qobject_cast<Plasma::Applet *>(m_tasks[appletName]->widget(parent, true));
+
+    if (applet) {
+        applet->destroy();
+    }
+}
 
 void PlasmoidProtocol::cleanupTask(QString typeId)
 {
     kDebug() << "task with typeId" << typeId << "removed";
     m_tasks.remove(typeId);
+}
+
+QStringList PlasmoidProtocol::applets() const
+{
+    return m_tasks.keys();
 }
 
 }
