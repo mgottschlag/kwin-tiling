@@ -85,6 +85,7 @@ KBlankSetup::KBlankSetup( QWidget *parent, const char *name )
 	QPalette palette;
 	palette.setColor( preview->backgroundRole(), Qt::black );
 	preview->setPalette(palette);
+	preview->setAutoFillBackground(true);
 	preview->show();    // otherwise saver does not get correct size
 	saver = new KBlankSaver( preview->winId() );
 	grid->addWidget(preview, 0, 1, 3, 1);
@@ -128,6 +129,8 @@ KBlankSaver::KBlankSaver( WId id ) : KScreenSaver( id )
 {
 	readSettings();
 	blank();
+	setAutoFillBackground(true);
+	show();
 }
 
 KBlankSaver::~KBlankSaver()
