@@ -50,7 +50,7 @@ void NotificationsEngine::init()
 {
 }
 
-inline void copyLineRGB32(int* dst, const char* src, int width)
+inline void copyLineRGB32(QRgb* dst, const char* src, int width)
 {
     const char* end = src + width * 3;
     for (; src != end; ++dst, src+=3) {
@@ -58,7 +58,7 @@ inline void copyLineRGB32(int* dst, const char* src, int width)
     }
 }
 
-inline void copyLineARGB32(int* dst, const char* src, int width)
+inline void copyLineARGB32(QRgb* dst, const char* src, int width)
 {
     const char* end = src + width * 4;
     for (; src != end; ++dst, src+=4) {
@@ -78,8 +78,22 @@ static QImage decodeNotificationSpecImageHint(const QDBusArgument& arg)
     arg.endStructure();
     //kDebug() << width << height << rowStride << hasAlpha << bitsPerSample << channels;
 
+    #define SANITY_CHECK(condition) \
+    if (!(condition)) { \
+        kWarning() << "Sanity check failed on" << #condition; \
+        return QImage(); \
+    }
+
+    SANITY_CHECK(width > 0);
+    SANITY_CHECK(width < 2048);
+    SANITY_CHECK(height > 0);
+    SANITY_CHECK(height < 2048);
+    SANITY_CHECK(rowStride > 0);
+
+    #undef SANITY_CHECK
+
     QImage::Format format = QImage::Format_Invalid;
-    void (*fcn)(int*, const char*, int) = 0;
+    void (*fcn)(QRgb*, const char*, int) = 0;
     if (bitsPerSample == 8) {
         if (channels == 4) {
             format = QImage::Format_ARGB32;
@@ -97,8 +111,12 @@ static QImage decodeNotificationSpecImageHint(const QDBusArgument& arg)
     QImage image(width, height, format);
     ptr = pixels.data();
     end = ptr + pixels.length();
-    for (int y=0; y<height && ptr < end; ++y, ptr += rowStride) {
-        fcn((int*)image.scanLine(y), ptr, width);
+    for (int y=0; y<height; ++y, ptr += rowStride) {
+        if (ptr + channels * width >= end) {
+            kWarning() << "Image data is incomplete. y:" << y << "height:" << height;
+            break;
+        }
+        fcn((QRgb*)image.scanLine(y), ptr, width);
     }
 
     return image;
