@@ -50,6 +50,60 @@ void NotificationsEngine::init()
 {
 }
 
+inline void copyLineRGB32(int* dst, const char* src, int width)
+{
+    const char* end = src + width * 3;
+    for (; src != end; ++dst, src+=3) {
+        *dst = qRgb(src[0], src[1], src[2]);
+    }
+}
+
+inline void copyLineARGB32(int* dst, const char* src, int width)
+{
+    const char* end = src + width * 4;
+    for (; src != end; ++dst, src+=4) {
+        *dst = qRgba(src[0], src[1], src[2], src[3]);
+    }
+}
+
+static QImage decodeNotificationSpecImageHint(const QDBusArgument& arg)
+{
+    int width, height, rowStride, hasAlpha, bitsPerSample, channels;
+    QByteArray pixels;
+    char* ptr;
+    char* end;
+
+    arg.beginStructure();
+    arg >> width >> height >> rowStride >> hasAlpha >> bitsPerSample >> channels >> pixels;
+    arg.endStructure();
+    //kDebug() << width << height << rowStride << hasAlpha << bitsPerSample << channels;
+
+    QImage::Format format = QImage::Format_Invalid;
+    void (*fcn)(int*, const char*, int) = 0;
+    if (bitsPerSample == 8) {
+        if (channels == 4) {
+            format = QImage::Format_ARGB32;
+            fcn = copyLineARGB32;
+        } else if (channels == 3) {
+            format = QImage::Format_RGB32;
+            fcn = copyLineRGB32;
+        }
+    }
+    if (format == QImage::Format_Invalid) {
+        kWarning() << "Unsupported image format (hasAlpha:" << hasAlpha << "bitsPerSample:" << bitsPerSample << "channels:" << channels << ")";
+        return QImage();
+    }
+
+    QImage image(width, height, format);
+    ptr = pixels.data();
+    end = ptr + pixels.length();
+    for (int y=0; y<height && ptr < end; ++y, ptr += rowStride) {
+        fcn((int*)image.scanLine(y), ptr, width);
+    }
+
+    return image;
+}
+
 uint NotificationsEngine::Notify(const QString &app_name, uint replaces_id,
                                  const QString &app_icon, const QString &summary, const QString &body,
                                  const QStringList &actions, const QVariantMap &hints, int timeout)
@@ -96,7 +150,8 @@ uint NotificationsEngine::Notify(const QString &app_name, uint replaces_id,
 
     QImage image;
     if (hints.contains("image_data")) {
-        image.loadFromData(hints["image_data"].toByteArray());
+        QDBusArgument arg = hints["image_data"].value<QDBusArgument>();
+        image = decodeNotificationSpecImageHint(arg);
     }
     notificationData.insert("image", image);
 
