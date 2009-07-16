@@ -62,6 +62,18 @@ uint NotificationsEngine::Notify(const QString &app_name, uint replaces_id,
         appname_str = i18n("Unknown Application");
     }
 
+    if (timeout == -1) {
+        const int AVERAGE_WORD_LENGTH = 6;
+        const int WORD_PER_MINUTE = 250;
+        int count = summary.length() + body.length();
+        timeout = 60000 * count / AVERAGE_WORD_LENGTH / WORD_PER_MINUTE;
+
+        // Add two seconds for the user to notice the notification, and ensure
+        // it last at least five seconds, otherwise all the user see is a
+        // flash
+        timeout = 2000 + qMin(timeout, 3000);
+    }
+
     const QString source = QString("notification %1").arg(id);
     if (replaces_id) {
         Plasma::DataContainer *container = containerForSource(source);
