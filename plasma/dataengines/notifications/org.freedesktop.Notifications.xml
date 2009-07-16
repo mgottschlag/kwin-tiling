@@ -1,6 +1,6 @@
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <node>
-  <interface name="org.kde.VisualNotifications">
+  <interface name="org.freedesktop.Notifications">
     <signal name="NotificationClosed">
       <arg name="id" type="u" direction="out"/>
       <arg name="reason" type="u" direction="out"/>
@@ -23,6 +23,15 @@
     </method>
     <method name="CloseNotification">
       <arg name="id" type="u" direction="in"/>
+    </method>
+    <method name="GetCapabilities">
+      <arg type="as" name="caps" direction="out"/>
+    </method>
+    <method name="GetServerInformation">
+      <arg type="s" name="name" direction="out"/>
+      <arg type="s" name="vendor" direction="out"/>
+      <arg type="s" name="version" direction="out"/>
+      <arg type="s" name="spec_version" direction="out"/>
     </method>
   </interface>
 </node>

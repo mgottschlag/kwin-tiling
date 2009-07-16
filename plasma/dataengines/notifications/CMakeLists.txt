@@ -4,7 +4,7 @@ set(notifications_engine_SRCS
     notificationaction.cpp
 )
 
-qt4_add_dbus_adaptor( notifications_engine_SRCS org.kde.VisualNotifications.xml notificationsengine.h  NotificationsEngine )
+qt4_add_dbus_adaptor( notifications_engine_SRCS org.freedesktop.Notifications.xml notificationsengine.h  NotificationsEngine )
 
 kde4_add_plugin(plasma_engine_notifications ${notifications_engine_SRCS})
 

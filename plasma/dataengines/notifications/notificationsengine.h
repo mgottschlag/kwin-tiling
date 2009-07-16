@@ -50,6 +50,10 @@ public:
 
     Plasma::Service* serviceForSource(const QString& source);
 
+    QStringList GetCapabilities();
+
+    QString GetServerInformation(QString& vendor, QString& version, QString& specVersion);
+
 signals:
     void NotificationClosed( uint id, uint reason );
     void ActionInvoked( uint id, const QString& actionKey );

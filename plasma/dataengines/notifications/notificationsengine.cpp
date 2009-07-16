@@ -19,7 +19,7 @@
 
 #include "notificationsengine.h"
 #include "notificationservice.h"
-#include "visualnotificationsadaptor.h"
+#include "notificationsadaptor.h"
 
 #include <Plasma/DataContainer>
 #include <Plasma/Service>
@@ -29,21 +29,21 @@
 NotificationsEngine::NotificationsEngine( QObject* parent, const QVariantList& args )
     : Plasma::DataEngine( parent, args ), m_nextId( 1 )
 {
-    VisualNotificationsAdaptor* adaptor = new VisualNotificationsAdaptor(this);
+    NotificationsAdaptor* adaptor = new NotificationsAdaptor(this);
     connect(this, SIGNAL(NotificationClosed(uint, uint)),
             adaptor, SIGNAL(NotificationClosed(uint,uint)));
     connect(this, SIGNAL(ActionInvoked(uint, const QString&)),
             adaptor, SIGNAL(ActionInvoked(uint, const QString&)));
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.registerService( "org.kde.VisualNotifications" );
-    dbus.registerObject( "/VisualNotifications", this );
+    dbus.registerService( "org.freedesktop.Notifications" );
+    dbus.registerObject( "/org/freedesktop/Notifications", this );
 }
 
 NotificationsEngine::~NotificationsEngine()
 {
     QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.unregisterService( "org.kde.VisualNotifications" );
+    dbus.unregisterService( "org.freedesktop.Notifications" );
 }
 
 void NotificationsEngine::init()
@@ -121,6 +121,26 @@ void NotificationsEngine::CloseNotification(uint id)
 Plasma::Service* NotificationsEngine::serviceForSource(const QString& source)
 {
     return new NotificationService(this, source);
+}
+
+QStringList NotificationsEngine::GetCapabilities()
+{
+    return QStringList()
+        << "body"
+        << "body-hyperlinks"
+        << "body-markup"
+        << "icon-static"
+        << "actions"
+        ;
+}
+
+// FIXME: Signature is ugly
+QString NotificationsEngine::GetServerInformation(QString& vendor, QString& version, QString& specVersion)
+{
+    vendor = "KDE";
+    version = "1.0"; // FIXME
+    specVersion = "0.10";
+    return "Plasma";
 }
 
 K_EXPORT_PLASMA_DATAENGINE(notifications, NotificationsEngine)
