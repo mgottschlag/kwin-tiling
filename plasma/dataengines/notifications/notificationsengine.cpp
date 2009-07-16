@@ -26,6 +26,8 @@
 
 #include <QImage>
 
+#include <kiconloader.h>
+
 NotificationsEngine::NotificationsEngine( QObject* parent, const QVariantList& args )
     : Plasma::DataEngine( parent, args ), m_nextId( 1 )
 {
@@ -122,6 +124,17 @@ static QImage decodeNotificationSpecImageHint(const QDBusArgument& arg)
     return image;
 }
 
+static QString findImageForSpecImagePath(const QString &_path)
+{
+    QString path = _path;
+    if (path.startsWith("file:")) {
+        KUrl url(path);
+        path = url.toLocalFile();
+    }
+    return KIconLoader::global()->iconPath(path, -KIconLoader::SizeHuge,
+                                           true /* canReturnNull */);
+}
+
 uint NotificationsEngine::Notify(const QString &app_name, uint replaces_id,
                                  const QString &app_icon, const QString &summary, const QString &body,
                                  const QStringList &actions, const QVariantMap &hints, int timeout)
@@ -171,7 +184,10 @@ uint NotificationsEngine::Notify(const QString &app_name, uint replaces_id,
         QDBusArgument arg = hints["image_data"].value<QDBusArgument>();
         image = decodeNotificationSpecImageHint(arg);
     } else if (hints.contains("image_path")) {
-        image.load(hints["image_path"].toString());
+        QString path = findImageForSpecImagePath(hints["image_path"].toString());
+        if (!path.isEmpty()) {
+            image.load(path);
+        }
     } else if (hints.contains("icon_data")) {
         // This hint was in use in version 0.9 of the spec but has been
         // replaced by "image_data" in version 0.10. We need to support it for
