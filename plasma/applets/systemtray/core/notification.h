@@ -42,7 +42,6 @@ public:
 
     QString applicationName() const;
     QIcon applicationIcon() const;
-    QString eventId() const;
     QString message() const;
     QString summary() const;
     int timeout() const;
@@ -66,7 +65,6 @@ signals:
 protected:
     void setApplicationName(const QString &applicationName);
     void setApplicationIcon(const QIcon &applicationIcon);
-    void setEventId(const QString &eventId);
     void setMessage(const QString &message);
     void setSummary(const QString &summary);
     void setTimeout(int timeout);

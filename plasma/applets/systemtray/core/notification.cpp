@@ -41,7 +41,6 @@ public:
 
     QString applicationName;
     QIcon applicationIcon;
-    QString eventId;
     QString message;
     QString summary;
     int timeout;
@@ -87,18 +86,6 @@ QIcon Notification::applicationIcon() const
 void Notification::setApplicationIcon(const QIcon &applicationIcon)
 {
     d->applicationIcon = applicationIcon;
-}
-
-
-QString Notification::eventId() const
-{
-    return d->eventId;
-}
-
-
-void Notification::setEventId(const QString &eventId)
-{
-    d->eventId = eventId;
 }
 
 
