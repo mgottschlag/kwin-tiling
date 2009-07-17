@@ -155,6 +155,10 @@ Solid::Control::NetworkInterface * Solid::Control::NetworkManagerPrivate::findNe
 
     if (backend == 0) return 0;
 
+    if (!backend->networkInterfaces().contains(uni)) {
+        return 0;
+    }
+
     QPair<NetworkInterface *, QObject *> pair = findRegisteredNetworkInterface(uni);
 
     if (pair.first != 0)
