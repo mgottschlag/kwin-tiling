@@ -158,7 +158,7 @@ void PlasmoidTask::Private::setupApplet()
 void PlasmoidTask::appletDestroyed(QObject *object)
 {
     if (object == d->applet) {
-        emit destroyed(this);
+        emit taskDeleted(d->typeId);
     }
 }
 
