@@ -188,8 +188,6 @@ void NetView::updateGeometry()
         break;
     //ignore changes in the main view
     default:
-        setMinimumSize(0, 0);
-        setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
         break;
     }
 

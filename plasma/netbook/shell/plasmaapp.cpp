@@ -88,9 +88,6 @@ PlasmaApp::PlasmaApp()
 
     m_mainView = new NetView(0, NetView::mainViewId(), 0);
     connect(m_mainView, SIGNAL(containmentActivated()), this, SLOT(mainContainmentActivated()));
-    m_mainView->installEventFilter(this);
-
-
 
     int width = 400;
     int height = 200;
@@ -111,18 +108,19 @@ PlasmaApp::PlasmaApp()
         }
     }
 
-    m_mainView->resize(width, height);
-
-
     // this line initializes the corona.
     corona();
     setIsDesktop(isDesktop);
     reserveStruts();
 
+    //FIXME: monstrous hack: force it non fullscreen by making it a pixel too short
+    m_mainView->setFixedSize(width, height-1);
+    m_mainView->move(0,0);
+
+
     if (isDesktop) {
         notifyStartup(true);
     }
-
 
     connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanup()));
 }
@@ -215,31 +213,6 @@ void PlasmaApp::mainContainmentActivated()
     }
 }
 
-bool PlasmaApp::eventFilter(QObject *watched, QEvent *event)    
-{
-    if (!m_isDesktop || !m_controlBar) {
-        return false;
-    }
-
-    if (watched == m_mainView && event->type() == QEvent::WindowDeactivate) {  
-
-        if (!QApplication::activeWindow() && m_controlBar->windowFlags() & Qt::X11BypassWindowManagerHint) {
-            m_controlBar->setWindowFlags(m_controlBar->windowFlags()^Qt::X11BypassWindowManagerHint);
-            KWindowSystem::setType(m_controlBar->effectiveWinId(), NET::Dock);
-            unsigned long state = NET::Sticky | NET::StaysOnTop | NET::KeepAbove;
-            KWindowSystem::setState(m_controlBar->effectiveWinId(), state);
-            positionPanel();
-        }
-        m_controlBar->show();
-    } else if (watched == m_mainView && event->type() == QEvent::WindowActivate) {
-        //hack necessary to be in front of the main window
-        m_controlBar->setWindowFlags(m_controlBar->windowFlags() | Qt::X11BypassWindowManagerHint);
-        m_controlBar->show();
-        positionPanel();
-    }
-    return false;
-}
-
 void PlasmaApp::setIsDesktop(bool isDesktop)
 {
     m_isDesktop = isDesktop;
@@ -248,7 +221,6 @@ void PlasmaApp::setIsDesktop(bool isDesktop)
         m_mainView->setWindowFlags(m_mainView->windowFlags() | Qt::FramelessWindowHint);
         KWindowSystem::setOnAllDesktops(m_mainView->winId(), true);
         m_mainView->show();
-        KWindowSystem::setState(m_mainView->winId(), NET::SkipTaskbar | NET::SkipPager);
         KWindowSystem::setType(m_mainView->winId(), NET::Normal);
     } else {
         m_mainView->setWindowFlags(m_mainView->windowFlags() & ~Qt::FramelessWindowHint);
@@ -270,7 +242,8 @@ void PlasmaApp::adjustSize(Kephal::Screen *screen)
 
     int width = rect.width();
     int height = rect.height();
-    m_mainView->setFixedSize(width, height);
+    //FIXME: ugly hack there too
+    m_mainView->setFixedSize(width, height-1);
     positionPanel();
     reserveStruts();
 }
@@ -378,23 +351,25 @@ void PlasmaApp::createView(Plasma::Containment *containment)
     } else if (id == NetView::controlBarId()) {
         if (!m_controlBar) {
             m_controlBar = new NetView(0, NetView::controlBarId(), 0);
-            KWindowSystem::setOnAllDesktops(m_controlBar->effectiveWinId(), true);
-            m_controlBar->setWindowFlags(m_mainView->windowFlags() | Qt::FramelessWindowHint);
-            m_controlBar->setFrameShape(QFrame::NoFrame);
-            KWindowSystem::setType(m_controlBar->effectiveWinId(), NET::Dock);
-            unsigned long state = NET::Sticky | NET::StaysOnTop | NET::KeepAbove;
-            KWindowSystem::setState(m_controlBar->effectiveWinId(), state);
 
             Kephal::Screens *screens = Kephal::Screens::self();
             connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)),
                     this, SLOT(adjustSize(Kephal::Screen *)));
 
+            m_controlBar->show();
+            KWindowSystem::setOnAllDesktops(m_controlBar->effectiveWinId(), true);
+            m_controlBar->setWindowFlags(m_mainView->windowFlags() | Qt::FramelessWindowHint);
+            m_controlBar->setFrameShape(QFrame::NoFrame);
+            unsigned long state = NET::Sticky | NET::StaysOnTop | NET::KeepAbove;
+            KWindowSystem::setState(m_controlBar->effectiveWinId(), state);
+            KWindowSystem::setType(m_controlBar->effectiveWinId(), NET::Dock);
 
-            m_controlBar->setAttribute(Qt::WA_TranslucentBackground);
+            m_controlBar->show();
+
             m_controlBar->setAutoFillBackground(false);
             m_controlBar->viewport()->setAutoFillBackground(false);
             m_controlBar->setAttribute(Qt::WA_TranslucentBackground);
-            m_controlBar->show();
+
             connect(m_controlBar, SIGNAL(locationChanged(const NetView *)), this, SLOT(controlBarMoved(const NetView *)));
             connect(m_controlBar, SIGNAL(geometryChanged()), this, SLOT(positionPanel()));
         }
