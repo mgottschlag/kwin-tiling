@@ -40,8 +40,10 @@ class KRequestShutdownHelper
     private slots:
         void processData();
     private:
-		SmcConn connection() const { return conn; }
+#ifndef Q_WS_WIN
+        SmcConn connection() const { return conn; }
         SmcConn conn;
+#endif
         QSocketNotifier* notifier;
     };
  
