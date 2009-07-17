@@ -97,15 +97,6 @@ PlasmaApp::PlasmaApp()
     connect(m_mainView, SIGNAL(containmentActivated()), this, SLOT(mainContainmentActivated()));
     m_window->installEventFilter(this);
 
-    //FIXME: if argb visuals enabled Qt will always set WM_CLASS as "qt-subapplication" no matter what
-    //the application name is we set the proper XClassHint here, hopefully won't be necessary anymore when
-    //qapplication will manage apps with argb visuals in a better way
-    XClassHint classHint;
-    classHint.res_name = const_cast<char*>("Plasma");
-    classHint.res_class = const_cast<char*>("Plasma");
-    XSetClassHint(QX11Info::display(), m_window->winId(), &classHint);
-
-
     m_controlBar = new NetView(0, NetView::controlBarId(), 0);
     KWindowSystem::setOnAllDesktops(m_controlBar->effectiveWinId(), true);
     m_controlBar->setWindowFlags(m_window->windowFlags() | Qt::FramelessWindowHint);
