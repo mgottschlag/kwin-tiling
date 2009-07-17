@@ -45,6 +45,7 @@ set(default_interface_SRCS
     interfaces/default/resultscene.cpp
     interfaces/default/selectionbar.cpp
     interfaces/default/krunnertabfilter.cpp
+    interfaces/default/resultsview.cpp
 )
 
 set(quicksand_interface_SRCS

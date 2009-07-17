@@ -110,7 +110,7 @@ void ResultScene::clearMatches()
 bool ResultScene::canMoveItemFocus() const
 {
     // We prevent a late query result from stealing the item focus from the user
-    // The item focus can be moved only if 
+    // The item focus can be moved only if
     // 1) there is no item currently focused
     // 2) the currently focused item is not visible anymore
     // 3) the focusBase widget (the khistorycombobox) has focus (i.e. the user is still typing or waiting) AND the currently focused item has not been hovered
@@ -150,7 +150,7 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
 
     m_hoverTimer.stop();
     setItemsAcceptHoverEvents(false);
-    
+
     //resize(width(), m.count() * ResultItem::BOUNDING_HEIGHT);
     m_clearTimer.stop();
     m_items.clear();
@@ -217,9 +217,10 @@ void ResultScene::arrangeItems(ResultItem *itemChanged)
 
         // it is vital that focus is set *after* the index
         if (!itemChanged && i == 0 && canMoveItemFocus()) {
+            clearSelection();
             setFocusItem(item);
             item->setSelected(true);
-            emit itemHoverEnter(item);
+            emit ensureVisibility(item);
         }
 
         ++i;
@@ -270,12 +271,12 @@ void ResultScene::focusInEvent(QFocusEvent *focusEvent)
 
     // The default implementation of focusInEvent assumes that if the scene has no focus
     // then it has no focused item; thus, when a scene gains focus, focusInEvent gives
-    // focus to the last focused item. 
-    // In our case this assumption is not true, as an item can be focused before the scene, 
-    // therefore we revert the behaviour by re-selecting the previously selected item 
+    // focus to the last focused item.
+    // In our case this assumption is not true, as an item can be focused before the scene,
+    // therefore we revert the behaviour by re-selecting the previously selected item
 
     ResultItem *currentFocus = dynamic_cast<ResultItem*>(focusItem());
-  
+
     QGraphicsScene::focusInEvent(focusEvent);
 
     switch (focusEvent->reason()) {
@@ -283,7 +284,7 @@ void ResultScene::focusInEvent(QFocusEvent *focusEvent)
     case Qt::BacktabFocusReason:
         break;
     default:
-        if (currentFocus) { 
+        if (currentFocus) {
             setFocusItem(currentFocus);
         }
         break;
