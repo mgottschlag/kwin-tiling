@@ -27,7 +27,8 @@ module PlasmaScripting
             :raise,
             :lower,
             :flushPendingConstraintsEvents,
-            :init
+            :init,
+            :initExtenderItem
 
     signals :releaseVisualFocus,
             :geometryChanged,
@@ -43,6 +44,10 @@ module PlasmaScripting
       connect(@applet_script.applet, SIGNAL(:geometryChanged), self, SIGNAL(:geometryChanged))
       connect(@applet_script.applet, SIGNAL(:configNeedsSaving), self, SIGNAL(:configNeedsSaving))
       connect(@applet_script.applet, SIGNAL(:activate), self, SIGNAL(:activate))
+
+      if respond_to?(:initExtenderItem)
+        connect(@applet_script.applet, SIGNAL(:initScriptingExtenderItem), self, SLOT(:initExtenderItem))
+      end
     end
 
     # If a method is called on a PlasmaScripting::Applet instance is found to be missing
@@ -166,6 +171,7 @@ module PlasmaScriptengineRuby
   class Applet < Plasma::AppletScript
     def initialize(parent, args)
       super(parent)
+      @applet = applet
     end
 
     def camelize(str)

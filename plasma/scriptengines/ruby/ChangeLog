@@ -1,3 +1,7 @@
+2009-07-17  Richard Dale  <richard.j.dale@gmail.com>
+* If an applet has implemented an initExtenderItem() method, then connect the
+new initScriptingExtenderItem() signal to it.
+
 2009-06-16  Richard Dale  <richard.j.dale@gmail.com>
 * The resize() method doesn't work with scripting plasmoids, so if it is used
 output a warning message, and suggest adding a X-Plasma-DefautSize entry in
