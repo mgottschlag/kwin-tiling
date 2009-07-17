@@ -72,6 +72,11 @@ public:
     bool isDesktop() const;
 
     void showAppletBrowser(Plasma::Containment *containment);
+
+
+protected:
+    bool eventFilter(QObject *watched, QEvent *event);
+
 private:
     PlasmaApp();
     void reserveStruts();

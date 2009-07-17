@@ -157,6 +157,11 @@ Plasma::Location NetView::location() const
     return containment()->location();
 }
 
+Plasma::FormFactor NetView::formFactor() const
+{
+    return containment()->formFactor();
+}
+
 void NetView::updateGeometry()
 {
     Plasma::Containment *c = containment();

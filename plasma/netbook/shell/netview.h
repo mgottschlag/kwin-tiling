@@ -45,6 +45,7 @@ public:
     void connectContainment(Plasma::Containment *containment);
 
     Plasma::Location location() const;
+    Plasma::FormFactor formFactor() const;
 
     static uint mainViewId() { return 1; }
     static uint controlBarId() { return 2; }

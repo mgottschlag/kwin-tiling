@@ -95,6 +95,7 @@ PlasmaApp::PlasmaApp()
     //m_window = new QWidget;
     m_window = m_mainView = new NetView(0, NetView::mainViewId(), 0);
     connect(m_mainView, SIGNAL(containmentActivated()), this, SLOT(mainContainmentActivated()));
+    m_window->installEventFilter(this);
 
     //FIXME: if argb visuals enabled Qt will always set WM_CLASS as "qt-subapplication" no matter what
     //the application name is we set the proper XClassHint here, hopefully won't be necessary anymore when
@@ -122,8 +123,6 @@ PlasmaApp::PlasmaApp()
     m_controlBar->setAutoFillBackground(false);
     m_controlBar->viewport()->setAutoFillBackground(false);
     m_controlBar->setAttribute(Qt::WA_TranslucentBackground);
-    //hack necessary to be in front of the main window
-    m_controlBar->setWindowFlags(Qt::X11BypassWindowManagerHint);
     m_controlBar->show();
     connect(m_controlBar, SIGNAL(locationChanged(const NetView *)), this, SLOT(controlBarMoved(const NetView *)));
     connect(m_controlBar, SIGNAL(geometryChanged()), this, SLOT(positionPanel()));
@@ -201,10 +200,15 @@ void PlasmaApp::syncConfig()
 void PlasmaApp::positionPanel()
 {
     QRect screenRect = Kephal::ScreenUtils::screenGeometry(m_controlBar->screen());
+
     //move
-    //TODO: support locations
-    controlBarMoved(m_mainView);
-    m_controlBar->resize(screenRect.width(), m_controlBar->size().height());
+    controlBarMoved(m_controlBar);
+
+    if (m_controlBar->formFactor() == Plasma::Horizontal) {
+        m_controlBar->setFixedSize(screenRect.width(), m_controlBar->size().height());
+    } else if (m_controlBar->formFactor() == Plasma::Vertical) {
+        m_controlBar->setFixedSize(m_controlBar->size().width(), screenRect.height());
+    }
     //sync margins
     const QRect availableScreen = m_corona->availableScreenRegion(0).boundingRect();
     const QRect screen = m_corona->screenGeometry(0);
@@ -236,10 +240,31 @@ void PlasmaApp::mainContainmentActivated()
         KWindowSystem::raiseWindow(activeWindow->effectiveWinId());
         activeWindow->setFocus();
     }
-    KWindowSystem::raiseWindow(m_controlBar->effectiveWinId());
-    m_controlBar->setFocus();
 }
 
+bool PlasmaApp::eventFilter(QObject *watched, QEvent *event)    
+{
+    if (!m_isDesktop) {
+        return false;
+    }
+
+    if (watched == m_window && event->type() == QEvent::WindowDeactivate) {  
+        if (m_controlBar->windowFlags() & Qt::X11BypassWindowManagerHint) {
+            m_controlBar->setWindowFlags(m_controlBar->windowFlags()^Qt::X11BypassWindowManagerHint);
+            KWindowSystem::setType(m_controlBar->effectiveWinId(), NET::Dock);
+            unsigned long state = NET::Sticky | NET::StaysOnTop | NET::KeepAbove;
+            KWindowSystem::setState(m_controlBar->effectiveWinId(), state);
+            positionPanel();
+        }
+        m_controlBar->show();
+    } else if (watched == m_window && event->type() == QEvent::WindowActivate) {
+        //hack necessary to be in front of the main window
+        m_controlBar->setWindowFlags(m_controlBar->windowFlags() | Qt::X11BypassWindowManagerHint);
+        m_controlBar->show();
+        positionPanel();
+    }
+    return false;
+}
 
 void PlasmaApp::setIsDesktop(bool isDesktop)
 {
@@ -251,9 +276,6 @@ void PlasmaApp::setIsDesktop(bool isDesktop)
         m_window->show();
         KWindowSystem::setState(m_window->winId(), NET::SkipTaskbar | NET::SkipPager);
         KWindowSystem::setType(m_window->winId(), NET::Normal);
-        KWindowSystem::clearState(m_window->winId(), NET::FullScreen);
-        m_window->lower();
-        KWindowSystem::lowerWindow(m_window->winId());
     } else {
         m_window->setWindowFlags(m_window->windowFlags() & ~Qt::FramelessWindowHint);
         KWindowSystem::setOnAllDesktops(m_window->winId(), false);
@@ -275,7 +297,7 @@ void PlasmaApp::adjustSize(Kephal::Screen *screen)
     int width = rect.width();
     int height = rect.height();
     m_window->setFixedSize(width, height);
-    m_controlBar->resize(width, m_controlBar->height());
+    positionPanel();
     reserveStruts();
 }
 
@@ -394,7 +416,6 @@ void PlasmaApp::controlBarMoved(const NetView *controlBar)
 
     QRect screenRect = Kephal::ScreenUtils::screenGeometry(m_controlBar->screen());
 
-    //TODO: manage layouts in the new way
     switch (controlBar->location()) {
     case Plasma::LeftEdge:
         m_controlBar->move(screenRect.topLeft());
