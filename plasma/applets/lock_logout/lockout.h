@@ -1,5 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2007 by Alexis Ménard <darktears31@gmail.com>           *
+ *   Copyright (C) 2009 by Frederik Gladhorn <gladhorn@kde.org>            *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -46,6 +47,8 @@ class LockOut : public Plasma::Applet
     public slots:
         void clickLogout();
         void clickLock();
+        void clickSleep();
+        void clickHibernate();
 
     protected Q_SLOTS:
         void configAccepted();
@@ -58,9 +61,13 @@ class LockOut : public Plasma::Applet
         Ui::lockoutConfig ui;
         bool m_showLockButton;
         bool m_showLogoutButton;
+        bool m_showSleepButton;
+        bool m_showHibernateButton;
 #endif
         Plasma::IconWidget *m_iconLock;
         Plasma::IconWidget *m_iconLogout;
+        Plasma::IconWidget *m_iconSleep;
+        Plasma::IconWidget *m_iconHibernate;
         QGraphicsLinearLayout *m_layout;
         void checkLayout();
         void showButtons();

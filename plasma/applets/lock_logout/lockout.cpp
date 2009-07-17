@@ -1,5 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2007 by Alexis Ménard <darktears31@gmail.com>           *
+ *   Copyright (C) 2009 by Frederik Gladhorn <gladhorn@kde.org>            *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -31,12 +32,15 @@
 
 // KDE
 #include <KIcon>
+#include <KJob>
 #ifndef Q_OS_WIN
 #include <KConfigDialog>
 #include <KSharedConfig>
 #include <kworkspace/kworkspace.h>
 #include <screensaver_interface.h>
 #endif
+
+#include <solid/control/powermanager.h>
 
 // Windows
 #ifdef Q_OS_WIN
@@ -66,6 +70,8 @@ void LockOut::init()
     KConfigGroup cg = config();
     m_showLockButton = cg.readEntry("showLockButton", true);
     m_showLogoutButton = cg.readEntry("showLogoutButton", true);
+    m_showSleepButton = cg.readEntry("showSleepButton", false);
+    m_showHibernateButton = cg.readEntry("showHibernateButton", false);
 #endif
 
     //Tooltip strings maybe should be different (eg. "Leave..."->"Logout")?
@@ -79,6 +85,16 @@ void LockOut::init()
     Plasma::ToolTipContent logoutToolTip(i18n("Leave..."),i18n("Logout, turn off or restart the computer"),m_iconLogout->icon());
     Plasma::ToolTipManager::self()->setContent(m_iconLogout, logoutToolTip);
 
+    m_iconSleep = new Plasma::IconWidget(KIcon("system-suspend"), "", this);
+    connect(m_iconSleep, SIGNAL(clicked()), this, SLOT(clickSleep()));
+    Plasma::ToolTipContent sleepToolTip(i18n("Suspend"),i18n("Sleep (suspend to RAM)"),m_iconSleep->icon());
+    Plasma::ToolTipManager::self()->setContent(m_iconSleep, sleepToolTip);
+    
+    m_iconHibernate = new Plasma::IconWidget(KIcon("system-suspend-hibernate"), "", this);
+    connect(m_iconHibernate, SIGNAL(clicked()), this, SLOT(clickHibernate()));
+    Plasma::ToolTipContent hibernateToolTip(i18n("Hibernate"),i18n("Hibernate (suspend to disk)"),m_iconHibernate->icon());
+    Plasma::ToolTipManager::self()->setContent(m_iconHibernate, hibernateToolTip);
+   
     showButtons();
 }
 
@@ -115,7 +131,7 @@ void LockOut::checkLayout()
     }
 
 #ifndef Q_OS_WIN
-    if (!m_showLockButton || !m_showLogoutButton) {
+    if (!m_showLockButton || !m_showLogoutButton || !m_showSleepButton || !m_showHibernateButton) {
         ratioToKeep = 1;
     }
 #endif
@@ -177,6 +193,58 @@ void LockOut::clickLogout()
 #endif
 }
 
+#include <KMessageBox>
+
+void LockOut::clickSleep()
+{
+    if (KMessageBox::questionYesNo(0,
+                                   i18n("Do you want to suspend to RAM (sleep)?"),
+                                   i18n("Suspend"))
+            != KMessageBox::Yes) {
+        return;
+    }
+    // Check if powerdevil is running, and use its methods to suspend if available
+    // otherwise go through Solid directly
+    QStringList modules;
+    QDBusInterface kdedInterface("org.kde.kded", "/kded", "org.kde.kded");
+    QDBusReply<QStringList> reply = kdedInterface.call("loadedModules");
+    if (reply.isValid() && reply.value().contains("powerdevil")) {
+        kDebug() << "Using powerdevil to suspend";
+        QDBusConnection dbus(QDBusConnection::sessionBus());
+        QDBusInterface iface("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus);
+        iface.call("suspend", Solid::Control::PowerManager::ToRam);
+    } else {
+        kDebug() << "Powerdevil not available, using solid to suspend";
+        KJob * job = Solid::Control::PowerManager::suspend(Solid::Control::PowerManager::ToRam);
+        job->start();
+    }
+}
+
+void LockOut::clickHibernate()
+{
+    if (KMessageBox::questionYesNo(0,
+                                   i18n("Do you want to suspend to disk (hibernate)?"),
+                                   i18n("Suspend"))
+            != KMessageBox::Yes) {
+        return;
+    }
+    // Check if powerdevil is running, and use its methods to hibernate if available
+    // otherwise go through Solid directly
+    QStringList modules;
+    QDBusInterface kdedInterface("org.kde.kded", "/kded", "org.kde.kded");
+    QDBusReply<QStringList> reply = kdedInterface.call("loadedModules");
+    if (reply.isValid() && reply.value().contains("powerdevil")) {
+        kDebug() << "Using powerdevil to hibernate";
+        QDBusConnection dbus(QDBusConnection::sessionBus());
+        QDBusInterface iface("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus);
+        iface.call("suspend", Solid::Control::PowerManager::ToDisk);
+    } else {
+        kDebug() << "Powerdevil not available, using solid to hibernate";
+        KJob * job = Solid::Control::PowerManager::suspend(Solid::Control::PowerManager::ToDisk);
+        job->start();
+    }
+}
+
 void LockOut::configAccepted()
 {
 #ifndef Q_OS_WIN
@@ -192,6 +260,18 @@ void LockOut::configAccepted()
     if (m_showLogoutButton != ui.checkBox_logout->isChecked()) {
         m_showLogoutButton = !m_showLogoutButton;
         cg.writeEntry("showLogoutButton", m_showLogoutButton);
+        changed = true;
+    }
+
+    if (m_showSleepButton != ui.checkBox_sleep->isChecked()) {
+        m_showSleepButton = !m_showSleepButton;
+        cg.writeEntry("showSleepButton", m_showSleepButton);
+        changed = true;
+    }
+
+    if (m_showHibernateButton != ui.checkBox_hibernate->isChecked()) {
+        m_showHibernateButton = !m_showHibernateButton;
+        cg.writeEntry("showHibernateButton", m_showHibernateButton);
         changed = true;
     }
 
@@ -213,6 +293,8 @@ void LockOut::createConfigurationInterface(KConfigDialog *parent)
 
     ui.checkBox_lock->setChecked(m_showLockButton);
     ui.checkBox_logout->setChecked(m_showLogoutButton);
+    ui.checkBox_sleep->setChecked(m_showSleepButton);
+    ui.checkBox_hibernate->setChecked(m_showHibernateButton);
 #endif
 }
 
@@ -225,22 +307,31 @@ void LockOut::showButtons()
     //definitely not the best workaround...
     m_layout->removeItem(m_iconLock);
     m_layout->removeItem(m_iconLogout);
+    m_layout->removeItem(m_iconSleep);
+    m_layout->removeItem(m_iconHibernate);
 
-    if (m_showLockButton) {
-	m_iconLock->setVisible(true);
+    m_iconLock->setVisible(m_showLockButton);
+
+    if (m_showLockButton) { 
         m_layout->addItem(m_iconLock);
-    } else {
-	m_iconLock->setVisible(false);
     }
 
+    m_iconLogout->setVisible(m_showLogoutButton);
     if (m_showLogoutButton) {
-	m_iconLogout->setVisible(true);
         m_layout->addItem(m_iconLogout);
-    } else {
-	m_iconLogout->setVisible(false);
     }
 
-    setConfigurationRequired(!m_showLockButton && !m_showLogoutButton);
+    m_iconSleep->setVisible(m_showSleepButton);
+    if (m_showSleepButton) {
+        m_layout->addItem(m_iconSleep);
+    }
+
+    m_iconHibernate->setVisible(m_showHibernateButton);
+    if (m_showHibernateButton) {
+        m_layout->addItem(m_iconHibernate);
+    }
+
+    setConfigurationRequired(!m_showLockButton && !m_showLogoutButton && !m_showSleepButton && !m_showHibernateButton);
     checkLayout();
 #endif // !Q_OS_WIN
 }

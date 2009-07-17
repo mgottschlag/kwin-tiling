@@ -1,44 +1,59 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>lockoutConfig</class>
- <widget class="QWidget" name="lockoutConfig" >
-  <property name="geometry" >
+ <widget class="QWidget" name="lockoutConfig">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>159</width>
-    <height>102</height>
+    <width>177</width>
+    <height>116</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Configure Lock/Logout</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" >
-   <item row="0" column="0" >
-    <widget class="QCheckBox" name="checkBox_lock" >
-     <property name="text" >
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QCheckBox" name="checkBox_lock">
+     <property name="text">
       <string>Show lock button</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="0" >
-    <widget class="QCheckBox" name="checkBox_logout" >
-     <property name="text" >
+   <item row="1" column="0">
+    <widget class="QCheckBox" name="checkBox_logout">
+     <property name="text">
       <string>Show logout button</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="0" >
-    <spacer name="verticalSpacer" >
-     <property name="orientation" >
+   <item row="4" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
        <height>40</height>
       </size>
      </property>
     </spacer>
+   </item>
+   <item row="3" column="0">
+    <widget class="QCheckBox" name="checkBox_hibernate">
+     <property name="text">
+      <string>Show hibernate button</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QCheckBox" name="checkBox_sleep">
+     <property name="text">
+      <string>Show sleep button</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

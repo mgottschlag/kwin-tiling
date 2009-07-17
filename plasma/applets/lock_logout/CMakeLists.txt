@@ -15,7 +15,7 @@ endif(NOT WIN32)
 kde4_add_plugin(plasma_applet_lockout ${lockout_SRCS})
 target_link_libraries(plasma_applet_lockout ${KDE4_PLASMA_LIBS} ${KDE4_KIO_LIBS})
 if(NOT WIN32)
-target_link_libraries(plasma_applet_lockout kworkspace)
+target_link_libraries(plasma_applet_lockout kworkspace solidcontrol)
 endif(NOT WIN32)
 
 install(TARGETS plasma_applet_lockout DESTINATION ${PLUGIN_INSTALL_DIR})
