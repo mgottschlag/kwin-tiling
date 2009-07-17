@@ -3,6 +3,7 @@
  *                                                                         *
  *   Copyright (C) 2008 Jason Stubbs <jasonbstubbs@gmail.com>              *
  *   Copyright (C) 2008 Sebastian Kügler <sebas@kde.org>                   *
+ *   Copyright (C) 2009 Marco Martin <notmart@gmail.com>                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -156,7 +157,7 @@ void PlasmoidTask::Private::setupApplet()
 
 void PlasmoidTask::appletDestroyed(QObject *object)
 {
-    if (object == this) {
+    if (object == d->applet) {
         emit destroyed(this);
     }
 }
