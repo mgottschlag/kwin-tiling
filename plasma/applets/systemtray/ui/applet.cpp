@@ -625,8 +625,11 @@ void Applet::configAccepted()
         QString appletName = item->data(Qt::UserRole).toString();
 
         if (item->checkState() == Qt::Checked && !applets.contains(appletName)) {
-            applets.removeAll(appletName);
             Private::s_manager->addApplet(appletName, this);
+        }
+
+        if (item->checkState() == Qt::Checked) {
+            applets.removeAll(appletName);
         }
     }
 
