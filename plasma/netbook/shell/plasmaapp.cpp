@@ -49,11 +49,6 @@
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrender.h>
 
-Display* dpy = 0;
-Colormap colormap = 0;
-Visual *visual = 0;
-
-
 PlasmaApp* PlasmaApp::self()
 {
     if (!kapp) {
@@ -118,6 +113,7 @@ PlasmaApp::PlasmaApp()
 
     m_mainView->resize(width, height);
 
+
     // this line initializes the corona.
     corona();
     setIsDesktop(isDesktop);
@@ -126,6 +122,7 @@ PlasmaApp::PlasmaApp()
     if (isDesktop) {
         notifyStartup(true);
     }
+
 
     connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanup()));
 }
@@ -339,7 +336,7 @@ Plasma::Corona* PlasmaApp::corona()
 
 bool PlasmaApp::hasComposite()
 {
-    return colormap && KWindowSystem::compositingActive();
+    return KWindowSystem::compositingActive();
 }
 
 void PlasmaApp::notifyStartup(bool completed)
