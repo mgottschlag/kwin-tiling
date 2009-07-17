@@ -53,7 +53,7 @@ protected:
 private:
     QGraphicsWidget *m_widget;
     Plasma::LineEdit *m_search;
-    Plasma::IconWidget *m_icon;
+    Plasma::IconWidget *m_closeIcon;
     QTimer *m_searchTimer;
 };
 

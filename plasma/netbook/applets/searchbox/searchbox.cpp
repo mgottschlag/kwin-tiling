@@ -37,7 +37,7 @@
 
 SearchBox::SearchBox(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args), m_widget(0), m_search(0),
-      m_icon(0)
+      m_closeIcon(0)
 {
     setPopupIcon("edit-find");
     setPassivePopup(true);
@@ -77,14 +77,15 @@ QGraphicsWidget *SearchBox::graphicsWidget()
     connect(m_searchTimer, SIGNAL(timeout()), this, SLOT(query()));
 
 
-    m_icon = new Plasma::IconWidget();
-    m_icon->setIcon("edit-find");
-    m_icon->setPreferredSize(KIconLoader::SizeSmallMedium,
-                             KIconLoader::SizeSmallMedium);
+    m_closeIcon = new Plasma::IconWidget();
+    m_closeIcon->setIcon("dialog-close");
+    m_closeIcon->setPreferredSize(KIconLoader::SizeSmallMedium,
+                                  KIconLoader::SizeSmallMedium);
+    connect(m_closeIcon, SIGNAL(clicked()), this, SLOT(hidePopup()));
 
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout();
     layout->addItem(m_search);
-    layout->addItem(m_icon);
+    layout->addItem(m_closeIcon);
     layout->setStretchFactor(m_search, 4);
 
     m_widget = new QGraphicsWidget(this);
@@ -96,8 +97,14 @@ QGraphicsWidget *SearchBox::graphicsWidget()
 
 void SearchBox::popupEvent(bool shown)
 {
-    if (shown && m_search) {
+    if (!m_search) {
+        return;
+    }
+
+    if (shown) {
         focusEditor();
+    } else {
+        m_search->setText(QString());
     }
 }
 
