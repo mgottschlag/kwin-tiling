@@ -624,7 +624,7 @@ void Applet::configAccepted()
         QListWidgetItem * item = d->plasmoidTasksUi.applets->item(i);
         QString appletName = item->data(Qt::UserRole).toString();
 
-        if (item->checkState() == Qt::Checked) {
+        if (item->checkState() == Qt::Checked && !applets.contains(appletName)) {
             applets.removeAll(appletName);
             Private::s_manager->addApplet(appletName, this);
         }
