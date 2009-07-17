@@ -96,7 +96,6 @@ private Q_SLOTS:
 private:
     Plasma::Corona *m_corona;
     Plasma::AppletBrowser *m_appletBrowser;
-    QWidget *m_window;
     NetView *m_controlBar;
     NetView *m_mainView;
     bool m_isDesktop;

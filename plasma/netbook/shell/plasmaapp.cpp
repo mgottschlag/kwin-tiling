@@ -67,7 +67,6 @@ PlasmaApp::PlasmaApp()
     : KUniqueApplication(),
       m_corona(0),
       m_appletBrowser(0),
-      m_window(0),
       m_controlBar(0),
       m_mainView(0),
       m_isDesktop(false)
@@ -92,41 +91,21 @@ PlasmaApp::PlasmaApp()
     KConfigGroup cg(KGlobal::config(), "General");
     Plasma::Theme::defaultTheme()->setFont(cg.readEntry("desktopFont", font()));
 
-    //m_window = new QWidget;
-    m_window = m_mainView = new NetView(0, NetView::mainViewId(), 0);
+    m_mainView = new NetView(0, NetView::mainViewId(), 0);
     connect(m_mainView, SIGNAL(containmentActivated()), this, SLOT(mainContainmentActivated()));
-    m_window->installEventFilter(this);
-
-    m_controlBar = new NetView(0, NetView::controlBarId(), 0);
-    KWindowSystem::setOnAllDesktops(m_controlBar->effectiveWinId(), true);
-    m_controlBar->setWindowFlags(m_window->windowFlags() | Qt::FramelessWindowHint);
-    m_controlBar->setFrameShape(QFrame::NoFrame);
-    KWindowSystem::setType(m_controlBar->effectiveWinId(), NET::Dock);
-    unsigned long state = NET::Sticky | NET::StaysOnTop | NET::KeepAbove;
-    KWindowSystem::setState(m_controlBar->effectiveWinId(), state);
-
-    Kephal::Screens *screens = Kephal::Screens::self();
-    connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)),
-            this, SLOT(adjustSize(Kephal::Screen *)));
+    m_mainView->installEventFilter(this);
 
 
-    m_controlBar->setAttribute(Qt::WA_TranslucentBackground);
-    m_controlBar->setAutoFillBackground(false);
-    m_controlBar->viewport()->setAutoFillBackground(false);
-    m_controlBar->setAttribute(Qt::WA_TranslucentBackground);
-    m_controlBar->show();
-    connect(m_controlBar, SIGNAL(locationChanged(const NetView *)), this, SLOT(controlBarMoved(const NetView *)));
-    connect(m_controlBar, SIGNAL(geometryChanged()), this, SLOT(positionPanel()));
 
     int width = 400;
     int height = 200;
     if (isDesktop) {
-        QRect rect = Kephal::ScreenUtils::screenGeometry(m_controlBar->screen());
+        QRect rect = Kephal::ScreenUtils::screenGeometry(m_mainView->screen());
         width = rect.width();
         height = rect.height();
     } else {
-        QAction *action = KStandardAction::quit(qApp, SLOT(quit()), m_window);
-        m_window->addAction(action);
+        QAction *action = KStandardAction::quit(qApp, SLOT(quit()), m_mainView);
+        m_mainView->addAction(action);
 
         QString geom = args->getOption("screen");
         int x = geom.indexOf('x');
@@ -137,7 +116,7 @@ PlasmaApp::PlasmaApp()
         }
     }
 
-    m_window->resize(width, height);
+    m_mainView->resize(width, height);
 
     // this line initializes the corona.
     corona();
@@ -171,10 +150,12 @@ void PlasmaApp::cleanup()
     viewIds.deleteGroup();
     viewIds.writeEntry(QString::number(m_mainView->containment()->id()), NetView::mainViewId());
 
-    viewIds.writeEntry(QString::number(m_controlBar->containment()->id()), NetView::controlBarId());
+    if (m_controlBar) {
+        viewIds.writeEntry(QString::number(m_controlBar->containment()->id()), NetView::controlBarId());
+    }
 
-    delete m_window;
-    m_window = 0;
+    delete m_mainView;
+    m_mainView = 0;
 
     delete m_corona;
     m_corona = 0;
@@ -190,6 +171,10 @@ void PlasmaApp::syncConfig()
 
 void PlasmaApp::positionPanel()
 {
+    if (!m_controlBar) {
+        return;
+    }
+
     QRect screenRect = Kephal::ScreenUtils::screenGeometry(m_controlBar->screen());
 
     //move
@@ -223,7 +208,7 @@ void PlasmaApp::mainContainmentActivated()
         return;
     }
 
-    const WId id = m_window->effectiveWinId();
+    const WId id = m_mainView->effectiveWinId();
 
     QWidget * activeWindow = QApplication::activeWindow();
     KWindowSystem::raiseWindow(id);
@@ -235,11 +220,11 @@ void PlasmaApp::mainContainmentActivated()
 
 bool PlasmaApp::eventFilter(QObject *watched, QEvent *event)    
 {
-    if (!m_isDesktop) {
+    if (!m_isDesktop || !m_controlBar) {
         return false;
     }
 
-    if (watched == m_window && event->type() == QEvent::WindowDeactivate) {  
+    if (watched == m_mainView && event->type() == QEvent::WindowDeactivate) {  
 
         if (!QApplication::activeWindow() && m_controlBar->windowFlags() & Qt::X11BypassWindowManagerHint) {
             m_controlBar->setWindowFlags(m_controlBar->windowFlags()^Qt::X11BypassWindowManagerHint);
@@ -249,7 +234,7 @@ bool PlasmaApp::eventFilter(QObject *watched, QEvent *event)
             positionPanel();
         }
         m_controlBar->show();
-    } else if (watched == m_window && event->type() == QEvent::WindowActivate) {
+    } else if (watched == m_mainView && event->type() == QEvent::WindowActivate) {
         //hack necessary to be in front of the main window
         m_controlBar->setWindowFlags(m_controlBar->windowFlags() | Qt::X11BypassWindowManagerHint);
         m_controlBar->show();
@@ -263,15 +248,15 @@ void PlasmaApp::setIsDesktop(bool isDesktop)
     m_isDesktop = isDesktop;
 
     if (isDesktop) {
-        m_window->setWindowFlags(m_window->windowFlags() | Qt::FramelessWindowHint);
-        KWindowSystem::setOnAllDesktops(m_window->winId(), true);
-        m_window->show();
-        KWindowSystem::setState(m_window->winId(), NET::SkipTaskbar | NET::SkipPager);
-        KWindowSystem::setType(m_window->winId(), NET::Normal);
+        m_mainView->setWindowFlags(m_mainView->windowFlags() | Qt::FramelessWindowHint);
+        KWindowSystem::setOnAllDesktops(m_mainView->winId(), true);
+        m_mainView->show();
+        KWindowSystem::setState(m_mainView->winId(), NET::SkipTaskbar | NET::SkipPager);
+        KWindowSystem::setType(m_mainView->winId(), NET::Normal);
     } else {
-        m_window->setWindowFlags(m_window->windowFlags() & ~Qt::FramelessWindowHint);
-        KWindowSystem::setOnAllDesktops(m_window->winId(), false);
-        KWindowSystem::setType(m_window->winId(), NET::Normal);
+        m_mainView->setWindowFlags(m_mainView->windowFlags() & ~Qt::FramelessWindowHint);
+        KWindowSystem::setOnAllDesktops(m_mainView->winId(), false);
+        KWindowSystem::setType(m_mainView->winId(), NET::Normal);
     }
 }
 
@@ -284,18 +269,18 @@ void PlasmaApp::adjustSize(Kephal::Screen *screen)
 {
     Q_UNUSED(screen)
 
-    QRect rect = Kephal::ScreenUtils::screenGeometry(m_controlBar->screen());
+    QRect rect = Kephal::ScreenUtils::screenGeometry(m_mainView->screen());
 
     int width = rect.width();
     int height = rect.height();
-    m_window->setFixedSize(width, height);
+    m_mainView->setFixedSize(width, height);
     positionPanel();
     reserveStruts();
 }
 
 void PlasmaApp::reserveStruts()
 {
-    if (!isDesktop()) {
+    if (!m_controlBar || !isDesktop()) {
         return;
     }
 
@@ -303,27 +288,27 @@ void PlasmaApp::reserveStruts()
     switch (m_controlBar->location()) {
     case Plasma::LeftEdge:
         strut.left_width = m_controlBar->width();
-        strut.left_start = m_window->y();
-        strut.left_end = m_window->y() + m_window->height() - 1;
+        strut.left_start = m_mainView->y();
+        strut.left_end = m_mainView->y() + m_mainView->height() - 1;
         break;
     case Plasma::RightEdge:
         strut.right_width = m_controlBar->width();
-        strut.right_start = m_window->y();
-        strut.right_end = m_window->y() + m_window->height() - 1;
+        strut.right_start = m_mainView->y();
+        strut.right_end = m_mainView->y() + m_mainView->height() - 1;
         break;
     case Plasma::TopEdge:
         strut.top_width = m_controlBar->height();
-        strut.top_start = m_window->x();
-        strut.top_end = m_window->x() + m_window->width() - 1;
+        strut.top_start = m_mainView->x();
+        strut.top_end = m_mainView->x() + m_mainView->width() - 1;
         break;
     case Plasma::BottomEdge:
     default:
         strut.bottom_width = m_controlBar->height();
-        strut.bottom_start = m_window->x();
-        strut.bottom_end = m_window->x() + m_window->width() - 1;
+        strut.bottom_start = m_mainView->x();
+        strut.bottom_end = m_mainView->x() + m_mainView->width() - 1;
     }
 
-    KWindowSystem::setExtendedStrut(m_window->winId(),
+    KWindowSystem::setExtendedStrut(m_mainView->winId(),
                                     strut.left_width, strut.left_start, strut.left_end,
                                     strut.right_width, strut.right_start, strut.right_end,
                                     strut.top_width, strut.top_start, strut.top_end,
@@ -333,7 +318,7 @@ void PlasmaApp::reserveStruts()
 Plasma::Corona* PlasmaApp::corona()
 {
     if (!m_corona) {
-        m_corona = new NetCorona(this, m_window);
+        m_corona = new NetCorona(this, m_mainView);
         connect(m_corona, SIGNAL(containmentAdded(Plasma::Containment*)),
                 this, SLOT(createView(Plasma::Containment*)));
         connect(m_corona, SIGNAL(configSynced()), this, SLOT(syncConfig()));
@@ -342,7 +327,7 @@ Plasma::Corona* PlasmaApp::corona()
         m_corona->setItemIndexMethod(QGraphicsScene::NoIndex);
         m_corona->initializeLayout();
 
-        m_window->show();
+        m_mainView->show();
 
         connect(m_corona, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
                 m_mainView, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
@@ -376,7 +361,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
     KConfigGroup viewIds(KGlobal::config(), "ViewIds");
     int defaultId = 0;
     if (containment->containmentType() == Plasma::Containment::PanelContainment && 
-        m_controlBar->containment() == 0 ) {
+        (!m_controlBar || m_controlBar->containment() == 0) ) {
         defaultId = NetView::controlBarId();
     } else if (containment->containmentType() == Plasma::Containment::PanelContainment && 
         m_mainView->containment() == 0 ) {
@@ -393,7 +378,30 @@ void PlasmaApp::createView(Plasma::Containment *containment)
          !viewIds.exists() && m_mainView->containment() == 0)) {
         m_mainView->setContainment(containment);
         containment->setScreen(0);
-    } else if (m_controlBar && id == NetView::controlBarId()) {
+    } else if (id == NetView::controlBarId()) {
+        if (!m_controlBar) {
+            m_controlBar = new NetView(0, NetView::controlBarId(), 0);
+            KWindowSystem::setOnAllDesktops(m_controlBar->effectiveWinId(), true);
+            m_controlBar->setWindowFlags(m_mainView->windowFlags() | Qt::FramelessWindowHint);
+            m_controlBar->setFrameShape(QFrame::NoFrame);
+            KWindowSystem::setType(m_controlBar->effectiveWinId(), NET::Dock);
+            unsigned long state = NET::Sticky | NET::StaysOnTop | NET::KeepAbove;
+            KWindowSystem::setState(m_controlBar->effectiveWinId(), state);
+
+            Kephal::Screens *screens = Kephal::Screens::self();
+            connect(screens, SIGNAL(screenResized(Kephal::Screen *, QSize, QSize)),
+                    this, SLOT(adjustSize(Kephal::Screen *)));
+
+
+            m_controlBar->setAttribute(Qt::WA_TranslucentBackground);
+            m_controlBar->setAutoFillBackground(false);
+            m_controlBar->viewport()->setAutoFillBackground(false);
+            m_controlBar->setAttribute(Qt::WA_TranslucentBackground);
+            m_controlBar->show();
+            connect(m_controlBar, SIGNAL(locationChanged(const NetView *)), this, SLOT(controlBarMoved(const NetView *)));
+            connect(m_controlBar, SIGNAL(geometryChanged()), this, SLOT(positionPanel()));
+        }
+
         m_controlBar->setContainment(containment);
     } else {
         containment->setScreen(-1);
@@ -402,7 +410,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
 
 void PlasmaApp::controlBarMoved(const NetView *controlBar)
 {
-    if (controlBar != m_controlBar) {
+    if (!m_controlBar || controlBar != m_controlBar) {
         return;
     }
 
