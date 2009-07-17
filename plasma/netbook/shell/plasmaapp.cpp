@@ -249,7 +249,8 @@ bool PlasmaApp::eventFilter(QObject *watched, QEvent *event)
     }
 
     if (watched == m_window && event->type() == QEvent::WindowDeactivate) {  
-        if (m_controlBar->windowFlags() & Qt::X11BypassWindowManagerHint) {
+
+        if (!QApplication::activeWindow() && m_controlBar->windowFlags() & Qt::X11BypassWindowManagerHint) {
             m_controlBar->setWindowFlags(m_controlBar->windowFlags()^Qt::X11BypassWindowManagerHint);
             KWindowSystem::setType(m_controlBar->effectiveWinId(), NET::Dock);
             unsigned long state = NET::Sticky | NET::StaysOnTop | NET::KeepAbove;
