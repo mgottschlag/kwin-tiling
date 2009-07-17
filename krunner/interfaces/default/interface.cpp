@@ -56,6 +56,7 @@
 #include "interfaces/default/resultscene.h"
 #include "interfaces/default/resultitem.h"
 #include "interfaces/default/krunnertabfilter.h"
+#include "interfaces/default/resultsview.h"
 
 static const int MIN_WIDTH = 420;
 
@@ -158,25 +159,18 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     m_searchTerm->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
     m_completion->insertItems(pastQueryItems);
     bottomLayout->insertWidget(2, m_searchTerm, 10);
-    
+
     m_resultsContainer = new QWidget(w);
     QVBoxLayout* resultsLayout = new QVBoxLayout(m_resultsContainer);
     resultsLayout->setMargin(0);
-    
+
     m_dividerLine = new QWidget(m_resultsContainer);
     m_dividerLine->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
     m_dividerLine->setFixedHeight(1);
     m_dividerLine->setAutoFillBackground(true);
     resultsLayout->addWidget(m_dividerLine);
 
-    m_resultsView = new QGraphicsView(m_resultsContainer);
-    m_resultsView->setFrameStyle(QFrame::NoFrame);
-    m_resultsView->viewport()->setAutoFillBackground(false);
-    m_resultsView->setInteractive(true);
-    m_resultsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_resultsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_resultsView->setOptimizationFlag(QGraphicsView::DontSavePainterState);
-    m_resultsView->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    m_resultsView = new ResultsView(m_resultsContainer);
 
     //kDebug() << "size:" << m_resultsView->size() << m_resultsView->minimumSize();
     m_resultsScene = new ResultScene(runnerManager, m_searchTerm, this);
@@ -186,11 +180,11 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     connect(m_resultsScene, SIGNAL(matchCountChanged(int)), this, SLOT(matchCountChanged(int)));
     connect(m_resultsScene, SIGNAL(itemActivated(ResultItem *)), this, SLOT(run(ResultItem *)));
     connect(m_resultsScene, SIGNAL(ensureVisibility(QGraphicsItem *)), this, SLOT(ensureVisibility(QGraphicsItem *)));
-    
+
     resultsLayout->addWidget(m_resultsView);
 
     m_layout->addWidget(m_resultsContainer);
-    
+
     connect(lineEdit, SIGNAL(userTextChanged(QString)), this, SLOT(queryTextEdited(QString)));
     connect(m_searchTerm, SIGNAL(returnPressed()), this, SLOT(runDefaultResultItem()));
 
@@ -201,7 +195,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
 
     new QShortcut(QKeySequence( Qt::Key_Escape ), this, SLOT(close()));
-    
+
     m_layout->setAlignment(Qt::AlignTop);
 
     setTabOrder(0, m_configButton);
@@ -215,11 +209,11 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
 
     // we restore the original size, which will set the results view back to its
     // normal size, then we hide the results view and resize the dialog
-    
+
     setMinimumSize(QSize(MIN_WIDTH , 0));
     adjustSize();
 
-    // we load the last used size; the saved value is the size of the dialog when the 
+    // we load the last used size; the saved value is the size of the dialog when the
     // results are visible;
 
     if (KGlobal::config()->hasGroup("Interface")) {
@@ -237,7 +231,7 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
 
 void Interface::resizeEvent(QResizeEvent *event)
 {
-  
+
     // We set m_defaultSize only when the event is spontaneous, i.e. when the user resizes the window
     // We always update the width, but we update the height only if the resultsContainer is visible.
 
@@ -260,7 +254,7 @@ void Interface::resizeEvent(QResizeEvent *event)
         p.setBrush(QPalette::Background, gr);
         m_dividerLine->setPalette(p);
     }
-    
+
     m_resultsScene->resize(m_resultsView->width(), qMax(m_resultsView->height(), int(m_resultsScene->height())));
 
     KRunnerDialog::resizeEvent(event);
@@ -271,7 +265,7 @@ Interface::~Interface()
     KRunnerSettings::setPastQueries(m_searchTerm->historyItems());
     KRunnerSettings::setQueryTextCompletionMode(m_searchTerm->completionMode());
     KRunnerSettings::self()->writeConfig();
-    
+
     // Before saving the size we resize to the default size, with the results container shown.
     resize(m_defaultSize);
     KConfigGroup interfaceConfig(KGlobal::config(), "Interface");
@@ -320,7 +314,7 @@ void Interface::display(const QString &term)
     show();
     resetInterface();
     KWindowSystem::forceActiveWindow(winId());
-    
+
     if (!term.isEmpty()) {
         m_searchTerm->setItemText(0, term);
     }
@@ -328,7 +322,7 @@ void Interface::display(const QString &term)
 
 void Interface::centerOnScreen()
 {
-    // this method is now called only by the ctor, with the results view visible, however 
+    // this method is now called only by the ctor, with the results view visible, however
     // we do not call KDialog::centerOnScreen(this, screen) because the dialog is still hidden
 
     int screen = Kephal::ScreenUtils::primaryScreenId();
@@ -338,7 +332,7 @@ void Interface::centerOnScreen()
 
     QRect r = Kephal::ScreenUtils::screenGeometry(screen);
     int w = width();
-    int h = height(); 
+    int h = height();
     move(r.left() + (r.width() / 2) - (w / 2),
          r.top() + (r.height() / 2) - (h / 2));
 }
@@ -381,7 +375,7 @@ void Interface::showHelp()
             match.setType(Plasma::QueryMatch::InformationalMatch);
             match.setIcon(icon);
             match.setText(syntax.exampleQueriesWithTermDescription().join(", "));
-            match.setSubtext(syntax.description() + "\n" + 
+            match.setSubtext(syntax.description() + "\n" +
                              i18n("(From %1, %2)", runner->name(), runner->description()));
             match.setData(syntax.exampleQueries().first());
             matches.insert(runner->name() + QString::number(++count), match);
@@ -394,7 +388,7 @@ void Interface::showHelp()
 void Interface::ensureVisibility(QGraphicsItem* item)
 {
     m_resultsScene->setItemsAcceptHoverEvents(false);
-    m_resultsView->ensureVisible(item);
+    m_resultsView->ensureVisible(item,0,0);
     m_resultsScene->setItemsAcceptHoverEvents(true);
 }
 
@@ -505,9 +499,9 @@ void Interface::matchCountChanged(int count)
 
     if (show) {
         //kDebug() << "showing!" << minimumSizeHint();
-        m_resultsContainer->show(); 
+        m_resultsContainer->show();
         resize(m_defaultSize);
-	m_resultsScene->resize(m_resultsView->width(), qMax(m_resultsView->height(), int(m_resultsScene->height())));
+        m_resultsScene->resize(m_resultsView->width(), qMax(m_resultsView->height(), int(m_resultsScene->height())));
     } else {
         //kDebug() << "hiding ... eventually";
         m_delayedRun = false;
@@ -520,16 +514,16 @@ void Interface::hideResultsArea()
     m_searchTerm->setFocus();
 
     resetResultsArea();
-    
+
     resize(qMax(minimumSizeHint().width(), m_defaultSize.width()), minimumSizeHint().height());
 }
 
 void Interface::resetResultsArea()
 {
     setMinimumSize(QSize(MIN_WIDTH,0));
-    m_resultsContainer->hide();   
+    m_resultsContainer->hide();
 
-    //This is a workaround for some Qt bug which is not fully understood; it seems that 
+    //This is a workaround for some Qt bug which is not fully understood; it seems that
     //adding a qgv to a layout and then hiding it gives some issues with resizing
     //Calling updateGeometry should not be necessary, but it probably triggers some updates which do the trick
 

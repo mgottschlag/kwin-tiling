@@ -88,6 +88,11 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
     m_match = match;
     m_icon = KIcon(match.icon());
 
+    if (m_configWidget) {
+        delete m_configWidget;
+        m_configWidget = 0;
+    }
+
     //kDebug() << match.hasConfigurationInterface();
     if (match.hasConfigurationInterface()) {
         m_configButton = new Plasma::ToolButton(this);
@@ -423,7 +428,7 @@ void ResultItem::calculateSize()
     }
 }
 
-void ResultItem::calculateSize(int sceneWidth, int sceneHeight) 
+void ResultItem::calculateSize(int sceneWidth, int sceneHeight)
 {
 
     QRect textBounds(contentsRect().toRect());
