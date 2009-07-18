@@ -10,21 +10,12 @@
    </rect>
   </property>
   <layout class="QVBoxLayout" name="_2" >
-   <property name="spacing" >
-    <number>0</number>
-   </property>
-   <property name="margin" >
-    <number>0</number>
-   </property>
    <item>
     <widget class="QGroupBox" name="groupBox_2" >
      <property name="title" >
       <string>Window Data</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
       <item>
        <layout class="QGridLayout" name="gridLayout" >
         <item row="0" column="0" >
@@ -214,9 +205,6 @@
       <string>Window Types</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
       <item row="0" column="0" >
        <widget class="QRadioButton" name="type_normal" >
         <property name="text" >

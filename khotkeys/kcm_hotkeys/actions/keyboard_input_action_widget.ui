@@ -10,9 +10,6 @@
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" >
-   <property name="margin" >
-    <number>0</number>
-   </property>
    <item>
     <widget class="KTextEdit" name="input" />
    </item>
@@ -22,14 +19,8 @@
       <string>Window</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <item>
          <widget class="QRadioButton" name="active_radio" >
           <property name="text" >

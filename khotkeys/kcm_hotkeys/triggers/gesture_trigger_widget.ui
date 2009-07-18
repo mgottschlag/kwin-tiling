@@ -10,9 +10,6 @@
    </rect>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout" >
-   <property name="margin" >
-    <number>0</number>
-   </property>
    <item>
     <widget class="GestureWidget" native="1" name="gesture" />
    </item>
