@@ -43,14 +43,10 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	QString wtstr;
 
 	QBoxLayout *ml = new QVBoxLayout( this );
-	ml->setSpacing( KDialog::spacingHint() );
-	ml->setMargin( KDialog::marginHint() );
 
 	QGroupBox* box = new QGroupBox( i18nc("@title:group 'man locale' ...", "Locale"), this );
 	ml->addWidget( box );
 	QFormLayout *fl = new QFormLayout( box );
-	fl->setSpacing( KDialog::spacingHint() );
-	fl->setMargin( KDialog::marginHint() );
 
 	// The Language group box
 	langcombo = new KLanguageButton( box );
@@ -64,16 +60,12 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	langcombo->setWhatsThis( wtstr );
 
 	QBoxLayout *mlml = new QHBoxLayout();
-	ml->setSpacing( KDialog::spacingHint() );
-	ml->setMargin( 0 );
 	ml->addItem( mlml );
 
 	box = new QGroupBox( i18nc("@title:group", "Appearance"), this );
 	mlml->addWidget( box );
 
 	fl = new QFormLayout( box );
-	fl->setSpacing( KDialog::spacingHint() );
-	fl->setMargin( KDialog::marginHint() );
 
 	useThemeCheck = new QCheckBox( i18n("&Use themed greeter"), box );
 	connect( useThemeCheck, SIGNAL(toggled( bool )), SLOT(slotUseThemeChanged()) );
@@ -103,10 +95,9 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	colcombo->setWhatsThis( wtstr );
 
 	box = new QGroupBox( i18nc("@title:group", "Fonts"), this );
+	mlml->addSpacing( KDialog::spacingHint() );
 	mlml->addWidget( box );
 	fl = new QFormLayout( box );
-	fl->setSpacing( KDialog::spacingHint() );
-	fl->setMargin( KDialog::marginHint() );
 
 	stdFontChooser = new KFontRequester( box );
 	stdFontChooser->setWhatsThis( i18n(
