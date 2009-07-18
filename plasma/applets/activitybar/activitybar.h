@@ -50,7 +50,6 @@ private Q_SLOTS:
 
 private:
     int m_activeContainment;
-    QPointer<Plasma::View> m_view;
     Plasma::TabBar *m_tabBar;
     QList<Plasma::Containment*> m_containments;
 };

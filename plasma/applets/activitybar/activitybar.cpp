@@ -80,7 +80,6 @@ void ActivityBar::init()
             if (cont->screen() != -1 &&
                 cont->screen() == myScreen &&
                 (cont->desktop() == -1 || cont->desktop() == KWindowSystem::currentDesktop()-1)) {
-                m_view = qobject_cast<Plasma::View *>(cont->view());
                 m_activeContainment = m_containments.count() - 1;
                 m_tabBar->setCurrentIndex(m_activeContainment);
             }
@@ -132,32 +131,10 @@ void ActivityBar::switchContainment(int newActive)
         return;
     }
 
-    Plasma::Corona *c = containment()->corona();
-    if (!c) {
-        return;
-    }
+    m_activeContainment = newActive;
+    m_containments[newActive]->setScreen(containment()->screen(), containment()->desktop());
+    return;
 
-    const int myScreen = containment()->screen();
-
-    //FIXME: this whole thing sounds like an hack isn't it?
-    if (!m_view || m_view->screen() != myScreen) {
-        Plasma::Containment *cont = c->containmentForScreen(containment()->screen(), containment()->desktop() - 1);
-        if (cont) {
-            m_view = qobject_cast<Plasma::View *>(cont->view());
-        }
-    }
-
-    if (m_view && m_view->screen() != myScreen) {
-        m_view = 0;
-        return;
-    }
-
-    if (m_view) {
-        m_activeContainment = newActive;
-        Plasma::Containment *cont = m_containments[newActive];
-
-        m_view->setContainment(cont);
-    }
 }
 
 void ActivityBar::currentDesktopChanged(const int currentDesktop)
@@ -180,7 +157,6 @@ void ActivityBar::currentDesktopChanged(const int currentDesktop)
         index != m_activeContainment) {
         m_activeContainment = index;
         m_tabBar->setCurrentIndex(index);
-        m_view = qobject_cast<Plasma::View *>(cont->view());
     }
 }
 
@@ -247,7 +223,6 @@ void ActivityBar::screenChanged(int wasScreen, int isScreen, Plasma::Containment
         (cont->desktop() == -1 || cont->desktop() == KWindowSystem::currentDesktop()-1)) {
         m_activeContainment = index;
         m_tabBar->setCurrentIndex(index);
-        m_view = qobject_cast<Plasma::View *>(cont->view());
     }
 }
 
