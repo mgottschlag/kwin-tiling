@@ -234,7 +234,7 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
         // kDebug() << "Remaining msecs on battery:" << m_remainingMSecs;
     }
 
-    if (data["Percent"].toInt() < 10) {
+    if (m_batteries_data.count() > 0 && data["Percent"].toInt() < 10) {
         setStatus(Plasma::NeedsAttentionStatus);
     } else {
         setStatus(Plasma::ActiveStatus);
