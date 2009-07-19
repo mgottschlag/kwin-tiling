@@ -664,8 +664,11 @@ void KScreenSaver::slotPlasmaSetup()
 void KScreenSaver::slotScreenSaver(Q3ListViewItem *item)
 {
     if (!item)
-      return;
-
+    {
+        mSetupBt->setEnabled(false);
+        mTestBt->setEnabled(false);
+        return;
+    }
     int i = 0, indx = -1;
 	Q_FOREACH( SaverConfig* saver , mSaverList ){
         if ( item->parent() )
@@ -686,6 +689,9 @@ void KScreenSaver::slotScreenSaver(Q3ListViewItem *item)
         }
 		i++;
     }
+
+    mSetupBt->setEnabled(item->childCount()==0);
+    mTestBt->setEnabled(item->childCount()==0);
     if (indx == -1) {
         mSelected = -1;
         return;
