@@ -1,3 +1,7 @@
+2009-07-19  Richard Dale  <richard.j.dale@gmail.com>
+* Use the new name 'extenderItemRestored()' for the signal to connect to
+initExtenderItem()
+
 2009-07-18  Richard Dale  <richard.j.dale@gmail.com>
 * Add a Ruby version of the C++ extender tutorial example on Techbase
 

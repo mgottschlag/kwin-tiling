@@ -28,7 +28,7 @@ module PlasmaScripting
             :lower,
             :flushPendingConstraintsEvents,
             :init,
-            :initExtenderItem
+            'initExtenderItem(Plasma::ExtenderItem*)'
 
     signals :releaseVisualFocus,
             :geometryChanged,
@@ -44,10 +44,7 @@ module PlasmaScripting
       connect(@applet_script.applet, SIGNAL(:geometryChanged), self, SIGNAL(:geometryChanged))
       connect(@applet_script.applet, SIGNAL(:configNeedsSaving), self, SIGNAL(:configNeedsSaving))
       connect(@applet_script.applet, SIGNAL(:activate), self, SIGNAL(:activate))
-
-      if respond_to?(:initExtenderItem)
-        connect(@applet_script.applet, SIGNAL(:initScriptingExtenderItem), self, SLOT(:initExtenderItem))
-      end
+      connect(@applet_script.applet, SIGNAL('extenderItemRestored(Plasma::ExtenderItem*)'), self, SLOT('initExtenderItem(PlasmExtenderItem*)'))
     end
 
     # If a method is called on a PlasmaScripting::Applet instance is found to be missing
@@ -72,6 +69,13 @@ module PlasmaScripting
     end
 
     def paintInterface(painter, option, contentsRect)
+    end
+
+    def initExtenderItem(item)
+       puts "Missing implementation of initExtenderItem in the applet " \
+                   "#{item.config.readEntry('SourceAppletPluginName', '')}" \
+                   "!\n Any applet that uses extenders should implement initExtenderItem to " \
+                   "instantiate a widget."
     end
 
     def size
