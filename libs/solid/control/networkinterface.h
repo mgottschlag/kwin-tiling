@@ -59,7 +59,7 @@ namespace Control
         /**
          * Enums describing the reason for a connection state change
          */
-        enum ConnectionStateChangeReason{ NoReason=1, NowManagedReason, NowUnmanagedReason,
+        enum ConnectionStateChangeReason{ NoReason=0, UnknownReason, NowManagedReason, NowUnmanagedReason,
                                     ConfigFailedReason, ConfigUnavailableReason,
                                     ConfigExpiredReason, NoSecretsReason, AuthSupplicantDisconnectReason,
                                     AuthSupplicantConfigFailedReason, AuthSupplicantFailedReason,
