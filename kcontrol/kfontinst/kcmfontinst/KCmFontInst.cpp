@@ -236,8 +236,8 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     itsGroupSplitter->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
     QStringList items;
-    QBoxLayout  *mainLayout=new QBoxLayout(QBoxLayout::TopToBottom, this),
-                *controlLayout=new QBoxLayout(QBoxLayout::TopToBottom, controls);
+    QBoxLayout  *mainLayout=new QBoxLayout(QBoxLayout::TopToBottom, this);
+    QGridLayout *controlLayout=new QGridLayout(controls);
 
     itsGroupsWidget=new QWidget(itsGroupSplitter);
     itsFontsWidget=new QWidget(itsGroupSplitter);
@@ -317,11 +317,9 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     {
         itsModeControl=new QComboBox(toolbar);
         itsModeAct=toolbar->addWidget(itsModeControl);
-        toolbar->addSeparator();
     }
 
-    itsFilter=new CFontFilter(toolbar);
-    toolbar->addWidget(itsFilter);
+    itsFilter=new CFontFilter(this);
 
     // Details - Groups...
     itsGroupList=new CGroupList(itsGroupsWidget);
@@ -399,8 +397,9 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     statusLayout->addWidget(itsListingProgress);
 
     // Layout widgets...
-    controlLayout->addWidget(toolbar);
-    controlLayout->addWidget(itsGroupSplitter);
+    controlLayout->addWidget(toolbar, 0, 0);
+    controlLayout->addWidget(itsFilter, 0, 1);
+    controlLayout->addWidget(itsGroupSplitter, 1, 0, 1, 2);
     mainLayout->addWidget(itsPreviewSplitter);
     mainLayout->addWidget(statusWidget);
     previewLayout->addWidget(previewToolbar);
@@ -413,8 +412,6 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     itsGroupSplitter->setStretchFactor(1, 1);
     itsPreviewSplitter->setStretchFactor(0, 1);
     itsPreviewSplitter->setStretchFactor(1, 0);
-
-    toolbar->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
     // Set sizes for 3 views...
     QList<int> defaultSizes;
