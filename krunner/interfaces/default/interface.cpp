@@ -50,8 +50,6 @@
 #include <Plasma/Theme>
 #include <Plasma/Svg>
 
-#include <kephal/screens.h>
-
 #include "krunnersettings.h"
 #include "interfaces/default/resultscene.h"
 #include "interfaces/default/resultitem.h"
@@ -64,7 +62,8 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
     : KRunnerDialog(runnerManager, parent),
       m_delayedRun(false),
       m_running(false),
-      m_queryRunning(false)
+      m_queryRunning(false),
+      m_oldScreen(-1)
 {
     m_hideResultsTimer.setSingleShot(true);
     connect(&m_hideResultsTimer, SIGNAL(timeout()), this, SLOT(hideResultsArea()));
@@ -223,6 +222,12 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
 
     m_defaultSize = size();
 
+    connect(Kephal::Screens::self(), SIGNAL(screenRemoved(int)),
+            this, SLOT(screenRemoved(int)));
+    connect(Kephal::Screens::self(), SIGNAL(screenResized(Kephal::Screen*,QSize,QSize)),
+            this, SLOT(screenChanged(Kephal::Screen*)));
+    connect(Kephal::Screens::self(), SIGNAL(screenMoved(Kephal::Screen*,QPoint,QPoint)),
+            this, SLOT(screenChanged(Kephal::Screen*)));
     centerOnScreen();
     m_resultsContainer->hide();
 
@@ -231,15 +236,14 @@ Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget *parent)
 
 void Interface::resizeEvent(QResizeEvent *event)
 {
-
     // We set m_defaultSize only when the event is spontaneous, i.e. when the user resizes the window
     // We always update the width, but we update the height only if the resultsContainer is visible.
 
     if (event->spontaneous()) {
         m_defaultSize.setWidth(width());
-	if (m_resultsContainer->isVisible()) {
-	    m_defaultSize.setHeight(height());
-	}
+        if (m_resultsContainer->isVisible()) {
+            m_defaultSize.setHeight(height());
+        }
     }
 
     Plasma::Theme *theme = Plasma::Theme::defaultTheme();
@@ -321,6 +325,19 @@ void Interface::display(const QString &term)
     }
 }
 
+void Interface::screenRemoved(int screen)
+{
+    m_screenPos.remove(screen);
+}
+
+void Interface::screenChanged(Kephal::Screen* screen)
+{
+    m_screenPos.remove(screen->id());
+    if (m_oldScreen == screen->id()) {
+        m_oldScreen = -1;
+    }
+}
+
 void Interface::centerOnScreen()
 {
     int screen = Kephal::ScreenUtils::primaryScreenId();
@@ -328,11 +345,24 @@ void Interface::centerOnScreen()
         screen = Kephal::ScreenUtils::screenId(QCursor::pos());
     }
 
+    if (m_oldScreen == screen) {
+        return;
+    }
+
+    m_screenPos[m_oldScreen] = pos();
+    m_oldScreen = screen;
+
+    if (m_screenPos.contains(screen)) {
+        move(m_screenPos[screen]);
+        return;
+    }
+
     QRect r = Kephal::ScreenUtils::screenGeometry(screen);
     int w = m_defaultSize.width();
     int h = m_defaultSize.height();
     move(r.left() + (r.width() / 2) - (w / 2),
-         r.top() + (r.height() / 2) - (h / 2));
+         r.top() + (r.height() / 3));
+    m_screenPos[screen] = pos();
 }
 
 void Interface::setWidgetPalettes()
