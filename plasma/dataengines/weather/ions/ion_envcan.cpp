@@ -1395,7 +1395,7 @@ void EnvCanadaIon::updateWeather(const QString& source)
 
     // Real weather - Current conditions
     data.insert("Observation Period", observationTime(source));
-    data.insert("Current Conditions", condition(source));
+    data.insert("Current Conditions", i18nc("weather condition", condition(source).toUtf8()));
     kDebug() << "i18n condition string: " << qPrintable(condition(source));
 
     // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
@@ -1630,7 +1630,7 @@ QString EnvCanadaIon::condition(const QString& source)
     if (d->m_weatherData[source].condition.isEmpty()) {
         d->m_weatherData[source].condition = "N/A";
     }
-    return i18nc("weather condition", d->m_weatherData[source].condition.toUtf8());
+    return (d->m_weatherData[source].condition.toUtf8());
 }
 
 QString EnvCanadaIon::dewpoint(const QString& source)
