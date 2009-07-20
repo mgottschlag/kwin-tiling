@@ -1,6 +1,7 @@
 [Global]
 IconName=system-lock-screen
 Comment=The KDE Screen Saver
+Comment[de]=Der Bildschirmschoner von KDE
 Comment[ja]=KDE スクリーンセーバー
 Comment[km]=ធាតុរក្សាអេក្រង់​របស់ KDE
 Comment[ko]=KDE 화면 보호기
@@ -19,6 +20,7 @@ Comment[zh_TW]=KDE 螢幕保護程式
 
 [Event/savingstarted]
 Name=Screen saver started
+Name[de]=Der Bildschirmschoner wurde gestartet.
 Name[ja]=スクリーンセーバー開始
 Name[km]=បាន​ចាប់ផ្ដើម​ធាតុរក្សា​អេក្រង់
 Name[ko]=화면 보호기 시작됨
@@ -35,6 +37,7 @@ Name[uk]=Запущено зберігач екрана
 Name[x-test]=xxScreen saver startedxx
 Name[zh_TW]=螢幕保護程式已啟動
 Comment=The screen saver has been started
+Comment[de]=Der Bildschirmschoner wurde gestartet.
 Comment[ja]=スクリーンセーバーが開始されました
 Comment[km]=ធាតុ​រក្សាអេក្រង់​ត្រូវ​បាន​ចាប់ផ្ដើម
 Comment[ko]=화면 보호기 시작됨
@@ -54,6 +57,7 @@ Action=None
 
 [Event/locked]
 Name=Screen locked
+Name[de]=Bildschirm gesperrt
 Name[ja]=スクリーンロック
 Name[km]=បាន​ចាក់សោ​អេក្រង់​
 Name[ko]=화면 잠김
@@ -70,6 +74,7 @@ Name[uk]=Екран заблоковано
 Name[x-test]=xxScreen lockedxx
 Name[zh_TW]=螢幕已鎖定
 Comment=The screen has been locked
+Comment[de]=Der Bildschirm wurde gesperrt.
 Comment[ja]=スクリーンがロックされました
 Comment[km]=អេក្រង់​ត្រូវ​បាន​ចាក់សោ
 Comment[ko]=화면 잠김
@@ -89,6 +94,7 @@ Action=None
 
 [Event/savingstopped]
 Name=Screen saver exited
+Name[de]=Der Bildschirmschoner wurde verlassen.
 Name[ja]=スクリーンセーバー終了
 Name[km]=បាន​ចេញ​ពី​ធាតុរក្សាអេក្រង់​
 Name[ko]=화면 보호기 종료됨
@@ -124,6 +130,7 @@ Action=None
 
 [Event/unlocked]
 Name=Screen unlocked
+Name[de]=Bildschirm freigegeben
 Name[ja]=スクリーンロック解除
 Name[km]=បាន​​ដោះសោ​អេក្រង់
 Name[ko]=화면 잠금 풀림
@@ -140,6 +147,7 @@ Name[uk]=Екран розблоковано
 Name[x-test]=xxScreen unlockedxx
 Name[zh_TW]=螢幕已解除鎖定
 Comment=The screen has been unlocked
+Comment[de]=Der Bildschirm wurde freigegeben.
 Comment[ja]=スクリーンのロックが解除されました
 Comment[km]=ធាតុរក្សាអេក្រង់​ត្រូ​វបានដោះសោ
 Comment[ko]=화면 잠금 풀림
