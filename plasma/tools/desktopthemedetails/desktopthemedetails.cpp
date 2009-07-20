@@ -675,7 +675,8 @@ void DesktopThemeDetails::replacementItemChanged()
             // Item replacement source is a file
             if (itemComboBox->currentText() == i18n("File...")) {
                 //Get the filename for the replacement item
-                QString fileReplacement = KFileDialog::getOpenFileName(KUrl(), QString(), this, i18n("Select File to Use for %1",i.key()));  
+                QString translated_key = i18nc("plasma name", qPrintable( i.key() ) );
+                QString fileReplacement = KFileDialog::getOpenFileName(KUrl(), QString(), this, i18n("Select File to Use for %1",translated_key));
                 if (!fileReplacement.isEmpty()) {
                     m_itemFileReplacements[i.value()] = fileReplacement;
                     int index = itemComboBox->findText(fileReplacement);
