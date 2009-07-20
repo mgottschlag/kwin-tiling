@@ -28,7 +28,6 @@
 #include <kmessagebox.h>
 #include <klocale.h>
 #include <kconfig.h>
-#include <k3listview.h>
 #include <kdialog.h>
 
 #include <QBoxLayout>
@@ -37,15 +36,11 @@
 #include <QPixmap>
 
 #include "themepage.h"
+#include <QTreeWidget>
 #include "themepage.moc"
 
 #include "bitmaps.h"
 
-
-namespace {
-	// Listview columns
-	enum Columns { NameColumn = 0, DescColumn, /* hidden */ DirColumn };
-}
 
 
 ThemePage::ThemePage( QWidget* parent, const char* name )
@@ -59,17 +54,15 @@ ThemePage::ThemePage( QWidget* parent, const char* name )
 	layout->addWidget(new QLabel( i18n("Select the cursor theme you want to use:"), this ));
 
 	// Create the theme list view
-	listview = new K3ListView( this );
-	listview->setFullWidth( true );
-	listview->setAllColumnsShowFocus( true );
-	listview->setSelectionModeExt( K3ListView::Single );
-	listview->addColumn( i18n("Name") );
-	listview->addColumn( i18n("Description") );
-	layout->addWidget(listview);
-
-	connect( listview, SIGNAL(selectionChanged(Q3ListViewItem*)),
-			SLOT(selectionChanged(Q3ListViewItem*)) );
-
+	listview = new QTreeWidget( this );
+        QStringList lstHeader;
+        lstHeader<<i18n("Name")<<i18n("Description");
+        listview->setHeaderLabels( lstHeader );
+        listview->setSelectionMode( QAbstractItemView::SingleSelection );
+        listview->setRootIsDecorated( false );
+        connect( listview, SIGNAL(currentItemChanged ( QTreeWidgetItem *, QTreeWidgetItem *) )
+                 , this, SLOT( selectionChanged( QTreeWidgetItem*, QTreeWidgetItem* ) ) );
+        layout->addWidget( listview );
 	insertThemes();
 }
 
@@ -79,10 +72,11 @@ ThemePage::~ThemePage()
 }
 
 
-void ThemePage::selectionChanged( Q3ListViewItem *item )
+void ThemePage::selectionChanged( QTreeWidgetItem*current,QTreeWidgetItem*previous )
 {
-	selectedTheme = item->text( DirColumn );
-	emit changed( selectedTheme != currentTheme );
+    Q_UNUSED( previous );
+    selectedTheme = current->data( 0, Qt::UserRole + 1 ).toString();
+    emit changed( selectedTheme != currentTheme );
 }
 
 
@@ -124,42 +118,64 @@ void ThemePage::load()
 		currentTheme = whiteCursor ? "SmallWhite" : "SmallBlack";
 
 	selectedTheme = currentTheme;
-	Q3ListViewItem *item = listview->findItem( currentTheme, DirColumn );
-	item->setSelected( true );
+        for ( int i = 0;i <listview->topLevelItemCount();++i )
+        {
+            QTreeWidgetItem *item = listview->topLevelItem( i );
+            if ( item && item->data(0, Qt::UserRole + 1 ) == currentTheme )
+            {
+                listview->setCurrentItem( item );
+            }
+        }
 }
 
 
 void ThemePage::defaults()
 {
 	currentTheme = selectedTheme = "SmallBlack";
-	Q3ListViewItem *item = listview->findItem( currentTheme, DirColumn );
-	item->setSelected( true );
+        for ( int i = 0;i <listview->topLevelItemCount();++i )
+        {
+            QTreeWidgetItem *item = listview->topLevelItem( i );
+            if ( item && item->data(0, Qt::UserRole + 1 ) == currentTheme )
+            {
+                listview->setCurrentItem( item );
+            }
+        }
 }
 
 
 void ThemePage::insertThemes()
 {
-	K3ListViewItem *item;
+    QList<QTreeWidgetItem *> lstChildren;
+    QTreeWidgetItem *item = new QTreeWidgetItem(listview );
 
-	item = new K3ListViewItem( listview, i18n("Small black"),
-			i18n("Small black cursors"), "SmallBlack" );
-	item->setPixmap( 0, QPixmap( arrow_small_black_xpm ) );
-	listview->insertItem( item );
+    item->setData( 0, Qt::DisplayRole,i18n("Small black")  );
+    item->setData( 1, Qt::DisplayRole, i18n("Small black cursors") );
+    item->setData( 0, Qt::DecorationRole, QPixmap( arrow_small_black_xpm ) );
+    item->setData( 0, Qt::UserRole + 1,"SmallBlack" );
+    lstChildren<<item;
 
-	item = new K3ListViewItem( listview, i18n("Large black"),
-			i18n("Large black cursors"), "LargeBlack" );
-	item->setPixmap( 0, QPixmap( arrow_large_black_xpm ) );
-	listview->insertItem( item );
+    item = new QTreeWidgetItem(listview );
+    item->setData( 0, Qt::DisplayRole, i18n("Large black") );
+    item->setData( 1, Qt::DisplayRole, i18n("Large black cursors") );
+    item->setData( 0, Qt::DecorationRole, QPixmap( arrow_large_black_xpm ) );
+    item->setData( 0, Qt::UserRole + 1,"LargeBlack"  );
+    lstChildren<<item;
 
-	item = new K3ListViewItem( listview, i18n("Small white"),
-			i18n("Small white cursors"), "SmallWhite" );
-	item->setPixmap( 0, QPixmap( arrow_small_white_xpm ) );
-	listview->insertItem( item );
+    item = new QTreeWidgetItem(listview );
+    item->setData( 0, Qt::DisplayRole, i18n("Small white") );
+    item->setData( 1, Qt::DisplayRole, i18n("Small white cursors") );
+    item->setData( 0, Qt::DecorationRole, QPixmap(arrow_small_white_xpm  ) );
+    item->setData( 0, Qt::UserRole + 1,"SmallWhite" );
+    lstChildren<<item;
 
-	item = new K3ListViewItem( listview, i18n("Large white"),
-			i18n("Large white cursors"), "LargeWhite" );
-	item->setPixmap( 0, QPixmap( arrow_large_white_xpm ) );
-	listview->insertItem( item );
+    item = new QTreeWidgetItem(listview );
+    item->setData( 0, Qt::DisplayRole, i18n("Large white") );
+    item->setData( 1, Qt::DisplayRole, i18n("Large white cursors") );
+    item->setData( 0, Qt::DecorationRole, QPixmap( arrow_large_white_xpm ) );
+    item->setData( 0, Qt::UserRole + 1, "LargeWhite" );
+    lstChildren<<item;
+
+    listview->addTopLevelItems( lstChildren );
 }
 
 

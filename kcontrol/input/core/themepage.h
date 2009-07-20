@@ -19,8 +19,8 @@
 #ifndef __THEMEPAGE_H
 #define __THEMEPAGE_H
 
-class K3ListView;
-class Q3ListViewItem;
+class QTreeWidget;
+class QTreeWidgetItem;
 
 class ThemePage : public QWidget
 {
@@ -39,13 +39,13 @@ class ThemePage : public QWidget
 		void changed( bool );
 
 	private Q_SLOTS:
-		void selectionChanged( Q3ListViewItem * );
+		void selectionChanged( QTreeWidgetItem *,QTreeWidgetItem* );
 
 	private:
 		void insertThemes();
 		void fixCursorFile();
 
-		K3ListView *listview;
+		QTreeWidget *listview;
 		QString currentTheme, selectedTheme;
 };
 
