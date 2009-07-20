@@ -40,6 +40,7 @@ Hdd::~Hdd()
 
 void Hdd::init()
 {
+    KGlobal::locale()->insertCatalog("plasma_applet_system-monitor");
     KConfigGroup cg = config();
     QString predicateString("IS StorageVolume");
     setEngine(dataEngine("soliddevice"));

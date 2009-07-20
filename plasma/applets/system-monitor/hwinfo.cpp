@@ -52,6 +52,7 @@ HWInfo::~HWInfo()
 
 void HWInfo::init()
 {
+    KGlobal::locale()->insertCatalog("plasma_applet_system-monitor");
     setTitle(i18n("Hardware Info"));
     appendItem("info");
     connectToEngine();

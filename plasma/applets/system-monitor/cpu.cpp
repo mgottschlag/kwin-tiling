@@ -39,6 +39,7 @@ SM::Cpu::~Cpu()
 
 void SM::Cpu::init()
 {
+    KGlobal::locale()->insertCatalog("plasma_applet_system-monitor");
     KConfigGroup cg = config();
     setEngine(dataEngine("systemmonitor"));
     setInterval(cg.readEntry("interval", 2) * 1000);
