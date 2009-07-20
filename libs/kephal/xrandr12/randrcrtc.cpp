@@ -183,9 +183,9 @@ void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
 
     if (newSize != m_currentRect.size())
     {
-        qDebug() << "   Changed size: " << mode.size();
+        qDebug() << "   Changed size: " << newSize;
         changed |= RandR::ChangeRect;
-        m_currentRect.setSize(mode.size());
+        m_currentRect.setSize(newSize);
         //Do NOT use event->width and event->height here, as it is being returned wrongly
     }
 
