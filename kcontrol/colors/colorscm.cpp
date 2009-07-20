@@ -333,7 +333,7 @@ void KColorCm::on_schemeImportButton_clicked()
             m_commonColorButtons[11]->setColor(g.readEntry("linkColor", m_colorSchemes[KColorScheme::View].foreground(KColorScheme::LinkText).color()));
             m_commonColorButtons[12]->setColor(g.readEntry("visitedLinkColor", m_colorSchemes[KColorScheme::View].foreground(KColorScheme::VisitedText).color()));
             // doesn't exist in KDE3: 13-15 PositiveText, NeutralText, NegativeText
-            m_commonColorButtons[16]->setColor(g.readEntry("selectBackground", m_colorSchemes[KColorScheme::View].decoration(KColorScheme::FocusColor).color()));
+            m_commonColorButtons[16]->setColor(g.readEntry("windowForeground", m_colorSchemes[KColorScheme::View].decoration(KColorScheme::FocusColor).color()));
             m_commonColorButtons[17]->setColor(g.readEntry("selectBackground", m_colorSchemes[KColorScheme::View].decoration(KColorScheme::HoverColor).color()));
             m_commonColorButtons[18]->setColor(g.readEntry("windowBackground", m_colorSchemes[KColorScheme::Tooltip].background().color()));
             m_commonColorButtons[19]->setColor(g.readEntry("windowForeground", m_colorSchemes[KColorScheme::Tooltip].foreground().color()));
