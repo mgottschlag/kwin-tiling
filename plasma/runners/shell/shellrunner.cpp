@@ -29,6 +29,8 @@
 #include <KStandardDirs>
 #include <KToolInvocation>
 
+#include <plasma/theme.h>
+
 #include "shell_config.h"
 
 ShellRunner::ShellRunner(QObject *parent, const QVariantList &args)
@@ -96,7 +98,15 @@ void ShellRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryM
 void ShellRunner::createRunOptions(QWidget *parent)
 {
     //TODO: for multiple runners?
+    //TODO: sync palette on theme changes
     ShellConfig *configWidget = new ShellConfig(config(), parent);
+
+    QPalette pal = configWidget->palette();
+    Plasma::Theme *theme = Plasma::Theme::defaultTheme();
+    pal.setColor(QPalette::Window, theme->color(Plasma::Theme::BackgroundColor));
+    pal.setColor(QPalette::WindowText, theme->color(Plasma::Theme::TextColor));
+    configWidget->setPalette(pal);
+
     connect(configWidget->m_ui.cbRunAsOther, SIGNAL(clicked(bool)), this, SLOT(setRunAsOtherUser(bool)));
     connect(configWidget->m_ui.cbRunInTerminal, SIGNAL(clicked(bool)), this, SLOT(setRunInTerminal(bool)));
 }
