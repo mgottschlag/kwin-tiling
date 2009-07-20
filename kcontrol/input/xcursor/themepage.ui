@@ -33,14 +33,14 @@
     </widget>
    </item>
    <item row="3" column="2" >
-    <widget class="QPushButton" name="removeButton" >
+    <widget class="KPushButton" name="removeButton" >
      <property name="text" >
       <string>Remove Theme</string>
      </property>
     </widget>
    </item>
    <item row="3" column="1" >
-    <widget class="QPushButton" name="installButton" >
+    <widget class="KPushButton" name="installButton" >
      <property name="text" >
       <string>Install New Theme...</string>
      </property>
