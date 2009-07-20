@@ -311,6 +311,7 @@ void Interface::display(const QString &term)
     m_searchTerm->setFocus();
     KWindowSystem::setOnDesktop(winId(), KWindowSystem::currentDesktop());
 
+    centerOnScreen();
     show();
     resetInterface();
     KWindowSystem::forceActiveWindow(winId());
@@ -322,17 +323,14 @@ void Interface::display(const QString &term)
 
 void Interface::centerOnScreen()
 {
-    // this method is now called only by the ctor, with the results view visible, however
-    // we do not call KDialog::centerOnScreen(this, screen) because the dialog is still hidden
-
     int screen = Kephal::ScreenUtils::primaryScreenId();
     if (Kephal::ScreenUtils::numScreens() > 1) {
         screen = Kephal::ScreenUtils::screenId(QCursor::pos());
     }
 
     QRect r = Kephal::ScreenUtils::screenGeometry(screen);
-    int w = width();
-    int h = height();
+    int w = m_defaultSize.width();
+    int h = m_defaultSize.height();
     move(r.left() + (r.width() / 2) - (w / 2),
          r.top() + (r.height() / 2) - (h / 2));
 }
