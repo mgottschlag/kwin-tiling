@@ -26,6 +26,7 @@
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QtDBus/QtDBus>
+#include <QDesktopWidget>
 
 #include <KAction>
 #include <KCrash>
@@ -88,6 +89,7 @@ PlasmaApp::PlasmaApp()
 
     m_mainView = new NetView(0, NetView::mainViewId(), 0);
     connect(m_mainView, SIGNAL(containmentActivated()), this, SLOT(mainContainmentActivated()));
+    connect(KWindowSystem::self(), SIGNAL(workAreaChanged()), this, SLOT(positionPanel()));
 
     int width = 400;
     int height = 200;
@@ -180,15 +182,15 @@ void PlasmaApp::positionPanel()
     } else if (m_controlBar->formFactor() == Plasma::Vertical) {
         m_controlBar->setFixedSize(m_controlBar->size().width(), screenRect.height());
     }
+    QDesktopWidget *desktop = QApplication::desktop();
     //sync margins
-    const QRect availableScreen = m_corona->availableScreenRegion(0).boundingRect();
-    const QRect screen = m_corona->screenGeometry(0);
+    const QRect availableScreen = desktop->availableGeometry(m_mainView);
 
     int left, top, right, bottom;
-    left = availableScreen.left() - screen.left();
-    right = screen.right() - availableScreen.right();
-    top = availableScreen.top() - screen.top();
-    bottom = screen.bottom() - availableScreen.bottom();
+    left = availableScreen.left() - screenRect.left();
+    right = screenRect.right() - availableScreen.right();
+    top = availableScreen.top() - screenRect.top();
+    bottom = screenRect.bottom() - availableScreen.bottom();
 
     foreach (Plasma::Containment *containment, m_corona->containments()) {
         if (containment->formFactor() == Plasma::Planar) {
