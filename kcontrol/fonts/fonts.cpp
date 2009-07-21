@@ -207,8 +207,8 @@ void FontUseItem::applyFontDiff( const QFont &fnt, int fontDiffFlags )
     if (!isFixedOnly() || QFontInfo(fnt).fixedPitch()) _font.setFamily( fnt.family() );
   }
   if (fontDiffFlags & KFontChooser::FontDiffStyle) {
-    _font.setBold( fnt.bold() );
-    _font.setItalic( fnt.italic() );
+    _font.setWeight( fnt.weight() );
+    _font.setStyle( fnt.style() );
     _font.setUnderline( fnt.underline() );
   }
 
