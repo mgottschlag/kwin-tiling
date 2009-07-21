@@ -1,5 +1,5 @@
 // This list contains all screen saver categories.
-// The categories are extracted for translation (see Makefile.am).
+// The categories are extracted for translation (see Messages.sh).
 
 // To show a screen saver in the list under a category, add the
 // category in the screen saver desktop file using the syntax below.

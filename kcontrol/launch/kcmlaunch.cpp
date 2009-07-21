@@ -46,7 +46,6 @@ LaunchConfig::LaunchConfig(QWidget * parent, const QVariantList &)
 {
     QVBoxLayout* Form1Layout = new QVBoxLayout( this );
     Form1Layout->setMargin( 0 );
-    Form1Layout->setSpacing( KDialog::spacingHint() );
 
     setQuickHelp( i18n ( "<h1>Launch Feedback</h1>"
      " You can configure the application-launch feedback here." ) );
@@ -61,16 +60,10 @@ LaunchConfig::LaunchConfig(QWidget * parent, const QVariantList &)
      "notification. In this case, the cursor stops blinking after the time\n"
      "given in the section 'Startup indication timeout'"));
 
-    QVBoxLayout *lay = new QVBoxLayout;
-    lay->setSpacing( 0 );
-    lay->setMargin( 0 );
-    GroupBox1->setLayout(lay);
+    QGridLayout* GroupBox1Layout = new QGridLayout();
+    GroupBox1->setLayout( GroupBox1Layout );
     Form1Layout->addWidget(GroupBox1);
 
-    QGridLayout* GroupBox1Layout = new QGridLayout();
-    GroupBox1->layout()->addItem( GroupBox1Layout );
-    GroupBox1Layout->setSpacing( 6 );
-    GroupBox1Layout->setMargin( 11 );
     GroupBox1Layout->setColumnStretch( 1, 1 );
 
     cb_busyCursor = new QComboBox( GroupBox1);
@@ -105,15 +98,9 @@ LaunchConfig::LaunchConfig(QWidget * parent, const QVariantList &)
      "notification. In this case, the button disappears after the time\n"
      "given in the section 'Startup indication timeout'"));
 
-    lay = new QVBoxLayout;
-    lay->setSpacing( 0 );
-    lay->setMargin( 0 );
-    GroupBox2->setLayout(lay);
-    Form1Layout->addWidget( GroupBox2 );
     QGridLayout* GroupBox2Layout = new QGridLayout();
-    GroupBox2->layout()->addItem( GroupBox2Layout );
-    GroupBox2Layout->setSpacing( 6 );
-    GroupBox2Layout->setMargin( 11 );
+    GroupBox2->setLayout( GroupBox2Layout );
+    Form1Layout->addWidget( GroupBox2 );
     GroupBox2Layout->setColumnStretch( 1, 1 );
 
     cb_taskbarButton = new QCheckBox( GroupBox2 );

@@ -125,12 +125,10 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
 
     QBoxLayout *topLayout = new QHBoxLayout(this);
     topLayout->setMargin(0);
-    topLayout->setSpacing(KDialog::spacingHint());
 
     // left column
     QVBoxLayout *leftColumnLayout = new QVBoxLayout( );
-    topLayout->addItem( leftColumnLayout );
-    leftColumnLayout->setSpacing( KDialog::spacingHint() );
+    topLayout->addLayout( leftColumnLayout );
 
     mSaverGroup = new QGroupBox(i18n("Screen Saver"), this );
     QVBoxLayout *groupLayout = new QVBoxLayout( mSaverGroup );
@@ -138,7 +136,6 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
     leftColumnLayout->setStretchFactor( mSaverGroup, 10 );
 
     mSaverListView = new Q3ListView( mSaverGroup );
-    mSaverListView->setMinimumHeight( 120 );
     mSaverListView->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     mSaverListView->addColumn("");
     mSaverListView->header()->hide();
@@ -258,8 +255,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
 
     // right column
     QBoxLayout* rightColumnLayout = new QVBoxLayout();
-    topLayout->addItem( rightColumnLayout );
-    rightColumnLayout->setSpacing( KDialog::spacingHint() );
+    topLayout->addLayout( rightColumnLayout );
 
     mMonitorPreview = new ScreenPreviewWidget(this);
     mMonitorPreview->setFixedSize(200,220);
@@ -271,7 +267,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
     mMonitorPreview->setWhatsThis( i18n("A preview of the selected screen saver.") );
 
     QBoxLayout* advancedLayout = new QHBoxLayout();
-    rightColumnLayout->addItem( advancedLayout );
+    rightColumnLayout->addLayout( advancedLayout );
     advancedLayout->setSpacing( 3 );
     advancedLayout->addWidget( new QWidget( this ) );
     QPushButton* advancedBt = new QPushButton(
