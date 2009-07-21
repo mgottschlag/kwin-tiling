@@ -130,7 +130,7 @@ GroupManager::GroupManager(QObject *parent)
 
 GroupManager::~GroupManager()
 {
-    TaskManager::TaskManager::self()->setTrackGeometry(false, d->configToken);
+    TaskManager::self()->setTrackGeometry(false, d->configToken);
     delete d->abstractSortingStrategy;
     delete d->abstractGroupingStrategy;
     delete d->rootGroup;
@@ -477,7 +477,7 @@ void GroupManager::reconnect()
     if (d->showOnlyCurrentDesktop || d->showOnlyMinimized || d->showOnlyCurrentScreen) {
         // listen to the relevant task manager signals
         if (d->showOnlyCurrentDesktop) {
-            connect(TaskManager::TaskManager::self(), SIGNAL(desktopChanged(int)),
+            connect(TaskManager::self(), SIGNAL(desktopChanged(int)),
                     this, SLOT(currentDesktopChanged(int)));
         }
 
@@ -485,7 +485,7 @@ void GroupManager::reconnect()
                 this, SLOT(taskChanged(TaskPtr,::TaskManager::TaskChanges)));
     }
 
-    TaskManager::TaskManager::self()->setTrackGeometry(d->showOnlyCurrentScreen, d->configToken);
+    TaskManager::self()->setTrackGeometry(d->showOnlyCurrentScreen, d->configToken);
 
     if (!d->showOnlyCurrentScreen) {
         d->geometryTasks.clear();
