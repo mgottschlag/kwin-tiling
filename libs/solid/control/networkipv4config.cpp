@@ -216,6 +216,11 @@ QStringList Solid::Control::IPv4Config::domains() const
     return d->domains;
 }
 
+QList<Solid::Control::IPv4Route> Solid::Control::IPv4Config::routes() const
+{
+    return d->routes;
+}
+
 Solid::Control::IPv4Config &Solid::Control::IPv4Config::operator=(const Solid::Control::IPv4Config& other)
 {
     if (this == &other)
