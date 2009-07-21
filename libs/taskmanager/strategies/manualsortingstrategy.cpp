@@ -59,11 +59,11 @@ ManualSortingStrategy::ManualSortingStrategy(GroupManager *parent)
 
     d->desktops = new desktopHashTable();
     //TODO add a screenHashTable
-    d->oldDesktop = TaskManager::TaskManager::self()->currentDesktop();
+    d->oldDesktop = TaskManager::self()->currentDesktop();
 
     if (d->groupingStrategy->showOnlyCurrentDesktop()) {
-        d->desktops->insert(TaskManager::TaskManager::self()->currentDesktop(), new itemHashTable());
-        d->managedItems = d->desktops->value(TaskManager::TaskManager::self()->currentDesktop());
+        d->desktops->insert(TaskManager::self()->currentDesktop(), new itemHashTable());
+        d->managedItems = d->desktops->value(TaskManager::self()->currentDesktop());
     } else {
         d->desktops->insert(0,new itemHashTable());
         d->managedItems = d->desktops->value(0);
