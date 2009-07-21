@@ -24,6 +24,8 @@
 #include <QMultiMap>
 #include <QTimer>
 
+#include <kephal/screens.h>
+
 // local includes
 #include "krunnerdialog.h"
 
@@ -73,6 +75,8 @@ class Interface : public KRunnerDialog
         void resetInterface();
         void showHelp();
         void ensureVisibility(QGraphicsItem *item);
+        void screenRemoved(int screen);
+        void screenChanged(Kephal::Screen* screen);
 
     private:
         void centerOnScreen();
@@ -99,6 +103,8 @@ class Interface : public KRunnerDialog
         bool m_running;
         bool m_queryRunning;
         QSize m_defaultSize;
+        int m_oldScreen;
+        QHash<int, QPoint> m_screenPos;
 };
 
 #endif
