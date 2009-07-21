@@ -48,7 +48,7 @@
 #include <windows.h>
 #endif // Q_OS_WIN
 
-static const int MINBUTTONSIZE = 10;
+static const int MINBUTTONSIZE = 21;
 static const int MARGINSIZE = 1;
 
 LockOut::LockOut(QObject *parent, const QVariantList &args)
@@ -104,25 +104,30 @@ LockOut::~LockOut()
 
 void LockOut::checkLayout()
 {
+    qreal left,top, right, bottom;
+    getContentsMargins(&left,&top, &right, &bottom);
+    int width = geometry().width() - left - right;
+    int height = geometry().height() - top - bottom;
+    
     Qt::Orientation direction;
     qreal ratioToKeep = 2;
 
     switch (formFactor()) {
         case Plasma::Vertical:
-            if (geometry().width() >= MINBUTTONSIZE * 2 + MARGINSIZE) {
+            if (width < MINBUTTONSIZE * 2 + MARGINSIZE) {
+                direction = Qt::Vertical;
+                ratioToKeep = 1.5;
+            } else {
                 direction = Qt::Horizontal;
                 ratioToKeep = 2;
-            } else {
-                direction = Qt::Vertical;
-                ratioToKeep = 0.5;
             }
             break;
         case Plasma::Horizontal:
-            if (geometry().height() >= MINBUTTONSIZE * 2 + MARGINSIZE) {
-                direction = Qt::Vertical;
-                ratioToKeep = 0.5;
-            } else {
+            if (height < (MINBUTTONSIZE * 2 + MARGINSIZE)) {
                 direction = Qt::Horizontal;
+                ratioToKeep = 1.5;
+            } else {
+                direction = Qt::Vertical;
                 ratioToKeep = 2;
             }
             break;
@@ -132,15 +137,15 @@ void LockOut::checkLayout()
 
 #ifndef Q_OS_WIN
     if (!m_showLockButton || !m_showLogoutButton || !m_showSleepButton || !m_showHibernateButton) {
-        ratioToKeep = 1;
+        //ratioToKeep = 1;
     }
 #endif
 
-    if (direction == Qt::Horizontal) {
+    /*if (direction == Qt::Horizontal) {
         setMinimumSize(MINBUTTONSIZE * 2 + MARGINSIZE, MINBUTTONSIZE);
     } else {
         setMinimumSize(MINBUTTONSIZE, MINBUTTONSIZE * 2 + MARGINSIZE);
-    }
+    }*/
 
     if (direction != m_layout->orientation()) {
         m_layout->setOrientation(direction);
