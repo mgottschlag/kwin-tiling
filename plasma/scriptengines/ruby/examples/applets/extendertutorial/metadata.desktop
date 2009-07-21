@@ -1,17 +1,27 @@
 [Desktop Entry]
 Name=Ruby Extender Tutorial
+Name[et]=Ruby laienduse algtutvustus
 Name[nds]=Ruby-Extender-Inföhren
+Name[pt]=Tutorial de Extensão do Ruby
+Name[pt_BR]=Tutorial de Extensão do Ruby
+Name[sl]=Vodnik Ruby razširitelj
 Name[sr]=рубијевски продужетак (туторијал)
 Name[sr@latin]=ruby produžetak (tutorijal)
 Name[sv]=Handledning för utökning i Ruby
 Name[uk]=Посібник з розширювача мовою Ruby
+Name[x-test]=xxRuby Extender Tutorialxx
 Name[zh_TW]=Ruby Extender 教學
 Comment=An example of a popup applet with extender
+Comment[et]=Laiendusega hüpikapleti näidis
 Comment[nds]=En Bispill för en Opduk-Lüttprogramm mit Extender
+Comment[pt]=Um exemplo de uma 'applet' com uma extensão
+Comment[pt_BR]=Um exemplo de uma 'applet' com uma extensão
+Comment[sl]=Primer pojavnega programčka z razširiteljem
 Comment[sr]=Пример искачућег аплета са продужетком
 Comment[sr@latin]=Primer iskačućeg apleta sa produžetkom
 Comment[sv]=Ett exempel på ett miniprogram med utökning
 Comment[uk]=Приклад контекстного аплету з розширювачем
+Comment[x-test]=xxAn example of a popup applet with extenderxx
 Comment[zh_TW]=彈出含延長器的小程式的範例
 Type=Service
 ServiceTypes=Plasma/PopupApplet
