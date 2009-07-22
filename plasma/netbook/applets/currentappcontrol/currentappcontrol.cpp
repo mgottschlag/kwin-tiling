@@ -87,10 +87,13 @@ void CurrentAppControl::constraintsEvent(Plasma::Constraints constraints)
         QFontMetrics fm(Plasma::Theme::defaultTheme()->font(Plasma::Theme::DefaultFont));
         if (formFactor() == Plasma::Vertical) {
             m_currentTask->setOrientation(Qt::Vertical);
-            setMinimumSize(0, KIconLoader::SizeSmallMedium*2 + fm.xHeight()*10);
+            //FIXME: all this minimum/maximum sizes shouldn't be necessary
+            m_currentTask->setMaximumSize(size().width(), QWIDGETSIZE_MAX);
+            setMinimumSize(0, KIconLoader::SizeSmallMedium*2 + fm.xHeight()*20);
         } else {
             m_currentTask->setOrientation(Qt::Horizontal);
-            setMinimumSize(KIconLoader::SizeSmallMedium*2 + fm.width('M')*10, 0);
+            m_currentTask->setMaximumSize(QWIDGETSIZE_MAX, size().height());
+            setMinimumSize(KIconLoader::SizeSmallMedium*2 + fm.width('M')*20, 0);
         }
     }
 }
