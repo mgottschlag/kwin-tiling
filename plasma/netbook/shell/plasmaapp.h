@@ -26,6 +26,11 @@
 
 #include <plasma/plasma.h>
 
+#ifdef Q_WS_X11
+#include <X11/Xlib.h>
+#include <fixx11h.h>
+#endif
+
 namespace Plasma
 {
     class Containment;
@@ -72,11 +77,14 @@ public:
     bool isDesktop() const;
 
     void showAppletBrowser(Plasma::Containment *containment);
+protected:
+    bool eventFilter(QObject * watched, QEvent *event);
+    bool x11EventFilter(XEvent *event);
 
 private:
     PlasmaApp();
     void reserveStruts();
-
+    void createUnhideTrigger();
 
 private Q_SLOTS:
     void cleanup();
@@ -92,9 +100,15 @@ private Q_SLOTS:
 private:
     Plasma::Corona *m_corona;
     Plasma::AppletBrowser *m_appletBrowser;
+#ifdef Q_WS_X11
+    Window m_unhideTrigger;
+    QRect m_triggerZone;
+    QRect m_unhideTriggerGeom;
+#endif
     NetView *m_controlBar;
     NetView *m_mainView;
     bool m_isDesktop;
+    bool m_autoHidePanel;
 };
 
 #endif // multiple inclusion guard

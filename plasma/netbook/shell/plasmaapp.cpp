@@ -64,7 +64,8 @@ PlasmaApp::PlasmaApp()
       m_appletBrowser(0),
       m_controlBar(0),
       m_mainView(0),
-      m_isDesktop(false)
+      m_isDesktop(false),
+      m_autoHidePanel(true)
 {
     KGlobal::locale()->insertCatalog("libplasma");
     KCrash::setFlags(KCrash::AutoRestart);
@@ -89,6 +90,7 @@ PlasmaApp::PlasmaApp()
     m_mainView = new NetView(0, NetView::mainViewId(), 0);
     connect(m_mainView, SIGNAL(containmentActivated()), this, SLOT(mainContainmentActivated()));
     connect(KWindowSystem::self(), SIGNAL(workAreaChanged()), this, SLOT(positionPanel()));
+    m_mainView->installEventFilter(this);
 
     int width = 400;
     int height = 200;
@@ -265,7 +267,7 @@ void PlasmaApp::adjustSize(Kephal::Screen *screen)
 
 void PlasmaApp::reserveStruts()
 {
-    if (!m_controlBar || !isDesktop()) {
+    if (m_autoHidePanel || !m_controlBar || !isDesktop()) {
         return;
     }
 
@@ -390,6 +392,11 @@ void PlasmaApp::createView(Plasma::Containment *containment)
         }
 
         m_controlBar->setContainment(containment);
+        if (m_autoHidePanel) {
+            createUnhideTrigger();
+            m_controlBar->hide();
+            m_controlBar->installEventFilter(this);
+        }
     } else {
         containment->setScreen(-1);
     }
@@ -460,6 +467,97 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
 void PlasmaApp::appletBrowserDestroyed()
 {
     m_appletBrowser = 0;
+}
+
+bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
+{
+    if (watched == m_mainView && event->type() == QEvent::WindowActivate) {
+        m_controlBar->show();
+    } else if (watched == m_mainView && event->type() == QEvent::WindowDeactivate && !QApplication::activeWindow()) {
+        m_controlBar->hide();
+    } else if (watched == m_controlBar && event->type() == QEvent::Leave && !QApplication::activeWindow()) {
+        m_controlBar->hide();
+    }
+    return false;
+}
+
+bool PlasmaApp::x11EventFilter(XEvent *event)
+{
+    if (m_autoHidePanel && !m_controlBar->isVisible() && event->xcrossing.window == m_unhideTrigger &&
+        (event->xany.send_event != True && event->type == EnterNotify)) {
+        m_controlBar->show();
+    }
+    return false;
+}
+
+void PlasmaApp::createUnhideTrigger()
+{
+#ifdef Q_WS_X11
+    //kDebug() << m_unhideTrigger << None;
+    if (m_unhideTrigger != None) {
+        return;
+    }
+
+    int actualWidth = 1;
+    int actualHeight = 1;
+    int triggerWidth = 1;
+    int triggerHeight = 1;
+
+    QPoint actualTriggerPoint = m_controlBar->pos();
+    QPoint triggerPoint = m_controlBar->pos();
+
+    switch (m_controlBar->location()) {
+        case Plasma::TopEdge:
+            actualWidth = triggerWidth = m_controlBar->width();
+
+            break;
+        case Plasma::BottomEdge:
+            actualWidth = triggerWidth = m_controlBar->width();
+            actualTriggerPoint = triggerPoint = m_controlBar->geometry().bottomLeft();
+
+            break;
+        case Plasma::RightEdge:
+            actualHeight = triggerHeight = m_controlBar->height();
+            actualTriggerPoint = triggerPoint = m_controlBar->geometry().topRight();
+
+            break;
+        case Plasma::LeftEdge:
+            actualHeight = triggerHeight = m_controlBar->height();
+
+            break;
+        default:
+            // no hiding unless we're on an edge.
+            return;
+            break;
+    }
+
+
+    XSetWindowAttributes attributes;
+    attributes.override_redirect = True;
+    attributes.event_mask = EnterWindowMask;
+
+
+    attributes.event_mask = EnterWindowMask | LeaveWindowMask | PointerMotionMask |
+                            KeyPressMask | KeyPressMask | ButtonPressMask |
+                            ButtonReleaseMask | ButtonMotionMask |
+                            KeymapStateMask | VisibilityChangeMask |
+                            StructureNotifyMask | ResizeRedirectMask |
+                            SubstructureNotifyMask |
+                            SubstructureRedirectMask | FocusChangeMask |
+                            PropertyChangeMask | ColormapChangeMask | OwnerGrabButtonMask;
+
+    unsigned long valuemask = CWOverrideRedirect | CWEventMask;
+    m_unhideTrigger = XCreateWindow(QX11Info::display(), QX11Info::appRootWindow(),
+                                    triggerPoint.x(), triggerPoint.y(), triggerWidth, triggerHeight,
+                                    0, CopyFromParent, InputOnly, CopyFromParent,
+                                    valuemask, &attributes);
+
+    /*XChangeProperty(QX11Info::display(), m_unhideTrigger, PlasmaApp::self()->m_XdndAwareAtom,
+                    XA_WINDOW, 32, PropModeReplace, (unsigned char *)&PlasmaApp::self()->m_XdndVersionAtom, 1);*/
+    XMapWindow(QX11Info::display(), m_unhideTrigger);
+    m_unhideTriggerGeom = QRect(triggerPoint, QSize(triggerWidth, triggerHeight));
+    m_triggerZone = QRect(actualTriggerPoint, QSize(actualWidth, actualHeight));
+#endif
 }
 
 #include "plasmaapp.moc"
