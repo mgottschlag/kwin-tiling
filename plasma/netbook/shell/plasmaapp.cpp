@@ -26,7 +26,6 @@
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QtDBus/QtDBus>
-#include <QDesktopWidget>
 
 #include <KAction>
 #include <KCrash>
@@ -182,15 +181,29 @@ void PlasmaApp::positionPanel()
     } else if (m_controlBar->formFactor() == Plasma::Vertical) {
         m_controlBar->setFixedSize(m_controlBar->size().width(), screenRect.height());
     }
-    QDesktopWidget *desktop = QApplication::desktop();
-    //sync margins
-    const QRect availableScreen = desktop->availableGeometry(m_mainView);
 
-    int left, top, right, bottom;
-    left = availableScreen.left() - screenRect.left();
-    right = screenRect.right() - availableScreen.right();
-    top = availableScreen.top() - screenRect.top();
-    bottom = screenRect.bottom() - availableScreen.bottom();
+
+    int left = 0;
+    int right = 0;
+    int top = 0;
+    int bottom = 0;
+
+    switch (m_controlBar->location()) {
+    case Plasma::LeftEdge:
+        left = m_controlBar->width();
+        break;
+    case Plasma::RightEdge:
+        right = m_controlBar->width();
+        break;
+    case Plasma::TopEdge:
+        top = m_controlBar->height();
+        break;
+    case Plasma::BottomEdge:
+        bottom = m_controlBar->height();
+        break;
+    default:
+        break;
+    }
 
     foreach (Plasma::Containment *containment, m_corona->containments()) {
         if (containment->formFactor() == Plasma::Planar) {
