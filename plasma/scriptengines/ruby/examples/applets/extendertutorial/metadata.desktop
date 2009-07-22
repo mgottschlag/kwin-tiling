@@ -2,6 +2,7 @@
 Name=Ruby Extender Tutorial
 Name[et]=Ruby laienduse algtutvustus
 Name[nds]=Ruby-Extender-Inföhren
+Name[nn]=Innføring i utvidar for Ruby
 Name[pt]=Tutorial de Extensão do Ruby
 Name[pt_BR]=Tutorial de Extensão do Ruby
 Name[sl]=Vodnik Ruby razširitelj
@@ -14,6 +15,7 @@ Name[zh_TW]=Ruby Extender 教學
 Comment=An example of a popup applet with extender
 Comment[et]=Laiendusega hüpikapleti näidis
 Comment[nds]=En Bispill för en Opduk-Lüttprogramm mit Extender
+Comment[nn]=Eit eksempel med eit sprettoppvindauge med utvidar
 Comment[pt]=Um exemplo de uma 'applet' com uma extensão
 Comment[pt_BR]=Um exemplo de uma 'applet' com uma extensão
 Comment[sl]=Primer pojavnega programčka z razširiteljem
