@@ -119,7 +119,7 @@ void LockOut::checkLayout()
                 ratioToKeep = 1.5;
             } else {
                 direction = Qt::Horizontal;
-                ratioToKeep = 2;
+                ratioToKeep = 0.5;
             }
             break;
         case Plasma::Horizontal:
@@ -128,7 +128,7 @@ void LockOut::checkLayout()
                 ratioToKeep = 1.5;
             } else {
                 direction = Qt::Vertical;
-                ratioToKeep = 2;
+                ratioToKeep = 0.5;
             }
             break;
         default:
@@ -141,12 +141,6 @@ void LockOut::checkLayout()
     }
 #endif
 
-    /*if (direction == Qt::Horizontal) {
-        setMinimumSize(MINBUTTONSIZE * 2 + MARGINSIZE, MINBUTTONSIZE);
-    } else {
-        setMinimumSize(MINBUTTONSIZE, MINBUTTONSIZE * 2 + MARGINSIZE);
-    }*/
-
     if (direction != m_layout->orientation()) {
         m_layout->setOrientation(direction);
     }
@@ -157,7 +151,7 @@ void LockOut::checkLayout()
         setMaximumSize(wsize, QWIDGETSIZE_MAX);
     } else if (formFactor() == Plasma::Vertical) {
         setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum));
-        qreal hsize = size().width() / ratioToKeep;
+        qreal hsize = size().width() * ratioToKeep;
         setMaximumSize(QWIDGETSIZE_MAX, hsize);
     } else {
         setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
