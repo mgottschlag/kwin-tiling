@@ -249,9 +249,10 @@ void QuicklaunchApplet::performUiRefactor()
     }
 
     int cols = qMax(1,m_innerLayout->columnCount());
+    int icons = qMax(1, qMin(m_icons.size(), m_visibleIcons));
 
     setPreferredSize(QSize((m_iconSize + 6) * cols,
-                           (m_iconSize + 6) * (qMax(1, qMin(m_icons.size(), m_visibleIcons)) / cols)));
+                           (m_iconSize + 6) * ceil(icons / (double)cols)));
     
     if (m_dialog) {
         m_dialog->close();
