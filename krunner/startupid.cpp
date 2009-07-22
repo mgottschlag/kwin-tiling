@@ -50,10 +50,10 @@ static Atom kde_splash_progress;
 
 StartupId::StartupId( QWidget* parent, const char* name )
     :   QWidget( parent ),
-	startup_info( KStartupInfo::CleanOnCantDetect ),
-	startup_window( None ),
-	blinking( true ),
-	bouncing( false )
+        startup_info( KStartupInfo::CleanOnCantDetect ),
+        startup_window( None ),
+        blinking( true ),
+        bouncing( false )
     {
     setObjectName( name );
     hide(); // is QWidget only because of x11Event()

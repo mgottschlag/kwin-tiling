@@ -423,7 +423,7 @@ void LockProcess::readSaver()
         {
             const QString saverType = desktopGroup.readEntry("X-KDE-Type").toUtf8();
             const QStringList saverTypes = saverType.split( ";");
-	    const int nbSaverTypes = saverTypes.count();
+            const int nbSaverTypes = saverTypes.count();
             for (int i = 0; i < nbSaverTypes ; ++i)
             {
                 if ((saverTypes[i] == "ManipulateScreen") && !manipulatescreen)
