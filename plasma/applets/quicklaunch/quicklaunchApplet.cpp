@@ -244,8 +244,11 @@ void QuicklaunchApplet::performUiRefactor()
         m_arrow->hide();
     }
 
-    setPreferredSize(m_layout->preferredSize() + QSize(4, 4));
+    int cols = qMax(1,m_innerLayout->columnCount());
 
+    setPreferredSize(QSize((m_iconSize + 6) * cols,
+                           (m_iconSize + 6) * (qMax(1, qMin(m_icons.size(), m_visibleIcons)) / cols)));
+    
     if (m_dialog) {
         m_dialog->close();
         m_dialogLayout->updateGeometry();
