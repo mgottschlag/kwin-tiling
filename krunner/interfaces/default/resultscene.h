@@ -66,7 +66,7 @@ class ResultScene : public QGraphicsScene
         void itemHoverLeave(ResultItem *item);
         void matchCountChanged(int count);
         void ensureVisibility(QGraphicsItem *item);
-	
+
     protected:
         void keyPressEvent(QKeyEvent * keyEvent);
         void focusInEvent(QFocusEvent *focusEvent);

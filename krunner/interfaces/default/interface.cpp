@@ -314,7 +314,6 @@ void Interface::display(const QString &term)
 {
     m_searchTerm->setFocus();
     KWindowSystem::setOnDesktop(winId(), KWindowSystem::currentDesktop());
-
     centerOnScreen();
     show();
     resetInterface();

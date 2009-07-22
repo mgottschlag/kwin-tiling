@@ -90,7 +90,7 @@ void ResultScene::resize(int width, int height)
 
     if (resizeItems) {
         foreach (ResultItem *item, m_items) {
-	    item->calculateSize(width, height);
+            item->calculateSize(width, height);
         }
     }
     setSceneRect(itemsBoundingRect());
@@ -141,7 +141,7 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
 
     if (m.isEmpty()) {
         kDebug() << "clearing";
-	resize(width(), 0);
+        resize(width(), 0);
         emit itemHoverEnter(0);
         m_clearTimer.start(200);
         return;
