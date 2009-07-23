@@ -44,8 +44,8 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsItem *parent)
     QGraphicsLinearLayout *mainLayout = new QGraphicsLinearLayout(this);
     mainLayout->addItem(background);
 
-    arrowsLayout = new QGraphicsLinearLayout(background);
-    stripLayout = new QGraphicsLinearLayout();
+    m_arrowsLayout = new QGraphicsLinearLayout(background);
+    m_stripLayout = new QGraphicsLinearLayout();
 
     leftArrow = new Plasma::PushButton(this);
     leftArrow->nativeWidget()->setIcon(KIcon("arrow-left"));
@@ -62,9 +62,19 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsItem *parent)
     leftArrow->setEnabled(false);
     rightArrow->setEnabled(false);
 
-    arrowsLayout->addItem(leftArrow);
-    arrowsLayout->addItem(stripLayout);
-    arrowsLayout->addItem(rightArrow);
+    QGraphicsWidget *leftSpacer = new QGraphicsWidget(this);
+    QGraphicsWidget *rightSpacer = new QGraphicsWidget(this);
+    leftSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    rightSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    leftSpacer->setPreferredSize(0, 0);
+    rightSpacer->setPreferredSize(0, 0);
+
+    m_arrowsLayout->addItem(leftArrow);
+    m_arrowsLayout->addItem(leftSpacer);
+    m_arrowsLayout->addItem(m_stripLayout);
+    m_arrowsLayout->setStretchFactor(m_stripLayout, 8);
+    m_arrowsLayout->addItem(rightSpacer);
+    m_arrowsLayout->addItem(rightArrow);
 }
 
 StripWidget::~StripWidget()
@@ -92,7 +102,7 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
     connect(action, SIGNAL(triggered()), this, SLOT(removeFavourite()));
 
     m_favouritesIcons.insert(fav, match);
-    stripLayout->insertItem(idx, widget);
+    m_stripLayout->insertItem(idx, widget);
 }
 
 void StripWidget::add(Plasma::QueryMatch match, const QString &query)
@@ -102,7 +112,7 @@ void StripWidget::add(Plasma::QueryMatch match, const QString &query)
     m_favouritesMatches.append(newMatch);
     m_favouritesQueries.insert(newMatch, query);
 
-    int idx = stripLayout->count();
+    int idx = m_stripLayout->count();
     if (idx > 4) {
         leftArrow->setEnabled(true);
         rightArrow->setEnabled(true);
@@ -159,7 +169,7 @@ void StripWidget::launchFavourite()
 void StripWidget::goRight()
 {
     // discover the item that will be removed
-    QGraphicsWidget *widget = static_cast<QGraphicsWidget*>(stripLayout->itemAt(0));
+    QGraphicsWidget *widget = static_cast<QGraphicsWidget*>(m_stripLayout->itemAt(0));
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(widget->childItems()[0]);
     Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
 
@@ -178,7 +188,7 @@ void StripWidget::goRight()
 void StripWidget::goLeft()
 {
     // discover the item that will be removed
-    QGraphicsWidget *widget = static_cast<QGraphicsWidget*>(stripLayout->itemAt(4));
+    QGraphicsWidget *widget = static_cast<QGraphicsWidget*>(m_stripLayout->itemAt(4));
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(widget->childItems()[0]);
     Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
 

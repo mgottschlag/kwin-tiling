@@ -68,8 +68,8 @@ private:
     Plasma::PushButton *leftArrow;
     Plasma::PushButton *rightArrow;
     Plasma::Frame *background;
-    QGraphicsLinearLayout *stripLayout;
-    QGraphicsLinearLayout *arrowsLayout;
+    QGraphicsLinearLayout *m_stripLayout;
+    QGraphicsLinearLayout *m_arrowsLayout;
 
     Plasma::RunnerManager *runnermg;
     QList<Plasma::QueryMatch*> m_favouritesMatches;
