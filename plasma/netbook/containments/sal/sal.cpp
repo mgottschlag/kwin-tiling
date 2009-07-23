@@ -91,6 +91,9 @@ void SearchLaunch::doSearch(const QString query)
 
     m_items.clear();
     m_matches.clear();
+    if (gridBackground && gridScroll) {
+        gridBackground->resize(gridScroll->size());
+    }
 }
 
 void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
@@ -123,6 +126,7 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         m_items.append(icon);
         m_matches.append(match);
         m_launchGrid->addItem(icon, i / 7, i % 7);
+        gridBackground->resize(gridBackground->size().width(), m_launchGrid->effectiveSizeHint(Qt::PreferredSize, gridScroll->size()).height());
     }
     queryCounter = i;
 }
