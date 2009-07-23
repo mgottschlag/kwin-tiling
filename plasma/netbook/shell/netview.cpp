@@ -79,6 +79,7 @@ void NetView::setContainment(Plasma::Containment *c)
 
 void NetView::configureContainment(Plasma::Containment *containment)
 {
+    Q_UNUSED(containment)
     /* TODO: implement; suggestion: as an overlay that takes the whole screen
     m_configDialog->show();
     KWindowSystem::setOnDesktop(m_configDialog->winId(), KWindowSystem::currentDesktop());

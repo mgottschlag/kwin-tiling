@@ -1,5 +1,6 @@
 /*
  *   Copyright 2006-2008 Aaron Seigo <aseigo@kde.org>
+ *   Copyright 2009 Marco Martin <notmart@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
@@ -65,7 +66,7 @@ PlasmaApp::PlasmaApp()
       m_controlBar(0),
       m_mainView(0),
       m_isDesktop(false),
-      m_autoHidePanel(true)
+      m_autoHideControlBar(true)
 {
     KGlobal::locale()->insertCatalog("libplasma");
     KCrash::setFlags(KCrash::AutoRestart);
@@ -267,32 +268,35 @@ void PlasmaApp::adjustSize(Kephal::Screen *screen)
 
 void PlasmaApp::reserveStruts()
 {
-    if (m_autoHidePanel || !m_controlBar || !isDesktop()) {
+    if (!m_controlBar || !isDesktop()) {
         return;
     }
 
     NETExtendedStrut strut;
-    switch (m_controlBar->location()) {
-    case Plasma::LeftEdge:
-        strut.left_width = m_controlBar->width();
-        strut.left_start = m_mainView->y();
-        strut.left_end = m_mainView->y() + m_mainView->height() - 1;
-        break;
-    case Plasma::RightEdge:
-        strut.right_width = m_controlBar->width();
-        strut.right_start = m_mainView->y();
-        strut.right_end = m_mainView->y() + m_mainView->height() - 1;
-        break;
-    case Plasma::TopEdge:
-        strut.top_width = m_controlBar->height();
-        strut.top_start = m_mainView->x();
-        strut.top_end = m_mainView->x() + m_mainView->width() - 1;
-        break;
-    case Plasma::BottomEdge:
-    default:
-        strut.bottom_width = m_controlBar->height();
-        strut.bottom_start = m_mainView->x();
-        strut.bottom_end = m_mainView->x() + m_mainView->width() - 1;
+
+    if (!m_autoHideControlBar) {
+        switch (m_controlBar->location()) {
+        case Plasma::LeftEdge:
+            strut.left_width = m_controlBar->width();
+            strut.left_start = m_mainView->y();
+            strut.left_end = m_mainView->y() + m_mainView->height() - 1;
+            break;
+        case Plasma::RightEdge:
+            strut.right_width = m_controlBar->width();
+            strut.right_start = m_mainView->y();
+            strut.right_end = m_mainView->y() + m_mainView->height() - 1;
+            break;
+        case Plasma::TopEdge:
+            strut.top_width = m_controlBar->height();
+            strut.top_start = m_mainView->x();
+            strut.top_end = m_mainView->x() + m_mainView->width() - 1;
+            break;
+        case Plasma::BottomEdge:
+        default:
+            strut.bottom_width = m_controlBar->height();
+            strut.bottom_start = m_mainView->x();
+            strut.bottom_end = m_mainView->x() + m_mainView->width() - 1;
+        }
     }
 
     KWindowSystem::setExtendedStrut(m_mainView->winId(),
@@ -392,11 +396,10 @@ void PlasmaApp::createView(Plasma::Containment *containment)
         }
 
         m_controlBar->setContainment(containment);
-        if (m_autoHidePanel) {
-            createUnhideTrigger();
-            m_controlBar->hide();
-            m_controlBar->installEventFilter(this);
-        }
+
+        m_autoHideControlBar = m_controlBar->config().readEntry("panelAutoHide", true);
+
+        setAutoHideControlBar(m_autoHideControlBar);
     } else {
         containment->setScreen(-1);
     }
@@ -429,6 +432,32 @@ void PlasmaApp::controlBarMoved(const NetView *controlBar)
     reserveStruts();
 }
 
+void PlasmaApp::setAutoHideControlBar(bool autoHide)
+{
+    if (!m_controlBar) {
+        return;
+    }
+
+    if (autoHide) {
+        createUnhideTrigger();
+        m_controlBar->hide();
+        m_controlBar->installEventFilter(this);
+    } else {
+#ifdef Q_WS_X11
+    if (m_unhideTrigger != None) {
+        XDestroyWindow(QX11Info::display(), m_unhideTrigger);
+        m_unhideTrigger = None;
+        m_triggerZone = m_unhideTriggerGeom = QRect();
+    }
+#endif
+        m_controlBar->show();
+        m_controlBar->removeEventFilter(this);
+    }
+
+    reserveStruts();
+    m_controlBar->config().writeEntry("panelAutoHide", autoHide);
+    m_autoHideControlBar = autoHide;
+}
 
 void PlasmaApp::showAppletBrowser()
 {
@@ -483,7 +512,7 @@ bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
 
 bool PlasmaApp::x11EventFilter(XEvent *event)
 {
-    if (m_autoHidePanel && !m_controlBar->isVisible() && event->xcrossing.window == m_unhideTrigger &&
+    if (m_autoHideControlBar && !m_controlBar->isVisible() && event->xcrossing.window == m_unhideTrigger &&
         (event->xany.send_event != True && event->type == EnterNotify)) {
         m_controlBar->show();
     }

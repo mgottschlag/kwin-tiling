@@ -46,9 +46,10 @@ public:
 
     Plasma::Location location() const;
     Plasma::FormFactor formFactor() const;
+    KConfigGroup config() const {return Plasma::View::config();}
 
-    static uint mainViewId() { return 1; }
-    static uint controlBarId() { return 2; }
+    static int mainViewId() { return 1; }
+    static int controlBarId() { return 2; }
 
 
 public Q_SLOTS:
@@ -71,7 +72,6 @@ Q_SIGNALS:
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
     void resizeEvent(QResizeEvent *event);
-
 };
 
 #endif // multiple inclusion guard

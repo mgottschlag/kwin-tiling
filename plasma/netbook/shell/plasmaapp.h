@@ -1,5 +1,6 @@
 /*
  *   Copyright 2006-2008 Aaron Seigo <aseigo@kde.org>
+ *   Copyright 2009 Marco Martin <notmart@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as
@@ -70,6 +71,8 @@ public:
      */
     void setIsDesktop(bool isDesktop);
 
+    void setAutoHideControlBar(bool autoHide);
+
     /**
      * Returns true if this widget is currently a desktop window.
      * See setIsDesktop()
@@ -108,7 +111,7 @@ private:
     NetView *m_controlBar;
     NetView *m_mainView;
     bool m_isDesktop;
-    bool m_autoHidePanel;
+    bool m_autoHideControlBar;
 };
 
 #endif // multiple inclusion guard
