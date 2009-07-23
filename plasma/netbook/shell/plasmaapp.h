@@ -41,6 +41,7 @@ namespace Plasma
 } // namespace Plasma
 
 class NetView;
+class QTimer;
 
 namespace Kephal
 {
@@ -99,6 +100,7 @@ private Q_SLOTS:
     void showAppletBrowser();
     void appletBrowserDestroyed();
     void mainContainmentActivated();
+    void delayedUnHide();
 
 private:
     Plasma::Corona *m_corona;
@@ -112,6 +114,7 @@ private:
     NetView *m_mainView;
     bool m_isDesktop;
     bool m_autoHideControlBar;
+    QTimer *m_unHideTimer;
 };
 
 #endif // multiple inclusion guard

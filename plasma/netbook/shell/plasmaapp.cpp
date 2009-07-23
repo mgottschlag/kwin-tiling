@@ -66,7 +66,8 @@ PlasmaApp::PlasmaApp()
       m_controlBar(0),
       m_mainView(0),
       m_isDesktop(false),
-      m_autoHideControlBar(true)
+      m_autoHideControlBar(true),
+      m_unHideTimer(0)
 {
     KGlobal::locale()->insertCatalog("libplasma");
     KCrash::setFlags(KCrash::AutoRestart);
@@ -212,6 +213,17 @@ void PlasmaApp::positionPanel()
         if (containment->formFactor() == Plasma::Planar) {
             containment->setContentsMargins(left, top, right, bottom);
         }
+    }
+
+    if (m_autoHideControlBar) {
+#ifdef Q_WS_X11
+        if (m_unhideTrigger != None) {
+            XDestroyWindow(QX11Info::display(), m_unhideTrigger);
+            m_unhideTrigger = None;
+            m_triggerZone = m_unhideTriggerGeom = QRect();
+        }
+#endif
+        createUnhideTrigger();
     }
 }
 
@@ -442,12 +454,17 @@ void PlasmaApp::setAutoHideControlBar(bool autoHide)
         createUnhideTrigger();
         m_controlBar->hide();
         m_controlBar->installEventFilter(this);
+        m_unHideTimer = new QTimer(this);
+        m_unHideTimer->setSingleShot(true);
+        connect(m_unHideTimer, SIGNAL(timeout()), this, SLOT(delayedUnHide()));
     } else {
 #ifdef Q_WS_X11
     if (m_unhideTrigger != None) {
         XDestroyWindow(QX11Info::display(), m_unhideTrigger);
         m_unhideTrigger = None;
         m_triggerZone = m_unhideTriggerGeom = QRect();
+        delete m_unHideTimer;
+        m_unHideTimer = 0;
     }
 #endif
         m_controlBar->show();
@@ -514,16 +531,24 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
 {
     if (m_autoHideControlBar && !m_controlBar->isVisible() && event->xcrossing.window == m_unhideTrigger &&
         (event->xany.send_event != True && event->type == EnterNotify)) {
-        m_controlBar->show();
+        m_unHideTimer->start(300);
     }
     return false;
+}
+
+void PlasmaApp::delayedUnHide()
+{
+    //FIXME: QCursor::pos() can be avoided somewat? the good news is that is quite rare, one time per trigger
+    if (m_unhideTriggerGeom.adjusted(-1, -1, 1, 1).contains(QCursor::pos())) {
+        m_controlBar->show();
+    }
 }
 
 void PlasmaApp::createUnhideTrigger()
 {
 #ifdef Q_WS_X11
     //kDebug() << m_unhideTrigger << None;
-    if (m_unhideTrigger != None) {
+    if (!m_autoHideControlBar || m_unhideTrigger != None) {
         return;
     }
 
@@ -581,8 +606,6 @@ void PlasmaApp::createUnhideTrigger()
                                     0, CopyFromParent, InputOnly, CopyFromParent,
                                     valuemask, &attributes);
 
-    /*XChangeProperty(QX11Info::display(), m_unhideTrigger, PlasmaApp::self()->m_XdndAwareAtom,
-                    XA_WINDOW, 32, PropModeReplace, (unsigned char *)&PlasmaApp::self()->m_XdndVersionAtom, 1);*/
     XMapWindow(QX11Info::display(), m_unhideTrigger);
     m_unhideTriggerGeom = QRect(triggerPoint, QSize(triggerWidth, triggerHeight));
     m_triggerZone = QRect(actualTriggerPoint, QSize(actualWidth, actualHeight));
