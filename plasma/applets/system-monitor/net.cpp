@@ -26,7 +26,7 @@
 
 SM::Net::Net(QObject *parent, const QVariantList &args)
     : SM::Applet(parent, args)
-    , m_rx("network/interfaces/(\\w+)/transmitter/data")
+    , m_rx("^network/interfaces/(\\w+)/transmitter/data$")
 {
     setHasConfigurationInterface(true);
     resize(234 + 20 + 23, 135 + 20 + 25);
@@ -46,18 +46,20 @@ void SM::Net::init()
     setEngine(dataEngine("systemmonitor"));
     setInterval(cg.readEntry("interval", 2) * 1000);
     setTitle(i18n("Network"));
-    
+
     m_showTopBar = cg.readEntry("showTopBar", true);
     m_showBackground = cg.readEntry("showBackground", true);
     m_inColor = cg.readEntry("inColor", QColor("#d2d200"));
     m_outColor = cg.readEntry("outColor", QColor("#f20000"));
-    
+
     connect(engine(), SIGNAL(sourceAdded(const QString&)),
             this, SLOT(sourceAdded(const QString&)));
     connect(engine(), SIGNAL(sourceRemoved(const QString&)),
             this, SLOT(sourceRemoved(const QString&)));
     if (!engine()->sources().isEmpty()) {
-        sourcesAdded();
+        foreach (const QString& source, engine()->sources()) {
+            sourceAdded(source);
+        }
     }
 }
 
@@ -222,7 +224,7 @@ void SM::Net::configAccepted()
     cg.writeEntry("interval", interval);
     interval *= 1000;
     setInterval(interval);
-    
+
     cg.writeEntry("showTopBar", m_showTopBar = uiAdv.showTopBarCheckBox->isChecked());
     cg.writeEntry("showBackground", m_showBackground = uiAdv.showBackgroundCheckBox->isChecked());
     cg.writeEntry("inColor", m_inColor = uiAdv.inColorCombo->color());
