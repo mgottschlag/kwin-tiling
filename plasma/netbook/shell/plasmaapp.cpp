@@ -231,10 +231,13 @@ void PlasmaApp::mainContainmentActivated()
 
     QWidget * activeWindow = QApplication::activeWindow();
     KWindowSystem::raiseWindow(id);
-    m_mainView->activateWindow();
+
     if (activeWindow) {
         KWindowSystem::raiseWindow(activeWindow->effectiveWinId());
+        m_mainView->activateWindow();
         activeWindow->setFocus();
+    } else {
+        m_mainView->activateWindow();
     }
 }
 

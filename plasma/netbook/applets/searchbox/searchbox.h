@@ -48,6 +48,8 @@ public slots:
 
 protected:
     void popupEvent(bool shown);
+    void focusInEvent(QFocusEvent *event);
+    bool eventFilter(QObject* watched, QEvent *event);
     void focusEditor();
 
 private:

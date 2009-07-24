@@ -91,6 +91,7 @@ QGraphicsWidget *SearchBox::graphicsWidget()
     m_widget = new QGraphicsWidget(this);
     m_widget->setLayout(layout);
     m_widget->setPreferredWidth(300);
+    m_widget->installEventFilter(this);
 
     return m_widget;
 }
@@ -106,6 +107,22 @@ void SearchBox::popupEvent(bool shown)
     } else {
         m_search->setText(QString());
     }
+}
+
+void SearchBox::focusInEvent(QFocusEvent *event)
+{
+    Q_UNUSED(event);
+
+    focusEditor();
+}
+
+bool SearchBox::eventFilter(QObject* watched, QEvent *event)
+{
+    //FIXME: is there a way to do it in PopupApplet?
+    if (event->type() == QEvent::FocusIn) {
+        focusEditor();
+    }
+    return false;
 }
 
 void SearchBox::focusEditor()
