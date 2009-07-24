@@ -31,6 +31,9 @@
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QLabel" name="labelFore0">
+        <property name="toolTip">
+         <string>Normal Text on Normal Background</string>
+        </property>
         <property name="text">
          <string>normal</string>
         </property>
@@ -48,6 +51,9 @@
          <font>
           <underline>true</underline>
          </font>
+        </property>
+        <property name="toolTip">
+         <string>Link Text on Normal Background</string>
         </property>
         <property name="text">
          <string>link</string>
@@ -67,6 +73,9 @@
           <underline>true</underline>
          </font>
         </property>
+        <property name="toolTip">
+         <string>Visited Text on Normal Background</string>
+        </property>
         <property name="text">
          <string>visited</string>
         </property>
@@ -77,6 +86,9 @@
    </item>
    <item row="0" column="3">
     <widget class="QWidget" name="widgetFore2" native="true">
+     <property name="toolTip">
+      <string>Active Text on Normal Background</string>
+     </property>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
        <widget class="QLabel" name="labelFore2">
@@ -93,6 +105,9 @@
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
        <widget class="QLabel" name="labelFore1">
+        <property name="toolTip">
+         <string>Inactive Text on Normal Background</string>
+        </property>
         <property name="text">
          <string>inactive</string>
         </property>
@@ -106,6 +121,9 @@
      <layout class="QHBoxLayout" name="horizontalLayout_6">
       <item>
        <widget class="QLabel" name="labelFore5">
+        <property name="toolTip">
+         <string>Negative Text on Normal Background</string>
+        </property>
         <property name="text">
          <string>negative</string>
         </property>
@@ -119,6 +137,9 @@
      <layout class="QHBoxLayout" name="horizontalLayout_7">
       <item>
        <widget class="QLabel" name="labelFore6">
+        <property name="toolTip">
+         <string>Neutral Text on Normal Background</string>
+        </property>
         <property name="text">
          <string>neutral</string>
         </property>
@@ -132,6 +153,9 @@
      <layout class="QHBoxLayout" name="horizontalLayout_8">
       <item>
        <widget class="QLabel" name="labelFore7">
+        <property name="toolTip">
+         <string>Positive Text on Normal Background</string>
+        </property>
         <property name="text">
          <string>positive</string>
         </property>
@@ -142,6 +166,9 @@
    </item>
    <item row="0" column="8">
     <widget class="QWidget" name="widgetFore8" native="true">
+     <property name="toolTip">
+      <string>Hover on Normal Background</string>
+     </property>
      <layout class="QHBoxLayout" name="horizontalLayout_9">
       <item>
        <widget class="QLabel" name="labelFore8">
@@ -158,6 +185,9 @@
      <layout class="QHBoxLayout" name="horizontalLayout_11">
       <item>
        <widget class="QLabel" name="labelBack0">
+        <property name="toolTip">
+         <string>Normal Text on Normal Background</string>
+        </property>
         <property name="text">
          <string>normal</string>
         </property>
@@ -175,6 +205,10 @@
          <font>
           <underline>true</underline>
          </font>
+        </property>
+        <property name="toolTip">
+         <string>Link Text on Link Background
+(Note: Link Background is derived from Link Text and cannot be separately configured at this time)</string>
         </property>
         <property name="text">
          <string>link</string>
@@ -194,6 +228,10 @@
           <underline>true</underline>
          </font>
         </property>
+        <property name="toolTip">
+         <string>Visited Text on Visited Background
+(Note: Visited Background is derived from Visited Text and cannot be separately configured at this time)</string>
+        </property>
         <property name="text">
          <string>visited</string>
         </property>
@@ -207,6 +245,10 @@
      <layout class="QHBoxLayout" name="horizontalLayout_14">
       <item>
        <widget class="QLabel" name="labelBack2">
+        <property name="toolTip">
+         <string>Active Text on Active Background
+(Note: Active Background is derived from Active Text and cannot be separately configured at this time)</string>
+        </property>
         <property name="text">
          <string>active</string>
         </property>
@@ -220,6 +262,9 @@
      <layout class="QHBoxLayout" name="horizontalLayout_15">
       <item>
        <widget class="QLabel" name="labelBack1">
+        <property name="toolTip">
+         <string>Inactive Text on Alternate Background</string>
+        </property>
         <property name="text">
          <string>alternate</string>
         </property>
@@ -233,6 +278,10 @@
      <layout class="QHBoxLayout" name="horizontalLayout_16">
       <item>
        <widget class="QLabel" name="labelBack5">
+        <property name="toolTip">
+         <string>Negative Text on Negative Background
+(Note: Negative Background is derived from Negative Text and cannot be separately configured at this time)</string>
+        </property>
         <property name="text">
          <string>negative</string>
         </property>
@@ -246,6 +295,10 @@
      <layout class="QHBoxLayout" name="horizontalLayout_17">
       <item>
        <widget class="QLabel" name="labelBack6">
+        <property name="toolTip">
+         <string>Neutral Text on Neutral Background
+(Note: Neutral Background is derived from Neutral Text and cannot be separately configured at this time)</string>
+        </property>
         <property name="text">
          <string>neutral</string>
         </property>
@@ -259,6 +312,10 @@
      <layout class="QHBoxLayout" name="horizontalLayout_18">
       <item>
        <widget class="QLabel" name="labelBack7">
+        <property name="toolTip">
+         <string>Positive Text on Positive Background
+(Note: Positive Background is derived from Positive Text and cannot be separately configured at this time)</string>
+        </property>
         <property name="text">
          <string>positive</string>
         </property>
@@ -272,6 +329,9 @@
      <layout class="QHBoxLayout" name="horizontalLayout_10">
       <item>
        <widget class="QLabel" name="labelFore9">
+        <property name="toolTip">
+         <string>Focus on Normal Background</string>
+        </property>
         <property name="text">
          <string>focus</string>
         </property>
