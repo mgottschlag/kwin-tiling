@@ -30,6 +30,8 @@ namespace Plasma
     class View;
 }
 
+class QGraphicsSceneMouseEvent;
+
 class ActivityBar : public Plasma::Applet
 {
 Q_OBJECT
@@ -39,6 +41,9 @@ public:
 
     void init();
     void constraintsEvent(Plasma::Constraints constraints);
+
+protected:
+    bool eventFilter(QObject *watched, QEvent *event);
 
 private Q_SLOTS:
     void switchContainment(int newActive);

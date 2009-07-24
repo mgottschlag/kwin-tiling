@@ -20,6 +20,7 @@
 #include "activitybar.h"
 
 #include <QGraphicsLinearLayout>
+#include <QGraphicsSceneMouseEvent>
 
 #include <KWindowSystem>
 
@@ -48,6 +49,7 @@ void ActivityBar::init()
 {
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
     m_tabBar = new Plasma::TabBar(this);
+    m_tabBar->nativeWidget()->installEventFilter(this);
     layout->addItem(m_tabBar);
     layout->setContentsMargins(0,0,0,0);
     //layout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
@@ -125,9 +127,19 @@ void ActivityBar::constraintsEvent(Plasma::Constraints constraints)
     }
 }
 
+bool ActivityBar::eventFilter(QObject *watched, QEvent *event)
+{
+    //request an activate also if the user clicks on the current active tab
+    if (watched == m_tabBar->nativeWidget() && event->type() == QEvent::MouseButtonRelease) {
+        QMouseEvent *me = static_cast<QMouseEvent *>(event);
+        switchContainment(m_tabBar->nativeWidget()->tabAt(me->pos()));
+    }
+    return false;
+}
+
 void ActivityBar::switchContainment(int newActive)
 {
-    if (newActive == m_activeContainment || !containment()) {
+    if (!containment()) {
         return;
     }
 
