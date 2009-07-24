@@ -116,7 +116,7 @@ public:
 
 public slots:
     void reloadMenu();
-    void checkSycocaChange();
+    void checkSycocaChange(const QStringList &changes);
 
 private:
     friend class ApplicationModelPrivate;
