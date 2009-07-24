@@ -89,6 +89,7 @@ private:
     PlasmaApp();
     void reserveStruts();
     void createUnhideTrigger();
+    void destroyUnHideTrigger();
 
 private Q_SLOTS:
     void cleanup();
@@ -100,7 +101,7 @@ private Q_SLOTS:
     void showAppletBrowser();
     void appletBrowserDestroyed();
     void mainContainmentActivated();
-    void delayedUnHide();
+    void controlBarVisibilityUpdate();
 
 private:
     Plasma::Corona *m_corona;
