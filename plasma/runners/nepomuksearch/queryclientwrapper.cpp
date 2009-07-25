@@ -90,6 +90,7 @@ qreal normalizeScore(double score) {
 
 void Nepomuk::QueryClientWrapper::slotNewEntries(const QList<Nepomuk::Search::Result>& results)
 {
+    QList<Plasma::QueryMatch> matches;
     foreach(const Search::Result& result, results) {
         Plasma::QueryMatch match(m_runner);
         match.setType(Plasma::QueryMatch::PossibleMatch);
@@ -105,17 +106,17 @@ void Nepomuk::QueryClientWrapper::slotNewEntries(const QList<Nepomuk::Search::Re
             type = Nepomuk::Types::Class(res.resourceType()).label();
         }
 
-        match.setText(i18nc("@action file/resource to be opened from KRunner. %1 is the name and %2 the type",
-                            "Open %1 (%2)",
-                            res.genericLabel(),
-                            type));
+        match.setText(res.genericLabel());
+        match.setSubtext(type);
+
         QString s = res.genericIcon();
         match.setIcon(KIcon(s.isEmpty() ? QString("nepomuk") : s));
 
         match.setData(qVariantFromValue(res));
         match.setId(res.resourceUri().toString());
-        m_runnerContext->addMatch(m_runnerContext->query(), match);
+        matches << match;
     }
+    m_runnerContext->addMatches(m_runnerContext->query(), matches);
 }
 
 #include "queryclientwrapper.moc"

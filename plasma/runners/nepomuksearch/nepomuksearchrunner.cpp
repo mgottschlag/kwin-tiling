@@ -21,6 +21,9 @@
 
 #include "queryserviceclient.h"
 
+#include <QMenu>
+
+#include <KIcon>
 #include <KRun>
 #include <KDebug>
 #include <KUrl>
@@ -30,6 +33,10 @@
 
 #include <Soprano/Vocabulary/NAO>
 
+#include <KFileItemActions>
+#include <KFileItemList>
+#include <KFileItemListProperties>
+#include <KIO/NetAccess>
 
 Q_DECLARE_METATYPE(Nepomuk::Resource)
 
@@ -63,10 +70,12 @@ void Nepomuk::SearchRunner::init()
     Nepomuk::ResourceManager::instance()->init();
 
     // we are pretty slow at times and use DBus calls
-    setSpeed( SlowSpeed );
+    setSpeed(SlowSpeed);
 
     // we are way less important than others, mostly because we are slow
-    setPriority( LowPriority );
+    setPriority(LowPriority);
+
+    m_actions = new KFileItemActions(this);
     addSyntax(Plasma::RunnerSyntax(":q:", i18n("Finds files, documents and other content that matches :q: using the desktop search system.")));
 }
 
@@ -108,6 +117,14 @@ void Nepomuk::SearchRunner::match( Plasma::RunnerContext& context )
 
 void Nepomuk::SearchRunner::run( const Plasma::RunnerContext&, const Plasma::QueryMatch& match )
 {
+    // If no action was selected, the interface doesn't support multiple 
+    // actions so we simply open the file
+    if (QAction *a = match.selectedAction()) {
+        if (a != action("open")) {
+            match.selectedAction()->trigger();
+            return;
+        }
+    }
     Nepomuk::Resource res = match.data().value<Nepomuk::Resource>();
     KUrl url;
 
@@ -119,6 +136,48 @@ void Nepomuk::SearchRunner::run( const Plasma::RunnerContext&, const Plasma::Que
     }
 
     (void)new KRun(url, 0);
+}
+
+QList<QAction*> Nepomuk::SearchRunner::actionsForMatch(const Plasma::QueryMatch &match)
+{
+    //Unlike other runners, the actions generated here are likely to see
+    //little reuse. Hence, we will clear the actions then generate new
+    //ones per iteration to avoid excessive memory consumption.
+    qDeleteAll(m_konqActions);
+    m_konqActions.clear();
+
+    QList<QAction*> ret;
+    if (!action("open")) {
+         addAction("open", KIcon("document-open"), i18n("Open"));
+    }
+    ret << action("open");
+
+    Nepomuk::Resource res = match.data().value<Nepomuk::Resource>();
+
+    QString address = QUrl::fromPercentEncoding(res.resourceUri().toString().toUtf8());
+    KUrl url(address);
+    KIO::UDSEntry entry;
+    if (!KIO::NetAccess::stat(url.path(), entry, 0)) {
+        return QList<QAction*>();
+    }
+
+    KFileItemList list;
+    list << KFileItem(entry, url);
+
+    KFileItemListProperties prop;
+    prop.setItems(list);
+
+    QMenu dummy;
+    m_actions->setItemListProperties(prop);
+    m_actions->addOpenWithActionsTo(&dummy, QString());
+    //Add user defined actions
+    m_actions->addServiceActionsTo(&dummy);
+
+    m_konqActions = actionsFromMenu(&dummy);
+
+    ret << m_konqActions;
+
+    return ret;
 }
 
 K_EXPORT_PLASMA_RUNNER(nepomuksearchrunner, Nepomuk::SearchRunner)

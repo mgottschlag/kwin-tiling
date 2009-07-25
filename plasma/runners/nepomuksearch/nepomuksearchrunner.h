@@ -27,10 +27,12 @@
 
 #include "result.h"
 
+class KFileItemActions;
+
+class QAction;
 
 namespace Nepomuk {
 
-    
     class SearchRunner : public Plasma::AbstractRunner
     {
         Q_OBJECT
@@ -43,11 +45,16 @@ namespace Nepomuk {
         void match( Plasma::RunnerContext& context );
         void run( const Plasma::RunnerContext& context, const Plasma::QueryMatch& action );
 
+        QList<QAction*> actionsForMatch(const Plasma::QueryMatch &match);
+
     private:
         void init();
 
         QMutex m_mutex;
         QWaitCondition m_waiter;
+
+        KFileItemActions *m_actions;
+        QList<QAction*> m_konqActions;
     };
 }
 
