@@ -48,6 +48,7 @@
 #include <Plasma/View>
 #include <Plasma/ScrollWidget>
 #include <Plasma/PopupApplet>
+#include <Plasma/Frame>
 
 using namespace Plasma;
 
@@ -91,7 +92,7 @@ void Newspaper::init()
     m_rightLayout->addItem(spacer2);
 
     m_background = new Plasma::FrameSvg(this);
-    m_background->setImagePath("widgets/background");
+    m_background->setImagePath("widgets/translucentbackground");
 
     Containment::init();
     setHasConfigurationInterface(true);
@@ -157,6 +158,7 @@ void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
         }
     }
 
+
     if (insertIndex == -1) {
         lay->insertItem(lay->count()-1, applet);
     } else {
@@ -165,7 +167,8 @@ void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 
 
     connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
-    applet->setBackgroundHints(NoBackground);
+    updateSize();
+    //applet->setBackgroundHints(NoBackground);
 }
 
 void Newspaper::updateSize()
@@ -185,7 +188,7 @@ void Newspaper::constraintsEvent(Plasma::Constraints constraints)
         constraints & Plasma::StartupCompletedConstraint) {
 
         foreach (Applet *applet, applets()) {
-            applet->setBackgroundHints(NoBackground);
+         //   applet->setBackgroundHints(NoBackground);
         }
     }
 
