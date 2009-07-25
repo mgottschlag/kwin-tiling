@@ -526,7 +526,7 @@ bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
 
 bool PlasmaApp::x11EventFilter(XEvent *event)
 {
-    if (m_autoHideControlBar && !m_controlBar->isVisible() && event->xcrossing.window == m_unhideTrigger &&
+    if (m_controlBar && m_autoHideControlBar && !m_controlBar->isVisible() && event->xcrossing.window == m_unhideTrigger &&
         (event->xany.send_event != True && event->type == EnterNotify)) {
         //delayed show
         m_unHideTimer->start(600);
