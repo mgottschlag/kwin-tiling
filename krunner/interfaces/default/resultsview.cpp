@@ -45,11 +45,7 @@ ResultsView::ResultsView(QWidget * parent)
     setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
     m_arrowSvg = new Plasma::Svg(this);
-    {
-        // lock because setImagePath uses KSycoca
-        QMutexLocker lock(Plasma::AbstractRunner::bigLock());
-        m_arrowSvg->setImagePath("widgets/arrows");
-    }
+    m_arrowSvg->setImagePath("widgets/arrows");
 
     m_previousPage = new QToolButton(this);
     m_previousPage->setIcon(m_arrowSvg->pixmap("up-arrow"));
