@@ -43,11 +43,10 @@ Applet::Applet(QObject *parent, const QVariantList &args)
      m_mainLayout(0),
      m_configSource(0)
 {
-    if (args.count() > 0) {
-        if (args[0].toString() == "SM") {
-            m_mode = Monitor;
-        }
+    if (args.count() > 0 && args[0].toString() == "SM") {
+        m_mode = Monitor;
     }
+
     QString name = pluginName();
 }
 
@@ -166,15 +165,18 @@ void Applet::connectToEngine()
         m_header->setText(m_title);
         mainLayout()->addItem(m_header);
     }
+
     if (m_items.count() == 0){
         displayNoAvailableSources();
         return;
     }
+
     foreach (const QString &item, m_items) {
         if (addMeter(item)) {
             connectSource(item);
         }
     }
+
     if (m_titleSpacer) {
         mainLayout()->addStretch();
     }
