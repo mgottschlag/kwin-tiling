@@ -92,7 +92,7 @@ void SystemMonitor::init()
     m_layout->addItem(m_buttons);
     foreach (const QString& applet, appletNames) {
         if (appletsFound.contains(applet)) {
-                addApplet(applet);
+            addApplet(applet);
         }
     }
 
@@ -132,12 +132,12 @@ SM::Applet *SystemMonitor::addApplet(const QString &name)
         connect(applet, SIGNAL(geometryChecked()), this, SLOT(checkGeometry()));
         connect(applet, SIGNAL(destroyed(QObject*)), this, SLOT(appletRemoved(QObject*)));
         applet->setFlag(QGraphicsItem::ItemIsMovable, false);
-        applet->init();
         applet->setBackgroundHints(Plasma::Applet::NoBackground);
         applet->setParentItem(m_widget);
         applet->setObjectName(name);
         connect(applet, SIGNAL(configNeedsSaving()), this, SIGNAL(configNeedsSaving()));
         m_layout->addItem(applet);
+        applet->init();
 
         KConfigGroup cg = config();
         saveState(cg);
