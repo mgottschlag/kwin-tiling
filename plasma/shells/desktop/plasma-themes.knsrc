@@ -1,4 +1,5 @@
 [KNewStuff2]
 ProvidersUrl=http://download.kde.org/khotnewstuff/plasmathemes-providers.xml
-TargetDir=desktoptheme
-Uncompress=true
+StandardResource=tmp
+InstallationCommand=plasmapkg -t theme -i %f
+UninstallCommand=plasmapkg -t theme -r %f
