@@ -82,6 +82,7 @@ void Nepomuk::SearchRunner::init()
 
 Nepomuk::SearchRunner::~SearchRunner()
 {
+    qDeleteAll(m_konqActions);
 }
 
 
@@ -173,7 +174,7 @@ QList<QAction*> Nepomuk::SearchRunner::actionsForMatch(const Plasma::QueryMatch 
     //Add user defined actions
     m_actions->addServiceActionsTo(&dummy);
 
-    m_konqActions = actionsFromMenu(&dummy);
+    m_konqActions = Plasma::actionsFromMenu(&dummy);
 
     ret << m_konqActions;
 
