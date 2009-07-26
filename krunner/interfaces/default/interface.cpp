@@ -358,7 +358,6 @@ void Interface::centerOnScreen()
 
     QRect r = Kephal::ScreenUtils::screenGeometry(screen);
     int w = m_defaultSize.width();
-    int h = m_defaultSize.height();
     move(r.left() + (r.width() / 2) - (w / 2),
          r.top() + (r.height() / 3));
     m_screenPos[screen] = pos();
