@@ -43,6 +43,9 @@ extern "C" KDE_EXPORT int kdemain(int argc, char * argv[] )
     }
   kDebug() << "X server XKB extension major=" << major << " minor=" << minor;
 
+  //Without that, the application dies when the dialog is closed only once.
+  app.setQuitOnLastWindowClosed(false);
+
   app.setXkbOpcode(xkb_opcode);
   app.disableSessionManagement();
   return app.exec();
