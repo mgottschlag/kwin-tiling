@@ -1,13 +1,15 @@
 #include "customwidgets.h"
 #include <KAction>
 #include <KStandardAction>
-#include<kiconloader.h>
-#include<cmath>
-#include<QHash>
+#include <kiconloader.h>
+#include <cmath>
+#include <QHash>
 
 #define UNIVERSAL_PADDING 20
 
 //AppletsList
+
+using namespace KCategorizedItemsViewModels;
 
 AppletsList::AppletsList(QGraphicsItem *parent)
         :QGraphicsWidget(parent)

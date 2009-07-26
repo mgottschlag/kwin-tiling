@@ -177,6 +177,8 @@ private:
 
 };
 
+} //end of namespace
+
 Q_DECLARE_METATYPE(KCategorizedItemsViewModels::Filter)
 
 #endif /*KCATEGORIZEDITEMSVIEWMODELS_H_*/

@@ -276,3 +276,5 @@ QStandardItemModel *DefaultItemFilterProxyModel::InnerProxyModel::sourceModel() 
 {
     return m_sourceModel;
 }
+
+}

@@ -20,10 +20,12 @@
 #include <Plasma/Applet>
 #include <Plasma/Corona>
 #include <Plasma/Containment>
-#include "kcategorizeditemsview_p.h"
+#include "kcategorizeditemsviewmodels_p.h"
 #include "plasmaappletitemmodel_p.h"
 #include "openwidgetassistant_p.h"
 #include "customwidgets.h"
+
+using namespace KCategorizedItemsViewModels;
 
 namespace Plasma
 {

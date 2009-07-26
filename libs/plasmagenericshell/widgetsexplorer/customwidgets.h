@@ -11,6 +11,7 @@
 #include <KMenu>
 #include <kpushbutton.h>
 #include "plasmaappletitemmodel_p.h"
+#include "kcategorizeditemsviewmodels_p.h"
 #include  "klineedit.h"
 #include <QScrollArea>
 #include <plasma/framesvg.h>
@@ -30,7 +31,7 @@ public:
 
     void init();
 
-    AbstractItem *getItemByProxyIndex(const QModelIndex &index) const;
+    KCategorizedItemsViewModels::AbstractItem *getItemByProxyIndex(const QModelIndex &index) const;
     void setItemModel(QStandardItemModel *model);
     void setFilterModel(QStandardItemModel *model);
 
@@ -43,7 +44,7 @@ public:
     void insertAppletIcon(AppletIconWidget *appletIconWidget);
     void eraseList();
 
-    QList < AbstractItem * > selectedItems() const;
+    QList < KCategorizedItemsViewModels::AbstractItem * > selectedItems() const;
 
 public slots:
     void searchTermChanged(const QString &text);
@@ -91,7 +92,7 @@ private:
 
     QStandardItemModel *m_modelItems;
     QStandardItemModel *m_modelFilters;
-    DefaultItemFilterProxyModel *m_modelFilterItems;
+    KCategorizedItemsViewModels::DefaultItemFilterProxyModel *m_modelFilterItems;
 
 };
 

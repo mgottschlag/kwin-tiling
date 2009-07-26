@@ -102,7 +102,7 @@ QVariantList PlasmaAppletItem::arguments() const
 }
 
 PlasmaAppletItemModel::PlasmaAppletItemModel(KConfigGroup configGroup, QObject * parent) :
-    KCategorizedItemsViewModels::QStandardItemModel(parent),
+    QStandardItemModel(parent),
     m_configGroup(configGroup)
 {
     m_used = m_configGroup.readEntry("used").split(',');

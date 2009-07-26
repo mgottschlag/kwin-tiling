@@ -60,8 +60,7 @@ private:
     PlasmaAppletItemModel * m_model;
 };
 
-class PlasmaAppletItemModel :
-    public KCategorizedItemsViewModels::QStandardItemModel
+class PlasmaAppletItemModel : public QStandardItemModel
 {
     Q_OBJECT
 
