@@ -391,7 +391,7 @@ QString NotifierDialog::getCategoryNameOfDevice(const Solid::Device& device)
         const Solid::DeviceInterface *interface = device.asDeviceInterface(type);
         if (interface)
         {
-            return Solid::DeviceInterface::typeToString(type);
+            return Solid::DeviceInterface::typeDescription(type);
         }
     }
     return 0;
