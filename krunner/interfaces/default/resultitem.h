@@ -108,6 +108,7 @@ protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
     void changeEvent(QEvent *event);
     void resizeEvent(QGraphicsSceneResizeEvent *);
+    void drawIcon(QPainter *painter, const QRect &iRect, const QPixmap &p);
 
 protected slots:
     void showConfig();

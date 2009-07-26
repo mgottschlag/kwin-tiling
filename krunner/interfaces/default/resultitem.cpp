@@ -182,6 +182,14 @@ void ResultItem::run(Plasma::RunnerManager *manager)
     manager->run(m_match);
 }
 
+void ResultItem::drawIcon(QPainter *painter, const QRect &iRect, const QPixmap &p)
+{
+    //QPixmap p = m_icon.pixmap(iconSize, QIcon::Active);
+    QRect r = p.rect();
+    r.moveCenter(iRect.center());
+    painter->drawPixmap(r, p);
+}
+
 void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(widget);
@@ -201,7 +209,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         // item ... or unless we are over 2 ticks into the higlight anim. complex but it works
         if (((scene() && !scene()->views().isEmpty() && !scene()->views()[0]->hasFocus()) &&
             !(option->state & QStyle::State_MouseOver)) || m_highlight > 2) {
-            painter->drawPixmap(iRect.topLeft(), m_icon.pixmap(iconSize, QIcon::Active));
+            drawIcon(painter, iRect, m_icon.pixmap(iconSize, QIcon::Active));
         } else {
             drawMixed = true;
             ++m_highlight;
@@ -219,7 +227,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
             m_highlightTimerId = startTimer(TIMER_INTERVAL);
         }
     } else {
-        painter->drawPixmap(iRect.topLeft(), m_icon.pixmap(iconSize, QIcon::Disabled));
+        drawIcon(painter, iRect, m_icon.pixmap(iconSize, QIcon::Disabled));
     }
 
     if (drawMixed) {
@@ -236,9 +244,9 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         qreal activeOpacity = painter->opacity() * factor;
 
         painter->setOpacity(painter->opacity() * (1 - factor));
-        painter->drawPixmap(iRect.topLeft(), m_icon.pixmap(iconSize, QIcon::Disabled));
+        drawIcon(painter, iRect, m_icon.pixmap(iconSize, QIcon::Disabled));
         painter->setOpacity(activeOpacity);
-        painter->drawPixmap(iRect.topLeft(), m_icon.pixmap(iconSize, QIcon::Active));
+        drawIcon(painter, iRect, m_icon.pixmap(iconSize, QIcon::Active));
         painter->setOpacity(1);
     }
 
@@ -430,7 +438,7 @@ void ResultItem::calculateSize()
 
 void ResultItem::calculateSize(int sceneWidth, int sceneHeight)
 {
-
+    Q_UNUSED(sceneHeight)
     QRect textBounds(contentsRect().toRect());
 
     textBounds.setWidth(sceneWidth);
