@@ -276,9 +276,3 @@ QStandardItemModel *DefaultItemFilterProxyModel::InnerProxyModel::sourceModel() 
 {
     return m_sourceModel;
 }
-
-// DefaultItemModel
-
-DefaultItemModel::DefaultItemModel(QObject *parent) :
-    QStandardItemModel(parent) {}
-}

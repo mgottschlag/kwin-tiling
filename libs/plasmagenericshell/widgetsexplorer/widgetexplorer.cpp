@@ -73,22 +73,20 @@ public:
     KCategorizedItemsViewModels::DefaultFilterModel filterModel;
 
     /**
-     * Widget that show the applet info when the icon is clicked/hovered
-     */
-    StandardCustomWidget *appletInfoWidget;
-    /**
-     * List of categories
-     */
-    StandardCustomWidget *categoriesListWidget;
-    /**
      * Button to install new widgets and its menu
      */
-    StandardCustomWidget *pushButtonWidget;
+    ManageWidgetsPushButton *pushButtonWidget;
     KMenu *pushButtonWidgetMenu;
     /**
-     * Widget that lists the applets and has the search LineEdit
+     * Widget that lists the applets
      */
-    StandardCustomWidget *appletsListSearchWidget;
+    AppletsList *appletsListWidget;
+
+    /**
+     * Widget that contains the search and categories filters
+     */
+    FilteringWidget *filteringWidget;
+
 };
 
 void WidgetExplorerMainWidgetPrivate::initFilters()
@@ -118,67 +116,49 @@ void WidgetExplorerMainWidgetPrivate::initFilters()
 
 void WidgetExplorerMainWidgetPrivate::init()
 {
+    // **** find a fancier way to use bla ****
+    QDesktopWidget *bla = new QDesktopWidget();
+    q->setMinimumWidth(bla->screenGeometry(-1).width());
+    q->setMaximumWidth(bla->screenGeometry(-1).width());
+    q->setMinimumHeight(170);
+    q->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
+    q->setAttribute(Qt::WA_TranslucentBackground);
 
-    q->setBackgroundSvg("widgets/translucentbackground");
-    q->setMinimumSize(QSizeF(600, 400));
+    QGraphicsLinearLayout *mainLinearLayout = new QGraphicsLinearLayout(Qt::Horizontal, 0);
 
-    QGraphicsLinearLayout *linearLayoutDepthZero = new QGraphicsLinearLayout(Qt::Horizontal, 0);
-    QGraphicsLinearLayout *linearLayoutDepthOneRight = new QGraphicsLinearLayout(Qt::Vertical, 0);
-    QGraphicsLinearLayout *linearLayoutDepthOneLeft = new QGraphicsLinearLayout(Qt::Horizontal, 0);
+    filteringWidget = new FilteringWidget();
+    filteringWidget->setMaximumWidth(q->contentsRect().width()/5);
+    filteringWidget->setMinimumWidth(q->contentsRect().width()/5);
 
-    appletInfoWidget = new AppletInfoWidget(0, 0, QSizeF(q->contentsRect().size().width()/3, (2 * (q->contentsRect().size().height()/4))));
-
-    categoriesListWidget = new FilteringList();
-
-    //categories list can grow down
-    categoriesListWidget->setMinimumWidth(q->contentsRect().size().width()/3);
-    categoriesListWidget->setMaximumWidth(q->contentsRect().size().width()/3);
-    categoriesListWidget->setMinimumHeight(q->contentsRect().size().height()/3 );
-
-    pushButtonWidget = new ManageWidgetsPushButton();
-    dynamic_cast<ManageWidgetsPushButton*>(pushButtonWidget)->button()->setText(i18n("Install New Widgets"));
-    pushButtonWidget->setMaximumHeight(50);
-    pushButtonWidget->setMinimumHeight(50);
-
-    appletsListSearchWidget = new AppletsListSearch();
+    appletsListWidget = new AppletsList();
 
     //para isso, fazer meu appletlist escutar doubleClick e ter método selectedItems
-    //QObject::connect(appletsListSearchWidget, SIGNAL(doubleClicked(const QModelIndex &)), q, SLOT(addApplet()));
-    //applets list can grow down and to the right
-    appletsListSearchWidget->setMinimumWidth(2 * (q->contentsRect().size().width()/3));
-    appletsListSearchWidget->setMaximumHeight(q->contentsRect().height());
+    //QObject::connect(appletsListWidget, SIGNAL(doubleClicked(const QModelIndex &)), q, SLOT(addApplet()));
+    appletsListWidget->setMaximumHeight(q->contentsRect().height());
+    appletsListWidget->setMinimumHeight(q->contentsRect().height());
 
-    linearLayoutDepthOneRight->addItem(appletInfoWidget);
-    linearLayoutDepthOneRight->addItem(categoriesListWidget);
-    linearLayoutDepthOneRight->addItem(pushButtonWidget);
+    kDebug() << appletsListWidget->geometry().size().height();
 
-    linearLayoutDepthOneLeft->addItem(appletsListSearchWidget);
+    QObject::connect(filteringWidget->textSearch()->nativeWidget(), SIGNAL(textChanged(QString)), appletsListWidget, SLOT(searchTermChanged(QString)));
 
-    linearLayoutDepthZero->addItem(linearLayoutDepthOneLeft);
-    linearLayoutDepthZero->addItem(linearLayoutDepthOneRight);
+    mainLinearLayout->addItem(appletsListWidget);
+    mainLinearLayout->addItem(filteringWidget);
+
+    mainLinearLayout->setAlignment(appletsListWidget, Qt::AlignVCenter);
+    mainLinearLayout->setAlignment(filteringWidget, Qt::AlignRight);
+    mainLinearLayout->setContentsMargins(5, 5, 5, 5);
 
     initFilters();
-    dynamic_cast<FilteringList *>(categoriesListWidget)->setModel(&filterModel);
-    dynamic_cast<AppletsListSearch *>(appletsListSearchWidget)->setFilterModel(&filterModel);
+    filteringWidget->categoriesList()->setModel(&filterModel);
+    appletsListWidget->setFilterModel(&filterModel);
 
-    QObject::connect(categoriesListWidget, SIGNAL(filterChanged(int)), appletsListSearchWidget, SLOT(filterChanged(int)));
+    QObject::connect(filteringWidget->categoriesList(), SIGNAL(filterChanged(int)), appletsListWidget, SLOT(filterChanged(int)));
 
     // Other models
-    dynamic_cast<AppletsListSearch *>(appletsListSearchWidget)->setItemModel(&itemModel);
+    appletsListWidget->setItemModel(&itemModel);
     initRunningApplets();
 
-    q->setLayout(linearLayoutDepthZero);
-
-//    QObject::connect(appletsListSearchWidget, SIGNAL(clicked(AbstractItem *)),
-//             appletInfoWidget, SLOT(updateApplet(AbstractItem *)));
-//
-    QObject::connect(appletsListSearchWidget, SIGNAL(entered(PlasmaAppletItem *)),
-             appletInfoWidget, SLOT(updateApplet(PlasmaAppletItem *)));
-
-    QObject::connect(appletInfoWidget, SIGNAL(infoButtonClicked(const QString &)),
-             q, SLOT(infoAboutApplet(const QString &)));
-
-    initPushButtonWidgetMenu();
+    q->setLayout(mainLinearLayout);
 
 }
 
@@ -186,7 +166,7 @@ void WidgetExplorerMainWidgetPrivate::initPushButtonWidgetMenu()
 {
     pushButtonWidgetMenu = new KMenu(i18n("Get New Widgets"));
     QObject::connect(pushButtonWidgetMenu, SIGNAL(aboutToShow()), q, SLOT(populateWidgetsMenu()));
-    dynamic_cast<ManageWidgetsPushButton*>(pushButtonWidget)->button()->setMenu(pushButtonWidgetMenu);
+    pushButtonWidget->button()->setMenu(pushButtonWidgetMenu);
 
 }
 
@@ -284,17 +264,27 @@ private:
 //WidgetExplorerMainWidget
 
 WidgetExplorerMainWidget::WidgetExplorerMainWidget(QGraphicsItem *parent)
-        :StandardCustomWidget(parent),
+        :QGraphicsWidget(parent),
         d(new WidgetExplorerMainWidgetPrivate(this))
 {
 
     d->init();
+
+    m_backgroundSvg = new Plasma::FrameSvg(this);
+    m_backgroundSvg->setImagePath("widgets/translucentbackground");
 }
 
 WidgetExplorerMainWidget::~WidgetExplorerMainWidget()
 {
      delete d;
 }
+
+void WidgetExplorerMainWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+ {
+     QGraphicsWidget::paint(painter, option, widget);
+     m_backgroundSvg->resizeFrame(contentsRect().size());
+     m_backgroundSvg->paintFrame(painter, contentsRect().topLeft());
+ }
 
 void WidgetExplorerMainWidget::setApplication(const QString &app)
 {
@@ -304,7 +294,7 @@ void WidgetExplorerMainWidget::setApplication(const QString &app)
 
     //FIXME: AFAIK this shouldn't be necessary ... but here it is. need to find out what in that
     //       maze of models and views is screwing up
-    dynamic_cast<AppletsListSearch *>(d->appletsListSearchWidget)->setItemModel(&d->itemModel);
+    d->appletsListWidget->setItemModel(&d->itemModel);
 
     //kDebug() << d->runningApplets;
     d->itemModel.setRunningApplets(d->runningApplets);
@@ -344,7 +334,7 @@ void WidgetExplorerMainWidget::addApplet()
         return;
     }
 
-    foreach (AbstractItem *item, dynamic_cast<AppletsListSearch *>(d->appletsListSearchWidget)->selectedItems()) {
+    foreach (AbstractItem *item, d->appletsListWidget->selectedItems()) {
         PlasmaAppletItem *selectedItem = (PlasmaAppletItem *) item;
         kDebug() << "Adding applet " << selectedItem->name() << "to containment";
         d->containment->addApplet(selectedItem->pluginName(), selectedItem->arguments());
@@ -496,7 +486,6 @@ void WidgetExplorerMainWidget::populateWidgetsMenu()
 //WidgetExplorer
 
 WidgetExplorer::WidgetExplorer(QWidget * parent, Qt::WindowFlags f)
-    : KDialog(parent, f)
 {
     init();
 }
@@ -509,40 +498,28 @@ WidgetExplorer::~WidgetExplorer()
 
 void WidgetExplorer::init()
 {
-    widget = new WidgetExplorerMainWidget();
-    QGraphicsScene *scene = new QGraphicsScene();
-    scene->addItem(widget);
-    QGraphicsView *view = new QGraphicsView(scene);
-
-    setMainWidget(view);
-
-    setWindowTitle(i18n("Add Widgets"));
-    setWindowIcon(KIcon("plasmagik"));
-
-    setButtons(KDialog::Close);
-
-//    KConfigGroup cg(KGlobal::config(), "PlasmaAppletBrowserDialog");
-    //restoreDialogSize(cg);
+    m_widget = new WidgetExplorerMainWidget();
+    addItem(m_widget);
 }
 
 void WidgetExplorer::setApplication(const QString &app)
 {
-    widget->setApplication(app);
+    m_widget->setApplication(app);
 }
 
 QString WidgetExplorer::application()
 {
-    return widget->application();
+    return m_widget->application();
 }
 
 void WidgetExplorer::setContainment(Plasma::Containment *containment)
 {
-    widget->setContainment(containment);
+    m_widget->setContainment(containment);
 }
 
 Containment *WidgetExplorer::containment() const
 {
-    return widget->containment();
+    return m_widget->containment();
 }
 
 } // namespace Plasma

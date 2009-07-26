@@ -1,26 +1,35 @@
 #include <QtGui>
 #include "customwidgets.h"
-#include "standardcustomwidget.h"
 #include <plasma/applet.h>
 #include "widgetexplorer.h"
 #include <plasma/containment.h>
-#include <KWindowSystem>
+#include <QDesktopWidget>
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
     Plasma::Containment *containment = new Plasma::Containment();
-    Plasma::WidgetExplorer *appletBrowser;
+    Plasma::WidgetExplorerMainWidget *appletBrowser;
 
-    appletBrowser = new Plasma::WidgetExplorer();
+    appletBrowser = new Plasma::WidgetExplorerMainWidget();
     appletBrowser->setContainment(containment);
     appletBrowser->setApplication();
-    //appletBrowser->setAttribute(Qt::WA_DeleteOnClose);
 
-    KWindowSystem::setOnDesktop(appletBrowser->winId(), KWindowSystem::currentDesktop());
-    appletBrowser->show();
-    KWindowSystem::activateWindow(appletBrowser->winId());
+    QGraphicsScene *scene = new QGraphicsScene();
+    scene->addItem(appletBrowser);
+    QGraphicsView *view = new QGraphicsView(scene);
+    view->setWindowFlags(Qt::FramelessWindowHint);
+    view->setAttribute(Qt::WA_TranslucentBackground, true);
+
+    view->setMinimumWidth(appletBrowser->minimumWidth());
+    view->setMaximumWidth(appletBrowser->minimumWidth());
+    view->setMinimumHeight(appletBrowser->minimumHeight() + 30);
+    view->setMaximumHeight(appletBrowser->minimumHeight() + 30);
+    view->show();
+
+    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     return app.exec();
 }

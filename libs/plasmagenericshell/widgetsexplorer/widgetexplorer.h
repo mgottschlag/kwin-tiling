@@ -3,8 +3,7 @@
 
 #include <QtGui>
 #include <KDE/KDialog>
-#include "standardcustomwidget.h"
-
+#include <plasma/framesvg.h>
 
 namespace Plasma
 {
@@ -15,13 +14,16 @@ class Applet;
 class WidgetExplorerPrivate;
 class WidgetExplorerMainWidgetPrivate;
 
-class WidgetExplorerMainWidget : public StandardCustomWidget {
+class WidgetExplorerMainWidget : public QGraphicsWidget
+{
 
     Q_OBJECT
 
 public:
     WidgetExplorerMainWidget(QGraphicsItem *parent = 0);
     ~WidgetExplorerMainWidget();
+
+    void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
 
     QString application();
     void setApplication(const QString &application = QString());
@@ -75,10 +77,11 @@ private:
     Q_PRIVATE_SLOT(d, void containmentDestroyed())
 
     WidgetExplorerMainWidgetPrivate * const d;
+    Plasma::FrameSvg *m_backgroundSvg;
 
 };
 
-class WidgetExplorer: public KDialog
+class WidgetExplorer: public QGraphicsScene
 {
     Q_OBJECT
 
@@ -105,7 +108,7 @@ public:
     Containment *containment() const;
 
 private:
-    WidgetExplorerMainWidget *widget;
+    WidgetExplorerMainWidget *m_widget;
 };
 
 } // namespace Plasma

@@ -21,10 +21,8 @@
 #define PLASMA_PLASMAAPPLETITEMMODEL_P_H
 
 #include <KPluginInfo>
-
 #include <Plasma/Applet>
-
-#include "kcategorizeditemsview_p.h"
+#include "kcategorizeditemsviewmodels_p.h"
 
 class PlasmaAppletItemModel;
 
@@ -63,7 +61,7 @@ private:
 };
 
 class PlasmaAppletItemModel :
-    public KCategorizedItemsViewModels::DefaultItemModel
+    public KCategorizedItemsViewModels::QStandartItemModel
 {
     Q_OBJECT
 

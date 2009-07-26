@@ -24,6 +24,7 @@
 #include <QtCore/QtCore>
 #include <KIcon>
 #include <KDebug>
+
 namespace KCategorizedItemsViewModels {
 
 typedef QPair<QString, QVariant> Filter;
@@ -175,17 +176,6 @@ private:
     InnerProxyModel m_innerModel;
 
 };
-
-/**
- * The default implementation of the model containing items. It /is/ QStandardItemModel
- */
-class DefaultItemModel : public QStandardItemModel
-{
-public:
-    DefaultItemModel(QObject *parent = 0);
-};
-
-}
 
 Q_DECLARE_METATYPE(KCategorizedItemsViewModels::Filter)
 
