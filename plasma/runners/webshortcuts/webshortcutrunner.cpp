@@ -58,7 +58,7 @@ void WebshortcutRunner::loadDelimiter()
         QString knownShortcuts;
 
         foreach (const KService::Ptr &offer, offers) {
-            knownShortcuts.append("<li>");
+            knownShortcuts.append("\n");
 
             if (offer->comment().isEmpty()) {
                 knownShortcuts.append(i18nc("A web shortcut and its name",
@@ -72,13 +72,11 @@ void WebshortcutRunner::loadDelimiter()
                                             offer->name(),
                                             offer->comment()));
             }
-
-            knownShortcuts.append("</li>");
         }
 
         Plasma::RunnerSyntax s("shortcut" + m_delimiter + ":q:",
                  i18n("Opens the location associated with \"shortcut\"  in a web browser with the query :q:. "
-                      "Known shortcuts include: <ul>%1<ul>", knownShortcuts));
+                      "Known shortcuts include:\n%1", knownShortcuts));
         syns << s;
     }
 
