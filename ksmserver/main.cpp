@@ -121,6 +121,8 @@ void checkComposite()
             }
         }
 
+        XFree(xvi);
+
     }
     XCloseDisplay( dpy );
     dpy = NULL;
