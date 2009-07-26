@@ -672,9 +672,12 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
         fprintf(f, "%s\n%i\n", session_manager, getpid());
         fclose(f);
         setenv( "SESSION_MANAGER", session_manager, true  );
+
        // Pass env. var to kdeinit.
        org::kde::KLauncher klauncher("org.kde.klauncher", "/KLauncher", QDBusConnection::sessionBus());
        klauncher.setLaunchEnv( "SESSION_MANAGER", (const char*) session_manager );
+
+        free(session_manager);
     }
 
     if (only_local) {
