@@ -41,6 +41,7 @@
 
 #include <Plasma/Containment>
 #include <Plasma/Theme>
+#include <Plasma/WindowEffects>
 
 #include "netcorona.h"
 #include "netview.h"
@@ -511,6 +512,7 @@ bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
 {
     if (watched == m_mainView && event->type() == QEvent::WindowActivate) {
         destroyUnHideTrigger();
+        Plasma::WindowEffects::setSlidingWindow(m_controlBar->winId(), m_controlBar->location());
         m_controlBar->show();
     } else if ((watched == m_mainView &&
                 event->type() == QEvent::WindowDeactivate &&
@@ -540,10 +542,12 @@ void PlasmaApp::controlBarVisibilityUpdate()
     if (!m_controlBar->isVisible()) {
         if (m_unhideTriggerGeom.adjusted(-1, -1, 1, 1).contains(QCursor::pos())) {
             destroyUnHideTrigger();
+            Plasma::WindowEffects::setSlidingWindow(m_controlBar->winId(), m_controlBar->location());
             m_controlBar->show();
         }
     } else {
         createUnhideTrigger();
+        Plasma::WindowEffects::setSlidingWindow(m_controlBar->winId(), m_controlBar->location());
         m_controlBar->hide();
     }
 }
