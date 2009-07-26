@@ -22,7 +22,6 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QGraphicsLinearLayout>
-#include <QTimeLine>
 #include <QTimer>
 #ifdef Q_WS_X11
 #include <X11/Xatom.h>
@@ -38,6 +37,7 @@
 #include <Plasma/PopupApplet>
 #include <Plasma/Svg>
 #include <Plasma/Theme>
+#include <Plasma/WindowEffects>
 
 #include "panelappletoverlay.h"
 #include "panelcontroller.h"
@@ -194,7 +194,6 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
       m_glowBar(0),
       m_mousePollTimer(0),
       m_strutsTimer(0),
-      m_timeLine(0),
       m_spacer(0),
       m_spacerIndex(-1),
 #ifdef Q_WS_X11
@@ -426,6 +425,8 @@ void PanelView::setVisibilityMode(PanelView::VisibilityMode mode)
     if (mode != AutoHide) {
         updatePanelGeometry();
         show();
+    } else {
+        hideMousePoll();
     }
 
     //kDebug() << "panel state set to" << state << NET::Sticky;
@@ -1055,18 +1056,6 @@ void PanelView::resizeEvent(QResizeEvent *event)
 #endif
 }
 
-QTimeLine *PanelView::timeLine()
-{
-    if (!m_timeLine) {
-        m_timeLine = new QTimeLine(200, this);
-        m_timeLine->setCurveShape(QTimeLine::EaseOutCurve);
-        m_timeLine->setUpdateInterval(10);
-        connect(m_timeLine, SIGNAL(valueChanged(qreal)), this, SLOT(animateHide(qreal)));
-    }
-
-    return m_timeLine;
-}
-
 void PanelView::hideMousePoll()
 {
     QPoint mousePos = QCursor::pos();
@@ -1188,15 +1177,11 @@ void PanelView::unhide(bool destroyTrigger)
     connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
     m_mousePollTimer->start(200);
 
-    // with composite, we can quite do some nice animations with transparent
-    // backgrounds; without it we can't so we just show/hide
-    QTimeLine * tl = timeLine();
-    tl->setDirection(QTimeLine::Backward);
-    tl->setDuration(100);
 
     if (m_visibilityMode == AutoHide || m_visibilityMode == LetWindowsCover) {
         // LetWindowsCover panels are always shown, so don't bother and prevent
         // some unsightly flickers
+        Plasma::WindowEffects::setSlidingWindow(winId(), location());
         show();
     }
 
@@ -1208,13 +1193,6 @@ void PanelView::unhide(bool destroyTrigger)
         m_triggerEntered = true;
         KWindowSystem::raiseWindow(winId());
         QTimer::singleShot(0, this, SLOT(resetTriggerEnteredSuppression()));
-    } else if (shouldHintHide()) {
-        if (tl->state() == QTimeLine::NotRunning) {
-            tl->start();
-        }
-    } else {
-        //if the hide before  compositing was active now the view is wrong
-        viewport()->move(0,0);
     }
 }
 
@@ -1230,26 +1208,18 @@ void PanelView::resetTriggerEnteredSuppression()
 
 void PanelView::startAutoHide()
 {
-    // with composite, we can quite do some nice animations with transparent
-    // backgrounds; without it we can't so we just show/hide
     if (m_mousePollTimer) {
         m_mousePollTimer->stop();
         disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
     }
 
-    QTimeLine *tl = timeLine();
-    tl->setDirection(QTimeLine::Forward);
-    tl->setDuration(200);
-
-    if (shouldHintHide()) {
-        if (tl->state() == QTimeLine::NotRunning) {
-            tl->start();
-        }
-    } else if (m_visibilityMode == LetWindowsCover) {
+    if (m_visibilityMode == LetWindowsCover) {
         KWindowSystem::lowerWindow(winId());
         createUnhideTrigger();
     } else {
-        animateHide(1.0);
+        Plasma::WindowEffects::setSlidingWindow(winId(), location());
+        createUnhideTrigger();
+        hide();
     }
 }
 
@@ -1289,15 +1259,6 @@ void PanelView::paintEvent(QPaintEvent *event)
 {
     Plasma::View::paintEvent(event);
     if (m_firstPaint) {
-        // set up our auothide system after we paint it visibly to the user
-        if (m_visibilityMode == AutoHide) {
-            QTimeLine * tl = timeLine();
-            tl->setDirection(QTimeLine::Forward);
-            if (tl->state() == QTimeLine::NotRunning) {
-                tl->start();
-            }
-        }
-
         m_firstPaint = false;
     }
 }
@@ -1349,56 +1310,6 @@ void PanelView::appletAdded(Plasma::Applet *applet)
         }
 
         setTabOrder(prior, moveOverlay);
-    }
-}
-
-void PanelView::animateHide(qreal progress)
-{
-    if (m_visibilityMode == AutoHide && shouldHintHide()) {
-        int margin = 0;
-        Plasma::Location loc = location();
-
-        if (loc == Plasma::TopEdge || loc == Plasma::BottomEdge) {
-            margin = int(progress * height());
-        } else {
-            margin = int(progress * width());
-        }
-
-        int xtrans = 0;
-        int ytrans = 0;
-
-        switch (loc) {
-            case Plasma::TopEdge:
-                ytrans = -margin;
-                break;
-            case Plasma::BottomEdge:
-                ytrans = margin;
-                break;
-            case Plasma::RightEdge:
-                xtrans = margin;
-                break;
-            case Plasma::LeftEdge:
-                xtrans = -margin;
-                break;
-            default:
-                // no hiding unless we're on an edge.
-                return;
-                break;
-        }
-
-    //kDebug() << progress << xtrans << ytransLetWindowsCover;
-        viewport()->move(xtrans, ytrans);
-    }
-
-    QTimeLine *tl = timeLine();
-    if (qFuzzyCompare(qreal(1.0), progress) && tl->direction() == QTimeLine::Forward) {
-        //kDebug() << "**************** hide complete" << triggerPoint << triggerWidth << triggerHeight;
-        createUnhideTrigger();
-        hide();
-    } else if (qFuzzyCompare(qreal(1.0), qreal(progress + 1.0)) && tl->direction() == QTimeLine::Backward) {
-        //if the show before accel was off now viewport position is wrong, so ensure it's visible
-        //kDebug() << "show complete";
-        viewport()->move(0,0);
     }
 }
 
