@@ -715,12 +715,12 @@ static int makeAbsolute( char screen, int val, char image, int size, int screen_
 
 static int makeAbsoluteX( const char* screen_ref, int x_rel, const char* image_ref, int width )
     {
-    return makeAbsolute( screen_ref[ 0 ], x_rel, image_ref[ 0 ], width, geometry.width());
+    return makeAbsolute( screen_ref[ 0 ], x_rel, image_ref[ 0 ], width, geometry.width()) + geometry.x();
     }
 
 static int makeAbsoluteY( const char* screen_ref, int y_rel, const char* image_ref, int height )
     {
-    return makeAbsolute( screen_ref[ 1 ], y_rel, image_ref[ 1 ], height, geometry.height());
+    return makeAbsolute( screen_ref[ 1 ], y_rel, image_ref[ 1 ], height, geometry.height()) + geometry.y();
     }
 
 static inline QRgb blend( QRgb c, QRgb background )
