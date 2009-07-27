@@ -18,6 +18,8 @@ int main(int argc, char *argv[])
 
     QGraphicsScene *scene = new QGraphicsScene();
     scene->addItem(appletBrowser);
+    scene->setSceneRect(QRectF(0, 0, appletBrowser->minimumWidth(), appletBrowser->minimumHeight()));
+
     QGraphicsView *view = new QGraphicsView(scene);
     view->setWindowFlags(Qt::FramelessWindowHint);
     view->setAttribute(Qt::WA_TranslucentBackground, true);

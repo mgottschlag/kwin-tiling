@@ -146,7 +146,7 @@ void AppletsList::updateList()
 
     eraseList();
 
-    for(int i = 0; i < /*m_modelFilterItems->rowCount()*/10; i++) {
+    for(int i = 0; i < /*m_modelFilterItems->rowCount()*/20; i++) {
         item = getItemByProxyIndex(m_modelFilterItems->index(i, 0));
         appletItem = (PlasmaAppletItem*) item;
 
