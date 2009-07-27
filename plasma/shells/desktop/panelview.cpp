@@ -865,8 +865,10 @@ void PanelView::togglePanelController()
         m_editting = true;
         m_panelController->resize(m_panelController->sizeHint());
         m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
+        Plasma::WindowEffects::setSlidingWindow(m_panelController->winId(), location());
         m_panelController->show();
     } else {
+        Plasma::WindowEffects::setSlidingWindow(m_panelController->winId(), location());
         m_panelController->close();
         updateStruts();
     }

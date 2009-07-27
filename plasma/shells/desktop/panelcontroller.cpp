@@ -41,6 +41,7 @@
 #include <Plasma/Theme>
 #include <Plasma/FrameSvg>
 #include <Plasma/Dialog>
+#include <Plasma/WindowEffects>
 
 #include "plasmaapp.h"
 #include "positioningruler.h"
@@ -521,7 +522,7 @@ PanelController::PanelController(QWidget* parent)
 
     ToolButton *closeControllerTool = d->addTool("window-close", i18n("Close this configuration window"), this, Qt::ToolButtonIconOnly, false);
     d->layout->addWidget(closeControllerTool);
-    connect(closeControllerTool, SIGNAL(clicked()), this, SLOT(hide()));
+    connect(closeControllerTool, SIGNAL(clicked()), this, SLOT(close()));
 
     d->ruler = new PositioningRuler(this);
     connect(d->ruler, SIGNAL(rulersMoved(int, int, int)), this, SLOT(rulersMoved(int, int, int)));
@@ -720,6 +721,7 @@ void PanelController::setLocation(const Plasma::Location &loc)
 
     d->ruler->setMaximumSize(d->ruler->sizeHint());
     d->syncRuler();
+    Plasma::WindowEffects::setSlidingWindow(winId(), loc);
 }
 
 Plasma::Location PanelController::location() const
