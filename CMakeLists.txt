@@ -16,8 +16,8 @@ endif(CMAKE_SOURCE_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
 
 
 #search packages used by KDE
-set(KDE_MIN_VERSION "4.2.96") # for the < 4.2 macro
-find_package(KDE4 4.2.96 REQUIRED)
+set(KDE_MIN_VERSION "4.3.0") # for the < 4.2 macro
+find_package(KDE4 4.3.0 REQUIRED)
 find_package(Strigi REQUIRED)
 find_package(QImageBlitz REQUIRED)
 find_package(ZLIB REQUIRED)
