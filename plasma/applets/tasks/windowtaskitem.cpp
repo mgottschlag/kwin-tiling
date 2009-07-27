@@ -185,21 +185,41 @@ void WindowTaskItem::updateToolTip()
 {
     if (!m_task) {
         return;
+    } 
+   
+    bool showToolTip = true;
+    TaskGroupItem *group = parentGroup();
+
+    if (group) {
+        QWidget *groupPopupDialog = parentGroup()->popupDialog();
+        QWidget *dialog = m_applet->popupDialog();
+
+        if (dialog && dialog->isVisible()) {
+            if (groupPopupDialog && groupPopupDialog == dialog) {
+                showToolTip = true;
+            } else {
+                showToolTip = false;
+            }
+        }
+    } 
+    
+    if (showToolTip) {
+        QPixmap p = m_task->task()->icon(KIconLoader::SizeLarge, KIconLoader::SizeLarge, false);
+        if (p.height() > KIconLoader::SizeLarge) {
+            p = p.scaled(QSize(KIconLoader::SizeLarge, KIconLoader::SizeLarge),
+                                Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        }
+
+        Plasma::ToolTipContent data(m_task->name(),
+                                    i18nc("Which virtual desktop a window is currently on", "On %1",
+                                    KWindowSystem::desktopName(m_task->desktop())), p);
+        data.setWindowToPreview(m_task->task()->window());
+        data.setClickable(true);
+
+        Plasma::ToolTipManager::self()->setContent(this, data);
+    } else {
+        Plasma::ToolTipManager::self()->clearContent(this);
     }
-
-    QPixmap p = m_task->task()->icon(KIconLoader::SizeLarge, KIconLoader::SizeLarge, false);
-    if (p.height() > KIconLoader::SizeLarge) {
-        p = p.scaled(QSize(KIconLoader::SizeLarge, KIconLoader::SizeLarge),
-                     Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    }
-
-    Plasma::ToolTipContent data(m_task->name(),
-                                i18nc("Which virtual desktop a window is currently on", "On %1",
-                                      KWindowSystem::desktopName(m_task->desktop())), p);
-    data.setWindowToPreview(m_task->task()->window());
-    data.setClickable(true);
-
-    Plasma::ToolTipManager::self()->setContent(this, data);
 }
 
 void WindowTaskItem::setStartupTask(TaskItem *task)

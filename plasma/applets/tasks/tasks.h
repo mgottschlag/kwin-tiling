@@ -105,8 +105,7 @@ public:
         bool showToolTip() const;
 
         void needsVisualFocus();
-
-
+        QWidget *popupDialog() const;
 signals:
     /**
     * emitted whenever we receive a constraintsEvent
@@ -116,6 +115,7 @@ signals:
 
 protected slots:
         void configAccepted();
+        void setPopupDialog(bool status);
 
 protected:
         void createConfigurationInterface(KConfigDialog *parent);
@@ -156,7 +156,7 @@ private:
         Qt::KeyboardModifier m_groupModifierKey;
 
         int m_currentDesktop;
-
+        QWidget *m_popupDialog;
 };
 
 #endif

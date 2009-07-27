@@ -52,7 +52,8 @@ Tasks::Tasks(QObject* parent, const QVariantList &arguments)
        m_bottomMargin(0),
        m_rootGroupItem(0),
        m_groupManager(0),
-       m_groupModifierKey(Qt::AltModifier)
+       m_groupModifierKey(Qt::AltModifier),
+       m_popupDialog(0)
 {
     setHasConfigurationInterface(true);
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
@@ -391,6 +392,19 @@ TaskGroupItem* Tasks::rootGroupItem()
     return m_rootGroupItem;
 }
 
+QWidget *Tasks::popupDialog() const
+{
+    return m_popupDialog;
+}
+
+void Tasks::setPopupDialog(bool status)
+{
+    QWidget *widget = qobject_cast<QWidget *>(sender());
+    
+    if (widget->isVisible()) {
+        m_popupDialog = widget;
+    }
+}
 
 K_EXPORT_PLASMA_APPLET(tasks, Tasks)
 

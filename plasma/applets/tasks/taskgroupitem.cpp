@@ -192,6 +192,7 @@ void TaskGroupItem::close()
     //close the popup if the group is removed
     if (m_popupDialog) {
         m_popupDialog->hide();
+        disconnect(m_popupDialog, 0, 0, 0);
         m_popupDialog->deleteLater();
         m_popupDialog = 0;
     }
@@ -264,6 +265,13 @@ void TaskGroupItem::updateTask(::TaskManager::TaskChanges changes)
 void TaskGroupItem::updateToolTip()
 {
     if (!m_group) {
+        return;
+    }
+
+    QWidget * dialog = m_applet->popupDialog();
+
+    if (dialog && dialog->isVisible()) {
+        Plasma::ToolTipManager::self()->clearContent(this);
         return;
     }
 
@@ -630,6 +638,7 @@ void TaskGroupItem::popupMenu()
     if (!m_popupDialog) {
         // Initialize popup dialog
         m_popupDialog = new Plasma::Dialog();
+        connect(m_popupDialog, SIGNAL(dialogVisible(bool)), m_applet, SLOT(setPopupDialog(bool)));
         KWindowSystem::setState(m_popupDialog->winId(), NET::SkipTaskbar| NET::SkipPager);
         m_popupDialog->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
         //TODO in the future it may be possible to use the Qt::Popup flag instead of the eventFilter, but for now the focus works better with the eventFilter
