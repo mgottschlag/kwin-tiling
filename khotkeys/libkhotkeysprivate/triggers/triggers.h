@@ -178,7 +178,7 @@ class KDE_EXPORT ShortcutTrigger
         QUuid _uuid;
 
         //! Are the conditions met?
-        bool _conditions_met;
+        bool _active;
 
         /**
          * The Key Sequence associated with this Trigger. This is needed

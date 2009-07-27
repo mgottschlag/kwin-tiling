@@ -33,7 +33,10 @@ ShortcutTrigger::ShortcutTrigger(
         ActionData* data_P,
         const KShortcut& shortcut,
         const QUuid &uuid )
-    : Trigger( data_P ), _uuid(uuid), _shortcut(shortcut)
+    :   Trigger( data_P ),
+        _uuid(uuid),
+        _active(false),
+        _shortcut(shortcut)
     {
     }
 
@@ -43,6 +46,7 @@ ShortcutTrigger::ShortcutTrigger(
        ,ActionData* data_P )
     :   Trigger( cfg_P, data_P ),
         _uuid( cfg_P.readEntry( "Uuid", QUuid::createUuid().toString())),
+        _active(false),
         _shortcut()
     {
     QString shortcutString = cfg_P.readEntry( "Key" );
@@ -66,10 +70,15 @@ void ShortcutTrigger::aboutToBeErased()
     }
 
 
-void ShortcutTrigger::activate( bool activate_P )
+void ShortcutTrigger::activate( bool newState )
     {
-    kDebug() << activate_P;
-    if(activate_P)
+    // If there is no change in state just return.
+    if (newState == _active)
+        return;
+
+    _active = newState;
+
+    if (_active)
         {
         QString name = data
             ? data->name()
@@ -90,8 +99,7 @@ void ShortcutTrigger::activate( bool activate_P )
         connect(
             act, SIGNAL(globalShortcutChanged(const QKeySequence&)),
             this, SIGNAL(globalShortcutChanged(const QKeySequence&)));
-            _conditions_met = true;
-            }
+        }
     else
         {
         // Disable the trigger. Delete the action.
@@ -129,12 +137,16 @@ const QString ShortcutTrigger::description() const
 
 void ShortcutTrigger::disable()
     {
+    activate(false);
+
     // Unregister the shortcut with kglobalaccel
     KAction *action = qobject_cast<KAction*>(keyboard_handler->getAction( _uuid ));
     if(action)
         {
         // In case the shortcut was changed from the kcm.
         _shortcut = action->globalShortcut();
+
+
         // Unregister the global shortcut.
         action->forgetGlobalShortcut();
         keyboard_handler->removeAction(_uuid);
