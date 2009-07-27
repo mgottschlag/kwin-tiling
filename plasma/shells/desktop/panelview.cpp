@@ -861,14 +861,31 @@ void PanelView::togglePanelController()
         }
     }
 
+    int offset = 0;
+    switch (location()) {
+    case Plasma::LeftEdge:
+        offset = geometry().right();
+        break;
+    case Plasma::RightEdge:
+        offset = geometry().left();
+        break;
+    case Plasma::TopEdge:
+        offset = geometry().bottom();
+        break;
+    case Plasma::BottomEdge:
+    default:
+        offset = geometry().top();
+        break;
+    }
+
     if (!m_panelController->isVisible()) {
         m_editting = true;
         m_panelController->resize(m_panelController->sizeHint());
         m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
-        Plasma::WindowEffects::setSlidingWindow(m_panelController->winId(), location());
+        Plasma::WindowEffects::setSlidingWindow(m_panelController->winId(), location(), offset);
         m_panelController->show();
     } else {
-        Plasma::WindowEffects::setSlidingWindow(m_panelController->winId(), location());
+        Plasma::WindowEffects::setSlidingWindow(m_panelController->winId(), location(), offset);
         m_panelController->close();
         updateStruts();
     }
@@ -1179,11 +1196,29 @@ void PanelView::unhide(bool destroyTrigger)
     connect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
     m_mousePollTimer->start(200);
 
+    QRect screenRect = Kephal::ScreenUtils::screenGeometry(screen());
+
+    int offset = 0;
+    switch (location()) {
+    case Plasma::LeftEdge:
+        offset = screenRect.right();
+        break;
+    case Plasma::RightEdge:
+        offset = screenRect.left();
+        break;
+    case Plasma::TopEdge:
+        offset = screenRect.bottom();
+        break;
+    case Plasma::BottomEdge:
+    default:
+        offset = screenRect.top();
+        break;
+    }
 
     if (m_visibilityMode == AutoHide || m_visibilityMode == LetWindowsCover) {
         // LetWindowsCover panels are always shown, so don't bother and prevent
         // some unsightly flickers
-        Plasma::WindowEffects::setSlidingWindow(winId(), location());
+        Plasma::WindowEffects::setSlidingWindow(winId(), location(), offset);
         show();
     }
 
@@ -1215,11 +1250,30 @@ void PanelView::startAutoHide()
         disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
     }
 
+    QRect screenRect = Kephal::ScreenUtils::screenGeometry(screen());
+    int offset = 0;
+
+    switch (location()) {
+    case Plasma::LeftEdge:
+        offset = screenRect.right();
+        break;
+    case Plasma::RightEdge:
+        offset = screenRect.left();
+        break;
+    case Plasma::TopEdge:
+        offset = screenRect.bottom();
+        break;
+    case Plasma::BottomEdge:
+    default:
+        offset = screenRect.top();
+        break;
+    }
+
     if (m_visibilityMode == LetWindowsCover) {
         KWindowSystem::lowerWindow(winId());
         createUnhideTrigger();
     } else {
-        Plasma::WindowEffects::setSlidingWindow(winId(), location());
+        Plasma::WindowEffects::setSlidingWindow(winId(), location(), offset);
         createUnhideTrigger();
         hide();
     }
