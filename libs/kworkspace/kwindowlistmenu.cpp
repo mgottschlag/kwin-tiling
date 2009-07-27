@@ -34,6 +34,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtDBus/QtDBus>
 #include <klocale.h>
 #include <kstringhandler.h>
+#ifndef WIN32
+#include <fixx11h.h>
+#endif
 #include <kstyle.h>
 #include <kwindowsystem.h>
 #include <netwm.h>
