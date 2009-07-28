@@ -142,6 +142,7 @@ class Pager : public Plasma::Applet
         KSelectionOwner* m_desktopLayoutOwner;
         Plasma::FrameSvg *m_background;
         KColorScheme *m_colorScheme;
+        bool m_verticalFormFactor;
 
         // dragging of windows
         QRect m_dragOriginal;
