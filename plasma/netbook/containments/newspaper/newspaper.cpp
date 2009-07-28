@@ -173,10 +173,17 @@ void Newspaper::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 
 void Newspaper::updateSize()
 {
+    QSizeF hint = m_mainWidget->effectiveSizeHint(Qt::PreferredSize);
     if (m_orientation == Qt::Horizontal) {
-        m_mainWidget->resize(m_mainWidget->effectiveSizeHint(Qt::PreferredSize).width(), m_mainWidget->size().height());
+        const qreal proposedWidth = hint.width();
+        hint.scale(QWIDGETSIZE_MAX, m_mainWidget->size().height(), Qt::KeepAspectRatio);
+        hint.setWidth(qMax(proposedWidth, hint.width()));
+        m_mainWidget->resize(hint);
     } else {
-        m_mainWidget->resize(m_mainWidget->size().width(), m_mainWidget->effectiveSizeHint(Qt::PreferredSize).height());
+        const qreal proposedHeight = hint.height();
+        hint.scale(m_mainWidget->size().width(), QWIDGETSIZE_MAX, Qt::KeepAspectRatio);
+        hint.setHeight(qMax(hint.height(), proposedHeight));
+        m_mainWidget->resize(hint);
     }
 }
 
