@@ -76,9 +76,7 @@ KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *pare
     m_iconSvg->setContainsMultipleImages(true);
     m_iconSvg->resize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
 
-    connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(update()));
-
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
+    connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(themeUpdated()));
     themeUpdated();
 }
 
@@ -147,7 +145,8 @@ void KRunnerDialog::themeUpdated()
     const int rightWidth = qMax(0, int(m_background->marginSize(Plasma::RightMargin)) - margin);
     const int bottomHeight = qMax(0, int(m_background->marginSize(Plasma::BottomMargin)) - margin);
 
-    setContentsMargins(leftWidth, topHeight, rightWidth, bottomHeight);
+    mainWidget()->setContentsMargins(leftWidth, topHeight, rightWidth, bottomHeight);
+    update();
 }
 
 void KRunnerDialog::paintEvent(QPaintEvent *e)
@@ -201,7 +200,7 @@ void KRunnerDialog::mousePressEvent(QMouseEvent *e)
     rootInfo.moveResizeRequest(winId(), e->globalX(), e->globalY(), NET::Move);
 
     e->accept();
-#endif    
+#endif
 }
 
 #include "krunnerdialog.moc"
