@@ -158,43 +158,43 @@ void ProgramGroupingStrategy::handleItem(AbstractGroupableItem *item)
 bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* groupItem)
 {
     //kDebug();
-    QHash <QString,AbstractGroupableItem *> itemMap;
+    QList<AbstractGroupableItem *> list;
+    const QString name = taskItem->task()->classClass();
 
-    foreach (AbstractGroupableItem *item, groupItem->members()) { //search for an existing group
-        if (item->isGroupItem()) { //maybe add the condition that the subgroup was created by programGrouping
+    //search for an existing group
+    foreach (AbstractGroupableItem *item, groupItem->members()) {
+        if (item->isGroupItem()) {
+            //TODO: maybe add the condition that the subgroup was created by programGrouping?
             if (programGrouping(taskItem, static_cast<TaskGroup*>(item))) {
                 //kDebug() << "joined subGroup";
                 return true;
             }
         } else {
             TaskItem *task = static_cast<TaskItem*>(item);
-            if (task->task()) { //omit startup tasks
-                QString name = task->task()->classClass();
-                itemMap.insertMulti(name,item);
+            if (task != taskItem && task->task() && task->task()->classClass() == name) { //omit startup tasks
+                list.append(item);
             }
         }
     }
 
-    if (!itemMap.values().contains(taskItem)) {
-        itemMap.insertMulti(taskItem->task()->classClass(), taskItem);
+    if (!list.isEmpty()) {
+        if (groupItem->isRootGroup()) {
+            //kDebug() << "create Group root group";
+            QIcon icon = taskItem->task()->icon();
+            list.append(taskItem);
+            TaskGroup* group = createGroup(list);
+            group->setName(name);
+            group->setColor(Qt::red);
+            group->setIcon(icon);
+            connect(group, SIGNAL(checkIcon(TaskGroup*)), this, SLOT(updateIcon(TaskGroup*)));
+        } else {
+            //kDebug() << "joined this Group";
+            groupItem->add(taskItem);
+        }
+
+        return true;
     }
 
-    QString name = taskItem->task()->classClass();
-    if (itemMap.count(name) >= groupItem->members().count() && !groupItem->isRootGroup()) { //join this group if this is not the rootGroup, otherwise tasks may not be grouped if there arent tasks of any other type, typically on startup
-        //kDebug() << "joined this Group";
-        groupItem->add(taskItem);
-        return true;
-    } else if (itemMap.count(name) >= 2) { //create new subgroup with at least 2 other task
-        //kDebug() << "create Group";
-        QIcon icon = taskItem->task()->icon();
-        QList <AbstractGroupableItem *> list(itemMap.values(name));
-        TaskGroup* group = createGroup(list);
-        group->setName(name);
-        group->setColor(Qt::red);
-        group->setIcon(icon);
-        connect(group, SIGNAL(checkIcon(TaskGroup*)), this, SLOT(updateIcon(TaskGroup*)));
-        return true;
-    }
     return false;
 }
 
