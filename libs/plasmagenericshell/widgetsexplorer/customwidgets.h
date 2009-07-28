@@ -1,20 +1,24 @@
 #ifndef CUSTOMLAYOUTITEMS_H
 #define CUSTOMLAYOUTITEMS_H
 
-#include <QtGui>
+#include "kcategorizeditemsviewmodels_p.h"
+#include "klineedit.h"
+#include "plasmaappletitemmodel_p.h"
+
+#include <KMenu>
+#include <QBasicTimer>
+#include <QScrollArea>
 #include <QtCore>
+#include <QtGui>
+
+#include <kpushbutton.h>
+
+#include <plasma/framesvg.h>
 #include <plasma/widgets/iconwidget.h>
-#include <plasma/widgets/pushbutton.h>
 #include <plasma/widgets/label.h>
 #include <plasma/widgets/lineedit.h>
+#include <plasma/widgets/pushbutton.h>
 #include <plasma/widgets/treeview.h>
-#include <KMenu>
-#include <kpushbutton.h>
-#include "plasmaappletitemmodel_p.h"
-#include "kcategorizeditemsviewmodels_p.h"
-#include  "klineedit.h"
-#include <QScrollArea>
-#include <plasma/framesvg.h>
 
 class AppletIconWidget;
 class PositionDotsSvgWidget;
@@ -54,6 +58,7 @@ public slots:
 
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
+    void timerEvent(QTimerEvent *event);
 
 private slots:
 //    void itemActivated(const QModelIndex &index);
@@ -94,6 +99,8 @@ private:
     QStandardItemModel *m_modelFilters;
     KCategorizedItemsViewModels::DefaultItemFilterProxyModel *m_modelFilterItems;
 
+    QBasicTimer m_searchDelayTimer;
+    QString m_searchString;
 };
 
 class AppletIconWidget : public Plasma::IconWidget

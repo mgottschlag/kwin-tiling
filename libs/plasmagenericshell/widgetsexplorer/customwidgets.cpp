@@ -6,6 +6,7 @@
 #include <QHash>
 
 #define UNIVERSAL_PADDING 20
+#define SEARCH_DELAY 300
 
 //AppletsList
 
@@ -102,9 +103,17 @@ void AppletsList::filterChanged(int index)
 
 void AppletsList::searchTermChanged(const QString &text)
 {
-    if (m_modelFilterItems && (text.size() >= 3 || text.size() == 0)) {
-        m_modelFilterItems->setSearch(text);
+    m_searchString = text;
+    m_searchDelayTimer.start(SEARCH_DELAY, this);
+}
+
+void AppletsList::timerEvent(QTimerEvent *event)
+{
+    if (event->timerId() == m_searchDelayTimer.timerId()) {
+        m_modelFilterItems->setSearch(m_searchString);
+        m_searchDelayTimer.stop();
     }
+    QGraphicsWidget::timerEvent(event);
 }
 
 void AppletsList::insertAppletIcon(AppletIconWidget *appletIconWidget)
