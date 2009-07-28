@@ -161,7 +161,7 @@ void NMNetworkManager::activateConnection(const QString & interfaceUni, const QS
     // ### FIXME find a better name for the parameter needed for NM 0.7
     QString extra_connection_parameter = connectionParameters.value("extra_connection_parameter").toString();
     if (extra_connection_parameter.isEmpty()) {
-        extra_connection_parameter = QLatin1String("/foo");
+        extra_connection_parameter = QLatin1String("/");
     }
     if ( serviceName.isEmpty() || connectionPath.isEmpty() ) {
         return;
