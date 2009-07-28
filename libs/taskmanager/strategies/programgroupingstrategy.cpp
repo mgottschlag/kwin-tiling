@@ -192,6 +192,7 @@ bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* gro
         group->setName(name);
         group->setColor(Qt::red);
         group->setIcon(icon);
+        connect(group, SIGNAL(checkIcon(TaskGroup*)), this, SLOT(updateIcon(TaskGroup*)));
         return true;
     }
     return false;
@@ -200,8 +201,23 @@ bool ProgramGroupingStrategy::programGrouping(TaskItem* taskItem, TaskGroup* gro
 void ProgramGroupingStrategy::checkGroup()
 {
     TaskGroup *group = qobject_cast<TaskGroup*>(sender()); 
-    if (group && group->members().size() <= 1) {
-        closeGroup(group);
+    if (group) {
+        if (group->members().size() < 2) {
+            closeGroup(group);
+        } else {
+            updateIcon(group);
+        }
+    }
+}
+
+void ProgramGroupingStrategy::updateIcon(TaskGroup *group)
+{
+    foreach (AbstractGroupableItem *taskItem, group->members()) {
+        if (!taskItem->icon().isNull()) {
+            QIcon icon = taskItem->icon();
+            group->setIcon(icon);
+            break;
+        }
     }
 }
 

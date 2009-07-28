@@ -129,9 +129,11 @@ Q_SIGNALS:
     void itemPositionChanged(AbstractGroupableItem *item);
     /** The group changed the desktop, is emitted in the toDesktop function */
     void movedToDesktop(int newDesk);
+    void checkIcon(TaskGroup *group);
 
 private Q_SLOTS:
     void itemDestroyed(AbstractGroupableItem *item);
+    void itemChanged(::TaskManager::TaskChanges changes);
 
 private:
     class Private;

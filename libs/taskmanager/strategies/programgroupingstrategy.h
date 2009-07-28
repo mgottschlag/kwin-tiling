@@ -60,6 +60,7 @@ private Q_SLOTS:
     *	by this strategy. This is done by adding the program to d->blackList
     */
     void toggleGrouping();
+    void updateIcon(TaskGroup *group);
 
 private:
     QString className(AbstractGroupableItem *item);
