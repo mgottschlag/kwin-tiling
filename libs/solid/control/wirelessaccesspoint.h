@@ -89,6 +89,11 @@ namespace Control
         QString ssid() const;
 
         /**
+         * The raw bytes of the Service Set Identifier of the access point
+         */
+        QByteArray rawSsid() const;
+
+        /**
          * Retrieves the frequency in MHz of the radio channel that this access point is operating on
          *
          * @return the frequency

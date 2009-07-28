@@ -43,6 +43,11 @@ QString FakeAccessPoint::ssid() const
     return mPropertyMap["ssid"].toString();
 }
 
+QByteArray FakeAccessPoint::rawSsid() const
+{
+    return mPropertyMap["ssid"].toByteArray();
+}
+
 
 uint FakeAccessPoint::frequency() const
 {
