@@ -61,7 +61,7 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
     if (!services.isEmpty()) {
         //kDebug() << service->name() << "is an exact match!" << service->storageId() << service->exec();
         foreach (const KService::Ptr &service, services) {
-            if (!service->noDisplay()) {
+            if (!service->noDisplay() && service->property("NotShowIn", QVariant::String) != "KDE") {
                 Plasma::QueryMatch match(this);
                 match.setType(Plasma::QueryMatch::ExactMatch);
                 setupMatch(service, match);
@@ -93,7 +93,7 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
             return;
         }
 
-        if (service->noDisplay()) {
+        if (service->noDisplay() && service->property("NotShowIn", QVariant::String) != "KDE") {
             continue;
         }
 

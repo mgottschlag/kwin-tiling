@@ -722,24 +722,7 @@ void PanelController::setLocation(const Plasma::Location &loc)
     d->ruler->setMaximumSize(d->ruler->sizeHint());
     d->syncRuler();
 
-    int offset = 0;
-    switch (location()) {
-    case Plasma::LeftEdge:
-        offset = geometry().left();
-        break;
-    case Plasma::RightEdge:
-        offset = geometry().right();
-        break;
-    case Plasma::TopEdge:
-        offset = geometry().top();
-        break;
-    case Plasma::BottomEdge:
-    default:
-        offset = geometry().bottom();
-        break;
-    }
-
-    Plasma::WindowEffects::slideWindow(winId(), loc, offset);
+    Plasma::WindowEffects::slideWindow(this, loc);
 }
 
 Plasma::Location PanelController::location() const

@@ -602,12 +602,12 @@ void PanelView::updatePanelGeometry()
 
     //update the panel controller location position and size
     if (m_panelController) {
-        m_panelController->setLocation(c->location());
 
         if (m_panelController->isVisible()) {
             m_panelController->resize(m_panelController->sizeHint());
             m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
         }
+        m_panelController->setLocation(c->location());
 
         foreach (PanelAppletOverlay *o, m_appletOverlays) {
             o->syncOrientation();
@@ -861,31 +861,14 @@ void PanelView::togglePanelController()
         }
     }
 
-    int offset = 0;
-    switch (location()) {
-    case Plasma::LeftEdge:
-        offset = geometry().right();
-        break;
-    case Plasma::RightEdge:
-        offset = geometry().left();
-        break;
-    case Plasma::TopEdge:
-        offset = geometry().bottom();
-        break;
-    case Plasma::BottomEdge:
-    default:
-        offset = geometry().top();
-        break;
-    }
-
     if (!m_panelController->isVisible()) {
         m_editting = true;
         m_panelController->resize(m_panelController->sizeHint());
         m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
-        Plasma::WindowEffects::slideWindow(m_panelController->winId(), location(), offset);
+        Plasma::WindowEffects::slideWindow(m_panelController, location());
         m_panelController->show();
     } else {
-        Plasma::WindowEffects::slideWindow(m_panelController->winId(), location(), offset);
+        Plasma::WindowEffects::slideWindow(m_panelController, location());
         m_panelController->close();
         updateStruts();
     }
@@ -1198,27 +1181,11 @@ void PanelView::unhide(bool destroyTrigger)
 
     QRect screenRect = Kephal::ScreenUtils::screenGeometry(screen());
 
-    int offset = 0;
-    switch (location()) {
-    case Plasma::LeftEdge:
-        offset = screenRect.right();
-        break;
-    case Plasma::RightEdge:
-        offset = screenRect.left();
-        break;
-    case Plasma::TopEdge:
-        offset = screenRect.bottom();
-        break;
-    case Plasma::BottomEdge:
-    default:
-        offset = screenRect.top();
-        break;
-    }
 
     if (m_visibilityMode == AutoHide || m_visibilityMode == LetWindowsCover) {
         // LetWindowsCover panels are always shown, so don't bother and prevent
         // some unsightly flickers
-        Plasma::WindowEffects::slideWindow(winId(), location(), offset);
+        Plasma::WindowEffects::slideWindow(this, location());
         show();
     }
 
@@ -1250,30 +1217,11 @@ void PanelView::startAutoHide()
         disconnect(m_mousePollTimer, SIGNAL(timeout()), this, SLOT(hideMousePoll()));
     }
 
-    QRect screenRect = Kephal::ScreenUtils::screenGeometry(screen());
-    int offset = 0;
-
-    switch (location()) {
-    case Plasma::LeftEdge:
-        offset = screenRect.right();
-        break;
-    case Plasma::RightEdge:
-        offset = screenRect.left();
-        break;
-    case Plasma::TopEdge:
-        offset = screenRect.bottom();
-        break;
-    case Plasma::BottomEdge:
-    default:
-        offset = screenRect.top();
-        break;
-    }
-
     if (m_visibilityMode == LetWindowsCover) {
         KWindowSystem::lowerWindow(winId());
         createUnhideTrigger();
     } else {
-        Plasma::WindowEffects::slideWindow(winId(), location(), offset);
+        Plasma::WindowEffects::slideWindow(this, location());
         createUnhideTrigger();
         hide();
     }
