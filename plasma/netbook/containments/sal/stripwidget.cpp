@@ -66,14 +66,16 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsItem *parent)
     QGraphicsWidget *rightSpacer = new QGraphicsWidget(this);
     leftSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     rightSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    leftSpacer->setPreferredSize(0, 0);
-    rightSpacer->setPreferredSize(0, 0);
+    /*leftSpacer->setPreferredSize(0, 0);
+    rightSpacer->setPreferredSize(0, 0);*/
 
     m_arrowsLayout->addItem(leftArrow);
     m_arrowsLayout->addItem(leftSpacer);
+    //m_arrowsLayout->addStretch();
     m_arrowsLayout->addItem(m_stripLayout);
-    m_arrowsLayout->setStretchFactor(m_stripLayout, 8);
+    //m_arrowsLayout->setStretchFactor(m_stripLayout, 8);
     m_arrowsLayout->addItem(rightSpacer);
+    //m_arrowsLayout->addStretch();
     m_arrowsLayout->addItem(rightArrow);
 }
 
@@ -103,6 +105,8 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
 
     m_favouritesIcons.insert(fav, match);
     m_stripLayout->insertItem(idx, widget);
+    m_stripLayout->setMaximumSize((fav->size().width())*m_stripLayout->count(), fav->size().height());
+    m_stripLayout->setMinimumSize(m_stripLayout->maximumSize());
 }
 
 void StripWidget::add(Plasma::QueryMatch match, const QString &query)
@@ -153,7 +157,12 @@ void StripWidget::remove(Plasma::IconWidget *favourite)
 void StripWidget::removeFavourite()
 {
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender()->parent());
+
     remove(icon);
+
+    //FIXME
+    m_stripLayout->setMinimumSize(icon->size().width()*(m_stripLayout->count()-1), icon->size().height());
+    m_stripLayout->setMaximumSize(m_stripLayout->minimumSize());
 }
 
 void StripWidget::launchFavourite()
