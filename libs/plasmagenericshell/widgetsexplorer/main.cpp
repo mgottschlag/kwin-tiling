@@ -23,6 +23,7 @@ int main(int argc, char *argv[])
     QGraphicsView *view = new QGraphicsView(scene);
     view->setWindowFlags(Qt::FramelessWindowHint);
     view->setAttribute(Qt::WA_TranslucentBackground, true);
+    view->setStyleSheet("background: transparent");
 
     view->setMinimumWidth(appletBrowser->minimumWidth());
     view->setMaximumWidth(appletBrowser->minimumWidth());

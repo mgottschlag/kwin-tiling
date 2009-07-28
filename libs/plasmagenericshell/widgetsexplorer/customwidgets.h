@@ -46,31 +46,29 @@ public:
      */
     AppletIconWidget *createAppletIcon(PlasmaAppletItem *appletItem);
     void insertAppletIcon(AppletIconWidget *appletIconWidget);
+    double listWidth();
     void eraseList();
+    void scroll(bool right, bool byWheel);
+    void scrollRight(int step, QRectF visibleRect);
+    void scrollLeft(int step, QRectF visibleRect);
+    void wheelEvent(QGraphicsSceneWheelEvent *event);
 
     QList < KCategorizedItemsViewModels::AbstractItem * > selectedItems() const;
+    AppletIconWidget *findAppletUnderXPosition(int xPosition);
 
 public slots:
     void searchTermChanged(const QString &text);
     void filterChanged(int index);
     void updateList();
     void appletIconEnter(AppletIconWidget *appletIcon);
+    void onRightArrowClick();
+    void onLeftArrowClick();
+    void manageArrows();
+    void resetScroll();
 
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
     void timerEvent(QTimerEvent *event);
-
-private slots:
-//    void itemActivated(const QModelIndex &index);
-//    void itemDoubleClicked(const QModelIndex &index);
-//    void slotSearchTermChanged(const QString &term);
-
-
-//    void itemClicked(const QModelIndex &index);
-//    void itemEntered(const QModelIndex &index);
-
-    //slot to handle the appletIcon and emit SIGNAL appletIconHoverEnter
-//    void appletIconHoverEnter(AppletIconWidget *appletIcon);
 
 Q_SIGNALS:
 
@@ -78,6 +76,7 @@ Q_SIGNALS:
     void appletIconHoverLeave(PlasmaAppletItem *item);
 
     void appletIconEnter(PlasmaAppletItem *appletItem);
+    void listScrolled();
 
 
 private:
@@ -101,6 +100,9 @@ private:
 
     QBasicTimer m_searchDelayTimer;
     QString m_searchString;
+
+    int arrowClickStep;
+    int scrollStep;
 };
 
 class AppletIconWidget : public Plasma::IconWidget
@@ -109,11 +111,12 @@ class AppletIconWidget : public Plasma::IconWidget
     Q_OBJECT
 
     public:
-        explicit AppletIconWidget(QGraphicsItem *parent = 0, PlasmaAppletItem *appletItem = 0, bool dotsSurrounded = true);
+        explicit AppletIconWidget(QGraphicsItem *parent = 0, PlasmaAppletItem *appletItem = 0);
         virtual ~AppletIconWidget();
 
         void setAppletItem(PlasmaAppletItem *appletIcon);
         PlasmaAppletItem *appletItem();
+        void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
 
     public Q_SLOTS:
         void updateApplet(PlasmaAppletItem *newAppletItem);
@@ -127,6 +130,9 @@ class AppletIconWidget : public Plasma::IconWidget
 
     private:
         PlasmaAppletItem *m_appletItem;
+
+        bool selected;
+        Plasma::FrameSvg *m_selectedBackgroundSvg;
 
 };
 

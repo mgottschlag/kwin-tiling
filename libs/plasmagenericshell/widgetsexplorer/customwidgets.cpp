@@ -7,6 +7,8 @@
 
 #define UNIVERSAL_PADDING 20
 #define SEARCH_DELAY 300
+#define ICON_WIDGET_HEIGHT 100
+#define ICON_WIDGET_WIDTH 100
 
 //AppletsList
 
@@ -16,7 +18,9 @@ AppletsList::AppletsList(QGraphicsItem *parent)
         :QGraphicsWidget(parent)
 {
     init();
-
+    arrowClickStep = 0;
+    scrollStep = 0;
+    connect(this, SIGNAL(listScrolled()), this, SLOT(manageArrows()));
 }
 
 AppletsList::~AppletsList()
@@ -28,10 +32,14 @@ void AppletsList::init()
     m_leftArrow = new Plasma::PushButton();
     m_leftArrow->nativeWidget()->setIcon(KIcon("arrow-left"));
     m_leftArrow->setMaximumSize(IconSize(KIconLoader::Panel), IconSize(KIconLoader::Panel));
+    m_leftArrow->setAttribute(Qt::WA_NoSystemBackground);
 
     m_rightArrow = new Plasma::PushButton();
     m_rightArrow->nativeWidget()->setIcon(KIcon("arrow-right"));
     m_rightArrow->setMaximumSize(IconSize(KIconLoader::Panel), IconSize(KIconLoader::Panel));
+
+    connect(m_rightArrow, SIGNAL(clicked()), this, SLOT(onRightArrowClick()));
+    connect(m_leftArrow, SIGNAL(clicked()), this, SLOT(onLeftArrowClick()));
 
     m_appletsListWidget = new QGraphicsWidget();
     m_appletListLinearLayout = new QGraphicsLinearLayout(Qt::Horizontal);
@@ -53,21 +61,17 @@ void AppletsList::init()
     m_arrowsLayout->setAlignment(m_rightArrow, Qt::AlignVCenter);
     m_arrowsLayout->setAlignment(m_leftArrow, Qt::AlignVCenter);
 
-    //m_arrowsLayout->setContentsMargins
-
-    //m_arrowsLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding, QSizePolicy::DefaultType);
-
     setLayout(m_arrowsLayout);
 
 }
 
 void AppletsList::resizeEvent(QGraphicsSceneResizeEvent *event) {
+    Q_UNUSED(event)
     m_appletsListWindowWidget->setMinimumHeight(m_appletsListWidget->geometry().height());
     m_appletsListWindowWidget->setMaximumHeight(m_appletsListWidget->geometry().height());
 
-    kDebug() << "list height "<< m_appletsListWidget->geometry().height();
-    kDebug() << "layout height "<< m_arrowsLayout->minimumHeight();
-    kDebug() << "window height "<< m_appletsListWindowWidget->minimumHeight();
+    arrowClickStep = ceil(m_appletsListWindowWidget->geometry().width()/6);
+    scrollStep = ceil(m_appletsListWindowWidget->geometry().width()/2);
 }
 
 void AppletsList::setItemModel(QStandardItemModel *model)
@@ -122,14 +126,21 @@ void AppletsList::insertAppletIcon(AppletIconWidget *appletIconWidget)
     m_appletListLinearLayout->addItem(appletIconWidget);
 }
 
+double AppletsList::listWidth() {
+    return m_appletsListWidget->childItems().count() *
+                    (ICON_WIDGET_WIDTH + m_appletListLinearLayout->spacing()) -
+                    m_appletListLinearLayout->spacing();
+}
+
 AppletIconWidget *AppletsList::createAppletIcon(PlasmaAppletItem *appletItem)
 {
     AppletIconWidget *applet = new AppletIconWidget();
     applet->setAppletItem(appletItem);
     applet->setIcon(appletItem->icon());
     applet->setText(appletItem->name());
-    applet->setMinimumSize(100, 100);
-    applet->setMaximumSize(100, 100);
+//    ***** set this another way ********
+    applet->setMinimumSize(ICON_WIDGET_WIDTH, ICON_WIDGET_HEIGHT);
+    applet->setMaximumSize(ICON_WIDGET_WIDTH, ICON_WIDGET_HEIGHT);
 
     connect(applet, SIGNAL(hoverEnter(AppletIconWidget*)), this, SLOT(appletIconEnter(AppletIconWidget*)));
 
@@ -155,7 +166,7 @@ void AppletsList::updateList()
 
     eraseList();
 
-    for(int i = 0; i < /*m_modelFilterItems->rowCount()*/20; i++) {
+    for(int i = 0; i < m_modelFilterItems->rowCount(); i++) {
         item = getItemByProxyIndex(m_modelFilterItems->index(i, 0));
         appletItem = (PlasmaAppletItem*) item;
 
@@ -165,8 +176,125 @@ void AppletsList::updateList()
         }
     }
 
-    m_appletListLinearLayout->setSpacing(10);
     m_appletsListWidget->setLayout(m_appletListLinearLayout);
+    m_appletListLinearLayout->setSpacing(10);
+    resetScroll();
+}
+
+void AppletsList::wheelEvent(QGraphicsSceneWheelEvent *event) {
+    if(event->delta() < 0) {
+        scroll(true, true);
+    } else {
+        scroll(false, true);
+    }
+}
+
+void AppletsList::onRightArrowClick() {
+    scroll(true, false);
+}
+
+void AppletsList::onLeftArrowClick() {
+    scroll(false, false);
+}
+
+void AppletsList::scroll(bool right, bool byWheel) {
+    QRectF visibleRect = m_appletsListWindowWidget->
+                         mapRectToItem(m_appletsListWidget, 0, 0,
+                                          m_appletsListWindowWidget->geometry().width(),
+                                          m_appletsListWindowWidget->geometry().height());
+    int step = byWheel ? scrollStep : arrowClickStep;
+
+    if(right) {
+        scrollRight(step, visibleRect);
+    } else {
+        scrollLeft(step, visibleRect);
+    }
+
+}
+
+void AppletsList::scrollRight(int step, QRectF visibleRect) {
+
+    int lastVisibleXOnList = visibleRect.x() + visibleRect.width();
+    int listWidthVar = listWidth();
+
+    if(lastVisibleXOnList < listWidthVar) {
+        if(lastVisibleXOnList + step > listWidthVar) {
+            step = listWidthVar - lastVisibleXOnList;
+            m_rightArrow->setEnabled(false);
+        }
+
+        m_appletsListWidget->moveBy(-step, 0);
+        emit(listScrolled());
+    }
+}
+
+void AppletsList::scrollLeft(int step, QRectF visibleRect) {
+
+    int firstVisibleXOnList = visibleRect.x();
+
+    if(firstVisibleXOnList > 0) {
+        if(firstVisibleXOnList - step < 0 ) {
+            step = firstVisibleXOnList;
+            m_leftArrow->setEnabled(false);
+        }
+
+        m_appletsListWidget->moveBy(step, 0);
+        emit(listScrolled());
+    }
+}
+
+void AppletsList::resetScroll() {
+    m_appletsListWidget->setPos(0,0);
+    manageArrows();
+}
+
+void AppletsList::manageArrows() {
+    QRectF visibleRect;
+    int firstVisibleXOnList;
+    int lastVisibleXOnList;
+
+    double listWidthVar = listWidth();
+
+    if(listWidthVar <= m_appletsListWindowWidget->geometry().width()) {
+        m_leftArrow->setEnabled(false);
+        m_rightArrow->setEnabled(false);
+
+    } else {
+        visibleRect = m_appletsListWindowWidget->
+                         mapRectToItem(m_appletsListWidget, 0, 0,
+                                          m_appletsListWindowWidget->geometry().width(),
+                                          m_appletsListWindowWidget->geometry().height());
+        firstVisibleXOnList = visibleRect.x();
+        lastVisibleXOnList = firstVisibleXOnList + visibleRect.width();
+
+        if(firstVisibleXOnList <= 0) {
+            m_leftArrow->setEnabled(false);
+        } else {
+            m_leftArrow->setEnabled(true);
+        }
+
+        if(lastVisibleXOnList >= listWidthVar) {
+            m_rightArrow->setEnabled(false);
+        } else {
+            m_rightArrow->setEnabled(true);
+        }
+    }
+}
+
+AppletIconWidget *AppletsList::findAppletUnderXPosition(int xPosition) {
+    QList<QGraphicsItem *> applets = m_appletsListWidget->childItems();
+
+    int firstXOnApplet;
+    int lastXOnApplet;
+
+    foreach(QGraphicsItem *applet, applets) {
+        firstXOnApplet = applet->mapToItem(m_appletsListWidget, 0, 0).x();
+        lastXOnApplet = applet->mapToItem(m_appletsListWidget, applet->boundingRect().width(), 0).x();
+        if((xPosition >= firstXOnApplet) && (xPosition <= lastXOnApplet)) {
+            return dynamic_cast<AppletIconWidget*>(applet);
+        }
+    }
+    return 0;
 }
 
 void AppletsList::populateAllAppletsHash()
@@ -197,14 +325,18 @@ void AppletsList::appletIconEnter(AppletIconWidget *appletIcon)
 QList <AbstractItem *> AppletsList::selectedItems() const
 {
 //    return m_appletList->selectedItems();
+    return QList<AbstractItem *>();
 }
 
 //AppletIconWidget
 
-AppletIconWidget::AppletIconWidget(QGraphicsItem *parent, PlasmaAppletItem *appletItem, bool dotsSurrounded)
+AppletIconWidget::AppletIconWidget(QGraphicsItem *parent, PlasmaAppletItem *appletItem)
     : Plasma::IconWidget(parent)
 {
     m_appletItem = appletItem;
+    selected = false;
+    m_selectedBackgroundSvg = new Plasma::FrameSvg(this);
+    m_selectedBackgroundSvg->setImagePath("widgets/translucentbackground");
 
     if(m_appletItem != 0) {
         setText(appletItem->name());
@@ -240,14 +372,26 @@ void AppletIconWidget::updateApplet(PlasmaAppletItem *appletItem)
 void AppletIconWidget::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Plasma::IconWidget::hoverEnterEvent(event);
+    selected = true;
     emit(hoverEnter(this));
 }
 
 void AppletIconWidget::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     Plasma::IconWidget::hoverLeaveEvent(event);
+    selected = false;
     emit(hoverLeave(this));
 }
+
+void AppletIconWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+ {
+    if(selected) {
+        m_selectedBackgroundSvg->resizeFrame(contentsRect().size());
+        m_selectedBackgroundSvg->paintFrame(painter, contentsRect().topLeft());
+     }
+
+    Plasma::IconWidget::paint(painter, option, widget);
+ }
 
 //FilteringList
 

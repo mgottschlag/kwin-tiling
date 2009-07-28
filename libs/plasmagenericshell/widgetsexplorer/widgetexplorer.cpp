@@ -298,7 +298,6 @@ void WidgetExplorerMainWidget::setApplication(const QString &app)
     //       maze of models and views is screwing up
     d->appletsListWidget->setItemModel(&d->itemModel);
 
-    //kDebug() << d->runningApplets;
     d->itemModel.setRunningApplets(d->runningApplets);
 }
 
@@ -487,8 +486,10 @@ void WidgetExplorerMainWidget::populateWidgetsMenu()
 
 //WidgetExplorer
 
-WidgetExplorer::WidgetExplorer(QWidget * parent, Qt::WindowFlags f)
+WidgetExplorer::WidgetExplorer(QWidget *parent, Qt::WindowFlags f)
 {
+    Q_UNUSED(parent)
+    Q_UNUSED(f)
     init();
 }
 
