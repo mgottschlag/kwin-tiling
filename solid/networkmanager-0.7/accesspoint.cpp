@@ -38,6 +38,7 @@ public:
     Solid::Control::AccessPoint::WpaFlags wpaFlags;
     Solid::Control::AccessPoint::WpaFlags rsnFlags;
     QString ssid;
+    QByteArray rawSsid;
     uint frequency;
     QString hardwareAddress;
     uint maxBitRate;
@@ -53,6 +54,7 @@ NMAccessPoint::NMAccessPoint( const QString& path, QObject * parent ) : Solid::C
     d->rsnFlags = convertWpaFlags( d->iface.rsnFlags() );
     d->signalStrength = d->iface.strength();
     d->ssid = d->iface.ssid();
+    d->rawSsid = d->iface.ssid();
     d->frequency = d->iface.frequency();
     d->hardwareAddress = d->iface.hwAddress();
     d->maxBitRate = d->iface.maxBitrate();
@@ -95,6 +97,11 @@ Solid::Control::AccessPoint::WpaFlags NMAccessPoint::rsnFlags() const
 QString NMAccessPoint::ssid() const
 {
     return d->ssid;
+}
+
+QByteArray NMAccessPoint::rawSsid() const
+{
+    return d->rawSsid;
 }
 
 uint NMAccessPoint::frequency() const

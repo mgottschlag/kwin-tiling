@@ -71,6 +71,11 @@ namespace Ifaces
         virtual QString ssid() const = 0;
 
         /**
+         * The raw bytes of the Service Set Identifier of the access point
+         */
+        virtual QByteArray rawSsid() const = 0;
+
+         /**
          * Retrieves the frequency in MHz of the radio channel that this access point is operating on
          *
          * @return the frequency

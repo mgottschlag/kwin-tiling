@@ -104,6 +104,12 @@ QString Solid::Control::AccessPoint::ssid() const
     return_SOLID_CALL(Ifaces::AccessPoint *, d->backendObject(), QString(), ssid());
 }
 
+QByteArray Solid::Control::AccessPoint::rawSsid() const
+{
+    Q_D(const AccessPoint);
+    return_SOLID_CALL(Ifaces::AccessPoint *, d->backendObject(), QByteArray(), rawSsid());
+}
+
 uint Solid::Control::AccessPoint::frequency() const
 {
     Q_D(const AccessPoint);
