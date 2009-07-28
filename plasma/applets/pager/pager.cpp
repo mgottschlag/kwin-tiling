@@ -66,6 +66,7 @@ Pager::Pager(QObject *parent, const QVariantList &args)
       m_desktopDown(false),
       m_hoverIndex(-1),
       m_colorScheme(0),
+      m_verticalFormFactor(false),
       m_dragId(0),
       m_dirtyDesktop(-1),
       m_dragStartDesktop(-1),
@@ -95,6 +96,7 @@ void Pager::init()
     m_displayedText = (DisplayedText)cg.readEntry("displayedText", (int)m_displayedText);
     m_showWindowIcons = cg.readEntry("showWindowIcons", m_showWindowIcons);
     m_rows = globalConfig().readEntry("rows", m_rows);
+    m_verticalFormFactor = (formFactor() == Plasma::Vertical);
     m_currentDesktopSelected = (CurrentDesktopSelected)cg.readEntry("currentDesktopSelected", (int)m_currentDesktopSelected);
 
     if (m_rows < 1) {
@@ -143,17 +145,36 @@ Pager::~Pager()
 
 void Pager::constraintsEvent(Plasma::Constraints constraints)
 {
-    if (constraints & Plasma::SizeConstraint) {
-        if (m_ignoreNextSizeConstraint) {
-            kDebug() << "ignoring size constraint";
-            m_ignoreNextSizeConstraint = false;
-        } else {
-            recalculateGeometry();
-            recalculateWindowRects();
-            if (m_background->hasElementPrefix(QString())) {
-                m_background->setElementPrefix(QString());
-                m_background->resizeFrame(size());
+    // whenever we switch to/from vertical form factor, swap the rows and columns around
+    if (constraints & Plasma::FormFactorConstraint) {
+        if (m_verticalFormFactor != (formFactor() == Plasma::Vertical) && m_columns != m_rows) {
+            int temp = m_columns;
+            m_columns = m_rows;
+            m_rows = temp;
+
+            // save this new value in the global config
+            KConfigGroup globalcg = globalConfig();
+            if (m_rows > m_desktopCount) {
+              m_rows = m_desktopCount;
             }
+            globalcg.writeEntry("rows", m_rows);
+            configNeedsSaving();
+            // no need to recalculate everything twice
+            if (!(constraints & Plasma::SizeConstraint)) {
+                recalculateGeometry();
+                recalculateWindowRects();
+                update();
+            }
+        }
+        m_verticalFormFactor = (formFactor() == Plasma::Vertical);
+    }
+
+    if (constraints & Plasma::SizeConstraint) {
+        recalculateGeometry();
+        recalculateWindowRects();
+        if (m_background->hasElementPrefix(QString())) {
+            m_background->setElementPrefix(QString());
+            m_background->resizeFrame(size());
         }
     }
 
@@ -247,21 +268,12 @@ void Pager::createConfigurationInterface(KConfigDialog *parent)
 
 void Pager::recalculateGeometry()
 {
-    if (!m_rects.isEmpty() && geometry().size() == m_size) {
-        //kDebug() << "leaving because" << !m_rects.isEmpty() << " and " << contentSize() << "==" << m_size;
-        return;
-    }
-
     int padding = 2; // Space between miniatures of desktops
     int textMargin = 3; // Space between name of desktop and border
     int rows = qMax(qMin(m_rows, m_desktopCount), 1);
-    int columns = m_desktopCount / rows + m_desktopCount % rows;
-
-    //inverse rows and columns in vertical panel
-    if (formFactor() == Plasma::Vertical) {
-        int temp = rows;
-        rows = columns;
-        columns = temp;
+    int columns = m_desktopCount / rows;
+    if (m_desktopCount % rows > 0) {
+        columns++;
     }
 
     qreal leftMargin = 0;
@@ -269,63 +281,87 @@ void Pager::recalculateGeometry()
     qreal rightMargin = 0;
     qreal bottomMargin = 0;
 
+    qreal ratio = (qreal)Kephal::ScreenUtils::desktopGeometry().width() / (qreal)Kephal::ScreenUtils::desktopGeometry().height();
+
     if (formFactor() == Plasma::Vertical || formFactor() == Plasma::Horizontal) {
         m_background->setElementPrefix(QString());
         m_background->getMargins(leftMargin, topMargin, rightMargin, bottomMargin);
 
-        qreal ratio = (qreal)Kephal::ScreenUtils::desktopGeometry().width() / (qreal)Kephal::ScreenUtils::desktopGeometry().height();
-
         if (formFactor() == Plasma::Vertical) {
-            qreal optimalSize = (geometry().width() - KIconLoader::SizeSmall*ratio * columns + padding*(columns-1)) / 2;
+            qreal optimalSize = (geometry().width() - KIconLoader::SizeSmall*ratio * columns - padding*(columns-1)) / 2;
 
             if (optimalSize < leftMargin || optimalSize < rightMargin) {
                 leftMargin = rightMargin = qMax(qreal(0), optimalSize);
                 m_showOwnBackground = false;
             }
         } else if (formFactor() == Plasma::Horizontal) {
-            qreal optimalSize = (geometry().height() - KIconLoader::SizeSmall*rows + padding*(rows-1)) / 2;
+            qreal optimalSize = (geometry().height() - KIconLoader::SizeSmall*rows - padding*(rows-1)) / 2;
 
             if (optimalSize < topMargin || optimalSize < bottomMargin) {
-                topMargin = bottomMargin =  qMax(qreal(0), optimalSize);
+                topMargin = bottomMargin = qMax(qreal(0), optimalSize);
                 m_showOwnBackground = false;
             }
-        } else {
-            m_showOwnBackground = true;
         }
     } else {
         getContentsMargins(&leftMargin, &topMargin, &rightMargin, &bottomMargin);
     }
 
+
     qreal itemHeight;
     qreal itemWidth;
+    qreal preferredItemHeight;
+    qreal preferredItemWidth;
 
     if (formFactor() == Plasma::Vertical) {
-        if (location() == Plasma::Floating)
-            itemWidth = (contentsRect().width() - padding * (columns - 1)) / columns;
-        else
-            itemWidth = (contentsRect().width() - leftMargin - rightMargin - padding * (columns - 1)) / columns;
+        // work out the preferred size based on the width of the contentsRect
+        preferredItemWidth = (contentsRect().width() - leftMargin - rightMargin - padding * (columns - 1)) / columns;
+        preferredItemHeight = preferredItemWidth / ratio;
+        // make sure items of the new size actually fit in the current contentsRect
+        itemHeight = (contentsRect().height() - topMargin - bottomMargin - padding * (rows - 1)) / rows;
+        if (itemHeight > preferredItemHeight) {
+            itemHeight = preferredItemHeight;
+        }
+        itemWidth = itemHeight * ratio;
+
         m_widthScaleFactor = itemWidth / Kephal::ScreenUtils::desktopGeometry().width();
-        itemHeight = Kephal::ScreenUtils::desktopGeometry().height() * m_widthScaleFactor;
-        m_heightScaleFactor = m_widthScaleFactor;
-    } else {
-        if (location() == Plasma::Floating)
-            itemHeight = (contentsRect().height() - padding * (rows - 1)) / rows;
-        else
-            itemHeight = (contentsRect().height() - topMargin - bottomMargin - padding * (rows - 1)) / rows;
         m_heightScaleFactor = itemHeight / Kephal::ScreenUtils::desktopGeometry().height();
-        itemWidth = Kephal::ScreenUtils::desktopGeometry().width() * m_heightScaleFactor;
+    } else {
+        // work out the preferred size based on the height of the contentsRect
+        if (formFactor() == Plasma::Horizontal) {
+            preferredItemHeight = (contentsRect().height() - topMargin - bottomMargin - padding * (rows - 1)) / rows;
+        } else {
+            preferredItemHeight = (contentsRect().height() - padding * (rows - 1)) / rows;
+        }
+        preferredItemWidth = preferredItemHeight * ratio;
+
         if (m_displayedText == Name) {
             // When containment is in this position we are not limited by low width and we can
             // afford increasing width of applet to be able to display every name of desktops
             for (int i = 0; i < m_desktopCount; i++) {
                 QFontMetricsF metrics(KGlobalSettings::taskbarFont());
                 QSizeF textSize = metrics.size(Qt::TextSingleLine, KWindowSystem::desktopName(i+1));
-                if (textSize.width() + textMargin * 2 > itemWidth) {
-                     itemWidth = textSize.width() + textMargin * 2;
+                if (textSize.width() + textMargin * 2 > preferredItemWidth) {
+                     preferredItemWidth = textSize.width() + textMargin * 2;
                 }
             }
         }
+
+        // make sure items of the new size actually fit in the current contentsRect
+        if (formFactor() == Plasma::Horizontal) {
+            itemWidth = (contentsRect().width() - leftMargin - rightMargin - padding * (columns - 1)) / columns;
+        } else {
+            itemWidth = (contentsRect().width() - padding * (columns - 1)) / columns;
+        }
+        if (itemWidth > preferredItemWidth) {
+            itemWidth = preferredItemWidth;
+        }
+        itemHeight = preferredItemHeight;
+        if (itemWidth < itemHeight * ratio) {
+            itemHeight = itemWidth / ratio;
+        }
+
         m_widthScaleFactor = itemWidth / Kephal::ScreenUtils::desktopGeometry().width();
+        m_heightScaleFactor = itemHeight / Kephal::ScreenUtils::desktopGeometry().height();
     }
 
     m_rects.clear();
@@ -358,22 +394,41 @@ void Pager::recalculateGeometry()
         m_background->resizeFrame(itemRect.size());
     }
 
-    m_size = QSizeF(ceil(columns * itemWidth + padding * (columns - 1) + leftMargin + rightMargin),
-                    ceil(m_rows * itemHeight + padding * (m_rows - 1) + topMargin + bottomMargin));
+    // allow ignored resizes only if the height has changed (or if the width has changed if we are in a vertical panel)
+    if (!m_ignoreNextSizeConstraint || (formFactor() != Plasma::Vertical && contentsRect().height() != m_size.height())
+                                    || (formFactor() == Plasma::Vertical && contentsRect().width()  != m_size.width())) {
 
-    //kDebug() << "new size set" << m_size << m_rows << m_columns << columns << itemWidth;
+        // this new size will have the same height/width as the horizontal/vertical panel has given it
+        QSizeF preferred = QSizeF(ceil(columns * preferredItemWidth + padding * (columns - 1) + leftMargin + rightMargin),
+                                  ceil(rows * preferredItemHeight + padding * (rows - 1) + topMargin + bottomMargin));
 
-    //resize(m_size);
-    setPreferredSize(m_size);
-    if (m_desktopLayoutOwner && columns != m_columns) {
-        // must own manager selection before setting global desktop layout
-        m_columns = columns;
-        NET::Orientation orient = NET::OrientationHorizontal;
-        NETRootInfo i( QX11Info::display(), 0 );
-        i.setDesktopLayout( orient, columns, rows, NET::DesktopLayoutCornerTopLeft );
+        //kDebug() << "current size:" << contentsRect() << " new preferred size: " << preferred << " form factor:" << formFactor() << " grid:" << m_rows << "x" << m_columns <<
+        //            " actual grid:" << rows << "x" << columns << " item size:" << itemWidth << "x" << itemHeight << " preferred item size:" << preferredItemWidth << "x" << preferredItemHeight;
+
+        // make sure the minimum size is smaller than preferred
+        setMinimumSize(qMin(preferred.width(),  minimumSize().width()),
+                       qMin(preferred.height(), minimumSize().height()));
+        //resize(m_size);
+        setPreferredSize(preferred);
+
+        m_ignoreNextSizeConstraint = true;
+    } else {
+        m_ignoreNextSizeConstraint = false;
+        //kDebug() << "ignoring event - current size:" << contentsRect() << " form factor:" << formFactor() << " grid:" << m_rows << "x" << m_columns <<
+        //            " actual grid:" << rows << "x" << columns << " item size:" << itemWidth << "x" << itemHeight << " preferred item size:" << preferredItemWidth << "x" << preferredItemHeight;
     }
 
-    m_ignoreNextSizeConstraint = true;
+    m_size = contentsRect().size();
+
+    if (columns != m_columns) {
+        m_columns = columns;
+        if (m_desktopLayoutOwner) {
+            // must own manager selection before setting global desktop layout
+            NET::Orientation orient = NET::OrientationHorizontal;
+            NETRootInfo i( QX11Info::display(), 0 );
+            i.setDesktopLayout( orient, columns, rows, NET::DesktopLayoutCornerTopLeft );
+        }
+    }
 }
 
 void Pager::recalculateWindowRects()
@@ -481,7 +536,10 @@ void Pager::configAccepted()
     // so we store the row count in the applet global configuration
     int rows = 0;
     if (formFactor() == Plasma::Vertical) {
-        rows = m_desktopCount / ui.spinRows->value() + m_desktopCount % ui.spinRows->value();
+        rows = m_desktopCount / ui.spinRows->value();
+        if (m_desktopCount % ui.spinRows->value() > 0) {
+            rows++;
+        }
     } else {
         rows = ui.spinRows->value();
     }
