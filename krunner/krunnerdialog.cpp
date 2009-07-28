@@ -167,6 +167,16 @@ bool KRunnerDialog::event(QEvent *event)
     return KDialog::event(event);
 }
 
+void KRunnerDialog::showEvent(QShowEvent *)
+{
+    m_runnerManager->setupMatchSession();
+}
+
+void KRunnerDialog::hideEvent(QHideEvent *)
+{
+    m_runnerManager->matchSessionComplete();
+}
+
 void KRunnerDialog::resizeEvent(QResizeEvent *e)
 {
     m_background->resizeFrame(e->size());
