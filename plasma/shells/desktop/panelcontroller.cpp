@@ -739,7 +739,7 @@ void PanelController::setLocation(const Plasma::Location &loc)
         break;
     }
 
-    Plasma::WindowEffects::setSlidingWindow(winId(), loc, offset);
+    Plasma::WindowEffects::slideWindow(winId(), loc, offset);
 }
 
 Plasma::Location PanelController::location() const

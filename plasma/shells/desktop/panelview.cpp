@@ -882,10 +882,10 @@ void PanelView::togglePanelController()
         m_editting = true;
         m_panelController->resize(m_panelController->sizeHint());
         m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
-        Plasma::WindowEffects::setSlidingWindow(m_panelController->winId(), location(), offset);
+        Plasma::WindowEffects::slideWindow(m_panelController->winId(), location(), offset);
         m_panelController->show();
     } else {
-        Plasma::WindowEffects::setSlidingWindow(m_panelController->winId(), location(), offset);
+        Plasma::WindowEffects::slideWindow(m_panelController->winId(), location(), offset);
         m_panelController->close();
         updateStruts();
     }
@@ -1218,7 +1218,7 @@ void PanelView::unhide(bool destroyTrigger)
     if (m_visibilityMode == AutoHide || m_visibilityMode == LetWindowsCover) {
         // LetWindowsCover panels are always shown, so don't bother and prevent
         // some unsightly flickers
-        Plasma::WindowEffects::setSlidingWindow(winId(), location(), offset);
+        Plasma::WindowEffects::slideWindow(winId(), location(), offset);
         show();
     }
 
@@ -1273,7 +1273,7 @@ void PanelView::startAutoHide()
         KWindowSystem::lowerWindow(winId());
         createUnhideTrigger();
     } else {
-        Plasma::WindowEffects::setSlidingWindow(winId(), location(), offset);
+        Plasma::WindowEffects::slideWindow(winId(), location(), offset);
         createUnhideTrigger();
         hide();
     }
