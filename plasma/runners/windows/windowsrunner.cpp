@@ -137,7 +137,7 @@ void WindowsRunner::match(Plasma::RunnerContext& context)
     // keyword match: when term starts with "window" we list all windows
     // the list can be restricted to windows matching a given name, class, role or desktop
     if (term.startsWith(i18nc("Note this is a KRunner keyword", "window") , Qt::CaseInsensitive)) {
-        QStringList keywords = term.split(" ");
+        const QStringList keywords = term.split(" ");
         QString windowName;
         QString windowClass;
         QString windowRole;
@@ -160,7 +160,7 @@ void WindowsRunner::match(Plasma::RunnerContext& context)
                 }
             } else {
                 // not a keyword - use as name if name is unused, but another option is set
-                if (windowName.isEmpty() && !keyword.contains('=') && 
+                if (windowName.isEmpty() && !keyword.contains('=') &&
                     (!windowRole.isEmpty() || !windowClass.isEmpty() || desktop != -1)) {
                     windowName = keyword;
                 }
@@ -215,7 +215,7 @@ void WindowsRunner::match(Plasma::RunnerContext& context)
     bool desktopAdded = false;
     // check for desktop keyword
     if (term.startsWith(i18nc("Note this is a KRunner keyword", "desktop") , Qt::CaseInsensitive)) {
-        QStringList parts = term.split(" ");
+        const QStringList parts = term.split(" ");
         if (parts.size() == 1) {
             // only keyword - list all desktops
             for (int i=1; i<=KWindowSystem::numberOfDesktops(); i++) {
@@ -256,7 +256,7 @@ void WindowsRunner::match(Plasma::RunnerContext& context)
         }
     }
     // check for matching desktops by name
-    foreach (const QString desktopName, m_desktopNames) {
+    foreach (const QString& desktopName, m_desktopNames) {
         int desktop = m_desktopNames.indexOf(desktopName) +1;
         if (desktopName.contains(term, Qt::CaseInsensitive)) {
             // desktop name matches - offer switch to
@@ -290,7 +290,7 @@ void WindowsRunner::run(const Plasma::RunnerContext& context, const Plasma::Quer
         return;
     }
 
-    QStringList parts = match.data().toString().split("_");
+    const QStringList parts = match.data().toString().split("_");
     WindowAction action = WindowAction(parts[0].toInt());
     WId w = WId(parts[1].toULong());
     KWindowInfo info = m_windows[w];
