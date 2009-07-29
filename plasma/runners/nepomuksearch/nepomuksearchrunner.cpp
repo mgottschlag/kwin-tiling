@@ -155,8 +155,7 @@ QList<QAction*> Nepomuk::SearchRunner::actionsForMatch(const Plasma::QueryMatch 
 
     Nepomuk::Resource res = match.data().value<Nepomuk::Resource>();
 
-    QString address = QUrl::fromPercentEncoding(res.resourceUri().toString().toUtf8());
-    KUrl url(address);
+    KUrl url(res.resourceUri());
     KIO::UDSEntry entry;
     if (!KIO::NetAccess::stat(url.path(), entry, 0)) {
         return QList<QAction*>();
