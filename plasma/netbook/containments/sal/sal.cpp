@@ -89,6 +89,8 @@ void SearchLaunch::doSearch(const QString query)
 
     foreach (Plasma::IconWidget *icon, m_items) {
         icon->deleteLater();
+        m_launchGrid->removeAt(0);
+        m_items.removeAll(icon);
     }
 
     m_items.clear();
@@ -344,7 +346,6 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             //FIXME: do it for each theme change, another place where anchorlayout would shine, now there is an hardcoded value, not acceptable
             m_homeButton->setPos(QPoint(0, 32) + m_mainLayout->contentsRect().topLeft());
             reset();
-
         }
     }
 
