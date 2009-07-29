@@ -187,6 +187,11 @@ QString WicdAccessPoint::ssid() const
     return d->essid;
 }
 
+QByteArray WicdAccessPoint::rawSsid() const
+{
+    return d->essid.toUtf8();
+}
+
 uint WicdAccessPoint::frequency() const
 {
     return d->frequency;
