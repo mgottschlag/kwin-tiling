@@ -40,6 +40,7 @@
 
 SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
+      m_homeButton(0),
       gridBackground(0),
       gridScroll(0)
 {
@@ -84,18 +85,87 @@ void SearchLaunch::themeUpdated()
 
 void SearchLaunch::doSearch(const QString query)
 {
-    runnermg->launchQuery(query);
     queryCounter = 0;
 
     foreach (Plasma::IconWidget *icon, m_items) {
-        delete icon;
+        icon->deleteLater();
     }
 
     m_items.clear();
     m_matches.clear();
+    runnermg->reset();
     if (gridBackground && gridScroll) {
         gridBackground->resize(gridScroll->size());
     }
+
+    if (gridScroll && query.isEmpty()) {
+        QList<Plasma::QueryMatch> fakeMatches;
+        Plasma::QueryMatch match(0);
+        match.setType(Plasma::QueryMatch::ExactMatch);
+        match.setRelevance(0.8);
+
+        //FIXME: awfully hardcoded, find a way nicer way
+        match.setId("bookmarks");
+        match.setIcon(KIcon("bookmarks"));
+        match.setText(i18n("Bookmarks"));
+        match.setData("bookmarks");
+        fakeMatches.append(match);
+
+        match.setId("contacts");
+        match.setIcon(KIcon("view-pim-contacts"));
+        match.setText(i18n("Contacts"));
+        match.setData("contacts");
+        fakeMatches.append(match);
+
+        match.setId("Network");
+        match.setIcon(KIcon("applications-internet"));
+        match.setText(i18n("Internet"));
+        match.setData("Network");
+        fakeMatches.append(match);
+
+        match.setId("AudioVideo");
+        match.setIcon(KIcon("applications-multimedia"));
+        match.setText(i18n("Multimedia"));
+        match.setData("AudioVideo");
+        fakeMatches.append(match);
+
+        match.setId("Education");
+        match.setIcon(KIcon("applications-education"));
+        match.setText(i18n("Education"));
+        match.setData("Education");
+        fakeMatches.append(match);
+
+        match.setId("Game");
+        match.setIcon(KIcon("applications-games"));
+        match.setText(i18n("Games"));
+        match.setData("Game");
+        fakeMatches.append(match);
+
+        match.setId("Graphics");
+        match.setIcon(KIcon("applications-graphics"));
+        match.setText(i18n("Graphics"));
+        match.setData("Graphics");
+        fakeMatches.append(match);
+
+        match.setId("Office");
+        match.setIcon(KIcon("applications-office"));
+        match.setText(i18n("Office"));
+        match.setData("Office");
+        fakeMatches.append(match);
+
+        setQueryMatches(fakeMatches);
+        m_homeButton->hide();
+    } else {
+        runnermg->launchQuery(query);
+        if (m_homeButton) {
+            m_homeButton->show();
+        }
+    }
+}
+
+void SearchLaunch::reset()
+{
+    doSearch(QString());
 }
 
 void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
@@ -138,7 +208,11 @@ void SearchLaunch::launch()
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender());
     int idx = m_items.indexOf(icon);
     Plasma::QueryMatch match = m_matches[idx];
-    runnermg->run(match);
+    if (runnermg->searchContext()->query().isEmpty()) {
+        doSearch(match.data().toString());
+    } else {
+        runnermg->run(match);
+    }
 }
 
 void SearchLaunch::addFavourite()
@@ -260,6 +334,17 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 
             // correctly set margins
             themeUpdated();
+            m_mainLayout->activate();
+            m_mainLayout->updateGeometry();
+
+            m_homeButton = new Plasma::IconWidget(this);
+            m_homeButton->setIcon(KIcon("go-home"));
+            m_homeButton->setText(i18n("Home"));
+            connect(m_homeButton, SIGNAL(activated()), this, SLOT(reset()));
+            //FIXME: do it for each theme change, another place where anchorlayout would shine, now there is an hardcoded value, not acceptable
+            m_homeButton->setPos(QPoint(0, 32) + m_mainLayout->contentsRect().topLeft());
+            reset();
+
         }
     }
 

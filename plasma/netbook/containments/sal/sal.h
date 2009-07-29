@@ -69,6 +69,7 @@ private slots:
     void setQueryMatches(const QList<Plasma::QueryMatch> &m);
     void launch();
     void addFavourite();
+    void reset();
 
 private:
     /**
@@ -78,6 +79,7 @@ private:
 
     Plasma::FrameSvg *m_background;
     Plasma::RunnerManager *runnermg;
+    Plasma::IconWidget *m_homeButton;
 
     int queryCounter;
     QList<Plasma::IconWidget*> m_items;
