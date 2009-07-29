@@ -70,8 +70,9 @@ void AppletsList::resizeEvent(QGraphicsSceneResizeEvent *event) {
     m_appletsListWindowWidget->setMinimumHeight(m_appletsListWidget->geometry().height());
     m_appletsListWindowWidget->setMaximumHeight(m_appletsListWidget->geometry().height());
 
-    arrowClickStep = ceil(m_appletsListWindowWidget->geometry().width()/6);
-    scrollStep = ceil(m_appletsListWindowWidget->geometry().width()/2);
+    int maxVisibleIconsOnList = maximumVisibleIconsOnList();
+    arrowClickStep = ceil(maxVisibleIconsOnList/4);
+    scrollStep = ceil(maxVisibleIconsOnList/2);
 }
 
 void AppletsList::setItemModel(QStandardItemModel *model)
@@ -85,10 +86,11 @@ void AppletsList::setItemModel(QStandardItemModel *model)
     m_modelFilterItems->sort(0);
 
     populateAllAppletsHash();
-    updateList();
 
     connect(m_modelFilterItems, SIGNAL(searchTermChanged(QString)), this, SLOT(updateList()));
     connect(m_modelFilterItems, SIGNAL(filterChanged()), this, SLOT(updateList()));
+
+    updateList();
 
 }
 
@@ -132,6 +134,13 @@ double AppletsList::listWidth() {
                     m_appletListLinearLayout->spacing();
 }
 
+int AppletsList::maximumVisibleIconsOnList() {
+    double windowWidth = m_appletsListWindowWidget->geometry().width();
+    double maxVisibleIconsOnList = floor(windowWidth/(ICON_WIDGET_WIDTH
+                                                          + m_appletListLinearLayout->spacing()));
+    return maxVisibleIconsOnList;
+}
+
 AppletIconWidget *AppletsList::createAppletIcon(PlasmaAppletItem *appletItem)
 {
     AppletIconWidget *applet = new AppletIconWidget();
@@ -163,6 +172,7 @@ void AppletsList::updateList()
 
     m_appletsListWidget->setLayout(NULL);
     m_appletListLinearLayout = new QGraphicsLinearLayout();
+    m_appletListLinearLayout->setContentsMargins(0, 0, 0, 0);
 
     eraseList();
 
@@ -182,10 +192,21 @@ void AppletsList::updateList()
 }
 
 void AppletsList::wheelEvent(QGraphicsSceneWheelEvent *event) {
-    if(event->delta() < 0) {
-        scroll(true, true);
+    //if the scroll is right or left
+    bool right;
+    bool byWheel = true;
+    bool canScroll;
+
+    right = event->delta() < 0 ? true : false;
+
+    if(right) {
+        canScroll = m_rightArrow->isEnabled() ? true : false;
     } else {
-        scroll(false, true);
+        canScroll = m_leftArrow->isEnabled() ? true : false;
+    }
+
+    if(canScroll) {
+        scroll(right, byWheel);
     }
 }
 
@@ -206,66 +227,67 @@ void AppletsList::scroll(bool right, bool byWheel) {
     } else {
         scrollLeft(step, visibleRect);
     }
-
 }
 
 void AppletsList::scrollRight(int step, QRectF visibleRect) {
-
-    int lastVisibleXOnList = visibleRect.x() + visibleRect.width();
-    int listWidthVar = listWidth();
-    QRectF newVisibleRect;
-
-    if(lastVisibleXOnList < listWidthVar) {
-        if(lastVisibleXOnList + step > listWidthVar) {
-            step = listWidthVar - lastVisibleXOnList;
-        }
-
-        m_appletsListWidget->moveBy(-step, 0);
-        newVisibleRect = visibleListRect();
-        scrollRightToShowClippedAppletIcon(newVisibleRect.x() + visibleRect.width());
-        emit(listScrolled());
-    }
-}
-
-void AppletsList::scrollLeft(int step, QRectF visibleRect) {
-
-    int firstVisibleXOnList = visibleRect.x();
-    QRectF newVisibleRect;
-
-    if(firstVisibleXOnList > 0) {
-        if(firstVisibleXOnList - step < 0 ) {
-            step = firstVisibleXOnList;
-        }
-
-        m_appletsListWidget->moveBy(step, 0);
-        newVisibleRect = visibleListRect();
-        scrollLeftToShowClippedAppletIcon(newVisibleRect.x());
-        emit(listScrolled());
-    }
-}
-
-void AppletsList::scrollRightToShowClippedAppletIcon(int lastVisibleXOnList) {
     AppletIconWidget *clipped;
     int newFirstVisibleXOnList;
+    int newFirstVisibleXOnWindow;
+    double scrollXAmount;
+    int lastVisibleXOnList = visibleRect.x() + visibleRect.width();
+    int listWidthVar = listWidth();
+
     clipped = findAppletUnderXPosition(lastVisibleXOnList);
+
     if(clipped) {
         newFirstVisibleXOnList = (clipped->pos().x() +
                                      clipped->boundingRect().width()) -
                                     m_appletsListWindowWidget->boundingRect().width();
-
-        m_appletsListWidget->moveBy(-1 * (m_appletsListWidget->mapToItem(m_appletsListWindowWidget,
-                                                                   newFirstVisibleXOnList, 0)).x() , 0);
+        newFirstVisibleXOnWindow = (m_appletsListWidget->mapToItem(m_appletsListWindowWidget,
+                                                                   newFirstVisibleXOnList, 0)).x();
+        scrollXAmount = newFirstVisibleXOnWindow +
+                                          (step - 1) * (m_appletListLinearLayout->spacing() +
+                                               ICON_WIDGET_WIDTH);
+    } else {
+        scrollXAmount = step * (m_appletListLinearLayout->spacing() +
+                                               ICON_WIDGET_WIDTH);
     }
+
+    //check if the scrollAmount is more than necessary to reach the end of the list
+    if(lastVisibleXOnList + scrollXAmount > listWidthVar) {
+        scrollXAmount = listWidthVar - lastVisibleXOnList;
+    }
+
+    m_appletsListWidget->moveBy(-scrollXAmount, 0);
+    emit(listScrolled());
 }
 
-void AppletsList::scrollLeftToShowClippedAppletIcon(int firstVisibleXOnList) {
+void AppletsList::scrollLeft(int step, QRectF visibleRect) {
+    double firstVisibleXOnList = visibleRect.x();
     AppletIconWidget *clipped;
+    int newFirstVisibleXOnWindow;
+    double scrollXAmount;
+
     clipped = findAppletUnderXPosition(firstVisibleXOnList);
+
     if(clipped) {
-        m_appletsListWidget->moveBy(-1 * (m_appletsListWidget->mapToItem(m_appletsListWindowWidget,
-                                                                   clipped->pos().x(), 0)).x() , 0);
+        newFirstVisibleXOnWindow = (m_appletsListWidget->mapToItem(m_appletsListWindowWidget,
+                                                                   clipped->pos().x(), 0)).x();
+        scrollXAmount =  (-newFirstVisibleXOnWindow) + ((step - 1) *
+                                                     (m_appletListLinearLayout->spacing() +
+                                                      ICON_WIDGET_WIDTH));
+    } else {
+        scrollXAmount = (step * (m_appletListLinearLayout->spacing() +
+                                               ICON_WIDGET_WIDTH));
     }
 
+    //check if the scrollAmount is more than necessary to reach the begining of the list
+    if(firstVisibleXOnList - scrollXAmount <  0){
+        scrollXAmount = firstVisibleXOnList;
+    }
+
+    m_appletsListWidget->moveBy(scrollXAmount, 0);
+    emit(listScrolled());
 }
 
 void AppletsList::resetScroll() {
@@ -312,7 +334,7 @@ AppletIconWidget *AppletsList::findAppletUnderXPosition(int xPosition) {
     foreach(QGraphicsItem *applet, applets) {
         firstXOnApplet = applet->mapToItem(m_appletsListWidget, 0, 0).x();
         lastXOnApplet = applet->mapToItem(m_appletsListWidget, applet->boundingRect().width(), 0).x();
-        if((xPosition >= firstXOnApplet) && (xPosition <= lastXOnApplet)) {
+        if((xPosition > firstXOnApplet) && (xPosition < lastXOnApplet)) {
             return dynamic_cast<AppletIconWidget*>(applet);
         }
     }

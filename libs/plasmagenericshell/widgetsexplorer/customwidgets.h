@@ -45,19 +45,24 @@ public:
      * Creates a new applet icon and puts it into the hash
      */
     AppletIconWidget *createAppletIcon(PlasmaAppletItem *appletItem);
+
     void insertAppletIcon(AppletIconWidget *appletIconWidget);
     double listWidth();
+    int maximumVisibleIconsOnList();
     void eraseList();
+    QList < KCategorizedItemsViewModels::AbstractItem * > selectedItems() const;
+    AppletIconWidget *findAppletUnderXPosition(int xPosition);
+    QRectF visibleListRect();
+
     void scroll(bool right, bool byWheel);
     void scrollRight(int step, QRectF visibleRect);
     void scrollLeft(int step, QRectF visibleRect);
     void wheelEvent(QGraphicsSceneWheelEvent *event);
-    void scrollRightToShowClippedAppletIcon(int lastVisibleXOnList);
-    void scrollLeftToShowClippedAppletIcon(int firstVisibleXOnList);
 
-    QList < KCategorizedItemsViewModels::AbstractItem * > selectedItems() const;
-    AppletIconWidget *findAppletUnderXPosition(int xPosition);
-    QRectF visibleListRect();
+//    void scrollRightToShowClippedAppletIcon(int lastVisibleXOnList);
+//    void scrollLeftToShowClippedAppletIcon(int firstVisibleXOnList);
+
+
 
 public slots:
     void searchTermChanged(const QString &text);
