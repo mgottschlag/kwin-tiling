@@ -52,9 +52,12 @@ public:
     void scrollRight(int step, QRectF visibleRect);
     void scrollLeft(int step, QRectF visibleRect);
     void wheelEvent(QGraphicsSceneWheelEvent *event);
+    void scrollRightToShowClippedAppletIcon(int lastVisibleXOnList);
+    void scrollLeftToShowClippedAppletIcon(int firstVisibleXOnList);
 
     QList < KCategorizedItemsViewModels::AbstractItem * > selectedItems() const;
     AppletIconWidget *findAppletUnderXPosition(int xPosition);
+    QRectF visibleListRect();
 
 public slots:
     void searchTermChanged(const QString &text);
