@@ -131,6 +131,7 @@ Action=None
 [Event/unlocked]
 Name=Screen unlocked
 Name[de]=Bildschirm freigegeben
+Name[is]=Skjár aflæstur
 Name[ja]=スクリーンロック解除
 Name[km]=បាន​​ដោះសោ​អេក្រង់
 Name[ko]=화면 잠금 풀림
