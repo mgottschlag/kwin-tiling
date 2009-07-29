@@ -436,6 +436,26 @@ void AppletIconWidget::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     emit(hoverLeave(this));
 }
 
+void AppletIconWidget::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
+{
+    Plasma::IconWidget::mouseMoveEvent(event);
+    if (event->button() != Qt::LeftButton
+        && (event->pos() - event->buttonDownPos(Qt::LeftButton))
+            .toPoint().manhattanLength() > QApplication::startDragDistance()
+    ) {
+        event->accept();
+        qDebug() << "Start Dragging";
+        QDrag * drag = new QDrag(event->widget());
+
+        QMimeData * data = new QMimeData();
+        data->setText("http://www.google.com");
+
+        drag->setMimeData(data);
+        drag->exec();
+    }
+
+}
+
 void AppletIconWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
  {
     if(selected) {

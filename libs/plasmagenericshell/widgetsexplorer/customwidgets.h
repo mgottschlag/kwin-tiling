@@ -130,7 +130,7 @@ class AppletIconWidget : public Plasma::IconWidget
         void updateApplet(PlasmaAppletItem *newAppletItem);
         void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
         void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
-
+        void mouseMoveEvent(QGraphicsSceneMouseEvent * event);
 
     Q_SIGNALS:
         void hoverEnter(AppletIconWidget *applet);
