@@ -4,6 +4,8 @@
 #include "widgetexplorer.h"
 #include <plasma/containment.h>
 #include <QDesktopWidget>
+#include <plasma/corona.h>
+#include <plasma/view.h>
 
 int main(int argc, char *argv[])
 {
@@ -16,11 +18,13 @@ int main(int argc, char *argv[])
     appletBrowser->setContainment(containment);
     appletBrowser->setApplication();
 
-    QGraphicsScene *scene = new QGraphicsScene();
+    Plasma::Corona *scene = new Plasma::Corona();
+
     scene->addItem(appletBrowser);
     scene->setSceneRect(QRectF(0, 0, appletBrowser->minimumWidth(), appletBrowser->minimumHeight()));
 
-    QGraphicsView *view = new QGraphicsView(scene);
+    Plasma::View *view = new Plasma::View(appletBrowser->containment(), 0);
+    view->setScene(scene);
     view->setWindowFlags(Qt::FramelessWindowHint);
     view->setAttribute(Qt::WA_TranslucentBackground, true);
     view->setStyleSheet("background: transparent");

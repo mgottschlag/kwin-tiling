@@ -21,8 +21,6 @@
 #include <plasma/widgets/treeview.h>
 
 class AppletIconWidget;
-class PositionDotsSvgWidget;
-class AppletsList;
 
 class AppletsList : public QGraphicsWidget
 {
@@ -124,7 +122,7 @@ class AppletIconWidget : public Plasma::IconWidget
 
         void setAppletItem(PlasmaAppletItem *appletIcon);
         PlasmaAppletItem *appletItem();
-        void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
     public Q_SLOTS:
         void updateApplet(PlasmaAppletItem *newAppletItem);
@@ -138,10 +136,9 @@ class AppletIconWidget : public Plasma::IconWidget
 
     private:
         PlasmaAppletItem *m_appletItem;
-
         bool selected;
         Plasma::FrameSvg *m_selectedBackgroundSvg;
-
+        bool m_showingTooltip;
 };
 
 class FilteringList : public QGraphicsWidget

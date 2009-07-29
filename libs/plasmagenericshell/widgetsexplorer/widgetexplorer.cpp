@@ -139,8 +139,6 @@ void WidgetExplorerMainWidgetPrivate::init()
     appletsListWidget->setMaximumHeight(q->contentsRect().height());
     appletsListWidget->setMinimumHeight(q->contentsRect().height());
 
-    kDebug() << appletsListWidget->geometry().size().height();
-
     QObject::connect(filteringWidget->textSearch()->nativeWidget(), SIGNAL(textChanged(QString)), appletsListWidget, SLOT(searchTermChanged(QString)));
 
     mainLinearLayout->addItem(appletsListWidget);
@@ -179,7 +177,6 @@ void WidgetExplorerMainWidgetPrivate::initRunningApplets()
         return;
     }
 
-    //kDebug() << runningApplets.count();
     Plasma::Corona *c = containment->corona();
 
     //we've tried our best to get a corona

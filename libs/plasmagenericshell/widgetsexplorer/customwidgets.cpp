@@ -5,6 +5,8 @@
 #include <cmath>
 #include <QHash>
 
+#include <plasma/tooltipmanager.h>
+
 #define UNIVERSAL_PADDING 20
 #define SEARCH_DELAY 300
 #define ICON_WIDGET_HEIGHT 100
@@ -143,10 +145,7 @@ int AppletsList::maximumVisibleIconsOnList() {
 
 AppletIconWidget *AppletsList::createAppletIcon(PlasmaAppletItem *appletItem)
 {
-    AppletIconWidget *applet = new AppletIconWidget();
-    applet->setAppletItem(appletItem);
-    applet->setIcon(appletItem->icon());
-    applet->setText(appletItem->name());
+    AppletIconWidget *applet = new AppletIconWidget(0, appletItem);
 //    ***** set this another way ********
     applet->setMinimumSize(ICON_WIDGET_WIDTH, ICON_WIDGET_HEIGHT);
     applet->setMaximumSize(ICON_WIDGET_WIDTH, ICON_WIDGET_HEIGHT);
@@ -391,18 +390,13 @@ AppletIconWidget::AppletIconWidget(QGraphicsItem *parent, PlasmaAppletItem *appl
     m_selectedBackgroundSvg = new Plasma::FrameSvg(this);
     m_selectedBackgroundSvg->setImagePath("widgets/translucentbackground");
 
-    if(m_appletItem != 0) {
-        setText(appletItem->name());
-        setIcon(appletItem->icon());
-    } else {
-        setText("no name");
-        setIcon("widgets/clock");
-    }
+    updateApplet(appletItem);
 }
 
 AppletIconWidget::~AppletIconWidget()
 {
     m_appletItem = 0;
+    Plasma::ToolTipManager::self()->unregisterWidget(this);
 }
 
 PlasmaAppletItem *AppletIconWidget::appletItem()
@@ -417,9 +411,28 @@ void AppletIconWidget::setAppletItem(PlasmaAppletItem *appletIcon)
 
 void AppletIconWidget::updateApplet(PlasmaAppletItem *appletItem)
 {
-    m_appletItem = appletItem;
-    setIcon(m_appletItem->icon());
-    setText(m_appletItem->name());
+    Plasma::ToolTipContent data;
+    QPixmap p;
+
+    if(appletItem != 0) {
+        m_appletItem = appletItem;
+        setText(m_appletItem->name());
+        setIcon(m_appletItem->icon());
+
+        data = Plasma::ToolTipContent();
+
+        p = m_appletItem->icon().pixmap(KIconLoader::SizeLarge, KIconLoader::SizeLarge);
+
+        data.setMainText(m_appletItem->name());
+        data.setImage(p);
+        data.setSubText(m_appletItem->description());
+
+        Plasma::ToolTipManager::self()->setContent(this, data);
+
+    } else {
+        setText("no name");
+        setIcon("widgets/clock");
+    }
 }
 
 void AppletIconWidget::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
