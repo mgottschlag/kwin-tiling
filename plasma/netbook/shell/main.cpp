@@ -33,7 +33,7 @@ KDE_EXPORT int kdemain(int argc, char **argv)
 {
     KAboutData aboutData("plasma-netbook", 0, ki18n("Plasma Workspace"),
                          version, ki18n(description), KAboutData::License_GPL,
-                         ki18n("Copyright 2006-2008, The KDE Team"));
+                         ki18n("Copyright 2006-2009, The KDE Team"));
     aboutData.addAuthor(ki18n("Aaron J. Seigo"),
                         ki18n("Author and maintainer"),
                         "aseigo@kde.org");
@@ -41,7 +41,7 @@ KDE_EXPORT int kdemain(int argc, char **argv)
     KCmdLineArgs::init(argc, argv, &aboutData);
 
     KCmdLineOptions options;
-    options.add("desktop",ki18n("Registers the application as the primary user interface"));
+    options.add("nodesktop", ki18n("Starts as a normal application instead of as the primary user interface"));
     options.add("screen <geometry>", ki18n("The geometry of the screen"), "800x480");
     KCmdLineArgs::addCmdLineOptions(options);
 

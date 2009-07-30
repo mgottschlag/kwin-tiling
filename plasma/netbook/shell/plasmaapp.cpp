@@ -74,6 +74,7 @@ PlasmaApp::PlasmaApp()
     KCrash::setFlags(KCrash::AutoRestart);
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+
     bool isDesktop = args->isSet("desktop");
     if (isDesktop) {
         notifyStartup(false);
