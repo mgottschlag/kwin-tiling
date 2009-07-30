@@ -465,6 +465,8 @@ void AppletIconWidget::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
 
         drag->setMimeData(data);
         drag->exec();
+
+        mouseReleaseEvent(event);
     }
 
 }
