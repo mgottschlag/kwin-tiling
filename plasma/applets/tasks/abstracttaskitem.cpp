@@ -586,26 +586,34 @@ void AbstractTaskItem::drawTask(QPainter *painter, const QStyleOptionGraphicsIte
 
     QRectF bounds = boundingRect().adjusted(m_applet->itemLeftMargin(), m_applet->itemTopMargin(), -m_applet->itemRightMargin(), -m_applet->itemBottomMargin());
 
-    if ((!m_animId && ~option->state & QStyle::State_MouseOver) ||
-         (m_oldBackgroundPrefix != "hover" && m_backgroundPrefix != "hover")) {
-        m_icon.paint(painter, iconRect(bounds).toRect());
+    WindowTaskItem *window = qobject_cast<WindowTaskItem *>(this);
+    QGraphicsWidget *busyWidget;
+    busyWidget = window ? window->busyWidget() : 0;
+    
+    if (busyWidget) {
+        busyWidget->setGeometry(iconRect(bounds));
+        busyWidget->show();
     } else {
-        KIconEffect *effect = KIconLoader::global()->iconEffect();
-        QPixmap result = m_icon.pixmap(iconRect(bounds).toRect().size());
+        if ((!m_animId && ~option->state & QStyle::State_MouseOver) 
+            ||(m_oldBackgroundPrefix != "hover" && m_backgroundPrefix != "hover")) {
+            m_icon.paint(painter, iconRect(bounds).toRect());
+        } else {
+            KIconEffect *effect = KIconLoader::global()->iconEffect();
+            QPixmap result = m_icon.pixmap(iconRect(bounds).toRect().size());
 
-        if (effect->hasEffect(KIconLoader::Desktop, KIconLoader::ActiveState)) {
-            if (qFuzzyCompare(qreal(1.0), m_alpha)) {
-                result = effect->apply(result, KIconLoader::Desktop, KIconLoader::ActiveState);
-            } else {
-                result = Plasma::PaintUtils::transition(
-                    result,
-                    effect->apply(result, KIconLoader::Desktop,
-                                  KIconLoader::ActiveState), m_fadeIn?m_alpha:1-m_alpha);
+            if (effect->hasEffect(KIconLoader::Desktop, KIconLoader::ActiveState)) {
+                if (qFuzzyCompare(qreal(1.0), m_alpha)) {
+                    result = effect->apply(result, KIconLoader::Desktop, KIconLoader::ActiveState);
+                } else {
+                    result = Plasma::PaintUtils::transition(result,
+                                        effect->apply(result, KIconLoader::Desktop,
+                                        KIconLoader::ActiveState), m_fadeIn?m_alpha:1-m_alpha);
+                }
             }
+            painter->drawPixmap(iconRect(bounds).topLeft(), result);
         }
-        painter->drawPixmap(iconRect(bounds).topLeft(), result);
     }
-
+    
     painter->setPen(QPen(textColor(), 1.0));
 
     QRect rect = textRect(bounds).toRect();

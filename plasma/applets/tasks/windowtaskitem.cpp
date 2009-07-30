@@ -60,7 +60,8 @@
 
 WindowTaskItem::WindowTaskItem(QGraphicsWidget *parent, Tasks *applet)
     : AbstractTaskItem(parent, applet),
-      m_task(0)
+      m_task(0),
+      m_busyWidget(0)
 {
 }
 
@@ -239,6 +240,11 @@ void WindowTaskItem::setStartupTask(TaskItem *task)
     connect(task, SIGNAL(gotTaskPointer()), this, SLOT(gotTaskPointer()));
     setText(task->startup()->text());
     setIcon(KIcon(task->startup()->icon()));
+
+    if (!m_busyWidget) {
+        m_busyWidget = new Plasma::BusyWidget(this);
+        m_busyWidget->hide();
+    }        
 }
 
 void WindowTaskItem::gotTaskPointer()
@@ -246,6 +252,9 @@ void WindowTaskItem::gotTaskPointer()
     //kDebug();
     TaskManager::TaskItem *item = qobject_cast<TaskManager::TaskItem*>(sender());
     if (item) {
+        delete m_busyWidget;
+        m_busyWidget = 0;
+
         setWindowTask(item);
     }
 }
@@ -340,6 +349,11 @@ void WindowTaskItem::setAdditionalMimeData(QMimeData* mimeData)
     if (m_task) {
         m_task->addMimeData(mimeData);
     }
+}
+
+QGraphicsWidget *WindowTaskItem::busyWidget() const
+{
+    return m_busyWidget;
 }
 
 #include "windowtaskitem.moc"

@@ -399,6 +399,7 @@ QWidget *Tasks::popupDialog() const
 
 void Tasks::setPopupDialog(bool status)
 {
+    Q_UNUSED(status)
     QWidget *widget = qobject_cast<QWidget *>(sender());
     
     if (widget->isVisible()) {

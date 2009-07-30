@@ -22,6 +22,7 @@
 #ifndef WINDOWTASKITEM_H
 #define WINDOWTASKITEM_H
 
+#include <Plasma/BusyWidget>
 #include "abstracttaskitem.h"
 // Own
 #include <taskmanager/taskmanager.h>
@@ -54,6 +55,7 @@ public:
     virtual bool isWindowItem() const;
     virtual bool isActive() const;
     virtual void setAdditionalMimeData(QMimeData* mimeData);
+    QGraphicsWidget *busyWidget() const;
 
 signals:
     /** Emitted when a window is selected for activation, minimization, iconification */
@@ -80,6 +82,7 @@ private:
     void setWindowTask(TaskManager::TaskItem* taskItem);
 
     TaskManager::TaskItem *m_task;
+    Plasma::BusyWidget *m_busyWidget;
 };
 
 #endif
