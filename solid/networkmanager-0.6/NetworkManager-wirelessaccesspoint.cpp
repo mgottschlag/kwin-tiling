@@ -143,6 +143,11 @@ QString NMAccessPoint::ssid() const
     return d->ssid;
 }
 
+QByteArray rawSsid() const
+{
+    return d->ssid.toLatin1();
+}
+
 uint NMAccessPoint::frequency() const
 {
     return d->frequency;

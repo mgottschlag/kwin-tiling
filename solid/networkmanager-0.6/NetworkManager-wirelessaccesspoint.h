@@ -46,6 +46,7 @@ public:
     Solid::Control::AccessPoint::WpaFlags wpaFlags() const;
     Solid::Control::AccessPoint::WpaFlags rsnFlags() const;
     QString ssid() const;
+    QByteArray rawSsid() const;
     uint frequency() const;
     QString hardwareAddress() const;
     uint maxBitRate() const;
