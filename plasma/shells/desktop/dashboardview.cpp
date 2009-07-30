@@ -280,7 +280,6 @@ void DashboardView::setContainment(Plasma::Containment *newContainment)
         m_zoomIn = action ? action->isEnabled() : false;
         newContainment->enableAction("zoom out", false);
         newContainment->enableAction("zoom in", false);
-        newContainment->openToolBox();
     }
 
     if (m_appletBrowser) {
@@ -318,12 +317,14 @@ void DashboardView::suppressShowTimeout()
     //kDebug() << "DashboardView::suppressShowTimeout";
     m_suppressShow = false;
 
-    if (!config().readEntry("DashboardShown", false)) {
+    KConfigGroup cg(KGlobal::config(), "Dashboard");
+    if (!cg.readEntry("DashboardShown", false)) {
         // the first time we show the user the dashboard, expand
         // the toolbox; some people don't know how to get out of it at first
         // so we do this as a hint for them
         containment()->openToolBox();
-        config().writeEntry("DashboardShown", true);
+        cg.writeEntry("DashboardShown", true);
+        configNeedsSaving();
     }
 }
 
