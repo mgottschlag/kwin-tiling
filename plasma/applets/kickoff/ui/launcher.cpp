@@ -866,7 +866,9 @@ void Launcher::setLauncherOrigin(const Plasma::PopupPlacement placement, Plasma:
             break;
         }
     }
+
     d->panelEdge = location;
+    reset();
 }
 
 #include "launcher.moc"
