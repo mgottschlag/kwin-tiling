@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>colorSettings</class>
- <widget class="QWidget" name="colorSettings" >
-  <property name="geometry" >
+ <widget class="QWidget" name="colorSettings">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,29 +10,29 @@
     <height>422</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="margin" >
+  <layout class="QVBoxLayout">
+   <property name="margin">
     <number>0</number>
    </property>
    <item>
-    <widget class="QTabWidget" name="tabWidget" >
-     <property name="currentIndex" >
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="pageScheme" >
-      <attribute name="title" >
+     <widget class="QWidget" name="pageScheme">
+      <attribute name="title">
        <string>&amp;Scheme</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout" >
-       <item row="0" column="0" >
-        <widget class="KListWidget" name="schemeList" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="KListWidget" name="schemeList">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="iconSize" >
+         <property name="iconSize">
           <size>
            <width>23</width>
            <height>16</height>
@@ -39,57 +40,57 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="1" >
-        <layout class="QVBoxLayout" name="verticalLayout_2" >
+       <item row="0" column="1">
+        <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="QPushButton" name="schemeKnsButton" >
-           <property name="toolTip" >
+          <widget class="QPushButton" name="schemeKnsButton">
+           <property name="toolTip">
             <string>Get new color schemes from the Internet</string>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>Get &amp;New Schemes...</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="schemeImportButton" >
-           <property name="toolTip" >
+          <widget class="QPushButton" name="schemeImportButton">
+           <property name="toolTip">
             <string>Import a color scheme from a file</string>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>Import Scheme...</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="schemeSaveButton" >
-           <property name="toolTip" >
+          <widget class="QPushButton" name="schemeSaveButton">
+           <property name="toolTip">
             <string>Save the current color scheme</string>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>Save Scheme...</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="schemeRemoveButton" >
-           <property name="enabled" >
+          <widget class="QPushButton" name="schemeRemoveButton">
+           <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="toolTip" >
+           <property name="toolTip">
             <string>Remove the selected scheme</string>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>Remove Scheme</string>
            </property>
           </widget>
          </item>
          <item>
           <spacer>
-           <property name="orientation" >
+           <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
              <height>40</height>
@@ -99,27 +100,27 @@
          </item>
         </layout>
        </item>
-       <item row="1" column="0" colspan="2" >
-        <widget class="QGroupBox" name="groupBox_3" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+       <item row="1" column="0" colspan="2">
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="title" >
+         <property name="title">
           <string>Preview</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3" >
+         <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
-           <widget class="PreviewWidget" native="1" name="schemePreview" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+           <widget class="PreviewWidget" name="schemePreview" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="minimumSize" >
+            <property name="minimumSize">
              <size>
               <width>0</width>
               <height>10</height>
@@ -132,44 +133,44 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="pageOptions" >
-      <attribute name="title" >
+     <widget class="QWidget" name="pageOptions">
+      <attribute name="title">
        <string>Options</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_7" >
+      <layout class="QVBoxLayout" name="verticalLayout_7">
        <item>
-        <widget class="QGroupBox" name="groupBox_6" >
-         <property name="title" >
+        <widget class="QGroupBox" name="groupBox_6">
+         <property name="title">
           <string>Options</string>
          </property>
-         <layout class="QVBoxLayout" name="_4" >
+         <layout class="QVBoxLayout" name="_4">
           <item>
-           <widget class="QCheckBox" name="useInactiveEffects" >
-            <property name="text" >
+           <widget class="QCheckBox" name="useInactiveEffects">
+            <property name="text">
              <string>Apply inactive window color &amp;effects</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="inactiveSelectionEffect" >
-            <property name="text" >
+           <widget class="QCheckBox" name="inactiveSelectionEffect">
+            <property name="text">
              <string>In&amp;active selection changes color</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="shadeSortedColumn" >
-            <property name="text" >
+           <widget class="QCheckBox" name="shadeSortedColumn">
+            <property name="text">
              <string>Shade sorted column &amp;in lists</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="applyToAlien" >
-            <property name="mouseTracking" >
+           <widget class="QCheckBox" name="applyToAlien">
+            <property name="mouseTracking">
              <bool>true</bool>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>Apply colors to &amp;non-KDE4 applications</string>
             </property>
            </widget>
@@ -178,23 +179,23 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_5" >
-         <property name="toolTip" >
+        <widget class="QGroupBox" name="groupBox_5">
+         <property name="toolTip">
           <string>Contrast used for 3D objects</string>
          </property>
-         <property name="title" >
+         <property name="title">
           <string>Contrast</string>
          </property>
-         <layout class="QVBoxLayout" name="_5" >
+         <layout class="QVBoxLayout" name="_5">
           <item>
-           <widget class="QSlider" name="contrastSlider" >
-            <property name="maximum" >
+           <widget class="QSlider" name="contrastSlider">
+            <property name="maximum">
              <number>10</number>
             </property>
-            <property name="pageStep" >
+            <property name="pageStep">
              <number>5</number>
             </property>
-            <property name="orientation" >
+            <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
            </widget>
@@ -203,11 +204,11 @@
         </widget>
        </item>
        <item>
-        <spacer name="verticalSpacer" >
-         <property name="orientation" >
+        <spacer name="verticalSpacer">
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
            <height>141</height>
@@ -217,341 +218,341 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="pageColors" >
-      <attribute name="title" >
+     <widget class="QWidget" name="pageColors">
+      <attribute name="title">
        <string>Colors</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_2" >
-       <item row="0" column="0" >
-        <widget class="QLabel" name="label_7" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>Color set:</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1" >
-        <widget class="QComboBox" name="colorSet" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+       <item row="0" column="1">
+        <widget class="QComboBox" name="colorSet">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="toolTip" >
+         <property name="toolTip">
           <string>Colorset to view/modify</string>
          </property>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Common Colors</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>View</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Window</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Button</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Selection</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Tooltip</string>
           </property>
          </item>
         </widget>
        </item>
-       <item row="1" column="0" colspan="2" >
-        <widget class="QStackedWidget" name="stackColors" >
-         <property name="currentIndex" >
+       <item row="1" column="0" colspan="2">
+        <widget class="QStackedWidget" name="stackColors">
+         <property name="currentIndex">
           <number>0</number>
          </property>
-         <widget class="QWidget" name="pageCommonColors" >
-          <layout class="QGridLayout" >
-           <property name="margin" >
+         <widget class="QWidget" name="pageCommonColors">
+          <layout class="QGridLayout">
+           <property name="margin">
             <number>0</number>
            </property>
-           <item row="0" column="0" >
-            <widget class="QTableWidget" name="commonColorTable" >
-             <property name="editTriggers" >
+           <item row="0" column="0">
+            <widget class="QTableWidget" name="commonColorTable">
+             <property name="editTriggers">
               <set>QAbstractItemView::NoEditTriggers</set>
              </property>
-             <property name="selectionMode" >
+             <property name="selectionMode">
               <enum>QAbstractItemView::SingleSelection</enum>
              </property>
-             <property name="selectionBehavior" >
+             <property name="selectionBehavior">
               <enum>QAbstractItemView::SelectRows</enum>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>true</bool>
              </property>
-             <property name="columnCount" >
+             <property name="columnCount">
               <number>2</number>
              </property>
              <row>
-              <property name="text" >
+              <property name="text">
                <string>New Row</string>
               </property>
              </row>
              <row>
-              <property name="text" >
+              <property name="text">
                <string>New Row</string>
               </property>
              </row>
              <row>
-              <property name="text" >
+              <property name="text">
                <string>New Row</string>
               </property>
              </row>
              <row>
-              <property name="text" >
+              <property name="text">
                <string>New Row</string>
               </property>
              </row>
              <row>
-              <property name="text" >
+              <property name="text">
                <string>New Row</string>
               </property>
              </row>
              <row>
-              <property name="text" >
+              <property name="text">
                <string>New Row</string>
               </property>
              </row>
              <row>
-              <property name="text" >
+              <property name="text">
                <string>New Row</string>
               </property>
              </row>
              <row>
-              <property name="text" >
+              <property name="text">
                <string>New Row</string>
               </property>
              </row>
              <row>
-              <property name="text" >
+              <property name="text">
                <string>New Row</string>
               </property>
              </row>
              <row>
-              <property name="text" >
+              <property name="text">
                <string>New Row</string>
               </property>
              </row>
              <row>
-              <property name="text" >
+              <property name="text">
                <string>New Row</string>
               </property>
              </row>
              <row>
-              <property name="text" >
+              <property name="text">
                <string>New Row</string>
               </property>
              </row>
              <row>
-              <property name="text" >
+              <property name="text">
                <string>New Row</string>
               </property>
              </row>
              <row>
-              <property name="text" >
+              <property name="text">
                <string>New Row</string>
               </property>
              </row>
              <row>
-              <property name="text" >
+              <property name="text">
                <string>New Row</string>
               </property>
              </row>
              <row>
-              <property name="text" >
+              <property name="text">
                <string>New Row</string>
               </property>
              </row>
              <row>
-              <property name="text" >
+              <property name="text">
                <string>New Row</string>
               </property>
              </row>
              <row>
-              <property name="text" >
+              <property name="text">
                <string>New Row</string>
               </property>
              </row>
              <row>
-              <property name="text" >
+              <property name="text">
                <string>New Row</string>
               </property>
              </row>
              <row>
-              <property name="text" >
+              <property name="text">
                <string>New Row</string>
               </property>
              </row>
              <row>
-              <property name="text" >
+              <property name="text">
                <string>New Row</string>
               </property>
              </row>
              <row>
-              <property name="text" >
+              <property name="text">
                <string>New Row</string>
               </property>
              </row>
              <row>
-              <property name="text" >
+              <property name="text">
                <string>New Row</string>
               </property>
              </row>
              <row>
-              <property name="text" >
+              <property name="text">
                <string>New Row</string>
               </property>
              </row>
              <column>
-              <property name="text" >
+              <property name="text">
                <string>0</string>
               </property>
              </column>
              <column>
-              <property name="text" >
+              <property name="text">
                <string>1</string>
               </property>
              </column>
-             <item row="0" column="0" >
-              <property name="text" >
+             <item row="0" column="0">
+              <property name="text">
                <string>View Background</string>
               </property>
              </item>
-             <item row="1" column="0" >
-              <property name="text" >
+             <item row="1" column="0">
+              <property name="text">
                <string>View Text</string>
               </property>
              </item>
-             <item row="2" column="0" >
-              <property name="text" >
+             <item row="2" column="0">
+              <property name="text">
                <string>Window Background</string>
               </property>
              </item>
-             <item row="3" column="0" >
-              <property name="text" >
+             <item row="3" column="0">
+              <property name="text">
                <string>Window Text</string>
               </property>
              </item>
-             <item row="4" column="0" >
-              <property name="text" >
+             <item row="4" column="0">
+              <property name="text">
                <string>Button Background</string>
               </property>
              </item>
-             <item row="5" column="0" >
-              <property name="text" >
+             <item row="5" column="0">
+              <property name="text">
                <string>Button Text</string>
               </property>
              </item>
-             <item row="6" column="0" >
-              <property name="text" >
+             <item row="6" column="0">
+              <property name="text">
                <string>Selection Background</string>
               </property>
              </item>
-             <item row="7" column="0" >
-              <property name="text" >
+             <item row="7" column="0">
+              <property name="text">
                <string>Selection Text</string>
               </property>
              </item>
-             <item row="8" column="0" >
-              <property name="text" >
+             <item row="8" column="0">
+              <property name="text">
                <string>Selection Inactive Text</string>
               </property>
              </item>
-             <item row="9" column="0" >
-              <property name="text" >
+             <item row="9" column="0">
+              <property name="text">
                <string>Inactive Text</string>
               </property>
              </item>
-             <item row="10" column="0" >
-              <property name="text" >
+             <item row="10" column="0">
+              <property name="text">
                <string>Active Text</string>
               </property>
              </item>
-             <item row="11" column="0" >
-              <property name="text" >
+             <item row="11" column="0">
+              <property name="text">
                <string>Link Text</string>
               </property>
              </item>
-             <item row="12" column="0" >
-              <property name="text" >
+             <item row="12" column="0">
+              <property name="text">
                <string>Visited Text</string>
               </property>
              </item>
-             <item row="13" column="0" >
-              <property name="text" >
+             <item row="13" column="0">
+              <property name="text">
                <string>Negative Text</string>
               </property>
              </item>
-             <item row="14" column="0" >
-              <property name="text" >
+             <item row="14" column="0">
+              <property name="text">
                <string>Neutral Text</string>
               </property>
              </item>
-             <item row="15" column="0" >
-              <property name="text" >
+             <item row="15" column="0">
+              <property name="text">
                <string>Positive Text</string>
               </property>
              </item>
-             <item row="16" column="0" >
-              <property name="text" >
+             <item row="16" column="0">
+              <property name="text">
                <string>Focus Decoration</string>
               </property>
              </item>
-             <item row="17" column="0" >
-              <property name="text" >
+             <item row="17" column="0">
+              <property name="text">
                <string>Hover Decoration</string>
               </property>
              </item>
-             <item row="18" column="0" >
-              <property name="text" >
+             <item row="18" column="0">
+              <property name="text">
                <string>Tooltip Background</string>
               </property>
              </item>
-             <item row="19" column="0" >
-              <property name="text" >
+             <item row="19" column="0">
+              <property name="text">
                <string>Tooltip Text</string>
               </property>
              </item>
-             <item row="20" column="0" >
-              <property name="text" >
+             <item row="20" column="0">
+              <property name="text">
                <string>Active Titlebar</string>
               </property>
              </item>
-             <item row="21" column="0" >
-              <property name="text" >
+             <item row="21" column="0">
+              <property name="text">
                <string>Active Titlebar Text</string>
               </property>
              </item>
-             <item row="22" column="0" >
-              <property name="text" >
+             <item row="22" column="0">
+              <property name="text">
                <string>Inactive Titlebar</string>
               </property>
              </item>
-             <item row="23" column="0" >
-              <property name="text" >
+             <item row="23" column="0">
+              <property name="text">
                <string>Inactive Titlebar Text</string>
               </property>
              </item>
@@ -559,26 +560,26 @@
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="pageSetColors" >
-          <layout class="QGridLayout" >
-           <property name="margin" >
+         <widget class="QWidget" name="pageSetColors">
+          <layout class="QGridLayout">
+           <property name="margin">
             <number>0</number>
            </property>
-           <item row="0" column="0" >
-            <widget class="QTableWidget" name="colorTable" >
-             <property name="editTriggers" >
+           <item row="0" column="0">
+            <widget class="QTableWidget" name="colorTable">
+             <property name="editTriggers">
               <set>QAbstractItemView::NoEditTriggers</set>
              </property>
-             <property name="selectionMode" >
+             <property name="selectionMode">
               <enum>QAbstractItemView::SingleSelection</enum>
              </property>
-             <property name="selectionBehavior" >
+             <property name="selectionBehavior">
               <enum>QAbstractItemView::SelectRows</enum>
              </property>
-             <property name="wordWrap" >
+             <property name="wordWrap">
               <bool>true</bool>
              </property>
-             <property name="columnCount" >
+             <property name="columnCount">
               <number>2</number>
              </property>
              <column/>
@@ -589,43 +590,43 @@
          </widget>
         </widget>
        </item>
-       <item row="2" column="0" colspan="2" >
-        <widget class="QGroupBox" name="groupBox_4" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+       <item row="2" column="0" colspan="2">
+        <widget class="QGroupBox" name="groupBox_4">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="minimumSize" >
+         <property name="minimumSize">
           <size>
            <width>0</width>
            <height>0</height>
           </size>
          </property>
-         <property name="title" >
+         <property name="title">
           <string>Preview</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_4" >
+         <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
-           <widget class="QStackedWidget" name="stackPreview" >
-            <property name="currentIndex" >
+           <widget class="QStackedWidget" name="stackPreview">
+            <property name="currentIndex">
              <number>1</number>
             </property>
-            <widget class="QWidget" name="pageCommonPreview" >
-             <layout class="QVBoxLayout" name="verticalLayout" >
-              <property name="margin" >
+            <widget class="QWidget" name="pageCommonPreview">
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <property name="margin">
                <number>0</number>
               </property>
               <item>
-               <widget class="PreviewWidget" native="1" name="colorPreview" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+               <widget class="PreviewWidget" name="colorPreview" native="true">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
-                <property name="minimumSize" >
+                <property name="minimumSize">
                  <size>
                   <width>0</width>
                   <height>10</height>
@@ -635,20 +636,20 @@
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="pageSetPreview" >
-             <layout class="QVBoxLayout" name="verticalLayout_5" >
-              <property name="margin" >
+            <widget class="QWidget" name="pageSetPreview">
+             <layout class="QVBoxLayout" name="verticalLayout_5">
+              <property name="margin">
                <number>0</number>
               </property>
               <item>
-               <widget class="SetPreviewWidget" native="1" name="setPreview" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+               <widget class="SetPreviewWidget" name="setPreview" native="true">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
-                <property name="minimumSize" >
+                <property name="minimumSize">
                  <size>
                   <width>0</width>
                   <height>10</height>
@@ -665,82 +666,82 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="pageInactice" >
-      <attribute name="title" >
+     <widget class="QWidget" name="pageInactice">
+      <attribute name="title">
        <string>Inactive</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_9" >
+      <layout class="QVBoxLayout" name="verticalLayout_9">
        <item>
-        <widget class="QGroupBox" name="groupBox" >
-         <property name="title" >
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
           <string>Inactive</string>
          </property>
-         <layout class="QGridLayout" name="_2" >
-          <item row="0" column="0" >
-           <widget class="QLabel" name="label" >
-            <property name="text" >
+         <layout class="QGridLayout" name="_2">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
              <string>Intensity:</string>
             </property>
-            <property name="alignment" >
+            <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
-          <item row="0" column="1" >
-           <widget class="QComboBox" name="inactiveIntensityBox" >
-            <property name="toolTip" >
+          <item row="0" column="1">
+           <widget class="QComboBox" name="inactiveIntensityBox">
+            <property name="toolTip">
              <string>Inactive intensity effect type</string>
             </property>
             <item>
-             <property name="text" >
+             <property name="text">
               <string>None</string>
              </property>
             </item>
             <item>
-             <property name="text" >
+             <property name="text">
               <string>Shade</string>
              </property>
             </item>
             <item>
-             <property name="text" >
+             <property name="text">
               <string>Darken</string>
              </property>
             </item>
             <item>
-             <property name="text" >
+             <property name="text">
               <string>Lighten</string>
              </property>
             </item>
            </widget>
           </item>
-          <item row="0" column="2" >
-           <widget class="QSlider" name="inactiveIntensitySlider" >
-            <property name="enabled" >
+          <item row="0" column="2">
+           <widget class="QSlider" name="inactiveIntensitySlider">
+            <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="toolTip" >
+            <property name="toolTip">
              <string>Inactive intensity effect amount</string>
             </property>
-            <property name="maximum" >
+            <property name="maximum">
              <number>40</number>
             </property>
-            <property name="pageStep" >
+            <property name="pageStep">
              <number>10</number>
             </property>
-            <property name="orientation" >
+            <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
            </widget>
           </item>
-          <item row="0" column="3" >
+          <item row="0" column="3">
            <spacer>
-            <property name="orientation" >
+            <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
-            <property name="sizeType" >
+            <property name="sizeType">
              <enum>QSizePolicy::Minimum</enum>
             </property>
-            <property name="sizeHint" stdset="0" >
+            <property name="sizeHint" stdset="0">
              <size>
               <width>61</width>
               <height>22</height>
@@ -748,132 +749,132 @@
             </property>
            </spacer>
           </item>
-          <item row="1" column="0" >
-           <widget class="QLabel" name="label_2" >
-            <property name="text" >
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
              <string>Color:</string>
             </property>
-            <property name="alignment" >
+            <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
-          <item row="1" column="1" >
-           <widget class="QComboBox" name="inactiveColorBox" >
-            <property name="toolTip" >
+          <item row="1" column="1">
+           <widget class="QComboBox" name="inactiveColorBox">
+            <property name="toolTip">
              <string>Inactive color effect type</string>
             </property>
             <item>
-             <property name="text" >
+             <property name="text">
               <string>None</string>
              </property>
             </item>
             <item>
-             <property name="text" >
+             <property name="text">
               <string>Desaturate</string>
              </property>
             </item>
             <item>
-             <property name="text" >
+             <property name="text">
               <string>Fade</string>
              </property>
             </item>
             <item>
-             <property name="text" >
+             <property name="text">
               <string>Tint</string>
              </property>
             </item>
            </widget>
           </item>
-          <item row="1" column="2" >
-           <widget class="QSlider" name="inactiveColorSlider" >
-            <property name="enabled" >
+          <item row="1" column="2">
+           <widget class="QSlider" name="inactiveColorSlider">
+            <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="toolTip" >
+            <property name="toolTip">
              <string>Inactive color amount</string>
             </property>
-            <property name="maximum" >
+            <property name="maximum">
              <number>40</number>
             </property>
-            <property name="pageStep" >
+            <property name="pageStep">
              <number>10</number>
             </property>
-            <property name="orientation" >
+            <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
            </widget>
           </item>
-          <item row="1" column="3" >
-           <widget class="KColorButton" name="inactiveColorButton" >
-            <property name="enabled" >
+          <item row="1" column="3">
+           <widget class="KColorButton" name="inactiveColorButton">
+            <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="toolTip" >
+            <property name="toolTip">
              <string>Inactive color</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="0" >
-           <widget class="QLabel" name="label_3" >
-            <property name="text" >
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
              <string>Contrast:</string>
             </property>
-            <property name="alignment" >
+            <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
-          <item row="2" column="1" >
-           <widget class="QComboBox" name="inactiveContrastBox" >
-            <property name="toolTip" >
+          <item row="2" column="1">
+           <widget class="QComboBox" name="inactiveContrastBox">
+            <property name="toolTip">
              <string>Inactive contrast effect type</string>
             </property>
             <item>
-             <property name="text" >
+             <property name="text">
               <string>None</string>
              </property>
             </item>
             <item>
-             <property name="text" >
+             <property name="text">
               <string>Fade</string>
              </property>
             </item>
             <item>
-             <property name="text" >
+             <property name="text">
               <string>Tint</string>
              </property>
             </item>
            </widget>
           </item>
-          <item row="2" column="2" >
-           <widget class="QSlider" name="inactiveContrastSlider" >
-            <property name="enabled" >
+          <item row="2" column="2">
+           <widget class="QSlider" name="inactiveContrastSlider">
+            <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="toolTip" >
+            <property name="toolTip">
              <string>Inactive contrast effect amount</string>
             </property>
-            <property name="maximum" >
+            <property name="maximum">
              <number>20</number>
             </property>
-            <property name="pageStep" >
+            <property name="pageStep">
              <number>5</number>
             </property>
-            <property name="orientation" >
+            <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
            </widget>
           </item>
-          <item row="2" column="3" >
+          <item row="2" column="3">
            <spacer>
-            <property name="orientation" >
+            <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
-            <property name="sizeType" >
+            <property name="sizeType">
              <enum>QSizePolicy::Minimum</enum>
             </property>
-            <property name="sizeHint" stdset="0" >
+            <property name="sizeHint" stdset="0">
              <size>
               <width>40</width>
               <height>20</height>
@@ -881,15 +882,15 @@
             </property>
            </spacer>
           </item>
-          <item row="3" column="0" colspan="4" >
-           <widget class="PreviewWidget" native="1" name="inactivePreview" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+          <item row="3" column="0" colspan="4">
+           <widget class="PreviewWidget" name="inactivePreview" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="minimumSize" >
+            <property name="minimumSize">
              <size>
               <width>0</width>
               <height>10</height>
@@ -901,96 +902,96 @@
         </widget>
        </item>
        <item>
-        <spacer name="verticalSpacer_3" >
-         <property name="orientation" >
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="pageDisabled" >
-      <attribute name="title" >
+     <widget class="QWidget" name="pageDisabled">
+      <attribute name="title">
        <string>Disabled</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_8" >
+      <layout class="QVBoxLayout" name="verticalLayout_8">
        <item>
-        <widget class="QGroupBox" name="groupBox_2" >
-         <property name="title" >
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
           <string>Disabled</string>
          </property>
-         <layout class="QGridLayout" name="_3" >
-          <item row="0" column="0" >
-           <widget class="QLabel" name="label_5" >
-            <property name="text" >
+         <layout class="QGridLayout" name="_3">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
              <string>Intensity:</string>
             </property>
-            <property name="alignment" >
+            <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
-          <item row="0" column="1" >
-           <widget class="QComboBox" name="disabledIntensityBox" >
-            <property name="toolTip" >
+          <item row="0" column="1">
+           <widget class="QComboBox" name="disabledIntensityBox">
+            <property name="toolTip">
              <string>Disabled intensity effect type</string>
             </property>
             <item>
-             <property name="text" >
+             <property name="text">
               <string>None</string>
              </property>
             </item>
             <item>
-             <property name="text" >
+             <property name="text">
               <string>Shade</string>
              </property>
             </item>
             <item>
-             <property name="text" >
+             <property name="text">
               <string>Darken</string>
              </property>
             </item>
             <item>
-             <property name="text" >
+             <property name="text">
               <string>Lighten</string>
              </property>
             </item>
            </widget>
           </item>
-          <item row="0" column="2" >
-           <widget class="QSlider" name="disabledIntensitySlider" >
-            <property name="enabled" >
+          <item row="0" column="2">
+           <widget class="QSlider" name="disabledIntensitySlider">
+            <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="toolTip" >
+            <property name="toolTip">
              <string>Disabled intensity effect amount</string>
             </property>
-            <property name="maximum" >
+            <property name="maximum">
              <number>40</number>
             </property>
-            <property name="pageStep" >
+            <property name="pageStep">
              <number>10</number>
             </property>
-            <property name="orientation" >
+            <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
            </widget>
           </item>
-          <item row="0" column="3" >
+          <item row="0" column="3">
            <spacer>
-            <property name="orientation" >
+            <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
-            <property name="sizeType" >
+            <property name="sizeType">
              <enum>QSizePolicy::Minimum</enum>
             </property>
-            <property name="sizeHint" stdset="0" >
+            <property name="sizeHint" stdset="0">
              <size>
               <width>61</width>
               <height>22</height>
@@ -998,132 +999,132 @@
             </property>
            </spacer>
           </item>
-          <item row="1" column="0" >
-           <widget class="QLabel" name="label_4" >
-            <property name="text" >
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
              <string>Color:</string>
             </property>
-            <property name="alignment" >
+            <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
-          <item row="1" column="1" >
-           <widget class="QComboBox" name="disabledColorBox" >
-            <property name="toolTip" >
+          <item row="1" column="1">
+           <widget class="QComboBox" name="disabledColorBox">
+            <property name="toolTip">
              <string>Disabled color effect type</string>
             </property>
             <item>
-             <property name="text" >
+             <property name="text">
               <string>None</string>
              </property>
             </item>
             <item>
-             <property name="text" >
+             <property name="text">
               <string>Desaturate</string>
              </property>
             </item>
             <item>
-             <property name="text" >
+             <property name="text">
               <string>Fade</string>
              </property>
             </item>
             <item>
-             <property name="text" >
+             <property name="text">
               <string>Tint</string>
              </property>
             </item>
            </widget>
           </item>
-          <item row="1" column="2" >
-           <widget class="QSlider" name="disabledColorSlider" >
-            <property name="enabled" >
+          <item row="1" column="2">
+           <widget class="QSlider" name="disabledColorSlider">
+            <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="toolTip" >
+            <property name="toolTip">
              <string>Disabled color effect amount</string>
             </property>
-            <property name="maximum" >
+            <property name="maximum">
              <number>40</number>
             </property>
-            <property name="pageStep" >
+            <property name="pageStep">
              <number>10</number>
             </property>
-            <property name="orientation" >
+            <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
            </widget>
           </item>
-          <item row="1" column="3" >
-           <widget class="KColorButton" name="disabledColorButton" >
-            <property name="enabled" >
+          <item row="1" column="3">
+           <widget class="KColorButton" name="disabledColorButton">
+            <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="toolTip" >
+            <property name="toolTip">
              <string>Disabled color</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="0" >
-           <widget class="QLabel" name="label_6" >
-            <property name="text" >
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_6">
+            <property name="text">
              <string>Contrast:</string>
             </property>
-            <property name="alignment" >
+            <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
-          <item row="2" column="1" >
-           <widget class="QComboBox" name="disabledContrastBox" >
-            <property name="toolTip" >
+          <item row="2" column="1">
+           <widget class="QComboBox" name="disabledContrastBox">
+            <property name="toolTip">
              <string>Disabled contrast type</string>
             </property>
             <item>
-             <property name="text" >
+             <property name="text">
               <string>None</string>
              </property>
             </item>
             <item>
-             <property name="text" >
+             <property name="text">
               <string>Fade</string>
              </property>
             </item>
             <item>
-             <property name="text" >
+             <property name="text">
               <string>Tint</string>
              </property>
             </item>
            </widget>
           </item>
-          <item row="2" column="2" >
-           <widget class="QSlider" name="disabledContrastSlider" >
-            <property name="enabled" >
+          <item row="2" column="2">
+           <widget class="QSlider" name="disabledContrastSlider">
+            <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="toolTip" >
+            <property name="toolTip">
              <string>Disabled contrast amount</string>
             </property>
-            <property name="maximum" >
+            <property name="maximum">
              <number>20</number>
             </property>
-            <property name="pageStep" >
+            <property name="pageStep">
              <number>10</number>
             </property>
-            <property name="orientation" >
+            <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
            </widget>
           </item>
-          <item row="2" column="3" >
+          <item row="2" column="3">
            <spacer>
-            <property name="orientation" >
+            <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
-            <property name="sizeType" >
+            <property name="sizeType">
              <enum>QSizePolicy::Minimum</enum>
             </property>
-            <property name="sizeHint" stdset="0" >
+            <property name="sizeHint" stdset="0">
              <size>
               <width>40</width>
               <height>20</height>
@@ -1131,15 +1132,15 @@
             </property>
            </spacer>
           </item>
-          <item row="3" column="0" colspan="4" >
-           <widget class="PreviewWidget" native="1" name="disabledPreview" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+          <item row="3" column="0" colspan="4">
+           <widget class="PreviewWidget" name="disabledPreview" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="minimumSize" >
+            <property name="minimumSize">
              <size>
               <width>0</width>
               <height>10</height>
@@ -1151,14 +1152,14 @@
         </widget>
        </item>
        <item>
-        <spacer name="verticalSpacer_2" >
-         <property name="orientation" >
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -1171,14 +1172,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KColorButton</class>
-   <extends>QPushButton</extends>
-   <header>kcolorbutton.h</header>
-  </customwidget>
-  <customwidget>
    <class>KListWidget</class>
    <extends>QListWidget</extends>
    <header>klistwidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KColorButton</class>
+   <extends>QPushButton</extends>
+   <header>kcolorbutton.h</header>
   </customwidget>
   <customwidget>
    <class>PreviewWidget</class>
