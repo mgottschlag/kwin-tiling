@@ -39,7 +39,7 @@
 					</item>
 					
 					<item type="entry" id="user-entry">
-						<pos anchor="c" x="54%" y="0%" width="110" height="22"/>
+						<pos anchor="c" x="52%" y="0%" width="110" height="22"/>
 					</item>
 
 					<item type="pixmap">
@@ -49,7 +49,7 @@
 					</item>
 									
 					<item type="entry" id="pw-entry">
-						<pos anchor="c" x="54%" y="0%" width="110" height="22"/>
+						<pos anchor="c" x="52%" y="0%" width="110" height="22"/>
 					</item>
 					
 				</box>
