@@ -26,7 +26,6 @@
 
 #include "kxkbconfig.h"
 
-class LayoutUnit;
 class XKlavierAdaptorPriv;
 
 class XKlavierAdaptor {

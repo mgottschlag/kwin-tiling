@@ -32,7 +32,6 @@
 #include <QDropEvent>
 
 class BGMonitor;
-class BGMonitorLabel;
 class QPixmap;
 class ScreenPreviewWidget;
 

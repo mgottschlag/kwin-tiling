@@ -28,7 +28,6 @@ class QListWidgetItem;
 class KComboBox;
 class QCheckBox;
 class QGroupBox;
-class QLabel;
 class QRadioButton;
 
 class KDMConvenienceWidget : public QWidget {

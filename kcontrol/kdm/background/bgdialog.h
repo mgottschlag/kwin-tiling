@@ -30,7 +30,6 @@
 
 class BGMonitorArrangement;
 class KStandardDirs;
-class BGMultiWallpaperList;
 
 class BGDialog_UI : public QWidget, public Ui::BGDialog_UI
 {

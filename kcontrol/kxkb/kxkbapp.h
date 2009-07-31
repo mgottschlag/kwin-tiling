@@ -31,7 +31,6 @@ DESCRIPTION
 
 #include "kxkbcore.h"
 
-class LayoutUnit;
 
 /**
     This class is used when calling kxkb as a standalone app

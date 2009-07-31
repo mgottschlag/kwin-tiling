@@ -29,7 +29,6 @@
 
 class QString;
 
-class QStringList;
 
 #define ORIGINAL_THEME "original" // no i18n() here!!!
 

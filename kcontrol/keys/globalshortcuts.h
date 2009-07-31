@@ -23,7 +23,6 @@
 #include <kcmodule.h>
 #include <QtCore/QHash>
 
-class KActionCollection;
 class KGlobalShortcutsEditor;
 
 class GlobalShortcutsModule : public KCModule

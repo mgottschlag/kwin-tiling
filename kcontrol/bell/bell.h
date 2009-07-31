@@ -26,7 +26,6 @@
 class QCheckBox;
 class KIntNumInput;
 class QPushButton;
-class QStringList;
 
 class KBellConfig : public KCModule
 {

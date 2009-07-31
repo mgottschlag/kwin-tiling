@@ -39,10 +39,8 @@ class KComboBox;
 class KConfig;
 class QCheckBox;
 class QComboBox;
-class QGroupBox;
 class QLabel;
 class QPushButton;
-class QSlider;
 class StylePreview;
 class QTabWidget;
 

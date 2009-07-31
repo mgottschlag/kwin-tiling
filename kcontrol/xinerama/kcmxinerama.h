@@ -28,7 +28,6 @@
 
 class KConfig;
 class QWidget;
-class QStringList;
 
 class KCMXinerama : public KCModule {
 	Q_OBJECT
