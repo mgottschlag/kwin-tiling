@@ -7,6 +7,7 @@
 
 #include <KMenu>
 #include <QBasicTimer>
+#include <QTimeLine>
 #include <QScrollArea>
 #include <QtCore>
 #include <QtGui>
@@ -31,11 +32,14 @@ public:
     AppletsList(QGraphicsItem *parent = 0);
     ~AppletsList();
 
+    QList < KCategorizedItemsViewModels::AbstractItem * > selectedItems() const;
+    void setItemModel(QStandardItemModel *model);
+    void setFilterModel(QStandardItemModel *model);
+
+private:
     void init();
 
     KCategorizedItemsViewModels::AbstractItem *getItemByProxyIndex(const QModelIndex &index) const;
-    void setItemModel(QStandardItemModel *model);
-    void setFilterModel(QStandardItemModel *model);
 
     void populateAllAppletsHash();
 
@@ -48,7 +52,6 @@ public:
     double listWidth();
     int maximumVisibleIconsOnList();
     void eraseList();
-    QList < KCategorizedItemsViewModels::AbstractItem * > selectedItems() const;
 
     AppletIconWidget *findAppletUnderXPosition(int xPosition);
     QRectF visibleListRect();
@@ -58,7 +61,7 @@ public:
     void scrollLeft(int step, QRectF visibleRect);
     void wheelEvent(QGraphicsSceneWheelEvent *event);
 
-public slots:
+private slots:
     void searchTermChanged(const QString &text);
     void filterChanged(int index);
     void updateList();
@@ -110,6 +113,9 @@ private:
 
     int arrowClickStep;
     int scrollStep;
+
+    QTimeLine scrollTimeLine;
+    int scrollTo;
 };
 
 class AppletIconWidget : public Plasma::IconWidget
