@@ -55,6 +55,8 @@ public:
     virtual void setRunning(int count);
     virtual bool passesFiltering(const KCategorizedItemsViewModels::Filter & filter) const;
     virtual QVariantList arguments() const;
+    virtual QMimeData *mimeData() const;
+    virtual QStringList mimeTypes() const;
 
 private:
     PlasmaAppletItemModel * m_model;

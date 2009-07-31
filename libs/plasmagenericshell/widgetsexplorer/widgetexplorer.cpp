@@ -134,8 +134,8 @@ void WidgetExplorerMainWidgetPrivate::init()
 
     appletsListWidget = new AppletsList();
 
-    //para isso, fazer meu appletlist escutar doubleClick e ter método selectedItems
     //QObject::connect(appletsListWidget, SIGNAL(doubleClicked(const QModelIndex &)), q, SLOT(addApplet()));
+    QObject::connect(appletsListWidget, SIGNAL(appletDoubleClicked(PlasmaAppletItem*)), q, SLOT(addApplet(PlasmaAppletItem*)));
     appletsListWidget->setMaximumHeight(q->contentsRect().height());
     appletsListWidget->setMinimumHeight(q->contentsRect().height());
 
@@ -327,7 +327,6 @@ Containment *WidgetExplorerMainWidget::containment() const
 
 void WidgetExplorerMainWidget::addApplet()
 {
-
     if (!d->containment) {
         return;
     }
@@ -337,6 +336,17 @@ void WidgetExplorerMainWidget::addApplet()
         kDebug() << "Adding applet " << selectedItem->name() << "to containment";
         d->containment->addApplet(selectedItem->pluginName(), selectedItem->arguments());
     }
+}
+
+void WidgetExplorerMainWidget::addApplet(PlasmaAppletItem *appletItem)
+{
+    if (!d->containment) {
+        return;
+    }
+
+    kDebug() << appletItem->pluginName() << appletItem->arguments();
+
+    d->containment->addApplet(appletItem->pluginName(), appletItem->arguments());
 }
 
 void WidgetExplorerMainWidget::destroyApplets(const QString &name)

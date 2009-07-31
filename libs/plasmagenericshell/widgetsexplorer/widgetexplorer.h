@@ -4,6 +4,7 @@
 #include <QtGui>
 #include <KDE/KDialog>
 #include <plasma/framesvg.h>
+#include "plasmaappletitemmodel_p.h"
 
 namespace Plasma
 {
@@ -44,6 +45,11 @@ public Q_SLOTS:
      * Adds currently selected applets
      */
     void addApplet();
+
+    /**
+     * Adds applet
+     */
+    void addApplet(PlasmaAppletItem *appletItem);
 
     /**
      * Destroy all applets with this name

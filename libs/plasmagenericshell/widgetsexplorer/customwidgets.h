@@ -49,6 +49,7 @@ public:
     int maximumVisibleIconsOnList();
     void eraseList();
     QList < KCategorizedItemsViewModels::AbstractItem * > selectedItems() const;
+
     AppletIconWidget *findAppletUnderXPosition(int xPosition);
     QRectF visibleListRect();
 
@@ -56,11 +57,6 @@ public:
     void scrollRight(int step, QRectF visibleRect);
     void scrollLeft(int step, QRectF visibleRect);
     void wheelEvent(QGraphicsSceneWheelEvent *event);
-
-//    void scrollRightToShowClippedAppletIcon(int lastVisibleXOnList);
-//    void scrollLeftToShowClippedAppletIcon(int firstVisibleXOnList);
-
-
 
 public slots:
     void searchTermChanged(const QString &text);
@@ -71,6 +67,8 @@ public slots:
     void onLeftArrowClick();
     void manageArrows();
     void resetScroll();
+    void itemSelected(AppletIconWidget *applet);
+    void appletIconDoubleClicked(AppletIconWidget *applet);
 
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
@@ -83,6 +81,7 @@ Q_SIGNALS:
 
     void appletIconEnter(PlasmaAppletItem *appletItem);
     void listScrolled();
+    void appletDoubleClicked(PlasmaAppletItem *appletItem);
 
 
 private:
@@ -104,6 +103,8 @@ private:
     QStandardItemModel *m_modelFilters;
     KCategorizedItemsViewModels::DefaultItemFilterProxyModel *m_modelFilterItems;
 
+    AppletIconWidget *m_selectedItem;
+
     QBasicTimer m_searchDelayTimer;
     QString m_searchString;
 
@@ -121,6 +122,7 @@ class AppletIconWidget : public Plasma::IconWidget
         virtual ~AppletIconWidget();
 
         void setAppletItem(PlasmaAppletItem *appletIcon);
+        void setSelected(bool selected);
         PlasmaAppletItem *appletItem();
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
@@ -128,15 +130,20 @@ class AppletIconWidget : public Plasma::IconWidget
         void updateApplet(PlasmaAppletItem *newAppletItem);
         void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
         void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
-        void mouseMoveEvent(QGraphicsSceneMouseEvent * event);
+        void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+        void mousePressEvent(QGraphicsSceneMouseEvent *event);
+        void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
 
     Q_SIGNALS:
         void hoverEnter(AppletIconWidget *applet);
         void hoverLeave(AppletIconWidget *applet);
+        void selected(AppletIconWidget *applet);
+        void doubleClicked(AppletIconWidget *applet);
 
     private:
         PlasmaAppletItem *m_appletItem;
-        bool selected;
+        bool m_selected;
+        bool m_hovered;
         Plasma::FrameSvg *m_selectedBackgroundSvg;
         bool m_showingTooltip;
 };

@@ -101,6 +101,24 @@ QVariantList PlasmaAppletItem::arguments() const
     return qvariant_cast<QVariantList>(data().toMap()["arguments"]);
 }
 
+QMimeData *PlasmaAppletItem::mimeData() const
+{
+    QMimeData *data = new QMimeData();
+    QByteArray appletName;
+    appletName += pluginName().toUtf8();
+    data->setData(mimeTypes().at(0), appletName);
+    return data;
+}
+
+QStringList PlasmaAppletItem::mimeTypes() const
+{
+    QStringList types;
+    types << QLatin1String("text/x-plasmoidservicename");
+    return types;
+}
+
+//PlasmaAppletItemModel
+
 PlasmaAppletItemModel::PlasmaAppletItemModel(KConfigGroup configGroup, QObject * parent) :
     QStandardItemModel(parent),
     m_configGroup(configGroup)

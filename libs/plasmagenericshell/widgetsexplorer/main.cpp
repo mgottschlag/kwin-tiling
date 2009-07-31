@@ -6,12 +6,20 @@
 #include <QDesktopWidget>
 #include <plasma/corona.h>
 #include <plasma/view.h>
+#include <plasma/containment.h>
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
     Plasma::Containment *containment = new Plasma::Containment();
+
+    KPluginInfo::List list = Plasma::Containment::listContainments();
+    
+    foreach(KPluginInfo info, list) {
+        kDebug() << info.pluginName();
+    }
+    
     Plasma::WidgetExplorerMainWidget *appletBrowser;
 
     appletBrowser = new Plasma::WidgetExplorerMainWidget();

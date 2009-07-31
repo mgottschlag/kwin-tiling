@@ -4,6 +4,7 @@
 #include <kiconloader.h>
 #include <cmath>
 #include <QHash>
+#include <typeinfo>
 
 #include <plasma/tooltipmanager.h>
 
@@ -22,6 +23,7 @@ AppletsList::AppletsList(QGraphicsItem *parent)
     init();
     arrowClickStep = 0;
     scrollStep = 0;
+    m_selectedItem = 0;
     connect(this, SIGNAL(listScrolled()), this, SLOT(manageArrows()));
 }
 
@@ -151,8 +153,24 @@ AppletIconWidget *AppletsList::createAppletIcon(PlasmaAppletItem *appletItem)
     applet->setMaximumSize(ICON_WIDGET_WIDTH, ICON_WIDGET_HEIGHT);
 
     connect(applet, SIGNAL(hoverEnter(AppletIconWidget*)), this, SLOT(appletIconEnter(AppletIconWidget*)));
+    connect(applet, SIGNAL(selected(AppletIconWidget*)), this, SLOT(itemSelected(AppletIconWidget*)));
+    connect(applet, SIGNAL(doubleClicked(AppletIconWidget*)), this, SLOT(appletIconDoubleClicked(AppletIconWidget*)));
 
     return applet;
+}
+
+void AppletsList::itemSelected(AppletIconWidget *applet)
+{
+    if(m_selectedItem) {
+        m_selectedItem->setSelected(false);
+    }
+    applet->setSelected(true);
+    m_selectedItem = applet;
+}
+
+void AppletsList::appletIconDoubleClicked(AppletIconWidget *applet)
+{
+    emit(appletDoubleClicked(applet->appletItem()));
 }
 
 void AppletsList::eraseList() {
@@ -386,7 +404,8 @@ AppletIconWidget::AppletIconWidget(QGraphicsItem *parent, PlasmaAppletItem *appl
     : Plasma::IconWidget(parent)
 {
     m_appletItem = appletItem;
-    selected = false;
+    m_hovered = false;
+    m_selected = false;
     m_selectedBackgroundSvg = new Plasma::FrameSvg(this);
     m_selectedBackgroundSvg->setImagePath("widgets/translucentbackground");
 
@@ -438,14 +457,14 @@ void AppletIconWidget::updateApplet(PlasmaAppletItem *appletItem)
 void AppletIconWidget::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Plasma::IconWidget::hoverEnterEvent(event);
-    selected = true;
+    m_hovered = true;
     emit(hoverEnter(this));
 }
 
 void AppletIconWidget::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     Plasma::IconWidget::hoverLeaveEvent(event);
-    selected = false;
+    m_hovered = false;
     emit(hoverLeave(this));
 }
 
@@ -458,24 +477,46 @@ void AppletIconWidget::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
     ) {
         event->accept();
         qDebug() << "Start Dragging";
-        QDrag * drag = new QDrag(event->widget());
+        QDrag *drag = new QDrag(event->widget());        
+        QPixmap p = appletItem()->icon().pixmap(KIconLoader::SizeLarge, KIconLoader::SizeLarge);
+        drag->setPixmap(p);
 
-        QMimeData * data = new QMimeData();
-        data->setText("http://www.google.com");
+        QMimeData *data = m_appletItem->mimeData();
 
         drag->setMimeData(data);
         drag->exec();
 
         mouseReleaseEvent(event);
     }
+}
 
+void AppletIconWidget::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    Q_UNUSED(event)
+    emit(selected(this));
+}
+
+void AppletIconWidget::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    Q_UNUSED(event)
+    emit(doubleClicked(this));
+}
+
+void AppletIconWidget::setSelected(bool selected)
+{
+    m_selected = selected;
+    update(0,0,boundingRect().width(), boundingRect().height());
 }
 
 void AppletIconWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
  {
-    if(selected) {
-        m_selectedBackgroundSvg->resizeFrame(contentsRect().size());
-        m_selectedBackgroundSvg->paintFrame(painter, contentsRect().topLeft());
+    if(m_selected || m_hovered) {
+        m_selectedBackgroundSvg->resizeFrame(boundingRect().size());
+        m_selectedBackgroundSvg->paintFrame(painter, boundingRect().topLeft());
+        if(m_selected) {
+            //again
+            m_selectedBackgroundSvg->paintFrame(painter, boundingRect().topLeft());
+        }
      }
 
     Plasma::IconWidget::paint(painter, option, widget);
