@@ -23,11 +23,8 @@
 
 #include <Plasma/Containment>
 
-class QComboBox;
 class QAction;
 class QTimer;
-class KDialog;
-class KIntNumInput;
 class Spacer;
 
 namespace Plasma

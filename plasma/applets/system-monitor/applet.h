@@ -26,7 +26,6 @@
 #define MINIMUM 24
 #define PREFERRED 200
 
-class Header;
 class QGraphicsLinearLayout;
 
 namespace Plasma {

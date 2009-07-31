@@ -22,7 +22,6 @@
 #include <kworkspace/kdisplaymanager.h>
 #include <Plasma/AbstractRunner>
 
-class QAction;
 
 /**
  * This class provides matches for running sessions as well as

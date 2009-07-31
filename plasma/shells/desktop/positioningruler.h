@@ -28,7 +28,6 @@
 
 namespace Plasma
 {
-    class Containment;
 }
 
 class PositioningRuler : public QWidget

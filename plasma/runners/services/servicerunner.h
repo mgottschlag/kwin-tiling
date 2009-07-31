@@ -25,7 +25,6 @@
 
 #include <Plasma/AbstractRunner>
 
-class QWidget;
 
 /**
  * This class looks for matches in the set of .desktop files installed by

@@ -28,8 +28,6 @@
 namespace Plasma {
     class Meter;
 }
-class Header;
-class QGraphicsLinearLayout;
 
 class Temperature : public SM::Applet
 {

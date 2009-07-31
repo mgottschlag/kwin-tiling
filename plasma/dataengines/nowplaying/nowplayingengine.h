@@ -28,7 +28,6 @@
 
 class DBusWatcher;
 class PollingWatcher;
-class PlayerControl;
 
 /**
  * The Now Playing data engine.

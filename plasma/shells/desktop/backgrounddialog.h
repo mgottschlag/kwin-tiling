@@ -20,7 +20,6 @@ namespace Plasma {
     class View;
 }
 class ThemeModel;
-class WallpaperPreview;
 class QStandardItemModel;
 class ScreenPreviewWidget;
 

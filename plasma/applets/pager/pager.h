@@ -28,7 +28,6 @@
 #include <Plasma/DataEngine>
 #include "ui_pagerConfig.h"
 
-class KDialog;
 class KSelectionOwner;
 class KColorScheme;
 class KWindowInfo;

@@ -36,7 +36,6 @@ using TaskManager::TaskItem;
 using TaskManager::AbstractGroupableItem;
 
 class TaskItemLayout;
-class SplitGroupItem;
 class QGraphicsLinearLayout;
 
 namespace Plasma

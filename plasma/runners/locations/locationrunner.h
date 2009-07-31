@@ -21,7 +21,6 @@
 
 #include <Plasma/AbstractRunner>
 
-class QAction;
 
 class LocationsRunner : public Plasma::AbstractRunner
 {

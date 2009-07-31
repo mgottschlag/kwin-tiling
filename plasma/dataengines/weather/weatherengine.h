@@ -29,7 +29,6 @@
 
 #include "ions/ion.h"
 
-class QTimer;
 
 /**
  * @author Shawn Starr

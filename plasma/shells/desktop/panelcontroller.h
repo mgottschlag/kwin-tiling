@@ -88,7 +88,7 @@ private:
     Q_PRIVATE_SLOT(d, void addSpace())
 
     class ButtonGroup;
-    class ResizeHandle;
+
     class Private;
     Private *d;
 };

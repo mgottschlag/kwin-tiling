@@ -24,7 +24,6 @@
 #include <KIcon>
 #include <KService>
 
-class QAction;
 
 class WebshortcutRunner : public Plasma::AbstractRunner {
     Q_OBJECT

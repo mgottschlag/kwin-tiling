@@ -27,10 +27,8 @@ namespace Plasma
 {
     class TabBar;
     class Containment;
-    class View;
 }
 
-class QGraphicsSceneMouseEvent;
 
 class ActivityBar : public Plasma::Applet
 {

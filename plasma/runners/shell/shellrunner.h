@@ -22,9 +22,7 @@
 #include <Plasma/AbstractRunner>
 
 class QWidget;
-class QAction;
 
-class ShellConfig;
 
 /**
  * This class runs programs using the literal name of the binary, much as one

@@ -32,8 +32,6 @@ class Launcher;
 }
 namespace Plasma
 {
-class IconWidget;
-class PushButton;
 }
 
 class LauncherApplet : public Plasma::PopupApplet

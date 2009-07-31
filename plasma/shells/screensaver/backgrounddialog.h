@@ -20,7 +20,6 @@ namespace Plasma {
     class View;
 }
 
-class WallpaperPreview;
 class ScreenPreviewWidget;
 
 class BackgroundDialog : public KDialog, public Ui::BackgroundDialog

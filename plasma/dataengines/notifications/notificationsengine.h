@@ -23,7 +23,6 @@
 
 #include <Plasma/DataEngine>
 
-class QSignalMapper;
 class QTimer;
 
 /**

@@ -28,12 +28,8 @@
 #include <Plasma/DataEngine>
 #include <Plasma/ToolTipManager>
 
-class QStandardItemModel;
-class QGraphicsLinearLayout;
-class QGraphicsProxyWidget;
 class QTimer;
 
-class KIcon;
 
 namespace Notifier
 {

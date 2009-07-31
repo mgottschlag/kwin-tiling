@@ -26,7 +26,6 @@
 #include <KIcon>
 
 class QAction;
-class QGraphicsContextMenuEvent;
 class QuicklaunchApplet;
 
 class QuicklaunchIcon : public Plasma::IconWidget

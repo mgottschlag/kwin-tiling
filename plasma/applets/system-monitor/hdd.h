@@ -29,7 +29,6 @@ namespace Plasma {
     class Meter;
 }
 class MonitorIcon;
-class Header;
 class QGraphicsLinearLayout;
 
 class Hdd : public SM::Applet

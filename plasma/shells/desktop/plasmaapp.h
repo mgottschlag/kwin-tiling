@@ -46,8 +46,6 @@ namespace Kephal {
 } // namespace Kephal
 
 class DesktopView;
-class BackgroundDialog;
-class RootWidget;
 class PanelView;
 class DesktopCorona;
 

@@ -27,9 +27,6 @@
 #include <Plasma/Applet>
 
 class KPropertiesDialog;
-class QGraphicsItem;
-class QGraphicsSceneMouseEvent;
-class QEvent;
 
 namespace Plasma
 {

@@ -26,8 +26,6 @@ namespace Plasma {
     class WebView;
     class IconWidget;
 }
-class Header;
-class QGraphicsLinearLayout;
 
 class HWInfo : public SM::Applet
 {

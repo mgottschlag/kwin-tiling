@@ -41,7 +41,6 @@
 
 class QGraphicsLinearLayout;
 
-class KColorScheme;
 
 namespace Plasma
 {
@@ -49,9 +48,7 @@ namespace Plasma
     class FrameSvg;
 } // namespace Plasma
 
-class WindowTaskItem;
 class TaskGroupItem;
-class AbstractTaskItem;
 
 using TaskManager::StartupPtr;
 using TaskManager::TaskPtr;

@@ -36,12 +36,9 @@
 #include "desktoplayout.h"
 
 class QAction;
-class QTimeLine;
 
 namespace Plasma
 {
-    class AppletBrowser;
-    class Svg;
 }
 
 /*class Tool : public QObject, public QGraphicsItem

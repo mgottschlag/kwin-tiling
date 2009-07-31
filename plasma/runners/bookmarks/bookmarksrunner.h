@@ -25,10 +25,8 @@
 
 #include <Plasma/AbstractRunner>
 
-class QWidget;
 
 class KBookmark;
-class KBookmarkGroup;
 class KBookmarkManager;
 
 class BookmarksRunner : public Plasma::AbstractRunner
