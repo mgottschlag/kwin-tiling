@@ -25,6 +25,12 @@ AppletsList::AppletsList(QGraphicsItem *parent)
     scrollStep = 0;
     m_selectedItem = 0;
     connect(this, SIGNAL(listScrolled()), this, SLOT(manageArrows()));
+
+    scrollTimeLine.setFrameRange(0, 100);
+    scrollTimeLine.setCurveShape(QTimeLine::EaseInOutCurve);
+    scrollTimeLine.setDuration(500); // TODO: Set this to a lesser value
+    connect(&scrollTimeLine, SIGNAL(frameChanged(int)),
+            this, SLOT(scrollTimeLineFrameChanged(int)));
 }
 
 AppletsList::~AppletsList()
@@ -132,15 +138,15 @@ void AppletsList::insertAppletIcon(AppletIconWidget *appletIconWidget)
     m_appletListLinearLayout->addItem(appletIconWidget);
 }
 
-double AppletsList::listWidth() {
+qreal AppletsList::listWidth() {
     return m_appletsListWidget->childItems().count() *
                     (ICON_WIDGET_WIDTH + m_appletListLinearLayout->spacing()) -
                     m_appletListLinearLayout->spacing();
 }
 
 int AppletsList::maximumVisibleIconsOnList() {
-    double windowWidth = m_appletsListWindowWidget->geometry().width();
-    double maxVisibleIconsOnList = floor(windowWidth/(ICON_WIDGET_WIDTH
+    qreal windowWidth = m_appletsListWindowWidget->geometry().width();
+    qreal maxVisibleIconsOnList = floor(windowWidth/(ICON_WIDGET_WIDTH
                                                           + m_appletListLinearLayout->spacing()));
     return maxVisibleIconsOnList;
 }
@@ -250,7 +256,7 @@ void AppletsList::scrollRight(int step, QRectF visibleRect) {
     AppletIconWidget *clipped;
     int newFirstVisibleXOnList;
     int newFirstVisibleXOnWindow;
-    double scrollXAmount;
+    qreal scrollXAmount;
     int lastVisibleXOnList = visibleRect.x() + visibleRect.width();
     int listWidthVar = listWidth();
 
@@ -275,15 +281,16 @@ void AppletsList::scrollRight(int step, QRectF visibleRect) {
         scrollXAmount = listWidthVar - lastVisibleXOnList;
     }
 
-    m_appletsListWidget->moveBy(-scrollXAmount, 0);
+    // m_appletsListWidget->moveBy(-scrollXAmount, 0);
+    animateMoveBy(-scrollXAmount);
     emit(listScrolled());
 }
 
 void AppletsList::scrollLeft(int step, QRectF visibleRect) {
-    double firstVisibleXOnList = visibleRect.x();
+    qreal firstVisibleXOnList = visibleRect.x();
     AppletIconWidget *clipped;
     int newFirstVisibleXOnWindow;
-    double scrollXAmount;
+    qreal scrollXAmount;
 
     clipped = findAppletUnderXPosition(firstVisibleXOnList);
 
@@ -303,8 +310,54 @@ void AppletsList::scrollLeft(int step, QRectF visibleRect) {
         scrollXAmount = firstVisibleXOnList;
     }
 
-    m_appletsListWidget->moveBy(scrollXAmount, 0);
+    //m_appletsListWidget->moveBy(scrollXAmount, 0);
+    animateMoveBy(scrollXAmount);
     emit(listScrolled());
+}
+
+/* ivan: Implementation of the following functions is
+ * less than optimal and is intended just to provide
+ * the temporary solution until plasma gets the new
+ * animation framework.
+ * TODO: Remove this and animate using plasma's
+ * animation framework when it is created */
+void AppletsList::animateMoveBy(int amount)
+{
+    scrollFrom = m_appletsListWidget->pos().x();
+    if (scrollTimeLine.state() == QTimeLine::Running) {
+        scrollTo = scrollTo + amount;
+    } else {
+        scrollTo = scrollFrom + amount;
+    }
+
+    if (scrollTo > 0) {
+        scrollTo = 0;
+    }
+
+    if (scrollTo + m_appletsListWidget->size().width() <
+        m_appletsListWindowWidget->size().width()) {
+        scrollTo = m_appletsListWindowWidget->size().width()
+                   - m_appletsListWidget->size().width();
+    }
+
+    // scrollTimeLine.stop();
+
+    if (scrollTimeLine.state() != QTimeLine::Running &&
+            scrollFrom != scrollTo) {
+        scrollTimeLine.start();
+    }
+}
+
+void AppletsList::scrollTimeLineFrameChanged(int frame)
+{
+    QPointF newPos = QPointF(
+        (frame/(qreal)100) * (scrollTo - scrollFrom) + scrollFrom,
+        m_appletsListWidget->pos().y());
+    m_appletsListWidget->setPos(newPos);
+
+    if (frame == 100) {
+        manageArrows();
+    }
 }
 
 void AppletsList::resetScroll() {
@@ -317,7 +370,7 @@ void AppletsList::manageArrows() {
     int firstVisibleXOnList;
     int lastVisibleXOnList;
 
-    double listWidthVar = listWidth();
+    qreal listWidthVar = listWidth();
 
     if(listWidthVar <= m_appletsListWindowWidget->geometry().width()) {
         m_leftArrow->setEnabled(false);
@@ -477,7 +530,7 @@ void AppletIconWidget::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
     ) {
         event->accept();
         qDebug() << "Start Dragging";
-        QDrag *drag = new QDrag(event->widget());        
+        QDrag *drag = new QDrag(event->widget());
         QPixmap p = appletItem()->icon().pixmap(KIconLoader::SizeLarge, KIconLoader::SizeLarge);
         drag->setPixmap(p);
 

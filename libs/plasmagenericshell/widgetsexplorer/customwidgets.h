@@ -49,7 +49,7 @@ private:
     AppletIconWidget *createAppletIcon(PlasmaAppletItem *appletItem);
 
     void insertAppletIcon(AppletIconWidget *appletIconWidget);
-    double listWidth();
+    qreal listWidth();
     int maximumVisibleIconsOnList();
     void eraseList();
 
@@ -72,6 +72,11 @@ private slots:
     void resetScroll();
     void itemSelected(AppletIconWidget *applet);
     void appletIconDoubleClicked(AppletIconWidget *applet);
+
+    /* TODO: Remove this and animate using plasma's
+     * animation framework when it is created */
+    void animateMoveBy(int amount);
+    void scrollTimeLineFrameChanged(int frame);
 
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
@@ -114,8 +119,11 @@ private:
     int arrowClickStep;
     int scrollStep;
 
+    /* TODO: Remove this and animate using plasma's
+     * animation framework when it is created */
     QTimeLine scrollTimeLine;
-    int scrollTo;
+    qreal scrollTo;
+    qreal scrollFrom;
 };
 
 class AppletIconWidget : public Plasma::IconWidget
