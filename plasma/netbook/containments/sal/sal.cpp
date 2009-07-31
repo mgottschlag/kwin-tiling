@@ -26,6 +26,7 @@
 
 #include <KDebug>
 #include <KIcon>
+#include <KIconLoader>
 
 #include <Plasma/Theme>
 #include <Plasma/Frame>
@@ -41,8 +42,8 @@
 SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
       m_homeButton(0),
-      gridBackground(0),
-      gridScroll(0)
+      m_viewMainWidget(0),
+      m_gridScroll(0)
 {
     setContainmentType(Containment::DesktopContainment);
     setHasConfigurationInterface(false);
@@ -96,11 +97,8 @@ void SearchLaunch::doSearch(const QString query)
     m_items.clear();
     m_matches.clear();
     runnermg->reset();
-    if (gridBackground && gridScroll) {
-        gridBackground->resize(gridScroll->size());
-    }
 
-    if (gridScroll && query.isEmpty()) {
+    if (m_gridScroll && query.isEmpty()) {
         QList<Plasma::QueryMatch> fakeMatches;
         Plasma::QueryMatch match(0);
         match.setType(Plasma::QueryMatch::ExactMatch);
@@ -176,6 +174,9 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         return;
     }
 
+    int iconSize = KIconLoader::SizeHuge;
+    int nColumns = m_gridScroll->size().width() / iconSize;
+
     // just add new QueryMatch
     int i;
     for (i = queryCounter; i < m.size(); i++) {
@@ -185,7 +186,7 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         Plasma::IconWidget *icon = new Plasma::IconWidget();
         icon->setText(match.text());
         icon->setIcon(match.icon());
-        icon->setMinimumSize(QSize(100, 100));
+        icon->setMinimumSize(icon->sizeFromIconSize(iconSize));
         icon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         icon->setDrawBackground(true);
         connect(icon, SIGNAL(activated()), this, SLOT(launch()));
@@ -199,8 +200,12 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         // add to layout and data structures
         m_items.append(icon);
         m_matches.append(match);
-        m_launchGrid->addItem(icon, i / 7, i % 7);
-        gridBackground->resize(gridBackground->size().width(), m_launchGrid->effectiveSizeHint(Qt::PreferredSize, gridScroll->size()).height());
+        m_launchGrid->addItem(icon, i / nColumns, i % nColumns);
+        /*if (m_viewMainWidget) {
+            m_viewMainWidget->setMaximumSize(m_gridScroll->size().width(), m_launchGrid->effectiveSizeHint(Qt::PreferredSize, m_gridScroll->size()).height());
+        m_viewMainWidget->layout()->activate();
+        }*/
+//        m_gridBackground->resize(m_gridScroll->size().width(), m_launchGrid->effectiveSizeHint(Qt::PreferredSize, m_gridScroll->size()).height());
     }
     queryCounter = i;
 }
@@ -308,14 +313,19 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             // create launch grid and make it centered
             QGraphicsLinearLayout *gridLayout = new QGraphicsLinearLayout(Qt::Vertical);
 
-            gridBackground = new Plasma::Frame(this);
+            Plasma::Frame *gridBackground = new Plasma::Frame(this);
             gridBackground->setFrameShadow(Plasma::Frame::Plain);
+            QGraphicsWidget *m_viewMainWidget = new QGraphicsWidget(this);
+            QGraphicsLinearLayout *mwLay = new QGraphicsLinearLayout(m_viewMainWidget);
+            mwLay->addStretch();
+            mwLay->addItem(gridBackground);
+            mwLay->addStretch();
 
-            gridScroll = new Plasma::ScrollWidget(this);
-            gridScroll->setWidget(gridBackground);
-            gridScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-            gridScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-            gridLayout->addItem(gridScroll);
+            m_gridScroll = new Plasma::ScrollWidget(this);
+            m_gridScroll->setWidget(m_viewMainWidget);
+            m_gridScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            m_gridScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+            gridLayout->addItem(m_gridScroll);
 
             m_launchGrid = new QGraphicsGridLayout();
             gridBackground->setLayout(m_launchGrid);

@@ -85,8 +85,8 @@ private:
     QList<Plasma::IconWidget*> m_items;
     QList<Plasma::QueryMatch> m_matches;
 
-    Plasma::Frame *gridBackground;
-    Plasma::ScrollWidget *gridScroll;
+    QGraphicsWidget *m_viewMainWidget;
+    Plasma::ScrollWidget *m_gridScroll;
     StripWidget *m_stripWidget;
 
     QGraphicsLinearLayout *m_mainLayout;
