@@ -1,15 +1,21 @@
 [Desktop Entry]
 # ctxt: plasma runner
 Name=Windows
+Name[nds]=Finstern
 Name[pt]=Janelas
 Name[pt_BR]=Janelas
+Name[tr]=Pencereler
 Name[uk]=Вікна
 Name[x-test]=xxWindowsxx
+Name[zh_TW]=視窗
 Comment=List windows and desktops and switch them
+Comment[nds]=Finstern un Schriefischen oplisten un wesseln
 Comment[pt]=Listar as janelas e ecrãs e mudar entre eles
 Comment[pt_BR]=Listar as janelas e áreas de trabalho e alternar entre elas
+Comment[tr]=Pencereleri ve masaüstlerini listele ve seç
 Comment[uk]=Показує список вікон і стільниць і перемикає їх
 Comment[x-test]=xxList windows and desktops and switch themxx
+Comment[zh_TW]=列出視窗與桌面並切換
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 Icon=preferences-system-windows
