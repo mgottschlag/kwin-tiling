@@ -8,3 +8,4 @@ target_link_libraries(plasma_containment_newspaper ${KDE4_PLASMA_LIBS} ${KDE4_KI
 
 install(TARGETS plasma_containment_newspaper DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-containment-newspaper.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+install(FILES border.svgz DESTINATION ${DATA_INSTALL_DIR}/desktoptheme/default/newspaper/)

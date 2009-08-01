@@ -49,6 +49,7 @@
 #include <Plasma/ScrollWidget>
 #include <Plasma/PopupApplet>
 #include <Plasma/Frame>
+#include <Plasma/SvgWidget>
 
 using namespace Plasma;
 
@@ -83,6 +84,25 @@ void Newspaper::init()
     m_rightLayout = new QGraphicsLinearLayout(Qt::Vertical);
     m_mainLayout->addItem(m_leftLayout);
     m_mainLayout->addItem(m_rightLayout);
+
+
+    Plasma::Svg *borderSvg = new Plasma::Svg(this);
+    borderSvg->setImagePath("newspaper/border");
+
+    m_topBorder = new Plasma::SvgWidget(this);
+    m_topBorder->setSvg(borderSvg);
+    m_topBorder->setElementID("top");
+    m_topBorder->resize(m_topBorder->effectiveSizeHint(Qt::PreferredSize));
+    m_topBorder->setZValue(900);
+    m_topBorder->show();
+
+    m_bottomBorder = new Plasma::SvgWidget(this);
+    m_bottomBorder->setSvg(borderSvg);
+    m_bottomBorder->setElementID("bottom");
+    m_bottomBorder->resize(m_bottomBorder->effectiveSizeHint(Qt::PreferredSize));
+    m_bottomBorder->setZValue(900);
+    m_bottomBorder->show();
+
 
     QGraphicsWidget *spacer1 = new QGraphicsWidget(m_mainWidget);
     spacer1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -191,16 +211,17 @@ void Newspaper::constraintsEvent(Plasma::Constraints constraints)
 {
     kDebug() << "constraints updated with" << constraints << "!!!!!!";
 
-    if (constraints & Plasma::FormFactorConstraint ||
-        constraints & Plasma::StartupCompletedConstraint) {
-
-        foreach (Applet *applet, applets()) {
-         //   applet->setBackgroundHints(NoBackground);
-        }
-    }
-
     if (constraints & Plasma::SizeConstraint && m_appletOverlay) {
         m_appletOverlay->resize(size());
+    }
+
+    if (constraints & Plasma::SizeConstraint) {
+        //FIXME: remove the hardcoded 2
+        m_topBorder->resize(m_scrollWidget->size().width(), m_topBorder->size().height());
+        m_topBorder->setPos(m_scrollWidget->pos() + QPoint(0, 2));
+
+        m_bottomBorder->resize(m_scrollWidget->size().width(), m_bottomBorder->size().height());
+        m_bottomBorder->setPos(m_scrollWidget->geometry().bottomLeft() - QPoint(0,  m_bottomBorder->size().height() + 2));
     }
 }
 
