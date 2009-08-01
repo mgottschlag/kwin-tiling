@@ -89,9 +89,13 @@ void SearchLaunch::doSearch(const QString query)
     queryCounter = 0;
 
     foreach (Plasma::IconWidget *icon, m_items) {
-        icon->deleteLater();
         m_launchGrid->removeAt(0);
         m_items.removeAll(icon);
+        icon->deleteLater();
+    }
+    if (m_viewMainWidget) {
+        m_viewMainWidget->resize(0,0);
+        m_viewMainWidget->layout()->activate();
     }
 
     m_items.clear();
@@ -175,7 +179,8 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     }
 
     int iconSize = KIconLoader::SizeHuge;
-    int nColumns = m_gridScroll->size().width() / iconSize;
+    //FIXME: this hardcoded +35 is to kinda patch the fact that sizeforiconsize can return different widths depending from the text.
+    int nColumns = qMax(1, int(m_gridScroll->size().width() / (iconSize+35)));
 
     // just add new QueryMatch
     int i;
@@ -200,12 +205,12 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         // add to layout and data structures
         m_items.append(icon);
         m_matches.append(match);
+
         m_launchGrid->addItem(icon, i / nColumns, i % nColumns);
-        /*if (m_viewMainWidget) {
-            m_viewMainWidget->setMaximumSize(m_gridScroll->size().width(), m_launchGrid->effectiveSizeHint(Qt::PreferredSize, m_gridScroll->size()).height());
+        //FIXME: why it seems to be needed here at the add of every new icon?
+        m_viewMainWidget->resize(0,0);
         m_viewMainWidget->layout()->activate();
-        }*/
-//        m_gridBackground->resize(m_gridScroll->size().width(), m_launchGrid->effectiveSizeHint(Qt::PreferredSize, m_gridScroll->size()).height());
+
     }
     queryCounter = i;
 }
@@ -315,7 +320,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 
             Plasma::Frame *gridBackground = new Plasma::Frame(this);
             gridBackground->setFrameShadow(Plasma::Frame::Plain);
-            QGraphicsWidget *m_viewMainWidget = new QGraphicsWidget(this);
+            m_viewMainWidget = new QGraphicsWidget(this);
             QGraphicsLinearLayout *mwLay = new QGraphicsLinearLayout(m_viewMainWidget);
             mwLay->addStretch();
             mwLay->addItem(gridBackground);
