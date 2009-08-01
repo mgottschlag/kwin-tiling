@@ -29,6 +29,7 @@
 #include <QTimer>
 #include <QX11Info>
 #include <QDBusInterface>
+#include <QTextDocument>
 
 #include <KDialog>
 #include <KColorScheme>
@@ -1265,12 +1266,12 @@ void Pager::updateToolTip()
             if ((taskCounter < 4) || active){    
                 QPixmap icon = KWindowSystem::icon(winInfo.win(), 16, 16, true);
                 if (icon.isNull()) {
-                     subtext += "<br />&bull;" + winInfo.visibleName();
+                     subtext += "<br />&bull;" + Qt::escape(winInfo.visibleName());
                 } else {
                     data.addResource(Plasma::ToolTipContent::ImageResource, QUrl("wicon://" + QString::number(taskCounter)), QVariant(icon));
                     subtext += "<br /><img src=\"wicon://" + QString::number(taskCounter) + "\"/>";
                 }
-                subtext += (active ? "<u>" : "") + winInfo.visibleName() + (active ? "</u>" : "");
+                subtext += (active ? "<u>" : "") + Qt::escape(winInfo.visibleName()) + (active ? "</u>" : "");
 
                 displayedTaskCounter++; 
                 windows.append(winInfo.win());
