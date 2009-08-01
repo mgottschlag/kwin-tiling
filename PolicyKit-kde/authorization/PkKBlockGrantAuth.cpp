@@ -55,7 +55,7 @@ PkKBlockGrantAuth::PkKBlockGrantAuth(PolKitPolicyFileEntry *pfe, bool block, QWi
 
     setCaption(m_block ? i18n("Grant Negative Authorization") : i18n("Grant Authorization"));
 
-    QString actionId = polkit_policy_file_entry_get_id(pfe);
+    const QString actionId = polkit_policy_file_entry_get_id(pfe);
 
     label->setText(m_block ?
                    i18n("<b><big>Granting a negative authorization for the <i>%1</i> "

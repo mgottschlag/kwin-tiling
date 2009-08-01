@@ -153,7 +153,7 @@ QModelIndex PoliciesModel::indexFromId(const QString &id, PolicyItem *parent) co
         PolicyItem *item = parent->child(i);
 //         kDebug() << "ITEM" << item->data(PathRole).toString() << parent->childCount();
         if (item->isGroup()) {
-            QModelIndex index = indexFromId(id, item);
+            const QModelIndex index = indexFromId(id, item);
             if (index != QModelIndex()) {
                 return index;
             }
@@ -272,7 +272,7 @@ void PoliciesModel::insertOrUpdate(const QStringList &actionPath, PolKitPolicyFi
             // if we are at the lowest level of a group
             // we try to get the vendorName
             if (actionPath.size() - 2 == level) {
-                QString vendorName = QString::fromLocal8Bit(polkit_policy_file_entry_get_action_vendor(entry));
+                const QString vendorName = QString::fromLocal8Bit(polkit_policy_file_entry_get_action_vendor(entry));
                 if (vendorName.isEmpty()) {
                     group->setData(Qt::DisplayRole, path);
                 } else {
