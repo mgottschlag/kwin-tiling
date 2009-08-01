@@ -29,6 +29,7 @@
 #include <QTimer>
 #include <QApplication>
 #include <QVarLengthArray>
+#include <QTextDocument>
 
 // KDE
 #include <KAuthorized>
@@ -211,7 +212,7 @@ void WindowTaskItem::updateToolTip()
                                 Qt::KeepAspectRatio, Qt::SmoothTransformation);
         }
 
-        Plasma::ToolTipContent data(m_task->name(),
+        Plasma::ToolTipContent data(Qt::escape(m_task->name()),
                                     i18nc("Which virtual desktop a window is currently on", "On %1",
                                     KWindowSystem::desktopName(m_task->desktop())), p);
         data.setWindowToPreview(m_task->task()->window());
