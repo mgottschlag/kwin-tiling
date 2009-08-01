@@ -30,6 +30,7 @@
 #include <QGraphicsGridLayout>
 
 class QAction;
+class QTimer;
 class StripWidget;
 
 namespace Plasma
@@ -70,6 +71,7 @@ private slots:
     void launch();
     void addFavourite();
     void reset();
+    void relayout();
 
 private:
     /**
@@ -82,8 +84,10 @@ private:
     Plasma::IconWidget *m_homeButton;
 
     int queryCounter;
-    QList<Plasma::IconWidget*> m_items;
-    QList<Plasma::QueryMatch> m_matches;
+    int m_maxColumnWidth;
+    QTimer *m_relayoutTimer;
+    QMultiMap<qreal, Plasma::IconWidget*> m_items;
+    QHash<Plasma::IconWidget*, Plasma::QueryMatch> m_matches;
 
     QGraphicsWidget *m_viewMainWidget;
     Plasma::ScrollWidget *m_gridScroll;

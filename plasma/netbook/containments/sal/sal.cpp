@@ -23,6 +23,7 @@
 
 #include <QPainter>
 #include <QAction>
+#include <QTimer>
 
 #include <KDebug>
 #include <KIcon>
@@ -42,6 +43,7 @@
 SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
       m_homeButton(0),
+      m_maxColumnWidth(0),
       m_viewMainWidget(0),
       m_gridScroll(0)
 {
@@ -70,6 +72,10 @@ void SearchLaunch::init()
     connect(runnermg, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)),
             this, SLOT(setQueryMatches(const QList<Plasma::QueryMatch>&)));
 
+    m_relayoutTimer = new QTimer(this);
+    m_relayoutTimer->setSingleShot(true);
+    connect(m_relayoutTimer, SIGNAL(timeout()), this, SLOT(relayout()));
+
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/translucentbackground");
 
@@ -90,13 +96,10 @@ void SearchLaunch::doSearch(const QString query)
 
     foreach (Plasma::IconWidget *icon, m_items) {
         m_launchGrid->removeAt(0);
-        m_items.removeAll(icon);
         icon->deleteLater();
     }
-    if (m_viewMainWidget) {
-        m_viewMainWidget->resize(0,0);
-        m_viewMainWidget->layout()->activate();
-    }
+    m_items.clear();
+    m_maxColumnWidth = 0;
 
     m_items.clear();
     m_matches.clear();
@@ -179,8 +182,6 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     }
 
     int iconSize = KIconLoader::SizeHuge;
-    //FIXME: this hardcoded +35 is to kinda patch the fact that sizeforiconsize can return different widths depending from the text.
-    int nColumns = qMax(1, int(m_gridScroll->size().width() / (iconSize+35)));
 
     // just add new QueryMatch
     int i;
@@ -196,6 +197,10 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         icon->setDrawBackground(true);
         connect(icon, SIGNAL(activated()), this, SLOT(launch()));
 
+        if (icon->size().width() > m_maxColumnWidth) {
+            m_maxColumnWidth = icon->size().width();
+        }
+
         // create action to add to favourites strip
         QAction *action = new QAction(icon);
         action->setIcon(KIcon("favorites"));
@@ -203,23 +208,52 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         connect(action, SIGNAL(triggered()), this, SLOT(addFavourite()));
 
         // add to layout and data structures
-        m_items.append(icon);
-        m_matches.append(match);
 
-        m_launchGrid->addItem(icon, i / nColumns, i % nColumns);
-        //FIXME: why it seems to be needed here at the add of every new icon?
-        m_viewMainWidget->resize(0,0);
-        m_viewMainWidget->layout()->activate();
+        m_items.insert(1/match.relevance(), icon);
+        m_matches.insert(icon, match);
 
+        m_relayoutTimer->start(400);
     }
     queryCounter = i;
+}
+
+void SearchLaunch::relayout()
+{
+    QList<Plasma::IconWidget *>orderedItems = m_items.values();
+    int validIndex = 0;
+
+    foreach (Plasma::IconWidget *icon, orderedItems) {
+        if (m_launchGrid->itemAt(validIndex) == icon) {
+            ++validIndex;
+        } else {
+            break;
+        }
+    }
+
+    for (int i = validIndex; i < m_launchGrid->count(); ++i) {
+        m_launchGrid->removeAt(validIndex);
+    }
+
+    int nColumns = qMax(1, int(m_gridScroll->size().width() / m_maxColumnWidth));
+    int i = 0;
+
+    foreach (Plasma::IconWidget *icon, orderedItems) {
+        if (i < validIndex) {
+            ++i;
+            continue;
+        }
+
+        m_launchGrid->addItem(icon, i / nColumns, i % nColumns);
+        ++i;
+    }
+    m_viewMainWidget->resize(0,0);
+
 }
 
 void SearchLaunch::launch()
 {
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender());
-    int idx = m_items.indexOf(icon);
-    Plasma::QueryMatch match = m_matches[idx];
+    Plasma::QueryMatch match = m_matches.value(icon, Plasma::QueryMatch(0));
     if (runnermg->searchContext()->query().isEmpty()) {
         doSearch(match.data().toString());
     } else {
@@ -230,8 +264,7 @@ void SearchLaunch::launch()
 void SearchLaunch::addFavourite()
 {
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender()->parent());
-    int idx = m_items.indexOf(icon);
-    Plasma::QueryMatch match = m_matches[idx];
+    Plasma::QueryMatch match = m_matches.value(icon, Plasma::QueryMatch(0));
     m_stripWidget->add(match, runnermg->searchContext()->query());
 }
 
@@ -366,6 +399,10 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 
     if (constraints & Plasma::LocationConstraint) {
         setFormFactorFromLocation(location());
+    }
+
+    if (constraints & Plasma::SizeConstraint) {
+        m_relayoutTimer->start();
     }
 
 }
