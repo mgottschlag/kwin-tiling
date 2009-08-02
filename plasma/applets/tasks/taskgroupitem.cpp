@@ -279,7 +279,7 @@ void TaskGroupItem::updateToolTip()
 
         TaskManager::TaskItem *taskItem = qobject_cast<TaskManager::TaskItem *>(item);
 
-        if (taskItem) {
+        if (taskItem && taskItem->task()) {
             windows.append(taskItem->task()->window());
         }
     }
