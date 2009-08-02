@@ -290,14 +290,12 @@ void TaskGroupItem::updateToolTip()
 
         TaskManager::TaskItem *taskItem = qobject_cast<TaskManager::TaskItem *>(item);
 
-        if (taskItem) {
+        if (taskItem && taskItem->task()) {
             windows.append(taskItem->task()->window());
         }
     }
 
     data.setWindowsToPreview(windows);
-
-
     Plasma::ToolTipManager::self()->setContent(this, data);
 }
 
@@ -558,7 +556,7 @@ void TaskGroupItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 //TODO: recurse through sub-groups?
             } else {
                 TaskItem * item = dynamic_cast<TaskItem*>(groupable);
-                if (item) {
+                if (item && item->task()) {
                     ids << item->task()->info().win();
                 }
             }

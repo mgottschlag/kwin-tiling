@@ -82,7 +82,7 @@ void WindowTaskItem::activate()
     // in a widget such as a line edit which does accept the focus)
     // this needs to be implemented for Plasma's own panels.
     //kDebug();
-    if (m_task) {
+    if (m_task && m_task->task()) {
         m_task->task()->activateRaiseOrIconify();
        // emit windowSelected(this);
     }
@@ -110,7 +110,7 @@ void WindowTaskItem::close()
 
 void WindowTaskItem::publishIconGeometry() const
 {
-    if (!m_task) {
+    if (!m_task || !m_task->task()) {
         return;
     }
 
@@ -120,7 +120,7 @@ void WindowTaskItem::publishIconGeometry() const
 
 void WindowTaskItem::publishIconGeometry(const QRect &rect) const
 {
-    if (m_task) {
+    if (m_task && m_task->task()) {
         m_task->task()->publishIconGeometry(rect);
     }
 }
@@ -185,7 +185,7 @@ void WindowTaskItem::updateTask(::TaskManager::TaskChanges changes)
 
 void WindowTaskItem::updateToolTip()
 {
-    if (!m_task) {
+    if (!m_task || !m_task->task()) {
         return;
     } 
    
