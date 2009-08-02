@@ -139,12 +139,13 @@ bool ActivityBar::eventFilter(QObject *watched, QEvent *event)
 
 void ActivityBar::switchContainment(int newActive)
 {
-    if (!containment()) {
+    Plasma::Containment *c = containment();
+    if (!c || newActive > m_containments.count()-1 || newActive < 0) {
         return;
     }
 
     m_activeContainment = newActive;
-    m_containments[newActive]->setScreen(containment()->screen(), containment()->desktop());
+    m_containments[newActive]->setScreen(c->screen(), c->desktop());
     return;
 
 }
