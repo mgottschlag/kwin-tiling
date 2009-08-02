@@ -471,7 +471,7 @@ QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupForecastIconMappi
     forecastList["chance of showers at times heavy"] = Rain;
     forecastList["chance of showers at times heavy or thundershowers"] = Thunderstorm;
     forecastList["chance of showers at times heavy or thunderstorms"] = Thunderstorm;
-    forecastList["chance of showers or thundershowers"] = Showers;
+    forecastList["chance of showers or thundershowers"] = Thunderstorm;
     forecastList["chance of showers or thunderstorms"] = Thunderstorm;
     forecastList["chance of snow"] = Snow;
     forecastList["chance of snow and blizzard"] = Snow;
@@ -1753,6 +1753,11 @@ QVector<QString> EnvCanadaIon::forecasts(const QString& source)
 
     for (int i = 0; i < d->m_weatherData[source].forecasts.size(); ++i) {
         // We need to shortform the day/night strings.
+
+        if (d->m_weatherData[source].forecasts[i]->forecastPeriod.contains("Today")) {
+            d->m_weatherData[source].forecasts[i]->forecastPeriod.replace("Today", i18n("day"));
+        }
+
         if (d->m_weatherData[source].forecasts[i]->forecastPeriod.contains("Tonight")) {
             d->m_weatherData[source].forecasts[i]->forecastPeriod.replace("Tonight", i18n("nite"));
         }
