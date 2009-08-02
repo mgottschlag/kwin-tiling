@@ -284,12 +284,7 @@ void TaskGroupItem::updateToolTip()
     QList<WId> windows;
 
     foreach (AbstractGroupableItem *item, m_group->members()) {
-        if (++i > 4) {
-            break;
-        }
-
         TaskManager::TaskItem *taskItem = qobject_cast<TaskManager::TaskItem *>(item);
-
         if (taskItem && taskItem->task()) {
             windows.append(taskItem->task()->window());
         }
