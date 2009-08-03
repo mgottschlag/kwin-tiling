@@ -23,11 +23,12 @@
 #include "taskgroupitem.h"
 
 // Qt
-#include <QGraphicsSceneContextMenuEvent>
-#include <QStyleOptionGraphicsItem>
-#include <QGraphicsView>
-#include <QTimer>
 #include <QApplication>
+#include <QGraphicsSceneContextMenuEvent>
+#include <QGraphicsView>
+#include <QStyleOptionGraphicsItem>
+#include <QTextDocument>
+#include <QTimer>
 #include <QVarLengthArray>
 
 // KDE
@@ -193,7 +194,7 @@ void WindowTaskItem::updateToolTip()
                      Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
 
-    Plasma::ToolTipContent data(m_task->name(),
+    Plasma::ToolTipContent data(Qt::escape(m_task->name()),
                                 i18nc("Which virtual desktop a window is currently on", "On %1",
                                       KWindowSystem::desktopName(m_task->desktop())), p);
     data.setWindowToPreview(m_task->task()->window());
