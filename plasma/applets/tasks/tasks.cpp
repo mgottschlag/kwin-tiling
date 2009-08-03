@@ -402,8 +402,10 @@ void Tasks::setPopupDialog(bool status)
     Q_UNUSED(status)
     QWidget *widget = qobject_cast<QWidget *>(sender());
 
-    if (widget->isVisible()) {
+    if (status && widget->isVisible()) {
         m_popupDialog = widget;
+    } else if (m_popupDialog == widget) {
+        m_popupDialog = 0;
     }
 }
 
