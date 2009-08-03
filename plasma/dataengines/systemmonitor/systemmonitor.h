@@ -35,18 +35,17 @@ class SystemMonitorEngine : public Plasma::DataEngine, public KSGRD::SensorClien
     Q_OBJECT
 
     public:
-	/** Inherited from Plasma::DataEngine.  Returns a list of all the sensors that ksysguardd knows about. */
+        /** Inherited from Plasma::DataEngine.  Returns a list of all the sensors that ksysguardd knows about. */
         virtual QStringList sources() const;
         SystemMonitorEngine( QObject* parent, const QVariantList& args );
         ~SystemMonitorEngine();
 
     protected:
         bool sourceRequestEvent(const QString &name);
-	/** inherited from SensorClient */
+        /** inherited from SensorClient */
         virtual void answerReceived( int id, const QList<QByteArray>&answer );
         virtual void sensorLost( int );
-	virtual bool updateSourceEvent(const QString &sensorName);
-
+        virtual bool updateSourceEvent(const QString &sensorName);
 
     protected slots:
         void updateSensors();
@@ -55,7 +54,7 @@ class SystemMonitorEngine : public Plasma::DataEngine, public KSGRD::SensorClien
     private:
         QStringList m_sensors;
         QTimer* m_timer;
-	int m_waitingFor;
+        int m_waitingFor;
 };
 
 K_EXPORT_PLASMA_DATAENGINE(systemmonitor, SystemMonitorEngine)

@@ -51,19 +51,31 @@ void SystemMonitorEngine::updateMonitorsList()
 
 QStringList SystemMonitorEngine::sources() const
 {
-    return m_sensors; 
+    return m_sensors;
 }
 
 bool SystemMonitorEngine::sourceRequestEvent(const QString &name)
 {
-    Q_UNUSED(name);
+    if (m_sensors.isEmpty()) {
+        // we don't have our first data yet, so let's trust the requester, at least fo rnow
+        // when we get our list of sensors later, then we'll know for sure and remove
+        // this source if they were wrong
+        setData(name, DataEngine::Data());
+        return true;
+    }
+
     return false;
 }
 
 bool SystemMonitorEngine::updateSourceEvent(const QString &sensorName)
 {
-    KSGRD::SensorMgr->sendRequest( "localhost", sensorName, (KSGRD::SensorClient*)this, m_sensors.indexOf(sensorName));
-    KSGRD::SensorMgr->sendRequest( "localhost", QString("%1?").arg(sensorName), (KSGRD::SensorClient*)this, -(m_sensors.indexOf(sensorName)+2));
+    const int index = m_sensors.indexOf(sensorName);
+
+    if (index != -1) {
+        KSGRD::SensorMgr->sendRequest("localhost", sensorName, (KSGRD::SensorClient*)this, index);
+        KSGRD::SensorMgr->sendRequest("localhost", QString("%1?").arg(sensorName), (KSGRD::SensorClient*)this, -(index + 2));
+    }
+
     return false;
 }
 
@@ -88,9 +100,9 @@ void SystemMonitorEngine::updateSensors()
 void SystemMonitorEngine::answerReceived(int id, const QList<QByteArray> &answer)
 {
     if (id < -1) {
-        if (answer.isEmpty() || m_sensors.count() <= (-id - 2)) {
-            kDebug() << "sensor info answer was empty, (" << answer.isEmpty() << ") or sensors too small ("
-                     << m_sensors.count() << ") for index" << (-id - 2);
+        if (answer.isEmpty() || m_sensors.count() < (-id - 2)) {
+            kDebug() << "sensor info answer was empty, (" << answer.isEmpty() << ") or sensors does not exist to us ("
+                     << (m_sensors.count() < (-id - 2)) << ") for index" << (-id - 2);
             return;
         }
 
@@ -121,23 +133,36 @@ void SystemMonitorEngine::answerReceived(int id, const QList<QByteArray> &answer
     }
 
     if (id == -1) {
-        QStringList sensors;
+        QSet<QString> sensors;
+        m_sensors.clear();
+        int count = 0;
 
         foreach (const QByteArray &sens, answer) {
             const QStringList newSensorInfo = QString::fromUtf8(sens).split('\t');
-            const QString newSensor = newSensorInfo[0];
-            sensors.append(newSensor);
-            setData(newSensor, "value", QVariant());
-            setData(newSensor, "type", newSensorInfo[1]);
+            if (newSensorInfo.count() < 2) {
+                continue;
+            }
 
-            KSGRD::SensorMgr->sendRequest( "localhost", QString("%1?").arg(newSensor), (KSGRD::SensorClient*)this, -(sensors.indexOf(newSensor)+2));
+            const QString newSensor = newSensorInfo[0];
+            sensors.insert(newSensor);
+            m_sensors.append(newSensor);
+            DataEngine::Data d;
+            d.insert("value", QVariant());
+            d.insert("type", newSensorInfo[1]);
+            setData(newSensor, d);
+            KSGRD::SensorMgr->sendRequest( "localhost", QString("%1?").arg(newSensor), (KSGRD::SensorClient*)this, -(count + 2));
+            ++count;
         }
-        foreach(const QString& sensor, m_sensors) {
-            if (!sensors.contains(sensor)) {
-                removeSource(sensor);
+
+        QHash<QString, Plasma::DataContainer*> sourceDict = containerDict();
+        QHashIterator<QString, Plasma::DataContainer*> it(sourceDict);
+        while (it.hasNext()) {
+            it.next();
+            if (!sensors.contains(it.key())) {
+                removeSource(it.key());
             }
         }
-        m_sensors = sensors;
+
         return;
     }
 
