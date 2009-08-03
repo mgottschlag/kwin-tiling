@@ -343,10 +343,17 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     // space is left for painting the time on top of it.
     QRectF dateRect;
     const QString timeString = KGlobal::locale()->formatTime(m_time, m_showSeconds);
+    QString fakeTimeString = "23:59";
+    if(m_showSeconds){
+        fakeTimeString += ":59";
+    }
+    
     QFont smallFont = KGlobalSettings::smallestReadableFont();
 
     if (m_showDate || showTimezone()) {
         QString dateString;
+        
+        //Create the localized date string if needed
         if (m_showDate) {
             KLocale tmpLocale(*KGlobal::locale());
             tmpLocale.setDateFormat("%e"); // day number of the month
@@ -411,7 +418,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
             if (formFactor() == Plasma::Vertical) {
                 smallFont.setPixelSize(qMax(contentsRect.height()/6, fm.ascent()));
             } else if (formFactor() == Plasma::Horizontal) {
-                    smallFont.setPixelSize(qMax(qMin(contentsRect.height(), contentsRect.width())*2/7, fm.ascent()));
+                smallFont.setPixelSize(qMax(qMin(contentsRect.height(), contentsRect.width())*2/7, fm.ascent()));
             } else {
                 smallFont.setPixelSize(qMax(qMin(contentsRect.height(), contentsRect.width())/8, KGlobalSettings::smallestReadableFont().pointSize()));
             }
@@ -459,8 +466,8 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     // kDebug(96669) << m_time;
     // Choose a relatively big font size to start with
     m_plainClockFont.setPointSizeF(qMax(m_timeRect.height(), KGlobalSettings::smallestReadableFont().pointSize()));
-    preparePainter(p, m_timeRect, m_plainClockFont, timeString, true);
-
+    preparePainter(p, m_timeRect, m_plainClockFont, fakeTimeString, true);
+    
     if (!m_dateString.isEmpty()) {
         if (m_dateTimezoneBesides) {
             QFontMetrics fm(m_plainClockFont);
@@ -483,10 +490,11 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
         p->setFont(f);
     }
-
-    QTextOption textOption(m_dateTimezoneBesides ? Qt::AlignCenter | Qt::AlignVCenter : Qt::AlignCenter);
-    textOption.setWrapMode(QTextOption::NoWrap);
-    p->drawText(m_timeRect, timeString, textOption);
+    
+    QFontMetrics fm(p->font());
+    
+    p->drawText(QPoint(m_timeRect.center().x() - fm.width(fakeTimeString) / 2,
+                       m_timeRect.center().y() + fm.height() / 3), timeString);
 }
 
 QRect Clock::preparePainter(QPainter *p, const QRect &rect, const QFont &font, const QString &text, bool singleline)
