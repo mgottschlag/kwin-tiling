@@ -187,8 +187,8 @@ void WindowTaskItem::updateToolTip()
 {
     if (!m_task || !m_task->task()) {
         return;
-    } 
-   
+    }
+
     bool showToolTip = true;
     TaskGroupItem *group = parentGroup();
 
@@ -203,8 +203,8 @@ void WindowTaskItem::updateToolTip()
                 showToolTip = false;
             }
         }
-    } 
-    
+    }
+
     if (showToolTip) {
         QPixmap p = m_task->task()->icon(KIconLoader::SizeLarge, KIconLoader::SizeLarge, false);
         if (p.height() > KIconLoader::SizeLarge) {
