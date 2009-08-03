@@ -62,8 +62,6 @@ private:
 
     QGraphicsWidget *m_mainWidget;
     Plasma::ScrollWidget *m_scrollWidget;
-    Plasma::SvgWidget *m_topBorder;
-    Plasma::SvgWidget *m_bottomBorder;
     QGraphicsLinearLayout *m_externalLayout;
     QGraphicsLinearLayout *m_mainLayout;
     QGraphicsLinearLayout *m_leftLayout;

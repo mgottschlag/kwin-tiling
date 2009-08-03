@@ -41,7 +41,6 @@ namespace Plasma
     class QueryMatch;
     class ScrollWidget;
     class Frame;
-    class SvgWidget;
 }
 
 class SearchLaunch : public Plasma::Containment
@@ -83,9 +82,6 @@ private:
     Plasma::FrameSvg *m_background;
     Plasma::RunnerManager *runnermg;
     Plasma::IconWidget *m_homeButton;
-
-    Plasma::SvgWidget *m_topBorder;
-    Plasma::SvgWidget *m_bottomBorder;
 
     int queryCounter;
     int m_maxColumnWidth;

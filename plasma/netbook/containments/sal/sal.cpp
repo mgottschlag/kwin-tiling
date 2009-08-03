@@ -38,7 +38,6 @@
 #include <Plasma/RunnerManager>
 #include <Plasma/QueryMatch>
 #include <Plasma/ScrollWidget>
-#include <Plasma/SvgWidget>
 
 
 SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
@@ -79,18 +78,6 @@ void SearchLaunch::init()
 
     Plasma::Svg *borderSvg = new Plasma::Svg(this);
     borderSvg->setImagePath("newspaper/border");
-
-    m_topBorder = new Plasma::SvgWidget(this);
-    m_topBorder->setSvg(borderSvg);
-    m_topBorder->setElementID("top");
-    m_topBorder->resize(m_topBorder->effectiveSizeHint(Qt::PreferredSize));
-    m_topBorder->setZValue(900);
-
-    m_bottomBorder = new Plasma::SvgWidget(this);
-    m_bottomBorder->setSvg(borderSvg);
-    m_bottomBorder->setElementID("bottom");
-    m_bottomBorder->resize(m_bottomBorder->effectiveSizeHint(Qt::PreferredSize));
-    m_bottomBorder->setZValue(900);
 
     m_background = new Plasma::FrameSvg(this);
     m_background->setImagePath("widgets/translucentbackground");
@@ -263,9 +250,6 @@ void SearchLaunch::relayout()
         ++i;
     }
     m_viewMainWidget->resize(0,0);
-
-    m_topBorder->setVisible(m_viewMainWidget->size().height() > m_gridScroll->size().height());
-    m_bottomBorder->setVisible(m_topBorder->isVisible());
 }
 
 void SearchLaunch::launch()
@@ -421,15 +405,6 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 
     if (constraints & Plasma::SizeConstraint) {
         m_relayoutTimer->start();
-
-        if (m_gridScroll) {
-            //FIXME: remove the hardcoded 2
-            m_topBorder->resize(m_gridScroll->size().width(), m_topBorder->size().height());
-            m_topBorder->setPos(m_gridScroll->pos() + QPoint(0, 2));
-
-            m_bottomBorder->resize(m_gridScroll->size().width(), m_bottomBorder->size().height());
-            m_bottomBorder->setPos(m_gridScroll->geometry().bottomLeft() - QPoint(0,  m_bottomBorder->size().height() + 2));
-        }
     }
 
 }
