@@ -94,7 +94,7 @@ public:
     bool forceTzDisplay : 1;
     bool displayHolidays : 1;
 
-    void addTzToTipText(QString &subText, QString tz)
+    void addTzToTipText(QString &subText, const QString& tz)
     {
         Plasma::DataEngine::Data data = q->dataEngine("time")->query(tz);
 
@@ -137,7 +137,7 @@ public:
         }
     }
 
-    void createDateExtender(QDate date)
+    void createDateExtender(const QDate& date)
     {
         Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(q->extender());
         eItem->setName("dateExtender-" + date.toString(Qt::ISODate));
