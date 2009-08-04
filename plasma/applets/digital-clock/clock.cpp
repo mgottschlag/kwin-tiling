@@ -343,11 +343,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     // space is left for painting the time on top of it.
     QRectF dateRect;
     const QString timeString = KGlobal::locale()->formatTime(m_time, m_showSeconds);
-    QString fakeTimeString = "23:59";
-    if(m_showSeconds){
-        fakeTimeString += ":59";
-    }
-    
+    const QString fakeTimeString = KGlobal::locale()->formatTime(QTime(23,59,59), m_showSeconds);
     QFont smallFont = KGlobalSettings::smallestReadableFont();
 
     if (m_showDate || showTimezone()) {
