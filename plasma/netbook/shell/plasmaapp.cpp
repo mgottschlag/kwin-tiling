@@ -225,6 +225,8 @@ void PlasmaApp::positionPanel()
 
 void PlasmaApp::mainContainmentActivated()
 {
+    m_mainView->setWindowTitle(m_mainView->containment()->activity());
+
     if (!m_isDesktop) {
         return;
     }
