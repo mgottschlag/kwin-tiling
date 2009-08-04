@@ -186,7 +186,7 @@ void ScreenPreviewWidget::dropEvent(QDropEvent *e)
         return;
 
     const KUrl::List uris(KUrl::List::fromMimeData(e->mimeData()));
-    if (uris.count() > 0) {
+    if (!uris.isEmpty()) {
         // TODO: Download remote file
         if (uris.first().isLocalFile())
            emit imageDropped(uris.first().path());
