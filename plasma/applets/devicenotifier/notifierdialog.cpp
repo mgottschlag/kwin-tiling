@@ -162,7 +162,7 @@ void NotifierDialog::insertDevice(const QString &name)
     m_notifierView->calculateRects();
 }
 
-void NotifierDialog::setUnMount(bool unmount, const QString &name) 
+void NotifierDialog::setUnMount(bool unmount, const QString &name)
 {
     QModelIndex index = indexForUdi(name);
     if (!index.isValid()) {
@@ -253,10 +253,10 @@ void NotifierDialog::buildDialog()
     QVBoxLayout *l_layout = new QVBoxLayout(m_widget);
     l_layout->setSpacing(0);
     l_layout->setMargin(0);
-    
+
     m_label = new QLabel(m_widget);
     updateColors();
-    
+
     QLabel *icon = new QLabel(m_widget);
     icon->setPixmap(KIcon("emblem-mounted").pixmap(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
 

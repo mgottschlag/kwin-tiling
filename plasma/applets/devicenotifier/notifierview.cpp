@@ -212,7 +212,7 @@ void NotifierView::paintEvent(QPaintEvent *event)
     while (it.hasNext()) {
         it.next();
         QRect itemRect = it.value();
-	QRect rect(itemRect.x(), itemRect.y() - verticalOffset(), itemRect.width(), itemRect.height()); 
+        QRect rect(itemRect.x(), itemRect.y() - verticalOffset(), itemRect.width(), itemRect.height());
         if (event->region().contains(rect)) {
             QModelIndex index = it.key();
             if (model()->hasChildren(index)) {
