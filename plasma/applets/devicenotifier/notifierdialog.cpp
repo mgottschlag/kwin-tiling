@@ -245,6 +245,10 @@ QString NotifierDialog::getDeviceUdi(int index)
 void NotifierDialog::buildDialog()
 {
     m_widget = new QWidget();
+    m_widget->setAttribute(Qt::WA_TranslucentBackground);
+    QPalette p = m_widget->palette();
+    p.setColor(QPalette::Window, Qt::transparent);
+    m_widget->setPalette(p);
 
     QVBoxLayout *l_layout = new QVBoxLayout(m_widget);
     l_layout->setSpacing(0);
@@ -408,9 +412,6 @@ void NotifierDialog::updateColors()
     KColorScheme colorTheme = KColorScheme(QPalette::Active, KColorScheme::View,Plasma::Theme::defaultTheme()->colorScheme());
     m_label->setText(i18n("<font color=\"%1\">Devices recently plugged in:</font>",colorTheme.foreground(KColorScheme::NormalText).color().name()));
 
-    QPalette p = m_widget->palette();
-    p.setColor(QPalette::Window, Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
-    m_widget->setPalette(p);
 }
 
 #include "notifierdialog.moc"
