@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 2.6)
 find_package(Qt4 REQUIRED)
 #include(${QT_USE_FILE})
 
-#set(CMAKE_MODULE_PATH ${HOME}/development/KDEBuilder/install/share/apps/cmake/modules ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH ${HOME}/development/KDEBuilder/install/share/apps/cmake/modules ${CMAKE_MODULE_PATH})
 #set(CMAKE_MODULE_PATH ${HOME}/development/KDE/install_dir/share/apps/cmake/modules ${CMAKE_MODULE_PATH})
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 find_package(KDE4 REQUIRED)

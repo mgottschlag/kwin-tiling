@@ -20,8 +20,11 @@
 #include <plasma/widgets/lineedit.h>
 #include <plasma/widgets/pushbutton.h>
 #include <plasma/widgets/treeview.h>
+#include <plasma/dialog.h>
 
 class AppletIconWidget;
+class AppletInfoWidget;
+class AppletToolTipWidget;
 
 class AppletsList : public QGraphicsWidget
 {
@@ -47,11 +50,12 @@ private:
      * Creates a new applet icon and puts it into the hash
      */
     AppletIconWidget *createAppletIcon(PlasmaAppletItem *appletItem);
-
     void insertAppletIcon(AppletIconWidget *appletIconWidget);
+
     qreal listWidth();
     int maximumVisibleIconsOnList();
     void eraseList();
+    void setToolTipPosition();
 
     AppletIconWidget *findAppletUnderXPosition(int xPosition);
     QRectF visibleListRect();
@@ -65,13 +69,18 @@ private slots:
     void searchTermChanged(const QString &text);
     void filterChanged(int index);
     void updateList();
-    void appletIconEnter(AppletIconWidget *appletIcon);
+
     void onRightArrowClick();
     void onLeftArrowClick();
     void manageArrows();
     void resetScroll();
+
     void itemSelected(AppletIconWidget *applet);
     void appletIconDoubleClicked(AppletIconWidget *applet);
+    void appletIconHoverLeave(AppletIconWidget *appletIcon);
+    void appletIconHoverEnter(AppletIconWidget *appletIcon);
+    void onToolTipEnter();
+    void onToolTipLeave();
 
     /* TODO: Remove this and animate using plasma's
      * animation framework when it is created */
@@ -84,15 +93,11 @@ protected:
 
 Q_SIGNALS:
 
-    void appletIconHoverEnter(PlasmaAppletItem *item);
-    void appletIconHoverLeave(PlasmaAppletItem *item);
-
-    void appletIconEnter(PlasmaAppletItem *appletItem);
-    void listScrolled();
     void appletDoubleClicked(PlasmaAppletItem *appletItem);
-
+    void listScrolled();
 
 private:
+
     /**
      * Hash containing all widgets that represents the applets
      */
@@ -107,12 +112,19 @@ private:
     Plasma::PushButton *m_rightArrow;
     Plasma::PushButton *m_leftArrow;
 
+    /**
+     * One single tootip to show applets info
+     */
+    AppletToolTipWidget *m_toolTip;
+
     QStandardItemModel *m_modelItems;
     QStandardItemModel *m_modelFilters;
     KCategorizedItemsViewModels::DefaultItemFilterProxyModel *m_modelFilterItems;
 
     AppletIconWidget *m_selectedItem;
 
+    QBasicTimer m_toolTipAppearTimer;
+    QBasicTimer m_toolTipDisappearTimer;
     QBasicTimer m_searchDelayTimer;
     QString m_searchString;
 
@@ -160,6 +172,54 @@ class AppletIconWidget : public Plasma::IconWidget
         bool m_hovered;
         Plasma::FrameSvg *m_selectedBackgroundSvg;
         bool m_showingTooltip;
+};
+
+class AppletToolTipWidget : public Plasma::Dialog {
+
+    Q_OBJECT
+
+    public:
+        explicit AppletToolTipWidget(QWidget *parent = 0, AppletIconWidget *applet = 0);
+        virtual ~AppletToolTipWidget();
+
+        void setAppletIconWidget(AppletIconWidget *applet);
+        void showEvent(QShowEvent * event);
+        AppletIconWidget *appletIconWidget();
+
+    Q_SIGNALS:
+        void enter();
+        void leave();
+
+    protected:
+        void enterEvent(QEvent *event);
+        void leaveEvent(QEvent *event);
+
+    private:        
+        AppletIconWidget *m_applet;
+        AppletInfoWidget *m_widget;
+};
+
+class AppletInfoWidget : public QGraphicsWidget {
+
+    Q_OBJECT
+
+    public:
+        AppletInfoWidget(QGraphicsItem *parent = 0, PlasmaAppletItem *appletItem = 0);
+        ~AppletInfoWidget();
+
+        void init();
+        void setAppletItem(PlasmaAppletItem *appletItem);
+
+    public Q_SLOTS:
+        void updateInfo();
+
+    private:
+        PlasmaAppletItem *m_appletItem;
+        QGraphicsLinearLayout *m_linearLayout;
+
+        Plasma::Label *m_descriptionLabel;
+        Plasma::IconWidget *m_iconWidget;
+        Plasma::IconWidget *m_infoButton;
 };
 
 class FilteringList : public QGraphicsWidget

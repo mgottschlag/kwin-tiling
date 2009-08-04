@@ -7,9 +7,12 @@
 #include <typeinfo>
 
 #include <plasma/tooltipmanager.h>
+#include <plasma/tooltipcontent.h>
 
 #define UNIVERSAL_PADDING 20
 #define SEARCH_DELAY 300
+#define TOOLTIP_APPEAR_DELAY 1000
+#define TOOLTIP_DISAPPEAR_DELAY 300
 #define ICON_WIDGET_HEIGHT 100
 #define ICON_WIDGET_WIDTH 100
 
@@ -31,6 +34,12 @@ AppletsList::AppletsList(QGraphicsItem *parent)
     scrollTimeLine.setDuration(500); // TODO: Set this to a lesser value
     connect(&scrollTimeLine, SIGNAL(frameChanged(int)),
             this, SLOT(scrollTimeLineFrameChanged(int)));
+
+    m_toolTip = new AppletToolTipWidget();
+    m_toolTip->setVisible(false);
+    connect(this, SIGNAL(appletIconHoverEnter(AppletIconWidget*)), this, SLOT(showToolTip(AppletIconWidget*)));
+    connect(m_toolTip, SIGNAL(enter()), this, SLOT(onToolTipEnter()));
+    connect(m_toolTip, SIGNAL(leave()), this, SLOT(onToolTipLeave()));
 }
 
 AppletsList::~AppletsList()
@@ -129,7 +138,61 @@ void AppletsList::timerEvent(QTimerEvent *event)
         m_modelFilterItems->setSearch(m_searchString);
         m_searchDelayTimer.stop();
     }
+
+    if(event->timerId() == m_toolTipAppearTimer.timerId()) {
+        setToolTipPosition();
+        m_toolTip->setVisible(true);
+        m_toolTipAppearTimer.stop();
+    }
+
+    if(event->timerId() == m_toolTipDisappearTimer.timerId()) {
+        m_toolTip->setVisible(false);
+        m_toolTipDisappearTimer.stop();
+    }
+
     QGraphicsWidget::timerEvent(event);
+}
+
+void AppletsList::appletIconHoverEnter(AppletIconWidget *applet)
+{    
+    if(!m_toolTip->isVisible()) {
+        m_toolTip->setAppletIconWidget(applet);
+        m_toolTipAppearTimer.start(TOOLTIP_APPEAR_DELAY, this);
+    } else {
+        if(!(m_toolTip->appletIconWidget()->appletItem()->pluginName() ==
+             applet->appletItem()->pluginName())) {
+            m_toolTip->setAppletIconWidget(applet);
+            setToolTipPosition();
+        }
+        m_toolTipDisappearTimer.stop();
+    }
+}
+
+void AppletsList::appletIconHoverLeave(AppletIconWidget *applet)
+{
+    Q_UNUSED(applet)
+
+    if(m_toolTip->isVisible()) {
+        m_toolTipDisappearTimer.start(TOOLTIP_DISAPPEAR_DELAY, this);
+    } else {
+        m_toolTipAppearTimer.stop();
+    }
+}
+
+void AppletsList::onToolTipEnter()
+{
+    m_toolTipDisappearTimer.stop();
+}
+
+void AppletsList::onToolTipLeave()
+{
+    m_toolTipDisappearTimer.start(TOOLTIP_DISAPPEAR_DELAY, this);
+}
+
+void AppletsList::setToolTipPosition()
+{
+    QPointF appletPosition = m_toolTip->appletIconWidget()->mapToItem(this, 0, 0);
+    m_toolTip->move(appletPosition.x(), m_toolTip->y());
 }
 
 void AppletsList::insertAppletIcon(AppletIconWidget *appletIconWidget)
@@ -158,7 +221,8 @@ AppletIconWidget *AppletsList::createAppletIcon(PlasmaAppletItem *appletItem)
     applet->setMinimumSize(ICON_WIDGET_WIDTH, ICON_WIDGET_HEIGHT);
     applet->setMaximumSize(ICON_WIDGET_WIDTH, ICON_WIDGET_HEIGHT);
 
-    connect(applet, SIGNAL(hoverEnter(AppletIconWidget*)), this, SLOT(appletIconEnter(AppletIconWidget*)));
+    connect(applet, SIGNAL(hoverEnter(AppletIconWidget*)), this, SLOT(appletIconHoverEnter(AppletIconWidget*)));
+    connect(applet, SIGNAL(hoverLeave(AppletIconWidget*)), this, SLOT(appletIconHoverLeave(AppletIconWidget*)));
     connect(applet, SIGNAL(selected(AppletIconWidget*)), this, SLOT(itemSelected(AppletIconWidget*)));
     connect(applet, SIGNAL(doubleClicked(AppletIconWidget*)), this, SLOT(appletIconDoubleClicked(AppletIconWidget*)));
 
@@ -440,11 +504,6 @@ AbstractItem *AppletsList::getItemByProxyIndex(const QModelIndex &index) const
     return (AbstractItem *)m_modelItems->itemFromIndex(m_modelFilterItems->mapToSource(index));
 }
 
-void AppletsList::appletIconEnter(AppletIconWidget *appletIcon)
-{
-    emit(appletIconEnter(appletIcon->appletItem()));
-}
-
 QList <AbstractItem *> AppletsList::selectedItems() const
 {
 //    return m_appletList->selectedItems();
@@ -498,6 +557,7 @@ void AppletIconWidget::updateApplet(PlasmaAppletItem *appletItem)
         data.setMainText(m_appletItem->name());
         data.setImage(p);
         data.setSubText(m_appletItem->description());
+        data.setClickable(true);
 
         Plasma::ToolTipManager::self()->setContent(this, data);
 
@@ -574,6 +634,118 @@ void AppletIconWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
     Plasma::IconWidget::paint(painter, option, widget);
  }
+
+//AppletToolTipWidget
+
+AppletToolTipWidget::AppletToolTipWidget(QWidget *parent, AppletIconWidget *applet)
+        : Plasma::Dialog(parent)
+{
+    m_applet = applet;
+    m_widget = new AppletInfoWidget();
+    if(m_applet) {
+        m_widget->setAppletItem(m_applet->appletItem());
+    }
+    setGraphicsWidget(m_widget);
+}
+
+AppletToolTipWidget::~AppletToolTipWidget()
+{
+}
+
+void AppletToolTipWidget::setAppletIconWidget(AppletIconWidget *applet)
+{
+    m_applet = applet;
+    m_widget->setAppletItem(m_applet->appletItem());
+}
+
+void AppletToolTipWidget::showEvent(QShowEvent * event)
+{
+    m_widget->updateInfo();
+    Plasma::Dialog::showEvent(event);
+}
+
+AppletIconWidget *AppletToolTipWidget::appletIconWidget()
+{
+    return m_applet;
+}
+
+void AppletToolTipWidget::enterEvent(QEvent *event)
+{
+    Q_UNUSED(event);
+    emit(enter());
+}
+
+void AppletToolTipWidget::leaveEvent(QEvent *event)
+{
+    Q_UNUSED(event);
+    emit(leave());
+}
+
+//AppletInfoWidget
+
+AppletInfoWidget::AppletInfoWidget(QGraphicsItem *parent, PlasmaAppletItem *appletItem)
+        : QGraphicsWidget(parent)
+{
+    m_appletItem = appletItem;
+    init();
+}
+
+AppletInfoWidget::~AppletInfoWidget()
+{
+}
+
+void AppletInfoWidget::init()
+{
+    m_iconWidget = new Plasma::IconWidget();
+    m_iconWidget->setAcceptHoverEvents(false);
+    m_iconWidget->setAcceptedMouseButtons(false);
+
+    m_descriptionLabel = new Plasma::Label();
+    m_descriptionLabel->setAlignment(Qt::AlignCenter);
+    //m_descriptionLabel->setMinimumSize(QSizeF(m_constSize.width(), m_constSize.height()/4));
+    m_descriptionLabel->setScaledContents(true);
+    m_descriptionLabel->nativeWidget()->setWordWrap(true);
+
+    if(m_appletItem != 0) {
+        m_iconWidget->setText(m_appletItem->pluginName());
+        m_iconWidget->setIcon(m_appletItem->icon());
+        m_descriptionLabel->setText(m_appletItem->description());
+    } else {
+        m_iconWidget->setText("not a widget");
+        m_iconWidget->setIcon("clock");
+        m_descriptionLabel->setText("Applet description");
+    }
+
+    m_infoButton = new Plasma::IconWidget();
+    m_infoButton->setIcon("help-about");
+//    m_infoButton->setMinimumSize(QSizeF(25, 25));
+//    m_infoButton->setMaximumSize(QSizeF(25, 25));
+
+    m_linearLayout = new QGraphicsLinearLayout();
+    m_linearLayout->setOrientation(Qt::Vertical);
+
+    m_linearLayout->addItem(m_iconWidget);
+    m_linearLayout->addItem(m_descriptionLabel);
+    m_linearLayout->addItem(m_infoButton);
+
+    setLayout(m_linearLayout);
+
+    m_linearLayout->setAlignment(m_infoButton, Qt::AlignRight);
+    m_linearLayout->setAlignment(m_iconWidget, Qt::AlignCenter);
+    m_linearLayout->setAlignment(m_descriptionLabel, Qt::AlignCenter);
+}
+
+void AppletInfoWidget::setAppletItem(PlasmaAppletItem *appletItem)
+{
+    m_appletItem = appletItem;
+}
+
+void AppletInfoWidget::updateInfo()
+{
+    m_iconWidget->setIcon(m_appletItem->icon());
+    m_iconWidget->setText(m_appletItem->pluginName());
+    m_descriptionLabel->setText(m_appletItem->description());
+}
 
 //FilteringList
 
