@@ -1,4 +1,5 @@
 #include "customwidgets.h"
+#include "widgetexplorer.h"
 #include <KAction>
 #include <KStandardAction>
 #include <kiconloader.h>
@@ -8,6 +9,7 @@
 
 #include <plasma/tooltipmanager.h>
 #include <plasma/tooltipcontent.h>
+#include <plasma/corona.h>
 
 #define UNIVERSAL_PADDING 20
 #define SEARCH_DELAY 300
@@ -15,6 +17,8 @@
 #define TOOLTIP_DISAPPEAR_DELAY 300
 #define ICON_WIDGET_HEIGHT 100
 #define ICON_WIDGET_WIDTH 100
+#define TOOLTIP_HEIGHT 200
+#define TOOLTIP_WIDTH 200
 
 //AppletsList
 
@@ -154,8 +158,11 @@ void AppletsList::timerEvent(QTimerEvent *event)
 }
 
 void AppletsList::appletIconHoverEnter(AppletIconWidget *applet)
-{    
+{
+    kDebug() << "debug?";
+
     if(!m_toolTip->isVisible()) {
+        kDebug() << "not visible";
         m_toolTip->setAppletIconWidget(applet);
         m_toolTipAppearTimer.start(TOOLTIP_APPEAR_DELAY, this);
     } else {
@@ -192,7 +199,15 @@ void AppletsList::onToolTipLeave()
 void AppletsList::setToolTipPosition()
 {
     QPointF appletPosition = m_toolTip->appletIconWidget()->mapToItem(this, 0, 0);
-    m_toolTip->move(appletPosition.x(), m_toolTip->y());
+
+    Plasma::Corona *corona = dynamic_cast<Plasma::WidgetExplorer*>(parentItem())->corona();
+
+    if(corona) {
+        m_toolTip->move(corona->popupPosition(m_toolTip->appletIconWidget(), m_toolTip->contentsRect().size()));
+    } else {
+        m_toolTip->move(appletPosition.x(), appletPosition.y());
+    }
+
 }
 
 void AppletsList::insertAppletIcon(AppletIconWidget *appletIconWidget)
@@ -527,7 +542,7 @@ AppletIconWidget::AppletIconWidget(QGraphicsItem *parent, PlasmaAppletItem *appl
 AppletIconWidget::~AppletIconWidget()
 {
     m_appletItem = 0;
-    Plasma::ToolTipManager::self()->unregisterWidget(this);
+//    Plasma::ToolTipManager::self()->unregisterWidget(this);
 }
 
 PlasmaAppletItem *AppletIconWidget::appletItem()
@@ -542,24 +557,24 @@ void AppletIconWidget::setAppletItem(PlasmaAppletItem *appletIcon)
 
 void AppletIconWidget::updateApplet(PlasmaAppletItem *appletItem)
 {
-    Plasma::ToolTipContent data;
-    QPixmap p;
+//    Plasma::ToolTipContent data;
+//    QPixmap p;
 
     if(appletItem != 0) {
         m_appletItem = appletItem;
         setText(m_appletItem->name());
         setIcon(m_appletItem->icon());
 
-        data = Plasma::ToolTipContent();
-
-        p = m_appletItem->icon().pixmap(KIconLoader::SizeLarge, KIconLoader::SizeLarge);
-
-        data.setMainText(m_appletItem->name());
-        data.setImage(p);
-        data.setSubText(m_appletItem->description());
-        data.setClickable(true);
-
-        Plasma::ToolTipManager::self()->setContent(this, data);
+//        data = Plasma::ToolTipContent();
+//
+//        p = m_appletItem->icon().pixmap(KIconLoader::SizeLarge, KIconLoader::SizeLarge);
+//
+//        data.setMainText(m_appletItem->name());
+//        data.setImage(p);
+//        data.setSubText(m_appletItem->description());
+//        data.setClickable(true);
+//
+//        Plasma::ToolTipManager::self()->setContent(this, data);
 
     } else {
         setText("no name");
@@ -654,6 +669,7 @@ AppletToolTipWidget::~AppletToolTipWidget()
 
 void AppletToolTipWidget::setAppletIconWidget(AppletIconWidget *applet)
 {
+    kDebug() << "set the AppletIconWidget";
     m_applet = applet;
     m_widget->setAppletItem(m_applet->appletItem());
 }
@@ -702,13 +718,14 @@ void AppletInfoWidget::init()
 
     m_descriptionLabel = new Plasma::Label();
     m_descriptionLabel->setAlignment(Qt::AlignCenter);
-    //m_descriptionLabel->setMinimumSize(QSizeF(m_constSize.width(), m_constSize.height()/4));
+    m_descriptionLabel->setMinimumSize(QSizeF(TOOLTIP_WIDTH, TOOLTIP_HEIGHT/4));
     m_descriptionLabel->setScaledContents(true);
     m_descriptionLabel->nativeWidget()->setWordWrap(true);
 
     if(m_appletItem != 0) {
         m_iconWidget->setText(m_appletItem->pluginName());
         m_iconWidget->setIcon(m_appletItem->icon());
+        m_iconWidget->setMinimumSize(50, 50);
         m_descriptionLabel->setText(m_appletItem->description());
     } else {
         m_iconWidget->setText("not a widget");
@@ -718,8 +735,8 @@ void AppletInfoWidget::init()
 
     m_infoButton = new Plasma::IconWidget();
     m_infoButton->setIcon("help-about");
-//    m_infoButton->setMinimumSize(QSizeF(25, 25));
-//    m_infoButton->setMaximumSize(QSizeF(25, 25));
+    m_infoButton->setMinimumSize(QSizeF(25, 25));
+    m_infoButton->setMaximumSize(QSizeF(25, 25));
 
     m_linearLayout = new QGraphicsLinearLayout();
     m_linearLayout->setOrientation(Qt::Vertical);

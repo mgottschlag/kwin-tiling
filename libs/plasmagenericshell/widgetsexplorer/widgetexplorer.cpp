@@ -30,11 +30,11 @@ using namespace KCategorizedItemsViewModels;
 namespace Plasma
 {
 
-class WidgetExplorerMainWidgetPrivate
+class WidgetExplorerPrivate
 {
 
 public:
-    WidgetExplorerMainWidgetPrivate(WidgetExplorerMainWidget *w)
+    WidgetExplorerPrivate(WidgetExplorer *w)
         : q(w),
           containment(0),
           config("plasmarc"),
@@ -60,9 +60,10 @@ public:
      */
     void appletRemoved(Plasma::Applet *applet);
 
-    WidgetExplorerMainWidget *q;
+    WidgetExplorer *q;
     QString application;
     Plasma::Containment *containment;
+    Plasma::Corona *corona;
     
     QHash<QString, int> runningApplets; // applet name => count
     //extra hash so we can look up the names of deleted applets
@@ -91,7 +92,7 @@ public:
 
 };
 
-void WidgetExplorerMainWidgetPrivate::initFilters()
+void WidgetExplorerPrivate::initFilters()
 {
     filterModel.clear();
 
@@ -116,7 +117,7 @@ void WidgetExplorerMainWidgetPrivate::initFilters()
     }
 }
 
-void WidgetExplorerMainWidgetPrivate::init()
+void WidgetExplorerPrivate::init()
 {
     // **** find a fancier way to use bla ****
     QDesktopWidget *bla = new QDesktopWidget();
@@ -162,7 +163,7 @@ void WidgetExplorerMainWidgetPrivate::init()
 
 }
 
-void WidgetExplorerMainWidgetPrivate::initPushButtonWidgetMenu()
+void WidgetExplorerPrivate::initPushButtonWidgetMenu()
 {
     pushButtonWidgetMenu = new KMenu(i18n("Get New Widgets"));
     QObject::connect(pushButtonWidgetMenu, SIGNAL(aboutToShow()), q, SLOT(populateWidgetsMenu()));
@@ -170,7 +171,7 @@ void WidgetExplorerMainWidgetPrivate::initPushButtonWidgetMenu()
 
 }
 
-void WidgetExplorerMainWidgetPrivate::initRunningApplets()
+void WidgetExplorerPrivate::initRunningApplets()
 {
 //get applets from corona, count them, send results to model
     if (!containment) {
@@ -202,12 +203,12 @@ void WidgetExplorerMainWidgetPrivate::initRunningApplets()
     itemModel.setRunningApplets(runningApplets);
 }
 
-void WidgetExplorerMainWidgetPrivate::containmentDestroyed()
+void WidgetExplorerPrivate::containmentDestroyed()
 {
     containment = 0;
 }
 
-void WidgetExplorerMainWidgetPrivate::appletAdded(Plasma::Applet *applet)
+void WidgetExplorerPrivate::appletAdded(Plasma::Applet *applet)
 {
     QString name = applet->pluginName();
     //kDebug() << name;
@@ -217,7 +218,7 @@ void WidgetExplorerMainWidgetPrivate::appletAdded(Plasma::Applet *applet)
     itemModel.setRunningApplets(name, runningApplets[name]);
 }
 
-void WidgetExplorerMainWidgetPrivate::appletRemoved(Plasma::Applet *applet)
+void WidgetExplorerPrivate::appletRemoved(Plasma::Applet *applet)
 {
     //kDebug() << (QObject*)applet;
     Plasma::Applet *a = (Plasma::Applet *)applet; //don't care if it's valid, just need the address
@@ -260,11 +261,11 @@ private:
 };
 
 
-//WidgetExplorerMainWidget
+//WidgetExplorer
 
-WidgetExplorerMainWidget::WidgetExplorerMainWidget(QGraphicsItem *parent)
+WidgetExplorer::WidgetExplorer(QGraphicsItem *parent)
         :QGraphicsWidget(parent),
-        d(new WidgetExplorerMainWidgetPrivate(this))
+        d(new WidgetExplorerPrivate(this))
 {
 
     d->init();
@@ -273,19 +274,19 @@ WidgetExplorerMainWidget::WidgetExplorerMainWidget(QGraphicsItem *parent)
     m_backgroundSvg->setImagePath("widgets/translucentbackground");
 }
 
-WidgetExplorerMainWidget::~WidgetExplorerMainWidget()
+WidgetExplorer::~WidgetExplorer()
 {
      delete d;
 }
 
-void WidgetExplorerMainWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void WidgetExplorer::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
  {
      QGraphicsWidget::paint(painter, option, widget);
      m_backgroundSvg->resizeFrame(contentsRect().size());
      m_backgroundSvg->paintFrame(painter, contentsRect().topLeft());
  }
 
-void WidgetExplorerMainWidget::setApplication(const QString &app)
+void WidgetExplorer::setApplication(const QString &app)
 {
     d->application = app;
     d->initFilters();
@@ -298,12 +299,12 @@ void WidgetExplorerMainWidget::setApplication(const QString &app)
     d->itemModel.setRunningApplets(d->runningApplets);
 }
 
-QString WidgetExplorerMainWidget::application()
+QString WidgetExplorer::application()
 {
     return d->application;
 }
 
-void WidgetExplorerMainWidget::setContainment(Plasma::Containment *containment)
+void WidgetExplorer::setContainment(Plasma::Containment *containment)
 {
     if (d->containment != containment) {
         if (d->containment) {
@@ -320,12 +321,24 @@ void WidgetExplorerMainWidget::setContainment(Plasma::Containment *containment)
     }
 }
 
-Containment *WidgetExplorerMainWidget::containment() const
+void WidgetExplorer::setCorona(Plasma::Corona *corona)
+{
+    if (d->corona != corona) {
+        d->corona = corona;
+    }
+}
+
+Containment *WidgetExplorer::containment() const
 {
     return d->containment;
 }
 
-void WidgetExplorerMainWidget::addApplet()
+Plasma::Corona *WidgetExplorer::corona() const
+{
+    return d->corona;
+}
+
+void WidgetExplorer::addApplet()
 {
     if (!d->containment) {
         return;
@@ -338,7 +351,7 @@ void WidgetExplorerMainWidget::addApplet()
     }
 }
 
-void WidgetExplorerMainWidget::addApplet(PlasmaAppletItem *appletItem)
+void WidgetExplorer::addApplet(PlasmaAppletItem *appletItem)
 {
     if (!d->containment) {
         return;
@@ -349,7 +362,7 @@ void WidgetExplorerMainWidget::addApplet(PlasmaAppletItem *appletItem)
     d->containment->addApplet(appletItem->pluginName(), appletItem->arguments());
 }
 
-void WidgetExplorerMainWidget::destroyApplets(const QString &name)
+void WidgetExplorer::destroyApplets(const QString &name)
 {
     if (!d->containment) {
         return;
@@ -379,7 +392,7 @@ void WidgetExplorerMainWidget::destroyApplets(const QString &name)
     d->itemModel.setRunningApplets(name, 0);
 }
 
-void WidgetExplorerMainWidget::infoAboutApplet(const QString &name)
+void WidgetExplorer::infoAboutApplet(const QString &name)
 {
     if (!d->containment) {
         return;
@@ -409,7 +422,7 @@ void WidgetExplorerMainWidget::infoAboutApplet(const QString &name)
     }
 }
 
-void WidgetExplorerMainWidget::downloadWidgets(const QString &type)
+void WidgetExplorer::downloadWidgets(const QString &type)
 {
     PackageStructure *installer = 0;
 
@@ -443,7 +456,7 @@ void WidgetExplorerMainWidget::downloadWidgets(const QString &type)
     }
 }
 
-void WidgetExplorerMainWidget::openWidgetFile()
+void WidgetExplorer::openWidgetFile()
 {
     // TODO: if we already have one of these showing and the user clicks to
     // add it again, show the same window?
@@ -452,7 +465,7 @@ void WidgetExplorerMainWidget::openWidgetFile()
     assistant->show();
 }
 
-void WidgetExplorerMainWidget::populateWidgetsMenu()
+void WidgetExplorer::populateWidgetsMenu()
 {
 
     if (!d->pushButtonWidgetMenu->actions().isEmpty()) {
@@ -489,47 +502,6 @@ void WidgetExplorerMainWidget::populateWidgetsMenu()
                          i18n("Install Widget From Local File..."), this);
     QObject::connect(action, SIGNAL(triggered(bool)), this, SLOT(openWidgetFile()));
     d->pushButtonWidgetMenu->addAction(action);
-}
-
-//WidgetExplorer
-
-WidgetExplorer::WidgetExplorer(QWidget *parent, Qt::WindowFlags f)
-{
-    Q_UNUSED(parent)
-    Q_UNUSED(f)
-    init();
-}
-
-WidgetExplorer::~WidgetExplorer()
-{
-//    KConfigGroup cg(KGlobal::config(), "PlasmaAppletBrowserDialog");
-//    saveDialogSize(cg);
-}
-
-void WidgetExplorer::init()
-{
-    m_widget = new WidgetExplorerMainWidget();
-    addItem(m_widget);
-}
-
-void WidgetExplorer::setApplication(const QString &app)
-{
-    m_widget->setApplication(app);
-}
-
-QString WidgetExplorer::application()
-{
-    return m_widget->application();
-}
-
-void WidgetExplorer::setContainment(Plasma::Containment *containment)
-{
-    m_widget->setContainment(containment);
-}
-
-Containment *WidgetExplorer::containment() const
-{
-    return m_widget->containment();
 }
 
 } // namespace Plasma

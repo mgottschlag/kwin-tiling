@@ -20,13 +20,14 @@ int main(int argc, char *argv[])
         kDebug() << info.pluginName();
     }
     
-    Plasma::WidgetExplorerMainWidget *appletBrowser;
+    Plasma::WidgetExplorer *appletBrowser;
 
-    appletBrowser = new Plasma::WidgetExplorerMainWidget();
+    appletBrowser = new Plasma::WidgetExplorer();
     appletBrowser->setContainment(containment);
     appletBrowser->setApplication();
 
     Plasma::Corona *scene = new Plasma::Corona();
+    appletBrowser->setCorona(scene);
 
     scene->addItem(appletBrowser);
     scene->setSceneRect(QRectF(0, 0, appletBrowser->minimumWidth(), appletBrowser->minimumHeight()));
@@ -37,10 +38,13 @@ int main(int argc, char *argv[])
     view->setAttribute(Qt::WA_TranslucentBackground, true);
     view->setStyleSheet("background: transparent");
 
+    QDesktopWidget *screen = new QDesktopWidget();
+
     view->setMinimumWidth(appletBrowser->minimumWidth());
     view->setMaximumWidth(appletBrowser->minimumWidth());
     view->setMinimumHeight(appletBrowser->minimumHeight() + 30);
     view->setMaximumHeight(appletBrowser->minimumHeight() + 30);
+    view->move(0, screen->height() - view->maximumHeight());
     view->show();
 
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
