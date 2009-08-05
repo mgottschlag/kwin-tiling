@@ -396,7 +396,6 @@ int TaskGroup::desktop() const
         if (item->desktop() != desk) {
             return 0;
         }
-        desk = item->desktop();
     }
     return desk;
 }
