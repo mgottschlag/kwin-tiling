@@ -80,10 +80,10 @@ private:
     void setFormFactorFromLocation(Plasma::Location loc);
 
     Plasma::FrameSvg *m_background;
-    Plasma::RunnerManager *runnermg;
+    Plasma::RunnerManager *m_runnermg;
     Plasma::IconWidget *m_homeButton;
 
-    int queryCounter;
+    int m_queryCounter;
     int m_maxColumnWidth;
     QTimer *m_relayoutTimer;
     QMultiMap<qreal, Plasma::IconWidget*> m_items;

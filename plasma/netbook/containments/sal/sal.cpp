@@ -55,7 +55,7 @@ SearchLaunch::~SearchLaunch()
     KConfigGroup cg = config();
     m_stripWidget->save(cg);
 
-    delete runnermg;
+    delete m_runnermg;
     delete m_background;
 }
 
@@ -67,8 +67,8 @@ void SearchLaunch::init()
     connect(this, SIGNAL(appletRemoved(Plasma::Applet*)),
             this, SLOT(appletRemoved(Plasma::Applet*)));
 
-    runnermg = new Plasma::RunnerManager(this);
-    connect(runnermg, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)),
+    m_runnermg = new Plasma::RunnerManager(this);
+    connect(m_runnermg, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)),
             this, SLOT(setQueryMatches(const QList<Plasma::QueryMatch>&)));
 
     m_relayoutTimer = new QTimer(this);
@@ -94,7 +94,7 @@ void SearchLaunch::themeUpdated()
 
 void SearchLaunch::doSearch(const QString query)
 {
-    queryCounter = 0;
+    m_queryCounter = 0;
 
     foreach (Plasma::IconWidget *icon, m_items) {
         m_launchGrid->removeAt(0);
@@ -105,7 +105,7 @@ void SearchLaunch::doSearch(const QString query)
 
     m_items.clear();
     m_matches.clear();
-    runnermg->reset();
+    m_runnermg->reset();
 
     if (m_gridScroll && query.isEmpty()) {
         QList<Plasma::QueryMatch> fakeMatches;
@@ -165,7 +165,7 @@ void SearchLaunch::doSearch(const QString query)
         setQueryMatches(fakeMatches);
         m_homeButton->hide();
     } else {
-        runnermg->launchQuery(query);
+        m_runnermg->launchQuery(query);
         if (m_homeButton) {
             m_homeButton->show();
         }
@@ -187,7 +187,7 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
 
     // just add new QueryMatch
     int i;
-    for (i = queryCounter; i < m.size(); i++) {
+    for (i = m_queryCounter; i < m.size(); i++) {
         Plasma::QueryMatch match = m[i];
 
         // create new IconWidget with information from the match
@@ -216,7 +216,7 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
 
         m_relayoutTimer->start(400);
     }
-    queryCounter = i;
+    m_queryCounter = i;
 }
 
 void SearchLaunch::relayout()
@@ -255,10 +255,10 @@ void SearchLaunch::launch()
 {
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender());
     Plasma::QueryMatch match = m_matches.value(icon, Plasma::QueryMatch(0));
-    if (runnermg->searchContext()->query().isEmpty()) {
+    if (m_runnermg->searchContext()->query().isEmpty()) {
         doSearch(match.data().toString());
     } else {
-        runnermg->run(match);
+        m_runnermg->run(match);
     }
 }
 
@@ -266,7 +266,7 @@ void SearchLaunch::addFavourite()
 {
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender()->parent());
     Plasma::QueryMatch match = m_matches.value(icon, Plasma::QueryMatch(0));
-    m_stripWidget->add(match, runnermg->searchContext()->query());
+    m_stripWidget->add(match, m_runnermg->searchContext()->query());
 }
 
 QList<QAction*> SearchLaunch::contextualActions()
@@ -374,7 +374,7 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             m_favourites->addStretch();
             m_favourites->addStretch();
 
-            m_stripWidget = new StripWidget(runnermg, this);
+            m_stripWidget = new StripWidget(m_runnermg, this);
             m_favourites->insertItem(1, m_stripWidget);
             KConfigGroup cg = config();
             m_stripWidget->restore(cg);
