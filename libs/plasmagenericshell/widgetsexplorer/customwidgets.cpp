@@ -727,17 +727,27 @@ void AppletInfoWidget::init()
 
     m_descriptionLabel = new Plasma::Label();
     m_descriptionLabel->setAlignment(Qt::AlignCenter);
-    m_descriptionLabel->setMinimumSize(QSizeF(TOOLTIP_WIDTH, TOOLTIP_HEIGHT/4));
+    m_descriptionLabel->setMinimumWidth(TOOLTIP_WIDTH);
+    m_descriptionLabel->setMaximumWidth(TOOLTIP_WIDTH);
     m_descriptionLabel->setScaledContents(true);
     m_descriptionLabel->nativeWidget()->setWordWrap(true);
 
+    m_nameLabel = new Plasma::Label();
+    QFont font = m_nameLabel->nativeWidget()->font();
+    font.setBold(true);
+    m_nameLabel->nativeWidget()->setFont(font);
+    m_nameLabel->setMinimumHeight(TOOLTIP_HEIGHT/4);
+
+    m_icon = new QIcon();
+
     if(m_appletItem != 0) {
-        m_iconWidget->setText(m_appletItem->pluginName());
+        //m_iconWidget->setText(m_appletItem->name());
         m_iconWidget->setIcon(m_appletItem->icon());
-        m_iconWidget->setMinimumSize(50, 50);
+        m_iconWidget->setMinimumSize(70, 70);
         m_descriptionLabel->setText(m_appletItem->description());
+        m_nameLabel->setText(m_appletItem->name());
+        m_icon = new QIcon(m_appletItem->icon());
     } else {
-        m_iconWidget->setText("not a widget");
         m_iconWidget->setIcon("clock");
         m_descriptionLabel->setText("Applet description");
     }
@@ -748,10 +758,16 @@ void AppletInfoWidget::init()
     m_infoButton->setMaximumSize(QSizeF(25, 25));
 
     m_linearLayout = new QGraphicsLinearLayout();
-    m_linearLayout->setOrientation(Qt::Vertical);
+    m_linearLayout->setOrientation(Qt::Horizontal);
+    QGraphicsLinearLayout *vLayout = new QGraphicsLinearLayout();
+    vLayout->setOrientation(Qt::Vertical);
 
     m_linearLayout->addItem(m_iconWidget);
-    m_linearLayout->addItem(m_descriptionLabel);
+    //m_linearLayout->addItem(m_icon->pixmap(50, 50));
+    vLayout->addItem(m_nameLabel);
+    vLayout->addItem(m_descriptionLabel);
+    //m_linearLayout->addItem(m_descriptionLabel);
+    m_linearLayout->addItem(vLayout);
     m_linearLayout->addItem(m_infoButton);
 
     setLayout(m_linearLayout);
@@ -769,8 +785,8 @@ void AppletInfoWidget::setAppletItem(PlasmaAppletItem *appletItem)
 void AppletInfoWidget::updateInfo()
 {
     m_iconWidget->setIcon(m_appletItem->icon());
-    m_iconWidget->setText(m_appletItem->pluginName());
     m_descriptionLabel->setText(m_appletItem->description());
+    m_nameLabel->setText(m_appletItem->pluginName());
 }
 
 //FilteringList

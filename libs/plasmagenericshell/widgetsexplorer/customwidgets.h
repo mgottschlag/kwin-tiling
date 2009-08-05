@@ -221,6 +221,8 @@ class AppletInfoWidget : public QGraphicsWidget {
         Plasma::Label *m_descriptionLabel;
         Plasma::IconWidget *m_iconWidget;
         Plasma::IconWidget *m_infoButton;
+        QIcon *m_icon;
+        Plasma::Label *m_nameLabel;
 };
 
 class FilteringList : public QGraphicsWidget
