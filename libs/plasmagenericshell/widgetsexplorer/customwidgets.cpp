@@ -10,6 +10,7 @@
 #include <plasma/tooltipmanager.h>
 #include <plasma/tooltipcontent.h>
 #include <plasma/corona.h>
+#include <plasma/theme.h>
 
 #define UNIVERSAL_PADDING 20
 #define SEARCH_DELAY 300
@@ -41,7 +42,6 @@ AppletsList::AppletsList(QGraphicsItem *parent)
 
     m_toolTip = new AppletToolTipWidget();
     m_toolTip->setVisible(false);
-    connect(this, SIGNAL(appletIconHoverEnter(AppletIconWidget*)), this, SLOT(showToolTip(AppletIconWidget*)));
     connect(m_toolTip, SIGNAL(enter()), this, SLOT(onToolTipEnter()));
     connect(m_toolTip, SIGNAL(leave()), this, SLOT(onToolTipLeave()));
 }
@@ -145,6 +145,7 @@ void AppletsList::timerEvent(QTimerEvent *event)
 
     if(event->timerId() == m_toolTipAppearTimer.timerId()) {
         setToolTipPosition();
+        m_toolTip->updateContent();
         m_toolTip->setVisible(true);
         m_toolTipAppearTimer.stop();
     }
@@ -159,16 +160,17 @@ void AppletsList::timerEvent(QTimerEvent *event)
 
 void AppletsList::appletIconHoverEnter(AppletIconWidget *applet)
 {
-    kDebug() << "debug?";
+    qDebug() << "debug?";
 
     if(!m_toolTip->isVisible()) {
-        kDebug() << "not visible";
+        qDebug() << "not visible";
         m_toolTip->setAppletIconWidget(applet);
         m_toolTipAppearTimer.start(TOOLTIP_APPEAR_DELAY, this);
     } else {
         if(!(m_toolTip->appletIconWidget()->appletItem()->pluginName() ==
              applet->appletItem()->pluginName())) {
             m_toolTip->setAppletIconWidget(applet);
+            m_toolTip->updateContent();
             setToolTipPosition();
         }
         m_toolTipDisappearTimer.stop();
@@ -669,9 +671,14 @@ AppletToolTipWidget::~AppletToolTipWidget()
 
 void AppletToolTipWidget::setAppletIconWidget(AppletIconWidget *applet)
 {
-    kDebug() << "set the AppletIconWidget";
+    qDebug() << "set the AppletIconWidget";
     m_applet = applet;
     m_widget->setAppletItem(m_applet->appletItem());
+}
+
+void AppletToolTipWidget::updateContent()
+{
+    m_widget->updateInfo();
 }
 
 void AppletToolTipWidget::showEvent(QShowEvent * event)
@@ -784,7 +791,17 @@ void FilteringList::init()
     m_treeView->nativeWidget()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_treeView->nativeWidget()->setRootIsDecorated(false);
     m_treeView->nativeWidget()->setAttribute(Qt::WA_TranslucentBackground);
-    m_treeView->setAttribute(Qt::WA_TranslucentBackground);
+    //m_treeView->setAttribute(Qt::WA_TranslucentBackground);
+
+    QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    QPalette plasmaPalette = QPalette();
+    plasmaPalette.setColor(QPalette::Base,
+                           Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
+    plasmaPalette.setColor(QPalette::Text, textColor);
+
+    m_treeView->setPalette(plasmaPalette);
+    m_treeView->nativeWidget()->setAutoFillBackground(true);
+
     QGraphicsLinearLayout *linearLayout = new QGraphicsLinearLayout();
     linearLayout->addItem(m_treeView);
     setLayout(linearLayout);

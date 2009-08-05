@@ -183,6 +183,7 @@ class AppletToolTipWidget : public Plasma::Dialog {
         virtual ~AppletToolTipWidget();
 
         void setAppletIconWidget(AppletIconWidget *applet);
+        void updateContent();
         void showEvent(QShowEvent * event);
         AppletIconWidget *appletIconWidget();
 
