@@ -659,6 +659,8 @@ AppletToolTipWidget::AppletToolTipWidget(QWidget *parent, AppletIconWidget *appl
 {
     m_applet = applet;
     m_widget = new AppletInfoWidget();
+    QGraphicsScene * scene = new QGraphicsScene();
+    scene->addItem(m_widget);
     if(m_applet) {
         m_widget->setAppletItem(m_applet->appletItem());
     }
