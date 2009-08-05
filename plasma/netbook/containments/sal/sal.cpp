@@ -47,8 +47,7 @@ SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
       m_viewMainWidget(0),
       m_gridScroll(0)
 {
-    setContainmentType(Containment::DesktopContainment);
-    setHasConfigurationInterface(false);
+    setContainmentType(Containment::CustomContainment);
 }
 
 SearchLaunch::~SearchLaunch()
