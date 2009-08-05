@@ -1,5 +1,5 @@
 #include <QtGui>
-#include "customwidgets.h"
+// #include "customwidgets.h"
 #include <plasma/applet.h>
 #include "widgetexplorer.h"
 #include <plasma/containment.h>
@@ -15,11 +15,11 @@ int main(int argc, char *argv[])
     Plasma::Containment *containment = new Plasma::Containment();
 
     KPluginInfo::List list = Plasma::Containment::listContainments();
-    
+
     foreach(KPluginInfo info, list) {
         kDebug() << info.pluginName();
     }
-    
+
     Plasma::WidgetExplorer *appletBrowser;
 
     appletBrowser = new Plasma::WidgetExplorer();

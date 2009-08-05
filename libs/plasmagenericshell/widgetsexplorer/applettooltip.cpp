@@ -79,7 +79,7 @@ void AppletInfoWidget::init()
     m_nameLabel->nativeWidget()->setFont(nameFont);
     m_nameLabel->nativeWidget()->setScaledContents(true);
     m_nameLabel->nativeWidget()->setWordWrap(true);
-    m_nameLabel->setMinimumSize(0,0);
+    // m_nameLabel->setMinimumSize(0,0);
 
     m_descriptionLabel = new Plasma::Label();
     QFont descriptionFont = m_descriptionLabel->nativeWidget()->font();
@@ -87,7 +87,7 @@ void AppletInfoWidget::init()
     m_descriptionLabel->nativeWidget()->setFont(descriptionFont);
     m_descriptionLabel->setScaledContents(true);
     m_descriptionLabel->nativeWidget()->setWordWrap(true);
-    m_descriptionLabel->setMinimumSize(0,0);
+    // m_descriptionLabel->setMinimumSize(0,0);
 
     m_infoButton = new Plasma::IconWidget();
     m_infoButton->setIcon("help-about");
@@ -120,19 +120,29 @@ void AppletInfoWidget::updateInfo()
 {
     if(m_appletItem != 0) {
         m_iconWidget->setIcon(m_appletItem->icon());
-        m_descriptionLabel->nativeWidget()->setMinimumSize(0,0);
+        // m_descriptionLabel->nativeWidget()->setMinimumSize(0,0);
         m_descriptionLabel->setText(m_appletItem->description());
-        m_descriptionLabel->nativeWidget()->setMinimumSize(m_descriptionLabel->nativeWidget()->minimumSizeHint());
-        m_descriptionLabel->nativeWidget()->setMaximumSize(m_descriptionLabel->nativeWidget()->minimumSizeHint());
-        m_nameLabel->nativeWidget()->setMinimumSize(0,0);
+        qDebug() << "minimum size hint: " << m_descriptionLabel->nativeWidget()->minimumSizeHint();
+        // m_descriptionLabel->nativeWidget()->setMinimumSize(m_descriptionLabel->nativeWidget()->minimumSizeHint());
+        // m_descriptionLabel->nativeWidget()->setMaximumSize(m_descriptionLabel->nativeWidget()->minimumSizeHint());
+        // m_nameLabel->nativeWidget()->setMinimumSize(0,0);
         m_nameLabel->setText(m_appletItem->name());
-        m_nameLabel->nativeWidget()->setMinimumSize(m_nameLabel->nativeWidget()->minimumSizeHint());
-        m_nameLabel->nativeWidget()->setMaximumSize(m_nameLabel->nativeWidget()->minimumSizeHint());
+        // m_nameLabel->nativeWidget()->setMinimumSize(m_nameLabel->nativeWidget()->minimumSizeHint());
+        // m_nameLabel->nativeWidget()->setMaximumSize(m_nameLabel->nativeWidget()->minimumSizeHint());
     } else {
         m_iconWidget->setIcon("clock");
         m_descriptionLabel->setText("applet description");
         m_nameLabel->setText("nameless applet");
     }
+
+    m_linearLayout->invalidate();
+    m_linearLayout->activate();
+    // QSize nameSize = m_nameLabel->nativeWidget()->sizeHint();
+    // QSize descSize = m_descriptionLabel->nativeWidget()->sizeHint();
+    // qDebug() << "size hint " << nameSize << descSize;
+
+    QSizeF prefSize = m_linearLayout->sizeHint(Qt::PreferredSize) + QSizeF(20, 20);
+    resize(prefSize);
 }
 
 void AppletInfoWidget::onInfoButtonClick()
