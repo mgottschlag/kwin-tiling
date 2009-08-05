@@ -163,7 +163,6 @@ void Task::refreshIcon()
             d->cachedChangesTimerId = startTimer(200 - d->lastUpdate.elapsed());
         }
 
-        d->lastUpdate.restart();
         return TaskUnchanged;
     }
 
