@@ -146,8 +146,7 @@ void ManualSortingStrategy::handleItem(AbstractGroupableItem *item)
             handleGroup(qobject_cast<TaskGroup*>(item));
         }
         check(item);
-    } else {
-        Q_ASSERT(item->parentGroup());
+    } else if (item->parentGroup()) {
         d->managedItems->insert(item, item->parentGroup()->members().indexOf(item));
     }
 }
