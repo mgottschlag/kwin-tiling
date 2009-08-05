@@ -119,10 +119,10 @@ void WidgetExplorerPrivate::initFilters()
 
 void WidgetExplorerPrivate::init()
 {
-    // **** find a fancier way to use bla ****
-    QDesktopWidget *bla = new QDesktopWidget();
-    q->setMinimumWidth(bla->screenGeometry(-1).width());
-    q->setMaximumWidth(bla->screenGeometry(-1).width());
+    // **** find a fancier way to use screen ****
+    QDesktopWidget *screen = new QDesktopWidget();
+    q->setMinimumWidth(screen->screenGeometry(-1).width());
+    q->setMaximumWidth(screen->screenGeometry(-1).width());
     q->setMinimumHeight(170);
     q->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
     q->setAttribute(Qt::WA_TranslucentBackground);

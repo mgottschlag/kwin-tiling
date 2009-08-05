@@ -184,7 +184,6 @@ class AppletToolTipWidget : public Plasma::Dialog {
 
         void setAppletIconWidget(AppletIconWidget *applet);
         void updateContent();
-        void showEvent(QShowEvent * event);
         AppletIconWidget *appletIconWidget();
 
     Q_SIGNALS:
@@ -211,6 +210,9 @@ class AppletInfoWidget : public QGraphicsWidget {
         void init();
         void setAppletItem(PlasmaAppletItem *appletItem);
 
+    private:
+        void fixSizes();
+
     public Q_SLOTS:
         void updateInfo();
 
@@ -221,7 +223,6 @@ class AppletInfoWidget : public QGraphicsWidget {
         Plasma::Label *m_descriptionLabel;
         Plasma::IconWidget *m_iconWidget;
         Plasma::IconWidget *m_infoButton;
-        QIcon *m_icon;
         Plasma::Label *m_nameLabel;
 };
 

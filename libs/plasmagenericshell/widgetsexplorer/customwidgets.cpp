@@ -160,10 +160,7 @@ void AppletsList::timerEvent(QTimerEvent *event)
 
 void AppletsList::appletIconHoverEnter(AppletIconWidget *applet)
 {
-    qDebug() << "debug?";
-
     if(!m_toolTip->isVisible()) {
-        qDebug() << "not visible";
         m_toolTip->setAppletIconWidget(applet);
         m_toolTipAppearTimer.start(TOOLTIP_APPEAR_DELAY, this);
     } else {
@@ -665,6 +662,7 @@ AppletToolTipWidget::AppletToolTipWidget(QWidget *parent, AppletIconWidget *appl
         m_widget->setAppletItem(m_applet->appletItem());
     }
     setGraphicsWidget(m_widget);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
 }
 
 AppletToolTipWidget::~AppletToolTipWidget()
@@ -673,7 +671,6 @@ AppletToolTipWidget::~AppletToolTipWidget()
 
 void AppletToolTipWidget::setAppletIconWidget(AppletIconWidget *applet)
 {
-    qDebug() << "set the AppletIconWidget";
     m_applet = applet;
     m_widget->setAppletItem(m_applet->appletItem());
 }
@@ -681,12 +678,6 @@ void AppletToolTipWidget::setAppletIconWidget(AppletIconWidget *applet)
 void AppletToolTipWidget::updateContent()
 {
     m_widget->updateInfo();
-}
-
-void AppletToolTipWidget::showEvent(QShowEvent * event)
-{
-    m_widget->updateInfo();
-    Plasma::Dialog::showEvent(event);
 }
 
 AppletIconWidget *AppletToolTipWidget::appletIconWidget()
@@ -724,38 +715,30 @@ void AppletInfoWidget::init()
     m_iconWidget = new Plasma::IconWidget();
     m_iconWidget->setAcceptHoverEvents(false);
     m_iconWidget->setAcceptedMouseButtons(false);
-
-    m_descriptionLabel = new Plasma::Label();
-    m_descriptionLabel->setAlignment(Qt::AlignCenter);
-    m_descriptionLabel->setMinimumWidth(TOOLTIP_WIDTH);
-    m_descriptionLabel->setMaximumWidth(TOOLTIP_WIDTH);
-    m_descriptionLabel->setScaledContents(true);
-    m_descriptionLabel->nativeWidget()->setWordWrap(true);
+    m_iconWidget->setMinimumSize(IconSize(KIconLoader::Desktop), IconSize(KIconLoader::Desktop));
+    m_iconWidget->setMaximumSize(IconSize(KIconLoader::Desktop), IconSize(KIconLoader::Desktop));
 
     m_nameLabel = new Plasma::Label();
-    QFont font = m_nameLabel->nativeWidget()->font();
-    font.setBold(true);
-    m_nameLabel->nativeWidget()->setFont(font);
-    m_nameLabel->setMinimumHeight(TOOLTIP_HEIGHT/4);
+    QFont nameFont = m_nameLabel->nativeWidget()->font();
+    nameFont.setBold(true);
+    nameFont.setPointSize(1.2 * nameFont.pointSize());
+    m_nameLabel->nativeWidget()->setFont(nameFont);
+    m_nameLabel->nativeWidget()->setScaledContents(true);
+    m_nameLabel->nativeWidget()->setWordWrap(true);
+    m_nameLabel->setMinimumSize(0,0);
 
-    m_icon = new QIcon();
-
-    if(m_appletItem != 0) {
-        //m_iconWidget->setText(m_appletItem->name());
-        m_iconWidget->setIcon(m_appletItem->icon());
-        m_iconWidget->setMinimumSize(70, 70);
-        m_descriptionLabel->setText(m_appletItem->description());
-        m_nameLabel->setText(m_appletItem->name());
-        m_icon = new QIcon(m_appletItem->icon());
-    } else {
-        m_iconWidget->setIcon("clock");
-        m_descriptionLabel->setText("Applet description");
-    }
+    m_descriptionLabel = new Plasma::Label();
+    QFont descriptionFont = m_descriptionLabel->nativeWidget()->font();
+    descriptionFont.setPointSize(1.2 * descriptionFont.pointSize());
+    m_descriptionLabel->nativeWidget()->setFont(descriptionFont);
+    m_descriptionLabel->setScaledContents(true);
+    m_descriptionLabel->nativeWidget()->setWordWrap(true);
+    m_descriptionLabel->setMinimumSize(0,0);
 
     m_infoButton = new Plasma::IconWidget();
     m_infoButton->setIcon("help-about");
-    m_infoButton->setMinimumSize(QSizeF(25, 25));
-    m_infoButton->setMaximumSize(QSizeF(25, 25));
+    m_infoButton->setMinimumSize(IconSize(KIconLoader::MainToolbar), IconSize(KIconLoader::MainToolbar));
+    m_infoButton->setMaximumSize(IconSize(KIconLoader::MainToolbar), IconSize(KIconLoader::MainToolbar));
 
     m_linearLayout = new QGraphicsLinearLayout();
     m_linearLayout->setOrientation(Qt::Horizontal);
@@ -763,18 +746,14 @@ void AppletInfoWidget::init()
     vLayout->setOrientation(Qt::Vertical);
 
     m_linearLayout->addItem(m_iconWidget);
-    //m_linearLayout->addItem(m_icon->pixmap(50, 50));
     vLayout->addItem(m_nameLabel);
     vLayout->addItem(m_descriptionLabel);
-    //m_linearLayout->addItem(m_descriptionLabel);
     m_linearLayout->addItem(vLayout);
     m_linearLayout->addItem(m_infoButton);
 
     setLayout(m_linearLayout);
 
     m_linearLayout->setAlignment(m_infoButton, Qt::AlignRight);
-    m_linearLayout->setAlignment(m_iconWidget, Qt::AlignCenter);
-    m_linearLayout->setAlignment(m_descriptionLabel, Qt::AlignCenter);
 }
 
 void AppletInfoWidget::setAppletItem(PlasmaAppletItem *appletItem)
@@ -784,9 +763,44 @@ void AppletInfoWidget::setAppletItem(PlasmaAppletItem *appletItem)
 
 void AppletInfoWidget::updateInfo()
 {
-    m_iconWidget->setIcon(m_appletItem->icon());
-    m_descriptionLabel->setText(m_appletItem->description());
-    m_nameLabel->setText(m_appletItem->pluginName());
+    if(m_appletItem != 0) {
+        m_iconWidget->setIcon(m_appletItem->icon());
+        m_descriptionLabel->nativeWidget()->setMinimumSize(0,0);
+        m_descriptionLabel->setText(m_appletItem->description());
+        qDebug() << "minimum size hint: " << m_descriptionLabel->nativeWidget()->minimumSizeHint();
+        m_descriptionLabel->nativeWidget()->setMinimumSize(m_descriptionLabel->nativeWidget()->minimumSizeHint());
+        m_descriptionLabel->nativeWidget()->setMaximumSize(m_descriptionLabel->nativeWidget()->minimumSizeHint());
+        m_nameLabel->nativeWidget()->setMinimumSize(0,0);
+        m_nameLabel->setText(m_appletItem->name());
+        m_nameLabel->nativeWidget()->setMinimumSize(m_nameLabel->nativeWidget()->minimumSizeHint());
+        m_nameLabel->nativeWidget()->setMaximumSize(m_nameLabel->nativeWidget()->minimumSizeHint());
+    } else {
+        m_iconWidget->setIcon("clock");
+        m_descriptionLabel->setText("applet description");
+        m_nameLabel->setText("nameless applet");
+    }
+
+    fixSizes();
+
+    qDebug() << "minimum size: " << m_descriptionLabel->nativeWidget()->minimumSize();
+    qDebug() << "";
+//    qDebug() << "native minimum size: " << m_descriptionLabel->nativeWidget()->minimumSize();
+//    qDebug() << "minimum size: " << m_descriptionLabel->minimumSize();
+}
+
+void AppletInfoWidget::fixSizes()
+{
+    m_descriptionLabel->nativeWidget()->setMinimumSize(0,0);
+    qDebug() << "minimum size hint: " << m_descriptionLabel->nativeWidget()->minimumSizeHint();
+    m_descriptionLabel->nativeWidget()->setMinimumSize(m_descriptionLabel->nativeWidget()->minimumSizeHint());
+    m_descriptionLabel->nativeWidget()->setMaximumSize(m_descriptionLabel->nativeWidget()->minimumSizeHint());
+    m_nameLabel->nativeWidget()->setMinimumSize(0,0);
+    m_nameLabel->nativeWidget()->setMinimumSize(m_nameLabel->nativeWidget()->minimumSizeHint());
+    m_nameLabel->nativeWidget()->setMaximumSize(m_nameLabel->nativeWidget()->minimumSizeHint());
+
+    m_descriptionLabel->adjustSize();
+    m_nameLabel->adjustSize();
+    adjustSize();
 }
 
 //FilteringList
@@ -809,7 +823,10 @@ void FilteringList::init()
     m_treeView->nativeWidget()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_treeView->nativeWidget()->setRootIsDecorated(false);
     m_treeView->nativeWidget()->setAttribute(Qt::WA_TranslucentBackground);
-    //m_treeView->setAttribute(Qt::WA_TranslucentBackground);
+
+    QFont listFont = m_treeView->nativeWidget()->font();
+    listFont.setPointSize(KGlobalSettings::smallestReadableFont().pointSize());
+    m_treeView->nativeWidget()->setFont(listFont);
 
     QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     QPalette plasmaPalette = QPalette();
@@ -857,11 +874,9 @@ void FilteringWidget::init()
 {
     m_filterLabel = new Plasma::Label();
     m_filterLabel->nativeWidget()->setText("Filter");
-    m_filterLabel->setMaximumHeight(10);
-    m_filterLabel->setMinimumHeight(10);
 
     QFont labelFont = m_filterLabel->font();
-    labelFont.setPointSize(3);
+    labelFont.setPointSize(KGlobalSettings::smallestReadableFont().pointSize());
     m_filterLabel->setFont(labelFont);
 
     m_textSearch = new Plasma::LineEdit();
