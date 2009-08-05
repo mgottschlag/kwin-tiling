@@ -21,18 +21,15 @@
 
 #include <QApplication>
 #include <QStandardItemModel>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QSpinBox>
-#include <QBitArray>
 #include <QBitmap>
+#include <QBitArray>
 
-#include <KAction>
 #include <KIconLoader>
 #include <KIconTheme>
 #include <KMenu>
 #include <KStandardAction>
 #include <KStringHandler>
+#include <KAction>
 
 #ifdef FOUND_SOPRANO
 #include <Soprano/Node>

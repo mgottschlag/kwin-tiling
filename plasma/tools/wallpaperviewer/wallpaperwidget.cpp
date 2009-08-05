@@ -19,7 +19,6 @@
 
 #include "wallpaperwidget.h"
 
-#include <QApplication>
 #include <QContextMenuEvent>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneWheelEvent>
@@ -30,11 +29,11 @@
 #include <QVBoxLayout>
 #include <QWheelEvent>
 
-#include <KAction>
 #include <KDebug>
 #include <KDialog>
 #include <KGlobal>
 #include <KStandardAction>
+#include <KAction>
 
 #include <Plasma/Wallpaper>
 
