@@ -271,9 +271,13 @@ void TaskGroupItem::updateToolTip()
         return;
     }
 
-    Plasma::ToolTipContent data(m_group->name(),
-                                i18nc("Which virtual desktop a window is currently on", "On %1",
-                                       KWindowSystem::desktopName(m_group->desktop())));
+    Plasma::ToolTipContent data(m_group->name(), QString());
+    int desktop = m_group->desktop();
+    if (desktop != 0) {
+        data.setSubText(i18nc("Which virtual desktop a window is currently on", "On %1",
+                        KWindowSystem::desktopName(m_group->desktop())));
+    }
+
     data.setImage(m_group->icon());
 
     int i = 0;
