@@ -24,7 +24,6 @@
 #include <QDesktopWidget>
 #include <QPaintEngine>
 #include <QHash>
-#include <QDateTime>
 #include <QPixmap>
 
 #include <kapplication.h>

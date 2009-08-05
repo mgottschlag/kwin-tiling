@@ -23,9 +23,7 @@
 #include <config-workspace.h>
 
 #include <QCheckBox>
-#include <QEvent>
 #include <QPushButton>
-#include <QSpinBox>
 
 #include <kfiledialog.h>
 #include <kimageio.h>

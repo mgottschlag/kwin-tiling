@@ -20,18 +20,17 @@
 
 #include <KConfig>
 #include <KLocale>
-#include <KAboutData>
 #include <KStandardDirs>
 
 #include <KGlobalSettings>
 #include <KToolInvocation>
-#include <KDialog>
 #include <KMessageBox>
 #include <KUrlRequesterDialog>
-
 #include <KIO/Job>
 #include <KIO/DeleteJob>
 #include <KIO/NetAccess>
+
+
 #include <KTar>
 
 #include <klauncher_iface.h>

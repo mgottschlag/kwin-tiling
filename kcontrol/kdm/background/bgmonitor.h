@@ -26,10 +26,7 @@
 #define _BGMONITOR_H_
 
 #include <QWidget>
-#include <QLabel>
 //Added by qt3to4:
-#include <QDragEnterEvent>
-#include <QDropEvent>
 
 class BGMonitor;
 class QPixmap;

@@ -19,7 +19,6 @@
 #include <QDir>
 #include <QPixmap>
 //Added by qt3to4:
-#include <QByteArray>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -31,7 +30,6 @@
 
 #include "bgdefaults.h"
 #include "bgsettings.h"
-#include <QX11Info>
 
 
 /*

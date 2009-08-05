@@ -23,16 +23,11 @@
 #include <QCheckBox>
 #include <QHeaderView>
 #include <QLabel>
-#include <QLayout>
 #include <QLineEdit>
-#include <QComboBox>
 #include <QPushButton>
-#include <QSlider>
 #include <QSpinBox>
 #include <QFrame>
 #include <QGridLayout>
-#include <QByteArray>
-#include <QX11Info>
 
 #include <kconfig.h>
 #include <kcolorbutton.h>

@@ -25,7 +25,6 @@
 
 #include <KLocale>
 #include <KConfig>
-#include <KConfigGroup>
 
 #include <QCheckBox>
 #include <QVBoxLayout>

@@ -31,7 +31,6 @@
 
 #include <QApplication>
 #include <QDesktopWidget>
-#include <QPainter>
 
 #include "kworkspace/screenpreviewwidget.h"
 

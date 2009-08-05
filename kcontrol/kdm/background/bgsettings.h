@@ -14,7 +14,6 @@
 
 #include <QColor>
 #include <QMap>
-#include <QVector>
 #include <ksharedconfig.h>
 
 template <class QString, class T> class QMap;

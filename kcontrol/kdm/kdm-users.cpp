@@ -21,11 +21,7 @@
 
 #include <KUrl>
 #include <KComboBox>
-#include <KGlobal>
 #include <KIconDialog>
-#include <KImageFilePreview>
-#include <KImageIO>
-#include <KIO/NetAccess>
 #include <KLineEdit>
 #include <KLocale>
 #include <KMessageBox>
@@ -33,6 +29,7 @@
 #include <KConfigGroup>
 #include <KStandardDirs>
 #include <KStandardGuiItem>
+#include <KIO/NetAccess>
 
 #include <QButtonGroup>
 #include <QCheckBox>

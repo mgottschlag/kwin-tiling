@@ -29,9 +29,6 @@
 
 #include <QCheckBox>
 #include <QLabel>
-#include <QPainter>
-#include <QRadioButton>
-#include <QSlider>
 #include <QTimer>
 
 

@@ -21,10 +21,6 @@
 #include "kdm-theme.h"
 
 #include <KDialog>
-#include <KGlobal>
-#include <KIO/Job>
-#include <KIO/DeleteJob>
-#include <KIO/NetAccess>
 #include <KLocale>
 #include <KMessageBox>
 #include <KProgressDialog>
@@ -36,6 +32,9 @@
 #include <KUrlRequesterDialog>
 #include <knewstuff2/engine.h>
 #include <KDebug>
+#include <KIO/Job>
+#include <KIO/DeleteJob>
+#include <KIO/NetAccess>
 
 #include <QDir>
 #include <QGridLayout>

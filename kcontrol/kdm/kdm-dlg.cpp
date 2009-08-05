@@ -21,24 +21,22 @@
 
 #include "positioner.h"
 
-#include <KApplication>
 #include <KDialog>
 #include <KFileDialog>
 #include <KIconLoader>
 #include <KImageFilePreview>
 #include <KImageIO>
-#include <KIO/NetAccess>
 #include <KLineEdit>
 #include <KLocale>
 #include <KMessageBox>
 #include <KConfig>
 #include <KConfigGroup>
 #include <KStandardDirs>
+#include <KIO/NetAccess>
 
 #include <QButtonGroup>
 #include <QDragEnterEvent>
 #include <QEvent>
-#include <QGroupBox>
 #include <QLabel>
 #include <QPushButton>
 #include <QRadioButton>
