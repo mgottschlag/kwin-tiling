@@ -211,6 +211,9 @@ void PlasmaApp::positionPanel()
         break;
     }
 
+    m_controlBar->containment()->setMaximumSize(m_controlBar->size());
+    m_controlBar->containment()->setMinimumSize(m_controlBar->size());
+
     foreach (Plasma::Containment *containment, m_corona->containments()) {
         if (containment->formFactor() == Plasma::Planar) {
             containment->setContentsMargins(left, top, right, bottom);
@@ -410,6 +413,8 @@ void PlasmaApp::createView(Plasma::Containment *containment)
         }
 
         m_controlBar->setContainment(containment);
+        containment->setMaximumSize(m_controlBar->size());
+        containment->setMinimumSize(m_controlBar->size());
 
         m_autoHideControlBar = m_controlBar->config().readEntry("panelAutoHide", true);
 
