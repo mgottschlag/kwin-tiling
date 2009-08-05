@@ -42,7 +42,6 @@
 #include <KDebug>
 #include <KIcon>
 #include <KIconEffect>
-#include <KLocalizedString>
 #include <KGlobalSettings>
 #include <KIconLoader>
 #include <KColorUtils>

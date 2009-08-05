@@ -26,8 +26,6 @@
 #include <QGraphicsSceneContextMenuEvent>
 #include <QStyleOptionGraphicsItem>
 #include <QGraphicsView>
-#include <QTimer>
-#include <QApplication>
 #include <QVarLengthArray>
 #include <QTextDocument>
 
@@ -35,8 +33,6 @@
 #include <KAuthorized>
 #include <KDebug>
 #include <KIcon>
-#include <KLocalizedString>
-#include <KGlobalSettings>
 #include <KIconLoader>
 
 #include <taskmanager/taskactions.h>
@@ -53,7 +49,6 @@
 #include "tasks.h"
 
 #ifdef Q_WS_X11
-#include <QX11Info>
 
 #include <X11/Xlib.h>
 #include <fixx11h.h>

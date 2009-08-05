@@ -26,10 +26,8 @@
 #include "tasks.h"
 
 // Qt
-#include <QObject>
 #include <QGraphicsGridLayout>
 #include <QList>
-#include <QMultiMap>
 
 
 class TaskGroupItem;

@@ -38,9 +38,6 @@
 #include <KAuthorized>
 #include <KDebug>
 #include <KIcon>
-#include <KLocalizedString>
-#include <KGlobalSettings>
-#include <KIconLoader>
 
 #include <taskmanager/taskactions.h>
 #include <taskmanager/taskmanager.h>

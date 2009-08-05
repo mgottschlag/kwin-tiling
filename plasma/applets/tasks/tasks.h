@@ -35,7 +35,6 @@
 #include <taskmanager/groupmanager.h>
 #include <taskmanager/taskitem.h>
 #include <taskmanager/startup.h>
-#include <KDialog>
 
 // Plasma
 #include <Plasma/Applet>

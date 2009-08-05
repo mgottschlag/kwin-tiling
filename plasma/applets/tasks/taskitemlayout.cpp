@@ -6,10 +6,8 @@
 #include <taskmanager/groupmanager.h>
 
 // Qt
-#include <QList>
 #include <QGraphicsScene>
 #include <QGraphicsGridLayout>
-#include <QPainter>
 
 #include <math.h>
 

@@ -30,10 +30,8 @@
 
 // KDE
 #include <KConfigDialog>
-#include <KWindowSystem>
 
 // Qt
-#include <QTimeLine>
 #include <QGraphicsScene>
 #include <QGraphicsLinearLayout>
 #include <QVariant>
