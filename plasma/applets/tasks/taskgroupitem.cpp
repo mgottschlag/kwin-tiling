@@ -280,7 +280,6 @@ void TaskGroupItem::updateToolTip()
 
     data.setImage(m_group->icon());
 
-    int i = 0;
     QList<WId> windows;
 
     foreach (AbstractGroupableItem *item, m_group->members()) {
@@ -524,6 +523,15 @@ void TaskGroupItem::itemRemoved(TaskManager::AbstractGroupableItem * groupableIt
 
     if (m_tasksLayout) {
         m_tasksLayout->removeTaskItem(item);
+
+        if (m_offscreenWidget) {
+            m_offscreenWidget->adjustSize();
+        }
+
+        if (m_popupDialog && m_popupDialog->isVisible() && 
+            m_applet->containment() && m_applet->containment()->corona()) {
+            m_popupDialog->move(m_applet->containment()->corona()->popupPosition(this, m_popupDialog->size()));
+        }
     }
 
     item->close();
