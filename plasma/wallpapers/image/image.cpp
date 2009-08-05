@@ -18,12 +18,9 @@
 #include <KDirSelectDialog>
 #include <KDirWatch>
 #include <KFileDialog>
-#include <KGlobalSettings>
-#include <KImageFilePreview>
-#include <KNS/Engine>
-#include <KProgressDialog>
 #include <KRandom>
 #include <KStandardDirs>
+#include <KNS/Engine>
 
 #include <Plasma/Theme>
 #include <Plasma/Animator>
