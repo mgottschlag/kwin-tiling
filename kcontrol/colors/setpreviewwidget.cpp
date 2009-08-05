@@ -21,7 +21,6 @@
 #include "setpreviewwidget.h"
 
 #include <KGlobalSettings>
-#include <KColorUtils>
 
 void setAutoFill(QWidget* widget)
 {

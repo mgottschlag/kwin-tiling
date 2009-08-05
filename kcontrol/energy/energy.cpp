@@ -24,7 +24,6 @@
 
 #include <QCheckBox>
 #include <QLabel>
-#include <QLayout>
 #include <kcomponentdata.h>
 
 //Added by qt3to4:

@@ -14,7 +14,6 @@
 #ifndef __Energy_h_Included__
 #define __Energy_h_Included__
 
-#include <QObject>
 #include <kcmodule.h>
 
 class QCheckBox;

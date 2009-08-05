@@ -22,12 +22,9 @@
 #ifndef dtime_included
 #define dtime_included
 
-#include <QDateTime>
-#include <QLineEdit>
 #include <QSpinBox>
 #include <QComboBox>
 #include <QTimer>
-#include <QValidator>
 #include <QWidget>
 #include <QCheckBox>
 //Added by qt3to4:

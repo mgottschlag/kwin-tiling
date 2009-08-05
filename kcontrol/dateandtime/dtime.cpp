@@ -34,18 +34,13 @@
 #include <QtGui/QGroupBox>
 #include <QPushButton>
 #include <QPainter>
-#include <QLayout>
-#include <QLabel>
 #include <QTimeEdit>
 
 #include <QCheckBox>
-#include <QRegExp>
 #include <QPaintEvent>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include <QApplication>
-#include <QPolygon>
 #include <kdebug.h>
 #include <klocale.h>
 #include <kprocess.h>

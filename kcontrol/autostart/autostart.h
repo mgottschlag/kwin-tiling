@@ -24,10 +24,8 @@
 #define _AUTOSTART_H_
 
 #include <KCModule>
-#include <KAboutData>
 #include <KFileItem>
 
-#include <QComboBox>
 #include <QPushButton>
 #include <QTreeWidget>
 

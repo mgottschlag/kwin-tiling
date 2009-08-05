@@ -27,22 +27,15 @@
 #include <config-workspace.h>
 
 #include <QLabel>
-#include <QComboBox>
-#include <QLayout>
-#include <QFile>
 //Added by qt3to4:
 #include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QTextStream>
 #include <QByteArray>
-#include <QBoxLayout>
 
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 #include <kdialog.h>
 #include <kio/netaccess.h>
-#include <KProcess>
 #include <kstandarddirs.h>
 #include <ksystemtimezone.h>
 #include <kdefakes.h>

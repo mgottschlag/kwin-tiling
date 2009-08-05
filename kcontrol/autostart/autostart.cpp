@@ -24,29 +24,25 @@
 #include "addscriptdialog.h"
 #include "advanceddialog.h"
 
-#include <KGenericFactory>
 #include <KLocale>
 #include <KGlobal>
 #include <KConfig>
 #include <KConfigGroup>
 #include <KGlobalSettings>
 #include <KStandardDirs>
-#include <KUrlRequester>
 #include <KOpenWithDialog>
 #include <KPropertiesDialog>
 #include <KDesktopFile>
 #include <KMessageBox>
-#include <KIO/NetAccess>
-#include <KIO/DeleteJob>
-#include <KIO/CopyJob>
+#include <KAboutData>
+#include <KDebug>
+#include <KIO/NetAccess>                                                                         
+#include <KIO/DeleteJob>                                                                         
+#include <KIO/CopyJob> 
 
 #include <QDir>
-#include <QHeaderView>
-#include <QItemDelegate>
 #include <QTreeWidget>
-#include <QGridLayout>
 #include <QStringList>
-#include <QStandardItemModel>
 
 
 K_PLUGIN_FACTORY(AutostartFactory, registerPlugin<Autostart>();)

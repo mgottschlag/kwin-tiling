@@ -51,7 +51,6 @@
 #endif
 
 #include <X11/Xlib.h>
-#include <QX11Info>
 
 #include <KPluginFactory>
 

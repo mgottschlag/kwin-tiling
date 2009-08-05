@@ -22,12 +22,10 @@
 #include <QComboBox>
 #include <QTreeWidgetItem>
 #include <QTreeWidget>
-#include <KIO/NetAccess>
-#include <KIO/DeleteJob>
-#include <KIO/CopyJob>
 
 #include <klocale.h>
 #include <KDebug>
+#include <KIO/CopyJob>
 
 AutoStartItem::AutoStartItem( const QString &service, QTreeWidgetItem *parent, Autostart* )
     : QTreeWidgetItem( parent )
