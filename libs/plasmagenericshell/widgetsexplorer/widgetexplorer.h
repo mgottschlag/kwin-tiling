@@ -2,8 +2,11 @@
 #define WIDGETEXPLORER_H
 
 #include <QtGui>
+
 #include <KDE/KDialog>
+
 #include <plasma/framesvg.h>
+
 #include "plasmaappletitemmodel_p.h"
 
 namespace Plasma

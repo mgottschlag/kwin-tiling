@@ -14,13 +14,21 @@ INCLUDE_DIRECTORIES(${KDE4_INCLUDES} ${HOME}/development/workspace/plasmaOnMyBra
 AUTOMOC4_ADD_EXECUTABLE(appletBrowser
 	       "kcategorizeditemsviewmodels.cpp"
 	       "plasmaappletitemmodel.cpp"
-	       "customwidgets.cpp"
+	       "appleticon.cpp"
+	       "appletsfiltering.cpp"
+	       "applettooltip.cpp"
+	       "appletslist.cpp"
+	       "managewidgets.cpp"
 	       "widgetexplorer.cpp"
 	       "openwidgetassistant.cpp"
 	       "main.cpp"
 	       "kcategorizeditemsviewmodels_p.h"
 	       "plasmaappletitemmodel_p.h"
-	       "customwidgets.h"
+	       "appleticon.h"
+	       "appletsfiltering.h"
+	       "applettooltip.h"
+	       "appletslist.h"
+	       "managewidgets.h"
 	       "widgetexplorer.h"
 	       "openwidgetassistant_p.h")
 

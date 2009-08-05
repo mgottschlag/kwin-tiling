@@ -1,29 +1,28 @@
 #include "widgetexplorer.h"
 
-#include <QLabel>
-#include <QGraphicsScene>
-#include <QGraphicsView>
+#include <kaction.h>
+#include <kconfig.h>
+#include <kconfiggroup.h>
+#include <kmenu.h>
+#include <kpushbutton.h>
+#include <kservicetypetrader.h>
+#include <kstandardaction.h>
+#include <kaboutdata.h>
+#include <kaboutapplicationdialog.h>
+#include <kcomponentdata.h>
+#include <kpluginloader.h>
+#include <klineedit.h>
 
-#include <KAction>
-#include <KConfig>
-#include <KConfigGroup>
-#include <KMenu>
-#include <KPageWidgetItem>
-#include <KPushButton>
-#include <KServiceTypeTrader>
-#include <KStandardAction>
-#include <KAboutData>
-#include <KAboutApplicationDialog>
-#include <KComponentData>
-#include <KPluginLoader>
+#include <plasma/applet.h>
+#include <plasma/corona.h>
+#include <plasma/containment.h>
 
-#include <Plasma/Applet>
-#include <Plasma/Corona>
-#include <Plasma/Containment>
 #include "kcategorizeditemsviewmodels_p.h"
 #include "plasmaappletitemmodel_p.h"
 #include "openwidgetassistant_p.h"
-#include "customwidgets.h"
+#include "appletslist.h"
+#include "managewidgets.h"
+#include "appletsfiltering.h"
 
 using namespace KCategorizedItemsViewModels;
 
@@ -137,6 +136,7 @@ void WidgetExplorerPrivate::init()
 
     //QObject::connect(appletsListWidget, SIGNAL(doubleClicked(const QModelIndex &)), q, SLOT(addApplet()));
     QObject::connect(appletsListWidget, SIGNAL(appletDoubleClicked(PlasmaAppletItem*)), q, SLOT(addApplet(PlasmaAppletItem*)));
+    QObject::connect(appletsListWidget, SIGNAL(infoButtonClicked(QString)), q, SLOT(infoAboutApplet(QString)));
     appletsListWidget->setMaximumHeight(q->contentsRect().height());
     appletsListWidget->setMinimumHeight(q->contentsRect().height());
 
@@ -243,7 +243,7 @@ void WidgetExplorerPrivate::appletRemoved(Plasma::Applet *applet)
 the KAboutData object that it is associated with, when it is deleted.
 This is required to free memory correctly when KAboutApplicationDialog
 is called with a temporary KAboutData that is allocated on the heap.
-(see the code below, in AppletBrowserWidget::infoAboutApplet())
+(see the code below, in WidgetExplorer::infoAboutApplet())
 */
 class KAboutApplicationDialog2 : public KAboutApplicationDialog
 {
@@ -394,6 +394,9 @@ void WidgetExplorer::destroyApplets(const QString &name)
 
 void WidgetExplorer::infoAboutApplet(const QString &name)
 {
+
+    qDebug() << name;
+
     if (!d->containment) {
         return;
     }
