@@ -47,6 +47,7 @@
 #include "netview.h"
 
 #include "appletbrowser.h"
+#include "backgrounddialog.h"
 
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrender.h>
@@ -365,6 +366,8 @@ void PlasmaApp::notifyStartup(bool completed)
 void PlasmaApp::createView(Plasma::Containment *containment)
 {
     connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
+    connect(containment, SIGNAL(configureRequested(Plasma::Containment*)),
+            this, SLOT(configureContainment(Plasma::Containment*)));
 
     KConfigGroup viewIds(KGlobal::config(), "ViewIds");
     int defaultId = 0;
@@ -380,12 +383,29 @@ void PlasmaApp::createView(Plasma::Containment *containment)
 
     kDebug() << "new containment" << (QObject*)containment << containment->id()<<"view id"<<id;
 
+    //is it a desktop?
+    if (containment->containmentType() != Plasma::Containment::PanelContainment &&
+         containment->containmentType() != Plasma::Containment::CustomPanelContainment) {
+        //for now let's just add those two by hand, not the whole lot
+        QAction *a = containment->action("add widgets");
+        if (a) {
+            containment->addToolBoxAction(a);
+        }
+
+        a = containment->action("configure");
+        if (a) {
+            containment->addToolBoxAction(a);
+        }
+    }
+
+    //is it a desktop -and- is it active?
     if ((m_mainView && id == NetView::mainViewId()) ||
         (containment->containmentType() != Plasma::Containment::PanelContainment &&
          containment->containmentType() != Plasma::Containment::CustomPanelContainment &&
          !viewIds.exists() && m_mainView->containment() == 0)) {
         m_mainView->setContainment(containment);
         containment->setScreen(0);
+    //is it a panel?
     } else if (id == NetView::controlBarId()) {
         if (!m_controlBar) {
             m_controlBar = new NetView(0, NetView::controlBarId(), 0);
@@ -515,6 +535,32 @@ void PlasmaApp::appletBrowserDestroyed()
 {
     m_appletBrowser = 0;
 }
+
+
+void PlasmaApp::configureContainment(Plasma::Containment *containment)
+{
+    const QString id = "plasma_containment_settings_" + QString::number(containment->id());
+    BackgroundDialog *configDialog = qobject_cast<BackgroundDialog*>(KConfigDialog::exists(id));
+    kDebug() << configDialog;
+
+    if (configDialog) {
+        configDialog->reloadConfig();
+    } else {
+        const QSize resolution = Kephal::ScreenUtils::screenGeometry(m_mainView->screen()).size();
+
+
+        KConfigSkeleton *nullManager = new KConfigSkeleton(0);
+        configDialog = new BackgroundDialog(resolution, containment, m_mainView, 0, id, nullManager);
+        configDialog->setAttribute(Qt::WA_DeleteOnClose);
+
+        connect(configDialog, SIGNAL(destroyed(QObject*)), nullManager, SLOT(deleteLater()));
+    }
+
+    configDialog->show();
+    KWindowSystem::setOnDesktop(configDialog->winId(), KWindowSystem::currentDesktop());
+    KWindowSystem::activateWindow(configDialog->winId());
+}
+
 
 bool PlasmaApp::eventFilter(QObject * watched, QEvent *event)
 {

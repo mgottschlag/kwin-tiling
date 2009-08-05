@@ -101,12 +101,6 @@ void Newspaper::init()
     Containment::init();
     setHasConfigurationInterface(true);
     themeUpdated();
-
-    QAction *a = action("add widgets");
-
-    if (a) {
-        addToolBoxAction(a);
-    }
 }
 
 void Newspaper::themeUpdated()

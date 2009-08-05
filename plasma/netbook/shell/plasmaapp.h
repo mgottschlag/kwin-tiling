@@ -102,6 +102,7 @@ private Q_SLOTS:
     void appletBrowserDestroyed();
     void mainContainmentActivated();
     void controlBarVisibilityUpdate();
+    void configureContainment(Plasma::Containment *containment);
 
 private:
     Plasma::Corona *m_corona;
