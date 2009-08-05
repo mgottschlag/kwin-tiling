@@ -28,18 +28,14 @@
 #include <QKeyEvent>
 #include <QLabel>
 #include <QMouseEvent>
-#include <QPainter>
 #include <QStackedWidget>
 #include <QTabBar>
 #include <QToolButton>
 #include <QVBoxLayout>
-#include <QStyleOptionSizeGrip>
 
 // KDE
 #include <KDebug>
-#include <KLocalizedString>
 #include <KIcon>
-#include <KStandardDirs>
 #include <kuser.h>
 #include <Plasma/Theme>
 #include <Plasma/Delegate>

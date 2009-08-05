@@ -26,7 +26,6 @@
 #include <QAbstractProxyModel>
 
 // KDE
-#include <KService>
 
 namespace Kickoff
 {

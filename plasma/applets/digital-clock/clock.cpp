@@ -33,14 +33,10 @@
 
 #include <KDebug>
 #include <KLocale>
-#include <KIcon>
 #include <KSharedConfig>
-#include <KTimeZoneWidget>
-#include <KDialog>
 #include <KColorScheme>
 #include <KGlobalSettings>
 #include <KConfigDialog>
-#include <KDatePicker>
 #include <Plasma/Theme>
 #include <Plasma/Dialog>
 #include <Plasma/ToolTipManager>

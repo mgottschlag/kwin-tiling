@@ -31,7 +31,6 @@
 #include <KConfigGroup>
 #include <KDesktopFile>
 #include <KIcon>
-#include <KGlobal>
 #include <KMimeType>
 #include <KUrl>
 #include <Solid/Device>

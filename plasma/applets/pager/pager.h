@@ -20,7 +20,6 @@
 #ifndef PAGER_H
 #define PAGER_H
 
-#include <QLabel>
 #include <QGraphicsSceneHoverEvent>
 #include <QList>
 

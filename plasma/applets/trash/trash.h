@@ -21,7 +21,6 @@
 #ifndef TRASH_H
 #define TRASH_H
 
-#include <KUrl>
 #include <QAction>
 #include <KMenu>
 #include <QGraphicsView>

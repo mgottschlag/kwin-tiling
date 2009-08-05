@@ -21,13 +21,10 @@
 #include "core/recentlyusedmodel.h"
 
 // Qt
-#include <QFileInfo>
 
 // KDE
 #include <KDesktopFile>
 #include <KDirWatch>
-#include <KIcon>
-#include <KLocalizedString>
 #include <KRecentDocument>
 #include <KUrl>
 #include <KDebug>

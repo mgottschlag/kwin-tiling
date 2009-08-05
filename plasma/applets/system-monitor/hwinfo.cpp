@@ -24,8 +24,6 @@
 #include <Plasma/Theme>
 #include <KStandardDirs>
 #include <KIcon>
-#include <KTextEdit>
-#include <QTextDocument>
 #include <QGraphicsLinearLayout>
 
 #define START "<html><head><style type=\"text/css\">\

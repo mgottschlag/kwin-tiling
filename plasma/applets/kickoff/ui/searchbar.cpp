@@ -27,14 +27,12 @@
 #include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QLabel>
-#include <QPainter>
 #include <QTimer>
 
 // KDE
 #include <KIcon>
 #include <KIconLoader>
 #include <KLineEdit>
-#include <KLocalizedString>
 
 //Plasma
 #include <Plasma/Theme>

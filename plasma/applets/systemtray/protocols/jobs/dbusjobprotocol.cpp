@@ -22,7 +22,6 @@
 
 
 #include <KConfigGroup>
-#include <KIcon>
 
 #include <plasma/dataenginemanager.h>
 #include <plasma/service.h>

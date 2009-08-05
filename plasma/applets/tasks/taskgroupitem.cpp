@@ -37,7 +37,6 @@
 // KDE
 #include <KAuthorized>
 #include <KDebug>
-#include <KIcon>
 
 #include <taskmanager/taskactions.h>
 #include <taskmanager/taskmanager.h>

@@ -24,7 +24,6 @@
 
 #include <QDBusConnectionInterface>
 
-#include <KIcon>
 #include <KDebug>
 
 

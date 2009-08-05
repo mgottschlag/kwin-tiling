@@ -20,11 +20,8 @@
 #ifndef BATTERY_H
 #define BATTERY_H
 
-#include <QLabel>
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsGridLayout>
-#include <QPair>
-#include <QMap>
 
 #include <Plasma/Applet>
 #include <Plasma/Animator>

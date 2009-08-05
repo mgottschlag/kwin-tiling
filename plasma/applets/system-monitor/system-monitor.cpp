@@ -19,7 +19,6 @@
 #include "system-monitor.h"
 #include "monitorbutton.h"
 #include "applet.h"
-#include <QTimer>
 #include <QGraphicsLinearLayout>
 #include <KPushButton>
 #include <Plasma/Containment>

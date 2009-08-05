@@ -21,16 +21,11 @@
 #ifndef CLOCK_H
 #define CLOCK_H
 
-#include <QImage>
-#include <QPaintDevice>
-#include <QLabel>
 #include <QPixmap>
 #include <QTimer>
-#include <QPaintEvent>
 #include <QPainter>
 #include <QTime>
 #include <QGraphicsItem>
-#include <QColor>
 
 #include <Plasma/Containment>
 #include <Plasma/DataEngine>

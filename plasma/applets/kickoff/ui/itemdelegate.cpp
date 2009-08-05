@@ -22,20 +22,14 @@
 #include "ui/itemdelegate.h"
 
 // Qt
-#include <QApplication>
-#include <QFontMetrics>
-#include <QIcon>
 #include <QModelIndex>
 #include <QPainter>
 #include <QStyle>
 #include <QStyleOptionViewItem>
-#include <QStyleOptionProgressBar>
 
 // KDE
-#include <KColorUtils>
 #include <KDebug>
 #include <KGlobal>
-#include <KGlobalSettings>
 #include <kcapacitybar.h>
 
 // plasma

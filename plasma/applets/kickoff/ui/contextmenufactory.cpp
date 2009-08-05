@@ -27,7 +27,6 @@
 
 // KDE
 #include <KIcon>
-#include <KLocalizedString>
 #include <KMenu>
 #include <KActionCollection>
 #include <KFileItem>

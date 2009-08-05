@@ -21,7 +21,6 @@
 #define MODELS_H
 
 // Qt
-#include <QtGlobal>
 
 // KDE
 #include <KService>

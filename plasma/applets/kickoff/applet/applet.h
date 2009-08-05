@@ -21,7 +21,6 @@
 #define APPLET_H
 
 // KDE
-#include <KIcon>
 
 // Plasma
 #include <Plasma/PopupApplet>

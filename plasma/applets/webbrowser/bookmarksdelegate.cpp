@@ -31,7 +31,6 @@
 
 // KDE
 #include <KDebug>
-#include <KGlobal>
 #include <KColorScheme>
 #include <KIcon>
 #include <KIconLoader>

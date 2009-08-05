@@ -25,15 +25,12 @@
 //Qt
 #include <QGraphicsLinearLayout>
 #include <QGraphicsProxyWidget>
-#include <QTimer>
 
 //KDE
 #include <KIcon>
-#include <KConfigDialog>
 #include <KStandardDirs>
 #include <KDesktopFile>
 #include <kdesktopfileactions.h>
-#include <KIconLoader>
 
 //plasma
 #include <Plasma/Dialog>

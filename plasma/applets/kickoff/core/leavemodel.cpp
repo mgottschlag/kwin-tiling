@@ -26,7 +26,6 @@
 // KDE
 #include <KConfigGroup>
 #include <KDebug>
-#include <KLocalizedString>
 #include <KIcon>
 #include <solid/control/powermanager.h>
 #include <kworkspace/kworkspace.h>

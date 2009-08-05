@@ -35,7 +35,6 @@
 #include <QtCore/QProcess>
 
 
-#include <KActionSelector>
 #include <KConfigDialog>
 
 #include <Solid/Device>

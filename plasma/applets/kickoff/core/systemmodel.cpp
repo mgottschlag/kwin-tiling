@@ -21,20 +21,14 @@
 #include "systemmodel.h"
 
 // Qt
-#include <QFile>
 #include <QHash>
 #include <QTimer>
 
 // KDE
-#include <KConfigGroup>
 #include <KDebug>
 #include <KDiskFreeSpaceInfo>
-#include <KLocalizedString>
 #include <KIcon>
-#include <KGlobal>
 #include <KUrl>
-#include <KServiceTypeTrader>
-#include <KStandardDirs>
 #include <KSycoca>
 #include <kfileplacesmodel.h>
 #include <solid/device.h>

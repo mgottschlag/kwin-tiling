@@ -26,7 +26,6 @@
 #include <QVBoxLayout>
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusReply>
-#include <QHeaderView>
 #include <QTimer>
 #include <QMetaEnum>
 
@@ -35,7 +34,6 @@
 #include <KColorScheme>
 #include <KIcon>
 #include <KIconLoader>
-#include <KGlobalSettings>
 #include <KMessageBox>
 
 //plasma

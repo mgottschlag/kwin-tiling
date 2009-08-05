@@ -33,9 +33,6 @@
 
 #include <KColorScheme>
 #include <KPushButton>
-#include <KGlobalSettings>
-#include <KIcon>
-#include <KLocalizedString>
 
 #include <plasma/extender.h>
 #include <plasma/extenderitem.h>

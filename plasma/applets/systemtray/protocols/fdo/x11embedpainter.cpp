@@ -26,7 +26,6 @@
 #include <QtCore/QTimer>
 
 #include <KDebug>
-#include <KGlobal>
 
 
 #define MAX_PAINTS_PER_SEC 20

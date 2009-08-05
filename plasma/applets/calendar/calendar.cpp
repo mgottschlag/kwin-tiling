@@ -22,7 +22,6 @@
 #include <QTimer>
 
 #include <KDebug>
-#include <KIcon>
 #include <KSystemTimeZones>
 
 #include <Plasma/Svg>

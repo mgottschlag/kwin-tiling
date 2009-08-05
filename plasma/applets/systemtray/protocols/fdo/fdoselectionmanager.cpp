@@ -33,7 +33,6 @@
 #include <QtGui/QTextDocument>
 #include <QtGui/QX11Info>
 
-#include <KGlobal>
 
 #include <config-X11.h>
 

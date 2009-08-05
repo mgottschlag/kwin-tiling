@@ -21,7 +21,6 @@
 
 #include <math.h>
 
-#include <QApplication>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QFont>
@@ -31,7 +30,6 @@
 #include <QDBusInterface>
 #include <QTextDocument>
 
-#include <KDialog>
 #include <KColorScheme>
 #include <KConfigDialog>
 #include <KGlobalSettings>

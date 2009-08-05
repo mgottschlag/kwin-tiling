@@ -21,7 +21,6 @@
 #include <Plasma/Theme>
 #include <Plasma/ToolTipManager>
 #include <KConfigDialog>
-#include <QTimer>
 #include <QGraphicsLinearLayout>
 
 SM::Net::Net(QObject *parent, const QVariantList &args)

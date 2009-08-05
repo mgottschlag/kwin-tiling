@@ -26,7 +26,6 @@
 #include <QStandardItemModel>
 
 // KDE
-#include <KService>
 
 namespace Kickoff
 {

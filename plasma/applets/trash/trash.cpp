@@ -21,17 +21,14 @@
 
 //QT
 #include <QGraphicsSceneDragDropEvent>
-#include <QApplication>
 #include <QGraphicsLinearLayout>
 
 //KDE
-#include <KGlobalSettings>
 #include <KCModuleProxy>
 #include <KConfigDialog>
 #include <KDebug>
 #include <KLocale>
 #include <KIconLoader>
-#include <KMimeType>
 #include <KRun>
 #include <KSharedConfig>
 #include <KMessageBox>
@@ -40,6 +37,7 @@
 #include <KStandardDirs>
 
 #include <kfileplacesmodel.h>
+
 #include <KIO/CopyJob>
 #include <KIO/JobUiDelegate>
 
@@ -47,6 +45,8 @@
 #include <Plasma/IconWidget>
 #include <Plasma/Containment>
 #include <Plasma/ToolTipManager>
+
+
 
 //Solid
 #include <solid/devicenotifier.h>

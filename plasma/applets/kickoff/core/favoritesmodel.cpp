@@ -30,7 +30,6 @@
 #include <KConfigGroup>
 #include <KService>
 #include <kdebug.h>
-#include <KUrl>
 
 using namespace Kickoff;
 

@@ -25,13 +25,10 @@
 #include <QGraphicsWidget>
 #include <QDrag>
 #include <QHash>
-#include <QMouseEvent>
 #include <QMimeData>
-#include <QToolButton>
 
 #include <KDialog>
 #include <KMimeType>
-#include <KStandardDirs>
 #include <KWindowSystem>
 #include <KIconLoader>
 #include <KUrl>

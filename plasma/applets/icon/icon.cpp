@@ -22,11 +22,8 @@
 #include <QGraphicsSceneDragDropEvent>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsItem>
-#include <QEvent>
-#include <QMimeData>
 #include <QGraphicsLinearLayout>
 
-#include <KGlobalSettings>
 #include <KDebug>
 #include <KDesktopFile>
 #include <KIconLoader>

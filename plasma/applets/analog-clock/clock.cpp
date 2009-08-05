@@ -22,20 +22,13 @@
 
 #include <math.h>
 
-#include <QApplication>
-#include <QBitmap>
 #include <QGraphicsScene>
-#include <QMatrix>
-#include <QPaintEvent>
 #include <QPainter>
 #include <QPainterPath>
 #include <QPixmap>
 #include <QStyleOptionGraphicsItem>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
 #include <QCheckBox>
 #include <QPushButton>
-#include <QSpinBox>
 
 #include <KConfigDialog>
 #include <KDebug>
@@ -43,8 +36,6 @@
 #include <KIcon>
 #include <KIconLoader>
 #include <KSharedConfig>
-#include <KTimeZoneWidget>
-#include <KDialog>
 
 #include <Plasma/Dialog>
 #include <Plasma/FrameSvg>

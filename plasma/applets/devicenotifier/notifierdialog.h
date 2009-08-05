@@ -22,14 +22,12 @@
 
 //Qt
 #include <QWidget>
-#include <QStringList>
 
 //solid
 #include <solid/solidnamespace.h>
 
 
 //to remove
-#include <QTreeView>
 
 class QModelIndex;
 class QStandardItemModel;

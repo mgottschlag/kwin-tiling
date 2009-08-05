@@ -23,7 +23,6 @@
 #include <QGraphicsWidget>
 #include <QGraphicsSceneContextMenuEvent>
 #include <QIcon>
-#include <QDBusReply>
 
 #include <KIcon>
 #include <KIconLoader>

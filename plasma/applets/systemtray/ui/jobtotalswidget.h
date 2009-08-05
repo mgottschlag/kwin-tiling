@@ -22,7 +22,6 @@
 
 #include "../core/job.h"
 
-#include <KJob>
 
 #include <QGraphicsWidget>
 

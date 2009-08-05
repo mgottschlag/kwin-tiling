@@ -25,12 +25,9 @@
 #include <KColorScheme>
 
 // Qt
-#include <QIcon>
 #include <QMouseEvent>
 #include <QPainter>
-
-#include <QGradient>
-#include <QLinearGradient>
+#include <QIcon>
 
 #include <Plasma/Plasma>
 #include <Plasma/Animator>

@@ -20,7 +20,6 @@
 #include "jobwidget.h"
 #include "../core/job.h"
 
-#include <KGlobalSettings>
 
 #include <QFont>
 #include <QAction>

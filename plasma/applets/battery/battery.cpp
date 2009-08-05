@@ -24,20 +24,19 @@
 #include <QApplication>
 #include <QDBusConnection>
 #include <QDBusInterface>
-#include <QDBusPendingCall>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QFont>
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsGridLayout>
 #include <QGraphicsLinearLayout>
+#include <QDBusPendingCall>
+#include <QLabel>
 
 #include <KDebug>
 #include <KIcon>
-#include <KLocalizedString>
 #include <KSharedConfig>
 #include <KToolInvocation>
-#include <KDialog>
 #include <KColorScheme>
 #include <KConfigDialog>
 #include <KGlobalSettings>

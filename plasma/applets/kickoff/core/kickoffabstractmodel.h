@@ -26,7 +26,6 @@
 #include <QAbstractItemModel>
 
 // KDE
-#include <KService>
 
 namespace Kickoff
 {

@@ -26,7 +26,6 @@
 #include <QGraphicsLayoutItem>
 #include <QList>
 #include <QTimer>
-#include <KIcon>
 #include <KDialog>
 
 #include "ui_quicklaunchConfig.h"
