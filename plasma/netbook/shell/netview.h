@@ -57,13 +57,6 @@ public Q_SLOTS:
     void screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment);
     void updateGeometry();
 
-    /**
-     * Configure containment.
-     *
-     * @arg containment to configure
-     */
-    void configureContainment(Plasma::Containment *containment);
-
 Q_SIGNALS:
     void locationChanged(const NetView *view);
     void geometryChanged();

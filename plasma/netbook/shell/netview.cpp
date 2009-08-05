@@ -77,16 +77,6 @@ void NetView::setContainment(Plasma::Containment *c)
     updateGeometry();
 }
 
-void NetView::configureContainment(Plasma::Containment *containment)
-{
-    Q_UNUSED(containment)
-    /* TODO: implement; suggestion: as an overlay that takes the whole screen
-    m_configDialog->show();
-    KWindowSystem::setOnDesktop(m_configDialog->winId(), KWindowSystem::currentDesktop());
-    KWindowSystem::activateWindow(m_configDialog->winId());
-    */
-}
-
 
 // This function is reimplemented from QGraphicsView to work around the problem
 // that QPainter::fillRect(QRectF/QRect, QBrush), which QGraphicsView uses, is
