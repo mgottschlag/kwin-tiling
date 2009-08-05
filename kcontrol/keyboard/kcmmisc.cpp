@@ -32,7 +32,6 @@
 #include <QCheckBox>
 
 #include <QWhatsThis>
-#include <KButtonGroup>
 
 #include <klocale.h>
 #include <kconfig.h>

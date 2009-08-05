@@ -38,9 +38,7 @@
 
 #include <QDBusConnection>
 #include <QDBusError>
-#include <QDBusInterface>
 #include <QDBusReply>
-#include <QDBusMetaType>
 
 
 /*

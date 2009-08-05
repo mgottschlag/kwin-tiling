@@ -4,11 +4,7 @@
 #include <kdialog.h>
 #include <QWidget>
 #include <kconfig.h>
-#include <QLabel>
-#include <QLayout>
 #include <QWhatsThis>
-#include <QGroupBox>
-#include <QObject>
 #include <QCheckBox>
 #include <QSlider>
 

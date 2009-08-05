@@ -22,16 +22,13 @@
 #include <QCheckBox>
 #include <Qt3Support/Q3Header>
 #include <QLabel>
-#include <QLayout>
 #include <Qt3Support/Q3CheckListItem>
 #include <QPushButton>
-#include <QSlider>
 #include <QTimer>
 #include <kmacroexpander.h>
 #include <kshell.h>
 
 //Added by qt3to4:
-#include <QPixmap>
 #include <QTextStream>
 #include <QKeyEvent>
 #include <QHBoxLayout>
@@ -60,7 +57,6 @@
 #include <kscreensaver_interface.h>
 #include <KPluginFactory>
 #include <KPluginLoader>
-#include <KMessageBox>
 
 #include <kworkspace/screenpreviewwidget.h>
 

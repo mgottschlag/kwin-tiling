@@ -17,7 +17,6 @@
  */
 #include "standard_actions_module.h"
 
-#include <QLayout>
 
 #include <KAction>
 #include <KActionCollection>
@@ -28,6 +27,8 @@
 #include <KStandardAction>
 #include <KMessageBox>
 #include <KLocale>
+
+#include <QVBoxLayout>
 
 K_PLUGIN_FACTORY(StandardActionsModuleFactory, registerPlugin<StandardActionsModule>();)
 K_EXPORT_PLUGIN(StandardActionsModuleFactory("kcmstandard_actions"))

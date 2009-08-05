@@ -22,8 +22,8 @@ DEALINGS IN THE SOFTWARE.
 */
 
 #include <QCheckBox>
-#include <QLayout>
 #include <QtCore/QSettings>
+#include <QVBoxLayout>
 #include <kdialog.h>
 #include <kglobal.h>
 #include <klocale.h>
