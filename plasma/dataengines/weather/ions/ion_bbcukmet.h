@@ -84,20 +84,20 @@ public:
     bool updateIonSource(const QString& source);
     void updateWeather(const QString& source);
 
-    QString place(const QString& source);
-    QString station(const QString& source);
-    QString observationTime(const QString& source);
-    //bool night(const QString& source);
-    int periodHour(const QString& source);
-    int periodMinute(const QString& source);
-    double periodLatitude(const QString& source);
-    double periodLongitude(const QString& source);
-    QString condition(const QString& source);
-    QMap<QString, QString> temperature(const QString& source);
-    QMap<QString, QString> wind(const QString& source);
-    QString humidity(const QString& source);
-    QString visibility(const QString& source);
-    QMap<QString, QString> pressure(const QString& source);
+    QString place(const QString& source) const;
+    QString station(const QString& source) const;
+    QString observationTime(const QString& source) const;
+    //bool night(const QString& source) const;
+    int periodHour(const QString& source) const;
+    int periodMinute(const QString& source) const;
+    double periodLatitude(const QString& source) const;
+    double periodLongitude(const QString& source) const;
+    QString condition(const QString& source) const;
+    QMap<QString, QString> temperature(const QString& source) const;
+    QMap<QString, QString> wind(const QString& source) const;
+    QString humidity(const QString& source) const;
+    QString visibility(const QString& source) const;
+    QMap<QString, QString> pressure(const QString& source) const;
     QVector<QString> forecasts(const QString& source);
 
 public slots:
@@ -115,11 +115,11 @@ protected slots:
 private:
     /* UKMET Methods - Internal for Ion */
 
-    QMap<QString, ConditionIcons> setupDayIconMappings(void);
-    QMap<QString, ConditionIcons> setupNightIconMappings(void);
+    QMap<QString, ConditionIcons> setupDayIconMappings(void) const;
+    QMap<QString, ConditionIcons> setupNightIconMappings(void) const;
 
-    QMap<QString, ConditionIcons> const& nightIcons(void);
-    QMap<QString, ConditionIcons> const& dayIcons(void);
+    QMap<QString, ConditionIcons> const& nightIcons(void) const;
+    QMap<QString, ConditionIcons> const& dayIcons(void) const;
 
     // Load and Parse the place search XML listings
     void findPlace(const QString& place, const QString& source);
@@ -138,7 +138,7 @@ private:
     void parseFiveDayForecast(const QString& source, QXmlStreamReader& xml);
     void parsePlaceForecast(const QString& source, QXmlStreamReader& xml);
     void parseWeatherForecast(const QString& source, QXmlStreamReader& xml);
-    void parseUnknownElement(QXmlStreamReader& xml);
+    void parseUnknownElement(QXmlStreamReader& xml) const;
 
 private:
     class Private;

@@ -86,9 +86,9 @@ protected slots:
     * @param source The datasource to be updated.
     * @param data The new data updated.
     */
-    void resetCompleted(IonInterface *, bool);
+    void resetCompleted(IonInterface *, bool) const;
 
-    void triggerReset(void);
+    void triggerReset(void) const;
 
     /**
      * Notify WeatherEngine a new ion has data sources.

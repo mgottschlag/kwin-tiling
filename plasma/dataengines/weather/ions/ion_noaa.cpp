@@ -51,7 +51,7 @@ public:
 
 };
 
-QMap<QString, IonInterface::WindDirections> NOAAIon::setupWindIconMappings(void)
+QMap<QString, IonInterface::WindDirections> NOAAIon::setupWindIconMappings(void) const
 {
     QMap<QString, WindDirections> windDir;
     windDir["north"] = N;
@@ -66,20 +66,20 @@ QMap<QString, IonInterface::WindDirections> NOAAIon::setupWindIconMappings(void)
     return windDir;
 }
 
-QMap<QString, IonInterface::ConditionIcons> NOAAIon::setupConditionIconMappings(void)
+QMap<QString, IonInterface::ConditionIcons> NOAAIon::setupConditionIconMappings(void) const
 {
 
     QMap<QString, ConditionIcons> conditionList;
     return conditionList;
 }
 
-QMap<QString, IonInterface::ConditionIcons> const& NOAAIon::conditionIcons(void)
+QMap<QString, IonInterface::ConditionIcons> const& NOAAIon::conditionIcons(void) const
 {
     static QMap<QString, ConditionIcons> const condval = setupConditionIconMappings();
     return condval;
 }
 
-QMap<QString, IonInterface::WindDirections> const& NOAAIon::windIcons(void)
+QMap<QString, IonInterface::WindDirections> const& NOAAIon::windIcons(void) const
 {
     static QMap<QString, WindDirections> const wval = setupWindIconMappings();
     return wval;
@@ -186,7 +186,7 @@ bool NOAAIon::updateIonSource(const QString& source)
 }
 
 // Parses city list and gets the correct city based on ID number
-void NOAAIon::getXMLSetup()
+void NOAAIon::getXMLSetup() const
 {
     KIO::TransferJob *job = KIO::get(KUrl("http://www.weather.gov/data/current_obs/index.xml"), KIO::NoReload, KIO::HideProgressInfo);
 
@@ -452,7 +452,7 @@ bool NOAAIon::readXMLData(const QString& source, QXmlStreamReader& xml)
 }
 
 // handle when no XML tag is found
-void NOAAIon::parseUnknownElement(QXmlStreamReader& xml)
+void NOAAIon::parseUnknownElement(QXmlStreamReader& xml) const
 {
 
     while (!xml.atEnd()) {
@@ -562,39 +562,39 @@ void NOAAIon::updateWeather(const QString& source)
     setData(source, data);
 }
 
-QString NOAAIon::country(const QString& source)
+QString NOAAIon::country(const QString& source) const
 {
     Q_UNUSED(source);
     return QString("USA");
 }
 
-QString NOAAIon::place(const QString& source)
+QString NOAAIon::place(const QString& source) const
 {
     return d->m_weatherData[source].locationName;
 }
 
-QString NOAAIon::station(const QString& source)
+QString NOAAIon::station(const QString& source) const
 {
     return d->m_weatherData[source].stationID;
 }
 
-QString NOAAIon::latitude(const QString& source)
+QString NOAAIon::latitude(const QString& source) const
 {
     return d->m_weatherData[source].stationLat;
 }
 
-QString NOAAIon::longitude(const QString& source)
+QString NOAAIon::longitude(const QString& source) const
 {
     return d->m_weatherData[source].stationLon;
 }
 
-QString NOAAIon::observationTime(const QString& source)
+QString NOAAIon::observationTime(const QString& source) const
 {
     return d->m_weatherData[source].observationTime;
 }
 
 /*
-bool NOAAIon::night(const QString& source)
+bool NOAAIon::night(const QString& source) const
 {
     if (d->m_weatherData[source].iconPeriodAP == "pm") {
         return true;
@@ -603,12 +603,12 @@ bool NOAAIon::night(const QString& source)
 }
 */
 
-int NOAAIon::periodHour(const QString& source)
+int NOAAIon::periodHour(const QString& source) const
 {
     return d->m_weatherData[source].iconPeriodHour.toInt();
 }
 
-QString NOAAIon::condition(const QString& source)
+QString NOAAIon::condition(const QString& source) const
 {
     if (d->m_weatherData[source].weather.isEmpty() || d->m_weatherData[source].weather == "NA") {
         d->m_weatherData[source].weather = "N/A";
@@ -616,12 +616,12 @@ QString NOAAIon::condition(const QString& source)
     return i18nc("weather condition", d->m_weatherData[source].weather.toUtf8());
 }
 
-QString NOAAIon::dewpoint(const QString& source)
+QString NOAAIon::dewpoint(const QString& source) const
 {
     return d->m_weatherData[source].dewpoint_F;
 }
 
-QString NOAAIon::humidity(const QString& source)
+QString NOAAIon::humidity(const QString& source) const
 {
     if (d->m_weatherData[source].humidity == "NA") {
         return QString("N/A");
@@ -630,7 +630,7 @@ QString NOAAIon::humidity(const QString& source)
     }
 }
 
-QMap<QString, QString> NOAAIon::visibility(const QString& source)
+QMap<QString, QString> NOAAIon::visibility(const QString& source) const
 {
     QMap<QString, QString> visibilityInfo;
     if (d->m_weatherData[source].visibility.isEmpty()) {
@@ -647,7 +647,7 @@ QMap<QString, QString> NOAAIon::visibility(const QString& source)
     return visibilityInfo;
 }
 
-QMap<QString, QString> NOAAIon::temperature(const QString& source)
+QMap<QString, QString> NOAAIon::temperature(const QString& source) const
 {
     QMap<QString, QString> temperatureInfo;
     temperatureInfo.insert("temperature", d->m_weatherData[source].temperature_F);
@@ -665,7 +665,7 @@ QMap<QString, QString> NOAAIon::temperature(const QString& source)
     return temperatureInfo;
 }
 
-QMap<QString, QString> NOAAIon::pressure(const QString& source)
+QMap<QString, QString> NOAAIon::pressure(const QString& source) const
 {
     QMap<QString, QString> pressureInfo;
     if (d->m_weatherData[source].pressure.isEmpty()) {
@@ -683,7 +683,7 @@ QMap<QString, QString> NOAAIon::pressure(const QString& source)
     return pressureInfo;
 }
 
-QMap<QString, QString> NOAAIon::wind(const QString& source)
+QMap<QString, QString> NOAAIon::wind(const QString& source) const
 {
     QMap<QString, QString> windInfo;
 

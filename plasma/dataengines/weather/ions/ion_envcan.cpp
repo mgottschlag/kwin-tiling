@@ -155,7 +155,7 @@ static double calculateSunsetTime(const int & day, const int & month, const int 
 
 }
 
-QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupConditionIconMappings(void)
+QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupConditionIconMappings(void) const
 {
     QMap<QString, ConditionIcons> conditionList;
 
@@ -247,7 +247,7 @@ QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupConditionIconMapp
 }
 
 
-QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupForecastIconMappings(void)
+QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupForecastIconMappings(void) const
 {
     QMap<QString, ConditionIcons> forecastList;
 
@@ -493,13 +493,13 @@ QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupForecastIconMappi
     return forecastList;
 }
 
-QMap<QString, IonInterface::ConditionIcons> const& EnvCanadaIon::conditionIcons(void)
+QMap<QString, IonInterface::ConditionIcons> const& EnvCanadaIon::conditionIcons(void) const
 {
     static QMap<QString, ConditionIcons> const condval = setupConditionIconMappings();
     return condval;
 }
 
-QMap<QString, IonInterface::ConditionIcons> const& EnvCanadaIon::forecastIcons(void)
+QMap<QString, IonInterface::ConditionIcons> const& EnvCanadaIon::forecastIcons(void) const
 {
     static QMap<QString, ConditionIcons> const foreval = setupForecastIconMappings();
     return foreval;
@@ -567,13 +567,13 @@ bool EnvCanadaIon::updateIonSource(const QString& source)
     return false;
 }
 
-void EnvCanadaIon::redoXMLSetup()
+void EnvCanadaIon::redoXMLSetup() const
 {
     getXMLSetup();
 }
 
 // Parses city list and gets the correct city based on ID number
-void EnvCanadaIon::getXMLSetup()
+void EnvCanadaIon::getXMLSetup() const
 {
     kDebug() << "getXMLSetup()";
 
@@ -1359,7 +1359,7 @@ void EnvCanadaIon::parseAstronomicals(WeatherData& data, QXmlStreamReader& xml)
 }
 
 // handle when no XML tag is found
-void EnvCanadaIon::parseUnknownElement(QXmlStreamReader& xml)
+void EnvCanadaIon::parseUnknownElement(QXmlStreamReader& xml) const
 {
 
     while (!xml.atEnd()) {
@@ -1575,23 +1575,23 @@ void EnvCanadaIon::updateWeather(const QString& source)
     setData(source, data);
 }
 
-QString EnvCanadaIon::country(const QString& source)
+QString EnvCanadaIon::country(const QString& source) const
 {
     return d->m_weatherData[source].countryName;
 }
-QString EnvCanadaIon::territory(const QString& source)
+QString EnvCanadaIon::territory(const QString& source) const
 {
     return d->m_weatherData[source].shortTerritoryName;
 }
-QString EnvCanadaIon::city(const QString& source)
+QString EnvCanadaIon::city(const QString& source) const
 {
     return d->m_weatherData[source].cityName;
 }
-QString EnvCanadaIon::region(const QString& source)
+QString EnvCanadaIon::region(const QString& source) const
 {
     return d->m_weatherData[source].regionName;
 }
-QString EnvCanadaIon::station(const QString& source)
+QString EnvCanadaIon::station(const QString& source) const
 {
     if (!d->m_weatherData[source].stationID.isEmpty()) {
         return d->m_weatherData[source].stationID.toUpper();
@@ -1600,32 +1600,32 @@ QString EnvCanadaIon::station(const QString& source)
     return "N/A";
 }
 
-QString EnvCanadaIon::latitude(const QString& source)
+QString EnvCanadaIon::latitude(const QString& source) const
 {
     return d->m_weatherData[source].stationLat;
 }
 
-QString EnvCanadaIon::longitude(const QString& source)
+QString EnvCanadaIon::longitude(const QString& source) const
 {
     return d->m_weatherData[source].stationLon;
 }
 
-QString EnvCanadaIon::observationTime(const QString& source)
+QString EnvCanadaIon::observationTime(const QString& source) const
 {
     return d->m_weatherData[source].obsTimestamp;
 }
 
-int EnvCanadaIon::periodHour(const QString& source)
+int EnvCanadaIon::periodHour(const QString& source) const
 {
     return d->m_weatherData[source].iconPeriodHour;
 }
 
-int EnvCanadaIon::periodMinute(const QString& source)
+int EnvCanadaIon::periodMinute(const QString& source) const
 {
     return d->m_weatherData[source].iconPeriodMinute;
 }
 
-QString EnvCanadaIon::condition(const QString& source)
+QString EnvCanadaIon::condition(const QString& source) const
 {
     if (d->m_weatherData[source].condition.isEmpty()) {
         d->m_weatherData[source].condition = "N/A";
@@ -1633,7 +1633,7 @@ QString EnvCanadaIon::condition(const QString& source)
     return (d->m_weatherData[source].condition.toUtf8());
 }
 
-QString EnvCanadaIon::dewpoint(const QString& source)
+QString EnvCanadaIon::dewpoint(const QString& source) const
 {
     if (!d->m_weatherData[source].dewpoint.isEmpty()) {
         return QString::number(d->m_weatherData[source].dewpoint.toFloat(), 'f', 1);
@@ -1641,7 +1641,7 @@ QString EnvCanadaIon::dewpoint(const QString& source)
     return "N/A";
 }
 
-QString EnvCanadaIon::humidity(const QString& source)
+QString EnvCanadaIon::humidity(const QString& source) const
 {
     if (!d->m_weatherData[source].humidity.isEmpty()) {
         return QString("%1%").arg(d->m_weatherData[source].humidity);
@@ -1649,7 +1649,7 @@ QString EnvCanadaIon::humidity(const QString& source)
     return "N/A";
 }
 
-QMap<QString, QString> EnvCanadaIon::visibility(const QString& source)
+QMap<QString, QString> EnvCanadaIon::visibility(const QString& source) const
 {
     QMap<QString, QString> visibilityInfo;
 
@@ -1662,7 +1662,7 @@ QMap<QString, QString> EnvCanadaIon::visibility(const QString& source)
     return visibilityInfo;
 }
 
-QMap<QString, QString> EnvCanadaIon::temperature(const QString& source)
+QMap<QString, QString> EnvCanadaIon::temperature(const QString& source) const
 {
     QMap<QString, QString> temperatureInfo;
     if (!d->m_weatherData[source].temperature.isEmpty()) {
@@ -1682,7 +1682,7 @@ QMap<QString, QString> EnvCanadaIon::temperature(const QString& source)
     return temperatureInfo;
 }
 
-QMap<QString, QString> EnvCanadaIon::watches(const QString& source)
+QMap<QString, QString> EnvCanadaIon::watches(const QString& source) const
 {
     QMap<QString, QString> watchData;
     QString watchType;
@@ -1696,7 +1696,7 @@ QMap<QString, QString> EnvCanadaIon::watches(const QString& source)
     return watchData;
 }
 
-QMap<QString, QString> EnvCanadaIon::warnings(const QString& source)
+QMap<QString, QString> EnvCanadaIon::warnings(const QString& source) const
 {
     QMap<QString, QString> warningData;
     QString warnType;
@@ -1805,7 +1805,7 @@ QVector<QString> EnvCanadaIon::forecasts(const QString& source)
     return forecastData;
 }
 
-QMap<QString, QString> EnvCanadaIon::pressure(const QString& source)
+QMap<QString, QString> EnvCanadaIon::pressure(const QString& source) const
 {
     QMap<QString, QString> pressureInfo;
 
@@ -1820,7 +1820,7 @@ QMap<QString, QString> EnvCanadaIon::pressure(const QString& source)
     return pressureInfo;
 }
 
-QMap<QString, QString> EnvCanadaIon::wind(const QString& source)
+QMap<QString, QString> EnvCanadaIon::wind(const QString& source) const
 {
     QMap<QString, QString> windInfo;
 
@@ -1857,7 +1857,7 @@ QMap<QString, QString> EnvCanadaIon::wind(const QString& source)
     return windInfo;
 }
 
-QMap<QString, QString> EnvCanadaIon::uvIndex(const QString& source)
+QMap<QString, QString> EnvCanadaIon::uvIndex(const QString& source) const
 {
     QMap<QString, QString> uvInfo;
 
@@ -1876,7 +1876,7 @@ QMap<QString, QString> EnvCanadaIon::uvIndex(const QString& source)
     return uvInfo;
 }
 
-QMap<QString, QString> EnvCanadaIon::regionalTemperatures(const QString& source)
+QMap<QString, QString> EnvCanadaIon::regionalTemperatures(const QString& source) const
 {
     QMap<QString, QString> regionalTempInfo;
 
@@ -1896,7 +1896,7 @@ QMap<QString, QString> EnvCanadaIon::regionalTemperatures(const QString& source)
     return regionalTempInfo;
 }
 
-QMap<QString, QString> EnvCanadaIon::yesterdayWeather(const QString& source)
+QMap<QString, QString> EnvCanadaIon::yesterdayWeather(const QString& source) const
 {
     QMap<QString, QString> yesterdayInfo;
 
@@ -1935,7 +1935,7 @@ QMap<QString, QString> EnvCanadaIon::yesterdayWeather(const QString& source)
     return yesterdayInfo;
 }
 
-QMap<QString, QString> EnvCanadaIon::sunriseSet(const QString& source)
+QMap<QString, QString> EnvCanadaIon::sunriseSet(const QString& source) const
 {
     QMap<QString, QString> sunInfo;
 
@@ -1954,7 +1954,7 @@ QMap<QString, QString> EnvCanadaIon::sunriseSet(const QString& source)
     return sunInfo;
 }
 
-QMap<QString, QString> EnvCanadaIon::moonriseSet(const QString& source)
+QMap<QString, QString> EnvCanadaIon::moonriseSet(const QString& source) const
 {
     QMap<QString, QString> moonInfo;
 
@@ -1973,7 +1973,7 @@ QMap<QString, QString> EnvCanadaIon::moonriseSet(const QString& source)
     return moonInfo;
 }
 
-QMap<QString, QString> EnvCanadaIon::weatherRecords(const QString& source)
+QMap<QString, QString> EnvCanadaIon::weatherRecords(const QString& source) const
 {
     QMap<QString, QString> recordInfo;
 

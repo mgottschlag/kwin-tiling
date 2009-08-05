@@ -140,7 +140,7 @@ void UKMETIon::init()
     setInitialized(true);
 }
 
-QMap<QString, IonInterface::ConditionIcons> UKMETIon::setupDayIconMappings(void)
+QMap<QString, IonInterface::ConditionIcons> UKMETIon::setupDayIconMappings(void) const
 {
 //    ClearDay, FewCloudsDay, PartlyCloudyDay, Overcast,
 //    Showers, ScatteredShowers, Thunderstorm, Snow,
@@ -198,7 +198,7 @@ QMap<QString, IonInterface::ConditionIcons> UKMETIon::setupDayIconMappings(void)
     return dayList;
 }
 
-QMap<QString, IonInterface::ConditionIcons> UKMETIon::setupNightIconMappings(void)
+QMap<QString, IonInterface::ConditionIcons> UKMETIon::setupNightIconMappings(void) const
 {
     QMap<QString, ConditionIcons> nightList;
     nightList["clear"] = ClearNight;
@@ -248,13 +248,13 @@ QMap<QString, IonInterface::ConditionIcons> UKMETIon::setupNightIconMappings(voi
     return nightList;
 }
 
-QMap<QString, IonInterface::ConditionIcons> const& UKMETIon::dayIcons(void)
+QMap<QString, IonInterface::ConditionIcons> const& UKMETIon::dayIcons(void) const
 {
     static QMap<QString, ConditionIcons> const dval = setupDayIconMappings();
     return dval;
 }
 
-QMap<QString, IonInterface::ConditionIcons> const& UKMETIon::nightIcons(void)
+QMap<QString, IonInterface::ConditionIcons> const& UKMETIon::nightIcons(void) const
 {
     static QMap<QString, ConditionIcons> const nval = setupNightIconMappings();
     return nval;
@@ -423,7 +423,7 @@ void UKMETIon::readSearchHTMLData(const QString& source, const QByteArray& html)
 }
 
 // handle when no XML tag is found
-void UKMETIon::parseUnknownElement(QXmlStreamReader& xml)
+void UKMETIon::parseUnknownElement(QXmlStreamReader& xml) const
 {
     while (!xml.atEnd()) {
         xml.readNext();
@@ -872,23 +872,23 @@ void UKMETIon::updateWeather(const QString& source)
     setData(weatherSource, data);
 }
 
-QString UKMETIon::place(const QString& source)
+QString UKMETIon::place(const QString& source) const
 {
     return d->m_weatherData[source].stationName;
 }
 
-QString UKMETIon::station(const QString& source)
+QString UKMETIon::station(const QString& source) const
 {
     return d->m_weatherData[source].stationName;
 }
 
-QString UKMETIon::observationTime(const QString& source)
+QString UKMETIon::observationTime(const QString& source) const
 {
     return d->m_weatherData[source].obsTime;
 }
 
 /*
-bool UKMETIon::night(const QString& source)
+bool UKMETIon::night(const QString& source) const
 {
     if (d->m_weatherData[source].iconPeriodAP == "pm") {
         return true;
@@ -896,32 +896,32 @@ bool UKMETIon::night(const QString& source)
     return false;
 } */
 
-int UKMETIon::periodHour(const QString& source)
+int UKMETIon::periodHour(const QString& source) const
 {
     return d->m_weatherData[source].iconPeriodHour;
 }
 
-int UKMETIon::periodMinute(const QString& source)
+int UKMETIon::periodMinute(const QString& source) const
 {
     return d->m_weatherData[source].iconPeriodMinute;
 }
 
-double UKMETIon::periodLatitude(const QString& source)
+double UKMETIon::periodLatitude(const QString& source) const
 {
     return d->m_weatherData[source].latitude;
 }
 
-double UKMETIon::periodLongitude(const QString& source)
+double UKMETIon::periodLongitude(const QString& source) const
 {
     return d->m_weatherData[source].longitude;
 }
 
-QString UKMETIon::condition(const QString& source)
+QString UKMETIon::condition(const QString& source) const
 {
     return (d->m_weatherData[source].condition);
 }
 
-QMap<QString, QString> UKMETIon::temperature(const QString& source)
+QMap<QString, QString> UKMETIon::temperature(const QString& source) const
 {
     QMap<QString, QString> temperatureInfo;
 
@@ -930,7 +930,7 @@ QMap<QString, QString> UKMETIon::temperature(const QString& source)
     return temperatureInfo;
 }
 
-QMap<QString, QString> UKMETIon::wind(const QString& source)
+QMap<QString, QString> UKMETIon::wind(const QString& source) const
 {
     QMap<QString, QString> windInfo;
     if (d->m_weatherData[source].windSpeed_miles == "N/A") {
@@ -948,7 +948,7 @@ QMap<QString, QString> UKMETIon::wind(const QString& source)
     return windInfo;
 }
 
-QString UKMETIon::humidity(const QString& source)
+QString UKMETIon::humidity(const QString& source) const
 {
     if (d->m_weatherData[source].humidity == "N/A%") {
         return "N/A";
@@ -956,12 +956,12 @@ QString UKMETIon::humidity(const QString& source)
     return d->m_weatherData[source].humidity;
 }
 
-QString UKMETIon::visibility(const QString& source)
+QString UKMETIon::visibility(const QString& source) const
 {
     return i18nc("visibility", d->m_weatherData[source].visibilityStr.toUtf8());
 }
 
-QMap<QString, QString> UKMETIon::pressure(const QString& source)
+QMap<QString, QString> UKMETIon::pressure(const QString& source) const
 {
     QMap<QString, QString> pressureInfo;
     if (d->m_weatherData[source].pressure == "N/A") {

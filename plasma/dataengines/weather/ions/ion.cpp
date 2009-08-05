@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (C) 2007-2008 by Shawn Starr <shawn.starr@rogers.com>           *
+ * Copyright (C) 2007-2009 by Shawn Starr <shawn.starr@rogers.com>           *
  *                                                                           *
  * This library is free software; you can redistribute it and/or             *
  * modify it under the terms of the GNU Library General Public               *
@@ -83,7 +83,7 @@ void IonInterface::setInitialized(bool initialized)
 /**
  * Return wind direction svg element to display in applet when given a wind direction.
  */
-QString IonInterface::getWindDirectionIcon(const QMap<QString, WindDirections> &windDirList, const QString& windDirection)
+QString IonInterface::getWindDirectionIcon(const QMap<QString, WindDirections> &windDirList, const QString& windDirection) const
 {
     switch (windDirList[windDirection.toLower()]) {
     case N:
@@ -129,7 +129,7 @@ QString IonInterface::getWindDirectionIcon(const QMap<QString, WindDirections> &
 /**
  * Return weather icon to display in an applet when given a condition.
  */
-QString IonInterface::getWeatherIcon(const QMap<QString, ConditionIcons> &conditionList, const QString& condition)
+QString IonInterface::getWeatherIcon(const QMap<QString, ConditionIcons> &conditionList, const QString& condition) const
 {
     switch (conditionList[condition.toLower()]) {
     case ClearDay:

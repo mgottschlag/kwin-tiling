@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (C) 2007-2008 by Shawn Starr <shawn.starr@rogers.com>           *
+ * Copyright (C) 2007-2009 by Shawn Starr <shawn.starr@rogers.com>           *
  *                                                                           *
  * This library is free software; you can redistribute it and/or             *
  * modify it under the terms of the GNU Library General Public               *
@@ -68,7 +68,7 @@ public:
      * @param condition the current condition being reported.
      * @return icon name
      */
-    QString getWeatherIcon(const QMap<QString, ConditionIcons> &conditionList, const QString& condition);
+    QString getWeatherIcon(const QMap<QString, ConditionIcons> &conditionList, const QString& condition) const;
 
     /**
      * Returns wind icon element to display in applet.
@@ -76,7 +76,7 @@ public:
      * @param windDirection the current wind direction.
      * @return svg element for wind direction
      */
-    QString getWindDirectionIcon(const QMap<QString, WindDirections> &windDirList, const QString& windDirection);
+    QString getWindDirectionIcon(const QMap<QString, WindDirections> &windDirList, const QString& windDirection) const;
 
 public Q_SLOTS:
 

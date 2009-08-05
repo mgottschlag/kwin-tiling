@@ -42,7 +42,7 @@ public:
      * Get instance of a loaded ion.
      * @returns a IonInterface instance of a loaded plugin.
      */
-    IonInterface* ionForSource(const QString& name) {
+    IonInterface* ionForSource(const QString& name) const {
         int offset = name.indexOf('|');
 
         if (offset < 1) {
@@ -57,7 +57,7 @@ public:
      * Get plugin name from datasource.
      * @returns The plugin name given a datasource.
      */
-    QString ionNameForSource(const QString& source) {
+    QString ionNameForSource(const QString& source) const {
         int offset = source.indexOf('|');
         if (offset < 1) {
             return QString();
@@ -244,7 +244,7 @@ bool WeatherEngine::updateSourceEvent(const QString& source)
     return ion->updateSourceEvent(source);
 }
 
-void WeatherEngine::triggerReset()
+void WeatherEngine::triggerReset() const
 {
     kDebug() << "triggerReset()";
     foreach(const QString &i, d->m_ions) {
@@ -265,7 +265,7 @@ void WeatherEngine::networkStatusChanged(Solid::Networking::Status status)
     }
 }
 
-void WeatherEngine::resetCompleted(IonInterface * i, bool b)
+void WeatherEngine::resetCompleted(IonInterface * i, bool b) const
 {
     disconnect(i, SIGNAL(resetCompleted(IonInterface*, bool)), this, SLOT(resetCompleted(IonInterface *, bool)));
     if (b) {
