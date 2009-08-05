@@ -20,9 +20,6 @@
 
 #include "calculatorrunner.h"
 
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QWidget>
 #include <QScriptEngine>
 
 #include <KIcon>

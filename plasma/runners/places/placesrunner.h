@@ -20,8 +20,6 @@
 #ifndef PLACESRUNNER_H
 #define PLACESRUNNER_H
 
-#include <KGenericFactory>
-#include <KIcon>
 
 #include <plasma/abstractrunner.h>
 #include <kfileplacesmodel.h>

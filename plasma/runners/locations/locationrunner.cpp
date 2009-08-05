@@ -19,14 +19,11 @@
 #include "locationrunner.h"
 
 #include <QDir>
-#include <QStringList>
 
 #include <KDebug>
 #include <KRun>
 #include <KLocale>
-#include <KMimeType>
 #include <KShell>
-#include <KToolInvocation>
 #include <KUrl>
 #include <KIcon>
 #include <KProtocolInfo>

@@ -20,7 +20,6 @@
 
 #include "shell_config.h"
 
-#include <QGridLayout>
 
 #include <KConfigGroup>
 #include <KDebug>

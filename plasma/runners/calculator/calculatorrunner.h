@@ -19,7 +19,6 @@
 #ifndef CALCULATORRUNNER_H
 #define CALCULATORRUNNER_H
 
-#include <KGenericFactory>
 
 #include <Plasma/AbstractRunner>
 

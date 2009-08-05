@@ -19,7 +19,6 @@
 #ifndef SERVICERUNNER_H
 #define SERVICERUNNER_H
 
-#include <QAction>
 
 #include <KService>
 

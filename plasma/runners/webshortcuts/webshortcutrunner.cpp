@@ -18,13 +18,10 @@
 
 #include "webshortcutrunner.h"
 
-#include <QStringList>
 
 #include <KDebug>
-#include <KRun>
 #include <KLocale>
 #include <KMimeType>
-#include <KStandardDirs>
 #include <KToolInvocation>
 #include <KUrl>
 

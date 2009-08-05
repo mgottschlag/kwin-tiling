@@ -20,7 +20,6 @@
 #ifndef BOOKMARKSRUNNER_H
 #define BOOKMARKSRUNNER_H
 
-#include <KGenericFactory>
 #include <KIcon>
 
 #include <Plasma/AbstractRunner>

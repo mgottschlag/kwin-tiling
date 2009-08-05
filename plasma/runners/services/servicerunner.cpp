@@ -18,7 +18,6 @@
 
 #include "servicerunner.h"
 
-#include <QWidget>
 #include <KIcon>
 
 #include <KDebug>

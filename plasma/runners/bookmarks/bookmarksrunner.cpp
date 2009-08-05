@@ -21,17 +21,14 @@
 
 #include <QDBusInterface>
 #include <QDBusReply>
-#include <QLabel>
 #include <QList>
 #include <QStack>
-#include <QWidget>
 
 #include <KIcon>
 #include <KBookmarkManager>
 #include <KToolInvocation>
 #include <KUrl>
 #include <KStandardDirs>
-
 
 BookmarksRunner::BookmarksRunner( QObject* parent, const QVariantList &args )
     : Plasma::AbstractRunner(parent, args)

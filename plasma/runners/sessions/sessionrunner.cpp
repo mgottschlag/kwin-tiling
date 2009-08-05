@@ -18,7 +18,6 @@
 
 #include "sessionrunner.h"
 
-#include <QWidget>
 
 #include <KAuthorized>
 #include <KDebug>

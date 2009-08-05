@@ -22,7 +22,6 @@
 #include <Plasma/AbstractRunner>
 
 #include <KIcon>
-#include <KService>
 
 
 class WebshortcutRunner : public Plasma::AbstractRunner {

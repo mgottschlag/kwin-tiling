@@ -26,7 +26,6 @@
 #include <KIcon>
 #include <KLocale>
 #include <KRun>
-#include <KStandardDirs>
 #include <KToolInvocation>
 
 #include <plasma/theme.h>

@@ -24,7 +24,6 @@
 #include <KDebug>
 #include <KDirWatch>
 #include <KIcon>
-#include <KStandardDirs>
 #include <KRun>
 #include <KRecentDocument>
 
