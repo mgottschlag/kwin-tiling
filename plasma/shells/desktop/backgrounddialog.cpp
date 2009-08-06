@@ -409,6 +409,7 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
 
     connect(m_containmentComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(settingsModified()));
     connect(m_activityName, SIGNAL(textChanged(const QString&)), this, SLOT(settingsModified()));
+    connect(m_activityName, SIGNAL(editingFinished()), this, SLOT(checkActivityName()));
 
     connect(m_theme, SIGNAL(currentIndexChanged(int)), this, SLOT(settingsModified()));
     connect(m_wallpaperMode, SIGNAL(currentIndexChanged(int)), this, SLOT(settingsModified()));
@@ -438,6 +439,13 @@ void BackgroundDialog::getNewThemes()
             m_theme->setCurrentIndex(m_themeModel->indexOf(
                                      Plasma::Theme::defaultTheme()->themeName()));
         }
+    }
+}
+
+void BackgroundDialog::checkActivityName()
+{
+    if (m_containment && m_activityName->text().isEmpty()) {
+        m_activityName->setText(m_containment->activity());
     }
 }
 

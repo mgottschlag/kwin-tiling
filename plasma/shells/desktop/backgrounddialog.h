@@ -63,6 +63,7 @@ private slots:
     void getNewThemes();
     void changeBackgroundMode(int mode);
     void cleanup();
+    void checkActivityName();
     void settingsModified(bool modified = true);
 
 private:
