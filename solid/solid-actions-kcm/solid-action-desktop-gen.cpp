@@ -45,7 +45,6 @@ int main( int argc, char *argv[] )
         KConfigGroup tConfig = typeFile.desktopGroup();
         if( !tConfig.hasKey("X-KDE-Solid-Actions-Type") || !tConfig.hasKey("Name") || !tConfig.hasKey("Type") ) {
             tConfig.writeEntry( "X-KDE-Solid-Actions-Type", typeInternal );
-            tConfig.writeEntry( "Name", availActions.types.value(typeInternal) );
             tConfig.writeEntry( "Type", "Solid-Device-Type" );
         }
         QStringList typeValues = availActions.valueList(typeInternal).keys();

@@ -57,7 +57,8 @@ SolidActionData::SolidActionData(bool includeFiles)
     foreach( const QMetaObject &interface, interfaceList ) {
         QString ifaceName = interface.className();
         ifaceName.remove(0, ifaceName.lastIndexOf(':') + 1);
-        types.insert(ifaceName, generateUserString(ifaceName));
+        QString cleanName = Solid::DeviceInterface::typeDescription( Solid::DeviceInterface::stringToType( ifaceName ) );
+        types.insert(ifaceName, cleanName);
         QMap<QString,QString> deviceValues;
         for( int doneProps = 0; interface.propertyCount() > doneProps; doneProps = doneProps + 1 ) {
             QMetaProperty ifaceProp = interface.property(doneProps);
