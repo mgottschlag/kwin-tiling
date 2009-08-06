@@ -166,7 +166,7 @@ void LayoutIcon::dimPixmap(QPixmap& pm)
 		for(int x=0; x<image.width(); x++)
 	{
 		QRgb rgb = image.pixel(x,y);
-		QRgb dimRgb(qRgb(qRed(rgb)*3/4, qGreen(rgb)*3/4, qBlue(rgb)*3/4));
+		QRgb dimRgb(qRgba(qRed(rgb)*3/4, qGreen(rgb)*3/4, qBlue(rgb)*3/4, qAlpha(rgb)));
 		image.setPixel(x, y, dimRgb);
 	}
 	pm = QPixmap::fromImage(image);
