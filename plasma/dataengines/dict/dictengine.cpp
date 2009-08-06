@@ -19,9 +19,9 @@
 #include "dictengine.h"
 #include <iostream>
 
-#include <QtNetwork/QTcpSocket>
 #include <KDebug>
 #include <KLocale>
+#include <ktcpsocket.h>
 
 #include <Plasma/DataContainer>
 
@@ -50,6 +50,7 @@ void DictEngine::setServer(const QString &server)
 
 static QString wnToHtml(const QString &word, QByteArray &text)
 {
+    Q_UNUSED(word)
     QList<QByteArray> splitText = text.split('\n');
     QString def;
     def += "<dl>\n";
@@ -195,7 +196,7 @@ bool DictEngine::sourceRequestEvent(const QString &word)
         setData(currentWord, dictName, QString());
     } else {
         setData(currentWord, dictName, QString());
-        tcpSocket = new QTcpSocket(this);
+        tcpSocket = new KTcpSocket(this);
         tcpSocket->abort();
         connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(socketClosed()));
 
