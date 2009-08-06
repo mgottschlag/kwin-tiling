@@ -40,7 +40,8 @@ namespace WeatherUtils
 enum TemperatureUnit { NoUnit = 0, DegreeUnit, Celsius, Fahrenheit, Kelvin };
 enum SpeedUnit { KilometersPerHour = 100, MetersPerSecond, MilesPerHour, Knots, Beaufort };
 enum DistanceUnit { Centimeters = 200, Millimeters, Inches, Kilometers, Miles };
-enum PressureUnit { Kilopascals = 300, InchesHG, Millibars, Hectopascals }; // FIXME deprecate millibars?
+enum PressureUnit { Kilopascals = 300, InchesHG, Millibars, Hectopascals };
+enum MeasureUnit { Percent = 400 };
 
 enum Errors { InvalidConversion = -100, NoSuchUnit = -110 };
 
