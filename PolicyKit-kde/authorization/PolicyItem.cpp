@@ -20,7 +20,6 @@
 
 #include "PolicyItem.h"
 
-#include <QStringList>
 #include <KIconLoader>
 #include <KIcon>
 

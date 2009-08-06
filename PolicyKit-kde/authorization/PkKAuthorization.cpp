@@ -24,7 +24,6 @@
 #include "AuthorizationsFilterModel.h"
 #include "pkitemdelegate.h"
 
-#include <QHeaderView>
 
 #include <Context>
 
