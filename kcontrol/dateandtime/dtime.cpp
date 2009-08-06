@@ -159,7 +159,15 @@ void Dtime::serverTimeCheck() {
 }
 
 void Dtime::findNTPutility(){
-  if(!KStandardDirs::findExe("ntpdate").isEmpty()) {
+  QByteArray envpath = qgetenv("PATH");
+  if (!envpath.isEmpty() && envpath[0] == ':')
+    envpath = envpath.mid(1);
+  QString path = "/sbin:/usr/sbin:";
+  if (!envpath.isEmpty())
+    path += QString::fromLocal8Bit(envpath);
+  else
+    path += QLatin1String("/bin:/usr/bin");
+  if(!KStandardDirs::findExe("ntpdate", path).isEmpty()) {
     ntpUtility = "ntpdate";
     kDebug() << "ntpUtility = " << ntpUtility;
     return;
