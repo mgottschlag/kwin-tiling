@@ -99,11 +99,6 @@ void DefaultDesktop::constraintsEvent(Plasma::Constraints constraints)
         }
     }
 
-    if (constraints & Plasma::SizeConstraint) {
-        refreshWorkingArea();
-    }
-
-    //FIXME: are refres on working are change and refresh on resize mutually exclusive?
     if (constraints & Plasma::StartupCompletedConstraint) {
         connect(corona(), SIGNAL(availableScreenRegionChanged()),
                 this, SLOT(refreshWorkingArea()));
@@ -121,6 +116,8 @@ void DefaultDesktop::constraintsEvent(Plasma::Constraints constraints)
         }
 
         m_layout->adjustPhysicalPositions();
+    } else if ((constraints & Plasma::SizeConstraint) || (constraints & Plasma::ScreenConstraint)) {
+        refreshWorkingArea();
     }
 }
 
@@ -135,13 +132,14 @@ void DefaultDesktop::addPanel()
 
 void DefaultDesktop::addPanel(const QString &plugin)
 {
-    if (corona()) {
-        Containment* panel = corona()->addContainment(plugin);
+    Corona *c = corona();
+    if (c) {
+        Containment* panel = c->addContainment(plugin);
         panel->showConfigurationInterface();
 
         panel->setScreen(screen());
 
-        QList<Plasma::Location> freeEdges = corona()->freeEdges(screen());
+        QList<Plasma::Location> freeEdges = c->freeEdges(screen());
         //kDebug() << freeEdges;
         Plasma::Location destination;
         if (freeEdges.contains(Plasma::TopEdge)) {
@@ -161,8 +159,11 @@ void DefaultDesktop::addPanel(const QString &plugin)
         panel->updateConstraints(Plasma::StartupCompletedConstraint);
         panel->flushPendingConstraintsEvents();
 
-        const QRect screenGeom = corona()->screenGeometry(screen());
-        const QRegion availGeom = corona()->availableScreenRegion(screen());
+        const bool screenExists = screen() < c->numScreens();
+        const QRect screenGeom = screenExists ? c->screenGeometry(screen())
+                                              : geometry().toRect();
+        const QRegion availGeom = screenExists ? c->availableScreenRegion(screen())
+                                               : geometry().toRect();
         int minH = 10;
         int minW = 10;
         int w = 35;
@@ -369,11 +370,12 @@ void DefaultDesktop::refreshWorkingArea()
     Corona *c = corona();
     if (!c) {
         //kDebug() << "no corona?!";
+        QTimer::singleShot(100, this, SLOT(refreshWorkingArea()));
         return;
     }
 
     QRectF workingGeom;
-    if (screen() != -1) {
+    if (screen() != -1 && screen() < c->numScreens()) {
         // we are associated with a screen, make sure not to overlap panels
         workingGeom = c->availableScreenRegion(screen()).boundingRect();
         //kDebug() << "got" << workingGeom;
@@ -385,10 +387,12 @@ void DefaultDesktop::refreshWorkingArea()
         //kDebug() << "defaults due to no screen; got:" << workingGeom;
     }
 
-    if (workingGeom != QRectF()) {
+    if (workingGeom.isValid()) {
         //kDebug() << "!!!!!!!!!!!!! workingGeom is" << workingGeom;
         m_layout->setWorkingArea(workingGeom);
         m_layout->adjustPhysicalPositions();
+    } else {
+        QTimer::singleShot(100, this, SLOT(refreshWorkingArea()));
     }
 }
 
