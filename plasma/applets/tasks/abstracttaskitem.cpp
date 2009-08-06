@@ -242,9 +242,6 @@ void AbstractTaskItem::toolTipAboutToShow()
 {
     if (m_applet->showToolTip()) {
         updateToolTip();
-        connect(Plasma::ToolTipManager::self(),
-                SIGNAL(windowPreviewActivated(WId,Qt::MouseButtons,Qt::KeyboardModifiers,QPoint)),
-                this, SLOT(activateWindow(WId,Qt::MouseButtons)));
     } else {
         Plasma::ToolTipManager::self()->clearContent(this);
     }
@@ -253,9 +250,6 @@ void AbstractTaskItem::toolTipAboutToShow()
 void AbstractTaskItem::toolTipHidden()
 {
     Plasma::ToolTipManager::self()->clearContent(this);
-    disconnect(Plasma::ToolTipManager::self(),
-               SIGNAL(windowPreviewActivated(WId,Qt::MouseButtons,Qt::KeyboardModifiers,QPoint)),
-               this, SLOT(activateWindow(WId,Qt::MouseButtons)));
 }
 
 void AbstractTaskItem::activateWindow(WId id, Qt::MouseButtons buttons)
