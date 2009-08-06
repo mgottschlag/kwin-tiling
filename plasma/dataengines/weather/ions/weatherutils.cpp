@@ -273,7 +273,7 @@ QString getUnitString(int unit, bool plain)
         else
             return i18nc("Kelvin, temperature unit", "K");
 
-    case WeatherUtils::Precent:
+    case WeatherUtils::Percent:
         if (plain)
             return QString("%");
         else
