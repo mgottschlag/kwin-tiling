@@ -186,7 +186,7 @@ WeatherEngine::~WeatherEngine()
 
 void WeatherEngine::unloadIons()
 {
-    foreach(const QString &ion, d->m_ions) {
+    foreach (const QString &ion, d->m_ions) {
         Plasma::DataEngineManager::self()->unloadEngine(ion);
     }
 

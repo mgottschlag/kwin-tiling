@@ -1645,7 +1645,7 @@ QString EnvCanadaIon::dewpoint(const QString& source) const
 QString EnvCanadaIon::humidity(const QString& source) const
 {
     if (!d->m_weatherData[source].humidity.isEmpty()) {
-        return QString("%1%").arg(d->m_weatherData[source].humidity);
+        return i18nc("Humidity in percent", "%1%", d->m_weatherData[source].humidity);
     }
     return "N/A";
 }
