@@ -13,6 +13,7 @@ Comment[fr]=Environnement de travail de Shell pour des périphériques de type N
 Comment[pt]=Área de trabalho para os dispositivos em mini-computadores.
 Comment[pt_BR]=Área de trabalho para os dispositivos em mini-computadores.
 Comment[sv]=Arbetsyta för bärbara nätdatorenheter.
+Comment[tr]=Netbook aygıtları için çalışma uçbirimi.
 Comment[uk]=Оболонка робочого простору для субноутбуків.
 Comment[x-test]=xxWorkspace shell for netbook devices.xx
 Type=Service
