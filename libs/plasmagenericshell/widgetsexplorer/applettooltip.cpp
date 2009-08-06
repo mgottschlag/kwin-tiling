@@ -78,7 +78,7 @@ void AppletInfoWidget::init()
     nameFont.setPointSize(1.2 * nameFont.pointSize());
     m_nameLabel->nativeWidget()->setFont(nameFont);
     m_nameLabel->nativeWidget()->setScaledContents(true);
-    m_nameLabel->nativeWidget()->setWordWrap(true);
+    // m_nameLabel->nativeWidget()->setWordWrap(true);
     // m_nameLabel->setMinimumSize(0,0);
 
     m_descriptionLabel = new Plasma::Label();
@@ -135,13 +135,13 @@ void AppletInfoWidget::updateInfo()
         m_nameLabel->setText("nameless applet");
     }
 
-    m_linearLayout->invalidate();
+    // m_linearLayout->invalidate();
     m_linearLayout->activate();
     // QSize nameSize = m_nameLabel->nativeWidget()->sizeHint();
     // QSize descSize = m_descriptionLabel->nativeWidget()->sizeHint();
     // qDebug() << "size hint " << nameSize << descSize;
 
-    QSizeF prefSize = m_linearLayout->sizeHint(Qt::PreferredSize) + QSizeF(20, 20);
+    QSizeF prefSize = m_linearLayout->sizeHint(Qt::PreferredSize) + QSizeF(32, 32);
     resize(prefSize);
 }
 
