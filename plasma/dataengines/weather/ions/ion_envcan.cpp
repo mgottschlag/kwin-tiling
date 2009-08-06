@@ -1404,9 +1404,10 @@ void EnvCanadaIon::updateWeather(const QString& source)
 
     const double observationSeconds = 60.0 * (periodMinute(source) + 60.0 * periodHour(source));
 
-    const double lati = latitude(source).toDouble();
-    const double longi = longitude(source).toDouble();
+    const double lati = latitude(source).replace(QRegExp("[^0-9.]"), NULL).toDouble();
+    const double longi = longitude(source).replace(QRegExp("[^0-9.]"), NULL).toDouble();
     const QDate today = QDate::currentDate();
+   
     const double sunrise = calculateSunriseTime(today.day(), today.month(), today.year(), lati, longi);
     const double sunset = calculateSunsetTime(today.day(), today.month(), today.year(), lati, longi);
 
