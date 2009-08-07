@@ -52,7 +52,7 @@ static int Dtime_save_ntp( const QStringList& ntpServers, bool ntpEnabled )
 {
   int ret = 0;
   // write to the system config file
-  KConfig _config( KDE_CONFDIR "kcmclockrc", KConfig::SimpleConfig);
+  KConfig _config( KDE_CONFDIR "/kcmclockrc", KConfig::SimpleConfig);
   KConfigGroup config(&_config, "NTP");
   config.writeEntry("servers", ntpServers );
   config.writeEntry("enabled", ntpEnabled );
