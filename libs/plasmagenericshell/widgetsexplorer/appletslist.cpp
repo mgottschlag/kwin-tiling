@@ -11,9 +11,11 @@
 
 #include <QHash>
 
+#define FILTER_APPLIANCE_DELAY 400
 #define SEARCH_DELAY 300
 #define TOOLTIP_APPEAR_DELAY 1000
 #define TOOLTIP_DISAPPEAR_DELAY 300
+
 #define ICON_WIDGET_HEIGHT 100
 #define ICON_WIDGET_WIDTH 100
 #define TOOLTIP_HEIGHT 200
@@ -122,8 +124,9 @@ void AppletsList::setFilterModel(QStandardItemModel *model)
 void AppletsList::filterChanged(int index)
 {
     if (m_modelFilterItems) {
-        QVariant data = m_modelFilters->item(index)->data();
-        m_modelFilterItems->setFilter(qVariantValue<KCategorizedItemsViewModels::Filter>(data));
+        m_dataFilterAboutToApply = m_modelFilters->item(index)->data();
+        m_filterApplianceTimer.start(FILTER_APPLIANCE_DELAY, this);
+        //m_modelFilterItems->setFilter(qVariantValue<KCategorizedItemsViewModels::Filter>(data));
     }
 }
 
@@ -150,6 +153,11 @@ void AppletsList::timerEvent(QTimerEvent *event)
     if(event->timerId() == m_toolTipDisappearTimer.timerId()) {
         m_toolTip->setVisible(false);
         m_toolTipDisappearTimer.stop();
+    }
+
+    if(event->timerId() == m_filterApplianceTimer.timerId()) {
+        m_modelFilterItems->setFilter(qVariantValue<KCategorizedItemsViewModels::Filter>
+                                      (m_dataFilterAboutToApply));
     }
 
     QGraphicsWidget::timerEvent(event);

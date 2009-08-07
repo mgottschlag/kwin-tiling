@@ -111,6 +111,8 @@ private:
 
     AppletIconWidget *m_selectedItem;
 
+    QVariant m_dataFilterAboutToApply;
+    QBasicTimer m_filterApplianceTimer;
     QBasicTimer m_toolTipAppearTimer;
     QBasicTimer m_toolTipDisappearTimer;
     QBasicTimer m_searchDelayTimer;
