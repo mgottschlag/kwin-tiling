@@ -29,9 +29,11 @@
 #include <QtGui/QIcon>
 #include <QtGui/QLabel>
 #include <QtGui/QListWidget>
+#include <QtGui/QTreeWidget>
 #include <QtGui/QCheckBox>
 #include <QtGui/QPainter>
 #include <QtGui/QX11Info>
+#include <QtGui/QComboBox>
 #include <QtCore/QProcess>
 
 
@@ -175,6 +177,7 @@ void Applet::init()
 {
     KConfigGroup cg = config();
     QStringList hiddenTypes = cg.readEntry("hidden", QStringList());
+    QStringList alwaysShownTypes = cg.readEntry("alwaysShown", QStringList());
 
     d->setTaskAreaGeometry();
     connect(Private::s_manager, SIGNAL(taskAdded(SystemTray::Task*)),
@@ -186,6 +189,7 @@ void Applet::init()
             d->taskArea, SLOT(removeTask(SystemTray::Task*)));
 
     d->taskArea->setHiddenTypes(hiddenTypes);
+    d->taskArea->setAlwaysShownTypes(alwaysShownTypes);
     connect(d->taskArea, SIGNAL(sizeHintChanged(Qt::SizeHint)),
             this, SLOT(propogateSizeHintChange(Qt::SizeHint)));
 
@@ -248,8 +252,8 @@ void Applet::init()
     }
 
     initExtenderTask(createExtenderTask);
-    d->taskArea->syncTasks(Private::s_manager->tasks());
     Private::s_manager->loadApplets(config(), this);
+    d->taskArea->syncTasks(Private::s_manager->tasks());
 }
 
 void Applet::initExtenderTask(bool create)
@@ -512,13 +516,27 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
     }
 
     foreach (const Task *task, sortedTasks) {
-        QListWidgetItem *listItem = new QListWidgetItem();
-        listItem->setText(task->name());
-        listItem->setIcon(task->icon());
-        listItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-        listItem->setData(Qt::UserRole, task->typeId());
-        listItem->setCheckState((task->hidden() & Task::UserHidden) ? Qt::Unchecked : Qt::Checked);
-        d->autoHideUi.icons->addItem(listItem);
+        QTreeWidgetItem *listItem = new QTreeWidgetItem(d->autoHideUi.icons);
+        QComboBox *itemCombo = new QComboBox(d->autoHideUi.icons);
+        listItem->setText(0, task->name());
+        listItem->setIcon(0, task->icon());
+        listItem->setFlags(Qt::ItemIsEnabled);
+        listItem->setData(0, Qt::UserRole, task->typeId());
+
+        itemCombo->addItem(i18nc("Item will be automatically shown or hidden from the systray", "Auto"));
+        itemCombo->addItem(i18nc("Item is never visible in the systray", "Hidden"));
+        itemCombo->addItem(i18nc("Item is always visible in the systray", "Always visible"));
+
+        if (task->hidden() & Task::UserHidden) {
+            itemCombo->setCurrentIndex(1);
+        } else if (d->taskArea->alwaysShownTypes().contains(task->typeId())) {
+            itemCombo->setCurrentIndex(2);
+        } else {
+            itemCombo->setCurrentIndex(0);
+        }
+        d->autoHideUi.icons->setItemWidget(listItem, 1, itemCombo);
+
+        d->autoHideUi.icons->addTopLevelItem(listItem);
     }
 
     foreach (const KPluginInfo &info, Plasma::Applet::listAppletInfo()) {
@@ -539,20 +557,28 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
 void Applet::configAccepted()
 {
     QStringList hiddenTypes;
-    QListWidget *hiddenList = d->autoHideUi.icons;
-    for (int i = 0; i < hiddenList->count(); ++i) {
-        QListWidgetItem *item = hiddenList->item(i);
+    QStringList alwaysShownTypes;
+    QTreeWidget *hiddenList = d->autoHideUi.icons;
+    for (int i = 0; i < hiddenList->topLevelItemCount(); ++i) {
+        QTreeWidgetItem *item = hiddenList->topLevelItem(i);
+        QComboBox *itemCombo = static_cast<QComboBox *>(hiddenList->itemWidget(item, 1));
         //kDebug() << (item->checkState() == Qt::Checked) << item->data(Qt::UserRole).toString();
-        if (item->checkState() != Qt::Checked) {
-            hiddenTypes << item->data(Qt::UserRole).toString();
+        //Always hidden
+        if (itemCombo->currentIndex() == 1) {
+            hiddenTypes << item->data(0, Qt::UserRole).toString();
+        //Always visible
+        } else if (itemCombo->currentIndex() == 2) {
+            alwaysShownTypes << item->data(0, Qt::UserRole).toString();
         }
     }
 
     d->taskArea->setHiddenTypes(hiddenTypes);
+    d->taskArea->setAlwaysShownTypes(alwaysShownTypes);
     d->taskArea->syncTasks(Private::s_manager->tasks());
 
     KConfigGroup cg = config();
     cg.writeEntry("hidden", hiddenTypes);
+    cg.writeEntry("alwaysShown", alwaysShownTypes);
 
     cg.writeEntry("AutoHidePopup", d->autoHideUi.autoHide->isChecked());
     if (d->autoHideUi.autoHide->isChecked()) {
@@ -623,7 +649,7 @@ void Applet::configAccepted()
         QListWidgetItem * item = d->plasmoidTasksUi.applets->item(i);
         QString appletName = item->data(Qt::UserRole).toString();
 
-        if (item->checkState() == Qt::Checked && !applets.contains(appletName)) {
+        if (item->checkState() != Qt::Unchecked && !applets.contains(appletName)) {
             Private::s_manager->addApplet(appletName, this);
         }
 

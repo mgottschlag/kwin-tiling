@@ -61,7 +61,30 @@
     </widget>
    </item>
    <item>
-    <widget class="QListWidget" name="icons"/>
+    <widget class="QTreeWidget" name="icons">
+     <property name="rootIsDecorated">
+      <bool>false</bool>
+     </property>
+     <attribute name="headerVisible">
+      <bool>false</bool>
+     </attribute>
+     <attribute name="headerDefaultSectionSize">
+      <number>200</number>
+     </attribute>
+     <attribute name="headerDefaultSectionSize">
+      <number>200</number>
+     </attribute>
+     <column>
+      <property name="text">
+       <string>1</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>2</string>
+      </property>
+     </column>
+    </widget>
    </item>
   </layout>
  </widget>

@@ -65,6 +65,7 @@ public:
     CompactLayout *lastTasksLayout;
 
     QSet<QString> hiddenTypes;
+    QSet<QString> alwaysShownTypes;
     bool showingHidden : 1;
     bool hasHiddenTasks : 1;
     bool hasTasksThatCanHide : 1;
@@ -97,6 +98,27 @@ void TaskArea::setHiddenTypes(const QStringList &hiddenTypes)
     d->hiddenTypes = QSet<QString>::fromList(hiddenTypes);
 }
 
+QStringList TaskArea::hiddenTypes() const
+{
+    return d->hiddenTypes.toList();
+}
+
+void TaskArea::setAlwaysShownTypes(const QStringList &alwaysShownTypes)
+{
+    d->alwaysShownTypes.clear();
+
+    foreach (QString type, alwaysShownTypes) {
+        if (!d->hiddenTypes.contains(type)) {
+            d->alwaysShownTypes.insert(type);
+        }
+    }
+}
+
+QStringList TaskArea::alwaysShownTypes() const
+{
+    return d->alwaysShownTypes.toList();
+}
+
 void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
 {
     //TODO: this is completely brute force; we shouldn't be redoing the
@@ -107,8 +129,11 @@ void TaskArea::syncTasks(const QList<SystemTray::Task*> &tasks)
         kDebug() << "checking" << task->name() << d->showingHidden;
         if (d->hiddenTypes.contains(task->typeId())) {
             task->setHidden(task->hidden()|Task::UserHidden);
+        } else if (d->alwaysShownTypes.contains(task->typeId())) {
+            task->setHidden(task->hidden() & ~Task::UserHidden);
+            task->setHidden(task->hidden() & ~Task::AutoHidden);
         } else if (task->hidden() & Task::UserHidden) {
-            task->setHidden(task->hidden() ^ Task::UserHidden);
+            task->setHidden(task->hidden() & ~Task::UserHidden);
         }
 
         addWidgetForTask(task);
@@ -175,7 +200,7 @@ void TaskArea::addWidgetForTask(SystemTray::Task *task)
 
     d->hasTasksThatCanHide = d->hasTasksThatCanHide || (task->hidden() != Task::NotHidden);
 
-    if (!d->showingHidden && task->hidden() != Task::NotHidden) {
+    if (!d->showingHidden && task->hidden() != Task::NotHidden && !d->alwaysShownTypes.contains(task->typeId())) {
         kDebug() << "is a hidden type";
         d->hasHiddenTasks = true;
         if (widget) {

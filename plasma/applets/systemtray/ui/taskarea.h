@@ -41,6 +41,9 @@ public:
     ~TaskArea();
 
     void setHiddenTypes(const QStringList &hiddenTypes);
+    QStringList hiddenTypes() const;
+    void setAlwaysShownTypes(const QStringList &alwaysShownTypes);
+    QStringList alwaysShownTypes() const;
     bool isHiddenType(const QString &typeId, bool always = true) const;
     void setShowFdoTasks(bool show);
     bool showFdoTasks() const;
