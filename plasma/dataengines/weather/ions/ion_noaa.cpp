@@ -504,7 +504,7 @@ void NOAAIon::updateWeather(const QString& source)
     data.insert("Temperature Unit", dataFields["temperatureUnit"]);
 
     // Do we have a comfort temperature? if so display it
-    if (dataFields["comfortTemperature"] != i18n("N/A")) {
+    if (dataFields["comfortTemperature"] != "N/A") {
         if (d->m_weatherData[source].windchill_F != "NA") {
             data.insert("Windchill", QString("%1").arg(dataFields["comfortTemperature"]));
             data.insert("Humidex", i18n("N/A"));
@@ -679,7 +679,7 @@ QMap<QString, QString> NOAAIon::wind(const QString& source) const
     }
 
     // May not always have gusty winds
-    if (d->m_weatherData[source].windGust == "NA" || d->m_weatherData[source].windGust == i18n("N/A")) {
+    if (d->m_weatherData[source].windGust == "NA" || d->m_weatherData[source].windGust == "N/A") {
         windInfo.insert("windGust", i18n("N/A"));
         windInfo.insert("windGustUnit", QString::number(WeatherUtils::NoUnit));
     } else {

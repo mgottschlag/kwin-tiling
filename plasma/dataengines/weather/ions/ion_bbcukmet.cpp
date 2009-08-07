@@ -638,7 +638,7 @@ void UKMETIon::parseWeatherObservation(const QString& source, WeatherData& data,
                 data.temperature_C = observeData[1].split(QChar(176))[0].trimmed();
 
                 // Temperature might be not available
-                if (data.temperature_C.contains(i18n("N/A"))) {
+                if (data.temperature_C.contains("N/A")) {
                     data.temperature_C = i18n("N/A");
                 }
 
@@ -930,7 +930,7 @@ QMap<QString, QString> UKMETIon::temperature(const QString& source) const
 QMap<QString, QString> UKMETIon::wind(const QString& source) const
 {
     QMap<QString, QString> windInfo;
-    if (d->m_weatherData[source].windSpeed_miles == i18n("N/A")) {
+    if (d->m_weatherData[source].windSpeed_miles == "N/A") {
         windInfo.insert("windSpeed", i18n("N/A"));
         windInfo.insert("windUnit", QString::number(WeatherUtils::NoUnit));
     } else {
@@ -948,7 +948,7 @@ QMap<QString, QString> UKMETIon::wind(const QString& source) const
 QMap<QString, QString> UKMETIon::humidity(const QString& source) const
 {
     QMap<QString, QString> humidityInfo;
-    if (d->m_weatherData[source].humidity != i18n("N/A")) {
+    if (d->m_weatherData[source].humidity != "N/A") {
         humidityInfo.insert("humidity", d->m_weatherData[source].humidity);
         humidityInfo.insert("humidityUnit", QString::number(WeatherUtils::Percent));
     } else {
@@ -967,7 +967,7 @@ QString UKMETIon::visibility(const QString& source) const
 QMap<QString, QString> UKMETIon::pressure(const QString& source) const
 {
     QMap<QString, QString> pressureInfo;
-    if (d->m_weatherData[source].pressure == i18n("N/A")) {
+    if (d->m_weatherData[source].pressure == "N/A") {
         pressureInfo.insert("pressure", i18n("N/A"));
         pressureInfo.insert("pressureUnit", QString::number(WeatherUtils::NoUnit));
         pressureInfo.insert("pressureTendency", i18n("N/A"));

@@ -1434,7 +1434,7 @@ void EnvCanadaIon::updateWeather(const QString& source)
     data.insert("Temperature", dataFields["temperature"]);
 
     // Do we have a comfort temperature? if so display it
-    if (dataFields["comfortTemperature"] != i18n("N/A") && !dataFields["comfortTemperature"].isEmpty()) {
+    if (dataFields["comfortTemperature"] != "N/A" && !dataFields["comfortTemperature"].isEmpty()) {
         if (dataFields["comfortTemperature"].toFloat() <= 0) {
             data.insert("Windchill", QString("%1").arg(dataFields["comfortTemperature"]));
             data.insert("Humidex", i18n("N/A"));
