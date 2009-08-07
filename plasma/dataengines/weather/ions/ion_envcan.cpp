@@ -1468,8 +1468,10 @@ void EnvCanadaIon::updateWeather(const QString& source)
         data.insert("Visibility Unit", dataFields["visibilityUnit"]);
     }
 
-    if (humidity(source) != "N/A") {
-        data.insert("Humidity", humidity(source));
+    dataFields = humidity(source);
+    data.insert("Humidity", dataFields["humidity"]);
+    if (dataFields["humidity"] != "N/A") {
+        data.insert("Humidity Unit", dataFields["humidityUnit"]);
     }
 
     dataFields = wind(source);
@@ -1642,12 +1644,17 @@ QString EnvCanadaIon::dewpoint(const QString& source) const
     return "N/A";
 }
 
-QString EnvCanadaIon::humidity(const QString& source) const
+QMap<QString, QString> EnvCanadaIon::humidity(const QString& source) const
 {
+    QMap<QString, QString> humidityInfo;
     if (!d->m_weatherData[source].humidity.isEmpty()) {
-        return i18nc("Humidity in percent", "%1%", d->m_weatherData[source].humidity);
+        humidityInfo.insert("humidity", d->m_weatherData[source].humidity);
+        humidityInfo.insert("humidityUnit", QString::number(WeatherUtils::Percent));
+    } else {
+        humidityInfo.insert("humidity", "N/A");
+        humidityInfo.insert("humidityUnit", QString::number(WeatherUtils::NoUnit));
     }
-    return "N/A";
+    return humidityInfo;
 }
 
 QMap<QString, QString> EnvCanadaIon::visibility(const QString& source) const
@@ -1659,6 +1666,7 @@ QMap<QString, QString> EnvCanadaIon::visibility(const QString& source) const
         visibilityInfo.insert("visibilityUnit", QString::number(WeatherUtils::Kilometers));
     } else {
         visibilityInfo.insert("visibility", "N/A");
+        visibilityInfo.insert("visibilityUnit", QString::number(WeatherUtils::NoUnit));
     }
     return visibilityInfo;
 }

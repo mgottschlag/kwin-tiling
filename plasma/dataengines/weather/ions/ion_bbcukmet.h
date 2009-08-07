@@ -95,7 +95,7 @@ public:
     QString condition(const QString& source) const;
     QMap<QString, QString> temperature(const QString& source) const;
     QMap<QString, QString> wind(const QString& source) const;
-    QString humidity(const QString& source) const;
+    QMap<QString, QString> humidity(const QString& source) const;
     QString visibility(const QString& source) const;
     QMap<QString, QString> pressure(const QString& source) const;
     QVector<QString> forecasts(const QString& source);

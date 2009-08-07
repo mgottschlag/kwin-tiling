@@ -837,7 +837,10 @@ void UKMETIon::updateWeather(const QString& source)
         data.insert("Condition Icon", getWeatherIcon(dayIcons(), condition(source)));
     }
 
-    data.insert("Humidity", humidity(source));
+    dataFields = humidity(source);
+    data.insert("Humidity", dataFields["humidity"]);
+    data.insert("Humidity Field", dataFields["humidityUnit"]);
+
     data.insert("Visibility", visibility(source));
 
     dataFields = temperature(source);
@@ -951,13 +954,18 @@ QMap<QString, QString> UKMETIon::wind(const QString& source) const
     return windInfo;
 }
 
-QString UKMETIon::humidity(const QString& source) const
+QMap<QString, QString> UKMETIon::humidity(const QString& source) const
 {
-    if (d->m_weatherData[source].humidity == "N/A") {
-        return d->m_weatherData[source].humidity;
+    QMap<QString, QString> humidityInfo;
+    if (d->m_weatherData[source].humidity != "N/A") {
+        humidityInfo.insert("humidity", d->m_weatherData[source].humidity);
+        humidityInfo.insert("humidityUnit", QString::number(WeatherUtils::Percent));
+    } else {
+        humidityInfo.insert("humidity", "N/A");
+        humidityInfo.insert("humidityUnit", QString::number(WeatherUtils::NoUnit));
     }
 
-    return i18nc("Humidity in percent", "%1%", d->m_weatherData[source].humidity); // FIXME: Turn '%' into a unit field
+    return humidityInfo;
 }
 
 QString UKMETIon::visibility(const QString& source) const

@@ -540,8 +540,10 @@ void NOAAIon::updateWeather(const QString& source)
         data.insert("Visibility Unit", dataFields["visibilityUnit"]);
     }
 
-    if (humidity(source) != "N/A") {
-        data.insert("Humidity", i18nc("Humidity in percent", "%1%", humidity(source))); // FIXME: Turn '%' into a unit field
+    dataFields = humidity(source);
+    data.insert("Humidity", dataFields["humidity"]);
+    if (dataFields["humidity"] != "N/A") {
+        data.insert("Humidity Unit", dataFields["humidityUnit"]);
     }
 
     // Set number of forecasts per day/night supported, none for this ion right now
@@ -621,13 +623,19 @@ QString NOAAIon::dewpoint(const QString& source) const
     return d->m_weatherData[source].dewpoint_F;
 }
 
-QString NOAAIon::humidity(const QString& source) const
+QMap<QString, QString> NOAAIon::humidity(const QString& source) const
 {
+    QMap<QString, QString> humidityInfo;
     if (d->m_weatherData[source].humidity == "NA") {
-        return QString("N/A");
+        humidityInfo.insert("humidity", QString("N/A"));
+        humidityInfo.insert("humidityUnit", QString::number(WeatherUtils::NoUnit));
+        return humidityInfo;
     } else {
-        return (d->m_weatherData[source].humidity);
+        humidityInfo.insert("humidity", d->m_weatherData[source].humidity);
+        humidityInfo.insert("humidityUnit", QString::number(WeatherUtils::Percent));
     }
+    
+    return humidityInfo;
 }
 
 QMap<QString, QString> NOAAIon::visibility(const QString& source) const
