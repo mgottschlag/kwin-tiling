@@ -44,7 +44,7 @@ module PlasmaScripting
       connect(@applet_script.applet, SIGNAL(:geometryChanged), self, SIGNAL(:geometryChanged))
       connect(@applet_script.applet, SIGNAL(:configNeedsSaving), self, SIGNAL(:configNeedsSaving))
       connect(@applet_script.applet, SIGNAL(:activate), self, SIGNAL(:activate))
-      connect(@applet_script.applet, SIGNAL('extenderItemRestored(Plasma::ExtenderItem*)'), self, SLOT('initExtenderItem(PlasmExtenderItem*)'))
+      connect(@applet_script.applet, SIGNAL('extenderItemRestored(Plasma::ExtenderItem*)'), self, SLOT('initExtenderItem(Plasma::ExtenderItem*)'))
     end
 
     # If a method is called on a PlasmaScripting::Applet instance is found to be missing
