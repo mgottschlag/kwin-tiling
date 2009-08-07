@@ -541,7 +541,7 @@ void NOAAIon::updateWeather(const QString& source)
     }
 
     if (humidity(source) != "N/A") {
-        data.insert("Humidity", QString("%1%").arg(humidity(source))); // FIXME: Turn '%' into a unit field
+        data.insert("Humidity", i18nc("Humidity in percent", "%1%", humidity(source))); // FIXME: Turn '%' into a unit field
     }
 
     // Set number of forecasts per day/night supported, none for this ion right now

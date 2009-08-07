@@ -646,6 +646,9 @@ void UKMETIon::parseWeatherObservation(const QString& source, WeatherData& data,
                 data.windSpeed_miles = observeData[3].split(',')[0].split(' ')[1].remove("mph");
 
                 data.humidity = observeData[4].split(',')[0].split(' ')[1];
+                if (data.humidity.endsWith('%')) {
+                    data.humidity.chop(1);
+                }
 
                 data.pressure = observeData[5].split(',')[0].split(' ')[1].split("mB")[0];
                 data.pressureTendency = observeData[5].split(',')[1].trimmed();
@@ -950,10 +953,11 @@ QMap<QString, QString> UKMETIon::wind(const QString& source)
 
 QString UKMETIon::humidity(const QString& source)
 {
-    if (d->m_weatherData[source].humidity == "N/A%") {
-        return "N/A";
+    if (d->m_weatherData[source].humidity == "N/A") {
+        return d->m_weatherData[source].humidity;
     }
-    return d->m_weatherData[source].humidity;
+
+    return i18nc("Humidity in percent", "%1%", d->m_weatherData[source].humidity); // FIXME: Turn '%' into a unit field
 }
 
 QString UKMETIon::visibility(const QString& source)
