@@ -88,6 +88,7 @@ public:
      * Widget that contains the search and categories filters
      */
     FilteringWidget *filteringWidget;
+    FilteringWidgetWithTabs *filteringWidgetWithTabs;
 
 };
 
@@ -95,7 +96,6 @@ void WidgetExplorerPrivate::initFilters()
 {
     filterModel.clear();
 
-    //conectar o addFilter daqui com a lista de categorias
     filterModel.addFilter(i18n("All Widgets"),
                           KCategorizedItemsViewModels::Filter(), KIcon("plasma"));
 
@@ -107,7 +107,6 @@ void WidgetExplorerPrivate::initFilters()
                           KCategorizedItemsViewModels::Filter("running", true),
                           KIcon("view-history"));
 
-    //conectar com algo que adiciona separador na lista de categorias
     filterModel.addSeparator(i18n("Categories:"));
 
     foreach (const QString &category, Plasma::Applet::listCategories(application)) {
@@ -132,6 +131,8 @@ void WidgetExplorerPrivate::init()
     filteringWidget->setMaximumWidth(q->contentsRect().width()/5);
     filteringWidget->setMinimumWidth(q->contentsRect().width()/5);
 
+    filteringWidgetWithTabs = new FilteringWidgetWithTabs();
+
     appletsListWidget = new AppletsList();
 
     //QObject::connect(appletsListWidget, SIGNAL(doubleClicked(const QModelIndex &)), q, SLOT(addApplet()));
@@ -141,25 +142,38 @@ void WidgetExplorerPrivate::init()
     appletsListWidget->setMinimumHeight(q->contentsRect().height());
 
     QObject::connect(filteringWidget->textSearch()->nativeWidget(), SIGNAL(textChanged(QString)), appletsListWidget, SLOT(searchTermChanged(QString)));
+    QObject::connect(filteringWidgetWithTabs->textSearch()->nativeWidget(), SIGNAL(textChanged(QString)), appletsListWidget, SLOT(searchTermChanged(QString)));
+
+    QGraphicsLinearLayout *vLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    vLayout->addItem(filteringWidgetWithTabs);
 
     mainLinearLayout->addItem(appletsListWidget);
-    mainLinearLayout->addItem(filteringWidget);
 
-    mainLinearLayout->setAlignment(appletsListWidget, Qt::AlignVCenter);
-    mainLinearLayout->setAlignment(filteringWidget, Qt::AlignRight);
+//    ***** comment the 2 lines below to remove the treeview of categories *****
+//    mainLinearLayout->addItem(filteringWidget);
+//    mainLinearLayout->setAlignment(filteringWidget, Qt::AlignRight);
+
+    mainLinearLayout->setAlignment(appletsListWidget, Qt::AlignVCenter);    
     mainLinearLayout->setContentsMargins(5, 5, 5, 5);
+
+
+    vLayout->addItem(mainLinearLayout);
 
     initFilters();
     filteringWidget->categoriesList()->setModel(&filterModel);
+    filteringWidgetWithTabs->categoriesList()->setModel(&filterModel);
+    vLayout->updateGeometry();
     appletsListWidget->setFilterModel(&filterModel);
 
     QObject::connect(filteringWidget->categoriesList(), SIGNAL(filterChanged(int)), appletsListWidget, SLOT(filterChanged(int)));
+    QObject::connect(filteringWidgetWithTabs->categoriesList(), SIGNAL(filterChanged(int)), appletsListWidget, SLOT(filterChanged(int)));
 
     // Other models
     appletsListWidget->setItemModel(&itemModel);
     initRunningApplets();
 
-    q->setLayout(mainLinearLayout);
+    //q->setLayout(mainLinearLayout);
+    q->setLayout(vLayout);
 
 }
 
