@@ -1654,12 +1654,10 @@ QMap<QString, QString> EnvCanadaIon::temperature(const QString& source) const
     QMap<QString, QString> temperatureInfo;
     if (!d->m_weatherData[source].temperature.isEmpty()) {
         temperatureInfo.insert("temperature", QString::number(d->m_weatherData[source].temperature.toFloat(), 'f', 1));
-        temperatureInfo.insert("temperatureUnit", QString::number(WeatherUtils::Celsius));
     }
 
     if (d->m_weatherData[source].temperature == i18n("N/A")) {
         temperatureInfo.insert("temperature", i18n("N/A"));
-        temperatureInfo.insert("temperatureUnit", QString::number(WeatherUtils::NoUnit));
     }
 
     temperatureInfo.insert("comfortTemperature", i18n("N/A"));
@@ -1667,6 +1665,9 @@ QMap<QString, QString> EnvCanadaIon::temperature(const QString& source) const
     if (d->m_weatherData[source].comforttemp != i18n("N/A")) {
         temperatureInfo.insert("comfortTemperature", d->m_weatherData[source].comforttemp);
     }
+  
+    // This is used for not just current temperature but also 8 days. Cannot be NoUnit.
+    temperatureInfo.insert("temperatureUnit", QString::number(WeatherUtils::Celsius));
     return temperatureInfo;
 }
 
