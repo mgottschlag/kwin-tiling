@@ -113,9 +113,19 @@ void PlasmoidProtocol::cleanupTask(QString typeId)
     m_tasks.remove(typeId);
 }
 
-QStringList PlasmoidProtocol::applets() const
+QStringList PlasmoidProtocol::applets(const Plasma::Applet *host) const
 {
-    return m_tasks.keys();
+    QStringList list;
+    QHashIterator<QString, PlasmoidTask *> i(m_tasks);
+
+    while (i.hasNext()) {
+        i.next();
+        if (i.value()->host() == host) {
+            list << i.key();
+        }
+    }
+
+    return list;
 }
 
 }

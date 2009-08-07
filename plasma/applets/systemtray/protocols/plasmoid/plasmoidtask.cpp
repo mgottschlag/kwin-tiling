@@ -104,6 +104,10 @@ QIcon PlasmoidTask::icon() const
     return d->icon;
 }
 
+Plasma::Applet *PlasmoidTask::host() const
+{
+    return d->host;
+}
 
 QGraphicsWidget* PlasmoidTask::createWidget(Plasma::Applet *host)
 {

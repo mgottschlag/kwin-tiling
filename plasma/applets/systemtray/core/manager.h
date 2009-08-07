@@ -106,7 +106,7 @@ public:
 
     void removeApplet(const QString appletName, Plasma::Applet *parent);
 
-    QStringList applets() const;
+    QStringList applets(Plasma::Applet *parent) const;
 
 signals:
     /**

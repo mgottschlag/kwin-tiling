@@ -254,9 +254,9 @@ void Manager::removeApplet(const QString appletName, Plasma::Applet *parent)
     d->plasmoidProtocol->removeApplet(appletName, parent);
 }
 
-QStringList Manager::applets() const
+QStringList Manager::applets(Plasma::Applet *parent) const
 {
-    return d->plasmoidProtocol->applets();
+    return d->plasmoidProtocol->applets(parent);
 }
 
 }

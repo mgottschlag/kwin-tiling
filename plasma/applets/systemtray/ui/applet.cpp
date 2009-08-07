@@ -539,6 +539,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
         d->autoHideUi.icons->addTopLevelItem(listItem);
     }
 
+    QStringList ownApplets = Private::s_manager->applets(this);
     foreach (const KPluginInfo &info, Plasma::Applet::listAppletInfo()) {
         KService::Ptr service = info.service();
         if (service->property("X-Plasma-NotificationArea", QVariant::Bool).toBool()) {
@@ -547,7 +548,7 @@ void Applet::createConfigurationInterface(KConfigDialog *parent)
             listItem->setIcon(KIcon(service->icon()));
             listItem->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
             listItem->setData(Qt::UserRole, info.pluginName());
-            listItem->setCheckState((Private::s_manager->applets().contains(info.pluginName())) ? Qt::Checked : Qt::Unchecked);
+            listItem->setCheckState(ownApplets.contains(info.pluginName()) ? Qt::Checked : Qt::Unchecked);
             d->plasmoidTasksUi.applets->addItem(listItem);
         }
     }
@@ -644,7 +645,7 @@ void Applet::configAccepted()
 
     d->taskArea->syncTasks(manager()->tasks());
 
-    QStringList applets = Private::s_manager->applets();
+    QStringList applets = Private::s_manager->applets(this);
     for (int i = 0; i < d->plasmoidTasksUi.applets->count(); ++i) {
         QListWidgetItem * item = d->plasmoidTasksUi.applets->item(i);
         QString appletName = item->data(Qt::UserRole).toString();

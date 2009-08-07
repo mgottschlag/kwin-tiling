@@ -46,6 +46,7 @@ public:
     virtual QString typeId() const;
     virtual QIcon icon() const;
     void forwardConstraintsEvent(Plasma::Constraints constraints);
+    Plasma::Applet *host() const;
 
 protected Q_SLOTS:
     void appletDestroyed(QObject *object);
