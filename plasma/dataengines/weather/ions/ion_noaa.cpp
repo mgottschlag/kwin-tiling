@@ -350,21 +350,21 @@ bool NOAAIon::readXMLSetup()
 
 WeatherData NOAAIon::parseWeatherSite(WeatherData& data, QXmlStreamReader& xml)
 {
-    data.temperature_C = "N/A";
-    data.temperature_F = "N/A";
-    data.dewpoint_C = "N/A";
-    data.dewpoint_F = "N/A";
-    data.weather = "N/A";
-    data.stationID = "N/A";
-    data.pressure = "N/A";
-    data.visibility = "N/A";
-    data.humidity = "N/A";
-    data.windSpeed = "N/A";
-    data.windGust = "N/A";
-    data.windchill_F = "N/A";
-    data.windchill_C = "N/A";
-    data.heatindex_F = "N/A";
-    data.heatindex_C = "N/A";
+    data.temperature_C = i18n("N/A");
+    data.temperature_F = i18n("N/A");
+    data.dewpoint_C = i18n("N/A");
+    data.dewpoint_F = i18n("N/A");
+    data.weather = i18n("N/A");
+    data.stationID = i18n("N/A");
+    data.pressure = i18n("N/A");
+    data.visibility = i18n("N/A");
+    data.humidity = i18n("N/A");
+    data.windSpeed = i18n("N/A");
+    data.windGust = i18n("N/A");
+    data.windchill_F = i18n("N/A");
+    data.windchill_C = i18n("N/A");
+    data.heatindex_F = i18n("N/A");
+    data.heatindex_C = i18n("N/A");
 
     while (!xml.atEnd()) {
         xml.readNext();
@@ -502,47 +502,47 @@ void NOAAIon::updateWeather(const QString& source)
     dataFields = temperature(source);
     data.insert("Temperature", dataFields["temperature"]);
 
-    if (dataFields["temperature"] != "N/A") {
+    if (dataFields["temperature"] != i18n("N/A")) {
         data.insert("Temperature Unit", dataFields["temperatureUnit"]);
     }
 
     // Do we have a comfort temperature? if so display it
-    if (dataFields["comfortTemperature"] != "N/A") {
+    if (dataFields["comfortTemperature"] != i18n("N/A")) {
         if (d->m_weatherData[source].windchill_F != "NA") {
             data.insert("Windchill", QString("%1").arg(dataFields["comfortTemperature"]));
-            data.insert("Humidex", "N/A");
+            data.insert("Humidex", i18n("N/A"));
         }
         if (d->m_weatherData[source].heatindex_F != "NA" && d->m_weatherData[source].temperature_F.toInt() != d->m_weatherData[source].heatindex_F.toInt()) {
             data.insert("Humidex", QString("%1").arg(dataFields["comfortTemperature"]));
-            data.insert("Windchill", "N/A");
+            data.insert("Windchill", i18n("N/A"));
         }
     } else {
-        data.insert("Windchill", "N/A");
-        data.insert("Humidex", "N/A");
+        data.insert("Windchill", i18n("N/A"));
+        data.insert("Humidex", i18n("N/A"));
     }
 
     data.insert("Dewpoint", dewpoint(source));
-    if (dewpoint(source) != "N/A") {
+    if (dewpoint(source) != i18n("N/A")) {
         data.insert("Dewpoint Unit", dataFields["temperatureUnit"]);
     }
 
     dataFields = pressure(source);
     data.insert("Pressure", dataFields["pressure"]);
 
-    if (dataFields["pressure"] != "N/A") {
+    if (dataFields["pressure"] != i18n("N/A")) {
         data.insert("Pressure Unit", dataFields["pressureUnit"]);
     }
 
     dataFields = visibility(source);
     data.insert("Visibility", dataFields["visibility"]);
 
-    if (dataFields["visibility"] != "N/A") {
+    if (dataFields["visibility"] != i18n("N/A")) {
         data.insert("Visibility Unit", dataFields["visibilityUnit"]);
     }
 
     dataFields = humidity(source);
     data.insert("Humidity", dataFields["humidity"]);
-    if (dataFields["humidity"] != "N/A") {
+    if (dataFields["humidity"] != i18n("N/A")) {
         data.insert("Humidity Unit", dataFields["humidityUnit"]);
     }
 
@@ -613,7 +613,7 @@ int NOAAIon::periodHour(const QString& source) const
 QString NOAAIon::condition(const QString& source) const
 {
     if (d->m_weatherData[source].weather.isEmpty() || d->m_weatherData[source].weather == "NA") {
-        d->m_weatherData[source].weather = "N/A";
+        d->m_weatherData[source].weather = i18n("N/A");
     }
     return i18nc("weather condition", d->m_weatherData[source].weather.toUtf8());
 }
@@ -627,7 +627,7 @@ QMap<QString, QString> NOAAIon::humidity(const QString& source) const
 {
     QMap<QString, QString> humidityInfo;
     if (d->m_weatherData[source].humidity == "NA") {
-        humidityInfo.insert("humidity", QString("N/A"));
+        humidityInfo.insert("humidity", QString(i18n("N/A")));
         humidityInfo.insert("humidityUnit", QString::number(WeatherUtils::NoUnit));
         return humidityInfo;
     } else {
@@ -642,11 +642,11 @@ QMap<QString, QString> NOAAIon::visibility(const QString& source) const
 {
     QMap<QString, QString> visibilityInfo;
     if (d->m_weatherData[source].visibility.isEmpty()) {
-        visibilityInfo.insert("visibility", QString("N/A"));
+        visibilityInfo.insert("visibility", QString(i18n("N/A")));
         return visibilityInfo;
     }
     if (d->m_weatherData[source].visibility == "NA") {
-        visibilityInfo.insert("visibility", QString("N/A"));
+        visibilityInfo.insert("visibility", QString(i18n("N/A")));
         visibilityInfo.insert("visibilityUnit", QString::number(WeatherUtils::NoUnit));
     } else {
         visibilityInfo.insert("visibility", d->m_weatherData[source].visibility);
@@ -660,7 +660,7 @@ QMap<QString, QString> NOAAIon::temperature(const QString& source) const
     QMap<QString, QString> temperatureInfo;
     temperatureInfo.insert("temperature", d->m_weatherData[source].temperature_F);
     temperatureInfo.insert("temperatureUnit", QString::number(WeatherUtils::Fahrenheit));
-    temperatureInfo.insert("comfortTemperature", "N/A");
+    temperatureInfo.insert("comfortTemperature", i18n("N/A"));
 
     if (d->m_weatherData[source].heatindex_F != "NA" && d->m_weatherData[source].windchill_F == "NA") {
         temperatureInfo.insert("comfortTemperature", d->m_weatherData[source].heatindex_F);
@@ -677,12 +677,12 @@ QMap<QString, QString> NOAAIon::pressure(const QString& source) const
 {
     QMap<QString, QString> pressureInfo;
     if (d->m_weatherData[source].pressure.isEmpty()) {
-        pressureInfo.insert("pressure", "N/A");
+        pressureInfo.insert("pressure", i18n("N/A"));
         return pressureInfo;
     }
 
     if (d->m_weatherData[source].pressure == "NA") {
-        pressureInfo.insert("pressure", "N/A");
+        pressureInfo.insert("pressure", i18n("N/A"));
         pressureInfo.insert("visibilityUnit", QString::number(WeatherUtils::NoUnit));
     } else {
         pressureInfo.insert("pressure", d->m_weatherData[source].pressure);
@@ -705,8 +705,8 @@ QMap<QString, QString> NOAAIon::wind(const QString& source) const
     }
 
     // May not always have gusty winds
-    if (d->m_weatherData[source].windGust == "NA" || d->m_weatherData[source].windGust == "N/A") {
-        windInfo.insert("windGust", "N/A");
+    if (d->m_weatherData[source].windGust == "NA" || d->m_weatherData[source].windGust == i18n("N/A")) {
+        windInfo.insert("windGust", i18n("N/A"));
         windInfo.insert("windGustUnit", QString::number(WeatherUtils::NoUnit));
     } else {
         windInfo.insert("windGust", QString::number(d->m_weatherData[source].windGust.toFloat(), 'f', 1));
@@ -714,7 +714,7 @@ QMap<QString, QString> NOAAIon::wind(const QString& source) const
     }
 
     if (d->m_weatherData[source].windDirection.isEmpty()) {
-        windInfo.insert("windDirection", "N/A");
+        windInfo.insert("windDirection", i18n("N/A"));
     } else {
         windInfo.insert("windDirection", i18nc("wind direction", d->m_weatherData[source].windDirection.toUtf8()));
     }

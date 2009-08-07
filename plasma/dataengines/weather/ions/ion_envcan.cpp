@@ -757,7 +757,7 @@ WeatherData EnvCanadaIon::parseWeatherSite(WeatherData& data, QXmlStreamReader& 
 bool EnvCanadaIon::readXMLData(const QString& source, QXmlStreamReader& xml)
 {
     WeatherData data;
-    data.comforttemp = "N/A";
+    data.comforttemp = i18n("N/A");
     data.recordHigh = 0.0;
     data.recordLow = 0.0;
 
@@ -909,19 +909,19 @@ void EnvCanadaIon::parseConditions(WeatherData& data, QXmlStreamReader& xml)
 {
 
     Q_ASSERT(xml.isStartElement() && xml.name() == "currentConditions");
-    data.temperature = "N/A";
-    data.dewpoint = "N/A";
-    data.condition = "N/A";
-    data.comforttemp = "N/A";
-    data.stationID = "N/A";
-    data.stationLat = "N/A";
-    data.stationLon = "N/A";
+    data.temperature = i18n("N/A");
+    data.dewpoint = i18n("N/A");
+    data.condition = i18n("N/A");
+    data.comforttemp = i18n("N/A");
+    data.stationID = i18n("N/A");
+    data.stationLat = i18n("N/A");
+    data.stationLon = i18n("N/A");
     data.pressure = 0.0;
-    data.pressureTendency = "N/A";
+    data.pressureTendency = i18n("N/A");
     data.visibility = 0;
-    data.humidity = "N/A";
-    data.windSpeed = "N/A";
-    data.windGust = "N/A";
+    data.humidity = i18n("N/A");
+    data.windSpeed = i18n("N/A");
+    data.windGust = i18n("N/A");
 
     while (!xml.atEnd()) {
         xml.readNext();
@@ -963,7 +963,7 @@ void EnvCanadaIon::parseConditions(WeatherData& data, QXmlStreamReader& xml)
         }
     }
     if (data.temperature.isEmpty())  {
-        data.temperature = "N/A";
+        data.temperature = i18n("N/A");
     }
 }
 
@@ -1434,49 +1434,49 @@ void EnvCanadaIon::updateWeather(const QString& source)
     data.insert("Temperature", dataFields["temperature"]);
 
     // Do we have a comfort temperature? if so display it
-    if (dataFields["comfortTemperature"] != "N/A" && !dataFields["comfortTemperature"].isEmpty()) {
+    if (dataFields["comfortTemperature"] != i18n("N/A") && !dataFields["comfortTemperature"].isEmpty()) {
         if (dataFields["comfortTemperature"].toFloat() <= 0) {
             data.insert("Windchill", QString("%1").arg(dataFields["comfortTemperature"]));
-            data.insert("Humidex", "N/A");
+            data.insert("Humidex", i18n("N/A"));
         } else {
             data.insert("Humidex", QString("%1").arg(dataFields["comfortTemperature"]));
-            data.insert("Windchill", "N/A");
+            data.insert("Windchill", i18n("N/A"));
         }
     } else {
-        data.insert("Windchill", "N/A");
-        data.insert("Humidex", "N/A");
+        data.insert("Windchill", i18n("N/A"));
+        data.insert("Humidex", i18n("N/A"));
     }
 
     data.insert("Temperature Unit", dataFields["temperatureUnit"]);
 
     data.insert("Dewpoint", dewpoint(source));
-    if (dewpoint(source) != "N/A") {
+    if (dewpoint(source) != i18n("N/A")) {
         data.insert("Dewpoint Unit", dataFields["temperatureUnit"]);
     }
 
     dataFields = pressure(source);
     data.insert("Pressure", dataFields["pressure"]);
 
-    if (dataFields["pressure"] != "N/A") {
+    if (dataFields["pressure"] != i18n("N/A")) {
         data.insert("Pressure Tendency", dataFields["pressureTendency"]);
         data.insert("Pressure Unit", dataFields["pressureUnit"]);
     }
 
     dataFields = visibility(source);
     data.insert("Visibility", dataFields["visibility"]);
-    if (dataFields["visibility"] != "N/A") {
+    if (dataFields["visibility"] != i18n("N/A")) {
         data.insert("Visibility Unit", dataFields["visibilityUnit"]);
     }
 
     dataFields = humidity(source);
     data.insert("Humidity", dataFields["humidity"]);
-    if (dataFields["humidity"] != "N/A") {
+    if (dataFields["humidity"] != i18n("N/A")) {
         data.insert("Humidity Unit", dataFields["humidityUnit"]);
     }
 
     dataFields = wind(source);
     data.insert("Wind Speed", dataFields["windSpeed"]);
-    if (dataFields["windSpeed"] != "N/A") {
+    if (dataFields["windSpeed"] != i18n("N/A")) {
         data.insert("Wind Speed Unit", dataFields["windUnit"]);
     }
     data.insert("Wind Gust", dataFields["windGust"]);
@@ -1487,14 +1487,14 @@ void EnvCanadaIon::updateWeather(const QString& source)
     dataFields = regionalTemperatures(source);
     data.insert("Normal High", dataFields["normalHigh"]);
     data.insert("Normal Low", dataFields["normalLow"]);
-    if (dataFields["normalHigh"] != "N/A" && dataFields["normalLow"] != "N/A") {
+    if (dataFields["normalHigh"] != i18n("N/A") && dataFields["normalLow"] != i18n("N/A")) {
         data.insert("Regional Temperature Unit", dataFields["regionalTempUnit"]);
     }
 
     // Check if UV index is available for the location
     dataFields = uvIndex(source);
     data.insert("UV Index", dataFields["uvIndex"]);
-    if (dataFields["uvIndex"] != "N/A") {
+    if (dataFields["uvIndex"] != i18n("N/A")) {
         data.insert("UV Rating", dataFields["uvRating"]);
     }
 
@@ -1547,7 +1547,7 @@ void EnvCanadaIon::updateWeather(const QString& source)
     data.insert("Yesterday High", dataFields["prevHigh"]);
     data.insert("Yesterday Low", dataFields["prevLow"]);
 
-    if (dataFields["prevHigh"] != "N/A" && dataFields["prevLow"] != "N/A") {
+    if (dataFields["prevHigh"] != i18n("N/A") && dataFields["prevLow"] != i18n("N/A")) {
         data.insert("Yesterday Temperature Unit", dataFields["yesterdayTempUnit"]);
     }
 
@@ -1565,7 +1565,7 @@ void EnvCanadaIon::updateWeather(const QString& source)
     dataFields = weatherRecords(source);
     data.insert("Record High Temperature", dataFields["recordHigh"]);
     data.insert("Record Low Temperature", dataFields["recordLow"]);
-    if (dataFields["recordHigh"] != "N/A" && dataFields["recordLow"] != "N/A") {
+    if (dataFields["recordHigh"] != i18n("N/A") && dataFields["recordLow"] != i18n("N/A")) {
         data.insert("Record Temperature Unit", dataFields["recordTempUnit"]);
     }
 
@@ -1600,7 +1600,7 @@ QString EnvCanadaIon::station(const QString& source) const
         return d->m_weatherData[source].stationID.toUpper();
     }
 
-    return "N/A";
+    return i18n("N/A");
 }
 
 QString EnvCanadaIon::latitude(const QString& source) const
@@ -1631,7 +1631,7 @@ int EnvCanadaIon::periodMinute(const QString& source) const
 QString EnvCanadaIon::condition(const QString& source) const
 {
     if (d->m_weatherData[source].condition.isEmpty()) {
-        d->m_weatherData[source].condition = "N/A";
+        d->m_weatherData[source].condition = i18n("N/A");
     }
     return (d->m_weatherData[source].condition.toUtf8());
 }
@@ -1641,7 +1641,7 @@ QString EnvCanadaIon::dewpoint(const QString& source) const
     if (!d->m_weatherData[source].dewpoint.isEmpty()) {
         return QString::number(d->m_weatherData[source].dewpoint.toFloat(), 'f', 1);
     }
-    return "N/A";
+    return i18n("N/A");
 }
 
 QMap<QString, QString> EnvCanadaIon::humidity(const QString& source) const
@@ -1651,7 +1651,7 @@ QMap<QString, QString> EnvCanadaIon::humidity(const QString& source) const
         humidityInfo.insert("humidity", d->m_weatherData[source].humidity);
         humidityInfo.insert("humidityUnit", QString::number(WeatherUtils::Percent));
     } else {
-        humidityInfo.insert("humidity", "N/A");
+        humidityInfo.insert("humidity", i18n("N/A"));
         humidityInfo.insert("humidityUnit", QString::number(WeatherUtils::NoUnit));
     }
     return humidityInfo;
@@ -1665,7 +1665,7 @@ QMap<QString, QString> EnvCanadaIon::visibility(const QString& source) const
         visibilityInfo.insert("visibility", QString::number(d->m_weatherData[source].visibility, 'f', 1));
         visibilityInfo.insert("visibilityUnit", QString::number(WeatherUtils::Kilometers));
     } else {
-        visibilityInfo.insert("visibility", "N/A");
+        visibilityInfo.insert("visibility", i18n("N/A"));
         visibilityInfo.insert("visibilityUnit", QString::number(WeatherUtils::NoUnit));
     }
     return visibilityInfo;
@@ -1678,14 +1678,14 @@ QMap<QString, QString> EnvCanadaIon::temperature(const QString& source) const
         temperatureInfo.insert("temperature", QString::number(d->m_weatherData[source].temperature.toFloat(), 'f', 1));
     }
 
-    if (d->m_weatherData[source].temperature == "N/A") {
-        temperatureInfo.insert("temperature", "N/A");
+    if (d->m_weatherData[source].temperature == i18n("N/A")) {
+        temperatureInfo.insert("temperature", i18n("N/A"));
     }
 
     temperatureInfo.insert("temperatureUnit", QString::number(WeatherUtils::Celsius));
-    temperatureInfo.insert("comfortTemperature", "N/A");
+    temperatureInfo.insert("comfortTemperature", i18n("N/A"));
 
-    if (d->m_weatherData[source].comforttemp != "N/A") {
+    if (d->m_weatherData[source].comforttemp != i18n("N/A")) {
         temperatureInfo.insert("comfortTemperature", d->m_weatherData[source].comforttemp);
     }
     return temperatureInfo;
@@ -1726,37 +1726,37 @@ QVector<QString> EnvCanadaIon::forecasts(const QString& source)
     // Do some checks for empty data
     for (int i = 0; i < d->m_weatherData[source].forecasts.size(); ++i) {
         if (d->m_weatherData[source].forecasts[i]->forecastPeriod.isEmpty()) {
-            d->m_weatherData[source].forecasts[i]->forecastPeriod = "N/A";
+            d->m_weatherData[source].forecasts[i]->forecastPeriod = i18n("N/A");
         }
         if (d->m_weatherData[source].forecasts[i]->shortForecast.isEmpty()) {
-            d->m_weatherData[source].forecasts[i]->shortForecast = "N/A";
+            d->m_weatherData[source].forecasts[i]->shortForecast = i18n("N/A");
         }
         if (d->m_weatherData[source].forecasts[i]->iconName.isEmpty()) {
-            d->m_weatherData[source].forecasts[i]->iconName = "N/A";
+            d->m_weatherData[source].forecasts[i]->iconName = i18n("N/A");
         }
         if (d->m_weatherData[source].forecasts[i]->forecastSummary.isEmpty()) {
-            d->m_weatherData[source].forecasts[i]->forecastSummary = "N/A";
+            d->m_weatherData[source].forecasts[i]->forecastSummary = i18n("N/A");
         }
         if (d->m_weatherData[source].forecasts[i]->forecastTempHigh.isEmpty()) {
-            d->m_weatherData[source].forecasts[i]->forecastTempHigh = "N/A";
+            d->m_weatherData[source].forecasts[i]->forecastTempHigh = i18n("N/A");
         }
         if (d->m_weatherData[source].forecasts[i]->forecastTempLow.isEmpty()) {
-            d->m_weatherData[source].forecasts[i]->forecastTempLow = "N/A";
+            d->m_weatherData[source].forecasts[i]->forecastTempLow = i18n("N/A");
         }
         if (d->m_weatherData[source].forecasts[i]->popPrecent.isEmpty()) {
-            d->m_weatherData[source].forecasts[i]->popPrecent = "N/A";
+            d->m_weatherData[source].forecasts[i]->popPrecent = i18n("N/A");
         }
         if (d->m_weatherData[source].forecasts[i]->windForecast.isEmpty()) {
-            d->m_weatherData[source].forecasts[i]->windForecast = "N/A";
+            d->m_weatherData[source].forecasts[i]->windForecast = i18n("N/A");
         }
         if (d->m_weatherData[source].forecasts[i]->precipForecast.isEmpty()) {
-            d->m_weatherData[source].forecasts[i]->precipForecast = "N/A";
+            d->m_weatherData[source].forecasts[i]->precipForecast = i18n("N/A");
         }
         if (d->m_weatherData[source].forecasts[i]->precipType.isEmpty()) {
-            d->m_weatherData[source].forecasts[i]->precipType = "N/A";
+            d->m_weatherData[source].forecasts[i]->precipType = i18n("N/A");
         }
         if (d->m_weatherData[source].forecasts[i]->precipTotalExpected.isEmpty()) {
-            d->m_weatherData[source].forecasts[i]->precipTotalExpected = "N/A";
+            d->m_weatherData[source].forecasts[i]->precipTotalExpected = i18n("N/A");
         }
     }
 
@@ -1819,7 +1819,7 @@ QMap<QString, QString> EnvCanadaIon::pressure(const QString& source) const
     QMap<QString, QString> pressureInfo;
 
     if (d->m_weatherData[source].pressure == 0) {
-        pressureInfo.insert("pressure", "N/A");
+        pressureInfo.insert("pressure", i18n("N/A"));
         return pressureInfo;
     } else {
         pressureInfo.insert("pressure", QString::number(d->m_weatherData[source].pressure, 'f', 1));
@@ -1835,7 +1835,7 @@ QMap<QString, QString> EnvCanadaIon::wind(const QString& source) const
 
     // May not have any winds
     if (d->m_weatherData[source].windSpeed.isEmpty()) {
-        windInfo.insert("windSpeed", "N/A");
+        windInfo.insert("windSpeed", i18n("N/A"));
         windInfo.insert("windUnit", QString::number(WeatherUtils::NoUnit));
     } else if (d->m_weatherData[source].windSpeed.toInt() == 0) {
         windInfo.insert("windSpeed", i18nc("wind speed", "Calm"));
@@ -1847,7 +1847,7 @@ QMap<QString, QString> EnvCanadaIon::wind(const QString& source) const
 
     // May not always have gusty winds
     if (d->m_weatherData[source].windGust.isEmpty()) {
-        windInfo.insert("windGust", "N/A");
+        windInfo.insert("windGust", i18n("N/A"));
         windInfo.insert("windGustUnit", QString::number(WeatherUtils::NoUnit));
     } else {
         windInfo.insert("windGust", QString::number(d->m_weatherData[source].windGust.toInt()));
@@ -1855,8 +1855,8 @@ QMap<QString, QString> EnvCanadaIon::wind(const QString& source) const
     }
 
     if (d->m_weatherData[source].windDirection.isEmpty() && d->m_weatherData[source].windSpeed.isEmpty()) {
-        windInfo.insert("windDirection", "N/A");
-        windInfo.insert("windDegrees", "N/A");
+        windInfo.insert("windDirection", i18n("N/A"));
+        windInfo.insert("windDegrees", i18n("N/A"));
     } else if (d->m_weatherData[source].windSpeed.toInt() == 0) {
         windInfo.insert("windDirection", i18nc("wind direction - wind speed is too low to measure", "VR")); // Variable/calm
     } else {
@@ -1871,13 +1871,13 @@ QMap<QString, QString> EnvCanadaIon::uvIndex(const QString& source) const
     QMap<QString, QString> uvInfo;
 
     if (d->m_weatherData[source].UVRating.isEmpty()) {
-        uvInfo.insert("uvRating", "N/A");
+        uvInfo.insert("uvRating", i18n("N/A"));
     } else {
         uvInfo.insert("uvRating", d->m_weatherData[source].UVRating);
     }
 
     if (d->m_weatherData[source].UVIndex.isEmpty()) {
-        uvInfo.insert("uvIndex", "N/A");
+        uvInfo.insert("uvIndex", i18n("N/A"));
     } else {
         uvInfo.insert("uvIndex", d->m_weatherData[source].UVIndex);
     }
@@ -1890,13 +1890,13 @@ QMap<QString, QString> EnvCanadaIon::regionalTemperatures(const QString& source)
     QMap<QString, QString> regionalTempInfo;
 
     if (d->m_weatherData[source].normalHigh.isEmpty()) {
-        regionalTempInfo.insert("normalHigh", "N/A");
+        regionalTempInfo.insert("normalHigh", i18n("N/A"));
     } else {
         regionalTempInfo.insert("normalHigh", d->m_weatherData[source].normalHigh);
     }
 
     if (d->m_weatherData[source].normalLow.isEmpty()) {
-        regionalTempInfo.insert("normalLow", "N/A");
+        regionalTempInfo.insert("normalLow", i18n("N/A"));
     } else {
         regionalTempInfo.insert("normalLow", d->m_weatherData[source].normalLow);
     }
@@ -1910,13 +1910,13 @@ QMap<QString, QString> EnvCanadaIon::yesterdayWeather(const QString& source) con
     QMap<QString, QString> yesterdayInfo;
 
     if (d->m_weatherData[source].prevHigh.isEmpty()) {
-        yesterdayInfo.insert("prevHigh", "N/A");
+        yesterdayInfo.insert("prevHigh", i18n("N/A"));
     } else {
         yesterdayInfo.insert("prevHigh", d->m_weatherData[source].prevHigh);
     }
 
     if (d->m_weatherData[source].prevLow.isEmpty()) {
-        yesterdayInfo.insert("prevLow", "N/A");
+        yesterdayInfo.insert("prevLow", i18n("N/A"));
     } else {
         yesterdayInfo.insert("prevLow", d->m_weatherData[source].prevLow);
     }
@@ -1929,7 +1929,7 @@ QMap<QString, QString> EnvCanadaIon::yesterdayWeather(const QString& source) con
     }
 
     if (d->m_weatherData[source].prevPrecipTotal.isEmpty()) {
-        yesterdayInfo.insert("prevPrecip", "N/A");
+        yesterdayInfo.insert("prevPrecip", i18n("N/A"));
     } else {
         yesterdayInfo.insert("prevPrecipTotal", d->m_weatherData[source].prevPrecipTotal);
         if (d->m_weatherData[source].prevPrecipType == "mm") {
@@ -1949,13 +1949,13 @@ QMap<QString, QString> EnvCanadaIon::sunriseSet(const QString& source) const
     QMap<QString, QString> sunInfo;
 
     if (d->m_weatherData[source].sunriseTimestamp.isEmpty()) {
-        sunInfo.insert("sunrise", "N/A");
+        sunInfo.insert("sunrise", i18n("N/A"));
     } else {
         sunInfo.insert("sunrise", d->m_weatherData[source].sunriseTimestamp);
     }
 
     if (d->m_weatherData[source].sunsetTimestamp.isEmpty()) {
-        sunInfo.insert("sunset", "N/A");
+        sunInfo.insert("sunset", i18n("N/A"));
     } else {
         sunInfo.insert("sunset", d->m_weatherData[source].sunsetTimestamp);
     }
@@ -1968,13 +1968,13 @@ QMap<QString, QString> EnvCanadaIon::moonriseSet(const QString& source) const
     QMap<QString, QString> moonInfo;
 
     if (d->m_weatherData[source].moonriseTimestamp.isEmpty()) {
-        moonInfo.insert("moonrise", "N/A");
+        moonInfo.insert("moonrise", i18n("N/A"));
     } else {
         moonInfo.insert("moonrise", d->m_weatherData[source].moonriseTimestamp);
     }
 
     if (d->m_weatherData[source].moonsetTimestamp.isEmpty()) {
-        moonInfo.insert("moonset", "N/A");
+        moonInfo.insert("moonset", i18n("N/A"));
     } else {
         moonInfo.insert("moonset", d->m_weatherData[source].moonsetTimestamp);
     }
@@ -1987,13 +1987,13 @@ QMap<QString, QString> EnvCanadaIon::weatherRecords(const QString& source) const
     QMap<QString, QString> recordInfo;
 
     if (d->m_weatherData[source].recordHigh == 0) {
-        recordInfo.insert("recordHigh", "N/A");
+        recordInfo.insert("recordHigh", i18n("N/A"));
     } else {
         recordInfo.insert("recordHigh", QString("%1").arg(d->m_weatherData[source].recordHigh));
     }
 
     if (d->m_weatherData[source].recordLow == 0) {
-        recordInfo.insert("recordLow", "N/A");
+        recordInfo.insert("recordLow", i18n("N/A"));
     } else {
         recordInfo.insert("recordLow", QString("%1").arg(d->m_weatherData[source].recordLow));
     }
@@ -2001,14 +2001,14 @@ QMap<QString, QString> EnvCanadaIon::weatherRecords(const QString& source) const
     recordInfo.insert("recordTempUnit", QString::number(WeatherUtils::Celsius));
 
     if (d->m_weatherData[source].recordRain == 0) {
-        recordInfo.insert("recordRain", "N/A");
+        recordInfo.insert("recordRain", i18n("N/A"));
     } else {
         recordInfo.insert("recordRain", QString("%1").arg(d->m_weatherData[source].recordRain));
         recordInfo.insert("recordRainUnit", QString::number(WeatherUtils::Millimeters));
     }
 
     if (d->m_weatherData[source].recordSnow == 0) {
-        recordInfo.insert("recordSnow", "N/A");
+        recordInfo.insert("recordSnow", i18n("N/A"));
     } else {
         recordInfo.insert("recordSnow", QString("%1").arg(d->m_weatherData[source].recordSnow));
         recordInfo.insert("recordSnowUnit", QString::number(WeatherUtils::Centimeters));
