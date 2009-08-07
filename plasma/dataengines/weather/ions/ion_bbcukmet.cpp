@@ -893,15 +893,6 @@ QString UKMETIon::observationTime(const QString& source) const
     return d->m_weatherData[source].obsTime;
 }
 
-/*
-bool UKMETIon::night(const QString& source) const
-{
-    if (d->m_weatherData[source].iconPeriodAP == "pm") {
-        return true;
-    }
-    return false;
-} */
-
 int UKMETIon::periodHour(const QString& source) const
 {
     return d->m_weatherData[source].iconPeriodHour;
@@ -978,6 +969,8 @@ QMap<QString, QString> UKMETIon::pressure(const QString& source) const
     QMap<QString, QString> pressureInfo;
     if (d->m_weatherData[source].pressure == i18n("N/A")) {
         pressureInfo.insert("pressure", i18n("N/A"));
+        pressureInfo.insert("pressureUnit", QString::number(WeatherUtils::NoUnit));
+        pressureInfo.insert("pressureTendency", i18n("N/A"));
         return pressureInfo;
     }
 
