@@ -501,10 +501,7 @@ void NOAAIon::updateWeather(const QString& source)
 
     dataFields = temperature(source);
     data.insert("Temperature", dataFields["temperature"]);
-
-    if (dataFields["temperature"] != i18n("N/A")) {
-        data.insert("Temperature Unit", dataFields["temperatureUnit"]);
-    }
+    data.insert("Temperature Unit", dataFields["temperatureUnit"]);
 
     // Do we have a comfort temperature? if so display it
     if (dataFields["comfortTemperature"] != i18n("N/A")) {
@@ -522,39 +519,24 @@ void NOAAIon::updateWeather(const QString& source)
     }
 
     data.insert("Dewpoint", dewpoint(source));
-    if (dewpoint(source) != i18n("N/A")) {
-        data.insert("Dewpoint Unit", dataFields["temperatureUnit"]);
-    }
-
     dataFields = pressure(source);
     data.insert("Pressure", dataFields["pressure"]);
-
-    if (dataFields["pressure"] != i18n("N/A")) {
-        data.insert("Pressure Unit", dataFields["pressureUnit"]);
-    }
+    data.insert("Pressure Unit", dataFields["pressureUnit"]);
 
     dataFields = visibility(source);
     data.insert("Visibility", dataFields["visibility"]);
-
-    if (dataFields["visibility"] != i18n("N/A")) {
-        data.insert("Visibility Unit", dataFields["visibilityUnit"]);
-    }
+    data.insert("Visibility Unit", dataFields["visibilityUnit"]);
 
     dataFields = humidity(source);
     data.insert("Humidity", dataFields["humidity"]);
-    if (dataFields["humidity"] != i18n("N/A")) {
-        data.insert("Humidity Unit", dataFields["humidityUnit"]);
-    }
+    data.insert("Humidity Unit", dataFields["humidityUnit"]);
 
     // Set number of forecasts per day/night supported, none for this ion right now
     data.insert(QString("Total Weather Days"), 0);
 
     dataFields = wind(source);
     data.insert("Wind Speed", dataFields["windSpeed"]);
-
-    if (dataFields["windSpeed"] != "Calm") {
-        data.insert("Wind Speed Unit", dataFields["windUnit"]);
-    }
+    data.insert("Wind Speed Unit", dataFields["windUnit"]);
 
     data.insert("Wind Gust", dataFields["windGust"]);
     data.insert("Wind Gust Unit", dataFields["windGustUnit"]);
@@ -595,16 +577,6 @@ QString NOAAIon::observationTime(const QString& source) const
     return d->m_weatherData[source].observationTime;
 }
 
-/*
-bool NOAAIon::night(const QString& source) const
-{
-    if (d->m_weatherData[source].iconPeriodAP == "pm") {
-        return true;
-    }
-    return false;
-}
-*/
-
 int NOAAIon::periodHour(const QString& source) const
 {
     return d->m_weatherData[source].iconPeriodHour.toInt();
@@ -643,6 +615,7 @@ QMap<QString, QString> NOAAIon::visibility(const QString& source) const
     QMap<QString, QString> visibilityInfo;
     if (d->m_weatherData[source].visibility.isEmpty()) {
         visibilityInfo.insert("visibility", QString(i18n("N/A")));
+        visibilityInfo.insert("visibilityUnit", QString::number(WeatherUtils::NoUnit));
         return visibilityInfo;
     }
     if (d->m_weatherData[source].visibility == "NA") {
@@ -678,6 +651,7 @@ QMap<QString, QString> NOAAIon::pressure(const QString& source) const
     QMap<QString, QString> pressureInfo;
     if (d->m_weatherData[source].pressure.isEmpty()) {
         pressureInfo.insert("pressure", i18n("N/A"));
+        pressureInfo.insert("pressureUnit", QString::number(WeatherUtils::NoUnit));
         return pressureInfo;
     }
 
