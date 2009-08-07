@@ -49,8 +49,6 @@ public:
 
     enum WindDirections { N, NNE, NE, ENE, E, SSE, SE, ESE, S, NNW, NW, WNW, W, SSW, SW, WSW, VR };
 
-    typedef QHash<QString, IonInterface*> IonDict; // Define Dict as a QHash for Ions
-
     /**
      * Constructor for the ion
      * @param parent The parent object.
