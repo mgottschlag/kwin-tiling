@@ -97,7 +97,7 @@ private:
     QMap<QString, WindDirections> const& windIcons(void) const;
 
     // Place information
-    QString country(const QString& source) const;
+    QString const country(const QString& source) const;
     QString place(const QString& source) const;
     QString station(const QString& source) const;
     QString latitude(const QString& source) const;

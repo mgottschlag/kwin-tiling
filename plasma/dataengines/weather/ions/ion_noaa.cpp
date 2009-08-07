@@ -546,7 +546,7 @@ void NOAAIon::updateWeather(const QString& source)
     setData(source, data);
 }
 
-QString NOAAIon::country(const QString& source) const
+QString const NOAAIon::country(const QString& source) const
 {
     Q_UNUSED(source);
     return QString("USA");
