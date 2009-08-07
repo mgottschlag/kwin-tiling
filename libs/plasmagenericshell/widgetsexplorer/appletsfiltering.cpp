@@ -116,7 +116,7 @@ FilteringWidget::FilteringWidget(QGraphicsItem * parent, Qt::WindowFlags wFlags)
     : QGraphicsWidget(parent, wFlags)
 {
     m_backgroundSvg = new Plasma::FrameSvg(this);
-    m_backgroundSvg->setImagePath("widgets/background");
+    //m_backgroundSvg->setImagePath("widgets/background");
 
     init();
 }
@@ -155,8 +155,8 @@ void FilteringWidget::init()
 void FilteringWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
  {
      QGraphicsWidget::paint(painter, option, widget);
-     m_backgroundSvg->resizeFrame(contentsRect().size());
-     m_backgroundSvg->paintFrame(painter, contentsRect().topLeft());
+     //m_backgroundSvg->resizeFrame(contentsRect().size());
+     //m_backgroundSvg->paintFrame(painter, contentsRect().topLeft());
  }
 
 FilteringList *FilteringWidget::categoriesList()
@@ -175,7 +175,7 @@ FilteringWidgetWithTabs::FilteringWidgetWithTabs(QGraphicsItem * parent, Qt::Win
     : QGraphicsWidget(parent, wFlags)
 {
     m_backgroundSvg = new Plasma::FrameSvg(this);
-    m_backgroundSvg->setImagePath("widgets/background");
+    //m_backgroundSvg->setImagePath("widgets/background");
 
     init();
 }
@@ -218,8 +218,8 @@ void FilteringWidgetWithTabs::init()
 void FilteringWidgetWithTabs::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
  {
      QGraphicsWidget::paint(painter, option, widget);
-     m_backgroundSvg->resizeFrame(contentsRect().size());
-     m_backgroundSvg->paintFrame(painter, contentsRect().topLeft());
+     //m_backgroundSvg->resizeFrame(contentsRect().size());
+     //m_backgroundSvg->paintFrame(painter, contentsRect().topLeft());
  }
 
 FilteringTabs *FilteringWidgetWithTabs::categoriesList()

@@ -298,6 +298,8 @@ void WidgetExplorer::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
      QGraphicsWidget::paint(painter, option, widget);
      m_backgroundSvg->resizeFrame(contentsRect().size());
      m_backgroundSvg->paintFrame(painter, contentsRect().topLeft());
+     //again
+     m_backgroundSvg->paintFrame(painter, contentsRect().topLeft());
  }
 
 void WidgetExplorer::setApplication(const QString &app)
