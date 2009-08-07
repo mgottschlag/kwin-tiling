@@ -61,5 +61,4 @@ install(FILES plasma-scriptengine-googlegadgets.desktop DESTINATION ${SERVICES_I
 
 install_ggl_gadget(photos)
 install_ggl_gadget(rss)
-install_ggl_gadget(analog_clock)
-install_ggl_gadget(weather_globe)
+install_ggl_gadget(analog-clock)

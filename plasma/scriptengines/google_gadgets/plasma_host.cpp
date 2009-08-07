@@ -285,12 +285,14 @@ void PlasmaHost::onConstraintsEvent(Plasma::Constraints constraints) {
     kDebug() << "size requested:" << s;
     double w = s.width();
     double h = s.height();
+    double old_w = view->GetWidth();
+    double old_h = view->GetHeight();
 
     if (view->OnSizing(&w, &h)) {
-      kDebug() << "Original view size:" << view->GetWidth()
-               << " " << view->GetHeight();
+      kDebug() << "Original view size:"
+               << old_w << " " << old_h;
       view->SetSize(w, h);
-      kDebug() << "view size change to:" << w << " " << h;
+      kDebug() << "Change to:" << w << " " << h;
     }
   }
 }

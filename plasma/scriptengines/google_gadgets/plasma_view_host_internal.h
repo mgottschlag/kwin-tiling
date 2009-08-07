@@ -47,6 +47,7 @@ class PlasmaViewHost::Private : public QObject {
     widget->setAttribute(Qt::WA_NoSystemBackground);
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(parent);
     layout->setSpacing(0);
+    layout->setContentsMargins(0, 0, 0, 0);
     QGraphicsProxyWidget* proxy = new QGraphicsProxyWidget(parent);
     proxy->setWidget(widget);
     layout->addItem(proxy);
@@ -147,9 +148,10 @@ class PlasmaViewHost::Private : public QObject {
 
     gadget_w_ = w;
     gadget_h_ = h;
+#if 0
     kDebug() << "view size:" << w << " " << h;
-
     kDebug() << "applet old size:" << info->applet->size();
+
     if (info->applet->location() == Plasma::Floating) {
       info->applet->resize(w, h);
     } else {
@@ -159,6 +161,7 @@ class PlasmaViewHost::Private : public QObject {
         info->applet->setMaximumHeight(h);
     }
     kDebug() << "applet new size:" << info->applet->size();
+#endif
 
     if (widget_) {
       kDebug() << "widget old size:" << widget_->size();

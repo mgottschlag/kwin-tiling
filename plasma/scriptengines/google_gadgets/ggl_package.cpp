@@ -81,7 +81,7 @@ class GadgetBrowserHost : public ggadget::HostInterface {
   }
 
   static QString extractGadgetIcon(const std::string& gadget_path,
-                            const QString& dest_dir) {
+                                   const QString& dest_dir) {
     ggadget::StringMap map;
 
     if (!ggadget::Gadget::GetGadgetManifest(gadget_path.c_str(), &map))
