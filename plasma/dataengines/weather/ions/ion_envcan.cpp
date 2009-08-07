@@ -1556,8 +1556,9 @@ void EnvCanadaIon::updateWeather(const QString& source)
     setData(source, data);
 }
 
-QString EnvCanadaIon::country(const QString& source) const
+QString const EnvCanadaIon::country(const QString& source) const
 {
+    // This will always return Canada
     return d->m_weatherData[source].countryName;
 }
 QString EnvCanadaIon::territory(const QString& source) const

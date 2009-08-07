@@ -168,7 +168,7 @@ private:
     QMap<QString, ConditionIcons> const& forecastIcons(void) const;
 
     // Place information
-    QString country(const QString& source) const;
+    QString const country(const QString& source) const;
     QString territory(const QString& source) const;
     QString city(const QString& source) const;
     QString region(const QString& source) const;
