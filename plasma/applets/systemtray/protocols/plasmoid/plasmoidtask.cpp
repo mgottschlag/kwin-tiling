@@ -24,6 +24,8 @@
 #include "plasmoidtask.h"
 #include <fixx11h.h>
 
+#include <KIcon>
+
 #include <plasma/applet.h>
 #include <plasma/plasma.h>
 
@@ -140,6 +142,8 @@ void PlasmoidTask::Private::setupApplet()
         name = QString();
         return;
     }
+
+    icon = KIcon(applet->icon());
 
     //applet->setParent(q);
     applet->setFlag(QGraphicsItem::ItemIsMovable, false);
