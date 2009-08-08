@@ -46,7 +46,6 @@ class FilteringTabs : public Plasma::TabBar
 
         void init();
         void setModel(QStandardItemModel *model);
-        void wheelEvent(QGraphicsSceneWheelEvent *event);
 
     private:
         void populateList();

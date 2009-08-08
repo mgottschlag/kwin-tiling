@@ -78,12 +78,6 @@ void FilteringTabs::init()
     nativeWidget()->setUsesScrollButtons(true);
 }
 
-void FilteringTabs::wheelEvent(QGraphicsSceneWheelEvent *event)
-{
-    event->ignore();
-    qDebug() << "get out of here!";
-}
-
 void FilteringTabs::populateList()
 {
     QStandardItem *item;

@@ -26,6 +26,13 @@ public:
     void setItemModel(QStandardItemModel *model);
     void setFilterModel(QStandardItemModel *model);
 
+    enum ScrollPolicy {
+        Right = 0,
+        Left = 1,
+        Wheel = 2,
+        Button = 3
+    };
+
 private:
     void init();
 
@@ -39,12 +46,13 @@ private:
     AppletIconWidget *createAppletIcon(PlasmaAppletItem *appletItem);
     void insertAppletIcon(AppletIconWidget *appletIconWidget);
 
-    qreal listWidth();
-    int maximumVisibleIconsOnList();
+    int maximumAproxVisibleIconsOnList();
     void eraseList();
     void setToolTipPosition();
 
-    AppletIconWidget *findAppletUnderXPosition(int xPosition);
+    bool isItemUnder(int itemIndex, qreal xPosition);
+    int findFirstVisibleApplet(int firstVisibleXOnList);
+    int findLastVisibleApplet(int lastVisibleXOnList);
     QRectF visibleListRect();
 
     void scroll(bool right, bool byWheel);
@@ -90,6 +98,7 @@ private:
      * Hash containing all widgets that represents the applets
      */
     QHash<QString, AppletIconWidget *> *m_allAppletsHash;
+    QList<AppletIconWidget *> *m_currentAppearingAppletsOnList;
 
     QGraphicsLinearLayout *m_appletListLinearLayout;
     QGraphicsWidget *m_appletsListWidget;

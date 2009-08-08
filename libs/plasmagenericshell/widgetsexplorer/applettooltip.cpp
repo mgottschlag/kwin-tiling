@@ -82,11 +82,13 @@ void AppletInfoWidget::init()
     headerLayout->setOrientation(Qt::Horizontal);
     headerLayout->addItem(m_iconWidget);
     headerLayout->addItem(m_nameLabel);
-    m_mainLayout->addItem(headerLayout);
 
+    headerLayout->setAlignment(m_iconWidget, Qt::AlignHCenter);
+
+    m_mainLayout->addItem(headerLayout);
     m_mainLayout->addItem(m_tabs);
 
-    m_mainLayout->setContentsMargins(0, 0, 0, 0);
+    m_mainLayout->setContentsMargins(10, 10, 10, 0);
 
     m_tabs->setPreferredSize(250, 150);
 
@@ -116,26 +118,7 @@ void AppletInfoWidget::init()
     m_tabs->addTab(i18n("Details"), m_detailsLabel);
     m_detailsLabel->nativeWidget()->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
-    // m_infoButton = new Plasma::IconWidget();
-    // m_infoButton->setIcon("help-about");
-    // m_infoButton->setMinimumSize(IconSize(KIconLoader::MainToolbar), IconSize(KIconLoader::MainToolbar));
-    // m_infoButton->setMaximumSize(IconSize(KIconLoader::MainToolbar), IconSize(KIconLoader::MainToolbar));
-    // connect(m_infoButton, SIGNAL(clicked()), this, SLOT(onInfoButtonClick()));
-
-    // m_linearLayout = new QGraphicsLinearLayout();
-    // m_linearLayout->setOrientation(Qt::Horizontal);
-    // QGraphicsLinearLayout *vLayout = new QGraphicsLinearLayout();
-    // vLayout->setOrientation(Qt::Vertical);
-
-    // m_linearLayout->addItem(m_iconWidget);
-    // vLayout->addItem(m_nameLabel);
-    // vLayout->addItem(m_descriptionLabel);
-    // m_linearLayout->addItem(vLayout);
-    // m_linearLayout->addItem(m_infoButton);
-
     setLayout(m_mainLayout);
-
-    //m_mainLayout->setAlignment(m_infoButton, Qt::AlignRight);
 }
 
 void AppletInfoWidget::setAppletItem(PlasmaAppletItem *appletItem)
@@ -165,11 +148,8 @@ void AppletInfoWidget::updateInfo()
         m_nameLabel->setText("Unknown applet");
     }
 
-    // m_linearLayout->invalidate();
+    m_mainLayout->invalidate();
     m_mainLayout->activate();
-    // QSize nameSize = m_nameLabel->nativeWidget()->sizeHint();
-    // QSize descSize = m_descriptionLabel->nativeWidget()->sizeHint();
-    // qDebug() << "size hint " << nameSize << descSize;
 
     QSizeF prefSize = m_mainLayout->sizeHint(Qt::PreferredSize) + QSizeF(32, 32);
     resize(prefSize);
