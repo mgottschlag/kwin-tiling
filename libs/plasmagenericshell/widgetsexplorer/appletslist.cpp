@@ -157,6 +157,7 @@ void AppletsList::timerEvent(QTimerEvent *event)
     if(event->timerId() == m_filterApplianceTimer.timerId()) {
         m_modelFilterItems->setFilter(qVariantValue<KCategorizedItemsViewModels::Filter>
                                       (m_dataFilterAboutToApply));
+        m_filterApplianceTimer.stop();
     }
 
     QGraphicsWidget::timerEvent(event);
@@ -323,9 +324,10 @@ void AppletsList::scroll(bool right, bool byWheel) {
     QRectF visibleRect = visibleListRect();
     int step = byWheel ? scrollStep : arrowClickStep;
 
+    m_toolTip->setVisible(false);
+
     if(right) {
         scrollRight(step, visibleRect);
-        qDebug() << visibleRect;
     } else {
         scrollLeft(step, visibleRect);
     }
