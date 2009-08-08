@@ -40,68 +40,46 @@
      <item>
       <widget class="QComboBox" name="sizeCombo" />
      </item>
+    </layout>
+   </item>
+   <item row="1" column="0" >
+    <layout class="QHBoxLayout" >
      <item>
       <widget class="QLabel" name="rateLabel" >
        <property name="text" >
         <string>Refresh:</string>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="refreshCombo" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize" >
-        <size>
-         <width>50</width>
-         <height>0</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="1" column="0" >
-    <layout class="QVBoxLayout" >
-     <item>
-      <widget class="QLabel" name="orientationLabel" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text" >
-        <string>Orientation:</string>
+       <property name="buddy" >
+        <cstring>refreshCombo</cstring>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="orientationCombo" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
+      <widget class="QComboBox" name="refreshCombo" />
      </item>
     </layout>
    </item>
    <item row="2" column="0" >
     <layout class="QHBoxLayout" >
      <item>
-      <widget class="QLabel" name="positionLabel" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+      <widget class="QLabel" name="orientationLabel" >
+       <property name="text" >
+        <string>Orientation:</string>
        </property>
+       <property name="buddy" >
+        <cstring>orientationCombo</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="orientationCombo" />
+     </item>
+    </layout>
+   </item>
+   <item row="3" column="0" >
+    <layout class="QHBoxLayout" >
+     <item>
+      <widget class="QLabel" name="positionLabel" >
        <property name="text" >
         <string comment="Position of the screen">Position:</string>
        </property>
@@ -110,7 +88,7 @@
      <item>
       <widget class="QComboBox" name="positionCombo" >
        <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+        <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -120,7 +98,7 @@
      <item>
       <widget class="QComboBox" name="positionOutputCombo" >
        <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+        <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
