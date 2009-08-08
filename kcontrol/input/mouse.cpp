@@ -293,25 +293,19 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
   mouse->setObjectName("Mouse Navigation");
   tabwidget->addTab(mouse, i18n("Mouse Navigation"));
 
-  QBoxLayout *vbox = new QVBoxLayout(mouse);
-
-  QVBoxLayout *vvbox = new QVBoxLayout();
-  vbox->addLayout( vvbox );
+  QFormLayout *form = new QFormLayout(mouse);
 
   mouseKeys = new QCheckBox(i18n("&Move pointer with keyboard (using the num pad)"), mouse);
-  vvbox->addWidget(mouseKeys);
-
-  QFormLayout *form = new QFormLayout();
-  vvbox->addLayout( form );
+  form->addRow(mouseKeys);
 
   mk_delay = new KIntNumInput(mouse);
-  mk_delay->setSuffix(i18n(" msec"));
   mk_delay->setRange(1, 1000, 50);
+  mk_delay->setSuffix(i18n(" msec"));
   form->addRow(i18n("&Acceleration delay:"), mk_delay);
 
   mk_interval = new KIntNumInput(0, mouse);
-  mk_interval->setSuffix(i18n(" msec"));
   mk_interval->setRange(1, 1000, 10);
+  mk_interval->setSuffix(i18n(" msec"));
   form->addRow(i18n("R&epeat interval:"), mk_interval);
 
   mk_time_to_max = new KIntNumInput(0, mouse);
@@ -335,8 +329,6 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
   connect(mk_time_to_max, SIGNAL(valueChanged(int)), this, SLOT(changed()));
   connect(mk_max_speed, SIGNAL(valueChanged(int)), this, SLOT(changed()));
   connect(mk_curve, SIGNAL(valueChanged(int)), this, SLOT(changed()));
-
-  vbox->addStretch();
 }
 
   settings = new MouseSettings;
