@@ -58,7 +58,6 @@ SMServerConfig::SMServerConfig( QWidget *parent, const QVariantList & )
 
     QVBoxLayout *topLayout = new QVBoxLayout(this);
     topLayout->setMargin(0);
-    topLayout->setSpacing(KDialog::spacingHint());
     dialog = new SMServerConfigImpl(this);
     connect(dialog, SIGNAL(changed()), SLOT(changed()));
 
