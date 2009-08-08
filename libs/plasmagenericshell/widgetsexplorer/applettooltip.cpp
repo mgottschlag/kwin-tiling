@@ -75,7 +75,7 @@ void AppletInfoWidget::init()
 
     m_aboutLabel   = new Plasma::Label();
     m_actionsLabel = new Plasma::Label();
-    m_authorLabel  = new Plasma::Label();
+    m_detailsLabel = new Plasma::Label();
 
     // main layout init
     QGraphicsLinearLayout * headerLayout = new QGraphicsLinearLayout();
@@ -96,21 +96,25 @@ void AppletInfoWidget::init()
     m_iconWidget->setMinimumSize(IconSize(KIconLoader::Desktop), IconSize(KIconLoader::Desktop));
     m_iconWidget->setMaximumSize(IconSize(KIconLoader::Desktop), IconSize(KIconLoader::Desktop));
 
-    QFont nameFont = m_nameLabel->nativeWidget()->font();
-    nameFont.setBold(true);
-    nameFont.setPointSize(1.2 * nameFont.pointSize());
-    m_nameLabel->nativeWidget()->setFont(nameFont);
+    QFont font = m_nameLabel->nativeWidget()->font();
+    font.setBold(true);
+    font.setPointSize(1.2 * font.pointSize());
+    m_nameLabel->nativeWidget()->setFont(font);
     m_nameLabel->nativeWidget()->setScaledContents(true);
     m_nameLabel->setMaximumHeight(m_iconWidget->maximumHeight());
 
     // about tab
     m_tabs->addTab(i18n("About"), m_aboutLabel);
+    font.setBold(false);
+    m_aboutLabel->setFont(font);
+    m_aboutLabel->nativeWidget()->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
     // actions tab
     m_tabs->addTab(i18n("Actions"), m_actionsLabel);
 
     // author tab
-    m_tabs->addTab(i18n("Author"), m_authorLabel);
+    m_tabs->addTab(i18n("Details"), m_detailsLabel);
+    m_detailsLabel->nativeWidget()->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
     // m_infoButton = new Plasma::IconWidget();
     // m_infoButton->setIcon("help-about");
@@ -146,14 +150,15 @@ void AppletInfoWidget::updateInfo()
         m_nameLabel->setText(m_appletItem->name());
 
         m_aboutLabel->setText(
-            i18n("Version: %1").arg(m_appletItem->version()) + "\n\n" +
             m_appletItem->description());
 
-        m_authorLabel->setText(
-            i18n("<html><p>Author: %1</p><p>License: %2</p><p>Please report bugs to: <a href=\"mailto:%3\">%3</a></p></html>")
+        m_detailsLabel->setText(
+            i18n("<html><p>Version: %4</p><p>Author: %1 (%2)</p><p>License: %3</p></html>")
                 .arg(m_appletItem->author())
+                .arg(m_appletItem->email())
                 .arg(m_appletItem->license())
-                .arg(m_appletItem->email()));
+                .arg(m_appletItem->version())
+                );
 
     } else {
         m_iconWidget->setIcon("plasma");

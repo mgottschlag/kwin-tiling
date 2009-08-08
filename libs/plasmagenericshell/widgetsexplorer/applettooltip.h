@@ -40,7 +40,7 @@ class AppletInfoWidget : public QGraphicsWidget {
 
         Plasma::Label   * m_aboutLabel;
         Plasma::Label   * m_actionsLabel;
-        Plasma::Label   * m_authorLabel;
+        Plasma::Label   * m_detailsLabel;
 
         // Plasma::IconWidget * m_infoButton;
 };
