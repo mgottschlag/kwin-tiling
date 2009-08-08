@@ -66,49 +66,72 @@ AppletInfoWidget::~AppletInfoWidget()
 
 void AppletInfoWidget::init()
 {
-    m_iconWidget = new Plasma::IconWidget();
+    m_mainLayout = new QGraphicsLinearLayout();
+    m_mainLayout->setOrientation(Qt::Vertical);
+
+    m_iconWidget   = new Plasma::IconWidget();
+    m_nameLabel    = new Plasma::Label();
+    m_tabs         = new Plasma::TabBar();
+
+    m_aboutLabel   = new Plasma::Label();
+    m_actionsLabel = new Plasma::Label();
+    m_authorLabel  = new Plasma::Label();
+
+    // main layout init
+    QGraphicsLinearLayout * headerLayout = new QGraphicsLinearLayout();
+    headerLayout->setOrientation(Qt::Horizontal);
+    headerLayout->addItem(m_iconWidget);
+    headerLayout->addItem(m_nameLabel);
+    m_mainLayout->addItem(headerLayout);
+
+    m_mainLayout->addItem(m_tabs);
+
+    m_mainLayout->setContentsMargins(0, 0, 0, 0);
+
+    m_tabs->setPreferredSize(250, 150);
+
+    // header init
     m_iconWidget->setAcceptHoverEvents(false);
     m_iconWidget->setAcceptedMouseButtons(false);
     m_iconWidget->setMinimumSize(IconSize(KIconLoader::Desktop), IconSize(KIconLoader::Desktop));
     m_iconWidget->setMaximumSize(IconSize(KIconLoader::Desktop), IconSize(KIconLoader::Desktop));
 
-    m_nameLabel = new Plasma::Label();
     QFont nameFont = m_nameLabel->nativeWidget()->font();
     nameFont.setBold(true);
     nameFont.setPointSize(1.2 * nameFont.pointSize());
     m_nameLabel->nativeWidget()->setFont(nameFont);
     m_nameLabel->nativeWidget()->setScaledContents(true);
-    // m_nameLabel->nativeWidget()->setWordWrap(true);
-    // m_nameLabel->setMinimumSize(0,0);
+    m_nameLabel->setMaximumHeight(m_iconWidget->maximumHeight());
 
-    m_descriptionLabel = new Plasma::Label();
-    QFont descriptionFont = m_descriptionLabel->nativeWidget()->font();
-    descriptionFont.setPointSize(1.2 * descriptionFont.pointSize());
-    m_descriptionLabel->nativeWidget()->setFont(descriptionFont);
-    m_descriptionLabel->setScaledContents(true);
-    m_descriptionLabel->nativeWidget()->setWordWrap(true);
-    // m_descriptionLabel->setMinimumSize(0,0);
+    // about tab
+    m_tabs->addTab(i18n("About"), m_aboutLabel);
 
-    m_infoButton = new Plasma::IconWidget();
-    m_infoButton->setIcon("help-about");
-    m_infoButton->setMinimumSize(IconSize(KIconLoader::MainToolbar), IconSize(KIconLoader::MainToolbar));
-    m_infoButton->setMaximumSize(IconSize(KIconLoader::MainToolbar), IconSize(KIconLoader::MainToolbar));
-    connect(m_infoButton, SIGNAL(clicked()), this, SLOT(onInfoButtonClick()));
+    // actions tab
+    m_tabs->addTab(i18n("Actions"), m_actionsLabel);
 
-    m_linearLayout = new QGraphicsLinearLayout();
-    m_linearLayout->setOrientation(Qt::Horizontal);
-    QGraphicsLinearLayout *vLayout = new QGraphicsLinearLayout();
-    vLayout->setOrientation(Qt::Vertical);
+    // author tab
+    m_tabs->addTab(i18n("Author"), m_authorLabel);
 
-    m_linearLayout->addItem(m_iconWidget);
-    vLayout->addItem(m_nameLabel);
-    vLayout->addItem(m_descriptionLabel);
-    m_linearLayout->addItem(vLayout);
-    m_linearLayout->addItem(m_infoButton);
+    // m_infoButton = new Plasma::IconWidget();
+    // m_infoButton->setIcon("help-about");
+    // m_infoButton->setMinimumSize(IconSize(KIconLoader::MainToolbar), IconSize(KIconLoader::MainToolbar));
+    // m_infoButton->setMaximumSize(IconSize(KIconLoader::MainToolbar), IconSize(KIconLoader::MainToolbar));
+    // connect(m_infoButton, SIGNAL(clicked()), this, SLOT(onInfoButtonClick()));
 
-    setLayout(m_linearLayout);
+    // m_linearLayout = new QGraphicsLinearLayout();
+    // m_linearLayout->setOrientation(Qt::Horizontal);
+    // QGraphicsLinearLayout *vLayout = new QGraphicsLinearLayout();
+    // vLayout->setOrientation(Qt::Vertical);
 
-    m_linearLayout->setAlignment(m_infoButton, Qt::AlignRight);
+    // m_linearLayout->addItem(m_iconWidget);
+    // vLayout->addItem(m_nameLabel);
+    // vLayout->addItem(m_descriptionLabel);
+    // m_linearLayout->addItem(vLayout);
+    // m_linearLayout->addItem(m_infoButton);
+
+    setLayout(m_mainLayout);
+
+    //m_mainLayout->setAlignment(m_infoButton, Qt::AlignRight);
 }
 
 void AppletInfoWidget::setAppletItem(PlasmaAppletItem *appletItem)
@@ -120,28 +143,30 @@ void AppletInfoWidget::updateInfo()
 {
     if(m_appletItem != 0) {
         m_iconWidget->setIcon(m_appletItem->icon());
-        // m_descriptionLabel->nativeWidget()->setMinimumSize(0,0);
-        m_descriptionLabel->setText(m_appletItem->description());
-        qDebug() << "minimum size hint: " << m_descriptionLabel->nativeWidget()->minimumSizeHint();
-        // m_descriptionLabel->nativeWidget()->setMinimumSize(m_descriptionLabel->nativeWidget()->minimumSizeHint());
-        // m_descriptionLabel->nativeWidget()->setMaximumSize(m_descriptionLabel->nativeWidget()->minimumSizeHint());
-        // m_nameLabel->nativeWidget()->setMinimumSize(0,0);
         m_nameLabel->setText(m_appletItem->name());
-        // m_nameLabel->nativeWidget()->setMinimumSize(m_nameLabel->nativeWidget()->minimumSizeHint());
-        // m_nameLabel->nativeWidget()->setMaximumSize(m_nameLabel->nativeWidget()->minimumSizeHint());
+
+        m_aboutLabel->setText(
+            i18n("Version: %1").arg(m_appletItem->version()) + "\n\n" +
+            m_appletItem->description());
+
+        m_authorLabel->setText(
+            i18n("<html><p>Author: %1</p><p>License: %2</p><p>Please report bugs to: <a href=\"mailto:%3\">%3</a></p></html>")
+                .arg(m_appletItem->author())
+                .arg(m_appletItem->license())
+                .arg(m_appletItem->email()));
+
     } else {
-        m_iconWidget->setIcon("clock");
-        m_descriptionLabel->setText("applet description");
-        m_nameLabel->setText("nameless applet");
+        m_iconWidget->setIcon("plasma");
+        m_nameLabel->setText("Unknown applet");
     }
 
     // m_linearLayout->invalidate();
-    m_linearLayout->activate();
+    m_mainLayout->activate();
     // QSize nameSize = m_nameLabel->nativeWidget()->sizeHint();
     // QSize descSize = m_descriptionLabel->nativeWidget()->sizeHint();
     // qDebug() << "size hint " << nameSize << descSize;
 
-    QSizeF prefSize = m_linearLayout->sizeHint(Qt::PreferredSize) + QSizeF(32, 32);
+    QSizeF prefSize = m_mainLayout->sizeHint(Qt::PreferredSize) + QSizeF(32, 32);
     resize(prefSize);
 }
 

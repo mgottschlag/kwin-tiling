@@ -44,13 +44,20 @@ public:
 
     PlasmaAppletItem(PlasmaAppletItemModel *model, const QMap<QString, QVariant>& info, FilterFlags flags = NoFilter, QMap<QString, QVariant> *extraAttrs = NULL);
 
-    virtual QString name() const;
     QString pluginName() const;
+    virtual QString name() const;
     virtual QString description() const;
+    virtual QString license() const;
+    virtual QString website() const;
+    virtual QString version() const;
+    virtual QString author() const;
+    virtual QString email() const;
+
     virtual int running() const;
     virtual bool used() const;
     virtual void setUsed(bool used);
     virtual void setFavorite(bool favorite);
+
     //set how many instances of this applet are running
     virtual void setRunning(int count);
     virtual bool passesFiltering(const KCategorizedItemsViewModels::Filter & filter) const;

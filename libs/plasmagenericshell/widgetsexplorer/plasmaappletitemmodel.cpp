@@ -38,11 +38,8 @@ PlasmaAppletItem::PlasmaAppletItem(PlasmaAppletItemModel *model,
     setText(info["name"].toString() + " - "+ info["category"].toString());
     setData(attrs);
     setIcon(qvariant_cast<QIcon>(info["icon"]));
-}
 
-QString PlasmaAppletItem::name() const
-{
-    return data().toMap()["name"].toString();
+    qDebug() << data();
 }
 
 QString PlasmaAppletItem::pluginName() const
@@ -50,9 +47,39 @@ QString PlasmaAppletItem::pluginName() const
     return data().toMap()["pluginName"].toString();
 }
 
+QString PlasmaAppletItem::name() const
+{
+    return data().toMap()["name"].toString();
+}
+
 QString PlasmaAppletItem::description() const
 {
     return data().toMap()["description"].toString();
+}
+
+QString PlasmaAppletItem::license() const
+{
+    return data().toMap()["license"].toString();
+}
+
+QString PlasmaAppletItem::website() const
+{
+    return data().toMap()["website"].toString();
+}
+
+QString PlasmaAppletItem::version() const
+{
+    return data().toMap()["version"].toString();
+}
+
+QString PlasmaAppletItem::author() const
+{
+    return data().toMap()["author"].toString();
+}
+
+QString PlasmaAppletItem::email() const
+{
+    return data().toMap()["email"].toString();
 }
 
 int PlasmaAppletItem::running() const
@@ -165,6 +192,11 @@ void PlasmaAppletItemModel::populateModel()
         attrs.insert("pluginName", info.pluginName());
         attrs.insert("description", info.comment());
         attrs.insert("category", info.category().toLower());
+        attrs.insert("license", info.fullLicense().name(KAboutData::FullName));
+        attrs.insert("website", info.website());
+        attrs.insert("version", info.version());
+        attrs.insert("author", info.author());
+        attrs.insert("email", info.email());
         attrs.insert("icon",
                      static_cast<QIcon>(KIcon(info.icon().isEmpty() ?
                                               "application-x-plasma" : info.icon())));

@@ -9,6 +9,7 @@
 
 #include <plasma/widgets/iconwidget.h>
 #include <plasma/widgets/label.h>
+#include <plasma/widgets/tabbar.h>
 #include <plasma/dialog.h>
 
 class AppletInfoWidget : public QGraphicsWidget {
@@ -30,13 +31,18 @@ class AppletInfoWidget : public QGraphicsWidget {
         void infoButtonClicked(const QString &apluginName);
 
     private:
-        PlasmaAppletItem *m_appletItem;
-        QGraphicsLinearLayout *m_linearLayout;
+        PlasmaAppletItem * m_appletItem;
+        QGraphicsLinearLayout * m_mainLayout;
 
-        Plasma::Label *m_descriptionLabel;
-        Plasma::IconWidget *m_iconWidget;
-        Plasma::IconWidget *m_infoButton;
-        Plasma::Label *m_nameLabel;
+        Plasma::IconWidget * m_iconWidget;
+        Plasma::Label  * m_nameLabel;
+        Plasma::TabBar * m_tabs;
+
+        Plasma::Label   * m_aboutLabel;
+        Plasma::Label   * m_actionsLabel;
+        Plasma::Label   * m_authorLabel;
+
+        // Plasma::IconWidget * m_infoButton;
 };
 
 class AppletToolTipWidget : public Plasma::Dialog {
