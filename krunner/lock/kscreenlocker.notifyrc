@@ -2,6 +2,7 @@
 IconName=system-lock-screen
 Comment=The KDE Screen Saver
 Comment[de]=Der Bildschirmschoner von KDE
+Comment[is]=KDE skjásvæfa
 Comment[ja]=KDE スクリーンセーバー
 Comment[km]=ធាតុរក្សាអេក្រង់​របស់ KDE
 Comment[ko]=KDE 화면 보호기
@@ -22,6 +23,7 @@ Comment[zh_TW]=KDE 螢幕保護程式
 [Event/savingstarted]
 Name=Screen saver started
 Name[de]=Der Bildschirmschoner wurde gestartet.
+Name[is]=Skjásvæfa ræst
 Name[ja]=スクリーンセーバー開始
 Name[km]=បាន​ចាប់ផ្ដើម​ធាតុរក្សា​អេក្រង់
 Name[ko]=화면 보호기 시작됨
@@ -40,6 +42,7 @@ Name[x-test]=xxScreen saver startedxx
 Name[zh_TW]=螢幕保護程式已啟動
 Comment=The screen saver has been started
 Comment[de]=Der Bildschirmschoner wurde gestartet.
+Comment[is]=Skjáhvílan hefur verið ræst
 Comment[ja]=スクリーンセーバーが開始されました
 Comment[km]=ធាតុ​រក្សាអេក្រង់​ត្រូវ​បាន​ចាប់ផ្ដើម
 Comment[ko]=화면 보호기 시작됨
