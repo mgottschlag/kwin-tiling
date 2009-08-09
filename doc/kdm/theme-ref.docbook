@@ -960,6 +960,21 @@ Screenshot=screenshot.png
             -->
 
             <para>
+              <literal>scalemode</literal> specifies how to adjust the size of
+              images which do not match the element's size.
+              <literal>free</literal> (the default) means to simply scale the
+              image to the right size, possibly distorting its aspect ratio.
+              The other two modes maintain the image's aspect ratio:
+              <literal>fit</literal> means to zoom the image to the maximal size
+              which fits into the element's geometry. The image will be centered.
+              The remaining area will not be painted by this element, so it should
+              be placed on top of a solid-filled <literal>rect</literal>.
+              <literal>crop</literal> means to zoom the image to the minimal size
+              which completely fills the element's geometry. The image will be
+              clipped symmetrically.
+            </para>
+
+            <para>
               <literal>tint</literal> and <literal>alpha</literal> form a
               color specification like in <literal>rect</literal> items.
               Each pixel of the image is multiplied with this color

@@ -68,6 +68,12 @@ KdmPixmap::definePixmap( const QDomElement &el, PixmapStruct::PixmapClass &pClas
 	if (fileName.isEmpty())
 		return;
 
+	QString aspect = el.attribute( "scalemode", "free" );
+	pClass.aspectMode =
+			(aspect == "fit") ? PixmapStruct::PixmapClass::AspectFit :
+			(aspect == "crop") ? PixmapStruct::PixmapClass::AspectCrop :
+			PixmapStruct::PixmapClass::AspectIgnore;
+
 	pClass.fullpath = fileName;
 	if (fileName.at( 0 ) != '/')
 		pClass.fullpath = themer()->baseDir() + '/' + fileName;
@@ -163,6 +169,26 @@ KdmPixmap::setGeometry( QStack<QSize> &parentSizes, const QRect &newGeometry, bo
 	updateSize( pixmap.normal );
 }
 
+void
+KdmPixmap::calcTargetArea( PixmapStruct::PixmapClass &pClass, const QSize &sh )
+{
+	if (pClass.aspectMode == PixmapStruct::PixmapClass::AspectIgnore) {
+		pClass.targetArea = area;
+	} else {
+		int ww, wh;
+		int sx = area.width() * 100000 / sh.width();
+		int sy = area.height() * 100000 / sh.height();
+		if ((sx > sy) == (pClass.aspectMode == PixmapStruct::PixmapClass::AspectFit)) {
+			wh = area.height();
+			ww = area.height() * sh.width() / sh.height();
+		} else {
+			ww = area.width();
+			wh = area.width() * sh.height() / sh.width();
+		}
+		QPoint c = area.center();
+		pClass.targetArea = QRect( c.x() - ww / 2, c.y() - wh / 2, ww, wh );
+	}
+}
 
 void
 KdmPixmap::drawContents( QPainter *p, const QRect &r )
@@ -174,7 +200,8 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 
 		if (pClass.svgImage) {
 			if (loadSvg( pClass )) {
-				scaledImage = QImage( area.size(), QImage::Format_ARGB32 );
+				calcTargetArea( pClass, pClass.svgSizeHint );
+				scaledImage = QImage( pClass.targetArea.size(), QImage::Format_ARGB32 );
 				scaledImage.fill( 0 );
 				QPainter pa( &scaledImage );
 				if (pClass.svgElement.isEmpty())
@@ -186,11 +213,15 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 		} else {
 			// use the loaded pixmap or a scaled version if needed
 			if (area.size() != pClass.image.size()) { // true for isNull
-				if (loadPixmap( pClass ))
-					scaledImage = pClass.image.scaled( area.size(),
+				if (loadPixmap( pClass )) {
+					calcTargetArea( pClass, pClass.image.size() );
+					scaledImage = pClass.image.scaled( pClass.targetArea.size(),
 						Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
-			} else
+				}
+			} else {
+				pClass.targetArea = area;
 				scaledImage = pClass.image;
+			}
 		}
 
 		if (scaledImage.isNull()) {
@@ -200,7 +231,9 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 
 		pClass.readyPixmap = QPixmap::fromImage( scaledImage );
 	}
-	p->drawPixmap( r.topLeft(), pClass.readyPixmap, QRect( r.topLeft() - area.topLeft(), r.size() ) );
+	QRect tr = r.intersected( pClass.targetArea );
+	p->drawPixmap( tr.topLeft(), pClass.readyPixmap,
+	               QRect( tr.topLeft() - pClass.targetArea.topLeft(), tr.size() ) );
 }
 
 void

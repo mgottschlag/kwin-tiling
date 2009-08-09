@@ -55,16 +55,18 @@ protected:
 	struct PixmapStruct {
 		struct PixmapClass {
 			PixmapClass()
-				: svgRenderer(0), present(false), svgImage(false) {}
+				: svgRenderer(0), present(false), svgImage(false), aspectMode(AspectIgnore) {}
 			QString fullpath;
 			QImage image;
 			KSvgRenderer *svgRenderer;
 			QPixmap readyPixmap;
+			QRect targetArea;
 			QColor tint;
 			bool present;
 			bool svgImage;
 			QString svgElement;
 			QSize svgSizeHint;
+			enum AspectMode { AspectIgnore, AspectFit, AspectCrop } aspectMode;
 		} normal, active, prelight;
 	} pixmap;
 
@@ -75,6 +77,7 @@ private:
 	void definePixmap( const QDomElement &el, PixmapStruct::PixmapClass &pc );
 	bool loadPixmap( PixmapStruct::PixmapClass &pc );
 	bool loadSvg( PixmapStruct::PixmapClass &pc );
+	void calcTargetArea( PixmapStruct::PixmapClass &pClass, const QSize &sh );
 	void applyTint( PixmapStruct::PixmapClass &pClass, QImage &img );
 	void updateSize( PixmapStruct::PixmapClass &pClass );
 	PixmapStruct::PixmapClass &getClass( ItemState sts );
