@@ -7,8 +7,8 @@
 	       text-color="#0b678c" disabled-text-color="#111111"/>
 	       
 	<item type="pixmap" id="background" background="true">
-		<normal file="1280x800.jpg"/>
-		<pos anchor="c" x="50%" y="50%" width="scale" height="100%"/>
+		<normal file="1280x800.jpg" scalemode="crop"/>
+		<pos anchor="c" x="50%" y="50%" width="100%" height="100%"/>
 	</item>
 
 	<item type="pixmap" id="system-session">
