@@ -130,7 +130,7 @@
  <connections>
   <connection>
    <sender>iconSizeSlider</sender>
-   <signal>sliderMoved(int)</signal>
+   <signal>valueChanged(int)</signal>
    <receiver>iconSizeSpin</receiver>
    <slot>setValue(int)</slot>
    <hints>
@@ -162,7 +162,7 @@
   </connection>
   <connection>
    <sender>dialogIconSizeSlider</sender>
-   <signal>sliderMoved(int)</signal>
+   <signal>valueChanged(int)</signal>
    <receiver>dialogIconSizeSpin</receiver>
    <slot>setValue(int)</slot>
    <hints>
