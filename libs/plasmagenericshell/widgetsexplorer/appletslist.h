@@ -19,18 +19,21 @@ class AppletsList : public QGraphicsWidget
     Q_OBJECT
 
 public:
-    AppletsList(QGraphicsItem *parent = 0);
+    AppletsList(Qt::Orientation orientation = Qt::Horizontal, QGraphicsItem *parent = 0);
     ~AppletsList();
 
     QList < KCategorizedItemsViewModels::AbstractItem * > selectedItems() const;
     void setItemModel(QStandardItemModel *model);
     void setFilterModel(QStandardItemModel *model);
+    void setOrientation(Qt::Orientation orientation);
 
     enum ScrollPolicy {
         Right = 0,
         Left = 1,
-        Wheel = 2,
-        Button = 3
+        Up = 2,
+        Down = 3,
+        Wheel = 4,
+        Button = 5
     };
 
 private:
@@ -55,10 +58,12 @@ private:
     int findLastVisibleApplet(int lastVisibleXOnList);
     QRectF visibleListRect();
 
-    void scroll(bool right, bool byWheel);
+    void scroll(ScrollPolicy side, ScrollPolicy how);
     void scrollRight(int step, QRectF visibleRect);
     void scrollLeft(int step, QRectF visibleRect);
     void wheelEvent(QGraphicsSceneWheelEvent *event);
+
+    void adjustContentsAccordingToOrientation();
 
 private slots:
     void searchTermChanged(const QString &text);
@@ -103,11 +108,12 @@ private:
     QGraphicsLinearLayout *m_appletListLinearLayout;
     QGraphicsWidget *m_appletsListWidget;
     QGraphicsWidget *m_appletsListWindowWidget;
-
     QGraphicsLinearLayout *m_arrowsLayout;
 
-    Plasma::PushButton *m_rightArrow;
-    Plasma::PushButton *m_leftArrow;
+    Plasma::PushButton *m_downRightArrow;
+    Plasma::PushButton *m_upLeftArrow;
+
+    Qt::Orientation m_orientation;
 
     /**
      * One single tootip to show applets info
@@ -128,13 +134,14 @@ private:
     QString m_searchString;
 
     int arrowClickStep;
-    int scrollStep;
+    int wheelStep;
 
     /* TODO: Remove this and animate using plasma's
      * animation framework when it is created */
     QTimeLine scrollTimeLine;
     qreal scrollTo;
     qreal scrollFrom;
+
 };
 
 #endif //APPLETSLIST_H

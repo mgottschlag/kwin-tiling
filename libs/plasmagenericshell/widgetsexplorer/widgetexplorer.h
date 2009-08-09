@@ -53,6 +53,19 @@ public:
      */
     Plasma::Corona *corona() const;
 
+    /**
+     * Set the orientation of the widgets explorer
+     *
+     * @arg the new orientation
+     */
+    void setOrientation(Qt::Orientation orientation);
+
+    void resizeEvent(QGraphicsSceneResizeEvent *event);
+
+Q_SIGNALS:
+
+    void orientationChanged(Qt::Orientation orientation);
+
 public Q_SLOTS:
     /**
      * Adds currently selected applets

@@ -22,14 +22,15 @@
 
 using namespace KCategorizedItemsViewModels;
 
-AppletsList::AppletsList(QGraphicsItem *parent)
+AppletsList::AppletsList(Qt::Orientation orientation, QGraphicsItem *parent)
         :QGraphicsWidget(parent)
 {
-    init();
     arrowClickStep = 0;
-    scrollStep = 0;
+    wheelStep = 0;
     m_selectedItem = 0;
     m_currentAppearingAppletsOnList = new QList<AppletIconWidget *>();
+    m_orientation = orientation;
+
     connect(this, SIGNAL(listScrolled()), this, SLOT(manageArrows()));
 
     scrollTimeLine.setFrameRange(0, 100);
@@ -43,6 +44,8 @@ AppletsList::AppletsList(QGraphicsItem *parent)
     connect(m_toolTip, SIGNAL(enter()), this, SLOT(onToolTipEnter()));
     connect(m_toolTip, SIGNAL(leave()), this, SLOT(onToolTipLeave()));
     connect(m_toolTip, SIGNAL(infoButtonClicked(QString)), this, SIGNAL(infoButtonClicked(QString)));
+
+    init();
 }
 
 AppletsList::~AppletsList()
@@ -51,49 +54,67 @@ AppletsList::~AppletsList()
 
 void AppletsList::init()
 {
-    m_leftArrow = new Plasma::PushButton();
-    m_leftArrow->nativeWidget()->setIcon(KIcon("arrow-left"));
-    m_leftArrow->setMaximumSize(IconSize(KIconLoader::Panel), IconSize(KIconLoader::Panel));
-    m_leftArrow->setAttribute(Qt::WA_NoSystemBackground);
+    QGraphicsLinearLayout *listToWindowLayout = new QGraphicsLinearLayout();
 
-    m_rightArrow = new Plasma::PushButton();
-    m_rightArrow->nativeWidget()->setIcon(KIcon("arrow-right"));
-    m_rightArrow->setMaximumSize(IconSize(KIconLoader::Panel), IconSize(KIconLoader::Panel));
+    m_upLeftArrow = new Plasma::PushButton();
+    m_upLeftArrow->setMaximumSize(IconSize(KIconLoader::Panel), IconSize(KIconLoader::Panel));
 
-    connect(m_rightArrow, SIGNAL(clicked()), this, SLOT(onRightArrowClick()));
-    connect(m_leftArrow, SIGNAL(clicked()), this, SLOT(onLeftArrowClick()));
+    m_downRightArrow = new Plasma::PushButton();
+    m_downRightArrow->setMaximumSize(IconSize(KIconLoader::Panel), IconSize(KIconLoader::Panel));
+
+    connect(m_downRightArrow, SIGNAL(clicked()), this, SLOT(onRightArrowClick()));
+    connect(m_upLeftArrow, SIGNAL(clicked()), this, SLOT(onLeftArrowClick()));
 
     m_appletsListWidget = new QGraphicsWidget();
-    m_appletListLinearLayout = new QGraphicsLinearLayout(Qt::Horizontal);
+    m_appletListLinearLayout = new QGraphicsLinearLayout(m_orientation);
     m_appletsListWidget->setLayout(m_appletListLinearLayout);
 
     m_appletsListWindowWidget = new QGraphicsWidget();
     m_appletsListWindowWidget->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
+    listToWindowLayout->addItem(m_appletListLinearLayout);
+    listToWindowLayout->setAlignment(m_appletListLinearLayout, Qt::AlignVCenter | Qt::AlignHCenter);
+    m_appletsListWindowWidget->setLayout(listToWindowLayout);
     m_appletsListWidget->setParentItem(m_appletsListWindowWidget);
 
-    m_arrowsLayout = new QGraphicsLinearLayout();
+    m_arrowsLayout = new QGraphicsLinearLayout(m_orientation);
 
-    m_arrowsLayout->addItem(m_leftArrow);
+    m_arrowsLayout->addItem(m_upLeftArrow);
     m_arrowsLayout->addItem(m_appletsListWindowWidget);
-    m_arrowsLayout->addItem(m_rightArrow);
+    m_arrowsLayout->addItem(m_downRightArrow);
 
-    m_arrowsLayout->setAlignment(m_rightArrow, Qt::AlignRight);
-    m_arrowsLayout->setAlignment(m_leftArrow, Qt::AlignLeft);
+    m_arrowsLayout->setAlignment(m_downRightArrow, Qt::AlignVCenter | Qt::AlignHCenter);
+    m_arrowsLayout->setAlignment(m_upLeftArrow, Qt::AlignVCenter | Qt::AlignHCenter);
 
-    m_arrowsLayout->setAlignment(m_rightArrow, Qt::AlignVCenter);
-    m_arrowsLayout->setAlignment(m_leftArrow, Qt::AlignVCenter);
+    m_arrowsLayout->setAlignment(m_appletsListWindowWidget, Qt::AlignVCenter | Qt::AlignHCenter);
+
+    if(m_orientation == Qt::Horizontal) {
+        m_upLeftArrow->nativeWidget()->setIcon(KIcon("go-previous"));
+        m_downRightArrow->nativeWidget()->setIcon(KIcon("go-next"));
+    } else {
+        m_upLeftArrow->nativeWidget()->setIcon(KIcon("go-up"));
+        m_downRightArrow->nativeWidget()->setIcon(KIcon("go-down"));
+    }
 
     setLayout(m_arrowsLayout);
 }
 
 void AppletsList::resizeEvent(QGraphicsSceneResizeEvent *event) {
-    Q_UNUSED(event)
-    m_appletsListWindowWidget->setMinimumHeight(m_appletsListWidget->geometry().height());
-    m_appletsListWindowWidget->setMaximumHeight(m_appletsListWidget->geometry().height());
+
+    QSizeF newSize = contentsRect().size();
+
+    qDebug() << newSize << event->newSize() << m_arrowsLayout->contentsRect().size();
+
+    if(m_orientation == Qt::Horizontal) {
+        m_appletsListWindowWidget->setMinimumHeight(m_appletsListWidget->size().height());
+        m_appletsListWindowWidget->setMaximumHeight(m_appletsListWidget->size().height());
+    } else {
+        m_appletsListWindowWidget->setMinimumWidth(newSize.width());
+        m_appletsListWindowWidget->setMaximumWidth(newSize.width());
+    }
 
     int maxVisibleIconsOnList = maximumAproxVisibleIconsOnList();
     arrowClickStep = ceil(maxVisibleIconsOnList/4);
-    scrollStep = ceil(maxVisibleIconsOnList/2);
+    wheelStep = ceil(maxVisibleIconsOnList/2);
     manageArrows();
 }
 
@@ -119,6 +140,29 @@ void AppletsList::setItemModel(QStandardItemModel *model)
 void AppletsList::setFilterModel(QStandardItemModel *model)
 {
     m_modelFilters = model;
+}
+
+void AppletsList::setOrientation(Qt::Orientation orientation)
+{
+    m_orientation = orientation;
+    adjustContentsAccordingToOrientation();
+}
+
+void AppletsList::adjustContentsAccordingToOrientation()
+{
+    m_appletListLinearLayout->invalidate();
+    m_appletListLinearLayout->setOrientation(m_orientation);
+    m_arrowsLayout->setOrientation(m_orientation);
+
+    if(m_orientation == Qt::Horizontal) {
+        m_upLeftArrow->nativeWidget()->setIcon(KIcon("go-previous"));
+        m_downRightArrow->nativeWidget()->setIcon(KIcon("go-next"));
+    } else {
+        m_upLeftArrow->nativeWidget()->setIcon(KIcon("go-up"));
+        m_downRightArrow->nativeWidget()->setIcon(KIcon("go-down"));
+    }
+
+    m_appletListLinearLayout->activate();
 }
 
 void AppletsList::filterChanged(int index)
@@ -272,8 +316,7 @@ void AppletsList::updateList()
     AppletIconWidget *appletIconWidget;
 
     m_appletsListWidget->setLayout(NULL);
-    m_appletListLinearLayout = new QGraphicsLinearLayout();
-    m_appletListLinearLayout->setContentsMargins(0, 0, 0, 0);
+    m_appletListLinearLayout = new QGraphicsLinearLayout(m_orientation);
 
     eraseList();
 
@@ -295,41 +338,45 @@ void AppletsList::updateList()
 
 void AppletsList::wheelEvent(QGraphicsSceneWheelEvent *event) {
     //if the scroll is right or left
-    bool right;
-    bool byWheel = true;
+    ScrollPolicy side;
     bool canScroll;
 
-    right = event->delta() < 0 ? true : false;
+    side = event->delta() < 0 ? AppletsList::Right : AppletsList::Left;
 
-    if(right) {
-        canScroll = m_rightArrow->isEnabled() ? true : false;
+    if(side == AppletsList::Right) {
+        canScroll = m_downRightArrow->isEnabled() ? true : false;
     } else {
-        canScroll = m_leftArrow->isEnabled() ? true : false;
+        canScroll = m_upLeftArrow->isEnabled() ? true : false;
     }
 
     if(canScroll) {
-        scroll(right, byWheel);
+        scroll(side, AppletsList::Wheel);
     }
 }
 
 void AppletsList::onRightArrowClick() {
-    scroll(true, false);
+    scroll(AppletsList::Right, AppletsList::Button);
 }
 
 void AppletsList::onLeftArrowClick() {
-    scroll(false, false);
+    scroll(AppletsList::Left, AppletsList::Button);
 }
 
-void AppletsList::scroll(bool right, bool byWheel) {
+void AppletsList::scroll(ScrollPolicy side, ScrollPolicy how) {
     QRectF visibleRect = visibleListRect();
-    int step = byWheel ? scrollStep : arrowClickStep;
+    int step = (how == AppletsList::Wheel) ? wheelStep : arrowClickStep;
 
     m_toolTip->setVisible(false);
 
-    if(right) {
-        scrollRight(step, visibleRect);
-    } else {
-        scrollLeft(step, visibleRect);
+    switch(side) {
+        case AppletsList::Right:
+            scrollRight(step, visibleRect);
+            break;
+        case AppletsList::Left:
+            scrollLeft(step, visibleRect);
+            break;
+        default:
+            break;
     }
 }
 
@@ -457,8 +504,8 @@ void AppletsList::manageArrows() {
     qreal listWidthVar = m_appletListLinearLayout->preferredSize().width();
 
     if(listWidthVar <= m_appletsListWindowWidget->geometry().width()) {
-        m_leftArrow->setEnabled(false);
-        m_rightArrow->setEnabled(false);
+        m_upLeftArrow->setEnabled(false);
+        m_downRightArrow->setEnabled(false);
 
     } else {
         visibleRect = visibleListRect();
@@ -466,15 +513,15 @@ void AppletsList::manageArrows() {
         lastVisibleXOnList = firstVisibleXOnList + visibleRect.width();
 
         if(firstVisibleXOnList <= 0) {
-            m_leftArrow->setEnabled(false);
+            m_upLeftArrow->setEnabled(false);
         } else {
-            m_leftArrow->setEnabled(true);
+            m_upLeftArrow->setEnabled(true);
         }
 
         if(lastVisibleXOnList >= listWidthVar) {
-            m_rightArrow->setEnabled(false);
+            m_downRightArrow->setEnabled(false);
         } else {
-            m_rightArrow->setEnabled(true);
+            m_downRightArrow->setEnabled(true);
         }
     }
 }

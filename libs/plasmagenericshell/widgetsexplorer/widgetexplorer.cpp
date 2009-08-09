@@ -44,10 +44,13 @@ public:
     }
 
     void initFilters();
-    void init();
+    void init(Qt::Orientation orientation);
     void initPushButtonWidgetMenu();
     void initRunningApplets();
     void containmentDestroyed();
+    void setOrientation(Qt::Orientation orientation);
+    void adjustContentsSize();
+    void setMainSize();
 
     /**
      * Tracks a new running applet
@@ -59,6 +62,7 @@ public:
      */
     void appletRemoved(Plasma::Applet *applet);
 
+    Qt::Orientation orientation;
     WidgetExplorer *q;
     QString application;
     Plasma::Containment *containment;
@@ -88,7 +92,7 @@ public:
      * Widget that contains the search and categories filters
      */
     FilteringWidget *filteringWidget;
-    FilteringWidgetWithTabs *filteringWidgetWithTabs;
+    QGraphicsLinearLayout *mainLayout;
 
 };
 
@@ -115,66 +119,102 @@ void WidgetExplorerPrivate::initFilters()
     }
 }
 
-void WidgetExplorerPrivate::init()
+void WidgetExplorerPrivate::init(Qt::Orientation orient)
 {
-    // **** find a fancier way to use screen ****
-    QDesktopWidget *screen = new QDesktopWidget();
-    q->setMinimumWidth(screen->screenGeometry(-1).width());
-    q->setMaximumWidth(screen->screenGeometry(-1).width());
-    q->setMinimumHeight(170);
-    q->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
-    q->setAttribute(Qt::WA_TranslucentBackground);
+    //init widgets
+    mainLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    orientation = orient;
+    filteringWidget = new FilteringWidget(orientation);
+    appletsListWidget = new AppletsList(orientation);
 
-    QGraphicsLinearLayout *mainLinearLayout = new QGraphicsLinearLayout(Qt::Horizontal, 0);
+    setMainSize();
 
-    filteringWidget = new FilteringWidget();
-    filteringWidget->setMaximumWidth(q->contentsRect().width()/5);
-    filteringWidget->setMinimumWidth(q->contentsRect().width()/5);
-
-    filteringWidgetWithTabs = new FilteringWidgetWithTabs();
-
-    appletsListWidget = new AppletsList();
-
+    //connect
     //QObject::connect(appletsListWidget, SIGNAL(doubleClicked(const QModelIndex &)), q, SLOT(addApplet()));
     QObject::connect(appletsListWidget, SIGNAL(appletDoubleClicked(PlasmaAppletItem*)), q, SLOT(addApplet(PlasmaAppletItem*)));
     QObject::connect(appletsListWidget, SIGNAL(infoButtonClicked(QString)), q, SLOT(infoAboutApplet(QString)));
-    appletsListWidget->setMaximumHeight(q->contentsRect().height());
-    appletsListWidget->setMinimumHeight(q->contentsRect().height());
-
     QObject::connect(filteringWidget->textSearch()->nativeWidget(), SIGNAL(textChanged(QString)), appletsListWidget, SLOT(searchTermChanged(QString)));
-    QObject::connect(filteringWidgetWithTabs->textSearch()->nativeWidget(), SIGNAL(textChanged(QString)), appletsListWidget, SLOT(searchTermChanged(QString)));
+    QObject::connect(filteringWidget, SIGNAL(filterChanged(int)), appletsListWidget, SLOT(filterChanged(int)));
 
-    QGraphicsLinearLayout *vLayout = new QGraphicsLinearLayout(Qt::Vertical);
-    vLayout->addItem(filteringWidgetWithTabs);
+    //adding to layout
+    mainLayout->addItem(filteringWidget);
+    mainLayout->addItem(appletsListWidget);
+    mainLayout->setAlignment(appletsListWidget, Qt::AlignHCenter);
+    mainLayout->setAlignment(appletsListWidget, Qt::AlignVCenter);
 
-    mainLinearLayout->addItem(appletsListWidget);
-
-//    ***** comment the 2 lines below to remove the treeview of categories *****
-//    mainLinearLayout->addItem(filteringWidget);
-//    mainLinearLayout->setAlignment(filteringWidget, Qt::AlignRight);
-
-    mainLinearLayout->setAlignment(appletsListWidget, Qt::AlignVCenter);    
-    mainLinearLayout->setContentsMargins(5, 5, 5, 5);
-
-
-    vLayout->addItem(mainLinearLayout);
-
+    //filters & models
     initFilters();
-    filteringWidget->categoriesList()->setModel(&filterModel);
-    filteringWidgetWithTabs->categoriesList()->setModel(&filterModel);
-    vLayout->updateGeometry();
+    filteringWidget->setModel(&filterModel);
     appletsListWidget->setFilterModel(&filterModel);
-
-    QObject::connect(filteringWidget->categoriesList(), SIGNAL(filterChanged(int)), appletsListWidget, SLOT(filterChanged(int)));
-    QObject::connect(filteringWidgetWithTabs->categoriesList(), SIGNAL(filterChanged(int)), appletsListWidget, SLOT(filterChanged(int)));
-
-    // Other models
     appletsListWidget->setItemModel(&itemModel);
     initRunningApplets();
 
-    //q->setLayout(mainLinearLayout);
-    q->setLayout(vLayout);
+    q->setContentsMargins(15,15,15,15);
+    //set the layout
+    q->setLayout(mainLayout);
 
+}
+
+void WidgetExplorerPrivate::setMainSize()
+{
+    // **** find a fancier way to use screen ****
+    QDesktopWidget *screen = new QDesktopWidget();
+    QSize screenSize = screen->screenGeometry(-1).size();
+    qDebug() << "screen size " << screen->screenGeometry(-1).size();
+
+    if(orientation == Qt::Horizontal) {
+       q->setMinimumWidth(screenSize.width());
+       q->setMaximumWidth(screenSize.width());
+       q->setMinimumHeight(screenSize.height()/4);
+       q->setMaximumHeight(screenSize.height()/4);
+    } else {
+       q->setMinimumHeight(screenSize.height());
+       q->setMaximumHeight(screenSize.height());
+       q->setMinimumWidth(screenSize.width()/5);
+       q->setMaximumWidth(screenSize.width()/5);
+    }
+}
+
+void WidgetExplorerPrivate::adjustContentsSize()
+{
+    mainLayout->invalidate();
+
+    QSizeF contentsSize = q->contentsRect().size();
+    qDebug() << "contents size: " << contentsSize;
+
+    if(orientation == Qt::Horizontal) {
+        if(filteringWidget != 0) {
+            filteringWidget->setPreferredSize(-1, -1);
+        }
+
+        if(appletsListWidget != 0) {
+            appletsListWidget->setPreferredSize(-1,-1);
+//            appletsListWidget->setMaximumHeight(contentsSize.height()
+//                                                - filteringWidget->size().height());
+        }
+
+    } else {
+        if(filteringWidget != 0) {
+            filteringWidget->setMinimumHeight(contentsSize.height()/4);
+            filteringWidget->setMaximumHeight(contentsSize.height()/4);
+            filteringWidget->setMinimumWidth(contentsSize.width());
+            filteringWidget->setMaximumWidth(contentsSize.width());
+        }
+
+        if(appletsListWidget != 0) {
+            appletsListWidget->setMinimumWidth(contentsSize.width());
+            appletsListWidget->setMaximumWidth(contentsSize.width());
+        }
+    }
+    mainLayout->activate();
+}
+
+void WidgetExplorerPrivate::setOrientation(Qt::Orientation orient)
+{
+    orientation = orient;
+    filteringWidget->setListOrientation(orientation);
+    appletsListWidget->setOrientation(orientation);
+    setMainSize();
 }
 
 void WidgetExplorerPrivate::initPushButtonWidgetMenu()
@@ -281,9 +321,7 @@ WidgetExplorer::WidgetExplorer(QGraphicsItem *parent)
         :QGraphicsWidget(parent),
         d(new WidgetExplorerPrivate(this))
 {
-
-    d->init();
-
+    d->init(Qt::Horizontal);
     m_backgroundSvg = new Plasma::FrameSvg(this);
     m_backgroundSvg->setImagePath("widgets/translucentbackground");
 }
@@ -293,13 +331,24 @@ WidgetExplorer::~WidgetExplorer()
      delete d;
 }
 
+void WidgetExplorer::resizeEvent(QGraphicsSceneResizeEvent *event) {
+    Q_UNUSED(event);
+    d->adjustContentsSize();
+}
+
+void WidgetExplorer::setOrientation(Qt::Orientation orientation)
+{
+    d->setOrientation(orientation);
+    emit(orientationChanged(orientation));
+}
+
 void WidgetExplorer::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
  {
      QGraphicsWidget::paint(painter, option, widget);
-     m_backgroundSvg->resizeFrame(contentsRect().size());
-     m_backgroundSvg->paintFrame(painter, contentsRect().topLeft());
+     m_backgroundSvg->resizeFrame(size());
+     m_backgroundSvg->paintFrame(painter, pos());
      //again
-     m_backgroundSvg->paintFrame(painter, contentsRect().topLeft());
+     m_backgroundSvg->paintFrame(painter, pos());
  }
 
 void WidgetExplorer::setApplication(const QString &app)

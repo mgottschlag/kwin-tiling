@@ -12,15 +12,15 @@
 
 #include "kcategorizeditemsviewmodels_p.h"
 #include "plasmaappletitemmodel_p.h"
+#include "widgetexplorer.h"
 
-class FilteringList : public QGraphicsWidget
+class FilteringTreeView : public QGraphicsWidget
 {
-
     Q_OBJECT
 
     public:
-        explicit FilteringList(QGraphicsItem * parent = 0, Qt::WindowFlags wFlags = 0);
-        virtual ~FilteringList();
+        explicit FilteringTreeView(QGraphicsItem * parent = 0, Qt::WindowFlags wFlags = 0);
+        virtual ~FilteringTreeView();
 
         void init();
         void setModel(QStandardItemModel *model);
@@ -61,31 +61,38 @@ class FilteringTabs : public Plasma::TabBar
 
 class FilteringWidget : public QGraphicsWidget
 {
-
     Q_OBJECT
 
     public:
         explicit FilteringWidget(QGraphicsItem * parent = 0, Qt::WindowFlags wFlags = 0);
+        explicit FilteringWidget(Qt::Orientation orientation = Qt::Horizontal, QGraphicsItem * parent = 0,
+                                 Qt::WindowFlags wFlags = 0);
         virtual ~FilteringWidget();
 
-        void init();
-        FilteringList *categoriesList();
-        Plasma::LineEdit *textSearch();
+        enum FilteringListOrientation {
+            Vertical = 0,
+            Horizontal = 1
+        };
 
-        void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
+        void init();
+        void setModel(QStandardItemModel *model);
+        void setListOrientation(Qt::Orientation orientation);
+        Plasma::LineEdit *textSearch();
+        void resizeEvent(QGraphicsSceneResizeEvent *event);
+
+    Q_SIGNALS:
+        void filterChanged(int index);
 
     private:
-        Plasma::FrameSvg *m_backgroundSvg;
-
-        FilteringList *m_categoriesList;
+        QGraphicsLinearLayout *m_linearLayout;
+        FilteringTreeView *m_categoriesTreeView;
+        FilteringTabs *m_categoriesTabs;
         Plasma::LineEdit *m_textSearch;
-        Plasma::Label *m_filterLabel;
-
+        Qt::Orientation m_orientation;
 };
 
 class FilteringWidgetWithTabs : public QGraphicsWidget
 {
-
     Q_OBJECT
 
     public:
@@ -95,11 +102,8 @@ class FilteringWidgetWithTabs : public QGraphicsWidget
         void init();
         FilteringTabs *categoriesList();
         Plasma::LineEdit *textSearch();
-        void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
 
     private:
-        Plasma::FrameSvg *m_backgroundSvg;
-
         FilteringTabs *m_categoriesList;
         Plasma::LineEdit *m_textSearch;
         Plasma::Label *m_filterLabel;

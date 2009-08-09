@@ -38,8 +38,6 @@ PlasmaAppletItem::PlasmaAppletItem(PlasmaAppletItemModel *model,
     setText(info["name"].toString() + " - "+ info["category"].toString());
     setData(attrs);
     setIcon(qvariant_cast<QIcon>(info["icon"]));
-
-    qDebug() << data();
 }
 
 QString PlasmaAppletItem::pluginName() const
