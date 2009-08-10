@@ -247,6 +247,7 @@ void SearchLaunch::relayout()
         }
 
         m_launchGrid->addItem(icon, i / nColumns, i % nColumns);
+        m_launchGrid->setAlignment(icon, Qt::AlignHCenter);
         ++i;
     }
     m_viewMainWidget->resize(0,0);
