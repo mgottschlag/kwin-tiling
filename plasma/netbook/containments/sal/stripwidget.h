@@ -68,17 +68,17 @@ private slots:
     void goRight();
 
 private:
-    Plasma::PushButton *leftArrow;
-    Plasma::PushButton *rightArrow;
-    Plasma::Frame *background;
+    Plasma::PushButton *m_leftArrow;
+    Plasma::PushButton *m_rightArrow;
+    Plasma::Frame *m_background;
     QGraphicsLinearLayout *m_stripLayout;
     QGraphicsLinearLayout *m_arrowsLayout;
 
-    Plasma::RunnerManager *runnermg;
+    Plasma::RunnerManager *m_runnermg;
     QList<Plasma::QueryMatch*> m_favouritesMatches;
     QHash<Plasma::QueryMatch*, QString> m_favouritesQueries;
     QHash<Plasma::IconWidget*, Plasma::QueryMatch*> m_favouritesIcons;
-    Plasma::RunnerContext *contexto;
+    Plasma::RunnerContext *m_context;
     ItemBackground *m_hoverIndicator;
 };
 

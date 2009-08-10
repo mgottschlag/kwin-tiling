@@ -34,37 +34,37 @@
 
 
 StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsItem *parent)
-    : QGraphicsWidget(parent), runnermg(rm)
+    : QGraphicsWidget(parent), m_runnermg(rm)
 {
-    background = new Plasma::Frame();
-    background->setFrameShadow(Plasma::Frame::Raised);
-    background->setMinimumSize(QSize(600, 115));
-    background->setMaximumSize(QSize(600, 115));
+    m_background = new Plasma::Frame();
+    m_background->setFrameShadow(Plasma::Frame::Raised);
+    m_background->setMinimumSize(QSize(600, 115));
+    m_background->setMaximumSize(QSize(600, 115));
 
-    // mainLayout to correctly setup the background
+    // mainLayout to correctly setup the m_background
     QGraphicsLinearLayout *mainLayout = new QGraphicsLinearLayout(this);
-    mainLayout->addItem(background);
+    mainLayout->addItem(m_background);
 
-    m_arrowsLayout = new QGraphicsLinearLayout(background);
+    m_arrowsLayout = new QGraphicsLinearLayout(m_background);
     m_stripLayout = new QGraphicsLinearLayout();
     m_hoverIndicator = new ItemBackground(this);
     m_hoverIndicator->hide();
     setAcceptHoverEvents(true);
 
-    leftArrow = new Plasma::PushButton(this);
-    leftArrow->nativeWidget()->setIcon(KIcon("arrow-left"));
-    leftArrow->setMaximumSize(IconSize(KIconLoader::Panel),
+    m_leftArrow = new Plasma::PushButton(this);
+    m_leftArrow->nativeWidget()->setIcon(KIcon("arrow-left"));
+    m_leftArrow->setMaximumSize(IconSize(KIconLoader::Panel),
                               IconSize(KIconLoader::Panel));
-    connect(leftArrow, SIGNAL(clicked()), this, SLOT(goLeft()));
+    connect(m_leftArrow, SIGNAL(clicked()), this, SLOT(goLeft()));
 
-    rightArrow = new Plasma::PushButton(this);
-    rightArrow->nativeWidget()->setIcon(KIcon("arrow-right"));
-    rightArrow->setMaximumSize(IconSize(KIconLoader::Panel),
+    m_rightArrow = new Plasma::PushButton(this);
+    m_rightArrow->nativeWidget()->setIcon(KIcon("arrow-right"));
+    m_rightArrow->setMaximumSize(IconSize(KIconLoader::Panel),
                                IconSize(KIconLoader::Panel));
-    connect(rightArrow, SIGNAL(clicked()), this, SLOT(goRight()));
+    connect(m_rightArrow, SIGNAL(clicked()), this, SLOT(goRight()));
 
-    leftArrow->setEnabled(false);
-    rightArrow->setEnabled(false);
+    m_leftArrow->setEnabled(false);
+    m_rightArrow->setEnabled(false);
 
     QGraphicsWidget *leftSpacer = new QGraphicsWidget(this);
     QGraphicsWidget *rightSpacer = new QGraphicsWidget(this);
@@ -73,14 +73,14 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsItem *parent)
     /*leftSpacer->setPreferredSize(0, 0);
     rightSpacer->setPreferredSize(0, 0);*/
 
-    m_arrowsLayout->addItem(leftArrow);
+    m_arrowsLayout->addItem(m_leftArrow);
     m_arrowsLayout->addItem(leftSpacer);
     //m_arrowsLayout->addStretch();
     m_arrowsLayout->addItem(m_stripLayout);
     //m_arrowsLayout->setStretchFactor(m_stripLayout, 8);
     m_arrowsLayout->addItem(rightSpacer);
     //m_arrowsLayout->addStretch();
-    m_arrowsLayout->addItem(rightArrow);
+    m_arrowsLayout->addItem(m_rightArrow);
 }
 
 StripWidget::~StripWidget()
@@ -123,8 +123,8 @@ void StripWidget::add(Plasma::QueryMatch match, const QString &query)
 
     int idx = m_stripLayout->count();
     if (idx > 4) {
-        leftArrow->setEnabled(true);
-        rightArrow->setEnabled(true);
+        m_leftArrow->setEnabled(true);
+        m_rightArrow->setEnabled(true);
     } else {
         createIcon(newMatch, idx);
     }
@@ -144,8 +144,8 @@ void StripWidget::remove(Plasma::IconWidget *favourite)
 
     // the IconWidget was not removed yet
     if (m_favouritesMatches.size() <= 5) {
-        leftArrow->setEnabled(false);
-        rightArrow->setEnabled(false);
+        m_leftArrow->setEnabled(false);
+        m_rightArrow->setEnabled(false);
     }
 
     if (m_favouritesMatches.size() >= 5) {
@@ -270,9 +270,9 @@ void StripWidget::restore(KConfigGroup &cg)
         // so we do not have to query again.
 
         // perform the query
-        if (runnermg->execQuery(query, runnerId)) {
+        if (m_runnermg->execQuery(query, runnerId)) {
             // find our match
-            Plasma::QueryMatch match(runnermg->searchContext()->match(matchId));
+            Plasma::QueryMatch match(m_runnermg->searchContext()->match(matchId));
 
             // we should verify some other saved information to avoid putting the
             // wrong item if the search result is different!
