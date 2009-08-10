@@ -30,10 +30,12 @@ void FilteringTreeView::init()
     listFont.setPointSize(KGlobalSettings::smallestReadableFont().pointSize());
     m_treeView->nativeWidget()->setFont(listFont);
 
-    QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     QPalette plasmaPalette = QPalette();
+    QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    qDebug() << textColor;
+    QColor color = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
     plasmaPalette.setColor(QPalette::Base,
-                           Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
+                           QColor(color.red(), color.green(), color.blue(), 0));
     plasmaPalette.setColor(QPalette::Text, textColor);
 
     m_treeView->setPalette(plasmaPalette);

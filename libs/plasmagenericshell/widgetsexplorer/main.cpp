@@ -23,8 +23,8 @@ int main(int argc, char *argv[])
     Plasma::WidgetExplorer *appletBrowser;
 
     appletBrowser = new Plasma::WidgetExplorer();
-//    appletBrowser->setOrientation(Qt::Vertical);
-    appletBrowser->setOrientation(Qt::Horizontal);
+    appletBrowser->setOrientation(Qt::Vertical);
+//    appletBrowser->setOrientation(Qt::Horizontal);
     appletBrowser->setContainment(containment);
     appletBrowser->setApplication();
 
