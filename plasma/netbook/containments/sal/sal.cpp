@@ -20,6 +20,7 @@
 
 #include "sal.h"
 #include "stripwidget.h"
+#include "itembackground.h"
 
 #include <QPainter>
 #include <QAction>
@@ -191,13 +192,13 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         Plasma::QueryMatch match = m[i];
 
         // create new IconWidget with information from the match
-        Plasma::IconWidget *icon = new Plasma::IconWidget();
+        Plasma::IconWidget *icon = new Plasma::IconWidget(m_viewMainWidget);
         icon->setText(match.text());
         icon->setIcon(match.icon());
         icon->setMinimumSize(icon->sizeFromIconSize(iconSize));
         icon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        icon->setDrawBackground(true);
         connect(icon, SIGNAL(activated()), this, SLOT(launch()));
+        icon->installEventFilter(this);
 
         if (icon->size().width() > m_maxColumnWidth) {
             m_maxColumnWidth = icon->size().width();
@@ -354,11 +355,16 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
 
             Plasma::Frame *gridBackground = new Plasma::Frame(this);
             gridBackground->setFrameShadow(Plasma::Frame::Plain);
+            gridBackground->setAcceptHoverEvents(true);
+            gridBackground->installEventFilter(this);
             m_viewMainWidget = new QGraphicsWidget(this);
             QGraphicsLinearLayout *mwLay = new QGraphicsLinearLayout(m_viewMainWidget);
             mwLay->addStretch();
             mwLay->addItem(gridBackground);
             mwLay->addStretch();
+
+            m_hoverIndicator = new ItemBackground(gridBackground);
+            m_hoverIndicator->hide();
 
             m_gridScroll = new Plasma::ScrollWidget(this);
             m_gridScroll->setWidget(m_viewMainWidget);
@@ -454,6 +460,22 @@ void SearchLaunch::dataUpdated(const QString &sourceName, const Plasma::DataEngi
     }
 
     doSearch(query);
+}
+
+bool SearchLaunch::eventFilter(QObject *watched, QEvent *event)
+{
+    if (event->type() == QEvent::GraphicsSceneHoverEnter) {
+        Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(watched);
+        if (icon) {
+            m_hoverIndicator->show();
+            m_hoverIndicator->animatedGeometryTransform(icon->geometry());
+        }
+    } else if (event->type() == QEvent::GraphicsSceneHoverLeave &&
+               qobject_cast<Plasma::Frame *>(watched)) {
+               m_hoverIndicator->hide();
+    }
+
+    return false;
 }
 
 K_EXPORT_PLASMA_APPLET(sal, SearchLaunch)

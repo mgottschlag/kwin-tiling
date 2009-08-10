@@ -33,6 +33,8 @@ class QAction;
 class QTimer;
 class StripWidget;
 
+class ItemBackground;
+
 namespace Plasma
 {
     class IconWidget;
@@ -56,6 +58,8 @@ public:
     void paintInterface(QPainter *painter,
                         const QStyleOptionGraphicsItem *option,
                         const QRect &contentsRect);
+protected:
+    bool eventFilter(QObject *watched, QEvent *event);
 
 public slots:
     void dataUpdated(const QString &sourceName, const Plasma::DataEngine::Data &data);
@@ -92,6 +96,7 @@ private:
     QGraphicsWidget *m_viewMainWidget;
     Plasma::ScrollWidget *m_gridScroll;
     StripWidget *m_stripWidget;
+    ItemBackground *m_hoverIndicator;
 
     QGraphicsLinearLayout *m_mainLayout;
     QGraphicsGridLayout *m_launchGrid;
