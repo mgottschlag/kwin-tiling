@@ -76,7 +76,9 @@ void ItemBackground::animatedSetVisible(bool visible)
 {
     m_fading = true;
     m_fadeIn = visible;
-    setVisible(visible);
+    if (visible) {
+        setVisible(true);
+    }
 
     if (m_animId != 0) {
         Plasma::Animator::self()->stopCustomAnimation(m_animId);
