@@ -25,11 +25,13 @@
 #include <KDebug>
 
 #include <Plasma/FrameSvg>
+#include <Plasma/Animator>
 #include <Plasma/Theme>
 
 ItemBackground::ItemBackground(QGraphicsWidget *parent)
     : QGraphicsWidget(parent),
-      m_frameSvg(new Plasma::FrameSvg(this))
+      m_frameSvg(new Plasma::FrameSvg(this)),
+      m_animId(0)
 {
     setContentsMargins(0, 0, 0, 0);
 
@@ -47,7 +49,18 @@ ItemBackground::~ItemBackground()
 
 void ItemBackground::animatedGeometryTransform(const QRectF &newGeometry)
 {
-    setGeometry(newGeometry);
+    qreal left, top, right, bottom;
+    m_frameSvg->getMargins(left, top, right, bottom);
+
+    m_oldGeometry = geometry();
+    m_newGeometry = newGeometry.adjusted(-left, -top, right, bottom);
+
+    if (m_animId != 0) {
+        Plasma::Animator::self()->stopCustomAnimation(m_animId);
+    }
+    m_animId = Plasma::Animator::self()->customAnimation(
+        15, 250,
+        Plasma::Animator::EaseInOutCurve, this, "animationUpdate");
 }
 
 void ItemBackground::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -58,4 +71,17 @@ void ItemBackground::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
         m_frameSvg->resizeFrame(option->rect.size());
     }
     m_frameSvg->paintFrame(painter, option->rect.topLeft());
+}
+
+void ItemBackground::animationUpdate(qreal progress)
+{
+    if (progress == 0) {
+        m_animId = 0;
+    }
+
+    setGeometry(m_oldGeometry.x() + (m_newGeometry.x() - m_oldGeometry.x()) * progress,
+                m_oldGeometry.y() + (m_newGeometry.y() - m_oldGeometry.y()) * progress,
+
+                m_oldGeometry.width() + (m_newGeometry.width() - m_oldGeometry.width()) * progress,
+                m_oldGeometry.height() + (m_newGeometry.height() - m_oldGeometry.height()) * progress);
 }

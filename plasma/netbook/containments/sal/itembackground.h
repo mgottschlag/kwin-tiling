@@ -39,8 +39,13 @@ public:
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
+private Q_SLOTS:
+    void animationUpdate(qreal progress);
 private:
     Plasma::FrameSvg *m_frameSvg;
+    QRectF m_oldGeometry;
+    QRectF m_newGeometry;
+    int m_animId;
 };
 
-#endif // VIEWITEM_H
+#endif
