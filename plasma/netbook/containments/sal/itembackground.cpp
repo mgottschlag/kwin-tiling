@@ -64,6 +64,7 @@ void ItemBackground::animatedShowAtRect(const QRectF &newGeometry)
 
     if (isVisible()) {
         m_fading = false;
+        m_opacity = 1;
         m_animId = Plasma::Animator::self()->customAnimation(
             15, 250, Plasma::Animator::EaseInOutCurve, this, "animationUpdate");
     } else {

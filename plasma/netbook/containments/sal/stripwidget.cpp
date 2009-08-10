@@ -18,6 +18,7 @@
  */
 
 #include "stripwidget.h"
+#include "itembackground.h"
 
 #include <Plasma/Frame>
 #include <Plasma/PushButton>
@@ -46,6 +47,9 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsItem *parent)
 
     m_arrowsLayout = new QGraphicsLinearLayout(background);
     m_stripLayout = new QGraphicsLinearLayout();
+    m_hoverIndicator = new ItemBackground(this);
+    m_hoverIndicator->hide();
+    setAcceptHoverEvents(true);
 
     leftArrow = new Plasma::PushButton(this);
     leftArrow->nativeWidget()->setIcon(KIcon("arrow-left"));
@@ -91,6 +95,7 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
                           QSizePolicy::MinimumExpanding);
 
     Plasma::IconWidget *fav = new Plasma::IconWidget(widget);
+    fav->installEventFilter(this);
     fav->setText(match->text());
     fav->setIcon(match->icon());
     fav->setMinimumSize(QSize(100, 100));
@@ -276,3 +281,24 @@ void StripWidget::restore(KConfigGroup &cg)
         }
     }
 }
+
+bool StripWidget::eventFilter(QObject *watched, QEvent *event)
+{
+    if (event->type() == QEvent::GraphicsSceneHoverEnter) {
+        Plasma::IconWidget *icon = qobject_cast<Plasma::IconWidget *>(watched);
+        if (icon) {
+            QGraphicsWidget *parent = icon->parentWidget();
+            if (parent) {
+                m_hoverIndicator->animatedShowAtRect(parent->geometry());
+            }
+        }
+    }
+
+    return false;
+}
+
+void StripWidget::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    m_hoverIndicator->animatedSetVisible(false);
+}
+

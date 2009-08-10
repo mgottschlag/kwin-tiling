@@ -40,6 +40,7 @@ namespace Plasma
     class RunnerManager;
 }
 
+class ItemBackground;
 
 class StripWidget : public QGraphicsWidget
 {
@@ -57,6 +58,8 @@ public:
 
 protected:
     void createIcon(Plasma::QueryMatch *match, int idx);
+    bool eventFilter(QObject *watched, QEvent *event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
 private slots:
     void removeFavourite();
@@ -76,6 +79,7 @@ private:
     QHash<Plasma::QueryMatch*, QString> m_favouritesQueries;
     QHash<Plasma::IconWidget*, Plasma::QueryMatch*> m_favouritesIcons;
     Plasma::RunnerContext *contexto;
+    ItemBackground *m_hoverIndicator;
 };
 
 #endif
