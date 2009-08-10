@@ -158,4 +158,4 @@ Comment[zh_TW]=監控本地使用者以 write(1) 或 wall(1) 傳送的訊息
 Type=Service
 Exec=kwrited
 OnlyShowIn=KDE;
-X-KDE-autostart-phase=0
+X-KDE-autostart-phase=1
