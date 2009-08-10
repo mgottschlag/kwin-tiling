@@ -31,7 +31,10 @@
 ItemBackground::ItemBackground(QGraphicsWidget *parent)
     : QGraphicsWidget(parent),
       m_frameSvg(new Plasma::FrameSvg(this)),
-      m_animId(0)
+      m_animId(0),
+      m_opacity(1),
+      m_fading(false),
+      m_fadeIn(false)
 {
     setContentsMargins(0, 0, 0, 0);
 
@@ -47,7 +50,7 @@ ItemBackground::ItemBackground(QGraphicsWidget *parent)
 ItemBackground::~ItemBackground()
 {}
 
-void ItemBackground::animatedGeometryTransform(const QRectF &newGeometry)
+void ItemBackground::animatedShowAtRect(const QRectF &newGeometry)
 {
     qreal left, top, right, bottom;
     m_frameSvg->getMargins(left, top, right, bottom);
@@ -58,30 +61,70 @@ void ItemBackground::animatedGeometryTransform(const QRectF &newGeometry)
     if (m_animId != 0) {
         Plasma::Animator::self()->stopCustomAnimation(m_animId);
     }
+
+    if (isVisible()) {
+        m_fading = false;
+        m_animId = Plasma::Animator::self()->customAnimation(
+            15, 250, Plasma::Animator::EaseInOutCurve, this, "animationUpdate");
+    } else {
+        setGeometry(m_newGeometry);
+        animatedSetVisible(true);
+    }
+}
+
+void ItemBackground::animatedSetVisible(bool visible)
+{
+    m_fading = true;
+    m_fadeIn = visible;
+    setVisible(visible);
+
+    if (m_animId != 0) {
+        Plasma::Animator::self()->stopCustomAnimation(m_animId);
+    }
+
     m_animId = Plasma::Animator::self()->customAnimation(
-        15, 250,
-        Plasma::Animator::EaseInOutCurve, this, "animationUpdate");
+               10, 250, Plasma::Animator::EaseInCurve, this, "animationUpdate");
 }
 
 void ItemBackground::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(widget)
 
-    if (m_frameSvg->size() != option->rect.size()) {
+    if (m_frameSvg->frameSize() != option->rect.size()) {
         m_frameSvg->resizeFrame(option->rect.size());
     }
-    m_frameSvg->paintFrame(painter, option->rect.topLeft());
+
+    if (qFuzzyCompare(m_opacity, (qreal)1.0)) {
+        m_frameSvg->paintFrame(painter, option->rect.topLeft());
+    } else if (qFuzzyCompare(m_opacity+1, (qreal)1.0)) {
+        return;
+    } else {
+        QPixmap framePix = m_frameSvg->framePixmap();
+        QPainter bufferPainter(&framePix);
+        bufferPainter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+        bufferPainter.fillRect(framePix.rect(), QColor(0, 0, 0, 255 * m_opacity));
+        bufferPainter.end();
+        painter->drawPixmap(framePix.rect(), framePix, framePix.rect());
+    }
 }
 
 void ItemBackground::animationUpdate(qreal progress)
 {
-    if (progress == 0) {
+    if (progress == 1) {
         m_animId = 0;
     }
 
-    setGeometry(m_oldGeometry.x() + (m_newGeometry.x() - m_oldGeometry.x()) * progress,
-                m_oldGeometry.y() + (m_newGeometry.y() - m_oldGeometry.y()) * progress,
+    if (m_fading) {
+        m_opacity = m_fadeIn?progress:1-progress;
+        if (!m_fadeIn && qFuzzyCompare(m_opacity+1, (qreal)1.0)) {
+            hide();
+        }
+    } else {
+        setGeometry(m_oldGeometry.x() + (m_newGeometry.x() - m_oldGeometry.x()) * progress,
+                    m_oldGeometry.y() + (m_newGeometry.y() - m_oldGeometry.y()) * progress,
 
-                m_oldGeometry.width() + (m_newGeometry.width() - m_oldGeometry.width()) * progress,
-                m_oldGeometry.height() + (m_newGeometry.height() - m_oldGeometry.height()) * progress);
+                    m_oldGeometry.width() + (m_newGeometry.width() - m_oldGeometry.width()) * progress,
+                    m_oldGeometry.height() + (m_newGeometry.height() - m_oldGeometry.height()) * progress);
+    }
+    update();
 }

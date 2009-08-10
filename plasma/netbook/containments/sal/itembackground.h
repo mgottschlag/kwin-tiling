@@ -35,7 +35,8 @@ public:
     ItemBackground(QGraphicsWidget *parent = 0);
     ~ItemBackground();
 
-    void animatedGeometryTransform(const QRectF &newGeometry);
+    void animatedShowAtRect(const QRectF &newGeometry);
+    void animatedSetVisible(bool visible);
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
@@ -46,6 +47,9 @@ private:
     QRectF m_oldGeometry;
     QRectF m_newGeometry;
     int m_animId;
+    qreal m_opacity;
+    bool m_fading;
+    bool m_fadeIn;
 };
 
 #endif
