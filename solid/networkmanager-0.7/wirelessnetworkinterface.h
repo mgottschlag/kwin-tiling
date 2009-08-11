@@ -41,7 +41,7 @@ Q_INTERFACES(Solid::Control::Ifaces::WirelessNetworkInterface)
 public:
     NMWirelessNetworkInterface(const QString & path, NMNetworkManager * manager, QObject * parent);
     ~NMWirelessNetworkInterface();
-    MacAddressList accessPoints() const;
+    QStringList accessPoints() const;
     QString activeAccessPoint() const;
     QString hardwareAddress() const;
     Solid::Control::WirelessNetworkInterface::OperationMode mode() const;
