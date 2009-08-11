@@ -211,6 +211,18 @@ void WidgetExplorerPrivate::setOrientation(Qt::Orientation orient)
     orientation = orient;
     filteringWidget->setListOrientation(orientation);
     appletsListWidget->setOrientation(orientation);
+
+    //**** comment this later ****
+    if(containment != 0) {
+        if(orientation == Qt::Horizontal) {
+            containment->setLocation(Plasma::BottomEdge);
+        } else {
+            containment->setLocation(Plasma::LeftEdge);
+        }
+    }
+    //******************************
+
+
     setMainSize();
 }
 
@@ -380,6 +392,15 @@ void WidgetExplorer::setContainment(Plasma::Containment *containment)
         }
 
         d->initRunningApplets();
+
+        //**** comment this later ****
+        if(d->orientation == Qt::Horizontal) {
+            containment->setLocation(Plasma::BottomEdge);
+        } else {
+            containment->setLocation(Plasma::RightEdge);
+        }
+        //******************************
+
     }
 }
 

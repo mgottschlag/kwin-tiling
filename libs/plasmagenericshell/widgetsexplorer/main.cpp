@@ -22,9 +22,11 @@ int main(int argc, char *argv[])
 
     Plasma::WidgetExplorer *appletBrowser;
 
+    Qt::Orientation orientation = Qt::Vertical;
+//    Qt::Orientation orientation = Qt::Horizontal;
+
     appletBrowser = new Plasma::WidgetExplorer();
-    appletBrowser->setOrientation(Qt::Vertical);
-//    appletBrowser->setOrientation(Qt::Horizontal);
+    appletBrowser->setOrientation(orientation);
     appletBrowser->setContainment(containment);
     appletBrowser->setApplication();
 
@@ -44,9 +46,15 @@ int main(int argc, char *argv[])
 
     view->setMinimumWidth(appletBrowser->minimumWidth());
     view->setMaximumWidth(appletBrowser->minimumWidth());
-    view->setMinimumHeight(appletBrowser->minimumHeight() + 30);
-    view->setMaximumHeight(appletBrowser->minimumHeight() + 30);
-    view->move(0, screen->height() - view->maximumHeight());
+    view->setMinimumHeight(appletBrowser->minimumHeight());
+    view->setMaximumHeight(appletBrowser->minimumHeight());
+
+    if(orientation == Qt::Horizontal) {
+        view->move(0, screen->height() - view->maximumHeight());
+    } else {
+        view->move(0, 0);
+    }
+
     view->show();
 
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
