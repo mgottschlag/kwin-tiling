@@ -28,10 +28,8 @@ public:
     void setOrientation(Qt::Orientation orientation);
 
     enum ScrollPolicy {
-        Right = 0,
-        Left = 1,
-        Up = 2,
-        Down = 3,
+        DownRight = 0,
+        UpLeft = 1,
         Wheel = 4,
         Button = 5
     };
@@ -54,13 +52,13 @@ private:
     void setToolTipPosition();
 
     bool isItemUnder(int itemIndex, qreal xPosition);
-    int findFirstVisibleApplet(int firstVisibleXOnList);
-    int findLastVisibleApplet(int lastVisibleXOnList);
+    int findFirstVisibleApplet(int firstVisiblePositionOnList);
+    int findLastVisibleApplet(int lastVisiblePositionOnList);
     QRectF visibleListRect();
 
     void scroll(ScrollPolicy side, ScrollPolicy how);
-    void scrollRight(int step, QRectF visibleRect);
-    void scrollLeft(int step, QRectF visibleRect);
+    void scrollDownRight(int step, QRectF visibleRect);
+    void scrollUpLeft(int step, QRectF visibleRect);
     void wheelEvent(QGraphicsSceneWheelEvent *event);
 
     void adjustContentsAccordingToOrientation();
@@ -89,6 +87,7 @@ private slots:
 
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
+    bool eventFilter(QObject *obj, QEvent *event);
     void timerEvent(QTimerEvent *event);
 
 Q_SIGNALS:

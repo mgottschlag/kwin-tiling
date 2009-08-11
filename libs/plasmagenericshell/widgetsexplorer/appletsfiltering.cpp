@@ -32,7 +32,6 @@ void FilteringTreeView::init()
 
     QPalette plasmaPalette = QPalette();
     QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-    qDebug() << textColor;
     QColor color = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
     plasmaPalette.setColor(QPalette::Base,
                            QColor(color.red(), color.green(), color.blue(), 0));

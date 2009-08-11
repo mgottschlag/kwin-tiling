@@ -60,6 +60,8 @@ public:
      */
     void setOrientation(Qt::Orientation orientation);
 
+protected:
+
     void resizeEvent(QGraphicsSceneResizeEvent *event);
 
 Q_SIGNALS:

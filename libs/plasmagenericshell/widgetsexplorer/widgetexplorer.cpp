@@ -139,8 +139,7 @@ void WidgetExplorerPrivate::init(Qt::Orientation orient)
     //adding to layout
     mainLayout->addItem(filteringWidget);
     mainLayout->addItem(appletsListWidget);
-    mainLayout->setAlignment(appletsListWidget, Qt::AlignHCenter);
-    mainLayout->setAlignment(appletsListWidget, Qt::AlignVCenter);
+    mainLayout->setAlignment(appletsListWidget, Qt::AlignVCenter | Qt::AlignHCenter);
 
     //filters & models
     initFilters();
@@ -180,7 +179,8 @@ void WidgetExplorerPrivate::adjustContentsSize()
     mainLayout->invalidate();
 
     QSizeF contentsSize = q->contentsRect().size();
-    qDebug() << "contents size: " << contentsSize;
+
+    qDebug() << "contents size" << contentsSize;
 
     if(orientation == Qt::Horizontal) {
         if(filteringWidget != 0) {
@@ -189,21 +189,18 @@ void WidgetExplorerPrivate::adjustContentsSize()
 
         if(appletsListWidget != 0) {
             appletsListWidget->setPreferredSize(-1,-1);
-//            appletsListWidget->setMaximumHeight(contentsSize.height()
-//                                                - filteringWidget->size().height());
         }
 
     } else {
         if(filteringWidget != 0) {
-            filteringWidget->setMinimumHeight(contentsSize.height()/4);
-            filteringWidget->setMaximumHeight(contentsSize.height()/4);
+            filteringWidget->setMinimumHeight(contentsSize.height()/5);
+            filteringWidget->setMaximumHeight(contentsSize.height()/5);
             filteringWidget->setMinimumWidth(contentsSize.width());
             filteringWidget->setMaximumWidth(contentsSize.width());
         }
 
         if(appletsListWidget != 0) {
-            appletsListWidget->setMinimumWidth(contentsSize.width());
-            appletsListWidget->setMaximumWidth(contentsSize.width());
+            appletsListWidget->setPreferredSize(-1,-1);
         }
     }
     mainLayout->activate();
