@@ -82,7 +82,7 @@ NMWirelessNetworkInterface::~NMWirelessNetworkInterface()
 
 }
 
-MacAddressList NMWirelessNetworkInterface::accessPoints() const
+QStringList NMWirelessNetworkInterface::accessPoints() const
 {
     Q_D(const NMWirelessNetworkInterface);
     return d->accessPoints;
@@ -120,7 +120,13 @@ Solid::Control::WirelessNetworkInterface::Capabilities NMWirelessNetworkInterfac
 
 QObject * NMWirelessNetworkInterface::createAccessPoint(const QString & uni)
 {
-    return new NMAccessPoint(uni, 0);
+    Q_D(NMWirelessNetworkInterface);
+    NMAccessPoint * ap = 0;
+    if (d->accessPoints.contains(uni)) {
+        ap = new NMAccessPoint(uni, 0);
+    }
+
+    return ap;
 }
 
 void NMWirelessNetworkInterface::wirelessPropertiesChanged(const QVariantMap & changedProperties)

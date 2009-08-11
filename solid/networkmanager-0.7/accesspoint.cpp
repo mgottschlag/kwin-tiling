@@ -49,19 +49,21 @@ public:
 NMAccessPoint::NMAccessPoint( const QString& path, QObject * parent ) : Solid::Control::Ifaces::AccessPoint(parent), d(new Private( path ))
 {
     d->uni = path;
-    d->capabilities = convertCapabilities( d->iface.flags() );
-    d->wpaFlags = convertWpaFlags( d->iface.wpaFlags() );
-    d->rsnFlags = convertWpaFlags( d->iface.rsnFlags() );
-    d->signalStrength = d->iface.strength();
-    d->ssid = d->iface.ssid();
-    d->rawSsid = d->iface.ssid();
-    d->frequency = d->iface.frequency();
-    d->hardwareAddress = d->iface.hwAddress();
-    d->maxBitRate = d->iface.maxBitrate();
-    // make this a static on WirelessNetworkInterface
-    d->mode = NMWirelessNetworkInterface::convertOperationMode(d->iface.mode());
-    connect( &d->iface, SIGNAL(PropertiesChanged(const QVariantMap &)),
+    if (d->iface.isValid()) {
+        d->capabilities = convertCapabilities( d->iface.flags() );
+        d->wpaFlags = convertWpaFlags( d->iface.wpaFlags() );
+        d->rsnFlags = convertWpaFlags( d->iface.rsnFlags() );
+        d->signalStrength = d->iface.strength();
+        d->ssid = d->iface.ssid();
+        d->rawSsid = d->iface.ssid();
+        d->frequency = d->iface.frequency();
+        d->hardwareAddress = d->iface.hwAddress();
+        d->maxBitRate = d->iface.maxBitrate();
+        // make this a static on WirelessNetworkInterface
+        d->mode = NMWirelessNetworkInterface::convertOperationMode(d->iface.mode());
+        connect( &d->iface, SIGNAL(PropertiesChanged(const QVariantMap &)),
                 this, SLOT(propertiesChanged(const QVariantMap &)));
+    }
 }
 
 NMAccessPoint::~NMAccessPoint()
