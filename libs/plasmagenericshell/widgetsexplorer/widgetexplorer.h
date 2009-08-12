@@ -98,11 +98,6 @@ public Q_SLOTS:
      */
     void openWidgetFile();
 
-    /**
-     * Shows infos about applets.
-     */
-    void infoAboutApplet(const QString &name);
-
     void populateWidgetsMenu();
 
 private:

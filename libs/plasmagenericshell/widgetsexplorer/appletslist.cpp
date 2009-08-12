@@ -14,6 +14,7 @@
 #define FILTER_APPLIANCE_DELAY 400
 #define SEARCH_DELAY 300
 #define TOOLTIP_APPEAR_DELAY 1000
+#define TOOLTIP_APPEAR_WHEN_VISIBLE_DELAY 300
 #define TOOLTIP_DISAPPEAR_DELAY 300
 
 #define ICON_SIZE 70
@@ -38,6 +39,12 @@ AppletsList::AppletsList(Qt::Orientation orientation, QGraphicsItem *parent)
     scrollTimeLine.setDuration(500); // TODO: Set this to a lesser value
     connect(&scrollTimeLine, SIGNAL(frameChanged(int)),
             this, SLOT(scrollTimeLineFrameChanged(int)));
+
+    toolTipMoveTimeLine.setFrameRange(0, 100);
+    toolTipMoveTimeLine.setCurveShape(QTimeLine::EaseInOutCurve);
+    toolTipMoveTimeLine.setDuration(500);
+    connect(&toolTipMoveTimeLine, SIGNAL(frameChanged(int)),
+            this, SLOT(toolTipMoveTimeLineFrameChanged(int)));
 
     m_toolTip = new AppletToolTipWidget();
     m_toolTip->setVisible(false);
@@ -212,6 +219,12 @@ void AppletsList::timerEvent(QTimerEvent *event)
         m_toolTipAppearTimer.stop();
     }
 
+    if(event->timerId() == m_toolTipAppearWhenAlreadyVisibleTimer.timerId()) {
+        m_toolTip->updateContent();
+        setToolTipPosition();
+        m_toolTipAppearWhenAlreadyVisibleTimer.stop();
+    }
+
     if(event->timerId() == m_toolTipDisappearTimer.timerId()) {
         m_toolTip->setVisible(false);
         m_toolTipDisappearTimer.stop();
@@ -235,8 +248,7 @@ void AppletsList::appletIconHoverEnter(AppletIconWidget *applet)
         if(!(m_toolTip->appletIconWidget()->appletItem()->pluginName() ==
             applet->appletItem()->pluginName())) {
             m_toolTip->setAppletIconWidget(applet);
-            m_toolTip->updateContent();
-            setToolTipPosition();
+            m_toolTipAppearWhenAlreadyVisibleTimer.start(TOOLTIP_APPEAR_WHEN_VISIBLE_DELAY, this);
         }
         m_toolTipDisappearTimer.stop();
     }
@@ -269,11 +281,19 @@ void AppletsList::setToolTipPosition()
 
     Plasma::Corona *corona = dynamic_cast<Plasma::WidgetExplorer*>(parentItem())->corona();
 
+    toolTipMoveFrom = m_toolTip->pos();
+
     if(corona) {
-        m_toolTip->move(corona->popupPosition(m_toolTip->appletIconWidget(), m_toolTip->geometry().size()));
+        toolTipMoveTo = corona->popupPosition(m_toolTip->appletIconWidget(), m_toolTip->geometry().size());
     } else {
-        m_toolTip->move(appletPosition.x(), appletPosition.y());
+        toolTipMoveTo = QPoint(appletPosition.x(), appletPosition.y());
     }
+    
+    if(m_toolTip->isVisible()) {
+        animateToolTipMove();
+    } else {
+        m_toolTip->move(toolTipMoveTo);
+    } 
 }
 
 void AppletsList::insertAppletIcon(AppletIconWidget *appletIconWidget)
@@ -430,15 +450,10 @@ void AppletsList::scrollDownRight(int step, QRectF visibleRect) {
 
     lastVisibleItemIndex = findLastVisibleApplet(lastVisiblePositionOnList);
 
-    qDebug() << "step " << step;
-    qDebug() << "lastVisibleItemIndex " << lastVisibleItemIndex;
-
     //find out if the last icon on list appears clipped
     if(isItemUnder(lastVisibleItemIndex, lastVisiblePositionOnList)) {
-        qDebug() << "clipped";
         appletsIndexesToSum = step - 1;
     } else {
-        qDebug() << "not clipped";
         appletsIndexesToSum = step;
     }
 
@@ -482,15 +497,10 @@ void AppletsList::scrollUpLeft(int step, QRectF visibleRect) {
 
     firstVisibleItemIndex = findFirstVisibleApplet(firstVisiblePositionOnList);
 
-    qDebug() << "step " << step;
-    qDebug() << "firstVisibleItemIndex " << firstVisibleItemIndex;
-
     //find out if the last icon on list appears clipped
     if(isItemUnder(firstVisibleItemIndex, firstVisiblePositionOnList)) {
-        qDebug() << "is under";
         appletsIndexesToReduce = step - 1;
     } else {
-        qDebug() << "not under";
         appletsIndexesToReduce = step;
     }
 
@@ -561,6 +571,18 @@ void AppletsList::animateMoveBy(int amount)
     }
 }
 
+void AppletsList::animateToolTipMove()
+{
+//    if(toolTipMoveTimeLine.state() == QTimeLine::Running) {
+//        toolTipMoveFrom = m_toolTip->pos();
+//    }
+    
+    if (toolTipMoveTimeLine.state() != QTimeLine::Running &&
+            toolTipMoveFrom != toolTipMoveTo) {
+        toolTipMoveTimeLine.start();
+    }
+}
+
 void AppletsList::scrollTimeLineFrameChanged(int frame)
 {
     QPointF newPos;
@@ -581,6 +603,17 @@ void AppletsList::scrollTimeLineFrameChanged(int frame)
     if (frame == 100) {
         manageArrows();
     }
+}
+
+void AppletsList::toolTipMoveTimeLineFrameChanged(int frame)
+{
+    QPoint newPos;
+
+    newPos = QPoint(
+            (frame/(qreal)100) * (toolTipMoveTo.x() - toolTipMoveFrom.x()) + toolTipMoveFrom.x(),
+            (frame/(qreal)100) * (toolTipMoveTo.y() - toolTipMoveFrom.y()) + toolTipMoveFrom.y());
+
+    m_toolTip->move(newPos);
 }
 
 void AppletsList::resetScroll() {

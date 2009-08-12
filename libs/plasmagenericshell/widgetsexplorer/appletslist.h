@@ -85,6 +85,9 @@ private slots:
     void animateMoveBy(int amount);
     void scrollTimeLineFrameChanged(int frame);
 
+    void animateToolTipMove();
+    void toolTipMoveTimeLineFrameChanged(int frame);
+
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
     bool eventFilter(QObject *obj, QEvent *event);
@@ -129,6 +132,7 @@ private:
     QBasicTimer m_filterApplianceTimer;
     QBasicTimer m_toolTipAppearTimer;
     QBasicTimer m_toolTipDisappearTimer;
+    QBasicTimer m_toolTipAppearWhenAlreadyVisibleTimer;
     QBasicTimer m_searchDelayTimer;
     QString m_searchString;
 
@@ -140,6 +144,10 @@ private:
     QTimeLine scrollTimeLine;
     qreal scrollTo;
     qreal scrollFrom;
+
+    QTimeLine toolTipMoveTimeLine;
+    QPoint toolTipMoveFrom;
+    QPoint toolTipMoveTo;
 
 };
 

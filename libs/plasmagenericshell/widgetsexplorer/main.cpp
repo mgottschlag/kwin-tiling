@@ -22,8 +22,8 @@ int main(int argc, char *argv[])
 
     Plasma::WidgetExplorer *appletBrowser;
 
-    Qt::Orientation orientation = Qt::Vertical;
-//    Qt::Orientation orientation = Qt::Horizontal;
+//    Qt::Orientation orientation = Qt::Vertical;
+    Qt::Orientation orientation = Qt::Horizontal;
 
     appletBrowser = new Plasma::WidgetExplorer();
     appletBrowser->setOrientation(orientation);

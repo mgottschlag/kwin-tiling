@@ -142,7 +142,6 @@ void AppletInfoWidget::updateInfo()
                 .arg(m_appletItem->license())
                 .arg(m_appletItem->version())
                 );
-
     } else {
         m_iconWidget->setIcon("plasma");
         m_nameLabel->setText("Unknown applet");

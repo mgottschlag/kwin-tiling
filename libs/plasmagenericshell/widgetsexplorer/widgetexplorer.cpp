@@ -159,7 +159,6 @@ void WidgetExplorerPrivate::setMainSize()
     // **** find a fancier way to use screen ****
     QDesktopWidget *screen = new QDesktopWidget();
     QSize screenSize = screen->screenGeometry(-1).size();
-    qDebug() << "screen size " << screen->screenGeometry(-1).size();
 
     if(orientation == Qt::Horizontal) {
        q->setMinimumWidth(screenSize.width());
@@ -179,8 +178,6 @@ void WidgetExplorerPrivate::adjustContentsSize()
     mainLayout->invalidate();
 
     QSizeF contentsSize = q->contentsRect().size();
-
-    qDebug() << "contents size" << contentsSize;
 
     if(orientation == Qt::Horizontal) {
         if(filteringWidget != 0) {
@@ -301,28 +298,6 @@ void WidgetExplorerPrivate::appletRemoved(Plasma::Applet *applet)
 
     itemModel.setRunningApplets(name, count);
 }
-
-/* This is just a wrapper around KAboutApplicationDialog that deletes
-the KAboutData object that it is associated with, when it is deleted.
-This is required to free memory correctly when KAboutApplicationDialog
-is called with a temporary KAboutData that is allocated on the heap.
-(see the code below, in WidgetExplorer::infoAboutApplet())
-*/
-class KAboutApplicationDialog2 : public KAboutApplicationDialog
-{
-public:
-    KAboutApplicationDialog2(KAboutData *ab, QWidget *parent = 0)
-    : KAboutApplicationDialog(ab, parent), m_ab(ab) {}
-
-    ~KAboutApplicationDialog2()
-    {
-        delete m_ab;
-    }
-
-private:
-    KAboutData *m_ab;
-};
-
 
 //WidgetExplorer
 
@@ -473,39 +448,6 @@ void WidgetExplorer::destroyApplets(const QString &name)
 
     d->runningApplets.remove(name);
     d->itemModel.setRunningApplets(name, 0);
-}
-
-void WidgetExplorer::infoAboutApplet(const QString &name)
-{
-
-    qDebug() << name;
-
-    if (!d->containment) {
-        return;
-    }
-
-    KPluginInfo::List applets = Plasma::Applet::listAppletInfo();
-    foreach (const KPluginInfo &info, applets) {
-        if (info.pluginName() == name) {
-            KAboutData *aboutData = new KAboutData(info.name().toUtf8(),
-                                              info.name().toUtf8(),
-                                              ki18n(info.name().toUtf8()),
-                                              info.version().toUtf8(), ki18n(info.comment().toUtf8()),
-                                              info.fullLicense().key(), ki18n(QByteArray()), ki18n(QByteArray()), info.website().toLatin1(),
-                                              info.email().toLatin1());
-
-            aboutData->setProgramIconName(info.icon());
-
-            aboutData->addAuthor(ki18n(info.author().toUtf8()), ki18n(QByteArray()), info.email().toLatin1());
-
-            //TODO should recycle this dialog if it is called up twice
-            //KAboutApplication nao recebe QGraphicsWidget como parent, entao coloquei 0
-            //KAboutApplicationDialog *aboutDialog = new KAboutApplicationDialog2(aboutData, this);
-            KAboutApplicationDialog *aboutDialog = new KAboutApplicationDialog2(aboutData, 0);
-            aboutDialog->show();
-            break;
-        }
-    }
 }
 
 void WidgetExplorer::downloadWidgets(const QString &type)
