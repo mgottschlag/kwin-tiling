@@ -105,7 +105,7 @@ namespace Ifaces
         /**
          * Retrieves the effective bit rate currently attainable by this device.
          *
-         * @return the bitrate in bit/s
+         * @return the bitrate in Kbit/s
          */
         int bitRate() const;
 
