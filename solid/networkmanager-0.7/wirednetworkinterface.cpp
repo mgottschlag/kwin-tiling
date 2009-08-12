@@ -37,7 +37,7 @@ NMWiredNetworkInterface::NMWiredNetworkInterface(const QString & path, NMNetwork
 {
     Q_D(NMWiredNetworkInterface);
     d->hardwareAddress = d->wiredIface.hwAddress();
-    d->bitrate = d->wiredIface.speed();
+    d->bitrate = d->wiredIface.speed() * 1000;
     d->carrier = d->wiredIface.carrier();
     //d->propHelper.registerProperty();
     connect( &d->wiredIface, SIGNAL(PropertiesChanged(const QVariantMap &)),
@@ -75,7 +75,7 @@ void NMWiredNetworkInterface::setCarrier(const QVariant& carrier)
 void NMWiredNetworkInterface::setBitRate(const QVariant& bitrate)
 {
     Q_D(NMWiredNetworkInterface);
-    d->bitrate = bitrate.toInt();
+    d->bitrate = bitrate.toInt() * 1000;
 }
 
 void NMWiredNetworkInterface::wiredPropertiesChanged(const QVariantMap &properties)
@@ -94,7 +94,7 @@ void NMWiredNetworkInterface::wiredPropertiesChanged(const QVariantMap &properti
     }
     it = properties.find(speedKey);
     if ( it != properties.end()) {
-        d->bitrate = it->toUInt();
+        d->bitrate = it->toUInt() * 1000;
         emit bitRateChanged(d->bitrate);
         propKeys.removeOne(speedKey);
     }
