@@ -209,13 +209,13 @@ LaunchConfig::save()
 LaunchConfig::defaults()
 {
   cb_busyCursor->setCurrentIndex(2);
-  cb_taskbarButton->setChecked((bool)Default & TaskbarButton);
+  cb_taskbarButton->setChecked( (bool)(Default & TaskbarButton) );
 
   sb_cursorTimeout->setValue( 30 );
   sb_taskbarTimeout->setValue( 30 );
 
   slotBusyCursor( 2 );
-  slotTaskbarButton( (bool)Default & TaskbarButton );
+  slotTaskbarButton( (bool)(Default & TaskbarButton) );
 
   checkChanged();
 }
