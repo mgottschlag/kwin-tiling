@@ -117,6 +117,8 @@ void checkComposite()
                 visual = xvi[i].visual;
                 colormap = XCreateColormap(dpy, RootWindow(dpy, screen),
                                             visual, AllocNone);
+
+                XFree(xvi);
                 return;
             }
         }
