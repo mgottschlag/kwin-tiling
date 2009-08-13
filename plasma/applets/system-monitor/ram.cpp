@@ -124,10 +124,7 @@ void SM::Ram::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
     Plasma::SignalPlotter *plotter = plotters()[source];
     if (plotter) {
         if (data["value"].toDouble() > m_max[source]) {
-            QString tmp = source.left(source.lastIndexOf('/') + 1);
-            m_max[source] = engine()->query(tmp + "used")["value"].toDouble() +
-                            engine()->query(tmp + "free")["value"].toDouble() +
-                            engine()->query(tmp + "application")["value"].toDouble();
+            m_max[source] = data["max"].toDouble();
             plotter->setVerticalRange(0.0, m_max[source] / 1024.0);
         }
 
