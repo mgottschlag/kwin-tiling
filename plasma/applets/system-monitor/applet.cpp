@@ -156,6 +156,9 @@ QGraphicsLinearLayout* Applet::mainLayout()
 void Applet::connectToEngine()
 {
     deleteMeters();
+    // We delete the layout since it seems to be only way to remove stretch set for some applets.
+    setLayout(0);
+    m_mainLayout = 0;
     disconnectSources();
 
     mainLayout()->setOrientation(m_orientation);
@@ -196,7 +199,8 @@ void Applet::checkGeometry()
             height = m_header->minimumSize().height();
             width = m_header->minimumSize().width();
         }
-        m_min.setHeight(height + m_items.count() * MINIMUM);
+        m_min.setHeight(qMax(height + m_items.count() * MINIMUM,
+                             mainLayout()->minimumSize().height()));
         m_min.setWidth(qMax(width + MINIMUM, m_minimumWidth));
         m_pref.setHeight(height + m_items.count() * m_preferredItemHeight);
         m_pref.setWidth(PREFERRED);
@@ -261,7 +265,10 @@ void Applet::disconnectSources()
 void Applet::deleteMeters(QGraphicsLinearLayout* layout)
 {
     if (!layout) {
-        layout = mainLayout();
+        layout = m_mainLayout;
+        if (!layout) {
+            return;
+        }
         m_meters.clear();
         m_plotters.clear();
         m_keepRatio.clear();
