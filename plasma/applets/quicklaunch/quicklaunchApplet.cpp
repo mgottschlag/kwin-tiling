@@ -21,6 +21,7 @@
 
 #include <KConfigDialog>
 #include <KDesktopFile>
+#include <KMessageBox>
 #include <QGraphicsSceneDragDropEvent>
 #include <QGraphicsWidget>
 #include <QDrag>
@@ -58,6 +59,7 @@ QuicklaunchApplet::QuicklaunchApplet(QObject *parent, const QVariantList &args)
     m_dialogLayout(0),
     m_addDialog(0),
     m_rightClickedIcon(0),
+    m_isBusy(false),
     m_addAction(0),
     m_removeAction(0),
     m_sortappAscending(0),
@@ -97,6 +99,7 @@ void QuicklaunchApplet::saveState(KConfigGroup &config) const
 
 void QuicklaunchApplet::init()
 {
+    m_isBusy = true;
     KConfigGroup cg = config();
     m_preferredIconSize = m_iconSize = qMax(s_defaultIconSize, (int)cg.readEntry("iconSize", contentsRect().height() / 2));
     m_visibleIcons = qMax(-1, cg.readEntry("visibleIcons", m_visibleIcons));
@@ -148,6 +151,8 @@ void QuicklaunchApplet::init()
     if (firstStart) {
         resize(sizeHint(Qt::PreferredSize));
     }
+
+    m_isBusy = false;
 }
 
 QSizeF QuicklaunchApplet::sizeHint(Qt::SizeHint which, const QSizeF & constraint) const
@@ -396,12 +401,16 @@ QList<QAction*> QuicklaunchApplet::contextActions(QuicklaunchIcon *icon)
 
 void QuicklaunchApplet::ascendingSort() 
 {
+    m_isBusy = true;
     sortQuicklaunch(AscendingSort);
+    m_isBusy = false;
 }
 
 void QuicklaunchApplet::descendingSort()
 {
+    m_isBusy = true;
     sortQuicklaunch(DescendingSort);
+    m_isBusy = false;
 }
 
 void QuicklaunchApplet::sortQuicklaunch(SortingOrder sortingorder)
@@ -601,6 +610,28 @@ void QuicklaunchApplet::addProgram(int index, const QString &url, bool isNewIcon
     KIcon icon;
     QString text;
     QString genericName;
+    bool do_add_program = true;
+
+    if (!m_isBusy) {
+        foreach (QuicklaunchIcon *icon, m_icons) {
+            if (icon->url().url() == appUrl.url()) {
+                if (KMessageBox::warningContinueCancel(
+                        0, 
+                        i18n("\"%1\" is already in quicklaunch!", icon->url().pathOrUrl()), 
+                        i18n("Warning") 
+                    ) == KMessageBox::Cancel) {
+                    do_add_program = false;
+                    break;
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+
+    if (!do_add_program) {
+        return;
+    }
 
     if (appUrl.isLocalFile() && KDesktopFile::isDesktopFile(appUrl.toLocalFile())) {
         KDesktopFile *f = new KDesktopFile(appUrl.toLocalFile());

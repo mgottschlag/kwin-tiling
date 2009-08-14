@@ -178,6 +178,7 @@ class QuicklaunchApplet : public Plasma::Applet
         Ui::quicklaunchAdd addUi;
         QuicklaunchIcon *m_rightClickedIcon;
         QPointF m_mousePressPos;
+        bool m_isBusy;
 
         QAction* m_addAction;
         QAction* m_removeAction;
