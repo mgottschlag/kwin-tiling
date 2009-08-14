@@ -72,6 +72,7 @@ Comment[gl]=Xestión da rede usando o daemon NetworkManager
 Comment[gu]=નેટવર્કવ્યવસ્થાપક ડેમનનો ઉપયોગ કરીને નેટવર્ક વ્યવસ્થા
 Comment[he]=ניהול הרשת באמצעות השירות NetworkManager
 Comment[hne]=नेटवर्कमेनेजर डेमन के उपयोग से नेटवर्क मेनेजमेंट
+Comment[hr]=Upravljanje mrežom koristeći NetworkManager daemon.
 Comment[hu]=Hálózatkezelés a NetworkManager szolgáltatás segítségével
 Comment[is]=Stjórnun nettenginga með Netstjóranum
 Comment[it]=Gestore della rete che usa li demone NetworkManager
