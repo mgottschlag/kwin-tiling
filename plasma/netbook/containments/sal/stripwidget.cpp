@@ -47,8 +47,9 @@ StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsItem *parent)
 
     m_arrowsLayout = new QGraphicsLinearLayout(m_background);
     m_stripLayout = new QGraphicsLinearLayout();
-    m_hoverIndicator = new ItemBackground(this);
+    m_hoverIndicator = new ItemBackground(m_background);
     m_hoverIndicator->hide();
+    m_hoverIndicator->setZValue(-100);
     setAcceptHoverEvents(true);
 
     m_leftArrow = new Plasma::PushButton(this);
@@ -91,7 +92,7 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
 {
     // create new IconWidget for favourite strip
 
-    Plasma::IconWidget *fav = new Plasma::IconWidget(this);
+    Plasma::IconWidget *fav = new Plasma::IconWidget(m_background);
     fav->installEventFilter(this);
     fav->setText(match->text());
     fav->setIcon(match->icon());
