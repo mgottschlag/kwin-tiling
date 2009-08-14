@@ -180,14 +180,12 @@ void StripWidget::launchFavourite()
 void StripWidget::goRight()
 {
     // discover the item that will be removed
-    QGraphicsWidget *widget = static_cast<QGraphicsWidget*>(m_stripLayout->itemAt(0));
-    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(widget->childItems()[0]);
+    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(m_stripLayout->itemAt(0));
     Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
 
     // removes the first item
     m_favouritesIcons.remove(icon);
     icon->hide();
-    delete widget;
 
     // adds the new item to the end of the list
     int idx = m_favouritesMatches.indexOf(match);
@@ -199,14 +197,12 @@ void StripWidget::goRight()
 void StripWidget::goLeft()
 {
     // discover the item that will be removed
-    QGraphicsWidget *widget = static_cast<QGraphicsWidget*>(m_stripLayout->itemAt(4));
-    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(widget->childItems()[0]);
+    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(m_stripLayout->itemAt(4));
     Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
 
     // removes the first item
     m_favouritesIcons.remove(icon);
     icon->hide();
-    delete widget;
 
     // adds the new item to the end of the list
     int idx = m_favouritesMatches.indexOf(match);
