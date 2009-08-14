@@ -91,8 +91,12 @@ StripWidget::~StripWidget()
 void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
 {
     // create new IconWidget for favourite strip
+    QGraphicsWidget *widget = new QGraphicsWidget();
+    widget->setSizePolicy(QSizePolicy::MinimumExpanding,
+                          QSizePolicy::MinimumExpanding);
+    //widget->setMinimumSize(100, 100);
 
-    Plasma::IconWidget *fav = new Plasma::IconWidget(m_background);
+    Plasma::IconWidget *fav = new Plasma::IconWidget(widget);
     fav->installEventFilter(this);
     fav->setText(match->text());
     fav->setIcon(match->icon());
@@ -107,7 +111,7 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
     connect(action, SIGNAL(triggered()), this, SLOT(removeFavourite()));
 
     m_favouritesIcons.insert(fav, match);
-    m_stripLayout->insertItem(idx, fav);
+    m_stripLayout->insertItem(idx, widget);
     m_stripLayout->setMaximumSize((fav->size().width())*m_stripLayout->count(), fav->size().height());
     m_stripLayout->setMinimumSize(m_stripLayout->maximumSize());
 }
@@ -181,12 +185,14 @@ void StripWidget::launchFavourite()
 void StripWidget::goRight()
 {
     // discover the item that will be removed
-    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(m_stripLayout->itemAt(0));
+    QGraphicsWidget *widget = static_cast<QGraphicsWidget*>(m_stripLayout->itemAt(0));
+    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(widget->childItems()[0]);
     Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
 
     // removes the first item
     m_favouritesIcons.remove(icon);
     icon->hide();
+    delete widget;
 
     // adds the new item to the end of the list
     int idx = m_favouritesMatches.indexOf(match);
@@ -198,12 +204,14 @@ void StripWidget::goRight()
 void StripWidget::goLeft()
 {
     // discover the item that will be removed
-    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(m_stripLayout->itemAt(4));
+    QGraphicsWidget *widget = static_cast<QGraphicsWidget*>(m_stripLayout->itemAt(4));
+    Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(widget->childItems()[0]);
     Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
 
     // removes the first item
     m_favouritesIcons.remove(icon);
     icon->hide();
+    delete widget;
 
     // adds the new item to the end of the list
     int idx = m_favouritesMatches.indexOf(match);
@@ -283,7 +291,7 @@ bool StripWidget::eventFilter(QObject *watched, QEvent *event)
         if (icon) {
             QGraphicsWidget *parent = icon->parentWidget();
             if (parent) {
-                m_hoverIndicator->animatedShowAtRect(icon->geometry());
+                m_hoverIndicator->animatedShowAtRect(parent->geometry());
             }
         }
     }
