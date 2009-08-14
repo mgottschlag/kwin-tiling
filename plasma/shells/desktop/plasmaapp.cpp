@@ -934,8 +934,8 @@ void PlasmaApp::createConfigurationInterface()
     QWidget *widget = new QWidget();
     m_configUi.setupUi(widget);
     KConfigSkeleton *nullManager = new KConfigSkeleton(0);
-    KConfigDialog *dialog = new KConfigDialog(0, "Plasma settings", nullManager);
-    dialog ->addPage(widget, i18n("Plasma settings"));
+    KConfigDialog *dialog = new KConfigDialog(0, "Plasma Settings", nullManager);
+    dialog ->addPage(widget, i18n("Plasma Settings"));
     dialog->setAttribute(Qt::WA_DeleteOnClose, true);
     dialog->setFaceType(KPageDialog::Auto);
     dialog->showButton(KDialog::Apply, false);
