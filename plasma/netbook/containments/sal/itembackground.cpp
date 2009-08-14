@@ -58,6 +58,11 @@ void ItemBackground::animatedShowAtRect(const QRectF &newGeometry)
     m_oldGeometry = geometry();
     m_newGeometry = newGeometry.adjusted(-left, -top, right, bottom);
 
+    QGraphicsWidget *pw = parentWidget();
+    if (pw) {
+        m_newGeometry = m_newGeometry.intersected(QRectF(QPointF(0,0), pw->size()));
+    }
+
     if (m_animId != 0) {
         Plasma::Animator::self()->stopCustomAnimation(m_animId);
     }

@@ -90,15 +90,12 @@ StripWidget::~StripWidget()
 void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
 {
     // create new IconWidget for favourite strip
-    QGraphicsWidget *widget = new QGraphicsWidget();
-    widget->setSizePolicy(QSizePolicy::MinimumExpanding,
-                          QSizePolicy::MinimumExpanding);
 
-    Plasma::IconWidget *fav = new Plasma::IconWidget(widget);
+    Plasma::IconWidget *fav = new Plasma::IconWidget(this);
     fav->installEventFilter(this);
     fav->setText(match->text());
     fav->setIcon(match->icon());
-    fav->setMinimumSize(QSize(100, 100));
+    fav->setMinimumSize(fav->sizeFromIconSize(KIconLoader::SizeHuge));
     fav->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(fav, SIGNAL(activated()), this, SLOT(launchFavourite()));
 
@@ -109,7 +106,7 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
     connect(action, SIGNAL(triggered()), this, SLOT(removeFavourite()));
 
     m_favouritesIcons.insert(fav, match);
-    m_stripLayout->insertItem(idx, widget);
+    m_stripLayout->insertItem(idx, fav);
     m_stripLayout->setMaximumSize((fav->size().width())*m_stripLayout->count(), fav->size().height());
     m_stripLayout->setMinimumSize(m_stripLayout->maximumSize());
 }
@@ -289,7 +286,7 @@ bool StripWidget::eventFilter(QObject *watched, QEvent *event)
         if (icon) {
             QGraphicsWidget *parent = icon->parentWidget();
             if (parent) {
-                m_hoverIndicator->animatedShowAtRect(parent->geometry());
+                m_hoverIndicator->animatedShowAtRect(icon->geometry());
             }
         }
     }
