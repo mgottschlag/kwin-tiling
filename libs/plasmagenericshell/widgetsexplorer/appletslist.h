@@ -13,16 +13,18 @@
 #include "appleticon.h"
 #include "applettooltip.h"
 
-class AppletsList : public QGraphicsWidget
+class AppletsListWidget : public QGraphicsWidget
 {
 
     Q_OBJECT
 
 public:
-    AppletsList(Qt::Orientation orientation = Qt::Horizontal, QGraphicsItem *parent = 0);
-    ~AppletsList();
+    AppletsListWidget(Qt::Orientation orientation = Qt::Horizontal, QGraphicsItem *parent = 0);
+    ~AppletsListWidget();
 
-    QList < KCategorizedItemsViewModels::AbstractItem * > selectedItems() const;
+    //not used yet
+    QList <KCategorizedItemsViewModels::AbstractItem *> selectedItems() const;
+
     void setItemModel(QStandardItemModel *model);
     void setFilterModel(QStandardItemModel *model);
     void setOrientation(Qt::Orientation orientation);
@@ -41,27 +43,39 @@ private:
 
     void populateAllAppletsHash();
 
-    /**
-     * Creates a new applet icon and puts it into the hash
-     */
+    //Creates a new applet icon and puts it into the hash
     AppletIconWidget *createAppletIcon(PlasmaAppletItem *appletItem);
+
+    //Adds the icon to the list layout
     void insertAppletIcon(AppletIconWidget *appletIconWidget);
 
+    //see how many icons is visible at once, approximately
     int maximumAproxVisibleIconsOnList();
+
+    //removes all the icons from the widget
     void eraseList();
     void setToolTipPosition();
 
-    bool isItemUnder(int itemIndex, qreal xPosition);
+    //according to the orientation, paramenter position can be the X or the Y of a QPoint
+    bool isItemUnder(int itemIndex, qreal position);
+
     int findFirstVisibleApplet(int firstVisiblePositionOnList);
     int findLastVisibleApplet(int lastVisiblePositionOnList);
+
+    //returns the what's the visible rect of the list widget
     QRectF visibleListRect();
 
     void scroll(ScrollPolicy side, ScrollPolicy how);
+
+    //scrolls down or right according to orientation
     void scrollDownRight(int step, QRectF visibleRect);
+
+    //scrolls up or left according to orientation
     void scrollUpLeft(int step, QRectF visibleRect);
+
     void wheelEvent(QGraphicsSceneWheelEvent *event);
 
-    void adjustContentsAccordingToOrientation();
+    void setContentsPropertiesAccordingToOrientation();
 
 private slots:
     void searchTermChanged(const QString &text);
@@ -70,7 +84,11 @@ private slots:
 
     void onRightArrowClick();
     void onLeftArrowClick();
+
+    //checks if arrows should be enabled or not
     void manageArrows();
+
+    //moves list to position 0,0
     void resetScroll();
 
     void itemSelected(AppletIconWidget *applet);
@@ -94,17 +112,15 @@ protected:
     void timerEvent(QTimerEvent *event);
 
 Q_SIGNALS:
-
     void appletDoubleClicked(PlasmaAppletItem *appletItem);
     void listScrolled();
-    void infoButtonClicked(const QString &apluginName);
 
 private:
 
-    /**
-     * Hash containing all widgets that represents the applets
-     */
+    //Hash containing all widgets that represents the applets
     QHash<QString, AppletIconWidget *> *m_allAppletsHash;
+
+    //list containing the applet icons of the filter proxy model
     QList<AppletIconWidget *> *m_currentAppearingAppletsOnList;
 
     QGraphicsLinearLayout *m_appletListLinearLayout;
@@ -117,13 +133,15 @@ private:
 
     Qt::Orientation m_orientation;
 
-    /**
-     * One single tootip to show applets info
-     */
+    //One single tootip to show applets info
     AppletToolTipWidget *m_toolTip;
 
     QStandardItemModel *m_modelItems;
+
+    //categories models
     QStandardItemModel *m_modelFilters;
+
+    //model that filters the item models
     KCategorizedItemsViewModels::DefaultItemFilterProxyModel *m_modelFilterItems;
 
     AppletIconWidget *m_selectedItem;

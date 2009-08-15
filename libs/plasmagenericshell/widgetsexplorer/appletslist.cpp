@@ -11,19 +11,16 @@
 
 #include <QHash>
 
+#define ICON_SIZE 70
 #define FILTER_APPLIANCE_DELAY 400
 #define SEARCH_DELAY 300
 #define TOOLTIP_APPEAR_DELAY 1000
 #define TOOLTIP_APPEAR_WHEN_VISIBLE_DELAY 300
 #define TOOLTIP_DISAPPEAR_DELAY 300
 
-#define ICON_SIZE 70
-#define TOOLTIP_HEIGHT 200
-#define TOOLTIP_WIDTH 200
-
 using namespace KCategorizedItemsViewModels;
 
-AppletsList::AppletsList(Qt::Orientation orientation, QGraphicsItem *parent)
+AppletsListWidget::AppletsListWidget(Qt::Orientation orientation, QGraphicsItem *parent)
         :QGraphicsWidget(parent)
 {
     arrowClickStep = 0;
@@ -34,6 +31,7 @@ AppletsList::AppletsList(Qt::Orientation orientation, QGraphicsItem *parent)
 
     connect(this, SIGNAL(listScrolled()), this, SLOT(manageArrows()));
 
+    //init timelines
     scrollTimeLine.setFrameRange(0, 100);
     scrollTimeLine.setCurveShape(QTimeLine::EaseInOutCurve);
     scrollTimeLine.setDuration(500); // TODO: Set this to a lesser value
@@ -46,40 +44,54 @@ AppletsList::AppletsList(Qt::Orientation orientation, QGraphicsItem *parent)
     connect(&toolTipMoveTimeLine, SIGNAL(frameChanged(int)),
             this, SLOT(toolTipMoveTimeLineFrameChanged(int)));
 
+    //init tooltip
     m_toolTip = new AppletToolTipWidget();
     m_toolTip->setVisible(false);
     connect(m_toolTip, SIGNAL(enter()), this, SLOT(onToolTipEnter()));
     connect(m_toolTip, SIGNAL(leave()), this, SLOT(onToolTipLeave()));
-    connect(m_toolTip, SIGNAL(infoButtonClicked(QString)), this, SIGNAL(infoButtonClicked(QString)));
 
     init();
 }
 
-AppletsList::~AppletsList()
+AppletsListWidget::~AppletsListWidget()
 {
 }
 
-void AppletsList::init()
+void AppletsListWidget::init()
 {
+    //init arrows
     m_upLeftArrow = new Plasma::PushButton();
     m_upLeftArrow->setMaximumSize(IconSize(KIconLoader::Panel), IconSize(KIconLoader::Panel));
 
     m_downRightArrow = new Plasma::PushButton();
     m_downRightArrow->setMaximumSize(IconSize(KIconLoader::Panel), IconSize(KIconLoader::Panel));
 
+    if(m_orientation == Qt::Horizontal) {
+        m_upLeftArrow->nativeWidget()->setIcon(KIcon("go-previous"));
+        m_downRightArrow->nativeWidget()->setIcon(KIcon("go-next"));
+    } else {
+        m_upLeftArrow->nativeWidget()->setIcon(KIcon("go-up"));
+        m_downRightArrow->nativeWidget()->setIcon(KIcon("go-down"));
+    }
+
     connect(m_downRightArrow, SIGNAL(clicked()), this, SLOT(onRightArrowClick()));
     connect(m_upLeftArrow, SIGNAL(clicked()), this, SLOT(onLeftArrowClick()));
 
+    //init applets list
     m_appletsListWidget = new QGraphicsWidget();
     m_appletListLinearLayout = new QGraphicsLinearLayout(m_orientation);
     m_appletsListWidget->setLayout(m_appletListLinearLayout);
+    //make its events pass through its parent
     m_appletsListWidget->installEventFilter(this);
 
+    //init window that shows the applets of the list - it clips the appletsListWidget
     m_appletsListWindowWidget = new QGraphicsWidget();
     m_appletsListWindowWidget->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
     m_appletsListWidget->setParentItem(m_appletsListWindowWidget);
+    //make its events pass through its parent
     m_appletsListWindowWidget->installEventFilter(this);
 
+    //layouts
     m_arrowsLayout = new QGraphicsLinearLayout(m_orientation);
 
     m_arrowsLayout->addItem(m_upLeftArrow);
@@ -90,18 +102,10 @@ void AppletsList::init()
     m_arrowsLayout->setAlignment(m_upLeftArrow, Qt::AlignVCenter | Qt::AlignHCenter);
     m_arrowsLayout->setAlignment(m_appletsListWindowWidget, Qt::AlignVCenter | Qt::AlignHCenter);
 
-    if(m_orientation == Qt::Horizontal) {
-        m_upLeftArrow->nativeWidget()->setIcon(KIcon("go-previous"));
-        m_downRightArrow->nativeWidget()->setIcon(KIcon("go-next"));
-    } else {
-        m_upLeftArrow->nativeWidget()->setIcon(KIcon("go-up"));
-        m_downRightArrow->nativeWidget()->setIcon(KIcon("go-down"));
-    }
-
     setLayout(m_arrowsLayout);
 }
 
-void AppletsList::resizeEvent(QGraphicsSceneResizeEvent *event) {
+void AppletsListWidget::resizeEvent(QGraphicsSceneResizeEvent *event) {
 
     Q_UNUSED(event);
 
@@ -117,12 +121,14 @@ void AppletsList::resizeEvent(QGraphicsSceneResizeEvent *event) {
     manageArrows();
 }
 
-bool AppletsList::eventFilter(QObject *obj, QEvent *event)
-{
+//parent intercepts children events
+bool AppletsListWidget::eventFilter(QObject *obj, QEvent *event)
+{    
     if (event->type() == QEvent::GraphicsSceneResize) {
         QGraphicsSceneResizeEvent *resizeEvent = static_cast<QGraphicsSceneResizeEvent *>(event);
         QGraphicsWidget *widget = dynamic_cast<QGraphicsWidget *>(obj);
 
+        //if the resize occured with the list widget
         if(widget == m_appletsListWidget) {
             if(m_orientation == Qt::Horizontal) {
                 m_appletsListWindowWidget->setMinimumHeight(resizeEvent->newSize().height());
@@ -132,19 +138,20 @@ bool AppletsList::eventFilter(QObject *obj, QEvent *event)
                 m_appletsListWindowWidget->setMaximumWidth(resizeEvent->newSize().width());
             }
             return false;
+
+        //if the resize occured with the window widget
         } else if(widget == m_appletsListWindowWidget) {
             int maxVisibleIconsOnList = maximumAproxVisibleIconsOnList();
             arrowClickStep = ceil(maxVisibleIconsOnList/4);
             wheelStep = ceil(maxVisibleIconsOnList/2);
             return false;
         }
-
      }
 
     return QObject::eventFilter(obj, event);
 }
 
-void AppletsList::setItemModel(QStandardItemModel *model)
+void AppletsListWidget::setItemModel(QStandardItemModel *model)
 {
     m_modelFilterItems = new DefaultItemFilterProxyModel(this);
 
@@ -163,18 +170,18 @@ void AppletsList::setItemModel(QStandardItemModel *model)
 
 }
 
-void AppletsList::setFilterModel(QStandardItemModel *model)
+void AppletsListWidget::setFilterModel(QStandardItemModel *model)
 {
     m_modelFilters = model;
 }
 
-void AppletsList::setOrientation(Qt::Orientation orientation)
+void AppletsListWidget::setOrientation(Qt::Orientation orientation)
 {
     m_orientation = orientation;
-    adjustContentsAccordingToOrientation();
+    setContentsPropertiesAccordingToOrientation();
 }
 
-void AppletsList::adjustContentsAccordingToOrientation()
+void AppletsListWidget::setContentsPropertiesAccordingToOrientation()
 {
     m_appletListLinearLayout->invalidate();
     m_appletListLinearLayout->setOrientation(m_orientation);
@@ -191,21 +198,22 @@ void AppletsList::adjustContentsAccordingToOrientation()
     m_appletListLinearLayout->activate();
 }
 
-void AppletsList::filterChanged(int index)
+void AppletsListWidget::filterChanged(int index)
 {
     if (m_modelFilterItems) {
         m_dataFilterAboutToApply = m_modelFilters->item(index)->data();
+        //wait a little before filtering the list
         m_filterApplianceTimer.start(FILTER_APPLIANCE_DELAY, this);
     }
 }
 
-void AppletsList::searchTermChanged(const QString &text)
+void AppletsListWidget::searchTermChanged(const QString &text)
 {
     m_searchString = text;
     m_searchDelayTimer.start(SEARCH_DELAY, this);
 }
 
-void AppletsList::timerEvent(QTimerEvent *event)
+void AppletsListWidget::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == m_searchDelayTimer.timerId()) {
         m_modelFilterItems->setSearch(m_searchString);
@@ -239,7 +247,7 @@ void AppletsList::timerEvent(QTimerEvent *event)
     QGraphicsWidget::timerEvent(event);
 }
 
-void AppletsList::appletIconHoverEnter(AppletIconWidget *applet)
+void AppletsListWidget::appletIconHoverEnter(AppletIconWidget *applet)
 {
     if(!m_toolTip->isVisible()) {
         m_toolTip->setAppletIconWidget(applet);
@@ -248,13 +256,16 @@ void AppletsList::appletIconHoverEnter(AppletIconWidget *applet)
         if(!(m_toolTip->appletIconWidget()->appletItem()->pluginName() ==
             applet->appletItem()->pluginName())) {
             m_toolTip->setAppletIconWidget(applet);
+
+            //small delay, so if one's hovering very fast over the icons,
+            //the tooltip doesn't appear frantically
             m_toolTipAppearWhenAlreadyVisibleTimer.start(TOOLTIP_APPEAR_WHEN_VISIBLE_DELAY, this);
         }
         m_toolTipDisappearTimer.stop();
     }
 }
 
-void AppletsList::appletIconHoverLeave(AppletIconWidget *applet)
+void AppletsListWidget::appletIconHoverLeave(AppletIconWidget *applet)
 {
     Q_UNUSED(applet)
 
@@ -265,17 +276,17 @@ void AppletsList::appletIconHoverLeave(AppletIconWidget *applet)
     }
 }
 
-void AppletsList::onToolTipEnter()
+void AppletsListWidget::onToolTipEnter()
 {
     m_toolTipDisappearTimer.stop();
 }
 
-void AppletsList::onToolTipLeave()
+void AppletsListWidget::onToolTipLeave()
 {
     m_toolTipDisappearTimer.start(TOOLTIP_DISAPPEAR_DELAY, this);
 }
 
-void AppletsList::setToolTipPosition()
+void AppletsListWidget::setToolTipPosition()
 {
     QPointF appletPosition = m_toolTip->appletIconWidget()->mapToItem(this, 0, 0);
 
@@ -296,14 +307,14 @@ void AppletsList::setToolTipPosition()
     } 
 }
 
-void AppletsList::insertAppletIcon(AppletIconWidget *appletIconWidget)
+void AppletsListWidget::insertAppletIcon(AppletIconWidget *appletIconWidget)
 {
     appletIconWidget->setVisible(true);
     m_appletListLinearLayout->addItem(appletIconWidget);
     m_appletListLinearLayout->setAlignment(appletIconWidget, Qt::AlignHCenter);
 }
 
-int AppletsList::maximumAproxVisibleIconsOnList() {
+int AppletsListWidget::maximumAproxVisibleIconsOnList() {
     qreal windowSize;
     qreal listTotalSize;
     qreal iconAverageSize;
@@ -326,11 +337,11 @@ int AppletsList::maximumAproxVisibleIconsOnList() {
     return maxVisibleIconsOnList;
 }
 
-AppletIconWidget *AppletsList::createAppletIcon(PlasmaAppletItem *appletItem)
+AppletIconWidget *AppletsListWidget::createAppletIcon(PlasmaAppletItem *appletItem)
 {
     AppletIconWidget *applet = new AppletIconWidget(0, appletItem);
-    applet->setMinimumSize(applet->sizeFromIconSize(70));
-    applet->setMaximumSize(applet->sizeFromIconSize(70));
+    applet->setMinimumSize(applet->sizeFromIconSize(ICON_SIZE));
+    applet->setMaximumSize(applet->sizeFromIconSize(ICON_SIZE));
 
     connect(applet, SIGNAL(hoverEnter(AppletIconWidget*)), this, SLOT(appletIconHoverEnter(AppletIconWidget*)));
     connect(applet, SIGNAL(hoverLeave(AppletIconWidget*)), this, SLOT(appletIconHoverLeave(AppletIconWidget*)));
@@ -340,7 +351,7 @@ AppletIconWidget *AppletsList::createAppletIcon(PlasmaAppletItem *appletItem)
     return applet;
 }
 
-void AppletsList::itemSelected(AppletIconWidget *applet)
+void AppletsListWidget::itemSelected(AppletIconWidget *applet)
 {
     if(m_selectedItem) {
         m_selectedItem->setSelected(false);
@@ -349,12 +360,12 @@ void AppletsList::itemSelected(AppletIconWidget *applet)
     m_selectedItem = applet;
 }
 
-void AppletsList::appletIconDoubleClicked(AppletIconWidget *applet)
+void AppletsListWidget::appletIconDoubleClicked(AppletIconWidget *applet)
 {
     emit(appletDoubleClicked(applet->appletItem()));
 }
 
-void AppletsList::eraseList() {
+void AppletsListWidget::eraseList() {
     QList<QGraphicsItem *> applets = m_appletsListWidget->childItems();
     foreach(QGraphicsItem *applet, applets) {
         applet->setParentItem(0);
@@ -362,7 +373,7 @@ void AppletsList::eraseList() {
     }
 }
 
-void AppletsList::updateList()
+void AppletsListWidget::updateList()
 {
     AbstractItem *item;
     PlasmaAppletItem *appletItem;
@@ -390,43 +401,42 @@ void AppletsList::updateList()
     resetScroll();
 }
 
-void AppletsList::wheelEvent(QGraphicsSceneWheelEvent *event) {
-    //if the scroll is right or left
+void AppletsListWidget::wheelEvent(QGraphicsSceneWheelEvent *event) {
     ScrollPolicy side;
     bool canScroll;
 
-    side = event->delta() < 0 ? AppletsList::DownRight : AppletsList::UpLeft;
+    side = event->delta() < 0 ? AppletsListWidget::DownRight : AppletsListWidget::UpLeft;
 
-    if(side == AppletsList::DownRight) {
+    if(side == AppletsListWidget::DownRight) {
         canScroll = m_downRightArrow->isEnabled() ? true : false;
     } else {
         canScroll = m_upLeftArrow->isEnabled() ? true : false;
     }
 
     if(canScroll) {
-        scroll(side, AppletsList::Wheel);
+        scroll(side, AppletsListWidget::Wheel);
     }
 }
 
-void AppletsList::onRightArrowClick() {
-    scroll(AppletsList::DownRight, AppletsList::Button);
+void AppletsListWidget::onRightArrowClick() {
+    scroll(AppletsListWidget::DownRight, AppletsListWidget::Button);
 }
 
-void AppletsList::onLeftArrowClick() {
-    scroll(AppletsList::UpLeft, AppletsList::Button);
+void AppletsListWidget::onLeftArrowClick() {
+    scroll(AppletsListWidget::UpLeft, AppletsListWidget::Button);
 }
 
-void AppletsList::scroll(ScrollPolicy side, ScrollPolicy how) {
+void AppletsListWidget::scroll(ScrollPolicy side, ScrollPolicy how) {
     QRectF visibleRect = visibleListRect();
-    int step = (how == AppletsList::Wheel) ? wheelStep : arrowClickStep;
+    int step = (how == AppletsListWidget::Wheel) ? wheelStep : arrowClickStep;
 
     m_toolTip->setVisible(false);
 
     switch(side) {
-        case AppletsList::DownRight:
+        case AppletsListWidget::DownRight:
             scrollDownRight(step, visibleRect);
             break;
-        case AppletsList::UpLeft:
+        case AppletsListWidget::UpLeft:
             scrollUpLeft(step, visibleRect);
             break;
         default:
@@ -434,7 +444,7 @@ void AppletsList::scroll(ScrollPolicy side, ScrollPolicy how) {
     }
 }
 
-void AppletsList::scrollDownRight(int step, QRectF visibleRect) {
+void AppletsListWidget::scrollDownRight(int step, QRectF visibleRect) {
     qreal scrollAmount;
     int lastVisiblePositionOnList;
     int lastVisibleItemIndex;
@@ -457,12 +467,15 @@ void AppletsList::scrollDownRight(int step, QRectF visibleRect) {
         appletsIndexesToSum = step;
     }
 
+    //find out if the step is more than necessary to reach the end of the list
     if(lastVisibleItemIndex + appletsIndexesToSum >= m_currentAppearingAppletsOnList->count()) {
         appletsIndexesToSum = m_currentAppearingAppletsOnList->count() - 1 - lastVisibleItemIndex;
     }
 
+    //who's gonna be the new last appearing icon on the list?!
     newLastIcon = m_currentAppearingAppletsOnList->at(lastVisibleItemIndex + appletsIndexesToSum);
 
+    //scroll enough to show the new last icon on the list
     if(m_orientation == Qt::Horizontal) {
         scrollAmount = (newLastIcon->pos().x() + newLastIcon->size().width()) -
                         lastVisiblePositionOnList;
@@ -482,7 +495,7 @@ void AppletsList::scrollDownRight(int step, QRectF visibleRect) {
     emit(listScrolled());
 }
 
-void AppletsList::scrollUpLeft(int step, QRectF visibleRect) {
+void AppletsListWidget::scrollUpLeft(int step, QRectF visibleRect) {
     qreal scrollAmount;
     int firstVisiblePositionOnList;
     int firstVisibleItemIndex;
@@ -504,12 +517,15 @@ void AppletsList::scrollUpLeft(int step, QRectF visibleRect) {
         appletsIndexesToReduce = step;
     }
 
+    //find out if the step is more than necessary to reach the begining of the list
     if(firstVisibleItemIndex - appletsIndexesToReduce < 0) {
         appletsIndexesToReduce = firstVisibleItemIndex;
     }
 
+    //who's gonna be the new first appearing icon on the list?!
     newFirstIcon = m_currentAppearingAppletsOnList->at(firstVisibleItemIndex - appletsIndexesToReduce);
 
+    //scroll enough to show the new last icon on the list
     if(m_orientation == Qt::Horizontal) {
         scrollAmount = firstVisiblePositionOnList - newFirstIcon->pos().x();
     } else {
@@ -531,7 +547,7 @@ void AppletsList::scrollUpLeft(int step, QRectF visibleRect) {
  * animation framework.
  * TODO: Remove this and animate using plasma's
  * animation framework when it is created */
-void AppletsList::animateMoveBy(int amount)
+void AppletsListWidget::animateMoveBy(int amount)
 {
     if(m_orientation == Qt::Horizontal) {
         scrollFrom = m_appletsListWidget->pos().x();
@@ -563,27 +579,21 @@ void AppletsList::animateMoveBy(int amount)
         }
     }
 
-    // scrollTimeLine.stop();
-
     if (scrollTimeLine.state() != QTimeLine::Running &&
             scrollFrom != scrollTo) {
         scrollTimeLine.start();
     }
 }
 
-void AppletsList::animateToolTipMove()
-{
-//    if(toolTipMoveTimeLine.state() == QTimeLine::Running) {
-//        toolTipMoveFrom = m_toolTip->pos();
-//    }
-    
+void AppletsListWidget::animateToolTipMove()
+{    
     if (toolTipMoveTimeLine.state() != QTimeLine::Running &&
             toolTipMoveFrom != toolTipMoveTo) {
         toolTipMoveTimeLine.start();
     }
 }
 
-void AppletsList::scrollTimeLineFrameChanged(int frame)
+void AppletsListWidget::scrollTimeLineFrameChanged(int frame)
 {
     QPointF newPos;
 
@@ -605,7 +615,7 @@ void AppletsList::scrollTimeLineFrameChanged(int frame)
     }
 }
 
-void AppletsList::toolTipMoveTimeLineFrameChanged(int frame)
+void AppletsListWidget::toolTipMoveTimeLineFrameChanged(int frame)
 {
     QPoint newPos;
 
@@ -616,12 +626,12 @@ void AppletsList::toolTipMoveTimeLineFrameChanged(int frame)
     m_toolTip->move(newPos);
 }
 
-void AppletsList::resetScroll() {
+void AppletsListWidget::resetScroll() {
     m_appletsListWidget->setPos(0,0);
     manageArrows();
 }
 
-void AppletsList::manageArrows() {
+void AppletsListWidget::manageArrows() {
     QRectF visibleRect = visibleListRect();
     qreal firstVisiblePositionOnList;
     qreal lastVisiblePositionOnList;
@@ -639,14 +649,13 @@ void AppletsList::manageArrows() {
     if(listSize <= windowSize) {
         m_upLeftArrow->setEnabled(false);
         m_downRightArrow->setEnabled(false);
+        
     } else {
 
         if(m_orientation == Qt::Horizontal) {
-            windowSize = m_appletsListWindowWidget->geometry().width();
             firstVisiblePositionOnList = visibleRect.x();
             lastVisiblePositionOnList = firstVisiblePositionOnList + visibleRect.width();
         } else {
-            windowSize = m_appletsListWindowWidget->geometry().height();
             firstVisiblePositionOnList = visibleRect.y();
             lastVisiblePositionOnList = firstVisiblePositionOnList + visibleListRect().height();
         }
@@ -665,7 +674,7 @@ void AppletsList::manageArrows() {
     }
 }
 
-bool AppletsList::isItemUnder(int itemIndex, qreal position) {
+bool AppletsListWidget::isItemUnder(int itemIndex, qreal position) {
     int firstPositionOnApplet;
     int lastPositionOnApplet;
     AppletIconWidget *applet;
@@ -689,7 +698,7 @@ bool AppletsList::isItemUnder(int itemIndex, qreal position) {
     }
 }
 
-int AppletsList::findFirstVisibleApplet(int firstVisiblePositionOnList) {
+int AppletsListWidget::findFirstVisibleApplet(int firstVisiblePositionOnList) {
 
     int resultIndex = -1;
     int resultDistance = 99999;
@@ -712,7 +721,7 @@ int AppletsList::findFirstVisibleApplet(int firstVisiblePositionOnList) {
     return resultIndex;
 }
 
-int AppletsList::findLastVisibleApplet(int lastVisiblePositionOnList) {
+int AppletsListWidget::findLastVisibleApplet(int lastVisiblePositionOnList) {
 
     int resultIndex = -1;
     int resultDistance = 99999;
@@ -736,7 +745,7 @@ int AppletsList::findLastVisibleApplet(int lastVisiblePositionOnList) {
     return resultIndex;
 }
 
-QRectF AppletsList::visibleListRect() {
+QRectF AppletsListWidget::visibleListRect() {
     QRectF visibleRect = m_appletsListWindowWidget->
                          mapRectToItem(m_appletsListWidget, 0, 0,
                                           m_appletsListWindowWidget->geometry().width(),
@@ -745,7 +754,7 @@ QRectF AppletsList::visibleListRect() {
     return visibleRect;
 }
 
-void AppletsList::populateAllAppletsHash()
+void AppletsListWidget::populateAllAppletsHash()
 {
     AbstractItem *item;
     PlasmaAppletItem *appletItem;
@@ -760,12 +769,12 @@ void AppletsList::populateAllAppletsHash()
     }
 }
 
-AbstractItem *AppletsList::getItemByProxyIndex(const QModelIndex &index) const
+AbstractItem *AppletsListWidget::getItemByProxyIndex(const QModelIndex &index) const
 {
     return (AbstractItem *)m_modelItems->itemFromIndex(m_modelFilterItems->mapToSource(index));
 }
 
-QList <AbstractItem *> AppletsList::selectedItems() const
+QList <AbstractItem *> AppletsListWidget::selectedItems() const
 {
 //    return m_appletList->selectedItems();
     return QList<AbstractItem *>();

@@ -20,31 +20,38 @@ FilteringTreeView::~FilteringTreeView()
 
 void FilteringTreeView::init()
 {
+    QFont listFont;
+    QPalette plasmaPalette;
+    QColor textColor;
+    QColor color;
+    QGraphicsLinearLayout *linearLayout;
+
+    //init treeview
     m_treeView = new Plasma::TreeView();
     m_treeView->nativeWidget()->setAttribute(Qt::WA_NoSystemBackground);
     m_treeView->nativeWidget()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_treeView->nativeWidget()->setRootIsDecorated(false);
     m_treeView->nativeWidget()->setAttribute(Qt::WA_TranslucentBackground);
 
-    QFont listFont = m_treeView->nativeWidget()->font();
+    //set font and palette
+    listFont = m_treeView->nativeWidget()->font();
     listFont.setPointSize(KGlobalSettings::smallestReadableFont().pointSize());
     m_treeView->nativeWidget()->setFont(listFont);
-
-    QPalette plasmaPalette = QPalette();
-    QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-    QColor color = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
+    plasmaPalette = QPalette();
+    textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    color = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
+    //transparent base color
     plasmaPalette.setColor(QPalette::Base,
                            QColor(color.red(), color.green(), color.blue(), 0));
     plasmaPalette.setColor(QPalette::Text, textColor);
-
     m_treeView->setPalette(plasmaPalette);
     m_treeView->nativeWidget()->setAutoFillBackground(true);
 
-    QGraphicsLinearLayout *linearLayout = new QGraphicsLinearLayout();
+    //layout
+    linearLayout = new QGraphicsLinearLayout();
     linearLayout->addItem(m_treeView);
     setLayout(linearLayout);
     m_treeView->nativeWidget()->header()->setVisible(false);
-    //m_treeView->nativeWidget()->setPalette((new Plasma::IconWidget())->palette());
 }
 
 void FilteringTreeView::setModel(QStandardItemModel *model)
@@ -128,28 +135,29 @@ FilteringWidget::~FilteringWidget(){
 
 void FilteringWidget::init()
 {
+    //init text search
     m_textSearch = new Plasma::LineEdit();
     m_textSearch->nativeWidget()->setClickMessage(/*i18n(*/"Type search"/*)*/);
     m_textSearch->setFocus();
     m_textSearch->setAttribute(Qt::WA_NoSystemBackground);
 
+    //init treeview categories
     m_categoriesTreeView = new FilteringTreeView();
     m_categoriesTabs = new FilteringTabs();
 
+    //throws the signal
     connect(m_categoriesTreeView, SIGNAL(filterChanged(int)), this, SIGNAL(filterChanged(int)));
     connect(m_categoriesTabs, SIGNAL(filterChanged(int)), this, SIGNAL(filterChanged(int)));
 
+    //layout
     m_linearLayout = new QGraphicsLinearLayout();
     m_linearLayout->setOrientation(m_orientation);
-
     m_linearLayout->addItem(m_textSearch);
-
     if(m_orientation == Qt::Horizontal) {
         m_linearLayout->addItem(m_categoriesTabs);
     } else {
         m_linearLayout->addItem(m_categoriesTreeView);
     }
-
     setLayout(m_linearLayout);
 }
 
@@ -162,9 +170,11 @@ void FilteringWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
     m_linearLayout->activate();
 
     if(m_orientation == Qt::Horizontal) {
+        //don't let it occupy the whole layout width
         m_textSearch->setMaximumWidth(contentsSize.width()/6);
         m_textSearch->setMinimumWidth(contentsSize.width()/6);
     } else {
+        //let it occupy the whole width
         m_textSearch->setMaximumWidth(-1);
         m_textSearch->setMinimumWidth(-1);
     }
@@ -185,9 +195,12 @@ void FilteringWidget::setListOrientation(Qt::Orientation orientation)
 {
     m_orientation = orientation;
     m_linearLayout->setOrientation(orientation);
+
     m_categoriesTabs->setVisible(false);
     m_categoriesTreeView->setVisible(false);
+
     m_linearLayout->removeAt(1);
+
     if(orientation == Qt::Horizontal) {
         m_textSearch->setPreferredWidth(200);
         m_textSearch->setPreferredHeight(-1);
@@ -201,44 +214,4 @@ void FilteringWidget::setListOrientation(Qt::Orientation orientation)
     }
 
     m_linearLayout->invalidate();
-}
-
-//FilteringWidgetWithTabs
-
-FilteringWidgetWithTabs::FilteringWidgetWithTabs(QGraphicsItem * parent, Qt::WindowFlags wFlags)
-    : QGraphicsWidget(parent, wFlags)
-{
-    init();
-}
-
-FilteringWidgetWithTabs::~FilteringWidgetWithTabs(){
-}
-
-void FilteringWidgetWithTabs::init()
-{
-    m_textSearch = new Plasma::LineEdit();
-    m_textSearch->nativeWidget()->setClickMessage(/*i18n(*/"Type search"/*)*/);
-    m_textSearch->setFocus();
-    m_textSearch->setAttribute(Qt::WA_NoSystemBackground);
-
-    m_categoriesList = new FilteringTabs();
-
-    QGraphicsLinearLayout *hLayout = new QGraphicsLinearLayout(Qt::Horizontal);
-
-    hLayout->addItem(m_textSearch);
-    hLayout->addItem(m_categoriesList);
-
-    hLayout->setContentsMargins(15,15,15,15);
-    this->setLayout(hLayout);
-
-}
-
-FilteringTabs *FilteringWidgetWithTabs::categoriesList()
-{
-    return m_categoriesList;
-}
-
-Plasma::LineEdit *FilteringWidgetWithTabs::textSearch()
-{
-    return m_textSearch;
 }

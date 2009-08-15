@@ -9,7 +9,6 @@ AppletToolTipWidget::AppletToolTipWidget(QWidget *parent, AppletIconWidget *appl
 {
     m_applet = applet;
     m_widget = new AppletInfoWidget();
-    connect(m_widget, SIGNAL(infoButtonClicked(QString)), this, SIGNAL(infoButtonClicked(QString)));
     QGraphicsScene * scene = new QGraphicsScene();
     scene->addItem(m_widget);
     if(m_applet) {
@@ -152,9 +151,4 @@ void AppletInfoWidget::updateInfo()
 
     QSizeF prefSize = m_mainLayout->sizeHint(Qt::PreferredSize) + QSizeF(32, 32);
     resize(prefSize);
-}
-
-void AppletInfoWidget::onInfoButtonClick()
-{
-    emit(infoButtonClicked(m_appletItem->pluginName()));
 }

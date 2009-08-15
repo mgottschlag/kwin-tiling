@@ -25,10 +25,6 @@ class AppletInfoWidget : public QGraphicsWidget {
 
     public Q_SLOTS:
         void updateInfo();
-        void onInfoButtonClick();
-
-    Q_SIGNALS:
-        void infoButtonClicked(const QString &apluginName);
 
     private:
         PlasmaAppletItem * m_appletItem;
@@ -41,8 +37,6 @@ class AppletInfoWidget : public QGraphicsWidget {
         Plasma::Label   * m_aboutLabel;
         Plasma::Label   * m_actionsLabel;
         Plasma::Label   * m_detailsLabel;
-
-        // Plasma::IconWidget * m_infoButton;
 };
 
 class AppletToolTipWidget : public Plasma::Dialog {
@@ -60,7 +54,6 @@ class AppletToolTipWidget : public Plasma::Dialog {
     Q_SIGNALS:
         void enter();
         void leave();
-        void infoButtonClicked(const QString &apluginName);
 
     protected:
         void enterEvent(QEvent *event);

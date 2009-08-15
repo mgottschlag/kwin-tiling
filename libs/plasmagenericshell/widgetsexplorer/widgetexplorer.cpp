@@ -86,7 +86,7 @@ public:
     /**
      * Widget that lists the applets
      */
-    AppletsList *appletsListWidget;
+    AppletsListWidget *appletsListWidget;
 
     /**
      * Widget that contains the search and categories filters
@@ -125,14 +125,12 @@ void WidgetExplorerPrivate::init(Qt::Orientation orient)
     mainLayout = new QGraphicsLinearLayout(Qt::Vertical);
     orientation = orient;
     filteringWidget = new FilteringWidget(orientation);
-    appletsListWidget = new AppletsList(orientation);
+    appletsListWidget = new AppletsListWidget(orientation);
 
     setMainSize();
 
     //connect
-    //QObject::connect(appletsListWidget, SIGNAL(doubleClicked(const QModelIndex &)), q, SLOT(addApplet()));
     QObject::connect(appletsListWidget, SIGNAL(appletDoubleClicked(PlasmaAppletItem*)), q, SLOT(addApplet(PlasmaAppletItem*)));
-    QObject::connect(appletsListWidget, SIGNAL(infoButtonClicked(QString)), q, SLOT(infoAboutApplet(QString)));
     QObject::connect(filteringWidget->textSearch()->nativeWidget(), SIGNAL(textChanged(QString)), appletsListWidget, SLOT(searchTermChanged(QString)));
     QObject::connect(filteringWidget, SIGNAL(filterChanged(int)), appletsListWidget, SLOT(filterChanged(int)));
 
@@ -149,7 +147,6 @@ void WidgetExplorerPrivate::init(Qt::Orientation orient)
     initRunningApplets();
 
     q->setContentsMargins(15,15,15,15);
-    //set the layout
     q->setLayout(mainLayout);
 
 }
@@ -280,7 +277,6 @@ void WidgetExplorerPrivate::appletAdded(Plasma::Applet *applet)
 
 void WidgetExplorerPrivate::appletRemoved(Plasma::Applet *applet)
 {
-    //kDebug() << (QObject*)applet;
     Plasma::Applet *a = (Plasma::Applet *)applet; //don't care if it's valid, just need the address
 
     QString name = appletNames.take(a);

@@ -48,6 +48,7 @@ class FilteringTabs : public Plasma::TabBar
         void setModel(QStandardItemModel *model);
 
     private:
+        //uses model to populate the tabs
         void populateList();
         QStandardItem *getItemByProxyIndex(const QModelIndex &index) const;
 
@@ -69,11 +70,6 @@ class FilteringWidget : public QGraphicsWidget
                                  Qt::WindowFlags wFlags = 0);
         virtual ~FilteringWidget();
 
-        enum FilteringListOrientation {
-            Vertical = 0,
-            Horizontal = 1
-        };
-
         void init();
         void setModel(QStandardItemModel *model);
         void setListOrientation(Qt::Orientation orientation);
@@ -89,24 +85,6 @@ class FilteringWidget : public QGraphicsWidget
         FilteringTabs *m_categoriesTabs;
         Plasma::LineEdit *m_textSearch;
         Qt::Orientation m_orientation;
-};
-
-class FilteringWidgetWithTabs : public QGraphicsWidget
-{
-    Q_OBJECT
-
-    public:
-        explicit FilteringWidgetWithTabs(QGraphicsItem * parent = 0, Qt::WindowFlags wFlags = 0);
-        virtual ~FilteringWidgetWithTabs();
-
-        void init();
-        FilteringTabs *categoriesList();
-        Plasma::LineEdit *textSearch();
-
-    private:
-        FilteringTabs *m_categoriesList;
-        Plasma::LineEdit *m_textSearch;
-        Plasma::Label *m_filterLabel;
 };
 
 #endif // APPLETSFILTERING_H

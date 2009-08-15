@@ -22,13 +22,15 @@ class AppletIconWidget : public Plasma::IconWidget
         PlasmaAppletItem *appletItem();
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
-    public Q_SLOTS:
-        void updateApplet(PlasmaAppletItem *newAppletItem);
+        //listen to events and emit signals
         void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
         void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
         void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
         void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+
+    public Q_SLOTS:
+        void updateApplet(PlasmaAppletItem *newAppletItem);
 
     Q_SIGNALS:
         void hoverEnter(AppletIconWidget *applet);
@@ -41,7 +43,6 @@ class AppletIconWidget : public Plasma::IconWidget
         bool m_selected;
         bool m_hovered;
         Plasma::FrameSvg *m_selectedBackgroundSvg;
-        bool m_showingTooltip;
 };
 
 #endif //APPLETICON_H
