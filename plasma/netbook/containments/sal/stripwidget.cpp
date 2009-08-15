@@ -94,7 +94,6 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
     QGraphicsWidget *widget = new QGraphicsWidget();
     widget->setSizePolicy(QSizePolicy::MinimumExpanding,
                           QSizePolicy::MinimumExpanding);
-    //widget->setMinimumSize(100, 100);
 
     Plasma::IconWidget *fav = new Plasma::IconWidget(widget);
     fav->installEventFilter(this);
@@ -104,6 +103,9 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
     fav->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(fav, SIGNAL(activated()), this, SLOT(launchFavourite()));
 
+    widget->setMinimumSize(fav->size().height(), fav->size().height());
+    fav->setPos(widget->size().width()/2-fav->size().width()/2, widget->size().height()/2-fav->size().height()/2);
+
     // set an action to be able to remove from favourites
     QAction *action = new QAction(fav);
     action->setIcon(KIcon("list-remove"));
@@ -112,7 +114,7 @@ void StripWidget::createIcon(Plasma::QueryMatch *match, int idx)
 
     m_favouritesIcons.insert(fav, match);
     m_stripLayout->insertItem(idx, widget);
-    m_stripLayout->setMaximumSize((fav->size().width())*m_stripLayout->count(), fav->size().height());
+    m_stripLayout->setMaximumSize((widget->size().width())*m_stripLayout->count(), widget->size().height());
     m_stripLayout->setMinimumSize(m_stripLayout->maximumSize());
 }
 
@@ -164,11 +166,12 @@ void StripWidget::remove(Plasma::IconWidget *favourite)
 void StripWidget::removeFavourite()
 {
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(sender()->parent());
+    QGraphicsWidget *widget = icon->parentWidget();
 
     remove(icon);
 
     //FIXME
-    m_stripLayout->setMinimumSize(icon->size().width()*(m_stripLayout->count()-1), icon->size().height());
+    m_stripLayout->setMinimumSize(widget->size().width()*(m_stripLayout->count()-1), widget->size().height());
     m_stripLayout->setMaximumSize(m_stripLayout->minimumSize());
 }
 
