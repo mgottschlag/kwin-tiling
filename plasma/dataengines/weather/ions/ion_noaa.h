@@ -130,7 +130,7 @@ private:
     void parseUnknownElement(QXmlStreamReader& xml) const;
 
     // Parse weather XML data
-    WeatherData parseWeatherSite(WeatherData& data, QXmlStreamReader& xml);
+    void parseWeatherSite(WeatherData& data, QXmlStreamReader& xml);
     void parseStationID(void);
     void parseStationList(void);
 

@@ -718,7 +718,7 @@ bool EnvCanadaIon::readXMLSetup()
     return (success && !d->m_xmlSetup.error());
 }
 
-WeatherData EnvCanadaIon::parseWeatherSite(WeatherData& data, QXmlStreamReader& xml)
+void EnvCanadaIon::parseWeatherSite(WeatherData& data, QXmlStreamReader& xml)
 {
     while (!xml.atEnd()) {
         xml.readNext();
@@ -750,7 +750,6 @@ WeatherData EnvCanadaIon::parseWeatherSite(WeatherData& data, QXmlStreamReader& 
             }
         }
     }
-    return data;
 }
 
 // Parse Weather data main loop, from here we have to decend into each tag pair
@@ -775,7 +774,7 @@ bool EnvCanadaIon::readXMLData(const QString& source, QXmlStreamReader& xml)
 
         if (xml.isStartElement()) {
             if (xml.name() == "siteData") {
-                data = parseWeatherSite(data, xml);
+                parseWeatherSite(data, xml);
             } else {
                 parseUnknownElement(xml);
             }

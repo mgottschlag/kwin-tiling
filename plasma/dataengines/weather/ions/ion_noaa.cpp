@@ -348,7 +348,7 @@ bool NOAAIon::readXMLSetup()
     return (!d->m_xmlSetup.error() && success);
 }
 
-WeatherData NOAAIon::parseWeatherSite(WeatherData& data, QXmlStreamReader& xml)
+void NOAAIon::parseWeatherSite(WeatherData& data, QXmlStreamReader& xml)
 {
     data.temperature_C = i18n("N/A");
     data.temperature_F = i18n("N/A");
@@ -422,7 +422,6 @@ WeatherData NOAAIon::parseWeatherSite(WeatherData& data, QXmlStreamReader& xml)
             }
         }
     }
-    return data;
 }
 
 // Parse Weather data main loop, from here we have to decend into each tag pair
@@ -439,7 +438,7 @@ bool NOAAIon::readXMLData(const QString& source, QXmlStreamReader& xml)
 
         if (xml.isStartElement()) {
             if (xml.name() == "current_observation") {
-                data = parseWeatherSite(data, xml);
+                parseWeatherSite(data, xml);
             } else {
                 parseUnknownElement(xml);
             }
