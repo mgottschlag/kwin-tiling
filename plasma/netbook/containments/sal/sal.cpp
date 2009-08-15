@@ -193,6 +193,7 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
 
         // create new IconWidget with information from the match
         Plasma::IconWidget *icon = new Plasma::IconWidget(m_viewMainWidget);
+        icon->hide();
         icon->setText(match.text());
         icon->setIcon(match.icon());
         icon->setMinimumSize(icon->sizeFromIconSize(iconSize));
@@ -248,6 +249,7 @@ void SearchLaunch::relayout()
 
         m_launchGrid->addItem(icon, i / nColumns, i % nColumns);
         m_launchGrid->setAlignment(icon, Qt::AlignHCenter);
+        icon->show();
         ++i;
     }
     m_viewMainWidget->resize(0,0);
