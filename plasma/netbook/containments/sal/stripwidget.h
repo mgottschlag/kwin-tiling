@@ -60,6 +60,7 @@ protected:
     void createIcon(Plasma::QueryMatch *match, int idx);
     bool eventFilter(QObject *watched, QEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+    void resizeEvent(QGraphicsSceneResizeEvent *event);
 
 private slots:
     void removeFavourite();
@@ -80,6 +81,7 @@ private:
     QHash<Plasma::IconWidget*, Plasma::QueryMatch*> m_favouritesIcons;
     Plasma::RunnerContext *m_context;
     ItemBackground *m_hoverIndicator;
+    int m_shownIcons;
 };
 
 #endif

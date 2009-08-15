@@ -34,12 +34,15 @@
 
 
 StripWidget::StripWidget(Plasma::RunnerManager *rm, QGraphicsItem *parent)
-    : QGraphicsWidget(parent), m_runnermg(rm)
+    : QGraphicsWidget(parent),
+      m_runnermg(rm),
+      m_shownIcons(5)
 {
     m_background = new Plasma::Frame();
     m_background->setFrameShadow(Plasma::Frame::Raised);
-    m_background->setMinimumSize(QSize(600, 115));
-    m_background->setMaximumSize(QSize(600, 115));
+    /*m_background->setMinimumSize(QSize(600, 115));
+    m_background->setMaximumSize(QSize(600, 115));*/
+    setMaximumHeight(115);
 
     // mainLayout to correctly setup the m_background
     QGraphicsLinearLayout *mainLayout = new QGraphicsLinearLayout(this);
@@ -126,7 +129,7 @@ void StripWidget::add(Plasma::QueryMatch match, const QString &query)
     m_favouritesQueries.insert(newMatch, query);
 
     int idx = m_stripLayout->count();
-    if (idx > 4) {
+    if (idx > m_shownIcons - 1) {
         m_leftArrow->setEnabled(true);
         m_rightArrow->setEnabled(true);
     } else {
@@ -147,19 +150,19 @@ void StripWidget::remove(Plasma::IconWidget *favourite)
     delete match;
 
     // the IconWidget was not removed yet
-    if (m_favouritesMatches.size() <= 5) {
+    if (m_favouritesMatches.size() <= m_shownIcons) {
         m_leftArrow->setEnabled(false);
         m_rightArrow->setEnabled(false);
     }
 
-    if (m_favouritesMatches.size() >= 5) {
+    if (m_favouritesMatches.size() >= m_shownIcons) {
         // adds the new item to the end of the list
         int idx = m_favouritesMatches.indexOf(match);
-        int newpos = (idx + 5) % m_favouritesMatches.size();
+        int newpos = (idx + m_shownIcons) % m_favouritesMatches.size();
 
         match = m_favouritesMatches[newpos];
-        // must be 5 here because at this point the icon was not deleted yet
-        createIcon(match, 5);
+        // must be m_shownIcons here because at this point the icon was not deleted yet
+        createIcon(match, m_shownIcons);
     }
 }
 
@@ -199,15 +202,15 @@ void StripWidget::goRight()
 
     // adds the new item to the end of the list
     int idx = m_favouritesMatches.indexOf(match);
-    int newpos = (idx + 5) % m_favouritesMatches.size();
+    int newpos = (idx + m_shownIcons) % m_favouritesMatches.size();
     match = m_favouritesMatches[newpos];
-    createIcon(match, 4);
+    createIcon(match, m_shownIcons-1);
 }
 
 void StripWidget::goLeft()
 {
     // discover the item that will be removed
-    QGraphicsWidget *widget = static_cast<QGraphicsWidget*>(m_stripLayout->itemAt(4));
+    QGraphicsWidget *widget = static_cast<QGraphicsWidget*>(m_stripLayout->itemAt(m_shownIcons - 1));
     Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(widget->childItems()[0]);
     Plasma::QueryMatch *match = m_favouritesIcons.value(icon);
 
@@ -219,7 +222,7 @@ void StripWidget::goLeft()
     // adds the new item to the end of the list
     int idx = m_favouritesMatches.indexOf(match);
     int size = m_favouritesMatches.size();
-    int newpos = (idx + size - 5) % size;
+    int newpos = (idx + size - m_shownIcons) % size;
     match = m_favouritesMatches[newpos];
     createIcon(match, 0);
 }
@@ -307,3 +310,32 @@ void StripWidget::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     m_hoverIndicator->animatedSetVisible(false);
 }
 
+void StripWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
+{
+    int newShownIcons = qMax(1, (int)((event->newSize().width() - m_leftArrow->size().width() - m_rightArrow->size().width())/m_background->size().height()));
+
+    int effectiveShownIcons = qMin(m_shownIcons, m_favouritesMatches.count());
+
+    if (newShownIcons > effectiveShownIcons) {
+        int newEffectiveShownIcons = qMin(newShownIcons, m_favouritesMatches.count());
+        for (int i = effectiveShownIcons; i < newEffectiveShownIcons; ++i) {
+            Plasma::QueryMatch *match = m_favouritesMatches[i];
+            createIcon(match, i);
+        }
+    } else if (newShownIcons < effectiveShownIcons) {
+        for (int i = effectiveShownIcons; i > newShownIcons && m_stripLayout->count() > 0; --i) {
+            QGraphicsWidget *widget = static_cast<QGraphicsWidget *>(m_stripLayout->itemAt(m_stripLayout->count()-1));
+            Plasma::IconWidget *icon = static_cast<Plasma::IconWidget*>(widget->childItems()[0]);
+
+            m_favouritesIcons.remove(icon);
+            icon->hide();
+            QSizeF widgetSize = widget->size();
+            delete widget;
+            //FIXME here as well
+            m_stripLayout->setMinimumSize(widgetSize.width()*(m_stripLayout->count()-1), widgetSize.height());
+            m_stripLayout->setMaximumSize(m_stripLayout->minimumSize());
+        }
+    }
+
+    m_shownIcons = newShownIcons;
+}

@@ -229,6 +229,11 @@ void SearchLaunch::setQueryMatches(const QList<Plasma::QueryMatch> &m)
 
 void SearchLaunch::relayout()
 {
+    //Relayout the strip widget
+    m_stripWidget->setMaximumWidth((size().width()/3)*2);
+    m_stripWidget->setMinimumWidth(m_stripWidget->maximumWidth());
+
+    //Relayout the grid
     QList<Plasma::IconWidget *>orderedItems = m_items.values();
     int validIndex = 0;
 
