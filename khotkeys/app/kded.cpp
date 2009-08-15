@@ -178,6 +178,8 @@ QString KHotKeysModule::register_menuentry_shortcut(
                 KShortcut(sequence),
                 storageId);
 
+        newAction->enable();
+
         _settings.write();
 
         // Return the real shortcut
