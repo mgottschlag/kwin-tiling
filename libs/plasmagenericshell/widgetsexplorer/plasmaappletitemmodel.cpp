@@ -199,6 +199,8 @@ void PlasmaAppletItemModel::populateModel()
                      static_cast<QIcon>(KIcon(info.icon().isEmpty() ?
                                               "application-x-plasma" : info.icon())));
 
+        qDebug() << info.name() << info.property("X-Plasma-Thumbnail");
+
         appendRow(new PlasmaAppletItem(this, attrs,((m_favorites.contains(info.pluginName())) ? PlasmaAppletItem::Favorite : PlasmaAppletItem::NoFilter) | ((m_used.contains(info.pluginName())) ? PlasmaAppletItem::Used : PlasmaAppletItem::NoFilter), &(extraPluginAttrs[info.pluginName()])));
     }
 }
