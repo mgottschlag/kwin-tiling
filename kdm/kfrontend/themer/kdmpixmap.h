@@ -77,9 +77,8 @@ private:
 	void definePixmap( const QDomElement &el, PixmapStruct::PixmapClass &pc );
 	bool loadPixmap( PixmapStruct::PixmapClass &pc );
 	bool loadSvg( PixmapStruct::PixmapClass &pc );
-	void calcTargetArea( PixmapStruct::PixmapClass &pClass, const QSize &sh );
+	bool calcTargetArea( PixmapStruct::PixmapClass &pClass, const QSize &sh );
 	void applyTint( PixmapStruct::PixmapClass &pClass, QImage &img );
-	void updateSize( PixmapStruct::PixmapClass &pClass );
 	PixmapStruct::PixmapClass &getClass( ItemState sts );
 	PixmapStruct::PixmapClass &getCurClass() { return getClass( state ); }
 
