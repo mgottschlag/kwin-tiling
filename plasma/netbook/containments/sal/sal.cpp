@@ -115,6 +115,12 @@ void SearchLaunch::doSearch(const QString query)
         match.setRelevance(0.8);
 
         //FIXME: awfully hardcoded, find a way nicer way
+        match.setId("system");
+        match.setIcon(KIcon("preferences-system"));
+        match.setText(i18n("System"));
+        match.setData("system");
+        fakeMatches.append(match);
+
         match.setId("bookmarks");
         match.setIcon(KIcon("bookmarks"));
         match.setText(i18n("Bookmarks"));
