@@ -173,22 +173,15 @@ KHotKeys::ActionDataBase *SettingsReaderV2::readActionData(
     // Now load the triggers
     readTriggerList(config, newObject);
 
+    // The object is complete. Activate it if needed
+    _disableActions
+        ? newObject->disable()
+        : config.readEntry("Enabled", false)
+            ? newObject->disable()
+            : newObject->enable();
+
     // Now activate the triggers if necessary
     newObject->update_triggers();
-
-#pragma FIXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXME
-#if 0
-    if (newObject->trigger()->type() == KHotKeys::Trigger::ShortcutTriggerType
-            && newObject->action()->type() == KHotKeys::Action::MenuEntryActionType)
-        {
-        // We collect all of those in the system group
-        KHotKeys::SimpleActionData *temp = newObject = new KHotKeys::MenuEntryShortcutActionData(
-                    _settings->get_system_group(KHotKeys::ActionDataGroup::SYSTEM_MENUENTRIES));
-        delete newObject;
-        newObject = temp;
-        newObject->accept(this);
-        }
-#endif
 
     return newObject;
     }
@@ -404,10 +397,6 @@ void SettingsReaderV2::visitActionDataBase(
     {
     object->set_name(_config->readEntry("Name"));
     object->set_comment(_config->readEntry("Comment"));
-
-    _disableActions
-        ? object->disable()
-        : object->enable();
 
     KConfigGroup conditionsConfig( _config->config(), _config->name() + "Conditions" );
 
