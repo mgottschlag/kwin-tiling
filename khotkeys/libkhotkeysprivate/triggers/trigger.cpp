@@ -22,15 +22,14 @@
 #include <KDE/KConfigGroup>
 #include <KDE/KDebug>
 
-namespace KHotKeys {
+namespace KHotKeys
+    {
+
+TriggerVisitor::~TriggerVisitor()
+    {}
+
 
 Trigger::Trigger( ActionData* data_P )
-    : data( data_P )
-    {
-    }
-
-
-Trigger::Trigger( KConfigGroup&, ActionData* data_P )
     : data( data_P )
     {
     }
@@ -50,25 +49,6 @@ void Trigger::cfg_write( KConfigGroup& cfg_P ) const
     cfg_P.writeEntry( "Type", "ERROR" );
     }
 
-
-Trigger* Trigger::create_cfg_read( KConfigGroup& cfg_P, ActionData* data_P )
-    {
-    QString type = cfg_P.readEntry( "Type" );
-    if( type == "SHORTCUT" || type == "SINGLE_SHORTCUT" )
-        return new ShortcutTrigger( cfg_P, data_P );
-    if( type == "WINDOW" )
-        return new WindowTrigger( cfg_P, data_P );
-    if( type == "GESTURE" )
-        return new GestureTrigger(cfg_P, data_P );
-// FIXME: SOUND
-#if 0
-    if( type == "VOICE" )
-        return new Voice_trigger (cfg_P, data_P );
-#endif
-
-    kWarning() << "Unknown Trigger type read from cfg file\n";
-    return NULL;
-    }
 
 
 void Trigger::enable()

@@ -23,23 +23,6 @@
 
 namespace KHotKeys {
 
-ActionList::ActionList( KConfigGroup& cfg_P, ActionData* data_P )
-    : QList< Action* >()
-    {
-    int cnt = cfg_P.readEntry( "ActionsCount", 0 );
-    QString save_cfg_group = cfg_P.name();
-    for( int i = 0;
-         i < cnt;
-         ++i )
-        {
-        KConfigGroup group( cfg_P.config(), save_cfg_group + QString::number( i ) );
-        Action* action = Action::create_cfg_read( group, data_P );
-        if( action )
-            append( action );
-        }
-    }
-
-
 ActionList::ActionList( const QString& comment_P )
     : QList< Action* >(), _comment( comment_P )
     {}

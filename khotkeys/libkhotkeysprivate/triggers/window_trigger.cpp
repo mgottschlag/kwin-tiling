@@ -29,6 +29,11 @@
 
 namespace KHotKeys {
 
+
+WindowTriggerVisitor::~WindowTriggerVisitor()
+    {}
+
+
 WindowTrigger::WindowTrigger(
         ActionData* data_P,
         Windowdef_list* windows_P,
@@ -50,24 +55,24 @@ WindowTrigger::WindowTrigger(
     }
 
 
-WindowTrigger::WindowTrigger(
-        KConfigGroup& cfg_P,
-        ActionData* data_P)
-    :   Trigger( cfg_P, data_P ),
-        active( true )
-    {
-    KConfigGroup windowsConfig( cfg_P.config(), cfg_P.name() + "Windows" );
-    _windows = new Windowdef_list( windowsConfig );
-    window_actions = WindowEvents(cfg_P.readEntry( "WindowActions", 0 ));
-    init();
-    }
-
-
 WindowTrigger::~WindowTrigger()
     {
 //    kDebug() << "~WindowTrigger :" << this;
     disconnect( windows_handler, NULL, this, NULL );
     delete _windows;
+    }
+
+
+void WindowTrigger::accept(TriggerVisitor& visitor)
+    {
+    if (WindowTriggerVisitor *v = dynamic_cast<WindowTriggerVisitor*>(&visitor))
+        {
+        v->visit(*this);
+        }
+    else
+        {
+        kDebug() << "Visitor error";
+        }
     }
 
 
@@ -149,6 +154,15 @@ const QString WindowTrigger::description() const
 void WindowTrigger::setOnWindowEvents(WindowEvents events)
     {
     window_actions = events;
+    }
+
+
+void WindowTrigger::set_window_rules(Windowdef_list *list)
+    {
+    if (_windows)
+        delete _windows;
+
+    _windows = list;
     }
 
 

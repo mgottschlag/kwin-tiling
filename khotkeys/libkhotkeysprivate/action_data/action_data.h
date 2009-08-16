@@ -61,6 +61,7 @@ class KDE_EXPORT ActionData
         Trigger_list* triggers();
 
         const ActionList* actions() const;
+        ActionList* actions();
 
         virtual void add_trigger( Trigger* trigger_P );
 

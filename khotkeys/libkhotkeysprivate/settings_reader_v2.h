@@ -20,12 +20,15 @@
  **/
 
 #include "action_data/action_data_visitor.h"
+#include "actions/actions.h"
+#include "triggers/triggers.h"
 
 class KConfigBase;
 class KConfigGroup;
 
 namespace KHotKeys {
     class Settings;
+    class Trigger_list;
     template< typename T, typename A > class SimpleActionDataHelper;
 }
 
@@ -33,7 +36,20 @@ namespace KHotKeys {
 /**
  * @author Michael Jansen <kde@michael-jansen.biz>
  */
-class SettingsReaderV2 : public KHotKeys::ActionDataVisitor
+class SettingsReaderV2 :
+        public KHotKeys::ActionDataVisitor,
+
+        public KHotKeys::ActionVisitor,
+        public KHotKeys::ActivateWindowActionVisitor,
+        public KHotKeys::CommandUrlActionVisitor,
+        public KHotKeys::DBusActionVisitor,
+        public KHotKeys::KeyboardInputActionVisitor,
+        public KHotKeys::MenuEntryActionVisitor,
+
+        public KHotKeys::TriggerVisitor,
+        public KHotKeys::WindowTriggerVisitor,
+        public KHotKeys::ShortcutTriggerVisitor,
+        public KHotKeys::GestureTriggerVisitor
     {
 public:
     SettingsReaderV2(
@@ -47,7 +63,11 @@ public:
 
     KHotKeys::ActionDataGroup *readGroup(const KConfigGroup &config, KHotKeys::ActionDataGroup *parent);
 
-    KHotKeys::ActionDataBase *readAction(const KConfigGroup &config, KHotKeys::ActionDataGroup *parent);
+    KHotKeys::ActionDataBase *readActionData(const KConfigGroup &config, KHotKeys::ActionDataGroup *parent);
+
+    KHotKeys::Trigger_list *readTriggerList(const KConfigGroup &config, KHotKeys::ActionData *parent);
+
+    KHotKeys::ActionList *readActionList(const KConfigGroup &config, KHotKeys::ActionData *parent);
 
     virtual void visitActionDataBase(KHotKeys::ActionDataBase *base);
 
@@ -61,6 +81,15 @@ public:
 
     virtual void visitSimpleActionData(KHotKeys::SimpleActionData *data);
 
+    virtual void visit(KHotKeys::ActivateWindowAction&);
+    virtual void visit(KHotKeys::CommandUrlAction&);
+    virtual void visit(KHotKeys::DBusAction&);
+    virtual void visit(KHotKeys::KeyboardInputAction&);
+    virtual void visit(KHotKeys::MenuEntryAction&);
+
+    virtual void visit(KHotKeys::GestureTrigger&);
+    virtual void visit(KHotKeys::ShortcutTrigger&);
+    virtual void visit(KHotKeys::WindowTrigger&);
 private:
 
     const KConfigGroup *_config;

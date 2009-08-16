@@ -34,7 +34,6 @@
 #include "windows_handler.h"
 #include "triggers/gestures.h"
 
-class KConfig;
 class QKeySequence;
 
 namespace KHotKeys
@@ -42,6 +41,13 @@ namespace KHotKeys
 
 class Windowdef_list;
 class ActionData;
+
+class TriggerVisitor
+    {
+public:
+    virtual ~TriggerVisitor();
+    };
+
 
 class KDE_EXPORT Trigger
     {
@@ -61,12 +67,10 @@ class KDE_EXPORT Trigger
         Q_DECLARE_FLAGS(TriggerTypes, TriggerType)
 
         Trigger( ActionData* data_P );
-        Trigger( KConfigGroup& cfg_P, ActionData* data_P );
         virtual ~Trigger();
         virtual void cfg_write( KConfigGroup& cfg_P ) const = 0;
         virtual Trigger* copy( ActionData* data_P ) const = 0;
         virtual const QString description() const = 0;
-        static Trigger* create_cfg_read( KConfigGroup& cfg_P, ActionData* data_P );
         virtual void activate( bool activate_P ) = 0;
 
         //! Disable the trigger
@@ -85,6 +89,11 @@ class KDE_EXPORT Trigger
          */
         virtual TriggerType type() const = 0;
 
+        /**
+         * Acyclic visitor pattern
+         */
+        virtual void accept(TriggerVisitor&) = 0;
+
     protected:
         ActionData* const data;
     };
@@ -98,15 +107,16 @@ class KDE_EXPORT Trigger_list
     Q_DISABLE_COPY( Trigger_list )
 
     public:
-        Trigger_list( const QString& comment_P ); // CHECKME nebo i data ?
-        Trigger_list( KConfigGroup& cfg_P, ActionData* data_P );
+        Trigger_list( const QString& comment = QString() );
         virtual ~Trigger_list();
+
         void activate( bool activate_P );
         void cfg_write( KConfigGroup& cfg_P ) const;
         //! Some convenience typedef
         typedef QList< Trigger* >::Iterator Iterator;
         typedef QList< Trigger* >::ConstIterator ConstIterator;
         const QString comment() const;
+        void set_comment(const QString &);
         Trigger_list* copy( ActionData* data_P ) const;
 
         //! Disable the trigger
@@ -124,6 +134,16 @@ class KDE_EXPORT Trigger_list
         QString _comment;
     };
 
+
+class ShortcutTrigger;
+class ShortcutTriggerVisitor
+    {
+public:
+    virtual ~ShortcutTriggerVisitor();
+    virtual void visit(ShortcutTrigger&) = 0;
+    };
+
+
 class KDE_EXPORT ShortcutTrigger
     : public QObject, public Trigger
     {
@@ -132,13 +152,9 @@ class KDE_EXPORT ShortcutTrigger
     typedef Trigger base;
     public:
         ShortcutTrigger(
-            ActionData* data_P,
-            const KShortcut& shortcut_P,
+            ActionData* data,
+            const KShortcut& shortcut = KShortcut(),
             const QUuid &uuid = QUuid::createUuid() );
-
-        ShortcutTrigger(
-            KConfigGroup& cfg_P,
-            ActionData* data_P );
 
         virtual ~ShortcutTrigger();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
@@ -161,6 +177,11 @@ class KDE_EXPORT ShortcutTrigger
 
         //! Enable the trigger
         virtual void enable();
+
+        /**
+         * Acyclic visitor pattern
+         */
+        virtual void accept(TriggerVisitor&);
 
     Q_SIGNALS:
 
@@ -194,6 +215,15 @@ class KDE_EXPORT ShortcutTrigger
     };
 
 
+class WindowTrigger;
+class WindowTriggerVisitor
+    {
+public:
+    virtual ~WindowTriggerVisitor();
+    virtual void visit(WindowTrigger&) = 0;
+    };
+
+
 class KDE_EXPORT WindowTrigger : public QObject, public Trigger
     {
     Q_OBJECT
@@ -216,11 +246,9 @@ class KDE_EXPORT WindowTrigger : public QObject, public Trigger
         Q_DECLARE_FLAGS(WindowEvents, window_action_t)
 
         WindowTrigger(
-                ActionData* data_P,
+                ActionData* data,
                 Windowdef_list* windowslist = NULL,
                 WindowEvents window_actions = 0 );
-
-        WindowTrigger( KConfigGroup& cfg_P, ActionData* data_P );
 
         void setOnWindowEvents(WindowEvents events);
 
@@ -229,12 +257,19 @@ class KDE_EXPORT WindowTrigger : public QObject, public Trigger
         virtual WindowTrigger* copy( ActionData* data_P ) const;
         virtual const QString description() const;
         const Windowdef_list* windows() const;
+        void set_window_rules(Windowdef_list *list);
         Windowdef_list* windows();
         bool triggers_on( window_action_t w_action_P ) const;
         virtual void activate( bool activate_P );
 
         virtual TriggerType type() const { return WindowTriggerType; }
 
+
+
+        /**
+         * Acyclic visitor pattern
+         */
+        virtual void accept(TriggerVisitor&);
 
     protected Q_SLOTS:
         void window_added( WId window_P );
@@ -270,6 +305,13 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(WindowTrigger::WindowEvents)
  * and links the gesture to an action.
  * One object equals one configured gesture.
  */
+class GestureTrigger;
+class GestureTriggerVisitor
+    {
+public:
+    virtual ~GestureTriggerVisitor();
+    virtual void visit(GestureTrigger&) = 0;
+    };
 
 class KDE_EXPORT GestureTrigger
     : public QObject, public Trigger
@@ -277,8 +319,8 @@ class KDE_EXPORT GestureTrigger
     Q_OBJECT
     typedef Trigger base;
     public:
-        GestureTrigger( ActionData* data_P, const StrokePoints& pointdata_P = StrokePoints() );
-        GestureTrigger( KConfigGroup& cfg_P, ActionData* data_P );
+        GestureTrigger( ActionData* data, const StrokePoints& pointdata_P = StrokePoints() );
+
         virtual ~GestureTrigger();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual Trigger* copy( ActionData* data_P ) const;
@@ -287,17 +329,24 @@ class KDE_EXPORT GestureTrigger
 
         //! Set the point data of the gesture
         void setPointData(const StrokePoints &data);
+        void setPointData(const QStringList &strings);
+        void setKDE3Gesture(const QString &gestureCode);
 
         virtual void activate( bool activate_P );
 
         virtual TriggerType type() const { return GestureTriggerType; }
+
+        /**
+         * Acyclic visitor pattern
+         */
+        virtual void accept(TriggerVisitor&);
+
     protected Q_SLOTS:
         void handle_gesture( const StrokePoints& gesture_P );
     Q_SIGNALS:
         void gotScore( ActionData* const data, const qreal score );
-    private:
-        void importKde3Gesture(KConfigGroup& cfg_P);
 
+    private:
         qreal comparePointData(const StrokePoints &a, const StrokePoints &b) const;
         inline qreal angleSquareDifference(qreal alpha, qreal beta) const;
 

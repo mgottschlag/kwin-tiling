@@ -25,20 +25,27 @@
 
 namespace KHotKeys {
 
-DBusAction::DBusAction( KConfigGroup& cfg_P, ActionData* data_P )
-    : Action( cfg_P, data_P )
-    {
-    _application = cfg_P.readEntry( "RemoteApp" );
-    _object = cfg_P.readEntry( "RemoteObj" );
-    _function = cfg_P.readEntry( "Call" );
-    _arguments = cfg_P.readEntry( "Arguments" );
-    }
+DBusActionVisitor::~DBusActionVisitor()
+    {}
 
 
 DBusAction::DBusAction( ActionData* data_P, const QString& app_P, const QString& obj_P,
     const QString& call_P, const QString& args_P )
     : Action( data_P ), _application( app_P ), _object( obj_P ), _function( call_P ), _arguments( args_P )
     {
+    }
+
+
+void DBusAction::accept(ActionVisitor& visitor)
+    {
+    if (DBusActionVisitor *v = dynamic_cast<DBusActionVisitor*>(&visitor))
+        {
+        v->visit(*this);
+        }
+    else
+        {
+        kDebug() << "Visitor error";
+        }
     }
 
 

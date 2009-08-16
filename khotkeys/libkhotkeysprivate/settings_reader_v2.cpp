@@ -28,6 +28,9 @@
 
 #include "triggers/triggers.h"
 
+#include "windows_helper/window_selection_list.h"
+
+
 #include "settings.h"
 
 #include <KDE/KConfig>
@@ -59,7 +62,7 @@ void SettingsReaderV2::read(const KConfigBase &config, KHotKeys::ActionDataGroup
         KConfigGroup childConfig(data.config(), configName + '_' + QString::number(i));
         if (_loadAll || KHotKeys::ActionDataBase::cfg_is_enabled(childConfig))
             {
-            readAction(childConfig, parent);
+            readActionData(childConfig, parent);
             }
         }
     }
@@ -115,7 +118,7 @@ KHotKeys::ActionDataGroup *SettingsReaderV2::readGroup(
         KConfigGroup childConfig(config.config(), configName + '_' + QString::number(i));
         if (_loadAll || KHotKeys::ActionDataBase::cfg_is_enabled(childConfig))
             {
-            readAction(childConfig, group);
+            readActionData(childConfig, group);
             }
         }
 
@@ -123,21 +126,20 @@ KHotKeys::ActionDataGroup *SettingsReaderV2::readGroup(
     }
 
 
-KHotKeys::ActionDataBase *SettingsReaderV2::readAction(
+KHotKeys::ActionDataBase *SettingsReaderV2::readActionData(
         const KConfigGroup &config,
         KHotKeys::ActionDataGroup *parent)
     {
-    KHotKeys::ActionDataBase *newObject = NULL;
-
     QString type = config.readEntry("Type");
 
     if (type == "ACTION_DATA_GROUP")
         {
-        newObject = readGroup(config, parent);
-        // Groups take care of disabling themselves.
-        return newObject;
+        return readGroup(config, parent);
         }
-    else if (type == "GENERIC_ACTION_DATA")
+
+    KHotKeys::ActionData *newObject = NULL;
+
+    if (type == "GENERIC_ACTION_DATA")
         {
         newObject = new KHotKeys::Generic_action_data(parent);
         }
@@ -165,6 +167,15 @@ KHotKeys::ActionDataBase *SettingsReaderV2::readAction(
     _config = &config;
     newObject->accept(this);
 
+    // And the actions
+    readActionList(config, newObject);
+
+    // Now load the triggers
+    readTriggerList(config, newObject);
+
+    // Now activate the triggers if necessary
+    newObject->update_triggers();
+
 #pragma FIXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXME
 #if 0
     if (newObject->trigger()->type() == KHotKeys::Trigger::ShortcutTriggerType
@@ -181,6 +192,211 @@ KHotKeys::ActionDataBase *SettingsReaderV2::readAction(
 
     return newObject;
     }
+
+
+KHotKeys::ActionList *SettingsReaderV2::readActionList(
+        const KConfigGroup &config,
+        KHotKeys::ActionData *parent)
+    {
+    KConfigGroup actionsGroup(config.config(), config.name() + "Actions");
+
+    int cnt = actionsGroup.readEntry( "ActionsCount", 0 );
+    QString save_cfg_group = actionsGroup.name();
+    kDebug() << cnt;
+    for (int i=0; i<cnt; ++i)
+        {
+        KConfigGroup group(actionsGroup.config(), save_cfg_group + QString::number(i));
+        KHotKeys::Action* action;
+
+        QString type = group.readEntry( "Type" );
+
+        if (type == "COMMAND_URL")
+            action = new KHotKeys::CommandUrlAction(parent);
+        else if (type == "MENUENTRY")
+            action = new KHotKeys::MenuEntryAction(parent);
+        else if (type == "DCOP" || type == "DBUS")
+            action = new KHotKeys::DBusAction(parent);
+        else if (type == "KEYBOARD_INPUT")
+            action = new KHotKeys::KeyboardInputAction(parent);
+        else if (type == "ACTIVATE_WINDOW")
+            action = new KHotKeys::ActivateWindowAction(parent);
+        else
+            {
+            kWarning() << "Unknown Action type read from cfg file\n";
+            return NULL;
+            }
+
+        _config = &group;
+        action->accept(*this);
+
+        parent->add_action( action );
+        }
+
+    return NULL;
+    }
+
+
+KHotKeys::Trigger_list *SettingsReaderV2::readTriggerList(
+        const KConfigGroup &config,
+        KHotKeys::ActionData *parent)
+    {
+    KConfigGroup triggersGroup(config.config(), config.name() + "Triggers");
+    KHotKeys::Trigger_list *list = parent->triggers();
+
+    if (!triggersGroup.exists()) return list;
+    kDebug();
+    Q_ASSERT(list);
+
+    list->set_comment(triggersGroup.readEntry("Comment"));
+
+    KHotKeys::Trigger *trigger = NULL;
+
+    int cnt = triggersGroup.readEntry( "TriggersCount", 0 );
+    for (int i = 0; i < cnt; ++i)
+        {
+        KConfigGroup triggerConfig( triggersGroup.config(), triggersGroup.name() + QString::number( i ));
+        QString type = triggerConfig.readEntry("Type");
+        QString uuid = triggerConfig.readEntry( "Uuid" );
+
+        if (type == "SHORTCUT" || type == "SINGLE_SHORTCUT")
+            trigger = new KHotKeys::ShortcutTrigger(parent, KShortcut(), uuid);
+        else if (type == "WINDOW")
+            trigger = new KHotKeys::WindowTrigger(parent);
+        else if (type == "GESTURE")
+            trigger = new KHotKeys::GestureTrigger(parent);
+        else
+            {
+            kWarning() << "khotkeys: Unknown trigger type" << type;
+            return NULL;
+            }
+
+        _config = & triggerConfig;
+        trigger->accept(*this);
+
+        if (trigger) parent->add_trigger( trigger );
+        }
+
+    return list;
+    }
+
+
+void SettingsReaderV2::visit(KHotKeys::ActivateWindowAction& action)
+    {
+    kDebug();
+    QString save_cfg_group = _config->name();
+    KConfigGroup windowGroup(_config->config(), save_cfg_group + "Window" );
+    action.set_window_list(new KHotKeys::Windowdef_list(windowGroup));
+    }
+
+
+void SettingsReaderV2::visit(KHotKeys::CommandUrlAction& action)
+    {
+    action.set_command_url(_config->readEntry("CommandURL"));
+    }
+
+
+void SettingsReaderV2::visit(KHotKeys::DBusAction& action)
+    {
+    action.set_remote_application(_config->readEntry( "RemoteApp" ));
+    action.set_remote_object(_config->readEntry( "RemoteObj" ));
+    action.set_called_function(_config->readEntry( "Call" ));
+    action.set_arguments(_config->readEntry( "Arguments" ));
+    }
+
+
+void SettingsReaderV2::visit(KHotKeys::GestureTrigger& trigger)
+    {
+    kDebug() << "GestureTrigger";
+    if (_config->hasKey("Gesture"))
+        trigger.setKDE3Gesture(_config->readEntry("Gesture"));
+    else
+        trigger.setPointData(_config->readEntry("GesturePointData", QStringList()));
+    }
+
+void SettingsReaderV2::visit(KHotKeys::KeyboardInputAction& action)
+    {
+    kDebug() << "KeyboardInputAction";
+
+    action.setInput(_config->readEntry("Input"));
+
+    KHotKeys::Windowdef_list *window_list = NULL;
+    KHotKeys::KeyboardInputAction::DestinationWindow destWindow;
+
+    // Try the new format with DestinationWindow
+    int destination = _config->readEntry( "DestinationWindow", -1);
+
+
+    switch (destination)
+        {
+        case KHotKeys::KeyboardInputAction::SpecificWindow:
+            {
+            KConfigGroup windowGroup( _config->config(), _config->name() + "DestinationWindow" );
+            window_list = new KHotKeys::Windowdef_list( windowGroup );
+            destWindow = KHotKeys::KeyboardInputAction::SpecificWindow;
+            }
+            break;
+
+        case KHotKeys::KeyboardInputAction::ActionWindow:
+            destWindow = KHotKeys::KeyboardInputAction::ActionWindow;
+            break;
+
+        case KHotKeys::KeyboardInputAction::ActiveWindow:
+            destWindow = KHotKeys::KeyboardInputAction::ActiveWindow;
+            break;
+
+        case -1:
+            {
+            // Old format
+            if(_config->readEntry( "IsDestinationWindow" , false))
+                {
+                KConfigGroup windowGroup( _config->config(), _config->name() + "DestinationWindow" );
+                window_list = new KHotKeys::Windowdef_list( windowGroup );
+                destWindow = KHotKeys::KeyboardInputAction::SpecificWindow;
+                }
+            else
+                {
+                if (_config->readEntry( "ActiveWindow" , false)) destWindow = KHotKeys::KeyboardInputAction::ActiveWindow;
+                else destWindow = KHotKeys::KeyboardInputAction::ActionWindow;
+                }
+            }
+            break;
+
+        default:
+            Q_ASSERT(false);
+            destWindow = KHotKeys::KeyboardInputAction::ActionWindow;
+        }
+
+    if (!window_list) window_list = new KHotKeys::Windowdef_list;
+
+    action.setDestination(destWindow);
+    action.setDestinationWindowRules(window_list);
+    }
+
+
+
+void SettingsReaderV2::visit(KHotKeys::MenuEntryAction& action)
+    {
+    visit( * static_cast<KHotKeys::CommandUrlAction*>(&action));
+    }
+
+
+void SettingsReaderV2::visit(KHotKeys::ShortcutTrigger &trigger)
+    {
+    QString shortcutString = _config->readEntry( "Key" );
+    // TODO: Check if this is still necessary
+    shortcutString.replace("Win+", "Meta+"); // Qt4 doesn't parse Win+, avoid a shortcut without modifier
+
+    trigger.set_key_sequence(shortcutString);
+    }
+
+
+void SettingsReaderV2::visit(KHotKeys::WindowTrigger &trigger)
+    {
+    KConfigGroup windowsConfig( _config->config(), _config->name() + "Windows" );
+    trigger.set_window_rules(new KHotKeys::Windowdef_list(windowsConfig));
+    trigger.setOnWindowEvents(KHotKeys::WindowTrigger::WindowEvents(_config->readEntry( "WindowActions", 0 )));
+    }
+
 
 
 void SettingsReaderV2::visitActionDataBase(
@@ -211,15 +427,6 @@ void SettingsReaderV2::visitActionData(
         KHotKeys::ActionData *object)
     {
     visitActionDataBase(object);
-
-    KConfigGroup triggersGroup( _config->config(), _config->name() + "Triggers" );
-    object->set_triggers(new KHotKeys::Trigger_list(triggersGroup, object));
-
-    KConfigGroup actionsGroup( _config->config(), _config->name() + "Actions" );
-    object->set_actions(new KHotKeys::ActionList(actionsGroup, object));
-
-    // Now activate the triggers if necessary
-    object->update_triggers();
     }
 
 

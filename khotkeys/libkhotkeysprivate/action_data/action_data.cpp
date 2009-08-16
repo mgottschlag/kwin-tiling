@@ -22,13 +22,6 @@ namespace KHotKeys
 {
 
 
-ActionData::~ActionData()
-    {
-    delete _triggers;
-    delete _actions;
-    }
-
-
 ActionData::ActionData(
         ActionDataGroup* parent_P,
         const QString& name_P,
@@ -39,13 +32,27 @@ ActionData::ActionData(
     :   ActionDataBase( parent_P, name_P, comment_P, conditions_P),
         _triggers( triggers_P ),
         _actions( actions_P )
-    {}
+    {
+    if (!_triggers)
+        _triggers = new Trigger_list;
+
+    if (!_actions)
+        _actions = new ActionList;
+    }
 
 
 void ActionData::accept(ActionDataConstVisitor *visitor) const
     {
     visitor->visitActionData(this);
     }
+
+
+ActionData::~ActionData()
+    {
+    delete _triggers; _triggers = NULL;
+    delete _actions; _actions = NULL;
+    }
+
 
 void ActionData::accept(ActionDataVisitor *visitor)
     {
@@ -89,6 +96,12 @@ const ActionList* ActionData::actions() const
     }
 
 
+ActionList* ActionData::actions()
+    {
+    return _actions;
+    }
+
+
 void ActionData::execute()
     {
     for( ActionList::Iterator it = _actions->begin();
@@ -122,18 +135,22 @@ void ActionData::set_triggers( Trigger_list* triggers_P )
     }
 
 
-void ActionData::add_action( Action* action_P, Action* after_P )
+void ActionData::add_action(Action* action, Action* after)
     {
-    int index = 0;
-    for( ActionList::Iterator it = _actions->begin();
-         it != _actions->end();
-         ++it )
+    kDebug() << action << after << _actions->count();
+    if (after)
         {
-        ++index;
-        if( *it == after_P )
-            break;
+        int index = _actions->indexOf(after);
+        _actions->insert(
+                index != -1
+                    ? index +1
+                    : _actions->count(),
+                action);
         }
-    _actions->insert( index, action_P );
+    else
+        {
+        _actions->append(action);
+        }
     }
 
 

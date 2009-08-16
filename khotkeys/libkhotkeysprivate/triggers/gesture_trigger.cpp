@@ -51,42 +51,32 @@
 namespace KHotKeys {
 
 
+GestureTriggerVisitor::~GestureTriggerVisitor()
+    {}
+
+
 GestureTrigger::GestureTrigger( ActionData* data_P, const StrokePoints &pointdata_P )
     : Trigger( data_P ), _pointdata( pointdata_P )
     {
     }
 
 
-GestureTrigger::GestureTrigger( KConfigGroup& cfg_P, ActionData* data_P )
-    : Trigger( cfg_P, data_P )
-    {
-    QStringList strings( cfg_P.readEntry("GesturePointData", QStringList()) );
-
-    // number of points that can be read
-    // (each string is one of 5 coordinates)
-    int n = strings.length()/5;
-    _pointdata.resize(n);
-
-    for(int i=0; i<n; i++)
-        {
-        _pointdata[i].s = strings[i*5 + 0].toDouble();
-        _pointdata[i].delta_s = strings[i*5 + 1].toDouble();
-        _pointdata[i].angle = strings[i*5 + 2].toDouble();
-        _pointdata[i].x = strings[i*5 + 3].toDouble();
-        _pointdata[i].y = strings[i*5 + 4].toDouble();
-        }
-
-    if(n < 5)
-        {
-        _pointdata.clear();
-        importKde3Gesture(cfg_P);
-        }
-    }
-
-
 GestureTrigger::~GestureTrigger()
     {
     gesture_handler->unregister_handler( this, SLOT( handle_gesture( const StrokePoints& )));
+    }
+
+
+void GestureTrigger::accept(TriggerVisitor& visitor)
+    {
+    if (GestureTriggerVisitor *v = dynamic_cast<GestureTriggerVisitor*>(&visitor))
+        {
+        v->visit(*this);
+        }
+    else
+        {
+        kDebug() << "Visitor error";
+        }
     }
 
 
@@ -142,9 +132,37 @@ const StrokePoints& GestureTrigger::pointData() const
     return _pointdata;
     }
 
+
 void GestureTrigger::setPointData( const StrokePoints &data )
     {
     _pointdata = data;
+    }
+
+
+void GestureTrigger::setPointData( const QStringList &strings )
+    {
+    // number of points that can be read
+    // (each string is one of 5 coordinates)
+    int n = strings.length()/5;
+    _pointdata.resize(n);
+
+    for(int i=0; i<n; i++)
+        {
+        _pointdata[i].s = strings[i*5 + 0].toDouble();
+        _pointdata[i].delta_s = strings[i*5 + 1].toDouble();
+        _pointdata[i].angle = strings[i*5 + 2].toDouble();
+        _pointdata[i].x = strings[i*5 + 3].toDouble();
+        _pointdata[i].y = strings[i*5 + 4].toDouble();
+        }
+
+#pragma CHECKME
+#if 0
+    if(n < 5)
+        {
+        _pointdata.clear();
+        importKde3Gesture(*_config);
+        }
+#endif
     }
 
 void GestureTrigger::handle_gesture( const StrokePoints &pointdata_P )
@@ -162,12 +180,13 @@ void GestureTrigger::handle_gesture( const StrokePoints &pointdata_P )
 
 // try to import a gesture from KDE3 times which is composed of a string of
 // numbers
-void GestureTrigger::importKde3Gesture(KConfigGroup& cfg_P)
+void GestureTrigger::setKDE3Gesture(const QString &gestureCode)
     {
-    QString gestureCode = cfg_P.readEntry( "Gesture" );
-
     if(gestureCode.isEmpty())
+        {
+        _pointdata.clear();
         return;
+        }
 
     Stroke stroke;
 
@@ -246,7 +265,6 @@ void GestureTrigger::importKde3Gesture(KConfigGroup& cfg_P)
     stroke.record(newx,  newy);
 
     _pointdata = stroke.processData();
-
     }
 
 

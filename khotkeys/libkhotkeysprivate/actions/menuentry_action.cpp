@@ -28,15 +28,26 @@
 
 namespace KHotKeys {
 
+MenuEntryActionVisitor::~MenuEntryActionVisitor()
+    {}
+
+
 MenuEntryAction::MenuEntryAction( ActionData* data_P, const QString& menuentry_P )
     : CommandUrlAction( data_P, menuentry_P )
     {
     }
 
 
-MenuEntryAction::MenuEntryAction( KConfigGroup& cfg_P, ActionData* data_P )
-    : CommandUrlAction( cfg_P, data_P )
+void MenuEntryAction::accept(ActionVisitor& visitor)
     {
+    if (MenuEntryActionVisitor *v = dynamic_cast<MenuEntryActionVisitor*>(&visitor))
+        {
+        v->visit(*this);
+        }
+    else
+        {
+        kDebug() << "Visitor error";
+        }
     }
 
 

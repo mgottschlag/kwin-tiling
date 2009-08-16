@@ -31,6 +31,10 @@
 
 namespace KHotKeys {
 
+CommandUrlActionVisitor::~CommandUrlActionVisitor()
+    {}
+
+
 CommandUrlAction::CommandUrlAction( ActionData* data_P, const QString& command_url_P )
     : Action( data_P ), _command_url( command_url_P )
     {
@@ -43,10 +47,16 @@ QString CommandUrlAction::command_url() const
     }
 
 
-CommandUrlAction::CommandUrlAction( KConfigGroup& cfg_P, ActionData* data_P )
-    : Action( cfg_P, data_P )
+void CommandUrlAction::accept(ActionVisitor& visitor)
     {
-    _command_url = cfg_P.readEntry( "CommandURL" );
+    if (CommandUrlActionVisitor *v = dynamic_cast<CommandUrlActionVisitor*>(&visitor))
+        {
+        v->visit(*this);
+        }
+    else
+        {
+        kDebug() << "Visitor error";
+        }
     }
 
 

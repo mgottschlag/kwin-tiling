@@ -21,6 +21,7 @@
 #include "windows_helper/window_selection_list.h"
 
 #include <KDE/KConfigGroup>
+#include <KDE/KDebug>
 
 #ifdef Q_WS_X11
 // Has to be behind all qt related stuff. Else the build fails miserably
@@ -30,6 +31,10 @@
 namespace KHotKeys {
 
 
+ActivateWindowActionVisitor::~ActivateWindowActionVisitor()
+    {}
+
+
 ActivateWindowAction::ActivateWindowAction( ActionData* data_P,
     const Windowdef_list* window_P )
     : Action( data_P ), _window( window_P )
@@ -37,12 +42,16 @@ ActivateWindowAction::ActivateWindowAction( ActionData* data_P,
     }
 
 
-ActivateWindowAction::ActivateWindowAction( KConfigGroup& cfg_P, ActionData* data_P )
-    : Action( cfg_P, data_P )
+void ActivateWindowAction::accept(ActionVisitor& visitor)
     {
-    QString save_cfg_group = cfg_P.name();
-    KConfigGroup windowGroup( cfg_P.config(), save_cfg_group + "Window" );
-    _window = new Windowdef_list( windowGroup );
+    if (ActivateWindowActionVisitor *v = dynamic_cast<ActivateWindowActionVisitor*>(&visitor))
+        {
+        v->visit(*this);
+        }
+    else
+        {
+        kDebug() << "Visitor error";
+        }
     }
 
 
@@ -86,6 +95,17 @@ const QString ActivateWindowAction::description() const
 Action* ActivateWindowAction::copy( ActionData* data_P ) const
     {
     return new ActivateWindowAction( data_P, window()->copy());
+    }
+
+
+void ActivateWindowAction::set_window_list(Windowdef_list *list)
+    {
+    if (_window)
+        {
+        delete _window;
+        }
+
+    _window = list;
     }
 
 } // namespace KHotKeys

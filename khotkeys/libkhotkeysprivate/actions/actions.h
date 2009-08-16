@@ -27,6 +27,13 @@ namespace KHotKeys
 class ActionData;
 class Windowdef_list;
 
+class ActionVisitor
+    {
+public:
+    virtual ~ActionVisitor() = 0;
+    };
+
+
 // this one is a base for all "real" resulting actions, e.g. running a command,
 // ActionData instances usually contain at least one Action
 class KDE_EXPORT Action
@@ -57,9 +64,13 @@ class KDE_EXPORT Action
          * Create a action
          */
         Action( ActionData* data_P );
-        Action( KConfigGroup& cfg_P, ActionData* data_P );
 
         virtual ~Action();
+
+        /**
+         * Acyclic visitor pattern
+         */
+        virtual void accept(ActionVisitor&) = 0;
 
         /**
          * Execute the action.
@@ -88,22 +99,6 @@ class KDE_EXPORT Action
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
 
         /**
-         * Read the configuration from @p cfg_P and create a new action.
-         *
-         * It's is the responsibility of the caller to make sure that @p cfg_P
-         * really holds the configuration for a action. But the code still
-         * tries to be as smart as possible when interpreting that stuff.
-         *
-         * The new actions will have @p parent_P as the parent.
-         *
-         * @param cfg_P the configuration object to read from
-         * @param data_P parent for the new object
-         *
-         * @returns the new action object.
-         */
-        static Action* create_cfg_read( KConfigGroup& cfg_P, ActionData* data_P );
-
-        /**
          * Return a copy of the action. 
          *
          * This is a real deep copy.
@@ -130,9 +125,10 @@ class KDE_EXPORT ActionList
     : public QList< Action* >
     {
     Q_DISABLE_COPY( ActionList )
+
     public:
-        ActionList( const QString& comment_P ); // CHECKME nebo i data ?
-        ActionList( KConfigGroup& cfg_P, ActionData* data_P );
+        ActionList( const QString& comment = QString());
+
         ~ActionList();
         void cfg_write( KConfigGroup& cfg_P ) const;
         //! Some convenience typedef
@@ -149,13 +145,23 @@ class KDE_EXPORT ActionList
         QString _comment;
     };
 
+
+
+class CommandUrlAction;
+class CommandUrlActionVisitor
+    {
+public:
+    virtual ~CommandUrlActionVisitor();
+    virtual void visit(CommandUrlAction&) = 0;
+    };
+
+
 class KDE_EXPORT CommandUrlAction
     : public Action
     {
     typedef Action base;
     public:
         CommandUrlAction( ActionData* data_P, const QString& command_url_P = QString() );
-        CommandUrlAction( KConfigGroup& cfg_P, ActionData* data_P );
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual void execute();
         virtual const QString description() const;
@@ -166,9 +172,25 @@ class KDE_EXPORT CommandUrlAction
 
         virtual ActionType type() { return CommandUrlActionType; }
         virtual Action* copy( ActionData* data_P ) const;
+
+        /**
+         * Acyclic visitor pattern
+         */
+        virtual void accept(ActionVisitor&);
+
     private:
         QString _command_url;
     };
+
+
+class MenuEntryAction;
+class MenuEntryActionVisitor
+    {
+public:
+    virtual ~MenuEntryActionVisitor();
+    virtual void visit(MenuEntryAction&) = 0;
+    };
+
 
 class KDE_EXPORT MenuEntryAction
     : public CommandUrlAction
@@ -176,7 +198,6 @@ class KDE_EXPORT MenuEntryAction
     typedef CommandUrlAction base;
     public:
         MenuEntryAction( ActionData* data_P, const QString& menuentry_P = QString() );
-        MenuEntryAction( KConfigGroup& cfg_P, ActionData* data_P );
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual void execute();
 
@@ -187,8 +208,23 @@ class KDE_EXPORT MenuEntryAction
         virtual const QString description() const;
         virtual Action* copy( ActionData* data_P ) const;
         virtual ActionType type() { return Action::MenuEntryActionType; }
+
+        /**
+         * Acyclic visitor pattern
+         */
+        virtual void accept(ActionVisitor&);
+
     private:
         KService::Ptr _service;
+    };
+
+
+class DBusAction;
+class DBusActionVisitor
+    {
+public:
+    virtual ~DBusActionVisitor();
+    virtual void visit(DBusAction&) = 0;
     };
 
 class KDE_EXPORT DBusAction
@@ -203,7 +239,6 @@ class KDE_EXPORT DBusAction
             const QString& call_P= QString(),
             const QString& args_P= QString() );
 
-        DBusAction( KConfigGroup& cfg_P, ActionData* data_P );
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual void execute();
         const QString remote_application() const;
@@ -219,11 +254,26 @@ class KDE_EXPORT DBusAction
         virtual const QString description() const;
         virtual Action* copy( ActionData* data_P ) const;
         virtual ActionType type() { return DBusActionType; }
+
+        /**
+         * Acyclic visitor pattern
+         */
+        virtual void accept(ActionVisitor&);
+
     private:
         QString _application; // CHECKME QCString ?
         QString _object;
         QString _function;
         QString _arguments;
+    };
+
+
+class KeyboardInputAction;
+class KeyboardInputActionVisitor
+    {
+public:
+    virtual ~KeyboardInputActionVisitor();
+    virtual void visit(KeyboardInputAction&) = 0;
     };
 
 class KDE_EXPORT KeyboardInputAction
@@ -248,10 +298,6 @@ class KDE_EXPORT KeyboardInputAction
                 Windowdef_list* dest_window_P = NULL,
                 bool active_window_P = true);
 
-        KeyboardInputAction(
-                KConfigGroup& cfg_P,
-                ActionData* data_P);
-
         virtual ~KeyboardInputAction();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual void execute();
@@ -270,10 +316,18 @@ class KDE_EXPORT KeyboardInputAction
 
         const Windowdef_list* dest_window() const;
         Windowdef_list* dest_window();
+        void setDestinationWindowRules(Windowdef_list *list);
+
         bool activeWindow() const;
         virtual const QString description() const;
         virtual Action* copy( ActionData* data_P ) const;
         virtual ActionType type() { return KeyboardInputActionType; }
+
+        /**
+         * Acyclic visitor pattern
+         */
+        virtual void accept(ActionVisitor&);
+
     private:
         QString _input;
         Windowdef_list* _dest_window;
@@ -282,20 +336,41 @@ class KDE_EXPORT KeyboardInputAction
         DestinationWindow _destination;
     };
 
+
+class ActivateWindowAction;
+class ActivateWindowActionVisitor
+    {
+public:
+    virtual ~ActivateWindowActionVisitor();
+    virtual void visit(ActivateWindowAction&) = 0;
+    };
+
+
 class KDE_EXPORT ActivateWindowAction
     : public Action
     {
     typedef Action base;
     public:
-        ActivateWindowAction( ActionData* data_P, const Windowdef_list* window_P );
-        ActivateWindowAction( KConfigGroup& cfg_P, ActionData* data_P );
+        ActivateWindowAction(
+                ActionData* data_P,
+                const Windowdef_list* window = NULL);
+
         virtual ~ActivateWindowAction();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual void execute();
+
         const Windowdef_list* window() const;
+        void set_window_list(Windowdef_list *list);
+
         virtual const QString description() const;
         virtual Action* copy( ActionData* data_P ) const;
         virtual ActionType type() { return ActivateWindowActionType; }
+
+        /**
+         * Acyclic visitor pattern
+         */
+        virtual void accept(ActionVisitor&);
+
     private:
         const Windowdef_list* _window;
     };

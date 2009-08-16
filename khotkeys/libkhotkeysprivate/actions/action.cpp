@@ -25,6 +25,10 @@
 namespace KHotKeys {
 
 
+ActionVisitor::~ActionVisitor()
+    {}
+
+
 Action::Action( ActionData* data_P )
     : data( data_P )
     {
@@ -40,30 +44,6 @@ void Action::aboutToBeErased()
     {
     // Nothing to do yet.
     }
-
-Action::Action( KConfigGroup&, ActionData* data_P )
-    : data( data_P )
-    {
-    }
-
-
-Action* Action::create_cfg_read( KConfigGroup& cfg_P, ActionData* data_P )
-    {
-    QString type = cfg_P.readEntry( "Type" );
-    if( type == "COMMAND_URL" )
-        return new CommandUrlAction( cfg_P, data_P );
-    if( type == "MENUENTRY" )
-        return new MenuEntryAction( cfg_P, data_P );
-    if( type == "DCOP" || type == "DBUS" )
-        return new DBusAction( cfg_P, data_P );
-    if( type == "KEYBOARD_INPUT" )
-        return new KeyboardInputAction( cfg_P, data_P );
-    if( type == "ACTIVATE_WINDOW" )
-        return new ActivateWindowAction( cfg_P, data_P );
-    kWarning() << "Unknown Action type read from cfg file\n";
-    return NULL;
-    }
-
 
 void Action::cfg_write( KConfigGroup& cfg_P ) const
     {

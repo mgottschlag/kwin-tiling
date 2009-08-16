@@ -36,6 +36,10 @@
 
 namespace KHotKeys {
 
+KeyboardInputActionVisitor::~KeyboardInputActionVisitor()
+    {}
+
+
 KeyboardInputAction::KeyboardInputAction(
         ActionData* data_P,
         const QString& input_P,
@@ -53,64 +57,22 @@ KeyboardInputAction::KeyboardInputAction(
     }
 
 
-KeyboardInputAction::KeyboardInputAction(
-        KConfigGroup& cfg_P,
-        ActionData* data_P)
-    :   Action( cfg_P, data_P ),
-        _dest_window(NULL)
-    {
-    _input = cfg_P.readEntry( "Input" );
-    
-    // Try the new format with DestinationWindow
-    int destination = cfg_P.readEntry( "DestinationWindow", -1);
-
-    switch (destination)
-        {
-        case SpecificWindow:
-            {
-            KConfigGroup windowGroup( cfg_P.config(), cfg_P.name() + "DestinationWindow" );
-            _dest_window = new Windowdef_list( windowGroup );
-            _destination = SpecificWindow;
-            }
-            break;
-
-        case ActionWindow:
-            _destination = ActionWindow;
-            break;
-
-        case ActiveWindow:
-            _destination = ActiveWindow;
-            break;
-
-        case -1:
-            {
-            // Old format
-            if(cfg_P.readEntry( "IsDestinationWindow" , false))
-                {
-                KConfigGroup windowGroup( cfg_P.config(), cfg_P.name() + "DestinationWindow" );
-                _dest_window = new Windowdef_list( windowGroup );
-                _destination = SpecificWindow;
-                }
-            else
-                {
-                if (cfg_P.readEntry( "ActiveWindow" , false)) _destination = ActiveWindow;
-                else _destination = ActionWindow;
-                }
-            }
-            break;
-
-        default:
-            Q_ASSERT(false);
-            _destination = ActionWindow;
-        }
-
-    if (!_dest_window) _dest_window = new Windowdef_list;
-    }
-
-
 KeyboardInputAction::~KeyboardInputAction()
     {
     delete _dest_window;
+    }
+
+
+void KeyboardInputAction::accept(ActionVisitor& visitor)
+    {
+    if (KeyboardInputActionVisitor *v = dynamic_cast<KeyboardInputActionVisitor*>(&visitor))
+        {
+        v->visit(*this);
+        }
+    else
+        {
+        kDebug() << "Visitor error";
+        }
     }
 
 
@@ -123,6 +85,15 @@ const QString& KeyboardInputAction::input() const
 void KeyboardInputAction::setDestination(const DestinationWindow & dest)
     {
     _destination = dest;
+    }
+
+
+void KeyboardInputAction::setDestinationWindowRules(Windowdef_list *list)
+    {
+    if (_dest_window)
+        delete _dest_window;
+
+    _dest_window = list;
     }
 
 
