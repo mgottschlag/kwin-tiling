@@ -130,7 +130,8 @@ void ActionData::add_triggers( Trigger_list* triggers_P )
 
 void ActionData::set_triggers( Trigger_list* triggers_P )
     {
-    Q_ASSERT( _triggers == 0 );
+    if (_triggers) delete _triggers;
+
     _triggers = triggers_P;
     }
 
@@ -179,7 +180,7 @@ void ActionData::add_actions( ActionList* actions_P, Action* after_P )
 
 void ActionData::set_actions( ActionList* actions_P )
     {
-    Q_ASSERT( _actions == 0 );
+    if (_actions) delete _actions;
     _actions = actions_P;
     }
 
