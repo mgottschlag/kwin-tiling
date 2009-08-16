@@ -1,3 +1,23 @@
+/*
+ *   Copyright (C) 2009 by Ana Cecília Martins <anaceciliamb@gmail.com>
+ *   Copyright (C) 2009 by Ivan Cukic <ivan.cukic+kde@gmail.com>
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU Library/Lesser General Public License
+ *   version 2, or (at your option) any later version, as published by the
+ *   Free Software Foundation
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details
+ *
+ *   You should have received a copy of the GNU Library/Lesser General Public
+ *   License along with this program; if not, write to the
+ *   Free Software Foundation, Inc.,
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 #include "appletslist.h"
 #include "widgetexplorer.h"
 
@@ -8,6 +28,7 @@
 #include <kpushbutton.h>
 
 #include <plasma/corona.h>
+#include <plasma/containment.h>
 
 #include <QHash>
 
@@ -289,12 +310,19 @@ void AppletsListWidget::onToolTipLeave()
 void AppletsListWidget::setToolTipPosition()
 {
     QPointF appletPosition = m_toolTip->appletIconWidget()->mapToItem(this, 0, 0);
+    QRectF appletRect = m_toolTip->appletIconWidget()->
+                        mapRectToItem(this, m_toolTip->appletIconWidget()->boundingRect());
 
     Plasma::Corona *corona = dynamic_cast<Plasma::WidgetExplorer*>(parentItem())->corona();
+    Plasma::WidgetExplorer *widgetExplorer = dynamic_cast<Plasma::WidgetExplorer*>(parentItem());
 
     toolTipMoveFrom = m_toolTip->pos();
 
+    //how come?
+    qDebug() << widgetExplorer->containment()->location() << Plasma::LeftEdge << Plasma::BottomEdge;
+
     if(corona) {
+//        ********* use this after integrating with plasma *************
         toolTipMoveTo = corona->popupPosition(m_toolTip->appletIconWidget(), m_toolTip->geometry().size());
     } else {
         toolTipMoveTo = QPoint(appletPosition.x(), appletPosition.y());

@@ -14,20 +14,14 @@ int main(int argc, char *argv[])
 
     Plasma::Containment *containment = new Plasma::Containment();
 
-    KPluginInfo::List list = Plasma::Containment::listContainments();
-
-    foreach(KPluginInfo info, list) {
-        kDebug() << info.pluginName();
-    }
-
     Plasma::WidgetExplorer *appletBrowser;
 
 //    Qt::Orientation orientation = Qt::Vertical;
     Qt::Orientation orientation = Qt::Horizontal;
 
     appletBrowser = new Plasma::WidgetExplorer();
-    appletBrowser->setOrientation(orientation);
     appletBrowser->setContainment(containment);
+    appletBrowser->setOrientation(orientation);
     appletBrowser->setApplication();
 
     Plasma::Corona *scene = new Plasma::Corona();
