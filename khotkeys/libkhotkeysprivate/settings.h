@@ -164,6 +164,11 @@ public:
     KShortcut voiceShortcut() const;
     //@}
 
+    /**
+     * Check if the given config file is a valid khotkeys file
+     */
+    bool isConfigFileValid(KConfigBase const &config, ImportType ask);
+
 protected:
 
     /**

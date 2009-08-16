@@ -29,6 +29,8 @@
 #include <KDE/KMessageBox>
 #include <KDE/KStandardDirs>
 
+#include <QtGui/QApplication>
+
 namespace KHotKeys
 {
 
@@ -230,10 +232,70 @@ bool Settings::import(KConfig& config, ImportType ask, ActionState state)
     }
 
 
+bool Settings::isConfigFileValid(KConfigBase const &config, ImportType ask)
+    {
+    bool valid = false;
+
+    // The file is only valid if it has a main group
+    KConfigGroup mainGroup( &config, "Main" );
+    if (mainGroup.isValid())
+        {
+        // Now check the version
+        int version = mainGroup.readEntry( "Version", -1234576 );
+        switch (version)
+            {
+            case 2:
+                valid = true;
+                break;
+
+            case 1:         // Version 1 files no longer supported
+                kDebug() << "Version 1 file encountered.";
+                break;
+
+            case -1234576:  // No Version entry -> invalid file
+                kDebug() << "No version specified in file:";
+                valid = false;
+                break;
+
+            default:
+                kDebug() << "Invalid Version found:" << version;
+                valid = false;
+                break;
+            }
+        }
+
+    // if it's valid we are finished.
+    if (valid) return valid;
+
+    // See if we should inform the user.
+    switch (ask)
+        {
+        case ImportAsk:
+                {
+                KMessageBox::information(
+                        QApplication::activeWindow(),
+                        "The specified file is empty or not a configuration file",
+                        "Import actions");
+                }
+            break;
+
+        case ImportSilent:
+            break;
+
+        default:
+            Q_ASSERT(false);
+        }
+
+    return valid;
+    }
+
+
 bool Settings::importFrom(ActionDataGroup *element, KConfigBase const &config, ImportType ask, ActionState state)
     {
-    KConfigGroup mainGroup(&config, "Main");
+    // Make sure the given file is valid
+    if (!isConfigFileValid(config, ask)) return false;
 
+    KConfigGroup mainGroup(&config, "Main");
     // A file can have a import id.
     QString import_id = mainGroup.readEntry( "ImportId" );
     if (!import_id.isEmpty())
@@ -405,21 +467,13 @@ bool Settings::reread_settings(bool include_disabled)
 
 bool Settings::read_settings(ActionDataGroup *root, KConfigBase const &config, bool include_disabled, ActionState state)
     {
-    // If the config group we should read from is empty, return.
-    if(config.groupList().count() == 0 )
-        {
-        kDebug() << "Empty group! Returning";
-        return false;
-        }
+    // Make sure the given file is valid
+    if (!isConfigFileValid(config, ImportSilent)) return false;
 
     KConfigGroup mainGroup( &config, "Main" ); // main group
     int version = mainGroup.readEntry( "Version", -1234576 );
     switch (version)
         {
-        case 1:
-            kError() << "Version 1 file no longer supported!";
-            break;
-
         case 2:
                 {
                 kDebug() << "Version 2 File!";
@@ -428,12 +482,10 @@ bool Settings::read_settings(ActionDataGroup *root, KConfigBase const &config, b
                 }
             break;
 
-        case -1234576: // no config file
-            kWarning() << "No configuration file!";
-            return false;
-
         default:
-            kWarning() << "Unknown cfg. file version\n";
+            // All other values are impossible because of the
+            // isConfigFileValid() call above.
+            Q_ASSERT(false);
             return false;
         }
 
