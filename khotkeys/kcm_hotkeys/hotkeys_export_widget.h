@@ -54,6 +54,9 @@ public:
     virtual ~KHotkeysExportDialog();
 
     QString importId() const;
+
+    bool allowMerging() const;
+    void setAllowMerging(bool);
     void setImportId(const QString &id);
     int state() const;
     KUrl url() const;

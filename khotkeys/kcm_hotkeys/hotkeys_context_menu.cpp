@@ -218,6 +218,7 @@ void HotkeysTreeViewContextMenu::exportAction()
         group = _view->model()->indexToActionDataBase(_index)->parent();
 
     widget->setImportId(group->importId());
+    widget->setAllowMerging(group->allowMerging());
 
     if (widget->exec() == QDialog::Accepted)
         {
@@ -246,10 +247,11 @@ void HotkeysTreeViewContextMenu::exportAction()
 
         QString id = widget->importId();
         KUrl url   = widget->url();
+        bool allowMerging = widget->allowMerging();
         if (!url.isEmpty())
             {
             KConfig config(url.path(), KConfig::SimpleConfig);
-            _view->model()->exportInputActions(_index, config, id, state);
+            _view->model()->exportInputActions(_index, config, id, state, allowMerging);
             }
         }
     delete widget;

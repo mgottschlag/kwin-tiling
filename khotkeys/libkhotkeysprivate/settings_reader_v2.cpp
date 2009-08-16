@@ -405,6 +405,7 @@ void SettingsReaderV2::visitActionDataBase(
     object->set_name(_config->readEntry("Name"));
     object->set_comment(_config->readEntry("Comment"));
     object->setImportId(_config->readEntry("ImportId"));
+    object->setAllowMerging(_config->readEntry("AllowMerge", false));
 
     KConfigGroup conditionsConfig( _config->config(), _config->name() + "Conditions" );
 

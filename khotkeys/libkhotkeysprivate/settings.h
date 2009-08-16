@@ -88,7 +88,8 @@ public:
             ActionDataBase *what,
             KConfigBase &config,
             const QString &id,
-            ActionState state);
+            ActionState state,
+            bool allowMerging);
 
     /**
      * Import settings from \a cfg_P.

@@ -333,7 +333,8 @@ void KHotkeysModel::exportInputActions(
         const QModelIndex &index,
         KConfigBase &config,
         const QString& id,
-        const KHotKeys::ActionState state)
+        const KHotKeys::ActionState state,
+        bool mergingAllowed)
     {
     KHotKeys::ActionDataBase  *element = indexToActionDataBase(index);
     KHotKeys::ActionDataGroup *group   = indexToActionDataGroup(index);
@@ -342,7 +343,8 @@ void KHotkeysModel::exportInputActions(
             group ? group : element->parent(),
             config,
             id,
-            state);
+            state,
+            mergingAllowed);
     }
 
 

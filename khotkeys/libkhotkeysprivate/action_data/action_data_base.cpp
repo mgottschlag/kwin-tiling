@@ -33,6 +33,7 @@ ActionDataBase::ActionDataBase(
         ,_comment(comment_P)
         ,_enabled(false)
         ,_importId()
+        ,_allowMerging(false)
     {
     if (parent()) parent()->add_child( this );
 
@@ -70,6 +71,12 @@ void ActionDataBase::accept(ActionDataConstVisitor *visitor) const
 bool ActionDataBase::cfg_is_enabled(const KConfigGroup& cfg_P )
     {
     return cfg_P.readEntry( "Enabled", true);
+    }
+
+
+bool ActionDataBase::allowMerging() const
+    {
+    return _allowMerging;
     }
 
 
@@ -116,6 +123,12 @@ QString ActionDataBase::name() const
 ActionDataGroup* ActionDataBase::parent() const
     {
     return _parent;
+    }
+
+
+void ActionDataBase::setAllowMerging(bool allowMerging)
+    {
+    _allowMerging = allowMerging;
     }
 
 

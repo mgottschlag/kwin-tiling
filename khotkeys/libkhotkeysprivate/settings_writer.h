@@ -39,12 +39,15 @@ class SettingsWriter : public ActionDataConstVisitor
 
 public:
 
-    SettingsWriter(const Settings *settings, ActionState state);
+    SettingsWriter(
+            const Settings *settings,
+            ActionState state,
+            const QString &id = QString(),
+            bool allowMerging = false);
 
     void exportTo(
             const ActionDataBase *element,
-            KConfigBase &config,
-            const QString &id);
+            KConfigBase &config);
 
     void writeTo(KConfigBase &cfg);
 
@@ -69,6 +72,10 @@ private:
     ActionState _state;
 
     QString _importId;
+
+    bool _allowMerging;
+
+    bool _export;
 
     // Disable copying
     SettingsWriter(const SettingsWriter&);

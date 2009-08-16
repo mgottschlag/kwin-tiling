@@ -116,6 +116,11 @@ class KDE_EXPORT ActionDataBase : public QObject
         QString importId() const;
 
         /**
+         */
+        void setAllowMerging(bool);
+        bool allowMerging() const;
+
+        /**
          * Is the action enabled?
          *
          * The action has different states.
@@ -173,6 +178,10 @@ class KDE_EXPORT ActionDataBase : public QObject
 
         //! The importId from the file we were imported
         QString _importId;
+
+        //! Is it allowed to merge this directory with others. Used when
+        //exporting and importig the directory
+        bool _allowMerging;
 
     };
 

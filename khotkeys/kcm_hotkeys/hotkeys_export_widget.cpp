@@ -46,10 +46,24 @@ KHotkeysExportDialog::~KHotkeysExportDialog()
     {}
 
 
+bool
+KHotkeysExportDialog::allowMerging() const
+    {
+    return w->ui.allowMerging->isChecked();
+    }
+
+
 QString
 KHotkeysExportDialog::importId() const
     {
     return w->ui.id->text();
+    }
+
+
+void
+KHotkeysExportDialog::setAllowMerging(bool allow)
+    {
+    w->ui.allowMerging->setChecked(allow);
     }
 
 
@@ -72,9 +86,6 @@ KHotkeysExportDialog::url() const
     {
     return w->ui.filename->url();
     }
-
-
-
 
 
 #include "moc_hotkeys_export_widget.cpp"

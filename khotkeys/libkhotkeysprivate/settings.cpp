@@ -96,10 +96,11 @@ void Settings::exportTo(
         ActionDataBase *what,
         KConfigBase &config,
         const QString &id,
-        KHotKeys::ActionState state)
+        KHotKeys::ActionState state,
+        bool allowMerging)
     {
-    SettingsWriter writer(this, state);
-    writer.exportTo(what, config, id);
+    SettingsWriter writer(this, state, id, allowMerging);
+    writer.exportTo(what, config);
     }
 
 

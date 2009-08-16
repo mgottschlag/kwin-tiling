@@ -41,20 +41,25 @@ namespace KHotKeys {
 const int CurrentFileVersion = 2;
 
 
-SettingsWriter::SettingsWriter(const Settings *settings, ActionState state)
+SettingsWriter::SettingsWriter(
+            const Settings *settings,
+            ActionState state,
+            const QString &id,
+            bool allowMerging)
     :   _settings(settings)
         ,_state(state)
-        ,_importId()
+        ,_importId(id)
+        ,_allowMerging(allowMerging)
+        ,_export(false)
     {
     }
 
 
 void SettingsWriter::exportTo(
         const ActionDataBase *element,
-        KConfigBase &config,
-        const QString &id)
+        KConfigBase &config)
     {
-    _importId = id;
+    _export = true;
 
     if (!element)
         {
@@ -71,6 +76,8 @@ void SettingsWriter::exportTo(
 
     KConfigGroup mainGroup(&config, "Main");
     mainGroup.writeEntry("Version", CurrentFileVersion);
+    mainGroup.writeEntry("AllowMerge", _allowMerging);
+
     if (!_importId.isEmpty()) mainGroup.writeEntry("ImportId", _importId);
 
     // The root group contains nothing but the datacount!
@@ -83,7 +90,7 @@ void SettingsWriter::exportTo(
     element->accept(this);
     _stack.pop();
 
-    _importId = QString();
+    _export = false;
     }
 
 
@@ -116,10 +123,14 @@ void SettingsWriter::visitActionDataBase(const ActionDataBase *base)
     config->writeEntry( "Type",    "ERROR" ); // derived classes should call with their type
     config->writeEntry( "Name",    base->name());
     config->writeEntry( "Comment", base->comment());
-    // We write the importId back only if we currently do no export with a
-    // different importId (_importId is set).
-    if (_importId.isEmpty() && !base->importId().isEmpty())
-        config->writeEntry( "ImportId", base->importId());
+    // We only write those two back we currently do not export
+    if (!_export)
+        {
+        // ImportId only if set
+        if (!base->importId().isEmpty())
+            config->writeEntry("ImportId", base->importId());
+        config->writeEntry("AllowMerge", base->allowMerging());
+        }
 
     switch (_state)
         {

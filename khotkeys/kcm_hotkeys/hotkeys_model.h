@@ -99,7 +99,8 @@ class KHotkeysModel : public QAbstractItemModel
             const QModelIndex &index,
             KConfigBase &config,
             const QString& id,
-            const KHotKeys::ActionState state);
+            const KHotKeys::ActionState state,
+            bool allowMerging);
 
     /**
      *Import the input actions from @a config.
