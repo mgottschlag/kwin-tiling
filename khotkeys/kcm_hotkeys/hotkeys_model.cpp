@@ -329,9 +329,20 @@ void KHotkeysModel::emitChanged(KHotKeys::ActionDataBase *item)
     }
 
 
-void KHotkeysModel::exportInputActions(const QModelIndex &index, KConfigBase &config)
+void KHotkeysModel::exportInputActions(
+        const QModelIndex &index,
+        KConfigBase &config,
+        const QString& id,
+        const KHotKeys::ActionState state)
     {
-    settings()->exportTo(indexToActionDataBase(index), config, KHotKeys::Current);
+    KHotKeys::ActionDataBase  *element = indexToActionDataBase(index);
+    KHotKeys::ActionDataGroup *group   = indexToActionDataGroup(index);
+
+    settings()->exportTo(
+            group ? group : element->parent(),
+            config,
+            id,
+            state);
     }
 
 

@@ -41,7 +41,10 @@ public:
 
     SettingsWriter(const Settings *settings, ActionState state);
 
-    void exportTo(const ActionDataBase *element, KConfigBase &config);
+    void exportTo(
+            const ActionDataBase *element,
+            KConfigBase &config,
+            const QString &id);
 
     void writeTo(KConfigBase &cfg);
 

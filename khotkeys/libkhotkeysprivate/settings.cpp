@@ -92,10 +92,14 @@ void Settings::enableGestures()
     }
 
 
-void Settings::exportTo(ActionDataBase *what, KConfigBase &config, ActionState state)
+void Settings::exportTo(
+        ActionDataBase *what,
+        KConfigBase &config,
+        const QString &id,
+        KHotKeys::ActionState state)
     {
     SettingsWriter writer(this, state);
-    writer.exportTo(what, config);
+    writer.exportTo(what, config, id);
     }
 
 

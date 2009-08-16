@@ -34,9 +34,9 @@ enum ImportType
 
 enum ActionState
     {
-    Enabled,    //!< Enable all actions
-    Disabled,   //!< Disable all actions
-    Current     //!< Keep the current state
+    Current,     //!< Keep the current state
+    Enabled,     //!< Enable all actions
+    Disabled     //!< Disable all actions
     };
 
 
@@ -79,9 +79,16 @@ public:
     void write();
 
     /**
-     * Export settings to @a config
+     * Export settings to @a config.
+     *
+     * @param id    use id for the exported file.
+     * @param state state to use for exported actions
      */
-    void exportTo(ActionDataBase *what, KConfigBase &config, ActionState);
+    void exportTo(
+            ActionDataBase *what,
+            KConfigBase &config,
+            const QString &id,
+            ActionState state);
 
     /**
      * Import settings from \a cfg_P.

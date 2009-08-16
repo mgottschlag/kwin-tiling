@@ -6,6 +6,7 @@ set(
     kcm_hotkeys.cpp
     kcm_module_factory.cpp
     global_settings_widget.cpp
+    hotkeys_export_widget.cpp
     hotkeys_model.cpp
     hotkeys_proxy_model.cpp
     hotkeys_tree_view.cpp
@@ -48,6 +49,7 @@ kde4_add_ui_files(
     kcm_hotkeys_PART_SRCS
 
     global_settings_widget.ui
+    hotkeys_export_widget.ui
     kcm_hotkeys.ui
 
     # HELPER WIDGETS

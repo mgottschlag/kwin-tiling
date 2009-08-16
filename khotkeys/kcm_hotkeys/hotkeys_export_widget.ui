@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>KHotkeysExportWidget</class>
+ <widget class="QWidget" name="KHotkeysExportWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>437</width>
+    <height>103</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="stateLabel">
+     <property name="toolTip">
+      <string>Change the exported state for the actions.</string>
+     </property>
+     <property name="text">
+      <string>Export Actions</string>
+     </property>
+     <property name="buddy">
+      <cstring>state</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QComboBox" name="state">
+     <property name="whatsThis">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Configure in which state the actions should be exported.&lt;/p&gt;
+&lt;p style=&quot; margin-top:8px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Actual State&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:30px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Export the actions in their current state.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;DIsabled&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:30px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Export the actions in disabled state.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Enabled&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:8px; margin-left:30px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Export the actions in enabled state.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <item>
+      <property name="text">
+       <string extracomment="Don't change the state of exported hotkey actions.">Actual State</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string extracomment="Export hotkey actions in enabled state.">Enabled</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string extracomment="Export hotkey actions into disabled  state">DIsabled</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="idLabel">
+     <property name="statusTip">
+      <string>KHotkeys file id.</string>
+     </property>
+     <property name="whatsThis">
+      <string>A khotkeys file id is used to ensure files are not imported more than once. They are mostly used for automatically updates from kde developers.</string>
+     </property>
+     <property name="text">
+      <string>Id</string>
+     </property>
+     <property name="buddy">
+      <cstring>id</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="KLineEdit" name="id">
+     <property name="clickMessage">
+      <string>set import id for file or leave empty</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="filenameLabel">
+     <property name="text">
+      <string>Filename</string>
+     </property>
+     <property name="buddy">
+      <cstring>filename</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="KUrlRequester" name="filename">
+     <property name="filter">
+      <string notr="true">*.khotkeys</string>
+     </property>
+     <property name="mode">
+      <set>KFile::File</set>
+     </property>
+     <property name="clickMessage">
+      <string/>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KUrlRequester</class>
+   <extends>QFrame</extends>
+   <header>kurlrequester.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>klineedit.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>state</tabstop>
+  <tabstop>id</tabstop>
+  <tabstop>filename</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

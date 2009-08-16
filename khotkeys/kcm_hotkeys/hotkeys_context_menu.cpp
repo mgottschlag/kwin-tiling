@@ -19,6 +19,7 @@
 
 #include "hotkeys_tree_view.h"
 #include "hotkeys_context_menu.h"
+#include "hotkeys_export_widget.h"
 
 #include "hotkeys_model.h"
 
@@ -143,8 +144,7 @@ void HotkeysTreeViewContextMenu::slotAboutToShow()
         }
 
     addSeparator();
-
-    addAction( i18n("Export..."), this, SLOT(exportAction()) );
+    addAction( i18n("Export Group..."), this, SLOT(exportAction()) );
     addAction( i18n("Import..."), this, SLOT(importAction()) );
     }
 
@@ -211,12 +211,41 @@ void HotkeysTreeViewContextMenu::importAction()
 
 void HotkeysTreeViewContextMenu::exportAction()
     {
-    KUrl url = KFileDialog::getSaveFileName(KUrl(), "*.khotkeys", this);
-    if (!url.isEmpty())
+    KHotkeysExportDialog *widget = new KHotkeysExportDialog(this);
+    if (widget->exec() == QDialog::Accepted)
         {
-        KConfig config(url.path(), KConfig::SimpleConfig);
-        _view->model()->exportInputActions(_index, config);
+        KHotKeys::ActionState state;
+        switch (widget->state())
+            {
+            case 0:
+                state = KHotKeys::Current;
+                break;
+
+            case 1:
+                state = KHotKeys::Enabled;
+                break;
+
+            case 2:
+                state = KHotKeys::Disabled;
+                break;
+
+            default:
+                // Unknown value alled to our ui file. Use disabled as a
+                // default.
+                Q_ASSERT(false);
+                state = KHotKeys::Disabled;
+                break;
+            }
+
+        QString id = widget->id();
+        KUrl url   = widget->url();
+        if (!url.isEmpty())
+            {
+            KConfig config(url.path(), KConfig::SimpleConfig);
+            _view->model()->exportInputActions(_index, config, id, state);
+            }
         }
+    delete widget;
     }
 
 

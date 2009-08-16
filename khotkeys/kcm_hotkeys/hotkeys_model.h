@@ -95,7 +95,11 @@ class KHotkeysModel : public QAbstractItemModel
     /**
      * Export the input actions into @a config.
      */
-    void exportInputActions(const QModelIndex &index, KConfigBase &config);
+    void exportInputActions(
+            const QModelIndex &index,
+            KConfigBase &config,
+            const QString& id,
+            const KHotKeys::ActionState state);
 
     /**
      *Import the input actions from @a config.

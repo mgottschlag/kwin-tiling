@@ -48,7 +48,10 @@ SettingsWriter::SettingsWriter(const Settings *settings, ActionState state)
     }
 
 
-void SettingsWriter::exportTo(const ActionDataBase *element, KConfigBase &config)
+void SettingsWriter::exportTo(
+        const ActionDataBase *element,
+        KConfigBase &config,
+        const QString &id)
     {
     if (!element)
         {
@@ -65,6 +68,7 @@ void SettingsWriter::exportTo(const ActionDataBase *element, KConfigBase &config
 
     KConfigGroup mainGroup(&config, "Main");
     mainGroup.writeEntry("Version", CurrentFileVersion);
+    if (!id.isEmpty()) mainGroup.writeEntry("ImportId", id);
 
     // The root group contains nothing but the datacount!
     KConfigGroup dataGroup(&config,  "Data");
@@ -107,7 +111,24 @@ void SettingsWriter::visitActionDataBase(const ActionDataBase *base)
     config->writeEntry( "Type",    "ERROR" ); // derived classes should call with their type
     config->writeEntry( "Name",    base->name());
     config->writeEntry( "Comment", base->comment());
-    config->writeEntry( "Enabled", base->isEnabled(ActionDataBase::Ignore));
+    switch (_state)
+        {
+        case KHotKeys::Current:
+            config->writeEntry( "Enabled", base->isEnabled(ActionDataBase::Ignore));
+            break;
+
+        case KHotKeys::Enabled:
+            config->writeEntry("Enabled", true);
+            break;
+
+        case KHotKeys::Disabled:
+            config->writeEntry("Enabled", false);
+            break;
+
+        default:
+            Q_ASSERT(false);
+            config->writeEntry("Enabled", false);
+        }
 
     if (base->conditions())
         {
