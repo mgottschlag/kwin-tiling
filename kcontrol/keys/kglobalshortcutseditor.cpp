@@ -454,7 +454,7 @@ void KGlobalShortcutsEditor::exportConfiguration(QStringList components, KConfig
         QHash<QString, ComponentData*>::Iterator iter = d->components.find(componentFriendly);
         if (iter == d->components.end())
             {
-            Q_ASSERT(iter == d->components.end());
+            Q_ASSERT(iter != d->components.end());
             continue;
             }
         else
