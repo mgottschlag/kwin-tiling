@@ -41,8 +41,9 @@ namespace KHotKeys {
 const int CurrentFileVersion = 2;
 
 
-SettingsWriter::SettingsWriter(const Settings *settings)
+SettingsWriter::SettingsWriter(const Settings *settings, ActionState state)
     :   _settings(settings)
+        ,_state(state)
     {
     }
 

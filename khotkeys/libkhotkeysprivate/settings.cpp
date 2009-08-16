@@ -90,9 +90,9 @@ void Settings::enableGestures()
     }
 
 
-void Settings::exportTo(ActionDataBase *what, KConfigBase &config)
+void Settings::exportTo(ActionDataBase *what, KConfigBase &config, ActionState state)
     {
-    SettingsWriter writer(this);
+    SettingsWriter writer(this, state);
     writer.exportTo(what, config);
     }
 
@@ -135,7 +135,7 @@ bool Settings::loadDefaults()
     QString installPath = KGlobal::dirs()->installPath("data");
 
     KConfig file(installPath + "khotkeys/defaults.khotkeys");
-    if (read_settings(m_actions, file, true, false))
+    if (read_settings(m_actions, file, true, Enabled))
         {
         kDebug() << "Loaded defaults from" << file.name();
         already_imported.append("defaults");
@@ -224,30 +224,44 @@ KShortcut Settings::voiceShortcut() const
     }
 
 
-bool Settings::import( KConfig& config, bool ask )
+bool Settings::import(KConfig& config, ImportType ask, ActionState state)
     {
-    return importFrom(m_actions, config, ask);
+    return importFrom(m_actions, config, ask, state);
     }
 
 
-bool Settings::importFrom(ActionDataGroup *element, KConfigBase const &config, bool ask)
+bool Settings::importFrom(ActionDataGroup *element, KConfigBase const &config, ImportType ask, ActionState state)
     {
     KConfigGroup mainGroup(&config, "Main");
 
     // A file can have a import id.
     QString import_id = mainGroup.readEntry( "ImportId" );
-    if( !import_id.isEmpty())
+    if (!import_id.isEmpty())
         {
         // File has a id. Check for a previous import.
-        if( already_imported.contains( import_id ))
+        if (already_imported.contains( import_id ))
             {
-            // Ask the user?
-            if( !ask || KMessageBox::warningContinueCancel(
-                            NULL,
-                            i18n( "This \"actions\" file has already been imported before. "
-                                  "Are you sure you want to import it again?" )) != KMessageBox::Continue )
+            switch (ask)
                 {
-                return true; // import "successful"
+                case ImportAsk:
+                    // Ask the user?
+                    if( ask == ImportSilent
+                            || ( ask == ImportAsk && KMessageBox::warningContinueCancel(
+                                    NULL,
+                                    i18n( "This \"actions\" file has already been imported before. "
+                                          "Are you sure you want to import it again?" )) != KMessageBox::Continue ) )
+                        {
+                        return true; // import "successful"
+                        }
+                    break;
+
+                case ImportSilent:
+                    return true;
+
+                default:
+                    // Unknown ImportType. Most likely None.
+                    Q_ASSERT(false);
+                    return true;
                 }
             }
         else
@@ -257,16 +271,31 @@ bool Settings::importFrom(ActionDataGroup *element, KConfigBase const &config, b
         }
     else
         {
-        // File has no import id
-        if( ask && KMessageBox::warningContinueCancel( NULL,
-                i18n( "This \"actions\" file has no ImportId field and therefore it cannot be determined "
-                      "whether or not it has been imported already. Are you sure you want to import it?" ))
-                == KMessageBox::Cancel )
-            return true;
+        switch (ask)
+            {
+            case ImportAsk:
+                if (KMessageBox::warningContinueCancel(
+                                NULL,
+                                i18n( "This \"actions\" file has no ImportId field and therefore it cannot be determined "
+                                      "whether or not it has been imported already. Are you sure you want to import it?" ))
+                        == KMessageBox::Cancel )
+                    {
+                    return true;
+                    }
+                break;
+
+            case ImportSilent:
+                return true;
+
+            default:
+                // Unknown ImportType. Most likely None.
+                Q_ASSERT(false);
+                return true;
+            }
         }
 
     // Include Disabled, Disable the imported actions
-    return read_settings(element, config, true, true);
+    return read_settings(element, config, true, state);
     }
 
 
@@ -367,14 +396,14 @@ bool Settings::reread_settings(bool include_disabled)
     KConfigGroup voiceConfig( &config, "Voice" );
     voice_shortcut=KShortcut( voiceConfig.readEntry("Shortcut" , "")  );
 
-    bool rc = read_settings(m_actions, config, include_disabled);
+    bool rc = read_settings(m_actions, config, include_disabled, Current);
     // Ensure the system groups exist
     validate();
     return rc;
     }
 
 
-bool Settings::read_settings(ActionDataGroup *root, KConfigBase const &config, bool include_disabled, bool disable)
+bool Settings::read_settings(ActionDataGroup *root, KConfigBase const &config, bool include_disabled, ActionState state)
     {
     // If the config group we should read from is empty, return.
     if(config.groupList().count() == 0 )
@@ -394,7 +423,7 @@ bool Settings::read_settings(ActionDataGroup *root, KConfigBase const &config, b
         case 2:
                 {
                 kDebug() << "Version 2 File!";
-                SettingsReaderV2 reader(this, include_disabled, disable);
+                SettingsReaderV2 reader(this, include_disabled, state);
                 reader.read(config, root);
                 }
             break;
@@ -421,7 +450,7 @@ bool Settings::update()
         {
         // Import checks if the file was already imported.
         KConfig file(path);
-        if (import(file, false))
+        if (import(file, ImportSilent, Disabled))
             {
             kDebug() << "Imported file" << path;
             imported = true;
@@ -439,7 +468,7 @@ bool Settings::update()
 void Settings::write()
     {
     KConfig cfg( KHOTKEYS_CONFIG_FILE );
-    SettingsWriter writer(this);
+    SettingsWriter writer(this, Current);
     writer.writeTo(cfg);
     }
 

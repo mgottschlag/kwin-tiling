@@ -32,6 +32,13 @@ enum ImportType
     ImportSilent //!< if already imported before, ignore (called from the update script)
     };
 
+enum ActionState
+    {
+    Enabled,    //!< Enable all actions
+    Disabled,   //!< Disable all actions
+    Current     //!< Keep the current state
+    };
+
 
 /**
  * Handles KHotKeys Settings.
@@ -74,14 +81,14 @@ public:
     /**
      * Export settings to @a config
      */
-    void exportTo(ActionDataBase *what, KConfigBase &config);
+    void exportTo(ActionDataBase *what, KConfigBase &config, ActionState);
 
     /**
      * Import settings from \a cfg_P.
      */
-    bool import(KConfig& cfg_P, bool ask = true);
+    bool import(KConfig& cfg_P, ImportType ask, ActionState state);
 
-    bool importFrom(ActionDataGroup *parent, KConfigBase const &config, bool ask=false);
+    bool importFrom(ActionDataGroup *parent, KConfigBase const &config, ImportType ask, ActionState state);
 
     /**
      * Get all actions
@@ -165,13 +172,13 @@ protected:
      * @param root the group to import to
      * @param config config object to read from
      * @param include_disabled should we read disabled actions?
-     * @param disable_actions disable the imported actions?
+     * @param state enable, disable or keep the actions enabled state
      */
     bool read_settings(
             ActionDataGroup *root,
             KConfigBase const &config,
             bool include_disabled,
-            bool disable_actions = false);
+            ActionState state);
 
     /**
      * Make sure all System Groups exists

@@ -331,7 +331,7 @@ void KHotkeysModel::emitChanged(KHotKeys::ActionDataBase *item)
 
 void KHotkeysModel::exportInputActions(const QModelIndex &index, KConfigBase &config)
     {
-    settings()->exportTo(indexToActionDataBase(index), config);
+    settings()->exportTo(indexToActionDataBase(index), config, KHotKeys::Current);
     }
 
 
@@ -412,7 +412,7 @@ void KHotkeysModel::importInputActions(const QModelIndex &index, KConfigBase con
         groupIndex = index.parent();
         }
 
-    if (settings()->importFrom(group, config, true))
+    if (settings()->importFrom(group, config, KHotKeys::ImportAsk, KHotKeys::Current))
         {
         kDebug();
         reset();

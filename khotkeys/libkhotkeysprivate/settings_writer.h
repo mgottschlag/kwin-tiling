@@ -23,13 +23,12 @@
 
 #include <QtCore/QStack>
 
+#include "settings.h"
+
 class KConfigBase;
 class KConfigGroup;
 
 namespace KHotKeys {
-
-class Settings;
-
 
 
 /**
@@ -40,7 +39,7 @@ class SettingsWriter : public ActionDataConstVisitor
 
 public:
 
-    SettingsWriter(const Settings *settings);
+    SettingsWriter(const Settings *settings, ActionState state);
 
     void exportTo(const ActionDataBase *element, KConfigBase &config);
 
@@ -63,6 +62,8 @@ private:
     const Settings *_settings;
 
     QStack<KConfigGroup*> _stack;
+
+    ActionState _state;
 
     }; //SettingsWriter
 
