@@ -62,7 +62,7 @@ SelectSchemeDialog::~SelectSchemeDialog()
 
 void SelectSchemeDialog::schemeActivated(int index)
 {
-    ui->m_url->setPath(m_schemes[index]);
+    ui->m_url->setUrl(m_schemes[index]);
 }
 
 
