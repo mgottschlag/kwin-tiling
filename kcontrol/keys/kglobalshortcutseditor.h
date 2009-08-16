@@ -25,6 +25,7 @@
 class KActionCollection;
 class KShortcut;
 class KConfig;
+class QDBusObjectPath;
 
 /**
  * Combine a KShortcutsEditor with a KComboBox.
@@ -55,7 +56,7 @@ public:
      * @param component   title for the component
      * @param title       title for the subtree in the component
      */
-    void addCollection(KActionCollection *, const QString &id, const QString &name);
+    void addCollection(KActionCollection *, const QDBusObjectPath &path, const QString &id, const QString &name);
 
     /**
      * Clear all collections were currently hosting. Current changes are not

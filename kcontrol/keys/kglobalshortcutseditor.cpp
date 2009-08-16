@@ -60,11 +60,63 @@
  * model.
  */
 
-struct componentData
-{
-    KShortcutsEditor *editor;
-    QString uniqueName;
-};
+class ComponentData
+    {
+
+public:
+
+    ComponentData(
+            const QString &uniqueName,
+            const QDBusObjectPath &path,
+            KShortcutsEditor *_editor);
+
+    ~ComponentData();
+
+    QString uniqueName() const;
+    KShortcutsEditor *editor();
+    QDBusObjectPath dbusPath();
+
+private:
+
+    QString _uniqueName;
+    QDBusObjectPath _path;
+    QPointer<KShortcutsEditor> _editor;
+    };
+
+
+ComponentData::ComponentData(
+        const QString &uniqueName,
+        const QDBusObjectPath &path,
+        KShortcutsEditor *editor)
+    :   _uniqueName(uniqueName),
+        _path(path),
+        _editor(editor)
+    {}
+
+
+ComponentData::~ComponentData()
+    {
+    delete _editor; _editor = 0;
+    }
+
+
+QString ComponentData::uniqueName() const
+    {
+    return _uniqueName;
+    }
+
+
+QDBusObjectPath ComponentData::dbusPath()
+    {
+    return _path;
+    }
+
+
+KShortcutsEditor *ComponentData::editor()
+    {
+    return _editor;
+    }
+
 
 class KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate
 {
@@ -95,7 +147,7 @@ public:
     Ui::KGlobalShortcutsEditor ui;
     QStackedWidget *stack;
     KShortcutsEditor::ActionTypes actionTypes;
-    QHash<QString, componentData> components;
+    QHash<QString, ComponentData*> components;
     QDBusConnection bus;
 };
 
@@ -142,7 +194,7 @@ KGlobalShortcutsEditor::~KGlobalShortcutsEditor()
 
 void KGlobalShortcutsEditor::activateComponent(const QString &component)
 {
-    QHash<QString, componentData>::Iterator iter = d->components.find(component);
+    QHash<QString, ComponentData*>::Iterator iter = d->components.find(component);
     if (iter == d->components.end()) {
         kDebug() << "The component" << component << "is unknown";
         Q_ASSERT(iter == d->components.end());
@@ -153,7 +205,7 @@ void KGlobalShortcutsEditor::activateComponent(const QString &component)
         if (index > -1) {
             // Known component. Get it.
             d->ui.components->setCurrentIndex(index);
-            d->stack->setCurrentWidget((*iter).editor);
+            d->stack->setCurrentWidget((*iter)->editor());
         }
     }
 }
@@ -161,12 +213,13 @@ void KGlobalShortcutsEditor::activateComponent(const QString &component)
 
 void KGlobalShortcutsEditor::addCollection(
         KActionCollection *collection,
+        const QDBusObjectPath &objectPath,
         const QString &id,
         const QString &friendlyName)
 {
     KShortcutsEditor *editor;
     // Check if this component is known
-    QHash<QString, componentData>::Iterator iter = d->components.find(friendlyName);
+    QHash<QString, ComponentData*>::Iterator iter = d->components.find(friendlyName);
     if (iter == d->components.end()) {
         // Unknown component. Create an editor.
         editor = new KShortcutsEditor(this, d->actionTypes);
@@ -178,15 +231,13 @@ void KGlobalShortcutsEditor::addCollection(
         d->ui.components->model()->sort(0);
 
         // Add to our component registry
-        componentData cd;
-        cd.editor = editor;
-        cd.uniqueName = id;
+        ComponentData *cd = new ComponentData(id, objectPath, editor);
         d->components.insert(friendlyName, cd);
 
         connect(editor, SIGNAL(keyChange()), this, SLOT(_k_key_changed()));
     } else {
         // Known component.
-        editor = (*iter).editor;
+        editor = (*iter)->editor();
     }
 
     // Add the collection to the editor of the component
@@ -202,7 +253,7 @@ void KGlobalShortcutsEditor::addCollection(
 void KGlobalShortcutsEditor::clearConfiguration()
 {
     QString name = d->ui.components->currentText();
-    d->components.value(name).editor->clearConfiguration();
+    d->components[name]->editor()->clearConfiguration();
 }
 
 
@@ -211,16 +262,16 @@ void KGlobalShortcutsEditor::defaults(ComponentScope scope)
     switch (scope)
         {
         case AllComponents:
-            foreach (const componentData &cd, d->components) {
+            Q_FOREACH (ComponentData *cd, d->components) {
                 // The editors are responsible for the reset
-                cd.editor->allDefault();
+                cd->editor()->allDefault();
             }
             break;
 
         case CurrentComponent: {
             QString name = d->ui.components->currentText();
             // The editors are responsible for the reset
-            d->components.value(name).editor->allDefault();
+            d->components[name]->editor()->allDefault();
             }
             break;
 
@@ -233,9 +284,7 @@ void KGlobalShortcutsEditor::defaults(ComponentScope scope)
 void KGlobalShortcutsEditor::clear()
 {
     // Remove all components and their associated editors
-    foreach (const componentData &cd, d->components) {
-        delete cd.editor;
-    }
+    qDeleteAll(d->components.values());
     d->components.clear();
     d->ui.components->clear();
 }
@@ -366,8 +415,8 @@ void KGlobalShortcutsEditor::save()
 {
     // The editors are responsible for the saving
     kDebug() << "Save the changes";
-    foreach (const componentData &cd, d->components) {
-        cd.editor->commit();
+    Q_FOREACH (ComponentData *cd, d->components) {
+        cd->editor()->commit();
     }
 }
 
@@ -378,22 +427,22 @@ void KGlobalShortcutsEditor::importConfiguration(KConfigBase *config)
 
     // In a first step clean out the current configurations. We do this
     // because we want to minimize the chance of conflicts.
-    Q_FOREACH (const componentData &cd, d->components) {
-        KConfigGroup group(config, cd.uniqueName);
-        kDebug() << cd.uniqueName << group.name();
+    Q_FOREACH (ComponentData *cd, d->components) {
+        KConfigGroup group(config, cd->uniqueName());
+        kDebug() << cd->uniqueName() << group.name();
         if (group.exists()) {
-            kDebug() << "Removing" << cd.uniqueName;
-            cd.editor->clearConfiguration();
+            kDebug() << "Removing" << cd->uniqueName();
+            cd->editor()->clearConfiguration();
         }
     }
 
     // Now import the new configurations.
-    Q_FOREACH (const componentData &cd, d->components) {
-        KConfigGroup group(config, cd.uniqueName);
+    Q_FOREACH (ComponentData *cd, d->components) {
+        KConfigGroup group(config, cd->uniqueName());
         kDebug();
         if (group.exists()) {
-            kDebug() << "Importing" << cd.uniqueName;
-            cd.editor->importConfiguration(&group);
+            kDebug() << "Importing" << cd->uniqueName();
+            cd->editor()->importConfiguration(&group);
         }
     }
 }
@@ -402,7 +451,7 @@ void KGlobalShortcutsEditor::exportConfiguration(QStringList components, KConfig
     {
     Q_FOREACH (const QString &componentFriendly, components)
         {
-        QHash<QString, componentData>::Iterator iter = d->components.find(componentFriendly);
+        QHash<QString, ComponentData*>::Iterator iter = d->components.find(componentFriendly);
         if (iter == d->components.end())
             {
             Q_ASSERT(iter == d->components.end());
@@ -410,8 +459,8 @@ void KGlobalShortcutsEditor::exportConfiguration(QStringList components, KConfig
             }
         else
             {
-            KConfigGroup group(config, (*iter).uniqueName);
-            (*iter).editor->exportConfiguration(&group);
+            KConfigGroup group(config, (*iter)->uniqueName());
+            (*iter)->editor()->exportConfiguration(&group);
             }
         }
     }
@@ -421,16 +470,16 @@ void KGlobalShortcutsEditor::undo()
 {
     // The editors are responsible for the undo
     kDebug() << "Undo the changes";
-    foreach (const componentData &cd, d->components) {
-        cd.editor->undoChanges();
+    Q_FOREACH (ComponentData *cd, d->components) {
+        cd->editor()->undoChanges();
     }
 }
 
 
 bool KGlobalShortcutsEditor::isModified() const
 {
-    foreach (const componentData &cd, d->components) {
-        if (cd.editor->isModified()) {
+    Q_FOREACH (ComponentData *cd, d->components) {
+        if (cd->editor()->isModified()) {
             return true;
         }
     }
@@ -453,7 +502,7 @@ QDBusObjectPath KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::component
 void KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::removeComponent()
 {
     QString name = ui.components->currentText();
-    QString componentUnique = components.value(name).uniqueName;
+    QString componentUnique = components.value(name)->uniqueName();
 
     // The confirmation text is different when the component is active
     if (KGlobalAccel::isComponentActive(componentUnique)) {
@@ -476,12 +525,17 @@ void KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::removeComponent()
         }
     }
 
+    // Initiate the removing of the component.
     if (KGlobalAccel::cleanComponent(componentUnique)) {
+
+        // Get the objectPath BEFORE we delete the source of it
+        QDBusObjectPath oPath = components.value(name)->dbusPath();
         // Remove the component from the gui
         removeComponent(componentUnique);
 
         // Load it again
-        if (loadComponent(componentPath(componentUnique))) {
+        // #############
+        if (loadComponent(oPath)) {
             // Active it
             q->activateComponent(name);
         }
@@ -545,7 +599,7 @@ bool KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::loadComponent(const 
                 KComponentData(componentContextId.toAscii()));
 
         // Now add the shortcuts.
-        foreach (const KGlobalShortcutInfo &shortcut, shortcuts) {
+        Q_FOREACH (const KGlobalShortcutInfo &shortcut, shortcuts) {
 
             const QString &objectName = shortcut.uniqueName();
             KAction *action = col->addAction(objectName);
@@ -576,7 +630,7 @@ bool KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::loadComponent(const 
                 QString('[') + shortcuts[0].contextFriendlyName() + QString(']');
             }
 
-        q->addCollection(col, componentContextId, componentFriendlyName);
+        q->addCollection(col, componentPath, componentContextId, componentFriendlyName );
 
     } // Q_FOREACH(context)
 
@@ -591,7 +645,7 @@ void KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::removeComponent(
 
     Q_FOREACH (const QString &text, components.keys())
         {
-        if (components.value(text).uniqueName == componentUnique)
+        if (components.value(text)->uniqueName() == componentUnique)
             {
             // Remove from QComboBox
             int index = ui.components->findText(text);
@@ -599,13 +653,10 @@ void KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::removeComponent(
             ui.components->removeItem(index);
 
             // Remove from QStackedWidget
-            stack->removeWidget(components.value(text).editor);
-
-            // Delete the editor
-            delete components.value(text).editor; components[text].editor = 0;
+            stack->removeWidget(components[text]->editor());
 
             // Remove the componentData
-            components.remove(text);
+            delete components.take(text);
             }
         }
     }
