@@ -65,6 +65,10 @@ private:
 
     ActionState _state;
 
+    // Disable copying
+    SettingsWriter(const SettingsWriter&);
+    SettingsWriter& operator=(const SettingsWriter&);
+
     }; //SettingsWriter
 
 } // namespace KHotKeys
