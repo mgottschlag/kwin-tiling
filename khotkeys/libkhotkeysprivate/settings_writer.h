@@ -68,6 +68,8 @@ private:
 
     ActionState _state;
 
+    QString _importId;
+
     // Disable copying
     SettingsWriter(const SettingsWriter&);
     SettingsWriter& operator=(const SettingsWriter&);

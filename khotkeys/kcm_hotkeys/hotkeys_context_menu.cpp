@@ -212,6 +212,13 @@ void HotkeysTreeViewContextMenu::importAction()
 void HotkeysTreeViewContextMenu::exportAction()
     {
     KHotkeysExportDialog *widget = new KHotkeysExportDialog(this);
+
+    KHotKeys::ActionDataGroup *group =  _view->model()->indexToActionDataGroup(_index);
+    if (!group)
+        group = _view->model()->indexToActionDataBase(_index)->parent();
+
+    widget->setImportId(group->importId());
+
     if (widget->exec() == QDialog::Accepted)
         {
         KHotKeys::ActionState state;
@@ -237,7 +244,7 @@ void HotkeysTreeViewContextMenu::exportAction()
                 break;
             }
 
-        QString id = widget->id();
+        QString id = widget->importId();
         KUrl url   = widget->url();
         if (!url.isEmpty())
             {

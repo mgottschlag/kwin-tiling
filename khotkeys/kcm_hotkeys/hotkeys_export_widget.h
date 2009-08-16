@@ -53,7 +53,8 @@ public:
     KHotkeysExportDialog(QWidget*);
     virtual ~KHotkeysExportDialog();
 
-    QString id() const;
+    QString importId() const;
+    void setImportId(const QString &id);
     int state() const;
     KUrl url() const;
 

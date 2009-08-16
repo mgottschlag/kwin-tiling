@@ -95,7 +95,11 @@ public:
      */
     bool import(KConfig& cfg_P, ImportType ask, ActionState state);
 
-    bool importFrom(ActionDataGroup *parent, KConfigBase const &config, ImportType ask, ActionState state);
+    bool importFrom(
+            ActionDataGroup *parent,
+            KConfigBase const &config,
+            ImportType ask,
+            ActionState state);
 
     /**
      * Get all actions

@@ -476,12 +476,13 @@ bool Settings::read_settings(ActionDataGroup *root, KConfigBase const &config, b
 
     KConfigGroup mainGroup( &config, "Main" ); // main group
     int version = mainGroup.readEntry( "Version", -1234576 );
+    QString import_id = mainGroup.readEntry( "ImportId" );
     switch (version)
         {
         case 2:
                 {
                 kDebug() << "Version 2 File!";
-                SettingsReaderV2 reader(this, include_disabled, state);
+                SettingsReaderV2 reader(this, include_disabled, state, import_id);
                 reader.read(config, root);
                 }
             break;

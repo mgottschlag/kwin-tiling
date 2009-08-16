@@ -32,6 +32,7 @@ ActionDataBase::ActionDataBase(
         ,_name(name_P)
         ,_comment(comment_P)
         ,_enabled(false)
+        ,_importId()
     {
     if (parent()) parent()->add_child( this );
 
@@ -64,7 +65,6 @@ void ActionDataBase::accept(ActionDataConstVisitor *visitor) const
     {
     visitor->visitActionDataBase(this);
     }
-
 
 
 bool ActionDataBase::cfg_is_enabled(const KConfigGroup& cfg_P )
@@ -144,9 +144,16 @@ void ActionDataBase::enable()
 
     // Enable only if the parent is enabled too
     if (isEnabled())
-        // FIXME: let doEnable decide if it makes sense do enable (No trigger
+        // FIXME: let doEnable decide if it makes sense to enable (No trigger
         // .... )
         doEnable();
+    }
+
+
+QString
+ActionDataBase::importId() const
+    {
+    return _importId;
     }
 
 
@@ -164,6 +171,13 @@ void ActionDataBase::set_conditions(Condition_list* conditions)
         }
 
     _conditions = conditions;
+    }
+
+
+void
+ActionDataBase::setImportId(const QString &id)
+    {
+    _importId = id;
     }
 
 

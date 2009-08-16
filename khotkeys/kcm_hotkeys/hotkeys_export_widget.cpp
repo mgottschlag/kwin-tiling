@@ -47,9 +47,16 @@ KHotkeysExportDialog::~KHotkeysExportDialog()
 
 
 QString
-KHotkeysExportDialog::id() const
+KHotkeysExportDialog::importId() const
     {
     return w->ui.id->text();
+    }
+
+
+void
+KHotkeysExportDialog::setImportId(const QString &id)
+    {
+    w->ui.id->setText(id);
     }
 
 

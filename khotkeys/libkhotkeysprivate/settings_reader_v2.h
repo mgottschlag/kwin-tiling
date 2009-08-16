@@ -55,7 +55,8 @@ public:
     SettingsReaderV2(
             KHotKeys::Settings *settings,
             bool loadAll=true,
-            bool loadDisabled=true);
+            bool loadDisabled=true,
+            const QString &importId = QString());
 
     virtual ~SettingsReaderV2();
 
@@ -99,6 +100,8 @@ private:
     bool _loadAll;
 
     bool _disableActions;
+
+    QString _importId;
 
     }; // SettingsReaderV2
 

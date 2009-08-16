@@ -44,6 +44,7 @@ const int CurrentFileVersion = 2;
 SettingsWriter::SettingsWriter(const Settings *settings, ActionState state)
     :   _settings(settings)
         ,_state(state)
+        ,_importId()
     {
     }
 
@@ -53,6 +54,8 @@ void SettingsWriter::exportTo(
         KConfigBase &config,
         const QString &id)
     {
+    _importId = id;
+
     if (!element)
         {
         Q_ASSERT(element);
@@ -68,7 +71,7 @@ void SettingsWriter::exportTo(
 
     KConfigGroup mainGroup(&config, "Main");
     mainGroup.writeEntry("Version", CurrentFileVersion);
-    if (!id.isEmpty()) mainGroup.writeEntry("ImportId", id);
+    if (!_importId.isEmpty()) mainGroup.writeEntry("ImportId", _importId);
 
     // The root group contains nothing but the datacount!
     KConfigGroup dataGroup(&config,  "Data");
@@ -79,6 +82,8 @@ void SettingsWriter::exportTo(
     _stack.push(&data1Group);
     element->accept(this);
     _stack.pop();
+
+    _importId = QString();
     }
 
 
@@ -111,6 +116,11 @@ void SettingsWriter::visitActionDataBase(const ActionDataBase *base)
     config->writeEntry( "Type",    "ERROR" ); // derived classes should call with their type
     config->writeEntry( "Name",    base->name());
     config->writeEntry( "Comment", base->comment());
+    // We write the importId back only if we currently do no export with a
+    // different importId (_importId is set).
+    if (_importId.isEmpty() && !base->importId().isEmpty())
+        config->writeEntry( "ImportId", base->importId());
+
     switch (_state)
         {
         case KHotKeys::Current:

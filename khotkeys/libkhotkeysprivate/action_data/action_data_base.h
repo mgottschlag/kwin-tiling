@@ -111,6 +111,11 @@ class KDE_EXPORT ActionDataBase : public QObject
         //@}
 
         /**
+         */
+        void setImportId(const QString&);
+        QString importId() const;
+
+        /**
          * Is the action enabled?
          *
          * The action has different states.
@@ -165,6 +170,9 @@ class KDE_EXPORT ActionDataBase : public QObject
 
         //! If this element is enabled
         bool _enabled; // is not really important, only used in conf. module and when reading cfg. file
+
+        //! The importId from the file we were imported
+        QString _importId;
 
     };
 

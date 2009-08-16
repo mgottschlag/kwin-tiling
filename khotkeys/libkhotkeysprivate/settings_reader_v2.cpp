@@ -39,10 +39,15 @@
 #include <KDE/KDebug>
 
 
-SettingsReaderV2::SettingsReaderV2(KHotKeys::Settings *settings, bool loadAll, bool loadDisabled)
+SettingsReaderV2::SettingsReaderV2(
+        KHotKeys::Settings *settings,
+        bool loadAll,
+        bool loadDisabled,
+        const QString &importId)
     :   _settings(settings),
         _loadAll(loadAll),
-        _disableActions(loadDisabled)
+        _disableActions(loadDisabled),
+        _importId(importId)
     {}
 
 
@@ -62,7 +67,9 @@ void SettingsReaderV2::read(const KConfigBase &config, KHotKeys::ActionDataGroup
         KConfigGroup childConfig(data.config(), configName + '_' + QString::number(i));
         if (_loadAll || KHotKeys::ActionDataBase::cfg_is_enabled(childConfig))
             {
-            readActionData(childConfig, parent);
+            KHotKeys::ActionDataBase *elem = readActionData(childConfig, parent);
+            if (!_importId.isEmpty())
+                elem->setImportId(_importId);
             }
         }
     }
@@ -397,6 +404,7 @@ void SettingsReaderV2::visitActionDataBase(
     {
     object->set_name(_config->readEntry("Name"));
     object->set_comment(_config->readEntry("Comment"));
+    object->setImportId(_config->readEntry("ImportId"));
 
     KConfigGroup conditionsConfig( _config->config(), _config->name() + "Conditions" );
 
