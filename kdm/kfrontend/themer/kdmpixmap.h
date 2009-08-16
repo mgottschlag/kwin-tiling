@@ -55,7 +55,7 @@ protected:
 	struct PixmapStruct {
 		struct PixmapClass {
 			PixmapClass()
-				: svgRenderer(0), present(false), svgImage(false), aspectMode(AspectIgnore) {}
+				: svgRenderer(0), present(false), svgImage(false), aspectMode(Qt::IgnoreAspectRatio) {}
 			QString fullpath;
 			QImage image;
 			KSvgRenderer *svgRenderer;
@@ -66,7 +66,7 @@ protected:
 			bool svgImage;
 			QString svgElement;
 			QSize svgSizeHint;
-			enum AspectMode { AspectIgnore, AspectFit, AspectCrop } aspectMode;
+			Qt::AspectRatioMode aspectMode;
 		} normal, active, prelight;
 	} pixmap;
 

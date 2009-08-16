@@ -70,9 +70,9 @@ KdmPixmap::definePixmap( const QDomElement &el, PixmapStruct::PixmapClass &pClas
 
 	QString aspect = el.attribute( "scalemode", "free" );
 	pClass.aspectMode =
-			(aspect == "fit") ? PixmapStruct::PixmapClass::AspectFit :
-			(aspect == "crop") ? PixmapStruct::PixmapClass::AspectCrop :
-			PixmapStruct::PixmapClass::AspectIgnore;
+			(aspect == "fit") ? Qt::KeepAspectRatio :
+			(aspect == "crop") ? Qt::KeepAspectRatioByExpanding :
+			Qt::IgnoreAspectRatio;
 
 	pClass.fullpath = fileName;
 	if (fileName.at( 0 ) != '/')
@@ -165,22 +165,10 @@ KdmPixmap::setGeometry( QStack<QSize> &parentSizes, const QRect &newGeometry, bo
 bool
 KdmPixmap::calcTargetArea( PixmapStruct::PixmapClass &pClass, const QSize &sh )
 {
-	if (pClass.aspectMode == PixmapStruct::PixmapClass::AspectIgnore) {
-		pClass.targetArea = area;
-	} else {
-		int ww, wh;
-		int sx = area.width() * 100000 / sh.width();
-		int sy = area.height() * 100000 / sh.height();
-		if ((sx > sy) == (pClass.aspectMode == PixmapStruct::PixmapClass::AspectFit)) {
-			wh = area.height();
-			ww = area.height() * sh.width() / sh.height();
-		} else {
-			ww = area.width();
-			wh = area.width() * sh.height() / sh.width();
-		}
-		QPoint c = area.center();
-		pClass.targetArea = QRect( c.x() - ww / 2, c.y() - wh / 2, ww, wh );
-	}
+	QSize sz = sh;
+	sz.scale( area.size(), pClass.aspectMode );
+	pClass.targetArea.setSize( sz );
+	pClass.targetArea.moveCenter( area.center() );
 	return pClass.targetArea.size() != pClass.readyPixmap.size();
 }
 
