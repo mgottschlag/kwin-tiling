@@ -22,16 +22,6 @@ namespace KHotKeys
 {
 
 
-ActionData::ActionData(const KConfigGroup& cfg_P, ActionDataGroup* parent_P )
-    : ActionDataBase( cfg_P, parent_P )
-    {
-    KConfigGroup triggersGroup( cfg_P.config(), cfg_P.name() + "Triggers" );
-    _triggers = new Trigger_list( triggersGroup, this );
-    KConfigGroup actionsGroup( cfg_P.config(), cfg_P.name() + "Actions" );
-    _actions = new ActionList( actionsGroup, this );
-    }
-
-
 ActionData::~ActionData()
     {
     delete _triggers;
@@ -52,18 +42,21 @@ ActionData::ActionData(
     {}
 
 
-void ActionData::accept(ActionDataVisitor *visitor) const
+void ActionData::accept(ActionDataConstVisitor *visitor) const
     {
     visitor->visitActionData(this);
     }
 
+void ActionData::accept(ActionDataVisitor *visitor)
+    {
+    visitor->visitActionData(this);
+    }
 
 void ActionData::doDisable()
     {
     triggers()->disable();
     update_triggers();
     }
-
 
 void ActionData::doEnable()
     {

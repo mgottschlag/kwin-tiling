@@ -19,20 +19,21 @@
  * Boston, MA 02110-1301, USA.
  **/
 
+#include "action_data/action_data_visitor.h"
+
 class KConfigBase;
 class KConfigGroup;
 
 namespace KHotKeys {
-    class ActionDataBase;
-    class ActionDataGroup;
     class Settings;
+    template< typename T, typename A > class SimpleActionDataHelper;
 }
 
 
 /**
  * @author Michael Jansen <kde@michael-jansen.biz>
  */
-class SettingsReaderV2
+class SettingsReaderV2 : public KHotKeys::ActionDataVisitor
     {
 public:
     SettingsReaderV2(
@@ -48,7 +49,21 @@ public:
 
     KHotKeys::ActionDataBase *readAction(const KConfigGroup &config, KHotKeys::ActionDataGroup *parent);
 
+    virtual void visitActionDataBase(KHotKeys::ActionDataBase *base);
+
+    virtual void visitActionData(KHotKeys::ActionData *group);
+
+    virtual void visitActionDataGroup(KHotKeys::ActionDataGroup *group);
+
+    virtual void visitGenericActionData(KHotKeys::Generic_action_data *data);
+
+    virtual void visitMenuentryShortcutActionData(KHotKeys::MenuEntryShortcutActionData *data);
+
+    virtual void visitSimpleActionData(KHotKeys::SimpleActionData *data);
+
 private:
+
+    const KConfigGroup *_config;
 
     KHotKeys::Settings *_settings;
 

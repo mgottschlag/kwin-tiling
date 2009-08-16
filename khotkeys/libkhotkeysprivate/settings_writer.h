@@ -28,8 +28,6 @@ class KConfigGroup;
 
 namespace KHotKeys {
 
-class ActionDataBase;
-class ActionDataGroup;
 class Settings;
 
 
@@ -37,7 +35,7 @@ class Settings;
 /**
  * @author Michael Jansen <kde@michael-jansen.biz>
  */
-class SettingsWriter : public ActionDataVisitor
+class SettingsWriter : public ActionDataConstVisitor
     {
 
 public:

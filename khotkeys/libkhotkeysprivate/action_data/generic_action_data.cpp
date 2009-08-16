@@ -32,18 +32,17 @@ Generic_action_data::Generic_action_data(
     }
 
 
-Generic_action_data::Generic_action_data(
-        const KConfigGroup& cfg_P,
-        ActionDataGroup* parent_P)
-    :   ActionData( cfg_P, parent_P )
-    {}
-
-
 Generic_action_data::~Generic_action_data()
     {}
 
 
-void Generic_action_data::accept(ActionDataVisitor *visitor) const
+void Generic_action_data::accept(ActionDataVisitor *visitor)
+    {
+    visitor->visitGenericActionData(this);
+    }
+
+
+void Generic_action_data::accept(ActionDataConstVisitor *visitor) const
     {
     visitor->visitGenericActionData(this);
     }

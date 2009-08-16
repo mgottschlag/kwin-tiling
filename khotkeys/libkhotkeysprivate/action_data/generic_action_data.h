@@ -26,14 +26,12 @@ class KDE_EXPORT Generic_action_data
     public:
 
         Generic_action_data(
-                ActionDataGroup* parent,
-                const QString& name,
-                const QString& comment,
-                Trigger_list* triggers,
-                Condition_list* conditions,
-                ActionList* actions);
-
-        Generic_action_data(const KConfigGroup& cfg_P, ActionDataGroup* parent_P );
+                ActionDataGroup* parent_P,
+                const QString& name_P = QString(),
+                const QString& comment_P = QString(),
+                Trigger_list* triggers_P = NULL,
+                Condition_list* conditions_P = NULL,
+                ActionList* actions_P = NULL);
 
         ~Generic_action_data();
 
@@ -41,7 +39,8 @@ class KDE_EXPORT Generic_action_data
          * Visitor pattern
          * @reimp
          */
-        virtual void accept(ActionDataVisitor *visitor) const;
+        virtual void accept(ActionDataVisitor *visitor);
+        virtual void accept(ActionDataConstVisitor *visitor) const;
 
         // CHECKME: Why this?
         using ActionDataBase::set_conditions; // make public

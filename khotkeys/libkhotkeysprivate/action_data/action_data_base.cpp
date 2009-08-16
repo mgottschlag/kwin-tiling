@@ -46,34 +46,6 @@ ActionDataBase::ActionDataBase(
     }
 
 
-ActionDataBase::ActionDataBase(
-        const KConfigGroup& cfg_P
-        ,ActionDataGroup* parent_P)
-            : _parent( parent_P)
-              ,_conditions(NULL)
-              ,_name()
-              ,_comment()
-              ,_enabled(false)
-    {
-    _name = cfg_P.readEntry( "Name" );
-    _comment = cfg_P.readEntry( "Comment" );
-
-    KConfigGroup conditionsConfig( cfg_P.config(), cfg_P.name() + "Conditions" );
-
-    // Load the conditions if they exist
-    if ( conditionsConfig.exists() )
-        {
-        _conditions = new Condition_list( conditionsConfig, this );
-        }
-    else
-        {
-        _conditions = new Condition_list(QString(), this);
-        }
-
-    if (parent()) parent()->add_child( this );
-    }
-
-
 ActionDataBase::~ActionDataBase()
     {
     if( parent())
@@ -82,10 +54,17 @@ ActionDataBase::~ActionDataBase()
     }
 
 
-void ActionDataBase::accept(ActionDataVisitor *visitor) const
+void ActionDataBase::accept(ActionDataVisitor *visitor)
     {
     visitor->visitActionDataBase(this);
     }
+
+
+void ActionDataBase::accept(ActionDataConstVisitor *visitor) const
+    {
+    visitor->visitActionDataBase(this);
+    }
+
 
 
 bool ActionDataBase::cfg_is_enabled(const KConfigGroup& cfg_P )
@@ -177,10 +156,14 @@ void ActionDataBase::set_name( const QString& name_P )
     }
 
 
-void ActionDataBase::set_conditions( Condition_list* conditions_P )
+void ActionDataBase::set_conditions(Condition_list* conditions)
     {
-    Q_ASSERT( _conditions == 0 );
-    _conditions = conditions_P;
+    if (_conditions)
+        {
+        delete _conditions;
+        }
+
+    _conditions = conditions;
     }
 
 

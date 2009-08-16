@@ -27,18 +27,15 @@ public:
 
     SimpleActionData(
         ActionDataGroup* parent_P,
-        const QString& name_P,
-        const QString& comment_P);
-
-    SimpleActionData(
-        const KConfigGroup& cfg_P,
-        ActionDataGroup* parent_P );
+        const QString& name_P = QString(),
+        const QString& comment_P = QString());
 
     /**
      * Visitor pattern
      * @reimp
      */
-    virtual void accept(ActionDataVisitor *visitor) const;
+    virtual void accept(ActionDataVisitor *visitor);
+    virtual void accept(ActionDataConstVisitor *visitor) const;
 
     //! The action associated with this hotkey
     virtual const Action* action() const;

@@ -43,12 +43,13 @@ SimpleActionData::SimpleActionData(
     {}
 
 
-SimpleActionData::SimpleActionData( const KConfigGroup& cfg_P, ActionDataGroup* parent_P )
-    : ActionData( cfg_P, parent_P )
-    {}
+void SimpleActionData::accept(ActionDataVisitor *visitor)
+    {
+    visitor->visitSimpleActionData(this);
+    }
 
 
-void SimpleActionData::accept(ActionDataVisitor *visitor) const
+void SimpleActionData::accept(ActionDataConstVisitor *visitor) const
     {
     visitor->visitSimpleActionData(this);
     }

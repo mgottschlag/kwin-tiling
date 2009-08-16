@@ -58,18 +58,18 @@ class KDE_EXPORT ActionDataGroup
          */
         ActionDataGroup( 
             ActionDataGroup* parent_P,
-            const QString& name_P,
-            const QString& comment_P,
+            const QString& name_P = QString(),
+            const QString& comment_P = QString(),
             Condition_list* conditions_P = NULL,
             system_group_t system_group_P = SYSTEM_NONE);
 
-        ActionDataGroup(const KConfigGroup& cfg_P, ActionDataGroup* parent_P );
         virtual ~ActionDataGroup();
 
         /**
          * Visitor pattern
          */
-        virtual void accept(ActionDataVisitor *visitor) const;
+        virtual void accept(ActionDataVisitor *visitor);
+        virtual void accept(ActionDataConstVisitor *visitor) const;
 
         virtual void update_triggers();
 
@@ -105,6 +105,7 @@ class KDE_EXPORT ActionDataGroup
          */
         bool is_system_group() const;
         system_group_t system_group() const;
+        void set_system_group(system_group_t group);
         //@}
 
         // CHECKME : Why this?

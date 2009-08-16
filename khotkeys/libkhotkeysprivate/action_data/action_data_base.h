@@ -24,6 +24,7 @@ namespace KHotKeys {
 
 class ActionDataGroup;
 class ActionDataVisitor;
+class ActionDataConstVisitor;
 class Condition_list;
 
 
@@ -54,16 +55,6 @@ class KDE_EXPORT ActionDataBase : public QObject
             Condition_list* condition);
 
         /**
-         * Read the setting for the \c ActionDataBase object from the \a
-         * cfg configuration object.
-         *
-         * \param cfg KConfigGroup to read from
-         * \param parent  A ActionDataGroup or 0. If provided the object is
-         *        registered with the group.
-         */
-        ActionDataBase(const KConfigGroup& cfg, ActionDataGroup* parent);
-
-        /**
          * Destructor
          */
         virtual ~ActionDataBase();
@@ -71,7 +62,8 @@ class KDE_EXPORT ActionDataBase : public QObject
         /**
          * Visitor pattern
          */
-        virtual void accept(ActionDataVisitor *visitor) const;
+        virtual void accept(ActionDataVisitor *visitor);
+        virtual void accept(ActionDataConstVisitor *visitor) const;
 
         /**
          * Get the conditions for this action or 0 if the action has no
@@ -146,10 +138,10 @@ class KDE_EXPORT ActionDataBase : public QObject
          */
         static bool cfg_is_enabled(const KConfigGroup& cfg);
 
-    protected:
-
         //! Set the list of condition for this element
         void set_conditions(Condition_list* conditions);
+
+    protected:
 
         virtual void doEnable() = 0;
 

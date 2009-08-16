@@ -39,15 +39,14 @@ class KDE_EXPORT ActionData
                 Condition_list* conditions_P,
                 ActionList* actions_P);
 
-        ActionData( const KConfigGroup& cfg_P, ActionDataGroup* parent_P );
-
         virtual ~ActionData();
 
         /**
          * Visitor pattern
          * @reimp
          */
-        virtual void accept(ActionDataVisitor *visitor) const;
+        virtual void accept(ActionDataVisitor *visitor);
+        virtual void accept(ActionDataConstVisitor *visitor) const;
 
         virtual void update_triggers();
 
@@ -63,7 +62,6 @@ class KDE_EXPORT ActionData
 
         const ActionList* actions() const;
 
-    protected:
         virtual void add_trigger( Trigger* trigger_P );
 
         virtual void add_triggers(

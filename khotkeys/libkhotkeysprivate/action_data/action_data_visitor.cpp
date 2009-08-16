@@ -33,7 +33,23 @@ ActionDataVisitor::~ActionDataVisitor()
     {}
 
 
-void ActionDataVisitor::visitActionDataBase(const ActionDataBase *action)
+void ActionDataVisitor::visitActionDataBase(ActionDataBase *action)
+    {
+    kDebug() << action->name();
+    Q_ASSERT(false);
+    }
+
+
+
+ActionDataConstVisitor::ActionDataConstVisitor()
+    {}
+
+
+ActionDataConstVisitor::~ActionDataConstVisitor()
+    {}
+
+
+void ActionDataConstVisitor::visitActionDataBase(const ActionDataBase *action)
     {
     kDebug() << action->name();
     Q_ASSERT(false);

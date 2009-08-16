@@ -50,14 +50,13 @@ MenuEntryShortcutActionData::MenuEntryShortcutActionData(
     {}
 
 
-MenuEntryShortcutActionData::MenuEntryShortcutActionData(
-        const KConfigGroup& cfg,
-        ActionDataGroup* parent)
-    :   base(cfg, parent)
-    {}
+void MenuEntryShortcutActionData::accept(ActionDataVisitor *visitor)
+    {
+    visitor->visitMenuentryShortcutActionData(this);
+    }
 
 
-void MenuEntryShortcutActionData::accept(ActionDataVisitor *visitor) const
+void MenuEntryShortcutActionData::accept(ActionDataConstVisitor *visitor) const
     {
     visitor->visitMenuentryShortcutActionData(this);
     }

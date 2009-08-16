@@ -29,15 +29,14 @@ namespace KHotKeys {
 class KDE_EXPORT MenuEntryShortcutActionData
     : public SimpleActionDataHelper< ShortcutTrigger, MenuEntryAction >
     {
+    public:
 
     typedef SimpleActionDataHelper< ShortcutTrigger, MenuEntryAction > base;
 
-    public:
-
         MenuEntryShortcutActionData(
                 ActionDataGroup* parent,
-                const QString& name,
-                const QString& comment);
+                const QString& name = QString(),
+                const QString& comment = QString());
 
         MenuEntryShortcutActionData(
                 ActionDataGroup* parent,
@@ -46,15 +45,12 @@ class KDE_EXPORT MenuEntryShortcutActionData
                 const KShortcut& shortcut,
                 const QString& command_url);
 
-        MenuEntryShortcutActionData(
-                const KConfigGroup& cfg,
-                ActionDataGroup* parent);
-
         /**
          * Visitor pattern
          * @reimp
          */
-        virtual void accept(ActionDataVisitor *visitor) const;
+        virtual void accept(ActionDataVisitor *visitor);
+        virtual void accept(ActionDataConstVisitor *visitor) const;
 
     };
 

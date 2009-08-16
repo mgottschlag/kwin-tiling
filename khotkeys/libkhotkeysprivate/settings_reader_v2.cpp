@@ -24,6 +24,8 @@
 #include "action_data/menuentry_shortcut_action_data.h"
 #include "action_data/simple_action_data.h"
 
+#include "conditions/conditions_list.h"
+
 #include "triggers/triggers.h"
 
 #include "settings.h"
@@ -98,13 +100,9 @@ KHotKeys::ActionDataGroup *SettingsReaderV2::readGroup(
     // if no group was found or merging is disabled create a new group
     if (!group)
         {
-        kDebug() << "Creating group " << config.name() << parent->comment();
-        group = new KHotKeys::ActionDataGroup(config, parent );
-
-        // We only disable newly created groups
-        if (!_disableActions && config.readEntry( "Enabled", true))
-            group->enable();
-
+        group = new KHotKeys::ActionDataGroup(parent);
+        _config = &config;
+        group->accept(this);
         }
 
     Q_ASSERT(group);
@@ -141,13 +139,12 @@ KHotKeys::ActionDataBase *SettingsReaderV2::readAction(
         }
     else if (type == "GENERIC_ACTION_DATA")
         {
-        newObject = new KHotKeys::Generic_action_data(config, parent);
+        newObject = new KHotKeys::Generic_action_data(parent);
         }
     else if (type == "MENUENTRY_SHORTCUT_ACTION_DATA")
         {
         // We collect all of those in the system group
         newObject = new KHotKeys::MenuEntryShortcutActionData(
-                config,
                 _settings->get_system_group(KHotKeys::ActionDataGroup::SYSTEM_MENUENTRIES));
         }
     else if (type == "SIMPLE_ACTION_DATA"
@@ -157,22 +154,7 @@ KHotKeys::ActionDataBase *SettingsReaderV2::readAction(
           || type == "KEYBOARD_INPUT_SHORTCUT_ACTION_DATA"
           || type == "ACTIVATE_WINDOW_SHORTCUT_ACTION_DATA")
         {
-        KHotKeys::SimpleActionData *sa;
-
-        sa = new KHotKeys::SimpleActionData(config, parent);
-        if ( (sa->trigger() && sa->trigger()->type() == KHotKeys::Trigger::ShortcutTriggerType)
-              && ( sa->action() && sa->action()->type() == KHotKeys::Action::MenuEntryActionType))
-            {
-            delete sa;
-            // We collect all of those in the system group
-            newObject = new KHotKeys::MenuEntryShortcutActionData(
-                    config,
-                    _settings->get_system_group(KHotKeys::ActionDataGroup::SYSTEM_MENUENTRIES));
-            }
-        else
-            {
-            newObject = sa;
-            }
+        newObject = new KHotKeys::SimpleActionData(parent);
         }
     else
         {
@@ -180,10 +162,100 @@ KHotKeys::ActionDataBase *SettingsReaderV2::readAction(
         return NULL;
         }
 
-    // We only disable newly created groups
-    if (!_disableActions && config.readEntry( "Enabled", true))
-        newObject->enable();
+    _config = &config;
+    newObject->accept(this);
+
+#pragma FIXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXME
+#if 0
+    if (newObject->trigger()->type() == KHotKeys::Trigger::ShortcutTriggerType
+            && newObject->action()->type() == KHotKeys::Action::MenuEntryActionType)
+        {
+        // We collect all of those in the system group
+        KHotKeys::SimpleActionData *temp = newObject = new KHotKeys::MenuEntryShortcutActionData(
+                    _settings->get_system_group(KHotKeys::ActionDataGroup::SYSTEM_MENUENTRIES));
+        delete newObject;
+        newObject = temp;
+        newObject->accept(this);
+        }
+#endif
 
     return newObject;
     }
 
+
+void SettingsReaderV2::visitActionDataBase(
+        KHotKeys::ActionDataBase *object)
+    {
+    object->set_name(_config->readEntry("Name"));
+    object->set_comment(_config->readEntry("Comment"));
+
+    _disableActions
+        ? object->disable()
+        : object->enable();
+
+    KConfigGroup conditionsConfig( _config->config(), _config->name() + "Conditions" );
+
+    // Load the conditions if they exist
+    if ( conditionsConfig.exists() )
+        {
+        object->set_conditions(new KHotKeys::Condition_list(conditionsConfig, object));
+        }
+    else
+        {
+        object->set_conditions(new KHotKeys::Condition_list(QString(), object));
+        }
+    }
+
+
+void SettingsReaderV2::visitActionData(
+        KHotKeys::ActionData *object)
+    {
+    visitActionDataBase(object);
+
+    KConfigGroup triggersGroup( _config->config(), _config->name() + "Triggers" );
+    object->set_triggers(new KHotKeys::Trigger_list(triggersGroup, object));
+
+    KConfigGroup actionsGroup( _config->config(), _config->name() + "Actions" );
+    object->set_actions(new KHotKeys::ActionList(actionsGroup, object));
+
+    // Now activate the triggers if necessary
+    object->update_triggers();
+    }
+
+
+void SettingsReaderV2::visitActionDataGroup(
+        KHotKeys::ActionDataGroup *object)
+    {
+    unsigned int system_group_tmp = _config->readEntry( "SystemGroup", 0 );
+
+    // Correct wrong values
+    if(system_group_tmp >= KHotKeys::ActionDataGroup::SYSTEM_MAX)
+        {
+        system_group_tmp = 0;
+        }
+
+    object->set_system_group(static_cast< KHotKeys::ActionDataGroup::system_group_t >(system_group_tmp));
+
+    visitActionDataBase(object);
+    }
+
+
+void SettingsReaderV2::visitGenericActionData(
+        KHotKeys::Generic_action_data *object)
+    {
+    visitActionData(object);
+    }
+
+
+void SettingsReaderV2::visitMenuentryShortcutActionData(
+        KHotKeys::MenuEntryShortcutActionData *object)
+    {
+    visitSimpleActionData(object);
+    }
+
+
+void SettingsReaderV2::visitSimpleActionData(
+        KHotKeys::SimpleActionData *object)
+    {
+    visitActionData(object);
+    }

@@ -21,26 +21,6 @@ namespace KHotKeys
 {
 
 ActionDataGroup::ActionDataGroup(
-        const KConfigGroup& cfg_P,
-        ActionDataGroup* parent_P)
-            : ActionDataBase( cfg_P, parent_P )
-              ,_list()
-              ,_system_group()
-
-    {
-    unsigned int system_group_tmp = cfg_P.readEntry( "SystemGroup", 0 );
-
-    // Correct wrong values
-    if(system_group_tmp >= SYSTEM_MAX)
-        {
-        system_group_tmp = 0;
-        }
-
-    _system_group = static_cast< system_group_t >( system_group_tmp );
-    }
-
-
-ActionDataGroup::ActionDataGroup(
         ActionDataGroup* parent_P,
         const QString& name_P,
         const QString& comment_P,
@@ -59,7 +39,14 @@ ActionDataGroup::~ActionDataGroup()
     }
 
 
-void ActionDataGroup::accept(ActionDataVisitor *visitor) const
+void ActionDataGroup::accept(ActionDataVisitor *visitor)
+    {
+    visitor->visitActionDataGroup(this);
+    }
+
+
+
+void ActionDataGroup::accept(ActionDataConstVisitor *visitor) const
     {
     visitor->visitActionDataGroup(this);
     }
@@ -95,6 +82,12 @@ Trigger::TriggerTypes ActionDataGroup::allowedTriggerTypes() const
 bool ActionDataGroup::is_system_group() const
     {
     return _system_group != SYSTEM_NONE and _system_group != SYSTEM_ROOT;
+    }
+
+
+void ActionDataGroup::set_system_group(system_group_t group)
+    {
+    _system_group = group;
     }
 
 
