@@ -184,11 +184,9 @@ KHotKeys::ActionDataBase *SettingsReaderV2::readActionData(
     _disableActions
         ? newObject->disable()
         : config.readEntry("Enabled", false)
-            ? newObject->disable()
-            : newObject->enable();
+            ? newObject->enable()
+            : newObject->disable();
 
-    // Now activate the triggers if necessary
-    newObject->update_triggers();
 
     return newObject;
     }
