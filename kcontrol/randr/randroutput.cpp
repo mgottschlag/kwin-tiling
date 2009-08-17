@@ -602,7 +602,6 @@ bool RandROutput::applyProposed(int changes, bool confirm)
 
 bool RandROutput::setCrtc(RandRCrtc *crtc, bool applyNow)
 {
-    Q_UNUSED(applyNow);
 	if( !crtc || (m_crtc && crtc->id() == m_crtc->id()) )
 		return false;
 	
@@ -615,7 +614,8 @@ bool RandROutput::setCrtc(RandRCrtc *crtc, bool applyNow)
 		           this, SLOT(slotCrtcChanged(RRCrtc, int)));
 				 
 		m_crtc->removeOutput(m_id);
-		m_crtc->applyProposed();
+		if( applyNow )
+			m_crtc->applyProposed();
 	}
 	m_crtc = crtc;
 	if (!m_crtc->isValid())
@@ -629,8 +629,8 @@ bool RandROutput::setCrtc(RandRCrtc *crtc, bool applyNow)
 }
 
 void RandROutput::disconnectFromCrtc()
-{
-	setCrtc(m_screen->crtc(None));
+{ // but don't apply now
+	setCrtc(m_screen->crtc(None), false);
 }
 
 void RandROutput::slotCrtcChanged(RRCrtc c, int changes)
