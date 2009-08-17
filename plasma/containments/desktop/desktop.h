@@ -61,20 +61,10 @@ public:
     ~DefaultDesktop();
     void constraintsEvent(Plasma::Constraints constraints);
 
-    QList<QAction*> contextualActions();
-
 protected:
     void dropEvent(QGraphicsSceneDragDropEvent *event);
 
 protected Q_SLOTS:
-    void runCommand();
-
-    void lockScreen();
-    void logout();
-
-    void addPanel();
-    void addPanel(const QString &plugin);
-
     void onAppletAdded(Plasma::Applet *, const QPointF &);
     void onAppletRemoved(Plasma::Applet *);
     void onAppletTransformedByUser();
@@ -82,13 +72,6 @@ protected Q_SLOTS:
     void refreshWorkingArea();
 
 private:
-    QMenu *m_addPanelsMenu;
-    QAction *m_addPanelAction;
-    QAction *m_runCommandAction;
-    QAction *m_lockScreenAction;
-    QAction *m_logoutAction;
-    QAction *m_separator;
-
     DesktopLayout *m_layout;
     bool dropping;
 };

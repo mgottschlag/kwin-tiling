@@ -168,60 +168,12 @@ QList<QAction*> Panel::contextualActions()
         m_configureAction->setIcon(KIcon("configure"));
         connect(m_configureAction, SIGNAL(triggered()), this, SIGNAL(toolBoxToggled()));
 
-        KPluginInfo::List panelPlugins = listContainmentsOfType("panel");
-
-        if (panelPlugins.size() == 1) {
-            m_addPanelAction = new QAction(i18n("Add Panel"), this);
-            connect(m_addPanelAction, SIGNAL(triggered(bool)), this, SLOT(addPanel()));
-        } else if (!panelPlugins.isEmpty()) {
-            m_addPanelsMenu = new QMenu();
-            m_addPanelAction = m_addPanelsMenu->menuAction();
-            m_addPanelAction->setText(i18n("Add Panel"));
-
-            QSignalMapper *mapper = new QSignalMapper(this);
-            connect(mapper, SIGNAL(mapped(QString)), this, SLOT(addPanel(QString)));
-
-            foreach (const KPluginInfo &plugin, panelPlugins) {
-                QAction *action = new QAction(plugin.name(), this);
-                if (!plugin.icon().isEmpty()) {
-                    action->setIcon(KIcon(plugin.icon()));
-                }
-
-                mapper->setMapping(action, plugin.pluginName());
-                connect(action, SIGNAL(triggered(bool)), mapper, SLOT(map()));
-                m_addPanelsMenu->addAction(action);
-            }
-        }
-
-        if (m_addPanelAction) {
-            m_addPanelAction->setIcon(KIcon("list-add"));
-        }
-
         constraintsEvent(Plasma::ImmutableConstraint);
     }
 
     QList<QAction*> actions;
 
-    QAction *a = action("add widgets");
-    if (a) {
-        actions.append(a);
-    }
-
-    if (m_addPanelAction) {
-        actions.append(m_addPanelAction);
-    }
-
-    a = action("lock widgets");
-    if (a) {
-        actions.append(a);
-    }
-
     actions.append(m_configureAction);
-
-    a = action("remove");
-    if (a) {
-        actions.append(a);
-    }
 
     return actions;
 }
