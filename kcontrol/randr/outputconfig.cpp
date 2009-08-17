@@ -41,6 +41,10 @@ OutputConfig::OutputConfig(QWidget *parent, RandROutput *output, OutputGraphicsI
 	        this, SLOT(positionComboChanged(int)));
 	connect(sizeCombo, SIGNAL(currentIndexChanged(int)),
 	        this, SLOT(updateRateList(int)));
+	connect(sizeCombo, SIGNAL(currentIndexChanged(int)),
+	        this, SLOT(updatePositionList()));
+	connect(sizeCombo, SIGNAL(currentIndexChanged(int)),
+	        this, SLOT(updateRotationList()));
 	connect(m_output, SIGNAL(outputChanged(RROutput, int)),
 	        this,     SLOT(outputChanged(RROutput, int)));
 		  
@@ -49,6 +53,9 @@ OutputConfig::OutputConfig(QWidget *parent, RandROutput *output, OutputGraphicsI
 	connect(orientationCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
 	connect(positionCombo,    SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
 	connect(positionOutputCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
+	// make sure to update option for relative position when other outputs get enabled/disabled
+	foreach( OutputConfig* config, precedingOutputConfigs )
+		connect( config, SIGNAL( updateView()), this, SLOT( updatePositionList()));
 
 	load();
 }
@@ -267,6 +274,12 @@ void OutputConfig::positionComboChanged(int item)
 
 void OutputConfig::updatePositionList(void)
 {
+	bool enable = !resolution().isEmpty();
+	positionCombo->setEnabled( enable );
+	positionLabel->setEnabled( enable );
+	positionOutputCombo->setEnabled( enable );
+	absolutePosX->setEnabled( enable );
+	absolutePosY->setEnabled( enable );
 	// when updating, use previously set value, otherwise read it from the output
 	QRect rect = positionCombo->count() > 0 ? QRect( position(), resolution()) : m_output->rect();
 	positionCombo->clear();
@@ -293,9 +306,7 @@ void OutputConfig::updatePositionList(void)
 			}
 		}
 	}
-        if( positionOutputCombo->count() > 0 )
-            positionOutputCombo->setEnabled( true );
-        else {
+        if( positionOutputCombo->count() == 0 ) {
             positionOutputCombo->setEnabled( false );
             while( positionCombo->count() > 1 ) // keep only 'Absolute'
                 positionCombo->removeItem( positionCombo->count() - 1 );
@@ -318,6 +329,9 @@ void OutputConfig::updatePositionList(void)
 
 void OutputConfig::updateRotationList(void)
 {
+	bool enable = !resolution().isEmpty();
+	orientationCombo->setEnabled( enable );
+	orientationLabel->setEnabled( enable );
 	orientationCombo->clear();
 	int rotations = m_output->rotations();
 	for(int i =0; i < 6; ++i) {
@@ -363,6 +377,7 @@ void OutputConfig::updateRateList(int resolutionIndex)
 	QSize resolution = sizeCombo->itemData(resolutionIndex).toSize();
 	if((resolution == QSize(0, 0)) || !resolution.isValid()) {
 		refreshCombo->setEnabled(false);
+		rateLabel->setEnabled(false);
 		return;
 	}
 	
@@ -371,6 +386,7 @@ void OutputConfig::updateRateList(int resolutionIndex)
 	refreshCombo->clear();
 	refreshCombo->addItem(i18nc("Automatic configuration", "Auto"), 0.0f);
 	refreshCombo->setEnabled(true);
+	rateLabel->setEnabled(true);
 	foreach(RRMode m, modeList) {
 		RandRMode outMode = m_output->screen()->mode(m);
 		if(outMode.isValid() && outMode.size() == resolution) {
