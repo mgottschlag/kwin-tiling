@@ -99,6 +99,7 @@ void RandRConfig::load(void)
 	// FIXME: adjust it to run on a multi screen system
 	CollapsibleWidget *w;
 	OutputGraphicsItem *o;
+	OutputConfigList preceding;
 	foreach(RandROutput *output, outputs)
 	{
 		o = new OutputGraphicsItem(output);
@@ -107,7 +108,8 @@ void RandRConfig::load(void)
 		connect(o,    SIGNAL(itemChanged(OutputGraphicsItem*)), 
 		        this, SLOT(slotAdjustOutput(OutputGraphicsItem*)));
 
-		OutputConfig *config = new OutputConfig(0, output, o);
+		OutputConfig *config = new OutputConfig(0, output, o, preceding);
+		preceding.append( config );
 		
 		QString description = output->isConnected()
 			? i18n("%1 (Connected)", output->name())

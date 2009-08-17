@@ -29,11 +29,14 @@
 class RandROutput;
 class OutputGraphicsItem;
 
+class OutputConfig;
+typedef QList<OutputConfig*> OutputConfigList;
+
 class OutputConfig : public QWidget, public Ui::OutputConfigBase 
 {
 	Q_OBJECT
 public:
-	OutputConfig(QWidget *parent, RandROutput *output, OutputGraphicsItem *item);
+	OutputConfig(QWidget *parent, RandROutput *output, OutputGraphicsItem *item, OutputConfigList preceding);
 	~OutputConfig();
 	
 	/** Enumeration describing two related outputs (i.e. VGA LeftOf TMDS) */
@@ -79,12 +82,16 @@ signals:
 
 
 private:
+	static bool isRelativeTo( QRect rect, QRect to, Relation rel );
 	int m_changes;
 	bool m_changed;
 	QPoint m_pos;
 	
 	RandROutput *m_output;
 	OutputGraphicsItem *m_item;
+	// List of configs shown before this one. Relative positions may be given only
+	// relative to these in order to avoid cycles.
+	OutputConfigList precedingOutputConfigs;
 };
 
 

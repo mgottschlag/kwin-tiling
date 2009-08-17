@@ -24,8 +24,9 @@
 #include "randrmode.h"
 #include <kdebug.h>
 
-OutputConfig::OutputConfig(QWidget *parent, RandROutput *output, OutputGraphicsItem *item)
+OutputConfig::OutputConfig(QWidget *parent, RandROutput *output, OutputGraphicsItem *item, OutputConfigList preceding)
 	: QWidget(parent)
+	, precedingOutputConfigs( preceding )
 {
 	m_output = output;
 	Q_ASSERT(output);
@@ -48,7 +49,7 @@ OutputConfig::OutputConfig(QWidget *parent, RandROutput *output, OutputGraphicsI
 	connect(orientationCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
 	connect(positionCombo,    SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
 	connect(positionOutputCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
-	
+
 	load();
 }
 
@@ -67,6 +68,26 @@ QPoint OutputConfig::position(void) const
 	if((Relation)positionCombo->itemData(index).toInt() == Absolute)
 		return QPoint(absolutePosX->text().toInt(), absolutePosY->text().toInt());
 	
+	foreach(OutputConfig *config, precedingOutputConfigs) {
+		if( config->output()->id()
+			== positionOutputCombo->itemData( positionOutputCombo->currentIndex()).toUInt()) {
+			QPoint pos = config->position();
+			switch( (Relation)positionCombo->itemData(index).toInt()) {
+				case LeftOf:
+					return QPoint( pos.x() - resolution().width(), pos.y());
+				case RightOf:
+					return QPoint( pos.x() + config->resolution().width(), pos.y());
+				case Over:
+					return QPoint( pos.x(), pos.y() - resolution().height());
+				case Under:
+					return QPoint( pos.x(), pos.y() + config->resolution().height());
+				case SameAs:
+					return pos;
+				default:
+					abort();
+			}
+		}
+	}
 	return QPoint(0, 0);
 }
 
@@ -205,6 +226,25 @@ void OutputConfig::setConfigDirty(void)
 	emit optionChanged();
 }
 
+bool OutputConfig::isRelativeTo( QRect rect, QRect to, Relation rel )
+{
+	switch( rel ) {
+		case LeftOf:
+			return rect.x() + rect.width() == to.x() && rect.y() == to.y();
+		case RightOf:
+			return rect.x() == to.x() + to.width() && rect.y() == to.y();
+		case Over:
+			return rect.x() == to.x() && rect.y() + rect.height() == to.y();
+		case Under:
+			return rect.x() == to.x() && rect.y() == to.y() + to.height();
+		case SameAs:
+			return rect.topLeft() == to.topLeft();
+		case Absolute:
+		default:
+			return false;
+	}
+}
+
 void OutputConfig::positionComboChanged(int item)
 {
 	Relation rel;
@@ -227,10 +267,12 @@ void OutputConfig::positionComboChanged(int item)
 
 void OutputConfig::updatePositionList(void)
 {
+	// when updating, use previously set value, otherwise read it from the output
+	QRect rect = positionCombo->count() > 0 ? QRect( position(), resolution()) : m_output->rect();
 	positionCombo->clear();
 	positionOutputCombo->clear();
 
-	Relation rel = SameAs;
+	Relation rel = Absolute;
 	// FIXME: get default value from KConfig
 	for(int i = -1; i < 5; i++)
 		positionCombo->addItem(OutputConfig::positionName((Relation)i), i);
@@ -240,9 +282,24 @@ void OutputConfig::updatePositionList(void)
 		positionCombo->setCurrentIndex(index);
 
 	/* Relative Output Name Configuration */
-	OutputMap outputs = m_output->screen()->outputs();
-	foreach(RandROutput *output, outputs)
+	foreach(OutputConfig *config, precedingOutputConfigs) {
+		RandROutput* output = config->output();
+		if( config->resolution().isEmpty())
+			continue; // ignore disabled outputs
 		positionOutputCombo->addItem(QIcon(output->icon()), output->name(), (int)output->id());
+		for( int rel = -1; rel < 5; ++rel ) {
+			if( isRelativeTo( rect, QRect( config->position(), config->resolution()), (Relation) rel )) {
+				positionCombo->setCurrentIndex( positionCombo->findData( rel ));
+			}
+		}
+	}
+        if( positionOutputCombo->count() > 0 )
+            positionOutputCombo->setEnabled( true );
+        else {
+            positionOutputCombo->setEnabled( false );
+            while( positionCombo->count() > 1 ) // keep only 'Absolute'
+                positionCombo->removeItem( positionCombo->count() - 1 );
+        }
 
 	// FIXME: get this from Kconfig again
 	/*if(m_output->relation(0) != m_output) {
@@ -250,10 +307,6 @@ void OutputConfig::updatePositionList(void)
 		if(index != -1)
 			positionOutputCombo->setCurrentIndex(index);
 	}*/
-	bool enabled = (m_output->screen()->activeCount() >= 2);
-	positionLabel->setEnabled(enabled);
-	positionCombo->setEnabled(enabled);
-	positionOutputCombo->setEnabled(enabled);
 
 	// FIXME: RandRScreen::applyProposed() has a bit of code for positioning
 	// outputs, but it's commented out and might not work as is. Until someone
