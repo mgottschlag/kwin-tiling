@@ -27,11 +27,7 @@
 #include <KWindowSystem>
 
 #include <Plasma/DataEngine>
-#include <Plasma/Containment>
-#include <Plasma/Corona>
 #include <Plasma/Service>
-
-Q_DECLARE_METATYPE(QPointer<Plasma::Containment>)
 
 SwitchWindow::SwitchWindow(QObject *parent, const QVariantList &args)
     : Plasma::ContextAction(parent, args)
