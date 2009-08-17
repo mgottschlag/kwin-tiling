@@ -29,6 +29,8 @@
 #include "randrscreen.h"
 
 #include <kglobalsettings.h>
+#include <kmessagebox.h>
+#include <kprocess.h>
 
 RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 	: QWidget(parent), Ui::RandRConfigBase()
@@ -275,6 +277,24 @@ void RandRConfig::clearIndicators()
 {
 	qDeleteAll( m_indicators );
 	m_indicators.clear();
+}
+
+void RandRConfig::insufficientVirtualSize()
+{
+    if( KMessageBox::questionYesNo( this,
+        i18n( "Insufficient virtual size for the total screen size.\n"
+              "The configured virtual size of your X server is insufficient for this setup. "
+              "This configuration needs to be adjusted.\n"
+              "Do you wish to run a tool to adjust the configuration?" )) == KMessageBox::Yes )
+        {
+        KProcess proc;
+        // TODO
+        if( proc.execute() == 0 )
+            KMessageBox::information( this, i18n( "Configuration has been adjusted. Please restart "
+                "your session for this change to take effect." ));
+        else
+            KMessageBox::sorry( this, i18n( "Changing configuration failed. Please adjust your xorg.conf manually." ));
+        }
 }
 
 #include "randrconfig.moc"

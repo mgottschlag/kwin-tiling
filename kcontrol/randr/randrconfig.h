@@ -65,6 +65,7 @@ protected:
 	virtual bool eventFilter(QObject *obj, QEvent *event);
 	
 private:
+        void insufficientVirtualSize();
 	RandRDisplay *m_display;
 	bool m_changed;
 	bool m_firstLoad;
