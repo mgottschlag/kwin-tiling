@@ -89,7 +89,7 @@ void RandrMonitorModule::initRandr()
     KActionCollection* coll = new KActionCollection( this );
     KAction* act = coll->addAction( "display" );
     act->setText( i18n( "Switch Display" ));
-    act->setGlobalShortcut( KShortcut( Qt::Key_Display ));
+// TODO    act->setGlobalShortcut( KShortcut( Qt::Key_Display ));
     connect( act, SIGNAL( triggered( bool )), SLOT( switchDisplay()));
     }
 
