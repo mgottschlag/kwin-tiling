@@ -14,3 +14,11 @@ OLD:
 last sync:
 r878939 (4.1)
 r883800 (4.2)
+
+
+
+- znormalizovat souradnice? (at topleft je 0,0)
+- at jdou crtc pro non-clone
+- detekovat clones a pouzit stejny crtc?
+- co to dela po startu?
+- zkontrolovat kwin a plasma, jestli nepadaji atd.

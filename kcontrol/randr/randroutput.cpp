@@ -628,6 +628,11 @@ bool RandROutput::setCrtc(RandRCrtc *crtc, bool applyNow)
 	return true;
 }
 
+void RandROutput::disconnectFromCrtc()
+{
+	setCrtc(m_screen->crtc(None));
+}
+
 void RandROutput::slotCrtcChanged(RRCrtc c, int changes)
 {
 	Q_UNUSED(c);

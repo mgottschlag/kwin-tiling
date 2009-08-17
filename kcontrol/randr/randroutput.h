@@ -69,6 +69,8 @@ public:
 	/** Returns the current CRTC for this output. */
 	RandRCrtc *crtc() const;
 
+	void disconnectFromCrtc();
+
 	/** Returns a list of all RRModes supported by this output. */
 	ModeList modes() const;
 

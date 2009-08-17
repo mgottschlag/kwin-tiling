@@ -158,6 +158,12 @@ void RandRConfig::apply()
 			         << ", rot =" << config->rotation()
 			         << ", rate =" << config->refreshRate();
 			
+			// Break the connection with the previous CRTC for changed outputs, since
+			// otherwise the code could try to use the same CRTC for two different outputs.
+			// This is probably rather hackish and may not always work, but I don't see
+			// a better way with this codebase, definitely not with the time I have now.
+			output->disconnectFromCrtc();
+
 			output->proposeRect(configuredRect);
 			output->proposeRotation(config->rotation());
 			output->proposeRefreshRate(config->refreshRate());
