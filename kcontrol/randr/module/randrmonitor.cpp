@@ -76,10 +76,12 @@ void RandrMonitorModule::initRandr()
     // change e.g. Qt's event mask.
     window = XCreateSimpleWindow( dpy, DefaultRootWindow( dpy ), 0, 0, 1, 1, 0, 0, 0 );
     XRRSelectInput( dpy, window, RROutputChangeNotifyMask );
+#if 0 // xrandr apparently can't detect hw changes and on some systems polling freezes X :(
     // HACK: see poll()
     QTimer* timer = new QTimer( this );
     timer->start( 10000 ); // 10 s
     connect( timer, SIGNAL( timeout()), this, SLOT( poll()));
+#endif
     helper = new RandrMonitorHelper( this );
     kapp->installX11EventFilter( helper );
     dialog = NULL;
