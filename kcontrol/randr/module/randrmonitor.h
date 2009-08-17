@@ -38,6 +38,7 @@ class RandrMonitorModule
         void processX11Event( XEvent* e );
     private slots:
         void poll();
+        void switchDisplay();
     private:
         void initRandr();
         void getRandrInfo( XRROutputChangeNotifyEvent* e, QString* change, QRect* rect );

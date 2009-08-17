@@ -18,6 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "randrmonitor.h"
 
+#include <kaction.h>
+#include <kactioncollection.h>
 #include <kapplication.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -78,6 +80,11 @@ void RandrMonitorModule::initRandr()
     kapp->installX11EventFilter( helper );
     dialog = NULL;
     currentMonitors = connectedMonitors();
+    KActionCollection* coll = new KActionCollection( this );
+    KAction* act = coll->addAction( "display" );
+    act->setText( i18n( "Switch Display" ));
+    act->setShortcut( Qt::Key_Display );
+    connect( act, SIGNAL( triggered( bool )), SLOT( switchDisplay()));
     }
 
 void RandrMonitorModule::poll()
@@ -140,6 +147,11 @@ QStringList RandrMonitorModule::connectedMonitors() const
         }
     XRRFreeScreenResources( resources );
     return ret;
+    }
+
+void RandrMonitorModule::switchDisplay()
+    {
+    // TODO
     }
 
 bool RandrMonitorHelper::x11Event( XEvent* e )
