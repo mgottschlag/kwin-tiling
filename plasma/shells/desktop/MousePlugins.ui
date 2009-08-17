@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>ContextActions</class>
- <widget class="QWidget" name="ContextActions" >
+ <class>MousePlugins</class>
+ <widget class="QWidget" name="MousePlugins" >
   <property name="geometry" >
    <rect>
     <x>0</x>

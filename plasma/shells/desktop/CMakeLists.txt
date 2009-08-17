@@ -24,11 +24,11 @@ set(wallpaper_SRCS
 set(plasma_SRCS
     backgrounddialog.cpp
     checkbox.cpp
-    contextactions.cpp
     dashboardview.cpp
     desktopcorona.cpp
     desktopview.cpp
     main.cpp
+    mouseplugins.cpp
     mousepluginwidget.cpp
     mouseinputbutton.cpp
     panelcontroller.cpp
@@ -42,7 +42,7 @@ set(plasma_SRCS
 )
 
 
-kde4_add_ui_files(plasma_SRCS BackgroundDialog.ui ContextActions.ui MousePluginWidget.ui globaloptions.ui)
+kde4_add_ui_files(plasma_SRCS BackgroundDialog.ui MousePlugins.ui MousePluginWidget.ui globaloptions.ui)
 kde4_add_kcfg_files(plasma_SRCS kcfg/plasma-shell-desktop.kcfgc)
 
 if(WIN32)

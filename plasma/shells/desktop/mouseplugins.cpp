@@ -1,10 +1,23 @@
 /*
-  Copyright (c) 2009 Chani Armitage <chani@kde.org>
-
-  insert GPL blurb here
+ *   Copyright (c) 2009 Chani Armitage <chani@kde.org>
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU Library General Public License as
+ *   published by the Free Software Foundation; either version 2, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details
+ *
+ *   You should have received a copy of the GNU Library General Public
+ *   License along with this program; if not, write to the
+ *   Free Software Foundation, Inc.,
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include "contextactions.h"
+#include "mouseplugins.h"
 #include "mousepluginwidget.h"
 
 #include <KConfigDialog>
@@ -14,7 +27,7 @@
 #include <Plasma/Containment>
 #include <plasma/contextaction.h>
 
-ContextActions::ContextActions(Plasma::Containment *containment, KConfigDialog *parent)
+MousePlugins::MousePlugins(Plasma::Containment *containment, KConfigDialog *parent)
     :QWidget(parent),
     m_containment(containment)
 {
@@ -22,9 +35,9 @@ ContextActions::ContextActions(Plasma::Containment *containment, KConfigDialog *
 
     Q_ASSERT(m_containment);
     foreach (const QString &key, m_containment->contextActionTriggers()) {
-        Plasma::ContextAction *ca = m_containment->contextAction(key);
-        if (ca) {
-            m_plugins.insert(key, ca->pluginName());
+        QString plugin = m_containment->contextAction(key);
+        if (!plugin.isEmpty()) {
+            m_plugins.insert(key, plugin);
         }
     }
 
@@ -55,17 +68,17 @@ ContextActions::ContextActions(Plasma::Containment *containment, KConfigDialog *
     connect(parent, SIGNAL(containmentPluginChanged(Plasma::Containment*)), this, SLOT(containmentPluginChanged(Plasma::Containment*)));
 }
 
-ContextActions::~ContextActions()
+MousePlugins::~MousePlugins()
 {
 }
 
-void ContextActions::configChanged(const QString &trigger)
+void MousePlugins::configChanged(const QString &trigger)
 {
     m_modifiedKeys << trigger;
     emit modified(true);
 }
 
-void ContextActions::configAccepted()
+void MousePlugins::configAccepted()
 {
     //FIXME only save changed configs
     emit save();
@@ -76,14 +89,11 @@ void ContextActions::configAccepted()
     m_modifiedKeys.clear();
 }
 
-void ContextActions::setTrigger(const QString &plugin, const QString &oldTrigger, const QString &newTrigger)
+void MousePlugins::setTrigger(const QString &plugin, const QString &oldTrigger, const QString &newTrigger)
 {
     if (newTrigger == oldTrigger) {
         return;
     }
-
-    //FIXME!!! config will break
-    //do I need to copyTo the new group-name or is there an easier way?
 
     if (!newTrigger.isEmpty() && m_plugins.contains(newTrigger)) {
         int ret = KMessageBox::warningContinueCancel(this,
@@ -118,7 +128,7 @@ void ContextActions::setTrigger(const QString &plugin, const QString &oldTrigger
 //FIXME this function assumes only the containment plugin is changing, not the config.
 //so, no switching activities.
 //if the config location *was* changed we'd have to figure out what to do with unsaved changes!
-void ContextActions::containmentPluginChanged(Plasma::Containment *c)
+void MousePlugins::containmentPluginChanged(Plasma::Containment *c)
 {
     kDebug() << "!!!!!!!!!";
     Q_ASSERT(c);

@@ -17,37 +17,46 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef MOUSEINPUTBUTTON_H
-#define MOUSEINPUTBUTTON_H
+#ifndef CONTEXTACTIONDIALOG_H
+#define CONTEXTACTIONDIALOG_H
 
-#include <QHash>
-#include <QPushButton>
+#include "ui_MousePlugins.h"
 
-class QEvent;
+namespace Plasma {
+    class Containment;
+}
 
-class MouseInputButton : public QPushButton
+class KConfigDialog;
+
+class MousePlugins : public QWidget
 {
     Q_OBJECT
 public:
-    MouseInputButton(QWidget *parent = 0);
-
-    QString trigger();
-    void setTrigger(const QString &trigger);
+    MousePlugins(Plasma::Containment *containment, KConfigDialog *parent);
+    ~MousePlugins();
 
 signals:
-    void triggerChanged(const QString &oldTrigger, const QString &newTrigger);
+    void modified(bool isModified);
+    void save();
 
-protected:
-    bool event(QEvent *event);
+public slots:
+    void configChanged(const QString &trigger);
+    void configAccepted();
+    void containmentPluginChanged(Plasma::Containment *c);
 
 private slots:
-    void getTrigger();
+    /**
+     * reassign the plugin's trigger to be @p newTrigger
+     */
+    void setTrigger(const QString &plugin, const QString &oldTrigger, const QString &newTrigger);
 
 private:
-    void changeTrigger(const QString& newTrigger);
 
-    QString m_trigger;
-    QHash<QString,QString> m_prettyStrings;
+    Ui::MousePlugins m_ui;
+    Plasma::Containment *m_containment;
+    QHash<QString, QString> m_plugins;
+    QSet<QString> m_modifiedKeys;
 };
 
 #endif
+

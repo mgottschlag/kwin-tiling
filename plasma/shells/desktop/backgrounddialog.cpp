@@ -10,7 +10,7 @@
 */
 
 #include "backgrounddialog.h"
-#include "contextactions.h"
+#include "mouseplugins.h"
 
 #include <QPainter>
 #include <QFile>
@@ -401,9 +401,9 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
 
     m_appearanceItem = addPage(main, i18n("Appearance"), "preferences-desktop-wallpaper");
 
-    ContextActions *ca = new ContextActions(m_containment, this);
-    connect(ca, SIGNAL(modified(bool)), this, SLOT(settingsModified(bool)));
-    m_mouseItem = addPage(ca, i18n("Mouse Plugins"), "contextactions");
+    MousePlugins *m = new MousePlugins(m_containment, this);
+    connect(m, SIGNAL(modified(bool)), this, SLOT(settingsModified(bool)));
+    m_mouseItem = addPage(m, i18n("Mouse Plugins"), "mouseplugins");
 
     if (m_containment && m_containment->hasConfigurationInterface()) {
         m_containment->createConfigurationInterface(this);
