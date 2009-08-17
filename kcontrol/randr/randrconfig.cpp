@@ -39,7 +39,6 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 	Q_ASSERT(m_display);
 	
 	m_changed = false;
-	m_firstLoad = true;
 
 	if (!m_display->isValid()) {
 		// FIXME: this needs much better handling of this error...
@@ -50,7 +49,9 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 
 	connect( identifyOutputsButton, SIGNAL( clicked()), SLOT( identifyOutputs()));
 	connect( &identifyTimer, SIGNAL( timeout()), SLOT( clearIndicators()));
+	connect( &compressUpdateViewTimer, SIGNAL( timeout()), SLOT( slotDelayedUpdateView()));
 	identifyTimer.setSingleShot( true );
+	compressUpdateViewTimer.setSingleShot( true );
 
 	// create the container for the settings widget
 	QHBoxLayout *layout = new QHBoxLayout(outputList);
@@ -80,19 +81,11 @@ void RandRConfig::load(void)
 		kDebug() << "Invalid display! Aborting config load.";
 		return;
 	}
-	
-	if(!m_firstLoad) {
-		qDeleteAll(m_outputList);
-		m_outputList.clear();
-		
-		QList<QGraphicsItem*> items = m_scene->items();
-		foreach(QGraphicsItem *i, items) {
-			if(i->scene() == m_scene)
-				m_scene->removeItem(i);
-		}
-	}
-	
-	m_firstLoad = false;
+
+	m_scene->clear();
+	qDeleteAll(m_outputList);
+	m_outputList.clear();
+	m_configs.clear(); // objects deleted above
 	
 	OutputMap outputs = m_display->currentScreen()->outputs();
 
@@ -102,13 +95,8 @@ void RandRConfig::load(void)
 	OutputConfigList preceding;
 	foreach(RandROutput *output, outputs)
 	{
-		o = new OutputGraphicsItem(output);
-		m_scene->addItem(o);
-		
-		connect(o,    SIGNAL(itemChanged(OutputGraphicsItem*)), 
-		        this, SLOT(slotAdjustOutput(OutputGraphicsItem*)));
-
-		OutputConfig *config = new OutputConfig(0, output, o, preceding);
+		OutputConfig *config = new OutputConfig(this, output, preceding);
+		m_configs.append( config );
 		preceding.append( config );
 		
 		QString description = output->isConnected()
@@ -121,6 +109,12 @@ void RandRConfig::load(void)
 		}
 		m_outputList.append(w);
 		
+		o = new OutputGraphicsItem(config);
+		m_scene->addItem(o);
+		
+		connect(o,    SIGNAL(itemChanged(OutputGraphicsItem*)), 
+		        this, SLOT(slotAdjustOutput(OutputGraphicsItem*)));
+
 		connect(config, SIGNAL(updateView()), this, SLOT(slotUpdateView()));
 		connect(config, SIGNAL(optionChanged()), this, SLOT(slotChanged()));
 	}		    
@@ -210,20 +204,26 @@ void RandRConfig::slotAdjustOutput(OutputGraphicsItem *o)
 
 void RandRConfig::slotUpdateView()
 {
+	compressUpdateViewTimer.start( 0 );
+}
+
+#include <typeinfo>
+
+void RandRConfig::slotDelayedUpdateView()
+{
 	QRect r;
 	bool first = true;
 
 	// updates the graphics view so that all outputs fit inside of it
-	OutputMap outputs = m_display->currentScreen()->outputs();
-	foreach(RandROutput *output, outputs)
+	foreach(OutputConfig *config, m_configs)
 	{		
 		if (first)
 		{
 			first = false;
-			r = output->rect();
+			r = config->rect();
 		}
 		else
-			r = r.united(output->rect());
+			r = r.united(config->rect());
 	}
 	// scale the total bounding rectangle for all outputs to fit
 	// 80% of the containing QGraphicsView
@@ -236,6 +236,12 @@ void RandRConfig::slotUpdateView()
 	screenView->scale(scale,scale);
 	screenView->ensureVisible(r);
 	screenView->setSceneRect(r);
+
+	foreach( QGraphicsItem* item, m_scene->items()) {
+		if( OutputGraphicsItem* itemo = dynamic_cast< OutputGraphicsItem* >( item ))
+			itemo->configUpdated();
+	}
+	screenView->update();
 }
 
 uint qHash( const QPoint& p )

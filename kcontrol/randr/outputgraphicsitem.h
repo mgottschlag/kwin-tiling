@@ -24,14 +24,16 @@
 
 #include "randr.h"
 
-class RandROutput;
+class OutputConfig;
 
 class OutputGraphicsItem : public QObject, public QGraphicsRectItem
 {
 	Q_OBJECT
 public:
-	OutputGraphicsItem(RandROutput *output);
+	OutputGraphicsItem(OutputConfig *config);
 	~OutputGraphicsItem();
+
+	void configUpdated(); // updates from OutputConfig
 
 	OutputGraphicsItem *left() const;
 	OutputGraphicsItem *right() const;
@@ -61,7 +63,7 @@ private:
 	OutputGraphicsItem *m_top;
 	OutputGraphicsItem *m_bottom;
 
-	RandROutput *m_output;
+	OutputConfig *m_config;
 	QGraphicsTextItem *m_text;
 
 

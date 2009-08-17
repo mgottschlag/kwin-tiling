@@ -27,7 +27,6 @@
 #include "randroutput.h"
 
 class RandROutput;
-class OutputGraphicsItem;
 
 class OutputConfig;
 typedef QList<OutputConfig*> OutputConfigList;
@@ -36,7 +35,7 @@ class OutputConfig : public QWidget, public Ui::OutputConfigBase
 {
 	Q_OBJECT
 public:
-	OutputConfig(QWidget *parent, RandROutput *output, OutputGraphicsItem *item, OutputConfigList preceding);
+	OutputConfig(QWidget *parent, RandROutput *output, OutputConfigList preceding);
 	~OutputConfig();
 	
 	/** Enumeration describing two related outputs (i.e. VGA LeftOf TMDS) */
@@ -51,8 +50,10 @@ public:
 	// NOTE: I'd love to have used Above and Below but Xlib already defines them
 	// and that confuses GCC.
 
+	bool isActive() const;
 	QPoint position(void) const;
 	QSize resolution(void) const;
+	QRect rect() const;
 	float refreshRate(void) const;
 	int rotation(void) const;
 	
@@ -88,7 +89,6 @@ private:
 	QPoint m_pos;
 	
 	RandROutput *m_output;
-	OutputGraphicsItem *m_item;
 	// List of configs shown before this one. Relative positions may be given only
 	// relative to these in order to avoid cycles.
 	OutputConfigList precedingOutputConfigs;

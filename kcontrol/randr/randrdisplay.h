@@ -25,6 +25,7 @@
 #include "randr.h"
 
 #include <X11/Xlib.h>
+#include <fixx11h.h>
 
 class RandRDisplay
 {

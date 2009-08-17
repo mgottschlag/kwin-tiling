@@ -5,6 +5,8 @@ r890269 (randr)
 
 pending:
 r861620
+OutputGraphicsItem::updateText() is from trunk and probably unnecessary here
+    - and the place which calls it probably shouldn't be there?
 
 OLD:
 

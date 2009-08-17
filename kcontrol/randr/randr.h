@@ -39,6 +39,8 @@ extern "C"
 #include <X11/extensions/Xrandr.h>
 }
 
+#include <fixx11h.h>
+
 #ifdef HAS_RANDR_1_2
 class RandRScreen;
 class RandRCrtc;

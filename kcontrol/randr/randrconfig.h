@@ -22,6 +22,7 @@
 
 #include "ui_randrconfigbase.h"
 #include "randr.h"
+#include "outputconfig.h"
 
 #include <QWidget>
 #include <QTimer>
@@ -51,6 +52,7 @@ public:
 
 public slots:
 	void slotUpdateView();
+	void slotDelayedUpdateView();
 
 protected slots:
 	void slotChanged(void);
@@ -76,6 +78,8 @@ private:
 	LayoutManager *m_layoutManager;
 	QList<QWidget*> m_indicators;
 	QTimer identifyTimer;
+	OutputConfigList m_configs;
+	QTimer compressUpdateViewTimer;
 };
 
 

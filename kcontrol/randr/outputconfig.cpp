@@ -24,15 +24,12 @@
 #include "randrmode.h"
 #include <kdebug.h>
 
-OutputConfig::OutputConfig(QWidget *parent, RandROutput *output, OutputGraphicsItem *item, OutputConfigList preceding)
+OutputConfig::OutputConfig(QWidget *parent, RandROutput *output, OutputConfigList preceding)
 	: QWidget(parent)
 	, precedingOutputConfigs( preceding )
 {
 	m_output = output;
 	Q_ASSERT(output);
-
-	m_item = item;
-	Q_ASSERT(item);
 
 	setupUi(this);
 
@@ -53,6 +50,12 @@ OutputConfig::OutputConfig(QWidget *parent, RandROutput *output, OutputGraphicsI
 	connect(orientationCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
 	connect(positionCombo,    SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
 	connect(positionOutputCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
+	connect(sizeCombo,    SIGNAL(currentIndexChanged(int)), this, SIGNAL(updateView()));
+	connect(orientationCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(updateView()));
+	connect(positionCombo,    SIGNAL(currentIndexChanged(int)), this, SIGNAL(updateView()));
+	connect(positionOutputCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(updateView()));
+	connect(absolutePosX, SIGNAL(textChanged(const QString&)), this, SIGNAL(updateView()));
+	connect(absolutePosY, SIGNAL(textChanged(const QString&)), this, SIGNAL(updateView()));
 	// make sure to update option for relative position when other outputs get enabled/disabled
 	foreach( OutputConfig* config, precedingOutputConfigs )
 		connect( config, SIGNAL( updateView()), this, SLOT( updatePositionList()));
@@ -71,6 +74,8 @@ RandROutput *OutputConfig::output(void) const
 
 QPoint OutputConfig::position(void) const
 {
+	if( !isActive())
+		return QPoint();
 	int index = positionCombo->currentIndex();
 	if((Relation)positionCombo->itemData(index).toInt() == Absolute)
 		return QPoint(absolutePosX->text().toInt(), absolutePosY->text().toInt());
@@ -100,11 +105,25 @@ QPoint OutputConfig::position(void) const
 
 QSize OutputConfig::resolution(void) const
 {
+	if( sizeCombo->count() == 0 )
+		return QSize();
 	return sizeCombo->itemData(sizeCombo->currentIndex()).toSize();
+}
+
+QRect OutputConfig::rect() const
+{
+	return QRect( position(), resolution());
+}
+
+bool OutputConfig::isActive() const
+{
+        return sizeCombo->count() != 0 && !resolution().isEmpty();
 }
 
 float OutputConfig::refreshRate(void) const
 {
+	if( !isActive())
+		return 0;
 	float rate = float(refreshCombo->itemData(refreshCombo->currentIndex()).toDouble());
 	if(rate == 0.0f) {
 		RateList rates = m_output->refreshRates(resolution());
@@ -115,6 +134,8 @@ float OutputConfig::refreshRate(void) const
 
 int OutputConfig::rotation(void) const
 {
+	if( !isActive())
+		return 0;
 	return orientationCombo->itemData(orientationCombo->currentIndex()).toInt();
 }
 
@@ -152,8 +173,6 @@ void OutputConfig::outputChanged(RROutput output, int changes)
 	if(changes & RandR::ChangeRect) {
 		QRect r = m_output->rect();
 		kDebug() << "Output rect changed:" << r;
-		m_item->setRect(r);
-		emit updateView();
 	}
 	
 	if(changes & RandR::ChangeRotation) {
@@ -208,7 +227,6 @@ void OutputConfig::load()
 
 	orientationCombo->clear();
 
-	m_item->setVisible(m_output->isActive());	
 	if (!m_output->isConnected())
 		return;
 
@@ -219,11 +237,6 @@ void OutputConfig::load()
 	updateRotationList();
 	updatePositionList();
 	
-	// update the item
-	m_item->setRect( 0, 0, m_output->rect().width(), m_output->rect().height());
-	kDebug() << "  Setting graphic rect pos: " << m_output->rect().topLeft();
-	m_item->setPos( m_output->rect().topLeft() );
-
 	emit updateView();
 }
 

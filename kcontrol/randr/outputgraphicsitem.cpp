@@ -17,7 +17,7 @@
  */
 
 #include "outputgraphicsitem.h"
-#include "randroutput.h"
+#include "outputconfig.h"
 #include "randr.h"
 
 #include <QPen>
@@ -26,34 +26,55 @@
 #include <QGraphicsScene>
 #include <KGlobalSettings>
 
-OutputGraphicsItem::OutputGraphicsItem(RandROutput *output)
-	: QGraphicsRectItem(output->rect())
+OutputGraphicsItem::OutputGraphicsItem(OutputConfig *config)
+	: QGraphicsRectItem(config->rect())
+	, m_config( config )
 {
 	m_output = output;
 
 	m_left = m_right = m_top = m_bottom = NULL;
 
 	setPen(QPen(Qt::black));
-	if(output->isActive())
-		setBrush(QColor(0, 255, 0, 128));
-	else setBrush(QColor(128, 128, 128, 0));
 
 	setFlag(QGraphicsItem::ItemIsMovable, false);
-	setFlag(QGraphicsItem::ItemIsSelectable, true);
+// FIXME not implemented yet	setFlag(QGraphicsItem::ItemIsSelectable, true);
 	
-	m_text = new QGraphicsTextItem( this );
-
+	m_text = new QGraphicsTextItem(QString(), this);
+	
 	QFont font = KGlobalSettings::generalFont();
 	font.setPixelSize(72);
 	m_text->setFont(font);
-    
-	updateText();
-
+	setVisible( false );
+	m_text->setVisible( false );
 }
 
 OutputGraphicsItem::~OutputGraphicsItem()
 {
 	disconnect();
+}
+
+void OutputGraphicsItem::configUpdated()
+{
+	if( !m_config->isActive()) {
+		setVisible( false );
+		m_text->setVisible( false );
+		return;
+	}
+	setVisible( true );
+	m_text->setVisible( true );
+	setRect( m_config->rect());
+	setBrush(QColor(0, 255, 0, 128));
+	// An example of this description text with radeonhd on randr 1.2:
+	// DVI-I_2/digital
+	// 1680x1050 (60.0 Hz)
+	QString refresh = QString::number(m_config->refreshRate(), 'f', 1);
+	QString desc = m_config->output()->name() + '\n' + 
+	               QString("%1x%2 (%3 Hz)").arg(rect().width()).arg(rect().height()).arg(refresh);
+	m_text->setPlainText( desc );
+	// more accurate text centering
+	QRectF textRect = m_text->boundingRect();
+	m_text->setPos( rect().x() + (rect().width() - textRect.width()) / 2,
+	                rect().y() + (rect().height() - textRect.height()) / 2);
 }
 
 OutputGraphicsItem *OutputGraphicsItem::left() const
