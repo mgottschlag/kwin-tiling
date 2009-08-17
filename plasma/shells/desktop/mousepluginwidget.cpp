@@ -63,6 +63,30 @@ KConfigGroup MousePluginWidget::configGroup()
     return m_config;
 }
 
+void MousePluginWidget::setContainment(Plasma::Containment *ctmt)
+{
+    if (m_pluginInstance) {
+        m_pluginInstance->setContainment(ctmt);
+    } else {
+        m_pluginInstance = Plasma::ContextAction::load(m_plugin.pluginName());
+        if (! m_pluginInstance) {
+            //FIXME tell user
+            kDebug() << "failed to load plugin!";
+            return;
+        }
+        if (m_pluginInstance->hasConfigurationInterface()) {
+            m_pluginInstance->setParent(this);
+            m_pluginInstance->setContainment(ctmt);
+            m_pluginInstance->restore(m_config);
+        } else {
+            //well, we don't need it then.
+            delete m_pluginInstance;
+            m_pluginInstance = 0;
+            m_ui.configButton->setVisible(false);
+        }
+    }
+}
+
 void MousePluginWidget::setTrigger(const QString &trigger)
 {
     m_ui.inputButton->setTrigger(trigger);
@@ -85,16 +109,9 @@ void MousePluginWidget::changeTrigger(const QString &oldTrigger, const QString& 
 void MousePluginWidget::configure()
 {
     if (! m_pluginInstance) {
-        m_pluginInstance = Plasma::ContextAction::load(m_plugin.pluginName());
-        if (! m_pluginInstance) {
-            //FIXME tell user
-            kDebug() << "eeeek!";
-            return;
-        }
-        m_pluginInstance->setParent(this);
-        if (m_config.isValid()) {
-            m_pluginInstance->restore(m_config);
-        }
+        //FIXME tell user
+        kDebug() << "failed to load plugin!";
+        return;
     }
 
     if (! m_configDlg) {

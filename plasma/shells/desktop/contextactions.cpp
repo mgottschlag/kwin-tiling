@@ -43,6 +43,8 @@ ContextActions::ContextActions(Plasma::Containment *containment, KConfigDialog *
         item->setTrigger(trigger);
         //FIXME make a truly unique config group
         item->setConfigGroup(KConfigGroup(&cfg, info.pluginName()));
+        item->setContainment(m_containment);
+        connect(parent, SIGNAL(containmentPluginChanged(Plasma::Containment*)), item, SLOT(setContainment(Plasma::Containment*)));
         connect(item, SIGNAL(triggerChanged(QString,QString,QString)), this, SLOT(setTrigger(QString,QString,QString)));
         connect(item, SIGNAL(configChanged(QString)), this, SLOT(configChanged(QString)));
         connect(this, SIGNAL(save()), item, SLOT(save()));

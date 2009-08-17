@@ -4,8 +4,6 @@ set(contextmenu_SRCS
     menu.cpp
 )
 
-#kde4_add_ui_files(contextmenu_SRCS config.ui)
-
 set(krunner_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/dbus/org.kde.krunner.App.xml)
 QT4_ADD_DBUS_INTERFACE(contextmenu_SRCS ${krunner_xml} krunner_interface)
 

@@ -31,6 +31,9 @@ signals:
     void triggerChanged(const QString &plugin, const QString &oldTrigger, const QString &newTrigger);
     void configChanged(const QString &trigger);
 
+public slots:
+    void setContainment(Plasma::Containment *ctmt);
+
 private slots:
     void changeTrigger(const QString &oldTrigger, const QString& newTrigger);
     void clearTrigger();

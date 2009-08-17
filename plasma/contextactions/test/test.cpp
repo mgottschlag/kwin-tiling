@@ -30,6 +30,7 @@
 ContextTest::ContextTest(QObject *parent, const QVariantList &args)
     : Plasma::ContextAction(parent, args)
 {
+    setHasConfigurationInterface(true);
     setConfigurationRequired(true);
 }
 

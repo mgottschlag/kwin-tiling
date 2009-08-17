@@ -20,6 +20,7 @@
 #ifndef CONTEXTMENU_HEADER
 #define CONTEXTMENU_HEADER
 
+#include <QButtonGroup>
 #include <plasma/contextaction.h>
 
 class ContextMenu : public Plasma::ContextAction
@@ -32,9 +33,12 @@ public:
     void init(const KConfigGroup&);
 
     void contextEvent(QEvent *event);
-    void contextEvent(QGraphicsSceneMouseEvent *event);
-    void wheelEvent(QGraphicsSceneWheelEvent *event);
     QList<QAction*> contextualActions();
+    QAction* action(const QString &name);
+
+    QWidget* createConfigurationInterface(QWidget* parent);
+    void configurationAccepted();
+    void save(KConfigGroup &config);
 
 public slots:
     void updateImmutability(const Plasma::ImmutabilityType immutable);
@@ -53,6 +57,12 @@ private:
     QAction *m_runCommandAction;
     QAction *m_lockScreenAction;
     QAction *m_logoutAction;
+    QAction *m_separator1;
+    QAction *m_separator2;
+
+    QList<QString> m_allActions;
+    QList<bool> m_enabledActions;
+    QButtonGroup *m_buttons;
 
 };
 

@@ -20,8 +20,10 @@
 #include "menu.h"
 
 #include <QAction>
+#include <QCheckBox>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneWheelEvent>
+#include <QVBoxLayout>
 #include <QSignalMapper>
 
 #include <KAuthorized>
@@ -47,8 +49,12 @@ ContextMenu::ContextMenu(QObject *parent, const QVariantList &args)
       m_addPanelAction(0),
       m_runCommandAction(0),
       m_lockScreenAction(0),
-      m_logoutAction(0)
+      m_logoutAction(0),
+      m_separator1(0),
+      m_separator2(0),
+      m_buttons(0)
 {
+    setHasConfigurationInterface(true);
 }
 
 ContextMenu::~ContextMenu()
@@ -58,13 +64,34 @@ ContextMenu::~ContextMenu()
 
 void ContextMenu::init(const KConfigGroup &config)
 {
-    if (isInitialized()) {
-        kDebug() << "second init";
-        return; //atm we have no config to reload
-    }
-
     Plasma::Containment *c = containment();
     Q_ASSERT(c);
+
+    m_allActions.clear();
+    m_enabledActions.clear();
+    QList<bool> defaultEnabled;
+
+    //FIXME what if it's a customcontainment?
+    //FIXME does anyone care that the panel/desktopaction orders are different?
+    if (c->containmentType() == Plasma::Containment::PanelContainment ||
+            c->containmentType() == Plasma::Containment::CustomPanelContainment) {
+        m_allActions << "add widgets" << "_add panel" << "lock widgets" << "_context" << "remove";
+        defaultEnabled << true << true << true << true << true;
+    } else {
+        //FIXME ugly code!
+        m_allActions << "_context" << "_run_command" << "add widgets" << "_add panel" << "remove" << "lock widgets" << "zoom in" << "zoom out" << "_sep1" << "_lock_screen" << "_logout" << "_sep2" << "configure" << "configure shortcuts";
+        defaultEnabled << true << true << true << true << true << true << false << false << true << true << true << true << true << false;
+    }
+
+    for (int i = 0; i < m_allActions.count(); ++i) {
+        m_enabledActions << config.readEntry(m_allActions.at(i), defaultEnabled.at(i));
+    }
+
+    if (isInitialized()) {
+        kDebug() << "second init";
+        return; //below here is stuff we only want to do once
+    }
+
     connect(c, SIGNAL(immutabilityChanged(const Plasma::ImmutabilityType)), this, SLOT(updateImmutability(const Plasma::ImmutabilityType)));
 
     //FIXME what if it's a panel? what if it's a customcontainment?
@@ -113,6 +140,11 @@ void ContextMenu::init(const KConfigGroup &config)
         m_logoutAction = new QAction(i18n("Leave..."), this);
         m_logoutAction->setIcon(KIcon("system-shutdown"));
         connect(m_logoutAction, SIGNAL(triggered(bool)), this, SLOT(logout()));
+
+        m_separator1 = new QAction(this);
+        m_separator1->setSeparator(true);
+        m_separator2 = new QAction(this);
+        m_separator2->setSeparator(true);
     }
 
     updateImmutability(c->immutability());
@@ -126,110 +158,75 @@ void ContextMenu::updateImmutability(const Plasma::ImmutabilityType immutable)
 
 void ContextMenu::contextEvent(QEvent *event)
 {
+    QPoint screenPos;
     switch (event->type()) {
-        case QEvent::GraphicsSceneMouseRelease:
-            contextEvent(dynamic_cast<QGraphicsSceneMouseEvent*>(event));
+        case QEvent::GraphicsSceneMouseRelease: {
+            QGraphicsSceneMouseEvent *e = dynamic_cast<QGraphicsSceneMouseEvent*>(event);
+            screenPos = e->screenPos();
             break;
-        case QEvent::GraphicsSceneWheel:
-            wheelEvent(dynamic_cast<QGraphicsSceneWheelEvent*>(event));
+        }
+        case QEvent::GraphicsSceneWheel: {
+            QGraphicsSceneWheelEvent *e = dynamic_cast<QGraphicsSceneWheelEvent*>(event);
+            screenPos = e->screenPos();
             break;
+        }
         default:
             break;
     }
-}
-
-void ContextMenu::contextEvent(QGraphicsSceneMouseEvent *event)
-{
-    QList<QAction*> actions = contextualActions();
 
     KMenu desktopMenu;
-    desktopMenu.addActions(actions);
-    desktopMenu.exec(event->screenPos());
-}
-
-void ContextMenu::wheelEvent(QGraphicsSceneWheelEvent *event)
-{
-    kDebug() << "test!!!!!!!!!!!!!11111111!!";
-    kDebug() << event->orientation() << event->delta();
-    kDebug() << event->buttons() << event->modifiers();
+    desktopMenu.addActions(contextualActions());
+    desktopMenu.exec(screenPos);
 }
 
 QList<QAction*> ContextMenu::contextualActions()
 {
     Plasma::Containment *c = containment();
     Q_ASSERT(c);
-    QList<QAction*> actions = c->contextualActions();
-
-    //standard actions
-    //FIXME what if it's a customcontainment?
-    //FIXME does anyone care that the panel/desktopaction orders are different?
-    if (c->containmentType() == Plasma::Containment::PanelContainment ||
-            c->containmentType() == Plasma::Containment::CustomPanelContainment) {
-        QAction *appletBrowserAction = c->action("add widgets");
-        if (appletBrowserAction) {
-            actions.append(appletBrowserAction);
+    QList<QAction*> actions;
+    for (int i = 0; i < m_allActions.count(); ++i) {
+        if (m_enabledActions.at(i)) {
+            QString name = m_allActions.at(i);
+            if (name == "_context") {
+                actions << c->contextualActions();
+            } else {
+                QAction *a = action(name);
+                if (a) {
+                    actions << a;
+                }
+            }
         }
-
-        if (m_addPanelAction) {
-            actions.append(m_addPanelAction);
-        }
-
-        QAction *lockDesktopAction = c->action("lock widgets");
-        if (lockDesktopAction) {
-            actions.append(lockDesktopAction);
-        }
-
-        //FIXME config action used to go here
-
-        QAction *removeAction = c->action("remove");
-        if (removeAction) {
-            actions.append(removeAction);
-        }
-
-    } else {
-        if (KAuthorized::authorizeKAction("run_command")) {
-            actions.append(m_runCommandAction);
-        }
-
-        QAction *appletBrowserAction = c->action("add widgets");
-        if (appletBrowserAction) {
-            actions.append(appletBrowserAction);
-        }
-
-        if (m_addPanelAction) {
-            actions.append(m_addPanelAction);
-        }
-
-        QAction *removeAction = c->action("remove");
-        //FIXME make removal of current activity possible
-        if (c->screen() == -1 && removeAction) {
-            actions.append(removeAction);
-        }
-
-        QAction *lockDesktopAction = c->action("lock widgets");
-        if (lockDesktopAction) {
-            actions.append(lockDesktopAction);
-        }
-
-        QAction *sep = new QAction(this);
-        sep->setSeparator(true);
-        actions.append(sep);
-
-        if (KAuthorized::authorizeKAction("lock_screen")) {
-            actions.append(m_lockScreenAction);
-        }
-
-        if (KAuthorized::authorizeKAction("logout")) {
-            actions.append(m_logoutAction);
-        }
-
-        if (c->containmentType() == Plasma::Containment::DesktopContainment) {
-            actions << sep;
-            actions << c->action("configure");
-        }
-
     }
     return actions;
+}
+
+QAction *ContextMenu::action(const QString &name)
+{
+    Plasma::Containment *c = containment();
+    Q_ASSERT(c);
+    if (name == "_sep1") {
+        return m_separator1;
+    } else if (name == "_sep2") {
+        return m_separator2;
+    } else if (name == "_add panel") {
+        return m_addPanelAction;
+    } else if (name == "_run_command") {
+        if (KAuthorized::authorizeKAction("run_command")) {
+            return m_runCommandAction;
+        }
+    } else if (name == "_lock_screen") {
+        if (KAuthorized::authorizeKAction("lock_screen")) {
+            return m_lockScreenAction;
+        }
+    } else if (name == "_logout") {
+        if (KAuthorized::authorizeKAction("logout")) {
+            return m_logoutAction;
+        }
+    } else {
+        //FIXME: remove action: make removal of current activity possible
+        return c->action(name);
+    }
+    return 0;
 }
 
 void ContextMenu::addPanel()
@@ -341,6 +338,58 @@ void ContextMenu::logout()
                                 KWorkSpace::ShutdownTypeDefault,
                                 KWorkSpace::ShutdownModeDefault);
 #endif
+}
+
+QWidget* ContextMenu::createConfigurationInterface(QWidget* parent)
+{
+    QWidget *widget = new QWidget(parent);
+    QVBoxLayout *lay = new QVBoxLayout();
+    widget->setLayout(lay);
+    m_buttons = new QButtonGroup(widget);
+    m_buttons->setExclusive(false);
+    for (int i = 0; i < m_allActions.count(); ++i) {
+        QString name = m_allActions.at(i);
+        QCheckBox *item = 0;
+
+        if (name == "_context") {
+            item = new QCheckBox(widget);
+            //FIXME better text
+            item->setText(i18n("[Other Actions]"));
+        } else {
+            QAction *a = action(name);
+            if (a) {
+                item = new QCheckBox(widget);
+                item->setText(a->text());
+                item->setIcon(a->icon());
+            }
+        }
+
+        if (item) {
+            item->setChecked(m_enabledActions.at(i));
+            lay->addWidget(item);
+            m_buttons->addButton(item, i);
+        }
+    }
+
+    return widget;
+}
+
+void ContextMenu::configurationAccepted()
+{
+    for (int i = 0; i < m_allActions.count(); ++i) {
+        QAbstractButton *b = m_buttons->button(i);
+        if (b) {
+            m_enabledActions.replace(i, b->isChecked());
+        }
+    }
+}
+
+void ContextMenu::save(KConfigGroup &config)
+{
+    //TODO should I only write the changed ones?
+    for (int i = 0; i < m_allActions.count(); ++i) {
+        config.writeEntry(m_allActions.at(i), m_enabledActions.at(i));
+    }
 }
 
 
