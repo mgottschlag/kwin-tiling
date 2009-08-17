@@ -33,6 +33,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <qtimer.h>
 #include <qx11info_x11.h>
 
+#include <randrdisplay.h>
+#include <randrscreen.h>
+#include <randroutput.h>
+
 K_PLUGIN_FACTORY(RandrMonitorModuleFactory,
                  registerPlugin<RandrMonitorModule>();
     )
@@ -151,7 +155,48 @@ QStringList RandrMonitorModule::connectedMonitors() const
 
 void RandrMonitorModule::switchDisplay()
     {
-    // TODO
+    QList< RandROutput* > outputs;
+    RandRDisplay display;
+    for( int scr = 0;
+         scr < display.numScreens();
+         ++scr )
+        {
+        foreach( RandROutput* output, display.screen( scr )->outputs())
+            {
+            if( !output->isConnected())
+                continue;
+            if( !outputs.contains( output ))
+                outputs.append( output );
+            }
+        }
+    if( outputs.count() <= 1 ) // just one, do nothing
+        return;
+    if( outputs.count() == 2 ) // alternative between one, second, both
+        {
+        if( outputs[ 0 ]->isActive() && !outputs[ 1 ]->isActive())
+            {
+            enableOutput( outputs[ 1 ], true );
+            enableOutput( outputs[ 0 ], false );
+            }
+        else if( !outputs[ 0 ]->isActive() && outputs[ 1 ]->isActive())
+            {
+            enableOutput( outputs[ 1 ], true );
+            enableOutput( outputs[ 0 ], true );
+            }
+        else
+            {
+            enableOutput( outputs[ 0 ], true );
+            enableOutput( outputs[ 1 ], false );
+            }
+        return;
+        }
+    // no idea what to do here
+    KToolInvocation::kdeinitExec( "kcmshell4", QStringList() << "display" );
+    }
+
+void RandrMonitorModule::enableOutput( RandROutput* output, bool enable )
+    { // a bit lame, but I don't know how to do this easily with this codebase :-/
+    KProcess::execute( QStringList() << "xrandr" << "--output" << output->name() << ( enable ? "--auto" : "--off" ));
     }
 
 bool RandrMonitorHelper::x11Event( XEvent* e )

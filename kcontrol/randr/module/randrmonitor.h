@@ -20,11 +20,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define RANDRMONITOR_H
 
 #include <kdedmodule.h>
+#include <kprocess.h>
 #include <qwidget.h>
 
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
 #include <fixx11h.h>
+
+class RandROutput;
 
 class RandrMonitorHelper;
 
@@ -43,6 +46,7 @@ class RandrMonitorModule
         void initRandr();
         void getRandrInfo( XRROutputChangeNotifyEvent* e, QString* change, QRect* rect );
         QStringList connectedMonitors() const;
+        void enableOutput( RandROutput* output, bool enable );
         bool have_randr;
         int randr_base;
         int randr_error;
