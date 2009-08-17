@@ -10,6 +10,7 @@
 */
 
 #include "backgrounddialog.h"
+#include "contextactions.h"
 
 #include <QPainter>
 #include <QFile>
@@ -399,6 +400,9 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
     m_containmentComboBox->setItemDelegate(new AppletDelegate());
 
     m_appearanceItem = addPage(main, i18n("Appearance"), "preferences-desktop-wallpaper");
+
+    ContextActions *ca = new ContextActions(m_containment, this);
+    connect(ca, SIGNAL(modified(bool)), this, SLOT(settingsModified(bool)));
 
     if (m_containment && m_containment->hasConfigurationInterface()) {
         m_containment->createConfigurationInterface(this);
