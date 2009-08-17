@@ -1,0 +1,18 @@
+[Desktop Entry]
+Name=Zoom
+Type=Service
+Icon=preferences-desktop-color
+Comment=Zoom activities in and out
+
+ServiceTypes=Plasma/ContextAction
+
+X-KDE-Library=plasma_contextaction_zoom
+X-KDE-PluginInfo-Author=Chani
+X-KDE-PluginInfo-Email=chani@kde.org
+X-KDE-PluginInfo-Name=zoom
+X-KDE-PluginInfo-Version=pre0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true
+
