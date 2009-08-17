@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Test
+Comment=A dummy plugin for testing
 Type=Service
 Icon=preferences-desktop-color
 ServiceTypes=Plasma/ContextAction

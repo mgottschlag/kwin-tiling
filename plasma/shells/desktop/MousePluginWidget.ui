@@ -1,0 +1,78 @@
+<ui version="4.0" >
+ <class>MousePluginWidget</class>
+ <widget class="QWidget" name="MousePluginWidget" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>605</width>
+    <height>204</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout" >
+   <item row="0" column="0" >
+    <widget class="QLabel" name="name" >
+     <property name="font" >
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text" >
+      <string>Name</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" >
+    <widget class="QToolButton" name="aboutButton" >
+     <property name="text" >
+      <string>...</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2" >
+    <widget class="MouseInputButton" name="inputButton" >
+     <property name="text" >
+      <string>Button:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="3" >
+    <widget class="QToolButton" name="clearButton" >
+     <property name="text" >
+      <string>...</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2" >
+    <widget class="QLabel" name="description" >
+     <property name="text" >
+      <string>Description</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2" colspan="2" >
+    <widget class="QPushButton" name="configButton" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
+     <property name="text" >
+      <string>Configure...</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MouseInputButton</class>
+   <extends>QPushButton</extends>
+   <header>mouseinputbutton.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

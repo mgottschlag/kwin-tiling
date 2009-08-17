@@ -50,6 +50,9 @@ public:
 
     void reloadConfig();
 
+signals:
+    void containmentPluginChanged(Plasma::Containment *c);
+
 public slots:
     void saveConfig();
 
@@ -74,6 +77,7 @@ private:
     Plasma::Containment* m_containment;
     ScreenPreviewWidget* m_preview;
     KPageWidgetItem *m_appearanceItem;
+    KPageWidgetItem *m_mouseItem;
     bool m_modified;
 };
 

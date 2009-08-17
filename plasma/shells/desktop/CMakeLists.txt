@@ -29,6 +29,8 @@ set(plasma_SRCS
     desktopcorona.cpp
     desktopview.cpp
     main.cpp
+    mousepluginwidget.cpp
+    mouseinputbutton.cpp
     panelcontroller.cpp
     panelview.cpp
     panelappletoverlay.cpp
@@ -40,7 +42,7 @@ set(plasma_SRCS
 )
 
 
-kde4_add_ui_files(plasma_SRCS BackgroundDialog.ui ContextActions.ui MouseInput.ui globaloptions.ui)
+kde4_add_ui_files(plasma_SRCS BackgroundDialog.ui ContextActions.ui MousePluginWidget.ui globaloptions.ui)
 kde4_add_kcfg_files(plasma_SRCS kcfg/plasma-shell-desktop.kcfgc)
 
 if(WIN32)

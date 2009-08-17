@@ -5,6 +5,7 @@
 */
 
 #include "contextactions.h"
+#include "mousepluginwidget.h"
 
 #include <KConfigDialog>
 #include <KDebug>
@@ -15,32 +16,34 @@
 
 ContextActions::ContextActions(Plasma::Containment *containment, KConfigDialog *parent)
     :QWidget(parent),
-    m_mouseDlg(0),
     m_containment(containment)
 {
     m_ui.setupUi(this);
 
-    reloadConfig();
+    Q_ASSERT(m_containment);
+    foreach (const QString &key, m_containment->contextActionTriggers()) {
+        Plasma::ContextAction *ca = m_containment->contextAction(key);
+        if (ca) {
+            m_plugins.insert(key, ca->pluginName());
+        }
+    }
+
+    //can't seem to do anything to pluginList in designer
+    QVBoxLayout *lay = new QVBoxLayout(m_ui.pluginList);
 
     KPluginInfo::List plugins = Plasma::ContextAction::listContextActionInfo();
     foreach (const KPluginInfo& info, plugins) {
-        QListWidgetItem *item = new QListWidgetItem(m_ui.pluginList);
-        QString text = info.name();
+        MousePluginWidget *item = new MousePluginWidget(info);
+        lay->addWidget(item);
+        item->setObjectName(info.pluginName());
         QString trigger = m_plugins.key(info.pluginName());
-        if (! trigger.isEmpty()) {
-            text += " (" + trigger + ")";
-        }
-        item->setText(text);
-        item->setData(Qt::UserRole, info.pluginName());
+        item->setTrigger(trigger);
+        connect(item, SIGNAL(triggerChanged(QString,QString,QString)), this, SLOT(setTrigger(QString,QString,QString)));
     }
-
-    connect(m_ui.pluginList, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)), this, SLOT(currentItemChanged(QListWidgetItem*)));
-    connect(m_ui.triggerButton, SIGNAL(clicked()), this, SLOT(getMouseInput()));
-
-    parent->addPage(this, i18n("Mouse Plugins"), "contextactions");
 
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+    connect(parent, SIGNAL(containmentPluginChanged(Plasma::Containment*)), this, SLOT(containmentPluginChanged(Plasma::Containment*)));
 }
 
 ContextActions::~ContextActions()
@@ -61,96 +64,49 @@ void ContextActions::configAccepted()
     m_modifiedKeys.clear();
 }
 
-void ContextActions::containmentChanged(Plasma::Containment *c)
+void ContextActions::setTrigger(const QString &plugin, const QString &oldTrigger, const QString &newTrigger)
 {
-    if (c && m_containment != c) {
-        m_containment=c;
-        reloadConfig();
-    }
-}
-
-void ContextActions::reloadConfig()
-{
-    if (! m_containment) {
-        return;
-    }
-    m_modifiedKeys.clear();
-    m_plugins.clear();
-
-    foreach (const QString &key, m_containment->contextActionTriggers()) {
-        Plasma::ContextAction *ca = m_containment->contextAction(key);
-        if (ca) {
-            m_plugins.insert(key, ca->pluginName());
-        }
-    }
-}
-
-void ContextActions::currentItemChanged(QListWidgetItem *current)
-{
-    QString plugin = current->data(Qt::UserRole).toString();
-    QString trigger = m_plugins.key(plugin); //FIXME linear time
-    m_ui.triggerButton->setText(trigger);
-}
-
-void ContextActions::getMouseInput()
-{
-    if (!m_mouseDlg) {
-        m_mouseDlg = new QDialog(this);
-        m_mouseUi.setupUi(m_mouseDlg);
-        m_mouseUi.inputLabel->installEventFilter(this);
-    }
-    m_mouseDlg->exec();
-}
-
-bool ContextActions::eventFilter(QObject *watched, QEvent *event)
-{
-    if (watched != m_mouseUi.inputLabel) {
-        kDebug() << "can't happen";
-        return false;
-    }
-
-    switch (event->type()) {
-        case QEvent::MouseButtonRelease:
-        case QEvent::Wheel:
-            setTrigger(Plasma::Containment::eventToString(event));
-            m_mouseDlg->accept();
-        case QEvent::MouseButtonPress:
-            event->accept();
-            return true;
-        default:
-            return false;
-    }
-
-}
-
-void ContextActions::setTrigger(const QString &newTrigger)
-{
-    QListWidgetItem *current = m_ui.pluginList->currentItem();
-    QString plugin = current->data(Qt::UserRole).toString();
-    QString oldTrigger = m_plugins.key(plugin); //FIXME linear time
-
     if (newTrigger == oldTrigger) {
         return;
     }
 
-    if (m_plugins.contains(newTrigger)) {
+    if (!newTrigger.isEmpty() && m_plugins.contains(newTrigger)) {
         int ret = KMessageBox::warningContinueCancel(this,
                 i18n("This trigger is assigned to another plugin."), QString(), KGuiItem(i18n("Reassign")));
-        if (ret != KMessageBox::Continue) {
+        if (ret == KMessageBox::Continue) {
+            //clear it from the UI
+            MousePluginWidget *w = findChild<MousePluginWidget*>(m_plugins.value(newTrigger));
+            Q_ASSERT(w);
+            w->setTrigger(QString());
+        } else {
+            //undo
+            MousePluginWidget *w = qobject_cast<MousePluginWidget*>(sender());
+            Q_ASSERT(w);
+            w->setTrigger(oldTrigger);
             return;
         }
     }
 
-    m_plugins.remove(oldTrigger);
-    m_plugins.insert(newTrigger, plugin);
-    m_modifiedKeys << newTrigger << oldTrigger;
+    if (!oldTrigger.isEmpty()) {
+        m_plugins.remove(oldTrigger);
+        m_modifiedKeys << oldTrigger;
+    }
+    if (!newTrigger.isEmpty()) {
+        m_plugins.insert(newTrigger, plugin);
+        m_modifiedKeys << newTrigger;
+    }
 
-    //FIXME update list
-    m_ui.triggerButton->setText(newTrigger);
     emit modified(true);
 }
 
 
-//FIXME containment can be changed under us by BackgroundDialog
-//and to complicate things, it could happen just after or just before we save?
+//FIXME this function assumes only the containment plugin is changing, not the config.
+//so, no switching activities.
+//if the config location *was* changed we'd have to figure out what to do with unsaved changes!
+void ContextActions::containmentPluginChanged(Plasma::Containment *c)
+{
+    kDebug() << "!!!!!!!!!";
+    Q_ASSERT(c);
+    m_containment=c;
+}
 

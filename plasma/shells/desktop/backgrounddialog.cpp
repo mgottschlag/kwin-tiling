@@ -403,6 +403,7 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::Containment *c, Pla
 
     ContextActions *ca = new ContextActions(m_containment, this);
     connect(ca, SIGNAL(modified(bool)), this, SLOT(settingsModified(bool)));
+    m_mouseItem = addPage(ca, i18n("Mouse Plugins"), "contextactions");
 
     if (m_containment && m_containment->hasConfigurationInterface()) {
         m_containment->createConfigurationInterface(this);
@@ -627,7 +628,9 @@ void BackgroundDialog::saveConfig()
             disconnect(this, 0, m_containment, 0);
 
             m_containment = m_view->swapContainment(m_containment, containment);
+            emit containmentPluginChanged(m_containment);
 
+            //remove all pages but our own
             KPageWidgetModel *m = qobject_cast<KPageWidgetModel *>(pageWidget()->model());
             if (m) {
                 int rows = m->rowCount();
@@ -641,7 +644,7 @@ void BackgroundDialog::saveConfig()
 
                     KPageWidgetItem *item = m->item(idx);
 
-                    if (item && item != m_appearanceItem) {
+                    if (item && item != m_appearanceItem && item != m_mouseItem) {
                         itemsToRemove.append(item);
                     }
                 }
@@ -651,6 +654,7 @@ void BackgroundDialog::saveConfig()
                 }
             }
 
+            //add the new containment's config
             if (m_containment->hasConfigurationInterface()) {
                 m_containment->createConfigurationInterface(this);
             }

@@ -8,7 +8,6 @@
 #define CONTEXTACTIONDIALOG_H
 
 #include "ui_ContextActions.h"
-#include "ui_MouseInput.h"
 
 namespace Plasma {
     class Containment;
@@ -23,32 +22,25 @@ public:
     ContextActions(Plasma::Containment *containment, KConfigDialog *parent);
     ~ContextActions();
 
-    bool eventFilter(QObject *watched, QEvent *event);
-
 signals:
     void modified(bool isModified);
 
 public slots:
     void settingsChanged(bool isModified);
     void configAccepted();
-    void containmentChanged(Plasma::Containment *c);
+    void containmentPluginChanged(Plasma::Containment *c);
 
 private slots:
-    void currentItemChanged(QListWidgetItem *current);
-    void getMouseInput();
+    /**
+     * reassign the plugin's trigger to be @p newTrigger
+     */
+    void setTrigger(const QString &plugin, const QString &oldTrigger, const QString &newTrigger);
 
 private:
-    void reloadConfig();
-    /**
-     * reassign the selected plugin's trigger to be @p newTrigger
-     */
-    void setTrigger(const QString &newTrigger);
 
     Ui::ContextActions m_ui;
-    Ui::MouseInput m_mouseUi;
-    QDialog *m_mouseDlg;
     Plasma::Containment *m_containment;
-    QHash<QString, QString> m_plugins; //TODO might a different structure be better?
+    QHash<QString, QString> m_plugins;
     QSet<QString> m_modifiedKeys;
 };
 
