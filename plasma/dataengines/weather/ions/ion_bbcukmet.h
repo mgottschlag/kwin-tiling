@@ -100,10 +100,10 @@ public:
     QMap<QString, QString> pressure(const QString& source) const;
     QVector<QString> forecasts(const QString& source);
 
-public slots:
+public Q_SLOTS:
     virtual void reset();
 
-protected slots:
+protected Q_SLOTS:
     void setup_slotDataArrived(KIO::Job *, const QByteArray &);
     void setup_slotJobFinished(KJob *);
     //void setup_slotRedirected(KIO::Job *, const KUrl &url);

@@ -79,10 +79,10 @@ public:
     bool updateIonSource(const QString& source); // Sync data source with Applet
     void updateWeather(const QString& source);
 
-public slots:
+public Q_SLOTS:
     virtual void reset();
 
-protected slots:
+protected Q_SLOTS:
     void setup_slotDataArrived(KIO::Job *, const QByteArray &);
     void setup_slotJobFinished(KJob *);
 

@@ -73,7 +73,7 @@ protected:
      */
     bool sourceRequestEvent(const QString &source);
 
-protected slots:
+protected Q_SLOTS:
     /**
      * Reimplemented from Plasma::DataEngine.
      * @param source The datasource to be updated.
