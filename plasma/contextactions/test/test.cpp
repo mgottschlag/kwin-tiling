@@ -33,6 +33,20 @@ ContextTest::ContextTest(QObject *parent, const QVariantList &args)
     setConfigurationRequired(true);
 }
 
+void ContextTest::contextEvent(QEvent *event)
+{
+    switch (event->type()) {
+        case QEvent::GraphicsSceneMouseRelease:
+            contextEvent(dynamic_cast<QGraphicsSceneMouseEvent*>(event));
+            break;
+        case QEvent::GraphicsSceneWheel:
+            wheelEvent(dynamic_cast<QGraphicsSceneWheelEvent*>(event));
+            break;
+        default:
+            break;
+    }
+}
+
 void ContextTest::contextEvent(QGraphicsSceneMouseEvent *event)
 {
     kDebug() << "test!!!!!!!!!!!!!!!!!!!!!!!" << event->pos();

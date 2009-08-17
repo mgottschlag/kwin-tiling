@@ -31,6 +31,7 @@ public:
 
     void init(const KConfigGroup&);
 
+    void contextEvent(QEvent *event);
     void contextEvent(QGraphicsSceneMouseEvent *event);
     void wheelEvent(QGraphicsSceneWheelEvent *event);
     QList<QAction*> contextualActions();

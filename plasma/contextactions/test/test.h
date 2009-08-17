@@ -31,6 +31,7 @@ class ContextTest : public Plasma::ContextAction
         ContextTest(QObject* parent, const QVariantList& args);
 
         void init(const KConfigGroup &config);
+        void contextEvent(QEvent *event);
         void contextEvent(QGraphicsSceneMouseEvent *event);
         void wheelEvent(QGraphicsSceneWheelEvent *event);
 

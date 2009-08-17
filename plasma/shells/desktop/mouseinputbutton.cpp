@@ -8,9 +8,9 @@
 
 #include <KDebug>
 
-#include <QEvent>
+#include <QKeyEvent>
 
-#include <Plasma/Containment>
+#include <plasma/contextaction.h>
 
 MouseInputButton::MouseInputButton(QWidget *parent)
     :QPushButton(parent)
@@ -54,7 +54,7 @@ bool MouseInputButton::event(QEvent *event)
             case QEvent::Wheel:
                 //kDebug() << "wheel@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@";
             case QEvent::MouseButtonRelease:
-                changeTrigger(Plasma::Containment::eventToString(event));
+                changeTrigger(Plasma::ContextAction::eventToString(event));
             case QEvent::MouseButtonPress:
                 event->accept();
                 return true;

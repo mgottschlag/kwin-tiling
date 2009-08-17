@@ -30,6 +30,7 @@ class SwitchDesktop : public Plasma::ContextAction
     public:
         SwitchDesktop(QObject* parent, const QVariantList& args);
 
+        void contextEvent(QEvent *event);
         void contextEvent(QGraphicsSceneMouseEvent *event);
         void wheelEvent(QGraphicsSceneWheelEvent *event);
 
