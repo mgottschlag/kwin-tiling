@@ -45,7 +45,6 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 	}
 
 	setupUi(this);
-	layout()->setMargin(0);
 
 	connect( identifyOutputsButton, SIGNAL( clicked()), SLOT( identifyOutputs()));
 	connect( &identifyTimer, SIGNAL( timeout()), SLOT( clearIndicators()));

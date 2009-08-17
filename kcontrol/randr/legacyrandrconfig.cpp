@@ -27,7 +27,6 @@ LegacyRandRConfig::LegacyRandRConfig(QWidget *parent, RandRDisplay *display)
 : QWidget(parent), Ui::LegacyRandRConfigBase()
 {
 	setupUi(this);
-	layout()->setMargin(0);
 	m_display = display;
 	Q_ASSERT(m_display);
 

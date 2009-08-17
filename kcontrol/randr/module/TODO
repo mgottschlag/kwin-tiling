@@ -1,6 +1,0 @@
-- zrusit ten modalni dialog
-- zkontrolovat, ze tohle opravdu nerusi randr eventmask pro Qt
-    - plus zkontrolovat, jak se tedy pouziva to window pro events
-- nedelat nic, kdyz kcmshell4 display uz je otevreny
-- musi se dialog zobrazit na spravnem monitoru (tj. ne na vypnutem)
-- Hidden[$e]= v .desktop nefunguje
