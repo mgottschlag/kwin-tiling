@@ -27,7 +27,7 @@ ForegroundNegative=191,3,3
 ForegroundNeutral=176,128,0
 ForegroundNormal=20,19,18
 ForegroundPositive=0,110,40
-ForegroundVisited=100,74,155
+ForegroundVisited=69,40,134
 
 [Colors:Selection]
 BackgroundAlternate=62,138,204
@@ -55,7 +55,7 @@ ForegroundNegative=191,3,3
 ForegroundNeutral=176,128,0
 ForegroundNormal=20,19,18
 ForegroundPositive=0,110,40
-ForegroundVisited=100,74,155
+ForegroundVisited=69,40,134
 
 [Colors:View]
 BackgroundAlternate=248,247,246
@@ -69,7 +69,7 @@ ForegroundNegative=191,3,3
 ForegroundNeutral=176,128,0
 ForegroundNormal=20,19,18
 ForegroundPositive=0,110,40
-ForegroundVisited=100,74,155
+ForegroundVisited=69,40,134
 
 [Colors:Window]
 BackgroundAlternate=218,217,216
@@ -83,7 +83,7 @@ ForegroundNegative=191,3,3
 ForegroundNeutral=176,128,0
 ForegroundNormal=20,19,18
 ForegroundPositive=0,110,40
-ForegroundVisited=100,74,155
+ForegroundVisited=69,40,134
 
 [General]
 Name=Oxygen
