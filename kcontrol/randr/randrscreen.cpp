@@ -395,7 +395,7 @@ void RandRScreen::load(KConfig &config)
 		: group.readEntry("UnifiedRect", QRect());
 	m_unifiedRotation = group.readEntry("UnifiedRotation", (int) RandR::Rotate0);
 
-	slotUnifyOutputs(m_outputsUnified);
+//	slotUnifyOutputs(m_outputsUnified);
 
 	foreach(RandROutput *output, m_outputs)
 	{
