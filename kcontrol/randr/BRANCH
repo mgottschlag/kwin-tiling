@@ -1,24 +1,8 @@
 last sync:
 r1012444 (4.3)
-r890269 (randr)
 
 
 pending:
 r861620
 OutputGraphicsItem::updateText() is from trunk and probably unnecessary here
     - and the place which calls it probably shouldn't be there?
-
-OLD:
-
-
-last sync:
-r878939 (4.1)
-r883800 (4.2)
-
-
-
-- znormalizovat souradnice? (at topleft je 0,0)
-- at jdou crtc pro non-clone
-- detekovat clones a pouzit stejny crtc?
-- co to dela po startu?
-- zkontrolovat kwin a plasma, jestli nepadaji atd.
