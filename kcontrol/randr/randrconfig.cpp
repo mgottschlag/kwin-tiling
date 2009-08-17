@@ -247,7 +247,7 @@ void RandRConfig::identifyOutputs()
 	OutputMap outputs = m_display->currentScreen()->outputs();
 	foreach(RandROutput *output, outputs)
 	{
-		if( !output->isConnected())
+		if( !output->isConnected() || output->rect().isEmpty())
 			continue;
 		ids[ output->rect().center() ].append( output->name());
 	}
