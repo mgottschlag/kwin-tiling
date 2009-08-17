@@ -338,13 +338,6 @@ void OutputConfig::updatePositionListDelayed()
 		if(index != -1)
 			positionOutputCombo->setCurrentIndex(index);
 	}*/
-
-	// FIXME: RandRScreen::applyProposed() has a bit of code for positioning
-	// outputs, but it's commented out and might not work as is. Until someone
-	// gets this to work, it's probably better not to show these controls.
-	positionLabel->setVisible(false);
-	positionCombo->setVisible(false);
-	positionOutputCombo->setVisible(false);
 }
 
 void OutputConfig::updateRotationList(void)
