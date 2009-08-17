@@ -19,6 +19,8 @@
 
 #include "mousepluginwidget.h"
 
+#include <Plasma/Containment>
+
 #include <KAboutData>
 #include <KAboutApplicationDialog>
 #include <KDebug>
@@ -62,29 +64,12 @@ MousePluginWidget::~MousePluginWidget()
     delete m_pluginInstance;
 }
 
-void MousePluginWidget::setConfigGroup(KConfigGroup cfg)
-{
-    //transplant the settings
-    if (m_config.isValid()) {
-        if (cfg.isValid()) {
-            kDebug() << "transplanting settings";
-            m_config.copyTo(&cfg);
-        }
-        //clean up the old config
-        m_config.deleteGroup();
-    }
-    m_config = cfg;
-}
-
-KConfigGroup MousePluginWidget::configGroup()
-{
-    return m_config;
-}
-
 void MousePluginWidget::setContainment(Plasma::Containment *ctmt)
 {
     //note: since the old plugin's parent is the old containment,
     //we let that containment take care of deleting it
+
+    m_containment = ctmt;
 
     m_pluginInstance = Plasma::ContainmentActions::load(ctmt, m_plugin.pluginName());
     if (! m_pluginInstance) {
@@ -92,8 +77,18 @@ void MousePluginWidget::setContainment(Plasma::Containment *ctmt)
         kDebug() << "failed to load plugin!";
         return;
     }
+
     if (m_pluginInstance->hasConfigurationInterface()) {
-        m_pluginInstance->restore(m_config);
+        QString trigger = m_ui.inputButton->trigger();
+        if (trigger.isEmpty()) {
+            //FIXME m_pluginInstance->restore(KConfigGroup());
+        } else {
+            //FIXME I'm assuming the config was successfully saved here already
+            KConfigGroup cfg = ctmt->config();
+            cfg = KConfigGroup(&cfg, "ActionPlugins");
+            cfg = KConfigGroup(&cfg, m_ui.inputButton->trigger());
+            m_pluginInstance->restore(cfg);
+        }
     } else {
         //well, we don't need it then.
         delete m_pluginInstance;
@@ -105,7 +100,7 @@ void MousePluginWidget::setContainment(Plasma::Containment *ctmt)
 void MousePluginWidget::setTrigger(const QString &trigger)
 {
     m_ui.inputButton->setTrigger(trigger);
-    m_ui.configButton->setEnabled(!trigger.isEmpty());
+    updateConfig(trigger);
 }
 
 void MousePluginWidget::clearTrigger()
@@ -117,8 +112,13 @@ void MousePluginWidget::clearTrigger()
 
 void MousePluginWidget::changeTrigger(const QString &oldTrigger, const QString& newTrigger)
 {
-    m_ui.configButton->setEnabled(!newTrigger.isEmpty());
+    updateConfig(newTrigger);
     emit triggerChanged(m_plugin.pluginName(), oldTrigger, newTrigger);
+}
+
+void MousePluginWidget::updateConfig(const QString &trigger)
+{
+    m_ui.configButton->setEnabled(!trigger.isEmpty());
 }
 
 void MousePluginWidget::configure()
@@ -172,8 +172,12 @@ void MousePluginWidget::rejectConfig()
 
 void MousePluginWidget::save()
 {
-    if (m_pluginInstance && m_config.isValid()) {
-        m_pluginInstance->save(m_config);
+    QString trigger = m_ui.inputButton->trigger();
+    if (m_pluginInstance && !trigger.isEmpty()) {
+        KConfigGroup cfg = m_containment->config();
+        cfg = KConfigGroup(&cfg, "ActionPlugins");
+        cfg = KConfigGroup(&cfg, trigger);
+        m_pluginInstance->save(cfg);
     }
 }
 

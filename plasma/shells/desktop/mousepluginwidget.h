@@ -36,9 +36,6 @@ public:
     MousePluginWidget(const KPluginInfo &plugin, QWidget *parent = 0);
     ~MousePluginWidget();
 
-    void setConfigGroup(KConfigGroup cfg);
-    KConfigGroup configGroup();
-
     void setTrigger(const QString &trigger);
 
 signals:
@@ -59,11 +56,13 @@ private slots:
     void showAbout();
 
 private:
+    void updateConfig(const QString &trigger);
+
     Ui::MousePluginWidget m_ui;
     KPluginInfo m_plugin;
     QPointer<Plasma::ContainmentActions> m_pluginInstance;
     QDialog *m_configDlg;
-    KConfigGroup m_config;
+    Plasma::Containment *m_containment;
 
 };
 #endif

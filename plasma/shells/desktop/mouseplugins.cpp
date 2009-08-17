@@ -44,10 +44,6 @@ MousePlugins::MousePlugins(Plasma::Containment *containment, KConfigDialog *pare
     //can't seem to do anything to pluginList in designer
     QVBoxLayout *lay = new QVBoxLayout(m_ui.pluginList);
 
-    //FIXME this feels wrong
-    KConfigGroup cfg = m_containment->config();
-    cfg = KConfigGroup(&cfg, "ActionPlugins");
-
     KPluginInfo::List plugins = Plasma::ContainmentActions::listContainmentActionsInfo();
     foreach (const KPluginInfo& info, plugins) {
         MousePluginWidget *item = new MousePluginWidget(info);
@@ -55,8 +51,6 @@ MousePlugins::MousePlugins(Plasma::Containment *containment, KConfigDialog *pare
         item->setObjectName(info.pluginName());
         QString trigger = m_plugins.key(info.pluginName());
         item->setTrigger(trigger);
-        //FIXME make a truly unique config group
-        item->setConfigGroup(KConfigGroup(&cfg, info.pluginName()));
         item->setContainment(m_containment);
         connect(parent, SIGNAL(containmentPluginChanged(Plasma::Containment*)), item, SLOT(setContainment(Plasma::Containment*)));
         connect(item, SIGNAL(triggerChanged(QString,QString,QString)), this, SLOT(setTrigger(QString,QString,QString)));
@@ -81,6 +75,13 @@ void MousePlugins::configChanged(const QString &trigger)
 
 void MousePlugins::configAccepted()
 {
+    KConfigGroup baseCfg = m_containment->config();
+    baseCfg = KConfigGroup(&baseCfg, "ActionPlugins");
+    foreach (const QString &trigger, m_modifiedKeys) {
+        KConfigGroup cfg = KConfigGroup(&baseCfg, trigger);
+        cfg.deleteGroup();
+    }
+
     //FIXME only save changed configs
     emit save();
 
