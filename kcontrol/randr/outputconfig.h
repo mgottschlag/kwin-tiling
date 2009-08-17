@@ -22,6 +22,7 @@
 
 #include <QWidget>
 #include <QTextStream>
+#include <QTimer>
 #include "ui_outputconfigbase.h"
 #include "randr.h"
 #include "randroutput.h"
@@ -69,6 +70,7 @@ protected slots:
 	void setConfigDirty(void);
 	
 	void updatePositionList(void);
+	void updatePositionListDelayed(void);
 	void updateRotationList(void);
 	void updateSizeList(void);
 	void updateRateList(void);
@@ -87,6 +89,7 @@ private:
 	int m_changes;
 	bool m_changed;
 	QPoint m_pos;
+	QTimer updatePositionListTimer;
 	
 	RandROutput *m_output;
 	// List of configs shown before this one. Relative positions may be given only

@@ -60,6 +60,9 @@ OutputConfig::OutputConfig(QWidget *parent, RandROutput *output, OutputConfigLis
 	foreach( OutputConfig* config, precedingOutputConfigs )
 		connect( config, SIGNAL( updateView()), this, SLOT( updatePositionList()));
 
+	updatePositionListTimer.setSingleShot( true );
+	connect( &updatePositionListTimer, SIGNAL( timeout()), SLOT( updatePositionListDelayed()));
+
 	load();
 }
 
@@ -286,6 +289,15 @@ void OutputConfig::positionComboChanged(int item)
 }
 
 void OutputConfig::updatePositionList(void)
+{
+	// Delay because
+	// a) this is an optimization
+	// b) this can be called in the middle of changing configuration and can
+	//    lead to the comboboxes being setup to wrong values
+	updatePositionListTimer.start( 0 );
+}
+
+void OutputConfig::updatePositionListDelayed()
 {
 	bool enable = !resolution().isEmpty();
 	positionCombo->setEnabled( enable );
