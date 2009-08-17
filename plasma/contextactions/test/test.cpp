@@ -38,7 +38,7 @@ void ContextTest::contextEvent(QGraphicsSceneMouseEvent *event)
     kDebug() << "test!!!!!!!!!!!!!!!!!!!!!!!" << event->pos();
     kDebug() << event->buttons() << event->modifiers();
 
-    Plasma::Containment *c = qobject_cast<Plasma::Containment*>(parent());
+    Plasma::Containment *c = containment();
     if (c) {
         kDebug() << c->name();
     } else {
@@ -47,6 +47,7 @@ void ContextTest::contextEvent(QGraphicsSceneMouseEvent *event)
     }
 
     KMenu desktopMenu;
+    desktopMenu.addTitle(m_text);
     desktopMenu.addAction(c->action("configure"));
     desktopMenu.exec(event->screenPos());
 
@@ -57,6 +58,35 @@ void ContextTest::wheelEvent(QGraphicsSceneWheelEvent *event)
     kDebug() << "test!!!!!!!!!!!!!11111111!!";
     kDebug() << event->orientation() << event->delta();
     kDebug() << event->buttons() << event->modifiers();
+}
+
+void ContextTest::init(const KConfigGroup &config)
+{
+    m_text = config.readEntry("test-text", QString());
+    setConfigurationRequired(m_text.isEmpty());
+}
+
+QWidget* ContextTest::createConfigurationInterface(QWidget* parent)
+{
+    //m_currentText = m_text;
+    QWidget *widget = new QWidget(parent);
+    m_ui.setupUi(widget);
+
+    m_ui.text->setText(m_text);
+    //FIXME this way or just get it on close?
+    //connect(m_ui.text, SIGNAL(changed(const QColor&)), this, SLOT(setColor(const QColor&)));
+    //connect(this, SIGNAL(settingsChanged(bool)), parent, SLOT(settingsChanged(bool)));
+    return widget;
+}
+
+void ContextTest::configurationAccepted()
+{
+    m_text = m_ui.text->text();
+}
+
+void ContextTest::save(KConfigGroup &config)
+{
+    config.writeEntry("test-text", m_text);
 }
 
 

@@ -24,9 +24,10 @@ public:
 
 signals:
     void modified(bool isModified);
+    void save();
 
 public slots:
-    void settingsChanged(bool isModified);
+    void configChanged(const QString &trigger);
     void configAccepted();
     void containmentPluginChanged(Plasma::Containment *c);
 

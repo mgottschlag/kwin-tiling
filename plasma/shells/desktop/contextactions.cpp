@@ -31,6 +31,9 @@ ContextActions::ContextActions(Plasma::Containment *containment, KConfigDialog *
     //can't seem to do anything to pluginList in designer
     QVBoxLayout *lay = new QVBoxLayout(m_ui.pluginList);
 
+    //FIXME this feels wrong
+    KConfigGroup cfg(&(m_containment->config()), "ContextActions");
+
     KPluginInfo::List plugins = Plasma::ContextAction::listContextActionInfo();
     foreach (const KPluginInfo& info, plugins) {
         MousePluginWidget *item = new MousePluginWidget(info);
@@ -38,7 +41,11 @@ ContextActions::ContextActions(Plasma::Containment *containment, KConfigDialog *
         item->setObjectName(info.pluginName());
         QString trigger = m_plugins.key(info.pluginName());
         item->setTrigger(trigger);
+        //FIXME make a truly unique config group
+        item->setConfigGroup(KConfigGroup(&cfg, info.pluginName()));
         connect(item, SIGNAL(triggerChanged(QString,QString,QString)), this, SLOT(setTrigger(QString,QString,QString)));
+        connect(item, SIGNAL(configChanged(QString)), this, SLOT(configChanged(QString)));
+        connect(this, SIGNAL(save()), item, SLOT(save()));
     }
 
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
@@ -50,14 +57,17 @@ ContextActions::~ContextActions()
 {
 }
 
-void ContextActions::settingsChanged(bool isModified)
+void ContextActions::configChanged(const QString &trigger)
 {
-    kDebug() << "#############################################";
-    emit modified(isModified);
+    m_modifiedKeys << trigger;
+    emit modified(true);
 }
 
 void ContextActions::configAccepted()
 {
+    //FIXME only save changed configs
+    emit save();
+
     foreach (const QString &trigger, m_modifiedKeys) {
         m_containment->setContextAction(trigger, m_plugins.value(trigger));
     }
@@ -69,6 +79,9 @@ void ContextActions::setTrigger(const QString &plugin, const QString &oldTrigger
     if (newTrigger == oldTrigger) {
         return;
     }
+
+    //FIXME!!! config will break
+    //do I need to copyTo the new group-name or is there an easier way?
 
     if (!newTrigger.isEmpty() && m_plugins.contains(newTrigger)) {
         int ret = KMessageBox::warningContinueCancel(this,

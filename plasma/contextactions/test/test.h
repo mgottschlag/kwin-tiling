@@ -20,7 +20,9 @@
 #ifndef CONTEXTTEST_HEADER
 #define CONTEXTTEST_HEADER
 
+#include "ui_config.h"
 #include <plasma/contextaction.h>
+#include <QString>
 
 class ContextTest : public Plasma::ContextAction
 {
@@ -28,8 +30,17 @@ class ContextTest : public Plasma::ContextAction
     public:
         ContextTest(QObject* parent, const QVariantList& args);
 
+        void init(const KConfigGroup &config);
         void contextEvent(QGraphicsSceneMouseEvent *event);
         void wheelEvent(QGraphicsSceneWheelEvent *event);
+
+        QWidget* createConfigurationInterface(QWidget* parent);
+        void configurationAccepted();
+        void save(KConfigGroup &config);
+
+    private:
+        Ui::Config m_ui;
+        QString m_text;
 };
 
 K_EXPORT_PLASMA_CONTEXTACTION(test, ContextTest)

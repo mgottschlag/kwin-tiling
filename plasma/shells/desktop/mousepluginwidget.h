@@ -9,7 +9,12 @@
 
 #include "ui_MousePluginWidget.h"
 
+#include <QDialog>
+
 #include <KPluginInfo>
+#include <KConfigGroup>
+
+#include <plasma/contextaction.h>
 
 class MousePluginWidget : public QWidget
 {
@@ -17,18 +22,30 @@ class MousePluginWidget : public QWidget
 public:
     MousePluginWidget(const KPluginInfo &plugin, QWidget *parent = 0);
 
+    void setConfigGroup(KConfigGroup cfg);
+    KConfigGroup configGroup();
+
     void setTrigger(const QString &trigger);
 
 signals:
     void triggerChanged(const QString &plugin, const QString &oldTrigger, const QString &newTrigger);
+    void configChanged(const QString &trigger);
 
 private slots:
     void changeTrigger(const QString &oldTrigger, const QString& newTrigger);
     void clearTrigger();
 
+    void configure();
+    void acceptConfig();
+    void rejectConfig();
+    void save();
+
 private:
     Ui::MousePluginWidget m_ui;
     KPluginInfo m_plugin;
+    Plasma::ContextAction *m_pluginInstance;
+    QDialog *m_configDlg;
+    KConfigGroup m_config;
 
 };
 #endif
