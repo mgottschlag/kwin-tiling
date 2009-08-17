@@ -117,7 +117,7 @@ void TaskJob::start()
             setResult(true);
             return;
         }
-        else if (operation == "activateRaiseOrMaximize") {
+        else if (operation == "activateRaiseOrIconify") {
             m_source->getTask()->activateRaiseOrIconify();
             setResult(true);
             return;

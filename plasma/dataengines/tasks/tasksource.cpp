@@ -95,6 +95,10 @@ void TaskSource::updateTask(::TaskManager::TaskChanges taskChanges)
             setData("onCurrentDesktop", m_task->isOnCurrentDesktop());
             setData("onAllDesktops", m_task->isOnAllDesktops());
             setData("desktop", m_task->desktop());
+            setData("icon", m_task->icon());
+            break;
+        case TaskManager::IconChanged:
+            setData("icon", m_task->icon());
             break;
         case TaskManager::NameChanged:
             setData("name", m_task->name());
@@ -110,6 +114,7 @@ void TaskSource::updateTask(::TaskManager::TaskChanges taskChanges)
             setData("keptBelowOthers", m_task->isKeptBelowOthers());
             setData("active", m_task->isActive());
             setData("onTop", m_task->isOnTop());
+            setData("visibleNameWithState", m_task->visibleNameWithState());
             break;
         case TaskManager::DesktopChanged:
             setData("onCurrentDesktop", m_task->isOnCurrentDesktop());
