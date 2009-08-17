@@ -188,10 +188,10 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     qobject_cast<KAction*>(a)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_V));
     connect(a, SIGNAL(triggered()), SLOT(slotPopupMenu()));
 
-    a = m_collection->addAction("repeat_action");
-    a->setText(i18n("Manually Invoke Action on Current Clipboard"));
-    qobject_cast<KAction*>(a)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_R));
-    connect(a, SIGNAL(triggered()), SLOT(slotRepeatAction()));
+    m_repeatAction = m_collection->addAction("repeat_action");
+    m_repeatAction->setText(i18n("Manually Invoke Action on Current Clipboard"));
+    qobject_cast<KAction*>(m_repeatAction)->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_R));
+    connect(m_repeatAction, SIGNAL(triggered()), SLOT(slotRepeatAction()));
 
     m_toggleURLGrabAction->setText(i18n("Enable Clipboard Actions"));
     m_toggleURLGrabAction->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::Key_X));
@@ -207,6 +207,7 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     popup->plugAction( m_toggleURLGrabAction );
     popup->plugAction( m_clearHistoryAction );
     popup->plugAction( m_configureAction );
+    popup->plugAction( m_repeatAction );
     if ( !isApplet() ) {
         popup->plugAction( m_quitAction );
     }
