@@ -47,8 +47,6 @@ public:
 
 	bool isConnected();
     
-	void updateText();
-
 protected:
 	void disconnect();
 	virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);

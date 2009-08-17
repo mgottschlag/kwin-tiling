@@ -30,8 +30,6 @@ OutputGraphicsItem::OutputGraphicsItem(OutputConfig *config)
 	: QGraphicsRectItem(config->rect())
 	, m_config( config )
 {
-	m_output = output;
-
 	m_left = m_right = m_top = m_bottom = NULL;
 
 	setPen(QPen(Qt::black));
@@ -235,28 +233,6 @@ void OutputGraphicsItem::setRight(OutputGraphicsItem *output)
 	   if (output)
 		   output->setBottom(item);
    }
-}
-
-void OutputGraphicsItem::updateText()
-{
-	// An example of this description text with radeonhd on randr 1.2:
-	// DVI-I_2/digital
-	// 1680x1050 (60.0 Hz)
-
-	int w = m_output->rect().width(), h = m_output->rect().height();
-
-	QString refresh = QString::number(m_output->refreshRate(), 'f', 1);
-	QString desc = m_output->name() + '\n' + 
-				   QString("%1x%2 (%3 Hz)").arg(w).arg(h).arg(refresh);
-
-	m_text->setPlainText(desc);
-
-	QRectF textRect = m_text->boundingRect();
-	QRect  outRect  = m_output->rect();
-	// more accurate text centering
-	m_text->setPos((outRect.width() - textRect.width()) / 2,
-				   (outRect.height() - textRect.height()) / 2);
-
 }
 
 void OutputGraphicsItem::disconnect()

@@ -201,11 +201,6 @@ void OutputConfig::outputChanged(RROutput output, int changes)
 		//QSize modeSize = m_output->screen()->mode(m_output->mode()).size();
 		QSize modeSize = m_output->mode().size();
 		updateRateList(sizeCombo->findData(modeSize));
-        
-		//Update the text inside the OutputGraphicsItem
-		m_item->updateText();
-		m_item->setRect(m_output->rect());
-		emit updateView();
 	}
 }
 
