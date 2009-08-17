@@ -61,7 +61,7 @@ public:
 	static QString positionName(Relation position);
 	RandROutput *output(void) const;
 
-	bool hasPendingChanges(void) const;
+	bool hasPendingChanges( const QPoint& normalizePos ) const;
 	
 public slots:
 	void load();

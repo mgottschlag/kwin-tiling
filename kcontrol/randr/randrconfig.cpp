@@ -137,6 +137,28 @@ void RandRConfig::defaults()
 void RandRConfig::apply()
 {
 	kDebug() << "Applying settings...";
+
+	// normalize positions so that the coordinate system starts at (0,0)
+	QPoint normalizePos;
+	bool first = true;
+	foreach(CollapsibleWidget *w, m_outputList) {
+		OutputConfig *config = static_cast<OutputConfig *>(w->innerWidget());
+		if( config->isActive()) {
+			QPoint pos = config->position();
+			if( first ) {
+				normalizePos = pos;
+				first = false;
+			} else {
+				if( pos.x() < normalizePos.x())
+					normalizePos.setX( pos.x());
+				if( pos.y() < normalizePos.y())
+					normalizePos.setY( pos.y());
+			}
+		}
+	}
+	normalizePos = -normalizePos;
+	kDebug() << "Normalizing positions by" << normalizePos;
+
 	foreach(CollapsibleWidget *w, m_outputList) {
 		OutputConfig *config = static_cast<OutputConfig *>(w->innerWidget());
 		RandROutput *output = config->output();
@@ -147,7 +169,7 @@ void RandRConfig::apply()
 		QSize res = config->resolution();
 		
 		if(!res.isNull()) {
-			if(!config->hasPendingChanges()) {
+			if(!config->hasPendingChanges( normalizePos )) {
 				kDebug() << "Ignoring identical config for" << output->name();
 				continue;
 			}
@@ -164,7 +186,7 @@ void RandRConfig::apply()
 			// a better way with this codebase, definitely not with the time I have now.
 			output->disconnectFromCrtc();
 
-			output->proposeRect(configuredRect);
+			output->proposeRect(configuredRect.translated( normalizePos ));
 			output->proposeRotation(config->rotation());
 			output->proposeRefreshRate(config->refreshRate());
 		} else { // user wants to disable this output

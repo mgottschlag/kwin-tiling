@@ -142,9 +142,9 @@ int OutputConfig::rotation(void) const
 	return orientationCombo->itemData(orientationCombo->currentIndex()).toInt();
 }
 
-bool OutputConfig::hasPendingChanges(void) const
+bool OutputConfig::hasPendingChanges( const QPoint& normalizePos ) const
 {
-	if (m_output->rect() != QRect(position(), resolution())) {
+	if (m_output->rect().translated( -normalizePos ) != QRect(position(), resolution())) {
 		return true;
 	}
 	else if (m_output->rotation() != rotation()) {
