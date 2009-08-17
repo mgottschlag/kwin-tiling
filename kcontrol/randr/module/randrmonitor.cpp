@@ -26,6 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kpluginloader.h>
 #include <ktoolinvocation.h>
 
+#include <qdbusconnection.h>
+#include <qdbusconnectioninterface.h>
 #include <qtimer.h>
 #include <qx11info_x11.h>
 
@@ -93,9 +95,15 @@ void RandrMonitorModule::processX11Event( XEvent* e )
         XRRNotifyEvent* e2 = reinterpret_cast< XRRNotifyEvent* >( e );
         if( e2->subtype == RRNotify_OutputChange ) // TODO && e2->window == window )
             {
+            kDebug() << "Monitor change detected";
             QStringList newMonitors = connectedMonitors();
             if( newMonitors == currentMonitors )
                 return;
+            if( QDBusConnection::sessionBus().interface()->isServiceRegistered(
+                "org.kde.internal.KSettingsWidget-kcm_display" ))
+                { // already running
+                return;
+                }
             kapp->updateUserTimestamp(); // well, let's say plugging in a monitor is a user activity
 #warning Modal dialog, stupid, fix.
             QString change;
