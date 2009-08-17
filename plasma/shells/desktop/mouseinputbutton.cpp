@@ -23,7 +23,7 @@
 
 #include <QKeyEvent>
 
-#include <plasma/contextaction.h>
+#include <plasma/containmentactions.h>
 
 MouseInputButton::MouseInputButton(QWidget *parent)
     :QPushButton(parent)
@@ -67,7 +67,7 @@ bool MouseInputButton::event(QEvent *event)
             case QEvent::Wheel:
                 //kDebug() << "wheel@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@";
             case QEvent::MouseButtonRelease:
-                changeTrigger(Plasma::ContextAction::eventToString(event));
+                changeTrigger(Plasma::ContainmentActions::eventToString(event));
             case QEvent::MouseButtonPress:
                 event->accept();
                 return true;

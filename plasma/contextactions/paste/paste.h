@@ -20,9 +20,9 @@
 #ifndef PASTE_HEADER
 #define PASTE_HEADER
 
-#include <plasma/contextaction.h>
+#include <plasma/containmentactions.h>
 
-class Paste : public Plasma::ContextAction
+class Paste : public Plasma::ContainmentActions
 {
     Q_OBJECT
     public:
@@ -31,6 +31,6 @@ class Paste : public Plasma::ContextAction
         void contextEvent(QEvent *event);
 };
 
-K_EXPORT_PLASMA_CONTEXTACTION(paste, Paste)
+K_EXPORT_PLASMA_CONTAINMENTACTIONS(paste, Paste)
 
 #endif

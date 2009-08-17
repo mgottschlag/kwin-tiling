@@ -1,15 +1,15 @@
 [Desktop Entry]
-Name=Paste
+Name=Switch Activity
 Type=Service
 Icon=preferences-desktop-color
-Comment=Creates a widget from the contents of the clipboard
+Comment=Switch to another activity
 
-ServiceTypes=Plasma/ContextAction
+ServiceTypes=Plasma/ContainmentActions
 
-X-KDE-Library=plasma_contextaction_paste
+X-KDE-Library=plasma_containmentactions_switchactivity
 X-KDE-PluginInfo-Author=Chani
 X-KDE-PluginInfo-Email=chani@kde.org
-X-KDE-PluginInfo-Name=paste
+X-KDE-PluginInfo-Name=switchactivity
 X-KDE-PluginInfo-Version=pre0.1
 X-KDE-PluginInfo-Website=http://plasma.kde.org/
 X-KDE-PluginInfo-Depends=

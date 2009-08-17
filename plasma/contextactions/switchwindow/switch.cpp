@@ -30,7 +30,7 @@
 #include <Plasma/Service>
 
 SwitchWindow::SwitchWindow(QObject *parent, const QVariantList &args)
-    : Plasma::ContextAction(parent, args)
+    : Plasma::ContainmentActions(parent, args)
 {
     setHasConfigurationInterface(true);
 }
@@ -89,15 +89,15 @@ void SwitchWindow::contextEvent(QEvent *event)
     }
 }
 
-void SwitchWindow::contextEvent(QGraphicsSceneMouseEvent *event)
+QMenu *SwitchWindow::makeMenu()
 {
     Plasma::DataEngine *tasks = dataEngine("tasks");
     if (! tasks->isValid()) {
-        return;
+        return 0;
     }
 
-    KMenu desktopMenu;
     QMultiHash<int, QAction*> desktops;
+    KMenu *desktopMenu = new KMenu();
 
     //make all the window actions
     foreach (const QString &source, tasks->sources()) {
@@ -113,7 +113,7 @@ void SwitchWindow::contextEvent(QGraphicsSceneMouseEvent *event)
             continue;
         }
 
-        QAction *action = new QAction(name, &desktopMenu);
+        QAction *action = new QAction(name, desktopMenu);
         action->setIcon(window.value("icon").value<QIcon>());
         action->setData(source);
         desktops.insert(window.value("desktop").toInt(), action);
@@ -122,36 +122,57 @@ void SwitchWindow::contextEvent(QGraphicsSceneMouseEvent *event)
     //sort into menu
     if (m_mode == CurrentDesktop) {
         int currentDesktop = KWindowSystem::currentDesktop();
-        desktopMenu.addTitle(i18n("Windows"));
-        desktopMenu.addActions(desktops.values(currentDesktop));
-        desktopMenu.addActions(desktops.values(-1));
+        desktopMenu->addTitle(i18n("Windows"));
+        desktopMenu->addActions(desktops.values(currentDesktop));
+        desktopMenu->addActions(desktops.values(-1));
     } else {
         int numDesktops = KWindowSystem::numberOfDesktops();
         if (m_mode == AllFlat) {
             for (int i = 1; i <= numDesktops; ++i) {
                 QString name = KWindowSystem::desktopName(i);
                 name = QString("%1: %2").arg(i).arg(name);
-                desktopMenu.addTitle(name);
-                desktopMenu.addActions(desktops.values(i));
+                desktopMenu->addTitle(name);
+                desktopMenu->addActions(desktops.values(i));
             }
-            desktopMenu.addTitle(i18n("All Desktops"));
-            desktopMenu.addActions(desktops.values(-1));
+            desktopMenu->addTitle(i18n("All Desktops"));
+            desktopMenu->addActions(desktops.values(-1));
         } else { //submenus
             for (int i = 1; i <= numDesktops; ++i) {
                 QString name = KWindowSystem::desktopName(i);
                 name = QString("%1: %2").arg(i).arg(name);
-                KMenu *subMenu = new KMenu(name, &desktopMenu);
+                KMenu *subMenu = new KMenu(name, desktopMenu);
                 subMenu->addActions(desktops.values(i));
-                desktopMenu.addMenu(subMenu);
+                desktopMenu->addMenu(subMenu);
             }
-            KMenu *subMenu = new KMenu(i18n("All Desktops"), &desktopMenu);
+            KMenu *subMenu = new KMenu(i18n("All Desktops"), desktopMenu);
             subMenu->addActions(desktops.values(-1));
-            desktopMenu.addMenu(subMenu);
+            desktopMenu->addMenu(subMenu);
         }
     }
 
-    connect(&desktopMenu, SIGNAL(triggered(QAction*)), this, SLOT(switchTo(QAction*)));
-    desktopMenu.exec(event->screenPos());
+    connect(desktopMenu, SIGNAL(triggered(QAction*)), this, SLOT(switchTo(QAction*)));
+    return desktopMenu;
+}
+
+void SwitchWindow::contextEvent(QGraphicsSceneMouseEvent *event)
+{
+    QMenu *desktopMenu = makeMenu();
+    if (desktopMenu) {
+        desktopMenu->exec(event->screenPos());
+    }
+}
+
+QList<QAction*> SwitchWindow::contextualActions()
+{
+    QList<QAction*> list;
+    QMenu *menu = makeMenu();
+    if (menu) {
+        QAction *action = new QAction(this); //FIXME I hope this doesn't leak
+        action->setMenu(menu);
+        menu->setTitle(i18n("Windows"));
+        list << action;
+    }
+    return list;
 }
 
 void SwitchWindow::switchTo(QAction *action)

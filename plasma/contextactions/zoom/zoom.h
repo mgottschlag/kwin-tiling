@@ -20,11 +20,11 @@
 #ifndef ZOOM_HEADER
 #define ZOOM_HEADER
 
-#include <plasma/contextaction.h>
+#include <plasma/containmentactions.h>
 
 class QAction;
 
-class Zoom : public Plasma::ContextAction
+class Zoom : public Plasma::ContainmentActions
 {
     Q_OBJECT
     public:
@@ -39,6 +39,6 @@ class Zoom : public Plasma::ContextAction
         void switchTo(QAction *action);
 };
 
-K_EXPORT_PLASMA_CONTEXTACTION(zoom, Zoom)
+K_EXPORT_PLASMA_CONTAINMENTACTIONS(zoom, Zoom)
 
 #endif

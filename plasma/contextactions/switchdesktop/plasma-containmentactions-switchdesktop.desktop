@@ -4,9 +4,9 @@ Type=Service
 Icon=preferences-desktop-color
 Comment=Switch to another virtual desktop
 
-ServiceTypes=Plasma/ContextAction
+ServiceTypes=Plasma/ContainmentActions
 
-X-KDE-Library=plasma_contextaction_switchdesktop
+X-KDE-Library=plasma_containmentactions_switchdesktop
 X-KDE-PluginInfo-Author=Chani
 X-KDE-PluginInfo-Email=chani@kde.org
 X-KDE-PluginInfo-Name=switchdesktop

@@ -1,14 +1,14 @@
 [Desktop Entry]
-Name=Contextual Menu
-Comment=The menu that normally shows on right-click
+Name=Test
+Comment=A dummy plugin for testing
 Type=Service
 Icon=preferences-desktop-color
-ServiceTypes=Plasma/ContextAction
+ServiceTypes=Plasma/ContainmentActions
 
-X-KDE-Library=plasma_contextaction_contextmenu
+X-KDE-Library=plasma_containmentactions_test
 X-KDE-PluginInfo-Author=Chani
 X-KDE-PluginInfo-Email=chani@kde.org
-X-KDE-PluginInfo-Name=contextmenu
+X-KDE-PluginInfo-Name=test
 X-KDE-PluginInfo-Version=pre0.1
 X-KDE-PluginInfo-Website=http://plasma.kde.org/
 X-KDE-PluginInfo-Depends=

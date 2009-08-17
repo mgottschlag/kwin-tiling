@@ -20,12 +20,12 @@
 #ifndef SWITCHWINDOW_HEADER
 #define SWITCHWINDOW_HEADER
 
-#include <plasma/contextaction.h>
+#include <plasma/containmentactions.h>
 
 class QAction;
 class QMenu;
 
-class AppLauncher : public Plasma::ContextAction
+class AppLauncher : public Plasma::ContainmentActions
 {
     Q_OBJECT
     public:
@@ -43,6 +43,6 @@ class AppLauncher : public Plasma::ContextAction
     private:
 };
 
-K_EXPORT_PLASMA_CONTEXTACTION(applauncher, AppLauncher)
+K_EXPORT_PLASMA_CONTAINMENTACTIONS(applauncher, AppLauncher)
 
 #endif

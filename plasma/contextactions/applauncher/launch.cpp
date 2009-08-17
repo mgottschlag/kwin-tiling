@@ -31,7 +31,7 @@
 #include <Plasma/Service>
 
 AppLauncher::AppLauncher(QObject *parent, const QVariantList &args)
-    : Plasma::ContextAction(parent, args)
+    : Plasma::ContainmentActions(parent, args)
 {
 }
 

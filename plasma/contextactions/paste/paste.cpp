@@ -25,7 +25,7 @@
 #include <KDebug>
 
 Paste::Paste(QObject *parent, const QVariantList &args)
-    : Plasma::ContextAction(parent, args)
+    : Plasma::ContainmentActions(parent, args)
 {
 }
 

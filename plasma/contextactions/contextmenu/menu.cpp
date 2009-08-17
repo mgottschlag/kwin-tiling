@@ -44,7 +44,7 @@
 #endif // Q_OS_WIN
 
 ContextMenu::ContextMenu(QObject *parent, const QVariantList &args)
-    : Plasma::ContextAction(parent, args),
+    : Plasma::ContainmentActions(parent, args),
       m_addPanelsMenu(0),
       m_addPanelAction(0),
       m_runCommandAction(0),

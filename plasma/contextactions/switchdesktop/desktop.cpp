@@ -27,7 +27,7 @@
 #include <KWindowSystem>
 
 SwitchDesktop::SwitchDesktop(QObject *parent, const QVariantList &args)
-    : Plasma::ContextAction(parent, args)
+    : Plasma::ContainmentActions(parent, args)
 {
 }
 

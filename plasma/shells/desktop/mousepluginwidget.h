@@ -27,13 +27,14 @@
 #include <KPluginInfo>
 #include <KConfigGroup>
 
-#include <plasma/contextaction.h>
+#include <plasma/containmentactions.h>
 
 class MousePluginWidget : public QWidget
 {
     Q_OBJECT
 public:
     MousePluginWidget(const KPluginInfo &plugin, QWidget *parent = 0);
+    ~MousePluginWidget();
 
     void setConfigGroup(KConfigGroup cfg);
     KConfigGroup configGroup();
@@ -60,7 +61,7 @@ private slots:
 private:
     Ui::MousePluginWidget m_ui;
     KPluginInfo m_plugin;
-    Plasma::ContextAction *m_pluginInstance;
+    QPointer<Plasma::ContainmentActions> m_pluginInstance;
     QDialog *m_configDlg;
     KConfigGroup m_config;
 

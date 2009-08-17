@@ -30,7 +30,6 @@
 MousePluginWidget::MousePluginWidget(const KPluginInfo &plugin, QWidget *parent)
     :QWidget(parent),
     m_plugin(plugin),
-    m_pluginInstance(0),
     m_configDlg(0)
 {
     m_ui.setupUi(this);
@@ -58,6 +57,11 @@ MousePluginWidget::MousePluginWidget(const KPluginInfo &plugin, QWidget *parent)
     connect(m_ui.aboutButton, SIGNAL(clicked()), this, SLOT(showAbout()));
 }
 
+MousePluginWidget::~MousePluginWidget()
+{
+    delete m_pluginInstance;
+}
+
 void MousePluginWidget::setConfigGroup(KConfigGroup cfg)
 {
     //transplant the settings
@@ -79,25 +83,22 @@ KConfigGroup MousePluginWidget::configGroup()
 
 void MousePluginWidget::setContainment(Plasma::Containment *ctmt)
 {
-    if (m_pluginInstance) {
-        m_pluginInstance->setContainment(ctmt);
+    //note: since the old plugin's parent is the old containment,
+    //we let that containment take care of deleting it
+
+    m_pluginInstance = Plasma::ContainmentActions::load(ctmt, m_plugin.pluginName());
+    if (! m_pluginInstance) {
+        //FIXME tell user
+        kDebug() << "failed to load plugin!";
+        return;
+    }
+    if (m_pluginInstance->hasConfigurationInterface()) {
+        m_pluginInstance->restore(m_config);
     } else {
-        m_pluginInstance = Plasma::ContextAction::load(m_plugin.pluginName());
-        if (! m_pluginInstance) {
-            //FIXME tell user
-            kDebug() << "failed to load plugin!";
-            return;
-        }
-        if (m_pluginInstance->hasConfigurationInterface()) {
-            m_pluginInstance->setParent(this);
-            m_pluginInstance->setContainment(ctmt);
-            m_pluginInstance->restore(m_config);
-        } else {
-            //well, we don't need it then.
-            delete m_pluginInstance;
-            m_pluginInstance = 0;
-            m_ui.configButton->setVisible(false);
-        }
+        //well, we don't need it then.
+        delete m_pluginInstance;
+        m_pluginInstance = 0;
+        m_ui.configButton->setVisible(false);
     }
 }
 

@@ -20,11 +20,11 @@
 #ifndef SWITCHACTIVITY_HEADER
 #define SWITCHACTIVITY_HEADER
 
-#include <plasma/contextaction.h>
+#include <plasma/containmentactions.h>
 
 class QAction;
 
-class SwitchActivity : public Plasma::ContextAction
+class SwitchActivity : public Plasma::ContainmentActions
 {
     Q_OBJECT
     public:
@@ -38,6 +38,6 @@ class SwitchActivity : public Plasma::ContextAction
         void switchTo(QAction *action);
 };
 
-K_EXPORT_PLASMA_CONTEXTACTION(switchactivity, SwitchActivity)
+K_EXPORT_PLASMA_CONTAINMENTACTIONS(switchactivity, SwitchActivity)
 
 #endif

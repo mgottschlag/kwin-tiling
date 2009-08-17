@@ -21,11 +21,12 @@
 #define SWITCHWINDOW_HEADER
 
 #include "ui_config.h"
-#include <plasma/contextaction.h>
+#include <plasma/containmentactions.h>
 
 class QAction;
+class QMenu;
 
-class SwitchWindow : public Plasma::ContextAction
+class SwitchWindow : public Plasma::ContainmentActions
 {
     Q_OBJECT
     public:
@@ -39,6 +40,8 @@ class SwitchWindow : public Plasma::ContextAction
         void contextEvent(QEvent *event);
         void contextEvent(QGraphicsSceneMouseEvent *event);
         void wheelEvent(QGraphicsSceneWheelEvent *event);
+        QList<QAction*> contextualActions();
+        QMenu *makeMenu();
 
     public slots:
         void switchTo(QAction *action);
@@ -53,6 +56,6 @@ class SwitchWindow : public Plasma::ContextAction
         MenuMode m_mode;
 };
 
-K_EXPORT_PLASMA_CONTEXTACTION(switchwindow, SwitchWindow)
+K_EXPORT_PLASMA_CONTAINMENTACTIONS(switchwindow, SwitchWindow)
 
 #endif

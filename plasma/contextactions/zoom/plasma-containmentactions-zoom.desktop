@@ -1,15 +1,15 @@
 [Desktop Entry]
-Name=Switch Window
+Name=Zoom
 Type=Service
 Icon=preferences-desktop-color
-Comment=Show a list of windows to switch to
+Comment=Zoom activities in and out
 
-ServiceTypes=Plasma/ContextAction
+ServiceTypes=Plasma/ContainmentActions
 
-X-KDE-Library=plasma_contextaction_switchwindow
+X-KDE-Library=plasma_containmentactions_zoom
 X-KDE-PluginInfo-Author=Chani
 X-KDE-PluginInfo-Email=chani@kde.org
-X-KDE-PluginInfo-Name=switchwindow
+X-KDE-PluginInfo-Name=zoom
 X-KDE-PluginInfo-Version=pre0.1
 X-KDE-PluginInfo-Website=http://plasma.kde.org/
 X-KDE-PluginInfo-Depends=

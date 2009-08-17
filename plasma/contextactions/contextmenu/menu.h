@@ -21,9 +21,9 @@
 #define CONTEXTMENU_HEADER
 
 #include <QButtonGroup>
-#include <plasma/contextaction.h>
+#include <plasma/containmentactions.h>
 
-class ContextMenu : public Plasma::ContextAction
+class ContextMenu : public Plasma::ContainmentActions
 {
     Q_OBJECT
 public:
@@ -66,6 +66,6 @@ private:
 
 };
 
-K_EXPORT_PLASMA_CONTEXTACTION(contextmenu, ContextMenu)
+K_EXPORT_PLASMA_CONTAINMENTACTIONS(contextmenu, ContextMenu)
 
 #endif

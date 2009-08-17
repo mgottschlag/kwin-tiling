@@ -1,15 +1,14 @@
 [Desktop Entry]
-Name=Application Launcher
+Name=Contextual Menu
+Comment=The menu that normally shows on right-click
 Type=Service
 Icon=preferences-desktop-color
-Comment=Run your favourite apps
+ServiceTypes=Plasma/ContainmentActions
 
-ServiceTypes=Plasma/ContextAction
-
-X-KDE-Library=plasma_contextaction_applauncher
+X-KDE-Library=plasma_containmentactions_contextmenu
 X-KDE-PluginInfo-Author=Chani
 X-KDE-PluginInfo-Email=chani@kde.org
-X-KDE-PluginInfo-Name=applauncher
+X-KDE-PluginInfo-Name=contextmenu
 X-KDE-PluginInfo-Version=pre0.1
 X-KDE-PluginInfo-Website=http://plasma.kde.org/
 X-KDE-PluginInfo-Depends=

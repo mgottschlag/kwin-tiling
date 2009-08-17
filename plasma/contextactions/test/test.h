@@ -21,10 +21,10 @@
 #define CONTEXTTEST_HEADER
 
 #include "ui_config.h"
-#include <plasma/contextaction.h>
+#include <plasma/containmentactions.h>
 #include <QString>
 
-class ContextTest : public Plasma::ContextAction
+class ContextTest : public Plasma::ContainmentActions
 {
     Q_OBJECT
     public:
@@ -44,6 +44,6 @@ class ContextTest : public Plasma::ContextAction
         QString m_text;
 };
 
-K_EXPORT_PLASMA_CONTEXTACTION(test, ContextTest)
+K_EXPORT_PLASMA_CONTAINMENTACTIONS(test, ContextTest)
 
 #endif

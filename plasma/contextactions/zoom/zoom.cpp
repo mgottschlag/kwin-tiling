@@ -32,7 +32,7 @@
 Q_DECLARE_METATYPE(QPointer<Plasma::Containment>)
 
 Zoom::Zoom(QObject *parent, const QVariantList &args)
-    : Plasma::ContextAction(parent, args)
+    : Plasma::ContainmentActions(parent, args)
 {
 }
 

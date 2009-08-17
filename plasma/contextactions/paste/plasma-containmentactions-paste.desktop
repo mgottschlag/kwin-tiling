@@ -1,14 +1,15 @@
 [Desktop Entry]
-Name=Test
-Comment=A dummy plugin for testing
+Name=Paste
 Type=Service
 Icon=preferences-desktop-color
-ServiceTypes=Plasma/ContextAction
+Comment=Creates a widget from the contents of the clipboard
 
-X-KDE-Library=plasma_contextaction_test
+ServiceTypes=Plasma/ContainmentActions
+
+X-KDE-Library=plasma_containmentactions_paste
 X-KDE-PluginInfo-Author=Chani
 X-KDE-PluginInfo-Email=chani@kde.org
-X-KDE-PluginInfo-Name=test
+X-KDE-PluginInfo-Name=paste
 X-KDE-PluginInfo-Version=pre0.1
 X-KDE-PluginInfo-Website=http://plasma.kde.org/
 X-KDE-PluginInfo-Depends=

@@ -25,7 +25,7 @@
 #include <KMessageBox>
 
 #include <Plasma/Containment>
-#include <plasma/contextaction.h>
+#include <plasma/containmentactions.h>
 
 MousePlugins::MousePlugins(Plasma::Containment *containment, KConfigDialog *parent)
     :QWidget(parent),
@@ -34,8 +34,8 @@ MousePlugins::MousePlugins(Plasma::Containment *containment, KConfigDialog *pare
     m_ui.setupUi(this);
 
     Q_ASSERT(m_containment);
-    foreach (const QString &key, m_containment->contextActionTriggers()) {
-        QString plugin = m_containment->contextAction(key);
+    foreach (const QString &key, m_containment->containmentActionsTriggers()) {
+        QString plugin = m_containment->containmentActions(key);
         if (!plugin.isEmpty()) {
             m_plugins.insert(key, plugin);
         }
@@ -45,9 +45,10 @@ MousePlugins::MousePlugins(Plasma::Containment *containment, KConfigDialog *pare
     QVBoxLayout *lay = new QVBoxLayout(m_ui.pluginList);
 
     //FIXME this feels wrong
-    KConfigGroup cfg(&(m_containment->config()), "ContextActions");
+    KConfigGroup cfg = m_containment->config();
+    cfg = KConfigGroup(&cfg, "ActionPlugins");
 
-    KPluginInfo::List plugins = Plasma::ContextAction::listContextActionInfo();
+    KPluginInfo::List plugins = Plasma::ContainmentActions::listContainmentActionsInfo();
     foreach (const KPluginInfo& info, plugins) {
         MousePluginWidget *item = new MousePluginWidget(info);
         lay->addWidget(item);
@@ -84,7 +85,7 @@ void MousePlugins::configAccepted()
     emit save();
 
     foreach (const QString &trigger, m_modifiedKeys) {
-        m_containment->setContextAction(trigger, m_plugins.value(trigger));
+        m_containment->setContainmentActions(trigger, m_plugins.value(trigger));
     }
     m_modifiedKeys.clear();
 }
