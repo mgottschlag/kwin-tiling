@@ -24,7 +24,6 @@
 
 #include <KDebug>
 #include <KMenu>
-#include <KWindowSystem>
 
 #include <Plasma/Containment>
 #include <Plasma/Corona>
