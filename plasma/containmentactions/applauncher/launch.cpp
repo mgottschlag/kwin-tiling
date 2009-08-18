@@ -64,7 +64,7 @@ void AppLauncher::contextEvent(QEvent *event)
 
     //add the whole kmenu
     Plasma::DataEngine::Data app = dataEngine("apps")->query("/");
-    QStringList sources = app.value("entries").toStringList();
+    const QStringList sources = app.value("entries").toStringList();
     foreach (const QString &source, sources) {
         addApp(&desktopMenu, source);
     }
