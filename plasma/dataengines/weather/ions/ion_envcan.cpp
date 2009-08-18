@@ -400,7 +400,7 @@ QMap<QString, IonInterface::ConditionIcons> EnvCanadaIon::setupForecastIconMappi
     forecastList["showers at times heavy or thundershowers"] = Showers;
     forecastList["showers at times heavy or thunderstorms"] = Thunderstorm;
     forecastList["showers or drizzle"] = Showers;
-    forecastList["showers or thundershowers"] = Showers;
+    forecastList["showers or thundershowers"] = Thunderstorm;
     forecastList["showers or thunderstorms"] = Thunderstorm;
     forecastList["smoke"] = NotAvailable;
     forecastList["snow"] = Snow;
