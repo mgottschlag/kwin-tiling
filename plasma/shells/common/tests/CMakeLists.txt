@@ -1,6 +1,6 @@
 if (KDE4_BUILD_TESTS)
 
-include_directories(../)
+include_directories(../ ../../desktop ${CMAKE_CURRENT_BINARY_DIR}/../../desktop)
 
 set(appletbrowser_SRCS
     appletbrowser.cpp
@@ -24,6 +24,9 @@ target_link_libraries(plasmaappletbrowser ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS}
 set(backgrounddialog_SRCS
     background.cpp
     ../../desktop/backgrounddialog.cpp
+    ../../desktop/mouseinputbutton.cpp
+    ../../desktop/mouseplugins.cpp
+    ../../desktop/mousepluginwidget.cpp
     ../wallpaperpreview.cpp
 )
 
