@@ -35,12 +35,12 @@ void Paste::contextEvent(QEvent *event)
     QPoint screenPos;
     switch (event->type()) {
         case QEvent::GraphicsSceneMouseRelease: {
-            QGraphicsSceneMouseEvent *e = dynamic_cast<QGraphicsSceneMouseEvent*>(event);
+            QGraphicsSceneMouseEvent *e = static_cast<QGraphicsSceneMouseEvent*>(event);
             scenePos = e->scenePos();
             screenPos = e->screenPos();
             break; }
         case QEvent::GraphicsSceneWheel: {
-            QGraphicsSceneWheelEvent *e = dynamic_cast<QGraphicsSceneWheelEvent*>(event);
+            QGraphicsSceneWheelEvent *e = static_cast<QGraphicsSceneWheelEvent*>(event);
             scenePos = e->scenePos();
             screenPos = e->screenPos();
             break; }
