@@ -44,10 +44,10 @@ void AppLauncher::contextEvent(QEvent *event)
     QPoint screenPos;
     switch (event->type()) {
         case QEvent::GraphicsSceneMouseRelease:
-            screenPos = (dynamic_cast<QGraphicsSceneMouseEvent*>(event))->screenPos();
+            screenPos = (static_cast<QGraphicsSceneMouseEvent*>(event))->screenPos();
             break;
         case QEvent::GraphicsSceneWheel:
-            screenPos = (dynamic_cast<QGraphicsSceneWheelEvent*>(event))->screenPos();
+            screenPos = (static_cast<QGraphicsSceneWheelEvent*>(event))->screenPos();
             break;
         default:
             kDebug() << "unexpected event type" << event->type();
