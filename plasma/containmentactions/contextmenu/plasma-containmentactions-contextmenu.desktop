@@ -1,6 +1,14 @@
 [Desktop Entry]
 Name=Contextual Menu
+Name[pt]=Menu de Contexto
+Name[pt_BR]=Menu de Contexto
+Name[sv]=Sammanhangsberoende meny
+Name[uk]=Контекстне меню
 Comment=The menu that normally shows on right-click
+Comment[pt]=O menu que aparece normalmente com o botão direito
+Comment[pt_BR]=O menu que aparece normalmente com o botão direito
+Comment[sv]=Menyn som normalt visas med ett högerklick
+Comment[uk]=Меню, яке буде показано у відповідь на клацання правою кнопкою миші
 Type=Service
 Icon=preferences-desktop-color
 ServiceTypes=Plasma/ContainmentActions

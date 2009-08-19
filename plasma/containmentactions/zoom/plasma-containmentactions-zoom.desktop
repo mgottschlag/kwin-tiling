@@ -68,6 +68,10 @@ Name[zh_TW]=縮放
 Type=Service
 Icon=preferences-desktop-color
 Comment=Zoom activities in and out
+Comment[pt]=Ampliar e reduzir as actividades
+Comment[pt_BR]=Ampliar e reduzir as actividades
+Comment[sv]=Zooma aktiviteter
+Comment[uk]=Збільшує та зменшує простори дій
 
 ServiceTypes=Plasma/ContainmentActions
 

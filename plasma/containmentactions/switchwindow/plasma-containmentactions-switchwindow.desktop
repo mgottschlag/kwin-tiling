@@ -1,8 +1,16 @@
 [Desktop Entry]
 Name=Switch Window
+Name[pt]=Mudar de Janela
+Name[pt_BR]=Mudar de Janela
+Name[sv]=Byt fönster
+Name[uk]=Перемкнути вікно
 Type=Service
 Icon=preferences-desktop-color
 Comment=Show a list of windows to switch to
+Comment[pt]=Mostrar uma lista com as janelas para onde mudar
+Comment[pt_BR]=Mostrar uma lista com as janelas para onde mudar
+Comment[sv]=Visa en lista med fönster att byta till
+Comment[uk]=Показує список вікон для перемикання
 
 ServiceTypes=Plasma/ContainmentActions
 
