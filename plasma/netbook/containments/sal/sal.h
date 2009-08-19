@@ -99,6 +99,7 @@ private:
     ItemBackground *m_hoverIndicator;
 
     QGraphicsLinearLayout *m_mainLayout;
+    QGraphicsLinearLayout *m_appletsLayout;
     QGraphicsGridLayout *m_launchGrid;
 };
 

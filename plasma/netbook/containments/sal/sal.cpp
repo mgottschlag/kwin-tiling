@@ -46,7 +46,8 @@ SearchLaunch::SearchLaunch(QObject *parent, const QVariantList &args)
       m_homeButton(0),
       m_maxColumnWidth(0),
       m_viewMainWidget(0),
-      m_gridScroll(0)
+      m_gridScroll(0),
+      m_appletsLayout(0)
 {
     setContainmentType(Containment::CustomContainment);
 }
@@ -294,14 +295,11 @@ void SearchLaunch::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 {
     Q_UNUSED(pos);
 
-    // this gets called whenever an applet is added, and we add it to our layout
-    QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout*>(layout());
-
-    if (!lay) {
+    if (!m_appletsLayout) {
         return;
     }
 
-    lay->addItem(applet);
+    m_appletsLayout->addItem(applet);
     applet->setBackgroundHints(NoBackground);
     connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
 }
@@ -399,9 +397,12 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
             KConfigGroup cg = config();
             m_stripWidget->restore(cg);
 
+            m_appletsLayout = new QGraphicsLinearLayout();
+
             // add our layouts to main vertical layout
             m_mainLayout->addItem(m_favourites);
             m_mainLayout->addItem(gridLayout);
+            m_mainLayout->addItem(m_appletsLayout);
 
             // correctly set margins
             themeUpdated();
@@ -423,6 +424,9 @@ void SearchLaunch::constraintsEvent(Plasma::Constraints constraints)
     }
 
     if (constraints & Plasma::SizeConstraint) {
+        if (m_appletsLayout) {
+            m_appletsLayout->setMaximumHeight(size().height()/4);
+        }
         m_relayoutTimer->start();
     }
 
