@@ -62,6 +62,7 @@ private slots:
     void appletRemoved(Plasma::Applet* applet);
     void updateSize();
     void updateConfigurationMode(bool config);
+    void containmentAdded(Plasma::Containment *containment);
 
 private:
     /**

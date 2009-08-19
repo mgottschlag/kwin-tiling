@@ -90,6 +90,14 @@ void Panel::init()
         connect(cont, SIGNAL(toolBoxVisibilityChanged(bool)),
             this, SLOT(updateConfigurationMode(bool)));
     }
+    connect(c, SIGNAL(containmentAdded(Plasma::Containment *)),
+            this, SLOT(containmentAdded(Plasma::Containment *)));
+}
+
+void Panel::containmentAdded(Plasma::Containment *containment)
+{
+    connect(containment, SIGNAL(toolBoxVisibilityChanged(bool)),
+            this, SLOT(updateConfigurationMode(bool)));
 }
 
 void Panel::backgroundChanged()

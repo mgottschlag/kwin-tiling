@@ -101,6 +101,21 @@ void Newspaper::init()
     Containment::init();
     setHasConfigurationInterface(true);
     themeUpdated();
+
+    //HACK to experiment with an idea: connect with toolBoxVisibilityChanged of /ALL/ containments
+    Plasma::Corona *c = corona();
+    foreach (Plasma::Containment *cont, c->containments()) {
+        connect(cont, SIGNAL(toolBoxVisibilityChanged(bool)),
+            this, SLOT(updateConfigurationMode(bool)));
+    }
+    connect(c, SIGNAL(containmentAdded(Plasma::Containment *)),
+            this, SLOT(containmentAdded(Plasma::Containment *)));
+}
+
+void Newspaper::containmentAdded(Plasma::Containment *containment)
+{
+    connect(containment, SIGNAL(toolBoxVisibilityChanged(bool)),
+            this, SLOT(updateConfigurationMode(bool)));
 }
 
 void Newspaper::themeUpdated()
