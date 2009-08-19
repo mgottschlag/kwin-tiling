@@ -90,35 +90,37 @@ void Nepomuk::SearchRunner::match( Plasma::RunnerContext& context )
 {
     kDebug() << &context << context.query();
 
-    // This method needs to be thread-safe since KRunner does simply start new threads whenever
-    // the query term changes.
-    m_mutex.lock();
+    if (Nepomuk::ResourceManager::instance()->initialized()) {
+        // This method needs to be thread-safe since KRunner does simply start new threads whenever
+        // the query term changes.
+        m_mutex.lock();
 
-    // we do not want to restart a query on each key-press. That would result
-    // in way too many queries for the rather sluggy Nepomuk query service
-    // Thus, we use a little timeout to make sure we do not query too often
+        // we do not want to restart a query on each key-press. That would result
+        // in way too many queries for the rather sluggy Nepomuk query service
+        // Thus, we use a little timeout to make sure we do not query too often
 
-    m_waiter.wait(&m_mutex, s_userActionTimeout);
-    m_mutex.unlock();
+        m_waiter.wait(&m_mutex, s_userActionTimeout);
+        m_mutex.unlock();
 
-    if (!context.isValid()) {
-        kDebug() << "deprecated search:" << context.query();
-        // we are no longer the latest call
-        return;
-    }
+        if (!context.isValid()) {
+            kDebug() << "deprecated search:" << context.query();
+            // we are no longer the latest call
+            return;
+        }
 
-    // no queries on very short strings
-    if (Search::QueryServiceClient::serviceAvailable() && context.query().count() >= 3) {
-        QueryClientWrapper queryWrapper(this, &context);
-        queryWrapper.runQuery();
-        m_waiter.wakeAll();
+        // no queries on very short strings
+        if (Search::QueryServiceClient::serviceAvailable() && context.query().count() >= 3) {
+            QueryClientWrapper queryWrapper(this, &context);
+            queryWrapper.runQuery();
+            m_waiter.wakeAll();
+        }
     }
 }
 
 
 void Nepomuk::SearchRunner::run( const Plasma::RunnerContext&, const Plasma::QueryMatch& match )
 {
-    // If no action was selected, the interface doesn't support multiple 
+    // If no action was selected, the interface doesn't support multiple
     // actions so we simply open the file
     if (QAction *a = match.selectedAction()) {
         if (a != action("open")) {
