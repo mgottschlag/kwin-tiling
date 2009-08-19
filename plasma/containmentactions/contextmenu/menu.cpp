@@ -345,6 +345,7 @@ QWidget* ContextMenu::createConfigurationInterface(QWidget* parent)
     QWidget *widget = new QWidget(parent);
     QVBoxLayout *lay = new QVBoxLayout();
     widget->setLayout(lay);
+    widget->setWindowTitle(i18n("Configure Contextual Menu Plugin"));
     m_buttons = new QButtonGroup(widget);
     m_buttons->setExclusive(false);
     for (int i = 0; i < m_allActions.count(); ++i) {

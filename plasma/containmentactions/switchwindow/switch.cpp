@@ -44,7 +44,7 @@ QWidget* SwitchWindow::createConfigurationInterface(QWidget* parent)
 {
     QWidget *widget = new QWidget(parent);
     m_ui.setupUi(widget);
-
+    widget->setWindowTitle(i18n("Configure Switch Window Plugin"));
     switch (m_mode) {
         case AllFlat:
             m_ui.flatButton->setChecked(true);

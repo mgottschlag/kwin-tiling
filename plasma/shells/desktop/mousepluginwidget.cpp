@@ -133,7 +133,6 @@ void MousePluginWidget::configure()
         m_configDlg = new QDialog(this);
         QLayout *lay = new QVBoxLayout(m_configDlg);
         m_configDlg->setLayout(lay);
-        m_configDlg->setWindowTitle(i18n("Configure Plugin"));
         m_configDlg->setWindowModality(Qt::WindowModal);
 
         //put the config in the dialog
@@ -141,7 +140,9 @@ void MousePluginWidget::configure()
         if (w) {
             lay->addWidget(w);
         }
+	const QString title = w->windowTitle();
 
+        m_configDlg->setWindowTitle(title.isEmpty() ? i18n("Configure Plugin") :title);
         //put buttons below
         QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
         lay->addWidget(buttons);
