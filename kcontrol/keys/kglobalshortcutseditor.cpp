@@ -194,8 +194,7 @@ void KGlobalShortcutsEditor::activateComponent(const QString &component)
 {
     QHash<QString, ComponentData*>::Iterator iter = d->components.find(component);
     if (iter == d->components.end()) {
-        kDebug() << "The component" << component << "is unknown";
-        Q_ASSERT(iter == d->components.end());
+        Q_ASSERT(iter != d->components.end());
         return;
     } else {
         int index = d->ui.components->findText(component);
