@@ -82,6 +82,7 @@ Comment[pt]=Executar as suas aplicações favoritas
 Comment[pt_BR]=Executar as suas aplicações favoritas
 Comment[sv]=Starta dina favoritprogram
 Comment[uk]=Запуск ваших улюблених програм
+Comment[x-test]=xxRun your favourite appsxx
 
 ServiceTypes=Plasma/ContainmentActions
 
