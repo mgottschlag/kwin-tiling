@@ -563,7 +563,7 @@ void PanelController::setContainment(Plasma::Containment *containment)
     int insertIndex = d->layout->count() - 3;
 
     QAction *action = containment->action("add widgets");
-    if (action) {
+    if (action && action->isEnabled()) {
         ToolButton *addWidgetTool = d->addTool(action, this);
         d->layout->insertWidget(insertIndex, addWidgetTool);
         ++insertIndex;
@@ -577,7 +577,7 @@ void PanelController::setContainment(Plasma::Containment *containment)
     connect(action, SIGNAL(triggered()), this, SLOT(addSpace()));
 
     action = containment->action("lock widgets");
-    if (action) {
+    if (action && action->isEnabled()) {
         ToolButton *lockWidgetsTool = d->addTool(action, this);
         d->layout->insertWidget(insertIndex, lockWidgetsTool);
         ++insertIndex;
@@ -585,7 +585,7 @@ void PanelController::setContainment(Plasma::Containment *containment)
     }
 
     action = containment->action("remove");
-    if (action) {
+    if (action && action->isEnabled()) {
         ToolButton *removePanelTool = d->addTool(action, this);
         removePanelTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
         d->optDialogLayout->insertWidget(insertIndex, removePanelTool);
