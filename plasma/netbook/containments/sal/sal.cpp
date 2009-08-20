@@ -442,7 +442,8 @@ void SearchLaunch::paintInterface(QPainter *painter,
     m_background->paintFrame(painter, contentsRect.topLeft());
 }
 
-void SearchLaunch::setFormFactorFromLocation(Plasma::Location loc) {
+void SearchLaunch::setFormFactorFromLocation(Plasma::Location loc)
+{
     switch (loc) {
     case Plasma::BottomEdge:
     case Plasma::TopEdge:
