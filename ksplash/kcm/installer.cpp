@@ -199,7 +199,7 @@ int SplashInstaller::addTheme(const QString &path, const QString &name)
 // Copy theme package into themes directory
 void SplashInstaller::addNewTheme(const KUrl &srcURL)
 {
-  QString dir = KGlobal::dirs()->saveLocation("ksplashthemes");
+  const QString dir = KGlobal::dirs()->saveLocation("ksplashthemes");
 
   KUrl url;
   QStringList themeNames;
@@ -247,7 +247,7 @@ void SplashInstaller::addNewTheme(const KUrl &srcURL)
     KArchiveDirectory const *ad = tarFile.directory();
 
     // Find first directory entry.
-    QStringList entries = ad->entries();
+    const QStringList entries = ad->entries();
     foreach(const QString& s, entries)
     {
       if( ad->entry(s)->isDirectory() )
@@ -286,7 +286,7 @@ void SplashInstaller::readThemesList()
   mThemesList->clear();
 
   // Read local themes
-  QStringList entryList = KGlobal::dirs()->resourceDirs("ksplashthemes");
+  const QStringList entryList = KGlobal::dirs()->resourceDirs("ksplashthemes");
   //kDebug() << "readThemesList: " << entryList;
   QDir dir;
   QStringList subdirs;
@@ -352,8 +352,8 @@ void SplashInstaller::slotRemove()
     return;
 
   bool rc = false;
-  QString themeName = mThemesList->item(cur)->text();
-  QString themeDir = mThemesList->text2path[themeName];
+  const QString themeName = mThemesList->item(cur)->text();
+  const QString themeDir = mThemesList->text2path[themeName];
   if (!themeDir.isEmpty())
   {
      KUrl url;
@@ -479,7 +479,7 @@ void SplashInstaller::slotNew()
 {
   KNS::Engine engine(this);
   if (engine.init("ksplash.knsrc")) {
-    KNS::Entry::List entries = engine.downloadDialogModal(this);
+    const KNS::Entry::List entries = engine.downloadDialogModal(this);
     if ( !entries.isEmpty() )
         readThemesList();
   }
@@ -503,7 +503,7 @@ void SplashInstaller::slotAdd()
 //-----------------------------------------------------------------------------
 void SplashInstaller::slotFilesDropped(const KUrl::List &urls)
 {
-  for(KUrl::List::ConstIterator it = urls.begin();
+  for(KUrl::List::ConstIterator it = urls.constBegin();
       it != urls.end();
       ++it)
       addNewTheme(*it);
