@@ -30,6 +30,7 @@ set(backgrounddialog_SRCS
     ../wallpaperpreview.cpp
 )
 
+kde4_add_ui_files(backgrounddialog_SRCS ../../desktop/MousePlugins.ui)
 kde4_add_ui_files(backgrounddialog_SRCS ../../desktop/BackgroundDialog.ui)
 kde4_add_kcfg_files(backgrounddialog_SRCS ../../desktop/kcfg/plasma-shell-desktop.kcfgc)
 
