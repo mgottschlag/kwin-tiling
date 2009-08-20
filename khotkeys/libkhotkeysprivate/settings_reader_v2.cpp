@@ -129,6 +129,14 @@ KHotKeys::ActionDataGroup *SettingsReaderV2::readGroup(
             }
         }
 
+    // The group is complete. Activate it if needed
+    _disableActions
+        ? group->disable()
+        : config.readEntry("Enabled", false)
+            ? group->enable()
+            : group->disable();
+
+
     return group;
     }
 
