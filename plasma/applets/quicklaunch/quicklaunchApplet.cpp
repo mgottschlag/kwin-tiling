@@ -610,28 +610,6 @@ void QuicklaunchApplet::addProgram(int index, const QString &url, bool isNewIcon
     KIcon icon;
     QString text;
     QString genericName;
-    bool do_add_program = true;
-
-    if (!m_isBusy) {
-        foreach (QuicklaunchIcon *icon, m_icons) {
-            if (icon->url().url() == appUrl.url()) {
-                if (KMessageBox::warningContinueCancel(
-                        0, 
-                        i18n("\"%1\" is already in quicklaunch!", icon->url().pathOrUrl()), 
-                        i18n("Warning") 
-                    ) == KMessageBox::Cancel) {
-                    do_add_program = false;
-                    break;
-                } else {
-                    break;
-                }
-            }
-        }
-    }
-
-    if (!do_add_program) {
-        return;
-    }
 
     if (appUrl.isLocalFile() && KDesktopFile::isDesktopFile(appUrl.toLocalFile())) {
         KDesktopFile *f = new KDesktopFile(appUrl.toLocalFile());
@@ -694,18 +672,20 @@ bool QuicklaunchApplet::dropHandler(const int pos, const QMimeData *mimedata)
     if (urls.isEmpty()) {
         return false;
     }
-
-    //if there are more than one the last is junk
-    if (urls.count() > 1) {
-        urls.removeLast();
-    }
-
-    foreach (const KUrl &url, urls) {
-        if (KDesktopFile::isDesktopFile(url.toLocalFile())) {
-            addProgram(pos, url.toLocalFile(), true);
+    
+    KUrl::List uniqueUrls = removeDuplicateUrls(urls);
+    
+    if (uniqueUrls.count()) { 
+        foreach (const KUrl &url, uniqueUrls) {
+            if (KDesktopFile::isDesktopFile(url.toLocalFile())) {
+                addProgram(pos, url.toLocalFile(), true);
+            }
         }
+        
+        return true;
     }
-    return true;
+
+    return false;
 }
 
 
@@ -728,9 +708,59 @@ void QuicklaunchApplet::showAddInterface()
 
 void QuicklaunchApplet::addAccepted()
 {
-    int insertplace = m_rightClickedIcon ? m_icons.indexOf(m_rightClickedIcon) : m_icons.size();
-    addProgram(insertplace, addUi.urlIcon->url().url(), true);
-    performUiRefactor();
+    KUrl::List uniqueUrls = removeDuplicateUrls(KUrl::List(addUi.urlIcon->url()));
+    if (uniqueUrls.count() == 1) { 
+        int insertplace = m_rightClickedIcon ? m_icons.indexOf(m_rightClickedIcon) : m_icons.size();
+        addProgram(insertplace, uniqueUrls.first().toLocalFile(), true);
+        performUiRefactor();
+    }
+}
+
+KUrl::List QuicklaunchApplet::removeDuplicateUrls(const KUrl::List &urls)
+{
+    QStringList duplicateWarningMessage;
+    duplicateWarningMessage.clear();
+
+    KUrl::List uniqueUrls = urls;
+    foreach (const KUrl &url, urls) {
+        foreach (QuicklaunchIcon *icon, m_icons) {
+            if (icon->url().url() == url.url()) {
+                duplicateWarningMessage << url.pathOrUrl();
+                uniqueUrls.removeOne(url);
+                break;
+            }
+        }
+    }
+
+    if (!duplicateWarningMessage.isEmpty()) {
+        KDialog *warningDialog = new KDialog;
+        warningDialog->setButtons(KDialog::Ok);
+        warningDialog->setModal(false);
+        warningDialog->setDefaultButton(KDialog::Ok);
+        
+        QString warningMessage;
+        int count = duplicateWarningMessage.count();
+
+        foreach (QString str, duplicateWarningMessage) {
+            warningMessage += str + "\n";
+        }
+
+        KMessageBox::createKMessageBox(warningDialog,
+            QMessageBox::Warning,
+            i18np("%2is already in quicklaunch, ignore it!", 
+                  "%2are already in quicklaunch, ignore them!", 
+                  count, 
+                  warningMessage), 
+            QStringList(),
+            QString(""),
+            NULL,
+            KMessageBox::NoExec);
+
+        warningDialog->resize(400, 300);
+        warningDialog->show();
+    }
+
+    return uniqueUrls;
 }
 
 K_EXPORT_PLASMA_APPLET(quicklaunch, QuicklaunchApplet)

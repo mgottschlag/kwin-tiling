@@ -149,6 +149,13 @@ class QuicklaunchApplet : public Plasma::Applet
         void addProgram(int index, const QString &desktopFile, bool isNewIcon = false);
 
         /**
+         * Remove duplicate KUrls
+         * @param urls The urls to be inserted into quicklaunch
+         * @return the KUrl::List which arleady removed duplications
+         */
+        KUrl::List removeDuplicateUrls(const KUrl::List &urls);
+
+        /**
          * Removes all items from a BoxLayout
          * @param layout Layout to clear
          */
