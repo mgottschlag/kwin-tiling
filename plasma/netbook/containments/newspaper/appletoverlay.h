@@ -26,7 +26,7 @@
 namespace Plasma
 {
     class Applet;
-};
+}
 
 class Newspaper;
 class AppletMoveSpacer;

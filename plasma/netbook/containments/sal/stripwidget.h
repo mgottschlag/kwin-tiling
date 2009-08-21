@@ -44,7 +44,7 @@ class ItemBackground;
 
 class StripWidget : public QGraphicsWidget
 {
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
     StripWidget(Plasma::RunnerManager *rm, QGraphicsItem *parent = 0);

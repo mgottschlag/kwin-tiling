@@ -33,7 +33,7 @@ class QTimer;
 
 class SearchBox: public Plasma::PopupApplet
 {
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
     SearchBox(QObject *parent, const QVariantList &args);
