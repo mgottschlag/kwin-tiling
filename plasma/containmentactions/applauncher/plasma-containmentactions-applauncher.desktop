@@ -78,11 +78,14 @@ Name[zh_TW]=應用程式啟動器
 Type=Service
 Icon=preferences-desktop-color
 Comment=Run your favourite apps
+Comment[nb]=Kjør dine yndlingsprogrammer
 Comment[pt]=Executar as suas aplicações favoritas
 Comment[pt_BR]=Executar as suas aplicações favoritas
 Comment[sv]=Starta dina favoritprogram
+Comment[tr]=Sevdiğiniz uygulamaları çalıştırın
 Comment[uk]=Запуск ваших улюблених програм
 Comment[x-test]=xxRun your favourite appsxx
+Comment[zh_TW]=執行您最常用的應用程式
 
 ServiceTypes=Plasma/ContainmentActions
 

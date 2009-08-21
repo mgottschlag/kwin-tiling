@@ -1,18 +1,23 @@
 [Desktop Entry]
 Name=Paste
+Name[nb]=Lim inn
 Name[pt]=Colar
 Name[pt_BR]=Colar
 Name[sv]=Klistra in
+Name[tr]=Yapıştır
 Name[uk]=Вставка
 Name[x-test]=xxPastexx
+Name[zh_TW]=貼上
 Type=Service
 Icon=preferences-desktop-color
 Comment=Creates a widget from the contents of the clipboard
+Comment[nb]=Lager et skjermelement av innholdet fra utklippstavla
 Comment[pt]=Cria um elemento a partir do conteúdo da área de transferência
 Comment[pt_BR]=Cria um elemento a partir do conteúdo da área de transferência
 Comment[sv]=Skapar en grafisk komponent från klippbordets innehåll
 Comment[uk]=Створює віджет з вмістом буфера обміну даними
 Comment[x-test]=xxCreates a widget from the contents of the clipboardxx
+Comment[zh_TW]=從剪貼簿內容建立一元件
 
 ServiceTypes=Plasma/ContainmentActions
 

@@ -1,18 +1,24 @@
 [Desktop Entry]
 Name=Switch Desktop
+Name[nb]=Bytt skrivebord
 Name[pt]=Mudar de Ecrã
 Name[pt_BR]=Mudar de Ecrã
 Name[sv]=Byt skrivbord
+Name[tr]=Masaüstünü Değiştir
 Name[uk]=Перемкнути стільницю
 Name[x-test]=xxSwitch Desktopxx
+Name[zh_TW]=切換桌面
 Type=Service
 Icon=preferences-desktop-color
 Comment=Switch to another virtual desktop
+Comment[nb]=Bytt til et annet virtuelt skrivebord
 Comment[pt]=Mudar para outro ecrã virtual
 Comment[pt_BR]=Mudar para outro ecrã virtual
 Comment[sv]=Byt till ett annat virtuellt skrivbord
+Comment[tr]=Başka bir sanal masaüstüne geç
 Comment[uk]=Перемкнутися на іншу віртуальну стільницю
 Comment[x-test]=xxSwitch to another virtual desktopxx
+Comment[zh_TW]=切換到其它虛擬桌面
 
 ServiceTypes=Plasma/ContainmentActions
 
