@@ -146,6 +146,7 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
         return;
     }
 
+    kDebug() << data.keys();
     //data from hotplug engine
     //kDebug() << data["udi"] << data["predicateFiles"].toStringList() << data["Device Types"].toStringList();
     QStringList predicateFiles = data["predicateFiles"].toStringList();
@@ -180,6 +181,10 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
 
         //data from soliddevice engine
     } else if (data["Device Types"].toStringList().contains("Storage Access")) {
+        QList<QVariant> freeSpaceData;
+        freeSpaceData << QVariant(0) << QVariant(0);
+        m_dialog->setDeviceData(source, QVariant(freeSpaceData), NotifierDialog::DeviceFreeSpaceRole);
+
         //kDebug() << "DeviceNotifier::solidDeviceEngine updated" << source;
         if (data["Accessible"].toBool() == true) {
             m_dialog->setUnMount(true,source);
@@ -188,6 +193,12 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
             QStringList overlays;
             overlays << "emblem-mounted";
             m_dialog->setDeviceData(source, KIcon(m_dialog->getDeviceData(source,NotifierDialog::IconNameRole).toString(), NULL, overlays), Qt::DecorationRole);
+ 
+            if (data["Free Space"].isValid()) {
+                QList<QVariant> freeSpaceData;
+                freeSpaceData << data["Size"] << data["Free Space"];
+                m_dialog->setDeviceData(source, QVariant(freeSpaceData), NotifierDialog::DeviceFreeSpaceRole);
+            }
         } else if (data["Device Types"].toStringList().contains("OpticalDisc")) {
             //Unmounted optical drive
             m_dialog->setDeviceData(source, KIcon("media-eject"), Qt::DecorationRole);

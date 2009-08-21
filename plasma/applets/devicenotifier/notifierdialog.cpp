@@ -51,6 +51,7 @@
 //own
 #include "notifierview.h"
 #include "devicenotifier.h"
+#include "devicespaceinfodelegate.h"
 
 using namespace Notifier;
 using namespace Plasma;
@@ -273,7 +274,9 @@ void NotifierDialog::buildDialog()
     m_notifierView->setMinimumSize(150,300);
     m_notifierView->setFocusPolicy(Qt::NoFocus);
 
-    Plasma::Delegate *delegate = new Delegate(this);
+
+    DeviceSpaceInfoDelegate *delegate = new DeviceSpaceInfoDelegate(this);
+    //Plasma::Delegate *delegate = new Delegate(this);
     //map the roles of m_hotplugModel into the standard Plasma::Delegate roles
     delegate->setRoleMapping(Plasma::Delegate::SubTitleRole, ActionRole);
     delegate->setRoleMapping(Plasma::Delegate::ColumnTypeRole, ScopeRole);

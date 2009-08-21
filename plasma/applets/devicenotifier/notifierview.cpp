@@ -18,6 +18,8 @@
 */
 
 #include "notifierview.h"
+#include "devicespaceinfodelegate.h"
+#include "notifierdialog.h"
 
 // Qt
 
@@ -280,7 +282,7 @@ void NotifierView::paintItem(QPainter &painter, const QRect &itemRect, const QMo
     if (index == currentIndex()) {
         option.state |= QStyle::State_HasFocus;
     }
-
+    QList<QVariant> freeSpaceData = index.data(NotifierDialog::DeviceFreeSpaceRole).toList();
     itemDelegate(index)->paint(&painter,option,index);
 }
 

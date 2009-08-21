@@ -69,9 +69,10 @@ namespace Notifier
               ActionRole = Qt::UserRole + 3,
               IconNameRole = Qt::UserRole + 4,
               ScopeRole = Qt::UserRole + 5,
-              SubTitleMandatoryRole = Qt::UserRole + 6
+              SubTitleMandatoryRole = Qt::UserRole + 6,
+              DeviceFreeSpaceRole =  Qt::UserRole + 7
           };
-  
+
           /**
           * Constructor of the dialog
           * @param notifier the notifier attached to this dialog
