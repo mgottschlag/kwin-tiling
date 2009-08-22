@@ -2,7 +2,7 @@
 Name=Switch Activity
 Name[nb]=Bytt aktivitet
 Name[pt]=Mudar de Actividade
-Name[pt_BR]=Mudar de Actividade
+Name[pt_BR]=Alternar atividade
 Name[sv]=Byt aktivitet
 Name[uk]=Перемкути простір дій
 Name[x-test]=xxSwitch Activityxx
@@ -12,7 +12,7 @@ Icon=preferences-desktop-color
 Comment=Switch to another activity
 Comment[nb]=Bytt til en annen aktivitet
 Comment[pt]=Mudar para outra actividade
-Comment[pt_BR]=Mudar para outra actividade
+Comment[pt_BR]=Alterna para outra atividade
 Comment[sv]=Byt till en annan aktivitet
 Comment[uk]=Перемкнутися на інший простір дій
 Comment[x-test]=xxSwitch to another activityxx

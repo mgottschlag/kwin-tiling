@@ -2,7 +2,7 @@
 Name=Application Information
 Name[nb]=Informasjon om program
 Name[pt]=Informação da Aplicação
-Name[pt_BR]=Informação da Aplicação
+Name[pt_BR]=Informações do aplicativo
 Name[sv]=Information om program
 Name[tr]=Uygulama Bilgileri
 Name[uk]=Відомості щодо програм
@@ -11,7 +11,7 @@ Name[zh_TW]=應用程式資訊
 Comment=Information and launching of all applications in the app menu.
 Comment[nb]=Informasjon og oppstart av alle programmer i programmenyen.
 Comment[pt]=Informação e lançamento de todas as aplicações no menu de aplicações.
-Comment[pt_BR]=Informação e lançamento de todas as aplicações no menu de aplicações.
+Comment[pt_BR]=Informação e inicialização de todos os aplicativos no menu de aplicativos.
 Comment[sv]=Information om och start av alla program i programmenyn.
 Comment[uk]=Відомості і запуск всіх програма з меню програм.
 Comment[x-test]=xxInformation and launching of all applications in the app menu.xx

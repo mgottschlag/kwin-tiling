@@ -2,7 +2,7 @@
 Name=Switch Window
 Name[nb]=Bytt vindu
 Name[pt]=Mudar de Janela
-Name[pt_BR]=Mudar de Janela
+Name[pt_BR]=Alternar janela
 Name[sv]=Byt fönster
 Name[tr]=Pencereyi Değiştir
 Name[uk]=Перемкнути вікно
@@ -13,7 +13,7 @@ Icon=preferences-desktop-color
 Comment=Show a list of windows to switch to
 Comment[nb]=Vis en liste over vinduer som kan byttes til
 Comment[pt]=Mostrar uma lista com as janelas para onde mudar
-Comment[pt_BR]=Mostrar uma lista com as janelas para onde mudar
+Comment[pt_BR]=Exibe uma lista de janelas para alternar
 Comment[sv]=Visa en lista med fönster att byta till
 Comment[tr]=Değiştirilecek pencereler listesini göster
 Comment[uk]=Показує список вікон для перемикання

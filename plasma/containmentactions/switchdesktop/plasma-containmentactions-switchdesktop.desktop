@@ -2,7 +2,7 @@
 Name=Switch Desktop
 Name[nb]=Bytt skrivebord
 Name[pt]=Mudar de Ecrã
-Name[pt_BR]=Mudar de Ecrã
+Name[pt_BR]=Alternar área de trabalho
 Name[sv]=Byt skrivbord
 Name[tr]=Masaüstünü Değiştir
 Name[uk]=Перемкнути стільницю
@@ -13,7 +13,7 @@ Icon=preferences-desktop-color
 Comment=Switch to another virtual desktop
 Comment[nb]=Bytt til et annet virtuelt skrivebord
 Comment[pt]=Mudar para outro ecrã virtual
-Comment[pt_BR]=Mudar para outro ecrã virtual
+Comment[pt_BR]=Alterna para outra área de trabalho
 Comment[sv]=Byt till ett annat virtuellt skrivbord
 Comment[tr]=Başka bir sanal masaüstüne geç
 Comment[uk]=Перемкнутися на іншу віртуальну стільницю
