@@ -56,7 +56,6 @@ IconApplet::IconApplet(QObject *parent, const QVariantList &args)
 
     if (!args.isEmpty()) {
         setUrl(args.value(0).toString());
-        m_icon->setText(m_text);
     }
 
     resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
@@ -143,6 +142,11 @@ void IconApplet::setUrl(const KUrl& url)
         m_icon->setIcon("unknown");
     }
 
+    //Update the icon text
+    if (formFactor() == Plasma::Planar || formFactor() == Plasma::MediaCenter) {
+        m_icon->setText(m_text);
+    }
+    
     //kDebug() << "url was" << url << "and is" << m_url;
 }
 
