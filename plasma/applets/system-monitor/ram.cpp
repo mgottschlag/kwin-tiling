@@ -88,12 +88,12 @@ bool SM::Ram::addMeter(const QString& source)
     plotter->setShowTopBar(m_showTopBar);
     plotter->setShowVerticalLines(false);
     plotter->setShowHorizontalLines(false);
-    plotter->setFontColor(theme->color(Plasma::Theme::HighlightColor));
+    plotter->setFontColor(theme->color(Plasma::Theme::TextColor));
     QFont font = theme->font(Plasma::Theme::DefaultFont);
     font.setPointSize(8);
     plotter->setFont(font);
-    plotter->setHorizontalLinesColor(theme->color(Plasma::Theme::HighlightColor));
-    plotter->setVerticalLinesColor(theme->color(Plasma::Theme::HighlightColor));
+    plotter->setHorizontalLinesColor(theme->color(Plasma::Theme::TextColor));
+    plotter->setVerticalLinesColor(theme->color(Plasma::Theme::TextColor));
     plotter->setHorizontalLinesCount(4);
     if (m_showBackground) {
         plotter->setSvgBackground("widgets/plot-background");
@@ -113,9 +113,9 @@ void SM::Ram::themeChanged()
 {
     Plasma::Theme* theme = Plasma::Theme::defaultTheme();
     foreach (Plasma::SignalPlotter *plotter, plotters()) {
-        plotter->setFontColor(theme->color(Plasma::Theme::HighlightColor));
-        plotter->setHorizontalLinesColor(theme->color(Plasma::Theme::HighlightColor));
-        plotter->setVerticalLinesColor(theme->color(Plasma::Theme::HighlightColor));
+        plotter->setFontColor(theme->color(Plasma::Theme::TextColor));
+        plotter->setHorizontalLinesColor(theme->color(Plasma::Theme::TextColor));
+        plotter->setVerticalLinesColor(theme->color(Plasma::Theme::TextColor));
     }
 }
 

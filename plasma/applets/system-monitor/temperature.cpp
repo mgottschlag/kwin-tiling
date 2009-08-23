@@ -205,7 +205,7 @@ bool Temperature::addMeter(const QString& source)
         plotter->setTitle(title);
         plotter->setUseAutoRange(false);
         plotter->setVerticalRange(0.0, 110.0);
-        plotter->setFontColor(theme->color(Plasma::Theme::HighlightColor));
+        plotter->setFontColor(theme->color(Plasma::Theme::TextColor));
         QFont font = theme->font(Plasma::Theme::DefaultFont);
         font.setPointSize(8);
         plotter->setFont(font);
