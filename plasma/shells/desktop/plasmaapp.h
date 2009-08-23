@@ -24,6 +24,7 @@
 #include <QList>
 #include <QSize>
 #include <QPoint>
+#include <QPointer>
 
 #include <KUniqueApplication>
 
@@ -48,6 +49,7 @@ namespace Kephal {
 class DesktopView;
 class PanelView;
 class DesktopCorona;
+class InteractiveConsole;
 
 class PlasmaApp : public KUniqueApplication
 {
@@ -93,6 +95,8 @@ public Q_SLOTS:
     // qdbuscpp2xml plasmaapp.h -o dbus/org.kde.plasma.App.xml
     void toggleDashboard();
     void showDashboard(bool show);
+    void showInteractiveConsole();
+    void loadScriptInInteractiveConsole(const QString &script);
     Q_SCRIPTABLE void quit();
 
     /**
@@ -146,6 +150,7 @@ private:
     QList<DesktopView*> m_desktops;
     QTimer *m_panelViewCreationTimer;
     Plasma::ZoomLevel m_zoomLevel;
+    QPointer<InteractiveConsole> m_console;
     int m_panelHidden;
 
     Ui::GlobalOptions m_configUi;

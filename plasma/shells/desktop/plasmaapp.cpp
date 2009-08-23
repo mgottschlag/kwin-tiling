@@ -68,6 +68,7 @@
 #include "checkbox.h"
 #include "desktopcorona.h"
 #include "desktopview.h"
+#include "interactiveconsole.h"
 #include "panelview.h"
 #include "plasma-shell-desktop.h"
 #include "toolbutton.h"
@@ -225,7 +226,6 @@ PlasmaApp::PlasmaApp()
 
 PlasmaApp::~PlasmaApp()
 {
-    delete m_appletBrowser;
 }
 
 void PlasmaApp::setupDesktop()
@@ -306,6 +306,8 @@ void PlasmaApp::cleanup()
     m_panels.clear();
     qDeleteAll(panels);
 
+    delete m_appletBrowser;
+    delete m_console;
     delete m_corona;
 
     //TODO: This manual sync() should not be necessary. Remove it when
@@ -329,6 +331,26 @@ void PlasmaApp::showDashboard(bool show)
 {
     foreach (DesktopView *view, m_desktops) {
         view->showDashboard(show);
+    }
+}
+
+void PlasmaApp::showInteractiveConsole()
+{
+    if (!m_console) {
+        m_console = new InteractiveConsole(m_corona);
+    }
+
+    KWindowSystem::setOnDesktop(m_console->winId(), KWindowSystem::currentDesktop());
+    m_console->show();
+    m_console->raise();
+    KWindowSystem::activateWindow(m_console->winId());
+}
+
+void PlasmaApp::loadScriptInInteractiveConsole(const QString &script)
+{
+    showInteractiveConsole();
+    if (m_console) {
+        m_console->loadScript(script);
     }
 }
 

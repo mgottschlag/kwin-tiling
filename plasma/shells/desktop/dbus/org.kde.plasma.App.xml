@@ -6,6 +6,11 @@
     <method name="showDashboard">
       <arg name="show" type="b" direction="in"/>
     </method>
+    <method name="showInteractiveConsole">
+    </method>
+    <method name="loadScriptInInteractiveConsole">
+      <arg name="script" type="s" direction="in"/>
+    </method>
     <method name="quit">
     </method>
   </interface>

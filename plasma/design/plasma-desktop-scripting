@@ -1,0 +1,39 @@
+ECMA Script Interaction With The Plasma Desktop Shell (plasma-desktop)
+======================================================================
+
+It is possible to control and interact with plasma-desktop using ECMA Script
+code. This scripting mechanism exposes containments, widgets and various aspects
+of plasma-desktop configuration to the user using the widely known and used
+ECMA Script language via the QtScript module.
+
+This document describes the API that is provided along with how to
+run such scripts in plasma-desktop.
+
+Running Scripts
+---------------
+
+There are three ways that scripts can be executed in plasma-desktop:
+
+* on first run: when plasma-desktop is first started any scripts in
+  $APPDATA/plasma/init/ are run. If there is more than one script, they are
+  run serially in the alphabetical order of the file names.
+
+* on update: when plasma-desktop is started, it will check in
+  $APPDATA/plasma/updates/ for scripts that have not yet been run. If there
+  is more than one script which has not been run yet they will be executed
+  serially in the alphabetical order of the file names.
+
+* interactively: an interactive scripting dialog can be requested either via
+  the KRunner window with "desktop console" or directly via dbus with
+  `qdbus org.kde.plasma-desktop /MainApplication showInteractiveConsole`.
+  Code may be entered directly into this window for execution. Alternately,
+  scripts from files can be loaded using KRunner with "desktop console /path/to/file"
+  or via dbus with
+  `qdbus org.kde.plasma-desktop /MainApplication loadScriptInInteractiveConsole /path/to/file`
+
+API
+---
+
+Screen geometry:
+* screenCount() returns the number of screens connected to the computer
+* screenGeometry(int screen) returns a rect object representing the geometry of a screen
