@@ -110,8 +110,10 @@ bool SM::Net::addMeter(const QString& source)
     QFont font = theme->font(Plasma::Theme::DefaultFont);
     font.setPointSize(8);
     plotter->setFont(font);
-    plotter->setHorizontalLinesColor(theme->color(Plasma::Theme::TextColor));
-    plotter->setVerticalLinesColor(theme->color(Plasma::Theme::TextColor));
+    QColor linesColor = theme->color(Plasma::Theme::TextColor);
+    linesColor.setAlphaF(0.4);
+    plotter->setHorizontalLinesColor(linesColor);
+    plotter->setVerticalLinesColor(linesColor);
     plotter->setHorizontalLinesCount(4);
     if (m_showBackground) {
         plotter->setSvgBackground("widgets/plot-background");
