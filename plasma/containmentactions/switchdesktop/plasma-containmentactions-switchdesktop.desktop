@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Switch Desktop
+Name[id]=Pindah Desktop
 Name[nb]=Bytt skrivebord
 Name[pt]=Mudar de Ecrã
 Name[pt_BR]=Alternar área de trabalho
@@ -11,6 +12,7 @@ Name[zh_TW]=切換桌面
 Type=Service
 Icon=preferences-desktop-color
 Comment=Switch to another virtual desktop
+Comment[id]=Berpindah ke desktop virtual lain
 Comment[nb]=Bytt til et annet virtuelt skrivebord
 Comment[pt]=Mudar para outro ecrã virtual
 Comment[pt_BR]=Alterna para outra área de trabalho

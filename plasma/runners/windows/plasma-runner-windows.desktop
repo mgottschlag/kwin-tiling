@@ -2,6 +2,7 @@
 # ctxt: plasma runner
 Name=Windows
 Name[hr]=Prozori
+Name[id]=Jendela
 Name[nds]=Finstern
 Name[pt]=Janelas
 Name[pt_BR]=Janelas
@@ -14,6 +15,7 @@ Name[x-test]=xxWindowsxx
 Name[zh_TW]=視窗
 Comment=List windows and desktops and switch them
 Comment[hr]=Popis prozora i radnih površina za laku promjenu među njima
+Comment[id]=Urutkan jendela dan desktop lalu kemudian tukar mereka
 Comment[nb]=List vinduer og skrivebord og bytt mellom dem
 Comment[nds]=Finstern un Schriefischen oplisten un wesseln
 Comment[pt]=Listar as janelas e ecrãs e mudar entre eles

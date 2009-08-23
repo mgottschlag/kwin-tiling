@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Switch Window
+Name[id]=Pindah Jendela
 Name[nb]=Bytt vindu
 Name[pt]=Mudar de Janela
 Name[pt_BR]=Alternar janela
@@ -11,6 +12,7 @@ Name[zh_TW]=切換視窗
 Type=Service
 Icon=preferences-desktop-color
 Comment=Show a list of windows to switch to
+Comment[id]=Tampilkan senarai jendela yang akan dipindahkan
 Comment[nb]=Vis en liste over vinduer som kan byttes til
 Comment[pt]=Mostrar uma lista com as janelas para onde mudar
 Comment[pt_BR]=Exibe uma lista de janelas para alternar

@@ -1,19 +1,23 @@
 [Desktop Entry]
 Name=Switch Activity
+Name[id]=Aktivitas Pindah
 Name[nb]=Bytt aktivitet
 Name[pt]=Mudar de Actividade
 Name[pt_BR]=Alternar atividade
 Name[sv]=Byt aktivitet
+Name[tr]=Eylemi Değiştir
 Name[uk]=Перемкути простір дій
 Name[x-test]=xxSwitch Activityxx
 Name[zh_TW]=切換活動
 Type=Service
 Icon=preferences-desktop-color
 Comment=Switch to another activity
+Comment[id]=Pindah ke aktivitas lain
 Comment[nb]=Bytt til en annen aktivitet
 Comment[pt]=Mudar para outra actividade
 Comment[pt_BR]=Alterna para outra atividade
 Comment[sv]=Byt till en annan aktivitet
+Comment[tr]=Başka bir eyleme geç
 Comment[uk]=Перемкнутися на інший простір дій
 Comment[x-test]=xxSwitch to another activityxx
 Comment[zh_TW]=切換到其它活動

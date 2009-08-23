@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Paste
+Name[id]=Tempel
 Name[nb]=Lim inn
 Name[pt]=Colar
 Name[pt_BR]=Colar
@@ -11,10 +12,12 @@ Name[zh_TW]=貼上
 Type=Service
 Icon=preferences-desktop-color
 Comment=Creates a widget from the contents of the clipboard
+Comment[id]=Membuat widget dari isi papan klip
 Comment[nb]=Lager et skjermelement av innholdet fra utklippstavla
 Comment[pt]=Cria um elemento a partir do conteúdo da área de transferência
 Comment[pt_BR]=Cria um widget a partir do conteúdo da área de transferência
 Comment[sv]=Skapar en grafisk komponent från klippbordets innehåll
+Comment[tr]=Pano içeriğininden bir gereç oluşturur
 Comment[uk]=Створює віджет з вмістом буфера обміну даними
 Comment[x-test]=xxCreates a widget from the contents of the clipboardxx
 Comment[zh_TW]=從剪貼簿內容建立一元件
