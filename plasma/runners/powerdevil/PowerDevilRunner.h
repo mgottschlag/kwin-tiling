@@ -39,6 +39,8 @@ class PowerDevilRunner : public Plasma::AbstractRunner
 
     private:
         void initUpdateTriggers();
+        void updateSyntaxes();
+        void addSuspendMatch(int value, QList<Plasma::QueryMatch> &matches);
 
         QDBusConnection m_dbus;
 
@@ -47,8 +49,8 @@ class PowerDevilRunner : public Plasma::AbstractRunner
         QStringList m_availableProfiles;
         QHash<QString, QString> m_profileIcon;
         QStringList m_supportedSchemes;
-        QStringList m_suspendMethods;
-        QHash<QString, int> m_suspendData;
+        QHash<int, QString> m_suspendMethods;
+        QHash<QString, int> m_synonyms;
 
         int m_shortestCommand;
 };
